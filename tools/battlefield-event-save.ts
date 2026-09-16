@@ -478,3 +478,106 @@ export function saveBattlefieldEvent(
         ],
     };
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// 删除一场战役（战场表 + 剧本两处一起删）
+// 🔴 [2026-09-16 主人定]「一年一个事件」——同年撞车的多余条目要能删掉。
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * 把条目**上方紧邻的注释块**一并算进删除范围。
+ * 那些 `// ── 前 332 年秋 · 加沙围城战 ──` 是这条专属的史料说明，
+ * 条目删了注释留着就成了孤儿，下一条会顶着上一条的说明，比不删更糟。
+ * 只往上吃连续的注释行与空行，碰到上一条目的 `},` 或数组开头 `[` 就停。
+ */
+function expandToLeadingComments(text: string, start: number): number {
+    let lineStart = text.lastIndexOf('\n', start - 1) + 1;
+    let cut = start;
+    while (lineStart > 0) {
+        const prevLineStart = text.lastIndexOf('\n', lineStart - 2) + 1;
+        const line = text.slice(prevLineStart, lineStart).trim();
+        if (line === '' || line.startsWith('//')) {
+            cut = prevLineStart;
+            lineStart = prevLineStart;
+            continue;
+        }
+        break;
+    }
+    return cut;
+}
+
+export function deleteBattlefieldEvent(
+    rootDir: string,
+    d: { bfId: string; year: number; title: string },
+): { battlefields: number; script: number; files: Array<{ file: string; content: string }> } {
+    // 🔴 [2026-09-16] 别强求 bfId：加沙围城战就是「剧本里有、战场表没有」，它的 bfId 本来就是空的。
+    //    战场 id 与战役名给一个就够 —— 有 id 删战场表，有名字删剧本，两边各自尽力。
+    if (!d) throw new Error('没给要删的东西');
+    if (!d.bfId && !d.title) throw new Error('要删哪个？战场 id 与战役名至少给一个');
+    if (!Number.isFinite(d.year)) throw new Error('年代不合法');
+
+    const bfFile = path.resolve(rootDir, 'src/data/Battlefields.ts');
+    const scFile = path.resolve(rootDir, 'src/data/HistoricalEventScript.ts');
+    const bfBefore = fs.readFileSync(bfFile, 'utf-8');
+    const scBefore = fs.readFileSync(scFile, 'utf-8');
+
+    const BF_DECL = 'export const BATTLEFIELDS';
+    const SC_DECL = 'export const HISTORICAL_EVENT_SCRIPT';
+    const bfCountBefore = scanEntries(bfBefore, BF_DECL).entries.length;
+    const scCountBefore = scanEntries(scBefore, SC_DECL).entries.length;
+
+    // 🔴 两处**可能只存在一边**：加沙围城战就是「剧本里有、战场表里没有」（列表显示未配战场）。
+    //    所以两边各自尽力删，只要删掉了一处就算数；两处都没有才报错。
+    const cutEntry = (text: string, hit: { start: number; end: number }): string => {
+        let end = hit.end + 1;
+        if (text[end] === ',') end++;                            // 连同结尾逗号
+        while (text[end] === '\n' || text[end] === '\r') end++;
+        return text.slice(0, expandToLeadingComments(text, hit.start)) + text.slice(end);
+    };
+
+    // ① 战场表：按 bfId
+    const bfScan = scanEntries(bfBefore, BF_DECL);
+    const bfHit = d.bfId
+        ? (bfScan.entries.find((e) => new RegExp(`id:\s*'${d.bfId}'`).test(e.body)) ?? null)
+        : null;
+    const bfText = bfHit ? cutEntry(bfBefore, bfHit) : bfBefore;
+
+    // ② 剧本：战役名优先，其次年份（与 save 同口径）
+    const scScan = scanEntries(scBefore, SC_DECL);
+    const scHit = scScan.entries.find((e) => {
+        const y = e.body.match(/year:\s*(-?\d+)/);
+        if (!y || Number(y[1]) !== d.year) return false;
+        return d.title ? e.body.includes(`title: ${tsStr(d.title)}`) : true;
+    }) ?? null;
+    const scText = scHit ? cutEntry(scBefore, scHit) : scBefore;
+
+    if (!bfHit && !scHit) {
+        throw new Error(`战场表与剧本里都没有【${d.title || d.bfId}】，没什么可删的`);
+    }
+
+    // 🔴 写盘前体检：只许**正好少一条**，多一条少一条都说明切错了
+    const bfCountAfter = scanEntries(bfText, BF_DECL).entries.length;
+    const scCountAfter = scanEntries(scText, SC_DECL).entries.length;
+    const bfExpect = bfHit ? bfCountBefore - 1 : bfCountBefore;
+    const scExpect = scHit ? scCountBefore - 1 : scCountBefore;
+    if (bfCountAfter !== bfExpect) {
+        throw new Error(`战场表条目数异常（${bfCountBefore} → ${bfCountAfter}，应为 ${bfExpect}），已中止写盘`);
+    }
+    if (scCountAfter !== scExpect) {
+        throw new Error(`剧本条目数异常（${scCountBefore} → ${scCountAfter}，应为 ${scExpect}），已中止写盘`);
+    }
+    for (const [label, t] of [['战场表', bfText], ['剧本', scText]] as const) {
+        if (/,\s*,/.test(t.replace(/\/\/[^\n]*/g, ''))) {
+            throw new Error(`${label}出现了连续逗号（数组空洞），已中止写盘`);
+        }
+    }
+
+    return {
+        battlefields: bfCountAfter,
+        script: scCountAfter,
+        files: [
+            { file: bfFile, content: bfText },
+            { file: scFile, content: scText },
+        ],
+    };
+}
