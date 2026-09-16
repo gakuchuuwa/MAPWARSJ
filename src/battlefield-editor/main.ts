@@ -180,6 +180,11 @@ function validate(d: BattleDraft): Issue[] {
         warn('战役名称建议用历史上最知名的叫法，以「战役／围城战／之战／会战／海战」结尾');
     }
     if (!d.eventTitle.trim()) warn('事件标题为空，建议写「公元前XXX年 XXX战役」');
+    // 🔴 [2026-09-16 主人定]「一年一个事件」：同一年只许有一场战役
+    const sameYear = drafts.filter((x) => x.year === d.year && x.title !== d.title);
+    if (sameYear.length) {
+        err(`前${-d.year}年已经有【${sameYear.map((x) => x.title).join('、')}】——一年一个事件，请删掉多余的那场或改年代`);
+    }
     if (!d.description.trim()) err('战役播报内容必须填（事件播报）');
     if (!d.battleDescription.trim()) warn('战役播报（战斗面板那条）为空，建议补上');
 
@@ -206,9 +211,9 @@ function validate(d: BattleDraft): Issue[] {
 
     if (!(d.attackerTroops > 0)) err('攻方兵力必须 > 0');
     if (!(d.defenderTroops > 0)) err('守方兵力必须 > 0');
-    // 13 战术层准入门槛：双方兵力都要 ≥5000，否则这一仗只能看战斗面板、进不去战术模式
+    // 🔴 [2026-09-16 主人定]「所有战场事件必须进入战术模式」——够不着门槛就是错，不是提醒
     if (d.attackerTroops < 5000 || d.defenderTroops < 5000) {
-        warn('有一方兵力 < 5000：达不到战术模式（13）准入门槛，这一仗不会进战术画面');
+        err('有一方兵力 < 5000，进不去战术模式。所有战场事件都必须能进 13，请按史料取更高的那个数值');
     }
 
     if (!d.attackerSourceCityId) err('攻方出兵据点必须选（军团从这里出发）');
@@ -261,6 +266,8 @@ const css = `
 .bf-btn.primary { background: #6a5a2a; border-color: #a08a3a; }
 .bf-btn.primary:hover { background: #877134; }
 .bf-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.bf-btn.danger { background: #5a2a24; border-color: #9a4a3a; }
+.bf-btn.danger:hover { background: #743429; }
 fieldset { border: 1px solid #3a342c; border-radius: 6px; margin: 0 0 14px; padding: 10px 14px 14px; }
 legend { color: #c9a33c; font-size: 13px; padding: 0 6px; }
 .row { display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -322,6 +329,7 @@ function render(): void {
     <div class="bf-toolbar">
         <button class="bf-btn" id="btn-new">＋ 新建战役</button>
         <button class="bf-btn primary" id="btn-save"${hasErr ? ' disabled' : ''}>保存到数据文件</button>
+        <button class="bf-btn danger" id="btn-delete"${isNew ? ' disabled' : ''}>删除这场战役</button>
         <span style="color:#8a8070;font-size:12px;">共 ${drafts.length} 场战役${isNew ? ' · 当前是新建，未保存' : ''}</span>
     </div>
     <div class="bf-wrap">
@@ -566,6 +574,33 @@ function bind(): void {
         isNew = true; working = blankDraft(); render();
     });
     on<HTMLButtonElement>('btn-save', 'click', () => { void save(); });
+    on<HTMLButtonElement>('btn-delete', 'click', () => { void removeBattle(); });
+}
+
+async function removeBattle(): Promise<void> {
+    if (isNew) return;
+    const name = working.title || working.bfId;
+    if (!confirm(`确定删除【${name}】？
+
+战场表与剧本两处的条目会一起删掉，含上方的史料注释。`)) return;
+    const btn = document.getElementById('btn-delete') as HTMLButtonElement | null;
+    if (btn) { btn.disabled = true; btn.textContent = '删除中…'; }
+    try {
+        const res = await fetch('/api/battlefield-editor/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bfId: working.bfId, year: working.year, title: working.title }),
+        });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || '未知错误');
+        alert(`已删除【${name}】
+战场表剩 ${json.battlefields} 条
+剧本剩 ${json.script} 条`);
+        location.reload();
+    } catch (e) {
+        alert('删除失败：' + (e as Error).message);
+        if (btn) { btn.disabled = false; btn.textContent = '删除这场战役'; }
+    }
 }
 
 async function save(): Promise<void> {

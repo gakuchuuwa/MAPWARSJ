@@ -7,7 +7,7 @@ import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
 import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
 import { replaceUnitStats } from './tools/unit-stats-save';
-import { saveBattlefieldEvent, type BattlefieldEventDraft } from './tools/battlefield-event-save';
+import { saveBattlefieldEvent, deleteBattlefieldEvent, type BattlefieldEventDraft } from './tools/battlefield-event-save';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -567,6 +567,31 @@ export default defineConfig({
                             res.end(JSON.stringify({ ok: true, mode: out.mode, battlefields: out.battlefields, script: out.script }));
                         } catch (err: any) {
                             console.error('[BattlefieldEditor] ❌ 保存失败:', err);
+                            res.statusCode = 400;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
+                // 删除一场战役（战场表 + 剧本两处一起删，含条目上方的史料注释块）
+                server.middlewares.use('/api/battlefield-editor/delete', (req, res) => {
+                    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: '仅支持 POST' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const d = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const out = deleteBattlefieldEvent(__dirname, d);
+                            for (const f of out.files) serverSafeWriteFileSync(f.file, f.content);
+                            console.log(`[BattlefieldEditor] 删除【${d.title || d.bfId}】 战场 ${out.battlefields} 条 / 剧本 ${out.script} 条`);
+                            res.end(JSON.stringify({ ok: true, battlefields: out.battlefields, script: out.script }));
+                        } catch (err: any) {
+                            console.error('[BattlefieldEditor] 删除失败:', err);
                             res.statusCode = 400;
                             res.end(JSON.stringify({ ok: false, error: err.message }));
                         }
