@@ -7866,6 +7866,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/STEPPE/sijitai_satraces.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": -26
         }
     },
     "folderGuides": {

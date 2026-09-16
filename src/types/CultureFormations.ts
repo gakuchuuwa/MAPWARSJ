@@ -2243,25 +2243,25 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     YARLUNG: 'PURU',
 };
 
-/** 取第一层文化军团名：优先 region 指针；无指针时按据点的建筑风格决定军团（🔴 2026-09-16 主人定：16+59+3 建筑风格对应 16+59+3 军团，不再兜底华夏） */
+/** 取第一层文化军团名：优先 region 指针（指向的军团还在才作数）；否则按据点的建筑风格决定军团
+ *  🔴 2026-09-16 主人定：军团挂靠保底统一走建筑风格（16+59+3 对应军团）。三级军团被删时，
+ *     该武将按据点的 buildingStyle 套军团。 */
 export function getCultureLegionName(region: RegionType | null | undefined): string {
-    if (region && CULTURE_LEGION_NAMES[region]) return CULTURE_LEGION_NAMES[region];
+    // ① region 指针（显式配置的三级/二级军团）；指向的军团被删（悬空）则不作数，落建筑风格保底
+    const ptr = region ? CULTURE_LEGION_NAMES[region] : undefined;
+    if (ptr && legionNameExists(ptr)) return ptr;
+    // ② 建筑风格保底：据点的 buildingStyle → 军团（16 母体→一级 / 59 文明→二级 / 3 三级→三级）
     const style = region ? REGION_TO_BUILDING_STYLE[region] : undefined;
-    if (style) {
-        const byStyle = getLegionNameByStyle(style);
-        if (byStyle) return byStyle;
-    }
-    // 🔴 [2026-09-16 修兜底错配] 查不到就按**自己的 16 母体**取一级军团名。
-    //    原来一律兜底成 '东亚军团' —— 而「东亚军团」同时是 CENTRAL 母体的**正式名**，
-    //    于是 HELLENIC（母体 GREEK，本该「希腊军团」）这类没显式配置的区全被并进东亚，
-    //    与 CENTRAL 撞名 → 审计报「【东亚军团】裂成多种编制」，编制还解析成 undefined。
-    //    母体归属是权威（区经 toBase16 归属），照它取名才是对的。
-    if (region) {
-        const base16 = toBase16(region);
-        const byBase16 = base16 ? BASE_16_LEGION_NAME_BY_REGION[base16] : undefined;
-        if (byBase16) return byBase16;
-    }
+    if (style) return getLegionNameByStyle(style);
     return '东亚军团';
+}
+
+/** 军团名是否存在（一级母体 / 二级 59 文明 / 三级自定义 之一） */
+function legionNameExists(name: string): boolean {
+    if (Object.values(BASE_16_LEGION_NAME_BY_REGION).includes(name)) return true;
+    if (LEVEL_2_CIV_59_MAP.has(name)) return true;
+    if (LEVEL_3_LEGION_MAP.has(name)) return true;
+    return false;
 }
 
 /** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 59 文明→二级军团 / 3 三级→三级军团） */

@@ -1233,7 +1233,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     sijitai: [
         { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
         // 前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
-        { generalId: 'sijitai_satraces', generalName: '萨特拉克斯', portrait: '' },
+        { generalId: 'sijitai_satraces', generalName: '萨特拉克斯', portrait: '/assets/STEPPE/sijitai_satraces.png' },
     ],
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
