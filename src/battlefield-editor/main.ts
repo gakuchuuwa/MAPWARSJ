@@ -17,6 +17,9 @@ import { BATTLEFIELDS } from '../data/Battlefields';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
+import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
+import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
+import { BASE_16_LEGION_NAME_BY_REGION } from '../types/CultureFormations';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
 
@@ -50,6 +53,8 @@ interface BattleDraft {
     attackerGeneralId: string;
     attackerTroops: number;
     attackerSourceCityId: string;
+    /** 攻方军团（留空 = 按势力/建筑风格默认） */
+    attackerLegionName: string;
 
     defenderFactionId: string;
     defenderGeneralId: string;
@@ -58,6 +63,8 @@ interface BattleDraft {
     defenderSourceCityId: string;
     /** 攻城战：打哪座城（守方就是这座城，不是军团） */
     defenderCityId: string;
+    /** 守方军团（留空 = 按势力/建筑风格默认） */
+    defenderLegionName: string;
 
     result: 'attacker_win' | 'defender_win';
     /** 行军航点（据点 id，逐段推进；最后一段走 location） */
@@ -83,6 +90,19 @@ const ALL_GENERALS: Array<{ generalId: string; generalName: string; factionId: s
 })();
 
 const GENERAL_BY_ID = new Map(ALL_GENERALS.map((g) => [g.generalId, g]));
+
+// 军团下拉数据源：一级 16 + 二级 59 + 三级 126（军团挂建筑风格 16+59+3 一一对应），按层分组便于挑选
+const LEGION_GROUPS: Array<{ label: string; legions: string[] }> = (() => {
+    const l1 = [...new Set(Object.values(BASE_16_LEGION_NAME_BY_REGION))].sort((a, b) => a.localeCompare(b, 'zh'));
+    const l2 = LEVEL_2_CIV_59_LEGIONS.map((l) => l.name).sort((a, b) => a.localeCompare(b, 'zh'));
+    const l3 = [...LEVEL_3_LEGION_MAP.keys()].sort((a, b) => a.localeCompare(b, 'zh'));
+    return [
+        { label: '一级 · 文化军团（16）', legions: l1 },
+        { label: '二级 · 文明军团（59）', legions: l2 },
+        { label: '三级 · 自定义军团', legions: l3 },
+    ];
+})();
+const ALL_LEGIONS: string[] = LEGION_GROUPS.flatMap((g) => g.legions);
 const CITY_BY_ID = new Map(CITIES_V2.map((c) => [c.id, c]));
 const ALL_CITIES = [...CITIES_V2].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
 
@@ -135,6 +155,7 @@ function loadDrafts(): BattleDraft[] {
             attackerGeneralId: bd.attackerGeneralId ?? '',
             attackerTroops: bd.attackerTroops ?? 0,
             attackerSourceCityId: bd.attackerSourceCityId ?? '',
+            attackerLegionName: bd.attackerLegionName ?? '',
             // 攻城战的守方是城，剧本里常常不写 defenderFactionId（势力从城读）→ 这里按城带出来
             defenderFactionId: bd.defenderFactionId
                 ?? (isSiege && anyBd.defenderCityId ? CITY_BY_ID.get(anyBd.defenderCityId)?.factionId ?? '' : ''),
@@ -142,6 +163,7 @@ function loadDrafts(): BattleDraft[] {
             defenderTroops: bd.defenderTroops ?? 0,
             defenderSourceCityId: bd.defenderSourceCityId ?? '',
             defenderCityId: anyBd.defenderCityId ?? '',
+            defenderLegionName: bd.defenderLegionName ?? '',
             result: bd.result ?? 'attacker_win',
             marchWaypoints: [...(bd.marchWaypoints ?? [])],
             cityUpdates: (ev.cityUpdates ?? [])
@@ -159,9 +181,9 @@ function blankDraft(): BattleDraft {
         year: -321, season: 0, type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
-        attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '',
+        attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
         defenderFactionId: '', defenderGeneralId: '', defenderTroops: 10000,
-        defenderSourceCityId: '', defenderCityId: '',
+        defenderSourceCityId: '', defenderCityId: '', defenderLegionName: '',
         result: 'attacker_win', marchWaypoints: [], cityUpdates: [],
     };
 }
@@ -320,6 +342,25 @@ function cityOptions(cur: string): string {
     return '<option value="">（未选）</option>'
         + ALL_CITIES.map((c) => opt(c.id, `${c.name} — ${c.id}`, cur)).join('');
 }
+function legionOptions(cur: string): string {
+    return '<option value="">（不指定 · 按势力/建筑风格默认）</option>'
+        + LEGION_GROUPS.map((g) => `<optgroup label="${escapeHtml(g.label)}">${g.legions.map((n) => opt(n, n, cur)).join('')}</optgroup>`).join('');
+}
+/** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */
+function filterLegionSelect(selectId: string, searchId: string): void {
+    const sel = document.getElementById(selectId) as HTMLSelectElement | null;
+    const inp = document.getElementById(searchId) as HTMLInputElement | null;
+    if (!sel || !inp) return;
+    const q = inp.value.trim().toLowerCase();
+    for (const optEl of Array.from(sel.options)) {
+        if (optEl.value === '') { optEl.hidden = false; continue; }
+        optEl.hidden = q !== '' && !optEl.textContent.toLowerCase().includes(q);
+    }
+    for (const g of Array.from(sel.querySelectorAll('optgroup'))) {
+        const anyVisible = Array.from(g.querySelectorAll('option')).some((o) => !(o as HTMLOptionElement).hidden);
+        (g as HTMLOptGroupElement).hidden = !anyVisible;
+    }
+}
 
 function render(): void {
     const issues = validate(working);
@@ -409,6 +450,9 @@ function render(): void {
                         <input type="number" id="f-attTroops" value="${working.attackerTroops}"></div>
                     <div class="fld"><label>出兵据点</label>
                         <select id="f-attCity">${cityOptions(working.attackerSourceCityId)}</select></div>
+                    <div class="fld"><label>军团</label>
+                        <input id="f-attLegionSearch" placeholder="搜索军团…" value="">
+                        <select id="f-attLegion">${legionOptions(working.attackerLegionName)}</select></div>
                 </div>
             </fieldset>
 
@@ -426,6 +470,9 @@ function render(): void {
                     : `
                     <div class="fld"><label>出兵据点</label>
                         <select id="f-defSrcCity">${cityOptions(working.defenderSourceCityId)}</select></div>`}
+                    <div class="fld"><label>军团</label>
+                        <input id="f-defLegionSearch" placeholder="搜索军团…" value="">
+                        <select id="f-defLegion">${legionOptions(working.defenderLegionName)}</select></div>
                 </div>
             </fieldset>
 
@@ -533,6 +580,8 @@ function bind(): void {
     on<HTMLInputElement>('f-attTroops', 'change', (el) => { working.attackerTroops = num(el.value); render(); });
     on<HTMLInputElement>('f-defTroops', 'change', (el) => { working.defenderTroops = num(el.value); render(); });
     on<HTMLSelectElement>('f-attCity', 'change', (el) => { working.attackerSourceCityId = el.value; render(); });
+    on<HTMLSelectElement>('f-attLegion', 'change', (el) => { working.attackerLegionName = el.value; render(); });
+    on<HTMLInputElement>('f-attLegionSearch', 'input', () => { filterLegionSelect('f-attLegion', 'f-attLegionSearch'); });
     on<HTMLSelectElement>('f-defCity', 'change', (el) => {
         working.defenderCityId = el.value;
         // 攻城战守方就是这座城：势力跟着城走，省得手写写歪
@@ -541,6 +590,8 @@ function bind(): void {
         render();
     });
     on<HTMLSelectElement>('f-defSrcCity', 'change', (el) => { working.defenderSourceCityId = el.value; render(); });
+    on<HTMLSelectElement>('f-defLegion', 'change', (el) => { working.defenderLegionName = el.value; render(); });
+    on<HTMLInputElement>('f-defLegionSearch', 'input', () => { filterLegionSelect('f-defLegion', 'f-defLegionSearch'); });
     on<HTMLSelectElement>('f-result', 'change', (el) => { working.result = el.value as BattleDraft['result']; });
     on<HTMLTextAreaElement>('f-desc', 'input', (el) => { working.description = el.value; });
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });

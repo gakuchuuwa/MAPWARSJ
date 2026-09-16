@@ -278,11 +278,13 @@ export class HistoricalEventManager {
                         attackerGeneralId: sd.attackerGeneralId,
                         attackerTroops: sd.attackerTroops,
                         attackerSourceCityId: sd.attackerSourceCityId ?? sd.attackerCityId,
+                        attackerLegionName: sd.attackerLegionName,
                         defenderFactionId: city.factionId,
                         defenderGeneralId: sd.defenderGeneralId,
                         defenderTroops: sd.defenderTroops ?? city.troops ?? 10000,
                         defenderSourceCityId: city.id,
                         defenderCityId: city.id,
+                        defenderLegionName: sd.defenderLegionName,
                         type: 'siege',
                         cityUpdates: ev.cityUpdates,
                         result: sd.result,
@@ -386,7 +388,10 @@ export class HistoricalEventManager {
         const legionGeneralId = isSiegeDefender ? null : generalId;
 
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
-        const legionName = FACTION_COMPOSITIONS[factionId]?.legionName
+        // 🔴 [2026-09-16 主人定] 军团优先用剧本里显式指定的军团名（战场编辑器可改）；没写就按
+        //    势力 → 建筑风格兜底。
+        const legionName = (isAtk ? fb.attackerLegionName : fb.defenderLegionName)
+            || FACTION_COMPOSITIONS[factionId]?.legionName
             || getCultureLegionName(city ? getCityRegion(city) : null);
         const army = this.legionManager.createLegion(
             stand, troops, factionId, legionName,

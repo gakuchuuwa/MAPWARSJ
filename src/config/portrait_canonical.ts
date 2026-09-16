@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/9/16 21:27:46（共 56 条）
+ * 生成时间：2026/9/16 22:54:35（共 57 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -58,6 +58,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/trastamara_feidinanershi.png": "/assets/SPANISH/__多余__SPANISH_03.png",
     "/assets/STEPPE/dingling_weilu.png": "/assets/STEPPE/__多余__STEPPE_03.png",
     "/assets/STEPPE/sijitai_ataiasi.png": "/assets/STEPPE/__多余__STEPPE_04.png",
+    "/assets/STEPPE/sijitai_satraces.png": "/assets/STEPPE/__多余__STEPPE_04.png",
     "/assets/STEPPE/__闲置__STEPPE_85.png": "/assets/STEPPE/__多余__STEPPE_02.png",
     "/assets/WESTERN/adao_d_mafushou.png": "/assets/WESTERN/__多余__WESTERN_01.png"
 };
