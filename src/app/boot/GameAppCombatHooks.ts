@@ -264,9 +264,12 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
-        // 🔴 [2026-09-09 同上] 区域战同样去掉 `!playerIn`，玩家入伍照常进 13。
-        const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
-            && (attHasGen && defHasGen && attHasElite && defHasElite);
+        // 战场事件必须进战术模式：HistoricalEventManager 为双方军团设置 isScriptArmy。
+        // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐及调试开关门槛阻挡。
+        const isBattlefieldEvent = [...attackers, ...defenders]
+            .some((u) => u.getEntity?.()?.isScriptArmy === true);
+        const eligible = isBattlefieldEvent || (app.tacticalModeEnabled && bigEnough && !bothNaval
+            && attHasGen && defHasGen && attHasElite && defHasElite);
         if (eligible) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];

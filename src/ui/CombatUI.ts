@@ -35,6 +35,8 @@ import {COMBAT_UI_TOKENS, uiPx} from '../config/combat-ui-tokens';
 import {summarizeTechEffects, summarizeSingleTechEffect} from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
+import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
+import { BATTLEFIELDS } from '../data/Battlefields';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
@@ -200,6 +202,92 @@ export function resolveAttackStyleTagLabel(style: string, isAttacker: boolean): 
         return isAttacker ? '勉为其难' : '固若金汤';
     }
     return isAttacker ? '锐不可当' : '固若金汤';
+}
+
+/**
+ * 🔴 [2026-09-16 主人定] 在战役名称前面添加真实的历史年份
+ * 规则与示例：前331年-高加米拉战役，公元208年-赤壁之战
+ */
+export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number | string | null): string {
+    if (!rawTitle) return '';
+
+    // 若已经带有标准前缀「前XXX年-」或「公元XXX年-」，直接返回
+    if (/^(前\d+年|公元\d+年)-/.test(rawTitle)) {
+        return rawTitle;
+    }
+
+    let year: number | null = null;
+    let cleanTitle = rawTitle.trim();
+
+    // 1. 若标题本身包含年份前缀，如 "公元前334年 格拉尼库斯河战役" 或 "前331年-高加米拉战役"
+    const inlineMatch = cleanTitle.match(/^(?:公元)?(前?\d+)年\s*[,，·\s-]?\s*(.+)$/);
+    if (inlineMatch) {
+        const yPart = inlineMatch[1];
+        if (yPart.startsWith('前')) {
+            year = -parseInt(yPart.slice(1), 10);
+        } else {
+            year = parseInt(yPart, 10);
+        }
+        cleanTitle = inlineMatch[2].trim();
+    }
+
+    // 2. 若未从标题提取出年份，从传入的 yearInput 读取
+    if (year === null && yearInput !== undefined && yearInput !== null && yearInput !== '') {
+        if (typeof yearInput === 'number' && !Number.isNaN(yearInput)) {
+            year = yearInput;
+        } else {
+            const str = String(yearInput).trim();
+            const numMatch = str.match(/(?:公元)?(前?\d+)年?/);
+            if (numMatch) {
+                const yPart = numMatch[1];
+                if (yPart.startsWith('前') || str.includes('前')) {
+                    year = -Math.abs(parseInt(yPart.replace(/[^\d]/g, ''), 10));
+                } else {
+                    year = parseInt(yPart, 10);
+                }
+            }
+        }
+    }
+
+    // 3. 剥离末尾的 " · 野战" / " · 攻城战"
+    cleanTitle = cleanTitle.replace(/\s*·\s*(野战|攻城战)$/, '').trim();
+
+    // 4. 若仍无年份，通过 HISTORICAL_EVENT_SCRIPT 查表匹配战役名
+    if (year === null) {
+        const found = HISTORICAL_EVENT_SCRIPT.find(
+            (ev) => ev.fieldBattleData?.title === cleanTitle
+                 || ev.siegeData?.title === cleanTitle
+                 || (ev.title && ev.title.includes(cleanTitle))
+        );
+        if (found) {
+            year = found.year;
+        }
+    }
+
+    // 5. 若仍无年份，通过 BATTLEFIELDS 查表匹配战场地名
+    if (year === null) {
+        const baseName = cleanTitle.replace(/(战役|之战|围攻战|围城战)$/, '');
+        const bfFound = BATTLEFIELDS.find((b) => b.name === cleanTitle || b.name === baseName);
+        if (bfFound && typeof bfFound.scriptYear === 'number') {
+            year = bfFound.scriptYear;
+        }
+    }
+
+    // 6. 最终兜底：从当前游戏世界时间系统获取
+    if (year === null) {
+        const cur = (window as any).game?.timeSystem?.getYear?.();
+        if (typeof cur === 'number' && !Number.isNaN(cur)) {
+            year = cur;
+        }
+    }
+
+    // 7. 拼接格式化结果
+    if (year !== null) {
+        const prefix = year < 0 ? `前${Math.abs(year)}年` : `公元${year}年`;
+        return `${prefix}-${cleanTitle}`;
+    }
+
+    return cleanTitle;
 }
 
 /**
@@ -1510,10 +1598,10 @@ export class CombatUI {
         } else {
             titleText = '遭遇战';
         }
-        const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
-        const fullTitle = `${titleText} · ${typeStr}`;
+        // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：前331年-高加米拉战役，公元208年-赤壁之战）
+        const formattedTitle = formatBattleTitleWithYear(titleText, init.getYear?.());
         this.battleTitle.style.background = 'none';
-        this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${fullTitle}</span>`;
+        this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
 
         // 势力名与军团名显示
         const attFactionName = (window as any).game?.cityManager?.getFactionName?.(init.attackerFactionId) ?? '攻方';
@@ -4953,7 +5041,9 @@ export class CombatUI {
             else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
         }
         
-        const titleHtml = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${title}</span>`;
+        // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：前331年-高加米拉战役，公元208年-赤壁之战）
+        const formattedTitle = formatBattleTitleWithYear(title, year);
+        const titleHtml = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
         this.battleTitle.style.background = 'none';
         this.battleTitle.style.border = 'none';
         this.battleTitle.style.boxShadow = 'none';
