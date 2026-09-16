@@ -96,7 +96,7 @@ export interface PlayerQuestDeps {
      * 不走上方那个 toast（那是到达/入伍/报错的操作提示，两者不能混）。
      * `onDone` 在念完时回调，调用方据此推下一段。
      */
-    announceBriefing?: (text: string, onDone?: () => void) => void;
+    announceBriefing?: (text: string, onDone?: () => void, onStart?: () => void) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
     feed?: {
@@ -598,6 +598,7 @@ export class PlayerQuestSystem {
         const pushNext = () => {
             if (this.briefingCancelled) return;
             if (i >= paragraphs.length || !stillHeading()) {
+                this.flushBriefingTrace(bf.id, i >= paragraphs.length ? 'done' : 'aborted');
                 this.clearJourneyBriefing();
                 return;
             }
@@ -606,7 +607,21 @@ export class PlayerQuestSystem {
             // 🔴 念完再推下一段：语音时长由 TTS 说了算，定时器猜出来的必然对不上口型
             const speak = this.deps.announceBriefing;
             if (speak) {
-                speak(line, () => pushNext());
+                // 🔴 [2026-09-16] 段间停留到底花在哪，靠实测不靠猜：
+                //    记「请求 → 真正开口 → 念完」三个时刻，整段播完落盘一次。
+                //    开口前那段就是玩家听到的「停留」（云健探测 + 合成往返）。
+                const tReq = Date.now();
+                let tSpeak = 0;
+                this.briefingTrace.push({ seg: i, chars: line.length, reqAt: tReq - this.briefingT0 });
+                speak(line, () => {
+                    const rec = this.briefingTrace[this.briefingTrace.length - 1];
+                    if (rec && rec.seg === i) {
+                        rec.waitMs = tSpeak ? tSpeak - tReq : null;   // 停留：请求到开口
+                        rec.readMs = tSpeak ? Date.now() - tSpeak : null;  // 朗读时长
+                        rec.totalMs = Date.now() - tReq;
+                    }
+                    pushNext();
+                }, () => { tSpeak = Date.now(); });
             } else {
                 // 没接播报（无声环境）→ 回落到按字数留阅读时间的字幕
                 const duration = journeyBriefingDuration(line);
@@ -615,7 +630,28 @@ export class PlayerQuestSystem {
             }
         };
         this.briefingCancelled = false;
+        this.briefingTrace = [];
+        this.briefingT0 = Date.now();
         pushNext();
+    }
+
+    /** 把这次播报的逐段计时落盘，供排查「段间停留」用（AI 读 scratch，不劳主人看日志） */
+    private flushBriefingTrace(bfId: string, why: 'done' | 'aborted'): void {
+        if (!this.briefingTrace.length) return;
+        const payload = {
+            at: new Date().toISOString(),
+            why: 'journeyBriefing',
+            bfId,
+            end: why,
+            totalSec: +((Date.now() - this.briefingT0) / 1000).toFixed(1),
+            segments: this.briefingTrace,
+        };
+        this.briefingTrace = [];
+        void fetch('/api/scene13-probe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        }).catch(() => { /* 诊断落盘失败不影响对局 */ });
     }
 
     private clearJourneyBriefing(): void {
@@ -689,6 +725,10 @@ export class PlayerQuestSystem {
     private briefingTimer: number | null = null;
     /** 停播闸：已经发出去的那段念完回调时，据此不再往下念 */
     private briefingCancelled = false;
+    /** 播报计时（诊断用）：每段「请求 → 开口 → 念完」的毫秒数，整段结束落盘 */
+    private briefingTrace: Array<{ seg: number; chars: number; reqAt: number;
+        waitMs?: number | null; readMs?: number | null; totalMs?: number }> = [];
+    private briefingT0 = 0;
 
     /**
      * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。

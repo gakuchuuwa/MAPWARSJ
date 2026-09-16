@@ -15,6 +15,13 @@ const TRUSTED_CLIENT_TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4';
 const WIN_EPOCH = 11644473600; // 1601→1970 秒差
 /** Edge 版本号：微软偶尔收紧校验，403 时优先更新此值（对齐 edge-tts 的 CHROMIUM_FULL_VERSION） */
 const SEC_MS_GEC_VERSION = '1-150.0.7871.129';
+
+/**
+ * 🔴 [2026-09-16] 连不上时的熔断时长。
+ * 原为 60s —— 一段战役背景播报就有 100+ 秒，60s 后熔断解除，中途又卡一次满额超时。
+ * 放到 5 分钟：连不上就整段播报期间都别再试；网络恢复后仍会自动重试。
+ */
+const DISABLE_MS = 300000;
 const OUTPUT_FORMAT = 'audio-24khz-48kbitrate-mono-mp3';
 
 export type EdgeVoice = 'zh-CN-YunjianNeural' | 'zh-CN-YunxiNeural';
@@ -72,7 +79,9 @@ class EdgeTtsClient {
     async synthesize(text: string, opts: EdgeTtsOptions = {}): Promise<Blob> {
         const voice: EdgeVoice = opts.voice ?? 'zh-CN-YunjianNeural';
         const rate = opts.rate;
-        const timeoutMs = opts.timeoutMs ?? 7000;
+        // 7s 对播报太长：连不上时第一段开口前就得干等 7 秒。
+        // 云健正常时合成一般 1~2s，3.5s 足够，失败也能早点回落 Web Speech。
+        const timeoutMs = opts.timeoutMs ?? 3500;
         const key = `${voice}|${ratePercent(rate)}|${text}`;
 
         const cached = this.cache.get(key);
@@ -108,7 +117,13 @@ class EdgeTtsClient {
                 }
             };
 
-            const timer = window.setTimeout(() => finish(new Error('edge-tts timeout')), timeoutMs);
+            const timer = window.setTimeout(() => {
+                // 🔴 [2026-09-16 主人报障「播报段间就是有停留」]
+                //    onerror / onclose 都会熔断，**只有超时这条漏了**。
+                //    云健连不上时每段开口前都白等满 timeoutMs，而且永远不熔断 —— 段段都卡。
+                this.disabledUntilMs = Date.now() + DISABLE_MS;
+                finish(new Error('edge-tts timeout'));
+            }, timeoutMs);
 
             ws.onopen = () => {
                 const now = new Date().toISOString();
@@ -153,12 +168,12 @@ class EdgeTtsClient {
 
             ws.onerror = () => {
                 // 端点连不上（很可能协议/版本变动）→ 短期禁用，避免每句都卡满超时
-                this.disabledUntilMs = Date.now() + 60000;
+                this.disabledUntilMs = Date.now() + DISABLE_MS;
                 finish(new Error('edge-tts ws error'));
             };
             ws.onclose = (ev: CloseEvent) => {
                 if (!done) {
-                    if (ev.code !== 1000) this.disabledUntilMs = Date.now() + 60000;
+                    if (ev.code !== 1000) this.disabledUntilMs = Date.now() + DISABLE_MS;
                     finish(new Error(`edge-tts closed ${ev.code}`));
                 }
             };

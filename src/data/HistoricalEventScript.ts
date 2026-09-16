@@ -94,17 +94,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 2,
         type: 'field_battle',
         title: '公元前333年 伊苏斯战役',
-        description:
-            '马其顿决定性胜利：亚历山大强渡皮纳鲁斯河直扑大流士御驾；'
-            + '大流士弃车逃离，王室家眷悉数被俘。',
+        description: '马其顿决定性胜利：亚历山大强渡皮纳鲁斯河直扑大流士御驾；大流士弃车逃离，王室家眷悉数被俘。',
         fieldBattleData: {
             title: '伊苏斯战役',
-            description:
-                '亚历山大亲率右翼伙伴骑兵渡河突破波斯左翼，'
-                + '大流士三世弃车逃离，王室家眷被俘。',
+            description: '亚历山大亲率右翼伙伴骑兵渡河突破波斯左翼，大流士三世弃车逃离，王室家眷被俘。',
 
             // 皮纳鲁斯河畔（伊苏斯城东南约 12 km），野战用 location。
-            location: { lat: 36.7583, lng: 36.2250 },
+            location: { lat: 36.7583, lng: 36.225 },
             marchWaypoints: ['city_adana'],      // 阿达纳（奇里乞亚，附近已有据点）
 
             // ── 攻方：马其顿 亚历山大 ──
