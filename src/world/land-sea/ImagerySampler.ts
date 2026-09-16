@@ -1,5 +1,5 @@
 import { latLngToTilePixel } from './ElevationSampler';
-import { decodeTileRGBA } from './TileDecoder';
+import { decodeTileRGBA, decodeOnFrameBudget } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -183,7 +183,8 @@ export class ImagerySampler {
             });
 
             // [2026-09-05] 同 ElevationSampler：共享画布 + willReadFrequently（原来是裸 getContext）
-            const data = decodeTileRGBA(img, IMAGERY_TILE_SIZE);
+            // [2026-09-16] 同上：解码排进逐帧预算队列，避免整屏预取的 onload 扎堆冻整帧
+            const data = await decodeOnFrameBudget(() => decodeTileRGBA(img, IMAGERY_TILE_SIZE));
             if (!data) return false;
             this.cache.set(key, data);
             this.touchCache(key);

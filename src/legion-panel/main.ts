@@ -11,6 +11,7 @@
  */
 import { FACTIONS } from '../data/factions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { planFallbackForDeletedLegion, applyFallbackPlan } from '../systems/LegionFallbackOnDelete';
 import {
     CULTURE_LEGION_NAMES,
     getLegionCompositionByName,
@@ -93,11 +94,20 @@ function buildRows(): LegionRow[] {
     for (const n of Object.values(BASE_16_LEGION_NAMES)) push(n, '一级');
     for (const l of LEVEL_2_CIV_59_LEGIONS) push(l.name, '二级');
     for (const l of LEVEL_3_LEGIONS) push(l.name, '三级');
+    // 🔴 [2026-09-16] 本次会话里新建的三级军团：静态表要等 HMR 才有它，
+    //    先从内存补进列表，新建完立刻能看见、能接着编（与保存编制「不等 HMR」同一套路）。
+    for (const n of runtimeCreated) if (!out.some(r => r.name === n)) push(n, '三级');
     return out;
 }
 
+/** 本次会话里新建的三级军团名（静态表还没有它们） */
+const runtimeCreated = new Set<string>();
+
 let rows: LegionRow[] = [];
 let keyword = '';
+/** 🔴 [2026-09-16 主人「加一个势力排序」] 按「用它的势力家数」排：none=表原顺序（一→二→三级）/ desc=多在前 / asc=少在前。
+ *  点「势力」表头循环切换。无人套用的军团要找出来，点两下切到 asc 就全在最上面。 */
+let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
@@ -137,8 +147,16 @@ function subLabelOf(unitId: string): string {
 let pickerKeyword = '';
 let pickerCat: string = 'all';
 
-function openUnitPicker(rowIdx: number): void {
-    if (!draft) return;
+/**
+ * @param onPick 给了就把选中的兵种交给它（新建军团弹窗用），不动 draft、不重绘主列表；
+ *               不给就是原行为：写进当前编辑中的 draft 那一排。
+ */
+function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, pickedNow?: string): void {
+    if (!draft && !onPick) return;
+    // 🔴 高亮「当前这一排是谁」：编辑现有军团时读 draft，新建弹窗没有 draft，读调用方传来的值。
+    //    原来这里直写 draft!.types[rowIdx]，新建那条路进来时 draft 是 null → 整个 paint 抛异常，
+    //    弹窗开出来是**空白的**（overlay 在、一张卡都没有）。
+    const currentType = (): string => (onPick ? (pickedNow ?? '') : (draft?.types[rowIdx] ?? ''));
     document.getElementById('lp-picker')?.remove();
     const overlay = document.createElement('div');
     overlay.id = 'lp-picker';
@@ -208,8 +226,8 @@ function openUnitPicker(rowIdx: number): void {
               <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                 ${us.map(u => `
                   <div class="lp-pk-card" data-uid="${esc(u.id)}" style="display:flex;gap:8px;align-items:center;
-                       background:${u.id === draft!.types[rowIdx] ? '#3a2f1e' : '#201d18'};
-                       border:1px solid ${u.id === draft!.types[rowIdx] ? '#c8a84b' : '#363024'};
+                       background:${u.id === currentType() ? '#3a2f1e' : '#201d18'};
+                       border:1px solid ${u.id === currentType() ? '#c8a84b' : '#363024'};
                        border-radius:4px;padding:6px 8px;cursor:pointer;">
                     <canvas data-uid="${esc(u.id)}" width="48" height="48"
                       style="width:48px;height:48px;flex:0 0 48px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
@@ -246,8 +264,10 @@ function openUnitPicker(rowIdx: number): void {
         }));
         document.getElementById('lp-pk-close')?.addEventListener('click', () => overlay.remove());
         box.querySelectorAll('.lp-pk-card').forEach(c => c.addEventListener('click', () => {
-            if (draft) draft.types[rowIdx] = (c as HTMLElement).dataset.uid!;
+            const uid = (c as HTMLElement).dataset.uid!;
             overlay.remove();
+            if (onPick) { onPick(uid); return; }
+            if (draft) draft.types[rowIdx] = uid;
             render();
         }));
     };
@@ -256,11 +276,17 @@ function openUnitPicker(rowIdx: number): void {
 
 function visible(): LegionRow[] {
     const kw = keyword.trim();
-    return rows.filter(r => {
+    const out = rows.filter(r => {
         if (layerFilter !== '全部' && r.layer !== layerFilter) return false;
         if (!kw) return true;
         return r.name.includes(kw) || r.slots.some(s => cn(s.type).includes(kw));
     });
+    if (sortByUsers !== 'none') {
+        const dir = sortByUsers === 'desc' ? -1 : 1;
+        // 家数相同的保持原来的层级顺序，别让同数的军团每次重绘都换位置
+        out.sort((a, b) => (a.users - b.users) * dir || rows.indexOf(a) - rows.indexOf(b));
+    }
+    return out;
 }
 
 function render(): void {
@@ -288,6 +314,8 @@ function render(): void {
             `<option value="${l}" ${layerFilter === l ? 'selected' : ''}>${l}${l === '全部' ? `（${rows.length} 支）` : `（${counts[l as Layer]} 支）`}</option>`).join('')}
       </select>
       <span style="color:#8a8378;font-size:12px;">列出 ${list.length} 支</span>
+      <button id="lp-new" style="margin-left:auto;padding:6px 14px;background:#2a4a2a;border:1px solid #4a7a4a;
+        color:#d0e8d0;border-radius:4px;font-size:13px;cursor:pointer;">➕ 新建军团</button>
     </div>
 
     <div style="flex:1;display:flex;min-height:0;">
@@ -301,7 +329,9 @@ function render(): void {
               <th style="padding:7px 10px;">前排</th>
               <th style="padding:7px 10px;">中坚</th>
               <th style="padding:7px 10px;">后排</th>
-              <th style="padding:7px 10px;">势力</th>
+              <th id="lp-sort-users" title="点击按势力家数排序（多在前 / 少在前 / 原顺序）"
+                  style="padding:7px 10px;cursor:pointer;user-select:none;${sortByUsers !== 'none' ? 'color:#f6e05e;' : ''}">
+                势力${sortByUsers === 'desc' ? ' ▼' : sortByUsers === 'asc' ? ' ▲' : ' ⇅'}</th>
             </tr>
           </thead>
           <tbody>
@@ -407,6 +437,11 @@ function render(): void {
         layerFilter = (e.target as HTMLSelectElement).value as Layer | '全部';
         render();
     });
+    document.getElementById('lp-new')?.addEventListener('click', () => { openCreateDialog(); });
+    document.getElementById('lp-sort-users')?.addEventListener('click', () => {
+        sortByUsers = sortByUsers === 'none' ? 'desc' : sortByUsers === 'desc' ? 'asc' : 'none';
+        render();
+    });
     host.querySelectorAll('tbody tr').forEach(tr => {
         tr.addEventListener('click', () => {
             selected = (tr as HTMLElement).dataset.name!;
@@ -483,6 +518,154 @@ async function rename(raw: string): Promise<void> {
     }
 }
 
+/**
+ * 新建军团 —— 🔴 [2026-09-16 主人定「添加一个功能，新建军团。一律属于三级」]
+ *
+ * 一级 16 母体与二级 59 文明是定数，只能改不能增，所以新建的**一律落三级表**。
+ * 弹窗要填三样：
+ *   · 军团名：命名法「时代 + 民族 + 军团」（如「城堡时代宋禁军团」），三层里不许重名
+ *   · 归属军团 parentLegion：一级 16 或二级 59 里的一支（三级表这个字段是必填）
+ *   · 阵型：七阵型之一，三排人数总和恒为 9
+ * 三排兵种先照抄归属军团的，战船 shipId 也跟归属军团走 —— 新建出来就是一支能用的军团，
+ * 主人再点进去逐排改。绝不留空位：空兵种在渲染层会掉回默认集。
+ */
+function openCreateDialog(): void {
+    document.getElementById('lp-create')?.remove();
+    const parents = rows.filter(r => r.layer === '一级' || r.layer === '二级');
+    let parentName = parents[0]?.name ?? '';
+    let mode: FormationMode = 'square';
+    let name = '';
+    /** 三排兵种：默认照抄归属军团，点一下就能换成任意兵种 */
+    let types: [string, string, string] = ['', '', ''];
+    /** 哪几排是主人自己点过的 —— 换归属军团时只刷没点过的那几排，别把手选的覆盖掉 */
+    const touched = [false, false, false];
+
+    const syncFromParent = (): void => {
+        const p = rows.find(r => r.name === parentName);
+        for (let i = 0; i < 3; i++) {
+            if (touched[i] && types[i]) continue;
+            types[i] = p?.slots[i]?.type ?? p?.slots[0]?.type ?? '';
+        }
+    };
+    syncFromParent();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'lp-create';
+    overlay.style.cssText = `position:fixed;inset:0;z-index:16000;background:rgba(0,0,0,.72);
+        display:flex;align-items:center;justify-content:center;`;
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    const box = document.createElement('div');
+    box.style.cssText = `width:min(600px,92vw);max-height:92vh;overflow:auto;background:#141210;
+        border:1px solid #3a342c;border-radius:6px;padding:18px;color:#e8e0d0;`;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    const paint = (): void => {
+        const cnt = MODE_ROWS[mode];
+        box.innerHTML = `
+          <div style="font-size:16px;color:#f6e05e;margin-bottom:4px;">新建军团</div>
+          <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
+            新建的军团一律是<b>三级</b>（一级 16 母体与二级 59 文明是定数，只能改不能增）。<br>
+            命名法：时代 + 民族 + 军团，例「城堡时代宋禁军团」。
+          </div>
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
+          <input id="lp-c-name" maxlength="24" placeholder="如：城堡时代宋禁军团" value="${esc(name)}"
+            style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">归属军团（一级 16 / 二级 59）</div>
+          <select id="lp-c-parent" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
+            ${parents.map(p => `<option value="${esc(p.name)}" ${p.name === parentName ? 'selected' : ''}>${p.layer}　${esc(p.name)}</option>`).join('')}
+          </select>
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">阵型</div>
+          <select id="lp-c-mode" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
+            ${(Object.keys(MODE_ROWS) as FormationMode[]).map(m => `<option value="${m}" ${m === mode ? 'selected' : ''}>${MODE_LABEL[m]}</option>`).join('')}
+          </select>
+          ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
+            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${cnt[i]} 人${touched[i] ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</div>
+            <div class="lp-c-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+                 background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+              <canvas id="lp-c-thumb-${i}" width="64" height="64"
+                style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+              <div style="flex:1;min-width:0;">
+                <div style="color:#e8e0d0;font-size:13px;">${esc(cn(types[i]))}</div>
+                <div style="color:#6a6358;font-size:11px;">${esc(subLabelOf(types[i]))} · 点击更换</div>
+              </div>
+              <span style="color:#8a8378;font-size:16px;">▾</span>
+            </div>`).join('')}
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button id="lp-c-go" style="flex:1;padding:9px;background:#2a4a2a;border:1px solid #4a7a4a;color:#d0e8d0;border-radius:4px;font-size:14px;cursor:pointer;">✅ 建立</button>
+            <button id="lp-c-cancel" style="flex:0 0 100px;padding:9px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;font-size:13px;cursor:pointer;">取消</button>
+          </div>`;
+        for (let i = 0; i < 3; i++) {
+            const cv = document.getElementById('lp-c-thumb-' + i) as HTMLCanvasElement | null;
+            if (cv && types[i]) drawUnitThumb(cv, types[i]);
+        }
+        const nameIn = document.getElementById('lp-c-name') as HTMLInputElement;
+        nameIn.addEventListener('input', e => { name = (e.target as HTMLInputElement).value; });
+        document.getElementById('lp-c-parent')?.addEventListener('change', e => {
+            parentName = (e.target as HTMLSelectElement).value;
+            syncFromParent();
+            paint();
+        });
+        document.getElementById('lp-c-mode')?.addEventListener('change', e => {
+            mode = (e.target as HTMLSelectElement).value as FormationMode;
+            paint();
+        });
+        box.querySelectorAll('.lp-c-unit').forEach(el => el.addEventListener('click', () => {
+            const i = Number((el as HTMLElement).dataset.row);
+            openUnitPicker(i, uid => { types[i] = uid; touched[i] = true; paint(); }, types[i]);
+        }));
+        document.getElementById('lp-c-cancel')?.addEventListener('click', () => overlay.remove());
+        document.getElementById('lp-c-go')?.addEventListener('click', () => {
+            void createLegion(name, parentName, mode, types, overlay);
+        });
+    };
+    paint();
+    (document.getElementById('lp-c-name') as HTMLInputElement)?.focus();
+}
+
+async function createLegion(
+    rawName: string,
+    parentName: string,
+    mode: FormationMode,
+    types: [string, string, string],
+    overlay: HTMLElement,
+): Promise<void> {
+    const name = (rawName ?? '').trim();
+    if (!name) { toast('❌ 请先填军团名', true); return; }
+    if (rows.some(r => r.name === name)) { toast(`❌ 【${name}】已存在，一个军团名只能有一种编制`, true); return; }
+    const parent = getLegionCompositionByName(parentName);
+    if (!parent) { toast(`❌ 归属军团【${parentName}】查不到编制`, true); return; }
+    const cnt = MODE_ROWS[mode];
+    // 兵种用弹窗里选好的那三个；人数按阵型走（三排总和恒 9，与选兵种无关）
+    const slots = [0, 1, 2].map(i => ({ type: types[i], count: cnt[i] }));
+    if (slots.some(sl => !sl.type)) { toast('❌ 三排兵种要选全', true); return; }
+    try {
+        const res = await fetch('/api/create-legion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                legionName: name,
+                formationMode: mode,
+                slots,
+                parentLegion: parentName,
+                shipId: parent.shipId ?? '',
+            }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        patchLegionComposition(name, slots, mode);   // 不等 HMR，立刻可见可编
+        runtimeCreated.add(name);
+        overlay.remove();
+        selected = name;
+        draft = null;
+        rows = buildRows();
+        render();
+        toast(`✅ 已新建三级军团【${name}】（归属 ${parentName}）：${slots.map(sl => cn(sl.type) + '×' + sl.count).join('　')}`);
+    } catch (e) {
+        toast('❌ 新建失败：' + ((e as Error)?.message ?? String(e)), true);
+    }
+}
+
 async function save(): Promise<void> {
     if (!selected || !draft) return;
     const counts = MODE_ROWS[draft.mode];
@@ -508,7 +691,23 @@ async function save(): Promise<void> {
 async function remove(): Promise<void> {
     if (!selected) return;
     const name = selected;
-    if (!window.confirm(`确定删除军团【${name}】？用它的势力会回落到所在文化区的军团。`)) return;
+    // 🔴 [2026-09-16 主人定] 删除前先把「谁要重排、各自去哪」算出来给主人看：
+    //    看武将时代 + 据点建筑风格 → 二级有同时代的就进二级，没有就退该风格的母体一级军团。
+    //    规则与样例见 src/systems/LegionFallbackOnDelete.ts 文件头。
+    const plan = planFallbackForDeletedLegion(name);
+    const toL2 = plan.items.filter((i) => i.via === 'level2').length;
+    const toL1 = plan.items.length - toL2;
+    const affected = plan.items.length + plan.skipped.length;
+    const lines = plan.items.slice(0, 8).map((i) => '  · ' + i.note).join('\n');
+    const more = plan.items.length > 8 ? '\n  …另有 ' + (plan.items.length - 8) + ' 家' : '';
+    const skipTip = plan.skipped.length
+        ? '\n判不了时代/风格的 ' + plan.skipped.length + ' 家将跟随文化区：\n  · '
+            + plan.skipped.slice(0, 5).map((s) => s.factionId + '（' + s.reason + '）').join('\n  · ')
+        : '';
+    if (!window.confirm(
+        '确定删除军团【' + name + '】？\n\n用它的 ' + affected + ' 家势力将重新安置'
+        + '（二级 ' + toL2 + ' / 一级 ' + toL1 + '）：\n' + lines + more + skipTip,
+    )) return;
     try {
         const res = await fetch('/api/delete-legion', {
             method: 'POST',
@@ -517,12 +716,26 @@ async function remove(): Promise<void> {
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        const applied = await applyFallbackPlan(plan);
+        // 判不了时代/风格的：保持旧行为，清空条目让它跟随文化区
+        for (const sk of plan.skipped) {
+            await fetch('/api/save-faction-legion', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ factionId: sk.factionId, legionName: null }),
+            });
+        }
         dropLegionFromMemory(name);
         selected = null;
         draft = null;
         rows = buildRows();
         render();
-        toast(`🗑 已删除军团【${name}】`);
+        toast(
+            `🗑 已删除军团【${name}】：重排 ${applied.ok} 家（二级 ${toL2} / 一级 ${toL1}）`
+            + (applied.failed.length ? `，${applied.failed.length} 家写入失败` : '')
+            + (plan.skipped.length ? `，${plan.skipped.length} 家判不了已跟随文化区` : ''),
+            applied.failed.length > 0,
+        );
+        if (applied.failed.length) console.error('[DeleteLegion] 写入失败：', applied.failed);
     } catch (e) {
         toast('❌ 删除失败：' + ((e as Error)?.message ?? String(e)), true);
     }

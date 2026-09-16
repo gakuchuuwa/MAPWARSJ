@@ -753,7 +753,10 @@
           <span class="de-board-badge">DRS 物理文件实测基准</span>
         </div>
         <div class="de-board-subtitle">
-          全图鉴经 DE 本体底层图形数据（drs/graphics）严格检验，彻底厘清 16 套成套风格集、2 套单时代共用外观、1 套自建民居、59 座专属城堡与 59 座专属奇观
+          全图鉴经 DE 本体底层图形数据（drs/graphics）严格检验，彻底厘清 16 套成套风格集、2 套单时代共用外观、1 套自建民居；
+          <!-- 🔴 [2026-09-16 主人「为什么看不到专属城堡」后定：两个数字含义不同，必须分别注明]
+               59 = DE 可玩文明数（每个文明一座）；64 / 61 = 图鉴里**物理目录**的实际座数。 -->
+          59 个可玩文明的专属城堡（<b>图鉴物理目录 64 座</b>）与专属奇观（<b>图鉴物理目录 61 座</b>）
         </div>
       </div>
       <div style="display:flex;gap:8px;">
@@ -769,16 +772,18 @@
         <div class="desc">拥有完整 Age2/Age3 城镇中心、民居与军事全套体系（每套 165~199 个文件）</div>
       </div>
 
-      <div class="de-metric-card" id="cardCastles64" title="点击一键筛选 59 座文明专属独立城堡">
+      <div class="de-metric-card" id="cardCastles64" title="点击一键筛选文明专属独立城堡（59 个可玩文明各一座；图鉴物理目录 64 座）">
         <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
-        <div class="label">🏰 文明专属独立城堡</div>
-        <div class="desc">去重孔雀帝国科技强化态与色雷斯单复数同义目录后的物理独立城堡实数</div>
+        <div class="label">🏰 文明专属独立城堡<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（59 = DE 可玩文明数）</span></div>
+        <div class="desc">图鉴按<b>物理目录</b>另计 <b>64 座</b>：61 座对应当页 59 文明 + 2 套三层自建分支，
+          另有滇黔 / 岭南 / 希腊母体通用 3 座；普鲁强化态与色雷斯单复数等 5 个变体目录不重复计入</div>
       </div>
 
-      <div class="de-metric-card" id="cardWonders61" title="点击一键筛选 59 座文明专属奇观">
+      <div class="de-metric-card" id="cardWonders61" title="点击一键筛选文明专属奇观（59 个可玩文明；图鉴物理目录 61 座）">
         <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
-        <div class="label">🏛️ 文明专属奇观</div>
-        <div class="desc">含 58 个文明专属奇观 + 罗马斗兽场（SCEN_COLOSSEUM）</div>
+        <div class="label">🏛️ 文明专属奇观<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（59 = DE 可玩文明数）</span></div>
+        <div class="desc">图鉴按<b>物理目录</b>另计 <b>61 座</b>：60 座 <code>X_WONDER_*</code> 目录（覆盖 58 个文明名，
+          其中不列颠、斯拉夫各多一座）+ 罗马斗兽场 <code>SCEN_COLOSSEUM</code></div>
       </div>
 
       <div class="de-metric-card" id="cardSharedEra" title="点击筛选跨文明单时代共用外观">
@@ -853,22 +858,20 @@
     </div>
   </div>
 
-  <!-- 🔴 [2026-09-12 主人「先把现有提取素材整理下，然后列个单子，分类」] 素材总览看板：
-       数据来自 /assets/asset_inventory.json（node scratch/build_asset_inventory.mjs 生成），
-       点任一行 = 把「素材库」下拉切到该库。 -->
-  <div class="de-board" id="assetInventoryBoard" style="margin-bottom:14px;">
-    <div class="de-board-header">
-      <div>
-        <div class="de-board-title">📚 现有素材总览（按库分类 · 点一行即筛选）</div>
-        <div class="de-board-sub" id="invSub">加载中…</div>
-      </div>
-    </div>
-    <div id="invGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px;padding:10px 12px;"></div>
-  </div>
+  <!-- 🔴 [2026-09-16 主人「这个不要这样显示，或者不要显示，有必要显示吗，这么占地方」]
+       「📚 素材总览看板」**已从本页移除显示**（它是一张 24 组、几十行目录名的卡片，太占地方）。
+       · **素材与数据一个都没删**：`public/assets/asset_inventory.json` + 人看的单子
+         `scratch/out/asset_inventory.md`（`node scratch/build_asset_inventory.mjs` 生成）照旧，
+         要看全量清单直接开那份 md / json。
+       · 要恢复本页的看板：把 `assetInventoryBoard` 那块 DOM（de-board + #invGrid + #invSub）
+         和 `renderInventoryBoard()` / `loadInventory()` 加回来、并在 `load()` 末尾重新调用一次即可。 -->
 
   <div class="bldg-toolbar">
     <input type="search" id="bldgSearch" placeholder="搜索 目录名 / 类型 / 前缀…" />
-    <!-- 🔴 [2026-09-12 主人「放到程序中，好好分类」] 素材库分类浏览（建筑 + 其余 8 个库） -->
+    <!-- 🔴 [2026-09-12 主人「放到程序中，好好分类」] 素材库分类浏览。
+         🔴 [2026-09-16 主人「建筑鉴赏是显示所有建筑的」「不是建筑的[不要]在这里显示」]
+         本页现在**只有「建筑」这一库**（8 个非建筑库已从本页移除显示，素材一个没删）。
+         下拉保留：它同时承担「本页当前是哪个库」的显示与重置筛选。 -->
     <select id="bldgLibrary"><option value="all">全部素材库</option></select>
     <select id="bldgUsage"><option value="all">全部用途</option></select>
     <select id="bldgGroup"><option value="all">全部分组</option></select>
@@ -950,32 +953,39 @@ const CULTURE_GROUPS = [
     group: '🏯 ASIA 东亚 (9套)',
     branches: [
       { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3',      label: '🏯 日本（重檐天守阁）' },
-      { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3',      label: '🏯 中国（北方华北·汉唐城楼）' },
-      { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',       label: '🏯 曹魏（中原高台阙楼）' },
-      { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',        label: '🏯 孙吴（江南水榭坞堡）' },
-      { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',       label: '🏯 蜀汉（巴蜀剑阁木关）' },
+      { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3',      label: '🏯 华夏（北方华北·汉唐城楼）' },
+      { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',       label: '🏯 北方（中原高台阙楼）' },
+      { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',        label: '🏯 江南（江南水榭坞堡）' },
+      { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',       label: '🏯 巴蜀（巴蜀剑阁木关）' },
       { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3',      label: '🏯 契丹（辽式边墙要塞）' },
       { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3',      label: '🏯 女真（居庸金代山城）' },
       { key: 'MONGOL',    deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3',      label: '⛺ 蒙古（塞外王帐石堡）' },
-      { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3',      label: '🏯 朝鲜（半岛山城要塞）' },
+      { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3',      label: '🏯 高丽（半岛山城要塞）' },
     ]
   },
   {
-    group: '🛡️ WEST 西欧 (6套)',
+    group: '🛡️ WEST 西欧 (7套)',
     branches: [
-      { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 日耳曼（西欧通用石堡）' },
+      { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 条顿（西欧通用石堡）' },
       { key: 'FRANKS',      deStyle: 'WEST', castle: 'FRAN_CASTLE_AGE3',       label: '🛡️ 法兰克（加洛林石堡）' },
       { key: 'BURGUNDIANS', deStyle: 'WEST', castle: 'BURG_CASTLE_AGE3',       label: '🛡️ 勃艮第（重装城堡）' },
-      { key: 'BRITONS',     deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 不列颠/凯尔特（苏格兰高地圆塔）' },
+      { key: 'BRITONS',     deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 不列颠（苏格兰高地圆塔）' },
+      /* 🔴 [2026-09-16 主人「二级只有 59 个，名字我给过三次了」]
+         凯尔特补齐：原来页面把「不列颠/凯尔特」挤在一条、又凭空多一条「东南欧」（DE 没这文明），
+         与权威文档 §三之二「WEST 7 座（不列颠、法兰克、哥特、条顿、凯尔特、勃艮第、维京）+
+         EAST 3 座（拜占庭、亚美尼亚、格鲁吉亚）」正好差两条。现把「东南欧」换成「凯尔特」，
+         二级仍是 59 条，且与文档的每文化座数完全对齐。
+         注：DE 本体只做了**一座**凯尔特城堡（b_celt_castle_age3），不列颠没有自己的城堡
+         （b_britons_castle* = 0 个），故这两条共用 CELT_CASTLE_AGE3（59 文明表里也是这样）。 */
+      { key: 'CELTS',       deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 凯尔特（苏格兰高地圆塔）' },
       { key: 'VIKINGS',     deStyle: 'WEST', castle: 'VIKI_CASTLE_AGE3',       label: '🛡️ 维京（诺斯长屋环形要塞）' },
       { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3',       label: '🛡️ 哥特（蛮族厚重石堡）' },
     ]
   },
   {
-    group: '🏛️ EAST 东南欧 (4套)',
+    group: '🏛️ EAST 东南欧 (3套)',
     branches: [
       { key: 'BYZANTINE',   deStyle: 'EAST', castle: 'BYZA_CASTLE_AGE3',       label: '🏛️ 拜占庭（东罗马·希腊语帝国要塞）' },
-      { key: 'EAST',        deStyle: 'EAST', castle: 'EAST_CASTLE_AGE3',       label: '⚔️ 东南欧（通用石堡）' },
       { key: 'ARMENIANS',   deStyle: 'EAST', castle: 'ARME_CASTLE_AGE3',       label: '⚔️ 亚美尼亚（高山石堡）' },
       { key: 'GEORGIANS',   deStyle: 'EAST', castle: 'GEOR_CASTLE_AGE3',       label: '⚔️ 格鲁吉亚（高加索石碉）' },
     ]
@@ -986,7 +996,7 @@ const CULTURE_GROUPS = [
       { key: 'POLES',       deStyle: 'SLAV', castle: 'POLE_CASTLE_AGE3',       label: '🛡️ 波兰（马尔堡红砖城堡）' },
       { key: 'BOHEMIANS',   deStyle: 'SLAV', castle: 'BOHE_CASTLE_AGE3',       label: '🛡️ 波希米亚（卡尔施泰因城堡）' },
       { key: 'MAGYAR',      deStyle: 'SLAV', castle: 'MAGY_CASTLE_AGE3',       label: '🛡️ 马扎尔（匈牙利科文堡）' },
-      { key: 'SLAVIC',      deStyle: 'SLAV', castle: 'SLAV_CASTLE_AGE3',       label: '⚔️ 东北欧（洋葱顶木石要塞）' },
+      { key: 'SLAVIC',      deStyle: 'SLAV', castle: 'SLAV_CASTLE_AGE3',       label: '⚔️ 斯拉夫（洋葱顶木石要塞）' },
       { key: 'LITHUANIANS', deStyle: 'SLAV', castle: 'LITH_CASTLE_AGE3',       label: '⚔️ 立陶宛（特拉凯湖中堡）' },
       { key: 'BULGARIANS',  deStyle: 'SLAV', castle: 'BULG_CASTLE_AGE3',       label: '⚔️ 保加利亚（沙皇要塞）' },
     ]
@@ -994,7 +1004,7 @@ const CULTURE_GROUPS = [
   {
     group: '🏛️ MEDI 地中海 (5套)',
     branches: [
-      { key: 'LATIN',       deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3',       label: '🏛️ 地中海（通用古典石堡）' },
+      { key: 'LATIN',       deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3',       label: '🏛️ 意大利（通用古典石堡）' },
       { key: 'ROMA',        deStyle: 'MEDI', castle: 'ROMA_CASTLE_AGE3',       label: '🏛️ 罗马（军团古典方石堡）' },
       { key: 'SICILIANS',   deStyle: 'MEDI', castle: 'SICI_CASTLE_AGE3',       label: '🏛️ 西西里（诺曼阿拉伯石堡）' },
       { key: 'SPANISH',     deStyle: 'MEDI', castle: 'SPAN_CASTLE_AGE3',       label: '🛡️ 西班牙（塞哥维亚高塔要塞）' },
@@ -1004,7 +1014,7 @@ const CULTURE_GROUPS = [
   {
     group: '🕌 ORIE 中东 (1套)',
     branches: [
-      { key: 'ORIE',         deStyle: 'ORIE', castle: 'ORIE_CASTLE_AGE3',      label: '🕌 阿拉伯（萨拉森生土要塞）' },
+      { key: 'ORIE',         deStyle: 'ORIE', castle: 'ORIE_CASTLE_AGE3',      label: '🕌 萨拉森（生土要塞）' },
     ]
   },
   {
@@ -1012,15 +1022,15 @@ const CULTURE_GROUPS = [
     branches: [
       { key: 'HUNS',        deStyle: 'CEAS', castle: 'HUNS_CASTLE_AGE3',       label: '⚔️ 匈人（游牧营垒木石要塞）' },
       { key: 'CUMAN',       deStyle: 'CEAS', castle: 'CUMA_CASTLE_AGE3',       label: '⚔️ 库曼（草原要塞）' },
-      { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3',      label: '🕌 突厥/奥斯曼（海峡要塞）' },
-      { key: 'CENTRAL_ASIA', deStyle: 'CEAS', castle: 'CEAS_CASTLE_AGE3',      label: '🐴 中亚（鞑靼赫拉特城堡）' },
+      { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3',      label: '🕌 奥斯曼（海峡要塞）' },
+      { key: 'CENTRAL_ASIA', deStyle: 'CEAS', castle: 'CEAS_CASTLE_AGE3',      label: '🐴 鞑靼（赫拉特城堡）' },
     ]
   },
   {
     group: '🕌 INDI 印度 (4套)',
     branches: [
-      { key: 'INDIA',       deStyle: 'INDI', castle: 'INDI_CASTLE_AGE3',       label: '🕌 印度（达罗毗荼石圆塔）' },
-      { key: 'MUGHAL',      deStyle: 'INDI', castle: 'HIND_CASTLE_AGE3',       label: '🕌 印度斯坦/莫卧儿（红砂岩堡）' },
+      { key: 'INDIA',       deStyle: 'INDI', castle: 'INDI_CASTLE_AGE3',       label: '🕌 达罗毗荼（石圆塔）' },
+      { key: 'MUGHAL',      deStyle: 'INDI', castle: 'HIND_CASTLE_AGE3',       label: '🕌 印度斯坦（红砂岩堡）' },
       { key: 'BENGALIS',    deStyle: 'INDI', castle: 'BENG_CASTLE_AGE3',       label: '🕌 孟加拉（比什努布尔红砖堡）' },
       { key: 'GURJARAS',    deStyle: 'INDI', castle: 'GURJ_CASTLE_AGE3',       label: '🕌 瞿折罗（瓜廖尔石堡）' },
     ]
@@ -1034,9 +1044,9 @@ const CULTURE_GROUPS = [
   {
     group: '🌴 SEAS 东南亚 (4套)',
     branches: [
-      { key: 'KHMER',       deStyle: 'SEAS', castle: 'SEAS_CASTLE_AGE3',       label: '🌴 东南亚/高棉（吴哥窟砂岩塔）' },
+      { key: 'KHMER',       deStyle: 'SEAS', castle: 'SEAS_CASTLE_AGE3',       label: '🌴 高棉（吴哥窟砂岩塔）' },
       { key: 'BURMESE',     deStyle: 'SEAS', castle: 'BURM_CASTLE_AGE3',       label: '🌴 缅甸（蒲甘佛塔城堡）' },
-      { key: 'VIETNAMESE',  deStyle: 'SEAS', castle: 'VIET_CASTLE_AGE3',       label: '🌴 大越（升龙城重檐）' },
+      { key: 'VIETNAMESE',  deStyle: 'SEAS', castle: 'VIET_CASTLE_AGE3',       label: '🌴 越南（升龙城重檐）' },
       { key: 'MALAY',       deStyle: 'SEAS', castle: 'MALA_CASTLE_AGE3',       label: '🌴 马来（满剌加木石水寨）' },
     ]
   },
@@ -1044,7 +1054,7 @@ const CULTURE_GROUPS = [
     group: '🌎 MESO 中美 (2套)',
     branches: [
       { key: 'MAYANS',   deStyle: 'MESO', castle: 'MAYA_CASTLE_AGE3', label: '🌎 玛雅（阶梯金字塔）' },
-      { key: 'AMERICA',  deStyle: 'MESO', castle: 'MESO_CASTLE_AGE3', label: '🌎 阿兹特克/墨西加（中美重装金字塔）' },
+      { key: 'AMERICA',  deStyle: 'MESO', castle: 'MESO_CASTLE_AGE3', label: '🌎 阿兹特克（中美重装金字塔）' },
     ]
   },
   {
@@ -1059,16 +1069,16 @@ const CULTURE_GROUPS = [
   {
     group: '🌍 AFRI 非洲 (3套)',
     branches: [
-      { key: 'BERBER',       deStyle: 'AFRI', castle: 'BERB_CASTLE_AGE3',      label: '🕌 北非柏柏尔（卡斯巴土堡）' },
-      { key: 'AFRICA',      deStyle: 'AFRI', castle: 'AFRI_CASTLE_AGE3',       label: '🌍 西非马里（生土要塞）' },
+      { key: 'BERBER',       deStyle: 'AFRI', castle: 'BERB_CASTLE_AGE3',      label: '🕌 柏柏尔（卡斯巴土堡）' },
+      { key: 'AFRICA',      deStyle: 'AFRI', castle: 'AFRI_CASTLE_AGE3',       label: '🌍 马里（生土要塞）' },
       { key: 'ETHIOPIANS',  deStyle: 'AFRI', castle: 'ETHI_CASTLE_AGE3',       label: '🌍 埃塞俄比亚（法西尔盖比石堡）' },
     ]
   },
   {
     group: '🏛️ PERSIAN 波斯 (2套)',
     branches: [
-      { key: 'SASANIAN',     deStyle: 'PERSIAN', castle: 'PERS_CASTLE_AGE3',   label: '🏛️ 萨珊波斯（巴姆圆城要塞）' },
-      { key: 'PERSIAN',      deStyle: 'PERSIAN', castle: 'PERSIAN_CASTLE_AGE3',label: '🏛️ 波斯传统（阿契美尼德石堡）' },
+      { key: 'SASANIAN',     deStyle: 'PERSIAN', castle: 'PERS_CASTLE_AGE3',   label: '🏛️ 波斯（巴姆圆城要塞）' },
+      { key: 'PERSIAN',      deStyle: 'PERSIAN', castle: 'PERSIAN_CASTLE_AGE3',label: '🏛️ 阿契美尼德（波斯石堡）' },
     ]
   },
   {
@@ -1106,6 +1116,15 @@ const LAYER3_CUSTOM_GROUPS = [
     group: '🏜️ 西域绿洲与专属高台要塞',
     branches: [
       { key: 'WESTERN',  deStyle: 'CEAS', castle: 'WESTERN_CASTLE_AGE3', label: '🏜️ 西域·绿洲（汉伊高台绿洲要塞）' },
+    ]
+  },
+  {
+    // 🔴 [2026-09-16 主人定] 第三层第三个专属建筑风格：漠北蒙古
+    //    🔴 [2026-09-16 主人定]「漠北蒙古属于东亚」→ 一级底座 = ASIA（东亚），
+    //    形态仍走三级自建的蒙古包毡帐营地（8 个真蒙古包 E~L + 栅栏），城堡 MONG_CASTLE_AGE3（木石大斡耳朵）。
+    group: '🏕️ 漠北蒙古毡帐营地',
+    branches: [
+      { key: 'MOBEI_MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
     ]
   },
 ];
@@ -1173,7 +1192,7 @@ function fillCustomSelect() {
   sel.innerHTML = html;
 }
 
-/** 专属独立城堡素材按文化圈对号入座分组（严格 60 座） */
+/** 专属独立城堡素材按文化圈对号入座分组（实测 62 座 = 59 文明 + 2 三层自建 + 1 希腊母体通用） */
 const CASTLE_GROUPS = [
   {
     group: '🏔️ 第三层专属定制宗堡与要塞 (2 座)',
@@ -1187,13 +1206,13 @@ const CASTLE_GROUPS = [
     castles: [
       { id: 'ASIA_CASTLE_AGE3', name: '东亚重檐楼阁（通用天守阁）' },
       { id: 'CHIN_CASTLE_AGE3', name: '汉唐城楼（北方华北）' },
-      { id: 'WEI_CASTLE_AGE3', name: '曹魏高台阙楼（中原）' },
-      { id: 'WU_CASTLE_AGE3', name: '孙吴水榭坞堡（江南水乡）' },
-      { id: 'SHU_CASTLE_AGE3', name: '蜀汉高台木关（巴蜀剑阁）' },
+      { id: 'WEI_CASTLE_AGE3', name: '北方高台阙楼（中原）' },
+      { id: 'WU_CASTLE_AGE3', name: '江南水榭坞堡（江南水乡）' },
+      { id: 'SHU_CASTLE_AGE3', name: '巴蜀高台木关（巴蜀剑阁）' },
       { id: 'KHIT_CASTLE_AGE3', name: '契丹辽式边墙要塞（北疆）' },
       { id: 'JURC_CASTLE_AGE3', name: '女真金代居庸关山城（东北）' },
       { id: 'MONG_CASTLE_AGE3', name: '蒙古草原王帐石堡（塞外）' },
-      { id: 'KORE_CASTLE_AGE3', name: '半岛高丽山城要塞（朝鲜）' },
+      { id: 'KORE_CASTLE_AGE3', name: '半岛高丽山城要塞' },
     ]
   },
   {
@@ -1308,8 +1327,14 @@ const CASTLE_GROUPS = [
     ]
   },
   {
-    group: '🏛️ GREEK 希腊 (3 座)',
+    /* 🔴 [2026-09-16 主人「希腊的是游戏本身的吗…先确保游戏本身的都解析了吗」]
+       补上 GREEK 母体通用城堡：本体素材 `b_greek_castle_age3`（DE 编年史 DLC 希腊建筑集），
+       图鉴里有、`src/config/deCastleAssets.ts` 引用 7 次（游戏真会用），但本页原来选不到它。
+       实测 DE 侧该素材只有 `_x1`/`_x2` 两个 sld（**无毁损/废墟态**），故图鉴里只有「完好」1 行。
+       注意：这不是新增第 17 套母体、也不动 59 二级铁律，只是把已解析的本体素材接进下拉。 */
+    group: '🏛️ GREEK 希腊 (4 座)',
     castles: [
+      { id: 'GREEK_CASTLE_AGE3', name: '希腊古典通用要塞（GREEK 母体 · 本体 b_greek_castle_age3，无毁损态）' },
       { id: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城阿提卡要塞' },
       { id: 'SPARTANS_CASTLE_AGE3', name: '斯巴达拉哥尼亚军营石堡' },
       { id: 'MACEDONIAN_CASTLE_AGE3', name: '马其顿希马鲁石塔城堡' },
@@ -1325,7 +1350,7 @@ const CASTLE_GROUPS = [
 
 let curCastle = 'auto';
 
-/** 填充 59 种专属城堡下拉框（严格 59 座） */
+/** 填充专属城堡下拉框（实测 62 座 = 59 文明 + 2 三层自建 + 1 希腊母体通用 GREEK） */
 function fillCastleSelect() {
   const sel = document.getElementById('selCastle');
   if (!sel) return;
@@ -1610,6 +1635,13 @@ const CITY_TIER_SCALE = {
 // 🔴 [2026-09-10 主人定] 草原营地（YURT）——对照 TerritorySystem.buildYurtCampHtml：
 //    8 蒙古包（YURT_E~L）+ 1 亚洲瞭望塔（ASIA_TOWER_AGE2）洗牌散布，围一圈 ARCHAIC 栅栏，无地基无石路。
 function renderYurtCampHtml(baseSize, style, type) {
+  // 🔴 [2026-09-16 主人「漠北蒙古的大中小城大小一样吗？」] 原来 5 张卡共用同一个 baseStage，
+  //    而毡帐营地的构成与 type 无关 → 大/中/小城画出来一模一样 ✗。
+  //    游戏侧 `src/systems/TerritorySystem.ts:1924-1940` 是按城型给尺寸的：
+  //      big_city 140 / medium_city 120 / small_city 100 / stockade 80 / pass 100
+  //    这里按**同一比例**缩放（以大城为 1.0，其余 120/140、100/140、80/140），保证不超出卡片。
+  const CAMP_SCALE = { big: 1.0, medium: 120 / 140, small: 100 / 140, pass: 100 / 140, stockade: 80 / 140 };
+  baseSize = baseSize * (CAMP_SCALE[type] || 1.0);
   const rnd = mulberry32(hashString(style + '_' + type + '_yurt_' + randomSeedOffset));
   const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
   const TOWER = 'TOWER';
@@ -1709,6 +1741,17 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   }
 
   // 大城、中城、小城、城寨：选出 9 建筑（完全洗牌打乱，中心不再固定某建筑）
+  // 🔴 [2026-09-16 主人定]「二级蒙古的大中小城中的 9 建筑添加蒙古包随机。总体不能超过 9 个。」
+  //    二级「蒙古」(curCulture === 'MONGOL') 的大城/中城/小城：把 8 个真蒙古包（YURT_E~L）掺进候选池随机抽取，
+  //    最终栋数**恒为 9**（大城 = 3 栋 AGE4 必有 + 6 栋自 9+8 候选里抽；中城/小城 = 自 9/12+8 候选里抽 9）。
+  //    蒙古包目录**没有风格前缀**（YURT_E，不是 ASIA_YURT_E_AGE2）→ 取图走 bldgPath 的特例。
+  const MONGOL_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+  const isMongol = (curCulture === 'MONGOL');
+  const isYurtBuilding = (b) => /^YURT_/.test(b);
+  const yurtItems = (age) => MONGOL_YURTS.map((b) => ({ b: b, age: age, s: 0.30 }));
+  const bldgPath = (styleName, b, age) => isYurtBuilding(b)
+    ? ('/SUCAI_BUILDING/' + b + '/preview.png')
+    : ('/SUCAI_BUILDING/' + styleName + '_' + b + '_' + age + '/preview.png');
   let pool = [];
   if (type === 'big') {
     const noble = [
@@ -1727,7 +1770,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'MILL', age: 'AGE3', s: 0.32 },
       { b: 'TOWER', age: 'AGE4', s: 0.32 } // 大型箭塔辅选项
     ];
-    const pickedSecondary = shuffle(secondaryList, rnd).slice(0, 6);
+    const pickedSecondary = shuffle(isMongol ? [...secondaryList, ...yurtItems('AGE3')] : secondaryList, rnd).slice(0, 6);
     pool = shuffle([...noble, ...pickedSecondary], rnd);
   } else if (type === 'medium') {
     const medList = [
@@ -1744,7 +1787,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'HOUSE', age: 'AGE3', s: 0.32 },
       { b: 'TOWER', age: 'AGE3', s: 0.32 }
     ];
-    pool = shuffle(medList, rnd).slice(0, 9);
+    pool = shuffle(isMongol ? [...medList, ...yurtItems('AGE3')] : medList, rnd).slice(0, 9);
   } else if (type === 'small') {
     const smlList = [
       { b: 'TOWN_CENTER', age: 'AGE2', s: 0.42 },
@@ -1757,7 +1800,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'STABLE', age: 'AGE2', s: 0.32 },
       { b: 'MARKET', age: 'AGE2', s: 0.32 }
     ];
-    pool = shuffle(smlList, rnd);
+    pool = shuffle(isMongol ? [...smlList, ...yurtItems('AGE2')] : smlList, rnd).slice(0, 9);
   } else if (type === 'stockade') {
     const stkList = [
       { b: 'SETTLEMENT', s: 0.34 },
@@ -1828,7 +1871,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
         const bGroundH = bGroundW * 0.58;
         parts.push('<img src="/SUCAI_TERRAIN/rd1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
 
-        const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+        const bPath = bldgPath(style, b.b, b.age);
         parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
       }
     });
@@ -1884,7 +1927,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
         parts.push('<img src="/SUCAI_BUILDING/' + castleDir + '/preview.png" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-65% + ' + slot.y.toFixed(1) + 'px))' + (cFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
       } else {
         const b = isCenterCastle ? pool[otherIdx++] : pool[i];
-        const bW = baseSize * 0.32 * tierScale * curBldgScale;
+        const bW = baseSize * (isYurtBuilding(b.b) ? 0.30 : 0.32) * tierScale * curBldgScale;
         const zIndex = Math.round(500 + slot.y);
         const isFlip = rnd() < 0.5;
 
@@ -1893,7 +1936,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
         const bGroundH = bGroundW * 0.58;
         parts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + bGroundW.toFixed(1) + 'px;height:' + bGroundH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
 
-        const bPath = '/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png';
+        const bPath = bldgPath(style, b.b, b.age);
         parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + slot.x.toFixed(1) + 'px),calc(-50% + ' + slot.y.toFixed(1) + 'px - 15%))' + (isFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
       }
     });
@@ -1928,7 +1971,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   }
   const cPath = isCenterCastle
     ? ('/SUCAI_BUILDING/' + castleDir + '/preview.png')
-    : ((type === 'stockade')
+    : ((type === 'stockade' || isYurtBuilding(centerItem.b))
       ? ('/SUCAI_BUILDING/' + centerItem.b + '/preview.png')
       : ('/SUCAI_BUILDING/' + style + '_' + centerItem.b + '_' + centerItem.age + '/preview.png'));
   const cTransform = isCenterCastle
@@ -1957,7 +2000,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
     }
 
-    const bPath = (type === 'stockade')
+    const bPath = (type === 'stockade' || isYurtBuilding(b.b))
       ? ('/SUCAI_BUILDING/' + b.b + '/preview.png')
       : ('/SUCAI_BUILDING/' + style + '_' + b.b + '_' + b.age + '/preview.png');
     parts.push('<img src="' + bPath + '" style="position:absolute;left:50%;top:50%;width:' + bW.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px - 15%))' + (bFlip ? ' scaleX(-1)' : '') + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
@@ -1968,7 +2011,12 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
 // 渲染完整据点形态 HTML
 function renderCityTypeHtml(baseSize, style, type, mirror) {
   // 🔴 [2026-09-10 主人定] 草原毡帐营地特化（属于 CEAS 风格下的蒙古/草原游牧分支，城寨除外走 buildYurtCampHtml）。
-  const isYurt = (style === 'YURT') || (curCulture === 'MONGOL' || curCulture === 'STEPPE');
+  // 🔴 [2026-09-16 主人「二级蒙古的建筑，大中小城采用正常的城墙」]
+  //    二级「蒙古」(MONGOL) 已改为套东亚建筑（cityDeStyle: MONGOL → ASIA）→ **不再走毡帐营地**，走正常城墙；
+  //    只有**三级「漠北蒙古」(MOBEI_MONGOL)** 与**草原区(STEPPE)** 才画毡帐营地。
+  const isYurt = (style === 'YURT')
+    || (curCulture === 'STEPPE' || curCulture === 'MOBEI_MONGOL')
+    || (curCustom === 'MOBEI_MONGOL');
   if (isYurt && type !== 'stockade') return renderYurtCampHtml(baseSize, style, type);
   const parts = [renderBuildings(baseSize, style, type, 'base')];
   let pieces = [];
@@ -2284,7 +2332,10 @@ function renderGateCloseup(style, type) {
   const parts = [];
   const baseW = Math.round(140 * curZoom);
 
-  const isYurt = (style === 'YURT') || (curCulture === 'MONGOL' || curCulture === 'STEPPE');
+  // 🔴 [2026-09-16] 二级「蒙古」走正常城墙；只有三级漠北蒙古 / 草原区走毡帐（城门/栅栏特写）
+  const isYurt = (style === 'YURT')
+    || (curCulture === 'STEPPE' || curCulture === 'MOBEI_MONGOL')
+    || (curCustom === 'MOBEI_MONGOL');
   if (isYurt) {
     if (type === 'pass') {
       return '<div style="color:#718096;font-size:12px;text-align:center;line-height:80px;">（蒙古险要·无外圈围墙）</div>';
@@ -2884,6 +2935,126 @@ refresh();
     });
   }
 
+  /** 分组下拉：给「文明专属城堡 / 奇观」两组补上含义说明（数字是**物理目录数**，与卡片的 59 文明数不同） */
+  function fillGroupSelect(groups) {
+    /* 🔴 [2026-09-16 主人定] 卡片写 59（DE 可玩文明数）、下拉写 64 / 61（图鉴物理目录数），两处都注明含义 */
+    var hint = {
+      '文明专属城堡 (64座)': '图鉴物理目录数：59 可玩文明 + 滇黔 / 岭南 / 希腊母体通用 等',
+      '文明专属奇观 (61座)': '图鉴物理目录数：含罗马斗兽场 SCEN_COLOSSEUM'
+    };
+    el.group.innerHTML = '';
+    var first = document.createElement('option');
+    first.value = 'all';
+    first.textContent = '全部分组 (' + rows.length + ')';
+    el.group.appendChild(first);
+    groups.forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v;
+      o.textContent = v + (hint[v] ? '·' + hint[v] : '') + ' (' + countBy('groupLabel', v) + ')';
+      el.group.appendChild(o);
+    });
+  }
+
+  /* ==========================================================================
+   * 「全部风格 / 文明」下拉的中文名（2026-09-16 主人「这个是什么意思，请检查对吗，请写中文」）
+   *
+   * 这个下拉 = 图鉴的**前缀**筛选器，**前缀 = 目录名第一段**
+   * （`ASIA_ARCHERY_RANGE_AGE2` → `ASIA`、`ARME_CASTLE_AGE3` → `ARME`）。
+   * 实测 89 项、行数合计 2672（对得上），但语义是混的 —— 四类东西挤在一个下拉里：
+   *   ① 16 套 DE 官方母体风格  ② 50 个文明专属城堡码  ③ 3 个单时代共用/本项目自建
+   *   ④ 19 个地标·城防·类型词  ⑤ 1 个空前缀（`_tmp_*` 临时素材第一段是空串，原来只显示「(6)」）
+   *
+   * 中文名来源**全部是项目自有数据，一个字都不编**：
+   *   · ① ← `catalogMeta.de16Styles`（构建脚本 build_de_buildings_catalog.mjs 的官方中文名）
+   *   · ③ ← `catalogMeta.sharedEraSets` / `customSets`
+   *   · ② ← 本页自有 `CULTURE_GROUPS` 的 61 个分支（`castle` 码 → 分支中文名），不另造映射表
+   *   · ④ ← `src/data/WonderNames.ts`（DE 官方中文名，2026-08-27 已逐条历史审计）、
+   *          `src/data/CityWonders.ts`、`src/systems/cityWallShared.ts`、`src/ui/Scene13WarLayer.ts`
+   *   · ⑤ 少数**项目里没有中文专名**的通用构件 → 只用图鉴自带的中文类别词，不编专名（逐条注明）
+   * ========================================================================== */
+  var PREFIX_LANDMARK_CN = {
+    // ── 有项目内中文专名的（出处逐个写明）──
+    'AMPHITHEATRE': { name: '杰姆古罗马圆形剧场', kind: '战役地标' },   // src/data/WonderNames.ts:93
+    'GOL': { name: '戈尔贡巴兹圆顶陵', kind: '战役地标' },              // WonderNames.ts:98（GOL_GUMBAZ）
+    'QUIMPER': { name: '坎佩尔圣科朗坦大教堂', kind: '战役地标' },       // WonderNames.ts:99
+    'MINARET': { name: '杰姆宣礼塔', kind: '战役地标' },                // WonderNames.ts:92
+    'SANCHI': { name: '桑奇大佛塔', kind: '战役地标' },                 // WonderNames.ts:90
+    'POENARI': { name: '德古拉波耶纳里城堡', kind: '战役地标' },         // WonderNames.ts:94
+    'WOODEN': { name: '圣奥古斯丁木制堡垒', kind: '战役地标' },          // WonderNames.ts:101（WOODEN_FORT）
+    'ARCH': { name: '君士坦丁凯旋门', kind: '战役地标' },               // src/data/CityWonders.ts:191（ARCH_OF_CONSTANTINE）
+    'GREAT': { name: '吉萨大金字塔', kind: '战役地标' },                // CityWonders.ts:163（GREAT_PYRAMID）
+    'PAGAN': { name: '罗姆瓦圣殿', kind: '战役地标' },                  // CityWonders.ts:173（PAGAN_SHRINE）
+    'HARDWOOD': { name: '硬木栅栏', kind: '城防构件' },                 // src/systems/cityWallShared.ts:14
+    'FOLWARK': { name: '波兰风车磨坊庄园', kind: '常规建筑' },           // src/ui/Scene13WarLayer.ts:5046
+    'OUTPOST': { name: '哨站', kind: '常规建筑' },                      // Scene13WarLayer.ts:5138
+    'FORTIFIED': { name: '强化哨站', kind: '常规建筑' },                 // Scene13WarLayer.ts:5138（FORTIFIED_OUTPOST）
+    'DIANQIAN': { name: '滇黔', kind: '文明专属城堡' },                 // src/audio/AudioManager.ts:227「滇黔」
+    'LINGNAN': { name: '岭南', kind: '文明专属城堡' },                  // src/batch-manager/main.ts:827
+    'THRACIANS': { name: '色雷斯（单复数同义，并入 THRACIAN）', kind: '文明专属城堡' }, // 构建脚本 specialNotes
+    // ── 项目里没有中文专名的通用构件：用图鉴自带的中文类别词标注，不编造 ──
+    '': { name: '临时素材', kind: '' },                    // groupLabel「临时素材」（_tmp_* 目录，第一段是空串）
+    'SCEN': { name: '场景物件', kind: '战役地标 / 城防' },   // asset_inventory.json 的 SUCAI_SCEN
+    'CAMP': { name: '营寨建筑', kind: '常规建筑' },          // Scene13WarLayer.ts:4762（CAMP_ARCHERY_RANGE / BARRACKS / STABLE）
+    'SETTLEMENT': { name: '聚落建筑', kind: '常规建筑' },     // src/systems/TerritorySystem.ts:85
+    'HUT': { name: '棚屋民居', kind: '常规建筑' },           // 构建脚本 /^(HUT|YURT)_[A-Z]$/ → 常规建筑
+    'FENCE': { name: '栅栏构件', kind: '城防构件' }          // cityWallShared.ts:130（FENCE_CORNER 四角 L 形转角件）
+  };
+
+  /** 前缀 → { name, kind }。只套一层「已有就跳过」，让更权威的来源优先。 */
+  function buildPrefixCn() {
+    var m = {};
+    function set(code, name, kind) {
+      if (typeof code === 'string' && name && !m[code]) m[code] = { name: name, kind: kind || '' };
+    }
+    // ① 地标·构件专名（最具体）
+    Object.keys(PREFIX_LANDMARK_CN).forEach(function (k) {
+      set(k, PREFIX_LANDMARK_CN[k].name, PREFIX_LANDMARK_CN[k].kind);
+    });
+    // ② DE 官方 16 套母体风格 —— 必须排在文明码之前：`ASIA` 既是风格母体、又是日/中/朝的城堡码
+    var st = (catalogMeta && catalogMeta.de16Styles) || {};
+    Object.keys(st).forEach(function (k) { set(k, st[k], 'DE 风格母体'); });
+    // ③ 单时代共用 + 本项目自建（名字自带括号说明 → 拆成 name / kind，避免出现「（…）（…）」双括号）
+    ['sharedEraSets', 'customSets'].forEach(function (key) {
+      var dic = (catalogMeta && catalogMeta[key]) || {};
+      Object.keys(dic).forEach(function (k) {
+        var parts = String(dic[k]).split(/[（(]/);
+        set(k, parts[0].trim(), (parts[1] || '').replace(/[）)]\s*$/, '').trim());
+      });
+    });
+    // ④ 文明专属城堡码 ← 本页自有 CULTURE_MAP（59 二层 + 2 三层自建，已合并进同一字典，别名键不影响）
+    Object.keys(CULTURE_MAP).forEach(function (key) {
+      var b = CULTURE_MAP[key] || {};
+      var code = String(b.castle || '').replace(/_CASTLE_AGE3.*$/, '');
+      // '🏯 日本（重檐天守阁）' → '日本'；'🌴 东南亚/高棉（吴哥窟砂岩塔）' → '东南亚/高棉'
+      var name = String(b.label || '')
+        .replace(/^[^\u4e00-\u9fa5A-Za-z0-9/]+/, '')
+        .replace(/（[^）]*）\s*$/, '')
+        .trim();
+      set(code, name, '文明专属城堡');
+    });
+    return m;
+  }
+
+  /** 前缀下拉：中文名 + 类别 + 条数（原来只有一串英文代码） */
+  function fillPrefixSelect(prefixes) {
+    var cn = buildPrefixCn();
+    el.prefix.innerHTML = '';
+    var first = document.createElement('option');
+    first.value = 'all';
+    first.textContent = '全部风格 / 文明 / 其它前缀 (' + prefixes.length + ' 种)';
+    el.prefix.appendChild(first);
+    prefixes.forEach(function (v) {
+      var o = document.createElement('option');
+      o.value = v;
+      var info = cn[v];
+      var txt = v ? v : '（空前缀）';
+      if (info && info.name) txt += (v ? ' ' : '') + info.name;
+      if (info && info.kind) txt += '（' + info.kind + '）';
+      o.textContent = txt + ' (' + countBy('prefix', v) + ')';
+      el.prefix.appendChild(o);
+    });
+  }
+
   function buildFilters() {
     var rawGroups = [], prefixes = [], types = [], ages = [];
     var seen = {};
@@ -2897,27 +3068,41 @@ refresh();
 
     // 智能排序分组：DE 官方 16 套排在最前，随后专属城堡与奇观，单时代共用与自建，最后城防、地标、临时
     var deGroups = rawGroups.filter(function(g) { return g.indexOf('DE 官方:') === 0; }).sort();
+    /* 🔴 [2026-09-16 主人「为什么看不到专属城堡」] 血训：这里原来写的是**精确组名**
+     *   `'文明专属城堡 (59座)'` / `'文明专属奇观 (59座)'`，而图鉴里的实际组名是
+     *   `'文明专属城堡 (64座)'` / `'文明专属奇观 (61座)'`（构建脚本按物理目录数定名）——
+     *   精确匹配失败 → 两组被 `filter` **静默丢掉**，分组下拉只剩 22 组、条数合计 2424（少 248 条：
+     *   城堡 187 + 奇观 61），主人当场发现「看不到专属城堡」。
+     *   修法：① 白名单只按**前缀**匹配（数字写死迟早再次错位）；
+     *         ② 末尾**兜底**：任何没进白名单的分组一律追加，绝不允许再整组凭空消失。 */
     var otherOrder = [
-      '文明专属城堡 (59座)',
-      '文明专属奇观 (59座)',
+      '文明专属城堡',
+      '文明专属奇观',
       '黑暗时代 (全文明共用)',
       '古典时代 (罗马归来共用)',
       '草原毡帐 (本项目自建民居)',
       // 🔴 [2026-09-12 主人「据点写第一页，建筑写鉴赏里」]
-      //    战场据点样式**不进本鉴赏页**（它是据点形态，已移到第一页第 6 张卡），
-      //    故不加入本白名单；下面的下拉里不会出现它。
+      //    战场据点样式**不进本鉴赏页**（它是据点形态，已移到第一页第 6 张卡）——
+      //    它的目录已从 de_buildings_catalog.json 里排除，所以下面兜底也不会把它捞回来。
       '城防构件',
       '战役地标·遗迹',
       '临时素材'
     ];
-    var otherGroups = otherOrder.filter(function(g) { return rawGroups.indexOf(g) >= 0; });
+    var otherGroups = [];
+    otherOrder.forEach(function (key) {
+      rawGroups.filter(function (g) { return g.indexOf(key) === 0; }).sort()
+        .forEach(function (g) { if (otherGroups.indexOf(g) < 0) { otherGroups.push(g); } });
+    });
+    rawGroups.filter(function (g) { return deGroups.indexOf(g) < 0 && otherGroups.indexOf(g) < 0; })
+      .sort().forEach(function (g) { otherGroups.push(g); });
     var groups = deGroups.concat(otherGroups);
 
-    /* 用途是最主要的维度，按「常规 → 专属城堡 → 专属奇观 → 城防 → 地标 → 装饰」固定顺序 */
+    /* 用途是最主要的维度，按「常规 → 专属城堡 → 专属奇观 → 城防 → 地标 → 装饰」固定顺序
+       🔴 [2026-09-16 主人定] 59 = DE 可玩文明数；括号里另注图鉴物理目录数（城堡 64 / 奇观 61），两个数字含义不同 */
     var USAGE_ORDER = [
       ['regular', '常规建筑'],
-      ['castle', '专属城堡 (59座)'],
-      ['wonder', '专属奇观 (59座)'],
+      ['castle', '专属城堡（59 文明 / 图鉴目录 64 座）'],
+      ['wonder', '专属奇观（59 文明 / 图鉴目录 61 座）'],
       ['defense', '城防构件'],
       ['landmark', '战役地标·遗迹'],
       ['decor', '装饰·临时素材'],
@@ -2937,8 +3122,9 @@ refresh();
       el.usage.appendChild(o);
     });
 
-    fillSelect(el.group, groups, 'groupLabel', '全部分组 (' + rows.length + ')');
-    /* 🔴 [2026-09-12 主人「放到程序中，好好分类」] 素材库下拉：建筑 + 其余 8 个库按库分类 */
+    fillGroupSelect(groups);
+    /* 素材库下拉：本页只挂「建筑（SUCAI_BUILDING）」一库（8 个非建筑库 2026-09-16 按主人指令
+       从本页移除显示；数据仍在 asset_libraries_catalog.json，未删）。 */
     if (el.library) {
       el.library.innerHTML = '';
       var libAll = document.createElement('option');
@@ -2961,11 +3147,13 @@ refresh();
         el.library.appendChild(o);
       });
     }
-    fillSelect(el.prefix, prefixes, 'prefix', '全部风格 / 文明 (' + prefixes.length + ' 种)');
+    /* 前缀下拉走中文名版本（原 fillSelect 只印英文代码，89 项看不明所以） */
+    fillPrefixSelect(prefixes);
     fillSelect(el.type, types, 'building', '全部建筑类型 (' + types.length + ' 种)');
     fillSelect(el.age, ages, 'age', '全部时代 (' + ages.length + ' 档)');
 
-    /* 状态默认「仅完好」—— 完好态下正好呈现 64 独立城堡与 61 专属奇观 */
+    /* 🔴 [2026-09-15 主人「这里的建筑鉴赏，是显示所有建筑的」]
+       状态默认改为「全部状态」—— 进页面就出全部建筑（完好/受损/摧毁/废墟），不再只出完好态。 */
     var stateLabel = { NORMAL: '完好', DAMAGED: '受损', DESTR: '摧毁', RUBBLE: '废墟' };
     el.state.innerHTML = '';
     ['NORMAL', 'DAMAGED', 'DESTR', 'RUBBLE', 'all'].forEach(function (v) {
@@ -2976,7 +3164,7 @@ refresh();
         : ('仅' + stateLabel[v] + ' (' + countBy('state', v) + ')');
       el.state.appendChild(o);
     });
-    el.state.value = 'NORMAL';
+    el.state.value = 'all';
   }
 
   function renderStyleChips() {
@@ -3012,7 +3200,7 @@ refresh();
     el.prefix.value = 'all';
     el.type.value = 'all';
     el.age.value = 'all';
-    el.state.value = 'NORMAL';
+    el.state.value = 'all';
     document.querySelectorAll('.de-metric-card, .de-style-chip').forEach(function(c) {
       c.classList.remove('active');
     });
@@ -3225,82 +3413,38 @@ refresh();
     });
   });
 
-  /* 🔴 [2026-09-12 主人「列个单子，分类」] 素材总览看板：按库 → 分类列出**已提取**的素材。
-   * 数据源 /assets/asset_inventory.json（node scratch/build_asset_inventory.mjs 生成，只读扫描）。 */
-  function renderInventoryBoard(inv) {
-    var grid = document.getElementById('invGrid');
-    var sub = document.getElementById('invSub');
-    if (!grid || !inv) return;
-    var html = '';
-    var libs = (inv.libraries || []);   // 建筑库也已作为普通一项写进 JSON（形状与其它库一致）
-    libs.forEach(function (l) {
-      var rows = Object.keys(l.buckets).map(function (k) {
-        return { k: k, n: l.buckets[k].length, sample: l.buckets[k].slice(0, 6).map(function (x) { return x.dir; }) };
-      }).sort(function (a, b) { return b.n - a.n; });
-      html += '<div class="card" style="cursor:pointer;" data-lib="' + l.library + '">'
-        + '<div class="card-header"><span>' + l.library + ' · ' + l.label + '</span>'
-        + '<span class="tag tag-med">' + l.dirs + ' 个</span></div>'
-        + '<div style="padding:8px 12px;font-size:12px;line-height:1.7;color:#a0aec0;">'
-        + rows.map(function (r) {
-          return '<div><strong style="color:#e2e8f0;">' + r.k + '</strong> '
-            + '<span style="color:#68d391;">' + r.n + '</span>'
-            + '<div style="color:#718096;font-size:11px;">' + r.sample.join(' · ') + (r.n > 6 ? ' …' : '') + '</div></div>';
-        }).join('')
-        + '</div></div>';
-    });
-    grid.innerHTML = html;
-    if (sub) {
-      sub.textContent = '共 ' + inv.total.dirs + ' 个已提取目录（' + libs.length + ' 个库）'
-        + '　—　点任意一张卡 = 按该库筛选下方素材';
-    }
-    grid.querySelectorAll('.card').forEach(function (c) {
-      c.addEventListener('click', function () {
-        var lib = c.dataset.lib;
-        if (el.library) {
-          var hit = Array.prototype.find.call(el.library.options, function (o) { return o.value === lib; });
-          if (hit) { el.library.value = lib; applyFilters(); scrollToToolbar(); }
-        }
-      });
-    });
-  }
-
-  function loadInventory() {
-    fetch('/assets/asset_inventory.json')
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (inv) { if (inv) renderInventoryBoard(inv); })
-      .catch(function () { /* 没生成就不显示 */ });
-  }
+  /* 🔴 [2026-09-16 主人「这个不要这样显示，或者不要显示，有必要显示吗，这么占地方」]
+     原「📚 素材总览看板」（renderInventoryBoard + loadInventory，读 asset_inventory.json）
+     **整块从本页移除显示** —— 那张卡把 24 个分组、几十行目录名全铺在鉴赏页上，太占地方。
+     数据侧一个都没删：asset_inventory.json 与 scratch/out/asset_inventory.md 照旧由
+     `node scratch/build_asset_inventory.mjs` 生成，要看全量清单开那份 md / json 即可。
+     要恢复本页看板：把上面注释里记的那块 DOM + 这两个函数加回来，并在 load() 末尾再调一次。 */
 
   function load() {
     el.stats.textContent = '加载素材清单…';
-    /* 🔴 [2026-09-12 主人「放到程序中，好好分类」]
-     * 原来只加载建筑图鉴（SUCAI_BUILDING）；现在再加载**其余 8 个库**的总目录并合并进来，
-     * 用一个「素材库」下拉分类浏览。两份目录的行结构一致，所以筛选器/大图弹窗完全复用。 */
-    Promise.all([
-      fetch('/assets/de_buildings_catalog.json').then(function (r) {
-        if (!r.ok) { throw new Error('建筑清单 HTTP ' + r.status); }
-        return r.json();
-      }),
-      fetch('/assets/asset_libraries_catalog.json').then(function (r) {
-        return r.ok ? r.json() : { rows: [] };   // 没生成也不影响建筑图鉴
-      })
-    ])
-      .then(function (both) {
-        var bldg = both[0], others = both[1];
+    /* 🔴 [2026-09-15 主人「这里的建筑鉴赏，是显示所有建筑的，不是建筑的全部删掉」
+     *    ——  本页 = 建筑鉴赏，**只放建筑**（SUCAI_BUILDING）。
+     * 2026-09-12 那次「放到程序中，好好分类」把其余 8 个库（SUCAI 兵种 / ANIMAL / BATTLEFIELD /
+     * FX / NATURE / RESOURCE / TERRAIN / TRADE，共 818 条）合并进了本页；按主人指令**在本页不再显示**
+     * （主人原话：「不要删除素材，只是不要在这里显示」—— 数据与素材目录一个字节没动）。
+     * 本页现在只读 `/assets/de_buildings_catalog.json`，行结构与筛选器/大图弹窗不变。
+     * `library` / `libraryLabel` 字段保留（供「素材库」下拉开合，本页只有建筑这一库）。 */
+    fetch('/assets/de_buildings_catalog.json').then(function (r) {
+      if (!r.ok) { throw new Error('建筑清单 HTTP ' + r.status); }
+      return r.json();
+    })
+      .then(function (bldg) {
         catalogMeta = bldg;
-        var brows = (bldg.rows || []).map(function (r) {
+        rows = (bldg.rows || []).map(function (r) {
           r.library = 'SUCAI_BUILDING';
           r.libraryLabel = '建筑（SUCAI_BUILDING）';
           return r;
         });
-        var orows = (others.rows || []).filter(function (r) { return r.library !== 'SUCAI_BUILDING'; });
-        rows = brows.concat(orows);
         el.count.textContent = '(' + rows.length + ')';
         buildFilters();
         renderStyleChips();
         bindBoardEvents();
         applyFilters();
-        loadInventory();
       })
       .catch(function (err) {
         el.stats.textContent = '清单加载失败：' + err.message

@@ -29,6 +29,42 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "qianzhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "didao": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "chijin": {
+        legionName: "城堡时代蒙古军团",
+        legionType: "sub",
+    },
+    "heng1": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "xingwei": {
+        legionName: "城堡时代吐蕃军团",
+        legionType: "sub",
+    },
+    "kelite": {
+        legionName: "封建时代拜占庭军团",
+        legionType: "sub",
+    },
+    "liguliya": {
+        legionName: "城堡时代意大利军团",
+        legionType: "sub",
+    },
+    "baerta": {
+        legionName: "封建时代哥特军团",
+        legionType: "sub",
+    },
+    "sailiugu": {
+        legionName: "古典时代马其顿军团",
+        legionType: "sub",
+    },
     "changshaguo": {
         legionName: "城堡时代宋禁军团",
         legionType: "sub",
@@ -1098,7 +1134,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "muong": {
-        legionName: "城堡时代京族军团",
+        legionName: "城堡时代大越军团",
         legionType: "sub",
     },
     "xian_d": {

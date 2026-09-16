@@ -2303,9 +2303,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -6
         },
         "/assets/liuhan/li_lx_d_liguang.png": {
-            "scale": 1.02,
+            "scale": 0.96,
             "offsetX": 0,
-            "offsetY": 3
+            "offsetY": 1
         },
         "/assets/HEXI/__闲置__HEXI_09.png": {
             "scale": 1,

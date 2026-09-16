@@ -391,7 +391,9 @@ export class GameMap {
             this.currentTileLayer = L.tileLayer(
                 `/{z}dixingtu/${terrainPath}/{x}/{y}.jpg`,
                 {
-                    tileSize: 512,
+                    // 文件为 512px 高清图，但 x/y 按标准 256px 网格编号。
+                    // 显示尺寸若设为 512，会使请求坐标减半，命中不存在的文件。
+                    tileSize: 256,
                     minZoom: 8,
                     maxZoom: 11,
                     minNativeZoom: 8,

@@ -190,7 +190,7 @@
 >
 > | # | 建筑母体 | 文化母体 | RegionType 代表 |
 > |---|---------|---------|----------------|
-> | 1 | ASIA | 华夏东亚 | CENTRAL |
+> | 1 | ASIA | 东亚 | CENTRAL |
 > | 2 | CEAS | 游牧草原·中亚 | STEPPE |
 > | 3 | INDI | 印度次大陆 | INDIA |
 > | 4 | WEST | 西欧日耳曼 | GERMANIC |
@@ -901,9 +901,17 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
 **现有素材分类单子（唯一入口）**：
 - **数据**：`public/assets/asset_inventory.json`（`node scratch/build_asset_inventory.mjs` 生成，**只读扫描、不提取**）
 - **人看的单子**：`scratch/out/asset_inventory.md`（库 → 分类 → 逐条目录名）
-- **程序里看**：`_citytest.html` 鉴赏页顶部「📚 现有素材总览」看板（9 个库 × 各自分类，点一张卡即按库筛选）
-- 现状（2026-09-12 实测）：**3488 个已提取目录** —— 建筑 2670 / 单位·武将·船·弹道 465 /
-  植被 133 / 动物 65 / 战场遗存 56 / 资源 55 / 商船 22 / 特效 17 / 地面 5。
+- **程序里看**：~~鉴赏页顶部「📚 素材总览」看板~~ —— 🔴 [2026-09-16 主人「这个不要这样显示，
+  或者不要显示，有必要显示吗，这么占地方」]**该看板已从鉴赏页整块移除显示**（24 组几十行目录名太占地方）。
+  要看清单开 `scratch/out/asset_inventory.md` 或 `asset_inventory.json`（两者照旧生成，一个字节没删）。
+  🔴 **[2026-09-16 主人「这里的建筑鉴赏，是显示所有建筑的」「不是建筑的[不要]在这里显示」
+  「不要删除素材，只是不要在这里显示」]**：鉴赏页图鉴**只显示建筑**（`SUCAI_BUILDING`）；
+  其余 8 个库仍完整写在 `asset_inventory.json` / 单子里、素材目录一个没删，只是**不在鉴赏页显示**。
+  同次改动：鉴赏页默认「全部状态」（完好/受损/摧毁/废墟全出），并补回两个漏掉的目录
+  （`THRACIAN_GATE_STONE_NE_RUBBLE`、`THRACIAN_TOWER_AGE3_RUBBLE`）→ 建筑 **2672**。
+  验收：`node scratch/verify_bldg_all_buildings.mjs`（真 Chrome 实测 + 出图）。
+- 现状（2026-09-16 实测，`node scratch/build_asset_inventory.mjs`）：**3491 个已提取目录** ——
+  建筑 2672 / 单位·武将·船·弹道 465 / 植被 133 / 动物 65 / 战场遗存 56 / 资源 55 / 商船 22 / 特效 18 / 地面 5。
 
 **提取铁律（违者返工）**：
 

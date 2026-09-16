@@ -2,7 +2,7 @@ import { latLngToTile } from '../../map/TileMapConfig';
 import { latLngToTilePixel } from './ElevationSampler';
 import { DEM_ZOOM, TERRARIUM_TILE_SIZE } from './TerrariumCodec';
 import { ESRI_SHADED_RELIEF_URL, buildWaterMask, isDefectGrayTile } from './WaterMask';
-import { decodeTileRGBA } from './TileDecoder';
+import { decodeTileRGBA, decodeOnFrameBudget } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -146,16 +146,20 @@ export class WaterMaskSampler {
 
             // ESRI 瓦片原生 256px，与 TERRARIUM_TILE_SIZE 一致；万一尺寸不符 decodeTileRGBA 会缩放到同一网格。
             // [2026-09-05] 画布改共享复用（原来逐瓦片新建）；willReadFrequently 本来就有，保持。
-            const rgba = decodeTileRGBA(img, TERRARIUM_TILE_SIZE);
-            if (!rgba) return false;
-            // 坏瓦片（整块纯灰）会被误读成「整块都是陆地」，会让海面变成可行军的陆地。
-            // 存 null 占位：既标记为不可用，又避免每次查询都重新拉取。
-            this.cache.set(
-                key,
-                isDefectGrayTile(rgba, TERRARIUM_TILE_SIZE, TERRARIUM_TILE_SIZE)
+            // 🔴 [2026-09-16] 解码 + 建掩膜整段排进逐帧预算队列（见 TileDecoder.decodeOnFrameBudget）：
+            //    整屏预取的 onload 会扎堆在同一帧，每块 2~3ms，十块就是一次可见的整帧冻结。
+            //    undefined = 解码失败；null = 坏瓦片（合法结果，要入缓存占位）。
+            const mask = await decodeOnFrameBudget<Uint8Array | null | undefined>(() => {
+                const rgba = decodeTileRGBA(img, TERRARIUM_TILE_SIZE);
+                if (!rgba) return undefined;
+                // 坏瓦片（整块纯灰）会被误读成「整块都是陆地」，会让海面变成可行军的陆地。
+                // 存 null 占位：既标记为不可用，又避免每次查询都重新拉取。
+                return isDefectGrayTile(rgba, TERRARIUM_TILE_SIZE, TERRARIUM_TILE_SIZE)
                     ? null
-                    : buildWaterMask(rgba, TERRARIUM_TILE_SIZE * TERRARIUM_TILE_SIZE),
-            );
+                    : buildWaterMask(rgba, TERRARIUM_TILE_SIZE * TERRARIUM_TILE_SIZE);
+            });
+            if (mask === undefined) return false;
+            this.cache.set(key, mask);
             this.touchCache(key);
             this.evictIfNeeded();
             this.failedAt.delete(key);

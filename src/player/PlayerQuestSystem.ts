@@ -666,6 +666,11 @@ export class PlayerQuestSystem {
         //    而「最近 K 座」里永远有 K 座更近的没去过的城挡着，实测美洲命中恒为 0。
         //    这一签只看兵多名将、完全不看距离，在同档候选里均匀抽。
         this.huntCount++;
+        // 🔴 [2026-09-16 主人定]「军团战败后重新寻将，不要找太近的 —— 太近的话刚打完又碰上」
+        //    标志只管**战败后的这一次**寻将，取出来就清掉；远游那一签本来就跨洲，不必再过滤，
+        //    但同样要把标志消费掉，否则会顺延到下一次普通寻将上。
+        const avoidNear = this.postDefeatHunt;
+        this.postDefeatHunt = false;
         if (this.huntCount % PlayerQuestSystem.VOYAGE_EVERY === 0) {
             return tied[Math.floor(Math.random() * tied.length)] ?? best;
         }
@@ -694,6 +699,17 @@ export class PlayerQuestSystem {
         }
         // K 由面板「就近寻将」定：开 = 1（永远挑最近的那座没去过的，路程最短 436km），
         // 关 = 5（最近五座里抽，554km，留出随机性）。摸到的数量两档一样，K 只管路程。
+        // 战败后这一趟：先把战场周边 POST_DEFEAT_MIN_KM 内的城整片剔掉，再照常「最近 K 座里抽」。
+        // 于是落点自然落在闸外最近的那一圈（约 300~400km），既离开了刚打完的那片，也没被甩到天边。
+        // 实测（scratch/_hunt_mindist.ts，430 座名将城）：第 5 近的城距离中位 312km，
+        // 而 300km 闸外仍剩候选 p50=425 座、**一座「无城可选」的城都没有** —— 闸不会落空。
+        // 兜底仍保留：万一某天据点分布变了导致闸外没人，就不强求，照旧用原池子，绝不卡死寻将。
+        if (avoidNear) {
+            const far = fresh.filter((c) => PlayerQuestSystem.distKm(
+                me, { lat: c.latitude, lng: c.longitude },
+            ) >= PlayerQuestSystem.POST_DEFEAT_MIN_KM);
+            if (far.length) fresh = far;
+        }
         const K = this.deps.hero.nearbyFirst ? 1 : PlayerQuestSystem.NEAR_K;
         const ranked = fresh
             .map((c) => ({ c, d: PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude }) }))
@@ -708,6 +724,12 @@ export class PlayerQuestSystem {
     /** 每多少次寻将放一次「远游」。实测 10 次太密（光远游就把平均路程从 424 抬到 830km），
      *  20 次是 554~616km 且仍能摸到美洲。 */
     private static readonly VOYAGE_EVERY = 20;
+    /** 🔴 [2026-09-16 主人定] 军团战败后那一次寻将的最小距离（km）：刚打完别在原地附近再卷进去。
+     *  取 300：正好是「第 5 近的名将城」的中位距离（312km），相当于把平时会抽中的那最近五座整体推到圈外；
+     *  再大就开始抢远游那一签的活了。 */
+    private static readonly POST_DEFEAT_MIN_KM = 300;
+    /** 下一次寻将要不要避开近处（军团覆灭时置位，用掉即清）。 */
+    private postDefeatHunt = false;
     /** 已自动寻将次数，只用来数远游节拍。 */
     private huntCount = 0;
     /** 已拜访过的城（**永久**排除，去遍全图才清空）。这是「别困在一个圈里」的唯一机制。 */
@@ -719,6 +741,10 @@ export class PlayerQuestSystem {
     }
 
     private onHostLost(_lastId: string): void {
+        // 🔴 [2026-09-16 主人定] 军团没了 → 下一次寻将避开战场周边（见 POST_DEFEAT_MIN_KM）。
+        //    置位放在这里是因为**两条覆灭路径**（PlayerHero 的战败停顿分支与军团被打光分支）
+        //    都汇到这一个回调，写一处就都盖住了。
+        this.postDefeatHunt = true;
         // 🔴 [2026-09-08 主人报障「军团覆灭，留在原地……不继续自动，我在面板中开着自动呢」]
         //    改前：没有任务时**只发一句提示，不 detach**。而 PlayerHero.update 的覆灭分支
         //    故意不清 hostLegionId（指望 onHostLost → finishQuest → detach 统一清场），

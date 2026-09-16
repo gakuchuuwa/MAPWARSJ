@@ -754,6 +754,7 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
     }
     if (style === 'ANDE') return 'INCA_CASTLE_AGE3';
     if (style === 'YURT') return 'MONG_CASTLE_AGE3';
+    if (style === 'MOBEI_MONGOL') return 'MONG_CASTLE_AGE3'; // 三级漠北蒙古毡帐营地（2026-09-16）
     return `${style}_CASTLE_AGE3`;
 }
 

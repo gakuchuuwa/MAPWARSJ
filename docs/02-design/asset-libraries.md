@@ -85,12 +85,57 @@ DE 素材名 7372   已提取 4759   未提取 2613      （未提取里 1178 �
 
 ### 程序里怎么看
 
-- **建筑鉴赏页**（`_citytest.html` 视图三）数据来自 `public/assets/de_buildings_catalog.json`
-  （`node scratch/build_de_buildings_catalog.mjs` 生成）。
-- **其它 8 个库**数据来自 `public/assets/asset_libraries_catalog.json`
-  （`node scratch/build_asset_libraries_catalog.mjs` 生成）→ 鉴赏页顶部「**素材库**」下拉按库分类浏览。
+- **建筑鉴赏页**（`_citytest.html` 视图三）**只放建筑**：数据来自 `public/assets/de_buildings_catalog.json`
+  （`node scratch/build_de_buildings_catalog.mjs` 生成），默认「全部状态」（完好/受损/摧毁/废墟全出）。
+- 🔴 **[2026-09-16 主人「这里的建筑鉴赏，是显示所有建筑的」「不是建筑的[不要]在这里显示」
+  「不要删除素材，只是不要在这里显示」]**：2026-09-12 曾把**其它 8 个库**（`asset_libraries_catalog.json`，
+  818 条：`SUCAI` / `SUCAI_ANIMAL` / `SUCAI_BATTLEFIELD` / `SUCAI_FX` / `SUCAI_NATURE` /
+  `SUCAI_RESOURCE` / `SUCAI_TERRAIN` / `SUCAI_TRADE`）合并进本页，**现已按指令从本页移除（只是不显示）**：
+  - 图鉴：`load()` 不再 fetch `asset_libraries_catalog.json`；
+  - 顶部的「📚 素材总览看板」：**整块从本页移除显示**（主人 2026-09-16：「这个不要这样显示，
+    或者不要显示，有必要显示吗，这么占地方」—— 那张卡把 24 组、几十行目录名铺满一屏）。
+    要看全量清单：`scratch/out/asset_inventory.md`（人看）或 `public/assets/asset_inventory.json`（数据）。
+  - **素材本身一个都没删** —— 8 个库的目录、`asset_libraries_catalog.json`、`asset_inventory.json`
+    里的对应条目全部原样保留（要恢复显示：`load()` 里重新 fetch 并 concat 那份清单、看板 DOM 与
+    `renderInventoryBoard()` / `loadInventory()` 加回来即可，两处都在 `_citytest.html` 留了注释锚点）。
+- **「全部风格 / 文明 / 其它前缀」下拉**（`#bldgPrefix`，2026-09-16 起带中文名）：
+  它筛的是**目录名第一段**（`ASIA_ARCHERY_RANGE_AGE2` → `ASIA`），实测 **89 项 / 行数合计 2672**：
+  16 套 DE 母体风格 + 50 个文明专属城堡码 + 3 个单时代共用/自建（`DARK`/`ARCHAIC`/`YURT`）
+  + 19 个地标·城防·类型词 + 1 个空前缀（`_tmp_*` 临时素材，原来在下拉里只显示「(6)」）。
+  中文名来源**全部是项目自有数据**：母体名 ← 图鉴 `de16Styles`；文明名 ← 本页 `CULTURE_MAP`
+  （59 二层 + 2 三层自建）；地标专名 ← `src/data/WonderNames.ts`、`CityWonders.ts`、
+  `cityWallShared.ts`、`Scene13WarLayer.ts`；少数没有中文专名的通用构件只用图鉴自带类别词。
+  实现在 `_citytest.html` 的 `PREFIX_LANDMARK_CN` / `buildPrefixCn()` / `fillPrefixSelect()`，
+  逐条写了出处；核对命令 `node scratch/dump_prefix_options.mjs`（真 Chrome 打印 89 项）。
+- 🔴 **两套数字口径都要留着，但必须注明含义**（2026-09-16 主人定）：
+  **59 = DE 可玩文明数**（看板五张卡片 + 图鉴副标题用它）；**64 / 61 = 图鉴物理目录数**
+  （分组下拉、用途下拉用它）。实测构成：城堡 64 座 = 页面 59 文明 + 2 套三层自建分支用到的 61 座，
+  另加滇黔 / 岭南 / 希腊母体通用 3 座；普鲁强化态与色雷斯单复数等 5 个变体目录**不重复计入**。
+  奇观 61 座 = 60 座 `X_WONDER_*` 目录（覆盖 58 个文明名，不列颠与斯拉夫各多一座）+ 罗马斗兽场
+  `SCEN_COLOSSEUM`。两处标签都要写清是「文明数」还是「物理目录数」，别再让人以为是同一个数。
+- 🔴 **城堡素材的完整对账（2026-09-16 主人「希腊的是游戏本身的吗，先确保游戏本身的都解析了吗」）**：
+  DE 侧 `resources\_common\drs\graphics` 里名字含 castle 的 `.sld` = **384 个**，逐条对账 **0 缺失**；
+  DE 的城堡码 **61 个**，与项目**双向无差**（含 `THRACIANS` 单复数重复目录，收为变体不重复计数）。
+  出处实测：**60 座来自 DE 本体**（`sld_source = b_*`），**4 座是项目自建**（`user_dianqian_castle` /
+  `user_lingnan_castle` / `user_tibet_castle` / `user_western_castle`）。
+  16 母体里 **15 个有自己的母体城堡**，唯一没有 `ANDE` —— **DE 本体就没有** `b_ande_castle_age3`，
+  游戏侧写死 `ANDE → INCA_CASTLE_AGE3`（安第斯借印加堡），其 4 个分支各有专属城堡，**不是缺件**。
+  重叠 **14 座**（母体码同时被某文明分支当专属城堡用），故 **16 + 61 − 14 = 63 码 → 62 座有目录 →
+  + 滇黔 / 岭南 2 座自建 = 64 座**。
+  🔴 **同次改动**：把本体素材 `GREEK_CASTLE_AGE3`（`b_greek_castle_age3`，DE 编年史希腊；
+  `deCastleAssets.ts` 引用 7 次、映射大希腊/塞琉古/波奥蒂亚/伊庇鲁斯/多德卡尼斯/古希腊/斯基泰）
+  **补进据点编辑页「专属城堡」下拉** —— 原来图鉴有、游戏在用，但页面选不到。
+  该下拉实测由 61 项变 **62 项**（+ 1 个「自动对号入座」= 63 个 option）。未新增母体、未动 59 二级铁律。
+  验收：`node scratch/verify_greek_castle.mjs`（真 Chrome：手选后险要卡真的插入并加载
+  `/SUCAI_BUILDING/GREEK_CASTLE_AGE3/preview.png` 480×408）；逐座归属表 `py scratch/audit_castle_map.py`。
+- 🔴 **「全部分组」下拉不许写死组名**（2026-09-16 主人「为什么看不到专属城堡」血训）：
+  排序白名单原来写的是精确组名 `'文明专属城堡 (59座)'`，而图鉴里的实际组名是
+  `'文明专属城堡 (64座)'`（构建脚本按物理目录数定名）→ 精确匹配失败，**城堡 187 条 + 奇观 61 条
+  共 248 条整组从下拉里静默消失**（22 组 / 合计 2424）。现改为**按前缀匹配 + 末尾兜底追加**
+  （任何没进白名单的分组一律排到最后），实测回到 **24 组 / 合计 2672 一条不漏**。
+  验收断言已写进 `scratch/verify_bldg_all_buildings.mjs`（缺组 / 合计不符直接 exit 1）。
 - 行结构两边一致（`prefix / building / age / groupLabel / usage / img / w / h / frames / kb`），
-  所以同一套筛选器、同一个大图弹窗都能用。
+  所以同一套筛选器、同一个大图弹窗都能用（这也是当初能合并、现在能拆开的原因）。
 
 ### 相关脚本一览
 
@@ -99,6 +144,8 @@ DE 素材名 7372   已提取 4759   未提取 2613      （未提取里 1178 �
 | `scratch/audit_asset_coverage.py` | **对账**：DE 有哪些、项目已提哪些、还缺哪些（只读） |
 | `scratch/extract_de_assets.py` | **批量提取**未提取素材并按分类写进对应库 |
 | `scratch/build_de_buildings_catalog.mjs` | 生成建筑图鉴（`SUCAI_BUILDING`） |
+| `scratch/verify_bldg_all_buildings.mjs` | **建筑鉴赏页验收**（真 Chrome）：默认全状态/只放建筑/补回缺失/看板已移除/前缀下拉全中文 |
+| `scratch/dump_prefix_options.mjs` | 打印前缀下拉 89 项（中文名逐条核对） |
 | `scratch/build_asset_libraries_catalog.mjs` | 生成其余 8 库总目录 |
 | `scratch/extract_battlefield_markers.py`、`extract_scen_flags.py`、`extract_yurts.py`… | 各专项提取（历史脚本，保留） |
 

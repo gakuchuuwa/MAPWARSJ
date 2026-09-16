@@ -178,6 +178,8 @@ for (const row of CULTURE_SHIP) {
 
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityRegion } from '../systems/RegionSystem';
+import { getLegionCompositionByName, CULTURE_LEGION_NAMES } from './CultureFormations';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 
 const _factionRegionCache = new Map<string, string>();
 
@@ -216,11 +218,45 @@ const FACTION_NAVAL_SHIP_OVERRIDE: Record<string, NavalShipAssetId> = {
     osman: 'WAR_GALLEY',           // 奥斯曼·穆罕默德二世：15世纪地中海桨帆舰队
 };
 
-export function getCultureNavalShip(region?: string | null, factionId?: string | null): NavalShipAssetId {
-    if (factionId && FACTION_NAVAL_SHIP_OVERRIDE[factionId]) return FACTION_NAVAL_SHIP_OVERRIDE[factionId];
+/** 获取军团绑定的专属海军模型（🔴 2026-09-16 主人定「海军兵模和军团绑在一起」） */
+export function getLegionNavalShip(legionName?: string | null): NavalShipAssetId | null {
+    if (!legionName) return null;
+    const comp = getLegionCompositionByName(legionName);
+    return comp?.shipId ?? null;
+}
+
+export function getCultureNavalShip(
+    region?: string | null,
+    factionId?: string | null,
+    legionName?: string | null,
+): NavalShipAssetId {
+    // 🔴 [2026-09-16 主人定「海军兵模和军团绑在一起」]
+    // 1. 最高优先级：军团自身绑定的海军模型
+    if (legionName) {
+        const legionShip = getLegionNavalShip(legionName);
+        if (legionShip) return legionShip;
+    }
+    // 2. 势力挂靠的军团所绑定的海军模型
+    if (factionId) {
+        const customLegionName = FACTION_COMPOSITIONS[factionId]?.legionName;
+        if (customLegionName) {
+            const legionShip = getLegionNavalShip(customLegionName);
+            if (legionShip) return legionShip;
+        }
+        if (FACTION_NAVAL_SHIP_OVERRIDE[factionId]) return FACTION_NAVAL_SHIP_OVERRIDE[factionId];
+    }
+    // 3. 文化母体军团绑定的海军模型
     const resolvedRegion = region ?? (factionId ? getFactionCultureRegion(factionId) : null);
-    if (!resolvedRegion) return FALLBACK_SHIP;
-    return REGION_TO_SHIP.get(resolvedRegion.toUpperCase()) ?? FALLBACK_SHIP;
+    if (resolvedRegion) {
+        const defaultLegion = (CULTURE_LEGION_NAMES as Record<string, string>)[resolvedRegion];
+        if (defaultLegion) {
+            const defShip = getLegionNavalShip(defaultLegion);
+            if (defShip) return defShip;
+        }
+        const upper = resolvedRegion.toUpperCase();
+        if (REGION_TO_SHIP.has(upper)) return REGION_TO_SHIP.get(upper)!;
+    }
+    return FALLBACK_SHIP;
 }
 
 /** 供验收脚本读的分配明细（区 → 船 + 史实依据） */
@@ -232,8 +268,9 @@ export function getNavalShipAssetId(
     _troops: number,
     region?: string | null,
     factionId?: string | null,
+    legionName?: string | null,
 ): NavalShipAssetId {
-    return getCultureNavalShip(region, factionId);
+    return getCultureNavalShip(region, factionId, legionName);
 }
 
 /** 战船 AssetID 对应官方标准中文名 */

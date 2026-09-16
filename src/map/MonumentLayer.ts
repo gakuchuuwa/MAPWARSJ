@@ -51,12 +51,13 @@ export class MonumentLayer {
     constructor(map: L.Map) {
         this.map = map;
 
-        // 创建专用高层级 Pane，确保奇观在据点（cityPane 610）与常规标记之上
+        // [2026-09-15 主人定「特殊建筑应该在军团的下层」]：
+        // 调整层级：据点(cityPane 610) < 特殊建筑(monumentPane 615) < 军团(unitsPane 620)
         if (!this.map.getPane('monumentPane')) {
             this.map.createPane('monumentPane');
             const pane = this.map.getPane('monumentPane');
             if (pane) {
-                pane.style.zIndex = '650';
+                pane.style.zIndex = '615';
             }
         }
 

@@ -22,7 +22,8 @@ export const MAP_LAYER_ZINDEX = {
     CONNECTIONS: 450,        // Above territory, below markers
 
     // Objects
-    CITY_MARKER: 600,        // Default MarkerPane
+    CITY_MARKER: 600,        // Default MarkerPane (cityPane: 610)
+    MONUMENT: 615,           // 特殊建筑/奇观（[2026-09-15 主人定「特殊建筑应该在军团的下层」]：在据点 610 之上、军团 620 之下）
 
     // Units Low (Siege Battle - Behind City)
     UNITS_LOW: 580,
@@ -51,6 +52,7 @@ export const MAP_LAYER_ZINDEX = {
 
 export const MAP_PANES = {
     LAND_SEA_DEBUG: 'landSeaDebugPane',
+    MONUMENT: 'monumentPane',
     UNITS: 'unitsPane',
     UNITS_LOW: 'unitsLowPane',
     EFFECTS: 'effectsPane',

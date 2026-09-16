@@ -115,6 +115,25 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
     ['TOWER', 'AGE4'], // [2026-09-08 主人定] 大型箭塔辅选项
 ];
 
+/** 🔴 [2026-09-16 主人定]「二级蒙古的大中小城中的 9 建筑添加蒙古包随机。总体不能超过 9 个。」
+ *  · 二级「蒙古」(buildingStyle === 'MONGOL') 的大城/中城/小城：把 8 个**真蒙古包**（`YURT_E~L`；
+ *    旧款 `A~D` 是茅草屋，2026-08-22 主人定弃用）当作**候选**掺进 9 建筑池，随机抽取，
+ *    **最终栋数恒为 9**（大城 = 3 栋 AGE4 必有 + 6 栋自 6+8 候选里抽）。
+ *  · 蒙古包目录名**没有风格前缀**（是 `YURT_E`，不是 `ASIA_YURT_E_AGE2`）→ 取图必须走特例，
+ *    与城寨池里的 `YURT_A~D` 同一套写法。 */
+const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+const MONGOL_YURT_SCALE = 0.30;
+const isYurtItem = (b: string): boolean => b.startsWith('YURT_');
+const isMongolStyle = (buildingStyle?: string): boolean => buildingStyle === 'MONGOL';
+/** 城池内单栋建筑的取图路径（蒙古包/棚屋类无风格前缀） */
+function cityBuildingSrc(style: string, b: string, age: string): string {
+    return isYurtItem(b) ? `/SUCAI_BUILDING/${b}/preview.png` : `/SUCAI_BUILDING/${style}_${b}_${age}/preview.png`;
+}
+/** 城池内单栋建筑的相对尺寸（蒙古包按 MONGOL_YURT_SCALE） */
+function cityBuildingScale(b: string, fallback: number): number {
+    return isYurtItem(b) ? MONGOL_YURT_SCALE : (DE_BUILDING_SCALES[b] || fallback);
+}
+
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘/中城按文化套用）──
 // 主人定：中国8区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
 // 其余按 cities_v2.ts 实际城市构成 + CityWonders 奇观锚定真实文明（2026-08-27 修正）：
@@ -464,14 +483,16 @@ function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeG
     return pieces;
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string): string {
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
     const rnd = deMulberry32(deHashString(cityId));
-    const ring = [...DE_SMALL_CITY_POOL];
+    // 🔴 [2026-09-16 主人定] 二级蒙古小城：9 建筑池里随机掺入蒙古包（见 MONGOL_CITY_YURTS 注释），总数仍恒为 9
+    const ring = [...DE_SMALL_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
     }
+    if (ring.length > 9) ring.length = 9;   // ⚠️ 掺入蒙古包后必须截到 9 栋（主人：总体不能超过 9 个）
     const rotation = rnd() * 360;
 
     // 容器尺寸（紧凑包裹闭合围墙与木大门）
@@ -491,12 +512,12 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
-    const centerW = baseSize * (centerCastle ? 0.55 : (DE_BUILDING_SCALES[centerB] || 0.4));
+    const centerW = baseSize * (centerCastle ? 0.55 : cityBuildingScale(centerB, 0.4));
     const centerGroundW = centerW * (centerCastle ? 1.6 : 2.3);
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId) : null;
-    const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : `/SUCAI_BUILDING/${style}_${centerB}_AGE2/preview.png`;
+    const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : cityBuildingSrc(style, centerB, 'AGE2');
     parts.push(
         `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
     );
@@ -514,7 +535,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;               // 半径错落
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
-        const bW = baseSize * (DE_BUILDING_SCALES[b] || 0.32);
+        const bW = baseSize * cityBuildingScale(b, 0.32);
         const zIndex = Math.round(100 + y);                       // 动态深度
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
 
@@ -527,7 +548,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         );
         // 该建筑本体
         parts.push(
-            `<img src="/SUCAI_BUILDING/${style}_${b}_AGE2/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
+            `<img src="${cityBuildingSrc(style, b, 'AGE2')}" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${x.toFixed(1)}px),calc(-50% + ${y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
         );
     });
 
@@ -696,12 +717,12 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 // 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城；城门与城墙完全1.0x自然咬合）
-function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string): string {
+function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
-    // 12 种城堡时代建筑随机洗牌，取前 9 栋
-    const ring = [...DE_MEDIUM_CITY_POOL];
+    // 12 种城堡时代建筑随机洗牌，取前 9 栋（二级蒙古：候选池再掺入 8 个蒙古包，仍取前 9 栋）
+    const ring = [...DE_MEDIUM_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
@@ -782,7 +803,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
             );
         } else {
             const b = centerCastle ? pool[otherIdx++] : pool[i];
-            const bW = baseSize * 0.32 * AUTO; // 统一大小 0.32
+            const bW = baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO; // 统一大小 0.32（蒙古包按 MONGOL_YURT_SCALE）
             const zIndex = Math.round(500 + slot.y);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
 
@@ -794,7 +815,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
             );
 
             parts.push(
-                `<img src="/SUCAI_BUILDING/${style}_${b}_AGE3/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
+                `<img src="${cityBuildingSrc(style, b, 'AGE3')}" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
         }
     });
@@ -819,7 +840,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 }
 
 // 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城）
-function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string): string {
+function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
@@ -830,7 +851,11 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         ['UNIVERSITY', 'AGE4'],
     ];
     const nobleKeys = new Set(noble.map(([b]) => b));
-    const secondaryPool = DE_IMPERIAL_CITY_POOL.filter(([b]) => !nobleKeys.has(b));
+    const secondaryPool: Array<[string, string]> = DE_IMPERIAL_CITY_POOL.filter(([b]) => !nobleKeys.has(b));
+    // 🔴 [2026-09-16 主人定] 二级蒙古大城：辅助池再掺入 8 个蒙古包 → 仍是「3 栋 AGE4 必有 + 6 栋辅助 = 9 栋」
+    if (isMongolStyle(buildingStyle)) {
+        for (const y of MONGOL_CITY_YURTS) secondaryPool.push([y, 'AGE3']);
+    }
     const secondary = [...secondaryPool];
     for (let i = secondary.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
@@ -919,7 +944,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             );
 
             parts.push(
-                `<img src="/SUCAI_BUILDING/${style}_${b}_${age}/preview.png" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
+                `<img src="${cityBuildingSrc(style, b, age)}" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
         }
     });
@@ -2028,9 +2053,9 @@ export class TerritorySystem {
                      ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
                           ${(deStyle
                               ? (city.type === 'big_city'
-                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion)
+                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
                                   : city.type === 'medium_city'
-                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion)
+                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
                                       : city.type === 'pass'
                                           // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，
                                           //    统一走通用险要：**石墙墙圈(8+4段+双门) + 中心城堡 + 四角4座箭塔，不留民政建筑**。
@@ -2041,7 +2066,7 @@ export class TerritorySystem {
                                           ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
                                           : city.type === 'stockade'
                                               ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
-                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion))
+                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;
