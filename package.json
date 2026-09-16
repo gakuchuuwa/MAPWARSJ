@@ -21,6 +21,7 @@
     "naval:sprite-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ship_sprites.mts",
     "naval:weapon-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_naval_weapons.mts",
     "legion:spacing-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_spacing.mts",
+    "battlefield:editor-audit": "npx tsx scratch/_verify_bf_editor_save.mts",
     "city:type-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_city_types.mts",
     "legion:zoc-bench": "npx tsx --import ./tools/sim-preload.mjs scratch/bench_zoc_scan.mts",
     "naval:leg-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_march_sea_legs.mts",

@@ -700,14 +700,14 @@ path.npc-hitbox {
     background: rgba(125, 111, 90, 0.6); /* 鼠标悬浮时加深 */
 }
 
-/* 大乱斗军情：独立抽屉面板，自适应内容高度与滚动，不绑定屏幕底部 */
+/* 大乱斗军情：贴顶贴底独立抽屉面板，自适应内容高度与滚动 */
 .event-panel.event-panel--brawl:not(.collapsed) {
-    bottom: auto !important;
+    bottom: 0 !important;
 }
 
 .event-panel.collapsed {
-    bottom: auto !important;
-    border-radius: 0 0 0 8px;
+    bottom: 0 !important;
+    border-radius: 0;
     padding-bottom: 14px;
 }
 
@@ -722,7 +722,7 @@ path.npc-hitbox {
 }
 
 .event-panel.expanded {
-    bottom: auto !important;
+    bottom: 0 !important;
     width: min(500px, calc(100vw - 16px));
 }
 

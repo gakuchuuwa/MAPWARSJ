@@ -70,7 +70,7 @@ export class CameraFollowUI {
     private static readonly LIST_REFRESH_INTERVAL_MS = 500;
     /** 军团按钮下缘 ≈ 62px；岳飞按钮固定于此，列表面板 z-index 更高盖住它 */
     private static readonly STACK_LEFT_PX = 16;
-    private static readonly LIST_PANEL_TOP_PX = 16;
+    private static readonly LIST_PANEL_TOP_PX = 0;
     /** 势力统计数据源（合并势力榜后，每行附带势力兵力/据点数） */
     private cityManager: { getCities(): any[] } | null = null;
     private factionManager: { getFactionName(id: string): string | undefined; getFactionColor(id: string): string | undefined } | null = null;
@@ -159,15 +159,17 @@ export class CameraFollowUI {
         panel.classList.add('is-collapsed');
         panel.style.cssText = `
             position: fixed;
-            top: ${CameraFollowUI.LIST_PANEL_TOP_PX}px;
+            top: 0;
+            bottom: 0;
             left: 0;
             width: 260px;
-            max-height: calc(100vh - 460px);
+            height: 100vh;
+            max-height: 100vh;
             overflow-y: auto;
-            z-index: 10001;
-            background: linear-gradient(to right, rgba(216, 197, 168, 0.6) 0%, rgba(235, 220, 195, 0.35) 70%, rgba(235, 220, 195, 0) 100%);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            z-index: 3000;
+            background: linear-gradient(155deg, rgba(32, 26, 20, 0.72), rgba(16, 14, 11, 0.78));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: none;
             box-shadow: none;
             display: block;
