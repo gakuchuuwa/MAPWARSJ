@@ -183,6 +183,29 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite);
+        // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
+        //    文档铁律：数字反常先加计数器问「每道闸各拦掉多少」。落 scene13_probe_log.jsonl（why=gateBlocked）。
+        if (!eligible && import.meta.env.DEV) {
+            const gate = {
+                tacticalModeEnabled: !!app.tacticalModeEnabled,
+                bigEnough, minTroops,
+                attTroops: battle.attacker.troops, defTroops: battle.defender.troops,
+                bothNaval, isNavalBattle, isNavalVsFortress,
+                attGeneralId: battle.attacker.generalId ?? null,
+                defGeneralId: battle.defender.generalId ?? null,
+                attHasElite, defHasElite,
+                attUnitType: (battle.attacker as { unitType?: string }).unitType ?? null,
+                defUnitType: (battle.defender as { unitType?: string }).unitType ?? null,
+                battleType: battle.type,
+                defenderId: (battle.defender.getEntity?.() as { id?: string } | undefined)?.id ?? null,
+            };
+            console.warn('🚫 [Scene13 闸门] 未进战术模式：', gate);
+            void fetch('/api/scene13-probe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ at: new Date().toISOString(), why: 'gateBlocked', gate }),
+            }).catch(() => { /* 诊断落盘失败不影响对局 */ });
+        }
         if (eligible) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
             const t = battleSceneTarget(centerUnit);

@@ -248,6 +248,359 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
     },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 330 年冬 · 亚历山大决战扎格罗斯：波斯门战役（Battle of the Persian Gate，前330年1月）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -330,
+        season: 3,                                   // 冬（史料：前330年1月，严冬风雪夜山道极限攀爬大迂回）
+        type: 'field_battle',
+        title: '公元前330年 波斯门战役',
+        description:
+            '马其顿军最终获胜：波斯总督阿尔塔巴扎诺斯利用扎格罗斯天险石垒扼守波斯门；'
+            + '亚历山大正面受挫后亲率精锐轻步兵风雪夜沿山道大迂回后方夹击，波斯守军战至最后全员阵亡；扫清进占波斯波利斯的最后屏障。',
+        fieldBattleData: {
+            title: '波斯门战役',
+            description:
+                '阿尔塔巴扎诺斯扼守波斯门险隘，亚历山大亲率精锐轻步兵雪夜沿隐秘山道大迂回后方夹击，波斯守军战至最后全员阵亡。',
+            // 扎格罗斯山脉险隘波斯门（北纬 30°42'30", 东经 51°35'55"）
+            location: { lat: 30.7083, lng: 51.5986 },
+
+            // ── 攻方：马其顿军先锋精锐 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 14000,                   // 史料 10,000 至 17,000 先锋精锐
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：波斯守军 阿尔塔巴扎诺斯 ──
+            defenderFactionId: 'aqimeinide',
+            defenderGeneralId: 'aqimeinide_aertabazanuosi',
+            defenderTroops: 1500,                    // 现代史学主流考证 700 至 2,000 人（中值）
+            defenderSourceCityId: 'city_bosibolisi', // 波斯波利斯
+
+            result: 'attacker_win',                  // 写真历史：马其顿迂回奇袭获胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+        // 🔴 战后归属：扫清最后屏障，波斯波利斯易主归马其顿
+        cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 329 年夏 · 亚历山大远征中亚：锡尔河战役（Battle of Jaxartes，前329年）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -329,
+        season: 1,                                   // 夏（史料：前329年盛夏苦盏前线强渡锡尔河突破战）
+        type: 'field_battle',
+        title: '公元前329年 锡尔河战役',
+        description:
+            '马其顿军大获全胜：亚历山大在锡尔河南岸架设重型弩炮进行超视距隔河火力覆盖驱散轻骑；'
+            + '随后用皮筏载兵强渡大河设伏诱敌，最终以伙伴骑兵合围重创斯基泰游牧联军，确立帝国东北边界。',
+        fieldBattleData: {
+            title: '锡尔河战役',
+            description:
+                '亚历山大架设重型弩炮隔河火力覆盖强渡锡尔河，设伏诱敌并以伙伴骑兵合围溃散斯基泰游牧大军。',
+            // 锡尔河畔苦盏前线（北纬 40°17'00", 东经 69°37'00"）
+            location: { lat: 40.2833, lng: 69.6167 },
+
+            // ── 攻方：马其顿军先锋部队 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 18000,                   // 史料参战先锋部队约 10,000 至 20,000 人
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：斯基泰骑兵联军 萨特拉克斯 ──
+            defenderFactionId: 'sijitai',
+            defenderGeneralId: 'sijitai_satraces',
+            defenderTroops: 16000,                   // 史料约 10,000 至 20,000 名游牧弓骑兵
+            defenderSourceCityId: 'city_asu',        // 塔纳伊斯
+
+            result: 'attacker_win',                  // 写真历史：马其顿强渡大获全胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 328 年冬 · 亚历山大平定中亚：索格底亚那岩山围攻战（Siege of the Sogdian Rock，前328年冬）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -328,
+        season: 3,                                   // 冬（史料：前328年冬至前327年初，严冬雪夜攀登冰冻绝壁）
+        type: 'field_battle',
+        title: '公元前328年 索格底亚那岩山围攻战',
+        description:
+            '马其顿军完胜：索格底亚那大贵族奥克夏特斯依四面悬崖峭壁死守岩山要塞；'
+            + '亚历山大选派300名精锐攀岩死士深夜沿冰雪冻壁奇袭登顶，守军心理彻底崩溃不战而降；奥克夏特斯归降，亚历山大迎娶罗克珊娜平定中亚反抗。',
+        fieldBattleData: {
+            title: '索格底亚那岩山围攻战',
+            description:
+                '奥克夏特斯扼守险峰绝壁要塞，亚历山大选派300攀岩死士雪夜渗透奇袭登顶，守军心理崩溃归降。',
+            // 苏尔汉河州贝孙岭险峰（北纬 38°58'00", 东经 67°02'00"）
+            location: { lat: 38.9667, lng: 67.0333 },
+
+            // ── 攻方：马其顿军先锋部队 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 10000,                   // 围攻先锋精锐主力部队
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：索格底亚那守军 奥克夏特斯 ──
+            defenderFactionId: 'sogdian',
+            defenderGeneralId: 'sogdian_aokexiate',
+            defenderTroops: 30000,                   // 史料守军约 30,000 人（含起义武装与军民）
+            defenderSourceCityId: 'city_varaksha',   // 瓦拉赫沙
+
+            result: 'attacker_win',                  // 写真历史：守军不战而降
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 327 年春 · 亚历山大进军印度：马萨加围城战（Siege of Massaga，前327年春）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -327,
+        season: 0,                                   // 春（史料：前327年春进军斯瓦特河谷）
+        type: 'field_battle',
+        title: '公元前327年 马萨加围城战',
+        description:
+            '马其顿军苦战攻克要塞获胜：亚历山大进军斯瓦特河谷围攻马萨加险要坚城；'
+            + '马其顿攻城塔与攻城锤昼夜猛轰城墙裂口，阿斯瓦卡首领阿萨卡诺斯阵亡，克莱奥菲斯女王率部投降；要塞被全面攻破，为进军印度扫清通道。',
+        fieldBattleData: {
+            title: '马萨加围城战',
+            description:
+                '亚历山大率攻城重型机械围攻马萨加险要要塞，阿萨卡诺斯阵亡后克莱奥菲斯女王统领全城力战投降，马其顿军攻克要塞。',
+            // 斯瓦特河谷查克达拉古要塞（北纬 34°40'15", 东经 71°50'30"）
+            location: { lat: 34.6708, lng: 71.8417 },
+
+            // ── 攻方：马其顿军 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 22000,                   // 史料约 20,000 至 25,000 人（中值）
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：阿斯瓦卡守军 克莱奥菲斯女王 ──
+            defenderFactionId: 'aswaka',
+            defenderGeneralId: 'aswaka_cleophis',
+            defenderTroops: 39000,                   // 史料 30,000 本土步兵 + 2,000 骑兵 + 7,000 雇佣军（含30头战象）
+            defenderSourceCityId: 'city_baishawa',   // 临近根据地白沙瓦（犍陀罗）
+
+            result: 'attacker_win',                  // 写真历史：攻克要塞获胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 326 年夏 · 亚历山大四大决战收官：希达斯佩斯河战役（Battle of the Hydaspes，前326年夏）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -326,
+        season: 1,                                   // 夏（史料：前326年5–6月季风暴雨期）
+        type: 'field_battle',
+        title: '公元前326年 希达斯佩斯河战役',
+        description:
+            '马其顿军惨胜：亚历山大暴风雨夜强渡急流，集中长枪兵斩杀象夫并以伙伴骑兵两翼包抄溃散波鲁斯大军；'
+            + '波鲁斯身负九创力战被俘后获释封还王位；此战为远征四大决战收官之役，士卒随后厌战兵变，亚历山大正式踏上回师之路。',
+        fieldBattleData: {
+            title: '希达斯佩斯河战役',
+            description:
+                '亚历山大暴风雨夜强渡希达斯佩斯河，以长枪方阵与单侧包抄血战波鲁斯重装战象巨墙，印度军阵线崩溃，波鲁斯力竭被俘。',
+            // 杰卢姆河畔平原（北纬 32°49'40", 东经 73°38'20"）
+            location: { lat: 32.8278, lng: 73.6389 },
+
+            // ── 攻方：马其顿与盟邦联军 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 42000,                   // 史料参战总兵力约 40,000 至 45,000 人（中值）
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：波鲁斯王国军 波鲁斯国王 ──
+            defenderFactionId: 'bulu',
+            defenderGeneralId: 'gen_bolusi',
+            defenderTroops: 34000,                   // 史料 20,000–30,000 步兵 + 4,000 骑兵 + 300 战车及重装战象巨墙
+            defenderSourceCityId: 'city_meng',       // 蒙格（海达斯佩斯河南岸会战根据地）
+
+            result: 'attacker_win',                  // 写真历史：马其顿惨胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 325 年春 · 亚历山大南撤清剿：马里斯城围攻战（Siege of the Mallian Citadel，前325年春）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -325,
+        season: 0,                                   // 春（史料：前325年春沿印度河河谷清剿）
+        type: 'field_battle',
+        title: '公元前325年 马里斯城围攻战',
+        description:
+            '马其顿军惨烈攻克卫城获胜：亚历山大率军沿印度河清剿围攻马利砖石卫城，亲自登梯突入城内庭院与守军血战，胸部中箭射穿肺叶倒地；'
+            + '愤怒的马其顿士卒砸开城门破城彻底屠戮守军，亚历山大侥幸脱险但肺伤终生未愈；随后马其顿军彻底控制印度河下游，横渡格德罗西亚荒漠回师。',
+        fieldBattleData: {
+            title: '马里斯城围攻战',
+            description:
+                '亚历山大亲自登梯突入马里斯砖石卫城血战身负重伤（胸部贯穿），赶来救驾的马其顿士卒怒破城门攻克要塞。',
+            // 木尔坦卫城古要塞遗址（北纬 30°11'50", 东经 71°28'30"）
+            location: { lat: 30.1972, lng: 71.4750 },
+
+            // ── 攻方：马其顿军主力分队 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 13000,                   // 史料参战主力精锐分队约 10,000 至 15,000 人（中值）
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：马利（摩罗婆）联军 马利首领 ──
+            defenderFactionId: 'malli',
+            defenderGeneralId: 'malli_leader',
+            defenderTroops: 54000,                   // 史料约 50,000 步兵 + 3,000 骑兵 + 1,000 战车
+            defenderSourceCityId: 'city_meng',       // 蒙格
+
+            result: 'attacker_win',                  // 写真历史：攻破卫城惨胜获胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 324 年冬 · 亚历山大实战绝唱：科塞亚战役（Cossaean Campaign，前324年冬）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -324,
+        season: 3,                                   // 冬（史料：前324年冬赫费斯提翁在埃克巴塔那病逝后发起严冬山地围剿）
+        type: 'field_battle',
+        title: '公元前324年 科塞亚战役',
+        description:
+            '马其顿军大获全胜：赫费斯提翁病逝后亚历山大发起扎格罗斯山地扫荡，分兵两路冒风雪翻越险峰切断退路，连拔数十处峭壁高山石堡彻底摧毁抵抗；'
+            + '残存科塞亚部族被迫集体投降；此役为亚历山大军事生涯最后一场实战战役，战后大军凯旋回师巴比伦。',
+        fieldBattleData: {
+            title: '科塞亚战役',
+            description:
+                '亚历山大与大将托勒密分兵两路雪夜翻越扎格罗斯险峰，轻重协同连拔数十处峭壁石堡，彻底击溃科塞亚部落联军。',
+            // 洛雷斯坦省扎格罗斯高地（北纬 33°45'00", 东经 47°10'00"）
+            location: { lat: 33.7500, lng: 47.1667 },
+
+            // ── 攻方：马其顿机动精锐部队 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 12000,                   // 史料参战机动精锐约 10,000 至 15,000 人（中值）
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：科塞亚山民武装 科塞亚首领 ──
+            defenderFactionId: 'kesaiya',
+            defenderGeneralId: 'kesaiya_shouling',
+            defenderTroops: 15000,                   // 史料约 10,000 至 20,000 名峭壁设伏部落勇士（中值）
+            defenderSourceCityId: 'city_hamadan',   // 哈马丹（埃克巴塔那）
+
+            result: 'attacker_win',                  // 写真历史：大获全胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 323 年秋 · 拉米亚战争爆发：普拉塔纳斯战役（Battle of Platana，前323年秋）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -323,
+        season: 2,                                   // 秋（史料：前323年秋亚历山大死讯传开后希腊各城邦爆发拉米亚战争）
+        type: 'field_battle',
+        title: '公元前323年 普拉塔纳斯战役',
+        description:
+            '希腊反马其顿联军全面大胜：亚历山大巴比伦逝世后希腊城邦爆发独立战争，莱奥斯塞尼斯统帅雅典与希腊联军在马里亚克湾平原迎击安提帕特；'
+            + '决战时刻色萨利精锐骑兵临阵倒戈反戈一击，马其顿军侧后彻底崩溃死伤惨重；安提帕特退守拉米亚坚城被围，拉开继业者纷争乱世大幕。',
+        fieldBattleData: {
+            title: '普拉塔纳斯战役',
+            description:
+                '希腊联军在普拉塔纳平原与马其顿常备军激战，色萨利精锐骑兵阵前倒戈，莱奥斯塞尼斯大破安提帕特。',
+            // 马里亚克湾沿海平原（北纬 38°48'30", 东经 22°43'10"）
+            location: { lat: 38.8083, lng: 22.7194 },
+
+            // ── 攻方：希腊反马其顿联军 莱奥斯塞尼斯 ──
+            attackerFactionId: 'xila',
+            attackerGeneralId: 'xila_leosthenes',
+            attackerTroops: 28000,                   // 史料参战联军约 25,000 至 30,000 人（中值）
+            attackerSourceCityId: 'city_yadian',     // 雅典
+
+            // ── 守方：马其顿帝国本土守军 安提帕特 ──
+            defenderFactionId: 'maqidun',
+            defenderGeneralId: 'maqidun_antipater',
+            defenderTroops: 13600,                   // 史料约 13,000 步兵 + 600 骑兵
+            defenderSourceCityId: 'city_salonica',   // 佩拉
+
+            result: 'attacker_win',                  // 写真历史：希腊联军大胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 322 年夏 · 拉米亚战争终局：克兰农战役（Battle of Crannon，前322年夏）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -322,
+        season: 1,                                   // 夏（史料：前322年8–9月盛夏平原大决战）
+        type: 'field_battle',
+        title: '公元前322年 克兰农战役',
+        description:
+            '马其顿联军大获全胜：安提帕特与克拉特罗斯精锐合兵发起全面反攻，以压倒性重装长矛老兵方阵碾碎希腊同盟步兵阵线；'
+            + '希腊骑兵见防线瓦解被迫脱离，同盟分崩离析；马其顿进驻雅典强行废除民主政体改立寡头统治，拉米亚战争彻底终结，希腊古典城邦政治时代宣告落幕。',
+        fieldBattleData: {
+            title: '克兰农战役',
+            description:
+                '安提帕特与克拉特罗斯合兵指挥老兵重装方阵全线突击，压倒性冲击瓦解希腊同盟步兵防线。',
+            // 色萨利克兰农平原（北纬 39°31'10", 东经 22°19'40"）
+            location: { lat: 39.5194, lng: 22.3278 },
+
+            // ── 攻方：马其顿帝国联军 安提帕特 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'maqidun_antipater',
+            attackerTroops: 45000,                   // 史料约 43,000 至 48,000 人（中值）
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+
+            // ── 守方：希腊反马其顿同盟军 安提菲洛斯 ──
+            defenderFactionId: 'xila',
+            defenderGeneralId: 'xila_antiphilus',
+            defenderTroops: 28500,                   // 史料约 28,500 人（25,000 步兵 + 3,500 骑兵）
+            defenderSourceCityId: 'city_yadian',     // 雅典
+
+            result: 'attacker_win',                  // 写真历史：马其顿联军大获全胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 321 年春 · 继业者内战爆发：赫勒斯滂战役（Battle of the Hellespont，前321年春）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -321,
+        season: 0,                                   // 春（史料：前321年春，第一次继业者战争关键决战）
+        type: 'field_battle',
+        title: '公元前321年 赫勒斯滂战役',
+        description:
+            '欧迈尼斯军大获全胜：第一次继业者战争爆发，欧迈尼斯在达达尼尔海峡南岸迎击克拉特罗斯叛军；'
+            + '欧迈尼斯封锁敌帅身份令两翼精锐重骑兵全速钳形突击，克拉特罗斯战马受创落马遭践踏阵亡，欧迈尼斯单挑手刃叛将涅俄普托勒摩斯；'
+            + '反摄政同盟步兵阵被围缴械投降，欧迈尼斯一战封神。',
+        fieldBattleData: {
+            title: '赫勒斯滂战役',
+            description:
+                '欧迈尼斯指挥两翼卡帕多细亚精锐重骑兵全速钳形冲锋，克拉特罗斯落马阵亡，欧迈尼斯阵斩叛将。',
+            // 恰纳卡莱达达尼尔海峡以南内陆平原（北纬 40°09'00", 东经 26°24'00"）
+            location: { lat: 40.1500, lng: 26.4000 },
+
+            // ── 攻方：帝国中央军（摄政派）/ 卡帕多细亚 欧迈尼斯 ──
+            attackerFactionId: 'kapaduoxiya',
+            attackerGeneralId: 'gen_eumenes',
+            attackerTroops: 25000,                   // 史料 25,000 人（20,000 步兵 + 5,000 精锐重骑兵）
+            attackerSourceCityId: 'city_dasijiliweng', // 达斯基利翁（小亚细亚赫勒斯滂弗里吉亚首府要塞）
+
+            // ── 守方：反摄政同盟军 / 马其顿 克拉特罗斯 ──
+            defenderFactionId: 'maqidun',
+            defenderGeneralId: 'maqidun_craterus',
+            defenderTroops: 22000,                   // 史料 22,000 人（20,000 精锐马其顿老兵方阵 + 2,000 骑兵）
+            defenderSourceCityId: 'city_salonica',   // 佩拉
+
+            result: 'attacker_win',                  // 写真历史：欧迈尼斯大获全胜
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
+    },
 ];
 
 /**

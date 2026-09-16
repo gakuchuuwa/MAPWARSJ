@@ -3196,6 +3196,28 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kanan_azemier: { generalId: 'kanan_azemier', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 加沙·巴提斯：普将（史实为死守沙丘要塞的波斯任命总督）· 逆势 · 善防
     feilisidin_batisi: { generalId: 'feilisidin_batisi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 波斯门·阿尔塔巴扎诺斯：普将（史实为波西斯行省总督，死守扎格罗斯山险隘至全员战死）· 逆势 · 善防
+    aqimeinide_aertabazanuosi: { generalId: 'aqimeinide_aertabazanuosi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 锡尔河·萨特拉克斯：普将（史实为锡尔河战役对阵亚历山大的斯基泰骑兵领袖）· 借势（轻骑骑射）· 善攻
+    sijitai_satraces: { generalId: 'sijitai_satraces', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
+    // 索格底亚那岩山·奥克夏特斯：普将（史实为索格底亚那大贵族，凭险扼守岩山后归降）· 逆势 · 善防
+    sogdian_aokexiate: { generalId: 'sogdian_aokexiate', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 马萨加·克莱奥菲斯：普将（史实为阿斯瓦卡首领之母，统领全城死守险要要塞力战后归降）· 逆势 · 善防
+    aswaka_cleophis: { generalId: 'aswaka_cleophis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 马里斯·马利首领：普将（史实为马利/摩罗婆联军首领，死守砖石卫城堡垒浴血力战）· 逆势 · 善防
+    malli_leader: { generalId: 'malli_leader', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 科塞亚·科塞亚首领：普将（史实为扎格罗斯山地部落酋长联军首领，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
+    kesaiya_shouling: { generalId: 'kesaiya_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 普拉塔纳斯·莱奥斯塞尼斯：普将（史实为雅典名将、拉米亚战争希腊反马其顿联军统帅）· 创势 · 善攻
+    xila_leosthenes: { generalId: 'xila_leosthenes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    // 普拉塔纳斯·安提帕特：普将（史实为马其顿摄政、欧洲最高统帅，兵败后坚守拉米亚城）· 逆势 · 善防
+    maqidun_antipater: { generalId: 'maqidun_antipater', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 克兰农·安提菲洛斯：普将（史实为接任阵亡莱奥斯塞尼斯之希腊同盟军总司令，步兵溃退后撤离）· 逆势 · 善防
+    xila_antiphilus: { generalId: 'xila_antiphilus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 赫勒斯滂·欧迈尼斯：名将（史实为亚历山大皇家书记官、卡帕多细亚总督，两翼骑兵闪电突击阵斩敌帅一战封神）· 创势 · 善攻
+    gen_eumenes: { generalId: 'gen_eumenes', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    // 赫勒斯滂·克拉特罗斯：名将（史实为亚历山大麾下第一名将，赫勒斯滂战役中战马受创坠马阵亡）· 逆势 · 善防
+    maqidun_craterus: { generalId: 'maqidun_craterus', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     gen_boleslaw_brave: { generalId: 'gen_boleslaw_brave', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     gen_topa_inca: { generalId: 'gen_topa_inca', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     gen_bir_hambir: { generalId: 'gen_bir_hambir', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },

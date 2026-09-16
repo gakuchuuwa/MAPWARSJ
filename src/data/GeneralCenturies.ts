@@ -414,6 +414,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'anushidgin_yile': 12,                               // 伊勒 · anushidgin · 希瓦
     'aqimeinide_daliushi': -6,
     'daliushi_iii': -4,                           // 大流士 · aqimeinide · 波斯波利斯
+    'aqimeinide_aertabazanuosi': -4,              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
     'asaibaijiang_xuliewu': 13,                          // 旭烈兀 · asaibaijiang · 马拉盖
     'babuer_babuer': 16,                                 // 巴布尔 · babuer · 喀布尔
     'badakhshan_yaerbeige': 17,                          // 雅尔贝格 · badakhshan · 法扎巴德
@@ -449,6 +450,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'saman_yisimayi': 9,                                // 伊斯玛仪 · saman · 阿母城
     'seljuq_sangjiaer': 12,                              // 桑贾尔 · seljuq · 木鹿
     'sogdian_dewasitiqi': 8,                            // 德瓦什提奇 · sogdian · 瓦拉赫沙
+    'sogdian_aokexiate': -4,                             // 奥克夏特斯 · sogdian · 索格底亚那岩山（前328年岩山之战守帅）
     'tiemuer_tiemuer': 14,                               // 帖木儿 · tiemuer · 撒马尔罕
     'wulaertu_ajishenti': 5,                             // 瓦尔丹 · wulaertu · 埃里温
     'xierwan_farukusha': 15,                             // 法鲁克沙 · xierwan · 巴库
@@ -1050,6 +1052,15 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_ezana':                         4,     // 埃扎纳 · ethiopia · 阿克苏姆帝国定教大帝（320-360在位）
     'gen_bolusi':                        -4,    // 波鲁斯 · bulu · 古印度波鲁斯国王对抗亚历山大（前326年海达斯佩斯河战役）
     'sijitai_ateas':                     -4,    // 阿泰阿斯 · sijitai · 斯基泰国王（前339年阵亡）
+    'sijitai_satraces':                  -4,    // 萨特拉克斯 · sijitai · 锡尔河（前329年锡尔河战役斯基泰统帅）
+    'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（前327年马萨加围城战守帅）
+    'malli_leader':                      -4,    // 马利首领 · malli · 马里斯（前325年马里斯城围攻战守帅）
+    'kesaiya_shouling':                  -4,    // 科塞亚首领 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
+    'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（前323年普拉塔纳斯战役希腊联军统帅）
+    'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（前323年普拉塔纳斯战役马其顿守帅）
+    'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（前322年克兰农战役希腊同盟总司令）
+    'gen_eumenes':                       -4,    // 欧迈尼斯 · kapaduoxiya · 赫勒斯滂（前321年赫勒斯滂战役统帅）
+    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（前321年赫勒斯滂战役守帅）
     'yamaxun_xibolvte':                  -12,   // 希波吕忒 · yamaxun · 亚马逊女王神话时代（前12世纪）
     'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
     'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约前2112年）

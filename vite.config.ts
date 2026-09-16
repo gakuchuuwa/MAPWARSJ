@@ -539,6 +539,37 @@ export default defineConfig({
                     });
                 });
 
+                // ========================================================
+                // 战场事件编辑器 /api/battlefield-editor/save（页面 /battlefield-editor.html）
+                // 一场战役落在两个文件里，这里一次写两处，避免手写漏配：
+                //   ① src/data/Battlefields.ts        战场（地名+坐标+scriptYear）
+                //   ② src/data/HistoricalEventScript.ts 剧本（双方将/兵力/胜负/播报/航点）
+                // 🔴 绝不整表重写（legion-editor 曾把 465 条洗成 1 条）：只按 id / 年份+坐标
+                //    定位单个条目做替换或追加，并在写盘前校验条目数没有变少。
+                // ========================================================
+                server.middlewares.use('/api/battlefield-editor/save', (req, res) => {
+                    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: '仅支持 POST' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const draft = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as BattlefieldEventDraft;
+                            const out = saveBattlefieldEvent(__dirname, draft);
+                            console.log(`[BattlefieldEditor] ✅ ${out.mode === 'insert' ? '新增' : '更新'}【${draft.title}】 战场 ${out.battlefields} 条 / 剧本 ${out.script} 条`);
+                            res.end(JSON.stringify({ ok: true, ...out }));
+                        } catch (err: any) {
+                            console.error('[BattlefieldEditor] ❌ 保存失败:', err);
+                            res.statusCode = 400;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 server.middlewares.use('/api/save-roads', (req, res) => {
                     if (req.method !== 'POST') {
                         res.statusCode = 405;

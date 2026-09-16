@@ -2057,6 +2057,10 @@ export const FACTIONS: Faction[] = [
     { id: 'sijitai', name: '斯基泰' },
     { id: 'wangdaer', name: '汪达尔' },
     { id: 'yamaxun', name: '亚马逊' },
+    { id: 'aswaka', name: '阿斯瓦卡' },  // 斯瓦特·马萨加（阿萨卡诺伊王族）· 前327年「马萨加围城战」守方
+    { id: 'malli', name: '马利' },  // 摩罗婆·马里斯（木尔坦卫城）· 前325年「马里斯城围攻战」守方
+    { id: 'kesaiya', name: '科塞亚' },  // 扎格罗斯·科塞亚人（山地部落联军）· 前324年「科塞亚战役」守方
+    { id: 'kapaduoxiya', name: '卡帕多细亚' },  // 卡帕多细亚（欧迈尼斯根据地）· 前321年「赫勒斯滂战役」主方
 ];
 
 // @ts-ignore
