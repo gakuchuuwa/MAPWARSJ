@@ -27,6 +27,8 @@
  */
 
 import { RegionType } from '../systems/RegionSystem';
+import { STYLE_TO_BASE16 } from '../systems/CultureBase16';
+import { REGION_TO_DE_STYLE } from '../systems/cityDeStyle';
 import { LEVEL_2_CIV_59_MAP } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
@@ -1510,7 +1512,7 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
 /** 第一层 18 文化军团名（文化+军团，主人 2026-08-20 定）。
  *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
  *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
-export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
+export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     CENTRAL: '古典时代华夏军团',
     NORTH: '古典时代秦汉军团',
     NORTHEAST: '古典时代鲜卑军团',
@@ -1529,10 +1531,8 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TIBET_IMPERIAL: "帝国时代青藏军团",
     CENTRAL_ASIA: "封建时代河中军团",
     CENTRAL_ASIA_IMPERIAL: '帝国时代中亚军团',
-    CENTRAL_ASIA_ANTIQUITY: '古典时代中亚军团',
     CENTRAL_ASIA_CASTLE: '封建时代萨珊军团',
     WEST_ASIA: '封建时代西亚军团',
-    WEST_ASIA_ANTIQUITY: '古典时代西亚军团',
     WEST_ASIA_CASTLE: '城堡时代西亚军团',
     WESTERN: '古典时代塞种军团',
     WESTERN_FEUDAL: '封建时代西域军团',
@@ -1564,7 +1564,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     AFRICA_ANTIQUITY: '古典时代努比亚军团',
     AFRICA_CASTLE: "城堡时代非洲军团",
     MALAY: '城堡时代马来军团',
-    SEASIA_ANTIQUITY: '古典时代东南亚军团',
     SEASIA_IMPERIAL: '帝国时代东南亚军团',
     SEASIA_CASTLE: '城堡时代东南亚军团',
     SEASIA_FEUDAL: '封建时代东南亚军团',
@@ -1572,7 +1571,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     SOUTHAM_IMPERIAL: '帝国时代南美军团',
     PURU: '古典时代普鲁军团',
     INDIA_FEUDAL: '封建时代印度军团',
-    INDIA_CASTLE: '城堡时代印度军团',
     INDIA_IMPERIAL: '帝国时代印度军团',
     ORIE: '封建时代阿拉伯军团',
     ORIE_ANTIQUITY: '古典时代阿拉伯军团',
@@ -1613,7 +1611,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     TARASCAN: '城堡时代塔拉斯科军团',
     TAIRONA: '城堡时代泰罗纳军团',
     TEHUELCHE: '帝国时代特维尔切军团',
-    ARMENIANS: '古典时代亚美尼亚军团',
     GEORGIANS: '封建时代格鲁吉亚军团',
     BURMESE: '城堡时代缅族军团',
     EGYPT: '古典时代埃及军团',
@@ -1662,7 +1659,6 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     PASHTUN: '帝国时代普什图军团',
     SWEDISH: '帝国时代瑞典军团',
     MACEDONIAN: "古典时代马其顿军团",
-    HELLENIC: '古典时代希伦军团',
     SONG: '城堡时代宋禁军团',
     GORYEO: '城堡时代高丽军团',
     JOSEON: '帝国时代朝鲜军团',
@@ -2072,9 +2068,200 @@ export function getBase16FormationConfig(region: RegionType): { formationMode: F
     return null;
 }
 
-/** 取第一层文化军团名（未知区兜底中原军团） */
+export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
+    ACHAEMENIDS: 'PERSIAN',
+    AFRICA: 'AFRICA',
+    AFRICA_ANTIQUITY: 'ETHIOPIANS',
+    AFRICA_CASTLE: 'ETHIOPIANS',
+    AFRICA_IMPERIAL: 'BERBER',
+    AINU: 'JAPAN',
+    ALMOHAD: 'BERBER',
+    AMERICA: 'AMERICA',
+    ANDE: 'INCA',
+    ANGLO_SAXON: 'WEST',
+    ARAGON: 'MEDI',
+    ARMENIANS: 'ARMENIANS',
+    ASSYRIAN: 'ORIE',
+    BABYLON: 'ORIE',
+    BASHU: 'BASHU',
+    BENGALIS: 'BENGALIS',
+    BERBER: 'BERBER',
+    BOHEMIANS: 'BOHEMIANS',
+    BRITONS: 'BRITONS',
+    BULGARIANS: 'BULGARIANS',
+    BURGUNDIANS: 'BURGUNDIANS',
+    BURMESE: 'BURMESE',
+    CARTHAGE: 'MEDI',
+    CASTILE: 'MEDI',
+    CELTS_FEUDAL: 'BRITONS',
+    CENTRAL: 'CENTRAL',
+    CENTRAL_ASIA: 'CENTRAL_ASIA',
+    CENTRAL_ASIA_ANTIQUITY: 'INDIA',
+    CENTRAL_ASIA_CASTLE: 'CENTRAL_ASIA',
+    CENTRAL_ASIA_IMPERIAL: 'CEAS',
+    CHIMU: 'ANDE',
+    CRUSADERS: 'WEST',
+    CUMAN: 'CUMAN',
+    DALI: 'ASIA',
+    DELHI: 'INDIA',
+    EAST: 'EAST',
+    EGYPT: 'ORIE',
+    ETHIOPIANS: 'ETHIOPIANS',
+    FRANKS: 'FRANKS',
+    FRENCH: 'WEST',
+    GEORGIANS: 'GEORGIANS',
+    GERMANIC: 'GERMANIC',
+    GERMANIC_CASTLE: 'VIKINGS',
+    GERMANIC_FEUDAL: 'WEST',
+    GERMANIC_IMPERIAL: 'WEST',
+    GHANA: 'AFRICA',
+    GOJOSEON: 'ASIA',
+    GORYEO: 'ASIA',
+    GOTHS: 'GOTHS',
+    GREEK: 'GREEK',
+    GURJARAS: 'GURJARAS',
+    HEBREWS: 'ORIE',
+    HEPHTHALITES: 'CEAS',
+    HEXI: 'KHITAN',
+    HITTITES: 'ORIE',
+    HRE: 'WEST',
+    HUAXIA_IMPERIAL: 'ASIA',
+    HUNS: 'HUNS',
+    ILKHANATE: 'PERSIAN',
+    IMPERIAL_ROME: 'ROMA',
+    INDIA: 'INDIA',
+    INDIA_CASTLE: 'INDIA',
+    INDIA_FEUDAL: 'INDIA',
+    INDIA_IMPERIAL: 'INDI',
+    IROQUOIS: 'MESO',
+    ITALIANS: 'MEDI',
+    JAPAN: 'JAPAN',
+    JAPAN_ANTIQUITY: 'ASIA',
+    JAPAN_IMPERIAL: 'JAPAN',
+    JAVANESE: 'MALAY',
+    JIANGNAN: 'JIANGNAN',
+    JOSEON: 'ASIA',
+    JURCHEN: 'NORTHEAST',
+    KARA_KHITAN: 'CEAS',
+    KHAZARS: 'CEAS',
+    KHITAN: 'KHITAN',
+    KHMER: 'KHMER',
+    KOREA: 'KOREA',
+    KUSH: 'AFRI',
+    KUSHAN: 'CEAS',
+    LATIN: 'LATIN',
+    LATIN_CASTLE: 'MEDI',
+    LATIN_FEUDAL: 'MEDI',
+    LATIN_IMPERIAL: 'MEDI',
+    LITHUANIANS: 'LITHUANIANS',
+    LOMBARDS: 'MEDI',
+    MAGYAR: 'MAGYAR',
+    MALAY: 'MALAY',
+    MAMLUKS: 'ORIE',
+    MANCHU: 'NORTHEAST',
+    MAPUCHE: 'MAPUCHE',
+    MAYANS: 'MAYANS',
+    MING: 'ASIA',
+    MOHE: 'NORTHEAST',
+    MONGOL: 'MONGOL',
+    MUGHAL: 'MUGHAL',
+    MUISCA: 'MUISCA',
+    NABATAEANS: 'ORIE',
+    NANZHAO: 'ASIA',
+    NORTH: 'WEI',
+    NORTHAM_IMPERIAL: 'MEDI',
+    NORTHEAST: 'NORTHEAST',
+    ORIE: 'ORIE',
+    ORIE_ANTIQUITY: 'ORIE',
+    OTTOMAN: 'ORIE',
+    OTTOMAN_IMPERIAL: 'ORIE',
+    PASHTUN: 'PERSIAN',
+    PERSIAN: 'PERSIAN',
+    PERSIAN_CASTLE: 'PERSIAN',
+    POLES: 'POLES',
+    PORTUGUESE: 'PORTUGUESE',
+    PURU: 'PURU',
+    QIANG: 'ASIA',
+    ROURAN: 'MONGOL',
+    RUS: 'SLAV',
+    RUSSIAN: 'SLAV',
+    SAFAVID: 'PERSIAN',
+    SASANIAN: 'SASANIAN',
+    SCOTLAND: 'BRITONS',
+    SCYTHIANS: 'EAST',
+    SEAS: 'SEAS',
+    SEASIA_ANTIQUITY: 'KHMER',
+    SEASIA_CASTLE: 'MALAY',
+    SEASIA_FEUDAL: 'SEAS',
+    SEASIA_IMPERIAL: 'SEAS',
+    SELJUQ: 'PERSIAN',
+    SERBIA: 'SLAV',
+    SICILIANS: 'SICILIANS',
+    SIKH: 'INDI',
+    SLAVIC: 'SLAVIC',
+    SLAVIC_CASTLE: 'SLAV',
+    SLAVIC_FEUDAL: 'SLAV',
+    SLAVIC_IMPERIAL: 'SLAV',
+    SOGDIANS: 'CEAS',
+    SONG: 'ASIA',
+    SOUTHAM_IMPERIAL: 'ANDE',
+    SPANISH: 'SPANISH',
+    SRIVIJAYA: 'MALAY',
+    STEPPE: 'MOBEI_MONGOL',
+    STEPPE_ANTIQUITY: 'CEAS',
+    STEPPE_FEUDAL: 'MOBEI_MONGOL',
+    STEPPE_IMPERIAL: 'MOBEI_MONGOL',
+    SWEDISH: 'WEST',
+    TAIRONA: 'ANDE',
+    TANGUT: 'KHITAN',
+    TARASCAN: 'MESO',
+    TEHUELCHE: 'ANDE',
+    TEUTONS: 'WEST',
+    THRACIAN: 'THRACIAN',
+    TIBET: 'PURU',
+    TIBET_CASTLE: 'PURU',
+    TIBET_IMPERIAL: 'PURU',
+    TIMURID: 'CEAS',
+    TUPI: 'TUPI',
+    TURKS: 'TURKS',
+    UIGHUR: 'MOBEI_MONGOL',
+    VANDALS: 'ORIE',
+    VIETNAMESE: 'VIETNAMESE',
+    VIKINGS: 'VIKINGS',
+    WEI: 'WEI',
+    WESTERN: 'CEAS',
+    WESTERN_CASTLE: 'CEAS',
+    WESTERN_FEUDAL: 'CEAS',
+    WESTERN_IMPERIAL: 'CEAS',
+    WEST_ASIA: 'ORIE',
+    WEST_ASIA_ANTIQUITY: 'ORIE',
+    WEST_ASIA_CASTLE: 'EAST',
+    WUSUN: 'CEAS',
+    YARLUNG: 'PURU',
+};
+
+/** 取第一层文化军团名：优先 region 指针；无指针时按据点的建筑风格决定军团（🔴 2026-09-16 主人定：16+59+3 建筑风格对应 16+59+3 军团，不再兜底华夏） */
 export function getCultureLegionName(region: RegionType | null | undefined): string {
-    return (region && CULTURE_LEGION_NAMES[region]) || CULTURE_LEGION_NAMES.CENTRAL;
+    if (region && CULTURE_LEGION_NAMES[region]) return CULTURE_LEGION_NAMES[region];
+    const style = region ? (REGION_TO_DE_STYLE as Record<string, string>)[region] : undefined;
+    return style ? getLegionNameByStyle(style) : '东亚军团';
+}
+
+/** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 59 文明→二级军团 / 3 三级→三级军团） */
+export function getLegionNameByStyle(buildingStyle: string): string {
+    // 16 母体 → 一级母体军团（优先，处理重名 ORIE/PURU/PERSIAN/THRACIAN/EAST）
+    const base16 = STYLE_TO_BASE16[buildingStyle];
+    if (base16) return BASE_16_LEGION_NAME_BY_REGION[base16] || '东亚军团';
+    // 59 文明 → 二级军团（region 字段匹配；高丽例外：buildingStyle KOREA ↔ region GORYEO）
+    if (buildingStyle === 'KOREA') return '城堡时代高丽军团';
+    for (const l2 of LEVEL_2_CIV_59_MAP.values()) {
+        if (l2.region === buildingStyle) return l2.name;
+    }
+    // 3 三级 → 三级军团
+    for (const l3 of LEVEL_3_LEGION_MAP.values()) {
+        if (l3.regions.includes(buildingStyle)) return l3.name;
+    }
+    return '东亚军团';
 }
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */

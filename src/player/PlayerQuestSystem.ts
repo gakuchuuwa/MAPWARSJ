@@ -289,6 +289,9 @@ export class PlayerQuestSystem {
 
         const join = (side: 'attacker' | 'defender' | null) => {
             this.deps.closeDialogue();
+            // 先结束选边暂停，再开战；开战后战术场景会接管暂停，不能再解除，
+            // 否则引擎已冻结而 GameAppLoop 不走战术 tick，画面会停在大地图。
+            this.deps.ensureUnpaused();
             const msg = bfApi.start(
                 bfId,
                 ({ attacker, defender }) => {
@@ -330,7 +333,6 @@ export class PlayerQuestSystem {
                 },
             );
             if (msg) { this.deps.notify(msg); return; }
-            this.deps.ensureUnpaused();
         };
 
         this.deps.showDialogue({
