@@ -3853,7 +3853,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/WEST_ASIA/xibolai_dawei.png": {
-            "scale": 0.92,
+            "scale": 0.96,
             "offsetX": 0,
             "offsetY": 17
         },
@@ -4216,11 +4216,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.89,
             "offsetX": 0,
             "offsetY": -8
-        },
-        "/assets/WEST_ASIA/__闲置__CENTRAL_ASIA_74.png": {
-            "scale": 1.12,
-            "offsetX": 0,
-            "offsetY": 5
         },
         "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_76.png": {
             "scale": 1.32,
@@ -7866,6 +7861,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

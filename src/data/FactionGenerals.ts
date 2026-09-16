@@ -1103,7 +1103,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
         // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
-        { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '' },
+        { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
