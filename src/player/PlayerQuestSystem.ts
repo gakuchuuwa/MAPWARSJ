@@ -26,6 +26,8 @@ import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
+import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
+import { isBattlefieldFought } from '../events/battlefieldState';
 
 export type PlayerQuestKind = 'restore' | 'campaign';
 
@@ -112,6 +114,8 @@ export interface PlayerQuestDeps {
 }
 
 const TICK_MS = 400;
+/** 战场寻路失败后的重试冷却，避免每 tick 重试刷屏并打断行程 */
+const BF_RETRY_COOLDOWN_MS = 60_000;
 
 export class PlayerQuestSystem {
     private quest: PlayerQuest | null = null;
@@ -229,12 +233,26 @@ export class PlayerQuestSystem {
     }
 
     /**
+     * 获取战场的战役标准名称（统一为【XXX战役】或【XXX围城战】）
+     * 🔴 [2026-09-16 主人定]「战场名称要写为XXX战役」
+     */
+    public getBattlefieldBattleTitle(bfId: string, fallbackName?: string): string {
+        const fb = this.deps.battlefields?.findBattle(bfId);
+        if (fb?.title) return fb.title;
+        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const name = fallbackName ?? bf?.name ?? '历史战役';
+        if (name.endsWith('战役') || name.endsWith('围城战')) return name;
+        return `${name}战役`;
+    }
+
+    /**
      * 🔴 [2026-09-14 主人定] 点击战场 → 打这一场真实战役。
      *
      * 主人的规矩逐条落在这里：
      *   ·「玩家要抵达战场才能触发」→ 先按玩家当前位置查距离，没到就只告诉他还差多远。
      *   ·「必须是武将在城」「一个战场只能打一次」→ 交给 checkReady 统一裁决。
      *   ·「玩家可以选择加入哪一方」→ 双方各一个选项，另给一个只看不打的选项。
+     *   ·「战场名称要写为XXX战役」（2026-09-16 主人定）
      */
     public onBattlefieldClicked(bfId: string, bfName: string): void {
         const bfApi = this.deps.battlefields;
@@ -243,6 +261,8 @@ export class PlayerQuestSystem {
             this.deps.notify('你正在军中，随军出征，军团解散前不可另投一方');
             return;
         }
+        const battleTitle = this.getBattlefieldBattleTitle(bfId, bfName);
+
         // 先看「能不能打」里与距离无关的那些（打过了 / 主帅在外 / 已有战事）
         const hardBlock = bfApi.checkReady(bfId, undefined);
         if (hardBlock) { this.deps.notify(hardBlock); return; }
@@ -252,13 +272,13 @@ export class PlayerQuestSystem {
         if (far) {
             const pos = bfApi.locate(bfId);
             if (!pos) { this.deps.notify(far); return; }
-            this.deps.notify(`${far}，正赶往【${bfName}】`);
-            this.deps.hero.travelToPoint(pos, bfName, () => this.onBattlefieldClicked(bfId, bfName));
+            this.deps.notify(`${far}，正赶往【${battleTitle}】`);
+            this.deps.hero.travelToPoint(pos, battleTitle, () => this.onBattlefieldClicked(bfId, battleTitle));
             return;
         }
 
         const fb = bfApi.findBattle(bfId);
-        if (!fb) { this.deps.notify(`【${bfName}】还没有配战役数据`); return; }
+        if (!fb) { this.deps.notify(`【${battleTitle}】还没有配战役数据`); return; }
 
         const atkName = this.deps.cityManager.getFactionName(fb.attackerFactionId);
         const defName = this.deps.cityManager.getFactionName(fb.defenderFactionId);
@@ -297,8 +317,8 @@ export class PlayerQuestSystem {
                             factionName: this.deps.cityManager.getFactionName(joinedFaction),
                         });
                         this.deps.notify(learned
-                            ? `⚔ 【${bfName}】战毕，习得「${eliteName}」之战法`
-                            : `⚔ 【${bfName}】战毕（「${eliteName}」已会）`);
+                            ? `⚔ 【${battleTitle}】战毕，习得「${eliteName}」之战法`
+                            : `⚔ 【${battleTitle}】战毕（「${eliteName}」已会）`);
                     }
                     // 战后双方军团会撤场（见 withdrawBattlefieldLegions）。玩家若还挂在上面，
                     // 军团一没就成了"随一支不存在的军团"，所以这里把他放回单骑，好去找下一家。
@@ -314,9 +334,9 @@ export class PlayerQuestSystem {
         };
 
         this.deps.showDialogue({
-            speaker: bfName,
+            speaker: battleTitle,
             portrait: null,
-            factionName: fb.title ?? bfName,
+            factionName: battleTitle,
             text: `${atkName}【${atkGeneral}】与${defName}【${defGeneral}】将于此地会战。`
                 + `壮士既已亲临，可自择一方效力，亦可袖手旁观。`,
             options: [
@@ -475,11 +495,83 @@ export class PlayerQuestSystem {
         this.emitChange();
     }
 
+    /**
+     * 寻找下一个待触发的历史战场：
+     * 1. 发生年份已到（bf.scriptYear <= currentYear）
+     * 2. 战场未打过（!isBattlefieldFought(bf.id)）
+     * 按发生年份由先到后排序（-334 -> -333 -> -332 -> -331...）
+     */
+    public findNextAvailableBattlefield(): { bf: BattlefieldData; title: string } | null {
+        const bfApi = this.deps.battlefields;
+        if (!bfApi) return null;
+        const currentYear = this.deps.getYear();
+
+        const available = BATTLEFIELDS
+            .filter((bf) => bf.scriptYear <= currentYear && !isBattlefieldFought(bf.id))
+            .sort((a, b) => a.scriptYear - b.scriptYear);
+
+        if (!available.length) return null;
+        const nextBf = available[0];
+        const title = this.getBattlefieldBattleTitle(nextBf.id, nextBf.name);
+        return { bf: nextBf, title };
+    }
+
+    /**
+     * 检查并自动引导玩家前往下一个历史战场：
+     * 🔴 [2026-09-16 主人定]
+     * 「如果玩家没有加入势力，就优先参加去战场，触发战争事件。游戏开始是-334年，就去格拉尼库斯河战役。
+     *   战场名称要写为XXX战役。打完后如果时间没到-333年就先去找武将加入势力乱斗，如果时间到了-333年就接着去下一个战场。
+     *   同理-332年也是如此。如果玩家加入了势力后，就不在触发战场事件，是跟着武将走，直至玩家离开势力，
+     *   先看时间触发战场时间，然后再去找武将乱斗。」
+     */
+    private checkAndTriggerNextBattlefield(): boolean {
+        const next = this.findNextAvailableBattlefield();
+        if (!next) return false;
+
+        const { bf, title } = next;
+        const bfApi = this.deps.battlefields;
+        if (!bfApi) return false;
+
+        // 已经在前往该战场的路上，继续行军
+        if (this.deps.hero.getTravelPointLabel() === title) {
+            return true;
+        }
+
+        // 上次寻路失败还在冷却里：不打断当前行程，先让玩家去找武将乱斗
+        const now = Date.now();
+        if (now < (this.bfRetryAfter.get(bf.id) ?? 0)) return false;
+
+        const pos = bfApi.locate(bf.id) ?? { lat: bf.lat, lng: bf.lng };
+        this.chaseCityId = null;
+        this.deps.hero.cancelChase();
+        this.deps.hero.cancelTravel();
+
+        const ok = this.deps.hero.travelToPoint(pos, title, () => {
+            this.onBattlefieldClicked(bf.id, title);
+        });
+
+        if (ok) {
+            this.bfRetryAfter.delete(bf.id);
+            this.deps.notify(`🐎 奔赴【${title}】`);
+            return true;
+        }
+        // 寻路失败（无路可达/正在军中）→ 冷却 60 秒再试，期间走找武将那条路
+        this.bfRetryAfter.set(bf.id, now + BF_RETRY_COOLDOWN_MS);
+        return false;
+    }
+
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
-        // [2026-09-05 玩家] 自动模式：空闲（无任务、未入伍、未行军）时自动选据点前往
-        if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached() && !this.deps.hero.isTraveling()) {
-            this.autoTravelToBestCity();
+        // 🔴 [2026-09-16 主人定]
+        // 玩家未加入势力（未入伍、无任务）时：
+        // 优先前往历史战场触发战役事件；
+        // 若当前年份无可用战场，且未在行军，才去找武将加入势力乱斗；
+        // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
+        if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
+            const headingToBattlefield = this.checkAndTriggerNextBattlefield();
+            if (!headingToBattlefield && !this.deps.hero.isTraveling()) {
+                this.autoTravelToBestCity();
+            }
         }
         const q = this.quest;
         if (!q) return;
@@ -520,6 +612,12 @@ export class PlayerQuestSystem {
 
     /** 追击中的那位武将的**本城**（会面后谈事仍以这座城的势力/目标为准） */
     private chaseCityId: string | null = null;
+    /**
+     * 战场寻路失败的冷却表：bfId -> 在此时间戳之前不再重试。
+     * tick 每 400ms 跑一次，若不记冷却，无路可达的战场会每秒 2.5 次
+     * 打断玩家去找武将的行程并重复弹「无路可达」，把玩家钉死在原地。
+     */
+    private bfRetryAfter = new Map<string, number>();
 
     /**
      * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。

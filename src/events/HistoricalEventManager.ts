@@ -243,15 +243,46 @@ export class HistoricalEventManager {
         return bf ? { lat: bf.lat, lng: bf.lng } : null;
     }
 
-    /** 战场对应的战役数据（按坐标就近匹配，与点亮战场同一口径） */
-    public findBattleForBattlefield(bfId: string): FieldBattleData | null {
+    /** 战场对应的战役数据（按坐标就近匹配，支持野战与攻城战） */
+    public findBattleForBattlefield(bfId: string): (FieldBattleData & {
+        defenderCityId?: string;
+        type?: 'field_battle' | 'siege';
+        cityUpdates?: Array<{ cityId: string; factionId?: string; troops?: number }>;
+    }) | null {
         const bf = BATTLEFIELDS.find((b) => b.id === bfId);
         if (!bf) return null;
         for (const ev of HISTORICAL_EVENT_SCRIPT) {
-            const fb = ev.fieldBattleData;
-            if (!fb?.location) continue;
-            if (getEuclideanDistance(fb.location, { lat: bf.lat, lng: bf.lng }) <= GameConfig.SIEGE.COMBAT_RADIUS) {
-                return fb;
+            if (ev.type === 'field_battle') {
+                const fb = ev.fieldBattleData;
+                if (!fb?.location) continue;
+                if (getEuclideanDistance(fb.location, { lat: bf.lat, lng: bf.lng }) <= GameConfig.SIEGE.COMBAT_RADIUS) {
+                    return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates };
+                }
+            } else if (ev.type === 'siege') {
+                const sd = ev.siegeData;
+                if (!sd?.defenderCityId) continue;
+                const city = this.cityManager.getCity(sd.defenderCityId);
+                if (!city) continue;
+                if (getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: bf.lat, lng: bf.lng }) <= GameConfig.SIEGE.COMBAT_RADIUS) {
+                    return {
+                        title: sd.title ?? ev.title,
+                        description: sd.description ?? ev.description,
+                        location: { lat: city.latitude, lng: city.longitude },
+                        attackerFactionId: sd.attackerFactionId,
+                        attackerGeneralId: sd.attackerGeneralId,
+                        attackerTroops: sd.attackerTroops,
+                        attackerSourceCityId: sd.attackerSourceCityId ?? sd.attackerCityId,
+                        defenderFactionId: city.factionId,
+                        defenderGeneralId: sd.defenderGeneralId,
+                        defenderTroops: sd.defenderTroops ?? city.troops ?? 10000,
+                        defenderSourceCityId: city.id,
+                        defenderCityId: city.id,
+                        type: 'siege',
+                        cityUpdates: ev.cityUpdates,
+                        result: sd.result,
+                        autoEnterRTS: sd.autoEnterRTS,
+                    };
+                }
             }
         }
         return null;
@@ -277,6 +308,12 @@ export class HistoricalEventManager {
         if (!bf) return '没有这个战场';
         // 一个战场只能打一次
         if (isBattlefieldFought(bfId)) return `【${bf.name}】已经打过了`;
+        // 🔴 [2026-09-16 主人定] 年份判定：未到发生年份不可触发
+        const currentYear = this.timeSystem.getYear();
+        if (currentYear < bf.scriptYear) {
+            const era = bf.scriptYear < 0 ? `公元前${Math.abs(bf.scriptYear)}` : `公元${bf.scriptYear}`;
+            return `【${bf.name}】战事尚未发生，须至${era}年方可开启`;
+        }
         if (this.battlefieldBattleRunning) {
             return this.battlefieldBattleRunning === bfId
                 ? `【${bf.name}】正在交战中`
@@ -304,10 +341,14 @@ export class HistoricalEventManager {
     }
 
     /**
-     * 为战役备一方军团，就地摆在野战处理器给该方定的**对阵位**上。
-     * 主帅在城才走到这里（见 checkBattlefieldReady），所以一律新建，不存在"同一个人出现两次"。
+     * 为战役备一方军团，就地摆在对阵位上。
+     * 攻城战：攻方在城外陆侧（稍偏东），守方在城内驻守；
+     * 野战：攻守双方东西对阵。
      */
-    private spawnBattlefieldSide(fb: FieldBattleData, side: 'attacker' | 'defender'): Army | null {
+    private spawnBattlefieldSide(
+        fb: FieldBattleData & { defenderCityId?: string; type?: 'field_battle' | 'siege' },
+        side: 'attacker' | 'defender'
+    ): Army | null {
         const loc = fb.location;
         if (!loc) return null;
         const isAtk = side === 'attacker';
@@ -315,9 +356,16 @@ export class HistoricalEventManager {
         const factionId = isAtk ? fb.attackerFactionId : fb.defenderFactionId;
         const troops = (isAtk ? fb.attackerTroops : fb.defenderTroops) ?? 10000;
         const sourceCityId = (isAtk ? fb.attackerSourceCityId : fb.defenderSourceCityId) ?? undefined;
-        // 攻方在西、守方在东，与 MultiLegionFieldBattle 的对阵口径一致；
-        // 刷在对阵位上 → 距离 0 → 走「即时抵达」分支，两军原地列阵，开场不会各自绕路。
-        const stand = { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
+
+        // 站位：攻城战攻方在城外东侧（长堤陆地连接部），守方在城内原点；野战东西对阵
+        let stand: { lat: number; lng: number };
+        if (fb.type === 'siege') {
+            stand = isAtk
+                ? { lat: loc.lat, lng: loc.lng + 0.025 }
+                : { lat: loc.lat, lng: loc.lng };
+        } else {
+            stand = { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
+        }
 
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
         const legionName = FACTION_COMPOSITIONS[factionId]?.legionName
@@ -367,20 +415,64 @@ export class HistoricalEventManager {
         onSpawned?.({ attacker, defender });
         gameLog('expedition',
             `⚔️ [战场]【${fb.title ?? bf.name}】开打：${attacker.name} vs ${defender.name}`
-            + ` @(${fb.location?.lat}, ${fb.location?.lng})`);
+            + ` @(${fb.location?.lat}, ${fb.location?.lng}) [${fb.type ?? 'field_battle'}]`);
 
-        this.fieldBattleManager.handleFieldBattleEvent(
-            { ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name },
-            () => {
+        // 🔴 [2026-09-16 主人定]「必须严格符合历史，该攻城就是攻城，该野战就野战。如果是攻城战，战斗要改据点归属。一切按历史，无论输赢。」
+        if (fb.type === 'siege' && fb.defenderCityId) {
+            const siegeData: SiegeData = {
+                title: fb.title,
+                description: fb.description,
+                attackerFactionId: fb.attackerFactionId,
+                attackerGeneralId: fb.attackerGeneralId,
+                attackerTroops: fb.attackerTroops,
+                defenderCityId: fb.defenderCityId,
+                defenderGeneralId: fb.defenderGeneralId,
+                defenderTroops: fb.defenderTroops,
+                result: fb.result ?? 'attacker_win',
+                autoEnterRTS: fb.autoEnterRTS ?? true,
+            };
+
+            this.siegeManager.startSiegeWithArmy(attacker, siegeData, () => {
                 this.battlefieldBattleRunning = null;
                 setActiveBattleTitle(null);
+                // 🔴 攻城战改据点归属（历史结算）：推罗易主归马其顿
+                if (fb.cityUpdates && fb.cityUpdates.length > 0) {
+                    for (const u of fb.cityUpdates) {
+                        if (u.factionId) {
+                            this.cityManager.updateCity(u.cityId, { factionId: u.factionId });
+                            gameLog('siege', `🚩 [攻城战史实结算] 据点【${u.cityId}】易主归【${u.factionId}】`);
+                        }
+                    }
+                }
                 // 打完了才叫战场：从这一刻起显示遗址形态，且这个战场此后不能再打
                 markBattlefieldFought(bfId);
                 gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);
                 onFinished?.({ attacker, defender });
                 this.withdrawBattlefieldLegions(bf.name, attacker, defender);
-            },
-        );
+            });
+        } else {
+            // 野战推演
+            this.fieldBattleManager.handleFieldBattleEvent(
+                { ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name },
+                () => {
+                    this.battlefieldBattleRunning = null;
+                    setActiveBattleTitle(null);
+                    if (fb.cityUpdates && fb.cityUpdates.length > 0) {
+                        for (const u of fb.cityUpdates) {
+                            if (u.factionId) {
+                                this.cityManager.updateCity(u.cityId, { factionId: u.factionId });
+                                gameLog('expedition', `🚩 [野战史实结算] 据点【${u.cityId}】易主归【${u.factionId}】`);
+                            }
+                        }
+                    }
+                    // 打完了才叫战场：从这一刻起显示遗址形态，且这个战场此后不能再打
+                    markBattlefieldFought(bfId);
+                    gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);
+                    onFinished?.({ attacker, defender });
+                    this.withdrawBattlefieldLegions(bf.name, attacker, defender);
+                },
+            );
+        }
         return null;
     }
 

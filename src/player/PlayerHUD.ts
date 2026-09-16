@@ -318,18 +318,23 @@ export class PlayerHUD {
         const host = hero.getHostLegion();
         const factionName = hero.factionId ? this.deps.getFactionName(hero.factionId) : '独行';
         const travel = hero.getTravelCityId();
+        const travelPoint = hero.getTravelPointLabel();
         const chasing = hero.isChasingArmy();
         const chaseName = hero.getChaseGeneralName();
         const state = host
             ? `随军 ${host.name}`
             : chasing
                 ? `追击武将${chaseName ? `【${chaseName}】` : ''}（在外行军）`
-                : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';
+                : travelPoint
+                    ? `前往【${travelPoint}】`
+                    : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';
         const questText = quest
             ? (quest.kind === 'restore'
                 ? `助${quest.generalName}复国【${quest.cityName}】`
                 : `随${quest.generalName}攻【${quest.targetCityName}】`)
-            : '到据点找武将';
+            : travelPoint
+                ? `奔赴【${travelPoint}】`
+                : '到据点找武将';
         this.body.innerHTML = '';
 
         const grid = document.createElement('div');

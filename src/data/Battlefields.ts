@@ -67,6 +67,28 @@ export const BATTLEFIELDS: BattlefieldData[] = [
         note: '伊苏斯战役战场（前333年），皮纳鲁斯河畔，亚历山大击溃大流士三世；'
             + '坐标与剧本 -333 的 location 一字不差；战场无势力、无兵力、不可攻占',
     },
+
+    // ── 前 332 年 推罗围城战（马其顿 vs 迦南） ──
+    //    剧本：`HistoricalEventScript` `-332`（`type: 'siege'` 攻城战）。
+    {
+        id: 'bf_tuile',
+        name: '推罗',
+        lat: 33.2709,
+        lng: 35.1962,
+        scriptYear: -332,
+        note: '推罗围城战战场（前332年），亚历山大填海筑堤历时七月破城；攻城战后推罗城易主归马其顿',
+    },
+
+    // ── 前 331 年 高加米拉战役（马其顿 vs 阿契美尼德波斯） ──
+    //    剧本：`HistoricalEventScript` `-331`（`type: 'field_battle'` 野战）。
+    {
+        id: 'bf_gaojiamila',
+        name: '高加米拉',
+        lat: 36.3628,
+        lng: 43.2500,
+        scriptYear: -331,
+        note: '高加米拉战役战场（前331年10月），亚历山大斜线战术与骑兵楔形突击击溃大流士三世；宣告波斯帝国瓦解',
+    },
 ];
 
 /** 按 id 取战场 */

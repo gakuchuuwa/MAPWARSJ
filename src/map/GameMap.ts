@@ -308,6 +308,7 @@ export class GameMap {
      */
     public updateTime(year: number) {
         this.currentYear = year;
+        this.battlefieldLayer?.setYear(year);
         // Vector road updates removed
     }
 
