@@ -44,6 +44,20 @@ export class SubtitleBanner {
                     opacity: 0;
                     transition: opacity ${FADE_MS}ms ease;
                 }
+                /* 🔴 [2026-09-16 主人定] 长段解说（战役背景播报）：短句那套 nowrap+大字距装不下，
+                   这里只在加了 .multiline 时放宽，原有 S 级短句行为一字不动。 */
+                #${BANNER_ID}.multiline {
+                    max-width: min(1180px, calc(100vw - 120px));
+                    white-space: pre-wrap;
+                    letter-spacing: 1px;
+                    line-height: 1.85;
+                    font-weight: 600;
+                    padding: 16px 30px;
+                    /* 🔴 [2026-09-16 主人定]「字幕左对齐，换行放中间」：
+                       **字块**靠 left:50% + translateX(-50%) 居中，**文字**左对齐。
+                       长段落逐行居中会让每行首尾参差、末行孤零零飘在中间，没法读。 */
+                    text-align: left;
+                }
             `;
             document.head.appendChild(style);
         }
@@ -55,12 +69,13 @@ export class SubtitleBanner {
     }
 
     /** 淡入显示；fallbackHoldMs 为兜底自动淡出时间，语音 onend 会提前调用 hide()。 */
-    static show(text: string, fallbackHoldMs = 9000): void {
+    static show(text: string, fallbackHoldMs = 9000, multiline = false): void {
         const el = this.ensure();
         if (this.hideTimer !== null) {
             window.clearTimeout(this.hideTimer);
             this.hideTimer = null;
         }
+        el.classList.toggle('multiline', multiline);
         el.textContent = text;
         void el.offsetWidth; // 连续两条字幕时也保证有淡入过渡
         el.style.opacity = '1';

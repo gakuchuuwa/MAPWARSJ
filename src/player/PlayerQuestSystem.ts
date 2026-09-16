@@ -91,10 +91,12 @@ export interface PlayerQuestDeps {
     closeDialogue: () => void;
     notify: (msg: string, durationMs?: number) => void | (() => void);
     /**
-     * 🔴 [2026-09-16 主人定]「字幕显示在下面」——赶路背景解说走**画面下方的字幕条**，
+     * 🔴 [2026-09-16 主人定]「播报出来，字幕显示在下面」——赶路背景解说。
+     * 由 `SpeechAnnouncer.announceBriefing` 一并负责**语音 + 下方字幕条**，
      * 不走上方那个 toast（那是到达/入伍/报错的操作提示，两者不能混）。
+     * `onDone` 在念完时回调，调用方据此推下一段。
      */
-    subtitle?: (text: string, durationMs?: number) => void | (() => void);
+    announceBriefing?: (text: string, onDone?: () => void) => void;
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
     feed?: {
@@ -587,35 +589,39 @@ export class PlayerQuestSystem {
 
         this.clearJourneyBriefing();
         let i = 0;
-        let nextAt = 0;
-        let dismiss: void | (() => void);
         const title = this.getBattlefieldBattleTitle(bf.id, bf.name);
+        // 玩家还在赶这个战场的路上才继续念（改道/入伍/到了都停）
+        const stillHeading = () => this.deps.hero.isTraveling()
+            && !this.deps.hero.isAttached()
+            && this.deps.hero.getTravelPointLabel() === title;
+
         const pushNext = () => {
-            // 玩家已经不在赶这个战场的路上（改道/入伍/到了）→ 停播，别追着他念
-            if (!this.deps.hero.isTraveling() || this.deps.hero.isAttached()
-                || this.deps.hero.getTravelPointLabel() !== title) {
-                if (typeof dismiss === 'function') dismiss();
+            if (this.briefingCancelled) return;
+            if (i >= paragraphs.length || !stillHeading()) {
                 this.clearJourneyBriefing();
                 return;
             }
-            if (Date.now() < nextAt) return;
-            if (i >= paragraphs.length) {
-                this.clearJourneyBriefing();
-                return;
-            }
-            const duration = journeyBriefingDuration(paragraphs[i]);
-            // 历史直播的解说字幕：优先走下方字幕条，没接线才回落到 toast
-            dismiss = (this.deps.subtitle ?? this.deps.notify)(paragraphs[i], duration);
-            nextAt = Date.now() + duration;
+            const line = paragraphs[i];
             i++;
+            // 🔴 念完再推下一段：语音时长由 TTS 说了算，定时器猜出来的必然对不上口型
+            const speak = this.deps.announceBriefing;
+            if (speak) {
+                speak(line, () => pushNext());
+            } else {
+                // 没接播报（无声环境）→ 回落到按字数留阅读时间的字幕
+                const duration = journeyBriefingDuration(line);
+                this.deps.notify(line, duration);
+                this.briefingTimer = window.setTimeout(() => pushNext(), duration);
+            }
         };
-        this.briefingTimer = window.setInterval(pushNext, 250);
-        pushNext();   // 第一段立刻出，别让玩家先干等
+        this.briefingCancelled = false;
+        pushNext();
     }
 
     private clearJourneyBriefing(): void {
+        this.briefingCancelled = true;   // 已发出的 onDone 回来时不再往下念
         if (this.briefingTimer !== null) {
-            window.clearInterval(this.briefingTimer);
+            window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
         }
     }
@@ -681,6 +687,8 @@ export class PlayerQuestSystem {
     /** 已经播过赶路背景的战场：同一个战场只播一次，改道或再次触发都不重播 */
     private briefedBattlefields = new Set<string>();
     private briefingTimer: number | null = null;
+    /** 停播闸：已经发出去的那段念完回调时，据此不再往下念 */
+    private briefingCancelled = false;
 
     /**
      * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。
