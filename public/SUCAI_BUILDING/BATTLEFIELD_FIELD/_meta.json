@@ -1,0 +1,10 @@
+{
+  "name": "BATTLEFIELD_FIELD",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 240,
+  "anchor_x": 170,
+  "anchor_y": 192,
+  "sld_source": "本项目拼装（SUCAI_BATTLEFIELD 拒马 + DE s_skeleton_soldier）",
+  "note": "战场据点样式 · 拒马 + 阵亡甲士（无城墙无城门无民居）"
+}
