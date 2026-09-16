@@ -3817,6 +3817,8 @@ export class Scene13WarLayer {
             type: init.battleType ?? 'field',
         });
         this.attach();
+        // [2026-09-16 主人定] 进战术模式换一首 BGM：换场景 = 换气氛
+        audioManager.rerollBgm();
         this.active = true;
         this.over = false;
         this.spawns = [];
@@ -4441,9 +4443,12 @@ export class Scene13WarLayer {
             for (const sp of this.spawns) pool += Math.max(0, sp.pool);
             console.warn(`⏹️ [Scene13War] 停止（${reason}）：演出已判负=${this.over} 场上${field}精灵 池${Math.round(pool)}精灵`);
         }
+        const wasActive = this.active;
         this.active = false;
         // 接触交战音景随演出退场淡出（循环音，不停会一直响下去）。
         audioManager.stopSceneLoop('land_contact');
+        // [2026-09-16 主人定] 回战略模式再换一首；stop 会在非活动态被重复调用，只在真退场时换
+        if (wasActive) audioManager.rerollBgm();
         this.spawns = [];
         this.men = [];
         this.corpses = [];

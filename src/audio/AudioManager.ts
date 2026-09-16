@@ -922,6 +922,18 @@ export class AudioManager {
     }
 
     /**
+     * 战略模式 ⇄ 战术模式切换时换一首曲子：换场景 = 换气氛。
+     *
+     * 与「不被打断」那条不冲突 —— 那条禁的是**镜头跨文化区**把曲子掐断（每首只放个开头）；
+     * 进/出 13 一局最多两次，是主人明确要的换场感。
+     * 走洗牌袋取下一首（排除正在放的那首），与自然接力同一套轮播，保证每首都轮得到。
+     */
+    public rerollBgm(): void {
+        if (!this.settings.enabled || !this.unlocked) return;
+        this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+    }
+
+    /**
      * 🔴 [2026-09-16 主人定]「所有背景音乐都要循环播放，这样才能都听到。不要被任何打断。」
      *
      * 原来是**区域优先**：镜头一跨文化区就立刻切歌。战场事件里玩家奔赴战场、镜头一路跨区，
