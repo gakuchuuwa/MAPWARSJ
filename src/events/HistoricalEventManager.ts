@@ -403,7 +403,11 @@ export class HistoricalEventManager {
         // 只为这一仗而生：不自行行军、不另寻目标、不掉兵
         army.scriptMarchExempt = true;
         army.isScriptArmy = true;
-        if (city) markSpawnTierConsumed(city, { general: true, elite: true });
+        // 🔴 [2026-09-16 修「推罗守将不是阿泽米尔」] 攻城战守方军团不占将位（legionGeneralId=null），
+        //    守将/精锐本该由 SiegeManager 的 assignSiegeGarrisonTier 挂到**城**上；若这里照旧消耗城的
+        //    将/精名额，assignSiegeGarrisonTier 的 needGeneral 会因 spawnGeneralUsed=true 而跳过
+        //    → 城拿不到守将 → 守方只显示军团名、不显示阿泽米尔。故攻城战守方不得在此消耗名额。
+        if (city && !isSiegeDefender) markSpawnTierConsumed(city, { general: true, elite: true });
         return army;
     }
 

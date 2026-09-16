@@ -540,8 +540,13 @@ export class PerformanceMonitor {
             max-width: 420px;
             max-height: 90vh;
             overflow-y: auto;
-            pointer-events: none;
-            user-select: none;
+            /* 🔴 [2026-09-16 主人要「F3 面板内容可以复制」]
+               原来 pointer-events:none + user-select:none，鼠标穿透、文字选不中，
+               想把数据贴给别人只能照着念。改为可选中；面板本身不拦地图操作，
+               靠下面那个 📋 按钮一键复制全文。 */
+            pointer-events: auto;
+            user-select: text;
+            cursor: default;
             display: none;
             box-shadow: 0 4px 24px rgba(0,0,0,0.45);
         `;
@@ -554,6 +559,26 @@ export class PerformanceMonitor {
         const header = document.createElement('div');
         header.style.cssText = 'font-weight: bold; font-size: 13px; margin-bottom: 6px; color: #ffcc00; border-bottom: 1px solid #444; padding-bottom: 4px;';
         header.textContent = '📊 性能监控 (F3 或 Ctrl+Shift+M 切换)';
+
+        // 🔴 [2026-09-16 主人要「F3 面板内容可以复制」] 一键复制全文，省得手动框选。
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = '📋 复制';
+        copyBtn.style.cssText = 'float:right;font:inherit;font-size:11px;font-weight:normal;'
+            + 'background:#2f2a22;color:#e8e0d0;border:1px solid #5a5042;border-radius:4px;'
+            + 'padding:1px 8px;cursor:pointer;margin-left:8px;';
+        copyBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            const text = `${header.textContent}
+${content.innerText}`;
+            void navigator.clipboard.writeText(text).then(
+                () => { copyBtn.textContent = '✓ 已复制'; },
+                () => { copyBtn.textContent = '✗ 失败'; },
+            ).finally(() => {
+                window.setTimeout(() => { copyBtn.textContent = '📋 复制'; }, 1500);
+            });
+        });
+        header.appendChild(copyBtn);
+
         overlay.insertBefore(header, content);
 
         document.body.appendChild(overlay);
@@ -701,6 +726,7 @@ export class PerformanceMonitor {
         //    显示当前曲名 + 响度补偿 + 此刻真实音量。gain 1.00 且不在补偿表里的，
         //    正是最可能偏响/偏轻的那批（没做过响度拉平），标黄提醒。
         const bgm = audioManager.getBgmStatus();
+        const duck = audioManager.getBgmDuckInfo();
         const bgmHtml = bgm
             ? `<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;">
                 <span style="color:#888;">♪ BGM</span>
@@ -709,6 +735,7 @@ export class PerformanceMonitor {
                 <div style="color:#9aa;margin-top:2px;">
                     补偿 <span style="color:${bgm.inGainTable ? '#ddd' : '#FF9800'};">${bgm.gain.toFixed(2)}${bgm.inGainTable ? '' : ' 未入表'}</span> ·
                     音量 <span style="color:#ddd;">${bgm.volume.toFixed(3)}</span> ·
+                    压低 <span style="color:${duck.factor < 1 ? '#FF9800' : '#777'};">${duck.factor < 1 ? `×${duck.factor.toFixed(2)} ${duck.reason}` : '无'}</span> ·
                     <span style="color:#777;">${bgm.currentSec}s / ${bgm.durationSec || '?'}s</span>
                     ${bgm.paused ? '<span style="color:#f44336;"> · 已暂停</span>' : ''}
                 </div>

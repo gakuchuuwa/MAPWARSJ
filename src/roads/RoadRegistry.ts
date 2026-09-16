@@ -928,6 +928,22 @@ export class RoadRegistry {
         return this.findNearestCityId(lat, lng, maxDistDeg);
     }
 
+    /**
+     * 🔴 [2026-09-16 主人报障「无路可达【波斯门战役】」]
+     * 取离目标最近的路网据点**坐标**（找不到返回 null）。
+     * 用途：战场不是据点、不在路网上（见 Battlefields.ts），像波斯门那样深在扎格罗斯山里、
+     * 最近的波斯波利斯都有 167km，`findPathOnRoad` 的 1.0° 判据够不着，直接判无路。
+     * 调用方拿它当**锚点**：先沿路网走到这座城，最后一段再直奔战场。
+     */
+    public getNearestCityPos(
+        lat: number, lng: number, maxDistDeg: number = 0.5,
+    ): { lat: number; lng: number } | null {
+        const id = this.findNearestCityId(lat, lng, maxDistDeg);
+        if (!id) return null;
+        const node = this.nodes.get(id);
+        return node ? { lat: node.lat, lng: node.lng } : null;
+    }
+
     // ===== 道路CRUD =====
 
     /**

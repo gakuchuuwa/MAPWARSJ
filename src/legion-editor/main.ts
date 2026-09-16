@@ -2004,20 +2004,30 @@ interface DistinctLegionEntry {
 }
 function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     const map = new Map<string, DistinctLegionEntry>();
-    // 1. 文化区默认军团（二层时代文明军团）
-    for (const rg of REGION_ORDER) {
-        const def = getRegionDefaultLegion(rg);
-        const name = getCultureLegionName(rg);
-        if (!map.has(name)) {
-            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
-        }
-    }
-    // 1.5 一级：16 母体文化军团（与二层时代军团彻底物理隔离，互不影响）
+    // 🔴 [2026-09-16 主人报障「【中东军团】编制不一致：达尔达尼亚、本都、弗里吉亚、吕底亚 ↔ 系统基准预设」]
+    //    **一级 16 母体必须先登记**，顺序不能反。原来是「文化区默认」先跑、母体后跑且 `if (!map.has)`：
+    //      · `getCultureLegionName('WEST_ASIA_ANTIQUITY')` 返回的就是母体名「中东军团」；
+    //      · 但编制取的是 `getRegionLegionComposition('WEST_ASIA_ANTIQUITY')` = **null**
+    //        （母体配置只在 ORIE 这个键上开，具体区经 toBase16 归属过去，本就不该有自己的编制）
+    //        → 兜底成 `square` + 默认兵种，却顶着「中东军团」这个名字占了位；
+    //      · 轮到母体那轮，`map.has('中东军团')` 已为真 → **真正的 ORIE 编制被跳过**。
+    //    基准于是成了「square|一堆默认兵」，而势力实际生效的是真母体
+    //    「balance_yoke|camel_heavy,shock_cavalry,cav_archer_heavy」，当场判定编制不一致。
+    //    母体是编制的权威（只在 16 母体开键），所以它先写、文化区默认只补空位。
+    // 1. 一级：16 母体文化军团（权威，先登记）
     for (const rg of BASE_16_REGIONS) {
         const name = getBase16LegionName(rg as RegionType);
         if (!map.has(name)) {
             const def = getBase16RegionDefaultLegion(rg as RegionType);
             map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg as RegionType });
+        }
+    }
+    // 1.5 文化区默认军团（二层时代文明军团）：只补母体没占的名字
+    for (const rg of REGION_ORDER) {
+        const def = getRegionDefaultLegion(rg);
+        const name = getCultureLegionName(rg);
+        if (!map.has(name)) {
+            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
         }
     }
     // 1.6 二级：59 个文明专属军团（权威定义：59 文明 × 时代专属城堡）

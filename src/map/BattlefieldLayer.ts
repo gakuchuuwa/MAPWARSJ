@@ -114,7 +114,7 @@ export class BattlefieldLayer {
         }
     }
 
-    /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 */
+    /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 + 标牌加「战场」 */
     private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
@@ -125,9 +125,12 @@ export class BattlefieldLayer {
         const morph = fought ? renderBattlefieldBoxHtml(BASE_ART_W, bf.id) : '';
 
         // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
-        //    标牌**只留地名**。原先这里会在标牌下多渲染一行「剧情武将」名字（如伊苏斯 → 大流士三世），
-        //    已整段删除（连同只服务它的 GENERAL_NAME_BY_ID 表）。
-        //    该武将仍在剧本里正常出场：-333 伊苏斯之战的守方主帅就是 `defenderGeneralId: 'daliushi_iii'`。
+        //    标牌只留地名。
+        // 🔴 [2026-09-16 主人定「地标在战场事件结束后加上战场两个字」]
+        //    未打完 = 纯地名（如「伊苏斯」）；打完战毕 = 地名 + 战场（如「伊苏斯战场」）
+        const displayName = fought
+            ? (bf.name.endsWith('战场') ? bf.name : `${bf.name}战场`)
+            : bf.name;
 
         return `
             <div class="battlefield-container" style="
@@ -140,7 +143,7 @@ export class BattlefieldLayer {
                 cursor: pointer;
             ">
                 ${morph}
-                <!-- 地名标牌（打完前**只有这个**） -->
+                <!-- 地名标牌（未打完 = 地名；打完战毕 = 地名 + 战场） -->
                 <div class="bf-label" style="
                     position: absolute;
                     bottom: -18px;
@@ -159,7 +162,7 @@ export class BattlefieldLayer {
                     box-shadow: 0 2px 4px rgba(0,0,0,0.6);
                     z-index: 400;
                 ">
-                    ${bf.name}
+                    ${displayName}
                 </div>
             </div>
         `;
