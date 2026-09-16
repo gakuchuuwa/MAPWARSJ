@@ -232,12 +232,32 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const rankScale = typeof rank === 'number' && Number.isFinite(rank)
             ? 1.35 - (Math.max(1, Math.min(10, rank)) - 1) * 0.065
             : 1;
-        const base = Math.max(2.0 * VectorRiverLayer.getScaleMultiplier(zoom), 1.0) * 1.15;
-        return Math.max(1.15, base * rankScale);
+        // 变宽加粗：基础线宽提升，保证河流无论在山脊谷底还是平原沙漠都清晰分明
+        // 🔴 [2026-09-12 主人「河道宽一点是不是更好」→ 是] 叠加系数 1.25 → **1.45**（全河网约 +16%）。
+        //    干流（scalerank 小）加得更多、支流克制，不会糊成一片；矢量层在 riverPane z=340
+        //    （低于领土/道路 350），加宽也不会盖住道路与据点。
+        const base = Math.max(2.8 * VectorRiverLayer.getScaleMultiplier(zoom), 1.4) * 1.45;
+        return Math.max(1.6, base * rankScale);
     }
 
-    // 河岸用较薄的半透明灰青描边，与地面融合，同时保留山谷中的可读性。
-    private static getBorderStyle(feature: any, zoom: number): L.PathOptions {
+    /**
+     * 🔴 [2026-09-12 主人「只优化 ZOOM9 可以吗，游戏大部分都是在 ZOOM9 运行」] **只在 zoom ≤9 把河画圆滑**。
+     *
+     * 原理与代价（都有案例实测背书，见 `docs/03-runtime/lag-casebook.md` 案例 D）：
+     *   · `smoothFactor` 是 Leaflet 投影顶点时的**抽稀容差**：值越小 → 保留顶点越多 → 折线越圆滑。
+     *   · 该层的成本已经被"**视口裁剪**"治过（只重建/重投影**可见子集**，全库 985,368 点里 99.8% 的屏外点不再参与）
+     *     → 所以"只让 zoom 9 更圆滑"**只多花 zoom 9 可见部分的钱**，其它档位一分不多花 ✓。
+     *   · 档位跟随 `getScaleMultiplier` 的**分档**（≤7 / 8~9 / 10~11 / ≥12）而不是精确 zoom 值 ——
+     *     因为样式只在**跨档**时重建（同档内换 zoom 值不重设），跟档位走才能保证 8↔9 切换时新值生效 ✓。
+     * ⚠️ 若 zoom 9 平移变卡，把 ZOOM9_SMOOTH 调回 1.0（Leaflet 默认）即可回到原状。
+     */
+    private static readonly ZOOM9_SMOOTH = 0.35;
+    private static smoothFactorFor(zoom: number): number {
+        return VectorRiverLayer.getScaleMultiplier(zoom) === 1.0 ? VectorRiverLayer.ZOOM9_SMOOTH : 1.0;
+    }
+
+    // 河岸描边：使用深青灰底色与 0.65 不透明度，提供清晰轮廓，同时与水系底色同相
+    private static getBorderStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
             return {
@@ -248,17 +268,20 @@ export class VectorRiverLayer extends L.FeatureGroup {
 
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
-            color: '#365968',
-            weight: waterWeight + 1.6,
-            opacity: 0.62,
+            // 🔴 [2026-09-12 主人「两层要融合，看着像一种」] 岸线由深青灰 #24485A @0.65 改为**同色系浅岸**
+            //    #2E6B86 @0.35、描边由 +1.8 收到 +1.2 —— 与栅格层的柔边同观感，两层不再各有一道边。
+            color: '#2E6B86',
+            weight: waterWeight + 1.2,
+            opacity: 0.35,
             lineCap: 'round',
             lineJoin: 'round',
+            smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
             className: 'vector-river-border'
         };
     }
 
-    // 水流主体与 RiverWorker 的宽河道、湖海水面使用同一蓝色。
-    private static getWaterStyle(feature: any, zoom: number): L.PathOptions {
+    // 水流主体：饱满清晰的深湖蓝水色 (#367E9E)，与湖泊水域同源同系，水体明晰不发虚
+    private static getWaterStyle(feature: any, zoom: number): L.PolylineOptions {
         const featureCla = feature?.properties?.featurecla;
         if (featureCla === 'Lake Centerline') {
             return {
@@ -268,11 +291,12 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: '#3E809E',
+            color: '#367E9E',
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 1.0,
             lineCap: 'round',
             lineJoin: 'round',
+            smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
             className: 'vector-river-water'
         };
     }

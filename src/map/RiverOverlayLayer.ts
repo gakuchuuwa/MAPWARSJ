@@ -26,7 +26,8 @@ export class RiverOverlayLayer extends L.GridLayer {
             tileSize: 256,
             pane: 'riverPane',
             zIndex: 340, // 位于领土/道路(350)之下
-            opacity: 0.8,
+            // DE texture supplies water detail; hide discontinuous DEM colors below.
+            opacity: 1.0,
             ...options
         });
 

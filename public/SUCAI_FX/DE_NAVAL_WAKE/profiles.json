@@ -1,0 +1,120 @@
+{
+  "back": {
+    "width": 140,
+    "height": 140,
+    "frames": 30,
+    "directions": 16,
+    "profiles": {
+      "small": {
+        "AtlasFile": "textures\\atlases\\wake_back.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.42,
+        "Duration1": 1.5,
+        "Duration2": 2.0,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      },
+      "medium": {
+        "AtlasFile": "textures\\atlases\\wake_back.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.62,
+        "Duration1": 1.5,
+        "Duration2": 2.0,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      },
+      "large": {
+        "AtlasFile": "textures\\atlases\\wake_back.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.8333,
+        "Duration1": 1.5,
+        "Duration2": 2.0,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      }
+    }
+  },
+  "front": {
+    "width": 120,
+    "height": 120,
+    "frames": 30,
+    "directions": 16,
+    "profiles": {
+      "small": {
+        "AtlasFile": "textures\\atlases\\wake_front.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.42,
+        "Duration1": 1.25,
+        "Duration2": 1.75,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      },
+      "medium": {
+        "AtlasFile": "textures\\atlases\\wake_front.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.62,
+        "Duration1": 1.25,
+        "Duration2": 1.75,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      },
+      "large": {
+        "AtlasFile": "textures\\atlases\\wake_front.dds",
+        "ImageFirst": 0,
+        "ImageCount": 480,
+        "ImageAngles": 16,
+        "Type": "Once",
+        "AlphaStart": 1,
+        "AlphaEnd": 0.0,
+        "Layer": "Terrain",
+        "Scale": 0.8333,
+        "Duration1": 1.25,
+        "Duration2": 1.75,
+        "StartMode": "Fade",
+        "StartDuration": 0.25,
+        "StopMode": "Fade",
+        "StopDuration": 0.25
+      }
+    }
+  }
+}

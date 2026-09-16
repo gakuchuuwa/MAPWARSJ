@@ -14,6 +14,19 @@
     display: inline-block;
     line-height: 0;
     vertical-align: bottom;
+    /* 🔴 [2026-09-13 性能] 建筑投影挂在**整摞**上，不是每张建筑图各挂一个。
+       改前实测（trace + DOM 普查）：屏上 4300~4600 个元素带 CSS filter，其中
+       3568 张建筑 img 各一条 drop-shadow(0 2px 3px)、774 张各一条 (0 2px 4px)；
+       每次平移都要为这几千个元素各跑一遍滤镜 →
+       8 秒窗口里 Layerize 3139ms/142 次（单次 22ms）、Paint 1102ms、UpdateLayer 45030 次，
+       而同一窗口 JS 热点每帧只有 ~4ms（GC 已排除：堆 520/4192MB、drops=0）。
+       改挂整摞后 A/B 两轮一致：Paint 949ms×6773 → 482ms×3656（第二轮 898 → 42ms），
+       滤镜元素 4300 → 约 200。
+       ⚠️ 必须挂在 .city-building-stack 上，别挪到 .city-image-container：
+         ① stack 本来就是 position:relative，加 filter 不改变绝对定位子元素的包含块（布局零风险）；
+            而 .city-image-container 上再加会把旗杆一起投影。
+         ② 代价：同一摞里建筑互相之间的内阴影没了，整摞只投一个轮廓影；地面装饰（plaza）也会带上淡影。 */
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
 }
 
 /*

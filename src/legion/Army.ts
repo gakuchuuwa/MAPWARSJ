@@ -273,6 +273,35 @@ export class Army implements IBattleUnit {
     public expeditionUnlocked: boolean = false;
 
     /**
+     * 🔴 [2026-09-11 主人定] **剧本行军豁免：剧本军团赶赴战场期间的特殊放行。**
+     *
+     * 原话：「让剧本军团直接赶赴战场，期间，不予其他任何人交战。」
+     *       「剧本军团没有 15 秒兵力消耗。该修复的修复。」
+     *
+     * true = 本军团正在按剧本赶路，**四处一律放行**（缺一不可）：
+     *   ① `LegionFieldBattle.tryEngageFieldBattle` —— 野战：**本方不主动开战，且别人也不能把它拖进战斗**
+     *      （所以 gate 要判两边，否则敌军自己那一轮照样能撞上来开战）；
+     *   ② `LegionManager.findHostileCityNear` —— 敌城 ZOC：返回 null，否则行为树会「先处理该城」把它钉在城下；
+     *   ③ `LegionManager.triggerSiege` —— 攻城总咽喉：返回 'skipped'，覆盖其余全部攻城触发路径
+     *      （目标城抵达 / 沿路行军 / 行为树动作 / 撞驻军转攻城）；
+     *   ④ `MarchAttritionSystem.tickMarchAttrition` —— **行军减兵（15 秒整跳）全免**，
+     *      否则跑过 15 秒免费期后每 15 秒扣 15%/30%/45%……，
+     *      剧情兵数（35000）会在抵达战场前就被啃光、甚至归零触发战败销毁，剧本直接断掉。
+     *
+     * 与远征（`expeditionTargetCityId`）**不是一回事**：远征军照常交战、照吃行军减兵
+     *   （`MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS = false`，2026-07-27 主人定），
+     *   这是剧本专属的额外豁免。
+     * 抵达战场后由剧本亲自解除本旗标并开打（`launchScriptBattle`），不由引擎自行解除。
+     */
+    public scriptMarchExempt: boolean = false;
+    /**
+     * 🔴 [2026-09-12 主人定] 剧本军团**身份**标记：true = 剧本导演（HistoricalEventManager）创建的军团，
+     *   其武将即「剧本武将」，可在大地图使用战略技（豁免「仅跟拍军团」平衡规则）。
+     *   与 scriptMarchExempt（行军豁免）严格分开：那个只管赶路期间不交战/不掉兵，
+     *   这个只标身份、不豁免任何行为。
+     */
+    public isScriptArmy: boolean = false;
+    /**
      * 行军减兵（远输困境）：自最后一次途经己方据点半径以来的游戏秒数（时间口径·一视同仁）。
      * LegionManager 主循环每帧累加（战斗中照走、战后休整停表；远征豁免军团不走表），
      * 途经任一己方据点 RESET_RADIUS_KM 内清零；split 时子军团继承（防拆分刷补给漏洞）。
@@ -1140,9 +1169,32 @@ export class Army implements IBattleUnit {
             rendererRef.destroyTime = Date.now();
             getGlobalUnitRenderer()?.invalidateView();
             const corpseMs = GameConfig.LEGION.CORPSE_DISPLAY_MS;
-            setTimeout(() => {
+            /* 🔴 [2026-09-12 主人报障「战略地图看不到阵亡动画，也看不到 15 秒尸体渐隐」]
+             *   原来这里是一条写死的 `setTimeout(rendererRef.destroy, corpseMs)`，走**真实时间**、
+             *   13 残局期间照跑不误。而残局时长 FOLLOW_SWITCH_DELAY_MS 已被改成 15000，
+             *   与 CORPSE_DISPLAY_MS 同长且**同时起算**（军团阵亡 → 演出判负 → 立刻起残局），
+             *   于是退场那一刻这条定时器早已（或刚好）到点，unit 已被 unregister ——
+             *   `BattleSceneLayer.exit` 里那句 `resetCorpseTimers()` 连对象都找不到，
+             *   重置的是空集合，所以「重置尸体计时」那版修法没有任何效果。
+             *   （残局期间 GlobalUnitRenderer.animate 因地图容器 hidden 整个早退，
+             *     尸体一帧没画过、阵亡动画的槽位状态机也一格没走，全被这条定时器白白吃掉。）
+             *
+             *   改成「到点前重新对表」的清扫器，两条规矩：
+             *     ① 13 场景还在（战略地图被盖住）→ 不清除，顺延；
+             *     ② 清除时刻永远跟着 `destroyTime` 走 —— 退场时 resetCorpseTimers 把它推到当下，
+             *        尸体自然从零重新走满 15 秒（保留 + 末段渐隐），与绘制那边同一个时间基准。
+             */
+            const sweepCorpse = (): void => {
+                const scene13Up = (window as { game?: { battleScene?: { isActive?(): boolean } } }).game
+                    ?.battleScene?.isActive?.() === true;
+                const left = (rendererRef.destroyTime ?? Date.now()) + corpseMs - Date.now();
+                if (scene13Up || left > 0) {
+                    setTimeout(sweepCorpse, Math.max(left, 500));
+                    return;
+                }
                 rendererRef.destroy();
-            }, corpseMs);
+            };
+            setTimeout(sweepCorpse, corpseMs);
             this.renderer = null;
         }
 

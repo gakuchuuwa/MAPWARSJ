@@ -75,6 +75,7 @@ export type RegionType =
     | 'PORTUGUESE'  // 葡萄牙[2026-08-28 补 DE 文明]
     | 'ETHIOPIANS'  // 埃塞俄比亚[2026-08-28 补 DE 文明]
     | 'BENGALIS'  // 孟加拉[2026-08-28 补 DE 文明]
+    | 'BENGALIS_ANTIQUITY'  // 古典孟加拉[2026-09-12 主人三条规矩：ratha_melee 须有军团套用]
     | 'GURJARAS'  // 瞿折罗[2026-08-28 补 DE 文明]
     | 'VIETNAMESE'  // 越南[2026-08-28 补 DE 文明]
     | 'KHMER'  // 高棉[2026-08-28 补 DE 文明]
@@ -119,6 +120,7 @@ export type RegionType =
     | 'JURCHEN'      // 女真（大金会宁府铁浮屠与拐子马）
     | 'SELJUQ'       // 塞尔柱（木鹿梅尔夫大塞尔柱帝国丹丹纳骑）
     | 'OTTOMAN'      // 奥斯曼（布尔萨苏丹亲兵耶尼切里军团）
+    | 'OTTOMAN_IMPERIAL' // 帝国奥斯曼（埃迪尔内塞利米耶清真寺）
     | 'FRENCH'       // 法兰西（百年战争巴黎敕令重装骑士）
     | 'MANCHU'       // 满洲（八旗重弓大箭骑射与巴牙喇白甲双层重铠肉搏突阵）
     | 'MUGHAL'       // 莫卧儿（阿格拉锁子甲战象冲阵与拉杰普特弯刀铁骑）
@@ -220,6 +222,7 @@ export const REGION_ORDER: RegionType[] = [
     'PORTUGUESE',
     'ETHIOPIANS',
     'BENGALIS',
+    'BENGALIS_ANTIQUITY',
     'GURJARAS',
     'VIETNAMESE',
     'KHMER',
@@ -263,6 +266,7 @@ export const REGION_ORDER: RegionType[] = [
     'JURCHEN',
     'SELJUQ',
     'OTTOMAN',
+    'OTTOMAN_IMPERIAL',
     'FRENCH',
     'MANCHU',
     'MUGHAL',
@@ -421,6 +425,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     PORTUGUESE: '帝国葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
+    BENGALIS_ANTIQUITY: '古典孟加拉',
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
@@ -465,6 +470,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     JURCHEN: '城堡女真',
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
+    OTTOMAN_IMPERIAL: '帝国奥斯曼',
     FRENCH: '城堡法兰西',
     MANCHU: '帝国满洲',
     MUGHAL: '帝国莫卧儿',
@@ -603,6 +609,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     PORTUGUESE: '帝国葡萄牙',
     ETHIOPIANS: '封建埃塞俄比亚',
     BENGALIS: '封建孟加拉',
+    BENGALIS_ANTIQUITY: '古典孟加拉',
     GURJARAS: '封建瞿折罗',
     VIETNAMESE: '城堡大越',
     KHMER: '城堡高棉',
@@ -647,6 +654,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     JURCHEN: '城堡女真',
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
+    OTTOMAN_IMPERIAL: '帝国奥斯曼',
     FRENCH: '城堡法兰西',
     MANCHU: '帝国满洲',
     MUGHAL: '帝国莫卧儿',
@@ -725,9 +733,9 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     //    而坐标判定不覆盖美洲/南亚/伊朗 —— 实测马丘比丘、戈尔康达、巴姆古城**全被判成「中原」**，
     //    也就是印加帝国在游戏里按中原文化出兵。加进别名表后游戏与编辑器一起修好。
     //    归属按史实定，且与这些势力**已经在用的军团**互相印证：
-    'PERSIANS': 'PERSIAN',          // 克尔曼(巴姆古城, 伊朗) —— 单复数写错而已，本来就在用【波斯军团】
+    'PERSIANS': 'PERSIAN',          // 克尔曼(巴姆古城, 伊朗) —— 单复数写错而已，本来就在用【古典时代阿契美尼德军团】
     'THRACIANS': 'THRACIAN',        // 奥德里西亚(塞乌托波利) —— 同上，本来就在用【色雷斯军团】
-    'INCAS': 'ANDE',                // 塔万廷苏尤(马丘比丘) = 印加帝国，本来就在用【安第斯军团】
+    'INCAS': 'ANDE',                // 塔万廷苏尤(马丘比丘) = 印加帝国，本来就在用【城堡时代克丘亚军团】
     'INDIANS': 'PURU',              // 库特布朝(戈尔康达, 17.4°N 德干) —— 泰卢固语区，属达罗毗荼南印度。
                                     //   注意别写成 PORUS(补噜)：那是旁遮普的波鲁斯王，在印度西北，方位相反。
 };
@@ -933,6 +941,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     PORTUGUESE: '#00838f',  // 葡萄牙[2026-08-28]
     ETHIOPIANS: '#9e9d24',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: '#d84315',  // 孟加拉[2026-08-28]
+    BENGALIS_ANTIQUITY: '#bf360c',  // 古典孟加拉[2026-09-12]
     GURJARAS: '#ff8f00',  // 瞿折罗[2026-08-28]
     VIETNAMESE: '#2e7d32',  // 越南[2026-08-28]
     KHMER: '#00695c',  // 高棉[2026-08-28]
@@ -977,6 +986,7 @@ export const REGION_BOUNDARY_COLORS: Record<RegionType, string> = {
     JURCHEN: '#d4af37',
     SELJUQ: '#006a4e',
     OTTOMAN: '#b22222',
+    OTTOMAN_IMPERIAL: '#b22222',
     FRENCH: '#002395',
     MANCHU: '#d4af37',
     MUGHAL: '#c2185b',
@@ -1627,13 +1637,20 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         big: resolvePath('/cities/latin_big.png'),
         pass: resolvePath('/cities/latin_pass.png')
     },
-    BENGALIS: { // 继承 INDIA 城市素材 // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+    BENGALIS: { // 继承 INDIA 城市素材 // 暂借滇缅图标（南亚，待专属素材）
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
         pass: resolvePath('/cities/dianqian_pass.png')
     },
-    GURJARAS: { // 继承 INDIA 城市素材 // ⚠️ 暂借滇缅图标（南亚，待专属素材）
+    // 2026-09-12 古典孟加拉：与孟加拉同城市素材（沿用 INDIA/滇缅图标），仅时代分档
+    BENGALIS_ANTIQUITY: {
+        small: resolvePath('/cities/dianqian_small.png'),
+        medium: resolvePath('/cities/dianqian_medium.png'),
+        big: resolvePath('/cities/dianqian_big.png'),
+        pass: resolvePath('/cities/dianqian_pass.png')
+    },
+    GURJARAS: { // 继承 INDIA 城市素材 // 暂借滇缅图标（南亚，待专属素材）
         small: resolvePath('/cities/dianqian_small.png'),
         medium: resolvePath('/cities/dianqian_medium.png'),
         big: resolvePath('/cities/dianqian_big.png'),
@@ -1892,6 +1909,12 @@ const STYLE_MAP: Record<RegionType, { small: string, medium: string, big: string
         pass: resolvePath('/cities/central_asia_pass.png')
     },
     OTTOMAN: {
+        small: resolvePath('/cities/middle_eastern_small.png'),
+        medium: resolvePath('/cities/middle_eastern_medium.png'),
+        big: resolvePath('/cities/middle_eastern_big.png'),
+        pass: resolvePath('/cities/middle_eastern_pass.png')
+    },
+    OTTOMAN_IMPERIAL: { // ✅ 复用中东素材（帝国奥斯曼）
         small: resolvePath('/cities/middle_eastern_small.png'),
         medium: resolvePath('/cities/middle_eastern_medium.png'),
         big: resolvePath('/cities/middle_eastern_big.png'),
@@ -2291,6 +2314,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     PORTUGUESE: ['city_lisiben'],  // 葡萄牙（中心据点已挂）
     ETHIOPIANS: ['city_lalibeila'],  // 埃塞俄比亚（中心据点已挂）
     BENGALIS: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
+    BENGALIS_ANTIQUITY: ['city_gaodacheng'],  // 孟加拉（中心据点已挂）
     GURJARAS: ['city_patan'],  // 瞿折罗（中心据点已挂）
     VIETNAMESE: ['city_shenglong'],  // 越南（中心据点已挂）
     KHMER: ['city_angkor'],  // 高棉（中心据点已挂）
@@ -2335,6 +2359,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     JURCHEN:     ['city_huining'],
     SELJUQ:      ['city_merv'],
     OTTOMAN:     ['city_buersa'],
+    OTTOMAN_IMPERIAL: ['city_aidiernei'],
     FRENCH:      ['city_bali'],
     MANCHU:      ['city_hetuala'],
     MUGHAL:      ['city_agela'],

@@ -37,9 +37,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     shi_clan: { name: '柘枝胡骑', tier: 4 },
   guzgan: { name: '古兹根卫队', tier: 4 },       // 法里亚布·古兹根戍卫
   badakhshan: { name: '达克游骑', tier: 4 },     // 法扎巴德·达克边防
-    kawusi: { name: '卡乌斯铁卫', tier: 4 },
   xianhai: { name: '咸海骁锐', tier: 4 },        // 养吉干·花剌子模北境
-  wuhu: { name: '乌护游骑', tier: 4 },           // 真珠河·乌古斯游牧（1040丹达内克胜伽色尼）
   jie: { name: '柘羯勇士', tier: 3 },            // 粟特城邦极其著名的职业重装雇佣兵/死士，文化辨识度极高，升入T3知名
   // —— 2026-06-20 新增：旁遮普·阿托克 ——
   pangzha: { name: '卡尔萨武士', tier: 1 },      // 阿托克·戈宾德辛格创立卡尔萨，兰季特辛格旁遮普帝国核心武力

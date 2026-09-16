@@ -1,234 +1,116 @@
-/**
- * 战略地图船只水上拖尾与水花绘制器（NavalWakeDrawer）
- *
- * 依据 AoE2 DE 原生粒子系统：
- * - resources\_common\particles\wake_back_*.json (船尾尾波/尾迹)
- * - resources\_common\particles\wake_front_*.json (船头破浪水花)
- * - 16 方向（0~15），每个方向 30 帧连续水纹动画
- * - 渲染在水面层（船体底层），随船体航行产生即时浪花与沿历史航迹消散的白色波纹拖尾。
- */
-
-interface WakeDirMeta {
-    frames: number;
-    box_w: number;
-    box_h: number;
-    anchor_x: number;
-    anchor_y: number;
-    dir: number;
+type Point = { x: number; y: number };
+/** 水迹在世界坐标中保存，地图移动或缩放后重新投影。 */
+export interface WakeProjection {
+    toWorld(point: Point): Point;
+    toScreen(point: Point): Point;
 }
-
-interface WakeDirAsset {
-    img: HTMLImageElement | null;
-    meta: WakeDirMeta;
-    loaded: boolean;
+interface Profile {
+    AlphaStart: number; AlphaEnd: number; Scale: number;
+    Duration1: number; Duration2: number; StartDuration: number; StopDuration: number;
 }
+interface Asset {
+    width: number; height: number; frames: number; directions: number;
+    profiles: Record<'small' | 'medium' | 'large', Profile>;
+}
+interface Particle {
+    position: Point; direction: number; born: number; duration: number;
+    kind: 'back' | 'front'; profile: Profile;
+}
+interface FleetWake { particles: Particle[]; lastEmission: number; lastSeen: number; }
 
+/** DE 原始 DDS 解包贴图和 Once 粒子寿命；发射间隔为本项目渲染采样参数。 */
 export class NavalWakeDrawer {
-    private static wakeBackDirs: (WakeDirAsset | null)[] = new Array(16).fill(null);
-    private static wakeFrontDirs: (WakeDirAsset | null)[] = new Array(16).fill(null);
-    private static isLoading = false;
-    private static isLoaded = false;
+    private static assets: Record<'back' | 'front', Asset> | null = null;
+    private static images: Partial<Record<'back' | 'front', HTMLImageElement>> = {};
+    private static loading = false;
+    private static fleets = new Map<string, FleetWake>();
+    private static readonly EMISSION_MS = 125;
+    private static lastCleanup = 0;
 
-    /** 预加载 16 方向 WAKE_BACK 与 WAKE_FRONT 素材 */
     public static ensureLoaded(): void {
-        if (this.isLoaded || this.isLoading) return;
-        this.isLoading = true;
-
-        const loadDir = (type: 'WAKE_BACK' | 'WAKE_FRONT', dirIdx: number): Promise<WakeDirAsset | null> => {
-            const dirStr = `dir${String(dirIdx).padStart(2, '0')}`;
-            const basePath = `/SUCAI/${type}/${dirStr}/`;
-            const defaultBox = type === 'WAKE_BACK' ? 140 : 120;
-            const defaultAnchor = defaultBox / 2;
-
-            return fetch(`${basePath}_meta.json`)
-                .then(res => res.ok ? res.json() : null)
-                .catch(() => null)
-                .then(metaJson => {
-                    const meta: WakeDirMeta = metaJson || {
-                        frames: 30,
-                        box_w: defaultBox,
-                        box_h: defaultBox,
-                        anchor_x: defaultAnchor,
-                        anchor_y: defaultAnchor,
-                        dir: dirIdx,
-                    };
-                    return new Promise<WakeDirAsset>((resolve) => {
-                        const img = new Image();
-                        img.onload = () => resolve({ img, meta, loaded: true });
-                        img.onerror = () => resolve({ img: null, meta, loaded: false });
-                        img.src = `${basePath}fly_0.png`;
-                    });
-                })
-                .catch(() => null);
-        };
-
-        const promises: Promise<any>[] = [];
-        for (let d = 0; d < 16; d++) {
-            promises.push(
-                loadDir('WAKE_BACK', d).then(asset => {
-                    this.wakeBackDirs[d] = asset;
-                }),
-                loadDir('WAKE_FRONT', d).then(asset => {
-                    this.wakeFrontDirs[d] = asset;
-                })
-            );
-        }
-
-        Promise.all(promises).then(() => {
-            this.isLoaded = true;
-            this.isLoading = false;
+        if (this.loading || this.assets) return;
+        this.loading = true;
+        const base = '/SUCAI_FX/DE_NAVAL_WAKE/';
+        const loadImage = (kind: 'back' | 'front') => new Promise<void>((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => { this.images[kind] = img; resolve(); };
+            img.onerror = reject;
+            img.src = `${base}wake_${kind}.png`;
+        });
+        void Promise.all([
+            fetch(`${base}profiles.json`).then(res => {
+                if (!res.ok) throw new Error('DE wake profiles unavailable');
+                return res.json();
+            }), loadImage('back'), loadImage('front'),
+        ]).then(([assets]) => { this.assets = assets; }).catch(error => {
+            console.error('[NavalWakeDrawer] DE 水迹加载失败', error);
         });
     }
 
-    /**
-     * 绘制舰队水上拖尾（在船体之前调用，位于水面层）
-     * 1. 舰队每艘存活船只各自独立激起船首破浪（WAKE_FRONT）与船尾翻波（WAKE_BACK）
-     * 2. 队尾船只沿龙骨逆航向正后方拉出 3 段平滑消散的白色直线尾浪带
-     */
     public static drawNavalWakes(
         ctx: CanvasRenderingContext2D,
-        shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir?: number }[],
-        direction: number,
-        scale: number,
-        tick: number,
-        isMoving: boolean,
-        _trail?: { x: number; y: number }[],
-        shipLength: number = 60,
+        ships: (Point & { r: number; isAlive: boolean; dir?: number })[],
+        direction: number, scale: number, tick: number, isMoving: boolean,
+        _trail?: Point[], shipLength = 60, unitId = '', projection?: WakeProjection,
     ): void {
         this.ensureLoaded();
-        if (!isMoving) return; // 静止待命状态不激起大浪花与拖尾
-
-        const d16 = ((direction % 16) + 16) % 16;
-        const backAsset = this.wakeBackDirs[d16];
-        const frontAsset = this.wakeFrontDirs[d16];
-
-        if (!backAsset?.loaded || !backAsset.img || !frontAsset?.loaded || !frontAsset.img) return;
-
-        // 统一水花尺寸缩放
-        const wakeScale = scale * 0.85;
-
-        // 🔴 [2026-08-27 航迹跟随] 后随船现在沿旗舰航迹排开（见 drawNaval），转弯时每艘船朝向都不同。
-        //   尾迹若仍共用旗舰航向，队尾的破浪/翻波会横着糊出去（船头朝东、浪花朝北）。
-        //   这里改为逐船取自己的 dir：素材按该向取（缺则回落旗舰向），航向矢量各算各的。
-        const backFallback = { img: backAsset.img, meta: backAsset.meta };
-        const frontFallback = { img: frontAsset.img, meta: frontAsset.meta };
-        const dirOf = (sh: { dir?: number; x: number; y: number }): number =>
-            sh.dir === undefined ? d16 : ((Math.round(sh.dir) % 16) + 16) % 16;
-        const backOf = (d: number): { img: HTMLImageElement; meta: WakeDirMeta } => {
-            const a = this.wakeBackDirs[d];
-            return a?.loaded && a.img ? { img: a.img, meta: a.meta } : backFallback;
-        };
-        const frontOf = (d: number): { img: HTMLImageElement; meta: WakeDirMeta } => {
-            const a = this.wakeFrontDirs[d];
-            return a?.loaded && a.img ? { img: a.img, meta: a.meta } : frontFallback;
-        };
-        /** 16 向 → 屏幕前进单位矢量（与 drawNaval 的 angle=(d+2)π/8 同源） */
-        const headingOf = (d: number): { hx: number; hy: number } => {
-            const a = (d + 2) * Math.PI / 8;
-            return { hx: Math.sin(a), hy: -Math.cos(a) };
-        };
-
-        // 找到队首旗舰（r 最大）与队尾船（r 最小）
-        let frontShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
-        let rearShip: { x: number; y: number; r: number; isAlive: boolean } | null = null;
-        for (const s of shipPositions) {
-            if (!s.isAlive) continue;
-            if (!frontShip || s.r > frontShip.r) frontShip = s;
-            if (!rearShip || s.r < rearShip.r) rearShip = s;
+        if (!this.assets || !unitId) return;
+        if (tick - this.lastCleanup > 2000) {
+            for (const [id, state] of this.fleets) {
+                if (tick - state.lastSeen > 2000) this.fleets.delete(id);
+            }
+            this.lastCleanup = tick;
         }
-
-        // ─── 1. 队尾船只沿船体龙骨正后方拉出连续消散尾流（Keel-Aligned Continuous Wake Trail）───
-        if (rearShip) {
-            const rDir = dirOf(rearShip);
-            const rAsset = backOf(rDir);
-            const rHead = headingOf(rDir);
-
-            // ─── 纯靠 AoE2 DE 原生 WAKE_BACK 动态水花贴图呈现流体消散（彻底摒弃任何人工几何线条与硬边光锥）───
-
-            // (2) 紧密平滑衔接的 5 段动态翻波贴图（连续扩散衰减）
-            const trailSteps = [
-                { dist: shipLength * 0.28, alpha: 0.26, scaleMul: 0.72, frameOffset: 0 },
-                { dist: shipLength * 0.65, alpha: 0.18, scaleMul: 0.85, frameOffset: 6 },
-                { dist: shipLength * 1.08, alpha: 0.12, scaleMul: 0.98, frameOffset: 12 },
-                { dist: shipLength * 1.55, alpha: 0.07, scaleMul: 1.12, frameOffset: 18 },
-                { dist: shipLength * 2.05, alpha: 0.03, scaleMul: 1.25, frameOffset: 24 },
-            ];
-
-            for (const step of trailSteps) {
-                // 沿龙骨逆航向直线取点，保证尾流绝对顺直无歪斜漂移
-                const tx = rearShip.x - rHead.hx * step.dist;
-                const ty = rearShip.y - rHead.hy * step.dist;
-
-                const frameIndex = (Math.floor(tick / 45) + step.frameOffset) % rAsset.meta.frames;
-                const s = wakeScale * step.scaleMul;
-                const w = rAsset.meta.box_w * s;
-                const h = rAsset.meta.box_h * s;
-                const left = tx - rAsset.meta.anchor_x * s;
-                const top = ty - rAsset.meta.anchor_y * s;
-                const sx = frameIndex * rAsset.meta.box_w;
-
-                ctx.globalAlpha = step.alpha;
-                ctx.drawImage(
-                    rAsset.img,
-                    sx, 0, rAsset.meta.box_w, rAsset.meta.box_h,
-                    left, top, w, h
-                );
+        let fleet = this.fleets.get(unitId);
+        if (!fleet || tick < fleet.lastSeen) {
+            fleet = { particles: [], lastEmission: -Infinity, lastSeen: tick };
+            this.fleets.set(unitId, fleet);
+        }
+        fleet.lastSeen = tick;
+        fleet.particles = fleet.particles.filter(p => tick - p.born < p.duration);
+        // 停船只停止发射，水面上已有的粒子继续完成淡出。
+        if (isMoving && tick - fleet.lastEmission >= this.EMISSION_MS) {
+            fleet.lastEmission = tick;
+            const alive = ships.filter(ship => ship.isAlive);
+            const frontRank = Math.max(...alive.map(ship => ship.r));
+            for (const ship of alive) {
+                const dir = ((Math.round(ship.dir ?? direction) % 16) + 16) % 16;
+                const angle = (dir + 2) * Math.PI / 8;
+                for (const kind of ['back', 'front'] as const) {
+                    const profile = this.assets[kind].profiles[ship.r === frontRank ? 'medium' : 'small'];
+                    const offset = shipLength * (kind === 'front' ? 0.20 : -0.22);
+                    const screen = { x: ship.x + Math.sin(angle) * offset, y: ship.y - Math.cos(angle) * offset };
+                    fleet.particles.push({
+                        position: projection?.toWorld(screen) ?? screen,
+                        // 🔴 [2026-09-12 主人报障「船尾水波不对」] 水迹贴图的行号必须与上面的**发射位移角同相位**：
+                        //    位移角用 `(dir + 2) * π/8`，而贴图行号原先直接用 `dir` —— 同一函数里两套相位，
+                        //    必然差 45°（2 档）：船斜着走、尾迹却朝另一个方向铺开。
+                        //    按 DE 素材的相位差补偿 −2：`(shipDir − 2 + 16) % 16`。
+                        //    ⚠️ 若实机观感反而更歪，把这里的 `+ 14` 换成 `+ 2` / `+ 4` 即可（只改这一个数）。
+                        direction: (dir + 14) % 16, born: tick,
+                        duration: 1000 * (profile.Duration1 + Math.random() * (profile.Duration2 - profile.Duration1)),
+                        kind, profile,
+                    });
+                }
             }
         }
-
-        // ─── 2. 舰队全员逐舰即时浪花（旗舰明显，僚舰轻微不抢镜）────────────
-        for (let i = 0; i < shipPositions.length; i++) {
-            const ship = shipPositions[i];
-            if (!ship || !ship.isAlive) continue;
-
-            const isFlagship = (ship === frontShip);
-            const animOffset = i * 75; // 各舰水花产生微小相位差，更加生动自然
-            const frameIndex = Math.floor((tick + animOffset) / 40) % 30;
-
-            const sDir = dirOf(ship);
-            const sHead = headingOf(sDir);
-            const fAsset = frontOf(sDir);
-            const bAsset = backOf(sDir);
-
-            // (1) 船首破浪（WAKE_FRONT）：紧贴船首尖端（0.20 船长），旗舰浪花适中锐利、僚舰微弱破水
-            const frontOffset = shipLength * 0.20;
-            const fx = ship.x + sHead.hx * frontOffset;
-            const fy = ship.y + sHead.hy * frontOffset;
-
-            const sFront = wakeScale * (isFlagship ? 0.65 : 0.38);
-            const wFront = fAsset.meta.box_w * sFront;
-            const hFront = fAsset.meta.box_h * sFront;
-            const leftFront = fx - fAsset.meta.anchor_x * sFront;
-            const topFront = fy - fAsset.meta.anchor_y * sFront;
-            const sxFront = (frameIndex % fAsset.meta.frames) * fAsset.meta.box_w;
-
-            ctx.globalAlpha = isFlagship ? 0.38 : 0.18;
-            ctx.drawImage(
-                fAsset.img,
-                sxFront, 0, fAsset.meta.box_w, fAsset.meta.box_h,
-                leftFront, topFront, wFront, hFront
-            );
-
-            // (2) 船尾翻波（WAKE_BACK）：紧贴船尾后方（0.22 船长），避免侵入后随船船头
-            const backOffset = shipLength * 0.22;
-            const bx = ship.x - sHead.hx * backOffset;
-            const by = ship.y - sHead.hy * backOffset;
-
-            const sBack = wakeScale * (isFlagship ? 0.62 : 0.40);
-            const wBack = bAsset.meta.box_w * sBack;
-            const hBack = bAsset.meta.box_h * sBack;
-            const leftBack = bx - bAsset.meta.anchor_x * sBack;
-            const topBack = by - bAsset.meta.anchor_y * sBack;
-            const sxBack = (frameIndex % bAsset.meta.frames) * bAsset.meta.box_w;
-
-            ctx.globalAlpha = isFlagship ? 0.32 : 0.18;
-            ctx.drawImage(
-                bAsset.img,
-                sxBack, 0, bAsset.meta.box_w, bAsset.meta.box_h,
-                leftBack, topBack, wBack, hBack
-            );
+        ctx.save();
+        const opacity = ctx.globalAlpha;
+        for (const particle of fleet.particles) {
+            const age = tick - particle.born;
+            const progress = Math.max(0, Math.min(1, age / particle.duration));
+            const profile = particle.profile;
+            const fadeIn = Math.min(1, age / (profile.StartDuration * 1000));
+            const fadeOut = Math.min(1, (particle.duration - age) / (profile.StopDuration * 1000));
+            ctx.globalAlpha = opacity * (profile.AlphaStart + (profile.AlphaEnd - profile.AlphaStart) * progress) * fadeIn * fadeOut;
+            const asset = this.assets[particle.kind];
+            const frame = Math.min(asset.frames - 1, Math.floor(progress * asset.frames));
+            const point = projection?.toScreen(particle.position) ?? particle.position;
+            const size = scale * profile.Scale;
+            const w = asset.width * size, h = asset.height * size;
+            ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
+                asset.width, asset.height, point.x - w / 2, point.y - h / 2, w, h);
         }
-
-        ctx.globalAlpha = 1.0;
+        ctx.restore();
     }
 }

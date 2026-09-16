@@ -11,6 +11,8 @@ export class GameConfig {
          *   war_sim 的平衡结论按开关分两套，别跨口径引用。
          */
         ENABLE_HISTORICAL_EVENTS: false,
+        // 剧本推进与乱斗调度共用此开关；军事科技年份门控保持独立。
+        ENABLE_SCRIPT_EVENTS: false,
         SANDBOX_MODE: true,
     };
     /**
@@ -93,7 +95,8 @@ export class GameConfig {
         CORPSE_FADE_OUT_MS: 5000,
         /** 回城解散、隐匿等非战死消失的渐隐时长 (ms) */
         DESPAWN_FADE_OUT_MS: 5000,
-        /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms) */
+        /** 跟随军阵亡后，镜头停留多久再自动切到兵力最多的军团 (ms)。
+         *  同时是 13 野战结束后战场残局（尸体烙图）的保留时长。 */
         FOLLOW_SWITCH_DELAY_MS: 5000,
         /** 各类型据点最低出兵阈值（armySize = 驻军 × 0.9，须 ≥ 此值才可出兵）。统一 5000（与军团成立绝对底线一致）。 */
         CITY_MIN_SPAWN_TROOPS: {

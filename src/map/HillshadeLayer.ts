@@ -1,8 +1,8 @@
 import * as L from 'leaflet';
 import { perfDoctor } from '../debug/PerfDoctor';
 import HillshadeWorker from '../workers/HillshadeWorker?worker'; // Vite Worker Import
-import { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers/HillshadeWorker';
-import { HISTORICAL_REGIONS } from '../data/HistoricalRegions';
+import type { HillshadeRequest, HillshadeResponse, HillshadeRegion } from '../workers/HillshadeWorker';
+import { HISTORICAL_REGIONS, NILE_VALLEY_EXP_BOUNDS } from '../data/HistoricalRegions';
 import { gameLog } from '../utils/GameLogger';
 import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
 import { MATERIAL_BUDGET_BYTES } from './StrategicTerrainMaterial';
@@ -37,6 +37,10 @@ interface HillshadeOptions extends L.GridLayerOptions {
     useElevationColor?: boolean;
     /** 沙漠/湿地/古湖等历史区域涂色（HISTORICAL_REGIONS），默认开 */
     useDesertColoring?: boolean;
+    /** 战略山体浮雕（Zoom7–12），默认开 */
+    experimentalRelief?: boolean;
+    /** 尼罗河谷冲积地貌试验（ZOOM 9），独立开关 */
+    valleyReliefExp?: boolean;
 }
 
 const WORKER_POOL_SIZE = 3;
@@ -54,6 +58,9 @@ export class HillshadeLayer extends L.GridLayer {
     private shadowOpacity: number;
     private useElevationColor: boolean;
     private useDesertColoring: boolean;
+    private experimentalRelief: boolean = true;
+    private valleyReliefExp: boolean = true;
+    private modeVersion: number = 0;
 
     private workers: Worker[] = [];
     private materialBytesByWorker = new Map<Worker, number>();
@@ -61,7 +68,7 @@ export class HillshadeLayer extends L.GridLayer {
     private workerRenderSamples = 0;
     private rrIndex: number = 0; // Worker 轮询下标
     private msgIdCounter: number = 0;
-    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, cacheKey: string }> = new Map();
+    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, cacheKey: string, modeVersion: number }> = new Map();
     /** LRU：Map 迭代序即插入序，命中时删了重插即「最近使用」 */
     private tileCache: Map<string, ImageBitmap> = new Map();
     /** 已发过预取请求的 z/x/y，避免每次 zoomend 重复占用连接 */
@@ -94,10 +101,12 @@ export class HillshadeLayer extends L.GridLayer {
             ...options
         });
 
-        this.zFactor = options?.zFactor ?? 25.0;
+        this.zFactor = options?.zFactor ?? 33.0;
         this.shadowOpacity = options?.shadowOpacity ?? 1.0;
         this.useElevationColor = options?.useElevationColor ?? true;
         this.useDesertColoring = options?.useDesertColoring ?? true;
+        this.experimentalRelief = options?.experimentalRelief ?? true;
+        this.valleyReliefExp = options?.valleyReliefExp ?? true;
         perfDoctor.registerCache({
             name: 'HillshadeLayer:DE materials(战略地表)',
             where: 'src/map/StrategicTerrainMaterial.ts:textures',
@@ -146,6 +155,13 @@ export class HillshadeLayer extends L.GridLayer {
             return;
         }
 
+        // 快速开关保护：旧 Worker 任务完成时如果 modeVersion 不匹配，直接丢弃位图避免串画
+        if (task.modeVersion !== this.modeVersion) {
+            bitmap?.close();
+            task.done(undefined, task.tile);
+            return;
+        }
+
         const { ctx, tile, done, cacheKey } = task;
 
         if (!bitmap) {
@@ -166,6 +182,30 @@ export class HillshadeLayer extends L.GridLayer {
             bitmap.close();
         }
         done(undefined, tile);
+    }
+
+    /** 山体浮雕试验的适用瓦片：只在战略档位 zoom7~12 生效 */
+    private isReliefTile(z: number): boolean {
+        return this.experimentalRelief && z >= 7 && z <= 12;
+    }
+
+    /** 尼罗河谷试验的适用瓦片：zoom9 且与试验范围相交 */
+    private isValleyTile(z: number, bounds: { north: number; south: number; east: number; west: number }): boolean {
+        return this.valleyReliefExp && z === 9 && !(
+            bounds.south > NILE_VALLEY_EXP_BOUNDS.north ||
+            bounds.north < NILE_VALLEY_EXP_BOUNDS.south ||
+            bounds.east < NILE_VALLEY_EXP_BOUNDS.west ||
+            bounds.west > NILE_VALLEY_EXP_BOUNDS.east
+        );
+    }
+
+    /**
+     * 位图缓存键：坐标 + 渲染模式标签。
+     * 🔴 createTile 与 prefetchAdjacentZoom 必须走这一个函数——两边各写一份标签字面量时，
+     *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
+     */
+    private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
+        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v6' : 'std'}:${isValley ? 'valley_nile_v1' : 'v0'}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */
@@ -230,8 +270,12 @@ export class HillshadeLayer extends L.GridLayer {
             for (let x = xMin; x <= xMax && count < PREFETCH_LIMIT; x++) {
                 for (let y = yMin; y <= yMax && count < PREFETCH_LIMIT; y++) {
                     const key = `${z}/${x}/${y}`;
-                    // 已算好或已预取过：不再重复占用连接
-                    if (this.tileCache.has(key) || this.prefetchedKeys.has(key)) continue;
+                    const cacheKey = this.tileCacheKey(
+                        z, x, y,
+                        this.isReliefTile(z),
+                        this.isValleyTile(z, tileBoundsFromCoords(z, x, y)),
+                    );
+                    if (this.tileCache.has(cacheKey) || this.prefetchedKeys.has(key)) continue;
                     this.prefetchedKeys.add(key);
 
                     const url = `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
@@ -271,9 +315,26 @@ export class HillshadeLayer extends L.GridLayer {
 
         if (changed) {
             // 参数变了，缓存里算好的位图全部作废
+            this.modeVersion++;
             this.clearTileCache();
             this.redraw();
         }
+    }
+
+    public setExperimentalRelief(enabled: boolean): void {
+        if (this.experimentalRelief === enabled) return;
+        this.experimentalRelief = enabled;
+        this.modeVersion++;
+        this.clearTileCache();
+        this.redraw();
+    }
+
+    public setValleyReliefExp(enabled: boolean): void {
+        if (this.valleyReliefExp === enabled) return;
+        this.valleyReliefExp = enabled;
+        this.modeVersion++;
+        this.clearTileCache();
+        this.redraw();
     }
 
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
@@ -293,7 +354,10 @@ export class HillshadeLayer extends L.GridLayer {
         // 创建时保持透明，在 Worker 计算完成前自然透出底图，彻底消除棋盘方块闪烁
 
         this.ensureWorkers();
-        const cacheKey = `${coords.z}/${coords.x}/${coords.y}`;
+        const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
+        const isExpTile = this.isReliefTile(coords.z);
+        const isValleyTile = this.isValleyTile(coords.z, bounds);
+        const cacheKey = this.tileCacheKey(coords.z, coords.x, coords.y, isExpTile, isValleyTile);
 
         // ── 缓存命中：来回切 zoom 时的常见路径，无网络、无 Worker、无像素回读 ──
         const cached = this.cacheGet(cacheKey);
@@ -309,23 +373,55 @@ export class HillshadeLayer extends L.GridLayer {
                 // InvalidStateError: The image source is detached。
                 // 改为重新查一次缓存：条目还在 ⇒ 位图必定有效（淘汰是「close + 删键」成对做的）。
                 const fresh = this.cacheGet(cacheKey);
+                if (!fresh) {
+                    // 🔴 [2026-09-13 主人报障「海面有块状色差」的真凶]
+                    //    命中缓存到这个微任务之间，位图可能已被 LRU 淘汰或 clearTileCache 释放
+                    //    （缩放时两者都高发）。旧代码在这里「保持透明 + done()」，并注释说
+                    //    「随后 Leaflet redraw 会重建这块瓦片」——**这句是错的**：done() 一调，
+                    //    Leaflet 就把该瓦片记为 leaflet-tile-loaded 留在 _tiles 里，除非视图
+                    //    把它移出，否则**永不重画**。于是图上留下一块永久全透明的方格，露出底图，
+                    //    在平坦纯色的海面上就是一块边界笔直、颜色偏浅的矩形（陆地上表现为直边接缝）。
+                    //    这条路径全程无日志，所以控制台什么都看不到。
+                    //    正确做法：重新派发 Worker 算一遍，算完照常上屏。
+                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+                    return;
+                }
                 try {
-                    if (fresh) {
-                        ctx.drawImage(fresh, 0, 0);
-                    } else {
-                        // 缓存已被清空：保持透明，随后 Leaflet redraw 会重建这块瓦片
-                    }
+                    ctx.drawImage(fresh, 0, 0);
                 } catch (err) {
-                    // 兜底：任何绘制异常保持透明，确保 done() 调用避免死锁
-                    console.warn('[Hillshade] 缓存位图绘制失败，保持透明:', err);
+                    // 兜底：绘制异常时重算，同样不留空白瓦片
+                    console.warn('[Hillshade] 缓存位图绘制失败，改为重算:', err);
+                    this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+                    return;
                 }
                 done(undefined, tile);
             });
             return tile;
         }
 
+        this.dispatchTile(coords, size, bounds, ctx, tile, done, cacheKey, isExpTile, isValleyTile);
+        return tile;
+    }
+
+    /**
+     * 把一块瓦片派发给 Worker 计算。
+     * 🔴 单独成方法是因为**缓存命中的那条路径也可能落空**（见 createTile 里的微任务）：
+     *    落空时必须重新走这里算一遍，绝不能 done() 一张空白画布 —— 那会被 Leaflet 记成
+     *    「已加载」，此后永不重建，图上就留下一块**永久透明的方格**。
+     */
+    private dispatchTile(
+        coords: L.Coords,
+        size: L.Point,
+        bounds: { north: number; south: number; east: number; west: number },
+        ctx: CanvasRenderingContext2D,
+        tile: HTMLCanvasElement,
+        done: L.DoneCallback,
+        cacheKey: string,
+        isExpTile: boolean,
+        isValleyTile: boolean,
+    ): void {
+        this.ensureWorkers();
         const reqId = this.msgIdCounter++;
-        const bounds = tileBoundsFromCoords(coords.z, coords.x, coords.y);
         // 仅传与当前瓦片相交的区域,减少 Worker 内逐像素检查的循环次数
         // 沙漠涂色关闭（调试开关）→ 不传任何区域，Worker 走纯海拔着色，可对比开关前后效果
         const relevantRegions = this.useDesertColoring
@@ -351,24 +447,26 @@ export class HillshadeLayer extends L.GridLayer {
             width: size.x,
             height: size.y,
             params: {
-                azimuth: (this.options as HillshadeOptions).azimuth || 315,
-                altitude: (this.options as HillshadeOptions).altitude || 40,
+                azimuth: (this.options as HillshadeOptions).azimuth ?? 315,
+                altitude: (this.options as HillshadeOptions).altitude ?? 40,
                 zFactor: this.zFactor,
                 opacity: this.shadowOpacity,
                 useElevationColor: this.useElevationColor
             },
             tileBounds: bounds,
-            regions: relevantRegions
+            regions: relevantRegions,
+            coords: { z: coords.z, x: coords.x, y: coords.y },
+            experimentalRelief: isExpTile,
+            valleyReliefExp: isValleyTile,
+            modeVersion: this.modeVersion
         };
 
         this.statTilesComputed++;
-        this.pendingTiles.set(reqId, { ctx, tile, done, cacheKey });
+        this.pendingTiles.set(reqId, { ctx, tile, done, cacheKey, modeVersion: this.modeVersion });
 
         // 轮询派发：Worker 内部 fetch 是异步的，多块并行在途才不会被串行拖慢
         this.workers[this.rrIndex].postMessage(request);
         this.rrIndex = (this.rrIndex + 1) % this.workers.length;
-
-        return tile;
     }
 
     // [FIX] 避免过渡动画完成时图层已被 remove 导致的 TypeError: Cannot read properties of null (reading 'getCenter')

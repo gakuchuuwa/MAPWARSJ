@@ -1,8 +1,8 @@
 {
   "name": "THRACIAN_HOUSE_AGE3_DESTR",
-  "frames": 60,
+  "frames": 300,
   "box_w": 240,
-  "box_h": 180,
+  "box_h": 184,
   "anchor_x": 124,
   "anchor_y": 128,
   "sld_source": "b_thracian_house_age3_destruction"

@@ -1675,7 +1675,7 @@ export class SiegeManager {
 
             // 设置到达回调：兵力汇入城市
             legion.setOnArriveCallback((arrivedArmy) => {
-                this.onReinforcementArrive(arrivedArmy, targetCity);
+                this.onReinforcementArrive(arrivedArmy, { ...targetCity });
             });
 
             // 派遣军团 (moveLegionToCity 内部会自动处理道路寻路)

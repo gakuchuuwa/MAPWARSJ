@@ -387,7 +387,6 @@ export class CombatUI {
     private rightSideTroopsSpan!: HTMLSpanElement;
     private battleTitle!: HTMLDivElement;
     private battleYear!: HTMLDivElement;
-    private eventDescription!: HTMLDivElement;
     /** 侧栏展示用名称（不含兵力，由 updateStats 拼成「名称: 兵力」） */
     private attackerDisplayName = '';
     private defenderDisplayName = '';
@@ -826,21 +825,6 @@ export class CombatUI {
         `;
         this.centerPanel.appendChild(this.createCenterGoldAccent());
 
-        // [NEW] Description Text (Minimal & Elegant)
-        this.eventDescription = document.createElement('div');
-        this.eventDescription.style.cssText = `
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(T.typography.descriptionSize)};
-            color: rgba(216, 200, 160, 0.7);
-            text-align: left; /* [MODIFIED] User requested left align for wrapped lines */
-            max-width: ${uiPx(700)};
-            margin-top: ${uiPx(15)};
-            line-height: 1.6;
-            letter-spacing: 1px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            display: none; /* Hidden by default */
-        `;
-
         // 纪年副标题（叠深色地图：浅字 + 稳态黑描边，不用闪烁动画以免发虚）
         this.battleYear = document.createElement('div');
         this.battleYear.style.cssText = `
@@ -1155,7 +1139,6 @@ export class CombatUI {
         this.centerPanel.appendChild(this.skillsRow);
         this.centerPanel.appendChild(this.healthBarContainer);
         this.centerPanel.appendChild(this.sideStatsRow);
-        this.centerPanel.appendChild(this.eventDescription);
         this.centerBackdrop.style.display = 'none';
         this.centerPanel.style.display = 'none';
         leftFrame.style.display = 'none';
@@ -1315,7 +1298,7 @@ export class CombatUI {
             if (el && !this.scene13SavedCss.has(el)) this.scene13SavedCss.set(el, el.style.cssText);
         };
         for (const el of [this.leftPortraitFrame, this.rightPortraitFrame, this.centerPanel,
-            this.centerBackdrop, this.battleYear, this.eventDescription, this.sideStatsRow,
+            this.centerBackdrop, this.battleYear, this.sideStatsRow,
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.centerSituationRow, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
             this.rightTotalMultBadge, this.leftBarTroopsBadge, this.rightBarTroopsBadge, topHud]) save(el);
@@ -1412,7 +1395,7 @@ export class CombatUI {
         if (this.indicatorJun) this.indicatorJun.style.display = 'none';
         if (this.centerSituationRow) this.centerSituationRow.style.display = 'none';
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = 'none';
-        for (const el of [this.battleYear, this.eventDescription, this.sideStatsRow]) {
+        for (const el of [this.battleYear, this.sideStatsRow]) {
             if (el) el.style.display = 'none';
         }
         // 🔴 战术模式中不用显示跟随面板（彻底隐藏避免遮挡）
@@ -1516,14 +1499,19 @@ export class CombatUI {
             }
         }
 
-        // 标题设置（地点 + 战斗类型）
-        let locName = '';
-        if (init.defenderCityId) {
+        // 标题设置：剧本战斗用 fieldBattleData.title（「格拉尼库斯河战役」「伊苏斯战役」），
+        // 攻城战用守城据点名 + 「之战」，其余野战兜底「遭遇战」。
+        let titleText: string;
+        if (init.title) {
+            titleText = init.title;
+        } else if (init.defenderCityId) {
             const c = (window as any).game?.cityManager?.getCity?.(init.defenderCityId);
-            locName = c?.name || init.defenderCityId;
+            titleText = `${c?.name || init.defenderCityId}之战`;
+        } else {
+            titleText = '遭遇战';
         }
         const typeStr = init.battleType === 'siege' ? '攻城战' : '野战';
-        const fullTitle = locName ? `${locName}之战 · ${typeStr}` : `遭遇战 · ${typeStr}`;
+        const fullTitle = `${titleText} · ${typeStr}`;
         this.battleTitle.style.background = 'none';
         this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${fullTitle}</span>`;
 
@@ -4982,12 +4970,6 @@ export class CombatUI {
         this.battleYear.textContent = year;
         this.battleYear.style.display = year ? 'block' : 'none';
 
-        if (description) {
-            this.eventDescription.textContent = description;
-            this.eventDescription.style.display = 'block';
-        } else {
-            this.eventDescription.style.display = 'none';
-        }
     }
 
     private updateStats() {

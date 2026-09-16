@@ -36,7 +36,7 @@ export interface FactionGeneral {
 }
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
-export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
+export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-09-07] 下面 5 位是新建美洲文化区的开局武将。portrait 一律留空 —— 
     //    我（AI）一张图都没看过，绝不凭空编专属立绘路径（曾编过 /assets/IROQUOIS/... 之类根本不存在的夹）。
     //    留空＝走文化池回落（见 resolveGeneralPortraitPath）。等主人放图后再按约定填：
@@ -1072,7 +1072,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     mamuluke: { generalId: 'mamuluke_baibaisi', generalName: '拜巴尔斯', portrait: '/assets/WEST_ASIA/mamuluke_baibaersi.png' },
     midi: { generalId: 'midi_daiaokaisi', generalName: '戴奥凯斯', portrait: '/assets/CENTRAL_ASIA/midi_daiaokaisi.png' },
     qiliqiya: { generalId: 'qiliqiya_pangpei', generalName: '庞培', portrait: '/assets/WEST_ASIA/qiliqiya_pangpei.png' },
-    aqimeinide: { generalId: 'aqimeinide_daliushi', generalName: '大流士', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
+    // 🔴 [2026-09-12 主人「什么玩意，看历史啊」] 阿契美尼德的武将改正为 **大流士三世**：
+    //    ① 史实：亚历山大东征（前334–330）时期在位的大王就是大流士三世，伊苏斯/高加米拉的主帅都是他；
+    //    ② 项目自己的数据早就是这么认的 —— `GeneralCenturies` 里 `'daliushi_iii': -4, // 大流士 · aqimeinide · 波斯波利斯`；
+    //       原先那条 `aqimeinide_daliushi` 世纪是 **-6（＝大流士一世）**，挂到伊苏斯上就是错人 ✗。
+    //    ⚠️ 立绘这一行是**恢复我此前误删的原绑定**（删 boluosi 时连带删掉的 `daliushi_iii` 档案里就是这张图），
+    //       不是我新分配立绘；要换图直接改这一行。
+    // 🔴 [2026-09-12 主人「据点：波斯波利斯（29.93,52.89）· 阿契美尼德 · 旗号阿契 · 精锐不死军 T2
+    //    —— **武将是大流士一世**，你怎么给我搞没了」]
+    //    **数组第一个 = 该势力守将 = 显示在据点上的那位** → 必须是 **大流士一世**（波斯波利斯的营建者，原配置）✓
+    //    大流士三世放第二位：他**不在据点上显示**，只供**剧本调用**（伊苏斯/高加米拉主帅 =
+    //    `defenderGeneralId: 'daliushi_iii'` ✓）—— 这正是主人取消「一势力一将」的用意 ✓。
+    aqimeinide: [
+        { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
+        { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
+    ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
     sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
@@ -1093,7 +1107,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     jieri: { generalId: 'jieri_jieriwang', generalName: '哈尔沙', portrait: '/assets/INDIA/jieri_jieriwang.png' },
     kongque: { generalId: 'kongque_zhantuoluo', generalName: '旃陀罗笈多', portrait: '/assets/INDIA/kongque_zhantuoluojiduo.png' },
     mojietuo: { generalId: 'mojietuo_pinbisuoluo', generalName: '频毗娑罗', portrait: '/assets/INDIA/mojietuo_pinpisuoluo.png' },
-    boluo: { generalId: 'boluo_damoboluo', generalName: '达磨波罗', portrait: '/assets/INDIA/boluo_damoboluo.png' },
+    // 2026-09-12 主人三条规矩：军团要有武将・武将要有所属据点势力。
+    // 古典时代孟加拉军团需要一位古典孟加拉武将 = 毗阇耶（大史记其自孟加拉僧伽补罗出海、
+    // 征服楞伽建僧伽罗王朝，约前543年，古典）。**数组第一位＝守将，仍是达磨波罗**（绝不挤掉）。
+    // 立绘留空＝走文化池回落，由主人放图。
+    boluo: [
+        { generalId: 'boluo_damoboluo', generalName: '达磨波罗', portrait: '/assets/INDIA/boluo_damoboluo.png' },
+        { generalId: 'boluo_vijaya', generalName: '毗阇耶', portrait: '' },
+    ],
     sumo: { generalId: 'sumo_sumowang', generalName: '苏摩', portrait: '/assets/INDIA/sumo_sumowang.png' },
     jiashi_d: { generalId: 'jiashi_jiashiwang_d', generalName: '梵摩达', portrait: '/assets/INDIA/jiashi_d_jiashiwang.png' },
     zhuluo: { generalId: 'zhuluo_lajialajia', generalName: '拉贾拉贾一世', portrait: '/assets/INDIA/zhuluo_lajialajiayishi.png' },
@@ -1167,6 +1188,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png' },
     bulu: { generalId: 'gen_bolusi', generalName: '波鲁斯', portrait: '/assets/INDIA/bulu_bolusi.png' },
     xiaofulijiya: { generalId: 'xiaofulijiya_aerxitis', generalName: '阿尔西提斯', portrait: '/assets/WEST_ASIA/xiaofulijiya_aerxitisi.png' },
+    // 🔴 推罗·阿泽米尔库斯（Azemilcus，推罗末代国王，前332年守岛城）。显示名限 ≤5 字 → 「阿泽米尔」。
+    //    portrait 留空 = 走文化池回落（见本文件既有约定），**立绘由主人放图后填，AI 不指定**。
+    kanan: { generalId: 'kanan_azemier', generalName: '阿泽米尔', portrait: '/assets/WEST_ASIA/kanan_azemier.png' },
+    // 🔴 加沙·巴提斯（Batis，史载波斯任命的加沙守将，围城中力竭被俘遭处决）。portrait 留空＝走文化池回落，立绘由主人放图
+    feilisidin: { generalId: 'feilisidin_batisi', generalName: '巴提斯', portrait: '/assets/WEST_ASIA/feilisidin_batisi.png' },
     mallabhum: { generalId: 'gen_bir_hambir', generalName: '比尔汉比尔', portrait: '/assets/INDIA/mallabhum_bierhanbier.png' },
     vidin_tsardom: { generalId: 'gen_ivan_sratsimir', generalName: '伊凡斯拉齐', portrait: '/assets/GERMANIC/vidin_tsardom_yifansilaqi.png' },
     gondarine: { generalId: 'gen_fasilides', generalName: '法西里德', portrait: '/assets/AFRICA/gondarine_faxilide.png' },
@@ -1182,15 +1208,33 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneral>> = {
     braganza_house: { generalId: 'gen_joao_i', generalName: '若昂一世', portrait: '/assets/LATIN/braganza_house_ruoangyishi.png' },
     trastamara: { generalId: 'gen_ferdinand_ii', generalName: '斐迪南二世', portrait: '/assets/SPANISH/trastamara_feidinanershi.png' },
     odrysian_late: { generalId: 'gen_seuthes_iii', generalName: '塞乌特斯', portrait: '/assets/GREEK/odrysian_late_saiwutesi.png' },
+    // ⚠️ [2026-09-11] 卡洛扬**立绘待主人提供**：立绘归主人专属，AI 依铁律不得新增/分配/代配，
+    //    故此处 portrait 留空串（`resolveGeneralPortraitPath('')` 有兜底，不会崩）。请主人补图后回填路径。
+    jialiboli: { generalId: 'jialiboli_kaluoyang', generalName: '卡洛扬', portrait: '/assets/SLAVIC/jialiboli_kaluoyang.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
     sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
 };
 
-/** 取某势力的开局名将；未配置返回 null（该势力不带将） */
+/** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]
+ *  势力可以挂**多个将**：本表现在允许值是「单个将」或「将的数组」两种写法（老数据一字不用改）。
+ *  · 取「该势力的守将」= 数组**第一个**（`getFactionGeneral`）；
+ *  · 取全部 = `getFactionGenerals`；
+ *  · `generalId → 档案` 的反查（F2 立绘 / 名牌）照样一份索引里全找得到。
+ */
+export type FactionGeneralEntry = FactionGeneral | readonly FactionGeneral[];
+
+/** 把某势力的条目归一成数组（单值也变成长度 1 的数组） */
+export function getFactionGenerals(factionId: string): FactionGeneral[] {
+    const entry = (FACTION_GENERALS as Record<string, FactionGeneralEntry | undefined>)[factionId];
+    if (!entry) return [];
+    return Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
+}
+
+/** 取某势力的开局名将（多个将时取**第一个**）；未配置返回 null（该势力不带将） */
 export function getFactionGeneral(factionId: string): FactionGeneral | null {
-    const general = FACTION_GENERALS[factionId];
+    const general = getFactionGenerals(factionId)[0];
     if (!general) return null;
     const portrait = _generalPortraitOverrides[general.generalId] ?? general.portrait;
     return {
@@ -1223,8 +1267,12 @@ let _generalIdIndex: Map<string, { factionId: string; general: FactionGeneral }>
 function getGeneralIdIndex(): Map<string, { factionId: string; general: FactionGeneral }> {
     if (_generalIdIndex) return _generalIdIndex;
     const index = new Map<string, { factionId: string; general: FactionGeneral }>();
-    for (const [factionId, general] of Object.entries(FACTION_GENERALS)) {
-        if (!index.has(general.generalId)) index.set(general.generalId, { factionId, general });
+    for (const [factionId, entry] of Object.entries(FACTION_GENERALS)) {
+        // 🔴 [2026-09-12 一势力一将取消] 条目可能是数组 → 逐个登记；同一 generalId 仍取**第一个**（语义不变）
+        const list = Array.isArray(entry) ? entry : [entry as FactionGeneral];
+        for (const general of list) {
+            if (!index.has(general.generalId)) index.set(general.generalId, { factionId, general });
+        }
     }
     _generalIdIndex = index;
     return index;

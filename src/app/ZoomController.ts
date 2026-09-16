@@ -3,6 +3,7 @@
  *
  * 规则（2026-09-01 主人重定，**旧规则已整套作废，勿参考历史注释**）：
  *   1. **开始跟随一支新军团 → zoom 8**。首次跟随是这一条，战败后换人也是这一条。
+ *      玩家入伍的军团例外 → 9；玩家独行不缩放（镜头交给玩家）。
  *   2. **战略地图上一开打就按形态切**：海战（舰队 vs 舰队）→ zoom 10；
  *        陆地战 → zoom 9。**攻城战一律算陆地战**，舰队打据点也走 9。
  *        海战判据 = 跟随军团在海上**且**这场是野战（`currentBattleType === 'field'`）。
@@ -129,8 +130,18 @@ export class ZoomController {
         if (armyId !== this.lastArmyId) {
             this.lastArmyId = armyId;
             this.marchZoomSinceMs = null;   // 换人 = 规则 5 重新计时
-            // 玩家入伍的军团：不缩放到 8（玩家镜头手动控制），但 lastArmyId 照常更新
-            if (armyId && armyAlive && !this.getIsPlayerHost()) this.applyZoom(FOLLOW_START_ZOOM);
+            // 🔴 [2026-09-12 主人定「玩家加入势力后 ZOOM 切换到 9」]
+            //    玩家**入伍的军团**（playerHostPowerMult 非空）→ 9；
+            //    玩家**独行**（跟随玩家本体）→ 不缩放（镜头交给玩家，原规则 1 行为）；
+            //    非玩家跟随 → 8（规则 1 原样）。
+            if (armyId && armyAlive) {
+                const isPlayerJoined = (army as any)?.playerHostPowerMult != null;
+                if (isPlayerJoined) {
+                    this.applyZoom(LAND_ZOOM);
+                } else if (!this.getIsPlayerHost()) {
+                    this.applyZoom(FOLLOW_START_ZOOM);
+                }
+            }
         }
 
         // ── 规则 5：陆/海行军连续 15 秒 → 切到目标 zoom（陆 9 / 海 9；海战的 10 归规则 2）──

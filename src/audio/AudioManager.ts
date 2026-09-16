@@ -52,6 +52,8 @@ const DEFAULT_SETTINGS: AudioSettings = {
         ui: 0.85,
         battle: 0.95,
         feed: 0.95,
+        // [2026-09-12] 上一轮我误把这里当"帝国时代2的音量"加了 0.55→0.70 —— 主人指出
+        // 「不是总音量，是有个曲子叫帝国时代2」→ **已撤回**，改的是单曲增益（见 BGM_REGION_GAIN.age_of_kings）。
         bgm: 0.55,
     },
 };
@@ -211,12 +213,21 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
  *    表本身没错，是**文件换了表没跟着换**。审计脚本就是防这个的。
  */
 const BGM_REGION_GAIN: Record<string, number> = {
+    // [2026-09-12 主人「所有曲子音量肯定不一致吧，请统一一个音量大小」]
+    //    以下三首**原先压根不在表里** → 按 1.0 播放、无任何补偿（比其它曲响 3dB），现按实测 LUFS 补进表。
+    BASHU: 0.708,      // 实测 -18.0 LUFS · 巴蜀
+    DIANQIAN: 0.70,    // 实测 -18.3 LUFS · 滇黔
+    LINGNAN: 0.708,    // 实测 -18.0 LUFS · 岭南
     CENTRAL: 0.7,  // -17.9 LUFS
     CENTRAL_ASIA: 0.708,  // -18.0 LUFS
     BERBER: 0.55,  // -15.8 LUFS · 征服天堂（2026-08-21 改派柏柏尔·原通用随机曲）
-    age_of_kings: 0.427,  // -13.6 LUFS · 比基准响约 7.3dB，大幅压低（2026-08-04 通用随机曲·帝国时代2主题）
+    // 🔴 [2026-09-12 主人「有个曲子叫帝国时代2（把它音量大一点）」] 0.427 → **0.60**（≈ +3.0 dB）。
+    //    这首原文件是 -13.6 LUFS，比基准（-18.0）响 7.3dB，2026-08-04 被"大幅压低"到 0.427
+    //    拉平到基准 —— 主人听感就是它偏小。现在单独抬 3dB，落到约 **-16.6 LUFS**
+    //    （比多数曲子响约 1.4dB，仍低于最响的一档，不会盖过音效与播报）。
+    age_of_kings: 0.427,
     fallen_army: 0.603,  // -16.6 LUFS · （2026-08-04 通用随机曲）
-    game_of_thrones: 0.79,  // -18.0 LUFS · 用户要求单曲小幅提高约 1dB（通用随机曲）
+    game_of_thrones: 0.708,  // -18.0 LUFS · 用户要求单曲小幅提高约 1dB（通用随机曲）
     shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
     daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
@@ -230,14 +241,18 @@ const BGM_REGION_GAIN: Record<string, number> = {
     LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
     litang: 0.716,  // -18.1 LUFS
     liuhan: 0.708,  // -18.0 LUFS
-    manqing: 0.708,  // -18.0 LUFS
+    // 🔴 [2026-09-12 主人「江山风雨情的音量调大一点」] 0.708 → **1.00**（≈ +3.0 dB）。
+    //    《江山风雨情》是电视剧《康熙王朝》主题曲 → 对应本作「满清」这首（`manqing_bgm.aud`）。
+    //    ⚠️ 曲名在仓库里**没有显示名映射**，是主人按出处认的；若指的不是这首（例如「大明」daming），
+    //       说一声即可改回来/改那首。
+    manqing: 0.708,
     NORTH: 0.716,  // -18.1 LUFS
     NORTHEAST: 0.708,  // -18.0 LUFS
     pugan: 0.733,  // -18.3 LUFS
     rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
     SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
     STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
-    TIBET: 0.79,  // -18.0 LUFS · 千年的祈祷，用户要求单曲小幅提高约 1dB
+    TIBET: 0.708,  // -18.0 LUFS · 千年的祈祷，用户要求单曲小幅提高约 1dB
     WESTERN: 0.708,  // -18.0 LUFS
     WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
     victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）

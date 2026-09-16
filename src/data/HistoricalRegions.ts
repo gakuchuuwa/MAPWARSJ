@@ -337,3 +337,95 @@ export const HISTORICAL_REGIONS: HistoricalRegion[] = [
         elevMin: 800, elevMax: 1200
     }
 ];
+
+// ==========================================
+// 尼罗河谷与三角洲局部冲积平原试验数据 (ZOOM 9)
+// 依据古埃及法老时代（古王国-新王国）Kemet 冲积黑土与绿洲走廊
+// ==========================================
+export interface NileAlluvialPolygon {
+    id: string;
+    name: string;
+    points: [number, number][]; // [lat, lng]
+    elevMax: number;            // 阶地断崖门控上限（米）
+    elevFade: number;           // 阶地边缘过渡羽化（米）
+    edgeFadeDeg?: number;       // 多边形平原边缘软羽化半径（度，约 0.07° = 7km）
+    color: [number, number, number];
+    blendStrength: number;
+}
+
+export const NILE_VALLEY_EXP_BOUNDS = {
+    north: 31.65,
+    south: 28.50,
+    west: 29.70,
+    east: 32.65
+};
+
+export const NILE_ALLUVIAL_POLYGONS: NileAlluvialPolygon[] = [
+    {
+        id: 'nile_delta',
+        name: '尼罗河三角洲',
+        points: [
+            [30.08, 31.25], // Cairo apex
+            [30.15, 30.90],
+            [30.40, 30.35],
+            [30.80, 29.95],
+            [31.15, 29.80], // Alexandria west
+            [31.35, 30.05], // Alexandria coast
+            [31.45, 30.40], // Rosetta mouth
+            [31.62, 30.90], // Lake Burullus north
+            [31.55, 31.85], // Damietta mouth
+            [31.35, 32.20], // Lake Manzala north
+            [31.05, 32.55], // Pelusium
+            [30.85, 32.25],
+            [30.55, 32.10], // Wadi Tumilat
+            [30.35, 31.75],
+            [30.15, 31.40]
+        ],
+        elevMax: 20,
+        elevFade: 8,
+        edgeFadeDeg: 0.08,      // 约 8km 平原荒漠自然软过渡
+        color: [148, 156, 128], // 低饱和温润三角洲壤土灰绿
+        blendStrength: 0.52
+    },
+    {
+        id: 'nile_valley_lower',
+        name: '尼罗河下游河谷',
+        points: [
+            [28.50, 30.75],
+            [28.80, 30.80],
+            [29.00, 30.90], // Beni Suef west
+            [29.30, 31.00],
+            [29.60, 31.12],
+            [29.85, 31.18], // Dahshur/Saqqara west cliff
+            [30.08, 31.15], // Giza west
+            [30.12, 31.30], // Cairo north
+            [29.95, 31.38], // Maadi east cliff
+            [29.70, 31.32], // Helwan east cliff
+            [29.40, 31.25],
+            [29.10, 31.18],
+            [28.80, 31.05],
+            [28.50, 30.95]
+        ],
+        elevMax: 36,
+        elevFade: 10,
+        color: [154, 160, 134], // 低饱和自然泛滥河泥暗青褐
+        blendStrength: 0.50
+    },
+    {
+        id: 'faiyum_oasis',
+        name: '法尤姆绿洲',
+        points: [
+            [29.15, 30.75],
+            [29.25, 30.45],
+            [29.50, 30.40],
+            [29.65, 30.65],
+            [29.55, 31.05],
+            [29.35, 31.05]
+        ],
+        elevMax: 30,
+        elevFade: 8,
+        color: [148, 155, 126], // 盆地湿润绿洲
+        blendStrength: 0.50
+    }
+];
+

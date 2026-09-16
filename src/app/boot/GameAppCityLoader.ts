@@ -31,6 +31,9 @@ export function loadGameAppCityData(app: GameApp): void {
             latitude: c.lat,
             longitude: c.lng,
             type: c.type,
+            // 🔴 [2026-09-11 主人定] 开局驻军一律 10000（`cities_v2` 里的 troops 开局被整个忽略）。
+            //    原先这里为「战场没有兵力」写过 `...(c.battlefield ? {} : { troops: 10000 })` 的补丁；
+            //    战场独立成 `src/data/Battlefields.ts` 之后**据点一律有兵力**，补丁已撤。
             troops: 10000,
             region: c.region,
             buildingStyle: c.buildingStyle,

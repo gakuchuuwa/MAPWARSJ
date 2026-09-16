@@ -34,6 +34,14 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     if (army.getIsInCombat()) return 0;
     // 战后休整：停表停扣（主人裁定：休整为战斗余韵；战斗中照走表但扣减暂停）
     if (army.isPostBattleResting?.()) return 0;
+    // 🔴 [2026-09-11 主人定 / 2026-09-12 归位] 剧本军团不扣兵：**剧本武将身份（isScriptArmy）特权**，
+    //    （原话「剧本军团没有 15 秒兵力消耗」）。2026-09-12 主人定「军本与乱斗分开」——
+    //    这个「不扣兵」是剧本身份，不是行军豁免（scriptMarchExempt），故改判 isScriptArmy。
+    //    不豁免的后果是实的：跑过 15 秒免费期后每 15 秒扣 15%/30%/45%……，
+    //    剧本写死的 35000 兵会在抵达战场前被啃光，甚至归零触发「战败销毁」→ 剧本整条断掉。
+    //    与远征豁免（`EXEMPT_CAMPAIGN_LEGIONS`，2026-07-27 主人定为 false）是**两回事**，勿合并。
+    // 亚历山大恢复常规战略地图减兵（2026-09-13）。
+    if (army.isScriptArmy && army.generalId !== 'gen_alexander_great') return 0;
     // 远征军团整体豁免（expeditionTargetCityId 非空，含岳飞脚本军）
     if (cfg.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null) return 0;
 

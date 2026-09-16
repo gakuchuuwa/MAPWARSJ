@@ -535,6 +535,12 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return BTStatus.SUCCESS;
 
+    // 🔴 [2026-09-11 主人定「不交战」] 剧本行军豁免军团**不自行寻找目标**：
+    //    它的去向由剧本导演（`HistoricalEventManager`）决定，不许行为树给它抽签攻城/追击。
+    //    ⚠️ 上面已先处理远征锁，所以这里只拦「自主寻敌」这一条——
+    //    不拦剧本用 `expeditionTargetCityId` 驱动的逐段行军（那走的是 HasTarget→MoveToTarget，不经这里）。
+    if (ctx.army.scriptMarchExempt) return BTStatus.FAILURE;
+
     const myFaction = ctx.army.getFactionId();
     const excludeTargetIds = buildExcludeTargetIds(ctx);
 

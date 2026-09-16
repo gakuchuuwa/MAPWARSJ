@@ -611,6 +611,11 @@ export class LegionManager {
         if (army.getIsInCombat()) return 'siege'; // Already busy
         if (this.siegeManager?.isArmyWaitingSiege(army.id)) return 'siege';
 
+        // 🔴 [2026-09-11 主人定] 剧本行军豁免：赶赴战场途中不攻城。
+        //    这是**攻城总咽喉**，放这一句即覆盖全部攻城路径：
+        //    目标城抵达(500) / 沿路行军(LegionRoadMarch 341·378) / 行为树动作(827) / 撞驻军转攻城(LegionFieldBattle 167)。
+        if (army.scriptMarchExempt) return 'skipped';
+
         // 【锁定目标不可跳，2026-08-07】收复老家 / 远征目标按军团选目标定稿①②「不重选」，
         // HasTarget 的收复、远征分支都在越城而走检查之前 return true，跳过后没有重抽出口：
         // 军团会停在城下，每帧 isSiegeSkipped 早退，空转满 60s 冷却再重掷，可无限续。
@@ -703,6 +708,10 @@ export class LegionManager {
 
     /** 供 AI：军团站在敌对据点 ZOC 内时必须先处理该城 */
     public findHostileCityNear(pos: LatLng, factionId: string, army?: Army | null): City | null {
+        // 🔴 [2026-09-11 主人定] 剧本行军豁免：赶赴战场途中，沿途敌城一律不算「必须先处理」。
+        //    不返回 null 的后果：行为树 HasTarget 会因 ZOC 强制攻城，把剧本军钉在城下（见本函数上方 466 行）。
+        if (army?.scriptMarchExempt) return null;
+
         // 长驱深入(str_11)：远征军团默认 50% 绕 small_city / stockade；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
         const smallCityBypassChance = army ? getLongDriveDeepBypassChance(army) : 0;
         const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
@@ -1026,7 +1035,10 @@ export class LegionManager {
 
         // ① 计时（一视同仁：不分步骑水陆；战斗中照走——围城断粮题中之义，扣减在战斗内暂停；
         //    战后休整停表；远征军团是否走表由 EXEMPT_CAMPAIGN_LEGIONS 决定，现为走表）
+        //    🔴 [2026-09-11 主人定] 剧本行军豁免期间**连表也停**：否则豁免期照记断粮时长，
+        //       剧本军团一解除豁免（抵达战场开打前那一刻）就会立刻吃到超高跳数的减员。
         if (!(army.isPostBattleResting?.() ?? false)
+            && (!army.scriptMarchExempt || army.generalId === 'gen_alexander_great')
             && !(GameConfig.MARCH_ATTRITION.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null)) {
             army.timeSinceSupply += deltaTime;
         }

@@ -153,6 +153,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     PORTUGUESE: 'INFANTRY',  // 葡萄牙[2026-08-28]
     ETHIOPIANS: 'MIXED',  // 埃塞俄比亚[2026-08-28]
     BENGALIS: 'ELEPHANT',  // 孟加拉[2026-08-28]
+    BENGALIS_ANTIQUITY: 'ELEPHANT',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: 'CAVALRY',  // 瞿折罗[2026-08-28]
     VIETNAMESE: 'ELEPHANT',  // 越南[2026-08-28]
     KHMER: 'ELEPHANT',  // 高棉[2026-08-28]
@@ -197,6 +198,7 @@ export const CULTURE_MOVEMENT_CLASS: Record<RegionType, MovementClass> = {
     JURCHEN: 'CAVALRY',
     SELJUQ: 'CAVALRY',
     OTTOMAN: 'MIXED',
+    OTTOMAN_IMPERIAL: 'MIXED',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: 'CAVALRY',
     MANCHU: 'CAVALRY',
     MUGHAL: 'MIXED',
@@ -372,6 +374,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     PORTUGUESE: 'balance_yoke',  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: 'echelon',  // 埃塞俄比亚[2026-08-28 暂复用父文化]
     BENGALIS: 'echelon',  // 孟加拉[2026-08-28 暂复用父文化]
+    BENGALIS_ANTIQUITY: 'echelon',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: 'crane_wing',  // 瞿折罗[2026-08-28 暂复用父文化]
     VIETNAMESE: "triangle",  // [2026-09-06] 与该文化势力实际编制统一
     KHMER: 'triangle',  // [2026-09-06] 与该文化势力实际编制统一
@@ -416,6 +419,7 @@ export const CULTURE_FORMATION_MODE: Record<RegionType, FormationMode> = {
     JURCHEN: "echelon",
     SELJUQ: 'crane_wing',
     OTTOMAN: 'crescent',
+    OTTOMAN_IMPERIAL: 'crescent',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: 'triangle',
     MANCHU: "square",
     MUGHAL: 'crane_wing',
@@ -2923,6 +2927,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     PORTUGUESE: '帝国时代葡萄牙军团',
     ETHIOPIANS: '封建时代埃塞俄比亚军团',
     BENGALIS: '封建时代孟加拉军团',
+    BENGALIS_ANTIQUITY: '古典时代孟加拉军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代瞿折罗军团',
     VIETNAMESE: "城堡时代京族军团",
     KHMER: '城堡时代高棉军团',
@@ -2967,6 +2972,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     JURCHEN: "城堡时代女真军团",
     SELJUQ: '城堡时代塞尔柱军团',
     OTTOMAN: '城堡时代奥斯曼军团',
+    OTTOMAN_IMPERIAL: '帝国时代奥斯曼军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: '城堡时代法兰西军团',
     MANCHU: "帝国时代满洲军团",
     MUGHAL: '帝国时代莫卧儿军团',
@@ -4927,6 +4933,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     PORTUGUESE: PORTUGUESE_TIERS,  // 葡萄牙[2026-08-28 暂复用父文化]
     ETHIOPIANS: ETHIOPIANS_TIERS,  // 埃塞俄比亚[2026-08-28 暂复用父文化]
     BENGALIS: BENGALIS_TIERS,  // 孟加拉[2026-08-28 暂复用父文化]
+    BENGALIS_ANTIQUITY: BENGALIS_TIERS,  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: GURJARAS_TIERS,  // 瞿折罗[2026-08-28 暂复用父文化]
     VIETNAMESE: VIETNAMESE_TIERS,  // 越南[2026-08-28 暂复用父文化]
     KHMER: KHMER_TIERS,  // 高棉[2026-08-28 暂复用父文化]
@@ -4971,6 +4978,7 @@ export const CULTURE_TIERS_MAP: Record<RegionType, CompositionTier[]> = {
     JURCHEN: JURCHEN_TIERS,
     SELJUQ: SELJUQ_TIERS,
     OTTOMAN: OTTOMAN_TIERS,
+    OTTOMAN_IMPERIAL: OTTOMAN_TIERS,  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: FRENCH_TIERS,
     MANCHU: MANCHU_TIERS,
     MUGHAL: MUGHAL_TIERS,

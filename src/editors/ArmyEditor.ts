@@ -119,6 +119,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     PORTUGUESE: 'luoma_diguo',  // 葡萄牙 → 待建势力对齐（暂用父文化势力占位）
     ETHIOPIANS: 'mali',  // 埃塞俄比亚 → 待建势力对齐（暂用父文化势力占位）
     BENGALIS: 'kongque',  // 孟加拉 → 待建势力对齐（暂用父文化势力占位）
+    BENGALIS_ANTIQUITY: 'kongque',  // 孟加拉 → 待建势力对齐（暂用父文化势力占位）
     GURJARAS: 'kongque',  // 瞿折罗 → 待建势力对齐（暂用父文化势力占位）
     VIETNAMESE: 'dali',  // 越南 → 待建势力对齐（暂用父文化势力占位）
     KHMER: 'dali',  // 高棉 → 待建势力对齐（暂用父文化势力占位）
@@ -163,6 +164,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     JURCHEN: 'dajin',
     SELJUQ: 'seljuq',
     OTTOMAN: 'osman',
+    OTTOMAN_IMPERIAL: 'lumiliya',
     FRENCH: 'gaolu',
     MANCHU: 'aisin_d',
     MUGHAL: 'mowoer',

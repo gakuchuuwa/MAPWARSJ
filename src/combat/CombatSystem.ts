@@ -94,6 +94,16 @@ export class Battle {
     public type: BattleType;
     private presetResult?: 'attacker_win' | 'defender_win';
 
+    /**
+     * 剧本写死的胜负（'attacker' | 'defender' | null = 未写死，由 13 演出判）。
+     * 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本事件战斗写死胜负，演出判负不得覆盖。
+     */
+    public getScriptedWinner(): 'attacker' | 'defender' | null {
+        if (this.presetResult === 'attacker_win') return 'attacker';
+        if (this.presetResult === 'defender_win') return 'defender';
+        return null;
+    }
+
     private initialAttackerTroops: number;
     private initialDefenderTroops: number;
 
@@ -505,6 +515,13 @@ export class CombatSystem {
         battleField.onReinforcementJoined = (unit, isAttacker) => {
             this.onRegionalBattleReinforcement?.(battleField, unit, isAttacker);
         };
+
+        // 🔴 [2026-09-12 主人令「两场就统一成『格拉尼库斯河战役』『伊苏斯战役』」]
+        //    标题必须**存到战场实例上**：横幅另有两条补弹路径（`GameApp.ts:588` / `GameAppLoop.ts:314`），
+        //    它们走的是 `bf.customTitle ?? (攻城 ? "城名 攻防战" : "攻方势力名 大战 守方势力名")`。
+        //    此前只把 title 交给 UI 回调 → 首帧显示剧本名，之后一旦补弹就退回「马其顿 大战 波斯帝国」，
+        //    与同一场仗的剧本名（「伊苏斯战役」）对不上 —— 正是主人看到的"两场显示不一样"。
+        battleField.customTitle = title;
 
         this.battleFields.push(battleField);
 

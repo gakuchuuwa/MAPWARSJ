@@ -1,9 +1,9 @@
 {
   "name": "THRACIAN_MILL_AGE2_DESTR",
-  "frames": 60,
-  "box_w": 244,
+  "frames": 100,
+  "box_w": 248,
   "box_h": 176,
-  "anchor_x": 130,
+  "anchor_x": 134,
   "anchor_y": 118,
   "sld_source": "b_thracian_mill_age2_destruction"
 }

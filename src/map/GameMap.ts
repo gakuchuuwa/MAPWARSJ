@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import { GameConfig } from '../config/GameConfig';
 
 import { TILE_CONFIG, tileToLatLng } from './TileMapConfig';
 import { HillshadeLayer } from './HillshadeLayer';
@@ -9,6 +10,7 @@ import { StrategicGridLayer } from './StrategicGridLayer';
 import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { MonumentLayer } from './MonumentLayer';
+import { BattlefieldLayer } from './BattlefieldLayer';
 import { VegetationLayer } from './VegetationLayer';
 import { MarineLifeLayer, registerMarineLifeLayer } from './MarineLifeLayer';
 import { setAnimalAmbientLayerVisible, setLandAnimalVisible, setFlyingAnimalVisible } from './AnimalAmbientLayer';
@@ -63,6 +65,8 @@ export class GameMap {
     private riverLayer: RiverOverlayLayer | null = null;
     private vectorRiverLayer: VectorRiverLayer | null = null;
     private monumentLayer: MonumentLayer | null = null;
+    /** 🔴 [2026-09-12 主人定] 战场图层（战场不是据点，是独立地名，类似奇观） */
+    private battlefieldLayer: BattlefieldLayer | null = null;
     private vegetationLayer: VegetationLayer | null = null;
     private marineLifeLayer: MarineLifeLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
@@ -194,8 +198,8 @@ export class GameMap {
         const vectorRiverPane = this.map.getPane('vectorRiverPane');
         if (vectorRiverPane) {
             vectorRiverPane.style.zIndex = '335'; // 低于 riverPane(340)
-            // 半透明融入 ESRI 宽河道，脊线效果
-            vectorRiverPane.style.opacity = '0.80';
+            vectorRiverPane.style.opacity = '1.0';
+            vectorRiverPane.style.filter = '';
         }
 
 
@@ -219,6 +223,8 @@ export class GameMap {
         this.cityCaptureRenderer = new CityCaptureRenderer(this);
         // [NEW] Initialize Wilderness Monument Layer (29 Historical Sites)
         this.monumentLayer = new MonumentLayer(this.map);
+        // 🔴 [2026-09-12 主人定] 战场图层：战场独立于据点体系（一个地名而已，类似奇观）
+        this.battlefieldLayer = new BattlefieldLayer(this.map);
         // 文化区界城环线（仅 zoom=6 显示）
         new RegionBoundaryLayer(this.map);
 
@@ -282,7 +288,7 @@ export class GameMap {
     private getZFactor(zoom: number): number {
         if (zoom <= 7) return 15.0;
         // 战略视图统一强度，保留山脊起伏并避免跨级重复重建瓦片。
-        else if (zoom <= 11) return 27.0;
+        else if (zoom <= 11) return 33.0;
         else if (zoom <= 12) return 45.0;
         else return 50.0;
     }
@@ -425,6 +431,39 @@ export class GameMap {
         }
     }
 
+    private isExperimentalReliefEnabled = (() => {
+        try { return localStorage.getItem('mapwar.terrainRelief.enabled') !== 'false'; }
+        catch { return true; }
+    })();
+
+    private isValleyReliefExpEnabled = (() => {
+        try { return localStorage.getItem('mapwar.valleyRelief.enabled') !== 'false'; }
+        catch { return true; }
+    })();
+
+    public setValleyReliefExp(enabled: boolean): void {
+        this.isValleyReliefExpEnabled = enabled;
+        try { localStorage.setItem('mapwar.valleyRelief.enabled', String(enabled)); }
+        catch { /* 存储不可用时仍正常切换当前画面。 */ }
+        this.hillshadeLayer?.setValleyReliefExp(enabled);
+    }
+
+    public setExperimentalRelief(enabled: boolean): void {
+        this.isExperimentalReliefEnabled = enabled;
+        try { localStorage.setItem('mapwar.terrainRelief.enabled', String(enabled)); }
+        catch { /* 存储不可用时仍正常切换当前画面。 */ }
+        if (enabled && (!this.hillshadeLayer || !this.map.hasLayer(this.hillshadeLayer))) {
+            this.toggleHillshade(true);
+            const chkHill = document.getElementById('chk-hillshade') as HTMLInputElement | null;
+            if (chkHill && !chkHill.checked) {
+                chkHill.checked = true;
+                const controls = document.getElementById('hillshade-controls');
+                if (controls) controls.style.display = 'flex';
+            }
+        }
+        this.hillshadeLayer?.setExperimentalRelief(enabled);
+    }
+
     public toggleHillshade(enable: boolean) {
         if (enable) {
             if (!this.hillshadeLayer) {
@@ -433,7 +472,9 @@ export class GameMap {
                     maxZoom: 18,
                     azimuth: 305,  // 偏西光照，更好突出东亚东西向山脉（秦岭、昆仑）
                     altitude: 45,  // 与 getAltitude() 对齐，避免首次 zoomend 触发全量重建
-                    zFactor: 27,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
+                    zFactor: 33,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
+                    experimentalRelief: this.isExperimentalReliefEnabled,
+                    valleyReliefExp: this.isValleyReliefExpEnabled,
                 });
             }
             if (!this.map.hasLayer(this.hillshadeLayer)) {
@@ -577,6 +618,10 @@ export class GameMap {
                         <span id="control-panel-toggle-icon" style="color:#5b7a66;">▼</span>
                     </div>
                     <div id="control-panel-content" style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1d3326;" title="默认关闭，使用乱斗模式；关闭后已开打的战斗正常结算，不再接下一章">
+                        <input type="checkbox" id="chk-script-mode">
+                        <b>📜 亚历山大剧本</b>
+                    </label>
                     <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#9c302f;">地图切换</div>
                     
                     <button id="btn-source-esri" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">
@@ -586,6 +631,18 @@ export class GameMap {
                     <button id="btn-source-local" style="padding:6px;cursor:pointer;background:transparent;border:1px solid rgba(125,111,90,0.5);border-radius:4px;color:#5b7a66;font-family:inherit;transition:all 0.2s;">
                         🗺️ 原始地图 (Local)
                     </button>
+
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8d4a2f;margin-top:2px;">
+                        <input type="checkbox" id="chk-terrain-relief-experiment">
+                        <b>⛰️ 全球山体立体浮雕</b>
+                    </label>
+                    <span id="terrain-relief-experiment-status" style="font-size:11px;color:#666;">全球范围 · 双尺度高程光影浮雕</span>
+
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#2f6e4a;margin-top:4px;">
+                        <input type="checkbox" id="chk-valley-relief-experiment" checked>
+                        <b>🏞️ 尼罗河谷冲积地貌试验 (ZOOM 9)</b>
+                    </label>
+                    <span id="valley-relief-experiment-status" style="font-size:11px;color:#666;">古埃及河谷与三角洲冲积黑土壤土层</span>
                     
                     <hr style="margin:4px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
                     
@@ -596,9 +653,9 @@ export class GameMap {
 
                     <div id="hillshade-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            立体强度 (Z-Factor) <span id="val-z">25.0</span>
+                            立体强度 (Z-Factor) <span id="val-z">33.0</span>
                         </label>
-                        <input type="range" id="rng-z" min="10.0" max="40.0" step="1.0" value="25.0" style="width:120px;">
+                        <input type="range" id="rng-z" min="10.0" max="40.0" step="1.0" value="33.0" style="width:120px;">
                         
                         <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
                             阴影浓度 (Opacity) <span id="val-o">100%</span>
@@ -715,6 +772,11 @@ export class GameMap {
                         <b>🏛️ 显示奇观</b>
                     </label>
 
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#8d4a2f;margin-top:4px;">
+                        <input type="checkbox" id="chk-battlefield-layer" checked>
+                        <b>⚔️ 显示战场</b>
+                    </label>
+
                     <div style="display:grid;grid-template-columns:30px 1fr 30px;gap:4px;align-items:center;">
                         <button id="btn-wonder-prev" title="上一个奇观" style="padding:6px 2px;cursor:pointer;background:transparent;color:#6a1b9a;border:1px solid rgba(106,27,154,0.45);border-radius:4px;font-weight:bold;font-family:inherit;">◀</button>
                         <button id="btn-wonder-viewer" style="padding:6px 2px;cursor:pointer;background:transparent;color:#6a1b9a;border:1px solid rgba(106,27,154,0.45);border-radius:4px;font-weight:bold;font-family:inherit;">🏛️ 查看奇观</button>
@@ -805,6 +867,37 @@ export class GameMap {
             const panelHeader = document.getElementById('control-panel-header');
             const panelContent = document.getElementById('control-panel-content');
             const toggleIcon = document.getElementById('control-panel-toggle-icon');
+            const chkReliefExp = document.getElementById('chk-terrain-relief-experiment') as HTMLInputElement | null;
+            const reliefExpStatus = document.getElementById('terrain-relief-experiment-status');
+            if (chkReliefExp) {
+                chkReliefExp.checked = this.isExperimentalReliefEnabled;
+                if (reliefExpStatus) {
+                    reliefExpStatus.textContent = this.isExperimentalReliefEnabled ? '已开启 · 全球生效 (Zoom7-12)' : '已关闭 · 原版光影';
+                }
+                chkReliefExp.addEventListener('change', (e: any) => {
+                    const enabled = !!e.target.checked;
+                    this.setExperimentalRelief(enabled);
+                    if (reliefExpStatus) {
+                        reliefExpStatus.textContent = enabled ? '已开启 · 全球生效 (Zoom7-12)' : '已关闭 · 恢复原版光影';
+                    }
+                });
+            }
+
+            const chkValleyExp = document.getElementById('chk-valley-relief-experiment') as HTMLInputElement | null;
+            const valleyExpStatus = document.getElementById('valley-relief-experiment-status');
+            if (chkValleyExp) {
+                chkValleyExp.checked = this.isValleyReliefExpEnabled;
+                if (valleyExpStatus) {
+                    valleyExpStatus.textContent = this.isValleyReliefExpEnabled ? '已开启 · 尼罗河谷与三角洲冲积黑土 (Zoom 9)' : '已关闭 · 恢复沙漠黄';
+                }
+                chkValleyExp.addEventListener('change', (e: any) => {
+                    const enabled = !!e.target.checked;
+                    this.setValleyReliefExp(enabled);
+                    if (valleyExpStatus) {
+                        valleyExpStatus.textContent = enabled ? '已开启 · 尼罗河谷与三角洲冲积黑土 (Zoom 9)' : '已关闭 · 恢复沙漠黄';
+                    }
+                });
+            }
             const debugPanelStorageKey = 'mapwar.debugPanel.options';
             let savedDebugPanelState: {
                 sourceKey?: string;
@@ -823,6 +916,8 @@ export class GameMap {
                 if (!panelContent) return;
                 const inputs: Record<string, string | boolean> = {};
                 panelContent.querySelectorAll<HTMLInputElement>('input[id]').forEach((input) => {
+                    if (input.id === 'chk-script-mode') return;
+                    if (input.id === 'chk-terrain-relief-experiment' || input.id === 'chk-valley-relief-experiment') return;
                     inputs[input.id] = input.type === 'checkbox' ? input.checked : input.value;
                 });
                 try {
@@ -1079,6 +1174,14 @@ export class GameMap {
                 });
             }
 
+            // 🔴 [2026-09-12 主人定] 战场图层显示开关（与奇观同一套做法）
+            const chkBattlefieldLayer = document.getElementById('chk-battlefield-layer') as HTMLInputElement;
+            if (chkBattlefieldLayer) {
+                chkBattlefieldLayer.addEventListener('change', (e: any) => {
+                    this.battlefieldLayer?.setVisible(!!e.target.checked);
+                });
+            }
+
             const btnWonderViewer = document.getElementById('btn-wonder-viewer');
             if (btnWonderViewer) {
                 let wonderIndex = 0;
@@ -1190,6 +1293,16 @@ export class GameMap {
 
             syncAudioControls();
 
+            const chkScriptMode = document.getElementById('chk-script-mode') as HTMLInputElement | null;
+            if (chkScriptMode) {
+                chkScriptMode.checked = GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS;
+                chkScriptMode.addEventListener('change', () => {
+                    window.dispatchEvent(new CustomEvent('toggle-script-mode', {
+                        detail: { enabled: chkScriptMode.checked }
+                    }));
+                });
+            }
+
 
             // [FIX] 编辑器复选框事件绑定 (之前缺失，导致编辑器无法打开)
             const chkEditorCity = document.getElementById('chk-editor-city') as HTMLInputElement;
@@ -1242,6 +1355,8 @@ export class GameMap {
                     savedInputs['rng-con'] = '114';
                 }
                 for (const [id, value] of Object.entries(savedInputs)) {
+                    if (id === 'chk-script-mode') continue;
+                    if (id === 'chk-terrain-relief-experiment' || id === 'chk-valley-relief-experiment') continue;
                     const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
                     if (!input) continue;
                     if (input.type === 'checkbox' && typeof value === 'boolean') {

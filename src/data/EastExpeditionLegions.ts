@@ -20,6 +20,7 @@ export const EAST_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     // ── T2 特色之兵 ──
     tiaodun_qishi: { name: '条顿骑士团', tier: 2 },   // 柯尼斯堡·乌尔里希：条顿骑士团
     ruidian_si: { name: '斯韦阿卫队', tier: 2 },      // 斯德哥尔摩·瑞典王室卫队
+    jialiboli: { name: '库曼骑兵', tier: 2 },         // 鲁西翁·卡洛扬：1206 鲁西翁之战歼灭拉丁帝国野战军，库曼骑兵为该役决定性突击力量（T2 战术尖刀）
 
     // ── T3 风土之兵 ──
     donggete: { name: '哥特近卫军', tier: 3 },        // 拉文纳·狄奥多里克：493 攻陷拉文纳建东哥特王国，亲卫为征服主力

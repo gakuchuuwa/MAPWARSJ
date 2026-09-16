@@ -253,6 +253,17 @@ export class BattleField implements IOpeningPulseSink {
     private predictedStrongerGroup!: FactionGroup;
     private predictedWeakerGroup!: FactionGroup;
     private presetResult?: 'attacker_win' | 'defender_win';
+
+    /**
+     * 剧本写死的胜负（'attacker' | 'defender' | null = 未写死，由 13 演出判）。
+     * 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本事件战斗写死胜负，
+     *    13 演出的判负回调**不得覆盖**它——否则演出里守方打赢 → 主角攻方被销毁 → 下一场衔接断。
+     */
+    public getScriptedWinner(): 'attacker' | 'defender' | null {
+        if (this.presetResult === 'attacker_win') return 'attacker';
+        if (this.presetResult === 'defender_win') return 'defender';
+        return null;
+    }
     /**
      * 本场胜负是否由 **13 演出**判的（区别于剧本写死的事件战斗）。
      *

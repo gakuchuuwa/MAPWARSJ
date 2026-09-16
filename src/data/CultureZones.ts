@@ -64,7 +64,7 @@ export const REGION_TO_ZONE: Record<string, CultureZone> = {
     WEST_ASIA: '中东', WEST_ASIA_ANTIQUITY: '中东', WEST_ASIA_CASTLE: '中东',
 
     // ── 拜占庭（二层分支：东罗马军区、格鲁吉亚、亚美尼亚、奥斯曼等）──
-    EAST: '希腊', BYZANTINE: '东欧', ARMENIANS: '地中海', GEORGIANS: '地中海', OTTOMAN: '中东',
+    EAST: '希腊', BYZANTINE: '东欧', ARMENIANS: '地中海', GEORGIANS: '地中海', OTTOMAN: '中东', OTTOMAN_IMPERIAL: '中东',
 
     // ── 斯拉夫（二层分支：罗斯、波兰、立陶宛、保加利亚、波希米亚等）──
     SLAVIC: '斯拉夫', RUSSIAN: '斯拉夫', BULGARIANS: '斯拉夫', POLES: '东欧',

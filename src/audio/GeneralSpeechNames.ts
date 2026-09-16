@@ -151,11 +151,15 @@ function buildSpeechReplaceTable(): ReadonlyArray<readonly [string, string]> {
   if (speechReplaceTable) return speechReplaceTable;
   const pairs: Array<[string, string]> = [];
   const seen = new Set<string>();
-  for (const g of Object.values(FACTION_GENERALS)) {
-    const speech = getGeneralNameForSpeech(g.generalId, g.generalName);
-    if (speech === g.generalName || seen.has(g.generalName)) continue;
-    seen.add(g.generalName);
-    pairs.push([g.generalName, speech]);
+  for (const entry of Object.values(FACTION_GENERALS)) {
+    // 🔴 [2026-09-12 主人「一势力一将，这个规则取消」] 条目可能是数组 → 逐个摊平处理
+    const list = Array.isArray(entry) ? entry : [entry as (typeof entry)];
+    for (const g of list) {
+      const speech = getGeneralNameForSpeech(g.generalId, g.generalName);
+      if (speech === g.generalName || seen.has(g.generalName)) continue;
+      seen.add(g.generalName);
+      pairs.push([g.generalName, speech]);
+    }
   }
   pairs.sort((a, b) => b[0].length - a[0].length);
   speechReplaceTable = pairs;

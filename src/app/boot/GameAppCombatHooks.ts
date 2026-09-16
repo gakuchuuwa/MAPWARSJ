@@ -98,6 +98,8 @@ function startScene13War(
     isNaval?: boolean,
     /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边 */
     followedOnDefenderSide?: boolean,
+    /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`），战斗面板大标题直接用它 */
+    title?: string | null,
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
@@ -147,6 +149,8 @@ function startScene13War(
         defenderCityLng,
         // [2026-08-31 主人定] 跟随军团在守方侧 → 攻守两侧左右对调
         followedOnDefenderSide,
+        // [2026-09-12] 剧本战斗标题（fieldBattleData.title），战斗面板大标题直接用它
+        title,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -188,7 +192,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             battle.scene13Frozen = true;
             app.battleScene?.setFrozenBattle(battle);   // 退场未判负时据此解冻（见 BattleSceneLayer.unfreezeScene13Battle）
             startScene13War(app, battle.attacker, battle.defender, (winner, sv) => {
-                battle.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
+                // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负的战斗，演出判负不得覆盖写死结果
+                //   （否则演出里守方打赢 → 主角攻方被销毁 → 下一场衔接直接断）。
+                const scripted = battle.getScriptedWinner();
+                const finalWinner = scripted ?? winner;
+                battle.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                 isNavalVsFortress ? 'siege' : battle.type, isNavalBattle,
@@ -261,14 +269,18 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         { factionId: att.factionId, troops: attTroops, getEntity: () => att.getEntity?.() },
                         { factionId: def.factionId, troops: defTroops, getEntity: () => defEntity?.getEntity?.() },
                         (winner, sv) => {
-                            battleField.forceScene13Result(winner, winner === 'attacker' ? sv.attacker : sv.defender);
+                            // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负，演出判负不得覆盖。
+                            const scripted = battleField.getScriptedWinner();
+                            const finalWinner = scripted ?? winner;
+                            battleField.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
                         },
                         battleField.getScene13PowerBonus(),
                         t.center,
                         `${battleField.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                         isNavalVsFortress ? 'siege' : battleField.type,
                         isNavalBattle,
-                        defenders.some((u) => u.id === followedId)
+                        defenders.some((u) => u.id === followedId),
+                        title
                     );
                 }
             }

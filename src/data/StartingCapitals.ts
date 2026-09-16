@@ -360,7 +360,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'fengzhou': 'city_dasanguan',
     'sizhou': 'city_huaiyin',
     'hantawadi': 'city_bago',
-    'wuhu': 'city_zhenzhuhe',
+'wuhu': 'city_zhenzhuhe',
 'ewenki': 'city_nibuchu',
     'gar': 'city_sapi',
 'mino': 'city_fuwa',
@@ -1177,8 +1177,12 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'braganza_house': 'city_braganca',
     'trastamara': 'city_la_mota',
     'odrysian_late': 'city_seuthopolis',
+    'jialiboli': 'city_luxiweng',
     'naxos_ancient': 'city_chimarros',
     'yamaxun': 'city_themiskyra',
+    // 🔴 [2026-09-12] 新增势力必须登记首都，否则沙盒兜底会把它降格成 panjun（见 five-file-sync.md 首都映射铁律）
+    'kanan': 'city_tuile',
+    'feilisidin': 'city_jiasa',
 };
 
 // @ts-ignore

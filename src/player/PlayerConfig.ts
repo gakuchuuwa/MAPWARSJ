@@ -135,8 +135,36 @@ export function moveClassForHeroKey(heroKey: string): 'CAVALRY' | 'INFANTRY' | '
     return WAR_TYPES[heroKey]?.cls === 'cav' ? 'CAVALRY' : 'INFANTRY';
 }
 export const PLAYER_HERO_NAME = '乱入者';
-/** 出生据点：长安（汉唐古都） */
-export const PLAYER_START_CITY_ID = 'city_changan';
+/**
+ * 出生据点：**佩拉**（马其顿首都，前334年亚历山大东征的出发点）。
+ *  🔴 [2026-09-11 主人定] 开局镜头与玩家一并放到亚历山大所在的佩拉（原为长安）。
+ *     亚历山大本人就锚定在此城（`maqidun` → `gen_alexander_great`，见 FactionGenerals），
+ *     故玩家出生即可进城面见。镜头同源：`GameApp.setupPlayer()` 用它做 `setView`，
+ *     改这一个常量，玩家出生点与开局画面一起走，不要再各写一份坐标。
+ */
+export const PLAYER_START_CITY_ID = 'city_salonica';
+
+/**
+ * 出生点相对出生据点的**偏移**（度），让玩家落在城外一段距离、需要自己走过去，
+ * 而不是站在城点正上方（否则点一下城就立刻触发城中对话，等于没有"面见"这一步）。
+ *
+ * 🔴 [2026-09-11 主人定「留一段距离」] —— 主人只给了"留一段距离"这条要求，**未指定数值**。
+ *     下列数值与方向是 **AI 自行选定的**（可按主人一句话随时改；这是实现上绕不开的选择，
+ *     按 player-rules-verbatim 的 AI 铁律第 2 条单列声明）：
+ *     · 取值依据：佩拉→安菲波利斯官道 `road_city_salonica_city_anfeibolisi_1788854070952`
+ *       自佩拉起**第 16 个节点** `[23.516062, 40.718755]`，即东行 0.9969° 经度、南 0.0412° 纬度。
+ *       **实测球面距离 84.1 km**（haversine, R=6371；该纬度 1° 经度仅 84.3 km，别按 111 km 估），
+ *       引擎用的欧氏度距 = 0.9978°，东偏南，正是亚历山大东征的方向。
+ *     · 为什么取路网节点而不用随手数值：玩家是沿**路网**行军的，落在无路处会「无路可达」；
+ *       取现成道路节点 = 出生点必定在路网上，`travelToCity` 必定规划得出路径。
+ *     · 与抵达判定半径的关系：`PLAYER_CITY_ARRIVE_DIST` = 0.06°，本偏移远大于它，
+ *       故出生时不会被判为"已在城下"，必须真的走一趟。
+ *
+ * ⚠️ 本偏移是**相对佩拉**选的。若将来改 `PLAYER_START_CITY_ID`，必须一并复核此偏移
+ *    （换城后同方向偏移可能落进海里或无路区）。
+ */
+export const PLAYER_START_OFFSET = { lat: -0.0412, lng: 0.9969 };
+
 /** 单骑行军速度倍率（相对军团统一行军速度） */
 export const PLAYER_HERO_SPEED_MULT = 1.5;
 /** 玩家自带精锐编队的兵力（探马及以上，选了精锐才带） */

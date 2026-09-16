@@ -6,6 +6,7 @@
  */
 
 import { isWaterPixel } from '../world/land-sea/WaterMask';
+import { loadStrategicWaterTexture, waterDetailAt } from '../map/StrategicWaterMaterial';
 
 export interface RiverWorkerRequest {
     id: number;
@@ -19,7 +20,7 @@ export interface RiverWorkerResponse {
     data: Uint8ClampedArray;
 }
 
-self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
+self.onmessage = async (e: MessageEvent<RiverWorkerRequest>) => {
     const { id, width, height, bitmap } = e.data;
     const len = width * height * 4;
 
@@ -57,7 +58,11 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
         }
     }
 
-    // 若整块瓦片没有水，直接返回全透明（极大提升非水域瓦片性能）
+    // 🚫 [2026-09-12 主人「这是你改的海吗，太丑了，给我改回来」] 我曾在这里加过兜底：
+    //    「整块没判到水、但平均色偏蓝 → 整块按纯色 #367E9E 铺满（alpha 255）」——
+    //    后果是把海面糊成一坨**没有明暗层次的死蓝**，地形浮雕感全丢 ✗。**已整段删除**。
+    //    恢复原行为：整块没判到水就返回全透明，露出底图自带的浮雕海色（自然层次保留）。
+    //    ⚠️ 教训：水域"块状色差"要治，只能让**判水更一致**，绝不能用"整块盖平"的办法 ✗。
     if (waterCount === 0) {
         self.postMessage({ id, data: outData }, [outData.buffer] as any);
         return;
@@ -65,6 +70,7 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
 
     // 2. 水岸平滑渐变（抗锯齿与浅水过渡）
     // 半径 1px 的分离核：过渡集中在岸线，避免宽蓝色光晕和窄河消失。
+    const waterTexture = await loadStrategicWaterTexture();
     const temp = new Float32Array(width * height);
     for (let y = 0; y < height; y++) {
         const rowOffset = y * width;
@@ -101,11 +107,14 @@ self.onmessage = (e: MessageEvent<RiverWorkerRequest>) => {
                 const s = t * t * (3 - 2 * t);
 
                 // 浅青岸边向内过渡到湖心 #3E809E，增强与山地的色差；外岸保留窄柔边。
-                outData[pixelIdx] = Math.round(99 - 37 * s);
-                outData[pixelIdx + 1] = Math.round(150 - 22 * s);
-                outData[pixelIdx + 2] = Math.round(168 - 10 * s);
+                // 🔴 [2026-09-12 主人「两层水域要融合，看着像一种」] 湖心色由 #3E809E 收到**矢量层同款水体 #367E9E**
+                //    （rgb 54,126,158）：两层深浅完全一致，叠在一起看不出接缝；浅滩端保持原来的亮青做柔边。
+                const detail = waterDetailAt(waterTexture, x, y) * s;
+                outData[pixelIdx] = Math.round(99 - 45 * s + detail * 0.65);
+                outData[pixelIdx + 1] = Math.round(150 - 24 * s + detail);
+                outData[pixelIdx + 2] = Math.round(168 - 10 * s + detail * 1.1);
                 outData[pixelIdx + 3] = isRiver[y0 + x]
-                    ? Math.round((0.85 + 0.15 * s) * 255)
+                    ? 255
                     : Math.round(s * 0.18 * 255);
             }
         }

@@ -1743,7 +1743,6 @@ path.npc-hitbox {
 
 /* 矢量河流边缘渐变羽化（方案一）：底层河岸描边微模糊，使水体自然渗入山川晕渲 */
 path.vector-river-border {
-    filter: blur(1.2px);
     pointer-events: none;
 }
 

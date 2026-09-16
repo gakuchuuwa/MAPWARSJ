@@ -58,7 +58,7 @@ import { PlayerHero } from '../player/PlayerHero';
 import { PlayerQuestSystem } from '../player/PlayerQuestSystem';
 import { PlayerHUD } from '../player/PlayerHUD';
 import { PlayerScene13Control } from '../player/PlayerScene13Control';
-import { PLAYER_START_CITY_ID } from '../player/PlayerConfig';
+import { PLAYER_START_CITY_ID, PLAYER_START_OFFSET } from '../player/PlayerConfig';
 import type { LegionManager } from '../legion/LegionManager';
 import { SaveLoadUI } from '../ui/SaveLoadUI'; // 存档/读档界面
 import { audioManager, type AudioManager } from '../audio/AudioManager';
@@ -531,7 +531,11 @@ export class GameApp {
             this.recruitmentSystem = new RecruitmentSystem(
                 this.cityManager,
                 legionManager,
-                this.historicalEventManager.getSiegeManager()
+                this.historicalEventManager.getSiegeManager(),
+                // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」（`PlayerHero.noLegionSpawn`，**默认开**）
+                //    —— 开局首发 + 季末募兵两条路一起闸，全图不生军团、武将都留在城里；
+                //    剧本主角军团由剧本自己 forceCreate，不走募兵系统，不受此闸影响。
+                () => this.playerHero?.noLegionSpawn ?? true,
             );
             this.followResupplySystem = new FollowResupplySystem(this.cityManager);
             legionManager.setFollowResupplySystem(this.followResupplySystem);
@@ -707,12 +711,19 @@ export class GameApp {
     }
 
     /**
-     * [2026-09-05 玩家] 乱入者：出生在长安（汉唐古都），镜头从此永远跟玩家；
+     * [2026-09-05 玩家] 乱入者：出生在出生据点（现为佩拉·马其顿）城外一段距离，镜头从此永远跟玩家；
      * 点据点前往 → 抵达对话 → 接任务入伍 → 随军进 13 亲自砍人攒功勋。
+     * 🔴 [2026-09-11 主人定「留一段距离」] 玩家出生点 = 出生据点 + `PLAYER_START_OFFSET`
+     *    （城外约 84 km，取现成官道节点，保证在路网上）。**镜头仍落在据点本身**，
+     *    故开局画面是「佩拉城 + 城东侧不远处的玩家」，玩家须自己走过去才能面见城中武将。
      */
     private setupPlayer(legionManager: LegionManager): void {
         const startCity = this.cityManager.getCity(PLAYER_START_CITY_ID) ?? this.cityManager.getCities()[0];
         if (!startCity) return;
+        const spawnPos = {
+            lat: startCity.latitude + PLAYER_START_OFFSET.lat,
+            lng: startCity.longitude + PLAYER_START_OFFSET.lng,
+        };
         const hero = new PlayerHero({
             map: this.map,
             cityManager: this.cityManager,
@@ -720,7 +731,7 @@ export class GameApp {
             notify: (msg) => this.playerHUD?.notify(msg),
             followCamera: () => this.cameraFollowUI.followPlayer(),
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
-        }, { lat: startCity.latitude, lng: startCity.longitude });
+        }, spawnPos);
         this.playerHero = hero;
 
         const quests = new PlayerQuestSystem({
@@ -735,6 +746,10 @@ export class GameApp {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
             },
             feed: this.brawlFeedPanel,
+            // 自动模式去接"当年剧本任务"用（主人 2026-09-11 定：-334 年必须去找亚历山大）
+            getYear: () => this.timeSystem.getYear(),
+            // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）
+            getScriptObjective: (armyId) => this.historicalEventManager.getScriptObjective(armyId),
         });
         this.playerQuests = quests;
 
@@ -801,6 +816,7 @@ if (import.meta.hot) {
                 game.cityManager.addCity({
                     id: c.id, name: c.name, factionId: c.factionId,
                     latitude: c.lat, longitude: c.lng, type: c.type as any,
+                    // 🔴 [2026-09-11 主人定] 开局驻军一律 10000（战场已独立，据点不再有「没有兵力」的情况）
                     troops: c.troops ?? 10000,
                 });
                 added++;

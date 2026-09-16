@@ -14,6 +14,8 @@ import type { City } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getScriptProtagonistCityId } from '../data/HistoricalEventScript';
+import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
 import { getFactionCompositionSlots } from '../types/CultureFormations';
@@ -43,6 +45,13 @@ export interface PlayerQuest {
     targetCityName: string;
     /** 出征任务奖励精锐 */
     reward?: { name: string; unitKey: string };
+    /**
+     * 🔴 [2026-09-11 主人定 A 方案] **剧本任务目标**（真历史剧本）：
+     * 玩家随的是**剧本主角军团**时，任务条显示真实历史进度（如「进军格拉尼库斯」），
+     * 而不是引擎默认那套「攻【某城】」——剧本拿 `expeditionTargetCityId` 当行军航点用，
+     * 引擎那套会把它误显示成"攻打该城"。有此字段即为剧本任务。
+     */
+    scriptObjective?: { label: string };
 }
 
 export interface DialogueOption {
@@ -91,6 +100,14 @@ export interface PlayerQuestDeps {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void;
     };
+    /** 当前游戏年份（负 = 公元前）。自动模式据此判定"当年有没有剧本任务要接"。 */
+    getYear: () => number;
+    /**
+     * 🔴 [2026-09-11 主人定 A 方案] 剧本主角军团的真实历史目标（非剧本军团返回 null）。
+     * 有值时：任务条改显示真历史进度，且**入伍不再要求该军团有"目标城"**
+     * （剧本军的 `expeditionTargetCityId` 只是行军航点，引擎那套会当成"要攻占的城"）。
+     */
+    getScriptObjective?: (armyId: string | null | undefined) => { label: string; done: boolean } | null;
 }
 
 const TICK_MS = 400;
@@ -365,6 +382,27 @@ export class PlayerQuestSystem {
         }
         const q = this.quest;
         if (!q) return;
+
+        // 🔴 [2026-09-11 主人定 A 方案] 剧本任务：**完成判定看剧本真实进度**，
+        //    不看"某座城归我方了"（剧本军的航点城本来就不该被攻占）。
+        if (q.scriptObjective) {
+            if (!GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS) {
+                this.quest = null;
+                this.emitChange();
+                return;
+            }
+            const obj = this.deps.getScriptObjective?.(q.legionId) ?? null;
+            if (obj?.done) {
+                this.finishQuest(true);
+                return;
+            }
+            const army0 = this.deps.legionManager.getLegionById(q.legionId);
+            if (!army0 || army0.isDestroyed || army0.getTroops() <= 0) {
+                this.finishQuest(false);
+            }
+            return;
+        }
+
         const target = this.deps.cityManager.getCity(q.targetCityId);
         if (target && target.factionId === q.factionId) {
             this.finishQuest(true);
@@ -376,9 +414,17 @@ export class PlayerQuestSystem {
         }
     }
 
-    /** 自动选据点前往：优先「名将 + 双行」武将的势力据点，同分随机取一个 */
+    /**
+     * 自动选据点前往：优先「名将 + 双行」武将的势力据点，同分随机取一个。
+     *
+     * 🔴 [2026-09-11 主人定「自动模式打开，玩家 -334 年要去找亚历山大接任务」]
+     *    当年若有剧本事件 → **无条件优先去剧本主角那座城**：压过"兵最多/名将/双行"排序，
+     *    也压过「就近寻将」开关——剧本任务是硬要求，不是可选项。
+     *    主角已率军出征时无需另写逻辑：下面既有的「认人不认城」分支会就地转成追出城。
+     *    没有剧本的年份 → 完全退回原有排序，行为一字不变。
+     */
     private autoTravelToBestCity(): void {
-        const city = this.pickAutoCity();
+        const city = this.pickScriptTargetCity() ?? this.pickAutoCity();
         if (!city) return;
         const g = getCityAnchoredGeneral(city.id);
         const army = g ? this.armyOfGeneral(g.generalId) : null;
@@ -392,6 +438,17 @@ export class PlayerQuestSystem {
         }
         this.chaseCityId = null;
         this.deps.hero.travelToCity(city.id);
+    }
+
+    /**
+     * 当年剧本主角所在的城（当年无剧本事件 → null）。
+     * 只回答"该去哪座城"；主角在不在城中由 `autoTravelToBestCity` 的既有分支处理。
+     */
+    private pickScriptTargetCity(): City | null {
+        if (!GameConfig.SYSTEM.ENABLE_SCRIPT_EVENTS) return null;
+        const cityId = getScriptProtagonistCityId(this.deps.getYear());
+        if (!cityId) return null;
+        return this.deps.cityManager.getCity(cityId) ?? null;
     }
 
     /** 追击中的那位武将的**本城**（会面后谈事仍以这座城的势力/目标为准） */
@@ -420,15 +477,21 @@ export class PlayerQuestSystem {
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         const targetName = target?.name ?? '前方敌城';
+        // 🔴 [2026-09-11 主人定 A 方案] 剧本主角军团：说真历史目标，不说"攻某城"
+        const scriptObj = this.deps.getScriptObjective?.(army.id) ?? null;
+        const goalText = scriptObj ? scriptObj.label : `往【${targetName}】`;
         const eliteName = getCityEliteLegionName(city.id) ?? `${generalName}部`;
         this.deps.showDialogue({
             speaker: generalName,
             portrait,
             factionName,
-            text: `壮士竟寻到军中来了。某正提兵往【${targetName}】，军旅之中不便设宴。`
-                + `壮士若不嫌鞍马劳顿，便随某同去，克城之日当以「${eliteName}」之战法相授。`,
+            text: scriptObj
+                ? `壮士竟寻到军中来了。某正提兵${scriptObj.label}，军旅之中不便设宴。`
+                    + `壮士若不嫌鞍马劳顿，便随某同去。`
+                : `壮士竟寻到军中来了。某正提兵往【${targetName}】，军旅之中不便设宴。`
+                    + `壮士若不嫌鞍马劳顿，便随某同去，克城之日当以「${eliteName}」之战法相授。`,
             options: [
-                { label: `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName, eliteName) },
+                { label: scriptObj ? `⚔ 就此随军（${scriptObj.label}）` : `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName, eliteName) },
                 { label: '告辞', onPick: () => this.deps.closeDialogue() },
             ],
         });
@@ -441,7 +504,11 @@ export class PlayerQuestSystem {
         const factionName = this.deps.cityManager.getFactionName(factionId);
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
-        if (!target) {
+        // 🔴 [2026-09-11 主人定 A 方案] 剧本主角军团：走真历史目标，**不再要求它有"目标城"**
+        //    （剧本军的 expeditionTargetCityId 只是行军航点，引擎那套会当成"要攻占的城"；
+        //      没有它时原来直接一句"所部暂无战事"把玩家挡在门外 —— 剧本军必须能入伍。）
+        const scriptObj = this.deps.getScriptObjective?.(army.id) ?? null;
+        if (!target && !scriptObj) {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
             return;
         }
@@ -455,16 +522,18 @@ export class PlayerQuestSystem {
             generalId: army.generalId ?? '',
             generalName,
             legionId: army.id,
-            targetCityId: target.id,
-            targetCityName: target.name,
+            targetCityId: target?.id ?? city.id,
+            targetCityName: target?.name ?? scriptObj?.label ?? city.name,
             reward: unitKey ? { name: eliteName, unitKey } : undefined,
+            scriptObjective: scriptObj ? { label: scriptObj.label } : undefined,
         };
         this.deps.hero.joinFaction(factionId);
         this.deps.hero.attachTo(army);
         this.deps.ensureUnpaused();
         this.deps.kickLegionAi(army.id);
-        this.deps.notify(`🐎 于军中投${generalName}，同征【${target.name}】`);
-        gameLog('expedition', `[玩家] 野外入伍：${generalName} 部 ${army.name} → ${target.name}`);
+        const goal = scriptObj ? scriptObj.label : `同征【${target?.name ?? '前方敌城'}】`;
+        this.deps.notify(`🐎 于军中投${generalName}，${goal}`);
+        gameLog('expedition', `[玩家] 野外入伍：${generalName} 部 ${army.name} → ${goal}`);
         this.emitChange();
     }
 
@@ -581,6 +650,24 @@ export class PlayerQuestSystem {
                 this.deps.feed?.pushRestoration?.({ factionId: q.factionId, cityName: q.cityName });
                 this.deps.notify(`🚩 【${q.cityName}】光复，${q.factionName}复国成功！赏大功 600`);
                 gameLog('expedition', `[玩家] 复国成功：${q.cityName} → ${q.factionName}，奖战功 600`);
+            } else if (q.scriptObjective) {
+                // 🔴 [2026-09-11 主人定 A 方案] 剧本任务：措辞是"抵达/完成历史目标"，不是"攻克某城"
+                const label = q.scriptObjective.label;
+                hero.addMerit(400);
+                if (q.reward) {
+                    const learned = hero.learnElite({
+                        name: q.reward.name,
+                        unitKey: q.reward.unitKey,
+                        factionId: q.factionId,
+                        factionName: q.factionName,
+                    });
+                    this.deps.notify(learned
+                        ? `🚩 ${label} 达成，学会精锐战法「${q.reward.name}」，赏大功 400`
+                        : `🚩 ${label} 达成（「${q.reward.name}」已会），赏大功 400`);
+                } else {
+                    this.deps.notify(`🚩 ${label} 达成，赏大功 400`);
+                }
+                gameLog('expedition', `[玩家] 剧本目标达成：${label}，奖战功 400`);
             } else {
                 hero.addMerit(400);
                 this.deps.feed?.pushExpedition?.({ legionName: q.generalName, cityName: q.targetCityName, kind: 'success' });
@@ -602,8 +689,10 @@ export class PlayerQuestSystem {
         } else {
             this.deps.notify(q.kind === 'restore'
                 ? `❌ 义军解散，${q.factionName}复国失败`
-                : `❌ 出征【${q.targetCityName}】失败，军团解散`);
-            gameLog('expedition', `[玩家] 任务失败：${q.kind} ${q.targetCityName}`);
+                : q.scriptObjective
+                    ? `❌ ${q.scriptObjective.label} 中断，军团解散`
+                    : `❌ 出征【${q.targetCityName}】失败，军团解散`);
+            gameLog('expedition', `[玩家] 任务失败：${q.kind} ${q.scriptObjective?.label ?? q.targetCityName}`);
         }
         this.emitChange();
     }
