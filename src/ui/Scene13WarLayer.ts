@@ -633,6 +633,16 @@ interface ArrowTower {
     down: boolean;
 }
 
+/** 🔴 [2026-09-16 主人定「防守方所有没有坍塌的建筑都可以射箭」] 守城普通建筑射手配置（单发冷箭，巷战狙击） */
+interface CityBuildingEntry {
+    sprite: DecorSprite;
+    name: string;
+    cd?: number;
+    range?: number;
+    reload?: number;
+    atk?: number;
+}
+
 // ── 兵种属性（2026-08-16 全面套用 AoE2 DE 真实数据）──
 // 五维 = 血 hp / 攻 atk / 防（meleeArmor 近防 + pierceArmor 远防）/ 射程 rng / 射速 reload。
 
@@ -1437,6 +1447,11 @@ const SIEGE_IMPERIAL_BUILDINGS: Array<[string, string]> = [
 ];
 /** 攻城战守方（中城）11 种城堡时代建筑，和战略中城一致（去掉箭塔，城墙内侧已有 4 座并列箭塔）：随机取 9 种且不重复。 */
 const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
+
+/** 🔴 [2026-09-16 主人定] 二级「蒙古」(buildingStyle === 'MONGOL') 守城方：城池 9 建筑池里随机掺入蒙古包。
+ *  用真蒙古包 `YURT_E~L`（旧款 A~D 是茅草屋，2026-08-22 主人定弃用）；目录名直接传 `place()`，
+ *  没有「风格前缀」问题。总数仍严格 9（大/中/小城都只从候选里取 9 栋）。 */
+const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」，08-29 去箭塔补民居：磨坊/民居×2/兵营/铁匠铺/靶场/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 /** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
@@ -1992,10 +2007,9 @@ const PROJ_SPEED_PX: Record<string, number> = {
     //    但 560 是 bombard_cannon 的**视野**（SIGHT_MAP），射程是 480px = 12 格；3.5s 则是
     //    DE 里 HLORR(14 格) 的时间，不是手推炮的。验算脚本 scratch/_de_bombard_speed.py。
     //    DE 实测：射程 12 格 / 最小射程 5 格 / 装填 6.5s / 弹速 4.0 格·秒 → 满射程飞 3.00s。
-    //    本项目射程 480px、最小射程 200px、装填 6.5s 与 DE 一模一样，只有弹速按项目节奏提速：
-    //      10 格/秒（400px/s）→ 满射程 1.20s。提速倍率 2.50×，与弩矢 2.33×、攻城塔 2.29× 同档。
-    //    仍比弩矢(14 格)慢，与 DE 的相对快慢同序（DE 炮弹 4.0 < 弩矢 6.0），保留高抛弧线感。
-    PROJ_BOMBARD_BALL: 10 * 40,
+    //    本项目射程 480px、最小射程 200px、装填 6.5s。
+    //    🔴 [2026-09-16 主人定] 手推炮弹速提速至 680 px/s（17 格/秒），满射程飞行时间压缩至约 0.7 秒。
+    PROJ_BOMBARD_BALL: 17 * 40,
     PROJ_GRENADE: 4.5 * 40,
 };
 /** DE 弹丸素材逐帧时长（秒）；未列出的单帧/定向素材不播放序列。 */
@@ -3270,8 +3284,8 @@ export class Scene13WarLayer {
     private arrowTowers: ArrowTower[] = [];
     /** 🔴 [主人需求] 攻城战守方城堡射手（险要专属；30 秒不坍塌，持续射击） */
     private castleTowers: ArrowTower[] = [];
-    /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；30 秒随机三形态 */
-    private cityBuildings: Array<{ sprite: DecorSprite; name: string }> = [];
+    /** 🔴 [2026-08-29 主人需求] 攻城战守城 9 建筑（含城堡/城镇中心/城市塔楼）；30 秒随机三形态 + 未坍塌射冷箭 */
+    private cityBuildings: CityBuildingEntry[] = [];
     private natureCache: Record<string, NatureAsset> = {};
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
@@ -4803,7 +4817,11 @@ export class Scene13WarLayer {
             const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledYurts[i], { scale }));
+            for (let i = 0; i < 8; i++) {
+                const sp = place(shuffledSpawns[i], shuffledYurts[i], { scale });
+                this.decorSprites.push(sp);
+                this.trackCityBuilding(sp);
+            }
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
             this.decorSprites.push(place(shuffledSpawns[8], 'ASIA_TOWER_AGE2', { scale }));
@@ -4844,6 +4862,17 @@ export class Scene13WarLayer {
                 ? side.filter((s) => !wonderSpots.some((w) => w.x === s.x && w.y === s.y))
                 : side;
             const style = this.buildingStyleFor(1);
+            // 🔴 [2026-09-16 主人定]「二级蒙古的大中小城中的 9 建筑添加蒙古包随机，总体不能超过 9 个。」
+            //    守城方是**二级「蒙古」**（据点 buildingStyle === 'MONGOL'，不是三级漠北蒙古）时，
+            //    大/中/小城的 9 建筑池里随机掺入 8 个真蒙古包（YURT_E~L，目录名直传 place() → 无风格前缀问题），
+            //    最终栋数**恒为 9**（与战略地图 TerritorySystem、据点编辑页完全同一口径）。
+            const defenderCity: any = this.defenderCityId
+                ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
+                : null;
+            const defenderIsMongol = !!defenderCity && defenderCity.buildingStyle === 'MONGOL';
+            const cityPoolBuildings = (base: string[]): string[] =>
+                defenderIsMongol ? [...base, ...MONGOL_CITY_YURTS] : [...base];
+            const isYurtAsset = (b: string): boolean => b.startsWith('YURT_');
             // 城墙/城门 = 装饰贴图 + 碰撞阻挡（照 DE，不可攻击）：铺贴图 + 建碰撞格（士兵不打墙、但 30 秒塌墙前被挡在城外）
             // 🔴 [2026-08-22 主人需求] 30 秒随机塌一半城墙，塌掉的墙段放行 + 留残骸：
             //    城门 → 播 50 帧倒塌动画 → 留 rubble 残骸；石墙/垛墙 → 切 D75 残垣；木栅栏 → 切木门 rubble 残骸。
@@ -5021,9 +5050,10 @@ export class Scene13WarLayer {
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
             if (this.defenderCityType === 'small_city') {
                 const shuffledSmall = [...buildingSide].sort(() => Math.random() - 0.5);
-                const shuffledBuildings = [...SIEGE_FEUDAL_BUILDINGS].sort(() => Math.random() - 0.5);
+                const shuffledBuildings = cityPoolBuildings(SIEGE_FEUDAL_BUILDINGS).sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSmall.length; i++) {
-                    const sp = place(shuffledSmall[i], `${style}_${shuffledBuildings[i]}_AGE2`, { scale: siegeBuildingScale(shuffledBuildings[i]) });
+                    const bk = shuffledBuildings[i];
+                    const sp = place(shuffledSmall[i], isYurtAsset(bk) ? bk : `${style}_${bk}_AGE2`, { scale: siegeBuildingScale(bk) });
                     this.decorSprites.push(sp);
                     this.trackCityBuilding(sp);
                 }
@@ -5044,10 +5074,11 @@ export class Scene13WarLayer {
             }
             // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；落点随机（2026-08-29 主人定「除箭塔外其余在 9 出兵口随机摆放」）。
             if (this.defenderCityType === 'medium_city') {
-                const shuffledBuildings = [...SIEGE_MEDIUM_BUILDINGS].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
+                const shuffledBuildings = cityPoolBuildings(SIEGE_MEDIUM_BUILDINGS).sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
                 const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSide.length; i++) {
-                    const sp = place(shuffledSide[i], `${style}_${shuffledBuildings[i]}_AGE3`, { scale: siegeBuildingScale(shuffledBuildings[i]) });
+                    const bk = shuffledBuildings[i];
+                    const sp = place(shuffledSide[i], isYurtAsset(bk) ? bk : `${style}_${bk}_AGE3`, { scale: siegeBuildingScale(bk) });
                     this.decorSprites.push(sp);
                     this.trackCityBuilding(sp);
                 }
@@ -5097,7 +5128,11 @@ export class Scene13WarLayer {
             const tcSp = place(shuffledBig[0], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE });
             this.decorSprites.push(tcSp);
             this.trackCityBuilding(tcSp);
-            const age3Pool = SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3').sort(() => Math.random() - 0.5);
+            const age3Pool: Array<[string, string]> = [
+                ...SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3'),
+                // 🔴 [2026-09-16 主人定] 二级蒙古大城：辅助池掺入蒙古包（仍是 3 栋 AGE4 必有 + 6 栋辅助 = 9）
+                ...(defenderIsMongol ? MONGOL_CITY_YURTS.map((y): [string, string] => [y, 'AGE3']) : []),
+            ].sort(() => Math.random() - 0.5);
             const ringBuildings: Array<[string, string]> = [
                 ['MARKET', 'AGE4'],
                 ['UNIVERSITY', 'AGE4'],
@@ -5106,7 +5141,7 @@ export class Scene13WarLayer {
             const ringSpawns = shuffledBig.slice(1);
             for (let i = 0; i < ringSpawns.length; i++) {
                 const [building, age] = ringBuildings[i];
-                const sp = place(ringSpawns[i], `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) });
+                const sp = place(ringSpawns[i], isYurtAsset(building) ? building : `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) });
                 this.decorSprites.push(sp);
                 this.trackCityBuilding(sp);
             }
@@ -6460,10 +6495,17 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 记录一座守城建筑（供 30 秒随机三形态用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
+    /** 记录一座守城建筑（供 30 秒随机三形态 + 未坍塌射冷箭用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
     private trackCityBuilding(sp: DecorSprite): void {
         const name = sp.asset.slice('BUILDING:'.length);
-        this.cityBuildings.push({ sprite: sp, name });
+        this.cityBuildings.push({
+            sprite: sp,
+            name,
+            cd: 1.0 + Math.random() * 2.5, // 错开初始开火时刻
+            range: 240,                   // 巷战狙击中近程 (220 ~ 250 px)
+            reload: 3.2,                  // 装填时间 3.0 ~ 3.5 秒
+            atk: 3,                       // 窗台民兵冷箭 (攻击力 2 ~ 3)
+        });
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
         this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
         this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
@@ -6480,6 +6522,9 @@ export class Scene13WarLayer {
         if (this.battleType !== 'siege') return;
         for (const t of this.arrowTowers) this.stepTowerShoot(t, dt);
         for (const c of this.castleTowers) this.stepTowerShoot(c, dt);
+        // 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
+        //    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）窗台民兵冷箭
+        for (const b of this.cityBuildings) this.stepCityBuildingShoot(b, dt);
     }
 
     /** 单座塔/城堡：找射程内最近攻方士兵，冷却到点连发 3 支箭 + 真实穿透伤害。 */
@@ -6532,6 +6577,66 @@ export class Scene13WarLayer {
             });
         }
         t.cd = t.reload;
+    }
+
+    /**
+     * 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
+     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）：窗台民兵冷箭（单发普通箭，攻 2~3，射程 240，装填 3.2s）。
+     *    关键规则：坍塌即停火。未坍塌时正常射击；一旦切为残骸或被投石车砸毁，立即熄火！
+     *    （注：城堡已在 castleTowers 中以三连发重火力射击，这里跳过 CASTLE 避免重复）。
+     */
+    private stepCityBuildingShoot(b: CityBuildingEntry, dt: number): void {
+        // 城堡已在 castleTowers 独立射击，跳过
+        if (b.name.includes('CASTLE')) return;
+        // 坍塌即停火：已销毁、正在倒塌、或已切成 RUBBLE 残骸，立即停止射击
+        if (b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) return;
+        // 建筑贴图未就绪不射
+        const bNa = this.natureCache[b.sprite.asset];
+        if (!bNa?.img?.complete) return;
+
+        b.cd = (b.cd ?? 0) - dt;
+        if (b.cd > 0) return;
+
+        // 窗台/屋檐开火点：贴图锚点在底基，抬到建筑中上部
+        const fireX = b.sprite.x;
+        const fireY = b.sprite.y - UNIT_PX * 0.6;
+        const range = b.range ?? 240; // 巷战狙击中近程 (220 ~ 250 px)
+
+        // 寻找射程内最近的攻方士兵
+        let foe: WarMan | null = null, bd = Infinity;
+        for (const m of this.men) {
+            if (m.f === 0 && m.hp > 0) {
+                const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
+                if (d < bd) { bd = d; foe = m; }
+            }
+        }
+        if (!foe || bd > range * range) { b.cd = 0.3; return; } // 无目标或超出射程，稍后再寻
+
+        // 真实伤害：窗台民兵冷箭（攻 2~3，默认 3）
+        const atk = b.atk ?? 3;
+        const target = this.statsFor(foe.key, foe.f);
+        const dmg = Math.max(1, atk - target.pierceArmor);
+        foe.atkNext++;
+        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+            * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
+        if (foe.hp <= 0) {
+            if (foe.hero) this.heroDown(foe);
+            else this.pushCorpse(foe);
+        }
+
+        const ax = foe.x - fireX, ay = foe.y - fireY;
+        const ad = Math.hypot(ax, ay) || 1;
+        // 单发普通箭（PROJ_ARROW）
+        this.arrows.push({
+            x: fireX, y: fireY,
+            dx: ax / ad, dy: ay / ad, len: ad,
+            t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
+            towerFlight: {
+                startLift: this.elevationLiftAt(fireX, b.sprite.y),
+                endLift: this.elevationLiftAt(foe.x, foe.y),
+            },
+        });
+        b.cd = b.reload ?? 3.2; // 装填时间 3.0 ~ 3.5 秒
     }
 
     /**
@@ -7290,6 +7395,12 @@ export class Scene13WarLayer {
                         this.ensureProj(proj);
                         if (isHussiteVolley) this.ensureProj('PROJ_GUNPOWDER');
                         const isFirearm = FIREARM_TYPES.has(m.key);
+                        // 🔴 [2026-09-16 主人「近战兵没有了也就没有音效了，应该添加 DE 的射箭音效」]
+                        //    常规远程兵（弓/弩/标枪/飞斧…）放箭声。攻城器械上面已经播了 siege_launch、
+                        //    火器下面 spawnFirearmMuzzle 里播 gun_fire，这里只补剩下那一类 —— 正是
+                        //    近战死绝、land_contact 淡出之后唯一还在动的那批兵，原先完全静音。
+                        //    限流靠 AudioManager 的 cooldown（arrow_fire 700ms），这里不必自己数人。
+                        if (!m.siegeW && !isFirearm) audioManager.play('arrow_fire');
                         for (let v = 0; v < volley; v++) {
                             // DE 胡斯战车每轮 = 1 发专属主弹 + 5 发 p_shot 次级弹。
                             const volleyProj = isHussiteVolley && v > 0 ? 'PROJ_GUNPOWDER' : proj;

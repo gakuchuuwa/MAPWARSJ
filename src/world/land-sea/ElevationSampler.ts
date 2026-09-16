@@ -7,7 +7,7 @@ import {
     decodeTerrariumElevation,
 } from './TerrariumCodec';
 import { computeSlopeFromTile, type SlopeSample } from './TerrainSlope';
-import { decodeTileRGBA } from './TileDecoder';
+import { decodeTileRGBA, decodeOnFrameBudget } from './TileDecoder';
 
 /** 瓦片取回失败后的重试冷却（真实毫秒）：期间不再重发请求，网络恢复后仍能重试 */
 const TILE_RETRY_COOLDOWN_MS = 60_000;
@@ -194,7 +194,8 @@ export class ElevationSampler {
             //    改前是裸 getContext('2d') + 逐瓦片新建画布，CPU Profile 实测这一处
             //    独占 36% CPU（12 秒采样 4287ms），是「玩家移动时战略画面卡」的最大单项。
             //    详见 TileDecoder.ts 文件头。
-            const data = decodeTileRGBA(img, TERRARIUM_TILE_SIZE);
+            //    🔴 [2026-09-16] 再排进逐帧预算队列：整屏预取的 onload 扎堆在同一帧才是「一顿一顿」的来源。
+            const data = await decodeOnFrameBudget(() => decodeTileRGBA(img, TERRARIUM_TILE_SIZE));
             if (!data) return false;
             this.cache.set(key, data);
             this.touchCache(key);

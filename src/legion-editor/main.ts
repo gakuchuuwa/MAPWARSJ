@@ -38,7 +38,7 @@ import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompos
 import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
-import { getCombatPower, getPowerRefs, getLegionPower } from '../data/CombatPower';
+import { getCombatPower, getPowerRefs, getLegionPower, invalidateCombatPowerCache } from '../data/CombatPower';
 import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
 import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
 import {
@@ -50,6 +50,7 @@ import {
 } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_NAMES } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
+import { resolveFallbackForFaction, planFallbackForDeletedLegion } from '../systems/LegionFallbackOnDelete';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -211,7 +212,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'liao_dao', name: '契丹辽刀手', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/LIAO_DAO/' },
     { id: 'elite_liao_dao', name: '契丹辽刀手精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
     { id: 'kamayuk', name: '枪兵长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
-    { id: 'jian_swordsman', name: '华夏盾牌步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
+    { id: 'jian_swordsman', name: '华夏步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
     { id: 'ninja', name: '日本忍者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/NINJA/' },
     { id: 'samurai', name: '日本武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_DE/' },
     { id: 'samurai_elite', name: '日本武士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },
@@ -225,22 +226,22 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'eastern_swordsman', name: '穆斯林剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/EASTERN_SWORDSMAN/' },
     { id: 'legionary', name: '罗马军团步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
     { id: 'throwing_axeman', name: '法兰克掷斧兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/THROWING_AXEMAN/' },
-    { id: 'heavy_pikeman', name: '长枪兵重装', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVY_PIKEMAN/' },
+    { id: 'heavy_pikeman', name: '长枪兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVY_PIKEMAN/' },
     { id: 'pikeman', name: '长枪兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PIKEMAN/' },
     { id: 'tiger_rider', name: '魏虎骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/TIGER_RIDER/' },
     { id: 'xianbei_raider', name: '鲜卑掠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/XIANBEI_RAIDER/' },
     { id: 'iron_pagoda', name: '女真铁浮屠', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IRON_PAGODA/' },
     { id: 'hei_kuang', name: '南北朝黑光铠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/HEI_KUANG/' },
-    { id: 'hei_kuang_heavy', name: '南北朝黑光铠骑兵重装', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/HEI_KUANG_HEAVY/' },
+    { id: 'hei_kuang_heavy', name: '南北朝黑光铠骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/HEI_KUANG_HEAVY/' },
     { id: 'steppe_lancer', name: '草原枪骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/STEPPE_LANCER/' },
     { id: 'elite_steppe_lancer', name: '草原枪骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITE_STEPPE_LANCER/' },
     { id: 'keshik', name: '鞑靼怯薛军', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/KESHIK/' },
     { id: 'tarkan', name: '匈奴答剌罕骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/TARKAN/' },
     { id: 'elite_tarkan', name: '匈奴答剌罕骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
     { id: 'boyar', name: '斯拉夫贵族铁骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
-    { id: 'savar', name: '萨珊萨瓦兰骑兵重装', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
-    { id: 'camel_heavy', name: '骆驼骑兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
-    { id: 'paladin', name: '骑士游侠重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
+    { id: 'savar', name: '萨珊萨瓦兰骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
+    { id: 'camel_heavy', name: '骆驼骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
+    { id: 'paladin', name: '骑士游侠高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
     { id: 'coustillier', name: '勃艮第马上轻骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
     { id: 'light_riders', name: '中世纪轻骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHT_RIDERS/' },
     { id: 'chukonu', name: '中国诸葛弩', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/CHUKONU/' },
@@ -257,7 +258,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'imperial_skirmisher', name: '越南掷矛手高级', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
     { id: 'archer', name: '南方步弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
     { id: 'cav_archer', name: '骑射手', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER/' },
-    { id: 'cav_archer_heavy', name: '骑射手重装', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
+    { id: 'cav_archer_heavy', name: '骑射手高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
     { id: 'pattiyoda_longbowman', name: '帕提尤达长弓兵', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
     { id: 'elite_pattiyoda_longbowman', name: '帕提尤达长弓兵精锐', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
     { id: 'composite_bowman', name: '亚美尼亚复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/COMPOSITE_BOWMAN/' },
@@ -300,7 +301,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_battle_elephant', name: '战斗象高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITEBATTLEELEPHANT/' },
     { id: 'elite_berserk', name: '维京狂战士精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITEBERSERK/' },
     { id: 'elite_blackwood_archer', name: '图皮黑木弓箭手精锐', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELITEBLACKWOODARCHER/' },
-    { id: 'elite_bolas_rider', name: '马普切套索骑兵精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBOLASRIDER/' },
+    { id: 'elite_bolas_rider', name: '马普切套索骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEBOLASRIDER/' },
     { id: 'elite_boyar', name: '斯拉夫贵族铁骑精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEBOYAR/' },
     { id: 'elite_camel_archer', name: '柏柏尔骆驼弓骑精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITECAMELARCHER/' },
     { id: 'elite_cataphract', name: '拜占庭圣骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITECATAPHRACT/' },
@@ -318,7 +319,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_guecha_warrior', name: '穆伊斯卡格查勇士精锐', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELITEGUECHAWARRIOR/' },
     { id: 'elite_huskarl', name: '哥特近卫军精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITEHUSKARL/' },
     { id: 'elite_hussite_wagon', name: '波希米亚胡斯战车精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEHUSSITEWAGON/' },
-    { id: 'elite_ibirapema_warrior', name: '图皮战棍勇士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
+    { id: 'elite_ibirapema_warrior', name: '图皮战棍勇士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITEIBIRAPEMAWARRIOR/' },
     { id: 'elite_iron_pagoda', name: '女真铁浮屠精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEIRONPAGODA/' },
     { id: 'elite_jaguar_warrior', name: '阿兹特克豹勇士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITEJAGUARWARRIOR/' },
     { id: 'elite_janissary', name: '土耳其苏丹亲兵精锐', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ELITEJANISSARY/' },
@@ -326,7 +327,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_keshik', name: '鞑靼怯薛军精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEKESHIK/' },
     { id: 'elite_kona', name: '马普切科纳勇士精锐', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/ELITEKONA/' },
     { id: 'elite_konnik', name: '保加利亚骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITEKONNIK/' },
-    { id: 'elite_konnik_foot', name: '锤炼兵精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITEFOOTKONNIK/' },
+    { id: 'elite_konnik_foot', name: '锤炼兵高级', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITEFOOTKONNIK/' },
     { id: 'elite_leitis', name: '立陶宛列提斯精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITELEITIS/' },
     { id: 'elite_magyar_huszar', name: '马扎尔骠骑兵精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEMAGYARHUSZAR/' },
     { id: 'elite_mameluke', name: '萨拉森马穆鲁克精锐', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ELITEMAMELUKE/' },
@@ -334,14 +335,14 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_obuch', name: '波兰奥布奇战锤兵精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITEOBUCH/' },
     { id: 'elite_organ_gun', name: '葡萄牙风琴炮精锐', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ELITEORGANGUN/' },
     { id: 'elite_plumed_archer', name: '玛雅羽箭手精锐', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ELITEPLUMEDARCHER/' },
-    { id: 'elite_ratha_melee', name: '孟加拉拉塔战车精锐', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITERATHAMELEE/' },
+    { id: 'elite_ratha_melee', name: '孟加拉拉塔战车高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITERATHAMELEE/' },
     { id: 'elite_ratha_ranged', name: '孟加拉拉塔弓战车精锐', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITERATHARANGED/' },
     { id: 'elite_scythian_horse_archer', name: '斯基泰骑射手高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/' },
     { id: 'elite_serjeant', name: '西西里军士长精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITESERJEANT/' },
     { id: 'elite_shotel_warrior', name: '埃塞俄比亚弯刀勇士精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITESHOTELWARRIOR/' },
-    { id: 'elite_shrivamsha_rider', name: '什里瓦姆沙骑手精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITESHRIVAMSHARIDER/' },
+    { id: 'elite_shrivamsha_rider', name: '什里瓦姆沙骑手高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITESHRIVAMSHARIDER/' },
     { id: 'elite_skirmisher', name: '掷矛手高级', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ELITESKIRMISHER/' },
-    { id: 'elite_temple_guard', name: '穆伊斯卡神庙守卫精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITETEMPLEGUARD/' },
+    { id: 'elite_temple_guard', name: '穆伊斯卡神庙守卫高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITETEMPLEGUARD/' },
     { id: 'elite_teutonic_knight', name: '条顿武士精锐', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/ELITETEUTONICKNIGHT/' },
     { id: 'elite_throwing_axeman', name: '法兰克掷斧兵精锐', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ELITETHROWINGAXEMAN/' },
     { id: 'elite_tiger_cavalry', name: '魏虎骑兵精锐', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITETIGERCAVALRY/' },
@@ -370,8 +371,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hill_tribesman', name: '山地部落民', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/HILL_TRIBESMAN/' },
     { id: 'hippeus', name: '斯巴达三百', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HIPPEUS/' },
     { id: 'elite_hippeus', name: '斯巴达三百精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HIPPEUS/' },
-    { id: 'hoplite', name: '希腊重装步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HOPLITE/' },
-    { id: 'elite_hoplite', name: '希腊重装步兵精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HOPLITE/' },
+    { id: 'hoplite', name: '希腊步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HOPLITE/' },
+    { id: 'elite_hoplite', name: '希腊步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HOPLITE/' },
     { id: 'strategos', name: '雅典将军卫队', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/STRATEGOS/' },
     { id: 'elite_strategos', name: '雅典将军卫队精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/STRATEGOS/' },
     { id: 'houfnice', name: '手推榴弹炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HOUFNICE/' },
@@ -382,9 +383,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'elite_immortal', name: '波斯长生军精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
     { id: 'immortal_ranged', name: '波斯长生军弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
-    { id: 'elite_immortal_ranged', name: '波斯长生军弓手精锐', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
-    { id: 'imperial_camel_rider', name: '印度斯坦骆驼骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
-    { id: 'imperial_centurion', name: '罗马骑兵重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
+    { id: 'elite_immortal_ranged', name: '波斯长生军弓手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/RANGED_IMMORTAL/' },
+    { id: 'imperial_camel_rider', name: '印度斯坦帝王骆驼兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIALCAMELRIDER/' },
+    { id: 'imperial_centurion', name: '罗马骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/IMPERIALCENTURION/' },
     { id: 'indian_tribesman', name: '印度部落民', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/INDIAN_TRIBESMAN/' },
     { id: 'iroquois_warrior', name: '易洛魁战士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IROQUOISWARRIOR/' },
     { id: 'jaguar_warrior', name: '阿兹特克豹勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JAGUARWARRIOR/' },
@@ -407,7 +408,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'organ_gun', name: '葡萄牙风琴炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ORGANGUN/' },
     { id: 'petard', name: '爆破工兵', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/PETARD/' },
     { id: 'phalangite', name: '马其顿方阵步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PHALANGITE/' },
-    { id: 'elite_phalangite', name: '马其顿方阵步兵精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PHALANGITE/' },
+    { id: 'elite_phalangite', name: '马其顿方阵步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PHALANGITE/' },
     { id: 'plumed_archer', name: '玛雅羽箭手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/PLUMEDARCHER/' },
     { id: 'qizilbash_warrior', name: '波斯红头骑士高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/QIZILBASHWARRIOR/' },
     { id: 'ratha_melee', name: '孟加拉拉塔战车', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/RATHAMELEE/' },
@@ -418,8 +419,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'rocket_cart', name: '火箭车', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ROCKETCART/' },
     { id: 'royal_janissary', name: '奥斯曼皇家亲兵高级', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/ROYALJANISSARY/' },
     { id: 'sacred_band', name: '希腊底比斯圣队高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SACRED_BAND/' },
-    { id: 'sannahya', name: '孔雀桑纳亚战象', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
-    { id: 'elite_sannahya', name: '孔雀桑纳亚战象精锐', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
+    { id: 'sannahya', name: '桑纳亚战象', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
+    { id: 'elite_sannahya', name: '桑纳亚战象高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
     { id: 'scorpion', name: '欧洲弩炮', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SCORPION/' },
     { id: 'scythian_axe_cavalry', name: '斯基泰斧骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
     { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
@@ -431,7 +432,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'siege_ram', name: '欧洲重型攻城槌重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGERAM/' },
     { id: 'skirmisher', name: '掷矛手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SKIRMISHER/' },
     { id: 'slinger', name: '投石兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/SLINGER/' },
-    { id: 'sogdian_cataphract', name: '粟特甲胄骑兵重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
+    { id: 'sogdian_cataphract', name: '粟特甲胄骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
     { id: 'sparabara', name: '波斯持盾步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SPARABARA/' },
     { id: 'spearman', name: '长矛兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SPEARMAN/' },
     { id: 'sakan_axeman', name: '塞种萨迦斧兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SAKAN_AXEMAN/' },
@@ -454,27 +455,27 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'champi_warrior', name: '印加尚皮勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIWARRIOR/' },
     { id: 'champi_runner', name: '印加尚皮飞毛腿', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
     { id: 'champi_scout', name: '印加尚皮斥候', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
-    { id: 'jian_swordman_unshielded', name: '华夏双手剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/JIAN_SWORDMAN_UNSHIELDED/' },
-    { id: 'cavalier', name: '骑士重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAVALIER/' },
+    { id: 'jian_swordman_unshielded', name: '华夏双手步兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/JIAN_SWORDMAN_UNSHIELDED/' },
+    { id: 'cavalier', name: '骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAVALIER/' },
     { id: 'flamethrower', name: '华夏猛火油柜重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/FLAMETHROWER/' },
     { id: 'helepolis', name: '希腊赫勒波利斯攻城塔重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/HELEPOLIS/' },
     { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
-    { id: 'halberdier', name: '欧洲重装戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
+    { id: 'halberdier', name: '欧洲戟兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
     { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
     { id: 'sosso_guard', name: '西非索索禁卫高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
     { id: 'elite_greek_cavalry', name: '希腊贵族骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
-    { id: 'jian_swordman_shielded', name: '华夏持盾刀剑手', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
+    { id: 'jian_swordman_shielded', name: '华夏步兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
     { id: 'levy', name: '近东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEVY/' },
     { id: 'gastraphetes', name: '希腊腹弩手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/GASTRAPHETES/' },
     { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
     { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
     { id: 'paragon', name: '楷模步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
     { id: 'shock_cavalry', name: '枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
-    { id: 'imperial_cavalry', name: '波斯具装铁骑重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
+    { id: 'imperial_cavalry', name: '波斯具装铁骑高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
-    { id: 'sarmatian', name: '东欧萨尔马提亚骑兵重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
+    { id: 'sarmatian', name: '东欧萨尔马提亚骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
     { id: 'elite_peltast', name: '色雷斯标枪手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
-    { id: 'vanguard', name: '先锋重装步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
+    { id: 'vanguard', name: '先锋步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'bowman', name: '弓兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/BOWMAN/' },
     { id: 'crusader_knight', name: '欧洲十字军骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CRUSADERKNIGHT/' },
     { id: 'raider', name: '掠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/RAIDER/' },
@@ -482,7 +483,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'antiquity_skirmisher', name: '古典掷矛手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_SKIRMISHER/' },
     { id: 'elite_antiquity_skirmisher', name: '古典掷矛手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/' },
     { id: 'antiquity_cavalry_archer', name: '古典骑射手', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_CAVALRY_ARCHER/' },
-    { id: 'antiquity_heavy_cavalry_archer', name: '古典骑射手重装', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/' },
+    { id: 'antiquity_heavy_cavalry_archer', name: '古典骑射手高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/' },
     { id: 'antiquity_light_cavalry', name: '古典轻骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_LIGHT_CAVALRY/' },
     { id: 'antiquity_scout_cavalry', name: '古典斥候骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_SCOUT_CAVALRY/' },
     { id: 'antiquity_spearman', name: '古典长矛兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_SPEARMAN/' },
@@ -607,7 +608,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
-    { id: 'frankish_paladin', name: '中世纪枪骑兵重装', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
+    { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
@@ -1581,7 +1582,7 @@ function applyFilter(): void {
     filteredRows = allRows.filter(r => {
         if (selectedRegionFilter !== 'all' && r.region !== selectedRegionFilter) return false;
         if (q) {
-            const shipAssetId = getCultureNavalShip(r.region, r.factionId);
+            const shipAssetId = getCultureNavalShip(r.region, r.factionId, r.legionName);
             const shipName = getNavalShipChineseName(shipAssetId);
             const slotMatch = r.slots.some(s => {
                 if (!s?.type) return false;
@@ -1810,11 +1811,13 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
 
     // ① 势力级制定条目
     const affected: string[] = [];
+    const affectedIds: string[] = [];
     for (const row of allRows) {
         const custom = localCustomCompositions[row.factionId];
         if (custom?.legionName?.trim() === legionName) {
             delete localCustomCompositions[row.factionId];
             affected.push(row.factionName);
+            affectedIds.push(row.factionId);
         }
     }
 
@@ -1851,16 +1854,30 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     buildRows();
     applyFilter();
     renderTable();
-    for (const r of allRows) {
-        if (!affected.includes(r.factionName)) continue;
-        await saveOneFactionLegion(r.factionId, null);
+    // 🔴 [2026-09-16 主人定] 势力级不再「清空条目让它跟随文化区」，而是**按规则重新安置**：
+    //    看武将时代 + 据点建筑风格 → 二级有同时代的就进二级，没有就退该风格的母体一级军团。
+    //    详见 src/systems/LegionFallbackOnDelete.ts 的文件头（含主人原话与杨业样例）。
+    let toL2 = 0, toL1 = 0;
+    const unplaced: string[] = [];
+    for (const factionId of affectedIds) {
+        const r = resolveFallbackForFaction(factionId);
+        if ('newLegionName' in r) {
+            await saveOneFactionLegion(factionId, r.newLegionName, r.via === 'level1' ? 'region' : 'sub');
+            if (r.via === 'level2') toL2++; else toL1++;
+        } else {
+            // 判不了（没武将 / 没据点 / 风格归不到母体）→ 保持旧行为：清空条目，跟随文化区
+            await saveOneFactionLegion(factionId, null);
+            unplaced.push(`${factionId}（${r.reason}）`);
+        }
     }
     showToast(
         `🗑 已删除军团【${legionName}】`
-        + (affected.length || cultures.length
-            ? `：${affected.length} 个势力 + ${cultures.length} 个文化区回落为母体军团`
-            : '（此前无势力、无文化区使用）'),
+        + (affectedIds.length
+            ? `：${affectedIds.length} 个势力重排（二级 ${toL2} / 一级 ${toL1}${unplaced.length ? ` / 判不了 ${unplaced.length}` : ''}）`
+            : '（此前无势力使用）')
+        + (cultures.length ? `，${cultures.length} 个文化区回落母体军团` : ''),
     );
+    if (unplaced.length) console.warn('[DeleteLegion] 这些势力判不了时代/风格，已按旧行为跟随文化区：', unplaced);
 }
 
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
@@ -2069,7 +2086,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
             const name = getBase16LegionName(rg as RegionType);
             const cultName = name.replace(/军团$/, '');
             const def = getBase16RegionDefaultLegion(rg as RegionType);
-            const shipId = getCultureNavalShip(rg as RegionType, null);
+            const shipId = getCultureNavalShip(rg as RegionType, null, name);
             const shipName = getNavalShipChineseName(shipId);
             const fidsCount = all.get(name)?.fids.length ?? 0;
             options.push({
@@ -2100,7 +2117,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
         const label = `${icon} ${entry.name} (${regLabel ? `${regLabel} · ` : ''}${countText})`;
         const castlePrefix = l2Def ? `🏰 ${l2Def.castleName} · ` : '';
         const description = `${castlePrefix}${regLabel ? `${regLabel} · ` : ''}${entry.fids.length ? `${entry.fids.length} 势力使用` : (layer === 'sub' ? '文明默认' : '文化默认')} · ${legionSummary(entry.formationMode, entry.slots)}`;
-        const shipId = getCultureNavalShip(row?.region ?? entry.region ?? null, fid ?? null);
+        const shipId = getCultureNavalShip(row?.region ?? entry.region ?? null, fid ?? null, entry.name);
         const shipName = getNavalShipChineseName(shipId);
 
         options.push({
@@ -2123,7 +2140,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
 const LAYER_FULL_LABEL: Record<LegionLayer, string> = {
     culture: '一级：文化军团（16 母体）',
     sub: '二级：文明 × 时代（59 文明）',
-    custom: '三级：自建军团',
+    custom: '三级：自定义军团',
 };
 
 /** 当前军团属于哪一类：一级16母体 / 二级文明×时代 / 三级自建 */
@@ -2961,6 +2978,9 @@ function renderEditPanel(row: FactionLegionRow): void {
           <div style="font-size:11px;color:#a89f8f;margin-top:2px;">势力：${row.factionName} | 据点：${row.capitalCityName} | 文化区：${row.regionLabel}${row.eliteName ? ` | 精锐番号：${row.eliteName} T${row.eliteTier}` : ''}</div>
         </div>
       </div>
+      <button id="le-copy-faction" title="把这个势力的武将 / 据点 / 文化区 / 番号 / 军团 / 三排编制 / 战舰 / 战力复制成文本"
+        style="flex:0 0 auto;padding:6px 12px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;
+        border-radius:4px;font-size:12px;cursor:pointer;white-space:nowrap;">📋 一键复制</button>
     </div>
 
     <!-- 当前军团状态 -->
@@ -3182,6 +3202,43 @@ function renderEditPanel(row: FactionLegionRow): void {
     `;
 
     els.panelContent.innerHTML = html;
+    // 🔴 [2026-09-16 主人「给这里的势力添加一个一键复制势力武将军团等信息」]
+    //    把当前选中势力的一整块信息拼成纯文本丢进剪贴板：武将 / 势力 / 据点 / 文化区 /
+    //    精锐番号 / 军团名与层级 / 阵型 / 三排兵种与人数 / 战舰 / 战力。
+    //    用**当前编辑中的** slots 与 mode（不是静态表），所以改了还没保存也能照实复制。
+    document.getElementById('le-copy-faction')?.addEventListener('click', async () => {
+        const legionName = currentEditingLegion?.legionName?.trim()
+            || (curLayer === 'culture' ? getCultureLegionName(row.region) : row.factionName + '军团');
+        const power = getLegionPower(slots)?.index ?? 0;
+        const ship = getNavalShipChineseName(getCultureNavalShip(row.region, row.factionId));
+        const rowLabels = ['前排', '中坚', '后排'];
+        const lines = [
+            `${row.generalName || row.factionName} · ${row.factionName}`,
+            `据点：${row.capitalCityName ?? '未知'} ｜ 文化区：${row.regionLabel}`
+                + (row.eliteName ? ` ｜ 精锐番号：${row.eliteName} T${row.eliteTier}` : ''),
+            `军团：${legionName}（${LAYER_FULL_LABEL[curLayer]}）`,
+            `阵型：${getFormationModeLabel(mode)}`,
+            ...slots.map((sl, i) => `${rowLabels[i] ?? '第' + (i + 1) + '排'}：${getUnitDisplayName(sl.type)} ×${sl.count}`),
+            `战舰：${ship}`,
+            `战力：${power}`,
+        ];
+        const text = lines.join(String.fromCharCode(10));
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast('📋 已复制【' + (row.generalName || row.factionName) + '】的势力信息');
+        } catch {
+            // 剪贴板被拒（没焦点/权限）时退回选中文本，让主人自己 Ctrl+C，别让点击毫无反应
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;left:50%;top:20%;transform:translateX(-50%);z-index:20000;width:min(560px,90vw);height:220px;';
+            document.body.appendChild(ta);
+            ta.select();
+            showToast('⚠️ 剪贴板不可用，已选中文本，按 Ctrl+C 复制；点空白处关闭', true);
+            const close = (): void => { ta.remove(); document.removeEventListener('click', close); };
+            setTimeout(() => document.addEventListener('click', close), 300);
+        }
+    });
+
     const tuneDetails = document.getElementById('le-tune-details') as HTMLDetailsElement | null;
     if (tuneDetails) tuneDetails.open = tuneDetailsOpen;
     bindPanelEvents(row);
@@ -3482,7 +3539,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
           })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
-        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此二/三级军团；用它的势力与文化区将回落为所在文化的母体军团（16 母体一级军团不可删）">🗑</button>` : ''}
+        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此三级军团；用它的势力按「武将时代 + 据点建筑风格」重新安置：二级有同时代的就进二级，没有就退该风格的母体一级军团（一级 16 与二级 59 不可删）">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
@@ -3507,7 +3564,18 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
                 showToast('❌ 一级：16 母体文化军团不可删除', true);
                 return;
             }
-            if (!window.confirm(`删除军团【${name}】？用它的势力与文化区将回落为所在文化的母体军团。`)) return;
+            // 🔴 [2026-09-16] 先把重排结果算出来给主人看，再问删不删
+            const _plan = planFallbackForDeletedLegion(name);
+            const _l2 = _plan.items.filter(i => i.via === 'level2').length;
+            const _l1 = _plan.items.length - _l2;
+            const _lines = _plan.items.slice(0, 8).map(i => '  · ' + i.note).join(String.fromCharCode(10));
+            const _more = _plan.items.length > 8 ? String.fromCharCode(10) + `  …另有 ${_plan.items.length - 8} 家` : '';
+            const _skip = _plan.skipped.length ? String.fromCharCode(10) + `判不了时代/风格的 ${_plan.skipped.length} 家将跟随文化区` : '';
+            if (!window.confirm(
+                `删除军团【${name}】？` + String.fromCharCode(10, 10)
+                + `用它的 ${_plan.items.length + _plan.skipped.length} 家势力将重新安置（二级 ${_l2} / 一级 ${_l1}）：`
+                + String.fromCharCode(10) + _lines + _more + _skip,
+            )) return;
             await deleteSpecificLegion(name);
             renderEditPanel(row);
         });
@@ -4374,6 +4442,17 @@ async function doUpdateUnitClassification(
     }
 }
 
+const EDITABLE_UNIT_STATS = [
+    { key: 'hp', label: '生命', min: 0, scale: 1 },
+    { key: 'atk', label: '攻击', min: 0, scale: 1 },
+    { key: 'meleeArmor', label: '近防', scale: 1 },
+    { key: 'pierceArmor', label: '远防', scale: 1 },
+    { key: 'rng', label: '射程（格；0为白刃）', min: 0, scale: 40 },
+    { key: 'reload', label: '装填时间（秒；越小越快）', min: 0, scale: 1 },
+    { key: 'spd', label: '移速（像素/秒）', min: 0, scale: 1 },
+    { key: 'sz', label: '体型（倍率）', min: 0, scale: 1 },
+] as const;
+
 /** 右侧面板的「战斗属性」段：陆战兵种读 WAR_TYPES，船只读 NavalShipTiers。 */
 function renderUnitStatsSection(u: DeUnitDef): string {
     const box = (label: string, value: string, tip = '') =>
@@ -4395,8 +4474,19 @@ function renderUnitStatsSection(u: DeUnitDef): string {
         return `
     <div class="le-form-section">
       <div class="le-section-title"><span>战斗属性</span>
-        <span style="font-size:11px;color:#7a7266;font-weight:normal;">13 战斗在用 · 出处 empires2_x2_p1.dat</span>
+        <button type="button" class="le-btn le-btn-sm" id="le-stats-edit">✏️ 编辑属性</button>
       </div>
+      <form id="le-stats-form" hidden style="margin:10px 0;padding:12px;border:1px solid #5b4b2d;border-radius:5px;">
+        <div style="font-size:12px;color:#c8bda8;margin-bottom:10px;">修改此兵种的统一战斗属性，所有使用它的军团共用。</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+          ${EDITABLE_UNIT_STATS.map(f => `<label style="font-size:12px;color:#c8bda8;">${f.label}<input class="le-input" name="${f.key}" type="number" step="any" required ${'min' in f ? `min="${f.min}"` : ''} value="${st[f.key] / f.scale}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;"></label>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="submit" class="le-btn le-btn-sm le-btn-primary" id="le-stats-save">💾 保存战斗属性</button>
+          <button type="button" class="le-btn le-btn-sm" id="le-stats-cancel">取消</button>
+        </div>
+        <div id="le-stats-status" role="status" style="font-size:12px;color:#e0c888;margin-top:8px;"></div>
+      </form>
       ${(() => {
           const pw = getCombatPower(u.id);
           if (!pw) return '';
@@ -4582,6 +4672,37 @@ function renderUnitPanel(unitId: string): void {
       </div>
     </div>
     `;
+
+    const statsForm = document.getElementById('le-stats-form') as HTMLFormElement | null;
+    const originalStats = getUnitStats(unitId);
+    if (statsForm && originalStats) {
+        const expected = Object.fromEntries(EDITABLE_UNIT_STATS.map(f => [f.key, originalStats[f.key]]));
+        document.getElementById('le-stats-edit')?.addEventListener('click', () => {
+            statsForm.hidden = !statsForm.hidden;
+            if (!statsForm.hidden) statsForm.querySelector('input')?.focus();
+        });
+        document.getElementById('le-stats-cancel')?.addEventListener('click', () => { statsForm.reset(); statsForm.hidden = true; });
+        statsForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            if (!statsForm.reportValidity()) return;
+            const values = Object.fromEntries(EDITABLE_UNIT_STATS.map(f => [f.key, Number((statsForm.elements.namedItem(f.key) as HTMLInputElement).value) * f.scale]));
+            const button = document.getElementById('le-stats-save') as HTMLButtonElement;
+            const status = document.getElementById('le-stats-status')!;
+            button.disabled = true;
+            status.textContent = '正在保存…';
+            try {
+                const response = await fetch('/api/save-unit-stats', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ unitId, values, expected }) });
+                const data = await response.json();
+                if (!response.ok || !data.ok) throw new Error(data.error || '保存失败');
+                Object.assign(originalStats, data.values);
+                invalidateCombatPowerCache();
+                applyCatalogFilter(); renderCatalogTable();
+                if (selectedUnitId === unitId) renderUnitPanel(unitId);
+                showToast('✅ 战斗属性已保存，游戏重新加载后使用新数值');
+            } catch (error: any) { status.textContent = `保存失败：${error.message}`; }
+            finally { button.disabled = false; }
+        });
+    }
 
     document.getElementById('le-u-idle')?.addEventListener('click', () => { animState = 'idle'; renderUnitPanel(unitId); });
     document.getElementById('le-u-move')?.addEventListener('click', () => { animState = 'move'; renderUnitPanel(unitId); });

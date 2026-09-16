@@ -5,8 +5,8 @@
   {
    "library": "SUCAI_BUILDING",
    "label": "建筑（含 16 母体 · 59 文明 · 场景建造）",
-   "dirs": 2670,
-   "mb": 1665.8,
+   "dirs": 2672,
+   "mb": 3093.2,
    "buckets": {
     "DE 官方: 非洲": [
      {
@@ -19,7 +19,7 @@
      },
      {
       "dir": "AFRI_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2751
+      "kb": 4398
      },
      {
       "dir": "AFRI_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -35,7 +35,7 @@
      },
      {
       "dir": "AFRI_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 3112
+      "kb": 4938
      },
      {
       "dir": "AFRI_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -51,7 +51,7 @@
      },
      {
       "dir": "AFRI_BARRACKS_AGE2_DESTR",
-      "kb": 3097
+      "kb": 4951
      },
      {
       "dir": "AFRI_BARRACKS_AGE2_RUBBLE",
@@ -67,7 +67,7 @@
      },
      {
       "dir": "AFRI_BARRACKS_AGE3_DESTR",
-      "kb": 3772
+      "kb": 6024
      },
      {
       "dir": "AFRI_BARRACKS_AGE3_RUBBLE",
@@ -83,7 +83,7 @@
      },
      {
       "dir": "AFRI_BLACKSMITH_AGE2_DESTR",
-      "kb": 1676
+      "kb": 2650
      },
      {
       "dir": "AFRI_BLACKSMITH_AGE2_RUBBLE",
@@ -99,7 +99,7 @@
      },
      {
       "dir": "AFRI_BLACKSMITH_AGE3_DESTR",
-      "kb": 1987
+      "kb": 3145
      },
      {
       "dir": "AFRI_BLACKSMITH_AGE3_RUBBLE",
@@ -115,11 +115,11 @@
      },
      {
       "dir": "AFRI_GATE_FORTIFIED_NE_DESTR",
-      "kb": 1067
+      "kb": 4653
      },
      {
       "dir": "AFRI_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 51
+      "kb": 94
      },
      {
       "dir": "AFRI_GATE_FORTIFIED_SE",
@@ -127,11 +127,11 @@
      },
      {
       "dir": "AFRI_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1069
+      "kb": 4801
      },
      {
       "dir": "AFRI_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 52
+      "kb": 96
      },
      {
       "dir": "AFRI_GATE_STONE_NE",
@@ -139,11 +139,11 @@
      },
      {
       "dir": "AFRI_GATE_STONE_NE_DESTR",
-      "kb": 865
+      "kb": 4558
      },
      {
       "dir": "AFRI_GATE_STONE_NE_RUBBLE",
-      "kb": 36
+      "kb": 78
      },
      {
       "dir": "AFRI_GATE_STONE_SE",
@@ -151,11 +151,11 @@
      },
      {
       "dir": "AFRI_GATE_STONE_SE_DESTR",
-      "kb": 816
+      "kb": 4465
      },
      {
       "dir": "AFRI_GATE_STONE_SE_RUBBLE",
-      "kb": 37
+      "kb": 80
      },
      {
       "dir": "AFRI_HOUSE_AGE2",
@@ -167,7 +167,7 @@
      },
      {
       "dir": "AFRI_HOUSE_AGE2_DESTR",
-      "kb": 1004
+      "kb": 4388
      },
      {
       "dir": "AFRI_HOUSE_AGE2_RUBBLE",
@@ -183,7 +183,7 @@
      },
      {
       "dir": "AFRI_HOUSE_AGE3_DESTR",
-      "kb": 1159
+      "kb": 5081
      },
      {
       "dir": "AFRI_HOUSE_AGE3_RUBBLE",
@@ -199,7 +199,7 @@
      },
      {
       "dir": "AFRI_MARKET_AGE2_DESTR",
-      "kb": 3836
+      "kb": 6091
      },
      {
       "dir": "AFRI_MARKET_AGE2_RUBBLE",
@@ -215,7 +215,7 @@
      },
      {
       "dir": "AFRI_MARKET_AGE3_DESTR",
-      "kb": 4227
+      "kb": 6705
      },
      {
       "dir": "AFRI_MARKET_AGE3_RUBBLE",
@@ -231,7 +231,7 @@
      },
      {
       "dir": "AFRI_MARKET_AGE4_DESTR",
-      "kb": 4892
+      "kb": 7803
      },
      {
       "dir": "AFRI_MARKET_AGE4_RUBBLE",
@@ -247,7 +247,7 @@
      },
      {
       "dir": "AFRI_MILL_AGE2_DESTR",
-      "kb": 1392
+      "kb": 2217
      },
      {
       "dir": "AFRI_MILL_AGE2_RUBBLE",
@@ -263,7 +263,7 @@
      },
      {
       "dir": "AFRI_MILL_AGE3_DESTR",
-      "kb": 1465
+      "kb": 2325
      },
      {
       "dir": "AFRI_MILL_AGE3_RUBBLE",
@@ -279,7 +279,7 @@
      },
      {
       "dir": "AFRI_MONASTERY_AGE3_DESTR",
-      "kb": 3470
+      "kb": 5507
      },
      {
       "dir": "AFRI_MONASTERY_AGE3_RUBBLE",
@@ -295,7 +295,7 @@
      },
      {
       "dir": "AFRI_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3231
+      "kb": 5092
      },
      {
       "dir": "AFRI_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -311,7 +311,7 @@
      },
      {
       "dir": "AFRI_STABLE_AGE2_DESTR",
-      "kb": 2254
+      "kb": 3560
      },
      {
       "dir": "AFRI_STABLE_AGE2_RUBBLE",
@@ -327,7 +327,7 @@
      },
      {
       "dir": "AFRI_STABLE_AGE3_DESTR",
-      "kb": 2858
+      "kb": 4502
      },
      {
       "dir": "AFRI_STABLE_AGE3_RUBBLE",
@@ -343,7 +343,7 @@
      },
      {
       "dir": "AFRI_TOWER_AGE2_DESTR",
-      "kb": 1048
+      "kb": 1650
      },
      {
       "dir": "AFRI_TOWER_AGE2_RUBBLE",
@@ -359,7 +359,7 @@
      },
      {
       "dir": "AFRI_TOWER_AGE3_DESTR",
-      "kb": 1246
+      "kb": 1961
      },
      {
       "dir": "AFRI_TOWER_AGE3_RUBBLE",
@@ -375,7 +375,7 @@
      },
      {
       "dir": "AFRI_TOWER_AGE4_DESTR",
-      "kb": 1691
+      "kb": 2679
      },
      {
       "dir": "AFRI_TOWER_AGE4_RUBBLE",
@@ -391,7 +391,7 @@
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3057
+      "kb": 4845
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE2_RUBBLE",
@@ -407,7 +407,7 @@
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3280
+      "kb": 5190
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE3_RUBBLE",
@@ -423,7 +423,7 @@
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3747
+      "kb": 5953
      },
      {
       "dir": "AFRI_TOWN_CENTER_AGE4_RUBBLE",
@@ -439,7 +439,7 @@
      },
      {
       "dir": "AFRI_UNIVERSITY_AGE3_DESTR",
-      "kb": 4786
+      "kb": 7531
      },
      {
       "dir": "AFRI_UNIVERSITY_AGE3_RUBBLE",
@@ -455,7 +455,7 @@
      },
      {
       "dir": "AFRI_UNIVERSITY_AGE4_DESTR",
-      "kb": 5215
+      "kb": 8222
      },
      {
       "dir": "AFRI_UNIVERSITY_AGE4_RUBBLE",
@@ -593,7 +593,7 @@
      },
      {
       "dir": "AFRI_CASTLE_AGE3_DESTR",
-      "kb": 6890
+      "kb": 15307
      },
      {
       "dir": "AFRI_CASTLE_AGE3_RUBBLE",
@@ -605,7 +605,7 @@
      },
      {
       "dir": "ARME_CASTLE_AGE3_DESTR",
-      "kb": 6167
+      "kb": 14194
      },
      {
       "dir": "ARME_CASTLE_AGE3_RUBBLE",
@@ -617,7 +617,7 @@
      },
      {
       "dir": "ASIA_CASTLE_AGE3_DESTR",
-      "kb": 5301
+      "kb": 11912
      },
      {
       "dir": "ASIA_CASTLE_AGE3_RUBBLE",
@@ -629,7 +629,7 @@
      },
      {
       "dir": "ATHENIANS_CASTLE_AGE3_DESTR",
-      "kb": 7186
+      "kb": 11284
      },
      {
       "dir": "ATHENIANS_CASTLE_AGE3_RUBBLE",
@@ -641,7 +641,7 @@
      },
      {
       "dir": "BENG_CASTLE_AGE3_DESTR",
-      "kb": 4858
+      "kb": 10441
      },
      {
       "dir": "BENG_CASTLE_AGE3_RUBBLE",
@@ -653,7 +653,7 @@
      },
      {
       "dir": "BERB_CASTLE_AGE3_DESTR",
-      "kb": 6997
+      "kb": 15922
      },
      {
       "dir": "BERB_CASTLE_AGE3_RUBBLE",
@@ -665,7 +665,7 @@
      },
      {
       "dir": "BOHE_CASTLE_AGE3_DESTR",
-      "kb": 5858
+      "kb": 12973
      },
      {
       "dir": "BOHE_CASTLE_AGE3_RUBBLE",
@@ -677,7 +677,7 @@
      },
      {
       "dir": "BULG_CASTLE_AGE3_DESTR",
-      "kb": 5535
+      "kb": 12594
      },
      {
       "dir": "BULG_CASTLE_AGE3_RUBBLE",
@@ -689,7 +689,7 @@
      },
      {
       "dir": "BURG_CASTLE_AGE3_DESTR",
-      "kb": 6465
+      "kb": 14371
      },
      {
       "dir": "BURG_CASTLE_AGE3_RUBBLE",
@@ -701,7 +701,7 @@
      },
      {
       "dir": "BURM_CASTLE_AGE3_DESTR",
-      "kb": 7581
+      "kb": 16984
      },
      {
       "dir": "BURM_CASTLE_AGE3_RUBBLE",
@@ -713,7 +713,7 @@
      },
      {
       "dir": "BYZA_CASTLE_AGE3_DESTR",
-      "kb": 5543
+      "kb": 12137
      },
      {
       "dir": "BYZA_CASTLE_AGE3_RUBBLE",
@@ -725,7 +725,7 @@
      },
      {
       "dir": "CEAS_CASTLE_AGE3_DESTR",
-      "kb": 6381
+      "kb": 14349
      },
      {
       "dir": "CEAS_CASTLE_AGE3_RUBBLE",
@@ -737,7 +737,7 @@
      },
      {
       "dir": "CELT_CASTLE_AGE3_DESTR",
-      "kb": 4834
+      "kb": 10247
      },
      {
       "dir": "CELT_CASTLE_AGE3_RUBBLE",
@@ -749,7 +749,7 @@
      },
      {
       "dir": "CHIN_CASTLE_AGE3_DESTR",
-      "kb": 7394
+      "kb": 16901
      },
      {
       "dir": "CHIN_CASTLE_AGE3_RUBBLE",
@@ -761,7 +761,7 @@
      },
      {
       "dir": "CUMA_CASTLE_AGE3_DESTR",
-      "kb": 6274
+      "kb": 14098
      },
      {
       "dir": "CUMA_CASTLE_AGE3_RUBBLE",
@@ -777,7 +777,7 @@
      },
      {
       "dir": "EAST_CASTLE_AGE3_DESTR",
-      "kb": 6488
+      "kb": 14746
      },
      {
       "dir": "EAST_CASTLE_AGE3_RUBBLE",
@@ -789,7 +789,7 @@
      },
      {
       "dir": "ETHI_CASTLE_AGE3_DESTR",
-      "kb": 5311
+      "kb": 11661
      },
      {
       "dir": "ETHI_CASTLE_AGE3_RUBBLE",
@@ -801,7 +801,7 @@
      },
      {
       "dir": "FRAN_CASTLE_AGE3_DESTR",
-      "kb": 6853
+      "kb": 16292
      },
      {
       "dir": "FRAN_CASTLE_AGE3_RUBBLE",
@@ -813,7 +813,7 @@
      },
      {
       "dir": "GEOR_CASTLE_AGE3_DESTR",
-      "kb": 6885
+      "kb": 15399
      },
      {
       "dir": "GEOR_CASTLE_AGE3_RUBBLE",
@@ -825,7 +825,7 @@
      },
      {
       "dir": "GOTH_CASTLE_AGE3_DESTR",
-      "kb": 7321
+      "kb": 16530
      },
      {
       "dir": "GOTH_CASTLE_AGE3_RUBBLE",
@@ -841,7 +841,7 @@
      },
      {
       "dir": "GURJ_CASTLE_AGE3_DESTR",
-      "kb": 5363
+      "kb": 12039
      },
      {
       "dir": "GURJ_CASTLE_AGE3_RUBBLE",
@@ -853,7 +853,7 @@
      },
      {
       "dir": "HIND_CASTLE_AGE3_DESTR",
-      "kb": 5470
+      "kb": 12363
      },
      {
       "dir": "HIND_CASTLE_AGE3_RUBBLE",
@@ -865,7 +865,7 @@
      },
      {
       "dir": "HUNS_CASTLE_AGE3_DESTR",
-      "kb": 5527
+      "kb": 12227
      },
      {
       "dir": "HUNS_CASTLE_AGE3_RUBBLE",
@@ -877,7 +877,7 @@
      },
      {
       "dir": "INCA_CASTLE_AGE3_DESTR",
-      "kb": 4713
+      "kb": 10347
      },
      {
       "dir": "INCA_CASTLE_AGE3_RUBBLE",
@@ -889,7 +889,7 @@
      },
      {
       "dir": "INDI_CASTLE_AGE3_DESTR",
-      "kb": 6793
+      "kb": 15552
      },
      {
       "dir": "INDI_CASTLE_AGE3_RUBBLE",
@@ -901,7 +901,7 @@
      },
      {
       "dir": "JURC_CASTLE_AGE3_DESTR",
-      "kb": 6351
+      "kb": 14275
      },
      {
       "dir": "JURC_CASTLE_AGE3_RUBBLE",
@@ -913,7 +913,7 @@
      },
      {
       "dir": "KHIT_CASTLE_AGE3_DESTR",
-      "kb": 6784
+      "kb": 15971
      },
      {
       "dir": "KHIT_CASTLE_AGE3_RUBBLE",
@@ -925,7 +925,7 @@
      },
      {
       "dir": "KORE_CASTLE_AGE3_DESTR",
-      "kb": 5263
+      "kb": 11692
      },
      {
       "dir": "KORE_CASTLE_AGE3_RUBBLE",
@@ -941,7 +941,7 @@
      },
      {
       "dir": "LITH_CASTLE_AGE3_DESTR",
-      "kb": 6673
+      "kb": 15560
      },
      {
       "dir": "LITH_CASTLE_AGE3_RUBBLE",
@@ -953,7 +953,7 @@
      },
      {
       "dir": "MACEDONIAN_CASTLE_AGE3_DESTR",
-      "kb": 6965
+      "kb": 11280
      },
      {
       "dir": "MACEDONIAN_CASTLE_AGE3_RUBBLE",
@@ -965,7 +965,7 @@
      },
      {
       "dir": "MAGY_CASTLE_AGE3_DESTR",
-      "kb": 6101
+      "kb": 14047
      },
      {
       "dir": "MAGY_CASTLE_AGE3_RUBBLE",
@@ -977,7 +977,7 @@
      },
      {
       "dir": "MALA_CASTLE_AGE3_DESTR",
-      "kb": 7427
+      "kb": 17088
      },
      {
       "dir": "MALA_CASTLE_AGE3_RUBBLE",
@@ -989,7 +989,7 @@
      },
      {
       "dir": "MAPU_CASTLE_AGE3_DESTR",
-      "kb": 5460
+      "kb": 12886
      },
      {
       "dir": "MAPU_CASTLE_AGE3_RUBBLE",
@@ -1001,7 +1001,7 @@
      },
      {
       "dir": "MAYA_CASTLE_AGE3_DESTR",
-      "kb": 6434
+      "kb": 14558
      },
      {
       "dir": "MAYA_CASTLE_AGE3_RUBBLE",
@@ -1013,7 +1013,7 @@
      },
      {
       "dir": "MEDI_CASTLE_AGE3_DESTR",
-      "kb": 7234
+      "kb": 16297
      },
      {
       "dir": "MEDI_CASTLE_AGE3_RUBBLE",
@@ -1025,7 +1025,7 @@
      },
      {
       "dir": "MESO_CASTLE_AGE3_DESTR",
-      "kb": 5916
+      "kb": 13166
      },
      {
       "dir": "MESO_CASTLE_AGE3_RUBBLE",
@@ -1037,7 +1037,7 @@
      },
      {
       "dir": "MONG_CASTLE_AGE3_DESTR",
-      "kb": 5841
+      "kb": 12951
      },
      {
       "dir": "MONG_CASTLE_AGE3_RUBBLE",
@@ -1049,7 +1049,7 @@
      },
      {
       "dir": "MUIS_CASTLE_AGE3_DESTR",
-      "kb": 7001
+      "kb": 16706
      },
      {
       "dir": "MUIS_CASTLE_AGE3_RUBBLE",
@@ -1061,7 +1061,7 @@
      },
      {
       "dir": "ORIE_CASTLE_AGE3_DESTR",
-      "kb": 6998
+      "kb": 15874
      },
      {
       "dir": "ORIE_CASTLE_AGE3_RUBBLE",
@@ -1077,7 +1077,7 @@
      },
      {
       "dir": "PERSIAN_CASTLE_AGE3_DESTR",
-      "kb": 6419
+      "kb": 10370
      },
      {
       "dir": "PERSIAN_CASTLE_AGE3_RUBBLE",
@@ -1089,7 +1089,7 @@
      },
      {
       "dir": "PERS_CASTLE_AGE3_DESTR",
-      "kb": 7232
+      "kb": 16388
      },
      {
       "dir": "PERS_CASTLE_AGE3_RUBBLE",
@@ -1101,7 +1101,7 @@
      },
      {
       "dir": "POLE_CASTLE_AGE3_DESTR",
-      "kb": 5283
+      "kb": 11698
      },
      {
       "dir": "POLE_CASTLE_AGE3_RUBBLE",
@@ -1113,7 +1113,7 @@
      },
      {
       "dir": "PORT_CASTLE_AGE3_DESTR",
-      "kb": 7390
+      "kb": 16640
      },
      {
       "dir": "PORT_CASTLE_AGE3_RUBBLE",
@@ -1137,7 +1137,7 @@
      },
      {
       "dir": "PURU_CASTLE_AGE3_DESTR",
-      "kb": 6081
+      "kb": 9843
      },
      {
       "dir": "PURU_CASTLE_AGE3_RUBBLE",
@@ -1149,7 +1149,7 @@
      },
      {
       "dir": "ROMA_CASTLE_AGE3_DESTR",
-      "kb": 6063
+      "kb": 13817
      },
      {
       "dir": "ROMA_CASTLE_AGE3_RUBBLE",
@@ -1161,7 +1161,7 @@
      },
      {
       "dir": "SEAS_CASTLE_AGE3_DESTR",
-      "kb": 7889
+      "kb": 18009
      },
      {
       "dir": "SEAS_CASTLE_AGE3_RUBBLE",
@@ -1173,7 +1173,7 @@
      },
      {
       "dir": "SHU_CASTLE_AGE3_DESTR",
-      "kb": 5534
+      "kb": 12441
      },
      {
       "dir": "SHU_CASTLE_AGE3_RUBBLE",
@@ -1185,7 +1185,7 @@
      },
      {
       "dir": "SICI_CASTLE_AGE3_DESTR",
-      "kb": 6409
+      "kb": 14601
      },
      {
       "dir": "SICI_CASTLE_AGE3_RUBBLE",
@@ -1197,7 +1197,7 @@
      },
      {
       "dir": "SLAV_CASTLE_AGE3_DESTR",
-      "kb": 6212
+      "kb": 13690
      },
      {
       "dir": "SLAV_CASTLE_AGE3_RUBBLE",
@@ -1209,7 +1209,7 @@
      },
      {
       "dir": "SPAN_CASTLE_AGE3_DESTR",
-      "kb": 6772
+      "kb": 15004
      },
      {
       "dir": "SPAN_CASTLE_AGE3_RUBBLE",
@@ -1221,7 +1221,7 @@
      },
      {
       "dir": "SPARTANS_CASTLE_AGE3_DESTR",
-      "kb": 5383
+      "kb": 8664
      },
      {
       "dir": "SPARTANS_CASTLE_AGE3_RUBBLE",
@@ -1233,7 +1233,7 @@
      },
      {
       "dir": "THRACIANS_CASTLE_AGE3_DESTR",
-      "kb": 7071
+      "kb": 10980
      },
      {
       "dir": "THRACIANS_CASTLE_AGE3_RUBBLE",
@@ -1253,7 +1253,7 @@
      },
      {
       "dir": "TUPI_CASTLE_AGE3_DESTR",
-      "kb": 5082
+      "kb": 11612
      },
      {
       "dir": "TUPI_CASTLE_AGE3_RUBBLE",
@@ -1265,7 +1265,7 @@
      },
      {
       "dir": "TURK_CASTLE_AGE3_DESTR",
-      "kb": 6492
+      "kb": 14338
      },
      {
       "dir": "TURK_CASTLE_AGE3_RUBBLE",
@@ -1277,7 +1277,7 @@
      },
      {
       "dir": "VIET_CASTLE_AGE3_DESTR",
-      "kb": 6261
+      "kb": 14160
      },
      {
       "dir": "VIET_CASTLE_AGE3_RUBBLE",
@@ -1289,7 +1289,7 @@
      },
      {
       "dir": "VIKI_CASTLE_AGE3_DESTR",
-      "kb": 7070
+      "kb": 15836
      },
      {
       "dir": "VIKI_CASTLE_AGE3_RUBBLE",
@@ -1301,7 +1301,7 @@
      },
      {
       "dir": "WEI_CASTLE_AGE3_DESTR",
-      "kb": 5813
+      "kb": 13200
      },
      {
       "dir": "WEI_CASTLE_AGE3_RUBBLE",
@@ -1317,7 +1317,7 @@
      },
      {
       "dir": "WEST_CASTLE_AGE3_DESTR",
-      "kb": 5958
+      "kb": 13479
      },
      {
       "dir": "WEST_CASTLE_AGE3_RUBBLE",
@@ -1329,7 +1329,7 @@
      },
      {
       "dir": "WU_CASTLE_AGE3_DESTR",
-      "kb": 4666
+      "kb": 10622
      },
      {
       "dir": "WU_CASTLE_AGE3_RUBBLE",
@@ -1871,7 +1871,7 @@
      },
      {
       "dir": "ANDE_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2284
+      "kb": 5201
      },
      {
       "dir": "ANDE_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -1887,7 +1887,7 @@
      },
      {
       "dir": "ANDE_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2579
+      "kb": 4114
      },
      {
       "dir": "ANDE_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -1903,7 +1903,7 @@
      },
      {
       "dir": "ANDE_BARRACKS_AGE2_DESTR",
-      "kb": 2639
+      "kb": 6024
      },
      {
       "dir": "ANDE_BARRACKS_AGE2_RUBBLE",
@@ -1919,7 +1919,7 @@
      },
      {
       "dir": "ANDE_BARRACKS_AGE3_DESTR",
-      "kb": 3357
+      "kb": 5422
      },
      {
       "dir": "ANDE_BARRACKS_AGE3_RUBBLE",
@@ -1935,7 +1935,7 @@
      },
      {
       "dir": "ANDE_BLACKSMITH_AGE2_DESTR",
-      "kb": 1506
+      "kb": 2384
      },
      {
       "dir": "ANDE_BLACKSMITH_AGE2_RUBBLE",
@@ -1951,7 +1951,7 @@
      },
      {
       "dir": "ANDE_BLACKSMITH_AGE3_DESTR",
-      "kb": 2653
+      "kb": 6222
      },
      {
       "dir": "ANDE_BLACKSMITH_AGE3_RUBBLE",
@@ -1967,11 +1967,11 @@
      },
      {
       "dir": "ANDE_GATE_FORTIFIED_NE_DESTR",
-      "kb": 938
+      "kb": 5864
      },
      {
       "dir": "ANDE_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 21
+      "kb": 98
      },
      {
       "dir": "ANDE_GATE_FORTIFIED_SE",
@@ -1979,11 +1979,11 @@
      },
      {
       "dir": "ANDE_GATE_FORTIFIED_SE_DESTR",
-      "kb": 969
+      "kb": 5972
      },
      {
       "dir": "ANDE_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 22
+      "kb": 99
      },
      {
       "dir": "ANDE_GATE_STONE_NE",
@@ -1991,11 +1991,11 @@
      },
      {
       "dir": "ANDE_GATE_STONE_NE_DESTR",
-      "kb": 862
+      "kb": 4649
      },
      {
       "dir": "ANDE_GATE_STONE_NE_RUBBLE",
-      "kb": 18
+      "kb": 77
      },
      {
       "dir": "ANDE_GATE_STONE_SE",
@@ -2003,11 +2003,11 @@
      },
      {
       "dir": "ANDE_GATE_STONE_SE_DESTR",
-      "kb": 801
+      "kb": 4561
      },
      {
       "dir": "ANDE_GATE_STONE_SE_RUBBLE",
-      "kb": 17
+      "kb": 74
      },
      {
       "dir": "ANDE_HOUSE_AGE2",
@@ -2019,7 +2019,7 @@
      },
      {
       "dir": "ANDE_HOUSE_AGE2_DESTR",
-      "kb": 1265
+      "kb": 8089
      },
      {
       "dir": "ANDE_HOUSE_AGE2_RUBBLE",
@@ -2035,7 +2035,7 @@
      },
      {
       "dir": "ANDE_HOUSE_AGE3_DESTR",
-      "kb": 1325
+      "kb": 5992
      },
      {
       "dir": "ANDE_HOUSE_AGE3_RUBBLE",
@@ -2051,7 +2051,7 @@
      },
      {
       "dir": "ANDE_MARKET_AGE2_DESTR",
-      "kb": 3410
+      "kb": 8058
      },
      {
       "dir": "ANDE_MARKET_AGE2_RUBBLE",
@@ -2067,7 +2067,7 @@
      },
      {
       "dir": "ANDE_MARKET_AGE3_DESTR",
-      "kb": 4093
+      "kb": 6627
      },
      {
       "dir": "ANDE_MARKET_AGE3_RUBBLE",
@@ -2083,7 +2083,7 @@
      },
      {
       "dir": "ANDE_MARKET_AGE4_DESTR",
-      "kb": 4183
+      "kb": 6764
      },
      {
       "dir": "ANDE_MARKET_AGE4_RUBBLE",
@@ -2099,7 +2099,7 @@
      },
      {
       "dir": "ANDE_MILL_AGE2_DESTR",
-      "kb": 1391
+      "kb": 2260
      },
      {
       "dir": "ANDE_MILL_AGE2_RUBBLE",
@@ -2115,7 +2115,7 @@
      },
      {
       "dir": "ANDE_MILL_AGE3_DESTR",
-      "kb": 1476
+      "kb": 2406
      },
      {
       "dir": "ANDE_MILL_AGE3_RUBBLE",
@@ -2131,7 +2131,7 @@
      },
      {
       "dir": "ANDE_MONASTERY_AGE3_DESTR",
-      "kb": 2972
+      "kb": 4725
      },
      {
       "dir": "ANDE_MONASTERY_AGE3_RUBBLE",
@@ -2147,7 +2147,7 @@
      },
      {
       "dir": "ANDE_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3258
+      "kb": 5188
      },
      {
       "dir": "ANDE_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -2163,7 +2163,7 @@
      },
      {
       "dir": "ANDE_STABLE_AGE2_DESTR",
-      "kb": 2111
+      "kb": 4879
      },
      {
       "dir": "ANDE_STABLE_AGE2_RUBBLE",
@@ -2179,7 +2179,7 @@
      },
      {
       "dir": "ANDE_STABLE_AGE3_DESTR",
-      "kb": 2541
+      "kb": 5890
      },
      {
       "dir": "ANDE_STABLE_AGE3_RUBBLE",
@@ -2195,7 +2195,7 @@
      },
      {
       "dir": "ANDE_TOWER_AGE2_DESTR",
-      "kb": 985
+      "kb": 2231
      },
      {
       "dir": "ANDE_TOWER_AGE2_RUBBLE",
@@ -2211,7 +2211,7 @@
      },
      {
       "dir": "ANDE_TOWER_AGE3_DESTR",
-      "kb": 1277
+      "kb": 2067
      },
      {
       "dir": "ANDE_TOWER_AGE3_RUBBLE",
@@ -2227,7 +2227,7 @@
      },
      {
       "dir": "ANDE_TOWER_AGE4_DESTR",
-      "kb": 1448
+      "kb": 2329
      },
      {
       "dir": "ANDE_TOWER_AGE4_RUBBLE",
@@ -2243,7 +2243,7 @@
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3408
+      "kb": 7784
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE2_RUBBLE",
@@ -2259,7 +2259,7 @@
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3904
+      "kb": 9057
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE3_RUBBLE",
@@ -2275,7 +2275,7 @@
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE4_DESTR",
-      "kb": 4543
+      "kb": 10522
      },
      {
       "dir": "ANDE_TOWN_CENTER_AGE4_RUBBLE",
@@ -2291,7 +2291,7 @@
      },
      {
       "dir": "ANDE_UNIVERSITY_AGE3_DESTR",
-      "kb": 4849
+      "kb": 7830
      },
      {
       "dir": "ANDE_UNIVERSITY_AGE3_RUBBLE",
@@ -2307,7 +2307,7 @@
      },
      {
       "dir": "ANDE_UNIVERSITY_AGE4_DESTR",
-      "kb": 5258
+      "kb": 8543
      },
      {
       "dir": "ANDE_UNIVERSITY_AGE4_RUBBLE",
@@ -2452,7 +2452,7 @@
       "kb": 14
      }
     ],
-    "DE 官方: 华夏东亚": [
+    "DE 官方: 东亚": [
      {
       "dir": "ASIA_ARCHERY_RANGE_AGE2",
       "kb": 142
@@ -2463,7 +2463,7 @@
      },
      {
       "dir": "ASIA_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2718
+      "kb": 4330
      },
      {
       "dir": "ASIA_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -2479,7 +2479,7 @@
      },
      {
       "dir": "ASIA_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2739
+      "kb": 4334
      },
      {
       "dir": "ASIA_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -2495,7 +2495,7 @@
      },
      {
       "dir": "ASIA_BARRACKS_AGE2_DESTR",
-      "kb": 3141
+      "kb": 5011
      },
      {
       "dir": "ASIA_BARRACKS_AGE2_RUBBLE",
@@ -2511,7 +2511,7 @@
      },
      {
       "dir": "ASIA_BARRACKS_AGE3_DESTR",
-      "kb": 3125
+      "kb": 4981
      },
      {
       "dir": "ASIA_BARRACKS_AGE3_RUBBLE",
@@ -2527,7 +2527,7 @@
      },
      {
       "dir": "ASIA_BLACKSMITH_AGE2_DESTR",
-      "kb": 2200
+      "kb": 3500
      },
      {
       "dir": "ASIA_BLACKSMITH_AGE2_RUBBLE",
@@ -2543,7 +2543,7 @@
      },
      {
       "dir": "ASIA_BLACKSMITH_AGE3_DESTR",
-      "kb": 2431
+      "kb": 3853
      },
      {
       "dir": "ASIA_BLACKSMITH_AGE3_RUBBLE",
@@ -2559,11 +2559,11 @@
      },
      {
       "dir": "ASIA_GATE_FORTIFIED_NE_DESTR",
-      "kb": 932
+      "kb": 4537
      },
      {
       "dir": "ASIA_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 41
+      "kb": 86
      },
      {
       "dir": "ASIA_GATE_FORTIFIED_SE",
@@ -2571,11 +2571,11 @@
      },
      {
       "dir": "ASIA_GATE_FORTIFIED_SE_DESTR",
-      "kb": 918
+      "kb": 4557
      },
      {
       "dir": "ASIA_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 42
+      "kb": 85
      },
      {
       "dir": "ASIA_GATE_STONE_NE",
@@ -2583,11 +2583,11 @@
      },
      {
       "dir": "ASIA_GATE_STONE_NE_DESTR",
-      "kb": 953
+      "kb": 4308
      },
      {
       "dir": "ASIA_GATE_STONE_NE_RUBBLE",
-      "kb": 44
+      "kb": 86
      },
      {
       "dir": "ASIA_GATE_STONE_SE",
@@ -2595,11 +2595,11 @@
      },
      {
       "dir": "ASIA_GATE_STONE_SE_DESTR",
-      "kb": 906
+      "kb": 4196
      },
      {
       "dir": "ASIA_GATE_STONE_SE_RUBBLE",
-      "kb": 43
+      "kb": 83
      },
      {
       "dir": "ASIA_HOUSE_AGE2",
@@ -2611,7 +2611,7 @@
      },
      {
       "dir": "ASIA_HOUSE_AGE2_DESTR",
-      "kb": 1250
+      "kb": 5360
      },
      {
       "dir": "ASIA_HOUSE_AGE2_RUBBLE",
@@ -2627,7 +2627,7 @@
      },
      {
       "dir": "ASIA_HOUSE_AGE3_DESTR",
-      "kb": 1416
+      "kb": 6154
      },
      {
       "dir": "ASIA_HOUSE_AGE3_RUBBLE",
@@ -2643,7 +2643,7 @@
      },
      {
       "dir": "ASIA_MARKET_AGE2_DESTR",
-      "kb": 3522
+      "kb": 5576
      },
      {
       "dir": "ASIA_MARKET_AGE2_RUBBLE",
@@ -2659,7 +2659,7 @@
      },
      {
       "dir": "ASIA_MARKET_AGE3_DESTR",
-      "kb": 3474
+      "kb": 5437
      },
      {
       "dir": "ASIA_MARKET_AGE3_RUBBLE",
@@ -2675,7 +2675,7 @@
      },
      {
       "dir": "ASIA_MARKET_AGE4_DESTR",
-      "kb": 4224
+      "kb": 6707
      },
      {
       "dir": "ASIA_MARKET_AGE4_RUBBLE",
@@ -2691,7 +2691,7 @@
      },
      {
       "dir": "ASIA_MILL_AGE2_DESTR",
-      "kb": 1262
+      "kb": 1990
      },
      {
       "dir": "ASIA_MILL_AGE2_RUBBLE",
@@ -2707,7 +2707,7 @@
      },
      {
       "dir": "ASIA_MILL_AGE3_DESTR",
-      "kb": 1545
+      "kb": 2465
      },
      {
       "dir": "ASIA_MILL_AGE3_RUBBLE",
@@ -2723,7 +2723,7 @@
      },
      {
       "dir": "ASIA_MONASTERY_AGE3_DESTR",
-      "kb": 2338
+      "kb": 3659
      },
      {
       "dir": "ASIA_MONASTERY_AGE3_RUBBLE",
@@ -2739,7 +2739,7 @@
      },
      {
       "dir": "ASIA_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 2872
+      "kb": 4500
      },
      {
       "dir": "ASIA_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -2755,7 +2755,7 @@
      },
      {
       "dir": "ASIA_STABLE_AGE2_DESTR",
-      "kb": 2115
+      "kb": 3340
      },
      {
       "dir": "ASIA_STABLE_AGE2_RUBBLE",
@@ -2771,7 +2771,7 @@
      },
      {
       "dir": "ASIA_STABLE_AGE3_DESTR",
-      "kb": 2665
+      "kb": 4237
      },
      {
       "dir": "ASIA_STABLE_AGE3_RUBBLE",
@@ -2787,7 +2787,7 @@
      },
      {
       "dir": "ASIA_TOWER_AGE2_DESTR",
-      "kb": 844
+      "kb": 1321
      },
      {
       "dir": "ASIA_TOWER_AGE2_RUBBLE",
@@ -2803,7 +2803,7 @@
      },
      {
       "dir": "ASIA_TOWER_AGE3_DESTR",
-      "kb": 1257
+      "kb": 1963
      },
      {
       "dir": "ASIA_TOWER_AGE3_RUBBLE",
@@ -2819,7 +2819,7 @@
      },
      {
       "dir": "ASIA_TOWER_AGE4_DESTR",
-      "kb": 1210
+      "kb": 1915
      },
      {
       "dir": "ASIA_TOWER_AGE4_RUBBLE",
@@ -2835,7 +2835,7 @@
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3144
+      "kb": 5004
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE2_RUBBLE",
@@ -2851,7 +2851,7 @@
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3058
+      "kb": 4792
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE3_RUBBLE",
@@ -2867,7 +2867,7 @@
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3288
+      "kb": 5138
      },
      {
       "dir": "ASIA_TOWN_CENTER_AGE4_RUBBLE",
@@ -2883,7 +2883,7 @@
      },
      {
       "dir": "ASIA_UNIVERSITY_AGE3_DESTR",
-      "kb": 3360
+      "kb": 5277
      },
      {
       "dir": "ASIA_UNIVERSITY_AGE3_RUBBLE",
@@ -2899,7 +2899,7 @@
      },
      {
       "dir": "ASIA_UNIVERSITY_AGE4_DESTR",
-      "kb": 2926
+      "kb": 4599
      },
      {
       "dir": "ASIA_UNIVERSITY_AGE4_RUBBLE",
@@ -3053,7 +3053,7 @@
      },
      {
       "dir": "CEAS_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2179
+      "kb": 3448
      },
      {
       "dir": "CEAS_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -3069,7 +3069,7 @@
      },
      {
       "dir": "CEAS_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2672
+      "kb": 4253
      },
      {
       "dir": "CEAS_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -3085,7 +3085,7 @@
      },
      {
       "dir": "CEAS_BARRACKS_AGE2_DESTR",
-      "kb": 2618
+      "kb": 4111
      },
      {
       "dir": "CEAS_BARRACKS_AGE2_RUBBLE",
@@ -3101,7 +3101,7 @@
      },
      {
       "dir": "CEAS_BARRACKS_AGE3_DESTR",
-      "kb": 3114
+      "kb": 4936
      },
      {
       "dir": "CEAS_BARRACKS_AGE3_RUBBLE",
@@ -3117,7 +3117,7 @@
      },
      {
       "dir": "CEAS_BLACKSMITH_AGE2_DESTR",
-      "kb": 1976
+      "kb": 3096
      },
      {
       "dir": "CEAS_BLACKSMITH_AGE2_RUBBLE",
@@ -3133,7 +3133,7 @@
      },
      {
       "dir": "CEAS_BLACKSMITH_AGE3_DESTR",
-      "kb": 2349
+      "kb": 3713
      },
      {
       "dir": "CEAS_BLACKSMITH_AGE3_RUBBLE",
@@ -3149,11 +3149,11 @@
      },
      {
       "dir": "CEAS_GATE_FORTIFIED_NE_DESTR",
-      "kb": 1127
+      "kb": 5267
      },
      {
       "dir": "CEAS_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 43
+      "kb": 95
      },
      {
       "dir": "CEAS_GATE_FORTIFIED_SE",
@@ -3161,11 +3161,11 @@
      },
      {
       "dir": "CEAS_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1115
+      "kb": 5140
      },
      {
       "dir": "CEAS_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 41
+      "kb": 89
      },
      {
       "dir": "CEAS_GATE_STONE_NE",
@@ -3173,11 +3173,11 @@
      },
      {
       "dir": "CEAS_GATE_STONE_NE_DESTR",
-      "kb": 1129
+      "kb": 4803
      },
      {
       "dir": "CEAS_GATE_STONE_NE_RUBBLE",
-      "kb": 44
+      "kb": 100
      },
      {
       "dir": "CEAS_GATE_STONE_SE",
@@ -3185,11 +3185,11 @@
      },
      {
       "dir": "CEAS_GATE_STONE_SE_DESTR",
-      "kb": 1115
+      "kb": 4847
      },
      {
       "dir": "CEAS_GATE_STONE_SE_RUBBLE",
-      "kb": 39
+      "kb": 93
      },
      {
       "dir": "CEAS_HOUSE_AGE2",
@@ -3201,7 +3201,7 @@
      },
      {
       "dir": "CEAS_HOUSE_AGE2_DESTR",
-      "kb": 1283
+      "kb": 5537
      },
      {
       "dir": "CEAS_HOUSE_AGE2_RUBBLE",
@@ -3217,7 +3217,7 @@
      },
      {
       "dir": "CEAS_HOUSE_AGE3_DESTR",
-      "kb": 1475
+      "kb": 6286
      },
      {
       "dir": "CEAS_HOUSE_AGE3_RUBBLE",
@@ -3233,7 +3233,7 @@
      },
      {
       "dir": "CEAS_MARKET_AGE2_DESTR",
-      "kb": 3992
+      "kb": 6328
      },
      {
       "dir": "CEAS_MARKET_AGE2_RUBBLE",
@@ -3249,7 +3249,7 @@
      },
      {
       "dir": "CEAS_MARKET_AGE3_DESTR",
-      "kb": 4678
+      "kb": 7471
      },
      {
       "dir": "CEAS_MARKET_AGE3_RUBBLE",
@@ -3265,7 +3265,7 @@
      },
      {
       "dir": "CEAS_MARKET_AGE4_DESTR",
-      "kb": 5241
+      "kb": 8339
      },
      {
       "dir": "CEAS_MARKET_AGE4_RUBBLE",
@@ -3281,7 +3281,7 @@
      },
      {
       "dir": "CEAS_MILL_AGE2_DESTR",
-      "kb": 1331
+      "kb": 2057
      },
      {
       "dir": "CEAS_MILL_AGE2_RUBBLE",
@@ -3297,7 +3297,7 @@
      },
      {
       "dir": "CEAS_MILL_AGE3_DESTR",
-      "kb": 1624
+      "kb": 2509
      },
      {
       "dir": "CEAS_MILL_AGE3_RUBBLE",
@@ -3313,7 +3313,7 @@
      },
      {
       "dir": "CEAS_MONASTERY_AGE3_DESTR",
-      "kb": 3724
+      "kb": 5918
      },
      {
       "dir": "CEAS_MONASTERY_AGE3_RUBBLE",
@@ -3329,7 +3329,7 @@
      },
      {
       "dir": "CEAS_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3831
+      "kb": 6032
      },
      {
       "dir": "CEAS_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -3345,7 +3345,7 @@
      },
      {
       "dir": "CEAS_STABLE_AGE2_DESTR",
-      "kb": 2162
+      "kb": 3366
      },
      {
       "dir": "CEAS_STABLE_AGE2_RUBBLE",
@@ -3361,7 +3361,7 @@
      },
      {
       "dir": "CEAS_STABLE_AGE3_DESTR",
-      "kb": 2510
+      "kb": 3952
      },
      {
       "dir": "CEAS_STABLE_AGE3_RUBBLE",
@@ -3377,7 +3377,7 @@
      },
      {
       "dir": "CEAS_TOWER_AGE2_DESTR",
-      "kb": 958
+      "kb": 1519
      },
      {
       "dir": "CEAS_TOWER_AGE2_RUBBLE",
@@ -3393,7 +3393,7 @@
      },
      {
       "dir": "CEAS_TOWER_AGE3_DESTR",
-      "kb": 1051
+      "kb": 1671
      },
      {
       "dir": "CEAS_TOWER_AGE3_RUBBLE",
@@ -3409,7 +3409,7 @@
      },
      {
       "dir": "CEAS_TOWER_AGE4_DESTR",
-      "kb": 1317
+      "kb": 2104
      },
      {
       "dir": "CEAS_TOWER_AGE4_RUBBLE",
@@ -3425,7 +3425,7 @@
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE2_DESTR",
-      "kb": 2996
+      "kb": 4707
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE2_RUBBLE",
@@ -3441,7 +3441,7 @@
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3228
+      "kb": 5065
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE3_RUBBLE",
@@ -3457,7 +3457,7 @@
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3419
+      "kb": 5340
      },
      {
       "dir": "CEAS_TOWN_CENTER_AGE4_RUBBLE",
@@ -3473,7 +3473,7 @@
      },
      {
       "dir": "CEAS_UNIVERSITY_AGE3_DESTR",
-      "kb": 4546
+      "kb": 7280
      },
      {
       "dir": "CEAS_UNIVERSITY_AGE3_RUBBLE",
@@ -3489,7 +3489,7 @@
      },
      {
       "dir": "CEAS_UNIVERSITY_AGE4_DESTR",
-      "kb": 4885
+      "kb": 7649
      },
      {
       "dir": "CEAS_UNIVERSITY_AGE4_RUBBLE",
@@ -3631,7 +3631,7 @@
      },
      {
       "dir": "DARK_GATE_PALISADE_NE_DESTR",
-      "kb": 702
+      "kb": 3968
      },
      {
       "dir": "DARK_GATE_PALISADE_NE_OPEN_TWIN",
@@ -3639,7 +3639,7 @@
      },
      {
       "dir": "DARK_GATE_PALISADE_NE_RUBBLE",
-      "kb": 31
+      "kb": 82
      },
      {
       "dir": "DARK_GATE_PALISADE_SE",
@@ -3647,11 +3647,11 @@
      },
      {
       "dir": "DARK_GATE_PALISADE_SE_DESTR",
-      "kb": 825
+      "kb": 4189
      },
      {
       "dir": "DARK_GATE_PALISADE_SE_RUBBLE",
-      "kb": 37
+      "kb": 86
      },
      {
       "dir": "DARK_WALL_PALISADE_N",
@@ -3681,7 +3681,7 @@
      },
      {
       "dir": "EAST_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2042
+      "kb": 3248
      },
      {
       "dir": "EAST_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -3697,7 +3697,7 @@
      },
      {
       "dir": "EAST_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2455
+      "kb": 3845
      },
      {
       "dir": "EAST_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -3713,7 +3713,7 @@
      },
      {
       "dir": "EAST_BARRACKS_AGE2_DESTR",
-      "kb": 2993
+      "kb": 4744
      },
      {
       "dir": "EAST_BARRACKS_AGE2_RUBBLE",
@@ -3729,7 +3729,7 @@
      },
      {
       "dir": "EAST_BARRACKS_AGE3_DESTR",
-      "kb": 3098
+      "kb": 4854
      },
      {
       "dir": "EAST_BARRACKS_AGE3_RUBBLE",
@@ -3745,7 +3745,7 @@
      },
      {
       "dir": "EAST_BLACKSMITH_AGE2_DESTR",
-      "kb": 1530
+      "kb": 2433
      },
      {
       "dir": "EAST_BLACKSMITH_AGE2_RUBBLE",
@@ -3761,7 +3761,7 @@
      },
      {
       "dir": "EAST_BLACKSMITH_AGE3_DESTR",
-      "kb": 2364
+      "kb": 3698
      },
      {
       "dir": "EAST_BLACKSMITH_AGE3_RUBBLE",
@@ -3777,11 +3777,11 @@
      },
      {
       "dir": "EAST_GATE_FORTIFIED_NE_DESTR",
-      "kb": 778
+      "kb": 4995
      },
      {
       "dir": "EAST_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 39
+      "kb": 95
      },
      {
       "dir": "EAST_GATE_FORTIFIED_SE",
@@ -3789,11 +3789,11 @@
      },
      {
       "dir": "EAST_GATE_FORTIFIED_SE_DESTR",
-      "kb": 700
+      "kb": 4851
      },
      {
       "dir": "EAST_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 37
+      "kb": 90
      },
      {
       "dir": "EAST_GATE_STONE_NE",
@@ -3801,11 +3801,11 @@
      },
      {
       "dir": "EAST_GATE_STONE_NE_DESTR",
-      "kb": 733
+      "kb": 4526
      },
      {
       "dir": "EAST_GATE_STONE_NE_RUBBLE",
-      "kb": 34
+      "kb": 89
      },
      {
       "dir": "EAST_GATE_STONE_SE",
@@ -3813,11 +3813,11 @@
      },
      {
       "dir": "EAST_GATE_STONE_SE_DESTR",
-      "kb": 706
+      "kb": 4493
      },
      {
       "dir": "EAST_GATE_STONE_SE_RUBBLE",
-      "kb": 35
+      "kb": 87
      },
      {
       "dir": "EAST_HOUSE_AGE2",
@@ -3829,7 +3829,7 @@
      },
      {
       "dir": "EAST_HOUSE_AGE2_DESTR",
-      "kb": 1069
+      "kb": 4662
      },
      {
       "dir": "EAST_HOUSE_AGE2_RUBBLE",
@@ -3845,7 +3845,7 @@
      },
      {
       "dir": "EAST_HOUSE_AGE3_DESTR",
-      "kb": 1243
+      "kb": 5424
      },
      {
       "dir": "EAST_HOUSE_AGE3_RUBBLE",
@@ -3861,7 +3861,7 @@
      },
      {
       "dir": "EAST_MARKET_AGE2_DESTR",
-      "kb": 3161
+      "kb": 4977
      },
      {
       "dir": "EAST_MARKET_AGE2_RUBBLE",
@@ -3877,7 +3877,7 @@
      },
      {
       "dir": "EAST_MARKET_AGE3_DESTR",
-      "kb": 3350
+      "kb": 5276
      },
      {
       "dir": "EAST_MARKET_AGE3_RUBBLE",
@@ -3893,7 +3893,7 @@
      },
      {
       "dir": "EAST_MARKET_AGE4_DESTR",
-      "kb": 4141
+      "kb": 6547
      },
      {
       "dir": "EAST_MARKET_AGE4_RUBBLE",
@@ -3909,7 +3909,7 @@
      },
      {
       "dir": "EAST_MILL_AGE2_DESTR",
-      "kb": 1429
+      "kb": 2220
      },
      {
       "dir": "EAST_MILL_AGE2_RUBBLE",
@@ -3925,7 +3925,7 @@
      },
      {
       "dir": "EAST_MILL_AGE3_DESTR",
-      "kb": 1864
+      "kb": 2953
      },
      {
       "dir": "EAST_MILL_AGE3_RUBBLE",
@@ -3941,7 +3941,7 @@
      },
      {
       "dir": "EAST_MONASTERY_AGE3_DESTR",
-      "kb": 3292
+      "kb": 5175
      },
      {
       "dir": "EAST_MONASTERY_AGE3_RUBBLE",
@@ -3957,7 +3957,7 @@
      },
      {
       "dir": "EAST_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 2670
+      "kb": 4224
      },
      {
       "dir": "EAST_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -3973,7 +3973,7 @@
      },
      {
       "dir": "EAST_STABLE_AGE2_DESTR",
-      "kb": 1914
+      "kb": 3028
      },
      {
       "dir": "EAST_STABLE_AGE2_RUBBLE",
@@ -3989,7 +3989,7 @@
      },
      {
       "dir": "EAST_STABLE_AGE3_DESTR",
-      "kb": 2059
+      "kb": 3271
      },
      {
       "dir": "EAST_STABLE_AGE3_RUBBLE",
@@ -4005,7 +4005,7 @@
      },
      {
       "dir": "EAST_TOWER_AGE2_DESTR",
-      "kb": 1142
+      "kb": 1798
      },
      {
       "dir": "EAST_TOWER_AGE2_RUBBLE",
@@ -4021,7 +4021,7 @@
      },
      {
       "dir": "EAST_TOWER_AGE3_DESTR",
-      "kb": 1487
+      "kb": 2378
      },
      {
       "dir": "EAST_TOWER_AGE3_RUBBLE",
@@ -4037,7 +4037,7 @@
      },
      {
       "dir": "EAST_TOWER_AGE4_DESTR",
-      "kb": 1376
+      "kb": 2165
      },
      {
       "dir": "EAST_TOWER_AGE4_RUBBLE",
@@ -4053,7 +4053,7 @@
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE2_DESTR",
-      "kb": 2549
+      "kb": 4069
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE2_RUBBLE",
@@ -4069,7 +4069,7 @@
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE3_DESTR",
-      "kb": 2604
+      "kb": 4102
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE3_RUBBLE",
@@ -4085,7 +4085,7 @@
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3640
+      "kb": 5789
      },
      {
       "dir": "EAST_TOWN_CENTER_AGE4_RUBBLE",
@@ -4101,7 +4101,7 @@
      },
      {
       "dir": "EAST_UNIVERSITY_AGE3_DESTR",
-      "kb": 3696
+      "kb": 5875
      },
      {
       "dir": "EAST_UNIVERSITY_AGE3_RUBBLE",
@@ -4117,7 +4117,7 @@
      },
      {
       "dir": "EAST_UNIVERSITY_AGE4_DESTR",
-      "kb": 4915
+      "kb": 7748
      },
      {
       "dir": "EAST_UNIVERSITY_AGE4_RUBBLE",
@@ -4309,7 +4309,7 @@
      },
      {
       "dir": "GREEK_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2912
+      "kb": 4501
      },
      {
       "dir": "GREEK_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -4325,7 +4325,7 @@
      },
      {
       "dir": "GREEK_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 3562
+      "kb": 5568
      },
      {
       "dir": "GREEK_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -4341,7 +4341,7 @@
      },
      {
       "dir": "GREEK_BARRACKS_AGE2_DESTR",
-      "kb": 3341
+      "kb": 5310
      },
      {
       "dir": "GREEK_BARRACKS_AGE2_RUBBLE",
@@ -4357,7 +4357,7 @@
      },
      {
       "dir": "GREEK_BARRACKS_AGE3_DESTR",
-      "kb": 3868
+      "kb": 6196
      },
      {
       "dir": "GREEK_BARRACKS_AGE3_RUBBLE",
@@ -4373,7 +4373,7 @@
      },
      {
       "dir": "GREEK_BLACKSMITH_AGE2_DESTR",
-      "kb": 2069
+      "kb": 3258
      },
      {
       "dir": "GREEK_BLACKSMITH_AGE2_RUBBLE",
@@ -4389,7 +4389,7 @@
      },
      {
       "dir": "GREEK_BLACKSMITH_AGE3_DESTR",
-      "kb": 2513
+      "kb": 3952
      },
      {
       "dir": "GREEK_BLACKSMITH_AGE3_RUBBLE",
@@ -4405,11 +4405,11 @@
      },
      {
       "dir": "GREEK_GATE_FORTIFIED_NE_DESTR",
-      "kb": 581
+      "kb": 4403
      },
      {
       "dir": "GREEK_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 16
+      "kb": 47
      },
      {
       "dir": "GREEK_GATE_FORTIFIED_SE",
@@ -4417,11 +4417,11 @@
      },
      {
       "dir": "GREEK_GATE_FORTIFIED_SE_DESTR",
-      "kb": 587
+      "kb": 4350
      },
      {
       "dir": "GREEK_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 15
+      "kb": 43
      },
      {
       "dir": "GREEK_GATE_STONE_NE",
@@ -4429,11 +4429,11 @@
      },
      {
       "dir": "GREEK_GATE_STONE_NE_DESTR",
-      "kb": 566
+      "kb": 3897
      },
      {
       "dir": "GREEK_GATE_STONE_NE_RUBBLE",
-      "kb": 12
+      "kb": 38
      },
      {
       "dir": "GREEK_GATE_STONE_SE",
@@ -4441,11 +4441,11 @@
      },
      {
       "dir": "GREEK_GATE_STONE_SE_DESTR",
-      "kb": 544
+      "kb": 3941
      },
      {
       "dir": "GREEK_GATE_STONE_SE_RUBBLE",
-      "kb": 9
+      "kb": 37
      },
      {
       "dir": "GREEK_HOUSE_AGE2",
@@ -4457,7 +4457,7 @@
      },
      {
       "dir": "GREEK_HOUSE_AGE2_DESTR",
-      "kb": 1693
+      "kb": 7324
      },
      {
       "dir": "GREEK_HOUSE_AGE2_RUBBLE",
@@ -4473,7 +4473,7 @@
      },
      {
       "dir": "GREEK_HOUSE_AGE3_DESTR",
-      "kb": 2006
+      "kb": 8318
      },
      {
       "dir": "GREEK_HOUSE_AGE3_RUBBLE",
@@ -4493,7 +4493,7 @@
      },
      {
       "dir": "GREEK_MARKET_AGE2_DESTR",
-      "kb": 3226
+      "kb": 5038
      },
      {
       "dir": "GREEK_MARKET_AGE2_RUBBLE",
@@ -4509,7 +4509,7 @@
      },
      {
       "dir": "GREEK_MARKET_AGE3_DESTR",
-      "kb": 3676
+      "kb": 5760
      },
      {
       "dir": "GREEK_MARKET_AGE3_RUBBLE",
@@ -4525,7 +4525,7 @@
      },
      {
       "dir": "GREEK_MARKET_AGE4_DESTR",
-      "kb": 4333
+      "kb": 6792
      },
      {
       "dir": "GREEK_MARKET_AGE4_RUBBLE",
@@ -4541,7 +4541,7 @@
      },
      {
       "dir": "GREEK_MILL_AGE2_DESTR",
-      "kb": 1452
+      "kb": 2327
      },
      {
       "dir": "GREEK_MILL_AGE2_RUBBLE",
@@ -4557,7 +4557,7 @@
      },
      {
       "dir": "GREEK_MILL_AGE3_DESTR",
-      "kb": 1546
+      "kb": 2475
      },
      {
       "dir": "GREEK_MILL_AGE3_RUBBLE",
@@ -4577,7 +4577,7 @@
      },
      {
       "dir": "GREEK_MONASTERY_AGE3_DESTR",
-      "kb": 2857
+      "kb": 4500
      },
      {
       "dir": "GREEK_MONASTERY_AGE3_RUBBLE",
@@ -4597,7 +4597,7 @@
      },
      {
       "dir": "GREEK_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 4104
+      "kb": 6574
      },
      {
       "dir": "GREEK_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -4613,7 +4613,7 @@
      },
      {
       "dir": "GREEK_STABLE_AGE2_DESTR",
-      "kb": 2306
+      "kb": 3589
      },
      {
       "dir": "GREEK_STABLE_AGE2_RUBBLE",
@@ -4629,7 +4629,7 @@
      },
      {
       "dir": "GREEK_STABLE_AGE3_DESTR",
-      "kb": 2355
+      "kb": 3662
      },
      {
       "dir": "GREEK_STABLE_AGE3_RUBBLE",
@@ -4645,7 +4645,7 @@
      },
      {
       "dir": "GREEK_TOWER_AGE2_DESTR",
-      "kb": 1055
+      "kb": 1650
      },
      {
       "dir": "GREEK_TOWER_AGE2_RUBBLE",
@@ -4661,7 +4661,7 @@
      },
      {
       "dir": "GREEK_TOWER_AGE3_DESTR",
-      "kb": 1417
+      "kb": 2189
      },
      {
       "dir": "GREEK_TOWER_AGE3_RUBBLE",
@@ -4677,7 +4677,7 @@
      },
      {
       "dir": "GREEK_TOWER_AGE4_DESTR",
-      "kb": 1618
+      "kb": 2499
      },
      {
       "dir": "GREEK_TOWER_AGE4_RUBBLE",
@@ -4693,7 +4693,7 @@
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3070
+      "kb": 4878
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE2_RUBBLE",
@@ -4709,7 +4709,7 @@
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3983
+      "kb": 6402
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE3_RUBBLE",
@@ -4725,7 +4725,7 @@
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE4_DESTR",
-      "kb": 4627
+      "kb": 7402
      },
      {
       "dir": "GREEK_TOWN_CENTER_AGE4_RUBBLE",
@@ -4741,7 +4741,7 @@
      },
      {
       "dir": "GREEK_UNIVERSITY_AGE3_DESTR",
-      "kb": 3758
+      "kb": 5883
      },
      {
       "dir": "GREEK_UNIVERSITY_AGE3_RUBBLE",
@@ -4757,7 +4757,7 @@
      },
      {
       "dir": "GREEK_UNIVERSITY_AGE4_DESTR",
-      "kb": 4691
+      "kb": 7394
      },
      {
       "dir": "GREEK_UNIVERSITY_AGE4_RUBBLE",
@@ -4903,7 +4903,7 @@
      },
      {
       "dir": "INDI_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2720
+      "kb": 4328
      },
      {
       "dir": "INDI_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -4919,7 +4919,7 @@
      },
      {
       "dir": "INDI_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2958
+      "kb": 4709
      },
      {
       "dir": "INDI_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -4935,7 +4935,7 @@
      },
      {
       "dir": "INDI_BARRACKS_AGE2_DESTR",
-      "kb": 3592
+      "kb": 5728
      },
      {
       "dir": "INDI_BARRACKS_AGE2_RUBBLE",
@@ -4951,7 +4951,7 @@
      },
      {
       "dir": "INDI_BARRACKS_AGE3_DESTR",
-      "kb": 3590
+      "kb": 5712
      },
      {
       "dir": "INDI_BARRACKS_AGE3_RUBBLE",
@@ -4967,7 +4967,7 @@
      },
      {
       "dir": "INDI_BLACKSMITH_AGE2_DESTR",
-      "kb": 2093
+      "kb": 3359
      },
      {
       "dir": "INDI_BLACKSMITH_AGE2_RUBBLE",
@@ -4983,7 +4983,7 @@
      },
      {
       "dir": "INDI_BLACKSMITH_AGE3_DESTR",
-      "kb": 2174
+      "kb": 3498
      },
      {
       "dir": "INDI_BLACKSMITH_AGE3_RUBBLE",
@@ -4999,11 +4999,11 @@
      },
      {
       "dir": "INDI_GATE_FORTIFIED_NE_DESTR",
-      "kb": 945
+      "kb": 4793
      },
      {
       "dir": "INDI_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 44
+      "kb": 97
      },
      {
       "dir": "INDI_GATE_FORTIFIED_SE",
@@ -5011,11 +5011,11 @@
      },
      {
       "dir": "INDI_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1008
+      "kb": 4818
      },
      {
       "dir": "INDI_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 46
+      "kb": 96
      },
      {
       "dir": "INDI_GATE_STONE_NE",
@@ -5023,11 +5023,11 @@
      },
      {
       "dir": "INDI_GATE_STONE_NE_DESTR",
-      "kb": 828
+      "kb": 4570
      },
      {
       "dir": "INDI_GATE_STONE_NE_RUBBLE",
-      "kb": 39
+      "kb": 98
      },
      {
       "dir": "INDI_GATE_STONE_SE",
@@ -5035,11 +5035,11 @@
      },
      {
       "dir": "INDI_GATE_STONE_SE_DESTR",
-      "kb": 837
+      "kb": 4655
      },
      {
       "dir": "INDI_GATE_STONE_SE_RUBBLE",
-      "kb": 37
+      "kb": 92
      },
      {
       "dir": "INDI_HOUSE_AGE2",
@@ -5051,7 +5051,7 @@
      },
      {
       "dir": "INDI_HOUSE_AGE2_DESTR",
-      "kb": 1253
+      "kb": 5611
      },
      {
       "dir": "INDI_HOUSE_AGE2_RUBBLE",
@@ -5067,7 +5067,7 @@
      },
      {
       "dir": "INDI_HOUSE_AGE3_DESTR",
-      "kb": 1315
+      "kb": 5828
      },
      {
       "dir": "INDI_HOUSE_AGE3_RUBBLE",
@@ -5083,7 +5083,7 @@
      },
      {
       "dir": "INDI_MARKET_AGE2_DESTR",
-      "kb": 3721
+      "kb": 5881
      },
      {
       "dir": "INDI_MARKET_AGE2_RUBBLE",
@@ -5099,7 +5099,7 @@
      },
      {
       "dir": "INDI_MARKET_AGE3_DESTR",
-      "kb": 4010
+      "kb": 6347
      },
      {
       "dir": "INDI_MARKET_AGE3_RUBBLE",
@@ -5115,7 +5115,7 @@
      },
      {
       "dir": "INDI_MARKET_AGE4_DESTR",
-      "kb": 5058
+      "kb": 8053
      },
      {
       "dir": "INDI_MARKET_AGE4_RUBBLE",
@@ -5131,7 +5131,7 @@
      },
      {
       "dir": "INDI_MILL_AGE2_DESTR",
-      "kb": 1694
+      "kb": 2613
      },
      {
       "dir": "INDI_MILL_AGE2_RUBBLE",
@@ -5147,7 +5147,7 @@
      },
      {
       "dir": "INDI_MILL_AGE3_DESTR",
-      "kb": 2010
+      "kb": 3202
      },
      {
       "dir": "INDI_MILL_AGE3_RUBBLE",
@@ -5163,7 +5163,7 @@
      },
      {
       "dir": "INDI_MONASTERY_AGE3_DESTR",
-      "kb": 4045
+      "kb": 6442
      },
      {
       "dir": "INDI_MONASTERY_AGE3_RUBBLE",
@@ -5179,7 +5179,7 @@
      },
      {
       "dir": "INDI_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3412
+      "kb": 5393
      },
      {
       "dir": "INDI_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -5195,7 +5195,7 @@
      },
      {
       "dir": "INDI_STABLE_AGE2_DESTR",
-      "kb": 2142
+      "kb": 3423
      },
      {
       "dir": "INDI_STABLE_AGE2_RUBBLE",
@@ -5211,7 +5211,7 @@
      },
      {
       "dir": "INDI_STABLE_AGE3_DESTR",
-      "kb": 2184
+      "kb": 3488
      },
      {
       "dir": "INDI_STABLE_AGE3_RUBBLE",
@@ -5227,7 +5227,7 @@
      },
      {
       "dir": "INDI_TOWER_AGE2_DESTR",
-      "kb": 892
+      "kb": 1422
      },
      {
       "dir": "INDI_TOWER_AGE2_RUBBLE",
@@ -5243,7 +5243,7 @@
      },
      {
       "dir": "INDI_TOWER_AGE3_DESTR",
-      "kb": 1055
+      "kb": 1680
      },
      {
       "dir": "INDI_TOWER_AGE3_RUBBLE",
@@ -5259,7 +5259,7 @@
      },
      {
       "dir": "INDI_TOWER_AGE4_DESTR",
-      "kb": 1437
+      "kb": 2292
      },
      {
       "dir": "INDI_TOWER_AGE4_RUBBLE",
@@ -5275,7 +5275,7 @@
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3038
+      "kb": 4783
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE2_RUBBLE",
@@ -5291,7 +5291,7 @@
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3302
+      "kb": 5227
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE3_RUBBLE",
@@ -5307,7 +5307,7 @@
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3820
+      "kb": 6091
      },
      {
       "dir": "INDI_TOWN_CENTER_AGE4_RUBBLE",
@@ -5323,7 +5323,7 @@
      },
      {
       "dir": "INDI_UNIVERSITY_AGE3_DESTR",
-      "kb": 4610
+      "kb": 7400
      },
      {
       "dir": "INDI_UNIVERSITY_AGE3_RUBBLE",
@@ -5339,7 +5339,7 @@
      },
      {
       "dir": "INDI_UNIVERSITY_AGE4_DESTR",
-      "kb": 4422
+      "kb": 7065
      },
      {
       "dir": "INDI_UNIVERSITY_AGE4_RUBBLE",
@@ -5481,7 +5481,7 @@
      },
      {
       "dir": "MEDI_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2124
+      "kb": 3367
      },
      {
       "dir": "MEDI_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -5497,7 +5497,7 @@
      },
      {
       "dir": "MEDI_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 3105
+      "kb": 4934
      },
      {
       "dir": "MEDI_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -5513,7 +5513,7 @@
      },
      {
       "dir": "MEDI_BARRACKS_AGE2_DESTR",
-      "kb": 2967
+      "kb": 4725
      },
      {
       "dir": "MEDI_BARRACKS_AGE2_RUBBLE",
@@ -5529,7 +5529,7 @@
      },
      {
       "dir": "MEDI_BARRACKS_AGE3_DESTR",
-      "kb": 3337
+      "kb": 5333
      },
      {
       "dir": "MEDI_BARRACKS_AGE3_RUBBLE",
@@ -5545,7 +5545,7 @@
      },
      {
       "dir": "MEDI_BLACKSMITH_AGE2_DESTR",
-      "kb": 2147
+      "kb": 3405
      },
      {
       "dir": "MEDI_BLACKSMITH_AGE2_RUBBLE",
@@ -5561,7 +5561,7 @@
      },
      {
       "dir": "MEDI_BLACKSMITH_AGE3_DESTR",
-      "kb": 2427
+      "kb": 3854
      },
      {
       "dir": "MEDI_BLACKSMITH_AGE3_RUBBLE",
@@ -5577,11 +5577,11 @@
      },
      {
       "dir": "MEDI_GATE_FORTIFIED_NE_DESTR",
-      "kb": 860
+      "kb": 5202
      },
      {
       "dir": "MEDI_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 39
+      "kb": 90
      },
      {
       "dir": "MEDI_GATE_FORTIFIED_SE",
@@ -5589,11 +5589,11 @@
      },
      {
       "dir": "MEDI_GATE_FORTIFIED_SE_DESTR",
-      "kb": 916
+      "kb": 5359
      },
      {
       "dir": "MEDI_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 45
+      "kb": 95
      },
      {
       "dir": "MEDI_GATE_STONE_NE",
@@ -5601,11 +5601,11 @@
      },
      {
       "dir": "MEDI_GATE_STONE_NE_DESTR",
-      "kb": 1004
+      "kb": 5008
      },
      {
       "dir": "MEDI_GATE_STONE_NE_RUBBLE",
-      "kb": 42
+      "kb": 87
      },
      {
       "dir": "MEDI_GATE_STONE_SE",
@@ -5613,11 +5613,11 @@
      },
      {
       "dir": "MEDI_GATE_STONE_SE_DESTR",
-      "kb": 935
+      "kb": 4968
      },
      {
       "dir": "MEDI_GATE_STONE_SE_RUBBLE",
-      "kb": 38
+      "kb": 82
      },
      {
       "dir": "MEDI_HOUSE_AGE2",
@@ -5629,7 +5629,7 @@
      },
      {
       "dir": "MEDI_HOUSE_AGE2_DESTR",
-      "kb": 1394
+      "kb": 6170
      },
      {
       "dir": "MEDI_HOUSE_AGE2_RUBBLE",
@@ -5645,7 +5645,7 @@
      },
      {
       "dir": "MEDI_HOUSE_AGE3_DESTR",
-      "kb": 1544
+      "kb": 6654
      },
      {
       "dir": "MEDI_HOUSE_AGE3_RUBBLE",
@@ -5661,7 +5661,7 @@
      },
      {
       "dir": "MEDI_MARKET_AGE2_DESTR",
-      "kb": 3803
+      "kb": 6055
      },
      {
       "dir": "MEDI_MARKET_AGE2_RUBBLE",
@@ -5677,7 +5677,7 @@
      },
      {
       "dir": "MEDI_MARKET_AGE3_DESTR",
-      "kb": 4158
+      "kb": 6622
      },
      {
       "dir": "MEDI_MARKET_AGE3_RUBBLE",
@@ -5693,7 +5693,7 @@
      },
      {
       "dir": "MEDI_MARKET_AGE4_DESTR",
-      "kb": 4544
+      "kb": 7230
      },
      {
       "dir": "MEDI_MARKET_AGE4_RUBBLE",
@@ -5709,7 +5709,7 @@
      },
      {
       "dir": "MEDI_MILL_AGE2_DESTR",
-      "kb": 1621
+      "kb": 2578
      },
      {
       "dir": "MEDI_MILL_AGE2_RUBBLE",
@@ -5725,7 +5725,7 @@
      },
      {
       "dir": "MEDI_MILL_AGE3_DESTR",
-      "kb": 1950
+      "kb": 3122
      },
      {
       "dir": "MEDI_MILL_AGE3_RUBBLE",
@@ -5741,7 +5741,7 @@
      },
      {
       "dir": "MEDI_MONASTERY_AGE3_DESTR",
-      "kb": 3809
+      "kb": 8566
      },
      {
       "dir": "MEDI_MONASTERY_AGE3_RUBBLE",
@@ -5757,7 +5757,7 @@
      },
      {
       "dir": "MEDI_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 4108
+      "kb": 6518
      },
      {
       "dir": "MEDI_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -5773,7 +5773,7 @@
      },
      {
       "dir": "MEDI_STABLE_AGE2_DESTR",
-      "kb": 2088
+      "kb": 3299
      },
      {
       "dir": "MEDI_STABLE_AGE2_RUBBLE",
@@ -5789,7 +5789,7 @@
      },
      {
       "dir": "MEDI_STABLE_AGE3_DESTR",
-      "kb": 2788
+      "kb": 4422
      },
      {
       "dir": "MEDI_STABLE_AGE3_RUBBLE",
@@ -5805,7 +5805,7 @@
      },
      {
       "dir": "MEDI_TOWER_AGE2_DESTR",
-      "kb": 889
+      "kb": 1388
      },
      {
       "dir": "MEDI_TOWER_AGE2_RUBBLE",
@@ -5821,7 +5821,7 @@
      },
      {
       "dir": "MEDI_TOWER_AGE3_DESTR",
-      "kb": 1064
+      "kb": 1652
      },
      {
       "dir": "MEDI_TOWER_AGE3_RUBBLE",
@@ -5837,7 +5837,7 @@
      },
      {
       "dir": "MEDI_TOWER_AGE4_DESTR",
-      "kb": 1153
+      "kb": 1809
      },
      {
       "dir": "MEDI_TOWER_AGE4_RUBBLE",
@@ -5853,7 +5853,7 @@
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE2_DESTR",
-      "kb": 2660
+      "kb": 4142
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE2_RUBBLE",
@@ -5869,7 +5869,7 @@
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3004
+      "kb": 4708
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE3_RUBBLE",
@@ -5885,7 +5885,7 @@
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE4_DESTR",
-      "kb": 2980
+      "kb": 4649
      },
      {
       "dir": "MEDI_TOWN_CENTER_AGE4_RUBBLE",
@@ -5901,7 +5901,7 @@
      },
      {
       "dir": "MEDI_UNIVERSITY_AGE3_DESTR",
-      "kb": 3870
+      "kb": 6053
      },
      {
       "dir": "MEDI_UNIVERSITY_AGE3_RUBBLE",
@@ -5917,7 +5917,7 @@
      },
      {
       "dir": "MEDI_UNIVERSITY_AGE4_DESTR",
-      "kb": 4505
+      "kb": 7110
      },
      {
       "dir": "MEDI_UNIVERSITY_AGE4_RUBBLE",
@@ -6059,7 +6059,7 @@
      },
      {
       "dir": "MESO_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 3665
+      "kb": 5844
      },
      {
       "dir": "MESO_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -6075,7 +6075,7 @@
      },
      {
       "dir": "MESO_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 3803
+      "kb": 6036
      },
      {
       "dir": "MESO_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -6091,7 +6091,7 @@
      },
      {
       "dir": "MESO_BARRACKS_AGE2_DESTR",
-      "kb": 2744
+      "kb": 4351
      },
      {
       "dir": "MESO_BARRACKS_AGE2_RUBBLE",
@@ -6107,7 +6107,7 @@
      },
      {
       "dir": "MESO_BARRACKS_AGE3_DESTR",
-      "kb": 2855
+      "kb": 4534
      },
      {
       "dir": "MESO_BARRACKS_AGE3_RUBBLE",
@@ -6123,7 +6123,7 @@
      },
      {
       "dir": "MESO_BLACKSMITH_AGE2_DESTR",
-      "kb": 2235
+      "kb": 3553
      },
      {
       "dir": "MESO_BLACKSMITH_AGE2_RUBBLE",
@@ -6139,7 +6139,7 @@
      },
      {
       "dir": "MESO_BLACKSMITH_AGE3_DESTR",
-      "kb": 2690
+      "kb": 4270
      },
      {
       "dir": "MESO_BLACKSMITH_AGE3_RUBBLE",
@@ -6155,11 +6155,11 @@
      },
      {
       "dir": "MESO_GATE_FORTIFIED_NE_DESTR",
-      "kb": 1078
+      "kb": 5014
      },
      {
       "dir": "MESO_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 49
+      "kb": 88
      },
      {
       "dir": "MESO_GATE_FORTIFIED_SE",
@@ -6167,11 +6167,11 @@
      },
      {
       "dir": "MESO_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1004
+      "kb": 4905
      },
      {
       "dir": "MESO_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 45
+      "kb": 81
      },
      {
       "dir": "MESO_GATE_STONE_NE",
@@ -6179,11 +6179,11 @@
      },
      {
       "dir": "MESO_GATE_STONE_NE_DESTR",
-      "kb": 827
+      "kb": 4532
      },
      {
       "dir": "MESO_GATE_STONE_NE_RUBBLE",
-      "kb": 40
+      "kb": 94
      },
      {
       "dir": "MESO_GATE_STONE_SE",
@@ -6191,11 +6191,11 @@
      },
      {
       "dir": "MESO_GATE_STONE_SE_DESTR",
-      "kb": 831
+      "kb": 4546
      },
      {
       "dir": "MESO_GATE_STONE_SE_RUBBLE",
-      "kb": 37
+      "kb": 90
      },
      {
       "dir": "MESO_HOUSE_AGE2",
@@ -6207,7 +6207,7 @@
      },
      {
       "dir": "MESO_HOUSE_AGE2_DESTR",
-      "kb": 1381
+      "kb": 6121
      },
      {
       "dir": "MESO_HOUSE_AGE2_RUBBLE",
@@ -6223,7 +6223,7 @@
      },
      {
       "dir": "MESO_HOUSE_AGE3_DESTR",
-      "kb": 1460
+      "kb": 6513
      },
      {
       "dir": "MESO_HOUSE_AGE3_RUBBLE",
@@ -6239,7 +6239,7 @@
      },
      {
       "dir": "MESO_MARKET_AGE2_DESTR",
-      "kb": 4204
+      "kb": 6709
      },
      {
       "dir": "MESO_MARKET_AGE2_RUBBLE",
@@ -6255,7 +6255,7 @@
      },
      {
       "dir": "MESO_MARKET_AGE3_DESTR",
-      "kb": 4856
+      "kb": 7742
      },
      {
       "dir": "MESO_MARKET_AGE3_RUBBLE",
@@ -6271,7 +6271,7 @@
      },
      {
       "dir": "MESO_MARKET_AGE4_DESTR",
-      "kb": 4905
+      "kb": 7840
      },
      {
       "dir": "MESO_MARKET_AGE4_RUBBLE",
@@ -6287,7 +6287,7 @@
      },
      {
       "dir": "MESO_MILL_AGE2_DESTR",
-      "kb": 2061
+      "kb": 3245
      },
      {
       "dir": "MESO_MILL_AGE2_RUBBLE",
@@ -6303,7 +6303,7 @@
      },
      {
       "dir": "MESO_MILL_AGE3_DESTR",
-      "kb": 2258
+      "kb": 3556
      },
      {
       "dir": "MESO_MILL_AGE3_RUBBLE",
@@ -6319,7 +6319,7 @@
      },
      {
       "dir": "MESO_MONASTERY_AGE3_DESTR",
-      "kb": 2703
+      "kb": 4269
      },
      {
       "dir": "MESO_MONASTERY_AGE3_RUBBLE",
@@ -6335,7 +6335,7 @@
      },
      {
       "dir": "MESO_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 4465
+      "kb": 7159
      },
      {
       "dir": "MESO_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -6351,7 +6351,7 @@
      },
      {
       "dir": "MESO_STABLE_AGE2_DESTR",
-      "kb": 2386
+      "kb": 3789
      },
      {
       "dir": "MESO_STABLE_AGE2_RUBBLE",
@@ -6367,7 +6367,7 @@
      },
      {
       "dir": "MESO_STABLE_AGE3_DESTR",
-      "kb": 3076
+      "kb": 4938
      },
      {
       "dir": "MESO_STABLE_AGE3_RUBBLE",
@@ -6383,7 +6383,7 @@
      },
      {
       "dir": "MESO_TOWER_AGE2_DESTR",
-      "kb": 1387
+      "kb": 2200
      },
      {
       "dir": "MESO_TOWER_AGE2_RUBBLE",
@@ -6399,7 +6399,7 @@
      },
      {
       "dir": "MESO_TOWER_AGE3_DESTR",
-      "kb": 1331
+      "kb": 2114
      },
      {
       "dir": "MESO_TOWER_AGE3_RUBBLE",
@@ -6415,7 +6415,7 @@
      },
      {
       "dir": "MESO_TOWER_AGE4_DESTR",
-      "kb": 1378
+      "kb": 2188
      },
      {
       "dir": "MESO_TOWER_AGE4_RUBBLE",
@@ -6431,7 +6431,7 @@
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3575
+      "kb": 5734
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE2_RUBBLE",
@@ -6447,7 +6447,7 @@
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3119
+      "kb": 4884
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE3_RUBBLE",
@@ -6463,7 +6463,7 @@
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3098
+      "kb": 4893
      },
      {
       "dir": "MESO_TOWN_CENTER_AGE4_RUBBLE",
@@ -6479,7 +6479,7 @@
      },
      {
       "dir": "MESO_UNIVERSITY_AGE3_DESTR",
-      "kb": 4986
+      "kb": 7883
      },
      {
       "dir": "MESO_UNIVERSITY_AGE3_RUBBLE",
@@ -6495,7 +6495,7 @@
      },
      {
       "dir": "MESO_UNIVERSITY_AGE4_DESTR",
-      "kb": 5149
+      "kb": 8178
      },
      {
       "dir": "MESO_UNIVERSITY_AGE4_RUBBLE",
@@ -6637,7 +6637,7 @@
      },
      {
       "dir": "ORIE_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 3004
+      "kb": 4773
      },
      {
       "dir": "ORIE_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -6653,7 +6653,7 @@
      },
      {
       "dir": "ORIE_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2925
+      "kb": 4639
      },
      {
       "dir": "ORIE_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -6669,7 +6669,7 @@
      },
      {
       "dir": "ORIE_BARRACKS_AGE2_DESTR",
-      "kb": 3310
+      "kb": 5275
      },
      {
       "dir": "ORIE_BARRACKS_AGE2_RUBBLE",
@@ -6685,7 +6685,7 @@
      },
      {
       "dir": "ORIE_BARRACKS_AGE3_DESTR",
-      "kb": 3788
+      "kb": 6051
      },
      {
       "dir": "ORIE_BARRACKS_AGE3_RUBBLE",
@@ -6701,7 +6701,7 @@
      },
      {
       "dir": "ORIE_BLACKSMITH_AGE2_DESTR",
-      "kb": 1830
+      "kb": 2886
      },
      {
       "dir": "ORIE_BLACKSMITH_AGE2_RUBBLE",
@@ -6717,7 +6717,7 @@
      },
      {
       "dir": "ORIE_BLACKSMITH_AGE3_DESTR",
-      "kb": 2095
+      "kb": 3310
      },
      {
       "dir": "ORIE_BLACKSMITH_AGE3_RUBBLE",
@@ -6733,11 +6733,11 @@
      },
      {
       "dir": "ORIE_GATE_FORTIFIED_NE_DESTR",
-      "kb": 833
+      "kb": 4505
      },
      {
       "dir": "ORIE_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 37
+      "kb": 80
      },
      {
       "dir": "ORIE_GATE_FORTIFIED_SE",
@@ -6745,11 +6745,11 @@
      },
      {
       "dir": "ORIE_GATE_FORTIFIED_SE_DESTR",
-      "kb": 807
+      "kb": 4381
      },
      {
       "dir": "ORIE_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 37
+      "kb": 76
      },
      {
       "dir": "ORIE_GATE_STONE_NE",
@@ -6757,11 +6757,11 @@
      },
      {
       "dir": "ORIE_GATE_STONE_NE_DESTR",
-      "kb": 955
+      "kb": 4477
      },
      {
       "dir": "ORIE_GATE_STONE_NE_RUBBLE",
-      "kb": 44
+      "kb": 88
      },
      {
       "dir": "ORIE_GATE_STONE_SE",
@@ -6769,11 +6769,11 @@
      },
      {
       "dir": "ORIE_GATE_STONE_SE_DESTR",
-      "kb": 971
+      "kb": 4377
      },
      {
       "dir": "ORIE_GATE_STONE_SE_RUBBLE",
-      "kb": 43
+      "kb": 86
      },
      {
       "dir": "ORIE_HOUSE_AGE2",
@@ -6785,7 +6785,7 @@
      },
      {
       "dir": "ORIE_HOUSE_AGE2_DESTR",
-      "kb": 1088
+      "kb": 4785
      },
      {
       "dir": "ORIE_HOUSE_AGE2_RUBBLE",
@@ -6801,7 +6801,7 @@
      },
      {
       "dir": "ORIE_HOUSE_AGE3_DESTR",
-      "kb": 1245
+      "kb": 5410
      },
      {
       "dir": "ORIE_HOUSE_AGE3_RUBBLE",
@@ -6817,7 +6817,7 @@
      },
      {
       "dir": "ORIE_MARKET_AGE2_DESTR",
-      "kb": 3910
+      "kb": 6225
      },
      {
       "dir": "ORIE_MARKET_AGE2_RUBBLE",
@@ -6833,7 +6833,7 @@
      },
      {
       "dir": "ORIE_MARKET_AGE3_DESTR",
-      "kb": 3934
+      "kb": 6162
      },
      {
       "dir": "ORIE_MARKET_AGE3_RUBBLE",
@@ -6849,7 +6849,7 @@
      },
      {
       "dir": "ORIE_MARKET_AGE4_DESTR",
-      "kb": 4610
+      "kb": 7319
      },
      {
       "dir": "ORIE_MARKET_AGE4_RUBBLE",
@@ -6865,7 +6865,7 @@
      },
      {
       "dir": "ORIE_MILL_AGE2_DESTR",
-      "kb": 2053
+      "kb": 3245
      },
      {
       "dir": "ORIE_MILL_AGE2_RUBBLE",
@@ -6881,7 +6881,7 @@
      },
      {
       "dir": "ORIE_MILL_AGE3_DESTR",
-      "kb": 2023
+      "kb": 3207
      },
      {
       "dir": "ORIE_MILL_AGE3_RUBBLE",
@@ -6897,7 +6897,7 @@
      },
      {
       "dir": "ORIE_MONASTERY_AGE3_DESTR",
-      "kb": 3109
+      "kb": 4897
      },
      {
       "dir": "ORIE_MONASTERY_AGE3_RUBBLE",
@@ -6913,7 +6913,7 @@
      },
      {
       "dir": "ORIE_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3640
+      "kb": 5765
      },
      {
       "dir": "ORIE_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -6929,7 +6929,7 @@
      },
      {
       "dir": "ORIE_STABLE_AGE2_DESTR",
-      "kb": 1640
+      "kb": 2591
      },
      {
       "dir": "ORIE_STABLE_AGE2_RUBBLE",
@@ -6945,7 +6945,7 @@
      },
      {
       "dir": "ORIE_STABLE_AGE3_DESTR",
-      "kb": 2312
+      "kb": 3644
      },
      {
       "dir": "ORIE_STABLE_AGE3_RUBBLE",
@@ -6961,7 +6961,7 @@
      },
      {
       "dir": "ORIE_TOWER_AGE2_DESTR",
-      "kb": 1140
+      "kb": 1797
      },
      {
       "dir": "ORIE_TOWER_AGE2_RUBBLE",
@@ -6977,7 +6977,7 @@
      },
      {
       "dir": "ORIE_TOWER_AGE3_DESTR",
-      "kb": 923
+      "kb": 1454
      },
      {
       "dir": "ORIE_TOWER_AGE3_RUBBLE",
@@ -6993,7 +6993,7 @@
      },
      {
       "dir": "ORIE_TOWER_AGE4_DESTR",
-      "kb": 1047
+      "kb": 1662
      },
      {
       "dir": "ORIE_TOWER_AGE4_RUBBLE",
@@ -7009,7 +7009,7 @@
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3326
+      "kb": 5266
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE2_RUBBLE",
@@ -7025,7 +7025,7 @@
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3287
+      "kb": 5194
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE3_RUBBLE",
@@ -7041,7 +7041,7 @@
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3280
+      "kb": 5193
      },
      {
       "dir": "ORIE_TOWN_CENTER_AGE4_RUBBLE",
@@ -7057,7 +7057,7 @@
      },
      {
       "dir": "ORIE_UNIVERSITY_AGE3_DESTR",
-      "kb": 3233
+      "kb": 5098
      },
      {
       "dir": "ORIE_UNIVERSITY_AGE3_RUBBLE",
@@ -7073,7 +7073,7 @@
      },
      {
       "dir": "ORIE_UNIVERSITY_AGE4_DESTR",
-      "kb": 4022
+      "kb": 6367
      },
      {
       "dir": "ORIE_UNIVERSITY_AGE4_RUBBLE",
@@ -7215,7 +7215,7 @@
      },
      {
       "dir": "PERSIAN_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2997
+      "kb": 4699
      },
      {
       "dir": "PERSIAN_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -7231,7 +7231,7 @@
      },
      {
       "dir": "PERSIAN_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2998
+      "kb": 4702
      },
      {
       "dir": "PERSIAN_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -7247,7 +7247,7 @@
      },
      {
       "dir": "PERSIAN_BARRACKS_AGE2_DESTR",
-      "kb": 3131
+      "kb": 4925
      },
      {
       "dir": "PERSIAN_BARRACKS_AGE2_RUBBLE",
@@ -7263,7 +7263,7 @@
      },
      {
       "dir": "PERSIAN_BARRACKS_AGE3_DESTR",
-      "kb": 3824
+      "kb": 6088
      },
      {
       "dir": "PERSIAN_BARRACKS_AGE3_RUBBLE",
@@ -7279,7 +7279,7 @@
      },
      {
       "dir": "PERSIAN_BLACKSMITH_AGE2_DESTR",
-      "kb": 2035
+      "kb": 3208
      },
      {
       "dir": "PERSIAN_BLACKSMITH_AGE2_RUBBLE",
@@ -7295,7 +7295,7 @@
      },
      {
       "dir": "PERSIAN_BLACKSMITH_AGE3_DESTR",
-      "kb": 2250
+      "kb": 3550
      },
      {
       "dir": "PERSIAN_BLACKSMITH_AGE3_RUBBLE",
@@ -7311,11 +7311,11 @@
      },
      {
       "dir": "PERSIAN_GATE_FORTIFIED_NE_DESTR",
-      "kb": 604
+      "kb": 4284
      },
      {
       "dir": "PERSIAN_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 17
+      "kb": 47
      },
      {
       "dir": "PERSIAN_GATE_FORTIFIED_SE",
@@ -7323,11 +7323,11 @@
      },
      {
       "dir": "PERSIAN_GATE_FORTIFIED_SE_DESTR",
-      "kb": 619
+      "kb": 4392
      },
      {
       "dir": "PERSIAN_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 18
+      "kb": 49
      },
      {
       "dir": "PERSIAN_GATE_STONE_NE",
@@ -7335,11 +7335,11 @@
      },
      {
       "dir": "PERSIAN_GATE_STONE_NE_DESTR",
-      "kb": 544
+      "kb": 3939
      },
      {
       "dir": "PERSIAN_GATE_STONE_NE_RUBBLE",
-      "kb": 8
+      "kb": 30
      },
      {
       "dir": "PERSIAN_GATE_STONE_SE",
@@ -7347,11 +7347,11 @@
      },
      {
       "dir": "PERSIAN_GATE_STONE_SE_DESTR",
-      "kb": 521
+      "kb": 3989
      },
      {
       "dir": "PERSIAN_GATE_STONE_SE_RUBBLE",
-      "kb": 8
+      "kb": 32
      },
      {
       "dir": "PERSIAN_HOUSE_AGE2",
@@ -7363,7 +7363,7 @@
      },
      {
       "dir": "PERSIAN_HOUSE_AGE2_DESTR",
-      "kb": 1560
+      "kb": 6547
      },
      {
       "dir": "PERSIAN_HOUSE_AGE2_RUBBLE",
@@ -7379,7 +7379,7 @@
      },
      {
       "dir": "PERSIAN_HOUSE_AGE3_DESTR",
-      "kb": 1664
+      "kb": 6901
      },
      {
       "dir": "PERSIAN_HOUSE_AGE3_RUBBLE",
@@ -7395,7 +7395,7 @@
      },
      {
       "dir": "PERSIAN_MARKET_AGE2_DESTR",
-      "kb": 3905
+      "kb": 6193
      },
      {
       "dir": "PERSIAN_MARKET_AGE2_RUBBLE",
@@ -7411,7 +7411,7 @@
      },
      {
       "dir": "PERSIAN_MARKET_AGE3_DESTR",
-      "kb": 4732
+      "kb": 7417
      },
      {
       "dir": "PERSIAN_MARKET_AGE3_RUBBLE",
@@ -7427,7 +7427,7 @@
      },
      {
       "dir": "PERSIAN_MARKET_AGE4_DESTR",
-      "kb": 5383
+      "kb": 8451
      },
      {
       "dir": "PERSIAN_MARKET_AGE4_RUBBLE",
@@ -7443,7 +7443,7 @@
      },
      {
       "dir": "PERSIAN_MILL_AGE2_DESTR",
-      "kb": 1216
+      "kb": 1932
      },
      {
       "dir": "PERSIAN_MILL_AGE2_RUBBLE",
@@ -7459,7 +7459,7 @@
      },
      {
       "dir": "PERSIAN_MILL_AGE3_DESTR",
-      "kb": 1515
+      "kb": 2428
      },
      {
       "dir": "PERSIAN_MILL_AGE3_RUBBLE",
@@ -7475,7 +7475,7 @@
      },
      {
       "dir": "PERSIAN_MONASTERY_AGE3_DESTR",
-      "kb": 2869
+      "kb": 4523
      },
      {
       "dir": "PERSIAN_MONASTERY_AGE3_RUBBLE",
@@ -7491,7 +7491,7 @@
      },
      {
       "dir": "PERSIAN_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 4359
+      "kb": 6904
      },
      {
       "dir": "PERSIAN_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -7507,7 +7507,7 @@
      },
      {
       "dir": "PERSIAN_STABLE_AGE2_DESTR",
-      "kb": 2482
+      "kb": 3923
      },
      {
       "dir": "PERSIAN_STABLE_AGE2_RUBBLE",
@@ -7523,7 +7523,7 @@
      },
      {
       "dir": "PERSIAN_STABLE_AGE3_DESTR",
-      "kb": 2835
+      "kb": 4455
      },
      {
       "dir": "PERSIAN_STABLE_AGE3_RUBBLE",
@@ -7539,7 +7539,7 @@
      },
      {
       "dir": "PERSIAN_TOWER_AGE2_DESTR",
-      "kb": 1129
+      "kb": 1797
      },
      {
       "dir": "PERSIAN_TOWER_AGE2_RUBBLE",
@@ -7555,7 +7555,7 @@
      },
      {
       "dir": "PERSIAN_TOWER_AGE3_DESTR",
-      "kb": 1504
+      "kb": 2385
      },
      {
       "dir": "PERSIAN_TOWER_AGE3_RUBBLE",
@@ -7571,7 +7571,7 @@
      },
      {
       "dir": "PERSIAN_TOWER_AGE4_DESTR",
-      "kb": 1650
+      "kb": 2616
      },
      {
       "dir": "PERSIAN_TOWER_AGE4_RUBBLE",
@@ -7587,7 +7587,7 @@
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE2_DESTR",
-      "kb": 4296
+      "kb": 6866
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE2_RUBBLE",
@@ -7603,7 +7603,7 @@
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE3_DESTR",
-      "kb": 4359
+      "kb": 6915
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE3_RUBBLE",
@@ -7619,7 +7619,7 @@
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE4_DESTR",
-      "kb": 4929
+      "kb": 7862
      },
      {
       "dir": "PERSIAN_TOWN_CENTER_AGE4_RUBBLE",
@@ -7635,7 +7635,7 @@
      },
      {
       "dir": "PERSIAN_UNIVERSITY_AGE3_DESTR",
-      "kb": 4689
+      "kb": 7434
      },
      {
       "dir": "PERSIAN_UNIVERSITY_AGE3_RUBBLE",
@@ -7651,7 +7651,7 @@
      },
      {
       "dir": "PERSIAN_UNIVERSITY_AGE4_DESTR",
-      "kb": 5840
+      "kb": 9066
      },
      {
       "dir": "PERSIAN_UNIVERSITY_AGE4_RUBBLE",
@@ -7793,7 +7793,7 @@
      },
      {
       "dir": "PURU_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2547
+      "kb": 3878
      },
      {
       "dir": "PURU_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -7809,7 +7809,7 @@
      },
      {
       "dir": "PURU_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 3428
+      "kb": 5467
      },
      {
       "dir": "PURU_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -7825,7 +7825,7 @@
      },
      {
       "dir": "PURU_BARRACKS_AGE2_DESTR",
-      "kb": 2871
+      "kb": 4527
      },
      {
       "dir": "PURU_BARRACKS_AGE2_RUBBLE",
@@ -7841,7 +7841,7 @@
      },
      {
       "dir": "PURU_BARRACKS_AGE3_DESTR",
-      "kb": 3903
+      "kb": 6114
      },
      {
       "dir": "PURU_BARRACKS_AGE3_RUBBLE",
@@ -7857,7 +7857,7 @@
      },
      {
       "dir": "PURU_BLACKSMITH_AGE2_DESTR",
-      "kb": 2303
+      "kb": 3568
      },
      {
       "dir": "PURU_BLACKSMITH_AGE2_RUBBLE",
@@ -7873,7 +7873,7 @@
      },
      {
       "dir": "PURU_BLACKSMITH_AGE3_DESTR",
-      "kb": 2400
+      "kb": 3823
      },
      {
       "dir": "PURU_BLACKSMITH_AGE3_RUBBLE",
@@ -7889,11 +7889,11 @@
      },
      {
       "dir": "PURU_GATE_FORTIFIED_NE_DESTR",
-      "kb": 431
+      "kb": 3851
      },
      {
       "dir": "PURU_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 14
+      "kb": 62
      },
      {
       "dir": "PURU_GATE_FORTIFIED_SE",
@@ -7901,11 +7901,11 @@
      },
      {
       "dir": "PURU_GATE_FORTIFIED_SE_DESTR",
-      "kb": 424
+      "kb": 3832
      },
      {
       "dir": "PURU_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 15
+      "kb": 63
      },
      {
       "dir": "PURU_GATE_STONE_NE",
@@ -7913,11 +7913,11 @@
      },
      {
       "dir": "PURU_GATE_STONE_NE_DESTR",
-      "kb": 413
+      "kb": 3255
      },
      {
       "dir": "PURU_GATE_STONE_NE_RUBBLE",
-      "kb": 13
+      "kb": 42
      },
      {
       "dir": "PURU_GATE_STONE_SE",
@@ -7925,11 +7925,11 @@
      },
      {
       "dir": "PURU_GATE_STONE_SE_DESTR",
-      "kb": 402
+      "kb": 3303
      },
      {
       "dir": "PURU_GATE_STONE_SE_RUBBLE",
-      "kb": 14
+      "kb": 43
      },
      {
       "dir": "PURU_HOUSE_AGE2",
@@ -7941,7 +7941,7 @@
      },
      {
       "dir": "PURU_HOUSE_AGE2_DESTR",
-      "kb": 1058
+      "kb": 4316
      },
      {
       "dir": "PURU_HOUSE_AGE2_RUBBLE",
@@ -7957,7 +7957,7 @@
      },
      {
       "dir": "PURU_HOUSE_AGE3_DESTR",
-      "kb": 1272
+      "kb": 5253
      },
      {
       "dir": "PURU_HOUSE_AGE3_RUBBLE",
@@ -7973,7 +7973,7 @@
      },
      {
       "dir": "PURU_MARKET_AGE2_DESTR",
-      "kb": 3335
+      "kb": 5234
      },
      {
       "dir": "PURU_MARKET_AGE2_RUBBLE",
@@ -7989,7 +7989,7 @@
      },
      {
       "dir": "PURU_MARKET_AGE3_DESTR",
-      "kb": 3736
+      "kb": 5814
      },
      {
       "dir": "PURU_MARKET_AGE3_RUBBLE",
@@ -8005,7 +8005,7 @@
      },
      {
       "dir": "PURU_MARKET_AGE4_DESTR",
-      "kb": 4375
+      "kb": 6836
      },
      {
       "dir": "PURU_MARKET_AGE4_RUBBLE",
@@ -8021,7 +8021,7 @@
      },
      {
       "dir": "PURU_MILL_AGE2_DESTR",
-      "kb": 1503
+      "kb": 2377
      },
      {
       "dir": "PURU_MILL_AGE2_RUBBLE",
@@ -8037,7 +8037,7 @@
      },
      {
       "dir": "PURU_MILL_AGE3_DESTR",
-      "kb": 1430
+      "kb": 2246
      },
      {
       "dir": "PURU_MILL_AGE3_RUBBLE",
@@ -8053,7 +8053,7 @@
      },
      {
       "dir": "PURU_MONASTERY_AGE3_DESTR",
-      "kb": 2085
+      "kb": 3173
      },
      {
       "dir": "PURU_MONASTERY_AGE3_RUBBLE",
@@ -8069,7 +8069,7 @@
      },
      {
       "dir": "PURU_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 3327
+      "kb": 5164
      },
      {
       "dir": "PURU_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -8085,7 +8085,7 @@
      },
      {
       "dir": "PURU_STABLE_AGE2_DESTR",
-      "kb": 2718
+      "kb": 4375
      },
      {
       "dir": "PURU_STABLE_AGE2_RUBBLE",
@@ -8101,7 +8101,7 @@
      },
      {
       "dir": "PURU_STABLE_AGE3_DESTR",
-      "kb": 2921
+      "kb": 4580
      },
      {
       "dir": "PURU_STABLE_AGE3_RUBBLE",
@@ -8117,7 +8117,7 @@
      },
      {
       "dir": "PURU_TOWER_AGE2_DESTR",
-      "kb": 1272
+      "kb": 1983
      },
      {
       "dir": "PURU_TOWER_AGE2_RUBBLE",
@@ -8133,7 +8133,7 @@
      },
      {
       "dir": "PURU_TOWER_AGE3_DESTR",
-      "kb": 1452
+      "kb": 2280
      },
      {
       "dir": "PURU_TOWER_AGE3_RUBBLE",
@@ -8149,7 +8149,7 @@
      },
      {
       "dir": "PURU_TOWER_AGE4_DESTR",
-      "kb": 1157
+      "kb": 1826
      },
      {
       "dir": "PURU_TOWER_AGE4_RUBBLE",
@@ -8165,7 +8165,7 @@
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3755
+      "kb": 5889
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE2_RUBBLE",
@@ -8181,7 +8181,7 @@
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3815
+      "kb": 5970
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE3_RUBBLE",
@@ -8197,7 +8197,7 @@
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3831
+      "kb": 6028
      },
      {
       "dir": "PURU_TOWN_CENTER_AGE4_RUBBLE",
@@ -8213,7 +8213,7 @@
      },
      {
       "dir": "PURU_UNIVERSITY_AGE3_DESTR",
-      "kb": 4649
+      "kb": 7161
      },
      {
       "dir": "PURU_UNIVERSITY_AGE3_RUBBLE",
@@ -8229,7 +8229,7 @@
      },
      {
       "dir": "PURU_UNIVERSITY_AGE4_DESTR",
-      "kb": 4608
+      "kb": 7226
      },
      {
       "dir": "PURU_UNIVERSITY_AGE4_RUBBLE",
@@ -8371,7 +8371,7 @@
      },
      {
       "dir": "SEAS_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 3084
+      "kb": 4909
      },
      {
       "dir": "SEAS_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -8387,7 +8387,7 @@
      },
      {
       "dir": "SEAS_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 4007
+      "kb": 6376
      },
      {
       "dir": "SEAS_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -8403,7 +8403,7 @@
      },
      {
       "dir": "SEAS_BARRACKS_AGE2_DESTR",
-      "kb": 2854
+      "kb": 4551
      },
      {
       "dir": "SEAS_BARRACKS_AGE2_RUBBLE",
@@ -8419,7 +8419,7 @@
      },
      {
       "dir": "SEAS_BARRACKS_AGE3_DESTR",
-      "kb": 3668
+      "kb": 5804
      },
      {
       "dir": "SEAS_BARRACKS_AGE3_RUBBLE",
@@ -8435,7 +8435,7 @@
      },
      {
       "dir": "SEAS_BLACKSMITH_AGE2_DESTR",
-      "kb": 2328
+      "kb": 3705
      },
      {
       "dir": "SEAS_BLACKSMITH_AGE2_RUBBLE",
@@ -8451,7 +8451,7 @@
      },
      {
       "dir": "SEAS_BLACKSMITH_AGE3_DESTR",
-      "kb": 3041
+      "kb": 4823
      },
      {
       "dir": "SEAS_BLACKSMITH_AGE3_RUBBLE",
@@ -8467,11 +8467,11 @@
      },
      {
       "dir": "SEAS_GATE_FORTIFIED_NE_DESTR",
-      "kb": 1425
+      "kb": 6337
      },
      {
       "dir": "SEAS_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 49
+      "kb": 129
      },
      {
       "dir": "SEAS_GATE_FORTIFIED_SE",
@@ -8479,11 +8479,11 @@
      },
      {
       "dir": "SEAS_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1460
+      "kb": 6402
      },
      {
       "dir": "SEAS_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 49
+      "kb": 124
      },
      {
       "dir": "SEAS_GATE_STONE_NE",
@@ -8491,11 +8491,11 @@
      },
      {
       "dir": "SEAS_GATE_STONE_NE_DESTR",
-      "kb": 1184
+      "kb": 4686
      },
      {
       "dir": "SEAS_GATE_STONE_NE_RUBBLE",
-      "kb": 49
+      "kb": 94
      },
      {
       "dir": "SEAS_GATE_STONE_SE",
@@ -8503,11 +8503,11 @@
      },
      {
       "dir": "SEAS_GATE_STONE_SE_DESTR",
-      "kb": 1159
+      "kb": 4595
      },
      {
       "dir": "SEAS_GATE_STONE_SE_RUBBLE",
-      "kb": 46
+      "kb": 90
      },
      {
       "dir": "SEAS_HOUSE_AGE2",
@@ -8519,7 +8519,7 @@
      },
      {
       "dir": "SEAS_HOUSE_AGE2_DESTR",
-      "kb": 1342
+      "kb": 5898
      },
      {
       "dir": "SEAS_HOUSE_AGE2_RUBBLE",
@@ -8535,7 +8535,7 @@
      },
      {
       "dir": "SEAS_HOUSE_AGE3_DESTR",
-      "kb": 1620
+      "kb": 7154
      },
      {
       "dir": "SEAS_HOUSE_AGE3_RUBBLE",
@@ -8551,7 +8551,7 @@
      },
      {
       "dir": "SEAS_MARKET_AGE2_DESTR",
-      "kb": 4566
+      "kb": 7292
      },
      {
       "dir": "SEAS_MARKET_AGE2_RUBBLE",
@@ -8567,7 +8567,7 @@
      },
      {
       "dir": "SEAS_MARKET_AGE3_DESTR",
-      "kb": 4997
+      "kb": 7959
      },
      {
       "dir": "SEAS_MARKET_AGE3_RUBBLE",
@@ -8583,7 +8583,7 @@
      },
      {
       "dir": "SEAS_MARKET_AGE4_DESTR",
-      "kb": 5302
+      "kb": 8449
      },
      {
       "dir": "SEAS_MARKET_AGE4_RUBBLE",
@@ -8599,7 +8599,7 @@
      },
      {
       "dir": "SEAS_MILL_AGE2_DESTR",
-      "kb": 1194
+      "kb": 1892
      },
      {
       "dir": "SEAS_MILL_AGE2_RUBBLE",
@@ -8615,7 +8615,7 @@
      },
      {
       "dir": "SEAS_MILL_AGE3_DESTR",
-      "kb": 1407
+      "kb": 2225
      },
      {
       "dir": "SEAS_MILL_AGE3_RUBBLE",
@@ -8631,7 +8631,7 @@
      },
      {
       "dir": "SEAS_MONASTERY_AGE3_DESTR",
-      "kb": 3311
+      "kb": 5253
      },
      {
       "dir": "SEAS_MONASTERY_AGE3_RUBBLE",
@@ -8647,7 +8647,7 @@
      },
      {
       "dir": "SEAS_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 4623
+      "kb": 7345
      },
      {
       "dir": "SEAS_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -8663,7 +8663,7 @@
      },
      {
       "dir": "SEAS_STABLE_AGE2_DESTR",
-      "kb": 2179
+      "kb": 3434
      },
      {
       "dir": "SEAS_STABLE_AGE2_RUBBLE",
@@ -8679,7 +8679,7 @@
      },
      {
       "dir": "SEAS_STABLE_AGE3_DESTR",
-      "kb": 3278
+      "kb": 5162
      },
      {
       "dir": "SEAS_STABLE_AGE3_RUBBLE",
@@ -8695,7 +8695,7 @@
      },
      {
       "dir": "SEAS_TOWER_AGE2_DESTR",
-      "kb": 1220
+      "kb": 1927
      },
      {
       "dir": "SEAS_TOWER_AGE2_RUBBLE",
@@ -8711,7 +8711,7 @@
      },
      {
       "dir": "SEAS_TOWER_AGE3_DESTR",
-      "kb": 1324
+      "kb": 2096
      },
      {
       "dir": "SEAS_TOWER_AGE3_RUBBLE",
@@ -8727,7 +8727,7 @@
      },
      {
       "dir": "SEAS_TOWER_AGE4_DESTR",
-      "kb": 1441
+      "kb": 2283
      },
      {
       "dir": "SEAS_TOWER_AGE4_RUBBLE",
@@ -8743,7 +8743,7 @@
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3562
+      "kb": 5635
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE2_RUBBLE",
@@ -8759,7 +8759,7 @@
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE3_DESTR",
-      "kb": 4934
+      "kb": 7785
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE3_RUBBLE",
@@ -8775,7 +8775,7 @@
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE4_DESTR",
-      "kb": 5240
+      "kb": 8269
      },
      {
       "dir": "SEAS_TOWN_CENTER_AGE4_RUBBLE",
@@ -8791,7 +8791,7 @@
      },
      {
       "dir": "SEAS_UNIVERSITY_AGE3_DESTR",
-      "kb": 4564
+      "kb": 7139
      },
      {
       "dir": "SEAS_UNIVERSITY_AGE3_RUBBLE",
@@ -8807,7 +8807,7 @@
      },
      {
       "dir": "SEAS_UNIVERSITY_AGE4_DESTR",
-      "kb": 5222
+      "kb": 8250
      },
      {
       "dir": "SEAS_UNIVERSITY_AGE4_RUBBLE",
@@ -8949,7 +8949,7 @@
      },
      {
       "dir": "SLAV_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2344
+      "kb": 3702
      },
      {
       "dir": "SLAV_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -8965,7 +8965,7 @@
      },
      {
       "dir": "SLAV_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2695
+      "kb": 4232
      },
      {
       "dir": "SLAV_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -8981,7 +8981,7 @@
      },
      {
       "dir": "SLAV_BARRACKS_AGE2_DESTR",
-      "kb": 2747
+      "kb": 4240
      },
      {
       "dir": "SLAV_BARRACKS_AGE2_RUBBLE",
@@ -8997,7 +8997,7 @@
      },
      {
       "dir": "SLAV_BARRACKS_AGE3_DESTR",
-      "kb": 2882
+      "kb": 4478
      },
      {
       "dir": "SLAV_BARRACKS_AGE3_RUBBLE",
@@ -9013,7 +9013,7 @@
      },
      {
       "dir": "SLAV_BLACKSMITH_AGE2_DESTR",
-      "kb": 1832
+      "kb": 2880
      },
      {
       "dir": "SLAV_BLACKSMITH_AGE2_RUBBLE",
@@ -9029,7 +9029,7 @@
      },
      {
       "dir": "SLAV_BLACKSMITH_AGE3_DESTR",
-      "kb": 2338
+      "kb": 3692
      },
      {
       "dir": "SLAV_BLACKSMITH_AGE3_RUBBLE",
@@ -9045,11 +9045,11 @@
      },
      {
       "dir": "SLAV_GATE_FORTIFIED_NE_DESTR",
-      "kb": 1122
+      "kb": 5298
      },
      {
       "dir": "SLAV_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 47
+      "kb": 104
      },
      {
       "dir": "SLAV_GATE_FORTIFIED_SE",
@@ -9057,11 +9057,11 @@
      },
      {
       "dir": "SLAV_GATE_FORTIFIED_SE_DESTR",
-      "kb": 1129
+      "kb": 5344
      },
      {
       "dir": "SLAV_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 46
+      "kb": 103
      },
      {
       "dir": "SLAV_GATE_STONE_NE",
@@ -9069,11 +9069,11 @@
      },
      {
       "dir": "SLAV_GATE_STONE_NE_DESTR",
-      "kb": 1060
+      "kb": 4598
      },
      {
       "dir": "SLAV_GATE_STONE_NE_RUBBLE",
-      "kb": 48
+      "kb": 95
      },
      {
       "dir": "SLAV_GATE_STONE_SE",
@@ -9081,11 +9081,11 @@
      },
      {
       "dir": "SLAV_GATE_STONE_SE_DESTR",
-      "kb": 1068
+      "kb": 4650
      },
      {
       "dir": "SLAV_GATE_STONE_SE_RUBBLE",
-      "kb": 45
+      "kb": 93
      },
      {
       "dir": "SLAV_HOUSE_AGE2",
@@ -9097,7 +9097,7 @@
      },
      {
       "dir": "SLAV_HOUSE_AGE2_DESTR",
-      "kb": 1208
+      "kb": 5494
      },
      {
       "dir": "SLAV_HOUSE_AGE2_RUBBLE",
@@ -9113,7 +9113,7 @@
      },
      {
       "dir": "SLAV_HOUSE_AGE3_DESTR",
-      "kb": 1276
+      "kb": 5685
      },
      {
       "dir": "SLAV_HOUSE_AGE3_RUBBLE",
@@ -9129,7 +9129,7 @@
      },
      {
       "dir": "SLAV_MARKET_AGE2_DESTR",
-      "kb": 3185
+      "kb": 4976
      },
      {
       "dir": "SLAV_MARKET_AGE2_RUBBLE",
@@ -9145,7 +9145,7 @@
      },
      {
       "dir": "SLAV_MARKET_AGE3_DESTR",
-      "kb": 4280
+      "kb": 6745
      },
      {
       "dir": "SLAV_MARKET_AGE3_RUBBLE",
@@ -9161,7 +9161,7 @@
      },
      {
       "dir": "SLAV_MARKET_AGE4_DESTR",
-      "kb": 4124
+      "kb": 6516
      },
      {
       "dir": "SLAV_MARKET_AGE4_RUBBLE",
@@ -9177,7 +9177,7 @@
      },
      {
       "dir": "SLAV_MILL_AGE2_DESTR",
-      "kb": 1533
+      "kb": 2442
      },
      {
       "dir": "SLAV_MILL_AGE2_RUBBLE",
@@ -9193,7 +9193,7 @@
      },
      {
       "dir": "SLAV_MILL_AGE3_DESTR",
-      "kb": 1619
+      "kb": 2562
      },
      {
       "dir": "SLAV_MILL_AGE3_RUBBLE",
@@ -9209,7 +9209,7 @@
      },
      {
       "dir": "SLAV_MONASTERY_AGE3_DESTR",
-      "kb": 3144
+      "kb": 4935
      },
      {
       "dir": "SLAV_MONASTERY_AGE3_RUBBLE",
@@ -9225,7 +9225,7 @@
      },
      {
       "dir": "SLAV_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 2416
+      "kb": 3797
      },
      {
       "dir": "SLAV_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -9241,7 +9241,7 @@
      },
      {
       "dir": "SLAV_STABLE_AGE2_DESTR",
-      "kb": 1949
+      "kb": 3090
      },
      {
       "dir": "SLAV_STABLE_AGE2_RUBBLE",
@@ -9257,7 +9257,7 @@
      },
      {
       "dir": "SLAV_STABLE_AGE3_DESTR",
-      "kb": 2435
+      "kb": 3848
      },
      {
       "dir": "SLAV_STABLE_AGE3_RUBBLE",
@@ -9273,7 +9273,7 @@
      },
      {
       "dir": "SLAV_TOWER_AGE2_DESTR",
-      "kb": 817
+      "kb": 1297
      },
      {
       "dir": "SLAV_TOWER_AGE2_RUBBLE",
@@ -9289,7 +9289,7 @@
      },
      {
       "dir": "SLAV_TOWER_AGE3_DESTR",
-      "kb": 1024
+      "kb": 1620
      },
      {
       "dir": "SLAV_TOWER_AGE3_RUBBLE",
@@ -9305,7 +9305,7 @@
      },
      {
       "dir": "SLAV_TOWER_AGE4_DESTR",
-      "kb": 1170
+      "kb": 1864
      },
      {
       "dir": "SLAV_TOWER_AGE4_RUBBLE",
@@ -9321,7 +9321,7 @@
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE2_DESTR",
-      "kb": 2370
+      "kb": 3732
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE2_RUBBLE",
@@ -9337,7 +9337,7 @@
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE3_DESTR",
-      "kb": 2743
+      "kb": 4296
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE3_RUBBLE",
@@ -9353,7 +9353,7 @@
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3270
+      "kb": 5155
      },
      {
       "dir": "SLAV_TOWN_CENTER_AGE4_RUBBLE",
@@ -9369,7 +9369,7 @@
      },
      {
       "dir": "SLAV_UNIVERSITY_AGE3_DESTR",
-      "kb": 4476
+      "kb": 7117
      },
      {
       "dir": "SLAV_UNIVERSITY_AGE3_RUBBLE",
@@ -9385,7 +9385,7 @@
      },
      {
       "dir": "SLAV_UNIVERSITY_AGE4_DESTR",
-      "kb": 4157
+      "kb": 6640
      },
      {
       "dir": "SLAV_UNIVERSITY_AGE4_RUBBLE",
@@ -9481,7 +9481,7 @@
      },
      {
       "dir": "SLAV_WALL_STONE_NE_D50",
-      "kb": 18
+      "kb": 19
      },
      {
       "dir": "SLAV_WALL_STONE_NE_D75",
@@ -9527,7 +9527,7 @@
      },
      {
       "dir": "THRACIAN_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 1899
+      "kb": 2917
      },
      {
       "dir": "THRACIAN_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -9543,7 +9543,7 @@
      },
      {
       "dir": "THRACIAN_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2209
+      "kb": 3470
      },
      {
       "dir": "THRACIAN_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -9559,7 +9559,7 @@
      },
      {
       "dir": "THRACIAN_BARRACKS_AGE2_DESTR",
-      "kb": 2559
+      "kb": 4008
      },
      {
       "dir": "THRACIAN_BARRACKS_AGE2_RUBBLE",
@@ -9575,7 +9575,7 @@
      },
      {
       "dir": "THRACIAN_BARRACKS_AGE3_DESTR",
-      "kb": 3664
+      "kb": 5929
      },
      {
       "dir": "THRACIAN_BARRACKS_AGE3_RUBBLE",
@@ -9591,7 +9591,7 @@
      },
      {
       "dir": "THRACIAN_BLACKSMITH_AGE2_DESTR",
-      "kb": 1680
+      "kb": 2617
      },
      {
       "dir": "THRACIAN_BLACKSMITH_AGE2_RUBBLE",
@@ -9607,7 +9607,7 @@
      },
      {
       "dir": "THRACIAN_BLACKSMITH_AGE3_DESTR",
-      "kb": 1970
+      "kb": 3051
      },
      {
       "dir": "THRACIAN_BLACKSMITH_AGE3_RUBBLE",
@@ -9631,7 +9631,11 @@
      },
      {
       "dir": "THRACIAN_GATE_STONE_NE_DESTR",
-      "kb": 406
+      "kb": 3316
+     },
+     {
+      "dir": "THRACIAN_GATE_STONE_NE_RUBBLE",
+      "kb": 23
      },
      {
       "dir": "THRACIAN_GATE_STONE_SE",
@@ -9639,11 +9643,11 @@
      },
      {
       "dir": "THRACIAN_GATE_STONE_SE_DESTR",
-      "kb": 431
+      "kb": 3364
      },
      {
       "dir": "THRACIAN_GATE_STONE_SE_RUBBLE",
-      "kb": 4
+      "kb": 25
      },
      {
       "dir": "THRACIAN_HOUSE_AGE2",
@@ -9655,7 +9659,7 @@
      },
      {
       "dir": "THRACIAN_HOUSE_AGE2_DESTR",
-      "kb": 1033
+      "kb": 4311
      },
      {
       "dir": "THRACIAN_HOUSE_AGE2_RUBBLE",
@@ -9671,7 +9675,7 @@
      },
      {
       "dir": "THRACIAN_HOUSE_AGE3_DESTR",
-      "kb": 1094
+      "kb": 4458
      },
      {
       "dir": "THRACIAN_HOUSE_AGE3_RUBBLE",
@@ -9691,7 +9695,7 @@
      },
      {
       "dir": "THRACIAN_MARKET_AGE2_DESTR",
-      "kb": 3090
+      "kb": 4783
      },
      {
       "dir": "THRACIAN_MARKET_AGE2_RUBBLE",
@@ -9707,7 +9711,7 @@
      },
      {
       "dir": "THRACIAN_MARKET_AGE3_DESTR",
-      "kb": 3437
+      "kb": 5359
      },
      {
       "dir": "THRACIAN_MARKET_AGE3_RUBBLE",
@@ -9723,7 +9727,7 @@
      },
      {
       "dir": "THRACIAN_MARKET_AGE4_DESTR",
-      "kb": 3974
+      "kb": 6070
      },
      {
       "dir": "THRACIAN_MARKET_AGE4_RUBBLE",
@@ -9739,7 +9743,7 @@
      },
      {
       "dir": "THRACIAN_MILL_AGE2_DESTR",
-      "kb": 933
+      "kb": 1428
      },
      {
       "dir": "THRACIAN_MILL_AGE2_RUBBLE",
@@ -9755,7 +9759,7 @@
      },
      {
       "dir": "THRACIAN_MILL_AGE3_DESTR",
-      "kb": 1098
+      "kb": 1719
      },
      {
       "dir": "THRACIAN_MILL_AGE3_RUBBLE",
@@ -9775,7 +9779,7 @@
      },
      {
       "dir": "THRACIAN_MONASTERY_AGE3_DESTR",
-      "kb": 2552
+      "kb": 3920
      },
      {
       "dir": "THRACIAN_MONASTERY_AGE3_RUBBLE",
@@ -9795,7 +9799,7 @@
      },
      {
       "dir": "THRACIAN_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 2500
+      "kb": 3910
      },
      {
       "dir": "THRACIAN_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -9811,7 +9815,7 @@
      },
      {
       "dir": "THRACIAN_STABLE_AGE2_DESTR",
-      "kb": 2320
+      "kb": 3621
      },
      {
       "dir": "THRACIAN_STABLE_AGE2_RUBBLE",
@@ -9827,7 +9831,7 @@
      },
      {
       "dir": "THRACIAN_STABLE_AGE3_DESTR",
-      "kb": 2053
+      "kb": 3179
      },
      {
       "dir": "THRACIAN_STABLE_AGE3_RUBBLE",
@@ -9843,7 +9847,7 @@
      },
      {
       "dir": "THRACIAN_TOWER_AGE2_DESTR",
-      "kb": 742
+      "kb": 1149
      },
      {
       "dir": "THRACIAN_TOWER_AGE2_RUBBLE",
@@ -9859,7 +9863,11 @@
      },
      {
       "dir": "THRACIAN_TOWER_AGE3_DESTR",
-      "kb": 752
+      "kb": 1172
+     },
+     {
+      "dir": "THRACIAN_TOWER_AGE3_RUBBLE",
+      "kb": 7
      },
      {
       "dir": "THRACIAN_TOWER_AGE4",
@@ -9871,7 +9879,7 @@
      },
      {
       "dir": "THRACIAN_TOWER_AGE4_DESTR",
-      "kb": 908
+      "kb": 1423
      },
      {
       "dir": "THRACIAN_TOWER_AGE4_RUBBLE",
@@ -9887,7 +9895,7 @@
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE2_DESTR",
-      "kb": 2683
+      "kb": 4192
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE2_RUBBLE",
@@ -9903,7 +9911,7 @@
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE3_DESTR",
-      "kb": 3903
+      "kb": 6210
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE3_RUBBLE",
@@ -9919,7 +9927,7 @@
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE4_DESTR",
-      "kb": 4180
+      "kb": 6606
      },
      {
       "dir": "THRACIAN_TOWN_CENTER_AGE4_RUBBLE",
@@ -9935,7 +9943,7 @@
      },
      {
       "dir": "THRACIAN_UNIVERSITY_AGE3_DESTR",
-      "kb": 3787
+      "kb": 6000
      },
      {
       "dir": "THRACIAN_UNIVERSITY_AGE3_RUBBLE",
@@ -9951,7 +9959,7 @@
      },
      {
       "dir": "THRACIAN_UNIVERSITY_AGE4_DESTR",
-      "kb": 4689
+      "kb": 7352
      },
      {
       "dir": "THRACIAN_UNIVERSITY_AGE4_RUBBLE",
@@ -10093,7 +10101,7 @@
      },
      {
       "dir": "WEST_ARCHERY_RANGE_AGE2_DESTR",
-      "kb": 2259
+      "kb": 3552
      },
      {
       "dir": "WEST_ARCHERY_RANGE_AGE2_RUBBLE",
@@ -10109,7 +10117,7 @@
      },
      {
       "dir": "WEST_ARCHERY_RANGE_AGE3_DESTR",
-      "kb": 2188
+      "kb": 3420
      },
      {
       "dir": "WEST_ARCHERY_RANGE_AGE3_RUBBLE",
@@ -10125,7 +10133,7 @@
      },
      {
       "dir": "WEST_BARRACKS_AGE2_DESTR",
-      "kb": 2816
+      "kb": 4469
      },
      {
       "dir": "WEST_BARRACKS_AGE2_RUBBLE",
@@ -10141,7 +10149,7 @@
      },
      {
       "dir": "WEST_BARRACKS_AGE3_DESTR",
-      "kb": 2848
+      "kb": 4549
      },
      {
       "dir": "WEST_BARRACKS_AGE3_RUBBLE",
@@ -10157,7 +10165,7 @@
      },
      {
       "dir": "WEST_BLACKSMITH_AGE2_DESTR",
-      "kb": 1877
+      "kb": 2990
      },
      {
       "dir": "WEST_BLACKSMITH_AGE2_RUBBLE",
@@ -10173,7 +10181,7 @@
      },
      {
       "dir": "WEST_BLACKSMITH_AGE3_DESTR",
-      "kb": 2167
+      "kb": 3433
      },
      {
       "dir": "WEST_BLACKSMITH_AGE3_RUBBLE",
@@ -10189,11 +10197,11 @@
      },
      {
       "dir": "WEST_GATE_FORTIFIED_NE_DESTR",
-      "kb": 800
+      "kb": 4867
      },
      {
       "dir": "WEST_GATE_FORTIFIED_NE_RUBBLE",
-      "kb": 38
+      "kb": 93
      },
      {
       "dir": "WEST_GATE_FORTIFIED_SE",
@@ -10201,11 +10209,11 @@
      },
      {
       "dir": "WEST_GATE_FORTIFIED_SE_DESTR",
-      "kb": 806
+      "kb": 4829
      },
      {
       "dir": "WEST_GATE_FORTIFIED_SE_RUBBLE",
-      "kb": 39
+      "kb": 91
      },
      {
       "dir": "WEST_GATE_STONE_NE",
@@ -10213,11 +10221,11 @@
      },
      {
       "dir": "WEST_GATE_STONE_NE_DESTR",
-      "kb": 724
+      "kb": 3868
      },
      {
       "dir": "WEST_GATE_STONE_NE_RUBBLE",
-      "kb": 36
+      "kb": 87
      },
      {
       "dir": "WEST_GATE_STONE_SE",
@@ -10225,11 +10233,11 @@
      },
      {
       "dir": "WEST_GATE_STONE_SE_DESTR",
-      "kb": 725
+      "kb": 3940
      },
      {
       "dir": "WEST_GATE_STONE_SE_RUBBLE",
-      "kb": 33
+      "kb": 81
      },
      {
       "dir": "WEST_HOUSE_AGE2",
@@ -10241,7 +10249,7 @@
      },
      {
       "dir": "WEST_HOUSE_AGE2_DESTR",
-      "kb": 1283
+      "kb": 5755
      },
      {
       "dir": "WEST_HOUSE_AGE2_RUBBLE",
@@ -10257,7 +10265,7 @@
      },
      {
       "dir": "WEST_HOUSE_AGE3_DESTR",
-      "kb": 1092
+      "kb": 4610
      },
      {
       "dir": "WEST_HOUSE_AGE3_RUBBLE",
@@ -10273,7 +10281,7 @@
      },
      {
       "dir": "WEST_MARKET_AGE2_DESTR",
-      "kb": 3703
+      "kb": 5850
      },
      {
       "dir": "WEST_MARKET_AGE2_RUBBLE",
@@ -10289,7 +10297,7 @@
      },
      {
       "dir": "WEST_MARKET_AGE3_DESTR",
-      "kb": 3163
+      "kb": 4974
      },
      {
       "dir": "WEST_MARKET_AGE3_RUBBLE",
@@ -10305,7 +10313,7 @@
      },
      {
       "dir": "WEST_MARKET_AGE4_DESTR",
-      "kb": 4004
+      "kb": 6326
      },
      {
       "dir": "WEST_MARKET_AGE4_RUBBLE",
@@ -10321,7 +10329,7 @@
      },
      {
       "dir": "WEST_MILL_AGE2_DESTR",
-      "kb": 1664
+      "kb": 2632
      },
      {
       "dir": "WEST_MILL_AGE2_RUBBLE",
@@ -10337,7 +10345,7 @@
      },
      {
       "dir": "WEST_MILL_AGE3_DESTR",
-      "kb": 1786
+      "kb": 2830
      },
      {
       "dir": "WEST_MILL_AGE3_RUBBLE",
@@ -10353,7 +10361,7 @@
      },
      {
       "dir": "WEST_MONASTERY_AGE3_DESTR",
-      "kb": 2985
+      "kb": 4768
      },
      {
       "dir": "WEST_MONASTERY_AGE3_RUBBLE",
@@ -10369,7 +10377,7 @@
      },
      {
       "dir": "WEST_SIEGE_WORKSHOP_AGE3_DESTR",
-      "kb": 2270
+      "kb": 3614
      },
      {
       "dir": "WEST_SIEGE_WORKSHOP_AGE3_RUBBLE",
@@ -10385,7 +10393,7 @@
      },
      {
       "dir": "WEST_STABLE_AGE2_DESTR",
-      "kb": 1947
+      "kb": 3111
      },
      {
       "dir": "WEST_STABLE_AGE2_RUBBLE",
@@ -10401,7 +10409,7 @@
      },
      {
       "dir": "WEST_STABLE_AGE3_DESTR",
-      "kb": 1856
+      "kb": 2967
      },
      {
       "dir": "WEST_STABLE_AGE3_RUBBLE",
@@ -10417,7 +10425,7 @@
      },
      {
       "dir": "WEST_TOWER_AGE2_DESTR",
-      "kb": 984
+      "kb": 1551
      },
      {
       "dir": "WEST_TOWER_AGE2_RUBBLE",
@@ -10433,7 +10441,7 @@
      },
      {
       "dir": "WEST_TOWER_AGE3_DESTR",
-      "kb": 1313
+      "kb": 2102
      },
      {
       "dir": "WEST_TOWER_AGE3_RUBBLE",
@@ -10449,7 +10457,7 @@
      },
      {
       "dir": "WEST_TOWER_AGE4_DESTR",
-      "kb": 1331
+      "kb": 2128
      },
      {
       "dir": "WEST_TOWER_AGE4_RUBBLE",
@@ -10465,7 +10473,7 @@
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE2_DESTR",
-      "kb": 3186
+      "kb": 5120
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE2_RUBBLE",
@@ -10481,7 +10489,7 @@
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE3_DESTR",
-      "kb": 2695
+      "kb": 4259
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE3_RUBBLE",
@@ -10497,7 +10505,7 @@
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE4_DESTR",
-      "kb": 3170
+      "kb": 5036
      },
      {
       "dir": "WEST_TOWN_CENTER_AGE4_RUBBLE",
@@ -10513,7 +10521,7 @@
      },
      {
       "dir": "WEST_UNIVERSITY_AGE3_DESTR",
-      "kb": 4029
+      "kb": 6492
      },
      {
       "dir": "WEST_UNIVERSITY_AGE3_RUBBLE",
@@ -10529,7 +10537,7 @@
      },
      {
       "dir": "WEST_UNIVERSITY_AGE4_DESTR",
-      "kb": 4126
+      "kb": 6616
      },
      {
       "dir": "WEST_UNIVERSITY_AGE4_RUBBLE",
@@ -14035,13 +14043,17 @@
   {
    "library": "SUCAI_FX",
    "label": "特效",
-   "dirs": 17,
-   "mb": 7.2,
+   "dirs": 18,
+   "mb": 13.8,
    "buckets": {
     "特效": [
      {
       "dir": "BLOOD",
       "kb": 98
+     },
+     {
+      "dir": "DE_NAVAL_WAKE",
+      "kb": 6746
      },
      {
       "dir": "DUST",
@@ -14142,7 +14154,7 @@
   }
  ],
  "total": {
-  "dirs": 3488,
-  "mb": 3739.5
+  "dirs": 3491,
+  "mb": 5173.5
  }
 }

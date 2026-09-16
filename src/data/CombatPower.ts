@@ -119,6 +119,12 @@ function computeRefAttacks(): { melee: number; pierce: number } {
 let refs: { melee: number; pierce: number } | null = null;
 let medianRaw = 0;
 
+/** 编辑器保存兵种属性后，重新计算全表参考攻击与战力归一化基准。 */
+export function invalidateCombatPowerCache(): void {
+    refs = null;
+    medianRaw = 0;
+}
+
 function rawPower(u: WarType): number {
     if (!refs) refs = computeRefAttacks();
     if (u.atk <= 0) return 0;                       // 非战斗单位（使者等）

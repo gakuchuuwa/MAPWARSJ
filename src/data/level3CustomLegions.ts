@@ -24,39 +24,13 @@ export interface Level3LegionDef {
     slots: CompositionSlot[];
     /** 默认挂这支军团的文化区（只作溯源用，编制不再按区存） */
     regions: string[];
+    /** 归属的 75 种正统军团名（一级 16 母体 或 二级 59 文明，🔴 2026-09-16 主人定） */
+    parentLegion: string;
+    /** 绑定的史实海军战船（对齐四大时代与历史，🔴 2026-09-16 主人定） */
+    shipId: string;
 }
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
-    {
-        name: '古典时代东南亚军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'vanguard', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
-        ],
-        regions: ['SEASIA_ANTIQUITY'],
-    },
-    {
-        name: '古典时代中亚军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'sogdian_cataphract', count: 4 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
-            { type: 'bactrian_archer', count: 3 },
-        ],
-        regions: ['CENTRAL_ASIA_ANTIQUITY'],
-    },
-    {
-        name: '古典时代亚美尼亚军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'warrior_priest', count: 3 },
-            { type: 'hill_tribesman', count: 2 },
-            { type: 'elite_composite_bowman', count: 4 },
-        ],
-        regions: ['ARMENIANS'],
-    },
     {
         name: '古典时代亚述军团',
         formationMode: 'crane_wing',
@@ -66,16 +40,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_chariot', count: 3 },
         ],
         regions: ['ASSYRIAN'],
+        parentLegion: '古典时代阿契美尼德军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代亚马逊军团',
         formationMode: 'crane_wing',
         slots: [
             { type: 'amazon_archer', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
-            { type: 'amazon_warrior', count: 3 },
+            { type: 'amazon_warrior', count: 4 },
+            { type: 'elite_scythian_horse_archer', count: 3 },
         ],
         regions: ['AMAZONS'],
+        parentLegion: '古典时代色雷斯军团',
+        shipId: 'LEMBOS',
     },
     {
         name: '古典时代先秦军团',
@@ -86,6 +64,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_chariot_ranged', count: 2 },
         ],
         regions: ['PRE_QIN'],
+        parentLegion: '古典时代华夏中原军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '古典时代努比亚军团',
@@ -96,6 +76,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'bactrian_archer', count: 3 },
         ],
         regions: ['KUSH'],
+        parentLegion: '非洲军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代华夏军团',
@@ -103,9 +85,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_white_feather_guard', count: 4 },
             { type: 'fire_archer', count: 3 },
-            { type: 'elite_chukonu', count: 2 },
+            { type: 'chukonu', count: 2 },
         ],
         regions: ['CENTRAL'],
+        parentLegion: '古典时代华夏中原军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '古典时代印度军团',
@@ -116,6 +100,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'sickle_warrior', count: 3 },
         ],
         regions: ['INDIA'],
+        parentLegion: '古典时代普鲁军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '古典时代埃及军团',
@@ -126,26 +112,32 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cretan_archer', count: 2 },
         ],
         regions: ['EGYPT'],
+        parentLegion: '非洲军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代塞种军团',
         formationMode: 'crescent',
         slots: [
-            { type: 'scythian_axe_cavalry', count: 3 },
-            { type: 'scythian_horse_archer', count: 2 },
+            { type: 'sakan_axeman', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 2 },
             { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['WESTERN'],
+        parentLegion: '中亚军团',
+        shipId: 'GALLEY',
     },
     {
         name: '古典时代大希腊军团',
         formationMode: 'echelon',
         slots: [
             { type: 'ekdromos', count: 4 },
-            { type: 'greek_noble_cavalry', count: 3 },
+            { type: 'phalangite', count: 3 },
             { type: 'tarantine_cavalry', count: 2 },
         ],
         regions: ['MAGNA_GRAECIA'],
+        parentLegion: '古典时代雅典军团',
+        shipId: 'TRIREME',
     },
     {
         name: '古典时代巴比伦军团',
@@ -153,29 +145,23 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_war_chariot', count: 4 },
             { type: 'guardsman', count: 2 },
-            { type: 'militia', count: 3 },
+            { type: 'elite_guardsman', count: 3 },
         ],
         regions: ['BABYLON'],
+        parentLegion: '古典时代阿契美尼德军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代布匿军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'mercenary_hoplite', count: 4 },
-            { type: 'rhodian_slinger', count: 3 },
+            { type: 'rhodian_slinger', count: 2 },
+            { type: 'vanguard', count: 4 },
+            { type: 'companion_cavalry', count: 3 },
         ],
         regions: ['CARTHAGE'],
-    },
-    {
-        name: '古典时代希伦军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'hippeus', count: 4 },
-            { type: 'sacred_band', count: 3 },
-            { type: 'strategos', count: 2 },
-        ],
-        regions: ['HELLENIC'],
+        parentLegion: '古典时代罗马军团',
+        shipId: 'TRIREME',
     },
     {
         name: '古典时代希伯来军团',
@@ -186,16 +172,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_chariot', count: 2 },
         ],
         regions: ['HEBREWS'],
+        parentLegion: '中东军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代希腊军团',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'elite_hoplite', count: 3 },
-            { type: 'elite_greek_cavalry', count: 4 },
+            { type: 'sacred_band', count: 4 },
+            { type: 'hoplite', count: 3 },
             { type: 'gastraphetes', count: 2 },
         ],
         regions: ['GREEK'],
+        parentLegion: '古典时代雅典军团',
+        shipId: 'TRIREME',
     },
     {
         name: '古典时代希腊雇佣军团',
@@ -206,6 +196,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'gastraphetes', count: 3 },
         ],
         regions: ['GREEK_MERCENARY'],
+        parentLegion: '古典时代斯巴达军团',
+        shipId: 'TRIREME',
     },
     {
         name: '古典时代斯基泰军团',
@@ -216,6 +208,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'scythian_horse_archer', count: 4 },
         ],
         regions: ['SCYTHIANS'],
+        parentLegion: '古典时代色雷斯军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代日本军团',
@@ -226,6 +220,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer', count: 2 },
         ],
         regions: ['JAPAN_ANTIQUITY'],
+        parentLegion: '东亚军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '古典时代日耳曼军团',
@@ -236,6 +232,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_antiquity_skirmisher', count: 3 },
         ],
         regions: ['GERMANIC'],
+        parentLegion: '西欧军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代月氏军团',
@@ -246,6 +244,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_cavalry_archer', count: 3 },
         ],
         regions: ['KUSHAN'],
+        parentLegion: '中亚军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代朝鲜军团',
@@ -256,16 +256,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_cavalry_archer', count: 3 },
         ],
         regions: ['GOJOSEON'],
+        parentLegion: '东亚军团',
+        shipId: 'GALLEY',
     },
     {
         name: '古典时代波斯军团',
         formationMode: 'fish_scale',
         slots: [
             { type: 'immortal', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'immortal_ranged', count: 2 },
+            { type: 'immortal_ranged', count: 4 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
         ],
         regions: ['PERSIAN'],
+        parentLegion: '古典时代阿契美尼德军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代秦汉军团',
@@ -276,6 +280,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'tiger_rider', count: 2 },
         ],
         regions: ['NORTH', 'HEXI'],
+        parentLegion: '古典时代华夏北方军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '古典时代纳巴泰军团',
@@ -286,16 +292,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'bactrian_archer', count: 3 },
         ],
         regions: ['NABATAEANS'],
+        parentLegion: '中东军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代罗马禁卫军团',
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         slots: [
             { type: 'equites', count: 4 },
-            { type: 'centurion', count: 3 },
-            { type: 'imperial_centurion', count: 2 },
+            { type: 'centurion', count: 2 },
+            { type: 'imperial_centurion', count: 3 },
         ],
         regions: ['IMPERIAL_ROME'],
+        parentLegion: '古典时代罗马军团',
+        shipId: 'TRIREME',
     },
     {
         name: '古典时代羌族军团',
@@ -306,6 +316,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },
         ],
         regions: ['QIANG'],
+        parentLegion: '东亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '古典时代草原军团',
@@ -316,16 +328,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_kipchak', count: 3 },
         ],
         regions: ['STEPPE_ANTIQUITY'],
-    },
-    {
-        name: '古典时代西亚军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'hoplite', count: 4 },
-            { type: 'companion_cavalry', count: 3 },
-            { type: 'rhodian_slinger', count: 2 },
-        ],
-        regions: ['WEST_ASIA_ANTIQUITY'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '古典时代赫梯军团',
@@ -336,16 +340,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_war_chariot', count: 4 },
         ],
         regions: ['HITTITES'],
+        parentLegion: '色雷斯军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代阿拉伯军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'camel_scout', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'militia', count: 2 },
+            { type: 'camel_rider', count: 3 },
+            { type: 'camel_heavy', count: 4 },
         ],
         regions: ['ORIE_ANTIQUITY'],
+        parentLegion: '中东军团',
+        shipId: 'FIRE_SHIP',
     },
     {
         name: '古典时代雅隆军团',
@@ -356,6 +364,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
         regions: ['YARLUNG'],
+        parentLegion: '东亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '古典时代鲜卑军团',
@@ -366,6 +376,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
         regions: ['NORTHEAST'],
+        parentLegion: '东亚军团',
+        shipId: 'GALLEY',
     },
     {
         name: '城堡时代东南亚军团',
@@ -376,6 +388,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer', count: 3 },
         ],
         regions: ['SEASIA_CASTLE'],
+        parentLegion: '城堡时代马来军团',
+        shipId: 'FAST_FIRE_SHIP',
     },
     {
         name: '城堡时代宋禁军团',
@@ -386,19 +400,23 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_chukonu', count: 3 },
         ],
         regions: ['SONG'],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
     {
-        name: '城堡时代中亚军团',
+        name: '封建时代萨珊军团',
         formationMode: 'balance_yoke',
         slots: [
             { type: 'savar', count: 4 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'elite_kipchak', count: 3 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'cav_archer', count: 3 },
         ],
         regions: ['CENTRAL_ASIA_CASTLE'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
-        name: '城堡时代京族军团',
+        name: '城堡时代大越军团',
         formationMode: 'triangle',
         slots: [
             { type: 'white_feather_guard', count: 2 },
@@ -406,6 +424,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer_elite', count: 4 },
         ],
         regions: ['VIETNAMESE'],
+        parentLegion: '城堡时代越南军团',
+        shipId: 'INCENDIARY_SHIP',
     },
     {
         name: '城堡时代伊利汗军团',
@@ -416,16 +436,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'keshik', count: 4 },
         ],
         regions: ['ILKHANATE'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '城堡时代克丘亚军团',
         formationMode: 'fish_scale',
         slots: [
             { type: 'champi_warrior', count: 3 },
-            { type: 'elite_kamayuk', count: 4 },
+            { type: 'temple_guard', count: 4 },
             { type: 'champi_scout', count: 2 },
         ],
         regions: ['ANDE'],
+        parentLegion: '城堡时代印加军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代党项军团',
@@ -436,6 +460,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_keshik', count: 3 },
         ],
         regions: ['TANGUT'],
+        parentLegion: '东亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '城堡时代十字军团',
@@ -446,6 +472,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crusader_knight', count: 4 },
         ],
         regions: ['CRUSADERS'],
+        parentLegion: '西欧军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '城堡时代卡斯蒂利亚军团',
@@ -456,16 +484,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_genitour', count: 2 },
         ],
         regions: ['CASTILE'],
-    },
-    {
-        name: '城堡时代印度军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'armored_elephant', count: 2 },
-            { type: 'elite_urumi_swordsman', count: 4 },
-            { type: 'pattiyoda_longbowman', count: 3 },
-        ],
-        regions: ['INDIA_CASTLE'],
+        parentLegion: '帝国时代西班牙军团',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代吐蕃军团',
@@ -476,6 +496,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 3 },
         ],
         regions: ['TIBET_CASTLE'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '城堡时代塔拉斯科军团',
@@ -486,6 +508,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'plumed_archer', count: 2 },
         ],
         regions: ['TARASCAN'],
+        parentLegion: '中美军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代塞尔柱军团',
@@ -493,9 +517,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'camel_rider', count: 2 },
             { type: 'elite_ghulam', count: 4 },
-            { type: 'longswordsman', count: 3 },
+            { type: 'cav_archer_heavy', count: 3 },
         ],
         regions: ['SELJUQ'],
+        parentLegion: '城堡时代萨拉森军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代塞尔维亚军团',
@@ -506,6 +532,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crossbowman', count: 2 },
         ],
         regions: ['SERBIA'],
+        parentLegion: '东北欧军团',
+        shipId: 'LEMBOS',
     },
     {
         name: '城堡时代墨西加军团',
@@ -516,6 +544,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'xolotl_warrior', count: 2 },
         ],
         regions: ['AMERICA'],
+        parentLegion: '城堡时代阿兹特克军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代大理军团',
@@ -526,6 +556,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_chukonu', count: 3 },
         ],
         regions: ['DALI'],
+        parentLegion: '东亚军团',
+        shipId: 'INCENDIARY_SHIP',
     },
     {
         name: '城堡时代奇穆军团',
@@ -536,6 +568,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'champi_runner', count: 2 },
         ],
         regions: ['CHIMU'],
+        parentLegion: '安第斯军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代拉丁军团',
@@ -546,6 +580,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'arbalest', count: 4 },
         ],
         regions: ['LATIN_CASTLE'],
+        parentLegion: '城堡时代意大利军团',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代摩洛哥军团',
@@ -556,6 +592,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_genitour', count: 3 },
         ],
         regions: ['ALMOHAD'],
+        parentLegion: '封建时代柏柏尔军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代日耳曼军团',
@@ -566,6 +604,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crossbowman', count: 3 },
         ],
         regions: ['GERMANIC_CASTLE'],
+        parentLegion: '西欧军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '城堡时代易洛魁军团',
@@ -576,6 +616,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_plumed_archer', count: 2 },
         ],
         regions: ['IROQUOIS'],
+        parentLegion: '中美军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代法兰西军团',
@@ -586,6 +628,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'frankish_paladin', count: 4 },
         ],
         regions: ['FRENCH'],
+        parentLegion: '城堡时代不列颠军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '城堡时代波斯军团',
@@ -596,6 +640,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 2 },
         ],
         regions: ['PERSIAN_CASTLE'],
+        parentLegion: '波斯军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代泰罗纳军团',
@@ -606,6 +652,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_temple_guard', count: 4 },
         ],
         regions: ['TAIRONA'],
+        parentLegion: '安第斯军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代神圣罗马军团',
@@ -616,6 +664,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crossbowman', count: 2 },
         ],
         regions: ['HRE'],
+        parentLegion: '城堡时代条顿军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '城堡时代缅族军团',
@@ -626,6 +676,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_arambai', count: 4 },
         ],
         regions: ['BURMESE'],
+        parentLegion: '城堡时代缅甸军团',
+        shipId: 'HEAVY_INCENDIARY_SHIP',
     },
     {
         name: '城堡时代罗斯军团',
@@ -636,6 +688,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 2 },
         ],
         regions: ['RUS'],
+        parentLegion: '城堡时代斯拉夫军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代苏格兰军团',
@@ -646,6 +700,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'two_handed_swordsman', count: 3 },
         ],
         regions: ['SCOTLAND'],
+        parentLegion: '西欧军团',
+        shipId: 'ELITE_LONGBOAT',
     },
     {
         name: '城堡时代西亚军团',
@@ -656,6 +712,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_composite_bowman', count: 2 },
         ],
         regions: ['WEST_ASIA_CASTLE'],
+        parentLegion: '中东军团',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '城堡时代西域军团',
@@ -666,16 +724,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_keshik', count: 4 },
         ],
         regions: ['WESTERN_CASTLE'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '城堡时代西辽军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'cav_archer', count: 3 },
-            { type: 'keshik', count: 4 },
+            { type: 'elite_liao_dao', count: 2 },
+            { type: 'keshik', count: 3 },
+            { type: 'cav_archer_heavy', count: 4 },
         ],
         regions: ['KARA_KHITAN'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '城堡时代诺曼军团',
@@ -686,6 +748,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'arbalest', count: 3 },
         ],
         regions: ['SICILIANS'],
+        parentLegion: '城堡时代西西里军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代镰仓军团',
@@ -696,6 +760,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer', count: 2 },
         ],
         regions: ['JAPAN'],
+        parentLegion: '城堡时代日本军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '城堡时代阿伊努军团',
@@ -706,6 +772,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_dog', count: 2 },
         ],
         regions: ['AINU'],
+        parentLegion: '东亚军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代阿拉贡军团',
@@ -716,6 +784,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_genitour', count: 2 },
         ],
         regions: ['ARAGON'],
+        parentLegion: '城堡时代西西里军团',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代非洲军团',
@@ -726,6 +796,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'genitour', count: 2 },
         ],
         regions: ['AFRICA_CASTLE'],
+        parentLegion: '城堡时代马里军团',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代马穆鲁克军团',
@@ -736,6 +808,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'camel_rider', count: 3 },
         ],
         regions: ['MAMLUKS'],
+        parentLegion: '城堡时代萨拉森军团',
+        shipId: 'FIRE_SHIP',
     },
     {
         name: '城堡时代高棉军团',
@@ -746,6 +820,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'heavy_pikeman', count: 4 },
         ],
         regions: ['KHMER'],
+        parentLegion: '封建时代高棉军团',
+        shipId: 'INCENDIARY_SHIP',
     },
     {
         name: '封建时代三佛齐军团',
@@ -756,6 +832,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer_elite', count: 3 },
         ],
         regions: ['SRIVIJAYA'],
+        parentLegion: '东南亚军团',
+        shipId: 'FAST_FIRE_SHIP',
     },
     {
         name: '封建时代东南亚军团',
@@ -766,6 +844,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'archer', count: 3 },
         ],
         regions: ['SEASIA_FEUDAL'],
+        parentLegion: '东南亚军团',
+        shipId: 'FAST_FIRE_SHIP',
     },
     {
         name: '封建时代伦巴第军团',
@@ -776,6 +856,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'throwing_axeman', count: 2 },
         ],
         regions: ['LOMBARDS'],
+        parentLegion: '地中海军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '封建时代凯尔特军团',
@@ -786,6 +868,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'woad_raider', count: 3 },
         ],
         regions: ['CELTS_FEUDAL'],
+        parentLegion: '西欧军团',
+        shipId: 'MONOREME',
     },
     {
         name: '封建时代加纳军团',
@@ -796,6 +880,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_skirmisher', count: 2 },
         ],
         regions: ['GHANA'],
+        parentLegion: '非洲军团',
+        shipId: 'CANOE',
     },
     {
         name: '封建时代印度军团',
@@ -806,6 +892,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'chakram_thrower', count: 3 },
         ],
         regions: ['INDIA_FEUDAL'],
+        parentLegion: '印度军团',
+        shipId: 'THIRISADAI',
     },
     {
         name: '封建时代可萨军团',
@@ -816,6 +904,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 3 },
         ],
         regions: ['KHAZARS'],
+        parentLegion: '东北欧军团',
+        shipId: 'MONOREME',
     },
     {
         name: '封建时代吐蕃军团',
@@ -826,6 +916,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 3 },
         ],
         regions: ['TIBET'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代嚈哒军团',
@@ -836,6 +928,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_tarkan', count: 4 },
         ],
         regions: ['HEPHTHALITES'],
+        parentLegion: '封建时代匈人军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代回鹘军团',
@@ -846,6 +940,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['UIGHUR'],
+        parentLegion: '封建时代匈人军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代拉丁军团',
@@ -856,6 +952,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_antiquity_skirmisher', count: 2 },
         ],
         regions: ['LATIN_FEUDAL'],
+        parentLegion: '地中海军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '封建时代斯拉夫军团',
@@ -866,6 +964,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'konnik_foot', count: 2 },
         ],
         regions: ['SLAVIC_FEUDAL'],
+        parentLegion: '东北欧军团',
+        shipId: 'MONOREME',
     },
     {
         name: '封建时代日耳曼军团',
@@ -876,6 +976,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'skirmisher', count: 3 },
         ],
         regions: ['GERMANIC_FEUDAL'],
+        parentLegion: '西欧军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '封建时代柔然军团',
@@ -886,6 +988,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_steppe_lancer', count: 4 },
         ],
         regions: ['ROURAN'],
+        parentLegion: '封建时代匈人军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代格鲁吉亚军团',
@@ -896,6 +1000,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer', count: 2 },
         ],
         regions: ['GEORGIANS'],
+        parentLegion: '封建时代亚美尼亚军团',
+        shipId: 'DROMON',
     },
     {
         name: '封建时代汪达尔军团',
@@ -906,6 +1012,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'laminated_bowman', count: 2 },
         ],
         regions: ['VANDALS'],
+        parentLegion: '封建时代哥特军团',
+        shipId: 'HEAVY_LEMBOS',
     },
     {
         name: '封建时代河中军团',
@@ -916,6 +1024,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_kipchak', count: 4 },
         ],
         regions: ['CENTRAL_ASIA'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代爪哇军团',
@@ -926,6 +1036,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'sunda_royal_fighter', count: 3 },
         ],
         regions: ['JAVANESE'],
+        parentLegion: '东南亚军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '封建时代玛雅军团',
@@ -936,6 +1048,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'plumed_archer', count: 4 },
         ],
         regions: ['MAYANS'],
+        parentLegion: '中美军团',
+        shipId: 'CANOE',
     },
     {
         name: '封建时代白蛮军团',
@@ -946,6 +1060,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'archer', count: 3 },
         ],
         regions: ['NANZHAO'],
+        parentLegion: '东亚军团',
+        shipId: 'INCENDIARY_SHIP',
     },
     {
         name: '封建时代盎格鲁-撒克逊军团',
@@ -956,6 +1072,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'longbowman', count: 2 },
         ],
         regions: ['ANGLO_SAXON'],
+        parentLegion: '封建时代法兰克军团',
+        shipId: 'MONOREME',
     },
     {
         name: '封建时代突厥军团',
@@ -966,6 +1084,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_steppe_lancer', count: 4 },
         ],
         regions: ['TURKS'],
+        parentLegion: '封建时代匈人军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代粟特军团',
@@ -976,6 +1096,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'camel_rider', count: 2 },
         ],
         regions: ['SOGDIANS'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代罗斯军团',
@@ -986,6 +1108,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'norse_warrior', count: 2 },
         ],
         regions: ['SLAVIC'],
+        parentLegion: '东北欧军团',
+        shipId: 'MONOREME',
     },
     {
         name: '封建时代草原军团',
@@ -996,6 +1120,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai_elite', count: 4 },
         ],
         regions: ['STEPPE_FEUDAL'],
+        parentLegion: '封建时代匈人军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代西亚军团',
@@ -1006,6 +1132,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'composite_bowman', count: 2 },
         ],
         regions: ['WEST_ASIA'],
+        parentLegion: '中东军团',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '封建时代西域军团',
@@ -1016,16 +1144,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'cav_archer_heavy', count: 4 },
         ],
         regions: ['WESTERN_FEUDAL'],
+        parentLegion: '中亚军团',
+        shipId: 'GALLEY',
     },
     {
         name: '封建时代阿拉伯军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'camel_rider', count: 2 },
+            { type: 'longswordsman', count: 2 },
             { type: 'elite_mameluke', count: 3 },
             { type: 'elite_camel_archer', count: 4 },
         ],
         regions: ['ORIE'],
+        parentLegion: '中东军团',
+        shipId: 'FIRE_SHIP',
     },
     {
         name: '封建时代隋唐军团',
@@ -1036,6 +1168,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hei_kuang_heavy', count: 3 },
         ],
         regions: ['JIANGNAN'],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '封建时代靺鞨军团',
@@ -1046,6 +1180,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'spearman', count: 2 },
         ],
         regions: ['MOHE'],
+        parentLegion: '封建时代契丹军团',
+        shipId: 'GALLEY',
     },
     {
         name: '封建时代高句丽军团',
@@ -1056,6 +1192,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'iron_pagoda', count: 2 },
         ],
         regions: ['KOREA'],
+        parentLegion: '封建时代契丹军团',
+        shipId: 'GALLEY',
     },
     {
         name: '帝国时代东南亚军团',
@@ -1066,6 +1204,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 3 },
         ],
         regions: ['SEASIA_IMPERIAL'],
+        parentLegion: '东南亚军团',
+        shipId: 'FAST_FIRE_SHIP',
     },
     {
         name: '帝国时代中亚军团',
@@ -1076,6 +1216,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 3 },
         ],
         regions: ['CENTRAL_ASIA_IMPERIAL'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代俄罗斯军团',
@@ -1086,6 +1228,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 2 },
         ],
         regions: ['RUSSIAN'],
+        parentLegion: '东北欧军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '帝国时代北美军团',
@@ -1096,6 +1240,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_plumed_archer', count: 2 },
         ],
         regions: ['NORTHAM_IMPERIAL'],
+        parentLegion: '中美军团',
+        shipId: 'CANOE',
     },
     {
         name: '帝国时代华夏军团',
@@ -1106,6 +1252,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'fire_archer', count: 2 },
         ],
         regions: ['HUAXIA_IMPERIAL'],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '帝国时代南美军团',
@@ -1116,16 +1264,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'bolas_rider', count: 2 },
         ],
         regions: ['SOUTHAM_IMPERIAL'],
+        parentLegion: '安第斯军团',
+        shipId: 'CANOE',
     },
     {
         name: '帝国时代印度军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'elite_armored_elephant', count: 2 },
+            { type: 'elite_elephant_archer', count: 2 },
             { type: 'imperial_camel_rider', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'elite_ghulam', count: 3 },
         ],
         regions: ['INDIA_IMPERIAL'],
+        parentLegion: '印度军团',
+        shipId: 'THIRISADAI',
     },
     {
         name: '帝国时代图皮军团',
@@ -1136,6 +1288,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_ibirapema_warrior', count: 4 },
         ],
         regions: ['TUPI'],
+        parentLegion: '城堡时代图皮军团',
+        shipId: 'CANOE',
     },
     {
         name: '帝国时代大明军团',
@@ -1146,6 +1300,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai_elite', count: 2 },
         ],
         regions: ['MING'],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '帝国时代拉丁军团',
@@ -1156,6 +1312,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 2 },
         ],
         regions: ['LATIN_IMPERIAL'],
+        parentLegion: '帝国时代西班牙军团',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '帝国时代斯拉夫军团',
@@ -1166,6 +1324,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 2 },
         ],
         regions: ['SLAVIC_IMPERIAL'],
+        parentLegion: '东北欧军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '帝国时代日本军团',
@@ -1176,6 +1336,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'ninja', count: 2 },
         ],
         regions: ['JAPAN_IMPERIAL'],
+        parentLegion: '城堡时代日本军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '帝国时代日耳曼军团',
@@ -1186,6 +1348,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 3 },
         ],
         regions: ['GERMANIC_IMPERIAL'],
+        parentLegion: '西欧军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '帝国时代普什图军团',
@@ -1196,6 +1360,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_ghulam', count: 4 },
         ],
         regions: ['PASHTUN'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代朝鲜军团',
@@ -1206,6 +1372,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 3 },
         ],
         regions: ['JOSEON'],
+        parentLegion: '城堡时代高丽军团',
+        shipId: 'TURTLE_SHIP',
     },
     {
         name: '帝国时代波斯军团',
@@ -1216,16 +1384,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'qizilbash_warrior', count: 4 },
         ],
         regions: ['SAFAVID'],
+        parentLegion: '波斯军团',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '帝国时代满洲军团',
-        formationMode: 'square',
+        formationMode: 'balance_yoke',
         slots: [
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'antiquity_cavalry_archer', count: 2 },
             { type: 'kipchak', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'cav_archer_heavy', count: 3 },
         ],
         regions: ['MANCHU'],
+        parentLegion: '东亚军团',
+        shipId: 'GALLEY',
     },
     {
         name: '帝国时代特维尔切军团',
@@ -1236,6 +1408,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'kona', count: 3 },
         ],
         regions: ['TEHUELCHE'],
+        parentLegion: '安第斯军团',
+        shipId: 'CANOE',
     },
     {
         name: '帝国时代瑞典军团',
@@ -1246,6 +1420,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hussar', count: 2 },
         ],
         regions: ['SWEDISH'],
+        parentLegion: '西欧军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '帝国时代草原军团',
@@ -1256,6 +1432,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai_elite', count: 3 },
         ],
         regions: ['STEPPE_IMPERIAL'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代莫卧儿军团',
@@ -1266,6 +1444,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'imperial_cavalry', count: 4 },
         ],
         regions: ['MUGHAL'],
+        parentLegion: '城堡时代印度斯坦军团',
+        shipId: 'HEAVY_INCENDIARY_SHIP',
     },
     {
         name: '帝国时代西域军团',
@@ -1276,6 +1456,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hand_cannoneer', count: 4 },
         ],
         regions: ['WESTERN_IMPERIAL'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代锡克军团',
@@ -1286,6 +1468,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'shrivamsha_rider', count: 2 },
         ],
         regions: ['SIKH'],
+        parentLegion: '印度军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代青藏军团',
@@ -1296,6 +1480,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai_elite', count: 4 },
         ],
         regions: ['TIBET_IMPERIAL'],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
     {
         name: '帝国时代非洲军团',
@@ -1306,6 +1492,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'royal_janissary', count: 2 },
         ],
         regions: ['AFRICA_IMPERIAL'],
+        parentLegion: '非洲军团',
+        shipId: 'CANOE',
     },
     {
         name: '古典时代魏晋军团',
@@ -1316,6 +1504,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_tiger_cavalry', count: 2 },
         ],
         regions: [],
+        parentLegion: '古典时代华夏北方军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '城堡时代岳家军团',
@@ -1326,6 +1516,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_keshik', count: 2 },
         ],
         regions: [],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
     {
         name: '城堡时代孟加拉军团',
@@ -1336,6 +1528,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_ratha_ranged', count: 4 },
         ],
         regions: [],
+        parentLegion: '城堡时代达罗毗荼军团',
+        shipId: 'THIRISADAI',
     },
     {
         name: '古典时代摩揭陀军团',
@@ -1346,6 +1540,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'ratha_ranged', count: 4 },
         ],
         regions: [],
+        parentLegion: '古典时代普鲁军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '古典时代加拉太军团',
@@ -1356,6 +1552,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_chariot', count: 4 },
         ],
         regions: [],
+        parentLegion: '古典时代凯尔特军团',
+        shipId: 'MONOREME',
     },
     {
         name: '古典时代波斯联合军团',
@@ -1363,9 +1561,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'mercenary_hoplite', count: 3 },
             { type: 'lancer', count: 4 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'elite_immortal_ranged', count: 2 },
         ],
         regions: [],
+        parentLegion: '古典时代阿契美尼德军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代迦南军团',
@@ -1376,6 +1576,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_skirmisher', count: 4 },
         ],
         regions: [],
+        parentLegion: '古典时代阿契美尼德军团',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代腓利斯丁军团',
@@ -1386,6 +1588,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_skirmisher', count: 4 },
         ],
         regions: [],
+        parentLegion: '地中海军团',
+        shipId: 'MONOREME',
     },
     {
         name: '城堡时代佛兰德军团',
@@ -1396,6 +1600,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'crossbowman', count: 2 },
         ],
         regions: ['HRE'],
+        parentLegion: '城堡时代勃艮第军团',
+        shipId: 'CARAVEL',
     },
     {
         name: '帝国时代忍者军团',
@@ -1406,6 +1612,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'ninja', count: 4 },
         ],
         regions: [],
+        parentLegion: '城堡时代日本军团',
+        shipId: 'ANT_WAR_GALLEY',
     },
 ];
 

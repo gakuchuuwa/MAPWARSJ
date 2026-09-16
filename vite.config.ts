@@ -6,6 +6,7 @@ import { execFile, execSync } from 'child_process';
 import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
 import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
+import { replaceUnitStats } from './tools/unit-stats-save';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -1156,6 +1157,77 @@ export default defineConfig({
                     });
                 });
                 // ========================================================
+                // 🔴 [2026-09-16 主人定「添加一个功能，新建军团。一律属于三级」]
+                //   /api/create-legion
+                //   body: { legionName, formationMode, slots, parentLegion, shipId, regions? }
+                //   新建的军团**一律进三级表**（一级 16 母体与二级 59 文明是定数，只能改不能增）。
+                //   ⚠️ 必须把 parentLegion / shipId 一起写进去：`Level3LegionDef` 里这两个是必填，
+                //      少写一个 tsc 就红（原来 serverSaveOrCreateLegion 的兜底新建正是漏了它们）。
+                // ========================================================
+                server.middlewares.use('/api/create-legion', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const legionName: string = String(data?.legionName ?? '').trim();
+                            if (!legionName) throw new Error('缺少军团名');
+                            if (!Array.isArray(data?.slots) || data.slots.length !== 3) throw new Error('必须给前/中/后三排');
+                            const total = data.slots.reduce((a: number, s: any) => a + Number(s?.count ?? 0), 0);
+                            if (total !== 9) throw new Error('三排人数合计必须是 9，收到 ' + total);
+                            const parentLegion: string = String(data?.parentLegion ?? '').trim();
+                            if (!parentLegion) throw new Error('缺少归属军团 parentLegion');
+                            const shipId: string = String(data?.shipId ?? '').trim();
+                            if (!shipId) throw new Error('缺少战船 shipId');
+                            // 撞名：三层都不许重（一个军团名只能有一种编制）
+                            if (BASE_16_LEGION_TO_REGION[legionName]) throw new Error('【' + legionName + '】是一级 16 母体军团名，不能占用');
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            if (safeReadFileSync(p2).includes("name: '" + legionName + "'")) {
+                                throw new Error('【' + legionName + '】已被二级 59 文明军团占用');
+                            }
+                            const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
+                            const text = safeReadFileSync(p3);
+                            if (text.includes("name: '" + legionName + "'")) {
+                                throw new Error('三级表里已经有【' + legionName + '】了');
+                            }
+                            // 归属军团必须真实存在（一级 16 或二级 59），否则回落安置会指向空气
+                            const parentOk = !!BASE_16_LEGION_TO_REGION[parentLegion]
+                                || safeReadFileSync(p2).includes("name: '" + parentLegion + "'");
+                            if (!parentOk) throw new Error('归属军团【' + parentLegion + '】不在一级 16 / 二级 59 里');
+                            markLegionSaveWrite();
+                            const at = text.lastIndexOf('];', text.indexOf('export const LEVEL_3_LEGION_MAP'));
+                            if (at < 0) throw new Error('level3CustomLegions.ts 结构异常，无法新建军团');
+                            const regions: string[] = Array.isArray(data?.regions) ? data.regions.map((r: any) => String(r)) : [];
+                            const entry = [
+                                '    {',
+                                "        name: '" + legionName + "',",
+                                "        formationMode: '" + String(data?.formationMode || 'square') + "',",
+                                '        slots: [',
+                                serverSlotLines(data.slots, '            '),
+                                '        ],',
+                                '        regions: [' + regions.map((r) => "'" + r + "'").join(', ') + '],',
+                                "        parentLegion: '" + parentLegion + "',",
+                                "        shipId: '" + shipId + "',",
+                                '    },',
+                            ].join('\n') + '\n';
+                            safeWriteFileSync(p3, text.slice(0, at) + entry + text.slice(at));
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                            console.log('[CreateLegion] ✅ 三级新建【' + legionName + '】← 归属 ' + parentLegion);
+                        } catch (err: any) {
+                            console.error('❌ [CreateLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                // ========================================================
                 // 🔴 [2026-09-14 主人报障「这 12 支我都删除了」]
                 //   /api/delete-legion   body: { legionName }
                 //   删除**军团本身那条记录**。原来的删除只解开了势力和文化区的挂靠，
@@ -1341,6 +1413,26 @@ export default defineConfig({
                 const mainTsPath = path.resolve(__dirname, 'src/legion-editor/main.ts');
                 const warTypesPath = path.resolve(__dirname, 'src/data/WarTypes.ts');
                 const navalShipTiersPath = path.resolve(__dirname, 'src/types/NavalShipTiers.ts');
+
+                server.middlewares.use('/api/save-unit-stats', (req, res) => {
+                    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ ok: false, error: '仅支持POST' })); return; }
+                    const chunks: Buffer[] = [];
+                    req.on('data', chunk => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const { unitId, values, expected } = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                            const file = path.resolve(__dirname, 'src/data/WarTypes.ts');
+                            const current = fs.readFileSync(file, 'utf8');
+                            const updated = replaceUnitStats(current, unitId, values, expected);
+                            if (updated !== current) serverSafeWriteFileSync(file, updated);
+                            res.end(JSON.stringify({ ok: true, values }));
+                        } catch (error: any) {
+                            res.statusCode = 400;
+                            res.end(JSON.stringify({ ok: false, error: error.message }));
+                        }
+                    });
+                });
 
                 server.middlewares.use('/api/rename-unit', (req, res) => {
                     if (req.method !== 'POST') {

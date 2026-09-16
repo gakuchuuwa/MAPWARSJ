@@ -1114,9 +1114,9 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_white_feather_guard', count: 2 },
-        { type: 'elite_chukonu', count: 3 },
-        { type: 'elite_fire_archer', count: 4 },
+        { type: 'jian_swordman_shielded', count: 2 },
+        { type: 'elite_fire_lancer', count: 3 },
+        { type: 'hei_kuang_heavy', count: 4 },
     ]
     }
 ];
@@ -1145,9 +1145,9 @@ export const STEPPE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_steppe_lancer', count: 2 },
+        { type: 'sakan_axeman', count: 2 },
         { type: 'sogdian_cataphract', count: 3 },
-        { type: 'elite_kipchak', count: 4 },
+        { type: 'elite_steppe_lancer', count: 4 },
     ]
     }
 ];
@@ -1200,8 +1200,8 @@ export const SLAVIC_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'winged_hussar', count: 2 },
-        { type: 'elite_boyar', count: 4 },
-        { type: 'elite_leitis', count: 3 },
+        { type: 'sarmatian', count: 4 },
+        { type: 'elite_scythian_horse_archer', count: 3 },
     ]
     }
 ];
@@ -1219,8 +1219,8 @@ export const GERMANIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_huskarl', count: 4 },
-        { type: 'longbowman_elite', count: 2 },
+        { type: 'champion', count: 4 },
+        { type: 'arbalest', count: 2 },
         { type: 'frankish_paladin', count: 3 },
     ]
     }
@@ -1244,9 +1244,9 @@ export const LATIN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'legionary', count: 4 },
-        { type: 'elite_genoese_crossbowman', count: 2 },
-        { type: 'paladin', count: 3 },
+        { type: 'condottiero', count: 4 },
+        { type: 'arbalest', count: 2 },
+        { type: 'equites', count: 3 },
     ]
     }
 ];
@@ -1272,7 +1272,7 @@ export const INDIA_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'imperial_camel_rider', count: 2 },
-        { type: 'elite_ghulam', count: 4 },
+        { type: 'elite_elephant_archer', count: 4 },
         { type: 'elite_skirmisher', count: 3 },
     ]
     }
@@ -1300,8 +1300,8 @@ export const GREEK_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'hoplite', count: 4 },
-        { type: 'gastraphetes', count: 2 },
+        { type: 'elite_hoplite', count: 4 },
+        { type: 'ekdromos', count: 2 },
         { type: 'elite_greek_cavalry', count: 3 },
     ]
     }
@@ -1366,9 +1366,9 @@ export const MALAY_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_arambai', count: 2 },
-        { type: 'karambit_warrior_elite', count: 3 },
-        { type: 'rattan_archer_elite', count: 4 },
+        { type: 'elite_battle_elephant', count: 2 },
+        { type: 'sunda_royal_fighter', count: 3 },
+        { type: 'imperial_skirmisher', count: 4 },
     ]
     }
 ];
@@ -1398,8 +1398,8 @@ export const AFRICA_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'sosso_guard', count: 3 },
-        { type: 'elite_shotel_warrior', count: 4 },
-        { type: 'elite_camel_archer', count: 2 },
+        { type: 'elite_genitour', count: 4 },
+        { type: 'camel_raider', count: 2 },
     ]
     }
 ];
@@ -1424,9 +1424,9 @@ export const EAST_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_cataphract', count: 3 },
-        { type: 'elite_monaspa', count: 4 },
-        { type: 'elite_magyar_huszar', count: 2 },
+        { type: 'sarmatian', count: 3 },
+        { type: 'imperial_centurion', count: 4 },
+        { type: 'cav_archer_heavy', count: 2 },
     ]
     }
 ];
@@ -1445,8 +1445,8 @@ export const PURU_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_chakram_thrower', count: 4 },
-        { type: 'elite_pattiyoda_longbowman', count: 2 },
+        { type: 'elite_sannahya', count: 4 },
+        { type: 'elite_skirmisher', count: 2 },
         { type: 'elite_shrivamsha_rider', count: 3 },
     ]
     }
@@ -1469,8 +1469,8 @@ export const AMERICA_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'elite_eagle_warrior', count: 2 },
-        { type: 'elite_jaguar_warrior', count: 4 },
-        { type: 'elite_plumed_archer', count: 3 },
+        { type: 'elite_ibirapema_warrior', count: 4 },
+        { type: 'xolotl_warrior', count: 3 },
     ]
     }
 ];
@@ -1492,7 +1492,7 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'elite_temple_guard', count: 4 },
-        { type: 'elite_blackwood_archer', count: 3 },
+        { type: 'elite_champi_warrior', count: 3 },
         { type: 'elite_bolas_rider', count: 2 },
     ]
     }
@@ -1530,7 +1530,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     CENTRAL_ASIA: "封建时代河中军团",
     CENTRAL_ASIA_IMPERIAL: '帝国时代中亚军团',
     CENTRAL_ASIA_ANTIQUITY: '古典时代中亚军团',
-    CENTRAL_ASIA_CASTLE: '城堡时代中亚军团',
+    CENTRAL_ASIA_CASTLE: '封建时代萨珊军团',
     WEST_ASIA: '封建时代西亚军团',
     WEST_ASIA_ANTIQUITY: '古典时代西亚军团',
     WEST_ASIA_CASTLE: '城堡时代西亚军团',
@@ -1602,7 +1602,7 @@ export const CULTURE_LEGION_NAMES: Record<RegionType, string> = {
     BENGALIS: '古典时代孟加拉军团',
     BENGALIS_ANTIQUITY: '古典时代孟加拉军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代瞿折罗军团',
-    VIETNAMESE: "城堡时代京族军团",
+    VIETNAMESE: "城堡时代大越军团",
     KHMER: '城堡时代高棉军团',
     MAYANS: '封建时代玛雅军团',
     MAPUCHE: '帝国时代马普切军团',
@@ -1707,7 +1707,7 @@ export const ORIE_BASE_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
         { type: 'camel_heavy', count: 4 },
-        { type: 'mameluke', count: 2 },
+        { type: 'shock_cavalry', count: 2 },
         { type: 'cav_archer_heavy', count: 3 },
     ]
     }
@@ -1729,7 +1729,7 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_rhomphaia_warrior', count: 4 },
+        { type: 'mercenary_hoplite', count: 4 },
         { type: 'elite_peltast', count: 2 },
         { type: 'tarantine_cavalry', count: 3 },
     ]
@@ -1847,70 +1847,86 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
 
 /** 🔴 [2026-09-11 主人定：第一层16母体文化军团与第二层时代文明军团彻底分开]
  *  第一层 16 母体文化军团专属编制映射表。与第二层时代军团完全物理隔离，互不影响。 */
-export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[] }>> = {
+export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[]; shipId: string }>> = {
     PURU: {
         formationMode: 'balance_yoke',
         tiers: PURU_BASE_TIERS,
+        shipId: 'ANT_WAR_GALLEY', // 普鲁军团：古典大战舰（南亚古典大舰）
     },
     AFRICA: {
         formationMode: 'fish_scale',
         tiers: AFRICA_BASE_TIERS,
+        shipId: 'CANOE', // 非洲军团：独木舟（尼日尔河与大湖区传统战舟）
     },
     CENTRAL: {
         formationMode: 'triangle',
         tiers: CENTRAL_BASE_TIERS,
+        shipId: 'LOU_CHUAN', // 东亚军团：中国楼船（汉唐宋华夏水师旗舰主力）
     },
     ANDE: {
         formationMode: 'echelon',
         tiers: ANDE_BASE_TIERS,
+        shipId: 'CANOE', // 安第斯军团：独木舟（安第斯与高山湖泊传统轻舟）
     },
     PERSIAN: {
         formationMode: 'crane_wing',
         tiers: PERSIAN_BASE_TIERS,
+        shipId: 'BIREME', // 波斯军团：双列桨座战船（阿契美尼德/萨珊波斯双列战船）
     },
     LATIN: {
         formationMode: 'balance_yoke',
         tiers: LATIN_BASE_TIERS,
+        shipId: 'TRIREME', // 地中海军团：三列桨座战船（罗马称霸地中海核心主力舰）
     },
     MALAY: {
         formationMode: 'triangle',
         tiers: MALAY_BASE_TIERS,
+        shipId: 'FAST_FIRE_SHIP', // 东南亚军团：快速喷火船（三佛齐/群岛水网突击快船）
     },
     EAST: {
         formationMode: 'fish_scale',
         tiers: EAST_BASE_TIERS,
+        shipId: 'DROMON', // 东南欧军团：德罗蒙战舰（拜占庭希腊火王牌战舰）
     },
     INDIA: {
         formationMode: 'crane_wing',
         tiers: INDIA_BASE_TIERS,
+        shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
     },
     SLAVIC: {
         formationMode: 'crane_wing',
         tiers: SLAVIC_BASE_TIERS,
+        shipId: 'MONOREME', // 东北欧军团：单列桨座战船（早期东斯拉夫/罗斯独木长船）
     },
     GERMANIC: {
         formationMode: 'balance_yoke',
         tiers: GERMANIC_BASE_TIERS,
+        shipId: 'CARAVEL', // 西欧军团：卡拉维尔帆船（西欧大西洋风帆战舰主力）
     },
     STEPPE: {
         formationMode: 'triangle',
         tiers: STEPPE_BASE_TIERS,
+        shipId: 'DEMO_RAFT', // 中亚军团：渡河木筏（内陆游牧渡河皮筏/木排，史实无远洋水师）
     },
     ORIE: {
         formationMode: 'balance_yoke',
         tiers: ORIE_BASE_TIERS,
+        shipId: 'FIRE_SHIP', // 中东军团：喷火船（阿拉伯/中东石脑油突击战船）
     },
     AMERICA: {
         formationMode: 'crane_wing',
         tiers: AMERICA_BASE_TIERS,
+        shipId: 'CANOE', // 中美军团：独木舟（特斯科科湖与玛雅雨林武装战舟）
     },
     GREEK: {
         formationMode: 'balance_yoke',
         tiers: GREEK_BASE_TIERS,
+        shipId: 'TRIREME', // 希腊军团：三列桨座战船（萨拉米斯海战希腊经典战舰）
     },
     THRACIAN: {
         formationMode: 'balance_yoke',
         tiers: THRACIAN_BASE_TIERS,
+        shipId: 'LEMBOS', // 色雷斯军团：希腊轻型伦博斯（色雷斯/黑海西岸轻捷突击快船）
     },
 };
 
@@ -1974,7 +1990,7 @@ const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slo
 /** 按**军团名**取编制：一级 → 二级 → 三级，找不到返回 null */
 export function getLegionCompositionByName(
     name: string | null | undefined,
-): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string } | null {
     if (!name || LEGION_DELETED.has(name)) return null;
     const patched = LEGION_RUNTIME_PATCH.get(name);
     if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })) };
@@ -1982,12 +1998,19 @@ export function getLegionCompositionByName(
     for (const rg of Object.keys(BASE_16_TIERS_MAP) as RegionType[]) {
         if (BASE_16_LEGION_NAME_BY_REGION[rg] !== name) continue;
         const b = BASE_16_TIERS_MAP[rg];
-        if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })) };
+        if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })), shipId: b.shipId };
     }
     const l2 = LEVEL_2_CIV_59_MAP.get(name);
-    if (l2) return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })) };
+    if (l2) {
+        const l2Ship = l2.shipId ?? (l2.region ? BASE_16_TIERS_MAP[l2.region]?.shipId : undefined);
+        return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })), shipId: l2Ship };
+    }
     const l3 = LEVEL_3_LEGION_MAP.get(name);
-    if (l3) return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })) };
+    if (l3) {
+        const l3Region = l3.regions?.[0] as RegionType | undefined;
+        const l3Ship = l3.shipId ?? (l3Region ? BASE_16_TIERS_MAP[l3Region]?.shipId : undefined);
+        return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship };
+    }
     return null;
 }
 
@@ -1999,7 +2022,7 @@ export function getRegionLegionComposition(
 }
 
 /** 一级 16 母体：文化区 → 母体军团名（与 legion-editor 的 BASE_16_LEGION_NAMES 同一份） */
-const BASE_16_LEGION_NAME_BY_REGION: Record<string, string> = {
+export const BASE_16_LEGION_NAME_BY_REGION: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
     PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '东北欧军团',
     EAST: '东南欧军团', PERSIAN: '波斯军团', MALAY: '东南亚军团', GREEK: '希腊军团',
@@ -2037,12 +2060,13 @@ export const CULTURE_FORMATION_MODE: Readonly<Record<RegionType, FormationMode>>
     });
 
 /** 获取第一层母体文化军团的默认配置（与第二层时代军团彻底物理隔离） */
-export function getBase16FormationConfig(region: RegionType): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+export function getBase16FormationConfig(region: RegionType): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string } | null {
     const custom = BASE_16_TIERS_MAP[region];
     if (custom && custom.tiers[0]?.slots) {
         return {
             formationMode: custom.formationMode,
             slots: custom.tiers[0].slots.map(s => ({ ...s })),
+            shipId: custom.shipId,
         };
     }
     return null;

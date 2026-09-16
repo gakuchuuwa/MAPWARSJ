@@ -17,7 +17,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
     HEXI: 'ASIA', WESTERN: 'CEAS', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
     TIBET: 'PURU', // 2026-09-11 主人定：吐蕃三层建筑风格套用南亚古典 PURU 粗石红褐石墙 + TIBET_CASTLE_AGE3
-    STEPPE: 'YURT', MONGOL: 'YURT', MONGOLS: 'YURT',
+    STEPPE: 'YURT', MONGOL: 'ASIA', MONGOLS: 'YURT', MOBEI_MONGOL: 'YURT', // [2026-09-16] 二级蒙古→东亚建筑+蒙古城堡；三级漠北蒙古→毡帐
     SLAVIC: 'SLAV', SLAVIC_FEUDAL: 'SLAV', SLAVIC_CASTLE: 'SLAV', SLAVIC_IMPERIAL: 'SLAV', GERMANIC: 'WEST', GERMANIC_FEUDAL: 'WEST', GERMANIC_IMPERIAL: 'WEST', GERMANIC_CASTLE: 'WEST', LATIN: 'MEDI', LATIN_CASTLE: 'MEDI', LATIN_IMPERIAL: 'MEDI',
     INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'CEAS',
     AFRICA: 'AFRI', BERBER: 'ORIE', MALAY: 'SEAS',
@@ -161,6 +161,15 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     SERBIA: 'SLAV',
     ILKHANATE: 'CEAS',
     ARAGON: 'MEDI',
+    // ── [2026-09-16 主人定] 59 二级文明值（buildingStyle）→ 母体风格集前缀。
+    //   59 文明值本身不是 DE 素材前缀（DE 只有 16 套母体素材），城墙/城镇必须回落到母体，
+    //   城堡则走 resolveCastleAsset 的「代表据点→势力→文化区→分支」四层。此处补 5 个
+    //   REGION_TO_DE_STYLE 里原本缺失的 59 文明 key（其余 49 个已在上方覆盖）。
+    WEI: 'ASIA',        // 曹魏（华夏）
+    ROMA: 'MEDI',       // 罗马（地中海）
+    INCA: 'ANDE',       // 印加（安第斯）
+    ATHENIANS: 'GREEK', // 雅典（希腊）
+    SPARTANS: 'GREEK',  // 斯巴达（希腊）
 };
 
 /** 判断某城是否用小城/关隘/中城/大城 DE 建筑组合渲染；优先取据点显式配置的 buildingStyle，否则按区域推导，返回 DE 建筑风格前缀，否则 null。
@@ -170,10 +179,17 @@ export function resolveCityDeBuildingStyle(cityId: string, cityType: string, cit
     if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
     // 小城/关隘/中城/大城都按建筑风格套用 DE 建筑（2026-08-27 扩充大城，帝国时代）
     const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
-    // 🔴 [2026-09-10 主人定] 草原/蒙古游牧区域一律保留 YURT 毡帐营地，不被通用 CEAS 覆盖
-    if (region && (region.includes('STEPPE') || region.includes('MONGOL'))) return 'YURT';
-    if (cityRegion && (cityRegion.includes('STEPPE') || cityRegion.includes('MONGOL'))) return 'YURT';
-    if (buildingStyle === 'YURT') return 'YURT';
-    if (buildingStyle) return buildingStyle;
+    // 🔴 [2026-09-16 主人定] 显式 buildingStyle 优先：二级蒙古(MONGOL)套东亚建筑+蒙古城堡，
+    //    三级漠北蒙古(MOBEI_MONGOL)毡帐营地（YURT），不再被 region 的 STEPPE/MONGOL 兜底强制覆盖。
+    if (buildingStyle) {
+        if (buildingStyle === 'YURT') return 'YURT';
+        return REGION_TO_DE_STYLE[buildingStyle] ?? buildingStyle;
+    }
+    // 无显式 buildingStyle，按 region 兜底：草原(STEPPE*)/漠北蒙古 → YURT 毡帐营地
+    // 🔴 [2026-09-16 主人「二级蒙古的建筑，大中小城采用正常的城墙」] 兜底**不再含裸 MONGOL** ——
+    //    二级蒙古走东亚建筑（REGION_TO_DE_STYLE.MONGOL='ASIA'），只有 MOBEI_MONGOL（三级漠北蒙古）才是毡帐；
+    //    注意 'MOBEI_MONGOL'.includes('MONGOL') 为真，所以这里必须写 MOBEI_MONGOL，不能写 MONGOL。
+    if (region && (region.includes('STEPPE') || region.includes('MOBEI_MONGOL'))) return 'YURT';
+    if (cityRegion && (cityRegion.includes('STEPPE') || cityRegion.includes('MOBEI_MONGOL'))) return 'YURT';
     return REGION_TO_DE_STYLE[region] ?? null;
 }
