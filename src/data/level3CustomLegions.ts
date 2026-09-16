@@ -80,18 +80,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'MONOREME',
     },
     {
-        name: '古典时代华夏军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'elite_white_feather_guard', count: 4 },
-            { type: 'fire_archer', count: 3 },
-            { type: 'chukonu', count: 2 },
-        ],
-        regions: ['CENTRAL'],
-        parentLegion: '古典时代华夏中原军团',
-        shipId: 'LOU_CHUAN',
-    },
-    {
         name: '古典时代印度军团',
         formationMode: 'crane_wing',
         slots: [
@@ -416,18 +404,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DEMO_RAFT',
     },
     {
-        name: '城堡时代大越军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'white_feather_guard', count: 2 },
-            { type: 'imperial_skirmisher', count: 3 },
-            { type: 'rattan_archer_elite', count: 4 },
-        ],
-        regions: ['VIETNAMESE'],
-        parentLegion: '城堡时代越南军团',
-        shipId: 'INCENDIARY_SHIP',
-    },
-    {
         name: '城堡时代伊利汗军团',
         formationMode: 'triangle',
         slots: [
@@ -534,18 +510,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SERBIA'],
         parentLegion: '东北欧军团',
         shipId: 'LEMBOS',
-    },
-    {
-        name: '城堡时代墨西加军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jaguar_warrior', count: 3 },
-            { type: 'elite_eagle_warrior', count: 4 },
-            { type: 'xolotl_warrior', count: 2 },
-        ],
-        regions: ['AMERICA'],
-        parentLegion: '城堡时代阿兹特克军团',
-        shipId: 'CANOE',
     },
     {
         name: '城堡时代大理军团',
@@ -668,18 +632,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CARAVEL',
     },
     {
-        name: '城堡时代缅族军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'armored_elephant', count: 2 },
-            { type: 'arambai', count: 3 },
-            { type: 'elite_arambai', count: 4 },
-        ],
-        regions: ['BURMESE'],
-        parentLegion: '城堡时代缅甸军团',
-        shipId: 'HEAVY_INCENDIARY_SHIP',
-    },
-    {
         name: '城堡时代罗斯军团',
         formationMode: 'fish_scale',
         slots: [
@@ -738,30 +690,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['KARA_KHITAN'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
-    },
-    {
-        name: '城堡时代诺曼军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'serjeant', count: 2 },
-            { type: 'elite_serjeant', count: 4 },
-            { type: 'arbalest', count: 3 },
-        ],
-        regions: ['SICILIANS'],
-        parentLegion: '城堡时代西西里军团',
-        shipId: 'WAR_GALLEY',
-    },
-    {
-        name: '城堡时代镰仓军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'samurai', count: 3 },
-            { type: 'samurai_elite', count: 4 },
-            { type: 'rattan_archer', count: 2 },
-        ],
-        regions: ['JAPAN'],
-        parentLegion: '城堡时代日本军团',
-        shipId: 'ANT_WAR_GALLEY',
     },
     {
         name: '城堡时代阿伊努军团',

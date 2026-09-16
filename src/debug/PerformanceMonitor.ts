@@ -1,5 +1,6 @@
 import { GameConfig } from '../config/GameConfig';
 import { perfDoctor } from './PerfDoctor';
+import { audioManager } from '../audio/AudioManager';
 
 /**
  * PerformanceMonitor — 运行时性能监控面板
@@ -696,6 +697,24 @@ export class PerformanceMonitor {
                 ? `<div style="font-size:10px;color:#666;margin-bottom:4px;">启动最慢: ${slowBoot[0].name} ${slowBoot[0].ms.toFixed(0)}ms · 共 ${bootTotal.toFixed(0)}ms</div>`
                 : '');
 
+        // 🔴 [2026-09-16 主人定]「有的背景音乐音量特别小，但我又不知道歌曲的名字」
+        //    显示当前曲名 + 响度补偿 + 此刻真实音量。gain 1.00 且不在补偿表里的，
+        //    正是最可能偏响/偏轻的那批（没做过响度拉平），标黄提醒。
+        const bgm = audioManager.getBgmStatus();
+        const bgmHtml = bgm
+            ? `<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;">
+                <span style="color:#888;">♪ BGM</span>
+                <span style="color:${bgm.paused ? '#f44336' : '#8fd18f'};margin-left:4px;">${bgm.track}</span>
+                <span style="color:#666;margin-left:6px;">${bgm.folder}</span>
+                <div style="color:#9aa;margin-top:2px;">
+                    补偿 <span style="color:${bgm.inGainTable ? '#ddd' : '#FF9800'};">${bgm.gain.toFixed(2)}${bgm.inGainTable ? '' : ' 未入表'}</span> ·
+                    音量 <span style="color:#ddd;">${bgm.volume.toFixed(3)}</span> ·
+                    <span style="color:#777;">${bgm.currentSec}s / ${bgm.durationSec || '?'}s</span>
+                    ${bgm.paused ? '<span style="color:#f44336;"> · 已暂停</span>' : ''}
+                </div>
+            </div>`
+            : '<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;color:#666;">♪ BGM 未播放</div>';
+
         const html = `
             ${bootHtml}
             <div style="display:flex;align-items:baseline;flex-wrap:nowrap;margin-bottom:4px;font-variant-numeric:tabular-nums;">
@@ -712,6 +731,7 @@ export class PerformanceMonitor {
                 慢帧&gt;16ms <span style="color:${s.slowFrameRatio >= 0.25 ? '#FF9800' : '#bbb'};">${(s.slowFrameRatio * 100).toFixed(0)}%</span> ·
                 重卡&gt;50ms <span style="color:${s.hitchFrameRatio >= 0.08 ? '#f44336' : '#bbb'};">${(s.hitchFrameRatio * 100).toFixed(0)}%</span>
             </div>
+            ${bgmHtml}
             ${this.buildStutterLine(s)}
             ${this.buildRatioLine()}
             ${this.buildSlowFrameLine()}

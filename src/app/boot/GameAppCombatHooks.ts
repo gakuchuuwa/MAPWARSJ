@@ -185,7 +185,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 && attHasElite && defHasElite);
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
         //    文档铁律：数字反常先加计数器问「每道闸各拦掉多少」。落 scene13_probe_log.jsonl（why=gateBlocked）。
-        if (!eligible && import.meta.env.DEV) {
+        if (import.meta.env.DEV) {
             const gate = {
                 tacticalModeEnabled: !!app.tacticalModeEnabled,
                 bigEnough, minTroops,
@@ -198,8 +198,16 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 defUnitType: (battle.defender as { unitType?: string }).unitType ?? null,
                 battleType: battle.type,
                 defenderId: (battle.defender.getEntity?.() as { id?: string } | undefined)?.id ?? null,
+                // 🔴 [2026-09-16 主人问「推罗守将为什么不是阿泽米尔」] 守方到底是谁，别再靠读代码猜：
+                eligible,
+                defName: (battle.defender as { name?: string }).name ?? null,
+                defPortrait: (battle.defender as { portraitPath?: string }).portraitPath ?? null,
+                defEntityType: (battle.defender.getEntity?.() as { type?: string } | undefined)?.type ?? null,
+                defGarrisonGeneral: (battle.defender.getEntity?.() as { _siegeGarrisonGeneralId?: string } | undefined)?._siegeGarrisonGeneralId ?? null,
+                defGarrisonPortrait: (battle.defender.getEntity?.() as { _siegeGarrisonPortrait?: string } | undefined)?._siegeGarrisonPortrait ?? null,
+                attName: (battle.attacker as { name?: string }).name ?? null,
             };
-            console.warn('🚫 [Scene13 闸门] 未进战术模式：', gate);
+            console.warn(eligible ? '✅ [Scene13 闸门] 进战术模式：' : '🚫 [Scene13 闸门] 未进战术模式：', gate);
             void fetch('/api/scene13-probe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
