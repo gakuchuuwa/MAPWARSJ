@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_CHURCH_RUINS",
+  "frames": 1,
+  "box_w": 340,
+  "box_h": 348,
+  "anchor_x": 188,
+  "anchor_y": 272,
+  "sld_source": "s_church_ruins"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_S",
+  "frames": 1,
+  "box_w": 92,
+  "box_h": 96,
+  "anchor_x": 76,
+  "anchor_y": 88,
+  "sld_source": "s_flag_s",
+  "note": "残破战旗·白底 X 十字，下缘破烂"
+}

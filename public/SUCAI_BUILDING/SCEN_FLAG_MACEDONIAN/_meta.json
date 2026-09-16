@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_MACEDONIAN",
+  "frames": 1,
+  "box_w": 76,
+  "box_h": 80,
+  "anchor_x": 44,
+  "anchor_y": 68,
+  "sld_source": "s_flag_macedonian",
+  "note": "马其顿维吉纳太阳旗（完好·醒目，作对照）"
+}

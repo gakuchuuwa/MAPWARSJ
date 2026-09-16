@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_PURU_RUINS",
+  "frames": 12,
+  "box_w": 140,
+  "box_h": 124,
+  "anchor_x": 80,
+  "anchor_y": 92,
+  "sld_source": "s_puru_ruins"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_GRAVES",
+  "frames": 6,
+  "box_w": 36,
+  "box_h": 44,
+  "anchor_x": 24,
+  "anchor_y": 36,
+  "sld_source": "s_graves"
+}

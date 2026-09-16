@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_MESOPOTAMIAN_RUINS",
+  "frames": 18,
+  "box_w": 128,
+  "box_h": 104,
+  "anchor_x": 70,
+  "anchor_y": 74,
+  "sld_source": "s_mesopotamian_ruins"
+}

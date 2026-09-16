@@ -1,0 +1,9 @@
+{
+  "name": "SCEN_MESOPOTAMIAN_TOMB",
+  "frames": 8,
+  "box_w": 128,
+  "box_h": 112,
+  "anchor_x": 66,
+  "anchor_y": 78,
+  "sld_source": "s_mesopotamian_tomb"
+}

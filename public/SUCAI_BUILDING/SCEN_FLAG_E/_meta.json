@@ -1,0 +1,10 @@
+{
+  "name": "SCEN_FLAG_E",
+  "frames": 1,
+  "box_w": 92,
+  "box_h": 104,
+  "anchor_x": 48,
+  "anchor_y": 80,
+  "sld_source": "s_flag_e",
+  "note": "残破战旗·白旗垂落破边"
+}
