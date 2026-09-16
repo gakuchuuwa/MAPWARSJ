@@ -23,6 +23,8 @@ export interface BattlefieldEventDraft {
     bfId: string;
     bfName: string;
     bfNote: string;
+    /** 赶路背景播报：玩家奔赴该战场途中逐段播的背景（空行分段） */
+    bfBriefing: string;
     year: number;
     season: number;
     type: 'field_battle' | 'siege';
@@ -231,6 +233,7 @@ function buildBattlefieldEntry(d: BattlefieldEventDraft): string {
         `        scriptYear: ${d.year},`,
     ];
     if (d.bfNote && d.bfNote.trim()) lines.push(`        note: ${tsStr(d.bfNote.trim())},`);
+    if (d.bfBriefing && d.bfBriefing.trim()) lines.push(`        briefing: ${tsStr(d.bfBriefing.trim())},`);
     lines.push('    },');
     return lines.join('\n');
 }
@@ -353,6 +356,7 @@ export function saveBattlefieldEvent(
                 ['scriptYear', String(d.year)],
             ];
             if (d.bfNote && d.bfNote.trim()) fields.push(['note', tsStr(d.bfNote.trim())]);
+            if (d.bfBriefing && d.bfBriefing.trim()) fields.push(['briefing', tsStr(d.bfBriefing.trim())]);
             bfText = patchFields(bfBefore, hit.start, hit.end, fields).text;
             bfMode = 'update';
         } else {

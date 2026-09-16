@@ -58,7 +58,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 40000,
+            // 🔴 [2026-09-16 主人定]「原文35000，战场就要35000」——
+            //    赶路播报里写的是「三万五千名跨海而来的希腊与马其顿健儿」，数据必须与文案同口径。
+            attackerTroops: 35000,
             attackerSourceCityId: 'city_salonica',      // 佩拉（马其顿首都，东征出发点）
 
             // ── 守方：小弗里吉亚（赫勒斯滂弗里吉亚，波斯）阿尔西提斯 ──
@@ -70,7 +72,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    所在区组名为 GREEK_MERCENARY。
             defenderFactionId: 'xiaofulijiya',
             defenderGeneralId: 'xiaofulijiya_aerxitis',
-            defenderTroops: 25000,
+            // 同上，按播报原文：「两万波斯铁骑与近两万精锐希腊雇佣重步兵」≈ 40000。
+            //    平衡：35000 : 40000 = 0.875，落在八环战力比 [0.8,1.2] 带内，不会一边倒；
+            //    攻方略劣也正是史实——亚历山大是仰攻陡岸强渡取胜，不是以多欺少。
+            defenderTroops: 40000,
             defenderSourceCityId: 'city_dasijiliweng',
 
             result: 'attacker_win',                     // 写真历史：马其顿必胜

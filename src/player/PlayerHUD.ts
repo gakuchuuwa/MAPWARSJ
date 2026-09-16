@@ -48,6 +48,9 @@ export class PlayerHUD {
     private overlay: HTMLDivElement | null = null;
     private toast: HTMLDivElement | null = null;
     private toastTimer: number | null = null;
+    /** 🔴 [2026-09-16 主人定] 赶路背景字幕：历史直播的解说字幕，显示在**画面下方** */
+    private subtitle: HTMLDivElement | null = null;
+    private subtitleTimer: number | null = null;
     private refreshTimer: number | null = null;
     private dialoguePauseTaken = false;
     private onStreamModeChange: ((e: Event) => void) | null = null;
@@ -69,6 +72,7 @@ export class PlayerHUD {
     ) {
         this.createPanel();
         this.createToast();
+        this.createSubtitle();
         hero.onChange(() => this.refresh());
         quests.onChange(() => this.refresh());
         this.refreshTimer = window.setInterval(() => this.refresh(), 1000);
@@ -771,12 +775,71 @@ export class PlayerHUD {
         this.toast = el;
     }
 
-    public notify(msg: string): void {
+    /**
+     * 🔴 [2026-09-16 主人定]「字幕显示在下面」——历史直播的解说字幕条。
+     * 与上方那个 toast 分开：toast 是操作提示（到达/入伍/报错），一行、短、居上；
+     * 字幕是讲解，成段、可换行、居下，压在 HUD 面板之上，观众一眼就知道这是解说。
+     */
+    private createSubtitle(): void {
+        const el = document.createElement('div');
+        el.id = 'player-subtitle';
+        el.style.cssText = `
+            position:fixed; left:50%; transform:translateX(-50%); z-index:10068; display:none;
+            bottom:calc(var(--player-hud-bottom, 96px) + 18px);
+            width:min(1180px, calc(100vw - 120px));
+            padding:16px 30px; box-sizing:border-box;
+            font-family:${FONT}; font-size:23px; font-weight:600; line-height:1.85;
+            color:#f7ecd6; text-align:center; letter-spacing:0.5px;
+            background:linear-gradient(180deg, rgba(12,10,8,0.82), rgba(12,10,8,0.92));
+            border:1px solid rgba(212,175,55,0.38); border-radius:10px;
+            box-shadow:0 6px 26px rgba(0,0,0,0.55);
+            text-shadow:0 2px 6px rgba(0,0,0,0.9);
+            pointer-events:none; white-space:pre-wrap;`;
+        document.body.appendChild(el);
+        this.subtitle = el;
+    }
+
+    /** 放一段字幕；返回一个可以提前收掉它的函数（后来的字幕会自动顶掉先前那条） */
+    public showSubtitle(text: string, durationMs = 7000): (() => void) | void {
+        if (!this.subtitle) return;
+        this.subtitle.textContent = text;
+        this.subtitle.style.display = 'block';
+        if (this.subtitleTimer) window.clearTimeout(this.subtitleTimer);
+        const timer = window.setTimeout(() => {
+            if (this.subtitle) this.subtitle.style.display = 'none';
+        }, durationMs);
+        this.subtitleTimer = timer;
+        return () => {
+            if (this.subtitleTimer !== timer) return;   // 已被后一段顶掉，别误收
+            window.clearTimeout(timer);
+            this.subtitleTimer = null;
+            if (this.subtitle) this.subtitle.style.display = 'none';
+        };
+    }
+
+    public hideSubtitle(): void {
+        if (this.subtitleTimer) { window.clearTimeout(this.subtitleTimer); this.subtitleTimer = null; }
+        if (this.subtitle) this.subtitle.style.display = 'none';
+    }
+
+    public notify(msg: string, durationMs = 4000): (() => void) | void {
         if (!this.toast) return;
         this.toast.textContent = msg;
         this.toast.style.display = 'block';
+        const longMessage = durationMs > 4000;
+        this.toast.style.whiteSpace = longMessage ? 'normal' : 'nowrap';
+        this.toast.style.width = longMessage ? 'min(680px, calc(100vw - 72px))' : 'auto';
+        this.toast.style.lineHeight = longMessage ? '1.8' : 'normal';
         if (this.toastTimer) window.clearTimeout(this.toastTimer);
-        this.toastTimer = window.setTimeout(() => { if (this.toast) this.toast.style.display = 'none'; }, 4000);
+        const timer = window.setTimeout(() => { if (this.toast) this.toast.style.display = 'none'; }, durationMs);
+        this.toastTimer = timer;
+        return () => {
+            // 不关闭后来覆盖上来的到达/参战提示。
+            if (this.toastTimer !== timer) return;
+            window.clearTimeout(timer);
+            this.toastTimer = null;
+            if (this.toast) this.toast.style.display = 'none';
+        };
     }
 
     public dispose(): void {
@@ -787,7 +850,9 @@ export class PlayerHUD {
         // 🔴 [2026-09-15] 轮播计时也要清，否则 dispose 后它还会翻相位、去动已移除的面板
         if (this.autoCollapseTimer !== null) window.clearTimeout(this.autoCollapseTimer);
         this.closeDialogue();
+        if (this.subtitleTimer) window.clearTimeout(this.subtitleTimer);
         this.panel?.remove();
         this.toast?.remove();
+        this.subtitle?.remove();
     }
 }

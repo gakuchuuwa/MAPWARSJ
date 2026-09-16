@@ -273,13 +273,10 @@ export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number |
         }
     }
 
-    // 6. 最终兜底：从当前游戏世界时间系统获取
-    if (year === null) {
-        const cur = (window as any).game?.timeSystem?.getYear?.();
-        if (typeof cur === 'number' && !Number.isNaN(cur)) {
-            year = cur;
-        }
-    }
+    // 6. 🔴 [2026-09-16 主人铁律] 乱斗一律不加时间！只给战场事件添加时间！
+    //    删除兜底从 timeSystem.getYear() 取当前游戏年份的逻辑——
+    //    乱斗的 title 如「尼凯亚 攻防战」「马其顿 大战 波斯帝国」不含年份、
+    //    也不会在历史事件表/战场表中命中，因此 year 保持 null，不拼年份前缀。
 
     // 7. 拼接格式化结果
     if (year !== null) {
@@ -1598,8 +1595,10 @@ export class CombatUI {
         } else {
             titleText = '遭遇战';
         }
-        // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：前331年-高加米拉战役，公元208年-赤壁之战）
-        const formattedTitle = formatBattleTitleWithYear(titleText, init.getYear?.());
+        // 🔴 [2026-09-16 主人铁律] 乱斗一律不加时间！init.getYear() 是当前游戏时间，
+        //    不是历史事件年份，绝不能传给 formatBattleTitleWithYear。
+        //    函数自行通过历史事件表/战场表查找年份，查不到就不加。
+        const formattedTitle = formatBattleTitleWithYear(titleText);
         this.battleTitle.style.background = 'none';
         this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
 

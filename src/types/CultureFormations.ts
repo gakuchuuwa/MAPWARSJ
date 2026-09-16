@@ -28,7 +28,6 @@
 
 import { RegionType } from '../systems/RegionSystem';
 import { STYLE_TO_BASE16 } from '../systems/CultureBase16';
-import { REGION_TO_DE_STYLE } from '../systems/cityDeStyle';
 import { LEVEL_2_CIV_59_MAP } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
@@ -2243,7 +2242,7 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
 /** 取第一层文化军团名：优先 region 指针；无指针时按据点的建筑风格决定军团（🔴 2026-09-16 主人定：16+59+3 建筑风格对应 16+59+3 军团，不再兜底华夏） */
 export function getCultureLegionName(region: RegionType | null | undefined): string {
     if (region && CULTURE_LEGION_NAMES[region]) return CULTURE_LEGION_NAMES[region];
-    const style = region ? (REGION_TO_DE_STYLE as Record<string, string>)[region] : undefined;
+    const style = region ? REGION_TO_BUILDING_STYLE[region] : undefined;
     return style ? getLegionNameByStyle(style) : '东亚军团';
 }
 

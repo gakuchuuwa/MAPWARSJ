@@ -771,7 +771,9 @@ export class GameApp {
             legionManager,
             showDialogue: (p) => this.playerHUD?.showDialogue(p),
             closeDialogue: () => this.playerHUD?.closeDialogue(),
-            notify: (msg) => this.playerHUD?.notify(msg),
+            notify: (msg, durationMs) => this.playerHUD?.notify(msg, durationMs),
+            // 🔴 [2026-09-16 主人定]「字幕显示在下面」：赶路背景解说走画面下方的字幕条
+            subtitle: (text, durationMs) => this.playerHUD?.showSubtitle(text, durationMs),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);
