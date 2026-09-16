@@ -3569,7 +3569,18 @@ export class Scene13WarLayer {
         }
 
         this.ensureType(setup.heroKey, f);
-        const hx = frontX + toward * depth * 0.9;
+        // 🔴 [2026-09-16 主人定]「野战的时候，玩家不要擅自先独立冲锋，第一波要跟着大部队，一起前进。」
+        //    1. 站位：置于本方前排队列正中（前沿微凸 10px 领军），绝不突前 0.9*depth 孤身送命；
+        //    2. 第一波行军：野战开局参与 march（列阵推进），锚定前排中心口，跟随大部队以全军行军速度整齐前进；
+        //    3. 接火前不擅自脱队冲锋：直到大部队整体碰撞接敌（!this.marching）才全军一同冲杀。
+        const inMarch = this.battleType !== 'siege';
+        const centerPort = row0.reduce(
+            (best, s) => (Math.abs(s.y - midY) < Math.abs(best.y - midY) ? s : best),
+            row0[0],
+        );
+        const heroPort = centerPort ?? row0[0];
+        const heroDep = -10;
+        const hx = heroPort.x + (toward > 0 ? 10 : -10);
         const hy = midY;
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
@@ -3582,7 +3593,7 @@ export class Scene13WarLayer {
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
             flag: false, fo: Math.random() * 600,
-            march: false, port: null, dep: 0, slotY: 0, pop: 0,
+            march: inMarch, port: inMarch ? heroPort : null, dep: heroDep, slotY: 0, pop: 0,
             flank: false,
             claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
         };
@@ -4393,7 +4404,7 @@ export class Scene13WarLayer {
                 onField: field[0] + field[1],
                 step: this.perfStat(this.perfStep),
                 water: this.perfStat(this.perfWater),
-                waterOps: { composeAvgMs: +(this.perfWaterOps.compose / Math.max(1, this.perfWaterOps.composeN)).toFixed(2), composeN: this.perfWaterOps.composeN, blitAvgMs: +(this.perfWaterOps.blit / Math.max(1, this.perfWaterOps.blitN)).toFixed(2), blitN: this.perfWaterOps.blitN },
+                waterOps: { composeAvgMs: +(this.perfWaterOps.compose / Math.max(1, this.perfWaterOps.composeN)).toFixed(2), composeN: this.perfWaterOps.composeN, blitAvgMs: +(this.perfWaterOps.blit / Math.max(1, this.perfWaterOps.blitN)).toFixed(2), blitN: this.perfWaterOps.blitN, patternAvgMs: +(this.perfWaterOps.pattern / Math.max(1, this.perfWaterOps.patternN)).toFixed(2), patternN: this.perfWaterOps.patternN },
                 tint: this.perfStat(this.perfTint),
                 waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
@@ -5290,19 +5301,22 @@ export class Scene13WarLayer {
             this.waterTileCache.set(img, tile);
         }
         if (tile.at === t) return tile.pattern;
+        const _p0 = import.meta.env.DEV ? performance.now() : 0;
         const g = tile.ctx, w = tile.canvas.width, h = tile.canvas.height;
         g.clearRect(0, 0, w, h);
+        // 🔴 [2026-09-16] 水纹平移改用 pattern.setTransform，别再 translate 后 fillRect(-w,-h,4w,4h)。
+        //    只有 (0,0,w,h) 会留在贴图单元里，画 16 倍面积的那 15/16 全被裁掉，纯属白烧。
         g.save();
+        source.setTransform(new DOMMatrix([1, 0, 0, 1, (t * 8) % w, (t * 4) % h]));
         g.fillStyle = source;
-        g.translate((t * 8) % w - w, (t * 4) % h - h);
-        g.fillRect(-w, -h, w * 4, h * 4);
+        g.fillRect(0, 0, w, h);
         g.restore();
         g.save();
         g.globalCompositeOperation = 'source-atop';
         g.globalAlpha = 0.22;
+        source.setTransform(new DOMMatrix([1, 0, 0, 1, (-t * 3.5) % w, (t * 5) % h]));
         g.fillStyle = source;
-        g.translate((-t * 3.5) % w - w, (t * 5) % h - h);
-        g.fillRect(-w, -h, w * 4, h * 4);
+        g.fillRect(0, 0, w, h);
         g.restore();
         g.save();
         g.globalCompositeOperation = 'source-atop';
@@ -5312,6 +5326,7 @@ export class Scene13WarLayer {
         g.restore();
         tile.pattern = g.createPattern(tile.canvas, 'repeat');
         tile.at = t;
+        if (import.meta.env.DEV) { this.perfWaterOps.pattern += performance.now() - _p0; this.perfWaterOps.patternN++; }
         return tile.pattern;
     }
     private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
@@ -5326,7 +5341,7 @@ export class Scene13WarLayer {
      *  DEV 下按操作分段计时进 perf.waterOps，下一场直接看是哪一步贵。 */
     private static readonly WATER_COMPOSE_HZ = 15;
     private static readonly WATER_RES = 0.5;
-    private perfWaterOps = { compose: 0, blit: 0, composeN: 0, blitN: 0 };
+    private perfWaterOps = { compose: 0, blit: 0, composeN: 0, blitN: 0, pattern: 0, patternN: 0 };
     private waterMaskCv: HTMLCanvasElement | null = null;
     private waterMaskCtx: CanvasRenderingContext2D | null = null;
     private waterBlurCv: HTMLCanvasElement | null = null;
@@ -7092,9 +7107,17 @@ export class Scene13WarLayer {
             }
 
             // DE Attack Move：没有发现敌人时保持编队推进；个人视野内一旦锁敌，立即脱离编队交战。
+            // 🔴 [2026-09-16 主人定]「野战的时候，玩家不要擅自先独立冲锋，第一波要跟着大部队，一起前进。」
+            //    野战大部队第一波推进（this.marching）期间，玩家严格跟随大部队行军队列前进；
+            //    除非大部队整体接战（!this.marching），或敌人近身贴脸（<65px）受到攻击，玩家不擅自脱队冲锋。
             if (m.march && m.foe) {
-                m.march = false;
-                m.port = null;
+                const keepInMarch = m.hero && this.marching && !(
+                    (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < 65 * 65 || hb
+                );
+                if (!keepInMarch) {
+                    m.march = false;
+                    m.port = null;
+                }
             }
 
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
@@ -7108,14 +7131,19 @@ export class Scene13WarLayer {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
-                m.aimT = (m.aimT ?? 0) - dt;
-                if (m.aimT <= 0) {
-                    // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
-                    //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
-                    //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
-                    const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
-                    if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
-                    m.aimT = 0.5;
+                // 🔴 [2026-09-16 主人定] 野战第一波大部队还在行军（this.marching）时，玩家不独自 aimAt 冲锋
+                if (m.hero && this.marching) {
+                    // 第一波跟随大部队行军，不主动向敌军重心单骑冲锋
+                } else {
+                    m.aimT = (m.aimT ?? 0) - dt;
+                    if (m.aimT <= 0) {
+                        // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
+                        //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
+                        //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
+                        const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
+                        if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                        m.aimT = 0.5;
+                    }
                 }
             }
 

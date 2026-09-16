@@ -1078,19 +1078,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     //       原先那条 `aqimeinide_daliushi` 世纪是 **-6（＝大流士一世）**，挂到伊苏斯上就是错人 ✗。
     //    ⚠️ 立绘这一行是**恢复我此前误删的原绑定**（删 boluosi 时连带删掉的 `daliushi_iii` 档案里就是这张图），
     //       不是我新分配立绘；要换图直接改这一行。
-    // 🔴 [2026-09-12 主人「据点：波斯波利斯（29.93,52.89）· 阿契美尼德 · 旗号阿契 · 精锐不死军 T2
-    //    —— **武将是大流士一世**，你怎么给我搞没了」]
-    //    **数组第一个 = 该势力守将 = 显示在据点上的那位** → 必须是 **大流士一世**（波斯波利斯的营建者，原配置）✓
-    //    大流士三世放第二位：他**不在据点上显示**，只供**剧本调用**（伊苏斯/高加米拉主帅 =
-    //    `defenderGeneralId: 'daliushi_iii'` ✓）—— 这正是主人取消「一势力一将」的用意 ✓。
-    aqimeinide: [
-        { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
-        { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
-    ],
-    sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
-    safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
-    sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
-    ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将

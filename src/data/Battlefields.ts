@@ -89,6 +89,18 @@ export const BATTLEFIELDS: BattlefieldData[] = [
         scriptYear: -331,
         note: '高加米拉战役战场（前331年10月），亚历山大斜线战术与骑兵楔形突击击溃大流士三世；宣告波斯帝国瓦解',
     },
+
+    // ── 前 330 年 波斯门战役（马其顿 vs 阿契美尼德波斯） ──
+    //    剧本：`HistoricalEventScript` `-330`（`type: 'field_battle'` 野战）。
+    {
+        id: 'bf_bosimen',
+        name: '波斯门',
+        lat: 30.7083,
+        lng: 51.5986,
+        scriptYear: -330,
+        note: '波斯门战役战场（前330年1月），阿尔塔巴扎诺斯利用扎格罗斯山脉天险绝壁扼守；'
+            + '亚历山大雪夜迂回奇袭获胜，扫清进占波斯波利斯的最后屏障',
+    },
 ];
 
 /** 按 id 取战场 */
