@@ -1,8 +1,8 @@
 {
   "name": "GREEK_HOUSE_AGE2_DESTR",
-  "frames": 60,
+  "frames": 300,
   "box_w": 288,
-  "box_h": 212,
+  "box_h": 216,
   "anchor_x": 142,
   "anchor_y": 142,
   "sld_source": "b_greek_house_age2_destruction"
