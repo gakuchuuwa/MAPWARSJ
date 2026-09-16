@@ -115,11 +115,13 @@ export interface SiegeData {
     attackerCityId?: string; // 可选：指定出兵城市（如果不填则自动选择最近的）
     attackerSourceCityId?: string; // [NEW] Optional: Synonym/Alias for attackerCityId for consistent naming
     attackerSourceLocation?: { lat: number, lng: number }; // [NEW] 可选：直接指定出兵坐标（优先级高于 attackerCityId）
+    attackerLegionName?: string; // [NEW] 攻方军团名（战场编辑器可显式指定；留空走势力/建筑风格默认）
     defenderCityId: string;
     attackerGeneralId?: string; // [NEW] 攻击方将领ID
     defenderGeneralId?: string; // [NEW] 防守方将领ID
     attackerTroops?: number;
     defenderTroops?: number; // [NEW] Override city defender troops
+    defenderLegionName?: string; // [NEW] 守方军团名（战场编辑器可显式指定；留空走势力/建筑风格默认）
     /**
      * 🔴 [2026-09-12 主人令「写呀，不写怎么继续？」] 逐事件独立行军航点（**攻城剧本用**）。
      * 与 `FieldBattleData.marchWaypoints` 同口径（军团逐段以据点为目标）；区别是走完航点后

@@ -38,11 +38,13 @@ export interface BattlefieldEventDraft {
     attackerGeneralId: string;
     attackerTroops: number;
     attackerSourceCityId: string;
+    attackerLegionName?: string;
     defenderFactionId: string;
     defenderGeneralId: string;
     defenderTroops: number;
     defenderSourceCityId: string;
     defenderCityId: string;
+    defenderLegionName?: string;
     result: 'attacker_win' | 'defender_win';
     marchWaypoints: string[];
     cityUpdates: Array<{ cityId: string; factionId: string }>;
@@ -261,6 +263,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     L.push(`            attackerGeneralId: ${tsStr(d.attackerGeneralId)},`);
     L.push(`            attackerTroops: ${d.attackerTroops},`);
     if (d.attackerSourceCityId) L.push(`            attackerSourceCityId: ${tsStr(d.attackerSourceCityId)},`);
+    if (d.attackerLegionName) L.push(`            attackerLegionName: ${tsStr(d.attackerLegionName)},`);
     // 🔴 `SiegeData` 没有 defenderFactionId：攻城战的守方就是那座城，势力从城读。
     //    野战的守方是军团，才需要显式写势力。写错一边直接编译不过。
     if (!isSiege) L.push(`            defenderFactionId: ${tsStr(d.defenderFactionId)},`);
@@ -271,6 +274,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     } else if (d.defenderSourceCityId) {
         L.push(`            defenderSourceCityId: ${tsStr(d.defenderSourceCityId)},`);
     }
+    if (d.defenderLegionName) L.push(`            defenderLegionName: ${tsStr(d.defenderLegionName)},`);
     L.push(`            result: ${tsStr(d.result)},`);
     L.push('            autoEnterRTS: true,');
     L.push('        },');
