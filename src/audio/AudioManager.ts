@@ -909,18 +909,23 @@ export class AudioManager {
     }
 
     /**
-     * 区域优先切歌：镜头文化区（folderName）变化 → 立刻切该区 BGM；
-     * 未变化 → 维持当前曲（含随机轮播曲），仅当整条 BGM 被 stopBgm 清空后才补播该区曲。
-     * 随机轮播曲放完由 ended 回调自然接力，此处不打断。
+     * 🔴 [2026-09-16 主人定]「所有背景音乐都要循环播放，这样才能都听到。不要被任何打断。」
+     *
+     * 原来是**区域优先**：镜头一跨文化区就立刻切歌。战场事件里玩家奔赴战场、镜头一路跨区，
+     * 曲子就被一路掐断，每首只放个开头 —— 主人报的「战场事件打断背景音乐」就是这条。
+     *
+     * 改为**只记录、不打断**：镜头换区只更新 cameraRegionFolder，当前这首照常放完；
+     * 放完由 `ended` 走洗牌袋接力下一首（覆盖全部曲目，每首都轮得到）。
+     * 只有在压根没歌在放时（开局、或被 stopBgm 清空）才立刻起一首。
+     *
+     * 代价说明白：音乐**不再与镜头所在文化区强对应**（在中原可能正放着拉丁曲）。
+     * 这是「都听到 + 不被打断」换来的，是主人明确要的取舍。
      */
     private applyCameraFolder(folderName: string): void {
-        if (folderName !== this.cameraRegionFolder) {
-            // 镜头进入新文化区：区域优先，立刻切歌
-            this.cameraRegionFolder = folderName;
-            if (this.failedBgmFolders.has(folderName)) return;
-            this.playBgmFolder(folderName);
-            return;
-        }
+        this.cameraRegionFolder = folderName;
+        if (this.failedBgmFolders.has(folderName)) return;
+        // 有歌在放就绝不插手 —— 包括镜头刚换了文化区
+        if (this.bgmAudio && !this.bgmAudio.paused && this.currentBgmSrc !== '') return;
         // 镜头文化区未变：仅当 BGM 被彻底停掉（currentBgmSrc 为空）才补播该区曲
         if (this.currentBgmSrc === '' && !this.failedBgmFolders.has(folderName)) {
             this.playBgmFolder(folderName);
