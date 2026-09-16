@@ -103,10 +103,17 @@ function loadDrafts(): BattleDraft[] {
         if (!bd) continue;
         const isSiege = ev.type === 'siege';
         const anyBd = bd as FieldBattleData & { defenderCityId?: string };
-        const loc = bd.location ?? { lat: 0, lng: 0 };
+        // 🔴 攻城战的剧本条目**可能没有 location**（推罗就是靠 defenderCityId + 航点走的），
+        //    这时用被攻据点的坐标兜底，否则列表里坐标会是 0、也配不上战场。
+        let loc = bd.location ?? null;
+        if (!loc && anyBd.defenderCityId) {
+            const c = CITY_BY_ID.get(anyBd.defenderCityId);
+            if (c) loc = { lat: c.lat, lng: c.lng };
+        }
+        loc = loc ?? { lat: 0, lng: 0 };
         // 战场按「同年 + 坐标接近」配对（两处坐标本应一字不差）
         const bf = BATTLEFIELDS.find((b) => b.scriptYear === ev.year
-            && Math.abs(b.lat - loc.lat) < 0.5 && Math.abs(b.lng - loc.lng) < 0.5) ?? null;
+            && Math.abs(b.lat - loc!.lat) < 0.5 && Math.abs(b.lng - loc!.lng) < 0.5) ?? null;
         drafts.push({
             bfId: bf?.id ?? '',
             bfName: bf?.name ?? '',
@@ -124,7 +131,9 @@ function loadDrafts(): BattleDraft[] {
             attackerGeneralId: bd.attackerGeneralId ?? '',
             attackerTroops: bd.attackerTroops ?? 0,
             attackerSourceCityId: bd.attackerSourceCityId ?? '',
-            defenderFactionId: bd.defenderFactionId ?? '',
+            // 攻城战的守方是城，剧本里常常不写 defenderFactionId（势力从城读）→ 这里按城带出来
+            defenderFactionId: bd.defenderFactionId
+                ?? (isSiege && anyBd.defenderCityId ? CITY_BY_ID.get(anyBd.defenderCityId)?.factionId ?? '' : ''),
             defenderGeneralId: bd.defenderGeneralId ?? '',
             defenderTroops: bd.defenderTroops ?? 0,
             defenderSourceCityId: bd.defenderSourceCityId ?? '',
@@ -498,7 +507,13 @@ function bind(): void {
     on<HTMLInputElement>('f-attTroops', 'change', (el) => { working.attackerTroops = num(el.value); render(); });
     on<HTMLInputElement>('f-defTroops', 'change', (el) => { working.defenderTroops = num(el.value); render(); });
     on<HTMLSelectElement>('f-attCity', 'change', (el) => { working.attackerSourceCityId = el.value; render(); });
-    on<HTMLSelectElement>('f-defCity', 'change', (el) => { working.defenderCityId = el.value; render(); });
+    on<HTMLSelectElement>('f-defCity', 'change', (el) => {
+        working.defenderCityId = el.value;
+        // 攻城战守方就是这座城：势力跟着城走，省得手写写歪
+        const c = CITY_BY_ID.get(el.value);
+        if (c && c.factionId) working.defenderFactionId = c.factionId;
+        render();
+    });
     on<HTMLSelectElement>('f-defSrcCity', 'change', (el) => { working.defenderSourceCityId = el.value; render(); });
     on<HTMLSelectElement>('f-result', 'change', (el) => { working.result = el.value as BattleDraft['result']; });
     on<HTMLTextAreaElement>('f-desc', 'input', (el) => { working.description = el.value; });

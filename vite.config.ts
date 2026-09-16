@@ -7,6 +7,7 @@ import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
 import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
 import { replaceUnitStats } from './tools/unit-stats-save';
+import { saveBattlefieldEvent, type BattlefieldEventDraft } from './tools/battlefield-event-save';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -560,8 +561,10 @@ export default defineConfig({
                         try {
                             const draft = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as BattlefieldEventDraft;
                             const out = saveBattlefieldEvent(__dirname, draft);
+                            // 两个文件都算好、体检通过之后才落盘（原子替换）
+                            for (const f of out.files) serverSafeWriteFileSync(f.file, f.content);
                             console.log(`[BattlefieldEditor] ✅ ${out.mode === 'insert' ? '新增' : '更新'}【${draft.title}】 战场 ${out.battlefields} 条 / 剧本 ${out.script} 条`);
-                            res.end(JSON.stringify({ ok: true, ...out }));
+                            res.end(JSON.stringify({ ok: true, mode: out.mode, battlefields: out.battlefields, script: out.script }));
                         } catch (err: any) {
                             console.error('[BattlefieldEditor] ❌ 保存失败:', err);
                             res.statusCode = 400;
