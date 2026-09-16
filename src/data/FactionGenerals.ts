@@ -107,7 +107,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     yipilusi: { generalId: 'yipilusi_piluoshi', generalName: '皮洛士', portrait: '/assets/LATIN/yipilusi_piluoshi.png' },
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/LATIN/lagoniya_lieaonida.png' },
-    maqidun: { generalId: 'gen_alexander_great', generalName: '亚历山大', portrait: '/assets/LATIN/maqidun_yalishanda.png' },
+    maqidun: [
+        { generalId: 'gen_alexander_great', generalName: '亚历山大', portrait: '/assets/LATIN/maqidun_yalishanda.png' },
+        // 前323年普拉塔纳斯战役守帅（马其顿摄政、欧洲最高统帅安提帕特），立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'maqidun_antipater', generalName: '安提帕特', portrait: '' },
+        // 前321年赫勒斯滂战役反摄政同盟统帅克拉特罗斯，立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'maqidun_craterus', generalName: '克拉特罗斯', portrait: '' },
+    ],
     lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/SLAVIC/lagusa_delagan.png' },
 
     ruidian_yota: { generalId: 'gen_charles_ix', generalName: '卡尔九世', portrait: '/assets/GERMANIC/ruidian_yota_kaerjiushi.png' },
@@ -171,7 +177,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     nuosi: { generalId: 'gen_olaf_skotkonung', generalName: '奥拉夫', portrait: '/assets/GERMANIC/nuosi_aolafu.png' },
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
-    xila: { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/GREEK/xila_dimisituo.png' },
+    xila: [
+        { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/GREEK/xila_dimisituo.png' },
+        // 前323年普拉塔纳斯战役统帅（希腊反马其顿联军统帅莱奥斯塞尼斯），立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'xila_leosthenes', generalName: '莱奥斯塞尼斯', portrait: '' },
+        // 前322年克兰农战役希腊同盟军总司令（接替阵亡莱奥斯塞尼斯之安提菲洛斯），立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'xila_antiphilus', generalName: '安提菲洛斯', portrait: '' },
+    ],
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
     fulandesi: { generalId: 'gen_robert_ii', generalName: '罗贝尔二世', portrait: '/assets/LATIN/fulandesi_luobeierershi.png' },
     bogendi: { generalId: 'bogendi_chali', generalName: '大胆查理', portrait: '/assets/GERMANIC/bogendi_dadanchali.png' },
@@ -509,7 +521,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 // ── 中亚区 2026-06-18 ──
     huarazim: { generalId: 'huarazim_mohemo', generalName: '摩诃末', portrait: '/assets/CENTRAL_ASIA/huarazim_mohemo.png' },
     kazakh: { generalId: 'kazakh_hasimu', generalName: '哈斯木', portrait: '/assets/CENTRAL_ASIA/kazakh_hasimu.png' },
-    sogdian: { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
+    sogdian: [
+        { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
+        // 前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '' },
+    ],
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
     anushidgin: { generalId: 'anushidgin_yile', generalName: '伊勒', portrait: '/assets/CENTRAL_ASIA/anushidgin_yile.png' },
@@ -1078,6 +1094,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     //       原先那条 `aqimeinide_daliushi` 世纪是 **-6（＝大流士一世）**，挂到伊苏斯上就是错人 ✗。
     //    ⚠️ 立绘这一行是**恢复我此前误删的原绑定**（删 boluosi 时连带删掉的 `daliushi_iii` 档案里就是这张图），
     //       不是我新分配立绘；要换图直接改这一行。
+    // 🔴 [2026-09-12 主人「据点：波斯波利斯（29.93,52.89）· 阿契美尼德 · 旗号阿契 · 精锐不死军 T2
+    //    —— **武将是大流士一世**，你怎么给我搞没了」]
+    //    **数组第一个 = 该势力守将 = 显示在据点上的那位** → 必须是 **大流士一世**（波斯波利斯的营建者，原配置）✓
+    //    大流士三世放第二位：他**不在据点上显示**，只供**剧本调用**（伊苏斯/高加米拉主帅 =
+    //    `defenderGeneralId: 'daliushi_iii'` ✓）—— 这正是主人取消「一势力一将」的用意 ✓。
+    aqimeinide: [
+        { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
+        { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
+        // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '' },
+    ],
+    sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
+    safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
+    sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
+    ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
@@ -1199,9 +1230,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     //    故此处 portrait 留空串（`resolveGeneralPortraitPath('')` 有兜底，不会崩）。请主人补图后回填路径。
     jialiboli: { generalId: 'jialiboli_kaluoyang', generalName: '卡洛扬', portrait: '/assets/SLAVIC/jialiboli_kaluoyang.png' },
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
-    sijitai: { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
+    sijitai: [
+        { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
+        // 前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
+        { generalId: 'sijitai_satraces', generalName: '萨特拉克斯', portrait: '' },
+    ],
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
+    // 前327年马萨加围城战守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
+    aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '' },
+    // 前325年马里斯城围攻战守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
+    malli: { generalId: 'malli_leader', generalName: '马利首领', portrait: '' },
+    // 前324年科塞亚战役守帅（扎格罗斯山脉科塞亚部落酋长联军首领），立绘按铁律留空走回落、待主人亲自放图分配
+    kesaiya: { generalId: 'kesaiya_shouling', generalName: '科塞亚首领', portrait: '' },
+    // 前321年赫勒斯滂战役统帅（卡帕多细亚总督、亚历山大皇家书记官欧迈尼斯），立绘按铁律留空走回落、待主人亲自放图分配
+    kapaduoxiya: { generalId: 'gen_eumenes', generalName: '欧迈尼斯', portrait: '' },
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]

@@ -1249,6 +1249,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'jialiboli': '加里',
     'naxos_ancient': '纳克',
     'yamaxun': '亚马',
+    'aswaka': '阿斯',
+    'malli': '马利',
+    'kesaiya': '科塞',
+    'kapaduoxiya': '卡帕',
 };
 
 // @ts-ignore

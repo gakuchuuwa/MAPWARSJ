@@ -367,20 +367,32 @@ export class HistoricalEventManager {
             stand = { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
         }
 
+        // 🔴 [2026-09-16 修「战场事件攻城战进不去战术模式」]
+        //    攻城战的守方是**城**（走 SiegeManager.startSiegeWithArmy 打 targetCity），
+        //    13 准入读的 `battle.defender.generalId` 来自城的 `_siegeGarrisonGeneralId`
+        //    （BattleUnitFactory 的 city 分支）。若把守将挂到这支随场守军上，
+        //    `assignSiegeGarrisonTier` 的 `hasLegionGeneral` 会判定「城内已有自家军团带着这个将」
+        //    → needGeneral=false → 城拿不到守将 → `!!battle.defender.generalId` 不成立
+        //    → **攻城战永远进不了 13**（野战的 defender 是军团本身，将挂军团上，所以野战照进）。
+        //    故攻城战守方军团不占将位，让守将正常落到城上；锚定将＝该城势力的将，与剧本守将一致
+        //    （推罗 anchorFaction=kanan → 阿泽米尔，正是剧本 defenderGeneralId）。
+        const isSiegeDefender = fb.type === 'siege' && !isAtk;
+        const legionGeneralId = isSiegeDefender ? null : generalId;
+
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
         const legionName = FACTION_COMPOSITIONS[factionId]?.legionName
             || getCultureLegionName(city ? getCityRegion(city) : null);
         const army = this.legionManager.createLegion(
             stand, troops, factionId, legionName,
-            undefined, undefined, sourceCityId, generalId ?? undefined,
+            undefined, undefined, sourceCityId, legionGeneralId ?? undefined,
             true,   // forceCreate：这一仗不受军团上限卡住
         );
         if (!army || !this.legionManager.getLegionById(army.id)) return null;
 
         army.setTroops(troops);
         army.isElite = true;   // 13 战术层准入要求双方都有将 + 都有精锐
-        if (generalId && !army.generalId) army.generalId = generalId;
-        const rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
+        if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
+        const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
         // 只为这一仗而生：不自行行军、不另寻目标、不掉兵
         army.scriptMarchExempt = true;
