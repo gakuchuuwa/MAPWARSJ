@@ -151,29 +151,25 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         type: 'siege',
         title: '公元前332年 推罗围城战',
         description:
-            '亚历山大填海筑堤直逼岛城，历时七月破推罗；波斯地中海舰队基地被彻底拔除。',
+            '马其顿军全面彻底的胜利：亚历山大历时七月强行填筑跨海长堤攻破推罗海岛坚固石墙；'
+            + '拔除波斯在地中海的海军基地，推罗城易主归马其顿。',
         siegeData: {
-            title: '推罗围城战',                     // 🔴 横幅一律显示**战役名**（§三之二 横幅标题铁律）
+            title: '推罗围城战',                     // 🔴 横幅一律显示战役名
             description:
-                '亚历山大拆推罗陆城、伐黎巴嫩雪松筑跨海长堤，联合塞浦路斯与腓尼基舰队约 220 艘'
-                + '封锁南北两港；七月破城，数万军民被屠或被贩为奴。',
+                '亚历山大率约 35,000–40,000 步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；'
+                + '推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 35000,                   // 史料 35000–40000
-            attackerSourceCityId: 'city_salonica',   // 佩拉（剧本主角军团的起兵据点）
-            defenderCityId: 'city_tuile',            // 推罗（岛城；守方城内正规守军 8000–10000，取城防默认值）
-            defenderGeneralId: 'kanan_azemier',      // 推罗末代国王阿泽米尔（势力「迦南」）
-            result: 'attacker_win',                  // 写真历史
+            attackerTroops: 35000,                   // 史料 35000–40000 步骑
+            attackerSourceCityId: 'city_salonica',   // 佩拉
+            defenderCityId: 'city_tuile',            // 推罗
+            defenderGeneralId: 'kanan_azemier',      // 推罗末代国王阿泽米尔库斯
+            defenderTroops: 10000,                   // 史料守军约 8,000–10,000
+            result: 'attacker_win',                  // 写真历史：攻城彻底胜利
             autoEnterRTS: true,                      // 进战术模式（13）
-            // 行军：伊苏斯 → 安提俄基亚 → 推罗（主人「方向对就行」；**只用已有据点**，绝不新建路标）
-            // 行军：**只留目标城本身**（推罗）。
-            // 🔴 [2026-09-12 主人报障「怎么打阿卡了？不去加沙」] 教训：这引擎里"路标"就是
-            //    `expeditionTargetCityId` ＝**要去打的城**（到了就打），所以**绝不能拿别国的城当路标**
-            //    —— 我原先写了 `['city_antiejiya','city_tuile']`，安提俄基亚属塞琉古(`sailiugu`)，
-            //    军团路过就会顺手把它打了。沿途城邦归降（马拉图斯/比布鲁斯/西顿…）**只写文案**。
             marchWaypoints: ['city_tuile'],
         },
-        // 战后归属：推罗归马其顿（真城；战场才不许写易主）
+        // 🔴 战后归属（主人定：如果是攻城战，战斗要改据点归属。一切按历史，无论输赢）：推罗归马其顿
         cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
     },
 
@@ -216,6 +212,41 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         // 战后归属：加沙归马其顿（真城）
         cityUpdates: [{ cityId: 'city_jiasa', factionId: 'maqidun' }],
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // 前 331 年秋 · 亚历山大决战波斯：高加米拉战役（Battle of Gaugamela，前331年10月）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -331,
+        season: 2,                                   // 秋（史料：前331年10月1日）
+        type: 'field_battle',
+        title: '公元前331年 高加米拉战役',
+        description:
+            '马其顿军决定性全面胜利：亚历山大以斜线战术拉扯波斯大军，亲率骑兵楔形突击直插大流士中军；'
+            + '波斯全军崩溃，大流士溃逃，直接宣告了阿契美尼德波斯帝国的瓦解。',
+        fieldBattleData: {
+            title: '高加米拉战役',
+            description:
+                '亚历山大亲率右翼伙伴骑兵形成楔形突击直扑波斯中军，大流士三世溃逃，波斯全军崩溃。',
+            // 摩苏尔以东广阔平原（北纬 36°21'46", 东经 43°15'00"）
+            location: { lat: 36.3628, lng: 43.2500 },
+
+            // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 47000,                   // 史料 47,000 人（约 40,000 步兵 + 7,000 骑兵）
+            attackerSourceCityId: 'city_salonica',
+
+            // ── 守方：波斯阿契美尼德帝国大军 大流士三世 ──
+            defenderFactionId: 'aqimeinide',
+            defenderGeneralId: 'daliushi_iii',
+            defenderTroops: 90000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
+            defenderSourceCityId: 'city_bosibolisi',
+
+            result: 'attacker_win',                  // 写真历史：马其顿决定性胜利
+            autoEnterRTS: true,                      // 进战术模式（13）
+        },
     },
 ];
 

@@ -151,6 +151,8 @@ export class PlayerHero {
 
     private hostLegionId: string | null = null;
     private travelCityId: string | null = null;
+    /** 赶往特定坐标目标（如历史战场）的目标显示名 */
+    private travelPointLabel: string | null = null;
     /**
      * 🔴 [2026-09-09 主人定]「到了城里总是没人就换武将，改成直接去找武将，无论在不在城中」。
      * 追的是**军团**（武将带着军团在外行军），不是据点。追击期间照常沿路网走，
@@ -311,12 +313,15 @@ export class PlayerHero {
     public isAttachedTo(armyId: string | null | undefined): boolean {
         return !!armyId && this.hostLegionId === armyId;
     }
-    public isTraveling(): boolean { return this.travelCityId != null || this.chaseArmyId != null; }
+    public isTraveling(): boolean {
+        return this.travelCityId != null || this.chaseArmyId != null || this.travelPointLabel != null || this.army.isMarching();
+    }
     /** 正在追某支军团找武将 */
     public isChasingArmy(): boolean { return this.chaseArmyId != null; }
     public getChaseArmyId(): string | null { return this.chaseArmyId; }
     public getChaseGeneralName(): string | null { return this.chaseGeneralName; }
     public getTravelCityId(): string | null { return this.travelCityId; }
+    public getTravelPointLabel(): string | null { return this.travelPointLabel; }
 
     public onChange(fn: () => void): void { this.changeListeners.add(fn); }
     private emitChange(): void { for (const fn of this.changeListeners) fn(); }
@@ -642,6 +647,7 @@ export class PlayerHero {
      */
     public travelToCity(cityId: string, keepChase = false): boolean {
         if (!keepChase) this.cancelChase();
+        this.travelPointLabel = null;
         if (this.hostLegionId) {
             this.deps.notify('你正在军中，随军出征，军团解散前不可离开');
             return false;
@@ -665,6 +671,7 @@ export class PlayerHero {
             return false;
         }
         this.travelCityId = cityId;
+        this.travelPointLabel = null;
         this.army.setTargetCity(city);
         this.army.setOnArriveCallback(() => this.handleArrive(cityId));
         this.army.moveAlongPath(path.map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as any).sea })));
@@ -700,21 +707,27 @@ export class PlayerHero {
         }
         const pos = this.army.getPosition();
         if (getEuclideanDistance(pos, target) * 111 <= 2) {
+            this.travelPointLabel = null;
             onArrive?.();       // 已经站在跟前了
             return true;
         }
         const path = roadRegistry.findPathOnRoad(pos, target);
         if (!path || path.length < 2) {
+            this.travelPointLabel = null;
             this.deps.notify(`无路可达【${label}】`);
             return false;
         }
         const marchPath = joinStartToRoadPolyline(pos, path, GameConfig.ROAD.JOIN_EPS);
         this.travelCityId = null;
+        this.travelPointLabel = label;
         this.army.setTargetCity(null);
         let fired = false;
         this.army.setOnArriveCallback(() => {
             if (fired) return;   // 到达回调只认一次，避免停步抖动重复触发
             fired = true;
+            this.travelPointLabel = null;
+            this.deps.releaseCamera();
+            this.emitChange();
             onArrive?.();
         });
         this.army.moveAlongPath(marchPath.slice(1).map((p: any) => ({ lat: p.lat, lng: p.lng, sea: p.sea })));
@@ -789,6 +802,7 @@ export class PlayerHero {
     /** 停止行军。⚠️ 不清 chaseArmyId —— 追击靠它续航，停的只是当前这一段路。
      *  要彻底放弃追击请用 cancelChase()。 */
     public cancelTravel(): void {
+        this.travelPointLabel = null;
         if (!this.travelCityId && this.army.isIdle()) return;
         this.travelCityId = null;
         this.army.stopMovement(false);
