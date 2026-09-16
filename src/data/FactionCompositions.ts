@@ -1029,16 +1029,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "jiujiang": {
-        legionName: "古典时代华夏军团",
+        legionName: "古典时代华夏中原军团",
     },
     "wuwu_d": {
-        legionName: "古典时代华夏军团",
+        legionName: "古典时代华夏中原军团",
     },
     "shanyue": {
         legionName: "古典时代秦汉军团",
     },
     "chu_d": {
-        legionName: "古典时代华夏军团",
+        legionName: "古典时代华夏中原军团",
     },
     "minyue": {
         legionName: "古典时代先秦军团",
@@ -1047,7 +1047,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "yue_d": {
-        legionName: "古典时代华夏军团",
+        legionName: "古典时代华夏中原军团",
     },
     "juandu": {
         legionName: "封建时代隋唐军团",
@@ -1134,7 +1134,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "muong": {
-        legionName: "城堡时代大越军团",
+        legionName: "城堡时代越南军团",
         legionType: "sub",
     },
     "xian_d": {
@@ -1462,7 +1462,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "sunwu_d": {
-        legionName: "古典时代华夏军团",
+        legionName: "古典时代华夏中原军团",
         legionType: "sub",
     },
     "kongque": {

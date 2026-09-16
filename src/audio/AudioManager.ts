@@ -684,6 +684,33 @@ export class AudioManager {
         return clamp01(this.settings.masterVolume * SPEECH_GAIN);
     }
 
+    /**
+     * 🔴 [2026-09-16 主人定]「有的背景音乐音量特别小，但我又不知道歌曲的名字」
+     * 当前 BGM 的实况 —— 调试面板（F3）拿它显示曲名与响度补偿，听到偏轻的曲子能当场认出是哪首。
+     *  · `gain` 就是 `BGM_REGION_GAIN` 里这首的补偿系数；**1.00 表示压根不在表里**（无补偿），
+     *    这类曲子通常就是听起来偏响或偏轻的那些，值得优先怀疑。
+     *  · `volume` 是 audio 元素此刻的真实音量（已含闪避：播报/音效/行军都会临时压低）。
+     */
+    public getBgmStatus(): {
+        track: string; folder: string; gain: number; inGainTable: boolean;
+        volume: number; paused: boolean; currentSec: number; durationSec: number;
+    } | null {
+        if (!this.currentBgmSrc) return null;
+        const folder = this.currentBgmFolder;
+        const file = this.currentBgmSrc.split('/').pop() ?? this.currentBgmSrc;
+        return {
+            track: decodeURIComponent(file),
+            folder,
+            gain: BGM_REGION_GAIN[folder] ?? 1.0,
+            inGainTable: Object.prototype.hasOwnProperty.call(BGM_REGION_GAIN, folder),
+            volume: this.bgmAudio ? +this.bgmAudio.volume.toFixed(3) : 0,
+            paused: this.bgmAudio ? this.bgmAudio.paused : true,
+            currentSec: this.bgmAudio ? Math.floor(this.bgmAudio.currentTime) : 0,
+            durationSec: this.bgmAudio && Number.isFinite(this.bgmAudio.duration)
+                ? Math.floor(this.bgmAudio.duration) : 0,
+        };
+    }
+
     public getSettings(): AudioSettings {
         return {
             enabled: this.settings.enabled,
