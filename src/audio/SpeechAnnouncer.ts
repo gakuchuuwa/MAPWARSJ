@@ -443,10 +443,11 @@ export class SpeechAnnouncer {
    *    所以走 sTier（略慢语速、期间不被常规播报打断），字幕用 multiline 长段排版。
    *    `onDone` 在**念完**时回调 —— 调用方据此推下一段，别用定时器瞎猜时长。
    */
-  public announceBriefing(text: string, onDone?: () => void): void {
+  public announceBriefing(text: string, onDone?: () => void, onStart?: () => void): void {
     const line = text.trim();
     if (!line) { onDone?.(); return; }
     this.speak(line, {
+      onStart,
       sTier: true,
       banner: line,
       bannerMultiline: true,
