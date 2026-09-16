@@ -215,7 +215,7 @@
     left: auto !important;
     bottom: auto !important;
     width: clamp(280px, 19vw, 360px) !important;
-    max-height: calc(100dvh - 100px) !important;
+    max-height: calc(100dvh - 360px) !important;
     min-height: 0 !important;
     padding: 14px 16px;
     box-sizing: border-box;
