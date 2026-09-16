@@ -3865,6 +3865,20 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         if (gi) generals[fId] = { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
     }
 
+    // 🔴 [2026-09-16 修「立绘调校面板缺多将势力的非首位武将」] allGenerals：**所有**武将
+    //    （单将 + 多将数组的每一个对象），供 portrait-tuner 列出全部武将；
+    //    `generals` 仍只存每势力首位（守将），batch-manager 等只认首位的地方不受影响。
+    const allGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> = [];
+    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
+        allGenerals.push({ generalId: m[2], generalName: m[3], portrait: m[4], factionId: m[1] });
+    }
+    for (const m of fgText.matchAll(/(\w+):\s*\[\s*([\s\S]*?)\s*\](?=\s*,|\s*\n)/g)) {
+        const fId = m[1];
+        for (const g of m[2].matchAll(/\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'\s*\}/g)) {
+            allGenerals.push({ generalId: g[1], generalName: g[2], portrait: g[3], factionId: fId });
+        }
+    }
+
     // generalProfiles: { [generalId]: { tier, tacticalSkillId, strategicSkillId? } }
     // [FIX 2026-07-08] 档案解析不再依赖字段顺序/单行格式：
     //   旧正则要求 strategicSkillId 紧跟 tacticalSkillId，三格(advantage/balance/disadvantage)插在中间
@@ -3999,7 +4013,7 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, factionColors, generals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。

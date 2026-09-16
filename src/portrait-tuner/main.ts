@@ -843,16 +843,23 @@ async function loadGenerals(): Promise<void> {
             DIANMIAN: '滇缅', CENTRAL_ASIA: '中亚',
         };
 
-        generals = Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string }>)
-            .map(([factionId, g]) => {
-                const cityId = capitals[factionId];
+        // 🔴 [2026-09-16 修「缺多将势力非首位武将」] 优先用 allGenerals（含多将数组全部对象）；
+        //    服务端还没这个字段时回退到 generals（每势力首位）。
+        const rawGenerals: Array<{ generalId: string; generalName: string; portrait: string; factionId: string }> =
+            (data.allGenerals && data.allGenerals.length > 0)
+                ? data.allGenerals
+                : Object.entries((data.generals ?? {}) as Record<string, { generalId: string; generalName: string; portrait: string }>)
+                    .map(([factionId, g]) => ({ ...g, factionId }));
+        generals = rawGenerals
+            .map((g) => {
+                const cityId = capitals[g.factionId];
                 const city = cityId ? cityById.get(cityId) : null;
                 const rawRegion = city?.region ?? '';
                 const region = (REGION_LABELS[rawRegion] ?? rawRegion) || '未知';
                 return {
                     generalId: g.generalId,
                     generalName: g.generalName,
-                    factionId,
+                    factionId: g.factionId,
                     portrait: g.portrait,
                     region,
                     cityName: city?.name ?? (cityId ?? ''),
