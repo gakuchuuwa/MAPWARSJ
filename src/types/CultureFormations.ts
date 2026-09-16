@@ -27,7 +27,7 @@
  */
 
 import { RegionType } from '../systems/RegionSystem';
-import { STYLE_TO_BASE16 } from '../systems/CultureBase16';
+import { STYLE_TO_BASE16, toBase16 } from '../systems/CultureBase16';
 import { LEVEL_2_CIV_59_MAP } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
@@ -1649,7 +1649,11 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     RUSSIAN: '帝国时代俄罗斯军团',
     SIKH: '帝国时代锡克军团',
     HEBREWS: '古典时代希伯来军团',
-    WUSUN: "东亚军团",
+    // 🔴 [2026-09-16 修错配] 乌孙原配「东亚军团」——它 toBase16 归 STEPPE（草原），
+    //    却因此拿到中原编制（jian_swordman_shielded / elite_fire_lancer / hei_kuang_heavy），
+    //    草原游牧配中原剑士火枪，兵种与史实都不对；且与 CENTRAL 撞名，
+    //    直接造成审计第⑨项「【东亚军团】裂成多种编制」。归位到自己母体 STEPPE 的一级军团名。
+    WUSUN: '中亚军团',
     QIANG: "古典时代羌族军团",
     YARLUNG: '古典时代雅隆军团',
     NABATAEANS: '古典时代纳巴泰军团',
@@ -2243,7 +2247,21 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
 export function getCultureLegionName(region: RegionType | null | undefined): string {
     if (region && CULTURE_LEGION_NAMES[region]) return CULTURE_LEGION_NAMES[region];
     const style = region ? REGION_TO_BUILDING_STYLE[region] : undefined;
-    return style ? getLegionNameByStyle(style) : '东亚军团';
+    if (style) {
+        const byStyle = getLegionNameByStyle(style);
+        if (byStyle) return byStyle;
+    }
+    // 🔴 [2026-09-16 修兜底错配] 查不到就按**自己的 16 母体**取一级军团名。
+    //    原来一律兜底成 '东亚军团' —— 而「东亚军团」同时是 CENTRAL 母体的**正式名**，
+    //    于是 HELLENIC（母体 GREEK，本该「希腊军团」）这类没显式配置的区全被并进东亚，
+    //    与 CENTRAL 撞名 → 审计报「【东亚军团】裂成多种编制」，编制还解析成 undefined。
+    //    母体归属是权威（区经 toBase16 归属），照它取名才是对的。
+    if (region) {
+        const base16 = toBase16(region);
+        const byBase16 = base16 ? BASE_16_LEGION_NAME_BY_REGION[base16] : undefined;
+        if (byBase16) return byBase16;
+    }
+    return '东亚军团';
 }
 
 /** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 59 文明→二级军团 / 3 三级→三级军团） */

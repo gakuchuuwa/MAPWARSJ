@@ -711,7 +711,20 @@ export class PlayerHero {
             onArrive?.();       // 已经站在跟前了
             return true;
         }
-        const path = roadRegistry.findPathOnRoad(pos, target);
+        let path = roadRegistry.findPathOnRoad(pos, target);
+        if (!path || path.length < 2) {
+            // 🔴 [2026-09-16 主人报障「无路可达【波斯门战役】」]
+            //    战场**不是据点、不在路网上**（见 Battlefields.ts）。`findPathOnRoad` 要求
+            //    起终点各自 1.0° 内有据点，而波斯门深在扎格罗斯山里，最近的波斯波利斯都有
+            //    167km（1.508°），够不着就直接判无路 —— 玩家于是永远到不了那个战场。
+            //    山里没城是**史实**（正是它「一夫当关」的前提），不能为了让路通就往山里塞城。
+            //    所以回落：沿路网走到离战场最近的那座城，最后一段直奔战场。
+            const anchor = roadRegistry.getNearestCityPos(target.lat, target.lng, 5);
+            if (anchor) {
+                const viaAnchor = roadRegistry.findPathOnRoad(pos, anchor);
+                if (viaAnchor && viaAnchor.length >= 2) path = [...viaAnchor, target];
+            }
+        }
         if (!path || path.length < 2) {
             this.travelPointLabel = null;
             this.deps.notify(`无路可达【${label}】`);

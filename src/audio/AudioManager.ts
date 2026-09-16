@@ -45,50 +45,58 @@ export interface AudioSettings {
     categoryVolume: Record<AudioCategory, number>;
 }
 
-const STORAGE_KEY = 'mapwar_audio_settings_v2';
+/**
+ * 🔴 [2026-09-16 主人定]「游戏中主要就三种：1 背景音乐、2 音效、3 播报。
+ *                        不压可以吗，例如 1 小、2 中、3 大。」
+ * 改为**静态分层**：三层各占一个固定音量，互不动态压低。
+ * 之所以能这么做 —— 优先级靠**音量差**保证，不必靠闪避去实时抢：
+ *      BGM 0.45  →  音效 0.70  →  播报 1.00
+ *      音效比音乐高 +3.9dB，播报又比音效高 +3.1dB，比音乐高 +6.9dB。
+ * 好处是音量恒定，不会再出现主人报的「忽高忽低」（那是闪避在 1.0/0.85/0.5/0.35/0.3 之间跳）。
+ *
+ * ⚠️ STORAGE_KEY 必须跟着升版号：旧版 v2 的设置存在 localStorage 里，
+ *    不升版的话浏览器会拿旧值覆盖这里的新默认值，改了等于没改。
+ */
+const STORAGE_KEY = 'mapwar_audio_settings_v3';
 const DEFAULT_SETTINGS: AudioSettings = {
     enabled: true,
     masterVolume: 0.5,
-    // 三层基准：语音优先（master×0.95），音效次之（匹配战斗氛围），音乐打底
     categoryVolume: {
-        ui: 0.85,
-        battle: 0.95,
-        feed: 0.95,
-        // [2026-09-12] 上一轮我误把这里当"帝国时代2的音量"加了 0.55→0.70 —— 主人指出
-        // 「不是总音量，是有个曲子叫帝国时代2」→ **已撤回**，改的是单曲增益（见 BGM_REGION_GAIN.age_of_kings）。
-        bgm: 0.55,
+        // 2 音效（中）：界面/战斗/情报同一层
+        ui: 0.70,
+        battle: 0.70,
+        feed: 0.70,
+        // 1 背景音乐（小）：打底，恒定不被压
+        bgm: 0.45,
     },
 };
 
 // ---- 混音闪避（ducking）：语音优先，音效与音乐打底衬托 ----
 // 播报响时音效/音乐压到低量衬托，不抢语音；无播报时各层正常。
 const DUCK = {
-    /** 播报时音乐压到 35%（衬托不抢） */
-    bgmUnderSpeech: 0.35,
-    /** 战斗音效循环时音乐压到 30%（战斗不动，2026-08-04 GAKU 定：战斗原样） */
-    bgmUnderSfx: 0.30,
-    /** 行军音效循环时音乐压到 50%（2026-08-04 GAKU 反馈行军几乎听不到 BGM：0.30 叠加 bgm 层 0.55 后音乐仅剩音效一半） */
-    bgmUnderMarch: 0.50,
     /**
-     * 13 接触音景（land_contact）循环时音乐压到 85% —— 比战斗 0.30、行军 0.50 都轻。
-     * 主人 2026-08-19 定「少压一点就行」：这段音景本身是战场底噪、不含旋律，
-     * 压太狠会把 BGM 整个吃掉，只要给它让出一点空间、听得出「音乐退了半步」即可。
+     * 🔴 [2026-09-16 主人定]「不压可以吗，例如 1 小、2 中、3 大」—— **闪避全线关闭**。
      *
-     * 🔴 [2026-09-02 主人「战术模式好像依然没有背景音乐」] 0.60 → 0.85。
-     *    实测（浏览器里逐个读 audio.volume 折算到 master 0.5，不是估算）：
-     *      战略地图 BGM 0.173 → 进 13 压成 0.104，而 land_contact 底噪是 0.199，
-     *      音乐比底噪低 5.7dB；再叠上火器 0.261 / 攻城撞击 0.295 / 爆炸 0.309 /
-     *      火炮 0.404（比音乐高 8~11.8dB），BGM 被整段宽频底噪彻底掩蔽 ——
-     *      听感就是「13 里没有音乐」，但它其实一直在播（bgmAudio.paused === false）。
-     *    0.85 后 BGM = 0.147，只比底噪低 2.6dB，能听出旋律又不抢戏。
-     *    ⚠️ 这条只管**音景**那一路；播报仍走 bgmUnderSpeech 0.35（语音优先不动）。
+     * 优先级改由**静态三层音量**保证（见 DEFAULT_SETTINGS / SPEECH_GAIN）：
+     *      BGM 0.45 < 音效 0.70 < 播报 1.00
+     * 播报比音乐高 +6.9dB、比音效高 +3.1dB，本来就压得住，不必再实时去压别人。
+     *
+     * 关掉的理由（主人报障两条，同一个根因）：
+     *   ·「背景音乐的音量总是忽高忽低」—— 军团常年行军，BGM 长期挂 50%，
+     *      进战斗掉 30%，没事又回 100%，在 1.0/0.85/0.5/0.35/0.3 之间来回跳。
+     *   ·「这个背景音乐的音量很小」—— 其实是那一刻正被行军压着，曲子本身标定是准的。
+     *
+     * 全部设为 1 = 任何情况下都不改变各层音量。要恢复某一路，把对应项改回小于 1 的值即可。
      */
-    bgmUnderBattleAmbience: 0.85,
-    /** 播报时音效压到 12%（微弱衬托，不抢语音） */
-    sfxUnderSpeech: 0.28,
+    bgmUnderSpeech: 1,
+    bgmUnderSfx: 1,
+    bgmUnderMarch: 1,
+    bgmUnderBattleAmbience: 1,
+    sfxUnderSpeech: 1,
 } as const;
-/** 播报有效音量 = master × SPEECH_GAIN（TTS 感知偏轻，补偿至与音效/音乐齐平） */
-const SPEECH_GAIN = 0.95; // 小幅上调播报音量（+5%）
+/** 3 播报（大）：三层里最高的一层，比音效 0.70 高 +3.1dB、比音乐 0.45 高 +6.9dB。
+ *  靠这个音量差压住另外两层，不再需要动态闪避。 */
+const SPEECH_GAIN = 1.0;
 
 // ---- 音量渐变时长（ms）：消除各路声音硬切的不适感 ----
 const FADE = {
@@ -269,7 +277,12 @@ const BGM_REGION_GAIN: Record<string, number> = {
     JIANGNAN: 0.708,  // -18.0 LUFS
     KOREA: 0.708,  // -18.0 LUFS
     LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
+    // 🔴 [2026-09-16] 主人报「这首音量很小」，一度提到 0.85；随后查明真因是**闪避**
+    //    （军团常年行军 → BGM 长期挂在 50%），已在 DUCK 表取消音效三路的压低。
+    //    标定本身实测是准的（整首 I=-18.2 LUFS，0.716 正好拉到 -21.05），故回到标定值，
+    //    维持「37 首同一响度」。别再因为听感单独抬某一首，那会重新打破统一。
     litang: 0.716,  // -18.1 LUFS
+
     liuhan: 0.708,  // -18.0 LUFS
     // 🔴 [2026-09-12 主人「江山风雨情的音量调大一点」] 0.708 → **1.00**（≈ +3.0 dB）。
     //    《江山风雨情》是电视剧《康熙王朝》主题曲 → 对应本作「满清」这首（`manqing_bgm.aud`）。
@@ -1131,6 +1144,27 @@ export class AudioManager {
      * - 音效(ui/battle/feed)：播报中静音（同层互斥：要么响播报，要么响音效）。
      * - 播报本身走 SpeechAnnouncer(TTS)，不在此压低。
      */
+    /**
+     * 🔴 [2026-09-16 主人报障「这个背景音乐的音量很小」]
+     * 当前 BGM 被压到多少、被谁压的 —— F3 面板显示它，好分清
+     * 「这首曲子本身轻」和「它正被行军/战斗/播报压着」。
+     * 分不清这两者就会去错地方：前者该调响度补偿，后者该调闪避档位。
+     */
+    public getBgmDuckInfo(): { factor: number; reason: string } {
+        if (this.speechDucking) return { factor: DUCK.bgmUnderSpeech, reason: '播报' };
+        if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) {
+            return { factor: DUCK.bgmUnderSfx, reason: '战斗' };
+        }
+        if (this.wantedLoops.has('land_contact')) {
+            return { factor: DUCK.bgmUnderBattleAmbience, reason: '13音景' };
+        }
+        if (this.wantedLoops.has('march_loop') || this.wantedLoops.has('cavalry_march_loop')
+            || this.wantedLoops.has('player_march_loop') || this.wantedLoops.has('naval_march_loop')) {
+            return { factor: DUCK.bgmUnderMarch, reason: '行军' };
+        }
+        return { factor: 1, reason: '无' };
+    }
+
     private duckFactor(category: AudioCategory): number {
         if (category === 'bgm') {
             if (this.speechDucking) return DUCK.bgmUnderSpeech;
