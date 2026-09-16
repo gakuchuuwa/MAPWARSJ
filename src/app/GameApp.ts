@@ -772,8 +772,10 @@ export class GameApp {
             showDialogue: (p) => this.playerHUD?.showDialogue(p),
             closeDialogue: () => this.playerHUD?.closeDialogue(),
             notify: (msg, durationMs) => this.playerHUD?.notify(msg, durationMs),
-            // 🔴 [2026-09-16 主人定]「字幕显示在下面」：赶路背景解说走画面下方的字幕条
-            subtitle: (text, durationMs) => this.playerHUD?.showSubtitle(text, durationMs),
+            // 🔴 [2026-09-16 主人定]「播报出来，字幕显示在下面」：
+            //    走现成的 SpeechAnnouncer —— 它一并管语音与底部字幕条（SubtitleBanner），
+            //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。
+            announceBriefing: (text, onDone) => speechAnnouncer.announceBriefing(text, onDone),
             kickLegionAi: (armyId) => this.aiController?.tickArmyById(armyId),
             ensureUnpaused: () => {
                 if (this.timeSystem.isGamePaused()) this.timeSystem.setPaused(false);

@@ -231,7 +231,13 @@ export class HistoricalEventManager {
         setTimeout(() => {
             for (const army of armies) {
                 if (!army || !this.legionManager.getLegionById(army.id)) continue;   // 已经没了就别重复清
-                this.legionManager.removeArmy(army);
+                // 🔴 [2026-09-16 主人报障「战役结束后亚历山大军团不消失」]
+                //    原来直接 removeArmy —— 整支军团连人带旗**凭空瞬消**，很突兀。
+                //    改走 disband()：它触发 beginDespawnFade()，与尸体同一套渐隐
+                //    （DESPAWN_FADE_OUT_MS 5s，LegionManager 在 CORPSE_DISPLAY_MS 15s 后才真正移出，
+                //     渐隐播得完）。disband 还会标 wasDisbanded —— 班师不算战败，
+                //    不给锚点城挂将/精锐冷却，下一场战役照常出将。
+                army.disband();
             }
             gameLog('expedition', `⚔️ [战场]【${bfName}】双方班师，主帅归城（下一个战场方可触发）`);
         }, 8000);

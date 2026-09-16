@@ -19,6 +19,15 @@ interface SpeakOptions {
   sTier?: boolean;
   /** 同步显示的字幕条文案（不传则不显示字幕） */
   banner?: string;
+  /** 字幕按**长段解说**排版（块居中、文字左对齐、可换行）；短句大事不传 */
+  bannerMultiline?: boolean;
+  /**
+   * 🔴 [2026-09-16 主人报障「没读完就下一段」] 长段解说的**兜底等待上限**（ms）。
+   * 不传时沿用 15s —— 那是给「某某灭国」这类短句设的；
+   * 战役背景解说一段上百字、念满 40~50s，撞上 15s 封顶就会被判成「已念完」，
+   * 触发 onDone → 下一段的 synth.cancel() 把还在念的这段掐断。
+   */
+  maxWaitMs?: number;
   rate?: number;
   /** 技能句已做人名校正，跳过全文 prepareSpeechText（防误替技能名/精锐名） */
   skipGlobalNameReplace?: boolean;
@@ -428,6 +437,26 @@ export class SpeechAnnouncer {
    *   有将 → 「白起率领秦国军，{势前缀}，兵临邯郸。赵国[名将]廉颇，{守方八字}」
    *          普将/名将同结构，仅名将多「名将」二字。
    */
+  /**
+   * 🔴 [2026-09-16 主人定] 战役背景解说 —— 玩家赶赴历史战场途中逐段念的旁白。
+   *    主人第八次重申的定位：这是**历史教材、历史直播**，用最真实的地理与历史做生动的直播。
+   *    所以走 sTier（略慢语速、期间不被常规播报打断），字幕用 multiline 长段排版。
+   *    `onDone` 在**念完**时回调 —— 调用方据此推下一段，别用定时器瞎猜时长。
+   */
+  public announceBriefing(text: string, onDone?: () => void): void {
+    const line = text.trim();
+    if (!line) { onDone?.(); return; }
+    this.speak(line, {
+      sTier: true,
+      banner: line,
+      bannerMultiline: true,
+      rate: 0.92,
+      // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
+      maxWaitMs: Math.min(180000, 4000 + line.length * 600),
+      onDone,
+    });
+  }
+
   public announceSiegeStart(opts: {
     attackerFactionId: string;
     cityName: string;
@@ -769,9 +798,23 @@ export class SpeechAnnouncer {
     }
 
     // 字幕条不依赖语音引擎是否可用（无声环境下画面仍完整）
-    if (opts?.banner) SubtitleBanner.show(opts.banner);
+    // 🔴 [2026-09-16 主人报障「字幕和语音对不上」] 字幕**跟着开口时刻**出，别在 speak 一开头就亮：
+    //    语音要等语音表就绪（50~450ms）+ 云端合成（~600ms），字幕早亮近一秒，观众看着就是不同步。
+    //    仍保底：1.5s 内没能开口（语音引擎不可用/静音环境）也把字幕亮出来，画面不缺信息。
+    let bannerShown = false;
+    let bannerFallbackTimer = 0;
+    const showBanner = (): void => {
+      if (bannerShown || !opts?.banner) return;
+      bannerShown = true;
+      window.clearTimeout(bannerFallbackTimer);
+      // 停留要盖住整段语音：短句仍是 9s，长段按估算时长走（settle 时会提前收）
+      const hold = Math.min(opts.maxWaitMs ?? 9000, Math.max(9000, 1500 + opts.banner.length * 400));
+      SubtitleBanner.show(opts.banner, hold, opts.bannerMultiline === true);
+    };
+    if (opts?.banner) bannerFallbackTimer = window.setTimeout(showBanner, 1500);
 
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      showBanner();
       opts?.onStart?.();
       opts?.onDone?.();
       return;
@@ -779,11 +822,17 @@ export class SpeechAnnouncer {
     const synth = window.speechSynthesis;
 
     if (opts?.sTier) {
-      // 兜底占用窗口：按文本长度估读完时间，onend 会提前释放
-      this.sTierBusyUntilMs = now + Math.min(12000, 2500 + text.length * 350);
+      // 兜底占用窗口：按文本长度估读完时间，onend 会提前释放。
+      // 🔴 长段解说要用 maxWaitMs 放宽，否则念到一半窗口就过期、普通播报插队打断。
+      this.sTierBusyUntilMs = now + Math.min(opts?.maxWaitMs ?? 12000, 2500 + text.length * 350);
     }
 
-    synth.cancel();
+    // 🔴 [2026-09-16 主人报障「第三段不读『然而』二字」]
+    //    原来每段开口前无条件 cancel()。Chrome 的老毛病：cancel() 后紧接着 speak()，
+    //    开头几个字会被吞掉。而串行播报里上一段**已自然念完**，synth 本就空闲，
+    //    这个 cancel 纯属多余，白踩那个坑。只在确实有语音在播/排队时才打断。
+    //    （云健那条路是播完整音频文件，不会吞字；吞字只会出在 Web Speech 回落上。）
+    if (synth.speaking || synth.pending) synth.cancel();
     // Chrome 常见：cancel 后 speaking 卡住 paused，后续 speak 无声
     try { if (synth.paused) synth.resume(); } catch { /* ignore */ }
     // 停掉上一句云健 Audio（synth.cancel 只停 Web Speech，管不到 Audio 元素）
@@ -836,13 +885,14 @@ export class SpeechAnnouncer {
         }
 
         this.beginSpeechDuckSession();
-        const duckSafetyMs = Math.min(15000, 1500 + text.length * 400);
+        const duckSafetyMs = Math.min(opts?.maxWaitMs ?? 15000, 1500 + text.length * 400);
         let settled = false;
         let started = false;
         let safety = 0;
         const fireStart = () => {
           if (started) return;
           started = true;
+          showBanner();          // 字幕与真正开口同刻
           opts?.onStart?.();
         };
         const settle = () => {
@@ -850,12 +900,27 @@ export class SpeechAnnouncer {
           settled = true;
           fireStart();
           window.clearTimeout(safety);
-          if (opts?.sTier) this.sTierBusyUntilMs = 0;
-          if (opts?.banner) {
-            window.setTimeout(() => SubtitleBanner.hide(), 1200);
-          }
-          opts?.onDone?.();
-          this.endSpeechDuckSessionIfIdle();
+          window.clearTimeout(bannerFallbackTimer);
+
+          const finish = () => {
+            if (opts?.sTier) this.sTierBusyUntilMs = 0;
+            if (opts?.banner) {
+            // 🔴 [2026-09-16 主人报障「字幕显示一下就没了」]
+            //    SubtitleBanner 是全局单例。settle 里安排完这个延迟 hide 就立刻 onDone，
+            //    调用方随即念下一段并 show 出新字幕 —— 1.2s 后这个定时器照样触发，
+            //    收掉的是**下一段**刚显示的字幕，于是每段只闪一下。
+            //    用播报序号挡掉：已被新一句取代就不许再收字幕。
+              window.setTimeout(() => { if (isCurrent()) SubtitleBanner.hide(); }, 1200);
+            }
+            opts?.onDone?.();
+            this.endSpeechDuckSessionIfIdle();
+          };
+
+          // 🔴 [2026-09-16 主人定]「主要是播报，字幕是辅助」
+          //    推进**只由语音说了算**：念完就立刻接下一段，绝不为了让字幕多停一会儿而拖住语音。
+          //    曾按字幕估算时长延后 onDone，结果语音念完还干等好几秒，段间大段静默。
+          //    字幕该停多久由它自己的 hold 管（见 showBanner），管不着语音的节奏。
+          finish();
         };
         safety = window.setTimeout(settle, duckSafetyMs);
 
