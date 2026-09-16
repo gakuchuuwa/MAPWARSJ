@@ -28,6 +28,7 @@ import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought } from '../events/battlefieldState';
+import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
 export type PlayerQuestKind = 'restore' | 'campaign';
 
@@ -88,7 +89,12 @@ export interface PlayerQuestDeps {
     };
     showDialogue: (payload: DialoguePayload) => void;
     closeDialogue: () => void;
-    notify: (msg: string) => void;
+    notify: (msg: string, durationMs?: number) => void | (() => void);
+    /**
+     * 🔴 [2026-09-16 主人定]「字幕显示在下面」——赶路背景解说走**画面下方的字幕条**，
+     * 不走上方那个 toast（那是到达/入伍/报错的操作提示，两者不能混）。
+     */
+    subtitle?: (text: string, durationMs?: number) => void | (() => void);
     kickLegionAi: (armyId: string) => void;
     ensureUnpaused: () => void;
     feed?: {
@@ -273,7 +279,9 @@ export class PlayerQuestSystem {
             const pos = bfApi.locate(bfId);
             if (!pos) { this.deps.notify(far); return; }
             this.deps.notify(`${far}，正赶往【${battleTitle}】`);
-            this.deps.hero.travelToPoint(pos, battleTitle, () => this.onBattlefieldClicked(bfId, battleTitle));
+            const ok = this.deps.hero.travelToPoint(pos, battleTitle, () => this.onBattlefieldClicked(bfId, battleTitle));
+            const bf = BATTLEFIELDS.find(b => b.id === bfId);
+            if (ok && bf) this.startJourneyBriefing(bf);
             return;
         }
 
@@ -555,11 +563,61 @@ export class PlayerQuestSystem {
         if (ok) {
             this.bfRetryAfter.delete(bf.id);
             this.deps.notify(`🐎 奔赴【${title}】`);
+            this.startJourneyBriefing(bf);
             return true;
         }
         // 寻路失败（无路可达/正在军中）→ 冷却 60 秒再试，期间走找武将那条路
         this.bfRetryAfter.set(bf.id, now + BF_RETRY_COOLDOWN_MS);
         return false;
+    }
+
+    /**
+     * 🔴 [2026-09-16 主人定] 赶路背景播报：玩家**在奔赴战场的路上**逐段播这场仗的背景。
+     * 空行分段，按各段字数保留阅读时间；抵达、改道或入伍时停止。
+     * 同一个战场只播一次（`briefedBattlefields`），中途改道或再次触发都不重播。
+     */
+    private startJourneyBriefing(bf: BattlefieldData): void {
+        const text = bf.briefing?.trim();
+        if (!text) return;
+        if (this.briefedBattlefields.has(bf.id)) return;
+        this.briefedBattlefields.add(bf.id);
+
+        const paragraphs = journeyBriefingParagraphs(text);
+        if (!paragraphs.length) return;
+
+        this.clearJourneyBriefing();
+        let i = 0;
+        let nextAt = 0;
+        let dismiss: void | (() => void);
+        const title = this.getBattlefieldBattleTitle(bf.id, bf.name);
+        const pushNext = () => {
+            // 玩家已经不在赶这个战场的路上（改道/入伍/到了）→ 停播，别追着他念
+            if (!this.deps.hero.isTraveling() || this.deps.hero.isAttached()
+                || this.deps.hero.getTravelPointLabel() !== title) {
+                if (typeof dismiss === 'function') dismiss();
+                this.clearJourneyBriefing();
+                return;
+            }
+            if (Date.now() < nextAt) return;
+            if (i >= paragraphs.length) {
+                this.clearJourneyBriefing();
+                return;
+            }
+            const duration = journeyBriefingDuration(paragraphs[i]);
+            // 历史直播的解说字幕：优先走下方字幕条，没接线才回落到 toast
+            dismiss = (this.deps.subtitle ?? this.deps.notify)(paragraphs[i], duration);
+            nextAt = Date.now() + duration;
+            i++;
+        };
+        this.briefingTimer = window.setInterval(pushNext, 250);
+        pushNext();   // 第一段立刻出，别让玩家先干等
+    }
+
+    private clearJourneyBriefing(): void {
+        if (this.briefingTimer !== null) {
+            window.clearInterval(this.briefingTimer);
+            this.briefingTimer = null;
+        }
     }
 
     // ── 跟踪 ──────────────────────────────────────────────
@@ -620,6 +678,9 @@ export class PlayerQuestSystem {
      * 打断玩家去找武将的行程并重复弹「无路可达」，把玩家钉死在原地。
      */
     private bfRetryAfter = new Map<string, number>();
+    /** 已经播过赶路背景的战场：同一个战场只播一次，改道或再次触发都不重播 */
+    private briefedBattlefields = new Set<string>();
+    private briefingTimer: number | null = null;
 
     /**
      * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。
@@ -926,5 +987,6 @@ export class PlayerQuestSystem {
     public dispose(): void {
         if (this.timer != null) window.clearInterval(this.timer);
         this.timer = null;
+        this.clearJourneyBriefing();
     }
 }

@@ -18,6 +18,7 @@ import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
+import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -26,6 +27,8 @@ interface BattleDraft {
     /** 战场地名（标牌上只显示这个） */
     bfName: string;
     bfNote: string;
+    /** 赶路背景播报：玩家在奔赴这个战场的路上逐段播的背景介绍（空行分段） */
+    bfBriefing: string;
 
     year: number;
     /** 0 春 1 夏 2 秋 3 冬 */
@@ -118,6 +121,7 @@ function loadDrafts(): BattleDraft[] {
             bfId: bf?.id ?? '',
             bfName: bf?.name ?? '',
             bfNote: bf?.note ?? '',
+            bfBriefing: bf?.briefing ?? '',
             year: ev.year,
             season: ev.season ?? 0,
             type: isSiege ? 'siege' : 'field_battle',
@@ -151,7 +155,7 @@ function loadDrafts(): BattleDraft[] {
 
 function blankDraft(): BattleDraft {
     return {
-        bfId: '', bfName: '', bfNote: '',
+        bfId: '', bfName: '', bfNote: '', bfBriefing: '',
         year: -321, season: 0, type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
@@ -292,6 +296,15 @@ function opt(value: string, label: string, cur: string): string {
     const sel = value === cur ? ' selected' : '';
     return `<option value="${escapeAttr(value)}"${sel}>${escapeHtml(label)}</option>`;
 }
+/** 赶路播报分几段（与引擎同口径：空行分段） */
+function briefingParagraphs(text: string): number {
+    return text.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean).length;
+}
+/** 包括最后一段阅读时间，与游戏字幕使用同一时长算法。 */
+function briefingSeconds(text: string): number {
+    return Math.ceil(journeyBriefingParagraphs(text).reduce((sum, p) => sum + journeyBriefingDuration(p), 0) / 1000);
+}
+
 function generalOptions(cur: string): string {
     return '<option value="">（未选）</option>'
         + ALL_GENERALS.map((g) => opt(g.generalId, `${g.generalName} — ${g.factionId}`, cur)).join('');
@@ -441,6 +454,11 @@ function render(): void {
                         <textarea id="f-battleDesc">${escapeHtml(working.battleDescription)}</textarea></div>
                 </div>
                 <div class="row">
+                    <div class="fld"><label>赶路背景播报 · 玩家在路上逐段播，空行分段</label>
+                        <textarea id="f-bfBriefing" style="min-height:120px;">${escapeHtml(working.bfBriefing)}</textarea>
+                        <span class="hint">${working.bfBriefing.trim() ? briefingParagraphs(working.bfBriefing) + ' 段，约 ' + briefingSeconds(working.bfBriefing) + ' 秒播完' : '留空则赶路时只有一条「奔赴XXX」提示'}</span></div>
+                </div>
+                <div class="row">
                     <div class="fld"><label>战场备注 · 史料出处，可空</label>
                         <textarea id="f-bfNote" style="min-height:40px;">${escapeHtml(working.bfNote)}</textarea></div>
                 </div>
@@ -519,6 +537,7 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-desc', 'input', (el) => { working.description = el.value; });
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
+    on<HTMLTextAreaElement>('f-bfBriefing', 'change', (el) => { working.bfBriefing = el.value; render(); });
 
     on<HTMLButtonElement>('wp-add', 'click', () => {
         const sel = document.getElementById('wp-city') as HTMLSelectElement | null;
