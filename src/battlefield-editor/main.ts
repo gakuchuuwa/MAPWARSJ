@@ -13,7 +13,7 @@
  * 数据是 import 进来的（Vite 服务这张页面），所以列表不需要服务端；
  * 只有落盘走 `/api/battlefield-editor/save`。
  */
-import { BATTLEFIELDS } from '../data/Battlefields';
+import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
@@ -136,9 +136,9 @@ function loadDrafts(): BattleDraft[] {
             if (c) loc = { lat: c.lat, lng: c.lng };
         }
         loc = loc ?? { lat: 0, lng: 0 };
-        // 战场按「同年 + 坐标接近」配对（两处坐标本应一字不差）
-        const bf = BATTLEFIELDS.find((b) => b.scriptYear === ev.year
-            && Math.abs(b.lat - loc!.lat) < 0.5 && Math.abs(b.lng - loc!.lng) < 0.5) ?? null;
+        // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近），与运行时同一个函数。
+        //    改之前这里用 0.5 度、运行时用 0.15 度且不看年份，编辑器配得上运行时未必配得上。见该函数长注释。
+        const bf = BATTLEFIELDS.find((b) => matchesBattlefield(b, ev.year, loc)) ?? null;
         drafts.push({
             bfId: bf?.id ?? '',
             bfName: bf?.name ?? '',

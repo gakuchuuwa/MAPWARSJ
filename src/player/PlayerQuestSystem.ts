@@ -669,8 +669,11 @@ export class PlayerQuestSystem {
         // 优先前往历史战场触发战役事件；
         // 若当前年份无可用战场，且未在行军，才去找武将加入势力乱斗；
         // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
+        // 🔴 [2026-09-17 主人定]「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场。」
+        //    乱斗模式下整条战场分支不走，直接去找武将入伍。切模式时已出发的行程由 setAutoPlan 掐掉。
         if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
-            const headingToBattlefield = this.checkAndTriggerNextBattlefield();
+            const headingToBattlefield = this.deps.hero.autoPlan === 'script'
+                && this.checkAndTriggerNextBattlefield();
             if (!headingToBattlefield && !this.deps.hero.isTraveling()) {
                 this.autoTravelToBestCity();
             }

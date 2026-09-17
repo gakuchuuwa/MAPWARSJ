@@ -39,6 +39,9 @@ import {
     type PlayerRank,
 } from './PlayerConfig';
 
+/** 自动模式的两套玩法：剧本模式到年份优先去战场，乱斗模式完全不去战场（主人 2026-09-17 定）。 */
+export type PlayerAutoPlan = 'script' | 'melee';
+
 /** 从本势力文化军团三排里学到的兵种（≠ 打城拿到的精锐番号 LearnedElite）。 */
 export interface LearnedUnit {
     /** 兵种 key（UNIT_ASSETS / WAR_TYPES 同名） */
@@ -166,6 +169,17 @@ export class PlayerHero {
      *  🔴 [2026-09-09 主人定「玩家开局默认自动」] 默认开启，HUD 里可随时手动关掉。 */
     public autoMode = true;
     /**
+     * 自动模式走哪套玩法（🔴 2026-09-17 主人定「剧本和乱斗模式分开。因为我还无法确定要不要做剧本。
+     *   现在的自动模式分为两种，一种是剧本模式，到了年份，玩家优先去战场。乱斗模式的话，玩家不去战场。」）
+     *
+     *   · `'script'` 剧本模式 —— 到了年份优先奔赴历史战场，没有可打的战场才去找武将乱斗（9-16 定的那套）；
+     *   · `'melee'`  乱斗模式 —— **完全不碰战场**，一直找武将入伍打乱斗。
+     *
+     * 🔴 默认 `'melee'` 乱斗（主人 2026-09-17 定「应该默认乱斗模式，你默认剧本模式，上来不就自动接任务了吗」）。
+     *   我起初默认 `'script'` 是错的：那样一开局玩家就自动奔赴格拉尼库斯，而剧本要不要做都还没定。
+     */
+    public autoPlan: PlayerAutoPlan = 'melee';
+    /**
      * 「就近寻将」开关，**默认关**。
      * 🔴 [2026-09-15 主人报障「就近太近只在一个势力找，全随机又一直在奔波」] 语义已改：
      *   它不再是「随机 / 取最近」的硬二选一，两头都被实测否掉了。
@@ -287,6 +301,18 @@ export class PlayerHero {
     public setAutoMode(on: boolean): void {
         if (this.autoMode === on) return;
         this.autoMode = on;
+        this.emitChange();
+    }
+    /**
+     * 切换自动模式的玩法（剧本 / 乱斗）。
+     * 🔴 切到乱斗时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则「乱斗模式玩家不去战场」
+     *    这条会被一趟已经出发的行程架空，玩家照样一路走到战场再触发。`travelPointLabel` 只在
+     *    `travelToPoint` 里设，而全项目只有战场引导会调它，所以它非空就等于「正在奔赴战场」。
+     */
+    public setAutoPlan(plan: PlayerAutoPlan): void {
+        if (this.autoPlan === plan) return;
+        this.autoPlan = plan;
+        if (plan === 'melee' && this.travelPointLabel !== null) this.cancelTravel();
         this.emitChange();
     }
     public setNearbyFirst(on: boolean): void {
