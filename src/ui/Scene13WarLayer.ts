@@ -6126,16 +6126,6 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-23 主人定] 攻城战不再列阵行军：开局双方按兵不动（见 holdSiege），
                 //    40 秒城墙坍塌后直接各自索敌接战（aimAt/search）；march 列阵只保留给野战。
                 const inMarch = this.deployT > 0 && this.battleType !== 'siege';
-                const slotIdx = s.slotN++;
-                // 奇袭出生点：敌方那一侧的边缘（比敌方出兵口更靠外 = 真的在背后），
-                // 纵向落在敌军重心一线，再按槽位散开，避免一堆人叠在同一点。
-                let flankX = 0, flankY = 0;
-                if (isFlank) {
-                    const VW = this.canvas?.width ?? 1920;
-                    const edge = Math.max(60, VW * 0.07) * 0.5;
-                    flankX = s.f === 0 ? VW - edge : edge;
-                    flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
-                }
                 const files = marchFilesOf(s.key);
                 // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
                 // 出兵口的前后行间距 depth = min(150, VW×0.075)，1920 屏才 144px，
@@ -6145,6 +6135,30 @@ export class Scene13WarLayer {
                 const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
                 const dep = ((slotIdx / files) | 0) * spDep;
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
+
+                // 🔴 [2026-09-17 主人定] 背刺奇袭出生点改造：在敌方最后排（row===2）出兵口随机抽取出生
+                let flankX = 0, flankY = 0;
+                if (isFlank) {
+                    const enemyBackSpawns = this.spawns.filter(sp => sp.f === 1 - s.f && sp.row === 2);
+                    const candidates = enemyBackSpawns.length > 0
+                        ? enemyBackSpawns
+                        : this.spawns.filter(sp => sp.f === 1 - s.f);
+                    const rndPort = candidates.length > 0
+                        ? candidates[Math.floor(Math.random() * candidates.length)]
+                        : null;
+                    const VW = this.canvas?.width ?? 1920;
+                    if (rndPort) {
+                        // 攻方(s.f===0)从敌方(守方)后排出兵口杀向中线，方阵排在出兵口后方(+dep)；
+                        // 守方(s.f===1)从敌方(攻方)后排出兵口杀向中线，方阵排在出兵口后方(-dep)。
+                        const rawX = rndPort.x + (s.f === 0 ? dep : -dep);
+                        flankX = Math.max(20, Math.min(VW - 20, rawX));
+                        flankY = rndPort.y;
+                    } else {
+                        const edge = Math.max(60, VW * 0.07) * 0.5;
+                        flankX = s.f === 0 ? VW - edge : edge;
+                        flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
+                    }
+                }
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
                     zid: this.manSeq++,

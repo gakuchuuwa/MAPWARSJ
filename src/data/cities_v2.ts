@@ -592,8 +592,8 @@ buildingStyle: 'VIETNAMESE', troops: 10000,
 
     { id: 'city_qucheng', name: '朐城', factionId: 'mi', lat: 34.5292, lng: 119.132996, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
-        { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'pass', region: 'CENTRAL',
-buildingStyle: 'CENTRAL', troops: 10000,
+        { id: 'city_baibogu', name: '白波谷', factionId: 'baibo', lat: 36.135621, lng: 112.206116, type: 'stockade', region: 'CENTRAL',
+buildingStyle: 'ASIA', troops: 10000,
         note: '白波谷；黄巾关隘',
     },
     { id: 'city_baoshan', name: '永昌', factionId: 'ailao', lat: 25.11, lng: 99.16, type: 'small_city', region: 'NORTH',
