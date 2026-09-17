@@ -369,26 +369,42 @@ function render(): void {
             </tr>
           </thead>
           <tbody>
-            ${list.map(r => `
+            ${list.map(r => {
+                /* 🔴 [2026-09-18 主人报障「编辑军团后，信息有的不实时更新」]
+                 * 左表原先只读 `r`（已保存的记录），而阵型/兵种/战船改动都写在 `draft` 里，
+                 * 于是右侧面板的三排人数当场从 4+2+3 变成 3+3+3，左表那一行却还挂着旧的
+                 * 「衡轭 4+2+3 ×4 ×2 ×3」—— 同一屏两个数，主人看到的就是这个。
+                 * 现在：**正在编辑的那一行改读 draft**，其余行照旧读已保存值。
+                 * 人数与右侧同源，都由 MODE_ROWS[mode] 得出，不会再各算各的。 */
+                const d = (draft && r.name === selected) ? draft : null;
+                const rMode = d ? d.mode : r.mode;
+                const rCnt = MODE_ROWS[rMode] ?? [0, 0, 0];
+                const rTypes: (string | undefined)[] = d
+                    ? [d.types[0], d.types[1], d.types[2]]
+                    : [r.slots[0]?.type, r.slots[1]?.type, r.slots[2]?.type];
+                const rShip = d ? d.shipId : r.shipId;
+                return `
               <tr data-name="${esc(r.name)}" style="cursor:pointer;border-top:1px solid #221e19;${selected === r.name ? 'background:#2f2a20;' : ''}">
                 <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : '#c0a0e0'};">${r.layer}</td>
                 <td style="padding:6px 10px;color:#e8e0d0;">${esc(r.name)}</td>
-                <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[r.mode] ?? r.mode}</td>
+                <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[rMode] ?? rMode}</td>
                 ${[0, 1, 2].map(i => {
-                    const u = r.slots[i];
+                    const t = rTypes[i];
+                    const c = d ? (rCnt[i] ?? 0) : (r.slots[i]?.count ?? 0);
                     return `<td style="padding:4px 10px;color:#d8c898;">
                       <div style="display:flex;align-items:center;gap:6px;">
-                        ${u ? `<canvas data-uid="${esc(u.type)}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
-                        <span>${esc(cn(u?.type ?? '—'))}<span style="color:#6a6358;"> ×${u?.count ?? 0}</span></span>
+                        ${t ? `<canvas data-uid="${esc(t)}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                        <span>${esc(cn(t ?? '—'))}<span style="color:#6a6358;"> ×${c}</span></span>
                       </div></td>`;
                 }).join('')}
                 <td style="padding:4px 10px;color:#d8c898;">
                   <div style="display:flex;align-items:center;gap:6px;">
-                    ${r.shipId ? `<canvas data-uid="${esc(shipUnitId(r.shipId))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
-                    <span>${esc(shipLabel(r.shipId))}</span>
+                    ${rShip ? `<canvas data-uid="${esc(shipUnitId(rShip))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                    <span>${esc(shipLabel(rShip))}</span>
                   </div></td>
                 <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
-              </tr>`).join('')}
+              </tr>`;
+            }).join('')}
           </tbody>
         </table>
       </div>

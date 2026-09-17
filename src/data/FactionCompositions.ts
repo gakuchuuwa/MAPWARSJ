@@ -70,7 +70,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "zhengzhou": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "sub",
     },
     "yao": {
@@ -469,95 +469,95 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "nuogai": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "bashekeer": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "xibo_d": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "oirat_ming": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "dzungar": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "kazakh": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tuoming": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tuerhute": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tushetu": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tumed": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tumengken": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "tuva": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "zhasaketu": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "kaerka": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "wuzhumuqin": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "xingan": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "chechen": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "sunite": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "buriat": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "huite": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "nuoyan_d": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "wuli_d": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "wulianghai": {
-        legionName: "帝国时代草原军团",
+        legionName: "帝国时代蒙古军团",
         legionType: "region",
     },
     "xiajiasi": {
@@ -609,31 +609,31 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "dingling": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "xiongnu": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "cheshihou": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "xijue": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "huyan": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "baidi": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "heisha_d": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "yada": {
@@ -969,115 +969,115 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "nifuhe": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "bailian": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "manzhou": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "manzhou_d": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "aisin_d": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "haixi_nvzhen": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "yeren_nvzhen": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "hezhe": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "agui": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "gumie": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "nanai": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "feiyaka": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "dawoer": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "suolun": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "jilin": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "keerqin": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "eluoke": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "kuye": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "ewenki": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "dongping": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "maomingan": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "aola": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "yehe": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "wula": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "qinghai": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "wenling": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "elunchunzu": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "weiyuan": {
-        legionName: "帝国时代满洲军团",
+        legionName: "帝国时代满清军团",
         legionType: "region",
     },
     "jiujiang": {
@@ -1108,7 +1108,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "quanrong": {
-        legionName: "古典时代草原军团",
+        legionName: "古典时代匈奴军团",
         legionType: "region",
     },
     "yanchuan_d": {

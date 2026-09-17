@@ -1520,8 +1520,8 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     JAPAN_ANTIQUITY: '封建时代大和军团',
     JAPAN_IMPERIAL: '帝王时代幕藩军团',
     STEPPE: "城堡时代蒙古军团",
-    STEPPE_IMPERIAL: "帝国时代草原军团",
-    STEPPE_ANTIQUITY: "古典时代草原军团",
+    STEPPE_IMPERIAL: "帝国时代蒙古军团",
+    STEPPE_ANTIQUITY: "古典时代匈奴军团",
     STEPPE_FEUDAL: "封建时代草原军团",
     HEXI: "古典时代秦汉军团",
     JIANGNAN: "封建时代隋唐军团",
@@ -1628,7 +1628,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     KUSH: '古典时代努比亚军团',
     KHITAN: "封建时代契丹军团",
     UIGHUR: '封建时代回鹘军团',
-    MOHE: '封建时代靺鞨军团',
+    MOHE: '封建时代渤海军团',
     ANGLO_SAXON: '封建时代盎格鲁-撒克逊军团',
     GHANA: '封建时代加纳军团',
     KHAZARS: '封建时代可萨军团',
@@ -1643,7 +1643,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     OTTOMAN: "帝国时代奥斯曼军团",
     OTTOMAN_IMPERIAL: '帝国时代奥斯曼军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     FRENCH: '城堡时代法兰西军团',
-    MANCHU: "帝国时代满洲军团",
+    MANCHU: "帝国时代满清军团",
     MUGHAL: '帝国时代莫卧儿军团',
     SAFAVID: '帝国时代波斯军团',
     RUSSIAN: '帝国时代俄罗斯军团',
@@ -1850,7 +1850,11 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
     PURU: {
         formationMode: 'balance_yoke',
         tiers: PURU_BASE_TIERS,
-        shipId: 'ANT_WAR_GALLEY', // 普鲁军团：古典大战舰（南亚古典大舰）
+        // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」+ 四时代硬闸]
+        //    本军团在役势力是蒙格（古典普鲁）＝古典时代，古典军团只许用古典船：
+        //    孟加拉楼船是**封建**档（✗越界）。南亚古典在现有 46 艘里没有既古典又像南亚的船，
+        //    故取古典时代**最高档**战船（古典桨帆船高级＝Elite Galley，古典✓）。
+        shipId: 'ANT_ELITE_GALLEY', // 普鲁军团：古典桨帆船高级（南亚古典暂用古典时代最高档战船）
     },
     AFRICA: {
         formationMode: 'fish_scale',
@@ -1880,7 +1884,10 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
     MALAY: {
         formationMode: 'triangle',
         tiers: MALAY_BASE_TIERS,
-        shipId: 'FAST_FIRE_SHIP', // 东南亚军团：快速喷火船（三佛齐/群岛水网突击快船）
+        // 🔴 [2026-09-19 四时代硬闸 + 同族升档] 原为 FAST_FIRE_SHIP（快速喷火船）＝**帝国**档，
+        //    而本军团在役势力是美山（城堡高棉）＝城堡时代，越界。火攻艨艟线里城堡窗内可用的是
+        //    「重型燃烧战船」（燃烧战船 → 重型燃烧战船，同一职能的最高档），高棉/真腊内河重船史实相合。
+        shipId: 'HEAVY_INCENDIARY_SHIP', // 东南亚军团：重型燃烧战船（内河火攻重船，城堡档）
     },
     EAST: {
         formationMode: 'fish_scale',
@@ -1900,7 +1907,12 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
     GERMANIC: {
         formationMode: 'balance_yoke',
         tiers: GERMANIC_BASE_TIERS,
-        shipId: 'CARAVEL', // 西欧军团：卡拉维尔帆船（西欧大西洋风帆战舰主力）
+        // 🔴 [2026-09-19 主人定] ① 素材样貌：MONOREME 是**地中海桨帆船**，配日耳曼/北海不像；
+        //    改挂长船（北海-波罗的海型屈首搭板长船，涅达姆船一脉）。项目已按「维京归日耳曼」
+        //    把维京算在本文化内，苏格兰也早在用长船素材，故日耳曼用长船不算跨界。
+        //    ② 同族升档：长船线两档（维京长船 → 维京长船高级），同属封建档，取高级档。
+        //    ③ 时代闸：本军团在役势力是封建日耳曼（美因茨），落在「封建军团可用古典+封建」窗内 ✓。
+        shipId: 'ELITE_LONGBOAT', // 西欧军团：维京长船高级（长船线最高档，封建档）
     },
     STEPPE: {
         formationMode: 'triangle',
@@ -1910,7 +1922,10 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
     ORIE: {
         formationMode: 'balance_yoke',
         tiers: ORIE_BASE_TIERS,
-        shipId: 'FIRE_SHIP', // 中东军团：喷火船（阿拉伯/中东石脑油突击战船）
+        // 🔴 [2026-09-19 四时代硬闸] 原为 FIRE_SHIP（喷火船）＝**城堡**档，而本军团在役势力是
+        //    巴格达（封建西亚）＝封建时代，越界。火船线里封建窗内可用的只有基础档「喷火桨帆船」
+        //    （喷火桨帆船=封建 → 喷火船=城堡 → 快速喷火船=帝国），此档已是封建窗内的最高档。
+        shipId: 'FIRE_GALLEY', // 中东军团：喷火桨帆船（阿拉伯-黎凡特火攻快船，封建档）
     },
     AMERICA: {
         formationMode: 'crane_wing',
@@ -1925,7 +1940,10 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
     THRACIAN: {
         formationMode: 'balance_yoke',
         tiers: THRACIAN_BASE_TIERS,
-        shipId: 'LEMBOS', // 色雷斯军团：希腊轻型伦博斯（色雷斯/黑海西岸轻捷突击快船）
+        // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」] 伦博斯线共四档
+        //    （轻型伦博斯 → 战型伦博斯高级 → 重型伦博斯重装 → 旗舰伦博斯重装），同为古典档，
+        //    取最高的旗舰档；色雷斯-黑海沿岸本即以伦博斯快船著称。
+        shipId: 'ELITE_LEMBOS', // 色雷斯军团：希腊旗舰伦博斯重装（伦博斯线最高档，古典档）
     },
 };
 

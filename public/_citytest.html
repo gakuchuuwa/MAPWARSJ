@@ -1129,11 +1129,7 @@ const LAYER3_CUSTOM_GROUPS = [
     //    形态仍走三级自建的蒙古包毡帐营地（8 个真蒙古包 E~L + 栅栏），城堡 MONG_CASTLE_AGE3（木石大斡耳朵）。
     group: '🏕️ 漠北蒙古毡帐营地',
     branches: [
-      // 🔴 [2026-09-18 主人定「战略地图上的据点，和战术模式中要同步」] deStyle 由 'ASIA' 改正为 'YURT'。
-      //    游戏侧权威 REGION_TO_DE_STYLE 写的是 `MOBEI_MONGOL: 'YURT'`（三级漠北蒙古→毡帐），
-      //    本表却写成 ASIA —— 于是 buildingStyle='MOBEI_MONGOL' 的据点（如燕然山）在游戏里是毡帐营地，
-      //    在本预览页却被算成东亚建筑，两边对不上，连带城寨/小城的营地判据 isYurt 也命不中。
-      { key: 'MOBEI_MONGOL', deStyle: 'YURT', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
+      { key: 'MOBEI_MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
     ]
   },
 ];

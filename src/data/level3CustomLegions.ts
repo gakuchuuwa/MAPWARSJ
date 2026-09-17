@@ -53,7 +53,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['AMAZONS'],
         parentLegion: '古典时代色雷斯军团',
-        shipId: 'LEMBOS',
+        shipId: 'ELITE_LEMBOS',
     },
     {
         name: '古典时代先秦军团',
@@ -89,7 +89,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['INDIA'],
         parentLegion: '古典时代普鲁军团',
-        shipId: 'ANT_WAR_GALLEY',
+        shipId: 'ANT_ELITE_GALLEY',
     },
     {
         name: '古典时代埃及军团',
@@ -113,7 +113,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['WESTERN'],
         parentLegion: '中亚军团',
-        shipId: 'GALLEY',
+        shipId: 'CANOE',
     },
     {
         name: '古典时代大希腊军团',
@@ -209,7 +209,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['JAPAN_ANTIQUITY'],
         parentLegion: '东亚军团',
-        shipId: 'ANT_WAR_GALLEY',
+        shipId: 'ANT_ELITE_GALLEY',
     },
     {
         name: '古典时代日耳曼军团',
@@ -245,7 +245,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['GOJOSEON'],
         parentLegion: '东亚军团',
-        shipId: 'GALLEY',
+        shipId: 'CANOE',
     },
     {
         name: '古典时代波斯军团',
@@ -305,19 +305,19 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['QIANG'],
         parentLegion: '东亚军团',
-        shipId: 'DEMO_RAFT',
+        shipId: 'CANOE',
     },
     {
-        name: '古典时代草原军团',
+        name: '古典时代匈奴军团',
         formationMode: 'square',
         slots: [
+            { type: 'elite_tarkan', count: 3 },
+            { type: 'steppe_lancer', count: 3 },
             { type: 'mangudai', count: 3 },
-            { type: 'xianbei_raider', count: 3 },
-            { type: 'elite_kipchak', count: 3 },
         ],
         regions: ['STEPPE_ANTIQUITY'],
         parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
+        shipId: 'CANOE',
     },
     {
         name: '古典时代赫梯军团',
@@ -341,7 +341,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['ORIE_ANTIQUITY'],
         parentLegion: '中东军团',
-        shipId: 'FIRE_SHIP',
+        shipId: 'BIREME',
     },
     {
         name: '古典时代雅隆军团',
@@ -353,7 +353,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['YARLUNG'],
         parentLegion: '东亚军团',
-        shipId: 'DEMO_RAFT',
+        shipId: 'CANOE',
     },
     {
         name: '古典时代鲜卑军团',
@@ -365,7 +365,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['NORTHEAST'],
         parentLegion: '东亚军团',
-        shipId: 'GALLEY',
+        shipId: 'CANOE',
     },
     {
         name: '城堡时代东南亚军团',
@@ -377,7 +377,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SEASIA_CASTLE'],
         parentLegion: '城堡时代马来军团',
-        shipId: 'FAST_FIRE_SHIP',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代宋禁军团',
@@ -449,7 +449,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['CRUSADERS'],
         parentLegion: '西欧军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代卡斯蒂利亚军团',
@@ -497,7 +497,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SERBIA'],
         parentLegion: '东北欧军团',
-        shipId: 'LEMBOS',
+        shipId: 'ELITE_LEMBOS',
     },
     {
         name: '城堡时代大理军团',
@@ -509,7 +509,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['DALI'],
         parentLegion: '东亚军团',
-        shipId: 'INCENDIARY_SHIP',
+        shipId: 'HEAVY_INCENDIARY_SHIP',
     },
     {
         name: '城堡时代拉丁军团',
@@ -545,7 +545,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['GERMANIC_CASTLE'],
         parentLegion: '西欧军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代易洛魁军团',
@@ -569,7 +569,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['FRENCH'],
         parentLegion: '城堡时代不列颠军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代波斯军团',
@@ -605,7 +605,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['HRE'],
         parentLegion: '城堡时代条顿军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代罗斯军团',
@@ -641,7 +641,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['WEST_ASIA_CASTLE'],
         parentLegion: '中东军团',
-        shipId: 'FIRE_GALLEY',
+        shipId: 'FIRE_SHIP',
     },
     {
         name: '城堡时代西域军团',
@@ -713,7 +713,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SRIVIJAYA'],
         parentLegion: '东南亚军团',
-        shipId: 'FAST_FIRE_SHIP',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '封建时代东南亚军团',
@@ -725,7 +725,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SEASIA_FEUDAL'],
         parentLegion: '东南亚军团',
-        shipId: 'FAST_FIRE_SHIP',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '封建时代伦巴第军团',
@@ -737,7 +737,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['LOMBARDS'],
         parentLegion: '地中海军团',
-        shipId: 'WAR_GALLEY',
+        shipId: 'GALLEY',
     },
     {
         name: '封建时代凯尔特军团',
@@ -833,7 +833,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['LATIN_FEUDAL'],
         parentLegion: '地中海军团',
-        shipId: 'WAR_GALLEY',
+        shipId: 'GALLEY',
     },
     {
         name: '封建时代斯拉夫军团',
@@ -857,7 +857,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['GERMANIC_FEUDAL'],
         parentLegion: '西欧军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_LONGBOAT',
     },
     {
         name: '封建时代柔然军团',
@@ -893,7 +893,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['VANDALS'],
         parentLegion: '封建时代哥特军团',
-        shipId: 'HEAVY_LEMBOS',
+        shipId: 'ELITE_LEMBOS',
     },
     {
         name: '封建时代河中军团',
@@ -917,7 +917,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['JAVANESE'],
         parentLegion: '东南亚军团',
-        shipId: 'WAR_GALLEY',
+        shipId: 'GALLEY',
     },
     {
         name: '封建时代玛雅军团',
@@ -941,7 +941,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['NANZHAO'],
         parentLegion: '东亚军团',
-        shipId: 'INCENDIARY_SHIP',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '封建时代盎格鲁-撒克逊军团',
@@ -960,8 +960,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'tarkan', count: 2 },
-            { type: 'cav_archer_heavy', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
+            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'mangudai', count: 4 },
         ],
         regions: ['TURKS'],
         parentLegion: '封建时代匈人军团',
@@ -1037,7 +1037,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['ORIE'],
         parentLegion: '中东军团',
-        shipId: 'FIRE_SHIP',
+        shipId: 'FIRE_GALLEY',
     },
     {
         name: '封建时代隋唐军团',
@@ -1052,12 +1052,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'LOU_CHUAN',
     },
     {
-        name: '封建时代靺鞨军团',
+        name: '封建时代渤海军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'laminated_bowman', count: 3 },
-            { type: 'hei_kuang_heavy', count: 4 },
-            { type: 'spearman', count: 2 },
+            { type: 'pikeman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'elite_iron_pagoda', count: 2 },
         ],
         regions: ['MOHE'],
         parentLegion: '封建时代契丹军团',
@@ -1217,7 +1217,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['JAPAN_IMPERIAL'],
         parentLegion: '城堡时代日本军团',
-        shipId: 'ANT_WAR_GALLEY',
+        shipId: 'ANT_ELITE_GALLEY',
     },
     {
         name: '帝国时代日耳曼军团',
@@ -1229,7 +1229,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['GERMANIC_IMPERIAL'],
         parentLegion: '西欧军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '帝国时代普什图军团',
@@ -1253,7 +1253,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['JOSEON'],
         parentLegion: '城堡时代高丽军团',
-        shipId: 'TURTLE_SHIP',
+        shipId: 'ELITE_TURTLE_SHIP',
     },
     {
         name: '帝国时代波斯军团',
@@ -1268,16 +1268,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'WAR_GALLEY',
     },
     {
-        name: '帝国时代满洲军团',
+        name: '帝国时代满清军团',
         formationMode: 'balance_yoke',
         slots: [
             { type: 'elite_fire_archer', count: 4 },
-            { type: 'antiquity_cavalry_archer', count: 2 },
+            { type: 'elite_iron_pagoda', count: 2 },
             { type: 'kipchak', count: 3 },
         ],
         regions: ['MANCHU'],
         parentLegion: '东亚军团',
-        shipId: 'GALLEY',
+        shipId: 'WAR_GALLEY',
     },
     {
         name: '帝国时代特维尔切军团',
@@ -1301,10 +1301,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SWEDISH'],
         parentLegion: '西欧军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
-        name: '帝国时代草原军团',
+        name: '帝国时代蒙古军团',
         formationMode: 'balance_yoke',
         slots: [
             { type: 'elite_keshik', count: 4 },
@@ -1421,7 +1421,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: [],
         parentLegion: '古典时代普鲁军团',
-        shipId: 'ANT_WAR_GALLEY',
+        shipId: 'ANT_ELITE_GALLEY',
     },
     {
         name: '古典时代加拉太军团',
@@ -1481,7 +1481,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['HRE'],
         parentLegion: '城堡时代勃艮第军团',
-        shipId: 'CARAVEL',
+        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '帝国时代忍者军团',
@@ -1493,7 +1493,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: [],
         parentLegion: '城堡时代日本军团',
-        shipId: 'ANT_WAR_GALLEY',
+        shipId: 'ANT_ELITE_GALLEY',
     },
     {
         name: '封建时代新罗军团',

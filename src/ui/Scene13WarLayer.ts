@@ -4822,7 +4822,11 @@ export class Scene13WarLayer {
      */
     private cityRoadFoundationTile(): string {
         // 🔴 [2026-08-27 主人定] 草原文化：pm1 泥地/草原营地底图
-        if (this.sideCulture[1] === 'STEPPE') return 'pm1';
+        // 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 判据由文化区 STEPPE 改为建筑风格 YURT：
+        //    漠北蒙古（MOBEI_MONGOL）原先匹配不上，会按城型拿到 rd1 石板 / rd2 碎石 / rck 岩石路，
+        //    而战略地图的毡帐营地是**无地基无石路**的泥地 —— 给毡帐铺石板大道两边就对不上了。
+        //    buildingStyleFor(1) 把 STEPPE 与 MOBEI_MONGOL 都归到 YURT，一次覆盖。
+        if (this.buildingStyleFor(1) === 'YURT') return 'pm1';
         // 🔴 [2026-09-03 主人定] 城寨(stockade)地基一律和草原一样——pm1 牧场地基（不分文化）
         if (this.defenderCityType === 'stockade') return 'pm1';
         // 🔴 [2026-08-27 主人定] 按城市等级选底图：大城 rd1 石板 / 中城 rd2 碎石 / 险要 rck 岩石（不再按文化）
@@ -5046,6 +5050,8 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-22 主人需求] 30 秒随机塌一半城墙，塌掉的墙段放行 + 留残骸：
             //    城门 → 播 50 帧倒塌动画 → 留 rubble 残骸；石墙/垛墙 → 切 D75 残垣；木栅栏 → 切木门 rubble 残骸。
             const placeWall = (s: { x: number; y: number }, asset: string, key: 'STONE_WALL' | 'STONE_GATE', linked = false): void => {
+                // 🔴 [2026-09-18] 毡帐险要按战略地图**无围墙**（buildYurtCampHtml(fence=false)）：一段都不铺
+                if (wallMat === 'NONE') return;
                 // 城墙 = 可攻击建筑（照 DE）：士兵能打、HP 归零破墙；碰撞 0.95 堵住相邻段缝隙
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
@@ -5057,6 +5063,8 @@ export class Scene13WarLayer {
             };
             // 城门：可攻击建筑（照 DE，城门 HP 更高），沿线铺 6 点密实碰撞体堵跨度两侧缝隙；破门播 50 帧倒塌动画 → rubble 残骸
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
+                // 🔴 [2026-09-18] 同 placeWall：毡帐险要无围墙，也就没有城门
+                if (wallMat === 'NONE') return;
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
                 const st = WALL_GATE_STATS.STONE_GATE;
@@ -5116,7 +5124,23 @@ export class Scene13WarLayer {
             //      ② 中东近东 ORIE（2026-09-12 战略层加石墙）战术层仍是木栅 ✗ ← 主人截图看到的
             //      ③ 波斯 PERSIAN（同日）同上 ✗
             //    现在改为**调用同一个共享判据**，战略/战术从此只有一处真相。
-            const wallMat = (this.defenderCityType === 'small_city' && shouldUseStoneWall(this.sideCulture[1])) ? 'STONE'
+            /* 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 毡帐据点（YURT）的围墙单独判，
+             * 逐条对齐 TerritorySystem 的战略地图画法：
+             *   大/中/小城 → buildYurtCampHtml(fence=true) = PALISADE 栅栏
+             *   城寨       → 保持 FENCE 细编篱笆（战略侧城寨本来就是篱笆）
+             *   险要       → buildYurtCampHtml(fence=false) = **无围墙**（下方 placeWall/placeGate 守卫拦掉）
+             *
+             * 改前判据是 `sideCulture[1] === 'STEPPE'`，只认草原文化区；而漠北蒙古的文化区是
+             * MOBEI_MONGOL，匹配不上 → 大城落到 'FORTIFIED'、中城与险要落到 'STONE'，
+             * 拼出 `YURT_WALL_FORTIFIED` / `YURT_WALL_STONE` —— public/SUCAI_BUILDING 下
+             * YURT_* 只有 A~L 十二个蒙古包，**根本没有墙/门/塔素材**，等于一堵看不见却挡路的墙。
+             * 现在改用 buildingStyleFor(1)（= 战略地图那套 resolveCityDeBuildingStyle 的结果），
+             * STEPPE 与 MOBEI_MONGOL 都映射成 YURT，一次覆盖。 */
+            const isYurtDefender = style === 'YURT';
+            const wallMat = isYurtDefender
+                ? (this.defenderCityType === 'stockade' ? 'FENCE'
+                    : this.defenderCityType === 'pass' ? 'NONE' : 'PALISADE')
+                : (this.defenderCityType === 'small_city' && shouldUseStoneWall(this.sideCulture[1])) ? 'STONE'
                 : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
@@ -5174,8 +5198,11 @@ export class Scene13WarLayer {
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
             //    射箭（复用 WarArrow 纯视觉弹丸 + 开火火花，不改平衡）；30 秒随机三形态（applyRandomCollapseForms）。
             // 主人 2026-09-03：草原(STEPPE)游牧不筑石塔——箭塔统一用亚洲木质瞭望塔(ASIA_TOWER)，与蒙古包/亚洲瞭望塔配套（弃 CEAS 石构）
+            // 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 判据由文化区 STEPPE 改为
+            //    建筑风格 YURT：漠北蒙古（MOBEI_MONGOL）原先匹配不上，会拼出 `YURT_TOWER_AGE4`
+            //    这种根本不存在的素材；战略地图那边毡帐营地的塔用的就是亚洲木质瞭望塔。
             const arrowTowerAsset =
-                (this.sideCulture[1] === 'STEPPE')
+                isYurtDefender
                     ? (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade') ? 'ASIA_TOWER_AGE2'
                     : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'ASIA_TOWER_AGE3'
                     : 'ASIA_TOWER_AGE4'
@@ -5218,7 +5245,22 @@ export class Scene13WarLayer {
             //    STEPPE 和 MOBEI_MONGOL **都**映射成 YURT 画营地，13 这边却匹配不上，
             //    于是漠北蒙古据点在战场被画成通用建筑池，两边对不上。
             //    buildingStyleFor(守方) 走的就是 defenderMapStyle（resolveCityDeBuildingStyle 的结果）。
-            if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
+            if (isYurtDefender) {
+                // 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 毡帐险要照战略侧
+                //    buildYurtCampHtml(fence=false, centerCastle=true)：无围墙 + 中心蒙古城堡 + 营帐环卫。
+                //    城墙已由 wallMat='NONE' 在 placeWall/placeGate 里拦掉，这里补上中心城堡；
+                //    城堡占掉最靠中线的那个位置，余下位置照常铺蒙古包与瞭望塔。
+                if (this.defenderCityType === 'pass' && buildingSide.length > 0) {
+                    const castleAsset = this.castleAssetFor(style);
+                    const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
+                    const centerSpawn = buildingSide.reduce((best, s) =>
+                        Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
+                    const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE, indestructible: true });
+                    this.decorSprites.push(castleSp);
+                    this.trackCityBuilding(castleSp);
+                    placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn));
+                    return;
+                }
                 placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide);
                 return;
             }
