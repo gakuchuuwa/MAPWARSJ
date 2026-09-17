@@ -377,17 +377,30 @@ export class PlayerHero {
         const before = this.getRank();
         const prevMerit = this.merit;
         this.merit = 0;
+        // 🔴 [2026-09-17 主人定] 军团解散/战败/脱离后，玩家已离开军团恢复单骑，
+        //    身份重归「布衣平民」，绝非在军中的「风行斥候」，且平民无官阶。
+        //    重置功勋即脱离势力，确保 after 必为布衣平民（civilian）。
+        this.factionId = null;
+        this.army.setFactionId('');
+        const rr = this.army.getRenderer();
+        if (rr) rr.factionId = undefined;
+
         const after = this.getRank();
         this.syncLearnedUnits();  // 降阶：收回超额已学兵种
         this.syncMoveProfile();
         const host = this.getHostLegion();
         if (host) {
-            host.playerHostPowerMult = after.powerMult;
-            host.playerHostRankName = after.name;
+            host.playerHostPowerMult = null;
+            host.playerHostRankName = null;
         }
         if (prevMerit > 0 || before.id !== after.id) {
-            this.deps.notify(`💥 ${reason}！功勋已归零，官阶降为【${after.name}】`);
-            gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，从【${before.name}】降为【${after.name}】`);
+            if (after.id === 'civilian') {
+                this.deps.notify(`💥 ${reason}！功勋已归零，重归【${after.name}】`);
+                gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，从【${before.name}】重归【${after.name}】`);
+            } else {
+                this.deps.notify(`💥 ${reason}！功勋已归零，官阶降为【${after.name}】`);
+                gameLog('expedition', `[玩家] ${reason}，功勋 ${prevMerit} 归零，从【${before.name}】降为【${after.name}】`);
+            }
         }
         this.emitChange();
     }

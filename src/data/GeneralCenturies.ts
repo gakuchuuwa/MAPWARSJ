@@ -1068,10 +1068,12 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（前776年）
     'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约前24年）
     'jiaye_jiaye':                       1,     // 金首露/伽耶 · jiaye · 伽耶开国君主（公元1世纪）
+    'jiaye_punafamo':                    7,     // 普那伐摩 · jiaye · 摩揭陀国王护持菩提伽耶（7世纪初）
     'pidisha_pidisha':                   -2,    // 毗底沙 · pidisha · 巽伽王朝陪都名邑（前2世纪）
     'aodesuosi_aodesuosi':               -4,    // 奥德索斯 · aodesuosi · 黑海希腊殖民城邦首领（前4世纪）
     'disidelusi_disidelusi':             2,     // 蒂斯德鲁斯 · disidelusi · 罗马阿非利加行省竞技场督造官（2世纪）
     'yisatisi_yisatisi':                 -6,    // 伊萨提斯 · yisatisi · 古波斯行省总督（前6世纪）
+    'yisatisi_falukezhade':              7,     // 法鲁克扎德 · yisatisi · 萨珊波斯末期将领（7世纪中叶）
     'keernuwaye_geladelong':             5,     // 格拉德隆 · keernuwaye · 凯尔特布列塔尼科努瓦耶国王（5世纪）
     'gen_henry_v':                       15,    // 亨利五世 · yinggelan · 阿金库尔战役英王（1415年成名）
     'gen_baodewen_iv':                   12,    // 鲍德温四世 · yelusalengwg · 耶路撒冷麻风王蒙吉萨战役（1177年成名）
@@ -1106,6 +1108,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'foluolida_meinendeshi':             16,    // 佩德罗·梅嫩德斯 · foluolida · 建立圣奥古斯丁（1565年成名）
     'meitai_hagenba':                    15,    // 彼得·冯·哈根巴赫 · meitai · 勃艮第占领阿尔萨斯总督（1474年公审）
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
+    'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
