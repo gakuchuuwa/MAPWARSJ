@@ -4013,7 +4013,14 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
         if (m[2].startsWith('str_')) strategicSkills.push({ id: m[2], grid: m[3], displayName: m[4], effect: m[5], magnitude: parseFloat(m[6]) });
     }
 
-    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
+    const eraPath = path.resolve(__dirname, 'src/data/GeneralEra.ts');
+    const eraText = fs.existsSync(eraPath) ? fs.readFileSync(eraPath, 'utf-8') : '';
+    const eras: Record<string, string> = {};
+    for (const m of eraText.matchAll(/'([^']+)':\s*'([^']+)'/g)) {
+        eras[m[1]] = m[2];
+    }
+
+    return { factions, cities, flags, capitals, factionColors, generals, allGenerals, profiles, elites, eras, tacticalSkills, strategicSkills, misplacedProfiles, malformedProfiles, profileIdMismatches, regions: Object.keys(REGION_TO_ELITE_FILE) };
 }
 
 /** 归一化立绘路径：反斜杠→正斜杠、去盘符/public 前缀、补前导斜杠 → 统一 /assets/.../x.png。
@@ -4035,6 +4042,7 @@ function serverSaveGeneral(data: {
     generalName: string;
     portrait: string;
     tier: string;
+    era?: string;
     tacticalSkillId: string;
     strategicSkillId?: string;
     advantageSkillId?: string;
@@ -4163,6 +4171,27 @@ function serverSaveGeneral(data: {
     markBatchSaveWrite();
     fs.writeFileSync(fgPath, guardSerializedDataText(fgText, 'FactionGenerals.ts'), 'utf-8');
     fs.writeFileSync(gsPath, guardSerializedDataText(gsText, 'general-skills/profiles.ts'), 'utf-8');
+
+    // [2026-09-17] 时代写入 GeneralEra.ts
+    if (data.era && ['antiquity', 'feudal', 'castle', 'imperial'].includes(data.era)) {
+        const eraPath = path.resolve(__dirname, 'src/data/GeneralEra.ts');
+        if (fs.existsSync(eraPath)) {
+            let eraText = fs.readFileSync(eraPath, 'utf-8');
+            const eraLine = `'${data.generalId}': '${data.era}',`;
+            if (eraText.includes(`'${data.generalId}':`)) {
+                eraText = eraText.replace(new RegExp(`'${data.generalId}':\\s*'[^']*'`), `'${data.generalId}': '${data.era}'`);
+                results.push('GeneralEra.ts: replaced');
+            } else {
+                eraText = serverInsertIntoStructure(eraText, 'GENERAL_ERA', eraLine, '    ');
+                results.push('GeneralEra.ts: inserted');
+            }
+            if (data.oldGeneralId && data.oldGeneralId !== data.generalId) {
+                eraText = eraText.replace(new RegExp(`\\n\\s*'${data.oldGeneralId}':\\s*'[^']*',?`), '');
+            }
+            fs.writeFileSync(eraPath, eraText, 'utf-8');
+        }
+    }
+
     return results;
 }
 

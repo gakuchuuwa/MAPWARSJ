@@ -1710,7 +1710,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "wuzhou_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "封建时代隋唐军团",
         legionType: "sub",
     },
     "gaer": {
@@ -2008,5 +2008,57 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     "adal": {
         legionName: "非洲军团",
         legionType: "region",
+    },
+    "liang_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "long2": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "chanzhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "xinping": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "dang_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "yaozhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "jiyuan": {
+        legionName: "封建时代突厥军团",
+        legionType: "sub",
+    },
+    "wang_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "xiao_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "tianxiong": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "huo": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "mushi": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "lai": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
     },
 };

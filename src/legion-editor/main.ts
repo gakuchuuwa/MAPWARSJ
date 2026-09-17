@@ -937,6 +937,10 @@ interface FactionLegionRow {
     capitalCityName?: string;
     region: RegionType;
     regionLabel: string;
+    /** 该势力开局名将的 generalId（军团看武将时代用） */
+    generalId?: string;
+    /** 首都据点的建筑风格（军团看建筑风格用） */
+    buildingStyle?: string;
     /** 该势力的史实将领名（搜索用：主人习惯按武将找势力，如「施琅」→ wenling） */
     generalName?: string;
     /** 精锐**番号** + tier（如 wenling → 福建水师 T3），出处 ExpeditionLegions。
@@ -1536,6 +1540,8 @@ function buildRows(): void {
             region,
             regionLabel,
             generalName: getFactionGeneral(f.id)?.generalName,
+            generalId: getFactionGeneral(f.id)?.generalId,
+            buildingStyle: capCity?.buildingStyle,
             eliteName: getExpeditionEliteConfig(f.id)?.name,
             eliteTier: getExpeditionEliteConfig(f.id)?.tier,
             // 🔴 [2026-09-06] 势力没有专属军团名时，回退显示**所属文化区的军团名**。

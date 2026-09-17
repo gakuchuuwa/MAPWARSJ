@@ -389,8 +389,6 @@ export class RecruitmentSystem {
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
         const region = this.getCityRegion(city);
-        // 🔴 [2026-09-17 主人定] 军团名一律看军团编辑器：FactionCompositions 显式条目优先，
-        //    无显式条目才落文化区默认军团名（getCultureLegionName）；不再用 REGION_LABELS 另起一套。
         const legionName = FACTION_COMPOSITIONS[city.factionId]?.legionName || getCultureLegionName(region);
         const newLegion = this.legionManager.createArmy({
             name: legionName,

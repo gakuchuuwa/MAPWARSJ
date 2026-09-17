@@ -7,9 +7,24 @@
 
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { getCultureLegionName } from '../types/CultureFormations';
+
+export const ERA_LABELS: Record<GeneralEra, string> = {
+    antiquity: '古典时代',
+    feudal: '封建时代',
+    castle: '城堡时代',
+    imperial: '帝王时代',
+};
+
+export const ERA_ORDER: Record<GeneralEra, number> = {
+    antiquity: 1,
+    feudal: 2,
+    castle: 3,
+    imperial: 4,
+};
 
 interface FactionRow {
     id: string;
@@ -25,6 +40,8 @@ interface FactionRow {
     generalName?: string;
     portrait?: string;
     tier?: string;
+    era?: GeneralEra;
+    eraLabel?: string;
     tacticalSkillId?: string;
     strategicSkillId?: string;
     advantageSkillId?: string;
@@ -66,6 +83,7 @@ interface EntityData {
         attackStyle?: 'attack' | 'defense' | 'balanced';
     }>;
     elites: Record<string, { name: string; tier: number; region: string }>;
+    eras?: Record<string, string>;
     tacticalSkills: Array<{ id: string; grid: string; displayName: string; assignTier?: string; triClass?: string; sixClass?: string }>;
     strategicSkills: Array<{ id: string; grid: string; displayName: string; effect: string; magnitude: number }>;
     regions: string[];
@@ -124,7 +142,8 @@ let rows: FactionRow[] = [];
 let filteredRows: FactionRow[] = [];
 let issues: ValidationIssue[] = [];
 let searchQuery = '';
-let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'no-legion' | 'no-skill' | 'errors' = 'all';
+let filterMode: 'all' | 'incomplete' | 'no-general' | 'no-portrait' | 'no-elite' | 'no-legion' | 'no-skill' | 'errors'
+    | 'era-antiquity' | 'era-feudal' | 'era-castle' | 'era-imperial' | 'no-era' = 'all';
 let sortCol = 'id';
 let sortAsc = true;
 let editingFactionId: string | null = null;
@@ -149,9 +168,14 @@ app.innerHTML = `
   <button type="button" id="bm-view-cities" class="bm-btn">🏙️ 据点编辑（全部据点）</button>
 </div>
 <div class="bm-toolbar" id="bm-toolbar-entities">
-  <input id="bm-search" class="bm-input" type="search" placeholder="搜索 ID / 名称 / 旗号…" />
+  <input id="bm-search" class="bm-input" type="search" placeholder="搜索 ID / 名称 / 旗号 / 时代…" />
   <select id="bm-filter" class="bm-select">
     <option value="all">全部</option>
+    <option value="era-antiquity">古典时代</option>
+    <option value="era-feudal">封建时代</option>
+    <option value="era-castle">城堡时代</option>
+    <option value="era-imperial">帝王时代</option>
+    <option value="no-era">缺时代</option>
     <option value="incomplete">不完整</option>
     <option value="no-general">缺武将</option>
     <option value="no-portrait">缺立绘</option>
@@ -302,6 +326,14 @@ function injectStyles(): void {
       .bar-75 { background:#b8b87c; }
       .bar-50 { background:#b8a07c; }
       .bar-25 { background:#b87c7c; }
+      .badge-era {
+        display:inline-block; padding:1px 6px; border-radius:3px;
+        font-size:11px; font-weight:600; line-height:1.4; letter-spacing:0.5px;
+      }
+      .badge-era-antiquity { background:#2a2210; color:#e5c158; border:1px solid #6b5320; }
+      .badge-era-feudal { background:#142614; color:#78c878; border:1px solid #286028; }
+      .badge-era-castle { background:#142036; color:#8ab4f8; border:1px solid #284478; }
+      .badge-era-imperial { background:#301414; color:#f08080; border:1px solid #782828; }
 
       .bm-form label { display:block; margin-bottom:10px; font-size:12px; color:#a89f8f; }
       .bm-form label span { display:block; margin-bottom:3px; }
@@ -506,6 +538,11 @@ function buildRows(): void {
         if (legionName) completeness++;
         completeness = Math.round(completeness / 6 * 100);
 
+        const era = gen
+            ? ((entityData!.eras?.[gen.generalId] || GENERAL_ERA[gen.generalId]) as GeneralEra | undefined)
+            : undefined;
+        const eraLabel = era ? ERA_LABELS[era] : undefined;
+
         return {
             id: f.id,
             name: f.name,
@@ -520,6 +557,8 @@ function buildRows(): void {
             generalName: gen?.generalName,
             portrait: gen?.portrait,
             tier: profile?.tier,
+            era,
+            eraLabel,
             tacticalSkillId: profile?.tacticalSkillId,
             advantageSkillId: profile?.advantageSkillId,
             balanceSkillId: profile?.balanceSkillId,
@@ -579,10 +618,15 @@ function applyFilter(): void {
     filteredRows = rows.filter(r => {
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            const haystack = `${r.id} ${r.name} ${r.flagText ?? ''} ${r.cityName ?? ''} ${r.generalName ?? ''} ${r.eliteName ?? ''}`.toLowerCase();
+            const haystack = `${r.id} ${r.name} ${r.flagText ?? ''} ${r.cityName ?? ''} ${r.generalName ?? ''} ${r.eraLabel ?? ''} ${r.eliteName ?? ''}`.toLowerCase();
             if (!haystack.includes(q)) return false;
         }
         switch (filterMode) {
+            case 'era-antiquity': return r.era === 'antiquity';
+            case 'era-feudal': return r.era === 'feudal';
+            case 'era-castle': return r.era === 'castle';
+            case 'era-imperial': return r.era === 'imperial';
+            case 'no-era': return !!r.generalId && !r.era;
             case 'incomplete': return r.completeness < 100;
             case 'no-general': return !r.generalId;
             case 'no-portrait': return !!r.generalId && !(r.portrait ?? '').trim();
@@ -598,6 +642,11 @@ function applyFilter(): void {
 
 function sortRows(): void {
     filteredRows.sort((a, b) => {
+        if (sortCol === 'era') {
+            const oa = a.era ? (ERA_ORDER[a.era] ?? 99) : 99;
+            const ob = b.era ? (ERA_ORDER[b.era] ?? 99) : 99;
+            return sortAsc ? oa - ob : ob - oa;
+        }
         let va: any = (a as any)[sortCol] ?? '';
         let vb: any = (b as any)[sortCol] ?? '';
         if (typeof va === 'number' && typeof vb === 'number') return sortAsc ? va - vb : vb - va;
@@ -618,10 +667,20 @@ function updateStats(): void {
     const ordinary = rows.filter(r => r.tier === 'ordinary').length;
     const t = [0, 0, 0, 0, 0];
     for (const r of rows) if (r.eliteTier != null && r.eliteTier >= 0 && r.eliteTier <= 4) t[r.eliteTier]++;
+    const eraCounts: Record<GeneralEra, number> = { antiquity: 0, feudal: 0, castle: 0, imperial: 0 };
+    let noEra = 0;
+    for (const r of rows) {
+        if (r.generalId) {
+            if (r.era && eraCounts[r.era] !== undefined) eraCounts[r.era]++;
+            else noEra++;
+        }
+    }
     els.stats.innerHTML =
         `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 缺军团 ${noLegion} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
-        + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`;
+        + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`
+        + `<span style="margin-left:12px;color:#e5c158">古典:<b>${eraCounts.antiquity}</b></span> <span style="color:#78c878">封建:<b>${eraCounts.feudal}</b></span> <span style="color:#8ab4f8">城堡:<b>${eraCounts.castle}</b></span> <span style="color:#f08080">帝王:<b>${eraCounts.imperial}</b></span>`
+        + (noEra > 0 ? ` <span style="color:#b87c7c">缺时代:<b>${noEra}</b></span>` : '');
 }
 
 // ── Table Rendering ──
@@ -636,6 +695,7 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: 'lat', label: '纬度', width: '60px' },
     { key: 'lng', label: '经度', width: '60px' },
     { key: 'generalName', label: '武将' },
+    { key: 'era', label: '时代', width: '85px' },
     { key: 'tacticalSkillId', label: '战术技', width: '70px' },
     { key: 'strategicSkillId', label: '战略技', width: '120px' },
     { key: 'eliteName', label: '精锐' },
@@ -664,6 +724,7 @@ function renderTable(): void {
             <td>${r.lat != null ? r.lat.toFixed(1) : ''}</td>
             <td>${r.lng != null ? r.lng.toFixed(1) : ''}</td>
             <td>${r.generalName ? `<span class="cell-ok">${r.generalName}</span>` : '<span class="cell-miss">✗</span>'}</td>
+            <td class="cell-era">${r.era ? `<span class="badge-era badge-era-${r.era}">${r.eraLabel}</span>` : (r.generalName ? '<span class="cell-miss">✗</span>' : '—')}</td>
             <td>${r.tacticalSkillId ? formatSkill(r.tacticalSkillId) : (r.generalName ? '<span class="cell-miss">✗</span>' : '')}</td>
             <td>${r.strategicSkillId ? formatSkill(r.strategicSkillId) : '—'}</td>
             <td>${r.eliteName ? `<span class="cell-ok">${r.eliteName}</span>` : '<span class="cell-miss">✗</span>'}</td>
@@ -894,6 +955,14 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="famous">名将</option>
               </select>
             </label>
+            <label><span>时代</span>
+              <select id="bm-quick-era" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="antiquity">古典时代 (≤400)</option>
+                <option value="feudal" selected>封建时代 (400-1050)</option>
+                <option value="castle">城堡时代 (1050-1500)</option>
+                <option value="imperial">帝王时代 (1500-1900)</option>
+              </select>
+            </label>
           </div>
           <label><span>立绘（输入拼音/势力key 即时筛选，如 liguang）</span>
             ${qInput('bm-quick-portrait', '留空 → 从未被占用的立绘中随机')}
@@ -1041,6 +1110,15 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 ${row!.tier ? '' : '<option value="" selected>请选择</option>'}
                 <option value="famous" ${row!.tier === 'famous' ? 'selected' : ''}>名将 (famous)</option>
                 <option value="ordinary" ${row!.tier === 'ordinary' ? 'selected' : ''}>普将 (ordinary)</option>
+              </select>
+            </label>
+            <label><span>时代（按辉煌年代/30岁判定）</span>
+              <select name="era">
+                ${row!.era ? '' : '<option value="" selected>请选择时代</option>'}
+                <option value="antiquity" ${row!.era === 'antiquity' ? 'selected' : ''}>古典时代 (≤400)</option>
+                <option value="feudal" ${row!.era === 'feudal' ? 'selected' : ''}>封建时代 (400-1050)</option>
+                <option value="castle" ${row!.era === 'castle' ? 'selected' : ''}>城堡时代 (1050-1500)</option>
+                <option value="imperial" ${row!.era === 'imperial' ? 'selected' : ''}>帝王时代 (1500-1900)</option>
               </select>
             </label>
           </div>
@@ -1544,6 +1622,7 @@ async function handleQuickSubmit(): Promise<void> {
                     generalName: f.genName,
                     portrait,
                     tier: f.genTier,
+                    era: (document.getElementById('bm-quick-era') as HTMLSelectElement)?.value || undefined,
                     tacticalSkillId,
                     strategicSkillId: strategicSkillId || undefined,
                     atkAdvantageSkillId: sixSlots.atkAdvantageSkillId,
@@ -1739,7 +1818,9 @@ async function handleFormSubmit(e: Event): Promise<void> {
                 body: JSON.stringify({
                     factionId, generalId, generalName,
                     portrait,
-                    tier, tacticalSkillId,
+                    tier,
+                    era: get('era') || undefined,
+                    tacticalSkillId,
                     strategicSkillId,
                     atkAdvantageSkillId: get('atkAdvantageSkillId') || undefined,
                     atkBalanceSkillId: get('atkBalanceSkillId') || undefined,
@@ -2086,8 +2167,8 @@ function exportCatalog(): void {
         : '';
 
     const tierCn = (t?: string) => t === 'famous' ? '名将' : t === 'ordinary' ? '普将' : '';
-    const header = '| 势力 | 据点 | 坐标(lat, lng) | 旗号 | 武将 | 品阶 | 战术技 | 战略技 | 精锐 | 级别 | 完整度 |';
-    const divider = '|---|---|---|---|---|---|---|---|---|---|---|';
+    const header = '| 势力 | 据点 | 坐标(lat, lng) | 旗号 | 武将 | 品阶 | 时代 | 战术技 | 战略技 | 精锐 | 级别 | 完整度 |';
+    const divider = '|---|---|---|---|---|---|---|---|---|---|---|---|';
 
     const lines: string[] = [
         '# MAPWAR 实体名册',
@@ -2109,6 +2190,7 @@ function exportCatalog(): void {
             mdCell(r.flagText),
             mdCell(r.generalName),
             mdCell(tierCn(r.tier)),
+            mdCell(r.eraLabel),
             mdCell(skillLabelPlain(r.tacticalSkillId)),
             mdCell(skillLabelPlain(r.strategicSkillId)),
             mdCell(r.eliteName),
