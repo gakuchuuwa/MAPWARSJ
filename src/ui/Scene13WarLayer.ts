@@ -1522,11 +1522,50 @@ export function isCavalryType(t: WarType | null | undefined): boolean {
 export function faceAngleDeg(dir: number): number {
     return ((((9 - dir) % 8) + 8) % 8) * 45;
 }
-/** 攻击者是否落在该单位正面扇区内（dx,dy = 攻击者相对该单位的位移，屏幕坐标 +y 向下）。导出=供离线自检 */
-export function inFrontArc(dir: number, dx: number, dy: number, halfDeg: number): boolean {
+/** 攻击者方位与该单位正面的夹角（0~180°）。0=正前方、90=正侧面、180=正后方。
+ *  dx,dy = 攻击者相对该单位的位移，屏幕坐标 +y 向下。导出=供离线自检 */
+export function attackArcDeg(dir: number, dx: number, dy: number): number {
     const bearing = ((Math.atan2(-dy, dx) * 180 / Math.PI) % 360 + 360) % 360;
     const d = Math.abs(bearing - faceAngleDeg(dir));
-    return Math.min(d, 360 - d) <= halfDeg;
+    return Math.min(d, 360 - d);
+}
+/** 攻击者是否落在该单位正面扇区内（dx,dy = 攻击者相对该单位的位移，屏幕坐标 +y 向下）。导出=供离线自检 */
+export function inFrontArc(dir: number, dx: number, dy: number, halfDeg: number): boolean {
+    return attackArcDeg(dir, dx, dy) <= halfDeg;
+}
+
+/* ── 【侧击·背击】绕到侧后打，这一刀更重（2026-09-17 主人定「先做背击判定这一条」）────────
+ * 史料：冷兵器阵战的胜负手从来不是正面对耗，而是侧后。方阵最怕被包抄（迎面拒马注释里
+ *   「亚历山大以方阵为砧、伙伴骑兵为锤」说的就是这件事）；坎尼、漠北、卡莱都是侧后崩的。
+ *   正面有盾有枪有同伴掩护，侧面只有半边身子，背后完全无防备——这是装备与队形的几何事实。
+ *
+ * 本层怎么表达：按**受害者的朝向**把来袭方位分三档，乘在这一击的伤害上：
+ *   正面（夹角 ≤60°）×1  ·  侧面（60~120°）×FLANK_SIDE_MUL  ·  背后（≥120°）×FLANK_REAR_MUL
+ *
+ * 🔴 只对**近战**（dmgType='melee'）生效，远程射中侧背不加成。三条理由：
+ *   1. 远程放风筝时几乎恒定咬在对方背后（kiting 逻辑就是绕到背面撵），全程吃背击 = 白送；
+ *   2. 「弩克步」这条边是 war_sim 实测标定过的，让远程凭朝向变强会直接动它；
+ *   3. 本规则要拿到的是「骑兵绕后突背值不值」，那是近战骑兵的事，不需要动弓弩。
+ *
+ * ⚠️ DE 本体**没有**朝向伤害这个模型（它只有加成伤害与护甲）。所以分档角度与两个倍率
+ *   都是 AI 在可用数据里定的起步值，不是主人逐字指定的，与迎面拒马同例，单列在此备查。
+ *   倍率取得保守（1.15 / 1.4，量级参照 PIKE_BRACE_TAKEN=0.5）——13 是裁决层，
+ *   倍率给大了会直接翻盘。先小，实测觉得绕后不够有回报再往上抬。
+ *
+ * 调参：只动下面三个常量；FLANK_ENABLED=false 可一键关闭本规则。
+ */
+const FLANK_ENABLED = true;
+const FLANK_FRONT_DEG = 60;    // 正面扇区半角（度）：≤ 此角 = 正面，无加成
+const FLANK_REAR_DEG = 120;    // 背后起始夹角（度）：≥ 此角 = 背后
+const FLANK_SIDE_MUL = 1.15;   // 侧面受击伤害倍率
+const FLANK_REAR_MUL = 1.4;    // 背后受击伤害倍率
+
+/** 侧背击伤害倍率：按受害者朝向 dir 与攻击者相对位移，返回 1 / FLANK_SIDE_MUL / FLANK_REAR_MUL。导出=供离线自检 */
+export function flankMulOf(dir: number, dx: number, dy: number): number {
+    const a = attackArcDeg(dir, dx, dy);
+    if (a >= FLANK_REAR_DEG) return FLANK_REAR_MUL;
+    if (a > FLANK_FRONT_DEG) return FLANK_SIDE_MUL;
+    return 1;
 }
 /**
  * 箭矢**每个远程兵每轮出手都射一支**（主人 2026-08-11 定），只是飞法学大地图：
@@ -2055,6 +2094,49 @@ const FLANK_TYPES = new Set([
     'ibirapema_warrior', 'elite_ibirapema_warrior',
     'companion_cavalry', 'elite_companion_cavalry',  // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
 ]);
+
+/** 冲击型奇袭：绕后次数**按兵力配额**（🔴 2026-09-17 主人定「一万兵力一次，两万兵力两次，三万兵力三次」）。
+ *
+ *  为什么要分这一类：补兵规则是「场上活人 < TRIGGER 就补 SIDE_CAP」，波次随出征兵力线性增长——
+ *    10000 兵补 1 波、30000 兵补 3~4 波、50000 兵补 6~7 波，每波那一口约 36 骑。
+ *    改之前是**每一波都绕后**，大仗里每隔几秒就有三十几骑凭空出现在敌人背后，那不是迂回，是持续空投。
+ *
+ *  身份不同，所以不能一个白名单管到底：
+ *    · 渗透型（忍者/马来爪刀/靛蓝突袭者/图皮战棍）—— 轻步兵潜入，反复摸进去本来就是它们的打法，不限次；
+ *    · 冲击型（伙伴骑兵）—— 重骑兵的价值在**成建制突击**：伊苏斯强渡后一击凿穿波斯左翼、
+ *      高加米拉右翼迂回后直插大流士中军缺口。大军团能多组织几次迂回，小军团只够一次。
+ *
+ *  落法：本集合里的兵种只在**前 quota 个补兵波**绕后，quota = 本方出征兵力 / FLANK_QUOTA_PER；
+ *    之后照常从己方出兵口出。仍然是剧本法——只改出生点，不新增自主决策，不碰判负。
+ *
+ *  ⚠️ 不足一万兵（出兵门槛 5000，所以存在 5000~9999 的军团）quota=0，整场不绕后。
+ *    主人原话只说了「一万一次」，没说不足一万怎么算，这里取字面：**一万是门槛**。
+ *    要改成「不足一万也给一次」就在 flankQuotaOf 外面套 Math.max(1, ...)。
+ */
+const FLANK_LIMITED_TYPES = new Set([
+    'companion_cavalry', 'elite_companion_cavalry',
+]);
+/** 每多少兵力给一次绕后配额（主人 2026-09-17：一万兵力一次） */
+const FLANK_QUOTA_PER = 10000;
+
+/** 本方能绕后几次 = 出征兵力 / FLANK_QUOTA_PER（向下取整）。导出=供离线自检 */
+export function flankQuotaOf(troops: number): number {
+    return Math.floor((troops || 0) / FLANK_QUOTA_PER);
+}
+
+/** 这一个兵该不该绕到敌军背后出生。闸依次是：补兵波（开局那批照常）、白名单、野战/攻城战分流、
+ *  冲击型受兵力配额限次。
+ *  - 野战：双方都可绕后（冲击型受配额限次）。
+ *  - 攻城战：**守城方（side=1）可绕后偷袭，攻城方（side=0）不绕后**（🔴 2026-09-17 主人定：攻城方
+ *    从敌方出兵口背后出生等于凭空出现在城墙之内，不合理；守城方绕到攻城方侧后是出城偷袭，成立）。
+ *  waveNo = 本方已发生的补兵波次，quota = flankQuotaOf(本方兵力)。side = 0 攻方 / 1 守方。导出=供离线自检 */
+export function shouldFlankSpawn(key: string, battleType: string, isSupplyWave: boolean, waveNo: number, quota: number, side: number): boolean {
+    if (!isSupplyWave || !FLANK_TYPES.has(key)) return false;
+    if (FLANK_LIMITED_TYPES.has(key) && waveNo > quota) return false;
+    if (battleType === 'field') return true;
+    if (battleType === 'siege') return side === 1;
+    return false;
+}
 
 // ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
 // 素材已瘦身到 public/SUCAI_FX/（抽帧 8~10 + 裁透明边 + 16 向降 8 向，7GB→71MB）。
@@ -3378,6 +3460,10 @@ export class Scene13WarLayer {
     private batchCd = 0;
     /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
     private deployT = 0;
+    /** 每方已发生的补兵波次（开局那批不算）。冲击型奇袭只认前 flankQuota 波，见 FLANK_LIMITED_TYPES */
+    private supplyWave = [0, 0];
+    /** 每方的绕后配额（= 出征兵力 / FLANK_QUOTA_PER），开场按双方兵力各算各的 */
+    private flankQuota = [0, 0];
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
     /**
@@ -3936,6 +4022,9 @@ export class Scene13WarLayer {
         this.techStats = [new Map(), new Map()];
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
+        this.supplyWave = [0, 0];   // 每场重置：冲击型奇袭的配额是按场算的
+        // 绕后配额：每方按自己的出征兵力算（一万一次），见 FLANK_LIMITED_TYPES
+        this.flankQuota = [flankQuotaOf(init.attackerTroops), flankQuotaOf(init.defenderTroops)];
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
         this.meleeContactCount = 0;      // 每场重置：下一场重新等近战接上才起循环音景
         this.meleeQuietSec = 0;
@@ -6000,6 +6089,7 @@ export class Scene13WarLayer {
              *     不新增任何自主决策，也不碰判负。
              */
             const isSupplyWave = this.deployT <= 0;   // 开局列阵期 deployT>0，补兵波次才奇袭
+            if (isSupplyWave) this.supplyWave[f]++;   // 本方第几个补兵波（冲击型奇袭只认第 1 波）
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
@@ -6012,10 +6102,10 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                // 🔴 [2026-09-13 主人定]「攻防战中，忍者、伙伴骑等，不能背刺、不能出现在敌方出兵口，
-                //    只有野战可以。」——攻城战里敌方出兵口在城墙之内，绕后出生等于凭空出现在城里，
-                //    既不合理也把攻城的正面强攻逻辑（砸墙→破口→压上）架空。背刺只在野战成立。
-                const isFlank = isSupplyWave && this.battleType === 'field' && FLANK_TYPES.has(s.key);
+                // 🔴 [2026-09-17 主人定]「守城忍者可绕后，攻城忍者不能绕后，其他偷袭兵种也一样」——
+                //    攻城方从敌方出兵口背后出生 = 凭空出现在城墙之内，不合理；守城方绕到攻城方侧后
+                //    是出城偷袭，成立。野战双方都可绕后（冲击型受配额限次）。
+                const isFlank = shouldFlankSpawn(s.key, this.battleType, isSupplyWave, this.supplyWave[f], this.flankQuota[f], s.f);
                 // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
                 // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
                 const tgt = isFlank
@@ -7483,6 +7573,13 @@ export class Scene13WarLayer {
                         braceTaken = PIKE_BRACE_TAKEN;
                     }
                 }
+                // ── 侧击/背击：绕到侧后砍这一刀更重（见 FLANK_* 长注释）──
+                //    只认「受害者是兵（建筑无朝向）」+「这一击是近战」两条；范围伤害（aoe → splash）
+                //    不走本路径，也不该吃朝向加成——溅射没有「从哪个方向砍进去」可言。
+                let flankMul = 1;
+                if (FLANK_ENABLED && !('sprite' in foe) && shooter.dmgType === 'melee') {
+                    flankMul = flankMulOf(foe.dir, m.x - foe.x, m.y - foe.y);
+                }
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
                 const primaryDamage = m.accHit !== false ? dmgVs(shooter, target) * projectileDamageCount : 0;
@@ -7500,7 +7597,7 @@ export class Scene13WarLayer {
                             foe.hurtBy = m;
                             foe.hurtAt = this.battleSec;
                         }
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * dt
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
