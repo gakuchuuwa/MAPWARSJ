@@ -1129,7 +1129,11 @@ const LAYER3_CUSTOM_GROUPS = [
     //    形态仍走三级自建的蒙古包毡帐营地（8 个真蒙古包 E~L + 栅栏），城堡 MONG_CASTLE_AGE3（木石大斡耳朵）。
     group: '🏕️ 漠北蒙古毡帐营地',
     branches: [
-      { key: 'MOBEI_MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
+      // 🔴 [2026-09-18 主人定「战略地图上的据点，和战术模式中要同步」] deStyle 由 'ASIA' 改正为 'YURT'。
+      //    游戏侧权威 REGION_TO_DE_STYLE 写的是 `MOBEI_MONGOL: 'YURT'`（三级漠北蒙古→毡帐），
+      //    本表却写成 ASIA —— 于是 buildingStyle='MOBEI_MONGOL' 的据点（如燕然山）在游戏里是毡帐营地，
+      //    在本预览页却被算成东亚建筑，两边对不上，连带城寨/小城的营地判据 isYurt 也命不中。
+      { key: 'MOBEI_MONGOL', deStyle: 'YURT', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
     ]
   },
 ];
@@ -1757,6 +1761,10 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   const bldgPath = (styleName, b, age) => isYurtBuilding(b)
     ? ('/SUCAI_BUILDING/' + b + '/preview.png')
     : ('/SUCAI_BUILDING/' + styleName + '_' + b + '_' + age + '/preview.png');
+  // 🔴 [2026-09-18] 毡帐城寨判据，与下方 isYurt 同一套（style=YURT／草原区／漠北蒙古三层任一命中）
+  const isYurtStockade = (style === 'YURT')
+    || (curCulture === 'STEPPE' || curCulture === 'MOBEI_MONGOL')
+    || (curCustom === 'MOBEI_MONGOL');
   let pool = [];
   if (type === 'big') {
     const noble = [
@@ -1823,7 +1831,18 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'OUTPOST', s: 0.26 },
       { b: 'FORTIFIED_OUTPOST', s: 0.26 }
     ];
-    pool = shuffle(stkList, rnd).slice(0, 9);
+    // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」
+    //    与毡帐营地同一套 9 件：8 蒙古包（YURT_E~L）+ 1 亚洲瞭望塔。
+    //    ⚠️ **只换这 9 个建筑**：城寨的篱笆围墙、布局、地基一律不动
+    //       （主人：「我说只改 9 建筑，你把篱笆墙怎么也给我删了」）。
+    //    与游戏侧 TerritorySystem 的 YURT_STOCKADE_NINE 同一套。
+    const yurtStkList = [
+      { b: 'YURT_E', s: 0.25 }, { b: 'YURT_F', s: 0.25 }, { b: 'YURT_G', s: 0.25 }, { b: 'YURT_H', s: 0.25 },
+      { b: 'YURT_I', s: 0.25 }, { b: 'YURT_J', s: 0.25 }, { b: 'YURT_K', s: 0.25 }, { b: 'YURT_L', s: 0.25 },
+      // 城寨一律走无风格前缀取图（见 cPath 的 `type === 'stockade'` 分支），故塔写完整目录名
+      { b: 'ASIA_TOWER_AGE2', s: 0.26 },
+    ];
+    pool = shuffle(isYurtStockade ? yurtStkList : stkList, rnd).slice(0, 9);
   }
 
   // 大城：底层菱形 clip-path 裁切广场地基（修复城北地基覆盖），9建筑按 3*3 排列、位置随机、随机镜像

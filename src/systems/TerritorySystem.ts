@@ -122,6 +122,10 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
  *  · 蒙古包目录名**没有风格前缀**（是 `YURT_E`，不是 `ASIA_YURT_E_AGE2`）→ 取图必须走特例，
  *    与城寨池里的 `YURT_A~D` 同一套写法。 */
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
+/** 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
+ *  与毡帐营地（buildYurtCampHtml）同一套 9 件：8 蒙古包 + 1 亚洲瞭望塔。
+ *  ⚠️ 只用于替换城寨的**建筑池**，城寨自己的篱笆围墙与布局不受影响。 */
+const YURT_STOCKADE_NINE = [...MONGOL_CITY_YURTS, 'ASIA_TOWER_AGE2'];
 const MONGOL_YURT_SCALE = 0.30;
 const isYurtItem = (b: string): boolean => b.startsWith('YURT_');
 const isMongolStyle = (buildingStyle?: string): boolean => buildingStyle === 'MONGOL';
@@ -580,8 +584,13 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 /** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，DE 编织篱笆围墙）
  *  2026-09-03 主人定 · 围墙用 DE 细编篱笆（s_archaic_fence），2026-09-03 按 DE 标准重新解析 box/anchor */
 function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: string): string {
+    // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
+    //    改前只有大城/中城/小城/险要四处有 `style === 'YURT'` 分支，**唯独城寨漏了** ——
+    //    于是漠北蒙古的城寨掉进通用池（大庄园/定居点/棚屋 A~G/哨所），混着抽 9 个，不是蒙古包。
+    //    ⚠️ 只换这 9 个建筑：**篱笆围墙、布局、缩放、地基一律不动**（主人 2026-09-18：
+    //       「我说只改 9 建筑，你把篱笆墙怎么也给我删了」）。城寨仍是城寨，只是住的换成蒙古包。
     const rnd = deMulberry32(deHashString(cityId));
-    const pool = [...DE_STOCKADE_BUILDING_POOL];
+    const pool = [...(style === 'YURT' ? YURT_STOCKADE_NINE : DE_STOCKADE_BUILDING_POOL)];
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
