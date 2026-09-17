@@ -7446,7 +7446,7 @@ export class Scene13WarLayer {
                     const shooter = wt;
                     this.splash(m, 75, shooter, 1.0);
                     m.hp = 0;
-                    this.pushCorpse(m);
+                    this.lastKillSec = this.battleSec;
                     continue;
                 }
                 m.st = (stats.rng && close && this.bank[m.key]?.realMelee) ? 2 : 1;
@@ -7863,6 +7863,11 @@ export class Scene13WarLayer {
     private pushCorpse(m: WarMan): void {
         // 死人打点：唯一的死亡入口，卡死检测（NO_KILL_SEC）就靠它。留尸/溃逃两条路都要记。
         this.lastKillSec = this.battleSec;
+        // 🔴 自爆单位（火焰骆驼/爆破兵）被击杀：满载火油炸药当场殉爆，绝不留四蹄站立的假尸体，永不逃跑
+        if (SUICIDE_TYPES.has(m.key)) {
+            this.explode('FX_PETARD', m.x, m.y);
+            return;
+        }
         // 🔴 [2026-09-15 主人定] 攻城武器阵亡不能逃跑，只能留下尸体（残骸），永不进 fleers 通道。
         if (m.siegeW) {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });

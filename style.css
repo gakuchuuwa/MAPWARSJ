@@ -14,6 +14,11 @@ body {
     position: relative;
 }
 
+/* 辅助消除 Chromium / WebKit 在 GPU 3D 变换下的瓦片边缘抗锯齿透明裂缝 */
+.leaflet-tile {
+    outline: 1px solid transparent;
+}
+
 /* 战略地图古典古卷氛围覆盖层（沙盘微暗角 + 宣纸绢帛暗纹，零交互遮挡） */
 #map::after {
     content: '';
