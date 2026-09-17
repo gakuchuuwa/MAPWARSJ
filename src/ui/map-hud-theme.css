@@ -349,6 +349,7 @@ body:has(#event-display.event-panel.is-collapsed) {
     height: auto !important;
     max-height: 100% !important;
     overflow-y: auto !important;
+    padding-bottom: 140px !important;
     scrollbar-width: thin;
     scrollbar-color: #8c7854 transparent;
 }

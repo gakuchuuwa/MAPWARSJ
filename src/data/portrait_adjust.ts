@@ -3293,7 +3293,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/LINGNAN/dayu_wangshouren.png": {
-            "scale": 0.85,
+            "scale": 0.87,
             "offsetX": 0,
             "offsetY": 6
         },

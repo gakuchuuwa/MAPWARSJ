@@ -576,7 +576,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 const pos = legion?.getPosition();
                 if (pos && followedId !== lastBgmFollowedId) {
                     lastBgmFollowedId = followedId;
-                    app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng);
+                    app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng, legion?.cultureRegion);
                 }
             } else {
                 lastBgmFollowedId = null;

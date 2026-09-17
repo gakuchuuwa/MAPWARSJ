@@ -237,11 +237,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '古典时代朝鲜军团',
-        formationMode: 'square',
+        formationMode: 'echelon',
         slots: [
-            { type: 'antiquity_spearman', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'antiquity_cavalry_archer', count: 2 },
         ],
         regions: ['GOJOSEON'],
         parentLegion: '东亚军团',

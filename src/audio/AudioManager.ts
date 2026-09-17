@@ -2,6 +2,7 @@ export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
+import { toBase16, type Base16Culture } from '../systems/CultureBase16';
 
 export type SoundKey =
     | 'march_loop'
@@ -254,7 +255,10 @@ const BGM_REGION_GAIN: Record<string, number> = {
     //      TIBET 裁 20s（-27.0 → -22.4），全部进入其余 33 首的同一档（优于 -25dB）。
     //    原文件备份在 `音乐素材/bgm_原始备份_20260915/*.orig`（这 4 首无母带，删备份即不可逆）。
     BASHU: 0.708,      // 实测 -18.0 LUFS · 巴蜀
-    DIANQIAN: 0.718,   // 实测 -18.12 LUFS · 滇黔（2026-09-15 裁前奏 26s 后重测）
+    // 🔴 [2026-09-17 主人定「如果有重复的，就把东亚的那个删除」] DIANQIAN 已删：
+    //    它与 pugan 是**字节完全相同**的同一首（md5 c90cbcd…，9-15 的注释就写着「同曲 cp」）。
+    //    留着会让东南亚母体 MALAY 名存实亡 —— 那个池里只有 pugan 一首，等于东南亚放的是东亚的曲子。
+    //    删东亚这份、把曲子留给 MALAY；滇黔军团经 toBase16 归 CENTRAL，从东亚池另外 16 首里取，不受影响。
     LINGNAN: 0.708,    // 实测 -18.0 LUFS · 岭南
     CENTRAL: 0.7,  // -17.9 LUFS
     CENTRAL_ASIA: 0.708,  // -18.0 LUFS
@@ -291,7 +295,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     manqing: 0.708,
     NORTH: 0.716,  // -18.1 LUFS
     NORTHEAST: 0.708,  // -18.0 LUFS
-    pugan: 0.718,  // -18.12 LUFS · = DIANQIAN 同曲 cp（2026-09-15 裁前奏 26s 后重测）
+    pugan: 0.718,  // -18.12 LUFS · 蒲甘（2026-09-15 裁前奏 26s 后重测）。原 DIANQIAN 与它同曲，2026-09-17 已删东亚那份
     rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
     SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
     STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
@@ -303,6 +307,39 @@ const BGM_REGION_GAIN: Record<string, number> = {
     xianqin: 0.708,  // -18.0 LUFS
     yingqin: 0.708,  // -18.0 LUFS
     zhaosong: 0.697,  // -17.87 LUFS · 兰陵王入阵曲（2026-09-15 裁前奏 37s 后重测）
+    // 🔴 [2026-09-17 主人定] 新增 3 首 BGM，补齐 16 母体：
+    ANDE: 0.596,      // 实测 -16.5 LUFS · 安第斯（梦之安魂曲 Lux Aeterna）
+    mohicans: 0.617,  // 实测 -16.8 LUFS · 安第斯（最后的莫西干人 Promentory）
+    AFRICA: 0.638,    // 实测 -17.1 LUFS · 非洲（Baba Yetu 索韦托福音合唱团）
+};
+
+/**
+ * 16 母体文化专属曲库池（2026-09-17 主人定）：
+ * 将全游戏全部 40 首曲目完整划分入 16 套母体体系，
+ * 使每个军团/武将无论出身何地，都能根据其所属母体播放自己文化的专属战歌。
+ */
+export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
+    CENTRAL: [
+        // DIANQIAN 已于 2026-09-17 删除（与 pugan 同曲，曲子留给 MALAY），见 BGM_REGION_GAIN 处注释
+        'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'HEXI', 'NORTH', 'NORTHEAST',
+        'JAPAN', 'KOREA', 'xianqin', 'yingqin', 'liuhan', 'wuzhou',
+        'zhaosong', 'daming', 'manqing'
+    ],
+    STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
+    INDIA: ['INDIA'],
+    GERMANIC: ['GERMANIC', 'game_of_thrones', 'helmet_to_helmet'],
+    PURU: ['TIBET', 'litang'],
+    ORIE: ['WEST_ASIA', 'BERBER'],
+    LATIN: ['LATIN', 'victory'],
+    SLAVIC: ['SLAVIC'],
+    EAST: ['age_of_kings'],
+    PERSIAN: ['shadow_assassin'],
+    MALAY: ['pugan'],
+    GREEK: ['fallen_army'],
+    THRACIAN: ['rock_house_jail'],
+    ANDE: ['ANDE', 'mohicans'],
+    AMERICA: ['hes_a_pirate'],
+    AFRICA: ['AFRICA'],
 };
 
 /**
@@ -381,7 +418,7 @@ export class AudioManager {
      * 最后一次 BGM 请求（无论当时成没成功）。解锁 / 重新启用音频后据此补播。
      * 只留最后一次：BGM 本来就是「当前该放哪首」的单值状态，不是队列。
      */
-    private lastBgmRequest: { portraitPath?: string; lat: number; lng: number } | null = null;
+    private lastBgmRequest: { portraitPath?: string; lat: number; lng: number; cultureRegion?: string | null } | null = null;
     /** 当前期望开启的循环音（startLoop 异步加载完成后据此决定是否真播）*/
     private wantedLoops = new Set<SoundKey>();
     /** 正在播放的一次性音效及其定义（暂停、主音量和语音闪避时同步处理）*/
@@ -484,7 +521,9 @@ export class AudioManager {
     private flushPendingBgm(): void {
         const req = this.lastBgmRequest;
         if (!req) return;
-        this.syncPortraitBgm(req.portraitPath, req.lat, req.lng);
+        // 🔴 [2026-09-17] cultureRegion 必须一起补回：漏了它，补播这一次就退回按坐标 getRegion 取曲，
+        //    「每个武将用自己文化的曲子」在**最关键的那一次**（解锁后的首播）失效。
+        this.syncPortraitBgm(req.portraitPath, req.lat, req.lng, req.cultureRegion);
     }
 
     /**
@@ -888,8 +927,8 @@ export class AudioManager {
         this.bgmObjectUrl = null;
     }
 
-    /** 每帧调用：以地理区域 BGM 为基础，有专属 BGM 的势力文件夹才覆盖 */
-    public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number): void {
+    /** 每帧调用：以 16 母体文化 BGM 为基础，有专属 BGM 的势力文件夹优先覆盖 */
+    public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number, cultureRegion?: string | null): void {
         if (lat === undefined || lng === undefined) return;
         // 🔴 [2026-08-12 修「有时候整局没音乐」] 无论这次成不成功都把请求**记下来**，供解锁 /
         //   重新启用音频后补播（flushPendingBgm）。
@@ -897,28 +936,39 @@ export class AudioManager {
         //   而浏览器自动播放策略下，用户第一次点击/按键之前 unlocked=false —— 老代码在这里直接 return，
         //   调用方却已经把 lastBgmFollowedId 写死了，于是**这个军团被换掉之前永远没有音乐**，
         //   期间打的所有 13 战斗全程无 BGM。音效没这个病，因为 unlock() 里有 reapplyFollowedLegionAudio 补播。
-        this.lastBgmRequest = { portraitPath, lat, lng };
+        //   ⚠️ [2026-09-17 恢复] 这段病根记录在 16 母体改造时被删掉了，它是 8-12 的血训，别再删。
+        this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
         if (!this.settings.enabled || !this.unlocked) return;
 
-        // 先按地理区域确定基础 BGM
-        const region: RegionType = getRegion(lat, lng);
-        let folderName: string = region;
-
-        // 检查立绘文件夹是否有专属 BGM（如 manqing/daming/litang 等势力夹）
+        // 1. 检查立绘文件夹是否有专属 BGM（如 manqing/daming/litang 等势力夹）
         const portraitFolder = portraitPath ? extractPortraitFolder(portraitPath) : undefined;
         const portraitDir = portraitFolder ? portraitFolder.replace(/^\/assets\/([^/]+)\/$/, '$1') : undefined;
         if (portraitDir && !BGM_FALLBACK_MAP[portraitDir] && AVAILABLE_BGM_FOLDERS.has(portraitDir)) {
-            folderName = portraitDir;
+            this.applyCameraFolder(portraitDir);
+            return;
         }
 
-        this.applyCameraFolder(resolveAvailableBgmFolder(folderName));
+        // 2. 🔴 [2026-09-17 主人定] 16 母体专属匹配：每个武将都用自己文化的曲子
+        const region: string = cultureRegion || getRegion(lat, lng);
+        const mother = toBase16(region);
+        const pool = BASE16_BGM_MAP[mother];
+        if (pool && pool.length > 0) {
+            const chosen = pool[Math.floor(Math.random() * pool.length)];
+            this.applyCameraFolder(chosen);
+            return;
+        }
+
+        this.applyCameraFolder(resolveAvailableBgmFolder(region));
     }
 
-
-    /** 每帧调用：根据镜头坐标切换对应文化区的 BGM */
+    /** 每帧调用：根据镜头坐标切换对应 16 母体文化区的 BGM */
     public syncRegionBgm(lat: number, lng: number): void {
         if (!this.settings.enabled || !this.unlocked) return;
-        this.applyCameraFolder(resolveAvailableBgmFolder(getRegion(lat, lng)));
+        const region = getRegion(lat, lng);
+        const mother = toBase16(region);
+        const pool = BASE16_BGM_MAP[mother];
+        const chosen = (pool && pool.length > 0) ? pool[Math.floor(Math.random() * pool.length)] : region;
+        this.applyCameraFolder(resolveAvailableBgmFolder(chosen));
     }
 
     /**
