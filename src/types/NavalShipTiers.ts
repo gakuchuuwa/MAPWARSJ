@@ -15,6 +15,9 @@ export type NavalShipAssetId = string;
 /**
  * 各船「侧向（dir2）」帧宽，取自 `public/SUCAI/<船>/_meta.json` 的 `idle.dirs["2"].fw`。
  * 由 `npm run naval:ship-audit` 校验与素材一致，素材换了会报出来。
+ * 🔴 [2026-09-18 全面修复] 补上原先没登记的四艘（JUNK 100 / TRADE_COG 132 /
+ *    TRANSPORT_SHIP 164 / LEVIATHAN 328，均按各自 `_meta.json` 实测）——
+ *    漏登记时 `getNavalShipDrawScale()` 退回基准 0.38，这三艘商船与利维坦在海上会明显偏大/偏小。
  */
 const SHIP_SIDE_WIDTH: Record<string, number> = {
     ANT_ELITE_GALLEY: 212,
@@ -47,13 +50,17 @@ const SHIP_SIDE_WIDTH: Record<string, number> = {
     HULK: 128,
     INCENDIARY_RAFT: 104,
     INCENDIARY_SHIP: 156,
+    JUNK: 100,
     LEMBOS: 100,
+    LEVIATHAN: 328,
     LONGBOAT: 128,
     LOU_CHUAN: 260,
     MERCHANT_SHIP: 144,
     MONOREME: 132,
     ONAGER_SHIP: 268,
     THIRISADAI: 320,
+    TRADE_COG: 132,
+    TRANSPORT_SHIP: 164,
     TRIREME: 176,
     TURTLE_SHIP: 292,
     WAR_GALLEY: 192,
@@ -101,8 +108,8 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'ANT_WAR_GALLEY', why: '代安宅船：DE 无日本专属船，暂用大型桨帆战船', regions: ['JAPAN'] },
 
     // ── 南亚 / 东南亚 ───────────────────────────────────────
-    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS', 'DELHI'] },
-    { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY', 'SRIVIJAYA'] },
+    { ship: 'THIRISADAI', why: 'DE 南印度专属多桅巨舰：朱罗王朝远征南洋', regions: ['INDIA', 'INDIA_CASTLE', 'PURU', 'BENGALIS', 'GURJARAS', 'DELHI'] },
+    { ship: 'FAST_FIRE_SHIP', why: '马六甲海峡快速突击船', regions: ['MALAY', 'SEASIA_ANTIQUITY', 'SRIVIJAYA'] },
     { ship: 'WAR_GALLEY', why: '爪哇 jong 大帆战船：满者伯夷以舰队制海群岛，郑和随员马欢与葡人皆记其船体巨大', regions: ['JAVANESE'] },
     { ship: 'HEAVY_INCENDIARY_SHIP', why: '恒河-布拉马普特拉重型内河战船：莫卧儿孟加拉总督的 nawara 舰队，长期与阿拉干-葡萄牙海盗争河口', regions: ['MUGHAL'] },
     { ship: 'INCENDIARY_SHIP', why: '红河/白藤江火攻船', regions: ['VIETNAMESE', 'KHMER'] },
@@ -146,7 +153,7 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'WAR_GALLEY', why: '亚得里亚-波河桨帆战船：伦巴第王国居意大利内陆，海岸多在拜占庭手中，仅维持近岸与河川战船', regions: ['LOMBARDS'] },
 
     // ── 中东 / 北非 ─────────────────────────────────────────
-    { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'ETHIOPIANS'] },
+    { ship: 'FIRE_GALLEY', why: '黎凡特-红海火攻快船', regions: ['WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'ETHIOPIANS'] },
     { ship: 'FIRE_SHIP', why: '阿拉伯突击火船：地中海/红海', regions: ['ORIE', 'MAMLUKS'] },
     { ship: 'WAR_GALLEY', why: '巴巴里桨帆战船：马格里布海岸', regions: ['BERBER', 'ALMOHAD'] },
     { ship: 'WAR_GALLEY', why: '波斯湾桨帆战船：萨珊海军', regions: ['SASANIAN'] },
@@ -157,12 +164,18 @@ const CULTURE_SHIP: Array<{ ship: string; why: string; regions: string[] }> = [
     { ship: 'CANOE', why: '尼日尔河战舟与大湖区水网战船：西非内陆帝国以河船控尼日尔河湾商道（加纳、马里皆恃之），非洲原住民传统水战主力独木战舟', regions: ['GHANA', 'MALI', 'AFRICA'] },
 
     // ── 美洲 ────────────────────────────────────────────────
-    { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI', 'INCA'] },
+    { ship: 'CANOE', why: '武装独木战舟：特斯科科湖水战与玛雅佩滕-乌苏马辛塔河雨林战船（美洲无风帆远洋船形制）', regions: ['AMERICA', 'ANDE', 'MAYANS', 'CHIMU', 'TARASCAN', 'MAPUCHE', 'MUISCA', 'TUPI', 'INCA'] },
 
     // ── 内陆：没有航海传统，给渡河筏（史实如此，不硬凑战舰）──
     // ⚠️ [2026-09-07 主人裁决] 所有文化区都必须登记船型，一个不许落空 —— 不挨着海的也要有，
     //    因为军团可能一路打到海边。内陆文化给渡河筏正是史实，但不能靠 FALLBACK 兜底。
-    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'MAGYAR', 'BOHEMIANS', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE', 'MONGOL'] },
+    // 🔴 [2026-09-18 全面修复] 下面这 6 个区原先**没登记**，而它们又没有对应的军团可挂船
+    //    （`CULTURE_LEGION_NAMES` 里查不到），于是真的落回 FALLBACK_SHIP —— 实测：
+    //    城堡奇穆/城堡塔拉斯科/古典中亚/古典东南亚/城堡印度/古典西亚 会在海上开出一艘地中海桨帆战船。
+    //    按主人 2026-09-07 定死的「所有文化区必须显式登记，不许靠兜底」补登记，
+    //    船一律沿用**同母体/同代兄弟区**已定的那一艘（不新造史实说法）。
+    //    实测：`npx tsx --import ./tools/sim-preload.mjs scratch/_check_missing_regions.mts` → 现 0 个落兜底。
+    { ship: 'DEMO_RAFT', why: '渡河木筏：内陆游牧/高原/绿洲，历史上无海军', regions: ['STEPPE', 'HUNS', 'CUMAN', 'TIBET', 'CENTRAL_ASIA', 'CENTRAL_ASIA_ANTIQUITY', 'MAGYAR', 'BOHEMIANS', 'TURKS', 'ROURAN', 'UIGHUR', 'SOGDIANS', 'HEPHTHALITES', 'PASHTUN', 'KARA_KHITAN', 'TIMURID', 'ILKHANATE', 'MONGOL'] },
     { ship: 'GALLEY', why: '内陆河渡桨船：塞种/乌孙/羌居妫水、热海、湟水诸河谷，以小型桨船控渡口（古典军团一律配战船，不吃木筏）', regions: ['WESTERN', 'WUSUN', 'QIANG'] },
     { ship: 'DEMO_RAFT', why: '黄河羊皮筏：西夏据宁夏平原与河西走廊，渡黄河恃充气羊皮筏（浑脱），无海岸线', regions: ['TANGUT'] },
     { ship: 'DEMO_RAFT', why: '湟水皮筏：羌人居青藏东缘河谷，以皮筏渡湟水/洮河，无航海传统', regions: ['QIANG'] },
@@ -273,13 +286,29 @@ export function getNavalShipAssetId(
     return getCultureNavalShip(region, factionId, legionName);
 }
 
-/** 战船 AssetID 对应官方标准中文名 */
+/**
+ * 战船 AssetID 对应官方标准中文名
+ *
+ * 🔴 [2026-09-18 主人「全面修复」] 本表必须与兵种表 `DE_UNITS_CATALOG`（`src/legion-editor/main.ts`）
+ *    **逐条同名**：同一艘船在「兵种鉴赏 / 选船弹窗 / 军团编辑·舰队卡片」读的是**兵种表名**，
+ *    在「海军编排面板 / 玩家 HUD ⚓ / 势力卡片舰队徽标 / 一键复制」读的是**本表名** ——
+ *    两处不一致就是同一艘船挂着两个名字。项目自己的改名接口 `/api/rename-unit`（vite.config.ts）
+ *    改兵种名时也是「兵种表 + WarTypes.ts + 本表」三处同改，本表即按此约定**以兵种表名为准**对齐。
+ *    本次修复：14 条两表不一致的对齐到兵种表名（如 火炮战舰→炮舰、大型大帆船→盖伦帆船、
+ *    重型爆破船→爆破舰），并补上原先漏登的两艘（ELITE_TURTLE_SHIP / LEVIATHAN）——
+ *    漏登时 `getNavalShipChineseName()` 会把 **素材 ID 原样**吐给玩家（HUD 显示「LEVIATHAN」）。
+ *    ⚠️ ONAGER_SHIP 例外取「中型投石舰」而非兵种表旧名：DE 本体官方简中是**中型**投石船
+ *    （Onager＝中型投石车；本项目陆地兵种 `onager` 也自叫「欧洲中型投石车高级」），
+ *    「重型」是错的档次，兵种表那条已同步改正。
+ *    实测：`node scratch/_audit_naval_chain.cjs`（46 条船 × 5 张表）—— 现在 0 条不一致。
+ */
 export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     LOU_CHUAN: '中国楼船',
     DRAGON_SHIP: '龙头战舰',
     INCENDIARY_SHIP: '燃烧战船',
     GALLEY: '桨帆船',
     TURTLE_SHIP: '龟船',
+    ELITE_TURTLE_SHIP: '龟船高级',
     ANT_WAR_GALLEY: '古典大战舰',
     THIRISADAI: '孟加拉楼船',
     FAST_FIRE_SHIP: '快速喷火船',
@@ -288,7 +317,7 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     TRIREME: '三列桨座战船',
     BIREME: '双列桨座战船',
     MONOREME: '单列桨座战船',
-    HEAVY_LEMBOS: '希腊重型伦博斯',
+    HEAVY_LEMBOS: '希腊重型伦博斯重装',
     LEMBOS: '希腊轻型伦博斯',
     DROMON: '德罗蒙战舰',
     LONGBOAT: '维京长船',
@@ -300,25 +329,26 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     CANOE: '独木舟',
     DEMO_RAFT: '爆破木筏',
     ANT_GALLEY: '古典桨帆船',
-    ANT_ELITE_GALLEY: '古典精锐桨帆船',
-    CARRACK: '卡拉克大帆船',
-    CANNON_GALLEON: '火炮战舰',
-    ELITE_CANNON_GALLEON: '精锐火炮战舰',
-    CATAPULT_GALLEON: '投石机战船',
-    CATAPULT_SHIP: '投石战舰',
-    DEMO_SHIP: '爆破船',
-    HEAVY_DEMO_SHIP: '重型爆破船',
+    ANT_ELITE_GALLEY: '古典桨帆船高级',
+    CARRACK: '克拉克帆船',
+    CANNON_GALLEON: '炮舰',
+    ELITE_CANNON_GALLEON: '炮舰高级',
+    CATAPULT_GALLEON: '投石盖伦船',
+    CATAPULT_SHIP: '投石舰',
+    DEMO_SHIP: '爆破舰',
+    HEAVY_DEMO_SHIP: '重型爆破舰',
     INCENDIARY_RAFT: '燃烧木筏',
     MERCHANT_SHIP: '商船',
     JUNK: '中式帆船',
     TRADE_COG: '柯克货船',
     TRANSPORT_SHIP: '运输船',
     ONAGER_SHIP: '中型投石舰',
-    WAR_HULK: '重装霍克船',
+    WAR_HULK: '霍克船高级',
     HULK: '霍克船',
-    WAR_LEMBOS: '战用伦博斯',
-    ELITE_LEMBOS: '精锐伦博斯',
-    GALLEON: '大型大帆船',
+    WAR_LEMBOS: '希腊战型伦博斯高级',
+    ELITE_LEMBOS: '希腊旗舰伦博斯重装',
+    GALLEON: '盖伦帆船',
+    LEVIATHAN: '利维坦',
 };
 
 /** 获取战船标准中文名 */

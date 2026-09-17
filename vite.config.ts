@@ -1398,10 +1398,19 @@ export default defineConfig({
                             if (!shipId) throw new Error('缺少战船 shipId');
                             markLegionSaveWrite();
                             let written = false;
-                            for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
-                                const p = path.resolve(__dirname, rel);
-                                const out = serverReplaceLegionShip(safeReadFileSync(p), legionName, shipId);
-                                if (out) { safeWriteFileSync(p, out); written = true; break; }
+                            // 一级母体：shipId 在 CultureFormations.ts 的 BASE_16_TIERS_MAP
+                            const base16Region = BASE_16_LEGION_TO_REGION[legionName];
+                            if (base16Region) {
+                                const p = path.resolve(__dirname, 'src/types/CultureFormations.ts');
+                                const out = serverReplaceBase16Ship(safeReadFileSync(p), base16Region, shipId);
+                                if (out) { safeWriteFileSync(p, out); written = true; }
+                            }
+                            if (!written) {
+                                for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
+                                    const p = path.resolve(__dirname, rel);
+                                    const out = serverReplaceLegionShip(safeReadFileSync(p), legionName, shipId);
+                                    if (out) { safeWriteFileSync(p, out); written = true; break; }
+                                }
                             }
                             if (!written) throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存战船');
                             res.setHeader('Content-Type', 'application/json');
@@ -2971,6 +2980,20 @@ function serverReplaceLegionShip(text: string, legionName: string, shipId: strin
     if (shipAt < 0) return null;
     const nextName = text.indexOf("name: '", at + 1);
     if (nextName > 0 && shipAt > nextName) return null; // shipId 落在下一条军团，不属于本军团
+    const valueStart = shipAt + "shipId: '".length;
+    const valueEnd = text.indexOf("'", valueStart);
+    if (valueEnd < 0) return null;
+    return text.slice(0, valueStart) + shipId + text.slice(valueEnd);
+}
+
+/** 一级 16 母体的战船 shipId 在 CultureFormations.ts 的 BASE_16_TIERS_MAP */
+function serverReplaceBase16Ship(text: string, region: string, shipId: string): string | null {
+    const at = text.indexOf('    ' + region + ': {');
+    if (at < 0) return null;
+    const shipAt = text.indexOf("shipId: '", at);
+    if (shipAt < 0) return null;
+    const nextEntry = text.indexOf('\n    ', at + 1);
+    if (nextEntry > 0 && shipAt > nextEntry) return null;
     const valueStart = shipAt + "shipId: '".length;
     const valueEnd = text.indexOf("'", valueStart);
     if (valueEnd < 0) return null;

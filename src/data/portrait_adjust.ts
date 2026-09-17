@@ -3898,7 +3898,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/WEST_ASIA/yashu_saergong.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -9
         },
@@ -6828,7 +6828,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 11
         },
         "/assets/CENTRAL_ASIA/samaila_muataisuimu.png": {
-            "scale": 1.01,
+            "scale": 1.05,
             "offsetX": 0,
             "offsetY": 4
         },
@@ -7876,6 +7876,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
+        },
+        "/assets/GREEK/adiyabeina_keleitusi.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

@@ -31,7 +31,7 @@ import {
     DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
     getUnitSubcategory, getUnitTier, observeThumbs, drawUnitThumb,
 } from '../legion-editor/main';
-import { NAVAL_SHIP_CHINESE_NAMES } from '../types/NavalShipTiers';
+import { getNavalShipChineseName } from '../types/NavalShipTiers';
 
 const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
@@ -145,16 +145,45 @@ function subLabelOf(unitId: string): string {
     return [cat, subCn].filter(Boolean).join(' / ') + tier;
 }
 
+/**
+ * 🔴 [2026-09-18 主人「让舰队和其他前中后三排兵种一样显示」]
+ * 军团表里存的 `shipId` 是**大写素材 ID**（如 `ANT_WAR_GALLEY`），
+ * 而兵种表 `DE_UNITS_CATALOG` 里的船 id 是**小写**（`ant_war_galley`）——
+ * 缩略图（drawUnitThumb）与选择器都走兵种表，所以显示前先转小写。
+ * 实测（`node scratch/_check_ship_ids.cjs`）：海军中文名表 44 条 + 三张编制表里实际在用的 23 个 shipId，
+ * 全部能落到兵种表的「船只」条目上，无一落空。
+ */
+function shipUnitId(shipId: string | undefined): string {
+    return (shipId ?? '').toLowerCase();
+}
+
+/** 战船显示名：取兵种表里的中文名（与选择器弹窗里同名），兵种表查无再退回海军中文名表 / 原样 ID。 */
+function shipLabel(shipId: string | undefined): string {
+    const uid = shipUnitId(shipId);
+    if (!uid) return '—';
+    return DE_UNITS_CATALOG.find(u => u.id === uid)?.name ?? getNavalShipChineseName(uid);
+}
+
 /** 选兵种：带图 + 按子分类分组的弹窗（2026-09-15 主人「选兵种的时候，要有图，要有子分类」） */
 let pickerKeyword = '';
 let pickerCat: string = 'all';
+/**
+ * 🔴 [2026-09-18 主人「让舰队和兵种一样显示」] 战船选择器也走这个弹窗，但**分类记忆要分开**：
+ *    战船默认停在「船只」，陆战兵种那套照旧记上次看的大类。
+ *    共用一个 pickerCat 的话，选完船再点前排，弹窗会只剩船只、陆战兵种全被滤掉。
+ */
+let pickerShipCat: string = 'naval';
+let pickerKind: 'unit' | 'ship' = 'unit';
 
 /**
- * @param onPick 给了就把选中的兵种交给它（新建军团弹窗用），不动 draft、不重绘主列表；
+ * @param onPick 给了就把选中的兵种交给它（新建军团弹窗、舰队选船用），不动 draft、不重绘主列表；
  *               不给就是原行为：写进当前编辑中的 draft 那一排。
+ * @param kind   'ship' = 给「舰队（战船）」选船（分类默认停船只、标题写舰队）。
  */
-function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, pickedNow?: string): void {
+function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, pickedNow?: string, kind: 'unit' | 'ship' = 'unit'): void {
     if (!draft && !onPick) return;
+    pickerKind = kind;
+    if (kind === 'ship') pickerCat = pickerShipCat;
     // 🔴 高亮「当前这一排是谁」：编辑现有军团时读 draft，新建弹窗没有 draft，读调用方传来的值。
     //    原来这里直写 draft!.types[rowIdx]，新建那条路进来时 draft 是 null → 整个 paint 抛异常，
     //    弹窗开出来是**空白的**（overlay 在、一张卡都没有）。
@@ -211,7 +240,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         );
         box.innerHTML = `
           <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <b style="color:#f6e05e;">选兵种 · ${['前排', '中坚', '后排'][rowIdx]}</b>
+            <b style="color:#f6e05e;">选兵种 · ${['前排', '中坚', '后排'][rowIdx] ?? '舰队'}</b>
             <input id="lp-pk-search" placeholder="搜兵种名 / 子分类 / ID" value="${esc(pickerKeyword)}"
               style="width:220px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
             ${cats.map(c => `<button data-cat="${c}" class="lp-pk-cat" style="background:${pickerCat === c ? '#5a3c28' : '#243246'};
@@ -262,6 +291,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         });
         box.querySelectorAll('.lp-pk-cat').forEach(b => b.addEventListener('click', () => {
             pickerCat = (b as HTMLElement).dataset.cat!;
+            if (pickerKind === 'ship') pickerShipCat = pickerCat;
             paint();
         }));
         document.getElementById('lp-pk-close')?.addEventListener('click', () => overlay.remove());
@@ -332,6 +362,7 @@ function render(): void {
               <th style="padding:7px 10px;">前排</th>
               <th style="padding:7px 10px;">中坚</th>
               <th style="padding:7px 10px;">后排</th>
+              <th style="padding:7px 10px;">舰队</th>
               <th id="lp-sort-users" title="点击按势力家数排序（多在前 / 少在前 / 原顺序）"
                   style="padding:7px 10px;cursor:pointer;user-select:none;${sortByUsers !== 'none' ? 'color:#f6e05e;' : ''}">
                 势力${sortByUsers === 'desc' ? ' ▼' : sortByUsers === 'asc' ? ' ▲' : ' ⇅'}</th>
@@ -351,6 +382,11 @@ function render(): void {
                         <span>${esc(cn(u?.type ?? '—'))}<span style="color:#6a6358;"> ×${u?.count ?? 0}</span></span>
                       </div></td>`;
                 }).join('')}
+                <td style="padding:4px 10px;color:#d8c898;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    ${r.shipId ? `<canvas data-uid="${esc(shipUnitId(r.shipId))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                    <span>${esc(shipLabel(r.shipId))}</span>
+                  </div></td>
                 <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
               </tr>`).join('')}
           </tbody>
@@ -382,10 +418,18 @@ function render(): void {
           </select>
 
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队（战船）</div>
-          <select id="lp-ship" style="width:100%;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;">
-            ${Object.entries(NAVAL_SHIP_CHINESE_NAMES).map(([id, cnName]) =>
-                `<option value="${id}" ${(draft!.shipId ?? '') === id ? 'selected' : ''}>${cnName}（${id}）</option>`).join('')}
-          </select>
+          <div id="lp-ship-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+               background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+            <canvas id="lp-thumb-ship" width="64" height="64"
+              style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#e8e0d0;font-size:13px;">${esc(shipLabel(draft!.shipId))}</div>
+              <div style="color:#6a6358;font-size:11px;">
+                ${esc(subLabelOf(shipUnitId(draft!.shipId)))} · 点击更换
+              </div>
+            </div>
+            <span style="color:#8a8378;font-size:16px;">▾</span>
+          </div>
 
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
@@ -469,22 +513,25 @@ function render(): void {
         if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
         render();
     });
-    document.getElementById('lp-ship')?.addEventListener('change', e => {
-        if (draft) draft.shipId = (e.target as HTMLSelectElement).value;
-        render();
+    document.getElementById('lp-ship-card')?.addEventListener('click', () => {
+        if (!draft) return;
+        // 选船走和三排兵种同一个弹窗（带图带子分类）：选中即写 draft.shipId，保存沿用 shipId 那条落盘路径
+        openUnitPicker(-1, uid => { draft!.shipId = uid.toUpperCase(); render(); }, shipUnitId(draft.shipId), 'ship');
     });
     host.querySelectorAll('.lp-unit').forEach(el => {
         el.addEventListener('click', () => {
             openUnitPicker(Number((el as HTMLElement).dataset.row));
         });
     });
-    // 兵种图：列表用懒加载（滚进视口才画），右侧三张立刻画
+    // 兵种图：列表用懒加载（滚进视口才画），右侧三排 + 舰队那张立刻画
     observeThumbs(host);
     if (draft) {
         for (let i = 0; i < 3; i++) {
             const c = document.getElementById('lp-thumb-' + i) as HTMLCanvasElement | null;
             if (c && draft.types[i]) void drawUnitThumb(c, draft.types[i]);
         }
+        const shipCv = document.getElementById('lp-thumb-ship') as HTMLCanvasElement | null;
+        if (shipCv && draft.shipId) void drawUnitThumb(shipCv, shipUnitId(draft.shipId));
     }
 
     document.getElementById('lp-reset')?.addEventListener('click', () => { draft = null; render(); });

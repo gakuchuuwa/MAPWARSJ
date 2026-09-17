@@ -519,7 +519,10 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'dragon_ship', name: '龙头战舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/DRAGON_SHIP/' },
     { id: 'thirisadai', name: '孟加拉楼船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI/THIRISADAI/' },
     { id: 'catapult_ship', name: '投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/CATAPULT_SHIP/' },
-    { id: 'onager_ship', name: '重型投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
+    // 🔴 [2026-09-18 全面修复] ONAGER_SHIP 原叫「重型投石舰」，档次写错了：DE 本体官方简中是
+    //    「中型投石船」（Onager＝中型投石车，本项目陆地兵种 onager 亦自叫「欧洲中型投石车高级」），
+    //    重型是 Siege Onager。改为「中型投石舰」，与 NavalShipTiers 的 NAVAL_SHIP_CHINESE_NAMES 同名。
+    { id: 'onager_ship', name: '中型投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
     { id: 'hero_khan', name: '英雄·成吉思汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 全球知名度第一的可汗；本人在武将册 menggu_d_chengjisihan 且无专属素材
     { id: 'hero_jadwiga', name: '英雄·雅德维加', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JADWIGA/' },   // [2026-09-07 补提] 波兰女王 1373–1399
     { id: 'hero_tamar', name: '英雄·塔玛尔', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TAMAR/' },   // [2026-09-07 补提] 格鲁吉亚女王 1160–1213

@@ -5212,7 +5212,13 @@ export class Scene13WarLayer {
             });
 
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
-            if (this.sideCulture[f] === 'STEPPE') {
+            // 🔴 [2026-09-18 主人定「战略地图上的据点，和战术模式中要同步」] 判据由文化区 STEPPE
+            //    改成**建筑风格 YURT**，与战略地图同源。原来只认 `sideCulture === 'STEPPE'`，
+            //    而漠北蒙古的文化区是 MOBEI_MONGOL —— 战略地图经 REGION_TO_DE_STYLE 把
+            //    STEPPE 和 MOBEI_MONGOL **都**映射成 YURT 画营地，13 这边却匹配不上，
+            //    于是漠北蒙古据点在战场被画成通用建筑池，两边对不上。
+            //    buildingStyleFor(守方) 走的就是 defenderMapStyle（resolveCityDeBuildingStyle 的结果）。
+            if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
                 placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide);
                 return;
             }
@@ -5320,7 +5326,8 @@ export class Scene13WarLayer {
         }
 
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔
-        if (this.sideCulture[f] === 'STEPPE') {
+        // 🔴 [2026-09-18] 同上：判据改用建筑风格 YURT，覆盖 STEPPE 与 MOBEI_MONGOL 两种文化区
+        if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
             placeYurtCamp();
             return;
         }
