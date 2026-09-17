@@ -22,7 +22,7 @@ import { CITY_CONFIG, clampCityTroops } from '../config/CityConfig';
 import { GameTime } from '../core/GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
-import { getCityRegion, REGION_ORDER, REGION_LABELS, RegionType, isRegionCenter } from '../systems/RegionSystem';
+import { getCityRegion, REGION_ORDER, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
@@ -30,6 +30,8 @@ import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { armDeploy } from '../legion/DeployGate';
 import { toBase16 } from '../systems/CultureBase16';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { getCultureLegionName } from '../types/CultureFormations';
 
 type RecruitmentCity = ReturnType<CityManager['getCities']>[number];
 type SpawnCandidate = {
@@ -387,9 +389,11 @@ export class RecruitmentSystem {
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
         const region = this.getCityRegion(city);
-        const cultureName = REGION_LABELS[region] || '中原';
+        // 🔴 [2026-09-17 主人定] 军团名一律看军团编辑器：FactionCompositions 显式条目优先，
+        //    无显式条目才落文化区默认军团名（getCultureLegionName）；不再用 REGION_LABELS 另起一套。
+        const legionName = FACTION_COMPOSITIONS[city.factionId]?.legionName || getCultureLegionName(region);
         const newLegion = this.legionManager.createArmy({
-            name: `${cultureName}军团`,
+            name: legionName,
             factionId: city.factionId,
             position: { lat: city.latitude, lng: city.longitude },
             troops: armySize,

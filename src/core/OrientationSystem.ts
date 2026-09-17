@@ -103,6 +103,19 @@ export class OrientationSystem {
         return Math.atan2(d.dx, d.dy) * (180 / Math.PI);
     }
 
+    /**
+     * 🔴 将原始地理航向角（0=北，顺时针向东为正，弧度）经 Web Mercator 纬度拉伸折算为屏幕罗盘角（弧度）。
+     * 避免在高纬度斜向航行时船身贴图与屏幕实际移动轨迹错位（螃蟹步横漂）。
+     */
+    public static geoHeadingToScreenCompassRad(geoRad: number, latDeg: number): number {
+        const lat = Math.max(-85, Math.min(85, latDeg)) * Math.PI / 180;
+        const cosLat = Math.max(0.01, Math.cos(lat));
+        // 地理位移比值: dLng = sin(geoRad), dLat = cos(geoRad)
+        // Mercator 屏幕轴位移: dx = dLng, dy = dLat / cosLat (向北为正)
+        // 屏幕罗盘角 (0=北, 顺时针): atan2(dx, dy)
+        return Math.atan2(Math.sin(geoRad), Math.cos(geoRad) / cosLat);
+    }
+
     /** 罗盘角（0=北 CW） → 数学角（0=东 CCW） */
     public static compassToMathDeg(compassDeg: number): number {
         return 90 - compassDeg;

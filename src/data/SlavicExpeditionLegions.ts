@@ -79,4 +79,6 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     pisha: { name: '毗沙都督卫', tier: 4 },
     wuhu: { name: '乌护游骑', tier: 4 },
     kawusi: { name: '卡乌斯铁卫', tier: 4 },
+    dian: { name: '秀山白义从', tier: 3 },
+    dali: { name: '洱海白戟', tier: 3 },
 };

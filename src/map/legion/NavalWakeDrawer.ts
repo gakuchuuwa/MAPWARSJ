@@ -15,6 +15,7 @@ interface Asset {
 interface Particle {
     position: Point; direction: number; born: number; duration: number;
     kind: 'back' | 'front'; profile: Profile;
+    rot?: number;
 }
 interface FleetWake { particles: Particle[]; lastEmission: number; lastSeen: number; }
 
@@ -49,7 +50,7 @@ export class NavalWakeDrawer {
 
     public static drawNavalWakes(
         ctx: CanvasRenderingContext2D,
-        ships: (Point & { r: number; isAlive: boolean; dir?: number })[],
+        ships: (Point & { r: number; isAlive: boolean; dir?: number; rot?: number; deg?: number; shipLen?: number })[],
         direction: number, scale: number, tick: number, isMoving: boolean,
         _trail?: Point[], shipLength = 60, unitId = '', projection?: WakeProjection,
     ): void {
@@ -75,19 +76,33 @@ export class NavalWakeDrawer {
             const frontRank = Math.max(...alive.map(ship => ship.r));
             for (const ship of alive) {
                 const dir = ((Math.round(ship.dir ?? direction) % 16) + 16) % 16;
-                const angle = (dir + 2) * Math.PI / 8;
+                // 船身精确罗盘角（0=北，顺时针）：优先使用连续航向角，避免离散 22.5° 台阶跳
+                const compassDeg = ship.deg !== undefined ? ship.deg : (45 + 22.5 * dir);
+                const compassRad = compassDeg * Math.PI / 180;
+                const rot = ship.rot ?? 0;
+
+                // 2:1 等轴测视角下的船体几何长轴与短轴：
+                // 优先使用该舰自身的真实物理船长（不同船型按各自尺寸定发射点：巨舰、中小舰、小艇各得其所）
+                const currentLen = ship.shipLen ?? (shipLength / 1.15);
+                const sternRad = compassRad + Math.PI;
+                const bowRad = compassRad;
+                const Rx = currentLen * 0.48;
+                const Ry = currentLen * 0.30;
+                const yPitch = -currentLen * 0.05;
+
                 for (const kind of ['back', 'front'] as const) {
                     const profile = this.assets[kind].profiles[ship.r === frontRank ? 'medium' : 'small'];
-                    const offset = shipLength * (kind === 'front' ? 0.20 : -0.22);
-                    const screen = { x: ship.x + Math.sin(angle) * offset, y: ship.y - Math.cos(angle) * offset };
+                    const targetRad = kind === 'back' ? sternRad : bowRad;
+                    const screen = {
+                        x: ship.x + Math.sin(targetRad) * Rx,
+                        y: ship.y - Math.cos(targetRad) * Ry + (kind === 'back' ? yPitch : -yPitch),
+                    };
                     fleet.particles.push({
                         position: projection?.toWorld(screen) ?? screen,
-                        // 🔴 [2026-09-12 主人报障「船尾水波不对」] 水迹贴图的行号必须与上面的**发射位移角同相位**：
-                        //    位移角用 `(dir + 2) * π/8`，而贴图行号原先直接用 `dir` —— 同一函数里两套相位，
-                        //    必然差 45°（2 档）：船斜着走、尾迹却朝另一个方向铺开。
-                        //    按 DE 素材的相位差补偿 −2：`(shipDir − 2 + 16) % 16`。
-                        //    ⚠️ 若实机观感反而更歪，把这里的 `+ 14` 换成 `+ 2` / `+ 4` 即可（只改这一个数）。
-                        direction: (dir + 14) % 16, born: tick,
+                        // 🔴 [2026-09-12 主人报障「船尾水波不对」] 水迹贴图的行号按 DE 素材相位差补偿 −2：(shipDir + 14) % 16
+                        direction: (dir + 14) % 16,
+                        rot,
+                        born: tick,
                         duration: 1000 * (profile.Duration1 + Math.random() * (profile.Duration2 - profile.Duration1)),
                         kind, profile,
                     });
@@ -108,8 +123,18 @@ export class NavalWakeDrawer {
             const point = projection?.toScreen(particle.position) ?? particle.position;
             const size = scale * profile.Scale;
             const w = asset.width * size, h = asset.height * size;
-            ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
-                asset.width, asset.height, point.x - w / 2, point.y - h / 2, w, h);
+            // 🔴 叠加粒子发射时的船身残差微旋（rot），使浪花对称轴与船体中轴线 100% 严丝合缝
+            if (particle.rot && Math.abs(particle.rot) > 0.001) {
+                ctx.save();
+                ctx.translate(point.x, point.y);
+                ctx.rotate(particle.rot);
+                ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
+                    asset.width, asset.height, -w / 2, -h / 2, w, h);
+                ctx.restore();
+            } else {
+                ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
+                    asset.width, asset.height, point.x - w / 2, point.y - h / 2, w, h);
+            }
         }
         ctx.restore();
     }

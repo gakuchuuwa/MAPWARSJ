@@ -786,7 +786,12 @@ export class Army implements IBattleUnit {
         const remainingAngle = Math.abs(diff - turn);
         const forwardFactor = Army.NAVAL_MIN_FORWARD_FACTOR
             + (1 - Army.NAVAL_MIN_FORWARD_FACTOR) * Math.max(0, Math.cos(remainingAngle));
-        const advance = moveDist * forwardFactor;
+        // 尚未对准路点时缩小转弯半径，让船首转得比目标方位更快，避免围着路点追逐。
+        // 对准后恢复正常步距；只减速，不挪动路点、不扩大到达捕获范围。
+        const turnLimitedAdvance = remainingAngle > 0.000001
+            ? distToNext * maxTurn * 0.8
+            : Infinity;
+        const advance = Math.min(moveDist * forwardFactor, turnLimitedAdvance);
         const minTurnRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S * 1.25;
 
         // 🔴 [2026-09-01 修「海上行军一颤一颤」] 到达判定**绝不能用最小转弯半径当捕获半径**。

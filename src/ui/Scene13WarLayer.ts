@@ -1760,7 +1760,8 @@ const PROJ_TYPE: Record<string, string> = {
     elite_war_wagon: 'PROJ_WAR_WAGON',
     // 先秦远程战车：DE `WARCHAR` → `Projectile War Chariot (Barrage/Focus Fire)` → p_spear_small
     //   = **小标枪**，不是箭。此前没映射、落回 PROJ_ARROW。
-    war_chariot_ranged: 'PROJ_SPEAR_SMALL',
+    // 🔴 [2026-09-17 主人定] 先秦战车改配精锐连弩的武器：投射物由小掷矛换成弩矢，与 elite_chukonu 同一件
+    war_chariot_ranged: 'PROJ_CROSSBOW',
     // 攻城塔：DE `SIEGTWR` → `Projectile Helepolis` → p_bolt（塔上弩机，非弓手羽箭）
     siege_tower: 'PROJ_HELEPOLIS',
     fire_archer: 'PROJ_ARROW_FIRE',
@@ -1910,9 +1911,10 @@ function accuracyOf(key: string, wt: WarType): number {
     // 长弓（DE 70%）
     if (key === 'longbowman' || key === 'longbowman_elite' || key === 'pattiyoda_longbowman' || key === 'elite_pattiyoda_longbowman') return 70;
     // 弩（弩兵/劲弩/热那亚弩/连弩/腹弩/弩炮/弩炮战象/高丽战车/攻城塔）
-    if (key.includes('crossbow') || key.includes('arbalest') || key.includes('ballista') || key.includes('scorpion') || key.includes('gastraphetes') || key.includes('chukonu') || key.includes('war_wagon') || key === 'siege_tower' || key === 'helepolis') return 85;
-    // 掷矛/标枪/投石（掷矛手/标枪骑兵/色雷斯标枪/格查勇士/投石兵/套索骑兵/先秦战车）
-    if (key.includes('skirmisher') || key.includes('peltast') || key.includes('genitour') || key.includes('slinger') || key.includes('bolas') || key.includes('guecha') || key === 'war_chariot_ranged') return 90;
+    // 🔴 [2026-09-17 主人定] 先秦战车改用连弩武器 → 准确率随之归入弩档 85（原在下面掷矛档 90）
+    if (key.includes('crossbow') || key.includes('arbalest') || key.includes('ballista') || key.includes('scorpion') || key.includes('gastraphetes') || key.includes('chukonu') || key.includes('war_wagon') || key === 'siege_tower' || key === 'helepolis' || key === 'war_chariot_ranged') return 85;
+    // 掷矛/标枪/投石（掷矛手/标枪骑兵/色雷斯标枪/格查勇士/投石兵/套索骑兵）
+    if (key.includes('skirmisher') || key.includes('peltast') || key.includes('genitour') || key.includes('slinger') || key.includes('bolas') || key.includes('guecha')) return 90;
     // 骑射（cls=cav 且默认箭，DE 骑射手 50%，移动中射击）
     if (wt.cls === 'cav') return 50;
     // 普通步弓（含火箭/火弓/象弓）
@@ -1932,7 +1934,25 @@ const PROJ_ARC_RATIO: Record<string, number> = {
     PROJ_GUNPOWDER: 0.05,      // DE Projectile Gunpowder (Primary) 0.05 ✓（原值就对）
     PROJ_FIRE_LANCER: 0.55,    // 🔴 DE Projectile Rocket Cart = **0.55**（原写 0.05，差 11 倍 ✗ 已改正）
     PROJ_HUSSITE_WAGON: 0.05,  // DE 0.05 ✓
-    PROJ_BOMBARD_BALL: 0.04,   // 手推攻城火炮/榴弹炮：平射微抛（正数 0.04，消除原 -0.05 钻地下坠）
+    /* 🔴 [2026-09-17 主人报障「手推炮的炮弹在空中的轨迹会飘」→「请全部修复」] 0.04 → 0.15。
+     * 病根是**参数与设计意图自相矛盾**：本弹丸被列在 PROJ_HIGH_ARC 里（注释写着「炮弹/手榴弹/投石：
+     * 高抛弧线」），实际弧度却只有 0.04 —— 比火枪弹的 0.05 还平，同集合的手榴弹 0.4、投石默认 0.5、
+     * 火箭车 0.55，它比它们平十倍以上。
+     * 0.04 的来历见原注释：「正数 0.04，**消除原 -0.05 钻地下坠**」——只是把负数翻成正数免得钻地，
+     * 顺手取的极小正数，不是 DE 真值，于是曲射炮打出了平射弹道。
+     *
+     * 实算（弧高 = min(距离×系数, 160)，峰值 = 4×弧高×0.25 = 弧高）：
+     *   改前 0.04：满射程 480px → 弧高 19px；最小射程 200px → 8px。弹速 680px/s，
+     *              等于一颗球花 0.29~0.71 秒、几乎走直线平移过去 —— 这就是「飘」。
+     *   改后 0.15：满射程 480px → 72px；最小射程 200px → 30px。抛得起来、砸得下去。
+     *
+     * ⚠️ 0.15 是我定的起步值，不是 DE 真值（Projectile Bombard Cannon id368 的 projectile_arc
+     *    手上没有，按铁律不编）。取值依据只有「比火枪 0.05 高、比投石 0.5 低」这个区间常识。
+     *    嫌不够高就往 0.2~0.3 调，嫌太夸张就回 0.1；本行同时管 houfnice 手推榴弹炮。
+     * ⚠️ 另三条假设已实测排除，别再往那边查：地形抬升逐帧查询（相邻跳变仅 2.8px，平滑）、
+     *    飞行时长随机（本弹丸走 PROJ_SPEED_PX 恒定速度分支，不加随机）、
+     *    素材帧质心漂移（30 帧质心跨度 X 0.39px / Y 0.13px）。 */
+    PROJ_BOMBARD_BALL: 0.15,
     PROJ_GRENADE: 0.4,         // 与投石同类（DE 未单独抽到掷弹弹丸，保留 0.4）
     // ── [2026-09-14 主人定] 按初速分三档：**弩最直 < 标枪 < 弓**（弓走默认 0.3，不写在表里）──
     //    判据是物理而非 DE 数值：弩初速最高、弹道最平；标枪人力投掷但投距近；弓居中。
@@ -1997,6 +2017,9 @@ const PROJ_ANGLE_OFFSET: Record<string, number> = {
 const PROJ_VOLLEY: Record<string, number> = {
     chukonu: 3,
     elite_chukonu: 5,
+    // 🔴 [2026-09-17 主人定] 先秦战车配精锐连弩的武器特效 → 连发支数照抄 elite_chukonu 的 5。
+    //    只是视觉连发：伤害仍按单发算（乘弹数只对 ORGAN_GUN_TYPES 生效，见 projectileDamageCount）。
+    war_chariot_ranged: 5,
     organ_gun: 5,        // 风琴炮一次齐射 5 弹（AoE2 DE）
     elite_organ_gun: 6,
     rocket_cart: 5,      // 火箭车/一窝蜂一次齐射 5 支火箭
@@ -7572,7 +7595,10 @@ export class Scene13WarLayer {
                         // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效（音效在 spawnFirearmMuzzle 内）
                         if (isFirearm) this.spawnFirearmMuzzle(m, ax, ay);
                         // 其他没有攻击动画的非火器车辆用素色尘烟提示开火；高丽战车按 DE 原样只发射弩矢。
-                        else if (this.bank[m.key]?.noAttackAnim && m.key !== 'war_wagon' && m.key !== 'elite_war_wagon') {
+                        // 🔴 [2026-09-17 主人定] 先秦战车改配精锐连弩的武器 → 一并排除尘烟：连弩开火没有尘烟，
+                        //    留着就不叫「和精锐连弩相同」了。它仍在 NO_ATTACK_ANIM 里（DE 素材的攻击图=待命图，
+                        //    那是素材事实、不能动），开火提示改由连弩的 5 连发弩矢承担，与高丽战车同理。
+                        else if (this.bank[m.key]?.noAttackAnim && m.key !== 'war_wagon' && m.key !== 'elite_war_wagon' && m.key !== 'war_chariot_ranged') {
                             this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
                         }
                         // 其余远程（弓/弩/投石）：箭矢开火音效已关闭（主人 2026-08-19），保留射击动作

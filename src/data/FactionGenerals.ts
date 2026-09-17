@@ -609,7 +609,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mingzheng: { generalId: 'mingzheng_jianzandechang', generalName: '坚赞德昌', portrait: '/assets/DIANQIAN/mingzheng_jianzandechang.png' }, // 打箭炉·明正土司
     hani_d: { generalId: 'hani_d_zhebi', generalName: '遮比', portrait: '/assets/DIANQIAN/hani_d_zhebi.png' }, // 思陀·哈尼首领
   // ── 滇缅区 2026-06-18 ──
-    dali: { generalId: 'dali_duansiping', generalName: '段俭魏', portrait: '/assets/DIANQIAN/dali_duansiping.png' },
+    dali: { generalId: 'dali_duansiping', generalName: '段思平', portrait: '/assets/DIANQIAN/dali_duansiping.png' },
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
     meitai: { generalId: 'meitai_hagenba', generalName: '哈根巴', portrait: '/assets/INDIA/meitai_hagenba.png' },  // 康格拉·曼尼普尔国王
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
@@ -965,7 +965,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     shanshan: { generalId: 'shanshan_weituqi', generalName: '尉屠耆', portrait: '/assets/WESTERN/shanshan_weituqi.png' },
     qianhui: { generalId: 'qianhui_baiyanhu', generalName: '白彦虎', portrait: '/assets/BASHU/qianhui_baiyanhu.png' },
     ava: { generalId: 'ava_minye_kyawswa', generalName: '明耶觉苏瓦', portrait: '/assets/DIANQIAN/ava_sijifa.png' },
-    dian: { generalId: 'dian_duanjianwei', generalName: '段思平', portrait: '/assets/DIANQIAN/dian_duansiping.png' },
+    dian: { generalId: 'dian_cuanchongdao', generalName: '爨崇道', portrait: '/assets/DIANQIAN/dian_duansiping.png' },
     mon: { generalId: 'mon_monuhe', generalName: '摩奴诃', portrait: '/assets/DIANQIAN/mon_monuhe.png' },
     ganden: { generalId: 'ganden_zongkaba', generalName: '宗喀巴', portrait: '/assets/TIBET/ganden_zongkaba.png' },
     niang: { generalId: 'niang_suonanjiabo', generalName: '索南加波', portrait: '/assets/TIBET/niang_suonanjiabo.png' },
