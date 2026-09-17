@@ -1500,7 +1500,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'jian_swordsman', count: 4 },
-            { type: 'fire_archer', count: 3 },
+            { type: 'war_wagon', count: 3 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],
         regions: [],

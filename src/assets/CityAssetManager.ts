@@ -384,7 +384,7 @@ export class CityAssetManager {
         'kiyad': '乞颜',
 'borjigin': '孛儿',
 'jalair': '札剌',
-        'hongirad': '弘吉',
+'hongirad': '弘吉',
 'choros': '萨吾',
 'guge': '古格',
 'ladakh': '玛域',

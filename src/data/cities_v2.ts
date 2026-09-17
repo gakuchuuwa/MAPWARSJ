@@ -1673,10 +1673,8 @@ buildingStyle: 'KHITAN', troops: 10000,
     
     { id: 'city_kerulen', name: '巴拉斯城', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL', note: '克鲁伦中游巴尔斯浩特/契丹河董城；清克鲁伦巴尔和屯会盟城；札剌亦儿' },
 
-    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.787170, type: 'pass', region: 'STEPPE',
-buildingStyle: 'MOBEI_MONGOL', troops: 10000,
-        note: '捕鱼儿海；弘吉剌关隘',
-    },
+    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.78717, type: 'stockade', troops: 20000, region: 'STEPPE' },
+
     { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CEAS' },
 
 

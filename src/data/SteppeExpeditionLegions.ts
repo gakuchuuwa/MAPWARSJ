@@ -44,7 +44,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     huyan: { name: '呼衍精骑', tier: 4 },
     yujiulu: { name: '柔然汗骑', tier: 4 },
     jalair: { name: '札剌亦儿军', tier: 3 },
-  hongirad: { name: '弘吉剌护卫', tier: 4 },           // 常规番号，降T3
     choros: { name: '萨吾尔鹘骑', tier: 3 },
   duolu: { name: '咄陆部铁骑', tier: 4 },              // 缺乏知名度支撑，降T3
   kaerka: { name: '喀尔喀重骑', tier: 4 },
@@ -106,5 +105,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     borjigin: { name: '那可儿伴当', tier: 1 },
     shatuo: { name: '鸦儿军', tier: 1 },
     xiongnu: { name: '鸣镝精骑', tier: 1 },
-    aertai: { name: '乃蛮残骑', tier: 3 },          // 也儿的石·屈出律：乃蛮残部骑兵
+    aertai: { name: '乃蛮残骑', tier: 3 },          // 也儿的石·屈出律：乃蛮残部骑兵,
+    hongirad: { name: '弘吉剌护卫', tier: 4 },
 };

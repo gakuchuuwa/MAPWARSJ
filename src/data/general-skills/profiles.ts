@@ -695,7 +695,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    hongirad_dexuechan: { generalId: 'hongirad_dexuechan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_511', atkBalanceSkillId: 'ts_718', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage' , attackStyle: 'defense'},
+    hongirad_dexuechan: { generalId: 'hongirad_dexuechan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_511', atkBalanceSkillId: 'ts_718', atkDisadvantageSkillId: 'ts_320', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_775', defDisadvantageSkillId: 'ts_635', aptitude: 'leverage', attackStyle: 'defense' },
 
 
 

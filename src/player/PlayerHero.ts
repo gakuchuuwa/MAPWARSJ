@@ -94,8 +94,10 @@ export interface Scene13PlayerSetup {
     heroKey: string;
     heroName: string;
     control: PlayerRank['control'];
-    /** 玩家自选精锐编队（探马及以上且已选精锐才有） */
-    eliteLane: { key: string; troops: number; name: string } | null;
+    /* 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 原 `eliteLane`（玩家自带精锐编队）已删除。
+     * 它曾被 Scene13WarLayer 用来**顶替**军团编制里的一口，那是 AI 从 12e「必须 9 支」反推出来的，
+     * 主人原话（player-rules-verbatim 三·二）只有控制权四条 + 编队数一条，从未允许玩家带兵入场。
+     * 玩家在 13 里只以 hero 身份出场，按官阶指挥军团**现有**部队。别再加回这个字段。 */
     /** 🔴 [2026-09-07 主人定] 玩家当前套用的本势力兵种 key。
      *  受控编队按它挑：探马 = 同兵种的**一队**，先锋 = 同兵种的**一排**。
      *  还没学到兵种时为 null → 退回旧口径（前排第一口 / 整个前排）。 */
@@ -972,13 +974,15 @@ export class PlayerHero {
     public buildScene13Setup(followedOnDefenderSide: boolean): Scene13PlayerSetup | null {
         if (!this.hostLegionId) return null;
         const rank = this.getRank();
-        const elite = rank.control === 'none' ? null : this.getSelectedElite();
+        // 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 不再下发 eliteLane。
+        //    原先把玩家自选精锐传进 13、顶替编制里的一口，那是 AI 从「必须 9 支」反推的，
+        //    主人原话（player-rules-verbatim 三·二 12a~12e）只讲控制权，没有一条允许玩家带兵改编制。
+        //    learnedElites / selectedElite 仍保留为收集与面板展示，只是不再影响 13 的编制。
         return {
             side: followedOnDefenderSide ? 1 : 0,
             heroKey: this.heroKey,
             heroName: this.name,
             control: rank.control,
-            eliteLane: elite ? { key: elite.unitKey, troops: PLAYER_ELITE_SQUAD_TROOPS, name: elite.name } : null,
             unitKey: this.getSelectedUnit()?.unitKey ?? null,
             onKill: () => this.addMerit(20),
             onHeroDown: () => this.noteHeroDown(),

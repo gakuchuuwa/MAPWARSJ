@@ -505,7 +505,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kiyad': 'city_burhan',
 'borjigin': 'city_qudiaoalan',
 'jalair': 'city_kerulen',
-    'hongirad': 'city_erguna',
+'hongirad': 'city_erguna',
 'choros': 'city_dzungar_basin',
 
 'kala': 'city_aoshen',

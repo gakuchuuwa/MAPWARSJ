@@ -1979,12 +1979,13 @@ export function patchLegionComposition(
     name: string,
     slots: CompositionSlot[],
     formationMode: FormationMode,
+    shipId?: string,
 ): void {
-    LEGION_RUNTIME_PATCH.set(name, { formationMode, slots: slots.map(s => ({ ...s })) });
+    LEGION_RUNTIME_PATCH.set(name, { formationMode, slots: slots.map(s => ({ ...s })), shipId });
 }
 
 /** 运行时覆盖（编辑器保存后立刻生效，不依赖 HMR）：军团名 → 编制 */
-const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[] }>();
+const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string }>();
 
 /** 按**军团名**取编制：一级 → 二级 → 三级，找不到返回 null */
 export function getLegionCompositionByName(
@@ -1992,7 +1993,7 @@ export function getLegionCompositionByName(
 ): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string } | null {
     if (!name || LEGION_DELETED.has(name)) return null;
     const patched = LEGION_RUNTIME_PATCH.get(name);
-    if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })) };
+    if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })), shipId: patched.shipId };
 
     for (const rg of Object.keys(BASE_16_TIERS_MAP) as RegionType[]) {
         if (BASE_16_LEGION_NAME_BY_REGION[rg] !== name) continue;

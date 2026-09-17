@@ -1378,6 +1378,44 @@ export default defineConfig({
                     });
                 });
                 // ========================================================
+                //   /api/save-legion-ship   body: { legionName, shipId }
+                //   只改这一支军团的战船 shipId（二级 59 / 三级表；一级母体另走 BASE_16_TIERS_MAP）。
+                // ========================================================
+                server.middlewares.use('/api/save-legion-ship', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const legionName: string = String(data?.legionName ?? '').trim();
+                            const shipId: string = String(data?.shipId ?? '').trim();
+                            if (!legionName) throw new Error('缺少军团名');
+                            if (!shipId) throw new Error('缺少战船 shipId');
+                            markLegionSaveWrite();
+                            let written = false;
+                            for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
+                                const p = path.resolve(__dirname, rel);
+                                const out = serverReplaceLegionShip(safeReadFileSync(p), legionName, shipId);
+                                if (out) { safeWriteFileSync(p, out); written = true; break; }
+                            }
+                            if (!written) throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存战船');
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true }));
+                            console.log('[SaveLegionShip] ✅ 【' + legionName + '】shipId → ' + shipId);
+                        } catch (err: any) {
+                            console.error('❌ [SaveLegionShip] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
                 //   body: { culture: string, slots: any[] }
@@ -2925,7 +2963,19 @@ function serverReplaceLegionEntry(text: string, legionName: string, slots: any[]
     return out;
 }
 
-/** 保存一支军团的编制（自动判层），返回被改动的文件路径 */
+/** 只替换一支军团的战船 shipId（二级 59 / 三级表；一级 16 母体的 shipId 在 BASE_16_TIERS_MAP，另走） */
+function serverReplaceLegionShip(text: string, legionName: string, shipId: string): string | null {
+    const at = text.indexOf("name: '" + legionName + "'");
+    if (at < 0) return null;
+    const shipAt = text.indexOf("shipId: '", at);
+    if (shipAt < 0) return null;
+    const nextName = text.indexOf("name: '", at + 1);
+    if (nextName > 0 && shipAt > nextName) return null; // shipId 落在下一条军团，不属于本军团
+    const valueStart = shipAt + "shipId: '".length;
+    const valueEnd = text.indexOf("'", valueStart);
+    if (valueEnd < 0) return null;
+    return text.slice(0, valueStart) + shipId + text.slice(valueEnd);
+}
 
 
 /**
