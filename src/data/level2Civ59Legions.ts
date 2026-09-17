@@ -24,7 +24,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代华夏中原军团', civ: '华夏', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
-        formationMode: 'square',
+        formationMode: 'echelon',
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-09-14 主人定] 二级军团一律「城堡兵 + 精锐兵 + 缺补兵」。
         //    原先三排全是精锐（白毦精锐/诸葛弩精锐/火焰弓精锐），凑不出「城堡兵 + 该兵精锐」这一对。
@@ -32,9 +32,9 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         //    缺补兵取蜀白毦兵 —— 《三国志》裴注引《零陵先贤传》「先主帐下白毦，西方上兵也」，
         //    陈到所领近卫精兵，古典中原本土，合史实。
         slots: [
-            { type: 'jian_swordman_unshielded', count: 3 },
+            { type: 'jian_swordman_unshielded', count: 4 },
             { type: 'chukonu', count: 3 },
-            { type: 'elite_chukonu', count: 3 },
+            { type: 'elite_chukonu', count: 2 },
         ],
     },
     {

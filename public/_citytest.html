@@ -1097,6 +1097,11 @@ const CULTURE_GROUPS = [
   },
 ];
 
+/* 🔴 [2026-09-17] CULTURE_GROUPS 在 <script type="module"> 里，模块作用域对下方的普通 <script>
+ * （据点风格编辑器）不可见。编辑器要靠它把「文化区名 → 16 母体 DE 风格」解析出来
+ * （见 deStyleOfCultureKey），所以在此显式挂到 window。别在编辑器里另抄一份 —— 抄了必漂移。 */
+window.CULTURE_GROUPS = CULTURE_GROUPS;
+
 /**
  * 第三层：专属定制文明建筑风格列表
  * 在一层 16 母体 + 二层 59 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
@@ -3532,6 +3537,15 @@ refresh();
       }
     });
   }
+  /* 文化区名 → 16 母体 DE 风格。表用本页已有的 CULTURE_GROUPS，不另造一份字典（造了必漂移）。 */
+  function deStyleOfCultureKey(k) {
+    if (!k || !window.CULTURE_GROUPS) return "";
+    for (var gi = 0; gi < window.CULTURE_GROUPS.length; gi++) {
+      var bs = window.CULTURE_GROUPS[gi].branches || [];
+      for (var bi = 0; bi < bs.length; bi++) if (bs[bi].key === k) return bs[bi].deStyle || '';
+    }
+    return '';
+  }
   function nativeReady() {
     return document.getElementById('selStyle').options.length > 1 && document.getElementById('selCulture').options.length > 1;
   }
@@ -3554,7 +3568,23 @@ refresh();
     if (mirrorBox) mirrorBox.checked = !!x.mirror;
     syncTypeHint();
     if (!keepStored) { custom.value = ''; castle.value = ''; }
-    if (x.buildingStyle && wall.querySelector('option[value="' + x.buildingStyle + '"]')) wall.value = x.buildingStyle;
+    /* 🔴 [2026-09-17 主人报障「长安怎么显示是中亚」] 城墙下拉不跟据点走的真凶。
+     * 据点的 buildingStyle 有一半写的是**文化区名**（CENTRAL / JIANGNAN / WEI / KHITAN…
+     * 实测 1088 座里 555 座如此），而城墙下拉里只有 16 个 DE 母体风格 option，
+     * 直接 querySelector 必然落空 → 旧代码 if 不成立就**什么都不做** →
+     * 下拉保留上一个据点的残留值（还会被 remember() 写进 localStorage），
+     * 于是选到长安（buildingStyle='CENTRAL'）时显示的是上一个据点的 CEAS 中亚。
+     *
+     * ⚠️ 这不只是看着错：照着按「保存」就会把别人的风格真写进 cities_v2。
+     * ⚠️ 游戏渲染本身是对的 —— resolveCityDeBuildingStyle 走 REGION_TO_DE_STYLE['CENTRAL']='ASIA'，
+     *    实测 555 座全部能正确解析、0 座落空。错的只有这个编辑器下拉。
+     *
+     * 解法：先直接匹配；匹配不到就查本页已有的 CULTURE_GROUPS（文化区→deStyle，
+     * 与 REGION_TO_DE_STYLE 同源，62 条分支实测能解析全部 46 种非 DE16 值）；
+     * 再解析不出就置空，**绝不保留上一个据点的值**。 */
+    var wv = x.buildingStyle || '';
+    if (wv && !wall.querySelector('option[value="' + wv + '"]')) wv = deStyleOfCultureKey(wv);
+    wall.value = wv;
     if (x.region) {
       if (custom.querySelector('option[value="' + x.region + '"]')) custom.value = x.region;
       else if (castle.querySelector('option[value="' + x.region + '"]')) castle.value = x.region;
