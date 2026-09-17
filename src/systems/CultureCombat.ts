@@ -25,7 +25,7 @@ import { GameConfig, rollCombatEffectivePower } from '../config/GameConfig';
 import type { IBattleUnit } from '../core/CombatSystem';
 import type { Army } from '../core/Army';
 import type { City } from '../types/core';
-import { RegionType, isRegionCenter } from './RegionSystem';
+import { RegionType } from './RegionSystem';
 import {
     type CultureCombatRole,
     isGarrisonUnit,
@@ -33,6 +33,7 @@ import {
 } from './CultureRegion';
 import { type EliteTier, getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
+import { hasCityWonder } from '../data/CityWonders';
 
 /** 文化区判定已抽至 CultureRegion（叶子模块，破循环依赖）；此处重新导出兼容旧引用 */
 export { type CultureCombatRole, resolveUnitCultureRegion } from './CultureRegion';
@@ -57,16 +58,6 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 15 文化中心据点守军「守土继绝」系数（非中心或非城防恒为 1） */
-function getRegionCenterGarrisonMultiplier(unit: IBattleUnit): number {
-    if (!isGarrisonUnit(unit)) return 1;
-    const city = unit.getEntity?.() as { id?: string } | undefined;
-    if (city?.id && isRegionCenter(city.id)) {
-        return GameConfig.CULTURE_COMBAT.REGION_CENTER_GARRISON_MULT;
-    }
-    return 1;
-}
-
 /** 文化区固定系数（不含关隘拒险而守） */
 export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
     const region = resolveUnitCultureRegion(unit);
@@ -79,23 +70,32 @@ export function getPassGarrisonCombatMultiplier(unit: IBattleUnit): number {
     return getPassGarrisonMultiplier(unit);
 }
 
-/** 15 文化中心守军「守土继绝」系数（非中心或非城防恒为 1） */
-export function getRegionCenterCombatMultiplier(unit: IBattleUnit): number {
-    return getRegionCenterGarrisonMultiplier(unit);
+/** 有特殊建筑（城内奇观/宗堡/王城）的名城守军系数（🔴 2026-09-17 主人定：有特殊建筑才算名城） */
+function getWonderCityGarrisonMultiplier(unit: IBattleUnit): number {
+    if (!isGarrisonUnit(unit)) return 1;
+    const city = unit.getEntity?.() as { id?: string } | undefined;
+    if (city?.id && hasCityWonder(city.id)) {
+        return GameConfig.CULTURE_COMBAT.WONDER_CITY_GARRISON_MULT;
+    }
+    return 1;
+}
+
+/** 名城守军系数（有特殊建筑的据点；非名城或非城防恒为 1） */
+export function getWonderCityCombatMultiplier(unit: IBattleUnit): number {
+    return getWonderCityGarrisonMultiplier(unit);
 }
 
 /**
  * 单单位固定战力系数 = 文化环 × 据点环
  *   文化环：文化区攻防表
- *   据点环：关隘「据险而守」与文化中心「守土继绝」**取最大值**，不相乘 —— 焊死据点环上限 1.2。
- *     当前数据两者零重叠（149 关隘 / 15 文化中心），取 max 与相乘结果一致；
- *     此写法是为了防止日后把某个文化中心改成关隘时，1.44 悄悄出现且无任何报错。
+ *   据点环：关隘「据险而守」与名城「有特殊建筑」**取最大值**，不相乘 —— 焊死据点环上限 1.2。
+ *     🔴 [2026-09-17 主人定] 名城 = 有特殊建筑（CITY_WONDER / CITY_WONDER_EXTRA）的据点，其他一律不是。
  */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
     const cultureRing = getCultureOnlyCombatMultiplier(unit);
     const siteRing = Math.max(
         getPassGarrisonMultiplier(unit),
-        getRegionCenterGarrisonMultiplier(unit),
+        getWonderCityGarrisonMultiplier(unit),
     );
     return cultureRing * siteRing;
 }

@@ -37,7 +37,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
-import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getRegionCenterCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getWonderCityCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
 import { EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -45,7 +45,6 @@ import {
     getOpeningTacticalPowerMultiplier,
     getGeneralSkillDisplayTags,
     getPassGarrisonDefenseSkillDisplay,
-    getRegionCenterDefenseSkillDisplay,
     getReinforcementJoinSkillDisplay,
     canUnitUseGeneralSkills,
     getBattleTerrainKind,
@@ -292,17 +291,6 @@ export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number |
  */
 export function resolveFamousTagLabel(isFamous: boolean): string | null {
     return isFamous ? '威震华夏' : null;
-}
-
-/**
- * 据点地利标签文案：守方在关隘要塞或区域名城时的地利标签。
- * - 关隘要塞：一夫当关
- * - 区域名城：名城重镇
- */
-export function resolveSiteDefenseTagLabel(passMult: number, regionMult: number): string | null {
-    if (passMult > 1.001) return '一夫当关';
-    if (regionMult > 1.001) return '名城重镇';
-    return null;
 }
 
 /**
@@ -3087,11 +3075,11 @@ export class CombatUI {
         const famousMult = getFamousGeneralMult(unit);
 
         const passMult = getPassGarrisonCombatMultiplier(unit);
-        const regionMult = getRegionCenterCombatMultiplier(unit);
+        const regionMult = getWonderCityCombatMultiplier(unit);
 
-        // [2026-08-06 修] cultureMult 用**纯文化环**（getCultureOnlyCombatMultiplier），据点环由下方
-        // passMult×regionMult 独立乘——此前用 getUnitCultureCombatMultiplier（文化×据点）导致据点环乘两遍，
-        // 守关隘/文化中心时面板总× 虚高 20%（引擎 getUnitBattlePowerMultiplier 只乘一次）。
+        // [2026-08-06 修] cultureMult 用**纯文化环**（getCultureOnlyCombatMultiplier），据点环由 passMult/regionMult 独立乘
+        // ——此前用 getUnitCultureCombatMultiplier（文化×据点）导致据点环乘两遍。
+        // 🔴 [2026-09-17 主人定] 名城 = 有特殊建筑（CITY_WONDER/EXTRA）的据点；据点环 = max(关隘, 名城)。
         const cultureMult = getCultureOnlyCombatMultiplier(unit);
 
         let tacChar = '技';
@@ -3151,9 +3139,7 @@ export class CombatUI {
             { label: '玩家官阶', shortName: '阶', val: playerMult },
         ].filter(f => Math.abs(f.val - 1) > 0.001);
 
-        // [2026-08-06 修] 据点环与引擎同行为：Math.max（关隘/文化中心取大不叠加，焊死上限 1.2）——
-        // 此前用 × 相乘，与引擎 getUnitCultureCombatMultiplier 的 max 不同；数值上现无差（149 关隘/15 中心零重叠），
-        // 但将来若某文化中心 type 改 pass，引擎仍 1.2、面板会静默 1.44（同坑第二次）。
+        // 🔴 [2026-09-17 主人定] 据点环 = max(关隘, 名城)；名城 = 有特殊建筑（CITY_WONDER/EXTRA）的据点。
         const siteMult = Math.max(passMult, regionMult);
         const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck * playerMult;
         const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
@@ -5037,7 +5023,7 @@ export class CombatUI {
         const cityUnit = defs.find(u => u.unitType === 'city');
         if (cityUnit) {
             if (Math.abs(getPassGarrisonCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '险要';
-            else if (Math.abs(getRegionCenterCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
+            else if (Math.abs(getWonderCityCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
         }
         
         // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：前331年-高加米拉战役，公元208年-赤壁之战）
