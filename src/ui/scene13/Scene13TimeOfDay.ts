@@ -135,24 +135,13 @@ function forcedPhase(): DayPhase | null {
 
 export function resolveTimeOfDay(input: ResolveInput): TimeOfDayGrade {
     const phase = forcedPhase() ?? pickPhase(input.seed, input);
-    // 🔴 [2026-09-11 主人定]「把战斗模式中，夜晚的滤镜删除。」
-    //    夜晚不再套任何色调滤镜：multiply / screen 都回到**恒等**（白 = 不改变），
-    //    也**不再叠**季节与群系偏移 —— 夜战就是原色战场，跟正午一样清亮。
-    //    （时段本身仍保留在池里：dusk 的"黄昏入夜"漂移、其余五个时段配色一律照旧，未动。）
-    if (phase === 'night') {
-        return {
-            phase,
-            multiply: [255, 255, 255],
-            screen: { rgb: [255, 255, 255], top: 0, fadeTo: 0 },
-            driftTo: null,
-        };
-    }
-    const multiply = round(applyClimate(BASE_MULTIPLY[phase], phase, input));
-    let driftTo: RGB | null = null;
-    // 黄昏在一场仗里慢慢入夜、黎明慢慢放亮：60s 内可见，但不到夜战那么暗
-    if (phase === 'dusk') driftTo = round(applyClimate(mix(BASE_MULTIPLY.dusk, BASE_MULTIPLY.night, 0.45), 'dusk', input));
-    if (phase === 'dawn') driftTo = round(applyClimate(mix(BASE_MULTIPLY.dawn, BASE_MULTIPLY.morning, 0.7), 'dawn', input));
-    return { phase, multiply, screen: BASE_SCREEN[phase], driftTo };
+    // 🔴 [2026-09-17 主人定] 彻底删除战术模式全屏时段滤镜（黄昏/黎明/时段/季节压暗全面废除，恢复 DE 原版纯正清亮通透原色）。
+    return {
+        phase,
+        multiply: [255, 255, 255],
+        screen: { rgb: [255, 255, 255], top: 0, fadeTo: 0 },
+        driftTo: null,
+    };
 }
 
 /**
@@ -181,26 +170,8 @@ export class Scene13TimeOfDayGrader {
 
     /** 在所有精灵画完之后调用（flip 之外：调色对称，翻不翻都一样） */
     paint(ctx: CanvasRenderingContext2D, w: number, h: number, now: number): void {
-        const g = this.grade;
-        if (!g) return;
-        if ((globalThis as any).__s13Tint === false) return;
-        const fade = Math.min(1, (now - this.t0) / Scene13TimeOfDayGrader.FADE_MS);
-        let mul = g.multiply;
-        if (g.driftTo) {
-            const k = Math.min(1, (now - this.t0) / Scene13TimeOfDayGrader.DRIFT_MS);
-            mul = mix(g.multiply, g.driftTo, k);
-        }
-        // 淡入：把 multiply 色向白插值（白 = 不改变）
-        if (fade < 1) mul = mix([255, 255, 255], mul, fade);
-        ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.fillStyle = `rgb(${mul[0] | 0},${mul[1] | 0},${mul[2] | 0})`;
-        ctx.fillRect(0, 0, w, h);
-        ctx.globalCompositeOperation = 'screen';
-        ctx.globalAlpha = fade;
-        ctx.fillStyle = this.screenFill(ctx, g.screen, w, h);
-        ctx.fillRect(0, 0, w, h);
-        ctx.restore();
+        // 🔴 [2026-09-17 主人定] 全屏滤镜彻底停用：不再执行任何整画布 multiply 压暗与 screen 泛光合成
+        return;
     }
 
     private screenFill(ctx: CanvasRenderingContext2D, s: ScreenGlow, w: number, h: number): CanvasGradient | string {

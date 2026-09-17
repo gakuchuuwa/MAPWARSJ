@@ -1473,4 +1473,6 @@ export class GameMap {
             requestAnimationFrame(panLoop);
         };
         
-        requestAnimationFrame(panLoop)
+        requestAnimationFrame(panLoop);
+    }
+}
