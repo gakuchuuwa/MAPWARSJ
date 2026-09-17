@@ -2061,4 +2061,172 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "封建时代隋唐军团",
         legionType: "sub",
     },
+    "weihaiwei": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "qiuchi": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "zhuoshi": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "chenzhou_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "dangchang": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "shaozhou_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "zizhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "weizhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "hezhou": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "tan_d": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "ran_d": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "wanzhou": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "daxi_ming": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "miaomin": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "qianhui": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "yang_bozhou": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "xiang_d": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "she": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "qianzhong": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "boren": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "zhancheng": {
+        legionName: "城堡时代越南军团",
+        legionType: "sub",
+    },
+    "monong": {
+        legionName: "城堡时代越南军团",
+        legionType: "sub",
+    },
+    "basha_d": {
+        legionName: "帝国时代东南亚军团",
+        legionType: "sub",
+    },
+    "luohu": {
+        legionName: "城堡时代东南亚军团",
+        legionType: "sub",
+    },
+    "xie_cj_d": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "shenshi": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "yiyang_d": {
+        legionName: "城堡时代宋禁军团",
+        legionType: "sub",
+    },
+    "chizhou": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "hongzhou": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "hu_d": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "wenzhou": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "zhangshicheng": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "chendiaoyan": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "dengmaoqi": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "yezongliu": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "wan": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "kejia": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "geng": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "shuntian": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "dacheng": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "ketagalan": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "haikou": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
 };

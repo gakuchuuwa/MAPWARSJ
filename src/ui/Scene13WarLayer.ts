@@ -3421,6 +3421,16 @@ export class Scene13WarLayer {
         // 战场底图铺满后，底下的地图不再参与浏览器绘制/合成；保留尺寸和镜头状态。
         // 地形缺图时仍显示原地图，不能用空白战场盖住它。
         if (this.coveredMap || !this.decorHasTerrain) return;
+        /* 🔴 [2026-09-17 主人报障「一直都是战略地图白屏」· 第二刀] 演出已停就绝不许再盖。
+         * 只把 stop() 改成无条件 restore **不够** —— 实测调用序列（scratch/_probe_cover_hook.mjs）：
+         *     306.9s restoreStrategyMap()  → covered=false vis=空      ← 恢复成功
+         *     306.9s stop("场景自愈退出")   → active=false             ← 演出停了
+         *     306.9s coverStrategyMap()    → covered=true vis=hidden   ← 同一毫秒又盖回去
+         * stop() 之后**还有一帧已经排进 requestAnimationFrame 的 render 会跑完**，
+         * 它照旧调本函数，于是刚恢复的地图立刻被重新盖上，且此后再没有人 restore → 永久白屏。
+         * （这也是为什么原来那版 `if (!keepFrame) restore` 从来救不回来。）
+         * 守卫判据与 tick/供数那几处一致：active 与 lingering 都为假 = 演出确已收场。 */
+        if (!this.active && !this.lingering) return;
         const element = document.getElementById('map');
         if (!element) return;
         this.coveredMap = { element, visibility: element.style.getPropertyValue('visibility'),
@@ -4558,7 +4568,22 @@ export class Scene13WarLayer {
     }
 
     public stop(reason = 'unknown', keepFrame = false): void {
-        if (!keepFrame) this.restoreStrategyMap();
+        /* 🔴 [2026-09-17 主人报障「一直都是战略地图白屏」] 原来是 `if (!keepFrame) this.restoreStrategyMap()`。
+         * 病根：keepFrame=true（保留残局最后一帧）这条路**不恢复战略地图**，而之后没有任何人收尾 ——
+         *   canvas 保持 display:block 但渲染早已停住（active/lingering 都是 false，render 不再跑），
+         *   于是「空白 canvas + visibility:hidden 的地图」= 纯白屏，一直持续到下一场 start() 才被动恢复。
+         *
+         * 实测（scratch/_probe_cover_restore.mjs，监听 #map 的 style 变化）：
+         *   t=21.2s 进13→hidden ✓ ／ t=100.4s 出13→恢复 ✓ ／ t=112.1s 进13→hidden ✓ ／ t=220.5s 出13→恢复 ✓
+         *   t=270s 进13→hidden，之后 13 已退出（active=false lingering=false）而 **coveredMap 仍为 true**
+         *   —— 盖了之后从没 restore，白屏现场就是这一刻。
+         *
+         * 解法：无条件恢复。cover 的唯一目的是性能优化（见 coverStrategyMap 注释「底下的地图不再参与
+         *   浏览器绘制/合成」），不是视觉必需 —— 战场底图铺满时地图恢复了也被盖住，看不见；
+         *   代价只是残局那几秒多一点合成开销，而不恢复的代价是永久白屏，风险完全不对称。
+         * ⚠️ 光靠这一刀不够：stop 之后仍有一帧已排队的 render 会再调 coverStrategyMap()，
+         *    所以那边另加了「演出已停不许盖」的守卫，两处配合才真正修好。 */
+        this.restoreStrategyMap();
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
