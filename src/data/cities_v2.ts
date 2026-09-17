@@ -988,7 +988,7 @@ buildingStyle: 'CEAS', troops: 10000,
 // 周边 — 待添加 (日本七道、朝鲜八道、各古政权首都)
 // ============================================================
 export const PERIPHERY: CityDataV2[] = [
-    { id: 'city_dali_city', name: '羊苴咩', factionId: 'dali', lat: 25.6983, lng: 100.1488, type: 'medium_city', troops: 20000, region: 'SLAVIC' },
+    { id: 'city_dali_city', name: '羊苴咩', factionId: 'dali', lat: 25.6983, lng: 100.1488, type: 'medium_city', troops: 10000, region: 'DALI', buildingStyle: 'ASIA' },
 
 
 
@@ -1752,7 +1752,7 @@ buildingStyle: 'PURU', troops: 10000,
     },
     { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'pass', region: 'NANZHAO',
 buildingStyle: 'ASIA', troops: 10000,
-        note: '乌蒙山；乌蛮关隘，东爨乌蛮领袖爨归王镇守',
+        note: '乌蒙山；乌蛮关隘，东爨乌蛮首领盖聘镇守',
     },
     { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', region: 'SONG',
 buildingStyle: 'ASIA', troops: 10000,
@@ -1771,7 +1771,7 @@ buildingStyle: 'ASIA', troops: 10000,
         note: '直通；孟族古城与直通王国都城',
     },
     // ── 第三类：世袭土司与门阀 ──
-    { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 20000, region: 'SLAVIC' },
+    { id: 'city_tonghai', name: '通海城', factionId: 'dian', lat: 24.11, lng: 102.76, type: 'small_city', troops: 10000, region: 'DALI', buildingStyle: 'ASIA' },
 
 
     { id: 'city_hailongtun', name: '海龙屯', factionId: 'yang_bozhou', lat: 27.751638, lng: 106.924438, type: 'pass', region: 'BASHU',

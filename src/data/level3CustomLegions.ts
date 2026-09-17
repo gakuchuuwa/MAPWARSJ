@@ -420,7 +420,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'fish_scale',
         slots: [
             { type: 'champi_warrior', count: 3 },
-            { type: 'temple_guard', count: 4 },
+            { type: 'slinger', count: 4 },
             { type: 'champi_scout', count: 2 },
         ],
         regions: ['ANDE'],
@@ -476,18 +476,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DEMO_RAFT',
     },
     {
-        name: '城堡时代塔拉斯科军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'jaguar_warrior', count: 3 },
-            { type: 'elite_jaguar_warrior', count: 4 },
-            { type: 'plumed_archer', count: 2 },
-        ],
-        regions: ['TARASCAN'],
-        parentLegion: '中美军团',
-        shipId: 'CANOE',
-    },
-    {
         name: '城堡时代塞尔柱军团',
         formationMode: 'crane_wing',
         slots: [
@@ -522,18 +510,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['DALI'],
         parentLegion: '东亚军团',
         shipId: 'INCENDIARY_SHIP',
-    },
-    {
-        name: '城堡时代奇穆军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'elite_champi_warrior', count: 4 },
-            { type: 'kamayuk', count: 3 },
-            { type: 'champi_runner', count: 2 },
-        ],
-        regions: ['CHIMU'],
-        parentLegion: '安第斯军团',
-        shipId: 'CANOE',
     },
     {
         name: '城堡时代拉丁军团',
@@ -613,7 +589,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'blackwood_archer', count: 2 },
             { type: 'guecha_warrior', count: 3 },
-            { type: 'elite_temple_guard', count: 4 },
+            { type: 'temple_guard', count: 4 },
         ],
         regions: ['TAIRONA'],
         parentLegion: '安第斯军团',
@@ -680,18 +656,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DEMO_RAFT',
     },
     {
-        name: '城堡时代西辽军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'elite_liao_dao', count: 2 },
-            { type: 'keshik', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
-        ],
-        regions: ['KARA_KHITAN'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-    },
-    {
         name: '城堡时代阿伊努军团',
         formationMode: 'fish_scale',
         slots: [
@@ -738,18 +702,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MAMLUKS'],
         parentLegion: '城堡时代萨拉森军团',
         shipId: 'FIRE_SHIP',
-    },
-    {
-        name: '城堡时代高棉军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'elite_ballista_elephant', count: 2 },
-            { type: 'archer', count: 3 },
-            { type: 'heavy_pikeman', count: 4 },
-        ],
-        regions: ['KHMER'],
-        parentLegion: '封建时代高棉军团',
-        shipId: 'INCENDIARY_SHIP',
     },
     {
         name: '封建时代三佛齐军团',

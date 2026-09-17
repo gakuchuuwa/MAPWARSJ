@@ -623,10 +623,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'chenla_duyebamo': 12,                               // 阇耶跋摩 · chenla · 吴哥
     'cuanshi_cuanlongyan': 5,                           // 爨龙颜 · cuanshi · 曲靖
     'dai_daoyingmeng': 15,                               // 刀应勐 · dai · 勐泐城
-    'dali_duansiping': 8,                               // 段俭魏 · dali · 羊苴咩
+    'dali_duansiping': 8,                               // 段思平 · dali · 羊苴咩
     'dangzhou_qiangduan': 3,                            // 强端 · dangzhou · 阴平
     'deli_alawuding': 13,                                // 阿拉乌丁 · deli · 德里
-    'dian_duanjianwei': 10,                              // 段思平 · dian · 通海城
+    'dian_cuanchongdao': 8,                             // 爨崇道 · dian · 通海城
     'dianguo_zhuangqiao': -3,                            // 庄蹻 · dianguo · 滇池
     'dongxu_mangruiti': 16,                              // 莽瑞体 · dongxu · 凯图玛蒂
     'dongzu_wumian': 14,                                 // 吴勉 · dongzu · 雷公山
@@ -655,7 +655,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'taiyuan_menglai': 13,                               // 孟莱 · taiyuan · 清坎城
     'wazu_banhongwang': 20,                              // 胡玉山 · wazu · 沧源
     'wenling_shilang': 17,                               // 施琅 · wenling · 澎湖
-    'wuman_cuanguiwang': 8,                             // 爨归 · wuman · 乌蒙山
+    'wuman_gaipin': 8,                                  // 盖聘 · wuman · 乌蒙山
     'xike_lanjite': 19,                                  // 兰季特辛格 · xike · 拉合尔
     'xingwei_hanba': 14,                                 // 罕拔 · xingwei · 木邦
     'yangzhou_wangping': 3,                             // 王平 · yangzhou · 兴势山

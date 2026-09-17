@@ -211,7 +211,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'champion', name: '欧洲双手剑士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
     { id: 'liao_dao', name: '契丹辽刀手', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/LIAO_DAO/' },
     { id: 'elite_liao_dao', name: '契丹辽刀手精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
-    { id: 'kamayuk', name: '枪兵长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
+    { id: 'kamayuk', name: '印加枪兵长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
     { id: 'jian_swordsman', name: '华夏步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIAN_SWORDSMAN/' },
     { id: 'ninja', name: '日本忍者', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/NINJA/' },
     { id: 'samurai', name: '日本武士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_DE/' },

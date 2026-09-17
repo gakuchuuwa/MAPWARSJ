@@ -258,7 +258,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '封建时代高棉军团', civ: '高棉', age: 'feudal', deStyle: 'SEAS', region: 'KHMER' as RegionType,
+        name: '封建时代吴哥军团', civ: '高棉', age: 'feudal', deStyle: 'SEAS', region: 'KHMER' as RegionType,
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
         formationMode: 'triangle',
         shipId: 'INCENDIARY_SHIP',
@@ -436,7 +436,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'kamayuk', count: 4 },
             { type: 'elite_kamayuk', count: 3 },
-            { type: 'slinger', count: 2 },
+            { type: 'champi_runner', count: 2 },
         ],
     },
     {
