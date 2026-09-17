@@ -445,6 +445,9 @@ export function saveBattlefieldEvent(
             }
             if (isSiege) innerFields.push(['defenderCityId', tsStr(d.defenderCityId)]);
             else if (d.defenderSourceCityId) innerFields.push(['defenderSourceCityId', tsStr(d.defenderSourceCityId)]);
+            // 🔴 [2026-09-16] 军团名（战场编辑器可显式指定）；留空不写 = 走势力/建筑风格默认
+            if (d.attackerLegionName) innerFields.push(['attackerLegionName', tsStr(d.attackerLegionName)]);
+            if (d.defenderLegionName) innerFields.push(['defenderLegionName', tsStr(d.defenderLegionName)]);
 
             scText = patchFields(p1.text, braceAt, braceEnd, innerFields).text;
             scMode = 'update';

@@ -231,6 +231,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
 
             result: 'attacker_win',                  // 写真历史：马其顿迂回奇袭获胜
             autoEnterRTS: true,                      // 进战术模式（13）
+            defenderLegionName: '古典时代波斯军团',
         },
         // 🔴 战后归属：扫清最后屏障，波斯波利斯易主归马其顿
         cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
