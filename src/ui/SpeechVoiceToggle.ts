@@ -34,7 +34,6 @@ export class SpeechVoiceToggle {
         btn.type = 'button';
         btn.className = 'game-time-btn';
         btn.title = '切换语音男声（云希/云健）';
-        btn.style.cssText = 'min-width: 70px; font-size: 13px;';
         btn.textContent = '🔊 ' + speechAnnouncer.getPreferredVoice();
         
         btn.addEventListener('click', () => {
