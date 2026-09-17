@@ -4920,18 +4920,19 @@ export class Scene13WarLayer {
 
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
         // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
-        const placeYurtCamp = (scale?: number): void => {
-            const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
+        const placeYurtCamp = (scale?: number, availableSpawns = side): void => {
+            if (availableSpawns.length === 0) return;
+            const shuffledSpawns = [...availableSpawns].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < shuffledSpawns.length - 1; i++) {
                 const sp = place(shuffledSpawns[i], shuffledYurts[i], { scale });
                 this.decorSprites.push(sp);
                 this.trackCityBuilding(sp);
             }
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
-            this.decorSprites.push(place(shuffledSpawns[8], 'ASIA_TOWER_AGE2', { scale }));
+            this.decorSprites.push(place(shuffledSpawns[shuffledSpawns.length - 1], 'ASIA_TOWER_AGE2', { scale }));
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -5151,7 +5152,7 @@ export class Scene13WarLayer {
 
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
             if (this.sideCulture[f] === 'STEPPE') {
-                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE);
+                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide);
                 return;
             }
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
@@ -5195,6 +5196,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-29 主人「城堡不在最上就在最下」] 城堡固定中间落点（y 最接近全军中线），其余 8 建筑随机放剩余落点。
             // [2026-08-29 主人「城堡有点大，请缩小」→ 再「显示比例加大」] 城堡单独用 SIEGE_CASTLE_SCALE，其余建筑仍用 SIEGE_CITY_BUILDING_SCALE。
             if (this.defenderCityType === 'pass') {
+                if (buildingSide.length === 0) return;
                 const castleAsset = this.castleAssetFor(style);
                 const passOthers = [
                     `${style}_BARRACKS_AGE3`,
@@ -5205,8 +5207,9 @@ export class Scene13WarLayer {
                     `${style}_TOWER_AGE4`, `${style}_TOWER_AGE4`,
                 ].sort(() => Math.random() - 0.5);
                 const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
-                const centerSpawn = side.reduce((best, s) =>
-                    Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, side[0]);
+                // 特殊建筑先占位；城堡只在剩余空位里选最接近中线的位置。
+                const centerSpawn = buildingSide.reduce((best, s) =>
+                    Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
                 const castleSp = place(centerSpawn, castleAsset, {
                     scale: SIEGE_CASTLE_SCALE,
                     indestructible: true,
@@ -5222,8 +5225,8 @@ export class Scene13WarLayer {
                     rubbleAsset: null,
                     down: false,
                 });
-                const shuffledOthers = side.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
-                for (let i = 0; i < 8; i++) {
+                const shuffledOthers = buildingSide.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
+                for (let i = 0; i < shuffledOthers.length; i++) {
                     const sp = place(shuffledOthers[i], passOthers[i], { scale: SIEGE_CITY_BUILDING_SCALE });
                     this.decorSprites.push(sp);
                     this.trackCityBuilding(sp);
@@ -6126,6 +6129,7 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-23 主人定] 攻城战不再列阵行军：开局双方按兵不动（见 holdSiege），
                 //    40 秒城墙坍塌后直接各自索敌接战（aimAt/search）；march 列阵只保留给野战。
                 const inMarch = this.deployT > 0 && this.battleType !== 'siege';
+                const slotIdx = s.slotN++;
                 const files = marchFilesOf(s.key);
                 // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
                 // 出兵口的前后行间距 depth = min(150, VW×0.075)，1920 屏才 144px，
