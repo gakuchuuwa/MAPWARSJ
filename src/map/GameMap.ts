@@ -53,6 +53,26 @@ function installZoomProjectSlicing(): void {
     };
 }
 
+/**
+ * 🔴 [2026-09-17 修] 消除 Chromium / WebKit 在非整数缩放（如 125%/150%）及亚像素位移下的瓦片接缝。
+ * 原理：Leaflet 以 256px 瓦片排布，在非 1.0 的 devicePixelRatio 或带小数的 transform 变换下，
+ * 邻接瓦片边缘会在 GPU 光栅化时因亚像素舍入产生 0.5~1px 的透明间隙，导致底色（#6395b8）透出形成网格方框。
+ * 瓦片尺寸微扩 0.5px（相当于 0.2% 重叠）可严密封堵接缝，且肉眼完全无形变失真。
+ */
+let _tileSeamPatchInstalled = false;
+function installTileSeamFix(): void {
+    if (_tileSeamPatchInstalled) return;
+    _tileSeamPatchInstalled = true;
+    const GridLayerProto = (L as any).GridLayer.prototype;
+    const origInitTile = GridLayerProto._initTile;
+    GridLayerProto._initTile = function (this: any, tile: HTMLElement) {
+        origInitTile.call(this, tile);
+        const size = this.getTileSize();
+        tile.style.width = (size.x + 0.5) + 'px';
+        tile.style.height = (size.y + 0.5) + 'px';
+    };
+}
+
 export class GameMap {
     private map: L.Map;
     private containerId: string;
@@ -118,6 +138,7 @@ export class GameMap {
         });
 
         installZoomProjectSlicing();
+        installTileSeamFix();
 
         const applyHillshadeForZoom = () => {
             if (!this.hillshadeLayer) return;
@@ -1452,6 +1473,4 @@ export class GameMap {
             requestAnimationFrame(panLoop);
         };
         
-        requestAnimationFrame(panLoop);
-    }
-}
+        requestAnimationFrame(panLoop)

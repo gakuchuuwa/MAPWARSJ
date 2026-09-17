@@ -245,8 +245,23 @@ export class PlayerHUD {
         if (!this.panel || !this.body) return;
         const inScene13 = this.deps.isScene13Active();
         if (inScene13) {
+            /* 🔴 [2026-09-17 主人报障「战术模式下右下角信息面板不缩小，应该缩小」]
+             * 改之前这个分支**只标记 panelsWereInScene13、什么也不收**：玩家面板靠下面那行
+             * display:none 自己藏了，军团/军情/右下角三个伙伴面板却原地保持进 13 那一刻的轮播相位
+             * —— 撞上「展开 30s」那一相进 13，它们就整场战斗一直开着挡画面。
+             * （佐证：panelsWereInScene13 这个字段在改之前全项目只被写、零处读，本该有的这段就是丢了。）
+             *
+             * 现在按既有设计「四个面板一次收齐」补上：进 13 那一刻把伙伴面板一并收起。
+             * ⚠️ 必须用边沿检测（!panelsWereInScene13）：refresh 每秒跑一次 + onChange 还会额外触发，
+             *    每次都调等于把主人在 13 里手动展开的面板每秒按回去。
+             * ⚠️ 不碰轮播相位 cyclePhaseExpanded：它记的是战略地图上该是哪一相，
+             *    出 13 时要照它恢复（见 else 分支），13 里的收起只是临时让位给战斗画面。
+             */
+            if (!this.panelsWereInScene13) this.deps.setCompanionPanelsExpanded(false);
             this.panelsWereInScene13 = true;
         } else {
+            // 出 13 那一刻：把伙伴面板恢复成轮播当前该有的相位（13 里收起只是临时让位，不改相位本身）
+            if (this.panelsWereInScene13) this.deps.setCompanionPanelsExpanded(this.cyclePhaseExpanded);
             // 🔴 [2026-09-15 主人定] 四面板在战略地图上**无限轮播**：展开 30s → 收起 60s → 往复。
             //    不再看「有没有势力」——主人「我这是自动直播，哪有手动」，旧那条
             //    （没势力才展开、入伍后永不再展开）在自动直播里等于全程隐身，见常量处注释。
