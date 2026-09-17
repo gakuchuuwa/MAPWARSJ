@@ -104,7 +104,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'MONOREME',
     },
     {
-        name: '古典时代塞种军团',
+        name: '古典时代西域军团',
         formationMode: 'crescent',
         slots: [
             { type: 'sakan_axeman', count: 3 },
@@ -224,12 +224,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'MONOREME',
     },
     {
-        name: '古典时代月氏军团',
+        name: '古典时代贵霜军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'sogdian_cataphract', count: 4 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'imperial_cavalry', count: 2 },
+            { type: 'laminated_bowman', count: 4 },
+            { type: 'elite_kipchak', count: 3 },
         ],
         regions: ['KUSHAN'],
         parentLegion: '中亚军团',
@@ -644,11 +644,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'FIRE_SHIP',
     },
     {
-        name: '城堡时代西域军团',
+        name: '城堡时代察合台军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'keshik', count: 3 },
+            { type: 'sakan_axeman', count: 2 },
+            { type: 'elite_scythian_horse_archer', count: 3 },
             { type: 'elite_keshik', count: 4 },
         ],
         regions: ['WESTERN_CASTLE'],
@@ -971,9 +971,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代粟特军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'bactrian_archer', count: 3 },
+            { type: 'savar', count: 3 },
             { type: 'sogdian_cataphract', count: 4 },
-            { type: 'camel_rider', count: 2 },
+            { type: 'elite_kipchak', count: 2 },
         ],
         regions: ['SOGDIANS'],
         parentLegion: '中亚军团',
@@ -1016,12 +1016,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'FIRE_GALLEY',
     },
     {
-        name: '封建时代西域军团',
+        name: '封建时代安西军团',
         formationMode: 'triangle',
         slots: [
             { type: 'sakan_axeman', count: 2 },
-            { type: 'tarkan', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
+            { type: 'elite_scythian_horse_archer', count: 3 },
+            { type: 'hei_kuang_heavy', count: 4 },
         ],
         regions: ['WESTERN_FEUDAL'],
         parentLegion: '中亚军团',
@@ -1328,12 +1328,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'HEAVY_INCENDIARY_SHIP',
     },
     {
-        name: '帝国时代西域军团',
+        name: '帝王时代维吾尔军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'kipchak', count: 2 },
-            { type: 'elite_kipchak', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'sakan_axeman', count: 2 },
+            { type: 'royal_janissary', count: 3 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['WESTERN_IMPERIAL'],
         parentLegion: '中亚军团',
@@ -1506,6 +1506,18 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+    },
+    {
+        name: '城堡时代帖木儿军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'elite_liao_dao', count: 4 },
+            { type: 'elite_keshik', count: 3 },
+            { type: 'mangudai_elite', count: 2 },
+        ],
+        regions: [],
+        parentLegion: '中亚军团',
+        shipId: 'DEMO_RAFT',
     },
 ];
 
