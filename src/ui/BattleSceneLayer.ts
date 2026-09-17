@@ -144,6 +144,7 @@ export class BattleSceneLayer {
     public exit(): void {
         if (!this.active) return;
         this.active = false;
+        this.lingerUntil = 0;
         this.followUnitId = null;
         // [2026-08-11 13 v2] 自愈/外部终结路径：演出层一并停（正常结束走 onRegionalBattleEnd 停）
         (window as any).game?.scene13War?.stop?.('场景自愈退出');

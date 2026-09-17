@@ -1214,7 +1214,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dali_duansiping: { generalId: 'dali_duansiping', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkDisadvantageSkillId: 'ts_712', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_408', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_617', defDisadvantageSkillId: 'ts_006', aptitude: 'reverse' , attackStyle: 'defense'},
+    dali_duansiping: { generalId: 'dali_duansiping', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_289', atkBalanceSkillId: 'ts_408', atkDisadvantageSkillId: 'ts_712', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_617', defDisadvantageSkillId: 'ts_006', aptitude: 'reverse', attackStyle: 'defense' },
 
 
 
@@ -2545,7 +2545,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    dian_duanjianwei: { generalId: 'dian_duanjianwei', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', defBalanceSkillId: 'ts_197', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_407', atkDisadvantageSkillId: 'ts_409', defAdvantageSkillId: 'ts_293', defDisadvantageSkillId: 'ts_320', aptitude: 'create' , attackStyle: 'attack'},
 
 
 
@@ -3293,6 +3292,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_rajaram: { generalId: 'gen_rajaram', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' }, // 马拉塔王，金奇抗莫卧儿九年围城 → 普将,
     yisatisi_falukezhade: { generalId: 'yisatisi_falukezhade', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     jiaye_punafamo: { generalId: 'jiaye_punafamo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    dian_cuanchongdao: { generalId: 'dian_cuanchongdao', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
 };
 
 

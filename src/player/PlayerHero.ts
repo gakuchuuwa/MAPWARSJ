@@ -397,12 +397,14 @@ export class PlayerHero {
         this.emitChange();
     }
 
-    // ── 战败停顿（🔴 2026-09-11 主人定「玩家军团战败后，玩家要停留 3 秒再移动去下个目标」）──
+    // ── 战败停顿：立即回战略地图，然后原地等待 5 秒再移动 ──
     /** 停顿截止时刻（Date.now() 口径）；≤ 现在 = 没在停顿 */
     private holdUntilMs = 0;
 
     /** 随军战败 → 落地停顿（时长见 PLAYER_DEFEAT_HOLD_MS） */
     private holdAfterDefeat(): void {
+        // 先退战术场景，避免残局停留消耗玩家在战略地图上的等待时间。
+        (window as any).game?.battleScene?.exit();
         this.holdUntilMs = Date.now() + PLAYER_DEFEAT_HOLD_MS;
     }
 
@@ -414,8 +416,7 @@ export class PlayerHero {
     /** 大地图战略战斗结算：随军军团战胜时，按歼敌兵力与官阶指挥分成获得战略战功；战败则功勋归零降职 */
     public onHostBattleEnd(result: 'victory' | 'defeat', enemyKilled: number): void {
         if (result === 'defeat') {
-            // 🔴 [2026-09-11 主人定]「玩家军团战败后，玩家要停留 3 秒再移动去下个目标。」
-            //    先落停顿，再走脱军流程：脱军团后玩家立刻能自由行动，这 3 秒就是它的「整备」时间。
+            // 战败立即回战略地图，从退场完成开始等待 5 秒，再走脱军清场流程。
             this.holdAfterDefeat();
             // 战败 = 脱离军团：清势力（信息栏不再显示旧势力）+ 清任务 + 关自动模式。
             // 走 onHostLost → finishQuest(false) → detach() 统一清场（含 factionId / host / 权限乘数 / 自动模式）。

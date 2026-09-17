@@ -2129,7 +2129,7 @@ export class LegionPhalanxDrawer {
             this.navalCourseByUnit.set(key, { deg: targetDeg, tick });
             return targetDeg;
         }
-        const dt = Math.max(0, Math.min(0.25, tick - prev.tick));   // 卡顿/切标签页后不要一步甩过半个圆
+        const dt = Math.max(0, Math.min(0.25, (tick - prev.tick) / 1000));   // 卡顿/切标签页后不要一步甩过半个圆
         const diff = ((targetDeg - prev.deg + 540) % 360) - 180;    // 最短转向差（-180..180）
         const maxStep = LegionPhalanxDrawer.NAVAL_TURN_RATE_DEG_PER_SEC * dt;
         const step = Math.max(-maxStep, Math.min(maxStep, diff));
@@ -2346,7 +2346,7 @@ export class LegionPhalanxDrawer {
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
         const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
-        const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number }[] = [];
+        const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number; rot?: number; deg?: number; shipLen?: number }[] = [];
 
         // 逐军团相位种子（只依赖 unitId）：站位误差与浮沉横摇共用，避免同屏所有舰队同频共振
         let unitPhase = 0;
@@ -2428,7 +2428,11 @@ export class LegionPhalanxDrawer {
             const shipDying = shipSlot?.state === 'DYING';
             const shipDead = shipSlot?.state === 'DEAD';
             const isShipAlive = !shipDead && !shipDying && state !== 'DEATH';
-            shipPositions.push({ x: dx, y: dy, r: pos.r, isAlive: isShipAlive, dir: shipDir });
+            const currentShipLen = td.dyn ? td.refLen! * td.s! : Math.max(td.w, td.h);
+            shipPositions.push({
+                x: dx, y: dy, r: pos.r, isAlive: isShipAlive, dir: shipDir,
+                rot: shipRot, deg: shipDeg, shipLen: currentShipLen,
+            });
 
             let rawSprite: HTMLImageElement | undefined;
             let currentFrameIndex = 0;

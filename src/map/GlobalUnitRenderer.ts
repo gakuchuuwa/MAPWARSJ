@@ -2326,7 +2326,7 @@ export class GlobalUnitRenderer {
                 const targetAngle = Math.atan2(dy, dx);
                 const unitId = unit.id || 'unknown';
                 const actualNavalHeading = Number.isFinite(unit.navalHeadingRad)
-                    ? unit.navalHeadingRad as number
+                    ? OrientationSystem.geoHeadingToScreenCompassRad(unit.navalHeadingRad as number, unitPos.lat)
                     : null;
                 let currentAngle = actualNavalHeading
                     ?? this.unitVisualAngles.get(unitId)
@@ -2516,11 +2516,17 @@ export class GlobalUnitRenderer {
                 } else if (unit.isAttacking && isValidMapCoord(unit.targetPos)) {
                     navalAngleRad = OrientationSystem.getScreenCompassDeg(unitPos, unit.targetPos) * Math.PI / 180;
                 } else if (unit.isMoving) {
-                    navalAngleRad = (Number.isFinite(unit.navalHeadingRad) ? unit.navalHeadingRad as number : null)
+                    navalAngleRad = (Number.isFinite(unit.navalHeadingRad)
+                        ? OrientationSystem.geoHeadingToScreenCompassRad(unit.navalHeadingRad as number, unitPos.lat)
+                        : null)
                         ?? this.unitVisualAngles.get(unit.id || 'unknown')
                         ?? (45 + 22.5 * navalDir16) * Math.PI / 180;
                 } else {
-                    navalAngleRad = (45 + 22.5 * navalDir16) * Math.PI / 180;
+                    navalAngleRad = (Number.isFinite(unit.navalHeadingRad)
+                        ? OrientationSystem.geoHeadingToScreenCompassRad(unit.navalHeadingRad as number, unitPos.lat)
+                        : null)
+                        ?? this.unitVisualAngles.get(unit.id || 'unknown')
+                        ?? (45 + 22.5 * navalDir16) * Math.PI / 180;
                 }
                 const navalDeg = navalAngleRad * 180 / Math.PI;
                 navalDir16 = ((Math.round((navalDeg - 45) / 22.5) % 16) + 16) % 16;

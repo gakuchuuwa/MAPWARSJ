@@ -334,6 +334,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xiayang_d', name: '夏阳' },
    // ── 2026-06-18：李勣@龙门（冯翊夏阳故地·禹门险隘；旗号夏阳）──
     { id: 'dian', name: '白爨' },
+
        // 通海路（通海）；滇国见 dianguo
     { id: 'xin', name: '上党' },
 
@@ -681,6 +682,7 @@ export const FACTIONS: Faction[] = [
     // ── 2026-05-26 五代十国势力 ──
     { id: 'dongdan', name: '东丹' },
     { id: 'dali', name: '大理' },
+
 
 
            // 紫霞紫 - 大理国(段思平 羊苴咩)

@@ -8,7 +8,6 @@
  */
 export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
   nanzhao: { name: '罗苴子', tier: 3 },        // 南诏/大理特色精锐，兵种特色鲜明，但无明确战略级大捷，降为T3知名。
-    dali: { name: '洱海白戟', tier: 3 },
   hantawadi: { name: '东吁象兵', tier: 1 },    // 勃固城·东吁王朝席卷中南半岛的战略主力
     dongxu: { name: '葡籍火枪兵', tier: 2 },
     meitai: { name: '飞镖骑兵', tier: 3 },  // 康格拉·哈根巴：梅泰人骑马投镖（Arambai）
@@ -38,7 +37,6 @@ export const DIANQIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: 
   dai: { name: '车里战象', tier: 4 },          // 勐泐城·刀应勐傣兵助明御缅（缺乏极其著名的战术高光，降T3）
   ava: { name: '王都卫军', tier: 4 },
     mon: { name: '孟族战象', tier: 4 },
-    dian: { name: '秀山白义从', tier: 3 },
     ahaomu: { name: '阿豪姆舟师', tier: 3 },           // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
     wazu: { name: '阿佤猎兵', tier: 3 },              // 西南少数民族极其典型的风土特种武装，民族辨识度极高，升入T3知名
     jingpozu: { name: '景颇长刀兵', tier: 3 },
