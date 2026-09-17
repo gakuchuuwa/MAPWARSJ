@@ -1662,11 +1662,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 8,
             "offsetY": 2
         },
-        "/assets/STEPPE/hongirad_dexuechan.png": {
-            "scale": 0.82,
-            "offsetX": 0,
-            "offsetY": 23
-        },
         "/assets/STEPPE/huyan_peicen.png": {
             "scale": 1,
             "offsetX": 0,
@@ -6542,11 +6537,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/STEPPE/__闲置__STEPPE_85.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 15
-        },
         "/assets/STEPPE/__多余__STEPPE_01.png": {
             "scale": 1.02,
             "offsetX": 0,
@@ -7592,11 +7582,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -26
         },
-        "/assets/STEPPE/__闲置__STEPPE_86.png": {
-            "scale": 1.03,
-            "offsetX": 0,
-            "offsetY": 11
-        },
         "/assets/STEPPE/__闲置__STEPPE_87.png": {
             "scale": 1.18,
             "offsetX": 0,
@@ -7876,6 +7861,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.22,
             "offsetX": 0,
             "offsetY": 13
+        },
+        "/assets/STEPPE/__闲置__STEPPE_92.png": {
+            "scale": 0.82,
+            "offsetX": 0,
+            "offsetY": 23
+        },
+        "/assets/STEPPE/__闲置__STEPPE_93.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/STEPPE/hongirad_dexuechan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 15
         }
     },
     "folderGuides": {

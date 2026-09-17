@@ -11,6 +11,16 @@ import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { getCultureLegionName } from '../types/CultureFormations';
+import {
+    BASE16_STYLES,
+    BASE16_NAMES,
+    CULTURE_59_GROUPS,
+    LAYER3_CUSTOM_GROUPS,
+    ALL_BRANCHES_MAP,
+    resolveCityHierarchy,
+    type Base16StyleKey,
+    type CityBase16Resolution,
+} from '../systems/CultureHierarchy';
 
 export const ERA_LABELS: Record<GeneralEra, string> = {
     antiquity: '古典时代',
@@ -2257,8 +2267,8 @@ function setView(mode: 'entities' | 'cities'): void {
     els.viewEntities.className = 'bm-btn' + (isCities ? '' : ' bm-btn-primary');
     els.viewCities.className = 'bm-btn' + (isCities ? ' bm-btn-primary' : '');
     if (isCities) {
-        els.cityStyle.innerHTML = '<option value="all">全部建筑风格</option>'
-            + BUILDING_STYLES.map(([k, cn]) => `<option value="${k}">${k} ${cn}</option>`).join('')
+        els.cityStyle.innerHTML = '<option value="all">全部建筑风格 (16母体全量)</option>'
+            + BASE16_STYLES.map(s => `<option value="${s.key}">${s.emoji} ${s.name} (${s.key})</option>`).join('')
             + '<option value="__none__">（未设建筑风格）</option>';
         els.citySearch.value = citySearch;
         els.cityType.value = cityTypeFilter;
@@ -2269,31 +2279,43 @@ function setView(mode: 'entities' | 'cities'): void {
     }
 }
 
-function filterCities(): EntityData['cities'] {
+function filterCities(): Array<EntityData['cities'][number] & { hierarchy: CityBase16Resolution }> {
     const q = citySearch.toLowerCase();
-    return cityList().filter(c => {
+    const all = cityList().map(c => ({
+        ...c,
+        hierarchy: resolveCityHierarchy(c),
+    }));
+    return all.filter(c => {
         if (cityTypeFilter !== 'all' && c.type !== cityTypeFilter) return false;
-        if (cityStyleFilter === '__none__') { if (c.buildingStyle) return false; }
-        else if (cityStyleFilter !== 'all' && c.buildingStyle !== cityStyleFilter) return false;
+        if (cityStyleFilter === '__none__') {
+            if (c.buildingStyle) return false;
+        } else if (cityStyleFilter !== 'all') {
+            // 🔴 核心：按 16 母体筛选！选 ASIA 涵盖所有东亚细分分支
+            if (c.hierarchy.base16 !== cityStyleFilter) return false;
+        }
         if (!q) return true;
-        return `${c.name} ${c.id} ${c.factionId} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.note ?? ''}`
+        return `${c.name} ${c.id} ${c.factionId} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.hierarchy.base16} ${c.hierarchy.base16Name} ${c.hierarchy.branchKey ?? ''} ${c.hierarchy.branchName ?? ''} ${c.note ?? ''}`
             .toLowerCase().includes(q);
     });
 }
 
 function renderCityTable(): void {
     const list = filterCities();
-    const styleCn = new Map(BUILDING_STYLES);
     const typeCn = new Map(CITY_TYPES);
     const tbody = list.map(c => {
         const sel = c.id === selectedCityId ? ' class="selected"' : '';
         const note = (c.note ?? '').slice(0, 24);
+        const h = c.hierarchy;
+        const branchHtml = h.branchName
+            ? `<span style="color:#f5e6c8;font-weight:600">${h.branchName}</span> <span class="cell-region" style="font-size:10px;color:#8fa3bb">(${h.branchKey})</span>`
+            : '<span style="color:#64748b">—</span>';
         return `<tr${sel} data-cid="${c.id}">
-            <td>${c.name}</td>
+            <td><b>${c.name}</b></td>
             <td class="cell-id">${c.id}</td>
             <td>${typeCn.get(c.type) ?? c.type}</td>
+            <td class="cell-region" style="font-weight:700;color:#f5d78e">${h.base16Emoji} ${h.base16Name} (${h.base16})</td>
+            <td>${branchHtml}</td>
             <td class="cell-region">${c.region ?? '<span class="cell-miss">✗</span>'}</td>
-            <td class="cell-region">${c.buildingStyle ?? '<span class="cell-miss">未设</span>'}</td>
             <td>${c.factionId}</td>
             <td>${c.troops ?? ''}</td>
             <td class="cell-region">${c.lat?.toFixed(2)}, ${c.lng?.toFixed(2)}</td>
@@ -2302,7 +2324,7 @@ function renderCityTable(): void {
     }).join('');
 
     els.cityTableWrap.innerHTML = `<table class="bm-table"><thead><tr>
-        <th>据点</th><th>ID</th><th>等级</th><th>文化区</th><th>建筑风格</th>
+        <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (59+3)</th><th>文化区</th>
         <th>势力</th><th>兵力</th><th>坐标</th><th>备注</th>
     </tr></thead><tbody>${tbody}</tbody></table>`;
 
@@ -2314,25 +2336,26 @@ function renderCityTable(): void {
             renderCityTable();
         });
     });
-    els.cityStats.textContent = `共 ${cityList().length} 座据点 · 当前显示 ${list.length} 座`
-        + `（风格表 ${BUILDING_STYLES.length} 套）`;
-    void styleCn;
+
+    const baseCounts: Record<string, number> = {};
+    for (const c of cityList()) {
+        const h = resolveCityHierarchy(c);
+        baseCounts[h.base16] = (baseCounts[h.base16] || 0) + 1;
+    }
+    const summary16 = BASE16_STYLES.map(s => `${s.name}: ${baseCounts[s.key] || 0}`).join(' · ');
+    els.cityStats.innerHTML = `<span style="color:#f5d78e">共 ${cityList().length} 座据点（当前显示 ${list.length} 座）</span><span style="margin-left:12px;color:#a89f8f;font-size:11px">16母体覆盖：${summary16}</span>`;
 }
 
 function openCityPanel(cityId: string): void {
     const c = cityList().find(x => x.id === cityId);
     if (!c) return;
-    // 🔴 [2026-09-11 主人「和游戏同步」] 文化区下拉 = **游戏全量 RegionType**
-    //   （REGION_ORDER 169 + 数据里在用的 NORTH/EAST 等 = 171），不再是服务端那份 67 项的旧表
-    //   —— 旧表缺 MING 等区，选到没有该选项的据点时会把 region 存空。
-    const regions = [...new Set<string>([
-        ...REGION_ORDER,
-        ...(entityData?.cities ?? []).map(x => x.region).filter(Boolean) as string[],
-    ])].sort();
     const factions = entityData?.factions ?? [];
-    const styleOpts = BUILDING_STYLES.map(([k, cn]) =>
-        `<option value="${k}" ${c.buildingStyle === k ? 'selected' : ''}>${k} ${cn}</option>`).join('');
-    // 游戏实际会采用的建筑风格（战略地图与战术战场同源）—— 让「编辑值」和「游戏结果」一眼可比
+    const h = resolveCityHierarchy(c);
+    const curWall = h.base16;
+    const curBranch = h.branchKey ?? '';
+    const isCustom = LAYER3_CUSTOM_GROUPS.some(g => g.branches.some(b => b.key === curBranch));
+
+    // 游戏实际会采用的建筑风格（战略地图与战术战场同源）
     const gameStyle = resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
     const steppeForced = !!(c.region && (c.region.includes('STEPPE') || c.region.includes('MONGOL')));
     const gameStyleLine = gameStyle
@@ -2359,14 +2382,42 @@ function openCityPanel(cityId: string): void {
           </select>
         </label>
         ${gameStyleLine}
-        <label><span>文化区 (region · 只读，不再保存)</span>
-          <input value="${c.region ?? '（未设）'}" readonly title="文化区不再在此保存——保存只改建筑风格等字段" />
-        </label>
-        <label><span>建筑风格 (buildingStyle)</span>
-          <select name="buildingStyle">
-            <option value="" ${!c.buildingStyle ? 'selected' : ''}>（未设 → 跟文化区走）</option>
-            ${styleOpts}
-          </select>
+
+        <!-- 🔴 [2026-09-18 主人定] 与 _citytest.html 100% 对齐的建筑风格三级体系 -->
+        <div style="background:#16130f;padding:10px 12px;border:1px solid #3a342c;border-radius:6px;margin-bottom:12px">
+          <div style="font-weight:700;color:#f6e05e;margin-bottom:8px">🏛️ 建筑风格三级体系（与 _citytest.html 同步）</div>
+
+          <label><span>① 城墙 / 母体 (16套母体建筑风格)</span>
+            <select name="wallStyle" id="bm-ce-wall">
+              ${BASE16_STYLES.map(s => `<option value="${s.key}" ${curWall === s.key ? 'selected' : ''}>${s.emoji} ${s.name} (${s.key})</option>`).join('')}
+            </select>
+          </label>
+
+          <label><span>② 城堡 / 文明分支 (59套专属城堡·险要)</span>
+            <select name="castleBranch" id="bm-ce-castle">
+              <option value="">── 不选二层分支 ──</option>
+              ${CULTURE_59_GROUPS.map(g => `
+                <optgroup label="${g.group}">
+                  ${g.branches.map(b => `<option value="${b.key}" ${!isCustom && curBranch === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
+                </optgroup>
+              `).join('')}
+            </select>
+          </label>
+
+          <label><span>③ 自建 / 专属定制 (3套独立视觉与宗堡)</span>
+            <select name="customStyle" id="bm-ce-custom">
+              <option value="">── 不选三层专属 ──</option>
+              ${LAYER3_CUSTOM_GROUPS.map(g => `
+                <optgroup label="${g.group}">
+                  ${g.branches.map(b => `<option value="${b.key}" ${isCustom && curBranch === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
+                </optgroup>
+              `).join('')}
+            </select>
+          </label>
+        </div>
+
+        <label><span>文化区 (region · 只读)</span>
+          <input value="${c.region ?? '（未设）'}" readonly title="文化区由二/三层风格或大区定义自动联动维护" />
         </label>
         <label><span>势力 (factionId)</span>
           <select name="factionId">
@@ -2394,33 +2445,76 @@ function openCityPanel(cityId: string): void {
           <button type="button" id="bm-city-close" class="bm-btn">关闭</button>
         </div>
         <p style="font-size:11px;color:#8a8272;margin-top:8px;line-height:1.6">
-          保存只改你动过的字段，其余字段（备注/建筑风格等）原样保留。<br />
+          保存与 _citytest.html 规范一致：一级母体写入 buildingStyle，二层59/三层3写入 region。<br />
           改坐标会先做 50km 邻近检查（项目铁律），不过关则整条不写盘。
         </p>
       </form>`;
 
     const form = document.getElementById('bm-city-form') as HTMLFormElement;
     form.addEventListener('submit', (e) => { e.preventDefault(); void saveCityEdits(c.id, form); });
-    // 改了「建筑风格 / 文化区 / 等级」就立刻重算「游戏实际采用」那一行（草原强制毡帐等规则一眼可见）
+
+    const elWall = document.getElementById('bm-ce-wall') as HTMLSelectElement | null;
+    const elCastle = document.getElementById('bm-ce-castle') as HTMLSelectElement | null;
+    const elCustom = document.getElementById('bm-ce-custom') as HTMLSelectElement | null;
+
     const refreshGameStyleHint = (): void => {
         const el = document.getElementById('bm-city-game-style');
         if (!el) return;
-        const fd = new FormData(form);
+        const wallVal = elWall?.value || c.buildingStyle || '';
+        const castleVal = elCastle?.value || '';
+        const customVal = elCustom?.value || '';
+        const regionVal = customVal || castleVal || c.region || '';
+        const typeVal = String(form.elements.namedItem('type') ? (form.elements.namedItem('type') as any).value : c.type);
         const s = resolveCityDeBuildingStyle(
             c.id,
-            String(fd.get('type') ?? c.type),
-            c.region ?? '',
-            Number(fd.get('lat') ?? c.lat),
-            Number(fd.get('lng') ?? c.lng),
-            String(fd.get('buildingStyle') ?? ''),
+            typeVal,
+            regionVal,
+            Number(c.lat),
+            Number(c.lng),
+            wallVal,
         );
-        const rg = c.region ?? '';
-        const forced = rg.includes('STEPPE') || rg.includes('MONGOL');
+        const forced = regionVal.includes('STEPPE') || regionVal.includes('MOBEI_MONGOL');
         el.innerHTML = `🎮 游戏实际采用建筑风格：<b style="color:${s ? '#f5d78e' : '#b87c7c'}">${s ?? '（无 → 兜底渲染）'}</b>`
             + (forced ? '<span style="color:#c8a05a">（文化区属草原/蒙古：游戏强制毡帐 YURT，此处另选别的不会生效）</span>' : '')
             + '<div style="color:#8a8272;margin-top:2px">战略地图与 ZOOM13 战术战场共用这一套解析</div>';
     };
-    for (const sel of ['buildingStyle', 'region', 'type', 'lat', 'lng']) {
+
+    if (elWall && elCastle && elCustom) {
+        elWall.addEventListener('change', () => {
+            const w = elWall.value;
+            if (elCastle.value) {
+                const b = ALL_BRANCHES_MAP[elCastle.value];
+                if (b && b.deStyle !== w) elCastle.value = '';
+            }
+            if (elCustom.value) {
+                const b = ALL_BRANCHES_MAP[elCustom.value];
+                if (b && b.deStyle !== w) elCustom.value = '';
+            }
+            refreshGameStyleHint();
+        });
+
+        elCastle.addEventListener('change', () => {
+            const k = elCastle.value;
+            if (k) {
+                elCustom.value = '';
+                const b = ALL_BRANCHES_MAP[k];
+                if (b) elWall.value = b.deStyle;
+            }
+            refreshGameStyleHint();
+        });
+
+        elCustom.addEventListener('change', () => {
+            const k = elCustom.value;
+            if (k) {
+                elCastle.value = '';
+                const b = ALL_BRANCHES_MAP[k];
+                if (b) elWall.value = b.deStyle;
+            }
+            refreshGameStyleHint();
+        });
+    }
+
+    for (const sel of ['type', 'lat', 'lng']) {
         (form.elements.namedItem(sel) as HTMLElement | null)?.addEventListener('change', refreshGameStyleHint);
     }
     document.getElementById('bm-city-reset')!.addEventListener('click', () => openCityPanel(c.id));
@@ -2434,11 +2528,17 @@ function openCityPanel(cityId: string): void {
 
 async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<void> {
     const fd = new FormData(form);
+    const wall = String(fd.get('wallStyle') ?? '').trim();
+    const castle = String(fd.get('castleBranch') ?? '').trim();
+    const custom = String(fd.get('customStyle') ?? '').trim();
+
+    // 🔴 [2026-09-18 主人定死] 与 _citytest.html 100% 对齐：
+    // 一级 16 母体写入 buildingStyle；二层 59 文明或三层 3 专属定制写入 region！
     const fields: Record<string, string | number | boolean | null> = {
         name: String(fd.get('name') ?? '').trim(),
         type: String(fd.get('type') ?? ''),
         factionId: String(fd.get('factionId') ?? ''),
-        buildingStyle: String(fd.get('buildingStyle') ?? ''),
+        buildingStyle: wall,
         troops: String(fd.get('troops') ?? '').trim(),
         tier: String(fd.get('tier') ?? '').trim(),
         lat: String(fd.get('lat') ?? '').trim(),
@@ -2446,8 +2546,13 @@ async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<voi
         mirror: fd.get('mirror') === 'on',
         note: String(fd.get('note') ?? ''),
     };
+    if (custom) {
+        fields.region = custom;
+    } else if (castle) {
+        fields.region = castle;
+    }
+
     try {
-        // 写盘会触发 Vite 整页热重载 → 提示会被冲掉；先落一个跨重载的"保存回执"，boot 时再弹
         localStorage.setItem('bm-city-saving', cityId);
         const res = await fetch('/api/save-city', {
             method: 'POST',
@@ -2468,7 +2573,7 @@ async function saveCityEdits(cityId: string, form: HTMLFormElement): Promise<voi
         openCityPanel(cityId);
     } catch (err: any) {
         localStorage.removeItem('bm-city-saving');
-        showToast(`保存失败：${err.message}`, true);
+        showToast(`保存失败: ${err.message}`, true);
     }
 }
 

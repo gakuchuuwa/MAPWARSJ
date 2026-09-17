@@ -968,7 +968,8 @@ export const FACTIONS: Faction[] = [
     // 部族棕 - 泰赤乌部(蒙古部族/斡难河中游)
     { id: 'jalair', name: '札剌亦儿' },
             // 克鲁伦绿 - 札剌亦儿部(蒙古部族/克鲁伦河)
-    { id: 'hongirad', name: '弘吉剌' },            // 额尔古纳紫 - 弘吉剌部(蒙古部族/额尔古纳河)
+    { id: 'hongirad', name: '弘吉剌' },
+            // 额尔古纳紫 - 弘吉剌部(蒙古部族/额尔古纳河)
     { id: 'choros', name: '萨吾尔' },
 
 

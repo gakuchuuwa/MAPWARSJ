@@ -3592,7 +3592,29 @@ export class Scene13WarLayer {
         this.heroInput = null;
     }
 
-    public setPlayerCommand(cmd: 'attack' | 'hold'): void { this.playerCmd = cmd; }
+    /**
+     * 🔴 [2026-09-18 主人报障「待命再自动改后，军队没有移动动作，是平移的」]
+     * 待命→自动这一下必须清受控编队的 stuckT，否则人在走、脚不迈（滑步）。
+     *
+     * 成因：待命期间 step 把目标点钉死（`m.tx = m.x; m.ty = m.y`），兵原地不动 →
+     *   净位移判据 netStuck 为真 → `stuckT` 被钉在 STUCK_IDLE_SEC + NET_STUCK_WINDOW = 0.55；
+     *   而渲染层那条 `!m.march && m.stuckT > STUCK_IDLE_SEC → set='idle'` **排在 `m.st===0 → 'move'` 前面**，
+     *   于是切回自动后位置已经在变、动画却还在播待命帧 = 平移。
+     *   stuckT 只能每帧减 dt，从 0.55 降到 0.3 要 0.25s，加上 0.25s 的窗口判定延迟，约半秒滑步。
+     *
+     * ⚠️ 这是同一个 bug 的**第二次发作**：2026-08-30「部署期结束滑步」已经在 step 里用
+     *   `for (const m of this.men) m.stuckT = 0;` 修过一模一样的一次，但只修了部署那条路径。
+     *   凡是「让兵成批静止一段时间、再放开」的开关，都要在放开那一帧清 stuckT。
+     */
+    public setPlayerCommand(cmd: 'attack' | 'hold'): void {
+        const prev = this.playerCmd;
+        this.playerCmd = cmd;
+        if (prev === 'hold' && cmd === 'attack') {
+            for (const m of this.men) {
+                if (m.hero || this.playerCtlLanes.has(m.lane)) { m.stuckT = 0; m.netT = 0; m.anchorX = m.x; m.anchorY = m.y; }
+            }
+        }
+    }
     public getPlayerCommand(): 'attack' | 'hold' { return this.playerCmd; }
 
     public getPlayerBattleState(): {
@@ -3646,45 +3668,20 @@ export class Scene13WarLayer {
         const toward = f === 0 ? 1 : -1;
         this.playerSetup = setup;
 
-        if (setup.eliteLane) {
-            const key = setup.eliteLane.key;
-            this.ensureType(key, f);
-            if (this.statsFor(key, f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
-            if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');
-            const pop = popCostOf(key);
-            // 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」——硬不变式。
-            //    玩家自带精锐**顶替**编制里的一口，绝不 push 成第 10 口（改前就是 push，每方变 10 口）。
-            //    顶替谁：前排最靠中线的那一口（row 0 里最靠前的），精锐本来就画在前排之前，位置对得上。
-            //    兵力守恒：被顶掉那口的 pool 并进精锐，一个兵都不少。
-            const takeOver = row0.reduce(
-                (best, s) => (best === null ? s : ((f === 0 ? s.x > best.x : s.x < best.x) ? s : best)),
-                null as (typeof row0)[number] | null,
-            );
-            const elitePool = Math.max(1, Math.round(setup.eliteLane.troops / SPRITE_TROOPS / pop));
-            if (takeOver) {
-                // 被顶掉那口的兵折算成精锐的精灵数（pop 不同要换算，守恒的是兵额不是精灵数）
-                const carried = Math.round(takeOver.pool * takeOver.pop / pop);
-                takeOver.key = key;
-                takeOver.pool = Math.max(1, elitePool + carried);
-                takeOver.pop = pop;
-                takeOver.spawned = 0;
-                takeOver.slotN = 0;
-                takeOver.x = frontX + toward * depth * 0.55;
-                takeOver.y = midY;
-                takeOver.row = -1;
-                takeOver.playerElite = true;
-            } else {
-                // 前排一口都没有（异常编制）才退回 push —— 此时本方本来就不足 9 口，不是本条造成的
-                this.spawns.push({
-                    f, key,
-                    x: frontX + toward * depth * 0.55,
-                    y: midY,
-                    pool: elitePool,
-                    pop, spawned: 0, slotN: 0,
-                    lane: this.spawns.length, row: -1, playerElite: true,
-                });
-            }
-        }
+        /* 🔴 [2026-09-18 主人定]「玩家自带精锐顶替编制里的一口，胡说八道，**玩家永远不能改变军团的兵种**。
+         *    我什么时候说过替换兵种啦？」—— 整段「玩家精锐顶替编制一口」已删除。
+         *
+         * 这段是 AI 自己推论出来的，不是主人定的。查 docs/AGENTS/player-rules-verbatim.md 三·二节：
+         *   主人原话只有 12a~12e 五条 —— 12a 斥候控制自己 / 12b 探马控制一支军队 /
+         *   12c 先锋控制一排军队 / 12d 将军控制全部军队 / 12e 任何时候双方都必须是 9 支军队。
+         *   **五条全是「控制权」，没有一个字提到玩家带兵入场或替换兵种。**
+         *   12e 说的是「必须 9 支」，AI 却由它推出「那就让玩家精锐顶替一口」，
+         *   顺手给了玩家改写军团编制的权力 —— 主人从没这么说过。
+         *   （原话表里那段「玩家带精锐入场时精锐顶替编制里的一口」是**表格外的 AI 注解**，已一并改正。）
+         *
+         * 现在：军团编制在 13 里**原样呈现**，9 口是军团自己的 9 口，玩家一个兵种都不改。
+         * 玩家本人照旧以 hero 身份在场（lane=-1，见下方 hero 精灵），按官阶控制军团**现有**的部队。
+         * ⚠️ 别再把这段加回来。要动编制必须有主人原话，不能从「必须 9 支」反推出「可以替换」。 */
         // 🔴 [2026-09-07 主人定]「探马控同兵种的一队、先锋控同兵种的一排」。
         //    setup.unitKey = 玩家面板选中的本势力兵种；本方阵中 key 相同的口才归他指挥。
         //    还没学到兵种（unitKey 为 null）→ 退回旧口径：one=自带精锐/前排第一口，front=整个前排。
@@ -3738,7 +3735,7 @@ export class Scene13WarLayer {
         };
         this.heroMan = hero;
         this.men.push(hero);
-        this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, elite: setup.eliteLane?.key ?? null, unitKey: setup.unitKey });
+        this.diagPush('playerSetup', { side: f, control: setup.control, lanes: this.playerCtlLanes.size, unitKey: setup.unitKey });
     }
 
     /** 玩家键盘移动（有输入时接管这一帧：不索敌不出手，只走）。返回 true = 本帧已处理 */

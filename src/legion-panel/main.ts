@@ -31,6 +31,7 @@ import {
     DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
     getUnitSubcategory, getUnitTier, observeThumbs, drawUnitThumb,
 } from '../legion-editor/main';
+import { NAVAL_SHIP_CHINESE_NAMES } from '../types/NavalShipTiers';
 
 const BASE_16_LEGION_NAMES: Record<string, string> = {
     CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
@@ -62,6 +63,7 @@ interface LegionRow {
     mode: FormationMode;
     slots: { type: string; count: number }[];
     users: number;
+    shipId: string;
 }
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;
@@ -89,7 +91,7 @@ function buildRows(): LegionRow[] {
         const name = resolveRenamedLegion(rawName);
         const c = getLegionCompositionByName(name);
         if (!c) return;
-        out.push({ name, layer, mode: c.formationMode, slots: c.slots.map(s => ({ type: s.type, count: s.count })), users: users.get(name) ?? 0 });
+        out.push({ name, layer, mode: c.formationMode, slots: c.slots.map(s => ({ type: s.type, count: s.count })), users: users.get(name) ?? 0, shipId: c.shipId ?? '' });
     };
     for (const n of Object.values(BASE_16_LEGION_NAMES)) push(n, '一级');
     for (const l of LEVEL_2_CIV_59_LEGIONS) push(l.name, '二级');
@@ -111,7 +113,7 @@ let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
-let draft: { mode: FormationMode; types: [string, string, string] } | null = null;
+let draft: { mode: FormationMode; types: [string, string, string]; shipId: string } | null = null;
 let host: HTMLElement;
 /** 🔴 [2026-09-15 主人报障「搜索框打不出汉字」]
  *  这两个搜索框每敲一下就 innerHTML 重建整块，输入框节点被换掉，
@@ -293,13 +295,14 @@ function render(): void {
     const list = visible();
     const sel = selected ? rows.find(r => r.name === selected) : null;
     if (sel && !draft) {
-        draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''] };
+        draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''], shipId: sel.shipId ?? '' };
     }
     const counts = { 一级: 0, 二级: 0, 三级: 0 } as Record<Layer, number>;
     for (const r of rows) counts[r.layer]++;
     const rowCnt = draft ? MODE_ROWS[draft.mode] : [0, 0, 0];
     const dirty = !!(sel && draft && (draft.mode !== sel.mode
-        || draft.types.join(',') !== sel.slots.map(s => s.type).join(',')));
+        || draft.types.join(',') !== sel.slots.map(s => s.type).join(',')
+        || (draft.shipId ?? '') !== (sel.shipId ?? '')));
 
     // 🔴 [2026-09-15] 整表是 innerHTML 重建的，点一支军团就换新节点，
     //     不记住滚动位置的话列表会弹回顶部，往下拉着编根本编不下去。
@@ -376,6 +379,12 @@ function render(): void {
           <select id="lp-mode" style="width:100%;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;">
             ${(Object.keys(MODE_ROWS) as FormationMode[]).map(m =>
                 `<option value="${m}" ${draft!.mode === m ? 'selected' : ''}>${MODE_LABEL[m]}</option>`).join('')}
+          </select>
+
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队（战船）</div>
+          <select id="lp-ship" style="width:100%;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;">
+            ${Object.entries(NAVAL_SHIP_CHINESE_NAMES).map(([id, cnName]) =>
+                `<option value="${id}" ${(draft!.shipId ?? '') === id ? 'selected' : ''}>${cnName}（${id}）</option>`).join('')}
           </select>
 
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
@@ -458,6 +467,10 @@ function render(): void {
 
     document.getElementById('lp-mode')?.addEventListener('change', e => {
         if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
+        render();
+    });
+    document.getElementById('lp-ship')?.addEventListener('change', e => {
+        if (draft) draft.shipId = (e.target as HTMLSelectElement).value;
         render();
     });
     host.querySelectorAll('.lp-unit').forEach(el => {
@@ -670,6 +683,8 @@ async function save(): Promise<void> {
     if (!selected || !draft) return;
     const counts = MODE_ROWS[draft.mode];
     const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
+    const prevShip = rows.find(r => r.name === selected)?.shipId ?? '';
+    const shipChanged = (draft.shipId ?? '') !== prevShip;
     try {
         const res = await fetch('/api/save-legion-composition', {
             method: 'POST',
@@ -678,7 +693,16 @@ async function save(): Promise<void> {
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        patchLegionComposition(selected, slots, draft.mode);
+        patchLegionComposition(selected, slots, draft.mode, draft.shipId || undefined);
+        if (shipChanged && draft.shipId) {
+            const shipRes = await fetch('/api/save-legion-ship', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ legionName: selected, shipId: draft.shipId }),
+            });
+            const shipJson = await shipRes.json();
+            if (!shipRes.ok || !shipJson.ok) throw new Error(shipJson.error ?? `HTTP ${shipRes.status}`);
+        }
         rows = buildRows();
         draft = null;
         render();

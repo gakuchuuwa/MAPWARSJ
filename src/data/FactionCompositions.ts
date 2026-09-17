@@ -29,6 +29,10 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "jinan": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
     "huai": {
         legionName: "帝国时代大明军团",
         legionType: "sub",
@@ -2319,6 +2323,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yanzhou": {
         legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "xinluo": {
+        legionName: "封建时代新罗军团",
         legionType: "sub",
     },
 };
