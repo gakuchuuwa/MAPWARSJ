@@ -475,15 +475,37 @@ function renderHillshade(
                 // Inlining for max perf in worker
                 const getZ = (baseIdx: number) => (data[baseIdx] * 256 + data[baseIdx + 1] + data[baseIdx + 2] * 0.00390625) - 32768;
 
-                const zTL = getZ((yT + xL) * 4);
-                const zT = getZ((yT + x) * 4);
-                const zTR = getZ((yT + xR) * 4);
-                const zL = getZ((yM + xL) * 4);
+                /* 🔴 [2026-09-17 主人报障「瓦片之间有浅色横竖线，新蔡、寿春周围平坦区尤其明显」]
+                 * 真凶就是下面这组邻域取值的**边界钳制**（xL/xR/yT/yB 在边缘取自己）：
+                 *   x=0 时左邻取自己 → Sobel 的 dzdx 退化成单边差分、梯度被低估约一半
+                 *   → 坡度偏小 → 光照偏向"平坦值" → 每块瓦片的左/上/下边各留一条 1px 亮度不连续。
+                 *   256px 一块拼起来就是铺满全图的方格网。平坦区明暗均匀所以最扎眼，山区反差大盖住了。
+                 *
+                 * 实测（scratch/_probe_hs_pixels.mjs，40 张晕渲瓦片，最外 1 列减内部第 3~6 列）：
+                 *   上边 均值 -2.09、37/40 一致偏暗；左边 -1.17、31/40 偏暗；下边 -1.04、34/40 偏暗。
+                 *   同一量具测底图 jpg 瓦片是 ±0.3 且偏亮/偏暗各半（随机）—— 所以不是底图、不是渲染留缝
+                 *   （DOM 上相邻瓦片间隙实测全 0），是这里算出来的。
+                 *
+                 * 解法：本文件**早就有** getPaddedDem()，会取周围 8 块瓦片拼成带 PAD=3 外扩的高程数组，
+                 *   只是一直只服务于浮雕路径。zoom 7~12 且 experimentalRelief（默认开）时它本来就已经算好，
+                 *   所以这里改用它是**零额外开销**，不多发一个 DEM 请求。
+                 *
+                 * ⚠️ 只有边缘像素的取值会变：内部像素在两条路径下数值完全相同
+                 *   （getPaddedDem 用 src[..]/256、getZ 用 data[..]*0.00390625，1/256 = 0.00390625，同一个数）。
+                 *   paddedDem 为 null（浮雕关掉、或邻块拉取失败）时原样回落钳制，与改之前一致。
+                 */
+                const pd = paddedDem;
+                const idxP = (y + PAD) * PAD_W + (x + PAD);
+
+                const zTL = pd ? pd[idxP - PAD_W - 1] : getZ((yT + xL) * 4);
+                const zT = pd ? pd[idxP - PAD_W] : getZ((yT + x) * 4);
+                const zTR = pd ? pd[idxP - PAD_W + 1] : getZ((yT + xR) * 4);
+                const zL = pd ? pd[idxP - 1] : getZ((yM + xL) * 4);
                 const zC = getZ(idx);
-                const zR = getZ((yM + xR) * 4);
-                const zBL = getZ((yB + xL) * 4);
-                const zB = getZ((yB + x) * 4);
-                const zBR = getZ((yB + xR) * 4);
+                const zR = pd ? pd[idxP + 1] : getZ((yM + xR) * 4);
+                const zBL = pd ? pd[idxP + PAD_W - 1] : getZ((yB + xL) * 4);
+                const zB = pd ? pd[idxP + PAD_W] : getZ((yB + x) * 4);
+                const zBR = pd ? pd[idxP + PAD_W + 1] : getZ((yB + xR) * 4);
 
                 const dzdx = ((zTR + 2 * zR + zBR) - (zTL + 2 * zL + zBL)) * INV_8;
                 const dzdy = ((zBL + 2 * zB + zBR) - (zTL + 2 * zT + zTR)) * INV_8;
