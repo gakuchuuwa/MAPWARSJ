@@ -1802,11 +1802,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "ashikaga": {
-        legionName: "城堡时代日本军团",
+        legionName: "城堡时代幕府军团",
         legionType: "sub",
     },
     "yamato": {
-        legionName: "城堡时代日本军团",
+        legionName: "城堡时代幕府军团",
         legionType: "sub",
     },
     "womaya": {
@@ -2227,6 +2227,98 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "haikou": {
         legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "guazhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "dizhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "qingyuan_bd": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "dingxiang_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "dai_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "chile": {
+        legionName: "封建时代突厥军团",
+        legionType: "sub",
+    },
+    "pingyuan": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "erzhu": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "gaoqi_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "zhuozhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "liwang": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "guiyi": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "zhe_d": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "kang": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "changshan": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "loufan": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "wei2": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "lingzhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "jilizhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "xingxingxia": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "yangguan": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "cangzhou": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
+    "yanzhou": {
+        legionName: "封建时代隋唐军团",
         legionType: "sub",
     },
 };
