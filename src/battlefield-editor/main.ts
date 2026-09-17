@@ -19,7 +19,9 @@ import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { CITIES_V2 } from '../data/cities_v2';
 import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
-import { BASE_16_LEGION_NAME_BY_REGION } from '../types/CultureFormations';
+import { BASE_16_LEGION_NAME_BY_REGION, getCultureLegionName } from '../types/CultureFormations';
+import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { getCityRegion } from '../systems/RegionSystem';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
 
@@ -342,8 +344,17 @@ function cityOptions(cur: string): string {
     return '<option value="">（未选）</option>'
         + ALL_CITIES.map((c) => opt(c.id, `${c.name} — ${c.id}`, cur)).join('');
 }
-function legionOptions(cur: string): string {
-    return '<option value="">（不指定 · 按势力/建筑风格默认）</option>'
+/** 留空时实际会套的军团（势力 → 建筑风格，与运行时 spawnBattlefieldSide 同一套口径） */
+function resolveCurrentLegion(factionId: string, sourceCityId: string): string {
+    const fac = FACTION_COMPOSITIONS[factionId];
+    if (fac?.legionName) return fac.legionName;
+    const city = sourceCityId ? CITY_BY_ID.get(sourceCityId) : undefined;
+    if (!city) return '';
+    return getCultureLegionName(getCityRegion({ latitude: city.lat, longitude: city.lng })) || '';
+}
+function legionOptions(cur: string, currentLegion: string): string {
+    const tip = currentLegion ? `（不指定 · 当前：${currentLegion}）` : '（不指定）';
+    return `<option value="">${escapeHtml(tip)}</option>`
         + LEGION_GROUPS.map((g) => `<optgroup label="${escapeHtml(g.label)}">${g.legions.map((n) => opt(n, n, cur)).join('')}</optgroup>`).join('');
 }
 /** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */
@@ -365,6 +376,9 @@ function filterLegionSelect(selectId: string, searchId: string): void {
 function render(): void {
     const issues = validate(working);
     const hasErr = issues.some((i) => i.level === 'error');
+    const attCurrentLegion = resolveCurrentLegion(working.attackerFactionId, working.attackerSourceCityId);
+    const defSrcCity = working.type === 'siege' ? working.defenderCityId : working.defenderSourceCityId;
+    const defCurrentLegion = resolveCurrentLegion(working.defenderFactionId, defSrcCity);
 
     app.innerHTML = `
     <div class="bf-toolbar">
@@ -452,7 +466,7 @@ function render(): void {
                         <select id="f-attCity">${cityOptions(working.attackerSourceCityId)}</select></div>
                     <div class="fld"><label>军团</label>
                         <input id="f-attLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-attLegion">${legionOptions(working.attackerLegionName)}</select></div>
+                        <select id="f-attLegion">${legionOptions(working.attackerLegionName, attCurrentLegion)}</select></div>
                 </div>
             </fieldset>
 
@@ -472,7 +486,7 @@ function render(): void {
                         <select id="f-defSrcCity">${cityOptions(working.defenderSourceCityId)}</select></div>`}
                     <div class="fld"><label>军团</label>
                         <input id="f-defLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-defLegion">${legionOptions(working.defenderLegionName)}</select></div>
+                        <select id="f-defLegion">${legionOptions(working.defenderLegionName, defCurrentLegion)}</select></div>
                 </div>
             </fieldset>
 
