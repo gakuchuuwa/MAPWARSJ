@@ -412,8 +412,13 @@ export class PlayerQuestSystem {
     ): Army | null {
         const eliteName = getCityEliteLegionName(city.id) ?? `${general.generalName}部`;
         // 🔴 [2026-09-10 主人定] 玩家起兵 = 势力本身的兵力（本城城防），不凭空造固定值；
-        //    起兵即本城兵力转入军团、据点城防归零（兵力守恒，和其他无关）。
-        const troops = Math.max(1, city.troops || 0);
+        //    起兵即本城兵力转入军团（兵力守恒，和其他无关）。
+        // 🔴 [2026-09-17 主人报障「有的军团出征后，据点留守兵力是0」] 原来这里是**带走全部、city.troops = 0**，
+        //    那是 9-10 定的老口径；9-17 已改定「据点**永**留 10% 驻军」，本路径没跟上，就成了唯一的归零点。
+        //    现在与 AI 募兵同口径：征 90%，留 10%（RecruitmentSystem 那两处也是 Math.floor(troops * 0.9)）。
+        //    ⚠️ 全项目只有这一处会把据点兵力清零——CityManager 的抽兵扣到 MIN_GARRISON 为止、
+        //       FollowResupplySystem 的补给留 minCity，两条都有下限保护，不必动。
+        const troops = Math.max(1, Math.floor((city.troops || 0) * 0.9));
         const army = this.deps.legionManager.createLegion(
             { lat: city.latitude, lng: city.longitude },
             troops,
@@ -427,7 +432,8 @@ export class PlayerQuestSystem {
         );
         if (!army || !this.deps.legionManager.getLegionById(army.id)) return null;
         army.setTroops(troops);
-        city.troops = 0;
+        // 扣掉带走的那部分，剩下的 10% 留城当驻军（兵力守恒不变，只是不再清零）
+        city.troops = Math.max(0, (city.troops || 0) - troops);
         army.isElite = true;
         army.name = eliteName;
         army.homeCityId = city.id;

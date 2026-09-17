@@ -1398,7 +1398,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/LINGNAN/longwu_huangdaozhou.png": {
-            "scale": 0.76,
+            "scale": 0.8,
             "offsetX": 0,
             "offsetY": 9
         },
