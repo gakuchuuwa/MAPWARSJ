@@ -200,7 +200,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'MONOREME',
     },
     {
-        name: '古典时代日本军团',
+        name: '封建时代大和军团',
         formationMode: 'fish_scale',
         slots: [
             { type: 'antiquity_skirmisher', count: 3 },
@@ -1088,12 +1088,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
     },
     {
-        name: '帝国时代中亚军团',
+        name: '帝王时代乌兹别克军团',
         formationMode: 'balance_yoke',
         slots: [
-            { type: 'elite_kipchak', count: 4 },
-            { type: 'kipchak', count: 2 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'elite_kipchak', count: 3 },
         ],
         regions: ['CENTRAL_ASIA_IMPERIAL'],
         parentLegion: '中亚军团',
@@ -1208,7 +1208,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'WAR_GALLEY',
     },
     {
-        name: '帝国时代日本军团',
+        name: '帝王时代幕藩军团',
         formationMode: 'fish_scale',
         slots: [
             { type: 'hand_cannoneer', count: 3 },
@@ -1494,6 +1494,18 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '城堡时代日本军团',
         shipId: 'ANT_WAR_GALLEY',
+    },
+    {
+        name: '封建时代新罗军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'jian_swordsman', count: 4 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'hei_kuang_heavy', count: 2 },
+        ],
+        regions: [],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
 ];
 
