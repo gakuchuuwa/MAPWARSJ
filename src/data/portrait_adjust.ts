@@ -7871,6 +7871,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -26
+        },
+        "/assets/WEST_ASIA/luben_tuoluosiershi.png": {
+            "scale": 1.22,
+            "offsetX": 0,
+            "offsetY": 13
         }
     },
     "folderGuides": {

@@ -139,7 +139,7 @@ app.innerHTML = `
     <a href="/portrait-tuner.html" class="bm-link">立绘调校</a>
     <button type="button" id="bm-reload" class="bm-btn">刷新数据</button>
     <button type="button" id="bm-export" class="bm-btn">导出名册</button>
-    <button type="button" id="bm-skill-coverage" class="bm-btn bm-btn-warn" title="只检查武将可佩戴技能；不含长驱深入、据险而守、守土继绝">检查技能覆盖</button>
+    <button type="button" id="bm-skill-coverage" class="bm-btn bm-btn-warn" title="只检查武将可佩戴技能；不含长驱深入、据险而守">检查技能覆盖</button>
     <button type="button" id="bm-name-audit" class="bm-btn bm-btn-warn" title="精锐 ≤5 字、武将/势力/据点 ≤9 字且全局不重名；武将名本名优先，重名用称呼">名称审计</button>
     <button type="button" id="bm-validate" class="bm-btn bm-btn-warn">运行校验</button>
   </div>

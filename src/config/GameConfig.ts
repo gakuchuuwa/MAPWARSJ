@@ -403,8 +403,8 @@ export class GameConfig {
             AFRICA: 0.90,             // 非洲
         } as Record<string, number>,
         PASS_GARRISON_MULT: 1.2,
-        /** 15 文化中心据点守军额外系数（与系统技「守土继绝」对应） */
-        REGION_CENTER_GARRISON_MULT: 1.2,
+        /** 有特殊建筑（城内奇观 CITY_WONDER / 附加奇观 CITY_WONDER_EXTRA）的名城守军额外系数（2026-09-17 主人定：有特殊建筑才算名城） */
+        WONDER_CITY_GARRISON_MULT: 1.2,
     };
     // [2026-06-12 删除] static MORALE（士气衰减 + FLANKING 侧翼系数）——全项目零引用的死配置。
     //   主人裁定：点线移动的大战略图无战术战斗界面，士气/侧翼加进来仍是「看数字掉」，

@@ -260,3 +260,12 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
         { asset: 'SICI_CASTLE_AGE3', name: '乌尔西诺堡', category: 'HERITAGE_FORT', lat: 37.499, lng: 15.085, description: '腓特烈二世在卡塔尼亚营建的乌尔西诺城堡；因距锡拉库萨仅约51公里，不另增过密据点。' },
     ],
 };
+
+/**
+ * 该据点是否有特殊建筑（城内奇观 CITY_WONDER 或附加城内奇观 CITY_WONDER_EXTRA）。
+ * 🔴 [2026-09-17 主人定] 「名城」判定 = **有特殊建筑**才算名城，其他一律不是。
+ *    取代原「文化中心（region center）」判定。
+ */
+export function hasCityWonder(cityId: string): boolean {
+    return cityId in CITY_WONDER || cityId in CITY_WONDER_EXTRA;
+}

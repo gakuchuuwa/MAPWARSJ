@@ -177,16 +177,6 @@ export const PASS_GARRISON_DEFENSE_SKILL: GarrisonSystemSkillDef = {
 
 
 
-/** 14 文化中心据点守军系统技（守土继绝，与关隘「据险而守」同机制不同名） */
-
-export const REGION_CENTER_DEFENSE_SKILL: GarrisonSystemSkillDef = {
-
-    displayName: '守土继绝',
-
-};
-
-
-
 export type ReinforcementSystemEffect = 'reinforcement_join_luck';
 
 

@@ -29,6 +29,18 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "qiliqiya": {
+        legionName: "古典时代罗马军团",
+        legionType: "sub",
+    },
+    "zhengzhou": {
+        legionName: "帝国时代草原军团",
+        legionType: "sub",
+    },
+    "yao": {
+        legionName: "古典时代魏晋军团",
+        legionType: "sub",
+    },
     "hongnong_jun": {
         legionName: "封建时代隋唐军团",
         legionType: "sub",
