@@ -180,7 +180,7 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
     mu_lijiang: 'DIANQIAN_CASTLE_AGE3',    // 丽江木氏土司
     luchuan: 'DIANQIAN_CASTLE_AGE3',       // 麓川平缅
     kunming_yi: 'DIANQIAN_CASTLE_AGE3',    // 昆明夷
-    wuman: 'DIANQIAN_CASTLE_AGE3',         // 乌蛮（乌蒙山爨归王）
+    wuman: 'DIANQIAN_CASTLE_AGE3',         // 乌蛮（乌蒙山盖聘）
     zangke: 'DIANQIAN_CASTLE_AGE3',        // 牂牁（胜境关谢龙羽）
     // ── 岭南 ──
     nanyue: 'LINGNAN_CASTLE_AGE3',         // 南越国

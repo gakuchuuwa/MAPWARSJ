@@ -1243,7 +1243,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    wuman_cuanguiwang: { generalId: 'wuman_cuanguiwang', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage' , attackStyle: 'defense'},
+    wuman_gaipin: { generalId: 'wuman_gaipin', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_020', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_770', defBalanceSkillId: 'ts_458', defDisadvantageSkillId: 'ts_376', aptitude: 'leverage' , attackStyle: 'defense'},
 
 
 

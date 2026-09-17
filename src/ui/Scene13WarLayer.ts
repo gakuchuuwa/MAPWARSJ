@@ -3437,6 +3437,22 @@ export class Scene13WarLayer {
      *    回调只在自己那一场的代号还有效时才加减，跨场的一律忽略。
      */
     private assetGen = 0;
+    /* 🔴 [2026-09-17 主人报障「又白了」→ 实测归因] `_meta.json` 解析结果缓存，**跨战斗永久保留**。
+     *
+     * 病根：start() 里 `this.bank = {}` 每场无条件清空，注释理由是「bank 里存的是**已染色**的帧，
+     *   换势力会把上一场的颜色带过来」—— 这对染色帧成立，但 bank 里**还存着 `_meta.json` 读来的
+     *   dyn/frames/dur（帧框、方向数、每帧时长）**，那是纯静态数据，与势力、染色毫无关系。
+     *   连它一起丢掉的后果：每场战斗重新 fetch 一遍全部 `_meta.json`。
+     *
+     * 实测（scratch/_probe_s13_blank.mjs）：进 13 后 pending 从 235 降到 0 要 **18 秒**，
+     *   这 18 秒 `frames=0` —— 一帧都没渲染过，画面就是纯白，主人两次截图都落在这段里。
+     *   三处 pending++ 全是 fetch `_meta.json`（兵种帧框 / 投射物 / 特效），没有一处是图片解码。
+     *
+     * 解法：静态 meta 单独缓存，按目录键；bank（染色帧）照旧每场清，一点不动。
+     * ⚠️ 必须返回**拷贝**：调用方会 `b.dyn = meta.dyn` 把引用挂进 bank，直接返回缓存对象会被后续写污染。
+     * ⚠️ 失败（null）不入缓存，留给下次重试。 */
+    private readonly dynMetaCache = new Map<string, { dyn: NonNullable<WarBank['dyn']>; frames: Record<string, number>; dur: Record<string, number> }>();
+    private readonly projMetaCache = new Map<string, { frames: number; box_w: number; box_h: number; anchor_x: number; anchor_y: number }>();
     /** [2026-08-11 防死锁] 素材加载开始时间戳（pending 卡死 10s 强制判负用） */
     private pendingStartedAt = 0;
     private enemyCen: ({ x: number; y: number } | null)[] = [null, null];
@@ -5783,6 +5799,9 @@ export class Scene13WarLayer {
 
     /** 读 AoE2 DE 素材的 `_meta.json`（帧数 + 每方向 box 尺寸/hotspot 偏移），映射到 slot。 */
     private async loadDynMeta(dir: string): Promise<{ dyn: NonNullable<WarBank['dyn']>; frames: Record<string, number>; dur: Record<string, number> } | null> {
+        // 命中缓存直接返回拷贝（见 dynMetaCache 头注：静态数据，跨战斗有效；拷贝防被调用方写污染）
+        const cached = this.dynMetaCache.get(dir);
+        if (cached) return { dyn: { ...cached.dyn }, frames: { ...cached.frames }, dur: { ...cached.dur } };
         try {
             const res = await fetch(`${dir}_meta.json`);
             if (!res.ok) return null;
@@ -5802,7 +5821,8 @@ export class Scene13WarLayer {
                     if (typeof meta[act].dur === 'number') dur[slot] = meta[act].dur;
                 }
             }
-            return { dyn, frames, dur };
+            this.dynMetaCache.set(dir, { dyn, frames, dur });   // 只缓存成功结果，失败留给下次重试
+            return { dyn: { ...dyn }, frames: { ...frames }, dur: { ...dur } };
         } catch { return null; }
     }
 
@@ -5917,10 +5937,15 @@ export class Scene13WarLayer {
 
     /** 读 DE 抛射物 `_meta.json`（帧数 + 帧框 + hotspot）。 */
     private async loadProjMeta(dir: string): Promise<{ frames: number; box_w: number; box_h: number; anchor_x: number; anchor_y: number } | null> {
+        // 同 loadDynMeta：静态数据跨战斗缓存（投射物与特效都走这里）。返回拷贝，调用方只读数值也不留隐患。
+        const cached = this.projMetaCache.get(dir);
+        if (cached) return { ...cached };
         try {
             const res = await fetch(`${dir}_meta.json`);
             if (!res.ok) return null;
-            return await res.json();
+            const meta = await res.json();
+            if (meta && typeof meta.frames === 'number') this.projMetaCache.set(dir, meta);
+            return meta;
         } catch { return null; }
     }
 

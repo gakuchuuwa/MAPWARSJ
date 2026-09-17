@@ -1786,7 +1786,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "chenla": {
-        legionName: "封建时代高棉军团",
+        legionName: "封建时代吴哥军团",
         legionType: "sub",
     },
     "gurjara": {
@@ -1947,6 +1947,66 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "wusun": {
         legionName: "东亚军团",
+        legionType: "region",
+    },
+    "xiliao": {
+        legionName: "中亚军团",
+        legionType: "region",
+    },
+    "kanata": {
+        legionName: "印度军团",
+        legionType: "region",
+    },
+    "rierman": {
+        legionName: "西欧军团",
+        legionType: "region",
+    },
+    "bulu": {
+        legionName: "普鲁军团",
+        legionType: "region",
+    },
+    "abasi": {
+        legionName: "中东军团",
+        legionType: "region",
+    },
+    "buni": {
+        legionName: "地中海军团",
+        legionType: "region",
+    },
+    "liulike": {
+        legionName: "东北欧军团",
+        legionType: "region",
+    },
+    "bendou": {
+        legionName: "东南欧军团",
+        legionType: "region",
+    },
+    "ansxi": {
+        legionName: "波斯军团",
+        legionType: "region",
+    },
+    "champa": {
+        legionName: "东南亚军团",
+        legionType: "region",
+    },
+    "haerjijiji": {
+        legionName: "希腊军团",
+        legionType: "region",
+    },
+    "odrysian_late": {
+        legionName: "色雷斯军团",
+        legionType: "region",
+    },
+    "qimu": {
+        legionName: "安第斯军团",
+        legionType: "region",
+    },
+    "talasike": {
+        legionName: "中美军团",
+        legionType: "region",
+    },
+    "adal": {
+        legionName: "非洲军团",
         legionType: "region",
     },
 };
