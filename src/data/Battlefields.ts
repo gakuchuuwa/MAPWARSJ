@@ -228,3 +228,32 @@ export const BATTLEFIELDS: BattlefieldData[] = [
 export function getBattlefield(id: string): BattlefieldData | undefined {
     return BATTLEFIELDS.find((b) => b.id === id);
 }
+
+/* ── 【战场 ↔ 剧本条目 的唯一配对判据】2026-09-17 ─────────────────────────────────
+ * 修的是**两处判据不一致**：改之前运行时（HistoricalEventManager.findBattleForBattlefield）
+ * 按「距离 ≤ 0.15 度」配、**完全不看年份**，取数组里第一个命中的；编辑器（battlefield-editor）
+ * 按「同年 + 0.5 度」配。两条隐患：
+ *   ① 运行时不看年份 → 同一地点将来有第二场战役（同地二战很常见），必定配错年份的那场；
+ *   ② 容差差了三倍多（0.15≈16km / 0.5≈55km）→ 坐标写歪 0.3 度时，编辑器显示配对成功、
+ *      运行时却找不到，表现为「点了战场没反应」，而编辑器一切正常，极难查。
+ *
+ * 实测（scratch/_probe_bf_match.mjs，14 条战役 × 14 个战场）：现有数据坐标**全部一字不差**
+ *   （距离全是 0）、年份全对、两种容差下都唯一命中 —— 没有实际故障，所以收紧判据零风险。
+ *
+ * 判据取 BattlefieldData.lat/lng 头注那句已有的数据契约：「必须与该场剧本 location 一字不差」。
+ * 容差留 0.15 度不是为了容错，是给攻城战用的 —— 攻城战条目没有 location，坐标取被攻据点的，
+ * 与战场标记点本来就会差一点。真要一字不差就把它调成 0。
+ */
+export const BATTLEFIELD_MATCH_DEG = 0.15;
+
+/** 这个战场是不是那条剧本条目打的。两处（运行时 / 编辑器）必须都走它，别再各写一套。 */
+export function matchesBattlefield(
+    bf: BattlefieldData,
+    eventYear: number,
+    loc: { lat: number; lng: number } | null | undefined,
+): boolean {
+    if (!loc) return false;
+    if (bf.scriptYear !== eventYear) return false;
+    return Math.abs(bf.lat - loc.lat) <= BATTLEFIELD_MATCH_DEG
+        && Math.abs(bf.lng - loc.lng) <= BATTLEFIELD_MATCH_DEG;
+}

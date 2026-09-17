@@ -2093,6 +2093,8 @@ const FLANK_TYPES = new Set([
     'woad_raider', 'elite_woad_raider',
     'ibirapema_warrior', 'elite_ibirapema_warrior',
     'companion_cavalry', 'elite_companion_cavalry',  // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
+    'keshik', 'elite_keshik',        // 🔴 [2026-09-17 主人定] 鞑靼怯薛军：成吉思汗迂回包抄（野狐岭/三峰山）
+    'kona', 'elite_kona',            // 🔴 [2026-09-17 主人定] 马普切科纳勇士：劳塔罗伏击奇袭（图卡佩尔）
 ]);
 
 /** 冲击型奇袭：绕后次数**按兵力配额**（🔴 2026-09-17 主人定「一万兵力一次，两万兵力两次，三万兵力三次」）。
@@ -2115,6 +2117,8 @@ const FLANK_TYPES = new Set([
  */
 const FLANK_LIMITED_TYPES = new Set([
     'companion_cavalry', 'elite_companion_cavalry',
+    'keshik', 'elite_keshik',        // 怯薛军成建制迂回，等同伙伴骑兵（冲击型，受「一万一次」配额）
+    'kona', 'elite_kona',            // 科纳勇士成建制奇袭，等同伙伴骑兵（冲击型，受「一万一次」配额）
 ]);
 /** 每多少兵力给一次绕后配额（主人 2026-09-17：一万兵力一次） */
 const FLANK_QUOTA_PER = 10000;

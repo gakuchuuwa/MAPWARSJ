@@ -22,7 +22,7 @@ import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import { GameConfig } from '../config/GameConfig';
 import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
-import { BATTLEFIELDS } from '../data/Battlefields';
+import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
 
 /**
  * `ensureAttackerLegion` 的入参：**野战与攻城两种剧本数据共有的"攻方四件"**。
@@ -261,7 +261,9 @@ export class HistoricalEventManager {
             if (ev.type === 'field_battle') {
                 const fb = ev.fieldBattleData;
                 if (!fb?.location) continue;
-                if (getEuclideanDistance(fb.location, { lat: bf.lat, lng: bf.lng }) <= GameConfig.SIEGE.COMBAT_RADIUS) {
+                // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近）。
+                //    改之前这里不看年份，同一地点第二场战役必配错；且容差与编辑器不一致。见该函数长注释。
+                if (matchesBattlefield(bf, ev.year, fb.location)) {
                     return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates };
                 }
             } else if (ev.type === 'siege') {
@@ -269,7 +271,7 @@ export class HistoricalEventManager {
                 if (!sd?.defenderCityId) continue;
                 const city = this.cityManager.getCity(sd.defenderCityId);
                 if (!city) continue;
-                if (getEuclideanDistance({ lat: city.latitude, lng: city.longitude }, { lat: bf.lat, lng: bf.lng }) <= GameConfig.SIEGE.COMBAT_RADIUS) {
+                if (matchesBattlefield(bf, ev.year, { lat: city.latitude, lng: city.longitude })) {
                     return {
                         title: sd.title ?? ev.title,
                         description: sd.description ?? ev.description,

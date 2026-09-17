@@ -1,7 +1,7 @@
 /**
  * PlayerHUD —— 玩家面板（右侧）、据点对话框、提示条。纯 DOM，不碰引擎。
  */
-import type { PlayerHero } from './PlayerHero';
+import type { PlayerHero, PlayerAutoPlan } from './PlayerHero';
 import type { PlayerQuestSystem } from './PlayerQuestSystem';
 import type { DialoguePayload } from './PlayerQuestSystem';
 import { heroKeyForRank, nextRankAfter, PLAYER_RANKS } from './PlayerConfig';
@@ -99,56 +99,17 @@ export class PlayerHUD {
         panel.id = 'player-hero-panel';
         panel.classList.add('is-collapsed');
         panel.style.cssText = `
-            position:fixed; left:50%; top:0; z-index:10003;
-            width:min(920px, calc(100vw - 32px)); padding:10px 16px 8px; box-sizing:border-box;
-            color:#f5e6c8; font-family:${FONT}; font-size:13px; line-height:1.4;
+            position:fixed; left:var(--army-panel-w, clamp(280px, 19vw, 360px)); right:var(--feed-panel-w, clamp(280px, 19vw, 360px)); top:0; z-index:10003;
+            width:auto; padding:5px 12px 4px; box-sizing:border-box;
+            color:#f5e6c8; font-family:${FONT}; font-size:12px; line-height:1.35;
             background:rgba(20,16,12,0.95);
             backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-            border:1px solid rgba(212,175,55,0.55); border-top:none; border-radius:0 0 10px 10px;
+            border:1px solid rgba(212,175,55,0.55); border-top:none; border-radius:0 0 6px 6px;
             box-shadow:0 8px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,235,170,0.12);
             pointer-events:auto; user-select:none;
-            transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            transform:translate(-50%, -100%);
+            transition:transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), left 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform:translateY(-100%);
         `;
-        const titleRow = document.createElement('div');
-        titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid rgba(212,175,55,0.25);';
-        
-        const titleLeft = document.createElement('div');
-        titleLeft.style.cssText = 'display:flex; align-items:center; gap:6px;';
-
-        const title = document.createElement('div');
-        title.style.cssText = 'font-weight:900; font-size:15px; letter-spacing:1px; color:#e8c77e; text-shadow:0 1px 3px rgba(0,0,0,0.8);';
-        title.textContent = `👤 ${this.hero.name}`;
-        this.title = title;
-        titleLeft.appendChild(title);
-
-        const renameBtn = document.createElement('button');
-        renameBtn.type = 'button';
-        renameBtn.textContent = '✎ 改名';
-        renameBtn.title = '修改玩家名称';
-        renameBtn.style.cssText = 'cursor:pointer; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:#dfc28c; font-size:11px; padding:2px 6px; border-radius:4px; line-height:1.2; font-family:inherit;';
-        renameBtn.addEventListener('mouseenter', () => { renameBtn.style.color = '#fffcee'; renameBtn.style.background = 'rgba(212,175,55,0.3)'; });
-        renameBtn.addEventListener('mouseleave', () => { renameBtn.style.color = '#dfc28c'; renameBtn.style.background = 'rgba(212,175,55,0.15)'; });
-        renameBtn.addEventListener('click', () => {
-            const trimmed = prompt('请输入新的玩家名称：', this.hero.name)?.trim();
-            if (!trimmed || trimmed === this.hero.name) return;
-            this.hero.rename(trimmed);
-            this.refresh();
-        });
-        titleLeft.appendChild(renameBtn);
-
-        const minBtn = document.createElement('button');
-        minBtn.type = 'button';
-        minBtn.textContent = '▲';
-        minBtn.title = '收起面板';
-        minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:15px; font-weight:900; line-height:1; padding:2px 4px; transition:color 0.2s;';
-        minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
-        minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
-        minBtn.addEventListener('click', () => this.toggleMinimize());
-        
-        titleRow.appendChild(titleLeft);
-        titleRow.appendChild(minBtn);
-        panel.appendChild(titleRow);
 
         const body = document.createElement('div');
         body.className = 'player-hud-body';
@@ -173,7 +134,6 @@ export class PlayerHUD {
         });
         this.panelSizeObserver.observe(panel);
         this.body = body;
-        this.minimizeBtn = minBtn;
     }
 
     private toggleMinimize(): void {
@@ -189,7 +149,7 @@ export class PlayerHUD {
         this.minimized = minimized;
         if (this.panel) {
             this.panel.classList.toggle('is-collapsed', this.minimized);
-            this.panel.style.transform = this.minimized ? 'translate(-50%, -100%)' : 'translate(-50%, 0)';
+            this.panel.style.transform = this.minimized ? 'translateY(-100%)' : 'translateY(0)';
         }
         if (this.drawerBtn) {
             this.drawerBtn.innerHTML = this.minimized
@@ -337,76 +297,112 @@ export class PlayerHUD {
                 : '到据点找武将';
         this.body.innerHTML = '';
 
-        const grid = document.createElement('div');
-        grid.className = 'player-hud-grid';
-        grid.style.cssText = 'display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:16px; align-items:start;';
+        // ═══════════════════════════════════════════════════════════════
+        // 第一行：身份功勋 ｜ 动向任务 ｜ 兵模兵装槽 + 最小化按钮
+        // ═══════════════════════════════════════════════════════════════
+        const rowTop = document.createElement('div');
+        rowTop.className = 'player-hud-row-top';
 
-        const row = (k: string, v: string, color = '#f5e6c8', title = '') =>
-            `<div class="player-hud-row" ${title ? `title="${title}"` : ''} style="display:flex;justify-content:space-between;gap:8px;line-height:1.5;padding:2px 0;"><span style="color:#ba9e7b;font-weight:600;">${k}</span><span style="color:${color};font-weight:700;text-align:right;">${v}</span></div>`;
+        // ── Top 左区：名字/改名、官阶、战力、功勋、势力 ──
+        const topLeft = document.createElement('div');
+        topLeft.className = 'player-hud-top-left';
 
-        // ── 第 1 列：身份与功勋 ──
-        const col1 = document.createElement('div');
-        col1.className = 'player-hud-col';
-        let htmlCol1 = '';
-        htmlCol1 += row('官阶', rank.name, '#e8c77e');
-        htmlCol1 += row('战力', `第九环 ×${rank.powerMult.toFixed(1)}`, '#e8c77e');
-        htmlCol1 += row('功勋', next ? `${hero.merit.toLocaleString()} / ${next.merit.toLocaleString()}` : hero.merit.toLocaleString(), '#fffcee');
-        const authTitle = rank.control === 'none' ? '平民与斥候单枪匹马，升至探马后可领一队' : '';
-        htmlCol1 += row('职权', rank.authority, '#9ec5e8', authTitle);
-        htmlCol1 += row('势力', factionName, hero.factionId ? '#52c486' : '#ba9e7b');
-        col1.innerHTML = htmlCol1;
-        grid.appendChild(col1);
+        const nameSpan = document.createElement('span');
+        nameSpan.style.cssText = 'font-weight:900; font-size:13px; color:#e8c77e; letter-spacing:0.5px; white-space:nowrap;';
+        nameSpan.textContent = `👤 ${hero.name}`;
+        this.title = nameSpan as any;
+        topLeft.appendChild(nameSpan);
 
-        // ── 第 2 列：动向与任务 ──
-        const col2 = document.createElement('div');
-        col2.className = 'player-hud-col';
-        let htmlCol2 = '';
+        const renameBtn = document.createElement('button');
+        renameBtn.type = 'button';
+        renameBtn.textContent = '✎';
+        renameBtn.title = '修改玩家名称';
+        renameBtn.style.cssText = 'cursor:pointer; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:#dfc28c; font-size:11px; padding:1px 4px; border-radius:3px; line-height:1; font-family:inherit;';
+        renameBtn.addEventListener('click', () => {
+            const trimmed = prompt('请输入新的玩家名称：', hero.name)?.trim();
+            if (!trimmed || trimmed === hero.name) return;
+            hero.rename(trimmed);
+            this.refresh();
+        });
+        topLeft.appendChild(renameBtn);
+
+        const sep1 = document.createElement('span');
+        sep1.className = 'player-hud-divider';
+        sep1.textContent = '|';
+        topLeft.appendChild(sep1);
+
+        const rankSpan = document.createElement('span');
+        rankSpan.style.cssText = 'color:#e8c77e; font-weight:700; white-space:nowrap;';
+        rankSpan.title = rank.authority ? `职权：${rank.authority}` : '';
+        rankSpan.textContent = rank.name;
+        topLeft.appendChild(rankSpan);
+
+        const powerSpan = document.createElement('span');
+        powerSpan.style.cssText = 'color:#dfc28c; font-size:11.5px; white-space:nowrap;';
+        powerSpan.textContent = `×${rank.powerMult.toFixed(1)}`;
+        topLeft.appendChild(powerSpan);
+
+        const meritSpan = document.createElement('span');
+        meritSpan.style.cssText = 'color:#fffcee; font-size:11.5px; white-space:nowrap;';
+        meritSpan.title = '功勋';
+        meritSpan.textContent = next ? `${hero.merit.toLocaleString()}/${next.merit.toLocaleString()}` : hero.merit.toLocaleString();
+        topLeft.appendChild(meritSpan);
+
+        const sep2 = document.createElement('span');
+        sep2.className = 'player-hud-divider';
+        sep2.textContent = '|';
+        topLeft.appendChild(sep2);
+
+        const facSpan = document.createElement('span');
+        facSpan.style.cssText = `color:${hero.factionId ? '#52c486' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
+        facSpan.textContent = factionName;
+        topLeft.appendChild(facSpan);
+
+        rowTop.appendChild(topLeft);
+
+        // ── Top 中区：动向状态与任务 ──
+        const topMid = document.createElement('div');
+        topMid.className = 'player-hud-top-mid';
+
+        const stateSpan = document.createElement('span');
         const stateColor = host ? '#f5a623' : '#f5e6c8';
-        const stateTitle = host ? '随军出征中，军团解散前不可离开' : '';
-        htmlCol2 += row('状态', state, stateColor, stateTitle);
-        htmlCol2 += row('任务', questText, quest ? '#ff8585' : '#ba9e7b');
-        col2.innerHTML = htmlCol2;
-        grid.appendChild(col2);
+        stateSpan.style.cssText = `color:${stateColor}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+        stateSpan.title = host ? '随军出征中，军团解散前不可离开' : state;
+        stateSpan.textContent = `📍 ${state}`;
+        topMid.appendChild(stateSpan);
 
-        // ── 第 3 列：兵模与战船（兵装槽） ──
-        const col3 = document.createElement('div');
-        col3.className = 'player-hud-col';
+        const sep3 = document.createElement('span');
+        sep3.className = 'player-hud-divider';
+        sep3.textContent = '|';
+        topMid.appendChild(sep3);
 
-        const uTitle = document.createElement('div');
-        uTitle.style.cssText = 'color:#ba9e7b; font-size:12px; font-weight:600; margin-bottom:4px;';
-        uTitle.textContent = '我的兵装';
-        col3.appendChild(uTitle);
+        const questSpan = document.createElement('span');
+        questSpan.style.cssText = `color:${quest ? '#ff8585' : '#ba9e7b'}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+        questSpan.title = `任务：${questText}`;
+        questSpan.textContent = `🎯 ${questText}`;
+        topMid.appendChild(questSpan);
 
-        // 兵装插槽卡片：左侧 64x64 兵模预览，右侧紧凑放置陆战与战船选择
-        const gearCard = document.createElement('div');
-        gearCard.style.cssText = 'display:flex; align-items:center; gap:10px; background:rgba(25,20,15,0.45); padding:4px 6px; border:1px solid rgba(212,175,55,0.22); border-radius:6px; box-sizing:border-box;';
+        rowTop.appendChild(topMid);
+
+        // ── Top 右区：兵模画布 + 陆战下拉 + 战船下拉 + 收起按钮 ──
+        const topRight = document.createElement('div');
+        topRight.className = 'player-hud-top-right';
 
         // 兵模缩略图
         const preview = document.createElement('canvas');
-        preview.width = 128;
-        preview.height = 128;
-        preview.style.cssText = 'display:block; width:64px; height:64px; flex-shrink:0; background:rgba(15,12,8,0.7); border:1px solid rgba(212,175,55,0.35); border-radius:4px; box-sizing:border-box;';
+        preview.width = 64;
+        preview.height = 64;
+        preview.style.cssText = 'display:block; width:26px; height:26px; flex-shrink:0; background:rgba(15,12,8,0.7); border:1px solid rgba(212,175,55,0.35); border-radius:4px; box-sizing:border-box;';
         this.renderUnitPreview(preview, hero.heroKey);
-        gearCard.appendChild(preview);
+        topRight.appendChild(preview);
 
-        // 右侧选择器组合
-        const gearSelects = document.createElement('div');
-        gearSelects.style.cssText = 'flex:1; min-width:0; display:flex; flex-direction:column; gap:5px;';
-
-        // 陆战选择行
-        const landRow = document.createElement('div');
-        landRow.style.cssText = 'display:flex; align-items:center; gap:6px;';
-        const landTag = document.createElement('span');
-        landTag.style.cssText = 'font-size:11px; color:#ba9e7b; font-weight:600; flex-shrink:0; width:26px;';
-        landTag.textContent = '陆战';
-        landRow.appendChild(landTag);
-
+        // 陆战选择
         const uSel = document.createElement('select');
         uSel.style.cssText = `
-            flex:1; min-width:0; font-family:inherit; font-size:12px; padding:1px 5px;
+            max-width:110px; font-family:inherit; font-size:11.5px; padding:1px 4px;
             background:rgba(35,28,20,0.92); color:#f5e6c8;
             border:1px solid rgba(212,175,55,0.45); border-radius:4px;
-            outline:none; cursor:pointer; box-sizing:border-box; height:24px; min-height:24px; margin:0 !important;
+            outline:none; cursor:pointer; box-sizing:border-box; height:22px; margin:0 !important;
         `;
         if (!hero.learnedUnits.length) {
             const fallbackKey = heroKeyForRank(rank.id);
@@ -422,39 +418,25 @@ export class PlayerHUD {
             uSel.appendChild(o);
         });
         uSel.value = String(hero.selectedUnit);
-        // 🔴 [2026-09-11 主人报「玩家面板中的我的兵装打不开」] 真因：这里原先把「能不能手选」绑在**官阶**上
-        //   （`!autoPickUnit || 官阶 >= 斥候`），于是「自动兵模」开着时，**掉阶回平民**的玩家下拉被 disable、
-        //   点不动（主人当时正是：布衣平民 + 已获骆驼骑兵）。
-        //   而 docs/AGENTS/player-hero.md §2.3 明定：已获得兵模**终身保留、掉阶后「一律仍可选用」** ——
-        //   这道官阶闸违反规则。现改为：**只要手上有兵模就能手选**；
-        //   「自动兵模」只管「加入军团时自动换」，不再挡手选（它关掉时本就不自动换，规则见 §二·四）。
         const canPickUnit = hero.learnedUnits.length > 0;
         uSel.disabled = !canPickUnit;
         uSel.title = canPickUnit
-            ? '选择出战兵模（已获兵模终身可选用；开着「自动兵模」时，加入新军团会再自动换成该军团的兵模）'
-            : '还没有收到任何兵模：加入一支军团即可获得该军团的兵模';
+            ? '选择陆战兵模（已获兵模终身可选用）'
+            : '还没有收到任何兵模：加入军团即可获得';
         uSel.addEventListener('change', () => hero.selectUnit(Number(uSel.value)));
-        landRow.appendChild(uSel);
-        gearSelects.appendChild(landRow);
+        topRight.appendChild(uSel);
 
-        // 战船选择行
-        const seaRow = document.createElement('div');
-        seaRow.style.cssText = 'display:flex; align-items:center; gap:6px;';
-        const seaTag = document.createElement('span');
-        seaTag.style.cssText = 'font-size:11px; color:#ba9e7b; font-weight:600; flex-shrink:0; width:26px;';
-        seaTag.textContent = '战船';
-        seaRow.appendChild(seaTag);
-
+        // 战船选择
         if (!hero.canPickShip()) {
             const shipDisplay = document.createElement('div');
             shipDisplay.style.cssText = `
-                flex:1; min-width:0; font-size:11.5px; color:#9ec5e8; font-weight:700; height:24px; line-height:22px;
-                padding:0 6px; background:rgba(25,22,18,0.7); border:1px solid rgba(212,175,55,0.25); border-radius:4px;
+                max-width:115px; font-size:11px; color:#9ec5e8; font-weight:700; height:22px; line-height:20px;
+                padding:0 4px; background:rgba(25,22,18,0.7); border:1px solid rgba(212,175,55,0.25); border-radius:4px;
                 overflow:hidden; text-overflow:ellipsis; white-space:nowrap; box-sizing:border-box; margin:0 !important;
             `;
             shipDisplay.title = `随势力舰队出战：${getNavalShipChineseName(hero.shipKey)}`;
-            shipDisplay.textContent = `⚓ 随舰队 · ${getNavalShipChineseName(hero.shipKey)}`;
-            seaRow.appendChild(shipDisplay);
+            shipDisplay.textContent = `⚓ ${getNavalShipChineseName(hero.shipKey)}`;
+            topRight.appendChild(shipDisplay);
         } else {
             const sSel = document.createElement('select');
             sSel.style.cssText = uSel.style.cssText;
@@ -470,47 +452,72 @@ export class PlayerHUD {
             });
             sSel.value = String(hero.selectedShip);
             sSel.disabled = hero.learnedShips.length === 0;
-            sSel.title = '独行侠可自选水战坐骑战船';
+            sSel.title = '独行侠可自选水战战船';
             sSel.addEventListener('change', () => hero.selectShip(Number(sSel.value)));
-            seaRow.appendChild(sSel);
+            topRight.appendChild(sSel);
         }
-        gearSelects.appendChild(seaRow);
-        gearCard.appendChild(gearSelects);
-        col3.appendChild(gearCard);
-        grid.appendChild(col3);
 
-        this.body.appendChild(grid);
+        // 收起按钮
+        const minBtn = document.createElement('button');
+        minBtn.type = 'button';
+        minBtn.textContent = this.minimized ? '▼' : '▲';
+        minBtn.title = this.minimized ? '展开' : '收起';
+        minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:14px; font-weight:900; line-height:1; padding:0 2px; margin-left:2px; transition:color 0.2s;';
+        minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
+        minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
+        minBtn.addEventListener('click', () => this.toggleMinimize());
+        this.minimizeBtn = minBtn;
+        topRight.appendChild(minBtn);
 
-        // ── 底部横栏：控制开关 + 快捷操作提示 ──
+        rowTop.appendChild(topRight);
+        this.body.appendChild(rowTop);
+
+        // ═══════════════════════════════════════════════════════════════
+        // 第二行：控制开关复选框组 ＋ 战术操作快捷提示
+        // ═══════════════════════════════════════════════════════════════
         const footer = document.createElement('div');
         footer.className = 'player-hud-footer';
-        footer.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:8px; padding-top:6px; border-top:1px dashed rgba(212,175,55,0.25); flex-wrap:wrap;';
 
         const ctrlRow = document.createElement('div');
         ctrlRow.className = 'player-hud-footer-controls';
-        ctrlRow.style.cssText = 'display:flex; align-items:center; gap:14px; flex-shrink:0; flex-wrap:wrap;';
+        ctrlRow.style.cssText = 'display:flex; align-items:center; gap:12px; flex-shrink:0; flex-wrap:wrap;';
 
         // 🤖 自动模式
         const autoLabel = document.createElement('label');
-        autoLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#52c486; font-weight:700; user-select:none;';
+        autoLabel.style.cssText = 'display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11.5px; color:#52c486; font-weight:700; user-select:none;';
         autoLabel.title = '开：自动寻找武将、自动入伍随军、自动接战；关：纯手动操作';
         const autoCheck = document.createElement('input');
         autoCheck.type = 'checkbox';
         autoCheck.checked = hero.autoMode;
-        autoCheck.style.cssText = 'cursor:pointer; accent-color:#52c486;';
+        autoCheck.style.cssText = 'cursor:pointer; accent-color:#52c486; margin:0;';
         autoCheck.addEventListener('change', () => hero.setAutoMode(autoCheck.checked));
         autoLabel.appendChild(autoCheck);
         autoLabel.appendChild(document.createTextNode('🤖 自动模式'));
         ctrlRow.appendChild(autoLabel);
 
+        // 📜/⚔️ 自动模式玩法
+        const planSel = document.createElement('select');
+        planSel.title = '剧本模式：到了年份优先奔赴历史战场，没有可打的战场才去找武将；乱斗模式：完全不去战场，一直找武将入伍';
+        planSel.disabled = !hero.autoMode;
+        planSel.style.cssText = 'cursor:pointer; font-size:11px; font-weight:700; color:#8ab4f8; background:#1b2333; border:1px solid #33415c; border-radius:4px; padding:1px 4px; height:22px;';
+        for (const [val, text] of [['script', '📜 剧本模式'], ['melee', '⚔️ 乱斗模式']] as const) {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = text;
+            if (hero.autoPlan === val) opt.selected = true;
+            planSel.appendChild(opt);
+        }
+        planSel.addEventListener('change', () => hero.setAutoPlan(planSel.value as PlayerAutoPlan));
+        ctrlRow.appendChild(planSel);
+
         // 🎲 自动兵模
         const autoUnitLabel = document.createElement('label');
-        autoUnitLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#dfc28c; font-weight:700; user-select:none;';
+        autoUnitLabel.style.cssText = 'display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11.5px; color:#dfc28c; font-weight:700; user-select:none;';
         autoUnitLabel.title = '开：随军时按军团统一兵模自动换，独行按 骑兵→战车→象兵→步兵 优选；关：只用你手选的兵模';
         const autoUnitCheck = document.createElement('input');
         autoUnitCheck.type = 'checkbox';
         autoUnitCheck.checked = hero.autoPickUnit;
-        autoUnitCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37;';
+        autoUnitCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
         autoUnitCheck.addEventListener('change', () => hero.setAutoPickUnit(autoUnitCheck.checked));
         autoUnitLabel.appendChild(autoUnitCheck);
         autoUnitLabel.appendChild(document.createTextNode('🎲 自动兵模'));
@@ -518,30 +525,31 @@ export class PlayerHUD {
 
         // 📍 就近寻将
         const nearLabel = document.createElement('label');
-        nearLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#dfc28c; font-weight:700; user-select:none;';
+        nearLabel.style.cssText = 'display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11.5px; color:#dfc28c; font-weight:700; user-select:none;';
         nearLabel.title = '开：只在身边一圈里抽签寻访，赶路最短；关：放宽到一州之地，更容易遇上别处的名将。两档都是加权抽签，不会死盯同一座城';
         const nearCheck = document.createElement('input');
         nearCheck.type = 'checkbox';
         nearCheck.checked = hero.nearbyFirst;
-        nearCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37;';
+        nearCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
         nearCheck.addEventListener('change', () => hero.setNearbyFirst(nearCheck.checked));
         nearLabel.appendChild(nearCheck);
         nearLabel.appendChild(document.createTextNode('📍 就近寻将'));
         ctrlRow.appendChild(nearLabel);
 
-        // 🚫 不出军团（[2026-09-11 主人定]「在玩家面板添加一个功能选项，默认不出军团」）
+        // 🚫 不出军团
         const noLegionLabel = document.createElement('label');
-        noLegionLabel.style.cssText = 'display:flex; align-items:center; gap:5px; cursor:pointer; font-size:12px; color:#dfc28c; font-weight:700; user-select:none;';
-        noLegionLabel.title = '开：全图不生任何军团，武将都留在城里；关：恢复常规募兵（开局首发属一次性事件，不会补跑）。乱斗开局默认关闭此项';
+        noLegionLabel.style.cssText = 'display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11.5px; color:#dfc28c; font-weight:700; user-select:none;';
+        noLegionLabel.title = '开：全图不生任何军团，武将都留在城里；关：恢复常规募兵。乱斗开局默认关闭此项';
         const noLegionCheck = document.createElement('input');
         noLegionCheck.type = 'checkbox';
         noLegionCheck.checked = hero.noLegionSpawn;
-        noLegionCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37;';
+        noLegionCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
         noLegionCheck.addEventListener('change', () => hero.setNoLegionSpawn(noLegionCheck.checked));
         noLegionLabel.appendChild(noLegionCheck);
         noLegionLabel.appendChild(document.createTextNode('🚫 不出军团'));
         ctrlRow.appendChild(noLegionLabel);
 
+        // 🎥 跟随视角
         if (this.deps.followCamera) {
             const followBtn = document.createElement('button');
             followBtn.type = 'button';
@@ -549,11 +557,11 @@ export class PlayerHUD {
             followBtn.textContent = isF ? '🎥 跟随中' : '🎥 跟随视角';
             followBtn.title = isF ? '正在跟随玩家视角（点击取消）' : '点击对准并跟随玩家';
             followBtn.style.cssText = `
-                cursor:pointer; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; font-family:inherit;
+                cursor:pointer; font-size:11px; font-weight:700; padding:1px 6px; border-radius:4px; font-family:inherit;
                 background:${isF ? 'rgba(82,196,134,0.22)' : 'rgba(212,175,55,0.14)'};
                 color:${isF ? '#52c486' : '#dfc28c'};
                 border:1px solid ${isF ? 'rgba(82,196,134,0.5)' : 'rgba(212,175,55,0.35)'};
-                transition:all 0.2s ease;
+                transition:all 0.2s ease; line-height:18px;
             `;
             followBtn.addEventListener('click', () => {
                 if (this.deps.isFollowing?.()) {
@@ -571,12 +579,13 @@ export class PlayerHUD {
         // 精简操作提示
         const tip = document.createElement('div');
         tip.className = 'player-hud-footer-tip';
-        tip.style.cssText = 'font-size:11px; color:#a89984; line-height:1.4; text-align:right; user-select:none;';
+        tip.style.cssText = 'font-size:11px; color:#a89984; line-height:1.2; text-align:right; user-select:none; white-space:nowrap;';
         tip.title = '战术模式操作：WASD / 方向键移动，点击地面前往；Q 切换自动作战，E 命令全军待命';
-        tip.textContent = '⌨ 战术：WASD 移动 · Q 自动 · E 待命';
+        tip.textContent = '⌨ WASD 移动 · Q 自动 · E 待命';
         footer.appendChild(tip);
 
         this.body.appendChild(footer);
+
     }
 
     /** 兵模预览：把玩家当前素材（key）的 IDLE 第 0 帧画到面板缩略图上。 */

@@ -29,6 +29,10 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "hongnong_jun": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
     "qianzhou": {
         legionName: "封建时代隋唐军团",
         legionType: "sub",
@@ -149,7 +153,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "han_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
         legionType: "sub",
     },
     "xianyu": {

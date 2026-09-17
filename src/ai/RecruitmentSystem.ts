@@ -24,8 +24,6 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, REGION_ORDER, REGION_LABELS, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import { getCityAnchoredStrategicMagnitude, emitFollowedCityAnchoredDefensePulse } from '../combat/GeneralSkillCombat';
-import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
@@ -298,17 +296,12 @@ export class RecruitmentSystem {
             // 排最前，补兵选中它却因 canGeneral=false 挂不上将，产出一支无名将军团并占住名将城，
             // 名将复出被拖住、场上名将越来越少（跟随系统才 fallback 到非名将）。
             if (isGeneralOnCooldown(city.id)) continue;
-            // 计算征兵兵力（城市兵力的90%）
+            // 计算征兵兵力（城市兵力的90%，据点保留 10% 驻军）
+            // 🔴 [2026-09-17 主人定] 据点保留 10% 兵力：删「调兵遣将 +10%」（str_28 已退役）与
+            //    「屯兵经略留兵」（str_27 已封印），征 90% 恒成立，据点永留 10% 驻军。
             const baseArmySize = Math.floor((city.troops || 0) * 0.9);
-            // 调兵遣将：征兵时出征兵力 +10%
-            const recruitMult = getCityAnchoredStrategicMagnitude(city.id, 'recruit_troops_mult');
-            let armySize = Math.floor(baseArmySize * (recruitMult > 1 ? recruitMult : 1));
+            let armySize = baseArmySize;
             const minTroops = this.getCityMinSpawnTroops(city);
-            // 屯兵经略：可征兵力不得超过城防减留兵保底
-            const reserveMag = getCityAnchoredStrategicMagnitude(city.id, 'garrison_reserve_troops');
-            if (reserveMag > 0) {
-                armySize = Math.min(armySize, Math.max(0, Math.floor((city.troops || 0) - reserveMag)));
-            }
             if (armySize < minTroops) continue;
 
             candidates.push({
@@ -405,48 +398,16 @@ export class RecruitmentSystem {
 
         if (!newLegion) return null;
 
-        // 屯兵经略：征兵后据点最低留兵（限制征用量）
-        const reserveMag = getCityAnchoredStrategicMagnitude(city.id, 'garrison_reserve_troops');
+        // 🔴 [2026-09-17 主人定] 据点保留 10% 兵力：征 90%，据点永留 10% 驻军。
+        //    （删「屯兵经略留兵」str_27 已封印 + 「招兵买马」「屯兵经略」死脉冲，防务技系已整体退役）
         const minTroops = this.getCityMinSpawnTroops(city);
-        if (reserveMag > 0) {
-            const maxDeduction = Math.max(0, (city.troops || 0) - reserveMag);
-            const actualDeduction = Math.min(newLegion.getTroops(), maxDeduction);
-            if (actualDeduction < minTroops) {
-                newLegion.destroy();
-                return null;
-            }
-            city.troops = (city.troops || 0) - actualDeduction;
-            if (actualDeduction < newLegion.getTroops()) {
-                newLegion.setTroops(actualDeduction);
-            }
-        } else {
-            city.troops = (city.troops || 0) - newLegion.getTroops();
+        if (newLegion.getTroops() < minTroops) {
+            newLegion.destroy();
+            return null;
         }
+        city.troops = (city.troops || 0) - newLegion.getTroops();
 
         this.queueCityLabel(city.id);
-
-        const followedId = getFollowedArmyId();
-        const followedArmy = followedId ? this.legionManager.getLegionById(followedId) : null;
-        if (followedArmy) {
-            if (getCityAnchoredStrategicMagnitude(city.id, 'recruit_cooldown_mult') < 1) {
-                emitFollowedCityAnchoredDefensePulse(
-                    city.id,
-                    city.latitude,
-                    city.longitude,
-                    'recruit_cooldown_mult',
-                    followedArmy,
-                );
-            }
-            if (reserveMag > 0) {
-                emitFollowedCityAnchoredDefensePulse(
-                    city.id,
-                    city.latitude,
-                    city.longitude,
-                    'garrison_reserve_troops',
-                    followedArmy,
-                );
-            }
-        }
 
         return newLegion;
     }
