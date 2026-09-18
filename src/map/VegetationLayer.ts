@@ -116,6 +116,15 @@ const TREE_IMG_FAILED = new Set<string>();
 const TREE_FRAMES_IMG = new Map<string, HTMLImageElement>();
 const TREE_FRAMES_FAILED = new Set<string>();
 
+/**
+ * 🔴 [2026-09-19 主人报「樱花树过季就消失了」] 每棵树「上一帧真正画成功的贴图」备忘：
+ *   换季那一瞬若本季/下一季两张都还没解码完，drawTreeAsset 会**一张都画不出来**（静默 return）
+ *   → 屏幕上就是「樱花淡没了、绿树没来」。这里按树位（经纬度 5 位小数）记住上一次画成的图，
+ *   两张都不行时拿它顶上：宁可晚一帧换季，也绝不出现一棵空树。
+ */
+const LAST_DRAWN_ASSET = new Map<string, string>();
+const LAST_DRAWN_MAX = 6000;
+
 function treeImage(asset: string, onReady: () => void): HTMLImageElement | null {
     if (TREE_IMG_FAILED.has(asset)) return null;
     const hit = TREE_IMG.get(asset);
@@ -526,6 +535,7 @@ export class VegetationLayer {
         const W = this.canvas.width, H = this.canvas.height;
 
         const items: { x: number; y: number; h: number; c: TreeDrawCommand }[] = [];
+        if (LAST_DRAWN_ASSET.size > LAST_DRAWN_MAX) LAST_DRAWN_ASSET.clear();   // 防无限增长
         for (const c of this.trees) {
             const pt = this.map.latLngToContainerPoint([c.lat, c.lng]);
             const h = hScale * c.jitter;
@@ -539,8 +549,8 @@ export class VegetationLayer {
             variant: number,
             it: { x: number; y: number; h: number },
             alpha: number,
-        ) => {
-            if (alpha <= 0.002) return;
+        ): string | null => {
+            if (alpha <= 0.002) return null;
             const meta = TREE_METAS[asset];
             ctx.globalAlpha = alpha * TREE_OPACITY;
 
@@ -556,20 +566,22 @@ export class VegetationLayer {
                     const frameIdx = meta.frames[variant % meta.frames.length];
                     const sx = frameIdx * meta.boxW;
                     ctx.drawImage(framesImg, sx, 0, meta.boxW, meta.boxH, dx, dy, w, it.h);
-                    return;
+                    return asset;
                 }
                 if (prevImg) {
                     ctx.drawImage(prevImg, 0, 0, prevImg.naturalWidth, prevImg.naturalHeight, dx, dy, w, it.h);
-                    return;
+                    return asset;
                 }
-            } else {
-                // 兜底：未配置元数据的资产按底部居中对齐
-                const im = treeImage(asset, this.onTreeImageReady);
-                if (im) {
-                    const w = it.h * (im.naturalWidth / im.naturalHeight);
-                    ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
-                }
+                return null;   // 两张都没就绪：由调用方用「上一次画成的图」兜底，绝不留空
             }
+            // 兜底：未配置元数据的资产按底部居中对齐
+            const im = treeImage(asset, this.onTreeImageReady);
+            if (im) {
+                const w = it.h * (im.naturalWidth / im.naturalHeight);
+                ctx.drawImage(im, it.x - w / 2, it.y - it.h, w, it.h);
+                return asset;
+            }
+            return null;
         };
 
         const drawContactShadow = (it: { x: number; y: number; h: number }) => {
@@ -585,6 +597,8 @@ export class VegetationLayer {
 
         for (const it of items) {
             drawContactShadow(it);
+            /** 树位键（经纬度 5 位小数）：给「上一帧画成的贴图」备忘用，四季之间坐标绝对不变 */
+            const posKey = `${Math.round(it.c.lat * 1e5)},${Math.round(it.c.lng * 1e5)}`;
 
             // 每棵树基于经纬度哈希做秒级错峰（0~0.35 秒）：整片林依次换装
             let treeBlend = baseBlend;
@@ -602,12 +616,22 @@ export class VegetationLayer {
                 const a2 = 1 - (1 - TREE_OPACITY) / (1 - a1);
                 drawTreeAsset(it.c.asset, it.c.variant, it, 1 - treeBlend);
                 drawTreeAsset(it.c.assetNext, it.c.variant, it, a2 / TREE_OPACITY);
+                LAST_DRAWN_ASSET.set(posKey, it.c.assetNext);
             } else if (!currentReady && nextReady) {
                 // 本季贴图还没解码完、下一季却已就绪 → 先按新季满额画，绝不空着
-                drawTreeAsset(it.c.assetNext, it.c.variant, it, 1);
+                if (drawTreeAsset(it.c.assetNext, it.c.variant, it, 1)) LAST_DRAWN_ASSET.set(posKey, it.c.assetNext);
             } else {
                 // 其余一律满额画本季老树（下一季没就绪就不淡化，杜绝"老树淡没了、新树没来"）
-                drawTreeAsset(it.c.asset, it.c.variant, it, 1);
+                const drawn = drawTreeAsset(it.c.asset, it.c.variant, it, 1);
+                if (drawn) LAST_DRAWN_ASSET.set(posKey, drawn);
+                else {
+                    // 🔴 [2026-09-19] 本季与下一季两张都还没就绪（换季那一瞬最易发生）→
+                    //   用这棵树上一次真正画成的贴图顶上：宁可晚一帧换季，也绝不留一棵空树。
+                    const last = LAST_DRAWN_ASSET.get(posKey);
+                    if (last && last !== it.c.asset && last !== it.c.assetNext) {
+                        drawTreeAsset(last, it.c.variant, it, 1);
+                    }
+                }
             }
             ctx.globalAlpha = 1;
         }

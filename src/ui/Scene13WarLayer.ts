@@ -2085,15 +2085,38 @@ const PROJ_FRAME_DUR: Record<string, number> = {
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
 const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
-/** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格；1 格 = 40px，与 rng 同换算）。 */
+/** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格；1 格 = 40px，与 rng 同换算）。
+ *  🔴 [2026-09-18 主人定·攻城武器无法近身攻击] 远程重型攻城武器严禁近身肉搏，贴脸时伤害归零。 */
 const MIN_RANGE_TYPES: Record<string, number> = {
+    // 投石车系列（DE 最小射程 3 格 = 120px）
     mangonel: 120,
     onager: 120,
     siege_onager: 120,
+    antiquity_mangonel: 120,
+    antiquity_onager: 120,
+    antiquity_siege_onager: 120,
+
+    // 投石机系列（DE 最小射程 4 格 = 160px）
     traction_trebuchet: 160,
     mounted_trebuchet: 160,
+    trebuchet: 160,
+
+    // 火炮/榴弹炮系列（DE 最小射程 5 格 = 200px）
     bombard_cannon: 200,
     houfnice: 200,
+
+    // 火箭车系列（远程齐射器械，最小射程 3 格 = 120px）
+    rocket_cart: 120,
+    heavy_rocket_cart: 120,
+
+    // 弩炮类器械（车身近身盲区 1 格 = 40px，近身贴脸无法开火）
+    scorpion: 40,
+    heavy_scorpion: 40,
+    antiquity_scorpion: 40,
+    antiquity_heavy_scorpion: 40,
+    siege_ballista: 40,
+
+    // 风琴炮/掷弹兵（DE 最小射程 1 格 = 40px）
     organ_gun: 40,
     elite_organ_gun: 40,
     grenadier: 40,
@@ -4210,6 +4233,13 @@ export class Scene13WarLayer {
                     if (season === 3) return 2;   // 冬 → 白
                     if (season === 2) return 1;   // 秋 → 橙
                     return 0;                      // 春/夏 → 绿
+                },
+                // 🔴 [2026-09-19 主人报「樱花树过季就消失／怎么不变绿」] **选树用真四季**：
+                //   上面那个 getCalendarSeason 是「战场地表季」（绿/橙/白三态，管地形与色调），
+                //   拿它去推树季会把春/夏都推成夏树 → 日本战场春天长不出樱花。
+                getTreeSeason: () => {
+                    const s = (window as any).game?.timeSystem?.getSeason?.();
+                    return (typeof s === 'number' && s >= 0 && s <= 3 ? s : 0) as 0 | 1 | 2 | 3;
                 },
             });
             const __envMs = performance.now() - __e0;
@@ -7441,6 +7471,8 @@ export class Scene13WarLayer {
                     }
                 }
                 const close = fd2 < 65 * 65;
+                const minR = MIN_RANGE_TYPES[m.key] ?? 0;
+                const tooClose = minR > 0 && fd2 < minR * minR;
                 // 🔴 [2026-08-17 修·「动作切换时的颤抖」] 够得着的判定必须带迟滞。
                 //    没有迟滞时，站在射程/贴身边缘上的兵会每帧翻面：
                 //      够得着 → 站桩出手（st=1，播攻击帧）→ 被 separate 推开半步 → 够不着
@@ -7645,8 +7677,6 @@ export class Scene13WarLayer {
                     // 只有真正在放箭/开火的那一轮才有弹丸：被贴身改白刃（st=2）或处于攻城盲区（minRange）时不射。
                     // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭/炮弹/弹丸），
                     //    连弩（诸葛弩）连发多支（普通 3、精锐 5，AoE2 wiki），风琴炮 5 弹，火箭车 5 支，其余每轮 1 支。
-                    const minR = MIN_RANGE_TYPES[m.key] ?? 0;
-                    const tooClose = minR > 0 && ((foe.x - m.x) ** 2 + (foe.y - m.y) ** 2 < minR * minR);
                     const shootPhase = SHOOT_PHASE_BY_TYPE[m.key] ?? DEFAULT_SHOOT_PHASE;
                     if (!m.shot && m.ph >= shootPhase && stats.rng > 65 && m.st === 1 && !tooClose) {
                         m.shot = true;
@@ -7728,28 +7758,25 @@ export class Scene13WarLayer {
                 }
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
-                const primaryDamage = m.accHit !== false ? dmgVs(shooter, target) * projectileDamageCount : 0;
-                const secondaryHitCount = (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon')
+                // 🔴 [2026-09-18 主人定·攻城武器无法近身攻击]
+                //    处于最小射程盲区（tooClose）内时严禁开火，主伤害严格为 0！
+                const primaryDamage = (!tooClose && m.accHit !== false) ? dmgVs(shooter, target) * projectileDamageCount : 0;
+                const secondaryHitCount = (!tooClose && (m.key === 'hussite_wagon' || m.key === 'elite_hussite_wagon'))
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
                     : 0;
                 const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
                 const dps = (primaryDamage + secondaryDamage) * heroRate / shooter.reload;
-                if (wt.aoe) this.splash(m, REACH, shooter, dt, heroRate);
-                else {
+                if ('sprite' in foe) {
+                    // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
+                    //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！
                     foe.atkNext++;
-                    // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
                     if (dps > 0) {
-                        if (!('sprite' in foe)) {
-                            foe.hurtBy = m;
-                            foe.hurtAt = this.battleSec;
-                        }
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt
-                            * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt;
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
                         // 🔴 [2026-08-23 主人定] 墙 hp 归零也算损 100% → 切 D75（破损到顶），与 40 秒坍塌残垣视觉一致。
-                        if ('sprite' in foe && foe.destrAssets) {
+                        if (foe.destrAssets) {
                             const ratio = Math.max(0, foe.hp) / foe.maxHp;
                             let stage = -1;
                             if (ratio <= 0.25) stage = 2;       // D75：损 75%
@@ -7763,9 +7790,33 @@ export class Scene13WarLayer {
                                 }
                             }
                         }
-                        // 🔴 [2026-08-23 主人定] 城墙坍塌唯一标准 = 开战 30 秒（WALL_AUTO_COLLAPSE_SEC → collapseFrontWalls）。
-                        //    士兵打墙只降 hp 做视觉破损（上方 damage stage），墙 hp 归零**不在此破墙、不联动坍塌**——
-                        //    墙保持破损贴图 + 阻挡，等 30 秒统一坍塌。只有非建筑（士兵/单位）阵亡才走尸体。
+                        // 城门提前被打爆（hp <= 0）→ 倒塌播动画切残骸并解除阻挡
+                        if (foe.key === 'STONE_GATE' && foe.hp <= 0 && !foe.sprite.collapse && foe.rubbleAsset) {
+                            this.collapseToRubble(foe.sprite, foe.rubbleAsset.slice(0, -'_RUBBLE'.length));
+                            foe.sprite.obstruction = undefined;
+                            foe.sprite.obstructionDisabled = true;
+                            if (foe.extraSprites) {
+                                for (const sp of foe.extraSprites) {
+                                    sp.obstruction = undefined;
+                                    sp.obstructionDisabled = true;
+                                }
+                            }
+                        }
+                    }
+                    // 若同时为 aoe 单位且未在盲区内，对周围士兵照常执行溅射
+                    if (!tooClose && wt.aoe) this.splash(m, REACH, shooter, dt, heroRate);
+                } else if (!tooClose && wt.aoe) {
+                    this.splash(m, REACH, shooter, dt, heroRate);
+                } else {
+                    foe.atkNext++;
+                    // DE accuracy：miss 的这一轮不打伤害（箭照飞、打空）
+                    if (dps > 0) {
+                        if (!('sprite' in foe)) {
+                            foe.hurtBy = m;
+                            foe.hurtAt = this.battleSec;
+                        }
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt
+                            * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                         if (foe.hp <= 0 && !('sprite' in foe)) {
                             this.onManKilled(foe, m);   // [2026-09-05 玩家] 玩家落马重整 / 玩家记功，其余留尸
                         }
@@ -7774,7 +7825,8 @@ export class Scene13WarLayer {
                 // ── 近战出手：生成刀光剑影（微弯斩击刀痕 / 突刺枪芒）与碰撞金属火花 ──
                 const keyStr = m.key.toLowerCase();
                 const isHeavyNonBlade = keyStr.includes('elephant') || keyStr.includes('ram') || keyStr.includes('wagon');
-                const isMeleeAttacking = !isHeavyNonBlade && (stats.rng <= 65 || m.st === 2 || close);
+                const isSiegeMachine = m.siegeW || minR > 0;
+                const isMeleeAttacking = !isHeavyNonBlade && !isSiegeMachine && (stats.rng <= 65 || m.st === 2 || close);
                 // 🔴 [2026-08-24 主人：「战斗开始前 30 秒是攻城武器攻击，但是没有音效」]
                 //    凿墙那 30~40 秒此前**完全静音**，只有画面在动。撞击声必须挂在**命中相位**上：
                 //    冲车/攻城锤/装甲象被 isHeavyNonBlade 排除在刀光之外（重械不该有刀光），

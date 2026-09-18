@@ -146,6 +146,12 @@ export interface Scene13EnvironmentInput {
     defenderGeneralId?: string | null;
     /** 日历季节兜底（无坐标 / 采样失败时）；缺省 0 */
     getCalendarSeason?: () => 0 | 1 | 2;
+    /**
+     * 🔴 [2026-09-19 主人报「樱花树过季就消失／怎么不变绿」] **真实游戏四季**（春0/夏1/秋2/冬3）。
+     * 战场地表季是 3 态（绿/橙/白，供地形与色调用），而**树**必须按真四季取：
+     * 不传这个 getter 就会退回旧的「绿→夏」兜底，日本战场春天永远看不到樱花。
+     */
+    getTreeSeason?: () => 0 | 1 | 2 | 3;
     /** 测试用：强制 biome（覆盖 detectBiome 结果），便于无浏览器环境生成指定环境 */
     forceBiome?: Biome;
     /**
@@ -561,6 +567,15 @@ function resolveSeason(
     return getCalendarSeason?.() ?? 0;
 }
 
+/**
+ * 🔴 [2026-09-19] 真实游戏四季（春0/夏1/秋2/冬3）—— 只给**选树**用。
+ * 取不到时返回 undefined，调用方退回旧的「绿→夏 / 橙→秋 / 白→冬」兜底映射（保住老行为）。
+ */
+function resolveTreeSeason(getTreeSeason?: () => 0 | 1 | 2 | 3): TreeSeason | undefined {
+    const s = getTreeSeason?.();
+    return typeof s === 'number' && s >= 0 && s <= 3 ? (s as TreeSeason) : undefined;
+}
+
 // ── clump 生长（照 RMS 斑块机制；注入 rng，不再 Math.random） ──
 
 function growClump(
@@ -730,7 +745,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
         // ── 第 5 层 OBJECTS：同一套 DE 主题内的树 / 悬崖断崖 / 平面装饰 / 实体装饰 + 通用资源 ──
         buildVegetation(VW, VH, gw, gh, ox, oy, biome, elevationBand, season, theme!, rng, objects, patches, occupied, isWater, input.lat, elev, waterKind, vegetationTile, input.lng, input.isSiege ?? false,
-                        input.keepClear ?? [], baseTerrain);
+                        input.keepClear ?? [], baseTerrain, resolveTreeSeason(input.getTreeSeason));
         buildResources(VW, VH, season, rng, objects, isWater, waterKind, biome, baseTerrain, input.isSiege ?? false,
                        input.keepClear ?? []);
 
@@ -1590,16 +1605,24 @@ function buildVegetation(
      *    这也是 DE `terrain_to_place_on` 的语义。
      */
     groundTile: string = '',
+    /** 🔴 [2026-09-19] 真实游戏四季（春0/夏1/秋2/冬3）；不给才退回旧的「绿→夏」兜底映射 */
+    treeSeason?: TreeSeason,
 ): void {
     // 🔴 [2026-08-24 主人定] 一个底图一种树：底图定基调，同一张图上不混种。
     //    地区覆盖 + 季节变体都在 TreeAssignment 里，见那个文件的头注释。
     //    只有拿不到经纬度（旧调用/单测）才回落到按主题挑一把树。
     let primaryTree: string;
     let secondaryTree: string | null = null;
-    // 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 树种表已升为**四季**（春0/夏1/秋2/冬3），
-    //   而本函数的 `season` 是**战场地表季节**（绿0/橙1/白2，地形/底色仍按三态走）。
-    //   对齐取最近的当季：绿→夏、橙→秋、白→冬（战场地表没有单独"春花"档）。
-    const treeSeason4 = ((season + 1) % 4) as TreeSeason;
+    /**
+     * 🔴 [2026-09-19 主人报「樱花树过季就消失了／怎么不变绿树」] 原实现是
+     *   `const treeSeason4 = ((season + 1) % 4)` —— 把**战场地表季**（绿0/橙1/白2）硬推一档去凑四季，
+     *   结果：**春(0)→1=夏、夏(1)→2=秋**？不，绿0 恒映射到夏，于是
+     *   ① 日本春天/夏天的战场永远长绿枫，**樱花一次都不出现**；
+     *   ② 春与夏的树完全一样（主人要的是「春天显示春天的」）。
+     *   现在改成：**优先用真实的游戏四季**（`input.getTreeSeason()`，春0/夏1/秋2/冬3），
+     *   传不进来时才退回旧的「绿→夏 / 橙→秋 / 白→冬」兜底映射。
+     */
+    const treeSeason4 = (treeSeason ?? ((season + 1) % 4)) as TreeSeason;
     if (lat !== undefined && lng !== undefined) {
         primaryTree = pickTree({ baseTile, lat, lng, season: treeSeason4, isSiege });
     } else {
