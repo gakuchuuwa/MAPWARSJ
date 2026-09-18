@@ -162,6 +162,19 @@ export class Army implements IBattleUnit {
      * 全程 ×1.05，船仍走可见弧线而不是原地掉头。
      */
     private static readonly NAVAL_TURN_RATE_RAD_S = 120 * Math.PI / 180;
+    /**
+     * 🔴 [2026-09-18 主人报障「船每次行驶到这里都要转圈」] 过弯减速下限。
+     *
+     * 最小转弯半径 R = v / ω。海路数据是现代渡轮航线，港口与海峡处留着密集锯齿：
+     * 实测 225 条海路 2430 个中间顶点里有 192 个「转角需要的弦长 > 进出段长度」——
+     * 满速下 R≈16km，船几何上吃不下这个角，只能绕着路点转到 0.6 圈才被脱出判据放行。
+     * 其中 47 个锯齿点已直接从数据里删掉（scratch/fix_naval_sharp_corners.mts，删点前用
+     * ESRI 水域掩膜逐公里验证新线段不上岸），剩下 126 个是真实的海峡/岬角急弯，
+     * 几何上删不掉 —— 只能像真船一样**进弯减速**：速度降下来，R 跟着变小就转得过去。
+     * 下限 0.2 是离线扫出来的甜点（scratch/audit_naval_orbit.mts 实测 0.35/0.2/0.12 三档）：
+     * 绕圈脱出次数 31→6（-81%），全程航时反而比修前快 1.3%；再压到 0.12 不再有收益、只更慢。
+     */
+    private static readonly NAVAL_CORNERING_MIN_FACTOR = 0.2;
     /** 大角度操舵时仍保留少量前进量，形成调头弧线而不是原地旋转。 */
     private static readonly NAVAL_MIN_FORWARD_FACTOR = 0.12;
     /** 连续这么多秒没靠近下一个路点 = 判定绕圈，直接换下一个路点脱出（不瞬移） */
@@ -744,6 +757,36 @@ export class Army implements IBattleUnit {
     }
 
     /**
+     * 过弯减速系数：下一个路点的拐角若按当前航速转不过来，就把速度压到刚好能转过去。
+     *
+     * 几何：转角 θ 处，半径 R 的圆弧需要进出各留 R·tan(θ/2) 的直线余量；本方法用更宽松的
+     * 弦长判据 2R·sin(θ/2) ≤ 可用段长，反解出 R_需要，再由 v = ω·R 得到允许航速。
+     * 返回 1 表示不用减速（直线段、末段、或这个弯本来就吃得下）。
+     */
+    private navalCorneringFactor(finalSpeed: number, distToNext: number): number {
+        const next = this.pathQueue[0];
+        if (!next || finalSpeed <= 0) return 1;
+        const curRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S;
+        if (distToNext > curRadius * 2) return 1;   // 离拐点还远，直线段全速
+        const inLat = this.destination.lat - this.position.lat;
+        const inLng = this.destination.lng - this.position.lng;
+        const outLat = next.lat - this.destination.lat;
+        const outLng = next.lng - this.destination.lng;
+        const inLen = Math.hypot(inLat, inLng);
+        const outLen = Math.hypot(outLat, outLng);
+        if (inLen <= 0.000001 || outLen <= 0.000001) return 1;
+        let theta = Math.atan2(outLng, outLat) - Math.atan2(inLng, inLat);
+        while (theta <= -Math.PI) theta += Math.PI * 2;
+        while (theta > Math.PI) theta -= Math.PI * 2;
+        const half = Math.abs(theta) / 2;
+        if (half < 0.01) return 1;                  // 几乎不拐弯
+        const usable = Math.min(distToNext, outLen);
+        const needRadius = usable / (2 * Math.sin(half));
+        if (needRadius >= curRadius) return 1;      // 这个弯吃得下
+        return Math.max(Army.NAVAL_CORNERING_MIN_FACTOR, needRadius / curRadius);
+    }
+
+    /**
      * 海军实际航行：先把船首以受限角速度转向路点，再沿船首方向位移。
      * 这保证位置与船头使用同一航向；换向时舰船走弧线，不会逻辑位置先倒退、贴图随后调头。
      */
@@ -783,6 +826,11 @@ export class Army implements IBattleUnit {
         while (this.navalHeadingRad <= -Math.PI) this.navalHeadingRad += Math.PI * 2;
         while (this.navalHeadingRad > Math.PI) this.navalHeadingRad -= Math.PI * 2;
 
+        // 🔴 [2026-09-18] 过弯减速：看**下一个**路点，算出这个拐角要求的转弯半径，
+        //    速度压到 v = ω·R_需要，船就能贴着弯开过去而不是绕圈。
+        //    只在快到拐点时生效（剩余距离 < 2 倍当前转弯半径），直线段一点不减速。
+        const corneringFactor = this.navalCorneringFactor(finalSpeed, distToNext);
+
         const remainingAngle = Math.abs(diff - turn);
         const forwardFactor = Army.NAVAL_MIN_FORWARD_FACTOR
             + (1 - Army.NAVAL_MIN_FORWARD_FACTOR) * Math.max(0, Math.cos(remainingAngle));
@@ -791,7 +839,7 @@ export class Army implements IBattleUnit {
         const turnLimitedAdvance = remainingAngle > 0.000001
             ? distToNext * maxTurn * 0.8
             : Infinity;
-        const advance = Math.min(moveDist * forwardFactor, turnLimitedAdvance);
+        const advance = Math.min(moveDist * forwardFactor * corneringFactor, turnLimitedAdvance);
         const minTurnRadius = finalSpeed / Army.NAVAL_TURN_RATE_RAD_S * 1.25;
 
         // 🔴 [2026-09-01 修「海上行军一颤一颤」] 到达判定**绝不能用最小转弯半径当捕获半径**。

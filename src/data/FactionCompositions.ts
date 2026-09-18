@@ -1310,8 +1310,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "boootiya": {
-        legionName: "古典时代希伦军团",
-        legionType: "sub",
+        legionName: "希腊军团",   // 🔴 [2026-09-18] 原挂【古典时代希伦军团】全仓查无此军=幽灵；按保底规则（底比斯 GREEK 风格 → 二级无同时代 → 退一级母体）安置
+        legionType: "region",
     },
     "yamaxun": {
         legionName: "古典时代亚马逊军团",
@@ -1658,7 +1658,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "funan": {
-        legionName: "古典时代东南亚军团",
+        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【古典时代东南亚军团】全仓查无此军=幽灵；按保底规则（毗耶陀 KHMER 风格 → 二级无同时代 → 退一级母体）安置
         legionType: "region",
     },
     "xichu": {
@@ -2335,16 +2335,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "suke": {
-        legionName: "城堡时代东南亚军团",
-        legionType: "sub",
+        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（素可泰 SEAS 风格 → 二级无同时代 → 退一级母体）安置
+        legionType: "region",
     },
     "lancang": {
-        legionName: "城堡时代东南亚军团",
-        legionType: "sub",
+        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（琅勃拉邦 SEAS 风格 → 二级无同时代 → 退一级母体）安置
+        legionType: "region",
     },
     "taiyuan": {
-        legionName: "城堡时代东南亚军团",
-        legionType: "sub",
+        legionName: "东亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（清坎寨 ASIA 风格 → 二级无同时代 → 退一级母体）安置
+        legionType: "region",
     },
     "ryukyu": {
         legionName: "城堡时代幕府军团",
