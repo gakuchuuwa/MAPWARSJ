@@ -422,6 +422,12 @@ export class GameMap {
                     maxNativeZoom: 11,
                     keepBuffer: 4,            // [OPTIMIZATION] 缓存上下左右 4 级瓦片，消除频繁切换与飞行的白块
                     updateWhenZooming: false, // [OPTIMIZATION] 缩放动画中保留上一层级瓦片不立刻释放，维持连续性
+                    // 🔴 [2026-09-18 主人报障「移动时屏幕边部出现没刷新的边缘」]
+                    //    Leaflet 的 updateInterval 默认 200ms —— 跟拍连续平移时，瓦片请求每 200ms 才补一次，
+                    //    这 200ms 里新露出来的那一条还没有瓦片，露出的是 #map 的海蓝底色（style.css: #6395b8），
+                    //    看起来就是「边缘没刷新」。压到 50ms：请求跟着镜头走，露边时间缩到 1/4。
+                    //    ⚠️ 别改成 0 —— 每帧都跑一次 _update 会在 fps 低的时候雪上加霜。
+                    updateInterval: 50,
                     errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
                 }
             );

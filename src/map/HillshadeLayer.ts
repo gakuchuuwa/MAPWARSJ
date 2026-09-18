@@ -96,6 +96,8 @@ export class HillshadeLayer extends L.GridLayer {
             tileSize: 256,
             opacity: 1.0,
             zIndex: 2,
+            // 🔴 [2026-09-18] 与底图同口径：跟拍平移时 50ms 补一次瓦片，别让边缘留空（默认 200ms）
+            updateInterval: 50,
             azimuth: 315,
             altitude: 40,
             ...options

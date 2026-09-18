@@ -24,6 +24,8 @@ export class RiverOverlayLayer extends L.GridLayer {
     constructor(options?: L.GridLayerOptions) {
         super({
             tileSize: 256,
+            // 🔴 [2026-09-18] 与底图同口径：跟拍平移时 50ms 补一次瓦片，别让边缘留空（默认 200ms）
+            updateInterval: 50,
             pane: 'riverPane',
             zIndex: 340, // 位于领土/道路(350)之下
             // DE texture supplies water detail; hide discontinuous DEM colors below.
