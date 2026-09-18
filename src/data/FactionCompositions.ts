@@ -1522,7 +1522,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tiemuer": {
-        legionName: "城堡时代鞑靼军团",
+        legionName: "城堡时代帖木儿军团",
         legionType: "sub",
     },
     "varendra": {

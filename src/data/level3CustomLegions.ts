@@ -83,9 +83,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代印度军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'elite_sannahya', count: 2 },
-            { type: 'indian_tribesman', count: 4 },
-            { type: 'sickle_warrior', count: 3 },
+            { type: 'sannahya', count: 2 },
+            { type: 'sickle_warrior', count: 4 },
+            { type: 'elite_pattiyoda_longbowman', count: 3 },
         ],
         regions: ['INDIA'],
         parentLegion: '古典时代普鲁军团',
@@ -253,7 +253,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'immortal', count: 3 },
             { type: 'immortal_ranged', count: 4 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
+            { type: 'imperial_cavalry', count: 2 },
         ],
         regions: ['PERSIAN'],
         parentLegion: '古典时代阿契美尼德军团',
@@ -396,8 +396,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'balance_yoke',
         slots: [
             { type: 'savar', count: 4 },
-            { type: 'imperial_cavalry', count: 2 },
-            { type: 'cav_archer', count: 3 },
+            { type: 'elite_skirmisher', count: 2 },
+            { type: 'laminated_bowman', count: 3 },
         ],
         regions: ['CENTRAL_ASIA_CASTLE'],
         parentLegion: '中亚军团',
@@ -407,7 +407,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代伊利汗军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'laminated_bowman', count: 2 },
             { type: 'cav_archer', count: 3 },
             { type: 'keshik', count: 4 },
         ],
@@ -479,7 +479,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代塞尔柱军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'camel_rider', count: 2 },
+            { type: 'laminated_bowman', count: 2 },
             { type: 'elite_ghulam', count: 4 },
             { type: 'cav_archer_heavy', count: 3 },
         ],
@@ -570,18 +570,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['FRENCH'],
         parentLegion: '城堡时代不列颠军团',
         shipId: 'ELITE_CARAVEL',
-    },
-    {
-        name: '城堡时代波斯军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'camel_rider', count: 3 },
-            { type: 'imperial_cavalry', count: 4 },
-            { type: 'cav_archer', count: 2 },
-        ],
-        regions: ['PERSIAN_CASTLE'],
-        parentLegion: '波斯军团',
-        shipId: 'WAR_GALLEY',
     },
     {
         name: '城堡时代泰罗纳军团',
@@ -971,7 +959,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '封建时代粟特军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'savar', count: 3 },
+            { type: 'elite_skirmisher', count: 3 },
             { type: 'sogdian_cataphract', count: 4 },
             { type: 'elite_kipchak', count: 2 },
         ],
@@ -1513,11 +1501,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'elite_liao_dao', count: 4 },
             { type: 'elite_keshik', count: 3 },
-            { type: 'mangudai_elite', count: 2 },
+            { type: 'elite_kipchak', count: 2 },
         ],
         regions: [],
         parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
+        shipId: 'TRANSPORT_SHIP',
     },
 ];
 

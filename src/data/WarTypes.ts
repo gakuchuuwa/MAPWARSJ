@@ -123,7 +123,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     mangudai: { name: '蒙古突骑', cls: 'cav', sz: 1, kite: 70, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.1, spd: 130, dmgType: 'pierce', bonus: { 20: 3, 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
     keshik: { name: '鞑靼怯薛军', cls: 'cav', sz: 1, hp: 120, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
     boyar: { name: '斯拉夫贵族铁骑', cls: 'cav', sz: 1, hp: 100, atk: 12, meleeArmor: 4, pierceArmor: 2, rng: 0, reload: 1.9, spd: 130, dmgType: 'melee', armorTags: [8, 19, 31] },
-    savar: { name: '萨珊萨瓦兰骑兵高级', cls: 'cav', sz: 1, hp: 145, atk: 14, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
+    savar: { name: '萨珊波斯萨瓦兰骑兵高级', cls: 'cav', sz: 1, hp: 145, atk: 14, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.8, spd: 130, dmgType: 'melee', bonus: { 15: 2 }, armorTags: [8, 31] },
     elite_kipchak: { name: '库曼钦察弓骑精锐', cls: 'cav', sz: 1, kite: 70, hp: 45, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 2.2, spd: 130, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 19, 31] },
     elite_composite_bowman: { name: '亚美尼亚复合弓手精锐', cls: 'ranged', sz: 1, hp: 50, atk: 4, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.0, spd: 50, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     camel_heavy: { name: '骆驼骑兵高级', cls: 'cav', sz: 1, hp: 120, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 8: 18, 16: 9, 30: 9, 35: 7 }, armorTags: [30, 31, 39] },
