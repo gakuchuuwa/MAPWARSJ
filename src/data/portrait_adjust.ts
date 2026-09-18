@@ -6198,7 +6198,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 5
         },
         "/assets/LATIN/yipilusi_piluoshi.png": {
-            "scale": 1,
+            "scale": 1.06,
             "offsetX": 0,
             "offsetY": 24
         },
@@ -7881,6 +7881,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/GREEK/aiduoniya_baxidasi.png": {
+            "scale": 1.16,
+            "offsetX": 0,
+            "offsetY": -24
         }
     },
     "folderGuides": {

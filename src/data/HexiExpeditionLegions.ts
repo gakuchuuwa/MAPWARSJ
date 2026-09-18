@@ -46,4 +46,5 @@ export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     hepan: { name: '葱岭守捉兵', tier: 3 },
     fushi: { name: '氐秦锐士', tier: 3 },
     quanrong: { name: '西戎骑兵', tier: 4 },
+    xingxingxia: { name: '交河锐骑', tier: 3 },
 };

@@ -682,9 +682,12 @@ function renderHillshade(
                 let b = colorLut[lIdx + 2];
 
                 // 气候材质提供地表色与纹理；高程仍决定起伏，雪线上方平滑淡出，呈现皑皑白雪。
+                // 🔴 [2026-09-18 主人令] 降低平原黄绿反差：低地平原(<400m)由原 0.60 调柔和至 0.35，
+                //    保留地表干湿与疏密自然质感的同时，大幅收敛黄绿反差；山地(>400m)平滑过渡至 0.52，呈现巍峨岩土立体感。
                 if (material && colorZ > 0 && material[idx + 3] > 0) {
                     const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
-                    const blend = 0.60 * snowFade * material[idx + 3] / 255;
+                    const baseBlend = colorZ < 400 ? 0.35 : Math.min(0.52, 0.35 + (colorZ - 400) * 0.00028);
+                    const blend = baseBlend * snowFade * material[idx + 3] / 255;
                     r += (material[idx] - r) * blend;
                     g += (material[idx + 1] - g) * blend;
                     b += (material[idx + 2] - b) * blend;

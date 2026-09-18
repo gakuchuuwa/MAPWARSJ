@@ -802,7 +802,7 @@ export class CityAssetManager {
 'jilizhou': '积',
         'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城
         'kepantuo': '渴盘陀',
-        'xingxingxia': '星',
+'xingxingxia': '伊',
 'yangguan': '西凉',
         'wulianghai': '乌梁海',
 'qinghai': '青海',

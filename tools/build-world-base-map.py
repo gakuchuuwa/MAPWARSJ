@@ -233,12 +233,35 @@ def main():
     put(land, 3)                                                   # 其余 → 半干草地
 
     # 温带/热带的一部分改判林地：真实荒野里森林与草地共存，
-    # 全判草地会让「矮树丛」系列一张都用不上。按格点做稳定的伪随机分配（非 rng，可复现）。
-    mix = ((lat * 7.13 + lng * 3.71).astype(np.int64) % 10)
-    f[(f == 2) & (mix < 3)] = 6          # 温带草地 → 30% 温带林地
-    f[(f == 1) & (mix < 2)] = 6          # 湿润草地 → 20% 温带林地
-    f[(f == 4) & (mix < 4)] = 7          # 丛林草地 → 40% 热带林地
-    f[(f == 18) & (mix < 3)] = 19        # 沼泽 → 30% 浅滩湿地
+    # 🔴 [2026-09-18 主人令] 消除原 ((lat * 7.13 + lng * 3.71) % 10) 产生的一维斜向平行条道道。
+    # 改用基于 2D 坐标域扭曲（Domain Warping）的多尺度各向同性自然斑块算法：
+    # 1. 坐标域双向非线性扰动，彻底打破任何轴向与平行倾斜走势；
+    # 2. 宏观尺度（波长 3~6 度）控制斑块聚散与大片开阔留白；
+    # 3. 中观尺度（波长 1~2 度）塑造大小不一的自然有机斑块，有的连起来、有的断开；
+    # 4. 微观尺度（波长 0.3~0.5 度）让边缘松散、参差不齐；
+    # 5. 内部草色穿孔（Perforation）：在斑块内部镂空透出底色，掺回草色，消除死板实心色块。
+    w_lat = lat + 0.35 * np.sin(lat * 1.3) * np.cos(lng * 1.1)
+    w_lng = lng + 0.35 * np.cos(lat * 1.1) * np.sin(lng * 1.3)
+
+    macro = np.cos(w_lat * 0.75) * np.cos(w_lng * 0.75) + \
+            0.5 * np.cos(w_lat * 1.5 + w_lng * 1.1) * np.cos(w_lat * 1.1 - w_lng * 1.5)
+    mid = np.sin(w_lat * 2.2) * np.cos(w_lng * 2.2) + \
+          0.5 * np.cos(w_lat * 3.1) * np.sin(w_lng * 3.1)
+    micro = np.sin(lat * 5.3) * np.sin(lng * 5.3)
+
+    combined = macro * 0.52 + mid * 0.36 + micro * 0.12
+    perforate = np.sin(lat * 7.9) * np.cos(lng * 7.9)
+
+    # 自然斑块门控判定（边缘松散、内部掺草色，覆盖率约 20%~35%）
+    patch_temp = (combined > 0.20) & (perforate < 0.60)     # 温带林地斑块 (~25%)
+    patch_moist = (combined > 0.30) & (perforate < 0.65)    # 湿润林地斑块 (~18%)
+    patch_jungle = (combined > 0.08) & (perforate < 0.70)   # 热带林地斑块 (~35%)
+    patch_marsh = (combined > 0.22) & (perforate < 0.60)    # 浅滩湿地斑块 (~24%)
+
+    f[(f == 2) & patch_temp] = 6          # 温带草地 → 自然有机斑块温带林地
+    f[(f == 1) & patch_moist] = 6         # 湿润草地 → 自然有机斑块温带林地
+    f[(f == 4) & patch_jungle] = 7        # 丛林草地 → 自然有机斑块热带林地
+    f[(f == 18) & patch_marsh] = 19       # 沼泽 → 自然有机斑块浅滩湿地
 
     # ══ 野战底图：冬季替换 ══════════════════════════════
     fw = f.copy()

@@ -981,7 +981,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'jilizhou': '积',
     'nuergan': '都卫', // 奴儿干都司；据点名奴儿干城，旗面避 §4.1 防重
     'kepantuo': '渴盘',
-    xingxingxia: '伊',
+'xingxingxia': '伊',
 'yangguan': '西凉',
     'wulianghai': '乌梁',
 'qinghai': '青海',
