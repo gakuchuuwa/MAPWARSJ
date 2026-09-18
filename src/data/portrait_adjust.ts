@@ -3863,7 +3863,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 3
         },
         "/assets/WEST_ASIA/jialedi_nibujianisa.png": {
-            "scale": 1.14,
+            "scale": 1.18,
             "offsetX": 0,
             "offsetY": -6
         },
@@ -3898,7 +3898,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/WEST_ASIA/yashu_saergong.png": {
-            "scale": 1.04,
+            "scale": 1,
             "offsetX": 0,
             "offsetY": -9
         },

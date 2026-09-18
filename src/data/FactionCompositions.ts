@@ -1506,7 +1506,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "siam": {
-        legionName: "帝国时代东南亚军团",
+        legionName: "帝王时代缅甸军团",
         legionType: "sub",
     },
     "xushouhui": {
@@ -2102,11 +2102,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tan_d": {
-        legionName: "城堡时代宋禁军团",
+        legionName: "城堡时代大理军团",
         legionType: "sub",
     },
     "ran_d": {
-        legionName: "城堡时代宋禁军团",
+        legionName: "城堡时代大理军团",
         legionType: "sub",
     },
     "wanzhou": {
@@ -2154,12 +2154,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "basha_d": {
-        legionName: "帝国时代东南亚军团",
+        legionName: "帝王时代缅甸军团",
         legionType: "sub",
     },
     "luohu": {
-        legionName: "城堡时代东南亚军团",
-        legionType: "sub",
+        legionName: "东南亚军团",
+        legionType: "region",
     },
     "xie_cj_d": {
         legionName: "城堡时代宋禁军团",
@@ -2327,6 +2327,91 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "xinluo": {
         legionName: "封建时代新罗军团",
+        legionType: "sub",
+    },
+    // ── 21 位边疆/非宋城堡时代势力军团精准安置（2026-09-18 主人定）──
+    "yingli": {
+        legionName: "城堡时代党项军团",
+        legionType: "sub",
+    },
+    "suke": {
+        legionName: "城堡时代东南亚军团",
+        legionType: "sub",
+    },
+    "lancang": {
+        legionName: "城堡时代东南亚军团",
+        legionType: "sub",
+    },
+    "taiyuan": {
+        legionName: "城堡时代东南亚军团",
+        legionType: "sub",
+    },
+    "ryukyu": {
+        legionName: "城堡时代幕府军团",
+        legionType: "sub",
+    },
+    "nong2": {
+        legionName: "城堡时代越南军团",
+        legionType: "sub",
+    },
+    "nongzhigao": {
+        legionName: "城堡时代越南军团",
+        legionType: "sub",
+    },
+    "mingzheng": {
+        legionName: "城堡时代吐蕃军团",
+        legionType: "sub",
+    },
+    "meitai": {
+        legionName: "城堡时代印度斯坦军团",
+        legionType: "sub",
+    },
+    "yi": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "pingnan": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "zuo_d": {
+        legionName: "帝国时代大明军团",
+        legionType: "sub",
+    },
+    "luchuan": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "dai": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "jingdong": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "luodian": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "miao": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "wumeng": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "miao_qing": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "dongzu": {
+        legionName: "城堡时代大理军团",
+        legionType: "sub",
+    },
+    "panyao": {
+        legionName: "城堡时代大理军团",
         legionType: "sub",
     },
 };
