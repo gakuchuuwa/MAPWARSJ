@@ -3556,6 +3556,9 @@ export class Scene13WarLayer {
     /** 首批素材是否已经全部就绪过一次：之后再有素材加载都不许冻结演出（见 tick 里那道闸） */
     private assetsReadyOnce = false;
 
+    /** 攻方主帅武将 id（攻城武器时代判定用） */
+    private attackerGeneralId: string | null = null;
+
     /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
 
@@ -4082,6 +4085,7 @@ export class Scene13WarLayer {
         this.adv = [0, 0];
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
+        this.attackerGeneralId = init.attackerGeneralId ?? null;
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）
@@ -4299,7 +4303,7 @@ export class Scene13WarLayer {
      */
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
-        const nine = getSiegeWeaponsForCulture(culture, this.sideLegionName(0));
+        const nine = getSiegeWeaponsForCulture(culture, this.sideLegionName(0), this.attackerGeneralId);
         // 美洲原住民不发攻城器械（没有冲车/投石机传统），城墙走 30 秒随机坍塌那条路
         if (!nine.length) return;
 
