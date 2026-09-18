@@ -1272,8 +1272,8 @@ export const INDIA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'imperial_camel_rider', count: 2 },
-        { type: 'elite_elephant_archer', count: 4 },
+        { type: 'imperial_camel_rider', count: 4 },
+        { type: 'elite_elephant_archer', count: 2 },
         { type: 'elite_skirmisher', count: 3 },
     ]
     }
@@ -1446,9 +1446,9 @@ export const PURU_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_sannahya', count: 4 },
-        { type: 'elite_skirmisher', count: 2 },
-        { type: 'elite_shrivamsha_rider', count: 3 },
+        { type: 'elite_sannahya', count: 2 },
+        { type: 'elite_skirmisher', count: 3 },
+        { type: 'elite_shrivamsha_rider', count: 4 },
     ]
     }
 ];
@@ -1848,7 +1848,7 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
  *  第一层 16 母体文化军团专属编制映射表。与第二层时代军团完全物理隔离，互不影响。 */
 export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[]; shipId: string }>> = {
     PURU: {
-        formationMode: 'balance_yoke',
+        formationMode: 'triangle',
         tiers: PURU_BASE_TIERS,
         // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」+ 四时代硬闸]
         //    本军团在役势力是蒙格（古典普鲁）＝古典时代，古典军团只许用古典船：
@@ -1895,7 +1895,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         shipId: 'DROMON', // 东南欧军团：德罗蒙战舰（拜占庭希腊火王牌战舰）
     },
     INDIA: {
-        formationMode: 'crane_wing',
+        formationMode: 'balance_yoke',
         tiers: INDIA_BASE_TIERS,
         shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
     },
