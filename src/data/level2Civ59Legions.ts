@@ -260,12 +260,12 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代吴哥军团', civ: '高棉', age: 'feudal', deStyle: 'SEAS', region: 'KHMER' as RegionType,
         castleId: 'SEAS_CASTLE_AGE3', castleName: '东南亚/高棉 吴哥窟砂岩塔',
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         shipId: 'FIRE_GALLEY',
         slots: [
-            { type: 'militia', count: 2 },
-            { type: 'ballista_elephant', count: 3 },
-            { type: 'elite_ballista_elephant', count: 4 },
+            { type: 'spearman', count: 4 },
+            { type: 'archer', count: 3 },
+            { type: 'elite_ballista_elephant', count: 2 },
         ],
     },
     {
