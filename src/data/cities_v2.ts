@@ -64,7 +64,12 @@ export type BuildingStyle =
     | 'MAYANS' | 'AMERICA' | 'INCA' | 'MUISCA' | 'MAPUCHE' | 'TUPI'
     | 'BERBER' | 'AFRICA' | 'ETHIOPIANS'
     | 'SASANIAN' | 'ATHENIANS' | 'SPARTANS' | 'MACEDONIAN'
-    | 'MOBEI_MONGOL'; // 漠北蒙古（三级自建毡帐营地，2026-09-16 主人定）
+    | 'MOBEI_MONGOL'   // 漠北蒙古（三级自建毡帐营地，2026-09-16 主人定）
+    /** [2026-09-18 主人定] 三级专属定制风格另两种。原先这两种据点的 buildingStyle 写的是
+     *  一级底座（青藏写 PURU、西域写 CEAS），三级身份只存在于已废弃的 region 字段里 ——
+     *  「region 早就取消了」，身份必须落在 buildingStyle 上，故补此两值。
+     *  渲染不变：TIBET→底座 PURU + TIBET_CASTLE_AGE3；WESTERN→底座 CEAS + WESTERN_CASTLE_AGE3。 */
+    | 'TIBET' | 'WESTERN';
 
 export interface CityDataV2 {
         id: string;
@@ -482,7 +487,7 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
     { id: 'city_chigucheng', name: '赤谷城', factionId: 'wusun', lat: 42.153304, lng: 77.585449, type: 'medium_city', troops: 10000, region: 'WUSUN', buildingStyle: 'CEAS', note: '伊犁河谷乌孙大昆弥都城，解忧公主和亲与大汉同盟战略支点' },
 
     { id: 'city_guishancheng', name: '贵山城', factionId: 'dayuan', lat: 41.290174, lng: 71.666565, type: 'small_city', region: 'WESTERN',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'WESTERN', troops: 10000,
         note: '贵山城；大宛小城',
     },
 
@@ -493,7 +498,7 @@ buildingStyle: 'CEAS', troops: 10000,
         lat: 40.5158, lng: 89.92,
         type: 'small_city',
         region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000,
         tier: 1,
         note: '楼兰/鄯善故城（罗布泊西）；楼兰旗号迁精绝' },
@@ -504,15 +509,15 @@ buildingStyle: 'CEAS', troops: 10000,
         lat: 38.41, lng: 77.24,
         type: 'small_city',
         region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000,
         note: '莎车国都；≠西夜叶城' },
     { id: 'city_shule', name: '盘橐', factionId: 'shule', lat: 39.4850, lng: 76.0007, type: 'medium_city', troops: 10000,        region: 'WESTERN_FEUDAL',
-buildingStyle: 'CEAS', tier: 1,
+buildingStyle: 'WESTERN', tier: 1,
         note: '盘橐；疏勒治所/重镇',
     },
 
-    { id: 'city_yanqi', name: '员渠城', factionId: 'yanqi', lat: 42.06, lng: 86.56, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_yanqi', name: '员渠城', factionId: 'yanqi', lat: 42.06, lng: 86.56, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
 
     {
@@ -530,7 +535,7 @@ buildingStyle: 'CEAS', tier: 1,
     { id: 'city_lanzhou', name: '皋兰', factionId: 'lanzhou', lat: 36.062422, lng: 103.765869, type: 'medium_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
 
 
-    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_ledu', name: '浇河', factionId: 'tuyu_d', lat: 35.7264, lng: 101.2061, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
     { id: 'city_lintao', name: '狄道', factionId: 'didao', lat: 35.37, lng: 103.86, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'CENTRAL' },
 
@@ -879,14 +884,14 @@ buildingStyle: 'CENTRAL', troops: 10000,
         troops: 10000,
         note: '枣阳军；孟珙统忠顺军抗蒙（《宋史·孟珙传》）' },
 
-    { id: 'city_ruoqiang', name: '卡克里克', factionId: 'ruoqiang', lat: 38.987176, lng: 88.948059, type: 'stockade', region: 'WESTERN', buildingStyle: 'CEAS', troops: 10000, note: '婼羌部落全民皆兵' },
+    { id: 'city_ruoqiang', name: '卡克里克', factionId: 'ruoqiang', lat: 38.987176, lng: 88.948059, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '婼羌部落全民皆兵' },
     {
         id: 'city_qiemo',
         name: '播仙',
         factionId: 'qiemo',
         lat: 38.14, lng: 85.53,
         type: 'stockade', region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000, note: '唐安西四镇之且末镇驻军' },
     {
         id: 'city_jingjue',
@@ -895,17 +900,17 @@ buildingStyle: 'CENTRAL', troops: 10000,
         lat: 37.06, lng: 82.69,
         type: 'pass',
         region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000,
         note: '汉西域精绝国；东汉都护府屯田戍边（索劼《汉官·西域传》）' },
-    { id: 'city_pishan', name: '固玛', factionId: 'pishan', lat: 37.570718, lng: 78.250122, type: 'stockade', region: 'WESTERN', buildingStyle: 'CEAS', troops: 10000, note: '皮山国常备武装' },
+    { id: 'city_pishan', name: '固玛', factionId: 'pishan', lat: 37.570718, lng: 78.250122, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '皮山国常备武装' },
         {
         id: 'city_weili',
         name: '库尔勒',
         factionId: 'weili',
         lat: 41.33, lng: 86.26,
         type: 'small_city', region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000, note: '尉犁国王城驻军' },
     // 迪化 — 且弥清新都 (原庭州已删除)
     // 鹰娑川 — 土尔扈特 (天山尤鲁都斯/巴音布鲁克)
@@ -913,10 +918,10 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
-    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'stockade', troops: 20000, region: 'HEXI' },
+    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'stockade', troops: 20000, region: 'HEXI', buildingStyle: 'ASIA' },
 
     // 赤亭 — 叛军 (吐鲁番绿洲)
-    { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
 
     {
@@ -926,7 +931,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         lat: 37.884, lng: 77.430,
         type: 'small_city',
         region: 'WESTERN',
-        buildingStyle: 'CEAS',
+        buildingStyle: 'WESTERN',
         troops: 10000,
         note: '西夜国都（漂沙）；≠莎车' },
 
@@ -934,9 +939,9 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
 
-    { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.22937, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'CEAS', mirror: true },
+    { id: 'city_xiuxun', name: '休循', factionId: 'khoja', lat: 39.709286, lng: 73.22937, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', mirror: true },
     { id: 'city_yinai', name: '英吉沙尔', factionId: 'yarkand', lat: 38.929502, lng: 76.225891, type: 'stockade', region: 'WESTERN_IMPERIAL',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'WESTERN', troops: 10000,
         note: '英吉沙尔；叶尔羌小城',
     },
     { id: 'city_yumenguan', name: '玉门关', factionId: 'guiyi', lat: 40.35, lng: 93.86, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
@@ -1059,7 +1064,7 @@ buildingStyle: 'KOREA', troops: 10000, tier: 0,
     { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA', mirror: true },
 
     // === 第三批新增据点 ===
-    { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
     // ---- 从 CITIES_LEGACY 迁移的城市 ----
     { id: 'city_qishan', name: '岐山', factionId: 'zhou', lat: 34.506539, lng: 107.487488, type: 'small_city', region: 'CENTRAL',
@@ -1125,7 +1130,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 
     { id: 'city_langjuxu', name: '狼居胥山', factionId: 'mengwu', lat: 47.687578, lng: 108.528442, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
-    { id: 'city_luoxie', name: '逻些', factionId: 'tubo', lat: 29.65, lng: 91.1, type: 'medium_city', troops: 10000, region: 'TIBET', buildingStyle: 'PURU', mirror: true },
+    { id: 'city_luoxie', name: '逻些', factionId: 'tubo', lat: 29.65, lng: 91.1, type: 'medium_city', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', mirror: true },
 
 
 
@@ -1220,7 +1225,7 @@ buildingStyle: 'JAPAN', troops: 10000,
 
         
 
-    { id: 'city_fusicheng', name: '伏俟城', factionId: 'xihai_d', lat: 36.76089, lng: 99.742126, type: 'small_city', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_fusicheng', name: '伏俟城', factionId: 'xihai_d', lat: 36.76089, lng: 99.742126, type: 'small_city', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
     {
         id: 'city_xianglin',
@@ -1325,7 +1330,7 @@ buildingStyle: 'KHITAN', troops: 10000,
     { id: 'city_suiye', name: '碎叶', factionId: 'xiliao', lat: 42.8, lng: 75.2667, type: 'medium_city', troops: 10000, region: 'KARA_KHITAN', buildingStyle: 'CEAS' },
 
 
-    { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', buildingStyle: 'PURU', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
+    { id: 'city_nieduo', name: '孽多', factionId: 'nandou', lat: 35.92, lng: 74.3, type: 'small_city', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '《汉书·西域传》难兜国王治；《新唐书·西域传》小勃律王居孽多城，高仙芝远征攻破处' },
 
     // ── 2026-05-26 更新：窝鲁朵八里→富贵城/拜巴里（色楞格河畔漠北回鹘陪都）──
 
@@ -1466,7 +1471,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
     { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'stockade', troops: 10000, region: 'SONG', buildingStyle: 'ASIA', mirror: true },
 
-    { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
 
 
@@ -1500,10 +1505,10 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     { id: 'city_yili', name: '固尔札', factionId: 'xibo_d', lat: 43.901854, lng: 81.315308, type: 'small_city', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CEAS' },
 
     { id: 'city_yadong', name: '卓木', factionId: 'gaxa', lat: 28.243709, lng: 89.376526, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '卓木；噶厦小城',
     },
-    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', mirror: true },
+    { id: 'city_leweizhai', name: '勒乌围', factionId: 'jinchuan_g', lat: 31.812147, lng: 101.931152, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', mirror: true },
 
 
 
@@ -1527,7 +1532,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
         note: '平陇；苗民关隘',
     },
     { id: 'city_kathmandu', name: '加德满都', factionId: 'gurkha', lat: 27.715138, lng: 85.185242, type: 'medium_city', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000, tier: 1,
+buildingStyle: 'TIBET', troops: 10000, tier: 1,
         note: '加德满都；廓喀小城',
     },
     {
@@ -1536,7 +1541,7 @@ buildingStyle: 'PURU', troops: 10000, tier: 1,
         
         note: '亚西；哈萨小城', region: 'STEPPE_IMPERIAL',
         buildingStyle: 'CEAS' },
-    { id: 'city_kokand', name: '浩罕', factionId: 'kokand', lat: 40.5333, lng: 70.9333, type: 'medium_city', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'CEAS' },
+    { id: 'city_kokand', name: '浩罕', factionId: 'kokand', lat: 40.5333, lng: 70.9333, type: 'medium_city', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN' },
 
 
     { id: 'city_fayzabad', name: '法扎巴德', factionId: 'badakhshan', lat: 37.068341, lng: 70.675049, type: 'stockade', region: 'CENTRAL_ASIA_IMPERIAL',
@@ -1581,7 +1586,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
     // 第十三类：西南土司
     // 第十四类：回疆割据（托克逊等）
-    { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'CEAS', troops: 10000, note: '杜尔伯特部游牧骑兵' },
+    { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '杜尔伯特部游牧骑兵' },
 
     { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'pass', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'CEAS', troops: 10000,
@@ -1671,7 +1676,7 @@ buildingStyle: 'KHITAN', troops: 10000,
     
     { id: 'city_kerulen', name: '巴拉斯城', factionId: 'jalair', lat: 47.969654, lng: 113.005371, type: 'small_city', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL', note: '克鲁伦中游巴尔斯浩特/契丹河董城；清克鲁伦巴尔和屯会盟城；札剌亦儿' },
 
-    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.78717, type: 'stockade', troops: 20000, region: 'STEPPE' },
+    { id: 'city_erguna', name: '捕鱼儿海', factionId: 'hongirad', lat: 48.061537, lng: 117.78717, type: 'stockade', troops: 20000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
     { id: 'city_dzungar_basin', name: '和博克', factionId: 'choros', lat: 46.713523, lng: 85.68512, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CEAS' },
 
@@ -1684,51 +1689,51 @@ buildingStyle: 'KHITAN', troops: 10000,
 
 
     // ── 2026-05-26 新增：西域/中亚城池（14个）──
-    { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_talas', name: '怛罗斯', factionId: 'tujishi', lat: 42.885995, lng: 71.347961, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
     { id: 'city_bukhara', name: '布哈拉', factionId: 'an', lat: 39.7667, lng: 64.4333, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_IMPERIAL', buildingStyle: 'CEAS' },
-    { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'medium_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_tashkent', name: '柘折城', factionId: 'shi_clan', lat: 41.3, lng: 69.3, type: 'medium_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
     // ── 2026-05-26 新增：青藏高原势力城市（24个）──
     // === 第一类：高原帝国与割据强权 ===
     { id: 'city_qionglong', name: '穹窿银', factionId: 'xiangxiong', lat: 31.193972, lng: 80.771484, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '穹窿银；象雄小城',
     },  // [2026-05-29] 原 xiangxiong 势力已删, 暂归叛军
-    { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_leh', name: '列城', factionId: 'ladakh', lat: 34.16, lng: 77.58, type: 'small_city', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
 
-    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_qingtang', name: '青唐城', factionId: 'tufa_d', lat: 36.644182, lng: 101.738892, type: 'medium_city', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
 
     { id: 'city_dangxiong', name: '当雄', factionId: 'khoshut', lat: 30.48, lng: 91.1, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '当雄；和硕特小城',
     },
 
     // === 第二类：雪域土著与古老强族 ===
     { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'pass', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '白海堡；多弥关隘',
     },
     { id: 'city_mapangyongcuo', name: '玛旁雍错', factionId: 'nvguo', lat: 30.814997, lng: 81.430664, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '玛旁雍错；女国小城',
     },
 
     {
         id: 'city_kangyanchuan', name: '察木多', factionId: 'bailan',
         lat: 31.1333, lng: 97.1667, type: 'stockade', region: 'TIBET_CASTLE',
-        buildingStyle: 'PURU', troops: 10000, tier: 4,
+        buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '察木多；白兰小城',
     },
-    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.04071, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'PURU' },
+    { id: 'city_heizong', name: '黑河宗', factionId: 'ganden', lat: 31.456786, lng: 92.04071, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET' },
 
-    { id: 'city_cuona', name: '错那', factionId: 'monpa', lat: 27.979850, lng: 91.928101, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', troops: 10000, note: '梅惹·洛珠嘉措门巴归附达赖' },
-    { id: 'city_metuo', name: '墨脱', factionId: 'lopi', lat: 29.250477, lng: 95.213013, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', troops: 10000, note: '阿波珞巴义都部据守墨脱' },
+    { id: 'city_cuona', name: '错那', factionId: 'monpa', lat: 27.979850, lng: 91.928101, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '梅惹·洛珠嘉措门巴归附达赖' },
+    { id: 'city_metuo', name: '墨脱', factionId: 'lopi', lat: 29.250477, lng: 95.213013, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '阿波珞巴义都部据守墨脱' },
     // === 第三类：世袭门阀与政教寡头 ===
     { id: 'city_chubusi', name: '楚布寺', factionId: 'karmapa', lat: 30.059496, lng: 90.532837, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '楚布寺；噶玛小城',
     },
 
@@ -1778,7 +1783,7 @@ buildingStyle: 'BASHU', mirror: true, troops: 10000,
 
 
     { id: 'city_mufu', name: '独克宗', factionId: 'jiantang', lat: 27.82, lng: 99.7, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '独克宗；建塘小城',
     },
 
@@ -1921,7 +1926,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
         note: '东康；肃慎小城',
     },
     { id: 'city_kanka', name: '康卡', factionId: 'kangju', lat: 40.832522, lng: 68.634338, type: 'stockade', region: 'WESTERN_FEUDAL',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'WESTERN', troops: 10000,
         note: '康卡；康居小城',
     },
     { id: 'city_asuka', name: '千早城', factionId: 'yamato', lat: 34.336668, lng: 135.689392, type: 'pass', region: 'JAPAN',
@@ -2090,13 +2095,13 @@ buildingStyle: 'VIETNAMESE', troops: 10000,
     },
     // ── 2026-05-28 新增：悉勃野(匹播) ──
     { id: 'city_pibo', name: '匹播', factionId: 'lang_clan', lat: 29.224032, lng: 91.746826, type: 'stockade', region: 'TIBET_CASTLE',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '匹播；帕竹朗小城',
     },
     // ── 2026-05-28 新增：工布(江达宗) ──
     // [2026-05-29] 原 gongbu 势力已删, 暂归叛军
     // ── 2026-05-28 新增：果洛(花石峡)、察哈尔(多伦) ──
-    { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'TIBET', buildingStyle: 'PURU', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
+    { id: 'city_huashixia', name: '花石峡', factionId: 'heyuan_d', lat: 35.196235, lng: 98.907166, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, mirror: true, note: '黑齿常之河源军大破吐蕃' },
 
     // ── 2026-05-30 威海(文登)；威海卫据点已删（与文登重复） ──
     { id: 'city_wendeng', name: '文登', factionId: 'weihaiwei', lat: 37.20, lng: 122.05, type: 'small_city', region: 'NORTH', buildingStyle: 'WEI', troops: 10000, note: '苏定方东征神灭军' } ];
@@ -2372,15 +2377,15 @@ buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
 
     { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CEAS', mirror: true },
     { id: 'city_rituzong', name: '日土宗', factionId: 'nanjie', lat: 33.367241, lng: 79.705811, type: 'pass', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '日土宗；南杰小城',
     },
 
 
     // ── 2026-05-28 新增：甘丹颇章(扎敦宗)、叛军(三陇沙/肩水金关) ──
-    { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_zhadunzong', name: '扎敦宗', factionId: 'gandenpozhang', lat: 29.645092, lng: 84.171753, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
-    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'CEAS' },
+    { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' },
 
     { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'HEXI',
 buildingStyle: 'KHITAN', troops: 10000, mirror: true,
@@ -2404,12 +2409,12 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     },
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
-    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'pass', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'PURU' },
+    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'pass', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET' },
 
 
 
     { id: 'city_qiongbu', name: '丁青宗', factionId: 'khyungpo', lat: 31.4100, lng: 95.5900, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000, tier: 4,
+buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '丁青宗；琼波小城',
     },
     { id: 'city_bukui', name: '卜奎', factionId: 'suolun', lat: 47.305322, lng: 123.752747, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
@@ -2431,15 +2436,15 @@ buildingStyle: 'ASIA', troops: 10000, tier: 4,
 
     // ── 2026-05-28 新增：康区藏族土司/部落据点 ──
     { id: 'city_riwoche', name: '类乌齐', factionId: 'dalung', lat: 31.3600, lng: 96.5000, type: 'stockade', region: 'TIBET_CASTLE',
-buildingStyle: 'PURU', troops: 10000, tier: 4,
+buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '类乌齐；达隆小城',
     },
     { id: 'city_derge', name: '德格', factionId: 'gar_kham', lat: 31.924163, lng: 99.181824, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '德格；德司小城',
     },
     { id: 'city_ganzi', name: '甘孜', factionId: 'kongsa', lat: 31.615967, lng: 99.981079, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '甘孜；孔萨小城',
     },
     { id: 'city_dajianlu', name: '打箭炉', factionId: 'mingzheng', lat: 30.0500, lng: 101.9600, type: 'stockade', region: 'SONG',
@@ -2449,7 +2454,7 @@ buildingStyle: 'ASIA', troops: 10000, tier: 4,
     // ── 2026-05-28 新增：波密(博窝/西藏) ──
     // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
     { id: 'city_basu', name: '八宿宗', factionId: 'daca', lat: 30.185461, lng: 97.283936, type: 'pass', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '八宿宗；达擦小城',
     },
 
@@ -2462,22 +2467,22 @@ buildingStyle: 'ASIA', troops: 10000,
 
     // ── 2026-05-28 新增：霍尔(索宗/那曲/家族) ──
     { id: 'city_suozong', name: '索宗', factionId: 'hor', lat: 31.889225, lng: 93.804016, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '索宗；霍尔小城',
     },
 
     // ── 2026-05-28 新增：董(囊谦宗/玉树/家族) ──
     { id: 'city_nangqian', name: '囊谦宗', factionId: 'dong', lat: 32.2000, lng: 96.4800, type: 'pass', region: 'TIBET_CASTLE',
-buildingStyle: 'PURU', troops: 10000, tier: 4,
+buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '囊谦宗；隆庆小城',
     },
 
     // ── 工布土王(尼池/林芝)；巴塘宗改叛军点 ──
     { id: 'city_nichi', name: '太昭', factionId: 'gongbu', lat: 29.752, lng: 93.232, type: 'pass', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '太昭；工布小城',
     },
-    { id: 'city_litangzong', name: '理塘宗', factionId: 'kangba', lat: 30.0000, lng: 100.2700, type: 'pass', region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', troops: 10000, note: '康巴骁骑招抚理塘' },
+    { id: 'city_litangzong', name: '理塘宗', factionId: 'kangba', lat: 30.0000, lng: 100.2700, type: 'pass', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '康巴骁骑招抚理塘' },
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
     { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MOBEI_MONGOL' },
@@ -2495,7 +2500,7 @@ buildingStyle: 'CEAS', troops: 10000,
 
 
     { id: 'city_gaochangcheng', name: '高昌', factionId: 'yiduhu', lat: 42.8533, lng: 89.53, type: 'medium_city', region: 'WESTERN_CASTLE',
-buildingStyle: 'CEAS', troops: 10000, mirror: true, tier: 1,
+buildingStyle: 'WESTERN', troops: 10000, mirror: true, tier: 1,
         note: '高昌；亦都护小城',
     },
 
@@ -2651,9 +2656,9 @@ buildingStyle: 'ASIA', troops: 10000,
 
 
 
-    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CEAS', mirror: true },
+    { id: 'city_hamiwei', name: '哈密卫', factionId: 'yiwu', lat: 42.8, lng: 93.5, type: 'pass', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', mirror: true },
 
-    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'CEAS', mirror: true },
+    { id: 'city_bieshibali', name: '务涂城', factionId: 'chagatai', lat: 43.988866, lng: 89.579773, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN', mirror: true },
 
 
 
@@ -2689,55 +2694,55 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 buildingStyle: 'MOBEI_MONGOL', troops: 10000,
         note: '巴彦图门；车臣小城',
     },
-    { id: 'city_huzhan', name: '忽毡', factionId: 'zhaowu', lat: 40.248096, lng: 69.658813, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CEAS' },
+    { id: 'city_huzhan', name: '忽毡', factionId: 'zhaowu', lat: 40.248096, lng: 69.658813, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN' },
 
-    { id: 'city_aoshen', name: '奥什', factionId: 'kala', lat: 40.53, lng: 72.79, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
-
-
+    { id: 'city_aoshen', name: '奥什', factionId: 'kala', lat: 40.53, lng: 72.79, type: 'small_city', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
 
-    { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'CEAS', troops: 10000, note: '温宿国王城常备武装' },
-    { id: 'city_kungang', name: '昆岗', factionId: 'adao_d', lat: 40.54, lng: 81.26, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'CEAS', troops: 10000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
-    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+
+
+    { id: 'city_dawushenkate', name: '大乌什', factionId: 'wensu', lat: 41.13, lng: 82.78, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '温宿国王城常备武装' },
+    { id: 'city_kungang', name: '昆岗', factionId: 'adao_d', lat: 40.54, lng: 81.26, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '清代阿克苏道昆岗军台；南疆驿路要冲' },
+    { id: 'city_mazhatage', name: '麻扎塔格', factionId: 'pisha', lat: 38.58, lng: 80.8, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
     { id: 'city_yutian2', name: '于阗', factionId: 'yuchi', lat: 37.1000, lng: 79.9200, type: 'medium_city', region: 'WESTERN_FEUDAL',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'WESTERN', troops: 10000,
         note: '于阗；尉迟治所/重镇',
     },
-    { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', region: 'WESTERN', buildingStyle: 'CEAS', troops: 10000, note: '扜弥国王都常备军' },
-    { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'keliya', lat: 35.45, lng: 81.1, type: 'stockade', region: 'TIBET', buildingStyle: 'PURU', troops: 10000, note: '尉迟曜于阗王助唐守克里雅山口' },
-    { id: 'city_longmucuo', name: '龙木错', factionId: 'yangtong', lat: 34.572168, lng: 80.348511, type: 'stockade', region: 'TIBET', buildingStyle: 'PURU', troops: 10000, note: '赤松德赞征羊同驻龙木错' },
-    { id: 'city_gadake', name: '噶大克', factionId: 'ali', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_yumi', name: '阿赫雅尔', factionId: 'yumi', lat: 36.85, lng: 81.65, type: 'small_city', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '扜弥国王都常备军' },
+    { id: 'city_keliyashankou', name: '阿什库尔', factionId: 'keliya', lat: 35.45, lng: 81.1, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '尉迟曜于阗王助唐守克里雅山口' },
+    { id: 'city_longmucuo', name: '龙木错', factionId: 'yangtong', lat: 34.572168, lng: 80.348511, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '赤松德赞征羊同驻龙木错' },
+    { id: 'city_gadake', name: '噶大克', factionId: 'ali', lat: 31.940459, lng: 80.139771, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
 
     { id: 'city_payangyi', name: '帕羊驿', factionId: 'supi', lat: 30.140235, lng: 83.281860, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '帕羊驿；苏毗小城',
     },
-    { id: 'city_saga', name: '萨噶', factionId: 'faqiang', lat: 29.33, lng: 85.23, type: 'stockade', region: 'YARLUNG', buildingStyle: 'PURU', troops: 10000, note: '论钦陵征服发羌驻萨噶' },
+    { id: 'city_saga', name: '萨噶', factionId: 'faqiang', lat: 29.33, lng: 85.23, type: 'stockade', region: 'YARLUNG', buildingStyle: 'TIBET', troops: 10000, note: '论钦陵征服发羌驻萨噶' },
 
     { id: 'city_sajia', name: '萨迦', factionId: 'khon', lat: 29.101759, lng: 87.665405, type: 'small_city', troops: 10000,
         
         note: '萨迦；萨迦昆小城', region: 'TIBET_CASTLE',
-        buildingStyle: 'PURU' },
+        buildingStyle: 'TIBET' },
     { id: 'city_sangzhuzi', name: '桑珠孜', factionId: 'tsangpa', lat: 29.303155, lng: 88.862915, type: 'medium_city', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '桑珠孜；藏巴汗小城',
     },
 
-    { id: 'city_jiamachikang', name: '甲玛赤康', factionId: 'spurgyal', lat: 29.74, lng: 91.7, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_jiamachikang', name: '甲玛赤康', factionId: 'spurgyal', lat: 29.74, lng: 91.7, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
     { id: 'city_juemuzong', name: '觉木宗', factionId: 'niang', lat: 29.571086, lng: 94.476929, type: 'stockade', region: 'TIBET_CASTLE',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '觉木宗；觉木宗小城',
     },
-    { id: 'city_galangzong', name: '噶朗宗', factionId: 'galangdiba', lat: 29.86, lng: 95.77, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', troops: 10000, note: '旺钦顿堆波密土王抗清' },
+    { id: 'city_galangzong', name: '噶朗宗', factionId: 'galangdiba', lat: 29.86, lng: 95.77, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '旺钦顿堆波密土王抗清' },
     { id: 'city_mangkangzong', name: '芒康宗', factionId: 'fuguo', lat: 29.67, lng: 98.59, type: 'pass', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '芒康宗；附国小城',
     },
     { id: 'city_adunzi', name: '阿墩子', factionId: 'bailang', lat: 28.48, lng: 98.85, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '阿墩子；白狼小城',
     },
     { id: 'city_dayan', name: '大研', factionId: 'mu_lijiang', lat: 26.87, lng: 100.22, type: 'stockade', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'ASIA' },
@@ -2754,17 +2759,17 @@ buildingStyle: 'ASIA', troops: 10000,
 
 
     { id: 'city_hunduduo', name: '昏度多', factionId: 'humi', lat: 37.022272, lng: 72.627869, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '昏度多；瓦罕小城',
     },
-    { id: 'city_puticheng', name: '菩提营', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'PURU' },
+    { id: 'city_puticheng', name: '菩提营', factionId: 'xiaobolu', lat: 35.3, lng: 75.64, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET' },
 
-    { id: 'city_kajier', name: '喀吉尔', factionId: 'jiashi', lat: 34.55, lng: 76.13, type: 'stockade', region: 'TIBET', buildingStyle: 'PURU', troops: 10000, note: '李玄策调克什米尔兵为唐征吐蕃' },
+    { id: 'city_kajier', name: '喀吉尔', factionId: 'jiashi', lat: 34.55, lng: 76.13, type: 'stockade', region: 'TIBET', buildingStyle: 'TIBET', troops: 10000, note: '李玄策调克什米尔兵为唐征吐蕃' },
     { id: 'city_zhaburang2', name: '札布让', factionId: 'guge', lat: 31.496599, lng: 79.799194, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '札布让；古格小城',
     },
-    { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'PURU' },
+    { id: 'city_jiangzi', name: '江孜', factionId: 'pazhu', lat: 28.92, lng: 89.59, type: 'small_city', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET' },
 
     { id: 'city_linqiong', name: '临邛', factionId: 'zhuoshi', lat: 30.4149, lng: 103.4619, type: 'small_city', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
@@ -2909,7 +2914,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 buildingStyle: 'MONGOL', troops: 10000,
         note: '赛汉塔拉；苏尼特小城',
     },
-    { id: 'city_sailan', name: '讹答剌', factionId: 'dayuzi', lat: 42.2863, lng: 69.5709, type: 'medium_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CEAS' },
+    { id: 'city_sailan', name: '讹答剌', factionId: 'dayuzi', lat: 42.2863, lng: 69.5709, type: 'medium_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN' },
 
     { id: 'city_saiyinshanda', name: '薛灵哥', factionId: 'wuliangha', lat: 49.437762, lng: 101.428528, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
@@ -2941,8 +2946,8 @@ buildingStyle: 'MONGOL', troops: 10000,
         factionId: 'qiuci',
         lat: 41.720000, lng: 82.930000, type: 'medium_city', troops: 10000, tier: 1, 
         note: '伊逻卢；龟兹治所/重镇', region: 'WESTERN',
-        buildingStyle: 'CEAS' },
-    { id: 'city_yuergun', name: '玉尔滚', factionId: 'weiwuer', lat: 41.35, lng: 81.3, type: 'stockade', region: 'WESTERN_CASTLE', buildingStyle: 'CEAS', troops: 10000, note: '伯克统领回部治安武装' },
+        buildingStyle: 'WESTERN' },
+    { id: 'city_yuergun', name: '玉尔滚', factionId: 'weiwuer', lat: 41.35, lng: 81.3, type: 'stockade', region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', troops: 10000, note: '伯克统领回部治安武装' },
     { id: 'city_bohuancheng', name: '拨换城', factionId: 'anxi', lat: 41.17, lng: 80.25, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'CEAS' },
 
 
@@ -2950,11 +2955,11 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
     { id: 'city_dashicheng', name: '大石堡', factionId: 'zhuxie', lat: 41.28, lng: 79.22, type: 'pass', region: 'WESTERN_FEUDAL',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'WESTERN', troops: 10000,
         note: '大石城；朱邪关隘',
     },
-    { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'CEAS', troops: 10000, note: '尉头国王城驻军' },
-    { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS', troops: 10000, note: '塞种部落骑射武装' },
+    { id: 'city_weitoucheng', name: '阿合奇', factionId: 'weitou', lat: 40.3, lng: 79.05, type: 'stockade', region: 'WESTERN', buildingStyle: 'WESTERN', troops: 10000, note: '尉头国王城驻军' },
+    { id: 'city_wosedecheng', name: '握瑟德', factionId: 'sai', lat: 39.77, lng: 78.56, type: 'stockade', region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN', troops: 10000, note: '塞种部落骑射武装' },
     { id: 'city_jiaseni', name: '哥疾宁', factionId: 'jiazini', lat: 33.55, lng: 68.42, type: 'medium_city', region: 'SASANIAN',
 buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
         note: '哥疾宁；伽色尼治所/重镇',
@@ -2969,7 +2974,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
 buildingStyle: 'INDI', troops: 10000,
         note: '巴米扬；梵衍那小城',
     },
-    { id: 'city_paixiucheng', name: '涓笃', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'CEAS' },
+    { id: 'city_paixiucheng', name: '涓笃', factionId: 'juandu', lat: 39.48, lng: 76.72, type: 'stockade', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
 
 
 
@@ -3042,9 +3047,9 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
     { id: 'city_gongzhubao', name: '公主堡', factionId: 'kepantuo', lat: 37.2008, lng: 75.3745, type: 'pass', troops: 10000, 
         note: '公主堡；渴盘陀关隘', region: 'WESTERN_FEUDAL',
-        buildingStyle: 'CEAS' },
+        buildingStyle: 'WESTERN' },
     { id: 'city_jimai', name: '吉麦', factionId: 'gongtang', lat: 29.3012, lng: 90.6812, type: 'stockade', region: 'TIBET_IMPERIAL',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '吉麦；贡唐小城',
     },
     // ── 2026-06-11 新增：库页岛民族据点 ──
@@ -3118,7 +3123,7 @@ buildingStyle: 'SEAS', troops: 10000,
         note: '上丁；巴沙小城',
     },
     // ── 2026-06-12 新增：夏顿@廷布 ──
-    { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_tingbu', name: '廷布', factionId: 'xiadun', lat: 27.472, lng: 89.639, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
     { id: 'city_huangchuan', name: '弋阳', factionId: 'huang_d', lat: 32.131, lng: 115.051, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
@@ -3138,22 +3143,22 @@ buildingStyle: 'SEAS', troops: 10000,
 
 
     { id: 'city_sapi', name: '萨毗营', factionId: 'gar', lat: 37.631470, lng: 88.884888, type: 'stockade', region: 'TIBET',
-buildingStyle: 'PURU', troops: 10000,
+buildingStyle: 'TIBET', troops: 10000,
         note: '萨毗城；噶尔氏小城',
     },
     { id: 'city_shayuan', name: '长宁', factionId: 'tongzhou', lat: 35.0032, lng: 109.9319, type: 'small_city', region: 'CENTRAL', buildingStyle: 'CENTRAL', troops: 10000, note: '大荔沙苑；西魏沙苑之战古战场；唐沙苑监牧马地；同州治' },
     { id: 'city_gasikou', name: '噶斯口', factionId: 'qinghai', lat: 38.078345, lng: 89.288635, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'CEAS', mirror: true },
 
 
-    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'golog', lat: 37.838198, lng: 91.678162, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_niubiziliang', name: '牛鼻子梁', factionId: 'golog', lat: 37.838198, lng: 91.678162, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
-    { id: 'city_mahaitai', name: '马海台', factionId: 'xining', lat: 38.045995, lng: 94.622498, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_mahaitai', name: '马海台', factionId: 'xining', lat: 38.045995, lng: 94.622498, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
-    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.896, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU' },
+    { id: 'city_taijinaier', name: '台吉乃尔', factionId: 'dulan', lat: 36.4266, lng: 94.896, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET' },
 
 
 
-    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'PURU', mirror: true },
+    { id: 'city_gasinaoer', name: '尕斯淖尔', factionId: 'kalun', lat: 38.3593, lng: 90.1334, type: 'stockade', troops: 10000, region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', mirror: true },
 
 
 
@@ -3190,7 +3195,7 @@ buildingStyle: 'PURU', troops: 10000,
 
     { id: 'city_cangyuan', name: '沧源', factionId: 'wazu', lat: 23.3725, lng: 99.4263, type: 'stockade', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'ASIA' },
 
-    { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'CEAS' },
+    { id: 'city_huoluoge', name: '霍罗格', factionId: 'tajikezu', lat: 37.49, lng: 71.55, type: 'stockade', troops: 10000, region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN' },
 
     { id: 'city_mizhina', name: '密支那', factionId: 'jingpozu', lat: 25.38, lng: 97.4, type: 'small_city', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'ASIA' },
 
@@ -3199,7 +3204,7 @@ buildingStyle: 'PURU', troops: 10000,
     { id: 'city_tanzhong', name: '潭中', factionId: 'liuzhou', lat: 24.28, lng: 109.41, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'ASIA' },
     { id: 'city_yunyang', name: '郧阳', factionId: 'luming', lat: 32.8127, lng: 110.8122, type: 'small_city', troops: 10000, region: 'MING', buildingStyle: 'ASIA' },
     { id: 'city_zhongshan', name: '中山', factionId: 'dingzhou', lat: 38.4708, lng: 115.0626, type: 'medium_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
-    { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'PURU', mirror: true },
+    { id: 'city_ledou', name: '乐都', factionId: 'shanzhou', lat: 36.49, lng: 102.37, type: 'stockade', troops: 10000, region: 'TIBET', buildingStyle: 'TIBET', mirror: true },
 
 
 
@@ -3282,7 +3287,7 @@ buildingStyle: 'PURU', troops: 10000,
     { id: 'city_yeerdishi', name: '也儿的石', factionId: 'aertai', lat: 47.85, lng: 85.60, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'CEAS', note: '额尔齐斯河上游乃蛮故地，屈出律1204年退守重整残部' },
     { id: 'city_kaerkahe', name: '卡尔卡河', factionId: 'kumanni', lat: 47.27, lng: 37.55, type: 'pass', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '1223卡尔卡河之战库曼联军前哨，忽炭汗力促罗斯王公结盟' },
     { id: 'city_mierkefu', name: '密尔科夫', factionId: 'xikuman', lat: 45.65, lng: 27.05, type: 'pass', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN', note: '喀尔巴阡东麓库曼主教区要塞，吉尔根汗庇护库曼难民' },
-    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'feierganna', lat: 40.89, lng: 71.34, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'CEAS', note: '费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城' },
+    { id: 'city_ahexikesi', name: '阿赫西克特', factionId: 'feierganna', lat: 40.89, lng: 71.34, type: 'small_city', troops: 10000, region: 'WESTERN_CASTLE', buildingStyle: 'WESTERN', note: '费尔干纳旧都，忽都鲁（巴布尔之母）长期坐镇筹粮守城' },
     { id: 'city_hongsa', name: '洪萨', factionId: 'qibucha', lat: 5.53, lng: -73.36, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '穆伊斯卡联盟萨奎首府（今通哈），帕坎奇克所在' },
     { id: 'city_kabufoliwu', name: '卡布弗里乌', factionId: 'tamoyue', lat: -22.88, lng: -42.03, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '塔莫约联盟领地，昆汉贝贝率众抗葡萄牙' },
     { id: 'city_kelipuli', name: '科利普利', factionId: 'naweierbuta', lat: -37.95, lng: -72.43, type: 'stockade', troops: 10000, region: 'MAPUCHE', buildingStyle: 'ANDE', note: '纳韦尔布塔山东南麓要冲，加尔瓦里诺断腕巡回动员部族血誓之地' },

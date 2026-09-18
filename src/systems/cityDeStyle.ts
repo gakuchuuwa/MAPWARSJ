@@ -193,3 +193,59 @@ export function resolveCityDeBuildingStyle(cityId: string, cityType: string, cit
     if (cityRegion && (cityRegion.includes('STEPPE') || cityRegion.includes('MOBEI_MONGOL'))) return 'YURT';
     return REGION_TO_DE_STYLE[region] ?? null;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+ * 🔴 [2026-09-18 主人定] 建筑风格三层铁律
+ *   「全部据点必须分为 16 种建筑风格，这是一级建筑风格。
+ *     然后一级 16 建筑风格，又分出二级 59 + 三级 3 种，草原毡帐是三级里的。」
+ *
+ *   一级 = 16 套（本文件 BASE_16_BUILDING_STYLES）：**每一座据点都必须落在其中一种**，无例外。
+ *   二级 = 59 文明（cities_v2.BuildingStyle 里那 59 个文明值，各有专属城堡）。
+ *   三级 = 皮肤级细分，草原毡帐 YURT 是其中之一。
+ *
+ *   ⚠️ 三级**不是**第 17 种一级风格。resolveCityDeBuildingStyle() 为了渲染会直接返回
+ *   'YURT'（毡帐营寨贴图 + MONG_CASTLE_AGE3），那是三级皮肤；要问「这座城的一级风格是哪一种」
+ *   一律走 resolveCityBase16Style()，它保证返回 16 之一。
+ *   验收：npm run city:style-audit（1088 座必须 100% 落在 16 种一级风格里）
+ * ══════════════════════════════════════════════════════════════════════ */
+
+/** 一级建筑风格 · 16 套（唯一权威，顺序与 cities_v2.BuildingStyle 的母体段一致）。 */
+export const BASE_16_BUILDING_STYLES = [
+    'ASIA', 'WEST', 'EAST', 'SLAV', 'MEDI', 'ORIE', 'CEAS', 'INDI',
+    'PURU', 'SEAS', 'MESO', 'ANDE', 'AFRI', 'PERSIAN', 'GREEK', 'THRACIAN',
+] as const;
+
+/** 一级 16 套的中文名（界面/审计统一口径）。 */
+export const BASE_16_STYLE_LABELS: Record<string, string> = {
+    ASIA: '东亚', WEST: '西欧', EAST: '东南欧', SLAV: '东北欧',
+    MEDI: '地中海', ORIE: '中东', CEAS: '中亚', INDI: '印度',
+    PURU: '普鲁', SEAS: '东南亚', MESO: '中美', ANDE: '安第斯',
+    AFRI: '非洲', PERSIAN: '波斯', GREEK: '希腊', THRACIAN: '色雷斯',
+};
+
+const BASE_16_SET: ReadonlySet<string> = new Set(BASE_16_BUILDING_STYLES);
+
+/** 三级专属定制风格（共 3 种）→ 它挂在哪一种一级风格底下。
+ *  🔴 权威 = _citytest.html 的 LAYER3_CUSTOM_GROUPS（本表必须与那一份同步，别另抄一份判断）：
+ *    · 青藏 TIBET          → 一级 PURU 普鲁（专属城堡 TIBET_CASTLE_AGE3 藏式金顶宗堡）
+ *    · 西域 WESTERN        → 一级 CEAS 中亚（专属城堡 WESTERN_CASTLE_AGE3 汉伊高台绿洲要塞）
+ *    · 漠北蒙古 MOBEI_MONGOL/YURT 毡帐营地 → 一级 **ASIA 东亚**（专属城堡 MONG_CASTLE_AGE3 木石大斡耳朵）
+ *      🔴 [2026-09-16 + 2026-09-18 主人两次口述]「漠北蒙古属于东亚」「草原毡帐是东亚」。
+ *      ⚠️ 别按「DE 把蒙古归 Central Asian 建筑集」推成 CEAS —— 主人定的是东亚，以主人口述为准。 */
+export const TIER3_STYLE_TO_BASE16: Record<string, string> = {
+    YURT: 'ASIA',
+    TIBET: 'PURU',
+    WESTERN: 'CEAS',
+};
+
+/** 某据点的**一级建筑风格**（16 选 1，永不返回三级皮肤）。
+ *  与 resolveCityDeBuildingStyle 同一条解析链，只是最后把三级皮肤折回它的一级。 */
+export function resolveCityBase16Style(
+    cityId: string, cityType: string, cityRegion: string | undefined,
+    lat: number, lng: number, buildingStyle?: string,
+): string | null {
+    const raw = resolveCityDeBuildingStyle(cityId, cityType, cityRegion, lat, lng, buildingStyle);
+    if (!raw) return null;
+    if (BASE_16_SET.has(raw)) return raw;
+    return TIER3_STYLE_TO_BASE16[raw] ?? REGION_TO_DE_STYLE[raw] ?? null;
+}

@@ -104,7 +104,9 @@
     "era:audit": "node scripts/audit_general_centuries.cjs",
     "era:todo": "node scripts/audit_general_centuries.cjs --todo",
     "age:audit": "node tools/age_rules_audit.mjs",
-    "legion:ghost-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ghost_legions.mts"
+    "legion:ghost-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ghost_legions.mts",
+    "city:style-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_city_base16_style.mts",
+    "legion:fallback-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_fallback_chain.mts"
   },
   "type": "module",
   "keywords": [],
