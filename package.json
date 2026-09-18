@@ -103,7 +103,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "era:audit": "node scripts/audit_general_centuries.cjs",
     "era:todo": "node scripts/audit_general_centuries.cjs --todo",
-    "age:audit": "node tools/age_rules_audit.mjs"
+    "age:audit": "node tools/age_rules_audit.mjs",
+    "legion:ghost-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ghost_legions.mts"
   },
   "type": "module",
   "keywords": [],

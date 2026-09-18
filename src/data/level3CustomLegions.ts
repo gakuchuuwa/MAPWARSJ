@@ -309,11 +309,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '古典时代匈奴军团',
-        formationMode: 'square',
+        formationMode: 'echelon',
         slots: [
-            { type: 'elite_tarkan', count: 3 },
+            { type: 'elite_tarkan', count: 4 },
             { type: 'steppe_lancer', count: 3 },
-            { type: 'mangudai', count: 3 },
+            { type: 'mangudai', count: 2 },
         ],
         regions: ['STEPPE_ANTIQUITY'],
         parentLegion: '中亚军团',

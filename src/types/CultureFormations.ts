@@ -1577,6 +1577,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     GREEK: "古典时代希腊军团",
     THRACIAN: '古典时代色雷斯军团',
     PERSIAN: '古典时代波斯军团',
+    ARMENIANS: '封建时代亚美尼亚军团',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 59 表这一支自己声明 region=ARMENIANS
     PERSIAN_CASTLE: '城堡时代波斯军团',
     CUMAN: '城堡时代库曼军团',
     BRITONS: '城堡时代不列颠军团',
@@ -1600,7 +1601,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     BENGALIS_ANTIQUITY: '古典时代孟加拉军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代瞿折罗军团',
     VIETNAMESE: "城堡时代越南军团",
-    KHMER: '城堡时代高棉军团',
+    KHMER: '封建时代吴哥军团',   // 🔴 [2026-09-18] 原挂【城堡时代高棉军团】全仓查无此军=幽灵；二级 59 表的【封建时代吴哥军团】自己声明 region=KHMER
     MAYANS: '封建时代玛雅军团',
     MAPUCHE: '帝国时代马普切军团',
     MUISCA: '城堡时代穆伊斯卡军团',
