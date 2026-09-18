@@ -30,13 +30,16 @@
 ## 二、军团是怎么选出来的（唯一链路）
 
 ```
-势力 FACTION_COMPOSITIONS[factionId].legionName   ← 有番号军团就用它
-  └─ 查不到 → 据点所属**文化区** CULTURE_LEGION_NAMES[region]
-       └─ 再查不到 → 幽灵（禁止出现）
+势力 FACTION_COMPOSITIONS[factionId].legionName   ← 势力挂的那支军团
+  └─ 查不到 → 幽灵（禁止出现）
 ```
 
-🔴 **不是按建筑风格选军团**。建筑风格（`resolveCityDeBuildingStyle`）只决定城池长什么样，
-与军团编制无关。文化区现有 171 个，不是 78 个；军团 197 支，与建筑风格不是一一对应。
+🔴 [2026-09-18 主人连说三遍]「**文化区早就取消了**」。据点的身份只有
+**建筑风格三层（一级 16 + 二级 59 + 三级 3）**。代码里那条
+`CULTURE_LEGION_NAMES[region]` 的回落是**没清干净的旧账**，不是现行设计，
+别拿它当判据、更别照着它写新逻辑。
+
+建筑风格与军团的唯一交集：**三级军团被删时的保底安置**（见 city-building-style-tiers.md）。
 
 ## 三、铁律
 

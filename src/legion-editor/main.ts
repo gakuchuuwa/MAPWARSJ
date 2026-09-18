@@ -50,7 +50,7 @@ import {
 } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
-import { resolveFallbackForFaction, planFallbackForDeletedLegion } from '../systems/LegionFallbackOnDelete';
+import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -3605,6 +3605,11 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
             const name = (btn as HTMLElement).dataset.deleteName!;
             if (isBase16CultureLegion(name)) {
                 showToast('❌ 一级：16 母体文化军团不可删除', true);
+                return;
+            }
+            // 🔴 [2026-09-18 主人定] 78 支基础军团不可删除：三级那 3 支保底军团同样拦住
+            if (isBaseFallbackLegion(name)) {
+                showToast('❌ 三级保底军团不可删除，青藏/西域/漠北蒙古的武将靠它兜底', true);
                 return;
             }
             // 🔴 [2026-09-16] 先把重排结果算出来给主人看，再问删不删

@@ -11,7 +11,7 @@
  */
 import { FACTIONS } from '../data/factions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { planFallbackForDeletedLegion, applyFallbackPlan } from '../systems/LegionFallbackOnDelete';
+import { planFallbackForDeletedLegion, applyFallbackPlan, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 import {
     CULTURE_LEGION_NAMES,
     getLegionCompositionByName,
@@ -862,6 +862,11 @@ async function remove(): Promise<void> {
         ? '\n判不了时代/风格的 ' + plan.skipped.length + ' 家将跟随文化区：\n  · '
             + plan.skipped.slice(0, 5).map((s) => s.factionId + '（' + s.reason + '）').join('\n  · ')
         : '';
+    // 🔴 [2026-09-18 主人定] 78 支基础军团不可删除：三级那 3 支保底军团也在内
+    if (isBaseFallbackLegion(name)) {
+        window.alert('【' + name + '】是三级保底军团，不可删除 —— 青藏/西域/漠北蒙古风格的武将靠它兜底。');
+        return;
+    }
     if (!window.confirm(
         '确定删除军团【' + name + '】？\n\n用它的 ' + affected + ' 家势力将重新安置'
         + '（二级 ' + toL2 + ' / 一级 ' + toL1 + '）：\n' + lines + more + skipTip,
