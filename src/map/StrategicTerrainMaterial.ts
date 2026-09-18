@@ -71,6 +71,53 @@ export function sampleClimateMaterials(
     return result;
 }
 
+/** 连续、确定的地理噪声；共享经纬度取相同值，不以瓦片为单位重复。 */
+function groundNoise(lat: number, lng: number, cells: number): number {
+    const x = (((lng + 180) % 360 + 360) % 360) / 360 * cells;
+    const y = (lat + 90) / 360 * cells;
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const smooth = (t: number) => t * t * (3 - 2 * t);
+    const fx = smooth(x - ix), fy = smooth(y - iy);
+    const hash = (cx: number, cy: number) => {
+        let h = Math.imul(((cx % cells) + cells) % cells, 374761393)
+            ^ Math.imul(cy, 668265263);
+        h = Math.imul(h ^ (h >>> 13), 1274126177);
+        return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+    };
+    const a = hash(ix, iy) * (1 - fx) + hash(ix + 1, iy) * fx;
+    const b = hash(ix, iy + 1) * (1 - fx) + hash(ix + 1, iy + 1) * fx;
+    return a * (1 - fy) + b * fy;
+}
+
+/** 只调整战略地图温带地表的视觉混合，不改世界查找表及战术地形。 */
+export function varyTemperateMaterials(
+    materials: Map<string, number>, lat: number, lng: number,
+): Map<string, number> {
+    if (!['grs', 'gr2', 'for'].some(name => materials.has(name))) return materials;
+    // 大片聚散中叠加较小变化；二维格点噪声避免平行正弦条带。
+    const variation = groundNoise(lat, lng, 180) * 0.55
+        + groundNoise(lat, lng, 540) * 0.30
+        + groundNoise(lat, lng, 1440) * 0.15;
+    const result = new Map<string, number>();
+    const add = (name: string, weight: number) => result.set(name, (result.get(name) ?? 0) + weight);
+    for (const [name, weight] of materials) {
+        if (name === 'for') {
+            // 林下保留土色，局部透出草色，弱化整片黄褐色的边界。
+            const grass = 0.28 + variation * 0.30;
+            add(name, weight * (1 - grass));
+            add('gr2', weight * grass);
+        } else if (name === 'grs' || name === 'gr2') {
+            // 两张现有温带草地同色系互混，形成柔和的枯绿变化。
+            const alternate = name === 'grs' ? 0.18 + variation * 0.25 : 0.08 + variation * 0.22;
+            add(name, weight * (1 - alternate));
+            add(name === 'grs' ? 'gr2' : 'grs', weight * alternate);
+        } else {
+            add(name, weight);
+        }
+    }
+    return result;
+}
+
 /** 在共享采样节点间混合材质，避免气候块边缘和相邻瓦片出现硬接缝。 */
 export function blendMaterialGrid(
     grid: MaterialNode[], columns: number, width: number, height: number,
@@ -117,8 +164,9 @@ export async function createTerrainMaterial(
         const lat = Math.atan(Math.sinh(northY + (southY - northY) * y * STEP / height)) * 180 / Math.PI;
         for (let x = 0; x < columns; x++) {
             const lng = bounds.west + (bounds.east - bounds.west) * x * STEP / width;
-            nodes.push(sampleClimateMaterials(lat, lng, worldWidth, worldHeight,
-                (sampleLat, sampleLng) => queryBaseTile({ lat: sampleLat, lng: sampleLng, isSiege: false, isWinter: false })));
+            const climate = sampleClimateMaterials(lat, lng, worldWidth, worldHeight,
+                (sampleLat, sampleLng) => queryBaseTile({ lat: sampleLat, lng: sampleLng, isSiege: false, isWinter: false }));
+            nodes.push(varyTemperateMaterials(climate, lat, lng));
         }
     }
     const assets = new Map<string, Uint8ClampedArray | null>();

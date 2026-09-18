@@ -849,7 +849,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xingxingxia_guoxiaoke: { generalId: 'xingxingxia_guoxiaoke', tier: 'ordinary', tacticalSkillId: 'ts_366', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_712', aptitude: 'create' , attackStyle: 'attack'},
+    xingxingxia_guoxiaoke: { generalId: 'xingxingxia_guoxiaoke', tier: 'ordinary', tacticalSkillId: 'ts_366', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_398', atkBalanceSkillId: 'ts_167', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_815', defBalanceSkillId: 'ts_769', defDisadvantageSkillId: 'ts_712', aptitude: 'create', attackStyle: 'attack' },
 
 
 

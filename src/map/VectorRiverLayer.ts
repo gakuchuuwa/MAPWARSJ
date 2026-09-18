@@ -1,10 +1,14 @@
 import L from 'leaflet';
 import { smoothRiverLine } from './RiverGeometry';
 import { gameLog } from '../utils/GameLogger';
-import { STRATEGIC_WATER_PALETTE, STRATEGIC_WATER_COLOR, STRATEGIC_RIVER_BANK_COLOR } from './StrategicWaterMaterial';
-
+// 🔴 [2026-09-18 主人要求] 矢量河流统一对齐浅色海域/近岸水面色 RGB [88, 152, 168]（#5898A8）
+// 消除深浅两层重叠割裂感，使矢量细流与栅格水面在视觉上浑然一体
+const VECTOR_RIVER_BASE = [88, 152, 168] as const;
+const VECTOR_RIVER_WATER_COLOR = `rgb(${VECTOR_RIVER_BASE.join(',')})`;
 // 柔和河岸微阴影：从水体基色派生微暗半透明色，模拟细河嵌进地形的微河床边缘
-const RIVER_BED_SHADOW_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(v => Math.round(v * 0.58)).join(',')})`;
+const RIVER_BED_SHADOW_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.round(v * 0.58)).join(',')})`;
+// 河心微光/反光：针对主要宽河轻微提亮
+const VECTOR_RIVER_TONE_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.min(255, Math.round(v * 1.10))).join(',')})`;
 
 /**
  * VectorRiverLayer
@@ -301,7 +305,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         }
 
         return {
-            color: STRATEGIC_WATER_COLOR,
+            color: VECTOR_RIVER_WATER_COLOR,
             weight: VectorRiverLayer.getWaterWeight(feature, zoom),
             opacity: 0.92,
             lineCap: 'round',
@@ -316,7 +320,7 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const weight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
             stroke: feature?.properties?.featurecla !== 'Lake Centerline' && weight >= 3.6,
-            color: STRATEGIC_RIVER_BANK_COLOR,
+            color: VECTOR_RIVER_TONE_COLOR,
             weight: Math.max(1.0, weight * 0.45),
             opacity: 0.35,
             lineCap: 'round',
