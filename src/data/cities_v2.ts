@@ -805,7 +805,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
     { id: 'city_qingyuan', name: '清远', factionId: 'chen', lat: 23.68, lng: 113.06, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'VIETNAMESE' },
 
-    { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
+    { id: 'city_gaoque', name: '高阙塞', factionId: 'baiyang', lat: 41.195202, lng: 107.166138, type: 'pass', troops: 10000, region: 'HEXI', buildingStyle: 'ASIA', mirror: true },
 
     { id: 'city_hengpuguan', name: '横浦关', factionId: 'shixing', lat: 25.32, lng: 114.26, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'VIETNAMESE' },
 
@@ -2639,7 +2639,7 @@ buildingStyle: 'ASIA', troops: 10000,
     { id: 'city_jingkou', name: '濡须口', factionId: 'wuwu_d', lat: 31.580000, lng: 117.920000, type: 'pass', region: 'JIANGNAN', buildingStyle: 'JIANGNAN', troops: 10000, mirror: true, note: '濡须水入巢湖水口；曹魏与孙吴濡须之战古战场；邻无为州' },
     { id: 'city_liyang', name: '巨鹿', factionId: 'ranwei_d', lat: 37.22, lng: 115.04, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
-    { id: 'city_ningyuan', name: '宁远城', factionId: 'zu_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 10000, region: 'MING', buildingStyle: 'WEI' },
+    { id: 'city_ningyuan', name: '宁远城', factionId: 'zu_d', lat: 40.618, lng: 120.72, type: 'pass', troops: 10000, region: 'MING', buildingStyle: 'ASIA', mirror: true },
 
 
     { id: 'city_salhu', name: '萨尔浒', factionId: 'manzhou', lat: 41.841, lng: 124.046, type: 'pass', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },

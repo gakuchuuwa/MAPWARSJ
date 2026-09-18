@@ -34,7 +34,11 @@ export interface TreeAssetMeta {
     frames: number[];
 }
 
-/** 24 种自然树木资产的精确元数据与站立健康帧变体白名单（彻底剔除采伐/倒伏/枯木桩动作帧） */
+/** 
+ * 自然树木资产的精确元数据与接地锚点配置
+ * 🔴 树根接地锚点（anchorX, anchorY）严格落在树干底座接触地面处，
+ *    保证四季切换时无论树冠高矮胖瘦，树木在地面上的根部绝对钉死不动！
+ */
 export const TREE_METAS: Record<string, TreeAssetMeta> = {
     OAK: { boxW: 332, boxH: 228, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
     GREEN_OAK: { boxW: 184, boxH: 200, anchorX: 112, anchorY: 172, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
@@ -51,6 +55,7 @@ export const TREE_METAS: Record<string, TreeAssetMeta> = {
     PALM: { boxW: 208, boxH: 208, anchorX: 128, anchorY: 180, frames: [6, 12, 15, 21, 27, 30] },
     OLIVE: { boxW: 216, boxH: 176, anchorX: 140, anchorY: 156, frames: [0, 3, 6, 9, 12, 15, 18, 21] },
     CYPRESS: { boxW: 128, boxH: 192, anchorX: 100, anchorY: 184, frames: [0, 3, 6, 9] },
+    CYPRESS_DEC: { boxW: 80, boxH: 116, anchorX: 60, anchorY: 108, frames: [0, 1, 2, 3, 4, 5] },
     WILLOW: { boxW: 240, boxH: 240, anchorX: 152, anchorY: 200, frames: [0, 1, 2] },
     BAMBOO: { boxW: 108, boxH: 100, anchorX: 68, anchorY: 76, frames: [9, 10, 11] },
     LUSH_BAMBOO: { boxW: 212, boxH: 180, anchorX: 118, anchorY: 146, frames: [0, 3, 6, 9] },
@@ -60,6 +65,29 @@ export const TREE_METAS: Record<string, TreeAssetMeta> = {
     BAOBAB: { boxW: 348, boxH: 236, anchorX: 148, anchorY: 200, frames: [0, 3, 6, 9] },
     DRAGON_TREE: { boxW: 200, boxH: 172, anchorX: 124, anchorY: 144, frames: [0, 2, 4, 6] },
     ACACIA: { boxW: 340, boxH: 236, anchorX: 140, anchorY: 196, frames: [0, 3, 6, 9] },
+    ITALIAN_PINE: { boxW: 152, boxH: 124, anchorX: 88, anchorY: 96, frames: [0, 2, 4, 6, 8, 10, 12, 14, 16] },
+    MONKEY_PUZZLE: { boxW: 220, boxH: 208, anchorX: 140, anchorY: 180, frames: [0, 1, 2, 3] },
+    BRAZILWOOD: { boxW: 268, boxH: 244, anchorX: 164, anchorY: 196, frames: [0, 2, 4, 6, 8, 10] },
+    MANGROVE: { boxW: 220, boxH: 176, anchorX: 132, anchorY: 144, frames: [0, 2, 4, 6, 8, 10, 12] },
+    // 🔴 [2026-09-19 补] CACTUS 是 pickTree 会返回、却漏在元数据表外的一种（美洲荒漠底图用）。
+    //    实测：preview 60×76、frames.png 660×76 = 11 帧齐；锚点取最低有彩色像素（树干接地）(36,65)。
+    //    漏登记时它会走「按图片尺寸底部居中」兜底（无接地锚点），且不参与预载。
+    CACTUS: { boxW: 60, boxH: 76, anchorX: 36, anchorY: 65, frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+    WAX_PALM: { boxW: 272, boxH: 288, anchorX: 180, anchorY: 264, frames: [0, 1, 2, 3] },
+    BUSH_TREE_A: { boxW: 156, boxH: 104, anchorX: 86, anchorY: 74, frames: [0, 1, 2, 3] },
+    // 战役大树阔叶变体（精确锚定树干底座接地处，消除换季跳动）：
+    SCENARIO_TREE_A: { boxW: 176, boxH: 172, anchorX: 112, anchorY: 148, frames: [0, 1, 2] },
+    SCENARIO_TREE_B: { boxW: 164, boxH: 188, anchorX: 104, anchorY: 168, frames: [0, 1, 2] },
+    SCENARIO_TREE_C: { boxW: 164, boxH: 188, anchorX: 104, anchorY: 164, frames: [0, 1, 2] },
+    SCENARIO_TREE_D: { boxW: 172, boxH: 160, anchorX: 108, anchorY: 132, frames: [0, 1, 2] },
+    SCENARIO_TREE_E: { boxW: 160, boxH: 188, anchorX: 108, anchorY: 168, frames: [0, 1, 2] },
+    SCENARIO_TREE_F: { boxW: 364, boxH: 200, anchorX: 164, anchorY: 180, frames: [0, 1, 2] },
+    SCENARIO_TREE_G: { boxW: 184, boxH: 204, anchorX: 120, anchorY: 180, frames: [0, 1, 2] },
+    SCENARIO_TREE_H: { boxW: 184, boxH: 204, anchorX: 120, anchorY: 180, frames: [0, 1, 2] },
+    SCENARIO_TREE_I: { boxW: 336, boxH: 188, anchorX: 136, anchorY: 172, frames: [0, 1, 2] },
+    SCENARIO_TREE_J: { boxW: 160, boxH: 160, anchorX: 104, anchorY: 136, frames: [0, 1, 2] },
+    SCENARIO_TREE_K: { boxW: 164, boxH: 160, anchorX: 104, anchorY: 136, frames: [0, 1, 2] },
+    SCENARIO_TREE_L: { boxW: 180, boxH: 144, anchorX: 112, anchorY: 120, frames: [0, 1, 2] },
 };
 
 /**
@@ -111,6 +139,36 @@ function treeFramesImage(asset: string, onReady: () => void): HTMLImageElement |
     TREE_FRAMES_IMG.set(asset, img);
     return null;
 }
+
+/** 检查某树资产是否已在内存中解码完毕 */
+function isTreeAssetReady(asset: string): boolean {
+    const meta = TREE_METAS[asset];
+    if (meta) {
+        const frames = TREE_FRAMES_IMG.get(asset);
+        if (frames && frames.complete && frames.naturalWidth > 0) return true;
+        const prev = TREE_IMG.get(asset);
+        if (prev && prev.complete && prev.naturalWidth > 0) return true;
+        return false;
+    }
+    const im = TREE_IMG.get(asset);
+    return !!(im && im.complete && im.naturalWidth > 0);
+}
+
+/**
+ * 🔴 [2026-09-19 主人令「全面修复」] 撤掉「启动全量预载」。
+ *
+ * 上一版在构造时调 `preloadAllTreeAssets()`，把 TREE_METAS 里 43 种树 × (preview.png + frames.png)
+ * 一次全拉 —— 实测 **86 个文件、13.1 MB**（最肥 RAINFOREST 1.25MB / BAOBAB 1MB / AUTUMN_OAK 0.96MB），
+ * 与主人自己的性能铁律冲突（`docs/03-runtime/perf-doctor.md` 把「开机预载」列为已知病灶；
+ * 军团那次的教训是全量预载 300+ 单位 → 实测 600 次长任务 / 160 秒）。
+ *
+ * 而且它是**冗余**的：
+ *   1. 采样循环（`renderInner`）对每棵采到的树都会把「本季 asset + 下一季 assetNext」两张
+ *      一起预热 —— 屏幕上画得出来的树，本来就提前一整季把下一季贴图拿到手；
+ *   2. 真正确保「换季不消失」的是 `paint()` 里那道判断：**两张都解码就绪才允许交叉淡化，
+ *      否则整棵满额画老树**。
+ * 故只保留「按采样预热 + 就绪才淡化」，不再开机全量拉图。
+ */
 
 if (import.meta.env.DEV) {
     perfDoctor.registerCache({
@@ -405,7 +463,7 @@ export class VegetationLayer {
             const gameSeason = currentGameSeason();
             if (this.sampledGameSeason !== gameSeason) {
                 this.lastRenderKey = '';
-                this.scheduleRender();
+                this.render(); // 换季翻转瞬间立即同步重绘，零延迟无缝接盘新季
                 isRafActive = false;
                 this.rafId = null;
                 return;
@@ -426,7 +484,7 @@ export class VegetationLayer {
             const gameSeason = currentGameSeason();
             if (this.sampledGameSeason !== gameSeason) {
                 this.lastRenderKey = '';
-                this.scheduleRender();
+                this.render(); // 换季立即同步重绘
                 return;
             }
             if (seasonBlend() > 0 && !isRafActive) {
@@ -534,12 +592,21 @@ export class VegetationLayer {
                 treeBlend = seasonBlend(hash(it.c.lat, it.c.lng, 99) * 0.35);
             }
 
-            if (it.c.assetNext !== it.c.asset && treeBlend > 0) {
+            // 🔴 零消失铁律：只有当下一季新树贴图完全解码就绪时，才允许进入交叉淡出；
+            // 若下一季新树尚未就绪，100% 满额绘制当前老树，绝不让画面中出现任何一帧无树或消失！
+            const currentReady = isTreeAssetReady(it.c.asset);
+            const nextReady = it.c.assetNext !== it.c.asset && isTreeAssetReady(it.c.assetNext);
+
+            if (currentReady && nextReady && treeBlend > 0) {
                 const a1 = (1 - treeBlend) * TREE_OPACITY;
                 const a2 = 1 - (1 - TREE_OPACITY) / (1 - a1);
                 drawTreeAsset(it.c.asset, it.c.variant, it, 1 - treeBlend);
                 drawTreeAsset(it.c.assetNext, it.c.variant, it, a2 / TREE_OPACITY);
+            } else if (!currentReady && nextReady) {
+                // 本季贴图还没解码完、下一季却已就绪 → 先按新季满额画，绝不空着
+                drawTreeAsset(it.c.assetNext, it.c.variant, it, 1);
             } else {
+                // 其余一律满额画本季老树（下一季没就绪就不淡化，杜绝"老树淡没了、新树没来"）
                 drawTreeAsset(it.c.asset, it.c.variant, it, 1);
             }
             ctx.globalAlpha = 1;
@@ -606,7 +673,7 @@ export class VegetationLayer {
         if (key === this.lastRenderKey) return;
         this.lastRenderKey = key;
         this.lastRenderAt = performance.now();
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // 🔴 [2026-09-18 修消失] 禁止在此处提前 clearRect：旧树必须持续显示在画布上，直到 paint() 原子绘制新树！
 
         let missingTiles = 0;
         let pendingImages = 0;
@@ -713,6 +780,9 @@ export class VegetationLayer {
         //   → **整层植被空白**，要等掩膜到齐（下面的 15 次重试）才回来；换季要重算整层，正好撞上这个空窗。
         //   因此：**新采样为空 + 旧列表非空 + 确有瓦片未就绪** → 保留旧列表继续显示（跟拍移动时旧树大多仍在屏内，不会闪白），
         //   并沿用下面的重试逻辑，等掩膜到了再换成新列表。
+        // 🔴 [2026-09-19 主人令「全面修复」] 上一版把判据放宽成「新采样不足旧列表 60% 也保留旧树」——
+        //   那会让镜头移到另一片区域时整批留下旧树、新视口该长的树反而不画（旧树又多在屏外＝等于少画树），
+        //   故收窄回上面这条原判据：只在「新采样为空」时兜底。
         const keepOldTrees = drawCommands.length === 0 && this.trees.length > 0 && missingTiles > 0;
         if (!keepOldTrees) this.trees = drawCommands;
         this.sampledGameSeason = gameSeason;
