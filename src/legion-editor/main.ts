@@ -2112,6 +2112,24 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         //    等于给同一个军团名立了第二份权威 —— 正是 [势力表不许存文化军团副本] 那条铁律
         //    禁的东西，副本必漂移。女真裂成两种编制就是它放行的。
     }
+    /* 🔴 [2026-09-18 主人报障「势力军团编排 / 军团编辑 这两个怎么不同步呀」]
+     *
+     * 病根：上面 1 / 1.5 / 1.6 / 1.7 四步是**直接从静态表读 slots**（BASE_16 / LEVEL_2 / LEVEL_3），
+     *   而「军团编辑」页走的是 `getLegionCompositionByName()` —— 它第一顺位读
+     *   `LEGION_RUNTIME_PATCH`（编辑器保存编制后立刻写进去，不等 HMR）。
+     *   于是在「军团编辑」里改完编制保存：那一页当场变了，切回「势力军团编排」还是旧编制，
+     *   要等 Vite HMR 把数据文件重新导入才对得上 —— 两页看起来就是不同步。
+     *
+     * 解法：出口处统一以 `getLegionCompositionByName()` 为准覆盖一遍编制。
+     *   它本身就是三层表的唯一查询口（补丁 → 一级 → 二级 → 三级），两页从此同一个数据源。
+     *   查不到的（还没登记的名字）保留静态值不动，不额外造兜底。
+     */
+    for (const entry of map.values()) {
+        const live = getLegionCompositionByName(entry.name);
+        if (!live) continue;
+        entry.formationMode = live.formationMode;
+        entry.slots = live.slots.map(s => ({ ...s }));
+    }
     return map;
 }
 
