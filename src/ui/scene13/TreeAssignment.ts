@@ -23,35 +23,61 @@
  *    不能当树用。PINE 那张是枯死的褐色松，只适合荒漠，别拿它当针叶林。
  */
 
-/** 季节：0=春夏 1=秋 2=冬（与 Scene13EnvironmentPlan.season 同源） */
-export type TreeSeason = 0 | 1 | 2 | 3;   // 春0 / 夏1 / 秋2 / 冬3（与 TimeSystem 的四季 1:1）
+/** 季节：春0 / 夏1 / 秋2 / 冬3（与 TimeSystem 的四季 1:1） */
+export type TreeSeason = 0 | 1 | 2 | 3;
+
+export type FourSeasons = readonly [string, string, string, string];
 
 /**
- * 季节变体表：夏 → [秋, 冬]。
- * 没登记的树四季同形（针叶、棕榈、热带树本来就不落叶）。
+ * 🔴 [2026-09-18 主人令] 四季树种变体表：严格按 [春 0, 夏 1, 秋 2, 冬 3]
+ * 保证一年四季各按其时：春出嫩绿/春花、夏出浓绿盛叶、秋出金黄红枫、冬出挂雪冬枯。
+ * 没登记的树默认四季同形（热带棕榈、荒漠枯木、竹林等四季常青或常枯）。
  */
-const SEASON_VARIANT: Readonly<Record<string, [string, string]>> = {
-    OAK: ['AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
-    GREEN_OAK: ['AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
-    ASIAN_MAPLE_GREEN: ['ASIAN_MAPLE_AUTUMN', 'ASIAN_MAPLE_AUTUMN'],
-    BIRCH_GREEN: ['BIRCH_AUTUMN', 'BIRCH_WINTER'],
-    ASIAN_PINE: ['ASIAN_PINE', 'SNOW_PINE'],
-    CYPRESS: ['CYPRESS_DEC', 'CYPRESS_DEC'],
-    WILLOW: ['WILLOW', 'BIRCH_WINTER'],
-    // 战役大树：ST_G 是银杏（金黄扇叶），ST_I 是白色冬枯树
-    SCENARIO_TREE_A: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_B: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_C: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_D: ['SCENARIO_TREE_F', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_E: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_H: ['SCENARIO_TREE_F', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_J: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_K: ['SCENARIO_TREE_F', 'SCENARIO_TREE_I'],
-    SCENARIO_TREE_L: ['SCENARIO_TREE_G', 'SCENARIO_TREE_I'],
-    PEACH_BLOSSOM: ['ASIAN_MAPLE_AUTUMN', 'BIRCH_WINTER'],
-    MONKEY_PUZZLE: ['MONKEY_PUZZLE', 'SNOW_PINE'],
-    ITALIAN_PINE: ['ITALIAN_PINE', 'ITALIAN_PINE'],
+const SEASON_4_VARIANTS: Readonly<Record<string, FourSeasons>> = {
+    // 栎树/温带阔叶：春(嫩绿春橡) → 夏(浓绿深橡) → 秋(金黄秋橡) → 冬(积雪冬橡)
+    OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
+    GREEN_OAK: ['GREEN_OAK', 'OAK', 'AUTUMN_OAK', 'SNOW_AUTUMN_OAK'],
+
+    // 亚洲枫/东亚槭：春(桃花春木) → 夏(盛夏绿枫) → 秋(金红秋枫) → 冬(冬雪松)
+    ASIAN_MAPLE_GREEN: ['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'],
+
+    // 白桦：春(嫩白桦) → 夏(绿白桦) → 秋(金黄桦) → 冬(冬枯雪桦)
+    BIRCH_GREEN: ['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'],
+
+    // 垂柳：春(杨柳嫩绿) → 夏(盛夏深柳) → 秋(秋柳金黄/浅绿) → 冬(冬枯枝)
+    WILLOW: ['WILLOW', 'WILLOW', 'WILLOW', 'BIRCH_WINTER'],
+
+    // 松柏类：春/夏/秋常青，冬季披雪
+    ASIAN_PINE: ['ASIAN_PINE', 'ASIAN_PINE', 'ASIAN_PINE', 'SNOW_PINE'],
+    PINE: ['PINE', 'PINE', 'PINE', 'SNOW_PINE'],
+    ITALIAN_PINE: ['ITALIAN_PINE', 'ITALIAN_PINE', 'ITALIAN_PINE', 'ITALIAN_PINE'],
+    MONKEY_PUZZLE: ['MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'MONKEY_PUZZLE', 'SNOW_PINE'],
+    CYPRESS: ['CYPRESS', 'CYPRESS', 'CYPRESS_DEC', 'CYPRESS_DEC'],
+
+    // 战役大树（中西欧、华北、东欧等高大阔叶）：
+    // 🔴 [2026-09-19 主人令「春天显示春天的、夏天显示夏天的」] 原表是「春=夏=同一棵」，实测
+    //    126 个「地点×底图」组合里 **83 处春夏同图**。12 棵战役大树里只有两种绿：
+    //    深绿档（实测亮度 39~45：L39 / J42 / A44 / K44 / B45）与浅绿档（51~55：D55 / E53 / H52 / C51）。
+    //    故每棵基树配一对「浅绿当春、深绿当夏」，配对按**不透明 bbox 宽高比**取最接近的一棵，
+    //    形状尽量不失真；秋沿用银杏金（G）/ 秋阔叶（F），冬沿用积雪冬枯（I）。
+    SCENARIO_TREE_A: ['SCENARIO_TREE_C', 'SCENARIO_TREE_A', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 夏 A(深44,比0.94) → 春 C(浅51,比0.86)
+    SCENARIO_TREE_B: ['SCENARIO_TREE_E', 'SCENARIO_TREE_B', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 夏 B(深45,比0.79) → 春 E(浅53,比0.76)
+    SCENARIO_TREE_C: ['SCENARIO_TREE_C', 'SCENARIO_TREE_K', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 春 C(浅51) → 夏 K(深44,比0.91)
+    SCENARIO_TREE_D: ['SCENARIO_TREE_D', 'SCENARIO_TREE_L', 'SCENARIO_TREE_F', 'SCENARIO_TREE_I'], // 春 D(浅55) → 夏 L(深39,比1.24)
+    SCENARIO_TREE_E: ['SCENARIO_TREE_E', 'SCENARIO_TREE_B', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 春 E(浅53) → 夏 B(深45,比0.79)
+    SCENARIO_TREE_H: ['SCENARIO_TREE_H', 'SCENARIO_TREE_B', 'SCENARIO_TREE_F', 'SCENARIO_TREE_I'], // 春 H(浅52) → 夏 B(深45,比0.79)
+    SCENARIO_TREE_J: ['SCENARIO_TREE_D', 'SCENARIO_TREE_J', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 夏 J(深42,比1.00) → 春 D(浅55,比1.12)
+    SCENARIO_TREE_K: ['SCENARIO_TREE_C', 'SCENARIO_TREE_K', 'SCENARIO_TREE_F', 'SCENARIO_TREE_I'], // 夏 K(深44,比0.91) → 春 C(浅51,比0.86)
+    SCENARIO_TREE_L: ['SCENARIO_TREE_D', 'SCENARIO_TREE_L', 'SCENARIO_TREE_G', 'SCENARIO_TREE_I'], // 夏 L(深39,比1.24) → 春 D(浅55,比1.12)
+
+    // 桃花/春花类
+    PEACH_BLOSSOM: ['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'],
 };
+
+// 兼容旧引用
+const SEASON_VARIANT: Readonly<Record<string, [string, string]>> = Object.fromEntries(
+    Object.entries(SEASON_4_VARIANTS).map(([k, v]) => [k, [v[2], v[3]] as [string, string]]),
+);
 
 /**
  * 底图 → 默认树。底图定基调。
@@ -397,14 +423,16 @@ export function pickTree(q: TreeQuery): string {
     // 攻城战不出枯树：城郊的枯木早被拾去烧了。换成耐旱的活树。
     if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) tree = 'PALM';
 
-    // 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 变体表口径仍是「夏 → [秋, 冬]」，但**取值要按四季**：
-    //    春(0)、夏(1) 都用原树（新绿 / 深绿），秋(2) 取 [0]、冬(3) 取 [1]。
-    //    改前三态写法是 `season === 1 ? [0] : [1]` —— 四季制下把"夏"误当成"秋"，
-    //    实测就是：日本夏天长红枫、东北夏天长黄桦（见 scratch/verify_tree_four_seasons.mts）。
-    if (q.season === 0 || q.season === 1) return tree;      // 春 / 夏 = 原树
-    const variant = SEASON_VARIANT[tree];
-    if (!variant) return tree;                              // 针叶/棕榈/热带树四季同形
-    return q.season === 2 ? variant[0] : variant[1];        // 秋 / 冬
+    // 🔴 [2026-09-18 主人令] 严格落实四季 1:1：春 0、夏 1、秋 2、冬 3
+    // 若地区覆盖已显式指定了 trees[四季]，上面已直接取出对应季节；
+    // 否则根据四季变体表映射当前季节形态：
+    const variant = SEASON_4_VARIANTS[tree];
+    if (variant) {
+        const s = Math.max(0, Math.min(3, q.season));
+        return variant[s];
+    }
+
+    return tree; // 针叶/棕榈/热带树四季同形
 }
 
 /** 调试/验收用：把三张表暴露出去 */

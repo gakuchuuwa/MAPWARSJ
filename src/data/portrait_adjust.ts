@@ -6248,7 +6248,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -15
         },
         "/assets/WEST_ASIA/osman_muhanmodeershi.png": {
-            "scale": 1.1,
+            "scale": 1.12,
             "offsetX": 0,
             "offsetY": 2
         },
@@ -7886,6 +7886,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 0,
             "offsetY": -24
+        },
+        "/assets/WEST_ASIA/aosimanbeiyiguo_aosimanyishi.png": {
+            "scale": 1.18,
+            "offsetX": -26,
+            "offsetY": 30
         }
     },
     "folderGuides": {

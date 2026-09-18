@@ -48,9 +48,12 @@ async function main(): Promise<void> {
 
     for (const c of cities) {
         for (const isSiege of [true, false]) {
-            for (const season of [0, 1, 2] as TreeSeason[]) {
+            // 🔴 [2026-09-19 修] 原为 [0,1,2]（春夏秋），**漏测冬天** —— 于是仅冬季出现的变体
+            //   （SNOW_AUTUMN_OAK / BIRCH_WINTER / SCENARIO_TREE_I）被误报成「无故闲置」。
+            //   四时代四季制下必须把冬(3)也测上。
+            for (const season of [0, 1, 2, 3] as TreeSeason[]) {
                 const base = queryBaseTile({
-                    lat: c.lat, lng: c.lng, isSiege, isWinter: season === 2,
+                    lat: c.lat, lng: c.lng, isSiege, isWinter: season === 3,
                 });
                 if (!base) continue;
                 const tree = pickTree({ baseTile: base, lat: c.lat, lng: c.lng, season });
@@ -62,7 +65,7 @@ async function main(): Promise<void> {
         }
     }
 
-    console.log(`\n共 ${total} 个组合（城 × 攻防/野战 × 三季）\n`);
+    console.log(`\n共 ${total} 个组合（城 × 攻防/野战 × 四季）\n`);
     const sorted = [...hits.entries()].sort((a, b) => b[1] - a[1]);
     for (const [tree, n] of sorted) {
         const pct = (n / total * 100).toFixed(1);
