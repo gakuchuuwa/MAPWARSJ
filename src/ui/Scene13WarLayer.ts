@@ -575,12 +575,18 @@ const SIEGE_MANGONEL_LINE: Partial<Record<RegionType, [string, string, string]>>
 const WALL_GATE_STATS: Record<string, WarType> = {
     STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
     STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 1650, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    // 🔴 [2026-09-18 主人定] 木栅栏/篱笆单开一档：hp 540（= 石墙 1080 的一半）、近防 2、远防 5（木质，照 DE）。
+    //    改前栅栏直接套 STONE_WALL（hp 1080、防 8/10）—— 一排木桩和石墙一样硬，正是主人实锤的
+    //    「攻城武器打很久栅栏都不坏」。
+    //    ⚠️ 血量不取 DE 本体的 250：那是玩家临时圈地的栅栏值，当城防太薄、一发就散。
+    //    540 → 砸开要三四发、比石墙快一档，材质差别看得出来又不至于一碰就没。
+    WOOD_WALL: { name: '木栅栏', cls: 'melee', sz: 1, hp: 540, atk: 0, meleeArmor: 2, pierceArmor: 5, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
 };
 
 /** 攻城战守方城墙/城门：可攻击建筑目标（士兵能打、HP 归零即破，照 DE）。不进 WarMan 网格，独立维护。 */
 interface WarBuilding {
     f: 0 | 1;
-    /** 'STONE_WALL' | 'STONE_GATE'（查 WALL_GATE_STATS） */
+    /** 'STONE_WALL' | 'WOOD_WALL' | 'STONE_GATE'（查 WALL_GATE_STATS） */
     key: string;
     x: number;
     y: number;
@@ -5089,11 +5095,13 @@ export class Scene13WarLayer {
                 // 城墙 = 可攻击建筑（照 DE）：士兵能打、HP 归零破墙；碰撞 0.95 堵住相邻段缝隙
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
-                const st = WALL_GATE_STATS[key];
+                // 木栅栏/篱笆走 WOOD_WALL 档（hp 250、防 2/5）；石墙/垛墙才是 STONE_WALL
+                const wKey = (asset.includes('PALISADE') || asset.includes('FENCE')) ? 'WOOD_WALL' : key;
+                const st = WALL_GATE_STATS[wKey];
                 // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；木栅栏/篱笆无破损档 → 破墙直接消失
                 const destrAssets = (asset.includes('PALISADE') || asset.includes('FENCE')) ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
                 if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
-                this.wallGates.push({ f: 1, key, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets });
+                this.wallGates.push({ f: 1, key: wKey, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets });
             };
             // 城门：可攻击建筑（照 DE，城门 HP 更高），沿线铺 6 点密实碰撞体堵跨度两侧缝隙；破门播 50 帧倒塌动画 → rubble 残骸
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
@@ -6733,7 +6741,7 @@ export class Scene13WarLayer {
         for (const b of this.wallGates) {
             const r = Math.random();
             if (r < 0.4) continue;   // 40% 保持完整
-            if (b.key === 'STONE_WALL') {
+            if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
                 const destr = b.destrAssets;   // [D25, D50, D75]
                 if (destr) {
                     // 石墙/垛墙：破损(D50) 占 40% / 残骸(D75) 占 20%，参差残垣断壁
@@ -7789,6 +7797,15 @@ export class Scene13WarLayer {
                                     foe.sprite.frame = 0;
                                 }
                             }
+                        }
+                        // 🔴 [2026-09-18] 木栅栏/篱笆打爆（hp <= 0）→ 直接消失并解除阻挡。
+                        //    栅栏没有破损档（destrAssets 为空），改前 hp 归零后既不换贴图也不破墙，
+                        //    只能干等 30 秒保底坍塌 —— 画面上就是「一直砸，栅栏纹丝不动」。
+                        //    与 applyRandomCollapseForms 里「栅栏无残垣 → 直接消失」同一口径。
+                        if (foe.key === 'WOOD_WALL' && foe.hp <= 0 && !foe.sprite.destroyed) {
+                            foe.sprite.destroyed = true;
+                            foe.sprite.obstruction = undefined;
+                            foe.sprite.obstructionDisabled = true;
                         }
                         // 城门提前被打爆（hp <= 0）→ 倒塌播动画切残骸并解除阻挡
                         if (foe.key === 'STONE_GATE' && foe.hp <= 0 && !foe.sprite.collapse && foe.rubbleAsset) {

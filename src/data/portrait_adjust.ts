@@ -837,11 +837,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 43
         },
-        "/assets/CENTRAL_ASIA/zhaowu_timuermieli.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": -12
-        },
         "/assets/CENTRAL_ASIA/wuhu_dukake.png": {
             "scale": 0.94,
             "offsetX": 2,
@@ -3001,11 +2996,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.91,
             "offsetX": 0,
             "offsetY": -12
-        },
-        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_18.png": {
-            "scale": 0.9,
-            "offsetX": 22,
-            "offsetY": -10
         },
         "/assets/CENTRAL_ASIA/jiazini_mahamaode.png": {
             "scale": 0.92,
@@ -7891,6 +7881,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.18,
             "offsetX": -26,
             "offsetY": 30
+        },
+        "/assets/CENTRAL_ASIA/__闲置__CENTRAL_ASIA_118.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": -12
+        },
+        "/assets/CENTRAL_ASIA/zhaowu_tiemuermieli.png": {
+            "scale": 0.96,
+            "offsetX": 11,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/zhaowu_timuermieli.png": {
+            "scale": 0.94,
+            "offsetX": 19,
+            "offsetY": -10
+        },
+        "/assets/CENTRAL_ASIA/feierganna_hudulu.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": -15
         }
     },
     "folderGuides": {
