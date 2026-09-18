@@ -368,18 +368,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CANOE',
     },
     {
-        name: '城堡时代东南亚军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'armored_elephant', count: 2 },
-            { type: 'sunda_royal_fighter', count: 4 },
-            { type: 'rattan_archer', count: 3 },
-        ],
-        regions: ['SEASIA_CASTLE'],
-        parentLegion: '城堡时代马来军团',
-        shipId: 'WAR_GALLEY',
-    },
-    {
         name: '城堡时代宋禁军团',
         formationMode: 'balance_yoke',
         slots: [
@@ -704,11 +692,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'FIRE_GALLEY',
     },
     {
-        name: '封建时代东南亚军团',
+        name: '古典时代高棉军团',
         formationMode: 'crane_wing',
         slots: [
             { type: 'elephant_archer', count: 2 },
-            { type: 'eastern_swordsman', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
             { type: 'archer', count: 3 },
         ],
         regions: ['SEASIA_FEUDAL'],
@@ -1064,11 +1052,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'GALLEY',
     },
     {
-        name: '帝国时代东南亚军团',
+        name: '帝王时代缅甸军团',
         formationMode: 'crane_wing',
         slots: [
             { type: 'elite_armored_elephant', count: 2 },
-            { type: 'champion', count: 4 },
+            { type: 'heavy_pikeman', count: 4 },
             { type: 'hand_cannoneer', count: 3 },
         ],
         regions: ['SEASIA_IMPERIAL'],
