@@ -48,7 +48,7 @@ import {
     LEVEL_2_CIV_59_MAP,
     isCivEraLegion,
 } from '../data/level2Civ59Legions';
-import { LEVEL_3_LEGION_NAMES } from '../data/level3CustomLegions';
+import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion } from '../systems/LegionFallbackOnDelete';
 
@@ -239,7 +239,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'tarkan', name: '匈奴答剌罕骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/TARKAN/' },
     { id: 'elite_tarkan', name: '匈奴答剌罕骑兵精锐', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_TARKAN/' },
     { id: 'boyar', name: '斯拉夫贵族铁骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/BOYAR/' },
-    { id: 'savar', name: '萨珊萨瓦兰骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
+    { id: 'savar', name: '萨珊波斯萨瓦兰骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SAVAR/' },
     { id: 'camel_heavy', name: '骆驼骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMEL_HEAVY/' },
     { id: 'paladin', name: '骑士游侠高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },
     { id: 'coustillier', name: '勃艮第马上轻骑', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/COUSTILLIER/' },
@@ -2055,6 +2055,30 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             existing.formationMode = l2.formationMode;
             existing.slots = l2.slots.map(s => ({ ...s }));
             if (!existing.region) existing.region = l2.region as RegionType;
+        }
+    }
+    /* 1.7 三级：自建 / 延伸军团 —— 🔴 [2026-09-18 主人报障「新建的军团不在第一页显示」「还是不显示呀」]
+     *
+     * 病根：本函数原先只登记 ① 16 母体 ② 文化区默认 ③ 59 文明 ④ **被势力用到的军团名**，
+     *   三级表从来没有被整表登记过 —— 一支三级军团只有在「已经有势力在用」时才会从第 2 步溜进来。
+     *   于是新建一支还没指派给任何势力的三级军团（如「城堡时代帖木儿军团」），
+     *   数据明明已经写进 level3CustomLegions.ts、模块里也读得到，
+     *   「选军团 → 三级：自建军团」里却搜不到它，主人以为没建成。
+     *
+     * 实测（scratch/_probe_l3_search.mjs，全新加载的页面）：
+     *   模块 LEVEL_3_LEGIONS 124 支、含「城堡时代帖木儿军团」；而选军团区搜它 → 「无匹配军团」。
+     *
+     * 解法：与 1.6 二级同样整表登记，fids 留空（还没势力用），编制只认军团自己那条记录。
+     * ⚠️ 仍然是 `if (!map.has(name))` —— 上面几步已登记的名字不覆盖，不给同一个军团名立第二份权威。 */
+    for (const l3 of LEVEL_3_LEGIONS) {
+        if (!map.has(l3.name)) {
+            map.set(l3.name, {
+                name: l3.name,
+                formationMode: l3.formationMode,
+                slots: l3.slots.map(s => ({ ...s })),
+                fids: [],
+                region: l3.regions?.[0] as RegionType | undefined,
+            });
         }
     }
     // 2. 所有势力（含隐式默认），按 effectiveLegionName 归入对应军团。

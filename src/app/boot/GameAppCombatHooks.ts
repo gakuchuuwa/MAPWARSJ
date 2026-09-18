@@ -257,9 +257,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         );
         const scale = 1;
         // [2026-08-30 主人改｜2026-09-15 门槛下调] 进 13 条件：开关开 + 双方兵力都 ≥5000（含援军合计）+ 双方不能都是海军 + 双方都有武将+精锐。
-        // [2026-08-16 主人改·含援军] 兵力门槛看每方**合计**（含所有已编入的援军），
-        //   不再是「每个单位单独 ≥5000」。因为 13 冻结引擎暂停游戏，开战时编入的援军
-        //   就是全部、不会有中途加入的援军——开战时看双方总兵力即可。
+        // 兵力门槛看每方当前合计（含所有已编入的援军）；跟随军团中途加入也复用此入口。
+        // 进入 13 后冻结战略行军，不再有在途援军赶到。
         const minTroops = GameConfig.COMBAT.SCENE13_MIN_TROOPS;
         const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
         const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0); // 守方合计（含援军）
@@ -278,7 +277,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             .some((u) => u.getEntity?.()?.isScriptArmy === true);
         const eligible = isBattlefieldEvent || (app.tacticalModeEnabled && bigEnough && !bothNaval
             && attHasGen && defHasGen && attHasElite && defHasElite);
-        if (eligible) {
+        if (eligible && !battleField?.scene13Frozen) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);
@@ -365,12 +364,12 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     };
 
     app.combatSystem.onRegionalBattleReinforcement = (battleField, joinedUnit) => {
+        const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (app.combatUI.isBoundToBattleField(battleField)) {
             app.combatUI.syncRegionalParticipantsFromBattleField(battleField);
-            return;
+            if (joinedUnit.id !== followedId || battleField.scene13Frozen) return;
         }
 
-        const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (!followedId || joinedUnit.id !== followedId) return;
         if (battleField.isOver) return;
 
@@ -384,24 +383,17 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         );
 
         const title = battleField.customTitle ?? (battleField.type === 'siege' ? (battleField.siegeCityId ? `${app.cityManager.getCity(battleField.siegeCityId)?.name ?? ''} 攻防战` : '攻城战') : `${app.cityManager.getFactionName(battleField.getAttackerFactionId())} 大战 ${app.cityManager.getFactionName(battleField.getDefenderFactionId())}`);
-        const dur = battleField.targetDuration;
-        const scale = 1;
-        try {
-            app.combatUI.showRegional(
-                attackers,
-                defenders,
-                undefined,
-                undefined,
-                title,
-                '',
-                false,
-                dur,
-                scale,
-                battleField
-            );
-        } catch (err) {
-            console.error('[GameApp] 援军加入战斗 UI 展示失败（战斗仍继续）:', err);
-        }
+        // 中途赶到的跟随援军与开战时共用门槛、攻守侧判定及战术结算入口。
+        app.combatSystem.onRegionalBattleStart?.(
+            attackers,
+            defenders,
+            undefined,
+            undefined,
+            title,
+            '',
+            false,
+            battleField
+        );
     };
 }
 

@@ -615,6 +615,14 @@ function openCreateDialog(): void {
     let types: [string, string, string] = ['', '', ''];
     /** 哪几排是主人自己点过的 —— 换归属军团时只刷没点过的那几排，别把手选的覆盖掉 */
     const touched = [false, false, false];
+    /* 🔴 [2026-09-18 主人定「新建军团要添加舰队，和套用的武将」]
+     *  · 舰队：原先只能从归属军团继承（createLegion 里写死 parent.shipId），现在可当场挑；
+     *    与三排兵种同一个规矩 —— 没手动点过就跟着归属军团走，点过就不再被覆盖。
+     *  · 套用的武将：新建完把这支军团指派给选中的势力，走与「保存武将换军团」同一个
+     *    接口 /api/save-faction-legion（单条写入，不整表覆盖）。留空 = 先不指派。 */
+    let shipId = '';
+    let shipTouched = false;
+    let assignFactionId = '';
 
     const syncFromParent = (): void => {
         const p = rows.find(r => r.name === parentName);
@@ -622,6 +630,7 @@ function openCreateDialog(): void {
             if (touched[i] && types[i]) continue;
             types[i] = p?.slots[i]?.type ?? p?.slots[0]?.type ?? '';
         }
+        if (!shipTouched) shipId = p?.shipId ?? '';
     };
     syncFromParent();
 
@@ -667,6 +676,24 @@ function openCreateDialog(): void {
               </div>
               <span style="color:#8a8378;font-size:16px;">▾</span>
             </div>`).join('')}
+          <!-- 🔴 [2026-09-18 主人定] 舰队：没手动点过就跟着归属军团 -->
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队 · 战船${shipTouched ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</div>
+          <div id="lp-c-ship" style="display:flex;gap:10px;align-items:center;margin-bottom:14px;
+               background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+            <canvas id="lp-c-thumb-ship" width="64" height="64"
+              style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#e8e0d0;font-size:13px;">${esc(shipLabel(shipId))}</div>
+              <div style="color:#6a6358;font-size:11px;">${esc(subLabelOf(shipUnitId(shipId)))} · 点击更换</div>
+            </div>
+            <span style="color:#8a8378;font-size:16px;">▾</span>
+          </div>
+          <!-- 🔴 [2026-09-18 主人定] 套用的武将：建好后把这支军团指派给该势力 -->
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">套用的武将 / 势力<span style="color:#6a6358;">（可留空，之后再指派）</span></div>
+          <select id="lp-c-assign" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
+            <option value="">— 暂不指派 —</option>
+            ${FACTIONS.map(f => `<option value="${esc(f.id)}" ${f.id === assignFactionId ? 'selected' : ''}>${esc(f.name)}</option>`).join('')}
+          </select>
           <div style="display:flex;gap:8px;margin-top:4px;">
             <button id="lp-c-go" style="flex:1;padding:9px;background:#2a4a2a;border:1px solid #4a7a4a;color:#d0e8d0;border-radius:4px;font-size:14px;cursor:pointer;">✅ 建立</button>
             <button id="lp-c-cancel" style="flex:0 0 100px;padding:9px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;font-size:13px;cursor:pointer;">取消</button>
@@ -675,6 +702,8 @@ function openCreateDialog(): void {
             const cv = document.getElementById('lp-c-thumb-' + i) as HTMLCanvasElement | null;
             if (cv && types[i]) drawUnitThumb(cv, types[i]);
         }
+        const shipCv = document.getElementById('lp-c-thumb-ship') as HTMLCanvasElement | null;
+        if (shipCv && shipId) drawUnitThumb(shipCv, shipUnitId(shipId));
         const nameIn = document.getElementById('lp-c-name') as HTMLInputElement;
         nameIn.addEventListener('input', e => { name = (e.target as HTMLInputElement).value; });
         document.getElementById('lp-c-parent')?.addEventListener('change', e => {
@@ -690,9 +719,16 @@ function openCreateDialog(): void {
             const i = Number((el as HTMLElement).dataset.row);
             openUnitPicker(i, uid => { types[i] = uid; touched[i] = true; paint(); }, types[i]);
         }));
+        // 🔴 [2026-09-18] 选战船：与右侧面板换船同一个弹窗（kind='ship'），选中即记为手动、不再跟归属军团
+        document.getElementById('lp-c-ship')?.addEventListener('click', () => {
+            openUnitPicker(-1, uid => { shipId = uid.toUpperCase(); shipTouched = true; paint(); }, shipUnitId(shipId), 'ship');
+        });
+        document.getElementById('lp-c-assign')?.addEventListener('change', e => {
+            assignFactionId = (e.target as HTMLSelectElement).value;
+        });
         document.getElementById('lp-c-cancel')?.addEventListener('click', () => overlay.remove());
         document.getElementById('lp-c-go')?.addEventListener('click', () => {
-            void createLegion(name, parentName, mode, types, overlay);
+            void createLegion(name, parentName, mode, types, shipId, assignFactionId, overlay);
         });
     };
     paint();
@@ -704,6 +740,10 @@ async function createLegion(
     parentName: string,
     mode: FormationMode,
     types: [string, string, string],
+    /** 🔴 [2026-09-18 主人定] 舰队：弹窗里挑的战船；空字符串 = 跟归属军团 */
+    pickedShipId: string,
+    /** 🔴 [2026-09-18 主人定] 套用的武将：建好后把本军团指派给该势力；空 = 先不指派 */
+    assignFactionId: string,
     overlay: HTMLElement,
 ): Promise<void> {
     const name = (rawName ?? '').trim();
@@ -724,19 +764,50 @@ async function createLegion(
                 formationMode: mode,
                 slots,
                 parentLegion: parentName,
-                shipId: parent.shipId ?? '',
+                // 🔴 [2026-09-18] 舰队改由弹窗决定；没挑就沿用归属军团的（与改前同义）
+                shipId: pickedShipId || (parent.shipId ?? ''),
             }),
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        patchLegionComposition(name, slots, mode);   // 不等 HMR，立刻可见可编
+        patchLegionComposition(name, slots, mode, pickedShipId || parent.shipId || undefined);   // 不等 HMR，立刻可见可编
+        // 🔴 [2026-09-18 主人定] 套用的武将：单条写入归属，与「保存武将换军团」同一个接口，绝不整表覆盖
+        let assignedName = '';
+        if (assignFactionId) {
+            const fa = FACTIONS.find(f => f.id === assignFactionId);
+            const ar = await fetch('/api/save-faction-legion', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ factionId: assignFactionId, legionName: name }),
+            });
+            const aj = await ar.json().catch(() => ({}));
+            if (ar.ok && aj.ok) {
+                (FACTION_COMPOSITIONS as Record<string, { legionName?: string }>)[assignFactionId] = {
+                    ...((FACTION_COMPOSITIONS as Record<string, { legionName?: string }>)[assignFactionId] ?? {}),
+                    legionName: name,
+                };   // 内存同步，势力数当场就对
+                assignedName = fa?.name ?? assignFactionId;
+            } else {
+                toast(`⚠️ 军团已建，但指派给【${fa?.name ?? assignFactionId}】失败：${aj.error ?? ar.status}`, true);
+            }
+        }
         runtimeCreated.add(name);
         overlay.remove();
         selected = name;
         draft = null;
         rows = buildRows();
         render();
-        toast(`✅ 已新建三级军团【${name}】（归属 ${parentName}）：${slots.map(sl => cn(sl.type) + '×' + sl.count).join('　')}`);
+        /* 🔴 [2026-09-18 主人报障「新建的军团不在第一页显示」]
+         * buildRows 的顺序是 一级(16) → 二级(59) → 三级 → runtimeCreated（本次新建的追加在**最末尾**），
+         * 所以刚建好的军团排在 198 支的最后一个，第一屏根本看不到 —— 它确实被 selected 高亮了，
+         * 但列表不会自己滚过去，看上去就像「没建出来」。
+         * 这里把它滚进视口，不动排序（排序由数据结构决定，刷新后它会归到三级那一组里）。 */
+        requestAnimationFrame(() => {
+            const tr = document.querySelector(`tr[data-name="${CSS.escape(name)}"]`);
+            tr?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        });
+        toast(`✅ 已新建三级军团【${name}】（归属 ${parentName}）：${slots.map(sl => cn(sl.type) + '×' + sl.count).join('　')}`
+            + `　🚢 ${shipLabel(pickedShipId || parent.shipId || '')}`
+            + (assignedName ? `　👤 已套用给【${assignedName}】` : ''));
     } catch (e) {
         toast('❌ 新建失败：' + ((e as Error)?.message ?? String(e)), true);
     }
