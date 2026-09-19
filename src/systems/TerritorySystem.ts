@@ -4,13 +4,14 @@ import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCH
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
 import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
-import { City } from '../types/core';
+import { City, CityType } from '../types/core';
 import { FactionManager } from '../world/FactionManager';
 import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
 import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAssets';
+import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
 // [PERF] Import Territory Worker
@@ -487,8 +488,23 @@ function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeG
     return pieces;
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
+/**
+ * 「大中小城寨」档位 → 据点建筑图底宽（px）。
+ * 🔴 与 `renderSingleCity` 里那段 switch **必须同源**：据点怎么定档，战场的砦就怎么定档，
+ *    否则同一个「小城寨」在据点与战场上会长成两个尺寸。
+ */
+function getCitySiegeBaseSize(cityType: string): number {
+    switch (cityType) {
+        case 'big_city': return 140;
+        case 'medium_city':
+        case 'pass': return 120;      // 险要与中城同档
+        case 'stockade': return 80;   // 城寨最小
+        case 'small_city':
+        default: return 100;
+    }
+}
+
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
     const rnd = deMulberry32(deHashString(cityId));
     // 🔴 [2026-09-16 主人定] 二级蒙古小城：9 建筑池里随机掺入蒙古包（见 MONGOL_CITY_YURTS 注释），总数仍恒为 9
     const ring = [...DE_SMALL_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
@@ -1942,6 +1958,67 @@ export class TerritorySystem {
         } finally {
             CityAssetManager.setTerritoryWorkActive(false);
         }
+    }
+
+    /**
+     * 🔴 [2026-09-19 主人定] **战场攻城战的标注套用据点样式**。
+     *
+     * 主人原话：「这种战场攻城战，标注上，套用大中小城寨哪个据点的样式就行。」
+     *   → 战场标牌平时画「战场形态」（拒马/尸体/骨骸/火把…）；
+     *     但**攻城战**是打一座 **砦/城**，它该长成据点那样（大城/中城/小城/城寨/险要），
+     *     而不是一堆残骸。
+     *
+     * 本方法把**据点自己那套组装**原样借出去给 `BattlefieldLayer` 用 ——
+     * 样式判据（`resolveCityDeBuildingStyle`）、城墙石/木（`shouldUseStoneWall`）、
+     * 中心城堡（日本/青藏/59 文明）与四种组装（大城/中城/险要/小城/城寨）
+     * **一个字都没复制**，全走 `renderSingleCity` 正在用的同一批函数，
+     * 因此战场上的砦与真正的据点在图上长得一模一样、且以后改据点样式两边一起变。
+     *
+     * @param bfId     战场 id（同时当随机种子：同一个战场每局长得一样，各战场互不相同）
+     * @param cityType 「大中小城寨」档：big_city / medium_city / small_city / stockade / pass
+     * @param factionId 归属方（决定中心城堡的文明素材；不传则不套中心城堡）
+     */
+    public buildSiegeCastleStackHtml(bfId: string, cityType: CityType, factionId?: string | null): string {
+        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        if (!bf) return '';
+        const region = getCityRegion({ latitude: bf.lat, longitude: bf.lng });
+        // 合成一个「只为画据点样式」的 City：战场没有势力/建筑风格字段，
+        // 风格由 region 推导（与据点「未显式配 buildingStyle 时」完全同一条路）。
+        const virtual = {
+            id: bf.id,
+            name: bf.name,
+            factionId: factionId ?? '',
+            latitude: bf.lat,
+            longitude: bf.lng,
+            type: cityType,
+            troops: 0,
+            region,
+        } as unknown as City;
+        const baseSize = getCitySiegeBaseSize(cityType);
+        const useStoneWall = shouldUseStoneWall(region);
+        const isJapan = !!region?.includes('JAPAN');
+        const isTibet = !!region?.includes('TIBET');
+        const centerCastle = isJapan || isTibet || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass');
+        const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
+        const faction = factionId ?? '';
+        if (deStyle) {
+            if (cityType === 'big_city') {
+                return buildDeBigCityStackHtml(baseSize, bf.id, deStyle, centerCastle, faction, region, undefined);
+            }
+            if (cityType === 'medium_city') {
+                return buildDeMediumCityStackHtml(baseSize, bf.id, deStyle, centerCastle, faction, region, undefined);
+            }
+            if (cityType === 'pass') {
+                return buildDePassStackHtml(baseSize, bf.id, deStyle, faction, region, false);
+            }
+            if (cityType === 'stockade') {
+                return buildDeStockadeStackHtml(baseSize, bf.id, deStyle);
+            }
+            return buildDeSmallCityStackHtml(baseSize, bf.id, deStyle, useStoneWall, centerCastle, faction, region, undefined);
+        }
+        // 无 DE 组合（不支持的类型）→ 与据点一样退回整图；战场没有 image，返回空串由调用方兜底
+        void virtual;
+        return '';
     }
 
     private renderSingleCity(city: City, targetLayerGroup: L.LayerGroup, markersMap: Map<string, L.Marker>, labelsMap: Map<string, L.Marker>, isGhost: boolean = false): void {

@@ -253,6 +253,11 @@ export class GameMap {
         this.initKeyboardNavigation();
     }
 
+    /** 战场图层（供 GameApp 注入 TerritorySystem，把攻城战战场画成据点样式） */
+    public getBattlefieldLayer(): BattlefieldLayer | null {
+        return this.battlefieldLayer;
+    }
+
     /** 线上部署：无右侧 Leaflet 面板，仍启用与开发版相同的默认图层 */
     private applyProductionMapDefaults(): void {
         this.applyDefaultMapVisuals(false);

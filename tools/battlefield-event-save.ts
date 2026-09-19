@@ -25,6 +25,28 @@ export interface BattlefieldEventDraft {
     bfNote: string;
     /** 赶路背景播报：玩家奔赴该战场途中逐段播的背景（空行分段） */
     bfBriefing: string;
+    /**
+     * 🔴 [2026-09-19 主人定] 在场人物（`BattlefieldCharacters.ts` 的人物 id）。
+     * 「缺少的人物，做成战场人物。人物和战场点绑定。」留空 = 这个战场没挂人物。
+     */
+    bfRoster?: string[];
+    /**
+     * 🔴 [2026-09-19 主人定] 这个战场**打的是哪座城**（只有攻城战用）。
+     * 战场标牌标在史实地点，攻城战打的却是最近的据点，两者差几十公里 → 不能按坐标配对，
+     * 故显式指名。见 `BattlefieldData.eventCityId` 的长注释。
+     */
+    bfEventCityId?: string;
+    /**
+     * 🔴 [2026-09-19 主人定「建立一个一之谷战场」] **战场要塞**：这个攻城战打的就是**这块战场**
+     * （一之谷），不是任何据点。给了它就不写 `defenderCityId`。
+     */
+    bfTargetBattlefieldId?: string;
+    /**
+     * 🔴 [2026-09-19 主人定] **战场攻城战的标注套用据点样式**：
+     * `big_city` / `medium_city` / `small_city` / `stockade` / `pass`（大中小城寨）。
+     * 留空 = 仍画普通战场形态（野战一律留空）。
+     */
+    bfSiegeCastleType?: string;
     year: number;
     season: number;
     /**
@@ -253,8 +275,12 @@ function removeField(
 
 // ── 新建路径：生成完整条目 ───────────────────────────────────────────
 
-function buildBattlefieldEntry(d: BattlefieldEventDraft): string {
-    const lines = [
+/** 攻城战草稿（战场记录要写 `eventCityId`） */
+function isSiegeDraft(d: BattlefieldEventDraft): boolean {
+    return d.type === 'siege';
+}
+
+function buildBattlefieldEntry(d: BattlefieldEventDraft): string {    const lines = [
         '    {',
         `        id: ${tsStr(d.bfId)},`,
         `        name: ${tsStr(d.bfName)},`,
@@ -264,6 +290,16 @@ function buildBattlefieldEntry(d: BattlefieldEventDraft): string {
     ];
     if (d.bfNote && d.bfNote.trim()) lines.push(`        note: ${tsStr(d.bfNote.trim())},`);
     if (d.bfBriefing && d.bfBriefing.trim()) lines.push(`        briefing: ${tsStr(d.bfBriefing.trim())},`);
+    // 🔴 [2026-09-19 主人定] 在场人物（战场人物与战场点绑定）
+    if (d.bfRoster && d.bfRoster.length) {
+        lines.push(`        roster: [${d.bfRoster.map((r) => tsStr(r)).join(', ')}],`);
+    }
+    // 🔴 [2026-09-19] 攻城战：这个战场打的是哪座城（显式指名，不比坐标）
+    if (isSiegeDraft(d) && d.bfEventCityId) lines.push(`        eventCityId: ${tsStr(d.bfEventCityId)},`);
+    // 🔴 [2026-09-19 主人定] 攻城战战场的**标注套用哪一档据点样式**（大中小城寨）
+    if (isSiegeDraft(d) && d.bfSiegeCastleType) {
+        lines.push(`        siegeCastleType: ${tsStr(d.bfSiegeCastleType)},`);
+    }
     lines.push('    },');
     return lines.join('\n');
 }
@@ -299,7 +335,11 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     if (!isSiege) L.push(`            defenderFactionId: ${tsStr(d.defenderFactionId)},`);
     L.push(`            defenderGeneralId: ${tsStr(d.defenderGeneralId)},`);
     L.push(`            defenderTroops: ${d.defenderTroops},`);
-    if (isSiege) {
+    // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] **战场要塞**：攻城目标是一块**战场**而不是据点，
+    //    写 `targetBattlefieldId`，不写 `defenderCityId`（两者必居其一）。
+    if (isSiege && d.bfTargetBattlefieldId) {
+        L.push(`            targetBattlefieldId: ${tsStr(d.bfTargetBattlefieldId)},`);
+    } else if (isSiege) {
         L.push(`            defenderCityId: ${tsStr(d.defenderCityId)},`);
     } else if (d.defenderSourceCityId) {
         L.push(`            defenderSourceCityId: ${tsStr(d.defenderSourceCityId)},`);
@@ -362,7 +402,11 @@ export function saveBattlefieldEvent(
     if (!/^bf_[a-z0-9_]+$/.test(d.bfId)) throw new Error('战场 id 必须是 bf_ 开头的小写拼音（战场不是据点）');
     if (!Number.isFinite(d.lat) || !Number.isFinite(d.lng)) throw new Error('战场坐标不合法');
     if (!Number.isFinite(d.year) || d.year === 0) throw new Error('年代不合法');
-    if (d.type === 'siege' && !d.defenderCityId) throw new Error('攻城战必须指定被攻打的据点');
+    // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城目标**二选一**：
+    //    打据点（推罗）给 `defenderCityId`；打**战场要塞**（一之谷）给 `bfTargetBattlefieldId`。
+    if (d.type === 'siege' && !d.defenderCityId && !d.bfTargetBattlefieldId) {
+        throw new Error('攻城战必须指定被攻打的据点，或指定「本战场即攻城目标」（战场要塞）');
+    }
     if (!(d.attackerTroops > 0) || !(d.defenderTroops > 0)) throw new Error('双方兵力必须 > 0');
     if (!d.attackerGeneralId || !d.defenderGeneralId) throw new Error('双方武将必须有');
 
@@ -391,7 +435,35 @@ export function saveBattlefieldEvent(
             ];
             if (d.bfNote && d.bfNote.trim()) fields.push(['note', tsStr(d.bfNote.trim())]);
             if (d.bfBriefing && d.bfBriefing.trim()) fields.push(['briefing', tsStr(d.bfBriefing.trim())]);
-            bfText = patchFields(bfBefore, hit.start, hit.end, fields).text;
+            // 🔴 [2026-09-19] 在场人物：有值就地替换，清空了**真删字段**（与 generalId 同规矩）
+            if (d.bfRoster && d.bfRoster.length) {
+                fields.push(['roster', `[${d.bfRoster.map((r) => tsStr(r)).join(', ')}]`]);
+            }
+            // 🔴 [2026-09-19] 攻城战：这个战场打的是哪座城 / 哪块战场（显式指名，一律不比坐标）
+            if (isSiegeDraft(d) && d.bfEventCityId) {
+                fields.push(['eventCityId', tsStr(d.bfEventCityId)]);
+            }
+            if (isSiegeDraft(d) && d.bfTargetBattlefieldId) {
+                fields.push(['eventBattlefieldId', tsStr(d.bfTargetBattlefieldId)]);
+            }
+            // 🔴 [2026-09-19 主人定] 攻城战战场标注用哪一档据点样式（大中小城寨）
+            if (isSiegeDraft(d) && d.bfSiegeCastleType) {
+                fields.push(['siegeCastleType', tsStr(d.bfSiegeCastleType)]);
+            }
+            const patched = patchFields(bfBefore, hit.start, hit.end, fields);
+            let bfTxt = d.bfRoster && d.bfRoster.length
+                ? patched.text
+                : removeField(patched.text, hit.start, patched.objEnd, 'roster');
+            if (!(isSiegeDraft(d) && d.bfEventCityId)) {
+                bfTxt = removeField(bfTxt, hit.start, hit.end, 'eventCityId');
+            }
+            if (!(isSiegeDraft(d) && d.bfTargetBattlefieldId)) {
+                bfTxt = removeField(bfTxt, hit.start, hit.end, 'eventBattlefieldId');
+            }
+            if (!(isSiegeDraft(d) && d.bfSiegeCastleType)) {
+                bfTxt = removeField(bfTxt, hit.start, hit.end, 'siegeCastleType');
+            }
+            bfText = bfTxt;
             bfMode = 'update';
         } else {
             bfText = insertEntry(bfBefore, BF_DECL, buildBattlefieldEntry(d), yearFromBattlefieldBody, d.year);
@@ -487,8 +559,14 @@ export function saveBattlefieldEvent(
             if (d.marchWaypoints.length) {
                 innerFields.push(['marchWaypoints', `[${d.marchWaypoints.map((w) => tsStr(w)).join(', ')}]`]);
             }
-            if (isSiege) innerFields.push(['defenderCityId', tsStr(d.defenderCityId)]);
-            else if (d.defenderSourceCityId) innerFields.push(['defenderSourceCityId', tsStr(d.defenderSourceCityId)]);
+            // 🔴 [2026-09-19] 攻城目标二选一：**战场要塞**（targetBattlefieldId）或**据点**（defenderCityId）。
+            if (isSiege && d.bfTargetBattlefieldId) {
+                innerFields.push(['targetBattlefieldId', tsStr(d.bfTargetBattlefieldId)]);
+            } else if (isSiege) {
+                innerFields.push(['defenderCityId', tsStr(d.defenderCityId)]);
+            } else if (d.defenderSourceCityId) {
+                innerFields.push(['defenderSourceCityId', tsStr(d.defenderSourceCityId)]);
+            }
             // 🔴 [2026-09-16] 军团名（战场编辑器可显式指定）；留空不写 = 走势力/建筑风格默认
             if (d.attackerLegionName) innerFields.push(['attackerLegionName', tsStr(d.attackerLegionName)]);
             if (d.defenderLegionName) innerFields.push(['defenderLegionName', tsStr(d.defenderLegionName)]);

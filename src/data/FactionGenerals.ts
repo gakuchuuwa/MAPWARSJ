@@ -25,6 +25,7 @@
  */
 
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
+import { getBattlefieldCharacter } from './BattlefieldCharacters';
 
 export interface FactionGeneral {
     /** 将领 id（须在 GENERAL_PROFILES 有档案，否则武将技不触发） */
@@ -1308,12 +1309,37 @@ function getGeneralIdIndex(): Map<string, { factionId: string; general: FactionG
     return index;
 }
 
+export function getFactionIdOfGeneral(generalId: string | null | undefined): string | null {
+    if (!generalId) return null;
+    const hit = getGeneralIdIndex().get(generalId);
+    if (hit) return hit.factionId;
+    // 战场人物（窦建德 / 平知盛式的"只在场战上出现"的人）也有势力归属，同样答得出来
+    return getBattlefieldCharacter(generalId)?.factionId ?? null;
+}
+
 export function getGeneralRecordByGeneralId(
     generalId: string,
     options?: { region?: import('../systems/RegionSystem').RegionType },
 ): FactionGeneral | null {
     const hit = getGeneralIdIndex().get(generalId);
-    if (!hit) return null;
+    if (!hit) {
+        // 🔴 [2026-09-19 主人定] 兜底：**战场人物**（窦建德 / 王世充 / 保卢斯 / 瓦罗 / 埃提乌斯…）。
+        //    主人原话「缺少的人物，做成战场人物。人物和战场点绑定。」
+        //    它们不在 `FACTION_GENERALS` 里（塞进去会被城池掷将掷到，那是"东边打完西边又打"），
+        //    但战场要用它们当主帅：`spawnBattlefieldSide` 与 13 战术模式都走本函数拿将领名与立绘，
+        //    不兜这一下，人物就"有 id 没名字"。
+        //    立绘照旧走 resolveGeneralPortraitPath（战场人物的 portrait 通常留空 → 势力池/文化池回落）。
+        const bfChar = getBattlefieldCharacter(generalId);
+        if (!bfChar) return null;
+        return {
+            generalId: bfChar.generalId,
+            generalName: bfChar.generalName,
+            portrait: resolveGeneralPortraitPath(bfChar.portrait, {
+                factionId: bfChar.factionId,
+                region: options?.region,
+            }),
+        };
+    }
     // 立绘 override 每次现取：它可以在运行时被改（setGeneralPortraitOverride），不能进索引
     const dedicated = _generalPortraitOverrides[generalId] ?? hit.general.portrait;
     return {

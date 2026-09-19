@@ -64,6 +64,13 @@ export interface PlayerQuest {
         title: string;
         lat: number;
         lng: number;
+        /**
+         * 攻城战才有：**要打的那座城**。
+         * 🔴 [2026-09-19] 攻城战的战场标在**史实地点**（一之谷 34.64,135.10），
+         *    而要打的城是姬路城（34.8394,134.6939）—— 两者差 0.2 度。军团赶路必须开向**城**，
+         *    否则会停在史实地点、离城二十公里，这一仗永远触发不了。
+         */
+        defenderCityId: string | null;
     };
 }
 
@@ -471,6 +478,8 @@ export class PlayerQuestSystem {
     ): {
         title: string; battlefieldId: string; battlefieldName: string;
         lat: number; lng: number; foeGeneralName: string | null;
+        /** 攻城战：要打的那座城（赶路终点是**城**，不是史实战场坐标） */
+        defenderCityId: string | null;
     } | null {
         const bf = BATTLEFIELDS.find((b) => b.id === hit.battlefieldId);
         if (!bf) return null;
@@ -486,6 +495,13 @@ export class PlayerQuestSystem {
             lat: bf.lat,
             lng: bf.lng,
             foeGeneralName: foeId ? (getGeneralRecordByGeneralId(foeId)?.generalName ?? null) : null,
+            // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城战的赶路终点：
+            //   · **战场要塞**（`targetBattlefieldId`）→ 就是这块战场本身的坐标；
+            //   · 普通攻城（打下某座**据点**）→ 那座城的坐标。
+            //   原先一律取 `defenderCityId`，一之谷改成打战场后就没有城可取了。
+            defenderCityId: hit.event.type === 'siege' && !hit.event.siegeData?.targetBattlefieldId
+                ? (hit.event.siegeData?.defenderCityId ?? null)
+                : null,
         };
     }
 
@@ -502,7 +518,7 @@ export class PlayerQuestSystem {
     private joinGeneralEvent(
         city: City,
         g: { generalId: string; generalName: string; portrait: string },
-        ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number },
+        ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number; defenderCityId?: string | null },
         army: Army | null,
     ): void {
         this.deps.closeDialogue();
@@ -533,6 +549,7 @@ export class PlayerQuestSystem {
                 title: ev.title,
                 lat: ev.lat,
                 lng: ev.lng,
+                defenderCityId: ev.defenderCityId ?? null,
             },
         };
         this.followingEventGeneralId = g.generalId;
@@ -554,7 +571,12 @@ export class PlayerQuestSystem {
         // 把这个目标清掉，免得 AI 或别处把它当成「要攻打自己这座城」。
         host.expeditionTargetCityId = null;
         this.armyMarchPoint = null;
-        this.startMarchToBattlefield(host, { lat: ev.lat, lng: ev.lng });
+        // 攻城战：赶路终点是**被攻的那座城**（战场标牌仍在史实地点，那是给玩家看的地理参照）
+        const defCity = ev.defenderCityId ? this.deps.cityManager.getCity(ev.defenderCityId) : null;
+        const marchTarget = defCity
+            ? { lat: defCity.latitude, lng: defCity.longitude }
+            : { lat: ev.lat, lng: ev.lng };
+        this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
         this.startJourneyBriefing(BATTLEFIELDS.find((b) => b.id === ev.battlefieldId) ?? null, ev.title);

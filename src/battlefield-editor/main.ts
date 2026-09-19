@@ -16,6 +16,7 @@
 import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { getAllBattlefieldCharacters } from '../data/BattlefieldCharacters';
 import { CITIES_V2 } from '../data/cities_v2';
 import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
@@ -34,6 +35,27 @@ interface BattleDraft {
     bfNote: string;
     /** 赶路背景播报：玩家在奔赴这个战场的路上逐段播的背景介绍（空行分段） */
     bfBriefing: string;
+    /**
+     * 🔴 [2026-09-19 主人定] 在场人物（`BattlefieldCharacters.ts` 的人物 id）——
+     * 「缺少的人物，做成战场人物。人物和战场点绑定。」这些人物不属于任何据点，只属于这一块战场。
+     */
+    bfRoster: string[];
+    /**
+     * 🔴 [2026-09-19 主人定] 攻城战：这个战场**打的是哪座城**。
+     * 战场标牌标在史实地点，打的却是最近的据点（一之谷 ↔ 姬路城相差 43km），故显式指名。
+     */
+    bfEventCityId: string;
+    /**
+     * 🔴 [2026-09-19 主人定「建立一个一之谷战场」] **本战场即攻城目标**（战场要塞，一之谷）。
+     * 攻城目标二选一：打据点给 `bfEventCityId`，打战场要塞给本字段（值 = 自己的战场 id）。
+     */
+    bfTargetBattlefieldId: string;
+    /**
+     * 🔴 [2026-09-19 主人定] **战场攻城战的标注套用据点样式**：
+     * `big_city` / `medium_city` / `small_city` / `stockade` / `pass`（大中小城寨）。
+     * 留空 = 仍画普通战场形态（野战留空）。
+     */
+    bfSiegeCastleType: string;
 
     year: number;
     /** 0 春 1 夏 2 秋 3 冬 */
@@ -114,6 +136,10 @@ const ALL_LEGIONS: string[] = LEGION_GROUPS.flatMap((g) => g.legions);
 const CITY_BY_ID = new Map(CITIES_V2.map((c) => [c.id, c]));
 const ALL_CITIES = [...CITIES_V2].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
 
+/** 🔴 [2026-09-19 主人定] 战场人物下拉（只在场战上出现的人，不参与城池掷将） */
+const ALL_BF_CHARACTERS = getAllBattlefieldCharacters();
+const BF_CHAR_BY_ID = new Map(ALL_BF_CHARACTERS.map((c) => [c.generalId, c]));
+
 // ── 把现有两个文件合并成编辑器视图 ────────────────────────────────────
 type AnyEvent = HistoricalEvent & {
     season?: number;
@@ -150,6 +176,10 @@ function loadDrafts(): BattleDraft[] {
             bfName: bf?.name ?? '',
             bfNote: bf?.note ?? '',
             bfBriefing: bf?.briefing ?? '',
+            bfRoster: [...(bf?.roster ?? [])],
+            bfEventCityId: bf?.eventCityId ?? '',
+            bfTargetBattlefieldId: bf?.eventBattlefieldId ?? '',
+            bfSiegeCastleType: (bf as { siegeCastleType?: string } | undefined)?.siegeCastleType ?? '',
             year: ev.year,
             season: ev.season ?? 0,
             generalId: (ev as AnyEvent & { generalId?: string }).generalId ?? '',
@@ -186,7 +216,7 @@ function loadDrafts(): BattleDraft[] {
 
 function blankDraft(): BattleDraft {
     return {
-        bfId: '', bfName: '', bfNote: '', bfBriefing: '',
+        bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
         year: -321, season: 0, generalId: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
@@ -251,9 +281,15 @@ function validate(d: BattleDraft): Issue[] {
 
     if (!(d.attackerTroops > 0)) err('攻方兵力必须 > 0');
     if (!(d.defenderTroops > 0)) err('守方兵力必须 > 0');
-    // 🔴 [2026-09-16 主人定]「所有战场事件必须进入战术模式」——够不着门槛就是错，不是提醒
+    // 🔴 [2026-09-19 主人定] **取消「5000 硬拦」**。
+    //    主人原话：「所有战场一律进入战术模式，不受 5000 限制。兵力要符合历史。」
+    //    运行时本来就放行：战场事件的双方军团都带 `isScriptArmy`，
+    //    `GameAppCombatHooks.onRegionalBattleStart` 里 `isBattlefieldEvent` 一真就直接进 13，
+    //    不看兵力/将领/精锐/调试开关。原先这里那道硬拦是编辑器自己加的，比引擎还严，
+    //    把桶狭间（信长 2000~3000）、千早城（楠木千余人）这类**史实就是这么少**的仗挡在门外。
+    //    保留一条提醒，不再拦保存。
     if (d.attackerTroops < 5000 || d.defenderTroops < 5000) {
-        err('有一方兵力 < 5000，进不去战术模式。所有战场事件都必须能进 13，请按史料取更高的那个数值');
+        warn('有一方兵力 < 5000：战场事件不受此限（会自动进战术模式），确认这是史实数字即可');
     }
 
     if (!d.attackerSourceCityId) err('攻方出兵据点必须选（军团从这里出发）');
@@ -353,8 +389,14 @@ function briefingSeconds(text: string): number {
 }
 
 function generalOptions(cur: string): string {
+    // 🔴 [2026-09-19 主人定]「缺少的人物，做成战场人物」——这些人也在攻守两方的下拉里，
+    //    否则「窦建德当守方主帅」根本选不出来。单列一个 optgroup 标明他们只在场战上出现。
+    const bfChars = ALL_BF_CHARACTERS.filter((c) => c.generalId !== cur);
     return '<option value="">（未选）</option>'
-        + ALL_GENERALS.map((g) => opt(g.generalId, `${g.generalName} — ${g.factionId}`, cur)).join('');
+        + ALL_GENERALS.map((g) => opt(g.generalId, `${g.generalName} — ${g.factionId}`, cur)).join('')
+        + (bfChars.length
+            ? `<optgroup label="⚔ 战场人物（只在场战上出现）">${bfChars.map((c) => opt(c.generalId, `${c.generalName} — ${c.factionId}`, cur)).join('')}</optgroup>`
+            : '');
 }
 function cityOptions(cur: string): string {
     return '<option value="">（未选）</option>'
@@ -472,6 +514,45 @@ function render(): void {
                         <input id="f-bfName" value="${escapeAttr(working.bfName)}" placeholder="高加米拉">
                         <span class="hint">标牌上只显示地名</span>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="fld">
+                        <label>在场人物 · 与这块战场绑定的人（战场人物表 src/data/BattlefieldCharacters.ts）</label>
+                        <div class="chips" id="roster">
+                            ${working.bfRoster.map((id, i) => `<span class="chip">${escapeHtml(BF_CHAR_BY_ID.get(id)?.generalName ?? id)}<button data-rm-ros="${i}">×</button></span>`).join('')}
+                        </div>
+                        <div class="row" style="margin-top:6px;">
+                            <select id="ros-char" style="flex:1;min-width:180px;">
+                                <option value="">（未选）</option>
+                                ${ALL_BF_CHARACTERS.map((c) => opt(c.generalId, `${c.generalName} — ${c.factionId}`, '')).join('')}
+                            </select>
+                            <button class="bf-btn" id="ros-add">加入在场人物</button>
+                        </div>
+                        <span class="hint">攻守两方的武将下拉里已单列「⚔ 战场人物」，可直接选来当主帅</span>
+                    </div>
+                    ${working.type === 'siege' ? `
+                    <div class="fld" style="max-width:320px;">
+                        <label>这个战场打的是哪座城 · 攻城战专用</label>
+                        <select id="f-eventCity">${cityOptions(working.bfEventCityId)}</select>
+                        <span class="hint">打**据点**时用（如推罗围城战 ↔ 推罗城）；打**战场要塞**请用右栏，两者二选一</span>
+                    </div>
+                    <div class="fld" style="max-width:320px;">
+                        <label>本战场即攻城目标 · 战场要塞（如「一之谷」）</label>
+                        <select id="f-eventBf">${opt('', '（不是）', working.bfTargetBattlefieldId)}${BATTLEFIELDS.map((x) => opt(x.id, `${x.name} — ${x.id}`, working.bfTargetBattlefieldId)).join('')}</select>
+                        <span class="hint">战场本身就是被强攻的目标时选它（不攻任何据点、战后不改任何据点归属）</span>
+                    </div>
+                    <div class="fld" style="max-width:260px;">
+                        <label>标注套用哪一档据点样式 · 攻城战专用</label>
+                        <select id="f-siegeCastle">
+                            ${opt('', '（不套用，画战场形态）', working.bfSiegeCastleType)}
+                            ${opt('big_city', '大城', working.bfSiegeCastleType)}
+                            ${opt('medium_city', '中城', working.bfSiegeCastleType)}
+                            ${opt('small_city', '小城', working.bfSiegeCastleType)}
+                            ${opt('stockade', '城寨', working.bfSiegeCastleType)}
+                            ${opt('pass', '险要（砦/关隘）', working.bfSiegeCastleType)}
+                        </select>
+                        <span class="hint">打完这一仗后，地图上这个战场就画成据点那样（与真据点同一套组装，样式不会走样）</span>
+                    </div>` : ''}
                 </div>
             </fieldset>
 
@@ -597,8 +678,7 @@ function bind(): void {
     on<HTMLInputElement>('f-lng', 'change', (el) => { working.lng = num(el.value); render(); });
     on<HTMLSelectElement>('f-type', 'change', (el) => {
         working.type = el.value as BattleDraft['type']; render();
-    });
-    on<HTMLInputElement>('f-bfId', 'input', (el) => { working.bfId = el.value; });
+    });    on<HTMLInputElement>('f-bfId', 'input', (el) => { working.bfId = el.value; });
     on<HTMLInputElement>('f-bfName', 'input', (el) => { working.bfName = el.value; });
 
     // 选武将自动带出势力 id：少一处手写就少一处写歪
@@ -626,8 +706,16 @@ function bind(): void {
         // 攻城战守方就是这座城：势力跟着城走，省得手写写歪
         const c = CITY_BY_ID.get(el.value);
         if (c && c.factionId) working.defenderFactionId = c.factionId;
+        // 🔴 [2026-09-19] 攻城战「打的是哪座城」缺省就跟着被攻据点走（一之谷那种史实战场坐标另填）
+        if (!working.bfEventCityId) working.bfEventCityId = el.value;
         render();
     });
+    // 🔴 [2026-09-19] 攻城战：战场 ↔ 被攻据点的显式链接（不比坐标）
+    on<HTMLSelectElement>('f-eventCity', 'change', (el) => { working.bfEventCityId = el.value; render(); });
+    // 🔴 [2026-09-19] 攻城战：本战场即攻城目标（战场要塞，一之谷）
+    on<HTMLSelectElement>('f-eventBf', 'change', (el) => { working.bfTargetBattlefieldId = el.value; render(); });
+    // 🔴 [2026-09-19 主人定] 攻城战战场标注套用哪一档据点样式（大中小城寨）
+    on<HTMLSelectElement>('f-siegeCastle', 'change', (el) => { working.bfSiegeCastleType = el.value; render(); });
     on<HTMLSelectElement>('f-defSrcCity', 'change', (el) => { working.defenderSourceCityId = el.value; render(); });
     on<HTMLSelectElement>('f-defLegion', 'change', (el) => { working.defenderLegionName = el.value; render(); });
     on<HTMLInputElement>('f-defLegionSearch', 'input', () => { filterLegionSelect('f-defLegion', 'f-defLegionSearch'); });
@@ -640,6 +728,18 @@ function bind(): void {
     on<HTMLButtonElement>('wp-add', 'click', () => {
         const sel = document.getElementById('wp-city') as HTMLSelectElement | null;
         if (sel && sel.value) { working.marchWaypoints.push(sel.value); render(); }
+    });
+    // 🔴 [2026-09-19 主人定] 在场人物增删（战场人物与战场点绑定）
+    on<HTMLButtonElement>('ros-add', 'click', () => {
+        const sel = document.getElementById('ros-char') as HTMLSelectElement | null;
+        if (sel && sel.value && !working.bfRoster.includes(sel.value)) {
+            working.bfRoster.push(sel.value); render();
+        }
+    });
+    document.querySelectorAll<HTMLElement>('[data-rm-ros]').forEach((el) => {
+        el.addEventListener('click', () => {
+            working.bfRoster.splice(Number(el.dataset.rmRos), 1); render();
+        });
     });
     document.querySelectorAll<HTMLElement>('[data-rm-wp]').forEach((el) => {
         el.addEventListener('click', () => {
