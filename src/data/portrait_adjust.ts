@@ -7043,7 +7043,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 24
         },
         "/assets/GREEK/naxos_ancient_kabuliyasi.png": {
-            "scale": 0.96,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": -12
         },
@@ -7916,6 +7916,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/GREEK/jikelazes_alisitide.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {

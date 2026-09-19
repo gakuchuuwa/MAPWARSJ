@@ -456,8 +456,8 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     //    三场战役**已整体删除**（连同 `Battlefields.ts` 的 bf_pulatanasi / bf_kelannong / bf_helesipang）。
     //    原因：这三场的归属武将（安提帕特／安提菲洛斯／欧迈尼斯）在库里**没有据点**，
     //    而玩家「找到武将」只认据点守将，事件永远等不到玩家 —— 按主人令直接删除，不留死数据。
-    //    ⚠️ 武将与势力记录**保留**（安提帕特／克拉特罗斯／莱奥斯塞尼斯／安提菲洛斯／欧迈尼斯、
-    //      势力 kapaduoxiya）：人物不是死数据，日后有据点/战场时可直接复用。
+    //    ⚠️ 武将与势力记录：安提帕特／莱奥斯塞尼斯／安提菲洛斯／克拉特罗斯仍在（分别挂 maqidun / xila）；
+    //      欧迈尼斯与孤儿势力 `kapaduoxiya` 已按主人令「都给我删了」删除。
     // ═══════════════════════════════════════════════════════════════
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──

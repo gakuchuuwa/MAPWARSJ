@@ -3232,8 +3232,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     maqidun_antipater: { generalId: 'maqidun_antipater', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 克兰农·安提菲洛斯：普将（史实为接任阵亡莱奥斯塞尼斯之希腊同盟军总司令，步兵溃退后撤离）· 逆势 · 善防
     xila_antiphilus: { generalId: 'xila_antiphilus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 赫勒斯滂·欧迈尼斯：名将（史实为亚历山大皇家书记官、卡帕多细亚总督，两翼骑兵闪电突击阵斩敌帅一战封神）· 创势 · 善攻
-    gen_eumenes: { generalId: 'gen_eumenes', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    // 🔴 [2026-09-19 主人令「都给我删了」] 欧迈尼斯（gen_eumenes）的档案已删除 ——
+    //    他名下的那一仗（前321赫勒斯滂战役）与势力 `kapaduoxiya` 均已删除，档案成了孤儿。
     // 赫勒斯滂·克拉特罗斯：名将（史实为亚历山大麾下第一名将，赫勒斯滂战役中战马受创坠马阵亡）· 逆势 · 善防
     maqidun_craterus: { generalId: 'maqidun_craterus', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     gen_boleslaw_brave: { generalId: 'gen_boleslaw_brave', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },

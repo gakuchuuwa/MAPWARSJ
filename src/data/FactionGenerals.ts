@@ -1268,8 +1268,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     malli: { generalId: 'malli_leader', generalName: '马利首领', portrait: '' },
     // 前324年科塞亚战役守帅（扎格罗斯山脉科塞亚部落酋长联军首领），立绘按铁律留空走回落、待主人亲自放图分配
     kesaiya: { generalId: 'kesaiya_shouling', generalName: '科塞亚首领', portrait: '' },
-    // 前321年赫勒斯滂战役统帅（卡帕多细亚总督、亚历山大皇家书记官欧迈尼斯），立绘按铁律留空走回落、待主人亲自放图分配
-    kapaduoxiya: { generalId: 'gen_eumenes', generalName: '欧迈尼斯', portrait: '' },
+    // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
+    //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
+    //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。
+    //    ⚠️ 立绘按铁律留空（等主人亲自放图）—— 与前三位同一种写法。
+    xia: { generalId: 'doujiande', generalName: '窦建德', portrait: '' },
+    // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
+    //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]

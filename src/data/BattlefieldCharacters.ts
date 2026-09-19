@@ -58,14 +58,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portraitProposedPath: '/assets/CENTRAL/xia_doujiande.png',
         note: '夏王窦建德，河北义军之主；621年虎牢关战役率十万众西援洛阳王世充，兵败被擒。史料：《旧唐书·窦建德传》《资治通鉴·唐纪五》。',
     },
-    wangshichong: {
-        generalId: 'wangshichong',
-        generalName: '王世充',
-        factionId: 'zheng',
-        portrait: '',
-        portraitProposedPath: '/assets/CENTRAL/zheng_wangshichong.png',
-        note: '郑帝（洛阳）王世充，621年被李世民围困于洛阳，粮尽援绝，见窦建德被擒后出降。史料：《旧唐书·王世充传》。',
-    },
+    // 🔴 [2026-09-19 主人令「都给我删了」] 王世充的记录已删除：
+    //    他唯一的归属是 `zheng`（郑）这个势力，而郑是**我给虎牢关多建的第三方** ——
+    //    虎牢关这一仗只有攻(唐·李世民)守(夏·窦建德)两方，王世充当时被围在洛阳、根本不在虎牢关。
+    //    势力与人物一起删，不留悬空引用。日后若做「洛阳之战」，再一并重建。
 
     // ── 坎尼战役（前216）罗马方主帅 ──────────────────────────────
     baolusi: {
