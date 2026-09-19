@@ -890,6 +890,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'echigo_shangshanqianxin': 16,                      // 上杉谦信 · echigo · 春日山
     'edo_dechuanjiakang': 16,                           // 德川家康 · edo · 江户城
     'fujiwara_yuanyijing': 12,                           // 源义经 · fujiwara · 柳之御所
+    'fujiwara_xiuheng': 12,                           // 藤原秀衡 · fujiwara · 柳之御所（奥州藤原氏三代当主）
     'gonggu_gonggudaozhu': 15,                           // 麻利芝 · gonggu · 平良
     'hashiba_fengchenxiuji': 16,                         // 丰臣秀吉 · hashiba · 姬路城
     'higo_d_juchiwuguang': 14,                           // 菊池武光 · higo_d · 熊本

@@ -309,7 +309,14 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'izumo': 'city_izumo',
 'satsuma': 'city_satsuma',
     'ryukyu': 'city_shuri',
-    'sagami': 'city_hakone',
+    // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」]
+    //    源氏的据点在**相模国**（源赖朝 1180 年入驻镰仓，相模国即其根据地）；
+    //    库里没有镰仓（新建会撞 50km 门槛：镰仓↔江户城仅 44.4km），故用同国的**箱根关**
+    //    ——「足柄八口」是镰仓的西门户，地理与史实都对得上。
+    // 🔴 [2026-09-19 主人令] 源氏的据点是**镰仓**（源赖朝 1180 年设幕府之地）。
+    //    原先暂借箱根关（因镰仓会撞 50km 门槛），现已按「两边据点各自微调」落地镰仓；
+    //    箱根关已还给 sagami（北条氏康）。
+    'genji': 'city_kamakura',
     'so': 'city_tsushima',
     'kakizaki': 'city_katsuyama',
     'fujiwara': 'city_yanaginogosho',

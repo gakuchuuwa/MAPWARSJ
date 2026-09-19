@@ -332,7 +332,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     iyo_d: { generalId: 'iyo_d_cunshangwuji', generalName: '村上武吉', portrait: '/assets/JAPAN/iyo_d_cunshangwuji.png' },
     nanbu: { generalId: 'nanbu_nanbuqingzheng', generalName: '南部晴政', portrait: '/assets/JAPAN/nanbu_nanbuqingzheng.png' },
     osumi: { generalId: 'osumi_ganfujianxu', generalName: '肝付兼续', portrait: '/assets/JAPAN/osumi_ganfujianxu.png' },
-    fujiwara: { generalId: 'fujiwara_yuanyijing', generalName: '源义经', portrait: '/assets/JAPAN/fujiwara_yuanyijing.png' },
+    // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」]
+    //    源义经归**源氏**（镰仓殿源赖朝的军势）：1184 年一之谷他是代表兄长出战的，
+    //    既不属于奥州藤原氏、也不在奥州（投奔奥州是 1185 年之后）。
+    //    ⚠️ 立绘路径**原样保留**（仍指同一张已存在的图）—— 未新增、未移动、未替换任何立绘文件。
+    genji: { generalId: 'fujiwara_yuanyijing', generalName: '源义经', portrait: '/assets/JAPAN/fujiwara_yuanyijing.png' },
+
+    // 🔴 [2026-09-19 主人令「先给奥州更换武将。新建一个」] 奥州藤原氏（陆奥·平泉）的当主。
+    //    ⚠️ 立绘一律留空 → 走「本政权夹 → 本文化夹」回落（见 AGENTS.md §十三）。
+    //    等主人放图后按约定填：**势力key_中文名拼音.png**（例 fujiwara_xiuheng.png）。
+    fujiwara: { generalId: 'fujiwara_xiuheng', generalName: '藤原秀衡', portrait: '/assets/JAPAN/fujiwara_tengyuanxiuheng.png' },
     kakizaki: { generalId: 'kakizaki_liqiqingguang', generalName: '蛎崎庆广', portrait: '/assets/JAPAN/kakizaki_liqiqingguang.png' },
     ayinu: { generalId: 'ayinu_hushemoquan', generalName: '胡奢魔犬', portrait: '/assets/LINGNAN/ayinu_hushemoquan.png' },
     so: { generalId: 'so_zongyizhi', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png' },

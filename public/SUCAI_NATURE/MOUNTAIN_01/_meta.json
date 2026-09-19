@@ -1,1 +1,8 @@
-{"frames": 1, "box_w": 620, "box_h": 400, "anchor_x": 280, "anchor_y": 204}
+{
+  "frames": 1,
+  "box_w": 620,
+  "box_h": 400,
+  "anchor_x": 280,
+  "anchor_y": 204,
+  "suffix": "x1"
+}

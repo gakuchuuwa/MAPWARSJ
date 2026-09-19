@@ -733,7 +733,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    攻城目标改走 `targetBattlefieldId`（引擎据此用战场记录合成攻城目标），
             //    **不再去攻打姬路城** —— 姬路城是羽柴方的据点，与这一仗毫无关系。
             targetBattlefieldId: 'bf_yinotani',
-            attackerFactionId: 'fujiwara',
+            attackerFactionId: 'genji',
             attackerGeneralId: 'fujiwara_yuanyijing',
             attackerTroops: 15000,
             attackerSourceCityId: 'city_kyoto',
@@ -764,7 +764,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '正成以巨木滚石碾碎蚁附之敌，夜布稻草假人诱敌狂射空箭，再投巨石掩杀；幕府大军百日不克。',
             attackerFactionId: 'ashikaga',
             attackerGeneralId: 'ashikaga_zulizunshi',
-            attackerTroops: 8000,
+            attackerTroops: 6000,
             attackerSourceCityId: 'city_kyoto',
             // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
 
