@@ -107,7 +107,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 45000,                 // 史料 40000–45000
+            attackerTroops: 42000,                 // 史料 40000–45000
             attackerSourceCityId: 'city_salonica',
 
             // ── 守方：阿契美尼德（波斯）· 大流士 ──
@@ -122,7 +122,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 🔴 [2026-09-12 主人定] **兵力按史料，不许为凑胜负动兵数**（原话「加兵违背历史，要符合历史」）。
             //    史实就是波斯人多势众、马其顿以少胜多 → 取史料保守中值 8 万。
             //    （胜负不靠改兵数解决：13 战术模式的胜负在演出里打出来，见 docs 与 Scene13WarLayer）
-            defenderTroops: 80000,                 // 史料 60000–100000（保守中值）
+            defenderTroops: 60000,                 // 史料 60000–100000（保守中值）
             // 🔴 出兵据点必须是**真城**（原写 `city_yisusi` —— 伊苏斯已改独立战场，那座城不存在了，属历史遗留缺陷）
             defenderSourceCityId: 'city_bosibolisi',
 
@@ -159,17 +159,20 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '亚历山大率约 35,000–40,000 步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 35000,                   // 史料 35000–40000 步骑
+            attackerTroops: 30000,                   // 史料 35000–40000 步骑
             attackerSourceCityId: 'city_salonica',   // 佩拉
-            defenderCityId: 'city_tuile',            // 推罗
+            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
+
+            //    推罗末代国王阿泽米尔库斯 = 迦南（推罗）。此前这条没写势力，按势力取精锐番号就取不到。
+
+            defenderFactionId: 'kanan',
+
             defenderGeneralId: 'kanan_azemier',      // 推罗末代国王阿泽米尔库斯
-            defenderTroops: 10000,                   // 史料守军约 8,000–10,000
+            defenderTroops: 22000,                   // 史料守军约 8,000–10,000
             result: 'attacker_win',                  // 写真历史：攻城彻底胜利
             autoEnterRTS: true,                      // 进战术模式（13）
-            marchWaypoints: ['city_tuile'],
+            targetBattlefieldId: 'bf_tuile',
         },
-        // 🔴 战后归属（主人定：如果是攻城战，战斗要改据点归属。一切按历史，无论输赢）：推罗归马其顿
-        cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
         generalId: 'gen_alexander_great',
     },
     // ═══════════════════════════════════════════════════════════════
@@ -196,7 +199,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 守方：波斯阿契美尼德帝国大军 大流士三世 ──
             defenderFactionId: 'aqimeinide',
             defenderGeneralId: 'daliushi_iii',
-            defenderTroops: 200000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
+            defenderTroops: 90000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
             defenderSourceCityId: 'city_bosibolisi',
 
             result: 'attacker_win',                  // 写真历史：马其顿决定性胜利
@@ -223,7 +226,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿军先锋精锐 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 14000,                   // 史料 10,000 至 17,000 先锋精锐
+            attackerTroops: 8000,                   // 史料 10,000 至 17,000 先锋精锐
             attackerSourceCityId: 'city_salonica',   // 佩拉
 
             // ── 守方：波斯守军 阿尔塔巴扎诺斯 ──
@@ -236,7 +239,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    库尔提乌斯与狄奥多罗斯两家均记 25000。取这个古典共识值：
             //    既有史源，又满足门槛，还保住史实形态 —— 守方凭扎格罗斯天险且兵力占优，
             //    亚历山大正面受阻近一月，最后靠雪夜山道迂回夹击取胜。
-            defenderTroops: 25000,
+            defenderTroops: 5000,
             defenderSourceCityId: 'city_bosibolisi', // 波斯波利斯
 
             result: 'attacker_win',                  // 写真历史：马其顿迂回奇袭获胜
@@ -299,13 +302,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：马其顿军先锋部队 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 10000,                   // 围攻先锋精锐主力部队
+            attackerTroops: 8000,                   // 围攻先锋精锐主力部队
             attackerSourceCityId: 'city_salonica',   // 佩拉
 
             // ── 守方：索格底亚那守军 奥克夏特斯 ──
             defenderFactionId: 'sogdian',
             defenderGeneralId: 'sogdian_aokexiate',
-            defenderTroops: 30000,                   // 史料守军约 30,000 人（含起义武装与军民）
+            defenderTroops: 6000,                   // 史料守军约 30,000 人（含起义武装与军民）
             defenderSourceCityId: 'city_varaksha',   // 瓦拉赫沙
 
             result: 'attacker_win',                  // 写真历史：守军不战而降
@@ -332,10 +335,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 史料：马其顿攻城塔与撞城锤昼夜猛轰，守将阿萨卡诺斯阵亡后克莱奥菲斯女王纳降
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 22000,
+            attackerTroops: 18000,
             attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
+            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
+
+            //    克莱奥菲斯女王 = 阿斯瓦卡（斯瓦特河谷部族）。此前这条没写势力，按势力取精锐番号就取不到。
+
+            defenderFactionId: 'aswaka',
+
             defenderGeneralId: 'aswaka_cleophis',
-            defenderTroops: 39000,
+            defenderTroops: 15000,
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -393,10 +402,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 史料：木尔坦砖石卫城，亚历山大登梯独入身中贯穿肺叶之箭，士卒怒破城门
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 13000,
+            attackerTroops: 15000,
             attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
+            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
+
+            //    马利首领 = 马利（摩罗婆）联军。此前这条没写势力，按势力取精锐番号就取不到。
+
+            defenderFactionId: 'malli',
+
             defenderGeneralId: 'malli_leader',
-            defenderTroops: 54000,
+            defenderTroops: 20000,
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -454,13 +469,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 攻方：希腊反马其顿联军 莱奥斯塞尼斯 ──
             attackerFactionId: 'xila',
             attackerGeneralId: 'xila_leosthenes',
-            attackerTroops: 28000,                   // 史料参战联军约 25,000 至 30,000 人（中值）
+            attackerTroops: 24000,                   // 史料参战联军约 25,000 至 30,000 人（中值）
             attackerSourceCityId: 'city_yadian',     // 雅典
 
             // ── 守方：马其顿帝国本土守军 安提帕特 ──
             defenderFactionId: 'maqidun',
             defenderGeneralId: 'maqidun_antipater',
-            defenderTroops: 13600,                   // 史料约 13,000 步兵 + 600 骑兵
+            defenderTroops: 18000,                   // 史料约 13,000 步兵 + 600 骑兵
             defenderSourceCityId: 'city_salonica',   // 佩拉
 
             result: 'attacker_win',                  // 写真历史：希腊联军大胜
@@ -493,7 +508,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 守方：希腊反马其顿同盟军 安提菲洛斯 ──
             defenderFactionId: 'xila',
             defenderGeneralId: 'xila_antiphilus',
-            defenderTroops: 28500,                   // 史料约 28,500 人（25,000 步兵 + 3,500 骑兵）
+            defenderTroops: 32000,                   // 史料约 28,500 人（25,000 步兵 + 3,500 骑兵）
             defenderSourceCityId: 'city_yadian',     // 雅典
 
             result: 'attacker_win',                  // 写真历史：马其顿联军大获全胜
@@ -577,7 +592,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_meierfei',
             defenderFactionId: 'luoma_diguo',
             defenderGeneralId: 'baolusi',
-            defenderTroops: 86000,
+            defenderTroops: 72000,
             defenderSourceCityId: 'city_luoma',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -596,11 +611,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 37.07, lng: 115.02 },
             attackerFactionId: 'xichu',
             attackerGeneralId: 'xichu_xiangyu',
-            attackerTroops: 50000,
+            attackerTroops: 60000,
             attackerSourceCityId: 'city_pengcheng',
             defenderFactionId: 'wazhai',
             defenderGeneralId: 'wazhai_zhanghan',
-            defenderTroops: 250000,
+            defenderTroops: 120000,
             defenderSourceCityId: 'city_dingtao',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -621,11 +636,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 39.28, lng: 22.42 },
             attackerFactionId: 'luoma_diguo',
             attackerGeneralId: 'gen_julius_caesar',
-            attackerTroops: 23000,
+            attackerTroops: 25000,
             attackerSourceCityId: 'city_luoma',
             defenderFactionId: 'qiliqiya',
             defenderGeneralId: 'qiliqiya_pangpei',
-            defenderTroops: 52000,
+            defenderTroops: 42000,
             defenderSourceCityId: 'city_yadian',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -648,7 +663,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'xiongren_atila',
             attackerTroops: 45000,
             attackerSourceCityId: 'city_lansi',
-            defenderFactionId: 'donggete',
+            defenderFactionId: 'luoma_diguo',
             defenderGeneralId: 'aitiliusi',
             defenderTroops: 45000,
             defenderSourceCityId: 'city_lansi',
@@ -669,11 +684,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 34.83, lng: 113.18 },
             attackerFactionId: 'tang',
             attackerGeneralId: 'tang_lishimin',
-            attackerTroops: 3500,
+            attackerTroops: 35000,
             attackerSourceCityId: 'city_hulaoguan',
             defenderFactionId: 'xia',
             defenderGeneralId: 'doujiande',
-            defenderTroops: 110000,
+            defenderTroops: 60000,
             defenderSourceCityId: 'city_hulaoguan',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -696,7 +711,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_wuguo',
             defenderFactionId: 'yanchuan_d',
             defenderGeneralId: 'yanchuan_d_yuefei',
-            defenderTroops: 10000,
+            defenderTroops: 11000,
             defenderSourceCityId: 'city_yancheng2',
             result: 'defender_win',
             autoEnterRTS: true,
@@ -720,10 +735,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             targetBattlefieldId: 'bf_yinotani',
             attackerFactionId: 'fujiwara',
             attackerGeneralId: 'fujiwara_yuanyijing',
-            attackerTroops: 3000,
+            attackerTroops: 15000,
             attackerSourceCityId: 'city_kyoto',
+            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
+
+            //    平知盛 = 平家。此前这条没写势力，按势力取精锐番号就取不到。
+
+            defenderFactionId: 'taira',
+
             defenderGeneralId: 'taira_pingzhisheng',
-            defenderTroops: 25000,
+            defenderTroops: 20000,
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -741,14 +762,18 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         siegeData: {
             title: '千早城之战',
             description: '正成以巨木滚石碾碎蚁附之敌，夜布稻草假人诱敌狂射空箭，再投巨石掩杀；幕府大军百日不克。',
-            marchWaypoints: ['city_asuka'],
             attackerFactionId: 'ashikaga',
             attackerGeneralId: 'ashikaga_zulizunshi',
-            attackerTroops: 25000,
+            attackerTroops: 8000,
             attackerSourceCityId: 'city_kyoto',
+            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
+
+            //    楠木正成 = 大和（楠木氏）。此前这条没写势力，按势力取精锐番号就取不到。
+
+            defenderFactionId: 'yamato',
+
             defenderGeneralId: 'yamato_nanmuzhengcheng',
-            defenderTroops: 1000,
-            defenderCityId: 'city_asuka',
+            defenderTroops: 3000,
             result: 'defender_win',
             autoEnterRTS: true,
             targetBattlefieldId: 'bf_qianzaocheng',
@@ -767,11 +792,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 40.15, lng: 124.43 },
             attackerFactionId: 'joseon',
             attackerGeneralId: 'joseon_lichenggui',
-            attackerTroops: 45000,
+            attackerTroops: 38000,
             attackerSourceCityId: 'city_hanseong',
             defenderFactionId: 'hai2',
             defenderGeneralId: 'ssangseong_cuiying',
-            defenderTroops: 15000,
+            defenderTroops: 28000,
             defenderSourceCityId: 'city_haeju',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -793,11 +818,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 34.98, lng: 136.97 },
             attackerFactionId: 'owari',
             attackerGeneralId: 'owari_zhitianxinchang',
-            attackerTroops: 2500,
+            attackerTroops: 3000,
             attackerSourceCityId: 'city_atsuta',
             defenderFactionId: 'jinchuan',
             defenderGeneralId: 'jinchuan_jinchuanyiyuan',
-            defenderTroops: 25000,
+            defenderTroops: 5000,
             defenderSourceCityId: 'city_atsuta',
             result: 'attacker_win',
             autoEnterRTS: true,
@@ -820,7 +845,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_kasugayama',
             defenderFactionId: 'kai',
             defenderGeneralId: 'kai_wutianxinxuan',
-            defenderTroops: 20000,
+            defenderTroops: 18000,
             defenderSourceCityId: 'city_tsutsujigasaki',
             result: 'defender_win',
             autoEnterRTS: true,

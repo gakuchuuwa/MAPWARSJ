@@ -12,7 +12,7 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { getCityEliteLegionName } from '../data/ExpeditionLegions';
+import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
@@ -389,11 +389,17 @@ export class PlayerQuestSystem {
                     //    奖的是**所投那一方**的主力兵种，与胜负无关 —— 亲历此役即得其战法。
                     const joinedFaction = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
                     const joinedGeneral = (side === 'attacker' ? fb.attackerGeneralId : fb.defenderGeneralId) ?? '';
-                    const sourceCityId = side === 'attacker' ? fb.attackerSourceCityId : fb.defenderSourceCityId;
                     const unitKey = this.mainUnitKeyOf(joinedFaction, joinedGeneral);
                     if (unitKey) {
-                        // 番号优先取出兵那座城的精锐番号，没有就用兵种本名
-                        const eliteName = (sourceCityId ? getCityEliteLegionName(sourceCityId) : null)
+                        // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」＋CC 独立审计第 3 条]
+                        //    **番号按势力取**（`getExpeditionEliteConfig(factionId)`），
+                        //    不再从「出兵城」取。
+                        //    改前的血训：守方那条路我修了、**玩家奖励这条路漏了** —— 于是玩家投哪边
+                        //    就可能拿到**别人家的番号**：投长平的赵守方拿到**秦的「上党锐骑」**、
+                        //    投桶狭间的今川守方拿到**织田的「织田马廻众」**、
+                        //    投法萨卢斯的庞培军拿到雅典的**「萨拉米斯舰」**（海军番号）、
+                        //    投虎牢关的唐/夏两边都拿到郑州的**「白袍军」**。
+                        const eliteName = getExpeditionEliteConfig(joinedFaction)?.name
                             ?? WAR_TYPES[unitKey]?.name ?? unitKey;
                         const learned = this.deps.hero.learnElite({
                             name: eliteName,

@@ -1181,7 +1181,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'naxos_ancient': 'city_chimarros',
     'yamaxun': 'city_themiskyra',
     // 🔴 [2026-09-12] 新增势力必须登记首都，否则沙盒兜底会把它降格成 panjun（见 five-file-sync.md 首都映射铁律）
-    'kanan': 'city_tuile',
+    // 🔴 [2026-09-19 主人定「据点和战场分开」] 迦南不再有据点：
+    //    推罗据点已删，迦南作为「只在战场上出现的势力」挂在推罗战场（kanan → 阿泽米尔 + 推罗水师），
+    //    精锐按**势力**取（getExpeditionEliteConfig），与本表无关。故此处不再映射到任何城。
     'feilisidin': 'city_jiasa',
 };
 
