@@ -25,6 +25,8 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCityRegion } from '../systems/RegionSystem';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
+// 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 硬规则检查单独成文件，便于脚本拿全量数据回归
+import { checkEventRules } from './eventRules';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -257,9 +259,7 @@ function validate(d: BattleDraft): Issue[] {
 
     if (!Number.isFinite(d.year) || d.year === 0) err('年代必须填（公元前写负数，如前321年 = -321）');
     if (!d.title.trim()) err('战役名称必须填');
-    else if (!/(战役|围城战|之战|会战|海战)$/.test(d.title.trim())) {
-        warn('战役名称建议用历史上最知名的叫法，以「战役／围城战／之战／会战／海战」结尾');
-    }
+    // 战役名一律「XXXX战役」、同将多场提示、归属武将可找到性… 全部交给 `eventRules.ts`（末尾统一并入）
     if (!d.eventTitle.trim()) warn('事件标题为空，建议写「公元前XXX年 XXX战役」');
     // 🔴 [2026-09-19 主人定] **删掉原先的「一年一个事件」互斥**。
     //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
@@ -269,17 +269,9 @@ function validate(d: BattleDraft): Issue[] {
     // 🔴 [2026-09-19 主人令「除亚历山大外尽量一人一场」＋运行时已支持同将多场]
     //    **同一武将可以挂多场**（亚历山大东征 11 场就是一个人打的），运行时
     //    `findHistoricalEventsOfGeneral` 返回数组、`PlayerQuestSystem` 按年份**依次解锁**。
-    //    所以这里**只提醒、不拦存** ——
+    //    所以这里**只提醒、不拦存**（见 `eventRules.ts` 的同类提示）——
     //    改前是 `err`，而 `hasErr` 会把「保存」按钮置灰，导致亚历山大名下那 11 场
     //    **在编辑器里一场都存不了**（血训：校验比运行时还严，等于把主人的数据锁死）。
-    if (d.generalId) {
-        const dup = drafts.filter((x) => x.generalId === d.generalId && x.title !== d.title);
-        if (dup.length) {
-            const name = GENERAL_BY_ID.get(d.generalId)?.generalName ?? d.generalId;
-            warn(`【${name}】名下还有【${dup.map((x) => x.title).join('、')}】——`
-                + '同一武将可挂多场，运行时按年份早→晚依次解锁；若只想一人一场请自行确认');
-        }
-    }
     if (!d.description.trim()) err('战役播报内容必须填（事件播报）');
     if (!d.battleDescription.trim()) warn('战役播报（战斗面板那条）为空，建议补上');
 
@@ -352,6 +344,11 @@ function validate(d: BattleDraft): Issue[] {
         if (!CITY_BY_ID.has(u.cityId)) err('战后归属的据点不存在：' + u.cityId);
         if (!u.factionId) err('战后归属没写归给谁：' + u.cityId);
     }
+
+    // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 这一轮真犯过的错，统一在 eventRules 里拦：
+    //    归属武将找不到 / 不在本场阵中 / 战役名不以「战役」结尾 / 文字里有括号 /
+    //    势力记录不存在 / 主帅查不到 / 势力没番号 / 兵力悬殊 / 战场坐标与别处重合。
+    out.push(...checkEventRules(d, drafts));
 
     return out;
 }
