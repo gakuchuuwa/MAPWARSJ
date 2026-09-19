@@ -112,3 +112,12 @@ export function toBase16(region: string | null | undefined): Base16Culture {
     if (!region) return 'CENTRAL';
     return BASE16_OF_REGION[region] ?? 'CENTRAL';
 }
+
+/** 一级 16 母体文化对应的代表军团名称 */
+export const BASE_16_LEGION_NAMES: Record<Base16Culture, string> = {
+    CENTRAL: '东亚军团', STEPPE: '中亚军团', INDIA: '印度军团', GERMANIC: '西欧军团',
+    PURU: '普鲁军团', ORIE: '中东军团', LATIN: '地中海军团', SLAVIC: '东北欧军团',
+    EAST: '东南欧军团', PERSIAN: '波斯军团', MALAY: '东南亚军团', GREEK: '希腊军团',
+    THRACIAN: '色雷斯军团', ANDE: '安第斯军团', AMERICA: '中美军团', AFRICA: '非洲军团',
+};
+
