@@ -504,7 +504,30 @@ export class PerfDoctor {
         };
     }
 
-    public report(context: Record<string, unknown> = {}): Record<string, unknown> {
+    /**
+     * DOM 计数：每个 Leaflet pane 挂了多少个子节点 + 全页元素总数。
+     * 🔴 [2026-09-18] 加这一段是因为「每帧 layerize」这类卡顿 **JS 热点表根本查不出**
+     *    （2026-09-08 据点 DOM 只增不删，每帧全量 layerize 10ms，就是靠 timeline trace 才抓到）。
+     *    节点数是这类问题唯一的廉价证据，而且视口隐藏时也准。
+     */
+    private domCounts(): Record<string, unknown> {
+        try {
+            const panes: Record<string, number> = {};
+            document.querySelectorAll('.leaflet-pane').forEach((el) => {
+                const name = el.className.replace('leaflet-pane', '').replace('leaflet-', '').replace('-pane', '').trim() || '(root)';
+                panes[name] = el.children.length;
+            });
+            return {
+                total: document.getElementsByTagName('*').length,
+                markers: document.querySelectorAll('.leaflet-marker-icon').length,
+                tiles: document.querySelectorAll('.leaflet-tile').length,
+                canvases: document.querySelectorAll('canvas').length,
+                panes,
+            };
+        } catch { return {}; }
+    }
+
+    public report(context: Record<string, unknown> = {}, canvasAudit: Record<string, { calls: number; ms: number }> | null = null): Record<string, unknown> {
         const mem = (performance as unknown as { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
         const findings = this.buildFindings();
         return {
@@ -545,6 +568,14 @@ export class PerfDoctor {
                     churn: (() => { try { return c.churn?.() ?? null; } catch { return null; } })(),
                 };
             }).sort((a, b) => b.MB - a.MB),
+            /** 🔴 按**画布**归因（ms/秒）：hotspots 全小、帧间隙却很大时，真凶通常在这里 */
+            canvasAudit: canvasAudit
+                ? Object.entries(canvasAudit)
+                    .map(([name, v]) => ({ name, callsPerSec: v.calls, msPerSec: v.ms }))
+                    .sort((a, b) => b.msPerSec - a.msPerSec)
+                    .slice(0, 12)
+                : null,
+            dom: this.domCounts(),
             hotspots: [...this.hots.entries()].map(([name, s]) => ({
                 name, where: s.where, calls: s.n,
                 avgMs: +(s.total / Math.max(1, s.n)).toFixed(3),
@@ -613,7 +644,18 @@ export class PerfDoctor {
 
     /** 落盘到 scratch/perf_doctor_latest.json（DEV 中间件），并把 JSON 复制一份到控制台变量 */
     public async dump(context: Record<string, unknown> = {}): Promise<Record<string, unknown>> {
-        const rep = this.report(context);
+        /* 🔴 [2026-09-18 主人「直接修复，你再等什么呢」] 帧率低时**自动**跑一次画布归因。
+         * 以前这一步要人在控制台手敲 `await perfDoctor.auditCanvas(3000)`，接手 AI 拿不到，
+         * 每份报告都停在「差额 54ms 不知道在哪」。现在 fps<30 就自己采 1.5 秒写进报告。
+         * 只在低帧率时开（包装 ctx 方法本身有开销），流畅时一分钱不花。 */
+        let canvasAudit: Record<string, { calls: number; ms: number }> | null = null;
+        try {
+            const gaps = this.frameGaps;
+            const fpsLow = gaps.length >= 10 && 1000 / this.q(gaps, 0.5) < 30;
+            const rafAlive = gaps.length > 0 && performance.now() - this.lastFrameAt < 1000;
+            if (fpsLow && rafAlive) canvasAudit = await this.auditCanvas(1500);
+        } catch { /* 探针自身不许抛 */ }
+        const rep = this.report(context, canvasAudit);
         (window as unknown as { __perfDoctorLast?: unknown }).__perfDoctorLast = rep;
         try {
             await fetch('/api/perf-doctor', {

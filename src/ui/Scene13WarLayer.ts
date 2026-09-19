@@ -119,7 +119,7 @@ function decromaCachePut(url: string, dataUrl: string): void {
  *
  *    存 Image 对象后，第二次遇到同一张图：HTTP、抠绿、两次解码**全跳过**，
  *    直接进 SpriteTinter（它自己也有 static 缓存，key 含势力色）。
- *    上限 CLEAN_CACHE_MAX 条，超了按插入序淘汰最旧的（Map 天然有序）。
+ *    上限 CLEAN_CACHE_MAX_BYTES 字节，超了淘汰最久未用的（命中会提到队尾 = LRU）。
  */
 const CLEAN_CACHE = new Map<string, HTMLImageElement>();
 /**
@@ -201,7 +201,13 @@ function ensureCleanImage(
     critical = false,
 ): Promise<HTMLImageElement | null> {
     const hit = CLEAN_CACHE.get(url);
-    if (hit && hit.complete && hit.naturalWidth > 0) return Promise.resolve(hit);
+    if (hit && hit.complete && hit.naturalWidth > 0) {
+        // 🔴 [2026-09-18] 命中提到队尾 = LRU；不提就是 FIFO，工作集比预算大时会被整批饿死。
+        //    实测 churn 4753 evict / 1858 reAdd（39%），与 SpriteTinter.maskCache 同一个病。
+        CLEAN_CACHE.delete(url);
+        CLEAN_CACHE.set(url, hit);
+        return Promise.resolve(hit);
+    }
     const flying = CLEAN_INFLIGHT.get(url);
     if (flying) {
         if (critical) { const image = CLEAN_LOADING.get(url); if (image) image.fetchPriority = 'high'; }
@@ -249,7 +255,7 @@ function ensureCleanImage(
     return job;
 }
 
-/** 按字节预算写入抠绿图缓存（FIFO）。图已 onload，尺寸可靠，无需补记。 */
+/** 按字节预算写入抠绿图缓存（LRU：命中处 delete+set 提尾，见上）。图已 onload，尺寸可靠，无需补记。 */
 function cleanCachePut(url: string, img: HTMLImageElement): void {
     if (CLEAN_CACHE.has(url)) return;
     if (EVICTED_CLEAN.delete(url)) CHURN.cleanReAdds++;
