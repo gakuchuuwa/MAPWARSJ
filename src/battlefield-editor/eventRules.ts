@@ -1,6 +1,12 @@
 /**
  * eventRules.ts —— 战场事件编辑器的**硬规则检查**（2026-09-19 主人令「把犯的错误设成必填项」）。
  *
+ * 🔴🔴🔴 最高铁律（2026-09-19 主人怒斥定死）：**严禁擅自新建 / 添加任何东西**。
+ *   主人原话：「别他妈的擅自胡乱瞎建了，写到你的记忆里，写到规矩里，写到所有你能看到的敌方（地方）。」
+ *   编辑器这边同样只做主人点名的事：**不许自己建势力 / 建据点 / 建战场 / 建人物 / 补番号 / 补旗号 / 补色**；
+ *   审计警告只报给主人看，**不是动手许可**。细则见 `docs/AGENTS/no-arbitrary-additions.md`。
+ *   本文件里的检查只**拦错**（拦住写歪的数据），绝不替主人补数据。
+ *
  * 为什么单独成文件：这些规则是**这一轮真犯过的错**，每一条都写明「犯过错所以拦」。
  *  · 放在编辑器里 → 主人录入时当场拦住；
  *  · 又能被脚本直接 import → 我可以在 Node 里拿**全部 23 场现存数据**跑一遍，
@@ -14,7 +20,7 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { FACTIONS } from '../data/factions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
-import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
+import { isBattlefieldCharacter, getBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 
 export interface EventRuleIssue { level: 'error' | 'warn'; msg: string; }
@@ -42,6 +48,8 @@ export interface EventRuleInput {
     defenderTroops: number;
     bfTargetBattlefieldId: string;
     defenderCityId: string;
+    /** 在场人物（战场人物 id 列表） */
+    bfRoster: string[];
 }
 
 // ── 惰性索引（编辑器每次校验都建一次全表太浪费）──────────────────────────
@@ -183,6 +191,20 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
     }
     if (nearest && nearest.km < 5) {
         warn(`战场坐标距据点「${nearest.name}」仅 ${nearest.km.toFixed(1)}km —— 两者标牌会挨着（史实如此则不必改坐标）`);
+    }
+
+    // ⑩ 在场人物必须查得到，且**所属势力要是本场攻守双方之一** ──────────
+    //    血训（2026-09-19 主人质问「防守方怎么两个人呀」）：虎牢关战役的在场人物里
+    //    我写进了**王世充**（郑）—— 而虎牢关的守方只有**窦建德**（夏）一人，王世充当时
+    //    被围在洛阳、根本不在虎牢关。这条规则就是为这种「守方凭空多一个人」立的。
+    //    ⚠️ 只 warn 不 err：历史上确实有**盟军主帅**在场（如沙隆的西哥特王），那不是错。
+    for (const id of d.bfRoster ?? []) {
+        const c = getBattlefieldCharacter(id);
+        if (!c) { err(`在场人物「${id}」不在战场人物表里（BattlefieldCharacters.ts）`); continue; }
+        if (c.factionId !== d.attackerFactionId && c.factionId !== d.defenderFactionId) {
+            warn(`在场人物「${c.generalName}」属于势力「${c.factionId}」，**不是本场攻守双方** —— `
+                + '确认他确实在场（盟军主帅／旁观者可以，无关之人请删掉）');
+        }
     }
 
     return out;

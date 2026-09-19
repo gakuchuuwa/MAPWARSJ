@@ -331,7 +331,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_el_cid': 'castle',
     'gen_eleanor': 'castle',
     'gen_epaminondas': 'antiquity',
-    'gen_eumenes': 'antiquity',
     'gen_eric_bloodaxe': 'feudal',
     'gen_ezana': 'antiquity',
     'gen_fasilides': 'imperial',
