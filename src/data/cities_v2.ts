@@ -3602,10 +3602,6 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_seuthopolis', name: '塞乌托波利', factionId: 'odrysian_late', lat: 42.618056, lng: 25.305556, type: 'pass', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '塞乌特斯三世营建的奥德里西亚王都与设防城' },
     { id: 'city_chimarros', name: '希马鲁塔', factionId: 'naxos_ancient', lat: 36.965, lng: 25.53, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '纳克索斯岛古典时代设防塔楼，编年史马其顿城堡素材原型' },
     { id: 'city_themiskyra', name: '忒弥斯基拉', factionId: 'yamaxun', lat: 41.2, lng: 36.98, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '特尔莫冬河口（今土耳其特尔梅），古希腊传统中亚马逊人的都城；赫拉克勒斯第九件功业「夺希波吕忒腰带」即远征此地。希罗多德四·110-117 记亚马逊人自此漂至塔奈斯河口，与斯基泰青年合流成萨尔马提亚人' },
-    // 🔴 [2026-09-12 主人批「新增推罗 + 保留阿卡（特批）」] 亚历山大剧本第三段「推罗围城战」的攻城载体。
-    //    50km 特批例外见 AGENTS.md §2.1.1.1（与阿卡实测 39.42 km；两座都是黎凡特史实名城，删谁伤史实）。
-    //    定级依据 §6.2：推罗非关隘/要塞/堡垒 → 按城市；城内 3–4 万人 >1 万 → 小城。
-    { id: 'city_tuile', name: '推罗', factionId: 'kanan', lat: 33.2709, lng: 35.1962, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '腓尼基母城、泰尔紫（骨螺紫）染料发源地；前332年亚历山大填海筑堤、历时七月破岛城。定级依据§6.2：非关隘/要塞/堡垒→城市；城内军民约3–4万>1万→小城' },
     // 🔴 [2026-09-12 主人「加沙用什么看历史」] 亚历山大剧本第四章「加沙围城战」的攻城载体。
     //    定级依据 §6.2：加沙非关隘/要塞/堡垒 → 按城市；城内军民数万 >1 万 → 小城（腓利斯丁五城之一）。
     //    坐标实测：最近邻耶路撒冷 76.43 km ≥50 km ✓ 合法，无需特批。

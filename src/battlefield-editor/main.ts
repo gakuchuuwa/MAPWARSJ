@@ -266,13 +266,18 @@ function validate(d: BattleDraft): Issue[] {
     //    还要写上时间，万一以后还要用，就不要再写了。」
     //    年份照旧要填（留着以后用），但不再限制同年只能一场 —— 一年可以有多场战役。
     //
-    // 🔴 改为**按武将查重**：主人定「每个武将一个真实的历史事件」，
-    //    所以同一个武将不许挂两场（挂两场时运行时取年份最早的那场，另一场永远轮不上，是死数据）。
+    // 🔴 [2026-09-19 主人令「除亚历山大外尽量一人一场」＋运行时已支持同将多场]
+    //    **同一武将可以挂多场**（亚历山大东征 11 场就是一个人打的），运行时
+    //    `findHistoricalEventsOfGeneral` 返回数组、`PlayerQuestSystem` 按年份**依次解锁**。
+    //    所以这里**只提醒、不拦存** ——
+    //    改前是 `err`，而 `hasErr` 会把「保存」按钮置灰，导致亚历山大名下那 11 场
+    //    **在编辑器里一场都存不了**（血训：校验比运行时还严，等于把主人的数据锁死）。
     if (d.generalId) {
         const dup = drafts.filter((x) => x.generalId === d.generalId && x.title !== d.title);
         if (dup.length) {
             const name = GENERAL_BY_ID.get(d.generalId)?.generalName ?? d.generalId;
-            err(`【${name}】已经挂了【${dup.map((x) => x.title).join('、')}】——一个武将一个事件，请改归属武将或删掉那场`);
+            warn(`【${name}】名下还有【${dup.map((x) => x.title).join('、')}】——`
+                + '同一武将可挂多场，运行时按年份早→晚依次解锁；若只想一人一场请自行确认');
         }
     }
     if (!d.description.trim()) err('战役播报内容必须填（事件播报）');
@@ -503,7 +508,7 @@ function render(): void {
                     <div class="fld">
                         <label>归属武将 · 玩家与这位武将入伍，打的就是这一场</label>
                         <select id="f-general">${generalOptions(working.generalId)}</select>
-                        <span class="hint">一个武将一个事件；留空 = 不归属任何武将（自动模式按老规矩挑）</span>
+                        <span class="hint">同一武将可挂多场（按年份依次解锁）；留空 = 不归属任何武将</span>
                     </div>
                     <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>

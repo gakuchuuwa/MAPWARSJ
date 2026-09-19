@@ -110,6 +110,15 @@ export type EventType = 'siege' | 'field_battle' | 'narrative';
 
 export interface SiegeData {
     attackerFactionId: string;
+    /**
+     * 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] **守方势力**。
+     *
+     * 原先只有 `FieldBattleData` 有字段，`SiegeData` 靠「被攻据点」的 `city.factionId` 反推 ——
+     * 而战场要塞（一之谷/千早城/马萨加/马里斯/推罗）**没有据点**，守方势力就无处可写，
+     * 连带「按势力取精锐番号」也取不到。现在显式写明。
+     * 兼容：为空的旧数据仍可回落 `city.factionId`。
+     */
+    defenderFactionId?: string;
     legionId?: string; // [NEW] Link to LegionConfig
     legionName?: string; // [OPTIONAL] Override name or for one-off
     attackerCityId?: string; // 可选：指定出兵城市（如果不填则自动选择最近的）

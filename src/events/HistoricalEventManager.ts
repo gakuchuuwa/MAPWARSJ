@@ -23,6 +23,9 @@ import { gameLog } from '../utils/GameLogger';
 import { GameConfig } from '../config/GameConfig';
 import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
 import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
+// 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
+//    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
+import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 
 /**
  * `ensureAttackerLegion` 的入参：**野战与攻城两种剧本数据共有的"攻方四件"**。
@@ -418,21 +421,46 @@ export class HistoricalEventManager {
         const isSiegeDefender = fb.type === 'siege' && !isAtk;
         const legionGeneralId = isSiegeDefender ? null : generalId;
 
+        // 🔴 [2026-09-19 主人怒斥「谁说的精锐是随据点挂的？？？凭什么不能挂战场？？？
+        //    「你别给我乱弄行不行」] **精锐挂在「势力」上，不是挂在据点上** —— 我之前
+        //    把「势力→番号」硬拐成「势力→首都城→番号」，还去给势力建据点当锚点，全是瞎弄。
+        //
+        //    读代码（不是读注释）得到的事实：
+        //      · `getExpeditionEliteLegionName(factionId)` / `getExpeditionEliteConfig(factionId)`
+        //        —— **直接按势力查番号**，表就是 `factionId → { name, tier }`（各区 ExpeditionLegions）。
+        //      · `getLegionEliteConfig(army)`（`ExpeditionLegions.ts:216`）只是**军营地上那条便捷路**：
+        //        `army.homeCityId ?? army.getSourceCityId()` → `getCityEliteConfig(cityId)`，
+        //        而 `CITY_ELITE_LEGIONS` 本身也是由 `STARTING_CAPITALS` 从**势力表**倒推出来的。
+        //        所以「按城查」与「按势力查」是同一张表的两个入口，城只是行军时的顺手指针。
+        //
+        //    → 战场军团**不走城这条路**：`sourceCityId` 一律留空，让 `getLegionEliteConfig`
+        //      返回 null，再由下面按**势力**把番号与档位直接写到这支军团上。
+        //      这样既不吃任何据点、也不牵动募兵（`markSpawnTierConsumed` 对守方本就不调）。
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
-        // 🔴 [2026-09-16 主人定] 军团优先用剧本里显式指定的军团名（战场编辑器可改）；没写就按
-        //    势力 → 建筑风格兜底。
+        // ⚠️ 军团名 ≠ 精锐番号（项目铁律）：军团名走「时代+文化+军团」，
+        //    番号（如「不死军」「背嵬军」）是另一回事，只显示在战力倍率词语标签里。
         const legionName = (isAtk ? fb.attackerLegionName : fb.defenderLegionName)
             || FACTION_COMPOSITIONS[factionId]?.legionName
             || getCultureLegionName(city ? getCityRegion(city) : null);
+        // 🔴 不挂 `homeCityId`、不设 `sourceCityId`：军团只为这一仗而生、打完就班师，
+        //    既不该有本城（牵扯募兵/驻军口径），也不该借任何城去查番号（番号按势力给，见下）。
         const army = this.legionManager.createLegion(
             stand, troops, factionId, legionName,
-            undefined, undefined, sourceCityId, legionGeneralId ?? undefined,
+            undefined, undefined, undefined, legionGeneralId ?? undefined,
             true,   // forceCreate：这一仗不受军团上限卡住
         );
         if (!army || !this.legionManager.getLegionById(army.id)) return null;
 
         army.setTroops(troops);
         army.isElite = true;   // 13 战术层准入要求双方都有将 + 都有精锐
+        // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] **番号按势力挂到这支战场军团上**：
+        //    `getExpeditionEliteConfig(factionId)` 的表就是 `factionId → { name, tier }`，
+        //    与据点毫无关系。名字写进军团名后缀，13 面板的番号标签读的就是它
+        //    （`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`）；
+        //    档位（战力第三环）由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 取不到时，
+        //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
+        const ownElite = getExpeditionEliteConfig(factionId);
+        if (ownElite) army.name = `${legionName}·${ownElite.name}`;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
         const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
