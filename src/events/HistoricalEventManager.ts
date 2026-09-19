@@ -14,7 +14,7 @@ import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCultureLegionName } from '../types/CultureFormations';
 import { getCityRegion } from '../systems/RegionSystem';
-import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getGeneralRecordByGeneralId, getFactionIdOfGeneral } from '../data/FactionGenerals';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { joinStartToRoadPolyline } from '../core/DistanceUtils';
@@ -252,6 +252,8 @@ export class HistoricalEventManager {
     /** 战场对应的战役数据（按坐标就近匹配，支持野战与攻城战） */
     public findBattleForBattlefield(bfId: string): (FieldBattleData & {
         defenderCityId?: string;
+        /** 战场要塞：攻城目标就是这块战场本身（一之谷），不是据点 */
+        targetBattlefieldId?: string;
         type?: 'field_battle' | 'siege';
         cityUpdates?: Array<{ cityId: string; factionId?: string; troops?: number }>;
     }) | null {
@@ -268,7 +270,34 @@ export class HistoricalEventManager {
                 }
             } else if (ev.type === 'siege') {
                 const sd = ev.siegeData;
-                if (!sd?.defenderCityId) continue;
+                if (!sd) continue;
+                // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] **战场要塞**（`targetBattlefieldId`）：
+                //    一之谷是战场不是据点，攻城目标就是它自己 —— 守方势力从守将反查，坐标取战场。
+                if (sd.targetBattlefieldId) {
+                    if (bf.id !== sd.targetBattlefieldId) continue;
+                    return {
+                        title: sd.title ?? ev.title,
+                        description: sd.description ?? ev.description,
+                        location: { lat: bf.lat, lng: bf.lng },
+                        attackerFactionId: sd.attackerFactionId,
+                        attackerGeneralId: sd.attackerGeneralId,
+                        attackerTroops: sd.attackerTroops,
+                        attackerSourceCityId: sd.attackerSourceCityId ?? sd.attackerCityId,
+                        attackerLegionName: sd.attackerLegionName,
+                        defenderFactionId: getFactionIdOfGeneral(sd.defenderGeneralId) ?? 'panjun',
+                        defenderGeneralId: sd.defenderGeneralId,
+                        defenderTroops: sd.defenderTroops ?? 10000,
+                        defenderSourceCityId: bf.id,
+                        defenderCityId: bf.id,          // 攻城链的目标 id（合成目标用它）
+                        defenderLegionName: sd.defenderLegionName,
+                        type: 'siege',
+                        targetBattlefieldId: bf.id,
+                        cityUpdates: ev.cityUpdates,
+                        result: sd.result,
+                        autoEnterRTS: sd.autoEnterRTS,
+                    };
+                }
+                if (!sd.defenderCityId) continue;
                 const city = this.cityManager.getCity(sd.defenderCityId);
                 if (!city) continue;
                 if (matchesBattlefield(bf, ev.year, { lat: city.latitude, lng: city.longitude })) {
@@ -447,7 +476,10 @@ export class HistoricalEventManager {
             + ` @(${fb.location?.lat}, ${fb.location?.lng}) [${fb.type ?? 'field_battle'}]`);
 
         // 🔴 [2026-09-16 主人定]「必须严格符合历史，该攻城就是攻城，该野战就野战。如果是攻城战，战斗要改据点归属。一切按历史，无论输赢。」
-        if (fb.type === 'siege' && fb.defenderCityId) {
+        // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 判定补上**战场要塞**那一路：
+        //    一之谷这种攻城战没有 `defenderCityId`（打的是战场不是据点），
+        //    若照旧只判 `fb.defenderCityId`，它会掉进下面的**野战**分支，攻城被降格成野战。
+        if (fb.type === 'siege' && (fb.defenderCityId || fb.targetBattlefieldId)) {
             const siegeData: SiegeData = {
                 title: fb.title,
                 description: fb.description,
@@ -455,6 +487,9 @@ export class HistoricalEventManager {
                 attackerGeneralId: fb.attackerGeneralId,
                 attackerTroops: fb.attackerTroops,
                 defenderCityId: fb.defenderCityId,
+                // 🔴 [2026-09-19 主人定] 战场要塞（一之谷）：攻城目标是**战场本身**，不是据点。
+                //    引擎据此用战场记录合成目标，不会去碰任何真实城池。
+                targetBattlefieldId: fb.targetBattlefieldId,
                 defenderGeneralId: fb.defenderGeneralId,
                 defenderTroops: fb.defenderTroops,
                 result: fb.result ?? 'attacker_win',

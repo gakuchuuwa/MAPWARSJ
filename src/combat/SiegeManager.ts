@@ -10,7 +10,8 @@ import { BattleUnitFactory } from './BattleUnitFactory';
 import { BattleField } from './BattleField';
 import { GameConfig } from '../config/GameConfig';
 import { gameLog } from '../utils/GameLogger';
-import {getGeneralRecordByGeneralId} from '../data/FactionGenerals';
+import {getGeneralRecordByGeneralId, getFactionIdOfGeneral} from '../data/FactionGenerals';
+import { BATTLEFIELDS } from '../data/Battlefields';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
@@ -469,7 +470,12 @@ export class SiegeManager {
             onSiegeComplete?.();
             return;
         }
-        const targetCity = this.cityManager.getCity(siegeData.defenderCityId);
+        // 🔴 [2026-09-19 主人定] 战场事件可以打「**战场要塞**」（不是据点）：
+        //    主人原话「战场和现有据点不是一回事，所有战场都新建」——一之谷就是这种，
+        //    它得能被打下来（源义经鹎越奇袭破之），却不是 `cities_v2` 里的城。
+        //    故 `SiegeData.targetBattlefieldId` 一给，就用战场记录**合成**本次攻城的目标，
+        //    不改据点表、不新增据点；AI 攻城一律不带这个字段，路径完全不受影响。
+        const targetCity = this.resolveSiegeTarget(siegeData);
         if (!targetCity) {
             console.warn(`[SiegeManager] Target city ${siegeData.defenderCityId} not found.`);
             onSiegeComplete?.();
@@ -479,10 +485,58 @@ export class SiegeManager {
         siegeLog(`[SiegeManager] Starting siege with army ${army.name} against ${targetCity.name}`);
 
         // 触发防御增援
-        this.triggerDefensiveReinforcements(targetCity);
+        // 🔴 战场要塞没有势力城池可增援（它不是任何势力的据点），跳过增援链
+        if (!(siegeData.targetBattlefieldId)) this.triggerDefensiveReinforcements(targetCity);
 
         // 直接开始攻城战
         this.onArmyArrive(army, targetCity, siegeData.attackerFactionId, siegeData, onSiegeComplete);
+    }
+
+    /**
+     * 解析攻城目标：普通攻城 = 据点表里的城；战场事件 = 用战场记录合成的「战场要塞」。
+     *
+     * 合成的对象只需满足攻城链实际读到的字段（id / name / lat / lng / factionId / type / troops
+     * / spawnGeneralUsed / spawnEliteUsed / siege* 标志）。它**不进 `cityManager.getCities()`**，
+     * 所以不会被 AI 当目标、不占据点名额、不参与 50km 间距与四公理审计 —— 与战场「类似奇观、
+     * 不是据点」的既有定位一致。
+     */
+    private resolveSiegeTarget(siegeData: SiegeData): {
+        id: string; name: string; latitude: number; longitude: number;
+        factionId: string; type: string; troops: number;
+        spawnGeneralUsed: boolean; spawnEliteUsed: boolean;
+        _isBattlefieldFortress?: boolean;
+    } | null {
+        const bfId = siegeData.targetBattlefieldId;
+        if (!bfId) {
+            // 普通攻城：目标是据点表里的城。`defenderCityId` 为空 = 这条数据既没给战场也没给城，交回 null。
+            return (siegeData.defenderCityId
+                ? this.cityManager.getCity(siegeData.defenderCityId)
+                : null) as never;
+        }
+        const bf = (BATTLEFIELDS as Array<{ id: string; name: string; lat: number; lng: number }>)
+            .find((b) => b.id === bfId);
+        if (!bf) {
+            console.warn(`[SiegeManager] Battlefield ${bfId} not found for siege event.`);
+            return null;
+        }
+        // 守军势力：战场事件里显式指定（`SiegeData` 没有 defenderFactionId 字段，故从守将势力反查）
+        const defGeneral = siegeData.defenderGeneralId
+            ? getGeneralRecordByGeneralId(siegeData.defenderGeneralId)
+            : null;
+        const defenderFactionId = getFactionIdOfGeneral(siegeData.defenderGeneralId) ?? 'panjun';
+        void defGeneral;
+        return {
+            id: bf.id,
+            name: bf.name,
+            latitude: bf.lat,
+            longitude: bf.lng,
+            factionId: defenderFactionId,
+            type: 'pass',                       // 要塞：走 pass 那套守城口径
+            troops: siegeData.defenderTroops ?? 10000,
+            spawnGeneralUsed: false,
+            spawnEliteUsed: false,
+            _isBattlefieldFortress: true,
+        };
     }
 
     public handleSiegeEvent(siegeData: SiegeData, onSiegeComplete?: () => void): void {

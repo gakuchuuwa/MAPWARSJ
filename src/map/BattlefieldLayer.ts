@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
+import type { TerritorySystem } from '../systems/TerritorySystem';
 
 /**
  * 战场图层 —— 🔴 [2026-09-12 主人定] 战场**不是据点**，是一块独立的地名，
@@ -25,10 +26,24 @@ import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W,
 /** 战场形态基准包络宽度（px，zoom 9）：与小城据点（约 184×160）同一视觉量级 */
 const BASE_ART_W = 230;
 
+/**
+ * 攻城战战场套**据点样式**时的容器尺寸（px）。
+ * 据点组装各自算自己的实际包围盒（`buildDe*CityStackHtml` 内部按 baseSize 铺），
+ * 这里给一个足够容纳「大城 140 档 + 中心城堡」的固定框，再让容器不裁切内容即可。
+ */
+const SIEGE_CASTLE_BOX_W = 360;
+const SIEGE_CASTLE_BOX_H = 320;
+
 export class BattlefieldLayer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
+    /**
+     * 🔴 [2026-09-19 主人定] 战场攻城战要套**据点样式**（大中小城寨），
+     * 而据点那套组装住在 `TerritorySystem` 里 → 由 `GameMap.attachTerritorySystem()` 注入。
+     * 未注入时退回普通战场形态（不报错、不影响野战）。
+     */
+    private territorySystem: TerritorySystem | null = null;
 
     constructor(map: L.Map) {
         this.map = map;
@@ -63,6 +78,28 @@ export class BattlefieldLayer {
         this.map.getPane('battlefieldPane')?.style.setProperty('--battlefield-scale', String(scale));
     }
 
+    /**
+     * 🔴 [2026-09-19 主人定] 注入 `TerritorySystem`，供**攻城战战场**套用据点样式。
+     * 走 setter（不走构造参数）是为了不动 `new BattlefieldLayer(this.map)` 那个已有调用点。
+     */
+    public setTerritorySystem(ts: TerritorySystem | null): void {
+        this.territorySystem = ts;
+        this.renderBattlefields();
+    }
+
+    /** 战场形态（拒马/尸体/骨骸…只在打完之后画） */
+    private buildMorphHtml(bf: BattlefieldData, fought: boolean): string {
+        if (!fought) return '';
+        // 🔴 [2026-09-19 主人定]「这种战场攻城战，标注上，套用大中小城寨哪个据点的样式就行。」
+        //    → 攻城战战场打的是**一座砦/城**，标牌该长成据点那样（大城/中城/小城/城寨/险要），
+        //      而不是一堆残骸。样式全走据点同一套组装（TerritorySystem.buildSiegeCastleStackHtml），
+        //      没有第二套画法 —— 以后据点样式改了，战场的砦一起变。
+        if (bf.siegeCastleType && this.territorySystem) {
+            return this.territorySystem.buildSiegeCastleStackHtml(bf.id, bf.siegeCastleType, null);
+        }
+        return renderBattlefieldBoxHtml(BASE_ART_W, bf.id);
+    }
+
     /** 重绘全部战场（打完标记变化、手动刷新时调） */
     public renderBattlefields(): void {
         this.layerGroup.clearLayers();
@@ -78,11 +115,15 @@ export class BattlefieldLayer {
             const fought = isBattlefieldFought(bf.id);
             const html = this.buildBattlefieldHtml(bf, fought);
 
-            // 形态盒子的画布尺寸（参考画布 340×240 × k），标牌挂在容器底部
+            // 形态盒子的画布尺寸（参考画布 340×240 × k），标牌挂在容器底部。
+            // 🔴 [2026-09-19] 套了**据点样式**（攻城战战场）的，尺寸按据点来算 ——
+            //    据点那套组装（木栅/石墙/中心城堡）比战场形态盒子大得多，
+            //    照旧用 340×240 的小框会把砦裁掉一半。
             const L0 = bfLayout();
             const k = BASE_ART_W / L0.artW;
-            const canvasW = BF_REF_W * k;
-            const canvasH = BF_REF_H * k;
+            const useCastle = fought && !!bf.siegeCastleType && !!this.territorySystem;
+            const canvasW = useCastle ? SIEGE_CASTLE_BOX_W : BF_REF_W * k;
+            const canvasH = useCastle ? SIEGE_CASTLE_BOX_H : BF_REF_H * k;
             const labelH = 18;
 
             const icon = L.divIcon({
@@ -111,11 +152,15 @@ export class BattlefieldLayer {
     private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
-        const canvasW = BF_REF_W * k;
-        const canvasH = BF_REF_H * k;
+        // 🔴 [2026-09-19] 套据点样式的攻城战战场：容器按据点尺寸给（见 renderBattlefields 同一判据）
+        const useCastle = fought && !!bf.siegeCastleType && !!this.territorySystem;
+        const canvasW = useCastle ? SIEGE_CASTLE_BOX_W : BF_REF_W * k;
+        const canvasH = useCastle ? SIEGE_CASTLE_BOX_H : BF_REF_H * k;
 
         // 形态（只在打完之后画）。种子 = 战场 id → 同一战场每局长得一样、各战场互不相同
-        const morph = fought ? renderBattlefieldBoxHtml(BASE_ART_W, bf.id) : '';
+        //   · 攻城战战场 → 套据点样式（大中小城寨），见 buildMorphHtml
+        //   · 其余 → 战场形态（拒马/尸体/骨骸…）
+        const morph = fought ? this.buildMorphHtml(bf, true) : '';
 
         // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
         //    标牌只留地名。

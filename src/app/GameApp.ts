@@ -297,6 +297,10 @@ export class GameApp {
             setLoadingMessage('正在布置城池…');
             setLoadingProgress(65);
             this.cityManager = new CityManager(this.map, this.factionManager);
+            // 🔴 [2026-09-19 主人定] 把 TerritorySystem 注入战场图层 —— 攻城战战场要套
+            //    **据点样式**（大中小城寨）。据点组装只有 TerritorySystem 这一份，
+            //    在战场里重画一套必然会与据点走样。
+            this.map.getBattlefieldLayer()?.setTerritorySystem(this.cityManager.getTerritorySystem());
             loadGameAppCityData(this);
             // 叛军旗：画据点前只 await 兜底 1 面，其余 52 面 3s 后后台补满。见 AGENTS.md §10.3
             // 阶段名别再写「52面」——这一相只装 1 面，历史上多次被误读成「叛军旗在干活」，

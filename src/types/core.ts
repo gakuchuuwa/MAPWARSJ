@@ -116,7 +116,13 @@ export interface SiegeData {
     attackerSourceCityId?: string; // [NEW] Optional: Synonym/Alias for attackerCityId for consistent naming
     attackerSourceLocation?: { lat: number, lng: number }; // [NEW] 可选：直接指定出兵坐标（优先级高于 attackerCityId）
     attackerLegionName?: string; // [NEW] 攻方军团名（战场编辑器可显式指定；留空走势力/建筑风格默认）
-    defenderCityId: string;
+    /**
+     * 被攻打的据点 id。
+     * 🔴 [2026-09-19 主人定] **可以留空**：战场要塞（`targetBattlefieldId`）这种攻城战
+     *    打的是一块**战场**而不是据点，此时本字段为空 —— 两者必居其一。
+     *    消费方凡读它，都必须能接住"这次打的不是城"。
+     */
+    defenderCityId?: string;
     attackerGeneralId?: string; // [NEW] 攻击方将领ID
     defenderGeneralId?: string; // [NEW] 防守方将领ID
     attackerTroops?: number;
@@ -128,6 +134,19 @@ export interface SiegeData {
      * **奔向目标城**（`defenderCityId`）、抵达城下即交给 `SiegeManager` 开打，而不是去野战场坐标。
      */
     marchWaypoints?: string[];
+    /**
+     * 🔴 [2026-09-19 主人定] **攻城战的战场目标**（只给「战场事件」用，AI 攻城一律不填）。
+     *
+     * 主人原话：「战场和现有据点不是一回事，所有战场都新建。」
+     *   → 一之谷这种**要塞战场本身就是一个战场**（`bf_yinotani`，34.64,135.10），不是据点；
+     *     但它又必须能被打下来（源义经鹎越奇袭破之）。
+     *
+     * 引擎的攻城链一路都要求「被攻的目标是一座城」（`cityManager.getCity` 拿不到就直接放弃），
+     * 于是战场要塞打不了。此字段让战场事件**直接指定战场 id**：`SiegeManager` 收到它时
+     * 用战场记录**合成**一个本次攻城专用的目标（id/名称/坐标/守军兵力都取自战场），
+     * 不改据点表、不新增据点、也不影响任何 AI 攻城路径。
+     */
+    targetBattlefieldId?: string;
     result?: 'attacker_win' | 'defender_win';
     customDuration?: number; // [NEW] Director-controlled battle duration in seconds (overrides troop-based calculation)
     speedMultiplier?: number; // [NEW] Custom movement speed for this event

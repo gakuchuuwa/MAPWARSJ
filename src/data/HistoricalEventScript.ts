@@ -33,7 +33,12 @@
  *    精锐无需在此指定：由势力自动解析（maqidun→伙伴骑兵 T0 / xiaofulijiya→希腊雇佣兵 T2）。
  */
 import type { HistoricalEvent } from '../types/core';
-import { battlefieldLocationOf, findBattlefieldOfGeneralEvent } from './Battlefields';
+import {
+    BATTLEFIELDS,
+    BATTLEFIELD_MATCH_DEG,
+    battlefieldLocationOf,
+    findBattlefieldOfGeneralEvent,
+} from './Battlefields';
 
 export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     {
@@ -188,12 +193,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // ── 守方：波斯阿契美尼德帝国大军 大流士三世 ──
             defenderFactionId: 'aqimeinide',
             defenderGeneralId: 'daliushi_iii',
-            defenderTroops: 90000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
+            defenderTroops: 200000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
             defenderSourceCityId: 'city_bosibolisi',
 
             result: 'attacker_win',                  // 写真历史：马其顿决定性胜利
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -525,6 +531,297 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
     },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -260,
+        season: 1,
+        generalId: 'xin_baiqi',
+        type: 'field_battle',
+        title: '公元前260年 长平之战',
+        description: '秦秘密换帅白起，佯败诱赵军深入，两万五千奇兵截其归路、五千铁骑断丹水粮道；赵军被割裂围困四十六日，突围不成，数十万降卒尽坑，赵国元气丧尽。',
+        fieldBattleData: {
+            title: '长平之战',
+            description: '白起以佯败诱敌至坚壁之下，奇兵截归路、铁骑断粮道，将赵军割裂合围四十六日，终致其全军崩溃。',
+            location: { lat: 35.79, lng: 112.92 },
+            attackerFactionId: 'xin',
+            attackerGeneralId: 'xin_baiqi',
+            attackerTroops: 500000,
+            attackerSourceCityId: 'city_shangdang',
+            defenderFactionId: 'zhao',
+            defenderGeneralId: 'zhao_lianpo',
+            defenderTroops: 450000,
+            defenderSourceCityId: 'city_shangdang',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: -216,
+        season: 1,
+        generalId: 'gen_hannibal',
+        type: 'field_battle',
+        title: '公元前216年 坎尼会战',
+        description: '汉尼拔以凸月阵诱罗马重步兵深入，两翼骑兵击溃罗马侧翼后合围封口；一日之内近七万罗马官兵阵亡，成就西方战术史上最完美的包围歼灭战。',
+        fieldBattleData: {
+            title: '坎尼会战',
+            description: '汉尼拔亲坐中军逐步后退成凹月形，诱罗马大军入彀，两翼铁骑合围封口，全歼罗马主力。',
+            location: { lat: 41.31, lng: 16.15 },
+            attackerFactionId: 'buni',
+            attackerGeneralId: 'gen_hannibal',
+            attackerTroops: 50000,
+            attackerSourceCityId: 'city_meierfei',
+            defenderFactionId: 'luoma_diguo',
+            defenderGeneralId: 'baolusi',
+            defenderTroops: 86000,
+            defenderSourceCityId: 'city_luoma',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: -207,
+        season: 3,
+        generalId: 'xichu_xiangyu',
+        type: 'field_battle',
+        title: '公元前207年 巨鹿之战',
+        description: '项羽破釜沉舟，楚军九战绝秦军甬道，虏王离、降章邯，秦军主力尽丧；诸侯将入辕门皆膝行而前，项羽由是始为诸侯上将军。',
+        fieldBattleData: {
+            title: '巨鹿之战',
+            description: '项羽率楚军渡漳水后凿舟破釜，以三日粮与秦军决战，九战九捷断其甬道，大破秦军。',
+            location: { lat: 37.07, lng: 115.02 },
+            attackerFactionId: 'xichu',
+            attackerGeneralId: 'xichu_xiangyu',
+            attackerTroops: 50000,
+            attackerSourceCityId: 'city_pengcheng',
+            defenderFactionId: 'wazhai',
+            defenderGeneralId: 'wazhai_zhanghan',
+            defenderTroops: 250000,
+            defenderSourceCityId: 'city_dingtao',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -48,
+        season: 1,
+        generalId: 'gen_julius_caesar',
+        type: 'field_battle',
+        title: '公元前48年 法萨卢斯战役',
+        description: '恺撒以劣势兵力列阵法萨卢斯平原，暗藏第四线步兵伏击庞培优势骑兵；庞培骑兵溃逃反暴露侧翼，恺撒全线反击，庞培主力崩溃，乘船逃往埃及。',
+        fieldBattleData: {
+            title: '法萨卢斯战役',
+            description: '恺撒设隐藏第四线步兵以标枪直刺骑手面门，击溃庞培骑兵后全线反击，瓦解庞培全军。',
+            location: { lat: 39.28, lng: 22.42 },
+            attackerFactionId: 'luoma_diguo',
+            attackerGeneralId: 'gen_julius_caesar',
+            attackerTroops: 23000,
+            attackerSourceCityId: 'city_luoma',
+            defenderFactionId: 'qiliqiya',
+            defenderGeneralId: 'qiliqiya_pangpei',
+            defenderTroops: 52000,
+            defenderSourceCityId: 'city_adana',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: 451,
+        season: 1,
+        generalId: 'xiongren_atila',
+        type: 'field_battle',
+        title: '公元451年 沙隆会战',
+        description: '埃提乌斯统罗马-西哥特联军于卡塔隆尼亚平原迎战阿提拉；西哥特王狄奥多里克战死，哥特战士哀兵反击，将匈人压回车阵，阿提拉不可战胜的神话就此破灭。',
+        fieldBattleData: {
+            title: '沙隆会战',
+            description: '罗马步兵与西哥特战士并肩顶住匈人骑射狂潮，黄昏将匈人全线压回大车营垒，阿提拉险欲自焚。',
+            location: { lat: 48.96, lng: 4.36 },
+            attackerFactionId: 'xiongren',
+            attackerGeneralId: 'xiongren_atila',
+            attackerTroops: 45000,
+            attackerSourceCityId: 'city_lansi',
+            defenderFactionId: 'donggete',
+            defenderGeneralId: 'aitiliusi',
+            defenderTroops: 45000,
+            defenderSourceCityId: 'city_lansi',
+            result: 'defender_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: 621,
+        season: 0,
+        generalId: 'tang_lishimin',
+        type: 'field_battle',
+        title: '公元621年 虎牢关之战',
+        description: '李世民以三千五百玄甲骑抢先扼守虎牢关，以逸待劳；正午突袭窦建德中军，生擒窦建德，洛阳王世充出降，唐军一役扫平双雄。',
+        fieldBattleData: {
+            title: '虎牢关之战',
+            description: '唐军铁骑正午破关而出，李世民亲执大旗直穿窦建德中军，夏军全线崩溃，窦建德负伤被擒。',
+            location: { lat: 34.83, lng: 113.18 },
+            attackerFactionId: 'tang',
+            attackerGeneralId: 'tang_lishimin',
+            attackerTroops: 3500,
+            attackerSourceCityId: 'city_hulaoguan',
+            defenderFactionId: 'xia',
+            defenderGeneralId: 'doujiande',
+            defenderTroops: 110000,
+            defenderSourceCityId: 'city_hulaoguan',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: 1140,
+        season: 1,
+        generalId: 'yanchuan_d_yuefei',
+        type: 'field_battle',
+        title: '公元1140年 郾城之战',
+        description: '岳飞以背嵬军步骑协同迎击，步兵持麻扎刀专斫马足，大破金军铁浮屠与拐子马；完颜宗弼北遁，岳家军威震中原。',
+        fieldBattleData: {
+            title: '郾城之战',
+            description: '岳云率背嵬、游奕军迎头截击，岳飞令步兵持长斧麻扎刀斫马足，血战数十合，金军精锐尽丧溃退。',
+            location: { lat: 33.58, lng: 114.02 },
+            attackerFactionId: 'jurchen',
+            attackerGeneralId: 'jurchen_wanyanzongbi',
+            attackerTroops: 15000,
+            attackerSourceCityId: 'city_wuguo',
+            defenderFactionId: 'yanchuan_d',
+            defenderGeneralId: 'yanchuan_d_yuefei',
+            defenderTroops: 10000,
+            defenderSourceCityId: 'city_yancheng2',
+            result: 'defender_win',
+            autoEnterRTS: true,
+        },
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: 1184,
+        season: 0,
+        generalId: 'fujiwara_yuanyijing',
+        type: 'siege',
+        title: '公元1184年 一之谷之战',
+        description: '源义经自鹎越断崖策马冲下，奇袭平家后背纵火；平家误以为源氏主力降临，全线崩溃争相逃向海上战船，陆上根基尽失。',
+        siegeData: {
+            title: '一之谷之战',
+            description: '义经率轻骑自百丈断崖呼啸而下，直冲平氏内营放火；平家数万将士精神崩溃，退上战船。',
+            // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 一之谷**是战场、不是据点**：
+            //    攻城目标改走 `targetBattlefieldId`（引擎据此用战场记录合成攻城目标），
+            //    **不再去攻打姬路城** —— 姬路城是羽柴方的据点，与这一仗毫无关系。
+            targetBattlefieldId: 'bf_yinotani',
+            attackerFactionId: 'fujiwara',
+            attackerGeneralId: 'fujiwara_yuanyijing',
+            attackerTroops: 3000,
+            attackerSourceCityId: 'city_himeji',
+            defenderGeneralId: 'taira_pingzhisheng',
+            defenderTroops: 25000,
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 🔴 战后归属：一之谷是**战场不是据点**，「没有主人，易什么主」（主人 2026-09-12 原话）——
+        //    源氏破砦的史实写在 description 与战场 note 里，不再改任何据点归属。
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: 1333,
+        season: 0,
+        generalId: 'yamato_nanmuzhengcheng',
+        type: 'siege',
+        title: '公元1333年 千早城之战',
+        description: '楠木正成以千余死士凭千早险峰坚守百日，滚木雷石、稻草假人诱敌，拖垮号称十万的幕府大军；关东武士战意瓦解，足利尊氏回师反叛，镰仓幕府崩塌。',
+        siegeData: {
+            title: '千早城之战',
+            description: '正成以巨木滚石碾碎蚁附之敌，夜布稻草假人诱敌狂射空箭，再投巨石掩杀；幕府大军百日不克。',
+            marchWaypoints: ['city_asuka'],
+            attackerFactionId: 'ashikaga',
+            attackerGeneralId: 'ashikaga_zulizunshi',
+            attackerTroops: 25000,
+            attackerSourceCityId: 'city_kyoto',
+            defenderGeneralId: 'yamato_nanmuzhengcheng',
+            defenderTroops: 1000,
+            defenderCityId: 'city_asuka',
+            result: 'defender_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: 1388,
+        season: 1,
+        generalId: 'joseon_lichenggui',
+        type: 'field_battle',
+        title: '公元1388年 威化岛回军',
+        description: '李成桂以“四不可”抗命，自威化岛掉转兵锋南下直取王京，擒诛崔莹、废禑王，尽掌高丽军国大权。',
+        fieldBattleData: {
+            title: '威化岛回军',
+            description: '李成桂于威化岛断然回军，踏浮桥南下直逼开京，崔莹兵败遭擒被诛，禑王被废。',
+            location: { lat: 40.15, lng: 124.43 },
+            attackerFactionId: 'joseon',
+            attackerGeneralId: 'joseon_lichenggui',
+            attackerTroops: 45000,
+            attackerSourceCityId: 'city_hanseong',
+            defenderFactionId: 'hai2',
+            defenderGeneralId: 'ssangseong_cuiying',
+            defenderTroops: 15000,
+            defenderSourceCityId: 'city_haeju',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_kaesong', factionId: 'joseon' }],
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: 1560,
+        season: 1,
+        generalId: 'owari_zhitianxinchang',
+        type: 'field_battle',
+        title: '公元1560年 桶狭间之战',
+        description: '织田信长以两千余骑借雷雨掩护迂回突袭桶狭间今川本阵，斩杀今川义元；东海道霸主一朝倾覆，信长天下布武由此发端。',
+        fieldBattleData: {
+            title: '桶狭间之战',
+            description: '信长借暴雨隐匿行踪，迂回至今川军背后，雨停一刻拔刀突袭，今川本阵崩溃，义元授首。',
+            location: { lat: 34.98, lng: 136.97 },
+            attackerFactionId: 'owari',
+            attackerGeneralId: 'owari_zhitianxinchang',
+            attackerTroops: 2500,
+            attackerSourceCityId: 'city_atsuta',
+            defenderFactionId: 'jinchuan',
+            defenderGeneralId: 'jinchuan_jinchuanyiyuan',
+            defenderTroops: 25000,
+            defenderSourceCityId: 'city_atsuta',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    {
+        year: 1561,
+        season: 2,
+        generalId: 'echigo_shangshanqianxin',
+        type: 'field_battle',
+        title: '公元1561年 川中岛之战',
+        description: '上杉谦信识破武田信玄啄木鸟战法，自妻女山突袭八幡原武田本阵，车悬之阵连番突击；午后武田别动队回援夹击，双方各自撤军，龙虎相争不分胜负。',
+        fieldBattleData: {
+            title: '川中岛之战',
+            description: '谦信借夜雾渡千曲川突袭武田本阵，车悬之阵排山倒海；武田别动队回援夹击，越后军方从容后撤。',
+            location: { lat: 36.59, lng: 138.2 },
+            attackerFactionId: 'echigo',
+            attackerGeneralId: 'echigo_shangshanqianxin',
+            attackerTroops: 13000,
+            attackerSourceCityId: 'city_kasugayama',
+            defenderFactionId: 'kai',
+            defenderGeneralId: 'kai_wutianxinxuan',
+            defenderTroops: 20000,
+            defenderSourceCityId: 'city_tsutsujigasaki',
+            result: 'defender_win',
+            autoEnterRTS: true,
+        },
+    },
 ];
 
 /**
@@ -577,8 +874,27 @@ export function findHistoricalEventOfGeneral(
         .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
     for (const event of mine) {
         const data = event.siegeData ?? event.fieldBattleData;
-        // 🔴 攻城战条目**可能没有 `location`**（推罗就是靠 `defenderCityId` + 航点走的）→
-        //    由 battlefieldLocationOf 统一兜底，与运行时 findBattleForBattlefield、编辑器三处同口径。
+        // ── 攻城战 ────────────────────────────────────────────────────
+        // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城战**一律显式指名目标**，不比坐标：
+        //   · **战场要塞**（`targetBattlefieldId`，如 `bf_yinotani`）→ 直接就是那块战场；
+        //   · 普通攻城（打下某座**据点**）→ 按战场记录上的 `eventCityId` 认（如推罗 ↔ bf_tuile）。
+        //   为什么不比坐标：战场标牌标在**史实地点**，而攻城打的是目标本身，两者差几十公里
+        //   （一之谷 ↔ 最近据点相差 43km，经纬差 0.1994/0.4061），任何合理的度容差都盖不住。
+        if (event.type === 'siege') {
+            const sd = event.siegeData;
+            if (sd?.targetBattlefieldId) {
+                const bf = BATTLEFIELDS.find((b) => b.id === sd.targetBattlefieldId);
+                if (bf) return { event, battlefieldId: bf.id };
+                continue;
+            }
+            const cityId = sd?.defenderCityId;
+            const bf = cityId
+                ? BATTLEFIELDS.find((b) => b.scriptYear === event.year && b.eventCityId === cityId)
+                : undefined;
+            if (bf) return { event, battlefieldId: bf.id };
+            continue;   // 攻城战不走坐标兜底 —— 那只会配上同年的另一块战场
+        }
+        // 野战：坐标由 battlefieldLocationOf 统一求出（与运行时、编辑器三处同口径）
         const loc = battlefieldLocationOf(data, cityPos);
         const bf = findBattlefieldOfGeneralEvent(event.year, loc);
         if (bf) return { event, battlefieldId: bf.id };

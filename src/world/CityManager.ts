@@ -454,6 +454,8 @@ export class CityManager {
     }
 
     // [PERF] Expose territory system for performance monitoring
+    // 🔴 [2026-09-19 主人定] 战场图层也借它把**攻城战战场**画成据点样式（大/中/小城、城寨、险要）——
+    //    据点组装只有这一份，战场不能再画第二套（否则「据点是石墙、战场是木栅」两处走样）。
     public getTerritorySystem(): TerritorySystem {
         return this.territorySystem;
     }
