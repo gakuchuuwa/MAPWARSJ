@@ -7898,9 +7898,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/NORTH/linhu_mafang.png": {
-            "scale": 0.92,
+            "scale": 0.9,
             "offsetX": 0,
-            "offsetY": -20
+            "offsetY": -19
         }
     },
     "folderGuides": {

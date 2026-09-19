@@ -52,8 +52,6 @@ export class RecruitmentSystem {
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
-    /** 16 母体地理文化大区（BASE16_CULTURES）轮流出兵：记录下一季从哪个母体大区开始找 */
-    private nextSpawnBase16Index = 0;
 
     /**
      * 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」闸门（`PlayerHero.noLegionSpawn`，**默认开**）。
@@ -238,15 +236,21 @@ export class RecruitmentSystem {
     }
 
     /**
-     * 候选城排序（2026-09-05 主人定，与玩家选将一致）：
-     *   1 兵最多 > 2 名将 > 3 双行 > 4 擅攻；同档随机洗牌保持画面多样性。
+     * 候选城排序（2026-09-19 主人定「军团刷新只看兵多，谁兵多谁组建军团」）：
+     *   绝对兵力（armySize）从大到小降序排列；兵力完全相同时名将优先。
      */
     private static sortSpawnCandidates(candidates: SpawnCandidate[]): void {
-        candidates.sort((a, b) => compareGeneralsByPriority(
-            { troops: a.armySize, cityId: a.city.id },
-            { troops: b.armySize, cityId: b.city.id },
-        ));
+        candidates.sort((a, b) => {
+            if (b.armySize !== a.armySize) {
+                return b.armySize - a.armySize;
+            }
+            return compareGeneralsByPriority(
+                { troops: a.armySize, cityId: a.city.id },
+                { troops: b.armySize, cityId: b.city.id },
+            );
+        });
     }
+
 
     private getCityRegion(city: RecruitmentCity): RegionType {
         return getCityRegion({
@@ -271,25 +275,6 @@ export class RecruitmentSystem {
         return toBase16(city.region);
     }
 
-    private getActiveLegionBase16Counts(): Map<Base16Culture, number> {
-        const counts = new Map<Base16Culture, number>();
-        for (const army of this.legionManager.getArmies()) {
-            if (army.isDestroyed || army.type !== 'legion') continue;
-            const cityId = army.homeCityId || army.getSourceCityId();
-            let base16: Base16Culture | null = null;
-            if (cityId) {
-                const c = this.cityManager.getCityById(cityId);
-                if (c) base16 = this.getCityBase16(c);
-            }
-            if (!base16 && army.cultureRegion) {
-                base16 = toBase16(army.cultureRegion as RegionType);
-            }
-            if (base16) {
-                counts.set(base16, (counts.get(base16) ?? 0) + 1);
-            }
-        }
-        return counts;
-    }
 
     private getCurrentViewportBounds(): { contains(latlng: [number, number]): boolean } | null {
         if (typeof window === 'undefined') return null;
@@ -344,18 +329,16 @@ export class RecruitmentSystem {
     }
 
     /**
-     * 开局首发出兵计划：16 母体地理文化大区均衡出兵（名将优先）。
-     * 16 大区各选优秀名将城，循环出兵至开局配额（约 32~48 支，上限留给季末逐季增长）。
+     * [2026-09-19 主人定] 开局第一轮出兵：只在第一轮让 16 区各出一个军团（各区内兵多者/名将优先），刚好首发 16 支。
      */
     private buildInitialSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
         const candidates = this.collectSpawnCandidates(cities);
         if (candidates.length === 0) return [];
 
-        const maxInitial = Math.min(48, Math.floor(GameConfig.LEGION.MAX_ACTIVE_LEGIONS * 0.5));
         const selected: SpawnCandidate[] = [];
         const usedCityIds = new Set<string>();
 
-        // 第一轮：16 大区各挑 1 支最优候选（名将·擅攻优先）
+        // 只在第一轮让 16 区各出一个军团
         for (const cult of BASE16_CULTURES) {
             const candidate = candidates.find(
                 (c) => c.base16 === cult && !usedCityIds.has(c.city.id)
@@ -365,28 +348,12 @@ export class RecruitmentSystem {
             usedCityIds.add(candidate.city.id);
         }
 
-        // 第二轮：在 16 大区继续轮询补充，直到达到开局目标或候选耗尽
-        for (let round = 0; round < 3 && selected.length < maxInitial; round++) {
-            let addedThisRound = 0;
-            for (const cult of BASE16_CULTURES) {
-                if (selected.length >= maxInitial) break;
-                const candidate = candidates.find(
-                    (c) => c.base16 === cult && !usedCityIds.has(c.city.id)
-                );
-                if (!candidate) continue;
-                selected.push(candidate);
-                usedCityIds.add(candidate.city.id);
-                addedThisRound++;
-            }
-            if (addedThisRound === 0) break;
-        }
-
         return selected;
     }
 
+
     /**
-     * 季度出兵计划：按 16 母体地理与历史文化大区公平轮转出兵。
-     * 彻底废除旧版 171 区全满死锁门槛，确保任何合格据点所属大区轮到即可出兵。
+     * [2026-09-19 主人定] 季度出兵计划：取消 16 区限制，只看兵多，谁兵多谁组建军团，补充至上限 16 支。
      */
     private buildSpawnPlan(cities: RecruitmentCity[]): SpawnCandidate[] {
         const maxLegions = GameConfig.LEGION.MAX_ACTIVE_LEGIONS;
@@ -396,33 +363,9 @@ export class RecruitmentSystem {
         const candidates = this.collectSpawnCandidates(cities);
         if (candidates.length === 0) return [];
 
-        const selected: SpawnCandidate[] = [];
-        const selectedCityIds = new Set<string>();
-        const nCultures = BASE16_CULTURES.length; // 16
-
-        // 16 大地理与历史文化大区轮流出兵：从上次停下的文化区开始，逐区轮询
-        for (let attempt = 0; attempt < nCultures * remaining; attempt++) {
-            if (selected.length >= remaining) break;
-            const cult = BASE16_CULTURES[(this.nextSpawnBase16Index + attempt) % nCultures];
-
-            const candidate = candidates.find(
-                (c) => c.base16 === cult && !selectedCityIds.has(c.city.id)
-            );
-            if (!candidate) continue;
-
-            selected.push(candidate);
-            selectedCityIds.add(candidate.city.id);
-        }
-
-        // 轮转游标推进到下一个文化区
-        if (selected.length > 0) {
-            const lastCult = selected[selected.length - 1].base16;
-            const lastIdx = BASE16_CULTURES.indexOf(lastCult);
-            this.nextSpawnBase16Index = (lastIdx + 1) % nCultures;
-        }
-
-        return selected;
+        return candidates.slice(0, remaining);
     }
+
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
         const region = this.getCityRegion(city);
@@ -500,9 +443,7 @@ export class RecruitmentSystem {
         let candidates: SpawnCandidate[];
 
         if (visibleLegionCount < 2) {
-            // 同屏不足 2 支 → 优先在屏内刷兵；屏内无合格城池才回落轮转
-            // 【2026-07-02 主人裁定】同屏优先出的军团不能是跟随军团（自己方）的势力，
-            //   保证镜头内刷出的是敌方军团，避免自己人扎堆、缺乏对抗观赏性。
+            // 同屏不足 2 支 → 优先在屏内挑选兵多的敌对据点刷兵；屏内无合格据点才回落全图
             const followedFactionId = this.getFollowedFactionId();
             const allCandidates = this.collectSpawnCandidates(cities);
             const viewportCandidates = allCandidates.filter(
@@ -512,9 +453,10 @@ export class RecruitmentSystem {
                 ? viewportCandidates
                 : this.buildSpawnPlan(cities);
         } else {
-            // 同屏已 ≥ 2 支 → 63 区文化轮转（区内随机取一座合格城）
+            // 全图谁兵多谁组建军团
             candidates = this.buildSpawnPlan(cities);
         }
+
 
         let spawnedThisSeason = 0;
 

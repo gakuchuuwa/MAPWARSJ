@@ -5,8 +5,11 @@ import type { CityType } from '../../types/core';
 import { getGlobalUnitRenderer } from '../../map/UnitRenderer';
 import { GameConfig } from '../../config/GameConfig';
 import { getFactionCultureRegion } from '../../config/portrait_defaults';
+// 🔴 [2026-09-18 补] unitRegion() 里用到了这两个（城按所在地判文化区），原先漏了 import
+//    —— 缺它俩会让 tsc 报 TS2304，运行到那行直接抛错。
 import { getCityRegion, getRegion } from '../../systems/RegionSystem';
-import { readSiegeGarrisonElite } from '../../combat/SiegeGarrisonTier';
+import { readSiegeGarrisonElite, readSiegeGarrisonEliteName } from '../../combat/SiegeGarrisonTier';
+import { getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName } from '../../data/ExpeditionLegions';
 import {
     setGeneralSkillLegionManager,
     setOnTacticalSkillTriggered,
@@ -81,14 +84,42 @@ function unitIsFortress(u: { unitType?: string }): boolean {
 }
 
 /**
+ * [2026-09-19] 解析参战单位史实精锐番号（城池守军 > 军团精锐 > 势力精锐兜底）
+ */
+function resolveUnitEliteName(unit: {
+    factionId: string | null;
+    unitType?: string;
+    getEntity?(): any;
+} | null | undefined): string | null {
+    if (!unit) return null;
+    const entity = unit.getEntity?.();
+    if (unit.unitType === 'city') {
+        const garrison = readSiegeGarrisonEliteName(entity);
+        if (garrison) return garrison;
+        const cityId = entity?.id ?? (typeof entity?.getCityId === 'function' ? entity.getCityId() : null);
+        if (cityId) {
+            const byCity = getCityEliteLegionName(cityId);
+            if (byCity) return byCity;
+        }
+    }
+    const fromLegion = entity ? getLegionEliteLegionName(entity) : null;
+    if (fromLegion) return fromLegion;
+    if (unit.factionId) {
+        const fromFaction = getExpeditionEliteLegionName(unit.factionId);
+        if (fromFaction) return fromFaction;
+    }
+    return null;
+}
+
+/**
  * [2026-08-11 13 v2] 启动出兵口互攻演出（Scene13WarLayer）。
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
  * 演出判负 → onDecision 回调写回引擎。
  */
 function startScene13War(
     app: GameApp,
-    attacker: { factionId: string | null; troops: number; generalId?: string | null; getEntity?(): any },
-    defender: { factionId: string | null; troops: number; generalId?: string | null; getEntity?(): any },
+    attacker: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any },
+    defender: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any },
     onDecision: (winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void,
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
@@ -119,6 +150,11 @@ function startScene13War(
     const defenderCityEntity = battleType === 'siege' ? defender.getEntity?.() : null;
     const defenderCityLat = typeof defenderCityEntity?.latitude === 'number' ? defenderCityEntity.latitude : undefined;
     const defenderCityLng = typeof defenderCityEntity?.longitude === 'number' ? defenderCityEntity.longitude : undefined;
+    const attackerEliteName = resolveUnitEliteName(attacker);
+    let defenderEliteName = resolveUnitEliteName(defender);
+    if (!defenderEliteName && defenderCityId) {
+        defenderEliteName = getCityEliteLegionName(defenderCityId);
+    }
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
@@ -132,6 +168,9 @@ function startScene13War(
         defenderTroops: defender.troops,
         attackerBonus: bonus?.attacker,
         defenderBonus: bonus?.defender,
+        // [2026-09-19] 双方史实精锐番号传递给战术演出及 CombatUI 战术布局展示
+        attackerEliteName,
+        defenderEliteName,
         // 战场中心坐标 → 树/湖季节按真实海拔判定（2026-08-12 主人定「应该根据海拔」）
         centerLat: center?.lat,
         centerLng: center?.lng,
@@ -299,8 +338,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 if (att && def) {
                     startScene13War(
                         app,
-                        { factionId: att.factionId, troops: attTroops, getEntity: () => att.getEntity?.() },
-                        { factionId: def.factionId, troops: defTroops, getEntity: () => defEntity?.getEntity?.() },
+                        { factionId: att.factionId, troops: attTroops, generalId: att.generalId, unitType: att.unitType, getEntity: () => att.getEntity?.() },
+                        { factionId: def.factionId, troops: defTroops, generalId: def.generalId, unitType: defEntity?.unitType, getEntity: () => defEntity?.getEntity?.() },
                         (winner, sv) => {
                             // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负，演出判负不得覆盖。
                             const scripted = battleField.getScriptedWinner();

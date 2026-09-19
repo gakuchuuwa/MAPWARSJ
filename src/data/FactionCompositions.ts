@@ -585,8 +585,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "helian": {
-        legionName: "封建时代草原军团",
-        legionType: "region",
+        legionName: "古典时代匈奴军团",
+        legionType: "sub",
     },
     "tiele": {
         legionName: "封建时代草原军团",

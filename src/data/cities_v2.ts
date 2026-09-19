@@ -54,6 +54,11 @@ export type BuildingStyle =
     /** [2026-09-16 主人定] 59 二级文明（有独特城堡）：16 母体 + 59 文明 = 75 类。
      *  重名 5 个（EAST/ORIE/PERSIAN/PURU/THRACIAN）已在上方母体里，此处不再重复。 */
     | 'JAPAN' | 'CENTRAL' | 'WEI' | 'JIANGNAN' | 'BASHU' | 'KHITAN' | 'NORTHEAST' | 'MONGOL' | 'KOREA'
+    // 🔴 [2026-09-18 主人定「每座据点都必须是一级 16 中的一种，其次必须是二级 59+3 中的一种」]
+    //    补 CELTS 凯尔特：本联合类型**原先漏了它**（与 cityDeStyle.REGION_TO_DE_STYLE 漏同一项同源），
+    //    于是全项目没有任何据点能写 buildingStyle='CELTS'，DE 的凯尔特城堡素材长期闲置。
+    //    爱尔兰/苏格兰/威尔士 7 座已归入这一类。
+    | 'CELTS'
     | 'GERMANIC' | 'FRANKS' | 'BURGUNDIANS' | 'BRITONS' | 'VIKINGS' | 'GOTHS'
     | 'BYZANTINE' | 'ARMENIANS' | 'GEORGIANS'
     | 'POLES' | 'BOHEMIANS' | 'MAGYAR' | 'SLAVIC' | 'LITHUANIANS' | 'BULGARIANS'
@@ -2196,15 +2201,18 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
-    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'pass', troops: 10000, region: 'BERBER', buildingStyle: 'ORIE', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：丹吉尔：摩洛哥，柏柏尔—马格里布（与非斯/马拉喀什同口径）
+    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'pass', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
     { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：迦太基：腓尼基—罗马，DE 无布匿分支，取地中海的罗马/意大利古典石堡
     { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'LATIN', mirror: true },
-    { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'ORIE' },
-    { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'small_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'ORIE', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按城市属性落最小城档 → 小城' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：凯鲁万：突尼斯，柏柏尔／阿格拉布王朝都城（region=BERBER）
+    { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：的黎波里：利比亚，柏柏尔—马格里布东部
+    { id: 'city_deliboli', name: '的黎波里', factionId: 'telibolisi', lat: 32.88, lng: 13.19, type: 'small_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER', note: '定级依据§6.2：的黎波里非关隘/要塞/堡垒，按城市判级；17世纪前人口无可靠数字（英/意/西/葡维基与Treccani均无），按城市属性落最小城档 → 小城' },
     { id: 'city_banjiaxi', name: '班加西', factionId: 'jileinaijia', lat: 32.11, lng: 20.06, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK' },
 
     { id: 'city_labate', name: '拉巴特', factionId: 'muwaxide', lat: 34.024, lng: -6.822, type: 'pass', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER', note: '拉巴特＝阿拉伯语 Ribat（边防要塞）；阿尔摩哈德哈里发雅各布·曼苏尔所建 Ribat al-Fath 胜利之堡，对伊比利亚圣战的集结要塞，乌达亚堡' },
@@ -2233,7 +2241,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'WEST' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'WEST' },
-    { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'BRITONS', note: '定级依据§6.2：卡莱尔非关隘/要塞/堡垒，按城市判级；1377年人头税678纳税人约1400–1500人、1597年约1780–2000，未达1万 → 城寨' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：卡莱尔：苏格兰—英格兰边境（region=SCOTLAND），苏格兰王国故地
+    { id: 'city_carlisle', name: '卡莱尔', factionId: 'kanbuliya', lat: 54.89, lng: -2.93, type: 'stockade', troops: 10000, region: 'SCOTLAND', buildingStyle: 'CELTS', note: '定级依据§6.2：卡莱尔非关隘/要塞/堡垒，按城市判级；1377年人头税678纳税人约1400–1500人、1597年约1780–2000，未达1万 → 城寨' },
         { id: 'city_dijon', name: '第戎', factionId: 'bogendi', lat: 47.32, lng: 5.04, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS' },
 
 
@@ -2252,9 +2261,13 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'MEDI' },
     { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAV', note: '定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
 
-    { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS' },
-    { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'WEST', note: '定级依据§6.2：17世纪前城居人口无可靠数字（城墙约12ha；1640年守军+居民300人），有特殊建筑不得为城寨 → 小城' },
-    { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'stockade', troops: 10000, region: 'BRITONS', buildingStyle: 'WEST' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：都柏林：爱尔兰，凯尔特（region=CELTS_FEUDAL）
+    { id: 'city_dublin', name: '都柏林', factionId: 'gaer', lat: 53.34, lng: -6.26, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡舍尔：爱尔兰凯尔特王城（region=CELTS_FEUDAL）
+    { id: 'city_kasheer', name: '卡舍尔', factionId: 'mangsite', lat: 52.5202, lng: -7.8907, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'CELTS', note: '定级依据§6.2：17世纪前城居人口无可靠数字（城墙约12ha；1640年守军+居民300人），有特殊建筑不得为城寨 → 小城' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」只给一级、二级靠 region(BRITONS) 推
+    //    → 归 CELTS：利默里克在爱尔兰（凯尔特语族地区，region 里的 BRITONS 是英伦泛称，不适用爱尔兰）
+    { id: 'city_limerick', name: '利默里克', factionId: 'tuomengde', lat: 52.6664, lng: -8.6957, type: 'stockade', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS' },
 
 
 
@@ -2268,7 +2281,8 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAV' },
 
 
-    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'BRITONS' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
+    { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' },
     { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'pass', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS' },
     { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'WEST' },
 
@@ -3346,7 +3360,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国' },
     { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'WEST', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
-    { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'WEST', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡那封：威尔士，凯尔特（爱德华一世威尔士城堡）
+    { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地' },
     { id: 'city_meierfei', name: '梅尔菲', factionId: 'apuliya', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'MEDI', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '塞米恩山脉贝塔以色列王国故地，传说尤迪特由此摧毁阿克苏姆' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'aosimanbeiyiguo', lat: 40.03, lng: 30.18, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'ORIE', note: '奥斯曼贝伊国第一都城，奥斯曼一世加齐圣战起源地' },
@@ -3383,8 +3398,10 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kesenza', name: '科森扎', factionId: 'baerta', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'MEDI', note: '亚拉里克410年病逝葬布森托河底之地' },
     { id: 'city_nabone', name: '纳博讷', factionId: 'saiputimanniya', lat: 43.18, lng: 3.00, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'WEST', note: '阿陶尔夫414年娶加拉·普拉西狄亚建宫廷之地' },
     { id: 'city_lier', name: '里尔', factionId: 'bogengnidielan', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
-    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'WEST', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
-    { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
+    { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },
+    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：布伊尔斯：威尔士中部，凯尔特
+    { id: 'city_buyiersi', name: '布伊尔斯', factionId: 'weiershigongguo', lat: 52.15, lng: -3.40, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '卢埃林1282年欧温桥之战阵亡殉难地' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1」] 原「ASIA」只给一级、二级靠 region 推 → 归 VIETNAMESE：义安（Nghe An）：越南中部；AGENTS 归位原则「越南归东南亚」，一级随 VIETNAMESE = SEAS
     { id: 'city_yian', name: '义安', factionId: 'huanzhou', lat: 18.67, lng: 105.68, type: 'small_city', troops: 10000, region: 'VIETNAMESE', buildingStyle: 'VIETNAMESE', note: '丁礼受封南越王坐镇驩州抗击林邑之地' },
     { id: 'city_debuleidamo', name: '德布雷达莫', factionId: 'tigelei', lat: 14.37, lng: 39.27, type: 'pass', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '提格雷悬崖修道要塞，吉达扬避难与反击阵地' },

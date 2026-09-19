@@ -3362,6 +3362,10 @@ export interface Scene13WarInit {
     title?: string | null;
     /** [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，让跟随军团固定在屏幕左边。 */
     followedOnDefenderSide?: boolean;
+    /** [2026-09-19] 攻方精锐番号（如「土默特精骑」） */
+    attackerEliteName?: string | null;
+    /** [2026-09-19] 守方精锐番号（如「东平镇营」） */
+    defenderEliteName?: string | null;
 }
 
 export class Scene13WarLayer {
