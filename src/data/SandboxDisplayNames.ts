@@ -1151,7 +1151,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'kaliya': '卡里',
     'bosidiguo': '波帝',
     'jikelazes': '基克',
-    'adiyabeina': '亚贝', // 🔴 [2026-09-12] 原「阿迪」与 adile(阿迪勒)撞旗 → 取「阿迪亚贝纳」中段「亚贝」
+'adiyabeina': '亚贝',
     'youbeiya': '优卑',
     'zeta': '泽塔',
     'haerjijiji': '基季',

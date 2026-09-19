@@ -1,4 +1,5 @@
-import {getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import {FACTION_GENERALS, getGeneralRecordByGeneralId, setGeneralPortraitOverride} from '../data/FactionGenerals';
+import { FACTIONS } from '../data/factions';
 import { registerPortraitPathRuntime, unregisterPortraitPathRuntime } from '../config/portrait_defaults';
 import { Battle, IBattleUnit } from '../core/CombatSystem';
 import { BattleField } from '../core/BattleField';
@@ -400,6 +401,12 @@ export class CombatUI {
     private toggleCollapseBtn!: HTMLButtonElement;
     private exitBattleBtn!: HTMLButtonElement;
     private isCollapsed: boolean = false;
+    /** [2026-09-19 主人定] 军团与精锐展示在科技旁边，名字下方删除设定 */
+    private currentAttackerLegionName: string = '';
+    private currentAttackerEliteName: string = '';
+    private currentDefenderLegionName: string = '';
+    private currentDefenderEliteName: string = '';
+
 
     /** 技能脉冲状态：同名技能一局只放一次；双方撞车时后到方延后错开 */
     private skillPulseShownKeys = new Set<string>();
@@ -1610,21 +1617,32 @@ export class CombatUI {
             ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
             : getCultureLegionName(defRegion);
 
+        // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
         const defenderLegionTag = this.sideElement('defender', this.leftLegionTag, this.rightLegionTag);
+        const finalAttFaction = (attFactionName && attFactionName !== '攻方')
+            ? attFactionName
+            : (this.resolveUnitFactionDisplayName({ factionId: init.attackerFactionId } as any, 'attacker', init.attackerGeneralId) || attFactionName);
+        attackerLegionTag.textContent = finalAttFaction;
+        attackerLegionTag.style.display = finalAttFaction ? 'block' : 'none';
+        attackerLegionTag.title = `所属势力：${finalAttFaction}`;
 
-        // [2026-09-19] 战术模式优先展示双方史实精锐番号（如「土默特精骑」「东平镇营」），无精锐番号才兜底编制军团名
-        const attElite = (init.attackerEliteName && init.attackerEliteName.trim())
-            || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : null);
-        const defElite = (init.defenderEliteName && init.defenderEliteName.trim())
-            || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId) : null)
-            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : null);
+        const finalDefFaction = (defFactionName && defFactionName !== '守方')
+            ? defFactionName
+            : (this.resolveUnitFactionDisplayName({ factionId: init.defenderFactionId } as any, 'defender', init.defenderGeneralId) || defFactionName);
+        defenderLegionTag.textContent = finalDefFaction;
+        defenderLegionTag.style.display = finalDefFaction ? 'block' : 'none';
+        defenderLegionTag.title = `所属势力：${finalDefFaction}`;
 
-        const attDisplayName = attElite || attLegionName;
-        const defDisplayName = defElite || defLegionName;
+        this.currentAttackerLegionName = attLegionName || '';
+        this.currentAttackerEliteName = (init.attackerEliteName && init.attackerEliteName.trim())
+            || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : '') || '';
+        this.currentDefenderLegionName = defLegionName || '';
+        this.currentDefenderEliteName = (init.defenderEliteName && init.defenderEliteName.trim())
+            || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId) : '')
+            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : '') || '';
 
-        this.applyLegionTagContent(attackerLegionTag, attDisplayName, !!attElite, attLegionName);
-        this.applyLegionTagContent(defenderLegionTag, defDisplayName, !!defElite, defLegionName);
+
 
         if (this.leftPortraitFrame) {
             this.leftPortraitFrame.style.display = 'block';
@@ -1714,7 +1732,141 @@ export class CombatUI {
     }
 
     /**
+     * [2026-09-19 主人定] 将军团名称拆分为「时代」与「军团本体」两行
+     * 如「古典时代鲜卑军团」-> 行1「古典时代」，行2「鲜卑军团」
+     */
+    private splitLegionEraAndName(rawName: string): [string, string] {
+        if (!rawName) return ['', ''];
+        const name = rawName.trim();
+        // 1. 标准四大时代全称：「古典时代」「封建时代」「城堡时代」「帝国时代」
+        const m = name.match(/^(古典时代|封建时代|城堡时代|帝国时代)(.+)$/);
+        if (m) {
+            return [m[1], m[2]];
+        }
+        // 2. 简写时代名：「古典」「封建」「城堡」「帝国」
+        const m2 = name.match(/^(古典|封建|城堡|帝国)(.+)$/);
+        if (m2) {
+            return [m2[1] + '时代', m2[2]];
+        }
+        // 3. 兜底：以「军团」结尾且长度 > 4
+        if (name.endsWith('军团') && name.length > 4) {
+            return [name.slice(0, name.length - 2), '军团'];
+        }
+        return ['军团', name];
+    }
+
+    /**
+     * [2026-09-19 主人定] 军团独立卡片：
+     * 1. 独立单框，与精锐框分开；
+     * 2. 不要前面的「军」字；
+     * 3. 时代与军团本体换行（如第一行「古典时代」，第二行「鲜卑军团」）。
+     */
+    private createLegionChip(rawLegionName: string, isAtt: boolean): HTMLDivElement {
+        const chip = document.createElement('div');
+        chip.className = 'combat-legion-chip';
+        chip.style.cssText = `
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5px 6px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(28, 16, 8, 0.94) 0%, rgba(14, 8, 3, 0.96) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 0 3px rgba(212, 175, 55, 0.12);
+            min-width: 48px;
+            min-height: 27px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            align-self: flex-end;
+            cursor: help;
+            pointer-events: auto;
+            gap: 0px;
+        `;
+        const fallback = isAtt ? '古典时代华夏中原军团' : '古典时代秦汉军团';
+        const name = (rawLegionName || fallback).trim();
+        chip.title = `军团编制：${name}`;
+
+        const [eraText, bodyText] = this.splitLegionEraAndName(name);
+
+        // 第一行：时代（如「古典时代」）
+        const eraSpan = document.createElement('span');
+        eraSpan.textContent = eraText;
+        eraSpan.style.cssText = `
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.15;
+            color: #d8b068;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        `;
+
+        // 第二行：军团本体（如「鲜卑军团」）
+        const bodySpan = document.createElement('span');
+        bodySpan.textContent = bodyText;
+        bodySpan.style.cssText = `
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #fff2d0;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        `;
+
+        chip.appendChild(eraSpan);
+        chip.appendChild(bodySpan);
+        return chip;
+    }
+
+    /**
+     * [2026-09-19 主人定] 精锐独立卡片：
+     * 1. 独立单框，与军团框分开；
+     * 2. 不要前面的「精」字；
+     * 3. 展现精锐番号名，金质黑金视觉，高度与军团/科技卡片完全对齐。
+     */
+    private createEliteChip(eliteName: string): HTMLDivElement | null {
+        if (!eliteName) return null;
+        const chip = document.createElement('div');
+        chip.className = 'combat-elite-chip';
+        chip.style.cssText = `
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5px 6px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(36, 20, 6, 0.94) 0%, rgba(18, 10, 2, 0.96) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 0 4px rgba(255, 215, 0, 0.15);
+            min-width: 44px;
+            min-height: 27px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            align-self: flex-end;
+            cursor: help;
+            pointer-events: auto;
+            gap: 0px;
+        `;
+        chip.title = `精锐番号：${eliteName}`;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = eliteName;
+        nameSpan.style.cssText = `
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #ffe68a;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        `;
+
+        chip.appendChild(nameSpan);
+        return chip;
+    }
+
+    /**
      * 重绘一侧的科技显示（中央跟随胶囊两翼风格）。
+     * [2026-09-19 主人定] 把军团和精锐分开显示在科技旁边，不要军字和精字，军团时代与名称换行。
      * 每一个科技的名称与具体效果一一垂直绑定（上名下效，垂直严格对齐）。
      * @param own 本方已解锁科技  @param foe 对方已解锁科技
      * @param isAtt 是否攻方（左翼）
@@ -1725,16 +1877,12 @@ export class CombatUI {
         foe: MilitaryTech[],
         isAtt: boolean,
     ): void {
-        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',');
+        const legionName = (isAtt ? this.currentAttackerLegionName : this.currentDefenderLegionName) || '';
+        const eliteName = (isAtt ? this.currentAttackerEliteName : this.currentDefenderEliteName) || '';
+        const sig = own.map((t) => t.id).join(',') + '|' + foe.map((t) => t.id).join(',') + `|${legionName}|${eliteName}|${isAtt}`;
         if (box.dataset.sig === sig) return;   // 每帧调用，内容没变就不重绘 DOM
         box.dataset.sig = sig;
         box.textContent = '';
-
-        if (!own.length) {
-            box.style.opacity = '0';
-            box.style.display = 'none';
-            return;
-        }
 
         box.style.display = 'flex';
         box.style.flexDirection = 'row';
@@ -1788,22 +1936,17 @@ export class CombatUI {
             };
         };
 
-        // 攻/守两翼标签的 title 悬停 = **主人自查工具，不是给观众的信息层**。
-        //   本作无玩家操作、以直播观赏为准：直播画面前的观众没有鼠标，悬停内容他们永远看不到。
-        //   它的用途是调平衡时快速核对某方吃到的全维度累计加成，别再往它上面挂「观众要看的东西」。
-        //   观众侧的强弱表达只能靠常驻可见元素（分色卡片本身）与 13 的战况演出。
-        // 屏幕左翼标签
-        if (box === this.leftTechBox) {
-            const tag = document.createElement('span');
-            tag.textContent = isAtt ? '⚔️ 攻方科技' : '🛡️ 守方科技';
-            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-right: 2px; cursor: help; align-self: flex-end; margin-bottom: 2px;`;
-            const totalSummary = summarizeTechEffects(own).join(' · ');
-            tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
-            box.appendChild(tag);
-        }
+        const legionChip = this.createLegionChip(legionName, isAtt);
+        const eliteChip = eliteName ? this.createEliteChip(eliteName) : null;
+
+        // 科技标签
+        const tag = document.createElement('span');
+        tag.textContent = isAtt ? (own.length ? '⚔️ 攻方科技' : '⚔️ 攻方') : (own.length ? '守方科技 🛡️' : '守方 🛡️');
+        tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; ${isAtt ? 'padding-right: 2px;' : 'padding-left: 2px;'} cursor: help; align-self: flex-end; margin-bottom: 2px;`;
+        const totalSummary = summarizeTechEffects(own).join(' · ');
+        tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '暂无已研发科技'}`;
 
         // 科技列表（每个科技一个垂直对齐的独立卡片/小列，按着底向上折行）
-        // 🔴 [2026-09-10 主人定] 科技标签第二行优先从中间对齐，避免阻挡左右两侧武将立绘
         const chipsWrap = document.createElement('div');
         chipsWrap.style.cssText = `
             display: flex;
@@ -1833,6 +1976,8 @@ export class CombatUI {
                 box-shadow: 0 1px 2px rgba(0,0,0,0.04);
                 gap: 0px;
                 min-width: 32px;
+                min-height: 27px;
+                box-sizing: border-box;
             `;
 
             // 科技名（行 1）
@@ -1863,20 +2008,24 @@ export class CombatUI {
             chipsWrap.appendChild(chip);
         }
 
-        box.appendChild(chipsWrap);
-
-        // 屏幕右翼标签
-        if (box === this.rightTechBox) {
-            const tag = document.createElement('span');
-            tag.textContent = isAtt ? '攻方科技 ⚔️' : '守方科技 🛡️';
-            tag.style.cssText = `color: ${isAtt ? '#8b5a00' : '#1d5f36'}; font-weight: bold; font-size: 11px; white-space: nowrap; padding-left: 2px; cursor: help; align-self: flex-end; margin-bottom: 2px;`;
-            const totalSummary = summarizeTechEffects(own).join(' · ');
-            tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '无加成'}`;
+        // 🔴 [2026-09-19 主人定] 把军团和精锐分开显示在科技旁边，独立两框，不要军字和精字，时代与军团换行
+        // 左侧攻方（leftTechBox）：[军团卡片] -> [精锐卡片] -> [科技卡片组] -> [⚔️ 攻方科技]
+        // 右侧守方（rightTechBox）：[守方科技 🛡️] -> [科技卡片组] -> [精锐卡片] -> [军团卡片]
+        if (box === this.leftTechBox) {
+            box.appendChild(legionChip);
+            if (eliteChip) box.appendChild(eliteChip);
+            if (own.length) box.appendChild(chipsWrap);
             box.appendChild(tag);
+        } else {
+            box.appendChild(tag);
+            if (own.length) box.appendChild(chipsWrap);
+            if (eliteChip) box.appendChild(eliteChip);
+            box.appendChild(legionChip);
         }
 
         void foe;
     }
+
 
     /** 中央面板底部：左半攻 / 右半守，「军团名: 兵力」+ 小血条 */
     private createSideHud(side: 'attacker' | 'defender'): HTMLDivElement {
@@ -5104,19 +5253,19 @@ export class CombatUI {
         // [13 布局] 跟随战术模式开关（幂等，进出各执行一次）
         this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true);
 
-        // [军事科技] 只在 13 战斗模式下显示双方科技（2026-08-18 主人定：非 13 战斗模式隐藏）
+        // [军事科技与军团/精锐] 只在 13 战斗模式下显示（非 13 战斗模式隐藏）
         if (this.leftTechBox && this.rightTechBox) {
-            const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? null;
-            if (sideTechs) {
+            const is13 = (window as any).game?.scene13War?.isActive?.() === true;
+            if (is13) {
+                const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? { attacker: [], defender: [] };
                 this.renderTechSide(
                     this.sideElement('attacker', this.leftTechBox, this.rightTechBox),
-                    sideTechs.attacker, sideTechs.defender, true,
+                    sideTechs.attacker || [], sideTechs.defender || [], true,
                 );
                 this.renderTechSide(
                     this.sideElement('defender', this.leftTechBox, this.rightTechBox),
-                    sideTechs.defender, sideTechs.attacker, false,
+                    sideTechs.defender || [], sideTechs.attacker || [], false,
                 );
-                // 分隔徽记只跟着「确实有科技可显示」走：没有科技时不留一个孤零零的图标
                 if (this.techDivider && this.scene13LayoutOn) {
                     this.techDivider.style.display = 'flex';
                     this.techDivider.style.opacity = '1';
@@ -5136,6 +5285,7 @@ export class CombatUI {
                 }
             }
         }
+
 
         // 蓄力收缩：会放技侧立绘随游戏时间缓缩，技能亮相时刻缩到底（脉冲从收缩值弹起）
         this.updatePortraitWinddown();
@@ -5405,25 +5555,29 @@ export class CombatUI {
         }
 
         const legionName = this.resolveUnitLegionName(nameUnit, side);
-        let displayName = legionName;
-        let isElite = false;
-        // [2026-09-19] 战术模式（Zoom 13）下名牌下方优先展示史实精锐番号
-        if (this.scene13LayoutOn) {
-            const eliteName = (nameUnit.unitType === 'city')
-                ? readSiegeGarrisonEliteName(nameUnit.getEntity?.())
-                : (nameUnit.getEntity?.() ? getLegionEliteLegionName(nameUnit.getEntity()) : null);
-            const resolvedElite = eliteName ?? (nameUnit.factionId ? getExpeditionEliteLegionName(nameUnit.factionId) : null);
-            if (resolvedElite) {
-                displayName = resolvedElite;
-                isElite = true;
-            }
+        const eliteName = (nameUnit.unitType === 'city')
+            ? readSiegeGarrisonEliteName(nameUnit.getEntity?.())
+            : (nameUnit.getEntity?.() ? getLegionEliteLegionName(nameUnit.getEntity()) : null);
+        const resolvedElite = eliteName ?? (nameUnit.factionId ? getExpeditionEliteLegionName(nameUnit.factionId) : null);
+        if (side === 'attacker') {
+            if (legionName) this.currentAttackerLegionName = legionName;
+            if (resolvedElite) this.currentAttackerEliteName = resolvedElite;
+        } else {
+            if (legionName) this.currentDefenderLegionName = legionName;
+            if (resolvedElite) this.currentDefenderEliteName = resolvedElite;
         }
-        if (displayName && (rec || nameUnit.factionId)) {
-            this.applyLegionTagContent(legionTag, displayName, isElite, legionName);
+        // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
+        const factionName = this.resolveUnitFactionDisplayName(nameUnit, side, generalId);
+        if (factionName && (rec || nameUnit.factionId)) {
+            legionTag.textContent = factionName;
+            legionTag.style.display = 'block';
+            legionTag.title = `所属势力：${factionName}`;
         } else {
             legionTag.textContent = '';
             legionTag.style.display = 'none';
         }
+
+
         tag.dataset.side = side;
         this.refreshGeneralNameTagInteract();
     }
@@ -5771,6 +5925,9 @@ export class CombatUI {
         return tag;
     }
 
+    /**
+     * [2026-09-19 主人定] 战术模式中，武将名字下写势力
+     */
     private createLegionNameTag(side: 'left' | 'right'): HTMLDivElement {
         const isAtt = side === 'left';
         const tag = document.createElement('div');
@@ -5779,20 +5936,20 @@ export class CombatUI {
         tag.style.cssText = `
             position: absolute;
             bottom: calc(52% - ${uiPx(24)});
-            ${isAtt ? 'right' : 'left'}: -${uiPx(25)};
-            transform: ${isAtt ? 'translateX(35%)' : 'translateX(-35%)'};
+            ${isAtt ? 'right' : 'left'}: calc(-${uiPx(25)} + ${uiPx(17)});
+            transform: ${isAtt ? 'translateX(50%)' : 'translateX(-50%)'};
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(11)};
-            font-weight: 700;
-            color: rgba(230, 215, 175, 0.88);
-            background: linear-gradient(135deg, rgba(32, 16, 8, 0.92) 0%, rgba(12, 5, 0, 0.92) 100%);
-            border: 1px solid rgba(180, 135, 55, 0.45);
-            border-radius: 2px;
-            padding: 1px 6px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+            font-size: ${uiPx(12)};
+            font-weight: 800;
+            color: #ffe89e;
+            background: linear-gradient(135deg, rgba(38, 20, 8, 0.96) 0%, rgba(18, 9, 3, 0.98) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.65);
+            border-radius: 3px;
+            padding: 1.5px 7px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), inset 0 0 4px rgba(255, 215, 0, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 1), 0 0 5px rgba(255, 215, 0, 0.4);
             white-space: nowrap;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             z-index: ${T.zIndex.portrait + 6};
             display: none;
             pointer-events: none;
@@ -5801,39 +5958,46 @@ export class CombatUI {
     }
 
     /**
-     * [2026-09-19] 渲染立绘名牌下方的番号标签：
-     * 精锐番号赋予高贵黑金金边质感与 [精] 金徽；普通编制名保持标准深色古朴质感。
+     * [2026-09-19 主人定] 解析武将/单位所属势力名称，显示在战术模式武将名字下方
      */
-    private applyLegionTagContent(
-        tag: HTMLDivElement,
-        name: string,
-        isElite: boolean,
-        fallbackLegionName?: string | null,
-    ): void {
-        if (!name) {
-            tag.textContent = '';
-            tag.style.display = 'none';
-            return;
+    private resolveUnitFactionDisplayName(
+        unit: IBattleUnit,
+        side: 'attacker' | 'defender',
+        generalId?: string | null,
+    ): string {
+        const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
+        let factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
+
+        if (!factionId && generalId) {
+            for (const [fid, entry] of Object.entries(FACTION_GENERALS)) {
+                const list = Array.isArray(entry) ? entry : [entry as any];
+                if (list.some((g: any) => g.generalId === generalId)) {
+                    factionId = fid;
+                    break;
+                }
+            }
         }
-        if (isElite) {
-            tag.innerHTML = `<span style="color:#ffd700;font-weight:900;margin-right:2px;font-size:${uiPx(10)};">[精]</span>${name}`;
-            tag.style.background = 'linear-gradient(135deg, rgba(42, 24, 10, 0.96) 0%, rgba(18, 10, 4, 0.96) 100%)';
-            tag.style.borderColor = 'rgba(255, 215, 0, 0.65)';
-            tag.style.color = '#fff5d0';
-            tag.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.9), inset 0 0 4px rgba(255, 215, 0, 0.2)';
-            tag.title = `精锐番号：${name}${fallbackLegionName ? `（编制：${fallbackLegionName}）` : ''}`;
-        } else {
-            tag.textContent = name;
-            tag.style.background = 'linear-gradient(135deg, rgba(32, 16, 8, 0.92) 0%, rgba(12, 5, 0, 0.92) 100%)';
-            tag.style.borderColor = 'rgba(180, 135, 55, 0.45)';
-            tag.style.color = 'rgba(230, 215, 175, 0.88)';
-            tag.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.85)';
-            tag.title = name;
+
+        if (!factionId && this.boundRegionalBattleField) {
+            factionId = side === 'attacker'
+                ? this.boundRegionalBattleField.getAttackerFactionId()
+                : this.boundRegionalBattleField.getDefenderFactionId();
         }
-        tag.style.display = 'block';
+
+        if (!factionId) return '';
+
+        const dynamicName = (window as any).game?.cityManager?.getFactionName?.(factionId)
+            ?? (window as any).game?.factionManager?.getFactionName?.(factionId);
+        if (dynamicName && typeof dynamicName === 'string') return dynamicName;
+
+        const staticFaction = FACTIONS.find((f) => f.id === factionId);
+        if (staticFaction?.name) return staticFaction.name;
+
+        return factionId;
     }
 
     private resolveUnitLegionName(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
+
         /* 🔴 [2026-09-18 主人定「必须一套数据」] 势力优先，且势力要从**实体本身**取：
            改前只看 `unit.factionId`，包装对象没带 factionId 时就一路退到「文化区默认军团名」
            （江南 → 封建时代隋唐军团），于是同一支军队在编辑器里是大明军团、到战场变成隋唐军团。

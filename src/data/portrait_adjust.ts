@@ -1492,11 +1492,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 0
         },
-        "/assets/NORTH/jianzhou_nvzhen_limanzhu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -14
-        },
         "/assets/NORTHEAST/haixi_nvzhen_baiyindali.png": {
             "scale": 1.09,
             "offsetX": 0,
@@ -2721,11 +2716,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": -5
-        },
-        "/assets/NORTHEAST/__闲置__NORTHEAST_34.png": {
-            "scale": 0.98,
-            "offsetX": 0,
-            "offsetY": 7
         },
         "/assets/NORTHEAST/mohe_wanyanzonghan.png": {
             "scale": 0.89,
@@ -5677,11 +5667,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/STEPPE/__闲置__STEPPE_57.png": {
-            "scale": 1.05,
-            "offsetX": 0,
-            "offsetY": 3
-        },
         "/assets/STEPPE/__闲置__STEPPE_58.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -6513,9 +6498,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 4
         },
         "/assets/STEPPE/__多余__STEPPE_01.png": {
-            "scale": 1.02,
+            "scale": 1.08,
             "offsetX": 0,
-            "offsetY": 4
+            "offsetY": -26
         },
         "/assets/STEPPE/xiongren_atila.png": {
             "scale": 1.02,
@@ -7822,11 +7807,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/STEPPE/sijitai_satraces.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": -26
-        },
         "/assets/WEST_ASIA/luben_tuoluosiershi.png": {
             "scale": 1.22,
             "offsetX": 0,
@@ -7901,6 +7881,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.9,
             "offsetX": 0,
             "offsetY": -19
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_43.png": {
+            "scale": 0.94,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_44.png": {
+            "scale": 0.9,
+            "offsetX": 0,
+            "offsetY": -25
+        },
+        "/assets/NORTHEAST/__闲置__NORTHEAST_42.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/NORTH/__闲置__NORTH_08.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -14
+        },
+        "/assets/NORTHEAST/jianzhou_nvzhen_limanzhu.png": {
+            "scale": 0.98,
+            "offsetX": 0,
+            "offsetY": 7
+        },
+        "/assets/STEPPE/sijitai_satraces.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {

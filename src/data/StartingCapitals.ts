@@ -1084,7 +1084,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kaliya': 'city_halikanasu',
     'bosidiguo': 'city_kelazuomeinai',
     'jikelazes': 'city_tiluo',
-    'adiyabeina': 'city_aerbeila',
+'adiyabeina': 'city_aerbeila',
     'youbeiya': 'city_kalisituosi',
     'zeta': 'city_antiwali',
     'haerjijiji': 'city_aolinsuosi',

@@ -2063,6 +2063,10 @@ interface BatchEntry {
     factionId: string;
     cityId: string;
     region?: string;
+    /** 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 一级 16 母体建筑风格，写进 cities_v2 的 buildingStyle。
+     *  二/三层键（59+3）仍走 region —— 与 _citytest.html、/api/save-city 同一口径。
+     *  ⚠️ 不传就**不写**该字段（老调用方行为不变）；传了就写，且重写整行时不会丢。 */
+    buildingStyle?: string;
     /** 据点类型（表单选择）：small_city/medium_city/big_city/pass；未传则按名字自动判 */
     cityType?: string;
     /** 若需先删冲突据点再新建，传其 city_id */
@@ -2191,8 +2195,9 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
         const cityType = entry.cityType || detected.type;
         const troops = 20000;
         const regionPart = entry.region ? `, region: '${entry.region}'` : '';
+        const buildingStylePart = entry.buildingStyle ? `, buildingStyle: '${entry.buildingStyle}'` : '';
         const mirrorPart = entry.mirror ? `, mirror: true` : '';
-        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart}${mirrorPart} },`;
+        const cityLine = `{ id: '${cId}', name: '${entry.cityName}', factionId: '${fId}', lat: ${entry.lat}, lng: ${entry.lng}, type: '${cityType}', troops: ${troops}${regionPart}${buildingStylePart}${mirrorPart} },`;
         if (isNewCity) {
             if (entry.deleteExistingCityId) {
                 try {
