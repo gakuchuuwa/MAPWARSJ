@@ -28,7 +28,7 @@ import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
-import { findHistoricalEventOfGeneral } from '../data/HistoricalEventScript';
+import { findHistoricalEventsOfGeneral } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
@@ -453,20 +453,29 @@ export class PlayerQuestSystem {
     private followingEventGeneralId: string | null = null;
 
     /**
-     * 这位武将尚未打过的史实战役。
-     * 打完的（战场已点亮遗址）一律视作**他的事件已用掉** —— 主人定「第一次触发……然后就随机」，
-     * 于是他会回到乱斗（本函数返回 null，调用方回落 `startCampaign` / `joinMarchingArmy`）。
+     * 这位武将**此刻该接的那一场史实战役**。
+     *
+     * 🔴 [2026-09-19 主人定] 一位武将可以有**多场**戏（亚历山大东征 11 场），
+     *    定案是「**按年份早→晚依次解锁**」：
+     *    · 取他名下**还没打过**的战役里年份最早的那一场（打过 = 战场遗址已点亮）；
+     *    · 全部打完 → 返回 null，他回到乱斗（主人定「第一次触发……然后就随机」）；
+     *    · 某一场一时去不了（`bfRetryAfter` 里正在冷却，例如寻路失败）→ **退到下一场**，
+     *      免得玩家的整条线被一个暂时到不了的战场钉死。
      */
     private generalEventFor(
         generalId: string,
     ): { event: HistoricalEvent; battlefieldId: string } | null {
         if (!generalId) return null;
-        const hit = findHistoricalEventOfGeneral(generalId, (id) => {
+        const all = findHistoricalEventsOfGeneral(generalId, (id) => {
             const c = this.deps.cityManager.getCity(id);
             return c ? { lat: c.latitude, lng: c.longitude } : undefined;
         });
-        if (!hit) return null;
-        return isBattlefieldFought(hit.battlefieldId) ? null : hit;
+        if (!all.length) return null;
+        const unfought = all.filter((h) => !isBattlefieldFought(h.battlefieldId));
+        if (!unfought.length) return null;
+        const now = Date.now();
+        const reachable = unfought.find((h) => now >= (this.bfRetryAfter.get(h.battlefieldId) ?? 0));
+        return reachable ?? unfought[0];
     }
 
     /**
@@ -588,6 +597,14 @@ export class PlayerQuestSystem {
 
     /** 军团自己沿路网开赴战场坐标（玩家随军，位置跟着走） */
     private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }): void {
+        // 🔴 [2026-09-19 主人定「把战场和据点分开」] **本来就在战场上**（战场自带攻守、军团就生成在战场）
+        //    → 没有"赶路"这一段，立刻接战。否则 `moveAlongPath` 收到零长路径不会触发抵达回调，
+        //    玩家会永远站在战场上等一个不会来的对话框。
+        if (getEuclideanDistance(host.getPosition(), target) * 111 <= 2) {
+            this.armyMarchPoint = { lat: target.lat, lng: target.lng };
+            this.onHostReachBattlefield();
+            return;
+        }
         if (!roadRegistry.isInitialized()) return;
         const from = host.getPosition();
         let path = roadRegistry.findPathOnRoad(from, target);

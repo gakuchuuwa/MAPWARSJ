@@ -87,6 +87,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 「据点归亚历山大」的落点：达斯基利翁（波斯方本营、阿尔西提斯治所）。
         // 主人只说「据点归亚历山大」未指定具体哪座城，此处依史实选定，可一句话更换。
         cityUpdates: [{ cityId: 'city_dasijiliweng', factionId: 'maqidun' }],
+        generalId: 'gen_alexander_great',
     },
     {
         year: -333,
@@ -134,6 +135,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    原先那句 `{ cityId: 'city_yisusi', factionId: 'maqidun' }` 是错误逻辑，主人指出后已删 ——
         //    它会让一座战场走一遍占城流程
         //    （`CityManager.updateCity`：写 `fallenAtYear`、重置将/精名额、播占城播报与烟雾）。
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -168,6 +170,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         // 🔴 战后归属（主人定：如果是攻城战，战斗要改据点归属。一切按历史，无论输赢）：推罗归马其顿
         cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
+        generalId: 'gen_alexander_great',
     },
     // ═══════════════════════════════════════════════════════════════
     // 前 331 年秋 · 亚历山大决战波斯：高加米拉战役（Battle of Gaugamela，前331年10月）
@@ -242,6 +245,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         // 🔴 战后归属：扫清最后屏障，波斯波利斯易主归马其顿
         cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -274,6 +278,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：马其顿强渡大获全胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -306,6 +311,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：守军不战而降
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -313,31 +319,27 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     // ═══════════════════════════════════════════════════════════════
     {
         year: -327,
-        season: 0,                                   // 春（史料：前327年春进军斯瓦特河谷）
-        type: 'field_battle',
+        season: 0,
+        type: 'siege',
         title: '公元前327年 马萨加围城战',
         description: '马其顿军苦战攻克要塞获胜：亚历山大进军斯瓦特河谷围攻马萨加险要坚城；马其顿攻城塔与攻城锤昼夜猛轰城墙裂口，阿斯瓦卡首领阿萨卡诺斯阵亡，克莱奥菲斯女王率部投降；要塞被全面攻破，为进军印度扫清通道。',
-        fieldBattleData: {
+        siegeData: {
             title: '马萨加围城战',
             description: '亚历山大率攻城重型机械围攻马萨加险要要塞，阿萨卡诺斯阵亡后克莱奥菲斯女王统领全城力战投降，马其顿军攻克要塞。',
-            // 斯瓦特河谷查克达拉古要塞（北纬 34°40'15", 东经 71°50'30"）
-            location: { lat: 34.6708, lng: 71.8417 },
-
-            // ── 攻方：马其顿军 亚历山大大帝 ──
+            // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（斯瓦特河谷查克达拉古要塞），
+            //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
+            targetBattlefieldId: 'bf_masajia',
+            // 史料：马其顿攻城塔与撞城锤昼夜猛轰，守将阿萨卡诺斯阵亡后克莱奥菲斯女王纳降
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 22000,                   // 史料约 20,000 至 25,000 人（中值）
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：阿斯瓦卡守军 克莱奥菲斯女王 ──
-            defenderFactionId: 'aswaka',
+            attackerTroops: 22000,
+            attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
             defenderGeneralId: 'aswaka_cleophis',
-            defenderTroops: 39000,                   // 史料 30,000 本土步兵 + 2,000 骑兵 + 7,000 雇佣军（含30头战象）
-            defenderSourceCityId: 'city_baishawa',   // 临近根据地白沙瓦（犍陀罗）
-
-            result: 'attacker_win',                  // 写真历史：攻克要塞获胜
-            autoEnterRTS: true,                      // 进战术模式（13）
+            defenderTroops: 39000,
+            result: 'attacker_win',
+            autoEnterRTS: true,
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -370,6 +372,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：马其顿惨胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -377,31 +380,27 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     // ═══════════════════════════════════════════════════════════════
     {
         year: -325,
-        season: 0,                                   // 春（史料：前325年春沿印度河河谷清剿）
-        type: 'field_battle',
+        season: 0,
+        type: 'siege',
         title: '公元前325年 马里斯城围攻战',
         description: '马其顿军惨烈攻克卫城获胜：亚历山大率军沿印度河清剿围攻马利砖石卫城，亲自登梯突入城内庭院与守军血战，胸部中箭射穿肺叶倒地；愤怒的马其顿士卒砸开城门破城彻底屠戮守军，亚历山大侥幸脱险但肺伤终生未愈；随后马其顿军彻底控制印度河下游，横渡格德罗西亚荒漠回师。',
-        fieldBattleData: {
+        siegeData: {
             title: '马里斯城围攻战',
             description: '亚历山大亲自登梯突入马里斯砖石卫城血战身负重伤（胸部贯穿），赶来救驾的马其顿士卒怒破城门攻克要塞。',
-            // 木尔坦卫城古要塞遗址（北纬 30°11'50", 东经 71°28'30"）
-            location: { lat: 30.1972, lng: 71.475 },
-
-            // ── 攻方：马其顿军主力分队 亚历山大大帝 ──
+            // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（木尔坦卫城古要塞遗址），
+            //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
+            targetBattlefieldId: 'bf_malisi',
+            // 史料：木尔坦砖石卫城，亚历山大登梯独入身中贯穿肺叶之箭，士卒怒破城门
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerTroops: 13000,                   // 史料参战主力精锐分队约 10,000 至 15,000 人（中值）
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：马利（摩罗婆）联军 马利首领 ──
-            defenderFactionId: 'malli',
+            attackerTroops: 13000,
+            attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
             defenderGeneralId: 'malli_leader',
-            defenderTroops: 54000,                   // 史料约 50,000 步兵 + 3,000 骑兵 + 1,000 战车
-            defenderSourceCityId: 'city_meng',       // 蒙格
-
-            result: 'attacker_win',                  // 写真历史：攻破卫城惨胜获胜
-            autoEnterRTS: true,                      // 进战术模式（13）
+            defenderTroops: 54000,
+            result: 'attacker_win',
+            autoEnterRTS: true,
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -434,6 +433,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：大获全胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_alexander_great',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -466,6 +466,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：希腊联军大胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'maqidun_antipater',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -498,6 +499,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：马其顿联军大获全胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'xila_antiphilus',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -530,6 +532,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',                  // 写真历史：欧迈尼斯大获全胜
             autoEnterRTS: true,                      // 进战术模式（13）
         },
+        generalId: 'gen_eumenes',
     },
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
@@ -623,7 +626,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderFactionId: 'qiliqiya',
             defenderGeneralId: 'qiliqiya_pangpei',
             defenderTroops: 52000,
-            defenderSourceCityId: 'city_adana',
+            defenderSourceCityId: 'city_yadian',
             result: 'attacker_win',
             autoEnterRTS: true,
         },
@@ -718,7 +721,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerFactionId: 'fujiwara',
             attackerGeneralId: 'fujiwara_yuanyijing',
             attackerTroops: 3000,
-            attackerSourceCityId: 'city_himeji',
+            attackerSourceCityId: 'city_kyoto',
             defenderGeneralId: 'taira_pingzhisheng',
             defenderTroops: 25000,
             result: 'attacker_win',
@@ -748,6 +751,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderCityId: 'city_asuka',
             result: 'defender_win',
             autoEnterRTS: true,
+            targetBattlefieldId: 'bf_qianzaocheng',
         },
     },
     {
@@ -868,10 +872,29 @@ export function findHistoricalEventOfGeneral(
     generalId: string,
     cityPos: (id: string) => { lat: number; lng: number } | undefined,
 ): { event: HistoricalEvent; battlefieldId: string } | null {
-    if (!generalId) return null;
+    return findHistoricalEventsOfGeneral(generalId, cityPos)[0] ?? null;
+}
+
+/**
+ * 🔴 [2026-09-19 主人定] **这位武将名下的全部史实战役**，按年份早→晚排好。
+ *
+ * 主人定案：「一位武将有 11 场戏时，**按年份早→晚依次解锁**」——
+ * 亚历山大东征正是这种情况（他一个人打了 -334 格拉努库斯河 → -324 科塞亚 共 11 场）。
+ *
+ * 为什么要返回**数组**而不是单场：原先只取最早那一场，于是「打完第一场后
+ * `isBattlefieldFought` 把它筛掉 → 返回 null → 这位武将再也没有事件可接」，
+ * 11 场戏只能玩到 1 场。调用方（`PlayerQuestSystem.generalEventFor`）负责挑
+ * 「此刻该接哪一场」，并在某场一时去不了（寻路失败）时退到下一场，不把整条线钉死。
+ */
+export function findHistoricalEventsOfGeneral(
+    generalId: string,
+    cityPos: (id: string) => { lat: number; lng: number } | undefined,
+): Array<{ event: HistoricalEvent; battlefieldId: string }> {
+    if (!generalId) return [];
     const mine = HISTORICAL_EVENT_SCRIPT
         .filter((e) => e.generalId === generalId)
         .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
+    const out: Array<{ event: HistoricalEvent; battlefieldId: string }> = [];
     for (const event of mine) {
         const data = event.siegeData ?? event.fieldBattleData;
         // ── 攻城战 ────────────────────────────────────────────────────
@@ -884,22 +907,22 @@ export function findHistoricalEventOfGeneral(
             const sd = event.siegeData;
             if (sd?.targetBattlefieldId) {
                 const bf = BATTLEFIELDS.find((b) => b.id === sd.targetBattlefieldId);
-                if (bf) return { event, battlefieldId: bf.id };
+                if (bf) out.push({ event, battlefieldId: bf.id });
                 continue;
             }
             const cityId = sd?.defenderCityId;
             const bf = cityId
                 ? BATTLEFIELDS.find((b) => b.scriptYear === event.year && b.eventCityId === cityId)
                 : undefined;
-            if (bf) return { event, battlefieldId: bf.id };
+            if (bf) out.push({ event, battlefieldId: bf.id });
             continue;   // 攻城战不走坐标兜底 —— 那只会配上同年的另一块战场
         }
         // 野战：坐标由 battlefieldLocationOf 统一求出（与运行时、编辑器三处同口径）
         const loc = battlefieldLocationOf(data, cityPos);
         const bf = findBattlefieldOfGeneralEvent(event.year, loc);
-        if (bf) return { event, battlefieldId: bf.id };
+        if (bf) out.push({ event, battlefieldId: bf.id });
     }
-    return null;
+    return out;
 }
 
 /**
