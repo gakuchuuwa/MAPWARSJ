@@ -159,7 +159,18 @@ function loadDrafts(): BattleDraft[] {
         const bd = battleDataOf(ev);
         if (!bd) continue;
         const isSiege = ev.type === 'siege';
-        const anyBd = bd as FieldBattleData & { defenderCityId?: string };
+        const anyBd = bd as FieldBattleData & { defenderCityId?: string; targetBattlefieldId?: string };
+        // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] **战场要塞优先**：攻城战打的是**一块战场**
+        //    （`targetBattlefieldId`），这种条目既没有 `location` 也没有 `defenderCityId`，
+        //    照旧走下面的坐标兜底会得到 (0,0) → 配不上任何战场 → 列表里显示「未配战场」、
+        //    连带 `siegeCastleType` 等字段全丢（血训：一之谷在编辑器里就是这么变成空白的）。
+        if (anyBd.targetBattlefieldId) {
+            const bfDirect = BATTLEFIELDS.find((b) => b.id === anyBd.targetBattlefieldId) ?? null;
+            if (bfDirect) {
+                drafts.push(buildDraftFrom(ev, bd, isSiege, bfDirect));
+                continue;
+            }
+        }
         // 🔴 攻城战的剧本条目**可能没有 location**（推罗就是靠 defenderCityId + 航点走的），
         //    这时用被攻据点的坐标兜底，否则列表里坐标会是 0、也配不上战场。
         let loc = bd.location ?? null;
@@ -171,7 +182,15 @@ function loadDrafts(): BattleDraft[] {
         // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近），与运行时同一个函数。
         //    改之前这里用 0.5 度、运行时用 0.15 度且不看年份，编辑器配得上运行时未必配得上。见该函数长注释。
         const bf = BATTLEFIELDS.find((b) => matchesBattlefield(b, ev.year, loc)) ?? null;
-        drafts.push({
+        drafts.push(buildDraftFrom(ev, bd, isSiege, bf));
+    }
+
+    function buildDraftFrom(ev: AnyEvent, bd: FieldBattleData, isSiege: boolean, bf: (typeof BATTLEFIELDS)[number] | null): BattleDraft {
+        const anyBd2 = bd as FieldBattleData & { defenderCityId?: string };
+        const loc2 = bd.location
+            ?? (anyBd2.defenderCityId ? (() => { const c = CITY_BY_ID.get(anyBd2.defenderCityId!); return c ? { lat: c.lat, lng: c.lng } : null; })() : null)
+            ?? (bf ? { lat: bf.lat, lng: bf.lng } : { lat: 0, lng: 0 });
+        return {
             bfId: bf?.id ?? '',
             bfName: bf?.name ?? '',
             bfNote: bf?.note ?? '',
@@ -188,27 +207,28 @@ function loadDrafts(): BattleDraft[] {
             eventTitle: ev.title ?? '',
             description: ev.description ?? '',
             battleDescription: bd.description ?? '',
-            lat: loc.lat,
-            lng: loc.lng,
+            lat: loc2.lat,
+            lng: loc2.lng,
             attackerFactionId: bd.attackerFactionId ?? '',
             attackerGeneralId: bd.attackerGeneralId ?? '',
             attackerTroops: bd.attackerTroops ?? 0,
             attackerSourceCityId: bd.attackerSourceCityId ?? '',
             attackerLegionName: bd.attackerLegionName ?? '',
-            // 攻城战的守方是城，剧本里常常不写 defenderFactionId（势力从城读）→ 这里按城带出来
+            // 攻城战的守方是城，剧本里常常不写 defenderFactionId（势力从城读）→ 这里按城带出来；
+            // 打「战场要塞」的没有城，守方势力从守将反查（与运行时同一口径）
             defenderFactionId: bd.defenderFactionId
-                ?? (isSiege && anyBd.defenderCityId ? CITY_BY_ID.get(anyBd.defenderCityId)?.factionId ?? '' : ''),
+                ?? (isSiege && anyBd2.defenderCityId ? CITY_BY_ID.get(anyBd2.defenderCityId)?.factionId ?? '' : ''),
             defenderGeneralId: bd.defenderGeneralId ?? '',
             defenderTroops: bd.defenderTroops ?? 0,
             defenderSourceCityId: bd.defenderSourceCityId ?? '',
-            defenderCityId: anyBd.defenderCityId ?? '',
+            defenderCityId: anyBd2.defenderCityId ?? '',
             defenderLegionName: bd.defenderLegionName ?? '',
             result: bd.result ?? 'attacker_win',
             marchWaypoints: [...(bd.marchWaypoints ?? [])],
             cityUpdates: (ev.cityUpdates ?? [])
                 .filter((u) => !!u.factionId)
                 .map((u) => ({ cityId: u.cityId, factionId: u.factionId as string })),
-        });
+        };
     }
     drafts.sort((a, b) => a.year - b.year);
     return drafts;
@@ -274,7 +294,9 @@ function validate(d: BattleDraft): Issue[] {
         err('攻守不能是同一个武将');
     }
     if (!d.attackerFactionId) err('攻方势力必须填');
-    if (!d.defenderFactionId) err('守方势力必须填');
+    // 🔴 [2026-09-19] 打**战场要塞**的攻城战没有「城」可读势力，守方势力由守将反查
+    //    （与运行时 `getFactionIdOfGeneral` 同一口径），此时不要求手填。
+    if (!d.defenderFactionId && !d.bfTargetBattlefieldId) err('守方势力必须填');
     if (d.attackerFactionId && d.attackerFactionId === d.defenderFactionId) {
         err('攻守不能是同一个势力');
     }
@@ -296,12 +318,21 @@ function validate(d: BattleDraft): Issue[] {
     else if (!CITY_BY_ID.has(d.attackerSourceCityId)) err('攻方出兵据点不存在：' + d.attackerSourceCityId);
 
     if (d.type === 'siege') {
-        if (!d.defenderCityId) err('攻城战必须指定被攻打的据点（守方就是这座城）');
-        else if (!CITY_BY_ID.has(d.defenderCityId)) err('被攻据点不存在：' + d.defenderCityId);
-        if (d.defenderCityId && !d.cityUpdates.some((u) => u.cityId === d.defenderCityId)) {
+        // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城目标**二选一**：
+        //    打**据点**（推罗围城战）给「被攻打的据点」；打**战场要塞**（一之谷之战）给「本战场即攻城目标」。
+        const isFortress = !!d.bfTargetBattlefieldId;
+        if (!isFortress && !d.defenderCityId) {
+            err('攻城战必须指定被攻打的据点，或指定「本战场即攻城目标」（战场要塞）');
+        }
+        if (d.defenderCityId && !CITY_BY_ID.has(d.defenderCityId)) err('被攻据点不存在：' + d.defenderCityId);
+        if (isFortress && !BATTLEFIELDS.some((b) => b.id === d.bfTargetBattlefieldId)) {
+            err('战场要塞不存在：' + d.bfTargetBattlefieldId);
+        }
+        // 打据点才谈「战后归属」；打**战场要塞**不改任何据点归属（战场没有主人，易什么主）
+        if (!isFortress && d.defenderCityId && !d.cityUpdates.some((u) => u.cityId === d.defenderCityId)) {
             warn('攻城战通常要写战后归属（主人定：该攻城就攻城，战斗要改据点归属，一切按历史）');
         }
-        if (d.defenderCityId && !d.marchWaypoints.includes(d.defenderCityId)) {
+        if (!isFortress && d.defenderCityId && !d.marchWaypoints.includes(d.defenderCityId)) {
             warn('攻城战的行军航点一般以被攻据点收尾');
         }
     } else {
