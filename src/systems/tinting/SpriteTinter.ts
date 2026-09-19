@@ -192,6 +192,13 @@ export class SpriteTinter {
         if (this.dirHasMask.get(dir) === false) return this.tintReadyUncached(sprite, factionId);
         const maskSrc = source.replace(/\.png$/, '.pc.png');
         let mask = this.maskCache.get(maskSrc);
+        /* 🔴 [2026-09-18 主人报障「移动一顿一顿」] 命中要**提到队尾**（LRU），不然淘汰是 FIFO。
+         * 实测证据（scratch/perf_doctor_log.jsonl 一小时 26 份报告）：
+         *   · tintedSpriteCache 有 touchTinted → LRU → churn 455 evict / **0 reAdd**；
+         *   · 本缓存没有 touch → FIFO → churn **7835 evict / 2607 reAdd（33%）**。
+         * 33% 的淘汰对象转头又被加回来 = 反复重下载/重解码同一批遮罩，纯烧 CPU，内存一分没省。
+         * 同期 fps 从开局 59.9 一路劣化到 15，重载页面后立刻回 59.9 —— 抖动随运行时长累积。 */
+        if (mask !== undefined) { this.maskCache.delete(maskSrc); this.maskCache.set(maskSrc, mask); }
         if (!mask) {
             const image = new Image();
             image.fetchPriority = this.criticalTintKeys.has(`${tintKeyOf(sprite)}_${factionId}`) ? 'high' : 'low';
