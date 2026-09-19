@@ -4091,7 +4091,8 @@ export class Scene13WarLayer {
         this.flipSides = init.followedOnDefenderSide === true;
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
-        this.defenderHolding = this.battleType === 'siege' && this.defenderCityType !== 'stockade';
+        // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
+        this.defenderHolding = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
@@ -4198,7 +4199,8 @@ export class Scene13WarLayer {
 
             // 🔴 [2026-08-22 主人定] 攻城战：按守方城级给攻方配备攻城武器（正常参战兵种，前置到攻方前排）
             // 🔴 [2026-09-03 主人定] 城寨(stockade)攻击方不带攻城武器——和野战一样直接开战
-            if (this.battleType === 'siege' && this.defenderCityType !== 'stockade') {
+            // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)攻击方不带攻城武器——和城寨野战一样
+            if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender()) {
                 this.spawnSiegeWeapons(VW, VH, mx, depth);
             }
 
@@ -4308,6 +4310,20 @@ export class Scene13WarLayer {
         const byFaction = fid ? FACTION_BUILDING_STYLE[fid] : undefined;
         if (byFaction) return byFaction;
         return REGION_BUILDING_STYLE[culture] ?? REGION_TO_DE_STYLE[culture] ?? 'WEST';
+    }
+
+    /**
+     * 守方是否为漠北蒙古风格（MOBEI_MONGOL / YURT 毡帐营地）。
+     * 🔴 [2026-09-19 主人定] 漠北蒙古风格的战术模式应该和城寨野战一样：直接开战，没有攻城武器，没有坍塌。
+     */
+    private isMobeiMongolDefender(): boolean {
+        if (this.battleType !== 'siege') return false;
+        if (this.defenderMapStyle === 'YURT') return true;
+        if (this.buildingStyleFor(1) === 'YURT') return true;
+        const c: any = this.defenderCityId
+            ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
+            : null;
+        return c?.buildingStyle === 'MOBEI_MONGOL' || c?.buildingStyle === 'YURT';
     }
 
     /**
@@ -4948,9 +4964,9 @@ export class Scene13WarLayer {
         // 玩家自带精锐是临时追加的战术出兵位，不属于军团九格编制；
         // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
         const side = this.spawns.filter((s) => s.f === f && !s.playerElite);
-        // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)守方**都在最前排营地前铺一道木桩拒马线。
+        // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)/漠北蒙古(MOBEI_MONGOL)守方**都在最前排营地前铺一道木桩拒马线。
         // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
-        const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade';
+        const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         if (!skipBarricade && side.length > 0) {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
             const isAttacker = f === 0;
@@ -4963,8 +4979,8 @@ export class Scene13WarLayer {
                 const topY = frontRow[0].y - 135;
                 const bottomY = frontRow[frontRow.length - 1].y + 135;
                 const offsetX = isAttacker ? 180
-                    // 主人 2026-09-03：城寨守方拒马顶到正面墙原位置(-380)，在箭塔(-320)之前（拒马在前、箭塔在后）；其余守方 -180
-                    : (this.defenderCityType === 'stockade' ? -380 : -180);
+                    // 主人 2026-09-03：城寨/漠北蒙古守方拒马顶到正面墙原位置(-380)，在箭塔(-320)之前（拒马在前、箭塔在后）；其余守方 -180
+                    : ((this.defenderCityType === 'stockade' || this.isMobeiMongolDefender()) ? -380 : -180);
                 this.ensureNatureAsset(barricadeAsset);
                 for (let i = 0; i < barricadeCount; i++) {
                     const t = i / (barricadeCount - 1);
@@ -5210,7 +5226,8 @@ export class Scene13WarLayer {
             // 2. 正面城墙：整排连续垂直主城墙（2026-08-22 主人定：正面中央是城墙，城门只留北翼/南翼 2 座）
             //    正面墙段 linked=true（参与「一处破 → 前排全倒」联动）
             //    主人 2026-09-03：城寨(stockade)只换**前排**——正面不铺篱笆墙（改拒马线，见 applyBuildingsForSide），两侧篱笆保留
-            if (this.defenderCityType !== 'stockade') {
+            //    🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样正面不铺墙，直接开战
+            if (this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender()) {
                 for (let i = -8.5; i <= 8.5; i += 1.0) {
                     placeWall({ x: wallFrontX, y: midY + i * pitch }, wBase + '_N', 'STONE_WALL', true);
                 }
@@ -5229,7 +5246,8 @@ export class Scene13WarLayer {
 
             // 🔴 [2026-09-03 主人定] 城寨(stockade)直接开战、和野战一样：围墙/城门全部纯贴图（去碰撞），
             //    不卡兵。别的城市靠 30 秒 collapseFrontWalls 去碰撞，城寨没有 30 秒坍塌，这里一上来就清掉。
-            if (this.defenderCityType === 'stockade') {
+            // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)同样去碰撞纯贴图不卡兵
+            if (this.defenderCityType === 'stockade' || this.isMobeiMongolDefender()) {
                 for (const b of this.wallGates) {
                     b.sprite.obstruction = undefined;
                     b.sprite.obstructionDisabled = true;
@@ -7258,7 +7276,8 @@ export class Scene13WarLayer {
         // 🔴 [2026-08-23 主人改] 攻城战保底：开战 WALL_AUTO_COLLAPSE_SEC 秒后，所有城墙自动
         //    随机坍塌一次——即使攻城武器还没打穿墙，30 秒后也强制随机塌一批，留出足够缺口。
         //    🔴 [2026-09-03 主人定] 城寨(stockade)无 30 秒坍塌——被攻方打穿才塌，和野战一样。
-        if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
+        //    🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)无 30 秒坍塌——和城寨野战一样没有坍塌。
+        if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender() && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
         }

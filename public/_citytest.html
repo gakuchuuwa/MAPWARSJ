@@ -1104,6 +1104,10 @@ window.CULTURE_GROUPS = CULTURE_GROUPS;
 
 /**
  * 第三层：专属定制文明建筑风格列表
+ * 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 59+3 中的一种」]
+ *    三级 3 类同样是「一级 16 的细分」，所以 deStyleOfCultureKey 必须**两层都查** ——
+ *    改前只查二级 59，导致 buildingStyle 写 TIBET / WESTERN / MOBEI_MONGOL 的 146 座据点
+ *    在编辑器里一级那一格**留白**（实测 146 座），等于"没有一级风格"。下面同样挂到 window。
  * 在一层 16 母体 + 二层 59 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
  */
 const LAYER3_CUSTOM_GROUPS = [
@@ -1133,6 +1137,9 @@ const LAYER3_CUSTOM_GROUPS = [
     ]
   },
 ];
+
+/* 同上：三级 3 类也要给据点编辑器可见（一级解析要查它） */
+window.LAYER3_CUSTOM_GROUPS = LAYER3_CUSTOM_GROUPS;
 
 /** 全量 59 套二层分支映射字典 */
 const CULTURE_MAP = {};
@@ -3552,11 +3559,15 @@ refresh();
       }
     });
   }
-  /* 文化区名 → 16 母体 DE 风格。表用本页已有的 CULTURE_GROUPS，不另造一份字典（造了必漂移）。 */
+  /* 文化区名 / 62 类键 → 16 母体 DE 风格。表用本页已有的 CULTURE_GROUPS + LAYER3_CUSTOM_GROUPS，
+     不另造一份字典（造了必漂移）。
+     🔴 [2026-09-18 主人定「据点必须一级 16 选 1、二级 59+3 选 1」] 改前只查二级 59 表，
+        漏查三级 3 表（TIBET/WESTERN/MOBEI_MONGOL）→ 那 146 座的一级直接留白。现在两层都查。 */
   function deStyleOfCultureKey(k) {
-    if (!k || !window.CULTURE_GROUPS) return "";
-    for (var gi = 0; gi < window.CULTURE_GROUPS.length; gi++) {
-      var bs = window.CULTURE_GROUPS[gi].branches || [];
+    if (!k) return "";
+    var groups = [].concat(window.CULTURE_GROUPS || [], window.LAYER3_CUSTOM_GROUPS || []);
+    for (var gi = 0; gi < groups.length; gi++) {
+      var bs = groups[gi].branches || [];
       for (var bi = 0; bi < bs.length; bi++) if (bs[bi].key === k) return bs[bi].deStyle || '';
     }
     return '';
@@ -3600,9 +3611,24 @@ refresh();
     var wv = x.buildingStyle || '';
     if (wv && !wall.querySelector('option[value="' + wv + '"]')) wv = deStyleOfCultureKey(wv);
     wall.value = wv;
-    if (x.region) {
-      if (custom.querySelector('option[value="' + x.region + '"]')) custom.value = x.region;
-      else if (castle.querySelector('option[value="' + x.region + '"]')) castle.value = x.region;
+    /* 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 59+3 中的一种；
+       前者套建筑素材（墙/房/塔），后者套城堡素材」] —— 二级/三级必须回填出该据点所属的那一类。
+       取值顺序（都是**现成的权威数据**，本页不另抄字典）：
+         ① 据点自己的 buildingStyle 本身就是 62 类之一（如 MONGOL / TIBET / WESTERN / KHITAN）
+         ② region 本身就是 62 类之一（如 KHMER / MALAY）
+         ③ region 经游戏侧权威表 REGION_TO_BRANCH 推导 —— 与 resolveCastleAsset 解析城堡
+            走的是**同一条链**；该表由 boot() 动态 import '/src/config/deCastleAssets.ts' 取回，
+            不在本页复制一份（复制必漂移）。
+       三条都取不到才留空（绝不保留上一个据点的残留值）。 */
+    var pick62 = function (k) {
+      if (!k) return false;
+      if (custom.querySelector('option[value="' + k + '"]')) { custom.value = k; return true; }
+      if (castle.querySelector('option[value="' + k + '"]')) { castle.value = k; return true; }
+      return false;
+    };
+    if (!pick62(x.buildingStyle) && !pick62(x.region)) {
+      var br = (window.REGION_TO_BRANCH || {})[x.region];
+      pick62(br);
     }
   }
   // 代码 → 中文：直接查本页原生下拉里的中文标签（不另造字典）
@@ -3663,6 +3689,17 @@ refresh();
     wall.addEventListener('change', remember); castle.addEventListener('change', remember); custom.addEventListener('change', remember);
     ctype.addEventListener('change', syncTypeHint);
     document.getElementById('ceReload').addEventListener('click', function () { location.reload(); });
+    /* 🔴 [2026-09-18 主人定「据点必须一级 16 选 1 + 二级 59+3 选 1」]
+       二级/三级兜底表直接用**游戏侧权威表** REGION_TO_BRANCH（src/config/deCastleAssets.ts，
+       resolveCastleAsset 解析城堡走的就是它），免得本页另抄一份后漂移。
+       本页是 public/ 下的静态页、不能 import TS，故走 Vite 的模块服务动态 import；
+       若取不到（例如生产构建里没有 /src），catch 掉即可 —— 退化为按 buildingStyle/region 直接命中。 */
+    import('/src/config/deCastleAssets.ts')
+      .then(function (m) {
+        window.REGION_TO_BRANCH = (m && m.REGION_TO_BRANCH) || {};
+        if (CITIES.length) syncFromCity(false);   // 表到了：重填一次当前据点的二/三级
+      })
+      .catch(function () { /* 无表时按 ①② 两条取值，不报错 */ });
     document.getElementById('ceSave').addEventListener('click', function () {
       var x = CITIES.find(function (y) { return y.id === city.value; });
       if (!x) { msg.style.color = '#fc8181'; msg.textContent = '请先选据点'; return; }

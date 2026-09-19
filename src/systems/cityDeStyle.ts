@@ -20,7 +20,12 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     STEPPE: 'YURT', MONGOL: 'ASIA', MONGOLS: 'YURT', MOBEI_MONGOL: 'YURT', // [2026-09-16] 二级蒙古→东亚建筑+蒙古城堡；三级漠北蒙古→毡帐
     SLAVIC: 'SLAV', SLAVIC_FEUDAL: 'SLAV', SLAVIC_CASTLE: 'SLAV', SLAVIC_IMPERIAL: 'SLAV', GERMANIC: 'WEST', GERMANIC_FEUDAL: 'WEST', GERMANIC_IMPERIAL: 'WEST', GERMANIC_CASTLE: 'WEST', LATIN: 'MEDI', LATIN_CASTLE: 'MEDI', LATIN_IMPERIAL: 'MEDI',
     INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'CEAS',
-    AFRICA: 'AFRI', BERBER: 'ORIE', MALAY: 'SEAS',
+    AFRICA: 'AFRI',
+    // 🔴 [2026-09-18] 柏柏尔(BERBER) 由 'ORIE' 改 'AFRI'：按 AGENTS「兵种/文化归位以民族史实为准」的
+    //   既定归位原则「**柏柏尔归非洲**」，马格里布（非斯/马拉喀什/拉巴特…）属非洲母体。
+    //   改前与 public/_citytest.html 的 CULTURE_GROUPS（BERBER deStyle=AFRI）不一致 ——
+    //   两张表打架，实测害得 6 座摩洛哥据点被算成「一级与二级底座不符」。
+    BERBER: 'AFRI', MALAY: 'SEAS',
     SEAS: 'SEAS', // [2026-09-11 主人「和游戏同步」补] 该键原先两张表都没有 → region='SEAS' 的 6 座（阿瑜陀耶等）一旦没走据点显式风格就会落到西欧 WEST；东南亚该走 SEAS 套装
     AMERICA: 'MESO',
     ANDE: 'ANDE',
@@ -39,14 +44,23 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     //   地中海(MEDI)=意大利/西西里/西班牙/葡萄牙/亚美尼亚/格鲁吉亚/雅典/斯巴达/马其顿；
     //   东亚(ASIA)=越南；东南亚(SEAS)=高棉；南美(ANDE)=马普切/穆伊斯卡/图皮；中美洲(MESO)=玛雅。
     BRITONS: 'WEST', CELTS_FEUDAL: 'WEST', BURGUNDIANS: 'WEST',
+    // 🔴 [2026-09-18] 补 CELTS（凯尔特）：本表此前**缺这一项**，任何据点写 buildingStyle='CELTS'
+    //   都会 REGION_TO_DE_STYLE 落空 → 一级风格为空。与页面表（CELTS deStyle=WEST）对齐。
+    CELTS: 'WEST',
     GOTHS: 'WEST', TEUTONS: 'WEST', VIKINGS: 'WEST', HUNS: 'CEAS',
     ITALIANS: 'MEDI', SICILIANS: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI',
-    ARMENIANS: 'MEDI', GEORGIANS: 'MEDI',
+    // 🔴 [2026-09-18] 亚美尼亚/格鲁吉亚 由 'MEDI' 改 'EAST'：AGENTS 既定归位原则写明
+    //   「**亚美尼亚/格鲁吉亚归拜占庭**」，拜占庭在本表 = 'EAST'；页面表同口径（deStyle=EAST）。
+    ARMENIANS: 'EAST', GEORGIANS: 'EAST',
     LITHUANIANS: 'SLAV', POLES: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV', MAGYAR: 'SLAV',
     ACHAEMENIDS: 'PERSIAN',
     BENGALIS: 'INDI', GURJARAS: 'INDI', PORUS: 'INDI',
     BENGALIS_ANTIQUITY: 'INDI',   // 2026-09-12 古典孟加拉：与孟加拉同风格
-    VIETNAMESE: 'ASIA', KHMER: 'SEAS',
+    // 🔴 [2026-09-18] 越南由 'ASIA' 改 'SEAS'：AGENTS 既定归位原则写明「**越南归东南亚**」，
+    //   页面表同口径（VIETNAMESE deStyle=SEAS）。改前游戏表把它算东亚，导致 33 座写
+    //   buildingStyle='VIETNAMESE' 的据点（其中 24 座是岭南/华南汉地）被一并算成东亚母体 ——
+    //   汉地那 24 座已按真实地理改归 CENTRAL 华夏（一级仍东亚），越南本土 9 座随本行转东南亚。
+    VIETNAMESE: 'SEAS', KHMER: 'SEAS',
     MAYANS: 'MESO',
     MAPUCHE: 'ANDE', TUPI: 'ANDE', MUISCA: 'ANDE',
     ETHIOPIANS: 'AFRI',

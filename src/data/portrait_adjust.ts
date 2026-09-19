@@ -4332,11 +4332,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 16,
             "offsetY": 13
         },
-        "/assets/NORTH/linhu_mafang.png": {
-            "scale": 1.21,
-            "offsetX": -7,
-            "offsetY": 0
-        },
         "/assets/LINGNAN/daozhou_yangzaixing.png": {
             "scale": 0.85,
             "offsetX": 0,
@@ -7652,11 +7647,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 13
         },
-        "/assets/NORTH/__闲置__LINGNAN_14.png": {
-            "scale": 0.92,
-            "offsetX": 0,
-            "offsetY": -20
-        },
         "/assets/NORTH/__闲置__daming_11.png": {
             "scale": 1.01,
             "offsetX": 0,
@@ -7901,6 +7891,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/assets/NORTH/__闲置__NORTH_07.png": {
+            "scale": 1.21,
+            "offsetX": -7,
+            "offsetY": 0
+        },
+        "/assets/NORTH/linhu_mafang.png": {
+            "scale": 0.92,
+            "offsetX": 0,
+            "offsetY": -20
         }
     },
     "folderGuides": {
