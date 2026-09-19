@@ -891,6 +891,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'edo_dechuanjiakang': 16,                           // 德川家康 · edo · 江户城
     'fujiwara_yuanyijing': 12,                           // 源义经 · fujiwara · 柳之御所
     'fujiwara_xiuheng': 12,                           // 藤原秀衡 · fujiwara · 柳之御所（奥州藤原氏三代当主）
+    'gen_minamoto_yoritomo': 12,                     // 源赖朝 · genji · 镰仓（1180年设幕府）
     'gonggu_gonggudaozhu': 15,                           // 麻利芝 · gonggu · 平良
     'hashiba_fengchenxiuji': 16,                         // 丰臣秀吉 · hashiba · 姬路城
     'higo_d_juchiwuguang': 14,                           // 菊池武光 · higo_d · 熊本
@@ -1059,11 +1060,13 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kesaiya_shouling':                  -4,    // 科塞亚首领 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
 
     'doujiande':                          7,    // 窦建德 · xia · 河北（621年虎牢关之战守帅，夏王）
-    'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（前323年普拉塔纳斯战役希腊联军统帅）
-    'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（前323年普拉塔纳斯战役马其顿守帅）
-    'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（前322年克兰农战役希腊同盟总司令）
-    'gen_eumenes':                       -4,    // 欧迈尼斯 · kapaduoxiya · 赫勒斯滂（前321年赫勒斯滂战役统帅）
-    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（前321年赫勒斯滂战役守帅）
+    // 🔴 [2026-09-19 主人令「全删除」] 下列 5 位（拉米亚战争/第一次继业者战争）的战役事件已删除，
+    //    但**人物记录保留** —— 他们本人没被删，只是暂时没有据点/战场可挂，日后可复用。
+    'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（前323年普拉塔纳斯战役希腊联军统帅；该战役已删除）
+    'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（前323年普拉塔纳斯战役马其顿守帅；该战役已删除）
+    'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（前322年克兰农战役希腊同盟总司令；该战役已删除）
+    'gen_eumenes':                       -4,    // 欧迈尼斯 · kapaduoxiya · 赫勒斯滂（前321年赫勒斯滂战役统帅；该战役已删除）
+    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（前321年赫勒斯滂战役守帅；该战役已删除）
     'yamaxun_xibolvte':                  -12,   // 希波吕忒 · yamaxun · 亚马逊女王神话时代（前12世纪）
     'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
     'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约前2112年）

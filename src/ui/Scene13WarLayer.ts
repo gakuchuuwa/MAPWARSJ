@@ -3366,9 +3366,27 @@ export interface Scene13WarInit {
     attackerEliteName?: string | null;
     /** [2026-09-19] 守方精锐番号（如「东平镇营」） */
     defenderEliteName?: string | null;
+    /** [2026-09-20 主人需求] 关隘城门大山自定义配置 */
+    passMountainConfig?: PassMountainConfig;
+}
+
+export interface PassMountainConfig {
+    enabled?: boolean;
+    asset?: string;
+    x?: number;
+    y?: number;
+    scale?: number;
+    flip?: boolean;
 }
 
 export class Scene13WarLayer {
+    /** [2026-09-20 主人需求] 关隘城门大山配置 */
+    public passMountainConfig: PassMountainConfig = {
+        enabled: true,
+        asset: 'MOUNTAIN_02',
+        scale: 1.15,
+        flip: false,
+    };
     private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
     private active = false;
@@ -4083,6 +4101,9 @@ export class Scene13WarLayer {
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
+        if (init.passMountainConfig) {
+            this.passMountainConfig = { ...this.passMountainConfig, ...init.passMountainConfig };
+        }
         // 🔴 [2026-09-11 主人「和游戏同步」] 守方据点建筑风格：与战略地图同一解析源（只算一次，存起来）
         this.defenderMapStyle = (() => {
             const c: any = this.defenderCityId
@@ -5247,6 +5268,32 @@ export class Scene13WarLayer {
             }
             // (3) 南翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
+
+            // 🔴 [2026-09-20 主人定] 关隘(pass)城门下依托大山：巍峨大山耸立于城门外侧下方，依山扎塞，绝不遮挡城门通道与出兵口
+            if (this.defenderCityType === 'pass' && this.passMountainConfig?.enabled !== false) {
+                const mAsset = this.passMountainConfig.asset || 'MOUNTAIN_02';
+                this.ensureNatureAsset(mAsset);
+                // 默认坐标：严格置于战场最底部边缘、城门正下方偏右，绝不遮挡中央冲锋路线、城门通道与出兵口
+                const mX = this.passMountainConfig.x ?? (wallFrontX - 50);
+                const mY = this.passMountainConfig.y ?? (botWallY + 260);
+                const mScale = this.passMountainConfig.scale ?? 1.2;
+                const mFlip = this.passMountainConfig.flip ?? false;
+                this.decorSprites.push({
+                    asset: mAsset,
+                    frame: 0,
+                    x: mX,
+                    y: mY,
+                    flip: mFlip,
+                    layer: 'world',
+                    z: 0,
+                    scale: mScale,
+                    indestructible: true,
+                    obstruction: { x: 2.2, y: 1.8 },
+                    obstructionContactSec: 0,
+                    obstructionTouched: false,
+                    obstructionDisabled: false,
+                });
+            }
 
             // 🔴 [2026-09-03 主人定] 城寨(stockade)直接开战、和野战一样：围墙/城门全部纯贴图（去碰撞），
             //    不卡兵。别的城市靠 30 秒 collapseFrontWalls 去碰撞，城寨没有 30 秒坍塌，这里一上来就清掉。

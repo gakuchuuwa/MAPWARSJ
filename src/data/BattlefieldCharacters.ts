@@ -85,6 +85,8 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '盖乌斯·特伦提乌斯·瓦罗，前216年罗马执政官，坎尼会战当日执掌罗马军令，战败后逃回。史料：李维《罗马史·第二十二卷》。',
     },
 
+    // 🔴 [2026-09-19 主人令] 村上武吉**已归位为据点守将**（能岛城，伊予势力），
+    //    不再属于战场人物表 —— 此处原条目已移除（他重新有了自己的城）。
     // ── 沙隆会战（451）西罗马方主帅 ──────────────────────────────
     aitiliusi: {
         generalId: 'aitiliusi',

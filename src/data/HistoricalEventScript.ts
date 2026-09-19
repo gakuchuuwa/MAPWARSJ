@@ -452,103 +452,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // 前 323 年秋 · 拉米亚战争爆发：普拉塔纳斯战役（Battle of Platana，前323年秋）
+    // 🔴 [2026-09-19 主人令「全删除」] 前323 普拉塔纳斯 / 前322 克兰农 / 前321 赫勒斯滂
+    //    三场战役**已整体删除**（连同 `Battlefields.ts` 的 bf_pulatanasi / bf_kelannong / bf_helesipang）。
+    //    原因：这三场的归属武将（安提帕特／安提菲洛斯／欧迈尼斯）在库里**没有据点**，
+    //    而玩家「找到武将」只认据点守将，事件永远等不到玩家 —— 按主人令直接删除，不留死数据。
+    //    ⚠️ 武将与势力记录**保留**（安提帕特／克拉特罗斯／莱奥斯塞尼斯／安提菲洛斯／欧迈尼斯、
+    //      势力 kapaduoxiya）：人物不是死数据，日后有据点/战场时可直接复用。
     // ═══════════════════════════════════════════════════════════════
-    {
-        year: -323,
-        season: 2,                                   // 秋（史料：前323年秋亚历山大死讯传开后希腊各城邦爆发拉米亚战争）
-        type: 'field_battle',
-        title: '公元前323年 普拉塔纳斯战役',
-        description: '希腊反马其顿联军全面大胜：亚历山大巴比伦逝世后希腊城邦爆发独立战争，莱奥斯塞尼斯统帅雅典与希腊联军在马里亚克湾平原迎击安提帕特；决战时刻色萨利精锐骑兵临阵倒戈反戈一击，马其顿军侧后彻底崩溃死伤惨重；安提帕特退守拉米亚坚城被围，拉开继业者纷争乱世大幕。',
-        fieldBattleData: {
-            title: '普拉塔纳斯战役',
-            description: '希腊联军在普拉塔纳平原与马其顿常备军激战，色萨利精锐骑兵阵前倒戈，莱奥斯塞尼斯大破安提帕特。',
-            // 马里亚克湾沿海平原（北纬 38°48'30", 东经 22°43'10"）
-            location: { lat: 38.8083, lng: 22.7194 },
-
-            // ── 攻方：希腊反马其顿联军 莱奥斯塞尼斯 ──
-            attackerFactionId: 'xila',
-            attackerGeneralId: 'xila_leosthenes',
-            attackerTroops: 24000,                   // 史料参战联军约 25,000 至 30,000 人（中值）
-            attackerSourceCityId: 'city_yadian',     // 雅典
-
-            // ── 守方：马其顿帝国本土守军 安提帕特 ──
-            defenderFactionId: 'maqidun',
-            defenderGeneralId: 'maqidun_antipater',
-            defenderTroops: 18000,                   // 史料约 13,000 步兵 + 600 骑兵
-            defenderSourceCityId: 'city_salonica',   // 佩拉
-
-            result: 'attacker_win',                  // 写真历史：希腊联军大胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'maqidun_antipater',
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 322 年夏 · 拉米亚战争终局：克兰农战役（Battle of Crannon，前322年夏）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -322,
-        season: 1,                                   // 夏（史料：前322年8–9月盛夏平原大决战）
-        type: 'field_battle',
-        title: '公元前322年 克兰农战役',
-        description: '马其顿联军大获全胜：安提帕特与克拉特罗斯精锐合兵发起全面反攻，以压倒性重装长矛老兵方阵碾碎希腊同盟步兵阵线；希腊骑兵见防线瓦解被迫脱离，同盟分崩离析；马其顿进驻雅典强行废除民主政体改立寡头统治，拉米亚战争彻底终结，希腊古典城邦政治时代宣告落幕。',
-        fieldBattleData: {
-            title: '克兰农战役',
-            description: '安提帕特与克拉特罗斯合兵指挥老兵重装方阵全线突击，压倒性冲击瓦解希腊同盟步兵防线。',
-            // 色萨利克兰农平原（北纬 39°31'10", 东经 22°19'40"）
-            location: { lat: 39.5194, lng: 22.3278 },
-
-            // ── 攻方：马其顿帝国联军 安提帕特 ──
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'maqidun_antipater',
-            attackerTroops: 45000,                   // 史料约 43,000 至 48,000 人（中值）
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：希腊反马其顿同盟军 安提菲洛斯 ──
-            defenderFactionId: 'xila',
-            defenderGeneralId: 'xila_antiphilus',
-            defenderTroops: 32000,                   // 史料约 28,500 人（25,000 步兵 + 3,500 骑兵）
-            defenderSourceCityId: 'city_yadian',     // 雅典
-
-            result: 'attacker_win',                  // 写真历史：马其顿联军大获全胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'xila_antiphilus',
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 321 年春 · 继业者内战爆发：赫勒斯滂战役（Battle of the Hellespont，前321年春）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -321,
-        season: 0,                                   // 春（史料：前321年春，第一次继业者战争关键决战）
-        type: 'field_battle',
-        title: '公元前321年 赫勒斯滂战役',
-        description: '欧迈尼斯军大获全胜：第一次继业者战争爆发，欧迈尼斯在达达尼尔海峡南岸迎击克拉特罗斯叛军；欧迈尼斯封锁敌帅身份令两翼精锐重骑兵全速钳形突击，克拉特罗斯战马受创落马遭践踏阵亡，欧迈尼斯单挑手刃叛将涅俄普托勒摩斯；反摄政同盟步兵阵被围缴械投降，欧迈尼斯一战封神。',
-        fieldBattleData: {
-            title: '赫勒斯滂战役',
-            description: '欧迈尼斯指挥两翼卡帕多细亚精锐重骑兵全速钳形冲锋，克拉特罗斯落马阵亡，欧迈尼斯阵斩叛将。',
-            // 恰纳卡莱达达尼尔海峡以南内陆平原（北纬 40°09'00", 东经 26°24'00"）
-            location: { lat: 40.15, lng: 26.4 },
-
-            // ── 攻方：帝国中央军（摄政派）/ 卡帕多细亚 欧迈尼斯 ──
-            attackerFactionId: 'kapaduoxiya',
-            attackerGeneralId: 'gen_eumenes',
-            attackerTroops: 25000,                   // 史料 25,000 人（20,000 步兵 + 5,000 精锐重骑兵）
-            attackerSourceCityId: 'city_dasijiliweng', // 达斯基利翁（小亚细亚赫勒斯滂弗里吉亚首府要塞）
-
-            // ── 守方：反摄政同盟军 / 马其顿 克拉特罗斯 ──
-            defenderFactionId: 'maqidun',
-            defenderGeneralId: 'maqidun_craterus',
-            defenderTroops: 22000,                   // 史料 22,000 人（20,000 精锐马其顿老兵方阵 + 2,000 骑兵）
-            defenderSourceCityId: 'city_salonica',   // 佩拉
-
-            result: 'attacker_win',                  // 写真历史：欧迈尼斯大获全胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'gen_eumenes',
-    },
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──

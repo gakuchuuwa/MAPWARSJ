@@ -110,7 +110,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/LATIN/lagoniya_lieaonida.png' },
     maqidun: [
         { generalId: 'gen_alexander_great', generalName: '亚历山大', portrait: '/assets/LATIN/maqidun_yalishanda.png' },
-        // 前323年普拉塔纳斯战役守帅（马其顿摄政、欧洲最高统帅安提帕特），立绘按铁律留空走回落、待主人亲自放图分配
+        // 前323年普拉塔纳斯战役守帅（马其顿摄政、欧洲最高统帅安提帕特）。
+        // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除（武将无据点、事件触发不了）；**人物记录保留**。
+        // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'maqidun_antipater', generalName: '安提帕特', portrait: '' },
         // 前321年赫勒斯滂战役反摄政同盟统帅克拉特罗斯，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'maqidun_craterus', generalName: '克拉特罗斯', portrait: '' },
@@ -180,9 +182,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
     xila: [
         { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/GREEK/xila_dimisituo.png' },
-        // 前323年普拉塔纳斯战役统帅（希腊反马其顿联军统帅莱奥斯塞尼斯），立绘按铁律留空走回落、待主人亲自放图分配
+        // 前323年普拉塔纳斯战役统帅（希腊反马其顿联军统帅莱奥斯塞尼斯）。
+        // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除；**人物记录保留**。
+        // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'xila_leosthenes', generalName: '莱奥斯塞尼斯', portrait: '' },
-        // 前322年克兰农战役希腊同盟军总司令（接替阵亡莱奥斯塞尼斯之安提菲洛斯），立绘按铁律留空走回落、待主人亲自放图分配
+        // 前322年克兰农战役希腊同盟军总司令（接替阵亡莱奥斯塞尼斯之安提菲洛斯）。
+        // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除；**人物记录保留**。
+        // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'xila_antiphilus', generalName: '安提菲洛斯', portrait: '' },
     ],
     xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
@@ -332,11 +338,20 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     iyo_d: { generalId: 'iyo_d_cunshangwuji', generalName: '村上武吉', portrait: '/assets/JAPAN/iyo_d_cunshangwuji.png' },
     nanbu: { generalId: 'nanbu_nanbuqingzheng', generalName: '南部晴政', portrait: '/assets/JAPAN/nanbu_nanbuqingzheng.png' },
     osumi: { generalId: 'osumi_ganfujianxu', generalName: '肝付兼续', portrait: '/assets/JAPAN/osumi_ganfujianxu.png' },
-    // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」]
-    //    源义经归**源氏**（镰仓殿源赖朝的军势）：1184 年一之谷他是代表兄长出战的，
-    //    既不属于奥州藤原氏、也不在奥州（投奔奥州是 1185 年之后）。
-    //    ⚠️ 立绘路径**原样保留**（仍指同一张已存在的图）—— 未新增、未移动、未替换任何立绘文件。
-    genji: { generalId: 'fujiwara_yuanyijing', generalName: '源义经', portrait: '/assets/JAPAN/fujiwara_yuanyijing.png' },
+    // 🔴 [2026-09-19 主人令「武将和精锐和据点必须契合：最好是此处据点的守将、为此处做出贡献的、
+    //    在此处镇守或当官、执行过任务也行；不要出生地在此没有贡献的人（如常山赵云）」]
+    //    **镰仓的守将 = 源赖朝**（`gen_minamoto_yoritomo`）：
+    //    1180 年于镰仓起兵、设**镰仓幕府**，此后坐镇镰仓施政，是整个源平合战的**总指挥**
+    //    （义经、范赖都是他派出去的军势）。镰仓因他而成天下之中 —— 契合。
+    //    ⚠️ 源赖朝立绘**留空** → 走政权夹 → 文化池回落；等主人放图后按约定填。
+    // 🔴 [2026-09-19 主人质问「换武将和势力的时候，直接替换不就行了？为什么现在还多了一个武将」]
+    //    **已直接替换**：源义经整个挪到 `genji_iyo`（松山，伊予守守地），
+    //    此处原先为他「寄存记录」的那第二条已删除 —— 同一个武将不再挂两个势力键。
+    //    镰仓 = 源赖朝一人，与全库「一势力 = 一据点 = 一武将」一致。
+    genji: { generalId: 'gen_minamoto_yoritomo', generalName: '源赖朝', portrait: '' },
+    // 🔴 [2026-09-19 主人令「行就换」] 松山（伊予国）的守将 = **源义经**（伊予守，伊予国即其守地）。
+    //    与 genji（镰仓挂源赖朝）分开一个键：一势力一城，才能各挂各的守将。
+    genji_iyo: { generalId: 'fujiwara_yuanyijing', generalName: '源义经', portrait: '/assets/JAPAN/fujiwara_yuanyijing.png' },
 
     // 🔴 [2026-09-19 主人令「先给奥州更换武将。新建一个」] 奥州藤原氏（陆奥·平泉）的当主。
     //    ⚠️ 立绘一律留空 → 走「本政权夹 → 本文化夹」回落（见 AGENTS.md §十三）。
