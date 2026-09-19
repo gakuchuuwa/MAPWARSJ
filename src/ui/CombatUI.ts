@@ -62,7 +62,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import {getGeneralProfile} from '../data/GeneralSkills';
 import { readSiegeGarrisonEliteName } from '../combat/SiegeGarrisonTier';
-import { getCityEliteConfig, getLegionEliteLegionName } from '../data/ExpeditionLegions';
+import { getCityEliteConfig, getLegionEliteLegionName, getCityEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
 import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
@@ -1374,7 +1374,8 @@ export class CombatUI {
             this.centerBackdrop, this.battleYear, this.sideStatsRow,
             this.leftTechBox, this.rightTechBox, this.indicatorJun, this.centerSituationRow, this.toggleCollapseBtn,
             this.skillsRow, this.healthBarContainer, this.battleTitle, this.leftTotalMultBadge,
-            this.rightTotalMultBadge, this.leftBarTroopsBadge, this.rightBarTroopsBadge, topHud]) save(el);
+            this.rightTotalMultBadge, this.leftBarTroopsBadge, this.rightBarTroopsBadge,
+            this.leftLegionTag, this.rightLegionTag, topHud]) save(el);
 
         // 🔴 [2026-09-10 主人定] 战役标题与据点攻防/险要徽章移入顶部玩家面板（player-scene13-bar），避免在血槽中央遮挡兵力
         const playerBar = document.getElementById('player-scene13-bar');
@@ -1611,18 +1612,19 @@ export class CombatUI {
 
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
         const defenderLegionTag = this.sideElement('defender', this.leftLegionTag, this.rightLegionTag);
-        if (attLegionName) {
-            attackerLegionTag.textContent = attLegionName;
-            attackerLegionTag.style.display = 'block';
-        } else {
-            attackerLegionTag.style.display = 'none';
-        }
-        if (defLegionName) {
-            defenderLegionTag.textContent = defLegionName;
-            defenderLegionTag.style.display = 'block';
-        } else {
-            defenderLegionTag.style.display = 'none';
-        }
+
+        // [2026-09-19] 战术模式优先展示双方史实精锐番号（如「土默特精骑」「东平镇营」），无精锐番号才兜底编制军团名
+        const attElite = (init.attackerEliteName && init.attackerEliteName.trim())
+            || (init.attackerFactionId ? getExpeditionEliteLegionName(init.attackerFactionId) : null);
+        const defElite = (init.defenderEliteName && init.defenderEliteName.trim())
+            || (init.defenderCityId ? getCityEliteLegionName(init.defenderCityId) : null)
+            || (init.defenderFactionId ? getExpeditionEliteLegionName(init.defenderFactionId) : null);
+
+        const attDisplayName = attElite || attLegionName;
+        const defDisplayName = defElite || defLegionName;
+
+        this.applyLegionTagContent(attackerLegionTag, attDisplayName, !!attElite, attLegionName);
+        this.applyLegionTagContent(defenderLegionTag, defDisplayName, !!defElite, defLegionName);
 
         if (this.leftPortraitFrame) {
             this.leftPortraitFrame.style.display = 'block';
@@ -5365,6 +5367,9 @@ export class CombatUI {
         unit: IBattleUnit,
         side: 'attacker' | 'defender',
     ): void {
+        /* 🔴 [2026-09-18 主人报障「朱棣怎么是封建时代隋唐军团？必须一套数据」]
+         *   名牌与军团名必须同源：名字取自谁，军团名/精锐番号就取谁，永远是同一支军队。 */
+        let nameUnit: IBattleUnit = unit;
         let generalId = unit.generalId;
         let rec = generalId ? getGeneralRecordByGeneralId(generalId) : null;
         if (!rec) {
@@ -5376,6 +5381,9 @@ export class CombatUI {
             if (cmdRec) {
                 generalId = cmd.generalId;
                 rec = cmdRec;
+                // 名字改取自指挥官 → 军团名/精锐番号也必须取自指挥官
+                // （改前军团名固定取原 unit，会显示成「朱棣 + 别人的军团名」）
+                nameUnit = cmd;
             }
         }
         const famousBadge = this.sideElement(side, this.leftFamousBadge, this.rightFamousBadge);
@@ -5396,10 +5404,22 @@ export class CombatUI {
             famousBadge.style.display = 'none';
         }
 
-        const legionName = this.resolveUnitLegionName(unit, side);
-        if (legionName && (rec || unit.factionId)) {
-            legionTag.textContent = legionName;
-            legionTag.style.display = 'block';
+        const legionName = this.resolveUnitLegionName(nameUnit, side);
+        let displayName = legionName;
+        let isElite = false;
+        // [2026-09-19] 战术模式（Zoom 13）下名牌下方优先展示史实精锐番号
+        if (this.scene13LayoutOn) {
+            const eliteName = (nameUnit.unitType === 'city')
+                ? readSiegeGarrisonEliteName(nameUnit.getEntity?.())
+                : (nameUnit.getEntity?.() ? getLegionEliteLegionName(nameUnit.getEntity()) : null);
+            const resolvedElite = eliteName ?? (nameUnit.factionId ? getExpeditionEliteLegionName(nameUnit.factionId) : null);
+            if (resolvedElite) {
+                displayName = resolvedElite;
+                isElite = true;
+            }
+        }
+        if (displayName && (rec || nameUnit.factionId)) {
+            this.applyLegionTagContent(legionTag, displayName, isElite, legionName);
         } else {
             legionTag.textContent = '';
             legionTag.style.display = 'none';
@@ -5780,8 +5800,47 @@ export class CombatUI {
         return tag;
     }
 
+    /**
+     * [2026-09-19] 渲染立绘名牌下方的番号标签：
+     * 精锐番号赋予高贵黑金金边质感与 [精] 金徽；普通编制名保持标准深色古朴质感。
+     */
+    private applyLegionTagContent(
+        tag: HTMLDivElement,
+        name: string,
+        isElite: boolean,
+        fallbackLegionName?: string | null,
+    ): void {
+        if (!name) {
+            tag.textContent = '';
+            tag.style.display = 'none';
+            return;
+        }
+        if (isElite) {
+            tag.innerHTML = `<span style="color:#ffd700;font-weight:900;margin-right:2px;font-size:${uiPx(10)};">[精]</span>${name}`;
+            tag.style.background = 'linear-gradient(135deg, rgba(42, 24, 10, 0.96) 0%, rgba(18, 10, 4, 0.96) 100%)';
+            tag.style.borderColor = 'rgba(255, 215, 0, 0.65)';
+            tag.style.color = '#fff5d0';
+            tag.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.9), inset 0 0 4px rgba(255, 215, 0, 0.2)';
+            tag.title = `精锐番号：${name}${fallbackLegionName ? `（编制：${fallbackLegionName}）` : ''}`;
+        } else {
+            tag.textContent = name;
+            tag.style.background = 'linear-gradient(135deg, rgba(32, 16, 8, 0.92) 0%, rgba(12, 5, 0, 0.92) 100%)';
+            tag.style.borderColor = 'rgba(180, 135, 55, 0.45)';
+            tag.style.color = 'rgba(230, 215, 175, 0.88)';
+            tag.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.85)';
+            tag.title = name;
+        }
+        tag.style.display = 'block';
+    }
+
     private resolveUnitLegionName(unit: IBattleUnit, side: 'attacker' | 'defender'): string {
-        const factionId = unit.factionId;
+        /* 🔴 [2026-09-18 主人定「必须一套数据」] 势力优先，且势力要从**实体本身**取：
+           改前只看 `unit.factionId`，包装对象没带 factionId 时就一路退到「文化区默认军团名」
+           （江南 → 封建时代隋唐军团），于是同一支军队在编辑器里是大明军团、到战场变成隋唐军团。
+           现在补一层：unit 上没有就用 entity 自己的势力（army.getFactionId / city.factionId），
+           只有**确实没有势力**时才允许退回文化区默认名。 */
+        const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
+        const factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
         // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;

@@ -73,10 +73,9 @@ export class GameConfig {
         DISBAND_TROOP_THRESHOLD: 5000,
         /** 兵力低于此值时进攻锚点改用本城（弱兵收缩防线，回程补兵） */
         HOME_ANCHOR_TROOP_THRESHOLD: 20000,
-        /** 沙盒地图上同时存在的军团硬上限（大城/中城数据不变，仅限制出征数量）。
-         *  🔴 [2026-09-09 主人定「开局军团上限设置为 20」]；军情面板滑条仍可在 10–99 实时调整。
-         *  （沿革：原 30 → 2026-08-14 改 99 → 本次改 20。） */
-        MAX_ACTIVE_LEGIONS: 20,
+        /** 沙盒地图上同时存在的军团硬上限（16 种建筑风格母体，每个母体 1 支，共 16 支，2026-09-19 主人定）。
+         *  军情面板滑条仍可在 10–99 实时调整。 */
+        MAX_ACTIVE_LEGIONS: 16,
         // [2026-08-07 删] REGION_BASELINE_LEGIONS / VIEWPORT_SPAWN_QUOTA —— 全项目零引用的死配置。
         //   文化区保底数（≥1）写死在 RecruitmentSystem.buildSpawnPlan，
         //   同屏保底数（<2）写死在 RecruitmentSystem.trySpawnLegions，改这两个常量不会有任何效果。
