@@ -293,6 +293,12 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     taira_pingzhisheng: { generalId: 'taira_pingzhisheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'leverage' , attackStyle: 'defense'},
+    // 🔴 [2026-09-19 主人令「先给奥州更换武将。新建一个」] 奥州藤原氏的新将。
+    //    源义经归入源氏后，奥州藤原氏空了出来，这里补它的当主。
+    //    藤原秀衡（1122?–1187）：**奥州藤原氏第三代当主**、陆奥·出羽的实际统治者。
+    //    1184 年前后正是他把源义经收为客将（义经 1185 年投奔平泉，秀衡临终命子泰衡庇护）；
+    //    平泉坐拥砂金与良马，是当时日本仅次于京都的富庶政权，故普将档、逆势（偏安自守）· 善防。
+    fujiwara_xiuheng: { generalId: 'fujiwara_xiuheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse' , attackStyle: 'defense'},
 
 
 

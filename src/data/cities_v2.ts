@@ -1167,7 +1167,7 @@ buildingStyle: 'KOREA', troops: 10000,
         note: '泗沘；百济治所/重镇',
     },
     
-    { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.68, lng: 139.76, type: 'big_city', troops: 10000, note: '德川幕府治所；盛期城居约40万+，与京都升大口径一致，升 big_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
+    { id: 'city_edo', name: '江户城', factionId: 'edo', lat: 35.75, lng: 139.8007, type: 'big_city', troops: 10000, note: '德川幕府治所；盛期城居约40万+，与京都升大口径一致，升 big_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
  // [2026-05-30] 升 big_city: 江户幕府 264 年 + 1700 年代百万人口世界第一
 
@@ -3261,7 +3261,16 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_biaoshi', name: '表氏', factionId: 'juqu_d', lat: 39.8, lng: 99.8, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'KHITAN' },
 
-    { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1925, lng: 139.0261, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
+    { id: 'city_hakone', name: '箱根关', factionId: 'sagami', lat: 35.1861, lng: 138.9999, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '天下第一关，关东的物理大门' },
+    // 🔴 [2026-09-19 主人令「源义经新建镰仓，据点可以错位，错位的时候要两边据点都要一点一点移动」]
+    //    **镰仓** —— 源赖朝 1180 年于此设幕府，是源氏（镰仓殿）的政权中枢；
+    //    原来一之谷的攻方写成奥州藤原氏（据点柳之御所，在东北），与史实不符。
+    //    坐标 **35.3195,139.5503 为镰仓真实位置，未做任何位移**；
+    //    为满足「据点间距 ≥50km」，改为**相邻两处各微调**：
+    //      · 箱根关西移 3km（35.1925,139.0261 → 35.1861,138.9999，更靠其真址小田原）
+    //      · 江户城东北移 9km（35.68,139.76 → 35.75,139.8007）
+    //    结果间距全部 ≥50km：镰仓↔箱根关 52.1 / 镰仓↔江户城 53.0 / 江户城↔箱根关 95.9。
+    { id: 'city_kamakura', name: '镰仓', factionId: 'genji', lat: 35.3195, lng: 139.5503, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '相模国镰仓；1180年源赖朝设幕府于此，源氏（镰仓殿）政权中枢。坐标为其真实位置' },
     { id: 'city_fuwa', name: '不破关', factionId: 'mino', lat: 35.3577, lng: 136.4602, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', mirror: true },
 
     { id: 'city_cheollyeong', name: '铁岭关', factionId: 'ssangseong', lat: 38.8102, lng: 127.4959, type: 'pass', troops: 10000, region: 'SONG', buildingStyle: 'KOREA' },

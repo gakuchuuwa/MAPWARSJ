@@ -2597,11 +2597,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 3
         },
-        "/assets/JAPAN/__闲置__JAPAN_19.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": 7
-        },
         "/assets/JAPAN/__闲置__JAPAN_20.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -7916,6 +7911,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.81,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/JAPAN/fujiwara_tengyuanxiuheng.png": {
+            "scale": 1.13,
+            "offsetX": 0,
+            "offsetY": 7
         }
     },
     "folderGuides": {

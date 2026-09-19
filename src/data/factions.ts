@@ -524,6 +524,10 @@ export const FACTIONS: Faction[] = [
     { id: 'so', name: '对马' },
     { id: 'kakizaki', name: '松前' },
     { id: 'fujiwara', name: '奥州' },
+    // 🔴 [2026-09-19 主人定「另立源氏/镰仓势力，要符合历史」] **源氏（镰仓殿）**
+    //    1184 年一之谷，源义经是代表兄长**源赖朝（镰仓殿）**出战，既不属于奥州藤原、也不在奥州
+    //    （投奔奥州是 1185 年之后）。原先攻方写成 \`fujiwara\`（奥州藤原氏，据点柳之御所）与史实不符。
+    { id: 'genji', name: '源氏' },
     { id: 'gaya', name: '伽倻' },
     { id: 'aki', name: '安艺' },
     { id: 'echigo', name: '越后' },
