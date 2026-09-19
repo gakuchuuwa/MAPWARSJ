@@ -3691,7 +3691,7 @@ export class CombatUI {
                 }
                 displayTitle = parts[parts.length - 1];
             } else if (parts.length >= 2) {
-                // Fallback: "前260年，秦赵长平之战"
+                // Fallback: "前260年，秦赵长平战役"
                 if (parts[0].includes('年')) {
                     displayYear = parts[0];
                 }

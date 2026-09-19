@@ -306,7 +306,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     //    ⚠️ 源义经在镰仓**没有任何职守与贡献**（14 岁在镰仓寄居，一生征战在外），
     //    故镰仓不挂义经 —— 与「常山赵云」同理，出生地/寄居地不算贡献。
     //    名将档（开创幕府、建立武家政权）· 创势 · 双行（军政兼资）
-    gen_minamoto_yoritomo: { generalId: 'gen_minamoto_yoritomo', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'attack'},
+    gen_minamoto_yoritomo: { generalId: 'gen_minamoto_yoritomo', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'create', attackStyle: 'attack' },
 
 
 
@@ -3223,7 +3223,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kesaiya_shouling: { generalId: 'kesaiya_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。
     //    他此前只在 `BattlefieldCharacters`（战场人物表）里，**没有档案/世纪/时代** ——
-    //    那三样缺一就进不了 13（战术模式），而虎牢关之战他是**守方主帅**，会卡在准入上。
+    //    那三样缺一就进不了 13（战术模式），而虎牢关战役他是**守方主帅**，会卡在准入上。
     //    普将（史实：河北义军之主，据河北建「夏」；621年虎牢关倾国西援洛阳王世充、兵败被擒）· 逆势 · 善防
     doujiande: { generalId: 'doujiande', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 普拉塔纳斯·莱奥斯塞尼斯：普将（史实为雅典名将、拉米亚战争希腊反马其顿联军统帅）· 创势 · 善攻

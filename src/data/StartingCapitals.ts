@@ -320,7 +320,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     //    把箱根关还给 sagami 时，漏了把本行锚定补回来（原被 `genji` 顶掉），
     //    于是 sagami 成了「有据点、无首都锚定」的半残势力（全图仅此 1 处，已补）。
     'sagami': 'city_hakone',
-    'genji': 'city_kamakura',
+'genji': 'city_kamakura',
     'so': 'city_tsushima',
     'kakizaki': 'city_katsuyama',
     'fujiwara': 'city_yanaginogosho',

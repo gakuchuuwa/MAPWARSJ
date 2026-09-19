@@ -139,7 +139,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // 前 332 年 · 亚历山大剧本**第三段**：推罗围城战（Tyro，公元前332年1月–7/8月）
+    // 前 332 年 · 亚历山大剧本**第三段**：推罗战役（Tyro，公元前332年1月–7/8月）
     // ═══════════════════════════════════════════════════════════════
     // 史料（主人给定）：马其顿陆军 35000–40000；中后期联合塞浦路斯与倒戈腓尼基舰队共约
     //   220–224 艘战船封锁推罗南北两港；城内正规守军 8000–10000、战船约 80 艘、避难军民 3–4 万。
@@ -152,10 +152,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         year: -332,
         season: 0,                                   // 春（史料：1 月起围城，历约 7 个月至夏末）
         type: 'siege',
-        title: '公元前332年 推罗围城战',
+        title: '公元前332年 推罗战役',
         description: '马其顿军全面彻底的胜利：亚历山大历时七月强行填筑跨海长堤攻破推罗海岛坚固石墙；拔除波斯在地中海的海军基地，推罗城易主归马其顿。',
         siegeData: {
-            title: '推罗围城战',                     // 🔴 横幅一律显示战役名
+            title: '推罗战役',                     // 🔴 横幅一律显示战役名
             description: '亚历山大率约 35,000–40,000 步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
@@ -285,16 +285,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // 前 328 年冬 · 亚历山大平定中亚：索格底亚那岩山围攻战（Siege of the Sogdian Rock，前328年冬）
+    // 前 328 年冬 · 亚历山大平定中亚：索格底亚那岩山战役（Siege of the Sogdian Rock，前328年冬）
     // ═══════════════════════════════════════════════════════════════
     {
         year: -328,
         season: 3,                                   // 冬（史料：前328年冬至前327年初，严冬雪夜攀登冰冻绝壁）
         type: 'field_battle',
-        title: '公元前328年 索格底亚那岩山围攻战',
+        title: '公元前328年 索格底亚那岩山战役',
         description: '马其顿军完胜：索格底亚那大贵族奥克夏特斯依四面悬崖峭壁死守岩山要塞；亚历山大选派300名精锐攀岩死士深夜沿冰雪冻壁奇袭登顶，守军心理彻底崩溃不战而降；奥克夏特斯归降，亚历山大迎娶罗克珊娜平定中亚反抗。',
         fieldBattleData: {
-            title: '索格底亚那岩山围攻战',
+            title: '索格底亚那岩山战役',
             description: '奥克夏特斯扼守险峰绝壁要塞，亚历山大选派300攀岩死士雪夜渗透奇袭登顶，守军心理崩溃归降。',
             // 苏尔汉河州贝孙岭险峰（北纬 38°58'00", 东经 67°02'00"）
             location: { lat: 38.9667, lng: 67.0333 },
@@ -318,16 +318,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // 前 327 年春 · 亚历山大进军印度：马萨加围城战（Siege of Massaga，前327年春）
+    // 前 327 年春 · 亚历山大进军印度：马萨加战役（Siege of Massaga，前327年春）
     // ═══════════════════════════════════════════════════════════════
     {
         year: -327,
         season: 0,
         type: 'siege',
-        title: '公元前327年 马萨加围城战',
+        title: '公元前327年 马萨加战役',
         description: '马其顿军苦战攻克要塞获胜：亚历山大进军斯瓦特河谷围攻马萨加险要坚城；马其顿攻城塔与攻城锤昼夜猛轰城墙裂口，阿斯瓦卡首领阿萨卡诺斯阵亡，克莱奥菲斯女王率部投降；要塞被全面攻破，为进军印度扫清通道。',
         siegeData: {
-            title: '马萨加围城战',
+            title: '马萨加战役',
             description: '亚历山大率攻城重型机械围攻马萨加险要要塞，阿萨卡诺斯阵亡后克莱奥菲斯女王统领全城力战投降，马其顿军攻克要塞。',
             // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（斯瓦特河谷查克达拉古要塞），
             //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
@@ -385,17 +385,17 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // 前 325 年春 · 亚历山大南撤清剿：马里斯城围攻战（Siege of the Mallian Citadel，前325年春）
+    // 前 325 年春 · 亚历山大南撤清剿：马里斯战役（Siege of the Mallian Citadel，前325年春）
     // ═══════════════════════════════════════════════════════════════
     {
         year: -325,
         season: 0,
         type: 'siege',
-        title: '公元前325年 马里斯城围攻战',
+        title: '公元前325年 马里斯战役',
         description: '马其顿军惨烈攻克卫城获胜：亚历山大率军沿印度河清剿围攻马利砖石卫城，亲自登梯突入城内庭院与守军血战，胸部中箭射穿肺叶倒地；愤怒的马其顿士卒砸开城门破城彻底屠戮守军，亚历山大侥幸脱险但肺伤终生未愈；随后马其顿军彻底控制印度河下游，横渡格德罗西亚荒漠回师。',
         siegeData: {
-            title: '马里斯城围攻战',
-            description: '亚历山大亲自登梯突入马里斯砖石卫城血战身负重伤（胸部贯穿），赶来救驾的马其顿士卒怒破城门攻克要塞。',
+            title: '马里斯战役',
+            description: '亚历山大亲自登梯突入马里斯砖石卫城血战身负重伤，胸部被贯穿，赶来救驾的马其顿士卒怒破城门攻克要塞。',
             // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（木尔坦卫城古要塞遗址），
             //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
             targetBattlefieldId: 'bf_malisi',
@@ -467,10 +467,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'xin_baiqi',
         type: 'field_battle',
-        title: '公元前260年 长平之战',
+        title: '公元前260年 长平战役',
         description: '秦秘密换帅白起，佯败诱赵军深入，两万五千奇兵截其归路、五千铁骑断丹水粮道；赵军被割裂围困四十六日，突围不成，数十万降卒尽坑，赵国元气丧尽。',
         fieldBattleData: {
-            title: '长平之战',
+            title: '长平战役',
             description: '白起以佯败诱敌至坚壁之下，奇兵截归路、铁骑断粮道，将赵军割裂合围四十六日，终致其全军崩溃。',
             location: { lat: 35.79, lng: 112.92 },
             attackerFactionId: 'xin',
@@ -490,10 +490,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'gen_hannibal',
         type: 'field_battle',
-        title: '公元前216年 坎尼会战',
+        title: '公元前216年 坎尼战役',
         description: '汉尼拔以凸月阵诱罗马重步兵深入，两翼骑兵击溃罗马侧翼后合围封口；一日之内近七万罗马官兵阵亡，成就西方战术史上最完美的包围歼灭战。',
         fieldBattleData: {
-            title: '坎尼会战',
+            title: '坎尼战役',
             description: '汉尼拔亲坐中军逐步后退成凹月形，诱罗马大军入彀，两翼铁骑合围封口，全歼罗马主力。',
             location: { lat: 41.31, lng: 16.15 },
             attackerFactionId: 'buni',
@@ -513,10 +513,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 3,
         generalId: 'xichu_xiangyu',
         type: 'field_battle',
-        title: '公元前207年 巨鹿之战',
+        title: '公元前207年 巨鹿战役',
         description: '项羽破釜沉舟，楚军九战绝秦军甬道，虏王离、降章邯，秦军主力尽丧；诸侯将入辕门皆膝行而前，项羽由是始为诸侯上将军。',
         fieldBattleData: {
-            title: '巨鹿之战',
+            title: '巨鹿战役',
             description: '项羽率楚军渡漳水后凿舟破釜，以三日粮与秦军决战，九战九捷断其甬道，大破秦军。',
             location: { lat: 37.07, lng: 115.02 },
             attackerFactionId: 'xichu',
@@ -563,10 +563,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'xiongren_atila',
         type: 'field_battle',
-        title: '公元451年 沙隆会战',
+        title: '公元451年 沙隆战役',
         description: '埃提乌斯统罗马-西哥特联军于卡塔隆尼亚平原迎战阿提拉；西哥特王狄奥多里克战死，哥特战士哀兵反击，将匈人压回车阵，阿提拉不可战胜的神话就此破灭。',
         fieldBattleData: {
-            title: '沙隆会战',
+            title: '沙隆战役',
             description: '罗马步兵与西哥特战士并肩顶住匈人骑射狂潮，黄昏将匈人全线压回大车营垒，阿提拉险欲自焚。',
             location: { lat: 48.96, lng: 4.36 },
             attackerFactionId: 'xiongren',
@@ -586,10 +586,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 0,
         generalId: 'tang_lishimin',
         type: 'field_battle',
-        title: '公元621年 虎牢关之战',
+        title: '公元621年 虎牢关战役',
         description: '李世民以三千五百玄甲骑抢先扼守虎牢关，以逸待劳；正午突袭窦建德中军，生擒窦建德，洛阳王世充出降，唐军一役扫平双雄。',
         fieldBattleData: {
-            title: '虎牢关之战',
+            title: '虎牢关战役',
             description: '唐军铁骑正午破关而出，李世民亲执大旗直穿窦建德中军，夏军全线崩溃，窦建德负伤被擒。',
             location: { lat: 34.83, lng: 113.18 },
             attackerFactionId: 'tang',
@@ -609,10 +609,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'yanchuan_d_yuefei',
         type: 'field_battle',
-        title: '公元1140年 郾城之战',
+        title: '公元1140年 郾城战役',
         description: '岳飞以背嵬军步骑协同迎击，步兵持麻扎刀专斫马足，大破金军铁浮屠与拐子马；完颜宗弼北遁，岳家军威震中原。',
         fieldBattleData: {
-            title: '郾城之战',
+            title: '郾城战役',
             description: '岳云率背嵬、游奕军迎头截击，岳飞令步兵持长斧麻扎刀斫马足，血战数十合，金军精锐尽丧溃退。',
             location: { lat: 33.58, lng: 114.02 },
             attackerFactionId: 'jurchen',
@@ -634,10 +634,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 0,
         generalId: 'fujiwara_yuanyijing',
         type: 'siege',
-        title: '公元1184年 一之谷之战',
+        title: '公元1184年 一之谷战役',
         description: '源义经自鹎越断崖策马冲下，奇袭平家后背纵火；平家误以为源氏主力降临，全线崩溃争相逃向海上战船，陆上根基尽失。',
         siegeData: {
-            title: '一之谷之战',
+            title: '一之谷战役',
             description: '义经率轻骑自百丈断崖呼啸而下，直冲平氏内营放火；平家数万将士精神崩溃，退上战船。',
             // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 一之谷**是战场、不是据点**：
             //    攻城目标改走 `targetBattlefieldId`（引擎据此用战场记录合成攻城目标），
@@ -667,10 +667,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 0,
         generalId: 'yamato_nanmuzhengcheng',
         type: 'siege',
-        title: '公元1333年 千早城之战',
+        title: '公元1333年 千早城战役',
         description: '楠木正成以千余死士凭千早险峰坚守百日，滚木雷石、稻草假人诱敌，拖垮号称十万的幕府大军；关东武士战意瓦解，足利尊氏回师反叛，镰仓幕府崩塌。',
         siegeData: {
-            title: '千早城之战',
+            title: '千早城战役',
             description: '正成以巨木滚石碾碎蚁附之敌，夜布稻草假人诱敌狂射空箭，再投巨石掩杀；幕府大军百日不克。',
             attackerFactionId: 'ashikaga',
             attackerGeneralId: 'ashikaga_zulizunshi',
@@ -694,10 +694,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'joseon_lichenggui',
         type: 'field_battle',
-        title: '公元1388年 威化岛回军',
+        title: '公元1388年 威化岛战役',
         description: '李成桂以“四不可”抗命，自威化岛掉转兵锋南下直取王京，擒诛崔莹、废禑王，尽掌高丽军国大权。',
         fieldBattleData: {
-            title: '威化岛回军',
+            title: '威化岛战役',
             description: '李成桂于威化岛断然回军，踏浮桥南下直逼开京，崔莹兵败遭擒被诛，禑王被废。',
             location: { lat: 40.15, lng: 124.43 },
             attackerFactionId: 'joseon',
@@ -720,10 +720,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 1,
         generalId: 'owari_zhitianxinchang',
         type: 'field_battle',
-        title: '公元1560年 桶狭间之战',
+        title: '公元1560年 桶狭间战役',
         description: '织田信长以两千余骑借雷雨掩护迂回突袭桶狭间今川本阵，斩杀今川义元；东海道霸主一朝倾覆，信长天下布武由此发端。',
         fieldBattleData: {
-            title: '桶狭间之战',
+            title: '桶狭间战役',
             description: '信长借暴雨隐匿行踪，迂回至今川军背后，雨停一刻拔刀突袭，今川本阵崩溃，义元授首。',
             location: { lat: 34.98, lng: 136.97 },
             attackerFactionId: 'owari',
@@ -743,10 +743,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         season: 2,
         generalId: 'echigo_shangshanqianxin',
         type: 'field_battle',
-        title: '公元1561年 川中岛之战',
+        title: '公元1561年 川中岛战役',
         description: '上杉谦信识破武田信玄啄木鸟战法，自妻女山突袭八幡原武田本阵，车悬之阵连番突击；午后武田别动队回援夹击，双方各自撤军，龙虎相争不分胜负。',
         fieldBattleData: {
-            title: '川中岛之战',
+            title: '川中岛战役',
             description: '谦信借夜雾渡千曲川突袭武田本阵，车悬之阵排山倒海；武田别动队回援夹击，越后军方从容后撤。',
             location: { lat: 36.59, lng: 138.2 },
             attackerFactionId: 'echigo',
@@ -821,6 +821,59 @@ export function findHistoricalEventOfGeneral(
  * 11 场戏只能玩到 1 场。调用方（`PlayerQuestSystem.generalEventFor`）负责挑
  * 「此刻该接哪一场」，并在某场一时去不了（寻路失败）时退到下一场，不把整条线钉死。
  */
+/**
+ * 这场事件打的是**哪一块战场**（配不上 → null）。
+ *
+ * 🔴 抽成独立函数的原因：`findHistoricalEventsOfGeneral`（按**武将**查他在打哪块战场）
+ *    与 `findGeneralOfBattlefield`（按**战场**反查归属武将）必须**同一口径**，
+ *    否则剧本模式「先找该战场的武将」会与「找到武将接他的战役」两边打架。
+ *
+ * 攻城战**一律显式指名**，不比坐标：
+ *   · 战场要塞（`targetBattlefieldId`，如一之谷 `bf_yinotani`）→ 直接就是那块战场；
+ *   · 普通攻城（打下某座**据点**）→ 按战场记录上的 `eventCityId` 认。
+ *   为什么不比坐标：战场标牌标在**史实地点**，而攻城打的是目标本身，两者差几十公里
+ *   （一之谷 ↔ 最近据点相差 43km），任何合理的度容差都盖不住。
+ */
+export function resolveEventBattlefieldId(
+    event: HistoricalEvent,
+    cityPos: (id: string) => { lat: number; lng: number } | undefined,
+): string | null {
+    if (event.type === 'siege') {
+        const sd = event.siegeData;
+        if (sd?.targetBattlefieldId) {
+            return BATTLEFIELDS.some((b) => b.id === sd.targetBattlefieldId) ? sd.targetBattlefieldId : null;
+        }
+        const cityId = sd?.defenderCityId;
+        const bf = cityId
+            ? BATTLEFIELDS.find((b) => b.scriptYear === event.year && b.eventCityId === cityId)
+            : undefined;
+        return bf?.id ?? null;
+    }
+    // 野战：坐标由 battlefieldLocationOf 统一求出（与运行时、编辑器三处同口径）
+    const loc = battlefieldLocationOf(event.siegeData ?? event.fieldBattleData, cityPos);
+    return findBattlefieldOfGeneralEvent(event.year, loc)?.id ?? null;
+}
+
+/**
+ * 🔴 [2026-09-19 主人令「也改成先找该战场的武将对话、随他一起去」]
+ * **这块战场归属哪位武将** —— 剧本模式要先找到他、与他对话，再随他一起赶赴战场，
+ * 而不是让玩家一个人跑到战场去就地选边。
+ *
+ * 判据 = 战场事件的 `generalId`（「这场仗是谁的」，不是攻守主帅）。
+ * 同一块战场只会有一场事件（全面检查脚本 `_audit_events_full.ts` 保证），故返回唯一命中。
+ */
+export function findGeneralOfBattlefield(
+    battlefieldId: string,
+    cityPos: (id: string) => { lat: number; lng: number } | undefined,
+): string | null {
+    if (!battlefieldId) return null;
+    for (const event of HISTORICAL_EVENT_SCRIPT) {
+        if (!event.generalId) continue;
+        if (resolveEventBattlefieldId(event, cityPos) === battlefieldId) return event.generalId;
+    }
+    return null;
+}
+
 export function findHistoricalEventsOfGeneral(
     generalId: string,
     cityPos: (id: string) => { lat: number; lng: number } | undefined,
@@ -831,31 +884,8 @@ export function findHistoricalEventsOfGeneral(
         .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
     const out: Array<{ event: HistoricalEvent; battlefieldId: string }> = [];
     for (const event of mine) {
-        const data = event.siegeData ?? event.fieldBattleData;
-        // ── 攻城战 ────────────────────────────────────────────────────
-        // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城战**一律显式指名目标**，不比坐标：
-        //   · **战场要塞**（`targetBattlefieldId`，如 `bf_yinotani`）→ 直接就是那块战场；
-        //   · 普通攻城（打下某座**据点**）→ 按战场记录上的 `eventCityId` 认（如推罗 ↔ bf_tuile）。
-        //   为什么不比坐标：战场标牌标在**史实地点**，而攻城打的是目标本身，两者差几十公里
-        //   （一之谷 ↔ 最近据点相差 43km，经纬差 0.1994/0.4061），任何合理的度容差都盖不住。
-        if (event.type === 'siege') {
-            const sd = event.siegeData;
-            if (sd?.targetBattlefieldId) {
-                const bf = BATTLEFIELDS.find((b) => b.id === sd.targetBattlefieldId);
-                if (bf) out.push({ event, battlefieldId: bf.id });
-                continue;
-            }
-            const cityId = sd?.defenderCityId;
-            const bf = cityId
-                ? BATTLEFIELDS.find((b) => b.scriptYear === event.year && b.eventCityId === cityId)
-                : undefined;
-            if (bf) out.push({ event, battlefieldId: bf.id });
-            continue;   // 攻城战不走坐标兜底 —— 那只会配上同年的另一块战场
-        }
-        // 野战：坐标由 battlefieldLocationOf 统一求出（与运行时、编辑器三处同口径）
-        const loc = battlefieldLocationOf(data, cityPos);
-        const bf = findBattlefieldOfGeneralEvent(event.year, loc);
-        if (bf) out.push({ event, battlefieldId: bf.id });
+        const bfId = resolveEventBattlefieldId(event, cityPos);
+        if (bfId) out.push({ event, battlefieldId: bfId });
     }
     return out;
 }

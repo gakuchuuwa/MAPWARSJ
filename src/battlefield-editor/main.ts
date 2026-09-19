@@ -67,7 +67,7 @@ interface BattleDraft {
      */
     generalId: string;
     type: 'field_battle' | 'siege';
-    /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗围城战」 */
+    /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
     /** 事件标题（年表那一行），如「公元前331年 高加米拉战役」 */
     eventTitle: string;
@@ -324,7 +324,7 @@ function validate(d: BattleDraft): Issue[] {
 
     if (d.type === 'siege') {
         // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城目标**二选一**：
-        //    打**据点**（推罗围城战）给「被攻打的据点」；打**战场要塞**（一之谷之战）给「本战场即攻城目标」。
+        //    打**据点**（推罗战役）给「被攻打的据点」；打**战场要塞**（一之谷战役）给「本战场即攻城目标」。
         const isFortress = !!d.bfTargetBattlefieldId;
         if (!isFortress && !d.defenderCityId) {
             err('攻城战必须指定被攻打的据点，或指定「本战场即攻城目标」（战场要塞）');
@@ -512,7 +512,7 @@ function render(): void {
                     </div>
                     <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>
-                        <input id="f-title" value="${escapeAttr(working.title)}" placeholder="例：高加米拉战役　推罗围城战">
+                        <input id="f-title" value="${escapeAttr(working.title)}" placeholder="例：高加米拉战役　推罗战役">
                     </div>
                 </div>
                 <div class="row">
@@ -570,7 +570,7 @@ function render(): void {
                     <div class="fld" style="max-width:320px;">
                         <label>这个战场打的是哪座城 · 攻城战专用</label>
                         <select id="f-eventCity">${cityOptions(working.bfEventCityId)}</select>
-                        <span class="hint">打**据点**时用（如推罗围城战 ↔ 推罗城）；打**战场要塞**请用右栏，两者二选一</span>
+                        <span class="hint">打**据点**时用（如推罗战役 ↔ 推罗城）；打**战场要塞**请用右栏，两者二选一</span>
                     </div>
                     <div class="fld" style="max-width:320px;">
                         <label>本战场即攻城目标 · 战场要塞（如「一之谷」）</label>

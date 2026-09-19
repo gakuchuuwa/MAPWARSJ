@@ -592,7 +592,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'kereyid_wanghan': 'castle',
     'kesaiya_shouling': 'antiquity',
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德
-    //    （621 年虎牢关之战守方主帅）—— 与李世民同属封建时代
+    //    （621 年虎牢关战役守方主帅）—— 与李世民同属封建时代
     'doujiande': 'feudal',
     'kesa_bulan': 'feudal',
     'ketagalan_huangqingyun': 'imperial',
