@@ -49,6 +49,7 @@ import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 // 🔴 [2026-09-12 主人「你只改战略，不改战术呀…其他的战术也要同步」] 战术攻城的城墙材质
 //    与战略地图**共用同一个判据**（cityWallShared.shouldUseStoneWall），不再各判一次。
 import { shouldUseStoneWall } from '../systems/cityWallShared';
+import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
@@ -3380,11 +3381,10 @@ export interface PassMountainConfig {
 }
 
 export class Scene13WarLayer {
-    /** [2026-09-20 主人需求] 关隘城门大山配置 */
+    /** [2026-09-20 主人方案 C 定稿] 关隘城门大山配置（enabled 为 undefined 时自动走 isMountainPass 判定） */
     public passMountainConfig: PassMountainConfig = {
-        enabled: true,
-        asset: 'MOUNTAIN_02',
-        scale: 1.15,
+        asset: 'MOUNTAIN_05',
+        scale: 1.2,
         flip: false,
     };
     private canvas: HTMLCanvasElement | null = null;
@@ -5269,9 +5269,20 @@ export class Scene13WarLayer {
             // (3) 南翼末端正统城垛立柱 (Wall Post)
             placeWall({ x: wallFrontX + 144 + 15 * pitchDx, y: botWallY + 72 + 15 * pitchDy }, wallPost, 'STONE_WALL');
 
-            // 🔴 [2026-09-20 主人定] 关隘(pass)城门下依托大山：巍峨大山耸立于城门外侧下方，依山扎塞，绝不遮挡城门通道与出兵口
-            if (this.defenderCityType === 'pass' && this.passMountainConfig?.enabled !== false) {
-                const mAsset = this.passMountainConfig.asset || 'MOUNTAIN_02';
+            // 🔴 [2026-09-20 主人方案 C 定稿] 只有「有山关隘」才使用大山场景；渡口/海防/平原要塞 100% 排除
+            const shouldSpawnMountain = this.defenderCityType === 'pass' && (
+                this.passMountainConfig?.enabled !== undefined
+                    ? this.passMountainConfig.enabled
+                    : (() => {
+                        const defenderCity = this.defenderCityId ? (CITIES_V2 as any[]).find((c) => c.id === this.defenderCityId) : null;
+                        const lat = defenderCity?.lat ?? this.centerLat;
+                        const lng = defenderCity?.lng ?? this.centerLng;
+                        return isMountainPass(this.defenderCityId, lat, lng, defenderCity?.name);
+                    })()
+            );
+
+            if (shouldSpawnMountain) {
+                const mAsset = this.passMountainConfig.asset || 'MOUNTAIN_05';
                 this.ensureNatureAsset(mAsset);
                 // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
                 const mX = this.passMountainConfig.x ?? (wallFrontX + 230);
