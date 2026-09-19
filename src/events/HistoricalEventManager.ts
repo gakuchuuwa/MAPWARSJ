@@ -318,12 +318,12 @@ export class HistoricalEventManager {
         if (!bf) return '没有这个战场';
         // 一个战场只能打一次
         if (isBattlefieldFought(bfId)) return `【${bf.name}】已经打过了`;
-        // 🔴 [2026-09-16 主人定] 年份判定：未到发生年份不可触发
-        const currentYear = this.timeSystem.getYear();
-        if (currentYear < bf.scriptYear) {
-            const era = bf.scriptYear < 0 ? `公元前${Math.abs(bf.scriptYear)}` : `公元${bf.scriptYear}`;
-            return `【${bf.name}】战事尚未发生，须至${era}年方可开启`;
-        }
+        // 🔴 [2026-09-19 主人定] **取消年份闸门**。
+        //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
+        //    还要写上时间，万一以后还要用，就不要再写了。」
+        //    改之前这里有一条「未到发生年份不可触发」（2026-09-16 定），
+        //    改为**武将触发**之后，玩家与谁相遇是他的自由，战役不该再被游戏年份锁住；
+        //    `bf.scriptYear` 与事件 `year` 字段**全部保留**（数据里照旧填），只是不再拦触发。
         if (this.battlefieldBattleRunning) {
             return this.battlefieldBattleRunning === bfId
                 ? `【${bf.name}】正在交战中`

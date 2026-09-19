@@ -38,6 +38,12 @@ interface BattleDraft {
     year: number;
     /** 0 春 1 夏 2 秋 3 冬 */
     season: number;
+    /**
+     * 🔴 [2026-09-19 主人定] **这场战役归属哪位武将** —— 「一个武将一个真实的历史事件」。
+     * 玩家与这位武将对话/野外会面并入伍 → 打的就是这一场（见 `PlayerQuestSystem`）。
+     * 留空 = 不归属任何武将（自动模式按老规矩挑），与加本字段之前的行为完全一致。
+     */
+    generalId: string;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗围城战」 */
     title: string;
@@ -146,6 +152,7 @@ function loadDrafts(): BattleDraft[] {
             bfBriefing: bf?.briefing ?? '',
             year: ev.year,
             season: ev.season ?? 0,
+            generalId: (ev as AnyEvent & { generalId?: string }).generalId ?? '',
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -180,7 +187,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '',
-        year: -321, season: 0, type: 'field_battle',
+        year: -321, season: 0, generalId: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -204,10 +211,19 @@ function validate(d: BattleDraft): Issue[] {
         warn('战役名称建议用历史上最知名的叫法，以「战役／围城战／之战／会战／海战」结尾');
     }
     if (!d.eventTitle.trim()) warn('事件标题为空，建议写「公元前XXX年 XXX战役」');
-    // 🔴 [2026-09-16 主人定]「一年一个事件」：同一年只许有一场战役
-    const sameYear = drafts.filter((x) => x.year === d.year && x.title !== d.title);
-    if (sameYear.length) {
-        err(`前${-d.year}年已经有【${sameYear.map((x) => x.title).join('、')}】——一年一个事件，请删掉多余的那场或改年代`);
+    // 🔴 [2026-09-19 主人定] **删掉原先的「一年一个事件」互斥**。
+    //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
+    //    还要写上时间，万一以后还要用，就不要再写了。」
+    //    年份照旧要填（留着以后用），但不再限制同年只能一场 —— 一年可以有多场战役。
+    //
+    // 🔴 改为**按武将查重**：主人定「每个武将一个真实的历史事件」，
+    //    所以同一个武将不许挂两场（挂两场时运行时取年份最早的那场，另一场永远轮不上，是死数据）。
+    if (d.generalId) {
+        const dup = drafts.filter((x) => x.generalId === d.generalId && x.title !== d.title);
+        if (dup.length) {
+            const name = GENERAL_BY_ID.get(d.generalId)?.generalName ?? d.generalId;
+            err(`【${name}】已经挂了【${dup.map((x) => x.title).join('、')}】——一个武将一个事件，请改归属武将或删掉那场`);
+        }
     }
     if (!d.description.trim()) err('战役播报内容必须填（事件播报）');
     if (!d.battleDescription.trim()) warn('战役播报（战斗面板那条）为空，建议补上');
@@ -412,6 +428,11 @@ function render(): void {
                         <select id="f-season">${SEASONS.map((s, i) => opt(String(i), s, String(working.season))).join('')}</select>
                     </div>
                     <div class="fld">
+                        <label>归属武将 · 玩家与这位武将入伍，打的就是这一场</label>
+                        <select id="f-general">${generalOptions(working.generalId)}</select>
+                        <span class="hint">一个武将一个事件；留空 = 不归属任何武将（自动模式按老规矩挑）</span>
+                    </div>
+                    <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>
                         <input id="f-title" value="${escapeAttr(working.title)}" placeholder="例：高加米拉战役　推罗围城战">
                     </div>
@@ -567,6 +588,10 @@ function bind(): void {
     on<HTMLInputElement>('f-year', 'change', (el) => { working.year = num(el.value); render(); });
     on<HTMLSelectElement>('f-season', 'change', (el) => { working.season = num(el.value); });
     on<HTMLInputElement>('f-title', 'input', (el) => { working.title = el.value; });
+    // 归属武将：只写 generalId 一个字段，**不顺手带出攻守势力** ——
+    // 事件归属的武将常常是攻方主帅，但也有以守方身份出面的时候（同一位将可能被请去打他守的那一仗），
+    // 自动改势力会把主人已经配好的数据弄乱。要带势力，用下面攻/守两处的武将选择器。
+    on<HTMLSelectElement>('f-general', 'change', (el) => { working.generalId = el.value; render(); });
     on<HTMLInputElement>('f-eventTitle', 'input', (el) => { working.eventTitle = el.value; });
     on<HTMLInputElement>('f-lat', 'change', (el) => { working.lat = num(el.value); render(); });
     on<HTMLInputElement>('f-lng', 'change', (el) => { working.lng = num(el.value); render(); });

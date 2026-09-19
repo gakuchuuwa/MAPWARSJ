@@ -229,6 +229,47 @@ export function getBattlefield(id: string): BattlefieldData | undefined {
     return BATTLEFIELDS.find((b) => b.id === id);
 }
 
+/**
+ * 🔴 [2026-09-19 主人定] 某位武将的史实战役 → 它对应的战场（战役**打在哪**）。
+ *
+ * 主人原话：「每个武将一个真实的历史事件」。战役条目上新增的 `generalId` 就是「这一仗是谁的」，
+ * 本函数把它翻成战场记录（`bf_*`，含坐标与地名），玩家要赶路去的就是这个坐标。
+ *
+ * ⚠️ 与 `matchesBattlefield`（把战场配回战役）方向相反：那个是**战场 → 战役**（跑步时反查），
+ *    这个是**武将 → 战场**（玩家接活时正查），两个函数都必须走同一条数据契约，
+ *    即「战役与战场同年 + 坐标接近」，故此处复用 `matchesBattlefield`，不另写一套判据。
+ *
+ * @returns 找不到配对的战场时返回 null（＝这条事件还没在 `Battlefields.ts` 里落战场，玩家接不了）
+ */
+export function findBattlefieldOfGeneralEvent(
+    eventYear: number,
+    loc: { lat: number; lng: number } | null | undefined,
+): BattlefieldData | null {
+    if (!loc) return null;
+    return BATTLEFIELDS.find((b) => matchesBattlefield(b, eventYear, loc)) ?? null;
+}
+
+/**
+ * 这条战役事件**打在哪**（战场坐标）。
+ *
+ * 🔴 [2026-09-19] 与运行时 `findBattleForBattlefield`、编辑器 `loadDrafts` **同一套口径**：
+ *    · 野战 / 有 `location` 的条目 → 直接用 `location`
+ *    · 攻城战没有 `location`（推罗就是靠 `defenderCityId` + 航点走的）→ 取**被攻据点**的坐标
+ *   三处只要有一处口径不同，就会出现「编辑器配得上、玩家却到不了」的暗坑。
+ */
+export function battlefieldLocationOf(
+    data: { location?: { lat: number; lng: number } | null; defenderCityId?: string } | null | undefined,
+    cityLookup: (id: string) => { lat: number; lng: number } | undefined,
+): { lat: number; lng: number } | null {
+    if (!data) return null;
+    if (data.location) return data.location;
+    if (data.defenderCityId) {
+        const c = cityLookup(data.defenderCityId);
+        if (c) return { lat: c.lat, lng: c.lng };
+    }
+    return null;
+}
+
 /* ── 【战场 ↔ 剧本条目 的唯一配对判据】2026-09-17 ─────────────────────────────────
  * 修的是**两处判据不一致**：改之前运行时（HistoricalEventManager.findBattleForBattlefield）
  * 按「距离 ≤ 0.15 度」配、**完全不看年份**，取数组里第一个命中的；编辑器（battlefield-editor）

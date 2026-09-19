@@ -33,6 +33,7 @@
  *    精锐无需在此指定：由势力自动解析（maqidun→伙伴骑兵 T0 / xiaofulijiya→希腊雇佣兵 T2）。
  */
 import type { HistoricalEvent } from '../types/core';
+import { battlefieldLocationOf, findBattlefieldOfGeneralEvent } from './Battlefields';
 
 export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     {
@@ -545,6 +546,44 @@ export function getScriptEventForYear(year: number): HistoricalEvent | null {
  */
 export function getScriptProtagonistCityId(year: number): string | null {
     return getScriptEventForYear(year)?.fieldBattleData?.attackerSourceCityId ?? null;
+}
+
+/**
+ * 🔴 [2026-09-19 主人定] **某位武将的那一场真实历史战役** —— 「一个武将一个真实的历史事件」。
+ *
+ * 主人原话：「我希望和武将对话后，加入武将军团，然后触发事件任务。……
+ *   之前是时间来触发，我想改为找到武将后，第一次触发，每个武将一个真实的历史事件，然后就随机。」
+ *
+ * ── 判据只有一条：`HistoricalEvent.generalId === generalId` ──────────────
+ *   ⚠️ **不看攻守双方主帅**（`siegeData` / `fieldBattleData` 里的 `attackerGeneralId` /
+ *   `defenderGeneralId`）。那两位是「这一仗谁打谁」，本字段是「这一仗是谁的」。
+ *   同一位武将完全可能出现在别人的事件里当对手 —— 那不是他自己的事件。
+ *   （把两者混起来，会出现「打了伊苏斯，大流士也算打过了他自己那一场」这种错。）
+ *
+ * ── 排序：年份早的优先 ───────────────────────────────────────────────
+ *   同一位武将将来若被挂上多条事件，**取年份最早的那一场** —— 与
+ *   `PlayerQuestSystem.findNextAvailableBattlefield` 原本「按年份由先到后」的口径一致，
+ *   结果确定、不随数据行序变化。
+ *
+ * @returns 该武将的事件；没挂（或挂了但没配战场）时返回 null，调用方回落走乱斗
+ */
+export function findHistoricalEventOfGeneral(
+    generalId: string,
+    cityPos: (id: string) => { lat: number; lng: number } | undefined,
+): { event: HistoricalEvent; battlefieldId: string } | null {
+    if (!generalId) return null;
+    const mine = HISTORICAL_EVENT_SCRIPT
+        .filter((e) => e.generalId === generalId)
+        .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
+    for (const event of mine) {
+        const data = event.siegeData ?? event.fieldBattleData;
+        // 🔴 攻城战条目**可能没有 `location`**（推罗就是靠 `defenderCityId` + 航点走的）→
+        //    由 battlefieldLocationOf 统一兜底，与运行时 findBattleForBattlefield、编辑器三处同口径。
+        const loc = battlefieldLocationOf(data, cityPos);
+        const bf = findBattlefieldOfGeneralEvent(event.year, loc);
+        if (bf) return { event, battlefieldId: bf.id };
+    }
+    return null;
 }
 
 /**
