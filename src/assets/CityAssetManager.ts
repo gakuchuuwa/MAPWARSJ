@@ -1041,6 +1041,7 @@ export class CityAssetManager {
         'jileinaijia': '基雷',
         'moxina': '墨西',
         'yamaxun': '亚马',
+        'adiyabeina': '亚贝',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

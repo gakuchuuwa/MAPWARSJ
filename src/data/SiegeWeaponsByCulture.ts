@@ -331,9 +331,13 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower'],
     },
+    '城堡时代女真军团': {
+        age: 'castle',
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower'],
+    },
     '城堡时代金朝军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower'],
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower'],
     },
     '城堡时代库曼军团': {
         age: 'castle',
@@ -720,6 +724,33 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
 };
 
 /**
+ * 🔴 [2026-09-18 主人报障「乞伏的攻城武器里怎么还有大象？攻城武器按什么设定的？」]
+ *    三级 TIBET（吐蕃/青藏）专用攻城武器：**无象**。
+ *
+ * 病根（实测 scratch/probe_qifu_siege.mts）：TIBET 的**一级底座是 PURU（普鲁素材）**，
+ *   于是攻城武器落进母体配置「**普鲁军团_feudal**」，而那一条里写着 2× 高棉弩炮战象。
+ *   乞伏（qifu_d，枹罕 region=TIBET，军团「古典时代鲜卑军团」不在专项表里，主帅乞伏炽磐成名于封建）
+ *   就是这条链：TIBET → 普鲁军团 → _feudal → 大象。
+ *
+ * 判据与 2026-08-24 删西域大象完全同一条（见 Scene13WarLayer 里
+ *   `SIEGE_ELEPHANT_BY_CULTURE` 的头注释）：「这地方**什么最多**」——
+ *   青藏高原无象源、吐蕃史上不用战象，不该出现。
+ * 实测修前全图 55 个据点带象，**其中 25 个是青藏系（错）**；另 30 个是
+ *   缅甸/越南/马来/高棉/东南亚/印度/孟加拉/瞿折罗/普鲁 —— 那些是史实该有的，**不动**。
+ *
+ * 器械风格对齐既有那条「吐蕃军团」：华夏系冲车 + 牵引抛石机（吐蕃吸收唐制）。
+ * 每档恒 9 件；古典只用古典器械（主人 2026-09-10 攻城武器铁律第 2 条）。
+ */
+const TIBET_SIEGE_BY_AGE: Record<SiegeAge, string[]> = {
+    antiquity: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_scorpion', 'antiquity_scorpion'],
+    feudal: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion'],
+    castle: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'grenadier', 'grenadier'],
+    imperial: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'grenadier', 'grenadier'],
+};
+/** 三种「青藏」文化区写法（三级 TIBET 及其历史变体） */
+const TIBET_CULTURE_KEYS = new Set(['TIBET', 'TIBET_CASTLE', 'TIBET_IMPERIAL']);
+
+/**
  * 攻城战攻方攻城武器发放函数（全游戏 78 种军团攻城武器真源）。
  *
  * 判定链：
@@ -758,6 +789,9 @@ export function getSiegeWeaponsForCulture(
 
     const mappedKey = `${baseName}_${age}`;
     if (LEGION_78_SIEGE_MAP[mappedKey]) {
+        // 🔴 [2026-09-18] 三级 TIBET/吐蕃/青藏 不走普鲁母体那条（「普鲁军团_feudal」里有大象）：
+        //    青藏无象源，改走专用无象配置（见上方 TIBET_SIEGE_BY_AGE 头注释）。
+        if (TIBET_CULTURE_KEYS.has(key)) return [...TIBET_SIEGE_BY_AGE[age]];
         return [...LEGION_78_SIEGE_MAP[mappedKey].weapons];
     }
 

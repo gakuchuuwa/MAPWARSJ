@@ -10,6 +10,10 @@
  * - 三层 3：3 套自建专属定制（吐蕃 TIBET、西域 WESTERN、漠北蒙古 MOBEI_MONGOL）
  */
 
+// 🔴 [2026-09-18] 二级兜底要用**游戏侧权威表**（文化区 → 59 分支），与 resolveCastleAsset 解析城堡同一条链。
+//    不另抄一份字典 —— 抄了必漂移（今天刚在 _citytest.html 上踩过这个坑）。
+import { REGION_TO_BRANCH } from '../config/deCastleAssets';
+
 export type Base16StyleKey =
     | 'ASIA' | 'WEST' | 'EAST' | 'SLAV'
     | 'MEDI' | 'ORIE' | 'CEAS' | 'INDI'
@@ -314,6 +318,16 @@ export function resolveCityHierarchy(city: { buildingStyle?: string; region?: st
     } else if (bs && ALL_BRANCHES_MAP[bs.toUpperCase()] && !BASE16_STYLES.some(s => s.key === bs.toUpperCase())) {
         // buildingStyle 填了 59/3 分支名（如 JIANGNAN, WEI, MOBEI_MONGOL）
         branchKey = bs.toUpperCase();
+    }
+    // 1.5 🔴 [2026-09-18 主人报障「选了一个据点，怎么不显示二级或者三级？」
+    //     与**游戏同源**：region 不是 62 类键时，用游戏权威表 REGION_TO_BRANCH 推出二级。
+    //     实测（scratch/probe_hierarchy_branch.mts）：不改这一条，**258 座**据点在本页
+    //     显示不出二/三级（表格「—」、面板 ②③ 为空），而游戏里其实有——
+    //     如 底比斯 region=GREEK → ATHENIANS（雅典）、布鲁日/罗斯托克 region=HRE → GERMANIC（条顿）、
+    //     维罗纳/比萨 region=ITALIANS → LATIN（意大利）。这条链与 resolveCastleAsset 解析城堡完全同一条。
+    if (!branchKey && reg) {
+        const viaRegion = REGION_TO_BRANCH[reg.toUpperCase()];
+        if (viaRegion && ALL_BRANCHES_MAP[viaRegion]) branchKey = viaRegion;
     }
 
     if (branchKey) {

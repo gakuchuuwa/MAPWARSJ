@@ -127,6 +127,65 @@ export class SiegeManager {
         });
     }
 
+    /**
+     * 🔴 [2026-09-18 主人报障 + 定规] 玩家（有势力、单骑）走进**自家据点**的攻城交战圈
+     *    → 自动参战救援（贴进守方在场军团，等同入伍）。
+     *
+     * 为什么必须单独做这一条：玩家自己的军队在 `PlayerHero` 里 `type = 'hero'`，而
+     *   · 援军编入 `BattleReinforcementPoll.isEligibleReinforcement` 第 52 行
+     *   · 异旗拦截 `interceptThirdPartyPassersBy` 第 213 行
+     *   **都只认 `type === 'legion'`** —— 玩家单骑因此"既不会被编入、也不会被拦下"，
+     *   路过自家被围攻的据点会直接穿过去。实测（scratch/probe_player_reinforcement.mts）：
+     *   同一条件下把 type 换成 'legion' 就立刻会被编入守方援军 —— 卡点就是这一条。
+     *
+     * 做法 = **贴进守方军团参战**：玩家只有 1 兵，直接当一支部队编入战斗面板等于"1 兵被秒判负"，
+     *   机制上不成立；贴进守军后，第九环·玩家官阶加成、13 内玩家数值、落马重整等既有链路全部照常。
+     *   战后按既有规矩处理（军团覆灭/解散 → 自动恢复单骑）。
+     * 只救**自家（守方）**战场：玩家势力 ≠ 守方势力时不动；已在军中（跟着军团走）时也不动
+     *   —— 那种情况本来就由援军轮询处理（守方同旗路过强制参战）。
+     */
+    private attachPlayerHeroToSiegeDefense(): void {
+        const hero = (window as any).game?.playerHero as
+            | {
+                factionId?: string | null;
+                isAttached?(): boolean;
+                getPosition?(): { lat: number; lng: number };
+                attachTo?(host: Army): void;
+                notifyPlayer?(msg: string): void;
+            }
+            | undefined;
+        if (!hero || typeof hero.isAttached !== 'function' || typeof hero.getPosition !== 'function') return;
+        if (hero.isAttached()) return;      // 已在军中：走援军轮询那条链
+        if (!hero.factionId) return;        // 独行（无势力）不参与
+
+        for (const [cityId, battleField] of this.activeSieges) {
+            if (battleField.isOver) continue;
+            if (hero.factionId !== battleField.getDefenderFactionId()) continue;   // 只救自家战场
+            const city = this.cityManager.getCity(cityId);
+            if (!city) continue;
+            const center = cityToLatLng(city);
+            if (getEuclideanDistance(hero.getPosition!(), center) > GameConfig.COMBAT.BATTLE_JOIN_RADIUS) continue;
+
+            // 贴进守方**在场**军团里兵力最多的那支。守方若只有城内驻军（无军团）→ 本轮不动，下轮再看。
+            let host: Army | null = null;
+            for (const u of battleField.getDefenderUnits()) {
+                const e = u.getEntity?.() as Army | undefined;
+                if (!e || e.type !== 'legion' || e.isDestroyed) continue;
+                if ((e.getTroops?.() ?? 0) <= 0) continue;
+                if (!host || (e.getTroops?.() ?? 0) > (host.getTroops?.() ?? 0)) host = e;
+            }
+            if (!host) {
+                siegeLog(`🛡️ [玩家救援] 玩家已进【${city.name}】交战圈，但守方暂无在场军团，待下轮`);
+                continue;
+            }
+
+            hero.attachTo?.(host);
+            siegeLog(`📯 [玩家救援] 玩家进【${city.name}】交战圈 → 随守军【${host.name}】参战救援`);
+            hero.notifyPlayer?.(`📯 【${city.name}】告急——你已随【${host.name}】参战救援！`);
+            return;
+        }
+    }
+
     /** 由 CombatSystem 节流调用：扫描圈内同旗军团并加入进行中的攻城战；异旗军团排队等待 */
     public runReinforcementPoll(): void {
         pollSiegeReinforcements(
@@ -142,6 +201,9 @@ export class SiegeManager {
 
         // 扫描圈内异旗军团：不穿过交战区，排队等待
         this.interceptThirdPartyPassersBy();
+
+        // 🔴 [2026-09-18 主人定「玩家路过自家被围攻的据点，应该作为援军救援」]
+        this.attachPlayerHeroToSiegeDefense();
 
         // 看门狗：兜住任何"攻城已结束却没人放行队列"的漏网（防排队者被 IsWaitingSiege 永久冻结）
         this.tickWaiterWatchdog();

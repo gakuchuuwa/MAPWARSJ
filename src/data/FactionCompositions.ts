@@ -29,6 +29,10 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "jianzhou_nvzhen": {
+        legionName: "城堡时代女真军团",
+        legionType: "sub",
+    },
     "shizhou": {
         legionName: "古典时代匈奴军团",
         legionType: "sub",
@@ -2359,7 +2363,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "taiyuan": {
-        legionName: "东亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（清坎寨 ASIA 风格 → 二级无同时代 → 退一级母体）安置
+        legionName: "东南亚军团",
         legionType: "region",
     },
     "ryukyu": {

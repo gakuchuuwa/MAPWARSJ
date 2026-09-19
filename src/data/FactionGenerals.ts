@@ -848,7 +848,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     zu_d: { generalId: 'zu_d_yuanchonghuan', generalName: '袁崇焕', portrait: '/assets/daming/zu_d_yuanchonghuan.png' },
     mao_wenlong: { generalId: 'mao_wenlong_maowenlong', generalName: '毛文龙', portrait: '/assets/NORTHEAST/mao_wenlong_maowenlong.png' },
     gongsun_d: { generalId: 'gongsun_d_gongsundu', generalName: '公孙度', portrait: '/assets/NORTH/gongsun_d_gongsundu.png' },
-    jianzhou_nvzhen: { generalId: 'jianzhou_nvzhen_limanzhu', generalName: '李满住', portrait: '/assets/NORTH/jianzhou_nvzhen_limanzhu.png' }, // 浑江·建州女真卫
+    jianzhou_nvzhen: { generalId: 'jianzhou_nvzhen_limanzhu', generalName: '李满住', portrait: '/assets/NORTHEAST/jianzhou_nvzhen_limanzhu.png' }, // 浑江·建州女真卫
     weihaiwei: { generalId: 'weihaiwei_sudingfang', generalName: '苏定方', portrait: '/assets/litang/weihaiwei_sudingfang.png' },
     xuan: { generalId: 'xuan_xuda', generalName: '徐达', portrait: '/assets/daming/xuan_xuda.png' },
     tuoba: { generalId: 'tuoba_tuobagui', generalName: '拓跋珪', portrait: '/assets/STEPPE/tuoba_tuobagui.png' },

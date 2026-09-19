@@ -338,6 +338,10 @@ export class PlayerHero {
         return this.hostLegionId ? this.deps.getLegionById(this.hostLegionId) : undefined;
     }
     public isAttached(): boolean { return this.hostLegionId != null; }
+    /** 🔴 [2026-09-18 主人定「玩家路过自家被围攻的据点，自动参战救援」]
+     *  供外部系统（SiegeManager）向玩家播报一句（如"已随守军参战"）。
+     *  玩家提示统一走 deps.notify，外部拿不到私有 deps，故开这个公开口。 */
+    public notifyPlayer(msg: string): void { this.deps.notify(msg); }
     public isAttachedTo(armyId: string | null | undefined): boolean {
         return !!armyId && this.hostLegionId === armyId;
     }

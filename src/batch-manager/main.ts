@@ -68,7 +68,11 @@ interface FactionRow {
     eliteName?: string;
     eliteTier?: number;
     eliteRegion?: string;
+    /** 🔴 [2026-09-18] 势力表那一列：游戏实际采用的建筑风格（resolveCityDeBuildingStyle 的结果） */
+    cityStyle?: string;
     cityRegion?: string;
+    /** 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 面板回填用：一级母体（buildingStyle） */
+    cityBuildingStyle?: string;
     legionName?: string;
     completeness: number;
 }
@@ -585,6 +589,12 @@ function buildRows(): void {
             eliteTier: elite?.tier,
             eliteRegion: elite?.region,
             cityRegion: city?.region,
+            cityBuildingStyle: city?.buildingStyle,
+            // 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 势力表那一列改显示**游戏实际采用的建筑风格**
+            //    （走游戏唯一解析源），不再是 region 原值 —— region 被两种语义混用过。
+            cityStyle: city
+                ? (resolveCityDeBuildingStyle(city.id, city.type, city.region, city.lat, city.lng, city.buildingStyle) ?? undefined)
+                : undefined,
             legionName,
             completeness,
         };
@@ -699,7 +709,7 @@ const COLUMNS: Array<{ key: string; label: string; width?: string }> = [
     { key: '_actions', label: '', width: '36px' },
     { key: 'id', label: 'ID', width: '120px' },
     { key: 'name', label: '势力' },
-    { key: 'cityRegion', label: '文化区', width: '90px' },
+    { key: 'cityStyle', label: '建筑风格', width: '110px' },
     { key: 'flagText', label: '旗号', width: '50px' },
     { key: 'cityName', label: '据点' },
     { key: 'lat', label: '纬度', width: '60px' },
@@ -728,7 +738,7 @@ function renderTable(): void {
             <td><button class="bm-copy-btn" data-copy-fid="${r.id}" title="复制为快速录入格式">📋</button></td>
             <td class="cell-id">${r.id}</td>
             <td>${r.name}</td>
-            <td class="cell-region">${r.cityRegion ?? ''}</td>
+            <td class="cell-region">${r.cityStyle ? `<span style="color:#8fd6a0;font-weight:600">${r.cityStyle}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td class="cell-flag">${r.flagText ?? '<span class="cell-miss">✗</span>'}</td>
             <td>${r.cityName ?? '<span class="cell-miss">✗</span>'}</td>
             <td>${r.lat != null ? r.lat.toFixed(1) : ''}</td>
@@ -922,7 +932,9 @@ async function openEditPanel(factionId: string | null): Promise<void> {
     const isNew = !row;
     const title = isNew ? '新增实体' : `编辑: ${row!.name}`;
 
-    const currentRegion = row?.cityRegion ?? row?.eliteRegion ?? '';
+    // 精锐所属区回填：优先精英自己的区；据点 region 只在它确实是已知文化区时兜底
+    // （region 现在写的多为二/三层键，如 MONGOL/TIBET，不能当区用）
+    const currentRegion = row?.eliteRegion ?? (row?.cityRegion && REGION_LABELS[row.cityRegion] ? row.cityRegion : '') ?? '';
     const regionOptions = (entityData?.regions ?? []).map(r =>
         `<option value="${r}" ${r === currentRegion ? 'selected' : ''}>${REGION_LABELS[r] ?? r} (${r})</option>`
     ).join('');
@@ -945,10 +957,28 @@ async function openEditPanel(factionId: string | null): Promise<void> {
           </div>
           <div class="form-row">
             <label><span>据点名 *</span>${qInput('bm-quick-cname')}</label>
-            <label><span>文化区 *</span>
-              <select id="bm-quick-region" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+            <!-- 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
+                 原来这里是「文化区 *」下拉 —— 已换成建筑风格三级（与 _citytest.html 同一套表）：
+                 ① 一级 16 母体（写 buildingStyle）　② 二级 59 文明 / ③ 三级 3 自建（写 region，二/三层键）。
+                 地区不再手选（由坐标自动判定）。 -->
+            <label><span>① 建筑风格 · 母体 (16) *</span>
+              <select id="bm-quick-wall" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
                 <option value="">请选择</option>
-                ${regionOptions}
+                ${BASE16_STYLES.map(s => `<option value="${s.key}">${s.emoji} ${s.name} (${s.key})</option>`).join('')}
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
+            <label><span>② 建筑风格 · 二级文明 (59)</span>
+              <select id="bm-quick-branch" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="">── 不选二级 ──</option>
+                ${CULTURE_59_GROUPS.map(g => `<optgroup label="${g.group}">${g.branches.map(b => `<option value="${b.key}">${b.label}</option>`).join('')}</optgroup>`).join('')}
+              </select>
+            </label>
+            <label><span>③ 建筑风格 · 三级自建 (3)</span>
+              <select id="bm-quick-custom" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="">── 不选三级 ──</option>
+                ${LAYER3_CUSTOM_GROUPS.map(g => `<optgroup label="${g.group}">${g.branches.map(b => `<option value="${b.key}">${b.label}</option>`).join('')}</optgroup>`).join('')}
               </select>
             </label>
           </div>
@@ -995,6 +1025,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="2" selected>T2</option><option value="3">T3</option><option value="4">T4</option>
               </select>
             </label>
+            <!-- 🔴 精锐文件按「区」分文件存放，这里单独选（它不是建筑风格，故不叫文化区） -->
+            <label><span>精锐所属区（写精锐文件用）</span>
+              <select id="bm-quick-eliteregion" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
+                <option value="">请选择</option>
+                ${regionOptions}
+              </select>
+            </label>
           </div>
 
           <div id="bm-quick-preview" class="bm-id-preview" style="margin-top:12px">
@@ -1018,7 +1055,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             'bm-quick-genname', 'bm-quick-elite']) {
             document.getElementById(id)!.addEventListener('input', () => updateQuickPreview());
         }
-        for (const id of ['bm-quick-region', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-elitetier']) {
+        for (const id of ['bm-quick-wall', 'bm-quick-branch', 'bm-quick-custom', 'bm-quick-eliteregion', 'bm-quick-tier', 'bm-quick-tac', 'bm-quick-elitetier']) {
             document.getElementById(id)!.addEventListener('change', () => updateQuickPreview());
         }
 
@@ -1050,6 +1087,16 @@ async function openEditPanel(factionId: string | null): Promise<void> {
         return;
     } else {
         // ── Edit existing: show IDs as readonly ──
+        // 🔴 [2026-09-18 主人报障「选了一个据点，怎么不显示二级或者三级？」]
+        //    回填**必须走 resolveCityHierarchy**（与表格同一解析器、与游戏同源），
+        //    不能拿字段原值硬填：实测 1088 座里 buildingStyle 有 506 座存的是二级键、146 座是三级键，
+        //    直接塞进 ①（16 母体）会全部落空 → ②③ 也跟着空，看上去就是"不显示二级/三级"。
+        const cityLikeForStyle = { buildingStyle: row!.cityBuildingStyle, region: row!.cityRegion };
+        const hStyle = resolveCityHierarchy(cityLikeForStyle);
+        const curWall = hStyle.base16;
+        const curBranchKey = hStyle.branchKey ?? '';
+        const isCustom = LAYER3_CUSTOM_GROUPS.some(g => g.branches.some(b => b.key === curBranchKey));
+        const eliteRegionCur = row!.eliteRegion ?? '';
         els.panelContent.innerHTML = `
         <form class="bm-form" id="bm-edit-form">
           <h3>编辑: ${row!.name}</h3>
@@ -1076,10 +1123,32 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>纬度 (lat)</span><input name="lat" type="number" step="any" value="${row!.lat ?? ''}" required /></label>
             <label><span>经度 (lng)</span><input name="lng" type="number" step="any" value="${row!.lng ?? ''}" required /></label>
           </div>
-          <label><span>文化区</span>
-            <select name="region">
-              ${currentRegion ? '' : '<option value="" selected>请选择</option>'}
-              ${regionOptions}
+          <!-- 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
+               原「文化区」下拉 → 换成建筑风格三级（与 _citytest.html 同一套表、同一写盘口径） -->
+          <label><span>① 建筑风格 · 母体 (16) *</span>
+            <select name="wallStyle">
+              <option value="">请选择</option>
+              ${BASE16_STYLES.map(s => `<option value="${s.key}" ${curWall === s.key ? 'selected' : ''}>${s.emoji} ${s.name} (${s.key})</option>`).join('')}
+            </select>
+          </label>
+          <label><span>② 建筑风格 · 二级文明 (59)</span>
+            <select name="castleBranch">
+              <option value="">── 不选二级 ──</option>
+              ${CULTURE_59_GROUPS.map(g => `
+                <optgroup label="${g.group}">
+                  ${g.branches.map(b => `<option value="${b.key}" ${!isCustom && curBranchKey === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
+                </optgroup>
+              `).join('')}
+            </select>
+          </label>
+          <label><span>③ 建筑风格 · 三级自建 (3)</span>
+            <select name="customStyle">
+              <option value="">── 不选三级 ──</option>
+              ${LAYER3_CUSTOM_GROUPS.map(g => `
+                <optgroup label="${g.group}">
+                  ${g.branches.map(b => `<option value="${b.key}" ${isCustom && curBranchKey === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
+                </optgroup>
+              `).join('')}
             </select>
           </label>
           <label><span>据点类型</span>
@@ -1163,6 +1232,13 @@ async function openEditPanel(factionId: string | null): Promise<void> {
                 <option value="2" ${row!.eliteTier === 2 ? 'selected' : ''}>T2</option>
                 <option value="3" ${row!.eliteTier === 3 ? 'selected' : ''}>T3</option>
                 <option value="4" ${row!.eliteTier === 4 ? 'selected' : ''}>T4</option>
+              </select>
+            </label>
+            <!-- 🔴 精锐文件按「区」分文件存放，单独选（它不是建筑风格，故不叫文化区） -->
+            <label><span>精锐所属区（写精锐文件用）</span>
+              <select name="eliteRegion">
+                <option value="">请选择</option>
+                ${regionOptions}
               </select>
             </label>
           </div>
@@ -1372,8 +1448,13 @@ function fillQuickFieldsFromText(): void {
     fillIfEmpty('bm-quick-cname', parsed.cityName);
     if (!isNaN(parsed.lat)) fillIfEmpty('bm-quick-lat', String(parsed.lat));
     if (!isNaN(parsed.lng)) fillIfEmpty('bm-quick-lng', String(parsed.lng));
-    const regionSelect = document.getElementById('bm-quick-region') as HTMLSelectElement | null;
-    if (regionSelect && parsed.region && !regionSelect.value) regionSelect.value = parsed.region;
+    // 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
+    //    粘贴文本里的「文化区」不再写进据点（地区由坐标自动判定）。
+    //    仅当它恰好就是 16 母体键（ASIA/WEST/CEAS…）时，顺手填到 ① 建筑风格；其余忽略。
+    const wallSelect = document.getElementById('bm-quick-wall') as HTMLSelectElement | null;
+    if (wallSelect && parsed.region && !wallSelect.value && BASE16_STYLES.some(s => s.key === parsed.region)) {
+        wallSelect.value = parsed.region;
+    }
     if (fillIfEmpty('bm-quick-genname', parsed.generalName)) {
         const tierSelect = document.getElementById('bm-quick-tier') as HTMLSelectElement | null;
         if (tierSelect) tierSelect.value = parsed.tier;
@@ -1394,7 +1475,13 @@ function readQuickFields() {
         cityName: val('bm-quick-cname'),
         lat: parseFloat(val('bm-quick-lat')),
         lng: parseFloat(val('bm-quick-lng')),
-        region: val('bm-quick-region'),
+        region: val('bm-quick-eliteregion'),
+        /** 🔴 [2026-09-18 主人定] 建筑风格三级：① 母体（写 buildingStyle）/ ② 59 / ③ 3（写 region，二/三层键） */
+        wallStyle: val('bm-quick-wall'),
+        branchStyle: val('bm-quick-branch'),
+        customStyle: val('bm-quick-custom'),
+        /** 写进据点 region 的**二/三层键**（与 _citytest.html、据点编辑面板同一口径） */
+        cityBranchKey: val('bm-quick-custom') || val('bm-quick-branch'),
         genName: val('bm-quick-genname'),
         genTier: (val('bm-quick-tier') === 'famous' ? 'famous' : 'ordinary') as 'famous' | 'ordinary',
         portrait: val('bm-quick-portrait'),
@@ -1481,7 +1568,7 @@ function updateQuickPreview(): void {
         `<span class="id-label">旗号:</span> ${f.flagText || '<span class="id-dup">取势力名首字</span>'}`,
         `<span class="id-label">据点:</span> ${f.cityName || '<span class="id-dup">必填</span>'} → <span class="id-value">${ids.cityId}</span>${ids.cityDup ? ' <span class="id-dup">(+后缀)</span>' : ''}`,
         `<span class="id-label">坐标:</span> ${isNaN(f.lat) || isNaN(f.lng) ? '<span class="id-dup">必填</span>' : `${f.lat}, ${f.lng}`}`,
-        `<span class="id-label">文化区:</span> ${f.region || '<span class="id-dup">请选择</span>'}`,
+        `<span class="id-label">建筑风格:</span> ① ${f.wallStyle || '<span class="id-dup">请选择</span>'} ②/③ ${f.cityBranchKey || '<span class="id-dup">请选择</span>'}`,
     ];
     const existingFaction = rows.find(r => r.id === ids.factionId);
     if (existingFaction) {
@@ -1517,8 +1604,17 @@ async function handleQuickSubmit(): Promise<void> {
         showToast('坐标必填，如 lat: 31.11, lng: 105.06', true);
         return;
     }
-    if (!f.region) {
-        showToast('请选择文化区', true);
+    // 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 一级 16 必选 + 二级 59 / 三级 3 至少选一个
+    if (!f.wallStyle) {
+        showToast('请选择建筑风格① 母体（16 套之一）', true);
+        return;
+    }
+    if (!f.cityBranchKey) {
+        showToast('请选择建筑风格② 二级文明（59）或 ③ 三级自建（3）中的一种', true);
+        return;
+    }
+    if (f.eliteName && !f.region) {
+        showToast('建精锐要先选「精锐所属区」（写精锐文件用）', true);
         return;
     }
 
@@ -1609,7 +1705,8 @@ async function handleQuickSubmit(): Promise<void> {
                         cityId: ids.cityId,
                         cityName: f.cityName,
                         lat: f.lat, lng: f.lng,
-                        region: f.region,
+                        region: f.cityBranchKey,
+                        buildingStyle: f.wallStyle,
                     }]
                 }),
             });
@@ -1664,7 +1761,7 @@ async function handleQuickSubmit(): Promise<void> {
                     factionId: ids.factionId,
                     eliteName: f.eliteName,
                     eliteTier: f.eliteTier,
-                    region: f.region,
+                    region: f.region,   // 精锐所属区（精锐文件分区，非建筑风格）
                 }),
             });
             const eliteData = await eliteRes.json();
@@ -1734,10 +1831,25 @@ async function handleFormSubmit(e: Event): Promise<void> {
     const lat = parseFloat(get('lat'));
     const lng = parseFloat(get('lng'));
 
-    const region = get('region');
+    // 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
+    //    一级 16 → buildingStyle；二级 59 / 三级 3 → region（二/三层键，与 _citytest.html、据点编辑面板同口径）
+    const wallStyle = get('wallStyle');
+    const castleBranch = get('castleBranch');
+    const customStyle = get('customStyle');
+    const region = customStyle || castleBranch;
+    /** 精锐文件按区存放，单独取（不是建筑风格） */
+    const eliteRegion = get('eliteRegion');
 
     if (!factionName || !flagText || !cityName || isNaN(lat) || isNaN(lng)) {
         showToast('请填写完整的势力和据点信息', true);
+        return;
+    }
+    if (!wallStyle) {
+        showToast('请选择建筑风格① 母体（16 套之一）', true);
+        return;
+    }
+    if (!region) {
+        showToast('请选择建筑风格② 二级文明（59）或 ③ 三级自建（3）中的一种', true);
         return;
     }
 
@@ -1804,6 +1916,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                     factionId, factionName, flagText,
                     cityId, cityName, lat, lng,
                     region: region || undefined,
+                    buildingStyle: wallStyle || undefined,
                     cityType: get('cityType') || 'small_city',
                     mirror: (form.querySelector('input[name="mirror"]') as HTMLInputElement | null)?.checked || undefined,
                 }]
@@ -1855,8 +1968,8 @@ async function handleFormSubmit(e: Event): Promise<void> {
         const eliteTier = get('eliteTier');
 
         if (eliteName) {
-            if (!region) {
-                showToast(`精锐保存失败: 请先选择文化区`, true);
+            if (!eliteRegion) {
+                showToast(`精锐保存失败: 请先选择精锐所属区（写精锐文件用）`, true);
                 return;
             }
             if (eliteTier === '') {
@@ -1869,7 +1982,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
                 body: JSON.stringify({
                     factionId, eliteName,
                     eliteTier: parseInt(eliteTier),
-                    region,
+                    region: eliteRegion,
                 }),
             });
             const eliteData = await eliteRes.json();
@@ -2306,6 +2419,10 @@ function renderCityTable(): void {
         const sel = c.id === selectedCityId ? ' class="selected"' : '';
         const note = (c.note ?? '').slice(0, 24);
         const h = c.hierarchy;
+        // 🔴 [2026-09-18 主人定] 这一列改显示「**游戏实际采用的建筑风格**」（走游戏唯一解析源），
+        //    不再显示 region 原值 —— region 被两种语义混用过（二/三层键 与 文化区名），
+        //    直接展示会让人误以为据点该选"文化区"。据点只认建筑风格三级，文化区不做可选风格。
+        const gameStyle = resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
         const branchHtml = h.branchName
             ? `<span style="color:#f5e6c8;font-weight:600">${h.branchName}</span> <span class="cell-region" style="font-size:10px;color:#8fa3bb">(${h.branchKey})</span>`
             : '<span style="color:#64748b">—</span>';
@@ -2315,7 +2432,7 @@ function renderCityTable(): void {
             <td>${typeCn.get(c.type) ?? c.type}</td>
             <td class="cell-region" style="font-weight:700;color:#f5d78e">${h.base16Emoji} ${h.base16Name} (${h.base16})</td>
             <td>${branchHtml}</td>
-            <td class="cell-region">${c.region ?? '<span class="cell-miss">✗</span>'}</td>
+            <td class="cell-region">${gameStyle ? `<span style="color:#8fd6a0;font-weight:600">${gameStyle}</span>` : '<span class="cell-miss">✗</span>'}</td>
             <td>${c.factionId}</td>
             <td>${c.troops ?? ''}</td>
             <td class="cell-region">${c.lat?.toFixed(2)}, ${c.lng?.toFixed(2)}</td>
@@ -2324,7 +2441,7 @@ function renderCityTable(): void {
     }).join('');
 
     els.cityTableWrap.innerHTML = `<table class="bm-table"><thead><tr>
-        <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (59+3)</th><th>文化区</th>
+        <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (59+3)</th><th>游戏实际采用建筑风格</th>
         <th>势力</th><th>兵力</th><th>坐标</th><th>备注</th>
     </tr></thead><tbody>${tbody}</tbody></table>`;
 
@@ -2416,9 +2533,11 @@ function openCityPanel(cityId: string): void {
           </label>
         </div>
 
-        <label><span>文化区 (region · 只读)</span>
-          <input value="${c.region ?? '（未设）'}" readonly title="文化区由二/三层风格或大区定义自动联动维护" />
-        </label>
+        <!-- 🔴 [2026-09-18 主人定「据点只留建筑风格三级，文化区不做可选风格」]
+             原处有一格「文化区 (region · 只读)」输入框 —— 已删除。
+             原因：region 这个字段被两种语义混用过（保存口径写二/三层键，存量数据里绝大多数写文化区名），
+             摆在建筑风格三级体系旁边只会让人以为据点要选"文化区"。
+             据点的一级/二级/三级就是上面 ①②③；游戏实际采用哪套由 resolveCityDeBuildingStyle 决定（面板上方已只读展示）。 -->
         <label><span>势力 (factionId)</span>
           <select name="factionId">
             ${factions.map(f => `<option value="${f.id}" ${c.factionId === f.id ? 'selected' : ''}>${f.name}（${f.id}）</option>`).join('')}
