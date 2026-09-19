@@ -348,7 +348,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     //    **已直接替换**：源义经整个挪到 `genji_iyo`（松山，伊予守守地），
     //    此处原先为他「寄存记录」的那第二条已删除 —— 同一个武将不再挂两个势力键。
     //    镰仓 = 源赖朝一人，与全库「一势力 = 一据点 = 一武将」一致。
-    genji: { generalId: 'gen_minamoto_yoritomo', generalName: '源赖朝', portrait: '' },
+    genji: { generalId: 'gen_minamoto_yoritomo', generalName: '源赖朝', portrait: '/assets/JAPAN/genji_yuanlaichao.png' },
     // 🔴 [2026-09-19 主人令「行就换」] 松山（伊予国）的守将 = **源义经**（伊予守，伊予国即其守地）。
     //    与 genji（镰仓挂源赖朝）分开一个键：一势力一城，才能各挂各的守将。
     genji_iyo: { generalId: 'fujiwara_yuanyijing', generalName: '源义经', portrait: '/assets/JAPAN/fujiwara_yuanyijing.png' },
@@ -1262,9 +1262,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
-    // 前327年马萨加围城战守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
+    // 前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
     aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '' },
-    // 前325年马里斯城围攻战守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
+    // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_leader', generalName: '马利首领', portrait: '' },
     // 前324年科塞亚战役守帅（扎格罗斯山脉科塞亚部落酋长联军首领），立绘按铁律留空走回落、待主人亲自放图分配
     kesaiya: { generalId: 'kesaiya_shouling', generalName: '科塞亚首领', portrait: '' },

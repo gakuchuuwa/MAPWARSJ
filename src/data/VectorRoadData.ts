@@ -80,7 +80,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [139.664406, 36.033483],
                     [139.680903, 35.955119],
                     [139.730396, 35.885003],
-                    [139.76, 35.68],
+                    [139.8007, 35.75],
                 ]
             }
         },
@@ -126,7 +126,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [139.76, 35.68],
+                    [139.8007, 35.75],
                     [139.557171, 35.687031],
                     [139.45406, 35.65816],
                     [139.421065, 35.666409],
@@ -24054,7 +24054,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [139.487055, 35.864381],
                     [139.5283, 35.790142],
                     [139.561295, 35.773644],
-                    [139.76, 35.68],
+                    [139.8007, 35.75],
                 ]
             }
         },
@@ -24372,39 +24372,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "冈丰城-鬼之城",
-                type: "road",
-                id: "road_city_okafu_city_guizhicheng_1781685055903",
-                startConnection: "city_okafu",
-                endConnection: "city_guizhicheng"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [133.5756, 33.5972],
-                    [133.692242, 33.694935],
-                    [133.675744, 33.736179],
-                    [133.782979, 33.806295],
-                    [133.782979, 33.831041],
-                    [133.770606, 33.868161],
-                    [133.774731, 33.892907],
-                    [133.782979, 33.925903],
-                    [133.815975, 34.01664],
-                    [133.828348, 34.029013],
-                    [133.844846, 34.086755],
-                    [133.836597, 34.144497],
-                    [133.84897, 34.177493],
-                    [133.815975, 34.239359],
-                    [133.828348, 34.276479],
-                    [133.81185, 34.528068],
-                    [133.844846, 34.556939],
-                    [133.82, 34.69],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "柳之御所-仙台",
                 type: "road",
                 id: "road_city_yanaginogosho_city_xiantai_1781685993574",
@@ -24639,26 +24606,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "松山-吉田郡山",
-                type: "road",
-                id: "road_city_songshan_city_yoshida_1781686210091",
-                startConnection: "city_songshan",
-                endConnection: "city_yoshida"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [132.77, 33.84],
-                    [132.574524, 34.222861],
-                    [132.574524, 34.251732],
-                    [132.537404, 34.288852],
-                    [132.530823, 34.438616],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "冈丰城-松山",
                 type: "road",
                 id: "road_city_okafu_city_songshan_1781686215264",
@@ -24683,7 +24630,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [132.904478, 33.653691],
                     [132.896229, 33.682562],
                     [132.854984, 33.707308],
-                    [132.77, 33.84],
+                    [132.7505, 33.8185],
                 ]
             }
         },
@@ -25993,33 +25940,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "箱根关-江户城",
-                type: "road",
-                id: "road_city_hakone_city_edo_1781879143122",
-                startConnection: "city_hakone",
-                endConnection: "city_edo"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [139.0261, 35.1925],
-                    [139.185973, 35.291087],
-                    [139.289083, 35.328206],
-                    [139.334452, 35.34058],
-                    [139.495304, 35.373575],
-                    [139.557171, 35.439566],
-                    [139.577793, 35.456063],
-                    [139.63141, 35.451939],
-                    [139.664406, 35.48081],
-                    [139.693277, 35.493183],
-                    [139.738645, 35.534427],
-                    [139.76, 35.68],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "骏府-躑躅崎馆",
                 type: "road",
                 id: "road_city_junfucheng_city_tsutsujigasaki_1781879163420",
@@ -26062,7 +25982,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [138.629176, 35.171478],
                     [138.781779, 35.134359],
                     [138.897263, 35.101363],
-                    [139.0261, 35.1925],
+                    [138.9999, 35.1861],
                 ]
             }
         },
@@ -64337,6 +64257,79 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [36.030049, 33.620696],
                     [36.075417, 33.595949],
                     [36.29, 33.51],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "冈丰城-备中高松城",
+                type: "road",
+                id: "road_city_okafu_city_guizhicheng_1789831705878",
+                startConnection: "city_okafu",
+                endConnection: "city_guizhicheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [133.5756, 33.5972],
+                    [133.675744, 33.736179],
+                    [133.782979, 33.806295],
+                    [133.782979, 33.831041],
+                    [133.770606, 33.868161],
+                    [133.774731, 33.892907],
+                    [133.782979, 33.925903],
+                    [133.815975, 34.01664],
+                    [133.828348, 34.029013],
+                    [133.844846, 34.086755],
+                    [133.84897, 34.177493],
+                    [133.815975, 34.239359],
+                    [133.828348, 34.276479],
+                    [133.81185, 34.528068],
+                    [133.82, 34.69],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "箱根关-镰仓",
+                type: "road",
+                id: "road_city_hakone_city_kamakura_1789831788624",
+                startConnection: "city_hakone",
+                endConnection: "city_kamakura"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [138.9999, 35.1861],
+                    [139.144728, 35.258091],
+                    [139.185973, 35.291087],
+                    [139.289083, 35.328206],
+                    [139.334452, 35.34058],
+                    [139.5503, 35.3195],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "镰仓-江户城",
+                type: "road",
+                id: "road_city_kamakura_city_edo_1789831794957",
+                startConnection: "city_kamakura",
+                endConnection: "city_edo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [139.5503, 35.3195],
+                    [139.63141, 35.451939],
+                    [139.664406, 35.48081],
+                    [139.693277, 35.493183],
+                    [139.738645, 35.534427],
+                    [139.751018, 35.575672],
+                    [139.8007, 35.75],
                 ]
             }
         },

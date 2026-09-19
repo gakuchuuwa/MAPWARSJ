@@ -49,14 +49,14 @@ export interface BattlefieldCharacter {
  * 键 = `generalId`，方便按 id 直查；顺序无关。
  */
 export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacter>> = {
-    // ── 虎牢关之战（621）夏方主帅 ────────────────────────────────
+    // ── 虎牢关战役（621）夏方主帅 ────────────────────────────────
     doujiande: {
         generalId: 'doujiande',
         generalName: '窦建德',
         factionId: 'xia',
         portrait: '',                       // 🔴 等主人放图；空 = 走池子回落
         portraitProposedPath: '/assets/CENTRAL/xia_doujiande.png',
-        note: '夏王窦建德，河北义军之主；621年虎牢关之战率十万众西援洛阳王世充，兵败被擒。史料：《旧唐书·窦建德传》《资治通鉴·唐纪五》。',
+        note: '夏王窦建德，河北义军之主；621年虎牢关战役率十万众西援洛阳王世充，兵败被擒。史料：《旧唐书·窦建德传》《资治通鉴·唐纪五》。',
     },
     wangshichong: {
         generalId: 'wangshichong',
@@ -67,14 +67,14 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '郑帝（洛阳）王世充，621年被李世民围困于洛阳，粮尽援绝，见窦建德被擒后出降。史料：《旧唐书·王世充传》。',
     },
 
-    // ── 坎尼会战（前216）罗马方主帅 ──────────────────────────────
+    // ── 坎尼战役（前216）罗马方主帅 ──────────────────────────────
     baolusi: {
         generalId: 'baolusi',
         generalName: '保卢斯',
         factionId: 'luoma_diguo',
         portrait: '',
         portraitProposedPath: '/assets/LATIN/luoma_diguo_baolusi.png',
-        note: '卢基乌斯·埃米利乌斯·保卢斯，前216年罗马执政官，坎尼会战中阵亡。史料：波利比乌斯《历史·第三卷》、李维《罗马史·第二十二卷》。',
+        note: '卢基乌斯·埃米利乌斯·保卢斯，前216年罗马执政官，坎尼战役中阵亡。史料：波利比乌斯《历史·第三卷》、李维《罗马史·第二十二卷》。',
     },
     waluo: {
         generalId: 'waluo',
@@ -82,19 +82,19 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'luoma_diguo',
         portrait: '',
         portraitProposedPath: '/assets/LATIN/luoma_diguo_waluo.png',
-        note: '盖乌斯·特伦提乌斯·瓦罗，前216年罗马执政官，坎尼会战当日执掌罗马军令，战败后逃回。史料：李维《罗马史·第二十二卷》。',
+        note: '盖乌斯·特伦提乌斯·瓦罗，前216年罗马执政官，坎尼战役当日执掌罗马军令，战败后逃回。史料：李维《罗马史·第二十二卷》。',
     },
 
     // 🔴 [2026-09-19 主人令] 村上武吉**已归位为据点守将**（能岛城，伊予势力），
     //    不再属于战场人物表 —— 此处原条目已移除（他重新有了自己的城）。
-    // ── 沙隆会战（451）西罗马方主帅 ──────────────────────────────
+    // ── 沙隆战役（451）西罗马方主帅 ──────────────────────────────
     aitiliusi: {
         generalId: 'aitiliusi',
         generalName: '埃提乌斯',
         factionId: 'luoma_diguo',
         portrait: '',
         portraitProposedPath: '/assets/LATIN/luoma_diguo_aitiliusi.png',
-        note: '弗拉维乌斯·埃提乌斯，西罗马末代名将、「最后的罗马人」；451年沙隆会战统率罗马-西哥特联军击退阿提拉。史料：约达尼斯《哥特史》、普罗柯比《战史》。',
+        note: '弗拉维乌斯·埃提乌斯，西罗马末代名将、「最后的罗马人」；451年沙隆战役统率罗马-西哥特联军击退阿提拉。史料：约达尼斯《哥特史》、普罗柯比《战史》。',
     },
 };
 

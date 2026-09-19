@@ -5273,9 +5273,9 @@ export class Scene13WarLayer {
             if (this.defenderCityType === 'pass' && this.passMountainConfig?.enabled !== false) {
                 const mAsset = this.passMountainConfig.asset || 'MOUNTAIN_02';
                 this.ensureNatureAsset(mAsset);
-                // 默认坐标：严格置于战场最底部边缘、城门正下方偏右，绝不遮挡中央冲锋路线、城门通道与出兵口
-                const mX = this.passMountainConfig.x ?? (wallFrontX - 50);
-                const mY = this.passMountainConfig.y ?? (botWallY + 260);
+                // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
+                const mX = this.passMountainConfig.x ?? (wallFrontX + 230);
+                const mY = this.passMountainConfig.y ?? (botWallY + 230);
                 const mScale = this.passMountainConfig.scale ?? 1.2;
                 const mFlip = this.passMountainConfig.flip ?? false;
                 this.decorSprites.push({

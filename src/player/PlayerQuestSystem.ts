@@ -28,7 +28,7 @@ import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
-import { findHistoricalEventsOfGeneral } from '../data/HistoricalEventScript';
+import { findHistoricalEventsOfGeneral, findGeneralOfBattlefield } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
@@ -198,6 +198,8 @@ export class PlayerQuestSystem {
 
     // ── 抵达对话 ──────────────────────────────────────────
     private onArrive(city: City): void {
+        // 已抵达（见到人或到了城）→ 「赶去与武将碰头」这一轮作废，下一拍按需重规划
+        this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
         if (hero.isAttached()) return;
         const g = this.generalInCity(city.id);
@@ -358,6 +360,15 @@ export class PlayerQuestSystem {
         const defGeneral = fb.defenderGeneralId
             ? getGeneralRecordByGeneralId(fb.defenderGeneralId)?.generalName ?? defName : defName;
 
+        // 🔴 [2026-09-19 主人令「谁的人物，玩家就帮谁」] 随武将而来的这一仗：**默认就是这位武将那一方**。
+        //    见 `ownSideOfFollowingEvent` 的血训说明 —— accent 一给错，自动模式就会反帮敌人。
+        //    自己单骑跑来战场（没随军）时才回到「可自择一方」的老口径。
+        const ownSide = this.ownSideOfFollowingEvent(bfId);
+        const ownGeneral = ownSide === 'attacker' ? atkGeneral : ownSide === 'defender' ? defGeneral : '';
+        const otherSide: 'attacker' | 'defender' = ownSide === 'attacker' ? 'defender' : 'attacker';
+        const otherGeneral = otherSide === 'attacker' ? atkGeneral : defGeneral;
+        const otherFaction = otherSide === 'attacker' ? atkName : defName;
+
         const join = (side: 'attacker' | 'defender' | null) => {
             this.deps.closeDialogue();
             // 已经在战场上了 → 清掉「正奔赴【XXX战役】」的标注，HUD 动向栏不再指着这里
@@ -425,6 +436,26 @@ export class PlayerQuestSystem {
             if (msg) { this.deps.notify(msg); return; }
         };
 
+        // 🔴 [2026-09-19 主人令「抵达据点接任务…为什么自动接攻击方的？谁的人物，玩家就帮谁」]
+        //    随军而来的这一仗：加粗高亮（= HUD 3 秒后自动确认的那一个）改成**自己主帅那一方**，
+        //    文案也点明「你随他而来，自当与他并肩」；想换边的仍可手动转投，但不再默认站到对面去。
+        if (ownSide) {
+            this.deps.showDialogue({
+                speaker: battleTitle,
+                portrait: null,
+                factionName: battleTitle,
+                text: `${atkName}【${atkGeneral}】与${defName}【${defGeneral}】将于此地会战。`
+                    + `壮士既随【${ownGeneral}】而来，此役自当与其并肩，共击${otherFaction}。`,
+                options: [
+                    { label: `⚔ 与${ownGeneral}并肩`, accent: true, onPick: () => join(ownSide) },
+                    { label: `⚔ 转投${otherFaction}·${otherGeneral}`, onPick: () => join(otherSide) },
+                    { label: '👁 只在旁观战', onPick: () => join(null) },
+                    { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                ],
+            });
+            return;
+        }
+
         this.deps.showDialogue({
             speaker: battleTitle,
             portrait: null,
@@ -432,8 +463,8 @@ export class PlayerQuestSystem {
             text: `${atkName}【${atkGeneral}】与${defName}【${defGeneral}】将于此地会战。`
                 + `壮士既已亲临，可自择一方效力，亦可袖手旁观。`,
             options: [
-                { label: `⚔ 助${atkName}（${atkGeneral}）`, accent: true, onPick: () => join('attacker') },
-                { label: `🛡 助${defName}（${defGeneral}）`, onPick: () => join('defender') },
+                { label: `⚔ 助${atkName}·${atkGeneral}`, accent: true, onPick: () => join('attacker') },
+                { label: `🛡 助${defName}·${defGeneral}`, onPick: () => join('defender') },
                 { label: '👁 只在旁观战', onPick: () => join(null) },
                 { label: '告辞', onPick: () => this.deps.closeDialogue() },
             ],
@@ -524,6 +555,25 @@ export class PlayerQuestSystem {
     private isFollowingGeneralEvent(bfId: string): boolean {
         const q = this.quest;
         return !!q && q.kind === 'general_event' && q.event?.battlefieldId === bfId;
+    }
+
+    /**
+     * 玩家随的那位武将，在他自己那一仗里站**哪一方**。
+     *
+     * 🔴 [2026-09-19 主人令「谁的人物，玩家就帮谁」] 血训：HUD 对话是「3 秒后自动点 accent 那一个」，
+     *    而选边对话原先把 accent **永远给攻方** —— 玩家跟着楠木正成去守千早城，
+     *    自动确认却把他塞进**攻方**，等于反帮敌人。
+     *    故此处给出「本将所在的一方」，供选边默认用。没随军 / 本将不在阵中 → null（回到自择一方）。
+     */
+    private ownSideOfFollowingEvent(bfId: string): 'attacker' | 'defender' | null {
+        if (!this.isFollowingGeneralEvent(bfId)) return null;
+        const gid = this.quest?.generalId;
+        if (!gid) return null;
+        const fb = this.deps.battlefields?.findBattle(bfId);
+        if (!fb) return null;
+        if (fb.attackerGeneralId === gid) return 'attacker';
+        if (fb.defenderGeneralId === gid) return 'defender';
+        return null;
     }
 
     /**
@@ -927,6 +977,39 @@ export class PlayerQuestSystem {
         const bfApi = this.deps.battlefields;
         if (!bfApi) return false;
 
+        // 🔴 [2026-09-19 主人令「也改成『先找该战场的武将对话、随他一起去』」]
+        //    剧本模式原来是把玩家**一个人**赶到战场坐标、到场才选边；
+        //    现在先去找**这一仗归属的那位武将**（战场事件的 `generalId`）：
+        //    走到他身边（在城里就进城、带兵在外就追出去）→ 触发对话 → 随他一起赶赴战场。
+        const owner = this.eventOwnerOfBattlefield(bf.id);
+        if (owner && !this.deps.hero.isAttached()) {
+            // 上次寻路失败还在冷却：不打断当前行程，先让玩家去找别的武将乱斗
+            const now2 = Date.now();
+            if (now2 < (this.bfRetryAfter.get(bf.id) ?? 0)) return false;
+            const name = getGeneralRecordByGeneralId(owner)?.generalName ?? '将军';
+            if (this.headingToEventGeneralId !== owner) {
+                const cityId = this.generalCityId(owner);
+                const army = this.armyOfGeneral(owner);
+                this.deps.hero.cancelTravel();
+                this.chaseCityId = army ? (cityId ?? null) : null;
+                const ok = army
+                    ? this.deps.hero.travelToArmy(army.id, name)
+                    : cityId
+                        ? this.deps.hero.travelToCity(cityId)
+                        : false;
+                if (ok) {
+                    this.headingToEventGeneralId = owner;
+                    this.bfRetryAfter.delete(bf.id);
+                    this.deps.notify(`🐎 先赴${name}军前，与他谈过再同赴【${title}】`);
+                    return true;
+                }
+                // 这位武将既不在城、也无在外军团（孤立无援）→ 冷却后回落「单骑赴战场」老路
+                this.bfRetryAfter.set(bf.id, now2 + BF_RETRY_COOLDOWN_MS);
+                return false;
+            }
+            return true;   // 正在赶去找他的路上，别重铺
+        }
+
         // 已经在前往该战场的路上，继续行军
         if (this.deps.hero.getTravelPointLabel() === title) {
             return true;
@@ -1150,6 +1233,8 @@ export class PlayerQuestSystem {
      * 与城中对话的区别只有一个 —— **不用起兵**，那支军团已经在打仗了，直接入伍即可。
      */
     public onMeetArmy(army: Army): void {
+        // 已经追上了 → 「赶去与武将碰头」这一轮作废
+        this.headingToEventGeneralId = null;
         const hero = this.deps.hero;
         if (hero.isAttached() || this.quest) return;
         const cityId = this.chaseCityId;
@@ -1265,6 +1350,31 @@ export class PlayerQuestSystem {
             (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId,
         ) ?? null;
     }
+
+    /** 这位武将的**本城**（据点锚定他的那座城）；找不到返回 null */
+    private generalCityId(generalId: string): string | null {
+        for (const c of this.deps.cityManager.getCities()) {
+            if (getCityAnchoredGeneral(c.id)?.generalId === generalId) return c.id;
+        }
+        return null;
+    }
+
+    /**
+     * 🔴 [2026-09-19 主人令「先找该战场的武将对话、随他一起去」]
+     * **这块战场归属哪位武将** —— 走 `findGeneralOfBattlefield`（数据层唯一口径）。
+     */
+    private eventOwnerOfBattlefield(bfId: string): string | null {
+        return findGeneralOfBattlefield(bfId, (id) => {
+            const c = this.deps.cityManager.getCity(id);
+            return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+        });
+    }
+
+    /**
+     * 剧本模式：正在赶去与哪位武将碰头（先谈、再随他赴战场）。
+     * 只用来避免每 400ms 重铺一次路；见到人（`onArrive` / `onMeetArmy`）即清空。
+     */
+    private headingToEventGeneralId: string | null = null;
 
     private pickAutoCity(): City | null {
         const candidates: City[] = [];
