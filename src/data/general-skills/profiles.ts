@@ -299,6 +299,14 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     //    1184 年前后正是他把源义经收为客将（义经 1185 年投奔平泉，秀衡临终命子泰衡庇护）；
     //    平泉坐拥砂金与良马，是当时日本仅次于京都的富庶政权，故普将档、逆势（偏安自守）· 善防。
     fujiwara_xiuheng: { generalId: 'fujiwara_xiuheng', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse' , attackStyle: 'defense'},
+    // 🔴 [2026-09-19 主人令「武将和精锐和据点必须契合，最好是此处据点的守将、为此处做出贡献的、
+    //    在此处镇守或当官、执行过任务也行」] **镰仓的守将必须是源赖朝**。
+    //    源赖朝（1147–1199）：1180 年于镰仓起兵、设**镰仓幕府**，此后十九年坐镇镰仓施政，
+    //    是整个源平合战的**总指挥**（义经、范赖都是他派出去的军势）。镰仓因他而成天下之中。
+    //    ⚠️ 源义经在镰仓**没有任何职守与贡献**（14 岁在镰仓寄居，一生征战在外），
+    //    故镰仓不挂义经 —— 与「常山赵云」同理，出生地/寄居地不算贡献。
+    //    名将档（开创幕府、建立武家政权）· 创势 · 双行（军政兼资）
+    gen_minamoto_yoritomo: { generalId: 'gen_minamoto_yoritomo', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_738', defAdvantageSkillId: 'ts_028', defBalanceSkillId: 'ts_638', defDisadvantageSkillId: 'ts_418', aptitude: 'create' , attackStyle: 'attack'},
 
 
 

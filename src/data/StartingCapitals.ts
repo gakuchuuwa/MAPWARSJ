@@ -316,6 +316,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     // 🔴 [2026-09-19 主人令] 源氏的据点是**镰仓**（源赖朝 1180 年设幕府之地）。
     //    原先暂借箱根关（因镰仓会撞 50km 门槛），现已按「两边据点各自微调」落地镰仓；
     //    箱根关已还给 sagami（北条氏康）。
+    // 🔴 [2026-09-19 主人质问「sagami 也是空势力，你没改回去吗」] **归位**：
+    //    把箱根关还给 sagami 时，漏了把本行锚定补回来（原被 `genji` 顶掉），
+    //    于是 sagami 成了「有据点、无首都锚定」的半残势力（全图仅此 1 处，已补）。
+    'sagami': 'city_hakone',
     'genji': 'city_kamakura',
     'so': 'city_tsushima',
     'kakizaki': 'city_katsuyama',
@@ -332,7 +336,14 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kaga_d': 'city_jianghu',
 'date_d': 'city_xiantai',
     'higo_d': 'city_xiongben',
-'iyo_d': 'city_songshan',
+    // 🔴 [2026-09-19 主人令「村上武吉换成源义经」] 松山（伊予国）改归**源氏·伊予**，
+    //    守将 = 源义经（1184 年一之谷后受任**伊予守**，伊予国即其守地，1185 年他在伊予忽那岛统水军）。
+    'genji_iyo': 'city_songshan',
+    // 🔴 [2026-09-19 主人「能岛／因岛能添加上吗」「同理 iyo_d 也是空势力，你没改回去吗」] **归位**：
+    //    村上武吉改驻其真本据**能岛城**（`city_noshima`），`iyo_d`（伊予）的锚定随城迁过去，
+    //    不再是「0 据点的空势力」（这是本轮自查出来的另一处半残）。
+    //    阵容保持原样未动：守将村上武吉、番号「伊予滩水军」T4。
+    'iyo_d': 'city_noshima',
     'otomo_d': 'city_funei',
     'suwa_d': 'city_gaodao',
 'iga_d': 'city_nabari',

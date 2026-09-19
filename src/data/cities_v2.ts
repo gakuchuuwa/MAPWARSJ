@@ -1223,7 +1223,24 @@ buildingStyle: 'JAPAN', troops: 10000,
     { id: 'city_xiantai', name: '青叶馆', factionId: 'date_d', lat: 38.27, lng: 140.87, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
     { id: 'city_xiongben', name: '熊本', factionId: 'higo_d', lat: 32.81, lng: 130.71, type: 'small_city', region: 'JAPAN', buildingStyle: 'JAPAN', troops: 10000, note: '肥后国治/加藤清正居城；江户时代城下町常住人口约4万-6万，为标准藩镇要地' },
-    { id: 'city_songshan', name: '松山', factionId: 'iyo_d', lat: 33.84, lng: 132.77, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
+    // 🔴 [2026-09-19 主人令「村上武吉换成源义经」「行就换」] 松山（伊予国）的守将改为**源义经**。
+    //    史实依据：1184 年一之谷后，兄长源赖朝为义经奏请**伊予守**，伊予国即其守地；
+    //    1185 年他确在伊予国忽那岛一带统率水军 —— 符合「在本处当官 / 执行过任务也行」。
+    //    故本城势力由 `iyo_d`（伊予·村上水军）改为 **`genji_iyo`（源氏·伊予）**，
+    //    守将随势力锚定 = 源义经。村上武吉则回其**真本据能岛城**（见下条），不再是「无城武将」。
+    // 🔴 [2026-09-19 主人质问「sagami 也是空势力，你没改回去吗」后自查] 松山为满足 50km 铁律微移：
+    //    新增能岛城（真址 34.18238,133.08109）后与松山仅 47.72km，不足 50km。
+    //    能岛是海岛、位移即失真，故只由松山一侧让位：沿「背离能岛」方向外移 3km
+    //    （33.84,132.77 → 33.8185,132.7505），仍在本松山市境内。
+    //    先例：箱根关西移 3km、高岛西移 7.7km、江户城东北移 9km（均为凑 50km，主人已认可的口径）。
+    //    移后松山最近邻：能岛城 50.7km / 吉田郡山 71.9km / 冈丰城 80.2km，全图无 <50km 的对。
+    { id: 'city_songshan', name: '松山', factionId: 'genji_iyo', lat: 33.8185, lng: 132.7505, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '伊予国松山；1184年后为源义经伊予守守地。为与能岛城保持≥50km，自 33.84,132.77 向西南微移 3km（仍在松山市境内）' },
+    // 🔴 [2026-09-19 主人「能岛／因岛能添加上吗」「同理 iyo_d 也是空势力，你没改回去吗」]
+    //    **能岛城** —— 村上武吉（能岛村上氏当主）的**真本据**，国指定史迹「能岛城迹」，
+    //    濑户内海村上水军三家的中枢；坐标为城迹真实位置（マピオン 能岛城迹 34.18237848,133.08109418），未做位移。
+    //    势力 `iyo_d`（伊予）由此恢复「有城」状态（此前松山让给源氏·伊予后成了空势力）。
+    //    注：能岛与因岛真实相距仅 15.86km，二岛只能取其一；取武吉本人的能岛。
+    { id: 'city_noshima', name: '能岛城', factionId: 'iyo_d', lat: 34.18238, lng: 133.08109, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '伊予国能岛；能岛村上氏（村上武吉）本据，国指定史迹能岛城迹，村上水军中枢' },
 
     { id: 'city_funei', name: '府内', factionId: 'otomo_d', lat: 33.24, lng: 131.61, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '丰后国府内；大友氏九州据地（府内为大友氏居城旧称）' },
     { id: 'city_gaodao', name: '高岛', factionId: 'suwa_d', lat: 36.0138, lng: 137.9662, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '信浓国诹访郡高岛；诹访氏中世本据（考据138.0515°E；与躑躅崎馆<50km，经度西移约7.7km）' },

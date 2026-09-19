@@ -205,6 +205,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'fujisi_fujiweng': 'antiquity',
     'fujiwara_yuanyijing': 'castle',
     'fujiwara_xiuheng': 'castle',
+    'gen_minamoto_yoritomo': 'castle',
     'fulijiya_maidasi': 'antiquity',
     'funan_fanman': 'antiquity',
     'fushi_wangmeng': 'antiquity',
