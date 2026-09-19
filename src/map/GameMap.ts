@@ -329,7 +329,8 @@ export class GameMap {
      */
     public updateTime(year: number) {
         this.currentYear = year;
-        this.battlefieldLayer?.setYear(year);
+        // 🔴 [2026-09-19 主人定] 战场图层不再按年份显示（「先不要时间这个限定条件了」），
+        //    故此处不再调 battlefieldLayer.setYear —— 战场一旦打过由 onBattlefieldFought 自己重绘。
         // Vector road updates removed
     }
 

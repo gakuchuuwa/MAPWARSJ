@@ -10,7 +10,7 @@
  * 军团一律走现成远征机制（expeditionTargetCityId + 行为树），本系统只发令、跟踪结果、收尾。
  */
 import type { Army } from '../legion/Army';
-import type { City } from '../types/core';
+import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { WAR_TYPES } from '../data/WarTypes';
@@ -22,15 +22,17 @@ import { getFactionCompositionSlots } from '../types/CultureFormations';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
-import { getEuclideanDistance } from '../core/DistanceUtils';
+import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
+import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
+import { findHistoricalEventOfGeneral } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
-export type PlayerQuestKind = 'restore' | 'campaign';
+export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
 
 export interface PlayerQuest {
     kind: PlayerQuestKind;
@@ -48,6 +50,21 @@ export interface PlayerQuest {
     targetCityName: string;
     /** 出征任务奖励精锐 */
     reward?: { name: string; unitKey: string };
+    /**
+     * 🔴 [2026-09-19 主人定] 只给 `kind: 'general_event'` 用 —— **这位武将的那一场史实战役**。
+     * 主人原话：「每个武将一个真实的历史事件」。战役的战场、坐标、胜负、兵力全在
+     * `HistoricalEventScript` + `Battlefields` 里（照搬，不在本系统里另存一份免得出现第二真源）。
+     */
+    event?: {
+        /** 战场 id（`bf_*`） */
+        battlefieldId: string;
+        /** 战场地名（标牌上那个） */
+        battlefieldName: string;
+        /** 战役全称，如【格拉尼库斯河战役】 */
+        title: string;
+        lat: number;
+        lng: number;
+    };
 }
 
 export interface DialogueOption {
@@ -103,8 +120,13 @@ export interface PlayerQuestDeps {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
         pushExpedition?(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void;
     };
-    /** 当前游戏年份（负 = 公元前）。 */
-    getYear: () => number;
+    /**
+     * 当前游戏年份（负 = 公元前）。
+     * 🔴 [2026-09-19 主人定] **本系统已不再读它** —— 「先不要时间这个限定条件了」，
+     *    武将触发、乱斗寻将、战场引导三条路都不看年份。字段保留为可选，只为将来若要用时不必再改接线；
+     *    GameApp 照旧传，不传也不影响。
+     */
+    getYear?: () => number;
     /**
      * 🔴 [2026-09-14 主人定] 战场玩法的接口（只用得着这三个，不整个 import 管理器免得绕成循环依赖）。
      */
@@ -199,6 +221,33 @@ export class PlayerQuestSystem {
             factionId: original,
             region: getCityRegion(city),
         });
+
+        // 🔴 [2026-09-19 主人定] **武将优先**：这位武将有归属他的史实战役 → 就是他请壮士同赴此役。
+        //    主人原话：「我希望和武将对话后，加入武将军团，然后触发事件任务。……
+        //      之前是时间来触发，我想改为找到武将后，第一次触发，每个武将一个真实的历史事件。」
+        //    排在复国/乱斗两条老路之前 —— 有史实的一律走史实，没配的才回落到原来的随机乱斗。
+        //    （主人：「一个一个武将写，先写名将，名将肯定都有，不是名将的玩家也不会找。」）
+        const ge = this.generalEventFor(g.generalId);
+        if (ge) {
+            const ev = this.describeGeneralEvent(ge);
+            if (ev) {
+                const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
+                const eliteName0 = getCityEliteLegionName(city.id) ?? `${g.generalName}部`;
+                this.deps.showDialogue({
+                    speaker: g.generalName,
+                    portrait,
+                    factionName,
+                    text: `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
+                        + `此战关系重大，某愿请壮士同往。破敌之日，当以「${eliteName0}」之战法相授。`,
+                    options: [
+                        { label: `⚔ 随${g.generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
+                        { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                    ],
+                });
+                return;
+            }
+        }
+
         if (city.factionId !== original) {
             const originalName = this.deps.cityManager.getFactionName(original);
             this.deps.showDialogue({
@@ -265,11 +314,16 @@ export class PlayerQuestSystem {
     public onBattlefieldClicked(bfId: string, bfName: string): void {
         const bfApi = this.deps.battlefields;
         if (!bfApi) return;
-        if (this.deps.hero.isAttached()) {
+        const battleTitle = this.getBattlefieldBattleTitle(bfId, bfName);
+        // 🔴 [2026-09-19 主人定] 玩家带着武将的军团赶到战场时**不再被「你正在军中」挡回**：
+        //    原先这里是不由分说 `if (hero.isAttached()) { notify('你正在军中…'); return; }`，
+        //    那是「玩家单骑点战场」那条老路的闸门。武将触发这条链上，玩家**本来就是随军来的** ——
+        //    跟着自己的主帅走到战场，理应能选边开打。
+        //    闸门保留原意（在军中不许另投一方），只放行一种情形：**这就是我随的这位武将的那一仗**。
+        if (this.deps.hero.isAttached() && !this.isFollowingGeneralEvent(bfId)) {
             this.deps.notify('你正在军中，随军出征，军团解散前不可另投一方');
             return;
         }
-        const battleTitle = this.getBattlefieldBattleTitle(bfId, bfName);
 
         // 先看「能不能打」里与距离无关的那些（打过了 / 主帅在外 / 已有战事）
         const hardBlock = bfApi.checkReady(bfId, undefined);
@@ -299,12 +353,23 @@ export class PlayerQuestSystem {
 
         const join = (side: 'attacker' | 'defender' | null) => {
             this.deps.closeDialogue();
+            // 已经在战场上了 → 清掉「正奔赴【XXX战役】」的标注，HUD 动向栏不再指着这里
+            // （单骑那条路由 travelToPoint 的抵达回调清；随军这条链没有那个回调，故在这里统一清）
+            this.deps.hero.setTravelPointLabel(null);
             // 先结束选边暂停，再开战；开战后战术场景会接管暂停，不能再解除，
             // 否则引擎已冻结而 GameAppLoop 不走战术 tick，画面会停在大地图。
             this.deps.ensureUnpaused();
             const msg = bfApi.start(
                 bfId,
                 ({ attacker, defender }) => {
+                    // 🔴 [2026-09-19 主人定] 战场上打的是**为这一仗生成的两支史实军团**，玩家先前随的
+                    //    那支「赶路军团」到这里就功成身退 —— 必须收掉，否则两件事同时出问题：
+                    //    ① 它身上还挂着这位武将（`army.generalId`），而战场准入要判「主帅在城，
+                    //       不能东边打完西边又打」（`HistoricalEventManager.isGeneralAvailable`）；
+                    //       不散掉这支军团，玩家自己跟着来的那一仗会被一句「主帅正率军在外」挡死。
+                    //    ② 它不属于战场玩法，不会随 `withdrawBattlefieldLegions` 班师，
+                    //       会变成棋盘上一支多出来的、没人管的军团。
+                    this.disposeHostMarchLegion();
                     if (!side) return;   // 只观战
                     const host = side === 'attacker' ? attacker : defender;
                     this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);
@@ -339,6 +404,8 @@ export class PlayerQuestSystem {
                         this.deps.hero.detach();
                         this.deps.notify('解甲归为单骑，可另寻他处');
                     }
+                    // 🔴 [2026-09-19 主人定] 武将触发的那条链，打完由这里收尾（战役名与结算一起报）
+                    this.finishGeneralEvent(bfId, battleTitle);
                     this.emitChange();
                 },
             );
@@ -358,6 +425,267 @@ export class PlayerQuestSystem {
                 { label: '告辞', onPick: () => this.deps.closeDialogue() },
             ],
         });
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // 武将的史实战役（🔴 2026-09-19 主人定，「一个武将一个真实的历史事件」）
+    //
+    // 主人原话：「我希望和武将对话后，加入武将军团，然后触发事件任务。
+    //   ……之前是时间来触发，我想改为找到武将后，第一次触发，每个武将一个真实的历史事件，
+    //   然后就随机。」
+    // 主人原话（乱斗）：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
+    //   还要写上时间，万一以后还要用。」
+    //
+    // 落点只有三条，其余全部复用现成的战场玩法：
+    //   ① 触发判据：`HistoricalEvent.generalId === 这位武将`（不看攻守主帅，也不看游戏年份）；
+    //   ② 行军：军团（host）自己沿路网开赴战场坐标，玩家随军（attach 后位置本来就跟军团走）；
+    //   ③ 开打：抵达后走**现成的** `onBattlefieldClicked` → 选边 → `startBattlefieldBattle`。
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 正在执行的那位武将的战役（供 `isFollowingGeneralEvent` 判「这就是我随的这位武将的那一仗」） */
+    private followingEventGeneralId: string | null = null;
+
+    /**
+     * 这位武将尚未打过的史实战役。
+     * 打完的（战场已点亮遗址）一律视作**他的事件已用掉** —— 主人定「第一次触发……然后就随机」，
+     * 于是他会回到乱斗（本函数返回 null，调用方回落 `startCampaign` / `joinMarchingArmy`）。
+     */
+    private generalEventFor(
+        generalId: string,
+    ): { event: HistoricalEvent; battlefieldId: string } | null {
+        if (!generalId) return null;
+        const hit = findHistoricalEventOfGeneral(generalId, (id) => {
+            const c = this.deps.cityManager.getCity(id);
+            return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+        });
+        if (!hit) return null;
+        return isBattlefieldFought(hit.battlefieldId) ? null : hit;
+    }
+
+    /**
+     * 把一条史实事件摊成界面要用的几样：战役名、战场地名、坐标、对手主帅名。
+     * 战场地名与坐标一律取自 `Battlefields`（**战场记录才是地名的真源**，标牌上显示的也是它）。
+     */
+    private describeGeneralEvent(
+        hit: { event: HistoricalEvent; battlefieldId: string },
+    ): {
+        title: string; battlefieldId: string; battlefieldName: string;
+        lat: number; lng: number; foeGeneralName: string | null;
+    } | null {
+        const bf = BATTLEFIELDS.find((b) => b.id === hit.battlefieldId);
+        if (!bf) return null;
+        const data = hit.event.siegeData ?? hit.event.fieldBattleData;
+        const atk = data?.attackerGeneralId ?? '';
+        const def = data?.defenderGeneralId ?? '';
+        // 对手＝不是我这位武将在打的那一位（本事件归我，故对手取另一方主帅）
+        const foeId = atk === hit.event.generalId ? def : atk;
+        return {
+            title: this.getBattlefieldBattleTitle(bf.id, bf.name),
+            battlefieldId: bf.id,
+            battlefieldName: bf.name,
+            lat: bf.lat,
+            lng: bf.lng,
+            foeGeneralName: foeId ? (getGeneralRecordByGeneralId(foeId)?.generalName ?? null) : null,
+        };
+    }
+
+    /** 玩家此刻随的这位武将，打的是不是这个战场（是 → 放行「在军中也能开打」） */
+    private isFollowingGeneralEvent(bfId: string): boolean {
+        const q = this.quest;
+        return !!q && q.kind === 'general_event' && q.event?.battlefieldId === bfId;
+    }
+
+    /**
+     * 入伍 + 接下这位武将的史实战役。
+     * @param army 已在野外的现成军团（野外会面走这条）；城内对话时为 null（自己起兵）
+     */
+    private joinGeneralEvent(
+        city: City,
+        g: { generalId: string; generalName: string; portrait: string },
+        ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number },
+        army: Army | null,
+    ): void {
+        this.deps.closeDialogue();
+        const host = army ?? this.raiseLegion(city, city.factionId, g, city.id);
+        if (!host) {
+            this.deps.notify('起兵失败（军团未能建立）');
+            return;
+        }
+        const factionId = host.getFactionId() || city.factionId;
+        const factionName = this.deps.cityManager.getFactionName(factionId);
+        const unitKey = this.mainUnitKeyOf(factionId, g.generalId);
+        this.quest = {
+            kind: 'general_event',
+            cityId: city.id,
+            cityName: city.name,
+            factionId,
+            factionName,
+            generalId: g.generalId,
+            generalName: g.generalName,
+            legionId: host.id,
+            // 「目标」不是据点而是战场：这两个字段照旧填，任务条/HUD 用的是 event.title
+            targetCityId: city.id,
+            targetCityName: ev.battlefieldName,
+            reward: unitKey ? { name: getCityEliteLegionName(city.id) ?? g.generalName, unitKey } : undefined,
+            event: {
+                battlefieldId: ev.battlefieldId,
+                battlefieldName: ev.battlefieldName,
+                title: ev.title,
+                lat: ev.lat,
+                lng: ev.lng,
+            },
+        };
+        this.followingEventGeneralId = g.generalId;
+        // 记一笔「这一仗还没打完、归属这位武将」：中途被打断（军团覆灭/离队）时靠它把战役接回来
+        this.pendingEventGeneralId = g.generalId;
+        if (!this.pendingEventOptions.includes(g.generalId)) this.pendingEventOptions.unshift(g.generalId);
+        // 🔴 随军：**先 attach 再驱动军团**。attach 之后玩家位置每帧跟着 host 走（PlayerHero.update），
+        //    所以只要把 host 送出去，玩家就在他身边，不需要另给玩家开一条「在军中还能自己走」的路。
+        this.deps.hero.joinFaction(factionId);
+        this.deps.hero.attachTo(host);
+        this.deps.ensureUnpaused();
+        // 🔴 钉住这支军团，不让 AI 行为树把它拉去攻别的城：本仗有**史实目标**，不是乱斗选目标。
+        //    走引擎既有的 `__scriptPinned`（AIController.tickArmy 第一句就 return）——
+        //    不新加任何开关，也不改行为树。
+        (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+        // 与剧本军同口径：赶路途中不主动与别人交战（免得半路被野战拦住去不了战场）
+        host.scriptMarchExempt = true;
+        // 起兵路径把「本城」写成了远征目标（`raiseLegion` 的入参语义）——本仗目标是**战场坐标**，
+        // 把这个目标清掉，免得 AI 或别处把它当成「要攻打自己这座城」。
+        host.expeditionTargetCityId = null;
+        this.armyMarchPoint = null;
+        this.startMarchToBattlefield(host, { lat: ev.lat, lng: ev.lng });
+        // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
+        this.deps.hero.setTravelPointLabel(ev.title);
+        this.startJourneyBriefing(BATTLEFIELDS.find((b) => b.id === ev.battlefieldId) ?? null, ev.title);
+        this.deps.notify(`⚔ 随${g.generalName}赴【${ev.title}】，战场在${ev.battlefieldName}`);
+        gameLog('expedition',
+            `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
+        this.emitChange();
+    }
+
+    /** 军团自己沿路网开赴战场坐标（玩家随军，位置跟着走） */
+    private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }): void {
+        if (!roadRegistry.isInitialized()) return;
+        const from = host.getPosition();
+        let path = roadRegistry.findPathOnRoad(from, target);
+        if (!path || path.length < 2) {
+            // 战场不是据点、不在路网上（波斯门深在扎格罗斯山里就是这种）→ 沿路网走到最近那座城，
+            // 最后一段直奔战场。与 `PlayerHero.travelToPoint` 同一套兜底，别再写第二套。
+            const anchor = roadRegistry.getNearestCityPos(target.lat, target.lng, 5);
+            if (anchor) {
+                const via = roadRegistry.findPathOnRoad(from, anchor);
+                if (via && via.length >= 2) path = [...via, target];
+            }
+        }
+        if (!path || path.length < 2) {
+            this.deps.notify(`无路可达【${this.quest?.event?.battlefieldName ?? '战场'}】`);
+            return;
+        }
+        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
+        host.setTargetCity(null);
+        host.setOnArriveCallback(() => this.onHostReachBattlefield());
+        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
+        this.armyMarchPoint = { lat: target.lat, lng: target.lng };
+    }
+
+    /** 军团抵达战场 → 弹选边（与点击战场同一条路，不另写开战逻辑） */
+    private onHostReachBattlefield(): void {
+        const q = this.quest;
+        if (!q || q.kind !== 'general_event' || !q.event) return;
+        this.armyMarchPoint = null;
+        this.onBattlefieldClicked(q.event.battlefieldId, q.event.battlefieldName);
+    }
+
+    /** 武将事件打完的收尾：战功 + 交付战法提示（战法本身由 onBattlefieldClicked 的授奖负责） */
+    private finishGeneralEvent(bfId: string, battleTitle: string): void {
+        const q = this.quest;
+        if (!q || q.kind !== 'general_event' || q.event?.battlefieldId !== bfId) return;
+        this.quest = null;
+        this.followingEventGeneralId = null;
+        this.armyMarchPoint = null;
+        // 这一仗打完了 → 这位武将的记事作废（主人定：第一次触发，之后就随机）
+        this.pendingEventGeneralId = null;
+        this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== q.generalId);
+        this.deps.hero.addMerit(500);
+        this.deps.notify(`🚩 【${battleTitle}】战毕，亲历此役，赏大功 500`);
+        gameLog('expedition', `[玩家] 武将史实战役战毕：【${battleTitle}】`);
+    }
+
+    /** 军团正在奔赴的战场坐标（抵达判定与失败重试用；null = 没在赶赴战场） */
+    private armyMarchPoint: { lat: number; lng: number } | null = null;
+
+    /**
+     * 未入伍时把「还没打完的那场武将战役」续上。
+     *
+     * 为什么要它：玩家在赶赴战场途中军团被灭/主动离队后，`quest` 就空了，
+     * 而战役还没打（遗址没点亮）。此时若按老规矩去乱斗选城，那场史实战役就再也接不上
+     * —— 主人定「第一次触发」，指的是**这一仗没打过就该还能打**，不是「接一次就作废」。
+     * 所以先找回那位武将（人在城里就去城、带兵在外就追出去），再走 `onArrive` / `onMeetArmy`
+     * 同一条对话链，由它们决定还是不是他那一仗。
+     *
+     * @returns true = 已经接手（调用方不要再另选目标）
+     */
+    private resumePendingGeneralEvent(): boolean {
+        const gid = this.pendingEventGeneralId;
+        if (!gid || this.pendingEventOptions.length === 0) return false;
+        if (this.deps.hero.autoPlan !== 'melee') return false;   // 剧本模式那条链由 checkAndTriggerNextBattlefield 负责
+        if (this.deps.hero.isTraveling()) return true;           // 正在赶路，别打断
+        // 从「最后谈过的那位武将」往回找，找到第一个还在场的就重新去谈
+        while (this.pendingEventOptions.length) {
+            const id = this.pendingEventOptions.shift()!;
+            const cityId = [...this.deps.cityManager.getCities()]
+                .find((c) => getCityAnchoredGeneral(c.id)?.generalId === id)?.id;
+            if (!cityId) continue;
+            const army = this.armyOfGeneral(id);
+            if (army) {
+                this.chaseCityId = cityId;
+                if (this.deps.hero.travelToArmy(army.id, getGeneralRecordByGeneralId(id)?.generalName ?? '将军')) return true;
+            }
+            this.chaseCityId = null;
+            if (this.deps.hero.travelToCity(cityId)) return true;
+        }
+        this.pendingEventGeneralId = null;
+        return false;
+    }
+
+    /** 随军赶赴战场途中的每拍维护：HUD 动向栏 + 播报续念 + 卡住时续路 */
+    private followPendingGeneralEvent(): void {
+        const q = this.quest;
+        if (!q?.event) return;
+        this.deps.hero.setTravelPointLabel(q.event.title);
+        const host = this.deps.legionManager.getLegionById(q.legionId);
+        if (!host || !this.armyMarchPoint) return;
+        // 🔴 卡住续路：军团若因故停住（被野战打断、复员等）而人还没到战场，就重新铺一次路，
+        //    免得玩家被永远钉在半路。重铺有冷却，不会每 400ms 刷屏。
+        const atTarget = getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= 3;
+        if (atTarget || host.isMarching()) return;
+        const now = Date.now();
+        if (now < this.marchRetryAfter) return;
+        this.marchRetryAfter = now + 10_000;
+        this.startMarchToBattlefield(host, this.armyMarchPoint);
+    }
+
+    /** 续路冷却（与战场寻路冷却同口径，避免每拍重铺） */
+    private marchRetryAfter = 0;
+    /** 武将战役被中断后，还能去找回的那几位武将（最近谈过的在前；用掉即清） */
+    private pendingEventGeneralId: string | null = null;
+    private pendingEventOptions: string[] = [];
+
+    /**
+     * 收掉「赶路军团」：仗一开打，随玩家赶路的那支军团就没用了（战场上用的是新生成的史实军团）。
+     * 只在**确实是武将史实战役那条链**上动手 —— 乱斗出征/复国两条老路的军团照旧不动。
+     *
+     * 不清空玩家对它的引用：`attachTo` 紧接在后面把玩家挂到战场那支军团上，
+     * 万一没挂上（选了观战），`PlayerHero.update` 会走「军团没了 → onHostLost」那条现成的清理路。
+     */
+    private disposeHostMarchLegion(): void {
+        const q = this.quest;
+        if (!q || q.kind !== 'general_event') return;
+        const host = this.deps.legionManager.getLegionById(q.legionId);
+        if (!host || host.isDestroyed) return;
+        host.disband();
+        gameLog('expedition', `[玩家] 赶路军团 ${host.name} 归队解散（战场改用史实军团）`);
     }
 
     /** 沿路网 BFS 最近敌城（跳数优先，同跳取直线最近）；找不到就全图直线最近敌城 */
@@ -515,17 +843,21 @@ export class PlayerQuestSystem {
 
     /**
      * 寻找下一个待触发的历史战场：
-     * 1. 发生年份已到（bf.scriptYear <= currentYear）
-     * 2. 战场未打过（!isBattlefieldFought(bf.id)）
-     * 按发生年份由先到后排序（-334 -> -333 -> -332 -> -331...）
+     * 1. 战场未打过（`!isBattlefieldFought(bf.id)`）
+     * 2. 按发生年份由先到后排序（-334 -> -333 -> -332 -> -331…）
+     *
+     * 🔴 [2026-09-19 主人定] **删掉「发生年份已到（`bf.scriptYear <= currentYear`）」这条过滤**。
+     *    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
+     *    还要写上时间，万一以后还要用，就不要再写了。」
+     *    于是「剧本模式」这条自动引导不再看游戏年份，剩下的判据只有「打没打过」；
+     *    `scriptYear` 字段与编辑器里的年代**照旧保留**（主人：万一以后还要用）。
      */
     public findNextAvailableBattlefield(): { bf: BattlefieldData; title: string } | null {
         const bfApi = this.deps.battlefields;
         if (!bfApi) return null;
-        const currentYear = this.deps.getYear();
 
         const available = BATTLEFIELDS
-            .filter((bf) => bf.scriptYear <= currentYear && !isBattlefieldFought(bf.id))
+            .filter((bf) => !isBattlefieldFought(bf.id))
             .sort((a, b) => a.scriptYear - b.scriptYear);
 
         if (!available.length) return null;
@@ -583,8 +915,14 @@ export class PlayerQuestSystem {
      * 🔴 [2026-09-16 主人定] 赶路背景播报：玩家**在奔赴战场的路上**逐段播这场仗的背景。
      * 空行分段，按各段字数保留阅读时间；抵达、改道或入伍时停止。
      * 同一个战场只播一次（`briefedBattlefields`），中途改道或再次触发都不重播。
+     *
+     * 🔴 [2026-09-19] 多一个 `titleOverride`：**武将触发**那条链上玩家是**随军**赶路
+     *   （`hero.isAttached() === true`），而下面的 `stillHeading` 有一道「未入伍才算在路上」的闸门
+     *   —— 那是给「单骑点战场」写的。若照旧判 `isAttached`，跟随武将时说第一段就会被掐断。
+     *   故随军赴战场时由调用方传 override，改用「HUD 动向栏还挂着这个战役名」判在不在路上。
      */
-    private startJourneyBriefing(bf: BattlefieldData): void {
+    private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string): void {
+        if (!bf) return;
         const text = bf.briefing?.trim();
         if (!text) return;
         if (this.briefedBattlefields.has(bf.id)) return;
@@ -595,11 +933,10 @@ export class PlayerQuestSystem {
 
         this.clearJourneyBriefing();
         let i = 0;
-        const title = this.getBattlefieldBattleTitle(bf.id, bf.name);
+        const title = titleOverride ?? this.getBattlefieldBattleTitle(bf.id, bf.name);
         // 玩家还在赶这个战场的路上才继续念（改道/入伍/到了都停）
-        const stillHeading = () => this.deps.hero.isTraveling()
-            && !this.deps.hero.isAttached()
-            && this.deps.hero.getTravelPointLabel() === title;
+        const stillHeading = () => this.deps.hero.getTravelPointLabel() === title
+            && (titleOverride ? true : !this.deps.hero.isAttached());
 
         const pushNext = () => {
             if (this.briefingCancelled) return;
@@ -670,6 +1007,12 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
+        // 🔴 [2026-09-19 主人定] **武将优先**：未入伍时若身上还有一场没打完的武将史实战役，
+        //    接着赶赴那个战场（赶路途中解散/失败/改道后能自动续上），而不是另选一座城。
+        //    判据只有一条：这场战役还没打过（`isBattlefieldFought`）—— 主人定「第一次触发……然后就随机」。
+        if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
+            if (this.resumePendingGeneralEvent()) return;
+        }
         // 🔴 [2026-09-16 主人定]
         // 玩家未加入势力（未入伍、无任务）时：
         // 优先前往历史战场触发战役事件；
@@ -686,6 +1029,24 @@ export class PlayerQuestSystem {
         }
         const q = this.quest;
         if (!q) return;
+
+        // 🔴 武将史实战役：目标不是据点，而是**战场坐标**，故成败判据与出征/复国两条不同
+        if (q.kind === 'general_event' && q.event) {
+            this.followPendingGeneralEvent();
+            const host = this.deps.legionManager.getLegionById(q.legionId);
+            if (!host || host.isDestroyed || host.getTroops() <= 0) {
+                this.deps.notify(`❌ 军团覆灭，未能抵达【${q.event.title}】`);
+                gameLog('expedition', `[玩家] 武将史实战役中断：${q.event.title}`);
+                this.quest = null;
+                this.followingEventGeneralId = null;
+                this.armyMarchPoint = null;
+                // 留下「这位武将那一仗还没打」的记事，好让自动模式把他找回来续上（见 resumePendingGeneralEvent）
+                this.pendingEventGeneralId = q.generalId;
+                if (!this.pendingEventOptions.includes(q.generalId)) this.pendingEventOptions.unshift(q.generalId);
+                this.emitChange();
+            }
+            return;
+        }
 
         const target = this.deps.cityManager.getCity(q.targetCityId);
         if (target && target.factionId === q.factionId) {
@@ -759,10 +1120,31 @@ export class PlayerQuestSystem {
             factionId,
             region: getCityRegion(city),
         });
+        // 🔴 [2026-09-19 主人定] 野外会面同城中对话一个口径：这位武将若有归属他的史实战役，
+        //    谈的就是那一仗（主人：「和武将对话后，加入武将军团，然后触发事件任务」）。
+        //    军团现成的，直接随他奔赴战场，不起兵。
+        const ge = this.generalEventFor(gid);
+        if (ge) {
+            const ev = this.describeGeneralEvent(ge);
+            if (ev) {
+                const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
+                this.deps.showDialogue({
+                    speaker: generalName,
+                    portrait,
+                    factionName,
+                    text: `壮士竟寻到军中来了。某正提兵赴【${ev.title}】，将于${ev.battlefieldName}与${foe}决战。`
+                        + `军旅之中不便设宴，壮士便随某同去——破敌之日，功劳簿上少不了你。`,
+                    options: [
+                        { label: `⚔ 就此随${generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? '' }, ev, army) },
+                        { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                    ],
+                });
+                return;
+            }
+        }
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         const targetName = target?.name ?? '前方敌城';
-        const goalText = `往【${targetName}】`;
         const eliteName = getCityEliteLegionName(city.id) ?? `${generalName}部`;
         this.deps.showDialogue({
             speaker: generalName,

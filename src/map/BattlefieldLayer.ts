@@ -2,19 +2,17 @@ import L from 'leaflet';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
-import { GameConfig } from '../config/GameConfig';
 
 /**
  * 战场图层 —— 🔴 [2026-09-12 主人定] 战场**不是据点**，是一块独立的地名，
  * 「**类似奇观**」（`src/map/MonumentLayer.ts`）：自己的 pane、自己的图层开关、自己的数据表
  * （`src/data/Battlefields.ts`），**不进 `cityManager.getCities()`**。
  *
- * ── 显示规矩（主人 2026-09-12 / 2026-09-16） ─────────────────────────
- *   「**按年份显示**」：
- *   · 未到年份（`currentYear < bf.scriptYear`）：不上图
- *   · 达到年份后：
- *     - **开战前**：**只显示地名**（不显示战场形态）
- *     - **打完**：地名 + **战场形态**（拒马 / 尸体 / 骨骸 / 火把 / 牲口骸骨 / 栅栏木堆 / 残破战旗）
+ * ── 显示规矩（主人 2026-09-12 / 2026-09-16 / 2026-09-19） ────────────
+ *   · **开战前**：**只显示地名**（不显示战场形态）
+ *   · **打完**：地名 + **战场形态**（拒马 / 尸体 / 骨骸 / 火把 / 牲口骸骨 / 栅栏木堆 / 残破战旗）
+ *   · 🔴 [2026-09-19 主人定] **取消「按年份显示」**：主人原话「现在游戏是乱斗，所有先不要时间
+ *     这个限定条件了」——任何战场一律上图（`bf.scriptYear` 保留在数据里，不再参与判定）。
  *   形态的布局数学在 `./battlefieldMorphology.ts`（与 `public/_citytest.html` 逐行同源）。
  *
  * ── 血脉教训（为什么独立） ────────────────────────────────────────────
@@ -31,7 +29,6 @@ export class BattlefieldLayer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
-    private currentYear: number = GameConfig.TIME.TIMELINE_START_YEAR;
 
     constructor(map: L.Map) {
         this.map = map;
@@ -66,22 +63,18 @@ export class BattlefieldLayer {
         this.map.getPane('battlefieldPane')?.style.setProperty('--battlefield-scale', String(scale));
     }
 
-    /** 同步游戏年份：跨年时刷新战场显示（未到年份的战场随时间推移逐步上图） */
-    public setYear(year: number): void {
-        if (this.currentYear === year) return;
-        this.currentYear = year;
-        this.renderBattlefields();
-    }
-
-    /** 重绘全部战场（打完标记变化、跨年或手动刷新时调） */
+    /** 重绘全部战场（打完标记变化、手动刷新时调） */
     public renderBattlefields(): void {
         this.layerGroup.clearLayers();
         this.markers.clear();
 
         for (const bf of BATTLEFIELDS) {
-            // 🔴 [2026-09-16 主人定] 未到发生年份的战场不上图（例如 -334 显示格拉尼库斯河，-333 才显示伊苏斯）
-            if (this.currentYear < bf.scriptYear) continue;
-
+            // 🔴 [2026-09-19 主人定] **取消「未到年份不上图」**。
+            //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
+            //    还要写上时间，万一以后还要用，就不要再写了。」
+            //    改之前是 2026-09-16 那条「未到发生年份的战场不上图」，与「武将触发」相冲：
+            //    玩家在 -334 年就可能跟着某位武将奔赴一场史实战役，战场却因为年份没到压根不在图上。
+            //    `bf.scriptYear` 字段**保留**（数据里照旧填），只是不再参与显示判定。
             const fought = isBattlefieldFought(bf.id);
             const html = this.buildBattlefieldHtml(bf, fought);
 

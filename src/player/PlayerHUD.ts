@@ -306,7 +306,11 @@ export class PlayerHUD {
         const questText = quest
             ? (quest.kind === 'restore'
                 ? `助${quest.generalName}复国【${quest.cityName}】`
-                : `随${quest.generalName}攻【${quest.targetCityName}】`)
+                // 🔴 [2026-09-19 主人定]「战场名称要写为XXX战役」——武将的那场史实战役照这条走，
+                //    显示战役全称（如【格拉尼库斯河战役】），不显示战场地名给玩家当任务名。
+                : quest.kind === 'general_event' && quest.event
+                    ? `随${quest.generalName}赴【${quest.event.title}】`
+                    : `随${quest.generalName}攻【${quest.targetCityName}】`)
             : travelPoint
                 ? `奔赴【${travelPoint}】`
                 : '到据点找武将';

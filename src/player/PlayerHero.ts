@@ -354,6 +354,19 @@ export class PlayerHero {
     public getChaseGeneralName(): string | null { return this.chaseGeneralName; }
     public getTravelCityId(): string | null { return this.travelCityId; }
     public getTravelPointLabel(): string | null { return this.travelPointLabel; }
+    /**
+     * 🔴 [2026-09-19 主人定] 由玩家任务系统设置/清除「正奔赴哪个战役」的标注。
+     *
+     * 与 `travelToPoint` 的分工：那条路是**玩家单骑**去战场，标注由它自己写、抵达回调自己清；
+     * 而「跟随武将赴史实战役」这条链上玩家是**随军**（`hostLegionId` 非空、位置每帧跟着军团走），
+     * 走不了 `travelToPoint`（它开头就挡「你正在军中」），标注只能由外部代写 ——
+     * 写的是同一个字段，HUD 动向栏与赶路播报读的也是同一个字段，**不另造第二套状态**。
+     */
+    public setTravelPointLabel(label: string | null): void {
+        if (this.travelPointLabel === label) return;
+        this.travelPointLabel = label;
+        this.emitChange();
+    }
 
     public onChange(fn: () => void): void { this.changeListeners.add(fn); }
     private emitChange(): void { for (const fn of this.changeListeners) fn(); }

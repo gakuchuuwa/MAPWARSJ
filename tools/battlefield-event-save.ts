@@ -27,6 +27,11 @@ export interface BattlefieldEventDraft {
     bfBriefing: string;
     year: number;
     season: number;
+    /**
+     * 🔴 [2026-09-19 主人定] 这场战役**归属哪位武将**（「一个武将一个真实的历史事件」）。
+     * 写进 `HistoricalEvent.generalId`；留空 = 不归属（字段不写入，行为与加它之前一致）。
+     */
+    generalId?: string;
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -223,6 +228,29 @@ function patchFields(
     return { text: out, objEnd: end };
 }
 
+/**
+ * 从对象体里**删掉**某个本层字段（连同它那一行）。
+ * 与 `patchFields` 配套：有值走 patch（就地换值、保行尾注释），清空了走这里。
+ * 🔴 为什么必须能删：`generalId` 清空后若只在有值时替换，旧武将名会一直留在数据里，
+ *    表现为「编辑器里明明清空了，游戏里还认这位武将」，是最难查的那类不一致。
+ */
+function removeField(
+    text: string,
+    objStart: number,
+    objEnd: number,
+    key: string,
+): string {
+    const indent = indentOf(text, objStart, objEnd);
+    const needle = '\n' + indent + key + ':';
+    const at = text.indexOf(needle, objStart);
+    if (at < 0 || at >= objEnd) return text;
+    const valueEnd = fieldValueEnd(text, at + needle.length, objEnd);
+    let lineEnd = valueEnd;
+    // 连同行尾注释一起吃掉，再连换行与行尾逗号
+    while (lineEnd < text.length && text[lineEnd] !== '\n') lineEnd++;
+    return text.slice(0, at) + text.slice(lineEnd);
+}
+
 // ── 新建路径：生成完整条目 ───────────────────────────────────────────
 
 function buildBattlefieldEntry(d: BattlefieldEventDraft): string {
@@ -249,6 +277,8 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     L.push('    {');
     L.push(`        year: ${d.year},`);
     L.push(`        season: ${d.season},`);
+    // 🔴 [2026-09-19 主人定] 归属武将（「一个武将一个真实的历史事件」）；留空不写。
+    if (d.generalId) L.push(`        generalId: ${tsStr(d.generalId)},`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -408,6 +438,11 @@ export function saveBattlefieldEvent(
                 ['title', tsStr(d.eventTitle || d.title)],
                 ['description', tsStr(d.description)],
             ];
+            // 🔴 [2026-09-19 主人定] 归属武将：有值的走 topFields（就地换值、保注释），
+            //    清空了的**必须真删字段** —— 否则旧武将一直留在数据里，
+            //    表现为「编辑器里清空了，游戏里还认这位武将」，是最难查的那类不一致。
+            //    ⚠️ 删除必须放在 patchFields **之后**按新位置做（patch 会移动下标）。
+            if (d.generalId) topFields.push(['generalId', tsStr(d.generalId)]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -416,11 +451,20 @@ export function saveBattlefieldEvent(
             }
             const p1 = patchFields(scBefore, hit.start, hit.end, topFields);
 
+            // 🔴 [2026-09-19 主人定] 归属武将被清空时：**真把这个字段删掉**。
+            //    放在 patch 之后做 —— 删除会抹掉行尾注释与换行，而 patch 是就地换值，
+            //    两者互不干扰，但删除必须用 patch 之后的新下标（patch 会移动位置）。
+            //    为什么非删不可：只在有值时替换的话，旧武将永远留在数据里，
+            //    表现为「编辑器里清空了，游戏里还认这位武将」，是最难查的那类不一致。
+            const p1Text = d.generalId
+                ? p1.text
+                : removeField(p1.text, hit.start, p1.objEnd, 'generalId');
+
             // 再进战斗数据块改里层字段（位置在 p1 之后要重新定位）
-            const innerStart = p1.text.indexOf(`${dataKey}: {`, hit.start);
+            const innerStart = p1Text.indexOf(`${dataKey}: {`, hit.start);
             if (innerStart < 0) throw new Error('定位不到战斗数据块：' + dataKey);
-            const braceAt = p1.text.indexOf('{', innerStart + dataKey.length);
-            const braceEnd = matchBraceEnd(p1.text, braceAt);
+            const braceAt = p1Text.indexOf('{', innerStart + dataKey.length);
+            const braceEnd = matchBraceEnd(p1Text, braceAt);
             if (braceEnd < 0) throw new Error('战斗数据块括号不配对');
 
             const innerFields: Array<[string, string]> = [
@@ -449,7 +493,7 @@ export function saveBattlefieldEvent(
             if (d.attackerLegionName) innerFields.push(['attackerLegionName', tsStr(d.attackerLegionName)]);
             if (d.defenderLegionName) innerFields.push(['defenderLegionName', tsStr(d.defenderLegionName)]);
 
-            scText = patchFields(p1.text, braceAt, braceEnd, innerFields).text;
+            scText = patchFields(p1Text, braceAt, braceEnd, innerFields).text;
             scMode = 'update';
         } else {
             scText = insertEntry(scBefore, SC_DECL, buildScriptEntry(d), yearFromScriptBody, d.year);
