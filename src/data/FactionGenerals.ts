@@ -465,7 +465,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     borjigin: { generalId: 'borjigin_tuolei', generalName: '拖雷', portrait: '/assets/STEPPE/borjigin_tuolei.png' },
     zhadalan: { generalId: 'zhadalan_zhamuhe', generalName: '札木合', portrait: '/assets/STEPPE/zhadalan_zhamuhe.png' },
     zhuerqi: { generalId: 'zhuerqi_sachabieqi', generalName: '撒察别乞', portrait: '/assets/STEPPE/zhuerqi_sachabieqi.png' },
-    chechen: { generalId: 'chechen_chechenhanshuolei', generalName: '硕垒', portrait: '/assets/STEPPE/chechen_chechenhanshuolei.png' },
+    chechen: { generalId: 'chechen_chechenhanshuolei', generalName: '硕垒', portrait: '/assets/STEPPE/chechen_shuolei.png' },
     tumengken: { generalId: 'tumengken_tumengken', generalName: '图蒙肯', portrait: '/assets/STEPPE/tumengken_tumengken.png' },
     bayegu: { generalId: 'bayegu_qulishi', generalName: '屈利失', portrait: '/assets/STEPPE/bayegu_qulishi.png' },
     zubu: { generalId: 'zubu_mogusi', generalName: '磨古斯', portrait: '/assets/STEPPE/zubu_mogusi.png' },

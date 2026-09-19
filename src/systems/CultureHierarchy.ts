@@ -259,7 +259,17 @@ for (const g of LAYER3_CUSTOM_GROUPS) {
 
 // 兼容别名与历史值
 ALL_BRANCHES_MAP['NORTH'] = ALL_BRANCHES_MAP['CENTRAL'];
-ALL_BRANCHES_MAP['HEXI'] = ALL_BRANCHES_MAP['WESTERN'];
+/* 🔴 [2026-09-18 主人定「青海（河湟）归东亚、套用 DE 契丹建筑」时清掉的历史别名]
+ *   原为 `ALL_BRANCHES_MAP['HEXI'] = ALL_BRANCHES_MAP['WESTERN']`（把河西当西域）。
+ *   它与游戏自己那两张表**直接打架**（实测）：
+ *     · cityDeStyle.REGION_TO_DE_STYLE['HEXI'] = 'ASIA'      → 游戏按【东亚】素材渲染
+ *     · deCastleAssets.REGION_CASTLE['HEXI'] = 'KHIT_CASTLE_AGE3' → 河西的险要城堡是【契丹】辽式边墙要塞
+ *     · CultureBase16.HEXI = 'CENTRAL' → 经 REGION_TO_DE_STYLE['CENTRAL']='ASIA' 同样落到东亚
+ *   留着它 → 玉门关/姑臧/青海 8 座在编辑器里显示成「中亚 CEAS · 西域」，
+ *   而游戏里画的是东亚素材 + 契丹城堡 —— 「看着和游戏不一致」就是这么来的。
+ *   清掉后：region='HEXI' 不再当分支，分支由 buildingStyle 决定（河西据点写的是 KHITAN 契丹）→
+ *   一级 由 toBase16Style(HEXI→CENTRAL→ASIA) 得【东亚】，与游戏完全一致。
+ *   ⚠️ 未写 buildingStyle 的 HEXI 据点则由 REGION_TO_BRANCH['HEXI']='CENTRAL' 推出二级【华夏】。 */
 ALL_BRANCHES_MAP['STEPPE'] = ALL_BRANCHES_MAP['MONGOL'];
 ALL_BRANCHES_MAP['WEST_ASIA'] = ALL_BRANCHES_MAP['TURKS'];
 ALL_BRANCHES_MAP['OTTOMAN'] = ALL_BRANCHES_MAP['TURKS'];
@@ -312,12 +322,17 @@ export function resolveCityHierarchy(city: { buildingStyle?: string; region?: st
     let branchName: string | null = null;
     let base: Base16StyleKey = 'ASIA';
 
-    // 1. 先看 region 是否是 59 或 3
-    if (reg && ALL_BRANCHES_MAP[reg.toUpperCase()]) {
-        branchKey = reg.toUpperCase();
-    } else if (bs && ALL_BRANCHES_MAP[bs.toUpperCase()] && !BASE16_STYLES.some(s => s.key === bs.toUpperCase())) {
-        // buildingStyle 填了 59/3 分支名（如 JIANGNAN, WEI, MOBEI_MONGOL）
+    // 1. 🔴 [2026-09-18 主人「必须一套数据」] **与游戏同序：buildingStyle 优先**。
+    //    游戏侧 resolveCityDeBuildingStyle 就是「显式 buildingStyle 优先，否则按 region 兜底」；
+    //    本函数原来反过来（region 优先）→ 实测 174 座据点里，编辑器显示的二级与战场实际用的不同，
+    //    其中 33 座连一级素材都不一样（例：卡法 数据 buildingStyle=LATIN 意大利，
+    //    但 region 里留着 STEPPE，编辑器就显示"草原"，而游戏画的是地中海素材）。
+    if (bs && ALL_BRANCHES_MAP[bs.toUpperCase()] && !BASE16_STYLES.some(s => s.key === bs.toUpperCase())) {
+        // buildingStyle 填了 59/3 分支名（如 JIANGNAN, WEI, MOBEI_MONGOL, KHITAN）→ 以它为准
         branchKey = bs.toUpperCase();
+    } else if (reg && ALL_BRANCHES_MAP[reg.toUpperCase()]) {
+        // buildingStyle 是 16 母体（或没写）→ 再看 region 是否是 62 类键
+        branchKey = reg.toUpperCase();
     }
     // 1.5 🔴 [2026-09-18 主人报障「选了一个据点，怎么不显示二级或者三级？」
     //     与**游戏同源**：region 不是 62 类键时，用游戏权威表 REGION_TO_BRANCH 推出二级。

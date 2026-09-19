@@ -1067,11 +1067,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -3
         },
-        "/assets/STEPPE/__闲置__CENTRAL_23.png": {
-            "scale": 0.81,
-            "offsetX": 0,
-            "offsetY": 0
-        },
         "/assets/HEXI/erzhu_erzhurong.png": {
             "scale": 0.98,
             "offsetX": 0,
@@ -1616,11 +1611,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": -9
-        },
-        "/assets/STEPPE/chechen_chechenhanshuolei.png": {
-            "scale": 0.83,
-            "offsetX": 0,
-            "offsetY": 11
         },
         "/assets/STEPPE/dingling_weilu.png": {
             "scale": 1.22,
@@ -7911,6 +7901,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": 3
+        },
+        "/assets/STEPPE/__闲置__STEPPE_94.png": {
+            "scale": 0.83,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/STEPPE/chechen_shuolei.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/STEPPE/chechen_chechenhanshuolei.png": {
+            "scale": 0.81,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
