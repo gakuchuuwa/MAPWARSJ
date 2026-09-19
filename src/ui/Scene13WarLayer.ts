@@ -2151,7 +2151,6 @@ const FLANK_TYPES = new Set([
     'woad_raider', 'elite_woad_raider',
     'ibirapema_warrior', 'elite_ibirapema_warrior',
     'companion_cavalry', 'elite_companion_cavalry',  // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
-    'keshik', 'elite_keshik',        // 🔴 [2026-09-17 主人定] 鞑靼怯薛军：成吉思汗迂回包抄（野狐岭/三峰山）
     'kona', 'elite_kona',            // 🔴 [2026-09-17 主人定] 马普切科纳勇士：劳塔罗伏击奇袭（图卡佩尔）
 ]);
 
@@ -2175,7 +2174,6 @@ const FLANK_TYPES = new Set([
  */
 const FLANK_LIMITED_TYPES = new Set([
     'companion_cavalry', 'elite_companion_cavalry',
-    'keshik', 'elite_keshik',        // 怯薛军成建制迂回，等同伙伴骑兵（冲击型，受「一万一次」配额）
     'kona', 'elite_kona',            // 科纳勇士成建制奇袭，等同伙伴骑兵（冲击型，受「一万一次」配额）
 ]);
 /** 每多少兵力给一次绕后配额（主人 2026-09-17：一万兵力一次） */
@@ -6745,6 +6743,14 @@ export class Scene13WarLayer {
      */
     private applyRandomCollapseForms(): void {
         for (const b of this.wallGates) {
+            // 🔴 [2026-09-18 主人定] **已经破掉的墙/门不再参与这次保底坍塌**（只修「同一个门塌两次」，
+            //    血量一律不动）：30 秒前被攻城武器打穿的城门（`hp<=0`、DESTR 倒塌动画已播完、停在 `_RUBBLE`）
+            //    若在这里再走一遍城门分支，`collapseToRubble` 会把 asset 重新指回 `DESTR`、帧归 0 ——
+            //    画面上就是「城门塌了两次」。石墙段同理：已打到 D75 残垣的会被改回 D50，等于自行「修好」一档。
+            //    跳过之后，30 秒这一下只处理**还立着**的墙/门（原来的 40% 完整 / 60% 坍塌比例不变）。
+            //    ⚠️ 判据绝不能加 `obstructionDisabled`：collapseFrontWalls() 在调本函数**之前**就已把
+            //    全体 wallGates 的 obstructionDisabled 置 true（解除阻挡），拿它判会把整排墙全跳过。
+            if (b.hp <= 0 || b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) continue;
             const r = Math.random();
             if (r < 0.4) continue;   // 40% 保持完整
             if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
