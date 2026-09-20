@@ -3378,15 +3378,16 @@ export interface PassMountainConfig {
     y?: number;
     scale?: number;
     flip?: boolean;
+    northAsset?: string;
+    northX?: number;
+    northY?: number;
+    northScale?: number;
+    northFlip?: boolean;
 }
 
 export class Scene13WarLayer {
-    /** [2026-09-20 主人方案 C 定稿] 关隘城门大山配置（enabled 为 undefined 时自动走 isMountainPass 判定） */
-    public passMountainConfig: PassMountainConfig = {
-        asset: 'MOUNTAIN_05',
-        scale: 1.2,
-        flip: false,
-    };
+    /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
+    public passMountainConfig: PassMountainConfig = {};
     private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
     private active = false;
@@ -5282,13 +5283,20 @@ export class Scene13WarLayer {
             );
 
             if (shouldSpawnMountain) {
-                const mAsset = this.passMountainConfig.asset || 'MOUNTAIN_05';
+                const MOUNTAIN_POOL = [
+                    'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05',
+                    'MOUNTAIN_06', 'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
+                ];
+                const pickRandomMountain = () => MOUNTAIN_POOL[Math.floor(Math.random() * MOUNTAIN_POOL.length)];
+
+                // 1. 南翼大山（默认从 11 种大山中随机抽取样式，支持翻转）
+                const mAsset = this.passMountainConfig.asset || pickRandomMountain();
                 this.ensureNatureAsset(mAsset);
                 // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
                 const mX = this.passMountainConfig.x ?? (wallFrontX + 230);
                 const mY = this.passMountainConfig.y ?? (botWallY + 230);
                 const mScale = this.passMountainConfig.scale ?? 1.2;
-                const mFlip = this.passMountainConfig.flip ?? false;
+                const mFlip = this.passMountainConfig.flip ?? (Math.random() > 0.5);
                 this.decorSprites.push({
                     asset: mAsset,
                     frame: 0,
@@ -5298,6 +5306,30 @@ export class Scene13WarLayer {
                     layer: 'world',
                     z: 0,
                     scale: mScale,
+                    indestructible: true,
+                    obstruction: { x: 2.2, y: 1.8 },
+                    obstructionContactSec: 0,
+                    obstructionTouched: false,
+                    obstructionDisabled: false,
+                });
+
+                // 2. 北翼大山（上方「两山夹一关」天险，默认从 11 种大山中随机抽取样式）
+                const northAsset = this.passMountainConfig.northAsset || pickRandomMountain();
+                this.ensureNatureAsset(northAsset);
+                // 默认坐标：严格置于战场北翼斜城墙背侧上端，绝不遮挡北城门通道与冲锋交战路线
+                const nX = this.passMountainConfig.northX ?? (wallFrontX + 230);
+                const nY = this.passMountainConfig.northY ?? (topWallY - 210);
+                const nScale = this.passMountainConfig.northScale ?? 1.2;
+                const nFlip = this.passMountainConfig.northFlip ?? (Math.random() > 0.5);
+                this.decorSprites.push({
+                    asset: northAsset,
+                    frame: 0,
+                    x: nX,
+                    y: nY,
+                    flip: nFlip,
+                    layer: 'world',
+                    z: 0,
+                    scale: nScale,
                     indestructible: true,
                     obstruction: { x: 2.2, y: 1.8 },
                     obstructionContactSec: 0,
@@ -6832,7 +6864,8 @@ export class Scene13WarLayer {
             //    全体 wallGates 的 obstructionDisabled 置 true（解除阻挡），拿它判会把整排墙全跳过。
             if (b.hp <= 0 || b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) continue;
             const r = Math.random();
-            if (r < 0.4) continue;   // 40% 保持完整
+            // 🔴 [2026-09-20 主人定] 城门必坍塌：城门（STONE_GATE）跳过 40% 保持完整的随机，30 秒时必塌
+            if (b.key !== 'STONE_GATE' && r < 0.4) continue;   // 40% 保持完整（城门除外）
             if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
                 const destr = b.destrAssets;   // [D25, D50, D75]
                 if (destr) {
