@@ -71,6 +71,7 @@
 | [H. 战略行军一顿一顿（进行中）](#h) | 缩放窗口内长任务 50~322ms 连片，**归因未定** | 待探针自动 dump |
 | [I. 玩家移动时战略画面卡](#i) | `getImageData` 独占 46% CPU（瓦片解码漏 `willReadFrequently`）+ 抠绿 PNG 往返 + 旗号文字集中生成 | 长任务 20365 → **6513ms**；最坏 712 → **313ms** |
 | [J. 战术模式很肉·一顿一顿](#j) | DE 素材白跑抠绿：判据 0 命中，却付 PNG 重编码 + 二次解码，单线程 Worker 串行排队 | 一场 39.4s 攻城战 `frames:0`、退场 `pending:78` → 跳过空操作 |
+| [K. 行军过程中持续有延迟感](#k) | 跟拍每帧 `panBy` → Leaflet 每帧完整 fire `moveend`，15 个「按移动结束写」的监听器每秒跑 38 遍 | moveend 758→**158** 次/20s；监听器 794→**100ms**；gapP90 32.5→**21.5ms** |
 
 ---
 
@@ -471,3 +472,105 @@ createImageBitmap → DechromaWorker(getImageData → 逐像素 → putImageData
 **验收**：打一场 13 攻城战，读 `scratch/scene13_probe_latest.json`：
 `perf.frames` 必须 > 0（不再是 0），`events` 里应出现 `assetsReady` 且不再有 `assetTimeout`。
 
+---
+
+<a id="k"></a>
+## K. 行军过程中持续有延迟感 —— 跟拍把 `moveend` 打成了每帧事件（2026-09-20）
+
+**主人报障**：「我感觉玩家在移动的过程中有延迟」。
+
+### 先排除掉的三个「像是真凶」的方向
+
+这轮一开始有三份分析各指一个方向，实测**全部不成立**，记下来防止重走：
+
+| 说法 | 实测 | 结论 |
+|---|---|---|
+| 相机滞后 400~657 米 = 橡皮筋拖拽感 | zoom9 实测 **1px ≈ 250m**（见 `GameAppLoop` 头注），400m = **1.6 像素**；120m 死区 = **0.5 像素** | ❌ 眼睛看不见 1.6px。且实机报告 `cameraFreezeJump: 0` |
+| 镜头一半帧不动、然后跳一格 = 量化 bug | 那正是**案例 C 修好之后应有的样子**（残差攒够 1px 走一格，平均速度精确等于请求速度） | ❌ 把疗效当病症 |
+| GC 停顿 | 实机 `heap.used 610 / limit 4192MB`（15%），57 个长任务里 `gc.matchedLongTasks: **1**` | ❌ 56/57 是同步计算，不是 GC |
+
+另外一并量到的「不是瓶颈」：
+
+- **画布渲染**：`perfDoctor.auditCanvas(4000)` 全部画布加起来只有 **5.6 ms/秒**；
+- **寻路**：20 秒内 `runDijkstra` 真实计算 16 次 / 合计 13ms，LRU 命中率 90.1%，**零淘汰**；
+- **Scene13 空转**：战略行军 15 秒内 `render` 调用 **0 次**（profile 里那 206ms 是真有战斗在打）；
+- **瓦片解码**：已有逐帧预算队列，415ms/30s ≈ 1.4% CPU。
+
+### 真凶
+
+跟拍镜头靠每帧 `panBy` 推进（案例 C 的亚像素残差版），而 **Leaflet 的 `panBy` 每调一次就完整
+fire 一轮 `movestart` / `move` / `moveend`**。
+
+`moveend` 的语义是「移动结束了」，挂在它上面的监听器 —— 整屏瓦片预取、各图层按视口刷新 ——
+全都是按「这事很少发生」写的。跟拍把它变成了**每帧事件**：
+
+实测（`scratch/audit_moveend.mjs`，zoom8 行军 20 秒）：
+
+| 量 | 数 |
+|---|---|
+| 帧数 | 931 |
+| `movestart` / `move` / `moveend` | 各 **758** 次（81% 的帧都在 fire 一整轮）|
+| `moveend` 监听器 | **15 个** |
+| 监听器总调用 | **11,370 次** |
+| 监听器总耗时 | **794ms / 20s ≈ 4% CPU** |
+
+全部集中在移动期间 —— 所以症状是「**一移动就顿、停下就好**」。
+
+> 这条其实早就写在 `TileDecoder.ts` 头注里了（「跟拍镜头每帧 panBy，Leaflet 每次都 fire moveend，
+> 而 LandSeaSystem 在 moveend 上挂着整个视口的瓦片预取」），当时只针对瓦片那一家做了预算队列，
+> **没人回头看 moveend 上还挂着另外 14 个监听器**。
+
+### 修法
+
+`GameAppLoop.panByThrottledMoveEnd()`：跟拍平移期间把 `moveend` **节流**到 100ms 一次
+（38 次/秒 → 10 次/秒），并在镜头停稳后用 trailing 补发一次，保证下游一定看到最终视口。
+
+⚠️ **不能直接吞掉**：Leaflet 自己的 `GridLayer` 也听 `moveend` 拉瓦片，全吞会让长途行军期间
+底图永远不加载（连续行军时「停下」这个时刻根本不到来）。所以是**节流**，不是**屏蔽**。
+
+⚠️ `move` 事件**照常逐帧 fire** —— 画布层（`syncCanvas` / `onCanvasFollow`）靠它按帧对齐位置，吞了会错位。
+
+### 前 → 后（无头 Chrome，同一条行军路线）
+
+| 量 | 修前 | 修后 |
+|---|---|---|
+| 20 秒内帧数 | 931 | **1076**（+15.6%）|
+| `moveend` 触发 | 758 次 | **158 次**（−79%）|
+| 监听器调用 | 11,370 次 | **2,370 次**（−79%）|
+| 监听器耗时 | 794ms | **100ms**（−87%）|
+| 帧间隔 p50 | 19.7ms | **16.6ms**（满 60fps）|
+| 帧间隔 p90 | 32.5ms | **21.5ms**（−34%）|
+| 帧间隔 p99 | 94.1ms | **52.5ms**（−44%）|
+| 最长帧 | 231.3ms | **132.6ms**（−43%）|
+| 长任务 | 10 个 / 886ms | **4 个 / 383ms**（−57%）|
+
+### 🔴 验收脚本（改跟拍或 moveend 相关代码必须重跑）
+
+```
+node scratch/audit_moveend.mjs        # moveend 触发次数与监听器耗时
+node scratch/audit_march_latency.mjs  # 帧间隔 p50/p90/p99 + 长任务
+```
+
+判据：`moveend` 触发次数应显著低于帧数（约 1/6），`gapP90` 应 ≤ 22ms。
+
+### 尚未修的一条（已定位，风险较高）
+
+`CombatSystem.startRegionalBattle` 在**跟拍军团卷入战斗**那一瞬间同步花 **109.4ms**：
+
+```
+startRegionalBattle 总计          峰值 109.4ms
+  └ onRegionalBattleStart(UI回调)  峰值 108.8ms   ← 几乎全部
+       └ scene13War.start              65.4ms
+       └ combatUI.showRegional         36.8ms
+            └ resetBattleOverlays      31.4ms（内含一次强制同步重排 void offsetWidth）
+  └ new BattleField + 其余         峰值   4.1ms   ← 战场构造本身不贵
+```
+
+规模无关（实测那场是 **1v1**）。`showRegional` 在 `if (eligible)` **之外**，所以即使这场仗
+不够格进战术层、人还在战略地图上，也照样付这 37ms。
+
+未修原因：那 4 处 `void offsetWidth` 是**有意的**（注释写明要把归位与缓动分成两帧），
+硬拆会破坏动画契约；且强制重排多半只是把浏览器本来就要做的布局**提前**到同一帧，
+不一定真省。要动需要先做 A/B 实测。
+
+探针：`scratch/audit_battle_init.mjs`、`scratch/audit_ui_cb.mjs`、`scratch/audit_ai_tick.mjs`。

@@ -87,6 +87,65 @@ function resetFollowPanResidual(): void {
     followPanResidual.y = 0;
 }
 
+/**
+ * 🔴 [2026-09-20 修「行军过程中持续有延迟感」] 跟拍平移的 `moveend` **节流**。
+ *
+ * 病灶（实测，不是推测）：跟拍靠每帧 `panBy` 推镜头，而 Leaflet 的 `panBy` 每调一次就
+ * 完整 fire 一轮 `movestart` / `move` / `moveend`。`moveend` 的语义是「移动结束了」，
+ * 挂在它上面的监听器（整屏瓦片预取、各图层按视口刷新…）全都是按「这事很少发生」写的，
+ * 结果在行军期间**每秒被触发 38 次**。
+ *
+ * 实测（`scratch/audit_moveend.mjs`，zoom8 行军 20 秒 / 931 帧）：
+ *   movestart 758 次 · move 758 次 · moveend 758 次  —— 81% 的帧都在 fire 一整轮；
+ *   moveend 监听器 15 个 × 758 次 = **11370 次调用 / 794ms / 20s ≈ 4% CPU**，
+ *   且全部集中在移动期间 —— 正是主人报的「一移动就顿、停下就好」。
+ *
+ * ⚠️ 不能直接吞掉 moveend：Leaflet 自己的 GridLayer 也听它来拉瓦片，全吞会让长途行军
+ *    期间底图永远不加载（连续行军时「停下」这个时刻根本不到来）。所以是**节流**不是**屏蔽**：
+ *    移动期间按 `MOVEEND_THROTTLE_MS` 放行（38 次/秒 → 10 次/秒），并在平移停下后
+ *    用 trailing 补发一次，保证「最终状态」一定被下游看到。
+ *
+ * `move` 事件照常逐帧 fire —— 画布层（syncCanvas / onCanvasFollow）靠它按帧对齐位置，吞了会错位。
+ * 回归脚本：`node scratch/audit_moveend.mjs`（需先起 dev server）。
+ */
+const MOVEEND_THROTTLE_MS = 100;
+let lastMoveEndFiredAt = 0;
+let moveEndTrailingTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** 按整像素平移，并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
+function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
+    const now = performance.now();
+    const due = now - lastMoveEndFiredAt >= MOVEEND_THROTTLE_MS;
+
+    type Firer = { fire: (type: string, data?: unknown, propagate?: boolean) => unknown };
+    const anyMap = map as unknown as Firer;
+    const origFire = anyMap.fire;
+    let swallowed = false;
+
+    if (!due) {
+        anyMap.fire = function (this: Firer, type: string, data?: unknown, propagate?: boolean) {
+            if (type === 'moveend') { swallowed = true; return this; }
+            return origFire.call(this, type, data, propagate);
+        };
+    }
+    try {
+        map.panBy(pt, { animate: false });
+    } finally {
+        anyMap.fire = origFire;
+    }
+    if (due) lastMoveEndFiredAt = now;
+
+    // trailing：镜头停稳后一定补发一次，保证下游拿到最终视口（瓦片预取、图层刷新都依赖它）
+    if (swallowed) {
+        if (moveEndTrailingTimer !== null) clearTimeout(moveEndTrailingTimer);
+        moveEndTrailingTimer = setTimeout(() => {
+            moveEndTrailingTimer = null;
+            lastMoveEndFiredAt = performance.now();
+            map.fire('moveend');
+        }, MOVEEND_THROTTLE_MS);
+    }
+}
+
 /** 累积亚像素残差后按整像素平移；1px 内停稳，且绝不越过目标反向修正。 */
 function panByAccumulated(
     map: L.Map,
@@ -118,7 +177,7 @@ function panByAccumulated(
     followPanResidual.x = settleX ? 0 : Math.max(-0.499, Math.min(0.499, fx - ix));
     followPanResidual.y = settleY ? 0 : Math.max(-0.499, Math.min(0.499, fy - iy));
     // 都是 0 就别调 panBy —— 省掉一次 pane transform + move 事件广播
-    if (ix !== 0 || iy !== 0) map.panBy(L.point(ix, iy), { animate: false });
+    if (ix !== 0 || iy !== 0) panByThrottledMoveEnd(map, L.point(ix, iy));
 }
 /**
  * 🔴 [2026-09-05 修「人物移动一顿一顿」] 单帧时间步：**下限 0、上限 0.1**。
