@@ -5289,7 +5289,7 @@ export class Scene13WarLayer {
                 ];
                 const pickRandomMountain = () => MOUNTAIN_POOL[Math.floor(Math.random() * MOUNTAIN_POOL.length)];
 
-                // 1. 南翼大山（默认从 11 种大山中随机抽取样式，支持翻转）
+                // 1. 南翼大山（默认从 11 种大山中随机抽取样式，支持翻转；纯贴图不卡兵）
                 const mAsset = this.passMountainConfig.asset || pickRandomMountain();
                 this.ensureNatureAsset(mAsset);
                 // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
@@ -5307,13 +5307,13 @@ export class Scene13WarLayer {
                     z: 0,
                     scale: mScale,
                     indestructible: true,
-                    obstruction: { x: 2.2, y: 1.8 },
+                    obstruction: undefined,
                     obstructionContactSec: 0,
                     obstructionTouched: false,
-                    obstructionDisabled: false,
+                    obstructionDisabled: true,
                 });
 
-                // 2. 北翼大山（上方「两山夹一关」天险，默认从 11 种大山中随机抽取样式）
+                // 2. 北翼大山（上方「两山夹一关」天险，默认从 11 种大山中随机抽取样式；纯贴图不卡兵）
                 const northAsset = this.passMountainConfig.northAsset || pickRandomMountain();
                 this.ensureNatureAsset(northAsset);
                 // 默认坐标：严格置于战场北翼斜城墙背侧上端，绝不遮挡北城门通道与冲锋交战路线
@@ -5331,10 +5331,10 @@ export class Scene13WarLayer {
                     z: 0,
                     scale: nScale,
                     indestructible: true,
-                    obstruction: { x: 2.2, y: 1.8 },
+                    obstruction: undefined,
                     obstructionContactSec: 0,
                     obstructionTouched: false,
-                    obstructionDisabled: false,
+                    obstructionDisabled: true,
                 });
             }
 
