@@ -109,13 +109,33 @@ function resetFollowPanResidual(): void {
  * 回归脚本：`node scratch/audit_moveend.mjs`（需先起 dev server）。
  */
 const MOVEEND_THROTTLE_MS = 100;
+/**
+ * 🔴 位移闸门：距上次放行的 moveend 已累计平移这么多像素，就**立刻放行**，不等时间片。
+ *
+ * 理由（实测，见 `scratch/audit_tile_during_march.mjs` 的 A/B）：纯时间节流在**高速行军**
+ * 时会让底图跟不上 —— 对照组（每帧 moveend）「最长零新瓦片间隔」194ms，纯时间节流版
+ * 恶化到 **2804ms**，加载率<60% 的采样也从 5/84 翻倍到 10/83。
+ * 瓦片是**按距离**失效的，不是按时间，所以闸门也该按距离开。
+ * 取 128px = 半块瓦片（Leaflet 瓦片 256px）：镜头挪过半块就该让下游重新算视口。
+ * 慢速漂移时这个闸门不会触发，仍由时间节流省下 CPU。
+ */
+const MOVEEND_DISTANCE_PX = 128;
 let lastMoveEndFiredAt = 0;
+/** 距上次放行 moveend 以来累计的平移像素（曼哈顿距离，够用且不必开方） */
+let panPxSinceMoveEnd = 0;
 let moveEndTrailingTimer: ReturnType<typeof setTimeout> | null = null;
 
 /** 按整像素平移，并把逐帧 moveend 收敛成「节流 + 停稳补发」。 */
 function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     const now = performance.now();
-    const due = now - lastMoveEndFiredAt >= MOVEEND_THROTTLE_MS;
+    // DEV A/B 量具：`__moveEndNoThrottle = true` 退回改前行为（每帧都 fire moveend），
+    // 用于同一次运行内对照（惯例同 TileDecoder.__tileDecodeNoBudget）。
+    // 回归脚本：scratch/audit_tile_during_march.mjs 用它跑对照组。
+    panPxSinceMoveEnd += Math.abs(pt.x) + Math.abs(pt.y);
+    const due = (import.meta.env.DEV
+        && (window as unknown as { __moveEndNoThrottle?: boolean }).__moveEndNoThrottle)
+        || now - lastMoveEndFiredAt >= MOVEEND_THROTTLE_MS
+        || panPxSinceMoveEnd >= MOVEEND_DISTANCE_PX;   // 高速行军：挪够半块瓦片立刻放行
 
     type Firer = { fire: (type: string, data?: unknown, propagate?: boolean) => unknown };
     const anyMap = map as unknown as Firer;
@@ -133,7 +153,14 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
     } finally {
         anyMap.fire = origFire;
     }
-    if (due) lastMoveEndFiredAt = now;
+    if (due) {
+        lastMoveEndFiredAt = now;
+        panPxSinceMoveEnd = 0;
+        // 🔴 本帧真发了一次 moveend，它已经带着最新视口到达下游 —— 之前被吞的那些所排的
+        //    trailing 就失效了，必须撤掉。不撤的话 100ms 后会再空放一次（下游按「移动结束」
+        //    重跑一轮瓦片预取 / 图层刷新，约 2~3ms 白烧）。
+        if (moveEndTrailingTimer !== null) { clearTimeout(moveEndTrailingTimer); moveEndTrailingTimer = null; }
+    }
 
     // trailing：镜头停稳后一定补发一次，保证下游拿到最终视口（瓦片预取、图层刷新都依赖它）
     if (swallowed) {
@@ -141,6 +168,7 @@ function panByThrottledMoveEnd(map: L.Map, pt: L.Point): void {
         moveEndTrailingTimer = setTimeout(() => {
             moveEndTrailingTimer = null;
             lastMoveEndFiredAt = performance.now();
+            panPxSinceMoveEnd = 0;
             map.fire('moveend');
         }, MOVEEND_THROTTLE_MS);
     }
