@@ -1612,11 +1612,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/donghu_tuiyin.png": {
-            "scale": 0.89,
-            "offsetX": 0,
-            "offsetY": 2
-        },
         "/assets/STEPPE/gaoche_afuzhiluo.png": {
             "scale": 0.84,
             "offsetX": 0,
@@ -5642,11 +5637,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -4
         },
-        "/assets/STEPPE/__闲置__STEPPE_58.png": {
-            "scale": 0.97,
-            "offsetX": 0,
-            "offsetY": 1
-        },
         "/assets/STEPPE/dafeichuan_murongnuohebo.png": {
             "scale": 0.93,
             "offsetX": 0,
@@ -7921,6 +7911,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.21,
             "offsetX": -7,
             "offsetY": 0
+        },
+        "/assets/STEPPE/__闲置__STEPPE_95.png": {
+            "scale": 0.89,
+            "offsetX": 0,
+            "offsetY": 2
+        },
+        "/assets/STEPPE/donghu_tuiyin.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": 1
         }
     },
     "folderGuides": {
