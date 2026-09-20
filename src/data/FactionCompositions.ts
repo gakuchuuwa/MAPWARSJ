@@ -102,7 +102,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "zhengzhou": {
-        legionName: "帝国时代蒙古军团",
+        legionName: "封建时代隋唐军团",
         legionType: "sub",
     },
     "yao": {

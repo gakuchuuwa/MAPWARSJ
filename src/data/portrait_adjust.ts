@@ -947,11 +947,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -14
         },
-        "/assets/CENTRAL/zhengzhou_chenqingzhi.png": {
-            "scale": 0.91,
-            "offsetX": 0,
-            "offsetY": -28
-        },
         "/assets/CENTRAL/yaozhou_limaozhen.png": {
             "scale": 0.99,
             "offsetX": 0,
@@ -7852,11 +7847,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -17
         },
-        "/assets/NORTH/__闲置__NORTH_07.png": {
-            "scale": 1.21,
-            "offsetX": -7,
-            "offsetY": 0
-        },
         "/assets/NORTH/linhu_mafang.png": {
             "scale": 0.9,
             "offsetX": 0,
@@ -7921,6 +7911,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.94,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/CENTRAL/__闲置__CENTRAL_65.png": {
+            "scale": 0.91,
+            "offsetX": 0,
+            "offsetY": -28
+        },
+        "/assets/NORTH/zhengzhou_chenqingzhi.png": {
+            "scale": 1.21,
+            "offsetX": -7,
+            "offsetY": 0
         }
     },
     "folderGuides": {

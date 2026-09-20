@@ -791,7 +791,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/litang/lingzhou_puguhuaien.png' },
     ningkou: { generalId: 'ningkou_liling', generalName: '李陵', portrait: '/assets/liuhan/ningkou_liling.png' },
     juqu_d: { generalId: 'juqu_d_juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/HEXI/juqu_d_juqumengxun.png' },
-        zhengzhou: { generalId: 'zhengzhou_chenqingzhi', generalName: '陈庆之', portrait: '/assets/CENTRAL/zhengzhou_chenqingzhi.png' },
+        zhengzhou: { generalId: 'zhengzhou_chenqingzhi', generalName: '陈庆之', portrait: '/assets/NORTH/zhengzhou_chenqingzhi.png' },
     sunqin: { generalId: 'sunqin_sunchuanting', generalName: '孙传庭', portrait: '/assets/CENTRAL/sunqin_sunchuanting.png' },
     hongnong_jun: { generalId: 'hongnong_jun_yangsu', generalName: '杨素', portrait: '/assets/CENTRAL/hongnong_jun_yangsu.png' },
 
