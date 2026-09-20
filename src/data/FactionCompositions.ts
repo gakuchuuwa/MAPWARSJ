@@ -29,6 +29,10 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    "hepan": {
+        legionName: "封建时代隋唐军团",
+        legionType: "sub",
+    },
     "aiduoniya": {
         legionName: "古典时代斯巴达军团",
         legionType: "sub",
