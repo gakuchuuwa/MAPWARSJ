@@ -50,6 +50,11 @@ san10pk_99026/
 
 # Large data files and models
 *.geojson
+# 例外：VectorRiverLayer 是**游戏运行时**唯一依赖的矢量源（GameMap.ts:602 fetch 它）。
+# 被 *.geojson 挡在库外 → 线上 checkout 里没有这个文件 → 请求落到 SPA 兜底拿回 index.html，
+# 控制台报 `Failed to load vector rivers`，线上整张地图一条河都没有（2026-09-22 查实）。
+# 已 `git add -f` 纳入跟踪；其余 geojson（道路/海路）只有编辑器用，线上不需要，继续挡着。
+!public/assets/ne_10m_rivers_lake_centerlines.geojson
 *.traineddata
 close_cities_report.json
 *.pdf
