@@ -26,7 +26,9 @@ import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/Hist
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
+import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
 import { isBattlefieldFought } from './battlefieldState';
+import { resolveEventStartCityId, type StartEventInfo, type StartCity } from './scriptEventStart';
 import { roadRegistry } from '../roads/RoadRegistry';
 
 /** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
@@ -116,7 +118,12 @@ export class ScriptCityVisibility {
         if (current) {
             const eraIdx = ERA_ORDER.indexOf(eraOfYear(current.year));
             const absent = new Set(current.absentCities ?? []);
+            const curYear = current.year;
             for (const c of cities) {
+                // 🔴 [2026-09-23 主人定「添加一个建立年代，到了年代据点再显示」]
+                //    建立年代晚于当前事件年份的据点，还没到它登场的年代，不上图。
+                const founded = CITY_FOUNDED_YEAR[c.id];
+                if (founded !== undefined && founded > curYear) continue;
                 const g = getCityAnchoredGeneral(c.id);
                 const era = g ? getGeneralEra(g.generalId) : undefined;
                 if (era && ERA_ORDER.indexOf(era) <= eraIdx && !absent.has(c.id)) out.add(c.id);
@@ -138,7 +145,7 @@ export class ScriptCityVisibility {
         cityAt: Map<string, string>,
         out: Set<string>,
     ): void {
-        const startId = ev.startCityId ?? (ev.generalId ? cityOfGeneral.get(ev.generalId) : undefined);
+        const startId = scriptEventStartCityId(ev, this.getCities()) ?? (ev.generalId ? cityOfGeneral.get(ev.generalId) : undefined);
         const start = startId ? pos.get(startId) : undefined;
         if (!start) return;
         const data = ev.siegeData ?? ev.fieldBattleData;
@@ -173,7 +180,7 @@ export class ScriptCityVisibility {
         for (const gid of [ev.generalId, data?.attackerGeneralId, data?.defenderGeneralId]) {
             if (gid) add(cityOfGeneral.get(gid));
         }
-        add(ev.startCityId);
+        add(scriptEventStartCityId(ev, this.getCities()));
         add(data?.attackerSourceCityId);
         add(ev.fieldBattleData?.defenderSourceCityId);
         add(ev.siegeData?.defenderCityId);
@@ -196,9 +203,38 @@ export function findCurrentScriptEventCity(cities: City[]): City | null {
         const bfId = resolveEventBattlefieldId(ev, (id) => pos.get(id));
         if (!bfId || isBattlefieldFought(bfId)) continue;
         if (!ev.generalId) return null;
-        // 有「军团出发据点」就生在那里，否则在归属武将本城
-        if (ev.startCityId) return cities.find((c) => c.id === ev.startCityId) ?? null;
+        // 有「军团出发据点」（写明的，或上一场打完的地方）就生在那里，否则在归属武将本城
+        const startId = scriptEventStartCityId(ev, cities);
+        if (startId) return cities.find((c) => c.id === startId) ?? null;
         return cities.find((c) => getCityAnchoredGeneral(c.id)?.generalId === ev.generalId) ?? null;
     }
     return null;
+}
+
+// ── 军团出发据点（与编辑器同口径，见 scriptEventStart.ts）────────────────────
+function toStartInfo(ev: HistoricalEvent, cityPos: (id: string) => { lat: number; lng: number } | undefined): StartEventInfo {
+    const siegeCityId = ev.type === 'siege' && !ev.siegeData?.targetBattlefieldId ? ev.siegeData?.defenderCityId : undefined;
+    const bfId = resolveEventBattlefieldId(ev, cityPos);
+    const bf = bfId ? BATTLEFIELDS.find((b) => b.id === bfId) : undefined;
+    const point = (siegeCityId ? cityPos(siegeCityId) : undefined)
+        ?? ev.fieldBattleData?.location ?? (bf ? { lat: bf.lat, lng: bf.lng } : null);
+    return {
+        generalId: ev.generalId ?? '', year: ev.year, season: ev.season ?? 0,
+        startCityId: ev.startCityId, absentCities: ev.absentCities, point, siegeCityId,
+    };
+}
+const startCache = new WeakMap<HistoricalEvent, string | null>();
+/**
+ * 这一场归属武将的军团从哪座城出发：事件写了就用；没写就从他上一场打完的地方；他的第一场 → null（用他本城）。
+ */
+export function scriptEventStartCityId(ev: HistoricalEvent, cities: readonly City[]): string | null {
+    if (startCache.has(ev)) return startCache.get(ev)!;
+    const pos = new Map(cities.map((c) => [c.id, { lat: c.latitude, lng: c.longitude }]));
+    const cityPos = (id: string) => pos.get(id);
+    const infos = new Map(HISTORICAL_EVENT_SCRIPT.map((e) => [e, toStartInfo(e, cityPos)]));
+    const list: StartCity[] = cities.map((c) => ({ id: c.id, lat: c.latitude, lng: c.longitude }));
+    const r = resolveEventStartCityId(infos.get(ev) ?? toStartInfo(ev, cityPos), [...infos.values()], list);
+    const id = r?.cityId ?? null;
+    if (cities.length) startCache.set(ev, id);   // 据点表还没加载时别把空结果记住
+    return id;
 }
