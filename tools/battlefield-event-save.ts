@@ -647,9 +647,19 @@ export function saveBattlefieldEvent(
             //    表现成「编辑器里明明选了推罗这座城，游戏里还是去打野战场」——
             //    与 `generalId` 清空不删字段是同一类最难查的不一致，故同样真删。
             let p2Text = innerPatched.text;
+            // 删一处后里层对象的结尾下标会前移，每次删之前按当前文本重算一次
+            const innerEndNow = () => matchBraceEnd(p2Text, braceAt);
             if (isSiege) {
                 const staleKey = d.bfTargetBattlefieldId ? 'defenderCityId' : 'targetBattlefieldId';
-                p2Text = removeField(p2Text, braceAt, innerPatched.objEnd, staleKey);
+                p2Text = removeField(p2Text, braceAt, innerEndNow(), staleKey);
+            }
+            // 🔴 [2026-09-23 血训 · 同一类] **行军航点清空也必须真删**。
+            //    原先只在 `d.marchWaypoints.length` 非空时才写这个字段（见上面 innerFields），
+            //    空的时候一个字都不写 → `patchFields` 只增改不删 → 旧航点原样留在数据里：
+            //    编辑器里航点已删光、还报了「已保存」，游戏里军团照旧绕去那座旧航点。
+            //    实测：前332推罗把航点从「阿卡」改成「拉塔基亚」再清空，数据里仍是 `['city_latajiya']`。
+            if (!d.marchWaypoints.length) {
+                p2Text = removeField(p2Text, braceAt, innerEndNow(), 'marchWaypoints');
             }
             scText = p2Text;
             scMode = 'update';
