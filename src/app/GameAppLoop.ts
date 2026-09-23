@@ -81,6 +81,8 @@ function followLerpFactor(deltaSeconds: number): number {
  */
 const followPanResidual = { x: 0, y: 0 };
 let lastFollowPanArmyId: string | null = null;
+/** 本帧战斗场景生命周期（battleScene.tick）是否已经跑过（见 tickGameAppFrame 末尾的兜底） */
+let battleSceneTickedThisFrame = false;
 
 function resetFollowPanResidual(): void {
     followPanResidual.x = 0;
@@ -333,6 +335,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
 }
 
 export function tickGameAppFrame(app: GameApp, timestamp: number): void {
+    battleSceneTickedThisFrame = false;
     const rawDelta = (timestamp - app.lastFrameTime) / 1000;
     const deltaTime = clampFrameDelta(rawDelta);
     if (timestamp > app.lastFrameTime) app.lastFrameTime = timestamp;
@@ -562,6 +565,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     // 场景激活 → 不跑战略地图跟拍/自动缩放，只维护战斗场景生命周期。
                     resetFollowPanResidual();
                     app.battleScene?.tick();
+                    battleSceneTickedThisFrame = true;
                     // [2026-08-11 战败停留] 13 演出已停（战斗结束、画面冻结在待命态）时，
                     // 放行普通跟拍逻辑：tickFollowCamera 看到军团阵亡会启动 FOLLOW_SWITCH_DELAY_MS
                     // 延迟 → 到期切回玩家。13 画面保持到切换那一刻
@@ -673,6 +677,13 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 lastBgmFollowedId = null;
             }
             perfMonitor.endTimer('camera');
+        }
+        // 🔴 [2026-09-23 修「战术模式结束后，无法退到战略地图」] 战斗场景的生命周期（残局待命到期 → exit）
+        //    原先只在「镜头正跟随某支军团」的分支里跑。战场事件里：赶路军团开战即收掉、战后双方史实军团撤场，
+        //    镜头就没有可跟的军团了 → 这条分支不进 → 永远没人调 battleScene.tick → 停在最后一帧、暂停不解除。
+        //    这里兜底：场景还开着、本帧又没跑过，就补跑一次（不管镜头跟没跟随）。
+        if (!battleSceneTickedThisFrame && app.battleScene?.isActive?.()) {
+            app.battleScene.tick();
         }
     } catch (error) {
         console.error('❌ Game Loop Error:', error);

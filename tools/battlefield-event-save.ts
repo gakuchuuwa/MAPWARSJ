@@ -62,6 +62,8 @@ export interface BattlefieldEventDraft {
     absentCities?: string[];
     /** 归属武将军团的主将队（第 10 队）兵种 */
     commanderUnit?: string;
+    /** 对手一方主帅的主将队兵种（必须是英雄） */
+    foeCommanderUnit?: string;
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -336,6 +338,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     if (srcLit) L.push(`        sources: ${srcLit},`);
     if (d.absentCities?.length) L.push(`        absentCities: [${d.absentCities.map((c) => tsStr(c)).join(', ')}],`);
     if (d.commanderUnit) L.push(`        commanderUnit: ${tsStr(d.commanderUnit)},`);
+    if (d.foeCommanderUnit) L.push(`        foeCommanderUnit: ${tsStr(d.foeCommanderUnit)},`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -543,6 +546,7 @@ export function saveBattlefieldEvent(
             const absentLit = d.absentCities?.length ? `[${d.absentCities.map((c) => tsStr(c)).join(', ')}]` : null;
             if (absentLit) topFields.push(['absentCities', absentLit]);
             if (d.commanderUnit) topFields.push(['commanderUnit', tsStr(d.commanderUnit)]);
+            if (d.foeCommanderUnit) topFields.push(['foeCommanderUnit', tsStr(d.foeCommanderUnit)]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -564,6 +568,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
+            }
+            if (!d.foeCommanderUnit) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'foeCommanderUnit');
             }
             if (!d.commanderUnit) {
                 const objOpen = p1Text.indexOf('{', hit.start);

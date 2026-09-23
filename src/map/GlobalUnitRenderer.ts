@@ -2451,8 +2451,8 @@ export class GlobalUnitRenderer {
                     const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = hostR.isAttacking ? 'ATTACK' : hostR.isMoving ? 'MOVE' : 'IDLE';
                     // 🔴 [2026-09-23 主人「玩家和将军之间有空隙」] 剧本模式行军纵队中：乱入者就站在队首（军团中心），
                     //    将军紧贴其后；不在纵队（方阵）时照旧画在前排之前领军
-                    const inColumn = !!(hostLegion as { id?: string } | undefined)?.id
-                        && LegionPhalanxDrawer.getColumnCommanderOffset((hostLegion as { id: string }).id) !== null;
+                    const hostId = (hostLegion as unknown as { id?: string } | undefined)?.id;
+                    const inColumn = !!hostId && LegionPhalanxDrawer.getColumnCommanderOffset(hostId) !== null;
                     const off = HeroSpriteDrawer.forwardOffset(dir, inColumn ? 0 : 96 * scale);
                     hx += off.x; hy += off.y;
                     HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: hx, y: hy }, heroState, dir, scale,
@@ -2572,12 +2572,22 @@ export class GlobalUnitRenderer {
             // 1. Draw Flag Pole (Behind Soldiers / Ship)
             // [2026-09-05 玩家] 乱入者离队（无势力）时不画旗杆/旗帜
             const playerNoFaction = (unit as any).isPlayerHero && !(unit as any).playerHero?.factionId;
+            // 🔴 [2026-09-23 主人「旗帜是不是应该和人在一起」「旗帜和旗杆没有保持统一」]
+            //    剧本模式行军纵队：旗杆与旗面**同一个位置**，都跟着将军（主将队）走；此处取一次，两处共用
+            const cmdOffNow = useNavalVisual ? null : LegionPhalanxDrawer.getColumnCommanderOffset(unit.id || 'unknown');
+            const flagAt = cmdOffNow
+                ? { x: centerPoint.x + cmdOffNow.x, y: centerPoint.y + cmdOffNow.y }
+                : { x: centerPoint.x, y: centerPoint.y };
+            // 🔴 [2026-09-23 主人「旗杆和旗帜是不是应该高一点」] 剧本模式军旗加高（旗杆与旗面同一系数，旗面贴杆顶）；
+            //    行军纵队与展开成阵一样高，不在展开那一刻变矮。乱斗 1 = 原样。
+            const flagPoleRatio = (!useNavalVisual && isScriptPeriod()) ? 1.6 : 1;
             if (!playerNoFaction) {
                 LegionFlagDrawer.drawPole(
                     ctx,
-                    { x: centerPoint.x, y: centerPoint.y },
+                    flagAt,
                     useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
-                    unit.factionId || 'panjun'
+                    unit.factionId || 'panjun',
+                    flagPoleRatio,
                 );
             }
 
@@ -2716,16 +2726,16 @@ export class GlobalUnitRenderer {
             const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
 
             if (!playerNoFaction) {
-                // 🔴 [2026-09-23] 剧本模式行军纵队：军旗跟着将军（主将队）走，不留在队伍中间的空处
-                const cmdOff = useNavalVisual ? null : LegionPhalanxDrawer.getColumnCommanderOffset(unit.id || 'unknown');
+                // 🔴 [2026-09-23] 旗面与旗杆同一个位置（flagAt，见上方旗杆处）
                 LegionFlagDrawer.drawFlag(
                     ctx,
-                    cmdOff ? { x: centerPoint.x + cmdOff.x, y: centerPoint.y + cmdOff.y } : { x: centerPoint.x, y: centerPoint.y },
+                    flagAt,
                     directionIndex,
                     useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
                     Date.now(),
                     unit.factionId || 'panjun',
-                    currentYear // [NEW] Pass year
+                    currentYear, // [NEW] Pass year
+                    flagPoleRatio,
                 );
             }
         }

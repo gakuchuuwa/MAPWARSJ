@@ -299,6 +299,11 @@ export interface HistoricalEvent {
      * 归属武将军团的**主将队（第 10 队）兵种**（WAR_TYPES 键），按素材样貌选。编辑器里必选。
      */
     commanderUnit?: string;
+    /**
+     * 🔴 [2026-09-23 主人定「第十队必须是英雄人物构成的」] **对手一方**（非归属武将那一方主帅）的主将队兵种，
+     * 必须是英雄兵模（WAR_TYPES 的 hero_*），按素材样貌或文化年代相近的人物选。
+     */
+    foeCommanderUnit?: string;
 }
 
 

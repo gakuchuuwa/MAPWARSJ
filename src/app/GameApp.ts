@@ -337,7 +337,13 @@ export class GameApp {
             // 🔴 [2026-09-23] 剧本期：当前这一场归属武将的主将队兵种（事件 commanderUnit）
             setScriptCommanderUnitResolver((generalId) => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
-                return ev && ev.generalId === generalId && ev.commanderUnit ? ev.commanderUnit : null;
+                if (!ev) return null;
+                if (ev.generalId === generalId) return ev.commanderUnit || null;
+                // 对手一方主帅：foeCommanderUnit（第十队必须是英雄）
+                const d = ev.siegeData ?? ev.fieldBattleData;
+                const isFoe = !!d && generalId !== ev.generalId
+                    && (d.attackerGeneralId === generalId || d.defenderGeneralId === generalId);
+                return isFoe ? (ev.foeCommanderUnit || null) : null;
             });
             // 🔴 [2026-09-23 主人定「特殊建筑都是和据点绑定的」] 特殊建筑跟着挂靠据点显隐
             this.map.getMonumentLayer()?.setCityFilter((cityId) => {
