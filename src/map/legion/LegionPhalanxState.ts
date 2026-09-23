@@ -51,7 +51,7 @@ export class LegionPhalanxStateManager {
      * Rule: Low Index (Center) = Archers. High Index (Outer) = Infantry.
      */
     private static recalculateTypes(state: LegionUnitState, totalCount: number) {
-        if (totalCount === 9) {
+        if (totalCount === 9 || totalCount === 10) {   // 10 = 编制 9 + 主将队（2026-09-23）
             // [USER REQUEST] 3x3 Grid: Front 2 rows (0-5) Infantry, Back 1 row (6-8) Archers
             state.slots.forEach((slot, index) => {
                 if (index >= 6) {

@@ -68,6 +68,7 @@ import type { Army } from '../legion/Army';
 import { speechAnnouncer, type CaptureJu } from '../audio/SpeechAnnouncer';
 import { audioManager } from '../audio/AudioManager';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { getScriptFactionLegionName } from '../events/scriptPeriod';
 const T = COMBAT_UI_TOKENS;
 
 /**
@@ -1612,12 +1613,15 @@ export class CombatUI {
         const defRegion = init.defenderFactionId
             ? resolveUnitCultureRegion({ factionId: init.defenderFactionId, unitType: 'legion', getPosition: () => ({ lat: 0, lng: 0 }) } as any)
             : 'CENTRAL';
-        const attLegionName = (init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
-            ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
-            : getCultureLegionName(attRegion);
-        const defLegionName = (init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
-            ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
-            : getCultureLegionName(defRegion);
+        // 🔴 [2026-09-23 主人定「军团只显示马其顿军就行了」] 剧本期：当前这一仗用的剧本军团名优先
+        const attLegionName = (init.attackerFactionId && getScriptFactionLegionName(init.attackerFactionId))
+            || ((init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
+                ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
+                : getCultureLegionName(attRegion));
+        const defLegionName = (init.defenderFactionId && getScriptFactionLegionName(init.defenderFactionId))
+            || ((init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
+                ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
+                : getCultureLegionName(defRegion));
 
         // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
@@ -6008,6 +6012,9 @@ export class CombatUI {
            只有**确实没有势力**时才允许退回文化区默认名。 */
         const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
         const factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
+        // ⓪ 🔴 [2026-09-23] 剧本期：当前这一仗用的剧本军团名（如「马其顿军」）
+        const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
+        if (scriptLegion) return scriptLegion;
         // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;

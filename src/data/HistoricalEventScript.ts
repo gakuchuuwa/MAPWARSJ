@@ -92,6 +92,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 主人只说「据点归亚历山大」未指定具体哪座城，此处依史实选定，可一句话更换。
         cityUpdates: [{ cityId: 'city_dasijiliweng', factionId: 'maqidun' }],
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         // 🔴 [2026-09-23] 武将邀约对白。史料：东征名义为报复薛西斯焚毁雅典神庙（阿里安《亚历山大远征记》II.14 致大流士书）；
         //    波斯小亚细亚诸总督集结于格拉尼库斯河迎战（同书 I.12）。
         // 🔴 [2026-09-23] 途经但前334年还不存在的据点：鲁西翁为中世纪地名，格拉尼库斯为按战役起名的城寨
@@ -148,6 +149,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    它会让一座战场走一遍占城流程
         //    （`CityManager.updateCity`：写 `fallenAtYear`、重置将/精名额、播占城播报与烟雾）。
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -187,6 +189,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             targetBattlefieldId: 'bf_tuile',
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
     // ═══════════════════════════════════════════════════════════════
     // 前 331 年秋 · 亚历山大决战波斯：高加米拉战役（Battle of Gaugamela，前331年10月）
@@ -220,6 +223,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -264,6 +268,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 🔴 战后归属：扫清最后屏障，波斯波利斯易主归马其顿
         cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -298,6 +303,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -332,6 +338,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -367,6 +374,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -401,6 +409,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -436,6 +445,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -470,6 +480,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
     // ═══════════════════════════════════════════════════════════════
