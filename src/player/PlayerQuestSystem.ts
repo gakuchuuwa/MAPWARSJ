@@ -24,6 +24,7 @@ import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
+import { findPathFromPoint } from '../events/scriptMarchPath';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
@@ -843,7 +844,7 @@ export class PlayerQuestSystem {
             const wp = this.deps.cityManager.getCity(wpId);
             if (!wp) continue;
             const wpPos = { lat: wp.latitude, lng: wp.longitude };
-            const leg = roadRegistry.findPathOnRoad(legStart, wpPos);
+            const leg = findPathFromPoint(legStart, wpPos);
             if (!leg || leg.length < 2) {
                 gameLog('expedition', `[玩家] 行军路标【${wp.name}】无路可达，跳过`);
                 continue;
@@ -851,13 +852,13 @@ export class PlayerQuestSystem {
             viaPath.push(...(viaPath.length ? leg.slice(1) : leg));
             legStart = wpPos;
         }
-        let path = this.withViaPath(viaPath, roadRegistry.findPathOnRoad(legStart, target));
+        let path = this.withViaPath(viaPath, findPathFromPoint(legStart, target));
         if (!path || path.length < 2) {
             // 战场不是据点、不在路网上（波斯门深在扎格罗斯山里就是这种）→ 沿路网走到最近那座城，
             // 最后一段直奔战场。与 `PlayerHero.travelToPoint` 同一套兜底，别再写第二套。
             const anchor = roadRegistry.getNearestCityPos(target.lat, target.lng, 5);
             if (anchor) {
-                const via = roadRegistry.findPathOnRoad(legStart, anchor);
+                const via = findPathFromPoint(legStart, anchor);
                 if (via && via.length >= 2) path = this.withViaPath(viaPath, [...via, target]);
             }
         }

@@ -944,6 +944,27 @@ export class RoadRegistry {
         return node ? { lat: node.lat, lng: node.lng } : null;
     }
 
+    /**
+     * 离某点最近的 k 座已接入路网的据点坐标（近 → 远），限 maxDistDeg 以内。
+     * 用途：从路网外的点（战场）出发时，别只吸到最近那座城 —— 见 `scriptMarchPath.findPathFromPoint`。
+     */
+    public getNearestCityPositions(
+        lat: number, lng: number, k: number, maxDistDeg: number,
+    ): Array<{ lat: number; lng: number; dist: number }> {
+        const out: Array<{ lat: number; lng: number; dist: number }> = [];
+        const cos = Math.cos(lat * Math.PI / 180);
+        for (const [id, node] of this.nodes) {
+            if (node.type !== 'city') continue;
+            const edges = this.adjacencyList.get(id);
+            if (!edges || edges.length === 0) continue;
+            const dLat = node.lat - lat;
+            const dLng = shortestLongitudeDelta(lng, node.lng) * cos;
+            const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+            if (dist < maxDistDeg) out.push({ lat: node.lat, lng: node.lng, dist });
+        }
+        return out.sort((a, b) => a.dist - b.dist).slice(0, k);
+    }
+
     // ===== 道路CRUD =====
 
     /**

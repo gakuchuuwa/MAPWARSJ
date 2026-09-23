@@ -29,6 +29,7 @@ import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
 import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
 import { isBattlefieldFought } from './battlefieldState';
 import { resolveEventStartCityId, type StartEventInfo, type StartCity } from './scriptEventStart';
+import { cityExistsInYear } from './cityInYear';
 import { roadRegistry } from '../roads/RoadRegistry';
 
 /** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
@@ -115,19 +116,25 @@ export class ScriptCityVisibility {
         // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
         //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
         //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
+        //
+        // 🔴 [2026-09-24 主人定「不光是阿卡，**所有的据点都应该按年代才能显示**，尤其是大城、中城、关隘」]
+        //    **年代闸门对全部据点一律生效 —— 事件用到的城、沿途经过的城也不例外。**
+        //    改之前这两类是 `add()` 无条件塞进 `out` 的（只受 absentCities 拦），
+        //    于是那年头还没有的城，只要被某场事件的路线捎带上就上了图：
+        //    前331 高加米拉那场的路线一带就漏出**大城安提俄基亚**（前300年才建）、**大城大马士革**（伍麦叶时代）、
+        //    **中城阿勒颇**、**关隘阿音贾鲁特**；前621 那场漏出 25 座非小城（潼关、维也纳、纽伦堡…）。
+        //    与主人早先的解释一致：「**不显示 ≠ 不存在**」—— 路照走、寻路/归属/战斗一概不受影响，
+        //    只是那一年地图上不画它。
         if (current) {
-            const eraIdx = ERA_ORDER.indexOf(eraOfYear(current.year));
             const absent = new Set(current.absentCities ?? []);
             const curYear = current.year;
-            for (const c of cities) {
-                // 🔴 [2026-09-23 主人定「添加一个建立年代，到了年代据点再显示」]
-                //    建立年代晚于当前事件年份的据点，还没到它登场的年代，不上图。
-                const founded = CITY_FOUNDED_YEAR[c.id];
-                if (founded !== undefined && founded > curYear) continue;
-                const g = getCityAnchoredGeneral(c.id);
-                const era = g ? getGeneralEra(g.generalId) : undefined;
-                if (era && ERA_ORDER.indexOf(era) <= eraIdx && !absent.has(c.id)) out.add(c.id);
-            }
+            /** 这座城那一年该不该上图（建立年代 + 归属武将时代，两道都要过） */
+            const passGate = (cityId: string): boolean =>
+                !absent.has(cityId) && cityExistsInYear(cityId, curYear);   // 唯一判据：cityInYear.ts
+            // ① 先把「事件用到的 + 沿途经过的」按同一道闸门过一遍（原来它们是不看的）
+            for (const id of [...out]) if (!passGate(id)) out.delete(id);
+            // ② 再放「当前时代及之前」的全部据点
+            for (const c of cities) if (passGate(c.id)) out.add(c.id);
         }
         this.cached = out;
         this.cachedBattlefields = bfs;

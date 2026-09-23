@@ -129,20 +129,6 @@ export const BATTLEFIELDS: BattlefieldData[] = [
         briefing: '公元前333年深秋，亚历山大率数万大军南下，大流士三世亲率大军绕袭其后，切断补给。两军在背山面海、宽仅两英里的狭长平原相遇，波斯兵力难以铺展。大流士背靠北岸列阵，亚历山大以萨里沙方阵居中、伙伴骑兵坐镇右翼。马其顿右翼压向浅滩，杀机一触即发。',
     },
 
-    // ── 前 332 年 推罗战役（马其顿 vs 迦南） ──
-    //    剧本：`HistoricalEventScript` `-332`（`type: 'siege'` 攻城战）。
-    {
-        id: 'bf_tuile',
-        name: '推罗',
-        lat: 33.2709,
-        lng: 35.1962,
-        scriptYear: -332,
-        note: '推罗战役战场，前332年，亚历山大填海筑堤历时七月破城；攻城战后推罗城易主归马其顿',
-        briefing: '公元前332年孟春，地中海东岸的推罗古城峭立海中，惊涛拍岸。这座腓尼基海上霸主依托距大陆近千米的天然海岛与深沟高垒，断然拒绝马其顿军队入城祭祀的要求，倚仗舰队与千余守军负隅顽抗。为了彻底剪除波斯帝国的制海权，亚历山大下令伐尽黎巴嫩山脉的林木，在惊涛骇浪间向孤岛强行构筑一道六十米宽的巍峨筑道。数月间，推罗人以火船冲撞、弩炮轰击与蛙人破障死守海疆，马其顿则调集塞浦路斯巨舰与攻城石弩日夜推进。漫天箭雨穿透海雾，两座高达百尺的攻城木塔正顶着沸油逼近被砸开缺口的海墙，一场决定东地中海命运的血战已扑面而来。',
-        siegeCastleType: 'small_city',
-        eventCityId: 'city_tuile',
-    },
-
     // ── 前 331 年 高加米拉战役（马其顿 vs 阿契美尼德波斯） ──
     //    剧本：`HistoricalEventScript` `-331`（`type: 'field_battle'` 野战）。
     {
@@ -436,6 +422,17 @@ export function battlefieldLocationOf(
 export const BATTLEFIELD_MATCH_DEG = 0.15;
 
 /** 这个战场是不是那条剧本条目打的。两处（运行时 / 编辑器）必须都走它，别再各写一套。 */
+/**
+ * 🔴 [2026-09-24 主人定「所有事件就两种：野战，战后显示战场；攻城战，攻城战必须有据点……攻城战，你搞什么战场呀」]
+ * 攻城战没有战场记录。它在剧本流程里的编号（记「打没打过」、排先后）由「被攻据点 + 年份」生成，不画任何战场标牌。
+ */
+export function siegeSiteId(cityId: string, year: number): string {
+    return `siege_${cityId}_${year}`;
+}
+export function isSiegeSiteId(id: string): boolean {
+    return id.startsWith('siege_');
+}
+
 export function matchesBattlefield(
     bf: BattlefieldData,
     eventYear: number,

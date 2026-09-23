@@ -34,6 +34,7 @@ import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/Jo
 import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
 import { resolveEventStartCityId, type StartEventInfo } from '../events/scriptEventStart';
+import { cityAbsentReason } from '../events/cityInYear';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import { SPRITE_PATHS } from '../config/UnitAssets';
@@ -421,6 +422,11 @@ function validate(d: BattleDraft): Issue[] {
     }
     if (d.startCityId && !CITY_BY_ID.has(d.startCityId)) {
         out.push({ level: 'error', msg: '军团出发据点不存在：' + d.startCityId });
+    }
+    // 🔴 [2026-09-24 主人「历史上哪年有了哪个据点，就显示哪个据点……符合历史」] 出发据点那一年必须已经存在
+    if (d.startCityId && CITY_BY_ID.has(d.startCityId)) {
+        const why = cityAbsentReason(d.startCityId, d.year);
+        if (why) out.push({ level: 'error', msg: `军团出发据点【${CITY_BY_ID.get(d.startCityId)!.name}】在这一年不存在：${why}。换一座那一年已有的城，或留空（从上一场打完的地方出发）` });
     }
     // 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单每项必填，绝不留空
     for (const it of EVENT_SOURCE_ITEMS) {
@@ -989,18 +995,24 @@ function renderRouteReport(): string {
             : '✖ 无路可达';
         return `<div style="${style}">${l.continuation ? '🚩连续行军 ' : ''}【${escapeHtml(l.from)}】→【${escapeHtml(l.to)}】${body}</div>`;
     }).join('');
-    const cityRows = r.shownCities.map((c) =>
-        `<span class="chip" style="${c.absent ? 'opacity:.55;text-decoration:line-through' : ''}">${escapeHtml(c.name)}`
-        + `${c.wonders.length ? ' · 🏛' + escapeHtml(c.wonders.join('、')) : ''}`
-        + `<button data-absent="${escapeAttr(c.id)}" title="${c.absent ? '改回：那一年已存在，显示' : '那一年还不存在：剧本期不显示，路照走'}">${c.absent ? '↺' : '✕不存在'}</button></span>`).join('');
+    const cityRows = r.shownCities.map((c) => {
+        // 年代闸门没过 → 那年不上图（与游戏同一套口径，见 routeCheck.eraGateReason）
+        const blocked = !c.absent && !!c.eraBlocked;
+        const style = c.absent ? 'opacity:.55;text-decoration:line-through'
+            : blocked ? 'opacity:.6;border-color:#8a6a2a;' : '';
+        return `<span class="chip" style="${style}" title="${escapeAttr(c.eraBlocked ?? '')}">${escapeHtml(c.name)}`
+            + `${c.wonders.length ? ' · 🏛' + escapeHtml(c.wonders.join('、')) : ''}`
+            + `${blocked ? ' · 🚫不上图（' + escapeHtml(c.eraBlocked!) + '）' : ''}`
+            + `<button data-absent="${escapeAttr(c.id)}" title="${c.absent ? '改回：那一年已存在，显示' : '那一年还不存在：剧本期不显示，路照走'}">${c.absent ? '↺' : '✕不存在'}</button></span>`;
+    }).join('');
     return `
         <div class="fld" style="margin-top:10px;">
-            <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（${st?.from === 'set' ? '本场写明的出发据点' : st?.from === 'previous' ? '上一场打完的地方' : '归属武将本城'}）出发，与游戏同一套寻路</label>
+            <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】${r.fromPrevBattlefield ? '继续行军，沿地图道路' : '（归属武将所在城）出发'}，与游戏同一套寻路</label>
             <div style="font-size:12px;line-height:1.7;">${legRows || '<span class="hint">算不出路线</span>'}</div>
             <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船。🚩 那一段是**剧本期连续行军**：军团打完上一场**就地开拔**，起点是**上一处战场**（不经过出发据点），也必须受同一套控制范围约束</span>
         </div>
         <div class="fld" style="margin-top:8px;">
-            <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 逐个核对那一年是否存在、名字对不对：不存在的点「✕不存在」，路照走、城不显示</label>
+            <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 逐个核对那一年是否存在、名字对不对；🚫 为**年代闸门没过**（建立年代 / 归属武将时代不符），那年不画、路照走；不存在的点「✕不存在」</label>
             <div class="chips">${cityRows}</div>
         </div>`;
 }
