@@ -35,4 +35,22 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_sangqi: -250,          // 桑奇，约前 250 年阿育王始建佛塔
     city_aksum: -50,            // 阿克苏姆，约前 1 世纪阿克苏姆王国兴起
     city_gelanikusi: -333,      // 格拉尼库斯，按前 334 战役起名的城寨（前 334 年尚无此城）
+
+    // ── 纳巴泰 ──
+    city_peitra: -300,          // 佩特拉，约前 300 年纳巴泰人定居建城（英文维基 "settled in the 4th century BC"）
+
+    // ── 汉西域 / 河西 ──
+    city_zhangye: -111,         // 张掖，前 111 年汉武帝元鼎六年设张掖郡
+    city_wuwei: -176,           // 姑臧（武威），约前 176 年匈奴占河西筑盖臧城（音讹为姑臧）
+    city_chigucheng: -161,      // 赤谷城，约前 161 年乌孙西迁伊犁建都（百度百科）
+    city_yiluolucheng: -177,    // 龟兹（伊逻卢城 / 汉代延城），约前 2 世纪龟兹国
+
+    // ── 中国秦汉以后新建 / 更名的城 ──
+    city_tuodongcheng: -279,    // 滇池，约前 279 年庄蹻入滇建滇国
+    city_datong: -295,          // 大同（平城），约前 295 年战国赵建平城
+    city_hefei: -221,           // 合肥，约前 221 年秦置合肥县
+    city_lanzhou: -81,          // 皋兰（兰州），前 81 年汉昭帝始元六年置金城郡
+    city_fuyu: -200,            // 黄龙府（夫余），约前 2 世纪夫余建国（前 108 年已立国）
+    city_wuchang: 221,          // 武昌，221 年孙权筑武昌城（改鄂县为武昌）
+    city_chaoyang: 341,         // 朝阳（龙城），341 年慕容皝筑龙城
 };

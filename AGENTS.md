@@ -50,6 +50,12 @@
    剧本模式里主角军团行军时排成一条纵队，沿实际走过的路一个跟一个走：**乱入者打头 → 将军（主将队）→ 前排 → 中排 → 后排**；
    距战场 60 km（`PlayerQuestSystem.COLUMN_DEPLOY_KM`）展开成阵，逐帧走位过去不瞬移。史料：维基 Battle of the Granicus——行军为纵队，临战才展开成战斗队形。
    乱斗模式不变。实现：`Army.columnMarch` + `LegionPhalanxDrawer.columnOffsets` + `GlobalUnitRenderer.updateColumnTrail`。
+   🔴 **海运段同一条规矩**（2026-09-23 主人报「船队的船朝向有问题，请检查船队是如何跟着旗舰的，请参考陆军的长蛇阵」）：
+   船队海上也排长蛇阵 —— 旗舰领航、后随船沿**旗舰走过的航迹**回溯定位，**每艘船朝向自己脚下那段航迹的切线**，
+   行驶到拐点才转；**不是全队统一朝旗舰航向**（那是乱斗/海战的规矩）。
+   判据**只看 `Army.columnMarch`，不看 `state`** —— 海运行军的 state 常常不是 `MOVE`，
+   原来 `drawNaval` 里那道 `state === 'MOVE'` 的门会把剧本行军的船队整个挡回「全队同向」。
+   实现：`LegionPhalanxDrawer.drawNaval(..., columnMarch)` + `GlobalUnitRenderer` 调用处传参。
 
 ### 四、剧本模式与乱斗模式分离
 - 唯一判据 `src/events/scriptPeriod.ts` 的 `isScriptPeriod()`（开局默认剧本；剧本全部打完自动切乱斗）。**剧本改动一律只在剧本期生效，乱斗逐字不变。**

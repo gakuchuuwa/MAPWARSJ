@@ -2656,6 +2656,13 @@ export class GlobalUnitRenderer {
                         },
                         toScreen: point => this.map.latLngToContainerPoint([point.y, point.x]),
                     },
+                    // 🔴 [2026-09-23 主人报「船队的船朝向有问题，请参考陆军的长蛇阵」]
+                    //    剧本模式行军纵队：船队与陆军同一个规矩（每艘船朝自己脚下的航迹切线）。
+                    //    判据与上面 columnTrail 完全一致，也不看 state —— 海运行军的 state 常常不是 MOVE。
+                    //    ⚠️ 这里不能用 `sceneActive`：那是**陆地分支**（下面的 else）里声明的，
+                    //    海军分支看不到，用它会在运行时抛 ReferenceError（实测踩过）。用同源的 isBattleScene13()。
+                    !this.isBattleScene13() && isScriptPeriod()
+                        && (unit as { columnMarch?: boolean }).columnMarch === true,
                 );
             } else {
                 // [AI SYSTEM] Use Dedicated Legion Drawer
