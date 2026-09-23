@@ -649,6 +649,9 @@ export class PlayerQuestSystem {
         g: { generalId: string; generalName: string; portrait: string },
         ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number; defenderCityId?: string | null; marchWaypoints?: string[] },
         army: Army | null,
+        /** 🔴 [2026-09-23] true = **剧本期连续行军**续接下一场（军团与玩家都在场上）：
+         *  此时"自某城起兵奔赴"那两条播报/日志是错的（人根本没回城），由调用方自己打。 */
+        continuation = false,
     ): void {
         this.deps.closeDialogue();
         // 🔴 [2026-09-23 主人报障「第一事件结束后，军团就消失了，玩家原地不动，没有继续第二事件」]
@@ -743,9 +746,11 @@ export class PlayerQuestSystem {
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
         this.startJourneyBriefing(BATTLEFIELDS.find((b) => b.id === ev.battlefieldId) ?? null, ev.title);
-        this.deps.notify(`⚔ 随${g.generalName}赴【${ev.title}】，战场在${ev.battlefieldName}`);
-        gameLog('expedition',
-            `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
+        if (!continuation) {
+            this.deps.notify(`⚔ 随${g.generalName}赴【${ev.title}】，战场在${ev.battlefieldName}`);
+            gameLog('expedition',
+                `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
+        }
         this.emitChange();
     }
 
@@ -1166,7 +1171,7 @@ export class PlayerQuestSystem {
             generalId: owner,
             generalName: rec.generalName,
             portrait: rec.portrait ?? '',
-        }, ev, army);
+        }, ev, army, true);
         this.deps.notify(`🐎 随${rec.generalName}自战场继续进兵，奔赴【${title}】`);
         gameLog('expedition', `[玩家] 连续行军：${rec.generalName} 率 ${army.name} 自战场续赴【${title}】（同一支军团，不重新起兵）`);
         return true;

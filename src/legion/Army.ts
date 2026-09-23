@@ -31,6 +31,7 @@ import {
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
+import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
 import { toBase16 } from '../systems/CultureBase16';
@@ -1018,8 +1019,7 @@ export class Army implements IBattleUnit {
                 this.landFlipFrames = 0;
             }
 
-            const moveClass = this.preferredMoveClass
-                ?? (this.cultureRegion ? getCultureMovementClass(this.cultureRegion) : 'MIXED');
+            const moveClass = this.preferredMoveClass ?? this.resolveMoveClassFromSlots();
             const base = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
             // 玩家专属缩放（AI 军团 terrainSpeedScale 恒为 null，走原路）
             this.terrainSpeedTarget = base * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
@@ -1039,6 +1039,49 @@ export class Army implements IBattleUnit {
             this.renderer.navalShipAssetLock = this.navalShipAssetLock;
         }
     }
+
+    /**
+     * 🔴 [2026-09-23 主人定「军团的行军速度要以军团中行军最慢的为准」]
+     *
+     * 军团的移动大类**看它自己的编成**，不再看文化区 —— 编成里最慢的那个兵种拖住全军：
+     *   · 编成里有战象（`spd ≤ ELEPHANT_SPD_MAX`）→ `ELEPHANT`（四档里最慢的一档）；
+     *   · **全是骑兵**（`cls === 'cav'`）→ `CAVALRY`：没有步兵拖累，最慢的就是骑兵本身；
+     *   · **只要编成里有步 / 远程** → `INFANTRY`。
+     *     这一条正是"以最慢的为准"的要害：混编军团的最慢兵种是步兵，那就得走步兵速度，
+     *     **不能因为带了几队骑兵就按骑兵跑**。故不再使用 `MIXED` 档（见下）。
+     *
+     * 判据只用兵种表里既有的 `cls` 与 `spd`，不新造映射。实测（`scratch/_audit_legion_move_class.mts`）：
+     * 全部文化编成里出现的兵种速度只有三档 —— 骑 130 / 步·远 50~99 / 象 40，**没有攻城器**，
+     * 所以上面三条覆盖全部编成，不会出现"最慢的兵种没有档可归"。
+     *
+     * ⚠️ 副作用（如实记在这里）：`MOVEMENT_MATRIX.MIXED`（平原 1.5）从此没有军团会归到 ——
+     *    它是按"步骑混编"设的中档，而"以最慢为准"下混编就该等于步兵档。**表本身一个字没改**，
+     *    将来若要把混编单独留一档，改回 `hasCav && hasFoot → 'MIXED'` 即可。
+     *
+     * 拿不到编成（离线构造、老军团、玩家单骑）时回落到原来的文化区口径，行为不变。
+     */
+    private resolveMoveClassFromSlots(): MovementClass {
+        const keys = this.cultureSlots;
+        if (!keys || !keys.length) {
+            return this.cultureRegion ? getCultureMovementClass(this.cultureRegion) : 'MIXED';
+        }
+        let hasElephant = false;
+        let hasCav = false;
+        let hasFoot = false;
+        for (const k of keys) {
+            const t = (WAR_TYPES as Record<string, { cls?: string; spd?: number } | undefined>)[k];
+            if (!t) continue;
+            if ((t.spd ?? 999) <= Army.ELEPHANT_SPD_MAX) hasElephant = true;
+            if (t.cls === 'cav') hasCav = true;
+            else hasFoot = true;
+        }
+        if (hasElephant) return 'ELEPHANT';
+        if (hasCav && !hasFoot) return 'CAVALRY';
+        return 'INFANTRY';
+    }
+
+    /** 编成里 `spd` 不超过它就算"有战象"（实测：全部文化编成中只有战象是 40，步兵最低 50） */
+    private static readonly ELEPHANT_SPD_MAX = 45;
 
     private getSpeed(): number {
         // 🔴 [2026-09-15] SPEED_TABLE 只在 16 母体上开键，先归母体再取值
