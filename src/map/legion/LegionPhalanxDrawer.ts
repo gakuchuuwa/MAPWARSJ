@@ -2185,6 +2185,18 @@ export class LegionPhalanxDrawer {
          */
         speedFactor?: number,
         wakeProjection?: WakeProjection,
+        /**
+         * 🔴 [2026-09-23 主人报「船队的船朝向有问题，请检查船队是如何跟着旗舰的，请参考陆军的长蛇阵」]
+         *
+         * 剧本模式行军纵队（`Army.columnMarch`）。true 时船队与**陆军纵队同一个规矩**：
+         * 每艘船朝向**自己脚下那段航迹**的切线，行驶到拐点才转 —— 一个跟一个的蛇形，
+         * 而不是全队统一朝旗舰航向（那是乱斗/海战的规矩）。
+         *
+         * ⚠️ 判据**只看纵队标记，不看 state**：海运剧本行军时 state 常常不是 `MOVE`
+         * （舰队在 IDLE / DAMAGE 等态），原来那条 `state === 'MOVE'` 的门会把整支船队
+         * 挡回「全队同向」，于是主人看到的就是「船头与队列方向对不上」。
+         */
+        columnMarch = false,
     ): void {
         // 兵力驱动纵队舰队（2026-08-19 主人定）：船数随兵力、旗舰领航、后随成列。
         // 海军船贴图略微缩小（baseHeight 72），避免靠港/围城时遮挡过重。
@@ -2362,7 +2374,7 @@ export class LegionPhalanxDrawer {
         // 所以 MOVE 无条件沿航迹；ATTACK/待命仍走 45° 门槛，区分「海战绕行(沿航迹)」vs
         // 「攻城面城/停泊(航迹是旧路线→退直线纵队)」，08-21 的堆叠 bug 不会回来。
         const activeTrail = (trail && (
-            state === 'MOVE' || this.trailAlignedWithHeading(trail, headVX, headVY)
+            state === 'MOVE' || columnMarch || this.trailAlignedWithHeading(trail, headVX, headVY)
         ))
             ? trail
             : undefined;
@@ -2414,7 +2426,7 @@ export class LegionPhalanxDrawer {
                 //    剧本模式行军与陆军纵队同一个规矩：每条船朝向**自己脚下那段航迹**，
                 //    行驶到拐点才转；各船单独按回转率转过去（键 = 军团#船序），不会一帧拧头。
                 //    旗舰仍用上面的舰队平滑航向；乱斗模式照旧全队同向（09-11 的做法）。
-                if (activeTrail && state === 'MOVE' && isScriptPeriod()) {
+                if (activeTrail && (state === 'MOVE' || columnMarch) && isScriptPeriod()) {
                     const ownDeg = LegionPhalanxDrawer.stepNavalCourse(
                         `${unitId}#${i}`, (localAng + Math.PI / 2) * 180 / Math.PI, tick);
                     faceAng = ownDeg * Math.PI / 180 - Math.PI / 2;
