@@ -75,6 +75,7 @@ import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityI
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
+import { BATTLEFIELDS } from '../data/Battlefields';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -361,7 +362,14 @@ export class GameApp {
                 return !!c && this.cityManager.isCityVisible(c);
             });
             // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
-            this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
+            // 🔴 [2026-09-24 主人「推罗打完为什么显示了两个据点？」] 攻打真实据点的攻城战（战场记录带 eventCityId），
+            //    战场就是那座城本身：城已在图上，就不再另画一个同坐标的战场标牌（推罗城 + 推罗战场叠成两个）。
+            //    战场记录照旧保留（记「打没打过」、定先后），战果由 cityUpdates 的易主体现。
+            this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => {
+                const cityId = BATTLEFIELDS.find((b) => b.id === bfId)?.eventCityId;
+                if (cityId && this.cityManager.getCity(cityId)) return false;
+                return this.scriptCityVisibility!.isBattlefieldVisible(bfId);
+            });
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
                 this.cityManager.refreshCityVisibility();

@@ -17,12 +17,37 @@
  *  · 特殊建筑跟着据点显示 → 一并列出这些城挂的特殊建筑，核对那一年是否已建成。
  */
 import { roadRegistry } from '../roads/RoadRegistry';
+import { findPathFromPoint } from '../events/scriptMarchPath';
+import { cityAbsentReason } from '../events/cityInYear';
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
 import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
+import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
+import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
+
+const ERA_ORDER: GeneralEra[] = ['antiquity', 'feudal', 'castle', 'imperial'];
+const ERA_NAME: Record<GeneralEra, string> = {
+    antiquity: '古典', feudal: '封建', castle: '城堡', imperial: '帝国',
+};
+function eraOfYear(year: number): GeneralEra {
+    if (year < 400) return 'antiquity';
+    if (year < 1050) return 'feudal';
+    if (year < 1500) return 'castle';
+    return 'imperial';
+}
+
+/**
+ * 🔴 [2026-09-24 主人定「不光是阿卡，**所有的据点都应该按年代才能显示**，尤其是大城、中城、关隘」]
+ * 年代闸门 —— 与游戏 `ScriptCityVisibility.compute` **同一套口径**：建立年代 + 归属武将时代，两道都要过。
+ * 没过闸的城那年不上图（**路照走**，只是不画）。编辑器必须照实报，否则这一栏会让主人以为会上图。
+ */
+export function eraGateReason(cityId: string, year: number | undefined): string | null {
+    if (year === undefined || !CITY_BY_ID.get(cityId)) return null;
+    return cityAbsentReason(cityId, year);   // 与游戏同一个判据（src/events/cityInYear.ts）
+}
 
 /** 点与点之间的控制范围（超出就提醒加路标） */
 export const ROUTE_LIMITS = {
@@ -76,9 +101,11 @@ export interface RouteLeg {
 
 export interface RouteReport {
     startCityName: string | null;
+    /** 第二场起：从上一场战场继续行军（不经出发据点） */
+    fromPrevBattlefield?: boolean;
     legs: RouteLeg[];
     /** 剧本期地图上会显示的据点（事件用到的 + 沿途经过的） */
-    shownCities: Array<{ id: string; name: string; wonders: string[]; absent: boolean }>;
+    shownCities: Array<{ id: string; name: string; wonders: string[]; absent: boolean; eraBlocked?: string }>;
     issues: Array<{ level: 'error' | 'warn'; msg: string }>;
 }
 
@@ -169,12 +196,18 @@ export function checkRoute(d: RouteDraft): RouteReport {
     const shown = new Set<string>();
     const add = (id?: string) => { if (id && CITY_BY_ID.has(id)) shown.add(id); };
 
-    // 运行时：军团从**归属武将所在的城**起兵出发（不是「攻方出兵据点」那一栏）
+    // 🔴 [2026-09-24 主人「为什么不是第二事件战场，到第三事件战场？」「没有具体的线路，就用地图中的道路」]
+    //    同一武将从第二场起：军团从**上一场的战场**沿地图道路开到这一场（与游戏连续行军一致），不经过任何出发据点。
+    //    只有他的第一场，才从他所在的城出发。
+    const prevEvForStart = previousEventOfSameGeneral(d.generalId, d.year, d.season);
+    const prevEndForStart = prevEvForStart ? eventEndPoint(prevEvForStart) : null;
+    const fromPrevBattlefield = !!prevEndForStart;
+    // 第一场：军团从**归属武将所在的城**起兵出发（不是「攻方出兵据点」那一栏）
     const startId = d.startCityId || (d.generalId ? cityOfGeneral(d.generalId) : undefined);
     const start = startId ? CITY_BY_ID.get(startId) : undefined;
     const ownSource = d.generalId === d.attackerGeneralId ? d.attackerSourceCityId
         : d.generalId === d.defenderGeneralId ? d.defenderSourceCityId : '';
-    if (start && ownSource && ownSource !== start.id && !d.startCityId) {
+    if (!fromPrevBattlefield && start && ownSource && ownSource !== start.id && !d.startCityId) {
         warn(`军团实际从归属武将所在的【${start.name}】出发，出兵据点一栏写的是【${CITY_BY_ID.get(ownSource)?.name ?? ownSource}】，两处不一致，请确认`);
     }
 
@@ -192,11 +225,12 @@ export function checkRoute(d: RouteDraft): RouteReport {
      * 战场常常不在路网上（波斯门深在扎格罗斯山里），不兜底就会把「离路直行 151 公里」误报成「无路可达」。
      */
     const buildLeg = (from: P, to: P, allowFallback: boolean) => {
-        let path = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
+        // 与游戏同一个入路算法（scriptMarchPath.findPathFromPoint）：从战场开拔不吸到身后那座城
+        let path = findPathFromPoint(from, to) as Array<P & { sea?: boolean }> | null;
         let offroadKm = 0;
         if ((!path || path.length < 2) && allowFallback) {
             const anchor = roadRegistry.getNearestCityPos(to.lat, to.lng, 5);
-            const via = anchor ? roadRegistry.findPathOnRoad(from, anchor) as Array<P & { sea?: boolean }> | null : null;
+            const via = anchor ? findPathFromPoint(from, anchor) as Array<P & { sea?: boolean }> | null : null;
             if (via && via.length >= 2 && anchor) {
                 path = [...via, to];
                 offroadKm = km(anchor, to);
@@ -211,10 +245,14 @@ export function checkRoute(d: RouteDraft): RouteReport {
     for (const wp of d.marchWaypoints) add(wp);
     for (const u of d.cityUpdates) add(u.cityId);
 
-    if (!start) {
+    if (!start && !fromPrevBattlefield) {
         err('找不到归属武将所在的城 → 算不出行军路线（归属武将必须是某座据点的守将）');
     } else {
-        const stops: Array<{ name: string; p: P }> = [{ name: start.name, p: { lat: start.lat, lng: start.lng } }];
+        const prevName = prevEvForStart
+            ? `上一场战场（${(prevEvForStart.title ?? `${prevEvForStart.year}年那一场`).replace(/^公元前\d+年\s*/, '')}）` : '';
+        const stops: Array<{ name: string; p: P }> = fromPrevBattlefield
+            ? [{ name: prevName, p: prevEndForStart! }]
+            : [{ name: start!.name, p: { lat: start!.lat, lng: start!.lng } }];
         for (const wp of d.marchWaypoints) {
             const c = CITY_BY_ID.get(wp);
             if (c) stops.push({ name: c.name, p: { lat: c.lat, lng: c.lng } });
@@ -278,7 +316,8 @@ export function checkRoute(d: RouteDraft): RouteReport {
         //    于是「第二场 → 第三场」真正要走的那一段，编辑器里一行都看不到：
         //    推罗那一场第一段实测 588 公里（直线 437 > 400），编辑器却报「无问题」。
         //    故这一段也算出来、按同三条控制范围提示（只提示，不挡保存）。
-        const prevEv = previousEventOfSameGeneral(d.generalId, d.year, d.season);
+        // 第二场起路线本身就从上一场战场算起（见函数开头），这里不再另算一条
+        const prevEv = fromPrevBattlefield ? null : previousEventOfSameGeneral(d.generalId, d.year, d.season);
         const prevEnd = prevEv ? eventEndPoint(prevEv) : null;
         if (prevEv && prevEnd) {
             const first = stops[1] ?? stops[stops.length - 1];
@@ -328,6 +367,7 @@ export function checkRoute(d: RouteDraft): RouteReport {
 
     const shownCities = [...shown].map((id) => ({
         id, name: CITY_BY_ID.get(id)!.name, wonders: wondersOf(id), absent: d.absentCities.includes(id),
+        eraBlocked: eraGateReason(id, d.year) ?? undefined,
     }));
-    return { startCityName: start?.name ?? null, legs, shownCities, issues };
+    return { startCityName: fromPrevBattlefield ? `上一场${(prevEvForStart!.title ?? '').replace(/^公元前\d+年\s*/, '')}的战场` : start?.name ?? null, fromPrevBattlefield, legs, shownCities, issues };
 }

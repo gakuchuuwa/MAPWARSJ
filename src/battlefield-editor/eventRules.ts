@@ -171,7 +171,7 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
         }
     }
 
-    // ⑦ 兵力比例：**攻方不得低于守方的 1/2.5** ───────────────────────
+    // ⑦ 兵力比例：**守方不得超过攻方的 2 倍**（只限守方）───────────────────────
     //    🔴 [2026-09-23 主人三次定调，合起来看本意是「攻方不能太少」]
     //       · 最初：「兵力不要相差太远，不要搞 300 打上万人的模式」——防的是**攻方 300 打守方 1 万**；
     //       · 同日：「改为，不超过 1:2.5」；
@@ -181,7 +181,8 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
     //      · 推罗 37500 : 8000（攻方远多）→ 照过（史实就是马其顿大胜）；
     //      · 300 打 1 万（攻方极少）→ 照样拦。
     //    攻方是玩家跟随的主角，攻方打不赢就与历史不符 —— 这才是这条规则要保的东西。
-    const MAX_TROOP_RATIO = 2.5;
+    //    🔴 [2026-09-24 主人再定「1:2，是为了限制防守方的，不限制攻击方」] 2.5 → 2。
+    const MAX_TROOP_RATIO = 2;
     const at = d.attackerTroops, dt = d.defenderTroops;
     if (at > 0 && dt > 0) {
         const defOverAt = dt / at;   // 守方是攻方的几倍

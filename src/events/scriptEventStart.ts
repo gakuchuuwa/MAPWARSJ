@@ -8,7 +8,7 @@
  *      ② 没写 → 同一武将上一场打完的地方：攻城战 = 被攻的那座城，野战 = 离战场最近、那一年已存在的据点；
  *      ③ 他的第一场 → null（调用方用他的本城）。
  */
-import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
+import { cityExistsInYear } from './cityInYear';
 
 /** 算出发地需要的事件信息（游戏的 HistoricalEvent、编辑器的草稿各自转成这个） */
 export interface StartEventInfo {
@@ -30,14 +30,15 @@ export function resolveEventStartCityId(
     allEvents: readonly StartEventInfo[],
     cities: readonly StartCity[],
 ): { cityId: string; from: 'set' | 'previous' } | null {
-    if (ev.startCityId) return { cityId: ev.startCityId, from: 'set' };
+    // 写明的出发据点那一年还不存在 → 不采用（主人：「历史上哪年有了哪个据点，就显示哪个据点」），按下面的默认走
+    if (ev.startCityId && cityExistsInYear(ev.startCityId, ev.year)) return { cityId: ev.startCityId, from: 'set' };
     if (!ev.generalId) return null;
     const prev = allEvents
         .filter((x) => x !== ev && x.generalId === ev.generalId
             && (x.year < ev.year || (x.year === ev.year && x.season < ev.season)))
         .sort((a, b) => (b.year - a.year) || (b.season - a.season))[0];
     if (!prev) return null;
-    if (prev.siegeCityId && cities.some((c) => c.id === prev.siegeCityId)) {
+    if (prev.siegeCityId && cities.some((c) => c.id === prev.siegeCityId) && cityExistsInYear(prev.siegeCityId, ev.year)) {
         return { cityId: prev.siegeCityId, from: 'previous' };
     }
     if (!prev.point) return null;
@@ -47,8 +48,7 @@ export function resolveEventStartCityId(
     let bestD = Infinity;
     for (const c of cities) {
         if (absent.has(c.id)) continue;
-        const founded = CITY_FOUNDED_YEAR[c.id];
-        if (founded !== undefined && founded > ev.year) continue;   // 那一年还没建
+        if (!cityExistsInYear(c.id, ev.year)) continue;   // 那一年还不存在（与地图显示同一判据）
         const d = Math.hypot(c.lat - prev.point.lat, (c.lng - prev.point.lng) * cosLat);
         if (d < bestD) { bestD = d; best = c; }
     }
