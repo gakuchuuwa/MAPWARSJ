@@ -638,7 +638,20 @@ export function saveBattlefieldEvent(
             if (d.attackerLegionName) innerFields.push(['attackerLegionName', tsStr(d.attackerLegionName)]);
             if (d.defenderLegionName) innerFields.push(['defenderLegionName', tsStr(d.defenderLegionName)]);
 
-            scText = patchFields(p1Text, braceAt, braceEnd, innerFields).text;
+            const innerPatched = patchFields(p1Text, braceAt, braceEnd, innerFields);
+            // 🔴 [2026-09-23 血训 · 前332推罗战役] 攻城目标二选一，切换时必须**真删掉另一个**。
+            //    `patchFields` 只增改不删：攻城目标从「打战场要塞」（`targetBattlefieldId`）
+            //    切成「打据点」（`defenderCityId`）时，旧的 `targetBattlefieldId` 会留在数据里，
+            //    而运行时它是压过据点的那一个
+            //    （`siegeCityId = type==='siege' && !targetBattlefieldId ? defenderCityId : undefined`），
+            //    表现成「编辑器里明明选了推罗这座城，游戏里还是去打野战场」——
+            //    与 `generalId` 清空不删字段是同一类最难查的不一致，故同样真删。
+            let p2Text = innerPatched.text;
+            if (isSiege) {
+                const staleKey = d.bfTargetBattlefieldId ? 'defenderCityId' : 'targetBattlefieldId';
+                p2Text = removeField(p2Text, braceAt, innerPatched.objEnd, staleKey);
+            }
+            scText = p2Text;
             scMode = 'update';
         } else {
             scText = insertEntry(scBefore, SC_DECL, buildScriptEntry(d), yearFromScriptBody, d.year);

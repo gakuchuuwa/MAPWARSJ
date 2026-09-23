@@ -219,14 +219,14 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
-        const eligible = app.tacticalModeEnabled && bigEnough && !bothNaval
+        const eligible = tacticalModeOn(app) && bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
                 && attHasElite && defHasElite);
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
         //    文档铁律：数字反常先加计数器问「每道闸各拦掉多少」。落 scene13_probe_log.jsonl（why=gateBlocked）。
         if (import.meta.env.DEV) {
             const gate = {
-                tacticalModeEnabled: !!app.tacticalModeEnabled,
+                tacticalModeEnabled: tacticalModeOn(app),
                 bigEnough, minTroops,
                 attTroops: battle.attacker.troops, defTroops: battle.defender.troops,
                 bothNaval, isNavalBattle, isNavalVsFortress,
@@ -310,12 +310,15 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
-        // 战场事件必须进战术模式：HistoricalEventManager 为双方军团设置 isScriptArmy。
-        // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐及调试开关门槛阻挡。
+        // 战场事件进战术模式：HistoricalEventManager 为双方军团设置 isScriptArmy。
+        // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
+        // 🔴 [2026-09-23 主人「剧本测试，我希望先不进入战术模式，都在战略模式下进行。可是调试面板中的这个功能失效了」]
+        //    改前战场事件连调试面板的「进入战术模式」开关也绕过去了。现在开关关掉，战场事件也留在战略地图打；
+        //    胜负照旧是史实（开战时已按剧本 result 写进 presetResult，战略层结算照它走）。
         const isBattlefieldEvent = [...attackers, ...defenders]
             .some((u) => u.getEntity?.()?.isScriptArmy === true);
-        const eligible = isBattlefieldEvent || (app.tacticalModeEnabled && bigEnough && !bothNaval
-            && attHasGen && defHasGen && attHasElite && defHasElite);
+        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
+            && attHasGen && defHasGen && attHasElite && defHasElite));
         if (eligible && !battleField?.scene13Frozen) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
@@ -448,4 +451,16 @@ export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManage
         app.combatUI.flashTacticalSkill(info.displayName, info.generalId, info.skillId);
         gameLog('battle', `✨ [CombatUI] 战术技展示: 【${info.displayName}】 (${info.generalId})`);
     });
+}
+
+/**
+ * 调试面板「进入战术模式」开关当前是否打开：以面板上的勾选框为准。
+ * 🔴 [2026-09-23] 面板刷新后复原勾选状态时会派发 change，但那时 window.game 可能还没挂上，
+ *    app.tacticalModeEnabled 就停在默认 true —— 面板显示关、游戏里还是开（主人报「这个功能失效了」）。
+ */
+function tacticalModeOn(app: { tacticalModeEnabled?: boolean }): boolean {
+    const chk = typeof document !== 'undefined'
+        ? document.getElementById('chk-tactical-mode') as HTMLInputElement | null : null;
+    if (chk) app.tacticalModeEnabled = chk.checked;
+    return !!app.tacticalModeEnabled;
 }

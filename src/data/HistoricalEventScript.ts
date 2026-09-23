@@ -194,12 +194,14 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         description: '马其顿军全面彻底的胜利：亚历山大历时七月强行填筑跨海长堤攻破推罗海岛坚固石墙；拔除波斯在地中海的海军基地，推罗城易主归马其顿。',
         siegeData: {
             title: '推罗战役',                     // 🔴 横幅一律显示战役名
-            description: '亚历山大率约 35,000–40,000 步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
+            description: '亚历山大率数万步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 30000,                   // 史料 35000–40000 步骑
-            attackerSourceCityId: 'city_salonica',   // 佩拉
+            attackerTroops: 37500,                   // 史料 35000–40000 步骑
+            // 🔴 [2026-09-23 主人报「船队不对呀」同源问题] 攻方出兵据点原写佩拉（马其顿本土）——
+            //    前332年亚历山大在腓尼基海岸，不该从本土出兵。改腓尼基北部港口拉塔基亚（前332年已存在）。
+            attackerSourceCityId: 'city_latajiya',
             // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
 
             //    推罗末代国王阿泽米尔库斯 = 迦南（推罗）。此前这条没写势力，按势力取精锐番号就取不到。
@@ -207,13 +209,20 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderFactionId: 'kanan',
 
             defenderGeneralId: 'kanan_azemier',      // 推罗末代国王阿泽米尔库斯
-            defenderTroops: 22000,                   // 史料守军约 8,000–10,000
+            defenderTroops: 8000,                   // 史料守军约 8,000–10,000
             result: 'attacker_win',                  // 写真历史：攻城彻底胜利
             autoEnterRTS: true,                      // 进战术模式（13）
-            targetBattlefieldId: 'bf_tuile',
+            marchWaypoints: ['city_ake'],
+            defenderLegionName: '推罗军',
+            defenderCityId: 'city_tuile',
         },
         generalId: 'gen_alexander_great',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        inviteText: '朋友，你来得正好。推罗人拒绝我入城向他们的神献祭，自恃海岛天险、城高墙厚。我已下令伐尽黎巴嫩山的雪松，要在海上筑一道长堤，把他们的海军一并拔掉。你可愿随我一同围城？',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗围城战，攻城战；马其顿军填海筑堤攻打海岛城邦推罗。' }, time: { level: 'fact', text: '英文维基百科 Siege of Tyre：前332年1月起围，历约七个月至夏末；季节取春。' }, place: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗为今黎巴嫩海岸外约一千米的海岛城邦；坐标取本表战场记录 33.2709,35.1962。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿与希腊同盟，亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre：伊苏斯战后马其顿军约 35,000–40,000 人，按标准取区间中值 37500。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗城邦（腓尼基/迦南），末代国王阿泽米尔库斯；时属阿契美尼德波斯治下。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Tyre：城内正规守军约 8,000–10,000 人，另有避难军民 3–4 万（非战斗人员，不计入）。本场按「故事以攻方为主、守方不可多到攻方打不赢」取区间低端 8000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Siege of Tyre 与阿里安《亚历山大远征记》：推罗守军以步兵守城为主，城头弩炮与弓手据墙射击，骑兵最少（腓尼基海岛城邦不产骑兵）；三排 前远程3 / 中步兵4 / 后骑兵2，取鱼鳞阵，落成剧本军团「推罗军」。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre：前333年11月伊苏斯战后，亚历山大沿海岸南下腓尼基（阿拉多斯、比布鲁斯、西顿），前332年1月进围推罗。游戏路线：拉塔基亚（腓尼基北部港口，前332年已存在）→ 阿卡（腓尼基海岸港口，距推罗 39 公里）→ 推罗；项目没有西顿据点，按铁律用附近已有据点连接、绝不新建。' }, result: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿胜；城破后守军阵亡约 6,000–8,000，平民多被贩为奴；推罗易主归马其顿，跨海长堤淤积使海岛此后永久成为半岛。' }, invite: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗人拒绝亚历山大入城向城中的麦勒卡特（希腊称赫拉克勒斯）献祭，是围城的直接导火索。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Siege of Tyre：跨海长堤宽约六十米、城距大陆近千米、推罗战船约八十艘、城破守军阵亡约 6,000–8,000。播报里兵力只写「数万」「千余」，不写确数。' } },
+        foeCommanderUnit: 'hero_parmenion',
+        startCityId: 'city_latajiya',
+        cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
     },
     // ═══════════════════════════════════════════════════════════════
     // 前 331 年秋 · 亚历山大决战波斯：高加米拉战役（Battle of Gaugamela，前331年10月）

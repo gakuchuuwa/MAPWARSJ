@@ -88,6 +88,9 @@ import {
 
 export { STARTING_CAPITALS } from '../data/StartingCapitals';
 
+/** 剧本模式开局：玩家出生点离归属武将所在城的距离（度，≈65 公里） */
+const SCRIPT_SPAWN_DIST_DEG = 0.6;
+
 declare global {
     interface Window {
         game: GameApp;
@@ -796,11 +799,15 @@ export class GameApp {
         if (candidateEdges.length > 0) {
             const edge = candidateEdges[Math.floor(Math.random() * candidateEdges.length)];
             // 沿道路挑一个离开据点一定距离的节点（>= 判定到达阈值，保证在城外）
+            // 🔴 [2026-09-24 主人「玩家上来就接任务了，你能不能把玩家拉的远一点呀」]
+            //    剧本模式出生在归属武将城外约 0.6°（≈65 公里）的路上，要先走一段才见到他；
+            //    路比这短就生在这条路的另一头。乱斗模式照旧只要出城（到达判定距离之外）。
+            const minDist = scriptStart ? SCRIPT_SPAWN_DIST_DEG : PLAYER_CITY_ARRIVE_DIST;
             let picked: [number, number] | null = null;
             for (let i = 1; i < edge.coordinates.length; i++) {
                 const c = edge.coordinates[i];
                 const d = getEuclideanDistance({ lat: startCity.latitude, lng: startCity.longitude }, { lat: c[1], lng: c[0] });
-                if (d >= PLAYER_CITY_ARRIVE_DIST) {
+                if (d >= minDist) {
                     picked = c;
                     break;
                 }
