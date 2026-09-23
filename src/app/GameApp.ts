@@ -73,7 +73,8 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
-import { setScriptPeriodProvider } from '../events/scriptPeriod';
+import { setScriptPeriodProvider, setScriptFactionLegionResolver } from '../events/scriptPeriod';
+import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -323,6 +324,16 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            // 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗的攻 / 守方用事件指名的剧本军团
+            setScriptFactionLegionResolver((factionId) => {
+                const ev = this.scriptCityVisibility?.getCurrentEvent();
+                const d = ev?.siegeData ?? ev?.fieldBattleData;
+                if (!d) return null;
+                const name = d.attackerFactionId === factionId ? d.attackerLegionName
+                    : (d as { defenderFactionId?: string }).defenderFactionId === factionId ? d.defenderLegionName
+                        : undefined;
+                return name && SCRIPT_LEGION_MAP.has(name) ? name : null;
+            });
             // 🔴 [2026-09-23 主人定「特殊建筑都是和据点绑定的」] 特殊建筑跟着挂靠据点显隐
             this.map.getMonumentLayer()?.setCityFilter((cityId) => {
                 const c = this.cityManager.getCity(cityId);

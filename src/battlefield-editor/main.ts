@@ -33,6 +33,11 @@ import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/Jo
 // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 硬规则检查单独成文件，便于脚本拿全量数据回归
 import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
+import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
+import { WAR_TYPES } from '../data/WarTypes';
+import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
+import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
+import { slotsMatchFormation } from '../types/CultureFormations';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -76,6 +81,8 @@ interface BattleDraft {
     generalId: string;
     /** 🔴 [2026-09-23] 武将邀约对白：剧本模式找到归属武将时他说的话（带语音，念完才开始赶路背景播报） */
     inviteText: string;
+    /** 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），每项必填 */
+    sources: Record<string, EventSourceEntry>;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -213,6 +220,8 @@ function loadDrafts(): BattleDraft[] {
             season: ev.season ?? 0,
             generalId: (ev as AnyEvent & { generalId?: string }).generalId ?? '',
             inviteText: (ev as AnyEvent & { inviteText?: string }).inviteText ?? '',
+            sources: Object.fromEntries(Object.entries((ev as AnyEvent & { sources?: Record<string, EventSourceEntry> }).sources ?? {})
+                .map(([k, v]) => [k, { ...v }])),
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -248,7 +257,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -360,6 +369,34 @@ function validate(d: BattleDraft): Issue[] {
     out.push(...checkEventRules(d, drafts));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
     out.push(...checkRoute(d).issues);
+    // 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单每项必填，绝不留空
+    for (const it of EVENT_SOURCE_ITEMS) {
+        const e = d.sources[it.key];
+        if (!e || !e.text.trim()) {
+            out.push({ level: 'error', msg: `史料依据「${it.label}」没写：先查；查不到用知名度最大的说法；再没有就合理推定并写明理由，绝不留空` });
+        }
+    }
+    // 🔴 [2026-09-23] 剧本军团三兵种 / 史料 / 名实相符
+    out.push(...checkSideLegion('攻方', d.attackerLegionName, resolveCurrentLegion(d.attackerFactionId, d.attackerSourceCityId)));
+    out.push(...checkSideLegion('守方', d.defenderLegionName,
+        resolveCurrentLegion(d.defenderFactionId, d.type === 'siege' ? d.defenderCityId : d.defenderSourceCityId)));
+    // 🔴 [2026-09-23 主人：「这是亚历山大率领的远征军……下一场还要换军团吗？」]
+    //    剧本军团是一支历史军队本身，同一武将的各场事件用同一支；只有史书记载编成确实变了才另立。
+    for (const [side, gid, legion] of [['攻方', d.attackerGeneralId, d.attackerLegionName], ['守方', d.defenderGeneralId, d.defenderLegionName]] as const) {
+        if (!gid) continue;
+        const others = new Set<string>();
+        for (const x of drafts) {
+            if (x.title === d.title) continue;
+            if (x.attackerGeneralId === gid && x.attackerLegionName) others.add(x.attackerLegionName);
+            if (x.defenderGeneralId === gid && x.defenderLegionName) others.add(x.defenderLegionName);
+        }
+        others.delete(legion);
+        if (others.size) {
+            const name = GENERAL_BY_ID.get(gid)?.generalName ?? gid;
+            out.push({ level: 'warn', msg: `${side}【${name}】在别的事件里用的是「${[...others].join('、')}」，这里是「${legion || '未指定'}」：`
+                + '同一支军队整场战争用同一支剧本军团，除非史书记载它的编成确实变了' });
+        }
+    }
 
     return out;
 }
@@ -454,10 +491,72 @@ function resolveCurrentLegion(factionId: string, sourceCityId: string): string {
     if (!city) return '';
     return getCultureLegionName(getCityRegion({ latitude: city.lat, longitude: city.lng })) || '';
 }
+/**
+ * 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 事件里只许选**第四层剧本军团**：
+ * 前三层的名字填进事件，运行时只改名字、兵种仍按势力取 —— 名不副实就是幽灵军团。
+ * 已存数据里若还有前三层的名字，照样列出来（标 ✖），好让校验指出来改。
+ */
 function legionOptions(cur: string, currentLegion: string): string {
-    const tip = currentLegion ? `（不指定 · 当前：${currentLegion}）` : '（不指定）';
-    return `<option value="">${escapeHtml(tip)}</option>`
-        + LEGION_GROUPS.map((g) => `<optgroup label="${escapeHtml(g.label)}">${g.legions.map((n) => opt(n, n, cur)).join('')}</optgroup>`).join('');
+    const tip = currentLegion ? `（不指定 · 用势力乱斗那支：${currentLegion}）` : '（不指定）';
+    const legacy = cur && !SCRIPT_LEGION_MAP.has(cur) ? opt(cur, `✖ ${cur}（前三层军团，事件里不能用）`, cur) : '';
+    return `<option value="">${escapeHtml(tip)}</option>` + legacy
+        + `<optgroup label="四级 · 剧本军团（按这一仗史实配三兵种）">${SCRIPT_LEGIONS.map((l) => opt(l.name, l.name, cur)).join('')}</optgroup>`;
+}
+
+/** 选中的剧本军团长什么样：阵型 + 前中后三排兵种 + 史料出处（没选就显示乱斗那支的兵种，提醒没按史实核对） */
+function legionPreview(name: string, fallback: string): string {
+    const def = name ? SCRIPT_LEGION_MAP.get(name) : undefined;
+    if (!def) {
+        return `<span class="hint">${fallback ? `未指定剧本军团：将用势力乱斗那支「${escapeHtml(fallback)}」，兵种没按此役史实核对` : '未指定剧本军团'}</span>`;
+    }
+    const rows = ['前排', '中排', '后排'];
+    const cells = def.slots.map((sl, i) =>
+        `${rows[i] ?? '第' + (i + 1) + '排'}：${escapeHtml(WAR_TYPES[sl.type]?.name ?? sl.type)} ×${sl.count}`).join(' · ');
+    return `<span class="hint" style="color:#cbb98e">${escapeHtml(FORMATION_LABEL[def.formationMode] ?? def.formationMode)} · ${cells}<br>史料：${escapeHtml(def.source)}</span>`;
+}
+
+const FORMATION_LABEL: Record<string, string> = {
+    square: '方阵 3-3-3', echelon: '雁行阵 4-3-2', fish_scale: '鱼鳞阵 3-4-2', crane_wing: '鹤翼阵 2-4-3',
+    triangle: '锥形阵 2-3-4', crescent: '偃月阵 3-2-4', balance_yoke: '衡轭阵 4-2-3',
+};
+
+/**
+ * 剧本军团硬规则（2026-09-23 主人：「确保以后新的军团都要符合历史」「军团都是三兵种构成的」）：
+ *   · 只许选第四层剧本军团（否则名不副实）；
+ *   · 三排 = 三个**不同**兵种（普通 / 高级 / 精锐只是档位，算同一兵种）；
+ *   · 九格位合计 9 且与阵型对得上；兵种必须在兵种库里；必须写史料出处。
+ */
+function checkSideLegion(side: string, name: string, fallback: string): Issue[] {
+    const out: Issue[] = [];
+    if (!name) {
+        out.push({ level: 'warn', msg: `${side}没指定剧本军团：会用势力乱斗那支「${fallback || '？'}」，兵种没按此役史实核对，建议按史料配一支剧本军团` });
+        return out;
+    }
+    const def = SCRIPT_LEGION_MAP.get(name);
+    if (!def) {
+        out.push({ level: 'error', msg: `${side}军团「${name}」不是剧本军团：前三层的名字填进事件，运行时只改名不改兵（幽灵军团），请改选剧本军团` });
+        return out;
+    }
+    const base = (t: string) => t.replace(/^elite_/, '');
+    if (def.slots.length !== 3 || new Set(def.slots.map((sl) => base(sl.type))).size !== 3) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」不是三个不同兵种（普通 / 高级 / 精锐算同一兵种）：军团必须三兵种构成` });
+    }
+    if (!slotsMatchFormation(def.slots, def.formationMode)) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排人数与阵型对不上（合计必须 9，按阵型分排）` });
+    }
+    for (const sl of def.slots) {
+        if (!WAR_TYPES[sl.type]) out.push({ level: 'error', msg: `${side}剧本军团「${name}」的兵种不存在：${sl.type}` });
+    }
+    if (!def.source.trim()) out.push({ level: 'error', msg: `${side}剧本军团「${name}」没写史料出处` });
+    // 🔴 [2026-09-23 主人定] 剧本军团不加时代：用真实历史名或后世通称
+    if (/^(古典|封建|城堡|帝国)时代/.test(name)) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」带了时代前缀：剧本军团用真实历史名或后世通称（如「马其顿军」），不加时代` });
+    }
+    // 名字用史实原名，不硬加「军团」；但不许与精锐番号同名（军团 ≠ 精锐）
+    if (Object.values(CITY_ELITE_LEGIONS).some((e) => e.name === name)) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」和一个精锐番号同名：军团与精锐不能混用一个名字` });
+    }
+    return out;
 }
 /** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */
 function filterLegionSelect(selectId: string, searchId: string): void {
@@ -612,7 +711,8 @@ function render(): void {
                         <select id="f-attCity">${cityOptions(working.attackerSourceCityId)}</select></div>
                     <div class="fld"><label>军团</label>
                         <input id="f-attLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-attLegion">${legionOptions(working.attackerLegionName, attCurrentLegion)}</select></div>
+                        <select id="f-attLegion">${legionOptions(working.attackerLegionName, attCurrentLegion)}</select>
+                        ${legionPreview(working.attackerLegionName, attCurrentLegion)}</div>
                 </div>
             </fieldset>
 
@@ -632,7 +732,8 @@ function render(): void {
                         <select id="f-defSrcCity">${cityOptions(working.defenderSourceCityId)}</select></div>`}
                     <div class="fld"><label>军团</label>
                         <input id="f-defLegionSearch" placeholder="搜索军团…" value="">
-                        <select id="f-defLegion">${legionOptions(working.defenderLegionName, defCurrentLegion)}</select></div>
+                        <select id="f-defLegion">${legionOptions(working.defenderLegionName, defCurrentLegion)}</select>
+                        ${legionPreview(working.defenderLegionName, defCurrentLegion)}</div>
                 </div>
             </fieldset>
 
@@ -694,6 +795,20 @@ function render(): void {
                 </div>
                 ${renderRouteReport()}
             </fieldset>
+
+            <fieldset><legend>八、史料依据 · 每项必填：先查，查到写史实出处；查不到用知名度最大的说法；再没有就合理推定并写明理由</legend>
+                ${EVENT_SOURCE_ITEMS.map((it) => {
+                    const cur = working.sources[it.key] ?? { level: 'fact', text: '' };
+                    const lv = (Object.keys(EVENT_SOURCE_LEVEL_LABEL) as EventSourceLevel[])
+                        .map((l) => opt(l, EVENT_SOURCE_LEVEL_LABEL[l], cur.level)).join('');
+                    return `<div class="row">
+                        <div class="fld" style="max-width:170px;"><label>${escapeHtml(it.label)}</label>
+                            <select data-src-level="${it.key}">${lv}</select></div>
+                        <div class="fld"><label>依据 · ${escapeHtml(it.hint)}</label>
+                            <textarea data-src-text="${it.key}" style="min-height:40px;">${escapeHtml(cur.text)}</textarea></div>
+                    </div>`;
+                }).join('')}
+            </fieldset>
         </div>
     </div>`;
 
@@ -744,7 +859,7 @@ function bind(): void {
         el.addEventListener('click', () => {
             selected = Number(el.dataset.i);
             isNew = false;
-            working = { ...drafts[selected] };
+            working = { ...drafts[selected], sources: { ...drafts[selected].sources } };
             render();
         });
     });
@@ -807,6 +922,21 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
     on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
+    // 史料依据：每项的级别与依据
+    document.querySelectorAll<HTMLSelectElement>('[data-src-level]').forEach((el) => {
+        el.addEventListener('change', () => {
+            const k = el.dataset.srcLevel!;
+            working.sources[k] = { level: el.value as EventSourceLevel, text: working.sources[k]?.text ?? '' };
+            render();
+        });
+    });
+    document.querySelectorAll<HTMLTextAreaElement>('[data-src-text]').forEach((el) => {
+        el.addEventListener('change', () => {
+            const k = el.dataset.srcText!;
+            working.sources[k] = { level: working.sources[k]?.level ?? 'fact', text: el.value };
+            render();
+        });
+    });
     on<HTMLTextAreaElement>('f-bfBriefing', 'change', (el) => { working.bfBriefing = el.value; render(); });
 
     on<HTMLButtonElement>('wp-add', 'click', () => {

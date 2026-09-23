@@ -14,3 +14,18 @@ export function setScriptPeriodProvider(fn: () => boolean): void {
 export function isScriptPeriod(): boolean {
     return provider();
 }
+
+/**
+ * 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗里某势力该用哪支**剧本军团**。
+ * 由 GameApp 注入（按当前事件的 attackerLegionName / defenderLegionName）；返回 null = 用势力自己挂的军团。
+ * 乱斗模式恒 null —— 乱斗里一格不变。
+ */
+let factionLegionResolver: (factionId: string) => string | null = () => null;
+
+export function setScriptFactionLegionResolver(fn: (factionId: string) => string | null): void {
+    factionLegionResolver = fn;
+}
+
+export function getScriptFactionLegionName(factionId: string): string | null {
+    return isScriptPeriod() ? factionLegionResolver(factionId) : null;
+}

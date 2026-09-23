@@ -32,6 +32,9 @@ export class ScriptCityVisibility {
     private cachedBattlefields: Set<string> | null = null;
     /** 上次计算时道路网还没建好（没算沿途经过的城） */
     private routeless = false;
+    /** 当前这一场（按年代第一场没打过的）；全部打完 = null */
+    private currentEv: HistoricalEvent | null = null;
+    private currentComputed = false;
 
     constructor(
         private readonly getCities: () => City[],
@@ -43,6 +46,13 @@ export class ScriptCityVisibility {
     public invalidate(): void {
         this.cached = null;
         this.cachedBattlefields = null;
+        this.currentComputed = false;
+    }
+
+    /** 当前这一场历史事件（剧本军团、出生地等用）；剧本已全部打完 → null */
+    public getCurrentEvent(): HistoricalEvent | null {
+        if (!this.currentComputed) this.compute();
+        return this.currentEv;
     }
 
     public isCityVisible(city: City): boolean {
@@ -72,6 +82,7 @@ export class ScriptCityVisibility {
 
         const out = new Set<string>();
         const bfs = new Set<string>();
+        let current: HistoricalEvent | null = null;
         const routeReady = roadRegistry.isInitialized();
         // 坐标 → 城（道路网的路径点在城的位置上正好就是城坐标）
         const cityAt = new Map<string, string>();
@@ -85,11 +96,13 @@ export class ScriptCityVisibility {
             if (routeReady) this.addRouteCities(ev, bfId, cityOfGeneral, pos, cityAt, out);
             bfs.add(bfId);
             // 已打过的累积保留；遇到第一场没打过的（当前这一场）加完就停
-            if (!isBattlefieldFought(bfId)) break;
+            if (!isBattlefieldFought(bfId)) { current = ev; break; }
         }
         this.cached = out;
         this.cachedBattlefields = bfs;
         this.routeless = !routeReady;
+        this.currentEv = current;
+        this.currentComputed = true;
     }
 
     /** 军团沿路实际经过的城：归属武将所在城 → 各行军路标 → 终点（攻城打的城 / 战场坐标） */
