@@ -397,7 +397,25 @@ function validate(d: BattleDraft): Issue[] {
     //    势力记录不存在 / 主帅查不到 / 势力没番号 / 兵力悬殊 / 战场坐标与别处重合。
     out.push(...checkEventRules(d, drafts));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
-    out.push(...checkRoute({ ...d, startCityId: effectiveStart(d)?.cityId ?? '' }).issues);
+    const routeReport = checkRoute({ ...d, startCityId: effectiveStart(d)?.cityId ?? '' });
+    out.push(...routeReport.issues);
+    // 🔴 [2026-09-24 主人问「不按历史线路行军，这个问题如何解决」] **路网偷偷改道要当场看得见**：
+    //    行军的路径是 `roadRegistry.findPathOnRoad(起点, 终点)` 算出来的（**路网最短路**），
+    //    路标只约束你写出来的那几个点，两点之间走哪条路由路网说了算 —— 一个路标都没写时尤其如此。
+    //    血训：加沙一场没写路标，路网把它带去了**耶路撒冷**；高加米拉一场写着**大马士革**（那是前333年帕曼纽取财宝的路），
+    //    两处都不是史书上的走法。
+    //    故：**本场一个路标都没写时**，把实测经过的城逐条点出来，请作者对照史料确认 ——
+    //    史料里没写的城，要么加路标绕开它，要么在「史料依据·行军路线」里写明为什么经过它。
+    if (!d.marchWaypoints.length) {
+        const via = [...new Set(routeReport.legs.flatMap((l) => l.via))];
+        if (via.length) {
+            out.push({
+                level: 'warn',
+                msg: `本场没写行军路标：走哪条路由路网最短路决定，实测经过【${via.join('、')}】`
+                    + '—— 请对照史料确认；史料里没写的城，要么加路标绕开它，要么在「史料依据·行军路线」里写明为什么经过它',
+            });
+        }
+    }
     // 🔴 [2026-09-23 主人定「剧本模式中，每一个主角武将的军团都必须是10队，样式从兵模素材中找，不要名字，要看样子符合就行」]
     if (d.generalId && !d.commanderUnit) {
         out.push({ level: 'error', msg: '主将队兵种没选：剧本模式每个主角武将的军团都是 10 队，第 10 队按素材样貌选一个符合这位武将的兵模' });
