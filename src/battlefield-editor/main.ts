@@ -987,7 +987,7 @@ function renderRouteReport(): string {
                 + (l.offroadKm > 0 ? ` · 离路直行 ${Math.round(l.offroadKm)} 公里` : '')
                 + (l.via.length ? ` · 经过：${escapeHtml(l.via.join(' → '))}` : '')
             : '✖ 无路可达';
-        return `<div style="${style}">【${escapeHtml(l.from)}】→【${escapeHtml(l.to)}】${body}</div>`;
+        return `<div style="${style}">${l.continuation ? '🚩连续行军 ' : ''}【${escapeHtml(l.from)}】→【${escapeHtml(l.to)}】${body}</div>`;
     }).join('');
     const cityRows = r.shownCities.map((c) =>
         `<span class="chip" style="${c.absent ? 'opacity:.55;text-decoration:line-through' : ''}">${escapeHtml(c.name)}`
@@ -997,7 +997,7 @@ function renderRouteReport(): string {
         <div class="fld" style="margin-top:10px;">
             <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（${st?.from === 'set' ? '本场写明的出发据点' : st?.from === 'previous' ? '上一场打完的地方' : '归属武将本城'}）出发，与游戏同一套寻路</label>
             <div style="font-size:12px;line-height:1.7;">${legRows || '<span class="hint">算不出路线</span>'}</div>
-            <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船</span>
+            <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船。🚩 那一段是**剧本期连续行军**：军团打完上一场**就地开拔**，起点是**上一处战场**（不经过出发据点），也必须受同一套控制范围约束</span>
         </div>
         <div class="fld" style="margin-top:8px;">
             <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 逐个核对那一年是否存在、名字对不对：不存在的点「✕不存在」，路照走、城不显示</label>

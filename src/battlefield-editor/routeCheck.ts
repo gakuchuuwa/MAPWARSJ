@@ -22,6 +22,7 @@ import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
+import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 
 /** 点与点之间的控制范围（超出就提醒加路标） */
 export const ROUTE_LIMITS = {
@@ -31,6 +32,8 @@ export const ROUTE_LIMITS = {
     MAX_DETOUR_RATIO: 1.6,
     /** 最后一段从路网末端直线走到战场，超过它说明战场离路太远 */
     MAX_OFFROAD_KM: 40,
+    /** 非最后一段贴到被攻据点这么近：说明军团先到了目标又走开，路标设在了目标之外 */
+    OVERSHOOT_KM: 15,
 };
 
 export interface RouteDraft {
@@ -51,6 +54,9 @@ export interface RouteDraft {
     absentCities: string[];
     /** 军团出发据点（空 = 归属武将本城） */
     startCityId: string;
+    /** 事件年代（用来找「同一武将上一场」，算连续行军那一段；编辑器草稿自带） */
+    year?: number;
+    season?: number;
 }
 
 export interface RouteLeg {
@@ -64,6 +70,8 @@ export interface RouteLeg {
     via: string[];
     /** 最后一段走出路网直线到战场的距离 */
     offroadKm: number;
+    /** 这一段是「上一处战场 → 本场」的连续行军段（剧本期军团不经过出发据点） */
+    continuation?: boolean;
 }
 
 export interface RouteReport {
@@ -112,6 +120,46 @@ function wondersOf(cityId: string): string[] {
     return out;
 }
 
+/** 这一场打完，军团**留在哪里**（= 下一场的起点）：攻城战 = 被攻的城 / 战场要塞，野战 = 战场坐标 */
+function eventEndPoint(ev: (typeof HISTORICAL_EVENT_SCRIPT)[number]): P | null {
+    const sd = ev.type === 'siege' ? (ev.siegeData as { defenderCityId?: string } | undefined) : undefined;
+    if (sd?.defenderCityId) {
+        const c = CITY_BY_ID.get(sd.defenderCityId);
+        if (c) return { lat: c.lat, lng: c.lng };
+    }
+    const bfId = resolveEventBattlefieldId(ev, (id) => {
+        const c = CITY_BY_ID.get(id);
+        return c ? { lat: c.lat, lng: c.lng } : undefined;
+    });
+    const bf = bfId ? BATTLEFIELDS.find((b) => b.id === bfId) : undefined;
+    return bf ? { lat: bf.lat, lng: bf.lng } : null;
+}
+
+/** 同一武将、比本场早的那一场（= 军团此刻所站之处） */
+function previousEventOfSameGeneral(generalId: string, year?: number, season?: number) {
+    if (!generalId || year === undefined) return null;
+    const s = season ?? 0;
+    return [...HISTORICAL_EVENT_SCRIPT]
+        .filter((e) => e.generalId === generalId && (e.year < year || (e.year === year && (e.season ?? 0) < s)))
+        .sort((a, b) => (b.year - a.year) || ((b.season ?? 0) - (a.season ?? 0)))[0] ?? null;
+}
+
+/**
+ * 这一段路是不是**先到了目标跟前、又走开了**（折返）。
+ *
+ * 判据只有一条：离终点最近的那一点**不在路径末尾**。
+ * 收尾那一段的最后一点本来就是终点（距离 0），所以判据必须在「最近点**不在末尾**」上，
+ * 否则每一段正常的收尾路都会被误判成折返（血训：刚加上这条时连续行军段当场误报）。
+ */
+function passesTerminusEarly(path: P[], end: P): { nearest: number; early: boolean } {
+    let nearest = Infinity, at = -1;
+    for (let i = 0; i < path.length; i++) {
+        const d = km(path[i], end);
+        if (d < nearest) { nearest = d; at = i; }
+    }
+    return { nearest, early: nearest <= ROUTE_LIMITS.OVERSHOOT_KM && at < path.length - 1 };
+}
+
 export function checkRoute(d: RouteDraft): RouteReport {
     ensureRoads();
     const issues: RouteReport['issues'] = [];
@@ -138,6 +186,25 @@ export function checkRoute(d: RouteDraft): RouteReport {
             : { lat: d.lat, lng: d.lng };
     const endName = siegeCity?.name ?? '战场';
 
+    /**
+     * 一段路：沿路网走；到不了又允许兜底时，走**与运行时同一套**兜底
+     * （`PlayerQuestSystem.startMarchToBattlefield`）—— 先沿路网到最近那座城，最后一段直奔目的地。
+     * 战场常常不在路网上（波斯门深在扎格罗斯山里），不兜底就会把「离路直行 151 公里」误报成「无路可达」。
+     */
+    const buildLeg = (from: P, to: P, allowFallback: boolean) => {
+        let path = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
+        let offroadKm = 0;
+        if ((!path || path.length < 2) && allowFallback) {
+            const anchor = roadRegistry.getNearestCityPos(to.lat, to.lng, 5);
+            const via = anchor ? roadRegistry.findPathOnRoad(from, anchor) as Array<P & { sea?: boolean }> | null : null;
+            if (via && via.length >= 2 && anchor) {
+                path = [...via, to];
+                offroadKm = km(anchor, to);
+            }
+        }
+        return { path, offroadKm };
+    };
+
     // 事件用到的城（与游戏 ScriptCityVisibility 同口径）
     for (const gid of [d.generalId, d.attackerGeneralId, d.defenderGeneralId]) if (gid) add(cityOfGeneral(gid));
     add(d.attackerSourceCityId); add(d.defenderSourceCityId); add(d.defenderCityId); add(d.bfEventCityId);
@@ -157,17 +224,12 @@ export function checkRoute(d: RouteDraft): RouteReport {
         for (let i = 0; i + 1 < stops.length; i++) {
             const a = stops[i], b = stops[i + 1];
             const isLast = i + 1 === stops.length - 1;
-            let path = roadRegistry.findPathOnRoad(a.p, b.p) as Array<P & { sea?: boolean }> | null;
-            let offroadKm = 0;
-            if ((!path || path.length < 2) && isLast) {
-                // 与运行时同一套兜底：沿路网到最近那座城，最后一段直奔战场
-                const anchor = roadRegistry.getNearestCityPos(b.p.lat, b.p.lng, 5);
-                const via = anchor ? roadRegistry.findPathOnRoad(a.p, anchor) as Array<P & { sea?: boolean }> | null : null;
-                if (via && via.length >= 2 && anchor) {
-                    path = [...via, b.p];
-                    offroadKm = km(anchor, b.p);
-                }
-            }
+            // 出发点又当路标用（军团出发据点那一段本来就要经过它）→ 这一段长度为零，跳过。
+            // 不跳过会去问「同一个点怎么走」，寻路返回 null，编辑器当场报「无路可达」把这一场挡住。
+            if (km(a.p, b.p) < 0.5) continue;
+            const built = buildLeg(a.p, b.p, isLast);
+            let path = built.path;
+            const offroadKm = built.offroadKm;
             const straightKm = km(a.p, b.p);
             if (!path || path.length < 2) {
                 legs.push({ from: a.name, to: b.name, ok: false, roadKm: 0, straightKm, seaKm: 0, via: [], offroadKm: 0 });
@@ -196,6 +258,70 @@ export function checkRoute(d: RouteDraft): RouteReport {
             }
             if (offroadKm > ROUTE_LIMITS.MAX_OFFROAD_KM) {
                 warn(`最后一段要离开道路直线走 ${Math.round(offroadKm)} 公里才到战场：战场离路太远，请核对坐标或加路标`);
+            }
+            // 🔴 路标设在**目标之外**：军团先贴着被攻据点过去、再走一段、然后折返回来攻城。
+            //    血训（2026-09-23 前332 推罗）：航点写的是阿卡，而阿卡在推罗**以南** 39 公里 ——
+            //    军团沿海岸南下先到推罗跟前，再走到阿卡，再掉头 39 公里回来围城。
+            //    史实是亚历山大**自北面的西顿**南下围推罗，压根没往南绕过。
+            if (siegeCity) {
+                const t = passesTerminusEarly(path, end);
+                if (t.early) {
+                    warn(`【${a.name}】→【${b.name}】这一段会先贴着被攻据点【${siegeCity.name}】（最近 ${Math.round(t.nearest)} 公里）经过，再折回来攻城：路标设在了目标之外，请挪到**来路一侧**`);
+                }
+            }
+        }
+
+        // ── 连续行军那一段：**上一处战场 → 本场第一个落脚点** ────────────────
+        // 🔴 2026-09-23 血训（前332 推罗战役）：上面每一段都是从「军团出发据点」起算的，
+        //    可剧本期主角的军团打完上一场是**就地继续开拔**（见 PlayerQuestSystem.continueScriptCampaign
+        //    与 AGENTS §三.1「从上一处战场继续行军」），起点是**上一处战场**，根本不经过出发据点。
+        //    于是「第二场 → 第三场」真正要走的那一段，编辑器里一行都看不到：
+        //    推罗那一场第一段实测 588 公里（直线 437 > 400），编辑器却报「无问题」。
+        //    故这一段也算出来、按同三条控制范围提示（只提示，不挡保存）。
+        const prevEv = previousEventOfSameGeneral(d.generalId, d.year, d.season);
+        const prevEnd = prevEv ? eventEndPoint(prevEv) : null;
+        if (prevEv && prevEnd) {
+            const first = stops[1] ?? stops[stops.length - 1];
+            if (km(prevEnd, first.p) >= 0.5) {
+                const straightKm = km(prevEnd, first.p);
+                const fromName = `上一场打完处（${(prevEv.title ?? `${prevEv.year}年那一场`).replace(/^公元前\d+年\s*/, '')}）`;
+                // 目的地就是终点（本场没写航点）时，允许与运行时同一套「到最近那座城再直奔」兜底
+                const isTerminus = first === stops[stops.length - 1];
+                const built = buildLeg(prevEnd, first.p, isTerminus);
+                const path = built.path;
+                if (!path || path.length < 2) {
+                    legs.push({ from: fromName, to: first.name, ok: false, roadKm: 0, straightKm, seaKm: 0, via: [], offroadKm: 0, continuation: true });
+                    warn(`连续行军第一段【${fromName}】→【${first.name}】无路可达：军团从上一处战场开拔会走不过去`);
+                } else {
+                    let roadKm = 0, seaKm = 0;
+                    const via: string[] = [];
+                    for (let k = 1; k < path.length; k++) {
+                        const seg = km(path[k - 1], path[k]);
+                        roadKm += seg;
+                        if (path[k].sea) seaKm += seg;
+                        const cid = cityAt.get(`${path[k].lat.toFixed(4)},${path[k].lng.toFixed(4)}`);
+                        if (cid) {
+                            const nm = CITY_BY_ID.get(cid)!.name;
+                            if (via[via.length - 1] !== nm) via.push(nm);
+                        }
+                    }
+                    legs.push({ from: fromName, to: first.name, ok: true, roadKm, straightKm, seaKm, via, offroadKm: built.offroadKm, continuation: true });
+                    if (straightKm > ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM) {
+                        warn(`连续行军第一段【${fromName}】→【${first.name}】直线 ${Math.round(straightKm)} 公里，超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里：军团从上一处战场开拔时中间走哪条路不受控，请在【${first.name}】之前加路标`);
+                    }
+                    if (straightKm > 20 && roadKm / straightKm > ROUTE_LIMITS.MAX_DETOUR_RATIO) {
+                        warn(`连续行军第一段【${fromName}】→【${first.name}】实际 ${Math.round(roadKm)} 公里，是直线的 ${(roadKm / straightKm).toFixed(1)} 倍：在绕远，请在中间加路标`);
+                    }
+                    if (built.offroadKm > ROUTE_LIMITS.MAX_OFFROAD_KM) {
+                        warn(`连续行军第一段要离开道路直线走 ${Math.round(built.offroadKm)} 公里才到终点：终点离路太远，请核对坐标或加路标`);
+                    }
+                    if (siegeCity) {
+                        const t = passesTerminusEarly(path, end);
+                        if (t.early) {
+                            warn(`连续行军第一段会先贴着被攻据点【${siegeCity.name}】（最近 ${Math.round(t.nearest)} 公里）经过，再折回来攻城：路标设在了目标之外，请挪到**来路一侧**`);
+                        }
+                    }
+                }
             }
         }
     }
