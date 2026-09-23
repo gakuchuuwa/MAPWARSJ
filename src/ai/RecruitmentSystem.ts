@@ -49,15 +49,22 @@ export class RecruitmentSystem {
     private siegeManager: SiegeManager | null;
     private seasonTimer: number = 0;
     private hasRunInitialSpawn = false;
+    /**
+     * 开局首发因剧本期被跳过 → 剧本结束（闸门打开）后补跑一次。
+     * 🔴 [2026-09-23] 主人定「剧本都结束后，自动切换到乱斗模式」：乱斗模式本来开局就有一批军团，
+     *    不补跑的话切过去全图空着，要等季末才零星出兵。
+     */
+    private initialSpawnDeferred = false;
     /** 每季募兵后分批刷新城市标签，避免一帧更新 600+ DOM 卡顿 */
     private pendingLabelCityIds: Set<string> = new Set();
     private static readonly LABEL_UPDATES_PER_FRAME = 20;
 
     /**
-     * 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」闸门（`PlayerHero.noLegionSpawn`，**默认开**）。
-     * 主人原话：「在玩家面板添加一个功能选项，**默认不出军团**」。
+     * 🔴 [2026-09-23 主人定] 历史剧本期闸门（`PlayerHero.autoPlan === 'script'`，默认）。
+     * 主人原话：「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。」
+     * （原面板「🚫 不出军团」勾选已并入剧本模式。）
      *
-     * 返回 true = 不生军团，**两条路一起闸**（由 GameApp 注入，判据 = 面板那个勾）：
+     * 返回 true = 不生军团，**两条路一起闸**（由 GameApp 注入）：
      *   · `runInitialSpawn`（播放时的开局首发）
      *   · `runSeasonTick` → `trySpawnLegions`（季末募兵）
      * **不闸**季初的 `recruitSeasonGarrison`（往城里补驻军，不产军团、也不把武将调出城）。
@@ -93,18 +100,18 @@ export class RecruitmentSystem {
      */
     public markInitialSpawnDone(): void {
         this.hasRunInitialSpawn = true;
+        this.initialSpawnDeferred = false;
     }
 
     public runInitialSpawn(): void {
         if (this.hasRunInitialSpawn) return;
         this.hasRunInitialSpawn = true;
 
-        // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」默认开 → **连开局首发也不生**。
-        //    （先前只闸季末那条，主人实测「还是有其他军团来捣乱」——
-        //      捣乱的正是播放时这一批首发。）
-        //    hasRunInitialSpawn 已在上面置位：事后关掉开关也**不会补跑**首发（开局一次性事件）。
+        // 🔴 历史剧本期 → **连开局首发也不生**（主人实测「还是有其他军团来捣乱」，捣乱的正是这一批首发）。
+        //    剧本结束转入乱斗后，由 update() 按 initialSpawnDeferred 补跑一次。
         if (this.isLegionSpawnPaused()) {
-            gameLog('recruitment', '💂 [募兵] 面板「不出军团」为开 → 跳过开局首发（全图不生军团）');
+            this.initialSpawnDeferred = true;
+            gameLog('recruitment', '💂 [募兵] 历史剧本期 → 开局首发推迟到剧本结束（全图不随机生军团）');
             return;
         }
 
@@ -166,6 +173,13 @@ export class RecruitmentSystem {
 
         this.flushPendingCityLabels();
 
+        // 剧本结束、转入乱斗：补跑那次被推迟的开局首发
+        if (this.initialSpawnDeferred && !this.isLegionSpawnPaused()) {
+            this.initialSpawnDeferred = false;
+            this.hasRunInitialSpawn = false;
+            this.runInitialSpawn();
+        }
+
         this.seasonTimer += gameDelta;
         if (this.seasonTimer < GameTime.SEASON_DURATION) return;
 
@@ -180,7 +194,7 @@ export class RecruitmentSystem {
         this.recruitSeasonGarrison(cities);
         // 季初重算据点将/精名额：上季覆灭或解散的军团所占名额在此释放（方案A）
         this.legionManager.syncCitySpawnTierConsumption();
-        // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」（默认开）→ 季末也不生军团。
+        // 🔴 历史剧本期 → 季末也不生军团。
         if (!this.isLegionSpawnPaused()) {
             this.trySpawnLegions(cities);
         }

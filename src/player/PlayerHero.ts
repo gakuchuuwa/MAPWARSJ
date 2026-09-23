@@ -75,8 +75,6 @@ export interface PlayerSaveState {
     nearbyFirst?: boolean;
     /** 自动选择兵模（默认开） */
     autoPickUnit?: boolean;
-    /** 不出军团（面板开关，默认开 = 全图不生任何军团）[2026-09-11 主人定] */
-    noLegionSpawn?: boolean;
     /** 已获海上兵模（战船 AssetId），终身保留 */
     learnedShips?: string[];
     /** 无势力时自选的战船下标；-1 = 独木舟 */
@@ -177,10 +175,15 @@ export class PlayerHero {
      *   · `'script'` 剧本模式 —— 到了年份优先奔赴历史战场，没有可打的战场才去找武将乱斗（9-16 定的那套）；
      *   · `'melee'`  乱斗模式 —— **完全不碰战场**，一直找武将入伍打乱斗。
      *
-     * 🔴 默认 `'melee'` 乱斗（主人 2026-09-17 定「应该默认乱斗模式，你默认剧本模式，上来不就自动接任务了吗」）。
-     *   我起初默认 `'script'` 是错的：那样一开局玩家就自动奔赴格拉尼库斯，而剧本要不要做都还没定。
+     * 🔴 [2026-09-23 主人定] 默认改回 `'script'` 剧本模式，且剧本模式是**整个世界的模式**：
+     *   「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。
+     *     军团在历史剧本期间，不能随意寻敌，只有等剧本都结束后，自动切换到乱斗模式。」
+     *   · 剧本模式 → 募兵系统不生军团（开局首发 + 季末），AI 行为树不驱动非剧本军团；
+     *   · 全部战场打完 → PlayerQuestSystem.tick 自动切到 `'melee'`，募兵与 AI 恢复。
+     *   原面板「🚫 不出军团」勾选已并入本项（主人：把不出军团功能放到剧本模式中）。
+     *   （9-17 曾定默认乱斗，已被本条取代。）
      */
-    public autoPlan: PlayerAutoPlan = 'melee';
+    public autoPlan: PlayerAutoPlan = 'script';
     /**
      * 「就近寻将」开关，**默认关**。
      * 🔴 [2026-09-15 主人报障「就近太近只在一个势力找，全随机又一直在奔波」] 语义已改：
@@ -198,17 +201,6 @@ export class PlayerHero {
      * 关：一切自动换装停手，只用玩家在面板上选的那个。
      */
     public autoPickUnit = true;
-    /**
-     * 🔴 [2026-09-11 主人定]「在玩家面板添加一个功能选项，**默认不出军团**」。
-     *
-     * 开（**默认**）= 全图**不生任何军团**：开局首发与季末募兵两条路一起闸掉，
-     *   武将都留在城里、世界安静，剧本主角军团（由剧本自己 forceCreate）不受影响。
-     * 关 = 恢复常规募兵（开局首发属"开局"一次性事件，不会补跑，只有季末募兵恢复）。
-     *
-     * 取代 2026-09-11 早些时候那套「开局 10 秒 / 玩家入伍」自动判定 ——
-     * 主人实测「还是有其他军团来捣乱」，故改为**看得见的手动开关**。
-     */
-    public noLegionSpawn = false;   // [2026-09-14] 剧本删除后不再跟剧本开关走；默认出军团（乱斗常态）
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -326,12 +318,6 @@ export class PlayerHero {
         if (this.autoPickUnit === on) return;
         this.autoPickUnit = on;
         if (on) this.syncMoveProfile();   // 打开即按当前状态重选一次
-        this.emitChange();
-    }
-    /** 面板「🚫 不出军团」开关（默认开） */
-    public setNoLegionSpawn(on: boolean): void {
-        if (this.noLegionSpawn === on) return;
-        this.noLegionSpawn = on;
         this.emitChange();
     }
     public getHostLegion(): Army | undefined {
@@ -1019,7 +1005,6 @@ export class PlayerHero {
             manualUnitPick: this.manualUnitPick,
             nearbyFirst: this.nearbyFirst,
             autoPickUnit: this.autoPickUnit,
-            noLegionSpawn: this.noLegionSpawn,
             learnedShips: [...this.learnedShips],
             selectedShip: this.selectedShip,
             selectedElite: this.selectedElite,
@@ -1040,7 +1025,6 @@ export class PlayerHero {
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.nearbyFirst = s.nearbyFirst ?? false;
         this.autoPickUnit = s.autoPickUnit ?? true;
-        this.noLegionSpawn = s.noLegionSpawn ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
         this.selectedElite = Math.min(this.learnedElites.length - 1, s.selectedElite ?? -1);

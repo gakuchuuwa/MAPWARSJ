@@ -190,9 +190,26 @@ export class CityManager {
         return this.isEditorMode;
     }
 
+    /**
+     * 🔴 [2026-09-23 主人定] 外部显示过滤（剧本期只显示剧本事件用到的据点，见 `ScriptCityVisibility`）。
+     * 只影响据点画不画，不影响据点本身（寻路/归属/战斗照旧）。
+     */
+    private visibilityFilter: ((city: City) => boolean) | null = null;
+
+    public setVisibilityFilter(filter: ((city: City) => boolean) | null): void {
+        this.visibilityFilter = filter;
+    }
+
+    /** 显示范围变了（剧本进度 / 模式切换）→ 按新范围重画视口据点 */
+    public refreshCityVisibility(): void {
+        void this.renderCitiesOnly();
+    }
+
     public isCityVisible(city: City): boolean {
         // 1. Editor Mode: Always visible
         if (this.isEditorMode) return true;
+
+        if (this.visibilityFilter && !this.visibilityFilter(city)) return false;
 
         // 2. Default: Visible if no dates defined
         if (city.startYear === undefined && city.endYear === undefined) return true;

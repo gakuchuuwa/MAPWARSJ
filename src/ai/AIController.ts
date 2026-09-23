@@ -41,12 +41,21 @@ export class AIController {
     /** 时间分片索引 */
     private currentArmyIndex: number = 0;
 
+    /**
+     * 🔴 [2026-09-23 主人定]「军团在历史剧本期间，不能随意寻敌，只有等剧本都结束后，自动切换到乱斗模式。」
+     * 返回 true = 剧本期：非剧本军团（`isScriptArmy !== true`）不跑行为树，原地不动、不选目标。
+     * 战役双方军团（isScriptArmy）照旧，不受影响。
+     */
+    private readonly isScriptPeriod: () => boolean;
+
     constructor(
         legionManager: LegionManager,
         cityManager: CityManager,
         roadRegistry: any, // 保留参数兼容性，但不再使用
-        historicalEventManager: HistoricalEventManager
+        historicalEventManager: HistoricalEventManager,
+        isScriptPeriod?: () => boolean
     ) {
+        this.isScriptPeriod = isScriptPeriod ?? (() => false);
         this.legionManager = legionManager;
         this.cityManager = cityManager;
         this.historicalEventManager = historicalEventManager;
@@ -140,6 +149,8 @@ export class AIController {
     private tickArmy(army: Army): void {
         // 脚本钉死军团（如岳飞北伐·朱仙镇宗弼军）：不跑行为树，避免被 AI 拉去攻城
         if ((army as Army & { __scriptPinned?: boolean }).__scriptPinned) return;
+        // 历史剧本期：非剧本军团不寻敌（见 isScriptPeriod）
+        if (!army.isScriptArmy && this.isScriptPeriod()) return;
 
         // 获取或创建上下文
         let context = this.armyContexts.get(army.id);
