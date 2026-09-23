@@ -516,7 +516,7 @@ export class PlayerHUD {
 
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');
-        planSel.title = '剧本模式：到了年份优先奔赴历史战场，没有可打的战场才去找武将；乱斗模式：完全不去战场，一直找武将入伍';
+        planSel.title = '剧本模式：按历史顺序奔赴战场，全图不随机生军团、军团不自行寻敌，剧本全部打完自动转入乱斗；乱斗模式：完全不去战场，一直找武将入伍';
         planSel.disabled = !hero.autoMode;
         planSel.style.cssText = 'cursor:pointer; font-size:11px; font-weight:700; color:#8ab4f8; background:#1b2333; border:1px solid #33415c; border-radius:4px; padding:1px 4px; height:22px;';
         for (const [val, text] of [['script', '📜 剧本模式'], ['melee', '⚔️ 乱斗模式']] as const) {
@@ -554,19 +554,6 @@ export class PlayerHUD {
         nearLabel.appendChild(nearCheck);
         nearLabel.appendChild(document.createTextNode('📍 就近寻将'));
         ctrlRow.appendChild(nearLabel);
-
-        // 🚫 不出军团
-        const noLegionLabel = document.createElement('label');
-        noLegionLabel.style.cssText = 'display:flex; align-items:center; gap:4px; cursor:pointer; font-size:11.5px; color:#dfc28c; font-weight:700; user-select:none;';
-        noLegionLabel.title = '开：全图不生任何军团，武将都留在城里；关：恢复常规募兵。乱斗开局默认关闭此项';
-        const noLegionCheck = document.createElement('input');
-        noLegionCheck.type = 'checkbox';
-        noLegionCheck.checked = hero.noLegionSpawn;
-        noLegionCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
-        noLegionCheck.addEventListener('change', () => hero.setNoLegionSpawn(noLegionCheck.checked));
-        noLegionLabel.appendChild(noLegionCheck);
-        noLegionLabel.appendChild(document.createTextNode('🚫 不出军团'));
-        ctrlRow.appendChild(noLegionLabel);
 
         // 🎥 跟随视角
         if (this.deps.followCamera) {

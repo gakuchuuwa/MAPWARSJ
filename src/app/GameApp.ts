@@ -71,6 +71,8 @@ import { exposeGameAppGlobals } from './GameAppExpose';
 import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
+import { ScriptCityVisibility } from '../events/scriptCityVisibility';
+import { onBattlefieldFought } from '../events/battlefieldState';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -133,6 +135,8 @@ export class GameApp {
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
     // [2026-09-05 玩家] 乱入者
     public playerHero: PlayerHero | null = null;
+    /** 剧本期据点显示（只显示剧本事件用到的据点） */
+    public scriptCityVisibility: ScriptCityVisibility | null = null;
     public playerQuests: PlayerQuestSystem | null = null;
     public playerHUD: PlayerHUD | null = null;
     public playerScene13Control: PlayerScene13Control | null = null;
@@ -310,6 +314,17 @@ export class GameApp {
             await CityAssetManager.onBootMapReady();
             this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();
+            // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
+            //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
+            this.scriptCityVisibility = new ScriptCityVisibility(
+                () => this.cityManager.getCities(),
+                () => (this.playerHero?.autoPlan ?? 'script') === 'script',
+            );
+            this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            onBattlefieldFought(() => {
+                this.scriptCityVisibility?.invalidate();
+                this.cityManager.refreshCityVisibility();
+            });
 
             setLoadingMessage('正在升旗入场…');
             setLoadingProgress(80);
@@ -527,20 +542,24 @@ export class GameApp {
 
             const legionManager = this.historicalEventManager.getLegionManager();
             wireGeneralSkillCombat(this, legionManager);
+            // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`，默认）：
+            //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
+            //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
+            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'script') === 'script';
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
                 roadRegistry,
-                this.historicalEventManager
+                this.historicalEventManager,
+                isScriptPeriod,
             );
             this.recruitmentSystem = new RecruitmentSystem(
                 this.cityManager,
                 legionManager,
                 this.historicalEventManager.getSiegeManager(),
-                // 🔴 [2026-09-11 主人定] 面板「🚫 不出军团」（`PlayerHero.noLegionSpawn`，**默认开**）
-                //    —— 开局首发 + 季末募兵两条路一起闸，全图不生军团、武将都留在城里；
-                //    剧本主角军团由剧本自己 forceCreate，不走募兵系统，不受此闸影响。
-                () => this.playerHero?.noLegionSpawn ?? true,
+                // 剧本期：开局首发 + 季末募兵两条路一起闸（原面板「🚫 不出军团」已并入剧本模式）；
+                //    战役双方军团由战场事件自己 forceCreate，不走募兵系统，不受此闸影响。
+                isScriptPeriod,
             );
             this.followResupplySystem = new FollowResupplySystem(this.cityManager);
             legionManager.setFollowResupplySystem(this.followResupplySystem);
@@ -768,6 +787,13 @@ export class GameApp {
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
         }, spawnPos);
         this.playerHero = hero;
+        // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
+        let lastPlan = hero.autoPlan;
+        hero.onChange(() => {
+            if (hero.autoPlan === lastPlan) return;
+            lastPlan = hero.autoPlan;
+            this.cityManager.refreshCityVisibility();
+        });
 
         const quests = new PlayerQuestSystem({
             hero,
@@ -792,6 +818,7 @@ export class GameApp {
                 checkReady: (bfId, pos) => this.historicalEventManager.checkBattlefieldReady(bfId, pos),
                 findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
                 locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
+                sideOfGeneral: (bfId, generalId) => this.historicalEventManager.getBattlefieldSideOfGeneral(bfId, generalId),
                 start: (bfId, onSpawned, onFinished) => this.historicalEventManager.startBattlefieldBattle(
                     bfId,
                     onSpawned,

@@ -437,11 +437,7 @@ export class HistoricalEventManager {
         //      返回 null，再由下面按**势力**把番号与档位直接写到这支军团上。
         //      这样既不吃任何据点、也不牵动募兵（`markSpawnTierConsumed` 对守方本就不调）。
         const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
-        // ⚠️ 军团名 ≠ 精锐番号（项目铁律）：军团名走「时代+文化+军团」，
-        //    番号（如「不死军」「背嵬军」）是另一回事，只显示在战力倍率词语标签里。
-        const legionName = (isAtk ? fb.attackerLegionName : fb.defenderLegionName)
-            || FACTION_COMPOSITIONS[factionId]?.legionName
-            || getCultureLegionName(city ? getCityRegion(city) : null);
+        const legionName = this.sideBaseLegionName(fb, side);
         // 🔴 不挂 `homeCityId`、不设 `sourceCityId`：军团只为这一仗而生、打完就班师，
         //    既不该有本城（牵扯募兵/驻军口径），也不该借任何城去查番号（番号按势力给，见下）。
         const army = this.legionManager.createLegion(
@@ -459,8 +455,7 @@ export class HistoricalEventManager {
         //    （`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`）；
         //    档位（战力第三环）由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 取不到时，
         //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
-        const ownElite = getExpeditionEliteConfig(factionId);
-        if (ownElite) army.name = `${legionName}·${ownElite.name}`;
+        army.name = this.sideLegionName(fb, side);
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
         const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
@@ -473,6 +468,42 @@ export class HistoricalEventManager {
         //    → 城拿不到守将 → 守方只显示军团名、不显示阿泽米尔。故攻城战守方不得在此消耗名额。
         if (city && !isSiegeDefender) markSpawnTierConsumed(city, { general: true, elite: true });
         return army;
+    }
+
+    /** 战役一方的军团名（不含番号）。⚠️ 军团名 ≠ 精锐番号（项目铁律）：军团名走「时代+文化+军团」，
+     *  番号（如「不死军」「背嵬军」）是另一回事，只显示在战力倍率词语标签里。 */
+    private sideBaseLegionName(fb: FieldBattleData, side: 'attacker' | 'defender'): string {
+        const isAtk = side === 'attacker';
+        const factionId = isAtk ? fb.attackerFactionId : fb.defenderFactionId;
+        const sourceCityId = (isAtk ? fb.attackerSourceCityId : fb.defenderSourceCityId) ?? undefined;
+        const city = sourceCityId ? this.cityManager.getCity(sourceCityId) : null;
+        return (isAtk ? fb.attackerLegionName : fb.defenderLegionName)
+            || FACTION_COMPOSITIONS[factionId]?.legionName
+            || getCultureLegionName(city ? getCityRegion(city) : null);
+    }
+
+    /** 战役一方在地图上显示的军团名：军团名 + 按势力挂的番号（与战场上生成的史实军团同名） */
+    private sideLegionName(fb: FieldBattleData, side: 'attacker' | 'defender'): string {
+        const base = this.sideBaseLegionName(fb, side);
+        const factionId = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
+        const ownElite = getExpeditionEliteConfig(factionId);
+        return ownElite ? `${base}·${ownElite.name}` : base;
+    }
+
+    /**
+     * 🔴 [2026-09-23 主人定「路上就显示史实兵力和军团名」] 主角赶路军团用：
+     * 某战场这一仗里、某位武将那一方的**史实兵力与军团名**（与战场上生成的史实军团同源）。
+     * 该武将不是本仗攻守主帅 → null。
+     */
+    public getBattlefieldSideOfGeneral(bfId: string, generalId: string):
+        { troops: number; legionName: string } | null {
+        const fb = this.findBattleForBattlefield(bfId);
+        if (!fb || !generalId) return null;
+        const side = fb.attackerGeneralId === generalId ? 'attacker'
+            : fb.defenderGeneralId === generalId ? 'defender' : null;
+        if (!side) return null;
+        const troops = (side === 'attacker' ? fb.attackerTroops : fb.defenderTroops) ?? 10000;
+        return { troops, legionName: this.sideLegionName(fb, side) };
     }
 
     /**

@@ -147,6 +147,8 @@ export interface PlayerQuestDeps {
         start(bfId: string,
             onSpawned: (sides: { attacker: Army; defender: Army }) => void,
             onFinished: (sides: { attacker: Army; defender: Army }) => void): string | null;
+        /** 某武将在这一仗里那一方的史实兵力与军团名（主角赶路军团用） */
+        sideOfGeneral?(bfId: string, generalId: string): { troops: number; legionName: string } | null;
     };
 }
 
@@ -526,6 +528,8 @@ export class PlayerQuestSystem {
         lat: number; lng: number; foeGeneralName: string | null;
         /** 攻城战：要打的那座城（赶路终点是**城**，不是史实战场坐标） */
         defenderCityId: string | null;
+        /** 主人设定的行军路标（据点 id，按顺序经过） */
+        marchWaypoints: string[];
     } | null {
         const bf = BATTLEFIELDS.find((b) => b.id === hit.battlefieldId);
         if (!bf) return null;
@@ -548,6 +552,7 @@ export class PlayerQuestSystem {
             defenderCityId: hit.event.type === 'siege' && !hit.event.siegeData?.targetBattlefieldId
                 ? (hit.event.siegeData?.defenderCityId ?? null)
                 : null,
+            marchWaypoints: [...(data?.marchWaypoints ?? [])],
         };
     }
 
@@ -583,7 +588,7 @@ export class PlayerQuestSystem {
     private joinGeneralEvent(
         city: City,
         g: { generalId: string; generalName: string; portrait: string },
-        ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number; defenderCityId?: string | null },
+        ev: { title: string; battlefieldId: string; battlefieldName: string; lat: number; lng: number; defenderCityId?: string | null; marchWaypoints?: string[] },
         army: Army | null,
     ): void {
         this.deps.closeDialogue();
@@ -591,6 +596,13 @@ export class PlayerQuestSystem {
         if (!host) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
+        }
+        // 🔴 [2026-09-23 主人定「路上就显示史实兵力和军团名」] 赶路军团直接用这一仗的史实兵力与军团名
+        //    （如亚历山大 35000、古典时代马其顿军团·伙伴骑兵），与战场上生成的史实军团同源。
+        const side = this.deps.battlefields?.sideOfGeneral?.(ev.battlefieldId, g.generalId);
+        if (side) {
+            host.setTroops(side.troops);
+            host.name = side.legionName;
         }
         const factionId = host.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
@@ -641,6 +653,7 @@ export class PlayerQuestSystem {
         const marchTarget = defCity
             ? { lat: defCity.latitude, lng: defCity.longitude }
             : { lat: ev.lat, lng: ev.lng };
+        this.marchWaypointsLeft = [...(ev.marchWaypoints ?? [])];
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
@@ -651,8 +664,40 @@ export class PlayerQuestSystem {
         this.emitChange();
     }
 
+    /** 这一趟还没走到的行军路标（据点 id，按顺序） */
+    private marchWaypointsLeft: string[] = [];
+
+    /** 路标段 + 最后一段拼成一条路；最后一段不通 → null（交给调用方兜底） */
+    private withViaPath(
+        via: { lat: number; lng: number }[],
+        last: { lat: number; lng: number }[] | null,
+    ): { lat: number; lng: number }[] | null {
+        if (!last || last.length < 2) return null;
+        return via.length ? [...via, ...last.slice(1)] : last;
+    }
+
+    /**
+     * 续路时去掉已经走过的路标：军团离「下一站」比路标离「下一站」还近，说明已越过这个路标。
+     */
+    private dropPassedWaypoints(pos: { lat: number; lng: number }, target: { lat: number; lng: number }): void {
+        while (this.marchWaypointsLeft.length) {
+            const wp = this.deps.cityManager.getCity(this.marchWaypointsLeft[0]);
+            if (!wp) { this.marchWaypointsLeft.shift(); continue; }
+            const wpPos = { lat: wp.latitude, lng: wp.longitude };
+            const nextId = this.marchWaypointsLeft[1];
+            const nextCity = nextId ? this.deps.cityManager.getCity(nextId) : null;
+            const next = nextCity ? { lat: nextCity.latitude, lng: nextCity.longitude } : target;
+            const reached = getEuclideanDistance(pos, wpPos) * 111 <= 3;
+            if (reached || getEuclideanDistance(pos, next) < getEuclideanDistance(wpPos, next)) {
+                this.marchWaypointsLeft.shift();
+                continue;
+            }
+            break;
+        }
+    }
+
     /** 军团自己沿路网开赴战场坐标（玩家随军，位置跟着走） */
-    private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }): void {
+    private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }, resume = false): void {
         // 🔴 [2026-09-19 主人定「把战场和据点分开」] **本来就在战场上**（战场自带攻守、军团就生成在战场）
         //    → 没有"赶路"这一段，立刻接战。否则 `moveAlongPath` 收到零长路径不会触发抵达回调，
         //    玩家会永远站在战场上等一个不会来的对话框。
@@ -663,14 +708,31 @@ export class PlayerQuestSystem {
         }
         if (!roadRegistry.isInitialized()) return;
         const from = host.getPosition();
-        let path = roadRegistry.findPathOnRoad(from, target);
+        // 🔴 [2026-09-23 主人定「军团按你设的路线走」] 先依次经过主人设的行军路标（据点），最后一段奔战场。
+        //    续路时（卡住重铺）已走过的路标不再回头去走（见 dropPassedWaypoints）。
+        if (resume) this.dropPassedWaypoints(from, target);
+        let legStart: { lat: number; lng: number } = from;
+        const viaPath: { lat: number; lng: number }[] = [];
+        for (const wpId of this.marchWaypointsLeft) {
+            const wp = this.deps.cityManager.getCity(wpId);
+            if (!wp) continue;
+            const wpPos = { lat: wp.latitude, lng: wp.longitude };
+            const leg = roadRegistry.findPathOnRoad(legStart, wpPos);
+            if (!leg || leg.length < 2) {
+                gameLog('expedition', `[玩家] 行军路标【${wp.name}】无路可达，跳过`);
+                continue;
+            }
+            viaPath.push(...(viaPath.length ? leg.slice(1) : leg));
+            legStart = wpPos;
+        }
+        let path = this.withViaPath(viaPath, roadRegistry.findPathOnRoad(legStart, target));
         if (!path || path.length < 2) {
             // 战场不是据点、不在路网上（波斯门深在扎格罗斯山里就是这种）→ 沿路网走到最近那座城，
             // 最后一段直奔战场。与 `PlayerHero.travelToPoint` 同一套兜底，别再写第二套。
             const anchor = roadRegistry.getNearestCityPos(target.lat, target.lng, 5);
             if (anchor) {
-                const via = roadRegistry.findPathOnRoad(from, anchor);
-                if (via && via.length >= 2) path = [...via, target];
+                const via = roadRegistry.findPathOnRoad(legStart, anchor);
+                if (via && via.length >= 2) path = this.withViaPath(viaPath, [...via, target]);
             }
         }
         if (!path || path.length < 2) {
@@ -758,7 +820,7 @@ export class PlayerQuestSystem {
         const now = Date.now();
         if (now < this.marchRetryAfter) return;
         this.marchRetryAfter = now + 10_000;
-        this.startMarchToBattlefield(host, this.armyMarchPoint);
+        this.startMarchToBattlefield(host, this.armyMarchPoint, true);
     }
 
     /** 续路冷却（与战场寻路冷却同口径，避免每拍重铺） */
@@ -1135,6 +1197,15 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
+        // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
+        //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
+        //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
+        if (this.deps.hero.autoPlan === 'script' && !this.quest
+            && this.findNextAvailableBattlefield() === null) {
+            this.deps.hero.setAutoPlan('melee');
+            this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式');
+            gameLog('expedition', '[玩家] 历史剧本全部结束 → 自动切换乱斗模式');
+        }
         // 🔴 [2026-09-19 主人定] **武将优先**：未入伍时若身上还有一场没打完的武将史实战役，
         //    接着赶赴那个战场（赶路途中解散/失败/改道后能自动续上），而不是另选一座城。
         //    判据只有一条：这场战役还没打过（`isBattlefieldFought`）—— 主人定「第一次触发……然后就随机」。
@@ -1151,7 +1222,10 @@ export class PlayerQuestSystem {
         if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
             const headingToBattlefield = this.deps.hero.autoPlan === 'script'
                 && this.checkAndTriggerNextBattlefield();
-            if (!headingToBattlefield && !this.deps.hero.isTraveling()) {
+            // 🔴 [2026-09-23] 剧本期不去找武将乱斗：军团此时不寻敌，起兵入伍只会原地停着；
+            //    战场一时去不了（寻路冷却）就等冷却后再试。
+            if (!headingToBattlefield && !this.deps.hero.isTraveling()
+                && this.deps.hero.autoPlan !== 'script') {
                 this.autoTravelToBestCity();
             }
         }
