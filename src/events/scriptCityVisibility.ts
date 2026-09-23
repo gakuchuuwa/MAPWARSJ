@@ -86,3 +86,21 @@ export class ScriptCityVisibility {
         add(BATTLEFIELDS.find((b) => b.id === bfId)?.eventCityId);
     }
 }
+
+/**
+ * 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式开局出生地：
+ * 当前这一场（按年代第一场没打过的）归属武将所在的城 —— 玩家一开局就在他附近，不必横跨半个地球去找。
+ * 剧本已全部打完 / 查不到 → null（调用方按乱斗的老规矩随机出生）。
+ */
+export function findCurrentScriptEventCity(cities: City[]): City | null {
+    const pos = new Map(cities.map((c) => [c.id, { lat: c.latitude, lng: c.longitude }]));
+    const events = [...HISTORICAL_EVENT_SCRIPT]
+        .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
+    for (const ev of events) {
+        const bfId = resolveEventBattlefieldId(ev, (id) => pos.get(id));
+        if (!bfId || isBattlefieldFought(bfId)) continue;
+        if (!ev.generalId) return null;
+        return cities.find((c) => getCityAnchoredGeneral(c.id)?.generalId === ev.generalId) ?? null;
+    }
+    return null;
+}
