@@ -517,7 +517,9 @@ export class PlayerHUD {
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');
         planSel.title = '剧本模式：按历史顺序奔赴战场，全图不随机生军团、军团不自行寻敌，剧本全部打完自动转入乱斗；乱斗模式：完全不去战场，一直找武将入伍';
-        planSel.disabled = !hero.autoMode;
+        // 🔴 [2026-09-24 主人「勾上自动模式，玩家不就自己去寻找武将啦……我还怎么画路呀」]
+        //    剧本 / 乱斗不再绑在自动模式上：不开自动也能切（切到乱斗 = 全部据点显示，画路用；暂停后世界不动）。
+        planSel.disabled = false;
         planSel.style.cssText = 'cursor:pointer; font-size:11px; font-weight:700; color:#8ab4f8; background:#1b2333; border:1px solid #33415c; border-radius:4px; padding:1px 4px; height:22px;';
         for (const [val, text] of [['script', '📜 剧本模式'], ['melee', '⚔️ 乱斗模式']] as const) {
             const opt = document.createElement('option');
