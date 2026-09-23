@@ -229,6 +229,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '亚历山大亲率右翼伙伴骑兵形成楔形突击直扑波斯中军，大流士三世溃逃，波斯全军崩溃。',
             // 摩苏尔以东广阔平原（北纬 36°21'46", 东经 43°15'00"）
             location: { lat: 36.3628, lng: 43.25 },
+            // 🔴 [2026-09-23 主人报「船队不对呀」：马其顿军沿叙利亚海岸坐船] 英文维基 Battle of Gaugamela：
+            //    前331年晚春或初夏自埃及出发，向东北穿过叙利亚，七八月至幼发拉底河塔普萨库斯，九月下旬至底格里斯河。
+            //    路标取沿途已有据点：加沙（前332年加沙围城）、阿卡（推罗已是战场，取其近旁）、大马士革、
+            //    阿勒颇（近塔普萨库斯）、埃德萨（渡幼发拉底后东进），全程陆路。
+            marchWaypoints: ['city_jiasa', 'city_ake', 'city_damasikusi', 'city_alepo', 'city_aidesa'],
 
             // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
@@ -247,6 +252,8 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,                      // 进战术模式（13）
         },
         generalId: 'gen_alexander_great',
+        // 军团出发据点：前331年亚历山大自埃及出发（英文维基 Battle of Gaugamela），不是上一场推罗近旁的阿卡
+        startCityId: 'city_mengfeisi',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
     },
 
