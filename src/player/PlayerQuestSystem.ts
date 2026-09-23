@@ -202,8 +202,12 @@ export class PlayerQuestSystem {
             }
         }
         if (!g) return null;
+        // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
+        //    打完一场后战场军团 8 秒才 disband，这 8 秒里它会被误判成「这位武将带兵在外」，
+        //    玩家到了下一场的出发城却扑空（generalInCity 返回 null）。与 armyOfGeneral /
+        //    isGeneralAvailable 同一处口径：战场军团是为上一仗而生的，不算「带兵在外」。
         const away = this.deps.legionManager.getArmies().some(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId,
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId && !a.isScriptArmy,
         );
         if (away) return null;
         const rec = getGeneralRecordByGeneralId(g.generalId);
@@ -1481,8 +1485,13 @@ export class PlayerQuestSystem {
      *     等于把「必须」降成了「优先」。 */
     /** 这位武将此刻带着的军团（在外行军中）；没带兵就返回 null = 人在城里 */
     private armyOfGeneral(generalId: string): Army | null {
+        // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
+        //    打完一场后，为上一仗生成的战场军团还要 8 秒才 disband（withdrawBattlefieldLegions），
+        //    这 8 秒里它会被误当成「这位武将带兵在外的军团」→ 玩家去追一支即将消失的军团，钉死原地，
+        //    下一场再也接不上。战场军团是为这一仗而生的，不该进「找武将出征」的候选
+        //    （与 HistoricalEventManager.isGeneralAvailable 同一处口径，两处都排除）。
         return this.deps.legionManager.getArmies().find(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId,
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId && !a.isScriptArmy,
         ) ?? null;
     }
 
