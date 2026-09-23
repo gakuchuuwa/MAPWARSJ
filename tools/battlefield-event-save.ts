@@ -54,6 +54,8 @@ export interface BattlefieldEventDraft {
      * 写进 `HistoricalEvent.generalId`；留空 = 不归属（字段不写入，行为与加它之前一致）。
      */
     generalId?: string;
+    /** 武将邀约对白（剧本模式找到归属武将时念）；留空不写 */
+    inviteText?: string;
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -315,6 +317,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     L.push(`        season: ${d.season},`);
     // 🔴 [2026-09-19 主人定] 归属武将（「一个武将一个真实的历史事件」）；留空不写。
     if (d.generalId) L.push(`        generalId: ${tsStr(d.generalId)},`);
+    if (d.inviteText && d.inviteText.trim()) L.push(`        inviteText: ${tsStr(d.inviteText.trim())},`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -515,6 +518,8 @@ export function saveBattlefieldEvent(
             //    表现为「编辑器里清空了，游戏里还认这位武将」，是最难查的那类不一致。
             //    ⚠️ 删除必须放在 patchFields **之后**按新位置做（patch 会移动下标）。
             if (d.generalId) topFields.push(['generalId', tsStr(d.generalId)]);
+            const invite = d.inviteText?.trim() ?? '';
+            if (invite) topFields.push(['inviteText', tsStr(invite)]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -528,9 +533,15 @@ export function saveBattlefieldEvent(
             //    两者互不干扰，但删除必须用 patch 之后的新下标（patch 会移动位置）。
             //    为什么非删不可：只在有值时替换的话，旧武将永远留在数据里，
             //    表现为「编辑器里清空了，游戏里还认这位武将」，是最难查的那类不一致。
-            const p1Text = d.generalId
+            let p1Text = d.generalId
                 ? p1.text
                 : removeField(p1.text, hit.start, p1.objEnd, 'generalId');
+            // 邀约对白清空了同样真删字段（同一规矩）；删除后对象尾部下标变了，重新找本条对象的结尾
+            if (!invite) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
+            }
 
             // 再进战斗数据块改里层字段（位置在 p1 之后要重新定位）
             const innerStart = p1Text.indexOf(`${dataKey}: {`, hit.start);
