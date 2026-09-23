@@ -145,6 +145,8 @@ export type LegionEliteLookup = {
   getFactionId(): string;
   homeCityId?: string | null;
   getSourceCityId(): string | null;
+  /** 🔴 [2026-09-23] 战场事件的史实军团：番号直接挂在军团上（军团名只写「马其顿军」，不再拼番号） */
+  eliteOverride?: EliteLegionConfig | null;
 };
 
 export {
@@ -214,6 +216,7 @@ export function getFactionCityEliteLegionName(
 
 /** 按军团出兵据点查精锐（番号随城，不看军团旗号） */
 export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig | null {
+  if (army.eliteOverride) return army.eliteOverride;
   const cityId = army.homeCityId ?? army.getSourceCityId();
   return getCityEliteConfig(cityId);
 }

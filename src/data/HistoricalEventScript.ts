@@ -54,7 +54,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
 
             // 主人指定的野战坐标。注：与据点「格拉尼库斯」city_gelanikusi(40.32, 27.28)
             // 相距约 10 km；本役是野战，故用 location 而非 locationCityId。
-            location: { lat: 40.23, lng: 27.24 },
+            location: { lat: 40.3167, lng: 27.2811 },
             // 🔴 [2026-09-23] 加特洛伊：阿里安《亚历山大远征记》I.11——亚历山大渡赫勒斯滂后先登岸伊利昂（特洛伊）祭祀，再会合大军进军格拉尼库斯河
             marchWaypoints: ['city_anfeibolisi', 'city_yanghe', 'city_teluoyi'],
 
@@ -63,7 +63,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             // 🔴 [2026-09-16 主人定]「原文35000，战场就要35000」——
             //    赶路播报里写的是「三万五千名跨海而来的希腊与马其顿健儿」，数据必须与文案同口径。
-            attackerTroops: 35000,
+            attackerTroops: 18100,
             attackerSourceCityId: 'city_salonica',      // 佩拉（马其顿首都，东征出发点）
             // 🔴 [2026-09-23] 剧本军团（第四层，src/data/scriptLegions.ts）：按此役史实配三兵种，乱斗不受影响
             attackerLegionName: '马其顿军',
@@ -80,8 +80,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 同上，按播报原文：「两万波斯铁骑与近两万精锐希腊雇佣重步兵」≈ 40000。
             //    平衡：35000 : 40000 = 0.875，落在八环战力比 [0.8,1.2] 带内，不会一边倒；
             //    攻方略劣也正是史实——亚历山大是仰攻陡岸强渡取胜，不是以多欺少。
-            defenderTroops: 40000,
+            defenderTroops: 27000,
             defenderSourceCityId: 'city_dasijiliweng',
+            defenderLegionName: '波斯总督联军',   // 剧本军团：小亚细亚诸总督联军
 
             result: 'attacker_win',                     // 写真历史：马其顿必胜
             autoEnterRTS: true,                          // 进战术模式（13）
@@ -93,9 +94,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         generalId: 'gen_alexander_great',
         // 🔴 [2026-09-23] 武将邀约对白。史料：东征名义为报复薛西斯焚毁雅典神庙（阿里安《亚历山大远征记》II.14 致大流士书）；
         //    波斯小亚细亚诸总督集结于格拉尼库斯河迎战（同书 I.12）。
-        inviteText: '壮士来得正好。我将渡过赫勒斯滂，进兵亚细亚，向波斯讨还当年薛西斯焚毁雅典神庙的旧账。波斯诸总督已在格拉尼库斯河畔集结，我要亲率伙伴骑兵破敌。壮士可愿随我东征？',
+        // 🔴 [2026-09-23] 途经但前334年还不存在的据点：鲁西翁为中世纪地名，格拉尼库斯为按战役起名的城寨
+        absentCities: ['city_luxiweng', 'city_gelanikusi'],
+        inviteText: '朋友，你来得正好。我将渡过赫勒斯滂，进兵亚细亚，向波斯讨还当年薛西斯焚毁雅典神庙的旧账。波斯诸总督已在格拉尼库斯河畔集结，我要亲率伙伴骑兵破敌。你可愿随我东征？',
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），编辑器里每项必填
-        sources: { battle: { level: 'fact', text: '维基百科 Battle of the Granicus：格拉尼库斯河战役，野战，亚历山大强渡河流进攻据守东岸的波斯军。' }, time: { level: 'fact', text: '维基百科 Battle of the Granicus：前334年5月，初春自马其顿出发，20天抵塞斯托斯，季节取春。' }, place: { level: 'fact', text: '维基百科 Battle of the Granicus：格拉尼库斯河即今土耳其比加河，维基坐标 40.3167,27.2811；本条战场坐标 40.23,27.24 系主人指定，与维基相差约10公里，待核。' }, attacker: { level: 'fact', text: '维基百科 Battle of the Granicus：马其顿与希腊同盟，亚历山大亲统右翼，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '维基百科 Battle of the Granicus：出征亚洲全军约步兵3.2万、骑兵5千；实际投入此役约1.81万，其中重骑4200、轻骑900、重步1.2万、轻步1千，希腊同盟与雇佣步兵未参战。本条取35000系主人按赶路播报定，与此役实际投入数不符，待核。' }, attackerLegion: { level: 'fact', text: '维基百科 Ancient Macedonian army：史称马其顿军；伙伴骑兵作矛头、方阵跟进、克里特弓箭手与阿格里安人掩护，前358至前331年一贯如此。' }, defender: { level: 'fact', text: '维基百科 Battle of the Granicus：阿契美尼德小亚细亚诸总督联军，古史未明言主帅，现代学者认为赫勒斯滂弗里吉亚总督阿尔西提斯总领；门农等同在军中。' }, defenderTroops: { level: 'fact', text: '维基百科 Battle of the Granicus：阿里安记骑兵2万、步兵近2万，称皆希腊雇佣兵；狄奥多罗斯记骑兵1万；现代学者多取骑兵1万、希腊雇佣兵四五千。本条取阿里安之数约4万。' }, defenderLegion: { level: 'fact', text: '维基百科 Battle of the Granicus：波斯骑兵沿东岸列阵在前，步兵列于其后高地；阿里安称步兵全是希腊雇佣兵，现代学者认为多为本地步兵。尚未配剧本军团，现用乱斗那支含长生军弓手，长生军不在此役，待改。' }, route: { level: 'fact', text: '维基百科 Battle of the Granicus：自马其顿经色雷斯至塞斯托斯，大军由塞斯托斯渡至阿拜多斯，亚历山大自埃莱乌斯渡海登西格翁角，谒伊利昂，经阿里斯巴、佩尔科特、兰普萨库斯至格拉尼库斯河。游戏路线：佩拉、安菲波利斯、羊河近塞斯托斯、坐船至特洛伊即伊利昂、沿海岸东进；途经据点鲁西翁为中世纪地名，前334年不应出现，待处理。' }, result: { level: 'fact', text: '维基百科 Battle of the Granicus：马其顿胜，亚历山大取得小亚细亚半壁；战后据点达斯基利翁即阿尔西提斯治所归马其顿。' }, invite: { level: 'fact', text: '阿里安《亚历山大远征记》II.14 亚历山大致大流士书：东征名义为报复波斯当年入侵希腊；对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '维基百科 Battle of the Granicus：门农献焦土之策被拒、帕曼纽劝明晨再渡被拒皆有载；播报中「五千伙伴骑兵」与史不符，伙伴骑兵1800、骑兵合计约5100，待核。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河战役，野战，亚历山大强渡河流进攻据守东岸的波斯军。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Granicus：前334年5月，初春自马其顿出发，20天抵塞斯托斯，季节取春。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河即今土耳其比加河；坐标取信息框 40.3167,27.2811。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿与希腊同盟，亚历山大亲统右翼，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：马其顿军投入此役共18100人。' }, attackerLegion: { level: 'fact', text: '英文维基百科 Ancient Macedonian army：史称马其顿军；伙伴骑兵作矛头、方阵跟进、克里特弓箭手掩护，前358至前331年一贯如此，故前骑兵、中步兵、后远程。比例按 Battle of the Granicus 信息框：骑兵5100、步兵12000、远程1000，步兵最多，取鱼鳞阵 前3中4后2，远程最少只能2人。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Granicus：阿契美尼德小亚细亚诸总督联军，古史未明言主帅，现代学者认为赫勒斯滂弗里吉亚总督阿尔西提斯总领；门农等同在军中。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：波斯军14000至40000人，按标准取区间中值27000。' }, defenderLegion: { level: 'popular', text: '英文维基百科 Battle of the Granicus：诸总督联军无专名，称波斯总督联军；骑兵沿东岸列阵在前，步兵列其后高地，含数千希腊雇佣兵；信息框中值骑兵15000、步兵12000，取雁行阵 前骑兵4中步兵3后远程2；远程无明载，按阿契美尼德军以弓手著称补一排。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Granicus：自马其顿经色雷斯至塞斯托斯，大军由塞斯托斯渡至阿拜多斯，亚历山大自埃莱乌斯渡海登西格翁角，谒伊利昂，经阿里斯巴、佩尔科特、兰普萨库斯至格拉尼库斯河。游戏路线：佩拉、安菲波利斯、羊河近塞斯托斯、坐船至特洛伊即伊利昂、沿海岸东进；途经据点鲁西翁为中世纪地名、格拉尼库斯为按战役起名的城寨，前334年皆无此城，列入那一年不存在，路照走、城不显示。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿胜，亚历山大取得小亚细亚半壁；战后据点达斯基利翁即阿尔西提斯治所归马其顿。' }, invite: { level: 'fact', text: '阿里安《亚历山大远征记》II.14 亚历山大致大流士书：东征名义为报复波斯当年入侵希腊；对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Granicus：出征全军约步兵3.2万、骑兵5千；门农献焦土之策被拒、帕曼纽劝明晨再渡被拒；波斯军列于东岸。英文维基百科 Alexander the Great：生于前356年7月，此役时二十一岁。' } },
     },
     {
         year: -333,

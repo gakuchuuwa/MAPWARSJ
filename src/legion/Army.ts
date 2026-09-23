@@ -302,6 +302,8 @@ export class Army implements IBattleUnit {
      *   这个只标身份、不豁免任何行为。
      */
     public isScriptArmy: boolean = false;
+    /** 🔴 [2026-09-23] 战场事件史实军团的番号（按势力取）：军团名只写军团名，番号走这里 */
+    public eliteOverride: { name: string; tier: 0 | 1 | 2 | 3 | 4 } | null = null;
     /**
      * 行军减兵（远输困境）：自最后一次途经己方据点半径以来的游戏秒数（时间口径·一视同仁）。
      * LegionManager 主循环每帧累加（战斗中照走、战后休整停表；远征豁免军团不走表），

@@ -250,7 +250,6 @@ export class PlayerQuestSystem {
                 const inviteText = this.scriptInvite(ev)
                     ?? `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
                         + `此战关系重大，某愿请壮士同往。破敌之日，当以「${eliteName0}」之战法相授。`;
-                this.speakInvite(inviteText);
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
@@ -1141,39 +1140,14 @@ export class PlayerQuestSystem {
      *   —— 那是给「单骑点战场」写的。若照旧判 `isAttached`，跟随武将时说第一段就会被掐断。
      *   故随军赴战场时由调用方传 override，改用「HUD 动向栏还挂着这个战役名」判在不在路上。
      */
-    /** 剧本模式：编辑器里写的邀约对白（没写 → null，用通用句）；乱斗模式一律 null（保持原样） */
+    /** 剧本模式：编辑器里写的邀约对白（没写 → null，用通用句）；乱斗模式一律 null（保持原样）。
+     *  🔴 [2026-09-23 主人定「接任务只需要文字就行，不需要语音播报」] 只显示文字，不念。 */
     private scriptInvite(ev: { inviteText: string | null }): string | null {
         return this.deps.hero.autoPlan === 'script' ? ev.inviteText : null;
     }
 
-    /** 邀约对白正在念 → 赶路背景播报先等着（两段不重叠） */
-    private inviteSpeaking = false;
-    private pendingBriefing: (() => void) | null = null;
-
-    /**
-     * 🔴 [2026-09-23 主人定「不要让武将邀约语音和背景介绍语音重叠了」]
-     * 剧本模式念出武将邀约；念完才放行赶路背景播报。乱斗模式不念（保持原样）。
-     */
-    private speakInvite(text: string): void {
-        if (this.deps.hero.autoPlan !== 'script') return;
-        const speak = this.deps.announceBriefing;
-        if (!speak) return;
-        this.inviteSpeaking = true;
-        speak(text, () => {
-            this.inviteSpeaking = false;
-            const next = this.pendingBriefing;
-            this.pendingBriefing = null;
-            next?.();
-        });
-    }
-
     private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string): void {
         if (!bf) return;
-        // 邀约还没念完：背景播报排在它后面
-        if (this.inviteSpeaking) {
-            this.pendingBriefing = () => this.startJourneyBriefing(bf, titleOverride);
-            return;
-        }
         const text = bf.briefing?.trim();
         if (!text) return;
         if (this.briefedBattlefields.has(bf.id)) return;
@@ -1396,7 +1370,6 @@ export class PlayerQuestSystem {
                 const inviteText = this.scriptInvite(ev)
                     ?? `壮士竟寻到军中来了。某正提兵赴【${ev.title}】，将于${ev.battlefieldName}与${foe}决战。`
                         + `军旅之中不便设宴，壮士便随某同去——破敌之日，功劳簿上少不了你。`;
-                this.speakInvite(inviteText);
                 this.deps.showDialogue({
                     speaker: generalName,
                     portrait,

@@ -131,7 +131,8 @@ export class ScriptCityVisibility {
             const path = roadRegistry.findPathOnRoad(stops[i], stops[i + 1]);
             for (const p of path ?? []) {
                 const id = cityAt.get(`${p.lat.toFixed(4)},${p.lng.toFixed(4)}`);
-                if (id) out.add(id);
+                // 那一年还不存在的据点：路照走，城不显示
+                if (id && !(ev.absentCities ?? []).includes(id)) out.add(id);
             }
         }
     }
@@ -142,7 +143,8 @@ export class ScriptCityVisibility {
         cityOfGeneral: Map<string, string>,
         out: Set<string>,
     ): void {
-        const add = (id: string | null | undefined) => { if (id) out.add(id); };
+        const absent = new Set(ev.absentCities ?? []);
+        const add = (id: string | null | undefined) => { if (id && !absent.has(id)) out.add(id); };
         const data = ev.siegeData ?? ev.fieldBattleData;
         for (const gid of [ev.generalId, data?.attackerGeneralId, data?.defenderGeneralId]) {
             if (gid) add(cityOfGeneral.get(gid));

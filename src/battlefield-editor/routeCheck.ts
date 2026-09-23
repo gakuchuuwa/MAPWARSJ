@@ -47,6 +47,8 @@ export interface RouteDraft {
     defenderSourceCityId: string;
     cityUpdates: Array<{ cityId: string }>;
     bfEventCityId: string;
+    /** 途经但那一年还不存在的据点：剧本期不显示 */
+    absentCities: string[];
 }
 
 export interface RouteLeg {
@@ -66,7 +68,7 @@ export interface RouteReport {
     startCityName: string | null;
     legs: RouteLeg[];
     /** 剧本期地图上会显示的据点（事件用到的 + 沿途经过的） */
-    shownCities: Array<{ id: string; name: string; wonders: string[] }>;
+    shownCities: Array<{ id: string; name: string; wonders: string[]; absent: boolean }>;
     issues: Array<{ level: 'error' | 'warn'; msg: string }>;
 }
 
@@ -196,6 +198,8 @@ export function checkRoute(d: RouteDraft): RouteReport {
         }
     }
 
-    const shownCities = [...shown].map((id) => ({ id, name: CITY_BY_ID.get(id)!.name, wonders: wondersOf(id) }));
+    const shownCities = [...shown].map((id) => ({
+        id, name: CITY_BY_ID.get(id)!.name, wonders: wondersOf(id), absent: d.absentCities.includes(id),
+    }));
     return { startCityName: start?.name ?? null, legs, shownCities, issues };
 }

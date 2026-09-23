@@ -58,6 +58,8 @@ export interface BattlefieldEventDraft {
     inviteText?: string;
     /** 资料清单：每项依据与可信级别（src/data/eventSources.ts） */
     sources?: Record<string, { level: string; text: string }>;
+    /** 途经但那一年还不存在的据点（剧本期不显示） */
+    absentCities?: string[];
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -330,6 +332,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     if (d.inviteText && d.inviteText.trim()) L.push(`        inviteText: ${tsStr(d.inviteText.trim())},`);
     const srcLit = sourcesLiteral(d);
     if (srcLit) L.push(`        sources: ${srcLit},`);
+    if (d.absentCities?.length) L.push(`        absentCities: [${d.absentCities.map((c) => tsStr(c)).join(', ')}],`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -534,6 +537,8 @@ export function saveBattlefieldEvent(
             if (invite) topFields.push(['inviteText', tsStr(invite)]);
             const srcLit = sourcesLiteral(d);
             if (srcLit) topFields.push(['sources', srcLit]);
+            const absentLit = d.absentCities?.length ? `[${d.absentCities.map((c) => tsStr(c)).join(', ')}]` : null;
+            if (absentLit) topFields.push(['absentCities', absentLit]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -555,6 +560,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
+            }
+            if (!absentLit) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'absentCities');
             }
             if (!srcLit) {
                 const objOpen = p1Text.indexOf('{', hit.start);

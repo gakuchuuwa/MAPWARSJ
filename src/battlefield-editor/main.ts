@@ -83,6 +83,8 @@ interface BattleDraft {
     inviteText: string;
     /** 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），每项必填 */
     sources: Record<string, EventSourceEntry>;
+    /** 🔴 [2026-09-23] 途经但那一年还不存在的据点（剧本期这一场不显示，路照走） */
+    absentCities: string[];
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -222,6 +224,7 @@ function loadDrafts(): BattleDraft[] {
             inviteText: (ev as AnyEvent & { inviteText?: string }).inviteText ?? '',
             sources: Object.fromEntries(Object.entries((ev as AnyEvent & { sources?: Record<string, EventSourceEntry> }).sources ?? {})
                 .map(([k, v]) => [k, { ...v }])),
+            absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -257,7 +260,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -510,8 +513,9 @@ function legionPreview(name: string, fallback: string): string {
         return `<span class="hint">${fallback ? `未指定剧本军团：将用势力乱斗那支「${escapeHtml(fallback)}」，兵种没按此役史实核对` : '未指定剧本军团'}</span>`;
     }
     const rows = ['前排', '中排', '后排'];
+    const CLS: Record<string, string> = { cav: '骑兵', melee: '步兵', ranged: '远程' };
     const cells = def.slots.map((sl, i) =>
-        `${rows[i] ?? '第' + (i + 1) + '排'}：${escapeHtml(WAR_TYPES[sl.type]?.name ?? sl.type)} ×${sl.count}`).join(' · ');
+        `${rows[i] ?? '第' + (i + 1) + '排'}${CLS[WAR_TYPES[sl.type]?.cls ?? ''] ?? ''} ×${sl.count}（${escapeHtml(WAR_TYPES[sl.type]?.name ?? sl.type)}）`).join(' · ');
     return `<span class="hint" style="color:#cbb98e">${escapeHtml(FORMATION_LABEL[def.formationMode] ?? def.formationMode)} · ${cells}<br>史料：${escapeHtml(def.source)}</span>`;
 }
 
@@ -537,9 +541,11 @@ function checkSideLegion(side: string, name: string, fallback: string): Issue[] 
         out.push({ level: 'error', msg: `${side}军团「${name}」不是剧本军团：前三层的名字填进事件，运行时只改名不改兵（幽灵军团），请改选剧本军团` });
         return out;
     }
-    const base = (t: string) => t.replace(/^elite_/, '');
-    if (def.slots.length !== 3 || new Set(def.slots.map((sl) => base(sl.type))).size !== 3) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」不是三个不同兵种（普通 / 高级 / 精锐算同一兵种）：军团必须三兵种构成` });
+    // 🔴 [2026-09-23 主人定「军团中只有骑兵，步兵，远程，不要分的那么细」] 三排 = 骑兵、步兵、远程各一排
+    const clsOf = (t: string) => WAR_TYPES[t]?.cls;
+    const classes = def.slots.map((sl) => clsOf(sl.type));
+    if (def.slots.length !== 3 || !['cav', 'melee', 'ranged'].every((c) => classes.includes(c as never))) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排不是骑兵、步兵、远程各一排：军团只分这三类兵种` });
     }
     if (!slotsMatchFormation(def.slots, def.formationMode)) {
         out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排人数与阵型对不上（合计必须 9，按阵型分排）` });
@@ -770,9 +776,9 @@ function render(): void {
                         <textarea id="f-battleDesc">${escapeHtml(working.battleDescription)}</textarea></div>
                 </div>
                 <div class="row">
-                    <div class="fld"><label>武将邀约对白 · 玩家找到归属武将时他说的话，带语音；念完后才开始赶路背景播报，两段不重叠</label>
+                    <div class="fld"><label>武将邀约对白 · 玩家找到归属武将时他说的话，只显示文字；称呼要合乎人物的时代与文化，如亚历山大称「朋友」，不用中式的「壮士」</label>
                         <textarea id="f-invite" style="min-height:58px;">${escapeHtml(working.inviteText)}</textarea>
-                        <span class="hint">${working.inviteText.trim() ? '约 ' + briefingSeconds(working.inviteText) + ' 秒念完' : '留空则用通用的一句邀约'}</span></div>
+                        <span class="hint">${working.inviteText.trim() ? '' : '留空则用通用的一句邀约'}</span></div>
                 </div>
                 <div class="row">
                     <div class="fld"><label>赶路背景播报 · 玩家在路上逐段播，空行分段</label>
@@ -835,7 +841,9 @@ function renderRouteReport(): string {
         return `<div style="${style}">【${escapeHtml(l.from)}】→【${escapeHtml(l.to)}】${body}</div>`;
     }).join('');
     const cityRows = r.shownCities.map((c) =>
-        `<span class="chip">${escapeHtml(c.name)}${c.wonders.length ? ' · 🏛' + escapeHtml(c.wonders.join('、')) : ''}</span>`).join('');
+        `<span class="chip" style="${c.absent ? 'opacity:.55;text-decoration:line-through' : ''}">${escapeHtml(c.name)}`
+        + `${c.wonders.length ? ' · 🏛' + escapeHtml(c.wonders.join('、')) : ''}`
+        + `<button data-absent="${escapeAttr(c.id)}" title="${c.absent ? '改回：那一年已存在，显示' : '那一年还不存在：剧本期不显示，路照走'}">${c.absent ? '↺' : '✕不存在'}</button></span>`).join('');
     return `
         <div class="fld" style="margin-top:10px;">
             <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（归属武将所在城）出发，与游戏同一套寻路</label>
@@ -843,7 +851,7 @@ function renderRouteReport(): string {
             <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船</span>
         </div>
         <div class="fld" style="margin-top:8px;">
-            <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 请逐个核对那一年是否存在、名字对不对</label>
+            <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 逐个核对那一年是否存在、名字对不对：不存在的点「✕不存在」，路照走、城不显示</label>
             <div class="chips">${cityRows}</div>
         </div>`;
 }
@@ -859,7 +867,7 @@ function bind(): void {
         el.addEventListener('click', () => {
             selected = Number(el.dataset.i);
             isNew = false;
-            working = { ...drafts[selected], sources: { ...drafts[selected].sources } };
+            working = { ...drafts[selected], sources: { ...drafts[selected].sources }, absentCities: [...drafts[selected].absentCities] };
             render();
         });
     });
@@ -922,6 +930,16 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
     on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
+    // 那一年还不存在的途经据点：切换
+    document.querySelectorAll<HTMLButtonElement>('[data-absent]').forEach((el) => {
+        el.addEventListener('click', () => {
+            const id = el.dataset.absent!;
+            working.absentCities = working.absentCities.includes(id)
+                ? working.absentCities.filter((x) => x !== id)
+                : [...working.absentCities, id];
+            render();
+        });
+    });
     // 史料依据：每项的级别与依据
     document.querySelectorAll<HTMLSelectElement>('[data-src-level]').forEach((el) => {
         el.addEventListener('change', () => {
