@@ -339,8 +339,13 @@ export class HistoricalEventManager {
      */
     public isGeneralAvailable(generalId: string | null | undefined, ignoreArmyId?: string): boolean {
         if (!generalId) return true;   // 没指定主帅的一方不受此限
+        // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
+        //    打完一场后战场军团 8 秒后才 disband，这 8 秒里它会被误判成「主帅率军在外」，
+        //    下一场 checkBattlefieldReady 被一句「XX正率军在外」挡死。战场军团是为上一仗而生的，
+        //    打完即算归城，不该算「率军在外」（与 PlayerQuestSystem.armyOfGeneral 同一处口径）。
         return !this.legionManager.getArmies().some(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId && a.id !== ignoreArmyId,
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId
+                && a.id !== ignoreArmyId && !a.isScriptArmy,
         );
     }
 
