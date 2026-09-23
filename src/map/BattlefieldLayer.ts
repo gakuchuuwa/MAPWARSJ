@@ -58,6 +58,12 @@ export class BattlefieldLayer {
         }
 
         this.layerGroup = L.layerGroup().addTo(this.map);
+        if (!document.getElementById('bf-click-through-style')) {
+            const st = document.createElement('style');
+            st.id = 'bf-click-through-style';
+            st.textContent = '.bf-click-through, .bf-click-through * { pointer-events: none !important; }';
+            document.head.appendChild(st);
+        }
         // 🔴 [2026-09-12 主人令] 开局随机种子偏移 → **每局的战场形态都不一样**（件种/镜像/挪位全重掷）。
         //    只在构造时设一次：同一局内稳定，战场不会中途变样。
         randomizeBattlefieldSeed();
@@ -155,6 +161,14 @@ export class BattlefieldLayer {
 
             this.markers.set(bf.id, marker);
         }
+    }
+
+    /**
+     * 🔴 [2026-09-24 主人「推罗不能点吗」「我要画路，怎么据点点不了呀」] 画路 / 编辑据点时，
+     *    战场标牌不接点击，让点击落到下面的据点上（推罗战场与推罗据点同一坐标，战场层压在据点层之上）。
+     */
+    public setClickThrough(on: boolean): void {
+        this.map.getPane('battlefieldPane')?.classList.toggle('bf-click-through', on);
     }
 
     /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 + 标牌加「战场」 */

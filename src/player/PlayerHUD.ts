@@ -49,6 +49,26 @@ export class PlayerHUD {
     private toast: HTMLDivElement | null = null;
     private toastTimer: number | null = null;
     private refreshTimer: number | null = null;
+    /**
+     * 🔴 [2026-09-24 主人「点不了呀，一点就缩回去了，你能设计得好点吗」]
+     *    面板内容每秒整块重建（body.innerHTML = ''），下拉框一点开就被删掉换新，勾选框、按钮也常点空。
+     *    现在：鼠标在面板上、或面板里的下拉框正打开着 → 不重建，只记「待刷新」；离开后立刻补上。
+     *    自动轮播到点也一样先等你操作完再收。
+     */
+    private pointerInPanel = false;
+    private refreshPending = false;
+    /** 用户正在操作面板（鼠标在上面，或下拉框打开/获得焦点中） */
+    private isUserInteracting(): boolean {
+        if (this.pointerInPanel) return true;
+        const ae = document.activeElement;
+        return !!(ae && this.panel?.contains(ae) && ae.tagName === 'SELECT');
+    }
+    private flushPendingRefresh(): void {
+        if (this.refreshPending && !this.isUserInteracting()) {
+            this.refreshPending = false;
+            this.refresh();
+        }
+    }
     private dialoguePauseTaken = false;
     private onStreamModeChange: ((e: Event) => void) | null = null;
 
@@ -128,6 +148,18 @@ export class PlayerHUD {
 
         document.body.appendChild(panel);
         this.panel = panel;
+        panel.addEventListener('pointerenter', () => { this.pointerInPanel = true; });
+        panel.addEventListener('pointerleave', () => {
+            this.pointerInPanel = false;
+            // 下拉框的选项列表会伸到面板外，此时焦点还在下拉框上 → 等它关掉（失焦）再刷新
+            window.setTimeout(() => this.flushPendingRefresh(), 0);
+        });
+        panel.addEventListener('focusout', () => window.setTimeout(() => this.flushPendingRefresh(), 0));
+        // 下拉框选完一项就交还焦点，面板随即刷新成新状态（否则焦点一直停在它上面，面板不更新）
+        panel.addEventListener('change', (e) => {
+            const t = e.target as HTMLElement | null;
+            if (t?.tagName === 'SELECT') window.setTimeout(() => (t as HTMLSelectElement).blur(), 0);
+        });
         this.panelSizeObserver = new ResizeObserver(() => {
             const bottom = panel.getBoundingClientRect().bottom;
             document.documentElement.style.setProperty('--player-hud-bottom', `${bottom}px`);
@@ -192,11 +224,28 @@ export class PlayerHUD {
                 this.scheduleNextCyclePhase();
                 return;
             }
+            // 用户正在操作面板：到点也先不收，1 秒后再看
+            if (this.cyclePhaseExpanded && this.isUserInteracting()) {
+                this.autoCollapseTimer = window.setTimeout(() => this.scheduleNextCycleRetry(), 1000);
+                return;
+            }
             // 第一个展开相走完 → 开局保护解除，之后「入伍即收起」那一脚才生效
             this.initialExpandDone = true;
             this.applyCyclePhase(!this.cyclePhaseExpanded);
             this.scheduleNextCyclePhase();
         }, hold);
+    }
+
+    /** 轮播到点时用户正在操作：等他操作完再翻相 */
+    private scheduleNextCycleRetry(): void {
+        this.autoCollapseTimer = null;
+        if (this.isUserInteracting()) {
+            this.autoCollapseTimer = window.setTimeout(() => this.scheduleNextCycleRetry(), 1000);
+            return;
+        }
+        this.initialExpandDone = true;
+        this.applyCyclePhase(!this.cyclePhaseExpanded);
+        this.scheduleNextCyclePhase();
     }
 
     /**
@@ -224,6 +273,7 @@ export class PlayerHUD {
      */
     private kickCycleToCollapsed(): void {
         if (!this.initialExpandDone) return;
+        if (this.isUserInteracting()) return;   // 正在操作面板：不当场收，轮播到点再收
         this.applyCyclePhase(false);
         this.scheduleNextCyclePhase();
     }
@@ -285,6 +335,8 @@ export class PlayerHUD {
         }
         this.panel.style.display = inScene13 ? 'none' : 'block';
         if (this.panel.style.display === 'none') return;
+        // 用户正在操作面板：先不重建（重建会把打开的下拉框、正要点的按钮整个换掉）
+        if (this.isUserInteracting()) { this.refreshPending = true; return; }
 
         const hero = this.hero;
         const rank = hero.getRank();
