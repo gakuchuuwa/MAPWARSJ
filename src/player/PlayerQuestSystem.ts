@@ -157,6 +157,8 @@ export interface PlayerQuestDeps {
 
 const TICK_MS = 400;
 /** 战场寻路失败后的重试冷却，避免每 tick 重试刷屏并打断行程 */
+/** 剧本模式行军纵队：离战场多少公里展开成阵（2026-09-23） */
+const COLUMN_DEPLOY_KM = 30;
 const BF_RETRY_COOLDOWN_MS = 60_000;
 
 export class PlayerQuestSystem {
@@ -683,6 +685,8 @@ export class PlayerQuestSystem {
             : { lat: ev.lat, lng: ev.lng };
         // 行军路标只在剧本模式走；乱斗模式照旧走最近的路
         this.marchWaypointsLeft = scriptMode ? [...(ev.marchWaypoints ?? [])] : [];
+        // 🔴 [2026-09-23 主人定「一条线的行军模式」「乱入者打头阵，然后是将军」] 剧本模式：行军纵队，接近战场再展开
+        host.columnMarch = scriptMode;
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
@@ -842,6 +846,10 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
+        // 🔴 [2026-09-23] 距战场 30 公里内：纵队展开成阵（逐帧走位过去，见 LegionPhalanxDrawer.columnOffsets）
+        if (host.columnMarch && getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= COLUMN_DEPLOY_KM) {
+            host.columnMarch = false;
+        }
         // 🔴 卡住续路：军团若因故停住（被野战打断、复员等）而人还没到战场，就重新铺一次路，
         //    免得玩家被永远钉在半路。重铺有冷却，不会每 400ms 刷屏。
         const atTarget = getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= 3;

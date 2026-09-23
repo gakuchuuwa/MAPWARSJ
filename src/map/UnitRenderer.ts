@@ -124,6 +124,11 @@ export class UnitRenderer implements IAnimatedUnit {
         return (this.unit as any).formationMode ?? null;
     }
 
+    /** 🔴 [2026-09-23] 剧本模式行军纵队（Army.columnMarch 转发；漏了这个 getter 渲染层会静默取 undefined） */
+    public get columnMarch(): boolean {
+        return (this.unit as any).columnMarch === true;
+    }
+
     /** 首选船型，委托底层 Army。
      *  🔴 [2026-09-09] 少了这个 getter，玩家「海上用独木舟」就是一句空话：
      *     GlobalUnitRenderer 的玩家分支写的是

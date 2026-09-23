@@ -4241,7 +4241,8 @@ export class Scene13WarLayer {
                 this.spawnSiegeWeapons(VW, VH, mx, depth);
             }
 
-            const defenderSpawnXs = this.spawns.filter((s) => s.f === 1).map((s) => s.x);
+            // 主将队（第 10 口，前排再往前）不是建筑位，不参与城墙前沿计算
+            const defenderSpawnXs = this.spawns.filter((s) => s.f === 1 && !s.commander).map((s) => s.x);
             const siegeWallFrontX = this.battleType === 'siege' && defenderSpawnXs.length > 0
                 ? Math.round(Math.min(...defenderSpawnXs) - 380)
                 : undefined;
@@ -4273,7 +4274,7 @@ export class Scene13WarLayer {
                 //    半径与 applyDefenderCityRoad 的辐射同口径（4 格），少一点都会露出树来。
                 //    不传的后果实测过：平均每场攻城战 3.8 棵树戳在城基和门前石路上。
                 keepClear: init.battleType === 'siege'
-                    ? this.spawns.filter((s) => s.f === 1)
+                    ? this.spawns.filter((s) => s.f === 1 && !s.commander)
                         .map((s) => ({ x: s.x, y: s.y, r: 4 * TILE_W }))
                     : [],
                 getCalendarSeason: () => {
@@ -4877,7 +4878,7 @@ export class Scene13WarLayer {
      */
     private applyDefenderCityRoad(): void {
         if (this.battleType !== 'siege') return;
-        const defenderSpawns = this.spawns.filter((s) => s.f === 1);
+        const defenderSpawns = this.spawns.filter((s) => s.f === 1 && !s.commander);
         if (defenderSpawns.length === 0 || this.isoGw === 0 || this.isoGh === 0) return;
 
         // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图（映射集中在 cityRoadFoundationTile）
@@ -5002,7 +5003,8 @@ export class Scene13WarLayer {
     private applyBuildingsForSide(f: 0 | 1): void {
         // 玩家自带精锐是临时追加的战术出兵位，不属于军团九格编制；
         // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
-        const side = this.spawns.filter((s) => s.f === f && !s.playerElite);
+        // 🔴 [2026-09-23] 主将队（第 10 口，前排再往前）不是编制建筑位：不计入，否则拒马挤在主将一口前、营地城墙因 10≠9 全不生成
+        const side = this.spawns.filter((s) => s.f === f && !s.playerElite && !s.commander);
         // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)/漠北蒙古(MOBEI_MONGOL)守方**都在最前排营地前铺一道木桩拒马线。
         // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
         const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();

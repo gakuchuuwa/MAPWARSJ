@@ -37,6 +37,7 @@ import {
 } from '../types/LegionComposition';
 import { getCultureTier, getFactionCompositionSlots, type FormationMode } from '../types/CultureFormations';
 import { HeroSpriteDrawer } from './player/HeroSpriteDrawer'; // [2026-09-05 玩家] 单骑精灵
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 /** [2026-08-10 编队外框] 命中查询结果：目标编队的位置 + 算它外框所需的全部参数 */
 interface SquadHit {
@@ -1895,6 +1896,31 @@ export class GlobalUnitRenderer {
         return radius;
     }
 
+    /** 🔴 [2026-09-23] 剧本模式行军纵队：各军团走过的轨迹（头在前，[0] = 当前位置） */
+    private columnTrails = new Map<string, { lat: number; lng: number }[]>();
+
+    /** 纵队中：更新并返回轨迹；不在纵队：丢掉轨迹、返回 null（画法据此展开回阵型） */
+    private updateColumnTrail(id: string, pos: { lat: number; lng: number }, on: boolean): { lat: number; lng: number }[] | null {
+        if (!on) {
+            this.columnTrails.delete(id);
+            return null;
+        }
+        let trail = this.columnTrails.get(id);
+        if (!trail) {
+            trail = [{ lat: pos.lat, lng: pos.lng }];
+            this.columnTrails.set(id, trail);
+            return trail;
+        }
+        trail[0] = { lat: pos.lat, lng: pos.lng };
+        const last = trail[1];
+        // 每走 0.01°（约 1 公里）落一个脚印；最多留 200 个（约 2°，足够排下整条纵队）
+        if (!last || Math.hypot(pos.lat - last.lat, pos.lng - last.lng) > 0.01) {
+            trail.splice(1, 0, { lat: pos.lat, lng: pos.lng });
+            if (trail.length > 200) trail.length = 200;
+        }
+        return trail;
+    }
+
     /** 军团（Army 渲染单位）版：从 cultureSlots 取阵型。 */
     private getScene13FormationFrontRadius(
         unit: IAnimatedUnit,
@@ -2423,7 +2449,11 @@ export class GlobalUnitRenderer {
                     let hx = centerPoint.x, hy = centerPoint.y;
                     const dir = hostR.lastDirection ?? directionIndex;
                     const heroState: 'IDLE' | 'MOVE' | 'ATTACK' = hostR.isAttacking ? 'ATTACK' : hostR.isMoving ? 'MOVE' : 'IDLE';
-                    const off = HeroSpriteDrawer.forwardOffset(dir, 96 * scale);
+                    // 🔴 [2026-09-23 主人「玩家和将军之间有空隙」] 剧本模式行军纵队中：乱入者就站在队首（军团中心），
+                    //    将军紧贴其后；不在纵队（方阵）时照旧画在前排之前领军
+                    const inColumn = !!(hostLegion as { id?: string } | undefined)?.id
+                        && LegionPhalanxDrawer.getColumnCommanderOffset((hostLegion as { id: string }).id) !== null;
+                    const off = HeroSpriteDrawer.forwardOffset(dir, inColumn ? 0 : 96 * scale);
                     hx += off.x; hy += off.y;
                     HeroSpriteDrawer.draw(ctx, hero?.heroKey ?? PLAYER_FALLBACK_HERO_KEY, { x: hx, y: hy }, heroState, dir, scale,
                         hero?.factionId ?? null, hero?.name ?? '乱入者', Date.now());
@@ -2642,6 +2672,10 @@ export class GlobalUnitRenderer {
                     state = 'IDLE';
                 }
 
+                // 🔴 [2026-09-23 主人定「一条线的行军模式」] 剧本模式行军纵队：记录军团走过的轨迹，纵队中才传给画法
+                const columnTrail = this.updateColumnTrail(unit.id || 'unknown', unitPos,
+                    !sceneActive && isScriptPeriod() && (unit as { columnMarch?: boolean }).columnMarch === true);
+
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',
                     ctx,
@@ -2672,6 +2706,7 @@ export class GlobalUnitRenderer {
                     squadInfo?.states ?? null,
                     squadInfo?.directions ?? null,
                     unit.formationMode ?? null,
+                    columnTrail,
                 );
             }
 
@@ -2681,9 +2716,11 @@ export class GlobalUnitRenderer {
             const currentYear = (window as any).game?.timeSystem?.getYear() ?? -999;
 
             if (!playerNoFaction) {
+                // 🔴 [2026-09-23] 剧本模式行军纵队：军旗跟着将军（主将队）走，不留在队伍中间的空处
+                const cmdOff = useNavalVisual ? null : LegionPhalanxDrawer.getColumnCommanderOffset(unit.id || 'unknown');
                 LegionFlagDrawer.drawFlag(
                     ctx,
-                    { x: centerPoint.x, y: centerPoint.y },
+                    cmdOff ? { x: centerPoint.x + cmdOff.x, y: centerPoint.y + cmdOff.y } : { x: centerPoint.x, y: centerPoint.y },
                     directionIndex,
                     useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
                     Date.now(),
