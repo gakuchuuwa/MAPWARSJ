@@ -1,5 +1,8 @@
 /**
- * 闸门：战术模式双方编队数**永远 9**。  npm run scene13:nine-lanes
+ * 闸门：战术模式双方编队数**永远 10**。  npm run scene13:nine-lanes（脚本名沿用旧名）
+ *
+ * 🔴🔴 [2026-09-23 主人定，取代 9-15 那条]「现在战略，战术都改为10队」「我现在说的才是硬规定」。
+ *   10 = 编制 9 口（LAYOUT 表仍每种 9 格）+ 主将队 1 口（slotsOf 里 withCommander 追加，站 COMMANDER_CELL）。
  *
  * 🔴 [2026-09-15 主人原话]「任何时候双方都必须是 9 支军队，永远是 9」。
  * 查三件结构性前提，任一不成立，运行期就不可能恒为 9：
@@ -28,12 +31,16 @@ for (const m of modes) {
 }
 
 // ② 编制展开闸门
-console.log('\n② 编制展开只放行 9 口');
-if (/types\.length\s*===\s*9/.test(src)) ok('slotsOf 仍以 types.length === 9 为闸');
-else bad('slotsOf 的「展开必须是 9 口」闸门不见了');
+console.log('\n② 编制展开 9 口 + 主将队 1 口');
+if (/types\.length\s*===\s*9/.test(src)) ok('slotsOf 仍以 types.length === 9 为闸（编制 9 口）');
+else bad('slotsOf 的「编制必须是 9 口」闸门不见了');
+if (/withCommander\(generalId, types\)/.test(src)) ok('slotsOf 追加主将队第 10 口');
+else bad('slotsOf 没有追加主将队（withCommander）');
+if (/const COMMANDER_CELL/.test(src) && /idx < 9 \? LAYOUT\[mode\]\[idx\] : COMMANDER_CELL/.test(src)) ok('第 10 口站 COMMANDER_CELL（前排正中再往前）');
+else bad('第 10 口的站位 COMMANDER_CELL 不见了');
 const fb = src.slice(src.indexOf('编制槽位派生失败'), src.indexOf('编制槽位派生失败') + 900);
 const fbN = (fb.match(/\{\s*key:/g) || []).length;
-if (fbN === 9) ok('兜底集 = 9 口'); else bad(`兜底集 = ${fbN} 口，应为 9`);
+if (fbN === 10) ok('兜底集 = 10 口'); else bad(`兜底集 = ${fbN} 口，应为 10`);
 
 /* ③ 🔴 [2026-09-18 主人纠正] 本项判据整个反了，已改写。
  *    原判据要求代码里**存在**「玩家精锐顶替编制一口」的路径（takeOver.playerElite = true），
@@ -47,15 +54,15 @@ const setup = src.slice(si, sj > si ? sj : si + 4000);
 if (/takeOver\.playerElite\s*=\s*true/.test(setup)) bad('又出现「精锐顶替编制一口」——玩家永远不能改变军团兵种');
 else ok('没有顶替路径（军团兵种不被玩家改写）');
 const pushes = (setup.match(/this\.spawns\.push\(/g) || []).length;
-if (pushes === 0) ok('没有任何 spawns.push（不新增第 10 口）');
+if (pushes === 0) ok('没有任何 spawns.push（玩家不新增编队）');
 else bad(`setupPlayerUnits 里有 ${pushes} 处 spawns.push，会给玩家额外增口`);
 if (/setup\.eliteLane/.test(setup)) bad('仍在读 setup.eliteLane 参与编制构建');
 else ok('编制构建不再读 eliteLane');
 
 // 运行期闸门还在不在
 console.log('\n④ 运行期校验');
-if (/const SIDE_LANES = 9;/.test(src) && /编队数铁律被破坏/.test(src)) ok('start() 里按 SIDE_LANES 校验两方口数');
-else bad('运行期的「永远是 9」校验不见了');
+if (/const SIDE_LANES = 10;/.test(src) && /编队数铁律被破坏/.test(src)) ok("start() 里按 SIDE_LANES=10 校验两方口数");
+else bad('运行期的「永远是 10」校验不见了');
 
-console.log(fail ? `\n\u2717 ${fail} 处不满足「双方永远 9 支军队」` : '\n\u2705 双方编队数恒为 9 的结构前提全部成立');
+console.log(fail ? `\n\u2717 ${fail} 处不满足「双方永远 10 支军队」` : '\n\u2705 双方编队数恒为 10 的结构前提全部成立');
 process.exit(fail ? 1 : 0);

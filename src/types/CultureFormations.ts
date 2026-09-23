@@ -34,6 +34,7 @@ import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompos
 import type { LegionType } from './UnitTypes';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { getScriptFactionLegionName } from '../events/scriptPeriod';
+import { withCommander } from '../data/generalHeroUnits';
 
 /** 军队编辑器可选阵型（2026-08-20 七大经典阵型，均 9 人）：
  *  square       方阵   = 3+3+3（前3/中3/后3，九宫等边·攻守均衡）
@@ -1067,8 +1068,10 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     const slots = factionSlots ?? getCultureTier(culture, army.getTroops())?.slots;
     if (!slots) return;
 
-    army.cultureSlots = expandCompositionSlots(slots);
-    army.cultureScales = expandCompositionScales(slots);
+    // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
+    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots));
+    const scales9 = expandCompositionScales(slots);
+    army.cultureScales = army.cultureSlots.length > scales9.length ? [...scales9, 1] : scales9;
     army.legionType =
         isQin || isHan || isTang || isSong || isMing || isSen || isRom || isPer || isPol || isTeu || isByz || isBer
             ? 'mixed'

@@ -110,6 +110,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -0.5 }, { r: 0, c: 0.5 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·雁行 4+3+2（9 格位）：宽面 4 顶前（排 0），中 3，后收 2（排 2）。
@@ -118,6 +119,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -0.5 }, { r: 2, c: 0.5 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·鱼鳞 3+4+2（9 格位）：前排 3（排 0），中阔鳞叠 4（排 1），后收尾 2（排 2）。
@@ -126,6 +128,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
         { r: 2, c: -1 }, { r: 2, c: 1 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·鹤翼 2+4+3（9 格位）：前锋 2 引敌（排 0），中排两翼展开 4（排 1），后排中军托底 3（排 2）。
@@ -134,6 +137,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1 }, { r: 0, c: 1 },
         { r: 1, c: -1.5 }, { r: 1, c: -0.5 }, { r: 1, c: 0.5 }, { r: 1, c: 1.5 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·方阵 3+3+3（9 格位）：前排 3（排 0），中排 3（排 1），后排 3（排 2）。
@@ -142,6 +146,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -1 }, { r: 1, c: 0 }, { r: 1, c: 1 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·偃月 3+2+4（9 格位）：前排 3（排 0），中窄 2（排 1），后排决胜 4（排 2）。
@@ -150,6 +155,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1 }, { r: 0, c: 0 }, { r: 0, c: 1 },
         { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
         { r: 2, c: -1.5 }, { r: 2, c: -0.5 }, { r: 2, c: 0.5 }, { r: 2, c: 1.5 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     /** 主阵·衡轭 4+2+3（9 格位）：前排横推 4（排 0），中窄 2（排 1），后排托底 3（排 2）。
@@ -158,6 +164,7 @@ export class LegionPhalanxDrawer {
         { r: 0, c: -1.5 }, { r: 0, c: -0.5 }, { r: 0, c: 0.5 }, { r: 0, c: 1.5 },
         { r: 1, c: -0.5 }, { r: 1, c: 0.5 },
         { r: 2, c: -1 }, { r: 2, c: 0 }, { r: 2, c: 1 },
+        { r: -1, c: 0 },   // 第 10 队：主将队，前排正中再往前（全阵矛头）
     ] as const;
 
     private static readonly PURE_CAVALRY_LEGION_TYPES: LegionType[] = ['cavalry', 'archer_cavalry'];
@@ -577,7 +584,7 @@ export class LegionPhalanxDrawer {
      * 🔴 [2026-08-21 全 16 向船] 战船已挂全 16 向，drawNaval 传 is16=true → 键 = direction 直取（0-15）。
      *    其余调用（陆军 8 向）不传 → 行为逐像素不变。
      */
-    /** 取 9 格阵型的布局表（行 r / 列 c）；非 9 格阵型返回 null，走老的方阵网格。 */
+    /** 取阵型布局表（行 r / 列 c）：前 9 格 = 三排编制，第 10 格 = 主将队（2026-09-23 主人定 10 队）；非七阵型返回 null，走老的方阵网格。 */
     private static layoutOf(mode: FormationMode): readonly { r: number; c: number }[] | null {
         switch (mode) {
             case 'triangle': return this.TRIANGLE_9_LAYOUT;
@@ -2597,7 +2604,8 @@ export class LegionPhalanxDrawer {
         let originalY = 0;
 
         // --- FORMATION LOGIC ---
-        const layout = index < 9 ? this.layoutOf(formationMode) : null;
+        // 前 9 格三排编制 + 第 10 格主将队（r=-1：前排再往前一排）—— 2026-09-23 主人定 10 队
+        const layout = index < 10 ? this.layoutOf(formationMode) : null;
         if (layout) {
             // 前中后三排等距：中排 y=0，前排 -spacingY，后排 +spacingY。
             // 行内横距对每排都一样，所以七个阵型各自的形状就是 (r, c) 那张表本身。

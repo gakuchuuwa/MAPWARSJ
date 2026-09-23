@@ -29,3 +29,17 @@ export function setScriptFactionLegionResolver(fn: (factionId: string) => string
 export function getScriptFactionLegionName(factionId: string): string | null {
     return isScriptPeriod() ? factionLegionResolver(factionId) : null;
 }
+
+/**
+ * 🔴 [2026-09-23 主人定] 剧本期：当前这一场归属武将的**主将队兵种**（事件里的 commanderUnit）。
+ * 返回 null = 用武将专属英雄表 / 前排兵种兜底（src/data/generalHeroUnits.ts）。乱斗恒 null。
+ */
+let commanderUnitResolver: (generalId: string) => string | null = () => null;
+
+export function setScriptCommanderUnitResolver(fn: (generalId: string) => string | null): void {
+    commanderUnitResolver = fn;
+}
+
+export function getScriptCommanderUnit(generalId: string): string | null {
+    return isScriptPeriod() ? commanderUnitResolver(generalId) : null;
+}

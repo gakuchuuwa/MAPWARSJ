@@ -35,6 +35,7 @@ import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
+import { SPRITE_PATHS } from '../config/UnitAssets';
 import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
 import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
 import { slotsMatchFormation } from '../types/CultureFormations';
@@ -85,6 +86,8 @@ interface BattleDraft {
     sources: Record<string, EventSourceEntry>;
     /** 🔴 [2026-09-23] 途经但那一年还不存在的据点（剧本期这一场不显示，路照走） */
     absentCities: string[];
+    /** 🔴 [2026-09-23] 归属武将军团的主将队（第 10 队）兵种：按素材样貌选，必选 */
+    commanderUnit: string;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -225,6 +228,7 @@ function loadDrafts(): BattleDraft[] {
             sources: Object.fromEntries(Object.entries((ev as AnyEvent & { sources?: Record<string, EventSourceEntry> }).sources ?? {})
                 .map(([k, v]) => [k, { ...v }])),
             absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
+            commanderUnit: (ev as AnyEvent & { commanderUnit?: string }).commanderUnit ?? '',
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -260,7 +264,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -372,6 +376,18 @@ function validate(d: BattleDraft): Issue[] {
     out.push(...checkEventRules(d, drafts));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
     out.push(...checkRoute(d).issues);
+    // 🔴 [2026-09-23 主人定「剧本模式中，每一个主角武将的军团都必须是10队，样式从兵模素材中找，不要名字，要看样子符合就行」]
+    if (d.generalId && !d.commanderUnit) {
+        out.push({ level: 'error', msg: '主将队兵种没选：剧本模式每个主角武将的军团都是 10 队，第 10 队按素材样貌选一个符合这位武将的兵模' });
+    } else if (d.commanderUnit && !WAR_TYPES[d.commanderUnit]) {
+        out.push({ level: 'error', msg: `主将队兵种不存在：${d.commanderUnit}` });
+    }
+    if (d.generalId && d.commanderUnit) {
+        const diff = drafts.filter((x) => x.title !== d.title && x.generalId === d.generalId && x.commanderUnit && x.commanderUnit !== d.commanderUnit);
+        if (diff.length) {
+            out.push({ level: 'warn', msg: `同一武将在【${diff.map((x) => x.title).join('、')}】里主将队用的是别的兵模：同一个人前后应当是同一个样子` });
+        }
+    }
     // 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单每项必填，绝不留空
     for (const it of EVENT_SOURCE_ITEMS) {
         const e = d.sources[it.key];
@@ -506,6 +522,66 @@ function legionOptions(cur: string, currentLegion: string): string {
         + `<optgroup label="四级 · 剧本军团（按这一仗史实配三兵种）">${SCRIPT_LEGIONS.map((l) => opt(l.name, l.name, cur)).join('')}</optgroup>`;
 }
 
+/**
+ * 🔴 [2026-09-23 主人定「样式从兵模素材中找，不要名字，要看样子符合就行」] 兵种素材样貌缩略图：
+ * 画该兵种 idle 动作第 2 方向的第一帧（DE 素材按 _meta.json 的帧宽裁；老素材按正方形帧裁）。
+ */
+function spriteThumb(key: string, size = 48): string {
+    return key ? `<canvas class="spr-thumb" data-spr="${escapeAttr(key)}" width="${size}" height="${size}" style="background:#0c0b0a;border:1px solid #443c32;border-radius:4px;flex:none;"></canvas>` : '';
+}
+const thumbCache = new Map<string, Promise<{ img: HTMLImageElement; fw: number; fh: number } | null>>();
+function loadThumb(key: string): Promise<{ img: HTMLImageElement; fw: number; fh: number } | null> {
+    const hit = thumbCache.get(key);
+    if (hit) return hit;
+    const p = (async () => {
+        const assets = (SPRITE_PATHS.UNIT_ASSETS as unknown as Record<string, { IDLE?: readonly string[] }>)[key];
+        const src = assets?.IDLE?.[2] ?? assets?.IDLE?.[0];
+        if (!src) return null;
+        const img = new Image();
+        // 等 load 事件，不用 img.decode()：标签页在后台时 decode() 永远不返回，缩略图就一直是空的
+        await new Promise<void>((res) => {
+            img.onload = () => res();
+            img.onerror = () => res();
+            img.src = src;
+        });
+        if (!img.naturalWidth) return null;
+        let fw = img.naturalHeight, fh = img.naturalHeight;
+        try {
+            const meta = await (await fetch(src.replace(/[^/]+$/, '_meta.json'))).json();
+            const d = meta?.idle?.dirs?.['2'] ?? meta?.idle?.dirs?.['0'];
+            if (d?.fw) { fw = d.fw; fh = d.fh; }
+        } catch { /* 老素材没有 _meta.json：按正方形帧 */ }
+        return { img, fw, fh };
+    })();
+    thumbCache.set(key, p);
+    return p;
+}
+function drawThumbs(): void {
+    document.querySelectorAll<HTMLCanvasElement>('canvas.spr-thumb').forEach((cv) => {
+        const key = cv.dataset.spr!;
+        void loadThumb(key).then((t) => {
+            const ctx = cv.getContext('2d');
+            if (!ctx) return;
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            if (!t) { ctx.fillStyle = '#7a3a3a'; ctx.fillText('无素材', 4, cv.height / 2); return; }
+            const k = Math.min(cv.width / t.fw, cv.height / t.fh);
+            const w = t.fw * k, h = t.fh * k;
+            ctx.imageSmoothingEnabled = false;
+            ctx.drawImage(t.img, 0, 0, t.fw, t.fh, (cv.width - w) / 2, (cv.height - h) / 2, w, h);
+        });
+    });
+}
+/** 主将队兵种下拉：英雄在前，其余按名 */
+function commanderOptions(cur: string): string {
+    const all = Object.entries(WAR_TYPES as Record<string, { name: string }>)
+        .filter(([k]) => (SPRITE_PATHS.UNIT_ASSETS as Record<string, unknown>)[k]);
+    const heroes = all.filter(([k]) => k.startsWith('hero_')).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
+    const others = all.filter(([k]) => !k.startsWith('hero_')).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
+    return '<option value="">（未选）</option>'
+        + `<optgroup label="英雄">${heroes.map(([k, v]) => opt(k, v.name, cur)).join('')}</optgroup>`
+        + `<optgroup label="其他兵种">${others.map(([k, v]) => opt(k, v.name, cur)).join('')}</optgroup>`;
+}
+
 /** 选中的剧本军团长什么样：阵型 + 前中后三排兵种 + 史料出处（没选就显示乱斗那支的兵种，提醒没按史实核对） */
 function legionPreview(name: string, fallback: string): string {
     const def = name ? SCRIPT_LEGION_MAP.get(name) : undefined;
@@ -516,7 +592,9 @@ function legionPreview(name: string, fallback: string): string {
     const CLS: Record<string, string> = { cav: '骑兵', melee: '步兵', ranged: '远程' };
     const cells = def.slots.map((sl, i) =>
         `${rows[i] ?? '第' + (i + 1) + '排'}${CLS[WAR_TYPES[sl.type]?.cls ?? ''] ?? ''} ×${sl.count}（${escapeHtml(WAR_TYPES[sl.type]?.name ?? sl.type)}）`).join(' · ');
-    return `<span class="hint" style="color:#cbb98e">${escapeHtml(FORMATION_LABEL[def.formationMode] ?? def.formationMode)} · ${cells}<br>史料：${escapeHtml(def.source)}</span>`;
+    const thumbs = def.slots.map((sl) => spriteThumb(sl.type, 48)).join('');
+    return `<div style="display:flex;gap:4px;margin:4px 0;">${thumbs}</div>`
+        + `<span class="hint" style="color:#cbb98e">${escapeHtml(FORMATION_LABEL[def.formationMode] ?? def.formationMode)} · ${cells}<br>史料：${escapeHtml(def.source)}</span>`;
 }
 
 const FORMATION_LABEL: Record<string, string> = {
@@ -622,6 +700,14 @@ function render(): void {
                         <label>归属武将 · 玩家与这位武将入伍，打的就是这一场</label>
                         <select id="f-general">${generalOptions(working.generalId)}</select>
                         <span class="hint">同一武将可挂多场（按年份依次解锁）；留空 = 不归属任何武将</span>
+                    </div>
+                    <div class="fld">
+                        <label>主将队兵种 · 第 10 队，按素材样貌选，不看兵名</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <select id="f-commander" style="flex:1;">${commanderOptions(working.commanderUnit)}</select>
+                            ${spriteThumb(working.commanderUnit, 72)}
+                        </div>
+                        <span class="hint">剧本模式每个主角武将的军团都是 10 队：编制 9 队 + 主将队 1 队（前排正中再往前）</span>
                     </div>
                     <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>
@@ -930,6 +1016,8 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
     on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
+    on<HTMLSelectElement>('f-commander', 'change', (el) => { working.commanderUnit = el.value; render(); });
+    drawThumbs();
     // 那一年还不存在的途经据点：切换
     document.querySelectorAll<HTMLButtonElement>('[data-absent]').forEach((el) => {
         el.addEventListener('click', () => {
