@@ -18,6 +18,7 @@ import { GameConfig } from '../../config/GameConfig';
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { generalHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../../combat/GeneralSkillCombat';
 import type { Army } from '../Army';
+import { isScriptPeriod } from '../../events/scriptPeriod';
 
 /**
  * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字），0 = 本帧无扣减。
@@ -42,6 +43,9 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
     //    与远征豁免（`EXEMPT_CAMPAIGN_LEGIONS`，2026-07-27 主人定为 false）是**两回事**，勿合并。
     // 亚历山大恢复常规战略地图减兵（2026-09-13）。
     if (army.isScriptArmy && army.generalId !== 'gen_alexander_great') return 0;
+    // 🔴 [2026-09-23 主人定「剧本模式下，士兵数会在15秒自动减少，这个没有关闭」]
+    //    历史剧本期一律不扣兵：兵力按史料写死，路上不许被啃掉。乱斗模式照旧。
+    if (isScriptPeriod()) return 0;
     // 远征军团整体豁免（expeditionTargetCityId 非空，含岳飞脚本军）
     if (cfg.EXEMPT_CAMPAIGN_LEGIONS && army.expeditionTargetCityId != null) return 0;
 

@@ -73,6 +73,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
+import { isScriptPeriod, setScriptPeriodProvider } from '../events/scriptPeriod';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -314,6 +315,9 @@ export class GameApp {
             await CityAssetManager.onBootMapReady();
             this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();
+            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
+            // 🔴 [2026-09-23 主人定「地图上的特殊建筑没有关闭」] 剧本期关闭奇观图层，乱斗恢复
+            this.syncMonumentsWithMode();
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
             this.scriptCityVisibility = new ScriptCityVisibility(
@@ -321,9 +325,12 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
+            this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
                 this.cityManager.refreshCityVisibility();
+                this.map.getBattlefieldLayer()?.renderBattlefields();
             });
 
             setLoadingMessage('正在升旗入场…');
@@ -730,6 +737,14 @@ export class GameApp {
         }
     }
 
+    /** 奇观图层随模式：剧本期关、乱斗开（面板上的奇观勾选同步） */
+    private syncMonumentsWithMode(): void {
+        const visible = !isScriptPeriod();
+        this.map.getMonumentLayer()?.setVisible(visible);
+        const chk = document.getElementById('chk-wonder-layer') as HTMLInputElement | null;
+        if (chk) chk.checked = visible;
+    }
+
     public gameLoop(timestamp: number): void {
         tickGameAppFrame(this, timestamp);
     }
@@ -795,6 +810,8 @@ export class GameApp {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
             this.cityManager.refreshCityVisibility();
+            this.map.getBattlefieldLayer()?.renderBattlefields();
+            this.syncMonumentsWithMode();
         });
 
         const quests = new PlayerQuestSystem({
@@ -817,11 +834,11 @@ export class GameApp {
             getYear: () => this.timeSystem.getYear(),
             // 🔴 [2026-09-14] 战场玩法：点击战场 → 选边 → 开打（规则全在 HistoricalEventManager 里）
             battlefields: {
-                checkReady: (bfId, pos) => this.historicalEventManager.checkBattlefieldReady(bfId, pos),
+                checkReady: (bfId, pos, ignoreArmyId) => this.historicalEventManager.checkBattlefieldReady(bfId, pos, ignoreArmyId),
                 findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
                 locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
                 sideOfGeneral: (bfId, generalId) => this.historicalEventManager.getBattlefieldSideOfGeneral(bfId, generalId),
-                start: (bfId, onSpawned, onFinished) => this.historicalEventManager.startBattlefieldBattle(
+                start: (bfId, onSpawned, onFinished, ignoreArmyId) => this.historicalEventManager.startBattlefieldBattle(
                     bfId,
                     onSpawned,
                     (sides) => {
@@ -839,6 +856,7 @@ export class GameApp {
                             this.battleScene?.exit();
                         }
                     },
+                    ignoreArmyId,
                 ),
             },
             // 🔴 [2026-09-11 主人定 A 方案] 剧本军的真实历史目标（任务条显示用）

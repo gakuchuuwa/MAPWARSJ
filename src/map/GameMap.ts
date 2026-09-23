@@ -254,6 +254,10 @@ export class GameMap {
     }
 
     /** 战场图层（供 GameApp 注入 TerritorySystem，把攻城战战场画成据点样式） */
+    public getMonumentLayer(): MonumentLayer | null {
+        return this.monumentLayer;
+    }
+
     public getBattlefieldLayer(): BattlefieldLayer | null {
         return this.battlefieldLayer;
     }
