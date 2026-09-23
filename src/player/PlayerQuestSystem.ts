@@ -138,7 +138,8 @@ export interface PlayerQuestDeps {
      * 🔴 [2026-09-14 主人定] 战场玩法的接口（只用得着这三个，不整个 import 管理器免得绕成循环依赖）。
      */
     battlefields?: {
-        checkReady(bfId: string, playerPos?: { lat: number; lng: number }): string | null;
+        /** ignoreArmyId：玩家随武将赶来的赶路军团（不算「主帅率军在外」） */
+        checkReady(bfId: string, playerPos?: { lat: number; lng: number }, ignoreArmyId?: string): string | null;
         /** 战场坐标（玩家赶路用；战场不是据点，不在路网里） */
         locate(bfId: string): { lat: number; lng: number } | null;
         findBattle(bfId: string): { attackerFactionId: string; defenderFactionId: string;
@@ -146,7 +147,8 @@ export interface PlayerQuestDeps {
             attackerSourceCityId?: string; defenderSourceCityId?: string } | null;
         start(bfId: string,
             onSpawned: (sides: { attacker: Army; defender: Army }) => void,
-            onFinished: (sides: { attacker: Army; defender: Army }) => void): string | null;
+            onFinished: (sides: { attacker: Army; defender: Army }) => void,
+            ignoreArmyId?: string): string | null;
         /** 某武将在这一仗里那一方的史实兵力与军团名（主角赶路军团用） */
         sideOfGeneral?(bfId: string, generalId: string): { troops: number; legionName: string } | null;
     };
@@ -337,11 +339,13 @@ export class PlayerQuestSystem {
         }
 
         // 先看「能不能打」里与距离无关的那些（打过了 / 主帅在外 / 已有战事）
-        const hardBlock = bfApi.checkReady(bfId, undefined);
+        // 随武将赶来的这一仗：他本人率领的赶路军团不算「主帅率军在外」
+        const ownMarchArmyId = this.isFollowingGeneralEvent(bfId) ? this.quest?.legionId : undefined;
+        const hardBlock = bfApi.checkReady(bfId, undefined, ownMarchArmyId);
         if (hardBlock) { this.deps.notify(hardBlock); return; }
 
         // 没到战场 → 不是报错，是**自动赶过去**，到了再弹选边（主人：玩家要抵达战场才能触发）
-        const far = bfApi.checkReady(bfId, this.deps.hero.getPosition());
+        const far = bfApi.checkReady(bfId, this.deps.hero.getPosition(), ownMarchArmyId);
         if (far) {
             const pos = bfApi.locate(bfId);
             if (!pos) { this.deps.notify(far); return; }
@@ -434,6 +438,7 @@ export class PlayerQuestSystem {
                     this.finishGeneralEvent(bfId, battleTitle);
                     this.emitChange();
                 },
+                ownMarchArmyId,
             );
             if (msg) { this.deps.notify(msg); return; }
         };

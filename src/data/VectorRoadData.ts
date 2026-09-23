@@ -23,6 +23,44 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
+                name: "特洛伊-格拉尼库斯",
+                type: "road",
+                id: "road_city_teluoyi_city_gelanikusi_1790100000000",
+                startConnection: "city_teluoyi",
+                endConnection: "city_gelanikusi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.23, 39.95],
+                    [26.3, 39.99],
+                    [26.345, 40.02],
+                    [26.388296, 40.072482],
+                    [26.398161, 40.084516],
+                    [26.417026, 40.131452],
+                    [26.44, 40.17],
+                    [26.45, 40.19],
+                    [26.53, 40.21],
+                    [26.56, 40.23],
+                    [26.575, 40.25],
+                    [26.6, 40.265],
+                    [26.64, 40.29],
+                    [26.665, 40.31],
+                    [26.685, 40.33],
+                    [26.71, 40.35],
+                    [26.74, 40.365],
+                    [26.78982, 40.367014],
+                    [26.864045, 40.366786],
+                    [26.974315, 40.357674],
+                    [27.053616, 40.340676],
+                    [27.077953, 40.332124],
+                    [27.28, 40.32],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
                 name: "姬路城-京都",
                 type: "road",
                 id: "road_city_himeji_city_kyoto_1780126728449",
@@ -57689,48 +57727,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [23.592819, 40.694867],
                     [23.626122, 40.690748],
                     [23.85, 40.82],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "特洛伊-羊河",
-                type: "road",
-                id: "road_city_teluoyi_city_yanghe_1788854152966",
-                startConnection: "city_teluoyi",
-                endConnection: "city_yanghe"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [26.23, 39.95],
-                    [26.388296, 40.072482],
-                    [26.398161, 40.084516],
-                    [26.417026, 40.131452],
-                    [26.61, 40.36],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "羊河-格拉尼库斯",
-                type: "road",
-                id: "road_city_yanghe_city_gelanikusi_1788854164489",
-                startConnection: "city_yanghe",
-                endConnection: "city_gelanikusi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [26.61, 40.36],
-                    [26.78982, 40.367014],
-                    [26.864045, 40.366786],
-                    [26.974315, 40.357674],
-                    [27.053616, 40.340676],
-                    [27.077953, 40.332124],
-                    [27.28, 40.32],
                 ]
             }
         },

@@ -100,6 +100,14 @@ export class BattlefieldLayer {
         return renderBattlefieldBoxHtml(BASE_ART_W, bf.id);
     }
 
+    /** 外部显示过滤（剧本期只显示已打过的战场与当前这一场，见 ScriptCityVisibility） */
+    private visibilityFilter: ((bfId: string) => boolean) | null = null;
+
+    public setVisibilityFilter(filter: ((bfId: string) => boolean) | null): void {
+        this.visibilityFilter = filter;
+        this.renderBattlefields();
+    }
+
     /** 重绘全部战场（打完标记变化、手动刷新时调） */
     public renderBattlefields(): void {
         this.layerGroup.clearLayers();
@@ -112,6 +120,7 @@ export class BattlefieldLayer {
             //    改之前是 2026-09-16 那条「未到发生年份的战场不上图」，与「武将触发」相冲：
             //    玩家在 -334 年就可能跟着某位武将奔赴一场史实战役，战场却因为年份没到压根不在图上。
             //    `bf.scriptYear` 字段**保留**（数据里照旧填），只是不再参与显示判定。
+            if (this.visibilityFilter && !this.visibilityFilter(bf.id)) continue;
             const fought = isBattlefieldFought(bf.id);
             const html = this.buildBattlefieldHtml(bf, fought);
 

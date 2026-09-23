@@ -337,15 +337,20 @@ export class HistoricalEventManager {
      *    主帅正带着军团在别处打仗时，这场战役就是不可用的，**既不复用他的军团、也不另建一个他**。
      *    （我上一版写的「复用在场军团挪到对阵位」正是主人否掉的做法，已删。）
      */
-    public isGeneralAvailable(generalId: string | null | undefined): boolean {
+    public isGeneralAvailable(generalId: string | null | undefined, ignoreArmyId?: string): boolean {
         if (!generalId) return true;   // 没指定主帅的一方不受此限
         return !this.legionManager.getArmies().some(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId,
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === generalId && a.id !== ignoreArmyId,
         );
     }
 
     /** 战场此刻能不能打；返回 null = 能打，否则是给玩家看的原因 */
-    public checkBattlefieldReady(bfId: string, playerPos?: { lat: number; lng: number }): string | null {
+    /**
+     * @param ignoreArmyId 🔴 [2026-09-23 修「亚历山大军团无法进入战术模式」] 玩家随武将赶来的那支**赶路军团**：
+     *   它正是这位主帅本人率领、专为这一仗赶路的军团，不算「主帅率军在外」。
+     *   不排除它，随武将赶到的这一仗永远被「XX正率军在外，战事无从谈起」挡住，开不起来。
+     */
+    public checkBattlefieldReady(bfId: string, playerPos?: { lat: number; lng: number }, ignoreArmyId?: string): string | null {
         const bf = BATTLEFIELDS.find((b) => b.id === bfId);
         if (!bf) return '没有这个战场';
         // 一个战场只能打一次
@@ -371,11 +376,11 @@ export class HistoricalEventManager {
             }
         }
         // 双方主帅都必须在城
-        if (!this.isGeneralAvailable(fb.attackerGeneralId)) {
+        if (!this.isGeneralAvailable(fb.attackerGeneralId, ignoreArmyId)) {
             const rec = getGeneralRecordByGeneralId(fb.attackerGeneralId!);
             return `${rec?.generalName ?? '攻方主帅'}正率军在外，战事无从谈起`;
         }
-        if (!this.isGeneralAvailable(fb.defenderGeneralId)) {
+        if (!this.isGeneralAvailable(fb.defenderGeneralId, ignoreArmyId)) {
             const rec = getGeneralRecordByGeneralId(fb.defenderGeneralId!);
             return `${rec?.generalName ?? '守方主帅'}正率军在外，战事无从谈起`;
         }
@@ -515,8 +520,9 @@ export class HistoricalEventManager {
         bfId: string,
         onSpawned?: (sides: { attacker: Army; defender: Army }) => void,
         onFinished?: (sides: { attacker: Army; defender: Army }) => void,
+        ignoreArmyId?: string,
     ): string | null {
-        const blocked = this.checkBattlefieldReady(bfId);
+        const blocked = this.checkBattlefieldReady(bfId, undefined, ignoreArmyId);
         if (blocked) return blocked;
         const bf = BATTLEFIELDS.find((b) => b.id === bfId)!;
         const fb = this.findBattleForBattlefield(bfId)!;
