@@ -56,6 +56,8 @@ export interface BattlefieldEventDraft {
     generalId?: string;
     /** 武将邀约对白（剧本模式找到归属武将时念）；留空不写 */
     inviteText?: string;
+    /** 资料清单：每项依据与可信级别（src/data/eventSources.ts） */
+    sources?: Record<string, { level: string; text: string }>;
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -278,6 +280,14 @@ function removeField(
 // ── 新建路径：生成完整条目 ───────────────────────────────────────────
 
 /** 攻城战草稿（战场记录要写 `eventCityId`） */
+/** 资料清单 → 一行 TS 对象字面量（空项不写）；整张为空 → null */
+function sourcesLiteral(d: BattlefieldEventDraft): string | null {
+    const entries = Object.entries(d.sources ?? {})
+        .filter(([, v]) => v && v.text && v.text.trim())
+        .map(([k, v]) => `${k}: { level: ${tsStr(v.level || 'fact')}, text: ${tsStr(v.text.trim())} }`);
+    return entries.length ? `{ ${entries.join(', ')} }` : null;
+}
+
 function isSiegeDraft(d: BattlefieldEventDraft): boolean {
     return d.type === 'siege';
 }
@@ -318,6 +328,8 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     // 🔴 [2026-09-19 主人定] 归属武将（「一个武将一个真实的历史事件」）；留空不写。
     if (d.generalId) L.push(`        generalId: ${tsStr(d.generalId)},`);
     if (d.inviteText && d.inviteText.trim()) L.push(`        inviteText: ${tsStr(d.inviteText.trim())},`);
+    const srcLit = sourcesLiteral(d);
+    if (srcLit) L.push(`        sources: ${srcLit},`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -520,6 +532,8 @@ export function saveBattlefieldEvent(
             if (d.generalId) topFields.push(['generalId', tsStr(d.generalId)]);
             const invite = d.inviteText?.trim() ?? '';
             if (invite) topFields.push(['inviteText', tsStr(invite)]);
+            const srcLit = sourcesLiteral(d);
+            if (srcLit) topFields.push(['sources', srcLit]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -541,6 +555,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
+            }
+            if (!srcLit) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'sources');
             }
 
             // 再进战斗数据块改里层字段（位置在 p1 之后要重新定位）

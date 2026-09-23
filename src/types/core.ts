@@ -284,6 +284,11 @@ export interface HistoricalEvent {
      * 带语音念出；赶路背景播报等它念完才开始，两段不重叠。留空 = 用通用的一句邀约。
      */
     inviteText?: string;
+    /**
+     * 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单：每项的依据与可信级别。
+     * 键 = `src/data/eventSources.ts` 的 EVENT_SOURCE_ITEMS；编辑器里每项必填。
+     */
+    sources?: Record<string, { level: 'fact' | 'popular' | 'inferred'; text: string }>;
 }
 
 

@@ -32,6 +32,8 @@ import { LEVEL_2_CIV_59_MAP } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
+import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
+import { getScriptFactionLegionName } from '../events/scriptPeriod';
 
 /** 军队编辑器可选阵型（2026-08-20 七大经典阵型，均 9 人）：
  *  square       方阵   = 3+3+3（前3/中3/后3，九宫等边·攻守均衡）
@@ -1024,6 +1026,12 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
 export function getFactionLegionComposition(
     factionId: string,
 ): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+    // 🔴 [2026-09-23] 剧本期：当前这一仗的攻 / 守方改用事件指名的剧本军团（第四层）；乱斗恒走下面原路
+    const scriptLegion = getScriptFactionLegionName(factionId);
+    if (scriptLegion) {
+        const c = getLegionCompositionByName(scriptLegion);
+        if (c) return c;
+    }
     return getLegionCompositionByName(FACTION_COMPOSITIONS[factionId]?.legionName);
 }
 
@@ -2030,6 +2038,9 @@ export function getLegionCompositionByName(
         const l3Ship = l3.shipId ?? (l3Region ? BASE_16_TIERS_MAP[l3Region]?.shipId : undefined);
         return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship };
     }
+    // 第四层：剧本军团（只有剧本事件指名时才会被查到；名字与前三层不重）
+    const l4 = SCRIPT_LEGION_MAP.get(name);
+    if (l4) return { formationMode: l4.formationMode, slots: l4.slots.map(s => ({ ...s })), shipId: l4.shipId };
     return null;
 }
 
