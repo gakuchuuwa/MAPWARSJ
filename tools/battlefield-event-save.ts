@@ -342,6 +342,10 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     if (d.commanderUnit) L.push(`        commanderUnit: ${tsStr(d.commanderUnit)},`);
     if (d.foeCommanderUnit) L.push(`        foeCommanderUnit: ${tsStr(d.foeCommanderUnit)},`);
     if (d.startCityId) L.push(`        startCityId: ${tsStr(d.startCityId)},`);
+    // 攻城战的播报存在事件本身（攻城战没有战场记录）
+    if (isSiege && !d.bfTargetBattlefieldId && d.bfBriefing && d.bfBriefing.trim()) {
+        L.push(`        briefing: ${tsStr(d.bfBriefing.trim())},`);
+    }
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -425,8 +429,14 @@ export function saveBattlefieldEvent(
     /** 算好的新内容；由调用方用 serverSafeWriteFileSync 原子落盘 */
     files: Array<{ file: string; content: string }>;
 } {
-    if (!d || !d.bfId || !d.title) throw new Error('战场 id 与战役名称必须有');
-    if (!/^bf_[a-z0-9_]+$/.test(d.bfId)) throw new Error('战场 id 必须是 bf_ 开头的小写拼音（战场不是据点）');
+    // 🔴 [2026-09-24 主人定「所有事件就两种……攻城战必须有据点……攻城战，你搞什么战场呀」]
+    //    野战：有战场记录（bf_*）；攻城战：只有被攻打的据点，**不写战场表**，播报存在事件本身。
+    const siegeOnCity = d?.type === 'siege' && !d.bfTargetBattlefieldId && !!d.defenderCityId;
+    if (!d || !d.title) throw new Error('战役名称必须有');
+    if (!siegeOnCity) {
+        if (!d.bfId) throw new Error('野战必须有战场 id');
+        if (!/^bf_[a-z0-9_]+$/.test(d.bfId)) throw new Error('战场 id 必须是 bf_ 开头的小写拼音（战场不是据点）');
+    }
     if (!Number.isFinite(d.lat) || !Number.isFinite(d.lng)) throw new Error('战场坐标不合法');
     if (!Number.isFinite(d.year) || d.year === 0) throw new Error('年代不合法');
     // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城目标**二选一**：
@@ -447,10 +457,27 @@ export function saveBattlefieldEvent(
     const bfCountBefore = scanEntries(bfBefore, BF_DECL).entries.length;
     const scCountBefore = scanEntries(scBefore, SC_DECL).entries.length;
 
-    // ── ① 战场表：按 bfId 定位 ──────────────────────────────────────
+    // ── ① 战场表：按 bfId 定位（攻城战不写战场表） ──────────────────
     let bfText: string;
     let bfMode: 'update' | 'insert';
-    {
+    /** 攻城战删掉的旧战场记录条数（0 或 1），写盘前体检用 */
+    let bfStaleRemoved = 0;
+    if (siegeOnCity) {
+        bfText = bfBefore;
+        bfMode = 'update';
+        // 旧数据迁移：攻城战以前也挂过一条战场记录（eventCityId = 这座城、同一年）→ 删掉，只留据点
+        const { entries } = scanEntries(bfBefore, BF_DECL);
+        const stale = entries.find((e) => new RegExp(`eventCityId:\\s*'${d.defenderCityId}'`).test(e.body)
+            && new RegExp(`scriptYear:\\s*${d.year}\\b`).test(e.body));
+        if (stale) {
+            bfStaleRemoved = 1;
+            const from = expandToLeadingComments(bfBefore, stale.start);
+            let to = stale.end;
+            while (to < bfBefore.length && /[\s,]/.test(bfBefore[to]) && bfBefore[to] !== '\n') to++;
+            if (bfBefore[to] === '\n') to++;
+            bfText = bfBefore.slice(0, from) + bfBefore.slice(to);
+        }
+    } else {
         const { entries } = scanEntries(bfBefore, BF_DECL);
         const hit = entries.find((e) => new RegExp(`id:\\s*'${d.bfId}'`).test(e.body));
         if (hit) {
@@ -551,6 +578,8 @@ export function saveBattlefieldEvent(
             if (d.commanderUnit) topFields.push(['commanderUnit', tsStr(d.commanderUnit)]);
             if (d.foeCommanderUnit) topFields.push(['foeCommanderUnit', tsStr(d.foeCommanderUnit)]);
             if (d.startCityId) topFields.push(['startCityId', tsStr(d.startCityId)]);
+            const siegeBrief = siegeOnCity ? (d.bfBriefing ?? '').trim() : '';
+            if (siegeBrief) topFields.push(['briefing', tsStr(siegeBrief)]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -577,6 +606,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'startCityId');
+            }
+            if (!siegeBrief) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'briefing');
             }
             if (!d.foeCommanderUnit) {
                 const objOpen = p1Text.indexOf('{', hit.start);
@@ -674,7 +708,7 @@ export function saveBattlefieldEvent(
     const scCountAfter = scanEntries(scText, SC_DECL).entries.length;
     const okCount = (before: number, after: number, mode: string) =>
         mode === 'insert' ? after === before + 1 : after === before;
-    if (!okCount(bfCountBefore, bfCountAfter, bfMode)) {
+    if (siegeOnCity ? bfCountAfter !== bfCountBefore - bfStaleRemoved : !okCount(bfCountBefore, bfCountAfter, bfMode)) {
         throw new Error(`战场表条目数异常（${bfCountBefore} → ${bfCountAfter}，${bfMode}），已中止写盘`);
     }
     if (!okCount(scCountBefore, scCountAfter, scMode)) {

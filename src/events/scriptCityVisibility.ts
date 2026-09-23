@@ -24,6 +24,7 @@
 import type { City, HistoricalEvent } from '../types/core';
 import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
+import { findEventSite } from '../data/eventSites';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
 import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
@@ -162,7 +163,7 @@ export class ScriptCityVisibility {
             if (p) stops.push(p);
         }
         const defCity = ev.type === 'siege' && !ev.siegeData?.targetBattlefieldId ? ev.siegeData?.defenderCityId : undefined;
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const bf = findEventSite(bfId);
         const end = (defCity ? pos.get(defCity) : undefined) ?? (bf ? { lat: bf.lat, lng: bf.lng } : undefined);
         if (end) stops.push(end);
         for (let i = 0; i + 1 < stops.length; i++) {
@@ -193,7 +194,7 @@ export class ScriptCityVisibility {
         add(ev.siegeData?.defenderCityId);
         for (const wp of data?.marchWaypoints ?? []) add(wp);
         for (const u of ev.cityUpdates ?? []) add(u.cityId);
-        add(BATTLEFIELDS.find((b) => b.id === bfId)?.eventCityId);
+        add(findEventSite(bfId)?.eventCityId);
     }
 }
 
@@ -222,7 +223,7 @@ export function findCurrentScriptEventCity(cities: City[]): City | null {
 function toStartInfo(ev: HistoricalEvent, cityPos: (id: string) => { lat: number; lng: number } | undefined): StartEventInfo {
     const siegeCityId = ev.type === 'siege' && !ev.siegeData?.targetBattlefieldId ? ev.siegeData?.defenderCityId : undefined;
     const bfId = resolveEventBattlefieldId(ev, cityPos);
-    const bf = bfId ? BATTLEFIELDS.find((b) => b.id === bfId) : undefined;
+    const bf = findEventSite(bfId);
     const point = (siegeCityId ? cityPos(siegeCityId) : undefined)
         ?? ev.fieldBattleData?.location ?? (bf ? { lat: bf.lat, lng: bf.lng } : null);
     return {

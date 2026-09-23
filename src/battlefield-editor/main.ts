@@ -18,7 +18,7 @@
  * 数据是 import 进来的（Vite 服务这张页面），所以列表不需要服务端；
  * 只有落盘走 `/api/battlefield-editor/save`。
  */
-import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
+import { BATTLEFIELDS, matchesBattlefield, siegeSiteId } from '../data/Battlefields';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
 import { getAllBattlefieldCharacters } from '../data/BattlefieldCharacters';
@@ -34,6 +34,7 @@ import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/Jo
 import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
 import { resolveEventStartCityId, type StartEventInfo } from '../events/scriptEventStart';
+import { findEventSite } from '../data/eventSites';
 import { cityAbsentReason } from '../events/cityInYear';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
@@ -209,7 +210,13 @@ function loadDrafts(): BattleDraft[] {
         loc = loc ?? { lat: 0, lng: 0 };
         // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近），与运行时同一个函数。
         //    改之前这里用 0.5 度、运行时用 0.15 度且不看年份，编辑器配得上运行时未必配得上。见该函数长注释。
-        const bf = BATTLEFIELDS.find((b) => matchesBattlefield(b, ev.year, loc)) ?? null;
+        // 🔴 [2026-09-24 主人定「攻城战必须有据点……攻城战，你搞什么战场呀」] 攻城据点：地点就是那座城
+        //    （eventSites 按「据点 + 年份」生成，播报存在事件本身）；野战才去战场表里配战场。
+        const siegeCity = isSiege && !(bd as { targetBattlefieldId?: string }).targetBattlefieldId
+            ? (bd as { defenderCityId?: string }).defenderCityId : undefined;
+        const bf = siegeCity
+            ? (findEventSite(siegeSiteId(siegeCity, ev.year)) ?? null)
+            : (BATTLEFIELDS.find((b) => matchesBattlefield(b, ev.year, loc)) ?? null);
         drafts.push(buildDraftFrom(ev, bd, isSiege, bf));
     }
 
@@ -222,7 +229,7 @@ function loadDrafts(): BattleDraft[] {
             bfId: bf?.id ?? '',
             bfName: bf?.name ?? '',
             bfNote: bf?.note ?? '',
-            bfBriefing: bf?.briefing ?? '',
+            bfBriefing: (isSiege ? (ev as AnyEvent & { briefing?: string }).briefing : undefined) ?? bf?.briefing ?? '',
             bfRoster: [...(bf?.roster ?? [])],
             bfEventCityId: bf?.eventCityId ?? '',
             bfTargetBattlefieldId: bf?.eventBattlefieldId ?? '',
@@ -314,9 +321,12 @@ function validate(d: BattleDraft): Issue[] {
     if (Math.abs(d.lat) > 90) err('纬度超范围');
     if (Math.abs(d.lng) > 180) err('经度超范围');
 
-    if (!d.bfId.trim()) err('战场 id 必须填（bf_ + 拼音）');
-    else if (!/^bf_[a-z0-9_]+$/.test(d.bfId.trim())) err('战场 id 必须是 bf_ 开头的小写拼音，且不能是 city_*（战场不是据点）');
-    if (!d.bfName.trim()) err('战场地名必须填（标牌上只显示地名）');
+    // 🔴 [2026-09-24 主人定] 两种事件两套规矩：野战有战场（战场 id + 地名），攻城战只有被攻打的据点，没有战场
+    if (d.type !== 'siege') {
+        if (!d.bfId.trim()) err('战场 id 必须填（bf_ + 拼音）');
+        else if (!/^bf_[a-z0-9_]+$/.test(d.bfId.trim())) err('战场 id 必须是 bf_ 开头的小写拼音，且不能是 city_*（战场不是据点）');
+        if (!d.bfName.trim()) err('战场地名必须填（标牌上只显示地名）');
+    }
 
     if (!d.attackerGeneralId) err('攻方武将必须选');
     if (!d.defenderGeneralId) err('守方武将必须选');
@@ -351,8 +361,11 @@ function validate(d: BattleDraft): Issue[] {
         // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城目标**二选一**：
         //    打**据点**（推罗战役）给「被攻打的据点」；打**战场要塞**（一之谷战役）给「本战场即攻城目标」。
         const isFortress = !!d.bfTargetBattlefieldId;
-        if (!isFortress && !d.defenderCityId) {
-            err('攻城战必须指定被攻打的据点，或指定「本战场即攻城目标」（战场要塞）');
+        // 🔴 [2026-09-24 主人定「攻城战必须有据点，就这么简单」] 不再接受「战场要塞」当攻城目标
+        if (isFortress) {
+            err('攻城战必须有据点：现在打的是战场要塞，请先在据点编辑里加上这座城，再在守方一栏把「被攻打的据点」选成它');
+        } else if (!d.defenderCityId) {
+            err('攻城战必须选被攻打的据点（攻城战没有战场，地点就是这座城）');
         }
         if (d.defenderCityId && !CITY_BY_ID.has(d.defenderCityId)) err('被攻据点不存在：' + d.defenderCityId);
         if (isFortress && !BATTLEFIELDS.some((b) => b.id === d.bfTargetBattlefieldId)) {
@@ -362,9 +375,10 @@ function validate(d: BattleDraft): Issue[] {
         if (!isFortress && d.defenderCityId && !d.cityUpdates.some((u) => u.cityId === d.defenderCityId)) {
             warn('攻城战通常要写战后归属（主人定：该攻城就攻城，战斗要改据点归属，一切按历史）');
         }
-        if (!isFortress && d.defenderCityId && !d.marchWaypoints.includes(d.defenderCityId)) {
-            warn('攻城战的行军航点一般以被攻据点收尾');
-        }
+        // 🔴 [2026-09-24 主人定「所有事件就两种……攻城战必须有据点，攻城战不要搞什么战场」]
+        //    攻城战的行军终点**就是这座城**（引擎自动把 `defenderCityId` 当终点，见 PlayerQuestSystem.marchTarget），
+        //    所以不再提示「航点要以被攻据点收尾」—— 那条提示会让人把城又写进航点，多出一段零长度路。
+        //    航点只在史料另有途经地时才填。
     } else {
         if (!d.defenderSourceCityId) warn('野战建议填守方出兵据点');
         else if (!CITY_BY_ID.has(d.defenderSourceCityId)) err('守方出兵据点不存在：' + d.defenderSourceCityId);
@@ -786,6 +800,7 @@ function render(): void {
                             ${opt('siege', '攻城战', working.type)}
                         </select>
                     </div>
+                    ${working.type !== 'siege' ? `
                     <div class="fld">
                         <label>战场 id</label>
                         <input id="f-bfId" value="${escapeAttr(working.bfId)}" placeholder="bf_gaojiamila">
@@ -796,7 +811,10 @@ function render(): void {
                         <input id="f-bfName" value="${escapeAttr(working.bfName)}" placeholder="高加米拉">
                         <span class="hint">标牌上只显示地名</span>
                     </div>
+                    ` : `
+                    <div class="fld"><label>地点</label><span class="hint">攻城战没有战场：地点就是守方一栏选的「被攻打的据点」，打完以据点易主体现战果</span></div>`}
                 </div>
+                ${working.type !== 'siege' ? `
                 <div class="row">
                     <div class="fld">
                         <label>在场人物 · 与这块战场绑定的人（战场人物表 src/data/BattlefieldCharacters.ts）</label>
@@ -812,30 +830,8 @@ function render(): void {
                         </div>
                         <span class="hint">攻守两方的武将下拉里已单列「⚔ 战场人物」，可直接选来当主帅</span>
                     </div>
-                    ${working.type === 'siege' ? `
-                    <div class="fld" style="max-width:320px;">
-                        <label>这个战场打的是哪座城 · 攻城战专用</label>
-                        <select id="f-eventCity">${cityOptions(working.bfEventCityId)}</select>
-                        <span class="hint">打**据点**时用（如推罗战役 ↔ 推罗城）；打**战场要塞**请用右栏，两者二选一</span>
-                    </div>
-                    <div class="fld" style="max-width:320px;">
-                        <label>本战场即攻城目标 · 战场要塞（如「一之谷」）</label>
-                        <select id="f-eventBf">${opt('', '（不是）', working.bfTargetBattlefieldId)}${BATTLEFIELDS.map((x) => opt(x.id, `${x.name} — ${x.id}`, working.bfTargetBattlefieldId)).join('')}</select>
-                        <span class="hint">战场本身就是被强攻的目标时选它（不攻任何据点、战后不改任何据点归属）</span>
-                    </div>
-                    <div class="fld" style="max-width:260px;">
-                        <label>标注套用哪一档据点样式 · 攻城战专用</label>
-                        <select id="f-siegeCastle">
-                            ${opt('', '（不套用，画战场形态）', working.bfSiegeCastleType)}
-                            ${opt('big_city', '大城', working.bfSiegeCastleType)}
-                            ${opt('medium_city', '中城', working.bfSiegeCastleType)}
-                            ${opt('small_city', '小城', working.bfSiegeCastleType)}
-                            ${opt('stockade', '城寨', working.bfSiegeCastleType)}
-                            ${opt('pass', '险要（砦/关隘）', working.bfSiegeCastleType)}
-                        </select>
-                        <span class="hint">打完这一仗后，地图上这个战场就画成据点那样（与真据点同一套组装，样式不会走样）</span>
-                    </div>` : ''}
                 </div>
+                ` : ''}
             </fieldset>
 
             <fieldset><legend>三、攻方</legend>
@@ -919,8 +915,8 @@ function render(): void {
                         <span class="hint">${working.bfBriefing.trim() ? briefingParagraphs(working.bfBriefing) + ' 段，约 ' + briefingSeconds(working.bfBriefing) + ' 秒播完' : '留空则赶路时只有一条「奔赴XXX」提示'}</span></div>
                 </div>
                 <div class="row">
-                    <div class="fld"><label>战场备注 · 史料出处，可空</label>
-                        <textarea id="f-bfNote" style="min-height:40px;">${escapeHtml(working.bfNote)}</textarea></div>
+                    ${working.type !== 'siege' ? `<div class="fld"><label>战场备注 · 史料出处，可空</label>
+                        <textarea id="f-bfNote" style="min-height:40px;">${escapeHtml(working.bfNote)}</textarea></div>` : ''}
                 </div>
             </fieldset>
 

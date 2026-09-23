@@ -194,7 +194,8 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
     }
 
     // ⑧ 战场坐标不得与**另一块战场**重合 ─────────────────────────────
-    for (const b of BATTLEFIELDS) {
+    // 攻城战没有战场（地点就是被攻据点），⑧⑨ 只对野战
+    for (const b of (d.type === 'siege' ? [] : BATTLEFIELDS)) {
         if (b.id === d.bfId) continue;
         const km = KM(d.lat, d.lng, b.lat, b.lng);
         if (km < 1) err(`本战场与「${b.name}」(${b.id}) 坐标几乎重合（${km.toFixed(2)}km）——一块战场只能用一次`);
@@ -209,7 +210,7 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
         const km = KM(d.lat, d.lng, c.lat, c.lng);
         if (!nearest || km < nearest.km) nearest = { name: `${c.name}(${c.id})`, km };
     }
-    if (nearest && nearest.km < 5) {
+    if (d.type !== 'siege' && nearest && nearest.km < 5) {
         warn(`战场坐标距据点「${nearest.name}」仅 ${nearest.km.toFixed(1)}km —— 两者标牌会挨着（史实如此则不必改坐标）`);
     }
 

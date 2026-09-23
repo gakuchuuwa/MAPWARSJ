@@ -23,6 +23,7 @@ import { gameLog } from '../utils/GameLogger';
 import { GameConfig } from '../config/GameConfig';
 import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
 import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
+import { findEventSite } from '../data/eventSites';
 import { isScriptPeriod } from './scriptPeriod';
 // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
 //    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
@@ -269,7 +270,7 @@ export class HistoricalEventManager {
 
     /** 战场坐标（玩家赶路用） */
     public locateBattlefield(bfId: string): { lat: number; lng: number } | null {
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const bf = findEventSite(bfId);
         return bf ? { lat: bf.lat, lng: bf.lng } : null;
     }
 
@@ -287,7 +288,7 @@ export class HistoricalEventManager {
          */
         scriptGeneralId?: string;
     }) | null {
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const bf = findEventSite(bfId);
         if (!bf) return null;
         for (const ev of HISTORICAL_EVENT_SCRIPT) {
             if (ev.type === 'field_battle') {
@@ -385,7 +386,7 @@ export class HistoricalEventManager {
      *   不排除它，随武将赶到的这一仗永远被「XX正率军在外，战事无从谈起」挡住，开不起来。
      */
     public checkBattlefieldReady(bfId: string, playerPos?: { lat: number; lng: number }, ignoreArmyId?: string): string | null {
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const bf = findEventSite(bfId);
         if (!bf) return '没有这个战场';
         // 一个战场只能打一次
         if (isBattlefieldFought(bfId)) return `【${bf.name}】已经打过了`;
@@ -604,7 +605,7 @@ export class HistoricalEventManager {
     ): string | null {
         const blocked = this.checkBattlefieldReady(bfId, undefined, ignoreArmyId);
         if (blocked) return blocked;
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId)!;
+        const bf = findEventSite(bfId)!;
         const fb = this.findBattleForBattlefield(bfId)!;
 
         const attacker = this.spawnBattlefieldSide(fb, 'attacker');
