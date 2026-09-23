@@ -32,6 +32,7 @@ import type { HistoricalEvent, FieldBattleData } from '../types/core';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
 // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 硬规则检查单独成文件，便于脚本拿全量数据回归
 import { checkEventRules } from './eventRules';
+import { checkRoute, ROUTE_LIMITS } from './routeCheck';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -354,6 +355,8 @@ function validate(d: BattleDraft): Issue[] {
     //    归属武将找不到 / 不在本场阵中 / 战役名不以「战役」结尾 / 文字里有括号 /
     //    势力记录不存在 / 主帅查不到 / 势力没番号 / 兵力悬殊 / 战场坐标与别处重合。
     out.push(...checkEventRules(d, drafts));
+    // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
+    out.push(...checkRoute(d).issues);
 
     return out;
 }
@@ -681,11 +684,45 @@ function render(): void {
                     <select id="wp-city" style="flex:1;max-width:280px;">${cityOptions('')}</select>
                     <button class="bf-btn" id="wp-add">添加航点</button>
                 </div>
+                ${renderRouteReport()}
             </fieldset>
         </div>
     </div>`;
 
     bind();
+}
+
+/**
+ * 行军路线实测（与游戏同一套寻路）：每段实际经过哪些城、哪段坐船、多远、绕不绕；
+ * 以及剧本期地图上会出现的据点与它们挂的特殊建筑 —— 供主人逐个核对那一年是否存在。
+ */
+function renderRouteReport(): string {
+    const r = checkRoute(working);
+    const legRows = r.legs.map((l) => {
+        const detour = l.straightKm > 0 ? l.roadKm / l.straightKm : 1;
+        const bad = !l.ok || l.straightKm > ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM
+            || (l.straightKm > 20 && detour > ROUTE_LIMITS.MAX_DETOUR_RATIO) || l.offroadKm > ROUTE_LIMITS.MAX_OFFROAD_KM;
+        const style = bad ? 'color:#ffcf7a' : '';
+        const body = l.ok
+            ? `${Math.round(l.roadKm)} 公里（直线 ${Math.round(l.straightKm)}）`
+                + (l.seaKm > 0 ? ` · ⚓坐船 ${Math.round(l.seaKm)} 公里` : '')
+                + (l.offroadKm > 0 ? ` · 离路直行 ${Math.round(l.offroadKm)} 公里` : '')
+                + (l.via.length ? ` · 经过：${escapeHtml(l.via.join(' → '))}` : '')
+            : '✖ 无路可达';
+        return `<div style="${style}">【${escapeHtml(l.from)}】→【${escapeHtml(l.to)}】${body}</div>`;
+    }).join('');
+    const cityRows = r.shownCities.map((c) =>
+        `<span class="chip">${escapeHtml(c.name)}${c.wonders.length ? ' · 🏛' + escapeHtml(c.wonders.join('、')) : ''}</span>`).join('');
+    return `
+        <div class="fld" style="margin-top:10px;">
+            <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（归属武将所在城）出发，与游戏同一套寻路</label>
+            <div style="font-size:12px;line-height:1.7;">${legRows || '<span class="hint">算不出路线</span>'}</div>
+            <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船</span>
+        </div>
+        <div class="fld" style="margin-top:8px;">
+            <label>剧本期地图上会出现的据点（事件用到的 + 沿途经过的）· 🏛 为挂在该城的特殊建筑 · 请逐个核对那一年是否存在、名字对不对</label>
+            <div class="chips">${cityRows}</div>
+        </div>`;
 }
 
 function bind(): void {

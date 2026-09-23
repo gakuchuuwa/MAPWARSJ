@@ -189,6 +189,7 @@ export const OPENING_TACTICAL_UI_DELAY_SEC = 3;
 // 三幕分界已移至 TacticalConstants（零依赖叶子），供 map 层等直接取用；此处原样再导出保持旧引用可用
 export { PHASE_STALEMATE_START, PHASE_COLLAPSE_START } from './TacticalConstants';
 import { PHASE_STALEMATE_START, PHASE_COLLAPSE_START } from './TacticalConstants';
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 // 开局脉冲按本场目标时长比例后移；慢直播：短战略提早亮相留错开窗，长战对齐第一幕末。
 const OPENING_UI_DELAY_RATIO = PHASE_STALEMATE_START;
@@ -1052,6 +1053,9 @@ export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
     // 🔴 [2026-09-12 主人定] 剧本模式武将没有战略技能：剧本军团（isScriptArmy）不配战略技。
     // 亚历山大恢复常规战略技能（2026-09-13）。
     if ((unit as any).isScriptArmy === true && unit.generalId !== 'gen_alexander_great') return null;
+    // 🔴 [2026-09-23 主人定「军团在行军过程中使用了战略技能，这个就没有必要了吧」]
+    //    历史剧本期一律没有战略技（行军、攻城都按史实走）；乱斗模式照旧。
+    if (isScriptPeriod()) return null;
     let overrideId = strategicOverrideByUnitId.get(unit.id);
     if (!overrideId && canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
