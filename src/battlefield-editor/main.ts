@@ -74,6 +74,8 @@ interface BattleDraft {
      * 留空 = 不归属任何武将（自动模式按老规矩挑），与加本字段之前的行为完全一致。
      */
     generalId: string;
+    /** 🔴 [2026-09-23] 武将邀约对白：剧本模式找到归属武将时他说的话（带语音，念完才开始赶路背景播报） */
+    inviteText: string;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -210,6 +212,7 @@ function loadDrafts(): BattleDraft[] {
             year: ev.year,
             season: ev.season ?? 0,
             generalId: (ev as AnyEvent & { generalId?: string }).generalId ?? '',
+            inviteText: (ev as AnyEvent & { inviteText?: string }).inviteText ?? '',
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -245,7 +248,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -666,6 +669,11 @@ function render(): void {
                         <textarea id="f-battleDesc">${escapeHtml(working.battleDescription)}</textarea></div>
                 </div>
                 <div class="row">
+                    <div class="fld"><label>武将邀约对白 · 玩家找到归属武将时他说的话，带语音；念完后才开始赶路背景播报，两段不重叠</label>
+                        <textarea id="f-invite" style="min-height:58px;">${escapeHtml(working.inviteText)}</textarea>
+                        <span class="hint">${working.inviteText.trim() ? '约 ' + briefingSeconds(working.inviteText) + ' 秒念完' : '留空则用通用的一句邀约'}</span></div>
+                </div>
+                <div class="row">
                     <div class="fld"><label>赶路背景播报 · 玩家在路上逐段播，空行分段</label>
                         <textarea id="f-bfBriefing" style="min-height:120px;">${escapeHtml(working.bfBriefing)}</textarea>
                         <span class="hint">${working.bfBriefing.trim() ? briefingParagraphs(working.bfBriefing) + ' 段，约 ' + briefingSeconds(working.bfBriefing) + ' 秒播完' : '留空则赶路时只有一条「奔赴XXX」提示'}</span></div>
@@ -798,6 +806,7 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-desc', 'input', (el) => { working.description = el.value; });
     on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
+    on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
     on<HTMLTextAreaElement>('f-bfBriefing', 'change', (el) => { working.bfBriefing = el.value; render(); });
 
     on<HTMLButtonElement>('wp-add', 'click', () => {

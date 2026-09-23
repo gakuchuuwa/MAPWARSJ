@@ -38,6 +38,8 @@ export interface EventRuleInput {
     description: string;
     battleDescription: string;
     generalId: string;
+    /** 武将邀约对白 */
+    inviteText: string;
     lat: number;
     lng: number;
     attackerFactionId: string;
@@ -81,6 +83,7 @@ function bracketFields(d: EventRuleInput): Array<[string, string]> {
         ['战场地名', d.bfName],
         ['战场注释', d.bfNote],
         ['赶路播报', d.bfBriefing],
+        ['武将邀约对白', d.inviteText],
     ];
 }
 
@@ -124,6 +127,11 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
             warn(`【${name}】名下还有【${dup.map((x) => x.title).join('、')}】——同一武将可挂多场，`
                 + '运行时按年份早→晚依次解锁；若只想一人一场请自行确认');
         }
+    }
+
+    // ①b 武将邀约对白：剧本模式里玩家找到他时念的话（2026-09-23 主人定「对话内容写到编辑器中」）
+    if (!d.inviteText?.trim()) {
+        warn('武将邀约对白没写：剧本模式会用一句通用邀约代替，建议按史料写这位武将此时会说的话');
     }
 
     // ② 战役名一律「XXXX战役」 ─────────────────────────────────────────

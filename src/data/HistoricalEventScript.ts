@@ -55,7 +55,8 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 主人指定的野战坐标。注：与据点「格拉尼库斯」city_gelanikusi(40.32, 27.28)
             // 相距约 10 km；本役是野战，故用 location 而非 locationCityId。
             location: { lat: 40.23, lng: 27.24 },
-            marchWaypoints: ['city_anfeibolisi', 'city_yanghe'],
+            // 🔴 [2026-09-23] 加特洛伊：阿里安《亚历山大远征记》I.11——亚历山大渡赫勒斯滂后先登岸伊利昂（特洛伊）祭祀，再会合大军进军格拉尼库斯河
+            marchWaypoints: ['city_anfeibolisi', 'city_yanghe', 'city_teluoyi'],
 
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',

@@ -144,7 +144,8 @@ export interface PlayerQuestDeps {
         locate(bfId: string): { lat: number; lng: number } | null;
         findBattle(bfId: string): { attackerFactionId: string; defenderFactionId: string;
             attackerGeneralId?: string; defenderGeneralId?: string; title?: string;
-            attackerSourceCityId?: string; defenderSourceCityId?: string } | null;
+            attackerSourceCityId?: string; defenderSourceCityId?: string;
+            result?: 'attacker_win' | 'defender_win' } | null;
         start(bfId: string,
             onSpawned: (sides: { attacker: Army; defender: Army }) => void,
             onFinished: (sides: { attacker: Army; defender: Army }) => void,
@@ -246,12 +247,15 @@ export class PlayerQuestSystem {
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
                 const eliteName0 = getCityEliteLegionName(city.id) ?? `${g.generalName}部`;
+                const inviteText = this.scriptInvite(ev)
+                    ?? `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
+                        + `此战关系重大，某愿请壮士同往。破敌之日，当以「${eliteName0}」之战法相授。`;
+                this.speakInvite(inviteText);
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
                     factionName,
-                    text: `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
-                        + `此战关系重大，某愿请壮士同往。破敌之日，当以「${eliteName0}」之战法相授。`,
+                    text: inviteText,
                     options: [
                         { label: `⚔ 随${g.generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
                         { label: '告辞', onPick: () => this.deps.closeDialogue() },
@@ -450,6 +454,14 @@ export class PlayerQuestSystem {
             if (msg) { this.deps.notify(msg); return; }
         };
 
+        // 🔴 [2026-09-23 主人定「玩家抵达战场后有必要选择势力吗？选择失败方干什么？又不是游戏，这是历史剧本」]
+        //    剧本模式不弹选边：随归属武将而来就站他那一方；不是随他来的，站史实上的胜方。乱斗模式照旧选边。
+        if (this.deps.hero.autoPlan === 'script') {
+            const winner: 'attacker' | 'defender' = fb.result === 'defender_win' ? 'defender' : 'attacker';
+            join(ownSide ?? winner);
+            return;
+        }
+
         // 🔴 [2026-09-19 主人令「抵达据点接任务…为什么自动接攻击方的？谁的人物，玩家就帮谁」]
         //    随军而来的这一仗：加粗高亮（= HUD 3 秒后自动确认的那一个）改成**自己主帅那一方**，
         //    文案也点明「你随他而来，自当与他并肩」；想换边的仍可手动转投，但不再默认站到对面去。
@@ -542,6 +554,8 @@ export class PlayerQuestSystem {
         defenderCityId: string | null;
         /** 主人设定的行军路标（据点 id，按顺序经过） */
         marchWaypoints: string[];
+        /** 武将邀约对白（编辑器里按史料写的；剧本模式用它并念出来） */
+        inviteText: string | null;
     } | null {
         const bf = BATTLEFIELDS.find((b) => b.id === hit.battlefieldId);
         if (!bf) return null;
@@ -565,6 +579,7 @@ export class PlayerQuestSystem {
                 ? (hit.event.siegeData?.defenderCityId ?? null)
                 : null,
             marchWaypoints: [...(data?.marchWaypoints ?? [])],
+            inviteText: hit.event.inviteText?.trim() || null,
         };
     }
 
@@ -1126,8 +1141,39 @@ export class PlayerQuestSystem {
      *   —— 那是给「单骑点战场」写的。若照旧判 `isAttached`，跟随武将时说第一段就会被掐断。
      *   故随军赴战场时由调用方传 override，改用「HUD 动向栏还挂着这个战役名」判在不在路上。
      */
+    /** 剧本模式：编辑器里写的邀约对白（没写 → null，用通用句）；乱斗模式一律 null（保持原样） */
+    private scriptInvite(ev: { inviteText: string | null }): string | null {
+        return this.deps.hero.autoPlan === 'script' ? ev.inviteText : null;
+    }
+
+    /** 邀约对白正在念 → 赶路背景播报先等着（两段不重叠） */
+    private inviteSpeaking = false;
+    private pendingBriefing: (() => void) | null = null;
+
+    /**
+     * 🔴 [2026-09-23 主人定「不要让武将邀约语音和背景介绍语音重叠了」]
+     * 剧本模式念出武将邀约；念完才放行赶路背景播报。乱斗模式不念（保持原样）。
+     */
+    private speakInvite(text: string): void {
+        if (this.deps.hero.autoPlan !== 'script') return;
+        const speak = this.deps.announceBriefing;
+        if (!speak) return;
+        this.inviteSpeaking = true;
+        speak(text, () => {
+            this.inviteSpeaking = false;
+            const next = this.pendingBriefing;
+            this.pendingBriefing = null;
+            next?.();
+        });
+    }
+
     private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string): void {
         if (!bf) return;
+        // 邀约还没念完：背景播报排在它后面
+        if (this.inviteSpeaking) {
+            this.pendingBriefing = () => this.startJourneyBriefing(bf, titleOverride);
+            return;
+        }
         const text = bf.briefing?.trim();
         if (!text) return;
         if (this.briefedBattlefields.has(bf.id)) return;
@@ -1347,12 +1393,15 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
+                const inviteText = this.scriptInvite(ev)
+                    ?? `壮士竟寻到军中来了。某正提兵赴【${ev.title}】，将于${ev.battlefieldName}与${foe}决战。`
+                        + `军旅之中不便设宴，壮士便随某同去——破敌之日，功劳簿上少不了你。`;
+                this.speakInvite(inviteText);
                 this.deps.showDialogue({
                     speaker: generalName,
                     portrait,
                     factionName,
-                    text: `壮士竟寻到军中来了。某正提兵赴【${ev.title}】，将于${ev.battlefieldName}与${foe}决战。`
-                        + `军旅之中不便设宴，壮士便随某同去——破敌之日，功劳簿上少不了你。`,
+                    text: inviteText,
                     options: [
                         { label: `⚔ 就此随${generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? '' }, ev, army) },
                         { label: '告辞', onPick: () => this.deps.closeDialogue() },
