@@ -160,4 +160,55 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_cangwu: -111,          // 苍梧，前 111 年汉武帝设苍梧郡
     city_ying: -278,            // 江陵，约前 278 年秦拔郢设江陵（此前叫郢都）
     city_linfen: 581,           // 临汾，581 年隋设临汾县（此前叫平阳）
+
+    // ── 美洲中城 ──
+    city_tzintzuntzan: 1325,    // 钦聪灿，约 1325 年塔拉斯科王 Tariácuri 建
+    city_chanchan: 900,         // 昌昌，约 900 年奇穆人建
+    city_onondaga: 1142,        // 奥农多加，约 1142 年易洛魁联盟成立（中央火塘）
+    city_cusco: 1200,           // 库斯科，约 1200 年印加曼科·卡帕克建
+
+    // ── 中东 / 北非 / 中亚中城 ──
+    city_aerjier: 972,          // 阿尔及尔，972 年齐里王朝布尔金建城
+    city_yidier: 750,           // 伊蒂尔，约 750 年成为可萨汗国首都
+    city_kashan: 1005,          // 喀山，1005 年伏尔加保加利亚人建
+    city_dibilisi: 458,         // 第比利斯，约 458 年瓦赫坦格一世建
+    city_salaichuke: 1250,      // 萨莱楚克，约 1250 年金帐汗国建
+    city_khiva: 1000,           // 希瓦，名称首见于 10 世纪（考古 6 世纪已有人居）
+    city_helate: 1146,          // 菲鲁兹库赫，1146 年古尔王朝库特布丁建
+    city_sailan: -200,          // 讹答剌，约前 200 年康居人建
+
+    // ── 印度 / 东南亚 / 西域中城 ──
+    city_patan: 746,            // 帕坦，746 年查拉基王朝 Vanaraja 建
+    city_ajiemier: 1113,        // 阿杰梅尔，1113 年乔汉王朝 Ajayaraja 二世建
+    city_bijiabuer: 1490,       // 比贾布尔，1490 年 Adil Shah 建苏丹国都
+    city_qunvcheng: -303,       // 曲女城，约前 303 年塞琉古文献首见 Calinipaxa
+    city_kathmandu: 723,        // 加德满都，723 年 Raja Gunakamadeva 建
+    city_bago: 573,             // 勃固，约 573 年孟族王子建汉达瓦底
+    city_dali_city: 779,        // 羊苴咩，779 年南诏异牟寻迁都
+    city_sangzhuzi: 1360,       // 桑珠孜，1360 年桑珠孜宗堡始建
+    city_qingtang: 1034,        // 青唐城，1034 年唃厮啰迁都
+    city_suiye: 679,            // 碎叶，679 年唐王方翼筑碎叶城
+    city_shule: -126,           // 盘橐（疏勒），疏勒国名首见《史记》前 126 年
+    city_yutian2: -126,         // 于阗，国名首见《史记》前 126 年
+    city_gaochangcheng: -48,    // 高昌，前 48 年汉置戊己校尉建高昌壁
+
+    // ── 中国 / 东亚中城 ──
+    city_yongzhou: 318,         // 晋兴，318 年东晋置晋兴郡
+    city_lingqu: -111,          // 始安，前 111 年汉置始安县
+    city_xiangyang: -202,       // 襄阳，前 202 年汉置襄阳县
+    city_zhaoqing: 1118,        // 肇庆，1118 年宋改端州为肇庆府
+    city_zhending: -196,        // 真定，前 196 年汉改东垣县为真定县
+    city_xuanhua: 1693,         // 宣化，1693 年清改宣化府
+    city_daming: 782,           // 大名，782 年唐田悦改魏州为大名府
+    city_hongzhou: -201,        // 豫章，前 201 年汉置豫章郡
+    city_jianning: 988,         // 建宁，988 年宋升建州为建宁军
+    city_huaiyin: 1228,         // 淮安，1228 年宋升楚州为淮安军
+    city_fuzhou: -202,          // 冶城，前 202 年闽越王无诸建都冶山
+    city_manila: 1571,          // 马尼拉，1571 年西班牙建城
+    city_qingyuan_zj: 1381,     // 宁波，1381 年明改明州府为宁波府
+    city_shenyang: 1296,        // 沈阳，1296 年元置沈阳路
+    city_pyongyang: 427,        // 平壤，427 年高句丽长寿王迁都
+    city_taizaifu: 701,         // 太宰府，701 年大宝律令设大宰府
+    city_jianghu: 1546,         // 金泽，1546 年本愿寺建尾山御坊
+    city_junfucheng: 680,       // 骏府，680 年骏河国府迁至
 };

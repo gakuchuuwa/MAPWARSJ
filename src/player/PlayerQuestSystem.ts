@@ -178,6 +178,42 @@ export class PlayerQuestSystem {
         deps.hero.onMeetArmy = (army) => this.onMeetArmy(army);
         deps.hero.onHostLost = (lastId) => this.onHostLost(lastId);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
+        // 🔴 [2026-09-24 主人报「乱斗模式还出文案」「跟随中也无法取消」「一点据点就回到玩家」]
+        //    切到乱斗、或关掉自动模式时，剧本那趟行程必须整个放下：不然玩家还在一路奔赴战场、
+        //    播报继续念，每次续路都把镜头拽回玩家（travelTo* 会 followCamera），画路时一点据点就被拉走。
+        let lastAuto = deps.hero.autoMode;
+        let lastPlan = deps.hero.autoPlan;
+        deps.hero.onChange(() => {
+            const auto = deps.hero.autoMode, plan = deps.hero.autoPlan;
+            const turnedOffAuto = lastAuto && !auto;
+            const toMelee = lastPlan === 'script' && plan === 'melee';
+            lastAuto = auto; lastPlan = plan;
+            if (turnedOffAuto || toMelee) this.abortScriptJourney();
+        });
+    }
+
+    /** 放下剧本行程：停播报、作废武将战役任务与会面标记、停下单骑正在走的路、镜头交还给你 */
+    private abortScriptJourney(): void {
+        this.clearJourneyBriefing();
+        const q = this.quest;
+        if (q?.kind === 'general_event') {
+            const host = this.deps.legionManager.getLegionById(q.legionId);
+            if (host) host.columnMarch = false;
+            this.quest = null;
+        }
+        this.followingEventGeneralId = null;
+        this.armyMarchPoint = null;
+        this.headingToEventGeneralId = null;
+        this.pendingEventGeneralId = null;
+        this.pendingEventOptions = [];
+        this.chaseCityId = null;
+        const hero = this.deps.hero;
+        hero.setTravelPointLabel(null);
+        if (!hero.isAttached()) {
+            hero.cancelChase();
+            hero.cancelTravel();
+        }
+        this.emitChange();
     }
 
     public getQuest(): PlayerQuest | null { return this.quest; }

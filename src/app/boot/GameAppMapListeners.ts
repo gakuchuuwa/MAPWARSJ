@@ -46,8 +46,15 @@ export function setupGameAppMapListeners(app: GameApp): void {
         app.audioManager.unlock();
     });
 
+    // 🔴 [2026-09-24] 编辑据点 / 画路时，战场标牌让出点击（见 BattlefieldLayer.setClickThrough）
+    let cityEditorOn = false;
+    const editorOpen = () => cityEditorOn || !!app.roadEditor?.isVisible();
+    const syncBattlefieldClicks = () => app.map?.getBattlefieldLayer?.()?.setClickThrough(editorOpen());
+
     window.addEventListener('toggle-editor-city', (e: Event) => {
         const detail = (e as CustomEvent<{ enabled?: boolean }>).detail;
+        cityEditorOn = !!detail?.enabled;
+        window.setTimeout(syncBattlefieldClicks, 0);
         if (app.cityEditor) {
             detail?.enabled ? app.cityEditor.show() : app.cityEditor.hide();
         }
@@ -59,6 +66,7 @@ export function setupGameAppMapListeners(app: GameApp): void {
         if (app.roadEditor) {
             detail?.enabled ? app.roadEditor.show() : app.roadEditor.hide();
         }
+        window.setTimeout(syncBattlefieldClicks, 0);
     });
 
     // 🔴 [2026-08-25] 海路编辑已并入道路编辑器：这个事件保留做兼容入口 ——
@@ -72,6 +80,7 @@ export function setupGameAppMapListeners(app: GameApp): void {
         } else {
             app.roadEditor.setMode('land');
         }
+        window.setTimeout(syncBattlefieldClicks, 0);
     });
 
     // 🔴 [2026-09-14 主人定] 点击战场 → 立刻打那一场真实战役（与剧本模式无关，见
@@ -79,6 +88,10 @@ export function setupGameAppMapListeners(app: GameApp): void {
     window.addEventListener('battlefield-click', (e: Event) => {
         const d = (e as CustomEvent<{ id?: string; name?: string }>).detail;
         if (!d?.id) return;
+        // 🔴 [2026-09-24 主人报「一点就回到玩家了」] 编辑器开着时点击是给编辑器的，不开战、不动玩家；
+        //    乱斗模式玩家不去战场（主人 2026-09-17 定「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场」）。
+        if (editorOpen()) return;
+        if (app.playerHero && app.playerHero.autoPlan !== 'script') return;
         // 抵达判定、武将在城判定、选边对话全在任务系统里（它握着 hero 与对话 UI）
         app.playerQuests?.onBattlefieldClicked(d.id, d.name ?? '战场');
     });
