@@ -1,9 +1,11 @@
 /**
  * 剧本期据点显示 —— 🔴 [2026-09-23 主人定]
  *
- * 主人原话：「现在的问题不光是君士坦丁堡，还有很多其他的据点」→ 定案「累积显示」：
- *   剧本进行时，地图上**只显示剧本事件用到的据点**；一场事件出现过的据点此后一直留着，
- *   下一场再加上它自己的据点。剧本全部结束、转入乱斗后，全部据点恢复显示。
+ * 主人原话：「现在的问题不光是君士坦丁堡，还有很多其他的据点」→ 定案「累积显示 + 时代分层」：
+ *   剧本进行时，地图上显示「当前事件所处时代及之前」的全部据点 + 事件用到的据点；
+ *   🔴 [2026-09-23 主人补「先把古典据点都放出来，到了封建显示下一批」]——开局别只显示事件用到的几十个城，
+ *   古典时代早就存在的雅典、巴比伦等古城该在图上；后续时代随剧本推进再放开。
+ *   剧本全部结束、转入乱斗后，全部据点恢复显示。
  *
  * 不给据点加任何字段（主人问「是不是应该先给所有的据点添加一个显示属性」→ 不需要）：
  *   哪些城显示，直接从事件数据算出来，据点数据一个不动。**只是不显示**，
@@ -23,8 +25,18 @@ import type { City, HistoricalEvent } from '../types/core';
 import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
 import { isBattlefieldFought } from './battlefieldState';
 import { roadRegistry } from '../roads/RoadRegistry';
+
+/** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
+function eraOfYear(year: number): GeneralEra {
+    if (year < 400) return 'antiquity';
+    if (year < 1050) return 'feudal';
+    if (year < 1500) return 'castle';
+    return 'imperial';
+}
+const ERA_ORDER: GeneralEra[] = ['antiquity', 'feudal', 'castle', 'imperial'];
 
 export class ScriptCityVisibility {
     private cached: Set<string> | null = null;
@@ -97,6 +109,18 @@ export class ScriptCityVisibility {
             bfs.add(bfId);
             // 已打过的累积保留；遇到第一场没打过的（当前这一场）加完就停
             if (!isBattlefieldFought(bfId)) { current = ev; break; }
+        }
+        // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
+        //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
+        //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
+        if (current) {
+            const eraIdx = ERA_ORDER.indexOf(eraOfYear(current.year));
+            const absent = new Set(current.absentCities ?? []);
+            for (const c of cities) {
+                const g = getCityAnchoredGeneral(c.id);
+                const era = g ? getGeneralEra(g.generalId) : undefined;
+                if (era && ERA_ORDER.indexOf(era) <= eraIdx && !absent.has(c.id)) out.add(c.id);
+            }
         }
         this.cached = out;
         this.cachedBattlefields = bfs;

@@ -299,7 +299,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     rock_house_jail: 0.724,  // -18.2 LUFS · （2026-08-04 通用随机曲）
     SLAVIC: 0.684,  // -17.7 LUFS · （2026-08-04 新增 Hall om mig）
     STEPPE: 0.708,  // -18.0 LUFS · 大幅提升
-    TIBET: 0.709,  // -18.01 LUFS · 千年的祈祷（2026-09-15 裁前奏 20s 后重测）
+    TIBET: 0.80,  // -18.01 LUFS · 千年的祈祷（2026-09-15 裁前奏 20s 后重测；2026-09-23 主人报略微偏轻，+1dB → 0.80）
     WESTERN: 0.708,  // -18.0 LUFS
     WEST_ASIA: 0.582,  // -16.3 LUFS · （2026-08-04 新增 出埃及记）
     victory: 0.589,  // -16.4 LUFS · （2026-08-04 通用随机曲）

@@ -250,7 +250,6 @@ export class HistoricalEventManager {
             const keepId = isScriptPeriod() && owner
                 ? armies.find((a) => a && a.generalId === owner)?.id ?? null
                 : null;
-            let withdrew = 0;
             for (const army of armies) {
                 if (!army || army.id === keepId) continue;
                 if (!this.legionManager.getLegionById(army.id)) continue;   // 已经没了就别重复清
@@ -261,12 +260,10 @@ export class HistoricalEventManager {
                 //     渐隐播得完）。disband 还会标 wasDisbanded —— 班师不算战败，
                 //    不给锚点城挂将/精锐冷却，下一场战役照常出将。
                 army.disband();
-                withdrew++;
             }
             gameLog('expedition', keepId
                 ? `⚔️ [战场]【${bfName}】战毕，主角军团留驻战场待命（继续东征），敌军班师`
                 : `⚔️ [战场]【${bfName}】双方班师，主帅归城（下一个战场方可触发）`);
-            if (withdrew === 0 && !keepId) return;
         }, 8000);
     }
 

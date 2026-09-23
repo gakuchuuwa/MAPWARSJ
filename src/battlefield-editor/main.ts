@@ -1166,9 +1166,31 @@ async function removeBattle(): Promise<void> {
     }
 }
 
+/**
+ * 🔴 [2026-09-23 血训] 防「旧页面把新内容写回旧的」：
+ *    一个很早打开的编辑器页面，里面存着格拉尼库斯河的旧草稿；在它上面一保存，
+ *    坐标、兵力、主将队、史料依据 13 项全被写回了旧值（页面不认识的新字段被当成「没有」删掉）。
+ *    做法：打开页面时记下两个数据文件的全文，保存前再取一次，不一样就不保存、让先刷新。
+ */
+const DATA_FILES = ['/src/data/Battlefields.ts', '/src/data/HistoricalEventScript.ts'];
+async function dataFilesSnapshot(): Promise<string> {
+    const texts = await Promise.all(DATA_FILES.map((u) =>
+        fetch(`${u}?raw&t=${Date.now()}`, { cache: 'no-store' }).then((r) => r.text())));
+    return texts.join('|');
+}
+const loadedSnapshot: Promise<string | null> = dataFilesSnapshot().catch(() => null);
+
 async function save(): Promise<void> {
     const issues = validate(working);
     if (issues.some((i) => i.level === 'error')) { alert('还有必填项没填对，先按红色提示改完'); return; }
+    const before = await loadedSnapshot;
+    const nowSnap = await dataFilesSnapshot().catch(() => null);
+    if (before !== null && nowSnap !== null && before !== nowSnap) {
+        alert('数据文件在你打开本页之后被改过（别的页面、别的 AI 或刚才的改动）。\n'
+            + '为免把新内容覆盖成旧的，这次不保存。\n'
+            + '请先把你改的文字复制下来，刷新页面，再贴回去保存。');
+        return;
+    }
     const btn = document.getElementById('btn-save') as HTMLButtonElement | null;
     if (btn) { btn.disabled = true; btn.textContent = '保存中…'; }
     try {
