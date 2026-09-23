@@ -211,7 +211,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defenderFactionId: 'kanan',
 
             defenderGeneralId: 'kanan_azemier',      // 推罗末代国王阿泽米尔库斯
-            defenderTroops: 8000,                   // 史料守军约 8,000–10,000
+            defenderTroops: 9000,                   // 史料守军约 8,000–10,000
             result: 'attacker_win',                  // 写真历史：攻城彻底胜利
             autoEnterRTS: true,                      // 进战术模式（13）
             defenderLegionName: '推罗军',
@@ -222,7 +222,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         briefing: '公元前332年孟春，地中海东岸的推罗古城峭立海中，惊涛拍岸。这座腓尼基海上霸主依托距大陆近千米的天然海岛与深沟高垒，断然拒绝马其顿军队入城祭祀的要求，倚仗舰队与千余守军负隅顽抗。为了彻底剪除波斯帝国的制海权，亚历山大下令伐尽黎巴嫩山脉的林木，在惊涛骇浪间向孤岛强行构筑一道六十米宽的巍峨筑道。数月间，推罗人以火船冲撞、弩炮轰击与蛙人破障死守海疆，马其顿则调集塞浦路斯巨舰与攻城石弩日夜推进。漫天箭雨穿透海雾，两座高达百尺的攻城木塔正顶着沸油逼近被砸开缺口的海墙，一场决定东地中海命运的血战已扑面而来。',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         inviteText: '朋友，你来得正好。推罗人拒绝我入城向他们的神献祭，自恃海岛天险、城高墙厚。我已下令伐尽黎巴嫩山的雪松，要在海上筑一道长堤，把他们的海军一并拔掉。你可愿随我一同围城？',
-        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗围城战，攻城战；马其顿军填海筑堤攻打海岛城邦推罗。' }, time: { level: 'fact', text: '英文维基百科 Siege of Tyre：前332年1月起围，历约七个月至夏末；季节取春。' }, place: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗为今黎巴嫩海岸外约一千米的海岛城邦；本场是攻城战，地点就是被攻据点「推罗」（city_tuile），坐标 33.2709,35.1962。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿与希腊同盟，亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre：伊苏斯战后马其顿军约 35,000–40,000 人，按标准取区间中值 37500。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗城邦（腓尼基/迦南），末代国王阿泽米尔库斯；时属阿契美尼德波斯治下。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Tyre：城内正规守军约 8,000–10,000 人，另有避难军民 3–4 万（非战斗人员，不计入）。本场按「故事以攻方为主、守方不可多到攻方打不赢」取区间低端 8000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Siege of Tyre 与阿里安《亚历山大远征记》：推罗守军以步兵守城为主，城头弩炮与弓手据墙射击，骑兵最少（腓尼基海岛城邦不产骑兵）；三排 前远程3 / 中步兵4 / 后骑兵2，取鱼鳞阵，落成剧本军团「推罗军」。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre (332 BC)：前333年11月伊苏斯战役后，亚历山大沿海岸南下腓尼基，阿拉多斯、比布鲁斯以次归附，经西顿（推罗以北约40公里）于前332年1月自北面进围推罗。游戏路线：自上一处战场（伊苏斯）直接开拔，沿海岸大道南下抵推罗 —— 本场不写出发据点、不设航点（出发地按「同一武将上一场打完的地方」取，那一年还不存在的城不当落脚点）。阿卡在推罗以南39公里、属反方向，不作航点；项目没有西顿、比布鲁斯据点，按铁律用附近已有据点连接、绝不新建。' }, result: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿胜；城破后守军阵亡约 6,000–8,000，平民多被贩为奴；推罗易主归马其顿，跨海长堤淤积使海岛此后永久成为半岛。' }, invite: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗人拒绝亚历山大入城向城中的麦勒卡特（希腊称赫拉克勒斯）献祭，是围城的直接导火索。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Siege of Tyre：跨海长堤宽约六十米、城距大陆近千米、推罗战船约八十艘、城破守军阵亡约 6,000–8,000。播报里兵力只写「数万」「千余」，不写确数。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗围城战，攻城战；马其顿军填海筑堤攻打海岛城邦推罗。' }, time: { level: 'fact', text: '英文维基百科 Siege of Tyre：前332年1月起围，历约七个月至夏末；季节取春。' }, place: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗为今黎巴嫩海岸外约一千米的海岛城邦；本场是攻城战，地点就是被攻据点「推罗」（city_tuile），坐标 33.2709,35.1962。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿与希腊同盟，亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre：伊苏斯战后马其顿军约 35,000–40,000 人，按标准取区间中值 37500。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗城邦（腓尼基/迦南），末代国王阿泽米尔库斯；时属阿契美尼德波斯治下。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Tyre：城内正规守军约 8,000–10,000 人，另有避难军民 3–4 万（非战斗人员，不计入）。按标准取信息框区间中值 9000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Siege of Tyre 与阿里安《亚历山大远征记》：推罗守军以步兵守城为主，城头弩炮与弓手据墙射击，骑兵最少（腓尼基海岛城邦不产骑兵）；三排 前远程3 / 中步兵4 / 后骑兵2，取鱼鳞阵，落成剧本军团「推罗军」。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre (332 BC)：前333年11月伊苏斯战役后，亚历山大沿海岸南下腓尼基，阿拉多斯、比布鲁斯以次归附，经西顿（推罗以北约40公里）于前332年1月自北面进围推罗。游戏路线：自上一处战场（伊苏斯）直接开拔，沿海岸大道南下抵推罗 —— 本场不写出发据点、不设航点（出发地按「同一武将上一场打完的地方」取，那一年还不存在的城不当落脚点）。阿卡在推罗以南39公里、属反方向，不作航点；项目没有西顿、比布鲁斯据点，按铁律用附近已有据点连接、绝不新建。' }, result: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿胜；城破后守军阵亡约 6,000–8,000，平民多被贩为奴；推罗易主归马其顿，跨海长堤淤积使海岛此后永久成为半岛。' }, invite: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗人拒绝亚历山大入城向城中的麦勒卡特（希腊称赫拉克勒斯）献祭，是围城的直接导火索。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Siege of Tyre：跨海长堤宽约六十米、城距大陆近千米、推罗战船约八十艘、城破守军阵亡约 6,000–8,000。播报里兵力只写「数万」「千余」，不写确数。' } },
         foeCommanderUnit: 'hero_brasidas',
         // 出发据点不写：剧本期连续行军从伊苏斯战场直接开拔；玩家不在军中时，默认在上一场打完处附近那一年已有的城（阿达纳）
         cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
@@ -230,43 +230,75 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     // ═══════════════════════════════════════════════════════════════
     // 前 331 年秋 · 亚历山大决战波斯：高加米拉战役（Battle of Gaugamela，前331年10月）
     // ═══════════════════════════════════════════════════════════════
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -332,
+        season: 2,
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你来得正好。前头的推罗已经拿下，攻城器械也一并运到了。加沙这座城踞在通往埃及的大道上，巴提斯不肯低头——他以为一道高墙就能挡住我。你可愿随我再围一次城？',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：亚历山大东征中的攻城战，前332年马其顿军攻取加沙要塞。' }, time: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：前332年10月破城（围城历时约两月；日文维基作三个月，从英文）。季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：加沙要塞踞于高地、距海约五英里，控扼叙利亚通往埃及的大道，城墙高逾十八米；坐标取本据点记录 31.5017,34.4668。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：马其顿军，亚历山大亲统。' }, attackerTroops: { level: 'inferred', text: '英文维基百科 Siege of Gaza (332 BC) 未给攻方兵数；同一支马其顿军推罗战后未获大补，沿用伊苏斯与推罗两场的 35,000–40,000，取 37500 —— 合理推定。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：要塞守将巴提斯（Batis），时属阿契美尼德波斯治下，拒不投降。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Siege of Gaza (332 BC)：城破时加沙方面阵亡约一万（男丁被杀、妇孺为奴），据此守方兵力取 10000 —— 合理推定（史无守军确数）。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：守方为波斯守军与阿拉伯雇佣兵（本据点精锐番号即「加沙雇佣兵」），凭高墙、土山与弩炮据守；番号取阿契美尼德军（巴提斯所部属波斯军系）。' }, route: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC) 与 Siege of Tyre (332 BC)：亚历山大前332年夏取推罗后率军南下进围加沙，并把推罗用过的攻城器械一并运来破其高墙（承前一场）。游戏路线：自上一处战场（推罗）直接开拔南下抵加沙，路网取道阿音贾鲁特—耶路撒冷—加沙，273 公里（直线 208）。战后：自加沙南下埃及（佩鲁西姆—孟菲斯），为下一场自孟菲斯出发的战役铺路。' }, result: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：马其顿胜。城破后男丁被杀、妇孺贩为奴，加沙方面阵亡约一万；巴提斯拒不投降，按库尔提乌斯所记被拖于战车之后处死；加沙入马其顿之手，通往埃及的门户就此打开。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Siege of Gaza (332 BC)：巴提斯拒不投降，亚历山大以推罗运来的攻城器械破墙，三次强攻后入城；对白措辞为撰写。' }, briefing: { level: 'fact', text: '英文维基百科 Siege of Gaza (332 BC)：加沙踞高地、城墙高逾十八米，马其顿军筑土山、调推罗攻城器械破墙；守军曾出击烧器械，亚历山大在反击中肩部受伤。文案按主人规矩不写兵力确数。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_aristides',
+        type: 'siege',
+        title: '公元前332年 加沙战役',
+        description: '马其顿军取加沙：亚历山大调来推罗用过的攻城器械，破其高地坚城，三次强攻后入城；守将巴提斯拒不投降被处死，加沙易主，通往埃及的门户就此打开。',
+        siegeData: {
+            title: '加沙战役',
+            description: '巴提斯凭高地坚城与阿拉伯雇佣兵死守；马其顿军筑土山、架推罗器械破墙，三次强攻后破城。',
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 37500,
+            attackerSourceCityId: 'city_tuile',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'feilisidin_batisi',
+            defenderTroops: 10000,
+            defenderCityId: 'city_jiasa',
+            defenderLegionName: '阿契美尼德军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_jiasa', factionId: 'maqidun' }],
+    },
     {
         year: -331,
         season: 2,                                   // 秋（史料：前331年10月1日）
         type: 'field_battle',
         title: '公元前331年 高加米拉战役',
-        description: '马其顿军决定性全面胜利：亚历山大以斜线战术拉扯波斯大军，亲率骑兵楔形突击直插大流士中军；波斯全军崩溃，大流士溃逃，直接宣告了阿契美尼德波斯帝国的瓦解。',
+        description: '马其顿决定性胜利：大流士三世在平野布下镰刀战车与两翼骑兵，亚历山大以方阵居中牵制、亲率伙伴骑兵自右翼撕开缺口，直扑大流士本阵；大流士弃阵东逃，美索不达米亚与波斯半壁就此易主。',
         fieldBattleData: {
             title: '高加米拉战役',
-            description: '亚历山大亲率右翼伙伴骑兵形成楔形突击直扑波斯中军，大流士三世溃逃，波斯全军崩溃。',
+            description: '大流士以镰刀战车与两翼骑兵猛攻，帕曼纽左翼死守；亚历山大率伙伴骑兵自右翼插入缺口，直取大流士本阵，波斯全军崩溃。',
             // 摩苏尔以东广阔平原（北纬 36°21'46", 东经 43°15'00"）
-            location: { lat: 36.3628, lng: 43.25 },
+            location: { lat: 36.56, lng: 43.444 },
             // 🔴 [2026-09-23 主人报「船队不对呀」：马其顿军沿叙利亚海岸坐船] 英文维基 Battle of Gaugamela：
             //    前331年晚春或初夏自埃及出发，向东北穿过叙利亚，七八月至幼发拉底河塔普萨库斯，九月下旬至底格里斯河。
             //    路标取沿途已有据点：加沙（前332年加沙围城）、阿卡（推罗已是战场，取其近旁）、大马士革、
             //    阿勒颇（近塔普萨库斯）、埃德萨（渡幼发拉底后东进），全程陆路。
-            marchWaypoints: ['city_jiasa', 'city_ake', 'city_damasikusi', 'city_alepo', 'city_aidesa'],
+            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_alepo', 'city_aidesa', 'city_niniwei'],
 
             // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
             attackerTroops: 47000,                   // 史料 47,000 人（约 40,000 步兵 + 7,000 骑兵）
-            attackerSourceCityId: 'city_salonica',
+            attackerSourceCityId: 'city_mengfeisi',
 
             // ── 守方：波斯阿契美尼德帝国大军 大流士三世 ──
             defenderFactionId: 'aqimeinide',
             defenderGeneralId: 'daliushi_iii',
-            defenderTroops: 90000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
+            defenderTroops: 85000,                   // 现代史学界估计 50,000 至 100,000 人（中高值）
             defenderSourceCityId: 'city_bosibolisi',
 
             result: 'attacker_win',                  // 写真历史：马其顿决定性胜利
             autoEnterRTS: true,                      // 进战术模式（13）
+            defenderLegionName: '阿契美尼德军',
         },
         generalId: 'gen_alexander_great',
         // 军团出发据点：前331年亚历山大自埃及出发（英文维基 Battle of Gaugamela），不是上一场推罗近旁的阿卡
-        startCityId: 'city_mengfeisi',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        inviteText: '朋友，你来得正好。大流士又派人来了，这回连女儿和半个帝国都舍得给——我都没要。他挑了块铲得干干净净的平野，好让他的镰刀战车跑起来。可惜他也给我留了一条路：他的中军。你可愿随我走这一趟？',
+        sources: { battle: { level: 'fact', text: '英文/中文维基百科 Battle of Gaugamela（高加米拉战役）：前331年马其顿与阿契美尼德波斯的决战，野战。' }, time: { level: 'fact', text: '维基百科高加米拉战役信息框：前331年10月1日，季节取秋。' }, place: { level: 'fact', text: '维基百科高加米拉战役信息框：战场可能在今伊拉克库尔德斯坦艾比尔附近的提尔·高美尔（Tel Gomel）周遭，坐标 36.56,43.444。' }, attacker: { level: 'fact', text: '维基百科高加米拉战役：马其顿王国与泛希腊同盟，亚历山大亲统，帕曼纽、菲罗塔斯、克拉特鲁斯、佩尔狄卡斯等分领各部。' }, attackerTroops: { level: 'fact', text: '维基百科高加米拉战役信息框：40,000 名步兵 + 7,000 名骑兵 = 47,000（Green 2013）。' }, attackerLegion: { level: 'fact', text: '维基百科高加米拉战役「Initial dispositions」：马其顿方阵居中双列推进，亚历山大率伙伴骑兵自右翼突破，帕曼纽率色萨利与色雷斯骑兵守左翼，克里特与希腊雇佣兵在右中；编成仍取马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2）。' }, defender: { level: 'fact', text: '维基百科高加米拉战役：阿契美尼德帝国，大流士三世亲统；贝苏斯领左翼（巴克特里亚、斯基泰等），马扎欧斯领右翼（叙利亚、米底、美索不达米亚等）。' }, defenderTroops: { level: 'fact', text: '维基百科高加米拉战役信息框：现代文献估计 50,000–120,000，按标准取区间中值 85,000（守/攻 = 1.81，在 1:2 之内）。' }, defenderLegion: { level: 'fact', text: '维基百科高加米拉战役「Initial dispositions」：大流士居中率精锐步兵（「苹果持兵」/希腊人所称长生军）与马尔迪亚弓手，两翼为各地骑兵，阵前布镰刀战车，另有十五头印度战象（战中未见出动、后在营中被缴，推为撤走）；编成取剧本军团「阿契美尼德军」（同一支波斯军，与伊苏斯、格拉尼库斯同一番号）。' }, route: { level: 'fact', text: '维基百科 Battle of Gaugamela 与 Siege of Gaza (332 BC)：加沙战后亚历山大南下埃及，波斯埃及总督马扎克斯不战而降（埃及无战事）；前331年在孟菲斯受冕为法老，并于尼罗河口建亚历山大城，随后西行锡瓦求阿蒙神谕，再回师北上推罗，经叙利亚北渡幼发拉底，东进至高加米拉。游戏路线：自上一处战场（加沙）开拔 → 佩鲁西姆 → 孟菲斯 → 亚历山大城 → 加沙 → 推罗 → 大马士革 → 阿勒颇 → 埃德萨 → 尼尼微 → 高加米拉。（原数据写「自孟菲斯出发」＝把军团白送过去，已改为走出去。）' }, result: { level: 'fact', text: '维基百科高加米拉战役：马其顿决定性胜利。大流士弃阵东逃，波斯帝国半壁江山与巴比伦在内的美索不达米亚全境入亚历山大之手；阿契美尼德方面伤亡据库尔提乌斯约四万，马其顿方面伤亡极轻（阿里安记百名步兵、千名骑兵）。本场为野战，不涉据点易主。' }, invite: { level: 'fact', text: '邀约对白所据史事：维基百科高加米拉战役：大流士三世三次遣使求和（赎回眷属、割让哈吕斯河以西、乃至愿与亚历山大平起平坐），亚历山大皆拒；决战前大流士在巴比伦重整大军、平野布阵以待。对白措辞为撰写。' }, briefing: { level: 'fact', text: '维基百科高加米拉战役：大流士为之铲平战场植被以便镰刀战车驰突，并布十五头印度战象（战中撤回）；马其顿方阵居中推进、两翼后斜，亚历山大率伙伴骑兵绕至右翼缺口直扑大流士本阵。文案按主人规矩不写兵力确数。' } },
+        foeCommanderUnit: 'hero_artaphernes',
     },
 
     // ═══════════════════════════════════════════════════════════════
