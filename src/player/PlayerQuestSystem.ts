@@ -599,7 +599,9 @@ export class PlayerQuestSystem {
         }
         // 🔴 [2026-09-23 主人定「路上就显示史实兵力和军团名」] 赶路军团直接用这一仗的史实兵力与军团名
         //    （如亚历山大 35000、古典时代马其顿军团·伙伴骑兵），与战场上生成的史实军团同源。
-        const side = this.deps.battlefields?.sideOfGeneral?.(ev.battlefieldId, g.generalId);
+        //    只在剧本模式；乱斗模式保持原样（起兵 = 本城兵力九成）。
+        const scriptMode = this.deps.hero.autoPlan === 'script';
+        const side = scriptMode ? this.deps.battlefields?.sideOfGeneral?.(ev.battlefieldId, g.generalId) : null;
         if (side) {
             host.setTroops(side.troops);
             host.name = side.legionName;
@@ -653,7 +655,8 @@ export class PlayerQuestSystem {
         const marchTarget = defCity
             ? { lat: defCity.latitude, lng: defCity.longitude }
             : { lat: ev.lat, lng: ev.lng };
-        this.marchWaypointsLeft = [...(ev.marchWaypoints ?? [])];
+        // 行军路标只在剧本模式走；乱斗模式照旧走最近的路
+        this.marchWaypointsLeft = scriptMode ? [...(ev.marchWaypoints ?? [])] : [];
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);

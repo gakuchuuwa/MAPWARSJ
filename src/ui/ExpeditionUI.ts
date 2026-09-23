@@ -189,6 +189,10 @@ export class ExpeditionUI {
         const army = this.getFollowedArmy?.() ?? null;
         if (!army || army.isDestroyed) return null;
         if (army.expeditionTargetCityId) return null; // 已在远征中
+        // 🔴 [2026-09-23] 史实战役军团（剧本钉住的赶路军团 / 战场双方军团）有史实目标，不是远征军：
+        //    否则镜头跟着它、兵力又够时会被改成番号名并另设远征目标。
+        const scripted = army as ExpeditionArmy & { __scriptPinned?: boolean; isScriptArmy?: boolean };
+        if (scripted.__scriptPinned || scripted.isScriptArmy) return null;
 
         // 滞回资格锁：兵力达到过 5 万即置锁，掉破仍保留，低于半数才重锁（防 5 万线抖动反复触发）
         const troops = army.getTroops();

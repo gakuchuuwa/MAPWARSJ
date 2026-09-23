@@ -71,7 +71,7 @@ import { exposeGameAppGlobals } from './GameAppExpose';
 import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
-import { ScriptCityVisibility } from '../events/scriptCityVisibility';
+import { ScriptCityVisibility, findCurrentScriptEventCity } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import {
     setupGameAppVisibilityHandler,
@@ -742,8 +742,10 @@ export class GameApp {
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
-        // 随机在世界所有据点中挑选一个出生据点
-        const startCity = allCities[Math.floor(Math.random() * allCities.length)];
+        // 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式（开局默认）：出生在当前这一场历史事件
+        //    归属武将的城外（格拉尼库斯河战役 = 佩拉）；乱斗模式照旧在全世界随机挑一个据点。
+        const scriptStart = findCurrentScriptEventCity(allCities);
+        const startCity = scriptStart ?? allCities[Math.floor(Math.random() * allCities.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;
