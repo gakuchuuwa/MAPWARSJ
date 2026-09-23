@@ -635,6 +635,22 @@ export class PlayerQuestSystem {
         army: Army | null,
     ): void {
         this.deps.closeDialogue();
+        // 🔴 [2026-09-23 主人报障「第一事件结束后，军团就消失了，玩家原地不动，没有继续第二事件」]
+        //    **谈定这一仗 = 「赶去与他会面」这件事作废**，标记必须在这里清掉。
+        //    不清的后果（实机复现，非推测）：
+        //      ① 抵达城 → onArrive 把标记清成 null → 弹对话（对话框自己把游戏**暂停**）；
+        //      ② 就在**同一帧**里 `playerQuests.tick()` 还会跑一遍（暂停判定在帧首，已经过去了）
+        //         → 又走 checkAndTriggerNextBattlefield → 此刻玩家已在城中 → travelToCity 走
+        //         「已在城里」分支 → 标记**又被设成这位武将**（此后 tick 见到「标记 === owner」
+        //         就直接 return true 不再重铺，对话因此不会被反复重建）；
+        //      ③ 3 秒后对话自动确认入伍 → quest 建立 → tick 不再进那条分支
+        //         → **标记就永久钉在 owner 上了**；
+        //      ④ 第一场打完（quest 清空）→ 第二场的归属武将**还是他**（亚历山大 11 场戏都归他）
+        //         → `headingToEventGeneralId === owner` 成立 → checkAndTriggerNextBattlefield 每拍
+        //         返回 true 却一步不动 → 玩家钉死在上一处战场上；第三场、第四场同理。
+        //    症状与 §16.2 第 33 条（`getScriptedWinner` 那次「打完不动 / 下一场衔接断」）同族，
+        //    但根因不同：那次是主角被销毁，这次是这个「防重铺」标记成了僵尸状态。
+        this.headingToEventGeneralId = null;
         // 🔴 [2026-09-23] 剧本模式：军团属于这一仗里本将那一方的势力（出发据点可能是别家的城），
         //    也不抽出发据点的城防（史实军团的兵力来自事件数据）
         const scriptSideFaction = this.deps.hero.autoPlan === 'script' ? this.sideFactionOf(ev.battlefieldId, g.generalId) : null;
@@ -814,6 +830,12 @@ export class PlayerQuestSystem {
         this.quest = null;
         this.followingEventGeneralId = null;
         this.armyMarchPoint = null;
+        // 🔴 [2026-09-23 主人令「以后每个事件的衔接，都不要犯同样的错误」]
+        //    这一仗打完了 → 「正在赶去与这位武将会面」的状态一律作废。
+        //    与 joinGeneralEvent 里那处是同一个字段的**同一件事**（会面结束），两处都要清：
+        //    这里兜住「凡是被标记挡住的下一场」，免得再出现「checkAndTriggerNextBattlefield
+        //    每拍返回 true 却一步不动」的僵尸状态（见 joinGeneralEvent 里的完整血训）。
+        this.headingToEventGeneralId = null;
         // 这一仗打完了 → 这位武将的记事作废（主人定：第一次触发，之后就随机）
         this.pendingEventGeneralId = null;
         this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== q.generalId);
