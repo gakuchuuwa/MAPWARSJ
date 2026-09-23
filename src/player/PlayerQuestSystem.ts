@@ -28,9 +28,9 @@ import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
-import { findHistoricalEventsOfGeneral, findGeneralOfBattlefield } from '../data/HistoricalEventScript';
+import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
-import { getScriptEventStart } from '../events/scriptPeriod';
+import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
@@ -413,7 +413,17 @@ export class PlayerQuestSystem {
                     //       不散掉这支军团，玩家自己跟着来的那一仗会被一句「主帅正率军在外」挡死。
                     //    ② 它不属于战场玩法，不会随 `withdrawBattlefieldLegions` 班师，
                     //       会变成棋盘上一支多出来的、没人管的军团。
-                    this.disposeHostMarchLegion();
+                    //
+                    // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？」]
+                    //    **剧本期例外**：战场若**复用**了玩家随的这支军团当主力
+                    //    （`HistoricalEventManager.reusableScriptArmy`）——那它就是主角的连续军团，
+                    //    当然不能收，也不能再生成第二支。只有没被复用的情形（例如主角在**守方**的
+                    //    攻城战：那一路守将必须落到**城**上，见 `reusableScriptArmy` 的说明）
+                    //    才照旧收掉赶路军团、改用战场上新生成的那一支。
+                    const hostIdNow = this.deps.hero.getHostLegionId();
+                    const reusedByBattlefield = !!hostIdNow
+                        && (attacker.id === hostIdNow || defender.id === hostIdNow);
+                    if (!reusedByBattlefield) this.disposeHostMarchLegion();
                     // 🔴 [2026-09-23 修] 赶路军团收掉后，任务改为盯**战场上本将那一方的史实军团**；
                     //    否则任务每拍检查发现赶路军团没了，就误报「❌ 军团覆灭，未能抵达【XX战役】」并丢掉任务，
                     //    打完也走不到 finishGeneralEvent 收尾。
@@ -457,7 +467,13 @@ export class PlayerQuestSystem {
                     }
                     // 战后双方军团会撤场（见 withdrawBattlefieldLegions）。玩家若还挂在上面，
                     // 军团一没就成了"随一支不存在的军团"，所以这里把他放回单骑，好去找下一家。
-                    if (this.deps.hero.isAttached()) {
+                    //
+                    // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？
+                    //    历史上不是这样的吗？」] **剧本期不脱队**：主角军团打完不撤场
+                    //    （见 `withdrawBattlefieldLegions` 的新判据），玩家自当继续随它东征 ——
+                    //    既不脱队，也不该按"脱离军团"把功勋清零（`detach()` 里有那条统一铁律）。
+                    //    只有乱斗模式（战场军团打完就散）才需要把玩家放回单骑另寻他处。
+                    if (this.deps.hero.isAttached() && !isScriptPeriod()) {
                         this.deps.hero.detach();
                         this.deps.notify('解甲归为单骑，可另寻他处');
                     }
@@ -1103,6 +1119,60 @@ export class PlayerQuestSystem {
     }
 
     /**
+     * 战场 id → 它对应的事件记录（`describeGeneralEvent` 的入参形态）。
+     * 判据与 `ScriptCityVisibility.compute` / `HistoricalEventManager.findBattleForBattlefield`
+     * 同源：`resolveEventBattlefieldId(ev, 城坐标)`。
+     */
+    private eventOfBattlefield(bfId: string): { event: HistoricalEvent; battlefieldId: string } | null {
+        for (const ev of HISTORICAL_EVENT_SCRIPT) {
+            if (resolveEventBattlefieldId(ev, (id) => {
+                const c = this.deps.cityManager.getCity(id);
+                return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+            }) === bfId) {
+                return { event: ev, battlefieldId: bfId };
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 🔴 [2026-09-23 主人三问「为什么第一个事件和第二个事件之间不能衔接呢？为什么玩家要脱离军团？
+     *    为什么不能从第一战场继续行军？历史上不是这样的吗？」]
+     *
+     * **剧本期连续行军**：玩家还在军中时，不脱队、不回城、不重新起兵 —— 直接把手上这支军团
+     * 从**当前所在的战场**开赴下一个战场（沿主人设的行军路标走）。史上亚历山大东征自始至终
+     * 是同一支马其顿军，衔接处不该出现「解散 → 回城 → 再起兵」。
+     *
+     * 复用 `joinGeneralEvent` 整条赶路链：它本来就接受一支现成军团（`army` 入参非空就不起兵），
+     * 所以这里只负责备齐「下一场是哪个战场、归属武将是谁、从哪座城算起」。
+     * 兵力由它按这一场的史料值重置（AGENTS：每场按 `attackerTroops/defenderTroops` 开战，不继承上战损）。
+     */
+    private continueScriptCampaign(bfId: string, owner: string, title: string): boolean {
+        const hostId = this.deps.hero.getHostLegionId();
+        const army = hostId ? this.deps.legionManager.getLegionById(hostId) : null;
+        if (!army || army.isDestroyed || army.getTroops() <= 0) return false;
+        const rec = getGeneralRecordByGeneralId(owner);
+        if (!rec) return false;
+        const hit = this.eventOfBattlefield(bfId);
+        if (!hit) return false;
+        const ev = this.describeGeneralEvent(hit);
+        if (!ev) return false;
+        // 城只用于任务条与奖励口径；连续行军时人在军中，取他的本城，没有就取脚下最近的城
+        const cityId = this.generalCityId(owner)
+            ?? roadRegistry.getNearestCityId(army.getPosition().lat, army.getPosition().lng);
+        const city = cityId ? this.deps.cityManager.getCity(cityId) : null;
+        if (!city) return false;
+        this.joinGeneralEvent(city, {
+            generalId: owner,
+            generalName: rec.generalName,
+            portrait: rec.portrait ?? '',
+        }, ev, army);
+        this.deps.notify(`🐎 随${rec.generalName}自战场继续进兵，奔赴【${title}】`);
+        gameLog('expedition', `[玩家] 连续行军：${rec.generalName} 率 ${army.name} 自战场续赴【${title}】（同一支军团，不重新起兵）`);
+        return true;
+    }
+
+    /**
      * 检查并自动引导玩家前往下一个历史战场：
      * 🔴 [2026-09-16 主人定]
      * 「如果玩家没有加入势力，就优先参加去战场，触发战争事件。游戏开始是-334年，就去格拉尼库斯河战役。
@@ -1123,6 +1193,13 @@ export class PlayerQuestSystem {
         //    现在先去找**这一仗归属的那位武将**（战场事件的 `generalId`）：
         //    走到他身边（在城里就进城、带兵在外就追出去）→ 触发对话 → 随他一起赶赴战场。
         const owner = this.eventOwnerOfBattlefield(bf.id);
+        // 🔴 [2026-09-23 主人三问「为什么第一个事件和第二个事件之间不能衔接？为什么玩家要脱离军团？
+        //    为什么不能从第一战场继续行军？」] **剧本期连续行军**：玩家本就随在归属武将的军中，
+        //    直接把这支军团从当前战场开赴下一个战场 —— 不脱队、不回城、不重新起兵。
+        //    （乱斗模式不走这条：那边玩家不在军中，照旧"先去找他"或单骑赴战场。）
+        if (owner && this.deps.hero.isAttached() && isScriptPeriod()) {
+            return this.continueScriptCampaign(bf.id, owner, title);
+        }
         if (owner && !this.deps.hero.isAttached()) {
             // 上次寻路失败还在冷却：不打断当前行程，先让玩家去找别的武将乱斗
             const now2 = Date.now();
@@ -1294,7 +1371,13 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-19 主人定] **武将优先**：未入伍时若身上还有一场没打完的武将史实战役，
         //    接着赶赴那个战场（赶路途中解散/失败/改道后能自动续上），而不是另选一座城。
         //    判据只有一条：这场战役还没打过（`isBattlefieldFought`）—— 主人定「第一次触发……然后就随机」。
-        if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
+        // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？」]
+        //    剧本期玩家**随军**是常态（同一支军团连续东征），不能因为"在军中"就停掉事件链
+        //    —— 否则战场打完就永远停在那儿等一个不会来的"去找武将"。
+        const scriptChain = this.deps.hero.autoPlan === 'script' && isScriptPeriod();
+        const canAdvance = this.deps.hero.autoMode && !this.quest
+            && (!this.deps.hero.isAttached() || scriptChain);
+        if (canAdvance) {
             if (this.resumePendingGeneralEvent()) return;
         }
         // 🔴 [2026-09-16 主人定]
@@ -1304,7 +1387,7 @@ export class PlayerQuestSystem {
         // 若玩家已加入势力（isAttached），则全程跟随武将，不触发战场事件。
         // 🔴 [2026-09-17 主人定]「剧本和乱斗模式分开……乱斗模式的话，玩家不去战场。」
         //    乱斗模式下整条战场分支不走，直接去找武将入伍。切模式时已出发的行程由 setAutoPlan 掐掉。
-        if (this.deps.hero.autoMode && !this.quest && !this.deps.hero.isAttached()) {
+        if (canAdvance) {
             const headingToBattlefield = this.deps.hero.autoPlan === 'script'
                 && this.checkAndTriggerNextBattlefield();
             // 🔴 [2026-09-23] 剧本期不去找武将乱斗：军团此时不寻敌，起兵入伍只会原地停着；

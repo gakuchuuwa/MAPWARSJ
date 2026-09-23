@@ -22,7 +22,11 @@ import { OrientationSystem } from '../core/OrientationSystem';
  *   · 发车即全不透明（不做渐显渐隐），走到屏幕外终点直接移除。
  */
 
-type Pt = { lat: number; lng: number };
+/**
+ * 路径点。`sea` 由 `RoadRegistry.pathToLatLngs` 带出来 —— 该点所在的那条边是不是海路
+ * （源自 `SEA_ROUTE_DATA`）。商队自己造的兜底直线没有它（undefined），那时才回落掩膜采样。
+ */
+type Pt = { lat: number; lng: number; sea?: boolean };
 
 interface TradeAsset {
     dir: string;
@@ -274,6 +278,24 @@ export class TradeTrafficLayer {
         return { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
     }
 
+    /**
+     * 折线上 `d` 处**所在那一段**是不是海路（`null` = 路径没带标记，交回掩膜采样）。
+     *
+     * 与 `pointAt` 同一套段查找：`RoadRegistry` 的 `seaFlags[i]` 记的是「第 i 个点所在的边」，
+     * 故段 [lo, hi] 的归属看 `pts[hi].sea`（`pathToLatLngs` 逐点带出）。
+     */
+    private static segSeaAt(pts: Pt[], cum: number[], d: number): boolean | null {
+        if (pts.length < 2) return null;
+        const dd = Math.max(0, Math.min(d, cum[cum.length - 1]));
+        let lo = 0, hi = cum.length - 1;
+        while (lo < hi - 1) {
+            const mid = (lo + hi) >> 1;
+            if (cum[mid] <= dd) lo = mid; else hi = mid;
+        }
+        const flag = pts[hi]?.sea ?? pts[lo]?.sea;
+        return typeof flag === 'boolean' ? flag : null;
+    }
+
     // ── 据点索引（道路/海路端点 → 坐标），用于找屏幕外起终点 ────────────
     private buildCityIndex(): Map<string, Pt> {
         if (this.cityIndex) return this.cityIndex;
@@ -487,11 +509,29 @@ export class TradeTrafficLayer {
                 const pos = TradeTrafficLayer.pointAt(c.path, c.cumLen, Math.max(0, ud));
 
                 // 陆上商队 / 进海商船：逐单位按海陆判定（渡海路段自动换船）
+                //
+                // 🔴 [2026-09-23 主人报障「左下角的商队应该是船，不应该是马队，这是网络延迟吗」]
+                //    判据改成**优先跟着「走的是哪条路」** —— 与 `Army.updateTerrainSpeed` 同一条铁律
+                //    （2026-09-01 主人定「按路线判定·港口登船」）。血训：
+                //    原来这里只查 `LandSeaSystem.isSeaAt`，而那份判据要**现去 AWS S3 拉 Terrarium
+                //    高程瓦片**（外加一张 ESRI 掩膜）；瓦片拿不到时它直接返回 false（当陆走），
+                //    失败还会进 60 秒冷却不再重试 —— 于是网络一抖，**整片海被判成陆地**，
+                //    商队就在海面上画马车。实测（同一台机器）：爱琴海南部 187 个采样点里
+                //    判海 0 个、瓦片没到 166 个；同一批瓦片有的 46ms 成功、有的 12s 超时。
+                //    而商队的路径本来就来自 `roadRegistry.pathToLatLngs`，**每个点自带 `sea` 标记**
+                //    （海路段的点 sea=true，源自 SEA_ROUTE_DATA）—— 用它既不依赖网络，
+                //    也不会在近岸「车/船」来回跳。只有标记缺失（`buildStraightRoute` 的兜底直线
+                //    不走路网）时才回落掩膜采样，保持旧行为兜底。
+                const legSea = TradeTrafficLayer.segSeaAt(c.path, c.cumLen, Math.max(0, ud));
                 let sea = false;
-                try {
-                    sea = LandSeaSystem.isSeaAt(pos);
-                } catch {
-                    /* 采样器未就绪 → 按陆路 */
+                if (legSea !== null) {
+                    sea = legSea;
+                } else {
+                    try {
+                        sea = LandSeaSystem.isSeaAt(pos);
+                    } catch {
+                        /* 采样器未就绪 → 按陆路 */
+                    }
                 }
                 const asset = sea ? shipAsset : cartAsset;
                 if (!asset) continue;

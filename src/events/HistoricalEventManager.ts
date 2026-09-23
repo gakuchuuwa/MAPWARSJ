@@ -23,6 +23,7 @@ import { gameLog } from '../utils/GameLogger';
 import { GameConfig } from '../config/GameConfig';
 import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
 import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
+import { isScriptPeriod } from './scriptPeriod';
 // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
 //    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
@@ -218,7 +219,7 @@ export class HistoricalEventManager {
     public static readonly BATTLEFIELD_TRIGGER_KM = 30;
 
     /**
-     * 战役打完 → 双方军团**撤场**（不留在乱斗棋盘上）。
+     * 战役打完 → 军团**撤场**（不留在乱斗棋盘上）。
      *
      * 🔴 [2026-09-14 主人问「是继续随军参战呢，还是直接消失呢」] 选择「撤场」，硬理由有三条：
      *   ① **主帅必须回城，否则下一个战场永远打不开。** 按主人自己定的规矩「必须武将在城，
@@ -229,11 +230,30 @@ export class HistoricalEventManager {
      *   ③ 历史痕迹已经由**战场遗址**留在图上了，不需要军团继续杵在那儿。
      *
      * 停 8 秒再撤：让 13 打完的结算画面走完，观众看清战果，不至于一结束就凭空蒸发。
+     *
+     * 🔴 [2026-09-23 主人三问「为什么第一个事件和第二个事件之间不能衔接？为什么玩家要脱离军团？
+     *    为什么不能从第一战场继续行军？历史上不是这样的吗？」]
+     *    上面那三条是**「乱斗 ＋ 战场」时代**定的，那时每场军团都是凭空生成的，撤场是对的。
+     *    但现在是**历史剧本**：亚历山大东征是一条连续战史（格拉尼库斯 → 伊苏斯 → 推罗 → 高加米拉
+     *    → …… → 印度），军队自始至终是**同一支马其顿军**，主帅也不该"回城等下一场"。
+     *    故 **剧本期主角那一方不撤场**（留在战场上，由 PlayerQuestSystem 直接开赴下一场），
+     *    敌军照旧撤（下一场对手本来就不同）。**乱斗模式逐字不变**（照撤双方）。
      */
-    private withdrawBattlefieldLegions(bfName: string, ...armies: Army[]): void {
+    private withdrawBattlefieldLegions(
+        bfName: string,
+        fb: FieldBattleData & { type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
+        ...armies: Army[]
+    ): void {
         setTimeout(() => {
+            // 剧本期：主角那一方留下继续东征（判据＝本事件归属武将带的那支）
+            const owner = fb.scriptGeneralId;
+            const keepId = isScriptPeriod() && owner
+                ? armies.find((a) => a && a.generalId === owner)?.id ?? null
+                : null;
+            let withdrew = 0;
             for (const army of armies) {
-                if (!army || !this.legionManager.getLegionById(army.id)) continue;   // 已经没了就别重复清
+                if (!army || army.id === keepId) continue;
+                if (!this.legionManager.getLegionById(army.id)) continue;   // 已经没了就别重复清
                 // 🔴 [2026-09-16 主人报障「战役结束后亚历山大军团不消失」]
                 //    原来直接 removeArmy —— 整支军团连人带旗**凭空瞬消**，很突兀。
                 //    改走 disband()：它触发 beginDespawnFade()，与尸体同一套渐隐
@@ -241,8 +261,12 @@ export class HistoricalEventManager {
                 //     渐隐播得完）。disband 还会标 wasDisbanded —— 班师不算战败，
                 //    不给锚点城挂将/精锐冷却，下一场战役照常出将。
                 army.disband();
+                withdrew++;
             }
-            gameLog('expedition', `⚔️ [战场]【${bfName}】双方班师，主帅归城（下一个战场方可触发）`);
+            gameLog('expedition', keepId
+                ? `⚔️ [战场]【${bfName}】战毕，主角军团留驻战场待命（继续东征），敌军班师`
+                : `⚔️ [战场]【${bfName}】双方班师，主帅归城（下一个战场方可触发）`);
+            if (withdrew === 0 && !keepId) return;
         }, 8000);
     }
 
@@ -259,6 +283,12 @@ export class HistoricalEventManager {
         targetBattlefieldId?: string;
         type?: 'field_battle' | 'siege';
         cityUpdates?: Array<{ cityId: string; factionId?: string; troops?: number }>;
+        /**
+         * 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？」]
+         * **本事件归属的那位武将** —— 剧本期他的军团就是主角的连续军团，战场**复用**同一支
+         * （见 `reusableScriptArmy`），整场战争一路打下去，不再凭空重造、打完就散。
+         */
+        scriptGeneralId?: string;
     }) | null {
         const bf = BATTLEFIELDS.find((b) => b.id === bfId);
         if (!bf) return null;
@@ -269,7 +299,7 @@ export class HistoricalEventManager {
                 // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近）。
                 //    改之前这里不看年份，同一地点第二场战役必配错；且容差与编辑器不一致。见该函数长注释。
                 if (matchesBattlefield(bf, ev.year, fb.location)) {
-                    return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates };
+                    return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates, scriptGeneralId: ev.generalId };
                 }
             } else if (ev.type === 'siege') {
                 const sd = ev.siegeData;
@@ -296,6 +326,7 @@ export class HistoricalEventManager {
                         type: 'siege',
                         targetBattlefieldId: bf.id,
                         cityUpdates: ev.cityUpdates,
+                        scriptGeneralId: ev.generalId,
                         result: sd.result,
                         autoEnterRTS: sd.autoEnterRTS,
                     };
@@ -321,6 +352,7 @@ export class HistoricalEventManager {
                         defenderLegionName: sd.defenderLegionName,
                         type: 'siege',
                         cityUpdates: ev.cityUpdates,
+                        scriptGeneralId: ev.generalId,
                         result: sd.result,
                         autoEnterRTS: sd.autoEnterRTS,
                     };
@@ -393,12 +425,44 @@ export class HistoricalEventManager {
     }
 
     /**
+     * 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？历史上不是这样的吗？」]
+     *
+     * **剧本期该复用哪支现成军团。** 历史上亚历山大东征自始至终是**同一支马其顿军**：
+     * 格拉尼库斯 → 伊苏斯 → 推罗 → 高加米拉 → …… 一路打下去，绝不每场凭空重造一支、
+     * 打完就解散让主帅回城再重新起兵（那正是主人看到的「衔接不上 / 要脱离军团」）。
+     *
+     * 判据（只认这三条，别的一律新生成）：
+     *   ① 剧本期（`isScriptPeriod()`）—— **乱斗模式逐字不变**，照旧每场就地生成；
+     *   ② 这一方的主帅就是**本事件的归属武将**（`scriptGeneralId`）—— 敌军人换场就换，照旧现生成；
+     *   ③ 他此刻确实带着一支军团（玩家随军随的就是它）。
+     *
+     * ⚠️ **攻城战的守方不复用**：那一路的守将必须由 `SiegeManager` 挂到**城**上
+     * （见 `spawnBattlefieldSide` 里 `isSiegeDefender` 的长注释），复用一支带将的守方军团
+     * 会让 `assignSiegeGarrisonTier` 的 `hasLegionGeneral` 判成「城内已有自家军团带这个将」
+     * → 城拿不到守将 → 攻城战永远进不了 13。此路保稳，不为连续性砸掉准入。
+     */
+    private reusableScriptArmy(
+        fb: FieldBattleData & { type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
+        side: 'attacker' | 'defender',
+    ): Army | null {
+        const owner = fb.scriptGeneralId;
+        if (!owner) return null;
+        const isAtk = side === 'attacker';
+        const gen = (isAtk ? fb.attackerGeneralId : fb.defenderGeneralId) ?? null;
+        if (gen !== owner) return null;
+        if (fb.type === 'siege' && !isAtk) return null;
+        return this.legionManager.getArmies().find(
+            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === owner,
+        ) ?? null;
+    }
+
+    /**
      * 为战役备一方军团，就地摆在对阵位上。
      * 攻城战：攻方在城外陆侧（稍偏东），守方在城内驻守；
      * 野战：攻守双方东西对阵。
      */
     private spawnBattlefieldSide(
-        fb: FieldBattleData & { defenderCityId?: string; type?: 'field_battle' | 'siege' },
+        fb: FieldBattleData & { defenderCityId?: string; type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
         side: 'attacker' | 'defender'
     ): Army | null {
         const loc = fb.location;
@@ -417,6 +481,26 @@ export class HistoricalEventManager {
                 : { lat: loc.lat, lng: loc.lng };
         } else {
             stand = { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
+        }
+
+        // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？
+        //    历史上不是这样的吗？」] 剧本期：主角那一方**不新造军团，直接用现成的那一支** ——
+        //    摆到对阵位、兵力按这一场的史料值重置，其余状态（番号、精锐、跟拍）全部沿用。
+        //    这样玩家随的始终是同一支军团，战场打完它也不散，直接开赴下一场。
+        const reuse = isScriptPeriod() ? this.reusableScriptArmy(fb, side) : null;
+        if (reuse) {
+            reuse.setTroops(troops);
+            reuse.isElite = true;
+            reuse.name = this.sideBaseLegionName(fb, side);
+            reuse.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
+            reuse.scriptMarchExempt = true;
+            reuse.isScriptArmy = true;
+            reuse.stopMovement();
+            reuse.setTargetCity(null);
+            reuse.setPosition(stand.lat, stand.lng);
+            gameLog('expedition',
+                `⚔️ [战场]【${fb.title ?? '战役'}】主角军团续战：沿用 ${reuse.name}（${troops} 兵），不另起新军`);
+            return reuse;
         }
 
         // 🔴 [2026-09-16 修「战场事件攻城战进不去战术模式」]
@@ -576,7 +660,7 @@ export class HistoricalEventManager {
                 markBattlefieldFought(bfId);
                 gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);
                 onFinished?.({ attacker, defender });
-                this.withdrawBattlefieldLegions(bf.name, attacker, defender);
+                this.withdrawBattlefieldLegions(bf.name, fb, attacker, defender);
             });
         } else {
             // 野战推演
@@ -597,7 +681,7 @@ export class HistoricalEventManager {
                     markBattlefieldFought(bfId);
                     gameLog('expedition', `⚔️ [战场]【${bf.name}】战毕，遗址上图，此战场不再重开`);
                     onFinished?.({ attacker, defender });
-                    this.withdrawBattlefieldLegions(bf.name, attacker, defender);
+                    this.withdrawBattlefieldLegions(bf.name, fb, attacker, defender);
                 },
             );
         }
