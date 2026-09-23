@@ -14,6 +14,7 @@ import { getLegionTroopCap } from './LegionSpawnPolicy';
 import { getEuclideanDistance } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
 import { generalIdHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../combat/GeneralSkillCombat';
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 export class FollowResupplySystem {
     private cityManager: CityManager;
@@ -32,6 +33,10 @@ export class FollowResupplySystem {
     public update(army: Army): void {
         const cfg = GameConfig.FOLLOW_RESUPPLY;
         if (!cfg.ENABLED || !GameConfig.SYSTEM.SANDBOX_MODE) return;
+        // 🔴 [2026-09-23 主人「文本中的兵力和军团兵力不一致呀」] 剧本期兵力 = 史料兵力，路过己方城不补兵。
+        //    实测：马其顿军 18100 出佩拉，路过马其顿城被补 5000 → 23100，与史料、播报都对不上。
+        //    与剧本期关掉行军减兵（MarchAttritionSystem）同一口径；乱斗模式照旧补兵。
+        if (isScriptPeriod()) return;
         if (army.isDestroyed || army.getTroops() <= 0) return;
         if (army.getIsInCombat()) return;
         if (army.isRetreatingHome) return; // 撤退中的残兵不抽沿途城兵
