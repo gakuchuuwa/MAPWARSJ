@@ -29,6 +29,7 @@ import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
+import { EVENT_SITES, findEventSite } from '../data/eventSites';
 import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
@@ -366,7 +367,7 @@ export class PlayerQuestSystem {
     public getBattlefieldBattleTitle(bfId: string, fallbackName?: string): string {
         const fb = this.deps.battlefields?.findBattle(bfId);
         if (fb?.title) return fb.title;
-        const bf = BATTLEFIELDS.find((b) => b.id === bfId);
+        const bf = findEventSite(bfId);
         const name = fallbackName ?? bf?.name ?? '历史战役';
         if (name.endsWith('战役') || name.endsWith('围城战')) return name;
         return `${name}战役`;
@@ -408,7 +409,7 @@ export class PlayerQuestSystem {
             if (!pos) { this.deps.notify(far); return; }
             this.deps.notify(`${far}，正赶往【${battleTitle}】`);
             const ok = this.deps.hero.travelToPoint(pos, battleTitle, () => this.onBattlefieldClicked(bfId, battleTitle));
-            const bf = BATTLEFIELDS.find(b => b.id === bfId);
+            const bf = findEventSite(bfId);
             if (ok && bf) this.startJourneyBriefing(bf);
             return;
         }
@@ -626,7 +627,7 @@ export class PlayerQuestSystem {
         /** 武将邀约对白（编辑器里按史料写的；剧本模式用它并念出来） */
         inviteText: string | null;
     } | null {
-        const bf = BATTLEFIELDS.find((b) => b.id === hit.battlefieldId);
+        const bf = findEventSite(hit.battlefieldId);
         if (!bf) return null;
         const data = hit.event.siegeData ?? hit.event.fieldBattleData;
         const atk = data?.attackerGeneralId ?? '';
@@ -782,7 +783,7 @@ export class PlayerQuestSystem {
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
-        this.startJourneyBriefing(BATTLEFIELDS.find((b) => b.id === ev.battlefieldId) ?? null, ev.title);
+        this.startJourneyBriefing(findEventSite(ev.battlefieldId) ?? null, ev.title);
         if (!continuation) {
             this.deps.notify(`⚔ 随${g.generalName}赴【${ev.title}】，战场在${ev.battlefieldName}`);
             gameLog('expedition',
@@ -1150,7 +1151,7 @@ export class PlayerQuestSystem {
         const bfApi = this.deps.battlefields;
         if (!bfApi) return null;
 
-        const available = BATTLEFIELDS
+        const available = EVENT_SITES
             .filter((bf) => !isBattlefieldFought(bf.id))
             .sort((a, b) => a.scriptYear - b.scriptYear);
 

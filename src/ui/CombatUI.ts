@@ -38,6 +38,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
+import { EVENT_SITES } from '../data/eventSites';
 import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getWonderCityCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
@@ -268,7 +269,7 @@ export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number |
     // 5. 若仍无年份，通过 BATTLEFIELDS 查表匹配战场地名
     if (year === null) {
         const baseName = cleanTitle.replace(/(战役|之战|围攻战|围城战)$/, '');
-        const bfFound = BATTLEFIELDS.find((b) => b.name === cleanTitle || b.name === baseName);
+        const bfFound = EVENT_SITES.find((b) => b.name === cleanTitle || b.name === baseName);
         if (bfFound && typeof bfFound.scriptYear === 'number') {
             year = bfFound.scriptYear;
         }

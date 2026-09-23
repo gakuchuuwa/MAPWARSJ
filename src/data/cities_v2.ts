@@ -3449,11 +3449,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'big_city', troops: 10000, region: 'HEBREWS', buildingStyle: 'ORIE', note: '大卫王定都与所罗门圣殿所在地，三大一神教圣城' },
     { id: 'city_ake', name: '阿卡', factionId: 'yelusalengwg', lat: 32.93, lng: 35.08, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', mirror: true, note: '定级依据§6.2：阿卡非关隘/要塞/堡垒（十字军王国都城、黎凡特港市），按城市判级；13世纪盛期城居推测2–4万（1191围城守军5,000–10,000），>1万 → 小城' },
     // 🔴 [2026-09-23 主人令「先添加据点」] 推罗城（腓尼基母城、黎凡特海岛港市）。
-    //    id / 坐标取 **AGENTS.md §2.1.1.1 50 km 特许例外清单第①条**（2026-09-12 主人「新增推罗 + 保留阿卡（特批）」），
-    //    与战场 `bf_tuile`（33.2709,35.1962）一字不差；与阿卡相距 39.42 km，属那条特许。
-    //    理由同主人原批：「攻城战必须打一座真据点，战场承载不了」——亚历山大剧本第三段「推罗围城战」的攻城载体。
+    //    id / 坐标取 **AGENTS.md §2.1.1.1 50 km 特许例外清单第①条**（2026-09-12 主人「新增推罗 + 保留阿卡（特批）」）；
+    //    与阿卡相距 39.42 km，属那条特许。
+    //    理由同主人原批：「攻城战必须打一座真据点，战场承载不了」——亚历山大剧本第三段「推罗战役」的攻城载体。
+    //    🔴 [2026-09-24 主人定「攻城战必须有据点，攻城战不要搞什么战场」] 此后再无 `bf_tuile` 战场记录：
+    //    攻城战的目标就是这座城，地点/坐标以本据点为准，战后以据点易主（cityUpdates）体现战果。
     //    region 取 ORIE：迦南的番号「推罗水师」登记在 OrieExpeditionLegions（本区）；同区大马士革/加沙/耶路撒冷亦为 ORIE 系。
-    { id: 'city_tuile', name: '推罗', factionId: 'kanan', lat: 33.2709, lng: 35.1962, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '定级依据§6.2：推罗非关隘/要塞/堡垒（腓尼基母城、黎凡特海岛港市），按城市判级；前332年围城时正规守军8,000–10,000、城破后约3万平民被贩为奴（英文维基 Siege of Tyre），>1万 → 小城。坐标与战场 bf_tuile 一致；与阿卡相距39.42km，见 AGENTS §2.1.1.1 特许例外①（2026-09-12 主人特批）' },
+    { id: 'city_tuile', name: '推罗', factionId: 'kanan', lat: 33.2709, lng: 35.1962, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '定级依据§6.2：推罗非关隘/要塞/堡垒（腓尼基母城、黎凡特海岛港市），按城市判级；前332年围城时正规守军8,000–10,000、城破后约3万平民被贩为奴（英文维基 Siege of Tyre），>1万 → 小城。与阿卡相距39.42km，见 AGENTS §2.1.1.1 特许例外①（2026-09-12 主人特批）' },
 
     { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'pass', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST' },
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
