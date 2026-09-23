@@ -215,5 +215,73 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
         }
     }
 
+    // ⑪ 赶路播报里的兵力数必须与攻守兵力数据一致 ─────────────────────
+    //    血训（2026-09-23 主人「文本中的兵力和军团兵力不一致呀」）：数据按英文维基信息框改成
+    //    18100 / 37000 / 75000 后，播报还写着「三万余步兵与五千骑兵」「三万余将士」「七万余大军」。
+    //    规则早就写着「背景播报里的数字必须与数据同口径」，但编辑器没查，所以一改数据就漏。
+    //    判据：播报里每一方的总兵力，要么原样写出，要么由同一句里相邻几项相加得出（如「一万五千骑兵与一万二千步兵」= 27000）。
+    if (d.bfBriefing.trim()) {
+        const troops = briefingTroopNumbers(d.bfBriefing);
+        const fuzzy = troops.filter((t) => t.fuzzy);
+        if (fuzzy.length) {
+            warn(`赶路播报里有约数兵力：${fuzzy.map((t) => t.raw).join('、')} —— 全军总数要写确数，与兵力数据一致`);
+        }
+        for (const [label, total] of [['攻方', d.attackerTroops], ['守方', d.defenderTroops]] as const) {
+            if (!(total > 0) || briefingHasTotal(troops, total)) continue;
+            err(`赶路播报与${label}兵力数据不一致：数据是 ${total}，播报里找不到这个数，也没有相邻几项加起来等于它`
+                + `（播报里的兵力：${troops.map((t) => t.raw).join('、') || '无'}）。改播报，或先查维基确认数据`);
+        }
+    }
+
     return out;
+}
+
+// ── ⑪ 用：从播报里取出兵力数 ────────────────────────────────────────────
+interface TroopNumber { raw: string; value: number; fuzzy: boolean; sentence: number }
+const CN_DIGIT: Record<string, number> = { 零: 0, 〇: 0, 一: 1, 二: 2, 两: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+/** 万以下一段：五千一百 / 二十 / 十五 */
+function cnSection(s: string): number {
+    let total = 0, digit = 0;
+    for (const ch of s) {
+        if (ch in CN_DIGIT) { digit = CN_DIGIT[ch]; continue; }
+        const unit = ch === '十' ? 10 : ch === '百' ? 100 : ch === '千' ? 1000 : 0;
+        if (unit) { total += (digit || 1) * unit; digit = 0; }
+    }
+    return total + digit;
+}
+function cnNumber(s: string): number {
+    const i = s.indexOf('万');
+    return i < 0 ? cnSection(s) : cnSection(s.slice(0, i) || '一') * 10000 + cnSection(s.slice(i + 1));
+}
+/** 数字后面紧跟这些量词 = 不是人数（距离、年龄、车船、象、火把…） */
+const NOT_TROOP_UNIT = /^(?:辆|头|艘|盏|座|里|米|英里|尺|丈|年|岁|天|日|月|步(?!兵)|倍|面|匹|石|斤|层|道|处)/;
+/** 数字后 8 字内出现这些词 = 说的是兵 */
+const TROOP_WORD = /兵|骑|将士|大军|军|武士|健儿|士卒|勇士|战士|弓手|死士|人/;
+function briefingTroopNumbers(text: string): TroopNumber[] {
+    const out: TroopNumber[] = [];
+    const sentences = text.split(/[。；！？]/);
+    sentences.forEach((sen, si) => {
+        const re = /([数近约])?([零〇一二两三四五六七八九十百千万]+)(余|多)?(万)?/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(sen))) {
+            const numStr = m[2] + (m[4] ?? '');
+            const value = m[3] && m[4] ? cnNumber(m[2]) * 10000 : cnNumber(numStr);
+            if (value < 100) continue;
+            const after = sen.slice(m.index + m[0].length);
+            if (NOT_TROOP_UNIT.test(after) || !TROOP_WORD.test(after.slice(0, 8))) continue;
+            out.push({ raw: m[0], value, fuzzy: !!(m[1] || m[3]), sentence: si });
+        }
+    });
+    return out;
+}
+function briefingHasTotal(troops: TroopNumber[], total: number): boolean {
+    for (let i = 0; i < troops.length; i++) {
+        let sum = 0;
+        for (let j = i; j < troops.length && troops[j].sentence === troops[i].sentence; j++) {
+            if (troops[j].fuzzy) break;
+            sum += troops[j].value;
+            if (sum === total) return true;
+        }
+    }
+    return false;
 }

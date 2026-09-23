@@ -30,6 +30,7 @@ import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { findHistoricalEventsOfGeneral, findGeneralOfBattlefield } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
+import { getScriptEventStart } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
@@ -189,7 +190,17 @@ export class PlayerQuestSystem {
 
     /** 城中武将：据点锚定武将，且此刻没有活着的军团带着他 */
     public generalInCity(cityId: string): { generalId: string; generalName: string; portrait: string } | null {
-        const g = getCityAnchoredGeneral(cityId);
+        // 🔴 [2026-09-23] 剧本期：当前这一场的归属武将身在「军团出发据点」，不在他本城
+        const start = getScriptEventStart();
+        let g = getCityAnchoredGeneral(cityId);
+        if (start) {
+            if (start.cityId === cityId) {
+                const rec0 = getGeneralRecordByGeneralId(start.generalId);
+                g = rec0 ? { generalId: start.generalId, generalName: rec0.generalName, portrait: rec0.portrait } as typeof g : g;
+            } else if (g?.generalId === start.generalId) {
+                return null;
+            }
+        }
         if (!g) return null;
         const away = this.deps.legionManager.getArmies().some(
             (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId,
@@ -620,7 +631,12 @@ export class PlayerQuestSystem {
         army: Army | null,
     ): void {
         this.deps.closeDialogue();
-        const host = army ?? this.raiseLegion(city, city.factionId, g, city.id);
+        // 🔴 [2026-09-23] 剧本模式：军团属于这一仗里本将那一方的势力（出发据点可能是别家的城），
+        //    也不抽出发据点的城防（史实军团的兵力来自事件数据）
+        const scriptSideFaction = this.deps.hero.autoPlan === 'script' ? this.sideFactionOf(ev.battlefieldId, g.generalId) : null;
+        const cityTroopsBefore = city.troops;
+        const host = army ?? this.raiseLegion(city, scriptSideFaction ?? city.factionId, g, city.id);
+        if (!army && scriptSideFaction) city.troops = cityTroopsBefore;
         if (!host) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
@@ -1470,8 +1486,20 @@ export class PlayerQuestSystem {
         ) ?? null;
     }
 
+    /** 这一仗里某位主帅所属那一方的势力；不是本仗主帅 → null */
+    private sideFactionOf(bfId: string, generalId: string): string | null {
+        const fb = this.deps.battlefields?.findBattle(bfId);
+        if (!fb) return null;
+        if (fb.attackerGeneralId === generalId) return fb.attackerFactionId;
+        if (fb.defenderGeneralId === generalId) return fb.defenderFactionId;
+        return null;
+    }
+
     /** 这位武将的**本城**（据点锚定他的那座城）；找不到返回 null */
     private generalCityId(generalId: string): string | null {
+        // 🔴 [2026-09-23] 剧本期：当前这一场的归属武将在「军团出发据点」
+        const start = getScriptEventStart();
+        if (start && start.generalId === generalId) return start.cityId;
         for (const c of this.deps.cityManager.getCities()) {
             if (getCityAnchoredGeneral(c.id)?.generalId === generalId) return c.id;
         }

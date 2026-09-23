@@ -114,7 +114,7 @@ export class ScriptCityVisibility {
         cityAt: Map<string, string>,
         out: Set<string>,
     ): void {
-        const startId = ev.generalId ? cityOfGeneral.get(ev.generalId) : undefined;
+        const startId = ev.startCityId ?? (ev.generalId ? cityOfGeneral.get(ev.generalId) : undefined);
         const start = startId ? pos.get(startId) : undefined;
         if (!start) return;
         const data = ev.siegeData ?? ev.fieldBattleData;
@@ -149,6 +149,7 @@ export class ScriptCityVisibility {
         for (const gid of [ev.generalId, data?.attackerGeneralId, data?.defenderGeneralId]) {
             if (gid) add(cityOfGeneral.get(gid));
         }
+        add(ev.startCityId);
         add(data?.attackerSourceCityId);
         add(ev.fieldBattleData?.defenderSourceCityId);
         add(ev.siegeData?.defenderCityId);
@@ -171,6 +172,8 @@ export function findCurrentScriptEventCity(cities: City[]): City | null {
         const bfId = resolveEventBattlefieldId(ev, (id) => pos.get(id));
         if (!bfId || isBattlefieldFought(bfId)) continue;
         if (!ev.generalId) return null;
+        // 有「军团出发据点」就生在那里，否则在归属武将本城
+        if (ev.startCityId) return cities.find((c) => c.id === ev.startCityId) ?? null;
         return cities.find((c) => getCityAnchoredGeneral(c.id)?.generalId === ev.generalId) ?? null;
     }
     return null;
