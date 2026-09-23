@@ -11,6 +11,7 @@ import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
+import { OrientationSystem } from '../../core/OrientationSystem';
 import { SPRITE_BASE_H, STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y } from '../../config/LegionSpacing';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
@@ -1194,7 +1195,13 @@ export class LegionPhalanxDrawer {
          *  默认不传 → 其他 zoom 与改动前逐像素一致。 */
         squadDirections: readonly number[] | null = null,
         /** 五阵型（triangle / echelon / fish_scale / crane_wing / square）；null = 靠 slots.length 兜底（6 人=三角，否则方阵）。 */
-        formationMode: FormationMode | null = null
+        formationMode: FormationMode | null = null,
+        /**
+         * 🔴 [2026-09-23 主人定「一条线的行军模式」「乱入者打头阵，然后是将军」] 剧本模式行军纵队：
+         * 军团走过的轨迹（经纬度，头在前：[0] = 当前位置，往后越来越旧）。非 null = 纵队行军中。
+         * null 且从没开过纵队 → 与改动前逐像素一致（乱斗不受影响）。
+         */
+        columnTrail: readonly { lat: number; lng: number }[] | null = null,
     ): void {
         if (!this.isLoaded) return;
 
@@ -1304,7 +1311,7 @@ export class LegionPhalanxDrawer {
         // 否则编队推进后阵亡，deadLat/deadLng 还是「原地」位置，尸体倒在没推进的原地（主人实锤）。
         // 槽位 idx → 相对军团中心的屏幕偏移（含编队推进偏移的旋转）。
         // 提成具名函数是因为**两处**要用同一口径：侵蚀阵亡（StateManager 内）与整军覆灭（下面那段）。
-        const slotOffsetOf = (idx: number) => {
+        const formationOffsetOf = (idx: number) => {
             const baseOff = this.getFormationOffset(idx, spacingX, spacingY, direction, legionType, rows, formationKind);
             const squadOff = squadOffsets && squadOffsets[idx];
             if (!squadOff) return baseOff;
@@ -1316,6 +1323,12 @@ export class LegionPhalanxDrawer {
                 y: baseOff.y + squadOff.x * ss + squadOff.y * sc,
             };
         };
+        // 🔴 [2026-09-23] 剧本模式行军纵队 / 展开成阵的过渡：每格位的当前偏移（null = 不在纵队也不在过渡 → 走原阵型）
+        const column = (!denseFront && projectFn)
+            ? this.columnOffsets(unitId, count, center, spacingY, columnTrail, projectFn, formationOffsetOf)
+            : null;
+        if (column?.dirs) squadDirections = column.dirs;
+        const slotOffsetOf = (idx: number) => column?.offsets[idx] ?? formationOffsetOf(idx);
 
         const currentState = LegionPhalanxStateManager.update(
             unitId, troops, rows, cols, count, direction, tick,
@@ -1475,6 +1488,8 @@ export class LegionPhalanxDrawer {
             // [2026-08-09 编队独立移动] 每编队独立推进偏移（像素，旋转前叠加随 direction 转）：
             // getFormationOffset 有缓存（key 不含偏移），返回的是共享对象 → 只读，另建新对象叠加。
             let drawOffset = baseOffset;
+            // 🔴 [2026-09-23] 剧本模式行军纵队 / 展开过渡：直接用纵队偏移（已含过渡插值）
+            const colOff = column?.offsets[i];
             const squadOff = squadOffsets && squadOffsets[i];
             if (squadOff) {
                 const sa = (direction + 1) * Math.PI / 4;
@@ -1485,6 +1500,7 @@ export class LegionPhalanxDrawer {
                     y: baseOffset.y + squadOff.x * ss + squadOff.y * sc,
                 };
             }
+            if (colOff) drawOffset = colOff;
             drawX = center.x + drawOffset.x;
             drawY = center.y + drawOffset.y;
 
@@ -2584,6 +2600,100 @@ export class LegionPhalanxDrawer {
 
     // [NEW] Custom Formation Offset Calculation
     /** 攻城额外士兵（弓步兵）已删除（2026-08-16 主人定：攻城只留 5 件器械） */
+
+    /** 纵队 / 过渡中各军团每格位的当前屏幕偏移（相对军团中心） */
+    private static columnCur: Map<string, { x: number; y: number }[]> = new Map();
+
+    /**
+     * 🔴 [2026-09-23 主人「旗帜是不是应该和人在一起」] 纵队 / 展开过渡中主将队（第 10 格）的屏幕偏移：
+     * 军旗跟着将军走。不在纵队（或没有主将队）→ null，旗照旧画在军团中心。
+     */
+    public static getColumnCommanderOffset(unitId: string): { x: number; y: number } | null {
+        const cur = this.columnCur.get(unitId);
+        return cur && cur.length === 10 ? cur[9] : null;
+    }
+
+    /**
+     * 🔴 [2026-09-23 主人定「一条线的行军模式」「乱入者打头阵，然后是将军」] 剧本模式行军纵队。
+     *
+     * 头 = 军团当前位置（乱入者站在这里，他打头阵）；其后沿军团实际走过的轨迹依次排：
+     *   将军（主将队，第 10 格）→ 前排 → 中排 → 后排（编制格位 0..8 原顺序）。
+     * 每个兵踩着轨迹走，转弯跟着路转，不会切过山海；各自朝向自己所在那一段路。
+     * 纵队与阵型切换时每格位走位过去（逐帧逼近目标），绝不瞬移（主人铁律「军团渲染绝不位移」）。
+     * 从没开过纵队的军团返回 null → 与改动前逐像素一致。
+     */
+    private static columnOffsets(
+        unitId: string,
+        count: number,
+        center: { x: number; y: number },
+        spacingY: number,
+        trail: readonly { lat: number; lng: number }[] | null,
+        projectFn: (lat: number, lng: number) => { x: number; y: number },
+        formationOffsetOf: (idx: number) => { x: number; y: number },
+    ): { offsets: { x: number; y: number }[]; dirs: number[] | null } | null {
+        const cur = this.columnCur.get(unitId);
+        if (!trail && !cur) return null;
+        const gap = spacingY * 0.62;              // 纵队里前后两个兵的间距
+        const targets: { x: number; y: number }[] = [];
+        const dirs: number[] = [];
+        if (trail) {
+            // 轨迹投影成屏幕折线（相对中心），头在前
+            const pts = trail.map((p) => { const q = projectFn(p.lat, p.lng); return { x: q.x - center.x, y: q.y - center.y }; });
+            if (!pts.length) pts.push({ x: 0, y: 0 });
+            pts[0] = { x: 0, y: 0 };
+            const cum = [0];
+            for (let k = 1; k < pts.length; k++) cum.push(cum[k - 1] + Math.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y));
+            // 取轨迹上距头 d 像素的点与该处的前进方向；轨迹不够长就沿最后一段往后直线延伸
+            const at = (d: number): { p: { x: number; y: number }; fx: number; fy: number } => {
+                for (let k = 1; k < pts.length; k++) {
+                    if (cum[k] >= d) {
+                        const segLen = Math.max(1e-6, cum[k] - cum[k - 1]);
+                        const t = (d - cum[k - 1]) / segLen;
+                        const a = pts[k - 1], b = pts[k];
+                        return { p: { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }, fx: a.x - b.x, fy: a.y - b.y };
+                    }
+                }
+                const n = pts.length;
+                const a = pts[Math.max(0, n - 2)], b = pts[n - 1];
+                let fx = a.x - b.x, fy = a.y - b.y;
+                const len = Math.hypot(fx, fy);
+                if (len < 1e-6) { fx = 1; fy = 0; } else { fx /= len; fy /= len; }
+                const extra = d - cum[n - 1];
+                return { p: { x: b.x - fx * extra, y: b.y - fy * extra }, fx, fy };
+            };
+            for (let i = 0; i < count; i++) {
+                // 纵队序号：将军（第 10 格）紧跟乱入者，其余按编制前→后
+                const rank = (count === 10 && i === 9) ? 1 : i + (count === 10 ? 2 : 1);
+                // 🔴 [2026-09-23 主人「玩家和将军之间有空隙」] 将军紧贴乱入者身后（0.75 间距），其后照常一格一个
+                const { p, fx, fy } = at((rank - 0.25) * gap);
+                targets.push(p);
+                // 屏幕 y 向下 → 数学角取 -fy
+                dirs.push(OrientationSystem.get8DirectionFromAngle(Math.atan2(-fy, fx) * 180 / Math.PI));
+            }
+        } else {
+            for (let i = 0; i < count; i++) targets.push(formationOffsetOf(i));
+        }
+        // 刚开始纵队：从当前阵型位置出发走过去；已有状态就从上一帧的位置继续
+        const now = (cur && cur.length === count)
+            ? cur
+            : targets.map((_, i) => (cur?.[i] ? { ...cur[i] } : { ...formationOffsetOf(i) }));
+        let settled = true;
+        const step = Math.max(0.5, gap * 0.08);   // 一帧最多走 gap 的 8%：走位过去，不跳
+        for (let i = 0; i < count; i++) {
+            const t = targets[i];
+            const c = now[i];
+            const dx = t.x - c.x, dy = t.y - c.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist <= step) { c.x = t.x; c.y = t.y; } else { c.x += dx / dist * step; c.y += dy / dist * step; settled = false; }
+        }
+        if (!trail && settled) {
+            // 已完全展开回阵型：清掉状态，回到原阵型画法
+            this.columnCur.delete(unitId);
+            return null;
+        }
+        this.columnCur.set(unitId, now);
+        return { offsets: now, dirs: trail ? dirs : null };
+    }
 
     private static getFormationOffset(
         index: number,
