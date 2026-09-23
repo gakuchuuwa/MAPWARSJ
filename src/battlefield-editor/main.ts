@@ -90,6 +90,8 @@ interface BattleDraft {
     commanderUnit: string;
     /** 🔴 [2026-09-23] 对手一方主帅的主将队兵种：必须是英雄 */
     foeCommanderUnit: string;
+    /** 🔴 [2026-09-23] 军团出发据点：这一场归属武将身在哪座城（空 = 他本城） */
+    startCityId: string;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -232,6 +234,7 @@ function loadDrafts(): BattleDraft[] {
             absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
             commanderUnit: (ev as AnyEvent & { commanderUnit?: string }).commanderUnit ?? '',
             foeCommanderUnit: (ev as AnyEvent & { foeCommanderUnit?: string }).foeCommanderUnit ?? '',
+            startCityId: (ev as AnyEvent & { startCityId?: string }).startCityId ?? '',
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -267,7 +270,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', foeCommanderUnit: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', foeCommanderUnit: '', startCityId: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -399,6 +402,30 @@ function validate(d: BattleDraft): Issue[] {
         if (diff.length) {
             out.push({ level: 'warn', msg: `同一武将在【${diff.map((x) => x.title).join('、')}】里主将队用的是别的兵模：同一个人前后应当是同一个样子` });
         }
+    }
+    // 🔴 [2026-09-23] 跨事件一致性：同一武将的第二场起，必须写他此时身在哪座城（军团出发据点），
+    //    且离他上一场的战场不能太远（他打完上一仗在那一带，不会凭空回到老家再出发）。
+    if (d.generalId) {
+        const earlier = drafts
+            .filter((x) => x.generalId === d.generalId && x.title !== d.title
+                && (x.year < d.year || (x.year === d.year && x.season < d.season)))
+            .sort((a, b) => (b.year - a.year) || (b.season - a.season))[0];
+        if (earlier) {
+            if (!d.startCityId) {
+                out.push({ level: 'error', msg: `军团出发据点没写：【${GENERAL_BY_ID.get(d.generalId)?.generalName ?? d.generalId}】上一场是【${earlier.title}】，这一场他身在哪座城？按史料选（不能默认回他本城）` });
+            } else {
+                const c = CITY_BY_ID.get(d.startCityId);
+                if (c) {
+                    const km = Math.hypot(c.lat - earlier.lat, (c.lng - earlier.lng) * Math.cos(c.lat * Math.PI / 180)) * 111;
+                    if (km > 800) {
+                        out.push({ level: 'warn', msg: `军团出发据点【${c.name}】离上一场【${earlier.title}】的战场约 ${Math.round(km)} 公里：中间这段行程请在史料依据「行军路线」里写明` });
+                    }
+                }
+            }
+        }
+    }
+    if (d.startCityId && !CITY_BY_ID.has(d.startCityId)) {
+        out.push({ level: 'error', msg: '军团出发据点不存在：' + d.startCityId });
     }
     // 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单每项必填，绝不留空
     for (const it of EVENT_SOURCE_ITEMS) {
@@ -897,6 +924,11 @@ function render(): void {
             </fieldset>
 
             <fieldset><legend>七、行军航点 · 军团逐段推进，最后一段走战场坐标</legend>
+                <div class="row">
+                    <div class="fld" style="max-width:360px;"><label>军团出发据点 · 这一场归属武将此时身在哪座城（玩家去那里找他，大军从那里出发）</label>
+                        <select id="f-startCity">${cityOptions(working.startCityId)}</select>
+                        <span class="hint">留空 = 武将本城；同一武将的第二场起必填（他不会每场都回老家）</span></div>
+                </div>
                 <div class="chips" id="waypoints">
                     ${working.marchWaypoints.map((w, i) => `<span class="chip">${escapeHtml(CITY_BY_ID.get(w)?.name ?? w)}<button data-rm-wp="${i}">×</button></span>`).join('')}
                 </div>
@@ -1037,6 +1069,7 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
     on<HTMLSelectElement>('f-commander', 'change', (el) => { working.commanderUnit = el.value; render(); });
     on<HTMLSelectElement>('f-foeCommander', 'change', (el) => { working.foeCommanderUnit = el.value; render(); });
+    on<HTMLSelectElement>('f-startCity', 'change', (el) => { working.startCityId = el.value; render(); });
     drawThumbs();
     // 那一年还不存在的途经据点：切换
     document.querySelectorAll<HTMLButtonElement>('[data-absent]').forEach((el) => {

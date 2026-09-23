@@ -71,6 +71,20 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             + '信息框骑兵10000至20000、步兵4000至20000，取中值骑兵15000、步兵12000，比例约4比3，取雁行阵 前骑兵4 / 中步兵3 / 后远程2。'
             + '远程此役无明载，按阿契美尼德军以弓手著称的通行说法补一排。',
     },
+    {
+        // 史名：阿契美尼德帝国的职业常备军统称 spāda；后世通称「阿契美尼德军」（与「马其顿军」同一叫法）
+        name: '阿契美尼德军',
+        formationMode: 'crane_wing',   // 鹤翼 2-4-3：前 2 / 中 4 / 后 3
+        slots: [
+            { type: 'imperial_cavalry', count: 2 },   // 前排骑兵：伊苏斯波斯骑兵率先渡河冲击（素材样貌：羽饰头盔、披甲战马的波斯贵族骑兵）
+            { type: 'elite_immortal', count: 4 },     // 中排步兵：长生军、希腊雇佣兵、亚美尼亚步兵，人数最多（素材样貌：持矛配金边大盾的波斯步兵）
+            { type: 'immortal_ranged', count: 3 },    // 后排远程：大量轻步兵、弓手（素材样貌：波斯弓手）
+        ],
+        shipId: 'BIREME',
+        source: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda。Battle of Issus 信息框：骑兵约1.1万加亚美尼亚骑兵7千，'
+            + '长生军1万、希腊雇佣兵1万、亚美尼亚步兵4万，轻步兵3万至8万；比例约 骑兵1.8万 : 步兵6万 : 远程5.5万，取鹤翼阵 前骑2 / 中步4 / 后远3。'
+            + '战法：波斯骑兵率先渡河冲击帕曼纽一翼，步兵沿河列阵，故前骑兵、中步兵、后远程。',
+    },
 ];
 
 export const SCRIPT_LEGION_MAP: ReadonlyMap<string, ScriptLegionDef> =

@@ -43,3 +43,17 @@ export function setScriptCommanderUnitResolver(fn: (generalId: string) => string
 export function getScriptCommanderUnit(generalId: string): string | null {
     return isScriptPeriod() ? commanderUnitResolver(generalId) : null;
 }
+
+/**
+ * 🔴 [2026-09-23] 剧本期：当前这一场的「归属武将 + 军团出发据点」（事件 startCityId）。
+ * 玩家去这座城找他、大军从这里出发；这期间他不算在本城。乱斗恒 null。
+ */
+let eventStartResolver: () => { generalId: string; cityId: string } | null = () => null;
+
+export function setScriptEventStartResolver(fn: () => { generalId: string; cityId: string } | null): void {
+    eventStartResolver = fn;
+}
+
+export function getScriptEventStart(): { generalId: string; cityId: string } | null {
+    return isScriptPeriod() ? eventStartResolver() : null;
+}

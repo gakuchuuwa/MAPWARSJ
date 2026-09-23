@@ -49,6 +49,8 @@ export interface RouteDraft {
     bfEventCityId: string;
     /** 途经但那一年还不存在的据点：剧本期不显示 */
     absentCities: string[];
+    /** 军团出发据点（空 = 归属武将本城） */
+    startCityId: string;
 }
 
 export interface RouteLeg {
@@ -120,11 +122,11 @@ export function checkRoute(d: RouteDraft): RouteReport {
     const add = (id?: string) => { if (id && CITY_BY_ID.has(id)) shown.add(id); };
 
     // 运行时：军团从**归属武将所在的城**起兵出发（不是「攻方出兵据点」那一栏）
-    const startId = d.generalId ? cityOfGeneral(d.generalId) : undefined;
+    const startId = d.startCityId || (d.generalId ? cityOfGeneral(d.generalId) : undefined);
     const start = startId ? CITY_BY_ID.get(startId) : undefined;
     const ownSource = d.generalId === d.attackerGeneralId ? d.attackerSourceCityId
         : d.generalId === d.defenderGeneralId ? d.defenderSourceCityId : '';
-    if (start && ownSource && ownSource !== start.id) {
+    if (start && ownSource && ownSource !== start.id && !d.startCityId) {
         warn(`军团实际从归属武将所在的【${start.name}】出发，出兵据点一栏写的是【${CITY_BY_ID.get(ownSource)?.name ?? ownSource}】，两处不一致，请确认`);
     }
 

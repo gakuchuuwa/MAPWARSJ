@@ -64,6 +64,8 @@ export interface BattlefieldEventDraft {
     commanderUnit?: string;
     /** 对手一方主帅的主将队兵种（必须是英雄） */
     foeCommanderUnit?: string;
+    /** 军团出发据点（空 = 归属武将本城） */
+    startCityId?: string;
     type: 'field_battle' | 'siege';
     title: string;
     eventTitle: string;
@@ -339,6 +341,7 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     if (d.absentCities?.length) L.push(`        absentCities: [${d.absentCities.map((c) => tsStr(c)).join(', ')}],`);
     if (d.commanderUnit) L.push(`        commanderUnit: ${tsStr(d.commanderUnit)},`);
     if (d.foeCommanderUnit) L.push(`        foeCommanderUnit: ${tsStr(d.foeCommanderUnit)},`);
+    if (d.startCityId) L.push(`        startCityId: ${tsStr(d.startCityId)},`);
     L.push(`        type: ${tsStr(d.type)},`);
     L.push(`        title: ${tsStr(d.eventTitle || d.title)},`);
     L.push(`        description: ${tsStr(d.description)},`);
@@ -547,6 +550,7 @@ export function saveBattlefieldEvent(
             if (absentLit) topFields.push(['absentCities', absentLit]);
             if (d.commanderUnit) topFields.push(['commanderUnit', tsStr(d.commanderUnit)]);
             if (d.foeCommanderUnit) topFields.push(['foeCommanderUnit', tsStr(d.foeCommanderUnit)]);
+            if (d.startCityId) topFields.push(['startCityId', tsStr(d.startCityId)]);
             if (d.cityUpdates.length) {
                 const ups = d.cityUpdates
                     .map((u) => `{ cityId: ${tsStr(u.cityId)}, factionId: ${tsStr(u.factionId)} }`)
@@ -568,6 +572,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
+            }
+            if (!d.startCityId) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'startCityId');
             }
             if (!d.foeCommanderUnit) {
                 const objOpen = p1Text.indexOf('{', hit.start);
