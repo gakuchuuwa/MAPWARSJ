@@ -281,7 +281,7 @@ export interface HistoricalEvent {
     generalId?: string;
     /**
      * 🔴 [2026-09-23 主人定] **武将邀约对白**：剧本模式下玩家找到归属武将时，他请玩家同赴此役说的话。
-     * 带语音念出；赶路背景播报等它念完才开始，两段不重叠。留空 = 用通用的一句邀约。
+     * 只显示文字、不念（主人 2026-09-23 定）。称呼要合乎人物的时代与文化。留空 = 用通用的一句邀约。
      */
     inviteText?: string;
     /**
@@ -289,6 +289,11 @@ export interface HistoricalEvent {
      * 键 = `src/data/eventSources.ts` 的 EVENT_SOURCE_ITEMS；编辑器里每项必填。
      */
     sources?: Record<string, { level: 'fact' | 'popular' | 'inferred'; text: string }>;
+    /**
+     * 🔴 [2026-09-23 主人定「符合历史」] 途经但**那一年还不存在**的据点（id）：剧本期这一场不显示它们，行军路线照走。
+     * 例：前334年途经的「鲁西翁」是中世纪地名、「格拉尼库斯」是按战役起名的城寨，当年并无此城。
+     */
+    absentCities?: string[];
 }
 
 

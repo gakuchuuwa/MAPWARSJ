@@ -333,6 +333,8 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     }
     // 优先实时军团名（精锐改名/远征改名），勿死读 adapter 创建时快照
     const army = unit.getEntity?.() as Army | undefined;
+    // 🔴 [2026-09-23] 战场事件史实军团：军团名只写「马其顿军」，番号挂在 eliteOverride 上
+    if (army?.eliteOverride?.name) return army.eliteOverride.name;
     const live = (army?.name ?? '').trim();
     const elite = army ? getLegionEliteLegionName(army) : null;
     const raw = (live || elite || unit.name || '').trim();

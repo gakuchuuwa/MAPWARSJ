@@ -460,7 +460,9 @@ export class HistoricalEventManager {
         //    （`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`）；
         //    档位（战力第三环）由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 取不到时，
         //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
-        army.name = this.sideLegionName(fb, side);
+        // 🔴 [2026-09-23 主人定「军团只显示马其顿军就行了」] 军团名只写军团名；番号按势力挂到 eliteOverride
+        army.name = legionName;
+        army.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
         const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
@@ -487,14 +489,6 @@ export class HistoricalEventManager {
             || getCultureLegionName(city ? getCityRegion(city) : null);
     }
 
-    /** 战役一方在地图上显示的军团名：军团名 + 按势力挂的番号（与战场上生成的史实军团同名） */
-    private sideLegionName(fb: FieldBattleData, side: 'attacker' | 'defender'): string {
-        const base = this.sideBaseLegionName(fb, side);
-        const factionId = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
-        const ownElite = getExpeditionEliteConfig(factionId);
-        return ownElite ? `${base}·${ownElite.name}` : base;
-    }
-
     /**
      * 🔴 [2026-09-23 主人定「路上就显示史实兵力和军团名」] 主角赶路军团用：
      * 某战场这一仗里、某位武将那一方的**史实兵力与军团名**（与战场上生成的史实军团同源）。
@@ -508,7 +502,7 @@ export class HistoricalEventManager {
             : fb.defenderGeneralId === generalId ? 'defender' : null;
         if (!side) return null;
         const troops = (side === 'attacker' ? fb.attackerTroops : fb.defenderTroops) ?? 10000;
-        return { troops, legionName: this.sideLegionName(fb, side) };
+        return { troops, legionName: this.sideBaseLegionName(fb, side) };
     }
 
     /**
