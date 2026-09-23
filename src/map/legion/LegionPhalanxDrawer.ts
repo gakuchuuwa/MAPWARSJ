@@ -12,6 +12,8 @@ import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type Naval
 import { gameLog } from '../../utils/GameLogger';
 import { popCostOf } from '../../data/UnitPopCost';
 import { OrientationSystem } from '../../core/OrientationSystem';
+import { isScriptPeriod } from '../../events/scriptPeriod';
+import { layoutColumn } from './columnMarchLayout';
 import { SPRITE_BASE_H, STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y } from '../../config/LegionSpacing';
 
 /** 启动时不预载（S10DB 860+ 素材尚未部署），首次水战再按需加载 */
@@ -2398,7 +2400,7 @@ export class LegionPhalanxDrawer {
             let node: { x: number; y: number };
             let localAng: number;
             // 贴图朝向角：舰队航向（旗舰与所有僚舰一致）。横向站位仍走下面的 localAng（当地法线）。
-            const faceAng = flagAng;
+            let faceAng = flagAng;
             if (backDist <= 0.0001) {
                 // 旗舰（及横列阵同排船）：位置就是逻辑点，朝向永远用精确航向，不受航迹采样抖动影响
                 node = { x: center.x, y: center.y };
@@ -2408,6 +2410,18 @@ export class LegionPhalanxDrawer {
                 const a0 = this.sampleNavalPath(path, backDist - smoothSpan, flagAng);
                 const a1 = this.sampleNavalPath(path, backDist + smoothSpan, flagAng);
                 localAng = Math.atan2(a0.y - a1.y, a0.x - a1.x);
+                // 🔴 [2026-09-23 主人「船队的行军模式怎么和陆军不一样呢？一个掉头都掉头」]
+                //    剧本模式行军与陆军纵队同一个规矩：每条船朝向**自己脚下那段航迹**，
+                //    行驶到拐点才转；各船单独按回转率转过去（键 = 军团#船序），不会一帧拧头。
+                //    旗舰仍用上面的舰队平滑航向；乱斗模式照旧全队同向（09-11 的做法）。
+                if (activeTrail && state === 'MOVE' && isScriptPeriod()) {
+                    const ownDeg = LegionPhalanxDrawer.stepNavalCourse(
+                        `${unitId}#${i}`, (localAng + Math.PI / 2) * 180 / Math.PI, tick);
+                    faceAng = ownDeg * Math.PI / 180 - Math.PI / 2;
+                } else {
+                    // 不在行军：清掉这条船记住的航向，下次起航从舰队航向重新开始
+                    LegionPhalanxDrawer.navalCourseByUnit.delete(`${unitId}#${i}`);
+                }
             }
             // ② 横向偏移沿当地法线（与旧刚体式 (cos angle, sin angle) 同向：angle = localAng + π/2）
             const origX = pos.c * shipSpread * cMult + lateralJitter;
@@ -2603,6 +2617,8 @@ export class LegionPhalanxDrawer {
 
     /** 纵队 / 过渡中各军团每格位的当前屏幕偏移（相对军团中心） */
     private static columnCur: Map<string, { x: number; y: number }[]> = new Map();
+    /** 纵队中各格位上一帧的朝向（迟滞换档用） */
+    private static columnDirs: Map<string, number[]> = new Map();
 
     /**
      * 🔴 [2026-09-23 主人「旗帜是不是应该和人在一起」] 纵队 / 展开过渡中主将队（第 10 格）的屏幕偏移：
@@ -2641,35 +2657,22 @@ export class LegionPhalanxDrawer {
             const pts = trail.map((p) => { const q = projectFn(p.lat, p.lng); return { x: q.x - center.x, y: q.y - center.y }; });
             if (!pts.length) pts.push({ x: 0, y: 0 });
             pts[0] = { x: 0, y: 0 };
-            const cum = [0];
-            for (let k = 1; k < pts.length; k++) cum.push(cum[k - 1] + Math.hypot(pts[k].x - pts[k - 1].x, pts[k].y - pts[k - 1].y));
-            // 取轨迹上距头 d 像素的点与该处的前进方向；轨迹不够长就沿最后一段往后直线延伸
-            const at = (d: number): { p: { x: number; y: number }; fx: number; fy: number } => {
-                for (let k = 1; k < pts.length; k++) {
-                    if (cum[k] >= d) {
-                        const segLen = Math.max(1e-6, cum[k] - cum[k - 1]);
-                        const t = (d - cum[k - 1]) / segLen;
-                        const a = pts[k - 1], b = pts[k];
-                        return { p: { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }, fx: a.x - b.x, fy: a.y - b.y };
-                    }
-                }
-                const n = pts.length;
-                const a = pts[Math.max(0, n - 2)], b = pts[n - 1];
-                let fx = a.x - b.x, fy = a.y - b.y;
-                const len = Math.hypot(fx, fy);
-                if (len < 1e-6) { fx = 1; fy = 0; } else { fx /= len; fy /= len; }
-                const extra = d - cum[n - 1];
-                return { p: { x: b.x - fx * extra, y: b.y - fy * extra }, fx, fy };
-            };
+            const dists: number[] = [];
             for (let i = 0; i < count; i++) {
                 // 纵队序号：将军（第 10 格）紧跟乱入者，其余按编制前→后
                 const rank = (count === 10 && i === 9) ? 1 : i + (count === 10 ? 2 : 1);
                 // 🔴 [2026-09-23 主人「玩家和将军之间有空隙」] 将军紧贴乱入者身后（0.75 间距），其后照常一格一个
-                const { p, fx, fy } = at((rank - 0.25) * gap);
-                targets.push(p);
-                // 屏幕 y 向下 → 数学角取 -fy
-                dirs.push(OrientationSystem.get8DirectionFromAngle(Math.atan2(-fy, fx) * 180 / Math.PI));
+                dists.push((rank - 0.25) * gap);
             }
+            // 🔴 [2026-09-23 主人「军队行军的时候频繁改变朝向，导致看着人物在闪」]
+            //    改前每人朝向取脚下那一小段轨迹（1 公里一个脚印，ZOOM 9 下只有三四个像素），
+            //    路网锯齿直接变成朝向在相邻两档间来回跳。现取前后各一个兵距的弦 + 迟滞换档。
+            //    实测（scratch/_column_dir_flicker.mts）：±1.5px 锯齿转 90°，每人换档 40~46 次 → 2~3 次。
+            const prevDirs = this.columnDirs.get(unitId);
+            const laid = layoutColumn(pts, dists, gap, prevDirs && prevDirs.length === count ? prevDirs : null);
+            targets.push(...laid.targets);
+            dirs.push(...laid.dirs);
+            this.columnDirs.set(unitId, laid.dirs);
         } else {
             for (let i = 0; i < count; i++) targets.push(formationOffsetOf(i));
         }
@@ -2689,6 +2692,7 @@ export class LegionPhalanxDrawer {
         if (!trail && settled) {
             // 已完全展开回阵型：清掉状态，回到原阵型画法
             this.columnCur.delete(unitId);
+            this.columnDirs.delete(unitId);
             return null;
         }
         this.columnCur.set(unitId, now);
