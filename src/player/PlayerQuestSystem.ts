@@ -158,7 +158,7 @@ export interface PlayerQuestDeps {
 const TICK_MS = 400;
 /** 战场寻路失败后的重试冷却，避免每 tick 重试刷屏并打断行程 */
 /** 剧本模式行军纵队：离战场多少公里展开成阵（2026-09-23） */
-const COLUMN_DEPLOY_KM = 30;
+const COLUMN_DEPLOY_KM = 60;   // 2026-09-23 主人「请提前一点恢复阵型，为了进入战斗」：30 → 60
 const BF_RETRY_COOLDOWN_MS = 60_000;
 
 export class PlayerQuestSystem {
@@ -846,7 +846,7 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
-        // 🔴 [2026-09-23] 距战场 30 公里内：纵队展开成阵（逐帧走位过去，见 LegionPhalanxDrawer.columnOffsets）
+        // 🔴 [2026-09-23] 距战场 60 公里内：纵队展开成阵（逐帧走位过去，见 LegionPhalanxDrawer.columnOffsets）
         if (host.columnMarch && getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= COLUMN_DEPLOY_KM) {
             host.columnMarch = false;
         }

@@ -88,6 +88,8 @@ interface BattleDraft {
     absentCities: string[];
     /** 🔴 [2026-09-23] 归属武将军团的主将队（第 10 队）兵种：按素材样貌选，必选 */
     commanderUnit: string;
+    /** 🔴 [2026-09-23] 对手一方主帅的主将队兵种：必须是英雄 */
+    foeCommanderUnit: string;
     type: 'field_battle' | 'siege';
     /** 战役名称：历史上最知名的那个，如「高加米拉战役」「推罗战役」 */
     title: string;
@@ -229,6 +231,7 @@ function loadDrafts(): BattleDraft[] {
                 .map(([k, v]) => [k, { ...v }])),
             absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
             commanderUnit: (ev as AnyEvent & { commanderUnit?: string }).commanderUnit ?? '',
+            foeCommanderUnit: (ev as AnyEvent & { foeCommanderUnit?: string }).foeCommanderUnit ?? '',
             type: isSiege ? 'siege' : 'field_battle',
             title: bd.title ?? '',
             eventTitle: ev.title ?? '',
@@ -264,7 +267,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', foeCommanderUnit: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -381,6 +384,15 @@ function validate(d: BattleDraft): Issue[] {
         out.push({ level: 'error', msg: '主将队兵种没选：剧本模式每个主角武将的军团都是 10 队，第 10 队按素材样貌选一个符合这位武将的兵模' });
     } else if (d.commanderUnit && !WAR_TYPES[d.commanderUnit]) {
         out.push({ level: 'error', msg: `主将队兵种不存在：${d.commanderUnit}` });
+    }
+    // 🔴 [2026-09-23 主人定「第十队必须是英雄人物构成的」] 双方主将队都必须是英雄兵模
+    if (d.commanderUnit && !d.commanderUnit.startsWith('hero_')) {
+        out.push({ level: 'error', msg: '主将队兵种必须是英雄兵模：第十队由英雄人物构成' });
+    }
+    if (!d.foeCommanderUnit) {
+        out.push({ level: 'error', msg: '对手主将队兵种没选：对面主帅的军团也是 10 队，第十队必须是英雄，按样貌或文化年代相近的人物选' });
+    } else if (!d.foeCommanderUnit.startsWith('hero_') || !WAR_TYPES[d.foeCommanderUnit]) {
+        out.push({ level: 'error', msg: `对手主将队兵种必须是存在的英雄兵模：${d.foeCommanderUnit}` });
     }
     if (d.generalId && d.commanderUnit) {
         const diff = drafts.filter((x) => x.title !== d.title && x.generalId === d.generalId && x.commanderUnit && x.commanderUnit !== d.commanderUnit);
@@ -707,7 +719,14 @@ function render(): void {
                             <select id="f-commander" style="flex:1;">${commanderOptions(working.commanderUnit)}</select>
                             ${spriteThumb(working.commanderUnit, 72)}
                         </div>
-                        <span class="hint">剧本模式每个主角武将的军团都是 10 队：编制 9 队 + 主将队 1 队（前排正中再往前）</span>
+                        <span class="hint">剧本模式每个主角武将的军团都是 10 队：编制 9 队 + 主将队 1 队（前排正中再往前）；第十队必须是英雄</span>
+                    </div>
+                    <div class="fld">
+                        <label>对手主将队兵种 · 对面那位主帅的第 10 队，必须是英雄，按样貌或文化年代相近的人物选</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <select id="f-foeCommander" style="flex:1;">${commanderOptions(working.foeCommanderUnit)}</select>
+                            ${spriteThumb(working.foeCommanderUnit, 72)}
+                        </div>
                     </div>
                     <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>
@@ -1017,6 +1036,7 @@ function bind(): void {
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
     on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
     on<HTMLSelectElement>('f-commander', 'change', (el) => { working.commanderUnit = el.value; render(); });
+    on<HTMLSelectElement>('f-foeCommander', 'change', (el) => { working.foeCommanderUnit = el.value; render(); });
     drawThumbs();
     // 那一年还不存在的途经据点：切换
     document.querySelectorAll<HTMLButtonElement>('[data-absent]').forEach((el) => {

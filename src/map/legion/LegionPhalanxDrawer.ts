@@ -2678,7 +2678,7 @@ export class LegionPhalanxDrawer {
             ? cur
             : targets.map((_, i) => (cur?.[i] ? { ...cur[i] } : { ...formationOffsetOf(i) }));
         let settled = true;
-        const step = Math.max(0.5, gap * 0.08);   // 一帧最多走 gap 的 8%：走位过去，不跳
+        const step = Math.max(0.5, gap * 0.15);   // 一帧最多走 gap 的 15%：走位过去，不跳（主人嫌慢，8% → 15%）
         for (let i = 0; i < count; i++) {
             const t = targets[i];
             const c = now[i];
