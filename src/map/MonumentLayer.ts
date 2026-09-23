@@ -14,6 +14,8 @@ interface MonumentData {
     asset: string;
     scale?: number;
     description: string;
+    /** 挂靠的据点：特殊建筑都和据点绑定，据点显示它才显示 */
+    cityId: string;
 }
 
 /** 奇观 marker 基准宽度（px）：与城堡地标（baseSize×0.68）一般大小，比普通据点建筑（×0.40）略大更显眼 */
@@ -77,6 +79,22 @@ export class MonumentLayer {
         if (pane) pane.style.setProperty('--monument-scale', String(scale));
     }
 
+    /**
+     * 🔴 [2026-09-23 主人定「特殊建筑都是和据点绑定的」「应该是随着据点的显现而恢复」]
+     * 外部据点显示判据：挂靠据点不显示 → 它的特殊建筑也不显示。null = 全部显示。
+     */
+    private cityFilter: ((cityId: string) => boolean) | null = null;
+
+    public setCityFilter(filter: ((cityId: string) => boolean) | null): void {
+        this.cityFilter = filter;
+        this.renderMonuments();
+    }
+
+    /** 据点显示范围变了（剧本进度 / 模式切换）→ 重画 */
+    public refresh(): void {
+        this.renderMonuments();
+    }
+
     private renderMonuments(): void {
         this.layerGroup.clearLayers();
         this.markers.clear();
@@ -104,6 +122,7 @@ export class MonumentLayer {
                     asset: `/SUCAI_BUILDING/${asset}/preview.png`,
                     scale: WONDER_SCALE_OVERRIDE[asset],
                     description: `${place}的文明奇观·${wonderName}`,
+                    cityId,
                 };
             })
             .filter((x): x is WonderMonument => x !== null);
@@ -123,6 +142,7 @@ export class MonumentLayer {
                     asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
                     scale: WONDER_SCALE_OVERRIDE[ex.asset],
                     description: ex.description,
+                    cityId,
                 }));
             });
 
@@ -135,9 +155,12 @@ export class MonumentLayer {
             ...extraMonuments,
         ];
         const placed = this.deoverlap(allMonuments);
-        this.browseMonuments = placed;
+        // 「查看奇观」只翻当前显示的
+        this.browseMonuments = this.cityFilter ? placed.filter((m) => this.cityFilter!(m.cityId)) : placed;
 
         for (const mon of placed) {
+            // 挂靠据点没显示 → 不画（落位仍按全部奇观算，位置不随显隐跳动）
+            if (this.cityFilter && !this.cityFilter(mon.cityId)) continue;
             // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
             const mirror = Math.random() < 0.5;
             const w = BASE_SIZE * (mon.scale ?? 1);

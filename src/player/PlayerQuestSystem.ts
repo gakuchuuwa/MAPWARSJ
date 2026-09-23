@@ -394,6 +394,13 @@ export class PlayerQuestSystem {
                     //    ② 它不属于战场玩法，不会随 `withdrawBattlefieldLegions` 班师，
                     //       会变成棋盘上一支多出来的、没人管的军团。
                     this.disposeHostMarchLegion();
+                    // 🔴 [2026-09-23 修] 赶路军团收掉后，任务改为盯**战场上本将那一方的史实军团**；
+                    //    否则任务每拍检查发现赶路军团没了，就误报「❌ 军团覆灭，未能抵达【XX战役】」并丢掉任务，
+                    //    打完也走不到 finishGeneralEvent 收尾。
+                    const q = this.quest;
+                    if (q?.kind === 'general_event' && q.event?.battlefieldId === bfId) {
+                        q.legionId = (side ?? ownSide ?? 'attacker') === 'attacker' ? attacker.id : defender.id;
+                    }
                     if (!side) return;   // 只观战
                     const host = side === 'attacker' ? attacker : defender;
                     this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);

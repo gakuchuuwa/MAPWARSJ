@@ -73,7 +73,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
-import { isScriptPeriod, setScriptPeriodProvider } from '../events/scriptPeriod';
+import { setScriptPeriodProvider } from '../events/scriptPeriod';
 import {
     setupGameAppVisibilityHandler,
     setupGameAppBackgroundHeartbeat,
@@ -316,8 +316,6 @@ export class GameApp {
             this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();
             setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
-            // 🔴 [2026-09-23 主人定「地图上的特殊建筑没有关闭」] 剧本期关闭奇观图层，乱斗恢复
-            this.syncMonumentsWithMode();
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
             this.scriptCityVisibility = new ScriptCityVisibility(
@@ -325,12 +323,18 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            // 🔴 [2026-09-23 主人定「特殊建筑都是和据点绑定的」] 特殊建筑跟着挂靠据点显隐
+            this.map.getMonumentLayer()?.setCityFilter((cityId) => {
+                const c = this.cityManager.getCity(cityId);
+                return !!c && this.cityManager.isCityVisible(c);
+            });
             // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
                 this.cityManager.refreshCityVisibility();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
+                this.map.getMonumentLayer()?.refresh();
             });
 
             setLoadingMessage('正在升旗入场…');
@@ -737,14 +741,6 @@ export class GameApp {
         }
     }
 
-    /** 奇观图层随模式：剧本期关、乱斗开（面板上的奇观勾选同步） */
-    private syncMonumentsWithMode(): void {
-        const visible = !isScriptPeriod();
-        this.map.getMonumentLayer()?.setVisible(visible);
-        const chk = document.getElementById('chk-wonder-layer') as HTMLInputElement | null;
-        if (chk) chk.checked = visible;
-    }
-
     public gameLoop(timestamp: number): void {
         tickGameAppFrame(this, timestamp);
     }
@@ -811,7 +807,7 @@ export class GameApp {
             lastPlan = hero.autoPlan;
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
-            this.syncMonumentsWithMode();
+            this.map.getMonumentLayer()?.refresh();
         });
 
         const quests = new PlayerQuestSystem({
