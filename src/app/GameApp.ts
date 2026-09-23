@@ -71,7 +71,7 @@ import { exposeGameAppGlobals } from './GameAppExpose';
 import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameAppCombatHooks';
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
-import { ScriptCityVisibility, findCurrentScriptEventCity } from '../events/scriptCityVisibility';
+import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
@@ -337,7 +337,9 @@ export class GameApp {
             // 🔴 [2026-09-23] 剧本期：当前这一场归属武将的军团出发据点（事件 startCityId）
             setScriptEventStartResolver(() => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
-                return ev?.generalId && ev.startCityId ? { generalId: ev.generalId, cityId: ev.startCityId } : null;
+                // 写明的出发据点，或同一武将上一场打完的地方（见 scriptEventStart.ts）
+                const cityId = ev?.generalId ? scriptEventStartCityId(ev, this.cityManager.getCities()) : null;
+                return ev?.generalId && cityId ? { generalId: ev.generalId, cityId } : null;
             });
             // 🔴 [2026-09-23] 剧本期：当前这一场归属武将的主将队兵种（事件 commanderUnit）
             setScriptCommanderUnitResolver((generalId) => {

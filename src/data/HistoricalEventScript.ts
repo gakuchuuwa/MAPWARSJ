@@ -114,8 +114,15 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
 
             // 皮纳鲁斯河畔（伊苏斯城东南约 12 km），野战用 location。
             location: { lat: 36.7525, lng: 36.1923 },   // 英文维基 Battle of Issus 信息框
-            // 戈尔迪乌姆出发，经安卡拉（古安库拉）、阿达纳（塔尔苏斯附近），南下伊苏斯（英文维基 Alexander the Great / Battle of Issus）
-            marchWaypoints: ['city_ankala', 'city_adana'],
+            // 戈尔迪乌姆出发，经安卡拉（古安库拉）、伊科尼乌姆（古吕考尼亚/科尼亚）、阿达纳（塔尔苏斯附近），南下伊苏斯
+            // 🔴 [2026-09-23 主人授权「你不会根据历史，制定真实的行军路线吗？」] 补上伊科尼乌姆当路标：
+            //    史载亚历山大前333年自戈尔迪乌姆东至安库拉，再南下经卡帕多西亚、过托罗斯山（奇里乞亚门）入奇里乞亚；
+            //    提亚纳、奇里乞亚门项目里没有据点，按铁律「用附近已有据点连接，绝不新建」，
+            //    路网实测南下走的就是伊科尼乌姆一线（安卡拉→阿达纳 直接寻路即「途经 伊科尼乌姆→阿达纳」）。
+            //    实测（scratch/_probe_route_waypoints.mjs）：安卡拉→伊科尼乌姆 直线232km/路网251km（1.09x）、
+            //    伊科尼乌姆→阿达纳 直线304km/路网359km（1.18x），都在 400km 与 1.6x 之内；
+            //    不补它则安卡拉→阿达纳 一段直线 407km，超过编辑器 400km 上限。
+            marchWaypoints: ['city_ankala', 'city_yikeniwumu', 'city_adana'],
 
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
@@ -152,15 +159,21 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    （`CityManager.updateCity`：写 `fallenAtYear`、重置将/精名额、播占城播报与烟雾）。
         generalId: 'gen_alexander_great',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-        // 对手主将队：达提斯——阿契美尼德米底人统帅，与大流士同文化同时代近；素材样貌为持矛的波斯骑将
-        foeCommanderUnit: 'hero_datis',
+        // 对手主将队：🔴 [2026-09-23 主人定「兵模没有的话，就用同时代的人就行，看样子，不要看名字」]
+        //    项目里没有大流士三世本人的英雄兵模（public/SUCAI 只有 ARTAPHERNES 与 DATIS 两个波斯英雄）。
+        //    原用 hero_datis（达提斯）—— 那是**前490年马拉松**的波斯统帅，与伊苏斯前333年差 157 年，
+        //    素材样貌也是银灰甲灰马、色调偏欧式（对照图：scratch/_hero_compare.png）。
+        //    改用 hero_artaphernes（阿尔塔弗涅斯，前334年阿契美尼德萨迪斯总督）：**同时代**，
+        //    样貌是金甲红披风的波斯贵族骑将，与「大流士三世御驾」这一路的形象相符。
+        //    按主人令**只看样貌与年代，不看名字**（是谁不追究）。
+        foeCommanderUnit: 'hero_artaphernes',
         // 军团出发据点：亚历山大前333年春在戈尔迪乌姆，不回佩拉（英文维基 Alexander the Great）
         startCityId: 'city_geerdiweng',
         // 阿达纳挂的「蛇堡」是中世纪亚美尼亚城堡，前333年尚无 → 本场不显示该城（路照走）
         absentCities: ['city_adana'],
         inviteText: '朋友，你来得正好。我在戈尔迪乌姆斩断了那个无人能解的结，传说解开它的人将成为亚细亚之王。大流士已在巴比伦集结大军，我要越过托罗斯山，进入奇里乞亚迎战他。你可愿随我同往？',
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts）
-        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯战役，野战，两军在皮纳鲁斯河两岸会战。' }, time: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：前333年11月5日，季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯城以南的皮纳鲁斯河，今土耳其哈塔伊省；坐标取信息框 36.7525,36.1923。海湾到群山之间仅2.6公里。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿与希腊同盟，亚历山大亲统右翼伙伴骑兵，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：马其顿军共约37000人。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前骑兵、中方阵、后远程，鱼鳞阵；此役亚历山大仍亲率伙伴骑兵为决胜一击。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Issus：阿契美尼德帝国，大流士三世亲征。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：现代估计5万至10万，按标准取区间中值75000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda，后世通称阿契美尼德军。英文维基百科 Battle of Issus：骑兵约1.8万、长生军与希腊雇佣兵及亚美尼亚步兵约6万、轻步兵3万至8万；波斯骑兵率先渡河冲击，故前骑兵中步兵后远程，鹤翼阵2-4-3。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great：亚历山大在弗里吉亚古都戈尔迪乌姆斩断戈尔迪之结，前333年春越过托罗斯山进入奇里乞亚，病后向叙利亚进军，又回师奇里乞亚在伊苏斯击败大流士。英文维基百科 Battle of Issus：亚历山大驻塔尔苏斯，得知大流士在巴比伦集结大军后南下。游戏路线：戈尔迪乌姆、安卡拉即古安库拉、阿达纳即塔尔苏斯附近、伊苏斯；史载经卡帕多西亚过奇里乞亚关，该地无同时代据点，路网实走伊科尼乌姆一线，同样经托罗斯山口入奇里乞亚。' }, result: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿胜，大流士弃军逃走，母亲、妻子、两个女儿被俘；伊苏斯是战场，无据点易主。' }, invite: { level: 'fact', text: '英文维基百科 Alexander the Great：戈尔迪乌姆斩断戈尔迪之结，传说能解开者将为亚细亚之王；英文维基百科 Battle of Issus：大流士在巴比伦集结大军。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Issus：海湾到群山仅2.6公里即两英里；大流士绕到马其顿军后方占领伊苏斯、砍去伤病员之手；马其顿军约3.7万，波斯军按中值7.5万，播报写三万七千、七万五千；方阵居中、亚历山大率伙伴骑兵在右翼。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯战役，野战，两军在皮纳鲁斯河两岸会战。' }, time: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：前333年11月5日，季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯城以南的皮纳鲁斯河，今土耳其哈塔伊省；坐标取信息框 36.7525,36.1923。海湾到群山之间仅2.6公里。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿与希腊同盟，亚历山大亲统右翼伙伴骑兵，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：马其顿军共约37000人。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前骑兵、中方阵、后远程，鱼鳞阵；此役亚历山大仍亲率伙伴骑兵为决胜一击。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Issus：阿契美尼德帝国，大流士三世亲征。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：现代估计5万至10万，按标准取区间中值75000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda，后世通称阿契美尼德军。英文维基百科 Battle of Issus：骑兵约1.8万、长生军与希腊雇佣兵及亚美尼亚步兵约6万、轻步兵3万至8万；波斯骑兵率先渡河冲击，故前骑兵中步兵后远程，鹤翼阵2-4-3。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great：亚历山大在弗里吉亚古都戈尔迪乌姆斩断戈尔迪之结，前333年春越过托罗斯山进入奇里乞亚，病后向叙利亚进军，又回师奇里乞亚在伊苏斯击败大流士。英文维基百科 Battle of Issus：亚历山大驻塔尔苏斯，得知大流士在巴比伦集结大军后南下。游戏路线：戈尔迪乌姆、安卡拉即古安库拉、伊科尼乌姆即古吕考尼亚（史载经卡帕多西亚过奇里乞亚关，提亚纳与奇里乞亚门项目里没有据点，按铁律用附近已有据点连接、绝不新建，故以路网实走的伊科尼乌姆作中间路标）、阿达纳即塔尔苏斯附近、伊苏斯。' }, result: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿胜，大流士弃军逃走，母亲、妻子、两个女儿被俘；伊苏斯是战场，无据点易主。' }, invite: { level: 'fact', text: '英文维基百科 Alexander the Great：戈尔迪乌姆斩断戈尔迪之结，传说能解开者将为亚细亚之王；英文维基百科 Battle of Issus：大流士在巴比伦集结大军。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Issus：海湾到群山仅2.6公里即两英里；大流士绕到马其顿军后方占领伊苏斯、砍去伤病员之手；马其顿军约3.7万，波斯军按中值7.5万，播报写三万七千、七万五千；方阵居中、亚历山大率伙伴骑兵在右翼。' } },
     },
 
     // ═══════════════════════════════════════════════════════════════

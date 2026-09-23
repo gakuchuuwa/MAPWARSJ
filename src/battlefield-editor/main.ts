@@ -33,6 +33,7 @@ import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/Jo
 // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 硬规则检查单独成文件，便于脚本拿全量数据回归
 import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
+import { resolveEventStartCityId, type StartEventInfo } from '../events/scriptEventStart';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import { SPRITE_PATHS } from '../config/UnitAssets';
@@ -381,7 +382,7 @@ function validate(d: BattleDraft): Issue[] {
     //    势力记录不存在 / 主帅查不到 / 势力没番号 / 兵力悬殊 / 战场坐标与别处重合。
     out.push(...checkEventRules(d, drafts));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
-    out.push(...checkRoute(d).issues);
+    out.push(...checkRoute({ ...d, startCityId: effectiveStart(d)?.cityId ?? '' }).issues);
     // 🔴 [2026-09-23 主人定「剧本模式中，每一个主角武将的军团都必须是10队，样式从兵模素材中找，不要名字，要看样子符合就行」]
     if (d.generalId && !d.commanderUnit) {
         out.push({ level: 'error', msg: '主将队兵种没选：剧本模式每个主角武将的军团都是 10 队，第 10 队按素材样貌选一个符合这位武将的兵模' });
@@ -403,24 +404,18 @@ function validate(d: BattleDraft): Issue[] {
             out.push({ level: 'warn', msg: `同一武将在【${diff.map((x) => x.title).join('、')}】里主将队用的是别的兵模：同一个人前后应当是同一个样子` });
         }
     }
-    // 🔴 [2026-09-23] 跨事件一致性：同一武将的第二场起，必须写他此时身在哪座城（军团出发据点），
-    //    且离他上一场的战场不能太远（他打完上一仗在那一带，不会凭空回到老家再出发）。
-    if (d.generalId) {
+    // 🔴 [2026-09-23] 跨事件一致性：同一武将的第二场起，默认从他上一场打完的地方出发（scriptEventStart.ts）；
+    //    史料另有记载（中途回过别处）才写「军团出发据点」。写了的，离上一场太远就提醒写明中间行程。
+    if (d.generalId && d.startCityId) {
         const earlier = drafts
             .filter((x) => x.generalId === d.generalId && x.title !== d.title
                 && (x.year < d.year || (x.year === d.year && x.season < d.season)))
             .sort((a, b) => (b.year - a.year) || (b.season - a.season))[0];
-        if (earlier) {
-            if (!d.startCityId) {
-                out.push({ level: 'error', msg: `军团出发据点没写：【${GENERAL_BY_ID.get(d.generalId)?.generalName ?? d.generalId}】上一场是【${earlier.title}】，这一场他身在哪座城？按史料选（不能默认回他本城）` });
-            } else {
-                const c = CITY_BY_ID.get(d.startCityId);
-                if (c) {
-                    const km = Math.hypot(c.lat - earlier.lat, (c.lng - earlier.lng) * Math.cos(c.lat * Math.PI / 180)) * 111;
-                    if (km > 800) {
-                        out.push({ level: 'warn', msg: `军团出发据点【${c.name}】离上一场【${earlier.title}】的战场约 ${Math.round(km)} 公里：中间这段行程请在史料依据「行军路线」里写明` });
-                    }
-                }
+        const c = CITY_BY_ID.get(d.startCityId);
+        if (earlier && c) {
+            const km = Math.hypot(c.lat - earlier.lat, (c.lng - earlier.lng) * Math.cos(c.lat * Math.PI / 180)) * 111;
+            if (km > 800) {
+                out.push({ level: 'warn', msg: `军团出发据点【${c.name}】离上一场【${earlier.title}】的战场约 ${Math.round(km)} 公里：中间这段行程请在史料依据「行军路线」里写明` });
             }
         }
     }
@@ -958,12 +953,29 @@ function render(): void {
     bind();
 }
 
+/** 草稿 → 算出发地用的精简信息（与游戏 scriptCityVisibility.toStartInfo 同口径） */
+function draftStartInfo(x: BattleDraft): StartEventInfo {
+    const siegeCityId = x.type === 'siege' && !x.bfTargetBattlefieldId ? x.defenderCityId || undefined : undefined;
+    const sc = siegeCityId ? CITY_BY_ID.get(siegeCityId) : undefined;
+    return {
+        generalId: x.generalId, year: x.year, season: x.season,
+        startCityId: x.startCityId || undefined, absentCities: x.absentCities,
+        point: sc ? { lat: sc.lat, lng: sc.lng } : { lat: x.lat, lng: x.lng }, siegeCityId,
+    };
+}
+const START_CITIES = CITIES_V2.map((c) => ({ id: c.id, lat: c.lat, lng: c.lng }));
+/** 这一场军团实际从哪出发：写明的 / 上一场打完的地方 / null = 归属武将本城（与游戏同一个函数） */
+function effectiveStart(d: BattleDraft): { cityId: string; from: 'set' | 'previous' } | null {
+    return resolveEventStartCityId(draftStartInfo(d), drafts.map(draftStartInfo), START_CITIES);
+}
+
 /**
  * 行军路线实测（与游戏同一套寻路）：每段实际经过哪些城、哪段坐船、多远、绕不绕；
  * 以及剧本期地图上会出现的据点与它们挂的特殊建筑 —— 供主人逐个核对那一年是否存在。
  */
 function renderRouteReport(): string {
-    const r = checkRoute(working);
+    const st = effectiveStart(working);
+    const r = checkRoute({ ...working, startCityId: st?.cityId ?? '' });
     const legRows = r.legs.map((l) => {
         const detour = l.straightKm > 0 ? l.roadKm / l.straightKm : 1;
         const bad = !l.ok || l.straightKm > ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM
@@ -983,7 +995,7 @@ function renderRouteReport(): string {
         + `<button data-absent="${escapeAttr(c.id)}" title="${c.absent ? '改回：那一年已存在，显示' : '那一年还不存在：剧本期不显示，路照走'}">${c.absent ? '↺' : '✕不存在'}</button></span>`).join('');
     return `
         <div class="fld" style="margin-top:10px;">
-            <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（归属武将所在城）出发，与游戏同一套寻路</label>
+            <label>行军路线实测 · 军团从【${escapeHtml(r.startCityName ?? '？')}】（${st?.from === 'set' ? '本场写明的出发据点' : st?.from === 'previous' ? '上一场打完的地方' : '归属武将本城'}）出发，与游戏同一套寻路</label>
             <div style="font-size:12px;line-height:1.7;">${legRows || '<span class="hint">算不出路线</span>'}</div>
             <span class="hint">控制范围：一段直线超过 ${ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM} 公里、绕远超过 ${ROUTE_LIMITS.MAX_DETOUR_RATIO} 倍、离路直行超过 ${ROUTE_LIMITS.MAX_OFFROAD_KM} 公里都要提醒加路标；渡海处应显示 ⚓坐船</span>
         </div>
