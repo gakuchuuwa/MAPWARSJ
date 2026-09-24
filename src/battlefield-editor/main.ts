@@ -42,6 +42,9 @@ import { SPRITE_PATHS } from '../config/UnitAssets';
 import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
 import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
 import { slotsMatchFormation } from '../types/CultureFormations';
+// 🔴 [2026-09-24 主人定] 本场特殊建筑：库里现成的奇观表（一城主奇观 + 同城第二三座 + 官方中文名）
+import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
+import { WONDER_NAME } from '../data/WonderNames';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -130,6 +133,11 @@ interface BattleDraft {
     marchWaypoints: string[];
     /** 战后归属变更 */
     cityUpdates: Array<{ cityId: string; factionId: string }>;
+    /**
+     * 🔴 [2026-09-24 主人定] **本场特殊建筑**：奇观素材目录名（`CityWonders.ts` 的 asset），
+     * 可多选；编辑器里连立绘一起看，图取自 `public/SUCAI_BUILDING/<素材>/preview.png`。
+     */
+    wonders: string[];
 }
 
 const SEASONS = ['春', '夏', '秋', '冬'];
@@ -168,6 +176,55 @@ const ALL_CITIES = [...CITIES_V2].sort((a, b) => a.name.localeCompare(b.name, 'z
 /** 🔴 [2026-09-19 主人定] 战场人物下拉（只在场战上出现的人，不参与城池掷将） */
 const ALL_BF_CHARACTERS = getAllBattlefieldCharacters();
 const BF_CHAR_BY_ID = new Map(ALL_BF_CHARACTERS.map((c) => [c.generalId, c]));
+
+// ── 特殊建筑（奇观）目录：CITY_WONDER + CITY_WONDER_EXTRA，按素材目录名去重 ──────────
+interface WonderOption { asset: string; name: string; cityId: string; cityName: string; description: string }
+const ALL_WONDERS: WonderOption[] = (() => {
+    const m = new Map<string, WonderOption>();
+    for (const [cityId, asset] of Object.entries(CITY_WONDER)) {
+        if (m.has(asset)) continue;
+        m.set(asset, {
+            asset, name: WONDER_NAME[asset] ?? asset, cityId,
+            cityName: CITY_BY_ID.get(cityId)?.name ?? cityId, description: '',
+        });
+    }
+    for (const [cityId, list] of Object.entries(CITY_WONDER_EXTRA)) {
+        for (const w of list) {
+            if (m.has(w.asset)) continue;
+            m.set(w.asset, {
+                asset: w.asset, name: w.name || (WONDER_NAME[w.asset] ?? w.asset), cityId,
+                cityName: CITY_BY_ID.get(cityId)?.name ?? cityId, description: w.description ?? '',
+            });
+        }
+    }
+    return [...m.values()].sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+})();
+const WONDER_BY_ASSET = new Map(ALL_WONDERS.map((w) => [w.asset, w]));
+const wonderName = (asset: string): string => WONDER_BY_ASSET.get(asset)?.name ?? WONDER_NAME[asset] ?? asset;
+
+/** 建筑立绘：库里现成的奇观图（一滴不改，只显示） */
+const wonderImg = (asset: string): string => `/SUCAI_BUILDING/${asset}/preview.png`;
+
+function wonderOptions(selected: readonly string[]): string {
+    return ALL_WONDERS.map((w) => {
+        const has = selected.includes(w.asset);
+        return `<option value="${escapeAttr(w.asset)}"${has ? ' disabled' : ''}>`
+            + `${escapeHtml(w.name)}　·　${escapeHtml(w.cityName)}${has ? '　（已在本场）' : ''}</option>`;
+    }).join('');
+}
+
+/** 下拉里当前选中那座建筑的立绘与史实说明（换选项就刷新，不用整页重画） */
+function refreshWonderPreview(): void {
+    const sel = document.getElementById('wonder-pick') as HTMLSelectElement | null;
+    const img = document.getElementById('wonder-preview-img') as HTMLImageElement | null;
+    const cap = document.getElementById('wonder-preview-cap');
+    const desc = document.getElementById('wonder-preview-desc');
+    const asset = sel?.value ?? '';
+    const w = asset ? WONDER_BY_ASSET.get(asset) : undefined;
+    if (img) img.src = asset ? wonderImg(asset) : '';
+    if (cap) cap.textContent = w ? `${w.name}　·　${w.cityName}` : '—';
+    if (desc) desc.textContent = w?.description || (asset ? '（这条没有史实说明：说明写在 CityWonders.ts 的 CITY_WONDER_EXTRA 里）' : '');
+}
 
 // ── 把现有两个文件合并成编辑器视图 ────────────────────────────────────
 type AnyEvent = HistoricalEvent & {
@@ -241,6 +298,7 @@ function loadDrafts(): BattleDraft[] {
             sources: Object.fromEntries(Object.entries((ev as AnyEvent & { sources?: Record<string, EventSourceEntry> }).sources ?? {})
                 .map(([k, v]) => [k, { ...v }])),
             absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
+            wonders: [...((ev as AnyEvent & { wonders?: string[] }).wonders ?? [])],
             commanderUnit: (ev as AnyEvent & { commanderUnit?: string }).commanderUnit ?? '',
             foeCommanderUnit: (ev as AnyEvent & { foeCommanderUnit?: string }).foeCommanderUnit ?? '',
             startCityId: (ev as AnyEvent & { startCityId?: string }).startCityId ?? '',
@@ -279,7 +337,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], commanderUnit: '', foeCommanderUnit: '', startCityId: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], wonders: [], commanderUnit: '', foeCommanderUnit: '', startCityId: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -995,6 +1053,28 @@ function render(): void {
                     </div>`;
                 }).join('')}
             </fieldset>
+
+            <fieldset><legend>九、本场特殊建筑 · 历史上知名的建筑（可多选，留空也可以）</legend>
+                <div class="row" id="wonder-cards">
+                    ${working.wonders.length ? working.wonders.map((a, i) => `
+                    <div class="fld" style="max-width:210px;">
+                        <img src="${wonderImg(a)}" alt="" style="width:100%;border-radius:6px;background:#0b0b0b;">
+                        <span class="hint">🏛 ${escapeHtml(wonderName(a))}　·　${escapeHtml(WONDER_BY_ASSET.get(a)?.cityName ?? '')}
+                            <button data-rm-wonder="${i}">× 移除</button></span>
+                    </div>`).join('') : '<span class="hint">（本场还没加特殊建筑）</span>'}
+                </div>
+                <div class="row" style="margin-top:6px;">
+                    <div class="fld" style="max-width:420px;"><label>选建筑 · 全库奇观（可搜名字或据点）</label>
+                        <input id="wonder-search" placeholder="搜索建筑名 / 据点名…" value="">
+                        <select id="wonder-pick">${wonderOptions(working.wonders)}</select></div>
+                    <div class="fld" style="max-width:240px;"><label>立绘预览 · <span id="wonder-preview-cap">—</span></label>
+                        <img id="wonder-preview-img" alt="" style="width:100%;border-radius:6px;background:#0b0b0b;">
+                        <span class="hint" id="wonder-preview-desc"></span></div>
+                    <button class="bf-btn" id="wonder-add">添加到本场</button>
+                </div>
+                <span class="hint">立绘取库里现成的奇观素材（public/SUCAI_BUILDING/&lt;素材&gt;/preview.png），AI 不新增、不替换任何立绘；
+                    史实说明与挂靠据点在 src/data/CityWonders.ts，中文名在 src/data/WonderNames.ts。</span>
+            </fieldset>
         </div>
     </div>`;
 
@@ -1198,6 +1278,31 @@ function bind(): void {
             working.cityUpdates.splice(Number(el.dataset.rmCu), 1); render();
         });
     });
+
+    // 🔴 [2026-09-24 主人定] 本场特殊建筑：加 / 删 / 换选中项看立绘 / 搜索
+    on<HTMLButtonElement>('wonder-add', 'click', () => {
+        const sel = document.getElementById('wonder-pick') as HTMLSelectElement | null;
+        if (sel && sel.value && !working.wonders.includes(sel.value)) { working.wonders.push(sel.value); render(); }
+    });
+    document.querySelectorAll<HTMLElement>('[data-rm-wonder]').forEach((el) => {
+        el.addEventListener('click', () => {
+            working.wonders.splice(Number(el.dataset.rmWonder), 1); render();
+        });
+    });
+    on<HTMLSelectElement>('wonder-pick', 'change', () => { refreshWonderPreview(); });
+    on<HTMLInputElement>('wonder-search', 'input', (el) => {
+        const q = el.value.trim();
+        const sel = document.getElementById('wonder-pick') as HTMLSelectElement | null;
+        if (!sel) return;
+        for (const o of [...sel.options]) {
+            const hide = !!q && !(o.textContent ?? '').includes(q);
+            o.hidden = hide; o.style.display = hide ? 'none' : '';
+        }
+        const first = [...sel.options].find((o) => !o.hidden && !o.disabled);
+        if (first) sel.value = first.value;
+        refreshWonderPreview();
+    });
+    refreshWonderPreview();
 
     on<HTMLButtonElement>('btn-new', 'click', () => {
         isNew = true; working = blankDraft(); render();

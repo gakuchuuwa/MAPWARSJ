@@ -102,6 +102,67 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），编辑器里每项必填
         sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河战役，野战，亚历山大强渡河流进攻据守东岸的波斯军。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Granicus：前334年5月，初春自马其顿出发，20天抵塞斯托斯，季节取春。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河即今土耳其比加河；坐标取信息框 40.3167,27.2811。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿与希腊同盟，亚历山大亲统右翼，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：马其顿军投入此役共18100人。' }, attackerLegion: { level: 'fact', text: '英文维基百科 Ancient Macedonian army：史称马其顿军；伙伴骑兵作矛头、方阵跟进、克里特弓箭手掩护，前358至前331年一贯如此，故前骑兵、中步兵、后远程。比例按 Battle of the Granicus 信息框：骑兵5100、步兵12000、远程1000，步兵最多，取鱼鳞阵 前3中4后2，远程最少只能2人。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Granicus：阿契美尼德小亚细亚诸总督联军，古史未明言主帅，现代学者认为赫勒斯滂弗里吉亚总督阿尔西提斯总领；门农等同在军中。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：波斯军14000至40000人，按标准取区间中值27000。' }, defenderLegion: { level: 'popular', text: '英文维基百科 Battle of the Granicus：诸总督联军无专名，称波斯总督联军；骑兵沿东岸列阵在前，步兵列其后高地，含数千希腊雇佣兵；信息框中值骑兵15000、步兵12000，取雁行阵 前骑兵4中步兵3后远程2；远程无明载，按阿契美尼德军以弓手著称补一排。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Granicus：自马其顿经色雷斯至塞斯托斯，大军由塞斯托斯渡至阿拜多斯，亚历山大自埃莱乌斯渡海登西格翁角，谒伊利昂，经阿里斯巴、佩尔科特、兰普萨库斯至格拉尼库斯河。游戏路线：佩拉、安菲波利斯、羊河近塞斯托斯、坐船至特洛伊即伊利昂、沿海岸东进；途经据点鲁西翁为中世纪地名、格拉尼库斯为按战役起名的城寨，前334年皆无此城，列入那一年不存在，路照走、城不显示。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿胜，亚历山大取得小亚细亚半壁；战后据点达斯基利翁即阿尔西提斯治所归马其顿。' }, invite: { level: 'fact', text: '阿里安《亚历山大远征记》II.14 亚历山大致大流士书：东征名义为报复波斯当年入侵希腊；对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Granicus：门农献焦土之策被拒、帕曼纽劝明晨再渡被拒；波斯骑兵沿东岸列阵、希腊雇佣兵在后；播报兵力只写大军，不写确数。英文维基百科 Alexander the Great：生于前356年7月，此役时周岁二十一，按中国虚岁计二十二。' } },
     },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -334,
+        season: 1,
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你来得正好。前头就是米利都——伊奥尼亚最大的城。守将本已答应把城交给我，是波斯舰队给了他胆子，他才变卦，如今只肯拿中立换我退兵，好让波斯人的船靠港。我不做这个买卖。你看好了：我拿投石机砸开他的墙，尼卡诺尔把港口封死，看那支舰队还能不能给他送进一粒粮。你可愿随我打这一仗？',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Miletus：前334年马其顿与阿契美尼德波斯之间的攻城战，亚历山大东征中的第一场攻城战与海战交锋；中文维基百科「米利都圍城戰」同条记其为东征中与波斯之间的第一场攻城战。' }, time: { level: 'popular', text: '英文维基百科 Siege of Miletus 信息框 date = 334 BC；中文维基百科同条目亦记前334年，两者均未给月份。此役在格拉尼库斯河战役（前334年5月）之后、哈利卡纳苏斯围城（前334年冬）之前，故季节取夏。可信级别：通行说法。' }, place: { level: 'fact', text: '英文维基百科 Siege of Miletus 信息框 coordinates 37°31′49″N 27°16′42″E（今土耳其艾登省迪迪姆的 Balat），即波斯治下的希腊城邦米利都（中文维基百科「米利都圍城戰」：愛奧尼亞的米利都）；本据点记录取其坐标 37.5303,27.2783。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Miletus 信息框 commander1 = Alexander the Great、Nicanor（帕曼纽之子，率舰队封锁港口）；中文维基百科「米利都圍城戰」：亚历山大亲统陆军，并先分派部队进攻伊奥尼亚境内尚未臣服的城镇，尼卡诺尔率马其顿舰队（一百六十艘）先占莱德岛。' }, attackerTroops: { level: 'inferred', text: '中、英文维基信息框均未给陆上兵数（英文信息框 strength1 只给 160 ships；中文信息框记「陸軍不明，艦隊160艘」）。同一支马其顿军于两个月前在格拉尼库斯为 18,100 人（英文维基 Battle of the Granicus 信息框），此后未获大补，中文维基另记其先分兵去取伊奥尼亚未服城镇，故取 18,000 —— 合理推定。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役陆军以投石机轰击城墙、自缺口攻入（中文维基百科「米利都圍城戰」引阿里安《亚历山大远征记》卷一）。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Miletus 信息框 commander2 = Hegesistratus（赫格西斯特），即米利都的波斯驻军守将；中文维基百科「米利都圍城戰」：他本欲向亚历山大献城，因附近波斯守军尚未远离、加上波斯舰队承诺来援而反悔；同条记波斯守军事先把兵力集中于米利都内城。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Siege of Miletus 信息框 strength2 = 400 ships (not engaged) + 300 Milesians；中文维基百科信息框记「陸軍不明，數量遠少於馬其頓軍」，正文记守城主力为希腊雇佣兵、另有波斯守军据内城，城破时少部分退守城外小岛（岛上即那三百名决意死战的希腊雇佣兵）、其余大多被消灭。据此全城守军当以千计，取 3000（远少于攻方，与中文维基「數量遠少於馬其頓軍」一致）—— 合理推定。' }, defenderLegion: { level: 'fact', text: '中文维基百科「米利都圍城戰」（据阿里安《亚历山大远征记》卷一）：守城主力为希腊雇佣兵，另有波斯守军据内城；波斯舰队四百艘停泊米克利，因马其顿舰队守住港口而无法支援。英文维基百科信息框 combatant2 = Achaemenid Empire、Milesian allies。守方军团取剧本军团「阿契美尼德军」（与格拉尼库斯、伊苏斯、加沙同一番号）。' }, route: { level: 'fact', text: '中文维基百科「米利都圍城戰」背景节（据阿里安《亚历山大远征记》卷一）：格拉尼库斯战后波斯小亚细亚诸总督多阵亡，赫勒斯滂弗里吉亚全归亚历山大，萨第斯、以弗所相继投降，米利都守将亦曾允降；亚历山大再分兵取伊奥尼亚未服城镇、自率其余南下米利都。游戏路线：自上一处战场（格拉尼库斯）开拔 → 斯法尔德（萨第斯） → 以弗所 → 米利都；米利都库里原无这座城，按 §二之二 添加据点（末段自以弗所直走野地 45.9 公里，属提示级、不新建道路）。攻方出兵据点记在达斯基利翁：格拉尼库斯战后归马其顿、离战场最近的本军据点。' }, result: { level: 'fact', text: '英文维基百科 Siege of Miletus：马其顿胜，territory = Alexander controls Ionia。中文维基百科「米利都圍城戰」（据阿里安《亚历山大远征记》卷一）：马其顿陆海并进，陆军以投石机破墙自缺口入城，尼卡诺尔舰队封住港口使波斯舰队无法支援，城内波斯守军大多被消灭，全城落入亚历山大之手；退守小岛的希腊雇佣兵被亚历山大收编入自己的军队。故本场「战后归属」按历史写米利都归马其顿。' }, invite: { level: 'fact', text: '邀约对白所据史事：中文维基百科「米利都圍城戰」（据阿里安《亚历山大远征记》卷一）——米利都市民代表与守城主力希腊雇佣兵的代表来见亚历山大，请其解除围城，米利都愿守中立并对马其顿、波斯双方开放城市与港口；亚历山大一口回绝，要他们次日准备决战。对白措辞为撰写。' }, briefing: { level: 'fact', text: '中、英文维基百科「米利都圍城戰」与阿里安《亚历山大远征记》卷一：尼卡诺尔先率舰队占莱德岛并把部队运上岛；三日后波斯舰队才到，只得在更远的米克利下锚；帕曼纽请战被亚历山大回绝（自认舰队数量与海战技巧都不及腓尼基、塞浦路斯水手）；亚历山大派菲罗塔斯前往米克利断其取水补给，波斯舰队退往萨摩斯、终于离开米利都海域；战后亚历山大解散海军，改以陆军夺取波斯所有海军基地。文案按主人规矩不写兵力确数。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_aristagoras',
+        briefing: '格拉尼库斯河一仗打完，波斯在小亚细亚的总督几乎死绝，赫勒斯滂弗里吉亚全境落到亚历山大手里；萨第斯、以弗所相继开门投降。米利都的波斯驻军守将赫格西斯特本也答应献城，可附近的波斯军还没走远，波斯舰队又许诺来援，他便反悔了，只肯让米利都保持中立、对双方都开放港口。\n\n亚历山大不肯讲这个价：他先分兵去取伊奥尼亚尚未臣服的城镇，自己带着剩下的人马直趋米利都。帕曼纽之子尼卡诺尔抢先一步，率马其顿舰队占住城外的莱德岛，把兵运上岛去。三天之后，波斯舰队才姗姗赶到，见莱德岛已被人占住，只得在更远的米克利下锚。\n\n帕曼纽劝亚历山大趁势打一场海战，亚历山大回绝了：马其顿的船比人家少，水手也不如腓尼基、塞浦路斯人老练，输了更要动摇希腊本土。他只让舰队守住港口，一步不出。\n\n第二天，陆海两军同时动手。陆军架起投石机轰击城墙，从缺口冲进城去；尼卡诺尔的舰队封死港口，叫波斯舰队一粒粮也送不进来。城里的守军大多被歼，只有少数人退到城外小岛上——那队希腊雇佣兵已经决意死战，亚历山大看了不忍，说他们是忠诚而高尚的战士，把他们收编进自己的军中，岛上其余的人都放了。\n\n此后他又派菲罗塔斯去米克利，断了波斯舰队的取水与补给。波斯舰队退到萨摩斯，终于离开米利都海域。经此一仗，亚历山大认清马其顿舰队敌不过波斯海军，索性解散了自己的海军，改定一条大策：用陆军把波斯所有的海军基地一座座拔掉，让那支舰队无港可归。',
+        type: 'siege',
+        title: '公元前334年 米利都战役',
+        description: '马其顿军取米利都：亚历山大先分兵扫平伊奥尼亚尚未臣服的城镇，自率主力南下围城；帕曼纽之子尼卡诺尔抢先占住莱德岛，把波斯舰队逼在港外。陆军以投石机轰塌城墙、自缺口突入，守军大多被歼，退守小岛的希腊雇佣兵被亚历山大收编入伍。米利都归马其顿，伊奥尼亚全境臣服；此战之后亚历山大认清马其顿舰队敌不过波斯海军，解散海军，改以陆军逐座拔掉波斯的海军基地。',
+        siegeData: {
+            title: '米利都战役',
+            description: '米利都守军以希腊雇佣兵为主力、波斯守军据内城，凭城墙与港口死守；马其顿陆军以投石机轰击城墙、自缺口攻入，尼卡诺尔率舰队封锁港口使波斯舰队无法支援，城遂破。',
+            marchWaypoints: ['city_sifaerde', 'city_yifusuo'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 18000,
+            attackerSourceCityId: 'city_dasijiliweng',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'yiaoniya_hegesistratus',
+            defenderTroops: 3000,
+            defenderCityId: 'city_miletus',
+            defenderLegionName: '阿契美尼德军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_miletus', factionId: 'maqidun' }],
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -334,
+        season: 2,
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，前头是哈利卡纳苏斯——卡里亚的坚城。门农在那里等着我：他刚当上波斯在小亚细亚的总指挥，手里还攥着一支舰队，港里泊得满满的，摆明了要跟我耗。城防他加固过不止一遍，护城河又宽又深。你看着，我把壕填了、把投石机架上去，一段一段把他的墙打下来。你可愿随我打这一仗？',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Halicarnassus：前334年马其顿与阿契美尼德波斯的攻城战（亚历山大东征中的攻城战）；中文维基百科「哈利卡那索斯圍城戰」同条记其为东征中与波斯之间的一场攻城战。' }, time: { level: 'popular', text: '英文维基百科 Siege of Halicarnassus 信息框 date = 334 BC；中文维基百科同条目亦记前334年，两者均未给月份。此役在米利都围城（夏）之后，围城结束后亚历山大遣新婚士兵回乡过冬（英文维基 Aftermath 节），故季节取秋。可信级别：通行说法。' }, place: { level: 'fact', text: '英文维基百科 Siege of Halicarnassus 信息框 coordinates 37.0333,27.4333（今土耳其博德鲁姆），即卡里亚都城哈利卡纳苏斯（摩索拉斯陵墓所在）；本据点记录坐标 37.03,27.43 与之一致。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Halicarnassus 信息框 commander1 = Alexander the Great；中文维基百科「哈利卡那索斯圍城戰」：亚历山大亲统陆军围城，部将佩尔狄卡斯所部亦在阵中（营中两名士兵冒进引燃总攻）。' }, attackerTroops: { level: 'inferred', text: '中、英文维基信息框均未给双方兵力（英文只给伤亡 16 : 170）。同一支马其顿军自格拉尼库斯（英文维基 Battle of the Granicus 信息框 18,100）连战未获大补，其间又分兵留守、另有部队被派去取伊奥尼亚未服城镇，故沿用前两场的量级取 18,000 —— 合理推定。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役陆军填平护城河、架投石机轰城，并自被撞开的城墙缺口攻入（中文维基百科「哈利卡那索斯圍城戰」，据阿里安《亚历山大远征记》卷一）。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Halicarnassus 信息框 commander2 = Orontobates、Memnon of Rhodes；中文维基百科同条：米利都战后波斯在哈利卡纳苏斯集结重兵，希腊雇佣军将领**罗得岛的门农受任小亚细亚总指挥、统率波斯舰队**并主持防务；卡里亚总督为**欧戎托巴提斯**（皮克索达拉斯之婿，皮克索达拉斯卒后由大流士三世任命）。本场守方主帅取门农。' }, defenderTroops: { level: 'inferred', text: '中、英文维基信息框均未给守方兵力（英文信息框只给伤亡 170）。中文维基记波斯在城中「聚集大批部队和希腊雇佣军」、以希腊雇佣军为主力，且能连日出城反击、夜袭烧器械、城破前从容整队夜遁，其众当以千计；按前一场米利都同一口径取 3,000（远少于攻方 18,000）—— 合理推定。' }, defenderLegion: { level: 'fact', text: '中文维基百科「哈利卡那索斯圍城戰」（据阿里安《亚历山大远征记》卷一）：守城主力为希腊雇佣军，另有波斯守军；波斯舰队泊于港内策应，援军曾乘船自海上抵达。守方军团取剧本军团「阿契美尼德军」（英文维基信息框 combatant2 = Achaemenid Empire，与格拉尼库斯、伊苏斯、加沙同一番号）。' }, route: { level: 'fact', text: '中文维基百科「哈利卡那索斯圍城戰」背景节（据阿里安《亚历山大远征记》卷一）：米利都围城战后，波斯在卡里亚的哈利卡纳苏斯集结部队与希腊雇佣军；亚历山大进入卡里亚境内，前女王阿妲献出要塞阿林达来投，随即围城。游戏路线：自上一处战场（米利都，攻城战＝那座城）开拔，沿主人新修的「米利都-哈利卡纳苏斯」道路南下直抵该城；阿林达不在据点库中，按铁律不新建、不写路标。' }, result: { level: 'fact', text: '英文维基百科 Siege of Halicarnassus：马其顿胜，territory = Alexander captures Caria。中文维基百科「哈利卡那索斯圍城戰」（据阿里安《亚历山大远征记》卷一）：门农与欧戎托巴提斯见城墙已倒一段、伤兵日增，决定弃城；波斯残军趁夜退出并焚烧城中军需，当晚风大，全城陷入火海；战后亚历山大仅得一座残城，留部分军队驻守，并把卡里亚交给阿妲统领。故本场「战后归属」按历史写哈利卡纳苏斯归马其顿（卫城仍为波斯守军据守，其后始下）。' }, invite: { level: 'fact', text: '邀约对白所据史事：中文维基百科「哈利卡那索斯圍城戰」——门农受任小亚细亚总指挥、统率波斯舰队，在哈利卡纳苏斯加强防御并令舰队泊于港口；亚历山大填平护城河、架投石机轰城。对白措辞为撰写。' }, briefing: { level: 'fact', text: '中、英文维基百科「哈利卡那索斯圍城戰」与阿里安《亚历山大远征记》卷一：内应约开城门未成、守军拼死抵抗而波斯援军乘船抵达，亚历山大先攻旁近要塞无功；其后填壕架炮，守军夜袭烧器械被击退；佩尔狄卡斯营中两名士兵冒进引来总攻，城墙被撞开、泥瓦匠旋即补砌新墙；连日轰城双方僵持，守军伤亡渐重；门农与欧戎托巴提斯决意弃城，残军夜遁纵火，风助火势焚毁全城；亚历山大急令追击并扑火救民，战后把卡里亚交阿妲。文案按主人规矩不写兵力确数。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_aristides',
+        briefing: '米利都既下，波斯把兵力与希腊雇佣军一齐集中到卡里亚的哈利卡纳苏斯。罗得岛的门农刚受任小亚细亚总指挥、又统率着波斯舰队，他把城防处处加固，舰队就泊在港里，摆明了要在这里跟亚历山大耗下去。\n\n亚历山大进入卡里亚境内，被废黜的前女王阿妲带着她仅剩的要塞阿林达来投。可哈利卡纳苏斯握着大兵，这一仗只能硬打。\n\n他先想拿城旁那座要塞当跳板：城中内应约定时辰开城，可他带着小部队赶到墙下时，内应已被波斯军发觉，城门没有开。他命人挖墙脚强攻，守军拼死抵抗，波斯的援军又乘船赶到，他只得收兵，回头专心围哈利卡纳苏斯。\n\n填平护城河、架起投石机之后，波斯守军夜里出城来烧器械，被马其顿军打退。过了几天，佩尔狄卡斯营里两名士兵莽撞逼近城墙，竟引得双方大打一场：城墙被撞开一段，城里的泥瓦匠很快又砌起一道新墙。此后连日投石轰城，守军不断出城反击，墙上的守兵居高临下打下来，双方都没讨到便宜，只是守军伤亡一天天重起来。\n\n门农与欧戎托巴提斯见城墙已倒了一段、伤兵日渐增多，决意弃城。波斯残军趁夜退出，并放火烧了城中军需；那一夜风大，火把整座哈利卡纳苏斯吞了进去。亚历山大急令追击，又命人扑火、救护城中百姓——他最后到手的，只是一座残城。他留下部分军队驻守，把卡里亚交给阿妲统领，继续东进。',
+        type: 'siege',
+        title: '公元前334年 哈利卡纳苏斯战役',
+        description: '马其顿军取哈利卡纳苏斯：亚历山大先攻旁近要塞无功，转而填壕架炮强攻坚城；守军夜袭烧器械、白日居高反击，双方僵持多日，城墙终被撞开一段。门农与欧戎托巴提斯见伤兵日增，决意弃城，波斯残军趁夜退出并纵火焚城，风大火烈全城化为火海。亚历山大急令追击扑火、救护百姓，最后只得到一座残城；哈利卡纳苏斯归马其顿，卡里亚交由前女王阿妲统领。',
+        siegeData: {
+            title: '哈利卡纳苏斯战役',
+            description: '守军以希腊雇佣军为主力、波斯舰队泊于港内策应，凭护城河、投石机与城墙死守；马其顿军填平壕沟、架炮轰墙，自被撞开的缺口强攻，守军当夜弃城纵火，城破。',
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 18000,
+            attackerSourceCityId: 'city_miletus',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'halikanasu_memnon',
+            defenderTroops: 3000,
+            defenderCityId: 'city_halikanasu',
+            defenderLegionName: '阿契美尼德军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_halikanasu', factionId: 'maqidun' }],
+    },
     {
         year: -333,
         // 秋（2）。史料记此役在前 333 年 11 月。
@@ -123,7 +184,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    实测（scratch/_probe_route_waypoints.mjs）：安卡拉→伊科尼乌姆 直线232km/路网251km（1.09x）、
             //    伊科尼乌姆→阿达纳 直线304km/路网359km（1.18x），都在 400km 与 1.6x 之内；
             //    不补它则安卡拉→阿达纳 一段直线 407km，超过编辑器 400km 上限。
-            marchWaypoints: ['city_yifusuo', 'city_halikanasu', 'city_geerdiweng', 'city_ankala', 'city_yikeniwumu', 'city_adana'],
+            marchWaypoints: ['city_geerdiweng', 'city_ankala', 'city_yikeniwumu', 'city_adana'],
 
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
@@ -173,7 +234,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         absentCities: ['city_adana'],
         inviteText: '朋友，你来得正好。我在戈尔迪乌姆斩断了那个无人能解的结，传说解开它的人将成为亚细亚之王。大流士已在巴比伦集结大军，我要越过托罗斯山，进入奇里乞亚迎战他。你可愿随我同往？',
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts）
-        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯战役，野战，两军在皮纳鲁斯河两岸会战。' }, time: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：前333年11月5日，季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯城以南的皮纳鲁斯河，今土耳其哈塔伊省；坐标取信息框 36.7525,36.1923。海湾到群山之间仅2.6公里。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿与希腊同盟，亚历山大亲统右翼伙伴骑兵，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：马其顿军共约37000人。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前骑兵、中方阵、后远程，鱼鳞阵；此役亚历山大仍亲率伙伴骑兵为决胜一击。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Issus：阿契美尼德帝国，大流士三世亲征。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：现代估计5万至10万，中值75000；主人定守方不超过攻方2倍，37000×2=74000，在区间内，取74000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda，后世通称阿契美尼德军。英文维基百科 Battle of Issus：骑兵约1.8万、长生军与希腊雇佣兵及亚美尼亚步兵约6万、轻步兵3万至8万；波斯骑兵率先渡河冲击，故前骑兵中步兵后远程，鹤翼阵2-4-3。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Battle of the Granicus：格拉尼库斯战后亚历山大南下，经萨迪斯、以弗所、米利都，前334年秋冬围哈利卡纳苏斯，其后北上弗里吉亚；前333年春在古都戈尔迪乌姆斩断戈尔迪之结，东至安库拉，再南下经卡帕多西亚、过托罗斯山即奇里乞亚门入奇里乞亚，驻军塔尔苏斯，得知大流士在巴比伦集结大军后南下，于伊苏斯迎战。游戏路线：出发地＝上一处战场（格拉尼库斯），不写出发据点（军团此刻就在战场上，写了就是瞬移）；途经 以弗所 → 哈利卡纳苏斯 → 戈尔迪乌姆 → 安卡拉即古安库拉 → 伊科尼乌姆 → 阿达纳即塔尔苏斯附近 → 伊苏斯。萨迪斯与米利都库中无据点，按铁律用附近已有据点连接、绝不新建，以弗所与哈利卡纳苏斯即为此两段的连接点。⚠️ 路网缺口两处，已报主人建路：哈利卡纳苏斯→戈尔迪乌姆 893 公里、绕远 1.81 倍；阿达纳→伊苏斯战场 226 公里、绕远 2.74 倍（路网没有阿达纳往南的直路，最短路绕经安提俄基亚）。' }, result: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿胜，大流士弃军逃走，母亲、妻子、两个女儿被俘；伊苏斯是战场，无据点易主。' }, invite: { level: 'fact', text: '英文维基百科 Alexander the Great：戈尔迪乌姆斩断戈尔迪之结，传说能解开者将为亚细亚之王；英文维基百科 Battle of Issus：大流士在巴比伦集结大军。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Issus：海湾到群山仅2.6公里即两英里；大流士绕到马其顿军后方占领伊苏斯、砍去伤病员之手；马其顿军约3.7万，波斯军按中值7.5万，播报写三万七千、七万五千；方阵居中、亚历山大率伙伴骑兵在右翼。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯战役，野战，两军在皮纳鲁斯河两岸会战。' }, time: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：前333年11月5日，季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Issus：伊苏斯城以南的皮纳鲁斯河，今土耳其哈塔伊省；坐标取信息框 36.7525,36.1923。海湾到群山之间仅2.6公里。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿与希腊同盟，亚历山大亲统右翼伙伴骑兵，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：马其顿军共约37000人。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前骑兵、中方阵、后远程，鱼鳞阵；此役亚历山大仍亲率伙伴骑兵为决胜一击。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Issus：阿契美尼德帝国，大流士三世亲征。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of Issus 信息框：现代估计5万至10万，中值75000；主人定守方不超过攻方2倍，37000×2=74000，在区间内，取74000。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda，后世通称阿契美尼德军。英文维基百科 Battle of Issus：骑兵约1.8万、长生军与希腊雇佣兵及亚美尼亚步兵约6万、轻步兵3万至8万；波斯骑兵率先渡河冲击，故前骑兵中步兵后远程，鹤翼阵2-4-3。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Battle of the Granicus：格拉尼库斯战后亚历山大南下，经萨迪斯、以弗所、米利都，前334年秋冬围哈利卡纳苏斯，其后北上弗里吉亚；前333年春在古都戈尔迪乌姆斩断戈尔迪之结，东至安库拉，再南下经卡帕多西亚、过托罗斯山即奇里乞亚门入奇里乞亚，驻军塔尔苏斯，得知大流士在巴比伦集结大军后南下，于伊苏斯迎战。游戏路线：出发地＝上一处战场（格拉尼库斯），不写出发据点（军团此刻就在战场上，写了就是瞬移）；途经 戈尔迪乌姆 → 安卡拉即古安库拉 → 伊科尼乌姆 → 阿达纳即塔尔苏斯附近 → 伊苏斯（以弗所那一段属格拉尼库斯～米利都两场，本场自哈利卡纳苏斯出发不再绕回以弗所）。⚠️ 路网缺口两处，已报主人建路：哈利卡纳苏斯→戈尔迪乌姆 893 公里、绕远 1.81 倍；阿达纳→伊苏斯战场 226 公里、绕远 2.74 倍（安提俄基亚-阿达纳那条路朝西南绕，军团先往西南再折回东北）。' }, result: { level: 'fact', text: '英文维基百科 Battle of Issus：马其顿胜，大流士弃军逃走，母亲、妻子、两个女儿被俘；伊苏斯是战场，无据点易主。' }, invite: { level: 'fact', text: '英文维基百科 Alexander the Great：戈尔迪乌姆斩断戈尔迪之结，传说能解开者将为亚细亚之王；英文维基百科 Battle of Issus：大流士在巴比伦集结大军。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Issus：海湾到群山仅2.6公里即两英里；大流士绕到马其顿军后方占领伊苏斯、砍去伤病员之手；马其顿军约3.7万，波斯军按中值7.5万，播报写三万七千、七万五千；方阵居中、亚历山大率伙伴骑兵在右翼。' } },
     },
 
     // ═══════════════════════════════════════════════════════════════

@@ -57801,44 +57801,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "以弗所-哈利卡纳苏斯",
-                type: "road",
-                id: "road_city_yifusuo_city_halikanasu_1788854765513",
-                startConnection: "city_yifusuo",
-                endConnection: "city_halikanasu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [27.34, 37.94],
-                    [27.539515, 37.896881],
-                    [27.554087, 37.87441],
-                    [27.514945, 37.824802],
-                    [27.425261, 37.770924],
-                    [27.402627, 37.749049],
-                    [27.386888, 37.720972],
-                    [27.367008, 37.668121],
-                    [27.34449, 37.569605],
-                    [27.34284, 37.509532],
-                    [27.359162, 37.474531],
-                    [27.376073, 37.466195],
-                    [27.489756, 37.462561],
-                    [27.53759, 37.456203],
-                    [27.760744, 37.315563],
-                    [27.752333, 37.270809],
-                    [27.711089, 37.246063],
-                    [27.66572, 37.225441],
-                    [27.6286, 37.200694],
-                    [27.616227, 37.180072],
-                    [27.583232, 37.15945],
-                    [27.570859, 37.12233],
-                    [27.43, 37.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卡里斯托斯-雅典",
                 type: "road",
                 id: "road_city_kalisituosi_city_yadian_1788854883086",
@@ -64455,6 +64417,59 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [32.759382, 37.839979],
                     [32.672769, 37.852353],
                     [32.4931, 37.8744],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "以弗所-米利都",
+                type: "road",
+                id: "road_city_yifusuo_city_miletus_1790229288536",
+                startConnection: "city_yifusuo",
+                endConnection: "city_miletus"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.34, 37.94],
+                    [27.539515, 37.896881],
+                    [27.554087, 37.87441],
+                    [27.514945, 37.824802],
+                    [27.425261, 37.770924],
+                    [27.402627, 37.749049],
+                    [27.386888, 37.720972],
+                    [27.367008, 37.668121],
+                    [27.2783, 37.5303],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "米利都-哈利卡纳苏斯",
+                type: "road",
+                id: "road_city_miletus_city_halikanasu_1790229294880",
+                startConnection: "city_miletus",
+                endConnection: "city_halikanasu"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.2783, 37.5303],
+                    [27.489756, 37.462561],
+                    [27.53759, 37.456203],
+                    [27.583774, 37.443596],
+                    [27.626556, 37.422479],
+                    [27.760744, 37.315563],
+                    [27.752333, 37.270809],
+                    [27.711089, 37.246063],
+                    [27.66572, 37.225441],
+                    [27.6286, 37.200694],
+                    [27.616227, 37.180072],
+                    [27.583232, 37.15945],
+                    [27.570859, 37.12233],
+                    [27.43, 37.03],
                 ]
             }
         },

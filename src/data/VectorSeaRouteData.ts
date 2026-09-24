@@ -5218,30 +5218,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "卡里斯托斯-克拉佐美奈",
-                type: "sea",
-                id: "sea_city_kalisituosi_city_kelazuomeinai_1788854841497",
-                startConnection: "city_kalisituosi",
-                endConnection: "city_kelazuomeinai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [24.42, 38.01],
-                    [24.612093, 37.988022],
-                    [24.6863, 38.0741],
-                    [25.432437, 38.327161],
-                    [25.753004, 38.636582],
-                    [26.157985, 38.716479],
-                    [26.53194, 38.694131],
-                    [26.677562, 38.603147],
-                    [26.77, 38.36],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "卡里斯托斯-以弗所",
                 type: "sea",
                 id: "sea_city_kalisituosi_city_yifusuo_1788854843049",
@@ -6321,6 +6297,31 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [132.729263, 33.955321],
                     [132.780959, 34.069596],
                     [132.530823, 34.438616],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "克拉佐美奈-卡里斯托斯",
+                type: "sea",
+                id: "sea_city_kelazuomeinai_city_kalisituosi_1790229365590",
+                startConnection: "city_kelazuomeinai",
+                endConnection: "city_kalisituosi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [26.77, 38.36],
+                    [26.677562, 38.603147],
+                    [26.53194, 38.694131],
+                    [26.289642, 38.78712500000001],
+                    [26.157985, 38.716479],
+                    [25.753004, 38.636582],
+                    [25.432437, 38.327161],
+                    [24.6863, 38.0741],
+                    [24.612093, 37.988022],
+                    [24.42, 38.01],
                 ]
             }
         },

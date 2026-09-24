@@ -60,6 +60,8 @@ export interface BattlefieldEventDraft {
     sources?: Record<string, { level: string; text: string }>;
     /** 途经但那一年还不存在的据点（剧本期不显示） */
     absentCities?: string[];
+    /** 🔴 [2026-09-24 主人定] 本场出现的特殊建筑（奇观素材目录名，见 `CityWonders.ts`）；留空不写 */
+    wonders?: string[];
     /** 归属武将军团的主将队（第 10 队）兵种 */
     commanderUnit?: string;
     /** 对手一方主帅的主将队兵种（必须是英雄） */
@@ -339,6 +341,8 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     const srcLit = sourcesLiteral(d);
     if (srcLit) L.push(`        sources: ${srcLit},`);
     if (d.absentCities?.length) L.push(`        absentCities: [${d.absentCities.map((c) => tsStr(c)).join(', ')}],`);
+    // 🔴 [2026-09-24 主人定] 本场特殊建筑：有值才写
+    if (d.wonders?.length) L.push(`        wonders: [${d.wonders.map((w) => tsStr(w)).join(', ')}],`);
     if (d.commanderUnit) L.push(`        commanderUnit: ${tsStr(d.commanderUnit)},`);
     if (d.foeCommanderUnit) L.push(`        foeCommanderUnit: ${tsStr(d.foeCommanderUnit)},`);
     if (d.startCityId) L.push(`        startCityId: ${tsStr(d.startCityId)},`);
@@ -575,6 +579,9 @@ export function saveBattlefieldEvent(
             if (srcLit) topFields.push(['sources', srcLit]);
             const absentLit = d.absentCities?.length ? `[${d.absentCities.map((c) => tsStr(c)).join(', ')}]` : null;
             if (absentLit) topFields.push(['absentCities', absentLit]);
+            // 🔴 [2026-09-24 主人定] 本场特殊建筑：有值就地替换，清空了下面真删字段
+            const wondersLit = d.wonders?.length ? `[${d.wonders.map((w) => tsStr(w)).join(', ')}]` : null;
+            if (wondersLit) topFields.push(['wonders', wondersLit]);
             if (d.commanderUnit) topFields.push(['commanderUnit', tsStr(d.commanderUnit)]);
             if (d.foeCommanderUnit) topFields.push(['foeCommanderUnit', tsStr(d.foeCommanderUnit)]);
             if (d.startCityId) topFields.push(['startCityId', tsStr(d.startCityId)]);
@@ -626,6 +633,11 @@ export function saveBattlefieldEvent(
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
                 if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'absentCities');
+            }
+            if (!wondersLit) {
+                const objOpen = p1Text.indexOf('{', hit.start);
+                const objEnd = matchBraceEnd(p1Text, objOpen);
+                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'wonders');
             }
             if (!srcLit) {
                 const objOpen = p1Text.indexOf('{', hit.start);
