@@ -1904,6 +1904,7 @@ export const FACTIONS: Faction[] = [
     { id: 'aosiruowen', name: '奥斯若恩' },
     { id: 'kesa', name: '可萨' },
     { id: 'aiaoniya', name: '爱奥尼亚' },
+    { id: 'yiaoniya', name: '伊奥尼亚' },        // 米利都·伊奥尼亚第一城（前334年米利都围城战守将赫格西斯特）
     { id: 'jialatai', name: '加拉太' },
     { id: 'guyashu', name: '阿舒尔' },
 

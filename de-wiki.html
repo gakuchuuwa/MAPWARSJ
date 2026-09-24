@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age of Empires II: Definitive Edition 官方百科全书</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .editor-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+            background: #15110d; border-bottom: 1px solid #4a3e2b;
+            padding: 4px 12px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+            font-size: 12px; font-family: "Noto Serif SC", serif;
+        }
+        .editor-nav a {
+            color: #d4af37; text-decoration: none; padding: 2px 8px;
+            border: 1px solid #5a4b32; border-radius: 3px; white-space: nowrap;
+        }
+        .editor-nav a:hover { background: #2f2516; color: #fff; }
+        .editor-nav a.active { background: #685328; color: #fff; border-color: #d4af37; font-weight: bold; }
+        #app { margin-top: 32px; min-height: calc(100vh - 32px); }
+    </style>
+</head>
+<body>
+    <div class="editor-nav">
+        <a href="/batch-manager.html">实体管理</a>
+        <a href="/portrait-tuner.html">立绘调校</a>
+        <a href="/skill-editor.html">技能管理</a>
+        <a href="/legion-editor.html">军团方阵</a>
+        <a href="/_citytest.html">据点编辑</a>
+        <a href="/battlefield-editor.html">战场事件</a>
+        <a href="/de-wiki.html" class="active">🏛️ DE官方百科</a>
+    </div>
+    <div id="app"></div>
+    <script type="module" src="/src/de-wiki/main.ts"></script>
+</body>
+</html>

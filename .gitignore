@@ -104,5 +104,6 @@ juji/
 !/package-lock.json
 !/vite.config.ts
 !/index.html
+!/de-wiki.html
 start_server.bat
 .auto_deploy_state.json

@@ -29,6 +29,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     kaliya: { name: '卡里亚水师', tier: 2 },       // 哈利卡纳苏斯·阿尔特米西亚：卡里亚女王萨拉米斯海战五舰助波斯
+    yiaoniya: { name: '米利都水师', tier: 3 },       // 米利都·伊奥尼亚：前494年拉德海战伊奥尼亚舰队主力，米利都以海军著称（史载其舰队为诸邦之冠）
     bosidiguo: { name: '波斯骑军', tier: 1 },       // 克拉佐美奈·阿尔塔弗涅斯：波斯骑兵主力，以弗所会战全歼雅典远征军
 
     // ── T3 风土之兵：文化知名度或兵种特色，无可考大捷 ──
