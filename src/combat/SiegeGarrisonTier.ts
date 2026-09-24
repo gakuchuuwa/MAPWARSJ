@@ -4,6 +4,8 @@ import {
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getScriptSiegeDefenderGeneral } from '../events/scriptPeriod';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import {
@@ -84,7 +86,10 @@ export function assignSiegeGarrisonTier(
     const anchorFaction = getCityAnchorFactionId(city.id);
 
     const eliteName = getCityEliteLegionName(city.id);
-    const anchoredGeneral = getCityAnchoredGeneral(city.id);
+    // 🔴 [2026-09-25] 剧本期攻城：事件写了这座城的守将就用他（底比斯＝菲尼克斯，不是伊巴密浓达）
+    const scriptDefenderId = getScriptSiegeDefenderGeneral(city.id);
+    const scriptDefender = scriptDefenderId ? getGeneralRecordByGeneralId(scriptDefenderId) : null;
+    const anchoredGeneral = scriptDefender ?? getCityAnchoredGeneral(city.id);
 
     // ② 城内已有自家军团带了（守城军团或在场援军），城防就不发了
     const hasLegionElite = defendingLegions.some((l) => l.isElite && l.name === eliteName);

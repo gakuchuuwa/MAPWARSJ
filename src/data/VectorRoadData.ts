@@ -63850,40 +63850,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "⚔格拉尼库斯河-特洛伊",
-                type: "road",
-                id: "road_bf_gelanikusihe_city_teluoyi_1790261913749",
-                startConnection: "bf_gelanikusihe",
-                endConnection: "city_teluoyi"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [27.2811, 40.3167],
-                    [27.170007, 40.133055],
-                    [27.142832, 40.112017],
-                    [27.113904, 40.070816],
-                    [27.050789, 40.054161],
-                    [27.045529, 40.017343],
-                    [26.964568, 40.01355],
-                    [26.894453, 40.025923],
-                    [26.717103, 39.898066],
-                    [26.66761, 39.881568],
-                    [26.655237, 39.87332],
-                    [26.605744, 39.819702],
-                    [26.556251, 39.807329],
-                    [26.465513, 39.778458],
-                    [26.411896, 39.774334],
-                    [26.362403, 39.778458],
-                    [26.31291, 39.794956],
-                    [26.259292, 39.803204],
-                    [26.2389, 39.9575],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "⚔伊苏斯-阿达纳",
                 type: "road",
                 id: "road_bf_yisusi_city_adana_1790261961858",
@@ -64389,38 +64355,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [69.658813, 40.248096],
                     [69.635841, 40.409495],
                     [69.4, 40.4],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "索格狄亚那岩-吉扎克",
-                type: "road",
-                id: "road_city_suogediyanayan_city_jizhake_1790263126718",
-                startConnection: "city_suogediyanayan",
-                endConnection: "city_jizhake"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [69.4, 40.4],
-                    [69.277016, 40.294011],
-                    [69.272892, 40.26514],
-                    [69.165657, 40.207398],
-                    [69.079044, 40.236269],
-                    [69.054297, 40.240393],
-                    [68.980058, 40.236269],
-                    [68.88932, 40.22802],
-                    [68.872823, 40.223896],
-                    [68.872823, 40.170278],
-                    [68.893445, 40.149656],
-                    [68.485127, 40.120785],
-                    [68.448007, 40.100163],
-                    [68.361394, 40.063043],
-                    [68.307777, 40.046545],
-                    [68.060311, 40.067167],
-                    [67.8333, 40.1167],
                 ]
             }
         },
@@ -64947,6 +64881,133 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [65.870243, 31.513116],
                     [65.861994, 31.529614],
                     [65.7372, 31.6289],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "吉扎克-居鲁士城",
+                type: "road",
+                id: "road_city_jizhake_city_julushicheng_1790267155739",
+                startConnection: "city_jizhake",
+                endConnection: "city_julushicheng"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [67.8333, 40.1167],
+                    [68.060311, 40.067167],
+                    [68.307777, 40.046545],
+                    [68.361394, 40.063043],
+                    [68.448007, 40.100163],
+                    [68.485127, 40.120785],
+                    [68.703721, 40.207398],
+                    [68.765588, 40.215647],
+                    [68.78621, 40.215647],
+                    [68.843952, 40.203273],
+                    [68.893445, 40.149656],
+                    [68.914067, 40.112536],
+                    [68.934689, 40.083665],
+                    [69, 39.91],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "居鲁士城-忽毡",
+                type: "road",
+                id: "road_city_julushicheng_city_huzhan_1790267172353",
+                startConnection: "city_julushicheng",
+                endConnection: "city_huzhan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [69, 39.91],
+                    [69.202776, 40.058919],
+                    [69.285265, 40.096038],
+                    [69.425495, 40.120785],
+                    [69.446117, 40.133158],
+                    [69.487362, 40.149656],
+                    [69.658813, 40.248096],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "格拉尼库斯-萨第斯",
+                type: "road",
+                id: "road_city_gelanikusi_city_sifaerde_1790300000000",
+                startConnection: "city_gelanikusi",
+                endConnection: "city_sifaerde"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.28, 40.32],
+                    [27.42, 40.2],
+                    [27.65, 40.1],
+                    [27.839355468750004, 39.88866516883715],
+                    [27.89, 39.65],
+                    [27.831115722656254, 39.57817336212529],
+                    [27.7020263671875, 39.54641191968671],
+                    [27.666320800781254, 39.42770738465604],
+                    [27.586669921875004, 39.30667511534216],
+                    [27.61, 39.19],
+                    [27.84, 38.92],
+                    [27.91, 38.71],
+                    [28.03, 38.48],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "苏萨-波斯波利斯（经波斯门）",
+                type: "road",
+                id: "road_city_susa_city_bosibolisi_1790310000000",
+                startConnection: "city_susa",
+                endConnection: "city_bosibolisi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [48.2578, 32.1906],
+                    [48.9, 31.9],
+                    [49.6, 31.28],
+                    [50.24, 30.6],
+                    [50.9, 30.85],
+                    [51.5986, 30.7083],
+                    [52.1, 30.35],
+                    [52.89, 29.93],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "蓝氏城-撒马尔罕（渡乌浒水经铁门）",
+                type: "road",
+                id: "road_city_lanshi_city_samaerhan_1790320000000",
+                startConnection: "city_lanshi",
+                endConnection: "city_samaerhan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [67.08252, 36.71248],
+                    [67.12, 36.95],
+                    [67.2783, 37.2242],
+                    [67.3, 37.6],
+                    [67.1986, 38.2056],
+                    [66.75, 38.4167],
+                    [66.83, 38.75],
+                    [66.83, 39.0578],
+                    [66.95, 39.35],
+                    [66.9714, 39.6525],
                 ]
             }
         },

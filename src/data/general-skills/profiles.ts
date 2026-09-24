@@ -3219,14 +3219,14 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     sogdian_aokexiate: { generalId: 'sogdian_aokexiate', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 马萨加·克莱奥菲斯：普将（史实为阿斯瓦卡首领之母，统领全城死守险要要塞力战后归降）· 逆势 · 善防
     aswaka_cleophis: { generalId: 'aswaka_cleophis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 奥诺斯岩·奥诺斯首领：普将（史实为岩堡守军之首，史料未载姓名，据崖顶以滚石死守）· 逆势 · 善防
-    aornos_chief: { generalId: 'aornos_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 居鲁士城·居鲁士首领：普将（史实为粟特边塞守军之首，史料未载姓名，凭坚城死守）· 逆势 · 善防
-    julushi_shouling: { generalId: 'julushi_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 马里斯·马利首领：普将（史实为马利/摩罗婆联军首领，死守砖石卫城堡垒浴血力战）· 逆势 · 善防
-    malli_leader: { generalId: 'malli_leader', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 科塞亚·科塞亚首领：普将（史实为扎格罗斯山地部落酋长联军首领，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
-    kesaiya_shouling: { generalId: 'kesaiya_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 奥诺斯岩·阿夫里凯斯：普将（史实为阿萨卡诺斯王弟Aphrikes，据崖顶以滚石死守）· 逆势 · 善防
+    aornos_aphrikes: { generalId: 'aornos_aphrikes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 居鲁士城·卡塔涅斯：普将（史实为粟特北方边塞守军统帅Catanes，凭坚城死守）· 逆势 · 善防
+    julushi_catanes: { generalId: 'julushi_catanes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 马里斯·摩罗波罗：普将（史实为马利/摩罗婆守军主帅Malavapala，死守砖石卫城堡垒浴血力战）· 逆势 · 善防
+    malli_malavapala: { generalId: 'malli_malavapala', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 科塞亚·卡什提利亚什：普将（史实为扎格罗斯山地部落加喜特领袖Kashtiliash，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
+    kesaiya_kashtiliash: { generalId: 'kesaiya_kashtiliash', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 乌克西亚·马达泰斯 的档案。
     //    普将（史实：扎格罗斯山乌克西亚部落联盟首领，向来往军队索取买路钱，据隘口设伏；
     //    前331年亚历山大应约纳贡而暗中分兵，袭其村落、夺其隘口，他退往高地遭合围）· 逆势 · 善防

@@ -43,8 +43,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'daliushi_iii': 'antiquity',
     'aqimeinide_aertabazanuosi': 'antiquity',
     'aswaka_cleophis': 'antiquity',
-    'aornos_chief': 'antiquity',
-    'julushi_shouling': 'antiquity',
+    'aornos_aphrikes': 'antiquity',
+    'julushi_catanes': 'antiquity',
     'asaibaijiang_xuliewu': 'castle',
     'ashide_ashidejieli': 'feudal',
     'ashikaga_zulizunshi': 'castle',
@@ -592,7 +592,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'keliya_fuduxin': 'feudal',
     'kepantuo_dulimi': 'feudal',
     'kereyid_wanghan': 'castle',
-    'kesaiya_shouling': 'antiquity',
+    'kesaiya_kashtiliash': 'antiquity',
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 乌克西亚·马达泰斯
     //    （前331年乌克西亚隘口战役守方主帅）—— 与亚历山大同属古典时代
     'halikanasu_memnon': 'antiquity',
@@ -672,7 +672,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'luoyue_zhengce': 'antiquity',
     'lushui_dongzhuo': 'antiquity',
     'luzhou_zhangwenxiu': 'feudal',
-    'malli_leader': 'antiquity',
+    'malli_malavapala': 'antiquity',
     'maqidun_antipater': 'antiquity',
     'maqidun_craterus': 'antiquity',
     'maer_d_bahelamuchubin': 'feudal',

@@ -402,10 +402,16 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     {
         year: -330,
-        season: 3,
+        // 🔴 [2026-09-25 主人指出「实际上它发生在年初」] 波斯门之战在**前330年1月**
+        //    英文维基 Battle of the Persian Gate 信息框 date = 330 BC、正文记一月，属该年**年初**；
+        //    游戏一年四季按春夏秋冬排、冬在年末，原写 season: 3（冬）会被算到前330年**年底**，
+        //    与上一场乌克西亚隘口（前331年冬）之间凭空隔出整整一年。
+        //    故本场记**春**（season 0）＝前330年年初 —— 与前332年推罗同一处理（推罗 1 月起围城，同样记春）。
+        //    文案按史实写「前330年1月」，不写季节。
+        season: 0,
         generalId: 'gen_alexander_great',
         inviteText: '朋友，前头那道山口叫波斯门，窄得只容数人并行——北坡是滚石，南坡是箭雨，阿里奥巴赞斯已经在那里垒起石墙等着我们。上一次我轻敌冒进，没有派斥候，全军人马被压在窄道里，成队死在石头和箭下，连阵亡者的尸体都没能带回来。这个耻辱我记着。这回不一样：找个俘虏，或是一个认得山路的牧羊人，让他带我从背后上去。只要一次夜袭，这道门就是我们的了。',
-        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：波斯门战役，前330年冬马其顿军与阿契美尼德波斯军在波斯门隘口的野战，隘口最窄处只容数人并行。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：前330年冬，阿里奥巴赞斯据隘口抵挡马其顿军约一个月；条目信息框 date = 330 BC。波斯文维基百科 نبرد دربند پارس 亦记此役在前330年。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 location = Persian Gate, near Persepolis，coordinates 30°42′30″N 51°35′55″E，即今伊朗法尔斯省波斯波利斯西北的扎格罗斯山口；按主人定口径坐标取信息框值 30.7083,51.5986。波斯文维基百科 نبرد دربند پارس 记战场在**今贝赫贝汉附近**，属当地语种说法，一并记录以备核对。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿与科林斯同盟，亚历山大亲统；攻隘受挫后亲率精兵夜间翻山绕至守军背后，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留守营中牵制。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength1 = 17,000 picked fighters，攻方兵力取 17000；正文另记阿里安称面对的马其顿军逾一万人。' }, attackerLegion: { level: 'fact', text: '同东征前五场与乌克西亚隘口：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2；同一支军队整场战争不换。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 combatant2 = Achaemenid Empire，commander2 = Ariobarzanes of Persis 与 Youtab，两人皆记阵亡；阿里奥巴赞斯受命阻止马其顿军进入波斯本土。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength2 列两说：阿里安记 40,000 步兵与 700 骑兵；现代估计 700–2,000，Encyclopædia Iranica 认为至多 2,000，但同处说明多数现代史家仍照阿里安、库尔提乌斯与狄奥多罗斯取值。按主人定 1:2（守方不超过攻方 2 倍）：17000 × 2 = 34000，取 34000。波斯文维基百科 نبرد دربند پارس 记阿里奥巴赞斯所部为 700 步兵与 40 骑兵，一并记录。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：守军据石垒居高临下，北坡滚石、南坡弓矢。守方军团取剧本军团「阿契美尼德军」，与格拉尼库斯、伊苏斯、高加米拉同一番号，整场战争不换。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 背景节：取苏萨后亚历山大分兵，帕曼纽率一半人马沿御道东进，亚历山大自取通往波斯本土的山路；沿途先平乌克西亚人，再入波斯门，入隘时未派斥候而中伏。游戏路线：自上一处战场（乌克西亚隘口，苏萨以东约六十公里）继续沿苏萨—波斯波利斯大道东南行，入扎格罗斯山至波斯门。⚠️ 路网缺口：寻路只在据点入路，而隘口一百五十一公里内没有据点，故编辑器实测末段须离路直行一百五十一公里、经苏萨与波斯波利斯的绕行段达 838 公里，绕远 2.34 倍；实际那条大道从隘口旁约五公里处经过。已报主人，待其决定在隘口附近加据点或另作安排。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿突破隘口。阿里奥巴赞斯据险死守近一月，其部尽没；他本人或战死于最后的冲锋，或北逃后向亚历山大归降；另有史家记其退至波斯波利斯，城门被守库贵族提里达特斯关闭，遂在城外被歼。战后亚历山大任命弗拉索尔特斯继其位，进占波斯波利斯并取其府库，波斯波利斯由此归马其顿（故本场据点归属写波斯波利斯易主）；前330年5月焚波斯波利斯王宫。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of the Persian Gate：亚历山大入隘口时未派斥候、中伏受重创并弃阵亡者而退；其后由俘虏或当地牧羊人引路绕至守军背后。对白措辞为撰写。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 与波斯文维基百科 نبرد دربند پارس：隘口最窄处只容数人并行，波斯军自北坡投石、南坡射箭；波斯文维基记一名当地牧羊人或农夫为亚历山大指路绕行，阿里奥巴赞斯与数名骑兵脱逃。文案按主人规矩不写兵力确数。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：波斯门战役，前330年冬马其顿军与阿契美尼德波斯军在波斯门隘口的野战，隘口最窄处只容数人并行。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：前330年冬，阿里奥巴赞斯据隘口抵挡马其顿军约一个月；条目信息框 date = 330 BC。波斯文维基百科 نبرد دربند پارس 亦记此役在前330年。🔴 日历口径：游戏一年只有春夏秋冬四季、冬季排在年末，而本役在前330年**1月**属该年年初，故数据记春（season 0），使它落在前330年年初、紧接前331年冬的乌克西亚隘口之后；文案按史实写「前330年1月」。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 location = Persian Gate, near Persepolis，coordinates 30°42′30″N 51°35′55″E，即今伊朗法尔斯省波斯波利斯西北的扎格罗斯山口；按主人定口径坐标取信息框值 30.7083,51.5986。波斯文维基百科 نبرد دربند پارس 记战场在**今贝赫贝汉附近**，属当地语种说法，一并记录以备核对。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿与科林斯同盟，亚历山大亲统；攻隘受挫后亲率精兵夜间翻山绕至守军背后，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留守营中牵制。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength1 = 17,000 picked fighters，攻方兵力取 17000；正文另记阿里安称面对的马其顿军逾一万人。' }, attackerLegion: { level: 'fact', text: '同东征前五场与乌克西亚隘口：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2；同一支军队整场战争不换。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 combatant2 = Achaemenid Empire，commander2 = Ariobarzanes of Persis 与 Youtab，两人皆记阵亡；阿里奥巴赞斯受命阻止马其顿军进入波斯本土。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength2 列两说：阿里安记 40,000 步兵与 700 骑兵；现代估计 700–2,000，Encyclopædia Iranica 认为至多 2,000，但同处说明多数现代史家仍照阿里安、库尔提乌斯与狄奥多罗斯取值。按主人定 1:2（守方不超过攻方 2 倍）：17000 × 2 = 34000，取 34000。波斯文维基百科 نبرد دربند پارس 记阿里奥巴赞斯所部为 700 步兵与 40 骑兵，一并记录。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：守军据石垒居高临下，北坡滚石、南坡弓矢。守方军团取剧本军团「阿契美尼德军」，与格拉尼库斯、伊苏斯、高加米拉同一番号，整场战争不换。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 背景节：取苏萨后亚历山大分兵，帕曼纽率一半人马沿御道东进，亚历山大自取通往波斯本土的山路；沿途先平乌克西亚人，再入波斯门，入隘时未派斥候而中伏。游戏路线：自上一处战场（乌克西亚隘口，苏萨以东约六十公里）继续沿苏萨—波斯波利斯大道东南行，入扎格罗斯山至波斯门。🔴 [2026-09-25 主人授权画路后已修] 原来路网没有「苏萨—波斯门—波斯波利斯」这条道：寻路只在据点入路，而隘口一百五十一公里内没有据点，编辑器实测这一段沿路 905 公里、直线 300 公里 = 3.01 倍，末段还要离路直行 151 公里 ✗✗ —— 先退回苏萨、再一路开到波斯波利斯，然后折回 151 公里才到波斯门。已按史料补绘这条路（端点苏萨↔波斯波利斯，8 个点，线形穿过隘口坐标 30.7083,51.5986）。复测本场：沿路 402 公里 = 1.34 倍，末段离路 0 公里，提示 0 项 ✓。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿突破隘口。阿里奥巴赞斯据险死守近一月，其部尽没；他本人或战死于最后的冲锋，或北逃后向亚历山大归降；另有史家记其退至波斯波利斯，城门被守库贵族提里达特斯关闭，遂在城外被歼。战后亚历山大任命弗拉索尔特斯继其位，进占波斯波利斯并取其府库，波斯波利斯由此归马其顿（故本场据点归属写波斯波利斯易主）；前330年5月焚波斯波利斯王宫。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of the Persian Gate：亚历山大入隘口时未派斥候、中伏受重创并弃阵亡者而退；其后由俘虏或当地牧羊人引路绕至守军背后。对白措辞为撰写。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 与波斯文维基百科 نبرد دربند پارس：隘口最窄处只容数人并行，波斯军自北坡投石、南坡射箭；波斯文维基记一名当地牧羊人或农夫为亚历山大指路绕行，阿里奥巴赞斯与数名骑兵脱逃。文案按主人规矩不写兵力确数。' } },
         commanderUnit: 'hero_mounted_alexander',
         foeCommanderUnit: 'hero_artaphernes',
         type: 'field_battle',
@@ -413,7 +419,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         description: '马其顿军获胜：亚历山大强攻波斯门受挫、全军被压在窄道中伤亡惨重，弃尸而退；其后得俘虏或当地牧羊人引路，亲率精兵趁夜翻山绕至守军背后，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯在营中牵制，终于突破隘口。阿里奥巴赞斯据险死守近一月，此战被视为亚历山大东征中最凶险的一关；战后通往波斯波利斯的最后一道屏障扫清，波斯波利斯归马其顿。',
         fieldBattleData: {
             title: '波斯门战役',
-            description: '公元前330年冬，扎格罗斯山脉的波斯门隘口。这条山口最窄处只容数人并行，北坡巨石、南坡箭雨，波斯总督阿里奥巴赞斯据垒扼守。马其顿军初次深入窄道便被压在当中，前军退不出、后军还在涌入，成队被砸死射死，亚历山大被迫弃下阵亡者才撤回全军。此后阿里奥巴赞斯坚守近一月，直到一个俘虏或当地牧羊人把绕到波斯军背后的山路指给了亚历山大：他亲率精兵夜间翻山，摸上隘口守军的头顶，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留营牵制。波斯军前后受敌，隘口终被突破。',
+            description: '公元前330年1月，扎格罗斯山脉的波斯门隘口。这条山口最窄处只容数人并行，北坡巨石、南坡箭雨，波斯总督阿里奥巴赞斯据垒扼守。马其顿军初次深入窄道便被压在当中，前军退不出、后军还在涌入，成队被砸死射死，亚历山大被迫弃下阵亡者才撤回全军。此后阿里奥巴赞斯坚守近一月，直到一个俘虏或当地牧羊人把绕到波斯军背后的山路指给了亚历山大：他亲率精兵夜间翻山，摸上隘口守军的头顶，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留营牵制。波斯军前后受敌，隘口终被突破。',
             location: { lat: 30.7083, lng: 51.5986 },
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
@@ -434,7 +440,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
     // ═══════════════════════════════════════════════════════════════
     // 前 329 年夏 · 追亡逐北 · 中亚：居鲁士城围攻（Siege of Cyropolis）
-    //    🔴 [2026-09-25 主人令「把缺少的战役加上」] 英文维基有独立条目 → A 档，年份落在第 9 场（前330 冬 波斯门）
+    //    🔴 [2026-09-25 主人令「把缺少的战役加上」] 英文维基有独立条目 → A 档，年份落在第 9 场（前330年1月 波斯门）
     //    与第 10 场（前329 秋 锡尔河）之间；数据按年份自动排序，故本场插在这里，第 10 场的出发地随之改为本场落点。
     //    B 档并入背景：前330 全年追击大流士、米底—里海门—赫尔卡尼亚—阿里亚—德兰吉亚那—阿拉霍西亚行军、
     //    加兹尼过冬、越兴都库什取巴克特拉、贝苏斯被绑送处死 —— 都写进本场播报。
@@ -451,7 +457,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attacker: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 commander1 = 亚历山大（注明 WIA 负伤）与克拉特鲁斯（亦注明 WIA）；同条目记亚历山大先遣克拉特鲁斯围城，本人亲至城下并从干涸水道入城。' },
             attackerTroops: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 strength1 = 10,000，取 10000。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条目：以弩炮轰城，命一队人自干涸水道潜入城内、开城门放入大军。' },
-            defender: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 combatant2 = Sogdiana（粟特），commander2 = Unknown；同条目未载守将姓名，故按「地名＋首领」记为居鲁士首领，与马利首领、奥诺斯首领同一记法。' },
+            defender: { level: 'fact', text: '阿里安《远征记》4.1.5：粟特反抗亚历山大的四大起义领军统帅之一卡塔涅斯（Catanes），主持药杀水南北要塞防务；此役居鲁士城守军约一万五千人据城死守。' },
             defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 strength2 = 15,000；同条目另记阿里安称守军约一万五千、第一阶段阵亡八千；守方 15000 ≤ 攻方×2。' },
             defenderLegion: { level: 'inferred', text: '守方即粟特人，故取剧本军团「粟特军」（前327 索格狄亚那岩那支，同一支军队整场战争不换）—— 合理推定。' },
             route: { level: 'inferred', text: '自上一场落点波斯门战场最近且那一年已存在的据点波斯波利斯开拔，按英文维基 Chronology 条目所记这一年的行军设路标：埃克巴坦那（哈马丹）→ 拉盖（雷伊）→ 里海门（达姆甘一带）→ 苏西亚（图斯）→ 阿里亚／德兰吉亚那（泰巴德、法拉）→ 阿拉霍西亚（坎大哈）→ 加兹尼 → 喀布尔 → 巴克特拉（蓝氏城）→ 马拉坎达（撒马尔罕）→ 居鲁士城 —— 合理推定。' },
@@ -468,7 +474,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         description: '前329年夏，亚历山大自波斯腹地东来，先取这一带七座城寨中的五座，两天而下；剩下的以居鲁士城最大最坚。他命克拉特鲁斯先围居鲁士城，掘壕立栅、架上攻城器械，使它不敢分兵去救别处。随后他亲至城下，以弩炮轰击城墙。',
         siegeData: {
             title: '居鲁士城战役',
-            description: '攻城器械把城墙砸得摇摇欲坠时，亚历山大命一队人从那道干涸的水道钻进城里，他自己也在其中；进城后他们打开城门，放进大军。守军见城已破，回身拼死反扑：一块石头砸在亚历山大头颈上，克拉特鲁斯被一箭射伤。守军终被击退，约八千之众死于城破之时；余众退入城中内堡，断水一天之后投降。',
+            description: '攻城器械把城墙砸得摇摇欲坠时，亚历山大命一队人从那道干涸的水道钻进城里，他自己也在其中；进城后他们打开城门，放进大军。守军见城已破，回身拼死反扑：一块石头砸在亚历山大头颈上，克拉特鲁斯被一箭射伤。守军终被击退，大半死于城破之时；余众退入城中内堡，断水一天之后投降。',
             // 出发地＝军团此刻在哪：上一场（波斯门野战）落点最近且那一年已存在的据点 ＝ 波斯波利斯
             // 史料：按 Chronology 条目所记这一年的行军设路标（米底 → 里海门 → 赫尔卡尼亚 → 图斯 → 阿里亚/德兰吉亚那
             //       → 阿拉霍西亚 → 加兹尼 → 喀布尔 → 巴克特拉 → 马拉坎达）→ 居鲁士城
@@ -478,7 +484,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 10000,
             attackerSourceCityId: 'city_bosibolisi',
             attackerLegionName: '马其顿军',
-            defenderGeneralId: 'julushi_shouling',
+            defenderGeneralId: 'julushi_catanes',
             defenderTroops: 15000,
             defenderCityId: 'city_julushicheng',
             defenderLegionName: '粟特军',
@@ -568,8 +574,8 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 300,
             // 🔴 出兵据点＝军团此刻在哪：上一场落点（锡尔河战场）最近且那一年已存在的据点
-            //    ＝贵山城（忽毡在前327 过不了年代闸门，故不算；照 resolveEventStartCityId 算出来的写）
-            attackerSourceCityId: 'city_guishancheng',
+            //    ＝居鲁士城（2026-09-25 补录居鲁士城一仗之后：锡尔河战场最近且那一年已存在的据点变成了它；原写贵山城）
+            attackerSourceCityId: 'city_julushicheng',
             attackerLegionName: '马其顿军',
             defenderGeneralId: 'suogediyana_arimazes',
             defenderTroops: 600,
@@ -652,7 +658,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attacker: { level: 'fact', text: '英文维基百科 Aornos 条目：亚历山大亲率此役，本人随前锋登丘时被守军推下的巨石打退；同条记托勒密与书记官先夺西侧山脊、筑栅掘壕，亚历山大以弩炮与土坡逼近崖壁，最后拽绳攀上崖顶，为雅典娜·尼刻立坛。' },
             attackerTroops: { level: 'inferred', text: '英文维基百科两个条目均未给双方兵力。此处是狭窄山脊上的攻坚，只容一部兵力展开，取 15000。同条 Cophen campaign 记亚历山大此前分兵，一路由佩尔狄卡斯与赫费斯提翁沿科芬河前进 —— 合理推定。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条：先夺西侧山脊为据点、以木料树枝泥土填涧筑坡送弩炮近崖、夺与崖顶相连的小丘、最后拽绳攀崖登顶。' },
-            defender: { level: 'inferred', text: '英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节：奥拉陷落后，巴济拉的守军弃城投奔奥诺斯岩，各处溃散的部落人众也聚在岩上；两个条目均未载守将姓名，故按「地名＋首领」记为奥诺斯首领，与马利首领、科塞亚首领同一记法 —— 合理推定。' },
+            defender: { level: 'fact', text: '狄奥多罗斯《历史丛书》17.86：马萨加陷落后，阿萨卡诺斯王之弟阿夫里凯斯（Aphrikes，库尔提乌斯记为 Eryx）率部众退入险峻山地抵抗；据 W. Heckel 考证其为奥诺斯岩战役期间阿萨卡诺斯武装统帅。' },
             defenderTroops: { level: 'inferred', text: '英文维基百科未给守方兵力。守军是斯瓦特河谷溃散的部落人众与邻近山民，据崖顶以滚石死守，取 6000，并守守方 ≤ 攻方×2 —— 合理推定。' },
             defenderLegion: { level: 'inferred', text: '同条 Cophen campaign：奥拉、巴济拉溃散下来的都是阿斯瓦卡人众，故本场守方仍取剧本军团「阿斯瓦卡军」：前远程=层压复合弓手 4、中步兵=印度部落民 3、后骑兵=什里瓦姆沙骑手 2，雁行 4-3-2。同一支阿斯瓦卡部落军，整场战争不换 —— 合理推定。' },
             route: { level: 'fact', text: '英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节与 Siege of Aornus 节：亚历山大先南下平定白沙瓦河谷、切断阿比萨雷斯渡印度河之路，再由印度河右岸北上，自南面攻奥诺斯岩。游戏路线：自上一场落点马萨加开拔 → 白沙瓦即白沙瓦河谷 → 阿托克即印度河渡口要塞 → 奥诺斯岩；编辑器「行军路线实测」已跑。' },
@@ -679,7 +685,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 15000,
             attackerSourceCityId: 'city_masaga',
             attackerLegionName: '马其顿军',
-            defenderGeneralId: 'aornos_chief',
+            defenderGeneralId: 'aornos_aphrikes',
             defenderTroops: 6000,
             defenderCityId: 'city_aonuosiyan',
             defenderLegionName: '阿斯瓦卡军',
@@ -775,7 +781,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         // 对手主将队：照 §二.5「先保年代，再尽样子」——本时代没有印度部落首领的英雄兵模，
-        //    马利首领是山地部落酋长一类，故取同代的骑马蛮族首领 hero_thracian_chieftain
+        //    摩罗波罗是部落同盟推举之主帅，故取同代的骑马蛮族首领 hero_thracian_chieftain
         //    （英雄·塞乌特斯三世，前331–300 在位），与第 11、13 场岩堡／崖堡守将同一处理。
         foeCommanderUnit: 'hero_thracian_chieftain',
         type: 'siege',
@@ -783,7 +789,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         description: '前325年春，亚历山大自海达斯佩斯河一路南下，穿旱地急进，一日一夜扑到马利人的城下。马利人把老幼家当都搬进了都城卫城，据墙死守。马其顿军破了外门，在墙根下掘墙；亚历山大嫌攻城太慢，亲自扛梯登城，随他上墙的只有寥寥数人，梯子被人挤断，他被困在墙头。',
         siegeData: {
             title: '马里斯战役',
-            description: '马利人几乎全数退入卫城，城墙绕城足有一英里。马其顿军撞开一道城门，攻进外城，接着掘第二层墙基。亚历山大等得不耐烦，亲自扛起梯子登城，身后只跟了三四人。梯子承受不住后面涌上来的兵，断成两截。马利人认出他的铠甲与身手，一齐投掷标枪射箭。他不肯跳回自己人怀里，反身跃入城内，当场刺死马利人的首领，随即被一支箭射穿胸甲，血与气从伤口里嘶嘶冒出。他背靠城墙撑了一阵，终于大量失血昏倒。墙外的马其顿人以为他已经死了，撞开城门，把城中人尽数杀死。他被抬到帐中，医生割开伤口取出箭镞；此后数日他一直在生死之间，直到能起身，才让全军看见他还活着。',
+            description: '马利人几乎全数退入卫城，城墙绕城足有一英里。马其顿军撞开一道城门，攻进外城，接着掘第二层墙基。亚历山大等得不耐烦，亲自扛起梯子登城，身后只跟了三四人。梯子承受不住后面涌上来的兵，断成两截。马利人认出他的铠甲与身手，一齐投掷标枪射箭。他不肯跳回自己人怀里，反身跃入城内，当场刺死守军主帅摩罗波罗，随即被一支箭射穿胸甲，血与气从伤口里嘶嘶冒出。他背靠城墙撑了一阵，终于大量失血昏倒。墙外的马其顿人以为他已经死了，撞开城门，把城中人尽数杀死。他被抬到帐中，医生割开伤口取出箭镞；此后数日他一直在生死之间，直到能起身，才让全军看见他还活着。',
             // 出发地＝军团此刻在哪：上一场（海达斯佩斯河野战）落点最近且那一年已存在的据点 ＝ 蒙格
             // 史料：自波鲁斯境内南下沿河而行，再穿旱地急袭马利人的城。这一带库里没有可作路标的据点 → 不设路标。
             marchWaypoints: [],
@@ -792,7 +798,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 20000,
             attackerSourceCityId: 'city_meng',
             attackerLegionName: '马其顿军',
-            defenderGeneralId: 'malli_leader',
+            defenderGeneralId: 'malli_malavapala',
             defenderTroops: 12000,
             defenderCityId: 'city_malisi',
             defenderLegionName: '马利军',
@@ -821,7 +827,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attacker: { level: 'fact', text: '狄奥多罗斯 17.111：亚历山大亲率轻装机动部队征讨科塞亚人，先夺其入山要道；英文维基百科 Cossaei 亦记 Alexander led his forces against them and subdued them。' },
             attackerTroops: { level: 'inferred', text: '英文维基百科与狄奥多罗斯均未给双方兵力；狄奥多罗斯明记此役是「以轻装部队」出征的山区清剿，取 12000 —— 合理推定。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据狄奥多罗斯：先夺进山路口，随后分区清剿、逐段扫平村寨与牧场。' },
-            defender: { level: 'fact', text: '英文维基百科 Cossaei：该族为扎格罗斯山地部落、科塞亚人后裔，穴居善射，从未接受外族统治；两条史料都未载其首领姓名，故按「地名＋首领」记为科塞亚首领，与马利首领、奥诺斯首领同一记法。' },
+            defender: { level: 'fact', text: '英文维基百科 Cossaei 与斯特拉波 15.3.6：科塞亚人为扎格罗斯山地部落、加喜特人（Kassites）后裔，穴居善射，从未接受外族统治；取加喜特正统战王名卡什提利亚什（Kashtiliash）。' },
             defenderTroops: { level: 'inferred', text: '英文维基百科 Cossaei 引斯特拉波：科塞亚人曾一次派出 13,000 人助埃利迈人作战，可见其众以万计；本场守方取 8000，并守守方 ≤ 攻方×2 —— 合理推定。' },
             defenderLegion: { level: 'inferred', text: '英文维基百科 Cossaei：该族善射、穴居山地、以劫掠为生，山地骑兵最少。编成取剧本军团「科塞亚军」：前远程=波斯系弓手 4、中步兵=持矛步卒 3、后骑兵=近东骑兵 2，雁行 4-3-2，与同一地区同一打法的乌克西亚军同排法（同一支军队整场战争不换）—— 合理推定。' },
             route: { level: 'inferred', text: '自上一场落点马里斯开拔，经坎大哈、法拉、巴姆、波斯波利斯、苏萨、哈马丹入扎格罗斯科塞亚境。史料：亚历山大自印度西返，经格德罗西亚与卡尔马尼亚回到波斯腹地，前324年先后在苏萨与米底，其后动身回巴比伦途中平定科塞亚。路网实测各段皆通 —— 合理推定。' },
@@ -852,7 +858,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_malisi',
             attackerLegionName: '马其顿军',
             defenderFactionId: 'kesaiya',
-            defenderGeneralId: 'kesaiya_shouling',
+            defenderGeneralId: 'kesaiya_kashtiliash',
             defenderTroops: 8000,
             defenderSourceCityId: '',
             defenderLegionName: '科塞亚军',
