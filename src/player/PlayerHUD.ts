@@ -11,6 +11,7 @@ import { uiPx, COMBAT_UI_TOKENS as T } from '../config/combat-ui-tokens';
 import { applyPortraitAdjustToElement } from '../config/PortraitAdjust';
 import { resolvePortraitSourceFacing } from '../config/portrait_defaults';
 import { LegionPhalanxDrawer } from '../map/legion/LegionPhalanxDrawer';
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 
@@ -107,6 +108,11 @@ export class PlayerHUD {
             //    开播收的那一下当场撤销。轮播相位与计时仍然不受影响。
             this.lastPanelFactionId = undefined;
             if (this.cycleStarted && this.cyclePhaseExpanded) this.applyCyclePhase(true);
+            // 🔴 [2026-09-24 主人定] 剧本期右下角信息面板一直显示：开播收的那一下当场撤销
+            //    （GameTimeHUD 的开播监听先注册、先收；这里后到，按剧本规则贴回展开）。
+            else if (this.cycleStarted && isScriptPeriod() && !this.deps.isScene13Active()) {
+                this.deps.setCompanionPanelsExpanded(this.cyclePhaseExpanded);
+            }
             this.refresh();
         };
         window.addEventListener('stream-mode-change', this.onStreamModeChange);
@@ -293,6 +299,9 @@ export class PlayerHUD {
 
     public refresh(): void {
         if (!this.panel || !this.body) return;
+        // 🔴 [2026-09-24 主人定] 剧本期不显示军团/军情面板（CSS body.script-period 藏），乱斗期照旧。
+        //    每秒对齐一次：剧本打完自动切乱斗时，两块面板随之回来。
+        document.body.classList.toggle('script-period', isScriptPeriod());
         const inScene13 = this.deps.isScene13Active();
         if (inScene13) {
             /* 🔴 [2026-09-17 主人报障「战术模式下右下角信息面板不缩小，应该缩小」]
