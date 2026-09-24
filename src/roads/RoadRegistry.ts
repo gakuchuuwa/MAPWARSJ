@@ -22,6 +22,7 @@ import { smoothRoad } from '../utils/GeometryUtils';
 import { GridSystem } from '../systems/GridSystem';
 import { getEuclideanDistance, joinStartToRoadPolyline, nearestPointOnPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { BATTLEFIELDS } from '../data/Battlefields';
 
 // ===== 图论数据结构 =====
 
@@ -160,6 +161,14 @@ export class RoadRegistry {
                 type: 'city'
             });
         });
+
+        // 1b. 🔴 [2026-09-24 主人定「要给战场连路」] 战场也注册成图节点（type 'junction'），
+        //     道路的 startConnection / endConnection 写 `bf_*` 就能接到战场上。
+        //     只认 type === 'city' 的地方（吸附最近城 findNearestCityId、入路候选 getNearestCityPositions）
+        //     一律跳过它 → AI 选目标、军团吸附都碰不到战场；没有路连到的战场节点就是孤立点，无任何作用。
+        for (const bf of BATTLEFIELDS) {
+            if (!this.nodes.has(bf.id)) this.addNode({ id: bf.id, lat: bf.lat, lng: bf.lng, type: 'junction' });
+        }
 
         // 2. 加载矢量道路为图边
         this.loadVectorRoads();

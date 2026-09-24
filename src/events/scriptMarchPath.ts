@@ -18,6 +18,7 @@
  *      `PlayerQuestSystem.leaveRoadNearest` 同一口径），末段就只剩几公里。
  */
 import { roadRegistry } from '../roads/RoadRegistry';
+import { LandSeaSystem } from '../world/land-sea';
 
 type P = { lat: number; lng: number };
 
@@ -119,10 +120,44 @@ function tryLeaveRoadNearTarget(from: P, to: P): P[] | null {
     return bestAlt;
 }
 
+/**
+ * 🔴 [2026-09-24 主人报「从格拉尼库斯战场返回特洛伊的时候，会出现舰队」]
+ *    入路那段是**不走路的直线**（起点 → 候选城）。实测格拉尼库斯阵位 → 羊河那条直线横跨赫勒斯滂 45 公里，
+ *    再坐「羊河-特洛伊」海路回到亚洲一侧 —— 只因总长比「走 14 公里到格拉尼库斯城、再陆路到特洛伊」短一两公里就被选中。
+ *    AGENTS「渡海必须坐船：陆路不得画过海面」→ 入路直线穿过海面的候选一律不要。
+ *    判据：沿线约每 2 公里采一次海陆（LandSeaSystem.isSeaAt）；瓦片没到时 isSeaAt 回 false（当陆），
+ *    只会少挡、不会误挡，与改前行为一致。
+ */
+function straightCrossesSea(a: P, b: P): boolean {
+    const km = lenDeg([a, b]) * 111;
+    const n = Math.max(1, Math.ceil(km / 2));
+    let sea = 0;
+    for (let i = 1; i < n; i++) {
+        const t = i / n;
+        if (LandSeaSystem.isSeaAt({ lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t })) {
+            if (++sea >= 2) return true;   // 连一个像素的河口都算就太严：至少两个采样点落海
+        }
+    }
+    return false;
+}
+
+/**
+ * 预先拉取「从 from 入路」那几条直线上的海陆瓦片（isSeaAt 查不到会后台排队下载）。
+ * 军团抵达战场阵位时调用：一场仗打完再开拔，入路判定（straightCrossesSea）就有瓦片可用，
+ * 不会因为瓦片没到而把横跨海峡的那条当成陆地。
+ */
+export function prefetchEntrySea(from: P): void {
+    for (const c of roadRegistry.getNearestCityPositions(from.lat, from.lng, ENTRY_CANDIDATES, ENTRY_MAX_DEG)) {
+        straightCrossesSea(from, c);
+    }
+}
+
 export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> | null {
     let best = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
+    if (best && best.length >= 2 && straightCrossesSea(from, best[1])) best = null;
     let bestCost = best && best.length >= 2 ? lenDeg(best) : Infinity;
     for (const c of roadRegistry.getNearestCityPositions(from.lat, from.lng, ENTRY_CANDIDATES, ENTRY_MAX_DEG)) {
+        if (straightCrossesSea(from, c)) continue;   // 入路直线不许横穿海面
         if (Math.hypot(c.lat - to.lat, c.lng - to.lng) < 0.05) {
             const cost = c.dist;
             if (cost < bestCost - 1e-9) {
