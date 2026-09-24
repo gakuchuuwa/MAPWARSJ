@@ -6325,5 +6325,30 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "加莱-伦敦",
+                type: "sea",
+                id: "sea_city_calais_city_lundun_1790256986117",
+                startConnection: "city_calais",
+                endConnection: "city_lundun"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [1.85, 50.95],
+                    [1.648479, 51.072443],
+                    [1.560854, 51.117159],
+                    [1.533005, 51.131371],
+                    [1.4181, 51.1477],
+                    [1.474566, 51.467902],
+                    [0.8262, 51.5038],
+                    [0.5034, 51.4996],
+                    [0.4499, 51.479],
+                    [-0.12, 51.5],
+                ]
+            }
+        },
     ]
 };
