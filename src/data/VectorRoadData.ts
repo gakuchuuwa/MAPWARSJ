@@ -43115,7 +43115,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [35.08, 32.93],
+                    [35.06889, 32.92139],
                     [35.333021154828856, 32.931917061690605],
                     [35.390763065864014, 32.92779263947381],
                     [35.43613171024877, 32.9401659061242],
@@ -47242,7 +47242,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [35.08, 32.93],
+                    [35.06889, 32.92139],
                     [35.044312, 32.76694],
                     [35.093805, 32.725696],
                     [35.118551, 32.713323],
@@ -57752,33 +57752,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "斯法尔德-克拉佐美奈",
-                type: "road",
-                id: "road_city_sifaerde_city_kelazuomeinai_1788854746916",
-                startConnection: "city_sifaerde",
-                endConnection: "city_kelazuomeinai"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [28.03, 38.48],
-                    [27.816337, 38.498977],
-                    [27.659276, 38.498306],
-                    [27.517529, 38.459525],
-                    [27.4515, 38.456865],
-                    [27.353608, 38.464939],
-                    [27.236618, 38.444143],
-                    [27.21721, 38.444953],
-                    [27.141141, 38.422174],
-                    [27.130828, 38.368482],
-                    [26.977273, 38.369317],
-                    [26.77, 38.36],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "克拉佐美奈-以弗所",
                 type: "road",
                 id: "road_city_kelazuomeinai_city_yifusuo_1788854756202",
@@ -64184,7 +64157,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [35.1962, 33.2709],
                     [35.130924, 33.12164],
                     [35.110302, 33.105143],
-                    [35.08, 32.93],
+                    [35.06889, 32.92139],
                 ]
             }
         },
@@ -64470,6 +64443,68 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [27.583232, 37.15945],
                     [27.570859, 37.12233],
                     [27.43, 37.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "佩尔加蒙-克拉佐美奈",
+                type: "road",
+                id: "road_city_peierjiameng_city_kelazuomeinai_1790246935529",
+                startConnection: "city_peierjiameng",
+                endConnection: "city_kelazuomeinai"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.18, 39.12],
+                    [27.052927, 39.004314],
+                    [27.04885, 38.969803],
+                    [27.060038, 38.92002],
+                    [27.047928, 38.869374],
+                    [26.98866, 38.831614],
+                    [26.977215, 38.754589],
+                    [27.057577, 38.680818],
+                    [27.075905, 38.649767],
+                    [27.077714, 38.623615],
+                    [27.074307, 38.610589],
+                    [27.047706, 38.568256],
+                    [27.042981, 38.523997],
+                    [27.08147, 38.495557],
+                    [27.141141, 38.422174],
+                    [27.130828, 38.368482],
+                    [26.977273, 38.369317],
+                    [26.77, 38.36],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "斯法尔德-以弗所",
+                type: "road",
+                id: "road_city_sifaerde_city_yifusuo_1790246951229",
+                startConnection: "city_sifaerde",
+                endConnection: "city_yifusuo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [28.03, 38.48],
+                    [27.816337, 38.498977],
+                    [27.659276, 38.498306],
+                    [27.540944, 38.46421],
+                    [27.353608, 38.464939],
+                    [27.236618, 38.444143],
+                    [27.21721, 38.444953],
+                    [27.141141, 38.422174],
+                    [27.130828, 38.368482],
+                    [27.138067, 38.317206],
+                    [27.190813, 38.270538],
+                    [27.22785, 38.259396],
+                    [27.298044, 38.175873],
+                    [27.34, 37.94],
                 ]
             }
         },
