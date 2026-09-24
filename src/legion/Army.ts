@@ -338,9 +338,23 @@ export class Army implements IBattleUnit {
         return this.sourceCityId;
     }
 
+    /**
+     * 🔴 [2026-09-24 主人「在海边开战会导致一会陆军，一会海军。如果是进入海战就保持纯海军，如果不是，请在战斗的时候保持纯陆军」]
+     * 战斗期间的形态锁：true = 整场海军（舰队对舰队的海战），false = 整场陆军，null = 未在战斗（照常海陆判定）。
+     * 开战那一刻定（setCombatState 先按「攻城→陆军 / 野战且在海上→暂定海军」，onBattleStart 再看对手是不是也在海上），
+     * 打完解锁。
+     */
+    private battleSeaLock: boolean | null = null;
+
     public setCombatState(isFighting: boolean, battleType?: 'siege' | 'field', targetPos?: { lat: number, lng: number }): void {
         const wasFighting = this.isExternalCombat;
         this.isExternalCombat = isFighting;
+        if (!isFighting) {
+            this.battleSeaLock = null;
+        } else if (!wasFighting || this.battleSeaLock === null) {
+            this.battleSeaLock = (battleType ?? 'field') === 'field' && this.isOnSea;
+            this.applyBattleSeaLock();
+        }
         this.isAttacking = isFighting; // Sync IAnimatedUnit property
         this.currentBattleType = isFighting ? (battleType || 'field') : null;
         if (!isFighting) {
@@ -434,6 +448,12 @@ export class Army implements IBattleUnit {
 
     public getIsInCombat(): boolean {
         return this.isExternalCombat;
+    }
+
+    /** 这一趟行军的终点（路径最后一点；没有剩余路径时是当前目的地）。玩家乱斗行军长蛇阵用 */
+    public getMarchEndPoint(): { lat: number; lng: number } | null {
+        const last = this.pathQueue[this.pathQueue.length - 1] ?? this.destination;
+        return last && Number.isFinite(last.lat) && Number.isFinite(last.lng) ? { lat: last.lat, lng: last.lng } : null;
     }
 
     public isMarching(): boolean {
@@ -908,9 +928,37 @@ export class Army implements IBattleUnit {
      * 更新海陆贴图 + 地形速度目标；实际倍率对目标做指数平滑。
      * @param deltaTime 游戏秒；≤0（构造/瞬移）时直接贴齐目标，不 lerp
      */
+    /**
+     * 按对手定战斗形态锁：海战 = 野战、自己在海上、**对手全都在海上**（舰队对舰队）；
+     * 否则（攻城、陆战、岸边一方在陆上）整场陆军。开战各入口（BattleUnitFactory / 多军团野战 / 援军入场）调用。
+     */
+    public lockBattleSeaForm(foes: ReadonlyArray<unknown>): void {
+        if (!this.isExternalCombat) return;
+        const list = foes.filter(Boolean) as Array<{ isOnSea?: boolean }>;
+        this.battleSeaLock = this.currentBattleType === 'field' && this.isOnSea
+            && list.length > 0 && list.every((f) => f.isOnSea === true);
+        this.applyBattleSeaLock();
+    }
+
+    /** 把战斗形态锁落到 isOnSea（与渲染层同步），锁定期间不做海陆判定 */
+    private applyBattleSeaLock(): void {
+        if (this.battleSeaLock === null) return;
+        this.isOnSea = this.battleSeaLock;
+        this.seaFlipDist = 0;
+        this.seaFlipElapsed = 0;
+        if (this.renderer) this.renderer.isOnSea = this.isOnSea;
+    }
+
     private updateTerrainSpeed(deltaTime: number = 0): void {
         const pos = { lat: this.position.lat, lng: this.position.lng };
         const wasOnSea = this.isOnSea;
+        // 🔴 [2026-09-24] 战斗中形态锁死（海战纯海军 / 其余纯陆军），不随脚下海岸线来回切
+        if (this.isExternalCombat && this.battleSeaLock !== null) {
+            this.isOnSea = this.battleSeaLock;
+            this.prevSeaCheckPos = { lat: pos.lat, lng: pos.lng };
+            this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+            return;
+        }
 
         // 海陆形态去抖，三层（2026-09-01 主人定「按路线判定·港口登船」后的现状）：
         //   ⓪ **路线判定**（下面那段，主力）：走海路段就是海军、走陆路段就是陆军，段内恒定；
@@ -1505,6 +1553,7 @@ export class Army implements IBattleUnit {
     public onBattleStart = (_opponent: IBattleUnit, battleType: 'siege' | 'field'): void => {
         const opponentPos = _opponent.getPosition();
         this.setCombatState(true, battleType, opponentPos);
+        this.lockBattleSeaForm([(_opponent as { getEntity?: () => unknown }).getEntity?.() ?? _opponent]);
         // 停步与路径存档由 LegionManager/SiegeManager 开战前完成；勿再 stopMovement 以免空队列覆写 savedPathQueue
     };
 

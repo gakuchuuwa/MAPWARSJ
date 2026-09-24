@@ -154,6 +154,25 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             + '随后双方爆发激烈近战白刃战，斯基泰主帅萨特拉克斯阵亡。'
             + '三排按游牧战术「骑射手最多且最先接敌、同族步卒居中、邻区步弓殿后掩护」取雁行阵 前骑兵4 / 中步兵3 / 后远程2。',
     },
+    {
+        // 史名：英文维基百科 Siege of the Sogdian Rock 记守方为 Sogdiana（粟特），无专名
+        //   → 按 AGENTS §二.2「史实原名或后世通称，原样用」，取通称「粟特军」，与「马其顿军」「阿契美尼德军」同一构词。
+        name: '粟特军',
+        // 三排＝骑兵、步兵、远程各一排（§二.3）；前 / 中 / 后按这支军队一贯怎么打、谁先接敌排：
+        //   粟特是河中绿洲城邦，武装以**甲胄骑兵**为招牌（素材 SOGDIANCATAPHRACT），步兵与弓手随其后，故前骑兵、中步兵、后远程。
+        //   人数按史地比例取最接近的鱼鳞阵 3-4-2（骑兵最少、步兵最多、弓手次之）。
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'sogdian_cataphract', count: 3 },   // 前排骑兵：粟特甲胄骑兵（cls=cav）—— 粟特武装的招牌兵种
+            { type: 'sakan_axeman', count: 4 },         // 中排步兵：塞种萨迦斧兵（cls=melee）—— 同一中亚文化区（挨着的邻族）步卒
+            { type: 'bactrian_archer', count: 2 },      // 后排远程：巴克特里亚弓手（cls=ranged）—— 中亚步弓，掩护主力
+        ],
+        source: '英文维基百科 Siege of the Sogdian Rock：守方为粟特，凭绝壁岩堡据守，主帅阿里马泽斯；'
+            + '同条目记岩堡守军在山顶出现马其顿人之后即降，说明其战力以据险防守为主。'
+            + '英文维基百科 Sogdia 与粟特甲胄骑兵相关条目：粟特为河中绿洲城邦，甲胄骑兵是其著名武装；'
+            + '步卒取同一中亚文化区的塞种萨迦斧兵、远程取巴克特里亚弓手（文化区挨着即可，同 AGENTS 兵种归属铁律）。'
+            + '三排按「甲骑在前、步卒居中、弓手殿后」取鱼鳞阵 前骑兵3 / 中步兵4 / 后远程2。',
+    },
 ];
 
 export const SCRIPT_LEGION_MAP: ReadonlyMap<string, ScriptLegionDef> =

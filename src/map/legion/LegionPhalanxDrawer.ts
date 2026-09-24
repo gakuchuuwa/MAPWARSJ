@@ -2426,7 +2426,8 @@ export class LegionPhalanxDrawer {
                 //    剧本模式行军与陆军纵队同一个规矩：每条船朝向**自己脚下那段航迹**，
                 //    行驶到拐点才转；各船单独按回转率转过去（键 = 军团#船序），不会一帧拧头。
                 //    旗舰仍用上面的舰队平滑航向；乱斗模式照旧全队同向（09-11 的做法）。
-                if (activeTrail && (state === 'MOVE' || columnMarch) && isScriptPeriod()) {
+                // 🔴 [2026-09-24] 乱斗期玩家所随军团（columnMarch）同样每船朝自己脚下航迹
+                if (activeTrail && (columnMarch || (state === 'MOVE' && isScriptPeriod()))) {
                     const ownDeg = LegionPhalanxDrawer.stepNavalCourse(
                         `${unitId}#${i}`, (localAng + Math.PI / 2) * 180 / Math.PI, tick);
                     faceAng = ownDeg * Math.PI / 180 - Math.PI / 2;
