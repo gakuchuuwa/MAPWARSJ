@@ -923,17 +923,15 @@ export class Army implements IBattleUnit {
             : 0;
         this.prevSeaCheckPos = { lat: pos.lat, lng: pos.lng };
 
-        // 🔴 [2026-09-01 主人定「按路线判定·港口登船」] 形态优先跟着**走的是哪条路**：
-        //    路网给的 `sea` 标记（RoadRegistry.GraphEdge.isSea）一段之内恒定，海路两端必是
-        //    港口城 —— 登船/上岸只发生在港口，海岸线锯齿再碎也抖不起来，迟滞对它无意义。
-        //      · 踏上海路段 → 当场登船，整段锁死海军形态（下面的采样根本不跑）；
-        //      · 踏上陆路段 → 当场上岸，但**只强制这一下**，之后仍放行采样 + 迟滞 ——
-        //        万一哪条「陆路」其实跨着水面（跨海峡的边），军团还能靠迟滞翻成船，
-        //        不至于以陆军形态泡在海里、还丢掉 `isOnSea` 带来的沿岸 ZOC 免疫。
+        // 🔴 [2026-09-01 主人定「按路线判定·港口登船」/ 2026-09-24 修复沿海陆路误判变舰队]
+        //    形态优先跟着**走的是哪条路**：路网给的 `sea` 标记（RoadRegistry.GraphEdge.isSea）一段之内恒定，
+        //    海路两端必是港口城 —— 登船/上岸只发生在港口。
+        //      · 踏上海路段 → 当场登船，整段锁死海军形态；
+        //      · 踏上陆路段 → 当场上岸，整段锁死陆军形态（绝不准沿海近岸海水掩膜采样将陆军篡改为舰队）；
+        //      · 只有未走在路网上（如脱路越野、自由移动）时，才回退到海陆掩膜采样。
         const legSea = this.currentLegSea();
-        const legChanged = legSea !== this.prevLegSea;
         this.prevLegSea = legSea;
-        if (legSea === true || (legSea === false && legChanged)) {
+        if (legSea === true || legSea === false) {
             this.isOnSea = legSea;
             this.seaFlipDist = 0;
             this.seaFlipElapsed = 0;

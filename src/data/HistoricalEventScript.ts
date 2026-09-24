@@ -274,7 +274,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    前331年晚春或初夏自埃及出发，向东北穿过叙利亚，七八月至幼发拉底河塔普萨库斯，九月下旬至底格里斯河。
             //    路标取沿途已有据点：加沙（前332年加沙围城）、阿卡（推罗已是战场，取其近旁）、大马士革、
             //    阿勒颇（近塔普萨库斯）、埃德萨（渡幼发拉底后东进），全程陆路。
-            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_alepo', 'city_aidesa', 'city_niniwei'],
+            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_damasikusi', 'city_alepo', 'city_aidesa', 'city_niniwei'],
 
             // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
