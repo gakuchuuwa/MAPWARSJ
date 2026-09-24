@@ -47,6 +47,17 @@ const ENTRY_MAX_DEG = 3.0;
 
 /** 末段超过它（公里）才考虑改走法 —— 与编辑器「离路直行」的控制范围 40 公里同一个数 */
 const LONG_HOP_KM = 40;
+/**
+ * 🔴 [2026-09-25 主人「该修复的修复」] **入路直行上限，与末段同一道闸（40 公里）。**
+ *   起因：第 3 场（前335 底比斯）实测 —— 军团从佩利昂出发，路径第 0→1 点是一条 **139.6 公里的直线**
+ *   （40.731,20.863 → 40.760,22.519），即**横穿品都斯山直插佩拉**，再从佩拉沿路南下 ✗；
+ *   史料是走吕恩克斯提斯—埃泽萨那条道（后来的埃格纳提亚道）。编辑器不报这一处 ——
+ *   它只量**末段离路**，入路直行原先没有上限（`ENTRY_MAX_DEG = 3.0` ≈ 333 公里）。
+ *   为什么原先放到 3.0°：第 20 场起点「马里斯」离最近有路据点 313 公里，不放宽就铺不出路；
+ *   那条路后来已补（路网伸进木尔坦一带），故这里收回同一道闸：入路直行 ≤40 公里，
+ *   超过就不认这个入口，改从「沿离出发点最近那条路」走（与末段 `tryLeaveRoadNearTarget` 同一做法）。
+ */
+const ENTRY_HOP_MAX_KM = 40;
 /** 下路阈值（公里）—— 与 `PlayerQuestSystem.leaveRoadNearest` 的 15 公里同一口径 */
 const LEAVE_ROAD_KM = 15;
 /** 为走这条路，允许整条路径最多比原方案长这么多倍。
@@ -155,8 +166,11 @@ export function prefetchEntrySea(from: P): void {
 export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> | null {
     let best = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
     if (best && best.length >= 2 && straightCrossesSea(from, best[1])) best = null;
+    // 入路那一步直行了多远：超过 40 公里就不认这条路（与末段同一道闸）
+    if (best && best.length >= 2 && lenDeg([from, best[1]]) * 111 > ENTRY_HOP_MAX_KM) best = null;
     let bestCost = best && best.length >= 2 ? lenDeg(best) : Infinity;
     for (const c of roadRegistry.getNearestCityPositions(from.lat, from.lng, ENTRY_CANDIDATES, ENTRY_MAX_DEG)) {
+        if (c.dist * 111 > ENTRY_HOP_MAX_KM) continue;   // 入路直行不许超过 40 公里
         if (straightCrossesSea(from, c)) continue;   // 入路直线不许横穿海面
         if (Math.hypot(c.lat - to.lat, c.lng - to.lng) < 0.05) {
             const cost = c.dist;
@@ -172,6 +186,33 @@ export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> 
         if (cost < bestCost - 1e-9) {
             bestCost = cost;
             best = [{ lat: from.lat, lng: from.lng }, ...leg];
+        }
+    }
+
+    // 🔴 [2026-09-25 收闸后补] **入口不一定是城，也可以是路上任意一点。**
+    //    起因：第 13 场起点「波斯门战场」正落在苏萨—波斯波利斯那条路上，可它离最近的城 151 公里 ——
+    //    只认「城」当入口时，40 公里那道闸把候选全挡掉，当场报「无路可达」✗。
+    //    故再按**路网节点**找一遍入口（与 `findPathToBattlefield` 同一做法），仍受 40 公里上限约束。
+    const targetNodes = roadRegistry.getNearestRoadNodes(to.lat, to.lng, 1, ENTRY_MAX_DEG);
+    const targetNodeId = targetNodes.length ? targetNodes[0].id : null;
+    if (targetNodeId) {
+        for (const c of roadRegistry.getNearestRoadNodes(from.lat, from.lng, ENTRY_CANDIDATES + 2, ENTRY_MAX_DEG)) {
+            if (c.dist * 111 > ENTRY_HOP_MAX_KM) continue;
+            if (c.dist * 111 > 0.5 && straightCrossesSea(from, c)) continue;
+            let leg: Array<P & { sea?: boolean }> = [];
+            if (c.id === targetNodeId) {
+                leg = [{ lat: c.lat, lng: c.lng } as P & { sea?: boolean }];
+            } else {
+                const r = roadRegistry.findPath(c.id, targetNodeId);
+                if (!r) continue;
+                leg = roadRegistry.pathToLatLngs(r) as Array<P & { sea?: boolean }>;
+            }
+            if (!leg.length) continue;
+            const cost = c.dist + lenDeg(leg) + lenDeg([leg[leg.length - 1], to]);
+            if (cost < bestCost - 1e-9) {
+                bestCost = cost;
+                best = [{ lat: from.lat, lng: from.lng }, ...leg, { lat: to.lat, lng: to.lng }];
+            }
         }
     }
 
