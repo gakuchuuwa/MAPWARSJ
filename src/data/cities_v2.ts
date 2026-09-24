@@ -3079,6 +3079,12 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    该条目记马萨加为阿萨卡诺伊人最大的设防城市与首府，位于斯瓦特河谷，故取河谷门户）。
     { id: 'city_masaga', name: '马萨加', factionId: 'aswaka', lat: 34.65, lng: 72.03, type: 'small_city', troops: 10000,
         note: '马萨加，阿萨卡诺伊阿斯瓦卡人的首府与最大设防城市，斯瓦特河谷山城；前327年秋为亚历山大所破，女王克莱奥菲斯守城。史料：英文维基百科 Cophen campaign 的 Siege of Massaga 节。', region: 'PURU', buildingStyle: 'PURU' },
+    // 🔴 [2026-09-25 §二之二 授权] 第 15 场「前325 马里斯」是攻城战，必须有真据点，库里没有 → 按授权添加。
+    //    势力（马利）＋武将（马利首领）＋精锐（马利城兵）库里都已有，故本场只新增这一个据点。
+    //    坐标取英文维基百科 Multan 条目信息框 30°11′N 71°28′E；城址身份见 note。
+    //    间距：--probe 实测最近拉合尔 313.44 km（≥40 km，无需特批）。
+    { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000,
+        note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。', region: 'PURU', buildingStyle: 'PURU' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
     //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（奥诺斯首领）＋精锐（绝壁守兵）。
     //    坐标取维基数据 Pir Sar 34.82,72.88 —— 英文维基百科 Aornos 条目正文记该岩在印度河上游峡谷湾上、

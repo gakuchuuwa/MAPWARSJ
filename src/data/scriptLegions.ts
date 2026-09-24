@@ -212,6 +212,28 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             + '兵种按子分类与文化区取：骑手取印度西北的什里瓦姆沙骑手、步战取南亚战象、远程取印度长弓，'
             + '同一文化区，见 AGENTS 兵种归属铁律。',
     },
+    {
+        // 史名：英文维基百科 Mallian campaign 信息框 combatant2 = Mallians（马利人，即摩罗婆），无专名
+        //   → 按 AGENTS §二.2「史实原名或后世通称，原样用」，取族名「马利军」，与「阿斯瓦卡军」「保拉瓦军」同一构词。
+        name: '马利军',
+        // 三排＝骑兵、步兵、远程各一排（§二.3）；前 / 中 / 后按这支军队一贯怎么打、谁先接敌排：
+        //   同条记马利人退入卫城据墙死守，以弓矢投石拒敌 —— 先接敌的是墙上的弓手；
+        //   部落步卒是全军主体居中；同条另记两族结盟时骑兵仅一万、步兵九万，骑兵最少殿后。
+        //   取人数最接近的鱼鳞阵 3-4-2。
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'pattiyoda_longbowman', count: 3 },   // 前排远程（cls=ranged）：印度长弓 —— 据卫城墙头先射
+            { type: 'indian_tribesman', count: 4 },       // 中排步兵（cls=melee）：印度部落民 —— 步卒是全军主体
+            { type: 'shrivamsha_rider', count: 2 },       // 后排骑兵（cls=cav）：印度西北骑手 —— 骑兵最少
+        ],
+        // 战船留空：马利是旁遮普内陆部落，无 naval 传统，按文化默认
+        source: '英文维基百科 Mallian campaign：马利人退入都城卫城据墙死守，以弓矢投石拒敌，'
+            + '亚历山大破外门、掘墙基、亲自扛梯登城；同条记马利与奥克西德拉卡两族一度结盟，'
+            + '合计步兵九万、骑兵一万、战车九百，骑兵占比最小。'
+            + '三排按「城头弓矢为先、步卒居中为主体、骑兵最少」取鱼鳞阵 前远程3 / 中步兵4 / 后骑兵2。'
+            + '兵种按子分类与文化区取：远程取印度长弓、步战取印度部落民、骑兵取印度西北的什里瓦姆沙骑手，'
+            + '同一文化区，见 AGENTS 兵种归属铁律。',
+    },
 ];
 
 export const SCRIPT_LEGION_MAP: ReadonlyMap<string, ScriptLegionDef> =
