@@ -15,7 +15,7 @@ import { GameConfig } from '../config/GameConfig';
  */
 import { Army } from '../legion/Army';
 import type { GameMap } from '../map/GameMap';
-import { getCultureNavalShip, getNavalShipChineseName } from '../types/NavalShipTiers';
+import { getCultureNavalShip } from '../types/NavalShipTiers';
 import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
@@ -42,7 +42,7 @@ import {
 /** 自动模式的两套玩法：剧本模式到年份优先去战场，乱斗模式完全不去战场（主人 2026-09-17 定）。 */
 export type PlayerAutoPlan = 'script' | 'melee';
 
-/** 从本势力文化军团三排里学到的兵种（≠ 打城拿到的精锐番号 LearnedElite）。 */
+/** 从本势力文化军团三排里学到的兵种。 */
 export interface LearnedUnit {
     /** 兵种 key（UNIT_ASSETS / WAR_TYPES 同名） */
     unitKey: string;
@@ -50,24 +50,14 @@ export interface LearnedUnit {
     unitName: string;
     /** 学到时所属势力 */
     factionId: string;
-    /** 该兵种在本势力军团里的排号：0 前排 / 1 中坚 / 2 后排 */
+    /** 该兵种在本势力军团里的排号：0 前排 / 1 中坚 / 2 后排 / 3 将军兵模（主将队） */
     row: number;
-}
-
-export interface LearnedElite {
-    /** 精锐番号（如「福建水师」） */
-    name: string;
-    /** 兵种 key（UNIT_ASSETS / WAR_TYPES 同名） */
-    unitKey: string;
-    factionId: string;
-    factionName: string;
 }
 
 export interface PlayerSaveState {
     merit: number;
     heroDowns: number;
     factionId: string | null;
-    learnedElites: LearnedElite[];
     learnedUnits?: LearnedUnit[];
     /** 玩家亲手换过兵模：读档后不许再自动换装 */
     manualUnitPick?: boolean;
@@ -80,7 +70,6 @@ export interface PlayerSaveState {
     /** 无势力时自选的战船下标；-1 = 独木舟 */
     selectedShip?: number;
     selectedUnit?: number;
-    selectedElite: number;
     lat: number;
     lng: number;
 }
@@ -130,7 +119,6 @@ export class PlayerHero {
     public heroDowns = 0;
     /** 当前效忠势力（接任务时加入；null = 独行） */
     public factionId: string | null = null;
-    public learnedElites: LearnedElite[] = [];
 
     /** 🔴 [2026-09-07 主人定] 本势力已学兵种：斥候学 1 个、探马再 1 个、先锋再 1 个，
      *  到先锋集齐该势力文化军团的三排。学到的兵种即玩家自己的素材（可在面板里挑）。 */
@@ -149,8 +137,6 @@ export class PlayerHero {
     private manualUnitPick = false;
     /** 面板选中的已收兵模下标；-1 = 还没收到（用官阶兜底形象，白身=古典斥候骑兵） */
     public selectedUnit = -1;
-    /** 选中带入战术模式的精锐下标（-1 = 不带） */
-    public selectedElite = -1;
 
     private hostLegionId: string | null = null;
     private travelCityId: string | null = null;
@@ -453,20 +439,22 @@ export class PlayerHero {
             : rank.control === 'one' ? 0.05
             : rank.control === 'front' ? 0.1 : 0.2);
         const gained = Math.max(20, Math.round(enemyKilled * ratio));
-        this.addMerit(gained);
-        this.deps.notify(`🚩 大捷！随军斩敌 ${enemyKilled.toLocaleString()}，按【${rank.name}】军职记战功 ${gained.toLocaleString()}`);
+        this.addMerit(gained);   // 🔴 [2026-09-24 主人「删除这种无聊信息」] 只记战功，不弹「大捷！随军斩敌…记战功」
     }
 
     // ── 兵模收集（凑卡玩法核心，见 docs/AGENTS/player-rules-verbatim.md 第零节）──
     /**
-     * 该官阶在**当前军团这 4 种兵模**里应当已收到几种。
+     * 该官阶在**当前军团这 5 种兵模**（三排 + 将军 + 舰队）里应当已收到几种。
      * 🔴 [2026-09-09 主人定]「每个军团有四种兵模，三排 + 船；斥候/探马/先锋/将军几个级别随机奖励；
      *    加入一个军团就可以获得一个兵模，升级到探马、先锋、将军，该军团获得齐全。」
      */
     private learnQuotaForRank(rankId: PlayerRankId): number {
         const idx = PLAYER_RANKS.findIndex((r) => r.id === rankId);
         const q = (id: PlayerRankId) => PLAYER_RANKS.findIndex((r) => r.id === id);
-        if (idx >= q('general')) return 4;    // 将军起：该军团四种齐全
+        // 🔴 [2026-09-24 主人定「每个军团都有三兵模，然后还有一个将军兵模，还有一个舰队兵模…正好5个官阶，5个兵模」]
+        //    斥候/探马/先锋 → 三排各一；将军/元帅 → 将军兵模、舰队兵模（两者随机先后）。
+        if (idx >= q('marshal')) return 5;    // 元帅起：五种齐全
+        if (idx >= q('general')) return 4;    // 将军：四种
         if (idx >= q('vanguard')) return 3;   // 先锋：三种
         if (idx >= q('outrider')) return 2;   // 探马：两种
         if (idx >= q('scout')) return 1;      // 斥候：一种
@@ -480,7 +468,8 @@ export class PlayerHero {
      */
     private legionUnitKeys(): string[] {
         const host = this.getHostLegion();
-        const expanded = host?.cultureSlots;
+        // 只取编制 9 队（三排）；第 10 队是主将队 = 将军兵模，另算（见 legionCommanderKey）
+        const expanded = host?.cultureSlots?.slice(0, 9);
         if (expanded && expanded.length) {
             const seen: string[] = [];
             for (const k of expanded) if (k && !seen.includes(k)) seen.push(k);
@@ -496,7 +485,18 @@ export class PlayerHero {
         return seen;
     }
 
-    /** 所在军团的战船（池子里的第四种）；独行期按势力文化区取，取不到返回 null */
+    /**
+     * 所在军团的将军兵模 = 主将队（第 10 队）兵种；与三排重复（主将无专属英雄、用前排兵种兜底）时返回 null。
+     * 独行期没有军团，也返回 null。
+     */
+    private legionCommanderKey(): string | null {
+        const slots = this.getHostLegion()?.cultureSlots;
+        if (!slots || slots.length < 10) return null;
+        const key = slots[9];
+        return key && !slots.slice(0, 9).includes(key) ? key : null;
+    }
+
+    /** 所在军团的战船（舰队兵模）；独行期按势力文化区取，取不到返回 null */
     private legionShipKey(): string | null {
         const host = this.getHostLegion();
         if (host) return host.navalShipAssetLock ?? getCultureNavalShip(host.cultureRegion, host.getFactionId());
@@ -543,16 +543,19 @@ export class PlayerHero {
         //    所以改投新势力后照样能从头学三排，旧势力学的也还留着能选。
         const want = this.learnQuotaForRank(this.getRank().id);
         if (!this.factionId) return;               // 独行期：不新收，但旧的原样保留
-        // 🔴 [2026-09-09 主人定] 池子 = **所加入的那支军团**的四种兵模：三排 + 船
-        // 🔴 [2026-09-10 主人定] 第一次只给陆地三排其一：该军团三排陆地还没学到任何一个时，
-        //    战船不进抽取池，避免斥候首抽落空在船上、陆战兵模不变。
+        // 🔴 [2026-09-24 主人定] 池子 = 所加入那支军团的五种兵模：三排 + 将军兵模 + 舰队兵模。
+        //    斥候/探马/先锋三阶先把三排随机收齐；三排齐了，将军/元帅两阶再在「将军兵模、舰队」里随机收。
+        //    （取代 2026-09-10「首抽只给陆地三排」那条：现在三排收齐之前，船和将军都不进池。）
         const landKeys = this.legionUnitKeys();
+        const cmdKey = this.legionCommanderKey();
         const shipKeyOfLegion = this.legionShipKey();
-        const landLearned = landKeys.some((k) => this.learnedUnits.some((u) => u.unitKey === k));
-        const pool: Array<{ key: string; row: number; ship: boolean }> = [
-            ...landKeys.map((key, row) => ({ key, row, ship: false })),
-            ...(shipKeyOfLegion && landLearned ? [{ key: shipKeyOfLegion, row: -1, ship: true }] : []),
+        type Pick = { key: string; row: number; ship: boolean };
+        const landPool: Pick[] = landKeys.map((key, row) => ({ key, row, ship: false }));
+        const highPool: Pick[] = [
+            ...(cmdKey ? [{ key: cmdKey, row: 3, ship: false }] : []),
+            ...(shipKeyOfLegion ? [{ key: shipKeyOfLegion, row: -1, ship: true }] : []),
         ];
+        const pool = [...landPool, ...highPool];
         if (!pool.length) return;
 
         // 「已收到几种」只数**这个池子里的**，与别处收的互不干扰
@@ -561,17 +564,16 @@ export class PlayerHero {
             : this.learnedUnits.some((u) => u.unitKey === p.key);
         const got = () => pool.filter(owns).length;
         while (got() < want) {
-            const rest = pool.filter((p) => !owns(p));
-            if (!rest.length) break;               // 这个军团的四种已收齐
+            const landRest = landPool.filter((p) => !owns(p));
+            const rest = landRest.length ? landRest : highPool.filter((p) => !owns(p));
+            if (!rest.length) break;               // 这个军团的五种已收齐
             const pick = rest[Math.floor(Math.random() * rest.length)];
             if (pick.ship) {
                 this.learnedShips.push(pick.key);
-                this.deps.notify(`⚓ 得军团战船【${getNavalShipChineseName(pick.key)}】`);
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
                 if (this.selectedUnit < 0) this.selectedUnit = this.learnedUnits.length - 1;
-                this.deps.notify(`🗡️ 得军团兵模【${name}】`);
             }
         }
     }
@@ -614,24 +616,6 @@ export class PlayerHero {
 
     public getSelectedUnit(): LearnedUnit | null {
         return this.learnedUnits[this.selectedUnit] ?? null;
-    }
-
-    // ── 精锐 ──────────────────────────────────────────────
-    public learnElite(e: LearnedElite): boolean {
-        if (this.learnedElites.some((x) => x.unitKey === e.unitKey && x.factionId === e.factionId)) return false;
-        this.learnedElites.push(e);
-        if (this.selectedElite < 0) this.selectedElite = this.learnedElites.length - 1;
-        this.emitChange();
-        return true;
-    }
-
-    public selectElite(idx: number): void {
-        this.selectedElite = idx >= 0 && idx < this.learnedElites.length ? idx : -1;
-        this.emitChange();
-    }
-
-    public getSelectedElite(): LearnedElite | null {
-        return this.learnedElites[this.selectedElite] ?? null;
     }
 
     // ── 势力 ──────────────────────────────────────────────
@@ -980,7 +964,6 @@ export class PlayerHero {
         // 🔴 [2026-09-18 主人定]「玩家永远不能改变军团的兵种」—— 不再下发 eliteLane。
         //    原先把玩家自选精锐传进 13、顶替编制里的一口，那是 AI 从「必须 9 支」反推的，
         //    主人原话（player-rules-verbatim 三·二 12a~12e）只讲控制权，没有一条允许玩家带兵改编制。
-        //    learnedElites / selectedElite 仍保留为收集与面板展示，只是不再影响 13 的编制。
         return {
             side: followedOnDefenderSide ? 1 : 0,
             heroKey: this.heroKey,
@@ -999,7 +982,6 @@ export class PlayerHero {
             merit: this.merit,
             heroDowns: this.heroDowns,
             factionId: this.factionId,
-            learnedElites: this.learnedElites.map((e) => ({ ...e })),
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
             selectedUnit: this.selectedUnit,
             manualUnitPick: this.manualUnitPick,
@@ -1007,7 +989,6 @@ export class PlayerHero {
             autoPickUnit: this.autoPickUnit,
             learnedShips: [...this.learnedShips],
             selectedShip: this.selectedShip,
-            selectedElite: this.selectedElite,
             lat: p.lat,
             lng: p.lng,
         };
@@ -1019,7 +1000,6 @@ export class PlayerHero {
         this.cancelTravel();
         this.merit = s.merit ?? 0;
         this.heroDowns = s.heroDowns ?? 0;
-        this.learnedElites = (s.learnedElites ?? []).map((e) => ({ ...e }));
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;
@@ -1027,7 +1007,6 @@ export class PlayerHero {
         this.autoPickUnit = s.autoPickUnit ?? true;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
-        this.selectedElite = Math.min(this.learnedElites.length - 1, s.selectedElite ?? -1);
         if (s.factionId) this.joinFaction(s.factionId);
         else {
             this.factionId = null;

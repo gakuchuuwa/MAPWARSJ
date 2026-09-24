@@ -365,10 +365,11 @@ export class MultiLegionFieldBattle {
             // 防止防守方生成在战场附近时因距离过近导致速度计算异常或永远不到达
             if (directDist < 0.02) {
                 // 钉到最近道路点（永不离开道路）
-                const snap = roadRegistry.findNearestRoadPoint(armyTarget.lat, armyTarget.lng, 10);
+                // 🔴 [2026-09-24] 剧本军团已走到史料阵位上：原地就位，不再吸到最近道路（实测会被挪 1.3 公里 = 瞬移）
+                const snap = army.isScriptArmy ? null : roadRegistry.findNearestRoadPoint(armyTarget.lat, armyTarget.lng, 10);
                 const finalPos = (snap && snap.distance < 2)
                     ? { lat: snap.lat, lng: snap.lng }
-                    : armyTarget;
+                    : army.isScriptArmy ? army.getPosition() : armyTarget;
                 battleLog(`[MultiLegion] Army ${army.name} is already at target (Dist: ${directDist.toFixed(4)}), instant arrival.`);
                 army.setPosition(finalPos.lat, finalPos.lng);
                 // Reset states immediately
