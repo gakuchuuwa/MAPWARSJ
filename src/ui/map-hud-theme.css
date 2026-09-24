@@ -146,7 +146,7 @@ body:has(#event-display.event-panel.is-collapsed) {
     top: 0 !important;
     width: auto !important;
     max-width: none !important;
-    padding: 5px 12px 4px !important;
+    padding: 4px 10px !important;
     font-size: 12px !important;
     line-height: 1.35 !important;
     max-height: calc(100dvh - 120px);
@@ -206,54 +206,39 @@ body:has(#event-display.event-panel.is-collapsed) {
     color: #fffcee;
 }
 
-/* 扁平两行布局结构 */
-#player-hero-panel .player-hud-row-top {
+/* 单行紧凑布局结构 */
+#player-hero-panel .player-hud-single-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: nowrap;
-    padding-bottom: 4px;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 11.5px;
+    white-space: nowrap;
 }
 
-#player-hero-panel .player-hud-top-left {
+#player-hero-panel .player-hud-section {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-shrink: 0;
 }
 
-#player-hero-panel .player-hud-top-mid {
+#player-hero-panel .player-hud-section-mid {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
-}
-
-#player-hero-panel .player-hud-top-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
 }
 
 #player-hero-panel .player-hud-divider {
     color: rgba(212, 175, 55, 0.3);
     user-select: none;
     font-size: 11px;
-}
-
-#player-hero-panel .player-hud-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding-top: 4px;
-    font-size: 11.5px;
-    white-space: nowrap;
 }
 
 #player-hero-panel select {

@@ -53,6 +53,12 @@ export class NavalPhalanxStateManager {
         this.states.delete(unitId);
     }
 
+    /** 只清航迹（军团上岸时调用），舰船状态保留 */
+    public static clearTrail(unitId: string): void {
+        const st = this.states.get(unitId);
+        if (st) st.trail.length = 0;
+    }
+
     /** 航迹最大保留点数。8 艘双列 = 4 段 × 1.15 船长 ≈ 4.6 船长，zoom10 下约 49 点（16px/点），
      *  取 64 点留足余量，避免航迹短于舰队 → 队尾被迫直线外推插岸。 */
     public static readonly TRAIL_MAX = 64;

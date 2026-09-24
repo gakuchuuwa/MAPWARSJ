@@ -857,7 +857,7 @@ export class GameApp {
             legionManager,
             showDialogue: (p) => this.playerHUD?.showDialogue(p),
             closeDialogue: () => this.playerHUD?.closeDialogue(),
-            notify: (msg, durationMs) => this.playerHUD?.notify(msg, durationMs),
+            notify: (msg, durationMs, scriptRelated) => this.playerHUD?.notify(msg, durationMs, scriptRelated),
             // 🔴 [2026-09-16 主人定]「播报出来，字幕显示在下面」：
             //    走现成的 SpeechAnnouncer —— 它一并管语音与底部字幕条（SubtitleBanner），
             //    不另造第二条字幕。onDone 让调用方在**念完**后再推下一段。

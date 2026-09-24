@@ -12,13 +12,11 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
-import { getCityEliteLegionName, getExpeditionEliteConfig } from '../data/ExpeditionLegions';
-import { WAR_TYPES } from '../data/WarTypes';
+import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
-import { getFactionCompositionSlots } from '../types/CultureFormations';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
@@ -52,7 +50,6 @@ export interface PlayerQuest {
     targetCityId: string;
     targetCityName: string;
     /** 出征任务奖励精锐 */
-    reward?: { name: string; unitKey: string };
     /**
      * 🔴 [2026-09-19 主人定] 只给 `kind: 'general_event'` 用 —— **这位武将的那一场史实战役**。
      * 主人原话：「每个武将一个真实的历史事件」。战役的战场、坐标、胜负、兵力全在
@@ -116,7 +113,8 @@ export interface PlayerQuestDeps {
     };
     showDialogue: (payload: DialoguePayload) => void;
     closeDialogue: () => void;
-    notify: (msg: string, durationMs?: number) => void | (() => void);
+    /** scriptRelated = 跟剧本直接有关（剧本期只弹这类，见 PlayerHUD.notify） */
+    notify: (msg: string, durationMs?: number, scriptRelated?: boolean) => void | (() => void);
     /**
      * 🔴 [2026-09-16 主人定]「播报出来，字幕显示在下面」——赶路背景解说。
      * 由 `SpeechAnnouncer.announceBriefing` 一并负责**语音 + 下方字幕条**，
@@ -305,10 +303,9 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const eliteName0 = getCityEliteLegionName(city.id) ?? `${g.generalName}部`;
                 const inviteText = this.scriptInvite(ev)
                     ?? `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
-                        + `此战关系重大，某愿请壮士同往。破敌之日，当以「${eliteName0}」之战法相授。`;
+                        + `此战关系重大，某愿请壮士同往。`;
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
@@ -350,15 +347,14 @@ export class PlayerQuestSystem {
             return;
         }
         const targetFactionName = this.deps.cityManager.getFactionName(target.factionId);
-        const eliteName = getCityEliteLegionName(city.id) ?? `${g.generalName}部`;
         this.deps.showDialogue({
             speaker: g.generalName,
             portrait,
             factionName,
             text: `壮士远来。【${target.name}】为${targetFactionName}所据，久为我${factionName}心腹之患。`
-                + `某奉命出征，愿请壮士同行。若得克城，某当以「${eliteName}」之战法相授，壮士可自领一军。`,
+                + `某奉命出征，愿请壮士同行。`,
             options: [
-                { label: `⚔ 随军出征【${target.name}】`, accent: true, onPick: () => this.startCampaign(city, g, target, eliteName) },
+                { label: `⚔ 随军出征【${target.name}】`, accent: true, onPick: () => this.startCampaign(city, g, target) },
                 { label: '告辞', onPick: () => this.deps.closeDialogue() },
             ],
         });
@@ -482,33 +478,7 @@ export class PlayerQuestSystem {
                     this.deps.hero.attachTo(host);
                 },
                 () => {
-                    if (!side) return;   // 只观战：没参战，不授战法
-                    // 🔴 [2026-09-14 主人定]「无论谁赢，玩家可以获得一个兵模，然后继续找其他势力。」
-                    //    奖的是**所投那一方**的主力兵种，与胜负无关 —— 亲历此役即得其战法。
-                    const joinedFaction = side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId;
-                    const joinedGeneral = (side === 'attacker' ? fb.attackerGeneralId : fb.defenderGeneralId) ?? '';
-                    const unitKey = this.mainUnitKeyOf(joinedFaction, joinedGeneral);
-                    if (unitKey) {
-                        // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」＋CC 独立审计第 3 条]
-                        //    **番号按势力取**（`getExpeditionEliteConfig(factionId)`），
-                        //    不再从「出兵城」取。
-                        //    改前的血训：守方那条路我修了、**玩家奖励这条路漏了** —— 于是玩家投哪边
-                        //    就可能拿到**别人家的番号**：投长平的赵守方拿到**秦的「上党锐骑」**、
-                        //    投桶狭间的今川守方拿到**织田的「织田马廻众」**、
-                        //    投法萨卢斯的庞培军拿到雅典的**「萨拉米斯舰」**（海军番号）、
-                        //    投虎牢关的唐/夏两边都拿到郑州的**「白袍军」**。
-                        const eliteName = getExpeditionEliteConfig(joinedFaction)?.name
-                            ?? WAR_TYPES[unitKey]?.name ?? unitKey;
-                        const learned = this.deps.hero.learnElite({
-                            name: eliteName,
-                            unitKey,
-                            factionId: joinedFaction,
-                            factionName: this.deps.cityManager.getFactionName(joinedFaction),
-                        });
-                        this.deps.notify(learned
-                            ? `⚔ 【${battleTitle}】战毕，习得「${eliteName}」之战法`
-                            : `⚔ 【${battleTitle}】战毕（「${eliteName}」已会）`);
-                    }
+                    if (!side) return;   // 只观战
                     // 战后双方军团会撤场（见 withdrawBattlefieldLegions）。玩家若还挂在上面，
                     // 军团一没就成了"随一支不存在的军团"，所以这里把他放回单骑，好去找下一家。
                     //
@@ -735,7 +705,6 @@ export class PlayerQuestSystem {
         }
         const factionId = host.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
-        const unitKey = this.mainUnitKeyOf(factionId, g.generalId);
         this.quest = {
             kind: 'general_event',
             cityId: city.id,
@@ -748,7 +717,6 @@ export class PlayerQuestSystem {
             // 「目标」不是据点而是战场：这两个字段照旧填，任务条/HUD 用的是 event.title
             targetCityId: city.id,
             targetCityName: ev.battlefieldName,
-            reward: unitKey ? { name: getCityEliteLegionName(city.id) ?? g.generalName, unitKey } : undefined,
             event: {
                 battlefieldId: ev.battlefieldId,
                 battlefieldName: ev.battlefieldName,
@@ -815,14 +783,26 @@ export class PlayerQuestSystem {
      */
     private leaveRoadNearest(leg: { lat: number; lng: number }[], target: { lat: number; lng: number }): { lat: number; lng: number }[] {
         if (leg.length < 3) return leg;
-        let best = leg.length - 1;
+        // 在每一段路上求离目标最近的那一点（路网里常有几十上百公里一笔直连的长边，只看顶点会漏）
+        let bestSeg = -1;
+        let bestPt: { lat: number; lng: number } | null = null;
         let bestD = Infinity;
-        for (let i = 0; i < leg.length - 1; i++) {   // 末点就是目标本身，不参与比较
-            const d = getEuclideanDistance(leg[i], target);
-            if (d < bestD) { bestD = d; best = i; }
+        for (let i = 0; i < leg.length - 2; i++) {   // 最后一段是「节点 → 目标」的离路直线，不参与
+            const a = leg[i], b = leg[i + 1];
+            if ((a as { sea?: boolean }).sea || (b as { sea?: boolean }).sea) continue;   // 海上不下路
+            const dx = b.lng - a.lng, dy = b.lat - a.lat;
+            const len2 = dx * dx + dy * dy;
+            const t = len2 > 0 ? Math.max(0, Math.min(1, ((target.lng - a.lng) * dx + (target.lat - a.lat) * dy) / len2)) : 0;
+            const p = { lat: a.lat + dy * t, lng: a.lng + dx * t };
+            const d = getEuclideanDistance(p, target);
+            if (d < bestD) { bestD = d; bestSeg = i; bestPt = p; }
         }
-        if (best >= leg.length - 2) return leg;       // 本来就在最近点下路
-        return [...leg.slice(0, Math.max(1, best + 1)), target];
+        if (!bestPt || bestSeg < 0) return leg;
+        // 路本来就是在最后一个节点离目标最近：照原路走
+        const lastNodeD = getEuclideanDistance(leg[leg.length - 2], target);
+        if (bestD >= lastNodeD - 1e-9) return leg;
+        if (bestD * 111 > 15) return leg;             // 路离目标还远：不拿长直线去抄近道，照原路走
+        return [...leg.slice(0, bestSeg + 1), bestPt, target];
     }
 
     /** 路标段 + 最后一段拼成一条路；最后一段不通 → null（交给调用方兜底） */
@@ -895,7 +875,7 @@ export class PlayerQuestSystem {
             }
         }
         if (!path || path.length < 2) {
-            this.deps.notify(`无路可达【${this.quest?.event?.battlefieldName ?? '战场'}】`);
+            this.deps.notify(`无路可达【${this.quest?.event?.battlefieldName ?? '战场'}】`, undefined, true);
             return;
         }
         const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
@@ -913,7 +893,7 @@ export class PlayerQuestSystem {
         this.onBattlefieldClicked(q.event.battlefieldId, q.event.battlefieldName);
     }
 
-    /** 武将事件打完的收尾：战功 + 交付战法提示（战法本身由 onBattlefieldClicked 的授奖负责） */
+    /** 武将事件打完的收尾：战功 */
     private finishGeneralEvent(bfId: string, battleTitle: string): void {
         const q = this.quest;
         if (!q || q.kind !== 'general_event' || q.event?.battlefieldId !== bfId) return;
@@ -1057,14 +1037,6 @@ export class PlayerQuestSystem {
         return best;
     }
 
-    /** 势力主力精锐兵种 = 编成里数量最多的那一档（精锐放 4 档铁律） */
-    private mainUnitKeyOf(factionId: string, generalId: string): string | null {
-        const slots = getFactionCompositionSlots(factionId, generalId);
-        if (!slots || !slots.length) return null;
-        let best = slots[0];
-        for (const s of slots) if (s.count > best.count) best = s;
-        return best.type ?? null;
-    }
 
     // ── 起兵 ──────────────────────────────────────────────
     private raiseLegion(
@@ -1143,7 +1115,6 @@ export class PlayerQuestSystem {
         city: City,
         g: { generalId: string; generalName: string; portrait: string },
         target: City,
-        eliteName: string,
     ): void {
         this.deps.closeDialogue();
         const army = this.raiseLegion(city, city.factionId, g, target.id);
@@ -1152,7 +1123,6 @@ export class PlayerQuestSystem {
             return;
         }
         const factionName = this.deps.cityManager.getFactionName(city.factionId);
-        const unitKey = this.mainUnitKeyOf(city.factionId, g.generalId);
         this.quest = {
             kind: 'campaign',
             cityId: city.id,
@@ -1164,7 +1134,6 @@ export class PlayerQuestSystem {
             legionId: army.id,
             targetCityId: target.id,
             targetCityName: target.name,
-            reward: unitKey ? { name: eliteName, unitKey } : undefined,
         };
         this.deps.hero.joinFaction(city.factionId);
         this.deps.hero.attachTo(army);
@@ -1400,7 +1369,7 @@ export class PlayerQuestSystem {
             } else {
                 // 没接播报（无声环境）→ 回落到按字数留阅读时间的字幕
                 const duration = journeyBriefingDuration(line);
-                this.deps.notify(line, duration);
+                this.deps.notify(line, duration, true);
                 this.briefingTimer = window.setTimeout(() => pushNext(), duration);
             }
         };
@@ -1445,7 +1414,7 @@ export class PlayerQuestSystem {
         if (this.deps.hero.autoPlan === 'script' && !this.quest
             && this.findNextAvailableBattlefield() === null) {
             this.deps.hero.setAutoPlan('melee');
-            this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式');
+            this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式', undefined, true);
             gameLog('expedition', '[玩家] 历史剧本全部结束 → 自动切换乱斗模式');
         }
         // 🔴 [2026-09-19 主人定] **武将优先**：未入伍时若身上还有一场没打完的武将史实战役，
@@ -1485,7 +1454,7 @@ export class PlayerQuestSystem {
             this.followPendingGeneralEvent();
             const host = this.deps.legionManager.getLegionById(q.legionId);
             if (!host || host.isDestroyed || host.getTroops() <= 0) {
-                this.deps.notify(`❌ 军团覆灭，未能抵达【${q.event.title}】`);
+                this.deps.notify(`❌ 军团覆灭，未能抵达【${q.event.title}】`, undefined, true);
                 gameLog('expedition', `[玩家] 武将史实战役中断：${q.event.title}`);
                 this.quest = null;
                 this.followingEventGeneralId = null;
@@ -1599,22 +1568,21 @@ export class PlayerQuestSystem {
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         const targetName = target?.name ?? '前方敌城';
-        const eliteName = getCityEliteLegionName(city.id) ?? `${generalName}部`;
         this.deps.showDialogue({
             speaker: generalName,
             portrait,
             factionName,
             text: `壮士竟寻到军中来了。某正提兵往【${targetName}】，军旅之中不便设宴。`
-                + `壮士若不嫌鞍马劳顿，便随某同去，克城之日当以「${eliteName}」之战法相授。`,
+                + `壮士若不嫌鞍马劳顿，便随某同去。`,
             options: [
-                { label: `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName, eliteName) },
+                { label: `⚔ 就此随军【${targetName}】`, accent: true, onPick: () => this.joinMarchingArmy(city, army, generalName) },
                 { label: '告辞', onPick: () => this.deps.closeDialogue() },
             ],
         });
     }
 
     /** 野外会面后入伍：军团现成的，不起兵，其余与 startCampaign 同口径 */
-    private joinMarchingArmy(city: City, army: Army, generalName: string, eliteName: string): void {
+    private joinMarchingArmy(city: City, army: Army, generalName: string): void {
         this.deps.closeDialogue();
         const factionId = army.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
@@ -1627,7 +1595,6 @@ export class PlayerQuestSystem {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
             return;
         }
-        const unitKey = this.mainUnitKeyOf(factionId, army.generalId ?? '');
         this.quest = {
             kind: 'campaign',
             cityId: city.id,
@@ -1639,7 +1606,6 @@ export class PlayerQuestSystem {
             legionId: army.id,
             targetCityId: target?.id ?? city.id,
             targetCityName: target?.name ?? city.name,
-            reward: unitKey ? { name: eliteName, unitKey } : undefined,
         };
         this.deps.hero.joinFaction(factionId);
         this.deps.hero.attachTo(army);
@@ -1874,25 +1840,11 @@ export class PlayerQuestSystem {
             if (q.kind === 'restore') {
                 hero.addMerit(600);
                 this.deps.feed?.pushRestoration?.({ factionId: q.factionId, cityName: q.cityName });
-                this.deps.notify(`🚩 【${q.cityName}】光复，${q.factionName}复国成功！赏大功 600`);
                 gameLog('expedition', `[玩家] 复国成功：${q.cityName} → ${q.factionName}，奖战功 600`);
             } else {
                 hero.addMerit(400);
                 this.deps.feed?.pushExpedition?.({ legionName: q.generalName, cityName: q.targetCityName, kind: 'success' });
-                if (q.reward) {
-                    const learned = hero.learnElite({
-                        name: q.reward.name,
-                        unitKey: q.reward.unitKey,
-                        factionId: q.factionId,
-                        factionName: q.factionName,
-                    });
-                    this.deps.notify(learned
-                        ? `🚩 攻克【${q.targetCityName}】，学会精锐战法「${q.reward.name}」，赏大功 400`
-                        : `🚩 攻克【${q.targetCityName}】（「${q.reward.name}」已会），赏大功 400`);
-                } else {
-                    this.deps.notify(`🚩 攻克【${q.targetCityName}】，赏大功 400`);
-                }
-                gameLog('expedition', `[玩家] 出征成功：${q.targetCityName}，奖励 ${q.reward?.name ?? '无'}，奖战功 400`);
+                gameLog('expedition', `[玩家] 出征成功：${q.targetCityName}，奖战功 400`);
             }
         } else {
             this.deps.notify(q.kind === 'restore'

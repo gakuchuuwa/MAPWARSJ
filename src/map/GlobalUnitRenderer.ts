@@ -2665,6 +2665,14 @@ export class GlobalUnitRenderer {
                         && (unit as { columnMarch?: boolean }).columnMarch === true,
                 );
             } else {
+                // 🔴 [2026-09-24 主人报「旗舰往北，其他的船为什么不在后面跟着？」]
+                //    上岸即清舰队航迹。航迹原先只在军团销毁/换跟拍时才清，剧本期同一支军团打整场战争，
+                //    上一次渡海（赫勒斯滂）的航迹一直留着；在推罗再下海时后随船沿「旧航迹」排，
+                //    排成一条从推罗斜连到西北旧航线的斜线。清掉后，下次下海从登船点重新记。
+                if (unit.id && this.navalTrailLast.has(unit.id)) {
+                    this.navalTrailLast.delete(unit.id);
+                    NavalPhalanxStateManager.clearTrail(unit.id);
+                }
                 // [AI SYSTEM] Use Dedicated Legion Drawer
                 const rawType = unit.legionType || 'mixed';
                 const assetsId: LegionType =
