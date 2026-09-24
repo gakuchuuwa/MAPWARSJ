@@ -717,6 +717,7 @@ export class SpeechAnnouncer {
 
   /** 清空技能播报队列（新战斗开打时，旧残留不再念） */
   private clearSkillQueue(): void {
+    this.skillQueueGen++;
     this.skillSpeakQueue.length = 0;
     this.skillSpeaking = false;
     this.endSpeechDuckSessionIfIdle();
@@ -728,15 +729,36 @@ export class SpeechAnnouncer {
     const next = this.skillSpeakQueue.shift();
     if (next === undefined) return;
     this.skillSpeaking = true;
+    // 🔴 [2026-09-24 主人报「剧本模式下的战斗面板中，武将双方不要同时释放技能」]
+    //    根因：剧本开战时正念战役旁白（sTier），speak() 对常规播报**当场**回调 onStart+onDone 不开口 →
+    //    队列里攻守两句同一瞬间先后出队 → 两个 Cut-in 同刻弹出。语音关闭 / TTS 不可用也是同一条路。
+    //    现在：一句亮相后至少过 SKILL_CUTIN_GAP_MS（= Cut-in 动画 3 秒）才放下一句，不管这句念没念出声。
+    let startedAt = 0;
+    const onStart = next.onStart;
+    const gen = this.skillQueueGen;
     this.speak(next.text, {
       skipGlobalNameReplace: next.skipGlobalNameReplace,
-      onStart: next.onStart,
+      onStart: () => {
+        startedAt = Date.now();
+        onStart?.();
+      },
       onDone: () => {
-        this.skillSpeaking = false;
-        this.drainSkillQueue();
+        const wait = startedAt ? Math.max(0, startedAt + SpeechAnnouncer.SKILL_CUTIN_GAP_MS - Date.now()) : 0;
+        const release = () => {
+          if (gen !== this.skillQueueGen) return;   // 期间队列已被新一场清掉：旧计时器不再动状态
+          this.skillSpeaking = false;
+          this.drainSkillQueue();
+        };
+        if (wait > 0) window.setTimeout(release, wait); else release();
       },
     });
   }
+
+  /** 技能队列代号：每次清队列 +1，作废上一场残留的放行计时器 */
+  private skillQueueGen = 0;
+
+  /** 两句技能亮相的最短间隔（毫秒）= CombatUI 里 skill-cut-in 动画时长，保证双方大字不同刻、不叠 */
+  private static readonly SKILL_CUTIN_GAP_MS = 3000;
 
   /** 当前男声偏好对应的 Neural 音色名（云健/云希直连用） */
   private currentEdgeVoice(): EdgeVoice {

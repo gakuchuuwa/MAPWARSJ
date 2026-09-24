@@ -196,8 +196,8 @@ const OPENING_UI_DELAY_RATIO = PHASE_STALEMATE_START;
 const OPENING_UI_DELAY_MAX_SEC = 20;
 /** 慢直播：双方技能 Cut-in 理想错开（秒），与 skill-cut-in 动画同长 */
 export const SKILL_PULSE_STAGGER_IDEAL_SEC = 3;
-/** 慢直播：最短错开（秒）；🔴 [2026-09-24] 现在是**下限**（任何时长都不许同刻），不再是「窗不够就不用」 */
-export const SKILL_PULSE_STAGGER_MIN_SEC = 1.25;
+/** 慢直播：最短错开（秒）；🔴 [2026-09-24] 下限给足 2.5 秒，保证前一个 Cut-in 视觉展示收尾后再放后手，绝不重叠叠字 */
+export const SKILL_PULSE_STAGGER_MIN_SEC = 2.5;
 /** 低于此目标时长（秒）视为短战。🔴 [2026-09-24] 短战**不再**允许双方脉冲叠放（见 resolveSkillPulseStaggerSec），此常量仅作时长档位参考。 */
 export const SKILL_PULSE_SHORT_BATTLE_SEC = 10;
 
@@ -234,10 +234,9 @@ export function resolveStalemateUiThresholdSec(targetDurationSec: number): numbe
  * 双方脉冲错开间隔（秒）。
  *
  * 🔴 [2026-09-24 主人定「战略模式下的战斗界面中，两个武将怎么同时释放技能，这是不对的」]
- *    原先这里有一道口子：**短战（≤10s）或相持窗不足就直接返回 0**（注释写的是「可叠字，双方都必须亮相」），
- *    于是双方 Cut-in 在**同一瞬间**弹出 —— 实测：T=8 的战斗里两条闪光请求相隔 0.00s、该档错开 0.00s。
- *    现已取消这道口子：**任何时长都不许同刻**，后手至少错开一点；
- *    相持段还剩多少就按多少挤（仍留下先后次序），窗口用完则退回最短间隔，绝不返回 0。
+ *    双方 Cut-in 绝不重叠叠放：
+ *    首发攻方完整展示（立绘放大+大字Cut-in+语音音效）约 3 秒后，守方再出招接招；
+ *    保证至少有 2.5 秒错开下限。
  */
 export function resolveSkillPulseStaggerSec(targetDurationSec: number, elapsedSec: number): number {
     const room = resolvePhase2RemainingSec(targetDurationSec, elapsedSec);
@@ -245,8 +244,7 @@ export function resolveSkillPulseStaggerSec(targetDurationSec: number, elapsedSe
         SKILL_PULSE_STAGGER_IDEAL_SEC,
         Math.max(SKILL_PULSE_STAGGER_MIN_SEC, room * 0.48),
     );
-    // 窗口比理想间隔短 → 按窗口给（后手仍在窗口内亮相）；窗口已过 → 最短间隔（绝不与先手同刻）
-    return room > 0 ? Math.min(want, room) : SKILL_PULSE_STAGGER_MIN_SEC;
+    return Math.max(SKILL_PULSE_STAGGER_MIN_SEC, room > 0 ? Math.min(want, room) : SKILL_PULSE_STAGGER_IDEAL_SEC);
 }
 
 /** @deprecated 仅兼容旧调用；新逻辑以 BattleField.elapsed 与 resolveStalemateUiThresholdSec 为准 */

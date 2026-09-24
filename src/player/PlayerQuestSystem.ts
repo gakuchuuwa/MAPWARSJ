@@ -150,11 +150,14 @@ export interface PlayerQuestDeps {
             attackerSourceCityId?: string; defenderSourceCityId?: string;
             result?: 'attacker_win' | 'defender_win' } | null;
         start(bfId: string,
-            onSpawned: (sides: { attacker: Army; defender: Army }) => void,
-            onFinished: (sides: { attacker: Army; defender: Army }) => void,
+            /** defender = null：剧本攻城战，守方就是那座城（不另造守方军团） */
+            onSpawned: (sides: { attacker: Army; defender: Army | null }) => void,
+            onFinished: (sides: { attacker: Army; defender: Army | null }) => void,
             ignoreArmyId?: string): string | null;
         /** 某武将在这一仗里那一方的史实兵力与军团名（主角赶路军团用） */
         sideOfGeneral?(bfId: string, generalId: string): { troops: number; legionName: string } | null;
+        /** 某武将在这一仗里的对阵位（剧本期主角军团直接行军到这里，开战不再挪位） */
+        standOfGeneral?(bfId: string, generalId: string): { lat: number; lng: number } | null;
     };
 }
 
@@ -201,6 +204,7 @@ export class PlayerQuestSystem {
         if (q?.kind === 'general_event') {
             const host = this.deps.legionManager.getLegionById(q.legionId);
             if (host) host.columnMarch = false;
+            this.columnMarchPending = false;
             this.quest = null;
         }
         this.followingEventGeneralId = null;
@@ -460,20 +464,22 @@ export class PlayerQuestSystem {
                     //    才照旧收掉赶路军团、改用战场上新生成的那一支。
                     const hostIdNow = this.deps.hero.getHostLegionId();
                     const reusedByBattlefield = !!hostIdNow
-                        && (attacker.id === hostIdNow || defender.id === hostIdNow);
+                        && (attacker.id === hostIdNow || defender?.id === hostIdNow);
                     if (!reusedByBattlefield) this.disposeHostMarchLegion();
                     // 🔴 [2026-09-23 修] 赶路军团收掉后，任务改为盯**战场上本将那一方的史实军团**；
                     //    否则任务每拍检查发现赶路军团没了，就误报「❌ 军团覆灭，未能抵达【XX战役】」并丢掉任务，
                     //    打完也走不到 finishGeneralEvent 收尾。
                     const q = this.quest;
                     if (q?.kind === 'general_event' && q.event?.battlefieldId === bfId) {
-                        q.legionId = (side ?? ownSide ?? 'attacker') === 'attacker' ? attacker.id : defender.id;
+                        const sideArmy = (side ?? ownSide ?? 'attacker') === 'attacker' ? attacker : defender;
+                        if (sideArmy) q.legionId = sideArmy.id;
                     }
                     if (!side) return;   // 只观战
                     const host = side === 'attacker' ? attacker : defender;
+                    // 剧本攻城战的守方是城、没有军团可随：只在旁观战
+                    if (!host) { this.deps.notify(`守方凭城据守，无军可随，于城外观战`); return; }
                     this.deps.hero.joinFaction(side === 'attacker' ? fb.attackerFactionId : fb.defenderFactionId);
                     this.deps.hero.attachTo(host);
-                    this.deps.notify(`⚔ 你加入${side === 'attacker' ? atkName : defName}，随${side === 'attacker' ? atkGeneral : defGeneral}出战`);
                 },
                 () => {
                     if (!side) return;   // 只观战：没参战，不授战法
@@ -773,13 +779,21 @@ export class PlayerQuestSystem {
         this.armyMarchPoint = null;
         // 攻城战：赶路终点是**被攻的那座城**（战场标牌仍在史实地点，那是给玩家看的地理参照）
         const defCity = ev.defenderCityId ? this.deps.cityManager.getCity(ev.defenderCityId) : null;
-        const marchTarget = defCity
-            ? { lat: defCity.latitude, lng: defCity.longitude }
-            : { lat: ev.lat, lng: ev.lng };
+        // 🔴 [2026-09-24 主人令「按历史」] 剧本期：行军终点 = 本方对阵位（开战复用这支军团时就摆在这里），
+        //    不再先走到战场正中心、开战又被拽回阵位（实测瞬移 15 公里）。乱斗照旧。
+        const stand = scriptMode ? this.deps.battlefields?.standOfGeneral?.(ev.battlefieldId, g.generalId) ?? null : null;
+        const marchTarget = stand
+            ?? (defCity
+                ? { lat: defCity.latitude, lng: defCity.longitude }
+                : { lat: ev.lat, lng: ev.lng });
         // 行军路标只在剧本模式走；乱斗模式照旧走最近的路
         this.marchWaypointsLeft = scriptMode ? [...(ev.marchWaypoints ?? [])] : [];
         // 🔴 [2026-09-23 主人定「一条线的行军模式」「乱入者打头阵，然后是将军」] 剧本模式：行军纵队，接近战场再展开
-        host.columnMarch = scriptMode;
+        // 🔴 [2026-09-24 主人报「战斗结束后，玩家会从战斗阵型变为行军阵型……应该是在行军后才改变阵型」]
+        //    这里只**记下**要走纵队，不当场切：接任务时军团常常还停在原地（战后实测停了 2 秒多才起步），
+        //    当场切就是原地变纵队。等它真的动起来再切（见 followPendingGeneralEvent），与战前展开对称。
+        host.columnMarch = false;
+        this.columnMarchPending = scriptMode;
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
@@ -793,6 +807,23 @@ export class PlayerQuestSystem {
 
     /** 这一趟还没走到的行军路标（据点 id，按顺序） */
     private marchWaypointsLeft: string[] = [];
+
+    /**
+     * 🔴 [2026-09-24] 最后一段在路上离目标最近的那一点下路，直奔目标，别走过头再折回。
+     *    实测格拉尼库斯：寻路终点落在路网节点（原格拉尼库斯城，阵位以东 15 公里），
+     *    而路其实在阵位 5.7 公里外经过 → 军团走到节点再掉头往西 15 公里 = 回头路。
+     */
+    private leaveRoadNearest(leg: { lat: number; lng: number }[], target: { lat: number; lng: number }): { lat: number; lng: number }[] {
+        if (leg.length < 3) return leg;
+        let best = leg.length - 1;
+        let bestD = Infinity;
+        for (let i = 0; i < leg.length - 1; i++) {   // 末点就是目标本身，不参与比较
+            const d = getEuclideanDistance(leg[i], target);
+            if (d < bestD) { bestD = d; best = i; }
+        }
+        if (best >= leg.length - 2) return leg;       // 本来就在最近点下路
+        return [...leg.slice(0, Math.max(1, best + 1)), target];
+    }
 
     /** 路标段 + 最后一段拼成一条路；最后一段不通 → null（交给调用方兜底） */
     private withViaPath(
@@ -852,14 +883,15 @@ export class PlayerQuestSystem {
             viaPath.push(...(viaPath.length ? leg.slice(1) : leg));
             legStart = wpPos;
         }
-        let path = this.withViaPath(viaPath, findPathFromPoint(legStart, target));
+        const lastLeg = findPathFromPoint(legStart, target);
+        let path = this.withViaPath(viaPath, lastLeg ? this.leaveRoadNearest(lastLeg, target) : null);
         if (!path || path.length < 2) {
             // 战场不是据点、不在路网上（波斯门深在扎格罗斯山里就是这种）→ 沿路网走到最近那座城，
             // 最后一段直奔战场。与 `PlayerHero.travelToPoint` 同一套兜底，别再写第二套。
             const anchor = roadRegistry.getNearestCityPos(target.lat, target.lng, 5);
             if (anchor) {
                 const via = findPathFromPoint(legStart, anchor);
-                if (via && via.length >= 2) path = this.withViaPath(viaPath, [...via, target]);
+                if (via && via.length >= 2) path = this.withViaPath(viaPath, this.leaveRoadNearest([...via, target], target));
             }
         }
         if (!path || path.length < 2) {
@@ -898,7 +930,6 @@ export class PlayerQuestSystem {
         this.pendingEventGeneralId = null;
         this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== q.generalId);
         this.deps.hero.addMerit(500);
-        this.deps.notify(`🚩 【${battleTitle}】战毕，亲历此役，赏大功 500`);
         gameLog('expedition', `[玩家] 武将史实战役战毕：【${battleTitle}】`);
     }
 
@@ -946,6 +977,13 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
+        // 🔴 [2026-09-24] 起步才变纵队：军团真的在走、且离战场还远（60 公里外）才切，只切这一次
+        if (this.columnMarchPending && host.isMarching()) {
+            this.columnMarchPending = false;
+            if (getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 > COLUMN_DEPLOY_KM) {
+                host.columnMarch = true;
+            }
+        }
         // 🔴 [2026-09-23] 距战场 60 公里内：纵队展开成阵（逐帧走位过去，见 LegionPhalanxDrawer.columnOffsets）
         if (host.columnMarch && getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= COLUMN_DEPLOY_KM) {
             host.columnMarch = false;
@@ -959,6 +997,9 @@ export class PlayerQuestSystem {
         this.marchRetryAfter = now + 10_000;
         this.startMarchToBattlefield(host, this.armyMarchPoint, true);
     }
+
+    /** 剧本行军：已接任务、等军团起步后再切纵队（见 followPendingGeneralEvent） */
+    private columnMarchPending = false;
 
     /** 续路冷却（与战场寻路冷却同口径，避免每拍重铺） */
     private marchRetryAfter = 0;

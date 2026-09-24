@@ -3841,15 +3841,6 @@ export class CombatUI {
         const bf = this.boundRegionalBattleField;
         // 【2026-08-16 用户指令】单方有将不放技能、不脉冲、不立绘缩放：仅双将战才触发技能脉冲与 Cut-in
         if (bf && !bf.bothSidesHaveGeneral()) return;
-        const addFlash = (badge: HTMLSpanElement | null) => {
-            if (!badge || !badge.textContent?.includes(displayName)) return;
-            badge.style.animation = 'none';
-            void badge.offsetWidth;
-            badge.style.animation = 'tactical-skill-pop 1.5s ease-out forwards';
-        };
-        addFlash(this.leftMultBadge);
-        addFlash(this.rightMultBadge);
-
         // —— 立绘/标签脉冲 ——
         // 武将技一局只放一次：UI 事件可能被重复广播（援军编入补发等），每侧一局只脉冲一次。
         // 侧别：① 战场单位列表 ② generalId 对名牌 ③ 技能标签兜底（仅限无将事件——
@@ -3895,6 +3886,13 @@ export class CombatUI {
             if (this.boundRegionalBattleField?.isOver) return;
             // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
             this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
+            // 🔴 [2026-09-24] 战力倍率徽章：随该侧武将技实际释放时弹出闪烁（不在派发时双侧同闪）
+            const sideBadge = this.sideElement(pulseSide, this.leftMultBadge, this.rightMultBadge);
+            if (sideBadge && sideBadge.textContent?.includes(displayName)) {
+                sideBadge.style.animation = 'none';
+                void sideBadge.offsetWidth;
+                sideBadge.style.animation = 'tactical-skill-pop 1.5s ease-out forwards';
+            }
             // 已燃时刻（P1）：0.6s 后标签定格为降亮度+金框+✓——updateSkillBadges 每帧重建时按此补挂；
             // 「标明放了哪个技」由已燃态承担（旧标签 surge 附着于每帧被重建的元素，从未真正可见，已清理）
             this.skillSpentAt.set(`${pulseSide}-${displayName}`, Date.now());
