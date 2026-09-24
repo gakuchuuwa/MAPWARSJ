@@ -3221,6 +3221,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     malli_leader: { generalId: 'malli_leader', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 科塞亚·科塞亚首领：普将（史实为扎格罗斯山地部落酋长联军首领，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
     kesaiya_shouling: { generalId: 'kesaiya_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 乌克西亚·马达泰斯 的档案。
+    //    普将（史实：扎格罗斯山乌克西亚部落联盟首领，向来往军队索取买路钱，据隘口设伏；
+    //    前331年亚历山大应约纳贡而暗中分兵，袭其村落、夺其隘口，他退往高地遭合围）· 逆势 · 善防
+    wukexiya_madates: { generalId: 'wukexiya_madates', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。
     //    他此前只在 `BattlefieldCharacters`（战场人物表）里，**没有档案/世纪/时代** ——
     //    那三样缺一就进不了 13（战术模式），而虎牢关战役他是**守方主帅**，会卡在准入上。

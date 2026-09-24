@@ -590,6 +590,9 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'kepantuo_dulimi': 'feudal',
     'kereyid_wanghan': 'castle',
     'kesaiya_shouling': 'antiquity',
+    // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 乌克西亚·马达泰斯
+    //    （前331年乌克西亚隘口战役守方主帅）—— 与亚历山大同属古典时代
+    'wukexiya_madates': 'antiquity',
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德
     //    （621 年虎牢关战役守方主帅）—— 与李世民同属封建时代
     'doujiande': 'feudal',

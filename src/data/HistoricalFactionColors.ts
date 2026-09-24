@@ -1179,6 +1179,7 @@ const _FIXED: Record<string, string> = {
     'aswaka': '#799F88', // 阿斯瓦卡·马萨加（斯瓦特山谷·灰绿）
     'malli': '#EBAF5B', // 马利·马里斯（印度河畔·沙黄）
     'kesaiya': '#525819', // 科塞亚·扎格罗斯（深山岩苔·深橄榄）
+    'wukexiya': '#7A5B33', // 乌克西亚·扎格罗斯（山岩土褐。无尚色记载 → 按史地特征取色，与科塞亚的深橄榄分色）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
