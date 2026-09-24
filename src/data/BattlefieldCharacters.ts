@@ -84,6 +84,15 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-09-19 主人令] 村上武吉**已归位为据点守将**（能岛城，伊予势力），
     //    不再属于战场人物表 —— 此处原条目已移除（他重新有了自己的城）。
     // ── 沙隆战役（451）西罗马方主帅 ──────────────────────────────
+    // ── 哈利卡纳苏斯围城战（前334）波斯方主帅 ────────────────────
+    halikanasu_memnon: {
+        generalId: 'halikanasu_memnon',
+        generalName: '门农',
+        factionId: 'aqimeinide',
+        portrait: '',                       // 🔴 等主人放图；空 = 走池子回落
+        portraitProposedPath: '/assets/PERSIAN/halikanasu_memnon.png',
+        note: '罗得岛的门农，波斯麾下希腊雇佣军名将。前334年米利都战后受任小亚细亚总指挥、统率波斯舰队，亲自布置哈利卡纳苏斯防御，携舰队泊于港内准备长期对抗；城破前夜与卡里亚总督欧戎托巴提斯一同弃城撤退，此后转攻爱琴海诸岛，前333年病死。史料：阿里安《亚历山大远征记》卷一、中文维基百科「哈利卡那索斯圍城戰」。',
+    },
     aitiliusi: {
         generalId: 'aitiliusi',
         generalName: '埃提乌斯',

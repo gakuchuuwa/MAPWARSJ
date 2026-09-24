@@ -295,6 +295,13 @@ export interface HistoricalEvent {
      */
     absentCities?: string[];
     /**
+     * 🔴 [2026-09-24 主人定「有一种建筑是特殊建筑……也可以添加建筑的立绘，增加剧本的趣味性和历史知识」]
+     * **本场出现的特殊建筑**（奇观素材目录名，如 `'GREAT_PYRAMID'`）：取自库里现成的特殊建筑表
+     * （`src/data/CityWonders.ts` 的 `CITY_WONDER` 一城主奇观 + `CITY_WONDER_EXTRA` 同城第二三座），
+     * 中文名在 `WonderNames.ts`，立绘在 `public/SUCAI_BUILDING/<素材>/preview.png`。留空 = 这一场不提建筑。
+     */
+    wonders?: string[];
+    /**
      * 🔴 [2026-09-23 主人定「剧本模式中，每一个主角武将的军团都必须是10队，样式从兵模素材中找，不要名字，要看样子符合就行」]
      * 归属武将军团的**主将队（第 10 队）兵种**（WAR_TYPES 键），按素材样貌选。编辑器里必选。
      */

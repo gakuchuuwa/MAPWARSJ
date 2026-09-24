@@ -3226,6 +3226,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 乌克西亚·马达泰斯 的档案。
     //    普将（史实：扎格罗斯山乌克西亚部落联盟首领，向来往军队索取买路钱，据隘口设伏；
     //    前331年亚历山大应约纳贡而暗中分兵，袭其村落、夺其隘口，他退往高地遭合围）· 逆势 · 善防
+    halikanasu_memnon: { generalId: 'halikanasu_memnon', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 罗得岛门农，波斯麾下希腊雇佣军名将：格拉尼库斯前献坚壁清野之策、前334年任小亚细亚总指挥守哈利卡纳苏斯、前333年转攻爱琴海连下基俄斯与莱斯博斯 → 名将
     wukexiya_madates: { generalId: 'wukexiya_madates', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。
     //    他此前只在 `BattlefieldCharacters`（战场人物表）里，**没有档案/世纪/时代** ——

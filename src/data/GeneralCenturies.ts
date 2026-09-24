@@ -1059,6 +1059,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（前327年马萨加战役守帅）
     'malli_leader':                      -4,    // 马利首领 · malli · 马里斯（前325年马里斯战役守帅）
     'kesaiya_shouling':                  -4,    // 科塞亚首领 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
+    'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（前334年哈利卡纳苏斯围城战守帅）
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（前331年乌克西亚隘口战役守帅）
 
     'doujiande':                          7,    // 窦建德 · xia · 河北（621年虎牢关战役守帅，夏王）
