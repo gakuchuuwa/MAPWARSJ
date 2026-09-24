@@ -3209,6 +3209,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     kanan_azemier: { generalId: 'kanan_azemier', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 加沙·巴提斯：普将（史实为死守沙丘要塞的波斯任命总督）· 逆势 · 善防
     feilisidin_batisi: { generalId: 'feilisidin_batisi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 伊奥尼亚·米利都守将赫格西斯特：普将（史载其为波斯驻米利都守军统领，据内城依墙死守，城破后余部退守小岛）· 逆势 · 善防
+    yiaoniya_hegesistratus: { generalId: 'yiaoniya_hegesistratus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 波斯门·阿尔塔巴扎诺斯：普将（史实为波西斯行省总督，死守扎格罗斯山险隘至全员战死）· 逆势 · 善防
     aqimeinide_aertabazanuosi: { generalId: 'aqimeinide_aertabazanuosi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 锡尔河·萨特拉克斯：普将（史实为锡尔河战役对阵亚历山大的斯基泰骑兵领袖）· 借势（轻骑骑射）· 善攻

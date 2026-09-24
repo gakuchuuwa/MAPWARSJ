@@ -20,6 +20,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'agui': 'imperial',
     'ahaomu_laqite': 'imperial',
     'aiaoniya_alisita': 'antiquity',
+    'yiaoniya_hegesistratus': 'antiquity',
     'aiji_lameisisi': 'antiquity',
     'ailan_shuteluke': 'antiquity',
     'ailao_leilao': 'antiquity',

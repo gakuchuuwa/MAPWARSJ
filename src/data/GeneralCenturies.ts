@@ -839,6 +839,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'abasi_mansuer': 8,                                 // 曼苏尔 · abasi · 巴格达
     'samaila_muataisuimu': 9,                           // 穆阿台绥姆 · samaila · 萨迈拉
     'aiaoniya_alisita': -5,                              // 阿里斯塔 · aiaoniya · 以弗所
+    'yiaoniya_hegesistratus': -4,                        // 赫格西斯特 · yiaoniya · 米利都（前334年米利都围城战守将）
     'aiji_lameisisi': -13,                                // 拉美西斯 · aiji · 孟菲斯
     'alabo_qiyade': 7,                                  // 齐亚德 · alabo · 巴士拉
     'aosiruowen_baodewen': 11,                           // 鲍德温 · aosiruowen · 埃德萨
