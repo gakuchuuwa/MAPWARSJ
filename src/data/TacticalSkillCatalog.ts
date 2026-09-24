@@ -172,12 +172,12 @@ export const TRI_CLASS_LABEL: Readonly<Record<TacticalTriClass, string>> = {
  * 六计参数定稿（在册=有 ownerGeneralId / 不在册）：
  *   攻战·机  加己攻          1.2  / 1.1
  *   胜战·全  减敌兵/加己兵    0.18 / 0.09
- *   敌战·衡  减己损+输了咬    0.2  / 0.1
+ *   敌战·衡  相持互角（胜后减损、精锐减损、战后恢复）
  *   混战·乱  克夺反          全否地形 / 半否地形
  *   并战·借  变随机          [0.6,1.4] / [0.7,1.3]
  *   ⚠ [2026-08-06 勘误] 上面敌战/并战两行原先写反了，并写了个不存在的「拖长一档 30s→45s」。
  *     以本文件下方的 EFFECT_TO_SIX_SET 为准（那才是唯一权威）；战斗时长与战术技无关。
- *   败战·险  更翻盘（唯一能改胜负） [0.25,0.45] / [0.30,0.40]
+ *   败战·险  更翻盘+输了咬（绝境反转、玉石俱焚拉敌垫背） [0.25,0.45] / [0.30,0.40]
  */
 export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixSet>> = {
     // 攻战·机（加己攻）
@@ -189,8 +189,7 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     dual_sub_troops_opening: 'shengzhan',
     ally_add_troops_opening: 'shengzhan',
     self_casualty_reduction: 'shengzhan', // 减己损：避实就虚保全自己
-    // 敌战·衡（输了咬：均势下你也不好过）
-    lose_enemy_casualty_boost: 'dizhan',
+    // 敌战·衡（均势相持：胜后减损、互角互保）
     win_casualty_reduction: 'dizhan',
     elite_casualty_reduction: 'dizhan',
     post_recovery_rate: 'dizhan',
@@ -206,7 +205,8 @@ export const EFFECT_TO_SIX_SET: Readonly<Record<TacticalBaseEffect, TacticalSixS
     luck_variance_self: 'bingzhan',
     luck_variance_enemy: 'bingzhan',
     luck_lock_self: 'bingzhan',
-    // 败战·险（更翻盘——六计中唯一能反转胜负的计）
+    // 败战·险（更翻盘/绝境反噬——六计中绝境反转、玉石俱焚拉敌垫背之计）
+    lose_enemy_casualty_boost: 'baizhan',   // 输了咬：绝境反扑拉敌垫背（如困兽犹斗）
     recompute_comeback: 'baizhan',
     lose_zero_enemy_recovery: 'baizhan',
     ally_add_troops_comeback: 'baizhan',
@@ -560,8 +560,8 @@ const COUNTER: TacticalSkillEntry[] = [
     {
         id: 'ts_046', ownerName: '三十六计', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 46,
         displayName: '暗渡陈仓', sourceQuote: '《史记·淮阴侯列传》：“明修栈道，暗度陈仓。”',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
         note: '【敌战计·衡】暗渡陈仓；三十六计（史记·韩信）',
     },
     {
@@ -4008,36 +4008,36 @@ const SANSHILIU: TacticalSkillEntry[] = [
     {
         id: 'ts_393', layer: 'tactical', series: 'fate', index: 393,
         displayName: '无中生有', ownerName: '三十六计', sourceQuote: '《南史·檀道济传》：唱筹量沙，全军而反，魏人不敢逼。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'post_recovery_rate', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '【敌战计·衡】无中生有；三十六计',
     },
     {
         id: 'ts_394', usageTag: '双行', situationTag: '均势', layer: 'tactical', series: 'fate', index: 394,
         displayName: '隔岸观火', ownerName: '三十六计', sourceQuote: '【曹操】观袁尚袁谭相争，坐收渔利，隔岸观火。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
         note: '【敌战计·衡】隔岸观火；三十六计',
     },
     {
         id: 'ts_395', layer: 'tactical', series: 'fate', index: 395,
         displayName: '笑里藏刀', ownerName: '三十六计', sourceQuote: '《史记·商君列传》：致书公子卬约盟，饮而伏甲掳之，遂破魏。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'win_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
         note: '【敌战计·衡】笑里藏刀；三十六计',
     },
     {
         id: 'ts_396', ownerName: '三十六计', usageTag: '防御', situationTag: '均势', layer: 'tactical', series: 'fate', index: 396,
         displayName: '李代桃僵', sourceQuote: '【曹操】官渡之战以卒代己诱敌，舍小保大，主力得转。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'elite_casualty_reduction', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.25, engineStatus: 'ready',
         note: '【敌战计·衡】李代桃僵；三十六计',
     },
     {
         id: 'ts_397', ownerName: '三十六计', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'fate', index: 397,
         displayName: '顺手牵羊', sourceQuote: '【刘邦】《史记·高祖本纪》：项羽东击齐，汉王乘隙定河内、略魏地。',
-        baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive',
-        magnitude: 1.25, engineStatus: 'ready',
+        baseEffect: 'post_recovery_rate', condition: 'always', phase: 'mid_battle_passive',
+        magnitude: 0.5, engineStatus: 'ready',
         note: '【敌战计·衡】顺手牵羊；三十六计',
     },
     {
@@ -4539,7 +4539,7 @@ const UNIQUE_T1_PRECISION: TacticalSkillEntry[] = [
 ];
 
 const UNIQUE_T1_EXPAND: TacticalSkillEntry[] = [
-    { id: 'ts_742', ownerName: '苻坚', usageTag: '攻击', situationTag: '均势', layer: 'tactical', series: 'casualty', index: 742, displayName: '困兽犹斗', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎。”倾尽残存兵力作最后一搏败中求胜。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
+    { id: 'ts_742', ownerName: '苻坚', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 742, displayName: '困兽犹斗', sourceQuote: '《左传·宣公十二年》：“困兽犹斗，况国相乎。”倾尽残存兵力作最后一搏败中求胜。', baseEffect: 'lose_enemy_casualty_boost', condition: 'always', phase: 'mid_battle_passive', magnitude: 1.25, engineStatus: 'ready' },
     { id: 'ts_743', ownerName: '张郃', layer: 'tactical', series: 'counter', index: 743, displayName: '断道绝险', sourceQuote: '《三国志·张郃传》街亭之战张郃断马谡汲水之道', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_745', layer: 'tactical', series: 'counter', index: 745, displayName: '引蛇出洞', situationTag: '均势', sourceQuote: '赤壁诱曹军水师出营就战，火攻歼之。', baseEffect: 'nullify_enemy_opening_cut', condition: 'always', phase: 'opening_roll', magnitude: 1, engineStatus: 'ready' },
     { id: 'ts_746', usageTag: '攻击', situationTag: '劣势', layer: 'tactical', series: 'casualty', index: 746, displayName: '白马救围', ownerName: '公孙瓒', ownerGeneralId: 'hejian_gongsunzan', sourceQuote: '【公孙瓒】《后汉书·公孙瓒传》：白马义从驰援解围。', baseEffect: 'recompute_comeback', condition: 'side_comeback', phase: 'mid_battle_comeback', magnitude: 1,

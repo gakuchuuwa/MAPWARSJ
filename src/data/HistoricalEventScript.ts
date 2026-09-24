@@ -301,570 +301,63 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         foeCommanderUnit: 'hero_artaphernes',
     },
 
-    // ═══════════════════════════════════════════════════════════════
-    // 前 330 年冬 · 亚历山大决战扎格罗斯：波斯门战役（Battle of the Persian Gate，前330年1月）
-    // ═══════════════════════════════════════════════════════════════
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -331,
+        season: 3,
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你来得正好。前头那座山里有乌克西亚人——连大流士的父辈过境，也得给他们一笔买路钱。他们派了人来，要我也照付。我答应了，说定日子走大道、如约纳贡。可你想想：他们既然在山口等着收钱，就绝不会想到我从北边的山路上去，更不会想到克拉特鲁斯已经站在他们的退路上。走吧，这一趟不费多少工夫，却能让通往波斯腹地的山门全开。',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile：乌克西亚隘口之战，马其顿军对扎格罗斯山乌克西亚部落的野战，战场在苏萨以东的山道。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile 信息框 date = 331 BC；该条目背景节记亚历山大取巴比伦、休整数日，再走二十日至苏萨，自苏萨向山地隘口进军；日文维基百科同条目记此役为前331年12月，故季节取冬。' }, place: { level: 'inferred', text: '英文维基百科 Battle of the Uxian Defile 信息框 location = East of Susa，coordinates 32°11′26″N 48°15′2″E；🔴 该坐标与苏萨城条目的 32°11′26″N 48°15′28″E 仅差约 0.7 公里，即信息框标的其实就是苏萨城本身，与同一条目正文「East of Susa」「战斗发生在苏萨与波斯波利斯之间的山脉」自相矛盾。英文维基百科 Uxians 条目、日文维基百科与波斯文维基百科均未给隘口坐标。故按主人定口径「查不到用知名度最大的说法，再没有按史地合理推定」：以正文为准，取苏萨以东约六十公里、去波斯波利斯大道上进入扎格罗斯山的第一处山口，坐标 32.0457,48.8506，取自该大道在路网上的实际走线，战场正落在道上。可信级别：合理推定。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile：马其顿与科林斯同盟，亚历山大亲统；战斗中克拉特鲁斯率盾卫占据高地，亚历山大自率其余将士走北路。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile 信息框 strength1 = 8,000 infantry，攻方兵力取 8000。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯、伊苏斯、推罗、加沙、高加米拉五场：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2；同一支军队整场战争不换。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile 信息框 combatant2 = Uxians，commander2 = Madates；英文维基百科 Uxians：乌克西亚人为扎格罗斯山中非伊朗裔半游牧部落联盟，分平原定居与山地游牧两支，平原一支降、山地一支索要买路钱，由马达泰斯统领。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Battle of the Uxian Defile 信息框 strength2 = Unknown，该条目与英文维基百科 Uxians 均未给守方兵数；波斯文维基无对应条目可补。按史地合理推定：乌克西亚为半游牧部落联盟，既能向历代波斯大王索取过路贡、又以险隘伏击马其顿全军，部众当以千计而不下数千，取 5000。可信级别：合理推定。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Uxians：该部落联盟以放牧与劫掠为生，被 Nearchus 列为西南四大掠夺民族之一；Battle of the Uxian Defile 记其据山隘设伏、退往高地后被合围。故编成以前远程、中步兵、后骑兵，取雁行阵 4-3-2，落成剧本军团「乌克西亚军」。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile 背景节：高加米拉战后亚历山大进抵巴比伦，总督马扎欧斯献城，休整数日并设为第二基地；自巴比伦走二十日至冬都苏萨，自苏萨向山地隘口进军。游戏路线：自上一处战场（高加米拉）开拔 → 尼尼微 → 亚述城 → 巴比伦 → 苏萨 → 乌克西亚隘口；苏萨以东一段按主人 2026-09-24 新建的巴比伦—苏萨道路与苏萨—波斯波利斯大道走，编辑器实测各段绕远不超过 1.32 倍。⚠️ 尼尼微与前 612 年被毁的亚述城在当年已属废墟，只作路网途经点使用，本场播报不再提这两座城。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile：马其顿胜，部落战士被四面合围后遭歼灭，幸存者求和，议定年贡 100 匹马、500 头牛、3 万只羊；英文维基百科 Uxians：此后乌克西亚人一度重获独立，大流士三世之母西绪甘比斯曾出面交涉释放以马达泰斯为首的乌克西亚俘虏。本场为野战，不涉据点易主。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of the Uxian Defile：乌克西亚人遣使要求亚历山大照波斯旧例交纳买路钱，亚历山大应下，称将按约定之日走大道纳贡，实则分兵走北路；对白措辞为撰写。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Uxian Defile 与 Uxians：亚历山大因巴比伦城墙高厚、墙内农田足以久守而唯恐波斯人据城重整，结果马扎欧斯献城并留任总督；取苏萨得金甚多，并送金回马其顿供安提帕特对斯巴达作战；乌克西亚人半游牧、靠放牧劫掠为生并向过境军队索费。文案按主人规矩不写兵力确数。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_artaphernes',
+        type: 'field_battle',
+        title: '公元前331年 乌克西亚隘口战役',
+        description: '马其顿军获胜：亚历山大以分兵之策破了乌克西亚隘口。克拉特鲁斯先据高地断其退路，亚历山大亲率精锐走北路袭取部落村落，再以接连强行军夺下隘口；乌克西亚人退往高地，正撞上守候已久的方阵，被四面合围。此战之后，通往波斯腹地的山道尽开，幸存者乞和，议定年贡马匹、牛羊。本场为野战，不涉据点易主。',
+        fieldBattleData: {
+            title: '乌克西亚隘口战役',
+            description: '公元前331年冬，扎格罗斯山脉东缘的乌克西亚隘口。乌克西亚人自恃险隘，向来往军队索取买路钱，认定马其顿人也会照波斯旧例纳贡，故只在山口静候。亚历山大应下纳贡之约，却选在约定之日分兵：克拉特鲁斯率盾卫抢占高地，堵死部落战士的退路；亚历山大自率精锐走北路，强袭其村落，随后以接连强行军夺取隘口。部落战士退向高地，正撞上守候已久的马其顿方阵，被四面合围后歼灭。',
+            location: { lat: 32.0457, lng: 48.8506 },
+            marchWaypoints: ['city_niniwei', 'city_yashucheng', 'city_babilun', 'city_susa'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 8000,
+            attackerSourceCityId: 'city_babilun',
+            attackerLegionName: '马其顿军',
+            defenderFactionId: 'wukexiya',
+            defenderGeneralId: 'wukexiya_madates',
+            defenderTroops: 5000,
+            defenderLegionName: '乌克西亚军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     {
         year: -330,
-        season: 3,                                   // 冬（史料：前330年1月，严冬风雪夜山道极限攀爬大迂回）
+        season: 3,
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，前头那道山口叫波斯门，窄得只容数人并行——北坡是滚石，南坡是箭雨，阿里奥巴赞斯已经在那里垒起石墙等着我们。上一次我轻敌冒进，没有派斥候，全军人马被压在窄道里，成队死在石头和箭下，连阵亡者的尸体都没能带回来。这个耻辱我记着。这回不一样：找个俘虏，或是一个认得山路的牧羊人，让他带我从背后上去。只要一次夜袭，这道门就是我们的了。',
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：波斯门战役，前330年冬马其顿军与阿契美尼德波斯军在波斯门隘口的野战，隘口最窄处只容数人并行。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：前330年冬，阿里奥巴赞斯据隘口抵挡马其顿军约一个月；条目信息框 date = 330 BC。波斯文维基百科 نبرد دربند پارس 亦记此役在前330年。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 location = Persian Gate, near Persepolis，coordinates 30°42′30″N 51°35′55″E，即今伊朗法尔斯省波斯波利斯西北的扎格罗斯山口；按主人定口径坐标取信息框值 30.7083,51.5986。波斯文维基百科 نبرد دربند پارس 记战场在**今贝赫贝汉附近**，属当地语种说法，一并记录以备核对。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿与科林斯同盟，亚历山大亲统；攻隘受挫后亲率精兵夜间翻山绕至守军背后，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留守营中牵制。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength1 = 17,000 picked fighters，攻方兵力取 17000；正文另记阿里安称面对的马其顿军逾一万人。' }, attackerLegion: { level: 'fact', text: '同东征前五场与乌克西亚隘口：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2；同一支军队整场战争不换。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 combatant2 = Achaemenid Empire，commander2 = Ariobarzanes of Persis 与 Youtab，两人皆记阵亡；阿里奥巴赞斯受命阻止马其顿军进入波斯本土。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 信息框 strength2 列两说：阿里安记 40,000 步兵与 700 骑兵；现代估计 700–2,000，Encyclopædia Iranica 认为至多 2,000，但同处说明多数现代史家仍照阿里安、库尔提乌斯与狄奥多罗斯取值。按主人定 1:2（守方不超过攻方 2 倍）：17000 × 2 = 34000，取 34000。波斯文维基百科 نبرد دربند پارس 记阿里奥巴赞斯所部为 700 步兵与 40 骑兵，一并记录。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：守军据石垒居高临下，北坡滚石、南坡弓矢。守方军团取剧本军团「阿契美尼德军」，与格拉尼库斯、伊苏斯、高加米拉同一番号，整场战争不换。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 背景节：取苏萨后亚历山大分兵，帕曼纽率一半人马沿御道东进，亚历山大自取通往波斯本土的山路；沿途先平乌克西亚人，再入波斯门，入隘时未派斥候而中伏。游戏路线：自上一处战场（乌克西亚隘口，苏萨以东约六十公里）继续沿苏萨—波斯波利斯大道东南行，入扎格罗斯山至波斯门。⚠️ 路网缺口：寻路只在据点入路，而隘口一百五十一公里内没有据点，故编辑器实测末段须离路直行一百五十一公里、经苏萨与波斯波利斯的绕行段达 838 公里，绕远 2.34 倍；实际那条大道从隘口旁约五公里处经过。已报主人，待其决定在隘口附近加据点或另作安排。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate：马其顿突破隘口。阿里奥巴赞斯据险死守近一月，其部尽没；他本人或战死于最后的冲锋，或北逃后向亚历山大归降；另有史家记其退至波斯波利斯，城门被守库贵族提里达特斯关闭，遂在城外被歼。战后亚历山大任命弗拉索尔特斯继其位，进占波斯波利斯并取其府库，前330年5月焚波斯波利斯王宫。本场为野战，不涉据点易主。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of the Persian Gate：亚历山大入隘口时未派斥候、中伏受重创并弃阵亡者而退；其后由俘虏或当地牧羊人引路绕至守军背后。对白措辞为撰写。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Persian Gate 与波斯文维基百科 نبرد دربند پارس：隘口最窄处只容数人并行，波斯军自北坡投石、南坡射箭；波斯文维基记一名当地牧羊人或农夫为亚历山大指路绕行，阿里奥巴赞斯与数名骑兵脱逃。文案按主人规矩不写兵力确数。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_artaphernes',
         type: 'field_battle',
         title: '公元前330年 波斯门战役',
-        description: '马其顿军最终获胜：波斯总督阿尔塔巴扎诺斯利用扎格罗斯天险石垒扼守波斯门；亚历山大正面受挫后亲率精锐轻步兵风雪夜沿山道大迂回后方夹击，波斯守军战至最后全员阵亡；扫清进占波斯波利斯的最后屏障。',
+        description: '马其顿军获胜：亚历山大强攻波斯门受挫、全军被压在窄道中伤亡惨重，弃尸而退；其后得俘虏或当地牧羊人引路，亲率精兵趁夜翻山绕至守军背后，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯在营中牵制，终于突破隘口。阿里奥巴赞斯据险死守近一月，此战被视为亚历山大东征中最凶险的一关；战后通往波斯波利斯的最后一道屏障扫清。本场为野战，不涉据点易主。',
         fieldBattleData: {
             title: '波斯门战役',
-            description: '阿尔塔巴扎诺斯扼守波斯门险隘，亚历山大亲率精锐轻步兵雪夜沿隐秘山道大迂回后方夹击，波斯守军战至最后全员阵亡。',
-            // 扎格罗斯山脉险隘波斯门（北纬 30°42'30", 东经 51°35'55"）
+            description: '公元前330年冬，扎格罗斯山脉的波斯门隘口。这条山口最窄处只容数人并行，北坡巨石、南坡箭雨，波斯总督阿里奥巴赞斯据垒扼守。马其顿军初次深入窄道便被压在当中，前军退不出、后军还在涌入，成队被砸死射死，亚历山大被迫弃下阵亡者才撤回全军。此后阿里奥巴赞斯坚守近一月，直到一个俘虏或当地牧羊人把绕到波斯军背后的山路指给了亚历山大：他亲率精兵夜间翻山，摸上隘口守军的头顶，托勒密与佩尔狄卡斯分路合围，克拉特鲁斯留营牵制。波斯军前后受敌，隘口终被突破。',
             location: { lat: 30.7083, lng: 51.5986 },
-
-            // ── 攻方：马其顿军先锋精锐 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 8000,                   // 史料 10,000 至 17,000 先锋精锐
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：波斯守军 阿尔塔巴扎诺斯 ──
+            attackerTroops: 17000,
+            attackerSourceCityId: 'city_susa',
+            attackerLegionName: '马其顿军',
             defenderFactionId: 'aqimeinide',
             defenderGeneralId: 'aqimeinide_aertabazanuosi',
-            // 🔴 [2026-09-16 主人定]「所有战场事件必须进入战术模式」+「必须符合历史」。
-            //    原为 1500（现代史学考证 700~2000 的中值）—— 有出处，但低于 13 准入门槛 5000，
-            //    这一仗就只能看战斗面板、进不去战术画面。
-            //    史料本身分裂：阿里安记 40000 步兵+700 骑兵（现代普遍认为夸大），
-            //    库尔提乌斯与狄奥多罗斯两家均记 25000。取这个古典共识值：
-            //    既有史源，又满足门槛，还保住史实形态 —— 守方凭扎格罗斯天险且兵力占优，
-            //    亚历山大正面受阻近一月，最后靠雪夜山道迂回夹击取胜。
-            defenderTroops: 5000,
-            defenderSourceCityId: 'city_bosibolisi', // 波斯波利斯
-
-            result: 'attacker_win',                  // 写真历史：马其顿迂回奇袭获胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-            defenderLegionName: '古典时代波斯军团',
-        },
-        // 🔴 战后归属：扫清最后屏障，波斯波利斯易主归马其顿
-        cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 329 年夏 · 亚历山大远征中亚：锡尔河战役（Battle of Jaxartes，前329年）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -329,
-        season: 1,                                   // 夏（史料：前329年盛夏苦盏前线强渡锡尔河突破战）
-        type: 'field_battle',
-        title: '公元前329年 锡尔河战役',
-        description: '马其顿军大获全胜：亚历山大在锡尔河南岸架设重型弩炮进行超视距隔河火力覆盖驱散轻骑；随后用皮筏载兵强渡大河设伏诱敌，最终以伙伴骑兵合围重创斯基泰游牧联军，确立帝国东北边界。',
-        fieldBattleData: {
-            title: '锡尔河战役',
-            description: '亚历山大架设重型弩炮隔河火力覆盖强渡锡尔河，设伏诱敌并以伙伴骑兵合围溃散斯基泰游牧大军。',
-            // 锡尔河畔苦盏前线（北纬 40°17'00", 东经 69°37'00"）
-            location: { lat: 40.2833, lng: 69.6167 },
-
-            // ── 攻方：马其顿军先锋部队 亚历山大大帝 ──
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 18000,                   // 史料参战先锋部队约 10,000 至 20,000 人
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：斯基泰骑兵联军 萨特拉克斯 ──
-            defenderFactionId: 'sijitai',
-            defenderGeneralId: 'sijitai_satraces',
-            defenderTroops: 16000,                   // 史料约 10,000 至 20,000 名游牧弓骑兵
-            defenderSourceCityId: 'city_asu',        // 塔纳伊斯
-
-            result: 'attacker_win',                  // 写真历史：马其顿强渡大获全胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 328 年冬 · 亚历山大平定中亚：索格底亚那岩山战役（Siege of the Sogdian Rock，前328年冬）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -328,
-        season: 3,                                   // 冬（史料：前328年冬至前327年初，严冬雪夜攀登冰冻绝壁）
-        type: 'field_battle',
-        title: '公元前328年 索格底亚那岩山战役',
-        description: '马其顿军完胜：索格底亚那大贵族奥克夏特斯依四面悬崖峭壁死守岩山要塞；亚历山大选派数百名精锐攀岩死士深夜沿冰雪冻壁奇袭登顶，守军心理彻底崩溃不战而降；奥克夏特斯归降，亚历山大迎娶罗克珊娜平定中亚反抗。',
-        fieldBattleData: {
-            title: '索格底亚那岩山战役',
-            description: '奥克夏特斯扼守险峰绝壁要塞，亚历山大选派300攀岩死士雪夜渗透奇袭登顶，守军心理崩溃归降。',
-            // 苏尔汉河州贝孙岭险峰（北纬 38°58'00", 东经 67°02'00"）
-            location: { lat: 38.9667, lng: 67.0333 },
-
-            // ── 攻方：马其顿军先锋部队 亚历山大大帝 ──
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 8000,                   // 围攻先锋精锐主力部队
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：索格底亚那守军 奥克夏特斯 ──
-            defenderFactionId: 'sogdian',
-            defenderGeneralId: 'sogdian_aokexiate',
-            defenderTroops: 6000,                   // 史料守军约 30,000 人（含起义武装与军民）
-            defenderSourceCityId: 'city_varaksha',   // 瓦拉赫沙
-
-            result: 'attacker_win',                  // 写真历史：守军不战而降
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 327 年春 · 亚历山大进军印度：马萨加战役（Siege of Massaga，前327年春）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -327,
-        season: 0,
-        type: 'siege',
-        title: '公元前327年 马萨加战役',
-        description: '马其顿军苦战攻克要塞获胜：亚历山大进军斯瓦特河谷围攻马萨加险要坚城；马其顿攻城塔与攻城锤昼夜猛轰城墙裂口，阿斯瓦卡首领阿萨卡诺斯阵亡，克莱奥菲斯女王率部投降；要塞被全面攻破，为进军印度扫清通道。',
-        siegeData: {
-            title: '马萨加战役',
-            description: '亚历山大率攻城重型机械围攻马萨加险要要塞，阿萨卡诺斯阵亡后克莱奥菲斯女王统领全城力战投降，马其顿军攻克要塞。',
-            // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（斯瓦特河谷查克达拉古要塞），
-            //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
-            targetBattlefieldId: 'bf_masajia',
-            // 史料：马其顿攻城塔与撞城锤昼夜猛轰，守将阿萨卡诺斯阵亡后克莱奥菲斯女王纳降
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 18000,
-            attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
-            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
-
-            //    克莱奥菲斯女王 = 阿斯瓦卡（斯瓦特河谷部族）。此前这条没写势力，按势力取精锐番号就取不到。
-
-            defenderFactionId: 'aswaka',
-
-            defenderGeneralId: 'aswaka_cleophis',
-            defenderTroops: 15000,
+            defenderTroops: 34000,
+            defenderSourceCityId: 'city_bosibolisi',
+            defenderLegionName: '阿契美尼德军',
             result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 326 年夏 · 亚历山大四大决战收官：希达斯佩斯河战役（Battle of the Hydaspes，前326年夏）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -326,
-        season: 1,                                   // 夏（史料：前326年5–6月季风暴雨期）
-        type: 'field_battle',
-        title: '公元前326年 希达斯佩斯河战役',
-        description: '马其顿军惨胜：亚历山大暴风雨夜强渡急流，集中长枪兵斩杀象夫并以伙伴骑兵两翼包抄溃散波鲁斯大军；波鲁斯身负九创力战被俘后获释封还王位；此战为远征四大决战收官之役，士卒随后厌战兵变，亚历山大正式踏上回师之路。',
-        fieldBattleData: {
-            title: '希达斯佩斯河战役',
-            description: '亚历山大暴风雨夜强渡希达斯佩斯河，以长枪方阵与单侧包抄血战波鲁斯重装战象巨墙，印度军阵线崩溃，波鲁斯力竭被俘。',
-            // 杰卢姆河畔平原（北纬 32°49'40", 东经 73°38'20"）
-            location: { lat: 32.8278, lng: 73.6389 },
-
-            // ── 攻方：马其顿与盟邦联军 亚历山大大帝 ──
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 42000,                   // 史料参战总兵力约 40,000 至 45,000 人（中值）
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：波鲁斯王国军 波鲁斯国王 ──
-            defenderFactionId: 'bulu',
-            defenderGeneralId: 'gen_bolusi',
-            defenderTroops: 34000,                   // 史料 20,000–30,000 步兵 + 4,000 骑兵 + 300 战车及重装战象巨墙
-            defenderSourceCityId: 'city_meng',       // 蒙格（海达斯佩斯河南岸会战根据地）
-
-            result: 'attacker_win',                  // 写真历史：马其顿惨胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 325 年春 · 亚历山大南撤清剿：马里斯战役（Siege of the Mallian Citadel，前325年春）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -325,
-        season: 0,
-        type: 'siege',
-        title: '公元前325年 马里斯战役',
-        description: '马其顿军惨烈攻克卫城获胜：亚历山大率军沿印度河清剿围攻马利砖石卫城，亲自登梯突入城内庭院与守军血战，胸部中箭射穿肺叶倒地；愤怒的马其顿士卒砸开城门破城彻底屠戮守军，亚历山大侥幸脱险但肺伤终生未愈；随后马其顿军彻底控制印度河下游，横渡格德罗西亚荒漠回师。',
-        siegeData: {
-            title: '马里斯战役',
-            description: '亚历山大亲自登梯突入马里斯砖石卫城血战身负重伤，胸部被贯穿，赶来救驾的马其顿士卒怒破城门攻克要塞。',
-            // 🔴 [2026-09-19 主人定「把战场和据点分开」] 这一仗打的是**这块战场本身**（木尔坦卫城古要塞遗址），
-            //    不再借任何据点当被攻目标 —— 战场自带攻守，双方都摆在战场上。
-            targetBattlefieldId: 'bf_malisi',
-            // 史料：木尔坦砖石卫城，亚历山大登梯独入身中贯穿肺叶之箭，士卒怒破城门
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 15000,
-            attackerSourceCityId: 'city_salonica',   // 佩拉（马其顿，仅作出兵身份，战场事件不靠它行军）
-            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
-
-            //    马利首领 = 马利（摩罗婆）联军。此前这条没写势力，按势力取精锐番号就取不到。
-
-            defenderFactionId: 'malli',
-
-            defenderGeneralId: 'malli_leader',
-            defenderTroops: 20000,
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 前 324 年冬 · 亚历山大实战绝唱：科塞亚战役（Cossaean Campaign，前324年冬）
-    // ═══════════════════════════════════════════════════════════════
-    {
-        year: -324,
-        season: 3,                                   // 冬（史料：前324年冬赫费斯提翁在埃克巴塔那病逝后发起严冬山地围剿）
-        type: 'field_battle',
-        title: '公元前324年 科塞亚战役',
-        description: '马其顿军大获全胜：赫费斯提翁病逝后亚历山大发起扎格罗斯山地扫荡，分兵两路冒风雪翻越险峰切断退路，连拔数十处峭壁高山石堡彻底摧毁抵抗；残存科塞亚部族被迫集体投降；此役为亚历山大军事生涯最后一场实战战役，战后大军凯旋回师巴比伦。',
-        fieldBattleData: {
-            title: '科塞亚战役',
-            description: '亚历山大与大将托勒密分兵两路雪夜翻越扎格罗斯险峰，轻重协同连拔数十处峭壁石堡，彻底击溃科塞亚部落联军。',
-            // 洛雷斯坦省扎格罗斯高地（北纬 33°45'00", 东经 47°10'00"）
-            location: { lat: 33.75, lng: 47.1667 },
-
-            // ── 攻方：马其顿机动精锐部队 亚历山大大帝 ──
-            attackerFactionId: 'maqidun',
-            attackerGeneralId: 'gen_alexander_great',
-            attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
-            attackerTroops: 12000,                   // 史料参战机动精锐约 10,000 至 15,000 人（中值）
-            attackerSourceCityId: 'city_salonica',   // 佩拉
-
-            // ── 守方：科塞亚山民武装 科塞亚首领 ──
-            defenderFactionId: 'kesaiya',
-            defenderGeneralId: 'kesaiya_shouling',
-            defenderTroops: 15000,                   // 史料约 10,000 至 20,000 名峭壁设伏部落勇士（中值）
-            defenderSourceCityId: 'city_hamadan',   // 哈马丹（埃克巴塔那）
-
-            result: 'attacker_win',                  // 写真历史：大获全胜
-            autoEnterRTS: true,                      // 进战术模式（13）
-        },
-        generalId: 'gen_alexander_great',
-        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 🔴 [2026-09-19 主人令「全删除」] 前323 普拉塔纳斯 / 前322 克兰农 / 前321 赫勒斯滂
-    //    三场战役**已整体删除**（连同 `Battlefields.ts` 的 bf_pulatanasi / bf_kelannong / bf_helesipang）。
-    //    原因：这三场的归属武将（安提帕特／安提菲洛斯／欧迈尼斯）在库里**没有据点**，
-    //    而玩家「找到武将」只认据点守将，事件永远等不到玩家 —— 按主人令直接删除，不留死数据。
-    //    ⚠️ 武将与势力记录：安提帕特／莱奥斯塞尼斯／安提菲洛斯／克拉特罗斯仍在（分别挂 maqidun / xila）；
-    //      欧迈尼斯与孤儿势力 `kapaduoxiya` 已按主人令「都给我删了」删除。
-    // ═══════════════════════════════════════════════════════════════
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: -260,
-        season: 1,
-        generalId: 'xin_baiqi',
-        type: 'field_battle',
-        title: '公元前260年 长平战役',
-        description: '秦秘密换帅白起，佯败诱赵军深入，以奇兵截其归路、以铁骑断丹水粮道；赵军被割裂围困四十六日，突围不成，数十万降卒尽坑，赵国元气丧尽。',
-        fieldBattleData: {
-            title: '长平战役',
-            description: '白起以佯败诱敌至坚壁之下，奇兵截归路、铁骑断粮道，将赵军割裂合围四十六日，终致其全军崩溃。',
-            location: { lat: 35.79, lng: 112.92 },
-            attackerFactionId: 'xin',
-            attackerGeneralId: 'xin_baiqi',
-            attackerTroops: 500000,
-            attackerSourceCityId: 'city_shangdang',
-            defenderFactionId: 'zhao',
-            defenderGeneralId: 'zhao_lianpo',
-            defenderTroops: 450000,
-            defenderSourceCityId: 'city_shangdang',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    {
-        year: -216,
-        season: 1,
-        generalId: 'gen_hannibal',
-        type: 'field_battle',
-        title: '公元前216年 坎尼战役',
-        description: '汉尼拔以凸月阵诱罗马重步兵深入，两翼骑兵击溃罗马侧翼后合围封口；一日之内近七万罗马官兵阵亡，成就西方战术史上最完美的包围歼灭战。',
-        fieldBattleData: {
-            title: '坎尼战役',
-            description: '汉尼拔亲坐中军逐步后退成凹月形，诱罗马大军入彀，两翼铁骑合围封口，全歼罗马主力。',
-            location: { lat: 41.31, lng: 16.15 },
-            attackerFactionId: 'buni',
-            attackerGeneralId: 'gen_hannibal',
-            attackerTroops: 50000,
-            attackerSourceCityId: 'city_meierfei',
-            defenderFactionId: 'luoma_diguo',
-            defenderGeneralId: 'baolusi',
-            defenderTroops: 72000,
-            defenderSourceCityId: 'city_luoma',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    {
-        year: -207,
-        season: 3,
-        generalId: 'xichu_xiangyu',
-        type: 'field_battle',
-        title: '公元前207年 巨鹿战役',
-        description: '项羽破釜沉舟，楚军九战绝秦军甬道，虏王离、降章邯，秦军主力尽丧；诸侯将入辕门皆膝行而前，项羽由是始为诸侯上将军。',
-        fieldBattleData: {
-            title: '巨鹿战役',
-            description: '项羽率楚军渡漳水后凿舟破釜，以三日粮与秦军决战，九战九捷断其甬道，大破秦军。',
-            location: { lat: 37.07, lng: 115.02 },
-            attackerFactionId: 'xichu',
-            attackerGeneralId: 'xichu_xiangyu',
-            attackerTroops: 60000,
-            attackerSourceCityId: 'city_pengcheng',
-            defenderFactionId: 'wazhai',
-            defenderGeneralId: 'wazhai_zhanghan',
-            defenderTroops: 120000,
-            defenderSourceCityId: 'city_dingtao',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: -48,
-        season: 1,
-        generalId: 'gen_julius_caesar',
-        type: 'field_battle',
-        title: '公元前48年 法萨卢斯战役',
-        description: '恺撒以劣势兵力列阵法萨卢斯平原，暗藏第四线步兵伏击庞培优势骑兵；庞培骑兵溃逃反暴露侧翼，恺撒全线反击，庞培主力崩溃，乘船逃往埃及。',
-        fieldBattleData: {
-            title: '法萨卢斯战役',
-            description: '恺撒设隐藏第四线步兵以标枪直刺骑手面门，击溃庞培骑兵后全线反击，瓦解庞培全军。',
-            location: { lat: 39.28, lng: 22.42 },
-            attackerFactionId: 'luoma_diguo',
-            attackerGeneralId: 'gen_julius_caesar',
-            attackerTroops: 25000,
-            attackerSourceCityId: 'city_luoma',
-            defenderFactionId: 'qiliqiya',
-            defenderGeneralId: 'qiliqiya_pangpei',
-            defenderTroops: 42000,
-            defenderSourceCityId: 'city_yadian',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: 451,
-        season: 1,
-        generalId: 'xiongren_atila',
-        type: 'field_battle',
-        title: '公元451年 沙隆战役',
-        description: '埃提乌斯统罗马-西哥特联军于卡塔隆尼亚平原迎战阿提拉；西哥特王狄奥多里克战死，哥特战士哀兵反击，将匈人压回车阵，阿提拉不可战胜的神话就此破灭。',
-        fieldBattleData: {
-            title: '沙隆战役',
-            description: '罗马步兵与西哥特战士并肩顶住匈人骑射狂潮，黄昏将匈人全线压回大车营垒，阿提拉险欲自焚。',
-            location: { lat: 48.96, lng: 4.36 },
-            attackerFactionId: 'xiongren',
-            attackerGeneralId: 'xiongren_atila',
-            attackerTroops: 45000,
-            attackerSourceCityId: 'city_lansi',
-            defenderFactionId: 'luoma_diguo',
-            defenderGeneralId: 'aitiliusi',
-            defenderTroops: 45000,
-            defenderSourceCityId: 'city_lansi',
-            result: 'defender_win',
-            autoEnterRTS: true,
-        },
-    },
-    {
-        year: 621,
-        season: 0,
-        generalId: 'tang_lishimin',
-        type: 'field_battle',
-        title: '公元621年 虎牢关战役',
-        description: '李世民以数千玄甲骑抢先扼守虎牢关，以逸待劳；正午突袭窦建德中军，生擒窦建德，洛阳王世充出降，唐军一役扫平双雄。',
-        fieldBattleData: {
-            title: '虎牢关战役',
-            description: '唐军铁骑正午破关而出，李世民亲执大旗直穿窦建德中军，夏军全线崩溃，窦建德负伤被擒。',
-            location: { lat: 34.83, lng: 113.18 },
-            attackerFactionId: 'tang',
-            attackerGeneralId: 'tang_lishimin',
-            attackerTroops: 35000,
-            attackerSourceCityId: 'city_hulaoguan',
-            defenderFactionId: 'xia',
-            defenderGeneralId: 'doujiande',
-            defenderTroops: 60000,
-            defenderSourceCityId: 'city_hulaoguan',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    {
-        year: 1140,
-        season: 1,
-        generalId: 'yanchuan_d_yuefei',
-        type: 'field_battle',
-        title: '公元1140年 郾城战役',
-        description: '岳飞以背嵬军步骑协同迎击，步兵持麻扎刀专斫马足，大破金军铁浮屠与拐子马；完颜宗弼北遁，岳家军威震中原。',
-        fieldBattleData: {
-            title: '郾城战役',
-            description: '岳云率背嵬、游奕军迎头截击，岳飞令步兵持长斧麻扎刀斫马足，血战数十合，金军精锐尽丧溃退。',
-            location: { lat: 33.58, lng: 114.02 },
-            attackerFactionId: 'jurchen',
-            attackerGeneralId: 'jurchen_wanyanzongbi',
-            attackerTroops: 15000,
-            attackerSourceCityId: 'city_wuguo',
-            defenderFactionId: 'yanchuan_d',
-            defenderGeneralId: 'yanchuan_d_yuefei',
-            defenderTroops: 11000,
-            defenderSourceCityId: 'city_yancheng2',
-            result: 'defender_win',
-            autoEnterRTS: true,
-        },
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: 1184,
-        season: 0,
-        generalId: 'fujiwara_yuanyijing',
-        type: 'siege',
-        title: '公元1184年 一之谷战役',
-        description: '源义经自鹎越断崖策马冲下，奇袭平家后背纵火；平家误以为源氏主力降临，全线崩溃争相逃向海上战船，陆上根基尽失。',
-        siegeData: {
-            title: '一之谷战役',
-            description: '义经率轻骑自百丈断崖呼啸而下，直冲平氏内营放火；平家数万将士精神崩溃，退上战船。',
-            // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 一之谷**是战场、不是据点**：
-            //    攻城目标改走 `targetBattlefieldId`（引擎据此用战场记录合成攻城目标），
-            //    **不再去攻打姬路城** —— 姬路城是羽柴方的据点，与这一仗毫无关系。
-            targetBattlefieldId: 'bf_yinotani',
-            attackerFactionId: 'genji',
-            attackerGeneralId: 'fujiwara_yuanyijing',
-            attackerTroops: 15000,
-            attackerSourceCityId: 'city_kyoto',
-            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
-
-            //    平知盛 = 平家。此前这条没写势力，按势力取精锐番号就取不到。
-
-            defenderFactionId: 'taira',
-
-            defenderGeneralId: 'taira_pingzhisheng',
-            defenderTroops: 20000,
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-        // 🔴 战后归属：一之谷是**战场不是据点**，「没有主人，易什么主」（主人 2026-09-12 原话）——
-        //    源氏破砦的史实写在 description 与战场 note 里，不再改任何据点归属。
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: 1333,
-        season: 0,
-        generalId: 'yamato_nanmuzhengcheng',
-        type: 'siege',
-        title: '公元1333年 千早城战役',
-        description: '楠木正成以千余死士凭千早险峰坚守百日，滚木雷石、稻草假人诱敌，拖垮声势浩大的幕府大军；关东武士战意瓦解，足利尊氏回师反叛，镰仓幕府崩塌。',
-        siegeData: {
-            title: '千早城战役',
-            description: '正成以巨木滚石碾碎蚁附之敌，夜布稻草假人诱敌狂射空箭，再投巨石掩杀；幕府大军百日不克。',
-            attackerFactionId: 'ashikaga',
-            attackerGeneralId: 'ashikaga_zulizunshi',
-            attackerTroops: 6000,
-            attackerSourceCityId: 'city_kyoto',
-            // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 守方势力显式写明：
-
-            //    楠木正成 = 大和（楠木氏）。此前这条没写势力，按势力取精锐番号就取不到。
-
-            defenderFactionId: 'yamato',
-
-            defenderGeneralId: 'yamato_nanmuzhengcheng',
-            defenderTroops: 3000,
-            result: 'defender_win',
-            autoEnterRTS: true,
-            targetBattlefieldId: 'bf_qianzaocheng',
-        },
-    },
-    {
-        year: 1388,
-        season: 1,
-        generalId: 'joseon_lichenggui',
-        type: 'field_battle',
-        title: '公元1388年 威化岛战役',
-        description: '李成桂以“四不可”抗命，自威化岛掉转兵锋南下直取王京，擒诛崔莹、废禑王，尽掌高丽军国大权。',
-        fieldBattleData: {
-            title: '威化岛战役',
-            description: '李成桂于威化岛断然回军，踏浮桥南下直逼开京，崔莹兵败遭擒被诛，禑王被废。',
-            location: { lat: 40.15, lng: 124.43 },
-            attackerFactionId: 'joseon',
-            attackerGeneralId: 'joseon_lichenggui',
-            attackerTroops: 38000,
-            attackerSourceCityId: 'city_hanseong',
-            defenderFactionId: 'hai2',
-            defenderGeneralId: 'ssangseong_cuiying',
-            defenderTroops: 28000,
-            defenderSourceCityId: 'city_haeju',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-        cityUpdates: [{ cityId: 'city_kaesong', factionId: 'joseon' }],
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
-        year: 1560,
-        season: 1,
-        generalId: 'owari_zhitianxinchang',
-        type: 'field_battle',
-        title: '公元1560年 桶狭间战役',
-        description: '织田信长以两千余骑借雷雨掩护迂回突袭桶狭间今川本阵，斩杀今川义元；东海道霸主一朝倾覆，信长天下布武由此发端。',
-        fieldBattleData: {
-            title: '桶狭间战役',
-            description: '信长借暴雨隐匿行踪，迂回至今川军背后，雨停一刻拔刀突袭，今川本阵崩溃，义元授首。',
-            location: { lat: 34.98, lng: 136.97 },
-            attackerFactionId: 'owari',
-            attackerGeneralId: 'owari_zhitianxinchang',
-            attackerTroops: 3000,
-            attackerSourceCityId: 'city_atsuta',
-            defenderFactionId: 'jinchuan',
-            defenderGeneralId: 'jinchuan_jinchuanyiyuan',
-            defenderTroops: 5000,
-            defenderSourceCityId: 'city_atsuta',
-            result: 'attacker_win',
-            autoEnterRTS: true,
-        },
-    },
-    {
-        year: 1561,
-        season: 2,
-        generalId: 'echigo_shangshanqianxin',
-        type: 'field_battle',
-        title: '公元1561年 川中岛战役',
-        description: '上杉谦信识破武田信玄啄木鸟战法，自妻女山突袭八幡原武田本阵，车悬之阵连番突击；午后武田别动队回援夹击，双方各自撤军，龙虎相争不分胜负。',
-        fieldBattleData: {
-            title: '川中岛战役',
-            description: '谦信借夜雾渡千曲川突袭武田本阵，车悬之阵排山倒海；武田别动队回援夹击，越后军方从容后撤。',
-            location: { lat: 36.59, lng: 138.2 },
-            attackerFactionId: 'echigo',
-            attackerGeneralId: 'echigo_shangshanqianxin',
-            attackerTroops: 13000,
-            attackerSourceCityId: 'city_kasugayama',
-            defenderFactionId: 'kai',
-            defenderGeneralId: 'kai_wutianxinxuan',
-            defenderTroops: 18000,
-            defenderSourceCityId: 'city_tsutsujigasaki',
-            result: 'defender_win',
             autoEnterRTS: true,
         },
     },

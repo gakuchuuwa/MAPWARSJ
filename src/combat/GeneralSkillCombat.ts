@@ -109,18 +109,18 @@ export function getSituationalSkillPool(unit: IBattleUnit, situation: BattleSitu
     if (!p) return [];
 
     const gid = unit.generalId;
-    // 三势选池·四/四/六（2026-07-20 主人定稿，2026-08-04 改为全池混合）：
-    //   优势 = 攻战/胜战/敌战/混战（不含劣势组 → 优势方摸不到败战翻盘计，保悬念铁律）
-    //   劣势 = 并战/败战/敌战/混战（不含优势组）
-    //   均势 = 全六计
+    // 三势选池（2026-09-24 主人定「兵力优势的时候，不应该用敌战计吧？」严格对齐三势与六战计）：
+    //   优势 = 攻战 / 胜战（居优主动压制，绝不使用相持敌战计或劣势计）
+    //   均势 = 敌战 / 混战（双方势均力敌、相持抗衡与错综乱局）
+    //   劣势 = 并战 / 败战（逆境借力与绝境翻盘）
     // 攻守双方同池，_isAttacker 不参与选技（攻守数值差由第四层攻防环负责）。
     const advGrp = ['gongzhan', 'shengzhan'] as const;
     const balGrp = ['dizhan', 'hunzhan'] as const;
     const disGrp = ['bingzhan', 'baizhan'] as const;
     const bySituation: Record<BattleSituation, readonly string[]> = {
-        advantage: [...advGrp, ...balGrp],
-        balance: [...advGrp, ...balGrp, ...disGrp],
-        disadvantage: [...disGrp, ...balGrp],
+        advantage: [...advGrp],
+        balance: [...balGrp],
+        disadvantage: [...disGrp],
     };
     const sixClasses = bySituation[situation];
     const sixSet = new Set(sixClasses);
