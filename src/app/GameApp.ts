@@ -73,7 +73,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
-import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, isScriptPeriod } from '../events/scriptPeriod';
+import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import {
     setupGameAppVisibilityHandler,
@@ -348,6 +348,11 @@ export class GameApp {
                 // 写明的出发据点，或同一武将上一场打完的地方（见 scriptEventStart.ts）
                 const cityId = ev?.generalId ? scriptEventStartCityId(ev, this.cityManager.getCities()) : null;
                 return ev?.generalId && cityId ? { generalId: ev.generalId, cityId } : null;
+            });
+            // 🔴 [2026-09-25] 剧本期攻城战：被攻那座城的守将 = 事件写的守将（见 scriptPeriod.getScriptSiegeDefenderGeneral）
+            setScriptSiegeDefenderResolver((cityId) => {
+                const sd = this.scriptCityVisibility?.getCurrentEvent()?.siegeData as { defenderCityId?: string; defenderGeneralId?: string } | undefined;
+                return sd?.defenderCityId === cityId ? sd.defenderGeneralId ?? null : null;
             });
             // 🔴 [2026-09-23] 剧本期：当前这一场归属武将的主将队兵种（事件 commanderUnit）
             setScriptCommanderUnitResolver((generalId) => {

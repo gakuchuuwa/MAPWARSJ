@@ -22,7 +22,7 @@ export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     aswaka: { name: '阿斯瓦卡山兵', tier: 3 },
     // 🔴 [2026-09-24 §二之二 授权] 前326 奥诺斯岩围城战守方此前没有番号。史料：阿里安《亚历山大远征记》
     //    卷四 28-30、狄奥多罗斯 17.85、库尔提乌斯 8.11（Pir Sar 崖顶岩堡，守军以滚石死守、夜遁弃岩）。
-    //    史书未载该岩守军番号 → 按史地合理推定。定级 T3「风土之兵」：崖顶守军，无独立战术大捷。
-    aornos: { name: '绝壁守兵', tier: 3 },
-    malli: { name: '马利城兵', tier: 3 },
+    //    史书未载该岩守军番号 → 按史地合理推定。定级 T4「存在之兵」：崖顶守军与卫城守军，构筑地方建制守备力量。
+    aornos: { name: '绝壁守兵', tier: 4 },
+    malli: { name: '马利城兵', tier: 4 },
 };
