@@ -14,6 +14,7 @@ import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAsset
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
+import { isScriptPeriod } from '../events/scriptPeriod';
 // [PERF] Import Territory Worker
 import TerritoryWorker from '../workers/TerritoryWorker?worker';
 import { TerritoryRequest, TerritoryResponse } from '../workers/TerritoryWorker';
@@ -1391,7 +1392,8 @@ export class TerritorySystem {
                 // 🔴 [2026-09-12 主人定] 战场已**独立出据点体系**（`src/data/Battlefields.ts` +
                 //    `src/map/BattlefieldLayer.ts`）→ 据点层不再有任何战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
-                this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost);
+                const fadeIn = isScriptPeriod();
+                this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost, fadeIn);
             }
             cityIndex = end;
         }
@@ -1443,7 +1445,16 @@ export class TerritorySystem {
                 const city = this.cities[i];
                 // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点层不再有战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
-                this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost);
+                if (this.cityMarkers.has(city.id)) {
+                    // 已有 marker：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
+                    const existingMarker = this.cityMarkers.get(city.id)!;
+                    const existingLabel = this.cityLabels.get(city.id);
+                    tempCityMarkers.set(city.id, existingMarker);
+                    if (existingLabel) tempCityLabels.set(city.id, existingLabel);
+                    continue;
+                }
+                const fadeIn = isScriptPeriod();
+                this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost, fadeIn);
             }
             cityIndex = end;
             if (cityIndex < this.cities.length) {
@@ -1455,9 +1466,15 @@ export class TerritorySystem {
         const markerLayers: L.Layer[] = [];
         tempLayerGroup.eachLayer((l) => markerLayers.push(l));
 
-        // 原子替换：先挂新 marker 再卸旧的。禁止 clearLayers + 分帧写入（cancel 后会丢据点贴图）
+        const keptLayers = new Set<L.Layer>();
+        for (const m of tempCityMarkers.values()) keptLayers.add(m);
+        for (const l of tempCityLabels.values()) keptLayers.add(l);
+
+        // 仅卸载不再显示的旧 marker/label（保留的 marker 原地不动）
         const staleLayers: L.Layer[] = [];
-        this.layerGroup.eachLayer((l) => staleLayers.push(l));
+        this.layerGroup.eachLayer((l) => {
+            if (!keptLayers.has(l)) staleLayers.push(l);
+        });
 
         for (const layer of markerLayers) {
             layer.addTo(this.layerGroup);
@@ -2021,7 +2038,14 @@ export class TerritorySystem {
         return '';
     }
 
-    private renderSingleCity(city: City, targetLayerGroup: L.LayerGroup, markersMap: Map<string, L.Marker>, labelsMap: Map<string, L.Marker>, isGhost: boolean = false): void {
+    private renderSingleCity(
+        city: City,
+        targetLayerGroup: L.LayerGroup,
+        markersMap: Map<string, L.Marker>,
+        labelsMap: Map<string, L.Marker>,
+        isGhost: boolean = false,
+        fadeIn: boolean = false
+    ): void {
         const color = this.factionManager.getFactionColor(city.factionId);
         // [USER REQUEST] Use original coordinates instead of snapping to hex center
         const displayLat = city.latitude;
@@ -2122,7 +2146,8 @@ export class TerritorySystem {
 
         const terrainClass = getCityImageContainerClass(city.id);
         const sizeClass = getCityMarkerSizeClass(city.type);
-        const containerClass = [terrainClass, sizeClass].filter(Boolean).join(' ');
+        const animClass = fadeIn ? 'map-fade-in' : '';
+        const containerClass = [terrainClass, sizeClass, animClass].filter(Boolean).join(' ');
         const icon = L.divIcon({
             className: 'city-icon',
             html: `<div class="city-image-container ${containerClass}" style="
@@ -2208,7 +2233,7 @@ export class TerritorySystem {
 
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
 
-        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap);
+        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap, fadeIn);
     }
 
     /** 兵力标签文案：纯数字显示（与军团一致） */
@@ -2217,7 +2242,7 @@ export class TerritorySystem {
     }
 
     /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
-    private static buildCityLabelHtml(city: City): string {
+    private static buildCityLabelHtml(city: City, fadeIn = false): string {
         // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点标签一律带兵力数字。
         //    （原「战场据点只显示地名、不带兵力」的特判已撤销。）
         const troopsSpan = `
@@ -2226,7 +2251,8 @@ export class TerritorySystem {
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
                 font-size: 11px;
             ">${TerritorySystem.formatTroopsLabel(city.troops)}</span>`;
-        return `<div style="
+        const animClass = fadeIn ? ' map-fade-in' : '';
+        return `<div class="city-label-content${animClass}" style="
             display: flex; justify-content: center; align-items: center; gap: 6px;
             width: 150px; margin-left: -75px; margin-top: 55px;
             cursor: inherit; white-space: nowrap;
@@ -2244,9 +2270,10 @@ export class TerritorySystem {
         lat: number,
         lng: number,
         targetLayerGroup: L.LayerGroup,
-        labelsMap: Map<string, L.Marker>
+        labelsMap: Map<string, L.Marker>,
+        fadeIn: boolean = false
     ) {
-        const html = TerritorySystem.buildCityLabelHtml(city);
+        const html = TerritorySystem.buildCityLabelHtml(city, fadeIn);
 
         const labelIcon = L.divIcon({ className: 'city-troop-label', html: html });
 
@@ -2394,7 +2421,7 @@ export class TerritorySystem {
             this.cityLabels.delete(city.id);
         }
 
-        this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, false);
+        this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, false, false);
     }
 
     public updateCityLabel(city: City) {

@@ -432,13 +432,70 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    英文维基百科 Battle of the Persian Gate：突破隘口后亚历山大进占波斯波利斯并取其府库，波斯波利斯归马其顿。
         cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
     },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    // ═══════════════════════════════════════════════════════════════
+    // 前 329 年夏 · 追亡逐北 · 中亚：居鲁士城围攻（Siege of Cyropolis）
+    //    🔴 [2026-09-25 主人令「把缺少的战役加上」] 英文维基有独立条目 → A 档，年份落在第 9 场（前330 冬 波斯门）
+    //    与第 10 场（前329 秋 锡尔河）之间；数据按年份自动排序，故本场插在这里，第 10 场的出发地随之改为本场落点。
+    //    B 档并入背景：前330 全年追击大流士、米底—里海门—赫尔卡尼亚—阿里亚—德兰吉亚那—阿拉霍西亚行军、
+    //    加兹尼过冬、越兴都库什取巴克特拉、贝苏斯被绑送处死 —— 都写进本场播报。
+    // ═══════════════════════════════════════════════════════════════
     {
+        year: -329,
+        season: 1,                                   // 夏（英文维基 Siege of Cyropolis 信息框 date = 329 BC；Chronology 条目记 7 月）
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你看这座城——居鲁士城，当年居鲁士大帝亲手筑的边塞，是这一带七座城里最大、守得最死的一座。城里的人自恃墙厚人多，说这一片最好的战士都在里头。我先派克拉特鲁斯围住它，把它的援手一条条掐断，再一间一间收拾周围那几座。等只剩它一个，我再来拔这颗钉子：墙用弩炮砸，人从那条干涸的水道钻进去——这一趟我自己带头。你可愿随我攻城？',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Siege of Cyropolis：前329年亚历山大攻取粟特七座城寨中最大最坚的居鲁士城，马其顿胜。该役有独立条目，故本场单列成场。' },
+            time: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 date = 329 BC；同站 Chronology of the expedition of Alexander the Great into Asia 记该役在 7 月，故季节取夏。' },
+            place: { level: 'inferred', text: '该条目信息框给坐标 40.2833,69.6333，那正是库里「忽毡」所在地（相距约 4 公里，且忽毡在前329 过不了年代闸门：其锚定武将帖木儿灭里属城堡时代）；同站 Chronology 条目另记 Cyropolis = Uroteppa（今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），本场据点取后者 —— 合理推定。本场是攻城战，地点就是被攻据点「居鲁士城」。' },
+            attacker: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 commander1 = 亚历山大（注明 WIA 负伤）与克拉特鲁斯（亦注明 WIA）；同条目记亚历山大先遣克拉特鲁斯围城，本人亲至城下并从干涸水道入城。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 strength1 = 10,000，取 10000。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条目：以弩炮轰城，命一队人自干涸水道潜入城内、开城门放入大军。' },
+            defender: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 combatant2 = Sogdiana（粟特），commander2 = Unknown；同条目未载守将姓名，故按「地名＋首领」记为居鲁士首领，与马利首领、奥诺斯首领同一记法。' },
+            defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 strength2 = 15,000；同条目另记阿里安称守军约一万五千、第一阶段阵亡八千；守方 15000 ≤ 攻方×2。' },
+            defenderLegion: { level: 'inferred', text: '守方即粟特人，故取剧本军团「粟特军」（前327 索格狄亚那岩那支，同一支军队整场战争不换）—— 合理推定。' },
+            route: { level: 'inferred', text: '自上一场落点波斯门战场最近且那一年已存在的据点波斯波利斯开拔，按英文维基 Chronology 条目所记这一年的行军设路标：埃克巴坦那（哈马丹）→ 拉盖（雷伊）→ 里海门（达姆甘一带）→ 苏西亚（图斯）→ 阿里亚／德兰吉亚那（泰巴德、法拉）→ 阿拉霍西亚（坎大哈）→ 加兹尼 → 喀布尔 → 巴克特拉（蓝氏城）→ 马拉坎达（撒马尔罕）→ 居鲁士城 —— 合理推定。' },
+            result: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 result = Macedonian victory、territory = Cyropolis captured by Macedon；同条目记约八千人阵亡、余众退入内堡断水一天后投降；故本场据点归属写居鲁士城归马其顿。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：同条目 —— 居鲁士城是七城中最大最坚者、号称本地最好的战士都在其中；亚历山大先命克拉特鲁斯围城并取其余各城，最后亲自攻城并从干涸水道入城。对白措辞为撰写，史事有据。' },
+            briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Chronology 与 Battle of Jaxartes —— 大流士之死、北上米底取埃克巴坦那、出里海门入赫尔卡尼亚、东行阿里亚／德兰吉亚那／阿拉霍西亚、加兹尼过冬、越兴都库什取巴克特拉、贝苏斯被部下绑送处死；文案按主人规矩不写兵力确数。' },
+        },
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        // 对手主将队：照 §二.5「先保年代，再尽样子」——本时代没有粟特首领的英雄兵模，
+        //    故取同代的骑马蛮族首领 hero_thracian_chieftain，与第 11、13 场岩堡／崖堡守将同一处理。
+        foeCommanderUnit: 'hero_thracian_chieftain',
+        type: 'siege',
+        title: '公元前329年 亚历山大东征居鲁士城战役',
+        description: '前329年夏，亚历山大自波斯腹地东来，先取这一带七座城寨中的五座，两天而下；剩下的以居鲁士城最大最坚。他命克拉特鲁斯先围居鲁士城，掘壕立栅、架上攻城器械，使它不敢分兵去救别处。随后他亲至城下，以弩炮轰击城墙。',
+        siegeData: {
+            title: '居鲁士城战役',
+            description: '攻城器械把城墙砸得摇摇欲坠时，亚历山大命一队人从那道干涸的水道钻进城里，他自己也在其中；进城后他们打开城门，放进大军。守军见城已破，回身拼死反扑：一块石头砸在亚历山大头颈上，克拉特鲁斯被一箭射伤。守军终被击退，约八千之众死于城破之时；余众退入城中内堡，断水一天之后投降。',
+            // 出发地＝军团此刻在哪：上一场（波斯门野战）落点最近且那一年已存在的据点 ＝ 波斯波利斯
+            // 史料：按 Chronology 条目所记这一年的行军设路标（米底 → 里海门 → 赫尔卡尼亚 → 图斯 → 阿里亚/德兰吉亚那
+            //       → 阿拉霍西亚 → 加兹尼 → 喀布尔 → 巴克特拉 → 马拉坎达）→ 居鲁士城
+            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_damugan', 'city_tusi', 'city_taibade', 'city_fala', 'city_kandaha', 'city_jiaseni', 'city_gaofu', 'city_lanshi', 'city_samaerhan'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 10000,
+            attackerSourceCityId: 'city_bosibolisi',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'julushi_shouling',
+            defenderTroops: 15000,
+            defenderCityId: 'city_julushicheng',
+            defenderLegionName: '粟特军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 🔴 攻城战必须写被攻据点的易主（§铁律 3）：居鲁士城归马其顿
+        cityUpdates: [{ cityId: 'city_julushicheng', factionId: 'maqidun' }],
+        briefing: '大流士既死，亚历山大把矛头转向弑君者贝苏斯。他北上米底，取埃克巴坦那；再东出里海门，入赫尔卡尼亚，收降当地部众。此后一路东行：过图斯、入阿里亚，平其叛乱；经德兰吉亚那、阿拉霍西亚，在加兹尼过冬；前329年春过喀布尔，翻越兴都库什山，直下巴克特拉。贝苏斯被自己的部将绑了送来，亚历山大把他交给波斯人依法处死。\n\n当年夏，他渡过乌浒水，进入粟特。这一带有七座城寨，他先取五座，两天而下。剩下的以居鲁士城最大——居鲁士大帝亲手筑的边塞，墙高人多，号称这一带最好的战士都在城中。',
+    },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
         year: -329,
         season: 2,
         generalId: 'gen_alexander_great',
         inviteText: '朋友，你来得正好。眼前这道药杀水是帝国疆界的尽头，对岸的斯基泰游牧骑兵已经列在河滩上，隔水叫骂，说我连渡河的胆量都没有。他们打的是半渡而击的主意：等我的人马泡在水里，好用骑射一个一个点名。我偏不让他们如意——砲车与弓手先压住对岸，全军同时下水，一鼓作气冲上北岸；脚一沾地，他们的回旋奔射就讨不到便宜了。你可愿随我渡这一趟？',
-        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：前329年亚历山大与塞种（Saka）在药杀水（今锡尔河）的野战，马其顿胜；中文维基百科「亚历山大大帝」同记其渡河北击草原游牧。' }, time: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 date = 329 BC；同条目战役地图标注「Battle of Jaxartes October 329 BC」，故季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 coordinates 40°17′00″N 69°37′00″E、location = Syr Darya（今锡尔河，战场跨乌兹别克、塔吉克、吉尔吉斯、哈萨克边境，在古塔什干西南、苦盏东北）；本战场记录取 40.2833,69.6167。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant1 = Macedonia、League of Corinth，commander1 = Alexander the Great —— 亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 strength1 = 6,000，攻方兵力取 6000；同信息框伤亡记马其顿阵亡 160、伤 1,000。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据英文维基正文：塞种低估马其顿「artillery、fleet、cavalry、infantry」的协同，亚历山大令全军**同时齐渡**、以砲兵与弓箭手掩护，渡后以弓箭手与骑兵击破塞种包围（Dani & Bernard 1994：crossed the river and broke through the encircling Sakas with the help of his archers and cavalry）。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant2 = Saka（塞种/萨迦）、commander2 = Satraces（萨特拉克斯）；正文记约 1,200 名塞种被围歼、**含其主帅 Satraces**，另俘 150 人、缴马 1,800。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Battle of Jaxartes 信息框 strength2 = Unknown，条目与中文维基均未给塞种兵数。据其阵亡约 1,200（含主帅）、被俘 150、缴马 1,800，其众当以千计；取 6,000（并守守方 ≤ 攻方×2 = 12,000）—— 合理推定。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：塞种据药杀水北岸，自信可在马其顿半渡登陆时取胜，以骑射手为主要打击手段。编成取剧本军团「斯基泰军」：前骑兵=斯基泰骑射手 4、中步兵=塞种萨迦斧兵 3、后远程=巴克特里亚弓手 2，雁行 4-3-2（同一支军队整场战争不换）。' }, route: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 背景节（引 Dani & Bernard 1994）：亚历山大先据马拉坎达（撒马尔罕，粟特王夏都），因忧药杀水以北的塞种而北进，过居鲁士城沿途取七座要塞，抵阿契美尼德疆界药杀水，遂渡河破围。游戏路线（自上一处战场波斯门开拔，全程陆路）：波斯波利斯 → 亚兹德 → 伊斯法罕 → 雷伊 → 达姆甘 → 尼沙布尔 → 图斯 → 萨拉赫斯 → 木鹿 → 阿母城（乌浒水渡口） → 布哈拉 → 撒马尔罕（马拉坎达） → 忽毡（居鲁士城）→ 锡尔河战场；编辑器「行军路线实测」已跑。' }, result: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 result = Macedonian victory。塞种约 1,200 阵亡（含主帅 Satraces）、150 被俘、1,800 匹马被缴；马其顿阵亡 160、伤 1,000。战后亚历山大在河南岸筑城（亚历山大·埃斯哈塔，今苦盏一带）以定北疆，故本场「战后归属」按历史写忽毡归马其顿。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of Jaxartes —— 塞种据北岸陈兵、打算趁马其顿半渡而击，并嘲弄其不敢渡河。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 正文：塞种占北岸，自信能在马其顿登陆时将其击败，却低估了马其顿砲兵、舰队、骑兵与步兵的协同；亚历山大令全军同时齐渡，使对岸骑射手面对更多目标，随后以弓箭手与骑兵破其包围，约 1,200 塞种被围歼、含主帅。文案按主人规矩不写兵力确数。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：前329年亚历山大与塞种（Saka）在药杀水（今锡尔河）的野战，马其顿胜；中文维基百科「亚历山大大帝」同记其渡河北击草原游牧。' }, time: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 date = 329 BC；同条目战役地图标注「Battle of Jaxartes October 329 BC」，故季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 coordinates 40°17′00″N 69°37′00″E、location = Syr Darya（今锡尔河，战场跨乌兹别克、塔吉克、吉尔吉斯、哈萨克边境，在古塔什干西南、苦盏东北）；本战场记录取 40.2833,69.6167。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant1 = Macedonia、League of Corinth，commander1 = Alexander the Great —— 亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 strength1 = 6,000，攻方兵力取 6000；同信息框伤亡记马其顿阵亡 160、伤 1,000。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据英文维基正文：塞种低估马其顿「artillery、fleet、cavalry、infantry」的协同，亚历山大令全军**同时齐渡**、以砲兵与弓箭手掩护，渡后以弓箭手与骑兵击破塞种包围（Dani & Bernard 1994：crossed the river and broke through the encircling Sakas with the help of his archers and cavalry）。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant2 = Saka（塞种/萨迦）、commander2 = Satraces（萨特拉克斯）；正文记约 1,200 名塞种被围歼、**含其主帅 Satraces**，另俘 150 人、缴马 1,800。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Battle of Jaxartes 信息框 strength2 = Unknown，条目与中文维基均未给塞种兵数。据其阵亡约 1,200（含主帅）、被俘 150、缴马 1,800，其众当以千计；取 6,000（并守守方 ≤ 攻方×2 = 12,000）—— 合理推定。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：塞种据药杀水北岸，自信可在马其顿半渡登陆时取胜，以骑射手为主要打击手段。编成取剧本军团「斯基泰军」：前骑兵=斯基泰骑射手 4、中步兵=塞种萨迦斧兵 3、后远程=巴克特里亚弓手 2，雁行 4-3-2（同一支军队整场战争不换）。' }, route: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 背景节（引 Dani & Bernard 1994）：亚历山大先据马拉坎达（撒马尔罕，粟特王夏都），因忧药杀水以北的塞种而北进，过居鲁士城沿途取七座要塞，抵阿契美尼德疆界药杀水，遂渡河破围。游戏路线（2026-09-25 补录居鲁士城之后）：自上一场落点居鲁士城开拔 → 忽毡（亚历山大·埃斯哈塔，前329 建于苦盏）→ 锡尔河战场（末段 5 公里），全程陆路：波斯波利斯 → 亚兹德 → 伊斯法罕 → 雷伊 → 达姆甘 → 尼沙布尔 → 图斯 → 萨拉赫斯 → 木鹿 → 阿母城（乌浒水渡口） → 布哈拉 → 撒马尔罕（马拉坎达） → 忽毡（居鲁士城）→ 锡尔河战场；编辑器「行军路线实测」已跑。' }, result: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 result = Macedonian victory。塞种约 1,200 阵亡（含主帅 Satraces）、150 被俘、1,800 匹马被缴；马其顿阵亡 160、伤 1,000。战后亚历山大在河南岸筑城（亚历山大·埃斯哈塔，今苦盏一带）以定北疆，故本场「战后归属」按历史写忽毡归马其顿。' }, invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of Jaxartes —— 塞种据北岸陈兵、打算趁马其顿半渡而击，并嘲弄其不敢渡河。对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 正文：塞种占北岸，自信能在马其顿登陆时将其击败，却低估了马其顿砲兵、舰队、骑兵与步兵的协同；亚历山大令全军同时齐渡，使对岸骑射手面对更多目标，随后以弓箭手与骑兵破其包围，约 1,200 塞种被围歼、含主帅。文案按主人规矩不写兵力确数。' } },
         commanderUnit: 'hero_mounted_alexander',
         // 🔴 [2026-09-24 主人「速不台，13 世纪蒙古人，与塞种主帅年代差得远……符合历史」]
         //    原来选 `hero_subotai`（速不台，13 世纪）＝与**前329 年的塞种主帅**差约 1600 年，不合历史。
@@ -453,11 +510,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '锡尔河战役',
             description: '锡尔河畔，马其顿弩炮破空齐射，射穿斯基泰前锋重铠，游牧阵型大乱。亚历山大亲率近卫骑兵与轻骑兵突入敌阵，以步骑协同之法两翼包夹，破解斯基泰回旋奔射之术。斯基泰主帅萨特拉克斯力战阵亡，游牧大军溃散北遁，帝国东北疆界自此底定。',
             location: { lat: 40.2833, lng: 69.6167 },
-            marchWaypoints: ['city_bosibolisi', 'city_yazide', 'city_yisifahan', 'city_leiyi', 'city_damugan', 'city_nishabuer', 'city_tusi', 'city_salahesi', 'city_merv', 'city_amucheng', 'city_bukhara', 'city_samaerhan', 'city_huzhan'],
+            marchWaypoints: ['city_huzhan'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 6000,
-            attackerSourceCityId: 'city_bosibolisi',
+            // 🔴 [2026-09-25 补录居鲁士城之后改链] 军团此刻在上一场落点＝居鲁士城（前329 夏），故本场自居鲁士城开拔；
+            //    路标只留忽毡（亚历山大·埃斯哈塔，前329 建于苦盏），战场就在忽毡以南 5 公里处。
+            attackerSourceCityId: 'city_julushicheng',
             attackerLegionName: '马其顿军',
             defenderFactionId: 'sijitai',
             defenderGeneralId: 'sijitai_satraces',
@@ -765,7 +824,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defender: { level: 'fact', text: '英文维基百科 Cossaei：该族为扎格罗斯山地部落、科塞亚人后裔，穴居善射，从未接受外族统治；两条史料都未载其首领姓名，故按「地名＋首领」记为科塞亚首领，与马利首领、奥诺斯首领同一记法。' },
             defenderTroops: { level: 'inferred', text: '英文维基百科 Cossaei 引斯特拉波：科塞亚人曾一次派出 13,000 人助埃利迈人作战，可见其众以万计；本场守方取 8000，并守守方 ≤ 攻方×2 —— 合理推定。' },
             defenderLegion: { level: 'inferred', text: '英文维基百科 Cossaei：该族善射、穴居山地、以劫掠为生，山地骑兵最少。编成取剧本军团「科塞亚军」：前远程=波斯系弓手 4、中步兵=持矛步卒 3、后骑兵=近东骑兵 2，雁行 4-3-2，与同一地区同一打法的乌克西亚军同排法（同一支军队整场战争不换）—— 合理推定。' },
-            route: { level: 'inferred', text: '自上一场落点马里斯开拔，经哥疾宁、坎大哈、法拉、巴姆、波斯波利斯、苏萨、哈马丹入扎格罗斯科塞亚境。史料：亚历山大自印度西返，经格德罗西亚与卡尔马尼亚回到波斯腹地，前324年先后在苏萨与米底，其后动身回巴比伦途中平定科塞亚。路网实测各段皆通 —— 合理推定。' },
+            route: { level: 'inferred', text: '自上一场落点马里斯开拔，经坎大哈、法拉、巴姆、波斯波利斯、苏萨、哈马丹入扎格罗斯科塞亚境。史料：亚历山大自印度西返，经格德罗西亚与卡尔马尼亚回到波斯腹地，前324年先后在苏萨与米底，其后动身回巴比伦途中平定科塞亚。路网实测各段皆通 —— 合理推定。' },
             result: { level: 'fact', text: '狄奥多罗斯 17.111：亚历山大先夺入山要道，屡战皆胜，斩获甚众，科塞亚人被迫以臣服换回被俘者；英文维基百科 Cossaei 记该族 at least for a time 被征服。故本场马其顿胜；科塞亚人没有可易主的据点，故本场不写据点归属。' },
             invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Cossaei 与狄奥多罗斯 17.111 —— 该族从未臣服、以买路钱与劫掠为生、善射穴居，亚历山大以轻装部队先夺进山路口再分区清剿。对白措辞为撰写，史事有据。' },
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Indian campaign of Alexander the Great 与 Gedrosia —— 印度河下行至帕塔拉、婆罗门城下中毒箭、尼阿库斯沿海回航、大军穿格德罗西亚沙漠而大损；英文维基百科 Alexander the Great —— 前324年苏萨婚礼与免除旧债、欧皮斯兵变、赫费斯提翁死于埃克巴坦那。文案按主人规矩不写兵力确数。' },
@@ -783,7 +842,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             location: { lat: 33.49, lng: 48.36 },   // 扎格罗斯山地、今卢里斯坦霍拉马巴德一带（条目未给坐标 —— 合理推定）
             // 出发地＝军团此刻在哪＝上一场落点（马里斯，攻城战＝那座城）
             // 史料：自印度西返，经格德罗西亚与波斯腹地，前324年冬自米底南下回巴比伦时穿科塞亚境
-            marchWaypoints: ['city_jiaseni', 'city_kandaha', 'city_fala', 'city_bam_citadel', 'city_bosibolisi', 'city_susa', 'city_hamadan'],
+            // 🔴 [2026-09-25 修复] 原来第一站写「哥疾宁」：路网里「马里斯→哥疾宁」的最短路是先南下坎大哈、再折回北上的哥疾宁（2.15 倍），
+            //    随后又要从哥疾宁折回坎大哈 —— 一南一北白跑两个来回；而哥疾宁本来也不在亚历山大这条归途的史料里
+            //    （他走格德罗西亚海岸与卡尔马尼亚，阿拉霍西亚那条内陆线是克拉特鲁斯的分路）。去掉后首段 2.15 倍 → 1.17 倍。
+            marchWaypoints: ['city_kandaha', 'city_fala', 'city_bam_citadel', 'city_bosibolisi', 'city_susa', 'city_hamadan'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 12000,

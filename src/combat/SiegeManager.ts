@@ -16,6 +16,7 @@ import { getGeneralProfile } from '../data/general-skills/profiles';
 import { getUnitEliteTier } from '../systems/CultureCombat';
 import { getLegionEliteLegionName } from '../data/ExpeditionLegions';
 import {generalHasStrategicEffect, getGeneralStrategicMagnitude, emitFollowedGeneralStrategicMapFx, pickRandomStrategicSkill, setStrategicSkillOverride, getEffectiveStrategicSkillId} from './GeneralSkillCombat';
+import { isScriptPeriod } from '../events/scriptPeriod';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
 
 const siegeLog = (...args: unknown[]) => gameLog('siege', ...args);
@@ -1140,7 +1141,8 @@ export class SiegeManager {
                 //   · 排除当前技：否则 1/14≈7% 抽回原技，观众看到换技却毫无变化。
                 //   · 换技瞬间【不】脉冲（2026-07-31 主人定，禁换技专用脉冲）；
                 //     新技触发时经 setStrategicSkillOverride 清 strategicFxShownOnce 记录照常报一次。
-                if (army.id === getFollowedArmyId() && army.generalId
+                // 🔴 [2026-09-25 主人「剧本模式下不要触发战略技能」] 剧本期不换技（也就不往军团身上塞技）
+                if (!isScriptPeriod() && army.id === getFollowedArmyId() && army.generalId
                     && getGeneralProfile(army.generalId)?.tier === 'famous') {
                     const curId = getEffectiveStrategicSkillId(army.id);
                     const newSkillId = pickRandomStrategicSkill(curId);

@@ -3,6 +3,7 @@ import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
 import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 /** 奇观 monument 数据（原 MonumentData 类型内联，野外奇观已全部转城内奇观挂靠据点） */
 interface MonumentData {
@@ -49,6 +50,7 @@ export class MonumentLayer {
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
     private browseMonuments: PlacedMonument[] = [];
+    private initialized = false;
 
     constructor(map: L.Map) {
         this.map = map;
@@ -64,7 +66,13 @@ export class MonumentLayer {
         }
 
         this.layerGroup = L.layerGroup().addTo(this.map);
-        this.renderMonuments();
+        // [2026-09-25] 首次绘制若外部未调 setCityFilter 则在微任务中兜底执行一次，避免无 filter 场景漏画
+        queueMicrotask(() => {
+            if (!this.initialized) {
+                this.initialized = true;
+                this.renderMonuments();
+            }
+        });
 
         // [2026-08-27 主人要求「名胜随地图缩放」]：与据点 cityPane 同一线性公式（9=1.0/10=1.5/11=2.0…）
         this.map.on('zoomend', () => this.updateScale());
@@ -87,6 +95,7 @@ export class MonumentLayer {
 
     public setCityFilter(filter: ((cityId: string) => boolean) | null): void {
         this.cityFilter = filter;
+        this.initialized = true;
         this.renderMonuments();
     }
 
@@ -96,9 +105,6 @@ export class MonumentLayer {
     }
 
     private renderMonuments(): void {
-        this.layerGroup.clearLayers();
-        this.markers.clear();
-
         // [2026-08-27 主人定「把所有奇观按坐标独立摆放到战略地图，不动据点」]：名城奇观也按城市坐标独立摆放
         const cityById = new Map(CITIES_V2.map((c) => [c.id, c]));
         interface WonderMonument extends MonumentData { assetKey: string; }
@@ -158,110 +164,131 @@ export class MonumentLayer {
         // 「查看奇观」只翻当前显示的
         this.browseMonuments = this.cityFilter ? placed.filter((m) => this.cityFilter!(m.cityId)) : placed;
 
+        const visibleMonuments = new Map<string, PlacedMonument>();
         for (const mon of placed) {
             // 挂靠据点没显示 → 不画（落位仍按全部奇观算，位置不随显隐跳动）
             if (this.cityFilter && !this.cityFilter(mon.cityId)) continue;
-            // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
-            const mirror = Math.random() < 0.5;
-            const w = BASE_SIZE * (mon.scale ?? 1);
-            const h = w;
-            const groundW = w * 1.6;
-            const groundH = groundW * 0.58;
-
-            // 自然野外地基：根据名胜类型选择岩石/泥地/石板底座
-            const plazaSrc = mon.category === 'HERITAGE_FORT'
-                ? '/SUCAI_TERRAIN/rck_plaza.png'
-                : (mon.category === 'ANCIENT_WONDER' ? '/SUCAI_TERRAIN/rd2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png');
-
-            const containerH = h + 30;
-            // 底座菱形中心设在 62%，底边前角在 ~74%（加 0.238*groundH）
-            // 建筑以底部地基为基准锚定（bottom: bottomOffset），使建筑地基完美踏在底座菱形中心，彻底解决悬空错位
-            const plazaCenterY = containerH * 0.62;
-            const plazaFrontY = plazaCenterY + 0.238 * groundH;
-            const bottomOffset = Math.max(16, Math.round(containerH - plazaFrontY));
-
-            // [2026-08-29] 素材名 + 实心底边锚定：个别底部带地面阴影的奇观（泰西封巨拱）用 top 锚定实心底边，其余走原底边锚定
-            const assetName = mon.asset.split('/').filter(Boolean).slice(-2)[0] ?? '';
-            const groundTop = WONDER_GROUND_TOP[assetName];
-            const anchorStyle = groundTop != null ? `top: ${groundTop}px;` : `bottom: ${bottomOffset}px;`;
-
-            const html = `
-                <div class="wilderness-monument-container" style="
-                    position: relative;
-                    width: ${w.toFixed(0)}px;
-                    height: ${containerH.toFixed(0)}px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    transform: scale(var(--monument-scale, 1));
-                    transform-origin: 50% 50%;
-                ">
-                    <!-- 2.5D 自然羽化底座 -->
-                    <img src="${plazaSrc}" style="
-                        position: absolute;
-                        left: 50%;
-                        top: 62%;
-                        width: ${groundW.toFixed(1)}px;
-                        height: ${groundH.toFixed(1)}px;
-                        transform: translate(-50%, -50%);
-                        z-index: 1;
-                        opacity: 0.88;
-                        pointer-events: none;
-                    " />
-                    <!-- 名胜建筑立绘：默认按精灵底边锚定到底座前角；底部带大段地面阴影的奇观改用 top 锚定实心底边，避免抬高悬空 -->
-                    <img src="${mon.asset}" style="
-                        position: absolute;
-                        left: 50%;
-                        ${anchorStyle}
-                        width: ${w.toFixed(1)}px;
-                        transform: translateX(-50%)${mirror ? ' scaleX(-1)' : ''};
-                        transform-origin: 50% 100%;
-                        z-index: 2;
-                        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
-                        transition: transform 0.2s ease;
-                    " onmouseover="this.style.transform='translateX(-50%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translateX(-50%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
-                    <!-- 金色名胜标牌（🔴 2026-09-14 修复据点名与特殊建筑名重叠：下移至 -32px，形成清晰双行排版） -->
-                    <div style="
-                        position: absolute;
-                        bottom: -32px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        white-space: nowrap;
-                        background: linear-gradient(180deg, rgba(20, 24, 30, 0.95) 0%, rgba(10, 12, 16, 0.98) 100%);
-                        border: 1px solid rgba(212, 175, 55, 0.85);
-                        border-radius: 3px;
-                        padding: 1px 5px;
-                        color: #f7e6a1;
-                        font-size: 11px;
-                        font-weight: bold;
-                        text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-                        box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-                        z-index: 3;
-                        pointer-events: none;
-                    ">
-                        ${mon.name}
-                    </div>
-                </div>
-            `;
-
-            const icon = L.divIcon({
-                className: 'monument-icon',
-                html: html,
-                iconSize: [w, h + 30],
-                iconAnchor: [w / 2, (h + 30) / 2]
-            });
-
-            const marker = L.marker([mon.renderLat, mon.renderLng], {
-                icon: icon,
-                interactive: true,
-                pane: 'monumentPane'
-            }).addTo(this.layerGroup);
-
-            // [2026-08-28 主人要求「奇观介绍写进文档，战略地图不显示」]：不再绑定详情弹窗
-            this.markers.set(mon.id, marker);
+            visibleMonuments.set(mon.id, mon);
         }
+
+        // 1. 移除不再显示的奇观
+        for (const [id, marker] of this.markers) {
+            if (!visibleMonuments.has(id)) {
+                this.layerGroup.removeLayer(marker);
+                this.markers.delete(id);
+            }
+        }
+
+        // 2. 添加新出现的奇观（已存在的保持不动，避免重复渐显或闪烁）
+        for (const [id, mon] of visibleMonuments) {
+            if (this.markers.has(id)) continue;
+            const fadeIn = isScriptPeriod();
+            const marker = this.createMonumentMarker(mon, fadeIn);
+            this.markers.set(id, marker);
+        }
+    }
+
+    private createMonumentMarker(mon: PlacedMonument, fadeIn = false): L.Marker {
+        // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
+        const mirror = Math.random() < 0.5;
+        const w = BASE_SIZE * (mon.scale ?? 1);
+        const h = w;
+        const groundW = w * 1.6;
+        const groundH = groundW * 0.58;
+
+        // 自然野外地基：根据名胜类型选择岩石/泥地/石板底座
+        const plazaSrc = mon.category === 'HERITAGE_FORT'
+            ? '/SUCAI_TERRAIN/rck_plaza.png'
+            : (mon.category === 'ANCIENT_WONDER' ? '/SUCAI_TERRAIN/rd2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png');
+
+        const containerH = h + 30;
+        // 底座菱形中心设在 62%，底边前角在 ~74%（加 0.238*groundH）
+        // 建筑以底部地基为基准锚定（bottom: bottomOffset），使建筑地基完美踏在底座菱形中心，彻底解决悬空错位
+        const plazaCenterY = containerH * 0.62;
+        const plazaFrontY = plazaCenterY + 0.238 * groundH;
+        const bottomOffset = Math.max(16, Math.round(containerH - plazaFrontY));
+
+        // [2026-08-29] 素材名 + 实心底边锚定：个别底部带地面阴影的奇观（泰西封巨拱）用 top 锚定实心底边，其余走原底边锚定
+        const assetName = mon.asset.split('/').filter(Boolean).slice(-2)[0] ?? '';
+        const groundTop = WONDER_GROUND_TOP[assetName];
+        const anchorStyle = groundTop != null ? `top: ${groundTop}px;` : `bottom: ${bottomOffset}px;`;
+        const animClass = fadeIn ? ' map-fade-in' : '';
+
+        const html = `
+            <div class="wilderness-monument-container${animClass}" style="
+                position: relative;
+                width: ${w.toFixed(0)}px;
+                height: ${containerH.toFixed(0)}px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transform: scale(var(--monument-scale, 1));
+                transform-origin: 50% 50%;
+            ">
+                <!-- 2.5D 自然羽化底座 -->
+                <img src="${plazaSrc}" style="
+                    position: absolute;
+                    left: 50%;
+                    top: 62%;
+                    width: ${groundW.toFixed(1)}px;
+                    height: ${groundH.toFixed(1)}px;
+                    transform: translate(-50%, -50%);
+                    z-index: 1;
+                    opacity: 0.88;
+                    pointer-events: none;
+                " />
+                <!-- 名胜建筑立绘：默认按精灵底边锚定到底座前角；底部带大段地面阴影的奇观改用 top 锚定实心底边，避免抬高悬空 -->
+                <img src="${mon.asset}" style="
+                    position: absolute;
+                    left: 50%;
+                    ${anchorStyle}
+                    width: ${w.toFixed(1)}px;
+                    transform: translateX(-50%)${mirror ? ' scaleX(-1)' : ''};
+                    transform-origin: 50% 100%;
+                    z-index: 2;
+                    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+                    transition: transform 0.2s ease;
+                " onmouseover="this.style.transform='translateX(-50%) scale(1.08)${mirror ? ' scaleX(-1)' : ''}'" onmouseout="this.style.transform='translateX(-50%) scale(1.0)${mirror ? ' scaleX(-1)' : ''}'" />
+                <!-- 金色名胜标牌（🔴 2026-09-14 修复据点名与特殊建筑名重叠：下移至 -32px，形成清晰双行排版） -->
+                <div style="
+                    position: absolute;
+                    bottom: -32px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    white-space: nowrap;
+                    background: linear-gradient(180deg, rgba(20, 24, 30, 0.95) 0%, rgba(10, 12, 16, 0.98) 100%);
+                    border: 1px solid rgba(212, 175, 55, 0.85);
+                    border-radius: 3px;
+                    padding: 1px 5px;
+                    color: #f7e6a1;
+                    font-size: 11px;
+                    font-weight: bold;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+                    z-index: 3;
+                    pointer-events: none;
+                ">
+                    ${mon.name}
+                </div>
+            </div>
+        `;
+
+        const icon = L.divIcon({
+            className: 'monument-icon',
+            html: html,
+            iconSize: [w, h + 30],
+            iconAnchor: [w / 2, (h + 30) / 2]
+        });
+
+        const marker = L.marker([mon.renderLat, mon.renderLng], {
+            icon: icon,
+            interactive: true,
+            pane: 'monumentPane'
+        }).addTo(this.layerGroup);
+
+        return marker;
     }
 
     /**

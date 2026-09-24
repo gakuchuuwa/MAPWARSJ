@@ -76,8 +76,9 @@ export class MultiLegionFieldBattle {
         battleLog(`🏟️ [MultiLegion] 开始多军团野战处理`);
 
         const battleLocation = data.location || { lat: 0, lng: 0 };
-        const attackerPosition = { lat: battleLocation.lat, lng: battleLocation.lng - BATTLE_OFFSET };
-        const defenderPosition = { lat: battleLocation.lat, lng: battleLocation.lng + BATTLE_OFFSET };
+        // 🔴 [2026-09-25] 剧本野战传入了阵位就用它（主角沿路开到哪就在哪打，对手隔战场对称），否则东西对阵
+        const attackerPosition = data.attackerStand ?? { lat: battleLocation.lat, lng: battleLocation.lng - BATTLE_OFFSET };
+        const defenderPosition = data.defenderStand ?? { lat: battleLocation.lat, lng: battleLocation.lng + BATTLE_OFFSET };
 
         // [NEW] Check for Narrative Mode (troops <= 1)
         const isNarrativeDuel = (data.attackerTroops || 0) <= 1 && (data.defenderTroops || 0) <= 1;
@@ -471,8 +472,8 @@ export class MultiLegionFieldBattle {
 
         const locLat = data.location ? data.location.lat : 0;
         const locLng = data.location ? data.location.lng : 0;
-        const attackerPosition = { lat: locLat, lng: locLng - BATTLE_OFFSET };
-        const defenderPosition = { lat: locLat, lng: locLng + BATTLE_OFFSET };
+        const attackerPosition = data.attackerStand ?? { lat: locLat, lng: locLng - BATTLE_OFFSET };
+        const defenderPosition = data.defenderStand ?? { lat: locLat, lng: locLng + BATTLE_OFFSET };
         const battleCenter = { lat: locLat, lng: locLng };
 
         // 参战军团锁定停步并进入野战状态（对齐攻城战规范，与 onBattleComplete 的 setCombatState(false) 成对）

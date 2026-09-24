@@ -5,7 +5,7 @@
  * 剧本全部打完自动切乱斗。各系统据此区分剧本 / 乱斗，不各自去找玩家对象。
  * 由 GameApp 注入判据；未注入（离线脚本 / 测试）时按乱斗算，不改变旧行为。
  */
-let provider: () => boolean = () => false;
+let provider: () => boolean = () => true;
 
 export function setScriptPeriodProvider(fn: () => boolean): void {
     provider = fn;

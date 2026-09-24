@@ -183,3 +183,74 @@ export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> 
     }
     return best;
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// 🔴 [2026-09-25 主人「不然我连线干什么，你能不能一步到位」] 沿主人画的战场支线开进战场
+//
+//   战场连了路（或归为一点并入了某座城）→ 军团**沿路网一直走向战场节点**，
+//   在离战场 BATTLE_STAND_KM（沿路量）处停下，那一点就是本方阵位；对手阵位隔着战场与之对称
+//   （见 HistoricalEventManager.startBattlefieldBattle）。游戏与战场事件编辑器共用这里。
+//   没连路的战场照旧走 findPathFromPoint（兜底）。
+// ════════════════════════════════════════════════════════════════════════════
+
+/** 阵位离战场（沿路）多少公里 —— 与原先固定对阵位 BATTLE_OFFSET 0.14°（约 12–15 公里）同一量级 */
+export const BATTLE_STAND_KM = 15;
+
+/** 战场在路网里的节点：归为一点的 → 那座城；独立且连了路的 → 战场自己；没连路 → null */
+export function battlefieldRoadNode(bfId: string): { id: string; lat: number; lng: number } | null {
+    const id = roadRegistry.resolveNodeId(bfId);
+    if (!roadRegistry.isNodeConnected(id)) return null;
+    const pos = roadRegistry.getNodePos(id);
+    return pos ? { id, ...pos } : null;
+}
+
+/**
+ * 从 from 沿路网走到战场节点的整条路。入口在附近已接入路网的节点里挑（城与连了路的战场都算，
+ * 上一场的阵位就在上一处战场的支线上），取「直线走到入口 + 沿路到战场」总长最短、且入口直线不跨海的那个。
+ */
+export function findPathToBattlefield(from: P, bfId: string): Array<P & { sea?: boolean }> | null {
+    const node = battlefieldRoadNode(bfId);
+    if (!node) return null;
+    let best: Array<P & { sea?: boolean }> | null = null;
+    let bestCost = Infinity;
+    for (const c of roadRegistry.getNearestRoadNodes(from.lat, from.lng, ENTRY_CANDIDATES + 1, ENTRY_MAX_DEG)) {
+        if (c.dist * 111 > 0.5 && straightCrossesSea(from, c)) continue;
+        let leg: Array<P & { sea?: boolean }>;
+        if (c.id === node.id) {
+            leg = [{ lat: c.lat, lng: c.lng }];
+        } else {
+            const r = roadRegistry.findPath(c.id, node.id);
+            if (!r) continue;
+            leg = roadRegistry.pathToLatLngs(r);
+        }
+        const cost = c.dist + lenDeg(leg);
+        if (cost < bestCost - 1e-9) {
+            bestCost = cost;
+            const head = leg[0];
+            best = head && Math.hypot(head.lat - from.lat, head.lng - from.lng) < 1e-6
+                ? [{ lat: from.lat, lng: from.lng }, ...leg.slice(1)]
+                : [{ lat: from.lat, lng: from.lng }, ...leg];
+        }
+    }
+    return best && best.length >= 2 ? best : null;
+}
+
+/**
+ * 把一条通往战场的路截到「离终点沿路 standKm」处：返回截后的路与阵位点。
+ * 路本身不够长（出发点就在战场跟前）→ 阵位 = 出发点。
+ */
+export function cutPathBeforeEnd<T extends P>(path: readonly T[], standKm: number): { path: T[]; stand: P } {
+    let remain = standKm;
+    for (let i = path.length - 1; i > 0; i--) {
+        const seg = lenDeg([path[i - 1], path[i]]) * 111;
+        if (seg >= remain) {
+            const t = seg > 0 ? (seg - remain) / seg : 0;   // 从 i-1 往 i 走 t
+            const a = path[i - 1], b = path[i];
+            const stand = { lat: a.lat + (b.lat - a.lat) * t, lng: a.lng + (b.lng - a.lng) * t };
+            return { path: [...path.slice(0, i), { ...b, ...stand } as T], stand };
+        }
+        remain -= seg;
+    }
+    const s0 = path[0];
+    return { path: [s0], stand: { lat: s0.lat, lng: s0.lng } };
+}
