@@ -371,9 +371,17 @@ function validate(d: BattleDraft): Issue[] {
         if (isFortress && !BATTLEFIELDS.some((b) => b.id === d.bfTargetBattlefieldId)) {
             err('战场要塞不存在：' + d.bfTargetBattlefieldId);
         }
-        // 打据点才谈「战后归属」；打**战场要塞**不改任何据点归属（战场没有主人，易什么主）
+        // 🔴 [2026-09-24 主人定「还有一个问题，就是战后据点归属问题」＋ 2026-09-16 铁律 3]
+        //    **攻城战必须写战后归属**：被攻打的据点要易主，一切按历史、无论输赢。
         if (!isFortress && d.defenderCityId && !d.cityUpdates.some((u) => u.cityId === d.defenderCityId)) {
-            warn('攻城战通常要写战后归属（主人定：该攻城就攻城，战斗要改据点归属，一切按历史）');
+            err('攻城战必须写「战后归属」：被攻打的据点【' + (CITY_BY_ID.get(d.defenderCityId)?.name ?? d.defenderCityId)
+                + '】没有易主 —— 主人定「该攻城就攻城，战斗要改据点归属，一切按历史，无论输赢」，请在「战后归属」栏加上这座城');
+        }
+        // 易主归谁：按史料。归给既不是攻方、也不是守方的第三方时才提醒核对
+        for (const u of d.cityUpdates) {
+            if (u.factionId && u.factionId !== d.attackerFactionId && u.factionId !== d.defenderFactionId) {
+                warn(`战后归属：据点【${CITY_BY_ID.get(u.cityId)?.name ?? u.cityId}】既没归攻方、也没归守方，归的是「${u.factionId}」—— 请核对史料`);
+            }
         }
         // 🔴 [2026-09-24 主人定「所有事件就两种……攻城战必须有据点，攻城战不要搞什么战场」]
         //    攻城战的行军终点**就是这座城**（引擎自动把 `defenderCityId` 当终点，见 PlayerQuestSystem.marchTarget），
@@ -382,6 +390,14 @@ function validate(d: BattleDraft): Issue[] {
     } else {
         if (!d.defenderSourceCityId) warn('野战建议填守方出兵据点');
         else if (!CITY_BY_ID.has(d.defenderSourceCityId)) err('守方出兵据点不存在：' + d.defenderSourceCityId);
+        // 🔴 [2026-09-24 主人定「野战后，根据历史，据点也要有归属问题，例如沙加打完，孟菲斯是不是应该归马其顿」]
+        //    **野战也可以有战后归属**：按历史，这一战之后确实易主的据点照写（格拉尼库斯后的达斯基利翁、
+        //    加沙后的孟菲斯都是史实）。编辑器只提醒一句，要求把它写进史料依据「胜负与战后归属」里。
+        if (d.cityUpdates.length) {
+            const names = d.cityUpdates.map((u) => CITY_BY_ID.get(u.cityId)?.name ?? u.cityId).join('、');
+            warn(`本场是野战，带了 ${d.cityUpdates.length} 条「战后归属」【${names}】—— `
+                + '主人定：野战后按历史该易主的据点也要写；请确认这几座城确实是这一战之后归了某方，并在史料依据「胜负与战后归属」里写明出处');
+        }
     }
 
     for (const wp of d.marchWaypoints) {
@@ -459,6 +475,18 @@ function validate(d: BattleDraft): Issue[] {
     if (d.startCityId && CITY_BY_ID.has(d.startCityId)) {
         const why = cityAbsentReason(d.startCityId, d.year);
         if (why) out.push({ level: 'error', msg: `军团出发据点【${CITY_BY_ID.get(d.startCityId)!.name}】在这一年不存在：${why}。换一座那一年已有的城，或留空（从上一场打完的地方出发）` });
+    }
+    // 🔴 [2026-09-24 血训 · 主人揪出「飞过去的？瞬移吗？」] 第二场起，军团**此刻**就在上一场打完的地方。
+    //    这时再写「军团出发据点」，军团会**从那里直接开拔**（不是走过去）。
+    //    只有「这位武将此刻不在军中、玩家须去某座城与他会面」才该写 —— 写了就提醒一句。
+    if (d.generalId && d.startCityId) {
+        const real = effectiveStart({ ...d, startCityId: '' });
+        if (real && real.from === 'previous' && real.cityId !== d.startCityId) {
+            const written = CITY_BY_ID.get(d.startCityId);
+            const where = CITY_BY_ID.get(real.cityId);
+            out.push({ level: 'warn', msg: `本场写了「军团出发据点」【${written?.name ?? d.startCityId}】，可军团此刻在【${where?.name ?? real.cityId}】：`
+                + '写了它，军团就从写的那座城**直接开拔**（等于瞬移过去）。除非这位武将此刻不在军中、玩家须去城中与他会面，否则请留空 —— 留空即从上一场打完的地方出发' });
+        }
     }
     // 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单每项必填，绝不留空
     for (const it of EVENT_SOURCE_ITEMS) {
@@ -954,7 +982,7 @@ function render(): void {
                 ${renderRouteReport()}
             </fieldset>
 
-            <fieldset><legend>八、史料依据 · 每项必填：先查，查到写史实出处；查不到用知名度最大的说法；再没有就合理推定并写明理由</legend>
+            <fieldset><legend>八、史料依据 · 每项必填：先查 —— 以**英文维基为基准、当地语种维基补细节**（中国史查中文维基、日本史查日文维基）；查到写史实出处；查不到用知名度最大的说法；再没有就合理推定并写明理由</legend>
                 ${EVENT_SOURCE_ITEMS.map((it) => {
                     const cur = working.sources[it.key] ?? { level: 'fact', text: '' };
                     const lv = (Object.keys(EVENT_SOURCE_LEVEL_LABEL) as EventSourceLevel[])
