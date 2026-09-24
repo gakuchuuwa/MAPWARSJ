@@ -1282,6 +1282,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 前331年乌克西亚隘口战役守帅（扎格罗斯山乌克西亚部落联盟首领马达泰斯，英文维基 Battle of the Uxian Defile 记领兵者 Madates），
     //    立绘按铁律留空走回落、待主人亲自放图分配
     wukexiya: { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '' },
+    // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
+    //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
+    dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
     // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
     //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
     //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。

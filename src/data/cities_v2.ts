@@ -3674,6 +3674,7 @@ buildingStyle: 'TIBET', troops: 10000,
     //    定级依据 §6.2：加沙非关隘/要塞/堡垒 → 按城市；城内军民数万 >1 万 → 小城（腓利斯丁五城之一）。
     //    坐标实测：最近邻耶路撒冷 76.43 km ≥50 km ✓ 合法，无需特批。
     { id: 'city_jiasa', name: '加沙', factionId: 'feilisidin', lat: 31.5017, lng: 34.4668, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '腓利斯丁五城之一、通往埃及的门户要塞城；前332年9–10月亚历山大堆土山、挖地道、四次总攻破城，守将巴提斯被处决。定级依据§6.2：非关隘/要塞/堡垒→城市；人口>1万→小城' },
+    { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'pass', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-09-25 主人批准新建] 伊利里亚人达萨雷提部的设防要塞，扼察贡山口（伊利里亚—马其顿南线要道）；前335年克莱图斯据此抗亚历山大（英文维基 Siege of Pelium / Pelion (Illyria)）。坐标：确切位置无定论，取温尼弗里斯说、莱恩·福克斯称「决定性论证」的兹韦兹代（Zvezdë，维基坐标 40.7306,20.8625）。定级依据§6.2：要塞→险要 pass。文化区：项目无伊利里亚文化区，伊利里亚与色雷斯同属古巴尔干部族、地理相邻，取 THRACIAN。' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

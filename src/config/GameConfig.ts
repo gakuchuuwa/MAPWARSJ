@@ -125,8 +125,9 @@ export class GameConfig {
         YEAR_DURATION: 60,
         /** 战后驻留（游戏秒） */
         POST_BATTLE_REST: 5,
-        /** 顶部竹简时间轴：前334年亚历山大东征起 → 公元1912年 */
-        TIMELINE_START_YEAR: -334,
+        /** 顶部竹简时间轴：前335年亚历山大巴尔干战役起 → 公元1912年
+         *  🔴 [2026-09-25 主人「开局年份得提前到前335 年，起点改成马其顿本土」] -334 → -335（补海姆斯山、佩利昂、底比斯三场） */
+        TIMELINE_START_YEAR: -335,
         TIMELINE_END_YEAR: 1912
     };
     static COMBAT = {

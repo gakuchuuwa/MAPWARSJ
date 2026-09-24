@@ -1218,6 +1218,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     //    （2026-09-19 曾一度「迦南不再有据点、只在战场上出现」，2026-09-23 主人令改回。）
     'kanan': 'city_tuile',
     'feilisidin': 'city_jiasa',
+    'dasaleiti': 'city_peiliang',
 };
 
 // @ts-ignore
