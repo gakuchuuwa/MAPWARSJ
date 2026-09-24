@@ -535,6 +535,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'suogediyana': 'city_suogediyanayan',
     // 🔴 [2026-09-24 §二之二 授权] 新据点「奥诺斯岩」要有锚定势力才上得了图（年代闸门读首府武将的时代）
     'aornos': 'city_aonuosiyan',
+    // 🔴 [2026-09-25 §二之二 授权] 新据点「马里斯」要有锚定势力才上得了图（年代闸门读首府武将的时代）；
+    //    马利势力此前一直没有首府，把马里斯给它当首府，不挤占任何现有城
+    'malli': 'city_malisi',
     'kangju': 'city_kanka',
     'geluolu': 'city_almaliq',
 'shi_clan': 'city_tashkent',
