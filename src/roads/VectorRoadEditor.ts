@@ -226,6 +226,14 @@ export class VectorRoadEditor implements IEditor {
     private statusLabel: HTMLElement | null = null;
     private roadSelect: HTMLSelectElement | null = null;
     private roadFilter: HTMLInputElement | null = null;
+    /**
+     * 🔴 [2026-09-25 主人令「给道路编辑器中的现有道路添加一个新旧道路排序，不然我看不到你新画的道路」]
+     *    现有道路下拉原先按「坐标点数降序」（最长的路在最前），新画的路点少、被埋在后面翻不到。
+     *    排序键取道路 id 末尾的时间戳（画路时以毫秒写进 id，如 `..._1790340000000`）；
+     *    没有时间戳的老路按**文件里的先后**兜底（新画的都追加在数组末尾）。
+     */
+    private roadSort: HTMLSelectElement | null = null;
+    private roadSortMode: 'len' | 'new' | 'old' | 'name' = 'len';
 
     // === 城市点击处理 ===
     private cityClickHandler: ((city: any, e?: any) => void) | null = null;
@@ -519,6 +527,32 @@ export class VectorRoadEditor implements IEditor {
             this.updateRoadSelect();
         });
 
+        // 🔴 [2026-09-25 主人令「给道路编辑器中的现有道路添加一个新旧道路排序，不然我看不到你新画的道路」]
+        //    现有道路下拉原先按「坐标点数降序」，新画的路点少排在最后、翻不到；这里加一个排序开关。
+        //    排序键：道路 id 末尾的毫秒时间戳（如 ..._1790340000000）＝ 画这条路的时刻；
+        //    没有时间戳的老路按文件先后兜底（新画的都追加在文件末尾）。
+        this.roadSort = document.createElement('select');
+        this.roadSort.style.cssText = `
+            background: #2a2a3a; color: #8fd6ff; border: 1px solid #555;
+            border-radius: 8px; padding: 10px 14px; font-size: 15px;
+            flex-shrink: 0; font-weight: bold;
+        `;
+        this.roadSort.title = '现有道路列表的排序方式（新建在前＝按画这条路的时刻倒序）';
+        for (const [value, label] of [['len', '📏 长路在前'], ['new', '🆕 新建在前'], ['old', '🕰️ 最旧在前'], ['name', '🔤 按名称']] as const) {
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.textContent = label;
+            this.roadSort.appendChild(opt);
+        }
+        this.roadSort.value = this.roadSortMode;
+        this.roadSort.addEventListener('change', () => {
+            const sel = this.roadSort!;
+            this.roadSortMode = sel.value as 'len' | 'new' | 'old' | 'name';
+            this.updateRoadSelect();
+            const shown = this.roadSelect ? this.roadSelect.options.length - 1 : 0;
+            this.setStatus(`🔀 排序：${sel.options[sel.selectedIndex]?.textContent ?? ''}（列出 ${shown} 条）`);
+        });
+
         // 道路列表
         this.roadSelect = document.createElement('select');
         this.roadSelect.style.cssText = `
@@ -659,6 +693,7 @@ export class VectorRoadEditor implements IEditor {
         nextRoadBtn.title = '在下拉列表中循环选下一条道路';
 
         row1.appendChild(this.roadFilter);
+        row1.appendChild(this.roadSort);
         row1.appendChild(this.roadSelect);
         row1.appendChild(prevRoadBtn);
         row1.appendChild(nextRoadBtn);
@@ -980,21 +1015,52 @@ export class VectorRoadEditor implements IEditor {
         if (!this.roadSelect) return;
         const filterText = (this.roadFilter?.value || '').toLowerCase().trim();
         this.roadSelect.innerHTML = '<option value="">-- 已有道路 --</option>';
-        // 按照坐标点数降序排列（最长的道路排在最前面）
-        const features = VECTOR_ROAD_DATA.features.slice().sort((a, b) => {
-            const lenA = a.geometry?.coordinates?.length || 0;
-            const lenB = b.geometry?.coordinates?.length || 0;
-            return lenB - lenA; // 降序
+        // 🔴 [2026-09-25 主人令] 排序可切：长路在前（原行为）／新建在前／最旧在前／按名称。
+        //    「新/旧」取道路 id 末尾的毫秒时间戳（画路那一刻）；没有时间戳的老路按文件先后兜底。
+        const stampOf = (id: string): number => {
+            const m = /_(\d{10,})$/.exec(id || '');
+            return m ? Number(m[1]) : 0;
+        };
+        const mode = this.roadSortMode;
+        const indexed = VECTOR_ROAD_DATA.features.map((f, i) => ({ f, i }));
+        indexed.sort((a, b) => {
+            const idA = a.f?.properties?.id ?? '';
+            const idB = b.f?.properties?.id ?? '';
+            switch (mode) {
+                case 'new': {
+                    const sA = stampOf(idA), sB = stampOf(idB);
+                    if (sA !== sB) return (sB || 0) - (sA || 0);      // 时间戳大的在前；没时间戳的（0）沉底
+                    return b.i - a.i;                                  // 同为老路：文件里靠后的在前
+                }
+                case 'old': {
+                    const sA = stampOf(idA) || a.i, sB = stampOf(idB) || b.i;
+                    return sA - sB;
+                }
+                case 'name':
+                    return String(a.f?.properties?.name ?? '').localeCompare(String(b.f?.properties?.name ?? ''), 'zh-Hans');
+                default:
+                    return (b.f?.geometry?.coordinates?.length || 0) - (a.f?.geometry?.coordinates?.length || 0); // 长路在前（原行为）
+            }
         });
-        for (const feature of features) {
+        for (const { f: feature } of indexed) {
             if (!feature || !feature.properties || !feature.geometry) continue;
             const name = (feature.properties.name || '未命名').toLowerCase();
-            const id = feature.properties.id.toLowerCase();
+            const id = (feature.properties.id || '').toLowerCase();
             // 过滤：搜索名称或ID
             if (filterText && !name.includes(filterText) && !id.includes(filterText)) continue;
             const opt = document.createElement('option');
             opt.value = feature.properties.id;
-            opt.textContent = `${feature.properties.name || '未命名'} (${feature.geometry.coordinates.length}点)`;
+            // 按新旧排序时把日期一并显示出来，方便一眼看出哪几条是新画的
+            let when = '';
+            if (mode === 'new' || mode === 'old') {
+                const ms = stampOf(feature.properties.id || '');
+                if (ms) {
+                    const d = new Date(ms);
+                    const p = (x: number) => String(x).padStart(2, '0');
+                    when = ` · ${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+                }
+            }
+            opt.textContent = `${feature.properties.name || '未命名'} (${feature.geometry.coordinates.length}点${when})`;
             this.roadSelect.appendChild(opt);
         }
     }
