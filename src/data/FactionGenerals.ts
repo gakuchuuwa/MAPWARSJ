@@ -546,13 +546,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 // ── 中亚区 2026-06-18 ──
     huarazim: { generalId: 'huarazim_mohemo', generalName: '摩诃末', portrait: '/assets/CENTRAL_ASIA/huarazim_mohemo.png' },
     kazakh: { generalId: 'kazakh_hasimu', generalName: '哈斯木', portrait: '/assets/CENTRAL_ASIA/kazakh_hasimu.png' },
+    // 前327年索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes）；
+    //    立绘按铁律留空走保底图，等主人亲自放图
+    suogediyana: { generalId: 'suogediyana_arimazes', generalName: '阿里马泽斯', portrait: '' },
     sogdian: [
         { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
         // 前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '' },
-        // 前327年早春索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes，故主帅取他）；
-        //    立绘按铁律留空走保底图，等主人亲自放图
-        { generalId: 'sogdian_arimazes', generalName: '阿里马泽斯', portrait: '' },
     ],
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
@@ -1269,6 +1269,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
     // 前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
     aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '' },
+    // 前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
+    //    立绘按铁律留空走保底图，等主人亲自放图
+    aornos: { generalId: 'aornos_chief', generalName: '奥诺斯首领', portrait: '' },
     // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_leader', generalName: '马利首领', portrait: '' },
     // 前324年科塞亚战役守帅（扎格罗斯山脉科塞亚部落酋长联军首领），立绘按铁律留空走回落、待主人亲自放图分配

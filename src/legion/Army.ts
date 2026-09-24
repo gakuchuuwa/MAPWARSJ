@@ -450,7 +450,23 @@ export class Army implements IBattleUnit {
         return this.isExternalCombat;
     }
 
-    /** 这一趟行军的终点（路径最后一点；没有剩余路径时是当前目的地）。玩家乱斗行军长蛇阵用 */
+    /** 纵队展开距离：离这一趟终点这么近就展开成阵（公里） */
+    public static readonly COLUMN_DEPLOY_KM = 40;   // 🔴 [2026-09-24 主人「就用40吧。统一下」] 60 → 40
+
+    /**
+     * 🔴 [2026-09-24 主人「我觉得所有军团行军都应该以长蛇阵的方式进行」]
+     * 所有军团（剧本、乱斗，玩家所随与 AI 一视同仁）：在行军、且离这一趟终点还有 COLUMN_DEPLOY_KM 以上 → 长蛇阵；
+     * 进入该距离或停下（到站 / 交战 / 受阻 / 战后休整）→ 展开成阵。玩家单骑（type 'hero'）不算军团，不排。
+     * 这是 columnMarch 的**唯一写入处**（原先剧本走 PlayerQuestSystem、乱斗玩家军团又一套，已并到这里）。
+     */
+    private updateColumnMarch(): void {
+        if (this.type === 'hero') { this.columnMarch = false; return; }
+        const end = this.isMarching() ? this.getMarchEndPoint() : null;
+        this.columnMarch = !!end
+            && Math.hypot(this.position.lat - end.lat, this.position.lng - end.lng) * 111 > Army.COLUMN_DEPLOY_KM;
+    }
+
+    /** 这一趟行军的终点（路径最后一点；没有剩余路径时是当前目的地） */
     public getMarchEndPoint(): { lat: number; lng: number } | null {
         const last = this.pathQueue[this.pathQueue.length - 1] ?? this.destination;
         return last && Number.isFinite(last.lat) && Number.isFinite(last.lng) ? { lat: last.lat, lng: last.lng } : null;
@@ -651,6 +667,7 @@ export class Army implements IBattleUnit {
         if (!this.exemptFromDeployHold && isDeployHeld()) return;
 
         this.updateTerrainSpeed(deltaTime);
+        this.updateColumnMarch();
 
         if (this.postBattleRestRemaining > 0) {
             this.postBattleRestRemaining = Math.max(0, this.postBattleRestRemaining - deltaTime);
