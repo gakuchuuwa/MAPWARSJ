@@ -73,7 +73,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { onBattlefieldFought } from '../events/battlefieldState';
-import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver } from '../events/scriptPeriod';
+import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import {
     setupGameAppVisibilityHandler,
@@ -908,6 +908,15 @@ export class GameApp {
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
             setCompanionPanelsExpanded: (expanded) => {
+                // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）；
+                //    右下角信息面板在战略地图上一直显示，只有进战术模式（13）时收起。乱斗期逐字不变。
+                if (isScriptPeriod()) {
+                    this.cameraFollowUI.closeList();
+                    this.brawlFeedPanel?.setExpanded(false);
+                    const inScene13 = this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true;
+                    this.gameTimeHUD?.setCollapsed(inScene13, false);
+                    return;
+                }
                 if (expanded) this.cameraFollowUI.openList();
                 else this.cameraFollowUI.closeList();
                 this.brawlFeedPanel?.setExpanded(expanded);

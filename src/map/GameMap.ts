@@ -127,7 +127,7 @@ export class GameMap {
         // 初始化
         this.map = L.map(containerId, {
             center: [lat, lng],
-            zoom: 8,
+            zoom: 9, // 🔴 [2026-09-24 主人定] 开局一律 ZOOM9（原 8）
             minZoom: TILE_CONFIG.MIN_ZOOM,
             maxZoom: 13, // [UPDATE] Detailed view enabled
             zoomSnap: 1,

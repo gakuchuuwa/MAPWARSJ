@@ -785,7 +785,6 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(ev.title);
         this.startJourneyBriefing(findEventSite(ev.battlefieldId) ?? null, ev.title);
         if (!continuation) {
-            this.deps.notify(`⚔ 随${g.generalName}赴【${ev.title}】，战场在${ev.battlefieldName}`);
             gameLog('expedition',
                 `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
         }
@@ -1210,7 +1209,6 @@ export class PlayerQuestSystem {
             generalName: rec.generalName,
             portrait: rec.portrait ?? '',
         }, ev, army, true);
-        this.deps.notify(`🐎 随${rec.generalName}自战场继续进兵，奔赴【${title}】`);
         gameLog('expedition', `[玩家] 连续行军：${rec.generalName} 率 ${army.name} 自战场续赴【${title}】（同一支军团，不重新起兵）`);
         return true;
     }
@@ -1261,7 +1259,6 @@ export class PlayerQuestSystem {
                 if (ok) {
                     this.headingToEventGeneralId = owner;
                     this.bfRetryAfter.delete(bf.id);
-                    this.deps.notify(`🐎 先赴${name}军前，与他谈过再同赴【${title}】`);
                     return true;
                 }
                 // 这位武将既不在城、也无在外军团（孤立无援）→ 冷却后回落「单骑赴战场」老路
@@ -1291,7 +1288,6 @@ export class PlayerQuestSystem {
 
         if (ok) {
             this.bfRetryAfter.delete(bf.id);
-            this.deps.notify(`🐎 奔赴【${title}】`);
             this.startJourneyBriefing(bf);
             return true;
         }

@@ -529,3 +529,14 @@ body:has(#event-display.event-panel.is-collapsed) {
 body:has(#combat-ui-panel.is-battle-visible:not(.is-collapsed):not(.is-scene13)) #player-hero-panel {
     max-height: calc(100dvh - 330px);
 }
+
+/* 🔴 [2026-09-24 主人定] 剧本期不显示军团面板、军情面板（连抽屉按钮一起藏）；乱斗期不受影响。
+   body.script-period 由 PlayerHUD.refresh 按 isScriptPeriod() 每秒对齐。 */
+body.script-period {
+    --army-panel-w: 0px;
+    --feed-panel-w: 0px;
+}
+body.script-period #army-list-panel,
+body.script-period #event-display {
+    display: none !important;
+}
