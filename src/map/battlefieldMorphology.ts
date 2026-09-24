@@ -94,12 +94,11 @@ export const BF_EXTRA_KINDS: BfExtraKind[] = [
             { key: 'FENCE', label: '栅栏木堆', path: '/SUCAI_BATTLEFIELD/FENCE_RUBBLE/preview.png', w: 100, h: 60, ax: 53, ay: 56 },
         ],
     },
-    // 残破战旗：主人 2026-09-12 早先亲自挑的 8 面，编进随机池 —— 有的战场插旗、有的不插
+    // 残破战旗：主人 2026-09-12 早先亲自挑的 7 面，编进随机池 —— 有的战场插旗、有的不插
     {
         key: 'flag', label: '残破战旗', variants: [
             { key: 'N', label: '旗 N · 深灰破布（边缘撕裂）', path: '/SUCAI_BUILDING/SCEN_FLAG_N/preview.png', w: 80, h: 96, ax: 60, ay: 95 },
             { key: 'R', label: '旗 R · 深色破旗（带白色兽纹）', path: '/SUCAI_BUILDING/SCEN_FLAG_R/preview.png', w: 80, h: 96, ax: 68, ay: 92 },
-            { key: 'S', label: '旗 S · 白底十字破旗', path: '/SUCAI_BUILDING/SCEN_FLAG_S/preview.png', w: 92, h: 96, ax: 72, ay: 95 },
             { key: 'D', label: '旗 D · 白旗破边', path: '/SUCAI_BUILDING/SCEN_FLAG_D/preview.png', w: 72, h: 84, ax: 64, ay: 81 },
             { key: 'E', label: '旗 E · 白旗垂落破边', path: '/SUCAI_BUILDING/SCEN_FLAG_E/preview.png', w: 92, h: 104, ax: 58, ay: 101 },
             { key: 'U', label: '旗 U · 白旗破边（小）', path: '/SUCAI_BUILDING/SCEN_FLAG_U/preview.png', w: 80, h: 96, ax: 60, ay: 95 },

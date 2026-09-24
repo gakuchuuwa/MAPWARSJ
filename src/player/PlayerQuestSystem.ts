@@ -22,7 +22,7 @@ import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
-import { findPathFromPoint } from '../events/scriptMarchPath';
+import { findPathFromPoint, prefetchEntrySea } from '../events/scriptMarchPath';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
@@ -881,6 +881,8 @@ export class PlayerQuestSystem {
     private onHostReachBattlefield(): void {
         const q = this.quest;
         if (!q || q.kind !== 'general_event' || !q.event) return;
+        // 打完从这里开拔去下一场：先把入路直线上的海陆瓦片拉下来（见 prefetchEntrySea）
+        if (this.armyMarchPoint) prefetchEntrySea(this.armyMarchPoint);
         this.armyMarchPoint = null;
         this.onBattlefieldClicked(q.event.battlefieldId, q.event.battlefieldName);
     }

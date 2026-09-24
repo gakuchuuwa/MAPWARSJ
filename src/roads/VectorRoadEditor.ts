@@ -27,6 +27,28 @@ import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
+import { BATTLEFIELDS } from '../data/Battlefields';
+
+/**
+ * 🔴 [2026-09-24 主人定「要给战场连路…让战场和据点一致」]
+ * 道路端点 = 据点 或 战场（`bf_*`）。编辑器里凡是「按 id 找端点」的地方一律走这里，
+ * 选端点、生成路线、切换候选、全面审查、定位，战场与据点同一套待遇。
+ */
+type RoadEndpoint = { id: string; name: string; lat: number; lng: number; kind: 'city' | 'battlefield' };
+function findEndpoint(id: string | null | undefined): RoadEndpoint | undefined {
+    if (!id) return undefined;
+    const c = CITIES.find((x) => x.id === id);
+    if (c) return { id: c.id, name: c.name, lat: c.lat, lng: c.lng, kind: 'city' };
+    const b = BATTLEFIELDS.find((x) => x.id === id);
+    if (b) return { id: b.id, name: b.name, lat: b.lat, lng: b.lng, kind: 'battlefield' };
+    return undefined;
+}
+/** 端点显示名：战场带 ⚔ 前缀，一眼分得清 */
+function endpointLabel(ep: RoadEndpoint | undefined, fallback?: string | null): string {
+    if (!ep) return fallback ?? '?';
+    return ep.kind === 'battlefield' ? `⚔${ep.name}` : ep.name;
+}
+const ALL_ENDPOINT_IDS = (): Set<string> => new Set<string>([...CITIES.map((c) => c.id), ...BATTLEFIELDS.map((b) => b.id)]);
 
 import {removeBacktracks} from '../utils/GeometryUtils';
 import {REGION_CENTERS, getCityRegion, RegionType} from '../systems/RegionSystem';
@@ -888,42 +910,37 @@ export class VectorRoadEditor implements IEditor {
     private enableCitySelection(): void {
         this.cityClickHandler = (city: any, _e?: any) => {
             if (!this.visible) return;
-
-            const cityId = city.id || city.name;
-            const cityData = CITIES.find(c => c.id === cityId);
-            if (!cityData) return;
-
-            if (!this.startCityId) {
-                // 选择起点
-                this.startCityId = cityId;
-                this.startMarker = L.circleMarker([cityData.lat, cityData.lng], {
-                    radius: 10, color: '#00e676', fillColor: '#00e676',
-                    fillOpacity: 0.8, weight: 3
-                }).addTo(this.map);
-                this.startMarker.bindTooltip(`起点: ${cityData.name}`, { permanent: true, direction: 'top' });
-                this.setStatus(`✅ 起点: ${cityData.name} | 请点击第二个城市（终点）`);
-
-            } else if (!this.endCityId) {
-                // 选择终点
-                if (cityId === this.startCityId) return; // 不能选同一城市
-
-                this.endCityId = cityId;
-                this.endMarker = L.circleMarker([cityData.lat, cityData.lng], {
-                    radius: 10, color: '#ff1744', fillColor: '#ff1744',
-                    fillOpacity: 0.8, weight: 3
-                }).addTo(this.map);
-                this.endMarker.bindTooltip(`终点: ${cityData.name}`, { permanent: true, direction: 'top' });
-
-                const startName = CITIES.find(c => c.id === this.startCityId)?.name || this.startCityId;
-                this.setStatus(`⏳ 正在寻路: ${startName} → ${cityData.name}...`);
-
-                // 触发寻路
-                setTimeout(() => this.generatePath(), 100);
-            }
+            const ep = findEndpoint(city.id || city.name);
+            if (ep) this.pickEndpoint(ep);
         };
 
         // 注册城市点击
         this.cityManager.setOnCityClick(this.cityClickHandler);
+    }
+
+    /** 选起点 / 终点：据点与战场同一条路（战场由编辑器自己的 ⚔ 标记点击进来） */
+    private pickEndpoint(ep: RoadEndpoint): void {
+        if (!this.visible) return;
+        if (!this.startCityId) {
+            this.startCityId = ep.id;
+            this.startMarker = L.circleMarker([ep.lat, ep.lng], {
+                radius: 10, color: '#00e676', fillColor: '#00e676',
+                fillOpacity: 0.8, weight: 3
+            }).addTo(this.map);
+            this.startMarker.bindTooltip(`起点: ${endpointLabel(ep)}`, { permanent: true, direction: 'top' });
+            this.setStatus(`✅ 起点: ${endpointLabel(ep)} | 请点击第二个据点或 ⚔战场（终点）`);
+        } else if (!this.endCityId) {
+            if (ep.id === this.startCityId) return; // 不能选同一端点
+            this.endCityId = ep.id;
+            this.endMarker = L.circleMarker([ep.lat, ep.lng], {
+                radius: 10, color: '#ff1744', fillColor: '#ff1744',
+                fillOpacity: 0.8, weight: 3
+            }).addTo(this.map);
+            this.endMarker.bindTooltip(`终点: ${endpointLabel(ep)}`, { permanent: true, direction: 'top' });
+            const startName = endpointLabel(findEndpoint(this.startCityId), this.startCityId);
+            this.setStatus(`⏳ 正在寻路: ${startName} → ${endpointLabel(ep)}...`);
+            setTimeout(() => this.generatePath(), 100);
+        }
     }
 
     private disableCitySelection(): void {
@@ -1631,10 +1648,10 @@ export class VectorRoadEditor implements IEditor {
     private generatePath(): void {
         if (!this.startCityId || !this.endCityId) return;
 
-        const startCity = CITIES.find(c => c.id === this.startCityId);
-        const endCity = CITIES.find(c => c.id === this.endCityId);
+        const startCity = findEndpoint(this.startCityId);
+        const endCity = findEndpoint(this.endCityId);
         if (!startCity || !endCity) {
-            this.setStatus('❌ 找不到城市数据');
+            this.setStatus('❌ 找不到端点数据（据点或战场）');
             return;
         }
 
@@ -1767,7 +1784,7 @@ export class VectorRoadEditor implements IEditor {
         }
 
         // 创建新道路
-        const roadName = `${startCity.name}-${endCity.name}`;
+        const roadName = `${endpointLabel(startCity)}-${endpointLabel(endCity)}`;
         const roadId = `road_${this.startCityId}_${this.endCityId}_${Date.now()}`;
 
         // 含海路段的路要标记：RoadRegistry 靠这个跳过 smoothRoad（平滑会把海上顶点推上岸）
@@ -1835,8 +1852,8 @@ export class VectorRoadEditor implements IEditor {
 
         const startCityId = feature.properties.startConnection;
         const endCityId = feature.properties.endConnection;
-        const startCity = CITIES.find(c => c.id === startCityId);
-        const endCity = CITIES.find(c => c.id === endCityId);
+        const startCity = findEndpoint(startCityId);
+        const endCity = findEndpoint(endCityId);
         if (!startCity || !endCity) return;
 
         const nextIdx = (this.currentCandidateIdx + 1) % this.pathCandidates.length;
@@ -1872,7 +1889,7 @@ export class VectorRoadEditor implements IEditor {
             }
         }
 
-        const roadName = `${startCity.name}-${endCity.name}`;
+        const roadName = `${endpointLabel(startCity)}-${endpointLabel(endCity)}`;
         this.setStatus(`${this.formatCandidateStatus(candidate, nextIdx, this.pathCandidates.length)} | ${roadName}${warn}`);
     }
 
@@ -2460,8 +2477,8 @@ export class VectorRoadEditor implements IEditor {
         if (!this.selectedRoadId) return false;
         const feature = VECTOR_ROAD_DATA.features.find(f => f.properties.id === this.selectedRoadId);
         if (!feature || !feature.properties.startConnection || !feature.properties.endConnection) return false;
-        const startCity = CITIES.find(c => c.id === feature.properties.startConnection);
-        const endCity = CITIES.find(c => c.id === feature.properties.endConnection);
+        const startCity = findEndpoint(feature.properties.startConnection);
+        const endCity = findEndpoint(feature.properties.endConnection);
         if (!startCity || !endCity || !this.geoGraphBuilt || this.geoNodes.length === 0) return false;
         this.setStatus('⏳ 计算候选路径中 ...');
         const list = this.buildRouteCandidates(startCity, endCity);
@@ -3362,8 +3379,8 @@ export class VectorRoadEditor implements IEditor {
             const endCityId = props.endConnection;
             if (!startCityId || !endCityId) continue;
 
-            const startCity = CITIES.find(c => c.id === startCityId);
-            const endCity = CITIES.find(c => c.id === endCityId);
+            const startCity = findEndpoint(startCityId);
+            const endCity = findEndpoint(endCityId);
             if (!startCity || !endCity) continue;
 
             checkedCount++;
@@ -3494,7 +3511,7 @@ export class VectorRoadEditor implements IEditor {
 
     private detectAllIssues(): void {
         const features = VECTOR_ROAD_DATA.features;
-        const validCityIds = new Set<string>(CITIES.map(c => c.id));
+        const validCityIds = ALL_ENDPOINT_IDS();   // 据点 + 战场，都是合法端点
 
         const issues = {
             missingStart: [] as Array<{ id: string; name: string }>,
@@ -3541,8 +3558,8 @@ export class VectorRoadEditor implements IEditor {
             // [2026-05-30 删除] 旧 NE 直线检测已停用
 
             const DRIFT_THRESHOLD_KM = VectorRoadEditor.STALE_STRETCH_DRIFT_KM;
-            const startCity = startId && validCityIds.has(startId) ? CITIES.find(x => x.id === startId) : undefined;
-            const endCity = endId && validCityIds.has(endId) ? CITIES.find(x => x.id === endId) : undefined;
+            const startCity = findEndpoint(startId);
+            const endCity = findEndpoint(endId);
 
             let startDriftKm = 0;
             let endDriftKm = 0;
@@ -4363,7 +4380,7 @@ export class VectorRoadEditor implements IEditor {
 
     private auditRoads(): void {
         const features = VECTOR_ROAD_DATA.features;
-        const validCityIds = new Set<string>(CITIES.map(c => c.id));
+        const validCityIds = ALL_ENDPOINT_IDS();
 
         const issues = {
             missingStart: [] as Array<{ id: string; name: string }>,
@@ -4459,11 +4476,8 @@ export class VectorRoadEditor implements IEditor {
     private cleanDanglingRoads(): void {
         this.setStatus('🧹 正在扫描悬挂道路...');
 
-        // 收集所有有效城市 ID
-        const validCityIds = new Set<string>();
-        for (const city of CITIES) {
-            validCityIds.add(city.id);
-        }
+        // 收集所有有效端点 ID（据点 + 战场；战场支线不是悬空路）
+        const validCityIds = ALL_ENDPOINT_IDS();
 
         // 找出悬挂道路
         const danglingIds: string[] = [];
