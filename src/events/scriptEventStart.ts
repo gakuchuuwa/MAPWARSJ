@@ -48,6 +48,10 @@ export function resolveEventStartCityId(
     let bestD = Infinity;
     for (const c of cities) {
         if (absent.has(c.id)) continue;
+        // 🔴 [2026-09-24] **本场要打的那座城不算出发地**：新据点「索格狄亚那岩」落在上一处战场（锡尔河）
+        //    22 公里内，于是「离战场最近、那年已存在的据点」算出来就是它自己 —— 军团会从正要攻打的城里出发，
+        //    开战判定 `≤2 公里` 当场触发，整段行军（这一场的「线」）全被跳过。攻城战的出发地必须在**城外**。
+        if (ev.siegeCityId && c.id === ev.siegeCityId) continue;
         if (!cityExistsInYear(c.id, ev.year)) continue;   // 那一年还不存在（与地图显示同一判据）
         const d = Math.hypot(c.lat - prev.point.lat, (c.lng - prev.point.lng) * cosLat);
         if (d < bestD) { bestD = d; best = c; }

@@ -2002,7 +2002,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     // 🔴 [2026-09-24 主人批间距特许] 第 11 场「前327 索格狄亚那岩」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
     //    坐标取英文维基百科 Siege of the Sogdian Rock 信息框 40.4,69.4；该条目正文写 near Samarkand、信息框却在忽毡旁，
     //    两处自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。离忽毡 27.69 公里，特许登记在 AGENTS §2.1.1.1。
-    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'sogdian', lat: 40.4, lng: 69.4, type: 'pass', troops: 10000,
+    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 40.4, lng: 69.4, type: 'pass', troops: 10000,
         note: '索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 10000, 
         note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS',
@@ -3074,6 +3074,18 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     },
     // ── 2026-08-05 罽宾迁白沙瓦；喀布尔归还巴布尔（1504 发迹地）──
     { id: 'city_gaofu', name: '喀布尔', factionId: 'babuer', lat: 34.55, lng: 69.2, type: 'small_city', troops: 10000, region: 'MUGHAL', buildingStyle: 'INDI', note: '喀布尔；巴布尔发迹地（帖木儿王朝后裔 1504 占城）' },
+        // 🔴 [2026-09-24] 第 12 场「前327 马萨加围城战」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
+    //    坐标取斯瓦特河谷要冲 Chakdara 一带 34.65,72.03（英文维基 Cophen campaign 未给马萨加坐标 → 按史地合理推定：
+    //    该条目记马萨加为阿萨卡诺伊人最大的设防城市与首府，位于斯瓦特河谷，故取河谷门户）。
+    { id: 'city_masaga', name: '马萨加', factionId: 'aswaka', lat: 34.65, lng: 72.03, type: 'small_city', troops: 10000,
+        note: '马萨加，阿萨卡诺伊阿斯瓦卡人的首府与最大设防城市，斯瓦特河谷山城；前327年秋为亚历山大所破，女王克莱奥菲斯守城。史料：英文维基百科 Cophen campaign 的 Siege of Massaga 节。', region: 'PURU', buildingStyle: 'PURU' },
+    // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
+    //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（奥诺斯首领）＋精锐（绝壁守兵）。
+    //    坐标取维基数据 Pir Sar 34.82,72.88 —— 英文维基百科 Aornos 条目正文记该岩在印度河上游峡谷湾上、
+    //    Gunangar Shamshi Khel 之西，条目所附照片说明即 Shangla 县，与这一点反查所得一致。
+    //    间距：--probe 实测最近马萨加 79.94 km（≥40 km，无需特批）。
+    { id: 'city_aonuosiyan', name: '奥诺斯岩', factionId: 'aornos', lat: 34.82, lng: 72.88, type: 'pass', troops: 10000,
+        note: '奥诺斯岩，希腊语意为无鸟之地，印度河上游峡谷湾上的崖顶岩堡；前326年春为亚历山大所取，是他一生最后一次围城。守军是斯瓦特河谷溃散下来的阿斯瓦卡人众。史料：英文维基百科 Aornos 条目、Cophen campaign 的 Siege of Aornus 节。', region: 'PURU', buildingStyle: 'PURU' },
     { id: 'city_baishawa', name: '白沙瓦', factionId: 'jibin', lat: 34.01, lng: 71.52, type: 'medium_city', troops: 10000, region: 'KUSHAN', buildingStyle: 'INDIA', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）' },
 
 

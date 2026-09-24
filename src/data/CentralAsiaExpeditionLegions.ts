@@ -21,6 +21,7 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     muer: { name: '呼罗珊义从', tier: 4 },
     tujishi: { name: '怛罗斯突骑', tier: 3 },
   sogdian: { name: '瓦拉赫沙卫', tier: 4 },
+  suogediyana: { name: '岩堡守兵', tier: 4 },   // 索格狄亚那岩岩堡守军；史书未载该岩堡部队番号 → 按史地合理推定
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
     anushidgin: { name: '希瓦铁骑', tier: 4 },
     dayuzi: { name: '讹答剌卫队', tier: 4 },

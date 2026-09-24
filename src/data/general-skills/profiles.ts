@@ -3219,6 +3219,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     sogdian_aokexiate: { generalId: 'sogdian_aokexiate', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 马萨加·克莱奥菲斯：普将（史实为阿斯瓦卡首领之母，统领全城死守险要要塞力战后归降）· 逆势 · 善防
     aswaka_cleophis: { generalId: 'aswaka_cleophis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 奥诺斯岩·奥诺斯首领：普将（史实为岩堡守军之首，史料未载姓名，据崖顶以滚石死守）· 逆势 · 善防
+    aornos_chief: { generalId: 'aornos_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 马里斯·马利首领：普将（史实为马利/摩罗婆联军首领，死守砖石卫城堡垒浴血力战）· 逆势 · 善防
     malli_leader: { generalId: 'malli_leader', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 科塞亚·科塞亚首领：普将（史实为扎格罗斯山地部落酋长联军首领，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
@@ -3229,7 +3231,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     halikanasu_memnon: { generalId: 'halikanasu_memnon', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 罗得岛门农，波斯麾下希腊雇佣军名将：格拉尼库斯前献坚壁清野之策、前334年任小亚细亚总指挥守哈利卡纳苏斯、前333年转攻爱琴海连下基俄斯与莱斯博斯 → 名将
     wukexiya_madates: { generalId: 'wukexiya_madates', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 索格狄亚那岩·阿里马泽斯：普将（史实为岩堡守将，凭绝壁自恃不可攻）· 借势 · 善守
-    sogdian_arimazes: { generalId: 'sogdian_arimazes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    suogediyana_arimazes: { generalId: 'suogediyana_arimazes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。
     //    他此前只在 `BattlefieldCharacters`（战场人物表）里，**没有档案/世纪/时代** ——
     //    那三样缺一就进不了 13（战术模式），而虎牢关战役他是**守方主帅**，会卡在准入上。

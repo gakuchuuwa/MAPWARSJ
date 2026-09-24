@@ -43,6 +43,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'daliushi_iii': 'antiquity',
     'aqimeinide_aertabazanuosi': 'antiquity',
     'aswaka_cleophis': 'antiquity',
+    'aornos_chief': 'antiquity',
     'asaibaijiang_xuliewu': 'castle',
     'ashide_ashidejieli': 'feudal',
     'ashikaga_zulizunshi': 'castle',
@@ -595,7 +596,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     //    （前331年乌克西亚隘口战役守方主帅）—— 与亚历山大同属古典时代
     'halikanasu_memnon': 'antiquity',
     'wukexiya_madates': 'antiquity',
-    'sogdian_arimazes': 'antiquity',
+    'suogediyana_arimazes': 'antiquity',
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德
     //    （621 年虎牢关战役守方主帅）—— 与李世民同属封建时代
     'doujiande': 'feudal',

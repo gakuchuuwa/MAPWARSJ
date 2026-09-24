@@ -162,7 +162,6 @@ export interface PlayerQuestDeps {
 const TICK_MS = 400;
 /** 战场寻路失败后的重试冷却，避免每 tick 重试刷屏并打断行程 */
 /** 剧本模式行军纵队：离战场多少公里展开成阵（2026-09-23） */
-const COLUMN_DEPLOY_KM = 60;   // 2026-09-23 主人「请提前一点恢复阵型，为了进入战斗」：30 → 60
 const BF_RETRY_COOLDOWN_MS = 60_000;
 
 export class PlayerQuestSystem {
@@ -201,8 +200,6 @@ export class PlayerQuestSystem {
         const q = this.quest;
         if (q?.kind === 'general_event') {
             const host = this.deps.legionManager.getLegionById(q.legionId);
-            if (host) host.columnMarch = false;
-            this.columnMarchPending = false;
             this.quest = null;
         }
         this.followingEventGeneralId = null;
@@ -756,12 +753,7 @@ export class PlayerQuestSystem {
                 : { lat: ev.lat, lng: ev.lng });
         // 行军路标只在剧本模式走；乱斗模式照旧走最近的路
         this.marchWaypointsLeft = scriptMode ? [...(ev.marchWaypoints ?? [])] : [];
-        // 🔴 [2026-09-23 主人定「一条线的行军模式」「乱入者打头阵，然后是将军」] 剧本模式：行军纵队，接近战场再展开
-        // 🔴 [2026-09-24 主人报「战斗结束后，玩家会从战斗阵型变为行军阵型……应该是在行军后才改变阵型」]
-        //    这里只**记下**要走纵队，不当场切：接任务时军团常常还停在原地（战后实测停了 2 秒多才起步），
-        //    当场切就是原地变纵队。等它真的动起来再切（见 followPendingGeneralEvent），与战前展开对称。
-        host.columnMarch = false;
-        this.columnMarchPending = scriptMode;
+        // 行军纵队（长蛇阵）由 Army.updateColumnMarch 统一管：起步才变纵队、离终点 40 公里展开
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
@@ -957,17 +949,6 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
-        // 🔴 [2026-09-24] 起步才变纵队：军团真的在走、且离战场还远（60 公里外）才切，只切这一次
-        if (this.columnMarchPending && host.isMarching()) {
-            this.columnMarchPending = false;
-            if (getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 > COLUMN_DEPLOY_KM) {
-                host.columnMarch = true;
-            }
-        }
-        // 🔴 [2026-09-23] 距战场 60 公里内：纵队展开成阵（逐帧走位过去，见 LegionPhalanxDrawer.columnOffsets）
-        if (host.columnMarch && getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= COLUMN_DEPLOY_KM) {
-            host.columnMarch = false;
-        }
         // 🔴 卡住续路：军团若因故停住（被野战打断、复员等）而人还没到战场，就重新铺一次路，
         //    免得玩家被永远钉在半路。重铺有冷却，不会每 400ms 刷屏。
         const atTarget = getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= 3;
@@ -978,39 +959,6 @@ export class PlayerQuestSystem {
         this.startMarchToBattlefield(host, this.armyMarchPoint, true);
     }
 
-    /** 乱斗期当前被设成长蛇阵的那支军团（玩家离队/换军团时把旧的收回阵型） */
-    private meleeColumnHostId: string | null = null;
-
-    /**
-     * 🔴 [2026-09-24 主人「请把乱斗模式玩家军团的行军，改为长蛇阵，和剧本模式一致」]
-     * 乱斗期：玩家所随军团在行军、且离这一趟终点还有 COLUMN_DEPLOY_KM 以上 → 长蛇阵；
-     * 进入该距离内或停下 → 展开成阵（与剧本「起步才变纵队、距目标 60 公里展开」同一个规矩）。
-     * 只动玩家所随的这一支，其他乱斗军团不变。剧本期由 joinGeneralEvent / followPendingGeneralEvent 管。
-     */
-    private syncMeleeColumnMarch(): void {
-        if (isScriptPeriod()) {
-            this.releaseMeleeColumnHost();
-            return;
-        }
-        const hostId = this.deps.hero.getHostLegionId();
-        if (hostId !== this.meleeColumnHostId) this.releaseMeleeColumnHost();
-        if (!hostId) return;
-        const host = this.deps.legionManager.getLegionById(hostId);
-        if (!host || host.isDestroyed) { this.meleeColumnHostId = null; return; }
-        this.meleeColumnHostId = hostId;
-        const end = host.isMarching() ? host.getMarchEndPoint() : null;
-        host.columnMarch = !!end && getEuclideanDistance(host.getPosition(), end) * 111 > COLUMN_DEPLOY_KM;
-    }
-
-    private releaseMeleeColumnHost(): void {
-        if (!this.meleeColumnHostId) return;
-        const old = this.deps.legionManager.getLegionById(this.meleeColumnHostId);
-        if (old) old.columnMarch = false;
-        this.meleeColumnHostId = null;
-    }
-
-    /** 剧本行军：已接任务、等军团起步后再切纵队（见 followPendingGeneralEvent） */
-    private columnMarchPending = false;
 
     /** 续路冷却（与战场寻路冷却同口径，避免每拍重铺） */
     private marchRetryAfter = 0;
@@ -1439,7 +1387,6 @@ export class PlayerQuestSystem {
 
     // ── 跟踪 ──────────────────────────────────────────────
     public tick(): void {
-        this.syncMeleeColumnMarch();
         // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
         //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。

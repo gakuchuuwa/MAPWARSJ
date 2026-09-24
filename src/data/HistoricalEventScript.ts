@@ -512,7 +512,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    ＝贵山城（忽毡在前327 过不了年代闸门，故不算；照 resolveEventStartCityId 算出来的写）
             attackerSourceCityId: 'city_guishancheng',
             attackerLegionName: '马其顿军',
-            defenderGeneralId: 'sogdian_arimazes',
+            defenderGeneralId: 'suogediyana_arimazes',
             defenderTroops: 600,
             defenderCityId: 'city_suogediyanayan',
             defenderLegionName: '粟特军',
@@ -523,6 +523,170 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         cityUpdates: [{ cityId: 'city_suogediyanayan', factionId: 'maqidun' }],
         // 赶路播报（攻城战的播报存在事件本身）：B 档并入背景的两件前328 之事也写在这里
         briefing: '加拜一战之后，斯皮塔米尼斯再也没能聚起人马。他退往北方草原，指望马萨革泰人替他报仇，那些人却砍下他的头，派人送到亚历山大帐前求和——中亚这场拖了两年的叛乱，至此才算了结。\n\n亚历山大在巴克特里亚过了冬。前327年的早春，他率军北上索格狄亚那，去拔掉叛军最后几处巢穴。挡在路上的，是索格狄亚那岩：一座立在绝壁之上的岩堡，四面刀削一般，向被称为不可攻。堡里的首领阿里马泽斯自恃天险，回绝马其顿人的招降时说，亚历山大除非有长了翅膀的兵，否则休想上来。\n\n亚历山大没有强攻。他召集全军，许下重赏，问谁愿意去爬那道崖。',
+    },
+    // ═══════════════════════════════════════════════════════════════
+    // 前 327 年秋 · 东征印度：马萨加围城战（Cophen campaign · Siege of Massaga，327 BC）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -327,
+        season: 2,                                   // 秋（战役信息框 date = May 327 – March 326 BC；马萨加为该战役首战，按月序推秋 —— 合理推定）
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，前头那座城叫马萨加，是阿斯瓦卡人的首府，也是这一带最大的设防城市。守城的是一位女王——克莱奥菲斯。她不肯降，还从印度河对岸重金请来了一批雇佣兵，自以为凭高墙险地就能把我挡在城外。你看好了：我不硬爬她的墙。我要在她眼皮底下堆起一座土垒、架起塔楼，把弓手与投石手送上塔顶，一段一段把人从墙头赶下去。你可愿随我打这一仗？',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Cophen campaign 的 Siege of Massaga 节：前327年马其顿军攻取阿斯瓦卡人首府马萨加的攻城战。该战役无独立条目，本场按其条目内这一节设计（主人总纲：维基有这个信息就可以设计）。' },
+            time: { level: 'inferred', text: '英文维基百科 Cophen campaign 信息框 date = May 327 BC – March 326 BC；同条目记马萨加为该战役第一战（其后依次为 Bazira、Ora、Aornos）。条目未给月份，按月序推秋 —— 合理推定。' },
+            place: { level: 'inferred', text: '英文维基百科 Cophen campaign：马萨加为阿萨卡诺伊阿斯瓦卡人最大的设防城市与首府，位于斯瓦特河谷；条目未给坐标，按史地取斯瓦特河谷门户 Chakdara 一带 34.65,72.03 —— 合理推定。本场是攻城战，地点就是被攻据点「马萨加」。' },
+            attacker: { level: 'fact', text: '英文维基百科 Cophen campaign 信息框 commander1 = Alexander the Great（并注明 WIA 负伤），另有 Craterus、Perdiccas、Ptolemy、Leonnatus 分领各部；同条目记亚历山大在马萨加城下亲率方阵冲阵并负伤。' },
+            attackerTroops: { level: 'inferred', text: '英文维基百科 Cophen campaign 信息框未给双方兵力。同一支马其顿军在前327年接收新兵后约三万众，此役为科芬河谷分路进军中的一路，取 20000 —— 合理推定。同条目另记此役马其顿阵亡不超过二十五人。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条目：亚历山大佯退诱敌、以弓手与标枪骑兵及阿格里安尼人反击、亲率方阵冲阵；攻城时筑塔楼土垒、桥上强攻。' },
+            defender: { level: 'fact', text: '英文维基百科 Cophen campaign 信息框 combatant2 = Aśvaka、Guraeans，commander2 = Cleophis；同条目记马萨加由女王克莱奥菲斯守城，另雇自印度河对岸的雇佣兵助守。' },
+            defenderTroops: { level: 'inferred', text: '英文维基百科 Cophen campaign 记阿萨卡诺伊人自印度河对岸雇来 7000 名雇佣兵（Fuller 1959, p.245），城防部落守军人数未载；按「查不到按史地合理推定」取 10000，并守守方 ≤ 攻方×2 —— 合理推定。' },
+            defenderLegion: { level: 'fact', text: '英文维基百科 Cophen campaign 的 Siege of Massaga 节：守军自城头抛射弓矢、石块乃至火球，雇佣兵步战最为顽强，山地部落骑兵最少。编成取剧本军团「阿斯瓦卡军」：前远程=层压复合弓手 4、中步兵=印度部落民 3、后骑兵=什里瓦姆沙骑手 2，雁行 4-3-2（同一支军队整场战争不换）。' },
+            route: { level: 'fact', text: '英文维基百科 Cophen campaign：亚历山大前327年春自巴克特里亚越兴都库什南下（途中建亚历山大里亚即今贝格拉姆），抵科芬河谷后先取周边，再东进斯瓦特攻马萨加。游戏路线：自上一处战场（索格狄亚那岩）开拔 → 蓝氏城即巴克特拉 → 巴米扬 → 喀布尔 → 难揭即那竭（科芬河谷）→ 马萨加；编辑器「行军路线实测」已跑。' },
+            result: { level: 'fact', text: '英文维基百科 Cophen campaign：马萨加陷落。同条目记守军议降后弃营夜遁、被马其顿军围歼于高地，随后马萨加被取、守军尽杀，马其顿阵亡不超过二十五人；故本场据点归属写马萨加归马其顿。同条目另记其后亚历山大遣科伊诺斯取 Bazira、遣阿尔塞塔斯等围 Ora。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Cophen campaign 信息框 commander2 = Cleophis（女王克莱奥菲斯守城）；同条目记阿萨卡诺伊人雇自印度河对岸的雇佣兵、守军凭城头弓矢石块火球顽抗，马其顿人以塔楼土垒多日强攻。对白措辞为撰写，史事有据。' },
+            briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Cophen campaign——前327年亚历山大越兴都库什南下入科芬河谷，马萨加为阿斯瓦卡人首府与最大设防城市，由克莱奥菲斯守城、另雇印度河对岸雇佣兵；同条目记马其顿阵亡不超过二十五人、城破后守军尽杀。文案按主人规矩不写兵力确数。' },
+        },
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        // 对手主将队：🔴 照 §二.5「看样子和年代选，不看名字」，本时代没有印度/阿斯瓦卡的英雄兵模，
+        //    守城的是**女王**克莱奥菲斯 → 取古典段唯一的女将英雄兵模 hero_artemisia（英雄·阿尔特米西亚，前5世纪卡里亚女王）。
+        foeCommanderUnit: 'hero_artemisia',
+        type: 'siege',
+        title: '公元前327年 亚历山大东征马萨加战役',
+        description: '马其顿军取马萨加：亚历山大佯退诱敌，把出城的阿斯瓦卡人引到坡下以弓矢与骑兵反击，亲率方阵冲阵，本人负伤；随后筑土垒塔楼九日、以弩炮与弓手压住墙头，桥上强攻两日，佣兵首领战死，守军议降后夜遁被围歼，马萨加城破、守军尽杀。',
+        siegeData: {
+            title: '马萨加战役',
+            description: '阿斯瓦卡人凭高墙与城头弓矢、石块、火球死守，雇佣兵尤为顽强；马其顿军先强攻不下，转而筑土垒、架塔楼，把弓手与投石手送上塔顶压制墙头，再由盾卫自塔桥冲城。桥塌人坠、死伤甚众，直到佣兵首领阵亡，守军才肯议降。',
+            // 出发地＝军团此刻在哪＝上一场落点（索格狄亚那岩，攻城战＝那座城）
+            // 史料：自索格狄亚那南下经马拉坎达、渡乌浒水至巴克特拉，再越兴都库什入科芬河谷
+            marchWaypoints: ['city_samaerhan', 'city_bukhara', 'city_amucheng', 'city_lanshi', 'city_fanyanna', 'city_gaofu', 'city_dinggucheng'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 20000,
+            attackerSourceCityId: 'city_suogediyanayan',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'aswaka_cleophis',
+            defenderTroops: 10000,
+            defenderCityId: 'city_masaga',
+            defenderLegionName: '阿斯瓦卡军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 🔴 攻城战必须写被攻据点的易主（§铁律 3）：马萨加归马其顿
+        cityUpdates: [{ cityId: 'city_masaga', factionId: 'maqidun' }],
+        briefing: '越过兴都库什山，马其顿大军自巴克特里亚南下，进抵科芬河谷。前327年秋，亚历山大沿河谷东进，直指阿斯瓦卡人的首府马萨加——那是这一带最大的设防城市，城墙高厚，城下就是斯瓦特河的急流。\n\n守城的是女王克莱奥菲斯。她不肯开门，还从印度河对岸重金请来一批久经战阵的雇佣兵，凭这些人守住了每一段墙头。城内守军自城头抛下弓矢、石块与火球，马其顿人第一次强攻便被打了回来。\n\n亚历山大没有硬拼。他命人就地筑起土垒、架上塔楼，把弓手与投石手送到塔顶，居高临下把守军从墙头压下去。',
+    },
+    // ═══════════════════════════════════════════════════════════════
+    // 前 326 年春 · 东征印度：奥诺斯岩围城战（Siege of Aornos；亚历山大一生最后一次围城）
+    //    B 档并入背景（§零之二「维基没有独立条目、只在别的条目里一段带过」）：
+    //    前327 冬 奥拉围城战与巴济拉之弃城 —— 都无独立条目，写进本场赶路播报。
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -326,
+        season: 0,                                   // 春（英文维基百科 Aornos 条目正文记围城在 前326年4月 —— Sastri 1988, p.54）
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你看那座岩。当地人管它叫奥诺斯，意思是连鸟都飞不上去的地方——传说赫拉克勒斯当年也没能把它拿下来。四面都是刀削的绝壁，崖顶却又平又宽，有泉水，能种地，围是围不死它的。守在上面的，是斯瓦特河谷逃出来的那些人，他们把这座岩当成最后的窝。我偏要上去。你随我去看看：人到底能不能比鸟先到那儿。',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Aornos 条目：奥诺斯岩是亚历山大最后一次围城，地点为今巴基斯坦开伯尔-普什图省印度河上游峡谷湾上的 Pir Sar 山脊；同条 Cophen campaign 的 Siege of Aornus 节记该役在 前327/326 年之冬。本场按其独立条目设计，攻城战一场对一个维基条目。' },
+            time: { level: 'inferred', text: '英文维基百科 Aornos 条目正文记围城在 前326 年 4 月（Sastri 1988, p.54）；同条 Cophen campaign 信息框 date = May 327 BC – March 326 BC、正文记围城在 前327/326 之冬。两处英文维基略有出入，取春，与下一场海达斯佩斯河战役（前326年5月）先后相接 —— 合理推定。' },
+            place: { level: 'inferred', text: '英文维基百科 Aornos 条目：该岩在印度河上游峡谷湾之上、Gunangar Shamshi Khel 之西，条目所附照片说明为 Shangla District；条目本身没有信息框坐标，故取维基数据 Pir Sar 34.82,72.88，该点反查地名落在 Shangla 县，与照片说明一致。西语维基信息框另给 34.7067,72.4528，该点落在斯瓦特河谷的赛杜谢里夫，与英文正文的印度河峡谷不合，不取 —— 合理推定。本场是攻城战，地点就是被攻据点「奥诺斯岩」。' },
+            attacker: { level: 'fact', text: '英文维基百科 Aornos 条目：亚历山大亲率此役，本人随前锋登丘时被守军推下的巨石打退；同条记托勒密与书记官先夺西侧山脊、筑栅掘壕，亚历山大以弩炮与土坡逼近崖壁，最后拽绳攀上崖顶，为雅典娜·尼刻立坛。' },
+            attackerTroops: { level: 'inferred', text: '英文维基百科两个条目均未给双方兵力。此处是狭窄山脊上的攻坚，只容一部兵力展开，取 15000。同条 Cophen campaign 记亚历山大此前分兵，一路由佩尔狄卡斯与赫费斯提翁沿科芬河前进 —— 合理推定。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条：先夺西侧山脊为据点、以木料树枝泥土填涧筑坡送弩炮近崖、夺与崖顶相连的小丘、最后拽绳攀崖登顶。' },
+            defender: { level: 'inferred', text: '英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节：奥拉陷落后，巴济拉的守军弃城投奔奥诺斯岩，各处溃散的部落人众也聚在岩上；两个条目均未载守将姓名，故按「地名＋首领」记为奥诺斯首领，与马利首领、科塞亚首领同一记法 —— 合理推定。' },
+            defenderTroops: { level: 'inferred', text: '英文维基百科未给守方兵力。守军是斯瓦特河谷溃散的部落人众与邻近山民，据崖顶以滚石死守，取 6000，并守守方 ≤ 攻方×2 —— 合理推定。' },
+            defenderLegion: { level: 'inferred', text: '同条 Cophen campaign：奥拉、巴济拉溃散下来的都是阿斯瓦卡人众，故本场守方仍取剧本军团「阿斯瓦卡军」：前远程=层压复合弓手 4、中步兵=印度部落民 3、后骑兵=什里瓦姆沙骑手 2，雁行 4-3-2。同一支阿斯瓦卡部落军，整场战争不换 —— 合理推定。' },
+            route: { level: 'fact', text: '英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节与 Siege of Aornus 节：亚历山大先南下平定白沙瓦河谷、切断阿比萨雷斯渡印度河之路，再由印度河右岸北上，自南面攻奥诺斯岩。游戏路线：自上一场落点马萨加开拔 → 白沙瓦即白沙瓦河谷 → 阿托克即印度河渡口要塞 → 奥诺斯岩；编辑器「行军路线实测」已跑。' },
+            result: { level: 'fact', text: '英文维基百科 Aornos 条目：马其顿胜。守军先以滚石打退攀上小丘的前锋、擂鼓三日相庆，随后趁夜弃岩而走；亚历山大拽绳攀上最后一段崖面，登顶后为雅典娜·尼刻立坛，并为阵亡者立冢。同条 Cophen campaign 记奥诺斯岩取下后，通向印度河的道路再无障碍，故本场据点归属写奥诺斯岩归马其顿。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Aornos 条目记该岩希腊语意为「无鸟」，阿里安记亚历山大要胜过传说中未能攻下此堡的赫拉克勒斯；同条记崖顶平坦、有天然泉水、宽到可以耕种，因此围不死它。对白措辞为撰写，史事有据。' },
+            briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节 —— 马萨加破后，亚历山大遣科伊诺斯往巴济拉、遣阿尔塞塔斯、阿塔罗斯与德米特里乌斯围奥拉；奥拉人出城突袭被击退，亚历山大闻阿比萨雷斯将渡印度河救奥拉而改道先取奥拉；奥拉陷落后巴济拉守军弃城投奔奥诺斯岩。同条 Siege of Aornus 节 —— 托勒密与书记官夺西侧山脊、填涧筑坡、夺相连小丘、守军弃岩夜遁、亚历山大攀崖登顶立坛。文案按主人规矩不写兵力确数。' },
+        },
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        // 对手主将队：🔴 照 §二.5「先保年代，再尽样子」——本时代没有印度山民首领的英雄兵模
+        //    （porus_elephant 是骑象的王，用于岩堡山民不合），故取同代的骑马蛮族首领
+        //    hero_thracian_chieftain（英雄·塞乌特斯三世，前331–300 在位），与第 11 场岩堡守将同一处理。
+        foeCommanderUnit: 'hero_thracian_chieftain',
+        type: 'siege',
+        title: '公元前326年 亚历山大东征奥诺斯岩战役',
+        description: '马其顿军取奥诺斯岩：先遣队抢占西侧山脊、筑栅掘壕为据点，点火的信号反被守军看见，峡谷里缠斗两日才重新聚拢；随后在北面以木料、树枝与泥土填涧堆坡，把弩炮推近崖壁。第三日夺下与崖顶相连的小丘，亚历山大亲率前锋登丘时被守军推下的巨石打退，守军擂鼓三日相庆。当夜守军弃岩而走，亚历山大拽着绳索攀上最后一段崖面，登上崖顶，为雅典娜·尼刻立坛。',
+        siegeData: {
+            title: '奥诺斯岩战役',
+            description: '守军据崖顶死守。北面深涧是上崖唯一的门户，马其顿人填涧筑坡、把弩炮推近崖壁时，他们从崖上推下巨石，把攀上小丘的前锋打退，擂鼓三日。夜里他们弃岩遁走，崖顶遂空。',
+            // 出发地＝军团此刻在哪＝上一场落点（马萨加，攻城战＝那座城）
+            // 史料：马萨加破后先南下平定白沙瓦河谷，再沿印度河右岸北上自南面攻岩
+            marchWaypoints: ['city_baishawa', 'city_atuoke'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 15000,
+            attackerSourceCityId: 'city_masaga',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'aornos_chief',
+            defenderTroops: 6000,
+            defenderCityId: 'city_aonuosiyan',
+            defenderLegionName: '阿斯瓦卡军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 🔴 攻城战必须写被攻据点的易主（§铁律 3）：奥诺斯岩归马其顿
+        cityUpdates: [{ cityId: 'city_aonuosiyan', factionId: 'maqidun' }],
+        briefing: '马萨加一破，阿斯瓦卡人再没能守住自己的河谷。入冬以后，亚历山大遣科伊诺斯往巴济拉，另遣阿尔塞塔斯、阿塔罗斯与德米特里乌斯去围奥拉。奥拉人出城突袭，被打了回去；巴济拉却凭山势死守不降。亚历山大率军北上巴济拉，途中听说阿比萨雷斯要渡印度河来救奥拉，当即改道先取奥拉。奥拉陷落，巴济拉的守军见大势已去，弃城投奔奥诺斯岩。\n\n前326年春，马其顿军越过白沙瓦河谷，沿印度河右岸北上，直指这座岩。当地人说它叫奥诺斯，意思是鸟都飞不上去；传说赫拉克勒斯当年也没能攻下。崖顶平坦，有泉，能耕种，围不死它。守在上面的，是斯瓦特河谷溃散下来的部落人众——他们把这处岩当作最后的退路。\n\n亚历山大先取西侧山脊为据点，再在北面填涧筑坡，把弩炮推近崖壁。第三日夺得与崖顶相连的小丘，前锋被巨石打退；当夜守军弃岩而走，他拽着绳索亲自攀上最后一段崖面，在崖顶为雅典娜·尼刻立坛。',
+    },
+    // ═══════════════════════════════════════════════════════════════
+    // 前 326 年夏 · 东征印度：海达斯佩斯河战役（Battle of the Hydaspes，对波鲁斯；东征伤亡最重的一役）
+    //    B 档并入背景（§零之二「无独立条目、只在一段里带过的受降过场」）：
+    //    渡印度河、尼萨受降、塔克西拉归附结盟 —— 都写进本场赶路播报，不单列成场。
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -326,
+        season: 1,                                   // 夏（英文维基百科 Battle of the Hydaspes 信息框 date = May 326 BC）
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你看对岸。波鲁斯把战象一字排在河滩上，就等着我渡河——我若硬渡，人马困在水里，正好让那些巨兽踩成泥。我不给他这个机会。上游有一处多林的河岛，河水在那里分了汊，人可以涉过去；路我已经摸清了，只等一个黑夜。今夜有雷雨，正好盖住动静：我率精锐先渡，克拉特鲁斯留在营中虚张声势。等他知道我已经到了他这一侧，这一仗就好打了。你可愿随我先渡？',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes：前326年5月马其顿军与波鲁斯治下的保拉瓦人在海达斯佩斯河即今杰赫勒姆河畔的野战，马其顿胜；同条记这是亚历山大东征中伤亡较重的一役，波鲁斯是其最顽强的对手。' },
+            time: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 date = May 326 BC，故季节取夏。' },
+            place: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 coordinates 32°49′40″N 73°38′20″E，即 32.8278,73.6389；location = Hydaspes River 今杰赫勒姆河，今巴基斯坦旁遮普省。本场是野战，战场记录取该坐标，与剧本这一场的 location 一字不差。' },
+            attacker: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 combatant1 = 马其顿帝国、科林斯同盟、犍陀罗，commander1 = 亚历山大、克拉特鲁斯、科伊诺斯、塔克西列斯；同条正文记亚历山大亲率伙伴骑兵冲击印度左翼。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 strength1 = 45,000–47,000，其中步兵 40,000、骑兵 5,000–7,000 及亚洲盟军，取区间中值 46000；同条正文记约 40,000 步兵与 5,000 骑兵渡河参战，克拉特鲁斯另率一部留在北岸营中。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条正文：先以达赫骑射手骚扰印度右翼、伙伴骑兵冲其左翼、科伊诺斯抄其后路，再以方阵萨里沙顶住战象，轻装兵砍象奴刺象眼。' },
+            defender: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 combatant2 = Pauravas 保拉瓦人，commander2 = 波鲁斯、Spitakes 与波鲁斯诸子；同条正文记波鲁斯不依印度诸王乘战车的旧例，亲自骑乘阵中最高大的战象督战。' },
+            defenderTroops: { level: 'inferred', text: '英文维基百科 Battle of the Hydaspes 信息框 strength2 = 22,000–54,000，其中步兵 20,000–50,000、骑兵 2,000–4,000、战象 85–200、战车 1,000，取区间中值 38000，并守守方 ≤ 攻方×2 —— 合理推定。' },
+            defenderLegion: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes：印度军以战车列于两翼骑兵之前、步兵居中、战象每隔五十尺列于步兵阵前，故战象与步卒为全军主体，先接敌的是两翼骑兵。编成取剧本军团「保拉瓦军」：前骑兵=什里瓦姆沙骑手 2、中步兵=南亚战象 4、后远程=印度长弓 3，鹤翼 2-4-3（同一支军队整场战争不换）。' },
+            route: { level: 'fact', text: '英文维基百科 Cophen campaign 与 Battle of the Hydaspes：亚历山大取奥诺斯岩后南下渡印度河，塔克西拉王献城结盟，再东进至海达斯佩斯河；游戏路线自上一场落点奥诺斯岩开拔 → 阿托克即印度河渡口 → 沿路东南经蒙格一带 → 海达斯佩斯河畔战场；编辑器「行军路线实测」已跑。' },
+            result: { level: 'fact', text: '英文维基百科 Battle of the Hydaspes 信息框 result = Macedonian victory，territory = 马其顿并吞海达斯佩斯河至希法色斯河即今比亚斯河之间的大部分旁遮普。同条记波鲁斯被俘后答「像国王对待另一位国王那样待我」，亚历山大让他继续保有自己的国土，并在战场处建尼卡亚城、在对岸建布凯法拉城以纪念战死的布塞法洛斯。故本场据点不易主：波鲁斯仍为其国之主，故不写据点归属。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of the Hydaspes —— 波鲁斯在南岸列阵拒渡，亚历山大连日佯动、以假王帐与频繁调动迷惑对手，最终在上游多林河岛趁雷雨夜偷渡，克拉特鲁斯留北岸牵制。对白措辞为撰写，史事有据。' },
+            briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Battle of the Hydaspes 背景与战前机动两节 —— 取奥诺斯岩后渡印度河、塔克西拉王结盟共击波鲁斯；B 档并入背景的尼萨受降即狄奥尼索斯传说、渡河与结盟三事都写在本文；文案按主人规矩不写兵力确数。' },
+        },
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        // 对手主将队：🔴 游戏里有波鲁斯专属英雄兵模 porus_elephant（波鲁斯王战象），
+        //    但编辑器「对手主将队」硬检查只认 hero_ 开头的 id（src/battlefield-editor/main.ts 第 516 行），
+        //    porus_elephant 会被判红、不许存盘；故本场照 §二.5 规则原文取 hero_* 里同代、文化区挨着的
+        //    英雄·达提斯（hero_datis，前5世纪波斯统帅，骑马）—— 已在史料依据里写明此事，等主人定是否放宽该检查。
+        foeCommanderUnit: 'hero_datis',
+        type: 'field_battle',
+        title: '公元前326年 亚历山大东征海达斯佩斯河战役',
+        description: '公元前326年夏，亚历山大进抵海达斯佩斯河。波鲁斯率大军在南岸列阵，战象当先，决意不让马其顿人过河。亚历山大连日沿河上下佯动，终于在雷雨之夜自上游河岛偷渡成功，全军人马悄然登上南岸，与波鲁斯的主力在河畔旷野正面相遇。',
+        fieldBattleData: {
+            title: '海达斯佩斯河战役',
+            description: '波鲁斯以战象居中、步兵紧随，骑兵与战车分列两翼，阵势如墙。亚历山大避开正面：先以骑射手骚扰其右翼，再亲率伙伴骑兵冲击其左翼，诱使印度骑兵来回奔援，由科伊诺斯抄其后路，把印度骑兵先行打散。战象随后压上，马其顿方阵以萨里沙长矛迎面顶住，轻装兵专砍象奴、刺象眼。巨兽负痛回冲，反把自家阵列搅乱。波鲁斯力战至最后，伤重被俘。',
+            location: { lat: 32.8278, lng: 73.6389 },   // 英文维基百科信息框 32°49′40″N 73°38′20″E
+            // 出发地＝军团此刻在哪＝上一场落点（奥诺斯岩，攻城战＝那座城）
+            // 史料：取奥诺斯岩后南下渡印度河，塔克西拉献城结盟，再东进至海达斯佩斯河
+            marchWaypoints: ['city_atuoke'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 46000,
+            attackerSourceCityId: 'city_aonuosiyan',
+            attackerLegionName: '马其顿军',
+            defenderFactionId: 'bulu',
+            defenderGeneralId: 'gen_bolusi',
+            defenderTroops: 38000,
+            defenderSourceCityId: 'city_meng',
+            defenderLegionName: '保拉瓦军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 野战按历史写战后归属（§铁律 3）：本场**无据点易主** —— 波鲁斯被俘后仍保有国土，蒙格仍属补噜
+        briefing: '海达斯佩斯河一战，是亚历山大东征以来最吃力的一仗。波鲁斯的战象冲乱了马其顿方阵，人马死伤之重，此前诸役未有。波鲁斯本人战至最后，伤重落马被俘。亚历山大问他愿受怎样的对待，他答：像国王对待另一位国王那样待我。亚历山大依言让他继续做他的国王，国土一如旧日；又命人在战场处筑尼卡亚城、在对岸筑布凯法拉城，纪念死在那里的战马布塞法洛斯。',
     },
 ];
 

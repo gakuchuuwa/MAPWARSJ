@@ -127,7 +127,7 @@ export function factionlessAppearancePriority(unitKey: string): number {
  *  🔴 [2026-09-07 主人定「玩家是骑兵和步兵，还是船，在地图上的移动速度要区分」]
  *     骑兵走 CAVALRY（平原 2.0 / 山地 0.9），步兵与远程走 INFANTRY（平原 1.4 / 山地 1.1，山地之王）。
  *     船不在这里：上船后全军统一 SEA_SPEED_MULTIPLIER=1.2，兵种加成失效（既有规则，别在这补）。
- *     这三档乘在 PLAYER_HERO_SPEED_MULT 之上 → 民兵约 2.1、乱入者约 3.0、海上约 1.8。 */
+ *     这三档乘在 PLAYER_HERO_SPEED_MULT 之上 → 2026-09-24 起（倍率 1.0）民兵约 1.4、乱入者约 2.0、海上约 1.2。 */
 export function moveClassForHeroKey(heroKey: string): 'CAVALRY' | 'INFANTRY' | 'ELEPHANT' {
     // 象兵单列：MOVEMENT_MATRIX 里 ELEPHANT 是平原 1.2 / 山地 0.7（战略机动笨重），
     // 光看 cls 会把战象当步兵（cls='melee'）、把象弓骑当远程，速度全给高了。
@@ -168,7 +168,7 @@ export const PLAYER_START_CITY_ID = 'city_changan';
 export const PLAYER_START_OFFSET = { lat: 0.2498, lng: 0.8323 };
 
 /** 单骑行军速度倍率（相对军团统一行军速度） */
-export const PLAYER_HERO_SPEED_MULT = 1.5;
+export const PLAYER_HERO_SPEED_MULT = 1.0;   // 🔴 [2026-09-24 主人「先1.0吧。试试看，如果不行，再查镜头跟随，并恢复」] 1.5 → 1.0（单骑行军眼晕）；不行就恢复 1.5
 /** 玩家自带精锐编队的兵力（探马及以上，选了精锐才带） */
 export const PLAYER_ELITE_SQUAD_TROOPS = 1500;
 /** 历史任务目标搜索：沿路网最多几跳 */
@@ -209,7 +209,7 @@ export const PLAYER_DEFEAT_HOLD_MS = 5000;
  *
  * ⚠️ 幅度 0.90 / 1.15 是我按「一小点」定的，主人没给具体数字 —— 嫌不够/过头直接调这两行。
  *    当前玩家是古典斥候骑兵：平原 2.0 → 1.80，山地 0.90 → 1.035（两者都还要再乘
- *    PLAYER_HERO_SPEED_MULT = 1.5）。海上不受影响：上船走 SEA_SPEED_MULTIPLIER，兵种/地形加成整个失效。
+ *    PLAYER_HERO_SPEED_MULT，2026-09-24 起 = 1.0）。海上不受影响：上船走 SEA_SPEED_MULTIPLIER，兵种/地形加成整个失效。
  */
 export const PLAYER_PLAIN_SPEED_SCALE = 0.90;
 export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.15;

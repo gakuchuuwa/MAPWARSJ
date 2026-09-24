@@ -528,6 +528,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
 'kala': 'city_aoshen',
 'sogdian': 'city_varaksha',
+    // 🔴 [2026-09-24] 阿斯瓦卡原无首府（为前327 马萨加战役建的势力）→ 把马萨加给它当首府，
+    //    这样该城才有锚定武将（克莱奥菲斯）与精锐（阿斯瓦卡山兵），同盟军年代闸门也才上得了图
+    'aswaka': 'city_masaga',
+    // 🔴 [2026-09-24 主人批准] 新据点「索格狄亚那岩」要有锚定势力才上得了图（闸门读首府武将的时代）
+    'suogediyana': 'city_suogediyanayan',
+    // 🔴 [2026-09-24 §二之二 授权] 新据点「奥诺斯岩」要有锚定势力才上得了图（年代闸门读首府武将的时代）
+    'aornos': 'city_aonuosiyan',
     'kangju': 'city_kanka',
     'geluolu': 'city_almaliq',
 'shi_clan': 'city_tashkent',
