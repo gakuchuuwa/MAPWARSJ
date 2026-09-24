@@ -45,6 +45,8 @@ import { slotsMatchFormation } from '../types/CultureFormations';
 // 🔴 [2026-09-24 主人定] 本场特殊建筑：库里现成的奇观表（一城主奇观 + 同城第二三座 + 官方中文名）
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { WONDER_NAME } from '../data/WonderNames';
+// 🔴 [2026-09-24 主人定] 剧本名：一个主角一条线 = 一个剧本（亚历山大东征）
+import { getScriptCampaignNameOfGeneral } from '../data/scriptCampaigns';
 
 // ── 编辑器里一场战役的全貌（= 两个文件的并集） ───────────────────────────
 interface BattleDraft {
@@ -176,6 +178,15 @@ const ALL_CITIES = [...CITIES_V2].sort((a, b) => a.name.localeCompare(b.name, 'z
 /** 🔴 [2026-09-19 主人定] 战场人物下拉（只在场战上出现的人，不参与城池掷将） */
 const ALL_BF_CHARACTERS = getAllBattlefieldCharacters();
 const BF_CHAR_BY_ID = new Map(ALL_BF_CHARACTERS.map((c) => [c.generalId, c]));
+
+/**
+ * 🔴 [2026-09-24 主人定「给这个剧本命名，亚历山大东征」] 顶部/列表里那句「· 剧本《亚历山大东征》」。
+ * 归属武将没登记剧本 → 空串（界面什么都不显示）。
+ */
+function campaignSuffix(generalId: string): string {
+    const name = getScriptCampaignNameOfGeneral(generalId);
+    return name ? ` · 剧本《${name}》` : '';
+}
 
 // ── 特殊建筑（奇观）目录：CITY_WONDER + CITY_WONDER_EXTRA，按素材目录名去重 ──────────
 interface WonderOption { asset: string; name: string; cityId: string; cityName: string; description: string }
@@ -828,13 +839,13 @@ function render(): void {
         <button class="bf-btn" id="btn-new">＋ 新建战役</button>
         <button class="bf-btn primary" id="btn-save"${hasErr ? ' disabled' : ''}>保存到数据文件</button>
         <button class="bf-btn danger" id="btn-delete"${isNew ? ' disabled' : ''}>删除这场战役</button>
-        <span style="color:#8a8070;font-size:12px;">共 ${drafts.length} 场战役${isNew ? ' · 当前是新建，未保存' : ''}</span>
+        <span style="color:#8a8070;font-size:12px;">共 ${drafts.length} 场战役${isNew ? ' · 当前是新建，未保存' : ''}${campaignSuffix(working.generalId)}</span>
     </div>
     <div class="bf-wrap">
         <div class="bf-list">
             ${drafts.map((d, i) => `
                 <div class="bf-list-item ${i === selected && !isNew ? 'active' : ''}" data-i="${i}">
-                    <div><span class="y">${d.year < 0 ? '前' + (-d.year) : d.year}年</span>${escapeHtml(d.title || '无名')}</div>
+                    <div><span class="y">${d.year < 0 ? '前' + (-d.year) : d.year}年</span>${campaignSuffix(d.generalId) ? `<span style="color:#7a6a3a;font-size:11px;margin-right:6px;">${escapeHtml(campaignSuffix(d.generalId).replace(/^ · 剧本《|》$/g, ''))}</span>` : ''}${escapeHtml(d.title || '无名')}</div>
                     <div class="t">${d.type === 'siege' ? '攻城战' : '野战'} · ${escapeHtml(d.bfName || '未配战场')}</div>
                 </div>`).join('')}
         </div>
