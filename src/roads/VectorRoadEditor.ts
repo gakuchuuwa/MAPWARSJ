@@ -765,13 +765,14 @@ export class VectorRoadEditor implements IEditor {
     }
 
     /**
-     * 🔴 [2026-09-24 主人「报错后要能定位」] 定位到一个点：放大到至少 ZOOM 9、居中，并在该处闪一圈黄光 3 秒，
+     * 🔴 [2026-09-24 主人「报错后要能定位」] 定位到一个点：固定 ZOOM 9、居中，并在该处闪一圈黄光 3 秒，
      * 据点与战场同一种定位。
      */
     private locatePoint(lat: number, lng: number, label: string): void {
         this.releaseCameraFollow();
         // 直接跳过去（不做动画）：动画靠浏览器动画帧推进，窗口不在前台时会卡在原地
-        this.map.setView([lat, lng], Math.max(this.map.getZoom(), 9), { animate: false });
+        // 🔴 [2026-09-25 主人「道路编辑器不要总是切换ZOOM好吗，保持在9」] 定位一律 ZOOM 9
+        this.map.setView([lat, lng], 9, { animate: false });
         this.flashAt(lat, lng);
         this.setStatus(`📍 ${label} (${lat.toFixed(2)}, ${lng.toFixed(2)})`);
     }
@@ -3028,10 +3029,11 @@ export class VectorRoadEditor implements IEditor {
     private panMapToRoad(coords: [number, number][]): void {
         if (!this.map || coords.length === 0) return;
         // 🔴 [2026-09-24 主人「报错后要能定位」] 整条路框进视野（原来只平移到路的重心、不缩放：
-        //    几百公里的路只露一截，几公里的战场支线在大比例尺下根本看不见）。最大放到 ZOOM 10。
+        //    几百公里的路只露一截）。2026-09-25 起改为固定 ZOOM 9、居中到路中心。
+        // 🔴 [2026-09-25 主人「不要总是切换ZOOM，保持在9」] 不再按路长缩放：以整条路的中心为准，固定 ZOOM 9
         const bounds = L.latLngBounds(coords.map(([lng, lat]) => [lat, lng] as [number, number]));
         this.releaseCameraFollow();
-        this.map.fitBounds(bounds, { padding: [120, 120], maxZoom: 10, animate: false });
+        this.map.setView(bounds.getCenter(), 9, { animate: false });
     }
 
     /**
