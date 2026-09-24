@@ -22,7 +22,7 @@ import { smoothRoad } from '../utils/GeometryUtils';
 import { GridSystem } from '../systems/GridSystem';
 import { getEuclideanDistance, joinStartToRoadPolyline, nearestPointOnPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { BATTLEFIELDS } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldMergedCityId } from '../data/Battlefields';
 
 // ===== 图论数据结构 =====
 
@@ -166,7 +166,10 @@ export class RoadRegistry {
         //     道路的 startConnection / endConnection 写 `bf_*` 就能接到战场上。
         //     只认 type === 'city' 的地方（吸附最近城 findNearestCityId、入路候选 getNearestCityPositions）
         //     一律跳过它 → AI 选目标、军团吸附都碰不到战场；没有路连到的战场节点就是孤立点，无任何作用。
+        //     🔴 [2026-09-25] 离据点 ≤ BATTLEFIELD_MERGE_KM 的战场「归为一点」：不建节点，记别名 → 那座城。
         for (const bf of BATTLEFIELDS) {
+            const merged = battlefieldMergedCityId(bf.id);
+            if (merged) { this.nodeAlias.set(bf.id, merged); continue; }
             if (!this.nodes.has(bf.id)) this.addNode({ id: bf.id, lat: bf.lat, lng: bf.lng, type: 'junction' });
         }
 
@@ -185,6 +188,14 @@ export class RoadRegistry {
     }
 
     // ===== 图操作 =====
+
+    /** 路网别名：归为一点的战场 id → 它所归的据点 id（见 Battlefields.battlefieldMergedCityId） */
+    private nodeAlias = new Map<string, string>();
+
+    /** 端点 id 在路网里实际对应的节点（归为一点的战场 → 那座城；其余原样） */
+    public resolveNodeId(id: string): string {
+        return this.nodeAlias.get(id) ?? id;
+    }
 
     private addNode(node: GraphNode): void {
         this.nodes.set(node.id, node);
@@ -303,9 +314,9 @@ export class RoadRegistry {
                 continue;
             }
 
-            // 确定起点和终点节点
-            let fromId = props.startConnection;
-            let toId = props.endConnection;
+            // 确定起点和终点节点（归为一点的战场 → 换成它所归的那座城）
+            let fromId = props.startConnection ? this.resolveNodeId(props.startConnection) : props.startConnection;
+            let toId = props.endConnection ? this.resolveNodeId(props.endConnection) : props.endConnection;
 
             // 如果没有明确指定连接，尝试自动吸附到最近城市
             if (!fromId) {
@@ -323,6 +334,7 @@ export class RoadRegistry {
                 console.warn(`⚠️ [RoadRegistry] Road "${props.name}" has no valid endpoints, skipping.`);
                 continue;
             }
+            if (fromId === toId) continue;   // 战场与它所归的城之间的路（归并后首尾同点），不成边
 
             // 吸附: 强制端点坐标与城市坐标一致
             const fromNode = this.nodes.get(fromId);

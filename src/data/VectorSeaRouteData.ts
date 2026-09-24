@@ -5144,54 +5144,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "希马鲁塔-哈利卡纳苏斯",
-                type: "sea",
-                id: "sea_city_chimarros_city_halikanasu_1788854834313",
-                startConnection: "city_chimarros",
-                endConnection: "city_halikanasu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.53, 36.965],
-                    [25.31357, 37.123878],
-                    [25.538442, 37.285018],
-                    [26.023353, 37.283125],
-                    [26.177005, 37.278399],
-                    [26.430146, 37.266748],
-                    [26.938326, 37.243358],
-                    [27.517316, 37.216708],
-                    [27.43, 37.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "提洛-哈利卡纳苏斯",
-                type: "sea",
-                id: "sea_city_tiluo_city_halikanasu_1788854838390",
-                startConnection: "city_tiluo",
-                endConnection: "city_halikanasu"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [25.27, 37.39],
-                    [25.145718, 37.292713],
-                    [25.538442, 37.285018],
-                    [26.023353, 37.283125],
-                    [26.177005, 37.278399],
-                    [26.430146, 37.266748],
-                    [26.938326, 37.243358],
-                    [27.517316, 37.216708],
-                    [27.43, 37.03],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "提洛-以弗所",
                 type: "sea",
                 id: "sea_city_tiluo_city_yifusuo_1788854839791",
@@ -6347,6 +6299,55 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                     [0.5034, 51.4996],
                     [0.4499, 51.479],
                     [-0.12, 51.5],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哈利卡纳苏斯-希马鲁塔",
+                type: "sea",
+                id: "sea_city_halikanasu_city_chimarros_1790262724922",
+                startConnection: "city_halikanasu",
+                endConnection: "city_chimarros"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.43, 37.03],
+                    [27.517316, 37.216708],
+                    [26.938326, 37.243358],
+                    [26.430146, 37.266748],
+                    [26.177005, 37.278399],
+                    [26.023353, 37.283125],
+                    [25.538442, 37.285018],
+                    [25.525085, 37.251137],
+                    [25.31357, 37.123878],
+                    [25.53, 36.965],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "哈利卡纳苏斯-提洛",
+                type: "sea",
+                id: "sea_city_halikanasu_city_tiluo_1790262729912",
+                startConnection: "city_halikanasu",
+                endConnection: "city_tiluo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [27.43, 37.03],
+                    [27.517316, 37.216708],
+                    [26.938326, 37.243358],
+                    [26.430146, 37.266748],
+                    [26.177005, 37.278399],
+                    [26.023353, 37.283125],
+                    [25.538442, 37.285018],
+                    [25.145718, 37.292713],
+                    [25.27, 37.39],
                 ]
             }
         },

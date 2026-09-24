@@ -29,6 +29,7 @@
  */
 
 import type { CityType } from '../types/core';
+import { CITIES_V2 } from './cities_v2';
 
 export interface BattlefieldData {
     /** 🔴 战场 id（**不是** `city_*`，不进据点表）：`bf_` + 拼音 */
@@ -195,6 +196,35 @@ export const BATTLEFIELDS: BattlefieldData[] = [
 /** 按 id 取战场 */
 export function getBattlefield(id: string): BattlefieldData | undefined {
     return BATTLEFIELDS.find((b) => b.id === id);
+}
+
+/**
+ * 🔴 [2026-09-25 主人「有的战场离据点太近了，根本无法连接，怎么办。能不能归为一个点」]
+ * 离某座据点不超过这个距离（公里）的战场，在**路网里归为那座据点**：不另立节点、不用画支线，
+ * 道路连到这个战场就等于连到那座城。战场自己的坐标、标牌、剧本位置一概不变，只是「走路」共用那座城。
+ * 实测（2026-09-25）：格拉尼库斯河距格拉尼库斯 0.4 km、锡尔河距忽毡 5.3 km → 归并；
+ * 其余最近的海达斯佩斯河距蒙格 23 km，照常画支线。
+ */
+export const BATTLEFIELD_MERGE_KM = 10;
+
+const mergedCityCache = new Map<string, string | null>();
+/** 这个战场在路网里归到哪座据点（null = 不归并，是独立的路网端点） */
+export function battlefieldMergedCityId(bfId: string): string | null {
+    if (mergedCityCache.has(bfId)) return mergedCityCache.get(bfId)!;
+    const bf = getBattlefield(bfId);
+    let best: string | null = null;
+    if (bf) {
+        const r = Math.PI / 180;
+        let bestKm = BATTLEFIELD_MERGE_KM;
+        for (const c of CITIES_V2) {
+            const h = Math.sin((c.lat - bf.lat) * r / 2) ** 2
+                + Math.cos(bf.lat * r) * Math.cos(c.lat * r) * Math.sin((c.lng - bf.lng) * r / 2) ** 2;
+            const km = 12742 * Math.asin(Math.sqrt(h));
+            if (km <= bestKm) { bestKm = km; best = c.id; }
+        }
+    }
+    mergedCityCache.set(bfId, best);
+    return best;
 }
 
 /**
