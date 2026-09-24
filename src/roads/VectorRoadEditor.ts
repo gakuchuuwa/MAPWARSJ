@@ -27,6 +27,7 @@ import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
+
 import {removeBacktracks} from '../utils/GeometryUtils';
 import {REGION_CENTERS, getCityRegion, RegionType} from '../systems/RegionSystem';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -3722,6 +3723,7 @@ export class VectorRoadEditor implements IEditor {
         const totalRoads = features.length;
         const orphanCities = this.getOrphanCities();
         const singleRoadCities = this.getSingleRoadCities();
+
         const totalIssues = issues.invalidStart.length + issues.invalidEnd.length +
             issues.sameStartEnd.length + issues.tooFewPoints.length +
             issues.duplicates.length +
@@ -3740,6 +3742,7 @@ export class VectorRoadEditor implements IEditor {
             singleRoadCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  → [${c.kind}] ${c.roadName} ↔ ${c.peerName}`));
             console.groupEnd();
         }
+
         if (issues.invalidStart.length) {
             console.group(`❌ start 指向不存在的城 [${issues.invalidStart.length}] → 将被清理`);
             issues.invalidStart.forEach(i => console.log(`  ${i.name}  → start="${i.ref}"`));
@@ -3809,7 +3812,8 @@ export class VectorRoadEditor implements IEditor {
         totalRoads: number,
         totalIssues: number,
         orphanCities: Array<{ id: string; name: string; lat: number; lng: number }>,
-        singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string; kind: '陆' | '海' }>
+        singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string; kind: '陆' | '海' }>,
+
     ): void {
         // 已有模态先移除
         document.querySelectorAll('#audit-report-modal').forEach(el => el.remove());
@@ -4130,6 +4134,7 @@ export class VectorRoadEditor implements IEditor {
                 goToCity((e.currentTarget as HTMLElement).dataset.cityId || '');
             });
         });
+
     }
 
     /** 各据点连接的道路条数（start/end 各计 1） */
@@ -4171,6 +4176,7 @@ export class VectorRoadEditor implements IEditor {
         }
         return counts;
     }
+
 
     /** 没有任何道路 start/end 连接的据点 */
     private getOrphanCities(): Array<{ id: string; name: string; lat: number; lng: number }> {
