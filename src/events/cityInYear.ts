@@ -29,8 +29,14 @@ export function eraOfYear(year: number): GeneralEra {
 
 /** 这一年这座城为什么不在（null = 在） */
 export function cityAbsentReason(cityId: string, year: number): string | null {
+    // 🔴 [2026-09-25 主人「该修复的修复」] **填了建立年代的城，就以建立年代为准，不再看归属武将的时代。**
+    //    起因：第 1 场（前335 海姆斯山）的路标城**普罗夫迪夫**（菲利波波利斯，前 342 年腓力二世所建）
+    //    被旧次序误拦 —— 它没填建立年代时先落到「归属武将时代」那道闸上，而它挂的守将是保加利亚沙皇西美昂（封建），
+    //    于是「封建时代的据点，这时还是古典时代」，前 335 年地图上不画它 ✗。这与主人定的
+    //    「历史上哪年有了哪个据点，就显示哪个据点」相冲。
+    //    建立年代是「哪年有这座城」的正解，归属武将时代只是**没填建立年代时的替代判据**（现 937 座靠它把关）。
     const founded = CITY_FOUNDED_YEAR[cityId];
-    if (founded !== undefined && founded > year) return `建立于 ${founded} 年，这一年（${year}）还没有`;
+    if (founded !== undefined) return founded > year ? `建立于 ${founded} 年，这一年（${year}）还没有` : null;
     const g = getCityAnchoredGeneral(cityId);
     const era = g ? getGeneralEra(g.generalId) : undefined;
     if (!era) return '归属武将没有时代，按规矩不上图';
