@@ -332,8 +332,13 @@ export class GameApp {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
                 const d = ev?.siegeData ?? ev?.fieldBattleData;
                 if (!d) return null;
+                // 🔴 [2026-09-24] 攻城数据没有 defenderFactionId：守方势力 = 被攻那座城当前的势力
+                //    （改前查不到 → 加沙守军显示成文化军团「古典时代腓利斯丁军团」而非剧本军团「阿契美尼德军」）
+                const defCityId = (d as { defenderCityId?: string }).defenderCityId;
+                const defFactionId = (d as { defenderFactionId?: string }).defenderFactionId
+                    ?? (defCityId ? this.cityManager.getCity(defCityId)?.factionId : undefined);
                 const name = d.attackerFactionId === factionId ? d.attackerLegionName
-                    : (d as { defenderFactionId?: string }).defenderFactionId === factionId ? d.defenderLegionName
+                    : defFactionId === factionId ? d.defenderLegionName
                         : undefined;
                 return name && SCRIPT_LEGION_MAP.has(name) ? name : null;
             });
@@ -870,6 +875,7 @@ export class GameApp {
                 findBattle: (bfId) => this.historicalEventManager.findBattleForBattlefield(bfId),
                 locate: (bfId) => this.historicalEventManager.locateBattlefield(bfId),
                 sideOfGeneral: (bfId, generalId) => this.historicalEventManager.getBattlefieldSideOfGeneral(bfId, generalId),
+                standOfGeneral: (bfId, generalId) => this.historicalEventManager.getBattlefieldStandOfGeneral(bfId, generalId),
                 start: (bfId, onSpawned, onFinished, ignoreArmyId) => this.historicalEventManager.startBattlefieldBattle(
                     bfId,
                     onSpawned,

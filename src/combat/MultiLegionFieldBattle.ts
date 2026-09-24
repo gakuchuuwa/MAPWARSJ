@@ -176,19 +176,9 @@ export class MultiLegionFieldBattle {
             }
         };
 
-        // [CAMERA FIX] Focus on battlefield center (Global Overview)
-        // Ensure correct coordinate order: [lat, lng] for Leaflet
-        // Skip camera movement if no specific location was provided or if narrative duel
-        if (data.location && !isNarrativeDuel && (window as any).game?.map) {
-            // Stop any existing camera follow first
-            if ((window as any).game.cinematicManager) {
-                (window as any).game.cinematicManager.stopFollowing();
-            }
-            // Use getLeafletMap() to access the raw L.Map instance
-            const leafletMap = (window as any).game.map.getLeafletMap();
-            const keepZoom = leafletMap.getZoom();
-            leafletMap.setView([data.location.lat, data.location.lng], keepZoom, { animate: true, duration: 3.0 });
-        }
+        // 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团——禁止改居中两军中点。
+        // 原此处擅自调 leafletMap.setView([data.location.lat, data.location.lng], keepZoom, { animate: true, duration: 3.0 })，
+        // 与主循环 tickFollowCamera 在每帧激烈冲突拉扯，导致开战瞬间屏幕剧烈抖动。遵铁律移除。
 
         // 攻击方移动 (Skip for narrative duels)
         if (!isNarrativeDuel && data.location) {
@@ -482,6 +472,17 @@ export class MultiLegionFieldBattle {
         const locLng = data.location ? data.location.lng : 0;
         const attackerPosition = { lat: locLat, lng: locLng - BATTLE_OFFSET };
         const defenderPosition = { lat: locLat, lng: locLng + BATTLE_OFFSET };
+        const battleCenter = { lat: locLat, lng: locLng };
+
+        // 参战军团锁定停步并进入野战状态（对齐攻城战规范，与 onBattleComplete 的 setCombatState(false) 成对）
+        attackerArmies.forEach(army => {
+            army.stopMovement(true);
+            army.setCombatState(true, 'field', battleCenter);
+        });
+        defenderArmies.forEach(army => {
+            army.stopMovement(true);
+            army.setCombatState(true, 'field', battleCenter);
+        });
 
         // [NEW] Auto-RTS Trigger
         if (data.autoEnterRTS) {

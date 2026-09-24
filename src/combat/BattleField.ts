@@ -626,14 +626,8 @@ export class BattleField implements IOpeningPulseSink {
         const attSit = situationOf(at, dt);
         const defSit = situationOf(dt, at);
 
-        // 先放侧：优劣→劣势；均势→随机（与亮相同锁）
-        if (attSit === 'disadvantage') {
-            this.skillPulseFirstSide = 'attacker';
-        } else if (defSit === 'disadvantage') {
-            this.skillPulseFirstSide = 'defender';
-        } else {
-            this.skillPulseFirstSide = Math.random() < 0.5 ? 'attacker' : 'defender';
-        }
+        // 先放侧：🔴 [2026-09-24 主人定 方案 A] 攻方先出招（发起冲锋/奇袭/强攻）→ 守方后出招（坚守/反击/化解），最符合战场攻防常理
+        this.skillPulseFirstSide = 'attacker';
 
         const usedSkillIds = new Set<string>();
         const usedSixClasses = new Set<string>();
@@ -952,14 +946,10 @@ export class BattleField implements IOpeningPulseSink {
         const ordered = [...this.openingPulseQueue].sort(
             (a, b) => sideRank(a.trigger.generalId) - sideRank(b.trigger.generalId),
         );
-        const sitLabel =
-            this.situationalAttDefRatio > 1.5 || this.situationalAttDefRatio < 0.67
-                ? '劣先'
-                : '均势随机';
         gameLog(
             'battle',
-            `✨ [SkillPulse] 释放顺序: ${firstSide === 'attacker' ? '攻方' : '守方'}先` +
-                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}，${sitLabel}）` +
+            `✨ [SkillPulse] 释放顺序: 攻方先 → 守方后（方案A：攻方发起冲锋/奇袭，守方坚守/反击）` +
+                `（开局兵力比攻/守=${this.situationalAttDefRatio.toFixed(2)}）` +
                 ` → ${ordered.map((o) => o.trigger.generalId || '?').join(' → ')}`,
         );
         for (const item of ordered) {

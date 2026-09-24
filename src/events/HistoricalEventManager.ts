@@ -243,7 +243,7 @@ export class HistoricalEventManager {
     private withdrawBattlefieldLegions(
         bfName: string,
         fb: FieldBattleData & { type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
-        ...armies: Army[]
+        ...armies: (Army | null)[]
     ): void {
         setTimeout(() => {
             // 剧本期：主角那一方留下继续东征（判据＝本事件归属武将带的那支）
@@ -454,6 +454,32 @@ export class HistoricalEventManager {
         ) ?? null;
     }
 
+    /** 一方的对阵位：攻城战攻方在城外东侧（长堤陆地连接部），守方在城内原点；野战东西对阵 */
+    private static sideStand(
+        fb: { type?: 'field_battle' | 'siege' },
+        side: 'attacker' | 'defender',
+        loc: { lat: number; lng: number },
+    ): { lat: number; lng: number } {
+        const isAtk = side === 'attacker';
+        if (fb.type === 'siege') {
+            return isAtk ? { lat: loc.lat, lng: loc.lng + 0.025 } : { lat: loc.lat, lng: loc.lng };
+        }
+        return { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
+    }
+
+    /**
+     * 🔴 [2026-09-24 主人令「按历史」] 某武将在这一仗里的对阵位 —— 剧本期主角军团**直接行军到这里**。
+     * 改前行军终点是战场正中心，抵达后开战又把复用的军团 setPosition 回对阵位（野战往回挪 0.14°≈15 公里），
+     * 实测军团走到离中心 0.16 公里后被瞬间拽回 15.5 公里外。行军到自己的阵位，开战时原地不动。
+     */
+    public getBattlefieldStandOfGeneral(bfId: string, generalId: string): { lat: number; lng: number } | null {
+        const fb = this.findBattleForBattlefield(bfId);
+        if (!fb?.location || !generalId) return null;
+        const side = fb.attackerGeneralId === generalId ? 'attacker'
+            : fb.defenderGeneralId === generalId ? 'defender' : null;
+        return side ? HistoricalEventManager.sideStand(fb, side, fb.location) : null;
+    }
+
     /**
      * 为战役备一方军团，就地摆在对阵位上。
      * 攻城战：攻方在城外陆侧（稍偏东），守方在城内驻守；
@@ -471,15 +497,7 @@ export class HistoricalEventManager {
         const troops = (isAtk ? fb.attackerTroops : fb.defenderTroops) ?? 10000;
         const sourceCityId = (isAtk ? fb.attackerSourceCityId : fb.defenderSourceCityId) ?? undefined;
 
-        // 站位：攻城战攻方在城外东侧（长堤陆地连接部），守方在城内原点；野战东西对阵
-        let stand: { lat: number; lng: number };
-        if (fb.type === 'siege') {
-            stand = isAtk
-                ? { lat: loc.lat, lng: loc.lng + 0.025 }
-                : { lat: loc.lat, lng: loc.lng };
-        } else {
-            stand = { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
-        }
+        const stand = HistoricalEventManager.sideStand(fb, side, loc);
 
         // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？
         //    历史上不是这样的吗？」] 剧本期：主角那一方**不新造军团，直接用现成的那一支** ——
@@ -599,8 +617,8 @@ export class HistoricalEventManager {
      */
     public startBattlefieldBattle(
         bfId: string,
-        onSpawned?: (sides: { attacker: Army; defender: Army }) => void,
-        onFinished?: (sides: { attacker: Army; defender: Army }) => void,
+        onSpawned?: (sides: { attacker: Army; defender: Army | null }) => void,
+        onFinished?: (sides: { attacker: Army; defender: Army | null }) => void,
         ignoreArmyId?: string,
     ): string | null {
         const blocked = this.checkBattlefieldReady(bfId, undefined, ignoreArmyId);
@@ -610,15 +628,30 @@ export class HistoricalEventManager {
 
         const attacker = this.spawnBattlefieldSide(fb, 'attacker');
         if (!attacker) return `【${bf.name}】攻方军团没能建起来`;
-        const defender = this.spawnBattlefieldSide(fb, 'defender');
-        if (!defender) return `【${bf.name}】守方军团没能建起来`;
+        // 🔴 [2026-09-24 主人报「剧本中的攻防战，好像是有援军的战斗」，令「按历史」]
+        //    剧本期攻城战：守方**就是被攻的那座城**，史料守军全在城里 —— 不另造守方军团。
+        //    改前另造一支 defenderTroops 的军团放在城上，攻城一开打就被「城市增援」当援军拉进城，
+        //    再加上城自己的开局驻军 10000，守方成了史料的两倍（推罗 9000 → 约 19000），面板还多出一行援军。
+        //    现在：开打前把城的驻军直接设为史料守军数，守方只有城这一份。乱斗期不走这里。
+        const scriptSiegeCity = isScriptPeriod() && fb.type === 'siege' && fb.defenderCityId
+            ? this.cityManager.getCity(fb.defenderCityId) : null;
+        let defender: Army | null = null;
+        if (scriptSiegeCity) {
+            const troops = fb.defenderTroops ?? 10000;
+            this.cityManager.updateCity(scriptSiegeCity.id, { troops });
+            gameLog('expedition',
+                `🏯 [战场]【${fb.title ?? bf.name}】守方即城池【${scriptSiegeCity.name}】：驻军按史料设为 ${troops}，不另造守方军团`);
+        } else {
+            defender = this.spawnBattlefieldSide(fb, 'defender');
+            if (!defender) return `【${bf.name}】守方军团没能建起来`;
+        }
 
         this.battlefieldBattleRunning = bfId;
         // 13 顶部玩家面板要显示「XXX战役」，名字从这里传出去
         setActiveBattleTitle(fb.title ?? `${bf.name}战役`);
         onSpawned?.({ attacker, defender });
         gameLog('expedition',
-            `⚔️ [战场]【${fb.title ?? bf.name}】开打：${attacker.name} vs ${defender.name}`
+            `⚔️ [战场]【${fb.title ?? bf.name}】开打：${attacker.name} vs ${defender?.name ?? scriptSiegeCity?.name ?? '?'}`
             + ` @(${fb.location?.lat}, ${fb.location?.lng}) [${fb.type ?? 'field_battle'}]`);
 
         // 🔴 [2026-09-16 主人定]「必须严格符合历史，该攻城就是攻城，该野战就野战。如果是攻城战，战斗要改据点归属。一切按历史，无论输赢。」
@@ -661,7 +694,8 @@ export class HistoricalEventManager {
                 this.withdrawBattlefieldLegions(bf.name, fb, attacker, defender);
             });
         } else {
-            // 野战推演
+            // 野战推演（野战守方必是军团：只有剧本攻城战才不造守方军团，见上）
+            if (!defender) return `【${bf.name}】守方军团没能建起来`;
             this.fieldBattleManager.handleFieldBattleEvent(
                 { ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name },
                 () => {
