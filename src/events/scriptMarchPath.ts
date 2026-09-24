@@ -23,12 +23,20 @@ function lenDeg(path: readonly P[]): number {
 
 /** 入路候选：最近几座城、多远以内 */
 const ENTRY_CANDIDATES = 3;
-const ENTRY_MAX_DEG = 1.0;   // 与 findPathOnRoad 吸城的 1.0° 同一个上限
+const ENTRY_MAX_DEG = 2.5;   // 2.5° 覆盖深山/旷野战场（如波斯门距波斯波利斯 151km/1.36°）
 
 export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> | null {
     let best = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
     let bestCost = best && best.length >= 2 ? lenDeg(best) : Infinity;
     for (const c of roadRegistry.getNearestCityPositions(from.lat, from.lng, ENTRY_CANDIDATES, ENTRY_MAX_DEG)) {
+        if (Math.hypot(c.lat - to.lat, c.lng - to.lng) < 0.05) {
+            const cost = c.dist;
+            if (cost < bestCost - 1e-9) {
+                bestCost = cost;
+                best = [{ lat: from.lat, lng: from.lng }, { lat: to.lat, lng: to.lng }];
+            }
+            continue;
+        }
         const leg = roadRegistry.findPathOnRoad(c, to) as Array<P & { sea?: boolean }> | null;
         if (!leg || leg.length < 2) continue;
         const cost = c.dist + lenDeg(leg);

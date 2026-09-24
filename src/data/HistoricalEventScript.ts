@@ -429,6 +429,38 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    英文维基百科 Battle of the Persian Gate：突破隘口后亚历山大进占波斯波利斯并取其府库，波斯波利斯归马其顿。
         cityUpdates: [{ cityId: 'city_bosibolisi', factionId: 'maqidun' }],
     },
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+    {
+        year: -329,
+        season: 2,
+        generalId: 'gen_alexander_great',
+        inviteText: '斯基泰人在锡尔河北岸陈兵嘲弄，此战必渡河破之，以定帝国东北之境。随我击碎大草原游牧骑兵！',
+        sources: { year: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框：公元前329年10月。' }, location: { level: 'fact', text: '英文维基百科信息框坐标 40°17′N 69°37′E，位于苦盏附近锡尔河畔。' }, nature: { level: 'fact', text: '野战：斯基泰人在锡尔河北岸旷野列阵阻击，亚历山大渡河后在开阔旷野与其展开运动决战。' }, generals: { level: 'fact', text: '英文维基百科信息框：马其顿方亚历山大大帝；斯基泰方萨特拉克斯，此战阵亡。' }, legions: { level: 'fact', text: '马其顿军，伙伴骑兵、方阵、弓箭手；斯基泰军，游牧骑射手、斧骑兵、辅助步兵。' }, troops: { level: 'popular', text: '英文维基百科信息框：马其顿渡河兵力约数万人，取主力精锐约18000；斯基泰兵力估约16000骑，符合守方不超过攻方两倍规则。' }, result: { level: 'fact', text: '英文维基百科信息框：马其顿决定性胜利，萨特拉克斯阵亡，斯基泰人遣使媾和。' }, territory: { level: 'fact', text: '战前亚历山大在忽毡奠基绝域亚历山大里亚，战后斯基泰降伏，忽毡与锡尔河一线正式纳入马其顿版图。' }, march: { level: 'fact', text: '自波斯波利斯向东，经赫卡托姆皮洛斯、木鹿、阿姆河至撒马尔罕与忽毡，沿中亚古道行军。' }, tactics: { level: 'fact', text: '亚历山大先用大型扭力投石机与弩炮隔河压制斯基泰骑兵，全军乘皮筏浮渡，随后以轻骑兵诱敌、重步骑两翼包抄粉碎骑射战术。' }, casualties: { level: 'popular', text: '英文维基百科：斯基泰阵亡约千余人，主帅萨特拉克斯战死；马其顿伤亡数百人。' }, sources: { level: 'fact', text: '阿里安《亚历山大远征记》卷四；查士丁《庞培·特罗古斯编年史》；英文与德文维基百科 Battle of Jaxartes。' }, reliability: { level: 'fact', text: '核心时间、地点、统帅、渡河技术与战役进程均有阿里安详实记录，可信度高。' } },
+        commanderUnit: 'hero_mounted_alexander',
+        foeCommanderUnit: 'hero_subotai',
+        type: 'field_battle',
+        title: '公元前329年 锡尔河战役',
+        description: '公元前329年秋，亚历山大平定中亚诸行省，挥师进抵锡尔河畔。北方斯基泰游牧骑兵隔河陈兵挑衅，嘲弄马其顿大军不敢涉足草原。亚历山大命军团以投石机与弩炮密集齐射压制对岸，全军乘皮筏强行渡河，与草原骑兵在旷野展开决战。',
+        fieldBattleData: {
+            title: '锡尔河战役',
+            description: '锡尔河畔，马其顿弩炮破空齐射，射穿斯基泰前锋重铠，游牧阵型大乱。亚历山大亲率近卫骑兵与轻骑兵突入敌阵，以步骑协同之法两翼包夹，破解斯基泰回旋奔射之术。斯基泰主帅萨特拉克斯力战阵亡，游牧大军溃散北遁，帝国东北疆界自此底定。',
+            location: { lat: 40.2833, lng: 69.6167 },
+            marchWaypoints: ['city_bosibolisi', 'city_yazide', 'city_yisifahan', 'city_leiyi', 'city_damugan', 'city_nishabuer', 'city_tusi', 'city_salahesi', 'city_merv', 'city_amucheng', 'city_bukhara', 'city_samaerhan', 'city_jizhake', 'city_huzhan'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 18000,
+            attackerSourceCityId: 'city_bosibolisi',
+            attackerLegionName: '马其顿军',
+            defenderFactionId: 'sijitai',
+            defenderGeneralId: 'sijitai_satraces',
+            defenderTroops: 16000,
+            defenderSourceCityId: 'city_huzhan',
+            defenderLegionName: '斯基泰军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_huzhan', factionId: 'maqidun' }],
+    },
 ];
 
 /**
