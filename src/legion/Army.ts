@@ -926,17 +926,30 @@ export class Army implements IBattleUnit {
         // 🔴 [2026-09-01 主人定「按路线判定·港口登船」/ 2026-09-24 修复沿海陆路误判变舰队]
         //    形态优先跟着**走的是哪条路**：路网给的 `sea` 标记（RoadRegistry.GraphEdge.isSea）一段之内恒定，
         //    海路两端必是港口城 —— 登船/上岸只发生在港口。
-        //      · 踏上海路段 → 当场登船，整段锁死海军形态；
-        //      · 踏上陆路段 → 当场上岸，整段锁死陆军形态（绝不准沿海近岸海水掩膜采样将陆军篡改为舰队）；
+        //      · 踏上海路段 → 登船，整段锁死海军形态；
+        //      · 踏上陆路段 → 上岸，整段锁死陆军形态（绝不准沿海近岸海水掩膜采样将陆军篡改为舰队）；
         //      · 只有未走在路网上（如脱路越野、自由移动）时，才回退到海陆掩膜采样。
+        // 🔴 [2026-09-24 主人报「军团在行军过程中，从海边过，经常会被瞬间切换成海军又切换回来」]
+        //    实测病灶：陆路那一路是**当刻翻转、零迟滞**（`legSea` 一变 `isOnSea` 立刻跟着变），
+        //    而沿海常常**陆路与海路并排**，最短路寻路会一段一段择优 → `sea` 标记几公里一交替
+        //    → 军团一会儿陆军一会儿舰队，玩家看到的就是「岸边来回切」。
+        //    → 比照主人 2026-08-04 定的老规矩（**短于 SEA_FLIP_CONFIRM_DEG 的渡海不变水军**：
+        //      「宁可迟钝，也不要频繁切换」），把**同一条距离闸**用在路线标记上：
+        //        · **海路标记**：只有「**前方连续海路**加起来够长（≥ SEA_FLIP_CONFIRM_DEG ≈22 公里）」才认它 → 当刻登船；
+        //          几公里的短海路标记**直接不认**，形态不动（岸边来回切就此消失）；
+        //        · **陆路标记**：照旧当刻上岸（绝不在陆路上变舰队）。
         const legSea = this.currentLegSea();
         this.prevLegSea = legSea;
         if (legSea === true || legSea === false) {
-            this.isOnSea = legSea;
-            this.seaFlipDist = 0;
-            this.seaFlipElapsed = 0;
-            this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
-            return;
+            const acceptedSea = legSea === true && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG;
+            if (legSea === false || acceptedSea) {
+                this.isOnSea = legSea;
+                this.seaFlipDist = 0;
+                this.seaFlipElapsed = 0;
+                this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
+                return;
+            }
+            // 海路标记太短（岸边那段）→ 不认，落到下面的掩膜判定（带迟滞）
         }
 
         const rawSea = LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng);
@@ -969,6 +982,32 @@ export class Army implements IBattleUnit {
         if (this.hasArrived) return null;
         const flag = this.destination?.sea;
         return typeof flag === 'boolean' ? flag : null;
+    }
+
+    /**
+     * 前方**连续海路**一共还有多长（度）：当前位置 → 第一个路点，再加后面一路 `sea` 标记的点之间的距离。
+     *
+     * 🔴 [2026-09-24 主人报「从海边过，经常被瞬间切换成海军又切换回来」]
+     *    沿海常常陆路与海路并排，最短路寻路一段一段择优 → `sea` 标记几公里一交替，
+     *    形态就跟着来回切。这里量出「这一串海路有多长」，短于 `SEA_FLIP_CONFIRM_DEG`（≈22 公里）的**不认**，
+     *    与主人 2026-08-04 定的老规矩一致：「短于这个距离的渡海不变水军，宁可迟钝，也不要频繁切换」。
+     */
+    private seaStretchAheadDeg(): number {
+        const queue = this.pathQueue as Array<{ lat: number; lng: number; sea?: boolean }>;
+        let deg = 0;
+        if (queue.length === 0) {
+            const dest = this.destination as { lat: number; lng: number; sea?: boolean } | null;
+            return dest?.sea === true
+                ? Math.hypot(dest.lat - this.position.lat, dest.lng - this.position.lng)
+                : 0;
+        }
+        deg += Math.hypot(queue[0].lat - this.position.lat, queue[0].lng - this.position.lng);
+        for (let i = 0; i < queue.length; i++) {
+            if (queue[i].sea !== true) break;
+            const next = queue[i + 1];
+            if (next) deg += Math.hypot(next.lat - queue[i].lat, next.lng - queue[i].lng);
+        }
+        return deg;
     }
 
     /** 海/陆形态确定之后的共同收尾：船型锁 → 速度目标 → 平滑 → 同步渲染层。 */
