@@ -27,7 +27,7 @@ import { roadRegistry } from './RoadRegistry';
 import { VECTOR_ROAD_DATA, VectorRoadFeature } from '../data/VectorRoadData';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
-import { BATTLEFIELDS } from '../data/Battlefields';
+import { BATTLEFIELDS, battlefieldMergedCityId } from '../data/Battlefields';
 
 /**
  * 🔴 [2026-09-24 主人定「要给战场连路…让战场和据点一致」]
@@ -288,6 +288,12 @@ export class VectorRoadEditor implements IEditor {
         this.setMonumentClickThrough(true);   // 奇观图片挡住据点 → 编辑期间让点击穿透
         this.initLayerPanes();  // [Phase B v2] 4 层独立 pane (z-index 380/390/400/410)
         this.renderAllRoads();
+        this.renderBattlefieldMarkers();
+        if (!this.bfHooked) {
+            this.bfHooked = true;
+            // 增删路后刷新战场标记的「已连 / 未连」状态
+            roadRegistry.onRoadsUpdated(() => { if (this.visible) this.renderBattlefieldMarkers(); });
+        }
         // 道路线宽随地图缩放（Leaflet weight 固定像素，需手动按 zoom 等比缩放）
         this.map.on('zoomend', this.onZoomEnd);
         // 路网一改（增删路、拖点落位）就丢弃吸附包围盒缓存 —— 光看 features.length 挡不住
@@ -433,6 +439,8 @@ export class VectorRoadEditor implements IEditor {
 
     public hide(): void {
         this.visible = false;
+        if (this.bfLayer) { this.map.removeLayer(this.bfLayer); this.bfLayer = null; }
+        if (this.flashMarker) { this.map.removeLayer(this.flashMarker); this.flashMarker = null; }
         this.map.off('zoomend', this.onZoomEnd);
         this.clearEditLayers();
         this.removeReferenceLayer();
@@ -727,22 +735,132 @@ export class VectorRoadEditor implements IEditor {
     private reportArea!: HTMLDivElement;
     /** [2026-05-30] 上次审查的问题路 id 队列, 供 [◀ 上问题/下问题 ▶] 导航 */
     private problemRoadIds: string[] = [];
+    /** 🔴 [2026-09-24] 问题队列里的「点」项（未连路的战场、孤儿城），排在道路问题之后一起轮 */
+    private problemPointIds: string[] = [];
     private problemRoadIdx: number = -1;
 
-    /** 在问题队列里上一/下一条 */
+    /** 在问题队列里上一/下一条（道路问题在前，据点/战场问题在后） */
     private selectAdjacentProblem(delta: number): void {
-        if (this.problemRoadIds.length === 0) {
+        const queue: Array<{ kind: 'road' | 'point'; id: string }> = [
+            ...this.problemRoadIds.map((id) => ({ kind: 'road' as const, id })),
+            ...this.problemPointIds.map((id) => ({ kind: 'point' as const, id })),
+        ];
+        if (queue.length === 0) {
             this.setStatus('⚠ 暂无问题队列, 先点 1️⃣ 全面审查');
             return;
         }
         let nextIdx = this.problemRoadIdx + delta;
-        if (nextIdx < 0) nextIdx = this.problemRoadIds.length - 1;
-        if (nextIdx >= this.problemRoadIds.length) nextIdx = 0;
+        if (nextIdx < 0) nextIdx = queue.length - 1;
+        if (nextIdx >= queue.length) nextIdx = 0;
         this.problemRoadIdx = nextIdx;
-        const roadId = this.problemRoadIds[nextIdx];
-        this.selectRoad(roadId);
-        if (this.roadSelect) this.roadSelect.value = roadId;
-        this.setStatus(`🔍 问题 [${nextIdx + 1}/${this.problemRoadIds.length}] ${roadId}`);
+        const item = queue[nextIdx];
+        if (item.kind === 'road') {
+            this.selectRoad(item.id);
+            if (this.roadSelect) this.roadSelect.value = item.id;
+            this.setStatus(`🔍 问题 [${nextIdx + 1}/${queue.length}] ${item.id}`);
+        } else {
+            const ep = findEndpoint(item.id);
+            if (ep) this.locatePoint(ep.lat, ep.lng, `问题 [${nextIdx + 1}/${queue.length}] ${endpointLabel(ep)}（${ep.kind === 'battlefield' ? '战场未连路' : '据点无路'}）`);
+        }
+    }
+
+    /**
+     * 🔴 [2026-09-24 主人「报错后要能定位」] 定位到一个点：放大到至少 ZOOM 9、居中，并在该处闪一圈黄光 3 秒，
+     * 据点与战场同一种定位。
+     */
+    private locatePoint(lat: number, lng: number, label: string): void {
+        this.releaseCameraFollow();
+        // 直接跳过去（不做动画）：动画靠浏览器动画帧推进，窗口不在前台时会卡在原地
+        this.map.setView([lat, lng], Math.max(this.map.getZoom(), 9), { animate: false });
+        this.flashAt(lat, lng);
+        this.setStatus(`📍 ${label} (${lat.toFixed(2)}, ${lng.toFixed(2)})`);
+    }
+
+    private flashMarker: L.CircleMarker | null = null;
+    private flashTimer = 0;
+    private flashAt(lat: number, lng: number): void {
+        if (this.flashMarker) { this.map.removeLayer(this.flashMarker); this.flashMarker = null; }
+        window.clearTimeout(this.flashTimer);
+        const m = L.circleMarker([lat, lng], {
+            radius: 28, color: '#ffeb3b', weight: 4, fill: false, opacity: 1, interactive: false,
+        }).addTo(this.map);
+        this.flashMarker = m;
+        let t = 0;
+        const tick = () => {
+            if (this.flashMarker !== m) return;
+            t += 1;
+            m.setStyle({ opacity: t % 2 ? 0.25 : 1 });
+            if (t < 12) this.flashTimer = window.setTimeout(tick, 250);
+            else { this.map.removeLayer(m); this.flashMarker = null; }
+        };
+        this.flashTimer = window.setTimeout(tick, 250);
+    }
+
+    // ===== 战场标记（编辑器专用；与据点一样可点选作起点/终点）=====
+    private bfLayer: L.LayerGroup | null = null;
+    private bfHooked = false;
+
+    /** 各战场连着几条路（陆路；海路不会连到战场） */
+    private battlefieldRoadCounts(): Map<string, number> {
+        const counts = new Map<string, number>();
+        for (const f of VECTOR_ROAD_DATA.features) {
+            const a = f?.properties?.startConnection, b = f?.properties?.endConnection;
+            for (const id of [a, b]) if (id && id.startsWith('bf_')) counts.set(id, (counts.get(id) ?? 0) + 1);
+        }
+        return counts;
+    }
+
+    /**
+     * 🔴 [2026-09-24 主人「让战场和据点一致，这样我就可以轻松给战场选择线路了」]
+     * 编辑器开着时把**全部**战场画成 ⚔ 标记（不看剧本年份，与游戏里的战场图层互不影响）：
+     * 已连路 = 紫色，未连路 = 红色虚线圈；点击与点据点一样，依次选作起点 / 终点。
+     */
+    private renderBattlefieldMarkers(): void {
+        if (this.bfLayer) { this.map.removeLayer(this.bfLayer); this.bfLayer = null; }
+        if (!this.visible) return;
+        const PANE = 'road-editor-bf-pane';
+        if (!this.map.getPane(PANE)) {
+            const pane = this.map.createPane(PANE);
+            pane.style.zIndex = '660';   // 高于据点(610)与奇观(650)，保证点得到
+        }
+        const counts = this.battlefieldRoadCounts();
+        const group = L.layerGroup();
+        for (const bf of BATTLEFIELDS) {
+            // 🔴 [2026-09-25] 离据点 ≤ BATTLEFIELD_MERGE_KM 的战场「归为一点」：绿色，点它 = 点那座城
+            const mergedCity = findEndpoint(battlefieldMergedCityId(bf.id));
+            if (mergedCity) {
+                const mm = L.circleMarker([bf.lat, bf.lng], {
+                    pane: PANE, radius: 9, color: '#2e7d32', weight: 3, fillColor: '#81c784', fillOpacity: 0.85,
+                });
+                mm.bindTooltip(`⚔${bf.name} ＝ ${mergedCity.name}（归为一点）`, { permanent: true, direction: 'right', offset: [8, 0] });
+                mm.on('click', (e: L.LeafletMouseEvent) => {
+                    L.DomEvent.stopPropagation(e);
+                    this.pickEndpoint(mergedCity);
+                });
+                group.addLayer(mm);
+                continue;
+            }
+            const n = counts.get(bf.id) ?? 0;
+            const linked = n > 0;
+            const m = L.circleMarker([bf.lat, bf.lng], {
+                pane: PANE,
+                radius: 9,
+                color: linked ? '#7c4dff' : '#ff1744',
+                weight: 3,
+                dashArray: linked ? undefined : '4 3',
+                fillColor: linked ? '#b388ff' : '#ff80ab',
+                fillOpacity: 0.85,
+            });
+            m.bindTooltip(`⚔${bf.name}${linked ? ` · ${n} 条路` : ' · 未连路'}`, { permanent: true, direction: 'right', offset: [8, 0] });
+            m.on('click', (e: L.LeafletMouseEvent) => {
+                L.DomEvent.stopPropagation(e);
+                const ep = findEndpoint(bf.id);
+                if (ep) this.pickEndpoint(ep);
+            });
+            group.addLayer(m);
+        }
+        group.addTo(this.map);
+        this.bfLayer = group;
     }
 
     /** [2026-05-30] 面板最小化状态 (true = 只显示状态栏) */
@@ -2909,11 +3027,21 @@ export class VectorRoadEditor implements IEditor {
     /** 定位到道路：仅平移视野中心，不改动当前缩放 */
     private panMapToRoad(coords: [number, number][]): void {
         if (!this.map || coords.length === 0) return;
-        let sumLng = 0, sumLat = 0;
-        for (const [lng, lat] of coords) { sumLng += lng; sumLat += lat; }
-        const cLng = sumLng / coords.length;
-        const cLat = sumLat / coords.length;
-        this.map.panTo([cLat, cLng], { animate: true, duration: 0.5 });
+        // 🔴 [2026-09-24 主人「报错后要能定位」] 整条路框进视野（原来只平移到路的重心、不缩放：
+        //    几百公里的路只露一截，几公里的战场支线在大比例尺下根本看不见）。最大放到 ZOOM 10。
+        const bounds = L.latLngBounds(coords.map(([lng, lat]) => [lat, lng] as [number, number]));
+        this.releaseCameraFollow();
+        this.map.fitBounds(bounds, { padding: [120, 120], maxZoom: 10, animate: false });
+    }
+
+    /**
+     * 定位前先放开镜头跟随：游戏主循环每帧都把镜头拉回被跟随的军团/玩家，
+     * 不放开的话定位过去马上又被拽回来（编辑器原来的「选中道路 → 平移」也一直有这个问题）。
+     */
+    private releaseCameraFollow(): void {
+        const follow = (window as { game?: { cameraFollowUI?: { getFollowedArmyId?: () => string | null; isFollowingPlayer?: () => boolean; cancelFollow?: () => void } } })
+            .game?.cameraFollowUI;
+        if (follow && (follow.getFollowedArmyId?.() || follow.isFollowingPlayer?.())) follow.cancelFollow?.();
     }
 
     private showControlPoints(roadId: string): void {
@@ -3740,6 +3868,11 @@ export class VectorRoadEditor implements IEditor {
         const totalRoads = features.length;
         const orphanCities = this.getOrphanCities();
         const singleRoadCities = this.getSingleRoadCities();
+        // 🔴 [2026-09-24] 战场与据点一致：没有任何道路连到的战场单列一栏（信息项，可定位）
+        const bfCounts = this.battlefieldRoadCounts();
+        const unlinkedBattlefields = BATTLEFIELDS
+            .filter((b) => !bfCounts.has(b.id) && !battlefieldMergedCityId(b.id))   // 归为一点的战场不算未连路
+            .map((b) => ({ id: b.id, name: b.name, lat: b.lat, lng: b.lng, scriptYear: b.scriptYear }));
 
         const totalIssues = issues.invalidStart.length + issues.invalidEnd.length +
             issues.sameStartEnd.length + issues.tooFewPoints.length +
@@ -3748,7 +3881,7 @@ export class VectorRoadEditor implements IEditor {
             issues.endpointDrift.length;
 
         // ───── 控制台分组打印 ─────
-        console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
+        console.group(`🔍 [全面审查] ${totalRoads} 条路 · 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length} · 未连路战场 ${unlinkedBattlefields.length}`);
         if (orphanCities.length) {
             console.group(`📋 孤儿城 (无路连接) [${orphanCities.length}]`);
             orphanCities.forEach(c => console.log(`  ${c.name}  [${c.id}]  (${c.lat.toFixed(2)}, ${c.lng.toFixed(2)})`));
@@ -3810,14 +3943,15 @@ export class VectorRoadEditor implements IEditor {
         console.groupEnd();
 
         // ───── 状态栏 + 富文本模态 ─────
-        if (totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0) {
+        const bfTag = ` · 未连路战场 ${unlinkedBattlefields.length}`;
+        if (totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0 && unlinkedBattlefields.length === 0) {
             this.setStatus(`✅ 审查通过：${totalRoads} 条道路全部正常`);
         } else if (totalIssues === 0) {
-            this.setStatus(`✅ 道路无问题 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
+            this.setStatus(`✅ 道路无问题 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}${bfTag}`);
         } else {
-            this.setStatus(`⚠ 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}`);
+            this.setStatus(`⚠ 问题 ${totalIssues} 项 · 孤儿城 ${orphanCities.length} · 单路据点 ${singleRoadCities.length}${bfTag}`);
         }
-        this.showAuditReportModal(issues, totalRoads, totalIssues, orphanCities, singleRoadCities);
+        this.showAuditReportModal(issues, totalRoads, totalIssues, orphanCities, singleRoadCities, unlinkedBattlefields);
     }
 
     /**
@@ -3830,7 +3964,7 @@ export class VectorRoadEditor implements IEditor {
         totalIssues: number,
         orphanCities: Array<{ id: string; name: string; lat: number; lng: number }>,
         singleRoadCities: Array<{ id: string; name: string; lat: number; lng: number; roadName: string; peerName: string; kind: '陆' | '海' }>,
-
+        unlinkedBattlefields: Array<{ id: string; name: string; lat: number; lng: number; scriptYear: number }> = [],
     ): void {
         // 已有模态先移除
         document.querySelectorAll('#audit-report-modal').forEach(el => el.remove());
@@ -3855,7 +3989,10 @@ export class VectorRoadEditor implements IEditor {
             overflow: hidden;
         `;
 
-        const infoOnly = totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0;
+        const infoOnly = totalIssues === 0 && orphanCities.length === 0 && singleRoadCities.length === 0 && unlinkedBattlefields.length === 0;
+        this.problemRoadIds = [];
+        this.problemPointIds = [];
+        this.problemRoadIdx = -1;
         const okBadge = infoOnly ? '✅' : '⚠';
         const titleColor = infoOnly ? '#4caf50' : '#ff9800';
         const header = document.createElement('div');
@@ -3871,7 +4008,8 @@ export class VectorRoadEditor implements IEditor {
                     📊 道路总数 <b style="color:#fff">${totalRoads}</b> ·
                     问题总数 <b style="color:${totalIssues > 0 ? '#ff9800' : '#4caf50'}">${totalIssues}</b> ·
                     孤儿城 <b style="color:${orphanCities.length > 0 ? '#ff9800' : '#4caf50'}">${orphanCities.length}</b> ·
-                    单路据点 <b style="color:${singleRoadCities.length > 0 ? '#ff9800' : '#4caf50'}">${singleRoadCities.length}</b>
+                    单路据点 <b style="color:${singleRoadCities.length > 0 ? '#ff9800' : '#4caf50'}">${singleRoadCities.length}</b> ·
+                    未连路战场 <b style="color:${unlinkedBattlefields.length > 0 ? '#e040fb' : '#4caf50'}">${unlinkedBattlefields.length}</b>
                 </div>
             </div>
             <button id="audit-close-btn" style="
@@ -4036,6 +4174,13 @@ export class VectorRoadEditor implements IEditor {
                 html += `<div style="color:#888;font-size:12px;margin-bottom:12px;">… 另有 ${orphanCities.length - 80} 座，见 F12 控制台完整列表</div>`;
             }
 
+            // 🔴 [2026-09-24] 未连路的战场：点 👁 定位 → 点地图上的 ⚔ 标记与据点一样选端点，画一条支线接到史料来路
+            const bfItems = unlinkedBattlefields.slice().sort((a, b) => a.scriptYear - b.scriptYear).map((b) => ({
+                html: `<b>⚔${b.name}</b> · ${b.scriptYear < 0 ? `前${-b.scriptYear}年` : `${b.scriptYear}年`} · (${b.lat.toFixed(2)}, ${b.lng.toFixed(2)}) <span style="color:#666;font-size:11px;">[${b.id}]</span>`,
+                cityId: b.id,
+            }));
+            html += citySection('⚔ 未连路的战场 (画一条支线接到史料里大军来的那条路)', '#e040fb', unlinkedBattlefields.length, bfItems);
+
             const singleRoadItems = singleRoadCities.slice(0, 80).map(c => ({
                 html: `<b>${c.name}</b> · 仅连 <span style="color:${c.kind === '海' ? '#4fc3f7' : '#ffb74d'}">${c.kind === '海' ? '🚢' : '🛣️'} ${c.roadName}</span> ↔ <b>${c.peerName}</b> <span style="color:#666;font-size:11px;">[${c.id}]</span>`,
                 cityId: c.id,
@@ -4060,8 +4205,9 @@ export class VectorRoadEditor implements IEditor {
 
             // [2026-05-30 删除] 名称过期检测停用 (用户公理: 不影响功能)
 
-            // 把问题路 id 列表存到编辑器, 供 [◀ 上问题/下问题 ▶] 用
+            // 把问题路 id 列表存到编辑器, 供 [◀ 上问题/下问题 ▶] 用；点项（未连路战场、孤儿城）排在后面
             this.problemRoadIds = allProblemIds;
+            this.problemPointIds = [...unlinkedBattlefields.map((b) => b.id), ...orphanCities.map((c) => c.id)];
 
             if (totalIssues > 0) {
                 html += `
@@ -4075,12 +4221,12 @@ export class VectorRoadEditor implements IEditor {
                         </div>
                     </div>
                 `;
-            } else if (orphanCities.length > 0 || singleRoadCities.length > 0) {
+            } else if (orphanCities.length > 0 || singleRoadCities.length > 0 || unlinkedBattlefields.length > 0) {
                 html += `
                     <div style="margin-top:24px;padding:14px 18px;background:rgba(255,152,0,0.1);border-left:4px solid #ff9800;border-radius:6px;">
                         <div style="font-weight:bold;color:#ff9800;margin-bottom:6px;">路网补全提示</div>
                         <div style="color:#ccc;line-height:1.8;">
-                            道路数据无结构性错误。上方 <b>孤儿城</b> / <b>单路据点</b> 为连通性提示。<br>
+                            道路数据无结构性错误。上方 <b>孤儿城</b> / <b>单路据点</b> / <b>未连路战场</b> 为连通性提示。<br>
                             建议: 点 👁 定位 → 手动画路，或点 <b>🔗 自动连</b> 批量补网。
                         </div>
                     </div>
@@ -4128,11 +4274,10 @@ export class VectorRoadEditor implements IEditor {
 
         const goToCity = (cityId: string) => {
             if (!cityId) return;
-            const city = CITIES.find(c => c.id === cityId);
-            if (!city) return;
+            const ep = findEndpoint(cityId);   // 据点或战场，同一种定位
+            if (!ep) return;
             close();
-            this.map.panTo([city.lat, city.lng], { animate: true, duration: 0.5 });
-            this.setStatus(`📍 孤儿城: ${city.name} (${city.lat.toFixed(2)}, ${city.lng.toFixed(2)})`);
+            this.locatePoint(ep.lat, ep.lng, endpointLabel(ep));
         };
         overlay.querySelectorAll('.audit-city-locate').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -4355,11 +4500,10 @@ export class VectorRoadEditor implements IEditor {
         overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 
         const goToCity = (cityId: string) => {
-            const city = CITIES.find(c => c.id === cityId);
-            if (!city) return;
+            const ep = findEndpoint(cityId);
+            if (!ep) return;
             close();
-            this.map.panTo([city.lat, city.lng], { animate: true, duration: 0.5 });
-            this.setStatus(`📍 ${city.name} (${city.lat.toFixed(2)}, ${city.lng.toFixed(2)})`);
+            this.locatePoint(ep.lat, ep.lng, endpointLabel(ep));
         };
         overlay.querySelectorAll('.city-list-locate, .city-list-row').forEach(el => {
             el.addEventListener('click', (e) => {
