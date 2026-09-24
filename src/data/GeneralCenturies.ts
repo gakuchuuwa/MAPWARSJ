@@ -1058,6 +1058,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'sijitai_satraces':                  -4,    // 萨特拉克斯 · sijitai · 锡尔河（前329年锡尔河战役斯基泰统帅）
     'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（前327年马萨加战役守帅）
     'aornos_chief':                      -4,    // 奥诺斯首领 · aornos · 奥诺斯岩（前326年奥诺斯岩围城战守帅）
+    'julushi_shouling':                  -4,    // 居鲁士首领 · julushi · 居鲁士城（前329年居鲁士城围攻守帅）
     'malli_leader':                      -4,    // 马利首领 · malli · 马里斯（前325年马里斯战役守帅）
     'kesaiya_shouling':                  -4,    // 科塞亚首领 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
     'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（前334年哈利卡纳苏斯围城战守帅）

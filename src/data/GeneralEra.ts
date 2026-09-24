@@ -44,6 +44,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'aqimeinide_aertabazanuosi': 'antiquity',
     'aswaka_cleophis': 'antiquity',
     'aornos_chief': 'antiquity',
+    'julushi_shouling': 'antiquity',
     'asaibaijiang_xuliewu': 'castle',
     'ashide_ashidejieli': 'feudal',
     'ashikaga_zulizunshi': 'castle',

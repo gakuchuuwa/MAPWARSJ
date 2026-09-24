@@ -198,6 +198,9 @@ export interface FieldBattleData {
     defenderLegionName?: string;  // [NEW] Create new defender legion
     attackerTroops?: number;      // [NEW] Troops for new attacker legion
     defenderTroops?: number;      // [NEW] Troops for new defender legion
+    /** 🔴 [2026-09-25] 运行时传入的双方阵位（剧本野战：主角沿路开到的位置 + 隔战场对称的对手位置）；不写 = 按 location ∓ BATTLE_OFFSET */
+    attackerStand?: { lat: number; lng: number };
+    defenderStand?: { lat: number; lng: number };
     speedMultiplier?: number;     // [NEW] Custom movement speed for this event
 
     // [NEW] 多军团参战支持

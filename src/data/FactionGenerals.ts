@@ -1272,6 +1272,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
     //    立绘按铁律留空走保底图，等主人亲自放图
     aornos: { generalId: 'aornos_chief', generalName: '奥诺斯首领', portrait: '' },
+    // 前329年居鲁士城围攻守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、奥诺斯首领同一记法）；
+    //    立绘按铁律留空走保底图，等主人亲自放图
+    julushi: { generalId: 'julushi_shouling', generalName: '居鲁士首领', portrait: '' },
     // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_leader', generalName: '马利首领', portrait: '' },
     // 前324年科塞亚战役守帅（扎格罗斯山脉科塞亚部落酋长联军首领），立绘按铁律留空走回落、待主人亲自放图分配

@@ -22,6 +22,10 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     tujishi: { name: '怛罗斯突骑', tier: 3 },
   sogdian: { name: '瓦拉赫沙卫', tier: 4 },
   suogediyana: { name: '岩堡守兵', tier: 4 },   // 索格狄亚那岩岩堡守军；史书未载该岩堡部队番号 → 按史地合理推定
+  // 🔴 [2026-09-25 主人令「把缺少的战役加上」] 前329 居鲁士城围攻守方此前没有番号。史料：英文维基百科
+  //    Siege of Cyropolis（居鲁士城是当地七座城寨中最大最坚者，守军约一万五千、号称本地最好的战士）。
+  //    史书未载其番号 → 按史地合理推定。定级 T3「风土之兵」。
+  julushi: { name: '坚城守兵', tier: 3 },
   kangju: { name: '康卡控弦', tier: 4 },              // 缺乏知名度支撑，降T3
     anushidgin: { name: '希瓦铁骑', tier: 4 },
     dayuzi: { name: '讹答剌卫队', tier: 4 },

@@ -17,7 +17,7 @@
  *  · 特殊建筑跟着据点显示 → 一并列出这些城挂的特殊建筑，核对那一年是否已建成。
  */
 import { roadRegistry } from '../roads/RoadRegistry';
-import { findPathFromPoint } from '../events/scriptMarchPath';
+import { findPathFromPoint, battlefieldRoadNode, findPathToBattlefield, cutPathBeforeEnd, BATTLE_STAND_KM } from '../events/scriptMarchPath';
 import { cityAbsentReason } from '../events/cityInYear';
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
@@ -224,7 +224,20 @@ export function checkRoute(d: RouteDraft): RouteReport {
      * （`PlayerQuestSystem.startMarchToBattlefield`）—— 先沿路网到最近那座城，最后一段直奔目的地。
      * 战场常常不在路网上（波斯门深在扎格罗斯山里），不兜底就会把「离路直行 151 公里」误报成「无路可达」。
      */
+    // 🔴 [2026-09-25] 野战战场连了路（或归为一点）→ 最后一段与游戏一样：沿路开向战场，在离战场 BATTLE_STAND_KM 处列阵
+    //    （PlayerQuestSystem.startMarchAlongBattlefieldRoad）。野战战场坐标与剧本 location 一字不差，按坐标认出是哪个战场。
+    const roadBf = d.type === 'field_battle' && !d.bfTargetBattlefieldId
+        ? BATTLEFIELDS.find((b) => Math.abs(b.lat - d.lat) < 1e-4 && Math.abs(b.lng - d.lng) < 1e-4) : undefined;
+    const roadBfConnected = !!roadBf && !!battlefieldRoadNode(roadBf.id);
     const buildLeg = (from: P, to: P, allowFallback: boolean) => {
+        if (allowFallback && roadBfConnected && roadBf) {
+            const toBf = findPathToBattlefield(from, roadBf.id);
+            if (toBf) {
+                const cut = cutPathBeforeEnd(toBf, BATTLE_STAND_KM);
+                const path = cut.path.length >= 2 ? cut.path : [from, cut.stand];
+                return { path: path as Array<P & { sea?: boolean }>, offroadKm: 0 };
+            }
+        }
         // 与游戏同一个入路算法（scriptMarchPath.findPathFromPoint）：从战场开拔不吸到身后那座城
         let path = findPathFromPoint(from, to) as Array<P & { sea?: boolean }> | null;
         let offroadKm = 0;

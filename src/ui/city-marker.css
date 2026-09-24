@@ -119,3 +119,17 @@
         drop-shadow(-2px 2px 0 rgba(46, 74, 95, 0.45))
         drop-shadow(0 6px 16px rgba(0, 0, 0, 0.5));
 }
+
+/* 🔴 [2026-09-25 主人定] 剧本模式中，所有据点、特殊建筑等出现时改为渐显（不要一下出现） */
+@keyframes mapFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.map-fade-in {
+    animation: mapFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}

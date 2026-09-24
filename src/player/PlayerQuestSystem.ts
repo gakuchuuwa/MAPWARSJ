@@ -22,7 +22,7 @@ import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
-import { findPathFromPoint, prefetchEntrySea } from '../events/scriptMarchPath';
+import { findPathFromPoint, prefetchEntrySea, battlefieldRoadNode, findPathToBattlefield, cutPathBeforeEnd, BATTLE_STAND_KM } from '../events/scriptMarchPath';
 import { gameLog } from '../utils/GameLogger';
 import type { PlayerHero } from './PlayerHero';
 import { PLAYER_QUEST_TARGET_MAX_HOPS } from './PlayerConfig';
@@ -746,8 +746,12 @@ export class PlayerQuestSystem {
         const defCity = ev.defenderCityId ? this.deps.cityManager.getCity(ev.defenderCityId) : null;
         // 🔴 [2026-09-24 主人令「按历史」] 剧本期：行军终点 = 本方对阵位（开战复用这支军团时就摆在这里），
         //    不再先走到战场正中心、开战又被拽回阵位（实测瞬移 15 公里）。乱斗照旧。
-        const stand = scriptMode ? this.deps.battlefields?.standOfGeneral?.(ev.battlefieldId, g.generalId) ?? null : null;
-        const marchTarget = stand
+        // 🔴 [2026-09-25 主人「不然我连线干什么，你能不能一步到位」] 剧本野战、战场连了路（或归为一点）：
+        //    沿主人画的路开进战场，在离战场 BATTLE_STAND_KM 处停下列阵（见 startMarchToBattlefield）。
+        const bfNode = scriptMode && !defCity ? battlefieldRoadNode(ev.battlefieldId) : null;
+        this.marchBattlefieldId = bfNode ? ev.battlefieldId : null;
+        const stand = scriptMode && !bfNode ? this.deps.battlefields?.standOfGeneral?.(ev.battlefieldId, g.generalId) ?? null : null;
+        const marchTarget = (bfNode ? { lat: bfNode.lat, lng: bfNode.lng } : null) ?? stand
             ?? (defCity
                 ? { lat: defCity.latitude, lng: defCity.longitude }
                 : { lat: ev.lat, lng: ev.lng });
@@ -827,7 +831,11 @@ export class PlayerQuestSystem {
     }
 
     /** 军团自己沿路网开赴战场坐标（玩家随军，位置跟着走） */
+    /** 剧本野战沿路开进的战场（连了路的战场 id；null = 按旧的对阵位兜底） */
+    private marchBattlefieldId: string | null = null;
+
     private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }, resume = false): void {
+        if (this.marchBattlefieldId && this.startMarchAlongBattlefieldRoad(host, resume)) return;
         // 🔴 [2026-09-19 主人定「把战场和据点分开」] **本来就在战场上**（战场自带攻守、军团就生成在战场）
         //    → 没有"赶路"这一段，立刻接战。否则 `moveAlongPath` 收到零长路径不会触发抵达回调，
         //    玩家会永远站在战场上等一个不会来的对话框。
@@ -875,6 +883,51 @@ export class PlayerQuestSystem {
         host.setOnArriveCallback(() => this.onHostReachBattlefield());
         host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
         this.armyMarchPoint = { lat: target.lat, lng: target.lng };
+    }
+
+    /**
+     * 🔴 [2026-09-25] 沿主人画的战场支线开进战场：先走完行军路标，最后一段沿路网走向战场节点，
+     * 在离战场 BATTLE_STAND_KM（沿路量）处停下 —— 那一点就是本方阵位（armyMarchPoint），
+     * 开战时原地不动、对手隔着战场与之对称（HistoricalEventManager.startBattlefieldBattle）。
+     * @returns false = 这条路铺不出来，交回原来的对阵位兜底
+     */
+    private startMarchAlongBattlefieldRoad(host: Army, resume: boolean): boolean {
+        const bfId = this.marchBattlefieldId;
+        const node = bfId ? battlefieldRoadNode(bfId) : null;
+        if (!bfId || !node || !roadRegistry.isInitialized()) return false;
+        const from = host.getPosition();
+        if (resume) this.dropPassedWaypoints(from, node);
+        let legStart: { lat: number; lng: number } = from;
+        const viaPath: { lat: number; lng: number }[] = [];
+        for (const wpId of this.marchWaypointsLeft) {
+            const wp = this.deps.cityManager.getCity(wpId);
+            if (!wp) continue;
+            const wpPos = { lat: wp.latitude, lng: wp.longitude };
+            const leg = findPathFromPoint(legStart, wpPos);
+            if (!leg || leg.length < 2) {
+                gameLog('expedition', `[玩家] 行军路标【${wp.name}】无路可达，跳过`);
+                continue;
+            }
+            viaPath.push(...(viaPath.length ? leg.slice(1) : leg));
+            legStart = wpPos;
+        }
+        const toBf = findPathToBattlefield(legStart, bfId);
+        if (!toBf) return false;
+        const cut = cutPathBeforeEnd(toBf, BATTLE_STAND_KM);
+        const stand = cut.stand;
+        const lastLeg = cut.path.length >= 2 ? cut.path : [legStart, stand];
+        const path = viaPath.length ? [...viaPath, ...lastLeg.slice(1)] : lastLeg;
+        this.armyMarchPoint = { lat: stand.lat, lng: stand.lng };
+        // 已经站在阵位上（出发点就在战场跟前）→ 直接开打
+        if (getEuclideanDistance(from, stand) * 111 <= 2 && !viaPath.length) {
+            this.onHostReachBattlefield();
+            return true;
+        }
+        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
+        host.setTargetCity(null);
+        host.setOnArriveCallback(() => this.onHostReachBattlefield());
+        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
+        return true;
     }
 
     /** 军团抵达战场 → 弹选边（与点击战场同一条路，不另写开战逻辑） */

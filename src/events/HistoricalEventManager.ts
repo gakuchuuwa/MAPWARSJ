@@ -481,13 +481,37 @@ export class HistoricalEventManager {
     }
 
     /**
+     * 🔴 [2026-09-25 主人「不然我连线干什么，你能不能一步到位」] 剧本野战的双方阵位：
+     *   主角军团沿主人画的路开到哪（离战场 BATTLE_STAND_KM 处，见 PlayerQuestSystem.startMarchAlongBattlefieldRoad），
+     *   就**原地**列阵开打；对手隔着战场与之对称。两军之间就是战场。
+     *   主角不在战场附近（例如不是一路行军过来的）→ null，照旧东西对阵。
+     */
+    private resolveScriptFieldStands(
+        fb: FieldBattleData & { type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
+    ): { attacker: { lat: number; lng: number }; defender: { lat: number; lng: number } } | null {
+        if (!isScriptPeriod() || fb.type === 'siege' || !fb.location) return null;
+        const loc = fb.location;
+        const atk = this.reusableScriptArmy(fb, 'attacker');
+        const def = atk ? null : this.reusableScriptArmy(fb, 'defender');
+        const hero = atk ?? def;
+        if (!hero) return null;
+        const p = hero.getPosition();
+        const km = getEuclideanDistance(p, loc) * 111;
+        if (km < 3 || km > 40) return null;   // 太近分不出方向 / 太远不是一路开过来的 → 东西对阵
+        const own = { lat: p.lat, lng: p.lng };
+        const foe = { lat: loc.lat * 2 - p.lat, lng: loc.lng * 2 - p.lng };
+        return atk ? { attacker: own, defender: foe } : { attacker: foe, defender: own };
+    }
+
+    /**
      * 为战役备一方军团，就地摆在对阵位上。
      * 攻城战：攻方在城外陆侧（稍偏东），守方在城内驻守；
      * 野战：攻守双方东西对阵。
      */
     private spawnBattlefieldSide(
         fb: FieldBattleData & { defenderCityId?: string; type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
-        side: 'attacker' | 'defender'
+        side: 'attacker' | 'defender',
+        standOverride?: { lat: number; lng: number },
     ): Army | null {
         const loc = fb.location;
         if (!loc) return null;
@@ -497,7 +521,7 @@ export class HistoricalEventManager {
         const troops = (isAtk ? fb.attackerTroops : fb.defenderTroops) ?? 10000;
         const sourceCityId = (isAtk ? fb.attackerSourceCityId : fb.defenderSourceCityId) ?? undefined;
 
-        const stand = HistoricalEventManager.sideStand(fb, side, loc);
+        const stand = standOverride ?? HistoricalEventManager.sideStand(fb, side, loc);
 
         // 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？
         //    历史上不是这样的吗？」] 剧本期：主角那一方**不新造军团，直接用现成的那一支** ——
@@ -626,7 +650,8 @@ export class HistoricalEventManager {
         const bf = findEventSite(bfId)!;
         const fb = this.findBattleForBattlefield(bfId)!;
 
-        const attacker = this.spawnBattlefieldSide(fb, 'attacker');
+        const stands = this.resolveScriptFieldStands(fb);
+        const attacker = this.spawnBattlefieldSide(fb, 'attacker', stands?.attacker);
         if (!attacker) return `【${bf.name}】攻方军团没能建起来`;
         // 🔴 [2026-09-24 主人报「剧本中的攻防战，好像是有援军的战斗」，令「按历史」]
         //    剧本期攻城战：守方**就是被攻的那座城**，史料守军全在城里 —— 不另造守方军团。
@@ -642,7 +667,7 @@ export class HistoricalEventManager {
             gameLog('expedition',
                 `🏯 [战场]【${fb.title ?? bf.name}】守方即城池【${scriptSiegeCity.name}】：驻军按史料设为 ${troops}，不另造守方军团`);
         } else {
-            defender = this.spawnBattlefieldSide(fb, 'defender');
+            defender = this.spawnBattlefieldSide(fb, 'defender', stands?.defender);
             if (!defender) return `【${bf.name}】守方军团没能建起来`;
         }
 
@@ -697,7 +722,10 @@ export class HistoricalEventManager {
             // 野战推演（野战守方必是军团：只有剧本攻城战才不造守方军团，见上）
             if (!defender) return `【${bf.name}】守方军团没能建起来`;
             this.fieldBattleManager.handleFieldBattleEvent(
-                { ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name },
+                {
+                    ...fb, attackerLegionName: attacker.name, defenderLegionName: defender.name,
+                    ...(stands ? { attackerStand: stands.attacker, defenderStand: stands.defender } : {}),
+                },
                 () => {
                     this.battlefieldBattleRunning = null;
                     setActiveBattleTitle(null);

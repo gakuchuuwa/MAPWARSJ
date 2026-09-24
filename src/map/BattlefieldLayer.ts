@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
+import { isScriptPeriod } from '../events/scriptPeriod';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
 import type { TerritorySystem } from '../systems/TerritorySystem';
 
@@ -38,6 +39,8 @@ export class BattlefieldLayer {
     private map: L.Map;
     private layerGroup: L.LayerGroup;
     private markers: Map<string, L.Marker> = new Map();
+    private markerFoughtState: Map<string, boolean> = new Map();
+    private initialized = false;
     /**
      * 🔴 [2026-09-19 主人定] 战场攻城战要套**据点样式**（大中小城寨），
      * 而据点那套组装住在 `TerritorySystem` 里 → 由 `GameMap.attachTerritorySystem()` 注入。
@@ -67,7 +70,12 @@ export class BattlefieldLayer {
         // 🔴 [2026-09-12 主人令] 开局随机种子偏移 → **每局的战场形态都不一样**（件种/镜像/挪位全重掷）。
         //    只在构造时设一次：同一局内稳定，战场不会中途变样。
         randomizeBattlefieldSeed();
-        this.renderBattlefields();
+        queueMicrotask(() => {
+            if (!this.initialized) {
+                this.initialized = true;
+                this.renderBattlefields();
+            }
+        });
 
         // 【打完了才叫战场】战斗结束时重绘：把刚打完的战场的形态亮出来
         onBattlefieldFought(() => this.renderBattlefields());
@@ -111,14 +119,13 @@ export class BattlefieldLayer {
 
     public setVisibilityFilter(filter: ((bfId: string) => boolean) | null): void {
         this.visibilityFilter = filter;
+        this.initialized = true;
         this.renderBattlefields();
     }
 
     /** 重绘全部战场（打完标记变化、手动刷新时调） */
     public renderBattlefields(): void {
-        this.layerGroup.clearLayers();
-        this.markers.clear();
-
+        const visibleBfs = new Map<string, BattlefieldData>();
         for (const bf of BATTLEFIELDS) {
             // 🔴 [2026-09-19 主人定] **取消「未到年份不上图」**。
             //    主人原话：「现在游戏是乱斗，所有先不要时间这个限定条件了，但是再写事件的时候，
@@ -127,40 +134,71 @@ export class BattlefieldLayer {
             //    玩家在 -334 年就可能跟着某位武将奔赴一场史实战役，战场却因为年份没到压根不在图上。
             //    `bf.scriptYear` 字段**保留**（数据里照旧填），只是不再参与显示判定。
             if (this.visibilityFilter && !this.visibilityFilter(bf.id)) continue;
-            const fought = isBattlefieldFought(bf.id);
-            const html = this.buildBattlefieldHtml(bf, fought);
-
-            // 形态盒子的画布尺寸（参考画布 340×240 × k），标牌挂在容器底部。
-            // 🔴 [2026-09-19] 套了**据点样式**（攻城战战场）的，尺寸按据点来算 ——
-            //    据点那套组装（木栅/石墙/中心城堡）比战场形态盒子大得多，
-            //    照旧用 340×240 的小框会把砦裁掉一半。
-            const L0 = bfLayout();
-            const k = BASE_ART_W / L0.artW;
-            const useCastle = fought && !!bf.siegeCastleType && !!this.territorySystem;
-            const canvasW = useCastle ? SIEGE_CASTLE_BOX_W : BF_REF_W * k;
-            const canvasH = useCastle ? SIEGE_CASTLE_BOX_H : BF_REF_H * k;
-            const labelH = 18;
-
-            const icon = L.divIcon({
-                className: 'battlefield-icon',
-                html,
-                iconSize: [canvasW, canvasH + labelH],
-                iconAnchor: [canvasW / 2, (canvasH + labelH) / 2],
-            });
-
-            // 🔴 [2026-09-14 主人定]「玩家点击战场后，触发真实的战役战斗。不用接任务了，这样简单。」
-            //    战场仍然不是据点、没有详情面板，点击只有一个用途：打这一场真实战役。
-            const marker = L.marker([bf.lat, bf.lng], {
-                icon,
-                interactive: true,
-                pane: 'battlefieldPane',
-            }).addTo(this.layerGroup);
-            marker.on('click', () => {
-                window.dispatchEvent(new CustomEvent('battlefield-click', { detail: { id: bf.id, name: bf.name } }));
-            });
-
-            this.markers.set(bf.id, marker);
+            visibleBfs.set(bf.id, bf);
         }
+
+        // 1. 移除不再显示的战场
+        for (const [id, marker] of this.markers) {
+            if (!visibleBfs.has(id)) {
+                this.layerGroup.removeLayer(marker);
+                this.markers.delete(id);
+                this.markerFoughtState.delete(id);
+            }
+        }
+
+        // 2. 更新或添加战场（新出现的在剧本模式下渐显）
+        for (const [id, bf] of visibleBfs) {
+            const fought = isBattlefieldFought(bf.id);
+            const prevFought = this.markerFoughtState.get(id);
+
+            if (this.markers.has(id)) {
+                if (prevFought !== fought) {
+                    const oldMarker = this.markers.get(id)!;
+                    this.layerGroup.removeLayer(oldMarker);
+                    this.markers.delete(id);
+                    const marker = this.createBattlefieldMarker(bf, fought, false);
+                    this.markers.set(id, marker);
+                    this.markerFoughtState.set(id, fought);
+                }
+                continue;
+            }
+
+            const fadeIn = isScriptPeriod();
+            const marker = this.createBattlefieldMarker(bf, fought, fadeIn);
+            this.markers.set(id, marker);
+            this.markerFoughtState.set(id, fought);
+        }
+    }
+
+    private createBattlefieldMarker(bf: BattlefieldData, fought: boolean, fadeIn = false): L.Marker {
+        const html = this.buildBattlefieldHtml(bf, fought, fadeIn);
+
+        const L0 = bfLayout();
+        const k = BASE_ART_W / L0.artW;
+        const useCastle = fought && !!bf.siegeCastleType && !!this.territorySystem;
+        const canvasW = useCastle ? SIEGE_CASTLE_BOX_W : BF_REF_W * k;
+        const canvasH = useCastle ? SIEGE_CASTLE_BOX_H : BF_REF_H * k;
+        const labelH = 18;
+
+        const icon = L.divIcon({
+            className: 'battlefield-icon',
+            html,
+            iconSize: [canvasW, canvasH + labelH],
+            iconAnchor: [canvasW / 2, (canvasH + labelH) / 2],
+        });
+
+        // 🔴 [2026-09-14 主人定]「玩家点击战场后，触发真实的战役战斗。不用接任务了，这样简单。」
+        //    战场仍然不是据点、没有详情面板，点击只有一个用途：打这一场真实战役。
+        const marker = L.marker([bf.lat, bf.lng], {
+            icon,
+            interactive: true,
+            pane: 'battlefieldPane',
+        }).addTo(this.layerGroup);
+        marker.on('click', () => {
+            window.dispatchEvent(new CustomEvent('battlefield-click', { detail: { id: bf.id, name: bf.name } }));
+        });
+
+        return marker;
     }
 
     /**
@@ -172,7 +210,7 @@ export class BattlefieldLayer {
     }
 
     /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 + 标牌加「战场」 */
-    private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean): string {
+    private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean, fadeIn = false): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
         // 🔴 [2026-09-19] 套据点样式的攻城战战场：容器按据点尺寸给（见 renderBattlefields 同一判据）
@@ -193,8 +231,10 @@ export class BattlefieldLayer {
             ? (bf.name.endsWith('战场') ? bf.name : `${bf.name}战场`)
             : bf.name;
 
+        const animClass = fadeIn ? ' map-fade-in' : '';
+
         return `
-            <div class="battlefield-container" style="
+            <div class="battlefield-container${animClass}" style="
                 position: relative;
                 width: ${canvasW.toFixed(0)}px;
                 height: ${canvasH.toFixed(0)}px;

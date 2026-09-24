@@ -986,6 +986,38 @@ export class RoadRegistry {
         return out.sort((a, b) => a.dist - b.dist).slice(0, k);
     }
 
+    /**
+     * 🔴 [2026-09-25] 离某点最近的 k 个**已接入路网**的节点（据点 + 连了路的战场），带 id。
+     * 用途：剧本行军沿路开进战场（scriptMarchPath.findPathToBattlefield）—— 上一场的阵位在上一处战场的支线上，
+     * 入口必须能选到那个战场节点，只看城会绕到别处入路。AI 不用它（AI 走 findNearestCityId，只认城）。
+     */
+    public getNearestRoadNodes(
+        lat: number, lng: number, k: number, maxDistDeg: number,
+    ): Array<{ id: string; lat: number; lng: number; dist: number }> {
+        const out: Array<{ id: string; lat: number; lng: number; dist: number }> = [];
+        const cos = Math.cos(lat * Math.PI / 180);
+        for (const [id, node] of this.nodes) {
+            const edges = this.adjacencyList.get(id);
+            if (!edges || edges.length === 0) continue;
+            const dLat = node.lat - lat;
+            const dLng = shortestLongitudeDelta(lng, node.lng) * cos;
+            const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+            if (dist < maxDistDeg) out.push({ id, lat: node.lat, lng: node.lng, dist });
+        }
+        return out.sort((a, b) => a.dist - b.dist).slice(0, k);
+    }
+
+    /** 节点坐标（没有这个节点返回 null） */
+    public getNodePos(id: string): { lat: number; lng: number } | null {
+        const n = this.nodes.get(id);
+        return n ? { lat: n.lat, lng: n.lng } : null;
+    }
+
+    /** 节点是否接入了路网（至少连着一条路） */
+    public isNodeConnected(id: string): boolean {
+        return (this.adjacencyList.get(id)?.length ?? 0) > 0;
+    }
+
     // ===== 道路CRUD =====
 
     /**

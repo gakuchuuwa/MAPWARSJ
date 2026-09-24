@@ -1017,6 +1017,17 @@ export function pickRandomStrategicSkill(excludeId?: string): string {
 /** unitId → 战略技 override（战后随机换技写入，优先级高于 general 档案） */
 const strategicOverrideByUnitId = new Map<string, string>();
 
+/**
+ * 🔴 [2026-09-25 主人「剧本模式下不要触发战略技能，不要显示战略技能脉冲」]
+ * 读军团身上的战略技**一律走这里**：剧本期恒无技（效果、脉冲、技名显示全部随之消失）。
+ * 改前只有 getGeneralStrategicSkillDef 拦了剧本期，而脉冲（emitFollowed*、视野技、纵横技）
+ * 与 UI 查询是直接读这张表的 → 剧本开始前或攻城换技留下的技照样触发、照样弹脉冲。
+ */
+function activeStrategicOverride(unitId: string): string | undefined {
+    if (isScriptPeriod()) return undefined;
+    return strategicOverrideByUnitId.get(unitId);
+}
+
 /** 「本次持有期内已脉冲过」的记录：key = `${unitId}|${skillId}`，换技/退场时清 */
 const strategicFxShownOnce = new Set<string>();
 
@@ -1035,12 +1046,12 @@ export function setStrategicSkillOverride(unitId: string, skillId: string): void
 
 /** 查询运行时 override 的战略技 ID（供 UI 显示）；无 override 返回 undefined */
 export function getStrategicSkillOverride(unitId: string): string | undefined {
-    return strategicOverrideByUnitId.get(unitId);
+    return activeStrategicOverride(unitId);
 }
 
 /** 该军团此刻实际生效的战略技 ID（2026-08-03 起无档案固定技，只读随机 override；无则 undefined） */
 export function getEffectiveStrategicSkillId(unitId: string): string | undefined {
-    return strategicOverrideByUnitId.get(unitId);
+    return activeStrategicOverride(unitId);
 }
 
 /** 军团覆没/退场时清掉 override，避免 Map 无限增长、以及 id 复用时继承前任的技 */
@@ -1059,7 +1070,7 @@ export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
     // 🔴 [2026-09-23 主人定「军团在行军过程中使用了战略技能，这个就没有必要了吧」]
     //    历史剧本期一律没有战略技（行军、攻城都按史实走）；乱斗模式照旧。
     if (isScriptPeriod()) return null;
-    let overrideId = strategicOverrideByUnitId.get(unit.id);
+    let overrideId = activeStrategicOverride(unit.id);
     if (!overrideId && canUnitUseGeneralSkills(unit)) {
         const profile = getGeneralProfile(unit.generalId);
         if (profile?.tier === 'famous') {
@@ -1092,7 +1103,7 @@ export function generalIdHasStrategicEffect(
     }
     // 运行时 override 优先
     if (unitId) {
-        const overrideId = strategicOverrideByUnitId.get(unitId);
+        const overrideId = activeStrategicOverride(unitId);
         if (overrideId) {
             const skill = getStrategicSkillDef(overrideId);
             return skill?.effect === effect;
@@ -1163,7 +1174,7 @@ function resolveGeneralStrategicSkillForEffect(
 ) {
     // 运行时 override 唯一来源（2026-08-03 起无档案固定技）；无 unitId（锚将场景）不脉冲
     if (!unitId) return null;
-    const overrideId = strategicOverrideByUnitId.get(unitId);
+    const overrideId = activeStrategicOverride(unitId);
     if (!overrideId) return null;
     const skill = getStrategicSkillDef(overrideId);
     if (!skill || skill.effect !== expectedEffect) return null;
@@ -1324,7 +1335,7 @@ export function emitFollowedVisionStrategicFxOnMarch(
     lng: number,
 ): void {
     // 运行时 override 唯一来源（2026-08-03 起无档案固定技）
-    const overrideId = strategicOverrideByUnitId.get(unit.id);
+    const overrideId = activeStrategicOverride(unit.id);
     const skillId = overrideId;
     const skill = skillId ? getStrategicSkillDef(skillId) : null;
     if (!skill || !VISION_STRATEGIC_EFFECTS.includes(skill.effect)) return;
@@ -1397,6 +1408,7 @@ export function getGeneralStrategicMagnitude(
 export function getLongDriveDeepBypassChance(
     army: Pick<Army, 'expeditionTargetCityId' | 'id'> & IBattleUnit,
 ): number {
+    if (isScriptPeriod()) return 0;   // 🔴 [2026-09-25] 剧本期无战略技（远征默认的长驱深入也不给）
     const def = getStrategicSkillDef('str_11');
     const catalogChance = def?.magnitude ?? 0.5;
     const onExpedition = army.expeditionTargetCityId != null;
@@ -1414,6 +1426,7 @@ export function emitFollowedLongDriveDeepBypassFx(
     _opts?: { dedupeMs?: number; dedupeKey?: string },
 ): boolean {
     if (army.id !== getFollowedArmyId()) return false;
+    if (isScriptPeriod()) return false;   // 🔴 [2026-09-25] 剧本期不显示战略技脉冲
     const skill = getStrategicSkillDef('str_11');
     if (!skill) return false;
 

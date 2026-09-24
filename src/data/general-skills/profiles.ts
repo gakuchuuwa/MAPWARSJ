@@ -3221,6 +3221,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     aswaka_cleophis: { generalId: 'aswaka_cleophis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 奥诺斯岩·奥诺斯首领：普将（史实为岩堡守军之首，史料未载姓名，据崖顶以滚石死守）· 逆势 · 善防
     aornos_chief: { generalId: 'aornos_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 居鲁士城·居鲁士首领：普将（史实为粟特边塞守军之首，史料未载姓名，凭坚城死守）· 逆势 · 善防
+    julushi_shouling: { generalId: 'julushi_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 马里斯·马利首领：普将（史实为马利/摩罗婆联军首领，死守砖石卫城堡垒浴血力战）· 逆势 · 善防
     malli_leader: { generalId: 'malli_leader', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 科塞亚·科塞亚首领：普将（史实为扎格罗斯山地部落酋长联军首领，依崇山峻岭绝壁险堡设伏力战）· 逆势 · 善防
