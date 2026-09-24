@@ -43142,28 +43142,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "加莱-伦敦",
-                type: "road",
-                id: "road_city_calais_city_lundun_1785751854091",
-                startConnection: "city_calais",
-                endConnection: "city_lundun"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [1.85, 50.95],
-                    [1.3375854492187502, 51.18020386644292],
-                    [1.0766601562500002, 51.07333122768277],
-                    [0.49575805664062506, 51.30657945585936],
-                    [0.31860351562500006, 51.32460477256678],
-                    [0.19226074218750003, 51.41890742069287],
-                    [-0.12, 51.5],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "金泽-不破关",
                 type: "road",
                 id: "road_city_jianghu_city_fuwa_1785754091552",
@@ -57014,38 +56992,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [3.190522, 50.889453],
                     [3.176276, 50.9568],
                     [3.22, 51.21],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "里尔-加莱",
-                type: "road",
-                id: "road_city_lier_city_calais_1788853539267",
-                startConnection: "city_lier",
-                endConnection: "city_calais"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [3.06, 50.63],
-                    [3.026003, 50.492423],
-                    [3.008208, 50.458963],
-                    [2.817558, 50.44033],
-                    [2.759294, 50.422952],
-                    [2.744832, 50.434777],
-                    [2.719702, 50.480899],
-                    [2.673139, 50.508346],
-                    [2.513929, 50.526059],
-                    [2.471659, 50.569915],
-                    [2.411656, 50.572085],
-                    [2.392741, 50.58349],
-                    [2.391888, 50.629524],
-                    [2.376985, 50.688257],
-                    [2.304227, 50.729457],
-                    [2.265657, 50.74173],
-                    [1.85, 50.95],
                 ]
             }
         },
