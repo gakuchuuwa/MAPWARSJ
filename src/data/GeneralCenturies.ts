@@ -1063,6 +1063,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kesaiya_kashtiliash':               -4,    // 卡什提利亚什 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
     'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（前334年哈利卡纳苏斯围城战守帅）
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（前331年乌克西亚隘口战役守帅）
+    'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（前335年佩利昂围城战守帅）
+    'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（前335年底比斯战役守帅）
+    'seleisi_shouling':                  -4,    // 色雷斯首领 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
 
     'doujiande':                          7,    // 窦建德 · xia · 河北（621年虎牢关战役守帅，夏王）

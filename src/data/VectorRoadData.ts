@@ -65011,5 +65011,54 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "泰巴德-法拉（经阿里亚·赫拉特）",
+                type: "road",
+                id: "road_city_taibade_city_fala_1790330000000",
+                startConnection: "city_taibade",
+                endConnection: "city_fala"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [60.7764, 34.7763],
+                    [61, 34.6],
+                    [61.28, 34.48],
+                    [61.7, 34.42],
+                    [62.2, 34.34],
+                    [62.15, 33.9],
+                    [62.1, 33.4],
+                    [62.05, 33],
+                    [62.08, 32.7],
+                    [62.11, 32.37],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "安菲波利斯-普罗夫迪夫（经内斯托斯河谷）",
+                type: "road",
+                id: "road_city_anfeibolisi_city_plovdiv_1790340000000",
+                startConnection: "city_anfeibolisi",
+                endConnection: "city_plovdiv"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [23.85, 40.82],
+                    [24.05, 40.95],
+                    [24.286, 41.013],
+                    [24.147, 41.152],
+                    [24.5, 41.27],
+                    [24.16, 41.65],
+                    [24.4, 41.74],
+                    [24.47, 42.05],
+                    [24.74, 42.14],
+                ]
+            }
+        },
     ]
 };

@@ -93,6 +93,25 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portraitProposedPath: '/assets/PERSIAN/halikanasu_memnon.png',
         note: '罗得岛的门农，波斯麾下希腊雇佣军名将。前334年米利都战后受任小亚细亚总指挥、统率波斯舰队，亲自布置哈利卡纳苏斯防御，携舰队泊于港内准备长期对抗；城破前夜与卡里亚总督欧戎托巴提斯一同弃城撤退，此后转攻爱琴海诸岛，前333年病死。史料：阿里安《亚历山大远征记》卷一、中文维基百科「哈利卡那索斯圍城戰」。',
     },
+    // ── 巴尔干战役（前335）守方主帅 —— 🔴 [2026-09-25 主人「甲，批准」] ──────────
+    //    底比斯本城的锚定武将是伊巴密浓达（前362 年已死），不能动；这一仗的守将按史料另立，
+    //    剧本攻城时由 scriptPeriod.getScriptSiegeDefenderGeneral 顶到城防上。
+    dibisi_phoinix: {
+        generalId: 'dibisi_phoinix',
+        generalName: '菲尼克斯',
+        factionId: 'boootiya',
+        portrait: '',
+        portraitProposedPath: '/assets/GREEK/boootiya_feinikesi.png',
+        note: '底比斯主将菲尼克斯（Phoinix），前335年底比斯起兵反马其顿、据城死战，与普罗提特斯同为守方指挥，城破战死。史料：英文维基百科 Battle of Thebes 信息框 commander2 = Phoinix †、Prothytes †。',
+    },
+    seleisi_shouling: {
+        generalId: 'seleisi_shouling',
+        generalName: '色雷斯首领',
+        factionId: 'seleisi',
+        portrait: '',
+        portraitProposedPath: '/assets/THRACIAN/seleisi_shouling.png',
+        note: '海姆斯山上据守山脊的「自治色雷斯人」的首领。史料（英文维基百科 Balkan campaign of Alexander the Great、阿里安《远征记》1.1）只记其为自治的色雷斯人，未留首领之名 → 按主人批准沿用「某某首领」之称。',
+    },
     aitiliusi: {
         generalId: 'aitiliusi',
         generalName: '埃提乌斯',

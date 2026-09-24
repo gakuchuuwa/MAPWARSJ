@@ -3232,6 +3232,13 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     //    前331年亚历山大应约纳贡而暗中分兵，袭其村落、夺其隘口，他退往高地遭合围）· 逆势 · 善防
     halikanasu_memnon: { generalId: 'halikanasu_memnon', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' }, // 罗得岛门农，波斯麾下希腊雇佣军名将：格拉尼库斯前献坚壁清野之策、前334年任小亚细亚总指挥守哈利卡纳苏斯、前333年转攻爱琴海连下基俄斯与莱斯博斯 → 名将
     wukexiya_madates: { generalId: 'wukexiya_madates', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 🔴 [2026-09-25] 巴尔干战役（前335）三位守帅。三闸定名将：三人皆无史载胜绩 → 普将
+    // 达萨雷提·克莱图斯：普将（史实：伊利里亚王，据佩利昂要塞与陶兰提王格劳基亚斯合兵，一度迫退亚历山大，终被夜袭击溃，焚城而逃）· 逆势 · 善防
+    dasaleiti_kleitos: { generalId: 'dasaleiti_kleitos', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 底比斯·菲尼克斯：普将（史实：底比斯起兵反马其顿的守城主将，拒降死战，城破身死）· 逆势 · 善防
+    dibisi_phoinix: { generalId: 'dibisi_phoinix', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    // 色雷斯·首领：普将（史实：据海姆斯山脊、以大车为垒推车冲阵的自治色雷斯人首领，被方阵登顶击溃）· 逆势 · 善防
+    seleisi_shouling: { generalId: 'seleisi_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 索格狄亚那岩·阿里马泽斯：普将（史实为岩堡守将，凭绝壁自恃不可攻）· 借势 · 善守
     suogediyana_arimazes: { generalId: 'suogediyana_arimazes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。

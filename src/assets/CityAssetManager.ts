@@ -1043,6 +1043,7 @@ export class CityAssetManager {
         'yamaxun': '亚马',
         'adiyabeina': '亚贝',
         'genji': '镰仓',
+        'dasaleiti': '达萨',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

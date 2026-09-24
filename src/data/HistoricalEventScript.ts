@@ -42,6 +42,146 @@ import {
 } from './Battlefields';
 
 export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
+    // ═══ 🔴 [2026-09-25 主人「甲，批准」一次做完] 巴尔干战役（前335）三场：海姆斯山 → 佩利昂 → 底比斯 ═══
+    //    英文维基「亚历山大战役」总表 Balkans 一栏的三场，亚历山大均亲统；开局年份随之由 -334 提前到 -335（GameConfig.TIME）。
+    {
+        year: -335,
+        season: 0,                                   // 春：英文维基 Balkan campaign「in the spring of 335 BC, he advanced into Thrace」
+        generalId: 'gen_alexander_great',
+        type: 'field_battle',
+        title: '公元前335年 海姆斯山战役',
+        description: '马其顿军获胜：自治的色雷斯人据海姆斯山脊、以大车连成营垒，欲推车冲散登山的马其顿军；亚历山大令步兵遇车则散开让路、来不及散开就伏地举盾，弓手射乱其阵，方阵登顶击溃守敌，北上之路就此打通。本场为野战，不涉据点易主。',
+        fieldBattleData: {
+            title: '海姆斯山战役',
+            description: '前335年春，马其顿军北上平定色雷斯，到了海姆斯山下，自治的色雷斯人据守山脊、以大车为垒，要把车推下来冲散队伍；亚历山大令步兵遇车散开或伏地以盾覆身，弓手射乱其阵，方阵一路登顶，色雷斯人溃散。',
+            // 战场坐标：维基未指明山口，取希普卡山口（英文维基 Shipka Pass 42.767,25.317），与 Battlefields.bf_haimusishan 一字不差
+            location: { lat: 42.767, lng: 25.317 },
+            // 路标：自佩拉东行至安菲波利斯，北上经菲利波波利斯（普罗夫迪夫，前342 年腓力二世所建）到海姆斯山下
+            marchWaypoints: ['city_anfeibolisi', 'city_plovdiv'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 23000,
+            attackerSourceCityId: 'city_salonica',      // 第一场：自马其顿本土（佩拉）起兵
+            attackerLegionName: '马其顿军',
+            defenderFactionId: 'seleisi',
+            defenderGeneralId: 'seleisi_shouling',
+            defenderTroops: 8000,
+            defenderLegionName: '色雷斯军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        commanderUnit: 'hero_mounted_alexander',
+        // 对手主将队：塞乌特斯三世——骑马的色雷斯酋长（素材样貌：头盔、金胸甲、披风的色雷斯骑将）
+        foeCommanderUnit: 'hero_thracian_chieftain',
+        inviteText: '朋友，你来得正好。父王遇刺，北边的色雷斯人、伊利里亚人都以为马其顿换了个毛头小子，趁机作乱。渡海去打波斯之前，我得先让他们知道谁是马其顿的王。前头就是海姆斯山，色雷斯人守在山脊上，还把大车连成一排，想等我们爬到半山就推下来。随我上山——车冲下来，就让开；来不及让，就趴下举盾，让车从盾上碾过去。',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great（Battle of Mount Haemus 重定向至此）：马其顿军北上平定色雷斯，在海姆斯山与据守山脊的色雷斯人交战，野战。' },
+            time: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：「in the spring of 335 BC, he advanced into Thrace」，季节取春。' },
+            place: { level: 'inferred', text: '英文维基百科 Balkan campaign 只记「Mount Haemus」（巴尔干山脉），未指明哪一处山口；Triballi 条目亦只记「crossed the Haemus ranges」。取今人最常引的希普卡山口，坐标用英文维基 Shipka Pass 信息框 42.767,25.317 —— 合理推定。' },
+            attacker: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：马其顿，亚历山大亲统；阿格里安人首领朗加罗斯率部沿途来会。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great 信息框 strength：重步兵一万二千、轻步兵八千、骑兵三千，合二万三千。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，前伙伴骑兵、中方阵步兵、后远程，鱼鳞阵 3-4-2；同一支军队整场战争不换。' },
+            defender: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：守山的是「Thracian garrison」（阿里安称自治的色雷斯人），首领未留名 → 按主人批准称「色雷斯首领」；势力取现有「色雷斯」。' },
+            defenderTroops: { level: 'inferred', text: '维基无守方兵数。同一战役中格泰人一万四千、特里巴利人一役阵亡三千，据山扼守、以大车为垒的自治色雷斯人当以数千计，取 8000（不超过攻方二倍）—— 合理推定。' },
+            defenderLegion: { level: 'popular', text: '色雷斯人以标枪手（佩尔塔斯特）散兵先战、长刃步兵随后，山地骑兵最少 → 剧本军团「色雷斯军」雁行 4-3-2（见 scriptLegions.ts 出处）。' },
+            route: { level: 'fact', text: '英文维基百科 Balkan campaign：亚历山大自马其顿北上进入色雷斯，至海姆斯山。游戏路线：佩拉 → 安菲波利斯 → 普罗夫迪夫（菲利波波利斯，前342 年腓力二世所建）→ 海姆斯山。⚠️ 实测：路网缺安菲波利斯—普罗夫迪夫间翻越罗多彼山的路（史载经腓立比北上翻山），军团绕经埃迪尔内，531 公里、直线 3.2 倍，待主人补路。' },
+            result: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：方阵登顶，击溃色雷斯人；本场为野战，不涉据点易主。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Balkan campaign：腓力二世遇刺后色雷斯、伊利里亚诸部作乱；色雷斯人以大车为垒欲推车冲阵，亚历山大令步兵散开或伏地以盾覆身。对白措辞为撰写。' },
+            briefing: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：腓力二世在女儿婚宴上遇刺、亚历山大被拥立；绕奥萨山迫色萨利人归附、在科林斯受推为统帅；前335年春北上色雷斯、阿格里安人朗加罗斯来会；色雷斯人以大车为垒守山脊。文案不写兵力确数。' },
+        },
+    },
+    {
+        year: -335,
+        season: 1,                                   // 夏：多瑙河之役后闻伊利里亚人叛，西进佩利昂（英文维基 Siege of Pelium）
+        generalId: 'gen_alexander_great',
+        type: 'siege',
+        title: '公元前335年 佩利昂战役',
+        description: '马其顿军取佩利昂：伊利里亚王克莱图斯据佩利昂要塞，陶兰提王格劳基亚斯引兵来援、占据四周高地，一度把马其顿军逼退到河对岸；三天后亚历山大趁夜突袭，伊利里亚人猝不及防大败，克莱图斯焚城逃往格劳基亚斯境内，伊利里亚与马其顿之间的山口从此握在马其顿手中。',
+        siegeData: {
+            title: '佩利昂战役',
+            description: '克莱图斯据佩利昂要塞死守，格劳基亚斯的援军占据周围高地；亚历山大初攻不下、被迫退到河对岸，三日后乘夜突袭，击溃伊利里亚人，克莱图斯焚城而逃。',
+            // 路标：史载自多瑙河经阿格里安人之地南下至佩利昂；沿途无那一年已存在的据点，按路网走（佩利昂尚待主人连路）
+            marchWaypoints: [],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 23000,
+            attackerSourceCityId: 'city_plovdiv',   // 出兵据点＝军团此刻在哪：上一场海姆斯山战场，取那年离战场最近且已存在的据点（塞乌托波利前330 年才建）
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'dasaleiti_kleitos',
+            defenderTroops: 7000,
+            defenderCityId: 'city_peiliang',
+            defenderLegionName: '伊利里亚军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_peiliang', factionId: 'maqidun' }],
+        commanderUnit: 'hero_mounted_alexander',
+        // 对手主将队：素材样貌为骑马、披斗篷的巴尔干贵族骑将（按样貌选，与名字同为「克雷图斯」纯属巧合）
+        foeCommanderUnit: 'hero_cleitus',
+        briefing: '海姆斯山一战之后，亚历山大继续北上，打散了特里巴利人，又用皮帐做成筏子渡过多瑙河，吓退了对岸的格泰人。就在这时，西边传来急报：伊利里亚王克莱图斯起兵反了，陶兰提人的王格劳基亚斯也要来会合。\n\n克莱图斯占的是佩利昂——伊利里亚人达萨雷提部的一座设防要塞，正扼着伊利里亚通往马其顿的山口。这道山口一丢，马其顿的西大门就敞开了，亚历山大南下平定希腊的路也会被截断。\n\n他立刻掉头南下，赶在两股伊利里亚人合兵之前兵临佩利昂城下。城头上，据说伊利里亚人刚刚杀了三个少年、三个少女和三头黑羊祭神，准备死守。',
+        inviteText: '朋友，多瑙河那边的仗才打完，西边就出了事：伊利里亚王克莱图斯占了佩利昂，陶兰提人的格劳基亚斯也要来帮他。那座要塞扼着伊利里亚进马其顿的山口，丢了它，我的西大门就敞开了，南下希腊的路也会被截断。我们得赶在他们合兵之前到城下。跟我走。',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Siege of Pelium：前335年亚历山大攻伊利里亚人所据的佩利昂要塞，攻城战；克莱图斯焚城而逃，要塞入马其顿之手。' },
+            time: { level: 'fact', text: '英文维基百科 Siege of Pelium 信息框 date = 335 BC；正文记亚历山大在多瑙河征战时闻伊利里亚之叛，其后西进，季节取夏。' },
+            place: { level: 'inferred', text: '英文维基百科 Pelion (Illyria)：佩利昂在察贡山口附近、伊利里亚与马其顿边界，确切位置无定论；取温尼弗里斯说、莱恩·福克斯称「决定性论证」的兹韦兹代（Zvezdë，英文维基坐标 40.7306,20.8625）为据点坐标 —— 以知名度最大的说法合理推定。' },
+            attacker: { level: 'fact', text: '英文维基百科 Siege of Pelium 信息框：马其顿，亚历山大、菲罗塔斯。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Siege of Pelium 信息框 strength1 = 23,000（重步兵一万二千、轻步兵八千、骑兵三千）。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，鱼鳞阵 3-4-2；同一支军队整场战争不换。' },
+            defender: { level: 'fact', text: '英文维基百科 Siege of Pelium 信息框 commander2 = Kleitos（克莱图斯，巴尔迪利斯之子）、Glaukias（陶兰提王）；据点佩利昂为伊利里亚人达萨雷提部之城（Pelion (Illyria) 条目）。主人批准：势力定名「达萨雷提」。' },
+            defenderTroops: { level: 'fact', text: '英文维基百科 Siege of Pelium 信息框 strength2 = 7,000；伤亡 马其顿二千、伊利里亚五千。' },
+            defenderLegion: { level: 'popular', text: '伊利里亚步兵持矛盾、兼用标枪投石、骑兵不多 → 剧本军团「伊利里亚军」雁行 4-3-2（见 scriptLegions.ts 出处）。' },
+            route: { level: 'fact', text: '英文维基百科 Siege of Pelium：亚历山大在多瑙河闻叛，经阿格里安人之地南下至佩利昂。沿途无那一年已存在的据点可作路标，按路网走。实测经塞乌托波利、索非亚一带（古阿格里安人之地，与史载相合）至佩拉，再离路直行 140 公里到佩利昂：⚠️ 佩利昂尚无道路、且史载自阿格里安人之地沿山谷直下佩利昂而非绕经佩拉，待主人为佩利昂连路。' },
+            result: { level: 'fact', text: '英文维基百科 Siege of Pelium：初攻不下退过河，三日后夜袭击溃伊利里亚人，克莱图斯焚城逃往格劳基亚斯境内；攻城战按史实易主，佩利昂归马其顿。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Siege of Pelium：克莱图斯、格劳基亚斯起兵，佩利昂扼伊利里亚—马其顿山口，失之则南下希腊之路受阻。对白措辞为撰写。' },
+            briefing: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：击特里巴利人、以皮帐作筏渡多瑙河吓退格泰人；Siege of Pelium：克莱图斯与格劳基亚斯之叛、佩利昂扼山口；Siege of Pelium 正文：克莱图斯据说以三童男、三童女、三黑羊祭神后迎战（「据说」一句从此出）。文案不写兵力确数。' },
+        },
+    },
+    {
+        year: -335,
+        season: 2,                                   // 秋：英文维基 Battle of Thebes 记其在佩利昂之后，两周急行军入维奥蒂亚
+        generalId: 'gen_alexander_great',
+        type: 'siege',
+        title: '公元前335年 底比斯战役',
+        description: '马其顿军取底比斯：佩利昂一战亚历山大负伤，希腊各地误传他已战死，底比斯流亡者回城鼓动起兵、围困卫城卡德米亚的马其顿守军；亚历山大两周内急行军南下直抵城下，底比斯人拒绝和解，城破后被夷为平地，幸存者尽数卖为奴隶，希腊各邦从此不敢再动，亚历山大得以放手东征。',
+        siegeData: {
+            title: '底比斯战役',
+            description: '底比斯人拒不接受和解条件，据城死战；马其顿军攻入城中，底比斯主将菲尼克斯、普罗提特斯战死，城破后全城被夷平。',
+            // 路标：史载穿过色萨利、经温泉关入维奥蒂亚；沿途无那一年已存在且在路网上的据点，按路网走
+            marchWaypoints: [],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 33000,
+            attackerSourceCityId: 'city_peiliang',   // 出兵据点＝军团此刻在哪：上一场佩利昂攻城，就在那座城
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'dibisi_phoinix',
+            defenderTroops: 15000,
+            defenderCityId: 'city_thebes',
+            defenderLegionName: '底比斯军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        cityUpdates: [{ cityId: 'city_thebes', factionId: 'maqidun' }],
+        commanderUnit: 'hero_mounted_alexander',
+        // 对手主将队：素材样貌为持圆盾长矛的希腊重装步兵将领（底比斯守城主将为重装步兵统领）
+        foeCommanderUnit: 'hero_brasidas',
+        briefing: '佩利昂城下，亚历山大负了伤。消息传到南方，就变成了「亚历山大已经死了」——雅典的德摩斯梯尼甚至找来一个人，说他亲眼看见了。\n\n底比斯的流亡者从雅典赶回城里，鼓动起兵，杀了两个亲马其顿的首领，把驻守卫城卡德米亚的马其顿兵团团围住。波斯大王的金钱也送到了，雅典答应出兵器相助，希腊各地眼看就要跟着倒向底比斯。\n\n亚历山大得报，立刻南下。他两周里急行军三百多英里，第七天进了色萨利，再过一周就到了维奥蒂亚，一路穿过温泉关，竟没有一个城邦察觉。底比斯人看见城下的大军，还不肯相信是亚历山大，只当是安提帕特。维奥蒂亚诸城纷纷离底比斯而去，雅典按兵不动，斯巴达的援军走到科林斯地峡就停下了——底比斯只剩孤城一座。',
+        inviteText: '朋友，希腊那边都当我死在佩利昂了。底比斯人把卡德米亚的守军围了，雅典人在背后给他们送兵器，波斯大王的金子也到了。只要底比斯这一城站得住，整个希腊都会跟着反。我们现在就南下，赶在他们回过神来之前，出现在底比斯城下。',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Battle of Thebes：前335年亚历山大攻底比斯，战于城外与城中，攻城战；城破后被夷平。' },
+            time: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框 date = 335 BC；正文记其在佩利昂之后、两周急行军入维奥蒂亚，季节取秋。' },
+            place: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框坐标 38°19′15″N 23°19′04″E；游戏据点「底比斯」city_thebes 38.32,23.31，与之吻合。' },
+            attacker: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框：马其顿与科林斯同盟，亚历山大亲统。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框 strength1 = 33,000（步兵三万、骑兵三千）。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，鱼鳞阵 3-4-2；同一支军队整场战争不换。' },
+            defender: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框 commander2 = Phoinix †、Prothytes †：守将取菲尼克斯。底比斯本城锚定武将伊巴密浓达前362 年已死，不用；剧本攻城由 scriptPeriod.getScriptSiegeDefenderGeneral 把城防守将指到菲尼克斯。' },
+            defenderTroops: { level: 'fact', text: '英文维基百科 Battle of Thebes 信息框 strength2 = 15,000；伤亡 战死六千、被俘三万。' },
+            defenderLegion: { level: 'popular', text: '底比斯以重装步兵方阵为主、维奥蒂亚骑兵为辅；圣队前338 年已在喀罗尼亚覆灭，不入此军 → 剧本军团「底比斯军」雁行 4-3-2（见 scriptLegions.ts 出处）。' },
+            route: { level: 'fact', text: '英文维基百科 Battle of Thebes：自佩利昂南下，两周急行军三百余英里，第七天入色萨利、再一周入维奥蒂亚，经温泉关。沿途无那一年已存在且在路网上的据点，按路网走。实测经佩拉、德尔斐至底比斯，560 公里、直线 1.6 倍：佩利昂尚无道路，只能先回佩拉再南下；德尔斐一带即出温泉关入维奥蒂亚的方向。待主人为佩利昂连路后复核。' },
+            result: { level: 'fact', text: '英文维基百科 Battle of Thebes：马其顿胜，底比斯被夷为平地，幸存者尽卖为奴；攻城战按史实易主，底比斯归马其顿（游戏无「毁城」机制，只作易主）。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Battle of Thebes：谣传亚历山大战死于佩利昂，底比斯流亡者回城起兵、围卡德米亚守军，雅典供兵器、波斯出钱。对白措辞为撰写。' },
+            briefing: { level: 'fact', text: '英文维基百科 Battle of Thebes：亚历山大在佩利昂负伤、德摩斯梯尼找人作证其已死；流亡者杀两名亲马其顿首领、围卡德米亚；两周急行军、第七天入色萨利；底比斯人以为来者是安提帕特；维奥蒂亚诸城离去、雅典按兵不动、斯巴达援军止于科林斯地峡。文案不写兵力确数。' },
+        },
+    },
     {
         year: -334,
         // 春（0）。史料记此役在 5 月前后；主人未指定季节，取春。
@@ -56,7 +196,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 英文维基 Battle of the Granicus 信息框坐标；本役是野战，故用 location 而非 locationCityId。
             location: { lat: 40.3167, lng: 27.2811 },
             // 🔴 [2026-09-23] 加特洛伊：阿里安《亚历山大远征记》I.11——亚历山大渡赫勒斯滂后先登岸伊利昂（特洛伊）祭祀，再会合大军进军格拉尼库斯河
-            marchWaypoints: ['city_anfeibolisi', 'city_yanghe', 'city_teluoyi'],
+            // 🔴 [2026-09-25] 补巴尔干三场后本场不再是第一场：出发点＝上一场底比斯城下；史载底比斯战后亚历山大回马其顿过冬、
+            //    前334 年春自佩拉东征（英文维基 Battle of Thebes / Battle of the Granicus）→ 路标最前加佩拉
+            marchWaypoints: ['city_salonica', 'city_anfeibolisi', 'city_yanghe', 'city_teluoyi'],
 
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
@@ -100,7 +242,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         absentCities: ['city_luxiweng', 'city_gelanikusi'],
         inviteText: '朋友，你来得正好。我将渡过赫勒斯滂，进兵亚细亚，向波斯讨还当年薛西斯焚毁雅典神庙的旧账。波斯诸总督已在格拉尼库斯河畔集结，我要亲率伙伴骑兵破敌。你可愿随我东征？',
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），编辑器里每项必填
-        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河战役，野战，亚历山大强渡河流进攻据守东岸的波斯军。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Granicus：前334年5月，初春自马其顿出发，20天抵塞斯托斯，季节取春。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河即今土耳其比加河；坐标取信息框 40.3167,27.2811。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿与希腊同盟，亚历山大亲统右翼，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：马其顿军投入此役共18100人。' }, attackerLegion: { level: 'fact', text: '英文维基百科 Ancient Macedonian army：史称马其顿军；伙伴骑兵作矛头、方阵跟进、克里特弓箭手掩护，前358至前331年一贯如此，故前骑兵、中步兵、后远程。比例按 Battle of the Granicus 信息框：骑兵5100、步兵12000、远程1000，步兵最多，取鱼鳞阵 前3中4后2，远程最少只能2人。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Granicus：阿契美尼德小亚细亚诸总督联军，古史未明言主帅，现代学者认为赫勒斯滂弗里吉亚总督阿尔西提斯总领；门农等同在军中。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：波斯军14000至40000人，按标准取区间中值27000。' }, defenderLegion: { level: 'popular', text: '英文维基百科 Battle of the Granicus：诸总督联军无专名，称波斯总督联军；骑兵沿东岸列阵在前，步兵列其后高地，含数千希腊雇佣兵；信息框中值骑兵15000、步兵12000，取雁行阵 前骑兵4中步兵3后远程2；远程无明载，按阿契美尼德军以弓手著称补一排。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Granicus：自马其顿经色雷斯至塞斯托斯，大军由塞斯托斯渡至阿拜多斯，亚历山大自埃莱乌斯渡海登西格翁角，谒伊利昂，经阿里斯巴、佩尔科特、兰普萨库斯至格拉尼库斯河。游戏路线：佩拉、安菲波利斯、羊河近塞斯托斯、坐船至特洛伊即伊利昂、沿海岸东进；途经据点鲁西翁为中世纪地名、格拉尼库斯为按战役起名的城寨，前334年皆无此城，列入那一年不存在，路照走、城不显示。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿胜，亚历山大取得小亚细亚半壁；战后据点达斯基利翁即阿尔西提斯治所归马其顿。' }, invite: { level: 'fact', text: '阿里安《亚历山大远征记》II.14 亚历山大致大流士书：东征名义为报复波斯当年入侵希腊；对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Granicus：门农献焦土之策被拒、帕曼纽劝明晨再渡被拒；波斯骑兵沿东岸列阵、希腊雇佣兵在后；播报兵力只写大军，不写确数。英文维基百科 Alexander the Great：生于前356年7月，此役时周岁二十一，按中国虚岁计二十二。' } },
+        sources: { battle: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河战役，野战，亚历山大强渡河流进攻据守东岸的波斯军。' }, time: { level: 'fact', text: '英文维基百科 Battle of the Granicus：前334年5月，初春自马其顿出发，20天抵塞斯托斯，季节取春。' }, place: { level: 'fact', text: '英文维基百科 Battle of the Granicus：格拉尼库斯河即今土耳其比加河；坐标取信息框 40.3167,27.2811。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿与希腊同盟，亚历山大亲统右翼，帕曼纽统左翼。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：马其顿军投入此役共18100人。' }, attackerLegion: { level: 'fact', text: '英文维基百科 Ancient Macedonian army：史称马其顿军；伙伴骑兵作矛头、方阵跟进、克里特弓箭手掩护，前358至前331年一贯如此，故前骑兵、中步兵、后远程。比例按 Battle of the Granicus 信息框：骑兵5100、步兵12000、远程1000，步兵最多，取鱼鳞阵 前3中4后2，远程最少只能2人。' }, defender: { level: 'fact', text: '英文维基百科 Battle of the Granicus：阿契美尼德小亚细亚诸总督联军，古史未明言主帅，现代学者认为赫勒斯滂弗里吉亚总督阿尔西提斯总领；门农等同在军中。' }, defenderTroops: { level: 'fact', text: '英文维基百科 Battle of the Granicus 信息框：波斯军14000至40000人，按标准取区间中值27000。' }, defenderLegion: { level: 'popular', text: '英文维基百科 Battle of the Granicus：诸总督联军无专名，称波斯总督联军；骑兵沿东岸列阵在前，步兵列其后高地，含数千希腊雇佣兵；信息框中值骑兵15000、步兵12000，取雁行阵 前骑兵4中步兵3后远程2；远程无明载，按阿契美尼德军以弓手著称补一排。' }, route: { level: 'fact', text: '英文维基百科 Battle of the Granicus：自马其顿经色雷斯至塞斯托斯，大军由塞斯托斯渡至阿拜多斯，亚历山大自埃莱乌斯渡海登西格翁角，谒伊利昂，经阿里斯巴、佩尔科特、兰普萨库斯至格拉尼库斯河。游戏路线：佩拉、安菲波利斯、羊河近塞斯托斯、坐船至特洛伊即伊利昂、沿海岸东进；途经据点鲁西翁为中世纪地名、格拉尼库斯为按战役起名的城寨，前334年皆无此城，列入那一年不存在，路照走、城不显示。2026-09-25 补巴尔干三场后，本场起点为上一场底比斯城下：英文维基 Balkan campaign 记平定底比斯后希腊复归臣服、亚历山大方可东征，史载其回马其顿过冬、次年春自佩拉出发 → 路标最前加佩拉。' }, result: { level: 'fact', text: '英文维基百科 Battle of the Granicus：马其顿胜，亚历山大取得小亚细亚半壁；战后据点达斯基利翁即阿尔西提斯治所归马其顿。' }, invite: { level: 'fact', text: '阿里安《亚历山大远征记》II.14 亚历山大致大流士书：东征名义为报复波斯当年入侵希腊；对白措辞为撰写，史事有据。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of the Granicus：门农献焦土之策被拒、帕曼纽劝明晨再渡被拒；波斯骑兵沿东岸列阵、希腊雇佣兵在后；播报兵力只写大军，不写确数。英文维基百科 Alexander the Great：生于前356年7月，此役时周岁二十一，按中国虚岁计二十二。' } },
     },
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
     {
@@ -494,9 +636,12 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 🔴 攻城战必须写被攻据点的易主（§铁律 3）：居鲁士城归马其顿
         cityUpdates: [{ cityId: 'city_julushicheng', factionId: 'maqidun' }],
         briefing: '大流士既死，亚历山大把矛头转向弑君者贝苏斯。他北上米底，取埃克巴坦那；再东出里海门，入赫尔卡尼亚，收降当地部众。此后一路东行：过图斯、入阿里亚，平其叛乱；经德兰吉亚那、阿拉霍西亚，在加兹尼过冬；前329年春过喀布尔，翻越兴都库什山，直下巴克特拉。贝苏斯被自己的部将绑了送来，亚历山大把他交给波斯人依法处死。\n\n当年夏，他渡过乌浒水，进入粟特。这一带有七座城寨，他先取五座，两天而下。剩下的以居鲁士城最大——居鲁士大帝亲手筑的边塞，墙高人多，号称这一带最好的战士都在城中。',
-    },
-    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
-    {
+    },
+
+    // ── 由战场事件编辑器生成（/battlefield-editor.html）──
+
+    {
+
         year: -329,
         season: 2,
         generalId: 'gen_alexander_great',
