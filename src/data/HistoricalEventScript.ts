@@ -469,6 +469,61 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         cityUpdates: [{ cityId: 'city_huzhan', factionId: 'maqidun' }],
     },
+    // ═══════════════════════════════════════════════════════════════
+    // 前 327 年早春 · 平定索格狄亚那：索格狄亚那岩（Siege of the Sogdian Rock，327 BC）
+    // ═══════════════════════════════════════════════════════════════
+    {
+        year: -327,
+        season: 0,                                   // 春（英文维基：captured in the early spring of 327 BC）
+        generalId: 'gen_alexander_great',
+        inviteText: '朋友，你看那道崖——阿里马泽斯说，除非我长出翅膀，否则休想上去。他把这话当笑话讲给我听。我倒要看看：人上不去的地方，是不是真就没人上得去。我已经放了赏，让敢冒险的人今夜去试；只要有人能摸到顶上，这一仗就先赢了一半。你可愿随我等着看？',
+        sources: {
+            battle: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock：前327年早春马其顿军攻取索格狄亚那岩（又名阿里马泽斯之岩，Rock of Ariamazes）的攻城战，属亚历山大征服阿契美尼德帝国过程中的一役。' },
+            time: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock：条目正文记 captured in the early spring of 327 BC，信息框 date = 327 BC。故季节取春。' },
+            place: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 coordinates 40.4 N, 69.4 E、location = Sogdiana, present-day Tajikistan；本据点记录取 40.4,69.4。⚠️ 同条目正文写 near Samarkand，与信息框坐标自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。本场是攻城战。' },
+            attacker: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 combatant1 = Macedon、League of Corinth，commander1 = Alexander the Great —— 亚历山大亲统。' },
+            attackerTroops: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 strength1 = 300；同信息框 casualties1 = 30，正与正文「夜间攀崖时摔死三十人」相合，可见该 300 即那支夜攀队，故攻方兵力取 300。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据英文维基正文：亚历山大悬重赏募人攀崖，三百人夜间徒手攀上绝壁，摔死三十人。' },
+            defender: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 combatant2 = Sogdiana，commander2 = Arimazes；本场守方主帅取阿里马泽斯，同条目记该岩堡为他所据。' },
+            defenderTroops: { level: 'inferred', text: '英文维基百科 Siege of the Sogdian Rock 信息框 strength2 = Unknown，正文亦未给岩堡守军兵数。按 §一.2 守方 ≤ 攻方×2 与「查不到按史地合理推定」：岩堡守军以据险为本，取 600 —— 合理推定。' },
+            defenderLegion: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 与 Sogdia：守方为粟特，凭绝壁据守，主帅阿里马泽斯；同条目记守军在山顶出现马其顿人之后即降。编成取剧本军团「粟特军」：前骑兵=粟特甲胄骑兵 3、中步兵=塞种萨迦斧兵 4、后远程=巴克特里亚弓手 2，鱼鳞 3-4-2（同一支军队整场战争不换）。' },
+            route: { level: 'fact', text: '英文维基百科 Spitamenes 与 Siege of the Sogdian Rock：前329年药杀水之战后斯皮塔米尼斯仍据马拉坎达一带；部将科伊诺斯于前328年12月在加拜之战将其击破，斯皮塔米尼斯随后为马萨革泰人所杀；亚历山大在巴克特里亚过冬，前327年早春北上索格狄亚那攻取该岩。游戏路线：自上一处战场（锡尔河）开拔 → 撒马尔罕即马拉坎达 → 阿母城即乌浒水渡口、巴克特里亚方向 → 撒马尔罕 → 忽毡即居鲁士城 → 索格狄亚那岩；编辑器「行军路线实测」已跑。' },
+            result: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 result = Macedonian victory，territory = Alexander captures Sogdiana；正文记守军不战而降，故本场据点归属写索格狄亚那岩归马其顿。同条目另记岩上俘虏中有奥克夏特斯之女罗克珊娜，亚历山大后来娶其为妻。' },
+            invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Siege of the Sogdian Rock —— 阿里马泽斯自恃绝壁，答马其顿招降时称亚历山大须有「长了翅膀的兵」方能上岩。对白措辞为撰写，史事有据。' },
+            briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Spitamenes —— 前328年12月加拜之战科伊诺斯破斯皮塔米尼斯，斯皮塔米尼斯为马萨革泰首领所杀、首级送亚历山大；英文维基百科 Siege of the Sogdian Rock —— 前327年早春取岩堡，夜攀者摔死三十人，守军见旗而降。文案按主人规矩不写兵力确数。' },
+        },
+        commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
+        // 对手主将队：🔴 照 §二.5「看样子和年代选，不看名字」，本时代没有粟特英雄兵模（名册里草原/中亚英雄兵模全是中世纪的），
+        //    故取**与亚历山大同代**的骑马蛮族首领（hero_thracian_chieftain = 英雄·塞乌特斯三世，前331–300 在位）。
+        foeCommanderUnit: 'hero_thracian_chieftain',
+        type: 'siege',
+        title: '公元前327年 亚历山大东征索格狄亚那岩战役',
+        description: '马其顿军取索格狄亚那岩：阿里马泽斯凭绝壁自恃不可攻，亚历山大悬赏募人夜攀，敢死者徒手攀上岩顶，天明在山顶挥旗示意；守军以为天兵降临，不战而降。奥克夏特斯之女罗克珊娜即在岩上，亚历山大后来娶之为妻。',
+        siegeData: {
+            title: '索格狄亚那岩战役',
+            description: '岩堡四面绝壁，无路可攻；马其顿军以绳索铁钉趁夜攀崖，自守军不曾设防的崖面摸上岩顶，天明自上而下挥旗呐喊。守军见顶上尽是马其顿人，军心崩溃，开堡投降。',
+            // 出发地＝军团此刻在哪＝上一场落点（锡尔河战场）→ 最近且那年已有的据点＝忽毡（§三.1）
+            // 史料走动写成路标：马拉坎达 → 乌浒水渡口 → 回程马拉坎达 → 忽毡 → 岩堡
+            marchWaypoints: ['city_samaerhan', 'city_amucheng', 'city_samaerhan', 'city_huzhan'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 300,
+            // 🔴 出兵据点＝军团此刻在哪：上一场落点（锡尔河战场）最近且那一年已存在的据点
+            //    ＝贵山城（忽毡在前327 过不了年代闸门，故不算；照 resolveEventStartCityId 算出来的写）
+            attackerSourceCityId: 'city_guishancheng',
+            attackerLegionName: '马其顿军',
+            defenderGeneralId: 'sogdian_arimazes',
+            defenderTroops: 600,
+            defenderCityId: 'city_suogediyanayan',
+            defenderLegionName: '粟特军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        // 🔴 攻城战必须写被攻据点的易主（§铁律 3）：岩堡归马其顿，territory = Alexander captures Sogdiana
+        cityUpdates: [{ cityId: 'city_suogediyanayan', factionId: 'maqidun' }],
+        // 赶路播报（攻城战的播报存在事件本身）：B 档并入背景的两件前328 之事也写在这里
+        briefing: '加拜一战之后，斯皮塔米尼斯再也没能聚起人马。他退往北方草原，指望马萨革泰人替他报仇，那些人却砍下他的头，派人送到亚历山大帐前求和——中亚这场拖了两年的叛乱，至此才算了结。\n\n亚历山大在巴克特里亚过了冬。前327年的早春，他率军北上索格狄亚那，去拔掉叛军最后几处巢穴。挡在路上的，是索格狄亚那岩：一座立在绝壁之上的岩堡，四面刀削一般，向被称为不可攻。堡里的首领阿里马泽斯自恃天险，回绝马其顿人的招降时说，亚历山大除非有长了翅膀的兵，否则休想上来。\n\n亚历山大没有强攻。他召集全军，许下重赏，问谁愿意去爬那道崖。',
+    },
 ];
 
 /**

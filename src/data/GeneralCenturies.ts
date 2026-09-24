@@ -1061,6 +1061,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kesaiya_shouling':                  -4,    // 科塞亚首领 · kesaiya · 科塞亚（前324年科塞亚战役守帅）
     'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（前334年哈利卡纳苏斯围城战守帅）
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（前331年乌克西亚隘口战役守帅）
+    'sogdian_arimazes':                 -4,    // 阿里马泽斯 · sogdian · 粟特（前327年索格狄亚那岩守将）
 
     'doujiande':                          7,    // 窦建德 · xia · 河北（621年虎牢关战役守帅，夏王）
     // 🔴 [2026-09-19 主人令「全删除」→「都给我删了」] 拉米亚战争那几位的战役事件已删除，人物记录暂留；

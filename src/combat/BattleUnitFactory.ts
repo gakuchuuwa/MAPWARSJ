@@ -208,6 +208,8 @@ export class BattleUnitFactory {
                 if (isMobile && entity.setCombatState) {
                     const opponentPos = opponent.getPosition();
                     entity.setCombatState(true, battleType, opponentPos);
+                    // 🔴 [2026-09-24] 战斗形态锁：对手也在海上才是海战（纯海军），否则整场纯陆军
+                    entity.lockBattleSeaForm?.([opponent.getEntity?.() ?? opponent]);
                     // moveAlongPath([]) 是 no-op；须 stopMovement 才能真正停步
                     if (typeof entity.stopMovement === 'function') {
                         entity.stopMovement(true);

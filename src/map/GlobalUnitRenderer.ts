@@ -2661,7 +2661,8 @@ export class GlobalUnitRenderer {
                     //    判据与上面 columnTrail 完全一致，也不看 state —— 海运行军的 state 常常不是 MOVE。
                     //    ⚠️ 这里不能用 `sceneActive`：那是**陆地分支**（下面的 else）里声明的，
                     //    海军分支看不到，用它会在运行时抛 ReferenceError（实测踩过）。用同源的 isBattleScene13()。
-                    !this.isBattleScene13() && isScriptPeriod()
+                    // 🔴 [2026-09-24] 乱斗期玩家所随军团也走长蛇阵：只看 columnMarch（它只会打在玩家所随军团上）
+                    !this.isBattleScene13()
                         && (unit as { columnMarch?: boolean }).columnMarch === true,
                 );
             } else {
@@ -2699,7 +2700,7 @@ export class GlobalUnitRenderer {
 
                 // 🔴 [2026-09-23 主人定「一条线的行军模式」] 剧本模式行军纵队：记录军团走过的轨迹，纵队中才传给画法
                 const columnTrail = this.updateColumnTrail(unit.id || 'unknown', unitPos,
-                    !sceneActive && isScriptPeriod() && (unit as { columnMarch?: boolean }).columnMarch === true);
+                    !sceneActive && (unit as { columnMarch?: boolean }).columnMarch === true);   // 🔴 [2026-09-24] 乱斗期玩家军团同样
 
                 LegionPhalanxDrawer.draw(
                     unit.id || 'unknown',

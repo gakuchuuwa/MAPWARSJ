@@ -484,6 +484,9 @@ export class MultiLegionFieldBattle {
             army.stopMovement(true);
             army.setCombatState(true, 'field', battleCenter);
         });
+        // 🔴 [2026-09-24] 战斗形态锁：双方都是舰队才是海战，否则整场纯陆军
+        attackerArmies.forEach(army => army.lockBattleSeaForm(defenderArmies));
+        defenderArmies.forEach(army => army.lockBattleSeaForm(attackerArmies));
 
         // [NEW] Auto-RTS Trigger
         if (data.autoEnterRTS) {
