@@ -2102,6 +2102,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
 
     { id: 'sute', name: '粟特' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记
+    { id: 'xinde', name: '信德' },
     { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
 ];
 
