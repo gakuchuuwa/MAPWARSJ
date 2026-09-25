@@ -415,7 +415,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aqimeinide_daliushi': -6,
     'daliushi_iii': -4,                           // 大流士 · aqimeinide · 波斯波利斯
     'aqimeinide_aertabazanuosi': -4,
-  'kapaduoxiya_sabiktas': -4,                           // 萨比克塔斯 · kapaduoxiya · 提亚纳（前333 任卡帕多细亚总督）              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
+  'kapaduoxiya_sabiktas': -4,
+  'maermajika_paraetos': -4,                      // 帕拉伊托斯 · maermajika · 马特鲁港
+  'ameng_jisi': -4,                               // 阿蒙祭司 · ameng · 锡瓦绿洲                           // 萨比克塔斯 · kapaduoxiya · 提亚纳（前333 任卡帕多细亚总督）              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
     'asaibaijiang_xuliewu': 13,                          // 旭烈兀 · asaibaijiang · 马拉盖
     'babuer_babuer': 16,                                 // 巴布尔 · babuer · 喀布尔
     'badakhshan_yaerbeige': 17,                          // 雅尔贝格 · badakhshan · 法扎巴德
