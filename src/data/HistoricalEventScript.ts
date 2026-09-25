@@ -57,7 +57,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 战场坐标：维基未指明山口，取希普卡山口（英文维基 Shipka Pass 42.767,25.317），与 Battlefields.bf_haimusishan 一字不差
             location: { lat: 42.767, lng: 25.317 },
             // 路标：自佩拉东行至安菲波利斯，北上经菲利波波利斯（普罗夫迪夫，前342 年腓力二世所建）到海姆斯山下
-            marchWaypoints: ['city_anfeibolisi', 'city_feilibi', 'city_plovdiv'],
+            marchWaypoints: ['city_anfeibolisi', 'city_plovdiv'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
