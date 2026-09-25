@@ -1288,13 +1288,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
     maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
     ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },
+    eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '' },   // 里海门守将（立绘留空走回落）
+    aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '' },   // 赫拉特守将（立绘留空走回落）
     xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
     meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
-    // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
-    //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
-    //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。
-    //    ⚠️ 立绘按铁律留空（等主人亲自放图）—— 与前三位同一种写法。
-    xia: { generalId: 'doujiande', generalName: '窦建德', portrait: '' },
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
 };

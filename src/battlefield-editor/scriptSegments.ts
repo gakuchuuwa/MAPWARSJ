@@ -78,7 +78,7 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
 
     // ── 第五片（前329–327）：4 段 / 3 场 ────────────────────────
-    { id: '5-1', part: 5, partName: '中亚与粟特平叛', from: '波斯波利斯', to: '蓝氏城（巴克特拉，过冬）', via: ['伊斯法罕', '哈马丹', '雷伊', '达姆甘', '图斯', '泰巴德', '法拉', '坎大哈', '哥疾宁', '喀布尔', '巴米扬'], events: [13], hasBattle: false, briefedBy: [13],
+    { id: '5-1', part: 5, partName: '中亚与粟特平叛', from: '波斯波利斯', to: '蓝氏城（巴克特拉，过冬）', via: ['伊斯法罕', '哈马丹', '雷伊', '里海门', '达姆甘', '白哈格', '尼沙布尔', '图斯', '泰巴德', '赫拉特', '法拉', '博斯特', '坎大哈', '哥疾宁', '高附'], events: [13], hasBattle: false, briefedBy: [13],
       note: '纯行军段（追击大流士与贝苏斯、跨洲北上、巴克特拉过冬）；由第 13 场的赶路播报念' },
     { id: '5-2', part: 5, partName: '中亚与粟特平叛', from: '蓝氏城', to: '居鲁士城', via: ['撒马尔罕'], events: [13], hasBattle: true, briefedBy: [13] },
     { id: '5-3', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },

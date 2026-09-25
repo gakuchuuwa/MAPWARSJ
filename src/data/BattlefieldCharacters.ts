@@ -49,15 +49,8 @@ export interface BattlefieldCharacter {
  * 键 = `generalId`，方便按 id 直查；顺序无关。
  */
 export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacter>> = {
-    // ── 虎牢关战役（621）夏方主帅 ────────────────────────────────
-    doujiande: {
-        generalId: 'doujiande',
-        generalName: '窦建德',
-        factionId: 'xia',
-        portrait: '',                       // 🔴 等主人放图；空 = 走池子回落
-        portraitProposedPath: '/assets/CENTRAL/xia_doujiande.png',
-        note: '夏王窦建德，河北义军之主；621年虎牢关战役率十万众西援洛阳王世充，兵败被擒。史料：《旧唐书·窦建德传》《资治通鉴·唐纪五》。',
-    },
+    // 🔴 [2026-09-25 主人令「删除，删除干净」] 虎牢关战役（621）夏方主帅**窦建德**的战场人物记录已删除：
+    //    那一仗已全删、势力 `xia` 也没有任何据点，记录成了悬空引用。日后若重建虎牢关一战，再按本表规矩重建。
     // 🔴 [2026-09-19 主人令「都给我删了」] 王世充的记录已删除：
     //    他唯一的归属是 `zheng`（郑）这个势力，而郑是**我给虎牢关多建的第三方** ——
     //    虎牢关这一仗只有攻(唐·李世民)守(夏·窦建德)两方，王世充当时被围在洛阳、根本不在虎牢关。

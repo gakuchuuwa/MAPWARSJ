@@ -2439,7 +2439,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
 
 
     { id: 'city_humicheng', name: '护密', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'stockade', region: 'CENTRAL_ASIA', buildingStyle: 'CEAS', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
-    { id: 'city_huoguocheng', name: '阿缓', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'stockade', troops: 10000, region: 'HEPHTHALITES', buildingStyle: 'CEAS', note: '白匈奴阿缓城，火国城旧都，嚈哒统治中亚阿姆河南岸之核心据点' },
+    { id: 'city_huoguocheng', name: '德拉普萨卡', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'stockade', troops: 10000, region: 'HEPHTHALITES', buildingStyle: 'CEAS', note: '白匈奴阿缓城，火国城旧都，嚈哒统治中亚阿姆河南岸之核心据点' },
 
 
     // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
@@ -3224,6 +3224,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_qihe', name: '哲德', factionId: 'xierhe', lat: 44.2219, lng: 64.3332, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'CUMAN', troops: 10000, note: '锡尔河下游Jand/毡的故址一带（哲德为异译）；乌古斯后钦察要城；非七河地区' },
     // ── 2026-06-20 替换：巴哈尔兹·泰巴德（原扎姆）──
     { id: 'city_taibade', name: '泰巴德', factionId: 'baha', lat: 34.7763, lng: 60.7764, type: 'stockade', region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', troops: 10000, note: '巴哈尔兹区泰巴德；呼罗珊东南边境重镇，巴哈尔兹重甲戟兵驻防' },
+    { id: 'city_helate_city', name: '赫拉特', factionId: 'aliya', lat: 34.34, lng: 62.19, type: 'medium_city', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '阿利亚行省首府（阿塔考纳，今阿富汗赫拉特）。🔴 [2026-09-25 主人令「添加」] 补进第五片 5-1 段：前330 亚历山大东进阿利亚，平定总督萨提巴扎尼斯叛乱（阿里安《远征记》III.25）。坐标 34.34,62.19。' },
     // ── 2026-06-20 新增：哈里·萨拉赫斯 ──
     { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
 
@@ -3388,6 +3389,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 三城同在伊朗高原北路（呼罗珊大道）上首尾相接，文化同质，雷伊无 note 说明为何单列西亚。
     // 本项目 WEST_ASIA 的定义是安纳托利亚/黎凡特/阿拉伯/埃及/两河，不含伊朗高原。
     { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN' },
+    { id: 'city_lihaimen', name: '里海门', factionId: 'eerbulushi', lat: 35.25, lng: 52.34, type: 'pass', troops: 10000, region: 'ORIE', buildingStyle: 'PERSIAN', note: '厄尔布尔士山脉隘口（里海门，今 Tang-e Sar-e Darreh）。🔴 [2026-09-25 主人令「添加」] 补进第五片 5-1 段：前330 大流士三世在此被巴克特里亚总督贝苏斯擒拿（阿里安《远征记》III.21）。按类型标准：关隘 → pass。🔴 [2026-09-25 主人问「建筑风格是波斯，还是阿拉伯」] 建筑风格取 **PERSIAN 波斯**（原误填 ORIE 中东—阿拉伯族）：本城在伊朗高原厄尔布尔士山，同片雷伊/达姆甘/加兹温/哈马丹一律 PERSIAN；而 ORIE 在库里代表中东—阿拉伯世界（大马士革/麦加/麦地那/加沙/科尔多瓦）。前330 年为阿契美尼德波斯本土，阿拉伯风格属 7 世纪伊斯兰征服之后，用之即穿越。坐标 35.25,52.34。', mirror: true },
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei', lat: 36.27, lng: 50, type: 'small_city', troops: 10000, region: 'SAFAVID', buildingStyle: 'PERSIAN' },
 
 

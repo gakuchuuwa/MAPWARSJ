@@ -418,6 +418,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
   'kapaduoxiya_sabiktas': -4,
   'maermajika_paraetos': -4,                      // 帕拉伊托斯 · maermajika · 马特鲁港
   'ameng_jisi': -4,
+  'eerbulushi_beisusi': -4,
+  'aliya_satibazanishi': -4,
   'xuliya_shoujiang': -4,
   'meisuobudamiya_shoujiang': -4,                               // 阿蒙祭司 · ameng · 锡瓦绿洲                           // 萨比克塔斯 · kapaduoxiya · 提亚纳（前333 任卡帕多细亚总督）              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
     'asaibaijiang_xuliewu': 13,                          // 旭烈兀 · asaibaijiang · 马拉盖
@@ -1073,7 +1075,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'seleisi_shouling':                  -4,    // 色雷斯首领 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
 
-    'doujiande':                          7,    // 窦建德 · xia · 河北（621年虎牢关战役守帅，夏王）
     // 🔴 [2026-09-19 主人令「全删除」→「都给我删了」] 拉米亚战争那几位的战役事件已删除，人物记录暂留；
     //    其中**欧迈尼斯已按「都给我删了」连同孤儿势力 kapaduoxiya 一并删除**（见下行注释）。
     'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（前323年普拉塔纳斯战役希腊联军统帅；该战役已删除）
