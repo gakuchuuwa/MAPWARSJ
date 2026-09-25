@@ -2094,7 +2094,9 @@ export const FACTIONS: Faction[] = [
     { id: 'dasaleiti', name: '达萨雷提' },
     { id: 'kapaduoxiya', name: '卡帕多细亚' },
     { id: 'maermajika', name: '马尔马里卡' },   // 马特鲁港（帕拉伊托尼乌姆）势力
-    { id: 'ameng', name: '阿蒙' },               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
+    { id: 'ameng', name: '阿蒙' },
+    { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
+    { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
 ];
 
 // @ts-ignore

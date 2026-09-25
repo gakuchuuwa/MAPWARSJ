@@ -1287,7 +1287,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
     kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
     maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
-    ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
+    ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },
+    xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+    meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
     // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
     //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
     //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。

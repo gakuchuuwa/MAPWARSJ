@@ -45,6 +45,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
   'kapaduoxiya_sabiktas': 'antiquity',
   'maermajika_paraetos': 'antiquity',
   'ameng_jisi': 'antiquity',
+  'xuliya_shoujiang': 'antiquity',
+  'meisuobudamiya_shoujiang': 'antiquity',
     'aswaka_cleophis': 'antiquity',
     'aornos_aphrikes': 'antiquity',
     'julushi_catanes': 'antiquity',

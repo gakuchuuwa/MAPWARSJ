@@ -486,7 +486,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    前331年晚春或初夏自埃及出发，向东北穿过叙利亚，七八月至幼发拉底河塔普萨库斯，九月下旬至底格里斯河。
             //    路标取沿途已有据点：加沙（前332年加沙围城）、阿卡（推罗已是战场，取其近旁）、大马士革、
             //    阿勒颇（近塔普萨库斯）、埃德萨（渡幼发拉底后东进），全程陆路。
-            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_damasikusi', 'city_alepo', 'city_aidesa', 'city_niniwei'],
+            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_matelugang', 'city_xiwa', 'city_mengfeisi', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_damasikusi', 'city_tapusakusi', 'city_nixibisi', 'city_niniwei'],   // 段3-3：加沙→佩鲁西姆→孟菲斯→亚历山大→马特鲁→锡瓦→回孟菲斯（阿里安 III.3-4）；段4-1：回程经佩鲁西姆→加沙→推罗→大马士革→塔普萨库斯（渡幼发拉底，III.7）→尼西比斯→尼尼微→高加米拉
 
             // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
             attackerFactionId: 'maqidun',
@@ -535,7 +535,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '乌克西亚隘口战役',
             description: '公元前331年冬，扎格罗斯山脉东缘的乌克西亚隘口。乌克西亚人自恃险隘，向来往军队索取买路钱，认定马其顿人也会照波斯旧例纳贡，故只在山口静候。亚历山大应下纳贡之约，却选在约定之日分兵：克拉特鲁斯率盾卫抢占高地，堵死部落战士的退路；亚历山大自率精锐走北路，强袭其村落，随后以接连强行军夺取隘口。部落战士退向高地，正撞上守候已久的马其顿方阵，被四面合围后歼灭。',
             location: { lat: 32.0457, lng: 48.8506 },
-            marchWaypoints: ['city_niniwei', 'city_yashucheng', 'city_babilun', 'city_susa'],
+            marchWaypoints: ['city_aerbeila', 'city_babilun', 'city_susa'],   // 段4-2：高加米拉战场 → 阿尔贝拉（收波斯辎重）→ 巴比伦（马扎亚斯献城、休整）→ 苏萨（皇家大道二十日）→ 乌克西亚隘口（阿里安 III.16-17）
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 8000,
