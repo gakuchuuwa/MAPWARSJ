@@ -948,6 +948,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
 
     'sute': 'city_nuotaka',
     'xinde': 'city_patala',
+    'jiduoluoxiya': 'city_pula',
+    'aolitai': 'city_lanbaqiya',
+    'kamanniyaxingsheng': 'city_kamanniya',
+    'keerman': 'city_xierzhan',
 'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
 'qinghai': 'city_gasikou',

@@ -53,6 +53,10 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     aliya: { name: '赫拉特骑手', tier: 3 },
   sute: { name: '粟特铁骑', tier: 3 },   // 诺塔卡（粟特南部要地）
   xinde: { name: '信德水师', tier: 3 },
+  jiduoluoxiya: { name: '马克兰弓手', tier: 3 },
+  aolitai: { name: '奥里泰标枪手', tier: 3 },
+  kamanniyaxingsheng: { name: '卡曼尼亚轻骑', tier: 3 },
+  keerman: { name: '山前戍卒', tier: 4 },
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
   baha: { name: '巴哈铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
     hali: { name: '萨洛尔弓骑', tier: 4 },
