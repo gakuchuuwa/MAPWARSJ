@@ -1,0 +1,102 @@
+/**
+ * 剧本的「片 → 段」表（**只给编辑器看，不进游戏数据**）。
+ *
+ * 🔴 主人 2026-09-25 定的框架：**片（战略区域）→ 段（一段征程）→ 点 ＋ 线**；
+ *    片与段**不进口数据**（游戏按 `year`/`season` 自动排场次），只在底本与编辑器里成表。
+ *
+ * 🔴 分段尺子：**段 ＝ 上一落点 → 本落点**；落点 ＝ 战争点（一场仗）或据点；
+ *    史料记明的**大驻留（集结／过冬／建城／政治休整）**再断一截。
+ *    → 全剧 6 片 23 段、20 场；其中 4 段是**不打仗的纯行军段**（`hasBattle: false`）。
+ *
+ * 🔴 播报归属：**不打仗的段没有自己的事件**，它的旁白由覆盖它的那一场的「赶路播报」念
+ *    （播报起步开念、念完为止），所以「段」这一列必须写清 `briefedBy` —— 免得以为那段没播报。
+ *
+ * NN 2026-09-25 复核后的一处修正（已采纳）：**埃及段归第三片**（`3-3`），
+ * 因为第三片片名就是「黎凡特与埃及走廊」，且埃及驻留是该片的收尾；第四片因此从 4 段变 3 段。
+ */
+
+export interface ScriptSegment {
+    /** 段号：`片-段`，如 `2-3` */
+    id: string;
+    /** 片号与片名 */
+    part: number;
+    partName: string;
+    /** 段的起点 → 终点（中间节点按史料途经地列出） */
+    from: string;
+    to: string;
+    /** 途经节点（线内的点，不上图、不判定） */
+    via: string[];
+    /** 这一段覆盖的场次号（1 起，按年份季节排序） */
+    events: number[];
+    /** 这一段里有没有仗（false ＝ 纯行军段） */
+    hasBattle: boolean;
+    /** 纯行军段的旁白由哪一场的赶路播报覆盖（有仗的段写本段所含的场） */
+    briefedBy: number[];
+    /** 同一条线在数据里的读法（供编辑核对） */
+    note?: string;
+}
+
+export const SCRIPT_PARTS: Array<{ part: number; name: string; years: string }> = [
+    { part: 1, name: '巴尔干平叛与希腊整合', years: '前335' },
+    { part: 2, name: '小亚细亚破门与封锁海岸', years: '前334–333' },
+    { part: 3, name: '黎凡特与埃及走廊', years: '前332–331' },
+    { part: 4, name: '波斯帝国心脏', years: '前331–330' },
+    { part: 5, name: '中亚与粟特平叛', years: '前329–327' },
+    { part: 6, name: '印度远征与班师', years: '前327–324' },
+];
+
+export const SCRIPT_SEGMENTS: ScriptSegment[] = [
+    // ── 第一片（前335）：4 段 / 3 场 ─────────────────────────────
+    { id: '1-1', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩拉', to: '安菲波利斯', via: [], events: [1], hasBattle: false, briefedBy: [1],
+      note: '本土动员与发兵集结；由第 1 场的赶路播报念' },
+    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '安菲波利斯', to: '黑穆斯山（战争点 01）', via: ['菲利比', '内斯托斯河', '罗多彼山', '菲利波波利斯'], events: [1], hasBattle: true, briefedBy: [1] },
+    { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '黑穆斯山战场', to: '佩利翁（战争点 03）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
+      note: '线内另含史料 B 档：破特里巴利人、皮帐作筏夜渡多瑙河' },
+    { id: '1-4', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利翁', to: '底比斯（战争点 04）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
+
+    // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────
+    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '萨蒂斯', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4, 5], hasBattle: true, briefedBy: [4, 5],
+      note: '含战争点 04→05 之间的渡海与格拉尼库斯' },
+    { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '萨蒂斯', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
+    { id: '2-3', part: 2, partName: '小亚细亚破门与封锁海岸', from: '哈利卡纳苏斯', to: '安基拉', via: ['考诺斯', '特尔梅索斯', '克桑托斯', '帕塔拉', '米拉', '法塞利斯', '克利马克斯隘道', '佩尔格', '特梅索斯', '萨加拉索斯', '塞莱奈', '戈尔迪乌姆（过冬）'], events: [7], hasBattle: false, briefedBy: [7],
+      note: '纯行军段（南岸扫荡＋内陆迂回）；由第 7 场的赶路播报念' },
+    { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安基拉', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
+
+    // ── 第三片（前332–331）：3 段 / 3 场（8、9 场 ＋ 第 10 场的埃及段）──
+    { id: '3-1', part: 3, partName: '黎凡特与埃及走廊', from: '伊苏斯战场', to: '推罗（战争点 08）', via: [], events: [8], hasBattle: true, briefedBy: [8] },
+    { id: '3-2', part: 3, partName: '黎凡特与埃及走廊', from: '推罗', to: '加沙（战争点 09）', via: [], events: [9], hasBattle: true, briefedBy: [9] },
+    { id: '3-3', part: 3, partName: '黎凡特与埃及走廊', from: '加沙', to: '亚历山大城', via: ['佩鲁西姆', '孟菲斯'], events: [10], hasBattle: false, briefedBy: [10],
+      note: '纯行军段（埃及不战而降、孟菲斯加冕、建亚历山大城）；由第 10 场的赶路播报念。NN 复核后划归第三片' },
+
+    // ── 第四片（前331–330）：3 段 / 3 场 ────────────────────────
+    { id: '4-1', part: 4, partName: '波斯帝国心脏', from: '亚历山大城', to: '高加米拉（战争点 10）', via: ['（回程）佩鲁西姆', '加沙', '推罗', '大马士革', '阿勒颇', '埃德萨', '尼尼微'], events: [10], hasBattle: true, briefedBy: [10] },
+    { id: '4-2', part: 4, partName: '波斯帝国心脏', from: '高加米拉战场', to: '乌克西亚隘口（战争点 11）', via: ['尼尼微', '亚述城', '巴比伦', '苏萨'], events: [11], hasBattle: true, briefedBy: [11] },
+    { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
+
+    // ── 第五片（前329–327）：4 段 / 3 场 ────────────────────────
+    { id: '5-1', part: 5, partName: '中亚与粟特平叛', from: '波斯波利斯', to: '蓝氏城（巴克特拉，过冬）', via: ['伊斯法罕', '哈马丹', '雷伊', '达姆甘', '图斯', '泰巴德', '法拉', '坎大哈', '哥疾宁', '喀布尔', '巴米扬'], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（追击大流士与贝苏斯、跨洲北上、巴克特拉过冬）；由第 13 场的赶路播报念' },
+    { id: '5-2', part: 5, partName: '中亚与粟特平叛', from: '蓝氏城', to: '居鲁士城', via: ['撒马尔罕'], events: [13], hasBattle: true, briefedBy: [13] },
+    { id: '5-3', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
+    { id: '5-4', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
+
+    // ── 第六片（前327–324）：5 段 / 5 场 ────────────────────────
+    { id: '6-1', part: 6, partName: '印度远征与班师', from: '索格狄亚那岩', to: '马萨加（战争点）', via: ['撒马尔罕', '阿母城', '蓝氏城', '巴米扬', '喀布尔', '难揭'], events: [16], hasBattle: true, briefedBy: [16] },
+    { id: '6-2', part: 6, partName: '印度远征与班师', from: '马萨加', to: '奥诺斯岩（战争点）', via: ['白沙瓦', '阿托克'], events: [17], hasBattle: true, briefedBy: [17] },
+    { id: '6-3', part: 6, partName: '印度远征与班师', from: '奥诺斯岩', to: '海达斯佩斯河（战争点）', via: ['阿托克'], events: [18], hasBattle: true, briefedBy: [18] },
+    { id: '6-4', part: 6, partName: '印度远征与班师', from: '海达斯佩斯河战场', to: '马里斯（战争点）', via: ['蒙格'], events: [19], hasBattle: true, briefedBy: [19] },
+    { id: '6-5', part: 6, partName: '印度远征与班师', from: '马里斯', to: '科塞亚（战争点）', via: ['坎大哈', '法拉', '巴姆', '波斯波利斯', '苏萨', '哈马丹'], events: [20], hasBattle: true, briefedBy: [20] },
+];
+
+/** 纯行军段（不打仗，但有赶路播报） */
+export const SCRIPT_PURE_MARCH_SEGMENTS = SCRIPT_SEGMENTS.filter((s) => !s.hasBattle);
+
+/** 某一场落在哪些段里（一场可以横跨段，一段也可以横跨场） */
+export function segmentsOfEvent(eventNo: number): ScriptSegment[] {
+    return SCRIPT_SEGMENTS.filter((s) => s.events.includes(eventNo));
+}
+
+/** 某一场的播报要念哪几段 */
+export function segmentsBriefedBy(eventNo: number): ScriptSegment[] {
+    return SCRIPT_SEGMENTS.filter((s) => s.briefedBy.includes(eventNo));
+}
