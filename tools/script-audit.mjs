@@ -60,12 +60,6 @@ const data = await page.evaluate(async (limit) => {
         const legs = rep.legs ?? [];
         const roadKm = legs.reduce((s, l) => s + (l.roadKm || 0), 0);
         const reds = (rep.issues ?? []).filter((i) => i.level === 'error').length;
-        // 🔴 [2026-09-25 主人新尺子「相邻节点间距严格 ≤200 公里」] 单腿沿路 > 200 公里的逐条点名，
-        //    与旧的「单腿 >400 公里」提示并存（400 那条仍在 issues 里）。
-        const over200 = legs
-            .map((l) => ({ from: l.from ?? '?', to: l.to ?? '?', km: Math.round(l.roadKm || 0) }))
-            .filter((l) => l.km > 200)
-            .map((l) => `${l.from}→${l.to} ${l.km}km`);
 
         // 方向：按站判 —— 相邻两站之间，有没有往回走超过 40 公里
         const pts = [];
@@ -93,7 +87,7 @@ const data = await page.evaluate(async (limit) => {
         }
         out.push({
             idx: all.indexOf(ev) + 1, title: String(ev.title).replace(/^公元前\d+年\s*/, ''),
-            roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length, over200,
+            roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length,
             // 逐腿明细（审核报告用）：起→止 / 直线 / 沿路 / 倍数 / 末段离路
             legList: legs.map((l) => ({
                 from: l.from, to: l.to, straightKm: Math.round(l.straightKm || 0),
@@ -158,18 +152,16 @@ for (const s of data.segs) {
     console.log(`${s.id.padEnd(5)} ${s.events.join('、').padEnd(8)} ${(s.hasBattle ? '有' : '纯行军').padEnd(5)} ${s.from} → ${s.to}`);
     console.log(`      里程 ${kmSum} km　红 ${reds}　方向疑点 ${bad.length ? '✗ ' + bad.join('；') : '0'}`);
 }
-console.log('\n=== 场表（逐场：超 200 公里的腿 = 主人新尺子）===');
-console.log('场次  路线   红 站数  超200腿  逐条（沿路公里）');
+console.log('\n=== 场表（逐场）===');
+console.log('场次  路线   红 站数  方向疑点');
 for (const r of data.rows) {
-    console.log(`${String(r.idx).padStart(3)}  ${String(r.roadKm).padStart(5)}km  ${String(r.reds).padStart(2)} ${String(r.stops).padStart(4)}  ${String(r.over200.length).padStart(4)}   ${r.over200.length ? r.over200.join('；') : '0'}`);
-    if (r.bad.length) console.log(`      方向疑点：${r.bad.join('；')}`);
+    console.log(`${String(r.idx).padStart(3)}  ${String(r.roadKm).padStart(5)}km  ${String(r.reds).padStart(2)} ${String(r.stops).padStart(4)}  ${r.bad.length ? '✗ ' + r.bad.join('；') : '0'}`);
 }
 console.log('\n=== 对账行（防「工具坏了却不知道」）===');
 {
     const totalScenes = data.rows.length;
     const totalLegs = data.rows.reduce((a, r) => a + r.legList.length, 0);
-    const overAll = data.rows.reduce((a, r) => a + r.over200.length, 0);
-    console.log(`  审了 ${totalScenes} 场 / ${totalLegs} 条腿；超 200 公里 ${overAll} 条；红项 ${data.rows.reduce((a, r) => a + r.reds, 0)}；方向疑点 ${data.rows.reduce((a, r) => a + r.bad.length, 0)}`);
+    console.log(`  审了 ${totalScenes} 场 / ${totalLegs} 条腿；红项 ${data.rows.reduce((a, r) => a + r.reds, 0)}；方向疑点 ${data.rows.reduce((a, r) => a + r.bad.length, 0)}`);
     if (totalScenes < 20) console.log(`  🔴 只审到 ${totalScenes} 场 —— 剧本共 20 场，**没审全**，这次结论不许用（旧版就是写死 12 场瞒了很久）`);
     if (!rulerOk) console.log('  🔴 尺子没过校验 —— 本次结果作废');
     writeFileSync('scratch/route_audit_report.json', JSON.stringify({ at: new Date().toISOString(), rulerOk, scenes: data.rows, segments: data.segs }, null, 2));
