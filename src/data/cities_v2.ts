@@ -3427,6 +3427,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '塞米恩山脉贝塔以色列王国故地，传说尤迪特由此摧毁阿克苏姆' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'aosimanbeiyiguo', lat: 40.03, lng: 30.18, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'ORIE', note: '奥斯曼贝伊国第一都城，奥斯曼一世加齐圣战起源地' },
     { id: 'city_anfeibolisi', name: '安菲波利斯', factionId: 'aiduoniya', lat: 40.82, lng: 23.85, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '色雷斯海岸希腊殖民城，巴西达斯424年攻克、422年战死守城' },
+    { id: 'city_feilibi', name: '菲利比', factionId: 'maqidun', lat: 41.00, lng: 24.2833, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '腓力二世命名的军事要塞与金矿产区，马其顿通往色雷斯的门户哨所' },
     { id: 'city_yanghe', name: '羊河', factionId: 'qiesuonisuosi', lat: 40.332, lng: 26.6, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '羊河（伊哥斯波塔米）海战战场，吕山德405年全歼雅典舰队。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 40.36,26.61 偏离 3.23 公里，按英文维基百科 Aegospotami 坐标改为 40.332,26.6。' },
     { id: 'city_gelanikusi', name: '格拉尼库斯', factionId: 'mixiya', lat: 40.32, lng: 27.28, type: 'stockade', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '格拉尼库斯河会战战场，帕曼纽334年统左翼大破波斯' },
     // 🔴 [2026-09-12 主人定] 战场**不再是据点**（主人：「把战场独立出来，不做为据点，就叫战场。
