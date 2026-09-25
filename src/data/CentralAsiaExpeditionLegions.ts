@@ -57,6 +57,9 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   aolitai: { name: '奥里泰标枪手', tier: 3 },
   kamanniyaxingsheng: { name: '卡曼尼亚轻骑', tier: 3 },
   keerman: { name: '山前戍卒', tier: 4 },
+  zhageluosi: { name: '扎格罗斯隘兵', tier: 4 },
+  lulisitan: { name: '卢里斯坦弓手', tier: 4 },
+  golpayegan_diqu: { name: '驿站戍卒', tier: 3 },
   // ── 2026-06-20 新增：布兹詹·哈里·卡伦 ──
   baha: { name: '巴哈铁卫', tier: 4 }, // 泰巴德·巴哈尔兹重装戍卫（缺乏极其著名的战术高光，降T3）
     hali: { name: '萨洛尔弓骑', tier: 4 },

@@ -1297,7 +1297,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     jiduoluoxiya: { generalId: 'jiduoluoxiya_xibiertiwusi', generalName: '西比尔提乌斯', portrait: '' },   // 普拉（亚历山大任命的吉德罗西亚总督，阿里安 VI.27）
     aolitai: { generalId: 'aolitai_shouling', generalName: '奥里泰首领', portrait: '' },   // 兰巴基亚（史料未留名，以族名首领称之）
     kamanniyaxingsheng: { generalId: 'kamanniya_zongdu', generalName: '卡曼尼亚总督', portrait: '' },   // 卡曼尼亚（史料未留名，以职名）
-    keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '锡尔詹守将', portrait: '' },   // 史料无名，以职名
+    keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '锡尔詹守将', portrait: '' },   // 
+    zhageluosi: { generalId: 'zhageluosi_guanjiang', generalName: '扎格罗斯门守将', portrait: '' },   // 
+    lulisitan: { generalId: 'lulisitan_shoujiang', generalName: '伊拉姆守将', portrait: '' },   // 
+    golpayegan_diqu: { generalId: 'golpayegan_yicheng', generalName: '古尔帕耶甘驿丞', portrait: '' },   // 
     meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
