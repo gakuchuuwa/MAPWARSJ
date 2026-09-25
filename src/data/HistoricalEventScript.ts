@@ -73,7 +73,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：塞乌特斯三世——骑马的色雷斯酋长（素材样貌：头盔、金胸甲、披风的色雷斯骑将）
         foeCommanderUnit: 'hero_thracian_chieftain',
-        inviteText: '朋友，你来得正好。父王遇刺，北边的色雷斯人、伊利里亚人都以为马其顿换了个毛头小子，趁机作乱。渡海去打波斯之前，我得先让他们知道谁是马其顿的王。前头就是海姆斯山，色雷斯人守在山脊上，还把大车连成一排，想等我们爬到半山就推下来。随我上山——车冲下来，就让开；来不及让，就趴下举盾，让车从盾上碾过去。',
+        inviteText: '朋友，你来得正好。我父亲腓力遇刺，北边的色雷斯人、伊利里亚人都以为马其顿换了个毛头小子，趁机作乱。渡海去打波斯之前，我得先让他们知道谁是马其顿的王。前头就是海姆斯山，色雷斯人守在山脊上，还把大车连成一排，想等我们爬到半山就推下来。随我上山——车冲下来，就让开；来不及让，就趴下举盾，让车从盾上碾过去。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great（Battle of Mount Haemus 重定向至此）：马其顿军北上平定色雷斯，在海姆斯山与据守山脊的色雷斯人交战，野战。' },
             time: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：「in the spring of 335 BC, he advanced into Thrace」，季节取春。' },
@@ -121,7 +121,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为骑马、披斗篷的巴尔干贵族骑将（按样貌选，与名字同为「克雷图斯」纯属巧合）
         foeCommanderUnit: 'hero_cleitus',
-        briefing: '海姆斯山之后，大军继续北上，据说一直打到了多瑙河边。西边却忽然传来急报：伊利里亚王克莱图斯反了，陶兰提人也来会合。佩利昂那座要塞扼着山口，丢了它，南下希腊的路怕是要断。他掉头就走——城头上，据说伊利里亚人刚祭过神，打算死守。',
+        briefing: '海姆斯山之后，亚历山大继续北上，据说打到了多瑙河边。西边忽然传来急报：伊利里亚王克莱图斯反了，陶兰提王格劳基亚斯也要来会合。佩利昂要塞扼着山口，丢了它，南下希腊的路怕是要断。亚历山大掉头南下——据说伊利里亚人刚祭过神，打算死守。',
         inviteText: '朋友，多瑙河那边的仗才打完，西边就出了事：伊利里亚王克莱图斯占了佩利昂，陶兰提人的格劳基亚斯也要来帮他。那座要塞扼着伊利里亚进马其顿的山口，丢了它，我的西大门就敞开了，南下希腊的路也会被截断。我们得赶在他们合兵之前到城下。跟我走。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Siege of Pelium：前335年亚历山大攻伊利里亚人所据的佩利昂要塞，攻城战；克莱图斯焚城而逃，要塞入马其顿之手。' },
@@ -167,7 +167,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为持圆盾长矛的希腊重装步兵将领（底比斯守城主将为重装步兵统领）
         foeCommanderUnit: 'hero_brasidas',
-        briefing: '佩利昂城下，亚历山大负了伤。南边便传开了：据说他已经死了，雅典人甚至找了人来作证。底比斯人杀了亲马其顿的首领，把卡德米亚的守军团团围住。他连夜南下，穿过温泉关，竟没人察觉——城下的人还在猜，来的恐怕不是他。',
+        briefing: '佩利昂城下，亚历山大负伤。南方传开：据说亚历山大已经死了，德摩斯梯尼还找人作证。底比斯人流亡者回城起兵，围住卡德米亚守军。亚历山大连夜南下，穿过温泉关，竟无人察觉——底比斯人还在猜：来的恐怕不是亚历山大。',
         inviteText: '朋友，希腊那边都当我死在佩利昂了。底比斯人把卡德米亚的守军围了，雅典人在背后给他们送兵器，波斯大王的金子也到了。只要底比斯这一城站得住，整个希腊都会跟着反。我们现在就南下，赶在他们回过神来之前，出现在底比斯城下。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Battle of Thebes：前335年亚历山大攻底比斯，战于城外与城中，攻城战；城破后被夷平。' },

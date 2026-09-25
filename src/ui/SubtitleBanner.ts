@@ -3,8 +3,9 @@
  *
  * 1. S 级大事（灭国 / 复国 / 文化中心易主）语音播报时，底部中央淡入一条古籍风字幕，播报结束缓缓淡出；
  * 2. 战役背景解说（行军途中的历史教材旁白）：
- *    长篇多段文字自动「流式渐显一部分、渐隐、再渐显下一部分」，每次仅展示 2~3 行精炼内容，
- *    彻底避免大段长文遮挡地图，达到史诗纪录片与电影旁白般的视觉呼吸感。
+ *    长篇文字无论是否包含换行，自动智能切为 1~2 行的精炼分片（按自然断句，每片约 40~85 字），
+ *    以「渐显一部分 ➔ 停留 ➔ 渐隐 ➔ 渐显下一部分」的电影宽屏流式呈现，
+ *    彻底杜绝多行大文本块遮挡地图，达到史诗纪录片与电影旁白般的视觉呼吸感。
  */
 
 const BANNER_ID = 'subtitle-banner';
@@ -79,7 +80,7 @@ export class SubtitleBanner {
                     line-height: 1.85;
                     font-size: 18px;
                     font-weight: 500;
-                    padding: 14px 38px 13px 38px;
+                    padding: 13px 36px 12px 36px;
                     text-align: justify;
                     text-justify: inter-ideograph;
                 }
@@ -119,19 +120,56 @@ export class SubtitleBanner {
     }
 
     /**
+     * 将长文本智能切分为适宜宽屏电影字幕呈现的微片段（每段约 40~85 字，严格保证 1~2 行且按标点完整断句）
+     */
+    private static splitIntoCinematicChunks(text: string, targetMaxChars = 85): string[] {
+        const rawParagraphs = text.split('\n').map(l => l.trim()).filter(Boolean);
+        const finalChunks: string[] = [];
+
+        for (const para of rawParagraphs) {
+            if (para.length <= targetMaxChars) {
+                finalChunks.push(para);
+                continue;
+            }
+
+            // 按中文终止标点切出完整子句（附带后引号）
+            const sentences = para.match(/[^。！？；]+([。！？；][”’]?|$)/g) || [para];
+            let currentChunk = '';
+
+            for (const sentence of sentences) {
+                const s = sentence.trim();
+                if (!s) continue;
+                if (!currentChunk) {
+                    currentChunk = s;
+                } else if ((currentChunk + s).length <= targetMaxChars) {
+                    currentChunk += s;
+                } else {
+                    finalChunks.push(currentChunk);
+                    currentChunk = s;
+                }
+            }
+            if (currentChunk) {
+                finalChunks.push(currentChunk);
+            }
+        }
+
+        return finalChunks.length > 0 ? finalChunks : [text];
+    }
+
+    /**
      * 显示字幕
      * - 单行短句：标准单条居中显示；
-     * - 多行长文（multiline 且带换行）：自动切片「流式渐显一部分、渐隐、再渐显下一部分」，避免遮挡地图。
+     * - 多行长文（multiline）：智能断句切片，流式「渐显一部分 ➔ 停留 ➔ 渐隐 ➔ 渐显下一部分」，每幕仅 1~2 行。
      */
     static show(text: string, fallbackHoldMs = 9000, multiline = false): void {
         const el = this.ensure();
         this.clearAllTimers();
 
-        // 检查是否为多行长文
-        const chunks = multiline ? text.split('\n').map(l => l.trim()).filter(Boolean) : [text];
+        // 如果是多行长文，智能切片为 1~2 行的微电影片段
+        const chunks = multiline ? this.splitIntoCinematicChunks(text, 85) : [text];
 
         if (chunks.length <= 1) {
-            // 单条短句模式
+            // 单条模式
             el.classList.toggle('multiline', multiline);
             el.innerHTML = multiline
                 ? `<div class="subtitle-header">❖ 史实纪事 ❖</div><div class="sub-content">${chunks[0] || text}</div>`
