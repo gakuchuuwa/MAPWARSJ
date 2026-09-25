@@ -2010,7 +2010,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     //    过不了年代闸门 —— 其锚定武将帖木儿灭里属城堡时代）；英文维基 Chronology 条目另记 Cyropolis = Uroteppa
     //    （今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），故本据点取后者。间距：--probe 实测最近索格狄亚那岩 64.22 公里。
 
-    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 38.8667, lng: 65.8, type: 'small_city', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地（今乌兹别克斯坦卡尔希）。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）。类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
+    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 38.8667, lng: 65.8, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地（今乌兹别克斯坦卡尔希）。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）。类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
         note: '居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 定级依据§6.2：史料只记「当地七座城寨中最大最坚的一座」与守军约八千，未见人口数字 → 按新规取小城。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 10000, 
         note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS',
@@ -3096,6 +3096,10 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    间距：--probe 实测最近拉合尔 313.44 km（≥40 km，无需特批）。
 
     { id: 'city_patala', name: '帕塔拉', factionId: 'xinde', lat: 25.39, lng: 68.36, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '印度河三角洲顶端重镇（今巴基斯坦海德拉巴/信德）。前325 夏亚历山大在此建军港，亲自率舰驶出河口进入印度洋，向波塞冬宰牛献祭、掷金杯入海 —— 印度远征的终点（阿里安《远征记》VI.17-20）。🔴 [2026-09-25 主人令「继续建」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_pula', name: '普拉', factionId: 'jiduoluoxiya', lat: 27.2025, lng: 60.6858, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '吉德罗西亚行省首府（今伊朗伊朗沙赫尔）。前325 年亚历山大率残军走完约 60 天的吉德罗西亚沙漠后抵此，获粮食牲畜补给（阿里安《远征记》VI.26）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_kamanniya', name: '卡曼尼亚', factionId: 'kamanniyaxingsheng', lat: 28.67, lng: 57.74, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '卡曼尼亚行省核心（今伊朗吉罗夫特/克尔曼地区）。前325 年亚历山大走出吉德罗西亚沙漠后在此与克拉特鲁斯的北路陆军、尼阿尔库斯的水师会师，并开庭清算远征期间乱政贪腐的地方官吏、举行盛大祭祀庆典（阿里安《远征记》VI.27-28）。🔴 [2026-09-25 主人令「重要据点先建」] 类型按标准：行省核心、非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_xierzhan', name: '锡尔詹', factionId: 'keerman', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '扎格罗斯山前走廊的中继据点（今伊朗锡尔詹）。🔴 [2026-09-25 主人令「只建锡尔詹」] 建它的依据：卡曼尼亚→帕萨尔加德 约 500 公里（>300）且路上没有据点 → 取锡尔詹把这段切成两段（各约 250 公里）。⚠️ 它是**几何中继点**，史料里没有这座城的记载；类型按标准（史料无名 → 城寨）。' },
+    { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'stockade', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '奥里泰人最大村落（今巴基斯坦拉斯贝拉）。亚历山大在此建城、留兵驻守，作为进入吉德罗西亚沙漠前最后的基地（阿里安 VI.21-22）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
     //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（阿夫里凯斯）＋精锐（绝壁守兵）。
@@ -3675,7 +3679,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDI', note: '库特布沙希王朝都城与德干高原堡垒' },
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心；定级依据§6.2：1684年城内约8000人（VOC使节Thomas Dias记录），未达1万但属城市→小城' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'pass', troops: 10000, region: 'MAYANS', buildingStyle: 'MESO', note: '乌斯马尔玛雅阶梯金字塔要塞城，查克王驻防' },
-    { id: 'city_bam_citadel', name: '巴姆古城', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
+    { id: 'city_bam_citadel', name: '巴姆', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
     { id: 'city_bedzin', name: '本津堡', factionId: 'lesser_poland', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
     { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'MEDI', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },

@@ -2103,6 +2103,10 @@ export const FACTIONS: Faction[] = [
 
     { id: 'sute', name: '粟特' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记
     { id: 'xinde', name: '信德' },
+    { id: 'jiduoluoxiya', name: '吉德罗西亚' },   // 普拉（行省首府）势力
+    { id: 'aolitai', name: '奥里泰' },   // 兰巴基亚（奥里泰部落）势力
+    { id: 'kamanniyaxingsheng', name: '卡曼尼亚行省' },   // 卡曼尼亚（会师与审判地）势力
+    { id: 'keerman', name: '克尔曼' },   // 锡尔詹（山前走廊中继点）势力
     { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
 ];
 

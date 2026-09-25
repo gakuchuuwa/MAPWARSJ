@@ -1274,6 +1274,10 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     'sute': '粟特',
     'xinde': '信德',
+    'jiduoluoxiya': '吉德',
+    'aolitai': '奥里',
+    'kamanniyaxingsheng': '卡曼',
+    'keerman': '克尔曼',
     'meisuobudamiya': '美索',
 };
 

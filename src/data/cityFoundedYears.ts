@@ -52,6 +52,10 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
 
     city_nuotaka: -2000,     // 诺塔卡（粟特古城，前329 亚历山大经此）
     city_patala: -2000,     // 帕塔拉
+    city_pula: -2000,     // 普拉（吉德罗西亚首府）
+    city_kamanniya: -2000,     // 卡曼尼亚（吉罗夫特，会师与审判地）
+    city_xierzhan: -2000,     // 锡尔詹（几何中继据点）
+    city_lanbaqiya: -2000,     // 兰巴基亚（奥里泰村落·亚历山大建城处）
     city_matelugang: -2000,    // 马特鲁港（帕拉伊托尼乌姆）：古埃及沿海港，前 2000 年已有聚落
     city_xiwa: -2000,
     city_lihaimen: -2000,
