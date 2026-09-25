@@ -2,17 +2,20 @@
  * SubtitleBanner.ts - 大事与战役解说字幕条（电影级古典史诗质感）
  *
  * 1. S 级大事（灭国 / 复国 / 文化中心易主）语音播报时，底部中央淡入一条古籍风字幕，播报结束缓缓淡出；
- * 2. 战役背景解说（行军途中的历史教材旁白）多行流式呈现，具备典雅暗金卷轴微光与毛玻璃通透感。
+ * 2. 战役背景解说（行军途中的历史教材旁白）：
+ *    长篇多段文字自动「流式渐显一部分、渐隐、再渐显下一部分」，每次仅展示 2~3 行精炼内容，
+ *    彻底避免大段长文遮挡地图，达到史诗纪录片与电影旁白般的视觉呼吸感。
  */
 
 const BANNER_ID = 'subtitle-banner';
 const STYLE_ID = 'subtitle-banner-style';
-const FADE_MS = 500;
+const FADE_MS = 450;
 
 export class SubtitleBanner {
     private static el: HTMLDivElement | null = null;
     private static hideTimer: number | null = null;
-    private static transitionTimer: number | null = null;
+    private static flowTimer: number | null = null;
+    private static fadeTimer: number | null = null;
 
     private static ensure(): HTMLDivElement {
         if (this.el && document.body.contains(this.el)) return this.el;
@@ -44,7 +47,7 @@ export class SubtitleBanner {
                     white-space: nowrap;
                     pointer-events: none;
                     opacity: 0;
-                    transition: opacity ${FADE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1);
+                    transition: opacity ${FADE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1), transform ${FADE_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1);
                     box-sizing: border-box;
                 }
                 /* 顶部与底部的微金流光饰线 */
@@ -52,8 +55,8 @@ export class SubtitleBanner {
                     content: '';
                     position: absolute;
                     top: 0;
-                    left: 12%;
-                    right: 12%;
+                    left: 8%;
+                    right: 8%;
                     height: 1px;
                     background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.6) 20%, rgba(255, 235, 170, 0.95) 50%, rgba(212, 175, 55, 0.6) 80%, transparent 100%);
                     pointer-events: none;
@@ -62,23 +65,48 @@ export class SubtitleBanner {
                     content: '';
                     position: absolute;
                     bottom: 0;
-                    left: 16%;
-                    right: 16%;
+                    left: 12%;
+                    right: 12%;
                     height: 1px;
                     background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.3) 20%, rgba(212, 175, 55, 0.6) 50%, rgba(212, 175, 55, 0.3) 80%, transparent 100%);
                     pointer-events: none;
                 }
-                /* 战役背景播报与多行长段落解说：书本最佳阅读行宽（~880px），呼吸感行高 */
+                /* 战役背景播报流式呈现：宽屏电影双行视界（1040px），扁平延展，不遮挡大地图 */
                 #${BANNER_ID}.multiline {
-                    max-width: min(880px, calc(100vw - 100px));
-                    white-space: pre-wrap;
+                    max-width: min(1040px, calc(100vw - 120px));
+                    white-space: normal;
                     letter-spacing: 1.5px;
-                    line-height: 2.05;
-                    font-size: 19px;
+                    line-height: 1.85;
+                    font-size: 18px;
                     font-weight: 500;
-                    padding: 20px 38px;
+                    padding: 14px 38px 13px 38px;
                     text-align: justify;
                     text-justify: inter-ideograph;
+                }
+                #${BANNER_ID} .subtitle-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    margin-bottom: 6px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    letter-spacing: 4px;
+                    color: #dfb86c;
+                }
+                #${BANNER_ID} .subtitle-header::before,
+                #${BANNER_ID} .subtitle-header::after {
+                    content: '';
+                    height: 1px;
+                    width: 32px;
+                    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6));
+                }
+                #${BANNER_ID} .subtitle-header::after {
+                    background: linear-gradient(90deg, rgba(212,175,55,0.6), transparent);
+                }
+                #${BANNER_ID} .sub-content {
+                    color: #f7eed8;
+                    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95), 0 0 10px rgba(212, 175, 55, 0.12);
                 }
             `;
             document.head.appendChild(style);
@@ -90,44 +118,92 @@ export class SubtitleBanner {
         return el;
     }
 
-    /** 淡入显示；fallbackHoldMs 为兜底自动淡出时间，语音 onend 会提前调用 hide()。 */
+    /**
+     * 显示字幕
+     * - 单行短句：标准单条居中显示；
+     * - 多行长文（multiline 且带换行）：自动切片「流式渐显一部分、渐隐、再渐显下一部分」，避免遮挡地图。
+     */
     static show(text: string, fallbackHoldMs = 9000, multiline = false): void {
         const el = this.ensure();
-        if (this.hideTimer !== null) {
-            window.clearTimeout(this.hideTimer);
-            this.hideTimer = null;
-        }
-        if (this.transitionTimer !== null) {
-            window.clearTimeout(this.transitionTimer);
-            this.transitionTimer = null;
+        this.clearAllTimers();
+
+        // 检查是否为多行长文
+        const chunks = multiline ? text.split('\n').map(l => l.trim()).filter(Boolean) : [text];
+
+        if (chunks.length <= 1) {
+            // 单条短句模式
+            el.classList.toggle('multiline', multiline);
+            el.innerHTML = multiline
+                ? `<div class="subtitle-header">❖ 史实纪事 ❖</div><div class="sub-content">${chunks[0] || text}</div>`
+                : (chunks[0] || text);
+            void el.offsetWidth;
+            el.style.opacity = '1';
+            el.style.transform = 'translateX(-50%) translateY(0)';
+            this.hideTimer = window.setTimeout(() => this.hide(), fallbackHoldMs);
+            return;
         }
 
-        const applyContent = () => {
-            el.classList.toggle('multiline', multiline);
-            el.textContent = text;
-            void el.offsetWidth; // 触发回流确保动画生效
+        // 多段流式播报（渐显一部分 ➔ 停留 ➔ 渐隐 ➔ 渐显下一部分）
+        el.classList.add('multiline');
+        const totalChars = chunks.reduce((sum, c) => sum + c.length, 0);
+        let currentIndex = 0;
+
+        const playChunk = () => {
+            if (currentIndex >= chunks.length) {
+                this.hide();
+                return;
+            }
+
+            const currentChunk = chunks[currentIndex];
+            const ratio = currentChunk.length / Math.max(1, totalChars);
+            // 本段时长按字数权重分配，保底至少 5.5 秒留足阅读时间
+            const chunkTotalMs = Math.max(5500, Math.round(fallbackHoldMs * ratio));
+            const holdMs = Math.max(2000, chunkTotalMs - FADE_MS);
+
+            currentIndex++;
+            el.innerHTML = `<div class="subtitle-header">❖ 史实纪事 (${currentIndex}/${chunks.length}) ❖</div><div class="sub-content">${currentChunk}</div>`;
+            void el.offsetWidth;
+
+            // 1. 优雅渐显
             el.style.opacity = '1';
-            this.hideTimer = window.setTimeout(() => this.hide(), fallbackHoldMs);
+            el.style.transform = 'translateX(-50%) translateY(0)';
+
+            // 2. 停留到期后渐隐
+            this.fadeTimer = window.setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(-50%) translateY(-4px)';
+
+                // 3. 渐隐完成（450ms）后，微停 120ms 淡入下一部分
+                this.flowTimer = window.setTimeout(() => {
+                    playChunk();
+                }, FADE_MS + 120);
+            }, holdMs);
         };
 
-        // 如果已经在显示中且文字有变化，先平滑微淡出 120ms 再淡入，实现电影台词般呼吸感切换
-        if (el.style.opacity === '1' && el.textContent !== text) {
-            el.style.opacity = '0.2';
-            this.transitionTimer = window.setTimeout(applyContent, 120);
-        } else {
-            applyContent();
+        playChunk();
+    }
+
+    /** 隐藏字幕并清除所有流式轮播计时器 */
+    static hide(): void {
+        this.clearAllTimers();
+        if (this.el) {
+            this.el.style.opacity = '0';
+            this.el.style.transform = 'translateX(-50%) translateY(-4px)';
         }
     }
 
-    static hide(): void {
+    private static clearAllTimers(): void {
         if (this.hideTimer !== null) {
             window.clearTimeout(this.hideTimer);
             this.hideTimer = null;
         }
-        if (this.transitionTimer !== null) {
-            window.clearTimeout(this.transitionTimer);
-            this.transitionTimer = null;
+        if (this.flowTimer !== null) {
+            window.clearTimeout(this.flowTimer);
+            this.flowTimer = null;
         }
-        if (this.el) this.el.style.opacity = '0';
+        if (this.fadeTimer !== null) {
+            window.clearTimeout(this.fadeTimer);
+            this.fadeTimer = null;
+        }
     }
 }
