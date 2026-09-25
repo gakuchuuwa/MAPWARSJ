@@ -72,6 +72,7 @@ import { wireGameAppCombatUiHooks, wireGeneralSkillCombat } from './boot/GameApp
 import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameAppCityLoader';
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
+import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
@@ -848,9 +849,18 @@ export class GameApp {
         this.playerHero = hero;
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
+        // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
+        //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回
+        const syncHistoricalOwners = () => syncScriptHistoricalOwners(
+            this.cityManager,
+            hero.autoPlan === 'script',
+            this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
+        );
+        syncHistoricalOwners();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
+            syncHistoricalOwners();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
             this.map.getMonumentLayer()?.refresh();
