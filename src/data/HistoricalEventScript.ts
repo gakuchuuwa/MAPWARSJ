@@ -57,7 +57,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 战场坐标：维基未指明山口，取希普卡山口（英文维基 Shipka Pass 42.767,25.317），与 Battlefields.bf_haimusishan 一字不差
             location: { lat: 42.767, lng: 25.317 },
             // 路标：自佩拉东行至安菲波利斯，北上经菲利波波利斯（普罗夫迪夫，前342 年腓力二世所建）到海姆斯山下
-            marchWaypoints: ['city_anfeibolisi', 'city_plovdiv'],
+            marchWaypoints: ['city_anfeibolisi', 'city_feilibi', 'city_plovdiv'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
@@ -84,7 +84,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             defender: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：守山的是「Thracian garrison」（阿里安称自治的色雷斯人），首领未留名 → 按主人批准称「色雷斯首领」；势力取现有「色雷斯」。' },
             defenderTroops: { level: 'inferred', text: '维基无守方兵数。同一战役中格泰人一万四千、特里巴利人一役阵亡三千，据山扼守、以大车为垒的自治色雷斯人当以数千计，取 8000（不超过攻方二倍）—— 合理推定。' },
             defenderLegion: { level: 'popular', text: '色雷斯人以标枪手（佩尔塔斯特）散兵先战、长刃步兵随后，山地骑兵最少 → 剧本军团「色雷斯军」雁行 4-3-2（见 scriptLegions.ts 出处）。' },
-            route: { level: 'fact', text: '英文维基百科 Balkan campaign：亚历山大自马其顿北上进入色雷斯，至海姆斯山。游戏路线：佩拉 → 安菲波利斯 → 普罗夫迪夫（菲利波波利斯，前342 年腓力二世所建）→ 海姆斯山。🔴 [2026-09-25 已补路] 原缺安菲波利斯—普罗夫迪夫间翻越罗多彼山的路（史载经腓立比北上翻山），军团绕经埃迪尔内，实测 531 公里、直线 3.2 倍 ✗；现已按史载补绘「安菲波利斯-普罗夫迪夫（经内斯托斯河谷）」，复测 175 公里／直线 164 公里＝1.07 倍，红 0、提示 0。' },
+            route: { level: 'fact', text: '阿里安《远征记》I.1 与英文维基 Balkan campaign：自佩拉经安菲波利斯，绕潘盖翁山北麓走廊至菲利比；渡内斯托斯河，将奥尔贝鲁斯山置于左侧，穿罗多彼山隘口经帕扎尔吉克入上色雷斯平原，抵菲利波波利斯（普罗夫迪夫）；在卡赞勒克谷地集结，进抵海姆斯山（希普卡山口）。佩拉至海姆斯山全程四段全线矢量道路贯通，实测 578 km。' },
             result: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：方阵登顶，击溃色雷斯人；本场为野战，不涉据点易主。' },
             invite: { level: 'fact', text: '邀约对白所据史事：英文维基百科 Balkan campaign：腓力二世遇刺后色雷斯、伊利里亚诸部作乱；色雷斯人以大车为垒欲推车冲阵，亚历山大令步兵散开或伏地以盾覆身。对白措辞为撰写。' },
             briefing: { level: 'fact', text: '英文维基百科 Balkan campaign of Alexander the Great：腓力二世在女儿婚宴上遇刺、亚历山大被拥立；绕奥萨山迫色萨利人归附、在科林斯受推为统帅；前335年春北上色雷斯、阿格里安人朗加罗斯来会；色雷斯人以大车为垒守山脊。文案不写兵力确数。' },
