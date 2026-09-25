@@ -59,30 +59,41 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '1-4', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利翁', to: '底比斯（战争点 04）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
 
     // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────
-    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '萨蒂斯', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4, 5], hasBattle: true, briefedBy: [4, 5],
+    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '斯法尔德（萨第斯）', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4, 5], hasBattle: true, briefedBy: [4, 5],
       note: '含战争点 04→05 之间的渡海与格拉尼库斯' },
     { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '萨蒂斯', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
-    { id: '2-3', part: 2, partName: '小亚细亚破门与封锁海岸', from: '哈利卡纳苏斯', to: '安基拉', via: ['考诺斯', '特尔梅索斯', '克桑托斯', '帕塔拉', '米拉', '法塞利斯', '克利马克斯隘道', '佩尔格', '特梅索斯', '萨加拉索斯', '塞莱奈', '戈尔迪乌姆（过冬）'], events: [7], hasBattle: false, briefedBy: [7],
+    { id: '2-3', part: 2, partName: '小亚细亚破门与封锁海岸', from: '哈利卡纳苏斯', to: '安卡拉（安基拉）', via: ['考诺斯', '特尔梅索斯', '克桑托斯', '帕塔拉', '米拉', '法塞利斯', '克利马克斯隘道', '佩尔格', '特梅索斯', '萨加拉索斯', '塞莱奈', '戈尔迪乌姆（过冬）'], events: [7], hasBattle: false, briefedBy: [7],
       note: '纯行军段（南岸扫荡＋内陆迂回）；由第 7 场的赶路播报念' },
-    { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安基拉', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
+    { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安卡拉（安基拉）', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
 
     // ── 第三片（前332–331）：3 段 / 3 场（8、9 场 ＋ 第 10 场的埃及段）──
     { id: '3-1', part: 3, partName: '黎凡特与埃及走廊', from: '伊苏斯战场', to: '推罗（战争点 08）', via: [], events: [8], hasBattle: true, briefedBy: [8] },
     { id: '3-2', part: 3, partName: '黎凡特与埃及走廊', from: '推罗', to: '加沙（战争点 09）', via: [], events: [9], hasBattle: true, briefedBy: [9] },
-    { id: '3-3', part: 3, partName: '黎凡特与埃及走廊', from: '加沙', to: '亚历山大城', via: ['佩鲁西姆', '孟菲斯'], events: [10], hasBattle: false, briefedBy: [10],
+    { id: '3-3', part: 3, partName: '黎凡特与埃及走廊', from: '加沙', to: '亚历山大（亚历山大城）', via: ['佩鲁西姆', '孟菲斯'], events: [10], hasBattle: false, briefedBy: [10],
       note: '纯行军段（埃及不战而降、孟菲斯加冕、建亚历山大城）；由第 10 场的赶路播报念。NN 复核后划归第三片' },
 
     // ── 第四片（前331–330）：3 段 / 3 场 ────────────────────────
-    { id: '4-1', part: 4, partName: '波斯帝国心脏', from: '亚历山大城', to: '高加米拉（战争点 10）', via: ['（回程）佩鲁西姆', '加沙', '推罗', '大马士革', '阿勒颇', '埃德萨', '尼尼微'], events: [10], hasBattle: true, briefedBy: [10] },
+    { id: '4-1', part: 4, partName: '波斯帝国心脏', from: '亚历山大（亚历山大城）', to: '高加米拉（战争点 10）', via: ['（回程）佩鲁西姆', '加沙', '推罗', '大马士革', '阿勒颇', '埃德萨', '尼尼微'], events: [10], hasBattle: true, briefedBy: [10] },
     { id: '4-2', part: 4, partName: '波斯帝国心脏', from: '高加米拉战场', to: '乌克西亚隘口（战争点 11）', via: ['尼尼微', '亚述城', '巴比伦', '苏萨'], events: [11], hasBattle: true, briefedBy: [11] },
     { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
 
-    // ── 第五片（前329–327）：4 段 / 3 场 ────────────────────────
-    { id: '5-1', part: 5, partName: '中亚与粟特平叛', from: '波斯波利斯', to: '蓝氏城（巴克特拉，过冬）', via: ['伊斯法罕', '哈马丹', '雷伊', '里海门', '达姆甘', '白哈格', '尼沙布尔', '图斯', '泰巴德', '赫拉特', '法拉', '博斯特', '坎大哈', '哥疾宁', '高附'], events: [13], hasBattle: false, briefedBy: [13],
-      note: '纯行军段（追击大流士与贝苏斯、跨洲北上、巴克特拉过冬）；由第 13 场的赶路播报念' },
-    { id: '5-2', part: 5, partName: '中亚与粟特平叛', from: '蓝氏城', to: '居鲁士城', via: ['撒马尔罕'], events: [13], hasBattle: true, briefedBy: [13] },
-    { id: '5-3', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
-    { id: '5-4', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
+    // ── 第五片（前329–327）：7 段 / 3 场 ────────────────────────
+    // 🔴 [2026-09-25 主人「这一段是不是太长了」→「一段一条播报」×3]
+    //    原 5-1 一段 4360 公里（波斯波利斯→蓝氏城）太长，一段只有一条旁白、中间三千公里没有讲解；
+    //    按史料的四个战略阶段拆成四段（追击大流士到里海门 / 东进阿里亚平叛 / 德兰吉亚那→阿拉霍西亚 / 翻兴都库什入巴克特里亚越冬），
+    //    每段各有自己的旁白 —— 第 13 场的 briefing 按空行分**五段**，与 5-1…5-5 一一对应（段起点：里海门、赫拉特、坎大哈、蓝氏城）。
+    { id: '5-1', part: 5, partName: '中亚与粟特平叛', from: '波斯波利斯', to: '里海门', via: ['伊斯法罕', '哈马丹', '雷伊'], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（北上米底取埃克巴坦那、东出里海门追大流士）；实测 1611 公里' },
+    { id: '5-2', part: 5, partName: '中亚与粟特平叛', from: '里海门', to: '赫拉特', via: ['达姆甘', '白哈格', '尼沙布尔', '图斯', '泰巴德'], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（出厄尔布尔士入赫尔卡尼亚、东进呼罗珊、平阿里亚之叛、筑阿利亚亚历山大城）；实测 1125 公里' },
+    { id: '5-3', part: 5, partName: '中亚与粟特平叛', from: '赫拉特', to: '坎大哈', via: ['法拉', '博斯特'], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（德兰吉亚那处死菲罗塔斯、南下阿拉霍西亚筑城）；实测 989 公里' },
+    { id: '5-4', part: 5, partName: '中亚与粟特平叛', from: '坎大哈', to: '蓝氏城（巴克特拉，过冬）', via: ['哥疾宁', '高附'], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（翻兴都库什入巴克特里亚、拿贝苏斯、巴克特拉过冬）；实测 635 公里' },
+    { id: '5-5', part: 5, partName: '中亚与粟特平叛', from: '蓝氏城', to: '居鲁士城', via: ['撒马尔罕'], events: [13], hasBattle: true, briefedBy: [13],
+      note: '渡乌浒水入粟特 → 居鲁士城围攻；实测 612 公里' },
+    { id: '5-6', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
+    { id: '5-7', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
 
     // ── 第六片（前327–324）：5 段 / 5 场 ────────────────────────
     { id: '6-1', part: 6, partName: '印度远征与班师', from: '索格狄亚那岩', to: '马萨加（战争点）', via: ['撒马尔罕', '阿母城', '蓝氏城', '巴米扬', '喀布尔', '难揭'], events: [16], hasBattle: true, briefedBy: [16] },

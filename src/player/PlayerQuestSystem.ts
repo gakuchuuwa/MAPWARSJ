@@ -32,6 +32,8 @@ import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBa
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
+// 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
+import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
 
@@ -768,7 +770,10 @@ export class PlayerQuestSystem {
         //    攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`）—— 这里按事件标题回查脚本取出来，
         //    兵团一起步就念（原来只认 `bf.briefing`，攻城战那一场等于没有播报 ✗）。
         const scriptEv = HISTORICAL_EVENT_SCRIPT.find((e) => e.title === ev.title);
-        this.startJourneyBriefing(findEventSite(ev.battlefieldId) ?? null, ev.title, scriptEv?.briefing ?? undefined);
+        this.startJourneyBriefing(
+            findEventSite(ev.battlefieldId) ?? null, ev.title, scriptEv?.briefing ?? undefined,
+            this.scriptSegmentStarts(scriptEv ?? null),
+        );
         if (!continuation) {
             gameLog('expedition',
                 `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
@@ -1373,7 +1378,10 @@ export class PlayerQuestSystem {
      * 🔴 [2026-09-25 主人「把『军团一到地方／一开战就掐断播报』改成『念完为止』」]
      *    详见下面 `pushNext` 那段注释：抵达、改道、入伍都不再中断旁白。
      */
-    private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string, textOverride?: string): void {
+    private startJourneyBriefing(
+        bf: BattlefieldData | null, titleOverride?: string, textOverride?: string,
+        segmentStarts?: Array<{ lat: number; lng: number; name: string }>,
+    ): void {
         const text = (bf?.briefing ?? textOverride ?? '').trim();
         if (!text) return;
         const key = bf?.id ?? `event:${titleOverride ?? ''}`;
@@ -1385,6 +1393,12 @@ export class PlayerQuestSystem {
 
         this.clearJourneyBriefing();
         let i = 0;
+        // 🔴 [2026-09-25 主人「一段一条播报」] 逐段口径的闸：**段落数 = 段起点数 + 1** 才逐段念
+        //    （段落 = 逐段的旁白）；对不上就回落旧口径（起步一口气念完），免得没逐段写的场断播。
+        this.briefingBounds = paragraphs.length === (segmentStarts?.length ?? -1) + 1 ? (segmentStarts as typeof this.briefingBounds) : [];
+        this.briefingBoundCursor = 0;
+        this.briefingBusy = false;
+        this.briefingPending = null;
         // 🔴 [2026-09-25 主人定「念完为止」] 原来这里有一道 `stillHeading()` 闸：
         //    军团一到地方（或改道、入伍）就把还没念的段落直接掐掉 —— 于是「字数必须塞进行军时长」
         //    （第一片三场只剩 60/114/102 字，主人批「文案有点短了」）。主人令：**起步开念、念完为止**。
@@ -1400,6 +1414,7 @@ export class PlayerQuestSystem {
             }
             const line = paragraphs[i];
             i++;
+            this.briefingBusy = true;
             // 🔴 念完再推下一段：语音时长由 TTS 说了算，定时器猜出来的必然对不上口型
             const speak = this.deps.announceBriefing;
             if (speak) {
@@ -1416,19 +1431,78 @@ export class PlayerQuestSystem {
                         rec.readMs = tSpeak ? Date.now() - tSpeak : null;  // 朗读时长
                         rec.totalMs = Date.now() - tReq;
                     }
+                    const next = this.briefingPending;
+                    this.briefingPending = null;
+                    this.briefingBusy = false;
+                    // 🔴 [2026-09-25 主人「一段一条播报」] 念完这条就**静音**，等军团走到下一段起点再念下一条；
+                    //    只有已排队的那条（段边界已经到了）才立刻接上 —— 正在念的话绝不掐断。
+                    if (next !== null) { i = next; pushNext(); return; }
+                    if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
                     pushNext();
                 }, () => { tSpeak = Date.now(); });
             } else {
                 // 没接播报（无声环境）→ 回落到按字数留阅读时间的字幕
                 const duration = journeyBriefingDuration(line);
                 this.deps.notify(line, duration, true);
-                this.briefingTimer = window.setTimeout(() => pushNext(), duration);
+                this.briefingTimer = window.setTimeout(() => {
+                    const next = this.briefingPending;
+                    this.briefingPending = null;
+                    this.briefingBusy = false;
+                    if (next !== null) { i = next; pushNext(); return; }
+                    if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
+                    pushNext();
+                }, duration);
             }
+        };
+        // 一段一条播报：把「念第 idx 条」暴露给行军侧（军团走到段起点时由 updateSegmentBriefing 调）
+        this.briefingAdvance = (idx: number) => {
+            if (this.briefingCancelled || idx >= paragraphs.length) return;
+            i = idx;
+            pushNext();
         };
         this.briefingCancelled = false;
         this.briefingTrace = [];
         this.briefingT0 = Date.now();
         pushNext();
+    }
+
+    /**
+     * 🔴 [2026-09-25 主人「一段一条播报」] 军团走到**一段的起点**（＝上一段的终点据点）→ 念这一段的旁白。
+     *    判据只有一条：离这个段起点 ≤ 15 公里（段起点本来是行军路标，路径就从它身上过）。
+     *    上一条还在念时**排队**，念完立刻接上 —— 不掐断正在念的话。
+     */
+    private updateSegmentBriefing(): void {
+        if (!this.briefingBounds.length || this.briefingCancelled) return;
+        if (this.briefingBoundCursor >= this.briefingBounds.length) return;
+        const q = this.quest;
+        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        if (!host || host.isDestroyed) return;
+        const b = this.briefingBounds[this.briefingBoundCursor];
+        if (getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111 > 15) return;
+        this.briefingBoundCursor++;
+        const idx = this.briefingBoundCursor;   // 边界 k → 第 k 段的旁白（第 0 段起步时已念）
+        if (this.briefingBusy) this.briefingPending = idx;
+        else this.briefingAdvance?.(idx);
+        gameLog('expedition', `[玩家] 一段一条播报：走到第 ${idx + 1} 段的起点【${b.name}】，念这一段的旁白`);
+    }
+
+    /**
+     * 本场行程里「每一段的起点」坐标（＝上一段的终点据点；最后一段的终点是本场战场，不做钩子）。
+     * 段名取自段表（`scriptSegments.ts`）；找一个据点按名字在图上找；找不齐 → 数组短一位 → 逐段口径自动不启用。
+     */
+    private scriptSegmentStarts(ev: { title?: string } | null): Array<{ lat: number; lng: number; name: string }> {
+        if (!ev?.title) return [];
+        const n = HISTORICAL_EVENT_SCRIPT.findIndex((e) => e.title === ev.title);
+        if (n < 0) return [];
+        const out: Array<{ lat: number; lng: number; name: string }> = [];
+        for (const s of segmentsBriefedBy(n + 1).slice(0, -1)) {
+            const nm = String(s.to)
+                .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+                .replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
+            const c = this.deps.cityManager.getCities().find((x) => x.name === nm);
+            if (c) out.push({ lat: c.latitude, lng: c.longitude, name: c.name });
+        }
+        return out;
     }
 
     /** 把这次播报的逐段计时落盘，供排查「段间停留」用（AI 读 scratch，不劳主人看日志） */
@@ -1452,6 +1526,11 @@ export class PlayerQuestSystem {
 
     private clearJourneyBriefing(): void {
         this.briefingCancelled = true;   // 已发出的 onDone 回来时不再往下念
+        this.briefingAdvance = null;
+        this.briefingBounds = [];
+        this.briefingBoundCursor = 0;
+        this.briefingBusy = false;
+        this.briefingPending = null;
         if (this.briefingTimer !== null) {
             window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
@@ -1500,6 +1579,9 @@ export class PlayerQuestSystem {
         }
         const q = this.quest;
         if (!q) return;
+
+        // 🔴 [2026-09-25 主人「一段一条播报」] 行军途中每帧看一眼：走到下一段的起点，就念这一段的旁白
+        this.updateSegmentBriefing();
 
         // 🔴 武将史实战役：目标不是据点，而是**战场坐标**，故成败判据与出征/复国两条不同
         if (q.kind === 'general_event' && q.event) {
@@ -1570,6 +1652,16 @@ export class PlayerQuestSystem {
     private briefingTrace: Array<{ seg: number; chars: number; reqAt: number;
         waitMs?: number | null; readMs?: number | null; totalMs?: number }> = [];
     private briefingT0 = 0;
+    /**
+     * 🔴 [2026-09-25 主人「一段一条播报」×3 —— 说了八百次]
+     *   一段一条：旁白按空行分段 = 本场行程**逐段的旁白**；第 0 条起步就念，
+     *   此后**军团走到一段起点（＝上一段的终点据点）才念下一条**（见 `updateSegmentBriefing`）。
+     */
+    private briefingBounds: Array<{ lat: number; lng: number; name: string }> = [];
+    private briefingBoundCursor = 0;
+    private briefingAdvance: ((idx: number) => void) | null = null;
+    private briefingBusy = false;
+    private briefingPending: number | null = null;
 
     /**
      * 🔴 [2026-09-09 主人定] 在野外追上了带兵的武将：直接谈随军。
