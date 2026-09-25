@@ -27,7 +27,10 @@ export class SubtitleBanner {
                 #${BANNER_ID} {
                     position: fixed;
                     left: 50%;
-                    bottom: 84px;
+                    /* 🔴 [2026-09-25 主人「这个字幕怎么总挡着道路编辑器，字幕放到下面去」]
+                       编辑器页（道路/战场/据点编辑器，路径里带 editor）→ 贴到最下面（10px），不再压工具栏；
+                       游戏内保持 84px（避开底部 HUD）。判据只看路径，不改任何游戏内位置。 */
+                    bottom: ${/editor/i.test(location.pathname) ? '10px' : '84px'};
                     transform: translateX(-50%);
                     z-index: 10003;
                     max-width: 76vw;
