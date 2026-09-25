@@ -66,4 +66,5 @@ export const SCRIPT_HISTORICAL_OWNERS: readonly ScriptHistoricalOwner[] = [
     // ── 印度：难陀王朝治下的摩揭陀（孔雀王朝前322 年才建） ──
     { year: -335, cityId: 'city_huashicheng', factionId: 'mojietuo', source: '英文维基 Pataliputra / Nanda Empire：前 4 世纪华氏城为难陀王朝摩揭陀的都城；孔雀王朝前322 年才建。' },
     { year: -335, cityId: 'city_walanaxi', factionId: 'mojietuo', source: '英文维基 Kashi Kingdom：迦尸国前 5 世纪已被摩揭陀吞并，前 4 世纪属难陀王朝。' },
+    { year: -335, cityId: 'city_tiyana', factionId: 'aqimeinide', source: '英文维基 Tyana / Cappadocia (satrapy)：前 4 世纪卡帕多细亚属阿契美尼德波斯行省；前333 年亚历山大穿越该地、任命萨比克塔斯为总督（阿里安 II.4），此后归马其顿。🔴 [2026-09-25 主人令「可以请添加」] 新建据点，旗号按剧本年份定。' },
 ];

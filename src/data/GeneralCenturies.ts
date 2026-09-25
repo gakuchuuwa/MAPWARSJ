@@ -414,7 +414,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'anushidgin_yile': 12,                               // 伊勒 · anushidgin · 希瓦
     'aqimeinide_daliushi': -6,
     'daliushi_iii': -4,                           // 大流士 · aqimeinide · 波斯波利斯
-    'aqimeinide_aertabazanuosi': -4,              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
+    'aqimeinide_aertabazanuosi': -4,
+  'aqimeinide_sabiktas': -4,                            // 萨比克塔斯 · aqimeinide · 卡帕多细亚（前333 任总督）              // 阿尔塔巴扎诺斯 · aqimeinide · 波斯波利斯/波斯门（前330年波斯门战役守帅）
     'asaibaijiang_xuliewu': 13,                          // 旭烈兀 · asaibaijiang · 马拉盖
     'babuer_babuer': 16,                                 // 巴布尔 · babuer · 喀布尔
     'badakhshan_yaerbeige': 17,                          // 雅尔贝格 · badakhshan · 法扎巴德
