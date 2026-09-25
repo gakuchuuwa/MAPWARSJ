@@ -1270,6 +1270,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xia': '窦夏',
     'dasaleiti': '达萨',
     'kapaduoxiya': '卡帕',
+    'maermajika': '马尔',
+    'ameng': '阿蒙',
 };
 
 // @ts-ignore
