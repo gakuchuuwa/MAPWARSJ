@@ -947,6 +947,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'xingxingxia': 'city_xingxingxia',
 
     'sute': 'city_nuotaka',
+    'xinde': 'city_patala',
 'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
 'qinghai': 'city_gasikou',

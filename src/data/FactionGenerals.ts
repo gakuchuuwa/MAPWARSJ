@@ -1293,6 +1293,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
 
     sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）
+    xinde: { generalId: 'xinde_patalawang', generalName: '帕塔拉王', portrait: '' },   // 帕塔拉
     meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。

@@ -3094,8 +3094,9 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    势力（马利）＋武将（摩罗波罗）＋精锐（马利城兵）库里都已有，故本场只新增这一个据点。
     //    坐标取英文维基百科 Multan 条目信息框 30°11′N 71°28′E；城址身份见 note。
     //    间距：--probe 实测最近拉合尔 313.44 km（≥40 km，无需特批）。
-    { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000,
-        note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。', region: 'PURU', buildingStyle: 'PURU' },
+
+    { id: 'city_patala', name: '帕塔拉', factionId: 'xinde', lat: 25.39, lng: 68.36, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '印度河三角洲顶端重镇（今巴基斯坦海德拉巴/信德）。前325 夏亚历山大在此建军港，亲自率舰驶出河口进入印度洋，向波塞冬宰牛献祭、掷金杯入海 —— 印度远征的终点（阿里安《远征记》VI.17-20）。🔴 [2026-09-25 主人令「继续建」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
     //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（阿夫里凯斯）＋精锐（绝壁守兵）。
     //    坐标取维基数据 Pir Sar 34.82,72.88 —— 英文维基百科 Aornos 条目正文记该岩在印度河上游峡谷湾上、
