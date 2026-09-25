@@ -2107,6 +2107,9 @@ export const FACTIONS: Faction[] = [
     { id: 'aolitai', name: '奥里泰' },   // 兰巴基亚（奥里泰部落）势力
     { id: 'kamanniyaxingsheng', name: '卡曼尼亚行省' },   // 卡曼尼亚（会师与审判地）势力
     { id: 'keerman', name: '克尔曼' },   // 锡尔詹（山前走廊中继点）势力
+    { id: 'zhageluosi', name: '扎格罗斯' },   // 呼勒万（隘口）势力
+    { id: 'lulisitan', name: '卢里斯坦' },   // 伊拉姆（西麓走廊）势力
+    { id: 'golpayegan_diqu', name: '古尔帕耶甘地区' },   // 古尔帕耶甘（几何驿站）势力
     { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
 ];
 

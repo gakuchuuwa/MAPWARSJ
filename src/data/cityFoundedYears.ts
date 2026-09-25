@@ -55,6 +55,9 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_pula: -2000,     // 普拉（吉德罗西亚首府）
     city_kamanniya: -2000,     // 卡曼尼亚（吉罗夫特，会师与审判地）
     city_xierzhan: -2000,     // 锡尔詹（几何中继据点）
+    city_hulewan: -2000,     // 呼勒万（扎格罗斯门隘口）
+    city_yilamu: -2000,     // 伊拉姆（扎格罗斯西麓中继据点）
+    city_guerpayegan: -2000,     // 古尔帕耶甘（山间谷地出口·几何驿站）
     city_lanbaqiya: -2000,     // 兰巴基亚（奥里泰村落·亚历山大建城处）
     city_matelugang: -2000,    // 马特鲁港（帕拉伊托尼乌姆）：古埃及沿海港，前 2000 年已有聚落
     city_xiwa: -2000,
