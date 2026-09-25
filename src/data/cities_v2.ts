@@ -2009,7 +2009,8 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     //    坐标：该条目信息框给 40.2833,69.6333，那正是库里「忽毡」的所在地（两城相距约 4 公里，且忽毡在前329
     //    过不了年代闸门 —— 其锚定武将帖木儿灭里属城堡时代）；英文维基 Chronology 条目另记 Cyropolis = Uroteppa
     //    （今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），故本据点取后者。间距：--probe 实测最近索格狄亚那岩 64.22 公里。
-    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
+
+    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 38.8667, lng: 65.8, type: 'small_city', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地（今乌兹别克斯坦卡尔希）。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）。类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
         note: '居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 定级依据§6.2：史料只记「当地七座城寨中最大最坚的一座」与守军约八千，未见人口数字 → 按新规取小城。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 10000, 
         note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS',
