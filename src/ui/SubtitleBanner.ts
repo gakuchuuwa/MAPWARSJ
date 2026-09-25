@@ -168,6 +168,12 @@ export class SubtitleBanner {
         const el = this.ensure();
         this.clearAllTimers();
 
+        // 🔴 [2026-09-25 主人「字幕总挡着道路编辑器，这怎么编辑呀」]
+        //    道路编辑器面板（id = vector-road-editor-panel）**开着的时候不显示字幕** ——
+        //    那是干活的面板，字幕只会挡路。判据是面板在不在 DOM 里，与页面路径无关
+        //    （道路编辑器是**游戏页里的面板**，不是独立页，所以按路径判断没用）。
+        if (document.getElementById('vector-road-editor-panel')) return;
+
         // 如果是多行长文，智能切片为 1~2 行的微电影片段
         const chunks = multiline ? this.splitIntoCinematicChunks(text, 85) : [text];
 
