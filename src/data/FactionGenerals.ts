@@ -23,7 +23,6 @@
  *
  * 红线：一势力一将领；专图文件名全局唯一；fallback 仅限本政权夹与本文化夹。
  */
-
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
 
@@ -1132,7 +1131,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
         // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
-      { generalId: 'aqimeinide_sabiktas', generalName: '萨比克塔斯', portrait: '' },   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘按铁律留空走回落，待主人亲自放图
+
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
@@ -1286,6 +1285,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
+    kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
     // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
     //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
     //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。
