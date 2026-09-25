@@ -13,6 +13,10 @@
 import puppeteer from 'puppeteer-core';
 
 const want = process.argv.slice(2).map(Number).filter((n) => Number.isFinite(n));
+// 🔴 [2026-09-25 主人问「你的审查程序怎么写的」] 场次上限原来**写死 12**（`}, 12)`）——
+//    于是第 13 场起根本没进过审核。现按参数走：给了场次就审到那一场，不给就全审。
+const LIMIT = want.length ? Math.max(...want) : 999;
+
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const browser = await puppeteer.launch({
     executablePath: CHROME, headless: true, defaultViewport: { width: 1200, height: 800 },
@@ -55,6 +59,12 @@ const data = await page.evaluate(async (limit) => {
         const legs = rep.legs ?? [];
         const roadKm = legs.reduce((s, l) => s + (l.roadKm || 0), 0);
         const reds = (rep.issues ?? []).filter((i) => i.level === 'error').length;
+        // 🔴 [2026-09-25 主人新尺子「相邻节点间距严格 ≤200 公里」] 单腿沿路 > 200 公里的逐条点名，
+        //    与旧的「单腿 >400 公里」提示并存（400 那条仍在 issues 里）。
+        const over200 = legs
+            .map((l) => ({ from: l.from ?? '?', to: l.to ?? '?', km: Math.round(l.roadKm || 0) }))
+            .filter((l) => l.km > 200)
+            .map((l) => `${l.from}→${l.to} ${l.km}km`);
 
         // 方向：按站判 —— 相邻两站之间，有没有往回走超过 40 公里
         const pts = [];
@@ -80,10 +90,10 @@ const data = await page.evaluate(async (limit) => {
             if (detour > 40) bad.push(`${a.name}→${b.name} 折返 ${Math.round(detour)} 公里`);
             pts.push(...p);
         }
-        out.push({ idx: all.indexOf(ev) + 1, title: String(ev.title).replace(/^公元前\d+年\s*/, ''), roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length });
+        out.push({ idx: all.indexOf(ev) + 1, title: String(ev.title).replace(/^公元前\d+年\s*/, ''), roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length, over200 });
     }
     return { rows: out, segs: seg.SCRIPT_SEGMENTS.map((s) => ({ id: s.id, part: s.part, from: s.from, to: s.to, events: s.events, hasBattle: s.hasBattle, briefedBy: s.briefedBy })) };
-}, 12);
+}, LIMIT);
 
 // ── 先用已知答案的腿校验尺子（尺子不对，后面所有结果都不许信）──
 const ruler = await page.evaluate(async () => {
@@ -128,10 +138,11 @@ for (const s of data.segs) {
     console.log(`${s.id.padEnd(5)} ${s.events.join('、').padEnd(8)} ${(s.hasBattle ? '有' : '纯行军').padEnd(5)} ${s.from} → ${s.to}`);
     console.log(`      里程 ${kmSum} km　红 ${reds}　方向疑点 ${bad.length ? '✗ ' + bad.join('；') : '0'}`);
 }
-console.log('\n=== 场表（前四片逐场）===');
-console.log('场次  路线   红  站数  方向疑点');
+console.log('\n=== 场表（逐场：超 200 公里的腿 = 主人新尺子）===');
+console.log('场次  路线   红 站数  超200腿  逐条（沿路公里）');
 for (const r of data.rows) {
-    console.log(`${String(r.idx).padStart(3)}  ${String(r.roadKm).padStart(5)}km  ${String(r.reds).padStart(2)}  ${String(r.stops).padStart(4)}  ${r.bad.length ? '✗ ' + r.bad.join('；') : '0'}`);
+    console.log(`${String(r.idx).padStart(3)}  ${String(r.roadKm).padStart(5)}km  ${String(r.reds).padStart(2)} ${String(r.stops).padStart(4)}  ${String(r.over200.length).padStart(4)}   ${r.over200.length ? r.over200.join('；') : '0'}`);
+    if (r.bad.length) console.log(`      方向疑点：${r.bad.join('；')}`);
 }
 const badAll = data.rows.reduce((a, r) => a + r.reds + r.bad.length, 0);
 console.log(badAll ? `\n❌ 前四片共 ${badAll} 处要处理` : '\n✅ 前四片的线、方向两关全过');
