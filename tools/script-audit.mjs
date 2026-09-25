@@ -11,6 +11,7 @@
  *       node tools/script-audit.mjs 1 2 3     # 只审指定场次
  */
 import puppeteer from 'puppeteer-core';
+import { writeFileSync } from 'node:fs';
 
 const want = process.argv.slice(2).map(Number).filter((n) => Number.isFinite(n));
 // 🔴 [2026-09-25 主人问「你的审查程序怎么写的」] 场次上限原来**写死 12**（`}, 12)`）——
@@ -90,7 +91,16 @@ const data = await page.evaluate(async (limit) => {
             if (detour > 40) bad.push(`${a.name}→${b.name} 折返 ${Math.round(detour)} 公里`);
             pts.push(...p);
         }
-        out.push({ idx: all.indexOf(ev) + 1, title: String(ev.title).replace(/^公元前\d+年\s*/, ''), roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length, over200 });
+        out.push({
+            idx: all.indexOf(ev) + 1, title: String(ev.title).replace(/^公元前\d+年\s*/, ''),
+            roadKm: Math.round(roadKm), reds, legs: legs.length, bad, stops: stops.length, over200,
+            // 逐腿明细（审核报告用）：起→止 / 直线 / 沿路 / 倍数 / 末段离路
+            legList: legs.map((l) => ({
+                from: l.from, to: l.to, straightKm: Math.round(l.straightKm || 0),
+                roadKm: Math.round(l.roadKm || 0), ratio: +(l.ratio || 0).toFixed(2),
+                offroadKm: Math.round(l.offroadKm || 0),
+            })),
+        });
     }
     return { rows: out, segs: seg.SCRIPT_SEGMENTS.map((s) => ({ id: s.id, part: s.part, from: s.from, to: s.to, events: s.events, hasBattle: s.hasBattle, briefedBy: s.briefedBy })) };
 }, LIMIT);
@@ -116,9 +126,19 @@ const ruler = await page.evaluate(async () => {
         }
         return { name: `${a.name}→${b.name}`, detour: Math.round(detour), note: '' };
     };
+    // 🔴 [2026-09-25] 原反例「波斯波利斯→伊斯法罕」的折返已从 >40 掉到 10 公里 —— 那条路被主人修直了，
+    //    反例失效。改为在若干「实测绕远」的腿里取折返最大的一条当反例（找不到 >40 的就说明尺子抓不到折返）。
+    const cands = [
+        ['city_halikanasu', 'city_geerdiweng'],   // 哈利卡纳苏斯→戈尔迪乌姆（实测 854 公里）
+        ['city_fala', 'city_bam_citadel'],        // 法拉→巴姆古城（实测 695 公里）
+        ['city_kandaha', 'city_fala'],            // 坎大哈→法拉（实测 398 公里）
+        ['city_bosibolisi', 'city_yisifahan'],    // 旧反例（已被主人修直，留作对照）
+    ].map(([a, b]) => test(a, b));
+    const worst = cands.slice().sort((x, y) => (y.detour ?? -1) - (x.detour ?? -1))[0];
     return {
-        good: test('city_salonica', 'city_anfeibolisi'),          // 正例：一路向东，应 0
-        bad: test('city_bosibolisi', 'city_yisifahan'),           // 反例：史料已知的大绕行（3.86 倍），应被抓出
+        good: test('city_salonica', 'city_anfeibolisi'),   // 正例：一路向东，应 0
+        bad: worst,                                        // 反例：候选里折返最大的一条
+        cands,
     };
 });
 console.log('=== 先校验尺子 ===');
@@ -144,6 +164,18 @@ for (const r of data.rows) {
     console.log(`${String(r.idx).padStart(3)}  ${String(r.roadKm).padStart(5)}km  ${String(r.reds).padStart(2)} ${String(r.stops).padStart(4)}  ${String(r.over200.length).padStart(4)}   ${r.over200.length ? r.over200.join('；') : '0'}`);
     if (r.bad.length) console.log(`      方向疑点：${r.bad.join('；')}`);
 }
+console.log('\n=== 对账行（防「工具坏了却不知道」）===');
+{
+    const totalScenes = data.rows.length;
+    const totalLegs = data.rows.reduce((a, r) => a + r.legList.length, 0);
+    const overAll = data.rows.reduce((a, r) => a + r.over200.length, 0);
+    console.log(`  审了 ${totalScenes} 场 / ${totalLegs} 条腿；超 200 公里 ${overAll} 条；红项 ${data.rows.reduce((a, r) => a + r.reds, 0)}；方向疑点 ${data.rows.reduce((a, r) => a + r.bad.length, 0)}`);
+    if (totalScenes < 20) console.log(`  🔴 只审到 ${totalScenes} 场 —— 剧本共 20 场，**没审全**，这次结论不许用（旧版就是写死 12 场瞒了很久）`);
+    if (!rulerOk) console.log('  🔴 尺子没过校验 —— 本次结果作废');
+    writeFileSync('scratch/route_audit_report.json', JSON.stringify({ at: new Date().toISOString(), rulerOk, scenes: data.rows, segments: data.segs }, null, 2));
+    console.log('  逐腿明细已落盘 → scratch/route_audit_report.json');
+}
+
 const badAll = data.rows.reduce((a, r) => a + r.reds + r.bad.length, 0);
 console.log(badAll ? `\n❌ 前四片共 ${badAll} 处要处理` : '\n✅ 前四片的线、方向两关全过');
 await browser.close();
