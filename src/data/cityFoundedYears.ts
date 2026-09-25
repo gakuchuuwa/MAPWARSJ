@@ -49,6 +49,8 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     //    建立年代无确切年份，按「合理推定」记约前 2000 年（不影响前334 之后任何一场的判定）。
     city_yikeniwumu: -2000,     // 伊科尼乌姆（科尼亚），约前 2000 年（赫梯 Ikkuwaniya）
     city_tiyana: -2000,        // 提亚纳（今土耳其 Niğde 省 Kemerhisar），赫梯名 Tuwanuwa，约前 2000 年 —— 前333 亚历山大穿越卡帕多细亚时已是重镇（阿里安《远征记》II.4）。🔴 [2026-09-25 补] 新建据点必须填建立年代，否则剧本期过不了年代闸门、开局不上图。
+
+    city_nuotaka: -2000,     // 诺塔卡（粟特古城，前329 亚历山大经此）
     city_matelugang: -2000,    // 马特鲁港（帕拉伊托尼乌姆）：古埃及沿海港，前 2000 年已有聚落
     city_xiwa: -2000,
     city_lihaimen: -2000,

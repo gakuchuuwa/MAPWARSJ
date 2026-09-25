@@ -944,7 +944,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'jilizhou': 'city_beishacheng',
     'nuergan': 'city_nuergan',
     'kepantuo': 'city_gongzhubao',
-'xingxingxia': 'city_xingxingxia',
+'xingxingxia': 'city_xingxingxia',
+
+    'sute': 'city_nuotaka',
 'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
 'qinghai': 'city_gasikou',
