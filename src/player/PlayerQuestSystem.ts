@@ -1349,13 +1349,11 @@ export class PlayerQuestSystem {
 
     /**
      * 🔴 [2026-09-16 主人定] 赶路背景播报：玩家**在奔赴战场的路上**逐段播这场仗的背景。
-     * 空行分段，按各段字数保留阅读时间；抵达、改道或入伍时停止。
+     * 空行分段，按各段字数保留阅读时间；**念完为止**（2026-09-25 主人改：抵达不再掐断）。
      * 同一个战场只播一次（`briefedBattlefields`），中途改道或再次触发都不重播。
      *
-     * 🔴 [2026-09-19] 多一个 `titleOverride`：**武将触发**那条链上玩家是**随军**赶路
-     *   （`hero.isAttached() === true`），而下面的 `stillHeading` 有一道「未入伍才算在路上」的闸门
-     *   —— 那是给「单骑点战场」写的。若照旧判 `isAttached`，跟随武将时说第一段就会被掐断。
-     *   故随军赴战场时由调用方传 override，改用「HUD 动向栏还挂着这个战役名」判在不在路上。
+     * 🔴 [2026-09-19] 多一个 `titleOverride`：**武将触发**那条链上玩家是**随军**赶路。
+     *   （2026-09-25 起 `stillHeading` 这道闸已按主人令取消，override 只用于取名与去重键。）
      */
     /** 剧本模式：编辑器里写的邀约对白（没写 → null，用通用句）；乱斗模式一律 null（保持原样）。
      *  🔴 [2026-09-23 主人定「接任务只需要文字就行，不需要语音播报」] 只显示文字，不念。 */
@@ -1364,13 +1362,16 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 赶路播报：**军团起步那一刻开念**，只在还在这条赶路路上才继续念（到了/改道/入伍就停）。
+     * 赶路播报：**军团起步那一刻开念、念完为止**。
      *
      * 🔴 [2026-09-25 主人「不是战斗结束后播报，是军团开始移动的时候播报」]
      *    原来这里只认「战场记录」的播报（`bf.briefing`）—— 于是**攻城战那一场没有播报**：
      *    按 §二之二 攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`），
      *    而 `startJourneyBriefing(null, ...)` 第一句 `if (!bf) return;` 直接返回 ✗。
      *    现在多接一个 `textOverride`：没有战场记录时用事件的播报，标题用事件标题。
+     *
+     * 🔴 [2026-09-25 主人「把『军团一到地方／一开战就掐断播报』改成『念完为止』」]
+     *    详见下面 `pushNext` 那段注释：抵达、改道、入伍都不再中断旁白。
      */
     private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string, textOverride?: string): void {
         const text = (bf?.briefing ?? textOverride ?? '').trim();
@@ -1384,15 +1385,16 @@ export class PlayerQuestSystem {
 
         this.clearJourneyBriefing();
         let i = 0;
-        const title = titleOverride ?? (bf ? this.getBattlefieldBattleTitle(bf.id, bf.name) : '');
-        // 玩家还在赶这个战场的路上才继续念（改道/入伍/到了都停）
-        const stillHeading = () => this.deps.hero.getTravelPointLabel() === title
-            && (titleOverride ? true : !this.deps.hero.isAttached());
-
+        // 🔴 [2026-09-25 主人定「念完为止」] 原来这里有一道 `stillHeading()` 闸：
+        //    军团一到地方（或改道、入伍）就把还没念的段落直接掐掉 —— 于是「字数必须塞进行军时长」
+        //    （第一片三场只剩 60/114/102 字，主人批「文案有点短了」）。主人令：**起步开念、念完为止**。
+        //    现在只认两件事：① 段落念完了（i >= paragraphs.length）② 被新的行程作废（briefingCancelled，
+        //    见 `abortScriptJourney` —— 主人自己关掉自动/转乱斗、或 dispose 时才停）。
+        //    行军到没到、改没改道，**都不再中断旁白**。
         const pushNext = () => {
             if (this.briefingCancelled) return;
-            if (i >= paragraphs.length || !stillHeading()) {
-                this.flushBriefingTrace(key, i >= paragraphs.length ? 'done' : 'aborted');
+            if (i >= paragraphs.length) {
+                this.flushBriefingTrace(key, 'done');
                 this.clearJourneyBriefing();
                 return;
             }
