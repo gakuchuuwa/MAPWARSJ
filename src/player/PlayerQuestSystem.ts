@@ -599,6 +599,8 @@ export class PlayerQuestSystem {
         marchWaypoints: string[];
         /** 武将邀约对白（编辑器里按史料写的；剧本模式用它并念出来） */
         inviteText: string | null;
+        /** 战役背景播报旁白（攻城战等没有独立战场记录的，旁白写在事件上） */
+        briefing?: string | null;
     } | null {
         const bf = findEventSite(hit.battlefieldId);
         if (!bf) return null;
@@ -623,6 +625,7 @@ export class PlayerQuestSystem {
                 : null,
             marchWaypoints: [...(data?.marchWaypoints ?? [])],
             inviteText: hit.event.inviteText?.trim() || null,
+            briefing: hit.event.briefing?.trim() || null,
         };
     }
 

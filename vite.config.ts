@@ -2364,12 +2364,22 @@ function findObjectEntryEnd(text: string, keyIdx: number): number {
     i++; // 越过冒号
     // 跳过冒号后的空白（值与 key 同行）
     while (i < text.length && (text[i] === ' ' || text[i] === '\t')) i++;
-    // 若值是对象 { ... }, 做花括号配对跳到匹配的 }
-    if (text[i] === '{') {
+    // 若值是对象 { ... } 或数组 [ ... ]（多将池），做括号配对跳到匹配的收尾括号
+    // [BUGFIX 2026-09-25] 旧逻辑只认 { }：数组条目（如 maqidun: [ {...}, {...} ]）只截到第一行，
+    //   批量管理器保存一次就把数组开头换成单个对象、留下孤儿元素与 ] → FactionGenerals.ts 语法崩溃。
+    //   配对时跳过字符串与 // 注释（注释里的 [2026-…] 不参与计数）。
+    if (text[i] === '{' || text[i] === '[') {
+        const open = text[i], close = open === '{' ? '}' : ']';
         let balance = 0;
         for (; i < text.length; i++) {
-            if (text[i] === '{') balance++;
-            else if (text[i] === '}') { balance--; if (balance === 0) { i++; break; } }
+            const ch = text[i];
+            if (ch === '/' && text[i + 1] === '/') { while (i < text.length && text[i] !== '\n') i++; continue; }
+            if (ch === "'" || ch === '"' || ch === '`') {
+                for (i++; i < text.length && text[i] !== ch; i++) if (text[i] === '\\') i++;
+                continue;
+            }
+            if (ch === open) balance++;
+            else if (ch === close) { balance--; if (balance === 0) { i++; break; } }
         }
     }
     // 走到当前行尾（覆盖尾随逗号、注释; 单行原始值也走到这里）
@@ -4155,7 +4165,32 @@ function serverSaveGeneral(data: {
 
     // FactionGenerals.ts
     const fgLine = `${data.factionId}: { generalId: '${data.generalId}', generalName: '${data.generalName}', portrait: '${data.portrait}' },`;
-    if (fgText.includes(`${data.factionId}:`)) {
+    const fgPoolIdx = (() => {
+        const kw = fgText.indexOf('FACTION_GENERALS');
+        const k = kw === -1 ? -1 : findObjectKeyIdx(fgText, kw, data.factionId);
+        if (k === -1) return -1;
+        const m = fgText.slice(k).match(/^[^:]*:\s*/);
+        return m && fgText[k + m[0].length] === '[' ? k : -1;
+    })();
+    if (fgPoolIdx !== -1) {
+        // [BUGFIX 2026-09-25] 多将池（数组）：只换池里这一位武将那一个元素，其他武将原样保留
+        const poolEnd = findObjectEntryEnd(fgText, fgPoolIdx);
+        const pool = fgText.slice(fgPoolIdx, poolEnd);
+        const elem = `{ generalId: '${data.generalId}', generalName: '${data.generalName}', portrait: '${data.portrait}' },`;
+        const findId = data.oldGeneralId || data.generalId;
+        const re = new RegExp(`\\{\\s*generalId:\\s*'${findId}'[^{}]*\\},?`);
+        let newPool: string;
+        if (re.test(pool)) {
+            newPool = pool.replace(re, elem);
+            results.push('FactionGenerals.ts: replaced (pool element)');
+        } else {
+            const closeIdx = pool.lastIndexOf(']');
+            const nl = fgText.includes('\r\n') ? '\r\n' : '\n';
+            newPool = pool.slice(0, closeIdx) + `    ${elem}${nl}    ` + pool.slice(closeIdx);
+            results.push('FactionGenerals.ts: appended (pool element)');
+        }
+        fgText = fgText.slice(0, fgPoolIdx) + newPool + fgText.slice(poolEnd);
+    } else if (fgText.includes(`${data.factionId}:`)) {
         fgText = serverReplaceObjectLine(fgText, 'FACTION_GENERALS', data.factionId, `    ${fgLine}`);
         results.push('FactionGenerals.ts: replaced');
     } else {

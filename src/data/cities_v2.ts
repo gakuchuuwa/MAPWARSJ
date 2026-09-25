@@ -2208,6 +2208,8 @@ export const CITIES_V2: CityDataV2[] = [
 
 
 
+
+
     { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAV' },
 
     { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'pass', troops: 10000, region: 'SWEDISH', buildingStyle: 'WEST' },
