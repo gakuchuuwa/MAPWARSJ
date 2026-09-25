@@ -12,7 +12,8 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
     // ── T1 功勋之兵：独立主力取得重大战略级胜利 + 建制延续性强 ──
     yashu: { name: '亚述战车', tier: 1 },          // 尼尼微·萨尔贡：新亚述战略主力，战车＋攻城工程重塑近东版图，建制延续数百年
-    luomu: { name: '古拉姆军', tier: 1 },          // 伊科尼乌姆·基利杰：罗姆苏丹国建都于此的古拉姆常备军。基利杰·阿尔斯兰二世
+    luomu: { name: '古拉姆军', tier: 1 },
+    kapaduoxiya: { name: '提亚纳骑兵', tier: 3 },   // 提亚纳·萨比克塔斯：卡帕多细亚高原骑手（波斯军中的卡帕多细亚骑兵是史载兵种）          // 伊科尼乌姆·基利杰：罗姆苏丹国建都于此的古拉姆常备军。基利杰·阿尔斯兰二世
     osman: { name: '苏丹亲兵', tier: 1 },          // 布尔萨·穆罕默德二世：奥斯曼禁卫军火枪手；1453 攻陷君士坦丁堡、1526 莫哈奇，T1 功勋
     adiyabeina: { name: '马其顿禁卫骑兵', tier: 1 },
     aosimanbeiyiguo: { name: '加齐骑兵', tier: 2 },   // 瑟于特·奥斯曼一世：加齐圣战骑兵

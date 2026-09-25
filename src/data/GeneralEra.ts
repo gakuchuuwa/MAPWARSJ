@@ -42,7 +42,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'aqimeinide_daliushi': 'antiquity',
     'daliushi_iii': 'antiquity',
     'aqimeinide_aertabazanuosi': 'antiquity',
-  'aqimeinide_sabiktas': 'antiquity',
+  'kapaduoxiya_sabiktas': 'antiquity',
     'aswaka_cleophis': 'antiquity',
     'aornos_aphrikes': 'antiquity',
     'julushi_catanes': 'antiquity',

@@ -1219,6 +1219,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kanan': 'city_tuile',
     'feilisidin': 'city_jiasa',
     'dasaleiti': 'city_peiliang',
+    'kapaduoxiya': 'city_tiyana',   // 🔴 [2026-09-25] 据点本位：将/精按 cityId 查录入表，靠这一行锚定
 };
 
 // @ts-ignore
