@@ -29,7 +29,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利
     fujisi: { name: '福基斯重步', tier: 4 },
     yilisi: { name: '埃利斯战车', tier: 4 },
-    maqidun: { name: '伙伴骑兵', tier: 0 },
     xiaofulijiya: { name: '希腊雇佣兵', tier: 2 },
     jileinaijia: { name: '昔兰尼骑兵', tier: 4 },
 
@@ -42,5 +41,6 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     youbeiya: { name: '波斯远征军', tier: 1 },          // 卡里斯托斯·达提斯：前490马拉松远征波斯水陆大军
     haerjijiji: { name: '萨里沙枪阵', tier: 1 },          // 奥林索斯·腓力二世：萨里沙超长矛马其顿方阵
     // 🔴 [2026-09-19 主人令「都给我删了」] 卡帕多细亚（`kapaduoxiya`）与其番号「卡帕多骑队」已删除 ——
-    //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
+    //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
+    maqidun: { name: '伙伴骑兵', tier: 0 },
 };

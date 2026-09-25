@@ -761,7 +761,11 @@ export class PlayerQuestSystem {
         this.startMarchToBattlefield(host, marchTarget);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
-        this.startJourneyBriefing(findEventSite(ev.battlefieldId) ?? null, ev.title);
+        // 🔴 [2026-09-25 主人「不是战斗结束后播报，是军团开始移动的时候播报」]
+        //    攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`）—— 这里按事件标题回查脚本取出来，
+        //    兵团一起步就念（原来只认 `bf.briefing`，攻城战那一场等于没有播报 ✗）。
+        const scriptEv = HISTORICAL_EVENT_SCRIPT.find((e) => e.title === ev.title);
+        this.startJourneyBriefing(findEventSite(ev.battlefieldId) ?? null, ev.title, scriptEv?.briefing ?? undefined);
         if (!continuation) {
             gameLog('expedition',
                 `[玩家] 武将史实战役：${g.generalName} 率 ${host.name} 自 ${city.name} 奔赴【${ev.title}】`);
@@ -1356,19 +1360,28 @@ export class PlayerQuestSystem {
         return this.deps.hero.autoPlan === 'script' ? ev.inviteText : null;
     }
 
-    private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string): void {
-        if (!bf) return;
-        const text = bf.briefing?.trim();
+    /**
+     * 赶路播报：**军团起步那一刻开念**，只在还在这条赶路路上才继续念（到了/改道/入伍就停）。
+     *
+     * 🔴 [2026-09-25 主人「不是战斗结束后播报，是军团开始移动的时候播报」]
+     *    原来这里只认「战场记录」的播报（`bf.briefing`）—— 于是**攻城战那一场没有播报**：
+     *    按 §二之二 攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`），
+     *    而 `startJourneyBriefing(null, ...)` 第一句 `if (!bf) return;` 直接返回 ✗。
+     *    现在多接一个 `textOverride`：没有战场记录时用事件的播报，标题用事件标题。
+     */
+    private startJourneyBriefing(bf: BattlefieldData | null, titleOverride?: string, textOverride?: string): void {
+        const text = (bf?.briefing ?? textOverride ?? '').trim();
         if (!text) return;
-        if (this.briefedBattlefields.has(bf.id)) return;
-        this.briefedBattlefields.add(bf.id);
+        const key = bf?.id ?? `event:${titleOverride ?? ''}`;
+        if (this.briefedBattlefields.has(key)) return;
+        this.briefedBattlefields.add(key);
 
         const paragraphs = journeyBriefingParagraphs(text);
         if (!paragraphs.length) return;
 
         this.clearJourneyBriefing();
         let i = 0;
-        const title = titleOverride ?? this.getBattlefieldBattleTitle(bf.id, bf.name);
+        const title = titleOverride ?? (bf ? this.getBattlefieldBattleTitle(bf.id, bf.name) : '');
         // 玩家还在赶这个战场的路上才继续念（改道/入伍/到了都停）
         const stillHeading = () => this.deps.hero.getTravelPointLabel() === title
             && (titleOverride ? true : !this.deps.hero.isAttached());
@@ -1376,7 +1389,7 @@ export class PlayerQuestSystem {
         const pushNext = () => {
             if (this.briefingCancelled) return;
             if (i >= paragraphs.length || !stillHeading()) {
-                this.flushBriefingTrace(bf.id, i >= paragraphs.length ? 'done' : 'aborted');
+                this.flushBriefingTrace(key, i >= paragraphs.length ? 'done' : 'aborted');
                 this.clearJourneyBriefing();
                 return;
             }
