@@ -1222,6 +1222,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kapaduoxiya': 'city_tiyana',
     'maermajika': 'city_matelugang',
     'ameng': 'city_xiwa',
+    'eerbulushi': 'city_lihaimen',
+    'aliya': 'city_helate_city',
     'xuliya': 'city_tapusakusi',
     'meisuobudamiya': 'city_nixibisi',   // 🔴 [2026-09-25] 据点本位：将/精按 cityId 查录入表，靠这一行锚定
 };

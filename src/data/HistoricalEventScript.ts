@@ -332,7 +332,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    实测（scratch/_probe_route_waypoints.mjs）：安卡拉→伊科尼乌姆 直线232km/路网251km（1.09x）、
             //    伊科尼乌姆→阿达纳 直线304km/路网359km（1.18x），都在 400km 与 1.6x 之内；
             //    不补它则安卡拉→阿达纳 一段直线 407km，超过编辑器 400km 上限。
-            marchWaypoints: ['city_geerdiweng', 'city_ankala', 'city_yikeniwumu', 'city_adana'],
+            marchWaypoints: ['city_geerdiweng', 'city_ankala', 'city_tiyana', 'city_adana'],   // 段2-4：安基拉 → 提亚纳（卡帕多细亚）→ 奇里乞亚门 → 塔尔苏斯 → 伊苏斯（阿里安 II.4-5；主人已连好 安基拉—提亚纳 那条路）
 
             // ── 攻方：马其顿 亚历山大 ──
             attackerFactionId: 'maqidun',
@@ -628,7 +628,14 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 出发地＝军团此刻在哪：上一场（波斯门野战）落点最近且那一年已存在的据点 ＝ 波斯波利斯
             // 史料：按 Chronology 条目所记这一年的行军设路标（米底 → 里海门 → 赫尔卡尼亚 → 图斯 → 阿里亚/德兰吉亚那
             //       → 阿拉霍西亚 → 加兹尼 → 喀布尔 → 巴克特拉 → 马拉坎达）→ 居鲁士城
-            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_damugan', 'city_tusi', 'city_taibade', 'city_fala', 'city_kandaha', 'city_jiaseni', 'city_gaofu', 'city_lanshi', 'city_samaerhan'],
+            // 🔴 [2026-09-25 主人令「重新整理 5-1 段的行军路线」，按「相邻节点 ≤200 公里」精细铺设]
+            //    按主人给的 35 站走廊重排：波斯波利斯 → 伊斯法罕 → 哈马丹 → 雷伊 → 里海门 → 达姆甘
+            //    → 白哈格（萨卜泽瓦尔）→ 尼沙布尔 → 图斯 → 泰巴德 → 赫拉特 → 法拉 → 博斯特（格里什克）
+            //    → 坎大哈 → 哥疾宁（加兹尼）→ 高附（喀布尔）→ 蓝氏城 → 撒马尔罕 →（居鲁士城）。
+            //    比原版多出 里海门 / 白哈格 / 赫拉特 / 博斯特 四站（原版漏了里海门天险与阿利亚首府赫拉特）。
+            //    ⚠️ 主人走廊里的 德拉普萨卡（昆都士）暂**未**写入：路网里喀布尔往北那道兴都库什山路（萨朗/哈瓦克）尚未连通，
+            //       实测 喀布尔 → 德拉普萨卡 沿路 664 公里、2.7 倍（直线只 244），军团会被绕到蓝氏城再折回来 —— 等那条路连好再插回。
+            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_bosite', 'city_kandaha', 'city_jiaseni', 'city_gaofu', 'city_lanshi', 'city_samaerhan'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 10000,

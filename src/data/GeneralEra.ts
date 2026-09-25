@@ -45,6 +45,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
   'kapaduoxiya_sabiktas': 'antiquity',
   'maermajika_paraetos': 'antiquity',
   'ameng_jisi': 'antiquity',
+  'eerbulushi_beisusi': 'antiquity',
+  'aliya_satibazanishi': 'antiquity',
   'xuliya_shoujiang': 'antiquity',
   'meisuobudamiya_shoujiang': 'antiquity',
     'aswaka_cleophis': 'antiquity',
@@ -607,9 +609,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dibisi_phoinix': 'antiquity',
     'seleisi_shouling': 'antiquity',
     'suogediyana_arimazes': 'antiquity',
-    // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德
-    //    （621 年虎牢关战役守方主帅）—— 与李世民同属封建时代
-    'doujiande': 'feudal',
     'kesa_bulan': 'feudal',
     'ketagalan_huangqingyun': 'imperial',
     'khoja_apakehezhuo': 'imperial',
