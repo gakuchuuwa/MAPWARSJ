@@ -6,6 +6,7 @@ import { LandSeaSystem } from '../world/land-sea';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { SEA_ROUTE_DATA } from '../data/VectorSeaRouteData';
 import { OrientationSystem } from '../core/OrientationSystem';
+import { NavalWakeDrawer } from './legion/NavalWakeDrawer';
 
 /**
  * TradeTrafficLayer — 战略地图「商贸交通」环境层（2026-08-31 主人定稿）。
@@ -499,10 +500,14 @@ export class TradeTrafficLayer {
 
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
+        /** 本帧待画的精灵：位置先全部算完 —— **先画水迹、后画船体**，浪花才垫在船底下 */
+        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; dx: number; dy: number }> = [];
 
         for (const c of this.caravans) {
             const cartAsset = this.assetFor(c.cartDir);
             const shipAsset = this.assetFor(c.shipDir);
+            /** 这一支车队里**正在海上**的单位（给它们画拖尾水迹） */
+            const seaShips: Array<{ x: number; y: number; r: number; isAlive: boolean; dir: number; deg: number; shipLen: number }> = [];
 
             for (let u = 0; u < c.count; u++) {
                 const ud = c.dist - u * UNIT_SPACING_DEG;
@@ -555,8 +560,34 @@ export class TradeTrafficLayer {
                 const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
                 const dx = pt.x - hx * scale;
                 const dy = pt.y - hy * scale;
-                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+                pending.push({ sheet, frame, fw, fh, dx, dy });
+                if (sea) {
+                    // 海上的单位进队列（船身罗盘角/朝向/船长都按这一帧算出来的真值给）
+                    seaShips.push({ x: pt.x, y: pt.y, r: u, isAlive: true, dir: dirIdx, deg: dirRes.deg, shipLen: fw * scale });
+                }
             }
+
+            // 🔴 [2026-09-25 主人报障「商船没有拖尾」] **海上这段的商船也要拖尾水迹** ——
+            //    与军团舰队同一套 DE 水迹（`NavalWakeDrawer`：WAKE_BACK / WAKE_FRONT）；
+            //    画在船体之前（浪花垫在船底下），每支车队一份粒子池（`trade:<车队 id>`，互不串味）。
+            //    海陆判据沿用本层已有的 `sea`（优先看走的是哪条路，掩膜兜底），不另立一套。
+            if (seaShips.length) {
+                NavalWakeDrawer.drawNavalWakes(
+                    ctx, seaShips, seaShips[0].dir, scale, this.nowMs, true,
+                    undefined, seaShips[0].shipLen, `trade:${c.id}`,
+                    {
+                        toWorld: (point) => {
+                            const ll = this.map.containerPointToLatLng(L.point(point.x, point.y));
+                            return { x: ll.lng, y: ll.lat };
+                        },
+                        toScreen: (point) => this.map.latLngToContainerPoint([point.y, point.x]),
+                    },
+                );
+            }
+        }
+
+        for (const p of pending) {
+            ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.dx, p.dy, p.fw * scale, p.fh * scale);
         }
     }
 
