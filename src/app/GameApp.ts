@@ -922,6 +922,10 @@ export class GameApp {
         });
         this.playerQuests = quests;
 
+        // 🔴 [2026-09-26 主人「我说的隐藏是最小化，你要把展开的UI按钮留着呀」]
+        //    剧本期右下角 HUD 只**最小化一次**（只留那个展开按钮），之后主人自己点开就点开，不再被轮播按回去。
+        let scriptHudMinimizedOnce = false;
+
         this.playerHUD = new PlayerHUD(hero, quests, {
             getFactionName: (id) => this.cityManager.getFactionName(id),
             getCityName: (id) => this.cityManager.getCity(id)?.name ?? id,
@@ -935,15 +939,27 @@ export class GameApp {
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
             setCompanionPanelsExpanded: (expanded) => {
-                // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）；
-                //    右下角信息面板在战略地图上一直显示，只有进战术模式（13）时收起。乱斗期逐字不变。
+                // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
+                // 🔴 [2026-09-26 主人两道令] 先令「把右下角的信息面板也隐藏」，随即报障
+                //    「你把信息面板的展开按钮也给隐藏啦，我怎么开打呀」，再澄清「我说的隐藏是最小化，
+                //    你要把展开的UI按钮留着呀」→ 口径定死：**剧本期只把右下角 HUD 最小化**，
+                //    那个展开按钮（`#toggle-time-hud-btn`，收起时显示「控制」）必须留着，
+                //    点它就能展开去按「播放」开打。绝不 display:none 整块 —— 那会把按钮一起带走。
+                //    只做**一次**（边沿触发）：主人自己点开后，轮播不再把它按回去。
                 if (isScriptPeriod()) {
                     this.cameraFollowUI.closeList();
                     this.brawlFeedPanel?.setExpanded(false);
-                    const inScene13 = this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true;
-                    this.gameTimeHUD?.setCollapsed(inScene13, false);
+                    if (!scriptHudMinimizedOnce) {
+                        scriptHudMinimizedOnce = true;
+                        this.gameTimeHUD?.setCollapsed(true, false);
+                    }
+                    // 进战术模式（13）仍然照旧收起（临时让位给战斗画面，不改相位）
+                    if (this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true) {
+                        this.gameTimeHUD?.setCollapsed(true, false);
+                    }
                     return;
                 }
+                scriptHudMinimizedOnce = false;   // 剧本打完切乱斗：下次再进剧本时重新最小化一次
                 if (expanded) this.cameraFollowUI.openList();
                 else this.cameraFollowUI.closeList();
                 this.brawlFeedPanel?.setExpanded(expanded);

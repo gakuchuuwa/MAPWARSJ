@@ -129,16 +129,32 @@ const ruler = await page.evaluate(async () => {
         ['city_bosibolisi', 'city_yisifahan'],    // 旧反例（已被主人修直，留作对照）
     ].map(([a, b]) => test(a, b));
     const worst = cands.slice().sort((x, y) => (y.detour ?? -1) - (x.detour ?? -1))[0];
+    // 🔴 [2026-09-26] 上面这批**真实数据反例**如今全部 ≤40 公里（路都被主人修直了），
+    //    于是旧的 rulerOk（要求反例 >40）永远为 false、报告里那条自校等于天天误报「结果作废」。
+    //    改为**合成折线**做硬自校（跑的是同一段算法，不碰路网）：一路靠近应 0，退回 50 公里再靠近应 >40。
+    //    真实反例仍逐条打印出来供参考，但它只作参考、不再决定合格与否。
+    const detourOf = (pts, target) => {
+        let min = Infinity, det = 0;
+        for (const q of pts) { const d = km(q, target); if (d < min - 0.001) min = d; else det = Math.max(det, d - min); }
+        return Math.round(det);
+    };
+    const B = { lat: 0, lng: 0 };
+    const synth = {
+        good: detourOf([{ lat: 1, lng: 0 }, { lat: 0.6, lng: 0 }, { lat: 0.2, lng: 0 }, { lat: 0.05, lng: 0 }], B),
+        bad: detourOf([{ lat: 1, lng: 0 }, { lat: 0.6, lng: 0 }, { lat: 0.2, lng: 0 }, { lat: 0.7, lng: 0 }, { lat: 0.1, lng: 0 }], B),
+    };
     return {
         good: test('city_salonica', 'city_anfeibolisi'),   // 正例：一路向东，应 0
-        bad: worst,                                        // 反例：候选里折返最大的一条
+        bad: worst,                                        // 真实数据里的最大折返（只作参考）
         cands,
+        synth,
     };
 });
 console.log('=== 先校验尺子 ===');
 console.log(`  正例（一路向东）${ruler.good.name}：折返 ${ruler.good.detour} 公里 → ${ruler.good.detour === 0 ? '✅ 对' : '❌ 尺子错'}`);
-console.log(`  反例（已知大绕行）${ruler.bad.name}：折返 ${ruler.bad.detour} 公里 → ${ruler.bad.detour > 40 ? '✅ 抓到了' : '❌ 尺子漏'}`);
-const rulerOk = ruler.good.detour === 0 && ruler.bad.detour > 40;
+console.log(`  合成反例（人为折返 50 公里）：${ruler.synth.bad} 公里 → ${ruler.synth.bad > 40 ? '✅ 抓到了' : '❌ 尺子漏'}`);
+console.log(`  （参考）真实数据里折返最大的一条　${ruler.bad.name}：${ruler.bad.detour} 公里 —— 路已修直，只作参考`);
+const rulerOk = ruler.good.detour === 0 && ruler.synth.bad > 40;
 console.log(rulerOk ? '  → 尺子合格，下面的方向结果可用\n' : '  → 尺子不合格，方向结果一律作废\n');
 
 
