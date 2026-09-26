@@ -927,7 +927,19 @@ export class AudioManager {
         this.bgmObjectUrl = null;
     }
 
-    /** 每帧调用：以 16 母体文化 BGM 为基础，有专属 BGM 的势力文件夹优先覆盖 */
+    /**
+     * 跟拍军团变了 / 解锁后补播时调一次。
+     * 🔴 [2026-09-25 主人令「『每个武将都用自己文化的曲子』这条作废，你认为怎么好就怎么弄」]
+     *    **BGM 一律走洗牌袋随机轮播**（覆盖全部 39 个曲目夹，每首都轮得到、不重播刚放完那首）：
+     *    · 开场那一首也从全库随机 —— 原来分两条「按人物定曲子」的路，实测都会把开场锁死：
+     *      ① 立绘夹专属 BGM（`portraitDir`，如 CENTRAL/LATIN/manqing…）→ 实测开局连开三局**全是 CENTRAL**
+     *         （`node scratch/_probe_bgm_branch.mjs` 打出：lastBgmRequest.portraitPath = /assets/CENTRAL/__闲置__CENTRAL_43.png
+     *         → cameraRegionFolder=CENTRAL → /assets/bgm/CENTRAL_bgm.aud），主人听着就是「BGM 是固定的」；
+     *      ② 16 母体文化池（马其顿所在 LATIN 池只有两首）→ 每局也都是那两首之一。
+     *    · 保留不动的两条老规矩：**有歌在放就绝不打断**（applyCameraFolder，2026-09-16「都听到」）、
+     *      文件缺失回落 `GENERIC_BGM_FALLBACK`。
+     * 名字仍叫 syncPortraitBgm（调用方按跟拍军团的立绘/坐标发起请求），只是**不再用它们挑曲子**。
+     */
     public syncPortraitBgm(portraitPath?: string, lat?: number, lng?: number, cultureRegion?: string | null): void {
         if (lat === undefined || lng === undefined) return;
         // 🔴 [2026-08-12 修「有时候整局没音乐」] 无论这次成不成功都把请求**记下来**，供解锁 /
@@ -940,28 +952,13 @@ export class AudioManager {
         this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
         if (!this.settings.enabled || !this.unlocked) return;
 
-        // 1. 检查立绘文件夹是否有专属 BGM（如 manqing/daming/litang 等势力夹）
-        const portraitFolder = portraitPath ? extractPortraitFolder(portraitPath) : undefined;
-        const portraitDir = portraitFolder ? portraitFolder.replace(/^\/assets\/([^/]+)\/$/, '$1') : undefined;
-        if (portraitDir && !BGM_FALLBACK_MAP[portraitDir] && AVAILABLE_BGM_FOLDERS.has(portraitDir)) {
-            this.applyCameraFolder(portraitDir);
-            return;
-        }
-
-        // 2. 🔴 [2026-09-17 主人定] 16 母体专属匹配：每个武将都用自己文化的曲子
-        const region: string = cultureRegion || getRegion(lat, lng);
-        const mother = toBase16(region);
-        const pool = BASE16_BGM_MAP[mother];
-        if (pool && pool.length > 0) {
-            const chosen = pool[Math.floor(Math.random() * pool.length)];
-            this.applyCameraFolder(chosen);
-            return;
-        }
-
-        this.applyCameraFolder(resolveAvailableBgmFolder(region));
+        this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
     }
 
-    /** 每帧调用：根据镜头坐标切换对应 16 母体文化区的 BGM */
+    /**
+     * ⚠️ [2026-09-25 核查] **全仓无调用方（死代码）**，且它按镜头文化区挑曲的做法已被上一条令作废 ——
+     * 保留原地但**别再接线**：要换曲走 `rerollBgm()` 或 `syncPortraitBgm()` 的洗牌袋。
+     */
     public syncRegionBgm(lat: number, lng: number): void {
         if (!this.settings.enabled || !this.unlocked) return;
         const region = getRegion(lat, lng);

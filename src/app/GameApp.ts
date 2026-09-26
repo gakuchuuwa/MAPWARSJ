@@ -73,6 +73,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
+import { syncScriptCityNames } from '../events/scriptCityNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
@@ -856,10 +857,15 @@ export class GameApp {
             hero.autoPlan === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
+        // 🔴 [2026-09-25 主人定「据点的名字，文案要和图上的统一」]
+        //    剧本期据点**显示名**换成那一年的古名（scriptCityNames.ts），切回乱斗原样换回
+        const syncCityNames = () => syncScriptCityNames(this.cityManager, hero.autoPlan === 'script');
+        syncCityNames();
         syncHistoricalOwners();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
+            syncCityNames();
             syncHistoricalOwners();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();

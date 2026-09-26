@@ -34,6 +34,7 @@ import { cityExistsInYear } from './cityInYear';
 import { roadRegistry } from '../roads/RoadRegistry';
 // 🔴 [2026-09-25 主人令「设计到的据点都要显示」] 段表里的途经点也是**点名用到**的据点（如 1-2 段的索非亚）
 import { SCRIPT_SEGMENTS } from '../battlefield-editor/scriptSegments';
+import { SCRIPT_CITY_NAMES } from '../data/scriptCityNames';
 
 /** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
 function eraOfYear(year: number): GeneralEra {
@@ -123,6 +124,13 @@ export class ScriptCityVisibility {
         // 段表的途经点 / 起止名，能对上库里据点的，算「点名用到」
         { 
             const byName = new Map(cities.map((c) => [c.name, c.id]));
+            // 🔴 [2026-09-25 主人令「据点的名字，文案要和图上的统一」]
+            //    段表里的地名与图上显示名是同一套写法，可**乱斗原名与剧本期古名两种混着出现**
+            //    （「菲利波波利斯」是新名、「喀布尔」是旧名）—— 两个名字都认，改名前后都能落到同一座据点。
+            for (const row of SCRIPT_CITY_NAMES) {
+                byName.set(row.meleeName, row.cityId);
+                byName.set(row.scriptName, row.cityId);
+            }
             const norm = (s: string) => String(s).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
             for (const seg of SCRIPT_SEGMENTS) {
                 for (const v of [seg.from, seg.to, ...seg.via]) {
