@@ -56,8 +56,8 @@ export const SCRIPT_PARTS: Array<{ part: number; name: string; years: string }> 
 export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     // ── 第一片（前335）：3 段 / 3 场 ─────────────────────────────
     { id: '1-1', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩拉', to: '海姆斯山（战争点 01）', via: ['菲利比', '内斯托斯河', '罗多彼山', '菲利波波利斯'], events: [1], hasBattle: true, briefedBy: [1] },
-    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '海姆斯山战场', to: '佩利昂（战争点 02）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
-      note: '线内另含史料 B 档：破特里巴利人、皮帐作筏夜渡多瑙河' },
+    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '海姆斯山战场', to: '佩利昂（战争点 02）', via: ['莱吉努斯河', '德鲁斯塔尔（多瑙河畔）', '布加勒斯特（北岸·渡河击盖塔人）', '索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
+      note: '🔴 [2026-09-25 主人「既然有据点，那么就添加个途径点」] 线**北到多瑙河**：破特里巴利人于莱吉努斯河（英文维基 Battle at Lyginus River：3,000 人战死），西尔穆斯退守多瑙河中的波伊刻岛，亚历山大渡河击盖塔人，随后折返西南经阿格里安人之地／派奥尼亚进兵佩利昂。这两件事按 B 档**在播报里念**（第 2 场播报已写），不单列为一场战役；路标用库里现成据点：德鲁斯塔尔（多瑙河畔锡利斯特拉）、布加勒斯特（北岸）。' },
     { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利昂', to: '底比斯（战争点 03）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
 
     // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────

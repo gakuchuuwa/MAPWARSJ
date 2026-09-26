@@ -33,7 +33,7 @@ export class SubtitleBanner {
                     bottom: ${/editor/i.test(location.pathname) ? '10px' : '84px'};
                     transform: translateX(-50%);
                     z-index: 10003;
-                    max-width: 76vw;
+                    max-width: 92vw;
                     padding: 12px 36px;
                     background: linear-gradient(180deg, rgba(22, 17, 13, 0.90) 0%, rgba(12, 9, 7, 0.95) 100%);
                     border: 1px solid rgba(212, 175, 55, 0.35);
@@ -77,7 +77,8 @@ export class SubtitleBanner {
                 }
                 /* 战役背景播报流式呈现：宽屏电影双行视界（1040px），扁平延展，不遮挡大地图 */
                 #${BANNER_ID}.multiline {
-                    max-width: min(1040px, calc(100vw - 120px));
+                    /* 🔴 [2026-09-25 主人「可以把屏幕做的更宽些」] 宽屏拉到 1680px / 两侧各留 32px */
+                    max-width: min(1680px, calc(100vw - 64px));
                     white-space: normal;
                     letter-spacing: 1.5px;
                     line-height: 1.85;
