@@ -46,6 +46,16 @@ export const SCRIPT_CITY_NAMES: readonly ScriptCityName[] = [
             + '（`cityFoundedYears.ts` 该城已填 -342，故前 335 年本就存在、本就上图。）',
     },
     {
+        cityId: 'city_sifaerde',
+        meleeName: '斯法尔德',
+        scriptName: '萨迪斯',
+        source: '英文维基百科 Sardis：吕底亚王都、阿契美尼德吕底亚行省首府，吕底亚语作 Sfard、今土耳其 Sart。'
+            + '库里乱斗名「斯法尔德」正是吕底亚语旧形 Sfard 的音译 —— 现代中文读者认不出。'
+            + '现代中文通作「萨迪斯」（大都会艺术博物馆中文页作「萨迪斯的阿尔忒弥斯神庙」，[链接](https://www.metmuseum.org/zh/audio-guide/1085)）；'
+            + '本片第 5 场播报原文本来就写「萨迪斯与以弗所相继开门投降」。'
+            + '按主人令「文案与图上必须是同一个名字、取现代读者认得出的那一个」→ 剧本期显示名统一成「萨迪斯」（id 不动）。',
+    },
+    {
         cityId: 'city_junshitandingbao',
         meleeName: '君士坦丁堡',
         scriptName: '拜占庭',

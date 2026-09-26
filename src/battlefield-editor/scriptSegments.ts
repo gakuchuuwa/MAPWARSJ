@@ -62,9 +62,9 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利昂', to: '底比斯（战争点 03）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
 
     // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────
-    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '斯法尔德', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4], hasBattle: true, briefedBy: [4],
-      note: '含战争点 03→04 之间的渡海与格拉尼库斯' },
-    { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '斯法尔德', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
+    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '萨迪斯', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '特洛伊（伊利昂祭祀）', '格拉尼库斯河战场'], events: [4], hasBattle: true, briefedBy: [4],
+      note: '含战争点 03→04 之间的渡海与格拉尼库斯。特洛伊（伊利昂）是史书明记的途经地：渡赫勒斯滂后亚历山大先登岸伊利昂祭雅典娜（阿里安 I.11），与数据里的路标 city_teluoyi 同一处，故补进段表。' },
+    { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '萨迪斯', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
     { id: '2-3', part: 2, partName: '小亚细亚破门与封锁海岸', from: '哈利卡纳苏斯', to: '安卡拉（安基拉）', via: ['考诺斯', '特尔梅索斯', '克桑托斯', '帕塔拉（吕基亚）', '米拉', '法塞利斯', '克利马克斯隘道', '佩尔格', '特梅索斯', '萨加拉索斯', '塞莱奈', '戈尔迪乌姆（过冬）'], events: [7], hasBattle: false, briefedBy: [7],
       note: '纯行军段（南岸扫荡＋内陆迂回）；由第 7 场的赶路播报念' },
     { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安卡拉（安基拉）', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
