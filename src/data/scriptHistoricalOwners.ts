@@ -32,6 +32,12 @@ export const SCRIPT_HISTORICAL_OWNERS: readonly ScriptHistoricalOwner[] = [
     { year: -335, cityId: 'city_yanghe', factionId: 'maqidun', source: '英文维基 Thracian Chersonese：雅典与马其顿长期争夺，前338 年割让给腓力二世。' },
 
     // ── 阿契美尼德波斯·小亚细亚诸行省 ──
+    // 🔴 [2026-09-26 第二片逐座核旗号] 前334 年爱奥尼亚诸希腊城邦仍是波斯属地（前387《大王和约》划归波斯，
+    //    亚历山大东征才解放），与上一条「克拉佐美奈」同一口径 —— 乱斗旗号「爱奥尼亚」「伊奥尼亚」是这两座城
+    //    最有名那段历史的旗号，放进前334 就是穿越。
+    { year: -335, cityId: 'city_yifusuo', factionId: 'aqimeinide', source: '英文维基 Ephesus / Peace of Antalcidas：前387 年《大王和约》把伊奥尼亚诸希腊城邦划归波斯，直到前334 年亚历山大东征才脱离波斯（与同表「克拉佐美奈」一条同一口径）。' },
+    { year: -335, cityId: 'city_miletus', factionId: 'aqimeinide', source: '英文维基 Siege of Miletus：前334 年米利都为波斯治下的希腊城邦，守将赫格西斯特拉图斯为波斯所任，另有波斯守军据内城；城破后归马其顿（本剧本第 5 场 `cityUpdates` 易主）。' },
+    { year: -335, cityId: 'city_damasikusi', factionId: 'aqimeinide', source: '英文维基 Damascus / Battle of Issus：前 4 世纪大马士革为阿契美尼德属地，是波斯王室与总督寄存战金的城；前333 年伊苏斯战后帕曼纽南下取之（阿里安《亚历山大远征记》II.11，本剧本第 7 场 `cityUpdates` 易主）。乱斗旗号「倭马亚」是 7 世纪以后的事。' },
     { year: -335, cityId: 'city_teluoyi', factionId: 'xiaofulijiya', source: '英文维基 Troad：直到亚历山大征服前，特洛阿德属阿契美尼德帝国赫勒斯滂弗里吉亚（小弗里吉亚）行省。' },
     { year: -335, cityId: 'city_peierjiameng', factionId: 'xiaofulijiya', source: '英文维基 Pergamon / Mysia：佩尔加蒙由亲波斯的贡吉洛斯家族领有，直到亚历山大才脱离波斯；密细亚在阿契美尼德时代称「小弗里吉亚」。阿塔罗斯王国前282 年才建。' },
     { year: -335, cityId: 'city_kelazuomeinai', factionId: 'aqimeinide', source: '英文维基 Clazomenae：前387 年《大王和约》把克拉佐美奈划归波斯。统一用阿契美尼德旗，免得同一帝国两面旗。' },
