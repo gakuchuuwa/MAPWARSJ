@@ -31,7 +31,7 @@ import { EVENT_SITES, findEventSite } from '../data/eventSites';
 import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
-import { journeyBriefingDuration, journeyBriefingParagraphs, journeyBriefingSentences } from './JourneyBriefing';
+import { journeyBriefingDuration, journeyBriefingParagraphs, journeyBriefingSentences, briefingAnchors } from './JourneyBriefing';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
 import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
@@ -777,7 +777,7 @@ export class PlayerQuestSystem {
         const scriptEv = HISTORICAL_EVENT_SCRIPT.find((e) => e.title === ev.title);
         this.startJourneyBriefing(
             findEventSite(ev.battlefieldId) ?? null, ev.title, scriptEv?.briefing ?? undefined,
-            this.scriptSegmentStarts(scriptEv ?? null),
+            this.scriptSegmentStarts(scriptEv ?? null, scriptEv?.briefing ?? undefined),
         );
         if (!continuation) {
             gameLog('expedition',
@@ -1566,18 +1566,42 @@ export class PlayerQuestSystem {
 
     /**
      * 本场行程里「每一段的起点」坐标（＝上一段的终点据点；最后一段的终点是本场战场，不做钩子）。
-     * 段名取自段表（`scriptSegments.ts`）；找一个据点按名字在图上找；找不齐 → 数组短一位 → 逐段口径自动不启用。
+     *
+     * 🔴 [2026-09-26 主人「行军和播报对不上」] **改成两条路，锚点优先**：
+     *   ① 旁白自己带锚点（段落开头 `【据点名】`）→ **就用这些锚点当钩子**，军团走到那座据点附近才念那一段。
+     *      这才是治「词跑在军团前面」的办法：像第 10 场那种「加沙一路讲到高加米拉」3900 公里的旁白，
+     *      原来只有「亚历山大城」一个钩子 —— 第二段（讲回师与高加米拉）在军团刚离亚历山大城时就念，
+     *      离高加米拉还有两千多公里；后面 200 多秒一路静音。带锚点后可拆成 佩鲁西姆／孟菲斯／锡瓦／推罗／
+     *      塔普萨库斯／尼尼微 各讲一段，走到哪讲到哪。
+     *   ② 没写锚点的场次照旧：取段表里「本场播报覆盖的段」的起点（最后一段的终点不做钩子）。
+     * 找不齐 → 数组短一位 → 逐段口径自动不启用（回落成起步一口气念）。
      */
-    private scriptSegmentStarts(ev: { title?: string } | null): Array<{ lat: number; lng: number; name: string }> {
+    private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string): Array<{ lat: number; lng: number; name: string }> {
         if (!ev?.title) return [];
+        const cities = this.deps.cityManager.getCities();
+        const findByName = (raw: string) => {
+            const nm = String(raw).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+                .replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
+            return cities.find((x) => x.name === nm);
+        };
+        // ① 旁白自带锚点：段落 2..N 开头的【据点名】（必须从**原文**读 —— 分段函数会把锚点剥掉）
+        if (text) {
+            const anchors = briefingAnchors(text);
+            if (anchors.length) {
+                const out: Array<{ lat: number; lng: number; name: string }> = [];
+                for (const a of anchors) {
+                    const c = findByName(a);
+                    if (c) out.push({ lat: c.latitude, lng: c.longitude, name: c.name });
+                }
+                if (out.length === anchors.length) return out;   // 锚点全认出来才用；缺一个就退回段起点口径
+            }
+        }
+        // ② 段表口径（原样）
         const n = HISTORICAL_EVENT_SCRIPT.findIndex((e) => e.title === ev.title);
         if (n < 0) return [];
         const out: Array<{ lat: number; lng: number; name: string }> = [];
         for (const s of segmentsBriefedBy(n + 1).slice(0, -1)) {
-            const nm = String(s.to)
-                .replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
-                .replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
-            const c = this.deps.cityManager.getCities().find((x) => x.name === nm);
+            const c = findByName(String(s.to));
             if (c) out.push({ lat: c.latitude, lng: c.longitude, name: c.name });
         }
         return out;

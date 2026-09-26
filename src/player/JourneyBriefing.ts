@@ -3,8 +3,32 @@ export function journeyBriefingDuration(text: string): number {
     return Math.max(7000, Array.from(text.trim()).length * 200 + 1500);
 }
 
+/**
+ * 🔴 [2026-09-26 主人「行军和播报对不上」] **旁白自己带锚点**：段落开头写 `【据点名】`，
+ *   表示「军团走到这座据点附近才念这一段」（锚点由 `PlayerQuestSystem.scriptSegmentStarts` 认）。
+ *   锚点是**给机器看的**，不念、不显示 —— 这里把它从正文里剥掉。
+ */
+export function stripBriefingAnchor(text: string): string {
+    return text.replace(/^\s*【[^】]{1,12}】\s*/, '');
+}
+
+/** 取出这一段挂的锚点名（没有锚点返回 null） */
+export function briefingAnchorOf(text: string): string | null {
+    const m = text.match(/^\s*【([^】]{1,12})】/);
+    return m ? m[1].trim() : null;
+}
+
+/**
+ * 整篇旁白里的锚点（按段落顺序，只取第 2 段起的）。
+ * ⚠️ 必须从**原文**上读：`journeyBriefingParagraphs` 会把锚点剥掉，
+ *    拿剥过的文本再去找锚点永远找不到（第一次跑就是这么误报的）。
+ */
+export function briefingAnchors(text: string): string[] {
+    return text.split(/\n\s*\n/).slice(1).map((p) => briefingAnchorOf(p)).filter(Boolean) as string[];
+}
+
 export function journeyBriefingParagraphs(text: string): string[] {
-    return text.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+    return text.split(/\n\s*\n/).map(s => stripBriefingAnchor(s.trim())).filter(Boolean);
 }
 
 /**
