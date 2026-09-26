@@ -6,9 +6,10 @@
  *
  * 🔴 分段尺子：**段 ＝ 上一落点 → 本落点**；落点 ＝ 战争点（一场仗）或据点；
  *    史料记明的**大驻留（集结／过冬／建城／政治休整）**再断一截。
- *    → 全剧 6 片 23 段、20 场；其中 4 段是**不打仗的纯行军段**（`hasBattle: false`）。
+ *    → 全剧 6 片 30 段、20 场；其中 11 段是**不打仗的纯行军段**（`hasBattle: false`）：
+ *      2-3／3-3／5-1／5-2／5-3／5-4／6-5／6-6／6-7／6-8／6-9。
  *
- * 🔴 [2026-09-25 主人令] **23 段每一段都要有自己的背景播报**（含 4 个不打仗的纯行军段 1-1／2-3／3-3／5-1）：
+ * 🔴 [2026-09-25 主人令] **30 段每一段都要有自己的背景播报**（含 11 个不打仗的纯行军段，同上列）：
  *    播报**按段写**（一段一段各写各的，字数按那一段的实测时长定），不再「一场一条盖两段」。
  *    设计统一放在最后一步做（主人定「这个一会设计」）；本表先记下这件事。
  *
@@ -52,14 +53,14 @@ export const SCRIPT_PARTS: Array<{ part: number; name: string; years: string }> 
 export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     // ── 第一片（前335）：4 段 / 3 场 ─────────────────────────────
     { id: '1-1', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩拉', to: '黑穆斯山（战争点 01）', via: ['菲利比', '内斯托斯河', '罗多彼山', '菲利波波利斯'], events: [1], hasBattle: true, briefedBy: [1] },
-    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '黑穆斯山战场', to: '佩利翁（战争点 03）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
+    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '黑穆斯山战场', to: '佩利翁（战争点 02）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
       note: '线内另含史料 B 档：破特里巴利人、皮帐作筏夜渡多瑙河' },
-    { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利翁', to: '底比斯（战争点 04）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
+    { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利翁', to: '底比斯（战争点 03）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
 
     // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────
-    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '斯法尔德（萨第斯）', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4, 5], hasBattle: true, briefedBy: [4, 5],
-      note: '含战争点 04→05 之间的渡海与格拉尼库斯' },
-    { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '萨蒂斯', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
+    { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '斯法尔德', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4], hasBattle: true, briefedBy: [4],
+      note: '含战争点 03→04 之间的渡海与格拉尼库斯' },
+    { id: '2-2', part: 2, partName: '小亚细亚破门与封锁海岸', from: '斯法尔德', to: '哈利卡纳苏斯（战争点 06）', via: ['以弗所', '米利都（战争点 05）'], events: [5, 6], hasBattle: true, briefedBy: [5, 6] },
     { id: '2-3', part: 2, partName: '小亚细亚破门与封锁海岸', from: '哈利卡纳苏斯', to: '安卡拉（安基拉）', via: ['考诺斯', '特尔梅索斯', '克桑托斯', '帕塔拉', '米拉', '法塞利斯', '克利马克斯隘道', '佩尔格', '特梅索斯', '萨加拉索斯', '塞莱奈', '戈尔迪乌姆（过冬）'], events: [7], hasBattle: false, briefedBy: [7],
       note: '纯行军段（南岸扫荡＋内陆迂回）；由第 7 场的赶路播报念' },
     { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安卡拉（安基拉）', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
@@ -90,14 +91,14 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
       note: '纯行军段（翻兴都库什入巴克特里亚、拿贝苏斯、巴克特拉过冬）；实测 635 公里' },
     { id: '5-5', part: 5, partName: '中亚与粟特平叛', from: '蓝氏城', to: '居鲁士城', via: ['撒马尔罕'], events: [13], hasBattle: true, briefedBy: [13],
       note: '渡乌浒水入粟特 → 居鲁士城围攻；实测 612 公里' },
-    { id: '5-6', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
-    { id: '5-7', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
+    { id: '5-6', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点 14）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
+    { id: '5-7', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点 15）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
 
     // ── 第六片（前327–324）：5 段 / 5 场 ────────────────────────
-    { id: '6-1', part: 6, partName: '印度远征与班师', from: '索格狄亚那岩', to: '马萨加（战争点）', via: ['撒马尔罕', '阿母城', '蓝氏城', '巴米扬', '喀布尔', '难揭'], events: [16], hasBattle: true, briefedBy: [16] },
-    { id: '6-2', part: 6, partName: '印度远征与班师', from: '马萨加', to: '奥诺斯岩（战争点）', via: ['白沙瓦', '阿托克'], events: [17], hasBattle: true, briefedBy: [17] },
-    { id: '6-3', part: 6, partName: '印度远征与班师', from: '奥诺斯岩', to: '海达斯佩斯河（战争点）', via: ['阿托克'], events: [18], hasBattle: true, briefedBy: [18] },
-    { id: '6-4', part: 6, partName: '印度远征与班师', from: '海达斯佩斯河战场', to: '马里斯（战争点）', via: ['蒙格'], events: [19], hasBattle: true, briefedBy: [19] },
+    { id: '6-1', part: 6, partName: '印度远征与班师', from: '索格狄亚那岩', to: '马萨加（战争点 16）', via: ['撒马尔罕', '阿母城', '蓝氏城', '巴米扬', '喀布尔', '难揭'], events: [16], hasBattle: true, briefedBy: [16] },
+    { id: '6-2', part: 6, partName: '印度远征与班师', from: '马萨加', to: '奥诺斯岩（战争点 17）', via: ['白沙瓦', '阿托克'], events: [17], hasBattle: true, briefedBy: [17] },
+    { id: '6-3', part: 6, partName: '印度远征与班师', from: '奥诺斯岩', to: '海达斯佩斯河（战争点 18）', via: ['阿托克'], events: [18], hasBattle: true, briefedBy: [18] },
+    { id: '6-4', part: 6, partName: '印度远征与班师', from: '海达斯佩斯河战场', to: '马里斯（战争点 19）', via: ['蒙格'], events: [19], hasBattle: true, briefedBy: [19] },
         { id: '6-5', part: 6, partName: '印度远征与班师', from: '马里斯', to: '普拉', via: ['帕塔拉', '兰巴基亚'], events: [20], hasBattle: false, briefedBy: [20],
       note: '纯行军段（顺印度河南下 → 帕塔拉出海献祭 → 马克兰荒漠苦旅到普拉）；由第 20 场的赶路播报念' },
     { id: '6-6', part: 6, partName: '印度远征与班师', from: '普拉', to: '卡曼尼亚', via: [], events: [20], hasBattle: false, briefedBy: [20],
