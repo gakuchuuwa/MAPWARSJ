@@ -56,6 +56,14 @@ export const SCRIPT_CITY_NAMES: readonly ScriptCityName[] = [
             + '按主人令「文案与图上必须是同一个名字、取现代读者认得出的那一个」→ 剧本期显示名统一成「萨迪斯」（id 不动）。',
     },
     {
+        cityId: 'city_yalishanda',
+        meleeName: '亚历山大',
+        scriptName: '亚历山大城',
+        source: '🔴 主人 2026-09-25 令「埃及那座据点就叫亚历山大城」，并定「文案里也不许简写成亚历山大」。'
+            + '英文维基百科 Alexandria：公元前331 年亚历山大大帝在尼罗河口择地建城，以其名命名（阿里安《亚历山大远征记》III.1–2）。'
+            + '本剧本第 10 场（含段 3-3 加沙→亚历山大城）的播报、段表、底本一律写「亚历山大城」（id 不动）。',
+    },
+    {
         cityId: 'city_junshitandingbao',
         meleeName: '君士坦丁堡',
         scriptName: '拜占庭',

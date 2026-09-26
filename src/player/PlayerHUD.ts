@@ -110,9 +110,9 @@ export class PlayerHUD {
             if (this.cycleStarted && this.cyclePhaseExpanded) this.applyCyclePhase(true);
             // 🔴 [2026-09-24 主人定] 剧本期右下角信息面板一直显示：开播收的那一下当场撤销
             //    （GameTimeHUD 的开播监听先注册、先收；这里后到，按剧本规则贴回展开）。
-            else if (this.cycleStarted && isScriptPeriod() && !this.deps.isScene13Active()) {
-                this.deps.setCompanionPanelsExpanded(this.cyclePhaseExpanded);
-            }
+            // 🔴 [2026-09-26 主人「我说的隐藏是最小化，你要把展开的UI按钮留着呀」] 那条已被取代：
+            //    剧本期右下角 HUD **就该是收起（最小化）的样子**（只剩展开按钮，点它去按「播放」开打），
+            //    所以这里不再替它贴回展开 —— 交给 `GameApp.setCompanionPanelsExpanded` 的剧本期分支管。
             this.refresh();
         };
         window.addEventListener('stream-mode-change', this.onStreamModeChange);
