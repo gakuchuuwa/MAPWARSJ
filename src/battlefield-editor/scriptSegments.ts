@@ -6,10 +6,13 @@
  *
  * 🔴 分段尺子：**段 ＝ 上一落点 → 本落点**；落点 ＝ 战争点（一场仗）或据点；
  *    史料记明的**大驻留（集结／过冬／建城／政治休整）**再断一截。
- *    → 全剧 6 片 30 段、20 场；其中 11 段是**不打仗的纯行军段**（`hasBattle: false`）：
- *      2-3／3-3／5-1／5-2／5-3／5-4／6-5／6-6／6-7／6-8／6-9。
+ *    → 全剧 6 片 **31 段**、20 场；其中 **12 段**是**不打仗的纯行军段**（`hasBattle: false`）：
+ *      4-4／2-3／3-3／5-1／5-2／5-3／5-4／6-5／6-6／6-7／6-8／6-9。
  *
- * 🔴 [2026-09-25 主人令] **30 段每一段都要有自己的背景播报**（含 11 个不打仗的纯行军段，同上列）：
+ * 🔴 [2026-09-25 主人令「赶紧修复」] **补 `4-4` 波斯门 → 波斯波利斯**：原来 `4-3` 落在波斯门、`5-1` 却从波斯波利斯起步，
+ *    「波斯门 → 波斯波利斯」（约 151 公里，下扎格罗斯山进王都、焚宫、驻留过冬）**无段覆盖** —— 按分段尺子「大驻留再断一截」补此段。
+ *
+ * 🔴 [2026-09-25 主人令] **31 段每一段都要有自己的背景播报**（含 12 个不打仗的纯行军段，同上列）：
  *    播报**按段写**（一段一段各写各的，字数按那一段的实测时长定），不再「一场一条盖两段」。
  *    设计统一放在最后一步做（主人定「这个一会设计」）；本表先记下这件事。
  *
@@ -51,11 +54,11 @@ export const SCRIPT_PARTS: Array<{ part: number; name: string; years: string }> 
 ];
 
 export const SCRIPT_SEGMENTS: ScriptSegment[] = [
-    // ── 第一片（前335）：4 段 / 3 场 ─────────────────────────────
-    { id: '1-1', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩拉', to: '黑穆斯山（战争点 01）', via: ['菲利比', '内斯托斯河', '罗多彼山', '菲利波波利斯'], events: [1], hasBattle: true, briefedBy: [1] },
-    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '黑穆斯山战场', to: '佩利翁（战争点 02）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
+    // ── 第一片（前335）：3 段 / 3 场 ─────────────────────────────
+    { id: '1-1', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩拉', to: '海姆斯山（战争点 01）', via: ['菲利比', '内斯托斯河', '罗多彼山', '菲利波波利斯'], events: [1], hasBattle: true, briefedBy: [1] },
+    { id: '1-2', part: 1, partName: '巴尔干平叛与希腊整合', from: '海姆斯山战场', to: '佩利昂（战争点 02）', via: ['索非亚（阿格里安人之地／派奥尼亚）'], events: [2], hasBattle: true, briefedBy: [2],
       note: '线内另含史料 B 档：破特里巴利人、皮帐作筏夜渡多瑙河' },
-    { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利翁', to: '底比斯（战争点 03）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
+    { id: '1-3', part: 1, partName: '巴尔干平叛与希腊整合', from: '佩利昂', to: '底比斯（战争点 03）', via: ['佩拉', '温泉关'], events: [3], hasBattle: true, briefedBy: [3] },
 
     // ── 第二片（前334–333）：4 段 / 4 场 ────────────────────────
     { id: '2-1', part: 2, partName: '小亚细亚破门与封锁海岸', from: '底比斯', to: '斯法尔德', via: ['佩拉（过冬）', '安菲波利斯', '羊河（渡海）', '格拉尼库斯河战场'], events: [4], hasBattle: true, briefedBy: [4],
@@ -71,10 +74,12 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '3-3', part: 3, partName: '黎凡特与埃及走廊', from: '加沙', to: '亚历山大（亚历山大城）', via: ['佩鲁西姆', '孟菲斯'], events: [10], hasBattle: false, briefedBy: [10],
       note: '纯行军段（埃及不战而降、孟菲斯加冕、建亚历山大城）；由第 10 场的赶路播报念。NN 复核后划归第三片' },
 
-    // ── 第四片（前331–330）：3 段 / 3 场 ────────────────────────
+    // ── 第四片（前331–330）：4 段 / 3 场 ────────────────────────
     { id: '4-1', part: 4, partName: '波斯帝国心脏', from: '亚历山大（亚历山大城）', to: '高加米拉（战争点 10）', via: ['（回程）佩鲁西姆', '加沙', '推罗', '大马士革', '阿勒颇', '埃德萨', '尼尼微'], events: [10], hasBattle: true, briefedBy: [10] },
     { id: '4-2', part: 4, partName: '波斯帝国心脏', from: '高加米拉战场', to: '乌克西亚隘口（战争点 11）', via: ['尼尼微', '亚述城', '巴比伦', '苏萨'], events: [11], hasBattle: true, briefedBy: [11] },
-    { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
+    { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚隘口战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
+    { id: '4-4', part: 4, partName: '波斯帝国心脏', from: '波斯门（战争点 12）', to: '波斯波利斯', via: [], events: [13], hasBattle: false, briefedBy: [13],
+      note: '纯行军段（下扎格罗斯山进波斯波利斯：占王都、焚宫、驻留过冬 —— 史料记明的大驻留，故单断一截；旁白由第 13 场的赶路播报念）' },
 
     // ── 第五片（前329–327）：7 段 / 3 场 ────────────────────────
     // 🔴 [2026-09-25 主人「这一段是不是太长了」→「一段一条播报」×3]
@@ -94,7 +99,7 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '5-6', part: 5, partName: '中亚与粟特平叛', from: '居鲁士城', to: '锡尔河（战争点 14）', via: ['忽毡'], events: [14], hasBattle: true, briefedBy: [14] },
     { id: '5-7', part: 5, partName: '中亚与粟特平叛', from: '锡尔河战场', to: '索格狄亚那岩（战争点 15）', via: ['撒马尔罕', '阿母城', '撒马尔罕', '忽毡'], events: [15], hasBattle: true, briefedBy: [15] },
 
-    // ── 第六片（前327–324）：5 段 / 5 场 ────────────────────────
+    // ── 第六片（前327–324）：10 段 / 5 场 ────────────────────────
     { id: '6-1', part: 6, partName: '印度远征与班师', from: '索格狄亚那岩', to: '马萨加（战争点 16）', via: ['撒马尔罕', '阿母城', '蓝氏城', '巴米扬', '喀布尔', '难揭'], events: [16], hasBattle: true, briefedBy: [16] },
     { id: '6-2', part: 6, partName: '印度远征与班师', from: '马萨加', to: '奥诺斯岩（战争点 17）', via: ['白沙瓦', '阿托克'], events: [17], hasBattle: true, briefedBy: [17] },
     { id: '6-3', part: 6, partName: '印度远征与班师', from: '奥诺斯岩', to: '海达斯佩斯河（战争点 18）', via: ['阿托克'], events: [18], hasBattle: true, briefedBy: [18] },
@@ -107,9 +112,9 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
       note: '纯行军段（扎格罗斯山前走廊 → 帕萨尔加德拜谒居鲁士陵 → 波斯波利斯）' },
     { id: '6-8', part: 6, partName: '印度远征与班师', from: '波斯波利斯', to: '苏萨', via: ['波斯门'], events: [20], hasBattle: false, briefedBy: [20],
       note: '纯行军段（皇家大道西线 → 苏萨融合大典）' },
-    { id: '6-9', part: 6, partName: '印度远征与班师', from: '苏萨', to: '埃克巴坦那', via: ['欧皮斯一带（巴格达）', '呼勒万', '伊拉姆', '纳哈万德'], events: [20], hasBattle: false, briefedBy: [20],
+    { id: '6-9', part: 6, partName: '印度远征与班师', from: '苏萨', to: '哈马丹（埃克巴坦那）', via: ['巴格达（欧皮斯一带）', '呼勒万', '伊拉姆', '纳哈万德'], events: [20], hasBattle: false, briefedBy: [20],
       note: '纯行军段（底格里斯平原北上 → 欧皮斯兵变与和解宴 → 扎格罗斯门 → 米底；赫菲斯提安之死）' },
-    { id: '6-10', part: 6, partName: '印度远征与班师', from: '埃克巴坦那', to: '巴比伦（战争点 20）', via: ['科塞亚山区'], events: [20], hasBattle: true, briefedBy: [20],
+    { id: '6-10', part: 6, partName: '印度远征与班师', from: '哈马丹（埃克巴坦那）', to: '巴比伦', via: ['科塞亚（战争点 20）'], events: [20], hasBattle: true, briefedBy: [20],
       note: '科塞亚人冬剿（第 20 场）→ 美索不达米亚 → 巴比伦（前 323 年 6 月大帝陨落，全剧终）' },
 ];
 
