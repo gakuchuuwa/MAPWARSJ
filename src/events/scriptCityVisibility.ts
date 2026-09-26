@@ -32,6 +32,8 @@ import { isBattlefieldFought } from './battlefieldState';
 import { resolveEventStartCityId, type StartEventInfo, type StartCity } from './scriptEventStart';
 import { cityExistsInYear } from './cityInYear';
 import { roadRegistry } from '../roads/RoadRegistry';
+// 🔴 [2026-09-25 主人令「设计到的据点都要显示」] 段表里的途经点也是**点名用到**的据点（如 1-2 段的索非亚）
+import { SCRIPT_SEGMENTS } from '../battlefield-editor/scriptSegments';
 
 /** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
 function eraOfYear(year: number): GeneralEra {
@@ -97,6 +99,10 @@ export class ScriptCityVisibility {
         }
 
         const out = new Set<string>();
+        /** 🔴 脚本**点名用到**的据点（出兵地/被攻城/路标/影响地/段表途经点）—— 一律显示，不看建立年代 */
+        const referenced = new Set<string>();
+        /** 只是**路线顺带经过**的据点 —— 照旧过年代闸门 */
+        const routeOnly = new Set<string>();
         const bfs = new Set<string>();
         let current: HistoricalEvent | null = null;
         const routeReady = roadRegistry.isInitialized();
@@ -108,12 +114,24 @@ export class ScriptCityVisibility {
         for (const ev of events) {
             const bfId = resolveEventBattlefieldId(ev, cityPos);
             if (!bfId) continue;
-            this.addEventCities(ev, bfId, cityOfGeneral, out);
-            if (routeReady) this.addRouteCities(ev, bfId, cityOfGeneral, pos, cityAt, out);
+            this.addEventCities(ev, bfId, cityOfGeneral, referenced);
+            if (routeReady) this.addRouteCities(ev, bfId, cityOfGeneral, pos, cityAt, routeOnly);
             bfs.add(bfId);
             // 已打过的累积保留；遇到第一场没打过的（当前这一场）加完就停
             if (!isBattlefieldFought(bfId)) { current = ev; break; }
         }
+        // 段表的途经点 / 起止名，能对上库里据点的，算「点名用到」
+        { 
+            const byName = new Map(cities.map((c) => [c.name, c.id]));
+            const norm = (s: string) => String(s).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '').replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
+            for (const seg of SCRIPT_SEGMENTS) {
+                for (const v of [seg.from, seg.to, ...seg.via]) {
+                    const id = byName.get(norm(v));
+                    if (id) referenced.add(id);
+                }
+            }
+        }
+        for (const id of referenced) out.add(id);
         // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
         //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
         //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
@@ -132,8 +150,11 @@ export class ScriptCityVisibility {
             /** 这座城那一年该不该上图（建立年代 + 归属武将时代，两道都要过） */
             const passGate = (cityId: string): boolean =>
                 !absent.has(cityId) && cityExistsInYear(cityId, curYear);   // 唯一判据：cityInYear.ts
-            // ① 先把「事件用到的 + 沿途经过的」按同一道闸门过一遍（原来它们是不看的）
-            for (const id of [...out]) if (!passGate(id)) out.delete(id);
+            // 🔴 [2026-09-25 主人令「**设计到的据点都要显示**」] 点名的据点已在上面无条件加入 `out`，
+            //    这里**只对「路线顺带经过的」**过闸门 —— 中途路网捎带上的、那年还没有的城照旧不画
+            //    （9-24 的教训仍在：前331 高加米拉那场路线一带漏出大城安提俄基亚〔前300才建〕）。
+            // ① 沿途经过的，按同一道闸门过一遍
+            for (const id of routeOnly) if (passGate(id)) out.add(id);
             // ② 再放「当前时代及之前」的全部据点
             for (const c of cities) if (passGate(c.id)) out.add(c.id);
         }

@@ -33,6 +33,9 @@ export class SubtitleBanner {
                     bottom: ${/editor/i.test(location.pathname) ? '10px' : '84px'};
                     transform: translateX(-50%);
                     z-index: 10003;
+                    /* 🔴 [2026-09-25 主人「可以把屏幕做的更宽些」] left:50% 的收缩盒，可用宽度只算到屏幕右半
+                       （1920 视口下＝960px），max-width 再大也铺不开 —— 用 width:max-content 让它按内容摊开。 */
+                    width: max-content;
                     max-width: 92vw;
                     padding: 12px 36px;
                     background: linear-gradient(180deg, rgba(22, 17, 13, 0.90) 0%, rgba(12, 9, 7, 0.95) 100%);
@@ -124,7 +127,7 @@ export class SubtitleBanner {
     }
 
     /**
-     * 将长文本智能切分为适宜宽屏电影字幕呈现的微片段（每段约 40~85 字，严格保证 1~2 行且按标点完整断句）
+     * 将长文本智能切分为适宜宽屏电影字幕呈现的微片段（每段约 40~140 字，宽屏下 1~2 行，按标点完整断句）
      */
     private static splitIntoCinematicChunks(text: string, targetMaxChars = 85): string[] {
         const rawParagraphs = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -176,7 +179,9 @@ export class SubtitleBanner {
         if (document.getElementById('vector-road-editor-panel')) return;
 
         // 如果是多行长文，智能切片为 1~2 行的微电影片段
-        const chunks = multiline ? this.splitIntoCinematicChunks(text, 85) : [text];
+        // 🔴 [2026-09-25 主人「字幕显示方式不对，可以把屏幕做的更宽些」] 每幕字数 85 → 140：
+        //    字幕盒是**按最长一行收缩**的，只放大宽度上限没用 —— 切片够长，行才会真的铺开（仍控制在 2 行内）。
+        const chunks = multiline ? this.splitIntoCinematicChunks(text, 140) : [text];
 
         if (chunks.length <= 1) {
             // 单条模式
