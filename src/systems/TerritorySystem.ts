@@ -2427,10 +2427,13 @@ export class TerritorySystem {
     public updateCityLabel(city: City) {
         const labelOriginal = this.cityLabels.get(city.id);
         if (labelOriginal) {
-            // 城名不变，只有城防数字变 → 直接改第二个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
+            // 城名 / 城防数字变了 → 直接改两个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
+            // 🔴 [2026-09-25 剧本期据点显示名会换（菲利波波利斯／拜占庭／埃克巴坦那…）]
+            //    原来这里只改第二个 span（兵力）、把城名当成不变的 → 改名后标签上仍挂着旧名（实测「切回剧本」时露馅）。
             const el = labelOriginal.getElement();
             const spans = el?.querySelectorAll('span');
             if (el && spans && spans.length >= 2) {
+                spans[0].textContent = city.name;
                 spans[1].textContent = TerritorySystem.formatTroopsLabel(city.troops ?? 0);
                 return;
             }

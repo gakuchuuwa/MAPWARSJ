@@ -115,7 +115,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_edo: 1457,             // 江户城，1457 年太田道灌筑江户城
 
     // ── 据点名首次出现（坐标上更早有城，但用的是后世著名时期的名字）──
-    city_junshitandingbao: 330, // 君士坦丁堡，330 年君士坦丁大帝落成命名（此前叫拜占庭，前 657 建）
+    city_junshitandingbao: -657, // 拜占庭，前 657 年墨伽拉殖民者建城；330 年君士坦丁大帝改名君士坦丁堡（剧本期显示名见 scriptCityNames.ts）
     city_luoyang: -300,         // 洛阳，约前 300 年战国「洛水之阳」得名（此前叫洛邑，前 1046 营建）
     city_bianliang: 907,        // 开封，907 年后梁改汴州为开封府（此前叫大梁，前 364 建）
     city_beijing: 1421,         // 北京，1421 年明成祖迁都北京（此前叫蓟城/幽州/大都）
