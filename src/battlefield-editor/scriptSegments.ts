@@ -69,15 +69,16 @@ export const SCRIPT_SEGMENTS: ScriptSegment[] = [
     { id: '2-4', part: 2, partName: '小亚细亚破门与封锁海岸', from: '安卡拉（安基拉）', to: '伊苏斯（战争点 07）', via: ['奇里乞亚门', '塔尔苏斯'], events: [7], hasBattle: true, briefedBy: [7] },
 
     // ── 第三片（前332–331）：3 段 / 3 场（8、9 场 ＋ 第 10 场的埃及段）──
-    { id: '3-1', part: 3, partName: '黎凡特与埃及走廊', from: '伊苏斯战场', to: '推罗（战争点 08）', via: [], events: [8], hasBattle: true, briefedBy: [8] },
-    { id: '3-2', part: 3, partName: '黎凡特与埃及走廊', from: '推罗', to: '加沙（战争点 09）', via: [], events: [9], hasBattle: true, briefedBy: [9] },
+    { id: '3-1', part: 3, partName: '黎凡特与埃及走廊', from: '伊苏斯战场', to: '推罗（战争点 08）', via: ['比布鲁斯', '西顿'], events: [8], hasBattle: true, briefedBy: [8] },
+    { id: '3-2', part: 3, partName: '黎凡特与埃及走廊', from: '推罗', to: '加沙（战争点 09）', via: ['阿卡'], events: [9], hasBattle: true, briefedBy: [9] },
     { id: '3-3', part: 3, partName: '黎凡特与埃及走廊', from: '加沙', to: '亚历山大（亚历山大城）', via: ['佩鲁西姆', '孟菲斯'], events: [10], hasBattle: false, briefedBy: [10],
       note: '纯行军段（埃及不战而降、孟菲斯加冕、建亚历山大城）；由第 10 场的赶路播报念。NN 复核后划归第三片' },
 
     // ── 第四片（前331–330）：4 段 / 3 场 ────────────────────────
     { id: '4-1', part: 4, partName: '波斯帝国心脏', from: '亚历山大（亚历山大城）', to: '高加米拉（战争点 10）', via: ['（回程）佩鲁西姆', '加沙', '推罗', '大马士革', '塔德莫尔', '塔普萨库斯', '埃德萨', '尼西比斯', '尼尼微'], events: [10], hasBattle: true, briefedBy: [10] },
     { id: '4-2', part: 4, partName: '波斯帝国心脏', from: '高加米拉战场', to: '乌克西亚隘口（战争点 11）', via: ['尼尼微', '亚述城', '巴比伦', '苏萨'], events: [11], hasBattle: true, briefedBy: [11] },
-    { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚隘口战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12] },
+    { id: '4-3', part: 4, partName: '波斯帝国心脏', from: '乌克西亚隘口战场', to: '波斯门（战争点 12）', via: [], events: [12], hasBattle: true, briefedBy: [12],
+      note: '无中途站：实测这一段 417 公里沿线没有任何据点（御道自乌克西亚隘口东南行，直抵波斯门），史料（阿里安 III.18）也只记自隘口东进，未记中途站。' },
     { id: '4-4', part: 4, partName: '波斯帝国心脏', from: '波斯门（战争点 12）', to: '波斯波利斯', via: [], events: [13], hasBattle: false, briefedBy: [13],
       note: '纯行军段（下扎格罗斯山进波斯波利斯：占王都、焚宫、驻留过冬 —— 史料记明的大驻留，故单断一截；旁白由第 13 场的赶路播报念）。⚠️ 途经点为空 ＝ 实测结果「无中途站」：这一段 151 公里直下，沿线没有任何据点，史料（阿里安 III.18）也只记「自隘口进抵波斯波利斯」，未记中途站 —— 故不硬填节点。' },
 
