@@ -121,7 +121,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为骑马、披斗篷的巴尔干贵族骑将（按样貌选，与名字同为「克雷图斯」纯属巧合）
         foeCommanderUnit: 'hero_cleitus',
-        briefing: '突破海姆斯山隘后，亚历山大大帝率军沿莱吉努斯河大破特里巴利人，追击至多瑙河畔的德鲁斯塔尔。为彻底消除北顾之忧，大军自布加勒斯特强渡多瑙河击溃盖塔人，震慑周边诸部。随后大军转向西南，经索非亚穿过阿格里安人领地急行军，直插西部边境要塞佩利昂，意图平定伊利里亚国王克莱图斯与格劳基亚斯的联军叛乱。',
+        briefing: '公元前335年，海姆斯山战后，亚历山大率军继续北上深入特里巴利人领地，于莱吉努斯河大破特里巴利军，其王西尔穆斯率部退守多瑙河中的波伊刻岛。亚历山大自拜占庭调集战舰上溯多瑙河，随后率大军强渡多瑙河击溃北岸的盖塔人，焚毁其城镇聚落，彻底震慑多瑙河畔北境诸部。正当大军于多瑙河畔休整之际，闻西边伊利里亚叛乱，亚历山大遂率军折返西南，经索非亚穿过阿格里安人领地与派奥尼亚急行军直插佩利昂，讨伐伊利里亚国王克莱图斯与陶兰提国王格劳基亚斯的联军。',
         inviteText: '朋友，多瑙河那边的仗才打完，西边就出了事：伊利里亚王克莱图斯占了佩利昂，陶兰提人的格劳基亚斯也要来帮他。那座要塞扼着伊利里亚进马其顿的山口，丢了它，我的西大门就敞开了，南下希腊的路也会被截断。我们得赶在他们合兵之前到城下。跟我走。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Siege of Pelium：公元前335年亚历山大攻伊利里亚人所据的佩利昂要塞，攻城战；克莱图斯焚城而逃，要塞入马其顿之手。' },
@@ -151,7 +151,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '底比斯战役',
             description: '底比斯人拒不接受和解条件，据城死战；马其顿军攻入城中，底比斯主将菲尼克斯、普罗提特斯战死，城破后全城被夷平。',
             // 路标：史载穿过色萨利、经温泉关入维奥蒂亚；沿途无那一年已存在且在路网上的据点，按路网走
-            marchWaypoints: [],
+            marchWaypoints: ['city_salonica'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 1-3 途经点为「佩拉、温泉关」，库里只有佩拉可用作路标（温泉关一线无据点，见史料依据·行军路线）
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 33000,
@@ -168,7 +168,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为持圆盾长矛的希腊重装步兵将领（底比斯守城主将为重装步兵统领）
         foeCommanderUnit: 'hero_brasidas',
-        briefing: '攻克佩利昂后，闻听底比斯误传其阵亡并起兵叛乱，亚历山大大帝率大军急行军南下。大军经都城佩拉并强跨咽喉温泉关，神兵天降兵临底比斯城下，意图镇压叛乱以稳定希腊局势。',
+        briefing: '公元前335年，佩利昂战局刚定，南方底比斯误信雅典演说家德摩斯梯尼宣称之亚历山大阵亡谣言，起兵叛乱围攻驻军。亚历山大当即率领大军日夜兼程急行南下，途经都城佩拉、跨越温泉关，神兵天降般兵临底比斯城下。',
         inviteText: '朋友，希腊那边都当我死在佩利昂了。底比斯人把卡德米亚的守军围了，雅典人在背后给他们送兵器，波斯大王的金子也到了。只要底比斯这一城站得住，整个希腊都会跟着反。我们现在就南下，赶在他们回过神来之前，出现在底比斯城下。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Battle of Thebes：公元前335年亚历山大攻底比斯，战于城外与城中，攻城战；城破后被夷平。' },
@@ -408,6 +408,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         siegeData: {
             title: '推罗战役',                     // 🔴 横幅一律显示战役名
             description: '亚历山大率数万步骑大军填海筑堤直逼海岛石墙，攻破推罗要塞；推罗国王阿泽米尔库斯率守军力战，推罗陷落。',
+            marchWaypoints: ['city_latajiya'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 3-1 途经点为「比布鲁斯、西顿」（库里无此二据点），改用沿海现成据点拉塔基亚作路标：自阿达纳沿腓尼基海岸南下
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
@@ -457,6 +458,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         siegeData: {
             title: '加沙战役',
             description: '巴提斯凭高地坚城与阿拉伯雇佣兵死守；马其顿军筑土山、架推罗器械破墙，三次强攻后破城。',
+            marchWaypoints: ['city_ake'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 3-2 途经点为「阿卡」：自推罗沿海南下经阿卡取加沙
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 37500,
@@ -491,7 +493,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    **不过阿勒颇**（阿勒颇在幼发拉底以西的北路，本场不走）。
             marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_matelugang', 'city_xiwa', 'city_mengfeisi', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_damasikusi', 'city_tapusakusi', 'city_nixibisi', 'city_niniwei'],   // 段3-3：加沙→佩鲁西姆→孟菲斯→亚历山大→马特鲁→锡瓦→回孟菲斯（阿里安 III.3-4）；段4-1：回程经佩鲁西姆→加沙→推罗→大马士革→塔普萨库斯（渡幼发拉底，III.7）→尼西比斯→尼尼微→高加米拉
 
-            // ── 攻方：马其顿与希腊联军 亚历山大大帝 ──
+            // ── 攻方：马其顿与希腊联军 亚历山大 ──
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerLegionName: '马其顿军',   // 剧本军团：亚历山大所率马其顿军，整场东征同一支
@@ -955,7 +957,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '马利人几乎全数退入卫城，城墙绕城足有一英里。马其顿军撞开一道城门，攻进外城，接着掘第二层墙基。亚历山大等得不耐烦，亲自扛起梯子登城，身后只跟了三四人。梯子承受不住后面涌上来的兵，断成两截。马利人认出他的铠甲与身手，一齐投掷标枪射箭。他不肯跳回自己人怀里，反身跃入城内，当场刺死守军主帅摩罗波罗，随即被一支箭射穿胸甲，血与气从伤口里嘶嘶冒出。他背靠城墙撑了一阵，终于大量失血昏倒。墙外的马其顿人以为他已经死了，撞开城门，把城中人尽数杀死。他被抬到帐中，医生割开伤口取出箭镞；此后数日他一直在生死之间，直到能起身，才让全军看见他还活着。',
             // 出发地＝军团此刻在哪：上一场（海达斯佩斯河野战）落点最近且那一年已存在的据点 ＝ 蒙格
             // 史料：自波鲁斯境内南下沿河而行，再穿旱地急袭马利人的城。这一带库里没有可作路标的据点 → 不设路标。
-            marchWaypoints: [],
+            marchWaypoints: ['city_meng'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 6-4 途经点为「蒙格」
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 20000,
