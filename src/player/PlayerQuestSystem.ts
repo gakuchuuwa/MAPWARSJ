@@ -31,7 +31,7 @@ import { EVENT_SITES, findEventSite } from '../data/eventSites';
 import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
-import { journeyBriefingDuration, journeyBriefingParagraphs } from './JourneyBriefing';
+import { journeyBriefingDuration, journeyBriefingParagraphs, journeyBriefingSentences } from './JourneyBriefing';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
 import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
@@ -1418,13 +1418,26 @@ export class PlayerQuestSystem {
             // 🔴 念完再推下一段：语音时长由 TTS 说了算，定时器猜出来的必然对不上口型
             const speak = this.deps.announceBriefing;
             if (speak) {
+                // 🔴 [2026-09-25 主人报障「字幕的显示和播报对不上」] **一段之内一句一次 speak()**：
+                //    字幕文本就是这一句（同一个变量），随开口亮、随念完换 ——
+                //    不再把整段丢给字幕条去「按字数比例自己走定时器」（那是第二条时钟，段越长错得越远）。
+                const sentences = journeyBriefingSentences(line);
+                let si = 0;
                 // 🔴 [2026-09-16] 段间停留到底花在哪，靠实测不靠猜：
                 //    记「请求 → 真正开口 → 念完」三个时刻，整段播完落盘一次。
                 //    开口前那段就是玩家听到的「停留」（云健探测 + 合成往返）。
                 const tReq = Date.now();
                 let tSpeak = 0;
                 this.briefingTrace.push({ seg: i, chars: line.length, reqAt: tReq - this.briefingT0 });
-                speak(line, () => {
+                const speakNextSentence = () => {
+                    if (this.briefingCancelled) return;
+                    if (si < sentences.length) {
+                        const sentence = sentences[si];
+                        si++;
+                        speak(sentence, () => { speakNextSentence(); }, si === 1 ? () => { tSpeak = Date.now(); } : undefined);
+                        return;
+                    }
+                    // 这一段念完 → 定格这一段的口型数据，再走段级推进
                     const rec = this.briefingTrace[this.briefingTrace.length - 1];
                     if (rec && rec.seg === i) {
                         rec.waitMs = tSpeak ? tSpeak - tReq : null;   // 停留：请求到开口
@@ -1439,7 +1452,8 @@ export class PlayerQuestSystem {
                     if (next !== null) { i = next; pushNext(); return; }
                     if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
                     pushNext();
-                }, () => { tSpeak = Date.now(); });
+                };
+                speakNextSentence();
             } else {
                 // 没接播报（无声环境）→ 回落到按字数留阅读时间的字幕
                 const duration = journeyBriefingDuration(line);
