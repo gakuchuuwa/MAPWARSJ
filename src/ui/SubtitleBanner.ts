@@ -168,7 +168,12 @@ export class SubtitleBanner {
      * - 单行短句：标准单条居中显示；
      * - 多行长文（multiline）：智能断句切片，流式「渐显一部分 ➔ 停留 ➔ 渐隐 ➔ 渐显下一部分」，每幕仅 1~2 行。
      */
-    static show(text: string, fallbackHoldMs = 9000, multiline = false): void {
+    /**
+     * @param singleScreen 🔴 [2026-09-27 主人「不是说好一路一句吗。为什么字幕是分句显示？」]
+     *   **一整句只占一屏**：赶路播报的一条路就是一句话，字幕必须整句一起出，
+     *   不再切成「(1/3)(2/3)」轮播（那是第二条时钟，也正是主人看到的「分句显示」）。
+     */
+    static show(text: string, fallbackHoldMs = 9000, multiline = false, singleScreen = false): void {
         const el = this.ensure();
         this.clearAllTimers();
 
@@ -181,7 +186,7 @@ export class SubtitleBanner {
         // 如果是多行长文，智能切片为 1~2 行的微电影片段
         // 🔴 [2026-09-25 主人「字幕显示方式不对，可以把屏幕做的更宽些」] 每幕字数 85 → 140：
         //    字幕盒是**按最长一行收缩**的，只放大宽度上限没用 —— 切片够长，行才会真的铺开（仍控制在 2 行内）。
-        const chunks = multiline ? this.splitIntoCinematicChunks(text, 140) : [text];
+        const chunks = multiline && !singleScreen ? this.splitIntoCinematicChunks(text, 140) : [text];
 
         if (chunks.length <= 1) {
             // 单条模式

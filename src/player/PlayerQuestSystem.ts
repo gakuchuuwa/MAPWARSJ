@@ -31,7 +31,7 @@ import { EVENT_SITES, findEventSite } from '../data/eventSites';
 import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBattlefield, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
-import { journeyBriefingDuration, journeyBriefingParagraphs, journeyBriefingSentences, briefingAnchors } from './JourneyBriefing';
+import { journeyBriefingDuration, journeyBriefingParagraphs, briefingAnchors } from './JourneyBriefing';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
 import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
@@ -1490,7 +1490,11 @@ export class PlayerQuestSystem {
                 // 🔴 [2026-09-25 主人报障「字幕的显示和播报对不上」] **一段之内一句一次 speak()**：
                 //    字幕文本就是这一句（同一个变量），随开口亮、随念完换 ——
                 //    不再把整段丢给字幕条去「按字数比例自己走定时器」（那是第二条时钟，段越长错得越远）。
-                const sentences = journeyBriefingSentences(line);
+                // 🔴 [2026-09-27 主人「不是说好一路一句吗。为什么字幕是分句显示？」]
+                //    **一路一句 ＝ 一条路一屏**：这一条路的整句**一次 speak()**，字幕就写这条路的全文，
+                //    不再按句末标点／逗号切成几屏 —— 那样观众看到的是「分句」，与「一路一句」对不上。
+                //    句子内部怎么断句是文案自己的事（逗号顿号都留在同一屏里）。
+                const sentences = [line];
                 let si = 0;
                 // 🔴 [2026-09-16] 段间停留到底花在哪，靠实测不靠猜：
                 //    记「请求 → 真正开口 → 念完」三个时刻，整段播完落盘一次。
