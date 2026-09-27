@@ -427,7 +427,7 @@ export class CityManager {
         const bounds = this.map.getLeafletMap().getBounds();
         return this.cities.filter(
             (city) =>
-                this.isCityVisible(city) &&
+                this.isCityRenderable(city) &&
                 bounds.contains([city.latitude, city.longitude]),
         );
     }

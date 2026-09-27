@@ -247,6 +247,41 @@ let lastFollowFlagPriorityKick = 0;
 let lastBgmFollowedId: string | null = null;
 
 /**
+ * 🔴 [2026-09-27 主人定]「军团只有移动的时候才播放移动音效」。
+ * `Army.isMarching()` 只表示「有行军任务」——排队、被挡、驻足、暂停时位置不动它照样答 true，行军音就一直响。
+ * 这里按**真实位移**判：每 MOVE_SFX_SAMPLE_MS 采一次位置，位移 ≥ MOVE_SFX_EPS_DEG 才算在走；
+ * 停下后留 MOVE_SFX_GRACE_MS 余量再关，免得采样边界上一开一关。
+ */
+const MOVE_SFX_SAMPLE_MS = 250;
+const MOVE_SFX_EPS_DEG = 0.0005;   // ≈55 米
+const MOVE_SFX_GRACE_MS = 400;
+const moveSfxState = { armyId: null as string | null, lat: NaN, lng: NaN, sampledAt: 0, lastMovedAt: 0 };
+
+function isFollowedArmyActuallyMoving(armyId: string | null, pos: { lat: number; lng: number } | null | undefined): boolean {
+    const now = performance.now();
+    if (!armyId || !pos || !Number.isFinite(pos.lat) || !Number.isFinite(pos.lng)) {
+        moveSfxState.armyId = null;
+        return false;
+    }
+    if (moveSfxState.armyId !== armyId) {
+        moveSfxState.armyId = armyId;
+        moveSfxState.lat = pos.lat;
+        moveSfxState.lng = pos.lng;
+        moveSfxState.sampledAt = now;
+        moveSfxState.lastMovedAt = 0;
+        return false;
+    }
+    if (now - moveSfxState.sampledAt >= MOVE_SFX_SAMPLE_MS) {
+        const d = Math.hypot(pos.lat - moveSfxState.lat, pos.lng - moveSfxState.lng);
+        if (d >= MOVE_SFX_EPS_DEG) moveSfxState.lastMovedAt = now;
+        moveSfxState.lat = pos.lat;
+        moveSfxState.lng = pos.lng;
+        moveSfxState.sampledAt = now;
+    }
+    return moveSfxState.lastMovedAt > 0 && now - moveSfxState.lastMovedAt <= MOVE_SFX_SAMPLE_MS + MOVE_SFX_GRACE_MS;
+}
+
+/**
  * 单帧主循环（日历 / 事件 / 战斗 / AI / 招募 / 战斗 UI / 跟随镜头）。
  * 从 GameApp 抽出以便第二期继续拆分启动与编辑器绑定。
  */
@@ -641,7 +676,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
 
                 app.audioManager.syncFollowedLegionAudio({
                     armyId: followedArmy && !followedArmy.isDestroyed ? followedId : null,
-                    marching: followedArmy?.isMarching?.() ?? false,
+                    // 有行军任务 且 真的在位移，才放行军音
+                    marching: (followedArmy?.isMarching?.() ?? false)
+                        && isFollowedArmyActuallyMoving(
+                            followedArmy && !followedArmy.isDestroyed ? followedId : null,
+                            followedArmy?.getPosition?.(),
+                        ),
                     inCombat: followedArmy?.getIsInCombat?.() ?? false,
                     isCavalry: followedArmy?.isCavalryArmy?.() ?? false,
                     isNaval: followedArmy?.isOnSea ?? false,
