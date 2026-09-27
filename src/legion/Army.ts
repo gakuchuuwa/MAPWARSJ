@@ -685,6 +685,11 @@ export class Army implements IBattleUnit {
         }
         if (this.isPostBattleResting()) return;
 
+        // 🔴 [2026-09-26 主人令「抵达B点后没有播报完，军团就先停止，等播报完继续」]
+        //    **播报未完就地驻足**：由 `PlayerQuestSystem` 每帧按下/松开（它知道这一段的旁白念完没有）。
+        //    只停位移，不改状态、不清路径 —— 松开后照原路继续走到终点。
+        if (this.marchHold) return;
+
         if (this.pathQueue.length === 0 && this.hasArrived) return;
         if (this.isBlocked()) return;
 
@@ -1512,9 +1517,18 @@ export class Army implements IBattleUnit {
         return true;
     }
 
+    /**
+     * 🔴 [2026-09-26 主人令] **停步待令**：播报没念完就地驻足，念完再走（见 `Army.update` 那道闸）。
+     *   只有 `PlayerQuestSystem` 会按它（走到本段终点＝B 点，而这一段的旁白还在念）。
+     */
+    private marchHold = false;
+
+    public setMarchHold(on: boolean): void { this.marchHold = on; }
+
+    public isMarchHeld(): boolean { return this.marchHold; }
+
     public moveAlongPath(path: MarchPoint[]): void {
         if (path.length === 0) return;
-
         // clone to avoid side effects；滤掉坏点，避免一路写进 NaN
         const newPath = path.filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lng));
         if (newPath.length === 0) return;
