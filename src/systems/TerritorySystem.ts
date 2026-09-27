@@ -2243,9 +2243,10 @@ export class TerritorySystem {
 
     /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
     private static buildCityLabelHtml(city: City, fadeIn = false): string {
-        // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点标签一律带兵力数字。
-        //    （原「战场据点只显示地名、不带兵力」的特判已撤销。）
-        const troopsSpan = `
+        // 🔴 [2026-09-27 主人定「不在据点显示兵力」] **剧本期（历史教程）据点标签一律不带兵力数字**：
+        //    这是历史剧本，不是乱斗数值面板；也免得「那一年这城驻多少兵」穿帮。
+        //    乱斗模式照旧显示兵力。
+        const troopsSpan = isScriptPeriod() ? '' : `
             <span style="
                 color: #f0c75e; font-weight: bold;
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

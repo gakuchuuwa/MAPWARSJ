@@ -792,6 +792,27 @@ export class LegionPhalanxDrawer {
             // 所有动作组都处理完了，这批原图才真的没人要（见 pendingRelease 上方说明）
             for (const p of pendingRelease) AssetLoader.release(p);
             pendingRelease.clear();
+
+            // 🔴 [2026-09-27 治愈时好时灰] 预加载该兵种全套 .pc.png 遮罩，确保大地图军团渲染时遮罩 100% 就绪
+            const allSprites: (HTMLImageElement | null | undefined)[] = [
+                ...cacheEntry.MOVE,
+                ...cacheEntry.IDLE,
+                ...cacheEntry.ATTACK,
+                ...cacheEntry.DAMAGE,
+                ...cacheEntry.DEATH,
+                ...cacheEntry.SHOOT,
+                ...cacheEntry.CHARGE,
+            ];
+            if (cacheEntry.SECONDARY) {
+                const s = cacheEntry.SECONDARY;
+                allSprites.push(...s.MOVE, ...s.IDLE, ...s.ATTACK, ...s.DAMAGE, ...s.DEATH, ...s.SHOOT, ...s.CHARGE);
+            }
+            if (cacheEntry.TERTIARY) {
+                const t = cacheEntry.TERTIARY;
+                allSprites.push(...t.MOVE, ...t.IDLE, ...t.ATTACK, ...t.DAMAGE, ...t.DEATH, ...t.SHOOT);
+            }
+            await SpriteTinter.preloadMasksForSprites(allSprites);
+
             this.unitSpriteCache.set(key, cacheEntry);
             this.spriteLastUsed.set(key, performance.now());
             await yieldMain();
