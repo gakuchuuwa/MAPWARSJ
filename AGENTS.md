@@ -167,6 +167,10 @@
 **验收工具（本仓已备）：** `npx tsx --import ./tools/sim-preload.mjs scratch/_audit_briefing_timeline.mts`（逐场报「该念 vs 实念／有没有丢段／末段被掐几秒」，20 场须 **0 丢段、迟到 ≤12 秒**）、
 `scratch/_audit_briefing_per_leg.mts`（每段字数 vs 它那段路）、`scratch/_dump_legs.mts <场次>`（把某场原文与「这段路多长／该写多少字」并排打出来）、`node scratch/_probe_briefing_segments.mjs`（逐段机制是否生效）。
 
+| 17 | 我拿「静态探针跑通了 20 场逐段挂点」当结论报「逐段已生效」——**真机里其实一直是「起步一口气念完」** | **静默失效**：任务侧标题是 `getBattlefieldBattleTitle()` 给的「海姆斯山战役」（**没有年份前缀**），脚本事件表里是「公元前335年 海姆斯山战役」，`HISTORICAL_EVENT_SCRIPT.find(e => e.title === ev.title)` 永远 false → `scriptEv` 恒 undefined → **锚点与段表两条路都读不到** → `briefingBounds` 长度 **0**（真机实测），退回起步一口气念完。**这正是主人说的「现在更加对不上了」的根子**：军团还在佩拉，嘴里已经念到安菲波利斯以东。已改成**认脚本事件只许「战场 id 优先、去年份前缀的标题兜底」**（`PlayerQuestSystem.findScriptEvent`），两处调用点（播报锚点、段表兜底）都换掉；真机复测 `briefingBounds = 1/1（安菲波利斯）`、日志出现「走到第 2 段的起点【安菲波利斯】，念这一段的旁白」。**教训：查「游戏里有没有生效」必须看真机状态（`briefingBounds` / 游戏日志），静态探针只证明「方法本身能算对」；凡是「按标题/名字全等」去另一张表里找实体的写法，都要先 print 一次两边到底长什么样。** |
+
+| 18 | 主人令「军团从 A 点触发开始播报，抵达 B 点后没有播报完，军团就先停止；等播报完继续以后再播报」——我原来按「念不完就掐掉尾巴」实现 | 已改为**驻足等念完**：`Army.setMarchHold` 一道闸 + `PlayerQuestSystem.settleBriefingHold` 每帧结算。两个触发点：① 走到 B 点（下一段挂点 15 公里内）时还有话没念完；② 最后一段：离本场终点（战场／被攻据点）≤ **20 公里**（`BRIEFING_HOLD_END_KM`）还有话没念完。松闸只有一个出口（`releaseBriefingHold`）：话念完／`clearJourneyBriefing`／任务没了／军团没了。**注意：军团被自己按住时，`hostIsMoving()` 必须答「在走」** —— 否则「移动时才播报」那道闸会把正在念的这一段掐掉，自己把自己等死。真机实测（`node scratch/_probe_briefing_hold.mjs`、`scratch/_diag_hold_state.mjs`）：`marchHold` 按下 57 拍，停住期间 `briefingBusy=true`，念完自动继续走。 |
+
 **已定下、不许再重开的：**
 - 🔴 **野战的「守方出兵据点」维持原样**（2026-09-24 主人定：**不撤**）—— 编辑器那一栏与那条提示**都保留**，
   现有几场野战的数据**也不动**。**撤它撤的是一个"从哪座城出来"的记账字段，与守方本身无关**：
