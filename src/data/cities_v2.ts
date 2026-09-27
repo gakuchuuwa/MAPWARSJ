@@ -2002,15 +2002,16 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     // 🔴 [2026-09-24 主人批间距特许] 第 11 场「前327 索格狄亚那岩」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
     //    坐标取英文维基百科 Siege of the Sogdian Rock 信息框 40.4,69.4；该条目正文写 near Samarkand、信息框却在忽毡旁，
     //    两处自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。离忽毡 27.69 公里，特许登记在 AGENTS §2.1.1.1。
-    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 40.4, lng: 69.4, type: 'pass', troops: 10000,
-        note: '索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
+    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 40.4, lng: 69.4, type: 'stockade', troops: 10000,
+        note: '索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。🔴 [2026-09-25 主人定稿「险要必须人口大于1万为PASS」] 它是绝壁**岩堡**（避难的百姓上山、非城镇），人口算不出来 → 按 §6.2① 落**城寨**（原为 pass）。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：英文维基信息框 strength2 = Unknown（史料未给守军数），本场守方 **600**（不大于 1 万）→ 不算 PASS。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     // 🔴 [2026-09-25 主人令「把缺少的战役加上」] 前329 居鲁士城围攻（英文维基 Siege of Cyropolis，独立条目）必须有真据点，
     //    库里没有 → 按 §二之二 添加，并按据点完整性铁律配齐 势力（居鲁士）＋武将（卡塔涅斯）＋精锐（坚城守兵）。
     //    坐标：该条目信息框给 40.2833,69.6333，那正是库里「忽毡」的所在地（两城相距约 4 公里，且忽毡在前329
     //    过不了年代闸门 —— 其锚定武将帖木儿灭里属城堡时代）；英文维基 Chronology 条目另记 Cyropolis = Uroteppa
     //    （今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），故本据点取后者。间距：--probe 实测最近索格狄亚那岩 64.22 公里。
-    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
-        note: '居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
+
+    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 38.8667, lng: 65.8, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地（今乌兹别克斯坦卡尔希）。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）。类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
+        note: '居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 定级依据§6.2：史料只记「当地七座城寨中最大最坚的一座」与守军约八千，未见人口数字 → 按新规取小城。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 10000, 
         note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS',
         buildingStyle: 'CEAS' },
@@ -2439,7 +2440,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
 
 
     { id: 'city_humicheng', name: '护密', factionId: 'qiepantuo', lat: 36.7266, lng: 71.6133, type: 'stockade', region: 'CENTRAL_ASIA', buildingStyle: 'CEAS', troops: 10000, tier: 4, note: '青藏/中亚环线共用锚点' },
-    { id: 'city_huoguocheng', name: '阿缓', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'stockade', troops: 10000, region: 'HEPHTHALITES', buildingStyle: 'CEAS', note: '白匈奴阿缓城，火国城旧都，嚈哒统治中亚阿姆河南岸之核心据点' },
+    { id: 'city_huoguocheng', name: '德拉普萨卡', factionId: 'yanda', lat: 36.7286, lng: 68.8681, type: 'stockade', troops: 10000, region: 'HEPHTHALITES', buildingStyle: 'CEAS', note: '白匈奴阿缓城，火国城旧都，嚈哒统治中亚阿姆河南岸之核心据点' },
 
 
     // ── 2026-05-28 新增：马蒙(达尔甘)、古兹根(法里亚布)、傣(勐泐城)、泰沅(清坎城)、帕銮(素可泰)、罗斛(呵叻城) ──
@@ -3088,20 +3089,28 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    坐标取斯瓦特河谷要冲 Chakdara 一带 34.65,72.03（英文维基 Cophen campaign 未给马萨加坐标 → 按史地合理推定：
     //    该条目记马萨加为阿萨卡诺伊人最大的设防城市与首府，位于斯瓦特河谷，故取河谷门户）。
     { id: 'city_masaga', name: '马萨加', factionId: 'aswaka', lat: 34.65, lng: 72.03, type: 'small_city', troops: 10000,
-        note: '马萨加，阿萨卡诺伊阿斯瓦卡人的首府与最大设防城市，斯瓦特河谷山城；前327年秋为亚历山大所破，女王克莱奥菲斯守城。史料：英文维基百科 Cophen campaign 的 Siege of Massaga 节。', region: 'PURU', buildingStyle: 'PURU' },
+        note: '马萨加，阿萨卡诺伊阿斯瓦卡人的首府与最大设防城市，斯瓦特河谷山城；前327年秋为亚历山大所破，女王克莱奥菲斯守城。史料：英文维基百科 Cophen campaign 的 Siege of Massaga 节。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。', region: 'PURU', buildingStyle: 'PURU' },
     // 🔴 [2026-09-25 §二之二 授权] 第 15 场「前325 马里斯」是攻城战，必须有真据点，库里没有 → 按授权添加。
     //    势力（马利）＋武将（摩罗波罗）＋精锐（马利城兵）库里都已有，故本场只新增这一个据点。
     //    坐标取英文维基百科 Multan 条目信息框 30°11′N 71°28′E；城址身份见 note。
     //    间距：--probe 实测最近拉合尔 313.44 km（≥40 km，无需特批）。
-    { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000,
-        note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。', region: 'PURU', buildingStyle: 'PURU' },
+
+    { id: 'city_patala', name: '帕塔拉', factionId: 'xinde', lat: 25.39, lng: 68.36, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '印度河三角洲顶端重镇（今巴基斯坦海德拉巴/信德）。前325 夏亚历山大在此建军港，亲自率舰驶出河口进入印度洋，向波塞冬宰牛献祭、掷金杯入海 —— 印度远征的终点（阿里安《远征记》VI.17-20）。🔴 [2026-09-25 主人令「继续建」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_pula', name: '普拉', factionId: 'jiduoluoxiya', lat: 27.2025, lng: 60.6858, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '吉德罗西亚行省首府（今伊朗伊朗沙赫尔）。前325 年亚历山大率残军走完约 60 天的吉德罗西亚沙漠后抵此，获粮食牲畜补给（阿里安《远征记》VI.26）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_kamanniya', name: '卡曼尼亚', factionId: 'kamanniyaxingsheng', lat: 28.67, lng: 57.74, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '卡曼尼亚行省核心（今伊朗吉罗夫特/克尔曼地区）。前325 年亚历山大走出吉德罗西亚沙漠后在此与克拉特鲁斯的北路陆军、尼阿尔库斯的水师会师，并开庭清算远征期间乱政贪腐的地方官吏、举行盛大祭祀庆典（阿里安《远征记》VI.27-28）。🔴 [2026-09-25 主人令「重要据点先建」] 类型按标准：行省核心、非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_xierzhan', name: '锡尔詹', factionId: 'keerman', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '扎格罗斯山前走廊的中继据点（今伊朗锡尔詹）。🔴 [2026-09-25 主人令「只建锡尔詹」] 建它的依据：卡曼尼亚→帕萨尔加德 约 500 公里（>300）且路上没有据点 → 取锡尔詹把这段切成两段（各约 250 公里）。⚠️ 它是**几何中继点**，史料里没有这座城的记载；类型按标准（史料无名 → 城寨）。' },
+    { id: 'city_hulewan', name: '呼勒万', factionId: 'zhageluosi', lat: 34.35, lng: 45.9, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯门（Pai-Taq 隘口）一带（今伊朗萨尔波勒扎哈卜）。从美索不达米亚平原进米底高原的必经山口；亚历山大自苏萨北上、进出米底均经此（阿里安《远征记》VII 前后）。🔴 [2026-09-25 主人令「建呼勒万」] 建它的依据：巴格达→哈马丹 约 420 公里（>300）且这一段路上没有据点。类型按标准（2026-09-25 主人定稿）：险要/关隘须**人口>1万**才是 PASS；本处是山口小镇（今萨尔波勒扎哈卜），人口无史料可考 → 落城寨。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：本处不是任何一场战役的被攻据点，据点 troops = **10000**（不大于 1 万）→ 仍不算 PASS。', mirror: true },
+    { id: 'city_yilamu', name: '伊拉姆', factionId: 'lulisitan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯山脉西麓山前走廊的中继据点（今伊朗伊拉姆）。🔴 [2026-09-25 主人令「添加据点，伊拉姆」] 建它的依据：苏萨→巴格达 沿路 >300 公里且这一段路上没有关键节点。⚠️ 它是**几何中继点**：史料里没有「伊拉姆」这座城的记载；类型按标准（史料无名 → 城寨）。' },
+    { id: 'city_guerpayegan', name: '古尔帕耶甘', factionId: 'golpayegan_diqu', lat: 33.4536, lng: 50.2884, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯山间谷地出口（今伊朗古尔帕耶甘）。🔴 [2026-09-25 主人令「纳哈万德改为古尔帕耶甘」] 它是这一段走廊上的**几何/驿站路点**（切入山间谷地的出口）。类型按标准：几何驿站、非险要、查不到人口史料 → 城寨。' },
+    { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'stockade', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '奥里泰人最大村落（今巴基斯坦拉斯贝拉）。亚历山大在此建城、留兵驻守，作为进入吉德罗西亚沙漠前最后的基地（阿里安 VI.21-22）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
     //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（阿夫里凯斯）＋精锐（绝壁守兵）。
     //    坐标取维基数据 Pir Sar 34.82,72.88 —— 英文维基百科 Aornos 条目正文记该岩在印度河上游峡谷湾上、
     //    Gunangar Shamshi Khel 之西，条目所附照片说明即 Shangla 县，与这一点反查所得一致。
     //    间距：--probe 实测最近马萨加 79.94 km（≥40 km，无需特批）。
-    { id: 'city_aonuosiyan', name: '奥诺斯岩', factionId: 'aornos', lat: 34.82, lng: 72.88, type: 'pass', troops: 10000,
-        note: '奥诺斯岩，希腊语意为无鸟之地，印度河上游峡谷湾上的崖顶岩堡；前326年春为亚历山大所取，是他一生最后一次围城。守军是斯瓦特河谷溃散下来的阿斯瓦卡人众。史料：英文维基百科 Aornos 条目、Cophen campaign 的 Siege of Aornus 节。', region: 'PURU', buildingStyle: 'PURU' },
+    { id: 'city_aonuosiyan', name: '奥诺斯岩', factionId: 'aornos', lat: 34.82, lng: 72.88, type: 'stockade', troops: 10000,
+        note: '奥诺斯岩，希腊语意为无鸟之地，印度河上游峡谷湾上的崖顶岩堡；前326年春为亚历山大所取，是他一生最后一次围城。守军是斯瓦特河谷溃散下来的阿斯瓦卡人众。史料：英文维基百科 Aornos 条目、Cophen campaign 的 Siege of Aornus 节。🔴 [2026-09-25 主人定稿「险要必须人口大于1万为PASS」] 崖顶**岩堡**（守军是溃散兵众、非城镇），人口算不出来 → 按 §6.2① 落**城寨**（原为 pass）。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：本场守方 **6000**（不大于 1 万）→ 不算 PASS。', region: 'PURU', buildingStyle: 'PURU' },
     { id: 'city_baishawa', name: '白沙瓦', factionId: 'jibin', lat: 34.01, lng: 71.52, type: 'medium_city', troops: 10000, region: 'KUSHAN', buildingStyle: 'INDIA', note: '白沙瓦；罽宾（迦腻色迦贵霜都，犍陀罗核心）' },
 
 
@@ -3224,6 +3233,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_qihe', name: '哲德', factionId: 'xierhe', lat: 44.2219, lng: 64.3332, type: 'stockade', region: 'STEPPE_FEUDAL', buildingStyle: 'CUMAN', troops: 10000, note: '锡尔河下游Jand/毡的故址一带（哲德为异译）；乌古斯后钦察要城；非七河地区' },
     // ── 2026-06-20 替换：巴哈尔兹·泰巴德（原扎姆）──
     { id: 'city_taibade', name: '泰巴德', factionId: 'baha', lat: 34.7763, lng: 60.7764, type: 'stockade', region: 'PERSIAN_CASTLE', buildingStyle: 'PERSIAN', troops: 10000, note: '巴哈尔兹区泰巴德；呼罗珊东南边境重镇，巴哈尔兹重甲戟兵驻防' },
+    { id: 'city_helate_city', name: '赫拉特', factionId: 'aliya', lat: 34.34, lng: 62.19, type: 'small_city', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '阿利亚行省首府（阿塔考纳，今阿富汗赫拉特）。🔴 [2026-09-25 主人令「添加」] 补进第五片 5-1 段：前330 亚历山大东进阿利亚，平定总督萨提巴扎尼斯叛乱（阿里安《远征记》III.25）。坐标 34.34,62.19。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 原记 medium_city（中城 >10万）无据 —— 史料查不到支持 10 万人口的数字，按新规**降为 small_city 小城**。' },
     // ── 2026-06-20 新增：哈里·萨拉赫斯 ──
     { id: 'city_salahesi', name: '萨拉赫斯', factionId: 'hali', lat: 36.5449, lng: 61.1577, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
 
@@ -3388,6 +3398,7 @@ buildingStyle: 'TIBET', troops: 10000,
     // 三城同在伊朗高原北路（呼罗珊大道）上首尾相接，文化同质，雷伊无 note 说明为何单列西亚。
     // 本项目 WEST_ASIA 的定义是安纳托利亚/黎凡特/阿拉伯/埃及/两河，不含伊朗高原。
     { id: 'city_leiyi', name: '雷伊', factionId: 'ribale', lat: 35.6, lng: 51.44, type: 'medium_city', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN' },
+    { id: 'city_lihaimen', name: '里海门', factionId: 'eerbulushi', lat: 35.25, lng: 52.34, type: 'stockade', troops: 10000, region: 'ORIE', buildingStyle: 'PERSIAN', note: '厄尔布尔士山脉隘口（里海门，今 Tang-e Sar-e Darreh）。🔴 [2026-09-25 主人令「添加」] 补进第五片 5-1 段：前330 大流士三世在此被巴克特里亚总督贝苏斯擒拿（阿里安《远征记》III.21）。按类型标准（2026-09-25 主人定稿「关隘、要塞、堡垒、兵家必争之地，并且必须人口大于1万为PASS」）：本处是厄尔布尔士山口，人口无史料可考 → 不算 PASS，落**城寨**（原为 pass）。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：本处不是任何一场战役的被攻据点，据点 troops = **10000**（不大于 1 万）→ 仍不算 PASS。🔴 [2026-09-25 主人问「建筑风格是波斯，还是阿拉伯」] 建筑风格取 **PERSIAN 波斯**（原误填 ORIE 中东—阿拉伯族）：本城在伊朗高原厄尔布尔士山，同片雷伊/达姆甘/加兹温/哈马丹一律 PERSIAN；而 ORIE 在库里代表中东—阿拉伯世界（大马士革/麦加/麦地那/加沙/科尔多瓦）。前330 年为阿契美尼德波斯本土，阿拉伯风格属 7 世纪伊斯兰征服之后，用之即穿越。坐标 35.25,52.34。', mirror: true },
     { id: 'city_jiaziwen', name: '加兹温', factionId: 'safawei', lat: 36.27, lng: 50, type: 'small_city', troops: 10000, region: 'SAFAVID', buildingStyle: 'PERSIAN' },
 
 
@@ -3417,6 +3428,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_nixiya', name: '尼凯亚', factionId: 'bitiniya', lat: 40.43, lng: 29.72, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'BYZANTINE' },
     { id: 'city_junshitandingbao', name: '君士坦丁堡', factionId: 'baizanting', lat: 41.01, lng: 28.97, type: 'big_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE' },
     { id: 'city_yikeniwumu', name: '伊科尼乌姆', factionId: 'luomu', lat: 37.8744, lng: 32.4931, type: 'stockade', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.87,32.48 偏离科尼亚城 1.25 公里，按英文维基百科 Konya 坐标改为 37.8744,32.4931。' },
+    { id: 'city_tiyana', name: '提亚纳', factionId: 'kapaduoxiya', lat: 37.848, lng: 34.611, type: 'small_city', troops: 8000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '卡帕多细亚重镇，安基拉南下奇里乞亚门古道必经之城。前333 年亚历山大穿越卡帕多细亚、任命萨比克塔斯为卡帕多细亚总督（阿里安《远征记》II.4），本城归马其顿。坐标取英文维基 Tyana 条 37.84806,34.61111。🔴 [2026-09-25 主人令「可以请添加」] 新建，使第 7 场的线改走 安基拉→提亚纳→奇里乞亚门→塔尔苏斯。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
         { id: 'city_nikexiya', name: '尼科西亚', factionId: 'saipulusi', lat: 35.18, lng: 33.38, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', note: '塞浦路斯王国都城·东地中海海岛要塞·居伊·德·吕西尼昂开国王都' },
 { id: 'city_antiejiya', name: '安提俄基亚', factionId: 'sailiugu', lat: 36.2, lng: 36.16, type: 'big_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', mirror: true },
     { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 10000, region: 'SEASIA_CASTLE', buildingStyle: 'MALAY', note: '满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉' },
@@ -3438,7 +3450,8 @@ buildingStyle: 'TIBET', troops: 10000,
     //   由 `src/map/BattlefieldLayer.ts` 独立图层渲染。
     //   ⚠️ 因此「格拉尼库斯河 ↔ 格拉尼库斯」10.6km 这种「过近」问题**整类消失**（战场不再占据点名额）。
     { id: 'city_peiluximu', name: '佩鲁西姆', factionId: 'xiaaiji', lat: 31.04, lng: 32.55, type: 'pass', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '埃及东方门户要塞，佩尔狄卡斯321年征埃及军至此处、尼罗河畔被弑' },
-    { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯' },
+    { id: 'city_matelugang', name: '马特鲁港', factionId: 'maermajika', lat: 31.35, lng: 27.23, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '古名帕拉伊托尼乌姆（Paraetonium），埃及西北沿海港。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段「埃及接收与加冕走廊」补：亚历山大自亚历山大城西行至此，再南下沙海往锡瓦（阿里安《远征记》III.3）。坐标按史料位置取 31.35,27.23。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
+    { id: 'city_halikanasu', name: '哈利卡纳苏斯', factionId: 'kaliya', lat: 37.03, lng: 27.43, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '卡里亚都城（摩索拉斯陵墓所在），阿尔特米西亚女王萨拉米斯海战率五舰助波斯 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_kelazuomeinai', name: '克拉佐美奈', factionId: 'bosidiguo', lat: 38.36, lng: 26.77, type: 'pass', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '爱奥尼亚半岛海港要塞，老阿尔塔弗涅斯497年亲统波斯第三军团强攻收复' },
     { id: 'city_tiluo', name: '提洛', factionId: 'jikelazes', lat: 37.39, lng: 25.27, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '爱琴海阿波罗圣地岛，达提斯490年主祭阿波罗、焚香300他连得并归还神像' },
     // 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 之一 + 二级 59+3 之一」]
@@ -3494,6 +3507,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'pass', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST' },
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
+    { id: 'city_xiwa', name: '锡瓦绿洲', factionId: 'ameng', lat: 29.2, lng: 25.52, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '锡瓦绿洲，阿蒙神庙神谕所在。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段补：前331 亚历山大亲率小队穿越沙漠来此，祭司称他为「阿蒙之子」，他随后回孟菲斯（阿里安 III.4；普鲁塔克《亚历山大传》27）。坐标取绿洲城镇 29.2,25.52。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_wasaite', name: '瓦塞特', factionId: 'dibisi', lat: 25.7, lng: 32.64, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
     { id: 'city_yalishanda', name: '亚历山大', factionId: 'tuolemi', lat: 31.1975, lng: 29.8925, type: 'big_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', mirror: true, note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 31.2,29.91 偏离亚历山大城 1.69 公里，按英文维基百科 Alexandria 坐标改为 31.1975,29.8925。' },
     { id: 'city_babilun', name: '巴比伦', factionId: 'jialedi', lat: 32.5425, lng: 44.4211, type: 'big_city', troops: 10000, region: 'BABYLON', buildingStyle: 'ORIE', note: '🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 32.53,44.42 偏离巴比伦城 1.39 公里，按英文维基百科 Babylon 坐标改为 32.5425,44.4211。' },
@@ -3502,6 +3516,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_samaila', name: '萨迈拉', factionId: 'samaila', lat: 34.206, lng: 43.880, type: 'medium_city', troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ORIE' },
     { id: 'city_awalisi', name: '阿瓦里斯', factionId: 'xikesuosi', lat: 30.79, lng: 31.83, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
     { id: 'city_niniwei', name: '尼尼微', factionId: 'yashu', lat: 36.36, lng: 43.15, type: 'medium_city', troops: 10000, region: 'ASSYRIAN', buildingStyle: 'ORIE', note: '新亚述帝国极盛王都，亚述巴尼拔皇家图书馆所在地' },
+    { id: 'city_tapusakusi', name: '塔普萨库斯', factionId: 'xuliya', lat: 35.91, lng: 38.53, type: 'stockade', troops: 10000, region: 'ASSYRIAN', buildingStyle: 'ORIE', note: '幼发拉底河渡口重镇。🔴 [2026-09-25 主人令「要补」] 前331 年 7 月亚历山大在此架浮桥渡幼发拉底（阿里安《远征记》III.7）。坐标 35.91,38.53（今 Al-Thawra 一带）。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
+    { id: 'city_nixibisi', name: '尼西比斯', factionId: 'meisuobudamiya', lat: 37.07, lng: 41.22, type: 'small_city', troops: 10000, region: 'ASSYRIAN', buildingStyle: 'ORIE', note: '今 Nusaybin，两河北部走廊重镇。🔴 [2026-09-25 主人令「要补」] 补进第四片 4-1 段（亚历山大自塔普萨库斯东行经此往尼尼微）。坐标 37.07,41.22。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 原记 medium_city（中城 >10万）无据 —— 史料查不到支持 10 万人口的数字，按新规**降为 small_city 小城**。' },
 
     { id: 'city_anate', name: '阿纳特', factionId: 'youfaladi', lat: 34.47, lng: 41.96, type: 'pass', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE' },
     { id: 'city_hamadan', name: '哈马丹', factionId: 'midi', lat: 34.8, lng: 48.51, type: 'medium_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '古称埃克巴塔那，米底王国都城与阿契美尼德帝国夏都' },
@@ -3666,7 +3682,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_golconda', name: '戈尔康达', factionId: 'qutb_shahi', lat: 17.3833, lng: 78.4011, type: 'pass', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDI', note: '库特布沙希王朝都城与德干高原堡垒' },
     { id: 'city_pagaruyung', name: '帕加鲁荣', factionId: 'minangkabau', lat: -0.471, lng: 100.621, type: 'small_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '米南加保王国王宫所在，尖顶大屋建筑中心；定级依据§6.2：1684年城内约8000人（VOC使节Thomas Dias记录），未达1万但属城市→小城' },
     { id: 'city_uxmal', name: '乌斯马尔', factionId: 'tutul_xiu', lat: 20.359, lng: -89.771, type: 'pass', troops: 10000, region: 'MAYANS', buildingStyle: 'MESO', note: '乌斯马尔玛雅阶梯金字塔要塞城，查克王驻防' },
-    { id: 'city_bam_citadel', name: '巴姆古城', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
+    { id: 'city_bam_citadel', name: '巴姆', factionId: 'kerman_bam', lat: 29.116, lng: 58.368, type: 'pass', troops: 10000, region: 'SASANIAN', buildingStyle: 'PERSIAN', note: '克尔曼东缘丝路绿洲要塞，巴姆城堡所在地' },
     { id: 'city_bedzin', name: '本津堡', factionId: 'lesser_poland', lat: 50.327217, lng: 19.129145, type: 'pass', troops: 10000, region: 'POLES', buildingStyle: 'POLES', note: '小波兰西境王家石堡，卡齐米日三世鹰巢防线节点' },
     { id: 'city_braganca', name: '布拉干萨', factionId: 'braganza_house', lat: 41.8042, lng: -6.7492, type: 'pass', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI', note: '葡萄牙东北边城与布拉干萨城堡，布拉干萨家族根基' },
     { id: 'city_la_mota', name: '拉莫塔堡', factionId: 'trastamara', lat: 41.309, lng: -4.9085, type: 'pass', troops: 10000, region: 'ARAGON', buildingStyle: 'MEDI', note: '麦地那德尔坎波王家要塞，特拉斯塔马拉王朝扩建' },
@@ -3677,7 +3693,7 @@ buildingStyle: 'TIBET', troops: 10000,
     //    定级依据 §6.2：加沙非关隘/要塞/堡垒 → 按城市；城内军民数万 >1 万 → 小城（腓利斯丁五城之一）。
     //    坐标实测：最近邻耶路撒冷 76.43 km ≥50 km ✓ 合法，无需特批。
     { id: 'city_jiasa', name: '加沙', factionId: 'feilisidin', lat: 31.5017, lng: 34.4668, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '腓利斯丁五城之一、通往埃及的门户要塞城；前332年9–10月亚历山大堆土山、挖地道、四次总攻破城，守将巴提斯被处决。定级依据§6.2：非关隘/要塞/堡垒→城市；人口>1万→小城' },
-    { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'pass', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-09-25 主人批准新建] 伊利里亚人达萨雷提部的设防要塞，扼察贡山口（伊利里亚—马其顿南线要道）；前335年克莱图斯据此抗亚历山大（英文维基 Siege of Pelium / Pelion (Illyria)）。坐标：确切位置无定论，取温尼弗里斯说、莱恩·福克斯称「决定性论证」的兹韦兹代（Zvezdë，维基坐标 40.7306,20.8625）。定级依据§6.2：要塞→险要 pass。文化区：项目无伊利里亚文化区，伊利里亚与色雷斯同属古巴尔干部族、地理相邻，取 THRACIAN。' },
+    { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'stockade', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-09-25 主人批准新建] 伊利里亚人达萨雷提部的设防要塞，扼察贡山口（伊利里亚—马其顿南线要道）；前335年克莱图斯据此抗亚历山大（英文维基 Siege of Pelium / Pelion (Illyria)）。坐标：确切位置无定论，取温尼弗里斯说、莱恩·福克斯称「决定性论证」的兹韦兹代（Zvezdë，维基坐标 40.7306,20.8625）。定级依据（2026-09-25 主人定稿）：它是扼山口的**山堡**、不是有人口的关隘城镇，人口无史料可考 → 按 §6.2①「险要须人口>1万才是 PASS」落**城寨**。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：前335 佩利昂战役守方 **7000**（不大于 1 万）→ 不算 PASS。文化区：项目无伊利里亚文化区，伊利里亚与色雷斯同属古巴尔干部族、地理相邻，取 THRACIAN。' },
         ];
 // ── 14 文化区（RegionType）────────────────────────────────
 // region: 'JAPAN',         // 日本

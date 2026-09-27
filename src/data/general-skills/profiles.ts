@@ -3241,11 +3241,6 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     seleisi_shouling: { generalId: 'seleisi_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 索格狄亚那岩·阿里马泽斯：普将（史实为岩堡守将，凭绝壁自恃不可攻）· 借势 · 善守
     suogediyana_arimazes: { generalId: 'suogediyana_arimazes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
-    // 🔴 [2026-09-19 主人令「一个战场一个防守方的武将一个势力一个精锐」] 夏·窦建德 的档案。
-    //    他此前只在 `BattlefieldCharacters`（战场人物表）里，**没有档案/世纪/时代** ——
-    //    那三样缺一就进不了 13（战术模式），而虎牢关战役他是**守方主帅**，会卡在准入上。
-    //    普将（史实：河北义军之主，据河北建「夏」；621年虎牢关倾国西援洛阳王世充、兵败被擒）· 逆势 · 善防
-    doujiande: { generalId: 'doujiande', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 普拉塔纳斯·莱奥斯塞尼斯：普将（史实为雅典名将、拉米亚战争希腊反马其顿联军统帅）· 创势 · 善攻
     xila_leosthenes: { generalId: 'xila_leosthenes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     // 普拉塔纳斯·安提帕特：普将（史实为马其顿摄政、欧洲最高统帅，兵败后坚守拉米亚城）· 逆势 · 善防

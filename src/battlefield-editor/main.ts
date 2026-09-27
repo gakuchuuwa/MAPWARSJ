@@ -38,6 +38,7 @@ import { findEventSite } from '../data/eventSites';
 import { cityAbsentReason } from '../events/cityInYear';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
+import { SCRIPT_PARTS, SCRIPT_SEGMENTS } from './scriptSegments';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
 import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
@@ -604,6 +605,11 @@ const css = `
 .bf-list-item.active { background: #3a3120; border-left: 3px solid #c9a33c; }
 .bf-list-item .y { color: #c9a33c; font-weight: bold; margin-right: 6px; }
 .bf-list-item .t { color: #8a8070; font-size: 11px; }
+    .bf-part { padding: 6px 10px; background: #241d12; color: #d8b45a; font-size: 12px; font-weight: bold; border-bottom: 1px solid #3a342c; }
+    .bf-part span { color: #8a8070; font-weight: normal; margin-left: 6px; }
+    .bf-seg { padding: 4px 10px 4px 14px; background: #191612; color: #9a9080; font-size: 11px; border-bottom: 1px solid #241f1a; }
+    .bf-march { padding: 5px 10px 5px 22px; color: #6a6355; font-size: 11px; border-bottom: 1px solid #241f1a; font-style: italic; }
+    .bf-via { display: block; color: #6a6355; font-size: 10px; margin-top: 2px; line-height: 1.35; }
 .bf-form { flex: 1; overflow-y: auto; padding: 14px 18px 60px; min-width: 0; }
 .bf-toolbar { padding: 8px 12px; background: #1a1714; border-bottom: 1px solid #3a342c; display: flex; gap: 8px; align-items: center; }
 .bf-btn { background: #2f2a22; color: #e8e0d0; border: 1px solid #5a5042; border-radius: 4px; padding: 5px 14px; cursor: pointer; font-family: inherit; font-size: 13px; }
@@ -828,6 +834,42 @@ function filterLegionSelect(selectId: string, searchId: string): void {
 }
 
 function render(): void {
+    // 🔴 [2026-09-25 主人报「编辑依然不是按片、段划分的」] 左侧列表按「片 → 段 → 场」排
+    //    表在 ./scriptSegments.ts（只给编辑器看，不进游戏数据）
+    const draftItemHtml = (d: any, i: number) => `
+                <div class="bf-list-item ${i === selected && !isNew ? 'active' : ''}" data-i="${i}">
+                    <div><span class="y">${d.year < 0 ? '前' + (-d.year) : d.year}年</span>${campaignSuffix(d.generalId) ? `<span style="color:#7a6a3a;font-size:11px;margin-right:6px;">${escapeHtml(campaignSuffix(d.generalId).replace(/^ · 剧本《|》$/g, ''))}</span>` : ''}${escapeHtml(d.title || '无名')}</div>
+                    <div class="t">${d.type === 'siege' ? '攻城战' : '野战'} · ${escapeHtml(d.bfName || '未配战场')}</div>
+                </div>`;
+    // 场次号（1 起，按年份季节排序）→ 草稿下标：按「年 + 标题」认，不依赖数组顺序
+    // 场次号（1 起，按年份季节排序）→ 草稿下标：
+    // 实测档案里 20 条全是战斗条目、且文件顺序＝（年,季）顺序，故按位次映射；再用年份核一遍，认不上就不硬塞。
+    const draftIndexOfEvent = (n: number) => {
+        const ev = (HISTORICAL_EVENT_SCRIPT as any[])[n - 1];
+        const d = drafts[n - 1];
+        if (!ev || !d) return -1;
+        return d.year === ev.year ? n - 1 : -1;
+    };
+    const ownedIdx = new Set<number>();
+    const segListHtml = SCRIPT_PARTS.map((p) => {
+        const rows: string[] = [];
+        for (const seg of SCRIPT_SEGMENTS.filter((x) => x.part === p.part)) {
+            rows.push(`<div class="bf-seg">${seg.id}　${escapeHtml(seg.from)} → ${escapeHtml(seg.to)}`
+                + `<span class="bf-via">${seg.via.length ? '途经：' + escapeHtml(seg.via.join('、')) : '（无途经点）'}</span></div>`);
+            if (seg.hasBattle) {
+                for (const n of seg.events) {
+                    const i = draftIndexOfEvent(n);
+                    if (i < 0 || ownedIdx.has(i)) continue;
+                    ownedIdx.add(i);
+                    rows.push(draftItemHtml(drafts[i], i));
+                }
+            } else {
+                rows.push(`<div class="bf-march">纯行军${seg.briefedBy.length ? `（旁白由第 ${seg.briefedBy.join('、')} 场念）` : ''}</div>`);
+            }
+        }
+        return `<div class="bf-part">第 ${p.part} 片　${escapeHtml(p.name)}<span>${escapeHtml(p.years)}</span></div>${rows.join('')}`;
+    }).join('');
+    const leftoverHtml = drafts.map((d, i) => (ownedIdx.has(i) ? '' : draftItemHtml(d, i))).join('');
     const issues = validate(working);
     const hasErr = issues.some((i) => i.level === 'error');
     const attCurrentLegion = resolveCurrentLegion(working.attackerFactionId, working.attackerSourceCityId);
@@ -843,11 +885,7 @@ function render(): void {
     </div>
     <div class="bf-wrap">
         <div class="bf-list">
-            ${drafts.map((d, i) => `
-                <div class="bf-list-item ${i === selected && !isNew ? 'active' : ''}" data-i="${i}">
-                    <div><span class="y">${d.year < 0 ? '前' + (-d.year) : d.year}年</span>${campaignSuffix(d.generalId) ? `<span style="color:#7a6a3a;font-size:11px;margin-right:6px;">${escapeHtml(campaignSuffix(d.generalId).replace(/^ · 剧本《|》$/g, ''))}</span>` : ''}${escapeHtml(d.title || '无名')}</div>
-                    <div class="t">${d.type === 'siege' ? '攻城战' : '野战'} · ${escapeHtml(d.bfName || '未配战场')}</div>
-                </div>`).join('')}
+            ${segListHtml}${leftoverHtml ? `<div class="bf-part">未编入段</div>${leftoverHtml}` : ''}
         </div>
         <div class="bf-form">
             ${issues.length ? `<div class="issues ${hasErr ? 'err' : 'ok'}">

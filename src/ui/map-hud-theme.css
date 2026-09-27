@@ -516,6 +516,13 @@ body:has(#combat-ui-panel.is-battle-visible:not(.is-collapsed):not(.is-scene13))
 }
 
 /* 🔴 [2026-09-24 主人定] 剧本期不显示军团面板、军情面板（连抽屉按钮一起藏）；乱斗期不受影响。
+   🔴 [2026-09-26 主人三道令定死口径] 先令「把右下角的信息面板也隐藏」→ 随即报障
+   「你把信息面板的展开按钮也给隐藏啦，我怎么开打呀」→ 再澄清「我说的隐藏是最小化，
+   你要把展开的UI按钮留着呀」。
+   **结论：右下角 HUD 不进这张表** —— 剧本期它是**最小化**（走面板自己的折叠机制
+   `GameTimeHUD.setCollapsed(true)`，见 `GameApp.setCompanionPanelsExpanded` 剧本期分支），
+   收起时只剩那个展开按钮（「控制」），点它就能展开去按「播放」开打。
+   这里若写成 `display:none` 会把展开按钮与播放按钮一起带走 —— 那是错的，别再改回来。
    body.script-period 由 PlayerHUD.refresh 按 isScriptPeriod() 每秒对齐。 */
 body.script-period {
     --army-panel-w: 0px;
