@@ -1528,7 +1528,12 @@ export class PlayerQuestSystem {
                     this.briefingBusy = false;
                     // 🔴 [2026-09-25 主人「一段一条播报」] 念完这条就**静音**，等军团走到下一段起点再念下一条；
                     //    只有已排队的那条（段边界已经到了）才立刻接上 —— 正在念的话绝不掐断。
-                    if (next !== null) { i = next; pushNext(); return; }
+                    if (next !== null) {
+                        // 🔴 正驻足等上一句时，排队的这一段**先压着**：松了闸（军团重新走起来）再念
+                        if (this.briefingHold) { this.pendingAfterHold = next; }
+                        else { i = next; pushNext(); }
+                        return;
+                    }
                     if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
                     pushNext();
                 };
@@ -1583,6 +1588,12 @@ export class PlayerQuestSystem {
         //    每帧问一次：动起来了就开口念。
         if (this.pendingBriefingStart && this.hostIsMoving()) this.pendingBriefingStart();
         this.settleBriefingHold();   // 🔴 到了点没念完就驻足（每帧结算）
+        // 驻足结束（军团重新走起来）→ 把压住的那一段接上
+        if (this.pendingAfterHold !== null && !this.briefingHold && !this.briefingBusy) {
+            const idx = this.pendingAfterHold;
+            this.pendingAfterHold = null;
+            this.briefingAdvance?.(idx);
+        }
         // 🔴 [2026-09-26 血训] 之前因「军团没走」挂起的那一句：走起来了就接着念（不是掐掉整条链）
         if (this.briefingResume && (this.hostIsMoving() || this.briefingHold)) {
             const resume = this.briefingResume;
@@ -1706,6 +1717,7 @@ export class PlayerQuestSystem {
         this.pendingBriefingStart = null;   // 压着等军团动起来的那一条，一并丢掉
         this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
         this.releaseBriefingHold();         // 🔴 这一趟播报结束 → 松闸，别把军团钉在点上
+        this.pendingAfterHold = null;
         if (this.briefingTimer !== null) {
             window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
@@ -1854,6 +1866,8 @@ export class PlayerQuestSystem {
      *   ⚠️ 按下去的是 `Army.setMarchHold`（**每帧重新按**，1.5 秒没人按就自动松 —— 永不会把军团钉死）。
      */
     private briefingHold = false;
+    /** 驻足期间被压住的那一段：松闸（军团重新走起来）之后再念 */
+    private pendingAfterHold: number | null = null;
     /** 已经到了下一个点、正在等这句念完（松闸＝`briefingBusy` 与 `briefingPending` 都空） */
     private briefingHoldArmed = false;
     /** 本场终点（战场／被攻据点）坐标：最后一句没念完时，也在这里等（同一条规矩） */
@@ -1879,7 +1893,9 @@ export class PlayerQuestSystem {
         const q = this.quest;
         const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
         if (!host || host.isDestroyed) { this.briefingHold = false; this.briefingHoldArmed = false; return; }
-        const speaking = this.briefingBusy || this.briefingPending !== null;
+        // 🔴 [2026-09-26 主人报障「卡这不动了」] **只等「当前这一句」**，不等排队的那一句：
+        //    否则军团会站在原地把「当前段 + 排队的下一段」一起听完（实测能站二三十秒，看着就是卡死）。
+        const speaking = this.briefingBusy;
         if (!speaking) { this.releaseBriefingHold(); return; }
         let near = this.briefingHoldArmed;
         if (!near && this.journeyEndPos) {
