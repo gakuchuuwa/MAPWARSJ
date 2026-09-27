@@ -25,6 +25,7 @@ import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
 import { FACTIONS } from '../data/factions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
+import { TerritorySystem } from '../systems/TerritorySystem';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { GAME_CONSTANTS, GameConfig } from '../config/GameConfig';
 import { AIController, RecruitmentSystem } from '../ai';
@@ -330,6 +331,10 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            // 🔴 [2026-09-27 主人定「全图的据点名称都显示出来，样貌按年代」]
+            //    渲染放宽到全库（名字都要看得见）；样貌照旧由年代闸门决定 —— 不过闸的只画灰字名字。
+            this.cityManager.setRenderFilter(() => true);
+            TerritorySystem.setSpriteFilter((city: any) => this.scriptCityVisibility!.isCityVisible(city));
             // 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗的攻 / 守方用事件指名的剧本军团
             setScriptFactionLegionResolver((factionId) => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();

@@ -2156,12 +2156,12 @@ export class TerritorySystem {
                      transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
                      ${ghostStyle}
                  ">
-                     ${(flagPole && showFlag) ? `<img src="${flagPole}" style="
+                     ${(flagPole && showFlag && TerritorySystem.hasCitySprite(city)) ? `<img src="${flagPole}" style="
                          position: absolute; top: 15px; left: 50%;
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
-                     ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
+                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">
                           ${(deStyle
                               ? (city.type === 'big_city'
                                   ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
@@ -2242,7 +2242,15 @@ export class TerritorySystem {
     }
 
     /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
-    private static buildCityLabelHtml(city: City, fadeIn = false): string {
+    /**
+     * 🔴 [2026-09-27 主人定] **样貌过滤器**：返回 false 的据点**只画灰字名字**（不画城样貌、不插旗、不可点）。
+     *    剧本期由 GameApp 设成「年代闸门」——那年存在的才画城，那年没有的只留名字（注记）。
+     */
+    private static spriteFilter: ((city: City) => boolean) | null = null;
+    public static setSpriteFilter(f: ((city: City) => boolean) | null): void { TerritorySystem.spriteFilter = f; }
+    public static hasCitySprite(city: City): boolean { return !TerritorySystem.spriteFilter || TerritorySystem.spriteFilter(city); }
+
+    private static buildCityLabelHtml(city: City, fadeIn = false, dim = false): string {
         // 🔴 [2026-09-27 主人定「不在据点显示兵力」] **剧本期（历史教程）据点标签一律不带兵力数字**：
         //    这是历史剧本，不是乱斗数值面板；也免得「那一年这城驻多少兵」穿帮。
         //    乱斗模式照旧显示兵力。
@@ -2259,9 +2267,9 @@ export class TerritorySystem {
             cursor: inherit; white-space: nowrap;
         ">
             <span style="
-                color: #ffffff; font-weight: bold;
+                color: ${dim ? '#c9c9c9' : '#ffffff'}; font-weight: ${dim ? 'normal' : 'bold'};
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                font-size: 13px;
+                font-size: ${dim ? '11px' : '13px'};
             ">${city.name}</span>${troopsSpan}
         </div>`;
     }
@@ -2274,14 +2282,15 @@ export class TerritorySystem {
         labelsMap: Map<string, L.Marker>,
         fadeIn: boolean = false
     ) {
-        const html = TerritorySystem.buildCityLabelHtml(city, fadeIn);
+        const spriteOk = TerritorySystem.hasCitySprite(city);
+        const html = TerritorySystem.buildCityLabelHtml(city, fadeIn, !spriteOk);
 
         const labelIcon = L.divIcon({ className: 'city-troop-label', html: html });
 
         const label = L.marker([lat, lng], {
             icon: labelIcon,
             zIndexOffset: 1000,
-            interactive: true,
+            interactive: spriteOk,   // 🔴 不过年代闸门的：只当注记，不可点
             pane: 'labelsPane'
         }).addTo(targetLayerGroup);
 
