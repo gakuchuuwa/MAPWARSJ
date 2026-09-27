@@ -1397,7 +1397,7 @@ let curRadiusMult = 1.0;
 let curBldgScale = 1.0;
 let curGateScale = 1.0;
 let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
-let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon'
+let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon' | 'rect'
 let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
 let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
 
@@ -1601,6 +1601,55 @@ function computeCorralOctagonWall(baseSize) {
   pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'POST' });
   pieces.push({ x: 0, y: -7.1 * sy, type: 'POST' });
   pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'POST' });
+  return pieces;
+}
+
+/* 城寨方案C：矩形围栏（[2026-09-16 主人定]「再添加一种，矩形的围栏城寨」＋「你可以用险要的样式」）
+ * 🔴 **走险要同款矩形拓扑**（与 computeRectWall 同一套走法）：
+ *    四顶点 P0→P1→P2→P3 的推进方向、「长边两门居中、短边不设门」、四角件衔接 —— 与险要完全一致。
+ *    险要本体 = 长 8 段 × 宽 4 段（2:1）；本方案 = **长 13 段 × 宽 7 段（≈1.86:1，同族比例）**，
+ *    取这个数是为了**脚印对齐另外三种城寨**：半宽 (13+7)/2 × 0.075 = 0.75×baseSize，
+ *    与正方城寨的 10 × 0.075 = 0.75×baseSize 完全相同（不放大也不缩小）。
+ * 🔴 **墙件仍是城寨自己的编织篱笆**（NE / SE / CORNER / GATE），**不换成险要的石墙与箭塔** ——
+ *    这是「城寨」不是「险要」：篱笆围栏 + 四角 L 形转角件 + 两座篱笆门居中。 */
+function computeCorralRectWall(baseSize) {
+  const sx = baseSize * 0.075, sy = sx * 0.58;   // 2:1 等轴网格（与其它三种城寨同一把尺）
+  const L = 12, W = 8;                            // 长边 / 短边（段），长:宽 = 3:2
+  // 🔴 **[2026-09-16 主人定]「为了围住 9 建筑，你做的太大了，城寨的整体大小要和其他 3 个差不多。
+  //     中间的建筑可以加减，改变摆放位置，不要为了 9 建筑特意加大围栏的范围。」**
+  //     → 围栏**不再为 9 建筑让路**：L+W = 12+8 = **20 格，与正方城寨的 2×10 格完全同脚印**
+  //       （半宽 (12+8)/2 × 0.075 = 0.75×baseSize，一分不大）。
+  //       反过来改**里面**：矩形围栏不用城寨那套「1 中 + 8 环」的圆环布局，
+  //       改用 **2 排 × 4 栋、去掉中心那栋 = 8 栋** 的矩形排法（见 renderBuildings 的 RECT_SLOTS），
+  //       栋距实测 0.26×baseSize，与另外三种城寨的环列栋距（约 0.28×baseSize）同一档，不挤。
+  const P = (u, v) => ({ x: (u + v) * sx, y: (u - v) * sy });
+  const P0 = P(-L / 2, -W / 2), P1 = P(L / 2, -W / 2), P2 = P(L / 2, W / 2), P3 = P(-L / 2, W / 2);
+  const cx = (P0.x + P1.x + P2.x + P3.x) / 4, cy = (P0.y + P1.y + P2.y + P3.y) / 4;
+  const pieces = [];
+  const put = (p, type, flipX) => pieces.push({ x: p.x - cx, y: p.y - cy, type: type, flipX: !!flipX });
+  const lerp = (A, B, t) => ({ x: A.x + (B.x - A.x) * t, y: A.y + (B.y - A.y) * t });
+
+  // 四角：L 形转角件（与另外三种城寨同一套，无缝咬合两段篱笆）
+  put(P0, 'CORNER'); put(P1, 'CORNER'); put(P2, 'CORNER'); put(P3, 'CORNER');
+
+  const halfL = Math.floor(L / 2);   // 门居中：跳过中位 3 段，门占中间 1 段（与险要同口径）
+  // 底边 P0→P1（长边，临街）
+  for (let k = 1; k < L; k++) {
+    if (k >= halfL - 1 && k <= halfL + 1) continue;
+    put(lerp(P0, P1, k / L), 'SE');
+  }
+  put(lerp(P0, P1, halfL / L), 'GATE', true);
+  // 顶边 P2→P3（长边）
+  for (let k = 1; k < L; k++) {
+    if (k >= halfL - 1 && k <= halfL + 1) continue;
+    put(lerp(P2, P3, k / L), 'NE', true);
+  }
+  put(lerp(P2, P3, halfL / L), 'GATE', true);
+  // 右边 P1→P2（短边，不设门）
+  for (let k = 1; k < W; k++) put(lerp(P1, P2, k / W), 'NE');
+  // 左边 P3→P0（短边，不设门）
+  for (let k = 1; k < W; k++) put(lerp(P3, P0, k / W), 'SE', true);
+
   return pieces;
 }
 
@@ -1982,6 +2031,11 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   }
 
   // 1. 中间建筑（中心城堡严格居中 0,0；普通建筑带自然微偏移）
+  //    🔴 [2026-09-16 主人「中间的建筑可以加减，改变摆放位置」] **矩形围栏不摆中间那栋**：
+  //       矩形是「两排对开的屯子」形态，院心再塞一栋居中的，会和两排挤在一起
+  //       （实测居中栋到最近一排只有 0.19×baseSize，而另三种城寨的环列栋距是 0.28）。
+  //       去掉后：排内栋距 0.26、两排之间 0.45 —— 与另三种同一档。总栋数 9 → 8（主人许加减）。
+  const isRectStockade = (type === 'stockade') && (curStockadeShape === 'rect');
   const centerItem = pool[0];
   const centerOffsetX = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12;
   const centerOffsetY = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12 * 0.58;
@@ -1991,7 +2045,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   const cFlip = rnd() < 0.5;
   const cZIndex = Math.round(500 + centerOffsetY);
 
-  if (type !== 'big') {
+  if (type !== 'big' && !isRectStockade) {
     const cgW = cW * (isCenterCastle ? 1.6 : 2.3), cgH = cgW * 0.58;
     const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
     parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
@@ -2004,19 +2058,44 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
   const cTransform = isCenterCastle
     ? ('transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-65% + ' + centerOffsetY.toFixed(1) + 'px))' + (cFlip ? ' scaleX(-1)' : ''))
     : ('transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px - 15%))' + (cFlip ? ' scaleX(-1)' : ''));
-  parts.push('<img src="' + cPath + '" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;' + cTransform + ';z-index:' + cZIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  if (!isRectStockade) {
+    parts.push('<img src="' + cPath + '" style="position:absolute;left:50%;top:50%;width:' + cW.toFixed(1) + 'px;' + cTransform + ';z-index:' + cZIndex + ';filter:drop-shadow(0 2px 4px rgba(0,0,0,0.45));" />');
+  }
 
   // 2. 周围建筑（中心城堡时取 4 栋，90° 扇区四角环卫；普通时取 8 栋 45° 扇区；主人 2026-09-10 定）
   const surroundCount = isCenterCastle ? 4 : 8;
-  const surround = isCenterCastle ? pool.slice(0, surroundCount) : pool.slice(1);
+  // 矩形围栏：中间那栋不摆，8 栋全从池头取（不再 slice(1) 给中心让位）
+  const RECT_N = 6;
+  const surround = isRectStockade ? pool.slice(0, RECT_N)
+    : (isCenterCastle ? pool.slice(0, surroundCount) : pool.slice(1));
+  /* 矩形围栏内的建筑位（**世界格 (u,v)**，不是屏幕坐标）：**两排各 3 栋 = 6 栋**。
+   * 为什么不摆 4 栋一排：围栏 12×8 格，扣掉最大一栋（SETTLEMENT 0.34×baseSize）的足迹后，
+   * 一排摆 4 栋必须拉到 u=±4.5 → 到栏边只剩 1.5 格，实测有栋锚点差 5px 出界 ✗；
+   * 摆 3 栋（u=±3.6、0，栋距 3.6 格 = 0.31×baseSize）则每栋到栏边还有 2.4 格 ✓，
+   * 栋距也宽于另三种城寨的环列（≈0.28）。栋数 9→8→6 均为主人「可以加减」所许。
+   * 投影走 2:1 等轴：(x,y) = ((u+v)·sx, (u−v)·sy)。与游戏侧 TerritorySystem 同一张表。 */
+  const RECT_STOCKADE_SLOTS = [
+    [-3.6, 2.2], [0, 2.2], [3.6, 2.2],
+    [-3.6, -2.2], [0, -2.2], [3.6, -2.2]
+  ];
   surround.forEach((b, i) => {
-    const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
-    const angleJitter = isCenterCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
-    const angle = (baseAngle + angleJitter) * Math.PI / 180;
-    const rBase = (type === 'big') ? 0.40 : (type === 'medium') ? 0.36 : (isCenterCastle ? 0.36 : 0.32);
-    const r = (rBase + rnd() * (isCenterCastle ? 0.08 : 0.10)) * baseSize * (type === 'big' ? curRadiusMult : 1.0);
-    const x = Math.cos(angle) * r;
-    const y = Math.sin(angle) * r * 0.58;
+    let x, y;
+    if (isRectStockade) {
+      const slot = RECT_STOCKADE_SLOTS[i % RECT_STOCKADE_SLOTS.length];
+      const u = slot[0] + (rnd() - 0.5) * 0.4;   // 微抖动，别摆成积木
+      const v = slot[1] + (rnd() - 0.5) * 0.3;
+      const sxu = baseSize * 0.075;
+      x = (u + v) * sxu;
+      y = (u - v) * sxu * 0.58;
+    } else {
+      const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
+      const angleJitter = isCenterCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
+      const angle = (baseAngle + angleJitter) * Math.PI / 180;
+      const rBase = (type === 'big') ? 0.40 : (type === 'medium') ? 0.36 : (isCenterCastle ? 0.36 : 0.32);
+      const r = (rBase + rnd() * (isCenterCastle ? 0.08 : 0.10)) * baseSize * (type === 'big' ? curRadiusMult : 1.0);
+      x = Math.cos(angle) * r;
+      y = Math.sin(angle) * r * 0.58;
+    }
     const bW = baseSize * b.s * tierScale * curBldgScale;
     const zIndex = Math.round(500 + y);
     const bFlip = rnd() < 0.5;
@@ -2066,17 +2145,22 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
     anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
   } else if (type === 'stockade') {
+    /* 城寨围栏四选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏（2026-09-16 主人定新增第 4 种） */
     const stkShape = (curStockadeShape === 'square')
       ? 0
       : (curStockadeShape === 'round')
         ? 1
         : (curStockadeShape === 'octagon')
           ? 2
-          : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 3);
+          : (curStockadeShape === 'rect')
+            ? 3
+            : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 3);
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize);
     } else if (stkShape === 2) {
       pieces = computeCorralOctagonWall(baseSize);
+    } else if (stkShape === 3) {
+      pieces = computeCorralRectWall(baseSize);
     } else {
       pieces = computeRingWall(baseSize, 5);
       for (const w of pieces) { if (w.type === 'POST') w.type = 'CORNER'; }
@@ -2096,7 +2180,15 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
    *    实测最低位相关性太强，同屏 5 种据点只在两种组合间交替
    *    （medium/pass/small 永远同步、big/stockade 永远与之相反），看着一点不随机。
    *    走 mulberry32 后与游戏 TerritorySystem 的 `rnd() < 0.5` 完全同构。 */
-  var doMirror = (mirror === 'on') ? true
+  /* 🔴 [2026-09-16 实测踩到的坑] **矩形围栏不吃镜像**。
+   *    镜像这一支是把围墙件的 x 取反（`p.x = -p.x`）。世界轴对齐的**正方/圆形/八角**对 x 镜像
+   *    **自对称**（镜像前后是同一圈墙），所以从来没暴露问题；
+   *    但**长方形不对称** —— x 取反后长边会跑到**另一条对角线**（12×8 变成 8×12），
+   *    而院内那 6 个建筑位不是在围墙件里、不会跟着转 → 实测镜像一开，6 栋全部落到栏外（截图核对过）。
+   *    故矩形形制直接不吃镜像；要变化就靠 style/种子挑建筑组合。 */
+  const isRectStockadeMirror = (type === 'stockade') && (curStockadeShape === 'rect');
+  var doMirror = isRectStockadeMirror ? false
+    : (mirror === 'on') ? true
     : (mirror === 'rnd')
       ? (mulberry32(hashString(style + '_' + type + '_w_' + randomSeedOffset + '_mirror'))() < 0.5)
       : false;
@@ -2787,7 +2879,7 @@ if (btnMedGates) {
 
 if (urlParams.has('stockadeShape')) {
   const s = urlParams.get('stockadeShape');
-  if (['rnd', 'square', 'round', 'octagon'].includes(s)) {
+  if (['rnd', 'square', 'round', 'octagon', 'rect'].includes(s)) {
     curStockadeShape = s;
     const btn = document.getElementById('btnStkShape');
     if (btn) {
@@ -2803,6 +2895,10 @@ if (urlParams.has('stockadeShape')) {
         btn.innerText = '城寨围栏: 样式三 (八角羊圈)';
         btn.style.background = '#d69e2e';
         btn.style.borderColor = '#ecc94b';
+      } else if (s === 'rect') {
+        btn.innerText = '城寨围栏: 样式四 (矩形围栏)';
+        btn.style.background = '#805ad5';
+        btn.style.borderColor = '#b794f4';
       } else {
         btn.innerText = '城寨围栏: 🎲 随机三选一';
         btn.style.background = '#243246';
@@ -2830,6 +2926,11 @@ if (btnStkShape) {
       btnStkShape.innerText = '城寨围栏: 样式三 (八角羊圈)';
       btnStkShape.style.background = '#d69e2e';
       btnStkShape.style.borderColor = '#ecc94b';
+    } else if (curStockadeShape === 'octagon') {
+      curStockadeShape = 'rect';
+      btnStkShape.innerText = '城寨围栏: 样式四 (矩形围栏)';
+      btnStkShape.style.background = '#805ad5';
+      btnStkShape.style.borderColor = '#b794f4';
     } else {
       curStockadeShape = 'rnd';
       btnStkShape.innerText = '城寨围栏: 🎲 随机三选一';
