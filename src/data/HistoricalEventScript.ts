@@ -474,6 +474,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',
             autoEnterRTS: true,
         },
+        // 🔴 [2026-09-27 主人令「阿卡没用不要显示了。而且离推罗太近了」]
+        //    段 3-2 的路标是阿卡（推罗 → 阿卡 → 加沙，41 ＋ 173 公里），可阿卡离推罗只有 42 公里、库里又判「城堡时代的据点」，
+        //    主人在图上看着多余 → **这一场不画它**（路照走、旁白照念、挂点照旧；「这一场不显示」优先于点名）。
+        absentCities: ['city_ake'],
         cityUpdates: [{ cityId: 'city_jiasa', factionId: 'maqidun' }, { cityId: 'city_mengfeisi', factionId: 'maqidun' }],
         briefing: '推罗既下，亚历山大南取埃及大道上的加沙。巴提斯凭高地坚城死守，马其顿军筑土山、架推罗器械破墙；亚历山大肩部中创仍强攻不止，巴提斯拒不投降，被拖在战车之后处死。',
     },

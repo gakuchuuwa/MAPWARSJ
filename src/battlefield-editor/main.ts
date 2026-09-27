@@ -702,6 +702,11 @@ function briefingBodiesOf(text: string, seg: ScriptRoadSegment | null): { bodies
     return { bodies: paras.slice(0, n), leftover: paras.slice(n) };
 }
 
+/** 当前草稿对应的段（段 ＝ 一场）：按年份季节认 —— render 与 bind 共用同一口径 */
+function currentRoadSeg(): ScriptRoadSegment | null {
+    return SCRIPT_ROAD_SEGMENTS.find((s) => s.year === working.year && s.season === (working.season ?? 0)) ?? null;
+}
+
 function assembleBriefing(bodies: Array<string | undefined>, seg: ScriptRoadSegment | null): string {
     return bodies
         .map((b, i) => {
@@ -924,7 +929,7 @@ function render(): void {
     const leftoverHtml = drafts.map((d, i) => (ownedIdx.has(i) ? '' : draftItemHtml(d, i))).join('');
     // 当前这一场（草稿按年份季节排序，与事件表同序）对应哪一段 —— 逐句尺子用它
     const workingScene = !isNew && selected >= 0 ? selected + 1 : -1;
-    const workingRoadSeg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === workingScene) ?? null;
+    const workingRoadSeg = currentRoadSeg();
     // 一路一句：把存盘的播报拆回「每一条路一句」，编辑器按条给框
     const _bfRows = briefingBodiesOf(working.bfBriefing, workingRoadSeg);
     const issues = validate(working);
@@ -1131,8 +1136,9 @@ function render(): void {
                                 : (d > 4 ? `<span style="color:#d08a5a;">超 ${d} 字</span>` : d < -4 ? `<span style="color:#7f9a6a;">欠 ${-d} 字</span>` : '<span style="color:#7f9a6a;">✔</span>');
                             return `<div style="margin:4px 0 10px;">`
                                 + `<div style="font-size:12px;color:#9a8f7a;">句 ${i + 1}${i === 0 ? '（起步句，无挂点）' : `　挂点【${escapeHtml(r.from)}】`}　${escapeHtml(r.from)} → ${escapeHtml(r.to)}　${r.km} 公里　该写 ${r.words} 字　<span id="bf-cnt-${i}">现在 ${ch} 字</span>　${tag}</div>`
-                                + `<textarea id="f-bf-row-${i}" data-row="${i}" style="min-height:54px;">${escapeHtml(body)}</textarea></div>`;
+                                + `<textarea id="f-bf-row-${i}" data-row="${i}" style="width:100%;min-height:74px;resize:vertical;line-height:1.5;">${escapeHtml(body)}</textarea></div>`;
                         }).join('')}
+                        ${(_bfRows.bodies.length + _bfRows.leftover.length) !== workingRoadSeg.roads.length ? `<div class="issues err" style="margin-top:6px;">现在的文本是 ${_bfRows.bodies.length + _bfRows.leftover.length} 段、本段有 ${workingRoadSeg.roads.length} 条路 —— <b>数目对不上</b>（多半是旧口径写的）：下面按顺序填进前几行，<b>请逐条核，别照着行号硬对</b>。</div>` : ''}
                         ${_bfRows.leftover.length ? `<div class="issues err" style="margin-top:6px;">现在的文本比本段的路多 ${_bfRows.leftover.length} 段（对不上段表，多半是旧口径写的）：<br>${_bfRows.leftover.map((t, k) => `${k + 1}. ${escapeHtml(t.slice(0, 40))}${t.length > 40 ? '…' : ''}`).join('<br>')}<br>把它们并进上面某一条路里，再存盘 —— 存盘只按上面每行的内容合成。</div>` : ''}
                         <span class="hint">本段 ${_bfRows.bodies.filter((b) => b.trim()).length} / ${workingRoadSeg.roads.length} 句已写 · 现在 ${_bfRows.bodies.reduce((a, b) => a + b.replace(/\s+/g, '').length, 0)} 字 · 该写 ${workingRoadSeg.words} 字</span>`
                         : `
@@ -1368,14 +1374,19 @@ function bind(): void {
     // 一路一句：每行一个框 —— 打字时只更新那一行的字数，改完（失焦）再把各行合成回 working.bfBriefing
     document.querySelectorAll<HTMLTextAreaElement>('textarea[data-row]').forEach((el) => {
         const i = Number(el.dataset.row);
+        // 🔴 [2026-09-27 主人「这框也太小了吧」] 文本框随内容自动撑高（满宽 + 至少 74px），打字时也跟着长
+        const fit = () => { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; };
+        fit();
         el.addEventListener('input', () => {
             const cnt = document.getElementById(`bf-cnt-${i}`);
             if (cnt) cnt.textContent = `现在 ${el.value.replace(/\s+/g, '').length} 字`;
+            fit();
         });
         el.addEventListener('change', () => {
-            const bodies = _bfRows.bodies.slice();
+            const seg = currentRoadSeg();
+            const bodies = briefingBodiesOf(working.bfBriefing, seg).bodies.slice();
             bodies[i] = el.value;
-            working.bfBriefing = assembleBriefing(bodies, workingRoadSeg);
+            working.bfBriefing = assembleBriefing(bodies, seg);
             render();
         });
     });

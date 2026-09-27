@@ -139,7 +139,12 @@ export class ScriptCityVisibility {
                 }
             }
         }
-        for (const id of referenced) out.add(id);
+        // 🔴 [2026-09-27 主人令「阿卡没用不要显示了」] **「这一场不显示」优先于点名**：
+        //    原来点名（段表途经点／路标／被攻城／影响地）是一律无条件上图的，于是把某座城标成「不存在」也照样显示出来
+        //    （阿卡就是这么被段 3-2 的途经点顶上去的，它离推罗只有 42 公里、库里又判「城堡时代的据点」）。
+        //    现在先取**当前这一场**的 absentCities，点名也要过它一道。
+        const absentNow = new Set(current?.absentCities ?? []);
+        for (const id of referenced) if (!absentNow.has(id)) out.add(id);
         // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
         //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
         //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
