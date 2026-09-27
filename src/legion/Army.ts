@@ -685,10 +685,10 @@ export class Army implements IBattleUnit {
         }
         if (this.isPostBattleResting()) return;
 
-        // 🔴 [2026-09-26 主人令「抵达B点后没有播报完，军团就先停止，等播报完继续」]
-        //    **播报未完就地驻足**：由 `PlayerQuestSystem` 每帧按下/松开（它知道这一段的旁白念完没有）。
-        //    只停位移，不改状态、不清路径 —— 松开后照原路继续走到终点。
-        if (this.marchHold) return;
+        // 🔴 [2026-09-26 主人定「我要的是行军播报，不是驻足播报」] **播报不许让军团停步**：
+        //    原来这里有一道「播报未完就地驻足」的闸（`setMarchHold`），已撤掉 ——
+        //    军团一路走，播报跟着走；文案按那一段路的长度写，念不完的部分就让它念不完。
+        if (this.marchHoldUntilMs > performance.now()) return;   // 仅保留机制以防将来启用；现无人按下
 
         if (this.pathQueue.length === 0 && this.hasArrived) return;
         if (this.isBlocked()) return;
@@ -1520,12 +1520,17 @@ export class Army implements IBattleUnit {
     /**
      * 🔴 [2026-09-26 主人令] **停步待令**：播报没念完就地驻足，念完再走（见 `Army.update` 那道闸）。
      *   只有 `PlayerQuestSystem` 会按它（走到本段终点＝B 点，而这一段的旁白还在念）。
+     * 🔴 [2026-09-26 主人报障「怎么不动了？」] **必须每帧重新按**（`setMarchHold(true)` 顶多管 1.5 秒）：
+     *   按的人（任务系统）只要有一帧没再按 —— 任务换了、播报链断了、异常了 —— 闸自己就松，
+     *   军团**永远不会被钉在路上**（这是「停下等念完」唯一允许的实现方式）。
      */
-    private marchHold = false;
+    private marchHoldUntilMs = 0;
 
-    public setMarchHold(on: boolean): void { this.marchHold = on; }
+    public setMarchHold(on: boolean): void {
+        this.marchHoldUntilMs = on ? performance.now() + 1500 : 0;
+    }
 
-    public isMarchHeld(): boolean { return this.marchHold; }
+    public isMarchHeld(): boolean { return this.marchHoldUntilMs > performance.now(); }
 
     public moveAlongPath(path: MarchPoint[]): void {
         if (path.length === 0) return;
