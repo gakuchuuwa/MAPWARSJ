@@ -328,6 +328,8 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
+            // 🔴 [2026-09-27 主人定] 剧本期没到年代的据点不隐藏，只显示灰色城名（无样貌、无旗、无兵力）
+            this.cityManager.setNameOnlyWhenFiltered(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
             // 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗的攻 / 守方用事件指名的剧本军团
             setScriptFactionLegionResolver((factionId) => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
