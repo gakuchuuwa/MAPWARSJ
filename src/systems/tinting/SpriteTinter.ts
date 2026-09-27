@@ -15,7 +15,9 @@ import { perfDoctor } from '../../debug/PerfDoctor';
 import SpriteTintWorker from '../../workers/SpriteTintWorker?worker';
 import { tintMaskPixels } from './MaskTintPixels';
 
-export type TintedSprite = HTMLImageElement | (ImageBitmap & {
+export type TintedSprite = HTMLImageElement | (HTMLCanvasElement & {
+    naturalWidth: number; naturalHeight: number; complete: true; src: string;
+}) | (ImageBitmap & {
     naturalWidth: number; naturalHeight: number; complete: true; src: string;
 });
 
@@ -38,8 +40,8 @@ function tintKeyOf(img: HTMLImageElement): string {
 
 /** 估算一张图占的堆字节：解码位图 w×h×4，加上 src 字符串（data URL 时非常大，UTF-16 2 字节/字符）。 */
 function imgBytes(img: TintedSprite): number {
-    const px = (img.naturalWidth || 0) * (img.naturalHeight || 0) * 4;
-    const src = img.src && img.src.startsWith('data:') ? img.src.length * 2 : 0;
+    const px = ((img as any).naturalWidth || (img as any).width || 0) * ((img as any).naturalHeight || (img as any).height || 0) * 4;
+    const src = (img as any).src && typeof (img as any).src === 'string' && (img as any).src.startsWith('data:') ? (img as any).src.length * 2 : 0;
     return px + src;
 }
 
@@ -498,6 +500,28 @@ export class SpriteTinter {
         }
     }
 
+    /**
+     * 查找同兵种已为该势力染好色的任意帧（作为遮罩加载中的安全过渡，杜绝闪灰原色）
+     */
+    private static findExistingTintedForUnit(
+        sourceUrl: string,
+        factionId: string,
+        tintHex: string | null
+    ): TintedSprite | null {
+        const lastSlash = sourceUrl.lastIndexOf('/');
+        if (lastSlash === -1) return null;
+        const dir = sourceUrl.slice(0, lastSlash + 1);
+        const suffix = `_${factionId}_${tintHex ?? 'raw'}`;
+        for (const [key, sprite] of this.tintedSpriteCache.entries()) {
+            if (key.startsWith(`mask:de:${dir}`) && key.endsWith(suffix)) {
+                if ((sprite as any).complete && ((sprite as any).naturalWidth > 0 || (sprite as any).width > 0)) {
+                    return sprite;
+                }
+            }
+        }
+        return null;
+    }
+
     private static getMaskTinted(
         sprite: HTMLImageElement,
         maskSrc: string,
@@ -514,7 +538,7 @@ export class SpriteTinter {
         //    （8 方向共用同一文件时必然发生）合并成同一条缓存，少染 7 次、少存 7 份位图。
         const cacheKey = `mask:${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete && cached.naturalWidth > 0 && !this.imageExports.has(cached)) { this.touchTinted(cacheKey, cached); return cached; }
+        if (cached && (cached as any).complete && ((cached as any).naturalWidth > 0 || (cached as any).width > 0)) { this.touchTinted(cacheKey, cached); return cached; }
         // 🔴 [2026-08-31 修「军团士兵不显示」] 已在缓存但**还没解码完**：直接返回**原图**，
         //    绝不再新建一张。调用方（LegionPhalanxDrawer:1425）拿到结果**不检查 .complete**
         //    就去算帧、drawImage —— 未解码图 naturalWidth = 0，帧数算成 0，整格什么都画不出来。
@@ -538,11 +562,11 @@ export class SpriteTinter {
             return this.getLuminanceTinted(sprite, factionId, tint, tintHex);
         }
         if (maskState && maskState.complete) {
-            // 遮罩就绪 → mask 精确染色
+            // 遮罩就绪 → mask 精确染色（同步产出独立 Canvas，首帧即为势力色）
             if (!sprite.complete || sprite.naturalWidth === 0) return sprite;
             const tinted = this.applyMaskTint(sprite, maskState, tint, maskSrc);
             this.tintedCachePut(cacheKey, tinted);
-            return sprite;
+            return tinted;
         }
         // 首次：发起遮罩加载，本帧返回原图（不染全身，避免脸/皮肤被亮度染色误伤）
         if (!maskState) {
@@ -564,6 +588,10 @@ export class SpriteTinter {
             m.src = maskSrc;
             this.maskCachePut(maskSrc, m);
         }
+        // 🔴 [2026-09-27 杜绝闪灰] 遮罩在途中：优先返回同兵种已染好势力的任意帧，绝不呈现未染色的灰色占位原图！
+        const sourceUrl: string = (sprite as any).sourceUrl || sprite.src;
+        const existing = this.findExistingTintedForUnit(sourceUrl, factionId, tintHex);
+        if (existing) return existing;
         return sprite;
     }
 
@@ -579,7 +607,7 @@ export class SpriteTinter {
         // key 用源路径而非 data URL，理由同 getMaskTinted（见那里的长注释）。
         const cacheKey = `${tintKeyOf(sprite)}_${factionId}_${tintHex ?? 'raw'}`;
         const cached = this.tintedSpriteCache.get(cacheKey);
-        if (cached && cached.complete && cached.naturalWidth > 0 && !this.imageExports.has(cached)) { this.touchTinted(cacheKey, cached); return cached; }
+        if (cached && (cached as any).complete && ((cached as any).naturalWidth > 0 || (cached as any).width > 0)) { this.touchTinted(cacheKey, cached); return cached; }
         if (cached) return sprite;   // 同上：未解码时回退原图，别让调用方拿到 naturalWidth=0 的图
 
         // 如果原图未加载完成，返回原图
@@ -587,7 +615,7 @@ export class SpriteTinter {
 
         const tintedSprite = this.applyTint(sprite, tint);
         this.tintedCachePut(cacheKey, tintedSprite);
-        return sprite;
+        return tintedSprite;
     }
 
     /**
@@ -600,7 +628,7 @@ export class SpriteTinter {
         mask: HTMLImageElement,
         tint: TintColor,
         maskSrc: string
-    ): HTMLImageElement {
+    ): TintedSprite {
         // 分别初始化主图/遮罩两个 canvas（applyTint 可能已初始化 tempCanvas 但未初始化 maskCanvas）
         // 🔴 [2026-08-17 修 13 开场卡 12.8 秒] 必须带 willReadFrequently。
         //    这两张 canvas 的用途就是 getImageData 逐像素读，不带这个标志时浏览器会把 canvas
@@ -664,9 +692,20 @@ export class SpriteTinter {
             this.WEAK_PC_COVERAGE, this.WEAK_EXTRA_TINT, this.weakCoverCache.get(maskSrc));
         this.weakCoverCache.set(maskSrc, weak);
 
-        ctx.putImageData(mainImageData, 0, 0);
+        // 🔴 [2026-09-27 治愈时好时灰] 返回独立的同步 Canvas，杜绝异步 toBlob 延迟与 tempCanvas 竞态
+        const outCanvas = document.createElement('canvas') as HTMLCanvasElement & {
+            naturalWidth: number; naturalHeight: number; complete: true; src: string;
+        };
+        outCanvas.width = sw;
+        outCanvas.height = sh;
+        Object.defineProperty(outCanvas, 'naturalWidth', { value: sw, configurable: true });
+        Object.defineProperty(outCanvas, 'naturalHeight', { value: sh, configurable: true });
+        Object.defineProperty(outCanvas, 'complete', { value: true, configurable: true });
+        Object.defineProperty(outCanvas, 'src', { value: '', configurable: true });
+        const outCtx = outCanvas.getContext('2d');
+        outCtx?.putImageData(mainImageData, 0, 0);
 
-        return this.exportCanvas(canvas, sprite);
+        return outCanvas;
     }
 
     /**
@@ -675,7 +714,7 @@ export class SpriteTinter {
     private static applyTint(
         sprite: HTMLImageElement,
         tint: TintColor
-    ): HTMLImageElement {
+    ): TintedSprite {
         // 初始化临时Canvas
         if (!this.tempCanvas) {
             this.tempCanvas = document.createElement('canvas');
@@ -768,9 +807,22 @@ export class SpriteTinter {
             // Alpha 保持不变
         }
 
-        ctx.putImageData(imageData, 0, 0);
+        // 🔴 [2026-09-27 治愈时好时灰] 同步创建独立 Canvas
+        const sw = sprite.naturalWidth || sprite.width;
+        const sh = sprite.naturalHeight || sprite.height;
+        const outCanvas = document.createElement('canvas') as HTMLCanvasElement & {
+            naturalWidth: number; naturalHeight: number; complete: true; src: string;
+        };
+        outCanvas.width = sw;
+        outCanvas.height = sh;
+        Object.defineProperty(outCanvas, 'naturalWidth', { value: sw, configurable: true });
+        Object.defineProperty(outCanvas, 'naturalHeight', { value: sh, configurable: true });
+        Object.defineProperty(outCanvas, 'complete', { value: true, configurable: true });
+        Object.defineProperty(outCanvas, 'src', { value: '', configurable: true });
+        const outCtx = outCanvas.getContext('2d');
+        outCtx?.putImageData(imageData, 0, 0);
 
-        return this.exportCanvas(canvas, sprite);
+        return outCanvas;
     }
 
     // ── PerfDoctor 体检访问器（私有 static 在类外读不到，这里开只读口子）──
@@ -792,6 +844,61 @@ export class SpriteTinter {
         this.maskCache.clear();
         this.maskCacheBytes = 0;
         console.log('🎨 [SpriteTinter] Cache cleared');
+    }
+
+    /**
+     * 为一组精灵图批量预加载 .pc.png 玩家色遮罩
+     * 在大地图兵种素材加载完成后调用，确保军团第一帧渲染时遮罩即就绪
+     */
+    public static async preloadMasksForSprites(
+        sprites: (HTMLImageElement | TintedSprite | null | undefined)[]
+    ): Promise<void> {
+        const promises: Promise<void>[] = [];
+        const seen = new Set<string>();
+
+        for (const sprite of sprites) {
+            if (!sprite) continue;
+            const sourceUrl: string = (sprite as any).sourceUrl || (sprite as any).src;
+            if (!sourceUrl || typeof sourceUrl !== 'string') continue;
+            if (!sourceUrl.includes('.png') || sourceUrl.endsWith('.pc.png')) continue;
+            const dir = sourceUrl.slice(0, sourceUrl.lastIndexOf('/') + 1);
+            if (this.dirHasMask.get(dir) === false) continue;
+            const maskSrc = sourceUrl.replace(/\.png$/, '.pc.png');
+            if (seen.has(maskSrc)) continue;
+            seen.add(maskSrc);
+
+            const existing = this.maskCache.get(maskSrc);
+            if (existing && existing !== 'none' && !existing.complete) {
+                promises.push(new Promise<void>(resolve => {
+                    const done = () => resolve();
+                    existing.addEventListener('load', done, { once: true });
+                    existing.addEventListener('error', done, { once: true });
+                    if (existing.complete) resolve();
+                }));
+                continue;
+            }
+            if (existing) continue;
+
+            promises.push(new Promise<void>(resolve => {
+                const img = new Image();
+                img.onload = () => {
+                    this.maskCachePut(maskSrc, img);
+                    if (dir) this.dirHasMask.set(dir, true);
+                    resolve();
+                };
+                img.onerror = () => {
+                    this.maskCachePut(maskSrc, 'none');
+                    if (dir && this.dirHasMask.get(dir) !== true) this.dirHasMask.set(dir, false);
+                    resolve();
+                };
+                img.src = maskSrc;
+                this.maskCachePut(maskSrc, img);
+            }));
+        }
+
+        if (promises.length > 0) {
+            await Promise.all(promises);
+        }
     }
 
     /**
