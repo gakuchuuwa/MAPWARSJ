@@ -365,6 +365,20 @@
   剧本期按 `src/data/scriptHistoricalOwners.ts` 把旗号换成**那一年实际管这座城的势力**（优先落到当年的行省/王国，说不清的落到帝国本身；
   只用已有势力，缺势力的城列出来报主人），每条写维基出处；由 `src/events/scriptHistoricalOwnersSync.ts` 套上/撤下：
   只动「还是乱斗原主」的城（剧本打下来的不碰），切回乱斗原样换回。**新做一场事件时，把这一年沿途与当地的城逐座核一遍旗号。**
+- 🔴 **据点建筑风格按剧本那一年的史实（2026-09-26 主人令「你要符合历史，看看这些据点符合建筑风格吗」→「符合历史，不要问我，直接改」）**：
+  `cities_v2` 的 `buildingStyle` 与乱斗 `factionId` **同一个病** —— 取的是「这座城**最有名的那段历史**」的风格
+  （阿卡＝十字军 CRUSADERS→WEST、索非亚＝保加利亚→SLAV、埃德萨＝十字军伯国→WEST），放进前 335 就是穿越。
+  · 三级口径（2026-09-18 定）：**一级 16 套**（`cityDeStyle.BASE_16_BUILDING_STYLES`，每座据点必须落在其中一种）
+    ＞ 二级 59 文明 ＞ 三级皮肤（YURT 毡帐／TIBET／WESTERN）。
+  · **剧本期表**：`src/data/scriptBuildingStyles.ts`（逐条写维基依据）＋ `src/events/scriptBuildingStylesSync.ts`
+    （剧本期套上、切回乱斗原样换回；**只动 `buildingStyle` 一个字段**，据点名／坐标／region／守将／精锐／旗号一概不动；
+    只动「还挂着乱斗原风格」的城）。`GameApp` 里与旗号、城名两条同步并排调用。
+  · 2026-09-26 逐座核过剧本那 **80 座**：74 座相符；**6 座不符已改** —— 索非亚／布加勒斯特／德鲁斯塔尔
+    SLAV→**THRACIAN**（前 335 是色雷斯人／盖塔人地界），阿卡／埃德萨／拉塔基亚 WEST→**ORIE**（前 332 是腓尼基／阿拉米城）；
+    另 **3 座可议一并改**：呼勒万／伊拉姆／古尔帕耶甘 MEDI→**PERSIAN**（扎格罗斯与米底的伊朗城镇，不是地中海）。
+  · 结果：剧本期建筑风格由 10 种变 **7 种**（ORIE 25／PERSIAN 24／CEAS 8／GREEK 7／INDI 7／THRACIAN 5／PURU 4）；
+    **乱斗画面逐字不变**。验收：`npx tsx --import ./tools/sim-preload.mjs scratch/_check_building_styles_sync.mts`
+    （套上／还原／只动该动的城／落在一级 16 套内）＋ `node scratch/_probe_building_styles_live.mjs`（真机读运行时值，9/9）。
 - 🔴 **据点名字：文案与图上必须是同一个名字，且取「现代读者认得出」的那一个（2026-09-25 主人定）**：
   主人原话：「据点的名字，文案要和图上的统一。」「不要用亚历山大城这种名字，太俗气了，而且知名度不高。」
   「我们是后人解读亚历山大的历史，我认为可以用后世知名度大的地名。」
