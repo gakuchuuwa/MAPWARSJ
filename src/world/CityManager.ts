@@ -203,8 +203,7 @@ export class CityManager {
     /**
      * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来……到年代的据点显示样貌」]
      * 被外部显示过滤挡掉的据点（剧本期那一年还没到年代的城）不再整个不画，
-     * 改成**只画灰色城名**（不画城池样貌、不插旗、不带兵力）；放大到 zoom ≥ 8 才出现
-     * （`TerritorySystem.applyZoomLayerVisibility` 按档位开关）。
+     * 改成**只画灰色城名**（不画城池样貌、不插旗、不带兵力）。
      * 返回 true 的据点只画灰名；据点本身照旧（寻路/归属/战斗一概不受影响）。
      */
     private nameOnlyWhenFiltered: (() => boolean) | null = null;

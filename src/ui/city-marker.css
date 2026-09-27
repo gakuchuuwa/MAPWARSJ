@@ -133,8 +133,3 @@
 .map-fade-in {
     animation: mapFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
-
-/* 🔴 [2026-09-27 主人定] 剧本期没到年代的据点只显示灰色城名；缩小到 zoom < 8 时隐藏 */
-.hide-name-only-cities .city-label-name-only {
-    display: none !important;
-}
