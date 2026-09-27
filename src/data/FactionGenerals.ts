@@ -23,7 +23,6 @@
  *
  * 红线：一势力一将领；专图文件名全局唯一；fallback 仅限本政权夹与本文化夹。
  */
-
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
 
@@ -1132,6 +1131,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
         // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
+
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
@@ -1285,11 +1285,23 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
-    // 🔴 [2026-09-19 主人令「为什么搞特殊」「废话」] 621 虎牢关战役守帅（夏王窦建德）——
-    //    原先他被做成「战场人物」，跟前四场（阿斯瓦卡/马利/科塞亚/迦南）口径不一样，是我搞的特殊。
-    //    现按主人令与前四场**统一**：主帅写在掷将表的势力键下。
-    //    ⚠️ 立绘按铁律留空（等主人亲自放图）—— 与前三位同一种写法。
-    xia: { generalId: 'doujiande', generalName: '窦建德', portrait: '' },
+    kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
+    maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+    ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },
+    eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '' },   // 里海门守将（立绘留空走回落）
+    aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '' },   // 赫拉特守将（立绘留空走回落）
+    xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+
+    sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）
+    xinde: { generalId: 'xinde_patalawang', generalName: '帕塔拉王', portrait: '' },   // 帕塔拉
+    jiduoluoxiya: { generalId: 'jiduoluoxiya_xibiertiwusi', generalName: '西比尔提乌斯', portrait: '' },   // 普拉（亚历山大任命的吉德罗西亚总督，阿里安 VI.27）
+    aolitai: { generalId: 'aolitai_shouling', generalName: '奥里泰首领', portrait: '' },   // 兰巴基亚（史料未留名，以族名首领称之）
+    kamanniyaxingsheng: { generalId: 'kamanniya_zongdu', generalName: '卡曼尼亚总督', portrait: '' },   // 卡曼尼亚（史料未留名，以职名）
+    keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '锡尔詹守将', portrait: '' },   // 
+    zhageluosi: { generalId: 'zhageluosi_guanjiang', generalName: '扎格罗斯门守将', portrait: '' },   // 
+    lulisitan: { generalId: 'lulisitan_shoujiang', generalName: '伊拉姆守将', portrait: '' },   // 
+    golpayegan_diqu: { generalId: 'golpayegan_yicheng', generalName: '古尔帕耶甘驿丞', portrait: '' },   // 
+    meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
 };

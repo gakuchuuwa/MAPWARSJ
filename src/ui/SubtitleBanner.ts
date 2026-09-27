@@ -27,10 +27,16 @@ export class SubtitleBanner {
                 #${BANNER_ID} {
                     position: fixed;
                     left: 50%;
-                    bottom: 84px;
+                    /* 🔴 [2026-09-25 主人「这个字幕怎么总挡着道路编辑器，字幕放到下面去」]
+                       编辑器页（道路/战场/据点编辑器，路径里带 editor）→ 贴到最下面（10px），不再压工具栏；
+                       游戏内保持 84px（避开底部 HUD）。判据只看路径，不改任何游戏内位置。 */
+                    bottom: ${/editor/i.test(location.pathname) ? '10px' : '84px'};
                     transform: translateX(-50%);
                     z-index: 10003;
-                    max-width: 76vw;
+                    /* 🔴 [2026-09-25 主人「可以把屏幕做的更宽些」] left:50% 的收缩盒，可用宽度只算到屏幕右半
+                       （1920 视口下＝960px），max-width 再大也铺不开 —— 用 width:max-content 让它按内容摊开。 */
+                    width: max-content;
+                    max-width: 92vw;
                     padding: 12px 36px;
                     background: linear-gradient(180deg, rgba(22, 17, 13, 0.90) 0%, rgba(12, 9, 7, 0.95) 100%);
                     border: 1px solid rgba(212, 175, 55, 0.35);
@@ -74,7 +80,8 @@ export class SubtitleBanner {
                 }
                 /* 战役背景播报流式呈现：宽屏电影双行视界（1040px），扁平延展，不遮挡大地图 */
                 #${BANNER_ID}.multiline {
-                    max-width: min(1040px, calc(100vw - 120px));
+                    /* 🔴 [2026-09-25 主人「可以把屏幕做的更宽些」] 宽屏拉到 1680px / 两侧各留 32px */
+                    max-width: min(1680px, calc(100vw - 64px));
                     white-space: normal;
                     letter-spacing: 1.5px;
                     line-height: 1.85;
@@ -120,7 +127,7 @@ export class SubtitleBanner {
     }
 
     /**
-     * 将长文本智能切分为适宜宽屏电影字幕呈现的微片段（每段约 40~85 字，严格保证 1~2 行且按标点完整断句）
+     * 将长文本智能切分为适宜宽屏电影字幕呈现的微片段（每段约 40~140 字，宽屏下 1~2 行，按标点完整断句）
      */
     private static splitIntoCinematicChunks(text: string, targetMaxChars = 85): string[] {
         const rawParagraphs = text.split('\n').map(l => l.trim()).filter(Boolean);
@@ -165,8 +172,16 @@ export class SubtitleBanner {
         const el = this.ensure();
         this.clearAllTimers();
 
+        // 🔴 [2026-09-25 主人「字幕总挡着道路编辑器，这怎么编辑呀」]
+        //    道路编辑器面板（id = vector-road-editor-panel）**开着的时候不显示字幕** ——
+        //    那是干活的面板，字幕只会挡路。判据是面板在不在 DOM 里，与页面路径无关
+        //    （道路编辑器是**游戏页里的面板**，不是独立页，所以按路径判断没用）。
+        if (document.getElementById('vector-road-editor-panel')) return;
+
         // 如果是多行长文，智能切片为 1~2 行的微电影片段
-        const chunks = multiline ? this.splitIntoCinematicChunks(text, 85) : [text];
+        // 🔴 [2026-09-25 主人「字幕显示方式不对，可以把屏幕做的更宽些」] 每幕字数 85 → 140：
+        //    字幕盒是**按最长一行收缩**的，只放大宽度上限没用 —— 切片够长，行才会真的铺开（仍控制在 2 行内）。
+        const chunks = multiline ? this.splitIntoCinematicChunks(text, 140) : [text];
 
         if (chunks.length <= 1) {
             // 单条模式

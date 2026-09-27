@@ -24,7 +24,9 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
 
     // ── T3 风土之兵 ──
     nabatai: { name: '香路驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
-    aiji: { name: '麦查伊军', tier: 3 },           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
+    aiji: { name: '麦查伊军', tier: 3 },
+    maermajika: { name: '利比亚标枪手', tier: 4 },   // 马特鲁港·帕拉伊托斯：利比亚标枪散兵（史载埃及军中的利比亚标枪手）
+    ameng: { name: '绿洲弓手', tier: 4 },            // 锡瓦绿洲·阿蒙祭司：沙漠绿洲弓手           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表
     antiaokegongguo: { name: '安条克骑', tier: 2 },  // 拉塔基亚·博希蒙德：诺曼十字军骑（1098首占安条克）

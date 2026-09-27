@@ -48,6 +48,23 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     //    它挂的守将却是罗姆苏丹基利杰·阿尔斯兰（城堡时代），旧次序下前333 年不上图 ✗。
     //    建立年代无确切年份，按「合理推定」记约前 2000 年（不影响前334 之后任何一场的判定）。
     city_yikeniwumu: -2000,     // 伊科尼乌姆（科尼亚），约前 2000 年（赫梯 Ikkuwaniya）
+    city_tiyana: -2000,        // 提亚纳（今土耳其 Niğde 省 Kemerhisar），赫梯名 Tuwanuwa，约前 2000 年 —— 前333 亚历山大穿越卡帕多细亚时已是重镇（阿里安《远征记》II.4）。🔴 [2026-09-25 补] 新建据点必须填建立年代，否则剧本期过不了年代闸门、开局不上图。
+
+    city_nuotaka: -2000,     // 诺塔卡（粟特古城，前329 亚历山大经此）
+    city_patala: -2000,     // 帕塔拉
+    city_pula: -2000,     // 普拉（吉德罗西亚首府）
+    city_kamanniya: -2000,     // 卡曼尼亚（吉罗夫特，会师与审判地）
+    city_xierzhan: -2000,     // 锡尔詹（几何中继据点）
+    city_hulewan: -2000,     // 呼勒万（扎格罗斯门隘口）
+    city_yilamu: -2000,     // 伊拉姆（扎格罗斯西麓中继据点）
+    city_guerpayegan: -2000,     // 古尔帕耶甘（山间谷地出口·几何驿站）
+    city_lanbaqiya: -2000,     // 兰巴基亚（奥里泰村落·亚历山大建城处）
+    city_matelugang: -2000,    // 马特鲁港（帕拉伊托尼乌姆）：古埃及沿海港，前 2000 年已有聚落
+    city_xiwa: -2000,
+    city_lihaimen: -2000,
+    city_helate_city: -2000,
+    city_tapusakusi: -2000,    // 塔普萨库斯：幼发拉底渡口古聚落
+    city_nixibisi: -2000,      // 尼西比斯：今 Nusaybin，古已有之          // 锡瓦绿洲：古聚落；阿蒙神谕前 7 世纪见载（填早于前332 即可过闸）
 
     // ── 纳巴泰 ──
     city_peitra: -300,          // 佩特拉，约前 300 年纳巴泰人定居建城（英文维基 "settled in the 4th century BC"）
@@ -98,7 +115,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_edo: 1457,             // 江户城，1457 年太田道灌筑江户城
 
     // ── 据点名首次出现（坐标上更早有城，但用的是后世著名时期的名字）──
-    city_junshitandingbao: 330, // 君士坦丁堡，330 年君士坦丁大帝落成命名（此前叫拜占庭，前 657 建）
+    city_junshitandingbao: -657, // 拜占庭，前 657 年墨伽拉殖民者建城；330 年君士坦丁大帝改名君士坦丁堡（剧本期显示名见 scriptCityNames.ts）
     city_luoyang: -300,         // 洛阳，约前 300 年战国「洛水之阳」得名（此前叫洛邑，前 1046 营建）
     city_bianliang: 907,        // 开封，907 年后梁改汴州为开封府（此前叫大梁，前 364 建）
     city_beijing: 1421,         // 北京，1421 年明成祖迁都北京（此前叫蓟城/幽州/大都）

@@ -106,7 +106,8 @@
     "age:audit": "node tools/age_rules_audit.mjs",
     "legion:ghost-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_ghost_legions.mts",
     "city:style-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_city_base16_style.mts",
-    "legion:fallback-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_fallback_chain.mts"
+    "legion:fallback-audit": "npx tsx --import ./tools/sim-preload.mjs scratch/audit_legion_fallback_chain.mts",
+    "city:gates": "npx tsx scratch/audit_add_completeness.mjs --city"
   },
   "type": "module",
   "keywords": [],

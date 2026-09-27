@@ -944,7 +944,17 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'jilizhou': 'city_beishacheng',
     'nuergan': 'city_nuergan',
     'kepantuo': 'city_gongzhubao',
-'xingxingxia': 'city_xingxingxia',
+'xingxingxia': 'city_xingxingxia',
+
+    'sute': 'city_nuotaka',
+    'xinde': 'city_patala',
+    'jiduoluoxiya': 'city_pula',
+    'aolitai': 'city_lanbaqiya',
+    'kamanniyaxingsheng': 'city_kamanniya',
+    'keerman': 'city_xierzhan',
+    'zhageluosi': 'city_hulewan',
+    'lulisitan': 'city_yilamu',
+    'golpayegan_diqu': 'city_guerpayegan',
 'yangguan': 'city_yangguan',
     'wulianghai': 'city_buergenjuntai',
 'qinghai': 'city_gasikou',
@@ -1219,6 +1229,13 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kanan': 'city_tuile',
     'feilisidin': 'city_jiasa',
     'dasaleiti': 'city_peiliang',
+    'kapaduoxiya': 'city_tiyana',
+    'maermajika': 'city_matelugang',
+    'ameng': 'city_xiwa',
+    'eerbulushi': 'city_lihaimen',
+    'aliya': 'city_helate_city',
+    'xuliya': 'city_tapusakusi',
+    'meisuobudamiya': 'city_nixibisi',   // 🔴 [2026-09-25] 据点本位：将/精按 cityId 查录入表，靠这一行锚定
 };
 
 // @ts-ignore

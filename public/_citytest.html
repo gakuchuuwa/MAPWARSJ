@@ -2193,7 +2193,8 @@ var BF_EXTRA_KINDS = [
   { key: 'fence',  label: '栅栏木堆',   variants: [
     { key: 'FENCE', label: '栅栏木堆', path: '/SUCAI_BATTLEFIELD/FENCE_RUBBLE/preview.png', w: 100, h: 60, ax: 53, ay: 56 }
   ] },
-  /* 残破战旗：主人 2026-09-12 早先亲自挑的 8 面，编进随机池 —— 有的战场插旗、有的不插 */
+  /* 残破战旗：主人 2026-09-12 早先亲自挑的 7 面 —— 🔴 [2026-09-25 主人令「战场中的这个旗帜取消」] 已不再进战场，
+   条目留着只为不挪动随机序列 + 本页对照。 */
   { key: 'flag',   label: '残破战旗',   variants: [
     { key: 'N',          label: '旗 N · 深灰破布（边缘撕裂）', path: '/SUCAI_BUILDING/SCEN_FLAG_N/preview.png',          w: 80, h: 96,  ax: 60, ay: 95 },
     { key: 'R',          label: '旗 R · 深色破旗（带白色兽纹）', path: '/SUCAI_BUILDING/SCEN_FLAG_R/preview.png',        w: 80, h: 96,  ax: 68, ay: 92 },
@@ -2248,7 +2249,9 @@ function bfRollPlan(seedKey) {
   /* 5 种补件各抽一个随机键排序后取前 n 种 = **不重种**的随机组合 */
   var order = BF_EXTRA_KINDS.map(function (k) { return { k: k, r: rnd() }; })
     .sort(function (a, b) { return a.r - b.r; });
-  plan.extraKinds = order.slice(0, n).map(function (o) { return o.k; });
+  /* 🔴 [2026-09-25 主人令「战场中的这个旗帜取消」] **战场不再插旗**：把「残破战旗」从抽签结果里剔除；
+     条目仍留在 BF_EXTRA_KINDS 参与抽签 → 随机数消耗不变，其余件的位置与镜像一件不挪。 */
+  plan.extraKinds = order.filter(function (o) { return o.k.key !== 'flag'; }).slice(0, n).map(function (o) { return o.k; });
   plan.extraVariants = plan.extraKinds.map(function (k) {
     return k.variants[Math.floor(rnd() * k.variants.length)];
   });
