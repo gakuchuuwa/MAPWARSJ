@@ -22,6 +22,8 @@ import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { isBattlefieldCharacter, getBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+import { stripBriefingAnchor } from '../player/JourneyBriefing';
+import { forbiddenCityNamesIn } from '../data/scriptForbiddenCityNames';
 
 export interface EventRuleIssue { level: 'error' | 'warn'; msg: string; }
 
@@ -98,7 +100,7 @@ const KM = (aLat: number, aLng: number, bLat: number, bLng: number): number => {
  * 硬规则检查。返回的 issue 与编辑器原有校验**合并**后一起显示（error 会置灰「保存」）。
  * @param allDrafts 全部草稿（判「这位武将名下还有别的战役」用）
  */
-export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId: string; title: string }>): EventRuleIssue[] {
+export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId: string; title: string }>, opts?: { roadStations?: readonly string[] }): EventRuleIssue[] {
     const out: EventRuleIssue[] = [];
     const err = (msg: string) => out.push({ level: 'error', msg });
     const warn = (msg: string) => out.push({ level: 'warn', msg });
@@ -147,6 +149,33 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
         if (hit) err(`${label}里有括号内容：${hit.join(' ')}（主人定：不要括号，改成逗号并列）`);
     }
 
+    // ③之二 文案里不许念「那年还不存在／那年不叫这个名字」的城名 ──────────
+    // ③之二 文案里不许念「那年还不存在／那年不叫这个名字」的城名 ──────────
+    //    来源：主人 2026-09-26「图中那年不显示的站，播报里不念城名，改念那年真有的河、山、隘口、部族」
+    //         ＋ 主人转呈的逐片地名考证（表在 data/scriptForbiddenCityNames.ts：阿托克／蒙格／呼勒万／巴姆／锡尔詹／
+    //         尼尼微／亚述城／贵山城／羯霜那／白沙瓦／忽毡…）。
+    //    🔴 只扫**要念出去的**四栏：赶路播报／事件播报／战役播报／武将邀约对白。
+    //       战役名称、事件标题、战场地名不算 —— 那是牌子上的地名，本来就该用图上那个名字；
+    //       段首【据点名】也不算（那是挂点坐标，stripBriefingAnchor 会剥掉、不念出来）。
+    //    ⚠️ 只报 warn：现有几场文案还留着待改处，报 err 会把主人已有的数据锁死；清干净了再收紧。
+    {
+        const stated: Array<[string, string]> = [
+            // ⚠️ 赶路播报是「一段一句」的：**每一段开头的【据点名】都要剥掉**（那是挂点坐标，不念出来），
+            //    只剥第一段会把后面每个挂点都当成「念了城名」误报（第 2 场那五个挂点就是这么被误报的）。
+            ['赶路播报', String(d.bfBriefing ?? '').split(/\r?\n\r?\n/).map((p) => stripBriefingAnchor(p.trim())).join('\n')],
+            ['事件播报', d.description],
+            ['战役播报', d.battleDescription],
+            ['武将邀约对白', d.inviteText],
+        ];
+        const seen = new Set<string>();
+        for (const [label, text] of stated) {
+            for (const row of forbiddenCityNamesIn(String(text ?? ''), d.year, opts?.roadStations)) {
+                if (seen.has(row.name)) continue;
+                seen.add(row.name);
+                warn(`${label}里出现「${row.name}」：这一年不该念这个城名，改念「${row.instead}」（${row.why}）`);
+            }
+        }
+    }
     // ④ 双方势力必须**真实存在**于 factions.ts ───────────────────────
     //    血训：621 虎牢关战役的守方势力 `xia`（夏·窦建德）在 factions.ts 里根本不存在，
     //    精锐番号却早早写了 → 战斗取不到势力名/势力色。此条拦它。

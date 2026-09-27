@@ -52,6 +52,11 @@ export function journeyBriefingParagraphs(text: string): string[] {
  *   第一段 44 字就是「腓力二世遇刺…趁丧起事；」＋「公元前335年春…北上平乱。」两句并成 1 次念的。
  *   一句一屏这条已经被并没了，字幕与语音的「一句对一句」自然又对不上。已改为不合并。
  */
+/**
+ * 🔴 [2026-09-27 口径已改] **游戏里不再用它** —— 主人定「一路一句」，一条路整句一次 speak()、整句一屏
+ *   （见 `PlayerQuestSystem` 的赶路播报与 `SubtitleBanner.show(..., singleScreen)`）。
+ *   这个切句器只留给验收脚本做「一句几屏」的分析，别在游戏里调用。
+ */
 export function journeyBriefingSentences(text: string, maxChars = 60): string[] {
     const paragraphs = text.split('\n').map((l) => l.trim()).filter(Boolean);
     const out: string[] = [];

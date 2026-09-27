@@ -21,6 +21,8 @@ interface SpeakOptions {
   banner?: string;
   /** 字幕按**长段解说**排版（块居中、文字左对齐、可换行）；短句大事不传 */
   bannerMultiline?: boolean;
+  /** 🔴 [2026-09-27] 整句只占一屏（赶路播报＝一路一句，不许切片轮播） */
+  bannerSingleScreen?: boolean;
   /**
    * 🔴 [2026-09-16 主人报障「没读完就下一段」] 长段解说的**兜底等待上限**（ms）。
    * 不传时沿用 15s —— 那是给「某某灭国」这类短句设的；
@@ -451,6 +453,7 @@ export class SpeechAnnouncer {
       sTier: true,
       banner: line,
       bannerMultiline: true,
+      bannerSingleScreen: true,   // 一路一句＝一路一屏：不切片、不轮播
       rate: 0.92,
       // 按字数估读完时间再留五成余量，封顶 3 分钟防某段异常长时卡住整条链
       maxWaitMs: Math.min(180000, 4000 + line.length * 600),
@@ -832,7 +835,7 @@ export class SpeechAnnouncer {
       window.clearTimeout(bannerFallbackTimer);
       // 停留要盖住整段语音：短句仍是 9s，长段按估算时长走（settle 时会提前收）
       const hold = Math.min(opts.maxWaitMs ?? 9000, Math.max(9000, 1500 + opts.banner.length * 400));
-      SubtitleBanner.show(opts.banner, hold, opts.bannerMultiline === true);
+      SubtitleBanner.show(opts.banner, hold, opts.bannerMultiline === true, opts.bannerSingleScreen === true);
     };
     if (opts?.banner) bannerFallbackTimer = window.setTimeout(showBanner, 1500);
 

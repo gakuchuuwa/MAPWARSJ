@@ -282,6 +282,37 @@ function isFollowedArmyActuallyMoving(armyId: string | null, pos: { lat: number;
 }
 
 /**
+ * 跟拍军团的行军 / 战斗循环音同步。
+ * 🔴 [2026-09-27 主人报「停下也有行军音效」] 原先只在 rAF 主循环里调：窗口被遮挡 / 切到 OBS / 最小化时
+ *    rAF 被节流、推演只走后台心跳 `tickGameLogicOnly`，军团停了却没人通知音频，行军音一直响（实测：停下 35 秒调用 0 次）。
+ *    现在两条路都调这一个函数。
+ */
+function syncFollowedLegionAudioFor(app: GameApp): void {
+    if (!app.audioManager) return;
+    const followedId = app.cameraFollowUI?.getFollowedArmyId() ?? null;
+    const followedArmy = followedId && app.historicalEventManager?.getLegionManager()
+        ? resolveFollowTarget(app, followedId) : null;
+    if (!followedId || !followedArmy) {
+        isFollowedArmyActuallyMoving(null, null);
+        app.audioManager.syncFollowedLegionAudio({ armyId: null, marching: false, inCombat: false });
+        return;
+    }
+    const alive = !followedArmy.isDestroyed;
+    app.audioManager.syncFollowedLegionAudio({
+        armyId: alive ? followedId : null,
+        // 有行军任务 且 真的在位移，才放行军音
+        marching: (followedArmy.isMarching?.() ?? false)
+            && isFollowedArmyActuallyMoving(alive ? followedId : null, followedArmy.getPosition?.()),
+        inCombat: followedArmy.getIsInCombat?.() ?? false,
+        isCavalry: followedArmy.isCavalryArmy?.() ?? false,
+        isNaval: followedArmy.isOnSea ?? false,
+        // 🔴 [2026-09-11 主人定] 跟拍对象 = 玩家本人（乱入者独骑）→ 播「玩家骑马」行军音。
+        //    随军时 getFollowedArmyId 报的是所在军团 id，这里自然为 false，仍播军团那两条行军音。
+        isPlayer: !!(app.playerHero && followedArmy === app.playerHero.army),
+    });
+}
+
+/**
  * 单帧主循环（日历 / 事件 / 战斗 / AI / 招募 / 战斗 UI / 跟随镜头）。
  * 从 GameApp 抽出以便第二期继续拆分启动与编辑器绑定。
  */
@@ -297,6 +328,9 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
     //    直接覆盖会让下一拍再算出一个负 delta（见 clampFrameDelta）。
     if (timestamp > app.lastFrameTime) app.lastFrameTime = timestamp;
     try {
+        // 🔴 [2026-09-27] 后台心跳也要同步跟拍军团的行军音（见 syncFollowedLegionAudioFor），
+        //    否则切后台 / 被遮挡时军团停了行军音还在响。
+        syncFollowedLegionAudioFor(app);
         if (app.timeSystem.isGamePaused() || !app.cityManager) {
             // 🔴 [2026-08-10 修死锁] 战术层期间 timeSystem 是暂停的，但战斗必须继续推进。
             // 漏了这一条的后果：标签页不可见（切窗口/切 OBS/最小化）→ rAF 被节流 → 主循环
@@ -674,21 +708,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     }
                 }
 
-                app.audioManager.syncFollowedLegionAudio({
-                    armyId: followedArmy && !followedArmy.isDestroyed ? followedId : null,
-                    // 有行军任务 且 真的在位移，才放行军音
-                    marching: (followedArmy?.isMarching?.() ?? false)
-                        && isFollowedArmyActuallyMoving(
-                            followedArmy && !followedArmy.isDestroyed ? followedId : null,
-                            followedArmy?.getPosition?.(),
-                        ),
-                    inCombat: followedArmy?.getIsInCombat?.() ?? false,
-                    isCavalry: followedArmy?.isCavalryArmy?.() ?? false,
-                    isNaval: followedArmy?.isOnSea ?? false,
-                    // 🔴 [2026-09-11 主人定] 跟拍对象 = 玩家本人（乱入者独骑）→ 播「玩家骑马」行军音。
-                    //    随军时 getFollowedArmyId 报的是所在军团 id，这里自然为 false，仍播军团那两条行军音。
-                    isPlayer: !!(app.playerHero && followedArmy === app.playerHero.army),
-                });
+                syncFollowedLegionAudioFor(app);
                 const now = performance.now();
                 if (now - lastFollowFlagPriorityKick >= FOLLOW_FLAG_PRIORITY_INTERVAL_MS) {
                     lastFollowFlagPriorityKick = now;
@@ -698,11 +718,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                     }
                 }
             } else {
-                app.audioManager.syncFollowedLegionAudio({
-                    armyId: null,
-                    marching: false,
-                    inCombat: false,
-                });
+                syncFollowedLegionAudioFor(app);
             }
             app.cameraFollowUI.update();
             // BGM 仅跟随军团切换时播放（不随镜头移动）

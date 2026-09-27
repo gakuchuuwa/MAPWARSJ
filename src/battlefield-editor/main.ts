@@ -29,7 +29,7 @@ import { BASE_16_LEGION_NAME_BY_REGION, getCultureLegionName } from '../types/Cu
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCityRegion } from '../systems/RegionSystem';
 import type { HistoricalEvent, FieldBattleData } from '../types/core';
-import { journeyBriefingDuration, journeyBriefingParagraphs } from '../player/JourneyBriefing';
+import { journeyBriefingDuration, journeyBriefingParagraphs, stripBriefingAnchor } from '../player/JourneyBriefing';
 // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 硬规则检查单独成文件，便于脚本拿全量数据回归
 import { checkEventRules } from './eventRules';
 import { checkRoute, ROUTE_LIMITS } from './routeCheck';
@@ -39,6 +39,7 @@ import { cityAbsentReason } from '../events/cityInYear';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { WAR_TYPES } from '../data/WarTypes';
 import { SCRIPT_PARTS, SCRIPT_SEGMENTS } from './scriptSegments';
+import { SCRIPT_ROAD_SEGMENTS, type ScriptRoadSegment } from './scriptSegments';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { CITY_ELITE_LEGIONS } from '../data/ExpeditionLegions';
 import { EVENT_SOURCE_ITEMS, EVENT_SOURCE_LEVEL_LABEL, type EventSourceEntry, type EventSourceLevel } from '../data/eventSources';
@@ -481,7 +482,11 @@ function validate(d: BattleDraft): Issue[] {
     // 🔴 [2026-09-19 主人令「把犯的错误在编辑器里设成必填项」] 这一轮真犯过的错，统一在 eventRules 里拦：
     //    归属武将找不到 / 不在本场阵中 / 战役名不以「战役」结尾 / 文字里有括号 /
     //    势力记录不存在 / 主帅查不到 / 势力没番号 / 兵力悬殊 / 战场坐标与别处重合。
-    out.push(...checkEventRules(d, drafts));
+    // 🔴 [2026-09-27 同步「一路一句」] 禁念城名检查要知道**这一场走的是哪条路**：
+    //    只扫「本段路线上的站」，才不会把「亚历山大」（人名）、「开城归附」、「卡瓦克山口」这类同字误报。
+    const _segForRules = SCRIPT_ROAD_SEGMENTS.find((s) => s.year === d.year && s.season === (d.season ?? 0)) ?? null;
+    const _roadStations = _segForRules ? [...new Set(_segForRules.roads.flatMap((r) => [r.from, r.to]))] : [];
+    out.push(...checkEventRules(d, drafts, { roadStations: _roadStations }));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
     const routeReport = checkRoute({ ...d, startCityId: effectiveStart(d)?.cityId ?? '' });
     out.push(...routeReport.issues);
@@ -662,6 +667,53 @@ function briefingParagraphs(text: string): number {
 function briefingSeconds(text: string): number {
     return Math.ceil(journeyBriefingParagraphs(text).reduce((sum, p) => sum + journeyBriefingDuration(p), 0) / 1000);
 }
+/**
+ * 🔴 [2026-09-27 主人定「一路一句」] 赶路播报的**逐句尺子**：
+ *   段首 `【据点名】` ＝ 这一句的**挂点**（军团走到那座据点 15 公里内才念）；该写字数 ＝ 这条路的公里 × 0.336。
+ *   同名站在同一条路上出现两次时（第 10 段的加沙：南下一次、北上又一次），按行军顺序认**后**一次。
+ * 返回每一句的挂点 / 那条路 / 公里 / 该写 / 现在写。
+ */
+function roadSentenceRows(text: string, seg: ScriptRoadSegment | null) {
+    const paras = String(text ?? '').split(/\r?\n\r?\n/).map((s) => s.replace(/\s+/g, '')).filter(Boolean);
+    let cursor = 0;
+    return paras.map((p, i) => {
+        const m = p.match(/^【([^】]+)】/);
+        const anchor = m ? m[1] : '';
+        const chars = (m ? p.slice(m[0].length) : p).length;
+        let road: ScriptRoadSegment['roads'][number] | null = null;
+        if (seg && anchor) {
+            for (let k = cursor; k < seg.roads.length; k++) {
+                if (seg.roads[k].from === anchor) { road = seg.roads[k]; cursor = k + 1; break; }
+            }
+            if (!road) road = seg.roads.find((r) => r.from === anchor) ?? null;
+        }
+        return { i, anchor, chars, road, km: road ? road.km : null, budget: road ? road.words : null };
+    });
+}
+/**
+ * 🔴 [2026-09-27 主人「我要的编辑器是一路一句。请分开写句子内容」]
+ *   赶路播报**一条路一个框**：这里把存盘文本按段表拆回每一条路（剥掉段首【据点名】挂点，只留句子本身），
+ *   以及把每条路的句子**合成回存盘格式**（第 2 条起自动加 【该路起点站名】，空行分段）。
+ *   存盘格式不变（`briefing` 仍是一段字符串），改的只是**编辑器怎么给你写**。
+ */
+function briefingBodiesOf(text: string, seg: ScriptRoadSegment | null): { bodies: string[]; leftover: string[] } {
+    const paras = String(text ?? '').split(/\r?\n\r?\n/).map((p) => p.trim()).filter(Boolean).map((p) => stripBriefingAnchor(p));
+    const n = seg ? seg.roads.length : paras.length;
+    return { bodies: paras.slice(0, n), leftover: paras.slice(n) };
+}
+
+function assembleBriefing(bodies: Array<string | undefined>, seg: ScriptRoadSegment | null): string {
+    return bodies
+        .map((b, i) => {
+            const t = String(b ?? '').trim();
+            if (!t) return '';
+            return i >= 1 && seg && seg.roads[i] ? `【${seg.roads[i].from}】${t}` : t;
+        })
+        .filter(Boolean)
+        .join('\n\n');
+}
+
+
 
 function generalOptions(cur: string): string {
     // 🔴 [2026-09-19 主人定]「缺少的人物，做成战场人物」——这些人也在攻守两方的下拉里，
@@ -851,25 +903,30 @@ function render(): void {
         return d.year === ev.year ? n - 1 : -1;
     };
     const ownedIdx = new Set<number>();
+    // 🔴 [2026-09-27 同步「一路一句」] 左栏按「片 → 段（＝一场，20 段）→ 场」显示：
+    //    段头直接报出本段的账（几路／多少公里／该写多少字），场条目排在它下面；
+    //    老的「路标段」（31 个）降为一行小字 —— 那张表管的是**地图上显示哪些城**（scriptCityVisibility 读它的 from/to/via），别丢。
     const segListHtml = SCRIPT_PARTS.map((p) => {
         const rows: string[] = [];
-        for (const seg of SCRIPT_SEGMENTS.filter((x) => x.part === p.part)) {
-            rows.push(`<div class="bf-seg">${seg.id}　${escapeHtml(seg.from)} → ${escapeHtml(seg.to)}`
-                + `<span class="bf-via">${seg.via.length ? '途经：' + escapeHtml(seg.via.join('、')) : '（无途经点）'}</span></div>`);
-            if (seg.hasBattle) {
-                for (const n of seg.events) {
-                    const i = draftIndexOfEvent(n);
-                    if (i < 0 || ownedIdx.has(i)) continue;
-                    ownedIdx.add(i);
-                    rows.push(draftItemHtml(drafts[i], i));
-                }
-            } else {
-                rows.push(`<div class="bf-march">纯行军${seg.briefedBy.length ? `（旁白由第 ${seg.briefedBy.join('、')} 场念）` : ''}</div>`);
+        for (const rseg of SCRIPT_ROAD_SEGMENTS.filter((x) => x.part === p.part)) {
+            const i = draftIndexOfEvent(rseg.scene);
+            const active = i >= 0 && i === selected && !isNew;
+            rows.push(`<div class="bf-seg${active ? ' active' : ''}" style="${active ? 'background:#3a3226;' : ''}">${rseg.id}　第 ${rseg.scene} 场　${escapeHtml(rseg.title)}`
+                + `<span class="bf-via">${escapeHtml(rseg.from)} → ${escapeHtml(rseg.to)}　${rseg.roads.length} 路 · ${rseg.km} 公里 · 该写 ${rseg.words} 字</span></div>`);
+            if (i >= 0 && !ownedIdx.has(i)) { ownedIdx.add(i); rows.push(draftItemHtml(drafts[i], i)); }
+            const marks = SCRIPT_SEGMENTS.filter((x) => x.events.includes(rseg.scene) && x.part === p.part);
+            if (marks.length) {
+                rows.push(`<div class="bf-march" style="margin-left:14px;font-size:11px;opacity:.75;">路标段 ${marks.map((m) => m.id).join('、')}${marks.some((m) => !m.hasBattle) ? '（含纯行军）' : ''} · 管地图显示哪些城</div>`);
             }
         }
         return `<div class="bf-part">第 ${p.part} 片　${escapeHtml(p.name)}<span>${escapeHtml(p.years)}</span></div>${rows.join('')}`;
     }).join('');
     const leftoverHtml = drafts.map((d, i) => (ownedIdx.has(i) ? '' : draftItemHtml(d, i))).join('');
+    // 当前这一场（草稿按年份季节排序，与事件表同序）对应哪一段 —— 逐句尺子用它
+    const workingScene = !isNew && selected >= 0 ? selected + 1 : -1;
+    const workingRoadSeg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === workingScene) ?? null;
+    // 一路一句：把存盘的播报拆回「每一条路一句」，编辑器按条给框
+    const _bfRows = briefingBodiesOf(working.bfBriefing, workingRoadSeg);
     const issues = validate(working);
     const hasErr = issues.some((i) => i.level === 'error');
     const attCurrentLegion = resolveCurrentLegion(working.attackerFactionId, working.attackerSourceCityId);
@@ -1063,9 +1120,25 @@ function render(): void {
                         <span class="hint">${working.inviteText.trim() ? '' : '留空则用通用的一句邀约'}</span></div>
                 </div>
                 <div class="row">
-                    <div class="fld"><label>赶路背景播报 · 玩家在路上逐段播，空行分段</label>
+                    <div class="fld"><label>赶路背景播报 · 一路一句（一条路一个框；存盘时自动合成「空行分段 ＋ 【起点站名】挂点」）</label>
+                        ${workingRoadSeg ? `
+                        <div style="font-size:12px;color:#9a8f7a;margin:2px 0 6px;">第 ${workingRoadSeg.scene} 场　${escapeHtml(workingRoadSeg.from)} → ${escapeHtml(workingRoadSeg.to)}　${workingRoadSeg.roads.length} 条路 · ${workingRoadSeg.km} 公里 · 该写 ${workingRoadSeg.words} 字　（每行一句，字数＝公里 × 0.336）</div>
+                        ${workingRoadSeg.roads.map((r, i) => {
+                            const body = _bfRows.bodies[i] ?? '';
+                            const ch = body.replace(/\s+/g, '').length;
+                            const d = ch - r.words;
+                            const tag = ch === 0 ? '<span style="color:#a06050;">（这一句还没写）</span>'
+                                : (d > 4 ? `<span style="color:#d08a5a;">超 ${d} 字</span>` : d < -4 ? `<span style="color:#7f9a6a;">欠 ${-d} 字</span>` : '<span style="color:#7f9a6a;">✔</span>');
+                            return `<div style="margin:4px 0 10px;">`
+                                + `<div style="font-size:12px;color:#9a8f7a;">句 ${i + 1}${i === 0 ? '（起步句，无挂点）' : `　挂点【${escapeHtml(r.from)}】`}　${escapeHtml(r.from)} → ${escapeHtml(r.to)}　${r.km} 公里　该写 ${r.words} 字　<span id="bf-cnt-${i}">现在 ${ch} 字</span>　${tag}</div>`
+                                + `<textarea id="f-bf-row-${i}" data-row="${i}" style="min-height:54px;">${escapeHtml(body)}</textarea></div>`;
+                        }).join('')}
+                        ${_bfRows.leftover.length ? `<div class="issues err" style="margin-top:6px;">现在的文本比本段的路多 ${_bfRows.leftover.length} 段（对不上段表，多半是旧口径写的）：<br>${_bfRows.leftover.map((t, k) => `${k + 1}. ${escapeHtml(t.slice(0, 40))}${t.length > 40 ? '…' : ''}`).join('<br>')}<br>把它们并进上面某一条路里，再存盘 —— 存盘只按上面每行的内容合成。</div>` : ''}
+                        <span class="hint">本段 ${_bfRows.bodies.filter((b) => b.trim()).length} / ${workingRoadSeg.roads.length} 句已写 · 现在 ${_bfRows.bodies.reduce((a, b) => a + b.replace(/\s+/g, '').length, 0)} 字 · 该写 ${workingRoadSeg.words} 字</span>`
+                        : `
                         <textarea id="f-bfBriefing" style="min-height:120px;">${escapeHtml(working.bfBriefing)}</textarea>
-                        <span class="hint">${working.bfBriefing.trim() ? briefingParagraphs(working.bfBriefing) + ' 段，约 ' + briefingSeconds(working.bfBriefing) + ' 秒播完' : '留空则赶路时只有一条「奔赴XXX」提示'}</span></div>
+                        <span class="hint">这一场认不出对应的段表（没编入段）：先按老办法整段写</span>`}
+                    </div>
                 </div>
                 <div class="row">
                     ${working.type !== 'siege' ? `<div class="fld"><label>战场备注 · 史料出处，可空</label>
@@ -1292,6 +1365,20 @@ function bind(): void {
         });
     });
     on<HTMLTextAreaElement>('f-bfBriefing', 'change', (el) => { working.bfBriefing = el.value; render(); });
+    // 一路一句：每行一个框 —— 打字时只更新那一行的字数，改完（失焦）再把各行合成回 working.bfBriefing
+    document.querySelectorAll<HTMLTextAreaElement>('textarea[data-row]').forEach((el) => {
+        const i = Number(el.dataset.row);
+        el.addEventListener('input', () => {
+            const cnt = document.getElementById(`bf-cnt-${i}`);
+            if (cnt) cnt.textContent = `现在 ${el.value.replace(/\s+/g, '').length} 字`;
+        });
+        el.addEventListener('change', () => {
+            const bodies = _bfRows.bodies.slice();
+            bodies[i] = el.value;
+            working.bfBriefing = assembleBriefing(bodies, workingRoadSeg);
+            render();
+        });
+    });
 
     on<HTMLButtonElement>('wp-add', 'click', () => {
         const sel = document.getElementById('wp-city') as HTMLSelectElement | null;
