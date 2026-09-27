@@ -2094,7 +2094,8 @@ export class TerritorySystem {
 
         // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→ 据点一律有势力、一律插旗。
         //    （原「战场没有势力不用插旗」的 `showFlag` 特判已撤销。）
-        const showFlag = true;
+        // 🔴 [2026-09-27 主人「怎么每次都把旗帜和旗杆分开」] 旗杆与旗面**同一个判断**：没到年代的据点两样都不画。
+        const showFlag = TerritorySystem.hasCitySprite(city);
 
         const flagFrameWidth = 32;
         const flagFrameHeight = 40;
@@ -2156,7 +2157,7 @@ export class TerritorySystem {
                      transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
                      ${ghostStyle}
                  ">
-                     ${(flagPole && showFlag && TerritorySystem.hasCitySprite(city)) ? `<img src="${flagPole}" style="
+                     ${(flagPole && showFlag) ? `<img src="${flagPole}" style="
                          position: absolute; top: 15px; left: 50%;
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
@@ -2195,7 +2196,7 @@ export class TerritorySystem {
 
         const marker = L.marker([displayLat, displayLng], {
             icon: icon,
-            interactive: true,
+            interactive: TerritorySystem.hasCitySprite(city),   // 没到年代的据点只当注记，不可点
             draggable: isEditorMode,
             pane: 'cityPane'
         }).addTo(targetLayerGroup);
@@ -2267,7 +2268,7 @@ export class TerritorySystem {
             cursor: inherit; white-space: nowrap;
         ">
             <span style="
-                color: ${dim ? '#c9c9c9' : '#ffffff'}; font-weight: ${dim ? 'normal' : 'bold'};
+                color: ${dim ? '#9a9a9a' : '#ffffff'}; font-weight: ${dim ? 'normal' : 'bold'};
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
                 font-size: ${dim ? '11px' : '13px'};
             ">${city.name}</span>${troopsSpan}
@@ -2449,7 +2450,7 @@ export class TerritorySystem {
             }
             const newIcon = L.divIcon({
                 className: 'city-troop-label',
-                html: TerritorySystem.buildCityLabelHtml(city),
+                html: TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city)),
             });
             labelOriginal.setIcon(newIcon);
         }
