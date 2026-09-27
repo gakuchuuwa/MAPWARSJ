@@ -2325,7 +2325,6 @@ export class TerritorySystem {
     /**
      * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来……到年代的据点显示样貌」]
      * 没到年代的城：只画灰色小字城名，不画城池样貌、不插旗、不带兵力。
-     * 带 `city-label-name-only` class：地图缩小到 zoom < 8 时整体隐藏（applyZoomLayerVisibility）。
      */
     private renderNameOnlyLabel(
         city: City,
@@ -2712,8 +2711,6 @@ export class TerritorySystem {
         // 城名（labelsPane）：zoom 6 界线视图隐藏；zoom 7 宏观浏览显示城名；zoom ≥ 8 显示
         const labelsPane = leafletMap.getPane('labelsPane');
         if (labelsPane) labelsPane.style.display = (floorZoom === 6) ? 'none' : '';
-        // 🔴 [2026-09-27 主人定] 没到年代的城（灰名）：放大到 zoom ≥ 8（据点显示那一档）才出现，缩小时不挤成一片
-        labelsPane?.classList.toggle('hide-name-only-cities', floorZoom < 8);
 
         MACRO_HIDDEN_INFRA_PANES.forEach((paneName) => {
             const pane = leafletMap.getPane(paneName);
