@@ -1444,9 +1444,6 @@ export class PlayerQuestSystem {
         //    改道／抵达／入伍 → 标题变了或清空 → 立刻停。
         //    `titleOverride` 那条链（武将触发、剧本段播报）玩家是随军赶路，故不再看 `isAttached`。
         const title = titleOverride ?? this.getBattlefieldBattleTitle(bf?.id ?? '', bf?.name ?? '');
-        const stillHeading = (): boolean => this.deps.hero.getTravelPointLabel() === title
-            && (titleOverride ? true : !this.deps.hero.isAttached())
-            && this.hostIsMoving();   // 🔴 [2026-09-25 主人「军团移动的时候才播报」] 军团在走才算「在路上」
 
         this.clearJourneyBriefing();
         let i = 0;
@@ -1459,13 +1456,27 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-25 主人重申「军团移动的时候才播报」] 这道闸**一直都在**（2026-09-16 定的）：
         //    途中只要军团不再赶这一趟（抵达／改道／入伍／关掉自动），没念完的直接掐掉。
         //    ⚠️ 2026-09-25 早些时候曾被误改成「念完为止」——主人当场纠正，已改回。
+        // 🔴 [2026-09-26 血训 · 真机第 2 场只念了一段就全没了]
+        //    「军团移动的时候才播报」这道闸**只许挂起，不许掐死**：
+        //    第 2 场的第一段（挂【塞乌托波利】）触发时，军团刚在上一场战场打完、还没迈步，
+        //    `hostIsMoving()` 答「没走」→ 旧代码当场 `clearJourneyBriefing()` 把**整条链**清掉 →
+        //    后面六段挂点全部作废（真机日志只有一条「走到第 2 段的起点」，之后一片安静）。
+        //    现在分成两问：
+        //      · `journeyAlive()`＝行程还挂着（HUD 动向栏标题没变、没入伍）→ **假就中止**（抵达/改道/入伍）；
+        //      · `hostIsMoving()`＝军团在不在走 → **假就挂起**（记住「下一句从哪继续」），走起来接着念。
+        const journeyAlive = (): boolean => this.deps.hero.getTravelPointLabel() === title
+            && (titleOverride ? true : !this.deps.hero.isAttached());
+        const suspendUntilMoving = (resume: () => void) => { this.briefingResume = resume; };
         const pushNext = () => {
             if (this.briefingCancelled) return;
-            if (i >= paragraphs.length || !stillHeading()) {
+            if (i >= paragraphs.length || !journeyAlive()) {
                 this.flushBriefingTrace(key, i >= paragraphs.length ? 'done' : 'aborted');
                 this.clearJourneyBriefing();
                 return;
             }
+            // 军团还没走（或正被我们按着等念完）→ 挂起，等 `updateSegmentBriefing` 每帧那一问
+            if (!this.hostIsMoving() && !this.briefingHold) { suspendUntilMoving(pushNext); return; }
+            this.briefingResume = null;
             const line = paragraphs[i];
             i++;
             this.briefingBusy = true;
@@ -1485,15 +1496,16 @@ export class PlayerQuestSystem {
                 this.briefingTrace.push({ seg: i, chars: line.length, reqAt: tReq - this.briefingT0 });
                 const speakNextSentence = () => {
                     if (this.briefingCancelled) return;
-                    // 🔴 [2026-09-25 主人重申「军团移动的时候才播报」] 军团一停（抵达/改道/入伍），
-                    //    当句念完就断在段中间 —— 不必等整段念完。
-                    if (!stillHeading()) {
+                    // 行程没了（抵达/改道/入伍）→ 才算中止，掐掉剩下的
+                    if (!journeyAlive()) {
                         this.briefingBusy = false;
                         this.briefingPending = null;
                         this.flushBriefingTrace(key, 'aborted');
                         this.clearJourneyBriefing();
                         return;
                     }
+                    // 军团停着（玩家勒马／刚开完打还没迈步）→ **挂起**，等走起来接着念（不掐）
+                    if (!this.hostIsMoving() && !this.briefingHold) { suspendUntilMoving(speakNextSentence); return; }
                     if (si < sentences.length) {
                         const sentence = sentences[si];
                         si++;
@@ -1525,7 +1537,7 @@ export class PlayerQuestSystem {
                     const next = this.briefingPending;
                     this.briefingPending = null;
                     this.briefingBusy = false;
-                    if (!stillHeading()) { this.flushBriefingTrace(key, 'aborted'); this.clearJourneyBriefing(); return; }
+                    if (!journeyAlive()) { this.flushBriefingTrace(key, 'aborted'); this.clearJourneyBriefing(); return; }
                     if (next !== null) { i = next; pushNext(); return; }
                     if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
                     pushNext();
@@ -1566,6 +1578,12 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-25 主人「军团移动的时候才播报」] 起步那一条若还没开口（军团当时还没动起来），
         //    每帧问一次：动起来了就开口念。
         if (this.pendingBriefingStart && this.hostIsMoving()) this.pendingBriefingStart();
+        // 🔴 [2026-09-26 血训] 之前因「军团没走」挂起的那一句：走起来了就接着念（不是掐掉整条链）
+        if (this.briefingResume && (this.hostIsMoving() || this.briefingHold)) {
+            const resume = this.briefingResume;
+            this.briefingResume = null;
+            resume();
+        }
         // 🔴 [2026-09-26 主人令「抵达 B 点后没播报完，军团就先停止；等播报完继续以后再播报」]
         //    每帧结算一次「停步待令」：走到 B 点而这一段的旁白还没念完 → 按住军团；念完 → 松开继续走。
         this.settleBriefingHold();
@@ -1707,6 +1725,7 @@ export class PlayerQuestSystem {
         this.briefingBusy = false;
         this.briefingPending = null;
         this.pendingBriefingStart = null;   // 压着等军团动起来的那一条，一并丢掉
+        this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
         // 🔴 [2026-09-26 主人令] 这一趟播报结束（念完／抵达／改道）→ **松闸**，别把军团钉在 B 点上。
         this.releaseBriefingHold();
         if (this.briefingTimer !== null) {
@@ -1851,6 +1870,11 @@ export class PlayerQuestSystem {
     private hostMovingCache: { ok: boolean; t: number } = { ok: true, t: 0 };
     /** 起步那一条还压在手里等军团动起来（见 `updateSegmentBriefing` 每帧那一问） */
     private pendingBriefingStart: (() => void) | null = null;
+    /**
+     * 🔴 [2026-09-26 血训] **军团停着的时候，播报只是「挂起」，不许被掐死**：
+     *    `updateSegmentBriefing` 每帧问一次：走起来了就接着念下一句（`briefingResume`）。
+     */
+    private briefingResume: (() => void) | null = null;
     /**
      * 🔴 [2026-09-26 主人令「军团从 A 点触发开始播报，抵达 B 点后没有播报完，军团就先停止；
      *    等播报完继续以后再播报」]
