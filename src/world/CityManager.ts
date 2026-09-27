@@ -200,6 +200,26 @@ export class CityManager {
         this.visibilityFilter = filter;
     }
 
+    /**
+     * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来……到年代的据点显示样貌」]
+     * 被外部显示过滤挡掉的据点（剧本期那一年还没到年代的城）不再整个不画，
+     * 改成**只画灰色城名**（不画城池样貌、不插旗、不带兵力）；放大到 zoom ≥ 8 才出现
+     * （`TerritorySystem.applyZoomLayerVisibility` 按档位开关）。
+     * 返回 true 的据点只画灰名；据点本身照旧（寻路/归属/战斗一概不受影响）。
+     */
+    private nameOnlyWhenFiltered: (() => boolean) | null = null;
+
+    public setNameOnlyWhenFiltered(enabled: (() => boolean) | null): void {
+        this.nameOnlyWhenFiltered = enabled;
+    }
+
+    /** 这座城只画灰色城名（被显示过滤挡掉、且处在「挡掉的只画名字」的模式里） */
+    public isCityNameOnly(city: City): boolean {
+        if (this.isEditorMode) return false;
+        if (!this.visibilityFilter || !this.nameOnlyWhenFiltered?.()) return false;
+        return !this.visibilityFilter(city);
+    }
+
     /** 显示范围变了（剧本进度 / 模式切换）→ 按新范围重画视口据点 */
     public refreshCityVisibility(): void {
         void this.renderCitiesOnly();
@@ -409,7 +429,7 @@ export class CityManager {
         const bounds = this.map.getLeafletMap().getBounds();
         return this.cities.filter(
             (city) =>
-                this.isCityVisible(city) &&
+                (this.isCityVisible(city) || this.isCityNameOnly(city)) &&
                 bounds.contains([city.latitude, city.longitude]),
         );
     }
@@ -417,12 +437,14 @@ export class CityManager {
     /** 启动优先：仅当前视口据点；不拖图则不画远处 */
     public async renderCitiesOnly(): Promise<void> {
         const viewportCities = this.getCitiesInMapViewport();
-        await this.territorySystem.renderCitiesOnly(viewportCities, (city) => this.isCityGhost(city));
+        await this.territorySystem.renderCitiesOnly(
+            viewportCities, (city) => this.isCityGhost(city), (city) => this.isCityNameOnly(city));
     }
 
     private async syncViewportCities(): Promise<void> {
         const viewportCities = this.getCitiesInMapViewport();
-        await this.territorySystem.appendCityMarkers(viewportCities, (city) => this.isCityGhost(city));
+        await this.territorySystem.appendCityMarkers(
+            viewportCities, (city) => this.isCityGhost(city), (city) => this.isCityNameOnly(city));
         CityAssetManager.notifyMapInteraction();
     }
 
