@@ -371,6 +371,26 @@ export class PlayerQuestSystem {
     }
 
     /**
+     * 🔴 [2026-09-26 血训] **认脚本事件只许用「战场 id 优先、去年份前缀的标题兜底」**，不许拿标题全等查：
+     *   任务/战场侧的标题是「海姆斯山战役」，脚本事件表里是「公元前335年 海姆斯山战役」，
+     *   全等比较必然查空 —— 查空的后果不是报错，而是**逐段挂点静默失效**（退回起步一口气念完）。
+     */
+    private findScriptEvent(ev: { title?: string; battlefieldId?: string | null } | null): (typeof HISTORICAL_EVENT_SCRIPT)[number] | undefined {
+        if (!ev) return undefined;
+        const strip = (s: string) => String(s ?? '')
+            .replace(/^公元前\s*\d+\s*年\s*/, '').replace(/^前\s*\d+\s*年\s*/, '')
+            .replace(/\s+/g, '');
+        const want = strip(ev.title ?? '');
+        if (ev.battlefieldId) {
+            const byBf = HISTORICAL_EVENT_SCRIPT.find((e) =>
+                resolveEventBattlefieldId(e, (id) => findEventSite(id)) === ev.battlefieldId);
+            if (byBf) return byBf;
+        }
+        if (!want) return undefined;
+        return HISTORICAL_EVENT_SCRIPT.find((e) => strip(String(e.title ?? '')) === want);
+    }
+
+    /**
      * 获取战场的战役标准名称（统一为【XXX战役】或【XXX围城战】）
      * 🔴 [2026-09-16 主人定]「战场名称要写为XXX战役」
      */
@@ -780,7 +800,12 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-25 主人「不是战斗结束后播报，是军团开始移动的时候播报」]
         //    攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`）—— 这里按事件标题回查脚本取出来，
         //    兵团一起步就念（原来只认 `bf.briefing`，攻城战那一场等于没有播报 ✗）。
-        const scriptEv = HISTORICAL_EVENT_SCRIPT.find((e) => e.title === ev.title);
+        // 🔴 [2026-09-26 血训 · 真机里逐段挂点一直没生效] **不许按标题全等查脚本事件**：
+        //    任务里的标题是 `getBattlefieldBattleTitle()` 给的「海姆斯山战役」（**没有「公元前335年」前缀**），
+        //    而脚本事件表里的标题是「公元前335年 海姆斯山战役」—— `e.title === ev.title` 永远 false，
+        //    于是 `scriptEv` 恒为 undefined → 锚点一个都读不到 → **一直在「起步一口气念完」**
+        //    （真机实测：`briefingBounds` 长度 0，与「逐段生效」的静态探针结论相反）。改按「战场 id 优先、去前缀标题兜底」认。
+        const scriptEv = this.findScriptEvent(ev);
         // 🔴 [2026-09-26 主人「第二段你听听」] **锚点必须从「真正要念的那段文字」里读**：
         //    野战场（场1/4/7/10/11/14/18/20）的旁白写在**战场记录** `bf.briefing` 上，
         //    而 `scriptEv.briefing` 是空的 —— 原来这里传的是后者，锚点一个都读不到，
@@ -1645,7 +1670,7 @@ export class PlayerQuestSystem {
             }
         }
         // ② 段表口径（原样）
-        const n = HISTORICAL_EVENT_SCRIPT.findIndex((e) => e.title === ev.title);
+        const n = HISTORICAL_EVENT_SCRIPT.indexOf(this.findScriptEvent(ev) as never);
         if (n < 0) return [];
         const out: Array<{ lat: number; lng: number; name: string }> = [];
         for (const s of segmentsBriefedBy(n + 1).slice(0, -1)) {
