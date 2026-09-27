@@ -780,6 +780,8 @@ export class SpriteTinter {
     public static debugMaskCacheSize(): number { return this.maskCache.size; }
     public static debugMaskCacheBytes(): number { return this.maskCacheBytes; }
     public static debugMaskCacheLimit(): number { return this.MASK_CACHE_MAX_BYTES; }
+    public static debugTintedSpriteCache() { return this.tintedSpriteCache; }
+    public static debugMaskCache() { return this.maskCache; }
 
     /**
      * 清除缓存（当势力颜色改变时调用）
@@ -812,6 +814,8 @@ export class SpriteTinter {
         console.log('🎨 [SpriteTinter] Preloaded tinted sprites for', factionIds.length, 'factions');
     }
 }
+
+(window as any).SpriteTinter = SpriteTinter;
 
 // [2026-08-31] 染色/遮罩两个缓存登记进 PerfDoctor 体检。
 //   这两个是单场 13 里最大的两块（实测单场染色图 876MB 位图 + 468MB data URL 字符串）。
