@@ -461,6 +461,10 @@ export class Army implements IBattleUnit {
      */
     private updateColumnMarch(): void {
         if (this.type === 'hero') { this.columnMarch = false; return; }
+        // 🔴 [2026-09-27 主人令「军团行至据点、播报没念完而停下时，改为常规阵型更好，好似在据点休息」]
+        //    **被按住（等这句念完）＝ 就地驻下**：不再摆长蛇阵，换成常规阵型原地展开 —— 看着就是在据点歇脚。
+        //    松闸（播报念完）后下一帧自然又按「在行军且离终点还有 40 公里以上」回到长蛇阵。
+        if (this.isMarchHeld()) { this.columnMarch = false; return; }
         const end = this.isMarching() ? this.getMarchEndPoint() : null;
         this.columnMarch = !!end
             && Math.hypot(this.position.lat - end.lat, this.position.lng - end.lng) * 111 > Army.COLUMN_DEPLOY_KM;
@@ -686,9 +690,10 @@ export class Army implements IBattleUnit {
         if (this.isPostBattleResting()) return;
 
         // 🔴 [2026-09-26 主人定「我要的是行军播报，不是驻足播报」] **播报不许让军团停步**：
-        //    原来这里有一道「播报未完就地驻足」的闸（`setMarchHold`），已撤掉 ——
+        //    —— 这道闸现在是**活的**：`PlayerQuestSystem.settleBriefingHold` 每帧重按（1.5 秒没人按自动松，永不会钉死）；
+        //    按住的这几秒里军团摆**常规阵型**（见 `updateColumnMarch`），看着像在据点歇脚。
         //    军团一路走，播报跟着走；文案按那一段路的长度写，念不完的部分就让它念不完。
-        if (this.marchHoldUntilMs > performance.now()) return;   // 仅保留机制以防将来启用；现无人按下
+        if (this.marchHoldUntilMs > performance.now()) return;
 
         if (this.pathQueue.length === 0 && this.hasArrived) return;
         if (this.isBlocked()) return;
