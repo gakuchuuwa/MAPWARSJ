@@ -1508,6 +1508,16 @@ export class TerritorySystem {
         }
         if (this.renderCounter !== renderId) return;
 
+        // 不带灰名判定的全量重绘（`update()` 走领土那条路，只给过闸的城）→ 已画的灰名原样留下，不被清掉
+        if (!nameOnlyPredicate) {
+            for (const id of this.nameOnlyIds) {
+                const label = this.cityLabels.get(id);
+                if (!label || tempCityLabels.has(id) || tempCityMarkers.has(id)) continue;
+                tempCityLabels.set(id, label);
+                tempNameOnlyIds.add(id);
+            }
+        }
+
         const markerLayers: L.Layer[] = [];
         tempLayerGroup.eachLayer((l) => markerLayers.push(l));
 
