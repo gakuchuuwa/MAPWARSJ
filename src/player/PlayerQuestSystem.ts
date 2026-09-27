@@ -171,6 +171,12 @@ const BF_RETRY_COOLDOWN_MS = 60_000;
  */
 const HOST_MOVE_EPS_DEG = 0.008;
 /**
+ * 🔴 [2026-09-26 主人定「一路一句；到了点没念完得停」] **最后一句的「点」**：
+ *    挂点之后不再有下一个据点，就用「离本场终点（战场／被攻据点）还剩 ≤20 公里」当那个点 ——
+ *    走到这里这句还没念完，军团驻足听完再进战场。
+ */
+const BRIEFING_HOLD_END_KM = 20;
+/**
  * 🔴 [2026-09-26 主人令「播报没完就先停下等」] **最后一段的「B 点」**：
  *    挂点之后不再有下一个据点，就用「离本场终点（战场／被攻据点）还剩 ≤20 公里」当 B——
  *    走到这里旁白还没念完，军团就驻足听完再进战场。
@@ -1473,7 +1479,7 @@ export class PlayerQuestSystem {
                 return;
             }
             // 军团还没走（或正被我们按着等念完）→ 挂起，等 `updateSegmentBriefing` 每帧那一问
-            if (!this.hostIsMoving()) { suspendUntilMoving(pushNext); return; }
+            if (!this.hostIsMoving() && !this.briefingHold) { suspendUntilMoving(pushNext); return; }
             this.briefingResume = null;
             const line = paragraphs[i];
             i++;
@@ -1503,7 +1509,7 @@ export class PlayerQuestSystem {
                         return;
                     }
                     // 军团停着（玩家勒马／刚开完打还没迈步）→ **挂起**，等走起来接着念（不掐）
-                    if (!this.hostIsMoving()) { suspendUntilMoving(speakNextSentence); return; }
+                    if (!this.hostIsMoving() && !this.briefingHold) { suspendUntilMoving(speakNextSentence); return; }
                     if (si < sentences.length) {
                         const sentence = sentences[si];
                         si++;
@@ -1576,8 +1582,9 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-25 主人「军团移动的时候才播报」] 起步那一条若还没开口（军团当时还没动起来），
         //    每帧问一次：动起来了就开口念。
         if (this.pendingBriefingStart && this.hostIsMoving()) this.pendingBriefingStart();
+        this.settleBriefingHold();   // 🔴 到了点没念完就驻足（每帧结算）
         // 🔴 [2026-09-26 血训] 之前因「军团没走」挂起的那一句：走起来了就接着念（不是掐掉整条链）
-        if (this.briefingResume && this.hostIsMoving()) {
+        if (this.briefingResume && (this.hostIsMoving() || this.briefingHold)) {
             const resume = this.briefingResume;
             this.briefingResume = null;
             resume();
@@ -1593,7 +1600,7 @@ export class PlayerQuestSystem {
         if (getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111 > 15) return;
         this.briefingBoundCursor++;
         const idx = this.briefingBoundCursor;   // 边界 k → 第 k 段的旁白（第 0 段起步时已念）
-        if (this.briefingBusy) this.briefingPending = idx;
+        if (this.briefingBusy) { this.briefingPending = idx; this.briefingHoldArmed = true; }
         else this.briefingAdvance?.(idx);
         gameLog('expedition', `[玩家] 一段一条播报：走到第 ${idx + 1} 段的起点【${b.name}】，念这一段的旁白`);
     }
@@ -1607,6 +1614,8 @@ export class PlayerQuestSystem {
      *   · 拿不到军团（没随军 / 已覆灭）时**不拦** —— 宁可念，也别把播报闷死。
      */
     private hostIsMoving(): boolean {
+        // 🔴 是我们自己按住的（驻足等这句念完）→ 算「在走」，否则移动闸会把正在念的这句掐掉
+        if (this.briefingHold) return true;
         // 🔴 [2026-09-26 主人令] **是我们自己按住的** → 算「在走」：军团正停在 B 点等这一段念完，
         //    若这里答「没走」，`stillHeading()` 就会把正在念的这一段掐掉 —— 那就是自己把自己等死。
         const now = performance.now();
@@ -1696,6 +1705,7 @@ export class PlayerQuestSystem {
         this.briefingPending = null;
         this.pendingBriefingStart = null;   // 压着等军团动起来的那一条，一并丢掉
         this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
+        this.releaseBriefingHold();         // 🔴 这一趟播报结束 → 松闸，别把军团钉在点上
         if (this.briefingTimer !== null) {
             window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
@@ -1836,6 +1846,52 @@ export class PlayerQuestSystem {
     private hostMovingCache: { ok: boolean; t: number } = { ok: true, t: 0 };
     /** 起步那一条还压在手里等军团动起来（见 `updateSegmentBriefing` 每帧那一问） */
     private pendingBriefingStart: (() => void) | null = null;
+    /**
+     * 🔴 [2026-09-26 主人定「一路一句；到了点没念完得停，不然行军和播报又对不上了」]
+     *   **走到下一个点还没念完 → 军团就地驻足，等这句念完再走**。这是「播报与位置对得上」的保障：
+     *   一句话按「那条路的公里数」写（公里 ÷ 12.51 × 4.2 字），正常正好念完到点、一秒不停；
+     *   只有差几秒的余量时才停那几秒，绝不带着错位往前走。
+     *   ⚠️ 按下去的是 `Army.setMarchHold`（**每帧重新按**，1.5 秒没人按就自动松 —— 永不会把军团钉死）。
+     */
+    private briefingHold = false;
+    /** 已经到了下一个点、正在等这句念完（松闸＝`briefingBusy` 与 `briefingPending` 都空） */
+    private briefingHoldArmed = false;
+    /** 本场终点（战场／被攻据点）坐标：最后一句没念完时，也在这里等（同一条规矩） */
+    private journeyEndPos: { lat: number; lng: number } | null = null;
+
+    /** 松闸（把军团放回路上）：`clearJourneyBriefing` 与 `settleBriefingHold` 共用的唯一出口 */
+    private releaseBriefingHold(): void {
+        this.briefingHoldArmed = false;
+        if (!this.briefingHold) return;
+        this.briefingHold = false;
+        const q = this.quest;
+        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        if (host && !host.isDestroyed) host.setMarchHold(false);
+    }
+
+    /**
+     * 🔴 [2026-09-26 主人定] 每帧结算「播报未完就地驻足」：
+     *   到点（下一个挂点）而这一句还在念 → **每帧重新按下** `Army.setMarchHold`（1.5 秒自动过期，不会钉死）；
+     *   念完（`briefingBusy` 与 `briefingPending` 都空）→ 松闸，照原路继续走。
+     *   最后一句同理：挂点之后没有下一个点了，就用「离本场终点 ≤20 公里」当那个点。
+     */
+    private settleBriefingHold(): void {
+        const q = this.quest;
+        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        if (!host || host.isDestroyed) { this.briefingHold = false; this.briefingHoldArmed = false; return; }
+        const speaking = this.briefingBusy || this.briefingPending !== null;
+        if (!speaking) { this.releaseBriefingHold(); return; }
+        let near = this.briefingHoldArmed;
+        if (!near && this.journeyEndPos) {
+            if (getEuclideanDistance(host.getPosition(), this.journeyEndPos) * 111 <= BRIEFING_HOLD_END_KM) near = true;
+        }
+        if (!near) return;
+        host.setMarchHold(true);   // 每帧重新按一次
+        if (!this.briefingHold) {
+            this.briefingHold = true;
+            gameLog('expedition', '[玩家] 到了点这一句还没念完：军团驻足听完再走（主人 2026-09-26 定）');
+        }
+    }
     /**
      * 🔴 [2026-09-26 血训] **军团停着的时候，播报只是「挂起」，不许被掐死**：
      *    `updateSegmentBriefing` 每帧问一次：走起来了就接着念下一句（`briefingResume`）。
