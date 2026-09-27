@@ -43,8 +43,14 @@ export function journeyBriefingParagraphs(text: string): string[] {
  *   字幕随开口（onStart）亮、随念完（onDone）换下一句，不存在「猜时长」这一环。
  *   句子之间那点合成往返（约几百毫秒）正好当自然停顿。
  *
- * 切法：先按中文句末标点断句，再把过短的句子并到 `maxChars` 以内；
+ * 切法：**文本里一句 = 一次 `speak()` = 一屏字幕**（不再把相邻短句并起来）；
  * 单句本身超过 `maxChars` 的，按逗号再切一刀（兜底，保证一屏放得下）。
+ *
+ * 🔴 [2026-09-26 主人报「行军播报更加对不上了」＋「一句一句的看，第一段有几句？」]
+ *   原来这里把**相邻的短句合并**（`current.length + p.length <= maxChars` 就并成一句）——
+ *   实测全片 65 段共 230 句，被并成 **193 次**，**35 个段是「几句话说成一口气」**：
+ *   第一段 44 字就是「腓力二世遇刺…趁丧起事；」＋「公元前335年春…北上平乱。」两句并成 1 次念的。
+ *   一句一屏这条已经被并没了，字幕与语音的「一句对一句」自然又对不上。已改为不合并。
  */
 export function journeyBriefingSentences(text: string, maxChars = 60): string[] {
     const paragraphs = text.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -52,20 +58,13 @@ export function journeyBriefingSentences(text: string, maxChars = 60): string[] 
     for (const para of paragraphs) {
         // 句末标点：。！？；……（含其后的收尾引号/括号）
         const sentences = para.match(/[^。！？；…]+[。！？；…]+[”’」』）)]?|[^。！？；…]+$/g) ?? [para];
-        let current = '';
-        const flush = () => { if (current.trim()) out.push(current.trim()); current = ''; };
         for (const raw of sentences) {
             const s = raw.trim();
             if (!s) continue;
-            // 单句太长 → 按逗号再切，保证一屏一行放得下
+            // 单句本身太长 → 按逗号再切（保证一屏一行放得下）；其余**一句就是一句**，不并
             const pieces = Array.from(s).length > maxChars ? splitByComma(s, maxChars) : [s];
-            for (const p of pieces) {
-                if (!current) { current = p; continue; }
-                if (Array.from(current).length + Array.from(p).length <= maxChars) current += p;
-                else { flush(); current = p; }
-            }
+            out.push(...pieces);
         }
-        flush();
     }
     return out.length ? out : [text.trim()];
 }

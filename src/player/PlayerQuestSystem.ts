@@ -775,9 +775,15 @@ export class PlayerQuestSystem {
         //    攻城战没有战场记录，它的旁白写在**事件**上（`ev.briefing`）—— 这里按事件标题回查脚本取出来，
         //    兵团一起步就念（原来只认 `bf.briefing`，攻城战那一场等于没有播报 ✗）。
         const scriptEv = HISTORICAL_EVENT_SCRIPT.find((e) => e.title === ev.title);
+        // 🔴 [2026-09-26 主人「第二段你听听」] **锚点必须从「真正要念的那段文字」里读**：
+        //    野战场（场1/4/7/10/11/14/18/20）的旁白写在**战场记录** `bf.briefing` 上，
+        //    而 `scriptEv.briefing` 是空的 —— 原来这里传的是后者，锚点一个都读不到，
+        //    那几场全退回「起步一口气念完」（按路标分段白做了）。现按 bf 优先、事件兜底。
+        const bfSite = findEventSite(ev.battlefieldId) ?? null;
+        const briefText = (bfSite as any)?.briefing ?? scriptEv?.briefing ?? undefined;
         this.startJourneyBriefing(
-            findEventSite(ev.battlefieldId) ?? null, ev.title, scriptEv?.briefing ?? undefined,
-            this.scriptSegmentStarts(scriptEv ?? null, scriptEv?.briefing ?? undefined),
+            bfSite, ev.title, scriptEv?.briefing ?? undefined,
+            this.scriptSegmentStarts(scriptEv ?? null, briefText),
         );
         if (!continuation) {
             gameLog('expedition',
