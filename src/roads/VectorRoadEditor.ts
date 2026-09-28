@@ -188,6 +188,14 @@ export class VectorRoadEditor implements IEditor {
     private geoAdj: Map<number, GeoEdge[]> = new Map();
     /** 航线网节点 id 集合：城市锚点只许落在陆路节点上，绝不能锚到海里 */
     private seaNodeIds: Set<number> = new Set();
+    /**
+     * 🔴 [2026-09-28 主人「把陆路和海路分开计算」] 海路航线线段的空间索引（0.5° 格子）。
+     *    陆路补桥（端点互连 / 端点接路）一律先问 `crossesSeaLane`：补出来的那一小段横穿航线 = 跨海峡/海湾，不补。
+     *    ⚠️ 它只认「横穿航线」，不是完整的水陆掩膜：没有航线经过的水面（小海湾、湖）挡不住。
+     */
+    private seaLaneSegs: [number, number, number, number][] = [];
+    private seaLaneGrid: Map<string, number[]> = new Map();
+    private static readonly SEA_LANE_CELL = 0.5;
     /** 已接驳的港口城数（状态栏/日志用） */
     private portLinkCount = 0;
     private geoGraphBuilt: boolean = false;
@@ -207,6 +215,12 @@ export class VectorRoadEditor implements IEditor {
     private endCityId: string | null = null;
     private startMarker: L.CircleMarker | null = null;
     private endMarker: L.CircleMarker | null = null;
+    /**
+     * 🔴 [2026-09-28 主人令「请优化」] 途经点：选好起点后，按住 Shift 点地图任意处加一个（途经地不一定有据点）。
+     *    有途经点时，寻路按「起点→途经1→…→终点」逐段各跑一次再拼接；某一段底图寻不通就只那一段用直线。
+     */
+    private viaPoints: Array<{ lat: number; lng: number; marker: L.CircleMarker }> = [];
+    private viaClickHandler: ((e: L.LeafletMouseEvent) => void) | null = null;
 
     // === 编辑层 ===
     private editPolylines: Map<string, L.Polyline> = new Map();
@@ -1101,6 +1115,88 @@ export class VectorRoadEditor implements IEditor {
 
         // 注册城市点击
         this.cityManager.setOnCityClick(this.cityClickHandler);
+
+        // 🔴 [2026-09-28] 途经点：起点选好后，按住 Shift 点地图任意处 → 加一个途经点；终点已选则立即重算
+        if (this.viaClickHandler) this.map.off('click', this.viaClickHandler);
+        this.viaClickHandler = (e: L.LeafletMouseEvent) => {
+            if (!this.visible || !this.startCityId || !e.originalEvent?.shiftKey) return;
+            this.addViaPoint(e.latlng.lat, e.latlng.lng);
+        };
+        this.map.on('click', this.viaClickHandler);
+    }
+
+    private addViaPoint(lat: number, lng: number): void {
+        const idx = this.viaPoints.length + 1;
+        const marker = L.circleMarker([lat, lng], {
+            radius: 8, color: '#ff9100', fillColor: '#ffab40', fillOpacity: 0.9, weight: 3
+        }).addTo(this.map);
+        marker.bindTooltip(`途经${idx}（右键删）`, { permanent: true, direction: 'top' });
+        const via = { lat, lng, marker };
+        marker.on('contextmenu', (ev: L.LeafletMouseEvent) => {
+            L.DomEvent.stopPropagation(ev);
+            this.map.removeLayer(marker);
+            this.viaPoints = this.viaPoints.filter(v => v !== via);
+            this.viaPoints.forEach((v, i) => v.marker.setTooltipContent(`途经${i + 1}（右键删）`));
+            if (this.endCityId) { this.setStatus('⏳ 途经点已删，重新寻路...'); setTimeout(() => this.generatePath(), 50); }
+        });
+        this.viaPoints.push(via);
+        if (this.endCityId) {
+            this.setStatus(`⏳ 已加途经${idx}，重新寻路...`);
+            setTimeout(() => this.generatePath(), 50);
+        } else {
+            this.setStatus(`📍 已加途经${idx} | 继续 Shift+点地图加途经点，或点击终点据点/⚔战场`);
+        }
+    }
+
+    private clearViaPoints(): void {
+        for (const v of this.viaPoints) this.map.removeLayer(v.marker);
+        this.viaPoints = [];
+    }
+
+    /**
+     * 途经点路线：起点→途经1→…→终点 逐段寻路（陆路为主，不走海路）再拼接。
+     * 某一段底图寻不通、或绕得离谱（与 isExtremeDetour 同一口径）→ 只那一段用直线，其余照样贴着底图的路。
+     */
+    private buildViaCandidate(startCity: { lat: number; lng: number }, endCity: { lat: number; lng: number }): RouteCandidate | null {
+        if (!this.viaPoints.length || !this.geoGraphBuilt) return null;
+        const pts = [startCity, ...this.viaPoints.map(v => ({ lat: v.lat, lng: v.lng })), endCity];
+        const coords: [number, number][] = [];
+        const edgeKeys = new Set<string>();
+        let straightLegs = 0;
+        for (let i = 0; i + 1 < pts.length; i++) {
+            const a = pts[i], b = pts[i + 1];
+            const direct = this.haversine(a.lat, a.lng, b.lat, b.lng);
+            const best = this.dijkstraBestAmongNodes(
+                this.findKNearestGeoNodes(a.lat, a.lng, 4),
+                this.findKNearestGeoNodes(b.lat, b.lng, 4),
+                { routePreference: 'land_first' }
+            );
+            let leg: [number, number][];
+            if (best && best.coordinates.length >= 2 && !this.isExtremeDetour(this.calculatePathLength(best.coordinates as [number, number][]), direct)) {
+                leg = best.coordinates as [number, number][];
+                best.edgeKeys.forEach(k => edgeKeys.add(k));
+            } else {
+                leg = [[a.lng, a.lat], [b.lng, b.lat]];
+                straightLegs++;
+            }
+            // 途经点本身也要落在线上：段首接上途经点坐标（第一段由调用方拼起点城）
+            if (i > 0) coords.push([a.lng, a.lat]);
+            for (const c of leg) coords.push(c);
+        }
+        const total = this.calculatePathLength(coords);
+        const directAll = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
+        return {
+            mode: 'prefer_land',
+            label: `📍 途经点路线（${this.viaPoints.length}点${straightLegs ? `·${straightLegs}段直线` : ''}）`,
+            coordinates: coords,
+            totalDistance: total,
+            edgeKeys,
+            isManualStraightLine: false,
+            waterRatio: this.computeWaterRatioFromEdgeKeys(edgeKeys),
+            detourRatio: total / Math.max(1, directAll),
+            variantReason: '途经点',
+            score: Number.MAX_SAFE_INTEGER,
+        };
     }
 
     /** 选起点 / 终点：据点与战场同一条路（战场由编辑器自己的 ⚔ 标记点击进来） */
@@ -1113,7 +1209,7 @@ export class VectorRoadEditor implements IEditor {
                 fillOpacity: 0.8, weight: 3
             }).addTo(this.map);
             this.startMarker.bindTooltip(`起点: ${endpointLabel(ep)}`, { permanent: true, direction: 'top' });
-            this.setStatus(`✅ 起点: ${endpointLabel(ep)} | 请点击第二个据点或 ⚔战场（终点）`);
+            this.setStatus(`✅ 起点: ${endpointLabel(ep)} | 请点击第二个据点或 ⚔战场（终点）· 按住 Shift 点地图可先加途经点`);
         } else if (!this.endCityId) {
             if (ep.id === this.startCityId) return; // 不能选同一端点
             this.endCityId = ep.id;
@@ -1131,6 +1227,8 @@ export class VectorRoadEditor implements IEditor {
     private disableCitySelection(): void {
         // 恢复默认的城市点击（不做任何事）
         this.cityManager.setOnCityClick(() => { });
+        if (this.viaClickHandler) { this.map.off('click', this.viaClickHandler); this.viaClickHandler = null; }
+        this.clearViaPoints();
     }
 
     private clearCitySelection(): void {
@@ -1138,6 +1236,7 @@ export class VectorRoadEditor implements IEditor {
         this.endCityId = null;
         if (this.startMarker) { this.map.removeLayer(this.startMarker); this.startMarker = null; }
         if (this.endMarker) { this.map.removeLayer(this.endMarker); this.endMarker = null; }
+        this.clearViaPoints();
 
         // [FIX] 清空候选路径并隐藏切换按钮
         this.pathCandidates = [];
@@ -1231,6 +1330,9 @@ export class VectorRoadEditor implements IEditor {
             // [2026-05-30] 40 → 80km: 用户反馈 光禄城-头曼城 71km 也算直线
             //              NE 内蒙古/西伯利亚段 真实路网有 50-70km 断口
             //              桥接边权 ×2.5 高惩罚, Dijkstra 优先走真路, 不会乱连
+            // 🔴 [2026-09-28] 断头先接 10km 内任意陆路（卡什那类「一头是端点、另一头是路中间」的口子）。
+            //    必须排在 bridgeEndpointGaps(80) 之前：那一步会给断头加边，加完它就不再是「度=1 的断头」了。
+            this.bridgeEndpointToRoad(10);
             this.bridgeEndpointGaps(80);
             // 水系断口就近连通，「水路为主」才走得通
             this.bridgeWaterGaps(40);
@@ -1258,7 +1360,8 @@ export class VectorRoadEditor implements IEditor {
 
     private buildGraphFromGeoJSON(geojsonRoads: any, geojsonWater?: any, geojsonSea?: any): void {
         const SNAP_TOLERANCE = 0.05; // ~5km 容差 (增大以确保连接)
-        const MAGNETIC_SNAP = 0.08;  // ~8km 强力磁吸容差 (确保并行路合并)
+        this.seaLaneSegs = [];
+        this.seaLaneGrid = new Map();
         const nodeMap: Map<string, number> = new Map();
 
         const snapKey = (lat: number, lng: number): string => {
@@ -1341,6 +1444,7 @@ export class VectorRoadEditor implements IEditor {
                     this.seaNodeIds.add(a);
                     this.seaNodeIds.add(b);
                     addEdge(a, b, [line[i], line[i + 1]], discount, false, true);
+                    this.indexSeaLaneSeg(lng1, lat1, lng2, lat2);
                 }
             };
             for (const f of geojsonSea.features || []) {
@@ -1758,6 +1862,106 @@ export class VectorRoadEditor implements IEditor {
      * 桥接 degree ≤ 4 的节点(地理上是"端点或近端点"的位置), 跳过高密度十字路口
      * 高权重(×2.5)惩罚, Dijkstra 优先走真路
      */
+    /** 把一段海路航线登记进 0.5° 格子索引（供 crossesSeaLane 查） */
+    private indexSeaLaneSeg(lng1: number, lat1: number, lng2: number, lat2: number): void {
+        const C = VectorRoadEditor.SEA_LANE_CELL;
+        const id = this.seaLaneSegs.push([lng1, lat1, lng2, lat2]) - 1;
+        const x0 = Math.floor(Math.min(lng1, lng2) / C), x1 = Math.floor(Math.max(lng1, lng2) / C);
+        const y0 = Math.floor(Math.min(lat1, lat2) / C), y1 = Math.floor(Math.max(lat1, lat2) / C);
+        for (let x = x0; x <= x1; x++) {
+            for (let y = y0; y <= y1; y++) {
+                const k = `${x}_${y}`;
+                let b = this.seaLaneGrid.get(k);
+                if (!b) { b = []; this.seaLaneGrid.set(k, b); }
+                b.push(id);
+            }
+        }
+    }
+
+    /**
+     * 这段直线（陆路补桥）是否横穿海路航线 —— 横穿 = 跨海峡/海湾，陆路不许这么补（渡海必须坐船）。
+     * 离线评估（scratch/_probe_bridge_sea_check.mjs）：卡什断口判陆路、可补；达达尼尔海峡判跨海；
+     * 现有「端点 80km 互连」4677+1198 条里有 1198 条被它拦下（贝尔岛海峡、休伦湖面等）。
+     */
+    private crossesSeaLane(lng1: number, lat1: number, lng2: number, lat2: number): boolean {
+        if (this.seaLaneSegs.length === 0) return false;
+        const C = VectorRoadEditor.SEA_LANE_CELL;
+        const x0 = Math.floor(Math.min(lng1, lng2) / C), x1 = Math.floor(Math.max(lng1, lng2) / C);
+        const y0 = Math.floor(Math.min(lat1, lat2) / C), y1 = Math.floor(Math.max(lat1, lat2) / C);
+        const side = (px: number, py: number, qx: number, qy: number, rx: number, ry: number) =>
+            Math.sign((qx - px) * (ry - py) - (qy - py) * (rx - px));
+        const seen = new Set<number>();
+        for (let x = x0; x <= x1; x++) {
+            for (let y = y0; y <= y1; y++) {
+                for (const id of this.seaLaneGrid.get(`${x}_${y}`) ?? []) {
+                    if (seen.has(id)) continue;
+                    seen.add(id);
+                    const [cx, cy, dx, dy] = this.seaLaneSegs[id];
+                    if (side(lng1, lat1, lng2, lat2, cx, cy) !== side(lng1, lat1, lng2, lat2, dx, dy)
+                        && side(cx, cy, dx, dy, lng1, lat1) !== side(cx, cy, dx, dy, lng2, lat2)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 🔴 [2026-09-28 主人「请修复」] 断头端点接到 maxKm 内最近的**任意**陆路节点（不止端点对端点）。
+     *    病例：吕基亚沿海路在卡什断开 8.5km —— 西段 #4137 的尽头是断头，东段两条路共用的起点度数为 2、
+     *    不算端点，于是 bridgeEndpointGaps（只连端点对端点）永远补不上，哈利卡纳苏斯→佩尔格只能绕内陆。
+     *    规矩：只连陆路节点；横穿海路航线不补；跳过自己这条路上 30 步以内的点（免得接回自己）；权重 ×1.5。
+     */
+    private bridgeEndpointToRoad(maxKm: number): void {
+        const CELL = 0.1;
+        const grid = new Map<string, number[]>();
+        for (const n of this.geoNodes) {
+            if (this.seaNodeIds.has(n.id)) continue;
+            const k = `${Math.floor(n.lng / CELL)}_${Math.floor(n.lat / CELL)}`;
+            let b = grid.get(k);
+            if (!b) { b = []; grid.set(k, b); }
+            b.push(n.id);
+        }
+        const nearOnOwnRoad = (from: number): Set<number> => {
+            const seen = new Set<number>([from]);
+            let frontier = [from];
+            for (let step = 0; step < 30 && frontier.length; step++) {
+                const next: number[] = [];
+                for (const u of frontier) for (const e of this.geoAdj.get(u) ?? []) if (!seen.has(e.to)) { seen.add(e.to); next.push(e.to); }
+                frontier = next;
+            }
+            return seen;
+        };
+        const rings = Math.ceil(maxKm / 11);
+        let bridged = 0, seaRejected = 0;
+        for (const node of this.geoNodes) {
+            if (this.seaNodeIds.has(node.id)) continue;
+            const adj = this.geoAdj.get(node.id);
+            if (!adj || adj.length !== 1) continue;
+            const own = nearOnOwnRoad(node.id);
+            const cx = Math.floor(node.lng / CELL), cy = Math.floor(node.lat / CELL);
+            let best: { id: number; d: number } | null = null;
+            for (let dx = -rings; dx <= rings; dx++) {
+                for (let dy = -rings; dy <= rings; dy++) {
+                    for (const oid of grid.get(`${cx + dx}_${cy + dy}`) ?? []) {
+                        if (own.has(oid)) continue;
+                        const o = this.geoNodes[oid];
+                        const d = this.haversine(node.lat, node.lng, o.lat, o.lng);
+                        if (d <= maxKm && (!best || d < best.d)) best = { id: oid, d };
+                    }
+                }
+            }
+            if (!best) continue;
+            const o = this.geoNodes[best.id];
+            if (this.crossesSeaLane(node.lng, node.lat, o.lng, o.lat)) { seaRejected++; continue; }
+            const coords: [number, number][] = [[node.lng, node.lat], [o.lng, o.lat]];
+            const weight = best.d * 1.5;
+            this.geoAdj.get(node.id)!.push({ from: node.id, to: best.id, weight, coords });
+            this.geoAdj.get(best.id)!.push({ from: best.id, to: node.id, weight, coords: [coords[1], coords[0]] });
+            bridged++;
+        }
+        console.log(`🔗 [EndpointToRoad] 断头接路 ${bridged} 条（≤${maxKm}km），横穿海路不补 ${seaRejected} 条`);
+    }
+
     private bridgeEndpointGaps(maxDistKm: number): void {
         // 桥接候选: degree === 1 的真实端点 (死胡同/断头路)
         const endpoints: number[] = [];
@@ -1801,7 +2005,8 @@ export class VectorRoadEditor implements IEditor {
                         if (bridgedPairs.has(pairKey(id, otherId))) continue;
                         const other = this.geoNodes[otherId];
                         const d = this.haversine(node.lat, node.lng, other.lat, other.lng);
-                        if (d <= maxDistKm) {
+                        // 🔴 [2026-09-28 陆海分开] 横穿海路航线的不当陆路补（渡海必须坐船）
+                        if (d <= maxDistKm && !this.crossesSeaLane(node.lng, node.lat, other.lng, other.lat)) {
                             candidates.push({id: otherId, dist: d});
                         }
                     }
@@ -1870,7 +2075,10 @@ export class VectorRoadEditor implements IEditor {
         let bestPath: RouteCandidate | null = null;
         let bestIdx = 0;
         let bestLen = Infinity;
-        for (let i = 0; i < candidatesList.length; i++) {
+        // 🔴 [2026-09-28] 用户点了途经点 → 就用途经点路线，不再按「最短」挑
+        const viaIdx = candidatesList.findIndex(c => c.variantReason === '途经点');
+        if (viaIdx >= 0) { bestPath = candidatesList[viaIdx]; bestIdx = viaIdx; bestLen = -1; }
+        for (let i = 0; i < candidatesList.length && viaIdx < 0; i++) {
             const candidate = candidatesList[i];
             if (candidate.isManualStraightLine) continue;
             const len = candidate.totalDistance || this.calculatePathLength(candidate.coordinates);
@@ -2613,6 +2821,8 @@ export class VectorRoadEditor implements IEditor {
 
         polyline.on('click', (e: L.LeafletMouseEvent) => {
             L.DomEvent.stopPropagation(e);
+            // 🔴 [2026-09-28] 正在连路（已选起点）时 Shift+点到已有道路上 = 加途经点，不是选中这条路
+            if (this.startCityId && e.originalEvent?.shiftKey) { this.addViaPoint(e.latlng.lat, e.latlng.lng); return; }
             this.selectRoad(roadId);
             const roadName = VECTOR_ROAD_DATA.features.find(f => f.properties.id === roadId)?.properties.name || roadId;
             this.setStatus('selected: ' + roadName);
@@ -3050,6 +3260,9 @@ export class VectorRoadEditor implements IEditor {
         }
 
         const finalList = merged.slice(0, VectorRoadEditor.MAX_ROUTE_CANDIDATES);
+        // 🔴 [2026-09-28] 有途经点：途经点路线排第一（其余候选仍在 🔀 切换路径里）
+        const via = this.buildViaCandidate(startCity, endCity);
+        if (via) finalList.unshift(via);
         // 直线始终保底：若被 slice 切掉，替换最后一位
         if (straight && !finalList.some(c => c.mode === 'straight')) {
             finalList[finalList.length - 1] = straight;
