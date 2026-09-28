@@ -104,12 +104,14 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 🔴 [2026-09-25 主人定「线都是连接据点的，不能横跨，必须经过重要的据点」] 故本场路标写索非亚：
             //    军团走 上一场落点（黑穆斯山战场）→ 索非亚 → 佩利昂，即经阿格里安人之地—派奥尼亚—林基斯蒂斯那条史料道。
             //    索非亚在前335 按「据点名首次出现」口径不上图，但**不显示≠不存在**，当路标合规。
-            marchWaypoints: ['city_delusitaer', 'city_bucharest', 'city_sofia'],   // 🔴 [2026-09-25 主人「既然有据点，那么就添加个途径点」] 线北到多瑙河：德鲁斯塔尔（多瑙河畔锡利斯特拉）→ 布加勒斯特（北岸·渡河击盖塔人）→ 再折返西南经索非亚（阿格里安人之地／派奥尼亚）进兵佩利昂；实测全程 1247 公里，每腿都在闸内。
+            // 🔴 95条路线清单段2核定：⚔海姆斯山 -> 德鲁斯塔尔 -> 特尔诺沃 -> 索非亚 -> 佩拉 -> 佩利昂
+            marchWaypoints: ['city_delusitaer', 'city_teernuowo', 'city_sofia', 'city_salonica'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
             attackerSourceCityId: 'city_plovdiv',   // 出兵据点＝军团此刻在哪：上一场海姆斯山战场，取那年离战场最近且已存在的据点（塞乌托波利前330 年才建）
             attackerLegionName: '马其顿军',
+            defenderFactionId: 'dasaleiti',
             defenderGeneralId: 'dasaleiti_kleitos',
             defenderTroops: 7000,
             defenderCityId: 'city_peiliang',
@@ -121,7 +123,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为骑马、披斗篷的巴尔干贵族骑将（按样貌选，与名字同为「克雷图斯」纯属巧合）
         foeCommanderUnit: 'hero_cleitus',
-        briefing: '击碎色雷斯车垒后，大军挥师向北穿越群山，击退特里巴利人，一路追至多瑙河畔。\n\n【德鲁斯塔尔】亚历山大以皮筏夜渡多瑙河，惊退格泰人；正待休整，突闻伊利里亚人夺占佩利昂要塞，全军火速折返。\n\n【特尔诺沃】大军掉头西南，翻越险隘穿越峡谷，疾进阿格里安盟军所在的索非亚盆地。\n\n【索非亚】阿格里安盟军稳住后方，马其顿精锐日夜兼程穿过派奥尼亚群山，迂回抢回国门通道。\n\n【佩拉】全军直扑察贡山口，赶在两路叛军合围之前，兵临佩利昂城下。',
+        briefing: '击溃色雷斯车垒后，大军乘胜挥师北上穿过崇山峻岭，进入特里巴利人腹地，在莱吉努斯河畔再破敌军；特里巴利首领退守多瑙河心岛屿，亚历山大自拜占庭调集船只迎战，大军一路追击直抵多瑙河畔。\n\n【德鲁斯塔尔】亚历山大令将士以兽皮帐幕充填干草制成皮筏，连夜强渡多瑙河天险，神兵天降般击溃对岸集结的盖泰骑兵；正当北境诸部慑服之际，西方急报突至，伊利里亚王克莱图斯攻占佩利昂要塞，全军火速掉头折返特尔诺沃。\n\n【特尔诺沃】大军调转兵锋西南疾驰，翻越险阻隘口，穿越蜿蜒峡谷，疾进阿格里安盟友朗加罗斯的领地；阿格里安山民勇士闻讯赶来会师，誓死护卫马其顿军后方。\n\n【索非亚】阿格里安盟友出兵稳住西北侧翼，亚历山大亲率伙伴骑兵与马其顿方阵日夜兼程，风驰电掣般穿过派奥尼亚重峦叠嶂；大军沿途换马急行，以难以置信的行军速度，抢在叛军察觉之前迂回夺回马其顿通往西方的要道。\n\n【佩拉】全军自都城直扑察贡山口，赶在陶兰提援军合围之前，兵临险要的佩利昂城下；亚历山大诱敌出城，趁夜发起雷霆突袭。',
         inviteText: '朋友，多瑙河那边的仗才打完，西边就出了事：伊利里亚王克莱图斯占了佩利昂，陶兰提人的格劳基亚斯也要来帮克莱图斯。那座要塞扼着伊利里亚进马其顿的山口，丢了它，我的西大门就敞开了，南下希腊的路也会被截断。我们得赶在克莱图斯与格劳基亚斯合兵之前到城下。跟我走。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Siege of Pelium：公元前335年亚历山大攻伊利里亚人所据的佩利昂要塞，攻城战；克莱图斯焚城而逃，要塞入马其顿之手。' },
@@ -156,6 +158,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 33000,
             attackerSourceCityId: 'city_peiliang',   // 出兵据点＝军团此刻在哪：上一场佩利昂攻城，就在那座城
             attackerLegionName: '马其顿军',
+            defenderFactionId: 'boootiya',
             defenderGeneralId: 'dibisi_phoinix',
             defenderTroops: 15000,
             defenderCityId: 'city_thebes',
@@ -167,7 +170,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         commanderUnit: 'hero_mounted_alexander',
         // 对手主将队：素材样貌为持圆盾长矛的希腊重装步兵将领（底比斯守城主将为重装步兵统领）
         foeCommanderUnit: 'hero_brasidas',
-        briefing: '佩利昂克定，西北边患已平；南方却谣传亚历山大战死，底比斯率先起兵围困卫城。\n\n【佩拉】亚历山大亲率精锐日夜疾驰，十四天狂飙三百里，如天降神兵越过温泉关，希腊各邦震恐失色。\n\n【德尔斐】大军压境底比斯城下；此战底定希腊，东征波斯大门自此洞开！\n\n【底比斯】城破夷平，希腊诸邦震恐谢罪；亚历山大率全军班师佩拉过冬，休整兵员置办器械，誓师筹谋开春东征。',
+        briefing: '佩利昂城下大捷，克莱图斯焚城遁逃，西北边陲重归安定；边患平定之后，亚历山大率大军回师都城佩拉休整，准备南下巡视希腊诸邦。\n\n【佩拉】南方骤起惊天谣言，误传亚历山大在西北深山负伤阵亡；底比斯流亡者趁机潜回城中举兵反叛，围困卫城卡德米亚守军。亚历山大闻讯亲率精锐日夜兼程急进，越过坦佩谷，如天降神兵般突破温泉关天险，直逼德尔斐，全希腊各邦震恐失色。\n\n【德尔斐】大军顺维奥蒂亚大道压境底比斯城下，底比斯人拒降死战，希腊命运在此一役。',
         inviteText: '朋友，希腊那边都当我死在佩利昂了。底比斯人把卡德米亚的守军围了，雅典人在背后给底比斯人送兵器，大流士的金子也到了。只要底比斯这一城站得住，整个希腊都会跟着反。我们现在就南下，趁底比斯人还没回过神来，出现在底比斯城下。',
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Battle of Thebes：公元前335年亚历山大攻底比斯，战于城外与城中，攻城战；城破后被夷平。' },
