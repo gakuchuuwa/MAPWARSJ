@@ -1433,6 +1433,7 @@ export class PlayerQuestSystem {
         if (this.briefedBattlefields.has(key)) return;
         this.briefedBattlefields.add(key);
         // 🔴 [2026-09-26 主人令] 记下本场终点：最后一段的旁白没念完时，军团在它前面驻足等（见 settleBriefingHold）
+        this.journeyEndPos = endPos ? { lat: endPos.lat, lng: endPos.lng } : null;
 
         const paragraphs = journeyBriefingParagraphs(text);
         if (!paragraphs.length) return;
@@ -1532,7 +1533,10 @@ export class PlayerQuestSystem {
                         else { i = next; pushNext(); }
                         return;
                     }
-                    if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
+                    if (this.briefingBounds.length) {
+                        this.flushBriefingTrace(key, 'done');
+                        return;
+                    }
                     pushNext();
                 };
                 speakNextSentence();
@@ -1546,7 +1550,10 @@ export class PlayerQuestSystem {
                     this.briefingBusy = false;
                     if (!journeyAlive()) { this.flushBriefingTrace(key, 'aborted'); this.clearJourneyBriefing(); return; }
                     if (next !== null) { i = next; pushNext(); return; }
-                    if (this.briefingBounds.length) { this.flushBriefingTrace(key, 'done'); return; }
+                    if (this.briefingBounds.length) {
+                        this.flushBriefingTrace(key, 'done');
+                        return;
+                    }
                     pushNext();
                 }, duration);
             }
@@ -1609,8 +1616,14 @@ export class PlayerQuestSystem {
         if (getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111 > 15) return;
         this.briefingBoundCursor++;
         const idx = this.briefingBoundCursor;   // 边界 k → 第 k 段的旁白（第 0 段起步时已念）
-        if (this.briefingBusy) { this.briefingPending = idx; this.briefingHoldArmed = true; }
-        else this.briefingAdvance?.(idx);
+        if (this.briefingBusy) {
+            this.briefingPending = idx;
+            this.briefingHoldArmed = true;
+            host.setMarchHold(true);
+            this.briefingHold = true;
+        } else {
+            this.briefingAdvance?.(idx);
+        }
         gameLog('expedition', `[玩家] 一段一条播报：走到第 ${idx + 1} 段的起点【${b.name}】，念这一段的旁白`);
     }
 
@@ -1716,6 +1729,7 @@ export class PlayerQuestSystem {
         this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
         this.releaseBriefingHold();         // 🔴 这一趟播报结束 → 松闸，别把军团钉在点上
         this.pendingAfterHold = null;
+        this.journeyEndPos = null;
         if (this.briefingTimer !== null) {
             window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
@@ -1894,7 +1908,10 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-26 主人报障「卡这不动了」] **只等「当前这一句」**，不等排队的那一句：
         //    否则军团会站在原地把「当前段 + 排队的下一段」一起听完（实测能站二三十秒，看着就是卡死）。
         const speaking = this.briefingBusy;
-        if (!speaking) { this.releaseBriefingHold(); return; }
+        if (!speaking) {
+            this.releaseBriefingHold();
+            return;
+        }
         let near = this.briefingHoldArmed;
         if (!near && this.journeyEndPos) {
             if (getEuclideanDistance(host.getPosition(), this.journeyEndPos) * 111 <= BRIEFING_HOLD_END_KM) near = true;
