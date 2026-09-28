@@ -160,26 +160,991 @@ export interface ScriptRoadSegment {
 }
 
 export const SCRIPT_ROAD_SEGMENTS: ScriptRoadSegment[] = [
-    { id: "段1", part: 1, partName: "巴尔干平叛与希腊整合", scene: 1, title: "海姆斯山战役", year: -335, season: 0, type: "野战", from: "佩拉", to: "⚔海姆斯山", km: 447, words: 78, roads: [{ from: "佩拉", to: "普罗夫迪夫", road: "佩拉-普罗夫迪夫", km: 321, words: 59 }, { from: "普罗夫迪夫", to: "塞乌托波利", road: "普罗夫迪夫-塞乌托波利", km: 126, words: 19 }] },
-    { id: "段2", part: 1, partName: "巴尔干平叛与希腊整合", scene: 2, title: "佩利昂战役", year: -335, season: 1, type: "攻城战", from: "⚔海姆斯山", to: "佩利昂", km: 1231, words: 219, roads: [{ from: "⚔海姆斯山", to: "德鲁斯塔尔", road: "⚔海姆斯山-德鲁斯塔尔", km: 261, words: 47 }, { from: "德鲁斯塔尔", to: "特尔诺沃", road: "德鲁斯塔尔-特尔诺沃", km: 301, words: 55 }, { from: "特尔诺沃", to: "索非亚", road: "特尔诺沃-索非亚", km: 206, words: 35 }, { from: "索非亚", to: "佩拉", road: "索非亚-佩拉", km: 295, words: 54 }, { from: "佩拉", to: "佩利昂", road: "佩拉-佩利昂", km: 168, words: 28 }] },
-    { id: "段3", part: 1, partName: "巴尔干平叛与希腊整合", scene: 3, title: "底比斯战役", year: -335, season: 2, type: "攻城战", from: "佩利昂", to: "佩拉", km: 1008, words: 104, roads: [{ from: "佩利昂", to: "佩拉", road: "佩利昂-佩拉", km: 168, words: 28 }, { from: "佩拉", to: "德尔斐", road: "佩拉-德尔斐", km: 347, words: 64 }, { from: "德尔斐", to: "底比斯", road: "德尔斐-底比斯", km: 73, words: 12 }, { from: "底比斯", to: "佩拉", road: "底比斯-佩拉", km: 420, words: 0 }] },
-    { id: "段4", part: 2, partName: "小亚细亚破门与封锁海岸", scene: 4, title: "格拉尼库斯河战役", year: -334, season: 0, type: "野战", from: "佩拉", to: "格拉尼库斯", km: 627, words: 210, roads: [{ from: "佩拉", to: "安菲波利斯", road: "佩拉-安菲波利斯", km: 121, words: 41 }, { from: "安菲波利斯", to: "鲁西翁", road: "安菲波利斯-鲁西翁", km: 263, words: 88 }, { from: "鲁西翁", to: "羊河", road: "鲁西翁-羊河", km: 70, words: 23 }, { from: "羊河", to: "特洛伊", road: "羊河—特洛伊", km: 65, words: 22 }, { from: "特洛伊", to: "格拉尼库斯", road: "特洛伊-格拉尼库斯", km: 108, words: 36 }] },
-    { id: "段5", part: 2, partName: "小亚细亚破门与封锁海岸", scene: 5, title: "米利都战役", year: -334, season: 1, type: "攻城战", from: "格拉尼库斯", to: "米利都", km: 445, words: 149, roads: [{ from: "格拉尼库斯", to: "斯法尔德", road: "格拉尼库斯-萨第斯", km: 242, words: 81 }, { from: "斯法尔德", to: "以弗所", road: "斯法尔德-以弗所", km: 137, words: 46 }, { from: "以弗所", to: "米利都", road: "以弗所-米利都", km: 66, words: 22 }] },
-    { id: "段6", part: 2, partName: "小亚细亚破门与封锁海岸", scene: 6, title: "哈利卡纳苏斯战役", year: -334, season: 2, type: "攻城战", from: "米利都", to: "哈利卡纳苏斯", km: 94, words: 31, roads: [{ from: "米利都", to: "哈利卡纳苏斯", road: "米利都-哈利卡纳苏斯", km: 94, words: 31 }] },
-    { id: "段7", part: 2, partName: "小亚细亚破门与封锁海岸", scene: 7, title: "伊苏斯战役", year: -333, season: 2, type: "野战", from: "哈利卡纳苏斯", to: "⚔伊苏斯", km: 1519, words: 511, roads: [{ from: "哈利卡纳苏斯", to: "戈尔迪乌姆", road: "哈利卡纳苏斯-戈尔迪乌姆", km: 854, words: 287 }, { from: "戈尔迪乌姆", to: "安卡拉", road: "安卡拉-戈尔迪乌姆", km: 97, words: 33 }, { from: "安卡拉", to: "提亚纳", road: "提亚纳-安卡拉", km: 311, words: 105 }, { from: "提亚纳", to: "阿达纳", road: "提亚纳-阿达纳", km: 152, words: 51 }, { from: "阿达纳", to: "⚔伊苏斯", road: "⚔伊苏斯-阿达纳", km: 105, words: 35 }] },
-    { id: "段8", part: 3, partName: "黎凡特与埃及走廊", scene: 8, title: "推罗战役", year: -332, season: 0, type: "攻城战", from: "⚔伊苏斯", to: "推罗", km: 436, words: 146, roads: [{ from: "⚔伊苏斯", to: "安提俄基亚", road: "⚔伊苏斯-安提俄基亚", km: 64, words: 21 }, { from: "安提俄基亚", to: "拉塔基亚", road: "安提俄基亚-拉塔基亚", km: 87, words: 29 }, { from: "拉塔基亚", to: "推罗", road: "推罗-拉塔基亚", km: 285, words: 96 }] },
-    { id: "段9", part: 3, partName: "黎凡特与埃及走廊", scene: 9, title: "加沙战役", year: -332, season: 2, type: "攻城战", from: "推罗", to: "加沙", km: 214, words: 72, roads: [{ from: "推罗", to: "阿卡", road: "推罗-阿卡", km: 41, words: 14 }, { from: "阿卡", to: "加沙", road: "阿卡-加沙", km: 173, words: 58 }] },
-    { id: "段10", part: 3, partName: "黎凡特与埃及走廊", scene: 10, title: "高加米拉战役", year: -331, season: 2, type: "野战", from: "加沙", to: "⚔高加米拉", km: 3860, words: 1297, roads: [{ from: "加沙", to: "佩鲁西姆", road: "加沙-佩鲁西姆", km: 204, words: 69 }, { from: "佩鲁西姆", to: "阿瓦里斯", road: "阿瓦里斯-佩鲁西姆", km: 92, words: 31 }, { from: "阿瓦里斯", to: "孟菲斯", road: "孟菲斯-阿瓦里斯", km: 131, words: 44 }, { from: "孟菲斯", to: "亚历山大", road: "亚历山大-孟菲斯", km: 233, words: 78 }, { from: "亚历山大", to: "马特鲁港", road: "亚历山大-马特鲁港", km: 284, words: 95 }, { from: "马特鲁港", to: "锡瓦绿洲", road: "锡瓦绿洲-马特鲁港", km: 301, words: 101 }, { from: "锡瓦绿洲", to: "孟菲斯", road: "锡瓦绿洲-孟菲斯", km: 693, words: 233 }, { from: "孟菲斯", to: "阿瓦里斯", road: "孟菲斯-阿瓦里斯", km: 131, words: 44 }, { from: "阿瓦里斯", to: "佩鲁西姆", road: "阿瓦里斯-佩鲁西姆", km: 92, words: 31 }, { from: "佩鲁西姆", to: "加沙", road: "加沙-佩鲁西姆", km: 204, words: 69 }, { from: "加沙", to: "阿卡", road: "阿卡-加沙", km: 173, words: 58 }, { from: "阿卡", to: "推罗", road: "推罗-阿卡", km: 41, words: 14 }, { from: "推罗", to: "大马士革", road: "推罗-大马士革", km: 150, words: 50 }, { from: "大马士革", to: "塔德莫尔", road: "大马士革-塔德莫尔", km: 269, words: 90 }, { from: "塔德莫尔", to: "塔普萨库斯", road: "塔普萨库斯-塔德莫尔", km: 199, words: 67 }, { from: "塔普萨库斯", to: "埃德萨", road: "塔普萨库斯-埃德萨", km: 195, words: 66 }, { from: "埃德萨", to: "尼西比斯", road: "埃德萨-尼西比斯", km: 222, words: 75 }, { from: "尼西比斯", to: "尼尼微", road: "尼尼微-尼西比斯", km: 195, words: 65 }, { from: "尼尼微", to: "⚔高加米拉", road: "⚔高加米拉-尼尼微", km: 51, words: 17 }] },
-    { id: "段11", part: 4, partName: "波斯帝国心脏", scene: 11, title: "乌克西亚隘口战役", year: -331, season: 3, type: "野战", from: "⚔高加米拉", to: "⚔乌克西亚隘口", km: 1165, words: 390, roads: [{ from: "⚔高加米拉", to: "阿尔贝拉", road: "⚔高加米拉-阿尔贝拉", km: 81, words: 27 }, { from: "阿尔贝拉", to: "亚述城", road: "阿尔贝拉-亚述城", km: 119, words: 40 }, { from: "亚述城", to: "萨迈拉", road: "亚述城-萨迈拉", km: 159, words: 53 }, { from: "萨迈拉", to: "巴格达", road: "萨迈拉-巴格达", km: 136, words: 46 }, { from: "巴格达", to: "巴比伦", road: "巴格达-巴比伦", km: 88, words: 29 }, { from: "巴比伦", to: "苏萨", road: "巴比伦-苏萨", km: 480, words: 161 }, { from: "苏萨", to: "⚔乌克西亚隘口", road: "苏萨-⚔乌克西亚隘口", km: 102, words: 34 }] },
-    { id: "段12", part: 4, partName: "波斯帝国心脏", scene: 12, title: "波斯门战役", year: -330, season: 0, type: "野战", from: "⚔乌克西亚隘口", to: "⚔波斯门", km: 417, words: 140, roads: [{ from: "⚔乌克西亚隘口", to: "⚔波斯门", road: "⚔乌克西亚隘口-⚔波斯门", km: 417, words: 140 }] },
-    { id: "段13", part: 4, partName: "波斯帝国心脏", scene: 13, title: "亚历山大东征居鲁士城战役", year: -329, season: 1, type: "攻城战", from: "⚔波斯门", to: "居鲁士城", km: 5083, words: 1707, roads: [{ from: "⚔波斯门", to: "波斯波利斯", road: "⚔波斯门-波斯波利斯", km: 177, words: 60 }, { from: "波斯波利斯", to: "伊斯法罕", road: "伊斯法罕-波斯波利斯", km: 396, words: 133 }, { from: "伊斯法罕", to: "古尔帕耶甘", road: "古尔帕耶甘-伊斯法罕", km: 173, words: 58 }, { from: "古尔帕耶甘", to: "哈马丹", road: "哈马丹-古尔帕耶甘", km: 406, words: 136 }, { from: "哈马丹", to: "雷伊", road: "哈马丹-雷伊", km: 315, words: 106 }, { from: "雷伊", to: "里海门", road: "雷伊-里海门", km: 99, words: 33 }, { from: "里海门", to: "达姆甘", road: "里海门-达姆甘", km: 217, words: 73 }, { from: "达姆甘", to: "白哈格", road: "白哈格-达姆甘", km: 310, words: 104 }, { from: "白哈格", to: "尼沙布尔", road: "尼沙布尔-白哈格", km: 110, words: 37 }, { from: "尼沙布尔", to: "图斯", road: "尼沙布尔-图斯", km: 112, words: 38 }, { from: "图斯", to: "泰巴德", road: "图斯-泰巴德", km: 233, words: 78 }, { from: "泰巴德", to: "赫拉特", road: "赫拉特-泰巴德", km: 143, words: 48 }, { from: "赫拉特", to: "法拉", road: "赫拉特-法拉", km: 249, words: 84 }, { from: "法拉", to: "博斯特", road: "博斯特-法拉", km: 259, words: 87 }, { from: "博斯特", to: "坎大哈", road: "坎大哈-博斯特", km: 139, words: 47 }, { from: "坎大哈", to: "哥疾宁", road: "哥疾宁-坎大哈", km: 342, words: 115 }, { from: "哥疾宁", to: "喀布尔", road: "哥疾宁-迦毕试", km: 139, words: 47 }, { from: "喀布尔", to: "德拉普萨卡", road: "喀布尔-德拉普萨卡", km: 309, words: 104 }, { from: "德拉普萨卡", to: "蓝氏城", road: "阿缓-蓝氏城", km: 168, words: 56 }, { from: "蓝氏城", to: "诺塔卡", road: "蓝氏城-诺塔卡", km: 430, words: 144 }, { from: "诺塔卡", to: "撒马尔罕", road: "诺塔卡-撒马尔罕", km: 137, words: 46 }, { from: "撒马尔罕", to: "吉扎克", road: "吉扎克-撒马尔罕", km: 93, words: 31 }, { from: "吉扎克", to: "居鲁士城", road: "吉扎克-居鲁士城", km: 127, words: 42 }] },
-    { id: "段14", part: 5, partName: "中亚与粟特平叛", scene: 14, title: "亚历山大东征锡尔河战役", year: -329, season: 2, type: "野战", from: "居鲁士城", to: "忽毡", km: 68, words: 23, roads: [{ from: "居鲁士城", to: "忽毡", road: "居鲁士城-忽毡", km: 68, words: 23 }] },
-    { id: "段15", part: 5, partName: "中亚与粟特平叛", scene: 15, title: "亚历山大东征索格狄亚那岩战役", year: -327, season: 0, type: "攻城战", from: "忽毡", to: "索格狄亚那岩", km: 23, words: 10, roads: [{ from: "忽毡", to: "索格狄亚那岩", road: "忽毡-索格狄亚那岩", km: 23, words: 10 }] },
-    { id: "段16", part: 5, partName: "中亚与粟特平叛", scene: 16, title: "亚历山大东征马萨加战役", year: -327, season: 2, type: "攻城战", from: "索格狄亚那岩", to: "马萨加", km: 1709, words: 574, roads: [{ from: "索格狄亚那岩", to: "撒马尔罕", road: "索格狄亚那岩-撒马尔罕", km: 316, words: 106 }, { from: "撒马尔罕", to: "诺塔卡", road: "撒马尔罕-诺塔卡", km: 137, words: 46 }, { from: "诺塔卡", to: "蓝氏城", road: "诺塔卡-蓝氏城", km: 430, words: 144 }, { from: "蓝氏城", to: "巴米扬", road: "蓝氏城-巴米扬", km: 352, words: 118 }, { from: "巴米扬", to: "喀布尔", road: "梵衍那-迦毕试", km: 144, words: 48 }, { from: "喀布尔", to: "难揭", road: "迦毕试-顶骨城", km: 121, words: 41 }, { from: "难揭", to: "马萨加", road: "顶骨城-马萨加", km: 210, words: 71 }] },
-    { id: "段17", part: 6, partName: "印度远征与班师", scene: 17, title: "亚历山大东征奥诺斯岩战役", year: -326, season: 0, type: "攻城战", from: "马萨加", to: "奥诺斯岩", km: 326, words: 109, roads: [{ from: "马萨加", to: "白沙瓦", road: "马萨加-白沙瓦", km: 96, words: 32 }, { from: "白沙瓦", to: "阿托克", road: "白沙瓦-阿托克", km: 92, words: 31 }, { from: "阿托克", to: "奥诺斯岩", road: "奥诺斯岩-阿托克", km: 138, words: 46 }] },
-    { id: "段18", part: 6, partName: "印度远征与班师", scene: 18, title: "亚历山大东征海达斯佩斯河战役", year: -326, season: 1, type: "野战", from: "奥诺斯岩", to: "⚔海达斯佩斯河", km: 326, words: 109, roads: [{ from: "奥诺斯岩", to: "阿托克", road: "奥诺斯岩-阿托克", km: 138, words: 46 }, { from: "阿托克", to: "⚔海达斯佩斯河", road: "阿托克-⚔海达斯佩斯河", km: 188, words: 63 }] },
-    { id: "段19", part: 6, partName: "印度远征与班师", scene: 19, title: "亚历山大东征马里斯战役", year: -325, season: 0, type: "攻城战", from: "⚔海达斯佩斯河", to: "马里斯", km: 401, words: 135, roads: [{ from: "蒙格", to: "马里斯", road: "蒙格-马里斯", km: 401, words: 135 }] },
-    { id: "段20", part: 6, partName: "印度远征与班师", scene: 20, title: "亚历山大东征科塞亚战役", year: -324, season: 3, type: "野战", from: "马里斯", to: "⚔科塞亚", km: 4460, words: 1497, roads: [{ from: "马里斯", to: "坎大哈", road: "马里斯-坎大哈", km: 668, words: 224 }, { from: "坎大哈", to: "博斯特", road: "坎大哈-博斯特", km: 139, words: 47 }, { from: "博斯特", to: "法拉", road: "博斯特-法拉", km: 259, words: 87 }, { from: "法拉", to: "巴姆", road: "巴姆古城-法拉", km: 695, words: 233 }, { from: "巴姆", to: "卡曼尼亚", road: "巴姆-卡曼尼亚", km: 99, words: 33 }, { from: "卡曼尼亚", to: "锡尔詹", road: "卡曼尼亚-锡尔詹", km: 258, words: 87 }, { from: "锡尔詹", to: "波斯波利斯", road: "锡尔詹-波斯波利斯", km: 334, words: 112 }, { from: "波斯波利斯", to: "⚔波斯门", road: "⚔波斯门-波斯波利斯", km: 177, words: 60 }, { from: "⚔波斯门", to: "⚔乌克西亚隘口", road: "⚔乌克西亚隘口-⚔波斯门", km: 417, words: 140 }, { from: "⚔乌克西亚隘口", to: "苏萨", road: "苏萨-⚔乌克西亚隘口", km: 102, words: 34 }, { from: "苏萨", to: "巴比伦", road: "巴比伦-苏萨", km: 480, words: 161 }, { from: "巴比伦", to: "巴格达", road: "巴格达-巴比伦", km: 88, words: 29 }, { from: "巴格达", to: "呼勒万", road: "巴格达-呼勒万", km: 218, words: 73 }, { from: "呼勒万", to: "哈马丹", road: "呼勒万-哈马丹", km: 297, words: 100 }, { from: "哈马丹", to: "⚔科塞亚", road: "哈马丹-⚔科塞亚", km: 229, words: 77 }] },
+    {
+        "id": "段1",
+        "part": 1,
+        "partName": "巴尔干平叛与希腊整合",
+        "scene": 1,
+        "title": "海姆斯山战役",
+        "year": -335,
+        "season": 0,
+        "type": "野战",
+        "from": "佩拉",
+        "to": "⚔海姆斯山",
+        "km": 447,
+        "words": 150,
+        "roads": [
+            {
+                "from": "佩拉",
+                "to": "普罗夫迪夫",
+                "road": "佩拉-普罗夫迪夫",
+                "km": 321,
+                "words": 108
+            },
+            {
+                "from": "普罗夫迪夫",
+                "to": "⚔海姆斯山",
+                "road": "普罗夫迪夫-⚔海姆斯山",
+                "km": 126,
+                "words": 42
+            }
+        ]
+    },
+    {
+        "id": "段2",
+        "part": 1,
+        "partName": "巴尔干平叛与希腊整合",
+        "scene": 2,
+        "title": "佩利昂战役",
+        "year": -335,
+        "season": 1,
+        "type": "攻城战",
+        "from": "⚔海姆斯山",
+        "to": "佩利昂",
+        "km": 1231,
+        "words": 413,
+        "roads": [
+            {
+                "from": "⚔海姆斯山",
+                "to": "德鲁斯塔尔",
+                "road": "⚔海姆斯山-德鲁斯塔尔",
+                "km": 261,
+                "words": 88
+            },
+            {
+                "from": "德鲁斯塔尔",
+                "to": "特尔诺沃",
+                "road": "德鲁斯塔尔-特尔诺沃",
+                "km": 301,
+                "words": 101
+            },
+            {
+                "from": "特尔诺沃",
+                "to": "索非亚",
+                "road": "特尔诺沃-索非亚",
+                "km": 206,
+                "words": 69
+            },
+            {
+                "from": "索非亚",
+                "to": "佩拉",
+                "road": "索非亚-佩拉",
+                "km": 295,
+                "words": 99
+            },
+            {
+                "from": "佩拉",
+                "to": "佩利昂",
+                "road": "佩拉-佩利昂",
+                "km": 168,
+                "words": 56
+            }
+        ]
+    },
+    {
+        "id": "段3",
+        "part": 1,
+        "partName": "巴尔干平叛与希腊整合",
+        "scene": 3,
+        "title": "底比斯战役",
+        "year": -335,
+        "season": 2,
+        "type": "攻城战",
+        "from": "佩利昂",
+        "to": "佩拉",
+        "km": 1008,
+        "words": 338,
+        "roads": [
+            {
+                "from": "佩利昂",
+                "to": "佩拉",
+                "road": "佩利昂-佩拉",
+                "km": 168,
+                "words": 56
+            },
+            {
+                "from": "佩拉",
+                "to": "德尔斐",
+                "road": "佩拉-德尔斐",
+                "km": 347,
+                "words": 116
+            },
+            {
+                "from": "德尔斐",
+                "to": "底比斯",
+                "road": "德尔斐-底比斯",
+                "km": 73,
+                "words": 25
+            },
+            {
+                "from": "底比斯",
+                "to": "佩拉",
+                "road": "底比斯-佩拉",
+                "km": 420,
+                "words": 141
+            }
+        ]
+    },
+    {
+        "id": "段4",
+        "part": 2,
+        "partName": "小亚细亚破门与封锁海岸",
+        "scene": 4,
+        "title": "格拉尼库斯河战役",
+        "year": -334,
+        "season": 0,
+        "type": "野战",
+        "from": "佩拉",
+        "to": "格拉尼库斯",
+        "km": 627,
+        "words": 211,
+        "roads": [
+            {
+                "from": "佩拉",
+                "to": "安菲波利斯",
+                "road": "佩拉-安菲波利斯",
+                "km": 121,
+                "words": 41
+            },
+            {
+                "from": "安菲波利斯",
+                "to": "羊河",
+                "road": "安菲波利斯-羊河",
+                "km": 333,
+                "words": 112
+            },
+            {
+                "from": "羊河",
+                "to": "特洛伊",
+                "road": "羊河—特洛伊",
+                "km": 65,
+                "words": 22
+            },
+            {
+                "from": "特洛伊",
+                "to": "格拉尼库斯",
+                "road": "特洛伊-格拉尼库斯",
+                "km": 108,
+                "words": 36
+            }
+        ]
+    },
+    {
+        "id": "段5",
+        "part": 2,
+        "partName": "小亚细亚破门与封锁海岸",
+        "scene": 5,
+        "title": "米利都战役",
+        "year": -334,
+        "season": 1,
+        "type": "攻城战",
+        "from": "格拉尼库斯",
+        "to": "米利都",
+        "km": 445,
+        "words": 149,
+        "roads": [
+            {
+                "from": "格拉尼库斯",
+                "to": "萨迪斯",
+                "road": "格拉尼库斯-萨迪斯",
+                "km": 242,
+                "words": 81
+            },
+            {
+                "from": "萨迪斯",
+                "to": "米利都",
+                "road": "萨迪斯-米利都",
+                "km": 203,
+                "words": 68
+            }
+        ]
+    },
+    {
+        "id": "段6",
+        "part": 2,
+        "partName": "小亚细亚破门与封锁海岸",
+        "scene": 6,
+        "title": "哈利卡纳苏斯战役",
+        "year": -334,
+        "season": 2,
+        "type": "攻城战",
+        "from": "米利都",
+        "to": "哈利卡纳苏斯",
+        "km": 94,
+        "words": 32,
+        "roads": [
+            {
+                "from": "米利都",
+                "to": "哈利卡纳苏斯",
+                "road": "米利都-哈利卡纳苏斯",
+                "km": 94,
+                "words": 32
+            }
+        ]
+    },
+    {
+        "id": "段7",
+        "part": 2,
+        "partName": "小亚细亚破门与封锁海岸",
+        "scene": 7,
+        "title": "伊苏斯战役",
+        "year": -333,
+        "season": 2,
+        "type": "野战",
+        "from": "哈利卡纳苏斯",
+        "to": "⚔伊苏斯",
+        "km": 1519,
+        "words": 510,
+        "roads": [
+            {
+                "from": "哈利卡纳苏斯",
+                "to": "戈尔迪乌姆",
+                "road": "哈利卡纳苏斯-戈尔迪乌姆",
+                "km": 854,
+                "words": 287
+            },
+            {
+                "from": "戈尔迪乌姆",
+                "to": "提亚纳",
+                "road": "戈尔迪乌姆-提亚纳",
+                "km": 408,
+                "words": 137
+            },
+            {
+                "from": "提亚纳",
+                "to": "⚔伊苏斯",
+                "road": "提亚纳-⚔伊苏斯",
+                "km": 257,
+                "words": 86
+            }
+        ]
+    },
+    {
+        "id": "段8",
+        "part": 3,
+        "partName": "黎凡特与埃及走廊",
+        "scene": 8,
+        "title": "推罗战役",
+        "year": -332,
+        "season": 0,
+        "type": "攻城战",
+        "from": "⚔伊苏斯",
+        "to": "推罗",
+        "km": 436,
+        "words": 147,
+        "roads": [
+            {
+                "from": "⚔伊苏斯",
+                "to": "拉塔基亚",
+                "road": "⚔伊苏斯-拉塔基亚",
+                "km": 151,
+                "words": 51
+            },
+            {
+                "from": "拉塔基亚",
+                "to": "推罗",
+                "road": "拉塔基亚-推罗",
+                "km": 285,
+                "words": 96
+            }
+        ]
+    },
+    {
+        "id": "段9",
+        "part": 3,
+        "partName": "黎凡特与埃及走廊",
+        "scene": 9,
+        "title": "加沙战役",
+        "year": -332,
+        "season": 2,
+        "type": "攻城战",
+        "from": "推罗",
+        "to": "加沙",
+        "km": 214,
+        "words": 72,
+        "roads": [
+            {
+                "from": "推罗",
+                "to": "加沙",
+                "road": "推罗-加沙",
+                "km": 214,
+                "words": 72
+            }
+        ]
+    },
+    {
+        "id": "段10",
+        "part": 3,
+        "partName": "黎凡特与埃及走廊",
+        "scene": 10,
+        "title": "高加米拉战役",
+        "year": -331,
+        "season": 2,
+        "type": "野战",
+        "from": "加沙",
+        "to": "⚔高加米拉",
+        "km": 3863,
+        "words": 1296,
+        "roads": [
+            {
+                "from": "加沙",
+                "to": "佩鲁西姆",
+                "road": "加沙-佩鲁西姆",
+                "km": 204,
+                "words": 68
+            },
+            {
+                "from": "佩鲁西姆",
+                "to": "孟菲斯",
+                "road": "佩鲁西姆-孟菲斯",
+                "km": 223,
+                "words": 75
+            },
+            {
+                "from": "孟菲斯",
+                "to": "亚历山大城",
+                "road": "孟菲斯-亚历山大城",
+                "km": 233,
+                "words": 78
+            },
+            {
+                "from": "亚历山大城",
+                "to": "马特鲁港",
+                "road": "亚历山大城-马特鲁港",
+                "km": 284,
+                "words": 95
+            },
+            {
+                "from": "马特鲁港",
+                "to": "锡瓦绿洲",
+                "road": "马特鲁港-锡瓦绿洲",
+                "km": 301,
+                "words": 101
+            },
+            {
+                "from": "锡瓦绿洲",
+                "to": "拜哈里耶",
+                "road": "锡瓦绿洲-拜哈里耶",
+                "km": 360,
+                "words": 121
+            },
+            {
+                "from": "拜哈里耶",
+                "to": "孟菲斯",
+                "road": "拜哈里耶-孟菲斯",
+                "km": 336,
+                "words": 113
+            },
+            {
+                "from": "孟菲斯",
+                "to": "佩鲁西姆",
+                "road": "孟菲斯-佩鲁西姆",
+                "km": 223,
+                "words": 75
+            },
+            {
+                "from": "佩鲁西姆",
+                "to": "加沙",
+                "road": "佩鲁西姆-加沙",
+                "km": 204,
+                "words": 68
+            },
+            {
+                "from": "加沙",
+                "to": "推罗",
+                "road": "加沙-推罗",
+                "km": 214,
+                "words": 72
+            },
+            {
+                "from": "推罗",
+                "to": "大马士革",
+                "road": "推罗-大马士革",
+                "km": 150,
+                "words": 50
+            },
+            {
+                "from": "大马士革",
+                "to": "塔德莫尔",
+                "road": "大马士革-塔德莫尔",
+                "km": 269,
+                "words": 90
+            },
+            {
+                "from": "塔德莫尔",
+                "to": "塔普萨库斯",
+                "road": "塔德莫尔-塔普萨库斯",
+                "km": 199,
+                "words": 67
+            },
+            {
+                "from": "塔普萨库斯",
+                "to": "埃德萨",
+                "road": "塔普萨库斯-埃德萨",
+                "km": 195,
+                "words": 65
+            },
+            {
+                "from": "埃德萨",
+                "to": "尼西比斯",
+                "road": "埃德萨-尼西比斯",
+                "km": 222,
+                "words": 75
+            },
+            {
+                "from": "尼西比斯",
+                "to": "⚔高加米拉",
+                "road": "尼西比斯-⚔高加米拉",
+                "km": 246,
+                "words": 83
+            }
+        ]
+    },
+    {
+        "id": "段11",
+        "part": 4,
+        "partName": "波斯帝国心脏",
+        "scene": 11,
+        "title": "乌克西亚隘口战役",
+        "year": -331,
+        "season": 3,
+        "type": "野战",
+        "from": "⚔高加米拉",
+        "to": "⚔乌克西亚隘口",
+        "km": 1165,
+        "words": 391,
+        "roads": [
+            {
+                "from": "⚔高加米拉",
+                "to": "阿尔贝拉",
+                "road": "⚔高加米拉-阿尔贝拉",
+                "km": 81,
+                "words": 27
+            },
+            {
+                "from": "阿尔贝拉",
+                "to": "巴格达",
+                "road": "阿尔贝拉-巴格达",
+                "km": 414,
+                "words": 139
+            },
+            {
+                "from": "巴格达",
+                "to": "苏萨",
+                "road": "巴格达-苏萨",
+                "km": 568,
+                "words": 191
+            },
+            {
+                "from": "苏萨",
+                "to": "⚔乌克西亚隘口",
+                "road": "苏萨-⚔乌克西亚隘口",
+                "km": 102,
+                "words": 34
+            }
+        ]
+    },
+    {
+        "id": "段12",
+        "part": 4,
+        "partName": "波斯帝国心脏",
+        "scene": 12,
+        "title": "波斯门战役",
+        "year": -330,
+        "season": 0,
+        "type": "野战",
+        "from": "⚔乌克西亚隘口",
+        "to": "⚔波斯门",
+        "km": 417,
+        "words": 140,
+        "roads": [
+            {
+                "from": "⚔乌克西亚隘口",
+                "to": "⚔波斯门",
+                "road": "⚔乌克西亚隘口-⚔波斯门",
+                "km": 417,
+                "words": 140
+            }
+        ]
+    },
+    {
+        "id": "段13",
+        "part": 4,
+        "partName": "波斯帝国心脏",
+        "scene": 13,
+        "title": "亚历山大东征居鲁士城战役",
+        "year": -329,
+        "season": 1,
+        "type": "攻城战",
+        "from": "⚔波斯门",
+        "to": "居鲁士城",
+        "km": 4946,
+        "words": 1661,
+        "roads": [
+            {
+                "from": "⚔波斯门",
+                "to": "波斯波利斯",
+                "road": "⚔波斯门-波斯波利斯",
+                "km": 177,
+                "words": 59
+            },
+            {
+                "from": "波斯波利斯",
+                "to": "伊斯法罕",
+                "road": "波斯波利斯-伊斯法罕",
+                "km": 396,
+                "words": 133
+            },
+            {
+                "from": "伊斯法罕",
+                "to": "哈马丹",
+                "road": "伊斯法罕-哈马丹",
+                "km": 579,
+                "words": 194
+            },
+            {
+                "from": "哈马丹",
+                "to": "雷伊",
+                "road": "哈马丹-雷伊",
+                "km": 315,
+                "words": 106
+            },
+            {
+                "from": "雷伊",
+                "to": "里海门",
+                "road": "雷伊-里海门",
+                "km": 99,
+                "words": 33
+            },
+            {
+                "from": "里海门",
+                "to": "达姆甘",
+                "road": "里海门-达姆甘",
+                "km": 217,
+                "words": 73
+            },
+            {
+                "from": "达姆甘",
+                "to": "白哈格",
+                "road": "达姆甘-白哈格",
+                "km": 310,
+                "words": 104
+            },
+            {
+                "from": "白哈格",
+                "to": "尼沙布尔",
+                "road": "白哈格-尼沙布尔",
+                "km": 110,
+                "words": 37
+            },
+            {
+                "from": "尼沙布尔",
+                "to": "泰巴德",
+                "road": "尼沙布尔-泰巴德",
+                "km": 345,
+                "words": 116
+            },
+            {
+                "from": "泰巴德",
+                "to": "赫拉特",
+                "road": "泰巴德-赫拉特",
+                "km": 143,
+                "words": 48
+            },
+            {
+                "from": "赫拉特",
+                "to": "法拉",
+                "road": "赫拉特-法拉",
+                "km": 249,
+                "words": 84
+            },
+            {
+                "from": "法拉",
+                "to": "博斯特",
+                "road": "法拉-博斯特",
+                "km": 259,
+                "words": 87
+            },
+            {
+                "from": "博斯特",
+                "to": "坎大哈",
+                "road": "博斯特-坎大哈",
+                "km": 139,
+                "words": 47
+            },
+            {
+                "from": "坎大哈",
+                "to": "哥疾宁",
+                "road": "坎大哈-哥疾宁",
+                "km": 342,
+                "words": 115
+            },
+            {
+                "from": "哥疾宁",
+                "to": "喀布尔",
+                "road": "哥疾宁-喀布尔",
+                "km": 139,
+                "words": 47
+            },
+            {
+                "from": "喀布尔",
+                "to": "德拉普萨卡",
+                "road": "喀布尔-德拉普萨卡",
+                "km": 309,
+                "words": 104
+            },
+            {
+                "from": "德拉普萨卡",
+                "to": "蓝氏城",
+                "road": "德拉普萨卡-蓝氏城",
+                "km": 168,
+                "words": 56
+            },
+            {
+                "from": "蓝氏城",
+                "to": "居鲁士城",
+                "road": "蓝氏城-居鲁士城",
+                "km": 650,
+                "words": 218
+            }
+        ]
+    },
+    {
+        "id": "段14",
+        "part": 5,
+        "partName": "中亚与粟特平叛",
+        "scene": 14,
+        "title": "亚历山大东征锡尔河战役",
+        "year": -329,
+        "season": 2,
+        "type": "野战",
+        "from": "居鲁士城",
+        "to": "忽毡",
+        "km": 74,
+        "words": 25,
+        "roads": [
+            {
+                "from": "居鲁士城",
+                "to": "忽毡",
+                "road": "居鲁士城-忽毡",
+                "km": 74,
+                "words": 25
+            }
+        ]
+    },
+    {
+        "id": "段15",
+        "part": 5,
+        "partName": "中亚与粟特平叛",
+        "scene": 15,
+        "title": "亚历山大东征索格狄亚那岩战役",
+        "year": -327,
+        "season": 0,
+        "type": "攻城战",
+        "from": "忽毡",
+        "to": "索格狄亚那岩",
+        "km": 103,
+        "words": 35,
+        "roads": [
+            {
+                "from": "忽毡",
+                "to": "索格狄亚那岩",
+                "road": "忽毡-索格狄亚那岩",
+                "km": 103,
+                "words": 35
+            }
+        ]
+    },
+    {
+        "id": "段16",
+        "part": 5,
+        "partName": "中亚与粟特平叛",
+        "scene": 16,
+        "title": "亚历山大东征马萨加战役",
+        "year": -327,
+        "season": 2,
+        "type": "攻城战",
+        "from": "索格狄亚那岩",
+        "to": "马萨加",
+        "km": 1927,
+        "words": 647,
+        "roads": [
+            {
+                "from": "索格狄亚那岩",
+                "to": "居鲁士城",
+                "road": "索格狄亚那岩-居鲁士城",
+                "km": 103,
+                "words": 35
+            },
+            {
+                "from": "居鲁士城",
+                "to": "吉扎克",
+                "road": "居鲁士城-吉扎克",
+                "km": 127,
+                "words": 43
+            },
+            {
+                "from": "吉扎克",
+                "to": "撒马尔罕",
+                "road": "吉扎克-撒马尔罕",
+                "km": 93,
+                "words": 31
+            },
+            {
+                "from": "撒马尔罕",
+                "to": "诺塔卡",
+                "road": "撒马尔罕-诺塔卡",
+                "km": 137,
+                "words": 46
+            },
+            {
+                "from": "诺塔卡",
+                "to": "铁门关",
+                "road": "诺塔卡-铁门关",
+                "km": 150,
+                "words": 50
+            },
+            {
+                "from": "铁门关",
+                "to": "蓝氏城",
+                "road": "铁门关-蓝氏城",
+                "km": 280,
+                "words": 94
+            },
+            {
+                "from": "蓝氏城",
+                "to": "巴米扬",
+                "road": "蓝氏城-巴米扬",
+                "km": 352,
+                "words": 118
+            },
+            {
+                "from": "巴米扬",
+                "to": "喀布尔",
+                "road": "巴米扬-喀布尔",
+                "km": 144,
+                "words": 48
+            },
+            {
+                "from": "喀布尔",
+                "to": "难揭",
+                "road": "喀布尔-难揭",
+                "km": 121,
+                "words": 41
+            },
+            {
+                "from": "难揭",
+                "to": "开伯尔山口",
+                "road": "难揭-开伯尔山口",
+                "km": 110,
+                "words": 37
+            },
+            {
+                "from": "开伯尔山口",
+                "to": "白沙瓦",
+                "road": "开伯尔山口-白沙瓦",
+                "km": 100,
+                "words": 34
+            },
+            {
+                "from": "白沙瓦",
+                "to": "斯瓦特河谷",
+                "road": "白沙瓦-斯瓦特河谷",
+                "km": 114,
+                "words": 38
+            },
+            {
+                "from": "斯瓦特河谷",
+                "to": "马萨加",
+                "road": "斯瓦特河谷-马萨加",
+                "km": 96,
+                "words": 32
+            }
+        ]
+    },
+    {
+        "id": "段17",
+        "part": 6,
+        "partName": "印度远征与班师",
+        "scene": 17,
+        "title": "亚历山大东征奥诺斯岩战役",
+        "year": -326,
+        "season": 0,
+        "type": "攻城战",
+        "from": "马萨加",
+        "to": "奥诺斯岩",
+        "km": 326,
+        "words": 109,
+        "roads": [
+            {
+                "from": "马萨加",
+                "to": "白沙瓦",
+                "road": "马萨加-白沙瓦",
+                "km": 96,
+                "words": 32
+            },
+            {
+                "from": "白沙瓦",
+                "to": "奥诺斯岩",
+                "road": "白沙瓦-奥诺斯岩",
+                "km": 230,
+                "words": 77
+            }
+        ]
+    },
+    {
+        "id": "段18",
+        "part": 6,
+        "partName": "印度远征与班师",
+        "scene": 18,
+        "title": "亚历山大东征海达斯佩斯河战役",
+        "year": -326,
+        "season": 1,
+        "type": "野战",
+        "from": "奥诺斯岩",
+        "to": "⚔海达斯佩斯河",
+        "km": 326,
+        "words": 109,
+        "roads": [
+            {
+                "from": "奥诺斯岩",
+                "to": "阿托克",
+                "road": "奥诺斯岩-阿托克",
+                "km": 138,
+                "words": 46
+            },
+            {
+                "from": "阿托克",
+                "to": "⚔海达斯佩斯河",
+                "road": "阿托克-⚔海达斯佩斯河",
+                "km": 188,
+                "words": 63
+            }
+        ]
+    },
+    {
+        "id": "段19",
+        "part": 6,
+        "partName": "印度远征与班师",
+        "scene": 19,
+        "title": "亚历山大东征马里斯战役",
+        "year": -325,
+        "season": 0,
+        "type": "攻城战",
+        "from": "⚔海达斯佩斯河",
+        "to": "马里斯",
+        "km": 424,
+        "words": 143,
+        "roads": [
+            {
+                "from": "⚔海达斯佩斯河",
+                "to": "蒙格",
+                "road": "⚔海达斯佩斯河-蒙格",
+                "km": 23,
+                "words": 8
+            },
+            {
+                "from": "蒙格",
+                "to": "马里斯",
+                "road": "蒙格-马里斯",
+                "km": 401,
+                "words": 135
+            }
+        ]
+    },
+    {
+        "id": "段20",
+        "part": 6,
+        "partName": "印度远征与班师",
+        "scene": 20,
+        "title": "亚历山大东征科塞亚战役",
+        "year": -324,
+        "season": 3,
+        "type": "野战",
+        "from": "马里斯",
+        "to": "⚔科塞亚",
+        "km": 4360,
+        "words": 1463,
+        "roads": [
+            {
+                "from": "马里斯",
+                "to": "奎达",
+                "road": "马里斯-奎达",
+                "km": 390,
+                "words": 131
+            },
+            {
+                "from": "奎达",
+                "to": "坎大哈",
+                "road": "奎达-坎大哈",
+                "km": 278,
+                "words": 93
+            },
+            {
+                "from": "坎大哈",
+                "to": "法拉",
+                "road": "坎大哈-法拉",
+                "km": 398,
+                "words": 134
+            },
+            {
+                "from": "法拉",
+                "to": "扎兰格",
+                "road": "法拉-扎兰格",
+                "km": 260,
+                "words": 87
+            },
+            {
+                "from": "扎兰格",
+                "to": "巴姆",
+                "road": "扎兰格-巴姆",
+                "km": 435,
+                "words": 146
+            },
+            {
+                "from": "巴姆",
+                "to": "锡尔詹",
+                "road": "巴姆-锡尔詹",
+                "km": 357,
+                "words": 120
+            },
+            {
+                "from": "锡尔詹",
+                "to": "波斯波利斯",
+                "road": "锡尔詹-波斯波利斯",
+                "km": 334,
+                "words": 112
+            },
+            {
+                "from": "波斯波利斯",
+                "to": "苏萨",
+                "road": "波斯波利斯-苏萨",
+                "km": 695,
+                "words": 233
+            },
+            {
+                "from": "苏萨",
+                "to": "巴比伦",
+                "road": "苏萨-巴比伦",
+                "km": 480,
+                "words": 161
+            },
+            {
+                "from": "巴比伦",
+                "to": "呼勒万",
+                "road": "巴比伦-呼勒万",
+                "km": 305,
+                "words": 102
+            },
+            {
+                "from": "呼勒万",
+                "to": "⚔科塞亚",
+                "road": "呼勒万-⚔科塞亚",
+                "km": 428,
+                "words": 144
+            }
+        ]
+    }
 ];
 
 export const SCRIPT_PURE_MARCH_SEGMENTS = SCRIPT_SEGMENTS.filter((s) => !s.hasBattle);
