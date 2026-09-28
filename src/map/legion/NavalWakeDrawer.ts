@@ -17,7 +17,11 @@ interface Particle {
     kind: 'back' | 'front'; profile: Profile;
     rot?: number;
 }
-interface FleetWake { particles: Particle[]; lastEmission: number; lastSeen: number; }
+interface FleetWake {
+    particles: Particle[]; lastEmission: number; lastSeen: number;
+    /** 每条船上一次发射时的世界坐标（按 ships 数组下标），用来算这条船实际往哪走 */
+    lastPos: Map<number, Point>;
+}
 
 /** DE 原始 DDS 解包贴图和 Once 粒子寿命；发射间隔为本项目渲染采样参数。 */
 export class NavalWakeDrawer {
@@ -26,6 +30,15 @@ export class NavalWakeDrawer {
     private static loading = false;
     private static fleets = new Map<string, FleetWake>();
     private static readonly EMISSION_MS = 125;
+    /**
+     * 🔴 [2026-09-28 主人「船头和船尾的浪花是不是应该在一条线上？现在有的时候不在一条线」]
+     *    船身画出来的朝向（限速转向、僚舰随旗舰）与实际行进方向偏差超过这个角度时，**只发船尾、不发船头**：
+     *    浪花会留在水面上 1.25~2 秒，船身斜着滑行时船头那串和船尾那串会变成两条错开的平行线。
+     *    直线航行两样照发（DE 原版就是船头浪花 + 船尾尾迹一对）。
+     */
+    private static readonly BOW_ALIGN_MAX_DEG = 15;
+    /** 两次发射间位移小于这么多像素 → 行进方向算不准，不做判定（照发船头） */
+    private static readonly BOW_ALIGN_MIN_MOVE_PX = 1.5;
     private static lastCleanup = 0;
 
     public static ensureLoaded(): void {
@@ -64,7 +77,7 @@ export class NavalWakeDrawer {
         }
         let fleet = this.fleets.get(unitId);
         if (!fleet || tick < fleet.lastSeen) {
-            fleet = { particles: [], lastEmission: -Infinity, lastSeen: tick };
+            fleet = { particles: [], lastEmission: -Infinity, lastSeen: tick, lastPos: new Map() };
             this.fleets.set(unitId, fleet);
         }
         fleet.lastSeen = tick;
@@ -75,6 +88,7 @@ export class NavalWakeDrawer {
             const alive = ships.filter(ship => ship.isAlive);
             const frontRank = Math.max(...alive.map(ship => ship.r));
             for (const ship of alive) {
+                const shipIdx = ships.indexOf(ship);
                 const dir = ((Math.round(ship.dir ?? direction) % 16) + 16) % 16;
                 // 船身精确罗盘角（0=北，顺时针）：优先使用连续航向角，避免离散 22.5° 台阶跳
                 const compassDeg = ship.deg !== undefined ? ship.deg : (45 + 22.5 * dir);
@@ -90,7 +104,22 @@ export class NavalWakeDrawer {
                 const Ry = currentLen * 0.30;
                 const yPitch = -currentLen * 0.05;
 
+                // 实际行进方向（屏幕罗盘角，0=上、顺时针）：上次发射时的位置投影到当前屏幕，与现在的位置比
+                let emitBow = true;
+                const prevWorld = fleet.lastPos.get(shipIdx);
+                if (prevWorld) {
+                    const prev = projection?.toScreen(prevWorld) ?? prevWorld;
+                    const mx = ship.x - prev.x, my = ship.y - prev.y;
+                    if (Math.hypot(mx, my) >= this.BOW_ALIGN_MIN_MOVE_PX) {
+                        const travelDeg = Math.atan2(mx, -my) * 180 / Math.PI;
+                        const diff = Math.abs(((travelDeg - compassDeg) % 360 + 540) % 360 - 180);
+                        if (diff > this.BOW_ALIGN_MAX_DEG) emitBow = false;
+                    }
+                }
+                fleet.lastPos.set(shipIdx, projection?.toWorld({ x: ship.x, y: ship.y }) ?? { x: ship.x, y: ship.y });
+
                 for (const kind of ['back', 'front'] as const) {
+                    if (kind === 'front' && !emitBow) continue;
                     const profile = this.assets[kind].profiles[ship.r === frontRank ? 'medium' : 'small'];
                     const targetRad = kind === 'back' ? sternRad : bowRad;
                     const screen = {
