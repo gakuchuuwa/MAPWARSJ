@@ -25,6 +25,7 @@ import { SimpleVectorRoadRenderer } from '../roads/SimpleVectorRoadRenderer';
 import { FACTIONS } from '../data/factions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { FactionTintSystem } from '../systems/tinting/FactionTintSystem';
+import { TerritorySystem } from '../systems/TerritorySystem';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { GAME_CONSTANTS, GameConfig } from '../config/GameConfig';
 import { AIController, RecruitmentSystem } from '../ai';
@@ -73,6 +74,7 @@ import { handleGameAppCityEditorSave, loadGameAppCityData } from './boot/GameApp
 import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
+import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncScriptCityNames } from '../events/scriptCityNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
@@ -329,8 +331,10 @@ export class GameApp {
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
-            // 🔴 [2026-09-27 主人定] 剧本期没到年代的据点不隐藏，只显示灰色城名（无样貌、无旗、无兵力）
-            this.cityManager.setNameOnlyWhenFiltered(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
+            // 🔴 [2026-09-27 主人定「全图的据点名称都显示出来，样貌按年代」]
+            //    渲染放宽到全库（名字都要看得见）；样貌照旧由年代闸门决定 —— 不过闸的只画灰字名字。
+            this.cityManager.setRenderFilter(() => true);
+            TerritorySystem.setSpriteFilter((city: any) => this.scriptCityVisibility!.isCityVisible(city));
             // 🔴 [2026-09-23 主人定「新建一个四级……为剧本军团」] 剧本期：当前这一仗的攻 / 守方用事件指名的剧本军团
             setScriptFactionLegionResolver((factionId) => {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
@@ -862,12 +866,19 @@ export class GameApp {
         // 🔴 [2026-09-25 主人定「据点的名字，文案要和图上的统一」]
         //    剧本期据点**显示名**换成那一年的古名（scriptCityNames.ts），切回乱斗原样换回
         const syncCityNames = () => syncScriptCityNames(this.cityManager, hero.autoPlan === 'script');
+        // 🔴 [2026-09-26 主人令「你要符合历史，看看这些据点符合建筑风格吗」→「符合历史，不要问我，直接改」]
+        //    剧本期据点**建筑风格**换成那一年该有的那一套（scriptBuildingStyles.ts），切回乱斗原样换回。
+        //    （`buildingStyle` 与乱斗 `factionId` 同一个病：取的是这城最有名那段历史的风格 ——
+        //      阿卡挂十字军、索非亚挂保加利亚，放进前 335 就是穿越。）
+        const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, hero.autoPlan === 'script');
         syncCityNames();
+        syncBuildingStyles();
         syncHistoricalOwners();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
             syncCityNames();
+            syncBuildingStyles();
             syncHistoricalOwners();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();

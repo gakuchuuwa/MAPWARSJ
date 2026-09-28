@@ -3,8 +3,32 @@ export function journeyBriefingDuration(text: string): number {
     return Math.max(7000, Array.from(text.trim()).length * 200 + 1500);
 }
 
+/**
+ * 🔴 [2026-09-26 主人「行军和播报对不上」] **旁白自己带锚点**：段落开头写 `【据点名】`，
+ *   表示「军团走到这座据点附近才念这一段」（锚点由 `PlayerQuestSystem.scriptSegmentStarts` 认）。
+ *   锚点是**给机器看的**，不念、不显示 —— 这里把它从正文里剥掉。
+ */
+export function stripBriefingAnchor(text: string): string {
+    return text.replace(/^\s*【[^】]{1,12}】\s*/, '');
+}
+
+/** 取出这一段挂的锚点名（没有锚点返回 null） */
+export function briefingAnchorOf(text: string): string | null {
+    const m = text.match(/^\s*【([^】]{1,12})】/);
+    return m ? m[1].trim() : null;
+}
+
+/**
+ * 整篇旁白里的锚点（按段落顺序，只取第 2 段起的）。
+ * ⚠️ 必须从**原文**上读：`journeyBriefingParagraphs` 会把锚点剥掉，
+ *    拿剥过的文本再去找锚点永远找不到（第一次跑就是这么误报的）。
+ */
+export function briefingAnchors(text: string): string[] {
+    return text.split(/\n\s*\n/).slice(1).map((p) => briefingAnchorOf(p)).filter(Boolean) as string[];
+}
+
 export function journeyBriefingParagraphs(text: string): string[] {
-    return text.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+    return text.split(/\n\s*\n/).map(s => stripBriefingAnchor(s.trim())).filter(Boolean);
 }
 
 /**
@@ -19,8 +43,19 @@ export function journeyBriefingParagraphs(text: string): string[] {
  *   字幕随开口（onStart）亮、随念完（onDone）换下一句，不存在「猜时长」这一环。
  *   句子之间那点合成往返（约几百毫秒）正好当自然停顿。
  *
- * 切法：先按中文句末标点断句，再把过短的句子并到 `maxChars` 以内；
+ * 切法：**文本里一句 = 一次 `speak()` = 一屏字幕**（不再把相邻短句并起来）；
  * 单句本身超过 `maxChars` 的，按逗号再切一刀（兜底，保证一屏放得下）。
+ *
+ * 🔴 [2026-09-26 主人报「行军播报更加对不上了」＋「一句一句的看，第一段有几句？」]
+ *   原来这里把**相邻的短句合并**（`current.length + p.length <= maxChars` 就并成一句）——
+ *   实测全片 65 段共 230 句，被并成 **193 次**，**35 个段是「几句话说成一口气」**：
+ *   第一段 44 字就是「腓力二世遇刺…趁丧起事；」＋「公元前335年春…北上平乱。」两句并成 1 次念的。
+ *   一句一屏这条已经被并没了，字幕与语音的「一句对一句」自然又对不上。已改为不合并。
+ */
+/**
+ * 🔴 [2026-09-27 口径已改] **游戏里不再用它** —— 主人定「一路一句」，一条路整句一次 speak()、整句一屏
+ *   （见 `PlayerQuestSystem` 的赶路播报与 `SubtitleBanner.show(..., singleScreen)`）。
+ *   这个切句器只留给验收脚本做「一句几屏」的分析，别在游戏里调用。
  */
 export function journeyBriefingSentences(text: string, maxChars = 60): string[] {
     const paragraphs = text.split('\n').map((l) => l.trim()).filter(Boolean);
@@ -28,20 +63,13 @@ export function journeyBriefingSentences(text: string, maxChars = 60): string[] 
     for (const para of paragraphs) {
         // 句末标点：。！？；……（含其后的收尾引号/括号）
         const sentences = para.match(/[^。！？；…]+[。！？；…]+[”’」』）)]?|[^。！？；…]+$/g) ?? [para];
-        let current = '';
-        const flush = () => { if (current.trim()) out.push(current.trim()); current = ''; };
         for (const raw of sentences) {
             const s = raw.trim();
             if (!s) continue;
-            // 单句太长 → 按逗号再切，保证一屏一行放得下
+            // 单句本身太长 → 按逗号再切（保证一屏一行放得下）；其余**一句就是一句**，不并
             const pieces = Array.from(s).length > maxChars ? splitByComma(s, maxChars) : [s];
-            for (const p of pieces) {
-                if (!current) { current = p; continue; }
-                if (Array.from(current).length + Array.from(p).length <= maxChars) current += p;
-                else { flush(); current = p; }
-            }
+            out.push(...pieces);
         }
-        flush();
     }
     return out.length ? out : [text.trim()];
 }

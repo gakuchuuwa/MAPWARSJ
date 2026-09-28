@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test toBlob</title></head>
+<body>
+<div id="output"></div>
+<script>
+async function test() {
+    const out = document.getElementById('output');
+    const log = (msg) => { console.log(msg); };
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = 100;
+    canvas.height = 100;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'yellow';
+    ctx.fillRect(0, 0, 100, 100);
+    
+    const img = new Image();
+    const p = new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            img.onload = () => {
+                log('Image loaded. Revoking URL...');
+                URL.revokeObjectURL(url);
+                // Now test drawing img onto a target canvas 50ms later
+                setTimeout(() => {
+                    const target = document.createElement('canvas');
+                    target.width = 100;
+                    target.height = 100;
+                    const tctx = target.getContext('2d');
+                    tctx.drawImage(img, 0, 0);
+                    const pixel = tctx.getImageData(50, 50, 1, 1).data;
+                    log(`Drawn pixel: [${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3]}]`);
+                    resolve(pixel);
+                }, 50);
+            };
+            img.src = url;
+        }, 'image/png');
+    });
+    await p;
+}
+test();
+</script>
+</body>
+</html>

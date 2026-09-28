@@ -102,3 +102,5 @@ export class FactionTintSystem {
         };
     }
 }
+
+(window as any).FactionTintSystem = FactionTintSystem;

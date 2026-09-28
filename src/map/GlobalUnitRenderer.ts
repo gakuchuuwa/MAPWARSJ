@@ -1077,6 +1077,11 @@ export class GlobalUnitRenderer {
             if (animating) {
                 hasActiveAnimation = true;
             }
+            // 🔴 [2026-09-27] 长蛇阵 ↔ 常规阵型走位中（例：被按住等播报 → 就地收拢成常规阵型）：
+            //    军团本身不动，但走位要逐帧推进，必须继续重画（只看视野内，屏外不驱动重画）。
+            if (inView && unit.id && LegionPhalanxDrawer.isInColumnState(unit.id)) {
+                hasActiveAnimation = true;
+            }
         }
 
         const projectilesActive = this.projectileSystem.hasActive();
