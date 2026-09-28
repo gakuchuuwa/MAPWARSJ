@@ -55,7 +55,6 @@ export interface BattlefieldEventDraft {
      */
     generalId?: string;
     /** 武将邀约对白（剧本模式找到归属武将时念）；留空不写 */
-    inviteText?: string;
     /** 资料清单：每项依据与可信级别（src/data/eventSources.ts） */
     sources?: Record<string, { level: string; text: string }>;
     /** 途经但那一年还不存在的据点（剧本期不显示） */
@@ -337,7 +336,6 @@ function buildScriptEntry(d: BattlefieldEventDraft): string {
     L.push(`        season: ${d.season},`);
     // 🔴 [2026-09-19 主人定] 归属武将（「一个武将一个真实的历史事件」）；留空不写。
     if (d.generalId) L.push(`        generalId: ${tsStr(d.generalId)},`);
-    if (d.inviteText && d.inviteText.trim()) L.push(`        inviteText: ${tsStr(d.inviteText.trim())},`);
     const srcLit = sourcesLiteral(d);
     if (srcLit) L.push(`        sources: ${srcLit},`);
     if (d.absentCities?.length) L.push(`        absentCities: [${d.absentCities.map((c) => tsStr(c)).join(', ')}],`);
@@ -573,8 +571,6 @@ export function saveBattlefieldEvent(
             //    表现为「编辑器里清空了，游戏里还认这位武将」，是最难查的那类不一致。
             //    ⚠️ 删除必须放在 patchFields **之后**按新位置做（patch 会移动下标）。
             if (d.generalId) topFields.push(['generalId', tsStr(d.generalId)]);
-            const invite = d.inviteText?.trim() ?? '';
-            if (invite) topFields.push(['inviteText', tsStr(invite)]);
             const srcLit = sourcesLiteral(d);
             if (srcLit) topFields.push(['sources', srcLit]);
             const absentLit = d.absentCities?.length ? `[${d.absentCities.map((c) => tsStr(c)).join(', ')}]` : null;

@@ -41,7 +41,6 @@ export interface EventRuleInput {
     battleDescription: string;
     generalId: string;
     /** 武将邀约对白 */
-    inviteText: string;
     lat: number;
     lng: number;
     attackerFactionId: string;
@@ -80,12 +79,10 @@ function bracketFields(d: EventRuleInput): Array<[string, string]> {
     return [
         ['战役名称', d.title],
         ['事件标题', d.eventTitle],
-        ['事件播报', d.description],
-        ['战役播报', d.battleDescription],
+        ['战役说明', d.description],
         ['战场地名', d.bfName],
         ['战场注释', d.bfNote],
         ['赶路播报', d.bfBriefing],
-        ['武将邀约对白', d.inviteText],
     ];
 }
 
@@ -131,10 +128,6 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
         }
     }
 
-    // ①b 武将邀约对白：剧本模式里玩家找到他时念的话（2026-09-23 主人定「对话内容写到编辑器中」）
-    if (!d.inviteText?.trim()) {
-        warn('武将邀约对白没写：剧本模式会用一句通用邀约代替，建议按史料写这位武将此时会说的话');
-    }
 
     // ② 战役名一律「XXXX战役」 ─────────────────────────────────────────
     //    主人令（2026-09-19）：「战役名称一律是XXXX战役可以吗」→ 已全库统一，编辑器同步硬拦。
@@ -163,9 +156,7 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
             // ⚠️ 赶路播报是「一段一句」的：**每一段开头的【据点名】都要剥掉**（那是挂点坐标，不念出来），
             //    只剥第一段会把后面每个挂点都当成「念了城名」误报（第 2 场那五个挂点就是这么被误报的）。
             ['赶路播报', String(d.bfBriefing ?? '').split(/\r?\n\r?\n/).map((p) => stripBriefingAnchor(p.trim())).join('\n')],
-            ['事件播报', d.description],
-            ['战役播报', d.battleDescription],
-            ['武将邀约对白', d.inviteText],
+            ['战役说明', d.description],
         ];
         const seen = new Set<string>();
         for (const [label, text] of stated) {
@@ -261,11 +252,31 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
     //    🔴 [2026-09-23 主人定「文案中不要写具体数字」] 口径：**兵力**用「数万」「千余」「大军」这类说法；
     //    年龄、器械、地理、谋略里的数字保留（如「二十二岁」「两百辆战车」「宽仅两英里」）。
     //    起因：数据按史料一改，播报里的「三万余」「七万余」就和军团兵力对不上。
-    for (const [label, text] of [['赶路播报', d.bfBriefing], ['事件播报', d.description],
-        ['战役播报', d.battleDescription], ['武将邀约对白', d.inviteText]] as const) {
+    for (const [label, text] of [['赶路播报', d.bfBriefing], ['战役说明', d.description]] as const) {
         const hits = briefingSpecificNumbers(String(text ?? ''));
         if (hits.length) {
             err(`${label}里的兵力写了确数：${hits.join('、')} —— 主人定「文案中不要写具体数字」，兵力改成「数万」「千余」「大军」这类说法`);
+        }
+    }
+
+    // ⑫ 文案必须为纯正第三人称传记体历史叙述文（2026-09-28 主人怒斥定死）───
+    //    🔴 彻底废除第一人称、第二人称与 NPC 套话：严禁出现「我、你、朋友、壮士」
+    for (const [label, text] of [['赶路播报', d.bfBriefing], ['战役说明', d.description]] as const) {
+        const raw = String(text ?? '');
+        if (!raw.trim()) continue;
+        if (/[我某]/.test(raw)) {
+            err(`${label}包含第一人称（我/某）：文案必须为第三人称传记体历史叙述文，严禁第一人称`);
+        }
+        if (/[你您]/.test(raw)) {
+            err(`${label}包含第二人称（你/您）：文案必须为第三人称传记体历史叙述文，严禁第二人称`);
+        }
+        for (const g of ['朋友', '壮士', '诸位']) {
+            if (raw.includes(g)) {
+                err(`${label}包含NPC搭话称呼「${g}」：严禁任何网游NPC套话，必须写成客观历史叙述文`);
+            }
+        }
+        if (raw.includes('大帝')) {
+            err(`${label}包含尊号「大帝」：严禁用尊号，一律直呼其名（如「亚历山大」）`);
         }
     }
 

@@ -318,17 +318,16 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const inviteText = this.scriptInvite(ev)
-                    ?? `壮士远来。某正要提兵赴【${ev.title}】，与${foe}决战于${ev.battlefieldName}。`
-                        + `此战关系重大，某愿请壮士同往。`;
+                const narrativeText = ev.description
+                    || `${g.generalName}整肃大军，正欲提兵进驻【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
                     factionName,
-                    text: inviteText,
+                    text: narrativeText,
                     options: [
-                        { label: `⚔ 随${g.generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
-                        { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                        { label: `⚔ 见证/加入【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
+                        { label: "告辞", onPick: () => this.deps.closeDialogue() },
                     ],
                 });
                 return;
@@ -635,8 +634,8 @@ export class PlayerQuestSystem {
         defenderCityId: string | null;
         /** 主人设定的行军路标（据点 id，按顺序经过） */
         marchWaypoints: string[];
-        /** 武将邀约对白（编辑器里按史料写的；剧本模式用它并念出来） */
-        inviteText: string | null;
+        /** 战役背景说明（第三人称纪实） */
+        description?: string | null;
         /** 战役背景播报旁白（攻城战等没有独立战场记录的，旁白写在事件上） */
         briefing?: string | null;
     } | null {
@@ -662,7 +661,7 @@ export class PlayerQuestSystem {
                 ? (hit.event.siegeData?.defenderCityId ?? null)
                 : null,
             marchWaypoints: [...(data?.marchWaypoints ?? [])],
-            inviteText: hit.event.inviteText?.trim() || null,
+            description: hit.event.description?.trim() || null,
             briefing: hit.event.briefing?.trim() || null,
         };
     }
@@ -1408,11 +1407,6 @@ export class PlayerQuestSystem {
      * 🔴 [2026-09-19] 多一个 `titleOverride`：**武将触发**那条链上玩家是**随军**赶路。
      *   （2026-09-25 起 `stillHeading` 这道闸已按主人令取消，override 只用于取名与去重键。）
      */
-    /** 剧本模式：编辑器里写的邀约对白（没写 → null，用通用句）；乱斗模式一律 null（保持原样）。
-     *  🔴 [2026-09-23 主人定「接任务只需要文字就行，不需要语音播报」] 只显示文字，不念。 */
-    private scriptInvite(ev: { inviteText: string | null }): string | null {
-        return this.deps.hero.autoPlan === 'script' ? ev.inviteText : null;
-    }
 
     /**
      * 赶路播报：**军团在路上的时候才念**（起步开念；抵达、改道、入伍一律停）。
@@ -1947,17 +1941,16 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const inviteText = this.scriptInvite(ev)
-                    ?? `壮士竟寻到军中来了。某正提兵赴【${ev.title}】，将于${ev.battlefieldName}与${foe}决战。`
-                        + `军旅之中不便设宴，壮士便随某同去——破敌之日，功劳簿上少不了你。`;
+                const narrativeText = ev.description
+                    || `${generalName}挥师前线，大军直指【${ev.battlefieldName}】，与${foe}决战于【${ev.title}】。军纪森严，三军枕戈待旦。`;
                 this.deps.showDialogue({
                     speaker: generalName,
                     portrait,
                     factionName,
-                    text: inviteText,
+                    text: narrativeText,
                     options: [
-                        { label: `⚔ 就此随${generalName}赴【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? '' }, ev, army) },
-                        { label: '告辞', onPick: () => this.deps.closeDialogue() },
+                        { label: `⚔ 见证/加入【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? "" }, ev, army) },
+                        { label: "告辞", onPick: () => this.deps.closeDialogue() },
                     ],
                 });
                 return;
