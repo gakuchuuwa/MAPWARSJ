@@ -3327,6 +3327,10 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     yisatisi_falukezhade: { generalId: 'yisatisi_falukezhade', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     jiaye_punafamo: { generalId: 'jiaye_punafamo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     dian_cuanchongdao: { generalId: 'dian_cuanchongdao', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    panfeiliya_apollonios: { generalId: 'panfeiliya_apollonios', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    baihaliye_djedkhonsu: { generalId: 'baihaliye_djedkhonsu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    kuida_chakar: { generalId: 'kuida_chakar', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    zhalange_barsaentes: { generalId: 'zhalange_barsaentes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
 };
 
 

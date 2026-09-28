@@ -65,6 +65,10 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_helate_city: -2000,
     city_tapusakusi: -2000,    // 塔普萨库斯：幼发拉底渡口古聚落
     city_nixibisi: -2000,      // 尼西比斯：今 Nusaybin，古已有之          // 锡瓦绿洲：古聚落；阿蒙神谕前 7 世纪见载（填早于前332 即可过闸）
+    city_peierge: -2000,       // 佩尔格：古潘菲利亚名城，青铜时代晚期已有
+    city_baihaliye: -2000,     // 拜哈里耶：利比亚沙漠绿洲，古埃及中王国已有定居
+    city_kuida: -2000,          // 奎达：古称沙尔，扼波兰山口，史前已有设防定居
+    city_zhalange: -2000,       // 扎兰格：德兰吉亚首府，阿契美尼德时代前已是绿洲都会
 
     // ── 纳巴泰 ──
     city_peitra: -300,          // 佩特拉，约前 300 年纳巴泰人定居建城（英文维基 "settled in the 4th century BC"）

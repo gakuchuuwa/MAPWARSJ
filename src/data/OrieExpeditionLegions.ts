@@ -37,4 +37,5 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     beileinisi: { name: '贝雷水师', tier: 4 },     // 贝雷尼斯·托勒密二世：其所建红海港埠常规水师
     dedan: { name: '德丹驼兵', tier: 4 },          // 泰马·卡比里尔：北阿拉伯德丹／黎哈彦常规驼兵
     gulaishi: { name: '古莱驼兵', tier: 4 },       // 麦加·艾布苏富扬：古莱什部落常规驼兵
+    baihaliye: { name: '拜哈巡守', tier: 4 },      // 拜哈里耶·杰德孔苏：利比亚沙漠绿洲守卫
 };

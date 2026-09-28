@@ -2111,6 +2111,10 @@ export const FACTIONS: Faction[] = [
     { id: 'lulisitan', name: '卢里斯坦' },   // 伊拉姆（西麓走廊）势力
     { id: 'golpayegan_diqu', name: '古尔帕耶甘地区' },   // 古尔帕耶甘（几何驿站）势力
     { id: 'meisuobudamiya', name: '美索不达米亚' },   // 尼西比斯势力               // 锡瓦绿洲（阿蒙神庙）势力   // 🔴 [2026-09-25] 提亚纳据点专用势力；前333 卡帕多细亚为波斯行省，此为其史地身份
+    { id: 'panfeiliya', name: '潘菲利亚' },
+    { id: 'baihaliye', name: '拜哈里耶' },
+    { id: 'kuida', name: '奎达' },
+    { id: 'zhalange', name: '扎兰格' },
 ];
 
 // @ts-ignore

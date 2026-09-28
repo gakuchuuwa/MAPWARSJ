@@ -43,4 +43,5 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // 🔴 [2026-09-19 主人令「都给我删了」] 卡帕多细亚（`kapaduoxiya`）与其番号「卡帕多骑队」已删除 ——
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },
+    panfeiliya: { name: '佩尔格方阵', tier: 3 },
 };

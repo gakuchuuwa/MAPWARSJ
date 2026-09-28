@@ -1236,6 +1236,10 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'aliya': 'city_helate_city',
     'xuliya': 'city_tapusakusi',
     'meisuobudamiya': 'city_nixibisi',   // 🔴 [2026-09-25] 据点本位：将/精按 cityId 查录入表，靠这一行锚定
+    'panfeiliya': 'city_peierge',
+    'baihaliye': 'city_baihaliye',
+    'kuida': 'city_kuida',
+    'zhalange': 'city_zhalange',
 };
 
 // @ts-ignore

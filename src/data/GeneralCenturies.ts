@@ -1130,6 +1130,10 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'meitai_hagenba':                    15,    // 彼得·冯·哈根巴赫 · meitai · 勃艮第占领阿尔萨斯总督（1474年公审）
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
     'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
+    'panfeiliya_apollonios':             -3,    // 阿波罗尼奥斯 · panfeiliya · 佩尔格（圆锥曲线论作者）
+    'baihaliye_djedkhonsu':              -6,    // 杰德孔苏 · baihaliye · 拜哈里耶（第二十六王朝绿洲总督）
+    'kuida_chakar':                      15,    // 恰卡尔 · kuida · 奎达（俾路支英雄）
+    'zhalange_barsaentes':               -4,    // 巴尔塞恩特斯 · zhalange · 扎兰格（德兰吉亚总督）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */
