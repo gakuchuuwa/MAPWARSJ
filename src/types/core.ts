@@ -283,11 +283,6 @@ export interface HistoricalEvent {
      */
     generalId?: string;
     /**
-     * 🔴 [2026-09-23 主人定] **武将邀约对白**：剧本模式下玩家找到归属武将时，他请玩家同赴此役说的话。
-     * 只显示文字、不念（主人 2026-09-23 定）。称呼要合乎人物的时代与文化。留空 = 用通用的一句邀约。
-     */
-    inviteText?: string;
-    /**
      * 🔴 [2026-09-23 主人定「确保每次事件收集的资料都是一致性的」] 资料清单：每项的依据与可信级别。
      * 键 = `src/data/eventSources.ts` 的 EVENT_SOURCE_ITEMS；编辑器里每项必填。
      */

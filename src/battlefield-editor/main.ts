@@ -90,8 +90,6 @@ interface BattleDraft {
      * 留空 = 不归属任何武将（自动模式按老规矩挑），与加本字段之前的行为完全一致。
      */
     generalId: string;
-    /** 🔴 [2026-09-23] 武将邀约对白：剧本模式找到归属武将时他说的话（带语音，念完才开始赶路背景播报） */
-    inviteText: string;
     /** 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts），每项必填 */
     sources: Record<string, EventSourceEntry>;
     /** 🔴 [2026-09-23] 途经但那一年还不存在的据点（剧本期这一场不显示，路照走） */
@@ -307,7 +305,6 @@ function loadDrafts(): BattleDraft[] {
             year: ev.year,
             season: ev.season ?? 0,
             generalId: (ev as AnyEvent & { generalId?: string }).generalId ?? '',
-            inviteText: (ev as AnyEvent & { inviteText?: string }).inviteText ?? '',
             sources: Object.fromEntries(Object.entries((ev as AnyEvent & { sources?: Record<string, EventSourceEntry> }).sources ?? {})
                 .map(([k, v]) => [k, { ...v }])),
             absentCities: [...((ev as AnyEvent & { absentCities?: string[] }).absentCities ?? [])],
@@ -350,7 +347,7 @@ function loadDrafts(): BattleDraft[] {
 function blankDraft(): BattleDraft {
     return {
         bfId: '', bfName: '', bfNote: '', bfBriefing: '', bfRoster: [], bfEventCityId: '', bfTargetBattlefieldId: '', bfSiegeCastleType: '',
-        year: -321, season: 0, generalId: '', inviteText: '', sources: {}, absentCities: [], wonders: [], commanderUnit: '', foeCommanderUnit: '', startCityId: '', type: 'field_battle',
+        year: -321, season: 0, generalId: '', sources: {}, absentCities: [], wonders: [], commanderUnit: '', foeCommanderUnit: '', startCityId: '', type: 'field_battle',
         title: '', eventTitle: '', description: '', battleDescription: '',
         lat: 0, lng: 0,
         attackerFactionId: '', attackerGeneralId: '', attackerTroops: 10000, attackerSourceCityId: '', attackerLegionName: '',
@@ -383,8 +380,7 @@ function validate(d: BattleDraft): Issue[] {
     //    所以这里**只提醒、不拦存**（见 `eventRules.ts` 的同类提示）——
     //    改前是 `err`，而 `hasErr` 会把「保存」按钮置灰，导致亚历山大名下那 11 场
     //    **在编辑器里一场都存不了**（血训：校验比运行时还严，等于把主人的数据锁死）。
-    if (!d.description.trim()) err('战役播报内容必须填（事件播报）');
-    if (!d.battleDescription.trim()) warn('战役播报（战斗面板那条）为空，建议补上');
+    if (!d.description.trim()) err('战役说明必须填（战局始末与胜负结果）');
 
     if (!Number.isFinite(d.lat) || !Number.isFinite(d.lng) || (d.lat === 0 && d.lng === 0)) {
         err('战场坐标必须填');
@@ -1110,45 +1106,50 @@ function render(): void {
                 </div>
             </fieldset>
 
-            <fieldset><legend>六、战役播报内容</legend>
+            <fieldset><legend>六、战役播报与说明</legend>
                 <div class="row">
-                    <div class="fld"><label>事件播报 · 这一年发生了什么</label>
-                        <textarea id="f-desc">${escapeHtml(working.description)}</textarea></div>
+                    <div class="fld"><label>📜 战役说明 · 战局始末与胜负结果（纯正第三人称历史叙述文；战斗面板、战前说明与战报展示）</label>
+                        <textarea id="f-desc" style="min-height:85px;line-height:1.5;">${escapeHtml(working.description)}</textarea>
+                        <span class="hint">全剧彻底废除第一/第二人称对白，统一为纯正第三人称史书传记体叙述；保存时自动同步写入战役与事件双层描述。</span>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="fld"><label>战役播报 · 战斗面板与横幅</label>
-                        <textarea id="f-battleDesc">${escapeHtml(working.battleDescription)}</textarea></div>
-                </div>
-                <div class="row">
-                    <div class="fld"><label>武将邀约对白 · 玩家找到归属武将时他说的话，只显示文字；称呼要合乎人物的时代与文化，如亚历山大称「朋友」，不用中式的「壮士」</label>
-                        <textarea id="f-invite" style="min-height:58px;">${escapeHtml(working.inviteText)}</textarea>
-                        <span class="hint">${working.inviteText.trim() ? '' : '留空则用通用的一句邀约'}</span></div>
-                </div>
-                <div class="row">
-                    <div class="fld"><label>赶路背景播报 · 一路一句（一条路一个框；存盘时自动合成「空行分段 ＋ 【起点站名】挂点」）</label>
+                <div class="row" style="margin-top:10px;">
+                    <div class="fld"><label>🚶 行军播报 · 一路一句（哪一路播报哪一句；大军行经该路段时前台逐段播放）</label>
                         ${workingRoadSeg ? `
-                        <div style="font-size:12px;color:#9a8f7a;margin:2px 0 6px;">第 ${workingRoadSeg.scene} 场　${escapeHtml(workingRoadSeg.from)} → ${escapeHtml(workingRoadSeg.to)}　${workingRoadSeg.roads.length} 条路 · ${workingRoadSeg.km} 公里 · 该写 ${workingRoadSeg.words} 字　（每行一句，字数＝公里 × 0.336）</div>
+                        <div style="font-size:12px;color:#c0a980;margin:4px 0 10px;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid #3c3222;border-radius:4px;">
+                            <b>第 ${workingRoadSeg.scene} 场行军征程</b>：${escapeHtml(workingRoadSeg.from)} ➜ ${escapeHtml(workingRoadSeg.to)}
+                            <span style="color:#8c8273;margin-left:8px;">共 ${workingRoadSeg.roads.length} 条路 · 全程 ${workingRoadSeg.km} 公里 · 建议总字数 ${workingRoadSeg.words} 字（按路网实测每公里约 0.336 字掐算）</span>
+                        </div>
                         ${workingRoadSeg.roads.map((r, i) => {
                             const body = _bfRows.bodies[i] ?? '';
                             const ch = body.replace(/\s+/g, '').length;
                             const d = ch - r.words;
-                            const tag = ch === 0 ? '<span style="color:#a06050;">（这一句还没写）</span>'
-                                : (d > 4 ? `<span style="color:#d08a5a;">超 ${d} 字</span>` : d < -4 ? `<span style="color:#7f9a6a;">欠 ${-d} 字</span>` : '<span style="color:#7f9a6a;">✔</span>');
-                            return `<div style="margin:4px 0 10px;">`
-                                + `<div style="font-size:12px;color:#9a8f7a;">句 ${i + 1}${i === 0 ? '（起步句，无挂点）' : `　挂点【${escapeHtml(r.from)}】`}　${escapeHtml(r.from)} → ${escapeHtml(r.to)}　${r.km} 公里　该写 ${r.words} 字　<span id="bf-cnt-${i}">现在 ${ch} 字</span>　${tag}</div>`
-                                + `<textarea id="f-bf-row-${i}" data-row="${i}" style="width:100%;min-height:74px;resize:vertical;line-height:1.5;">${escapeHtml(body)}</textarea></div>`;
+                            const tag = ch === 0 ? '<span style="color:#a06050;font-weight:bold;">（未填）</span>'
+                                : (d > 4 ? `<span style="color:#d08a5a;">超 ${d} 字</span>` : d < -4 ? `<span style="color:#7f9a6a;">欠 ${-d} 字</span>` : '<span style="color:#7f9a6a;">✔ 字数适中</span>');
+                            const hookInfo = i === 0
+                                ? '<span style="color:#999;">起步路段 · 大军拔营启程，无前置挂点</span>'
+                                : `<span style="color:#e0b968;">挂点：行经进驻【${escapeHtml(r.from)}】时播报</span>`;
+                            return `<div style="margin:8px 0 12px;padding:8px 12px;background:rgba(0,0,0,0.22);border:1px solid #363024;border-radius:4px;">`
+                                + `<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;flex-wrap:wrap;gap:4px;">`
+                                + `  <div><strong style="color:#f0c674;font-size:13px;">【第 ${i + 1} 路】${escapeHtml(r.from)} ➜ ${escapeHtml(r.to)}</strong>`
+                                + `  <span style="color:#a89f91;font-size:12px;margin-left:10px;">路长：${r.km} 公里</span>`
+                                + `  <span style="color:#787060;font-size:12px;margin-left:6px;">（${hookInfo}）</span></div>`
+                                + `  <div style="font-size:12px;"><span style="color:#8a8070;">预算：${r.words} 字</span>`
+                                + `  <span style="color:#555;margin:0 4px;">|</span>`
+                                + `  <span id="bf-cnt-${i}" style="color:#e0d8c8;">当前 ${ch} 字</span>`
+                                + `  <span style="margin-left:6px;">${tag}</span></div>`
+                                + `</div>`
+                                + `<div style="font-size:12px;color:#c8b898;margin-bottom:4px;">👉 <b>播报文案（第 ${i + 1} 路对应播报）：</b></div>`
+                                + `<textarea id="f-bf-row-${i}" data-row="${i}" placeholder="输入走到第 ${i + 1} 路（${escapeHtml(r.from)} ➜ ${escapeHtml(r.to)}）时播报的传记文案..." style="width:100%;min-height:74px;resize:vertical;line-height:1.5;box-sizing:border-box;">${escapeHtml(body)}</textarea>`
+                                + `</div>`;
                         }).join('')}
                         ${(_bfRows.bodies.length + _bfRows.leftover.length) !== workingRoadSeg.roads.length ? `<div class="issues err" style="margin-top:6px;">现在的文本是 ${_bfRows.bodies.length + _bfRows.leftover.length} 段、本段有 ${workingRoadSeg.roads.length} 条路 —— <b>数目对不上</b>（多半是旧口径写的）：下面按顺序填进前几行，<b>请逐条核，别照着行号硬对</b>。</div>` : ''}
                         ${_bfRows.leftover.length ? `<div class="issues err" style="margin-top:6px;">现在的文本比本段的路多 ${_bfRows.leftover.length} 段（对不上段表，多半是旧口径写的）：<br>${_bfRows.leftover.map((t, k) => `${k + 1}. ${escapeHtml(t.slice(0, 40))}${t.length > 40 ? '…' : ''}`).join('<br>')}<br>把它们并进上面某一条路里，再存盘 —— 存盘只按上面每行的内容合成。</div>` : ''}
-                        <span class="hint">本段 ${_bfRows.bodies.filter((b) => b.trim()).length} / ${workingRoadSeg.roads.length} 句已写 · 现在 ${_bfRows.bodies.reduce((a, b) => a + b.replace(/\s+/g, '').length, 0)} 字 · 该写 ${workingRoadSeg.words} 字</span>`
+                        <span class="hint">当前已填 ${_bfRows.bodies.filter((b) => b.trim()).length} / ${workingRoadSeg.roads.length} 路 · 总字数 ${_bfRows.bodies.reduce((a, b) => a + b.replace(/\s+/g, '').length, 0)} / 预算 ${workingRoadSeg.words} 字</span>`
                         : `
                         <textarea id="f-bfBriefing" style="min-height:120px;">${escapeHtml(working.bfBriefing)}</textarea>
                         <span class="hint">这一场认不出对应的段表（没编入段）：先按老办法整段写</span>`}
                     </div>
-                </div>
-                <div class="row">
-                    ${working.type !== 'siege' ? `<div class="fld"><label>战场备注 · 史料出处，可空</label>
-                        <textarea id="f-bfNote" style="min-height:40px;">${escapeHtml(working.bfNote)}</textarea></div>` : ''}
                 </div>
             </fieldset>
 
@@ -1180,6 +1181,12 @@ function render(): void {
                             <textarea data-src-text="${it.key}" style="min-height:40px;">${escapeHtml(cur.text)}</textarea></div>
                     </div>`;
                 }).join('')}
+                ${working.type !== 'siege' ? `
+                <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px dashed #3a3224;">
+                    <div class="fld"><label>野战场记账备注 · 战场表史料出处（写入 Battlefield 表 note 字段，非前台播报文案，可空）</label>
+                        <textarea id="f-bfNote" style="min-height:40px;">${escapeHtml(working.bfNote)}</textarea>
+                    </div>
+                </div>` : ''}
             </fieldset>
 
             <fieldset><legend>九、本场特殊建筑 · 历史上知名的建筑（可多选，留空也可以）</legend>
@@ -1337,10 +1344,11 @@ function bind(): void {
     on<HTMLSelectElement>('f-defLegion', 'change', (el) => { working.defenderLegionName = el.value; render(); });
     on<HTMLInputElement>('f-defLegionSearch', 'input', () => { filterLegionSelect('f-defLegion', 'f-defLegionSearch'); });
     on<HTMLSelectElement>('f-result', 'change', (el) => { working.result = el.value as BattleDraft['result']; });
-    on<HTMLTextAreaElement>('f-desc', 'input', (el) => { working.description = el.value; });
-    on<HTMLTextAreaElement>('f-battleDesc', 'input', (el) => { working.battleDescription = el.value; });
+    on<HTMLTextAreaElement>('f-desc', 'input', (el) => {
+        working.description = el.value;
+        working.battleDescription = el.value;
+    });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
-    on<HTMLTextAreaElement>('f-invite', 'change', (el) => { working.inviteText = el.value; render(); });
     on<HTMLSelectElement>('f-commander', 'change', (el) => { working.commanderUnit = el.value; render(); });
     on<HTMLSelectElement>('f-foeCommander', 'change', (el) => { working.foeCommanderUnit = el.value; render(); });
     on<HTMLSelectElement>('f-startCity', 'change', (el) => { working.startCityId = el.value; render(); });
@@ -1371,7 +1379,7 @@ function bind(): void {
         });
     });
     on<HTMLTextAreaElement>('f-bfBriefing', 'change', (el) => { working.bfBriefing = el.value; render(); });
-    // 一路一句：每行一个框 —— 打字时只更新那一行的字数，改完（失焦）再把各行合成回 working.bfBriefing
+    // 一路一句：每行一个框 —— 打字时更新当前行的字数，同时同步到 working.bfBriefing
     document.querySelectorAll<HTMLTextAreaElement>('textarea[data-row]').forEach((el) => {
         const i = Number(el.dataset.row);
         // 🔴 [2026-09-27 主人「这框也太小了吧」] 文本框随内容自动撑高（满宽 + 至少 74px），打字时也跟着长
@@ -1379,8 +1387,12 @@ function bind(): void {
         fit();
         el.addEventListener('input', () => {
             const cnt = document.getElementById(`bf-cnt-${i}`);
-            if (cnt) cnt.textContent = `现在 ${el.value.replace(/\s+/g, '').length} 字`;
+            if (cnt) cnt.textContent = `当前 ${el.value.replace(/\s+/g, '').length} 字`;
             fit();
+            const seg = currentRoadSeg();
+            const bodies = briefingBodiesOf(working.bfBriefing, seg).bodies.slice();
+            bodies[i] = el.value;
+            working.bfBriefing = assembleBriefing(bodies, seg);
         });
         el.addEventListener('change', () => {
             const seg = currentRoadSeg();
@@ -1499,6 +1511,15 @@ async function dataFilesSnapshot(): Promise<string> {
 const loadedSnapshot: Promise<string | null> = dataFilesSnapshot().catch(() => null);
 
 async function save(): Promise<void> {
+    working.battleDescription = working.description;
+    const seg = currentRoadSeg();
+    if (seg) {
+        const rowEls = document.querySelectorAll<HTMLTextAreaElement>('textarea[data-row]');
+        if (rowEls.length > 0) {
+            const bodies = Array.from(rowEls).map((el) => el.value);
+            working.bfBriefing = assembleBriefing(bodies, seg);
+        }
+    }
     const issues = validate(working);
     if (issues.some((i) => i.level === 'error')) { alert('还有必填项没填对，先按红色提示改完'); return; }
     const before = await loadedSnapshot;

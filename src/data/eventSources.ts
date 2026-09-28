@@ -31,7 +31,6 @@ export const EVENT_SOURCE_ITEMS = [
     { key: 'defenderLegion', label: '守方军团编成', hint: '史称什么；骑兵、步兵、远程各多少人，按比例定三排人数；一贯怎么打定前中后' },
     { key: 'route', label: '行军路线', hint: '从哪出发，途经哪些地方，在哪渡河 / 渡海' },
     { key: 'result', label: '胜负与战后归属', hint: '谁胜；战后哪座城归谁' },
-    { key: 'invite', label: '邀约对白所据史事', hint: '武将这番话依据的史事' },
     { key: 'briefing', label: '背景播报所据史料', hint: '赶路播报里的人数、人物、地形出自哪里' },
 ] as const;
 
