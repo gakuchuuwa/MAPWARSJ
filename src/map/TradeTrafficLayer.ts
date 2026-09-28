@@ -563,7 +563,10 @@ export class TradeTrafficLayer {
                 pending.push({ sheet, frame, fw, fh, dx, dy });
                 if (sea) {
                     // 海上的单位进队列（船身罗盘角/朝向/船长都按这一帧算出来的真值给）
-                    seaShips.push({ x: pt.x, y: pt.y, r: u, isAlive: true, dir: dirIdx, deg: dirRes.deg, shipLen: fw * scale });
+                    // 🔴 [2026-09-28 主人「船头和船尾的浪花应该在一条线上」] deg 给**画出来的船身角**（16 向扇区中心），
+                    //    不给带 10° 死区的行进角 lastDeg —— 船身不旋转、只按扇区换帧，浪花要沿船身轴发，才落在船头船尾上。
+                    const hullDeg = asset.dirs16 ? 45 + 22.5 * dirIdx : dirRes.deg;
+                    seaShips.push({ x: pt.x, y: pt.y, r: u, isAlive: true, dir: dirIdx, deg: hullDeg, shipLen: fw * scale });
                 }
             }
 

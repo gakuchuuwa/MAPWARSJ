@@ -201,7 +201,7 @@ export function checkRoute(d: RouteDraft): RouteReport {
     //    只有他的第一场，才从他所在的城出发。
     const prevEvForStart = previousEventOfSameGeneral(d.generalId, d.year, d.season);
     const prevEndForStart = prevEvForStart ? eventEndPoint(prevEvForStart) : null;
-    const fromPrevBattlefield = !!prevEndForStart;
+    const fromPrevBattlefield = !d.startCityId && !!prevEndForStart;
     // 第一场：军团从**归属武将所在的城**起兵出发（不是「攻方出兵据点」那一栏）
     const startId = d.startCityId || (d.generalId ? cityOfGeneral(d.generalId) : undefined);
     const start = startId ? CITY_BY_ID.get(startId) : undefined;
@@ -333,7 +333,7 @@ export function checkRoute(d: RouteDraft): RouteReport {
         const prevEv = fromPrevBattlefield ? null : previousEventOfSameGeneral(d.generalId, d.year, d.season);
         const prevEnd = prevEv ? eventEndPoint(prevEv) : null;
         if (prevEv && prevEnd) {
-            const first = stops[1] ?? stops[stops.length - 1];
+            const first = d.startCityId ? stops[0] : (stops[1] ?? stops[stops.length - 1]);
             if (km(prevEnd, first.p) >= 0.5) {
                 const straightKm = km(prevEnd, first.p);
                 const fromName = `上一场打完处（${(prevEv.title ?? `${prevEv.year}年那一场`).replace(/^公元前\d+年\s*/, '')}）`;
