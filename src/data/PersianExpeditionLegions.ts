@@ -64,4 +64,6 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     aqimeinide: { name: '不死军', tier: 2 },
     asaibaijiang: { name: '伊儿汗怯薛', tier: 1 },
     yisatisi: { name: '圣火卫', tier: 3 },
+    kuida: { name: '奎达精骑', tier: 3 },          // 奎达·恰卡尔：波兰山口骑军
+    zhalange: { name: '扎兰突骑', tier: 3 },        // 扎兰格·巴尔塞恩特斯：德兰吉亚绿洲突骑
 };

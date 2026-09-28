@@ -1044,6 +1044,10 @@ export class CityAssetManager {
         'adiyabeina': '亚贝',
         'genji': '镰仓',
         'dasaleiti': '达萨',
+        'panfeiliya': '潘菲',
+        'baihaliye': '拜哈',
+        'kuida': '沙尔',
+        'zhalange': '扎兰',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

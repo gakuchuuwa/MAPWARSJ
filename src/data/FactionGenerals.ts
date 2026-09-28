@@ -1302,6 +1302,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     lulisitan: { generalId: 'lulisitan_shoujiang', generalName: '伊拉姆守将', portrait: '' },   // 
     golpayegan_diqu: { generalId: 'golpayegan_yicheng', generalName: '古尔帕耶甘驿丞', portrait: '' },   // 
     meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '尼西比斯守将', portrait: '' },   // 尼西比斯（同上；立绘留空走回落）                  // 锡瓦阿蒙神庙祭司（史书未留名，以职名为名；立绘留空走回落）   // 前333 亚历山大任命的卡帕多细亚总督（阿里安 II.4）；立绘留空走回落，待主人放图
+    panfeiliya: { generalId: 'panfeiliya_apollonios', generalName: '阿波罗尼奥斯', portrait: '' },
+    baihaliye: { generalId: 'baihaliye_djedkhonsu', generalName: '杰德孔苏', portrait: '' },
+    kuida: { generalId: 'kuida_chakar', generalName: '恰卡尔', portrait: '' },
+    zhalange: { generalId: 'zhalange_barsaentes', generalName: '巴尔塞恩特斯', portrait: '' },
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
 };

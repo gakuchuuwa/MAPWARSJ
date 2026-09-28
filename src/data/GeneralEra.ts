@@ -1139,6 +1139,10 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'zu_d_yuanchonghuan': 'imperial',
     'zubu_mogusi': 'castle',
     'zuo_d_wufu': 'castle',
+    'panfeiliya_apollonios': 'antiquity',
+    'baihaliye_djedkhonsu': 'antiquity',
+    'kuida_chakar': 'feudal',
+    'zhalange_barsaentes': 'antiquity',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {
