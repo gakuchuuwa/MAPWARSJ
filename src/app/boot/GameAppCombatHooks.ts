@@ -459,6 +459,10 @@ export function wireGeneralSkillCombat(app: GameApp, legionManager: LegionManage
  *    app.tacticalModeEnabled 就停在默认 true —— 面板显示关、游戏里还是开（主人报「这个功能失效了」）。
  */
 function tacticalModeOn(app: { tacticalModeEnabled?: boolean }): boolean {
+    // 🔴 [2026-09-28 主人定「部署的程序只保留战略层面，战术用来做本地视频」]
+    //    线上构建一律不进战术模式；战术层的城墙破损/倒塌动画（SUCAI_BUILDING 下 *_D25/_D50/_D75/_DESTR/_RUBBLE
+    //    的 frames*.png，1337 个文件 / 3.07GB）已由 .vercelignore 排除，不上传。本地 dev 不受影响。
+    if (import.meta.env.PROD) return false;
     const chk = typeof document !== 'undefined'
         ? document.getElementById('chk-tactical-mode') as HTMLInputElement | null : null;
     if (chk) app.tacticalModeEnabled = chk.checked;

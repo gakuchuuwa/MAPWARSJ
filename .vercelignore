@@ -99,3 +99,9 @@ public/assets/**/__闲置__*
 public/cities/备用
 # 兜底：Vercel 的 glob 若不认上面那条 a/**/b 写法，这条按任意层级匹配，效果一样。
 **/__闲置__*
+# 🔴 [2026-09-28 主人定「部署的程序只保留战略层面，不要战术了。战术用来做本地视频」]
+# 战略层读建筑只用每个目录的 preview.png；frames*.png 是战术层（zoom13）的城墙破损/倒塌动画
+# （*_D25/_D50/_D75/_DESTR/_RUBBLE 共 1337 个 3.07GB）和谁都不读的多帧图（1932 个 68MB）。
+# 线上已关闭战术模式（GameAppCombatHooks.tacticalModeOn 在 PROD 下恒为 false），故整批不上传。
+public/SUCAI_BUILDING/**/frames.png
+public/SUCAI_BUILDING/**/frames.pc.png
