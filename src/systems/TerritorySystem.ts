@@ -1004,8 +1004,6 @@ export class TerritorySystem {
     // UI Elements Mapped by City ID
     private cityMarkers: Map<string, L.Marker> = new Map();
     private cityLabels: Map<string, L.Marker> = new Map();
-    /** 🔴 [2026-09-27 主人定] 只画灰色城名的据点（没到年代的城）：只有 cityLabels 里的标签，没有 cityMarkers */
-    private nameOnlyIds: Set<string> = new Set();
 
     // Caches
     private geometryCache: Map<string, { checksum: string, paths: L.LatLng[][] }> = new Map();
@@ -1363,24 +1361,19 @@ export class TerritorySystem {
     /** 仅绘制据点旗号/标签（启动时先出图，避免全图 BFS 期间地图空白） */
     public async renderCitiesOnly(
         cities: City[],
-        ghostPredicate?: (city: City) => boolean,
-        nameOnlyPredicate?: (city: City) => boolean
+        ghostPredicate?: (city: City) => boolean
     ): Promise<void> {
         this.cities = cities;
         const renderId = ++this.renderCounter;
-        await this.renderCityLayersChunked(renderId, ghostPredicate, nameOnlyPredicate);
+        await this.renderCityLayersChunked(renderId, ghostPredicate);
     }
 
     /** 视口扩展：只追加尚未绘制的据点（拖图后分块补画） */
     public async appendCityMarkers(
         cities: City[],
-        ghostPredicate?: (city: City) => boolean,
-        nameOnlyPredicate?: (city: City) => boolean
+        ghostPredicate?: (city: City) => boolean
     ): Promise<void> {
-        const toAdd = cities.filter((c) => {
-            if (nameOnlyPredicate?.(c)) return !this.nameOnlyIds.has(c.id);
-            return !this.cityMarkers.has(c.id);
-        });
+        const toAdd = cities.filter((c) => !this.cityMarkers.has(c.id));
         if (toAdd.length === 0) return;
 
         const renderId = ++this.renderCounter;
@@ -1398,25 +1391,8 @@ export class TerritorySystem {
                 const city = toAdd[i];
                 // 🔴 [2026-09-12 主人定] 战场已**独立出据点体系**（`src/data/Battlefields.ts` +
                 //    `src/map/BattlefieldLayer.ts`）→ 据点层不再有任何战场特判。
-                const fadeIn = isScriptPeriod();
-                // 身份变了（灰名 ↔ 正常据点）→ 先摘掉旧的那一套再画
-                const oldLabel = this.cityLabels.get(city.id);
-                if (oldLabel) {
-                    this.layerGroup.removeLayer(oldLabel);
-                    this.cityLabels.delete(city.id);
-                }
-                const oldMarker = this.cityMarkers.get(city.id);
-                if (oldMarker) {
-                    this.layerGroup.removeLayer(oldMarker);
-                    this.cityMarkers.delete(city.id);
-                }
-                if (nameOnlyPredicate?.(city)) {
-                    this.renderNameOnlyLabel(city, this.layerGroup, this.cityLabels, fadeIn);
-                    this.nameOnlyIds.add(city.id);
-                    continue;
-                }
-                this.nameOnlyIds.delete(city.id);
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
+                const fadeIn = isScriptPeriod();
                 this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost, fadeIn);
             }
             cityIndex = end;
@@ -1454,14 +1430,11 @@ export class TerritorySystem {
 
     private async renderCityLayersChunked(
         renderId: number,
-        ghostPredicate?: (city: City) => boolean,
-        nameOnlyPredicate?: (city: City) => boolean
+        ghostPredicate?: (city: City) => boolean
     ): Promise<void> {
         const tempLayerGroup = L.layerGroup();
         const tempCityLabels = new Map<string, L.Marker>();
         const tempCityMarkers = new Map<string, L.Marker>();
-        const tempNameOnlyIds = new Set<string>();
-        const wantTroops = !isScriptPeriod();
         const chunkSize = 12;
         let cityIndex = 0;
 
@@ -1472,33 +1445,15 @@ export class TerritorySystem {
                 const city = this.cities[i];
                 // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点层不再有战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
-                const fadeIn = isScriptPeriod();
-                // 🔴 [2026-09-27 主人定] 没到年代的城只画灰色城名
-                if (nameOnlyPredicate?.(city)) {
-                    const existingNameLabel = this.nameOnlyIds.has(city.id) ? this.cityLabels.get(city.id) : undefined;
-                    if (existingNameLabel) tempCityLabels.set(city.id, existingNameLabel);
-                    else this.renderNameOnlyLabel(city, tempLayerGroup, tempCityLabels, fadeIn);
-                    tempNameOnlyIds.add(city.id);
-                    continue;
-                }
                 if (this.cityMarkers.has(city.id)) {
                     // 已有 marker：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
                     const existingMarker = this.cityMarkers.get(city.id)!;
                     const existingLabel = this.cityLabels.get(city.id);
                     tempCityMarkers.set(city.id, existingMarker);
-                    if (existingLabel) {
-                        // 剧本 ↔ 乱斗切换：兵力数字要随之去掉 / 补回
-                        const hasTroops = (existingLabel.getElement()?.querySelectorAll('span').length ?? 0) >= 2;
-                        if (hasTroops !== wantTroops) {
-                            existingLabel.setIcon(L.divIcon({
-                                className: 'city-troop-label',
-                                html: TerritorySystem.buildCityLabelHtml(city),
-                            }));
-                        }
-                        tempCityLabels.set(city.id, existingLabel);
-                    }
+                    if (existingLabel) tempCityLabels.set(city.id, existingLabel);
                     continue;
                 }
+                const fadeIn = isScriptPeriod();
                 this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost, fadeIn);
             }
             cityIndex = end;
@@ -1507,16 +1462,6 @@ export class TerritorySystem {
             }
         }
         if (this.renderCounter !== renderId) return;
-
-        // 不带灰名判定的全量重绘（`update()` 走领土那条路，只给过闸的城）→ 已画的灰名原样留下，不被清掉
-        if (!nameOnlyPredicate) {
-            for (const id of this.nameOnlyIds) {
-                const label = this.cityLabels.get(id);
-                if (!label || tempCityLabels.has(id) || tempCityMarkers.has(id)) continue;
-                tempCityLabels.set(id, label);
-                tempNameOnlyIds.add(id);
-            }
-        }
 
         const markerLayers: L.Layer[] = [];
         tempLayerGroup.eachLayer((l) => markerLayers.push(l));
@@ -1540,7 +1485,6 @@ export class TerritorySystem {
 
         this.cityMarkers = tempCityMarkers;
         this.cityLabels = tempCityLabels;
-        this.nameOnlyIds = tempNameOnlyIds;
         // 攻城放大状态跟随全量重绘（2026-07-18）：临时层渲染时 marker 未上图，getElement() 为空，
         // renderSingleCity 里的补回不生效——必须在原子换层后统一补回，否则战斗中据点"提前恢复"
         for (const cityId of this.siegeZoomedCities) {
@@ -2150,7 +2094,8 @@ export class TerritorySystem {
 
         // 🔴 [2026-09-12 主人定] 战场已独立出据点体系（`src/data/Battlefields.ts`）→ 据点一律有势力、一律插旗。
         //    （原「战场没有势力不用插旗」的 `showFlag` 特判已撤销。）
-        const showFlag = true;
+        // 🔴 [2026-09-27 主人「怎么每次都把旗帜和旗杆分开」] 旗杆与旗面**同一个判断**：没到年代的据点两样都不画。
+        const showFlag = TerritorySystem.hasCitySprite(city);
 
         const flagFrameWidth = 32;
         const flagFrameHeight = 40;
@@ -2217,7 +2162,7 @@ export class TerritorySystem {
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
-                     ${this.showCityTextures ? `<div class="city-building-stack" style="display: inline-block;">
+                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">
                           ${(deStyle
                               ? (city.type === 'big_city'
                                   ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
@@ -2251,7 +2196,7 @@ export class TerritorySystem {
 
         const marker = L.marker([displayLat, displayLng], {
             icon: icon,
-            interactive: true,
+            interactive: TerritorySystem.hasCitySprite(city),   // 没到年代的据点只当注记，不可点
             draggable: isEditorMode,
             pane: 'cityPane'
         }).addTo(targetLayerGroup);
@@ -2298,10 +2243,18 @@ export class TerritorySystem {
     }
 
     /** 据点标签 HTML（城名 + 城防）。renderCityLabel / updateCityLabel 共用，勿再复制粘贴 */
-    private static buildCityLabelHtml(city: City, fadeIn = false): string {
-        // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点标签一律带兵力数字。
-        //    （原「战场据点只显示地名、不带兵力」的特判已撤销。）
-        // 🔴 [2026-09-27 主人定「不在据点显示兵力」] 剧本期据点只显示城名，不带兵力数字；乱斗照旧。
+    /**
+     * 🔴 [2026-09-27 主人定] **样貌过滤器**：返回 false 的据点**只画灰字名字**（不画城样貌、不插旗、不可点）。
+     *    剧本期由 GameApp 设成「年代闸门」——那年存在的才画城，那年没有的只留名字（注记）。
+     */
+    private static spriteFilter: ((city: City) => boolean) | null = null;
+    public static setSpriteFilter(f: ((city: City) => boolean) | null): void { TerritorySystem.spriteFilter = f; }
+    public static hasCitySprite(city: City): boolean { return !TerritorySystem.spriteFilter || TerritorySystem.spriteFilter(city); }
+
+    private static buildCityLabelHtml(city: City, fadeIn = false, dim = false): string {
+        // 🔴 [2026-09-27 主人定「不在据点显示兵力」] **剧本期（历史教程）据点标签一律不带兵力数字**：
+        //    这是历史剧本，不是乱斗数值面板；也免得「那一年这城驻多少兵」穿帮。
+        //    乱斗模式照旧显示兵力。
         const troopsSpan = isScriptPeriod() ? '' : `
             <span style="
                 color: #f0c75e; font-weight: bold;
@@ -2315,40 +2268,11 @@ export class TerritorySystem {
             cursor: inherit; white-space: nowrap;
         ">
             <span style="
-                color: #ffffff; font-weight: bold;
+                color: ${dim ? '#9a9a9a' : '#ffffff'}; font-weight: ${dim ? 'normal' : 'bold'};
                 text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                font-size: 13px;
+                font-size: ${dim ? '11px' : '13px'};
             ">${city.name}</span>${troopsSpan}
         </div>`;
-    }
-
-    /**
-     * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来……到年代的据点显示样貌」]
-     * 没到年代的城：只画灰色小字城名，不画城池样貌、不插旗、不带兵力。
-     */
-    private renderNameOnlyLabel(
-        city: City,
-        targetLayerGroup: L.LayerGroup,
-        labelsMap: Map<string, L.Marker>,
-        fadeIn: boolean = false
-    ): void {
-        const animClass = fadeIn ? ' map-fade-in' : '';
-        const html = `<div class="city-label-content city-label-name-only${animClass}" style="
-            display: flex; justify-content: center; align-items: center;
-            width: 150px; margin-left: -75px; margin-top: -8px;
-            white-space: nowrap; pointer-events: none;
-        "><span style="
-                color: #b8b8b8; font-weight: normal; opacity: 0.85;
-                text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-                font-size: 11px;
-            ">${city.name}</span></div>`;
-        const label = L.marker([city.latitude, city.longitude], {
-            icon: L.divIcon({ className: 'city-troop-label', html }),
-            zIndexOffset: 500,
-            interactive: false,
-            pane: 'labelsPane'
-        }).addTo(targetLayerGroup);
-        labelsMap.set(city.id, label);
     }
 
     private renderCityLabel(
@@ -2359,14 +2283,15 @@ export class TerritorySystem {
         labelsMap: Map<string, L.Marker>,
         fadeIn: boolean = false
     ) {
-        const html = TerritorySystem.buildCityLabelHtml(city, fadeIn);
+        const spriteOk = TerritorySystem.hasCitySprite(city);
+        const html = TerritorySystem.buildCityLabelHtml(city, fadeIn, !spriteOk);
 
         const labelIcon = L.divIcon({ className: 'city-troop-label', html: html });
 
         const label = L.marker([lat, lng], {
             icon: labelIcon,
             zIndexOffset: 1000,
-            interactive: true,
+            interactive: spriteOk,   // 🔴 不过年代闸门的：只当注记，不可点
             pane: 'labelsPane'
         }).addTo(targetLayerGroup);
 
@@ -2507,16 +2432,10 @@ export class TerritorySystem {
             this.cityLabels.delete(city.id);
         }
 
-        // 灰名据点（没到年代）易主后仍只画灰名，不画样貌/旗号
-        if (this.nameOnlyIds.has(city.id)) {
-            this.renderNameOnlyLabel(city, this.layerGroup, this.cityLabels, false);
-            return;
-        }
         this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, false, false);
     }
 
     public updateCityLabel(city: City) {
-        if (this.nameOnlyIds.has(city.id)) return;   // 灰名据点不显示兵力
         const labelOriginal = this.cityLabels.get(city.id);
         if (labelOriginal) {
             // 城名 / 城防数字变了 → 直接改两个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
@@ -2531,7 +2450,7 @@ export class TerritorySystem {
             }
             const newIcon = L.divIcon({
                 className: 'city-troop-label',
-                html: TerritorySystem.buildCityLabelHtml(city),
+                html: TerritorySystem.buildCityLabelHtml(city, false, !TerritorySystem.hasCitySprite(city)),
             });
             labelOriginal.setIcon(newIcon);
         }

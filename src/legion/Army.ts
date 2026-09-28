@@ -461,6 +461,10 @@ export class Army implements IBattleUnit {
      */
     private updateColumnMarch(): void {
         if (this.type === 'hero') { this.columnMarch = false; return; }
+        // 🔴 [2026-09-27 主人令「军团行至据点、播报没念完而停下时，改为常规阵型更好，好似在据点休息」]
+        //    **被按住（等这句念完）＝ 就地驻下**：不再摆长蛇阵，换成常规阵型原地展开 —— 看着就是在据点歇脚。
+        //    松闸（播报念完）后下一帧自然又按「在行军且离终点还有 40 公里以上」回到长蛇阵。
+        if (this.isMarchHeld()) { this.columnMarch = false; return; }
         const end = this.isMarching() ? this.getMarchEndPoint() : null;
         this.columnMarch = !!end
             && Math.hypot(this.position.lat - end.lat, this.position.lng - end.lng) * 111 > Army.COLUMN_DEPLOY_KM;
@@ -684,6 +688,12 @@ export class Army implements IBattleUnit {
             }
         }
         if (this.isPostBattleResting()) return;
+
+        // 🔴 [2026-09-26 主人定「我要的是行军播报，不是驻足播报」] **播报不许让军团停步**：
+        //    —— 这道闸现在是**活的**：`PlayerQuestSystem.settleBriefingHold` 每帧重按（1.5 秒没人按自动松，永不会钉死）；
+        //    按住的这几秒里军团摆**常规阵型**（见 `updateColumnMarch`），看着像在据点歇脚。
+        //    军团一路走，播报跟着走；文案按那一段路的长度写，念不完的部分就让它念不完。
+        if (this.marchHoldUntilMs > performance.now()) return;
 
         if (this.pathQueue.length === 0 && this.hasArrived) return;
         if (this.isBlocked()) return;
@@ -1512,9 +1522,23 @@ export class Army implements IBattleUnit {
         return true;
     }
 
+    /**
+     * 🔴 [2026-09-26 主人令] **停步待令**：播报没念完就地驻足，念完再走（见 `Army.update` 那道闸）。
+     *   只有 `PlayerQuestSystem` 会按它（走到本段终点＝B 点，而这一段的旁白还在念）。
+     * 🔴 [2026-09-26 主人报障「怎么不动了？」] **必须每帧重新按**（`setMarchHold(true)` 顶多管 1.5 秒）：
+     *   按的人（任务系统）只要有一帧没再按 —— 任务换了、播报链断了、异常了 —— 闸自己就松，
+     *   军团**永远不会被钉在路上**（这是「停下等念完」唯一允许的实现方式）。
+     */
+    private marchHoldUntilMs = 0;
+
+    public setMarchHold(on: boolean): void {
+        this.marchHoldUntilMs = on ? performance.now() + 1500 : 0;
+    }
+
+    public isMarchHeld(): boolean { return this.marchHoldUntilMs > performance.now(); }
+
     public moveAlongPath(path: MarchPoint[]): void {
         if (path.length === 0) return;
-
         // clone to avoid side effects；滤掉坏点，避免一路写进 NaN
         const newPath = path.filter((p) => Number.isFinite(p?.lat) && Number.isFinite(p?.lng));
         if (newPath.length === 0) return;

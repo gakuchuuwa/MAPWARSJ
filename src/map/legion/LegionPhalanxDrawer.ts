@@ -792,6 +792,27 @@ export class LegionPhalanxDrawer {
             // 所有动作组都处理完了，这批原图才真的没人要（见 pendingRelease 上方说明）
             for (const p of pendingRelease) AssetLoader.release(p);
             pendingRelease.clear();
+
+            // 🔴 [2026-09-27 治愈时好时灰] 预加载该兵种全套 .pc.png 遮罩，确保大地图军团渲染时遮罩 100% 就绪
+            const allSprites: (HTMLImageElement | null | undefined)[] = [
+                ...cacheEntry.MOVE,
+                ...cacheEntry.IDLE,
+                ...cacheEntry.ATTACK,
+                ...cacheEntry.DAMAGE,
+                ...cacheEntry.DEATH,
+                ...cacheEntry.SHOOT,
+                ...cacheEntry.CHARGE,
+            ];
+            if (cacheEntry.SECONDARY) {
+                const s = cacheEntry.SECONDARY;
+                allSprites.push(...s.MOVE, ...s.IDLE, ...s.ATTACK, ...s.DAMAGE, ...s.DEATH, ...s.SHOOT, ...s.CHARGE);
+            }
+            if (cacheEntry.TERTIARY) {
+                const t = cacheEntry.TERTIARY;
+                allSprites.push(...t.MOVE, ...t.IDLE, ...t.ATTACK, ...t.DAMAGE, ...t.DEATH, ...t.SHOOT);
+            }
+            await SpriteTinter.preloadMasksForSprites(allSprites);
+
             this.unitSpriteCache.set(key, cacheEntry);
             this.spriteLastUsed.set(key, performance.now());
             await yieldMain();
@@ -2637,6 +2658,16 @@ export class LegionPhalanxDrawer {
      * 🔴 [2026-09-23 主人「旗帜是不是应该和人在一起」] 纵队 / 展开过渡中主将队（第 10 格）的屏幕偏移：
      * 军旗跟着将军走。不在纵队（或没有主将队）→ null，旗照旧画在军团中心。
      */
+    /**
+     * 这支军团是否还在「长蛇阵 ↔ 常规阵型」之间（纵队中或正在走位收拢）。
+     * 🔴 [2026-09-27 主人报「停下改常规阵型没有效果」] 渲染器只在单位移动时才重画；
+     *    军团被按住（等播报念完）就不动了，不重画 → 走位收拢一帧都推不动，画面定格在长蛇。
+     *    GlobalUnitRenderer 靠这个判定：还在过渡就继续重画，收拢完（状态被清）自然停。
+     */
+    public static isInColumnState(unitId: string): boolean {
+        return this.columnCur.has(unitId);
+    }
+
     public static getColumnCommanderOffset(unitId: string): { x: number; y: number } | null {
         const cur = this.columnCur.get(unitId);
         return cur && cur.length === 10 ? cur[9] : null;

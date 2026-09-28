@@ -201,22 +201,21 @@ export class CityManager {
     }
 
     /**
-     * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来……到年代的据点显示样貌」]
-     * 被外部显示过滤挡掉的据点（剧本期那一年还没到年代的城）不再整个不画，
-     * 改成**只画灰色城名**（不画城池样貌、不插旗、不带兵力）。
-     * 返回 true 的据点只画灰名；据点本身照旧（寻路/归属/战斗一概不受影响）。
+     * 🔴 [2026-09-27 主人定「全图的据点名称都显示出来，样貌按年代」]
+     *   **渲染可见** 与 **逻辑可见** 拆开：
+     *   · 逻辑可见（`isCityVisible`）＝ 那一年真的存在（能否被攻打、特殊建筑显不显示都按它）；
+     *   · 渲染可见（`isCityRenderable`）＝ 要不要在地图上**建这座城的 marker**。
+     *   剧本期把渲染放宽到全库（名字都要看得见），样貌由 `TerritorySystem.setSpriteFilter` 决定画不画城。
      */
-    private nameOnlyWhenFiltered: (() => boolean) | null = null;
+    private renderFilter: ((city: City) => boolean) | null = null;
 
-    public setNameOnlyWhenFiltered(enabled: (() => boolean) | null): void {
-        this.nameOnlyWhenFiltered = enabled;
+    public setRenderFilter(filter: ((city: City) => boolean) | null): void {
+        this.renderFilter = filter;
     }
 
-    /** 这座城只画灰色城名（被显示过滤挡掉、且处在「挡掉的只画名字」的模式里） */
-    public isCityNameOnly(city: City): boolean {
-        if (this.isEditorMode) return false;
-        if (!this.visibilityFilter || !this.nameOnlyWhenFiltered?.()) return false;
-        return !this.visibilityFilter(city);
+    public isCityRenderable(city: City): boolean {
+        if (this.isEditorMode) return true;
+        return this.renderFilter ? this.renderFilter(city) : this.isCityVisible(city);
     }
 
     /** 显示范围变了（剧本进度 / 模式切换）→ 按新范围重画视口据点 */
@@ -364,7 +363,7 @@ export class CityManager {
         const t0 = performance.now();
         const cityIds = [...new Set(seeds.map((s) => s.cityId))];
         const oldFactions = [...new Set(seeds.map((s) => s.oldFactionId).filter(Boolean) as string[])];
-        const visibleCities = this.cities.filter((city) => this.isCityVisible(city));
+        const visibleCities = this.cities.filter((city) => this.isCityRenderable(city));
         await this.territorySystem.updateIncremental(
             cityIds,
             (city) => this.isCityGhost(city),
@@ -428,7 +427,7 @@ export class CityManager {
         const bounds = this.map.getLeafletMap().getBounds();
         return this.cities.filter(
             (city) =>
-                (this.isCityVisible(city) || this.isCityNameOnly(city)) &&
+                this.isCityRenderable(city) &&
                 bounds.contains([city.latitude, city.longitude]),
         );
     }
@@ -436,14 +435,12 @@ export class CityManager {
     /** 启动优先：仅当前视口据点；不拖图则不画远处 */
     public async renderCitiesOnly(): Promise<void> {
         const viewportCities = this.getCitiesInMapViewport();
-        await this.territorySystem.renderCitiesOnly(
-            viewportCities, (city) => this.isCityGhost(city), (city) => this.isCityNameOnly(city));
+        await this.territorySystem.renderCitiesOnly(viewportCities, (city) => this.isCityGhost(city));
     }
 
     private async syncViewportCities(): Promise<void> {
         const viewportCities = this.getCitiesInMapViewport();
-        await this.territorySystem.appendCityMarkers(
-            viewportCities, (city) => this.isCityGhost(city), (city) => this.isCityNameOnly(city));
+        await this.territorySystem.appendCityMarkers(viewportCities, (city) => this.isCityGhost(city));
         CityAssetManager.notifyMapInteraction();
     }
 
@@ -462,7 +459,7 @@ export class CityManager {
     public async renderAllCities(): Promise<void> {
         const t0 = performance.now();
         // [NEW] Filter cities based on visibility
-        const visibleCities = this.cities.filter(city => this.isCityVisible(city));
+        const visibleCities = this.cities.filter(city => this.isCityRenderable(city));
 
         // Pass "ghost" status via runtime property injection (or modify TerritorySystem)
         // For now, let's inject a temporary property if needed, or better:
