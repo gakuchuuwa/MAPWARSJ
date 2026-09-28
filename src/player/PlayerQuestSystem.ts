@@ -32,6 +32,7 @@ import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBa
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs, briefingAnchors } from './JourneyBriefing';
+import { SCRIPT_CITY_NAMES } from '../data/scriptCityNames';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
 import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
@@ -1671,10 +1672,24 @@ export class PlayerQuestSystem {
     private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string): Array<{ lat: number; lng: number; name: string }> {
         if (!ev?.title) return [];
         const cities = this.deps.cityManager.getCities();
+        // 🔴 [2026-09-28 主人令「一路一句」复查 · 真机实测] **挂点名要两种写法都认**：
+        //    剧本期图上用的是**剧本名**（`city_plovdiv` 在图上叫「菲利波波利斯」），
+        //    而播报里写的是库里原名【普罗夫迪夫】—— 只按 `c.name` 查就**一个锚点都认不出来**，
+        //    `briefingBounds` 长度 0 → 第 1 场整个退回「起步一口气念完」，而且**永远不会驻足**
+        //    （真机实测：第 1 场 bounds=0，第 2 场 bounds=4 正常，差别就在这一处地名）。
+        //    与 `scriptCityVisibility` 同一口径：乱斗原名与剧本期古名**两种都认**。
+        const byName = new Map<string, (typeof cities)[number]>();
+        for (const c of cities) byName.set(c.name, c);
+        for (const row of SCRIPT_CITY_NAMES) {
+            const c = cities.find((x) => x.id === row.cityId);
+            if (!c) continue;
+            byName.set(row.meleeName, c);
+            byName.set(row.scriptName, c);
+        }
         const findByName = (raw: string) => {
             const nm = String(raw).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
                 .replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
-            return cities.find((x) => x.name === nm);
+            return byName.get(nm) ?? cities.find((x) => x.name === nm);
         };
         // ① 旁白自带锚点：段落 2..N 开头的【据点名】（必须从**原文**读 —— 分段函数会把锚点剥掉）
         if (text) {
