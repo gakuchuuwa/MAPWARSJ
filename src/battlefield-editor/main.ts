@@ -488,7 +488,7 @@ function validate(d: BattleDraft): Issue[] {
     const _roadStations = _segForRules ? [...new Set(_segForRules.roads.flatMap((r) => [r.from, r.to]))] : [];
     out.push(...checkEventRules(d, drafts, { roadStations: _roadStations }));
     // 🔴 [2026-09-23 主人令「注意行军路线怎么呈现，点与点之间要控制的范围」] 行军路线检查（与游戏同一套寻路）
-    const routeReport = checkRoute({ ...d, startCityId: effectiveStart(d)?.cityId ?? '' });
+    const routeReport = checkRoute(d);
     out.push(...routeReport.issues);
     // 🔴 [2026-09-24 主人问「不按历史线路行军，这个问题如何解决」] **路网偷偷改道要当场看得见**：
     //    行军的路径是 `roadRegistry.findPathOnRoad(起点, 终点)` 算出来的（**路网最短路**），
@@ -1231,7 +1231,7 @@ function effectiveStart(d: BattleDraft): { cityId: string; from: 'set' | 'previo
  */
 function renderRouteReport(): string {
     const st = effectiveStart(working);
-    const r = checkRoute({ ...working, startCityId: st?.cityId ?? '' });
+    const r = checkRoute(working);
     const legRows = r.legs.map((l) => {
         const detour = l.straightKm > 0 ? l.roadKm / l.straightKm : 1;
         const bad = !l.ok || l.straightKm > ROUTE_LIMITS.MAX_LEG_STRAIGHT_KM
