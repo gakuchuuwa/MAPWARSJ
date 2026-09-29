@@ -13655,38 +13655,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "阏与-邯郸",
-                type: "road",
-                id: "road_city_eyu_city_handan_1780157017714",
-                startConnection: "city_eyu",
-                endConnection: "city_handan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [113.381, 36.487],
-                    [113.585684, 36.524289],
-                    [113.614555, 36.528413],
-                    [113.64755, 36.55316],
-                    [113.705292, 36.627399],
-                    [113.783656, 36.685141],
-                    [113.849647, 36.714012],
-                    [113.874393, 36.734634],
-                    [113.882642, 36.734634],
-                    [113.932135, 36.763505],
-                    [113.952757, 36.796501],
-                    [114.014624, 36.788252],
-                    [114.088863, 36.751132],
-                    [114.196098, 36.685141],
-                    [114.270338, 36.668644],
-                    [114.32808, 36.648021],
-                    [114.49, 36.61],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "太原-井陉关",
                 type: "road",
                 id: "road_city_taiyuan_city_jingxingguan_1780157039606",
@@ -64844,7 +64812,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [65.655773, 38.582375],
                     [65.684644, 38.668988],
                     [65.705266, 38.706108],
-                    [65.8, 38.8667],
+                    [66.83, 39.0578],
                 ]
             }
         },
@@ -64860,7 +64828,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [65.8, 38.8667],
+                    [66.83, 39.0578],
                     [65.9981, 39.007191],
                     [66.03522, 39.031938],
                     [66.130082, 39.085555],
@@ -64894,7 +64862,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             geometry: {
                 type: "LineString",
                 coordinates: [
-                    [65.8, 38.8667],
+                    [66.83, 39.0578],
                     [65.622778, 39.011315],
                     [65.593907, 39.027813],
                     [65.544414, 39.085555],
@@ -66595,7 +66563,39 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [66.006349, 38.706108],
                     [65.965105, 38.722606],
                     [65.911487, 38.755601],
-                    [65.8, 38.8667],
+                    [66.83, 39.0578],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "阏与-邯郸",
+                type: "road",
+                id: "road_city_eyu_city_handan_1790711825990",
+                startConnection: "city_eyu",
+                endConnection: "city_handan"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [113.381, 36.487],
+                    [113.585684, 36.524289],
+                    [113.614555, 36.528413],
+                    [113.64755, 36.55316],
+                    [113.705292, 36.627399],
+                    [113.783656, 36.685141],
+                    [113.849647, 36.714012],
+                    [113.874393, 36.734634],
+                    [113.882642, 36.734634],
+                    [113.932135, 36.763505],
+                    [113.952757, 36.796501],
+                    [114.014624, 36.788252],
+                    [114.088863, 36.751132],
+                    [114.196098, 36.685141],
+                    [114.270338, 36.668644],
+                    [114.32808, 36.648021],
+                    [114.49, 36.61],
                 ]
             }
         },
