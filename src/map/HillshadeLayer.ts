@@ -6,6 +6,7 @@ import { HISTORICAL_REGIONS, NILE_VALLEY_EXP_BOUNDS } from '../data/HistoricalRe
 import { gameLog } from '../utils/GameLogger';
 import { ESRI_SHADED_RELIEF_URL } from '../world/land-sea/WaterMask';
 import { MATERIAL_BUDGET_BYTES } from './StrategicTerrainMaterial';
+import type { RiverSegmentsMessage } from './RiverStripData';
 
 // 转换 HistoricalRegion 为 Worker 友好结构(扁平化, 默认值)
 const REGIONS_FOR_WORKER: HillshadeRegion[] = HISTORICAL_REGIONS.map(r => ({
@@ -63,6 +64,8 @@ export class HillshadeLayer extends L.GridLayer {
     private modeVersion: number = 0;
 
     private workers: Worker[] = [];
+    /** 沙漠河流绿带用的河流线段（主线程抽稀好）；undefined = 还没加载完，null = 加载失败 */
+    private riverSegments: Float32Array | null | undefined = undefined;
     private materialBytesByWorker = new Map<Worker, number>();
     private workerRenderMs = 0;
     private workerRenderSamples = 0;
@@ -134,6 +137,8 @@ export class HillshadeLayer extends L.GridLayer {
         for (let i = 0; i < WORKER_POOL_SIZE; i++) {
             const w = new HillshadeWorker();
             w.onmessage = this.handleWorkerMessage.bind(this);
+            // 重建的 Worker 也要拿到河流线段（沙漠河流绿带用）
+            if (this.riverSegments !== undefined) w.postMessage({ type: 'rivers', segs: this.riverSegments } satisfies RiverSegmentsMessage);
             this.workers.push(w);
         }
         this.rrIndex = 0;
@@ -329,6 +334,15 @@ export class HillshadeLayer extends L.GridLayer {
         this.modeVersion++;
         this.clearTileCache();
         this.redraw();
+    }
+
+    /**
+     * 🔴 [2026-09-30] 河流线段（src/map/RiverStripData.ts 抽稀）发给各 Worker，干旱瓦片画沙漠河流绿带用。
+     *    主线程本来就要加载解析这份河流数据，在这里转交，Worker 不再各自下载 6MB。
+     */
+    public setRiverSegments(segs: Float32Array | null): void {
+        this.riverSegments = segs;
+        for (const w of this.workers) w.postMessage({ type: 'rivers', segs } satisfies RiverSegmentsMessage);
     }
 
     public setValleyReliefExp(enabled: boolean): void {

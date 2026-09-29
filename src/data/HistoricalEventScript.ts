@@ -692,14 +692,14 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock：公元前327年早春马其顿军攻取索格狄亚那岩（又名阿里马泽斯之岩，Rock of Ariamazes）的攻城战，属亚历山大征服阿契美尼德帝国过程中的一役。' },
             time: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock：条目正文记 captured in the early spring of 327 BC，信息框 date = 327 BC。故季节取春。' },
-            place: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 coordinates 40.4 N, 69.4 E、location = Sogdiana, present-day Tajikistan；本据点记录取 40.4,69.4。⚠️ 同条目正文写 near Samarkand，与信息框坐标自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。本场是攻城战。' },
+            place: { level: 'inferred', text: '英文维基百科 Siege of the Sogdian Rock 正文第一句写 near Samarkand，信息框却给 40.4N,69.4E（忽毡旁），两处自相矛盾；阿里安《远征记》卷四 18–19 记此岩在诺塔卡（今沙赫里萨布兹）冬营附近、巴克特里亚与粟特交界的山区；学术公认在撒马尔罕以南的吉萨尔山脉 / 铁门关 / 拜孙山区（乌兹别克斯坦考古学院）。坐标取拜孙一带 38.21,67.02 —— 合理推定。🔴 [2026-09-30 血训 #11] 旧坐标 40.4,69.4 机械照搬维基信息框野指标，导致岩堡错位 300 公里到北疆忽毡旁、18 个月真实转战被抹杀，已修正。' },
             attacker: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 combatant1 = Macedon、League of Corinth，commander1 = Alexander the Great —— 亚历山大亲统。' },
             attackerTroops: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 strength1 = 300；同信息框 casualties1 = 30，正与正文「夜间攀崖时摔死三十人」相合，可见该 300 即那支夜攀队，故攻方兵力取 300。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据英文维基正文：亚历山大悬重赏募人攀崖，三百人夜间徒手攀上绝壁，摔死三十人。' },
             defender: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 combatant2 = Sogdiana，commander2 = Arimazes；本场守方主帅取阿里马泽斯，同条目记该岩堡为他所据。' },
             defenderTroops: { level: 'inferred', text: '英文维基百科 Siege of the Sogdian Rock 信息框 strength2 = Unknown，正文亦未给岩堡守军兵数。按 §一.2 守方 ≤ 攻方×2 与「查不到按史地合理推定」：岩堡守军以据险为本，取 600 —— 合理推定。' },
             defenderLegion: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 与 Sogdia：守方为粟特，凭绝壁据守，主帅阿里马泽斯；同条目记守军在山顶出现马其顿人之后即降。编成取剧本军团「粟特军」：前骑兵=粟特甲胄骑兵 3、中步兵=塞种萨迦斧兵 4、后远程=巴克特里亚弓手 2，鱼鳞 3-4-2（同一支军队整场战争不换）。' },
-            route: { level: 'fact', text: '英文维基百科 Spitamenes 与 Siege of the Sogdian Rock：公元前329年药杀水之战后斯皮塔米尼斯仍据马拉坎达一带；部将科伊诺斯于公元前328年12月在加拜之战将其击破，斯皮塔米尼斯随后为马萨革泰人所杀；亚历山大在巴克特里亚过冬，公元前327年早春北上索格狄亚那攻取该岩。游戏路线：自上一处战场（锡尔河）开拔 → 撒马尔罕即马拉坎达 → 阿母城即乌浒水渡口、巴克特里亚方向 → 撒马尔罕 → 忽毡即居鲁士城 → 索格狄亚那岩；编辑器「行军路线实测」已跑。' },
+            route: { level: 'fact', text: '阿里安《远征记》卷四 1–18：前329年秋锡尔河战后亚历山大筑最远亚历山大城（忽毡），随即因斯皮塔米尼斯叛乱围攻马拉坎达（撒马尔罕）而率军南下解围；此后一年余在粟特与大夏之间拉锯平叛；前328年12月部将科伊诺斯在加拜之战击溃斯皮塔米尼斯（为马萨革泰人所杀送首）；前328/327年冬亚历山大全军在诺塔卡（今沙赫里萨布兹）冬营大休整；前327年早春从诺塔卡冬营开拔南下，直取吉萨尔山脉中的索格狄亚那岩。游戏路线：自上一场落点忽毡开拔 → 居鲁士城 → 吉扎克 → 撒马尔罕（马拉坎达）→ 诺塔卡（前328/327冬营大营）→ 索格狄亚那岩。🔴 [2026-09-30 血训 #11 修路线] 旧路线从忽毡直达 35 公里外的假岩堡，抹杀了 18 个月真实转战。' },
             result: { level: 'fact', text: '英文维基百科 Siege of the Sogdian Rock 信息框 result = Macedonian victory，territory = Alexander captures Sogdiana；正文记守军不战而降，故本场据点归属写索格狄亚那岩归马其顿。同条目另记岩上俘虏中有奥克夏特斯之女罗克珊娜，亚历山大后来娶其为妻。' },
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Spitamenes —— 公元前328年12月加拜之战科伊诺斯破斯皮塔米尼斯，斯皮塔米尼斯为马萨革泰首领所杀、首级送亚历山大；英文维基百科 Siege of the Sogdian Rock —— 公元前327年早春取岩堡，夜攀者摔死三十人，守军见旗而降。文案按主人规矩不写兵力确数。' },
         },
@@ -715,7 +715,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '岩堡四面绝壁，无路可攻；马其顿军以绳索铁钉趁夜攀崖，自守军不曾设防的崖面摸上岩顶，天明自上而下挥旗呐喊。守军见顶上尽是马其顿人，军心崩溃，开堡投降。',
             // 出发地＝军团此刻在哪＝上一场落点（锡尔河战场）→ 最近且那年已有的据点＝忽毡（§三.1）
             // 史料走动写成路标：马拉坎达 → 乌浒水渡口 → 回程马拉坎达 → 忽毡 → 岩堡
-            marchWaypoints: [],   // 锡尔河战场直逼索格狄亚那岩堡（22.5km），加拜之战等并入背景，绝不折返跑
+            marchWaypoints: ['city_julushicheng', 'city_jizhake', 'city_samaerhan', 'city_nuotaka'],   // 🔴 [2026-09-30 血训 #11 修路线] 史实 18 个月大转进：忽毡 → 南下居鲁士城 → 吉扎克 → 撒马尔罕（平叛）→ 诺塔卡（前328/327冬全军冬营大休整）→ 开春直取索格狄亚那岩
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 300,
@@ -767,7 +767,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '阿斯瓦卡人凭高墙与城头弓矢、石块、火球死守，雇佣兵尤为顽强；马其顿军先强攻不下，转而筑土垒、架塔楼，把弓手与投石手送上塔顶压制墙头，再由盾卫自塔桥冲城。桥塌人坠、死伤甚众，直到佣兵首领阵亡，守军才肯议降。',
             // 出发地＝军团此刻在哪＝上一场落点（索格狄亚那岩，攻城战＝那座城）
             // 史料：自索格狄亚那南下经马拉坎达、渡乌浒水至巴克特拉，再越兴都库什入科芬河谷
-            marchWaypoints: ['city_samaerhan', 'city_nuotaka', 'city_lanshi', 'city_fanyanna', 'city_gaofu', 'city_dinggucheng'],   // 单向南下经铁门关至蓝氏城，翻兴都库什入马萨加
+            marchWaypoints: ['city_nuotaka', 'city_lanshi', 'city_fanyanna', 'city_gaofu', 'city_dinggucheng'],   // 🔴 [2026-09-30 血训 #11 修路线] 索格狄亚那岩坐标修正后在诺塔卡东南，不再需要北上撒马尔罕折返；路线：索格狄亚那岩 → 诺塔卡 → 蓝氏城（巴克特拉，全军誓师集结）→ 巴米扬 → 喀布尔 → 难揭 → 马萨加
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 20000,

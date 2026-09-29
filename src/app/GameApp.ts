@@ -75,7 +75,7 @@ import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
-import { syncScriptCityNames } from '../events/scriptCityNamesSync';
+import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
@@ -863,21 +863,23 @@ export class GameApp {
             hero.autoPlan === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
-        // 🔴 [2026-09-25 主人定「据点的名字，文案要和图上的统一」]
-        //    剧本期据点**显示名**换成那一年的古名（scriptCityNames.ts），切回乱斗原样换回
-        const syncCityNames = () => syncScriptCityNames(this.cityManager, hero.autoPlan === 'script');
+        // 🔴 [2026-09-30 主人定「战略地图上只显示一种名字……不需要按年代显示名字」
+        //     +「例如北京，这是明朝才有的名字吧。但是这个地方在周朝就有人迹了，所以应该显示在地图上」]
+        //    **名字一处一名（最知名的那个），不按年代、不按模式换** —— 开局套一次即可
+        //    （旧版是「进剧本期换古名、切回乱斗换回来」，已废）；**显示与否**另由年代闸门管，
+        //    判的是**这地方什么时候成城**（`cityFoundedYears.ts`），与名字无关。
+        applyCityDisplayNames(this.cityManager);
         // 🔴 [2026-09-26 主人令「你要符合历史，看看这些据点符合建筑风格吗」→「符合历史，不要问我，直接改」]
         //    剧本期据点**建筑风格**换成那一年该有的那一套（scriptBuildingStyles.ts），切回乱斗原样换回。
         //    （`buildingStyle` 与乱斗 `factionId` 同一个病：取的是这城最有名那段历史的风格 ——
         //      阿卡挂十字军、索非亚挂保加利亚，放进前 335 就是穿越。）
         const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, hero.autoPlan === 'script');
-        syncCityNames();
+        //    名字不随模式变（上面已套完），故这里不再有 syncCityNames()
         syncBuildingStyles();
         syncHistoricalOwners();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
-            syncCityNames();
             syncBuildingStyles();
             syncHistoricalOwners();
             this.cityManager.refreshCityVisibility();

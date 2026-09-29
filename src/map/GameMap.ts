@@ -6,6 +6,7 @@ import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
 import { VectorRiverLayer } from './VectorRiverLayer';
 import { setStrategicRiverProximityData } from './StrategicRiverProximity';
+import { buildRiverSegments } from './RiverStripData';
 import { StrategicGridLayer } from './StrategicGridLayer';
 import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
@@ -516,6 +517,9 @@ export class GameMap {
                     experimentalRelief: this.isExperimentalReliefEnabled,
                     valleyReliefExp: this.isValleyReliefExpEnabled,
                 });
+                // 沙漠河流绿带要河流线段：已加载就直接给，没加载就触发一次（加载完会自动转交）
+                if (this.riverSegmentsCache) this.hillshadeLayer.setRiverSegments(this.riverSegmentsCache);
+                else this.loadRiverData().catch(() => { /* 失败已通知 Worker，河流图层那边会报错 */ });
             }
             if (!this.map.hasLayer(this.hillshadeLayer)) {
                 this.hillshadeLayer.addTo(this.map);
@@ -565,6 +569,32 @@ export class GameMap {
         }
     }
 
+    /**
+     * 河流数据只下载解析一次，河流图层与晕渲图层（沙漠河流绿带）共用。
+     * 🔴 [2026-09-30] 晕渲图层创建时也会触发：河流图层关着时绿带照样有数据，干旱瓦片不会干等。
+     */
+    private riverDataPromise: Promise<any> | null = null;
+    private riverSegmentsCache: Float32Array | null = null;
+    private loadRiverData(): Promise<any> {
+        return this.riverDataPromise ??= fetch(`${import.meta.env.BASE_URL || '/'}assets/ne_10m_rivers_lake_centerlines.geojson`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                gameLog('startup', '[GameMap] Vector river data loaded');
+                setStrategicRiverProximityData(data);
+                this.riverSegmentsCache = buildRiverSegments(data);
+                this.hillshadeLayer?.setRiverSegments(this.riverSegmentsCache);
+                return data;
+            })
+            .catch(err => {
+                this.riverDataPromise = null;                    // 失败不缓存，下次再试
+                this.hillshadeLayer?.setRiverSegments(null);     // 告诉晕渲 Worker 别再等
+                throw err;
+            });
+    }
+
     public toggleRiver(enable: boolean) {
         // [FIX] Always clean up old listener to prevent duplicates/ghosts
         this.map.off('zoomend', this.updateRiverVisibility);
@@ -602,15 +632,9 @@ export class GameMap {
 
             // 2. Load Vector Layer (Authentic Data)：河流条数多、线细
             if (!this.vectorRiverLayer) {
-                const basePath = import.meta.env.BASE_URL || '/';
-                fetch(`${basePath}assets/ne_10m_rivers_lake_centerlines.geojson`)
-                    .then(res => {
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        return res.json();
-                    })
+                this.loadRiverData()
                     .then(data => {
-                        gameLog('startup', '[GameMap] Vector river data loaded');
-                        setStrategicRiverProximityData(data);
+                        if (this.vectorRiverLayer) return;
                         this.vectorRiverLayer = new VectorRiverLayer(data, { pane: 'vectorRiverPane' });
 
                         // [FIX] Initial Visibility Check

@@ -2002,7 +2002,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     // 🔴 [2026-09-24 主人批间距特许] 第 11 场「前327 索格狄亚那岩」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
     //    坐标取英文维基百科 Siege of the Sogdian Rock 信息框 40.4,69.4；该条目正文写 near Samarkand、信息框却在忽毡旁，
     //    两处自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。离忽毡 27.69 公里，特许登记在 AGENTS §2.1.1.1。
-    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 40.4, lng: 69.4, type: 'stockade', troops: 10000,
+    { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 38.21, lng: 67.02, type: 'stockade', troops: 10000,
         note: '索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。🔴 [2026-09-25 主人定稿「险要必须人口大于1万为PASS」] 它是绝壁**岩堡**（避难的百姓上山、非城镇），人口算不出来 → 按 §6.2① 落**城寨**（原为 pass）。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：英文维基信息框 strength2 = Unknown（史料未给守军数），本场守方 **600**（不大于 1 万）→ 不算 PASS。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     // 🔴 [2026-09-25 主人令「把缺少的战役加上」] 前329 居鲁士城围攻（英文维基 Siege of Cyropolis，独立条目）必须有真据点，
     //    库里没有 → 按 §二之二 添加，并按据点完整性铁律配齐 势力（居鲁士）＋武将（卡塔涅斯）＋精锐（坚城守兵）。
