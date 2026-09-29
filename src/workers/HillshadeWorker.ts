@@ -96,7 +96,17 @@ async function loadDemFloat32(z: number, x: number, y: number): Promise<Float32A
 
     const url = `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
     try {
-        const resp = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(4000) });
+        // 🔴 [2026-09-30] 超时只重试一次（第二次放宽到 10 秒）。
+        //    开局一次派几十块瓦片、每块再取 8 块邻块，网络一挤就有请求撞上 4 秒超时；
+        //    缺一块邻块整块瓦片就退回旧版光照，且被图层缓存，地图上留下一块边界笔直的「平」方块
+        //    （实测马其顿 zoom 9：953 次请求中断 4 次，对应 4 处方块，scratch/terrain_ab/verify_game.mjs）。
+        let resp: Response;
+        try {
+            resp = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(4000) });
+        } catch (err) {
+            if ((err as Error)?.name !== 'TimeoutError') throw err;
+            resp = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(10000) });
+        }
         if (!resp.ok) return null;
         const blob = await resp.blob();
         const bitmap = await createImageBitmap(blob);
@@ -309,6 +319,44 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
     return padded;
 }
 
+const rampUp = (v: number, a: number, b: number) => {
+    const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+};
+
+/**
+ * 自然雪线高度（米）。
+ * 🔴 [2026-09-30] 三处硬边界改为渐变 —— 旧版在北纬 30° 一刀切（+350m 只加在 ≥30°），
+ *    拉萨以西约 4900m 的平坦谷地被切出一块边界笔直的白色雪块（scratch/terrain_ab/out/tibet_rect_zoom.png）；
+ *    青藏椭圆边缘同样从 +360m 直接跳到 0。数值中心不变，只把切口抹成过渡带。
+ */
+function snowlineAt(lat: number, lng: number): number {
+    const latDeg = Math.abs(lat);
+    // 1. 全球海洋/温湿基准雪线 (低纬度 ~5100m，中高纬度每度下降 115m；阿尔卑斯 2800~3100m，挪威 1100~1400m)
+    let snowline = latDeg > 28 ? 5100 - (latDeg - 28) * 115 : 5100;
+    snowline = Math.max(700, snowline);
+
+    // 2. 温带内陆干燥大陆度修正 (天山、阿勒泰、中亚、伊朗，降水减少使雪线自然抬升 350m)
+    //    范围仍是 45°E~105°E、30°N~55°N，边界各留约 ±1.5~2° 过渡带
+    const wLng = rampUp(lng, 43, 47) * (1 - rampUp(lng, 103, 107));
+    const wLat = rampUp(lat, 28.5, 31.5) * (1 - rampUp(lat, 53.5, 56.5));
+    snowline += 350 * wLng * wLat;
+
+    // 3. 青藏高原“第三极”高原面热岛效应与喜马拉雅雨影抬升 (Mass Elevation Effect)
+    //    中心 +480m、椭圆边缘内侧 (dist2 0.8~1.0) 平滑收到 0；
+    //    既释放 4000~5000m 的高原草甸与湖盆，又保留念青唐古拉、唐古拉与喜马拉雅等 5600m+ 冰川雪峰
+    const dLng = (lng - 88.5) / 13.5;
+    const dLat = (lat - 32.8) / 5.2;
+    const dist2 = dLng * dLng + dLat * dLat;
+    if (dist2 < 1.0) {
+        const tibetBoost = (1.0 - dist2 * 0.25) * 480 * (1 - rampUp(dist2, 0.8, 1.0));
+        // 喜马拉雅南坡过渡 (27.2°~28.6°N)：南坡受印度洋季风暴雪影响雪线低，翻过山脊向北极旱
+        const southGradient = lat < 28.6 ? Math.max(0, (lat - 27.2) / 1.4) : 1.0;
+        snowline += tibetBoost * southGradient;
+    }
+    return snowline;
+}
+
 function isCaspianCoord(coords: { z: number; x: number; y: number }): boolean {
     if (coords.z === 9) {
         return coords.x >= 325 && coords.x <= 333 && coords.y >= 189 && coords.y <= 197;
@@ -416,6 +464,9 @@ function renderHillshade(
     if (divisor < 20) divisor = 20;
 
     // [OPTIMIZATION-PERF] Branch logic outside the loop
+    // 材质两层在循环外取一次引用
+    const climateMat = material ? material.climate : null;
+    const rockMat = material ? material.rock : null;
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
         // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
@@ -429,41 +480,14 @@ function renderHillshade(
             const noiseYRow = (y & 255) * 256;
 
             const rowLat = rowLatRad(y) * 180 / Math.PI;
-            const latDeg = Math.abs(rowLat);
-            // 自然地理学真实自然雪线高度（米，全球 12 大山系实地校准）：
-            // 1. 全球海洋/温湿基准雪线 (低纬度 ~5100m，中高纬度每度下降 115m；阿尔卑斯 2800~3100m，挪威 1100~1400m)
-            let rowSnowline = 5100;
-            if (latDeg > 28) {
-                rowSnowline = 5100 - (latDeg - 28) * 115;
-            }
-            rowSnowline = Math.max(700, rowSnowline);
-
-            // 2. 温带内陆干燥大陆度修正 (天山、阿勒泰、中亚、伊朗，降水减少使雪线自然抬升 300~350m)
-            if (tileCenterLng > 45 && tileCenterLng < 105 && rowLat >= 30 && rowLat <= 55) {
-                rowSnowline += 350;
-            }
-
-            // 3. 青藏高原“第三极”世界最高巨大高原面热岛效应与喜马拉雅极旱雨影抬升 (Mass Elevation Effect)
-            // 覆盖青藏高原腹地 (75°E~103°E, 27.2°N~38.0°N)
-            // 产生约 +480m 的自然雪线抬升，常年永久雪线稳定于 5550m~5750m：
-            // 既彻底释放 4000~5000m 的广大高原草甸与湖盆沃土，又完整保留念青唐古拉、唐古拉与喜马拉雅等 5600m+ 冰川雪山神峰
-            if (tileCenterLng >= 75 && tileCenterLng <= 103 && rowLat >= 27.2 && rowLat <= 38.0) {
-                const dLng = (tileCenterLng - 88.5) / 13.5;
-                const dLat = (rowLat - 32.8) / 5.2;
-                const dist2 = dLng * dLng + dLat * dLat;
-                if (dist2 < 1.0) {
-                    const tibetBoost = (1.0 - dist2 * 0.25) * 480;
-                    // 喜马拉雅南坡过渡 (27.2°~28.6°N)：南坡受印度洋季风暴雪影响雪线低，翻过山脊向北极旱
-                    let southGradient = 1.0;
-                    if (rowLat < 28.6) {
-                        southGradient = Math.max(0, (rowLat - 27.2) / 1.4);
-                    }
-                    rowSnowline += tibetBoost * southGradient;
-                }
-            }
+            // 雪线按瓦片东西两边的经度各算一次、逐像素插值：相邻瓦片共用同一条边，跨瓦片连续。
+            // （旧版整块瓦片用中心经度，经度相关的抬升在瓦片交界处会断开。）
+            const snowlineW = snowlineAt(rowLat, tileBounds ? tileBounds.west : tileCenterLng);
+            const snowlineE = snowlineAt(rowLat, tileBounds ? tileBounds.east : tileCenterLng);
 
             for (let x = 0; x < width; x++) {
                 const idx = (yM + x) * 4;
+                const rowSnowline = snowlineW + (snowlineE - snowlineW) * (x + 0.5) / width;
 
                 // X Neighbors
                 const xL = (x === 0 ? 0 : x - 1);
@@ -508,9 +532,10 @@ function renderHillshade(
                 const dzdx = ((zTR + 2 * zR + zBR) - (zTL + 2 * zL + zBL)) * INV_8;
                 const dzdy = ((zBL + 2 * zB + zBR) - (zTL + 2 * zT + zTR)) * INV_8;
 
-                const slope = Math.atan(Math.sqrt(dzdx * dzdx + dzdy * dzdy) / divisor);
+                const gradMag = Math.sqrt(dzdx * dzdx + dzdy * dzdy);
+                const slope = Math.atan(gradMag / divisor);
                 // 真实地面坡度（米/米），供坡面岩石用；与晕渲的夸张系数无关
-                const slopeGrad = Math.sqrt(dzdx * dzdx + dzdy * dzdy) / meters;
+                const slopeGrad = gradMag / meters;
                 let aspect = Math.atan2(dzdy, -dzdx);
                 if (aspect < 0) aspect += 2 * Math.PI;
 
@@ -686,7 +711,6 @@ function renderHillshade(
                 //    保留地表干湿与疏密自然质感的同时，大幅收敛黄绿反差；山地(>400m)平滑过渡至 0.52，呈现巍峨岩土立体感。
                 // 🔴 [2026-09-30] 山地上限 0.52 → 0.42：山地的岩土质感改由下面的坡面岩石层提供，
                 //    气候贴图压得太重会冲淡海拔色阶（山脚到山顶的层次）。
-                const climateMat = material ? material.climate : null;
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
                     const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
                     const baseBlend = colorZ < 400 ? 0.35 : Math.min(0.42, 0.35 + (colorZ - 400) * 0.00028);
@@ -698,10 +722,9 @@ function renderHillshade(
 
                 // 🔴 [2026-09-30 主人令「全面修复」] 坡面岩石：贴图原先只看气候，陡坡与谷底铺同一张草地。
                 //    现在按坡度混入裸岩（rck）：坡度 0.14（约 8°）起露岩，0.55（约 29°）以上以岩石为主。
-                //    林线以下山坡多有植被覆盖，岩石上限随海拔从 0.45（≤1500m）升到 0.75（≥3000m）。
+                //    林线以下山坡多有植被覆盖，岩石上限随海拔从 0.55（≤1500m）升到 0.85（≥3000m）。
                 //    阈值依据 zoom 9 实测坡度分布（scratch/terrain_ab）：华北平原 97% < 0.008；
                 //    太行山中位 0.087、前 10% > 0.24；帕米尔中位 0.31。
-                const rockMat = material ? material.rock : null;
                 if (rockMat && colorZ > 0 && !isWater && rockMat[idx + 3] > 0) {
                     const t = Math.max(0, Math.min(1, (slopeGrad - 0.14) / 0.41));
                     if (t > 0) {
