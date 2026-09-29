@@ -90,19 +90,25 @@ export class NavalWakeDrawer {
             for (const ship of alive) {
                 const shipIdx = ships.indexOf(ship);
                 const dir = ((Math.round(ship.dir ?? direction) % 16) + 16) % 16;
-                // 船身精确罗盘角（0=北，顺时针）：优先使用连续航向角，避免离散 22.5° 台阶跳
+                // 船身精确罗盘角（0=北，顺时针）：只用于下面「实际行进方向」的偏差判定
                 const compassDeg = ship.deg !== undefined ? ship.deg : (45 + 22.5 * dir);
-                const compassRad = compassDeg * Math.PI / 180;
                 const rot = ship.rot ?? 0;
 
-                // 2:1 等轴测视角下的船体几何长轴与短轴：
-                // 优先使用该舰自身的真实物理船长（不同船型按各自尺寸定发射点：巨舰、中小舰、小艇各得其所）
+                // 🔴 [2026-09-30 主人报「船在行驶的时候，船头浪花和船尾浪花对不齐」] 发射点按**船身的画法**算：
+                //    船身 = 离散 16 向帧（该向罗盘角 45+22.5×dir）绕热点再旋转残差角 rot（LegionPhalanxDrawer.drawNaval）。
+                //    所以船头/船尾 = 该向在 2:1 等距下的船轴向量（竖向 = 横向 × 0.5），再旋转同一个 rot，以热点为中心对称。
+                //    旧写法两处与船身不一致（实测 scratch/terrain_ab/hull_tips.py、wake_sheet.py）：
+                //      ① 竖向偏移 yPitch 船头 +0.05 船长、船尾 −0.05 船长 —— 南北向恰好凑对，东西向却变成船头低、船尾高
+                //         （8 种船实测东西向两端吃水线差 −0.18 ~ +0.03 船长，旧公式预测 +0.10，方向都反了；新模型 0）；
+                //      ② 用连续航向角套椭圆，而船身是「离散帧 + 旋转」，南北向附近两者能差约 10°。
+                // 优先使用该舰自身的真实船长（不同船型按各自尺寸定发射点）
                 const currentLen = ship.shipLen ?? (shipLength / 1.15);
-                const sternRad = compassRad + Math.PI;
-                const bowRad = compassRad;
                 const Rx = currentLen * 0.48;
-                const Ry = currentLen * 0.30;
-                const yPitch = -currentLen * 0.05;
+                const dirRad = (45 + 22.5 * dir) * Math.PI / 180;
+                const axX0 = Math.sin(dirRad) * Rx, axY0 = -Math.cos(dirRad) * Rx * 0.5;
+                const cosR = Math.cos(rot), sinR = Math.sin(rot);
+                const axX = axX0 * cosR - axY0 * sinR;   // 与 ctx.rotate(rot) 同向（屏幕坐标 y 向下，顺时针为正）
+                const axY = axX0 * sinR + axY0 * cosR;
 
                 // 实际行进方向（屏幕罗盘角，0=上、顺时针）：上次发射时的位置投影到当前屏幕，与现在的位置比
                 let emitBow = true;
@@ -121,11 +127,8 @@ export class NavalWakeDrawer {
                 for (const kind of ['back', 'front'] as const) {
                     if (kind === 'front' && !emitBow) continue;
                     const profile = this.assets[kind].profiles[ship.r === frontRank ? 'medium' : 'small'];
-                    const targetRad = kind === 'back' ? sternRad : bowRad;
-                    const screen = {
-                        x: ship.x + Math.sin(targetRad) * Rx,
-                        y: ship.y - Math.cos(targetRad) * Ry + (kind === 'back' ? yPitch : -yPitch),
-                    };
+                    const sign = kind === 'back' ? -1 : 1;
+                    const screen = { x: ship.x + axX * sign, y: ship.y + axY * sign };
                     fleet.particles.push({
                         position: projection?.toWorld(screen) ?? screen,
                         // 🔴 [2026-09-12 主人报障「船尾水波不对」] 水迹贴图的行号按 DE 素材相位差补偿 −2：(shipDir + 14) % 16

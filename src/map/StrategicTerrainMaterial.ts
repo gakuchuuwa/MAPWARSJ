@@ -13,8 +13,27 @@ let worldWidth = 0, worldHeight = 0;
 let residentBytes = 0;
 export const getMaterialBytes = (): number => residentBytes;
 
+/**
+ * 带重试的读取：失败后隔 0.3s、1s 各再试一次。
+ * 🔴 [2026-09-30] 同一个 Worker 里同时排队的瓦片共用同一次下载，开局一屏瓦片恰好是同时派出的：
+ *    只靠「失败不缓存、下一块再试」救不了它们（实测 3 次失败 → 12 块里 9 块没贴图），所以要在这里重试。
+ */
 async function readPixels(url: string, size?: number): Promise<ImageData> {
-    const response = await fetch(url, { signal: AbortSignal.timeout(2500) });
+    for (const wait of [0, 300, 1000]) {
+        if (wait) await new Promise(resolve => setTimeout(resolve, wait));
+        try {
+            return await readPixelsOnce(url, size);
+        } catch (err) {
+            if (wait === 1000) throw err;
+        }
+    }
+    throw new Error('unreachable');
+}
+
+async function readPixelsOnce(url: string, size?: number): Promise<ImageData> {
+    // 🔴 [2026-09-30] 2.5s → 8s：地表贴图每张约 530KB，开局一个 Worker 要拉二三十张、3 个 Worker 同时拉，
+    //    2.5 秒很容易超时（本地开发服务器重编译时实测过一次整个 Worker 没贴图）
+    const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
     if (!response.ok) throw new Error(`Material HTTP ${response.status}: ${url}`);
     const bitmap = await createImageBitmap(await response.blob());
     try {
@@ -36,7 +55,11 @@ function loadWorld(): Promise<boolean> {
         worldHeight = image.height;
         residentBytes += image.data.byteLength;
         return true;
-    }).catch(() => false);
+    }).catch(() => {
+        // 网络失败不缓存：旧版把 false 永久记下，这个 Worker 整局都没有地表贴图；下一块瓦片会重试
+        worldReady = undefined;
+        return false;
+    });
 }
 
 function loadTexture(name: string): Promise<Uint8ClampedArray | null> {
@@ -48,7 +71,11 @@ function loadTexture(name: string): Promise<Uint8ClampedArray | null> {
             if (residentBytes + bytes > MATERIAL_BUDGET_BYTES) return null;
             residentBytes += bytes;
             return image.data;
-        }).catch(() => null);
+        }).catch(() => {
+            // 网络失败不缓存（同上）；超出内存预算的 null 仍然缓存，重试也没用
+            textures.delete(name);
+            return null;
+        });
         textures.set(name, pending);
     }
     return pending;
@@ -332,6 +359,7 @@ export const TERRAIN_RULE_TEXTURES = [
     'des', 'pm2',                             // 橙色沙漠 / 橙褐荒漠
     'pc1', 'pc2',                             // 热带稀树草原
     'gr4', 'ds5',                             // 山地：湿润区褐色山地草甸 / 干旱区碎石坡
+    'gr2', 'grs',                             // 沙漠中的河流绿带（尼罗河、两河、印度河、阿姆河…灌溉农业带）
 ] as const;
 export type TerrainRuleTexture = typeof TERRAIN_RULE_TEXTURES[number];
 

@@ -145,6 +145,35 @@ function hasBelowSeaPixel(data: Uint8ClampedArray, pixelCount: number): boolean 
     return false;
 }
 
+/**
+ * 内陆湖判据：湖面在高程数据里是完全水平的一片（3×3 邻域 9 个值逐位相等、且在海平面以上）。
+ * 🔴 [2026-09-30] 旧版只有「含低于海平面像素」的瓦片才取水体掩膜 → 青海湖、纳木错、贝加尔湖等高原/内陆湖
+ *    整片被画成陆地，贝加尔湖只有湖底数据低于海平面的那一块是蓝的，湖面被瓦片边一刀切开。
+ *    实测完全水平像素：青海湖 51467、贝加尔 57820、巴尔喀什 43555、纳木错 11225、洞庭湖 2141；
+ *    华北平原 36、太行 0、撒哈拉 0、萨赫勒 78、青藏高原面 380、亚马孙 3、西伯利亚平原 629 → 门槛取 1500。
+ *    未覆盖：高程数据没压平的小湖（如挪威北部 100m 处的小湖，0 个水平像素），仍只在邻块含海时显示为水。
+ */
+const LAKE_FLAT_PIXELS = 1500;
+function countFlatLandPixels(data: Uint8ClampedArray, w: number, h: number, stopAt: number): number {
+    let count = 0;
+    for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+            const i = (y * w + x) * 4;
+            if (data[i] < 128) continue;   // 海平面以下不算湖面
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            let flat = true;
+            for (let dy = -1; dy <= 1 && flat; dy++) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    const j = i + (dy * w + dx) * 4;
+                    if (data[j] !== r || data[j + 1] !== g || data[j + 2] !== b) { flat = false; break; }
+                }
+            }
+            if (flat && ++count >= stopAt) return count;
+        }
+    }
+    return count;
+}
+
 // Define message types
 export interface HillshadeRegion {
     center: [number, number];   // [lat, lng]
@@ -339,11 +368,140 @@ function pickRuleTextures(src: Uint8ClampedArray, mayHaveWater: boolean, req: Hi
     if (maxZ > 900) out.push('gr4', 'ds5');                                   // 山地带
     if (latMinAbs < 52) out.push('des', 'pm2');                               // 沙漠（全球沙漠都在 52° 以内）
     if (latMinAbs < 24) out.push('pc1', 'pc2');                               // 热带稀树草原
+    if (latMinAbs < 52) out.push('gr2', 'grs');                               // 沙漠中的河流绿带（干旱带都在 52° 以内）
     if (hasWater) out.push('wt2', 'wt4', 'wt3', 'wt5', 'sha', 'bch', 'bc2', 'gravel_wet'); // 海水、浅礁、海岸
     if (hasWater && latMaxAbs > 76) out.push('ice', 'ic2');                   // 海冰
     // 积雪：雪线最低的情形（该瓦片最高纬、不计任何抬升）再放宽 300m
     const lowestSnowline = Math.max(700, 5100 - Math.max(0, latMaxAbs - 28) * 115);
     if (maxZ > lowestSnowline - 300) out.push('sno', 'snf', 'snd');
+    return out;
+}
+
+/**
+ * 🔴 [2026-09-30 主人令] 沙漠中的河流绿带：两河流域、印度河、尼罗河、阿姆河……古代最重要的灌溉农业带，
+ *    气候分区图每格约 18km，这些十几到几十公里宽的河谷塞不进一格，原来整片按周围沙漠上色（巴比伦、帕塔拉像沙丘）。
+ *    数据：战略地图同一份 Natural Earth 河流中心线（public/assets/ne_10m_rivers_lake_centerlines.geojson），
+ *    只取 7 级及以上的河；绿带半宽按等级给（公里）。只在干旱区铺（见渲染里的 aridity 门槛），湿润区不受影响。
+ */
+const RIVER_HALF_WIDTH_KM: Readonly<Record<number, number>> = { 0: 9, 1: 9, 2: 10, 3: 13, 4: 12, 5: 10, 6: 6, 7: 4 };
+const RIVER_CELL_DEG = 1;
+let riverSegs: Float32Array | null = null;          // [lng1, lat1, lng2, lat2, 半宽km] × N
+let riverCells: Map<string, number[]> | null = null;
+let riverLoading: Promise<boolean> | null = null;
+
+function loadRivers(): Promise<boolean> {
+    return riverLoading ??= (async () => {
+        try {
+            const res = await fetch('/assets/ne_10m_rivers_lake_centerlines.geojson', { signal: AbortSignal.timeout(15000) });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const gj = await res.json();
+            const segs: number[] = [];
+            const walk = (c: unknown, w: number) => {
+                if (!Array.isArray(c) || c.length === 0) return;
+                if (typeof c[0]?.[0] === 'number') {
+                    for (let i = 1; i < c.length; i++) segs.push(c[i - 1][0], c[i - 1][1], c[i][0], c[i][1], w);
+                    return;
+                }
+                for (const child of c) walk(child, w);
+            };
+            for (const f of gj?.features ?? []) {
+                if (f?.properties?.featurecla !== 'River') continue;
+                const w = RIVER_HALF_WIDTH_KM[f.properties.scalerank as number];
+                if (w) walk(f.geometry?.coordinates, w);
+            }
+            const arr = new Float32Array(segs);
+            const cells = new Map<string, number[]>();
+            for (let i = 0; i < arr.length; i += 5) {
+                // 半宽换算成度再放宽：纬向 ×1、经向 ×2（高纬经度更「窄」）
+                const pad = arr[i + 4] / 111.32;
+                const x0 = Math.floor((Math.min(arr[i], arr[i + 2]) - pad * 2) / RIVER_CELL_DEG), x1 = Math.floor((Math.max(arr[i], arr[i + 2]) + pad * 2) / RIVER_CELL_DEG);
+                const y0 = Math.floor((Math.min(arr[i + 1], arr[i + 3]) - pad) / RIVER_CELL_DEG), y1 = Math.floor((Math.max(arr[i + 1], arr[i + 3]) + pad) / RIVER_CELL_DEG);
+                for (let cy = y0; cy <= y1; cy++) for (let cx = x0; cx <= x1; cx++) {
+                    const k = cx + ',' + cy;
+                    let list = cells.get(k);
+                    if (!list) { list = []; cells.set(k, list); }
+                    list.push(i);
+                }
+            }
+            riverSegs = arr; riverCells = cells;
+            return true;
+        } catch {
+            riverLoading = null;   // 网络失败不缓存，下一块瓦片再试
+            return false;
+        }
+    })();
+}
+
+/**
+ * 本瓦片每个像素的「河流绿带强度」0~1（离河道不到半宽一半为 1，之后渐隐，到半宽为 0）。
+ * 距离在 4px 粗网格上算、网格内双线性插值；网格点取全局经纬度，相邻瓦片共用边上网格点，无接缝。
+ * 附近没有大河时返回 null。
+ */
+/** 平滑值噪声（经纬度，约 0.12° 一格），给河流绿带宽窄变化用；全局坐标 → 跨瓦片连续 */
+function riverWidthNoise(lng: number, lat: number): number {
+    const x = lng / 0.12, y = lat / 0.12;
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy, sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+    const h = (a: number, b: number) => {
+        let v = Math.imul(a, 374761393) ^ Math.imul(b, 668265263);
+        v = Math.imul(v ^ (v >>> 13), 1274126177);
+        return ((v ^ (v >>> 16)) >>> 0) / 4294967295;
+    };
+    const top = h(ix, iy) * (1 - sx) + h(ix + 1, iy) * sx;
+    const bottom = h(ix, iy + 1) * (1 - sx) + h(ix + 1, iy + 1) * sx;
+    return top * (1 - sy) + bottom * sy;
+}
+
+function computeRiverStrip(bounds: { north: number; south: number; west: number; east: number }, width: number, height: number): Float32Array | null {
+    const segs = riverSegs, cells = riverCells;
+    if (!segs || !cells) return null;
+    const cand = new Set<number>();
+    for (let cy = Math.floor(bounds.south / RIVER_CELL_DEG) - 1; cy <= Math.floor(bounds.north / RIVER_CELL_DEG) + 1; cy++) {
+        for (let cx = Math.floor(bounds.west / RIVER_CELL_DEG) - 1; cx <= Math.floor(bounds.east / RIVER_CELL_DEG) + 1; cx++) {
+            const list = cells.get(cx + ',' + cy);
+            if (list) for (const i of list) cand.add(i);
+        }
+    }
+    if (cand.size === 0) return null;
+    const idx = [...cand];
+    const STEP = 4, cols = Math.floor(width / STEP) + 1, rows = Math.floor(height / STEP) + 1;
+    const node = new Float32Array(cols * rows);
+    const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
+    const southY = Math.asinh(Math.tan(bounds.south * Math.PI / 180));
+    let any = false;
+    for (let j = 0; j < rows; j++) {
+        const lat = Math.atan(Math.sinh(northY + (southY - northY) * j * STEP / height)) * 180 / Math.PI;
+        const kx = Math.cos(lat * Math.PI / 180) * 111.32, ky = 111.32;
+        for (let i = 0; i < cols; i++) {
+            const lng = bounds.west + (bounds.east - bounds.west) * i * STEP / width;
+            let best = Infinity;
+            for (const k of idx) {
+                const ax = (segs[k] - lng) * kx, ay = (segs[k + 1] - lat) * ky;
+                const bx = (segs[k + 2] - lng) * kx, by = (segs[k + 3] - lat) * ky;
+                const dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
+                const t = len2 > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)) : 0;
+                const d = Math.hypot(ax + dx * t, ay + dy * t) / segs[k + 4];
+                if (d < best) best = d;
+            }
+            // 宽度随地理低频噪声起伏（0.7~1.3 倍，约 13km 一格）：等宽的绿带像画上去的公路，自然河谷绿洲宽窄不一
+            best /= 0.7 + 0.6 * riverWidthNoise(lng, lat);
+            let v = 0;
+            if (best <= 0.4) v = 1;
+            else if (best < 1) { const t = (1 - best) / 0.6; v = t * t * (3 - 2 * t); }
+            node[j * cols + i] = v;
+            if (v > 0) any = true;
+        }
+    }
+    if (!any) return null;
+    const out = new Float32Array(width * height);
+    for (let y = 0; y < height; y++) {
+        const gy = Math.min(rows - 2, Math.floor(y / STEP)), fy = (y - gy * STEP) / STEP;
+        for (let x = 0; x < width; x++) {
+            const gx = Math.min(cols - 2, Math.floor(x / STEP)), fx = (x - gx * STEP) / STEP;
+            const n = gy * cols + gx;
+            out[y * width + x] = (node[n] * (1 - fx) + node[n + 1] * fx) * (1 - fy) + (node[n + cols] * (1 - fx) + node[n + cols + 1] * fx) * fy;
+        }
+    }
     return out;
 }
 
@@ -436,6 +594,7 @@ function renderHillshade(
     paddedDem: Float32Array | null = null,
     parentDem: Float32Array | null = null,
     caspianDem: Float32Array | null = null,
+    riverStrip: Float32Array | null = null,
 ): Uint8ClampedArray<ArrayBuffer> {
     // LUT 在调用前由 initLUTs() 建好；取成局部常量，让类型收窄在本函数内成立
     initLUTs();
@@ -537,7 +696,7 @@ function renderHillshade(
     const texIce = tex.ice, texIc2 = tex.ic2;
     const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texSha = tex.sha;
     const texDes = tex.des, texPm2 = tex.pm2, texPc1 = tex.pc1, texPc2 = tex.pc2;
-    const texGr4 = tex.gr4, texDs5 = tex.ds5;
+    const texGr4 = tex.gr4, texDs5 = tex.ds5, texGr2 = tex.gr2, texGrs = tex.grs;
     /** 取一张规则贴图在像素 p 的颜色（A/B 两套地理取样按交替权重混合），写入 TX */
     const sampleTex = (t: Uint8ClampedArray | undefined, p: number): boolean => {
         if (!t || !matTapA) return false;
@@ -840,8 +999,11 @@ function renderHillshade(
                     }
                     // ② 沙漠成片：干旱低中海拔，按低频噪声成片铺橙色沙（热带 des，温带 pm2）
                     const patch = matPatch![p];
+                    // 🔴 [2026-09-30] 海拔 140m 以下渐隐（60~140m 过渡）：大河冲积平原（巴比伦、印度河下游、尼罗河三角洲、
+                    //    阿姆河下游）海拔中位 6~87m、9px 起伏 4~7m；沙丘沙漠除卡拉库姆西部外都在 120m 以上、起伏 10~80m。
+                    //    原来在两河、印度河平原上铺出大片橙色沙斑，像沙丘沙漠，与史实（古代最重要的灌溉农业区）相反。
                     const desert = sandiness > 0.3 && colorZ < 2600
-                        ? rampWorker(sandiness, 0.3, 0.9) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade : 0;
+                        ? rampWorker(sandiness, 0.3, 0.9) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade * rampWorker(colorZ, 60, 140) : 0;
                     if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
                         r += (TX[0] - r) * desert; g += (TX[1] - g) * desert; b += (TX[2] - b) * desert;
                     }
@@ -850,6 +1012,18 @@ function renderHillshade(
                         ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.55) / 0.35) * (0.25 + 0.25 * patch) : 0;
                     if (savanna > 0 && mix2(texPc1, 1 - patch, texPc2, patch, p)) {
                         r += (TX[0] - r) * savanna; g += (TX[1] - g) * savanna; b += (TX[2] - b) * savanna;
+                    }
+                }
+
+                // ⑦ 沙漠中的河流绿带：干旱区（aridity 0.45 起渐入）大河两侧铺绿草，陡坡不铺（河谷崖壁留给岩石）
+                if (isLand && matTapA && riverStrip) {
+                    const rs = riverStrip[p];
+                    if (rs > 0) {
+                        const w = rs * rampWorker(aridity, 0.45, 0.8) * (1 - rampWorker(slopeGrad, 0.03, 0.08)) * 0.62 * snowFade;
+                        const pt = matPatch![p];
+                        if (w > 0 && mix2(texGr2, 1 - pt, texGrs, pt, p)) {
+                            r += (TX[0] - r) * w; g += (TX[1] - g) * w; b += (TX[2] - b) * w;
+                        }
                     }
                 }
 
@@ -876,9 +1050,10 @@ function renderHillshade(
                     }
                 }
 
-                // ⑤ 海岸沙滩：离海 ≤4px（约 1km）、海拔 12m 以下、不陡；热带白沙 / 温带沙滩 / 寒带湿砾
-                if (isLand && matTapA && nearWater && nearWater[p] && colorZ < 12 && slopeGrad < 0.12) {
-                    const beach = (1 - rampWorker(colorZ, 3, 12)) * 0.75;
+                // ⑤ 海岸沙滩：离海 ≤4px（约 1km）、海拔 20m 以下、不陡；热带白沙 / 温带沙滩 / 寒带湿砾
+                //    （12m 时 zoom 9 下只剩最外一圈像素、原尺寸几乎看不见，放宽到 20m）
+                if (isLand && matTapA && nearWater && nearWater[p] && colorZ < 20 && slopeGrad < 0.12) {
+                    const beach = (1 - rampWorker(colorZ, 6, 20)) * 0.8;
                     const beachTex = absLat < 30 ? texBch : absLat < 55 ? texBc2 : texGravelWet;
                     if (beach > 0 && sampleTex(beachTex, p)) {
                         r += (TX[0] - r) * beach; g += (TX[1] - g) * beach; b += (TX[2] - b) * beach;
@@ -1199,9 +1374,10 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
         // 只有本瓦片含海平面以下像素或启用河谷冲积试验时取掩膜。内陆瓦片直接跳过，
         // 沿海/海域/试验瓦片才多等一次，且有超时兜底，保证河流与湖泊保持纯净水色。
         const hasBelowSea = hasBelowSeaPixel(src, req.width * req.height);
-        const needMask = hasBelowSea || !!req.valleyReliefExp;
-        // 规则贴图在高程解码后立即开拉，与水体掩膜下载并行（「有低于海平面的像素」是「有水」的必要条件，按它判宁多勿漏）
-        resolveRules(pickRuleTextures(src, hasBelowSea, req));
+        const mayHaveLake = !hasBelowSea && countFlatLandPixels(src, req.width, req.height, LAKE_FLAT_PIXELS) >= LAKE_FLAT_PIXELS;
+        const needMask = hasBelowSea || mayHaveLake || !!req.valleyReliefExp;
+        // 规则贴图在高程解码后立即开拉，与水体掩膜下载并行（「会去取掩膜」是「有水」的必要条件，按它判宁多勿漏）
+        resolveRules(pickRuleTextures(src, hasBelowSea || mayHaveLake, req));
         const mask = needMask
             ? await fetchWaterMask(req.waterMaskUrl, req.width, req.height)
             : null;
@@ -1233,8 +1409,15 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
             ? await getPaddedDem(src, req.coords) : null;
 
         const [material, parentDem, caspianDem] = await Promise.all([materialPending, parentDemPending, caspianDemPending]);
+        // 干旱瓦片才要河流绿带：第一次碰到时才加载河流数据（6MB，每个 Worker 一次）
+        let riverStrip: Float32Array | null = null;
+        if (material && req.tileBounds) {
+            let maxArid = 0;
+            for (let i = 0; i < material.arid.length; i += 64) if (material.arid[i] > maxArid) maxArid = material.arid[i];
+            if (maxArid >= 0.45 && await loadRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
+        }
         const renderStart = performance.now();
-        const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem);
+        const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip);
         const renderMs = performance.now() - renderStart;
         const bitmap = await createImageBitmap(new ImageData(output, req.width, req.height));
 
