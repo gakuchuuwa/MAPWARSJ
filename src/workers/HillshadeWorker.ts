@@ -4,7 +4,7 @@
  */
 
 import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
-import { createTerrainMaterial, getMaterialBytes } from '../map/StrategicTerrainMaterial';
+import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial } from '../map/StrategicTerrainMaterial';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
@@ -221,20 +221,18 @@ function initLUTs() {
     const coastalSand = [165, 180, 150];    // 海岸冲积低饱和绿 (16%饱和)
     const lowlandPale = [150, 178, 135];    // 0-400m sage 平原绿 (对标 Map Library)
     const lowlandEnd = [130, 160, 115];     // 400m 锚点林地深绿 (22%饱和)
-    const sandBeige = [168, 172, 136];      // 1000m 中山林地到浅暖岩过渡 (温润通透)
-    const loessYellow = [186, 178, 142];    // 1300m 中高山温润暖岩石基底
-    const loessMid = [188, 178, 146];       // 2500m 亚高山暖石基底
-    // [HIGHLAND-EARTH-REV2] 高原与高山温润通透大地色阶（自然地理真实性校准）
-    // 2500m-3500m: 亚高山林线至高原河谷草甸，温润通透带微草绿意(林芝/雅江河谷农耕沃土)
-    // 3500m-4500m: 高原广袤草场与高寒草甸，明朗金黄与浅驼大地色(拉萨河谷/纳木错圣湖周边)
-    // 4500m-5300m: 高寒草原与荒漠碎屑坡，风化暖赭色与浅砂岩色
-    // 5300m-5600m: 亚高山裸露风化岩山，暖调砂岩与花岗岩色
-    // 5600m+: 亚雪线冰碛碎石，由真实动态雪线覆盖连绵白雪冰川
-    const valleyMeadow = [178, 180, 144];   // ~3200m 高原河谷温润高山草甸(带温和草木生机)
-    const alpineSteppe = [192, 182, 145];   // ~3800m 高原草甸金黄(明朗温润)
-    const highlandPlains = [182, 172, 142]; // ~4400m 高原广袤草原浅驼金(明朗开阔)
-    const highlandDesert = [170, 160, 136]; // ~4900m 高寒荒漠暖赭色碎屑坡
-    const subnivalRock = [152, 144, 132];   // ~5300m 亚高山暖调花岗岩石
+    // 🔴 [2026-09-30 主人令「全面修复」地形呈现] 中高山段重排：
+    //    旧色阶 1000~4400m 亮度只在 167~181 之间来回（1300m 与 2500m 几乎同色），山脚到山顶看不出层次。
+    //    现在色相单向推进：平原绿 → 橄榄 → 卡其 → 黄褐 → 褐（亚高山）→ 高原面浅驼 → 碎屑坡赭 → 冰碛灰。
+    //    3800m 起高原面回亮是有意的：青藏高原面广阔平坦，不能整片压成深褐。
+    const oliveFoot = [164, 168, 116];      // ~1000m 山麓橄榄（低山林地到草坡）
+    const khakiUpland = [182, 164, 120];    // ~1600m 中山卡其
+    const tanMontane = [172, 148, 110];     // ~2400m 中高山黄褐
+    const brownSubalpine = [158, 134, 102]; // ~3200m 亚高山褐（林线附近）
+    const plateauSteppe = [178, 160, 122];  // ~3800m 高原面草场浅驼（拉萨河谷/纳木错）
+    const highlandPlains = [172, 154, 122]; // ~4400m 高原草原驼色
+    const highlandDesert = [162, 148, 126]; // ~4900m 高寒荒漠碎屑坡暖赭
+    const subnivalRock = [150, 142, 132];   // ~5300m 亚高山风化岩
     const moraineGrey = [135, 130, 126];    // ~5600m+ 冰碛岩基底(由动态雪线覆盖白雪)
 
     for (let i = 0; i < range; i++) {
@@ -249,12 +247,12 @@ function initLUTs() {
         else if (elev < 0) lerpColor(shoalCyan, coastalSand, (elev + 3) / 3, lut, offset);
         else if (elev < 20) lerpColor(coastalSand, lowlandPale, elev / 20, lut, offset);
         else if (elev < 400) lerpColor(lowlandPale, lowlandEnd, (elev - 20) / 380, lut, offset);
-        else if (elev < 1000) lerpColor(lowlandEnd, sandBeige, (elev - 400) / 600, lut, offset);
-        else if (elev < 1300) lerpColor(sandBeige, loessYellow, (elev - 1000) / 300, lut, offset);
-        else if (elev < 2500) lerpColor(loessYellow, loessMid, (elev - 1300) / 1200, lut, offset);
-        else if (elev < 3200) lerpColor(loessMid, valleyMeadow, (elev - 2500) / 700, lut, offset);
-        else if (elev < 3800) lerpColor(valleyMeadow, alpineSteppe, (elev - 3200) / 600, lut, offset);
-        else if (elev < 4400) lerpColor(alpineSteppe, highlandPlains, (elev - 3800) / 600, lut, offset);
+        else if (elev < 1000) lerpColor(lowlandEnd, oliveFoot, (elev - 400) / 600, lut, offset);
+        else if (elev < 1600) lerpColor(oliveFoot, khakiUpland, (elev - 1000) / 600, lut, offset);
+        else if (elev < 2400) lerpColor(khakiUpland, tanMontane, (elev - 1600) / 800, lut, offset);
+        else if (elev < 3200) lerpColor(tanMontane, brownSubalpine, (elev - 2400) / 800, lut, offset);
+        else if (elev < 3800) lerpColor(brownSubalpine, plateauSteppe, (elev - 3200) / 600, lut, offset);
+        else if (elev < 4400) lerpColor(plateauSteppe, highlandPlains, (elev - 3800) / 600, lut, offset);
         else if (elev < 4900) lerpColor(highlandPlains, highlandDesert, (elev - 4400) / 500, lut, offset);
         else if (elev < 5300) lerpColor(highlandDesert, subnivalRock, (elev - 4900) / 400, lut, offset);
         else if (elev < 5600) lerpColor(subnivalRock, moraineGrey, (elev - 5300) / 300, lut, offset);
@@ -328,7 +326,7 @@ function renderHillshade(
     data: Uint8ClampedArray,
     req: HillshadeRequest,
     waterMask: Uint8Array | null = null,
-    material: Uint8ClampedArray | null = null,
+    material: TerrainMaterial | null = null,
     paddedDem: Float32Array | null = null,
     parentDem: Float32Array | null = null,
     caspianDem: Float32Array | null = null,
@@ -511,6 +509,8 @@ function renderHillshade(
                 const dzdy = ((zBL + 2 * zB + zBR) - (zTL + 2 * zT + zTR)) * INV_8;
 
                 const slope = Math.atan(Math.sqrt(dzdx * dzdx + dzdy * dzdy) / divisor);
+                // 真实地面坡度（米/米），供坡面岩石用；与晕渲的夸张系数无关
+                const slopeGrad = Math.sqrt(dzdx * dzdx + dzdy * dzdy) / meters;
                 let aspect = Math.atan2(dzdy, -dzdx);
                 if (aspect < 0) aspect += 2 * Math.PI;
 
@@ -684,13 +684,40 @@ function renderHillshade(
                 // 气候材质提供地表色与纹理；高程仍决定起伏，雪线上方平滑淡出，呈现皑皑白雪。
                 // 🔴 [2026-09-18 主人令] 降低平原黄绿反差：低地平原(<400m)由原 0.60 调柔和至 0.35，
                 //    保留地表干湿与疏密自然质感的同时，大幅收敛黄绿反差；山地(>400m)平滑过渡至 0.52，呈现巍峨岩土立体感。
-                if (material && colorZ > 0 && material[idx + 3] > 0) {
+                // 🔴 [2026-09-30] 山地上限 0.52 → 0.42：山地的岩土质感改由下面的坡面岩石层提供，
+                //    气候贴图压得太重会冲淡海拔色阶（山脚到山顶的层次）。
+                const climateMat = material ? material.climate : null;
+                if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
                     const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
-                    const baseBlend = colorZ < 400 ? 0.35 : Math.min(0.52, 0.35 + (colorZ - 400) * 0.00028);
-                    const blend = baseBlend * snowFade * material[idx + 3] / 255;
-                    r += (material[idx] - r) * blend;
-                    g += (material[idx + 1] - g) * blend;
-                    b += (material[idx + 2] - b) * blend;
+                    const baseBlend = colorZ < 400 ? 0.35 : Math.min(0.42, 0.35 + (colorZ - 400) * 0.00028);
+                    const blend = baseBlend * snowFade * climateMat[idx + 3] / 255;
+                    r += (climateMat[idx] - r) * blend;
+                    g += (climateMat[idx + 1] - g) * blend;
+                    b += (climateMat[idx + 2] - b) * blend;
+                }
+
+                // 🔴 [2026-09-30 主人令「全面修复」] 坡面岩石：贴图原先只看气候，陡坡与谷底铺同一张草地。
+                //    现在按坡度混入裸岩（rck）：坡度 0.14（约 8°）起露岩，0.55（约 29°）以上以岩石为主。
+                //    林线以下山坡多有植被覆盖，岩石上限随海拔从 0.45（≤1500m）升到 0.75（≥3000m）。
+                //    阈值依据 zoom 9 实测坡度分布（scratch/terrain_ab）：华北平原 97% < 0.008；
+                //    太行山中位 0.087、前 10% > 0.24；帕米尔中位 0.31。
+                const rockMat = material ? material.rock : null;
+                if (rockMat && colorZ > 0 && !isWater && rockMat[idx + 3] > 0) {
+                    const t = Math.max(0, Math.min(1, (slopeGrad - 0.14) / 0.41));
+                    if (t > 0) {
+                        const rockMax = 0.55 + 0.30 * Math.max(0, Math.min(1, (zC - 1500) / 1500));
+                        const w = t * t * (3 - 2 * t) * rockMax;
+                        // rck 原色偏暖黄 (147,135,107)，与黄褐山色几乎同色、混了看不出来（实测陡/缓坡色差只 +2~6%）。
+                        // 裸岩从高空看是冷灰褐：向自身灰度收 45%、整体压暗 8%，与暖色谷地拉开。
+                        const rr = rockMat[idx], rg = rockMat[idx + 1], rb = rockMat[idx + 2];
+                        const grey = rr * 0.299 + rg * 0.587 + rb * 0.114;
+                        const tr = (rr + (grey - rr) * 0.45) * 0.92;
+                        const tg = (rg + (grey - rg) * 0.45) * 0.92;
+                        const tb = (rb + (grey - rb) * 0.45) * 0.92 + 4;
+                        r += (tr - r) * w;
+                        g += (tg - g) * w;
+                        b += (tb - b) * w;
+                    }
                 }
 
                 // [NILE-ALLUVIAL] 尼罗河谷与三角洲冲积黑土壤土层试验 (ZOOM 9 专用)
@@ -809,6 +836,14 @@ function renderHillshade(
                     r = r * invR + 255 * rStr;
                     g = g * invR + 255 * rStr;
                     b = b * invR + 255 * rStr;
+                }
+
+                // 🔴 [2026-09-30] 阳坡偏暖、阴坡偏冷（制图常用手法，只作用于陆地），加强立体感
+                if (!isWater && zC > 0) {
+                    const lit = Math.max(-0.5, Math.min(0.4, shadeFactor - 1));
+                    const k = lit * 0.12;
+                    r *= 1 + k;
+                    b *= 1 - k;
                 }
 
                 output[idx] = r * shadeFactor;
@@ -953,7 +988,7 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
         if (!colorLUT || !noiseLUT) throw new Error('LUT init failed');
 
         const materialPending = req.params.useElevationColor && req.tileBounds
-            ? createTerrainMaterial(req.tileBounds, req.width, req.height).catch(() => null)
+            ? createTerrainMaterial(req.tileBounds, req.width, req.height, req.coords).catch(() => null)
             : Promise.resolve(null);
         const resp = await fetch(req.url, { mode: 'cors', signal: AbortSignal.timeout(8000) });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
