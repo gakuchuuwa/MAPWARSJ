@@ -4,7 +4,7 @@
  */
 
 import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
-import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial } from '../map/StrategicTerrainMaterial';
+import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial, type TerrainRuleTexture } from '../map/StrategicTerrainMaterial';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
@@ -319,6 +319,34 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
     return padded;
 }
 
+/**
+ * 本瓦片会触发哪些地形规则 → 只加载那几类贴图。每条判定都比渲染里的规则更宽，宁多勿漏：
+ * 缺了某张贴图，渲染里那条规则会静默跳过，画面就少一块。
+ */
+function pickRuleTextures(src: Uint8ClampedArray, mayHaveWater: boolean, req: HillshadeRequest): TerrainRuleTexture[] {
+    let minZ = Infinity, maxZ = -Infinity;
+    for (let i = 0; i < src.length; i += 4) {
+        const z = src[i] * 256 + src[i + 1] + src[i + 2] / 256 - 32768;
+        if (z < minZ) minZ = z;
+        if (z > maxZ) maxZ = z;
+    }
+    const hasWater = mayHaveWater;
+    const b = req.tileBounds;
+    const latMaxAbs = b ? Math.max(Math.abs(b.north), Math.abs(b.south)) : 90;
+    const latMinAbs = b ? (b.north * b.south <= 0 ? 0 : Math.min(Math.abs(b.north), Math.abs(b.south))) : 0;
+    const out: TerrainRuleTexture[] = [];
+    if (maxZ - minZ > 30) out.push('rck', 'rock_wet');                       // 坡面岩石（有起伏才有陡坡）
+    if (maxZ > 900) out.push('gr4', 'ds5');                                   // 山地带
+    if (latMinAbs < 52) out.push('des', 'pm2');                               // 沙漠（全球沙漠都在 52° 以内）
+    if (latMinAbs < 24) out.push('pc1', 'pc2');                               // 热带稀树草原
+    if (hasWater) out.push('wt2', 'wt4', 'wt3', 'wt5', 'sha', 'bch', 'bc2', 'gravel_wet'); // 海水、浅礁、海岸
+    if (hasWater && latMaxAbs > 76) out.push('ice', 'ic2');                   // 海冰
+    // 积雪：雪线最低的情形（该瓦片最高纬、不计任何抬升）再放宽 300m
+    const lowestSnowline = Math.max(700, 5100 - Math.max(0, latMaxAbs - 28) * 115);
+    if (maxZ > lowestSnowline - 300) out.push('sno', 'snf', 'snd');
+    return out;
+}
+
 const TX = new Float64Array(3);
 const rampWorker = (v: number, a: number, b: number) => {
     const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
@@ -500,6 +528,8 @@ function renderHillshade(
     const matTapB = material ? material.tapB : null;
     const matBomb = material ? material.bomb : null;
     const matPatch = material ? material.patch : null;
+    const matArid = material ? material.arid : null;
+    const matSand = material ? material.sand : null;
     const tex = material ? material.tex : {};
     const texRck = tex.rck, texRockWet = tex.rock_wet, texGravelWet = tex.gravel_wet;
     const texBch = tex.bch, texBc2 = tex.bc2;
@@ -682,7 +712,10 @@ function renderHillshade(
                     const slopeWeight = Math.max(0, Math.min(1, (slopeMag - 0.008) / 0.024));
                     const lapWeight = Math.max(0, Math.min(1, (Math.abs(lap) - 0.6) / 2.0));
                     const reliefWeight = Math.max(slopeWeight, lapWeight);
-                    const fineWeight = Math.max(elevWeight, reliefWeight);
+                    // 🔴 [2026-09-30] 海面只用 3 像素粗尺度坡度：水深数据在瓦片交界处有轻微断层（红海实测交界两侧差 13.4m、
+                    //    瓦片内部相邻列 8.4m），1 像素细尺度坡度把它放大成一条直缝（光照开 3.04 个亮度级、关 0.15）。
+                    //    改后交界台阶 0.19；海底大尺度起伏照旧由 3 像素坡度表现。验收：scratch/terrain_ab/seam_probe.mts
+                    const fineWeight = (waterMask !== null && waterMask[yM + x] !== 0) ? 0 : Math.max(elevWeight, reliefWeight);
 
                     let effDzdx1 = dzdx1, effDzdy1 = dzdy1;
                     let effDzdx3 = dzdx3, effDzdy3 = dzdy3;
@@ -776,22 +809,20 @@ function renderHillshade(
                 //    气候贴图压得太重会冲淡海拔色阶（山脚到山顶的层次）。
                 // 🔴 [2026-09-30 主人令「多用帝国时代 2 素材，让战略地图色彩丰富」] 贴图由地形规则决定：
                 //    气候表只给 20 种贴图；下面按海拔 / 坡度 / 水深 / 纬度 / 海岸，逐像素加入另外 25 种 DE 地表贴图。
-                //    湿润与干旱由本像素气候贴图的颜色判断（草地 g>r、沙地 r>g），不另建气候字段。
+                //    干湿与沙地程度来自气候贴图的逐张分类（StrategicTerrainMaterial.CLIMATE_CLASS）。
                 const p = yM + x;
                 const isLand = colorZ > 0 && !isWater;
-                let aridity = 0.5;
-                if (climateMat && climateMat[idx + 3] > 0) {
-                    aridity = Math.max(0, Math.min(1, (climateMat[idx] - climateMat[idx + 1] + 5) / 35));
-                }
+                const aridity = matArid ? matArid[p] : 0.5;
+                const sandiness = matSand ? matSand[p] : 0;
                 const humidity = 1 - aridity;
                 const absLat = Math.abs(rowLat);
                 const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
 
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
-                    // 🔴 9-18 主人令「降低平原黄绿反差」：低地草地（绿色贴图）保持 0.35 不动；
-                    //    沙漠、荒漠、干草原这类非草地贴图不存在黄绿反差问题，提到 0.60，让贴图成为主色。
-                    const greenness = Math.max(0, Math.min(1, (climateMat[idx + 1] - climateMat[idx]) / 25));
-                    const lowBlend = 0.35 + 0.25 * (1 - greenness);
+                    // 🔴 9-18 主人令「降低平原黄绿反差」：低地草地（含干草 gr7，它和青草交错正是黄绿反差的来源）保持 0.35 不动；
+                    //    只有沙地（pal/qs 等）不存在黄绿反差问题，按沙地程度提到 0.60，让贴图成为主色。
+                    //    （曾按「贴图绿不绿」判，把 gr7 也提到 0.60，华北平原黄绿起伏 5.6 → 8.8，已改。）
+                    const lowBlend = 0.35 + 0.25 * sandiness;
                     const baseBlend = colorZ < 400 ? lowBlend : Math.min(0.60, lowBlend + (colorZ - 400) * 0.0002);
                     const blend = baseBlend * snowFade * climateMat[idx + 3] / 255;
                     r += (climateMat[idx] - r) * blend;
@@ -809,14 +840,14 @@ function renderHillshade(
                     }
                     // ② 沙漠成片：干旱低中海拔，按低频噪声成片铺橙色沙（热带 des，温带 pm2）
                     const patch = matPatch![p];
-                    const desert = aridity > 0.45 && colorZ < 2600
-                        ? rampWorker(aridity, 0.45, 0.85) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade : 0;
+                    const desert = sandiness > 0.3 && colorZ < 2600
+                        ? rampWorker(sandiness, 0.3, 0.9) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade : 0;
                     if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
                         r += (TX[0] - r) * desert; g += (TX[1] - g) * desert; b += (TX[2] - b) * desert;
                     }
                     // ③ 热带稀树草原：南北回归线附近、半干旱、2000m 以下
-                    const savanna = absLat < 24 && colorZ < 2000
-                        ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.4) / 0.35) * (0.30 + 0.30 * patch) : 0;
+                    const savanna = absLat < 24 && colorZ < 2000 && sandiness < 0.5
+                        ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.55) / 0.35) * (0.25 + 0.25 * patch) : 0;
                     if (savanna > 0 && mix2(texPc1, 1 - patch, texPc2, patch, p)) {
                         r += (TX[0] - r) * savanna; g += (TX[1] - g) * savanna; b += (TX[2] - b) * savanna;
                     }
@@ -855,7 +886,7 @@ function renderHillshade(
                 }
 
                 // ⑥ 海水：按水深铺 DE 海水（深海 wt4 → 近海 wt2 → 浅海：温带 wt3 / 热带 wt5），
-                //    热带浅海成片出礁（sha），极地（|纬度|>70°）渐变为海冰。保留 45% 原水深色阶，深浅过渡不断层。
+                //    热带浅海成片出礁（sha），极地（|纬度| 76°~82° 渐入）为海冰 —— 巴伦支海南部、挪威海受北大西洋暖流影响终年不冻，门槛不能再往南。保留 45% 原水深色阶，深浅过渡不断层。
                 if (!isLand && colorZ < 0 && matTapA && texWt2) {
                     const depth = -colorZ;
                     const tropical = absLat < 28;
@@ -867,7 +898,7 @@ function renderHillshade(
                     if (shallowW > 0 && sampleTex(tropical ? texWt5 : texWt3, p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
                     const reefW = tropical && depth < 40 ? (1 - rampWorker(depth, 15, 40)) * rampWorker(matPatch![p], 0.5, 0.75) * 0.5 : 0;
                     if (reefW > 0 && sampleTex(texSha, p)) { wr += (TX[0] - wr) * reefW; wg += (TX[1] - wg) * reefW; wb += (TX[2] - wb) * reefW; }
-                    const iceW = rampWorker(absLat, 70, 76) * 0.85;
+                    const iceW = rampWorker(absLat, 76, 82) * 0.85;
                     if (iceW > 0 && mix2(texIce, 1 - matPatch![p], texIc2, matPatch![p], p)) { wr += (TX[0] - wr) * iceW; wg += (TX[1] - wg) * iceW; wb += (TX[2] - wb) * iceW; }
                     r += (wr - r) * 0.55; g += (wg - g) * 0.55; b += (wb - b) * 0.55;
                 }
@@ -1147,8 +1178,11 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
         initLUTs();
         if (!colorLUT || !noiseLUT) throw new Error('LUT init failed');
 
+        // 规则贴图要等高程与水体掩膜到手才知道用哪些；气候贴图先行加载，与高程下载并行
+        let resolveRules: (names: readonly TerrainRuleTexture[]) => void = () => { };
+        const rulesNeeded = new Promise<readonly TerrainRuleTexture[]>(resolve => { resolveRules = resolve; });
         const materialPending = req.params.useElevationColor && req.tileBounds
-            ? createTerrainMaterial(req.tileBounds, req.width, req.height, req.coords).catch(() => null)
+            ? createTerrainMaterial(req.tileBounds, req.width, req.height, req.coords, rulesNeeded).catch(() => null)
             : Promise.resolve(null);
         const resp = await fetch(req.url, { mode: 'cors', signal: AbortSignal.timeout(8000) });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -1164,7 +1198,10 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
 
         // 只有本瓦片含海平面以下像素或启用河谷冲积试验时取掩膜。内陆瓦片直接跳过，
         // 沿海/海域/试验瓦片才多等一次，且有超时兜底，保证河流与湖泊保持纯净水色。
-        const needMask = hasBelowSeaPixel(src, req.width * req.height) || !!req.valleyReliefExp;
+        const hasBelowSea = hasBelowSeaPixel(src, req.width * req.height);
+        const needMask = hasBelowSea || !!req.valleyReliefExp;
+        // 规则贴图在高程解码后立即开拉，与水体掩膜下载并行（「有低于海平面的像素」是「有水」的必要条件，按它判宁多勿漏）
+        resolveRules(pickRuleTextures(src, hasBelowSea, req));
         const mask = needMask
             ? await fetchWaterMask(req.waterMaskUrl, req.width, req.height)
             : null;
