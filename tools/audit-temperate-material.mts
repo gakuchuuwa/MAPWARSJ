@@ -59,7 +59,7 @@ for (let i = 0; i < regions.length; i++) {
         if (side === 'after') {
             for (let ty = 0; ty < 2; ty++) for (let tx = 0; tx < 2; tx++) {
                 const local = Array.from({ length: 25 }, (_, n) => grid[(ty * 4 + Math.floor(n / 5)) * 9 + tx * 4 + n % 5]);
-                const tile = blendMaterialGrid(local, 5, 256, 256);
+                const tile = blendMaterialGrid(local, 5, 256, 256, { gx9: tx * 256, gy9: ty * 256, scale: 1 });
                 for (let y = 0; y < 256; y++) {
                     const start = ((ty * 256 + y) * 512 + tx * 256) * 4;
                     assert.deepEqual(tile.slice(y * 1024, (y + 1) * 1024), whole.slice(start, start + 1024));
