@@ -2000,8 +2000,11 @@ buildingStyle: 'NORTHEAST', troops: 10000,
         note: '伯都；勿吉小城',
     },
     // 🔴 [2026-09-24 主人批间距特许] 第 11 场「前327 索格狄亚那岩」攻城战必须有真据点，库里没有 → 按 §二之二 添加。
-    //    坐标取英文维基百科 Siege of the Sogdian Rock 信息框 40.4,69.4；该条目正文写 near Samarkand、信息框却在忽毡旁，
-    //    两处自相矛盾，按 §一.1「坐标以信息框为准」取信息框值。离忽毡 27.69 公里，特许登记在 AGENTS §2.1.1.1。
+    // 🔴 [2026-09-30 坐标纠错 · 主人令「必须符合历史」] 原取英文维基信息框 40.4,69.4 —— 该坐标**与同条目正文第一句
+    //    「near Samarkand」自相矛盾**，且把岩堡错位 300 公里到北疆忽毡旁（当时还为它开了 27.69 公里的间距特许）。
+    //    今按：① 英文维基 Siege of the Sogdian Rock 正文 near Samarkand；② 阿里安《远征记》IV.18–19 记此岩在
+    //    诺塔卡（今沙赫里萨布兹）冬营附近、粟特与巴克特里亚交界的山区；③ 学术认定在撒马尔罕以南吉萨尔山脉／
+    //    铁门关／拜孙（Bayson）山区 —— 取 **38.21,67.02**（合理推定，见事件「史料依据·地点」栏）。旧值与那条间距特许一并作废。
     { id: 'city_suogediyanayan', name: '索格狄亚那岩', factionId: 'suogediyana', lat: 38.21, lng: 67.02, type: 'stockade', troops: 10000,
         note: '索格狄亚那岩，即阿里马泽斯之岩，粟特境内绝壁岩堡，前327年早春为亚历山大所取。守将阿里马泽斯。史料：英文维基百科 Siege of the Sogdian Rock。🔴 [2026-09-25 主人定稿「险要必须人口大于1万为PASS」] 它是绝壁**岩堡**（避难的百姓上山、非城镇），人口算不出来 → 按 §6.2① 落**城寨**（原为 pass）。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：英文维基信息框 strength2 = Unknown（史料未给守军数），本场守方 **600**（不大于 1 万）→ 不算 PASS。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     // 🔴 [2026-09-25 主人令「把缺少的战役加上」] 前329 居鲁士城围攻（英文维基 Siege of Cyropolis，独立条目）必须有真据点，
@@ -2010,7 +2013,12 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     //    过不了年代闸门 —— 其锚定武将帖木儿灭里属城堡时代）；英文维基 Chronology 条目另记 Cyropolis = Uroteppa
     //    （今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），故本据点取后者。间距：--probe 实测最近索格狄亚那岩 64.22 公里。
 
-    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 38.8667, lng: 65.8, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地（今乌兹别克斯坦卡尔希）。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）。类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
+    // 🔴 [2026-09-30 坐标纠错 · 主人令「必须符合历史」] 原 38.8667,65.8 记作「今卡尔希」—— 与史料不符：
+    //    英文维基 `Nautaca`（https://en.wikipedia.org/wiki/Nautaca）**重定向到 Shahrisabz**，
+    //    即诺塔卡 ＝ 今**乌兹别克斯坦沙赫里萨布兹**（Kesh 绿洲，撒马尔罕以南约 67 公里）；
+    //    卡尔希是另一座城（Nakhshab／Nasaf），古名与诺塔卡不同。剧本路线与文案本来就写「诺塔卡（今沙赫里萨布兹）冬营」，
+    //    坐标遂与之对齐；`--probe` 实测最近邻撒马尔罕 67.24 公里 ✓ 过 40 km 硬闸。
+    { id: 'city_nuotaka', name: '诺塔卡', factionId: 'sute', lat: 39.0578, lng: 66.83, type: 'stockade', troops: 10000, region: 'SOGDIANS', buildingStyle: 'CEAS', note: '粟特南部要地诺塔卡（Nautaca），今乌兹别克斯坦沙赫里萨布兹（Kesh 绿洲）—— 英文维基 Nautaca 条目即重定向至 Shahrisabz。🔴 [2026-09-25 主人令「缺据点直接建」] 补进 5-5 段：前329 亚历山大渡乌浒水后经此北上，斯皮塔米尼斯在此把贝苏斯交给马其顿前锋托勒密（阿里安《远征记》IV.1）；前328/327 年冬亚历山大全军在此冬营大休整，前327 早春自此南下取索格狄亚那岩（IV.18）。类型按标准：非要塞堡垒、查不到人口史料 → 城寨。' },    { id: 'city_julushicheng', name: '居鲁士城', factionId: 'julushi', lat: 39.91, lng: 69.0, type: 'small_city', troops: 15000,
         note: '居鲁士城，即 Cyropolis，居鲁士大帝所建的粟特边塞、当地七座城寨中最大最坚的一座；前329年夏为亚历山大所破，守军约八千战死、余众退入内堡断水一日而降。史料：英文维基百科 Siege of Cyropolis。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算」] 定级依据§6.2：史料只记「当地七座城寨中最大最坚的一座」与守军约八千，未见人口数字 → 按新规取小城。', region: 'SOGDIANS', buildingStyle: 'CEAS' },
     { id: 'city_varaksha', name: '瓦拉赫沙', factionId: 'sogdian', lat: 40.402983, lng: 63.088989, type: 'medium_city', troops: 10000, 
         note: '粟特著名壁画古城瓦拉赫沙（Varakhsha），布哈拉绿洲夏宫与商业重镇', region: 'SOGDIANS',
@@ -3095,7 +3103,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     //    坐标取英文维基百科 Multan 条目信息框 30°11′N 71°28′E；城址身份见 note。
     //    间距：--probe 实测最近拉合尔 313.44 km（≥40 km，无需特批）。
 
-    { id: 'city_patala', name: '帕塔拉', factionId: 'xinde', lat: 25.39, lng: 68.36, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '印度河三角洲顶端重镇（今巴基斯坦海德拉巴/信德）。前325 夏亚历山大在此建军港，亲自率舰驶出河口进入印度洋，向波塞冬宰牛献祭、掷金杯入海 —— 印度远征的终点（阿里安《远征记》VI.17-20）。🔴 [2026-09-25 主人令「继续建」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_patala', name: '帕塔拉', factionId: 'xinde', lat: 25.39, lng: 68.36, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '印度河三角洲顶端重镇（今巴基斯坦海德拉巴/信德）。前325 夏亚历山大在此建军港，亲自率舰驶出河口进入印度洋，向波塞冬宰牛献祭、掷金杯入海 —— 印度远征的终点（阿里安《远征记》VI.17-20）。🔴 [2026-09-25 主人令「继续建」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_pula', name: '普拉', factionId: 'jiduoluoxiya', lat: 27.2025, lng: 60.6858, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '吉德罗西亚行省首府（今伊朗伊朗沙赫尔）。前325 年亚历山大率残军走完约 60 天的吉德罗西亚沙漠后抵此，获粮食牲畜补给（阿里安《远征记》VI.26）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_kamanniya', name: '卡曼尼亚', factionId: 'kamanniyaxingsheng', lat: 28.67, lng: 57.74, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '卡曼尼亚行省核心（今伊朗吉罗夫特/克尔曼地区）。前325 年亚历山大走出吉德罗西亚沙漠后在此与克拉特鲁斯的北路陆军、尼阿尔库斯的水师会师，并开庭清算远征期间乱政贪腐的地方官吏、举行盛大祭祀庆典（阿里安《远征记》VI.27-28）。🔴 [2026-09-25 主人令「重要据点先建」] 类型按标准：行省核心、非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_xierzhan', name: '锡尔詹', factionId: 'keerman', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '扎格罗斯山前走廊的中继据点（今伊朗锡尔詹）。🔴 [2026-09-25 主人令「只建锡尔詹」] 建它的依据：卡曼尼亚→帕萨尔加德 约 500 公里（>300）且路上没有据点 → 取锡尔詹把这段切成两段（各约 250 公里）。⚠️ 它是**几何中继点**，史料里没有这座城的记载；类型按标准（史料无名 → 城寨）。' },
