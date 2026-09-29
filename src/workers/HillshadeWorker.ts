@@ -5,6 +5,7 @@
 
 import { buildWaterMask, isDefectGrayTile } from '../world/land-sea/WaterMask';
 import { createTerrainMaterial, getMaterialBytes, type TerrainMaterial, type TerrainRuleTexture } from '../map/StrategicTerrainMaterial';
+import type { RiverSegmentsMessage } from '../map/RiverStripData';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS, type NileAlluvialPolygon } from '../data/HistoricalRegions';
 
 interface PreparedNilePolygon extends NileAlluvialPolygon {
@@ -380,63 +381,39 @@ function pickRuleTextures(src: Uint8ClampedArray, mayHaveWater: boolean, req: Hi
 /**
  * 🔴 [2026-09-30 主人令] 沙漠中的河流绿带：两河流域、印度河、尼罗河、阿姆河……古代最重要的灌溉农业带，
  *    气候分区图每格约 18km，这些十几到几十公里宽的河谷塞不进一格，原来整片按周围沙漠上色（巴比伦、帕塔拉像沙丘）。
- *    数据：战略地图同一份 Natural Earth 河流中心线（public/assets/ne_10m_rivers_lake_centerlines.geojson），
- *    只取 7 级及以上的河；绿带半宽按等级给（公里）。只在干旱区铺（见渲染里的 aridity 门槛），湿润区不受影响。
+ *    线段由主线程从战略地图的河流数据抽稀后发来（口径见 src/map/RiverStripData.ts）。只在干旱区铺（见渲染里的 aridity 门槛），湿润区不受影响。
  */
-const RIVER_HALF_WIDTH_KM: Readonly<Record<number, number>> = { 0: 9, 1: 9, 2: 10, 3: 13, 4: 12, 5: 10, 6: 6, 7: 4 };
 const RIVER_CELL_DEG = 1;
-let riverSegs: Float32Array | null = null;          // [lng1, lat1, lng2, lat2, 半宽km] × N
+let riverSegs: Float32Array | null = null;          // [lng1, lat1, lng2, lat2, 半宽km] × N（主线程抽稀好发来）
 let riverCells: Map<string, number[]> | null = null;
-let riverLoading: Promise<boolean> | null = null;
+let resolveRivers: (ok: boolean) => void = () => { };
+const riversReady = new Promise<boolean>(resolve => { resolveRivers = resolve; });
 
-function loadRivers(): Promise<boolean> {
-    return riverLoading ??= (async () => {
-        try {
-            const res = await fetch('/assets/ne_10m_rivers_lake_centerlines.geojson', { signal: AbortSignal.timeout(15000) });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const gj = await res.json();
-            const segs: number[] = [];
-            const walk = (c: unknown, w: number) => {
-                if (!Array.isArray(c) || c.length === 0) return;
-                if (typeof c[0]?.[0] === 'number') {
-                    for (let i = 1; i < c.length; i++) segs.push(c[i - 1][0], c[i - 1][1], c[i][0], c[i][1], w);
-                    return;
-                }
-                for (const child of c) walk(child, w);
-            };
-            for (const f of gj?.features ?? []) {
-                if (f?.properties?.featurecla !== 'River') continue;
-                const w = RIVER_HALF_WIDTH_KM[f.properties.scalerank as number];
-                if (w) walk(f.geometry?.coordinates, w);
-            }
-            const arr = new Float32Array(segs);
-            const cells = new Map<string, number[]>();
-            for (let i = 0; i < arr.length; i += 5) {
-                // 半宽换算成度再放宽：纬向 ×1、经向 ×2（高纬经度更「窄」）
-                const pad = arr[i + 4] / 111.32;
-                const x0 = Math.floor((Math.min(arr[i], arr[i + 2]) - pad * 2) / RIVER_CELL_DEG), x1 = Math.floor((Math.max(arr[i], arr[i + 2]) + pad * 2) / RIVER_CELL_DEG);
-                const y0 = Math.floor((Math.min(arr[i + 1], arr[i + 3]) - pad) / RIVER_CELL_DEG), y1 = Math.floor((Math.max(arr[i + 1], arr[i + 3]) + pad) / RIVER_CELL_DEG);
-                for (let cy = y0; cy <= y1; cy++) for (let cx = x0; cx <= x1; cx++) {
-                    const k = cx + ',' + cy;
-                    let list = cells.get(k);
-                    if (!list) { list = []; cells.set(k, list); }
-                    list.push(i);
-                }
-            }
-            riverSegs = arr; riverCells = cells;
-            return true;
-        } catch {
-            riverLoading = null;   // 网络失败不缓存，下一块瓦片再试
-            return false;
+/** 主线程发来河流线段：建 1° 格索引 */
+function setRiverSegments(segs: Float32Array | null): void {
+    if (!segs) { resolveRivers(false); return; }
+    const cells = new Map<string, number[]>();
+    for (let i = 0; i < segs.length; i += 5) {
+        const pad = segs[i + 4] / 111.32;
+        const x0 = Math.floor((Math.min(segs[i], segs[i + 2]) - pad * 2) / RIVER_CELL_DEG), x1 = Math.floor((Math.max(segs[i], segs[i + 2]) + pad * 2) / RIVER_CELL_DEG);
+        const y0 = Math.floor((Math.min(segs[i + 1], segs[i + 3]) - pad) / RIVER_CELL_DEG), y1 = Math.floor((Math.max(segs[i + 1], segs[i + 3]) + pad) / RIVER_CELL_DEG);
+        for (let cy = y0; cy <= y1; cy++) for (let cx = x0; cx <= x1; cx++) {
+            const k = cx + ',' + cy;
+            let list = cells.get(k);
+            if (!list) { list = []; cells.set(k, list); }
+            list.push(i);
         }
-    })();
+    }
+    riverSegs = segs; riverCells = cells;
+    resolveRivers(true);
 }
 
-/**
- * 本瓦片每个像素的「河流绿带强度」0~1（离河道不到半宽一半为 1，之后渐隐，到半宽为 0）。
- * 距离在 4px 粗网格上算、网格内双线性插值；网格点取全局经纬度，相邻瓦片共用边上网格点，无接缝。
- * 附近没有大河时返回 null。
- */
+/** 干旱瓦片等河流数据：主线程启动时就在加载，通常早已送达；最多等 10 秒，超时这块不画绿带 */
+function waitRivers(): Promise<boolean> {
+    if (riverSegs) return Promise.resolve(true);
+    return Promise.race([riversReady, new Promise<boolean>(resolve => setTimeout(() => resolve(false), 10000))]);
+}
+
 /** 平滑值噪声（经纬度，约 0.12° 一格），给河流绿带宽窄变化用；全局坐标 → 跨瓦片连续 */
 function riverWidthNoise(lng: number, lat: number): number {
     const x = lng / 0.12, y = lat / 0.12;
@@ -455,33 +432,49 @@ function riverWidthNoise(lng: number, lat: number): number {
 function computeRiverStrip(bounds: { north: number; south: number; west: number; east: number }, width: number, height: number): Float32Array | null {
     const segs = riverSegs, cells = riverCells;
     if (!segs || !cells) return null;
+    // 候选线段：瓦片范围按最宽绿带（13km × 1.3 倍噪声）外扩后与线段外包框相交的才算
+    const padLat = 13 * 1.3 / 111.32;
+    const padLng = padLat / Math.max(0.2, Math.cos(Math.max(Math.abs(bounds.north), Math.abs(bounds.south)) * Math.PI / 180));
+    const west = bounds.west - padLng, east = bounds.east + padLng, south = bounds.south - padLat, north = bounds.north + padLat;
     const cand = new Set<number>();
-    for (let cy = Math.floor(bounds.south / RIVER_CELL_DEG) - 1; cy <= Math.floor(bounds.north / RIVER_CELL_DEG) + 1; cy++) {
-        for (let cx = Math.floor(bounds.west / RIVER_CELL_DEG) - 1; cx <= Math.floor(bounds.east / RIVER_CELL_DEG) + 1; cx++) {
+    for (let cy = Math.floor(south / RIVER_CELL_DEG); cy <= Math.floor(north / RIVER_CELL_DEG); cy++) {
+        for (let cx = Math.floor(west / RIVER_CELL_DEG); cx <= Math.floor(east / RIVER_CELL_DEG); cx++) {
             const list = cells.get(cx + ',' + cy);
-            if (list) for (const i of list) cand.add(i);
+            if (!list) continue;
+            for (const i of list) {
+                if (Math.max(segs[i], segs[i + 2]) < west || Math.min(segs[i], segs[i + 2]) > east) continue;
+                if (Math.max(segs[i + 1], segs[i + 3]) < south || Math.min(segs[i + 1], segs[i + 3]) > north) continue;
+                cand.add(i);
+            }
         }
     }
     if (cand.size === 0) return null;
     const idx = [...cand];
-    const STEP = 4, cols = Math.floor(width / STEP) + 1, rows = Math.floor(height / STEP) + 1;
+    const STEP = 8, cols = Math.floor(width / STEP) + 1, rows = Math.floor(height / STEP) + 1;
     const node = new Float32Array(cols * rows);
     const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
     const southY = Math.asinh(Math.tan(bounds.south * Math.PI / 180));
     let any = false;
+    const rowIdx: number[] = [];
     for (let j = 0; j < rows; j++) {
         const lat = Math.atan(Math.sinh(northY + (southY - northY) * j * STEP / height)) * 180 / Math.PI;
         const kx = Math.cos(lat * Math.PI / 180) * 111.32, ky = 111.32;
+        // 这一行只和纬度上够得着的线段比（每行约省掉 2/3）
+        rowIdx.length = 0;
+        for (const k of idx) {
+            if (Math.max(segs[k + 1], segs[k + 3]) >= lat - padLat && Math.min(segs[k + 1], segs[k + 3]) <= lat + padLat) rowIdx.push(k);
+        }
+        if (rowIdx.length === 0) continue;
         for (let i = 0; i < cols; i++) {
             const lng = bounds.west + (bounds.east - bounds.west) * i * STEP / width;
             let best = Infinity;
-            for (const k of idx) {
+            for (const k of rowIdx) {
                 const ax = (segs[k] - lng) * kx, ay = (segs[k + 1] - lat) * ky;
                 const bx = (segs[k + 2] - lng) * kx, by = (segs[k + 3] - lat) * ky;
                 const dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
                 const t = len2 > 0 ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2)) : 0;
                 const d = Math.hypot(ax + dx * t, ay + dy * t) / segs[k + 4];
-                if (d < best) best = d;
+                if (d < best) { best = d; if (best < 0.25) break; }   // 已深在绿带里（噪声最窄 0.7 倍也满幅），不必再比
             }
             // 宽度随地理低频噪声起伏（0.7~1.3 倍，约 13km 一格）：等宽的绿带像画上去的公路，自然河谷绿洲宽窄不一
             best /= 0.7 + 0.6 * riverWidthNoise(lng, lat);
@@ -1015,14 +1008,17 @@ function renderHillshade(
                     }
                 }
 
-                // ⑦ 沙漠中的河流绿带：干旱区（aridity 0.45 起渐入）大河两侧铺绿草，陡坡不铺（河谷崖壁留给岩石）
+                // ⑦ 沙漠中的河流绿带：干旱区（aridity 0.6 起渐入；干草 gr7=0.5 这类温带干草原不算）大河两侧铺绿草，陡坡不铺（河谷崖壁留给岩石）
+                //    这里只算好颜色与权重，等历史区域沙漠染色、尼罗河冲积土试验层之后再叠 ——
+                //    大片沙漠椭圆（如尼罗河以西，强度 0.75）是底色，河流绿带是其中的例外；先叠会被刷回沙色（游戏实测三角洲绿带几乎看不见）
+                let riverGreenW = 0, riverGreenR = 0, riverGreenG = 0, riverGreenB = 0;
                 if (isLand && matTapA && riverStrip) {
                     const rs = riverStrip[p];
                     if (rs > 0) {
-                        const w = rs * rampWorker(aridity, 0.45, 0.8) * (1 - rampWorker(slopeGrad, 0.03, 0.08)) * 0.62 * snowFade;
+                        const w = rs * rampWorker(aridity, 0.6, 0.85) * (1 - rampWorker(slopeGrad, 0.03, 0.08)) * 0.62 * snowFade;
                         const pt = matPatch![p];
                         if (w > 0 && mix2(texGr2, 1 - pt, texGrs, pt, p)) {
-                            r += (TX[0] - r) * w; g += (TX[1] - g) * w; b += (TX[2] - b) * w;
+                            riverGreenW = w; riverGreenR = TX[0]; riverGreenG = TX[1]; riverGreenB = TX[2];
                         }
                     }
                 }
@@ -1165,6 +1161,11 @@ function renderHillshade(
                         g = g * iw + reg.color[1] * w;
                         b = b * iw + reg.color[2] * w;
                     }
+                }
+
+                // ⑦（续）河流绿带叠在历史区域与尼罗河试验层之上
+                if (riverGreenW > 0) {
+                    r += (riverGreenR - r) * riverGreenW; g += (riverGreenG - g) * riverGreenW; b += (riverGreenB - b) * riverGreenW;
                 }
 
                 // 真实高山雪线与常年冰川着色（严格符合欧亚大陆自然地理学规律）
@@ -1347,8 +1348,9 @@ async function fetchWaterMask(
     }
 }
 
-self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
-    const req = e.data;
+self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>) => {
+    if ((e.data as RiverSegmentsMessage).type === 'rivers') { setRiverSegments((e.data as RiverSegmentsMessage).segs); return; }
+    const req = e.data as HillshadeRequest;
     try {
         initLUTs();
         if (!colorLUT || !noiseLUT) throw new Error('LUT init failed');
@@ -1409,12 +1411,12 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest>) => {
             ? await getPaddedDem(src, req.coords) : null;
 
         const [material, parentDem, caspianDem] = await Promise.all([materialPending, parentDemPending, caspianDemPending]);
-        // 干旱瓦片才要河流绿带：第一次碰到时才加载河流数据（6MB，每个 Worker 一次）
+        // 干旱瓦片才要河流绿带（河流线段由主线程发来，见 setRiverSegments）
         let riverStrip: Float32Array | null = null;
         if (material && req.tileBounds) {
             let maxArid = 0;
             for (let i = 0; i < material.arid.length; i += 64) if (material.arid[i] > maxArid) maxArid = material.arid[i];
-            if (maxArid >= 0.45 && await loadRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
+            if (maxArid >= 0.6 && await waitRivers()) riverStrip = computeRiverStrip(req.tileBounds, req.width, req.height);
         }
         const renderStart = performance.now();
         const output = renderHillshade(src, req, mask, material, paddedDem, parentDem, caspianDem, riverStrip);

@@ -2549,7 +2549,7 @@ export class TerritorySystem {
         const labelOriginal = this.cityLabels.get(city.id);
         if (labelOriginal) {
             // 城名 / 城防数字变了 → 直接改两个 span 的文本，省掉 setIcon 重建 icon 的 DOM 开销
-            // 🔴 [2026-09-25 剧本期据点显示名会换（菲利波波利斯／拜占庭／埃克巴坦那…）]
+            // 🔴 [2026-09-25 据点显示名会变（开局套唯一显示名 `cityDisplayNames.ts`、玩家改名）]
             //    原来这里只改第二个 span（兵力）、把城名当成不变的 → 改名后标签上仍挂着旧名（实测「切回剧本」时露馅）。
             const el = labelOriginal.getElement();
             const spans = el?.querySelectorAll('span');

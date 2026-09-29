@@ -32,7 +32,7 @@ import { HISTORICAL_EVENT_SCRIPT, findHistoricalEventsOfGeneral, findGeneralOfBa
 import { isBattlefieldFought } from '../events/battlefieldState';
 import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs, briefingAnchors } from './JourneyBriefing';
-import { SCRIPT_CITY_NAMES } from '../data/scriptCityNames';
+import { CITY_DISPLAY_NAMES } from '../data/cityDisplayNames';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
 import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
 
@@ -172,17 +172,15 @@ const BF_RETRY_COOLDOWN_MS = 60_000;
  */
 const HOST_MOVE_EPS_DEG = 0.008;
 /**
- * 🔴 [2026-09-26 主人定「一路一句；到了点没念完得停」] **最后一句的「点」**：
- *    挂点之后不再有下一个据点，就用「离本场终点（战场／被攻据点）还剩 ≤20 公里」当那个点 ——
- *    走到这里这句还没念完，军团驻足听完再进战场。
+ * 🔴 [2026-09-30 主人定「**如果是战场不用等播报完，请直接开战，开战过程中可以播报**」]
+ *    **撤掉「到战场/城下驻足等播报」这道闸**（原 `BRIEFING_HOLD_END_KM = 20`）。
+ *    来由（主人报障）：「军团抵达底比斯后，为什么停驻了，不直接开战？是因为播报没有完吗」
+ *    —— 实测就是这么回事：底比斯是攻城战，`SIEGE.COMBAT_RADIUS` = 0.15° ≈ **16.6 公里**才开打，
+ *    而驻足闸在 **20 公里**就把军团按住了，最后一段没念完（第 3 场超 window 35.7 秒）就一直站着，
+ *    于是**永远走不进开战圈**。
+ *    → 终点不再驻足（中途挂点照旧驻足，保证念到哪讲到哪）；到了就开战，
+ *      **开打之后这一段播报照念**（见 `journeyAlive` / `hostIsMoving` 里的 `hostInBattle`）。
  */
-const BRIEFING_HOLD_END_KM = 20;
-/**
- * 🔴 [2026-09-26 主人令「播报没完就先停下等」] **最后一段的「B 点」**：
- *    挂点之后不再有下一个据点，就用「离本场终点（战场／被攻据点）还剩 ≤20 公里」当 B——
- *    走到这里旁白还没念完，军团就驻足听完再进战场。
- */
-
 export class PlayerQuestSystem {
     private quest: PlayerQuest | null = null;
     /** 开局原势力快照（以 CityManager 开局状态为准，与 RebellionSystem 同口径） */
@@ -445,7 +443,7 @@ export class PlayerQuestSystem {
             this.deps.notify(`${far}，正赶往【${battleTitle}】`);
             const ok = this.deps.hero.travelToPoint(pos, battleTitle, () => this.onBattlefieldClicked(bfId, battleTitle));
             const bf = findEventSite(bfId);
-            if (ok && bf) this.startJourneyBriefing(bf, undefined, undefined, undefined, pos);
+            if (ok && bf) this.startJourneyBriefing(bf);
             return;
         }
 
@@ -820,7 +818,6 @@ export class PlayerQuestSystem {
         this.startJourneyBriefing(
             bfSite, ev.title, scriptEv?.briefing ?? undefined,
             this.scriptSegmentStarts(scriptEv ?? null, briefText),
-            marchTarget,   // 本场终点（战场阵位／被攻据点）：最后一段没念完时在这里驻足等
         );
         if (!continuation) {
             gameLog('expedition',
@@ -1403,7 +1400,7 @@ export class PlayerQuestSystem {
 
         if (ok) {
             this.bfRetryAfter.delete(bf.id);
-            this.startJourneyBriefing(bf, undefined, undefined, undefined, pos);
+            this.startJourneyBriefing(bf);
             return true;
         }
         // 寻路失败（无路可达/正在军中）→ 冷却 60 秒再试，期间走找武将那条路
@@ -1433,19 +1430,19 @@ export class PlayerQuestSystem {
      *    **闸门回来了**（`stillHeading`）：只在「HUD 动向栏还挂着这一场」时往下念，
      *    军团一到地方／一改道／一入伍，**当句念完就停**（不再「念完为止」）。
      *    推论：文案要写得**念得完**（篇幅按行军时长量 —— 见 §一.2「播报篇幅」）。
+     * 🔴 [2026-09-30 主人定「如果是战场不用等播报完，请直接开战，开战过程中可以播报」]
+     *    本函数不再收「本场终点」参数（原第 5 个 `endPos`）—— 到了战场/城下不停、
+     *    直接开战，这一段的播报在**开打之后照念完**（`journeyAlive` / `hostIsMoving` 认 `hostInBattle`）。
      */
     private startJourneyBriefing(
         bf: BattlefieldData | null, titleOverride?: string, textOverride?: string,
         segmentStarts?: Array<{ lat: number; lng: number; name: string }>,
-        endPos?: { lat: number; lng: number } | null,
     ): void {
         const text = (bf?.briefing ?? textOverride ?? '').trim();
         if (!text) return;
         const key = bf?.id ?? `event:${titleOverride ?? ''}`;
         if (this.briefedBattlefields.has(key)) return;
         this.briefedBattlefields.add(key);
-        // 🔴 [2026-09-26 主人令] 记下本场终点：最后一段的旁白没念完时，军团在它前面驻足等（见 settleBriefingHold）
-        this.journeyEndPos = endPos ? { lat: endPos.lat, lng: endPos.lng } : null;
 
         const paragraphs = journeyBriefingParagraphs(text);
         if (!paragraphs.length) return;
@@ -1476,7 +1473,10 @@ export class PlayerQuestSystem {
         //      · `journeyAlive()`＝行程还挂着（HUD 动向栏标题没变、没入伍）→ **假就中止**（抵达/改道/入伍）；
         //      · `hostIsMoving()`＝军团在不在走 → **假就挂起**（记住「下一句从哪继续」），走起来接着念。
         const journeyAlive = (): boolean => this.deps.hero.getTravelPointLabel() === title
-            && (titleOverride ? true : !this.deps.hero.isAttached());
+            && (titleOverride ? true : !this.deps.hero.isAttached())
+            // 🔴 [2026-09-30 主人定「开战过程中可以播报」] 军团已经打到仗上了 → 这一趟不算结束：
+            //    开战那一刻 HUD 动向栏就不再挂着这一场了，若只认标题，最后一段会被**当场掐掉**。
+            || this.hostInBattle();
         const suspendUntilMoving = (resume: () => void) => { this.briefingResume = resume; };
         const pushNext = () => {
             if (this.briefingCancelled) return;
@@ -1650,6 +1650,9 @@ export class PlayerQuestSystem {
     private hostIsMoving(): boolean {
         // 🔴 是我们自己按住的（驻足等这句念完）→ 算「在走」，否则移动闸会把正在念的这句掐掉
         if (this.briefingHold) return true;
+        // 🔴 [2026-09-30 主人定「开战过程中可以播报」] **军团正在开打** → 也算「在走」：
+        //    开打后军团原地不动，若答「没走」，这最后一段就会被挂起、再也等不到恢复（仗打完了也不走了）。
+        if (this.hostInBattle()) return true;
         // 🔴 [2026-09-26 主人令] **是我们自己按住的** → 算「在走」：军团正停在 B 点等这一段念完，
         //    若这里答「没走」，`stillHeading()` 就会把正在念的这一段掐掉 —— 那就是自己把自己等死。
         const now = performance.now();
@@ -1683,19 +1686,17 @@ export class PlayerQuestSystem {
     private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string): Array<{ lat: number; lng: number; name: string }> {
         if (!ev?.title) return [];
         const cities = this.deps.cityManager.getCities();
-        // 🔴 [2026-09-28 主人令「一路一句」复查 · 真机实测] **挂点名要两种写法都认**：
-        //    剧本期图上用的是**剧本名**（`city_plovdiv` 在图上叫「菲利波波利斯」），
-        //    而播报里写的是库里原名【普罗夫迪夫】—— 只按 `c.name` 查就**一个锚点都认不出来**，
-        //    `briefingBounds` 长度 0 → 第 1 场整个退回「起步一口气念完」，而且**永远不会驻足**
-        //    （真机实测：第 1 场 bounds=0，第 2 场 bounds=4 正常，差别就在这一处地名）。
-        //    与 `scriptCityVisibility` 同一口径：乱斗原名与剧本期古名**两种都认**。
+        // 🔴 [2026-09-28 主人令「一路一句」复查 · 真机实测]「挂点名要两种写法都认」；
+        //    🔴 [2026-09-30 主人定「战略地图上只显示一种名字（最知名的那个），不按年代显示名字」]
+        //    地图上现在是一处一名（`cityDisplayNames.ts`），而播报/段表里可能还写着库里原名
+        //    → 显示名与库名**两种都登记**（如 萨迪斯 ⇄ 斯法尔德、亚历山大城 ⇄ 亚历山大）。
         const byName = new Map<string, (typeof cities)[number]>();
         for (const c of cities) byName.set(c.name, c);
-        for (const row of SCRIPT_CITY_NAMES) {
+        for (const row of CITY_DISPLAY_NAMES) {
             const c = cities.find((x) => x.id === row.cityId);
             if (!c) continue;
-            byName.set(row.meleeName, c);
-            byName.set(row.scriptName, c);
+            byName.set(row.dbName, c);
+            byName.set(row.displayName, c);
         }
         const findByName = (raw: string) => {
             const nm = String(raw).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
@@ -1755,7 +1756,6 @@ export class PlayerQuestSystem {
         this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
         this.releaseBriefingHold();         // 🔴 这一趟播报结束 → 松闸，别把军团钉在点上
         this.pendingAfterHold = null;
-        this.journeyEndPos = null;
         if (this.briefingTimer !== null) {
             window.clearTimeout(this.briefingTimer);
             this.briefingTimer = null;
@@ -1908,8 +1908,17 @@ export class PlayerQuestSystem {
     private pendingAfterHold: number | null = null;
     /** 已经到了下一个点、正在等这句念完（松闸＝`briefingBusy` 与 `briefingPending` 都空） */
     private briefingHoldArmed = false;
-    /** 本场终点（战场／被攻据点）坐标：最后一句没念完时，也在这里等（同一条规矩） */
-    private journeyEndPos: { lat: number; lng: number } | null = null;
+
+    /**
+     * 🔴 [2026-09-30 主人定「开战过程中可以播报」] **军团正在开打** —— 这一段时间里
+     *   播报既不掐也不挂起：战役旁白照念完（`journeyAlive` 认它、`hostIsMoving` 认它）。
+     *   ⚠️ 只认「本场军团真在战斗」（`Army.getIsInCombat`），战斗一结束就恢复原判据。
+     */
+    private hostInBattle(): boolean {
+        const q = this.quest;
+        const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
+        return !!host && !host.isDestroyed && host.getIsInCombat?.() === true;
+    }
 
     /** 松闸（把军团放回路上）：`clearJourneyBriefing` 与 `settleBriefingHold` 共用的唯一出口 */
     private releaseBriefingHold(): void {
@@ -1922,10 +1931,13 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 🔴 [2026-09-26 主人定] 每帧结算「播报未完就地驻足」：
+     * 🔴 [2026-09-26 主人定] 每帧结算「播报未完就地驻足」（**只在半路的挂点上**）：
      *   到点（下一个挂点）而这一句还在念 → **每帧重新按下** `Army.setMarchHold`（1.5 秒自动过期，不会钉死）；
      *   念完（`briefingBusy` 与 `briefingPending` 都空）→ 松闸，照原路继续走。
-     *   最后一句同理：挂点之后没有下一个点了，就用「离本场终点 ≤20 公里」当那个点。
+     * 🔴 [2026-09-30 主人定「如果是战场不用等播报完，请直接开战」] **最后一程不驻足** ——
+     *   原来还有一条「离本场终点（战场／被攻据点）≤20 公里」也算到点，已撤：
+     *   军团被按在 20 公里外，而攻城开战圈只有 16.6 公里（`SIEGE.COMBAT_RADIUS` 0.15°），
+     *   于是**永远走不到开战圈**（主人报障：抵达底比斯后停驻、不直接开战）。
      */
     private settleBriefingHold(): void {
         const q = this.quest;
@@ -1939,9 +1951,6 @@ export class PlayerQuestSystem {
             return;
         }
         let near = this.briefingHoldArmed;
-        if (!near && this.journeyEndPos) {
-            if (getEuclideanDistance(host.getPosition(), this.journeyEndPos) * 111 <= BRIEFING_HOLD_END_KM) near = true;
-        }
         if (!near) return;
         host.setMarchHold(true);   // 每帧重新按一次
         if (!this.briefingHold) {

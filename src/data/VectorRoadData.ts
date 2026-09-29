@@ -62638,50 +62638,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "忽毡-索格狄亚那岩",
-                type: "road",
-                id: "road_city_huzhan_city_suogediyanayan_1790263078790",
-                startConnection: "city_huzhan",
-                endConnection: "city_suogediyanayan"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [69.658813, 40.248096],
-                    [69.635841, 40.409495],
-                    [69.4, 40.4],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "索格狄亚那岩-柘折城",
-                type: "road",
-                id: "road_city_suogediyanayan_city_tashkent_1790263148690",
-                startConnection: "city_suogediyanayan",
-                endConnection: "city_tashkent"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [69.4, 40.4],
-                    [69.198652, 40.5456],
-                    [69.211025, 40.636338],
-                    [69.21515, 40.826061],
-                    [69.239896, 40.842559],
-                    [69.285265, 40.929172],
-                    [69.297638, 40.991038],
-                    [69.334758, 41.032282],
-                    [69.334758, 41.102397],
-                    [69.326509, 41.156015],
-                    [69.3, 41.3],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "奥诺斯岩-马萨加",
                 type: "road",
                 id: "road_city_aonuosiyan_city_masaga_1790263197093",
@@ -66607,6 +66563,39 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                     [27.641601562500004, 37.260938147754516],
                     [27.583232, 37.15945],
                     [27.43, 37.03],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "索格狄亚那岩-诺塔卡",
+                type: "road",
+                id: "road_city_suogediyanayan_city_nuotaka_1790711135131",
+                startConnection: "city_suogediyanayan",
+                endConnection: "city_nuotaka"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [67.02, 38.21],
+                    [66.847731, 38.244173],
+                    [66.773492, 38.256546],
+                    [66.736372, 38.285417],
+                    [66.699252, 38.29779],
+                    [66.653883, 38.293666],
+                    [66.571395, 38.330786],
+                    [66.493031, 38.347283],
+                    [66.311556, 38.557629],
+                    [66.266188, 38.594749],
+                    [66.200197, 38.615371],
+                    [66.17545, 38.631869],
+                    [66.097086, 38.668988],
+                    [66.07234, 38.685486],
+                    [66.006349, 38.706108],
+                    [65.965105, 38.722606],
+                    [65.911487, 38.755601],
+                    [65.8, 38.8667],
                 ]
             }
         },
