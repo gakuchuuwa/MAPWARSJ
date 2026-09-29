@@ -319,6 +319,36 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
     return padded;
 }
 
+const TX = new Float64Array(3);
+const rampWorker = (v: number, a: number, b: number) => {
+    const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+};
+
+/** 掩膜向外扩 R 像素（先横后竖两遍滑窗，O(n)） */
+function dilateMask(mask: Uint8Array, w: number, h: number, R: number): Uint8Array {
+    const tmp = new Uint8Array(w * h), out = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) {
+        let count = 0;
+        for (let x = 0; x < Math.min(w, R); x++) if (mask[y * w + x]) count++;
+        for (let x = 0; x < w; x++) {
+            if (x + R < w && mask[y * w + x + R]) count++;
+            if (x - R - 1 >= 0 && mask[y * w + x - R - 1]) count--;
+            tmp[y * w + x] = count > 0 ? 1 : 0;
+        }
+    }
+    for (let x = 0; x < w; x++) {
+        let count = 0;
+        for (let y = 0; y < Math.min(h, R); y++) if (tmp[y * w + x]) count++;
+        for (let y = 0; y < h; y++) {
+            if (y + R < h && tmp[(y + R) * w + x]) count++;
+            if (y - R - 1 >= 0 && tmp[(y - R - 1) * w + x]) count--;
+            out[y * w + x] = count > 0 ? 1 : 0;
+        }
+    }
+    return out;
+}
+
 const rampUp = (v: number, a: number, b: number) => {
     const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
     return t * t * (3 - 2 * t);
@@ -464,9 +494,42 @@ function renderHillshade(
     if (divisor < 20) divisor = 20;
 
     // [OPTIMIZATION-PERF] Branch logic outside the loop
-    // 材质两层在循环外取一次引用
+    // 材质在循环外取一次引用
     const climateMat = material ? material.climate : null;
-    const rockMat = material ? material.rock : null;
+    const matTapA = material ? material.tapA : null;
+    const matTapB = material ? material.tapB : null;
+    const matBomb = material ? material.bomb : null;
+    const matPatch = material ? material.patch : null;
+    const tex = material ? material.tex : {};
+    const texRck = tex.rck, texRockWet = tex.rock_wet, texGravelWet = tex.gravel_wet;
+    const texBch = tex.bch, texBc2 = tex.bc2;
+    const texSno = tex.sno, texSnf = tex.snf, texSnd = tex.snd;
+    const texIce = tex.ice, texIc2 = tex.ic2;
+    const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texSha = tex.sha;
+    const texDes = tex.des, texPm2 = tex.pm2, texPc1 = tex.pc1, texPc2 = tex.pc2;
+    const texGr4 = tex.gr4, texDs5 = tex.ds5;
+    /** 取一张规则贴图在像素 p 的颜色（A/B 两套地理取样按交替权重混合），写入 TX */
+    const sampleTex = (t: Uint8ClampedArray | undefined, p: number): boolean => {
+        if (!t || !matTapA) return false;
+        const ia = matTapA[p], ib = matTapB![p], w = matBomb![p], iw = 1 - w;
+        TX[0] = t[ia] * iw + t[ib] * w;
+        TX[1] = t[ia + 1] * iw + t[ib + 1] * w;
+        TX[2] = t[ia + 2] * iw + t[ib + 2] * w;
+        return true;
+    };
+    /** 两张规则贴图按权重混合（缺一张就只用另一张），写入 TX */
+    const mix2 = (ta: Uint8ClampedArray | undefined, wa: number, tb: Uint8ClampedArray | undefined, wb: number, p: number): boolean => {
+        if (!ta || wa <= 0) return sampleTex(tb, p);
+        if (!tb || wb <= 0) return sampleTex(ta, p);
+        sampleTex(ta, p);
+        const r0 = TX[0], g0 = TX[1], b0 = TX[2];
+        sampleTex(tb, p);
+        const k = wb / (wa + wb);
+        TX[0] = r0 + (TX[0] - r0) * k; TX[1] = g0 + (TX[1] - g0) * k; TX[2] = b0 + (TX[2] - b0) * k;
+        return true;
+    };
+    // 离水 ≤4px 的陆地像素（海岸沙滩用）；只有带水体掩膜的瓦片才有海岸
+    const nearWater = waterMask && matTapA ? dilateMask(waterMask, width, height, 4) : null;
     if (params.useElevationColor) {
         // --- COLORED RENDERING PATH ---
         // 【2026-07-19 主人定：移除近岸晕染】原有 4 环扩散预计算每瓦片约 200 万次数组读取，
@@ -711,36 +774,102 @@ function renderHillshade(
                 //    保留地表干湿与疏密自然质感的同时，大幅收敛黄绿反差；山地(>400m)平滑过渡至 0.52，呈现巍峨岩土立体感。
                 // 🔴 [2026-09-30] 山地上限 0.52 → 0.42：山地的岩土质感改由下面的坡面岩石层提供，
                 //    气候贴图压得太重会冲淡海拔色阶（山脚到山顶的层次）。
+                // 🔴 [2026-09-30 主人令「多用帝国时代 2 素材，让战略地图色彩丰富」] 贴图由地形规则决定：
+                //    气候表只给 20 种贴图；下面按海拔 / 坡度 / 水深 / 纬度 / 海岸，逐像素加入另外 25 种 DE 地表贴图。
+                //    湿润与干旱由本像素气候贴图的颜色判断（草地 g>r、沙地 r>g），不另建气候字段。
+                const p = yM + x;
+                const isLand = colorZ > 0 && !isWater;
+                let aridity = 0.5;
+                if (climateMat && climateMat[idx + 3] > 0) {
+                    aridity = Math.max(0, Math.min(1, (climateMat[idx] - climateMat[idx + 1] + 5) / 35));
+                }
+                const humidity = 1 - aridity;
+                const absLat = Math.abs(rowLat);
+                const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
+
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
-                    const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
-                    const baseBlend = colorZ < 400 ? 0.35 : Math.min(0.42, 0.35 + (colorZ - 400) * 0.00028);
+                    // 🔴 9-18 主人令「降低平原黄绿反差」：低地草地（绿色贴图）保持 0.35 不动；
+                    //    沙漠、荒漠、干草原这类非草地贴图不存在黄绿反差问题，提到 0.60，让贴图成为主色。
+                    const greenness = Math.max(0, Math.min(1, (climateMat[idx + 1] - climateMat[idx]) / 25));
+                    const lowBlend = 0.35 + 0.25 * (1 - greenness);
+                    const baseBlend = colorZ < 400 ? lowBlend : Math.min(0.60, lowBlend + (colorZ - 400) * 0.0002);
                     const blend = baseBlend * snowFade * climateMat[idx + 3] / 255;
                     r += (climateMat[idx] - r) * blend;
                     g += (climateMat[idx + 1] - g) * blend;
                     b += (climateMat[idx + 2] - b) * blend;
                 }
 
-                // 🔴 [2026-09-30 主人令「全面修复」] 坡面岩石：贴图原先只看气候，陡坡与谷底铺同一张草地。
-                //    现在按坡度混入裸岩（rck）：坡度 0.14（约 8°）起露岩，0.55（约 29°）以上以岩石为主。
-                //    林线以下山坡多有植被覆盖，岩石上限随海拔从 0.55（≤1500m）升到 0.85（≥3000m）。
-                //    阈值依据 zoom 9 实测坡度分布（scratch/terrain_ab）：华北平原 97% < 0.008；
-                //    太行山中位 0.087、前 10% > 0.24；帕米尔中位 0.31。
-                if (rockMat && colorZ > 0 && !isWater && rockMat[idx + 3] > 0) {
+                if (isLand && matTapA) {
+                    // ① 山地带（900~2200m 渐入）：湿润区褐色山地草甸 gr4，干旱区碎石坡 ds5
+                    const mont = rampWorker(colorZ, 900, 2200) * 0.38 * snowFade;
+                    if (mont > 0) {
+                        if (mix2(texGr4, humidity, texDs5, aridity, p)) {
+                            r += (TX[0] - r) * mont; g += (TX[1] - g) * mont; b += (TX[2] - b) * mont;
+                        }
+                    }
+                    // ② 沙漠成片：干旱低中海拔，按低频噪声成片铺橙色沙（热带 des，温带 pm2）
+                    const patch = matPatch![p];
+                    const desert = aridity > 0.45 && colorZ < 2600
+                        ? rampWorker(aridity, 0.45, 0.85) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade : 0;
+                    if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
+                        r += (TX[0] - r) * desert; g += (TX[1] - g) * desert; b += (TX[2] - b) * desert;
+                    }
+                    // ③ 热带稀树草原：南北回归线附近、半干旱、2000m 以下
+                    const savanna = absLat < 24 && colorZ < 2000
+                        ? (1 - rampWorker(absLat, 18, 24)) * Math.max(0, 1 - Math.abs(aridity - 0.4) / 0.35) * (0.30 + 0.30 * patch) : 0;
+                    if (savanna > 0 && mix2(texPc1, 1 - patch, texPc2, patch, p)) {
+                        r += (TX[0] - r) * savanna; g += (TX[1] - g) * savanna; b += (TX[2] - b) * savanna;
+                    }
+                }
+
+                // ④ 坡面岩石：坡度 0.14（约 8°）起露岩，0.55（约 29°）以上以岩石为主；
+                //    林线以下山坡多有植被，上限随海拔从 0.55（≤1500m）升到 0.85（≥3000m）。
+                //    阈值依据 zoom 9 实测坡度分布（scratch/terrain_ab）：华北平原 97% < 0.008；太行山中位 0.087；帕米尔中位 0.31。
+                //    干旱区用干岩 rck（向灰度收 45%、压暗 8%，与暖色谷地拉开），湿润区混入湿岩 rock_wet。
+                if (isLand && matTapA && texRck) {
                     const t = Math.max(0, Math.min(1, (slopeGrad - 0.14) / 0.41));
-                    if (t > 0) {
+                    if (t > 0 && sampleTex(texRck, p)) {
                         const rockMax = 0.55 + 0.30 * Math.max(0, Math.min(1, (zC - 1500) / 1500));
                         const w = t * t * (3 - 2 * t) * rockMax;
-                        // rck 原色偏暖黄 (147,135,107)，与黄褐山色几乎同色、混了看不出来（实测陡/缓坡色差只 +2~6%）。
-                        // 裸岩从高空看是冷灰褐：向自身灰度收 45%、整体压暗 8%，与暖色谷地拉开。
-                        const rr = rockMat[idx], rg = rockMat[idx + 1], rb = rockMat[idx + 2];
-                        const grey = rr * 0.299 + rg * 0.587 + rb * 0.114;
-                        const tr = (rr + (grey - rr) * 0.45) * 0.92;
-                        const tg = (rg + (grey - rg) * 0.45) * 0.92;
-                        const tb = (rb + (grey - rb) * 0.45) * 0.92 + 4;
+                        const grey = TX[0] * 0.299 + TX[1] * 0.587 + TX[2] * 0.114;
+                        let tr = (TX[0] + (grey - TX[0]) * 0.45) * 0.92;
+                        let tg = (TX[1] + (grey - TX[1]) * 0.45) * 0.92;
+                        let tb = (TX[2] + (grey - TX[2]) * 0.45) * 0.92 + 4;
+                        const wet = humidity * 0.35;
+                        if (wet > 0 && sampleTex(texRockWet, p)) {
+                            tr += (TX[0] - tr) * wet; tg += (TX[1] - tg) * wet; tb += (TX[2] - tb) * wet;
+                        }
                         r += (tr - r) * w;
                         g += (tg - g) * w;
                         b += (tb - b) * w;
                     }
+                }
+
+                // ⑤ 海岸沙滩：离海 ≤4px（约 1km）、海拔 12m 以下、不陡；热带白沙 / 温带沙滩 / 寒带湿砾
+                if (isLand && matTapA && nearWater && nearWater[p] && colorZ < 12 && slopeGrad < 0.12) {
+                    const beach = (1 - rampWorker(colorZ, 3, 12)) * 0.75;
+                    const beachTex = absLat < 30 ? texBch : absLat < 55 ? texBc2 : texGravelWet;
+                    if (beach > 0 && sampleTex(beachTex, p)) {
+                        r += (TX[0] - r) * beach; g += (TX[1] - g) * beach; b += (TX[2] - b) * beach;
+                    }
+                }
+
+                // ⑥ 海水：按水深铺 DE 海水（深海 wt4 → 近海 wt2 → 浅海：温带 wt3 / 热带 wt5），
+                //    热带浅海成片出礁（sha），极地（|纬度|>70°）渐变为海冰。保留 45% 原水深色阶，深浅过渡不断层。
+                if (!isLand && colorZ < 0 && matTapA && texWt2) {
+                    const depth = -colorZ;
+                    const tropical = absLat < 28;
+                    sampleTex(texWt2, p);
+                    let wr = TX[0], wg = TX[1], wb = TX[2];
+                    const deepW = rampWorker(depth, 300, 2500);
+                    if (deepW > 0 && sampleTex(texWt4, p)) { wr += (TX[0] - wr) * deepW; wg += (TX[1] - wg) * deepW; wb += (TX[2] - wb) * deepW; }
+                    const shallowW = 1 - rampWorker(depth, 20, 250);
+                    if (shallowW > 0 && sampleTex(tropical ? texWt5 : texWt3, p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
+                    const reefW = tropical && depth < 40 ? (1 - rampWorker(depth, 15, 40)) * rampWorker(matPatch![p], 0.5, 0.75) * 0.5 : 0;
+                    if (reefW > 0 && sampleTex(texSha, p)) { wr += (TX[0] - wr) * reefW; wg += (TX[1] - wg) * reefW; wb += (TX[2] - wb) * reefW; }
+                    const iceW = rampWorker(absLat, 70, 76) * 0.85;
+                    if (iceW > 0 && mix2(texIce, 1 - matPatch![p], texIc2, matPatch![p], p)) { wr += (TX[0] - wr) * iceW; wg += (TX[1] - wg) * iceW; wb += (TX[2] - wb) * iceW; }
+                    r += (wr - r) * 0.55; g += (wg - g) * 0.55; b += (wb - b) * 0.55;
                 }
 
                 // [NILE-ALLUVIAL] 尼罗河谷与三角洲冲积黑土壤土层试验 (ZOOM 9 专用)
@@ -845,8 +974,16 @@ function renderHillshade(
                     }
                     const finalSnow = snowT * snowCover;
 
-                    // 冰川积雪高反照率纯白底色（微泛高寒冷青）
-                    const snowR = 250, snowG = 252, snowB = 255;
+                    // 冰川积雪高反照率底色（微泛高寒冷青）；🔴 [2026-09-30] 叠 DE 雪地贴图 sno 的纹理（35%），不再是一片死白
+                    let snowR = 250, snowG = 252, snowB = 255;
+                    if (sampleTex(texSno, yM + x)) {
+                        snowR += (TX[0] * 1.12 - snowR) * 0.35; snowG += (TX[1] * 1.12 - snowG) * 0.35; snowB += (Math.min(255, TX[2] * 1.12) - snowB) * 0.35;
+                    }
+                    // 雪线附近（snowT < 0.6）先铺残雪：湿润区 snf（雪夹土），干旱高原 snd（雪夹沙）
+                    const patchyW = (1 - rampWorker(snowT, 0.2, 0.6));
+                    if (patchyW > 0 && mix2(texSnf, humidity, texSnd, aridity, yM + x)) {
+                        snowR += (TX[0] - snowR) * patchyW; snowG += (TX[1] - snowG) * patchyW; snowB += (TX[2] - snowB) * patchyW;
+                    }
                     r = r * (1 - finalSnow) + snowR * finalSnow;
                     g = g * (1 - finalSnow) + snowG * finalSnow;
                     b = b * (1 - finalSnow) + snowB * finalSnow;

@@ -4,8 +4,9 @@ type Bounds = { north: number; south: number; west: number; east: number };
 export type MaterialNode = ReadonlyArray<{ pixels: Uint8ClampedArray; weight: number }>;
 const SIZE = 128;
 const STEP = 64;
-// 世界查找图 + 至多 24 张缩小的材质；只存像素，解码位图立即释放。
-export const MATERIAL_BUDGET_BYTES = 12 * 1024 * 1024;
+// 世界查找图 + 气候贴图与地形规则贴图（128px 缩小版含 mip）；只存像素，解码位图立即释放。
+// 🔴 [2026-09-30] 12MB → 16MB：世界气候图 8.9MB + 气候贴图约 20 张 + 地形规则贴图 25 张（每张含 mip 约 85KB）
+export const MATERIAL_BUDGET_BYTES = 16 * 1024 * 1024;
 const textures = new Map<string, Promise<Uint8ClampedArray | null>>();
 let worldReady: Promise<boolean> | undefined;
 let worldWidth = 0, worldHeight = 0;
@@ -29,7 +30,7 @@ async function readPixels(url: string, size?: number): Promise<ImageData> {
 
 function loadWorld(): Promise<boolean> {
     return worldReady ??= readPixels('/world/world-base.png').then(image => {
-        if (image.data.byteLength > MATERIAL_BUDGET_BYTES - 24 * SIZE * SIZE * 4) return false;
+        if (image.data.byteLength > MATERIAL_BUDGET_BYTES - 48 * SIZE * SIZE * 4) return false;
         setWorldBaseData(image.data, image.width, image.height);
         worldWidth = image.width;
         worldHeight = image.height;
@@ -316,22 +317,90 @@ export function materialOriginForTile(z: number, x: number, y: number): Material
     return { gx9: x * 256 * scale, gy9: y * 256 * scale, scale };
 }
 
-/** 坡面岩石：陡坡露出的裸岩；Worker 按坡度决定混入多少 */
-export const SLOPE_ROCK_TEXTURE = 'rck';
+/**
+ * 地形规则贴图（2026-09-30 主人令「多用帝国时代 2 素材，让战略地图色彩丰富」）。
+ * 气候表只给出 20 种贴图（全球陆地面积前 5 种占约 60%）；下面这些由 Worker 按海拔/坡度/水深/纬度/海岸逐像素选用。
+ * 实测清单：scratch/terrain_ab/tex_usage.mts；素材全部是 DE 本体 terrain/textures（已提取在 public/SUCAI_TERRAIN）。
+ */
+export const TERRAIN_RULE_TEXTURES = [
+    'rck', 'rock_wet', 'gravel_wet',          // 坡面岩石：干岩 / 湿岩 / 湿碎石（寒冷海岸）
+    'bch', 'bc2', 'beach_wet',                // 海岸：热带白沙 / 温带沙滩 / 湿沙
+    'sno', 'snf', 'snd',                      // 雪线以上积雪 / 雪线附近残雪（带土、带沙）
+    'ice', 'ic2',                             // 极地海冰
+    'wt4', 'wt2', 'wtr', 'wt3', 'wt5',        // 海水：深海 → 近海 → 热带浅海
+    'sha',                                    // 热带浅海礁
+    'des', 'pm2',                             // 橙色沙漠 / 橙褐荒漠
+    'pc1', 'pc2',                             // 热带稀树草原
+    'gr4', 'ds5',                             // 山地：湿润区褐色山地草甸 / 干旱区碎石坡
+] as const;
+export type TerrainRuleTexture = typeof TERRAIN_RULE_TEXTURES[number];
 
 export type TerrainMaterial = {
     /** 气候地表（草/林/沙/雪…），alpha = 有效权重 */
     climate: Uint8ClampedArray<ArrayBuffer>;
-    /** 坡面岩石，同一套地理取样；素材缺失时为 null */
-    rock: Uint8ClampedArray<ArrayBuffer> | null;
+    /** 每个像素在「A / B 两套地理取样」里的纹素字节下标，及两套交替权重；规则贴图共用 */
+    tapA: Int32Array;
+    tapB: Int32Array;
+    bomb: Float32Array;
+    /** 低频地理噪声 0~1（约 25km 一格），规则贴图做「成片」变化用；跨瓦片连续 */
+    patch: Float32Array;
+    /** 规则贴图（已按本瓦片 mip 档取好）；素材缺失时该键不存在 */
+    tex: Partial<Record<TerrainRuleTexture, Uint8ClampedArray>>;
 };
+
+/** 规则贴图的逐像素取样表（最近纹素；zoom 10 放大时略粗，只影响海战） */
+function buildTaps(width: number, height: number, origin: MaterialOrigin) {
+    const level = materialMipLevel(origin.scale);
+    const size = SIZE >> level;
+    const ax = axisTable(origin.gx9, width, origin.scale, PERIOD_A, size);
+    const ay = axisTable(origin.gy9, height, origin.scale, PERIOD_A, size);
+    const bx = axisTable(origin.gx9 + OFFSET_B[0], width, origin.scale, PERIOD_B, size);
+    const by = axisTable(origin.gy9 + OFFSET_B[1], height, origin.scale, PERIOD_B, size);
+    const tapA = new Int32Array(width * height), tapB = new Int32Array(width * height);
+    const bomb = new Float32Array(width * height), patch = new Float32Array(width * height);
+    const bombCols = Math.ceil(width / BOMB_STEP) + 1, bombRows = Math.ceil(height / BOMB_STEP) + 1;
+    const bg = new Float32Array(bombCols * bombRows), pg = new Float32Array(bombCols * bombRows);
+    for (let j = 0; j < bombRows; j++) for (let i = 0; i < bombCols; i++) {
+        const x9 = origin.gx9 + i * BOMB_STEP * origin.scale, y9 = origin.gy9 + j * BOMB_STEP * origin.scale;
+        bg[j * bombCols + i] = bombWeight(x9, y9);
+        pg[j * bombCols + i] = patchNoise(x9, y9);
+    }
+    for (let y = 0; y < height; y++) {
+        const rowA = ay.near[y] * size, rowB = by.near[y] * size;
+        const by0 = Math.floor(y / BOMB_STEP), bfy = (y % BOMB_STEP) / BOMB_STEP;
+        for (let x = 0; x < width; x++) {
+            const p = y * width + x;
+            tapA[p] = (rowA + ax.near[x]) * 4;
+            tapB[p] = (rowB + bx.near[x]) * 4;
+            const bx0 = Math.floor(x / BOMB_STEP), bfx = (x % BOMB_STEP) / BOMB_STEP;
+            const i = by0 * bombCols + bx0;
+            bomb[p] = (bg[i] * (1 - bfx) + bg[i + 1] * bfx) * (1 - bfy) + (bg[i + bombCols] * (1 - bfx) + bg[i + bombCols + 1] * bfx) * bfy;
+            patch[p] = (pg[i] * (1 - bfx) + pg[i + 1] * bfx) * (1 - bfy) + (pg[i + bombCols] * (1 - bfx) + pg[i + bombCols + 1] * bfx) * bfy;
+        }
+    }
+    return { tapA, tapB, bomb, patch, level };
+}
+
+/** 成片变化用的低频噪声（两个倍频），输入 zoom 9 全局像素 */
+function patchNoise(x9: number, y9: number): number {
+    const one = (cell: number, seed: number) => {
+        const x = x9 / cell + seed, y = y9 / cell - seed;
+        const ix = Math.floor(x), iy = Math.floor(y);
+        const s = (t: number) => t * t * (3 - 2 * t);
+        const fx = s(x - ix), fy = s(y - iy);
+        const a = hash2(ix, iy) * (1 - fx) + hash2(ix + 1, iy) * fx;
+        const b = hash2(ix, iy + 1) * (1 - fx) + hash2(ix + 1, iy + 1) * fx;
+        return a * (1 - fy) + b * fy;
+    };
+    return one(100, 17.3) * 0.65 + one(37, 5.1) * 0.35;
+}
 
 export async function createTerrainMaterial(
     bounds: Bounds, width: number, height: number,
     coords?: { z: number; x: number; y: number },
 ): Promise<TerrainMaterial | null> {
     if (!await loadWorld()) return null;
-    const origin = coords ? materialOriginForTile(coords.z, coords.x, coords.y) : undefined;
+    const origin = coords ? materialOriginForTile(coords.z, coords.x, coords.y) : { gx9: 0, gy9: 0, scale: 1 };
     const columns = Math.ceil(width / STEP) + 1;
     const rows = Math.ceil(height / STEP) + 1;
     const northY = Math.asinh(Math.tan(bounds.north * Math.PI / 180));
@@ -347,16 +416,26 @@ export async function createTerrainMaterial(
         }
     }
     const assets = new Map<string, Uint8ClampedArray | null>();
-    await Promise.all([...new Set([...nodes.flatMap(node => [...node.keys()]), SLOPE_ROCK_TEXTURE])]
+    await Promise.all([...new Set([...nodes.flatMap(node => [...node.keys()]), ...TERRAIN_RULE_TEXTURES])]
         .map(async name => assets.set(name, await loadTexture(name))));
     const grid = nodes.map(node => [...node].flatMap(([name, weight]) => {
         const pixels = assets.get(name);
         return pixels ? [{ pixels, weight }] : [];
     }));
     const climate = blendMaterialGrid(grid, columns, width, height, origin);
-    const rockPixels = assets.get(SLOPE_ROCK_TEXTURE);
-    const rock = rockPixels
-        ? blendMaterialGrid(Array(columns * rows).fill([{ pixels: rockPixels, weight: 1 }]), columns, width, height, origin)
-        : null;
-    return { climate, rock };
+    return assembleTerrainMaterial(climate, assets, width, height, origin);
+}
+
+/** 气候层 + 规则贴图组装成 Worker 用的材质（测试脚本也直接调用它） */
+export function assembleTerrainMaterial(
+    climate: Uint8ClampedArray<ArrayBuffer>, assets: ReadonlyMap<string, Uint8ClampedArray | null>,
+    width: number, height: number, origin: MaterialOrigin,
+): TerrainMaterial {
+    const { tapA, tapB, bomb, patch, level } = buildTaps(width, height, origin);
+    const tex: TerrainMaterial['tex'] = {};
+    for (const name of TERRAIN_RULE_TEXTURES) {
+        const pixels = assets.get(name);
+        if (pixels) tex[name] = mipsOf(pixels)[level];
+    }
+    return { climate, tapA, tapB, bomb, patch, tex };
 }
