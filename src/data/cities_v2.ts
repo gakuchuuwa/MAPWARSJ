@@ -2239,7 +2239,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'pass', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城' },
+    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城' },
 
 
 
@@ -2301,7 +2301,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_toledo', name: '托莱多', factionId: 'xigete', lat: 39.86, lng: -4.02, type: 'medium_city', troops: 10000, region: 'CASTILE', buildingStyle: 'MEDI' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：科尔多瓦：西班牙安达卢斯
-    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'andaluoxiya', lat: 37.88, lng: -4.77, type: 'big_city', troops: 10000, region: 'ORIE', buildingStyle: 'SPANISH', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
+    { id: 'city_cordoba', name: '科尔多瓦', factionId: 'andaluoxiya', lat: 37.88, lng: -4.77, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'SPANISH', note: '后伍麦叶鼎盛约20–30万，未达大城50万门槛，降 medium_city' },
     { id: 'city_zaragoza', name: '萨拉戈萨', factionId: 'alagong', lat: 41.65, lng: -0.88, type: 'small_city', troops: 10000, region: 'ARAGON', buildingStyle: 'MEDI' },
     { id: 'city_eger', name: '维雷茨基', factionId: 'shaiyue', lat: 48.77, lng: 23.17, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'SLAV', note: '定级依据§6.2：埃格尔非关隘/要塞/堡垒，按城市判级；1494-95年dicalis税册全城区约3500人（墙内2000、河谷聚落群6575为下限），未达1万 → 城寨' },
 
@@ -2341,7 +2341,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'SPANISH' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI' },
 
-    { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'medium_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
+    { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
     { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'SLAV' },
     { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'medium_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR' },
     { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'xiongyati', lat: 45.749, lng: 22.888, type: 'small_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR', note: '定级依据§6.2：胡内多阿拉非关隘/要塞/堡垒，按城市判级；1512年oppidum仅196户约900人，17世纪约1100–1250，人口未达1万但属有特殊建筑的城市 → 小城' },
@@ -3110,7 +3110,7 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     { id: 'city_hulewan', name: '呼勒万', factionId: 'zhageluosi', lat: 34.35, lng: 45.9, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯门（Pai-Taq 隘口）一带（今伊朗萨尔波勒扎哈卜）。从美索不达米亚平原进米底高原的必经山口；亚历山大自苏萨北上、进出米底均经此（阿里安《远征记》VII 前后）。🔴 [2026-09-25 主人令「建呼勒万」] 建它的依据：巴格达→哈马丹 约 420 公里（>300）且这一段路上没有据点。类型按标准（2026-09-25 主人定稿）：险要/关隘须**人口>1万**才是 PASS；本处是山口小镇（今萨尔波勒扎哈卜），人口无史料可考 → 落城寨。人口查不到时按主人第四段补条款以**剧本驻守兵力**折算：本处不是任何一场战役的被攻据点，据点 troops = **10000**（不大于 1 万）→ 仍不算 PASS。', mirror: true },
     { id: 'city_yilamu', name: '伊拉姆', factionId: 'lulisitan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯山脉西麓山前走廊的中继据点（今伊朗伊拉姆）。🔴 [2026-09-25 主人令「添加据点，伊拉姆」] 建它的依据：苏萨→巴格达 沿路 >300 公里且这一段路上没有关键节点。⚠️ 它是**几何中继点**：史料里没有「伊拉姆」这座城的记载；类型按标准（史料无名 → 城寨）。' },
     { id: 'city_guerpayegan', name: '古尔帕耶甘', factionId: 'golpayegan_diqu', lat: 33.4536, lng: 50.2884, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯山间谷地出口（今伊朗古尔帕耶甘）。🔴 [2026-09-25 主人令「纳哈万德改为古尔帕耶甘」] 它是这一段走廊上的**几何/驿站路点**（切入山间谷地的出口）。类型按标准：几何驿站、非险要、查不到人口史料 → 城寨。' },
-    { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'stockade', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '奥里泰人最大村落（今巴基斯坦拉斯贝拉）。亚历山大在此建城、留兵驻守，作为进入吉德罗西亚沙漠前最后的基地（阿里安 VI.21-22）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
+    { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '奥里泰人最大村落（今巴基斯坦拉斯贝拉）。亚历山大在此建城、留兵驻守，作为进入吉德罗西亚沙漠前最后的基地（阿里安 VI.21-22）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。前325年亚历山大亲自扛梯登城，中箭重伤。' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
     //    并按据点完整性铁律配齐 势力（奥诺斯）＋武将（阿夫里凯斯）＋精锐（绝壁守兵）。

@@ -181,7 +181,7 @@ export const BATTLEFIELDS: BattlefieldData[] = [
         lng: 69.6167,
         scriptYear: -329,
         note: '公元前329年锡尔河战役，亚历山大渡河大破斯基泰游牧骑兵。B 档并入背景：依 §零之二「主角不在场的偏师之战不单列，写进相邻那一场的播报」，公元前329年冬帕尔努克斯率偏师往救马拉坎达、全军覆没一事写在本文的播报里，不另立事件。史料：英文维基百科 Spitamenes 与 Battle of Jaxartes。',
-        briefing: '居鲁士城既下，亚历山大北上锡尔河；对岸的斯基泰骑兵已在河滩列阵。',
+        briefing: '居鲁士城既下，亚历山大直趋药杀水；对岸塞种骑兵已列阵。',
     },
     // ── 前 326 年 海达斯佩斯河战役（马其顿 vs 保拉瓦人波鲁斯） ──
     //    剧本：`HistoricalEventScript` `-326` 夏（`type: 'field_battle'` 野战）。
