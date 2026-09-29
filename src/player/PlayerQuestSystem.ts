@@ -871,18 +871,18 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 续路时去掉已经走过的路标：军团离「下一站」比路标离「下一站」还近，说明已越过这个路标。
+     * 续路时去掉已经走过的路标：军团已进入该据点 15 公里以内，说明已到达过该据点。
+     * 🔴 [2026-09-29 修复] 绝不使用「军团离下站 < 路标离下站」的直线比较！
+     * 在折返/迂回路线（如 海姆斯山 -> 德鲁斯塔尔 -> 特尔诺沃）上，海姆斯山到特尔诺沃 68km 远小于
+     * 德鲁斯塔尔到特尔诺沃 213km，会导致德鲁斯塔尔被 100% 误杀，大军直接跳过德鲁斯塔尔直奔索非亚。
      */
-    private dropPassedWaypoints(pos: { lat: number; lng: number }, target: { lat: number; lng: number }): void {
+    private dropPassedWaypoints(pos: { lat: number; lng: number }): void {
         while (this.marchWaypointsLeft.length) {
             const wp = this.deps.cityManager.getCity(this.marchWaypointsLeft[0]);
             if (!wp) { this.marchWaypointsLeft.shift(); continue; }
             const wpPos = { lat: wp.latitude, lng: wp.longitude };
-            const nextId = this.marchWaypointsLeft[1];
-            const nextCity = nextId ? this.deps.cityManager.getCity(nextId) : null;
-            const next = nextCity ? { lat: nextCity.latitude, lng: nextCity.longitude } : target;
-            const reached = getEuclideanDistance(pos, wpPos) * 111 <= 3;
-            if (reached || getEuclideanDistance(pos, next) < getEuclideanDistance(wpPos, next)) {
+            const reached = getEuclideanDistance(pos, wpPos) * 111 <= 15;
+            if (reached) {
                 this.marchWaypointsLeft.shift();
                 continue;
             }
@@ -908,7 +908,7 @@ export class PlayerQuestSystem {
         const from = host.getPosition();
         // 🔴 [2026-09-23 主人定「军团按你设的路线走」] 先依次经过主人设的行军路标（据点），最后一段奔战场。
         //    续路时（卡住重铺）已走过的路标不再回头去走（见 dropPassedWaypoints）。
-        if (resume) this.dropPassedWaypoints(from, target);
+        if (resume) this.dropPassedWaypoints(from);
         let legStart: { lat: number; lng: number } = from;
         const viaPath: { lat: number; lng: number }[] = [];
         for (const wpId of this.marchWaypointsLeft) {
@@ -956,7 +956,7 @@ export class PlayerQuestSystem {
         const node = bfId ? battlefieldRoadNode(bfId) : null;
         if (!bfId || !node || !roadRegistry.isInitialized()) return false;
         const from = host.getPosition();
-        if (resume) this.dropPassedWaypoints(from, node);
+        if (resume) this.dropPassedWaypoints(from);
         let legStart: { lat: number; lng: number } = from;
         const viaPath: { lat: number; lng: number }[] = [];
         for (const wpId of this.marchWaypointsLeft) {
@@ -1064,10 +1064,21 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(q.event.title);
         const host = this.deps.legionManager.getLegionById(q.legionId);
         if (!host || !this.armyMarchPoint) return;
+        // 动态移出途中已到达的路标（距离当前队首路标 <= 15km）
+        while (this.marchWaypointsLeft.length) {
+            const wp = this.deps.cityManager.getCity(this.marchWaypointsLeft[0]);
+            if (!wp) { this.marchWaypointsLeft.shift(); continue; }
+            if (getEuclideanDistance(host.getPosition(), { lat: wp.latitude, lng: wp.longitude }) * 111 <= 15) {
+                this.marchWaypointsLeft.shift();
+                continue;
+            }
+            break;
+        }
         // 🔴 卡住续路：军团若因故停住（被野战打断、复员等）而人还没到战场，就重新铺一次路，
         //    免得玩家被永远钉在半路。重铺有冷却，不会每 400ms 刷屏。
+        //    正在驻足听播报（isMarchHeld / briefingHold）属于正常停留，绝不触发续路。
         const atTarget = getEuclideanDistance(host.getPosition(), this.armyMarchPoint) * 111 <= 3;
-        if (atTarget || host.isMarching()) return;
+        if (atTarget || host.isMarching() || host.isMarchHeld?.() || this.briefingHold) return;
         const now = Date.now();
         if (now < this.marchRetryAfter) return;
         this.marchRetryAfter = now + 10_000;
