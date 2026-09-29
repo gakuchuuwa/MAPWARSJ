@@ -143,8 +143,14 @@ export class ScriptCityVisibility {
         //    原来点名（段表途经点／路标／被攻城／影响地）是一律无条件上图的，于是把某座城标成「不存在」也照样显示出来
         //    （阿卡就是这么被段 3-2 的途经点顶上去的，它离推罗只有 42 公里、库里又判「城堡时代的据点」）。
         //    现在先取**当前这一场**的 absentCities，点名也要过它一道。
+        // 🔴 [2026-09-28 主人定「全部据点只有两种显示方式：**全部显现** 或 **只显示灰色名字**」]
+        //    点名（路标／段表途经点／被攻据点／影响地）**不再无条件上图** —— 一律和别的据点过同一道年代闸门：
+        //    那年存在的 → 全部显现（城样貌＋白名）；那年不存在的 → **只显示灰色名字**（不画城、不可点）。
+        //    来由：第 2 场的路标【特尔诺沃】是中世纪保加利亚都城，前 335 年不该有——它却因为「点名」被顶成白名。
         const absentNow = new Set(current?.absentCities ?? []);
-        for (const id of referenced) if (!absentNow.has(id)) out.add(id);
+        const gateNow = (cityId: string): boolean =>
+            !absentNow.has(cityId) && (!current || cityExistsInYear(cityId, current.year));   // 唯一判据：cityInYear.ts
+        for (const id of referenced) if (gateNow(id)) out.add(id);
         // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
         //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
         //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
