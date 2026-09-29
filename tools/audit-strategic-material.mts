@@ -5,7 +5,7 @@ import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
 import sharp from 'sharp';
 import { queryBaseTile, setWorldBaseData } from '../src/ui/scene13/WorldBaseMap';
-import { blendMaterialGrid, sampleClimateMaterials, materialOriginForTile } from '../src/map/StrategicTerrainMaterial';
+import { blendMaterialGrid, sampleClimateMaterials, materialOriginForTile, assembleTerrainMaterial } from '../src/map/StrategicTerrainMaterial';
 import { NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS } from '../src/data/HistoricalRegions';
 
 const texture = (shift: number) => Uint8ClampedArray.from({ length: 128 * 128 * 4 },
@@ -94,7 +94,11 @@ const source = readFileSync('src/workers/HillshadeWorker.ts', 'utf8').replace(/^
 const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const render = runInNewContext(js + '\nrenderHillshade;', { exports: {}, self: {}, Uint8ClampedArray, Float32Array, NILE_ALLUVIAL_POLYGONS, NILE_VALLEY_EXP_BOUNDS });
 const req = { width: 5, height: 5, params: { azimuth: 305, altitude: 45, zFactor: 27, opacity: 1, useElevationColor: true } };
-const surface = { climate: new Uint8ClampedArray(5 * 5 * 4).fill(255), rock: null };
+// 5×5 测试瓦片的材质：气候层 + 指定的规则贴图（128px 纯色）
+const solid = (v: number) => Uint8ClampedArray.from({ length: 128 * 128 * 4 }, (_, i) => i % 4 === 3 ? 255 : v);
+const mat = (climate: Uint8ClampedArray, rules: Record<string, number> = {}) => assembleTerrainMaterial(
+    climate as Uint8ClampedArray<ArrayBuffer>, new Map(Object.entries(rules).map(([k, v]) => [k, solid(v)])), 5, 5, materialOriginForTile(9, 400, 200));
+const surface = mat(new Uint8ClampedArray(5 * 5 * 4).fill(255));
 const flat = (elevation: number) => Uint8ClampedArray.from({ length: 100 }, (_, i) =>
     i % 4 === 0 ? Math.floor((elevation + 32768) / 256) : i % 4 === 1 ? (elevation + 32768) % 256 : i % 4 === 3 ? 255 : 0);
 // 海水须带水体掩膜：无掩膜时低于海平面按陆地上色（里海低地/吐鲁番盆地，2026-07-28 规则）
@@ -103,10 +107,10 @@ for (const [elevation, mask] of [[-30, seaMask], [0, null], [5500, null]] as con
     assert.deepEqual(render(flat(elevation), req, mask, surface), render(flat(elevation), req, mask, null));
 }
 assert.notDeepEqual(render(flat(300), req, null, surface), render(flat(300), req, null, null));
-assert.deepEqual(render(flat(300), req, null, { climate: new Uint8ClampedArray(100), rock: null }), render(flat(300), req, null, null));
+assert.deepEqual(render(flat(300), req, null, mat(new Uint8ClampedArray(100))), render(flat(300), req, null, null));
 console.log('PASS: 实际 Worker 保持海水、海平面、高山雪地着色，陆地融合生效，透明材质回退一致');
 // 坡面岩石：平地不混岩石；陡坡混入
-const rockOnly = { climate: new Uint8ClampedArray(100), rock: Uint8ClampedArray.from({ length: 100 }, (_, i) => i % 4 === 3 ? 255 : 90) };
+const rockOnly = mat(new Uint8ClampedArray(100), { rck: 90 });
 assert.deepEqual(render(flat(1200), req, null, rockOnly), render(flat(1200), req, null, null));
 const slopeDem = Uint8ClampedArray.from({ length: 100 }, (_, i) => {
     const e = 1200 + ((i >> 2) % 5) * 400;   // 每像素升 400m，远超 0.55 坡度
@@ -115,3 +119,8 @@ const slopeDem = Uint8ClampedArray.from({ length: 100 }, (_, i) => {
 const slopeReq = { ...req, coords: { z: 9, x: 400, y: 200 } };
 assert.notDeepEqual(render(slopeDem, slopeReq, null, rockOnly), render(slopeDem, slopeReq, null, null));
 console.log('PASS: 坡面岩石只作用于陡坡，平地不变');
+// 海水贴图：带水体掩膜的海面按水深铺 DE 海水；陆地不受海水贴图影响
+const seaTex = mat(new Uint8ClampedArray(100), { wt2: 40, wt4: 20, wt3: 60, wt5: 90 });
+assert.notDeepEqual(render(flat(-800), slopeReq, seaMask, seaTex), render(flat(-800), slopeReq, seaMask, null));
+assert.deepEqual(render(flat(300), slopeReq, null, seaTex), render(flat(300), slopeReq, null, mat(new Uint8ClampedArray(100))));
+console.log('PASS: 海面按水深铺 DE 海水贴图，陆地不受影响');

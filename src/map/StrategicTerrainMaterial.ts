@@ -335,9 +335,26 @@ export const TERRAIN_RULE_TEXTURES = [
 ] as const;
 export type TerrainRuleTexture = typeof TERRAIN_RULE_TEXTURES[number];
 
+/**
+ * 气候贴图的干湿分类（按 DE 贴图本身的样子逐张定，不用颜色推 —— 林下落叶 for / 山地草甸 gr4 偏棕，
+ * 按「红大于绿」推会被当成沙漠，实测在晋中盆地、挪威苔原冒出橙色沙斑）。
+ * arid：0 湿润 ~ 1 极干；sand：是不是真沙地（只有它才铺成片的橙色沙）。未列出的按 arid 0.5 / sand 0。
+ */
+const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number }>> = {
+    gr6: { arid: 0, sand: 0 }, gr2: { arid: 0, sand: 0 }, grs: { arid: 0.05, sand: 0 }, fo2: { arid: 0, sand: 0 },
+    for: { arid: 0.1, sand: 0 }, underbrush_leaves: { arid: 0.1, sand: 0 }, sh4: { arid: 0, sand: 0 },
+    gr3: { arid: 0.2, sand: 0 }, qs2: { arid: 0.2, sand: 0 }, gr4: { arid: 0.35, sand: 0 },
+    gr7: { arid: 0.5, sand: 0 }, gr5: { arid: 0.6, sand: 0 }, rck: { arid: 0.7, sand: 0 },
+    ds4: { arid: 0.75, sand: 0 }, gravel_default: { arid: 0.8, sand: 0 }, ds2: { arid: 0.8, sand: 0.25 },
+    ds5: { arid: 0.9, sand: 0.1 }, pal: { arid: 1, sand: 1 }, pal1: { arid: 1, sand: 1 }, qs: { arid: 1, sand: 1 },
+};
+
 export type TerrainMaterial = {
     /** 气候地表（草/林/沙/雪…），alpha = 有效权重 */
     climate: Uint8ClampedArray<ArrayBuffer>;
+    /** 逐像素干旱度 0~1、沙地程度 0~1（由气候贴图分类插值；无气候数据处为 0.5 / 0） */
+    arid: Float32Array;
+    sand: Float32Array;
     /** 每个像素在「A / B 两套地理取样」里的纹素字节下标，及两套交替权重；规则贴图共用 */
     tapA: Int32Array;
     tapB: Int32Array;
@@ -395,9 +412,15 @@ function patchNoise(x9: number, y9: number): number {
     return one(100, 17.3) * 0.65 + one(37, 5.1) * 0.35;
 }
 
+/**
+ * @param ruleTextures 本瓦片用得到的规则贴图（Worker 解码高程、拿到水体掩膜后才知道，所以可传 Promise）。
+ *   🔴 [2026-09-30] 按需加载：冷启动一屏铺满实测慢 3%~12%，主要是每个 Worker 首次都要拉全部 25 张；
+ *   内陆瓦片用不到海水/沙滩，低地用不到雪。缺的贴图 Worker 那条规则自动跳过。
+ */
 export async function createTerrainMaterial(
     bounds: Bounds, width: number, height: number,
     coords?: { z: number; x: number; y: number },
+    ruleTextures: readonly string[] | Promise<readonly string[]> = TERRAIN_RULE_TEXTURES,
 ): Promise<TerrainMaterial | null> {
     if (!await loadWorld()) return null;
     const origin = coords ? materialOriginForTile(coords.z, coords.x, coords.y) : { gx9: 0, gy9: 0, scale: 1 };
@@ -416,20 +439,49 @@ export async function createTerrainMaterial(
         }
     }
     const assets = new Map<string, Uint8ClampedArray | null>();
-    await Promise.all([...new Set([...nodes.flatMap(node => [...node.keys()]), ...TERRAIN_RULE_TEXTURES])]
+    const climateLoads = Promise.all([...new Set(nodes.flatMap(node => [...node.keys()]))]
         .map(async name => assets.set(name, await loadTexture(name))));
+    const rules = await ruleTextures;
+    await Promise.all([climateLoads, ...rules.map(async name => assets.set(name, await loadTexture(name)))]);
     const grid = nodes.map(node => [...node].flatMap(([name, weight]) => {
         const pixels = assets.get(name);
         return pixels ? [{ pixels, weight }] : [];
     }));
     const climate = blendMaterialGrid(grid, columns, width, height, origin);
-    return assembleTerrainMaterial(climate, assets, width, height, origin);
+    const nodeArid = nodes.map(node => classOf(node, 'arid', 0.5));
+    const nodeSand = nodes.map(node => classOf(node, 'sand', 0));
+    return assembleTerrainMaterial(climate, assets, width, height, origin,
+        interpolateNodes(nodeArid, columns, width, height), interpolateNodes(nodeSand, columns, width, height));
+}
+
+function classOf(node: Map<string, number>, key: 'arid' | 'sand', fallback: number): number {
+    let sum = 0, weight = 0;
+    for (const [name, w] of node) { sum += (CLIMATE_CLASS[name]?.[key] ?? (key === 'arid' ? 0.5 : 0)) * w; weight += w; }
+    return weight > 0 ? sum / weight : fallback;
+}
+
+/** 节点值按与气候贴图相同的 STEP 网格双线性插值到逐像素（相邻瓦片共用边上节点，无接缝） */
+function interpolateNodes(values: number[], columns: number, width: number, height: number): Float32Array {
+    const out = new Float32Array(width * height);
+    for (let y = 0; y < height; y++) {
+        const gy = Math.floor(y / STEP), fy = (y % STEP) / STEP;
+        for (let x = 0; x < width; x++) {
+            const gx = Math.floor(x / STEP), fx = (x % STEP) / STEP;
+            const i = gy * columns + gx;
+            const top = values[i] * (1 - fx) + (fx > 0 ? values[i + 1] * fx : 0);
+            const bottom = fy > 0 ? values[i + columns] * (1 - fx) + (fx > 0 ? values[i + columns + 1] * fx : 0) : 0;
+            out[y * width + x] = top * (1 - fy) + bottom * fy;
+        }
+    }
+    return out;
 }
 
 /** 气候层 + 规则贴图组装成 Worker 用的材质（测试脚本也直接调用它） */
 export function assembleTerrainMaterial(
     climate: Uint8ClampedArray<ArrayBuffer>, assets: ReadonlyMap<string, Uint8ClampedArray | null>,
     width: number, height: number, origin: MaterialOrigin,
+    arid: Float32Array = new Float32Array(width * height).fill(0.5),
+    sand: Float32Array = new Float32Array(width * height),
 ): TerrainMaterial {
     const { tapA, tapB, bomb, patch, level } = buildTaps(width, height, origin);
     const tex: TerrainMaterial['tex'] = {};
@@ -437,5 +489,5 @@ export function assembleTerrainMaterial(
         const pixels = assets.get(name);
         if (pixels) tex[name] = mipsOf(pixels)[level];
     }
-    return { climate, tapA, tapB, bomb, patch, tex };
+    return { climate, arid, sand, tapA, tapB, bomb, patch, tex };
 }

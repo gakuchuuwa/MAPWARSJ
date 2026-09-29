@@ -156,22 +156,24 @@ export class BattlefieldLayer {
                     const oldMarker = this.markers.get(id)!;
                     this.layerGroup.removeLayer(oldMarker);
                     this.markers.delete(id);
-                    const marker = this.createBattlefieldMarker(bf, fought, false);
+                    // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」] 打完仗、战场遗迹出现：只让遗迹渐显，
+                    //    地名标牌本来就在（只多了「战场」二字），不重播渐显
+                    const marker = this.createBattlefieldMarker(bf, fought, false, true);
                     this.markers.set(id, marker);
                     this.markerFoughtState.set(id, fought);
                 }
                 continue;
             }
 
-            const fadeIn = isScriptPeriod();
-            const marker = this.createBattlefieldMarker(bf, fought, fadeIn);
+            // 新出现的战场一律渐显（剧本、乱斗都一样）
+            const marker = this.createBattlefieldMarker(bf, fought, true);
             this.markers.set(id, marker);
             this.markerFoughtState.set(id, fought);
         }
     }
 
-    private createBattlefieldMarker(bf: BattlefieldData, fought: boolean, fadeIn = false): L.Marker {
-        const html = this.buildBattlefieldHtml(bf, fought, fadeIn);
+    private createBattlefieldMarker(bf: BattlefieldData, fought: boolean, fadeIn = false, morphFadeIn = false): L.Marker {
+        const html = this.buildBattlefieldHtml(bf, fought, fadeIn, morphFadeIn);
 
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
@@ -210,7 +212,7 @@ export class BattlefieldLayer {
     }
 
     /** 单个战场的 HTML：**未打完 = 只有地名**；打完 = 地名 + 战场形态 + 标牌加「战场」 */
-    private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean, fadeIn = false): string {
+    private buildBattlefieldHtml(bf: BattlefieldData, fought: boolean, fadeIn = false, morphFadeIn = false): string {
         const L0 = bfLayout();
         const k = BASE_ART_W / L0.artW;
         // 🔴 [2026-09-19] 套据点样式的攻城战战场：容器按据点尺寸给（见 renderBattlefields 同一判据）
@@ -221,7 +223,10 @@ export class BattlefieldLayer {
         // 形态（只在打完之后画）。种子 = 战场 id → 同一战场每局长得一样、各战场互不相同
         //   · 攻城战战场 → 套据点样式（大中小城寨），见 buildMorphHtml
         //   · 其余 → 战场形态（拒马/尸体/骨骸…）
-        const morph = fought ? this.buildMorphHtml(bf, true) : '';
+        const morphHtml = fought ? this.buildMorphHtml(bf, true) : '';
+        const morph = morphHtml && morphFadeIn
+            ? `<div class="map-fade-in" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;">${morphHtml}</div>`
+            : morphHtml;
 
         // 🔴 [2026-09-12 主人令「怎么战场还显示武将名字呢，删除，别乱加」]
         //    标牌只留地名。

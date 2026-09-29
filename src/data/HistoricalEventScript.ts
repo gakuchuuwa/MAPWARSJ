@@ -424,6 +424,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         sources: { battle: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗围城战，攻城战；马其顿军填海筑堤攻打海岛城邦推罗。' }, time: { level: 'fact', text: '英文维基百科 Siege of Tyre：公元前332年1月起围，历约七个月至夏末；季节取春。' }, place: { level: 'fact', text: '英文维基百科 Siege of Tyre (332 BC)：推罗为今黎巴嫩海岸外约一千米的海岛城邦；本场是攻城战，地点就是被攻据点「推罗」（city_tuile），坐标 33.2709,35.1962。' }, attacker: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿与希腊同盟，亚历山大亲统。' }, attackerTroops: { level: 'popular', text: '英文维基百科 Siege of Tyre (332 BC) 信息框只给舰队（马其顿 120 艘）、未给陆军兵数；英文维基百科 Alexander the Great 记伊苏斯战后马其顿军约 35,000–40,000 人，据此沿用 37500 —— 可信级别：通行说法（**不是信息框值**）。' }, attackerLegion: { level: 'fact', text: '同格拉尼库斯河战役：马其顿军，前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2。' }, defender: { level: 'fact', text: '英文维基百科 Siege of Tyre：推罗城邦（腓尼基/迦南），末代国王阿泽米尔库斯；时属阿契美尼德波斯治下。' }, defenderTroops: { level: 'popular', text: '英文维基百科 Siege of Tyre (332 BC) 信息框只给舰队（推罗 80 艘）、未给守军兵数；守军 8,000–10,000 一说取自通行叙述，取 9000；另有避难军民 3–4 万（非战斗人员，不计入）。信息框 casualties2 记阵亡 6,000–7,000、钉死 2,000（阿里安 II.24.4），与守军量级相合 —— 可信级别：通行说法（**不是信息框值**）。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Siege of Tyre 与阿里安《亚历山大远征记》：推罗守军以步兵守城为主，城头弩炮与弓手据墙射击，骑兵最少（腓尼基海岛城邦不产骑兵）；三排 前远程3 / 中步兵4 / 后骑兵2，取鱼鳞阵，落成剧本军团「推罗军」。' }, route: { level: 'fact', text: '英文维基百科 Alexander the Great 与 Siege of Tyre (332 BC)：公元前333年11月伊苏斯战役后，亚历山大沿海岸南下腓尼基，阿拉多斯、比布鲁斯以次归附，经西顿（推罗以北约40公里）于公元前332年1月自北面进围推罗。游戏路线：自上一处战场（伊苏斯）直接开拔，沿海岸大道南下抵推罗 —— 本场不写出发据点、不设航点（出发地按「同一武将上一场打完的地方」取，那一年还不存在的城不当落脚点）。阿卡在推罗以南39公里、属反方向，不作航点；项目没有西顿、比布鲁斯据点，按铁律用附近已有据点连接、绝不新建。' }, result: { level: 'fact', text: '英文维基百科 Siege of Tyre：马其顿胜；城破后守军阵亡约 6,000–8,000，平民多被贩为奴；推罗易主归马其顿，跨海长堤淤积使海岛此后永久成为半岛。' }, briefing: { level: 'fact', text: '英文维基百科 Siege of Tyre：跨海长堤宽约六十米、城距大陆近千米、推罗战船约八十艘、城破守军阵亡约 6,000–8,000。播报里兵力只写「数万」「数千」，不写确数。' } },
         foeCommanderUnit: 'hero_brasidas',
         // 出发据点不写：剧本期连续行军从伊苏斯战场直接开拔；玩家不在军中时，默认在上一场打完处附近那一年已有的城（阿达纳）
+        absentCities: ['city_ake'],
         cityUpdates: [{ cityId: 'city_tuile', factionId: 'maqidun' }],
     },
     // ═══════════════════════════════════════════════════════════════
@@ -443,7 +444,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         siegeData: {
             title: '加沙战役',
             description: '巴提斯凭高地坚城与阿拉伯雇佣兵死守；马其顿军筑土山、架推罗器械破墙，接连强攻后破城。',
-            marchWaypoints: ['city_ake'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 3-2 途经点为「阿卡」：自推罗沿海南下经阿卡取加沙
+            marchWaypoints: [],   // 🔴 [2026-09-30 主人定隐藏阿卡] 推罗直达加沙 214 km，中途不点名阿卡
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 45000,                   // 英文维基 Siege of Gaza (332 BC) 信息框 strength1 = 45,000
@@ -456,9 +457,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             result: 'attacker_win',
             autoEnterRTS: true,
         },
-        // 🔴 [2026-09-27 主人令「阿卡没用不要显示了。而且离推罗太近了」]
-        //    段 3-2 的路标是阿卡（推罗 → 阿卡 → 加沙，41 ＋ 173 公里），可阿卡离推罗只有 42 公里、库里又判「城堡时代的据点」，
-        //    主人在图上看着多余 → **这一场不画它**（路照走、旁白照念、挂点照旧；「这一场不显示」优先于点名）。
+        // 🔴 [2026-09-27/09-30 主人定「阿卡没用不要显示了。而且离推罗太近了」] 隐藏阿卡，仅方式②显示灰色名字
         absentCities: ['city_ake'],
         cityUpdates: [{ cityId: 'city_jiasa', factionId: 'maqidun' }, { cityId: 'city_mengfeisi', factionId: 'maqidun' }],
         briefing: '推罗既下，亚历山大南取埃及大道上的加沙。巴提斯凭高地坚城死守，马其顿军筑土山、架推罗器械破墙；亚历山大肩部中创仍强攻不止，城破后巴提斯力战被俘，据后世史家所记，被拖在战车之后处死。',
@@ -503,6 +502,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    英文维基百科 Battle of the Uxian Defile 背景节：亚历山大进抵巴比伦，总督马扎欧斯献城，
         //    休整数日并设为第二基地；自巴比伦走二十日至波斯冬都苏萨。美索不达米亚与苏锡安那两城归马其顿。
         cityUpdates: [{ cityId: 'city_babilun', factionId: 'maqidun' }, { cityId: 'city_susa', factionId: 'maqidun' }],
+        absentCities: ['city_ake'],
         generalId: 'gen_alexander_great',
         // 🔴 [2026-09-24 主人怒斥「怎么从加沙到的孟菲斯？？？还史料如此？」] 出兵据点＝**军团此刻在哪**：
         //    上一场（前332年秋加沙围城）打完，军团就停在加沙；原来写孟菲斯（理由「史料：自埃及出发」）＝
@@ -527,7 +527,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '乌克西亚隘口战役',
             description: '公元前331年冬，扎格罗斯山脉东缘的乌克西亚隘口。乌克西亚人自恃险隘，向来往军队索取买路钱，认定马其顿人也会照波斯旧例纳贡，故只在山口静候。亚历山大应下纳贡之约，却选在约定之日分兵：克拉特鲁斯率盾卫抢占高地，堵死部落战士的退路；亚历山大自率精锐走北路，强袭乌克西亚人的村落，随后以接连强行军夺取隘口。部落战士退向高地，正撞上守候已久的马其顿方阵，被四面合围后歼灭。',
             location: { lat: 32.0457, lng: 48.8506 },
-            marchWaypoints: ['city_aerbeila', 'city_babilun', 'city_susa'],   // 段4-2：高加米拉战场 → 阿尔贝拉（收波斯辎重）→ 巴比伦（马扎亚斯献城、休整）→ 苏萨（皇家大道二十日）→ 乌克西亚隘口（阿里安 III.16-17）
+            marchWaypoints: ['city_aerbeila', 'city_yashucheng', 'city_babilun', 'city_susa'],   // 段4-2：高加米拉战场 → 阿尔贝拉（收波斯辎重）→ 亚述城 → 巴比伦（马扎亚斯献城、休整）→ 苏萨（皇家大道二十日）→ 乌克西亚隘口（阿里安 III.16-17）
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 8000,

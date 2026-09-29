@@ -1392,8 +1392,8 @@ export class TerritorySystem {
                 // 🔴 [2026-09-12 主人定] 战场已**独立出据点体系**（`src/data/Battlefields.ts` +
                 //    `src/map/BattlefieldLayer.ts`）→ 据点层不再有任何战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
-                const fadeIn = isScriptPeriod();
-                this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost, fadeIn);
+                // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」] 新出现的据点一律渐显（剧本、乱斗都一样）
+                this.renderSingleCity(city, this.layerGroup, this.cityMarkers, this.cityLabels, isGhost, true);
             }
             cityIndex = end;
         }
@@ -1445,16 +1445,22 @@ export class TerritorySystem {
                 const city = this.cities[i];
                 // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点层不再有战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
-                if (this.cityMarkers.has(city.id)) {
-                    // 已有 marker：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
+                const spriteNow = TerritorySystem.hasCitySprite(city);
+                if (this.cityMarkers.has(city.id) && this.citySpriteShown.get(city.id) === spriteNow) {
+                    // 已有 marker 且样貌状态没变：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
                     const existingMarker = this.cityMarkers.get(city.id)!;
                     const existingLabel = this.cityLabels.get(city.id);
                     tempCityMarkers.set(city.id, existingMarker);
                     if (existingLabel) tempCityLabels.set(city.id, existingLabel);
                     continue;
                 }
-                const fadeIn = isScriptPeriod();
-                this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost, fadeIn);
+                // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」]
+                //    ① 新出现的据点一律渐显（剧本、乱斗都一样）；
+                //    ② 剧本推进到这座城的年代、「灰字名字」变成完整据点时：旧版原样保留灰字 marker，
+                //       城的样貌要等拖图离开再回来才出现、出现也是硬切。现在按样貌状态变化重建：城图渐显，
+                //       名字本来就在，不重播渐显（只由灰变白），免得名字闪一下。
+                const spriteFlipped = this.cityMarkers.has(city.id);
+                this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost, true, !spriteFlipped);
             }
             cityIndex = end;
             if (cityIndex < this.cities.length) {
@@ -2044,8 +2050,10 @@ export class TerritorySystem {
         markersMap: Map<string, L.Marker>,
         labelsMap: Map<string, L.Marker>,
         isGhost: boolean = false,
-        fadeIn: boolean = false
+        fadeIn: boolean = false,
+        labelFadeIn: boolean = fadeIn
     ): void {
+        this.citySpriteShown.set(city.id, TerritorySystem.hasCitySprite(city));
         const color = this.factionManager.getFactionColor(city.factionId);
         // [USER REQUEST] Use original coordinates instead of snapping to hex center
         const displayLat = city.latitude;
@@ -2234,7 +2242,7 @@ export class TerritorySystem {
 
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
 
-        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap, fadeIn);
+        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap, labelFadeIn);
     }
 
     /** 兵力标签文案：纯数字显示（与军团一致） */
@@ -2248,6 +2256,8 @@ export class TerritorySystem {
      *    剧本期由 GameApp 设成「年代闸门」——那年存在的才画城，那年没有的只留名字（注记）。
      */
     private static spriteFilter: ((city: City) => boolean) | null = null;
+    /** 每座已建 marker 上一次画的是「完整据点」还是「灰字名字」，年代闸门翻转时据此重建并渐显 */
+    private citySpriteShown = new Map<string, boolean>();
     public static setSpriteFilter(f: ((city: City) => boolean) | null): void { TerritorySystem.spriteFilter = f; }
     public static hasCitySprite(city: City): boolean { return !TerritorySystem.spriteFilter || TerritorySystem.spriteFilter(city); }
 
