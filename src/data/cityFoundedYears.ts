@@ -37,7 +37,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_zhizhicheng: -50,      // 郅支城，约前 50 年郅支单于
     city_sangqi: -250,          // 桑奇，约前 250 年阿育王始建佛塔
     city_aksum: -50,            // 阿克苏姆，约前 1 世纪阿克苏姆王国兴起
-    city_gelanikusi: -333,      // 格拉尼库斯，按前 334 战役起名的城寨（前 334 年尚无此城）
+    city_gelanikusi: -500,      // 格拉尼库斯，色雷斯/弗里吉亚古聚落营寨，亚历山大前334年决战地
 
     // ── 🔴 [2026-09-25] 建立年代早于 -334、但没填会被「归属武将时代」误拦的城 ──
     //    第 1 场（前335 海姆斯山）的路标城，前 342 年腓力二世所建；它挂的守将却是保加利亚沙皇西美昂（封建），
@@ -132,7 +132,7 @@ export const CITY_FOUNDED_YEAR: Record<string, number> = {
     city_kelong: -38,           // 科隆，前 38 年罗马建 Colonia Agrippina
     city_milan: -222,           // 米兰，前 222 年罗马建 Mediolanum
     city_florence: -59,         // 佛罗伦萨，前 59 年罗马建 Florentia
-    city_sofia: 1300,           // 索非亚，约 14 世纪得名 Sofia（前身 Serdica 前 29 年罗马建）
+    city_sofia: -500,           // 索非亚（前身色雷斯塞尔迪卡 Serdica，约前 500 年建），前335年亚历山大远征色雷斯经此
     city_venice: 421,           // 威尼斯，421 年建
     city_naples: -470,          // 那不勒斯，约前 470 年希腊建 Neapolis
     city_feisi: 789,            // 非斯，789 年伊德里斯一世建
