@@ -886,6 +886,8 @@ const _FIXED: Record<string, string> = {
     'buni': '#7A2E6E', // 迦太基·迦太基（腓尼基紫，推罗紫渊源）
     'talike': '#C08040', // 塔里克·丹吉尔（撒哈拉橙褐）
     'maqidun': '#C9A227', // 马其顿·佩拉（亚历山大金）
+'hesitiya': '#4E7C7B', // 赫斯提亚·佩利纳（色萨利骑兵青）
+'hekaniya': '#A2653A', // 赫卡尼亚·兹拉卡塔（里海密林赭）
     'yadelaiya': '#901C26', // 威尼斯·威尼斯城（圣马可暗红）
     'gaolu': '#2A4B8F', // 法兰西·巴黎（王室蓝 fleur-de-lis）
     'kaernute': '#3D5A3D', // 卡尔努特·沙特尔（高卢凯尔特绿）

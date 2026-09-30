@@ -527,7 +527,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '乌克西亚隘口战役',
             description: '公元前331年冬，扎格罗斯山脉东缘的乌克西亚隘口。乌克西亚人自恃险隘，向来往军队索取买路钱，认定马其顿人也会照波斯旧例纳贡，故只在山口静候。亚历山大应下纳贡之约，却选在约定之日分兵：克拉特鲁斯率盾卫抢占高地，堵死部落战士的退路；亚历山大自率精锐走北路，强袭乌克西亚人的村落，随后以接连强行军夺取隘口。部落战士退向高地，正撞上守候已久的马其顿方阵，被四面合围后歼灭。',
             location: { lat: 32.0457, lng: 48.8506 },
-            marchWaypoints: ['city_aerbeila', 'city_yashucheng', 'city_babilun', 'city_susa'],   // 段4-2：高加米拉战场 → 阿尔贝拉（收波斯辎重）→ 亚述城 → 巴比伦（马扎亚斯献城、休整）→ 苏萨（皇家大道二十日）→ 乌克西亚隘口（阿里安 III.16-17）
+            marchWaypoints: ['city_aerbeila', 'city_babilun', 'city_susa'],   // 段4-2：高加米拉战场 → 阿尔贝拉（收波斯辎重）→ 亚述城 → 巴比伦（马扎亚斯献城、休整）→ 苏萨（皇家大道二十日）→ 乌克西亚隘口（阿里安 III.16-17）
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 8000,
@@ -624,7 +624,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    比原版多出 里海门 / 白哈格 / 赫拉特 / 博斯特 四站（原版漏了里海门天险与阿利亚首府赫拉特）。
             //    ⚠️ 主人走廊里的 德拉普萨卡（昆都士）暂**未**写入：路网里喀布尔往北那道兴都库什山路（萨朗/哈瓦克）尚未连通，
             //       实测 喀布尔 → 德拉普萨卡 沿路 664 公里、2.7 倍（直线只 244），军团会被绕到蓝氏城再折回来 —— 等那条路连好再插回。
-            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_nuotaka'],
+            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_nuotaka', 'city_samaerhan'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 10000,

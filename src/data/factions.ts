@@ -21,6 +21,8 @@ export const FACTIONS: Faction[] = [
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
+    { id: 'hesitiya', name: '赫斯提亚' },
+    { id: 'hekaniya', name: '赫卡尼亚' },      // 赫卡尼亚（里海东南，兹拉卡塔为其首府）        // 赫斯提亚（古色萨利四区之一赫斯提亚提斯，佩利纳为其重镇）
 
 
 
