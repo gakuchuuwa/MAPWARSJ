@@ -34,6 +34,12 @@ export function installSeaDiagProbe(game: any): void {
                 if (cnt > 100) seaStats.push({ mean: [Math.round(sr / cnt), Math.round(sg / cnt), Math.round(sb / cnt)], lumMin: mn, lumMax: mx, alpha: Math.round(a / cnt), opacity: o, key: (t as any).dataset?.key ?? '' });
             }
             const tilePane = L.getPanes().tilePane as HTMLElement;
+            const tileLayers = Array.from(tilePane.children).map((el: any) => ({ cls: String(el.className).slice(0, 40), z: getComputedStyle(el).zIndex, op: getComputedStyle(el).opacity, filter: getComputedStyle(el).filter, blend: getComputedStyle(el).mixBlendMode, n: el.querySelectorAll('img,canvas').length, isHs: el === cont }));
+            const panes = Object.entries(L.getPanes()).map(([k, el]: any) => ({ k, z: getComputedStyle(el).zIndex, op: getComputedStyle(el).opacity, filter: getComputedStyle(el).filter, blend: getComputedStyle(el).mixBlendMode, bg: getComputedStyle(el).backgroundColor, kids: el.children.length }));
+            const big: any[] = [];
+            L.getContainer().querySelectorAll('canvas,div,img').forEach((el: any) => { const r = el.getBoundingClientRect(); if (r.width > R.width * 0.5 && r.height > R.height * 0.5 && !el.classList.contains('leaflet-pane') && !el.classList.contains('leaflet-tile-container')) { const cs = getComputedStyle(el); let cover: any = null; if (el.tagName === 'CANVAS') { try { const c2 = el.getContext('2d'); const dd = c2.getImageData(0, 0, el.width, el.height).data; let k = 0, t2 = 0, sa = 0, sr = 0, sg = 0, sb = 0; for (let i = 0; i < dd.length; i += 400) { t2++; if (dd[i + 3] > 0) { k++; sa += dd[i + 3]; sr += dd[i]; sg += dd[i + 1]; sb += dd[i + 2]; } } cover = { pct: +(k / t2 * 100).toFixed(1), a: k ? Math.round(sa / k) : 0, rgb: k ? [Math.round(sr / k), Math.round(sg / k), Math.round(sb / k)] : null }; } catch { cover = 'webgl?'; } } big.push({ tag: el.tagName, cls: String(el.className?.baseVal ?? el.className).slice(0, 50), pane: el.closest('.leaflet-pane')?.className?.slice(13, 40), op: cs.opacity, bg: cs.backgroundColor, blend: cs.mixBlendMode, filter: cs.filter, cover }); } });
+            const bodyOver: any[] = [];
+            document.querySelectorAll('body > *').forEach((el: any) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); if (r.width > innerWidth * 0.5 && r.height > innerHeight * 0.5 && cs.display !== 'none' && cs.visibility !== 'hidden') bodyOver.push({ tag: el.tagName, id: el.id, cls: String(el.className).slice(0, 40), op: cs.opacity, bg: cs.backgroundColor, blend: cs.mixBlendMode, z: cs.zIndex, pe: cs.pointerEvents, filter: cs.filter, backdrop: (cs as any).backdropFilter }); });
             const payload = {
                 kind: 'seaDiag', seq: n, at: new Date().toISOString(), ua: navigator.userAgent,
                 zoom: L.getZoom(), center: L.getCenter(), dpr: devicePixelRatio,
@@ -41,6 +47,7 @@ export function installSeaDiagProbe(game: any): void {
                 useDesertColoring: hs.useDesertColoring, shadowOpacity: hs.shadowOpacity, hsOnMap: L.hasLayer(hs),
                 tilePaneFilter: tilePane?.style.filter, containerBg: getComputedStyle(L.getContainer()).backgroundColor,
                 hsContainerOpacity: cont ? getComputedStyle(cont).opacity : null, tileCount: tiles.length, opHist, seaStats,
+                tileLayers, panes, big, bodyOver, htmlFilter: getComputedStyle(document.documentElement).filter, bodyFilter: getComputedStyle(document.body).filter,
                 ls: Object.fromEntries(Object.keys(localStorage).filter(k => /mapwar/i.test(k)).map(k => [k, String(localStorage.getItem(k)).slice(0, 60)])),
             };
             void fetch('/api/zoom-perf', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload, null, 2) });
