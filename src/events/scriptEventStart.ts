@@ -33,10 +33,14 @@ export function resolveEventStartCityId(
     // 写明的出发据点那一年还不存在 → 不采用（主人：「历史上哪年有了哪个据点，就显示哪个据点」），按下面的默认走
     if (ev.startCityId && cityExistsInYear(ev.startCityId, ev.year)) return { cityId: ev.startCityId, from: 'set' };
     if (!ev.generalId) return null;
+    // 🔴 [2026-09-30 修同季多场] 海姆斯山、多瑙河渡河都是春（season 0），原来 `season <` 会把同季的上一场漏掉，
+    //    使下一场（佩利昂）的「上一场」退回海姆斯山、出发地算错 300 公里。改为：只取数组顺序在 ev 之前（idx < evIdx）
+    //    的场次，按 year/season/索引降序取最近一场（同季时后场在前）。
+    const evIdx = allEvents.indexOf(ev);
     const prev = allEvents
-        .filter((x) => x !== ev && x.generalId === ev.generalId
-            && (x.year < ev.year || (x.year === ev.year && x.season < ev.season)))
-        .sort((a, b) => (b.year - a.year) || (b.season - a.season))[0];
+        .map((x, idx) => ({ x, idx }))
+        .filter(({ x, idx }) => idx < evIdx && x.generalId === ev.generalId)
+        .sort((a, b) => (b.x.year - a.x.year) || (b.x.season - a.x.season) || (b.idx - a.idx))[0]?.x;
     if (!prev) return null;
     if (prev.siegeCityId && cities.some((c) => c.id === prev.siegeCityId) && cityExistsInYear(prev.siegeCityId, ev.year)) {
         return { cityId: prev.siegeCityId, from: 'previous' };
