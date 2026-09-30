@@ -760,7 +760,6 @@ export class GameApp {
             // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，
             // 免得排查时还要主人在控制台敲命令。不改变任何游戏行为。
             ZoomPerfProbe.install(this);
-            void import('../debug/SeaDiagProbe').then(m => m.installSeaDiagProbe(this));   // [2026-09-30 临时诊断，查完即删]
 
             // 世界存档（跨天续摊）：存/读由人主动点，刷新绝不自动读档；自动存档每 10 分钟覆盖当天档。
             this.saveManager = new GameSaveManager(this);

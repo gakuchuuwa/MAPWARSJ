@@ -325,6 +325,74 @@ function initLUTs() {
  */
 const LAND_BELOW_SEA_COLOR_ELEV = 10;
 
+
+/**
+ * 🔴 [2026-09-30 主人令「先修下层」] 高程数据在海上是拼起来的：缩放 9 有些瓦片给的是**水面高度**而不是水深 ——
+ *    塞浦路斯以东、亚得里亚海整块写 0 米，里海中部整块写 -29 米（里海水面），旁边瓦片却是 -500~-780 米真实水深
+ *    （实测 scratch 对比：里海缩放 9 与缩放 6 水深差中位 284 米；塞浦路斯以东 118 个海点 42 个是 0 米）。
+ *    一块平一块深，交界成直角「悬崖」，颜色和海底光影都画成方块。
+ *    做法：在算颜色与光影**之前**，把这类「水面高度」像素用缩放 6 的真实水深（双线性，跨 z6 瓦片连续）填回去，
+ *    高程本身连续了，颜色和光影都不再出方块。判据：值是 0 米（或里海一带的 -29 米），且粗一级水深明显更深（深 15 米以上）
+ *    —— 真正的 0 米海岸陆地、-28 米里海低地，粗一级不会比它深 15 米，不受影响。缩放 6 在没毛病的海域与缩放 9 只差 1~15 米。
+ */
+const COARSE_Z = 6;
+const CASPIAN_BOX = { south: 36.5, north: 47.3, west: 46.4, east: 55.6 };
+function tileLatLngBox(z: number, x: number, y: number) {
+    const n = 2 ** z;
+    const lat = (yy: number) => { const k = Math.PI - 2 * Math.PI * yy / n; return 180 / Math.PI * Math.atan(0.5 * (Math.exp(k) - Math.exp(-k))); };
+    return { west: x / n * 360 - 180, east: (x + 1) / n * 360 - 180, north: lat(y), south: lat(y + 1) };
+}
+function touchesCaspian(z: number, x: number, y: number): boolean {
+    const b = tileLatLngBox(z, x, y);
+    return !(b.east < CASPIAN_BOX.west || b.west > CASPIAN_BOX.east || b.north < CASPIAN_BOX.south || b.south > CASPIAN_BOX.north);
+}
+function isSurfaceValue(v: number, caspian: boolean): boolean {
+    return Math.abs(v) < 0.5 || (caspian && Math.abs(v + 29) <= 0.8);
+}
+/** 就地修补一块 256×256 高程（Float32，米）：水面高度像素换成缩放 6 的真实水深。返回是否改动过。 */
+async function fillSurfaceSea(dem: Float32Array, z: number, x: number, y: number): Promise<boolean> {
+    if (z <= COARSE_Z) return false;
+    const caspian = touchesCaspian(z, x, y);
+    let any = false;
+    for (let i = 0; i < dem.length; i++) if (isSurfaceValue(dem[i], caspian)) { any = true; break; }
+    if (!any) return false;
+    const s = 2 ** (z - COARSE_Z);
+    const cx0 = Math.floor(x / s), cy0 = Math.floor(y / s);
+    const coarse = new Map<string, Float32Array | null>();
+    await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].map(async dx => {
+        coarse.set(`${dx}/${dy}`, await fetchDemFloat32(COARSE_Z, cx0 + dx, cy0 + dy));
+    })));
+    if (!coarse.get('0/0')) return false;
+    const at = (gx: number, gy: number): number | null => {
+        const tx = Math.floor(gx / 256) - cx0, ty = Math.floor(gy / 256) - cy0;
+        const t = coarse.get(`${tx}/${ty}`);
+        if (!t) return null;
+        return t[(((gy % 256) + 256) % 256) * 256 + (((gx % 256) + 256) % 256)];
+    };
+    let changed = false;
+    for (let py = 0; py < 256; py++) for (let px = 0; px < 256; px++) {
+        const i = py * 256 + px;
+        const v = dem[i];
+        if (!isSurfaceValue(v, caspian)) continue;
+        // 本像素中心在缩放 6 全局像素坐标里的位置（取像素中心，双线性）
+        const fx = ((x * 256 + px + 0.5) / s) - 0.5, fy = ((y * 256 + py + 0.5) / s) - 0.5;
+        const ix = Math.floor(fx), iy = Math.floor(fy), ax = fx - ix, ay = fy - iy;
+        const a = at(ix, iy), b = at(ix + 1, iy), c = at(ix, iy + 1), d = at(ix + 1, iy + 1);
+        if (a === null || b === null || c === null || d === null) continue;
+        const cz = (a * (1 - ax) + b * ax) * (1 - ay) + (c * (1 - ax) + d * ax) * ay;
+        if (cz < v - 15) { dem[i] = cz; changed = true; }
+    }
+    return changed;
+}
+/** 把 Float32 高程写回 Terrarium 编码（R*256+G+B/256-32768） */
+function writeTerrarium(src: Uint8ClampedArray, dem: Float32Array): void {
+    for (let i = 0; i < dem.length; i++) {
+        const v = dem[i] + 32768;
+        const r = Math.floor(v / 256), g = Math.floor(v - r * 256), b = Math.round((v - r * 256 - g) * 256);
+        src[i * 4] = r; src[i * 4 + 1] = g; src[i * 4 + 2] = Math.min(255, b);
+    }
+}
+
 const PAD = 3;
 const PAD_W = 256 + 2 * PAD;
 
@@ -336,7 +404,7 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
     const tiles = new Map<string, Float32Array>([['0/0', center]]);
     const neighbors = await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
         const dem = await fetchDemFloat32(coords.z, coords.x + dx, coords.y + dy);
-        if (dem) tiles.set(`${dx}/${dy}`, dem);
+        if (dem) { await fillSurfaceSea(dem, coords.z, coords.x + dx, coords.y + dy); tiles.set(`${dx}/${dy}`, dem); }
         return dem !== null;
     })));
     // 邻块不可用时整块使用原版光照，不能用假高度冒充连续地形。
@@ -687,7 +755,7 @@ function renderHillshade(
     const texBch = tex.bch, texBc2 = tex.bc2;
     const texSno = tex.sno, texSnf = tex.snf, texSnd = tex.snd;
     const texIce = tex.ice, texIc2 = tex.ic2;
-    const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texWtr = tex.wtr, texSha = tex.sha;
+    const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texSha = tex.sha;
     const texDes = tex.des, texPm2 = tex.pm2, texPc1 = tex.pc1, texPc2 = tex.pc2;
     const texGr4 = tex.gr4, texDs5 = tex.ds5, texGr2 = tex.gr2, texGrs = tex.grs;
     /** 取一张规则贴图在像素 p 的颜色（A/B 两套地理取样按交替权重混合），写入 TX */
@@ -1065,16 +1133,13 @@ function renderHillshade(
                     let wr = TX[0], wg = TX[1], wb = TX[2];
                     const deepW = rampWorker(depth, 300, 2500);
                     if (deepW > 0 && sampleTex(texWt4, p)) { wr += (TX[0] - wr) * deepW; wg += (TX[1] - wg) * deepW; wb += (TX[2] - wb) * deepW; }
-                    // 🔴 [2026-09-30 主人报「黑海岸边一片平色」] 温带浅海原用 wt3（24,82,127），与近海 wt2（26,66,108）只差一点、再被 55% 冲淡，
-                    //    浅大陆架（瓦尔纳外 60 公里 5~50 米）画不出来 → 温带浅海改用 wtr（33,119,162），叠加比例按浅度提到 80%。
                     const shallowW = 1 - rampWorker(depth, 20, 250);
-                    if (shallowW > 0 && sampleTex(tropical ? texWt5 : (texWtr ?? texWt3), p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
+                    if (shallowW > 0 && sampleTex(tropical ? texWt5 : texWt3, p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
                     const reefW = tropical && depth < 40 ? (1 - rampWorker(depth, 15, 40)) * rampWorker(matPatch![p], 0.5, 0.75) * 0.5 : 0;
                     if (reefW > 0 && sampleTex(texSha, p)) { wr += (TX[0] - wr) * reefW; wg += (TX[1] - wg) * reefW; wb += (TX[2] - wb) * reefW; }
                     const iceW = rampWorker(absLat, 76, 82) * 0.85;
                     if (iceW > 0 && mix2(texIce, 1 - matPatch![p], texIc2, matPatch![p], p)) { wr += (TX[0] - wr) * iceW; wg += (TX[1] - wg) * iceW; wb += (TX[2] - wb) * iceW; }
-                    const seaMix = 0.55 + 0.25 * shallowW;   // 浅海贴图压得更实，深海维持原 55%
-                    r += (wr - r) * seaMix; g += (wg - g) * seaMix; b += (wb - b) * seaMix;
+                    r += (wr - r) * 0.55; g += (wg - g) * 0.55; b += (wb - b) * 0.55;
                 }
 
                 // [NILE-ALLUVIAL] 尼罗河谷与三角洲冲积黑土壤土层试验 (ZOOM 9 专用)
@@ -1375,6 +1440,12 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         srcBitmap.close();
 
         const src = ctx.getImageData(0, 0, req.width, req.height).data;
+        // 先把「水面高度」的海像素填成真实水深，后面的颜色、光影、掩膜判断都用填好的高程（见 fillSurfaceSea）
+        if (req.coords && req.width === 256 && req.height === 256) {
+            const dem0 = new Float32Array(256 * 256);
+            for (let i = 0; i < dem0.length; i++) dem0[i] = src[i * 4] * 256 + src[i * 4 + 1] + src[i * 4 + 2] / 256 - 32768;
+            if (await fillSurfaceSea(dem0, req.coords.z, req.coords.x, req.coords.y)) writeTerrarium(src, dem0);
+        }
 
         // 只有本瓦片含海平面以下像素或启用河谷冲积试验时取掩膜。内陆瓦片直接跳过，
         // 沿海/海域/试验瓦片才多等一次，且有超时兜底，保证河流与湖泊保持纯净水色。

@@ -112,7 +112,9 @@ export function renderStrategicWater(
         out[o] = base[0] + tone * 0.8 + grain * 0.70 + shore * shoreLift[0] + glint;
         out[o+1] = base[1] + tone * 1.3 + grain + shore * shoreLift[1] + glint;
         out[o+2] = base[2] + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;
-        if (water[i]) out[o+3] = 255;
+        // 🔴 [2026-09-30 主人定] 河流层要保留（显示河流），但不能把整片海涂成平色：河道与岸边 6 像素内照旧不透明，
+        //    6~16 像素渐隐，开阔海面透出下层晕渲的真实水深（下层的海上方块已在 HillshadeWorker.fillSurfaceSea 修掉）。
+        if (water[i]) out[o+3] = Math.round(255 * Math.max(0, Math.min(1, (16 - distance[i]) / 10)));
         else {
             const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
             out[o+3] = Math.round(coverage * 0.18 * 255);
