@@ -21,8 +21,8 @@ export const FACTIONS: Faction[] = [
   { id: 'yipilusi', name: '伊庇鲁斯' },
   { id: 'lagoniya', name: '拉哥尼亚' },  // 别名：斯巴达本土（Laconia，斯巴达城邦所在地）
   { id: 'maqidun', name: '马其顿' },
-    { id: 'hesitiya', name: '赫斯提亚' },
-    { id: 'hekaniya', name: '赫卡尼亚' },      // 赫卡尼亚（里海东南，兹拉卡塔为其首府）        // 赫斯提亚（古色萨利四区之一赫斯提亚提斯，佩利纳为其重镇）
+  { id: 'hesitiya', name: '赫斯提亚' },  // 古色萨利四区之一赫斯提亚提斯（Histiaeotis），佩利纳为其重镇
+  { id: 'hekaniya', name: '赫卡尼亚' },  // 里海东南，兹拉卡塔为其首府
 
 
 
@@ -1860,6 +1860,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xingwei', name: '兴威' },
     { id: 'saerbadaer', name: '萨尔巴达尔' },
     { id: 'kumisi', name: '库米斯' },
+    { id: 'shahelude', name: '沙赫鲁德' },
     { id: 'ribale', name: '日巴勒' },
     { id: 'safawei', name: '吉兰' },
 
@@ -2101,7 +2102,8 @@ export const FACTIONS: Faction[] = [
     { id: 'ameng', name: '阿蒙' },
     { id: 'eerbulushi', name: '厄尔布尔士' },   // 里海门势力
     { id: 'aliya', name: '阿利亚' },   // 赫拉特势力
-    { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
+    { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
+
 
     { id: 'sute', name: '粟特' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记
     { id: 'xinde', name: '信德' },

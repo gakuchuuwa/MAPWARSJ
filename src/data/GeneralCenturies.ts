@@ -444,6 +444,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'keerkezi_manasi': 9,                               // 玛纳斯 · keerkezi · 斯姆哈纳
     'kesa_bulan': 8,                                    // 布兰 · kesa · 打耳班
     'kumisi_aerpu': 11,                                  // 阿尔普 · kumisi · 达姆甘
+    'shahelude_weisitamu': 6,                            // 维斯塔姆 · shahelude · 比斯塔姆（6世纪萨珊叛乱割据）
     'maer_d_bahelamuchubin': 6,                         // 巴赫拉姆 · maer_d · 彭迪
     'mamon_mameng': 10,                                  // 马蒙 · mamon · 达尔甘
     'midi_daiaokaisi': -7,                               // 戴奥凯斯 · midi · 哈马丹
@@ -1131,8 +1132,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
     'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
     'panfeiliya_apollonios':             -3,    // 阿波罗尼奥斯 · panfeiliya · 佩尔格（圆锥曲线论作者）
-'hesitiya_akiyasi':               -2,
-'hekaniya_artabazos':             -4,    // 阿尔塔巴佐斯 · hekaniya · 兹拉卡塔（前4世纪波斯宿将，大流士三世死后坐镇赫卡尼亚）    // 费莱的伊阿宋 · hesitiya · 佩利纳（前4世纪色萨利执政，前370年代色萨利霸主）
+    'hesitiya_yiasong':               -4,    // 伊阿宋（费莱的伊阿宋） · hesitiya · 佩利纳（前4世纪色萨利霸主，前375年统一色萨利）
+    'hekaniya_artabazos':             -4,    // 阿尔塔巴佐斯 · hekaniya · 兹拉卡塔（前4世纪波斯宿将，大流士三世死后坐镇赫卡尼亚）
     'baihaliye_djedkhonsu':              -6,    // 杰德孔苏 · baihaliye · 拜哈里耶（第二十六王朝绿洲总督）
     'kuida_chakar':                      15,    // 恰卡尔 · kuida · 奎达（俾路支英雄）
     'zhalange_barsaentes':               -4,    // 巴尔塞恩特斯 · zhalange · 扎兰格（德兰吉亚总督）

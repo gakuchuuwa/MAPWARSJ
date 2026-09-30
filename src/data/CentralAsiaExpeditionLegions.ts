@@ -50,7 +50,8 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
     najie: { name: '那竭方阵兵', tier: 3 },
   // ── 2026-06-20 新增：杜兰尼·呼罗珊·阿巴尔 ──
     dulan_d: { name: '普什图骑', tier: 1 },
-    aliya: { name: '赫拉特骑手', tier: 3 },
+    aliya: { name: '赫拉特骑手', tier: 3 },
+
   sute: { name: '粟特铁骑', tier: 3 },   // 诺塔卡（粟特南部要地）
   xinde: { name: '信德水师', tier: 3 },
   jiduoluoxiya: { name: '马克兰弓手', tier: 3 },
@@ -66,7 +67,6 @@ export const CENTRAL_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { na
   kalan: { name: '萨珊边骑', tier: 4 },    // 图斯·卡伦家族世袭东北边防元帅（常规番号，降T3）
   // ── 2026-06-20 新增：锡斯坦·德兰吉亚 ──
   delan: { name: '苏伦具装骑', tier: 1 },   // 法拉·卡莱战役大破罗马军团的战略主力
-    huluo: { name: '古尔重骑', tier: 1 },
   aba: { name: '萨珊重装骑', tier: 1 },    // 尼沙布尔·萨珊波斯抗击罗马帝国的战略主力
     kala: { name: '古拉姆近卫', tier: 3 },
     saerbadaer: { name: '萨尔巴达军', tier: 3 },  // 白哈格·拉扎克：萨尔巴达尔平民/民兵抗蒙，非骑兵

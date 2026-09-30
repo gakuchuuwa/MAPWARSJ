@@ -147,7 +147,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             title: '底比斯战役',
             description: '底比斯人拒不接受和解条件，据城死战；马其顿军攻入城中，底比斯主将菲尼克斯、普罗提特斯战死，城破后全城被夷平。',
             // 路标：史载穿过色萨利、经温泉关入维奥蒂亚；沿途无那一年已存在且在路网上的据点，按路网走
-            marchWaypoints: ['city_salonica'],   // 🔴 [2026-09-25 主人令「同步游戏，同步编辑器」] 段 1-3 途经点为「佩拉、温泉关」，库里只有佩拉可用作路标（温泉关一线无据点，见史料依据·行军路线）
+            marchWaypoints: ['city_pelina'],   // 🔴 [2026-09-30 按阿里安 I.7] 佩利昂 →（经埃奥达亚、埃利米奥提斯、斯廷法亚、帕拉瓦亚）第七天到色萨利的佩利纳 → 第六天入彼奥提亚（越过温泉关以南）。此前用佩拉作路标是路网缺据点造成的绕路，主人已建佩利纳
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 33000,
@@ -624,7 +624,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    比原版多出 里海门 / 白哈格 / 赫拉特 / 博斯特 四站（原版漏了里海门天险与阿利亚首府赫拉特）。
             //    ⚠️ 主人走廊里的 德拉普萨卡（昆都士）暂**未**写入：路网里喀布尔往北那道兴都库什山路（萨朗/哈瓦克）尚未连通，
             //       实测 喀布尔 → 德拉普萨卡 沿路 664 公里、2.7 倍（直线只 244），军团会被绕到蓝氏城再折回来 —— 等那条路连好再插回。
-            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_nuotaka', 'city_samaerhan'],
+            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_zilakata', 'city_bistam', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_nuotaka', 'city_samaerhan'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 10000,

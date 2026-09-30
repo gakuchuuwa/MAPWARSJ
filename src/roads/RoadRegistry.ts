@@ -579,6 +579,29 @@ export class RoadRegistry {
     }
 
     /**
+     * 两个节点之间**直接连着的那条路**（剧本行军专用）。
+     * 最短路会为了省几公里绕开主人新画的直连路（例：兹拉卡塔—比斯塔姆 176 公里 < 经达姆甘 158 公里，寻路永远不走它）；
+     * 剧本的相邻路标若本来就有直连的路，就该走这条路。没有直连返回 null，乱斗与 AI 行军不使用本方法。
+     */
+    public findDirectEdgePath(startNodeId: string, endNodeId: string): PathResult | null {
+        let best: GraphEdge | null = null;
+        for (const e of this.edges.values()) {
+            if (!((e.from === startNodeId && e.to === endNodeId) || (e.from === endNodeId && e.to === startNodeId))) continue;
+            if (!best || e.lengthKm < best.lengthKm) best = e;
+        }
+        if (!best) return null;
+        const forward = best.from === startNodeId;
+        const coords = forward ? best.coordinates : [...best.coordinates].reverse();
+        return {
+            nodes: [startNodeId, endNodeId],
+            edges: [best],
+            totalDistance: best.lengthKm,
+            coordinates: coords,
+            seaFlags: coords.map(() => !!best!.isSea),
+        };
+    }
+
+    /**
      * 将路径坐标转为 {lat, lng}[] 格式 (Leaflet 兼容)
      */
     public pathToLatLngs(path: PathResult): { lat: number; lng: number; sea?: boolean }[] {

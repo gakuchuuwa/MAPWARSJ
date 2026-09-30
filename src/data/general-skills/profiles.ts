@@ -2912,6 +2912,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     xingwei_hanba: { generalId: 'xingwei_hanba', tier: 'ordinary', tacticalSkillId: 'ts_220', atkAdvantageSkillId: 'ts_679', atkBalanceSkillId: 'ts_278', atkDisadvantageSkillId: 'ts_484', defAdvantageSkillId: 'ts_390', defBalanceSkillId: 'ts_197', defDisadvantageSkillId: 'ts_417', aptitude: 'create', attackStyle: 'attack' },
     saerbadaer_lazhake: { generalId: 'saerbadaer_lazhake', tier: 'ordinary', tacticalSkillId: 'ts_374', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_273', defDisadvantageSkillId: 'ts_418', aptitude: 'reverse', attackStyle: 'defense' },
     kumisi_aerpu: { generalId: 'kumisi_aerpu', tier: 'ordinary', tacticalSkillId: 'ts_402', atkAdvantageSkillId: 'ts_003', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_392', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_712', aptitude: 'reverse', attackStyle: 'attack' },
+    shahelude_weisitamu: { generalId: 'shahelude_weisitamu', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
     ribale_faheerdaolai: { generalId: 'ribale_faheerdaolai', tier: 'ordinary', tacticalSkillId: 'ts_010', atkAdvantageSkillId: 'ts_010', atkBalanceSkillId: 'ts_380', atkDisadvantageSkillId: 'ts_689', defAdvantageSkillId: 'ts_630', defBalanceSkillId: 'ts_396', defDisadvantageSkillId: 'ts_822', aptitude: 'create', attackStyle: 'defense' },
     yilihanguo_d_hezan: { generalId: 'yilihanguo_d_hezan', tier: 'ordinary', tacticalSkillId: 'ts_213', atkAdvantageSkillId: 'ts_031', atkBalanceSkillId: 'ts_404', atkDisadvantageSkillId: 'ts_690', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_161', aptitude: 'leverage', attackStyle: 'attack' },
     yilihanguo_yisimeier: { generalId: 'yilihanguo_yisimeier', tier: 'famous', tacticalSkillId: 'ts_003', atkAdvantageSkillId: 'ts_032', atkBalanceSkillId: 'ts_406', atkDisadvantageSkillId: 'ts_691', defAdvantageSkillId: 'ts_748', defBalanceSkillId: 'ts_530', defDisadvantageSkillId: 'ts_179', aptitude: 'create', attackStyle: 'attack' },
@@ -3235,6 +3236,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     // 🔴 [2026-09-25] 巴尔干战役（前335）三位守帅。三闸定名将：三人皆无史载胜绩 → 普将
     // 达萨雷提·克莱图斯：普将（史实：伊利里亚王，据佩利昂要塞与陶兰提王格劳基亚斯合兵，一度迫退亚历山大，终被夜袭击溃，焚城而逃）· 逆势 · 善防
     dasaleiti_kleitos: { generalId: 'dasaleiti_kleitos', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    hesitiya_yiasong: { generalId: 'hesitiya_yiasong', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    hekaniya_artabazos: { generalId: 'hekaniya_artabazos', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 底比斯·菲尼克斯：普将（史实：底比斯起兵反马其顿的守城主将，拒降死战，城破身死）· 逆势 · 善防
     dibisi_phoinix: { generalId: 'dibisi_phoinix', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 色雷斯·首领：普将（史实：据海姆斯山脊、以大车为垒推车冲阵的自治色雷斯人首领，被方阵登顶击溃）· 逆势 · 善防

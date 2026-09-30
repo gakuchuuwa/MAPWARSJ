@@ -855,6 +855,7 @@ export class CityAssetManager {
 'xingwei': '兴威',
         'saerbadaer': '萨尔',
         'kumisi': '库米',
+        'shahelude': '沙赫',
 'ribale': '日巴',
 'safawei': '吉兰',
 'yilihanguo': '阿杰',
