@@ -727,6 +727,10 @@ export class CityManager {
     // Siege Effects
     /** 攻城放大还原的延迟定时器：同城新攻城重开时取消未走的还原（防陈旧定时器把新城缩回去） */
     private readonly siegeZoomRestoreTimers = new Map<string, ReturnType<typeof setTimeout>>();
+    /** 由 GameApp 注入：接管「战后缩回」直到跟拍军团开始行军；返回 false = 不接管，照旧按时缩回 */
+    public siegeZoomHoldUntilMarch: ((cityId: string, release: () => void) => boolean) | null = null;
+    /** 同城重开攻城时撤掉「等行军再缩」，免得旧的松闸把新一场的放大缩回去 */
+    public siegeZoomHoldCancel: ((cityId: string) => void) | null = null;
 
     /** @param battleDurationSec 本场攻城战目标时长，用于把三坨火的渐显节奏摊到整场战斗
      *  @param enableCityZoom 是否放大据点建筑——仅跟拍军团参战的那场（2026-08-04） */
@@ -746,7 +750,8 @@ export class CityManager {
                 battleDurationSec,
                 enableCityZoom ? getSiegeCityBuildingStackScale(city.type) : 1,
             );
-            // 新攻城开始：取消上一场未走的"延迟还原"
+            // 新攻城开始：取消上一场未走的"延迟还原"（含等行军的那种）
+            this.siegeZoomHoldCancel?.(cityId);
             const pending = this.siegeZoomRestoreTimers.get(cityId);
             if (pending) {
                 clearTimeout(pending);
@@ -795,6 +800,8 @@ export class CityManager {
             this.siegeZoomRestoreTimers.delete(cityId);
             this.territorySystem.setCitySiegeZoom(cityId, false);
         };
+        // 🔴 [2026-10-01 主人定] 跟拍那场放大的据点：战斗结束不按时缩回，等跟拍军团开始行军再缩（GarrisonCityZoom 管）
+        if (this.territorySystem.isCitySiegeZoomed(cityId) && this.siegeZoomHoldUntilMarch?.(cityId, startRestore)) return;
         if (restoreDelayMs <= 0) {
             startRestore();
             return;

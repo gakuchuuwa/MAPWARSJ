@@ -798,7 +798,7 @@ export class CityEditor implements IEditor {
             }
             const auto = getRegion(lat, lng);
             hint.innerHTML = `🔍 自动判定: <b style="color:#FFD54F">${REGION_LABELS[auto]} (${auto})</b>`;
-            // [NEW] 50km 间距检查
+            // [NEW] 40km 间距检查
             this.checkProximity(lat, lng, proximityEl);
         };
 
@@ -809,8 +809,8 @@ export class CityEditor implements IEditor {
     }
 
     // ============================================================
-    // [NEW] 50km 邻近据点检查
-    //   规范来源: cities.ts 顶部注释 "两个相邻据点之间必须保持至少 50公里"
+    // [NEW] 40km 邻近据点检查
+    //   规范来源: cities.ts 顶部注释 "两个相邻据点之间必须保持至少 40公里"
     //   实现: 1) 先用 ~0.6° 经纬度盒子粗筛 (快) 2) 对候选用 haversine 算精确距离
     // ============================================================
     private checkProximity(lat: number, lng: number, el: HTMLElement | null): void {
