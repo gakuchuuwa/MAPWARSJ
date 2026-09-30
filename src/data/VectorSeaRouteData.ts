@@ -6396,5 +6396,24 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥拉-卡拉奇",
+                type: "sea",
+                id: "sea_city_aola_city_kalaqi_1790766686317",
+                startConnection: "city_aola",
+                endConnection: "city_kalaqi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [65.51, 25.51],
+                    [66.08333, 24.5],
+                    [66.66667, 24.41667],
+                    [67.01, 24.86],
+                ]
+            }
+        },
     ]
 };

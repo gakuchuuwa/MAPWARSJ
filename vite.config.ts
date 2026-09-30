@@ -2161,15 +2161,15 @@ function batchImportFiles(entries: BatchEntry[]): BatchFileResult[] {
                     continue;
                 }
             } else if (entry.forceProximity) {
-                // 强制添加模式：跳过50km邻近检查，新旧城都保留
+                // 强制添加模式：跳过40km邻近检查，新旧城都保留
                 console.log(`[BatchImport] 💪 Force add ${entry.cityName}, skipping proximity check`);
             } else {
-                // 50km 邻近检查（在修改任何文件之前）
+                // 40km 邻近检查（在修改任何文件之前）
                 const proximityIssues = serverCheckProximity(citiesText, entry.lat, entry.lng, cId);
                 console.log(`[BatchImport] Proximity check for ${entry.cityName} (${entry.lat},${entry.lng}): ${proximityIssues.length} issues`, JSON.stringify(proximityIssues));
                 if (proximityIssues.length > 0) {
                     results.push({ file: 'src/data/cities_v2.ts', ok: false, operation: 'skip',
-                        error: `距 "${proximityIssues[0].name}" 仅 ${proximityIssues[0].km.toFixed(1)}km (< 50km)` });
+                        error: `距 "${proximityIssues[0].name}" 仅 ${proximityIssues[0].km.toFixed(1)}km (< 40km)` });
                     console.log(`[BatchImport] ❌ SKIP ${entry.cityName}: proximity issue`);
                     continue; // 跳过整个条目，不修改任何文本
                 }
@@ -2687,7 +2687,7 @@ interface ProximityCity {
     km: number;
 }
 
-/** 检查新据点是否与已有据点间距 >= 50km */
+/** 检查新据点是否与已有据点间距 >= 40km */
 function serverCheckProximity(citiesText: string, lat: number, lng: number, excludeId: string): ProximityCity[] {
     const issues: ProximityCity[] = [];
     const lines = citiesText.split('\n');
@@ -2714,7 +2714,7 @@ function serverCheckProximity(citiesText: string, lat: number, lng: number, excl
                 const cLat = parseFloat(latMatch[1]);
                 const cLng = parseFloat(lngMatch[1]);
                 const km = haversineKm(lat, lng, cLat, cLng);
-                if (km < 50) {
+                if (km < 40) {
                     issues.push({ name, km });
                 }
             }
@@ -3758,7 +3758,7 @@ function serverSaveCity(payload: {
     if (open < 0 || close < 0) return { ok: false, error: `据点 ${id} 条目边界解析失败` };
     let block = text0.slice(open, close + 1);
 
-    // ── 坐标：改动前先做 50km 邻近检查（不含自己）──
+    // ── 坐标：改动前先做 40km 邻近检查（不含自己）──
     const curLat = parseFloat(block.match(/lat:\s*(-?[\d.]+)/)?.[1] ?? 'NaN');
     const curLng = parseFloat(block.match(/lng:\s*(-?[\d.]+)/)?.[1] ?? 'NaN');
     const newLat = fields.lat !== undefined ? Number(fields.lat) : curLat;
@@ -3771,7 +3771,7 @@ function serverSaveCity(payload: {
         }
         const near = serverCheckProximity(text0, newLat, newLng, id);
         if (near.length) {
-            return { ok: false, error: `新坐标距「${near[0].name}」仅 ${near[0].km.toFixed(1)}km（<50km），整条未写盘` };
+            return { ok: false, error: `新坐标距「${near[0].name}」仅 ${near[0].km.toFixed(1)}km（<40km），整条未写盘` };
         }
     }
 
@@ -4851,13 +4851,13 @@ function serverValidateEntities(): {
         }
     }
 
-    // 1. 据点间距 < 50km
+    // 1. 据点间距 < 40km
     for (let i = 0; i < data.cities.length; i++) {
         for (let j = i + 1; j < data.cities.length; j++) {
             const a = data.cities[i], b = data.cities[j];
             const km = haversineKm(a.lat, a.lng, b.lat, b.lng);
-            if (km < 50) {
-                issues.push({ level: 'error', msg: `据点 "${a.name}" 与 "${b.name}" 间距仅 ${km.toFixed(1)}km (< 50km)` });
+            if (km < 40) {
+                issues.push({ level: 'error', msg: `据点 "${a.name}" 与 "${b.name}" 间距仅 ${km.toFixed(1)}km (< 40km)` });
             }
         }
     }

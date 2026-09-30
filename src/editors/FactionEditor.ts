@@ -514,10 +514,10 @@ export class FactionEditor {
                     if (Math.abs(c.lat - entry.lat) > 0.6) return false;
                     if (Math.abs(c.lng - entry.lng) > 0.6) return false;
                     const km = this.haversineKm(entry.lat, entry.lng, c.lat, c.lng);
-                    return km < 50;
+                    return km < 40;
                 });
                 if (tooClose.length > 0) {
-                    proximityWarn = `距${tooClose[0].name}<50km`;
+                    proximityWarn = `距${tooClose[0].name}<40km`;
                     conflictCityId = tooClose[0].id;
                     conflictName = tooClose[0].name;
                     conflictFactionId = tooClose[0].factionId;
@@ -592,7 +592,7 @@ export class FactionEditor {
         const proxCount = proximityEntries.length;
         if (proxCount > 0) {
             html += `<div style="color:#FFB74D; margin-top:4px; font-size:10px;">
-                ⚠ ${proxCount} 条距已有城不足 50km，请为每条选择操作后再保存
+                ⚠ ${proxCount} 条距已有城不足 40km，请为每条选择操作后再保存
             </div>`;
         } else {
             html += `<div style="color:#888; margin-top:4px; font-size:10px;">

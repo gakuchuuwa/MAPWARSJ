@@ -1674,7 +1674,7 @@ async function handleQuickSubmit(): Promise<void> {
     const existingFaction = rows.find(r => r.id === ids.factionId);
 
     try {
-        // Step 0: 50km proximity check（游戏规则约束，保持拦截）
+        // Step 0: 40km proximity check（游戏规则约束，保持拦截）
         const proxRes = await fetch('/api/check-proximity', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1686,7 +1686,7 @@ async function handleQuickSubmit(): Promise<void> {
         const proxData = await proxRes.json();
         if (!proxData.ok && proxData.issues?.length > 0) {
             const nearest = proxData.issues[0];
-            showToast(`距 "${nearest.name}" 仅 ${nearest.km.toFixed(1)}km (< 50km)，不允许添加`, true);
+            showToast(`距 "${nearest.name}" 仅 ${nearest.km.toFixed(1)}km (< 40km)，不允许添加`, true);
             return;
         }
 

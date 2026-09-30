@@ -3334,6 +3334,8 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     baihaliye_djedkhonsu: { generalId: 'baihaliye_djedkhonsu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     kuida_chakar: { generalId: 'kuida_chakar', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     zhalange_barsaentes: { generalId: 'zhalange_barsaentes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    shiyuzu_aolaqiuzhang: { generalId: 'shiyuzu_aolaqiuzhang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    maikelan_punong: { generalId: 'maikelan_punong', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     muertan_naxierding: { generalId: 'muertan_naxierding', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     muxikani_muxikanuosi: { generalId: 'muxikani_muxikanuosi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' },
     xindu_bahelamuhan: { generalId: 'xindu_bahelamuhan', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
