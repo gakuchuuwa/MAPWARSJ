@@ -1,5 +1,6 @@
 import L from 'leaflet';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
+import { WONDER_FOUNDED_YEAR } from '../data/wonderFoundedYears';
 import { WONDER_NAME } from '../data/WonderNames';
 import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
@@ -99,6 +100,23 @@ export class MonumentLayer {
         this.renderMonuments();
     }
 
+    /** 当前剧本年份（剧本期用于奇观建成年代闸门；乱斗期不看）。null = 无年份信息，不拦。 */
+    private scriptYear: number | null = null;
+
+    public setScriptYear(year: number | null): void {
+        this.scriptYear = year;
+        this.renderMonuments();
+    }
+
+    /** 奇观建成年代闸门：乱斗恒显示；剧本期「建成年代 ≤ 当前年份」才显示。没填年代的兜底显示。 */
+    private wonderFoundedOk(asset: string): boolean {
+        if (!isScriptPeriod()) return true;
+        if (this.scriptYear == null) return true;
+        const founded = WONDER_FOUNDED_YEAR[asset];
+        if (founded == null) return true;
+        return founded <= this.scriptYear;
+    }
+
     /** 据点显示范围变了（剧本进度 / 模式切换）→ 重画 */
     public refresh(): void {
         this.renderMonuments();
@@ -110,6 +128,8 @@ export class MonumentLayer {
         interface WonderMonument extends MonumentData { assetKey: string; }
         const wonderMonuments: WonderMonument[] = Object.entries(CITY_WONDER)
             .map(([cityId, asset]): WonderMonument | null => {
+                // 剧本期：奇观还没建成 → 不显示（挂靠据点照旧显示，只有奇观不画）
+                if (!this.wonderFoundedOk(asset)) return null;
                 const city = cityById.get(cityId);
                 if (!city) return null;
                 const wonderName = WONDER_NAME[asset] || city.name;
@@ -139,17 +159,19 @@ export class MonumentLayer {
             .flatMap(([cityId, extras]) => {
                 const city = cityById.get(cityId);
                 if (!city) return [];
-                return extras.map((ex) => ({
-                    id: `extra_${cityId}_${ex.asset}`,
-                    name: ex.name,
-                    category: ex.category ?? 'ANCIENT_WONDER',
-                    lat: ex.lat ?? city.lat,
-                    lng: ex.lng ?? city.lng,
-                    asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
-                    scale: WONDER_SCALE_OVERRIDE[ex.asset],
-                    description: ex.description,
-                    cityId,
-                }));
+                return extras
+                    .filter((ex) => this.wonderFoundedOk(ex.asset))
+                    .map((ex) => ({
+                        id: `extra_${cityId}_${ex.asset}`,
+                        name: ex.name,
+                        category: ex.category ?? 'ANCIENT_WONDER',
+                        lat: ex.lat ?? city.lat,
+                        lng: ex.lng ?? city.lng,
+                        asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
+                        scale: WONDER_SCALE_OVERRIDE[ex.asset],
+                        description: ex.description,
+                        cityId,
+                    }));
             });
 
         // [2026-08-27] 去重叠排序：正确挂靠（真实就在城市）优先落位固定；错位修正（WONDER_COORD）其次；

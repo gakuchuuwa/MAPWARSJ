@@ -378,12 +378,16 @@ export class GameApp {
                 const c = this.cityManager.getCity(cityId);
                 return !!c && this.cityManager.isCityVisible(c);
             });
+            // 🔴 [2026-09-30 主人令「给每个特殊建筑添加一个建好的年代」] 奇观建成年代闸门：剧本期按当前年份，乱斗恒 null
+            this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
             // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
                 this.cityManager.refreshCityVisibility();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
+                // 打完一场 → 当前事件年份前进 → 奇观建成年代闸门按新年份重画
+                this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
                 this.map.getMonumentLayer()?.refresh();
             });
 
