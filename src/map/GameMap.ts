@@ -692,6 +692,11 @@ export class GameMap {
                         🗺️ 原始地图 (Local)
                     </button>
 
+                    <hr style="margin:8px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
+                    <div style="font-weight:bold;margin-bottom:2px;font-size:12px;color:#666;">📍 坐标搜索</div>
+                    <input type="text" id="inp-coord-search" placeholder="lat, lng（如 37.2833, 34.7833）" style="padding:6px;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-family:inherit;font-size:12px;color:#1d3326;background:rgba(255,255,255,0.6);width:100%;box-sizing:border-box;">
+                    <button id="btn-coord-search" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">🔍 查看</button>
+
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8d4a2f;margin-top:2px;">
                         <input type="checkbox" id="chk-terrain-relief-experiment">
                         <b>⛰️ 全球山体立体浮雕</b>
@@ -1014,6 +1019,25 @@ export class GameMap {
 
             if (btnEsri) btnEsri.addEventListener('click', () => this.setMapSource('ESRI_SHADED'));
             if (btnLocal) btnLocal.addEventListener('click', () => this.setMapSource('LOCAL'));
+
+            // 📍 坐标搜索：输入 lat, lng 跳转到该处（支持逗号/空格分隔，回车或点「查看」）
+            const btnCoordSearch = document.getElementById('btn-coord-search');
+            const inpCoordSearch = document.getElementById('inp-coord-search') as HTMLInputElement | null;
+            if (btnCoordSearch && inpCoordSearch) {
+                const goCoord = () => {
+                    const raw = inpCoordSearch.value.trim();
+                    if (!raw) return;
+                    const m = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*[,，\s]\s*(-?\d+(?:\.\d+)?)\s*$/);
+                    if (!m) { alert('坐标格式不对：请输入 lat, lng（如 37.2833, 34.7833）'); return; }
+                    const lat = parseFloat(m[1]);
+                    const lng = parseFloat(m[2]);
+                    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) { alert('经纬度超出范围'); return; }
+                    const zoom = Math.max(8, this.map.getZoom());
+                    this.map.flyTo([lat, lng], zoom, { duration: 1.2 });
+                };
+                btnCoordSearch.addEventListener('click', goCoord);
+                inpCoordSearch.addEventListener('keydown', (e: any) => { if (e.key === 'Enter') goCoord(); });
+            }
 
             if (chkHillshade) {
                 chkHillshade.addEventListener('change', (e: any) => {
