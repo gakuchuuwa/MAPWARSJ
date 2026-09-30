@@ -609,6 +609,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'dasaleiti_kleitos': 'antiquity',
     'dibisi_phoinix': 'antiquity',
     'seleisi_shouling': 'antiquity',
+    'jite_shouling': 'antiquity',
     'suogediyana_arimazes': 'antiquity',
     'kesa_bulan': 'feudal',
     'ketagalan_huangqingyun': 'imperial',

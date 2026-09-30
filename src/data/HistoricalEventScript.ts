@@ -90,6 +90,50 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
     },
     {
         year: -335,
+        season: 0,                                   // 春：阿里安 I.3「海姆斯山之役后第三天」追特里巴利人至多瑙河，夜渡击吉特人
+        generalId: 'gen_alexander_great',
+        type: 'field_battle',
+        title: '公元前335年 多瑙河渡河战役',
+        description: '马其顿军大胜：海姆斯山役后亚历山大追特里巴利人至多瑙河，见北岸吉特人列阵相阻，搜罗独木舟、以皮囊填草充作浮具，连夜强渡天险；吉特人未及骑兵交火即溃散，亚历山大占领平毁其城、祭神后当天撤回南岸。本场为野战，不涉据点易主。',
+        fieldBattleData: {
+            title: '多瑙河渡河战役',
+            description: '公元前335年春，多瑙河北岸。海姆斯山一役色雷斯人溃散，亚历山大挥师北上追特里巴利人，兵锋直抵多瑙河。特里巴利残部与色雷斯人退入河心岛，北岸吉特人列阵相阻。亚历山大搜罗沿岸独木舟、以皮囊填草充作浮具，趁夜色强渡欧陆第一大河；吉特人被这神速渡河震慑，未及骑兵初次交火即溃散，先逃入城、再弃城逃入荒野。亚历山大占领平毁其城，祭宙斯、赫拉克勒斯与河神，当天撤回南岸。',
+            // 战场坐标：阿里安 I.4 记吉特人的城「离多瑙河约 1 帕拉桑（≈5.5 公里）」——德鲁斯塔尔渡口（44.12,27.26）北边，合理推定
+            location: { lat: 44.19, lng: 27.26 },
+            // 路标：自上一场落点海姆斯山战场北上，经德鲁斯塔尔（多瑙河南岸渡口）渡河至北岸吉特人的城（阿里安 I.3-4）
+            marchWaypoints: ['city_delusitaer'],
+            attackerFactionId: 'maqidun',
+            attackerGeneralId: 'gen_alexander_great',
+            attackerTroops: 23000,
+            attackerSourceCityId: 'city_plovdiv',      // 出兵据点＝军团此刻在哪：上一场海姆斯山战场，取那年离战场最近且已存在的据点（普罗夫迪夫）
+            attackerLegionName: '马其顿军',
+            defenderFactionId: 'seleisi',
+            defenderGeneralId: 'jite_shouling',
+            defenderTroops: 14000,
+            defenderLegionName: '色雷斯军',
+            result: 'attacker_win',
+            autoEnterRTS: true,
+        },
+        commanderUnit: 'hero_mounted_alexander',
+        // 对手主将队：吉特人首领（未留名，色雷斯北支）——骑马的色雷斯酋长（同海姆斯山那场，素材样貌：头盔、金胸甲、披风的色雷斯骑将）
+        foeCommanderUnit: 'hero_thracian_chieftain',
+        sources: {
+            battle: { level: 'fact', text: '阿里安《远征记》I.3-4：海姆斯山役后亚历山大追特里巴利人至多瑙河，以皮囊填草、独木舟连夜强渡，在北岸击吉特人；英文维基百科 Alexander\'s Balkan campaign 记此役为强渡多瑙河击吉特人，野战。' },
+            time: { level: 'fact', text: '阿里安《远征记》I.3：「On the third day after the battle（海姆斯山之役后第三天）Alexander reached the river Ister」，季节取春。' },
+            place: { level: 'inferred', text: '阿里安《远征记》I.4 记吉特人的城「distant about a parasang from the Ister」（离多瑙河约 1 帕拉桑 ≈ 5.5 公里）。取多瑙河下游锡利斯特拉（德鲁斯塔尔）渡口北岸一带 44.19,27.26 —— 合理推定。' },
+            attacker: { level: 'fact', text: '阿里安《远征记》I.3-4：马其顿，亚历山大亲统；命尼卡诺尔领方阵，自率骑兵居右翼。' },
+            attackerTroops: { level: 'fact', text: '阿里安《远征记》I.3 原文：渡河者「1,500 cavalry and 4,000 infantry」；本场攻方填巴尔干远征全军 23000（同海姆斯山一役，英文维基 Balkan campaign 信息框），渡河部队 5500 记于史料。' },
+            attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，前伙伴骑兵、中方阵步兵、后远程，鱼鳞阵 3-4-2；同一支军队整场战争不换。' },
+            defender: { level: 'fact', text: '阿里安《远征记》I.3：吉特人（Getae）为多瑙河北岸「信永生」的色雷斯北支部族，首领未留名 → 按主人批准称「吉特人首领」；势力套用「色雷斯」。' },
+            defenderTroops: { level: 'fact', text: '阿里安《远征记》I.3 原文：吉特人「about 4,000 cavalry and more than 10,000 infantry」，取 14000。' },
+            defenderLegion: { level: 'popular', text: '套用剧本军团「色雷斯军」（吉特为色雷斯北支，同一打法）：前色雷斯标枪手 4、中长刃斩手 3、后轻骑兵 2，雁行 4-3-2（见 scriptLegions.ts 出处）。' },
+            route: { level: 'fact', text: '阿里安《远征记》I.2-4：海姆斯山役后追特里巴利人北上，至多瑙河（伊斯特河）；特里巴利人与色雷斯人退入河心岛，亚历山大决定渡河击北岸吉特人。自海姆斯山战场经德鲁斯塔尔（多瑙河南岸渡口）渡河至北岸。' },
+            result: { level: 'fact', text: '阿里安《远征记》I.4：吉特人未及骑兵初次交火即溃散，弃城逃入荒野；亚历山大占领平毁其城、祭神后当天撤回南岸。本场为野战，不涉据点易主。' },
+            briefing: { level: 'fact', text: '阿里安《远征记》I.3-4：多瑙河为欧陆第一大河；亚历山大以皮囊填草充浮具、搜罗独木舟夜渡；吉特人列阵北岸相阻。文案不写兵力确数。' },
+        },
+    },
+    {
+        year: -335,
         season: 1,                                   // 夏：多瑙河之役后闻伊利里亚人叛，西进佩利昂（英文维基 Siege of Pelium）
         generalId: 'gen_alexander_great',
         type: 'siege',
@@ -100,14 +144,14 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '克莱图斯据佩利昂要塞死守，格劳基亚斯的援军占据周围高地；亚历山大初攻不下、被迫退到河对岸，几天后乘夜突袭，击溃伊利里亚人，克莱图斯焚城而逃。',
             // 路标：史载自多瑙河经阿格里安人之地与派奥尼亚南下至佩利昂（阿里安 I.5）。沿线重要的已有据点是**索非亚（塞尔迪卡）**——
             // 🔴 [2026-09-25 主人定「线都是连接据点的，不能横跨，必须经过重要的据点」] 故本场路标写索非亚：
-            //    军团走 上一场落点（黑穆斯山战场）→ 索非亚 → 佩利昂，即经阿格里安人之地—派奥尼亚—林基斯蒂斯那条史料道。
+            //    军团走 上一场落点（德鲁斯塔尔，多瑙河渡河战役打完撤回的南岸渡口）→ 索非亚 → 佩利昂，即经阿格里安人之地—派奥尼亚—林基斯蒂斯那条史料道。
             //    索非亚在前335 按「据点名首次出现」口径不上图，但**不显示≠不存在**，当路标合规。
-            // 🔴 95条路线清单段2核定：⚔海姆斯山 -> 德鲁斯塔尔 -> 索非亚 -> 佩拉 -> 佩利昂（特尔诺沃为中世纪据点，仅作路网物理穿行，不作起终点与挂点）
-            marchWaypoints: ['city_delusitaer', 'city_sofia'],
+            // 🔴 [2026-09-30 加多瑙河渡河战役] 德鲁斯塔尔已是上一场（多瑙河渡河）的落点，本场从德鲁斯塔尔出发，路标只写索非亚
+            marchWaypoints: ['city_sofia'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 23000,
-            attackerSourceCityId: 'city_plovdiv',   // 出兵据点＝军团此刻在哪：上一场海姆斯山战场，取那年离战场最近且已存在的据点（塞乌托波利前330 年才建）
+            attackerSourceCityId: 'city_delusitaer',   // 出兵据点＝军团此刻在哪：上一场多瑙河渡河战场（打完撤回南岸德鲁斯塔尔渡口）
             attackerLegionName: '马其顿军',
             defenderFactionId: 'dasaleiti',
             defenderGeneralId: 'dasaleiti_kleitos',

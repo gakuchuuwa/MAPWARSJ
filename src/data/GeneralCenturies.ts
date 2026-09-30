@@ -1075,6 +1075,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（前335年佩利昂围城战守帅）
     'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（前335年底比斯战役守帅）
     'seleisi_shouling':                  -4,    // 色雷斯首领 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
+    'jite_shouling':                     -4,    // 吉特人首领 · seleisi · 多瑙河渡河（前335年多瑙河渡河战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
 
     // 🔴 [2026-09-19 主人令「全删除」→「都给我删了」] 拉米亚战争那几位的战役事件已删除，人物记录暂留；
