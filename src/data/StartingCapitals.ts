@@ -1244,6 +1244,9 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'baihaliye': 'city_baihaliye',
     'kuida': 'city_kuida',
     'zhalange': 'city_zhalange',
+    'muertan': 'city_wuqi',
+    'muxikani': 'city_aluoer',
+    'xindu': 'city_kalaqi',
 };
 
 // @ts-ignore

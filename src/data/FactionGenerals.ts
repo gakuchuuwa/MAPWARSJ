@@ -1311,7 +1311,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kuida: { generalId: 'kuida_chakar', generalName: '恰卡尔', portrait: '' },
     zhalange: { generalId: 'zhalange_barsaentes', generalName: '巴尔塞恩特斯', portrait: '' },
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
-    //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。
+    //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
+    muertan: { generalId: 'muertan_naxierding', generalName: '纳西尔丁', portrait: '' },
+    muxikani: { generalId: 'muxikani_muxikanuosi', generalName: '穆西卡诺斯', portrait: '' },
+    xindu: { generalId: 'xindu_bahelamuhan', generalName: '巴赫拉姆汗', portrait: '' },
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]

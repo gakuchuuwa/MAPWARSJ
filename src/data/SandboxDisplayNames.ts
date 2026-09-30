@@ -1290,6 +1290,9 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'baihaliye': '拜哈',
     'kuida': '沙尔',
     'zhalange': '扎兰',
+    'muertan': '木尔',
+    'muxikani': '穆西',
+    'xindu': '信度',
 };
 
 // @ts-ignore

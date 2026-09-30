@@ -25,4 +25,7 @@ export const PURU_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     //    史书未载该岩守军番号 → 按史地合理推定。定级 T4「存在之兵」：崖顶守军与卫城守军，构筑地方建制守备力量。
     aornos: { name: '绝壁守兵', tier: 4 },
     malli: { name: '马利城兵', tier: 4 },
+    muertan: { name: '突厥马穆军', tier: 3 },
+    muxikani: { name: '信德象兵', tier: 3 },
+    xindu: { name: '信德长弓手', tier: 2 },
 };

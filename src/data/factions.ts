@@ -2119,6 +2119,9 @@ export const FACTIONS: Faction[] = [
     { id: 'baihaliye', name: '拜哈里耶' },
     { id: 'kuida', name: '奎达' },
     { id: 'zhalange', name: '扎兰格' },
+    { id: 'muertan', name: '木尔坦' },
+    { id: 'muxikani', name: '穆西卡尼' },
+    { id: 'xindu', name: '信度' },
 ];
 
 // @ts-ignore
