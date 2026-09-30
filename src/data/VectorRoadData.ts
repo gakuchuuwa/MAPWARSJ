@@ -65863,7 +65863,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "佩尔格-戈尔迪乌姆",
+                name: "阿斯彭杜斯-戈尔迪乌姆",
                 type: "road",
                 id: "road_city_peierge_city_geerdiweng_1790584672359",
                 startConnection: "city_peierge",
@@ -66285,7 +66285,7 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "佩尔格-哈利卡纳苏斯",
+                name: "阿斯彭杜斯-哈利卡纳苏斯",
                 type: "road",
                 id: "road_city_peierge_city_halikanasu_1790585261286",
                 startConnection: "city_peierge",
