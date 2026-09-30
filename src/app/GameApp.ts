@@ -50,6 +50,7 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor'; // [PERF]
 import { CameraFollowUI } from '../ui/CameraFollowUI'; // [NEW] 军团跟随视角
 import { ExpeditionUI } from '../ui/ExpeditionUI'; // 远征指令（GAME_DIRECTION 2026-06-11）
 import { ZoomController } from './ZoomController'; // 自动缩放控制
+import { GarrisonCityZoom } from './GarrisonCityZoom'; // 停驻放大据点
 import { ZoomPerfProbe } from '../debug/ZoomPerfProbe'; // 缩放卡顿自动采样（仅 DEV）
 import { StreamModeToggle } from '../ui/StreamModeToggle'; // 直播模式（隐藏开发 UI）
 import { initUnattendedStream } from './UnattendedStream'; // 无人值守直播（?stream=1）
@@ -139,6 +140,7 @@ export class GameApp {
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
     public expeditionUI!: ExpeditionUI; // 远征指令（仅跟拍军团，兵力≥5万解锁）
     public zoomController!: ZoomController; // 自动缩放（规则见 ZoomController 文件头）
+    public garrisonCityZoom!: GarrisonCityZoom; // 跟拍军团停驻据点时放大据点（见 GarrisonCityZoom 文件头）
     public tacticalModeEnabled: boolean = true; // 是否进入战术模式（zoom13 微观战斗），调试面板开关
     public audioManager: AudioManager = audioManager;
     public saveManager!: GameSaveManager; // 世界存档（跨天续摊）
@@ -756,6 +758,8 @@ export class GameApp {
                 // 镜头交给玩家。⚠️ 只关规则 1 —— 规则 5「行军 15 秒 → 9/10」仍要生效。
                 return this.cameraFollowUI.isFollowingPlayer();
             });
+
+            this.garrisonCityZoom = new GarrisonCityZoom(this.cityManager);
 
             // [诊断] 缩放卡顿自动采样（仅 DEV）：每次缩放落盘 scratch/zoom_perf_latest.json，
             // 免得排查时还要主人在控制台敲命令。不改变任何游戏行为。

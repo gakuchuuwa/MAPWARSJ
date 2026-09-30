@@ -61,6 +61,8 @@ export function waterToneAt(x: number, y: number): number {
 export interface WaterTileMask {
     id: number; width: number; height: number; x: number; y: number; z: number;
     mask: Uint8Array;
+    /** 该像素高程 < 0（海底）。取到才有；没取到（null/undefined）则水面一律不透明 */
+    deep?: Uint8Array | null;
 }
 
 /** 邻接瓦片只提供真实水域掩膜，不改变海陆判定。 */
@@ -114,7 +116,12 @@ export function renderStrategicWater(
         out[o+2] = base[2] + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;
         // 🔴 [2026-09-30 血训] 曾把离岸 16 像素外的水面改透明想透出下层海深 —— 结果内陆湖（下层不画湖水）整片变空，
         //    只剩一圈蓝边。这一层分不清湖和海，水面一律不透明，不许再改透明。
-        if (water[i]) out[o+3] = 255;
+        // [2026-10-01 主人批准试] 只有「高程 < 0」的水面（海底）才允许透明：下层恰好只在高程 < 0 处画水深，两边判据一致。
+        //    湖、河、高处的水、没取到高程的水面一律不透明。河口/死海/里海都按高程判，不靠「连通外海」。
+        if (water[i]) {
+            const isDeep = !!tile.deep && tile.deep[y * w + x] === 1;
+            out[o+3] = isDeep ? Math.round(255 * Math.max(0, Math.min(1, (16 - distance[i]) / 10))) : 255;
+        }
         else {
             const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
             out[o+3] = Math.round(coverage * 0.18 * 255);

@@ -11,8 +11,8 @@ export const CITY_MARKER_SIZE_SMALL_CLASS = 'city-icon--size-small';
 
 /** 平时据点建筑图宽（px）：大 140 / 中 120 / 小与关 100 —— 攻城统一放大不改此表 */
 export const CITY_MARKER_BASE_WIDTH_BY_TYPE: Readonly<Record<string, number>> = {
-    big_city: 140,
-    medium_city: 120,
+    big_city: 120,     // 2026-10-01 主人定：原 140
+    medium_city: 110,  // 2026-10-01 主人定：原 120
     small_city: 100,
     stockade: 100,   // 城寨与小城/关隘同档
     pass: 100,
