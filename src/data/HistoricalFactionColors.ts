@@ -795,6 +795,7 @@ const _FIXED: Record<string, string> = {
     'pangzha': '#B58A28',
     'saerbadaer': '#386B48',
     'kumisi': '#884058',
+    'shahelude': '#7A3A50', // 沙赫鲁德·比斯塔姆（帕提亚复兴深绛）
     'ribale': '#784028',
     'safawei': '#1B5E83',
     'yilihanguo': '#A83020',
@@ -1191,7 +1192,8 @@ const _FIXED: Record<string, string> = {
     'ameng': '#C2A25A',
     'eerbulushi': '#6E6A5A', // 里海门
     'aliya': '#8A6E4B', // 赫拉特
-    'xuliya': '#9A7B4F', // 叙利亚·塔普萨库斯（幼发拉底河谷·褐）
+    'xuliya': '#9A7B4F', // 叙利亚·塔普萨库斯（幼发拉底河谷·褐）
+
 
     'sute': '#181868', // 粟特·诺塔卡（粟特绿洲土黄）
     'xinde': '#1818A0', // 信德

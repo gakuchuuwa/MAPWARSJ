@@ -164,6 +164,15 @@ export function prefetchEntrySea(from: P): void {
 }
 
 export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> | null {
+    // 🔴 [2026-09-30 主人令「那你到是用呀」] 相邻两个路标若是**直接连着的一条路**，就走这条路（不让最短路绕开主人画的直连路）。
+    const fromId = roadRegistry.getNearestCityId(from.lat, from.lng, 0.02);
+    const toId = roadRegistry.getNearestCityId(to.lat, to.lng, 0.02);
+    if (fromId && toId && fromId !== toId) {
+        const direct = roadRegistry.findDirectEdgePath(fromId, toId);
+        if (direct && direct.coordinates.length >= 2) {
+            return direct.coordinates.map(([lng, lat], i) => ({ lat, lng, sea: direct.seaFlags[i] }));
+        }
+    }
     let best = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
     if (best && best.length >= 2 && straightCrossesSea(from, best[1])) best = null;
     // 入路那一步直行了多远：超过 40 公里就不认这条路（与末段同一道闸）

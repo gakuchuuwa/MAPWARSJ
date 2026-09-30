@@ -15,7 +15,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
 
     // ── T2 特色之兵 ──
     sashan: { name: '萨瓦兰铁骑', tier: 2 },
-    hekaniya: { name: '赫卡尼亚骑', tier: 2 },        // 菲鲁扎巴德·萨珊：铁甲重骑兵（波斯铁甲圣骑）
+    hekaniya: { name: '赫卡尼亚骑', tier: 2 },        // 赫卡尼亚·兹拉卡塔：里海东南波斯骑兵
     safawei_d: { name: '红头军', tier: 2 },         // 伊斯法罕·萨法维：土库曼精锐骑兵（奇兹尔巴什）
     ansxi: { name: '帕提亚铁骑', tier: 2 },         // 尼萨·安息：铁甲重骑兵
     seljuq: { name: '古拉姆', tier: 2 },        // 木鹿·塞尔柱：突厥近卫
@@ -41,7 +41,7 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     // ── T3 风土之兵 ──
     midi: { name: '米底骑射', tier: 3 },            // 哈马丹·米底：米底骑兵
     muer: { name: '呼罗珊重骑', tier: 3 },          // 马尔夫鲁德·呼罗珊：大呼罗珊重骑
-    huluo: { name: '古尔重骑', tier: 3 },           // 菲鲁兹库赫·古尔：古尔王朝重骑
+    huluo: { name: '古尔重骑', tier: 1 },           // 菲鲁兹库赫·古尔：古尔王朝重骑（塔拉因战役征服北印度的战略主力）
     jiazini: { name: '伽色尼亲兵', tier: 3 },       // 哥疾宁·伽色尼：突厥奴隶兵（马穆鲁克）
     safawei: { name: '吉兰义军', tier: 3 },         // 加兹温·吉兰：里海南岸萨法维起源地
     yilihanguo: { name: '阿杰姆卫队', tier: 3 },    // 赞詹·阿杰姆
@@ -67,4 +67,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     yisatisi: { name: '圣火卫', tier: 3 },
     kuida: { name: '奎达精骑', tier: 3 },          // 奎达·恰卡尔：波兰山口骑军
     zhalange: { name: '扎兰突骑', tier: 3 },        // 扎兰格·巴尔塞恩特斯：德兰吉亚绿洲突骑
+    shahelude: { name: '帕提亚重骑', tier: 1 },      // 沙赫鲁德·比斯塔姆：维斯塔姆帕提亚具装重骑
 };

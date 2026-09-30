@@ -1056,6 +1056,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'xingwei': '兴威',
     'saerbadaer': '萨尔',
     'kumisi': '库米',
+    'shahelude': '沙赫',
 'ribale': '日巴',
 'safawei': '吉兰',
 'yilihanguo': '阿杰',
@@ -1270,7 +1271,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'ameng': '阿蒙',
     'eerbulushi': '厄尔',
     'aliya': '阿利',
-    'xuliya': '叙利',
+    'xuliya': '叙利',
+
 
     'sute': '粟特',
     'xinde': '信德',

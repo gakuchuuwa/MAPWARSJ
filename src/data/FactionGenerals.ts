@@ -1077,6 +1077,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xingwei: { generalId: 'xingwei_hanba', generalName: '罕拔', portrait: '/assets/DIANQIAN/xingwei_hanba.png' },
     saerbadaer: { generalId: 'saerbadaer_lazhake', generalName: '拉扎克', portrait: '/assets/CENTRAL_ASIA/saerbadaer_lazhake.png' },
     kumisi: { generalId: 'kumisi_aerpu', generalName: '阿尔普', portrait: '/assets/CENTRAL_ASIA/kumisi_aerpu.png' },
+    shahelude: { generalId: 'shahelude_weisitamu', generalName: '维斯塔姆', portrait: '' },
     ribale: { generalId: 'ribale_faheerdaolai', generalName: '法赫尔道莱', portrait: '/assets/CENTRAL_ASIA/ribale_faheerdaolai.png' },
     safawei: { generalId: 'safawei_aisimaier', generalName: '艾斯迈尔', portrait: '/assets/CENTRAL_ASIA/safawei_aisimaier.png' },
     yilihanguo: { generalId: 'yilihanguo_yisimeier', generalName: '伊斯梅尔', portrait: '/assets/CENTRAL_ASIA/yilihanguo_yisimeier.png' },
@@ -1285,14 +1286,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
-        hesitiya: { generalId: 'hesitiya_akiyasi', generalName: '阿基亚斯', portrait: '' },
-        hekaniya: { generalId: 'hekaniya_artabazos', generalName: '阿尔塔巴佐斯', portrait: '' },
+    hesitiya: { generalId: 'hesitiya_yiasong', generalName: '伊阿宋', portrait: '' },
+    hekaniya: { generalId: 'hekaniya_artabazos', generalName: '阿尔塔巴佐斯', portrait: '' },
     kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
     maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
     ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },
     eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '' },   // 里海门守将（立绘留空走回落）
     aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '' },   // 赫拉特守将（立绘留空走回落）
-    xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+    xuliya: { generalId: 'xuliya_shoujiang', generalName: '渡口守将', portrait: '' },   // 塔普萨库斯（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+
 
     sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）
     xinde: { generalId: 'xinde_patalawang', generalName: '帕塔拉王', portrait: '' },   // 帕塔拉

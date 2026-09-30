@@ -944,7 +944,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'jilizhou': 'city_beishacheng',
     'nuergan': 'city_nuergan',
     'kepantuo': 'city_gongzhubao',
-'xingxingxia': 'city_xingxingxia',
+'xingxingxia': 'city_xingxingxia',
+
 
     'sute': 'city_nuotaka',
     'xinde': 'city_patala',
@@ -1026,6 +1027,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'xingwei': 'city_mubang',
     'saerbadaer': 'city_baihage',
     'kumisi': 'city_damugan',
+    'shahelude': 'city_bistam',
 'ribale': 'city_leiyi',
 'safawei': 'city_jiaziwen',
 'yilihanguo': 'city_zanzhan',
@@ -1229,6 +1231,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'kanan': 'city_tuile',
     'feilisidin': 'city_jiasa',
     'dasaleiti': 'city_peiliang',
+    'hesitiya': 'city_pelina',
+    'hekaniya': 'city_zilakata',
     'kapaduoxiya': 'city_tiyana',
     'maermajika': 'city_matelugang',
     'ameng': 'city_xiwa',
