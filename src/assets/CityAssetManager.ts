@@ -1051,6 +1051,8 @@ export class CityAssetManager {
         'baihaliye': '拜哈',
         'kuida': '沙尔',
         'zhalange': '扎兰',
+        'maikelan': '麦克',
+        'shiyuzu': '食鱼',
         'muertan': '木尔',
         'muxikani': '穆西',
         'xindu': '信度',

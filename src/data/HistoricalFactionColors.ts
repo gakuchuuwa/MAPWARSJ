@@ -1199,6 +1199,7 @@ const _FIXED: Record<string, string> = {
     'xinde': '#1818A0', // 信德
     'jiduoluoxiya': '#6E5A46', // 吉德罗西亚·普拉（荒漠褐）
     'aolitai': '#5F7A6A', // 奥里泰·兰巴基亚（海岸灰绿）
+    'shiyuzu': '#4A6B8A', // 食鱼族·奥拉（海岸蓝灰）
     'kamanniyaxingsheng': '#2828D0', // 卡曼尼亚行省（荒漠绿洲）
     'keerman': '#289FD7', // 克尔曼·锡尔詹（山前旱原）
     'zhageluosi': '#28B252', // 扎格罗斯·呼勒万（山岩灰）
@@ -1209,6 +1210,7 @@ const _FIXED: Record<string, string> = {
     'baihaliye': '#BA8518', // 拜哈里耶·绿洲（沙漠金赭）
     'kuida': '#8B4513', // 奎达·波兰山口（高地褐）
     'zhalange': '#7E5238', // 扎兰格·哈蒙湿地（红土赭褐）
+    'maikelan': '#8A7A4A', // 麦克兰·特尔巴特（荒漠沙黄）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

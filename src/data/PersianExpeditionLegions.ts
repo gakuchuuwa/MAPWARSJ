@@ -68,4 +68,5 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     kuida: { name: '奎达精骑', tier: 3 },          // 奎达·恰卡尔：波兰山口骑军
     zhalange: { name: '扎兰突骑', tier: 3 },        // 扎兰格·巴尔塞恩特斯：德兰吉亚绿洲突骑
     shahelude: { name: '帕提亚重骑', tier: 1 },      // 沙赫鲁德·比斯塔姆：维斯塔姆帕提亚具装重骑
+    maikelan: { name: '麦克兰骆骑', tier: 3 },       // 特尔巴特·麦克兰：凯奇河谷骆驼轻骑
 };

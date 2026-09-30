@@ -992,7 +992,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 出发地＝军团此刻在哪＝上一场落点（马里斯，攻城战＝那座城）
             // 史料：自印度西返，经格德罗西亚与波斯腹地，前324年冬自米底南下回巴比伦时穿科塞亚境
             // 沿格德罗西亚海岸西行：马里斯 → 帕塔拉 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯 → 苏萨 → 巴比伦 → 呼勒万（札格罗斯山门） → 哈马丹 → 科塞亚
-            marchWaypoints: ['city_patala', 'city_lanbaqiya', 'city_pula', 'city_kamanniya', 'city_bosibolisi', 'city_susa', 'city_hulewan', 'city_hamadan'],   // 🔴 [2026-09-28 改线] 亚历山大本人走的是**格德罗西亚沿海**（帕塔拉＝印度河三角洲 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯），原来那条「坎大哈 → 法拉 → 巴姆」是克拉特鲁斯走的北路（阿拉霍西亚—德兰吉亚那），不是主角这一路。
+            marchWaypoints: ['city_wuqi', 'city_aluoer', 'city_patala', 'city_lanbaqiya', 'city_teerbate', 'city_pula', 'city_kamanniya', 'city_bosibolisi', 'city_susa', 'city_hulewan', 'city_hamadan'],   // 🔴 [2026-09-28 改线] 亚历山大本人走的是**格德罗西亚沿海**（帕塔拉＝印度河三角洲 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯），原来那条「坎大哈 → 法拉 → 巴姆」是克拉特鲁斯走的北路（阿拉霍西亚—德兰吉亚那），不是主角这一路。
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 12000,

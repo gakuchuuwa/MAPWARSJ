@@ -2109,6 +2109,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xinde', name: '信德' },
     { id: 'jiduoluoxiya', name: '吉德罗西亚' },   // 普拉（行省首府）势力
     { id: 'aolitai', name: '奥里泰' },   // 兰巴基亚（奥里泰部落）势力
+    { id: 'shiyuzu', name: '食鱼族' },   // 奥拉（欣戈尔河口食鱼族）势力
     { id: 'kamanniyaxingsheng', name: '卡曼尼亚行省' },   // 卡曼尼亚（会师与审判地）势力
     { id: 'keerman', name: '克尔曼' },   // 锡尔詹（山前走廊中继点）势力
     { id: 'zhageluosi', name: '扎格罗斯' },   // 呼勒万（隘口）势力
@@ -2119,6 +2120,7 @@ export const FACTIONS: Faction[] = [
     { id: 'baihaliye', name: '拜哈里耶' },
     { id: 'kuida', name: '奎达' },
     { id: 'zhalange', name: '扎兰格' },
+    { id: 'maikelan', name: '麦克兰' },   // 特尔巴特（凯奇王国/麦克兰邦国）势力
     { id: 'muertan', name: '木尔坦' },
     { id: 'muxikani', name: '穆西卡尼' },
     { id: 'xindu', name: '信度' },

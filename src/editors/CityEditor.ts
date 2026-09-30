@@ -256,7 +256,7 @@ export class CityEditor implements IEditor {
             </div>
 
             <!-- 辅助功能 -->
-            <button type="button" id="ce-audit-proximity" style="width: 100%; background: #455A64; color: white; border: none; padding: 8px; cursor: pointer; margin-top: 8px;">📏 全图间距检查 (&lt;50km)</button>
+            <button type="button" id="ce-audit-proximity" style="width: 100%; background: #455A64; color: white; border: none; padding: 8px; cursor: pointer; margin-top: 8px;">📏 全图间距检查 (&lt;40km)</button>
             <div id="ce-proximity-audit" style="display: none; margin-top: 8px; padding: 8px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; font-size: 11px; line-height: 1.5; max-height: 220px; overflow-y: auto;"></div>
             <button type="button" id="ce-copy-code" style="width: 100%; background: #9C27B0; color: white; border: none; padding: 8px; cursor: pointer; margin-top: 8px;">📋 复制代码到剪贴板</button>
 
@@ -607,7 +607,7 @@ export class CityEditor implements IEditor {
         }
 
         // Copy Code
-        // [NEW] 全图 <50km 间距审计
+        // [NEW] 全图 <40km 间距审计
         const auditBtn = this.container.querySelector('#ce-audit-proximity') as HTMLButtonElement;
         if (auditBtn) {
             auditBtn.onclick = (e) => {
@@ -816,7 +816,7 @@ export class CityEditor implements IEditor {
     private checkProximity(lat: number, lng: number, el: HTMLElement | null): void {
         if (!el) return;
         const allCities = this.cityManager.getCities();
-        const MIN_KM = 50;
+        const MIN_KM = 40;
         const BOX_DEG = 0.6; // 大约 60-70km 的纬度差，足以覆盖 50km
 
         const tooClose: Array<{ city: any; km: number }> = [];
@@ -837,7 +837,7 @@ export class CityEditor implements IEditor {
         }
 
         if (tooClose.length === 0) {
-            el.innerHTML = '<span style="color:#81C784">✓ 周围 50km 内无其他据点</span>';
+            el.innerHTML = '<span style="color:#81C784">✓ 周围 40km 内无其他据点</span>';
             return;
         }
 
@@ -847,7 +847,7 @@ export class CityEditor implements IEditor {
         const more = tooClose.length > 3 ? ` (还有 ${tooClose.length - 3} 个)` : '';
         const lines = top.map(t => `  • <b>${t.city.name}</b> (${t.city.id}) — ${t.km.toFixed(1)} km`);
         el.innerHTML =
-            `<span style="color:#FF5252">⚠ 距离过近 (规范要求 ≥50km):</span>${more}<br>` +
+            `<span style="color:#FF5252">⚠ 距离过近 (规范要求 ≥40km):</span>${more}<br>` +
             lines.join('<br>') +
             `<br><span style="color:#999">如真实地理上无法兼容，应删除名气较小的那个；不要硬拉坐标。</span>`;
     }
@@ -859,7 +859,7 @@ export class CityEditor implements IEditor {
     }
 
     /** 全图两两 Haversine，返回所有 < minKm 的据点对的唯一列表（i<j 去重） */
-    private findAllProximityConflicts(minKm: number = 50): Array<{ km: number; a: City; b: City }> {
+    private findAllProximityConflicts(minKm: number = 40): Array<{ km: number; a: City; b: City }> {
         const cities = this.cityManager.getCities();
         const MIN_KM = minKm;
         const BOX_DEG = 0.6;
@@ -882,21 +882,21 @@ export class CityEditor implements IEditor {
         return pairs;
     }
 
-    /** 全图间距审计：列出所有 <50km 的据点对，点击可定位 */
+    /** 全图间距审计：列出所有 <40km 的据点对，点击可定位 */
     private runGlobalProximityAudit(): void {
         const panel = this.container?.querySelector('#ce-proximity-audit') as HTMLElement | null;
         if (!panel) return;
 
-        const pairs = this.findAllProximityConflicts(50);
+        const pairs = this.findAllProximityConflicts(40);
         panel.style.display = 'block';
 
         if (pairs.length === 0) {
-            panel.innerHTML = `<div style="color:#81C784;font-weight:bold;">✓ 全图 ${this.cityManager.getCities().length} 个据点，无 &lt;50km 冲突</div>`;
+            panel.innerHTML = `<div style="color:#81C784;font-weight:bold;">✓ 全图 ${this.cityManager.getCities().length} 个据点，无 &lt;40km 冲突</div>`;
             this.setStatus('间距检查完成：无冲突');
             return;
         }
 
-        const header = `<div style="color:#FF5252;font-weight:bold;margin-bottom:6px;">⚠ ${pairs.length} 对 &lt;50km（规范 ≥50km）</div>`;
+        const header = `<div style="color:#FF5252;font-weight:bold;margin-bottom:6px;">⚠ ${pairs.length} 对 &lt;40km（规范 ≥40km）</div>`;
         const rows = pairs.map((p, idx) => {
             const flagA = this.getFlagLabel(p.a.factionId);
             const flagB = this.getFlagLabel(p.b.factionId);

@@ -1300,6 +1300,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xinde: { generalId: 'xinde_patalawang', generalName: '帕塔拉王', portrait: '' },   // 帕塔拉
     jiduoluoxiya: { generalId: 'jiduoluoxiya_xibiertiwusi', generalName: '西比尔提乌斯', portrait: '' },   // 普拉（亚历山大任命的吉德罗西亚总督，阿里安 VI.27）
     aolitai: { generalId: 'aolitai_shouling', generalName: '奥里泰首领', portrait: '' },   // 兰巴基亚（史料未留名，以族名首领称之）
+    shiyuzu: { generalId: 'shiyuzu_aolaqiuzhang', generalName: '奥拉酋长', portrait: '' },  // 奥拉（食鱼族酋长，前325年阻截尼阿库斯舰队）
     kamanniyaxingsheng: { generalId: 'kamanniya_zongdu', generalName: '卡曼尼亚总督', portrait: '' },   // 卡曼尼亚（史料未留名，以职名）
     keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '锡尔詹守将', portrait: '' },   // 
     zhageluosi: { generalId: 'zhageluosi_guanjiang', generalName: '扎格罗斯门守将', portrait: '' },   // 
@@ -1310,6 +1311,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     baihaliye: { generalId: 'baihaliye_djedkhonsu', generalName: '杰德孔苏', portrait: '' },
     kuida: { generalId: 'kuida_chakar', generalName: '恰卡尔', portrait: '' },
     zhalange: { generalId: 'zhalange_barsaentes', generalName: '巴尔塞恩特斯', portrait: '' },
+    maikelan: { generalId: 'maikelan_punong', generalName: '普农', portrait: '' },   // 特尔巴特（霍特氏族传奇首领，普纳古堡镇守者）
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     muertan: { generalId: 'muertan_naxierding', generalName: '纳西尔丁', portrait: '' },

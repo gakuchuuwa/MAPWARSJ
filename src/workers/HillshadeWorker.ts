@@ -687,7 +687,7 @@ function renderHillshade(
     const texBch = tex.bch, texBc2 = tex.bc2;
     const texSno = tex.sno, texSnf = tex.snf, texSnd = tex.snd;
     const texIce = tex.ice, texIc2 = tex.ic2;
-    const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texSha = tex.sha;
+    const texWt4 = tex.wt4, texWt2 = tex.wt2, texWt3 = tex.wt3, texWt5 = tex.wt5, texWtr = tex.wtr, texSha = tex.sha;
     const texDes = tex.des, texPm2 = tex.pm2, texPc1 = tex.pc1, texPc2 = tex.pc2;
     const texGr4 = tex.gr4, texDs5 = tex.ds5, texGr2 = tex.gr2, texGrs = tex.grs;
     /** 取一张规则贴图在像素 p 的颜色（A/B 两套地理取样按交替权重混合），写入 TX */
@@ -1065,13 +1065,16 @@ function renderHillshade(
                     let wr = TX[0], wg = TX[1], wb = TX[2];
                     const deepW = rampWorker(depth, 300, 2500);
                     if (deepW > 0 && sampleTex(texWt4, p)) { wr += (TX[0] - wr) * deepW; wg += (TX[1] - wg) * deepW; wb += (TX[2] - wb) * deepW; }
+                    // 🔴 [2026-09-30 主人报「黑海岸边一片平色」] 温带浅海原用 wt3（24,82,127），与近海 wt2（26,66,108）只差一点、再被 55% 冲淡，
+                    //    浅大陆架（瓦尔纳外 60 公里 5~50 米）画不出来 → 温带浅海改用 wtr（33,119,162），叠加比例按浅度提到 80%。
                     const shallowW = 1 - rampWorker(depth, 20, 250);
-                    if (shallowW > 0 && sampleTex(tropical ? texWt5 : texWt3, p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
+                    if (shallowW > 0 && sampleTex(tropical ? texWt5 : (texWtr ?? texWt3), p)) { wr += (TX[0] - wr) * shallowW; wg += (TX[1] - wg) * shallowW; wb += (TX[2] - wb) * shallowW; }
                     const reefW = tropical && depth < 40 ? (1 - rampWorker(depth, 15, 40)) * rampWorker(matPatch![p], 0.5, 0.75) * 0.5 : 0;
                     if (reefW > 0 && sampleTex(texSha, p)) { wr += (TX[0] - wr) * reefW; wg += (TX[1] - wg) * reefW; wb += (TX[2] - wb) * reefW; }
                     const iceW = rampWorker(absLat, 76, 82) * 0.85;
                     if (iceW > 0 && mix2(texIce, 1 - matPatch![p], texIc2, matPatch![p], p)) { wr += (TX[0] - wr) * iceW; wg += (TX[1] - wg) * iceW; wb += (TX[2] - wb) * iceW; }
-                    r += (wr - r) * 0.55; g += (wg - g) * 0.55; b += (wb - b) * 0.55;
+                    const seaMix = 0.55 + 0.25 * shallowW;   // 浅海贴图压得更实，深海维持原 55%
+                    r += (wr - r) * seaMix; g += (wg - g) * seaMix; b += (wb - b) * seaMix;
                 }
 
                 // [NILE-ALLUVIAL] 尼罗河谷与三角洲冲积黑土壤土层试验 (ZOOM 9 专用)
