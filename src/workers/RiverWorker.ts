@@ -1,4 +1,5 @@
 import { isWaterPixel } from '../world/land-sea/WaterMask';
+import { TERRARIUM_TILE_URL } from '../world/land-sea/TerrariumCodec';
 import { loadStrategicWaterTexture, renderStrategicWater, type WaterTileMask } from '../map/StrategicWaterMaterial';
 
 export interface RiverWorkerRequest {
@@ -29,7 +30,7 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
     for (let i = 0; i < mask.length; i++) {
         mask[i] = isWaterPixel(pixels[i*4], pixels[i*4+1], pixels[i*4+2]) ? 1 : 0;
     }
-    const tile = { id, width, height, x, y, z, mask };
+    const tile: WaterTileMask = { id, width, height, x, y, z, mask };
     tiles.set(keyOf(tile), tile);
     const texture = await loadStrategicWaterTexture();
     if (tiles.get(keyOf(tile)) !== tile) return;
@@ -44,4 +45,35 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
             : new Uint8ClampedArray(width * height * 4);
         self.postMessage({ id: neighbor.id, data }, [data.buffer] as any);
     }
+
+    // 高程晚到：取到后只重画本块（水面在高程 < 0 处才透明，见 renderStrategicWater）；失败就保持不透明
+    if (!tile.deep && mask.some(v => v !== 0)) {
+        const deep = await fetchDeep(x, y, z, width, height);
+        if (!deep || tiles.get(keyOf(tile)) !== tile) return;
+        tile.deep = deep;
+        const data = renderStrategicWater(tile, tiles, texture);
+        self.postMessage({ id, data }, [data.buffer] as any);
+    }
 };
+
+/** 取同 z/x/y 的 Terrarium 高程瓦片，返回「高程 < 0」逐像素标记；任何失败返回 null */
+async function fetchDeep(x: number, y: number, z: number, width: number, height: number): Promise<Uint8Array | null> {
+    if (z > 12) return null;
+    try {
+        const url = TERRARIUM_TILE_URL.replace('{z}', String(z)).replace('{x}', String(x)).replace('{y}', String(y));
+        const resp = await fetch(url, { mode: 'cors', signal: AbortSignal.timeout(6000) });
+        if (!resp.ok) return null;
+        const bmp = await createImageBitmap(await resp.blob());
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) { bmp.close(); return null; }
+        ctx.drawImage(bmp, 0, 0, width, height);
+        bmp.close();
+        const px = ctx.getImageData(0, 0, width, height).data;
+        const deep = new Uint8Array(width * height);
+        for (let i = 0; i < deep.length; i++) deep[i] = px[i * 4] < 128 ? 1 : 0;   // Terrarium：r < 128 ⟺ 高程 < 0
+        return deep;
+    } catch {
+        return null;
+    }
+}

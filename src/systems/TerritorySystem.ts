@@ -564,9 +564,9 @@ function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeG
  */
 function getCitySiegeBaseSize(cityType: string): number {
     switch (cityType) {
-        case 'big_city': return 140;
-        case 'medium_city':
-        case 'pass': return 120;      // 险要与中城同档
+        case 'big_city': return 120;      // 2026-10-01 主人定：大城 140→120（ZOOM9）
+        case 'medium_city': return 110;   // 2026-10-01 主人定：中城 120→110（ZOOM9）
+        case 'pass': return 120;          // 险要维持原 120
         case 'stockade': return 80;   // 城寨最小
         case 'small_city':
         default: return 100;
@@ -2167,10 +2167,12 @@ export class TerritorySystem {
         let baseSize = 100;
         switch (city.type) {
             case 'big_city':
-                baseSize = 140;
+                baseSize = 120;      // 2026-10-01 主人定：大城 140→120（ZOOM9）
                 break;
             case 'medium_city':
-            case 'pass':         // 险要与中城同档（其次）
+                baseSize = 110;      // 2026-10-01 主人定：中城 120→110（ZOOM9）
+                break;
+            case 'pass':             // 险要维持原 120
                 baseSize = 120;
                 break;
             case 'small_city':
@@ -2585,6 +2587,14 @@ export class TerritorySystem {
         } else {
             root.classList.remove('city-under-siege');
         }
+    }
+
+    /** 跟拍军团停驻时据点建筑放大（class city-garrisoned，与攻城放大互不相干）；marker 不存在时不做事 */
+    public setCityGarrisonZoom(cityId: string, enabled: boolean): void {
+        const root = this.cityMarkers.get(cityId)?.getElement()?.querySelector('.city-image-container');
+        if (!root) return;
+        if (enabled) root.classList.add('city-garrisoned');
+        else root.classList.remove('city-garrisoned');
     }
 
     /** 该据点是否处于攻城建筑放大态（仅跟拍军团参战那场会开） */

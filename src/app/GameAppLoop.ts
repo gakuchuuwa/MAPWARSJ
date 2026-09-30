@@ -560,6 +560,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 // 镜头完全交给玩家手动控制，除非玩家自己操作。开启时行为保持不变。
                 const autoCtrl = app.zoomController.enabled;
                 if (autoCtrl) app.zoomController.tick();
+                app.garrisonCityZoom?.tick(followedArmy, !!sceneActive);
 
                 if (!sceneActive) {
                     if (!autoCtrl) {
