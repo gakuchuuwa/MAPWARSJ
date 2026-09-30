@@ -4,6 +4,8 @@ const SIZE = 128;
 export const STRATEGIC_WATER_PALETTE = {
     base: [64, 117, 141] as const,
     shoreLift: [24, 35, 27] as const,
+    /** 深海色：水深越大越接近它（见 RiverWorker 的 depthT；湖、河、高处的水深度为 0，保持 base） */
+    deep: [24, 58, 88] as const,
 };
 export const STRATEGIC_WATER_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.join(',')})`;
 export const STRATEGIC_RIVER_BANK_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(
@@ -61,8 +63,11 @@ export function waterToneAt(x: number, y: number): number {
 export interface WaterTileMask {
     id: number; width: number; height: number; x: number; y: number; z: number;
     mask: Uint8Array;
-    /** 该像素高程 < 0（海底）。取到才有；没取到（null/undefined）则水面一律不透明 */
-    deep?: Uint8Array | null;
+    /**
+     * 逐像素水深权重 0..1（0 = 浅/湖/河，1 = 深海）。由 RiverWorker 从**同一张粗级（z6）高程**双线性采样得出，
+     * 全图每块用同一份数据、同一种算法 → 块与块之间天然连续，没有「这块深、那块浅」的方块。取不到为 null → 平色。
+     */
+    depthT?: Float32Array | null;
 }
 
 /** 邻接瓦片只提供真实水域掩膜，不改变海陆判定。 */
@@ -97,7 +102,8 @@ export function renderStrategicWater(
             distance[i+pw-1]+Math.SQRT2, distance[i+pw+1]+Math.SQRT2);
     }
     const out = new Uint8ClampedArray(w * h * 4);
-    const { base, shoreLift } = STRATEGIC_WATER_PALETTE;
+    const { base, shoreLift, deep } = STRATEGIC_WATER_PALETTE;
+    const depthT = tile.depthT ?? null;
     for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
         const i = (y + pad) * pw + x + pad, o = (y * w + x) * 4;
         const wx = tile.x * w + x, wy = tile.y * h + y;
@@ -111,17 +117,21 @@ export function renderStrategicWater(
         // 浪花仅少量点缀岸边，不连续描白边。
         const glint = water[i] && distance[i] < 1.5
             ? Math.max(0, Math.sin(wx / 7 + Math.sin(wy / 11)) - 0.65) * 38 : 0;
-        out[o] = base[0] + tone * 0.8 + grain * 0.70 + shore * shoreLift[0] + glint;
-        out[o+1] = base[1] + tone * 1.3 + grain + shore * shoreLift[1] + glint;
-        out[o+2] = base[2] + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;
+        // 水深上色：河流层自己画深浅（不靠透明透出下层），湖/河/高处的水 depthT=0 → 与原来同色
+        const d = depthT ? depthT[y * w + x] : 0;
+        const b0 = base[0] + (deep[0] - base[0]) * d;
+        const b1 = base[1] + (deep[1] - base[1]) * d;
+        const b2 = base[2] + (deep[2] - base[2]) * d;
+        out[o] = b0 + tone * 0.8 + grain * 0.70 + shore * shoreLift[0] + glint;
+        out[o+1] = b1 + tone * 1.3 + grain + shore * shoreLift[1] + glint;
+        out[o+2] = b2 + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;
         // 🔴 [2026-09-30 血训] 曾把离岸 16 像素外的水面改透明想透出下层海深 —— 结果内陆湖（下层不画湖水）整片变空，
         //    只剩一圈蓝边。这一层分不清湖和海，水面一律不透明，不许再改透明。
         // [2026-10-01 主人批准试] 只有「高程 < 0」的水面（海底）才允许透明：下层恰好只在高程 < 0 处画水深，两边判据一致。
         //    湖、河、高处的水、没取到高程的水面一律不透明。河口/死海/里海都按高程判，不靠「连通外海」。
-        if (water[i]) {
-            const isDeep = !!tile.deep && tile.deep[y * w + x] === 1;
-            out[o+3] = isDeep ? Math.round(255 * Math.max(0, Math.min(1, (16 - distance[i]) / 10))) : 255;
-        }
+        // [2026-10-01 已撤回] 试过「高程<0 才透明」：同一片海里有的瓦片透明、有的不透明（高程瓦片/下层到得不一样快），
+        //    出现方块状刷不出的区域。水面一律不透明，不许再试透明。
+        if (water[i]) out[o+3] = 255;
         else {
             const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
             out[o+3] = Math.round(coverage * 0.18 * 255);
