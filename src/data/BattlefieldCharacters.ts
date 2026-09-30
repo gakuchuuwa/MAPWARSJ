@@ -105,6 +105,14 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portraitProposedPath: '/assets/THRACIAN/seleisi_shouling.png',
         note: '海姆斯山上据守山脊的「自治色雷斯人」的首领。史料（英文维基百科 Balkan campaign of Alexander the Great、阿里安《远征记》1.1）只记其为自治的色雷斯人，未留首领之名 → 按主人批准沿用「某某首领」之称。',
     },
+    jite_shouling: {
+        generalId: 'jite_shouling',
+        generalName: '吉特人首领',
+        factionId: 'seleisi',
+        portrait: '',
+        portraitProposedPath: '/assets/THRACIAN/jite_shouling.png',
+        note: '多瑙河北岸吉特人（Getae，色雷斯北支，信永生）的首领。史料（阿里安《远征记》I.3）只记吉特人约四千骑兵、一万余步兵列阵相阻，未留首领之名 → 按主人批准沿用「某某首领」之称。',
+    },
     aitiliusi: {
         generalId: 'aitiliusi',
         generalName: '埃提乌斯',

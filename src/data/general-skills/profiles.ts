@@ -3243,6 +3243,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     dibisi_phoinix: { generalId: 'dibisi_phoinix', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 色雷斯·首领：普将（史实：据海姆斯山脊、以大车为垒推车冲阵的自治色雷斯人首领，被方阵登顶击溃）· 逆势 · 善防
     seleisi_shouling: { generalId: 'seleisi_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    jite_shouling: { generalId: 'jite_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 索格狄亚那岩·阿里马泽斯：普将（史实为岩堡守将，凭绝壁自恃不可攻）· 借势 · 善守
     suogediyana_arimazes: { generalId: 'suogediyana_arimazes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     // 普拉塔纳斯·莱奥斯塞尼斯：普将（史实为雅典名将、拉米亚战争希腊反马其顿联军统帅）· 创势 · 善攻
