@@ -137,6 +137,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'fengzhou_wujie': 12,                                // 吴玠 · fengzhou · 大散关
     'guide_d_xiaohe': -3,                                // 萧何 · guide_d · 永城
     'han_baoyuan': -3,                                   // 暴鸢 · han · 新郑
+    'caoren': 3,                                         // 曹仁 · xuguo · 许昌
     'han_d_liubang': -3,                                 // 刘邦 · han_d · 南郑
     'hao_d_weirui': 6,                                  // 韦睿 · hao_d · 钟离
     'hongnong_jun_yangsu': 6,                           // 杨素 · hongnong_jun · 函谷关
