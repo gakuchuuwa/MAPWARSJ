@@ -624,7 +624,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    比原版多出 里海门 / 白哈格 / 赫拉特 / 博斯特 四站（原版漏了里海门天险与阿利亚首府赫拉特）。
             //    ⚠️ 主人走廊里的 德拉普萨卡（昆都士）暂**未**写入：路网里喀布尔往北那道兴都库什山路（萨朗/哈瓦克）尚未连通，
             //       实测 喀布尔 → 德拉普萨卡 沿路 664 公里、2.7 倍（直线只 244），军团会被绕到蓝氏城再折回来 —— 等那条路连好再插回。
-            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_zilakata', 'city_bistam', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_nuotaka', 'city_samaerhan'],
+            marchWaypoints: ['city_yisifahan', 'city_hamadan', 'city_leiyi', 'city_lihaimen', 'city_damugan', 'city_zilakata', 'city_bistam', 'city_baihage', 'city_nishabuer', 'city_tusi', 'city_taibade', 'city_helate_city', 'city_fala', 'city_kandaha', 'city_gaofu', 'city_lanshi', 'city_samaerhan', 'city_jizhake'],
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 10000,
@@ -715,7 +715,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             description: '岩堡四面绝壁，无路可攻；马其顿军以绳索铁钉趁夜攀崖，自守军不曾设防的崖面摸上岩顶，天明自上而下挥旗呐喊。守军见顶上尽是马其顿人，军心崩溃，开堡投降。',
             // 出发地＝军团此刻在哪＝上一场落点（锡尔河战场）→ 最近且那年已有的据点＝忽毡（§三.1）
             // 史料走动写成路标：马拉坎达 → 乌浒水渡口 → 回程马拉坎达 → 忽毡 → 岩堡
-            marchWaypoints: ['city_julushicheng', 'city_jizhake', 'city_samaerhan', 'city_nuotaka'],   // 🔴 [2026-09-30 血训 #11 修路线] 史实 18 个月大转进：忽毡 → 南下居鲁士城 → 吉扎克 → 撒马尔罕（平叛）→ 诺塔卡（前328/327冬全军冬营大休整）→ 开春直取索格狄亚那岩
+            marchWaypoints: ['city_samaerhan', 'city_lanshi', 'city_samaerhan', 'city_nuotaka'],   // 🔴 [2026-09-30 铁律：符合历史，不为路网让步] 阿里安 IV.5–7、IV.15–18：忽毡 → 强行军撒马尔罕（三天 1500 斯塔迪亚）→ 蓝氏城（扎里亚斯帕，前329/328 冬）→ 撒马尔罕（前328，渡阿姆河入索格底亚那）→ 诺塔卡（前328/327 冬营）→ 索格狄亚那岩。路网里蓝氏城—撒马尔罕必经索格狄亚那岩，属路网问题，已报主人，史实不删
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 300,
@@ -992,7 +992,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             // 出发地＝军团此刻在哪＝上一场落点（马里斯，攻城战＝那座城）
             // 史料：自印度西返，经格德罗西亚与波斯腹地，前324年冬自米底南下回巴比伦时穿科塞亚境
             // 沿格德罗西亚海岸西行：马里斯 → 帕塔拉 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯 → 苏萨 → 巴比伦 → 呼勒万（札格罗斯山门） → 哈马丹 → 科塞亚
-            marchWaypoints: ['city_patala', 'city_lanbaqiya', 'city_pula', 'city_kamanniya', 'city_bosibolisi', 'city_susa', 'city_babilun', 'city_hulewan', 'city_hamadan'],   // 🔴 [2026-09-28 改线] 亚历山大本人走的是**格德罗西亚沿海**（帕塔拉＝印度河三角洲 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯），原来那条「坎大哈 → 法拉 → 巴姆」是克拉特鲁斯走的北路（阿拉霍西亚—德兰吉亚那），不是主角这一路。
+            marchWaypoints: ['city_patala', 'city_lanbaqiya', 'city_pula', 'city_kamanniya', 'city_bosibolisi', 'city_susa', 'city_hulewan', 'city_hamadan'],   // 🔴 [2026-09-28 改线] 亚历山大本人走的是**格德罗西亚沿海**（帕塔拉＝印度河三角洲 → 兰巴基亚 → 普拉 → 卡曼尼亚 → 波斯波利斯），原来那条「坎大哈 → 法拉 → 巴姆」是克拉特鲁斯走的北路（阿拉霍西亚—德兰吉亚那），不是主角这一路。
             attackerFactionId: 'maqidun',
             attackerGeneralId: 'gen_alexander_great',
             attackerTroops: 12000,
