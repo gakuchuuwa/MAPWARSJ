@@ -36,7 +36,7 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'ASIA_WONDER_KOREANS': 645,           // 庆州皇龙寺九层木塔：645年
     'ORIE_WONDER_BERBERS': 1195,          // 拉巴特哈桑塔：穆瓦希德1195年始建
     'ASIA_WONDER_MONGOLS': 1206,          // 成吉思汗金帐：1206年建大蒙古国（约）
-    'CEAS_WONDER_TATARS': 1424,           // 撒马尔罕乌鲁格别克天文台：1420年代（约）
+    'CEAS_WONDER_TATARS': 1428,           // 撒马尔罕乌鲁格别克天文台：1420年代早期奠基、约1428年建成（英文维基 completed around 1428 AD，完成年份有争议）
     'SLAV_WONDER_POLES': 1038,            // 克拉科夫瓦维尔城堡：约1038年重建（约）
     'EAST_WONDER_TEUTONS': 1093,          // 拉赫的玛利亚拉赫修院：1093年
     'ASIA_WONDER_JAPANESE': 794,          // 京都（平安京）：794年
