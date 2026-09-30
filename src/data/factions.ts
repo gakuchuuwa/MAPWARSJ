@@ -329,6 +329,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'wei', name: '魏国' },
     { id: 'han', name: '韩国' },
+    { id: 'xuguo', name: '许国' },
     { id: 'han_d', name: '汉国' },
 
 

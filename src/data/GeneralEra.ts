@@ -486,6 +486,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'haixi_nvzhen_baiyindali': 'imperial',
     'hali_gedaerzi': 'antiquity',
     'han_baoyuan': 'antiquity',
+    'caoren': 'antiquity',
     'han_d_liubang': 'antiquity',
     'hani_d_zhebi': 'imperial',
     'hantawadi_mangyinglong': 'imperial',

@@ -12,6 +12,7 @@ export const CENTRAL_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     qin: { name: '铁鹰锐士', tier: 1 },
     qi: { name: '齐之技击', tier: 2 },
   han: { name: '韩之劲弩', tier: 2 },        // 战国时期韩国凭精良弩机在阵地防御与远程打击独步天下的战术兵种，升入T2战术
+    xuguo: { name: '许都虎贲', tier: 2 },
   xichu: { name: '江东子弟', tier: 0 },    // 彭城·项羽巨鹿破秦（《史记》）
     han_d: { name: '大汉材官', tier: 2 },
   pizhou: { name: '陷阵营', tier: 2 },        // 下邳·高顺陷阵营

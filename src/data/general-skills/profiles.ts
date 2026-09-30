@@ -1968,6 +1968,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
     han_baoyuan: { generalId: 'han_baoyuan', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_362', atkBalanceSkillId: 'ts_366', atkDisadvantageSkillId: 'ts_733', defAdvantageSkillId: 'ts_391', defBalanceSkillId: 'ts_299', defDisadvantageSkillId: 'ts_179', aptitude: 'leverage' , attackStyle: 'attack'},
+    caoren: { generalId: 'caoren', tier: 'famous', tacticalSkillId: 'ts_758', advantageSkillId: 'ts_758', balanceSkillId: 'ts_273', disadvantageSkillId: 'ts_758', atkAdvantageSkillId: 'ts_273', atkBalanceSkillId: 'ts_273', atkDisadvantageSkillId: 'ts_273', defAdvantageSkillId: 'ts_758', defBalanceSkillId: 'ts_758', defDisadvantageSkillId: 'ts_758', aptitude: 'reverse' , attackStyle: 'defense'},
 
 
 
