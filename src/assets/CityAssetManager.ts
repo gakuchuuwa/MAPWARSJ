@@ -1045,6 +1045,8 @@ export class CityAssetManager {
         'genji': '镰仓',
         'dasaleiti': '达萨',
         'panfeiliya': '潘菲',
+'hesitiya': '赫斯',
+'hekaniya': '赫卡',
         'baihaliye': '拜哈',
         'kuida': '沙尔',
         'zhalange': '扎兰',

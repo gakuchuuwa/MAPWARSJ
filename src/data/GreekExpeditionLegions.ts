@@ -44,4 +44,5 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     //    它只服务前321「赫勒斯滂战役」，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
     maqidun: { name: '伙伴骑兵', tier: 0 },
     panfeiliya: { name: '佩尔格方阵', tier: 3 },
+    hesitiya: { name: '色萨利铁骑', tier: 1 },
 };

@@ -1285,6 +1285,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
+        hesitiya: { generalId: 'hesitiya_akiyasi', generalName: '阿基亚斯', portrait: '' },
+        hekaniya: { generalId: 'hekaniya_artabazos', generalName: '阿尔塔巴佐斯', portrait: '' },
     kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
     maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
     ameng: { generalId: 'ameng_jisi', generalName: '阿蒙祭司', portrait: '' },

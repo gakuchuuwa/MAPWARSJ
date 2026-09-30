@@ -30,6 +30,7 @@ export const SCRIPT_HISTORICAL_OWNERS: readonly ScriptHistoricalOwner[] = [
     { year: -335, cityId: 'city_aolinsuosi', factionId: 'maqidun', source: '英文维基 Olynthus：前348 年被腓力二世围攻摧毁，卡尔基狄克同盟随之并入马其顿。' },
     { year: -335, cityId: 'city_plovdiv', factionId: 'maqidun', source: '英文维基 Plovdiv：前342 年腓力二世征服此城、废黜奥德里西亚国王，移民两千马其顿人。' },
     { year: -335, cityId: 'city_yanghe', factionId: 'maqidun', source: '英文维基 Thracian Chersonese：雅典与马其顿长期争夺，前338 年割让给腓力二世。' },
+    { year: -335, cityId: 'city_pelina', factionId: 'maqidun', source: '英文维基 Thessaly：前344–342 年腓力二世任色萨利执政（archon of Thessaly），色萨利同盟受马其顿节制；前335 年亚历山大继任执政，剧本期旗号归马其顿。' },
     // 🔴 [2026-09-26 第三片] 埃及那座城是亚历山大前331 年亲手所建，建城那年起就是马其顿的；
     //    乱斗旗号「托勒密」是前305 年托勒密一世称王以后的事（且本剧本第 10 场城名一律写「亚历山大城」）。
     { year: -331, cityId: 'city_yalishanda', factionId: 'maqidun', source: '英文维基 Alexandria：公元前331 年由亚历山大大帝在尼罗河口择地建立（阿里安 III.1–2），属马其顿治下；托勒密王朝前305 年才立。' },
