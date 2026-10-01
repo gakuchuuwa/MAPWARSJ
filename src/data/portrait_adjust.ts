@@ -7971,6 +7971,26 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.1,
             "offsetX": -17,
             "offsetY": -25
+        },
+        "/assets/CENTRAL_ASIA/suogediyana_alimazeshi.png": {
+            "scale": 1.17,
+            "offsetX": 0,
+            "offsetY": -1
+        },
+        "/assets/INDIA/aswaka_kelaiaofeisi.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": 9
+        },
+        "/assets/INDIA/aornos_afulikaisi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/INDIA/malli_moluobaluo.png": {
+            "scale": 1.12,
+            "offsetX": -3,
+            "offsetY": 16
         }
     },
     "folderGuides": {
