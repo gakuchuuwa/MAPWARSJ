@@ -34,7 +34,7 @@ import { getScriptEventStart, isScriptPeriod } from '../events/scriptPeriod';
 import { journeyBriefingDuration, journeyBriefingParagraphs, briefingAnchors } from './JourneyBriefing';
 import { CITY_DISPLAY_NAMES } from '../data/cityDisplayNames';
 // 🔴 [2026-09-25 主人「一段一条播报」×3] 段的划分（段表）进游戏侧：军团走到一段起点就念那一段的旁白
-import { segmentsBriefedBy } from '../battlefield-editor/scriptSegments';
+import { SCRIPT_ROAD_SEGMENTS } from '../battlefield-editor/scriptSegments';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
 
@@ -1672,15 +1672,12 @@ export class PlayerQuestSystem {
     }
 
     /**
-     * 本场行程里「每一段的起点」坐标（＝上一段的终点据点；最后一段的终点是本场战场，不做钩子）。
+     * 本场行程里「每一段的起点」坐标（＝上一段路的终点；最后一段的终点是本场战场，不做钩子）。
      *
-     * 🔴 [2026-09-26 主人「行军和播报对不上」] **改成两条路，锚点优先**：
-     *   ① 旁白自己带锚点（段落开头 `【据点名】`）→ **就用这些锚点当钩子**，军团走到那座据点附近才念那一段。
-     *      这才是治「词跑在军团前面」的办法：像第 10 场那种「加沙一路讲到高加米拉」3900 公里的旁白，
-     *      原来只有「亚历山大城」一个钩子 —— 第二段（讲回师与高加米拉）在军团刚离亚历山大城时就念，
-     *      离高加米拉还有两千多公里；后面 200 多秒一路静音。带锚点后可拆成 佩鲁西姆／孟菲斯／锡瓦／推罗／
-     *      塔普萨库斯／尼尼微 各讲一段，走到哪讲到哪。
-     *   ② 没写锚点的场次照旧：取段表里「本场播报覆盖的段」的起点（最后一段的终点不做钩子）。
+     * 🔴 [2026-10-01 主人「82 次播报每路一段、不要括号」] **挂点一律从 82 路表读**：
+     *   ① 旁白自带锚点（段落开头 `【据点名】`）→ 兼容旧数据的兜底，军团走到那座据点附近才念那一段。
+     *   ② 没写锚点（现在是常态）→ 取 `SCRIPT_ROAD_SEGMENTS` 里本场每条路的 `to`（去掉末路到战场/终点），
+     *      含战场节点（`⚔波斯门` 等从 `BATTLEFIELDS` 查坐标），一路一钩、走到哪讲到哪。
      * 找不齐 → 数组短一位 → 逐段口径自动不启用（回落成起步一口气念）。
      */
     private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string): Array<{ lat: number; lng: number; name: string }> {
@@ -1698,10 +1695,22 @@ export class PlayerQuestSystem {
             byName.set(row.dbName, c);
             byName.set(row.displayName, c);
         }
-        const findByName = (raw: string) => {
-            const nm = String(raw).replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
+        const findByName = (raw: string): { latitude: number; longitude: number; name: string } | undefined => {
+            const s = String(raw);
+            // 🔴 [2026-10-01 主人「82 次播报每路一段」] 战场节点（⚔前缀）不是据点，
+            //    从 BATTLEFIELDS 查坐标（波斯门／乌克西亚隘口／科塞亚…），让战场路也能做挂点。
+            const bfMatch = s.match(/^⚔(.+)$/);
+            if (bfMatch) {
+                const bfName = bfMatch[1].trim();
+                const bf = BATTLEFIELDS.find((b) => b.name === bfName);
+                if (bf) return { latitude: bf.lat, longitude: bf.lng, name: bf.name };
+                return undefined;
+            }
+            const nm = s.replace(/（[^）]*）/g, '').replace(/\([^)]*\)/g, '')
                 .replace(/战争点\s*\d*/g, '').replace(/战场|一带|过冬/g, '').trim();
-            return byName.get(nm) ?? cities.find((x) => x.name === nm);
+            const c = byName.get(nm) ?? cities.find((x) => x.name === nm);
+            if (!c) return undefined;
+            return { latitude: c.latitude, longitude: c.longitude, name: c.name };
         };
         // ① 旁白自带锚点：段落 2..N 开头的【据点名】（必须从**原文**读 —— 分段函数会把锚点剥掉）
         if (text) {
@@ -1715,12 +1724,14 @@ export class PlayerQuestSystem {
                 if (out.length === anchors.length) return out;   // 锚点全认出来才用；缺一个就退回段起点口径
             }
         }
-        // ② 段表口径（原样）
+        // ② 段表口径：从 82 路表（SCRIPT_ROAD_SEGMENTS）读中间挂点（去掉末路到战场/终点），含战场节点
         const n = HISTORICAL_EVENT_SCRIPT.indexOf(this.findScriptEvent(ev) as never);
         if (n < 0) return [];
+        const seg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === n + 1);
+        if (!seg) return [];
         const out: Array<{ lat: number; lng: number; name: string }> = [];
-        for (const s of segmentsBriefedBy(n + 1).slice(0, -1)) {
-            const c = findByName(String(s.to));
+        for (const r of seg.roads.slice(0, -1)) {
+            const c = findByName(r.to);
             if (c) out.push({ lat: c.latitude, lng: c.longitude, name: c.name });
         }
         return out;
