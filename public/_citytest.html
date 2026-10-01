@@ -754,6 +754,19 @@
             <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形</button>
             <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取六种之一">🎲</button>
           </div>
+          <!-- 🔴 [2026-10-02 主人令] 九种直角多边形据点样式（过目用）：几何在 cityWallShared.STOCKADE_POLYGON_LAYOUTS -->
+          <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);align-items:center;">
+            <span style="font-size:11px;color:#94a3b8;">新样式（过目）:</span>
+            <button type="button" class="stk-pill-btn" data-shape="poly_square" title="方城（菱形底）· 24 件">① 方城</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_long" title="长条关城（两端塔）· 26 件 —— 关隘">② 长条关城</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_l" title="L 形寨 · 28 件">③ L 形寨</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_u" title="凹形（U 形）寨 · 40 件">④ 凹形寨</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_mamian" title="四面马面（中段外凸敌台）· 52 件">⑤ 四面马面</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_wengcheng" title="瓮城（门外套方框）· 34 件">⑥ 瓮城</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_stairs" title="阶梯寨（依山逐级）· 36 件">⑦ 阶梯寨</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_bar" title="长墙带中段凸台 · 32 件">⑧ 长墙凸台</button>
+            <button type="button" class="stk-pill-btn" data-shape="poly_t" title="T 形（品字联堡）· 36 件">⑨ T 形联堡</button>
+          </div>
           <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);align-items:center;">
             <span style="font-size:11px;color:#94a3b8;">栅栏材质:</span>
             <button type="button" class="stk-pill-btn active" data-fence="auto">自动</button>
@@ -868,6 +881,17 @@
           <button type="button" class="stk-pill-btn" data-shape="oval" title="样式五：椭圆山脊堡（顺脊展布）">⑤ 椭圆山脊堡</button>
           <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形隘口寨</button>
           <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取六种之一">🎲 随机</button>
+          <!-- 🔴 [2026-10-02 主人令] 九种直角多边形据点样式（过目用；几何在 cityWallShared.STOCKADE_POLYGON_LAYOUTS） -->
+          <span style="flex-basis:100%;height:0;"></span>
+          <button type="button" class="stk-pill-btn" data-shape="poly_square" title="方城（菱形底）· 24 件">① 方城</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_long" title="长条关城（两端塔）· 26 件 —— 关隘">② 长条关城</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_l" title="L 形寨 · 28 件">③ L 形寨</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_u" title="凹形（U 形）寨 · 40 件">④ 凹形寨</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_mamian" title="四面马面（中段外凸敌台）· 52 件">⑤ 四面马面</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_wengcheng" title="瓮城（门外套方框）· 34 件">⑥ 瓮城</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_stairs" title="阶梯寨（依山逐级）· 36 件">⑦ 阶梯寨</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_bar" title="长墙带中段凸台 · 32 件">⑧ 长墙凸台</button>
+          <button type="button" class="stk-pill-btn" data-shape="poly_t" title="T 形（品字联堡）· 36 件">⑨ T 形联堡</button>
         </div>
         <button type="button" class="btn-stk-next stk-action-btn" style="padding:6px 14px;font-size:13px;" title="点击在图片中切换下一种形制">🔄 切换其他样式 ▾</button>
       </div>
@@ -1568,6 +1592,9 @@ import {
   legacyFenceClip,
   stockadeCurveShape,
   resolveStockadeShapeByFence,
+  // 🔴 [2026-10-02 主人令] 九种直角多边形据点样式（过目用，几何在共享模块）
+  STOCKADE_POLYGON_LAYOUTS,
+  buildStockadePolygonRing,
 } from '/src/systems/cityWallShared.ts';
 
 /* 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
@@ -1579,6 +1606,19 @@ function stkShapeByFence(shapeIdx, fenceKey) {
   const i = STK_SHAPE_ORDER.indexOf(r);
   return i < 0 ? shapeIdx : i;
 }
+/* 🔴 [2026-10-02 主人令] **直角多边形据点样式（九种）** —— 主人过目用（几何在共享模块，唯一一份）。
+ *   序号约定：**0~5 = 现役六形制**，**6 起 = 九种直角多边形**（见 `STOCKADE_POLYGON_LAYOUTS`）。
+ *   ⚠️ 这九种**还没并进游戏的据点哈希**（等主人点头）；现在只在评估页里翻看。 */
+const STK_POLY_KEYS = STOCKADE_POLYGON_LAYOUTS.map((l) => l.key);
+const STK_POLY_LABELS = Object.fromEntries(STOCKADE_POLYGON_LAYOUTS.map((l) => [l.key, l.label]));
+/** 形制键 → 序号（六形制 0~5；九种直角多边形 6~14；不认识 → -1 交给哈希） */
+function stkShapeIndexOf(key) {
+  const i = STK_SHAPE_ORDER.indexOf(key);
+  if (i >= 0) return i;
+  const p = STK_POLY_KEYS.indexOf(key);
+  return p >= 0 ? 6 + p : -1;
+}
+const isPolyShapeIdx = (idx) => idx >= 6;
 
 function getFortifiedAnchors(style) {
   return DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
@@ -2176,26 +2216,23 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     const fullGW = (10 * stepX) * 2.8, fullGH = (10 * stepY) * 5.6;
     stkShape = (type === 'small') ? 0 : ((forceShape !== null)
       ? forceShape
-      : (curStockadeShape === 'square')
-        ? 0
-        : (curStockadeShape === 'round')
-          ? 1
-          : (curStockadeShape === 'octagon')
-            ? 2
-            : (curStockadeShape === 'rect')
-              ? 3
-              : (curStockadeShape === 'oval')
-                ? 4
-                : (curStockadeShape === 'trapezoid')
-                  ? 5
-                  : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6));
+      : (stkShapeIndexOf(curStockadeShape) >= 0
+        ? stkShapeIndexOf(curStockadeShape)
+        : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6)));
     let clip = '';
     // 篱笆（密编荆篱）套的圆城／八角 = 主人原版，地面裁切也用原版椭圆（其余材质走新裁切）
     const stkFenceKey = ((curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style)).key;
     // 🔴 主人令：弧形三形只许配密编荆篱；材质不是荆篱 → 换成直边形制（圆城→正方 / 八角→矩形 / 椭圆→梯形）
-    stkShape = stkShapeByFence(stkShape, stkFenceKey);
+    //    （九种直角多边形不在弧形之列，任何材质都能用）
+    if (!isPolyShapeIdx(stkShape)) stkShape = stkShapeByFence(stkShape, stkFenceKey);
     const legacyClip = (type === 'stockade') ? legacyFenceClip(stkShape === 1 ? 'round' : 'octagon', baseSize, stkFenceKey) : null;
-    if ((stkShape === 1 || stkShape === 2) && legacyClip) {
+    if (isPolyShapeIdx(stkShape)) {
+      // 🔴 直角多边形：地面裁切按**成品件表的包围盒**内缩 6%（与围栏同一把尺，任何材质都走这条）
+      const ps = buildStockadePolygonRing(STK_POLY_KEYS[stkShape - 6], baseSize);
+      const pxs = ps.map((p) => p.x), pys = ps.map((p) => p.y);
+      const w = Math.max(...pxs) - Math.min(...pxs), h = Math.max(...pys) - Math.min(...pys);
+      clip = 'ellipse(' + (w / 2 * 0.94).toFixed(1) + 'px ' + (h / 2 * 0.94).toFixed(1) + 'px at 50% 50%)';
+    } else if ((stkShape === 1 || stkShape === 2) && legacyClip) {
       clip = 'ellipse(' + legacyClip.clipRx.toFixed(1) + 'px ' + legacyClip.clipRy.toFixed(1) + 'px at 50% 50%)';
     } else if (stkShape === 1) {
       // 样式二：圆城（等轴正圆）—— 地面裁切跟共享模块 `stockadeCurveShape('round')` 同一把尺（内缩 6%）
@@ -2387,23 +2424,17 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
     const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
     let stkShape = (forceShape !== null)
       ? forceShape
-      : (curStockadeShape === 'square')
-        ? 0
-        : (curStockadeShape === 'round')
-          ? 1
-          : (curStockadeShape === 'octagon')
-            ? 2
-            : (curStockadeShape === 'rect')
-              ? 3
-              : (curStockadeShape === 'oval')
-                ? 4
-                : (curStockadeShape === 'trapezoid')
-                  ? 5
-                  : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6);
+      : (stkShapeIndexOf(curStockadeShape) >= 0
+        ? stkShapeIndexOf(curStockadeShape)
+        : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6));
     // 🔴 主人令：弧形三形只许配密编荆篱（这一处决定**砌哪一圈件**，与上面地面裁切那处必须同一结论）
-    stkShape = stkShapeByFence(stkShape, fenceSet.key);
+    //    九种直角多边形不在弧形之列：任何材质都能用，不走落定
+    if (!isPolyShapeIdx(stkShape)) stkShape = stkShapeByFence(stkShape, fenceSet.key);
     var resolvedStkShape = stkShape;   // 供下方镜像守卫用（随机掷到的形制也要认）
-    if (stkShape === 1) {
+    if (isPolyShapeIdx(stkShape)) {
+      // 🔴 [2026-10-02 主人令] 直角多边形样式（九种，过目用）：件表由共享模块生成，转角自动是城垛、一扇门开在最靠下那段墙
+      pieces = buildStockadePolygonRing(STK_POLY_KEYS[stkShape - 6], baseSize);
+    } else if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize, fenceSet.key);
     } else if (stkShape === 2) {
       pieces = computeCorralOctagonWall(baseSize, fenceSet.key);
@@ -2432,8 +2463,9 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
 
   /* 三态解析：rnd 时按 style+type+种子 掷骰，所以同一屏里 5 种据点各自独立、
    * 换风格或点 🎲 会重新分配，刷新页面结果保持一致（哈希而非 Math.random）。 */
-  // 非对称形制（矩形 3 / 梯形 5）不吃镜像，与游戏 skipMirror 同口径；按实际掷到的形制判
-  const isAsymmStockade = (type === 'stockade') && (typeof resolvedStkShape === 'number') && (resolvedStkShape === 3 || resolvedStkShape === 5);
+  // 非对称形制（矩形 3 / 梯形 5 / **九种直角多边形 6 起**）不吃镜像，与游戏 skipMirror 同口径；按实际掷到的形制判
+  const isAsymmStockade = (type === 'stockade') && (typeof resolvedStkShape === 'number')
+    && (resolvedStkShape === 3 || resolvedStkShape === 5 || resolvedStkShape >= 6);
   var doMirror = isAsymmStockade ? false
     : (mirror === 'on') ? true
     : (mirror === 'rnd')
@@ -3268,6 +3300,16 @@ const STK_SHAPE_NAMES = {
   rect: '样式四：矩形围栏 (双门6建筑)',
   oval: '样式五：椭圆山脊堡 (顺脊展布)',
   trapezoid: '样式六：梯形隘口寨 (背窄前阔)',
+  // 🔴 [2026-10-02 主人令] 九种直角多边形（过目用；几何在 cityWallShared.STOCKADE_POLYGON_LAYOUTS）
+  poly_square: '多边形①：方城（菱形底）',
+  poly_long: '多边形②：长条关城（两端塔）',
+  poly_l: '多边形③：L 形寨',
+  poly_u: '多边形④：凹形（U 形）寨',
+  poly_mamian: '多边形⑤：四面马面（中段外凸敌台）',
+  poly_wengcheng: '多边形⑥：瓮城（门外套方框）',
+  poly_stairs: '多边形⑦：阶梯寨（依山逐级）',
+  poly_bar: '多边形⑧：长墙带中段凸台',
+  poly_t: '多边形⑨：T 形（品字联堡）',
   rnd: '🎲 随机六选一'
 };
 
@@ -3278,10 +3320,20 @@ const STK_SHAPE_SHORT_NAMES = {
   rect: '样式四 矩形',
   oval: '样式五 椭圆',
   trapezoid: '样式六 梯形',
+  poly_square: '多边形① 方城',
+  poly_long: '多边形② 长条关城',
+  poly_l: '多边形③ L 形寨',
+  poly_u: '多边形④ 凹形寨',
+  poly_mamian: '多边形⑤ 四面马面',
+  poly_wengcheng: '多边形⑥ 瓮城',
+  poly_stairs: '多边形⑦ 阶梯寨',
+  poly_bar: '多边形⑧ 长墙凸台',
+  poly_t: '多边形⑨ T 形',
   rnd: '随机'
 };
 
-const STK_SHAPES_CYCLE = ['square', 'round', 'octagon', 'rect', 'oval', 'trapezoid'];
+const STK_SHAPES_CYCLE = ['square', 'round', 'octagon', 'rect', 'oval', 'trapezoid',
+  'poly_square', 'poly_long', 'poly_l', 'poly_u', 'poly_mamian', 'poly_wengcheng', 'poly_stairs', 'poly_bar', 'poly_t'];
 
 function syncStockadeShapeUI() {
   const currentKey = curStockadeShape || 'square';
@@ -3315,6 +3367,11 @@ function syncStockadeShapeUI() {
       btn.innerText = '城寨围栏: 样式六 (梯形隘口寨)';
       btn.style.background = '#b45309';
       btn.style.borderColor = '#f59e0b';
+    } else if (STK_POLY_KEYS.includes(currentKey)) {
+      // 🔴 九种直角多边形（过目用）：颜色统一用青色系，方便与现役六形制区分
+      btn.innerText = '城寨围栏: ' + (STK_SHAPE_NAMES[currentKey] || currentKey) + '（新·过目用）';
+      btn.style.background = '#1d4ed8';
+      btn.style.borderColor = '#60a5fa';
     } else {
       btn.innerText = '城寨围栏: 🎲 随机六选一';
       btn.style.background = '#243246';
@@ -3379,7 +3436,8 @@ function showStockadeGallery() {
 
 if (urlParams.has('stockadeShape')) {
   const s = urlParams.get('stockadeShape');
-  if (['rnd', 'square', 'round', 'octagon', 'rect', 'oval', 'trapezoid'].includes(s)) {
+  // 🔴 [2026-10-02] 除了六形制与 rnd，还收九种直角多边形的键（poly_square / poly_long / …），过目直链用
+  if (['rnd', 'square', 'round', 'octagon', 'rect', 'oval', 'trapezoid'].includes(s) || STK_POLY_KEYS.includes(s)) {
     curStockadeShape = s;
   }
 }
