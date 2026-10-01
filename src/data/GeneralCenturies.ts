@@ -1139,7 +1139,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'baihaliye_djedkhonsu':              -6,    // 杰德孔苏 · baihaliye · 拜哈里耶（第二十六王朝绿洲总督）
     'kuida_chakar':                      15,    // 恰卡尔 · kuida · 奎达（俾路支英雄）
     'zhalange_barsaentes':               -4,    // 巴尔塞恩特斯 · zhalange · 扎兰格（德兰吉亚总督）
-    'shiyuzu_aolaqiuzhang':              -4,    // 奥拉酋长 · shiyuzu · 奥拉（前325年食鱼族阻截尼阿库斯舰队）
+    'shiyuzu_aolaqiuzhang':              -4,    // 阿波罗多洛斯 · shiyuzu · 奥拉（前325年食鱼族阻截尼阿库斯舰队）
     'maikelan_punong':                   10,    // 普农 · maikelan · 特尔巴特（俾路支霍特氏族传说英雄，约10世纪）
 };
 
