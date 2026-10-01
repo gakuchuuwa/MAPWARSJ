@@ -1639,7 +1639,9 @@ export class PlayerQuestSystem {
         const host = q ? this.deps.legionManager.getLegionById(q.legionId) : null;
         if (!host || host.isDestroyed) return;
         const b = this.briefingBounds[this.briefingBoundCursor];
-        if (getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111 > 15) return;
+        const dKm = getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111;
+        gameLog('expedition', `[玩家][挂点检测] cursor=${this.briefingBoundCursor} 目标=${b.name} 距离=${dKm.toFixed(1)}km 阈值15 busy=${this.briefingBusy} armed=${this.briefingHoldArmed} hold=${this.briefingHold}`);
+        if (dKm > 15) return;
         this.briefingBoundCursor++;
         const idx = this.briefingBoundCursor;   // 边界 k → 第 k 段的旁白（第 0 段起步时已念）
         if (this.briefingBusy) {
