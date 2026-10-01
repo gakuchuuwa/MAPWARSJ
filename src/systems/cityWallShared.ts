@@ -294,12 +294,12 @@ export type StockadeShapeKey = typeof STOCKADE_SHAPE_KEYS[number];
 export const STOCKADE_SHAPE_LABELS: Record<StockadeShapeKey, string> = {
     square: '正方', round: '圆城', octagon: '八角', rect: '矩形围栏', oval: '椭圆山脊堡', trapezoid: '梯形隘口寨',
 };
-export function buildStockadeShapeRing(shape: StockadeShapeKey, baseSize: number): StockadeRingPiece[] {
+export function buildStockadeShapeRing(shape: StockadeShapeKey, baseSize: number, material?: string | null): StockadeRingPiece[] {
     switch (shape) {
         case 'square': return buildRingWallAndGate(baseSize, 5);
         case 'rect': return buildStockadeRectRing(baseSize);
         case 'trapezoid': return buildStockadeTrapezoidRing(baseSize);
-        case 'round': case 'octagon': case 'oval': return buildStockadeCurveRing(shape, baseSize);
+        case 'round': case 'octagon': case 'oval': return buildStockadeCurveRing(shape, baseSize, material);   // 篱笆套圆城/八角 = 主人原版
     }
 }
 

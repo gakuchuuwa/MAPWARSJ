@@ -12,6 +12,8 @@ import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { MonumentLayer } from './MonumentLayer';
 import { BattlefieldLayer } from './BattlefieldLayer';
+import { CITIES_V2 } from '../data/cities_v2';
+import { BATTLEFIELDS } from '../data/Battlefields';
 import { VegetationLayer } from './VegetationLayer';
 import { MarineLifeLayer, registerMarineLifeLayer } from './MarineLifeLayer';
 import { setAnimalAmbientLayerVisible, setLandAnimalVisible, setFlyingAnimalVisible } from './AnimalAmbientLayer';
@@ -91,6 +93,7 @@ export class GameMap {
     private vegetationLayer: VegetationLayer | null = null;
     private marineLifeLayer: MarineLifeLayer | null = null;
     private cityCaptureRenderer: CityCaptureRenderer | null = null;
+    private searchCoordMarker: L.Marker | null = null;
     private isVectorRiverEnabled: boolean = true; // [FIX] Track explicit enabled state
     private useGCJ02: boolean = true; // [NEW] Default to true for offset logic
     private currentYear: number = -236; // [NEW] Track year for temporal filtering
@@ -682,32 +685,13 @@ export class GameMap {
                         <span id="control-panel-toggle-icon" style="color:#5b7a66;">▼</span>
                     </div>
                     <div id="control-panel-content" style="display:flex; flex-direction:column; gap:8px;">
-                    <div style="font-weight:bold;margin-bottom:4px;font-size:13px;color:#9c302f;">地图切换</div>
-                    
-                    <button id="btn-source-esri" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">
-                        ⛰️ 立体地形 (ESRI)
-                    </button>
-                    
-                    <button id="btn-source-local" style="padding:6px;cursor:pointer;background:transparent;border:1px solid rgba(125,111,90,0.5);border-radius:4px;color:#5b7a66;font-family:inherit;transition:all 0.2s;">
-                        🗺️ 原始地图 (Local)
-                    </button>
-
-                    <hr style="margin:8px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
                     <div style="font-weight:bold;margin-bottom:2px;font-size:12px;color:#666;">📍 坐标搜索</div>
                     <input type="text" id="inp-coord-search" placeholder="lat, lng（如 37.2833, 34.7833）" style="padding:6px;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-family:inherit;font-size:12px;color:#1d3326;background:rgba(255,255,255,0.6);width:100%;box-sizing:border-box;">
-                    <button id="btn-coord-search" style="padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">🔍 查看</button>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8d4a2f;margin-top:2px;">
-                        <input type="checkbox" id="chk-terrain-relief-experiment">
-                        <b>⛰️ 全球山体立体浮雕</b>
-                    </label>
-                    <span id="terrain-relief-experiment-status" style="font-size:11px;color:#666;">全球范围 · 双尺度高程光影浮雕</span>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#2f6e4a;margin-top:4px;">
-                        <input type="checkbox" id="chk-valley-relief-experiment" checked>
-                        <b>🏞️ 尼罗河谷冲积地貌试验 (ZOOM 9)</b>
-                    </label>
-                    <span id="valley-relief-experiment-status" style="font-size:11px;color:#666;">古埃及河谷与三角洲冲积黑土壤土层</span>
+                    <div style="display:flex;gap:6px;margin-top:4px;">
+                        <button id="btn-coord-search" style="flex:1;padding:6px;cursor:pointer;background:transparent;color:#1d3326;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-weight:bold;font-family:inherit;transition:all 0.2s;">🔍 查看 (ZOOM 9)</button>
+                        <button id="btn-coord-search-clear" style="padding:6px 10px;cursor:pointer;background:transparent;color:#8d231b;border:1px solid rgba(141,35,27,0.4);border-radius:4px;font-size:12px;font-family:inherit;transition:all 0.2s;display:none;" title="清除地图上的搜索标记">❌ 清除</button>
+                    </div>
+                    <div id="coord-search-result" style="font-size:11px;color:#5c3e21;background:rgba(255,255,255,0.6);border-left:3px solid #8d231b;padding:4px 6px;border-radius:3px;line-height:1.4;display:none;margin-top:4px;"></div>
                     
                     <hr style="margin:4px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
                     
@@ -748,28 +732,6 @@ export class GameMap {
                     </label>
 
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
-                    
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#333;margin-bottom:4px;">
-                        <input type="checkbox" id="chk-style" checked> 
-                        <b>🎨 开启美术滤镜</b>
-                    </label>
-
-                    <div id="style-controls" style="margin-left:20px;display:flex;flex-direction:column;gap:4px;">
-                        <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            复古做旧 (Sepia) <span id="val-sep">8%</span>
-                        </label>
-                        <input type="range" id="rng-sep" min="0" max="100" step="1" value="8" style="width:120px;">
-
-                        <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            色彩饱和 (Sat) <span id="val-sat">104%</span>
-                        </label>
-                        <input type="range" id="rng-sat" min="0" max="200" step="2" value="104" style="width:120px;">
-                        
-                        <label style="font-size:11px;color:#666;display:flex;justify-content:space-between;">
-                            对比度 (Con) <span id="val-con">104%</span>
-                        </label>
-                        <input type="range" id="rng-con" min="50" max="200" step="2" value="104" style="width:120px;">
-                    </div>
 
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#0066cc;margin-top:8px;">
                         <input type="checkbox" id="chk-river" checked>  
@@ -903,16 +865,7 @@ export class GameMap {
                         <b>⚔ 军队编辑</b>
                     </label>
 
-                    <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #555;">
-                        <div style="font-weight:bold;margin-bottom:4px;font-size:12px;color:#999;">🔗 外部编辑器（新标签页）</div>
-                        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
-                            <a href="/batch-manager.html" target="_blank" style="color:#cbb98e;text-decoration:none;">📋 实体管理</a>
-                            <a href="/portrait-tuner.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🖼 立绘调校</a>
-                            <a href="/skill-editor.html" target="_blank" style="color:#cbb98e;text-decoration:none;">⚙ 技能管理</a>
-                            <a href="/legion-editor.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🛡 军团方阵</a>
-                            <a href="/scratch/_siege_preview.html" target="_blank" style="color:#cbb98e;text-decoration:none;">🏞 战场背景</a>
-                        </div>
-                    </div>
+
                     `;
                 }
                 
@@ -932,37 +885,6 @@ export class GameMap {
             const panelHeader = document.getElementById('control-panel-header');
             const panelContent = document.getElementById('control-panel-content');
             const toggleIcon = document.getElementById('control-panel-toggle-icon');
-            const chkReliefExp = document.getElementById('chk-terrain-relief-experiment') as HTMLInputElement | null;
-            const reliefExpStatus = document.getElementById('terrain-relief-experiment-status');
-            if (chkReliefExp) {
-                chkReliefExp.checked = this.isExperimentalReliefEnabled;
-                if (reliefExpStatus) {
-                    reliefExpStatus.textContent = this.isExperimentalReliefEnabled ? '已开启 · 全球生效 (Zoom7-12)' : '已关闭 · 原版光影';
-                }
-                chkReliefExp.addEventListener('change', (e: any) => {
-                    const enabled = !!e.target.checked;
-                    this.setExperimentalRelief(enabled);
-                    if (reliefExpStatus) {
-                        reliefExpStatus.textContent = enabled ? '已开启 · 全球生效 (Zoom7-12)' : '已关闭 · 恢复原版光影';
-                    }
-                });
-            }
-
-            const chkValleyExp = document.getElementById('chk-valley-relief-experiment') as HTMLInputElement | null;
-            const valleyExpStatus = document.getElementById('valley-relief-experiment-status');
-            if (chkValleyExp) {
-                chkValleyExp.checked = this.isValleyReliefExpEnabled;
-                if (valleyExpStatus) {
-                    valleyExpStatus.textContent = this.isValleyReliefExpEnabled ? '已开启 · 尼罗河谷与三角洲冲积黑土 (Zoom 9)' : '已关闭 · 恢复沙漠黄';
-                }
-                chkValleyExp.addEventListener('change', (e: any) => {
-                    const enabled = !!e.target.checked;
-                    this.setValleyReliefExp(enabled);
-                    if (valleyExpStatus) {
-                        valleyExpStatus.textContent = enabled ? '已开启 · 尼罗河谷与三角洲冲积黑土 (Zoom 9)' : '已关闭 · 恢复沙漠黄';
-                    }
-                });
-            }
             const debugPanelStorageKey = 'mapwar.debugPanel.options';
             let savedDebugPanelState: {
                 sourceKey?: string;
@@ -1012,17 +934,30 @@ export class GameMap {
                 });
             }
 
-            const btnEsri = document.getElementById('btn-source-esri');
-            const btnLocal = document.getElementById('btn-source-local');
             const chkHillshade = document.getElementById('chk-hillshade') as HTMLInputElement;
             const chkRiver = document.getElementById('chk-river') as HTMLInputElement;
 
-            if (btnEsri) btnEsri.addEventListener('click', () => this.setMapSource('ESRI_SHADED'));
-            if (btnLocal) btnLocal.addEventListener('click', () => this.setMapSource('LOCAL'));
-
-            // 📍 坐标搜索：输入 lat, lng 跳转到该处（支持逗号/空格分隔，回车或点「查看」）
+            // 📍 坐标搜索：输入 lat, lng 跳转到 ZOOM 9 并标记定位（带波纹高亮、最近据点与距离提示）
             const btnCoordSearch = document.getElementById('btn-coord-search');
+            const btnCoordClear = document.getElementById('btn-coord-search-clear');
             const inpCoordSearch = document.getElementById('inp-coord-search') as HTMLInputElement | null;
+            const coordSearchResult = document.getElementById('coord-search-result');
+
+            const clearCoordMarker = () => {
+                if (this.searchCoordMarker) {
+                    this.map.removeLayer(this.searchCoordMarker);
+                    this.searchCoordMarker = null;
+                }
+                if (btnCoordClear) btnCoordClear.style.display = 'none';
+                if (coordSearchResult) {
+                    coordSearchResult.style.display = 'none';
+                    coordSearchResult.innerHTML = '';
+                }
+            };
+            if (btnCoordClear) {
+                btnCoordClear.addEventListener('click', clearCoordMarker);
+            }
+
             if (btnCoordSearch && inpCoordSearch) {
                 const goCoord = () => {
                     const raw = inpCoordSearch.value.trim();
@@ -1032,9 +967,131 @@ export class GameMap {
                     const lat = parseFloat(m[1]);
                     const lng = parseFloat(m[2]);
                     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) { alert('经纬度超出范围'); return; }
-                    const zoom = Math.max(8, this.map.getZoom());
-                    this.map.flyTo([lat, lng], zoom, { duration: 1.2 });
+
+                    // 1. 寻找最近的据点
+                    let nearestCity: (typeof CITIES_V2)[number] | null = null;
+                    let minCityDist = Infinity;
+                    for (const c of CITIES_V2) {
+                        const d = L.latLng(lat, lng).distanceTo([c.lat, c.lng]) / 1000;
+                        if (d < minCityDist) {
+                            minCityDist = d;
+                            nearestCity = c;
+                        }
+                    }
+
+                    // 2. 寻找最近的战场
+                    let nearestBf: (typeof BATTLEFIELDS)[number] | null = null;
+                    let minBfDist = Infinity;
+                    for (const b of BATTLEFIELDS) {
+                        const d = L.latLng(lat, lng).distanceTo([b.lat, b.lng]) / 1000;
+                        if (d < minBfDist) {
+                            minBfDist = d;
+                            nearestBf = b;
+                        }
+                    }
+
+                    // 方位角计算（以最近据点为原点看目标点）
+                    let dirText = '';
+                    if (nearestCity) {
+                        const dLat = lat - nearestCity.lat;
+                        const dLng = (lng - nearestCity.lng) * Math.cos(nearestCity.lat * Math.PI / 180);
+                        const angle = (Math.atan2(dLng, dLat) * 180 / Math.PI + 360) % 360;
+                        const dirs = ['北', '东北', '东', '东南', '南', '西南', '西', '西北', '北'];
+                        dirText = dirs[Math.round(angle / 45) % 8];
+                    }
+
+                    // 3. 清理旧标记
+                    if (this.searchCoordMarker) {
+                        this.map.removeLayer(this.searchCoordMarker);
+                        this.searchCoordMarker = null;
+                    }
+
+                    // 4. 注入波纹动画样式
+                    if (!document.getElementById('coord-search-style')) {
+                        const st = document.createElement('style');
+                        st.id = 'coord-search-style';
+                        st.textContent = `
+                            @keyframes coord-pulse-ring {
+                                0% { transform: scale(0.3); opacity: 1; }
+                                70% { transform: scale(2.2); opacity: 0.25; }
+                                100% { transform: scale(2.8); opacity: 0; }
+                            }
+                            @keyframes coord-pin-bounce {
+                                0%, 100% { transform: translateY(0); }
+                                50% { transform: translateY(-7px); }
+                            }
+                            .coord-search-pin-anim {
+                                filter: drop-shadow(0 4px 6px rgba(0,0,0,0.55));
+                                animation: coord-pin-bounce 1.6s ease-in-out infinite;
+                            }
+                        `;
+                        document.head.appendChild(st);
+                    }
+
+                    // 5. 创建带脉冲动画的指示 Marker
+                    const icon = L.divIcon({
+                        className: 'coord-search-marker-icon',
+                        html: `
+                            <div style="position:relative;width:40px;height:40px;pointer-events:auto;cursor:pointer;">
+                                <div style="position:absolute;left:20px;top:20px;width:34px;height:34px;margin-left:-17px;margin-top:-17px;border-radius:50%;border:2px solid #e74c3c;background:rgba(231,76,60,0.22);animation:coord-pulse-ring 1.6s cubic-bezier(0.2,0.8,0.2,1) infinite;pointer-events:none;"></div>
+                                <div style="position:absolute;left:20px;top:20px;width:8px;height:8px;margin-left:-4px;margin-top:-4px;border-radius:50%;background:#e74c3c;border:2px solid #ffffff;box-shadow:0 0 6px #e74c3c;pointer-events:none;"></div>
+                                <div class="coord-search-pin-anim" style="position:absolute;left:20px;top:-22px;transform:translateX(-50%);font-size:26px;line-height:1;user-select:none;pointer-events:none;">📍</div>
+                            </div>
+                        `,
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 20]
+                    });
+
+                    const popupContent = `
+                        <div style="font-family:serif;font-size:12px;color:#2c1810;min-width:180px;line-height:1.5;">
+                            <div style="font-weight:bold;font-size:13px;color:#8d231b;border-bottom:1px solid rgba(141,35,27,0.3);padding-bottom:3px;margin-bottom:5px;">
+                                📍 坐标搜索定位
+                            </div>
+                            <div><b>纬度 (lat):</b> ${lat.toFixed(4)}</div>
+                            <div><b>经度 (lng):</b> ${lng.toFixed(4)}</div>
+                            ${nearestCity ? `<div style="margin-top:4px;color:#1d3326;">🏛️ <b>最近据点:</b> ${nearestCity.name} <span style="color:#8d4a2f;">(${minCityDist.toFixed(1)} km, ${dirText}向)</span></div>` : ''}
+                            ${nearestBf && minBfDist <= 150 ? `<div style="color:#555;">⚔️ <b>最近战场:</b> ${nearestBf.name} <span style="color:#8d4a2f;">(${minBfDist.toFixed(1)} km)</span></div>` : ''}
+                            <div style="margin-top:6px;text-align:right;">
+                                <button id="btn-coord-popup-clear" style="font-size:11px;padding:2px 8px;cursor:pointer;background:#fff;border:1px solid #ccc;border-radius:3px;color:#8d231b;">清除标记</button>
+                            </div>
+                        </div>
+                    `;
+
+                    const marker = L.marker([lat, lng], { icon, zIndexOffset: 10000 }).addTo(this.map);
+                    marker.bindPopup(popupContent, { autoClose: false, closeOnClick: false, offset: [0, -16] });
+                    this.searchCoordMarker = marker;
+
+                    marker.on('popupopen', () => {
+                        const btnPopupClear = document.getElementById('btn-coord-popup-clear');
+                        if (btnPopupClear) {
+                            btnPopupClear.addEventListener('click', clearCoordMarker);
+                        }
+                    });
+
+                    // 6. 移动至 ZOOM 9 并自动弹出信息窗口
+                    const targetZoom = 9; // 🔴 主人指定：移动至 ZOOM 9
+                    this.map.flyTo([lat, lng], targetZoom, { duration: 1.0 });
+
+                    // 飞行完成后打开弹窗
+                    let popupOpened = false;
+                    const openMarkerPopup = () => {
+                        if (popupOpened) return;
+                        popupOpened = true;
+                        if (this.searchCoordMarker === marker) {
+                            marker.openPopup();
+                        }
+                    };
+                    this.map.once('moveend', openMarkerPopup);
+                    setTimeout(openMarkerPopup, 1100);
+
+                    // 7. 更新面板状态与显示清除按钮
+                    if (btnCoordClear) btnCoordClear.style.display = 'inline-block';
+                    if (coordSearchResult) {
+                        coordSearchResult.style.display = 'block';
+                        coordSearchResult.innerHTML = `<b>${lat.toFixed(4)}, ${lng.toFixed(4)}</b><br>${nearestCity ? `🏛️ 距据点【${nearestCity.name}】${minCityDist.toFixed(1)}km（${dirText}）` : ''}${nearestBf && minBfDist <= 150 ? `<br>⚔️ 距战场【${nearestBf.name}】${minBfDist.toFixed(1)}km` : ''}`;
+                    }
                 };
+
                 btnCoordSearch.addEventListener('click', goCoord);
                 inpCoordSearch.addEventListener('keydown', (e: any) => { if (e.key === 'Enter') goCoord(); });
             }
@@ -1115,49 +1172,11 @@ export class GameMap {
 
 
 
-            // Style Sliders
-            const chkStyle = document.getElementById('chk-style') as HTMLInputElement;
-            const styleControls = document.getElementById('style-controls');
-
-            const rngSep = document.getElementById('rng-sep') as HTMLInputElement;
-            const rngSat = document.getElementById('rng-sat') as HTMLInputElement;
-            const rngCon = document.getElementById('rng-con') as HTMLInputElement;
-            const valSep = document.getElementById('val-sep');
-            const valSat = document.getElementById('val-sat');
-            const valCon = document.getElementById('val-con');
-
-            const updateStyle = () => {
-                const isEnabled = chkStyle ? chkStyle.checked : false;
-
-                if (styleControls) {
-                    styleControls.style.display = isEnabled ? 'flex' : 'none';
-                }
-
-                const pane = this.map.getPane('tilePane');
-                if (pane) {
-                    if (isEnabled) {
-                        const sep = rngSep.value;
-                        const sat = rngSat.value;
-                        const con = rngCon.value;
-
-                        if (valSep) valSep.innerText = sep + '%';
-                        if (valSat) valSat.innerText = sat + '%';
-                        if (valCon) valCon.innerText = con + '%';
-
-                        pane.style.filter = `sepia(${sep}%) saturate(${sat}%) contrast(${con}%) brightness(98%)`;
-                    } else {
-                        pane.style.filter = 'none';
-                    }
-                }
-            };
-
-            // Init Default Style
-            updateStyle();
-
-            if (chkStyle) chkStyle.addEventListener('change', updateStyle);
-            if (rngSep) { rngSep.addEventListener('input', updateStyle); rngSep.addEventListener('change', updateStyle); }
-            if (rngSat) { rngSat.addEventListener('input', updateStyle); rngSat.addEventListener('change', updateStyle); }
-            if (rngCon) { rngCon.addEventListener('input', updateStyle); rngCon.addEventListener('change', updateStyle); }
+            // 🔴 [2026-10-01 主人定] 滤镜是设定好的，无用，删除面板调节，固定应用设定滤镜
+            const tilePane = this.map.getPane('tilePane');
+            if (tilePane) {
+                tilePane.style.filter = 'sepia(8%) saturate(104%) contrast(104%) brightness(98%)';
+            }
 
             // Faction Color Toggle
             const chkFaction = document.getElementById('chk-faction') as HTMLInputElement;
@@ -1415,21 +1434,12 @@ export class GameMap {
                 });
             }
 
-            const savedSourceKey = savedDebugPanelState?.sourceKey;
-            if (savedSourceKey === 'LOCAL' || savedSourceKey === 'ESRI_SHADED') {
-                this.setMapSource(savedSourceKey);
-            }
+            this.setMapSource('LOCAL');
 
             const savedInputs = savedDebugPanelState?.inputs;
             if (savedInputs && panelContent) {
-                // 如果是旧版本默认值 (10/100/110)，自动升级到新古卷默认值 (24/86/114)
-                if (savedInputs['rng-sep'] === '10' && savedInputs['rng-sat'] === '100' && savedInputs['rng-con'] === '110') {
-                    savedInputs['rng-sep'] = '24';
-                    savedInputs['rng-sat'] = '86';
-                    savedInputs['rng-con'] = '114';
-                }
                 for (const [id, value] of Object.entries(savedInputs)) {
-                    if (id === 'chk-terrain-relief-experiment' || id === 'chk-valley-relief-experiment') continue;
+                    if (id.startsWith('rng-sep') || id.startsWith('rng-sat') || id.startsWith('rng-con') || id === 'chk-style') continue;
                     const input = panelContent.querySelector<HTMLInputElement>(`#${id}`);
                     if (!input) continue;
                     if (input.type === 'checkbox' && typeof value === 'boolean') {
@@ -1448,8 +1458,6 @@ export class GameMap {
                     persistDebugPanelState();
                 }
             });
-            btnEsri?.addEventListener('click', persistDebugPanelState);
-            btnLocal?.addEventListener('click', persistDebugPanelState);
         }, 500);
     }
 
