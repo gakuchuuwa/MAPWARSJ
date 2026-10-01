@@ -7943,9 +7943,29 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/GREEK/dasaleiti_kelaitusi.png": {
-            "scale": 1.14,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": -17
+        },
+        "/assets/SLAVIC/seleisi_ketuoluo.png": {
+            "scale": 1.12,
+            "offsetX": -6,
+            "offsetY": 8
+        },
+        "/assets/GREEK/boootiya_feinikesi.png": {
+            "scale": 1.1,
+            "offsetX": 0,
+            "offsetY": -6
+        },
+        "/assets/GREEK/yiaoniya_hegexisite.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -4
+        },
+        "/assets/PERSIAN/kaliya_mennong.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

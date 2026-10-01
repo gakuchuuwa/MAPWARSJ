@@ -20,7 +20,11 @@
   button { background:#243246; color:#edf2f7; border:1px solid #4a5568; padding:5px 11px; border-radius:5px; font-size:12px; cursor:pointer; }
   button:hover { background:#32445e; border-color:#63b3ed; }
   button.active { background:#2b6cb0; border-color:#63b3ed; color:#fff; font-weight:600; }
+  button:disabled { opacity:.35; cursor:not-allowed; }
+  button:disabled:hover { background:#243246; border-color:#4a5568; }
   button.danger:hover { background:#742a2a; border-color:#fc8181; }
+  .modehint { font-size:12px; color:#a0aec0; }
+  .modehint b { color:#f6e05e; }
   .main { display:flex; align-items:flex-start; gap:14px; padding:14px 18px 60px 18px; }
   .stage-wrap { flex:1 1 auto; background:#131b26; border:1px solid #243042; border-radius:8px; overflow:hidden; }
   #stage { position:relative; width:100%; height:660px; overflow:hidden; cursor:crosshair; background:radial-gradient(circle at 50% 45%, #1a2638 0%, #0c1017 100%); }
@@ -53,16 +57,24 @@
 
 <header>
   <h1>🧱 围栏编辑器 · 城门 / 城垛 / 城墙</h1>
-  <span class="hint">照主人定的**围栏三件套标准**画：城墙只有东北 / 东南两朝向 → 朝向一变就放城垛 → 城门只开一扇、两边接城墙 → 城垛两边接城墙。</span>
+  <span class="hint">照主人定的<b>围栏三件套标准</b>画：城墙只有东北 / 东南两朝向 → 朝向一变就放城垛 → 城门只开一扇、两边接城墙 → 城垛两边接城墙。</span>
 </header>
 
 <div class="toolbar">
   <div class="grp">
-    <label>工具</label>
-    <button data-tool="wall" class="active">① 城墙</button>
-    <button data-tool="post">② 城垛</button>
-    <button data-tool="gate">③ 城门</button>
-    <button data-tool="erase">④ 橡皮</button>
+    <label>操作</label>
+    <button data-mode="place" class="active">🧱 放置</button>
+    <button data-mode="erase">🧽 删除</button>
+    <button data-mode="rotate">🔄 旋转</button>
+  </div>
+  <div class="grp" id="pieceGrp">
+    <label>放置什么</label>
+    <button data-piece="wall" class="active">城墙</button>
+    <button data-piece="post">城垛</button>
+    <button data-piece="gate">城门</button>
+  </div>
+  <div class="grp" style="flex:1 1 320px;">
+    <span class="modehint" id="modeHint"></span>
   </div>
   <div class="grp">
     <label>栅栏材质</label>
@@ -88,9 +100,14 @@
   </div>
   <div class="grp">
     <label>同屏缩放</label>
-    <button data-zoom="1" class="active">100%</button>
-    <button data-zoom="1.4">140%</button>
-    <button data-zoom="1.9">190%</button>
+    <button id="btnZoomOut" title="缩小（滚轮亦可）">−</button>
+    <button data-zoom="1">100%</button>
+    <button data-zoom="2">200%</button>
+    <button data-zoom="3">300%</button>
+    <button data-zoom="5">500%</button>
+    <button id="btnZoomIn" title="放大（滚轮亦可）">+</button>
+    <button id="btnFit" class="active" title="把围栏放大到铺满画布">适配窗口</button>
+    <span class="muted" id="zoomOut" style="min-width:52px;">—</span>
   </div>
 </div>
 
@@ -139,7 +156,7 @@
 <script type="module">
 import {
   buildStockadeShapeRing, STOCKADE_SHAPE_LABELS, STOCKADE_SHAPE_KEYS,
-  STOCKADE_FENCE_SETS, validateStockadeRing, autoInsertStockadePosts,
+  STOCKADE_FENCE_SETS, validateStockadeRing, autoInsertStockadePosts, ringOrderOf,
 } from '/src/systems/cityWallShared.ts';
 import { CITIES_V2 } from '/src/data/cities_v2.ts';
 
@@ -165,9 +182,11 @@ const D_NE = { i: +1, j: -1 }, D_SE = { i: +1, j: +1 }, D_NW = { i: -1, j: -1 },
 const S = {
   pieces: [],        // [{x,y,type,flipX}]（数组顺序 = 环顺序）
   tail: null,        // 还没定朝向的尾点（正在画）
-  tool: 'wall',
+  mode: 'place',     // 操作：place 放置 / erase 删除 / rotate 旋转（三件事分开，互不越权）
+  piece: 'wall',     // 放置什么：wall 城墙 / post 城垛 / gate 城门（只在 place 模式下生效）
   mat: 'HARDWOOD',
-  zoom: 1,
+  zoom: 3,           // 初始放大倍数（载入设计后还会自动「适配窗口」）
+  fit: true,         // 自动适配：载入形制 / 样式 / 导入后自动把围栏铺满画布
   undo: [],
   styleKey: null,    // 正在编辑哪一条已存样式（另存为时为 null）
   savedStyles: [],
@@ -175,6 +194,7 @@ const S = {
 };
 
 const el = (id) => document.getElementById(id);
+window.__stk = S;   // 调试/探针用：脚本里直接读设计状态
 const toast = (msg, ms = 2600) => { const t = el('toast'); t.innerHTML = msg; t.style.display = 'block'; clearTimeout(toast._t); toast._t = setTimeout(() => (t.style.display = 'none'), ms); };
 
 /* ── 格点 ↔ 屏幕 ───────────────────────────────────────────────── */
@@ -278,20 +298,65 @@ function nearestIndex(x, y) {
   return { index: best, dist: bd };
 }
 
+const HIT_TOL = STEP_X * 0.75;          // 点中构件判定：离件中心 ≤ 0.75 格
+/** 城墙四种朝向（标准的两个朝向 + 各自镜像）；旋转就是在这四者里循环 */
+const WALL_CYCLE = [
+  { type: 'NE', flipX: false, label: '东北向 ↗' },
+  { type: 'SE', flipX: false, label: '东南向 ↘' },
+  { type: 'SE', flipX: true, label: '西南向 ↙' },
+  { type: 'NE', flipX: true, label: '西北向 ↖' },
+];
+function rotatePiece(p) {
+  if (p.type === 'NE' || p.type === 'SE') {
+    const cur = WALL_CYCLE.findIndex((o) => o.type === p.type && !!o.flipX === !!p.flipX);
+    const next = WALL_CYCLE[((cur < 0 ? 0 : cur) + 1) % WALL_CYCLE.length];
+    p.type = next.type; p.flipX = next.flipX;
+    return next.label;
+  }
+  p.flipX = !p.flipX;                    // 城门 / 城垛：左右镜像
+  return p.flipX ? '镜像（左右翻）' : '正向';
+}
+const pieceName = (t) => ({ NE: '城墙', SE: '城墙', POST: '城垛', GATE: '城门', CORNER: 'L 形转角件' }[t] || t);
+
 function onClick(ev) {
   const r = stage.getBoundingClientRect();
   const { i, j } = toLattice(ev.clientX - r.left, ev.clientY - r.top);
   const { x, y } = { x: i * STEP_X, y: j * STEP_Y };
   const near = nearestIndex(x, y);
+  const hit = near.index >= 0 && near.dist <= HIT_TOL;
 
-  if (S.tool === 'wall') {
+  /* ① 删除：点构件就删掉它 */
+  if (S.mode === 'erase') {
+    if (!hit) { toast('删除：点在要删掉的构件上'); return; }
+    pushUndo();
+    const gone = pieceName(S.pieces[near.index].type);
+    S.pieces.splice(near.index, 1);
+    if (S.pieces.length === 0) S.tail = null;
+    refresh();
+    toast('已删掉 1 件' + gone);
+    return;
+  }
+
+  /* ② 旋转：点构件转一格（城墙四朝向循环；城门 / 城垛镜像） */
+  if (S.mode === 'rotate') {
+    if (!hit) { toast('旋转：点在要转的构件上'); return; }
+    pushUndo();
+    const p = S.pieces[near.index];
+    const how = rotatePiece(p);
+    refresh();
+    toast('已把这一件' + pieceName(p.type) + '转成 ' + how + (p.type === 'GATE' || p.type === 'POST' ? '' : '（城墙朝向也可以走「自动补垛」按走线重算）'));
+    return;
+  }
+
+  /* ③ 放置 */
+  if (S.piece === 'wall') {
     pushUndo();
     if (!S.tail) { S.tail = { x, y }; refresh(); return; }
     const st = stepOf(S.tail, { x, y });
     if (!st) {
       // 不相邻：如果点在已画的第一件上且能闭合 → 闭合
       if (S.pieces.length >= 3 && near.dist < STEP_X * 0.75 && near.index === 0) { closeRing(); return; }
-      toast('⚠️ 只能点在**相邻格点**上（斜一格）——已把指针移到新的一点重新起笔');
+      toast('⚠️ 只能点在<b>相邻格点</b>上（斜一格）——已把指针移到新的一点重新起笔');
       S.tail = { x, y };
       refresh();
       return;
@@ -304,37 +369,52 @@ function onClick(ev) {
     return;
   }
 
-  if (S.tool === 'erase') {
-    if (near.index < 0) return;
-    pushUndo();
-    S.pieces.splice(near.index, 1);
-    if (S.pieces.length === 0) S.tail = null;
-    refresh();
-    return;
-  }
-
   // 城垛 / 城门：点在件上 = 换成它；点在两件之间 = 插进去（保持环顺序）
   pushUndo();
-  const demoteGates = (except) => S.pieces.forEach((p, i) => { if (p.type === 'GATE' && i !== except) p.type = 'NE'; });
-  if (near.index >= 0 && near.dist < STEP_X * 0.75) {
-    if (S.tool === 'gate') demoteGates(near.index);
-    S.pieces[near.index].type = S.tool === 'post' ? 'POST' : 'GATE';
+  const want = S.piece === 'post' ? 'POST' : 'GATE';
+  const demoteGates = (except) => S.pieces.forEach((p, i) => {
+    if (p.type === 'GATE' && i !== except) demoteGateToWall(S.pieces, p);      // 其余门还原成城墙（带正确朝向）
+  });
+  if (hit) {
+    if (want === 'GATE') demoteGates(near.index);
+    S.pieces[near.index].type = want;
     S.pieces[near.index].flipX = false;
-    S.pieces = S.tool === 'gate' ? retypeWalls(S.pieces) : S.pieces;
+    S.pieces = want === 'GATE' ? retypeWalls(S.pieces) : S.pieces;
     refresh();
     return;
   }
   if (S.pieces.length < 2) { toast('先把城墙画起来，再在墙上放城垛 / 城门'); refresh(); return; }
-  let seg = 0, bd = Infinity;
-  for (let k = 0; k < S.pieces.length; k++) {
-    const a = S.pieces[k], b = S.pieces[(k + 1) % S.pieces.length];
-    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-    const d = Math.hypot(mx - x, my - y);
-    if (d < bd) { bd = d; seg = k; }
+  // 插进去：优先找**相邻两件**里中点离点击点最近的一对（件表按环序存；载入的直边形制里也有隔 2 格的「门位」）
+  const pairNear = (list, maxD) => {
+    let at = -1, bd = Infinity;
+    for (let k = 0; k < list.length; k++) {
+      const ia = list[k], ib = list[(k + 1) % list.length];
+      if (ia === ib) continue;
+      const a = S.pieces[ia], b = S.pieces[ib];
+      const dd = Math.hypot(a.x - b.x, a.y - b.y);
+      if (dd > maxD) continue;
+      const d = Math.hypot((a.x + b.x) / 2 - x, (a.y + b.y) / 2 - y);
+      if (d < bd) { bd = d; at = ia; }
+    }
+    return { at, d: bd };
+  };
+  const seq = S.pieces.map((_, i) => i);
+  let pick = pairNear(seq, STEP_X * 2.2);
+  if (pick.at < 0) {                        // 件表被打乱过（删过件）：退一步，全表找最近的一对
+    let at = -1, bd = Infinity;
+    for (let i = 0; i < S.pieces.length; i++) for (let j = 0; j < S.pieces.length; j++) {
+      if (i === j) continue;
+      const a = S.pieces[i], b = S.pieces[j];
+      if (Math.hypot(a.x - b.x, a.y - b.y) > STEP_X * 2.2) continue;
+      const d = Math.hypot((a.x + b.x) / 2 - x, (a.y + b.y) / 2 - y);
+      if (d < bd) { bd = d; at = i; }
+    }
+    pick = { at, d: bd };
   }
-  if (S.tool === 'gate') demoteGates(-1);
-  S.pieces.splice(seg + 1, 0, { x, y, type: S.tool === 'post' ? 'POST' : 'GATE', flipX: false });
-  S.pieces = S.tool === 'gate' ? retypeWalls(S.pieces) : S.pieces;
+  if (pick.at < 0 || pick.d > STEP_X * 2.2) { toast('这里离墙太远：点在墙上，或点在两件之间的格点上'); refresh(); return; }
+  if (want === 'GATE') demoteGates(-1);
+  S.pieces.splice(pick.at + 1, 0, { x, y, type: want, flipX: false });
+  S.pieces = want === 'GATE' ? retypeWalls(S.pieces) : S.pieces;
   refresh();
 }
 
@@ -360,10 +440,12 @@ function closeRing() {
 function ringClosed() {
   if (S.pieces.length < 3) return false;
   const a = S.pieces[S.pieces.length - 1], b = S.pieces[0];
-  return Math.hypot(a.x - b.x, a.y - b.y) <= STEP_X * 1.5;
+  return Math.hypot(a.x - b.x, a.y - b.y) <= STEP_X * 2.2;   // 件表按环序存；首尾贴上就算闭合（城门外侧空一格 = 2 格）
 }
 
 function refresh() {
+  if (S.fit) S.zoom = fitZoom();          // 适配模式下每次刷新都按画布重算（窗口缩放也跟着变）
+  syncZoomButtons();
   drawGrid();
   renderPieces();
   const errs = validateStockadeRing(S.pieces, REF);
@@ -374,7 +456,7 @@ function refresh() {
   const gate = S.pieces.findIndex((p) => p.type === 'GATE');
   if (gate >= 0) {
     const g = S.pieces[gate];
-    if (g.y < 0) warnings.push('城门在**上半圈**：标准要求门开在「左下那条边」正中（下半圈）');
+    if (g.y < 0) warnings.push('城门在<b>上半圈</b>：标准要求门开在「左下那条边」正中（下半圈）');
   }
   const box = bbox(S.pieces);
   el('checkOut').innerHTML = (errs.length === 0
@@ -394,7 +476,35 @@ const bbox = (ps) => {
   return { w: maxX - minX, h: maxY - minY, minX, maxX, minY, maxY };
 };
 
-/** 按「它到下一件的一步」重算城墙朝向（标准：朝向由走向定）。步长不是整格的（曲线形制）保持原样。 */
+/* ── 缩放：画布太小看不清，一律放大到铺满 ─────────────────────── */
+const ZOOM_MIN = 1, ZOOM_MAX = 8;
+const clampZoom = (z) => Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z));
+/** 把圈放大到画布的 OCCUPY，让构件看得清（构件图比圈还大一圈，故只占 55%） */
+function fitZoom() {
+  const box = bbox(S.pieces);
+  const W = stage.clientWidth, H = stage.clientHeight;
+  if (!box.w || !box.h || W < 50 || H < 50) return 3;
+  const OCCUPY = 0.55;
+  return clampZoom(Math.round(Math.min((W * OCCUPY) / box.w, (H * OCCUPY) / box.h) * 10) / 10);
+}
+function setZoom(z, { keepFit = false } = {}) {
+  S.zoom = clampZoom(z);
+  S.fit = keepFit;
+  syncZoomButtons();
+  refresh();
+}
+function syncZoomButtons() {
+  document.querySelectorAll('[data-zoom]').forEach((b) => b.classList.toggle('active', !S.fit && Number(b.dataset.zoom) === S.zoom));
+  const f = el('btnFit');
+  if (f) f.classList.toggle('active', S.fit);
+  const out = el('zoomOut');
+  if (out) out.textContent = S.zoom.toFixed(1) + '×' + (S.fit ? ' 适配' : '');
+}
+
+/** 按「它到下一件的一步」重算城墙朝向（标准：朝向由走向定）。步长不是整格的（曲线形制）保持原样。
+ *  ⚠️ 这里走**件表顺序**（画出来的、载入的形制都是按环序存的）；
+ *     不要改成按极角重排后再算 —— 直边形制（正方 / 矩形 / 梯形）的直角边上有角度并列的件，
+ *     极角排序会把同一段上的件排乱，实测矩形 / 梯形当场多出 2 处「朝向变了没城垛」、城垛从 4 个涨到 7 / 5 个。 */
 function retypeWalls(pieces) {
   const out = pieces.map((p) => ({ ...p }));
   for (let i = 0; i < out.length; i++) {
@@ -405,13 +515,26 @@ function retypeWalls(pieces) {
   }
   return out;
 }
+/** 旧城门还原成城墙 —— 🔴 城门两侧各空一格（到邻居 **2 格**），`stepOf` 取不到走向，重算救不了它；
+ *  改取**离它最近的城墙**（同一段上的那两件就在 2 格外）的朝向照抄。
+ *  ⚠️ 不许按极角环序找邻居：直边形制的直角边上有角度并列的件，排序会排乱（实测矩形 / 梯形各多 2 处违规）。 */
+function demoteGateToWall(pieces, gate) {
+  let best = null, bd = Infinity;
+  for (const q of pieces) {
+    if (q === gate || (q.type !== 'NE' && q.type !== 'SE')) continue;
+    const d = Math.hypot(q.x - gate.x, q.y - gate.y);
+    if (d < bd) { bd = d; best = q; }
+  }
+  if (best) { gate.type = best.type; gate.flipX = !!best.flipX; return; }
+  gate.type = 'NE'; gate.flipX = false;
+}
 /** 只留一扇门（标准：一个围栏只开一扇）：留下最靠下（左下边）的那扇，其余按走向还原成城墙 */
 function keepSingleGate(pieces) {
   const out = pieces.map((p) => ({ ...p }));
   const gates = out.map((p, i) => (p.type === 'GATE' ? i : -1)).filter((i) => i >= 0);
   if (gates.length <= 1) return out;
   gates.sort((a, b) => out[b].y - out[a].y);
-  for (const i of gates.slice(1)) out[i].type = 'NE';
+  for (const i of gates.slice(1)) demoteGateToWall(out, out[i]);
   return retypeWalls(out);
 }
 /** 载入任何形制后的统一归一：只留一扇门 → 重算朝向 → 按标准补垛 */
@@ -476,7 +599,7 @@ function renderStyleList() {
     S.styleKey = s.key; S.mat = s.material || 'HARDWOOD'; S.pieces = s.pieces.map((p) => ({ ...p })); S.tail = null;
     S.applyTo = new Set(s.applyTo || []);
     el('styleName').value = s.name;
-    syncMatButtons(); renderCityPick(); refresh(); toast('已载入样式「' + s.name + '」');
+    syncMatButtons(); renderCityPick(); S.fit = true; refresh(); toast('已载入样式「' + s.name + '」');
   }));
 }
 
@@ -498,15 +621,39 @@ function syncMatButtons() {
   document.querySelectorAll('[data-mat]').forEach((b) => b.classList.toggle('active', b.dataset.mat === S.mat));
 }
 function syncToolButtons() {
-  document.querySelectorAll('[data-tool]').forEach((b) => b.classList.toggle('active', b.dataset.tool === S.tool));
+  document.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('active', b.dataset.mode === S.mode));
+  document.querySelectorAll('[data-piece]').forEach((b) => {
+    b.classList.toggle('active', b.dataset.piece === S.piece);
+    b.disabled = S.mode !== 'place';          // 「放置什么」只在放置模式下管用
+  });
+  el('pieceGrp').style.opacity = S.mode === 'place' ? '1' : '.55';
+  stage.style.cursor = S.mode === 'place' ? 'crosshair' : 'pointer';
+  const HINTS = {
+    place: {
+      wall: '放置·<b>城墙</b>：点格点起笔，再点<b>相邻格点</b>（斜一格）连笔画圈；点回起点即闭合',
+      post: '放置·<b>城垛</b>：点在墙上就换成本件；点在两件之间就插进去',
+      gate: '放置·<b>城门</b>：点在墙上换成本件（标准只留一扇，旧的自动还原成城墙）',
+    },
+    erase: '删除：点哪件删哪件（<b>右键</b>在任意模式下也能删）',
+    rotate: '旋转：点构件转一格 —— 城墙在<b>东北 / 东南 / 西南 / 西北</b>四朝向里循环，城门·城垛左右镜像',
+  };
+  el('modeHint').innerHTML = S.mode === 'place' ? HINTS.place[S.piece] : HINTS[S.mode];
 }
-document.querySelectorAll('[data-tool]').forEach((b) => b.addEventListener('click', () => { S.tool = b.dataset.tool; syncToolButtons(); }));
-document.querySelectorAll('[data-mat]').forEach((b) => b.addEventListener('click', () => { S.mat = b.dataset.mat; syncMatButtons(); refresh(); }));
-document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => {
-  S.zoom = Number(b.dataset.zoom);
-  document.querySelectorAll('[data-zoom]').forEach((x) => x.classList.toggle('active', x === b));
-  refresh();
+document.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => { S.mode = b.dataset.mode; syncToolButtons(); }));
+document.querySelectorAll('[data-piece]').forEach((b) => b.addEventListener('click', () => {
+  if (S.mode !== 'place') { S.mode = 'place'; }               // 点「放置什么」自动回到放置模式，少一步
+  S.piece = b.dataset.piece; syncToolButtons();
 }));
+document.querySelectorAll('[data-mat]').forEach((b) => b.addEventListener('click', () => { S.mat = b.dataset.mat; syncMatButtons(); refresh(); }));
+document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => setZoom(Number(b.dataset.zoom))));
+el('btnFit').addEventListener('click', () => { S.fit = true; refresh(); });
+el('btnZoomIn').addEventListener('click', () => setZoom(S.zoom * 1.35));
+el('btnZoomOut').addEventListener('click', () => setZoom(S.zoom / 1.35));
+// 滚轮缩放：向上放大、向下缩小（以画布中心为锚，够用且不打断画线）
+stage.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  setZoom(S.zoom * (e.deltaY < 0 ? 1.18 : 1 / 1.18));
+}, { passive: false });
 document.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('click', () => {
   pushUndo();
   S.pieces = normalizeDesign(buildStockadeShapeRing(b.dataset.preset, REF).map((p) => ({ ...p })));
@@ -514,6 +661,7 @@ document.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('cl
   const errs = validateStockadeRing(S.pieces, REF);
   toast('已载入「' + STOCKADE_SHAPE_LABELS[b.dataset.preset] + '」并归一（只留一扇门 + 按标准补垛）：'
     + (errs.length ? '⚠️ 还剩 ' + errs.length + ' 处不合规，看右侧清单' : '✅ 合三件套标准'));
+  S.fit = true;
   refresh();
 }));
 el('btnClose').addEventListener('click', closeRing);
@@ -544,15 +692,29 @@ el('btnImport').addEventListener('click', async () => {
     S.tail = null; S.mat = o.material || S.mat; S.styleKey = o.key || null;
     el('styleName').value = o.name || '';
     S.applyTo = new Set(o.applyTo || []);
-    syncMatButtons(); renderCityPick(); refresh(); toast('已导入');
+    syncMatButtons(); renderCityPick(); S.fit = true; refresh(); toast('已导入');
   } catch (e) { toast('❌ JSON 解析失败：' + e.message); }
 });
 el('cityFind').addEventListener('input', renderCityPick);
 stage.addEventListener('click', onClick);
+// 右键 = 删除（任意模式下都能用，不改当前操作）
+stage.addEventListener('contextmenu', (ev) => {
+  ev.preventDefault();
+  const r = stage.getBoundingClientRect();
+  const { i, j } = toLattice(ev.clientX - r.left, ev.clientY - r.top);
+  const near = nearestIndex(i * STEP_X, j * STEP_Y);
+  if (near.index < 0 || near.dist > HIT_TOL) { toast('右键删除：点在要删掉的构件上'); return; }
+  pushUndo();
+  const gone = pieceName(S.pieces[near.index].type);
+  S.pieces.splice(near.index, 1);
+  if (S.pieces.length === 0) S.tail = null;
+  refresh();
+  toast('已删掉 1 件' + gone);
+});
 window.addEventListener('resize', refresh);
 
 /* ── 起手：默认载入「正方」，并拉一次已存样式 ─────────────────── */
-S.pieces = buildStockadeShapeRing('square', REF).map((p) => ({ ...p }));
+S.pieces = normalizeDesign(buildStockadeShapeRing('square', REF).map((p) => ({ ...p })));   // 与预设按钮同一条路（只留一扇门 + 补垛）
 el('styleName').value = '我的围栏 1';
 syncToolButtons(); syncMatButtons(); renderCityPick(); refresh(); loadStyleList();
 </script>
