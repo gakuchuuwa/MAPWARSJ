@@ -1478,7 +1478,7 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
   - **样式五：小城硬木** —— 小城同款硬木尖桩木栅栏（`DE_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`POST`），尖桩原木双塔木门（`DARK_GATE_PALISADE`），内部 9 建筑环列。
   - **样式六：原木尖桩** —— 经典尖原木木栅栏（`DE_DARK_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`DARK_WALL_PALISADE_POST`），双塔木门，内部 9 建筑环列。
   - **样式七：平切木栅** —— 古典横木加固栅栏（`DE_ARCHAIC_PALISADE_ANCHORS`），正方五格，两端平切横木加固，四角立木垛，双塔木门，内部 9 建筑环列。
-  - **内部建筑池**（常规城寨 20 候选随机抽 9 栋 / 矩形 6 栋）：定居点 `SETTLEMENT`、棚屋 `HUT_A~G`、简易帐篷 `YURT_A~D`、哨站 `OUTPOST`/`FORTIFIED_OUTPOST`，以及主人 2026-10-01 引入的 6 款 DE 官方黑暗时代核心建筑（兵营 `DARK_BARRACKS_AGE1`、定居点大屋 `DARK_SETTLEMENT_AGE1`、牧场棚圈 `DARK_PASTURE`、部落中心 `DARK_TOWN_CENTER_AGE1`、房屋 `DARK_HOUSE_AGE1`、磨坊 `DARK_MILL_AGE1`）。草原/漠北蒙古特化则为 8 蒙古包（`YURT_E~L`）+ 1 亚洲瞭望塔（`ASIA_TOWER_AGE2`）。
+  - **内部建筑池**（常规城寨 19 候选随机抽 9 栋 / 矩形 6 栋）：定居点 `SETTLEMENT`、棚屋 `HUT_A~G`、简易帐篷 `YURT_A~D`、哨站 `OUTPOST`/`FORTIFIED_OUTPOST`，以及主人 2026-10-01 引入的 5 款 DE 官方黑暗时代核心建筑（兵营 `DARK_BARRACKS_AGE1`、定居点大屋 `DARK_SETTLEMENT_AGE1`、部落中心 `DARK_TOWN_CENTER_AGE1`、房屋 `DARK_HOUSE_AGE1`、磨坊 `DARK_MILL_AGE1`）。草原/漠北蒙古特化则为 8 蒙古包（`YURT_E~L`）+ 1 亚洲瞭望塔（`ASIA_TOWER_AGE2`）。
 
 
 #### 三之二、第一页 6 张据点卡的排布（2026-09-12 主人定）

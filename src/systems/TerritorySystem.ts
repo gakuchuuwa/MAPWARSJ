@@ -79,14 +79,14 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（20 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代牧场 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
+// 城寨建筑池（19 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
     'OUTPOST', 'FORTIFIED_OUTPOST',
     'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
-    'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_PASTURE', 'DARK_TOWN_CENTER_AGE1',
+    'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_TOWN_CENTER_AGE1',
 ];
 
 const DE_STOCKADE_SCALES: Record<string, number> = {
@@ -95,7 +95,7 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
     YURT_A: 0.25, YURT_B: 0.25, YURT_C: 0.25, YURT_D: 0.25,
     OUTPOST: 0.26, FORTIFIED_OUTPOST: 0.26,
     DARK_HOUSE_AGE1: 0.26, DARK_MILL_AGE1: 0.30,
-    DARK_BARRACKS_AGE1: 0.32, DARK_SETTLEMENT_AGE1: 0.34, DARK_PASTURE: 0.25, DARK_TOWN_CENTER_AGE1: 0.36,
+    DARK_BARRACKS_AGE1: 0.32, DARK_SETTLEMENT_AGE1: 0.34, DARK_TOWN_CENTER_AGE1: 0.36,
 };
 
 /** 🔴 [2026-09-16 主人定「中间的建筑可以加减，改变摆放位置」] 矩形围栏（城寨样式四）院内的建筑位：
@@ -714,21 +714,22 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     const fullGW = (10 * stepX) * 2.8, fullGH = (10 * stepY) * 5.6;
     let clip = '';
     if (stockadeStyle === 1) {
-        // 样式二：圆形羊圈 (Rx = 7.0 * stepX)
-        const rX = 7.0 * stepX, rY = 7.0 * stepY;
+        // 样式二：圆形羊圈 (Rx = 6.6 * stepX，严密贴合栅栏内侧脚线)
+        const rX = 6.6 * stepX, rY = 6.6 * stepY;
         clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
     } else if (stockadeStyle === 2) {
-        // 样式三：八角羊圈 (Rx = 7.1 * stepX)
-        const rX = 7.1 * stepX, rY = 7.1 * stepY;
+        // 样式三：八角羊圈 (Rx = 6.7 * stepX，严密贴合栅栏内侧脚线)
+        const rX = 6.7 * stepX, rY = 6.7 * stepY;
         clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
     } else if (stockadeStyle === 3) {
-        // 样式四：矩形围栏 (12×8)
-        const u1 = 10 * stepX, v1 = 2 * stepY;
-        const u2 = 2 * stepX, v2 = 10 * stepY;
+        // 样式四：矩形围栏 (12×8，严密贴合围栏内侧脚线)
+        const u1 = 9.4 * stepX, v1 = 1.9 * stepY;
+        const u2 = 1.9 * stepX, v2 = 9.4 * stepY;
         clip = `polygon(calc(50% - ${u2.toFixed(1)}px) calc(50% - ${v2.toFixed(1)}px), calc(50% + ${u1.toFixed(1)}px) calc(50% + ${v1.toFixed(1)}px), calc(50% + ${u2.toFixed(1)}px) calc(50% + ${v2.toFixed(1)}px), calc(50% - ${u1.toFixed(1)}px) calc(50% - ${v1.toFixed(1)}px))`;
     } else {
-        // 样式一/五/六/七：正方菱形（与小城完全相同）
-        const rX = 10 * stepX, rY = 10 * stepY;
+        // 样式一/五/六/七：正方菱形（与小城完全相同 S=5, AX=10，城内饱满无漏黑）
+        const AX = 10;
+        const rX = AX * stepX, rY = AX * stepY;
         clip = `polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%)`;
     }
     parts.push(
