@@ -1397,7 +1397,7 @@ let curRadiusMult = 1.0;
 let curBldgScale = 1.0;
 let curGateScale = 1.0;
 let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
-let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon' | 'rect'
+let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon' | 'rect' | 'palisade'
 let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
 let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
 
@@ -2145,7 +2145,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
     anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
   } else if (type === 'stockade') {
-    /* 城寨围栏四选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏（2026-09-16 主人定新增第 4 种） */
+    /* 城寨围栏五选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 小城栅栏（2026-10-01 主人定新增第 5 种） */
     const stkShape = (curStockadeShape === 'square')
       ? 0
       : (curStockadeShape === 'round')
@@ -2154,18 +2154,27 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
           ? 2
           : (curStockadeShape === 'rect')
             ? 3
-            : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 3);
+            : (curStockadeShape === 'palisade')
+              ? 4
+              : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 5);
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize);
+      anchors = FENCE_ANCHORS;
     } else if (stkShape === 2) {
       pieces = computeCorralOctagonWall(baseSize);
+      anchors = FENCE_ANCHORS;
     } else if (stkShape === 3) {
       pieces = computeCorralRectWall(baseSize);
+      anchors = FENCE_ANCHORS;
+    } else if (stkShape === 4) {
+      // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏
+      pieces = computeRingWall(baseSize, 5);
+      anchors = PALISADE_ANCHORS;
     } else {
       pieces = computeRingWall(baseSize, 5);
       for (const w of pieces) { if (w.type === 'POST') w.type = 'CORNER'; }
+      anchors = FENCE_ANCHORS;
     }
-    anchors = FENCE_ANCHORS;
   } else if (type === 'pass') {
     const rndWall = mulberry32(hashString(style + '_' + type + '_' + randomSeedOffset + '_passtower'));
     // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要 = 城堡 + 5 座箭塔（多一座门楼箭塔）；与 TerritorySystem 同步
@@ -2481,7 +2490,8 @@ function renderGateCloseup(style, type) {
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'stockade') {
-    const a = FENCE_ANCHORS.GATE;
+    const isPalisadeGate = curStockadeShape === 'palisade';
+    const a = isPalisadeGate ? PALISADE_ANCHORS.GATE : FENCE_ANCHORS.GATE;
     const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'pass') {
@@ -2879,7 +2889,7 @@ if (btnMedGates) {
 
 if (urlParams.has('stockadeShape')) {
   const s = urlParams.get('stockadeShape');
-  if (['rnd', 'square', 'round', 'octagon', 'rect'].includes(s)) {
+  if (['rnd', 'square', 'round', 'octagon', 'rect', 'palisade'].includes(s)) {
     curStockadeShape = s;
     const btn = document.getElementById('btnStkShape');
     if (btn) {
@@ -2899,8 +2909,12 @@ if (urlParams.has('stockadeShape')) {
         btn.innerText = '城寨围栏: 样式四 (矩形围栏)';
         btn.style.background = '#805ad5';
         btn.style.borderColor = '#b794f4';
+      } else if (s === 'palisade') {
+        btn.innerText = '城寨围栏: 样式五 (小城栅栏)';
+        btn.style.background = '#9b2c2c';
+        btn.style.borderColor = '#fc8181';
       } else {
-        btn.innerText = '城寨围栏: 🎲 随机三选一';
+        btn.innerText = '城寨围栏: 🎲 随机五选一';
         btn.style.background = '#243246';
         btn.style.borderColor = '#4a5568';
       }
@@ -2931,9 +2945,14 @@ if (btnStkShape) {
       btnStkShape.innerText = '城寨围栏: 样式四 (矩形围栏)';
       btnStkShape.style.background = '#805ad5';
       btnStkShape.style.borderColor = '#b794f4';
+    } else if (curStockadeShape === 'rect') {
+      curStockadeShape = 'palisade';
+      btnStkShape.innerText = '城寨围栏: 样式五 (小城栅栏)';
+      btnStkShape.style.background = '#9b2c2c';
+      btnStkShape.style.borderColor = '#fc8181';
     } else {
       curStockadeShape = 'rnd';
-      btnStkShape.innerText = '城寨围栏: 🎲 随机三选一';
+      btnStkShape.innerText = '城寨围栏: 🎲 随机五选一';
       btnStkShape.style.background = '#243246';
       btnStkShape.style.borderColor = '#4a5568';
     }

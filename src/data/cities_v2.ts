@@ -3420,7 +3420,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_dabulishi', name: '大不里士', factionId: 'yilihanguo_d', lat: 38.08, lng: 46.29, type: 'medium_city', troops: 10000, region: 'ILKHANATE', buildingStyle: 'PERSIAN' },
-    { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'stockade', troops: 10000, region: 'ILKHANATE', buildingStyle: 'PERSIAN' },
+    { id: 'city_malagai', name: '马拉盖', factionId: 'asaibaijiang', lat: 37.39, lng: 46.24, type: 'small_city', troops: 10000, region: 'ILKHANATE', buildingStyle: 'PERSIAN', note: '伊尔汗国早期王都（旭烈兀建都于此），马拉盖天文台所在地，人口数万；依2026-10-01铁律定为小城' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 ARMENIANS：埃里温：亚美尼亚
     { id: 'city_ailiwen', name: '埃里温', factionId: 'wulaertu', lat: 40.18, lng: 44.51, type: 'small_city', troops: 10000, region: 'WEST_ASIA', buildingStyle: 'ARMENIANS' },
@@ -3712,7 +3712,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
     // 🔴 [2026-09-30 主人令「添加据点：兹拉卡塔 36.84,54.43」] 赫卡尼亚首府、阿契美尼德二十大行省之一赫卡尼亚的行政首府与王家驻地。
     { id: 'city_zilakata', name: '兹拉卡塔', factionId: 'hekaniya', lat: 36.84, lng: 54.43, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '兹拉卡塔（Zadracarta），希腊化时期称谓（阿里安《远征记》III.23–25），后称戈尔甘（Gorgan／Hyrcania Metropolis），伊斯兰时期为朱尔詹（Jurjan）。阿契美尼德帝国及后继者治下赫卡尼亚行省首府与王家驻地，大流士三世死后阿尔塔巴佐斯率部退守此城；亚历山大入城后授阿尔塔巴佐斯为巴克特里亚总督。定级依据§6.2：非关隘/要塞/堡垒（不是险要）；地处里海东南沼泽森林与荒原边缘，阿契美尼德及希腊化早期城内固定居民推算约1万–3万 ⇒ 小城(small_city)。文化：波斯(PERSIAN)。' },
-    { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'stockade', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '🔴 [2026-09-25 主人批准新建] 伊利里亚人达萨雷提部的设防要塞，扼察贡山口（伊利里亚—马其顿南线要道）；前335年克莱图斯据此抗亚历山大（英文维基 Siege of Pelium / Pelion (Illyria)）。坐标：确切位置无定论，取温尼弗里斯说、莱恩·福克斯称「决定性论证」的兹韦兹代（Zvezdë，维基坐标 40.7306,20.8625）。定级依据§6.2：它是扼山口的**山堡**、不是有石头城墙的关隘城镇（2026-09-30 新口径：险要须有石头城墙才 PASS）→ 落**城寨**。文化区：项目无伊利里亚文化区，伊利里亚与色雷斯同属古巴尔干部族、地理相邻，取 THRACIAN。' },
+    { id: 'city_peiliang', name: '佩利昂', factionId: 'dasaleiti', lat: 40.7306, lng: 20.8625, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '伊利里亚达萨雷提部与达达尼王国设防首府（今阿尔巴尼亚兹韦兹代），阿里安称其为「该地区防御最坚固之城」；前335年克莱图斯与陶兰提王格劳基亚斯联军数万人据守抗马其顿，城内守军逾万，依2026-10-01铁律定为小城（原误标城寨stockade）' },
     { id: 'city_peierge', name: '阿斯彭杜斯', factionId: 'panfeiliya', lat: 36.9389, lng: 31.1722, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '阿斯彭杜斯（Aspendos），潘菲利亚大城，今土耳其安塔利亚省 Belkıs；阿里安《远征记》I.27：前334 亚历山大在此索取人质与赋税并留下驻军 —— 史料明载大军驻军，故立为本段路的终点；佩尔格只是沿途经过，降为途经点。坐标取英文维基 Aspendos 36.9389,31.1722。（本据点沿用原佩尔格的内部 id city_peierge，避免连带改动路网与事件引用。）定级依据§6.2：非关隘/要塞/堡垒（不是险要），人口查不到史料 ⇒ 按「算不出来一律按小城和城寨」落小城(small_city)。建筑风格：希腊古典(GREEK)。' },
     { id: 'city_baihaliye', name: '拜哈里耶', factionId: 'baihaliye', lat: 28.35, lng: 28.86, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '🔴 [2026-09-28 主人批准新建] 埃及西部沙漠绿洲拜哈里耶(Bahariya)，利比亚沙漠商路要冲与葡萄酒名产地；亚历山大自锡瓦神庙东归孟菲斯经此，建有亚历山大神庙。定级依据（2026-09-28 主人定规）：非关隘险要，按城市定级；沙漠绿洲农业聚落，查无过万史料人口数字，算不出来一律按城寨 → 城寨(stockade)。建筑风格：东方/古埃及(ORIE)。' },
     { id: 'city_kuida', name: '奎达', factionId: 'kuida', lat: 30.58, lng: 67.01, type: 'stockade', troops: 10000, region: 'PASHTUN', buildingStyle: 'PERSIAN', note: '🔴 [2026-09-28 主人批准新建] 古称沙尔(Shal/Kot)，扼波兰山口咽喉之高地要塞；连接印度河平原与俾路支/阿拉霍西亚高原之战略要冲。定级依据§6.2：属险要/关隘/要塞，但泥石山堡无石头城墙（2026-09-30 新口径：险要须有石头城墙才 PASS）→ 落城寨(stockade)。建筑风格：波斯/普什图高地土石堡垒(PERSIAN)。' },

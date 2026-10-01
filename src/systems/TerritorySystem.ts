@@ -682,13 +682,13 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         const j = Math.floor(rnd() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
-    // 严密咬合的篱笆围墙与篱笆门：[2026-09-08 主人定] 样式随机；🔴 [2026-09-16 主人定] 补第 4 种「矩形围栏」：
+    // 严密咬合的篱笆围墙与篱笆门：[2026-09-08 主人定] 样式随机；🔴 [2026-09-16 主人定] 补第 4 种「矩形围栏」；🔴 [2026-10-01 主人定] 补第 5 种「小城栅栏」：
     // 0: 原有正方形 (四角L形转角件 FENCE_CORNER)
     // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈)
     // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场)
-    // 3: 方案C (矩形围栏，走险要同款矩形拓扑；🔴 2026-09-28 补进游戏 —— 评估页 `public/_citytest.html`
-    //    2026-09-16 就加了这一种，游戏侧一直停在 `% 3`，「四选一」少了第四个，等于矩形围栏从没在游戏里出现过）
-    const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 4;
+    // 3: 方案C (矩形围栏，走险要同款矩形拓扑；🔴 2026-09-28 补进游戏)
+    // 4: 方案D (小城栅栏，用小城同款硬木栅栏套 DE_PALISADE_ANCHORS)
+    const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 5;
     /** 矩形围栏：院内改用「两排各 3 栋」的屯子排法，不摆中间那栋（见下方 RECT_STOCKADE_SLOTS） */
     const isRectStockade = stockadeStyle === 3;
 
@@ -757,18 +757,23 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     });
 
     let wallPieces: PalisadeGridPiece[];
+    let wallAnchors = DE_FENCE_ANCHORS;
     if (stockadeStyle === 1) {
         wallPieces = computeCorralRoundWall(baseSize);
     } else if (stockadeStyle === 2) {
         wallPieces = computeCorralOctagonWall(baseSize);
     } else if (stockadeStyle === 3) {
         wallPieces = computeCorralRectWall(baseSize);
+    } else if (stockadeStyle === 4) {
+        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏
+        wallPieces = computePalisadeWallAndGate(baseSize);
+        wallAnchors = DE_PALISADE_ANCHORS;
     } else {
         wallPieces = computePalisadeWallAndGate(baseSize);
         for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
     }
     // 🔴 [2026-09-16 评估页实测踩到的坑] **矩形围栏不吃镜像**：镜像这一支是把围墙件的 x 取反，
-    //    世界轴对齐的**正方/圆形/八角**对 x 镜像**自对称**（镜像前后是同一圈墙），所以从来没暴露问题；
+    //    世界轴对齐的**正方/圆形/八角/小城栅栏**对 x 镜像**自对称**（镜像前后是同一圈墙），所以从来没暴露问题；
     //    但**长方形不对称** —— x 取反后长边跑到**另一条对角线**（12×8 变成 8×12），
     //    而院内那 6 个建筑位不在围墙件里、不会跟着转 → 6 栋全部落到栏外。
     //    故矩形形制直接不吃镜像；要变化就靠种子挑建筑组合。
@@ -776,7 +781,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
     wallPieces.forEach((w) => {
-        const anchor = DE_FENCE_ANCHORS[w.type];
+        const anchor = wallAnchors[w.type];
         const zIndex = Math.round(100 + w.y);
         const pieceW = baseSize * anchor.widthFactor;
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
