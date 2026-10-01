@@ -1,0 +1,12 @@
+{
+  "name": "ARCHAIC_GATE_PALISADE_SE",
+  "frames": 1,
+  "box_w": 297,
+  "box_h": 233,
+  "anchor_x": 169,
+  "anchor_y": 170,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_archaic_gate_palisade_se_closed + b_archaic_gate_palisade_corner"
+}
