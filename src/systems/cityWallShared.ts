@@ -5,9 +5,22 @@
  *  🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」] 由 TerritorySystem 移入本共享模块：
  *     城寨栅栏材质要按据点 id 落定，**战略地图、攻城战场、评估页必须是同一个种子同一个结果**；
  *     各写一份哈希必然漂移（本仓血训：小城石墙名单三处各判一次 → 三处不同步）。 */
+let CITY_STYLE_SESSION_SEED = '';
+
+/**
+ * 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」]
+ * 每局随机种子：开局时由 GameApp 生成随机值注入；deHashString 把种子拼进输入，
+ * 于是同一座城每一局样式都可能不同（不再按 cityId 永远固定）。
+ * 未注入时为空串 → 退回按 cityId 的确定性随机（离线脚本 / 评估页 _citytest.html 不受影响、稳定预览）。
+ */
+export function setCityStyleSessionSeed(seed: string): void {
+    CITY_STYLE_SESSION_SEED = seed;
+}
+
 export function deHashString(s: string): number {
+    const input = CITY_STYLE_SESSION_SEED ? `${CITY_STYLE_SESSION_SEED}|${s}` : s;
     let h = 0;
-    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+    for (let i = 0; i < input.length; i++) h = (h * 31 + input.charCodeAt(i)) | 0;
     return h >>> 0;
 }
 
@@ -329,6 +342,89 @@ export function resolveStockadeShapeByFence(shape: string, fenceKey: string | nu
     if (!isFenceOnlyStockadeShape(shape)) return shape as StockadeShapeKey;
     if (fenceKey === 'FENCE') return shape as StockadeShapeKey;
     return STOCKADE_SHAPE_FALLBACK[shape] ?? 'square';
+}
+
+/* ============================================================================
+ * 🔴 [2026-10-02 主人令] **直角多边形据点样式（九种）** —— 主人过目用
+ *
+ * 用一组 **(u,v) 整数顶点**描述外形，边必须**平行 u 轴或 v 轴**：
+ *   u = 格点方向 (1,-1)、v = 格点方向 (1,1)（屏幕上 ±30.1°）—— 这两条走向**只有它们有能无缝拼接的素材**
+ *   （见本节「素材走向实测」；横竖走向没有墙片，硬拼就是扇状重叠）。
+ *   换算：i = u+v, j = v-u；x = i·stepX, y = j·stepY。
+ *
+ * 生成规则（与现役六形制同一套：转角必有城垛、直边是城墙、一扇门开在最靠下那条边的正中）。
+ * ⚠️ **每条边至少 2 格**：1 格的小凸台会让两个拐角城垛挨在一起（违「城垛不许相邻」）。
+ * ⚠️ 现在**只给评估页过目**，**还没并进 `STOCKADE_SHAPE_KEYS` / 据点哈希**（等主人点头再并）。
+ * ========================================================================== */
+export interface StockadePolygonLayout {
+    key: string;
+    label: string;
+    note: string;
+    verts: Array<[number, number]>;
+}
+export const STOCKADE_POLYGON_LAYOUTS: StockadePolygonLayout[] = [
+    { key: 'poly_square', label: '方城（菱形底）', note: '通用城寨基准：地面上 6×6 的方形', verts: [[0, 0], [6, 0], [6, 6], [0, 6]] },
+    { key: 'poly_long', label: '长条关城（两端塔）', note: '关隘 PASS —— 卡山口、卡渡口', verts: [[0, 0], [10, 0], [10, 3], [0, 3]] },
+    { key: 'poly_l', label: 'L 形寨', note: '依山傍河、地形缺一角', verts: [[0, 0], [7, 0], [7, 3], [3, 3], [3, 7], [0, 7]] },
+    { key: 'poly_u', label: '凹形（U 形）寨', note: '一面靠崖 / 靠河，缺口那面本来就不用墙', verts: [[0, 0], [8, 0], [8, 8], [5, 8], [5, 4], [3, 4], [3, 8], [0, 8]] },
+    { key: 'poly_mamian', label: '四面马面（中段外凸敌台）', note: '防御等级高的寨 —— 正史最常见的加筑法', verts: [[-2, 2], [-2, 6], [0, 6], [0, 8], [3, 8], [3, 10], [7, 10], [7, 8], [10, 8], [10, 6], [12, 6], [12, 2], [10, 2], [10, 0], [7, 0], [7, -2], [3, -2], [3, 0], [0, 0], [0, 2]] },
+    { key: 'poly_wengcheng', label: '瓮城（门外套方框）', note: '城门防御强化，前出可夹击', verts: [[0, 0], [3, 0], [3, -2], [7, -2], [7, 0], [10, 0], [10, 5], [0, 5]] },
+    { key: 'poly_stairs', label: '阶梯寨（依山逐级）', note: '山坡地形，逐级而上', verts: [[0, 0], [9, 0], [9, 3], [7, 3], [7, 5], [5, 5], [5, 7], [5, 9], [0, 9]] },
+    { key: 'poly_bar', label: '长墙带中段凸台', note: '隘口长墙 + 中段敌台', verts: [[0, 0], [3, 0], [3, -2], [7, -2], [7, 0], [10, 0], [10, 2], [7, 2], [7, 4], [3, 4], [3, 2], [0, 2]] },
+    { key: 'poly_t', label: 'T 形（品字联堡）', note: '大营：正面长墙 + 后凸营堡', verts: [[0, 0], [10, 0], [10, 4], [7, 4], [7, 8], [3, 8], [3, 4], [0, 4]] },
+];
+export const STOCKADE_POLYGON_KEYS = STOCKADE_POLYGON_LAYOUTS.map((l) => l.key);
+export const getStockadePolygonLayout = (key: string): StockadePolygonLayout | undefined =>
+    STOCKADE_POLYGON_LAYOUTS.find((l) => l.key === key);
+
+/** 城门开在「最靠下那一段墙」的正中（与现役六形制同一条规律）；那一段不足 3 件就不开（两边要各留一格墙）。 */
+function putStockadeFrontGate(pieces: StockadeRingPiece[]): StockadeRingPiece[] {
+    const n = pieces.length;
+    const runs: number[][] = [];
+    let cur: number[] = [];
+    for (let k = 0; k < n; k++) {
+        if (pieces[k].type !== 'NE' && pieces[k].type !== 'SE') { if (cur.length) runs.push(cur); cur = []; }
+        else cur.push(k);
+    }
+    if (cur.length) runs.push(cur);
+    if (runs.length > 1 && runs[0][0] === 0 && runs[runs.length - 1][runs[runs.length - 1].length - 1] === n - 1) {
+        runs[0] = runs.pop()!.concat(runs[0]);                       // 首尾同段 → 合并
+    }
+    let best: number[] | null = null, bestY = -Infinity;
+    for (const r of runs) {
+        if (r.length < 3) continue;
+        const my = r.reduce((s, i) => s + (pieces[i].y + pieces[(i + 1) % n].y) / 2, 0) / r.length;
+        if (my > bestY) { bestY = my; best = r; }
+    }
+    if (best) { const mid = best[Math.floor(best.length / 2)]; pieces[mid].type = 'GATE'; pieces[mid].flipX = false; }
+    return pieces;
+}
+
+/** 直角多边形样式的成品件表（评估页 / 编辑器 / 以后并进游戏都调这一个） */
+export function buildStockadePolygonRing(layoutKey: string, baseSize: number): StockadeRingPiece[] {
+    const L = getStockadePolygonLayout(layoutKey);
+    if (!L) return [];
+    const n = L.verts.length;
+    const path: Array<{ u: number; v: number; corner: boolean }> = [];
+    for (let k = 0; k < n; k++) {                                    // 逐边逐格走：每段起点 = 顶点 → 城垛
+        const [u0, v0] = L.verts[k], [u1, v1] = L.verts[(k + 1) % n];
+        const du = Math.sign(u1 - u0), dv = Math.sign(v1 - v0);
+        const steps = Math.abs(u1 - u0) + Math.abs(v1 - v0);
+        for (let s = 0; s < steps; s++) path.push({ u: u0 + du * s, v: v0 + dv * s, corner: s === 0 });
+    }
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const raw: StockadeRingPiece[] = path.map((p, k) => {
+        const q = path[(k + 1) % path.length];
+        const di = (q.u - p.u) + (q.v - p.v), dj = (q.v - p.v) - (q.u - p.u);   // 格步（全是斜步）
+        const type: StockadeRingPiece['type'] = p.corner ? 'POST' : (di > 0 ? (dj < 0 ? 'NE' : 'SE') : (dj > 0 ? 'SE' : 'NE'));
+        return { x: (p.u + p.v) * stepX, y: (p.v - p.u) * stepY, type, flipX: !(di > 0) };
+    });
+    // 🔴 顶点表允许随便写（例：四面马面的 u 从 -2 到 12），**成品一律按包围盒居中** ——
+    //    与现役六形制一样以容器中心为原点，围栏与地面裁切才对得齐。
+    const xs = raw.map((p) => p.x), ys = raw.map((p) => p.y);
+    const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+    const pieces = raw.map((p) => ({ ...p, x: p.x - cx, y: p.y - cy }));
+    return putStockadeFrontGate(pieces);
 }
 
 /** 曲线围栏的三种轮廓参数（唯一一份：游戏与评估页都从这里取，地面裁切也跟着这几个数） */

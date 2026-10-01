@@ -79,6 +79,7 @@ import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
+import { setCityStyleSessionSeed } from '../systems/cityWallShared';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import {
     setupGameAppVisibilityHandler,
@@ -325,6 +326,8 @@ export class GameApp {
             await CityAssetManager.onBootMapReady();
             this.perfMonitor.markBootPhase('视口势力旗染色');
             this.cityManager.bindViewportCitySync();
+            // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
+            setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
             setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。

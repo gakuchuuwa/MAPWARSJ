@@ -3,6 +3,7 @@ export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
 import { toBase16, type Base16Culture } from '../systems/CultureBase16';
+import { isScriptPeriod } from '../events/scriptPeriod';
 
 export type SoundKey =
     | 'march_loop'
@@ -352,6 +353,22 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
 const AVAILABLE_BGM_FOLDERS = new Set<string>(Object.keys(BGM_REGION_GAIN));
 const BGM_ROTATION_FOLDERS: readonly string[] = Object.freeze([...AVAILABLE_BGM_FOLDERS]);
 const GENERIC_BGM_FALLBACK = 'age_of_kings';
+
+/**
+ * 🔴 [2026-10-02 主人定「亚历山大的剧本的背景音乐只采用西方歌曲循环播放」]
+ * 历史剧本期（亚历山大东征）专用轮播池：只放西方 / 地中海 / 中东史诗曲，不放中国、日本、蒙古、印度、南美曲。
+ * 判据 = 曲目真实来源（西方电影 / 游戏 / 史诗配乐），不是 folder 名字：
+ *   LATIN=Star Sky(TSFH)、WEST_ASIA=出埃及记、BERBER=征服天堂(Vangelis)、GERMANIC=The Mass(Era)、
+ *   victory=Victory(TSFH)、rock_house_jail=勇闯夺命岛、fallen_army=Audiomachine、helmet_to_helmet=Brand X、
+ *   hes_a_pirate=加勒比海盗(Hans Zimmer)、game_of_thrones=GoT主题(Ramin Djawadi)、age_of_kings=帝国时代2主题。
+ * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（Baba Yetu 东非斯瓦希里语），
+ *   以及全部中国 / 日本 / 朝鲜 / 草原 / 中亚 / 青藏 / 印度 / 东南亚 / 南美曲。
+ */
+const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
+    'LATIN', 'WEST_ASIA', 'BERBER', 'GERMANIC',
+    'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet',
+    'hes_a_pirate', 'game_of_thrones', 'age_of_kings',
+]);
 
 function resolveAvailableBgmFolder(folder: string): string {
     // 没有对应文化曲时用无文化归属的游戏主题曲，不能拿中原音乐冒充其他文明。
@@ -1080,9 +1097,11 @@ export class AudioManager {
         return next;
     }
 
-    /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。 */
+    /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。
+     *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。 */
     private shuffledBgmFolders(): string[] {
-        const arr = [...BGM_ROTATION_FOLDERS];
+        const pool = isScriptPeriod() ? SCRIPT_WESTERN_BGM_FOLDERS : BGM_ROTATION_FOLDERS;
+        const arr = [...pool];
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [arr[i], arr[j]] = [arr[j], arr[i]];
