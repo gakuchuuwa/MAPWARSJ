@@ -67,7 +67,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kaliya: [
         { generalId: 'gen_artemisia', generalName: '阿尔特米西亚', portrait: '/assets/GREEK/kaliya_aertermixiya.png' },
         // 前334年哈利卡纳苏斯战役守帅（罗得岛的门农，波斯西部沿海统帅，阿里安 I.20 记其与卡里亚总督据城死守），立绘按铁律留空、待主人亲自放图分配
-        { generalId: 'halikanasu_memnon', generalName: '门农', portrait: '' },
+        { generalId: 'halikanasu_memnon', generalName: '门农', portrait: '/assets/PERSIAN/kaliya_mennong.png' },
     ],
     bosidiguo: { generalId: 'gen_artaphernes', generalName: '阿尔塔弗涅斯', portrait: '/assets/PERSIAN/bosidiguo_aertafuniesi.png' },
     jikelazes: { generalId: 'gen_aristides', generalName: '阿里斯提德', portrait: '/assets/GREEK/jikelazes_alisitide.png' },
@@ -104,7 +104,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     boootiya: [
         { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
         // 前335年底比斯战役守帅（底比斯主将菲尼克斯，见剧本该场 description），立绘按铁律留空、待主人亲自放图分配
-        { generalId: 'dibisi_phoinix', generalName: '菲尼克斯', portrait: '' },
+        { generalId: 'dibisi_phoinix', generalName: '菲尼克斯', portrait: '/assets/GREEK/boootiya_feinikesi.png' },
     ],
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
     kelite: { generalId: 'gen_nikephoros_phokas', generalName: '福卡斯', portrait: '/assets/LATIN/kelite_fukasi.png' },
@@ -169,7 +169,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     seleisi: [
         { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
         // 前335年多瑙河渡河战役守帅（多瑙河北岸吉特人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
-        { generalId: 'jite_shouling', generalName: '科托罗', portrait: '' },
+        { generalId: 'jite_shouling', generalName: '科托罗', portrait: '/assets/SLAVIC/seleisi_ketuoluo.png' },
     ],
     bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },
     zhituo: { generalId: 'gen_zhytomyr', generalName: '日托米尔', portrait: '/assets/SLAVIC/zhituo_rituomier.png' },

@@ -1,6 +1,6 @@
 {
   "generatedFrom": "stockade-wall-editor.html",
-  "rule": "围栏三件套标准：城门 / 城垛 / 城墙（NE·SE）—— 朝向一变必须有城垛、城门只开一扇且两边接城墙、城垛两边接城墙",
+  "rule": "围栏三件套标准：城门 / 城垛 / 城墙（NE·SE）—— 朝向一变必须有城垛、城门只一扇且两边接城墙、城垛两边接城墙",
   "baseSizeRef": 100,
   "styles": []
 }
