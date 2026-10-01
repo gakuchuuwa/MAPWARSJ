@@ -454,7 +454,7 @@ export class HistoricalEventManager {
         ) ?? null;
     }
 
-    /** 一方的对阵位：攻城战攻方在城外东侧（长堤陆地连接部），守方在城内原点；野战东西对阵 */
+    /** 一方的对阵位：野战东西对阵；攻城战守方在城内原点，攻方兜底在城外（优先由 resolveScriptFieldStands 原地就位） */
     private static sideStand(
         fb: { type?: 'field_battle' | 'siege' },
         side: 'attacker' | 'defender',
@@ -462,34 +462,35 @@ export class HistoricalEventManager {
     ): { lat: number; lng: number } {
         const isAtk = side === 'attacker';
         if (fb.type === 'siege') {
-            return isAtk ? { lat: loc.lat, lng: loc.lng + 0.025 } : { lat: loc.lat, lng: loc.lng };
+            return isAtk ? { lat: loc.lat, lng: loc.lng - BATTLE_OFFSET } : { lat: loc.lat, lng: loc.lng };
         }
         return { lat: loc.lat, lng: loc.lng + (isAtk ? -BATTLE_OFFSET : BATTLE_OFFSET) };
     }
 
     /**
      * 🔴 [2026-09-24 主人令「按历史」] 某武将在这一仗里的对阵位 —— 剧本期主角军团**直接行军到这里**。
-     * 改前行军终点是战场正中心，抵达后开战又把复用的军团 setPosition 回对阵位（野战往回挪 0.14°≈15 公里），
-     * 实测军团走到离中心 0.16 公里后被瞬间拽回 15.5 公里外。行军到自己的阵位，开战时原地不动。
+     * 攻城战没有写死的对阵点（目标是被攻城池，攻方沿路开到城下就地列阵，见 resolveScriptFieldStands），返回 null。
      */
     public getBattlefieldStandOfGeneral(bfId: string, generalId: string): { lat: number; lng: number } | null {
         const fb = this.findBattleForBattlefield(bfId);
         if (!fb?.location || !generalId) return null;
+        if (fb.type === 'siege') return null;
         const side = fb.attackerGeneralId === generalId ? 'attacker'
             : fb.defenderGeneralId === generalId ? 'defender' : null;
         return side ? HistoricalEventManager.sideStand(fb, side, fb.location) : null;
     }
 
     /**
-     * 🔴 [2026-09-25 主人「不然我连线干什么，你能不能一步到位」] 剧本野战的双方阵位：
-     *   主角军团沿主人画的路开到哪（离战场 BATTLE_STAND_KM 处，见 PlayerQuestSystem.startMarchAlongBattlefieldRoad），
-     *   就**原地**列阵开打；对手隔着战场与之对称。两军之间就是战场。
-     *   主角不在战场附近（例如不是一路行军过来的）→ null，照旧东西对阵。
+     * 🔴 [2026-09-25 主人「不然我连线干什么，你能不能一步到位」] 剧本战役的双方阵位：
+     *   主角军团沿主人画的路开到哪（离战场/城池 BATTLE_STAND_KM 处），就**原地**列阵开打：
+     *   - 攻城战：守方在城内（loc），攻方在来路一侧的城外（own）原地列阵，绝不跨城瞬移；
+     *   - 野战：对手隔着战场与之对称。两军之间就是战场。
+     *   主角不在战场附近（例如不是一路行军过来的）→ null，走兜底对阵。
      */
     private resolveScriptFieldStands(
         fb: FieldBattleData & { type?: 'field_battle' | 'siege'; scriptGeneralId?: string },
     ): { attacker: { lat: number; lng: number }; defender: { lat: number; lng: number } } | null {
-        if (!isScriptPeriod() || fb.type === 'siege' || !fb.location) return null;
+        if (!isScriptPeriod() || !fb.location) return null;
         const loc = fb.location;
         const atk = this.reusableScriptArmy(fb, 'attacker');
         const def = atk ? null : this.reusableScriptArmy(fb, 'defender');
@@ -497,8 +498,16 @@ export class HistoricalEventManager {
         if (!hero) return null;
         const p = hero.getPosition();
         const km = getEuclideanDistance(p, loc) * 111;
-        if (km < 3 || km > 40) return null;   // 太近分不出方向 / 太远不是一路开过来的 → 东西对阵
+        if (km < 1 || km > 40) return null;   // 太近完全重叠 / 太远不是一路开过来的 → 走兜底对阵
         const own = { lat: p.lat, lng: p.lng };
+
+        if (fb.type === 'siege') {
+            // 攻城战：城池/据点固定在 loc（守方）；攻城方沿路行军开到城外哪一侧，就在哪一侧就地列阵，绝不瞬移
+            return atk
+                ? { attacker: own, defender: { lat: loc.lat, lng: loc.lng } }
+                : { attacker: { lat: loc.lat * 2 - p.lat, lng: loc.lng * 2 - p.lng }, defender: { lat: loc.lat, lng: loc.lng } };
+        }
+
         const foe = { lat: loc.lat * 2 - p.lat, lng: loc.lng * 2 - p.lng };
         return atk ? { attacker: own, defender: foe } : { attacker: foe, defender: own };
     }
