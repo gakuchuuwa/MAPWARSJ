@@ -258,6 +258,8 @@ export interface HistoricalEvent {
     regnalYear?: string;
     season: number; // 0: Spring, 1: Summer, 2: Autumn, 3: Winter
     description: string;
+    /** 玩家会面时的武将对话（第一人称邀约对白） */
+    dialogue?: string;
     type: EventType;
     siegeData?: SiegeData;
     fieldBattleData?: FieldBattleData;

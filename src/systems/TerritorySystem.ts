@@ -567,7 +567,7 @@ function getCitySiegeBaseSize(cityType: string): number {
         case 'big_city': return 120;      // 2026-10-01 主人定：大城 140→120（ZOOM9）
         case 'medium_city': return 110;   // 2026-10-01 主人定：中城 120→110（ZOOM9）
         case 'pass': return 120;          // 险要维持原 120
-        case 'stockade': return 80;   // 城寨最小
+        case 'stockade': return 100;   // 2026-10-01 主人定：城寨 80→100
         case 'small_city':
         default: return 100;
     }
@@ -2178,8 +2178,8 @@ export class TerritorySystem {
             case 'small_city':
                 baseSize = 100;
                 break;
-            case 'stockade':     // 城寨最小（比小城略小）
-                baseSize = 80;
+            case 'stockade':     // 2026-10-01 主人定：城寨 80→100（对齐小城基准尺寸）
+                baseSize = 100;
                 break;
             default:
                 baseSize = 100;

@@ -317,8 +317,8 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const narrativeText = ev.description
-                    || `${g.generalName}整肃大军，正欲提兵进驻【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
+                const narrativeText = ev.dialogue
+                    || `${g.generalName}整肃大军，正欲提兵奔赴【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
@@ -635,6 +635,8 @@ export class PlayerQuestSystem {
         marchWaypoints: string[];
         /** 战役背景说明（第三人称纪实） */
         description?: string | null;
+        /** 武将邀约对白（第一人称台词） */
+        dialogue?: string | null;
         /** 战役背景播报旁白（攻城战等没有独立战场记录的，旁白写在事件上） */
         briefing?: string | null;
     } | null {
@@ -661,6 +663,7 @@ export class PlayerQuestSystem {
                 : null,
             marchWaypoints: [...(data?.marchWaypoints ?? [])],
             description: hit.event.description?.trim() || null,
+            dialogue: hit.event.dialogue?.trim() || null,
             briefing: hit.event.briefing?.trim() || null,
         };
     }
@@ -2025,7 +2028,7 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const narrativeText = ev.description
+                const narrativeText = ev.dialogue
                     || `${generalName}挥师前线，大军直指【${ev.battlefieldName}】，与${foe}决战于【${ev.title}】。军纪森严，三军枕戈待旦。`;
                 this.deps.showDialogue({
                     speaker: generalName,
