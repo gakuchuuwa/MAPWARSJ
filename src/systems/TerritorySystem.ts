@@ -380,93 +380,90 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () 
     return pieces;
 }
 
-/** 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定优化） */
+type CorralXY = { x: number; y: number };
+
+/** 🔴 [2026-10-01 主人定「围栏三件套标准」] 曲线围栏（圆形／椭圆／八角）的唯一拼法，游戏与评估页两边同一份：
+ *  三件：城墙（NE／SE 两朝向，含镜像）、城垛（POST）、城门（GATE）。
+ *  ① 沿轮廓等弧长取点；② 按走向定朝向（右上 NE／右下 SE／左下 SE 镜像／左上 NE 镜像），近水平、近竖直处沿用上一段朝向；
+ *  ③ **朝向一变就放一个城垛**（城垛两边必为城墙、城垛之间必隔着墙）；
+ *  ④ **只开一扇门**，放在「左下」那一边的 gateFrac 处，门两边各留墙（门不直接挨城垛）。
+ *  返回的数组**按轮廓顺序**排列（验收脚本据此检查相邻关系）。 */
+function corralPiecesFromLoop(loop: CorralXY[], step: number, gateFrac: number): PalisadeGridPiece[] {
+    const m = loop.length;
+    const segLen: number[] = [];
+    let total = 0;
+    for (let i = 0; i < m; i++) { const a = loop[i], b = loop[(i + 1) % m]; const d = Math.hypot(b.x - a.x, b.y - a.y); segLen.push(d); total += d; }
+    const n = Math.max(12, Math.round(total / step));
+    const st = total / n;
+    const samples: Array<CorralXY & { dx: number; dy: number; s: number }> = [];
+    let seg = 0, segStart = 0;
+    for (let k = 0; k < n; k++) {
+        const s = k * st;
+        while (seg < m - 1 && s >= segStart + segLen[seg] - 1e-9) { segStart += segLen[seg]; seg++; }
+        const a = loop[seg], b = loop[(seg + 1) % m];
+        const t = segLen[seg] > 0 ? (s - segStart) / segLen[seg] : 0;
+        samples.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, dx: b.x - a.x, dy: b.y - a.y, s });
+    }
+    // 朝向：0 右上(NE) 1 右下(SE) 2 左下(SE 镜像) 3 左上(NE 镜像)；近水平／近竖直（<0.3）不能定，沿用上一段
+    const orient = (dx: number, dy: number): number | null => {
+        const len = Math.hypot(dx, dy);
+        if (len === 0 || Math.abs(dx) < 0.3 * len || Math.abs(dy) < 0.3 * len) return null;
+        return dx > 0 ? (dy < 0 ? 0 : 1) : (dy > 0 ? 2 : 3);
+    };
+    const raw = samples.map((p) => orient(p.dx, p.dy));
+    const f = raw.findIndex((v) => v !== null);
+    let prev = raw[f] as number;
+    const oo: number[] = new Array(n);
+    for (let j = 0; j < n; j++) { const k = (f + j) % n; if (raw[k] !== null) prev = raw[k] as number; oo[k] = prev; }
+    const KIND: Array<['NE' | 'SE', boolean]> = [['NE', false], ['SE', false], ['SE', true], ['NE', true]];
+    let pieces: PalisadeGridPiece[] = samples.map((p, k) => (oo[k] !== oo[(k - 1 + n) % n]
+        ? { x: p.x, y: p.y, type: 'POST', flipX: false }
+        : { x: p.x, y: p.y, type: KIND[oo[k]][0], flipX: KIND[oo[k]][1] }) as PalisadeGridPiece);
+    // 城门：左下（朝向 2）那一边，按 gateFrac 取位置，左右各让出约 1 段
+    let first = -1, last = -1;
+    for (let k = 0; k < n; k++) if (oo[k] === 2) { if (first < 0) first = k; last = k; }
+    if (first >= 0) {
+        const sg = samples[first].s + (samples[last].s - samples[first].s) * gateFrac;
+        const out: PalisadeGridPiece[] = [];
+        let placed = false;
+        for (let k = 0; k < n; k++) {
+            if (Math.abs(samples[k].s - sg) <= 1.0 * st && pieces[k].type !== 'POST') {
+                if (!placed) { out.push({ x: Rx_(sg), y: Ry_(sg), type: 'GATE', flipX: false }); placed = true; }
+                continue;
+            }
+            out.push(pieces[k]);
+        }
+        pieces = out;
+    }
+    return pieces;
+    function Rx_(sg: number) { return pointAt(sg).x; }
+    function Ry_(sg: number) { return pointAt(sg).y; }
+    function pointAt(sg: number) {
+        let acc = 0;
+        for (let i = 0; i < m; i++) { if (sg <= acc + segLen[i] + 1e-9) { const t = segLen[i] > 0 ? (sg - acc) / segLen[i] : 0; const a = loop[i], b = loop[(i + 1) % m]; return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; } acc += segLen[i]; }
+        return { x: loop[0].x, y: loop[0].y };
+    }
+}
+
+
+/** 城寨方案A：圆形羊圈围栏——三件套标准拼法（见 AGENTS.md「三之三」） */
 function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
     const sy = sx * 0.58;
-    const Rx = 7.0 * sx;
-    const Ry = Rx * 0.58;
-    const pieces: PalisadeGridPiece[] = [];
-    const N = 34;
-    for (let i = 0; i < N; i++) {
-        const angle = -90 + i * (360.0 / N);
-        const rad = angle * Math.PI / 180;
-        const x = Rx * Math.cos(rad);
-        const y = Ry * Math.sin(rad);
-        // 正前方东南开一扇篱笆门 (angle 在 50° ~ 75° 之间)
-        if (angle >= 50 && angle <= 75) {
-            if (Math.abs(angle - 62.5) < 7) {
-                pieces.push({ x, y, type: 'GATE' });
-            }
-            continue;
-        }
-        if (i % 6 === 0   /* 🔴 2026-10-01 主人「栅栏墩太多，墩子不能挨着，必须有栅栏间隔」：每 6 段一墩 */) {
-            pieces.push({ x, y, type: 'POST' });
-        } else if (angle > -90 && angle < 0) {
-            pieces.push({ x, y, type: 'SE' });
-        } else if (angle >= 0 && angle < 90) {
-            pieces.push({ x, y, type: 'SE', flipX: true });
-        } else if (angle >= 90 && angle < 180) {
-            pieces.push({ x, y, type: 'NE', flipX: true });
-        } else {
-            pieces.push({ x, y, type: 'NE' });
-        }
-    }
-    return pieces;
+    const Rx = 7.0 * sx, Ry = 7.0 * sx * 0.58;
+    const loop: CorralXY[] = [];
+    for (let i = 0; i < 72; i++) { const a = (-90 + i * 5) * Math.PI / 180; loop.push({ x: Rx * Math.cos(a), y: Ry * Math.sin(a) }); }
+    return corralPiecesFromLoop(loop, sx * 1.12, 0.5);
 }
-
-/** 城寨方案B：圆润八角羊圈围栏（优化放大尺寸，切去生硬尖角，八面围场舒展过渡，2026-09-08 主人定优化） */
+/** 城寨方案B：八角羊圈围栏——世界格切角正方（半边 H=3.7、切角 c=1.2），三件套标准拼法 */
 function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
     const sy = sx * 0.58;
-    const pieces: PalisadeGridPiece[] = [];
-    const N_seg = 5;
-    // 1. 东北边 (右上，SE段)
-    for (let k = 0; k < N_seg; k++) {
-        const t = k / (N_seg - 1);
-        pieces.push({ x: (2.6 + t * 3.8) * sx, y: (-6.4 + t * 3.8) * sy, type: 'SE' });
-    }
-    // 🔴 [2026-10-01 主人「墩子不能挨着，必须有一个栅栏间隔」] 四个转角各只留正中 1 墩，两侧改栅栏
-    // 2. 东角过渡弧
-    pieces.push({ x: 6.8 * sx, y: -1.2 * sy, type: 'SE' });
-    pieces.push({ x: 7.1 * sx, y: 0, type: 'POST' });
-    pieces.push({ x: 6.8 * sx, y: 1.2 * sy, type: 'SE', flipX: true });
-    // 3. 东南边 (右下，SE flipX段，带门)
-    for (let k = 0; k < N_seg; k++) {
-        const t = k / (N_seg - 1);
-        const x = (6.4 - t * 3.8) * sx;
-        const y = (2.6 + t * 3.8) * sy;
-        if (k === 2) {
-            pieces.push({ x, y, type: 'GATE' });
-        } else {
-            pieces.push({ x, y, type: 'SE', flipX: true });
-        }
-    }
-    // 4. 南角过渡弧
-    pieces.push({ x: 1.2 * sx, y: 6.8 * sy, type: 'SE', flipX: true });
-    pieces.push({ x: 0, y: 7.1 * sy, type: 'POST' });
-    pieces.push({ x: -1.2 * sx, y: 6.8 * sy, type: 'NE', flipX: true });
-    // 5. 西南边 (左下，NE flipX段)
-    for (let k = 0; k < N_seg; k++) {
-        const t = k / (N_seg - 1);
-        pieces.push({ x: (-2.6 - t * 3.8) * sx, y: (6.4 - t * 3.8) * sy, type: 'NE', flipX: true });
-    }
-    // 6. 西角过渡弧
-    pieces.push({ x: -6.8 * sx, y: 1.2 * sy, type: 'NE', flipX: true });
-    pieces.push({ x: -7.1 * sx, y: 0, type: 'POST' });
-    pieces.push({ x: -6.8 * sx, y: -1.2 * sy, type: 'NE' });
-    // 7. 西北边 (左上，NE段)
-    for (let k = 0; k < N_seg; k++) {
-        const t = k / (N_seg - 1);
-        pieces.push({ x: (-6.4 + t * 3.8) * sx, y: (-2.6 - t * 3.8) * sy, type: 'NE' });
-    }
-    // 8. 北角过渡弧
-    pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'NE' });
-    pieces.push({ x: 0, y: -7.1 * sy, type: 'POST' });
-    pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'SE' });
-    return pieces;
+    const H = 3.7, c = 1.2;
+    const P = (u: number, v: number) => ({ x: u * sx, y: v * sy });
+    const loop = [P(-c, c - 2 * H), P(c, c - 2 * H), P(2 * H - c, -c), P(2 * H - c, c), P(c, 2 * H - c), P(-c, 2 * H - c), P(-2 * H + c, c), P(-2 * H + c, -c)];
+    return corralPiecesFromLoop(loop, sx * 1.12, 0.45);
 }
-
 /** 城寨方案C：矩形围栏（🔴 [2026-09-16 主人定]「再添加一种，矩形的围栏城寨」＋「你可以用险要的样式」）
  *  · **走险要同款矩形拓扑**（与 `computeRectWall` 同一套走法）：四顶点 P0→P1→P2→P3 的推进方向、
  *    「长边两门居中、短边不设门」、四角 L 形转角件衔接 —— 与险要完全一致。
@@ -521,41 +518,15 @@ function computeCorralRectWall(baseSize: number): PalisadeGridPiece[] {
     return pieces;
 }
 
-/** 城寨方案D：椭圆山脊堡围栏（顺应山脊走势的长椭圆围场，两端收窄，前向开门，2026-10-02 主人定） */
+/** 城寨方案D：椭圆山脊堡围栏——三件套标准拼法（见 AGENTS.md「三之三」） */
 function computeCorralOvalWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
     const sy = sx * 0.58;
-    const Rx = 8.5 * sx;
-    const Ry = 5.2 * sy;
-    const pieces: PalisadeGridPiece[] = [];
-    const N = 34;
-    for (let i = 0; i < N; i++) {
-        const angle = -90 + i * (360.0 / N);
-        const rad = angle * Math.PI / 180;
-        const x = Rx * Math.cos(rad);
-        const y = Ry * Math.sin(rad);
-        // 正前方东南开一扇木大门 (angle 在 50° ~ 75° 之间)
-        if (angle >= 50 && angle <= 75) {
-            if (Math.abs(angle - 62.5) < 7) {
-                pieces.push({ x, y, type: 'GATE' });
-            }
-            continue;
-        }
-        if (i % 6 === 0   /* 🔴 2026-10-01 主人「栅栏墩太多，墩子不能挨着，必须有栅栏间隔」：每 6 段一墩 */) {
-            pieces.push({ x, y, type: 'POST' });
-        } else if (angle > -90 && angle < 0) {
-            pieces.push({ x, y, type: 'SE' });
-        } else if (angle >= 0 && angle < 90) {
-            pieces.push({ x, y, type: 'SE', flipX: true });
-        } else if (angle >= 90 && angle < 180) {
-            pieces.push({ x, y, type: 'NE', flipX: true });
-        } else {
-            pieces.push({ x, y, type: 'NE' });
-        }
-    }
-    return pieces;
+    const Rx = 8.5 * sx, Ry = 5.2 * sy;
+    const loop: CorralXY[] = [];
+    for (let i = 0; i < 72; i++) { const a = (-90 + i * 5) * Math.PI / 180; loop.push({ x: Rx * Math.cos(a), y: Ry * Math.sin(a) }); }
+    return corralPiecesFromLoop(loop, sx * 1.12, 0.5);
 }
-
 /** 城寨方案E：梯形隘口寨围栏（背山面险的梯形关隘营寨，背窄前阔，正面长门，四角立垛，2026-10-02 主人定） */
 function computeCorralTrapezoidWall(baseSize: number): PalisadeGridPiece[] {
     const sx = baseSize * 0.075;
@@ -823,9 +794,10 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         const rX = 6.6 * stepX, rY = 6.6 * stepY;
         clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
     } else if (stockadeShape === 2) {
-        // 样式三：八角羊圈 (Rx = 6.7 * stepX，严密贴合栅栏内侧脚线)
-        const rX = 6.7 * stepX, rY = 6.7 * stepY;
-        clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
+        // 样式三：八角羊圈 —— 地面裁成与围栏同一个八边形（H=3.7、切角 c=1.2，再内缩 6% 贴合栅栏内侧脚线，城外零溢出）
+        const H8 = 3.7, c8 = 1.2, k8 = 0.94;
+        const oct = [[-c8, c8 - 2 * H8], [c8, c8 - 2 * H8], [2 * H8 - c8, -c8], [2 * H8 - c8, c8], [c8, 2 * H8 - c8], [-c8, 2 * H8 - c8], [-2 * H8 + c8, c8], [-2 * H8 + c8, -c8]];
+        clip = `polygon(${oct.map(([u, v]) => `${cssOff(u * stepX * k8)} ${cssOff(v * stepY * k8)}`).join(', ')})`;
     } else if (stockadeShape === 3) {
         // 样式四：矩形围栏 (12×8，严密贴合围栏内侧脚线)
         const u1 = 9.4 * stepX, v1 = 1.9 * stepY;
