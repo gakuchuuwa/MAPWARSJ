@@ -1458,16 +1458,33 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
   新分组**不加进去就永远选不到**，数据在 JSON 里也白搭。新增分组必须同时加白名单。
 
 - 🔴 **评估页与游戏两侧的「形制个数」必须一致**（2026-09-28 主人问「我记得城寨有四个样式，项目中是不是缺少一个样式呀」）：
-  城寨篱笆围栏是 **四选一** —— **正方标准 / 圆形羊圈 / 八角羊圈 / 矩形围栏**。
+  城寨篱笆围栏是 **四选一** —— **正方标准 / 圆形羊圈 / 八角羊圈 / 矩形围栏**
+  （🔴 2026-10-01 主人再定加第 5 种「小城栅栏」→ 现为 **五选一**）。
   2026-09-16 评估页就加了第 4 种「矩形围栏」（主人原话「再添加一种，矩形的围栏城寨」），
   游戏 `TerritorySystem.buildDeStockadeStackHtml` 却一直停在 `% 3` —— **矩形围栏从没在游戏里出现过**
-  （实测全库 290 座城寨据点/攻城战场里，本该有 74 座是矩形）。已补：`computeCorralRectWall`
+  （实测全库 281 座城寨据点/攻城战场里，本该有 46 座是矩形）。已补：`computeCorralRectWall`
   ＋ 院内 `RECT_STOCKADE_SLOTS`（矩形不摆中间那栋、改**两排各 3 栋**、**不吃镜像**）。
   **验收（权威）**：`npx tsx scratch/verify_stockade_shape_parity.mts`
   （① 形制个数 ② 三个围墙函数逐件比对 ③ 槽位表 ④ 镜像守卫 ⑤ 真实据点分布，须 0 处不一致）
-  ＋ `node scratch/_probe_stockade_game_render.mjs`（真机四形制并排出图，需 5173 的 vite dev 在跑）。
+  ＋ `node scratch/_probe_stockade_game_render.mjs`（真机并排出图，需 5173 的 vite dev 在跑）。
   **教训：评估页改了、游戏侧不跟，主人以为有、游戏里其实没有；「个数」这种一眼可见的差，
   每一条验收里都要有 —— 光验评估页自己，验不出缺件。**
+
+- 🔴 **城寨栅栏 = 形制 × 材质 两个轴**（2026-10-02 主人令「**请把 4 种全部用上，可以增加城寨的多样性**」）：
+  形制（几何）5 种（正方 / 圆形羊圈 / 八角羊圈 / 矩形围栏 / 小城栅栏，主人 2026-10-01 定，一个字不动）
+  × **栅栏材质 4 套**（细编篱笆 FENCE / 硬木尖桩 HARDWOOD / 尖桩原木 DARK / 横木加固 ARCHAIC）
+  = **20 种组合**，两轴都按据点 id 稳定落定（刷新不变）。旧观感一格不丢（形制 ①②③④ 配篱笆、⑤ 配硬木＝旧样）。
+  - **材质表只有一份**：`src/systems/cityWallShared.ts` 的 `STOCKADE_FENCE_SETS` ＋ `pickStockadeFenceSet()`
+    ＋ `normalizeStockadeCorner()`（`deHashString` 也搬进此模块）—— **战略地图 / 攻城战场 Scene13WarLayer / 评估页三处共用**；
+    各写一份必然漂移（血训：小城石墙名单三处各判一次 → 三处不同步）。
+  - ⚠️ **L 形转角件（`FENCE_CORNER`）只有篱笆套有**：另外三套 DE 里没有转角件，四角一律改摆木垛（`hasCorner:false`）；
+    漏这一步 `anchors['CORNER']` 是 undefined，**整圈墙静默不画**（2026-10-02 真机才验出来，静态检查全绿）。
+  - **验收**：`npx tsx scratch/verify_stockade_shape_parity.mts`（⑦ 材质四套同表同种子 + 四套在真实据点里都掷得到）、
+    `node scratch/_probe_stockade_game_render.mjs`（**20 种组合全渲染**：件数 / 材质↔图源 / 四角件归一 / 形制几何不受材质影响 / 矩形院内建筑内点）、
+    `npx tsx --import ./tools/sim-preload.mjs scratch/audit_siege_style_assets.mts`（四套件在盘上齐不齐）。
+  - ⚠️ **真机探针踩到的坑**：vite dev 给模块打过 HMR 时间戳时，`Battlefields.ts?t=…` 与裸 URL 是**两个 module 实例**，
+    往裸的那份 push 探针条目，游戏方法读的是 `?t=` 那份（`find()` 永远找不到）→ 组合全渲染成空串。
+    探针一律按**页面真实抓取过的 URL**（取最新时间戳）取模块。
 
 #### 三之二、第一页 6 张据点卡的排布（2026-09-12 主人定）
 

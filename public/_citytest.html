@@ -526,7 +526,9 @@
 
     <button id="btnMirror" class="active" style="background:#b7791f;border-color:#f6e05e;color:#fff;">城墙镜像: 🎲 随机</button>
     <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机二选一</button>
-    <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机三选一</button>
+    <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机五选一</button>
+    <!-- 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」] 城寨栅栏**材质**四选一（与形制正交） -->
+    <button id="btnStkFence" style="background:#243246;border-color:#4a5568;">城寨栅栏: 🎲 随机四选一</button>
     <button id="btnCenterCastle" style="background:#243246;border-color:#4a5568;">城心城堡: 自动 (按分支)</button>
     <button id="btnPalisadeSet" style="background:#243246;border-color:#4a5568;">营地栅栏: 🎲 随机二选一</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
@@ -638,7 +640,7 @@
     <div class="card">
       <div class="card-header">
         <span>🛖 城寨 (Stockade)</span>
-        <span class="tag tag-stk">S = 5 细编篱笆</span>
+        <span class="tag tag-stk">S = 5 栅栏围栏 · 形制 5 × 材质 4</span>
       </div>
       <div class="viewport viewport-stage">
         <div id="stageStockade" style="position:relative;width:100%;height:100%;pointer-events:none;"></div>
@@ -646,9 +648,12 @@
       <div class="card-desc">
         <strong>架构体系：</strong>
         <ul>
-          <li><strong>城墙</strong>：S = 5 DE 真·细编织篱笆（FENCE）</li>
-          <li><strong>城门</strong>：细篱小门 + L形转角件无缝过渡</li>
-          <li><strong>建筑</strong>：大庄园、定居点、棚屋 A~G、蒙古包</li>
+          <li><strong>围墙</strong>：S = 5 城寨栅栏 —— <strong>形制 5 种</strong>（正方 / 圆形羊圈 / 八角羊圈 / 矩形围栏 / 小城栅栏）
+            × <strong>栅栏材质 4 套</strong>（细编篱笆 FENCE / 硬木尖桩 HARDWOOD / 尖桩原木 DARK / 横木加固 ARCHAIC）＝ <strong>20 种城寨</strong>，
+            两轴都按据点落定（刷新不变）</li>
+          <li><strong>城墙</strong>：细编织篱笆时四角为 L 形转角件；其余三套四角摆木垛（那三套 DE 里没有转角件）</li>
+          <li><strong>城门</strong>：细编篱笆有自家细篱小门；硬木 / 横木加固套无门件，借尖桩原木的双塔木门</li>
+          <li><strong>建筑</strong>：大庄园、定居点、棚屋 A~G、蒙古包、黑暗时代房屋与磨坊</li>
           <li><strong>地基</strong>：sr2_plaza 压实泥石地基（与小城一致）</li>
         </ul>
       </div>
@@ -1398,6 +1403,9 @@ let curBldgScale = 1.0;
 let curGateScale = 1.0;
 let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
 let curStockadeShape = 'rnd'; // 'rnd' | 'square' | 'round' | 'octagon' | 'rect' | 'palisade'
+/* 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」] 城寨**栅栏材质**四选一
+ *    （细编篱笆 / 硬木尖桩 / 尖桩原木 / 横木加固）——与游戏的形制轴**正交**，两张轴各掷各的。 */
+let curStockadeFenceSet = 'rnd'; // 'rnd' | 'FENCE' | 'HARDWOOD' | 'DARK' | 'ARCHAIC'
 let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
 let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
 
@@ -1416,6 +1424,12 @@ import {
   DE_STONE_ANCHORS_BY_STYLE,
   DE_FORTIFIED_ANCHORS_BY_STYLE,
   shouldUseStoneWall,
+  // 🔴 [2026-10-02] 城寨栅栏四套（细编篱笆/硬木尖桩/尖桩原木/横木加固）**直接吃游戏那份表**：
+  //    本页不再自建一份材质清单，游戏改了这里自动跟着改（血训：两处各写一份必然漂移）。
+  STOCKADE_FENCE_SETS,
+  pickStockadeFenceSet,
+  normalizeStockadeCorner,
+  deHashString,
 } from '/src/systems/cityWallShared.ts';
 
 function getFortifiedAnchors(style) {
@@ -1881,7 +1895,9 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
       { b: 'YURT_C', s: 0.25 },
       { b: 'YURT_D', s: 0.25 },
       { b: 'OUTPOST', s: 0.26 },
-      { b: 'FORTIFIED_OUTPOST', s: 0.26 }
+      { b: 'FORTIFIED_OUTPOST', s: 0.26 },
+      { b: 'DARK_HOUSE_AGE1', s: 0.26 },
+      { b: 'DARK_MILL_AGE1', s: 0.30 }
     ];
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」
     //    与毡帐营地同一套 9 件：8 蒙古包（YURT_E~L）+ 1 亚洲瞭望塔。
@@ -2145,7 +2161,10 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
     // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
     anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
   } else if (type === 'stockade') {
-    /* 城寨围栏五选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 小城栅栏（2026-10-01 主人定新增第 5 种） */
+    /* 城寨围栏五选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 小城栅栏（2026-10-01 主人定新增第 5 种）
+     * 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」] 形制之外再加**栅栏材质**四选一：
+     *    细编篱笆 / 硬木尖桩 / 尖桩原木 / 横木加固 —— 与游戏 `pickStockadeFenceSet` 同一张表，
+     *    形制（5）× 材质（4）= 20 种城寨；旧观感一格不丢（形制0/1/2/3 配篱笆、形制4 配硬木＝旧样）。 */
     const stkShape = (curStockadeShape === 'square')
       ? 0
       : (curStockadeShape === 'round')
@@ -2157,24 +2176,30 @@ function renderCityTypeHtml(baseSize, style, type, mirror) {
             : (curStockadeShape === 'palisade')
               ? 4
               : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 5);
+    // 栅栏材质：按钮指定优先；'rnd' 时走与游戏同一个哈希（种子仍按风格+类型+🎲，本页没有真实 cityId）
+    const stkFence = (curStockadeFenceSet === 'rnd')
+      ? STOCKADE_FENCE_SETS[deHashString(style + '|' + type + '|' + randomSeedOffset + '|stockade_fence_set') % STOCKADE_FENCE_SETS.length]
+      : (STOCKADE_FENCE_SETS.find((s) => s.key === curStockadeFenceSet) || STOCKADE_FENCE_SETS[0]);
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize);
-      anchors = FENCE_ANCHORS;
+      anchors = stkFence.anchors;
     } else if (stkShape === 2) {
       pieces = computeCorralOctagonWall(baseSize);
-      anchors = FENCE_ANCHORS;
+      anchors = stkFence.anchors;
     } else if (stkShape === 3) {
       pieces = computeCorralRectWall(baseSize);
-      anchors = FENCE_ANCHORS;
+      anchors = stkFence.anchors;
     } else if (stkShape === 4) {
-      // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏
+      // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（正方拓扑，四角摆木垛、不转 L 形转角件）
       pieces = computeRingWall(baseSize, 5);
-      anchors = PALISADE_ANCHORS;
+      anchors = stkFence.anchors;
     } else {
       pieces = computeRingWall(baseSize, 5);
       for (const w of pieces) { if (w.type === 'POST') w.type = 'CORNER'; }
-      anchors = FENCE_ANCHORS;
+      anchors = stkFence.anchors;
     }
+    // 🔴 [2026-10-02] 四角件归一：L 形转角件只有细编篱笆套有，其余三套改摆木垛 POST（与游戏同一函数）
+    normalizeStockadeCorner(pieces, stkFence);
   } else if (type === 'pass') {
     const rndWall = mulberry32(hashString(style + '_' + type + '_' + randomSeedOffset + '_passtower'));
     // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要 = 城堡 + 5 座箭塔（多一座门楼箭塔）；与 TerritorySystem 同步
@@ -2967,6 +2992,53 @@ if (urlParams.has('palisadeSet')) {
   }
 }
 
+/* ============================================================================
+ * 城寨栅栏材质按钮（🔴 2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」）
+ *   四套材质的中文名**取自游戏那张表**（`STOCKADE_FENCE_SETS[].label`），本页不另起名字。
+ *   循环顺序：🎲 随机 → 细编篱笆 → 硬木尖桩 → 尖桩原木 → 横木加固 → 回到随机。
+ * ========================================================================== */
+if (urlParams.has('stkFence')) {
+  const v = urlParams.get('stkFence');
+  if (['rnd', 'FENCE', 'HARDWOOD', 'DARK', 'ARCHAIC'].includes(v)) curStockadeFenceSet = v;
+}
+
+/** 城寨栅栏材质按钮外观与状态同步 */
+function syncStkFenceBtn() {
+  const btn = document.getElementById('btnStkFence');
+  if (!btn) return;
+  const colors = {
+    FENCE: ['#276749', '#48bb78'],
+    HARDWOOD: ['#2b6cb0', '#63b3ed'],
+    DARK: ['#744210', '#f6ad55'],
+    ARCHAIC: ['#805ad5', '#b794f4'],
+  };
+  if (curStockadeFenceSet === 'rnd') {
+    btn.innerText = '城寨栅栏: 🎲 随机四选一';
+    btn.style.background = '#243246';
+    btn.style.borderColor = '#4a5568';
+    btn.style.color = '#fff';
+  } else {
+    const set = STOCKADE_FENCE_SETS.find((s) => s.key === curStockadeFenceSet);
+    const n = STOCKADE_FENCE_SETS.findIndex((s) => s.key === curStockadeFenceSet) + 1;
+    btn.innerText = `城寨栅栏: 套系${n} (${set ? set.label : curStockadeFenceSet})`;
+    const c = colors[curStockadeFenceSet] || ['#243246', '#4a5568'];
+    btn.style.background = c[0];
+    btn.style.borderColor = c[1];
+    btn.style.color = '#fff';
+  }
+}
+
+const btnStkFence = document.getElementById('btnStkFence');
+if (btnStkFence) {
+  btnStkFence.addEventListener('click', () => {
+    const order = ['rnd', ...STOCKADE_FENCE_SETS.map((s) => s.key)];
+    const i = order.indexOf(curStockadeFenceSet);
+    curStockadeFenceSet = order[(i + 1) % order.length];
+    syncStkFenceBtn();
+    refresh();
+  });
+}
+
 /** 营地栅栏按钮外观与状态同步 */
 function syncPalisadeSetBtn() {
   const btn = document.getElementById('btnPalisadeSet');
@@ -3011,6 +3083,7 @@ fillStyleSelect();  // 16 套风格全部列进下拉（原 HTML 只写死了 10
 syncMirrorBtn();   // 无 ?mirror 参数时也要让按钮外观与默认态一致
 syncCenterCastleBtn(); // 初始化城心城堡按钮状态
 syncPalisadeSetBtn();  // 初始化营地栅栏套系按钮状态
+syncStkFenceBtn();     // 初始化城寨栅栏材质按钮状态（🔴 2026-10-02 四选一）
 refresh();
 
 /* ==========================================================================

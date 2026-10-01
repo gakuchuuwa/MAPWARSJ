@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
-import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall } from './cityWallShared';
+import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, pickStockadeFenceSet, normalizeStockadeCorner } from './cityWallShared';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
 import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
@@ -46,11 +46,8 @@ import {
 
 // ── [2026-08-26 实验] 小城 DE 建筑组合（中间磨坊 + 等轴椭圆 Y-Sorting 环绕）──
 // 确定性随机（以 cityId 为种子，重渲染不闪烁）
-function deHashString(s: string): number {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return h >>> 0;
-}
+// 🔴 [2026-10-02] `deHashString` 已移入 `./cityWallShared`（城寨栅栏材质要战略/战术/评估页三处同一个种子），
+//    本文件改为 import，**不再自己留一份**。
 function deMulberry32(seed: number): () => number {
     let a = seed >>> 0;
     return () => {
@@ -82,12 +79,13 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（14 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站，随机取 9 种，2026-09-08 主人定）
+// 城寨建筑池（16 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊，随机取 9 种，2026-10-01 主人定）
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
     'OUTPOST', 'FORTIFIED_OUTPOST',
+    'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
 ];
 
 const DE_STOCKADE_SCALES: Record<string, number> = {
@@ -95,6 +93,7 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
     HUT_A: 0.25, HUT_B: 0.25, HUT_C: 0.26, HUT_D: 0.25, HUT_E: 0.25, HUT_F: 0.25, HUT_G: 0.25,
     YURT_A: 0.25, YURT_B: 0.25, YURT_C: 0.25, YURT_D: 0.25,
     OUTPOST: 0.26, FORTIFIED_OUTPOST: 0.26,
+    DARK_HOUSE_AGE1: 0.26, DARK_MILL_AGE1: 0.30,
 };
 
 /** 🔴 [2026-09-16 主人定「中间的建筑可以加减，改变摆放位置」] 矩形围栏（城寨样式四）院内的建筑位：
@@ -668,8 +667,12 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
 /** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，DE 编织篱笆围墙）
  *  2026-09-03 主人定 · 围墙用 DE 细编篱笆（s_archaic_fence），2026-09-03 按 DE 标准重新解析 box/anchor
- *  🔴 围墙形制四选一（正方 / 圆形羊圈 / 八角羊圈 / **矩形围栏**）：随 `cityId` 落定，
- *     与评估页 `public/_citytest.html` 的「城寨围栏四选一」同一套数学，见 `computeCorralRectWall`。 */
+ *  🔴 围墙形制五选一（正方 / 圆形羊圈 / 八角羊圈 / **矩形围栏** / **小城栅栏**）：随 `cityId` 落定，
+ *     与评估页 `public/_citytest.html` 的「城寨围栏五选一」同一套数学，见 `computeCorralRectWall`。
+ *  🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」] 再加**栅栏材质**一轴（四选一）：
+ *     形制（几何 5 种）× 材质（4 套：细编篱笆/硬木尖桩/尖桩原木/横木加固）= **20 种城寨**。
+ *     材质表与落定函数在 `cityWallShared.STOCKADE_FENCE_SETS` / `pickStockadeFenceSet`，
+ *     **战略地图、攻城战场（Scene13WarLayer）、评估页三处共用同一张表同一个种子**。 */
 function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: string): string {
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
     //    改前只有大城/中城/小城/险要四处有 `style === 'YURT'` 分支，**唯独城寨漏了** ——
@@ -687,8 +690,17 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈)
     // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场)
     // 3: 方案C (矩形围栏，走险要同款矩形拓扑；🔴 2026-09-28 补进游戏)
-    // 4: 方案D (小城栅栏，用小城同款硬木栅栏套 DE_PALISADE_ANCHORS)
+    // 4: 方案D (小城栅栏，正方拓扑但四角摆木垛、不转 L 形转角件)
     const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 5;
+    /* 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」]
+     *   形制（几何）与**栅栏材质**是两个独立的轴，都按据点 id 落定：
+     *     · 形制 5 种（主人 2026-10-01 定，一个字不动）；
+     *     · 材质 4 套（`cityWallShared.STOCKADE_FENCE_SETS`）：细编篱笆 / 硬木尖桩 / 尖桩原木 / 横木加固。
+     *   → 全库城寨从原来的 5 种外观变成 **5 × 4 = 20 种组合**（旧观感一格不丢：形制1/2/3/0 配篱笆=旧样，
+     *     形制4「小城栅栏」配硬木=旧样）。
+     *   ⚠️ **L 形转角件只有细编篱笆套有**：另外三套四角必须改摆木垛（POST），否则取不到锚点、整圈墙静默不画
+     *      —— 归一由 `normalizeStockadeCorner` 统一做（见下）。 */
+    const fenceSet = pickStockadeFenceSet(cityId);
     /** 矩形围栏：院内改用「两排各 3 栋」的屯子排法，不摆中间那栋（见下方 RECT_STOCKADE_SLOTS） */
     const isRectStockade = stockadeStyle === 3;
 
@@ -701,14 +713,11 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
 
     const parts: string[] = [];
 
-    // 中间 1 个建筑（随机选，居中）+ 自然地基
-    //    🔴 [2026-09-16 主人「中间的建筑可以加减，改变摆放位置」] **矩形围栏不摆中间那栋**：
-    //       矩形是「两排对开的屯子」形态，院心再塞一栋居中的，会和两排挤在一起
-    //       （评估页实测：居中栋到最近一排只有 0.19×baseSize，而另三种城寨的环列栋距是 0.28）。
-    //       去掉后：排内栋距 0.31、两排之间 0.45 —— 与另三种同一档。总栋数 9 → 6（主人许加减）。
+    // 🔴 [2026-10-01 主人定「不要中心主位、不放大1.15倍，保持9建筑随机」]：
+    //    城寨 9 建筑纯粹平权随机（矩形围栏为 6 建筑两排），中心建筑与周围 8 栋同尺寸、同比例、无特殊主位特权
     if (!isRectStockade) {
         const centerB = ring[0];
-        const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.28) * 1.15;
+        const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.25);
         const centerGroundW = centerW * 2.3;
         const centerGroundH = centerGroundW * 0.58;
         const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
@@ -716,7 +725,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
             `<img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${centerGroundW.toFixed(1)}px;height:${centerGroundH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
         );
         parts.push(
-            `<img src="/SUCAI_BUILDING/${centerB}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
+            `<img src="/SUCAI_BUILDING/${centerB}/preview.png" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,calc(-50% - 15%))${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
         );
     }
 
@@ -757,7 +766,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     });
 
     let wallPieces: PalisadeGridPiece[];
-    let wallAnchors = DE_FENCE_ANCHORS;
+    const wallAnchors = fenceSet.anchors;   // 🔴 [2026-10-02] 锚点随**栅栏材质**走（四套），不再写死篱笆
     if (stockadeStyle === 1) {
         wallPieces = computeCorralRoundWall(baseSize);
     } else if (stockadeStyle === 2) {
@@ -765,13 +774,16 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     } else if (stockadeStyle === 3) {
         wallPieces = computeCorralRectWall(baseSize);
     } else if (stockadeStyle === 4) {
-        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏
+        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（正方拓扑，但四角摆木垛、不转 L 形转角件）
         wallPieces = computePalisadeWallAndGate(baseSize);
-        wallAnchors = DE_PALISADE_ANCHORS;
     } else {
         wallPieces = computePalisadeWallAndGate(baseSize);
         for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
     }
+    // 🔴 [2026-10-02] 四角件归一：L 形转角件（FENCE_CORNER）**只有细编篱笆套有**，
+    //    换来硬木/尖桩原木/横木加固时 `anchors['CORNER']` 是 undefined（会静默画不出墙），
+    //    故本套没有转角件时，把四角的 CORNER 一律改成本套的木垛 POST（坐标不动）。
+    normalizeStockadeCorner(wallPieces, fenceSet);
     // 🔴 [2026-09-16 评估页实测踩到的坑] **矩形围栏不吃镜像**：镜像这一支是把围墙件的 x 取反，
     //    世界轴对齐的**正方/圆形/八角/小城栅栏**对 x 镜像**自对称**（镜像前后是同一圈墙），所以从来没暴露问题；
     //    但**长方形不对称** —— x 取反后长边跑到**另一条对角线**（12×8 变成 8×12），

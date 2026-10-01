@@ -1,0 +1,9 @@
+{
+  "name": "DARK_MILL_AGE1_DESTR",
+  "frames": 1,
+  "box_w": 232,
+  "box_h": 156,
+  "anchor_x": 124,
+  "anchor_y": 112,
+  "sld_source": "b_dark_mill_age1_destruction"
+}
