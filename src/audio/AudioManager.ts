@@ -311,7 +311,12 @@ const BGM_REGION_GAIN: Record<string, number> = {
     // 🔴 [2026-09-17 主人定] 新增 3 首 BGM，补齐 16 母体：
     ANDE: 0.596,      // 实测 -16.5 LUFS · 安第斯（梦之安魂曲 Lux Aeterna）
     mohicans: 0.617,  // 实测 -16.8 LUFS · 安第斯（最后的莫西干人 Promentory）
-    AFRICA: 0.638,    // 实测 -17.1 LUFS · 非洲（Baba Yetu 索韦托福音合唱团）
+    // 🔴 [2026-10-02 主人令「BGM 不许是歌、要纯音乐」] 非洲这首**换了文件**：
+    //    原曲是 **Baba Yetu（Christopher Tin，索韦托福音合唱团，带人声的歌曲、商业版权作品）** → **已删除**；
+    //    换成**自己合成的非洲纯器乐**（djembe/dundun 鼓组 + kora 拨弦 + balafon 木琴 + 沙锤，**无任何人声**，
+    //    无版权问题、可复现可调）：生成器 `tools/africa_bgm_synth.mjs`，D 小调五声 · 104 BPM · 64 小节 ≈ 2:29。
+    //    前 5 秒实测 -17.7 LUFS、前 15 秒 -16.7 LUFS（**无安静前奏**，不会像 DIANQIAN/TIBET 那样开头听不见）。
+    AFRICA: 0.668,    // 实测 -17.5 LUFS · 非洲（自制纯器乐）
 };
 
 /**
@@ -361,7 +366,7 @@ const GENERIC_BGM_FALLBACK = 'age_of_kings';
  *   LATIN=Star Sky(TSFH)、WEST_ASIA=出埃及记、BERBER=征服天堂(Vangelis)、GERMANIC=The Mass(Era)、
  *   victory=Victory(TSFH)、rock_house_jail=勇闯夺命岛、fallen_army=Audiomachine、helmet_to_helmet=Brand X、
  *   hes_a_pirate=加勒比海盗(Hans Zimmer)、game_of_thrones=GoT主题(Ramin Djawadi)、age_of_kings=帝国时代2主题。
- * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（Baba Yetu 东非斯瓦希里语），
+ * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（自制非洲器乐：鼓组+kora+木琴），
  *   以及全部中国 / 日本 / 朝鲜 / 草原 / 中亚 / 青藏 / 印度 / 东南亚 / 南美曲。
  */
 const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
