@@ -505,7 +505,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 🔴 [2026-09-27/09-30 主人定「阿卡没用不要显示了。而且离推罗太近了」] 隐藏阿卡，仅方式②显示灰色名字
         absentCities: ['city_ake'],
         cityUpdates: [{ cityId: 'city_jiasa', factionId: 'maqidun' }, { cityId: 'city_mengfeisi', factionId: 'maqidun' }],
-        briefing: '推罗既下，亚历山大南取埃及大道上的加沙。巴提斯凭高地坚城死守，马其顿军筑土山、架推罗器械破墙；亚历山大肩部中创仍强攻不止，城破后巴提斯力战被俘，据后世史家所记，被拖在战车之后处死。',
+        briefing: '推罗既下，亚历山大南取埃及大道上的加沙。巴提斯凭高地坚城死守，马其顿军筑土山、架推罗器械破墙；亚历山大肩部中创仍强攻不止，城破后巴提斯力战被俘，绑于战车之后拖行处死。',
     },
     {
         year: -331,

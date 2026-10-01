@@ -3,7 +3,9 @@ import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
 import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
-    buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing } from './cityWallShared';
+    buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing,
+    // 🔴 [2026-10-02 主人令「弧形三种只许配密编荆篱」] 形制按材质落定，只许调这两个
+    STOCKADE_SHAPE_KEYS, resolveStockadeShapeByFence } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
@@ -534,10 +536,15 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     //   坐标按 baseSize 等比缩放（样式一律以 baseSizeRef = 100 存）。见 `src/data/stockadeWallStyles.ts`。
     // 🔴 [2026-10-02 主人「我要改的是这一类，不是这一城」] 自定义样式**按分类取**：建筑风格 × 形制（`ASIA|round` 之类），不再按据点 id。
     const hashShape = deHashString(cityId + '|stockade_wall_shape') % 6;
-    const customStyle = pickStockadeWallStyleByCategory(style, hashShape);
-    const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : getStockadeFenceSetByStyle(style);
+    // 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
+    //   弧形三形**只许配密编荆篱**（只有它有 L 形转角件）；本城若掷到弧形三形而材质不是荆篱 → 换成直边形制
+    //   （圆城→正方 · 八角→矩形 · 椭圆→梯形）。落定函数在 cityWallShared，评估页 / 编辑器共用同一份。
+    const builtinFence = getStockadeFenceSetByStyle(style);
+    const shapeIdx = STOCKADE_SHAPE_KEYS.indexOf(resolveStockadeShapeByFence(STOCKADE_SHAPE_KEYS[hashShape], builtinFence.key));
+    const customStyle = pickStockadeWallStyleByCategory(style, shapeIdx < 0 ? hashShape : shapeIdx);
+    const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : builtinFence;
     const wallAnchors = fenceSet.anchors;
-    const stockadeShape = hashShape;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
+    const stockadeShape = shapeIdx < 0 ? hashShape : shapeIdx;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
 
     const isRect = stockadeShape === 3;
     const isOval = stockadeShape === 4;

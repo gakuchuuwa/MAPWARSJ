@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/10/1 22:40:58（共 51 条）
+ * 生成时间：2026/10/2 00:32:04（共 53 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -16,12 +16,13 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_10.png": "/assets/AMERICA/yasuer_xipuliyanuo.png",
     "/assets/SPANISH/__暂留__SPANISH_11.png": "/assets/AMERICA/zhibuluotuo_enlike.png",
     "/assets/PERSIAN/__暂留__PERSIAN_04.png": "/assets/CENTRAL_ASIA/aba_shapuer.png",
+    "/assets/CENTRAL_ASIA/卢里斯坦 · 舒特鲁克1.png": "/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png",
     "/assets/PERSIAN/__暂留__PERSIAN_05.png": "/assets/CENTRAL_ASIA/aqimeinide_daliushi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_02.png": "/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_06.png": "/assets/CENTRAL_ASIA/gelujiya_tamaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_07.png": "/assets/CENTRAL_ASIA/kawusi_haidaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_08.png": "/assets/CENTRAL_ASIA/keerjisi_bagelate.png",
-    "/assets/PERSIAN/zhageluosi_bahelamu.png": "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png",
+    "/assets/CENTRAL_ASIA/扎格罗斯 · 巴赫拉姆1.png": "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png",
     "/assets/PERSIAN/__暂留__PERSIAN_09.png": "/assets/CENTRAL_ASIA/midi_daiaokaisi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_10.png": "/assets/CENTRAL_ASIA/muer_mujier.png",
     "/assets/PERSIAN/__暂留__PERSIAN_11.png": "/assets/CENTRAL_ASIA/sashan_aerdaxier.png",
@@ -31,6 +32,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/PERSIAN/__暂留__PERSIAN_15.png": "/assets/CENTRAL_ASIA/yisatisi_yisatisi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_01.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_01.png",
     "/assets/PERSIAN/__暂留__PERSIAN_03.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_03.png",
+    "/assets/PERSIAN/zhageluosi_bahelamu.png": "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_04.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_03.png": "/assets/DIANQIAN/chenla_duyebamo.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_04.png": "/assets/DIANQIAN/dai_daoyingmeng.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_05.png": "/assets/DIANQIAN/konbaung_yongjiya.png",
@@ -54,5 +56,5 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__暂留__GREEK_09.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__暂留__GREEK_10.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",
-    "/assets/WEST_ASIA/lulisitan_shuteluke.png": "/assets/WEST_ASIA/ailan_shuteluke.png"
+    "/assets/WEST_ASIA/lulisitan_shuteluke.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png"
 };

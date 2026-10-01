@@ -186,7 +186,7 @@
 import {
   buildStockadeShapeRing, STOCKADE_SHAPE_LABELS, STOCKADE_SHAPE_KEYS,
   STOCKADE_FENCE_SETS, validateStockadeRing, autoInsertStockadePosts, ringOrderOf,
-  getStockadeFenceSetByStyle,
+  getStockadeFenceSetByStyle, resolveStockadeShapeByFence, isFenceOnlyStockadeShape,
 } from '/src/systems/cityWallShared.ts';
 
 /* ============================================================================
@@ -533,6 +533,26 @@ function normalizeDesign(pieces) {
   return autoInsertStockadePosts(retypeWalls(keepSingleGate(pieces)));
 }
 
+/* ── 主人令：弧形三种（圆城 / 八角 / 椭圆）只许配密编荆篱 ──────────────
+ * 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
+ *   四套材质里**只有密编荆篱有 L 形转角件**（FENCE_CORNER）；另外三套只有 NE/SE/POST，拿它们拼弧
+ *   是「斜片硬拼」→ 扇状重叠 / 双层木栅（真素材试拼页 /scratch/_wall_dir_test.html 可复现）。
+ *   落定规则与游戏、评估页同一份：圆城→正方 · 八角→矩形 · 椭圆→梯形。 */
+const CURVE_SHAPES = ['round', 'octagon', 'oval'];
+const fingerprint = (ps) => JSON.stringify(ps.map((p) => [p.x, p.y, p.type, !!p.flipX]));
+const CURVE_FINGERPRINTS = new Set();
+for (const k of CURVE_SHAPES) {
+  for (const mat of [null, 'FENCE']) {
+    const raw = buildStockadeShapeRing(k, REF, mat).map((p) => ({ ...p }));
+    CURVE_FINGERPRINTS.add(fingerprint(raw));               // 原版（篱笆套不归一）
+    CURVE_FINGERPRINTS.add(fingerprint(normalizeDesign(raw)));
+  }
+}
+/** 当前设计是不是「圆城 / 八角 / 椭圆」这三种弧形（原版或归一版都算） */
+const isCurveDesign = (ps) => ps.length > 0 && CURVE_FINGERPRINTS.has(fingerprint(ps));
+const CURVE_MAT_TIP = '⚠️ 圆城 / 八角 / 椭圆<b>只许配密编荆篱</b>（四套材质里只有它有 L 形转角件；'
+  + '另外三套拿斜片硬拼弧线会出扇状重叠）——要换这套材质，请先载入直边形制（正方 / 矩形 / 梯形）';
+
 /* ── 存 / 取 ──────────────────────────────────────────────────── */
 function currentStyle() {
   const box = bbox(S.pieces);
@@ -552,6 +572,8 @@ async function saveStyle(asNew) {
   const errs = validateStockadeRing(S.pieces, REF);
   if (errs.length) { toast('❌ 不合三件套标准，先按右侧清单改好再存：<br>' + errs.slice(0, 4).map((e) => '· ' + e).join('<br>')); return; }
   if (!ringClosed()) { toast('❌ 环还没闭合（有断口），先把断口补上'); return; }
+  // 主人令：弧形三种只许配密编荆篱（存盘前最后一道自查）
+  if (S.mat !== 'FENCE' && isCurveDesign(S.pieces)) { toast(CURVE_MAT_TIP); return; }
   if (asNew) S.styleKey = null;
   const style = currentStyle();
   if (!asNew) {
@@ -588,6 +610,7 @@ function renderStyleList() {
     const s = S.savedStyles.find((x) => x.key === n.dataset.key);
     if (!s) return;
     S.styleKey = s.key; S.mat = s.material || 'HARDWOOD'; S.pieces = s.pieces.map((p) => ({ ...p })); S.tail = null;
+    if (isCurveDesign(S.pieces) && S.mat !== 'FENCE') S.mat = 'FENCE';     // 主人令：弧形只许配密编荆篱
     S.applyTo = new Set(s.applyTo || []);
     el('styleName').value = s.name;
     syncMatButtons(); renderCatPick(); S.fit = true; refresh(); toast('已载入样式「' + s.name + '」');
@@ -602,7 +625,21 @@ const STYLE_NAMES = { ASIA: '东亚', CEAS: '中亚', INDI: '印度', WEST: '西
 const MAT_NAME = { HARDWOOD: '硬木粗桩', DARK: '原木尖桩', ARCHAIC: '横木平切', FENCE: '密编荆篱' };
 const catName = (key) => { const [st, sh] = String(key).split('|'); return (STYLE_NAMES[st] || st) + ' · ' + (STOCKADE_SHAPE_LABELS[sh] || sh); };
 el('catStyle').innerHTML = Object.entries(STYLE_NAMES).map(([k, v]) => `<option value="${k}">${v}（${k}）</option>`).join('');
-el('catShape').innerHTML = STOCKADE_SHAPE_KEYS.map((k) => `<option value="${k}">${STOCKADE_SHAPE_LABELS[k]}</option>`).join('');
+/** 🔴 主人令：弧形三种只许配密编荆篱 —— 该风格的材质不是荆篱时，形制下拉里那三个弧形选项**置灰** */
+function syncCatShapeOptions() {
+  const styleKey = el('catStyle').value;
+  const mat = getStockadeFenceSetByStyle(styleKey).key;
+  el('catShape').innerHTML = STOCKADE_SHAPE_KEYS.map((k) => {
+    const blocked = CURVE_SHAPES.includes(k) && mat !== 'FENCE';
+    return `<option value="${k}"${blocked ? ' disabled' : ''}>${STOCKADE_SHAPE_LABELS[k]}${blocked ? '（只许密编荆篱）' : ''}</option>`;
+  }).join('');
+  // 当前选中的形制若被禁 → 自动落到对应的直边形制（圆城→正方 / 八角→矩形 / 椭圆→梯形）
+  if (CURVE_SHAPES.includes(el('catShape').value) && mat !== 'FENCE') {
+    el('catShape').value = resolveStockadeShapeByFence(el('catShape').value, mat);
+  }
+}
+syncCatShapeOptions();
+el('catStyle').addEventListener('change', syncCatShapeOptions);
 const curCat = () => el('catStyle').value + '|' + el('catShape').value;
 /** 这一类现在被哪套已存样式认领（最后保存的那套生效） */
 const holderOfCat = (key, exceptKey) => [...S.savedStyles].reverse().find((st) => st.key !== exceptKey && (st.applyTo || []).includes(key));
@@ -613,15 +650,20 @@ function loadCategory() {
   const custom = holderOfCat(key, null);
   if (custom) {
     S.styleKey = custom.key; S.mat = custom.material || 'HARDWOOD'; S.pieces = custom.pieces.map((p) => ({ ...p })); S.tail = null;
+    if (isCurveDesign(S.pieces) && S.mat !== 'FENCE') S.mat = 'FENCE';     // 主人令：弧形只许配密编荆篱
     S.applyTo = new Set(custom.applyTo || []); el('styleName').value = custom.name;
     el('catInfo').innerHTML = `<b>${catName(key)}</b>：已指派自定义样式「<b>${custom.name}</b>」· 材质 ${MAT_NAME[S.mat]} · ${custom.pieces.length} 件。改完点「保存到这一类」。`;
   } else {
     const mat = getStockadeFenceSetByStyle(style).key;
+    // 🔴 主人令：弧形三形只许配密编荆篱 —— 这一类的形制若与材质冲突，按游戏同一条规则换成直边形制
+    const shapeUsed = resolveStockadeShapeByFence(shape, mat);
     S.mat = mat;
-    S.pieces = buildStockadeShapeRing(shape, REF, mat).map((p) => ({ ...p }));   // 与游戏同一份（篱笆套圆城/八角为主人原版）；游戏里该形制可能再随机左右镜像
+    S.pieces = buildStockadeShapeRing(shapeUsed, REF, mat).map((p) => ({ ...p }));   // 与游戏同一份（篱笆套圆城/八角为主人原版）；游戏里该形制可能再随机左右镜像
     S.tail = null; S.styleKey = null; S.applyTo = new Set([key]);
-    el('styleName').value = catName(key);
-    el('catInfo').innerHTML = `<b>${catName(key)}</b>：游戏默认 · 材质 <b>${MAT_NAME[mat]}</b>（按建筑风格定）· 形制 <b>${STOCKADE_SHAPE_LABELS[shape]}</b>。可直接改，改完点「保存到这一类」。`;
+    el('styleName').value = catName(style + '|' + shapeUsed);
+    el('catInfo').innerHTML = `<b>${catName(key)}</b>：游戏默认 · 材质 <b>${MAT_NAME[mat]}</b>（按建筑风格定）· 形制 <b>${STOCKADE_SHAPE_LABELS[shapeUsed]}</b>`
+      + (shapeUsed !== shape ? `（<span class="warn">${STOCKADE_SHAPE_LABELS[shape]}只许配密编荆篱，已按规则换成 ${STOCKADE_SHAPE_LABELS[shapeUsed]}</span>）` : '')
+      + '。可直接改，改完点「保存到这一类」。';
   }
   syncMatButtons(); renderCatPick(); renderStyleList(); S.fit = true; refresh();
   toast('已读取「' + catName(key) + '」的围栏样式');
@@ -706,7 +748,11 @@ document.querySelectorAll('[data-piece]').forEach((b) => b.addEventListener('cli
   if (S.mode !== 'place') { S.mode = 'place'; }               // 点「放置什么」自动回到放置模式，少一步
   S.piece = b.dataset.piece; syncToolButtons();
 }));
-document.querySelectorAll('[data-mat]').forEach((b) => b.addEventListener('click', () => { S.mat = b.dataset.mat; syncMatButtons(); refresh(); }));
+document.querySelectorAll('[data-mat]').forEach((b) => b.addEventListener('click', () => {
+  // 主人令：弧形三种只许配密编荆篱 —— 当前设计是弧形时，不许换成另外三套材质（保住设计，只拒绝这一步）
+  if (b.dataset.mat !== 'FENCE' && isCurveDesign(S.pieces)) { toast(CURVE_MAT_TIP); return; }
+  S.mat = b.dataset.mat; syncMatButtons(); refresh();
+}));
 document.querySelectorAll('[data-zoom]').forEach((b) => b.addEventListener('click', () => setZoom(Number(b.dataset.zoom))));
 el('btnFit').addEventListener('click', () => { S.fit = true; refresh(); });
 el('btnZoomIn').addEventListener('click', () => setZoom(S.zoom * 1.35));
@@ -719,6 +765,9 @@ stage.addEventListener('wheel', (e) => {
 document.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('click', () => {
   pushUndo();
   const shape = b.dataset.preset;
+  // 🔴 主人令：弧形三种只许配密编荆篱 —— 载入弧形时若材质不是荆篱，自动把材质切成密编荆篱
+  let autoMat = false;
+  if (CURVE_SHAPES.includes(shape) && S.mat !== 'FENCE') { S.mat = 'FENCE'; autoMat = true; syncMatButtons(); }
   // 🔴 篱笆（密编荆篱）套的圆城、八角 = 主人 2026-09-08 原版（游戏里就是它，不套三件套标准）：
   //    载入时带上材质，与游戏同一份；**不归一**（归一会改掉原版的双门 / 连垛），右侧清单仅供参考。
   const isLegacyFence = S.mat === 'FENCE' && (shape === 'round' || shape === 'octagon');
@@ -726,13 +775,14 @@ document.querySelectorAll('[data-preset]').forEach((b) => b.addEventListener('cl
   S.pieces = isLegacyFence ? raw : normalizeDesign(raw);
   S.tail = null;
   const errs = validateStockadeRing(S.pieces, REF);
+  const matNote = autoMat ? '（弧形三形只许配密编荆篱，材质已自动切成密编荆篱）' : '';
   if (isLegacyFence) {
     S.fit = true; refresh();
-    toast('ℹ️ 已载入「' + STOCKADE_SHAPE_LABELS[shape] + '」<b>篱笆套原版</b>（与游戏里一致，不套三件套标准；右侧清单仅供参考，想另存新样式需先改到合规）');
+    toast('ℹ️ 已载入「' + STOCKADE_SHAPE_LABELS[shape] + '」<b>篱笆套原版</b>（与游戏里一致，不套三件套标准；右侧清单仅供参考，想另存新样式需先改到合规）' + matNote);
     return;
   }
   toast('已载入「' + STOCKADE_SHAPE_LABELS[b.dataset.preset] + '」并归一（只留一扇门 + 按标准补垛）：'
-    + (errs.length ? '⚠️ 还剩 ' + errs.length + ' 处不合规，看右侧清单' : '✅ 合三件套标准'));
+    + (errs.length ? '⚠️ 还剩 ' + errs.length + ' 处不合规，看右侧清单' : '✅ 合三件套标准') + matNote);
   S.fit = true;
   refresh();
 }));
@@ -764,6 +814,7 @@ el('btnImport').addEventListener('click', async () => {
     const o = JSON.parse(txt);
     S.pieces = (o.pieces || []).map((p) => ({ ...p }));
     S.tail = null; S.mat = o.material || S.mat; S.styleKey = o.key || null;
+    if (isCurveDesign(S.pieces) && S.mat !== 'FENCE') { S.mat = 'FENCE'; toast('ℹ️ 这份设计是弧形（圆城/八角/椭圆）：按主人令材质已自动切成密编荆篱'); }
     el('styleName').value = o.name || '';
     S.applyTo = new Set(o.applyTo || []);
     syncMatButtons(); renderCatPick(); S.fit = true; refresh(); toast('已导入');
