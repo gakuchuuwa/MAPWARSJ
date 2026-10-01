@@ -1470,21 +1470,15 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
   **教训：评估页改了、游戏侧不跟，主人以为有、游戏里其实没有；「个数」这种一眼可见的差，
   每一条验收里都要有 —— 光验评估页自己，验不出缺件。**
 
-- 🔴 **城寨栅栏 = 形制 × 材质 两个轴**（2026-10-02 主人令「**请把 4 种全部用上，可以增加城寨的多样性**」）：
-  形制（几何）5 种（正方 / 圆形羊圈 / 八角羊圈 / 矩形围栏 / 小城栅栏，主人 2026-10-01 定，一个字不动）
-  × **栅栏材质 4 套**（细编篱笆 FENCE / 硬木尖桩 HARDWOOD / 尖桩原木 DARK / 横木加固 ARCHAIC）
-  = **20 种组合**，两轴都按据点 id 稳定落定（刷新不变）。旧观感一格不丢（形制 ①②③④ 配篱笆、⑤ 配硬木＝旧样）。
-  - **材质表只有一份**：`src/systems/cityWallShared.ts` 的 `STOCKADE_FENCE_SETS` ＋ `pickStockadeFenceSet()`
-    ＋ `normalizeStockadeCorner()`（`deHashString` 也搬进此模块）—— **战略地图 / 攻城战场 Scene13WarLayer / 评估页三处共用**；
-    各写一份必然漂移（血训：小城石墙名单三处各判一次 → 三处不同步）。
-  - ⚠️ **L 形转角件（`FENCE_CORNER`）只有篱笆套有**：另外三套 DE 里没有转角件，四角一律改摆木垛（`hasCorner:false`）；
-    漏这一步 `anchors['CORNER']` 是 undefined，**整圈墙静默不画**（2026-10-02 真机才验出来，静态检查全绿）。
-  - **验收**：`npx tsx scratch/verify_stockade_shape_parity.mts`（⑦ 材质四套同表同种子 + 四套在真实据点里都掷得到）、
-    `node scratch/_probe_stockade_game_render.mjs`（**20 种组合全渲染**：件数 / 材质↔图源 / 四角件归一 / 形制几何不受材质影响 / 矩形院内建筑内点）、
-    `npx tsx --import ./tools/sim-preload.mjs scratch/audit_siege_style_assets.mts`（四套件在盘上齐不齐）。
-  - ⚠️ **真机探针踩到的坑**：vite dev 给模块打过 HMR 时间戳时，`Battlefields.ts?t=…` 与裸 URL 是**两个 module 实例**，
-    往裸的那份 push 探针条目，游戏方法读的是 `?t=` 那份（`find()` 永远找不到）→ 组合全渲染成空串。
-    探针一律按**页面真实抓取过的 URL**（取最新时间戳）取模块。
+- 🔴 **城寨外围形制五选一（2026-10-01 主人定）**：
+  城寨篱笆/栅栏围栏共有 **五种形制样式** —— **正方标准 / 圆形羊圈 / 八角羊圈 / 矩形围栏 / 小城栅栏**。
+  - **样式一：正方标准** —— 细编篱笆（`DE_FENCE_ANCHORS`），四角咬合 L 形篱笆转角件（`FENCE_CORNER`），单面正门（`FENCE_GATE`），内部 9 建筑环列。
+  - **样式二：圆形羊圈** —— 细编篱笆（`DE_FENCE_ANCHORS`），平滑椭圆弧围场（`computeCorralRoundWall`），带间隔立柱与篱笆门，内部 9 建筑环列。
+  - **样式三：八角羊圈** —— 细编篱笆（`DE_FENCE_ANCHORS`），八面切角圆润过渡（`computeCorralOctagonWall`），东南设门，内部 9 建筑环列。
+  - **样式四：矩形围栏** —— 细编篱笆（`DE_FENCE_ANCHORS`），险要拓扑长方形（`computeCorralRectWall`），长边对开双门，内部两排各 3 栋（共 6 栋，`RECT_STOCKADE_SLOTS`），不吃镜像。
+  - **样式五：小城栅栏** —— 小城同款硬木尖桩木栅栏（`DE_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`POST`），尖桩原木双塔木门（`DARK_GATE_PALISADE`），内部 9 建筑环列。
+  - **内部建筑池**（常规城寨 16 候选随机抽 9 栋 / 矩形 6 栋）：定居点 `SETTLEMENT`、棚屋 `HUT_A~G`、简易帐篷 `YURT_A~D`、哨站 `OUTPOST`/`FORTIFIED_OUTPOST`，以及主人 2026-10-01 新增引入的 DE 黑暗时代房屋 `DARK_HOUSE_AGE1`、磨坊 `DARK_MILL_AGE1`。草原/漠北蒙古特化则为 8 蒙古包（`YURT_E~L`）+ 1 亚洲瞭望塔（`ASIA_TOWER_AGE2`）。
+
 
 #### 三之二、第一页 6 张据点卡的排布（2026-09-12 主人定）
 

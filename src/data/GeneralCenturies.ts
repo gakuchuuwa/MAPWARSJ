@@ -1074,8 +1074,8 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wukexiya_madates':                  -4,    // 提里巴斯 · wukexiya · 乌克西亚（扎格罗斯及乌克西亚地方首领）
     'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（前335年佩利昂围城战守帅）
     'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（前335年底比斯战役守帅）
-    'seleisi_shouling':                  -4,    // 色雷斯首领 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
-    'jite_shouling':                     -4,    // 吉特人首领 · seleisi · 多瑙河渡河（前335年多瑙河渡河战役守帅）
+    'seleisi_shouling':                  -4,    // 塞乌特斯 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
+    'jite_shouling':                     -4,    // 科托罗 · seleisi · 多瑙河渡河（前335年多瑙河渡河战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
     'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（前328年粟特起义统帅）
     'xinde_patalawang':                  -4,    // 涅阿库斯 · xinde · 帕塔拉（前325年信德印度洋航线提督）

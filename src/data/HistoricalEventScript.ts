@@ -65,7 +65,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerSourceCityId: 'city_salonica',      // 第一场：自马其顿本土（佩拉）起兵
             attackerLegionName: '马其顿军',
             defenderFactionId: 'seleisi',
-            defenderGeneralId: 'seleisi_shouling',
+            defenderGeneralId: 'gen_seuthes_iii',
             defenderTroops: 8000,
             defenderLegionName: '色雷斯军',
             result: 'attacker_win',
@@ -116,7 +116,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             autoEnterRTS: true,
         },
         commanderUnit: 'hero_mounted_alexander',
-        // 对手主将队：吉特人首领（未留名，色雷斯北支）——骑马的色雷斯酋长（同海姆斯山那场，素材样貌：头盔、金胸甲、披风的色雷斯骑将）
+        // 对手主将队：吉特人君主科托罗（色雷斯北支）——骑马的色雷斯酋长（同海姆斯山那场，素材样貌：头盔、金胸甲、披风的色雷斯骑将）
         foeCommanderUnit: 'hero_thracian_chieftain',
         sources: {
             battle: { level: 'fact', text: '阿里安《远征记》I.3-4：海姆斯山役后亚历山大追特里巴利人至多瑙河，以皮囊填草、独木舟连夜强渡，在北岸击吉特人；英文维基百科 Alexander\'s Balkan campaign 记此役为强渡多瑙河击吉特人，野战。' },
@@ -125,7 +125,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attacker: { level: 'fact', text: '阿里安《远征记》I.3-4：马其顿，亚历山大亲统；命尼卡诺尔领方阵，自率骑兵居右翼。' },
             attackerTroops: { level: 'fact', text: '阿里安《远征记》I.3 原文：渡河者「1,500 cavalry and 4,000 infantry」；本场攻方填巴尔干远征全军 23000（同海姆斯山一役，英文维基 Balkan campaign 信息框），渡河部队 5500 记于史料。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军，前伙伴骑兵、中方阵步兵、后远程，鱼鳞阵 3-4-2；同一支军队整场战争不换。' },
-            defender: { level: 'fact', text: '阿里安《远征记》I.3：吉特人（Getae）为多瑙河北岸「信永生」的色雷斯北支部族，首领未留名 → 按主人批准称「吉特人首领」；势力套用「色雷斯」。' },
+            defender: { level: 'fact', text: '阿里安《远征记》I.3：吉特人（Getae）为多瑙河北岸「信永生」的色雷斯北支部族，守将取吉特人君主科托罗（Cothelas）；势力套用「色雷斯」。' },
             defenderTroops: { level: 'fact', text: '阿里安《远征记》I.3 原文：吉特人「about 4,000 cavalry and more than 10,000 infantry」，取 14000。' },
             defenderLegion: { level: 'popular', text: '套用剧本军团「色雷斯军」（吉特为色雷斯北支，同一打法）：前色雷斯标枪手 4、中长刃斩手 3、后轻骑兵 2，雁行 4-3-2（见 scriptLegions.ts 出处）。' },
             route: { level: 'fact', text: '阿里安《远征记》I.2-4：海姆斯山役后追特里巴利人北上，至多瑙河（伊斯特河）；特里巴利人与色雷斯人退入河心岛，亚历山大决定渡河击北岸吉特人。自海姆斯山战场经德鲁斯塔尔（多瑙河南岸渡口）渡河至北岸。' },
