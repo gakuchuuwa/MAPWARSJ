@@ -1995,7 +1995,6 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       { b: 'DARK_MILL_AGE1', s: 0.30 },
       { b: 'DARK_BARRACKS_AGE1', s: 0.32 },
       { b: 'DARK_SETTLEMENT_AGE1', s: 0.34 },
-      { b: 'DARK_PASTURE', s: 0.25 },
       { b: 'DARK_TOWN_CENTER_AGE1', s: 0.36 }
     ];
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」
@@ -2158,21 +2157,22 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
                     : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 7));
     let clip = '';
     if (stkShape === 1) {
-      // 样式二：圆形羊圈 (Rx = 7.0 * stepX)
-      const rX = 7.0 * stepX, rY = 7.0 * stepY;
+      // 样式二：圆形羊圈 (Rx = 6.6 * stepX，严密贴合栅栏内侧脚线)
+      const rX = 6.6 * stepX, rY = 6.6 * stepY;
       clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
     } else if (stkShape === 2) {
-      // 样式三：八角羊圈 (Rx = 7.1 * stepX)
-      const rX = 7.1 * stepX, rY = 7.1 * stepY;
+      // 样式三：八角羊圈 (Rx = 6.7 * stepX，严密贴合栅栏内侧脚线)
+      const rX = 6.7 * stepX, rY = 6.7 * stepY;
       clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
     } else if (stkShape === 3) {
-      // 样式四：矩形围栏 (12×8)
-      const u1 = 10 * stepX, v1 = 2 * stepY;
-      const u2 = 2 * stepX, v2 = 10 * stepY;
+      // 样式四：矩形围栏 (12×8，严密贴合围栏内侧脚线)
+      const u1 = 9.4 * stepX, v1 = 1.9 * stepY;
+      const u2 = 1.9 * stepX, v2 = 9.4 * stepY;
       clip = 'polygon(calc(50% - ' + u2.toFixed(1) + 'px) calc(50% - ' + v2.toFixed(1) + 'px), calc(50% + ' + u1.toFixed(1) + 'px) calc(50% + ' + v1.toFixed(1) + 'px), calc(50% + ' + u2.toFixed(1) + 'px) calc(50% + ' + v2.toFixed(1) + 'px), calc(50% - ' + u1.toFixed(1) + 'px) calc(50% - ' + v1.toFixed(1) + 'px))';
     } else {
-      // 样式一/五/六/七：正方菱形（与小城完全相同）
-      const rX = 10 * stepX, rY = 10 * stepY;
+      // 样式一/五/六/七：正方菱形（与小城完全相同 S=5, AX=10，城内饱满无漏黑）
+      const AX = 10;
+      const rX = AX * stepX, rY = AX * stepY;
       clip = 'polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%)';
     }
     parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + clip + ';z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
@@ -2820,11 +2820,10 @@ function refresh() {
         + '<img src="' + gate2.path + '" style="width:' + gW2 + 'px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />'
         + '</div></div>';
 
-      stkGrid += stkHead('四、城寨内部建筑候选池（20 款建筑 · 重点展示 DE 官方黑暗时代新增建筑）');
+      stkGrid += stkHead('四、城寨内部建筑候选池（19 款建筑 · 重点展示 DE 官方黑暗时代新增建筑）');
       const bldgShowcase = [
         { id: 'DARK_BARRACKS_AGE1', label: '⭐ DE 黑暗时代兵营（新增）' },
         { id: 'DARK_SETTLEMENT_AGE1', label: '⭐ DE 黑暗时代定居点大屋（新增）' },
-        { id: 'DARK_PASTURE', label: '⭐ DE 黑暗时代牧场棚圈（新增）' },
         { id: 'DARK_TOWN_CENTER_AGE1', label: '⭐ DE 黑暗时代部落中心（新增）' },
         { id: 'DARK_HOUSE_AGE1', label: '⭐ DE 黑暗时代房屋' },
         { id: 'DARK_MILL_AGE1', label: '⭐ DE 黑暗时代磨坊' },
