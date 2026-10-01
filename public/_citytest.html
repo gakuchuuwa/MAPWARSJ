@@ -771,7 +771,7 @@
         <ul>
           <li><strong>围栏</strong>：S = 5 —— <strong>七大外围形制</strong>（可在图片上方直接点击切换，或点击【🔄 其他样式】）</li>
           <li><strong>形制六种</strong>：① 正方 ② 圆形 ③ 八角 ④ 矩形 ⑤ 椭圆山脊堡 ⑥ 梯形隘口寨</li>
-          <li><strong>材质四套</strong>（按一层建筑风格定）：硬木粗桩 东亚/印度/波斯/中东 · 原木尖桩 东北欧/西欧/普鲁/色雷斯 · 横木平切 地中海/希腊/东南欧/中亚 · 密编荆篱 中美/安第斯/非洲/东南亚</li>
+          <li><strong>材质四套</strong>（按一层建筑风格定）：硬木粗桩 东亚/印度/普鲁/波斯/中东 · 原木尖桩 东北欧/西欧/色雷斯 · 横木平切 地中海/希腊/东南欧/中亚/草原营地 · 密编荆篱 中美/安第斯/非洲/东南亚</li>
           <li><strong>建筑</strong>：定居点、棚屋 A~G、简易帐篷 A~D、哨站、DE 黑暗时代房屋与磨坊（16 候选抽 9 栋 / 矩形 6 栋）</li>
           <li><strong>地基</strong>：sr2_plaza 压实泥石地基（与小城一致）</li>
         </ul>
@@ -2845,8 +2845,8 @@ function refresh() {
         + '曲线三形（圆城/八角/椭圆）统一走共享拼法 <code>cityWallShared.buildStockadeCurveRing()</code>，与游戏**逐件一致**；<br>'
         + '　· <b>内部建筑（平权随机）</b>：定居点/棚屋A~G/简易帐篷A~D/哨站/<b>DE 黑暗时代房屋与磨坊</b> 共 16 款候选抽取 9 栋（矩形 6 栋 / 椭圆与梯形 7 栋）；'
         + '草原/漠北蒙古特化为 8 蒙古包 + 1 亚洲瞭望塔；<br>'
-        + '　· <b>栅栏材质（四套 · 按建筑风格分配）</b>：硬木粗尖桩 HARDWOOD（东亚/印度/波斯/中东）、原木尖桩 DARK（东北欧/西欧/普鲁/色雷斯）、'
-        + '横木平切 ARCHAIC（地中海/希腊/东南欧/中亚）、密编荆篱 FENCE（中美/安第斯/非洲/东南亚）。</div>';
+        + '　· <b>栅栏材质（四套 · 按建筑风格分配）</b>：硬木粗尖桩 HARDWOOD（东亚/印度/普鲁/波斯/中东）、原木尖桩 DARK（东北欧/西欧/色雷斯）、'
+        + '横木平切 ARCHAIC（地中海/希腊/东南欧/中亚/草原营地）、密编荆篱 FENCE（中美/安第斯/非洲/东南亚）。</div>';
 
       stkGrid += stkHead('一、六大外围形制逐款对照（同尺寸脚印 · 6 种形制全览）');
       stkGrid += stkTile('样式一 · 正方标准', '菱形四角 · 9建筑', 0, false, 'stk_v0');
@@ -2866,9 +2866,9 @@ function refresh() {
 
       stkGrid += stkHead('三、四大文明栅栏城门特写对照');
       const gateList = [
-        { label: '① 硬木粗尖桩大门 (HARDWOOD)', desc: '东亚 (ASIA) / 印度 (INDI) / 波斯 (PERSIAN) / 中东 (ORIE)', anchor: PALISADE_ANCHORS.GATE },
-        { label: '② 原木尖桩大门 (DARK)', desc: '东北欧 (SLAV) / 西欧 (WEST) / 普鲁 (PURU) / 色雷斯 (THRACIAN)', anchor: DARK_PALISADE_ANCHORS.GATE },
-        { label: '③ 横木平切大门 (ARCHAIC)', desc: '地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS)', anchor: ARCHAIC_PALISADE_ANCHORS.GATE },
+        { label: '① 硬木粗尖桩大门 (HARDWOOD)', desc: '东亚 (ASIA) / 印度 (INDI) / 普鲁 (PURU) / 波斯 (PERSIAN) / 中东 (ORIE)', anchor: PALISADE_ANCHORS.GATE },
+        { label: '② 原木尖桩大门 (DARK)', desc: '东北欧 (SLAV) / 西欧 (WEST) / 色雷斯 (THRACIAN)', anchor: DARK_PALISADE_ANCHORS.GATE },
+        { label: '③ 横木平切大门 (ARCHAIC)', desc: '地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS) / 草原营地 (YURT)', anchor: ARCHAIC_PALISADE_ANCHORS.GATE },
         { label: '④ 密编荆篱木门 (FENCE)', desc: '中美 (MESO) / 安第斯 (ANDE) / 非洲 (AFRI) / 东南亚 (SEAS)', anchor: FENCE_ANCHORS.GATE },
       ];
       gateList.forEach(g => {
