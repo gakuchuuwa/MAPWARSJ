@@ -5,7 +5,7 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
     buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
-import { pickStockadeWallStyle } from '../data/stockadeWallStyles';
+import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
 import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
@@ -532,10 +532,12 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     //   玩家在「围栏编辑器」(`/stockade-wall-editor.html`) 里设计并存盘的样式，一旦**指派**给某座据点，
     //   这座城寨就直接用**玩家的设计**（不再走六形制哈希，也不随机镜像 —— 所见即所得）；
     //   坐标按 baseSize 等比缩放（样式一律以 baseSizeRef = 100 存）。见 `src/data/stockadeWallStyles.ts`。
-    const customStyle = pickStockadeWallStyle(cityId);
+    // 🔴 [2026-10-02 主人「我要改的是这一类，不是这一城」] 自定义样式**按分类取**：建筑风格 × 形制（`ASIA|round` 之类），不再按据点 id。
+    const hashShape = deHashString(cityId + '|stockade_wall_shape') % 6;
+    const customStyle = pickStockadeWallStyleByCategory(style, hashShape);
     const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : getStockadeFenceSetByStyle(style);
     const wallAnchors = fenceSet.anchors;
-    const stockadeShape = customStyle ? 0 : deHashString(cityId + '|stockade_wall_shape') % 6;
+    const stockadeShape = hashShape;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
 
     const isRect = stockadeShape === 3;
     const isOval = stockadeShape === 4;

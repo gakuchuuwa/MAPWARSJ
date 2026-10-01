@@ -1830,6 +1830,10 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
 - **拼法**：圆形／椭圆／八角这类曲线围栏，统一走 `corralPiecesFromLoop`（游戏 `TerritorySystem.ts` 与评估页 `_citytest.html` 两边同一份）：沿轮廓等弧长取点 → 按走向定朝向 → 朝向变处放城垛 → 在左下边正中开一扇门。
 - **验收**：`npx tsx scratch/verify_stockade_shape_parity.mts` 第 ⑦ 项逐形制、逐尺寸检查「城垛不相邻、城垛两边是墙、城门两边是墙、只开一扇门、朝向只在城垛处变」。
 - 矩形／梯形／正方这几个由直边拼成的形制，转角本来就是四角件，不在曲线拼法之内。
+- 🔴 **自定义围栏样式按「分类」存取，不按某座城**（2026-10-02 主人：「我要改的是这一类，不是这一城」「据点样式只能是据点的分类，不要给我据点的名称」）：
+  分类 = **建筑风格 × 形制**，键写成 `STYLE|shape`（如 `ASIA|round`＝东亚·圆城）；编辑器（`/stockade-wall-editor.html`）里**不许出现任何据点名称或 id**。
+  游戏取样式只走 `src/data/stockadeWallStyleLookup.pickStockadeWallStyleByCategory(建筑风格, 形制序号)`，同一类被多套样式认领时以最后保存的为准；`stockadeWallStyles.ts` 里自动生成的 `pickStockadeWallStyle(cityId)` 作废不用。
+  编辑器三个动作：读取这一类（已有自定义样式就载入它，否则载入游戏默认：材质按建筑风格定、几何按形制）／保存到这一类（须合规，并把这一类从别的样式认领里摘掉）／恢复这一类默认。
 - 🔴 **例外（2026-10-02 主人令「AI 把我以前篱笆做的圆城、八角改坏了，只改篱笆的」）**：**密编荆篱（FENCE，篱笆）这一套的圆城与八角，保留主人 2026-09-08 手工做的原版**（圆城 34 件、八角 32 件，每 4 件一垛、八角四角各 3 垛），**不套本标准、也不放大**；地面裁切同用原版椭圆。唯一入口 `cityWallShared.buildStockadeCurveRing(shape, baseSize, material)`，`material === 'FENCE'` 时走 `legacyFenceRoundWall / legacyFenceOctagonWall`。其余三套材质（硬木／原木／横木）照本标准。**AI 不许再动篱笆套的这两个形制。**
 
 #### 🔴 2026-10-02 主人令「**把这个标准记下来，重设计下城寨的圆城，八角，椭圆**」——重设计记录
