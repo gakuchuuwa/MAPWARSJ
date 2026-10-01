@@ -913,6 +913,27 @@ export const DE_FORTIFIED_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX
  *  🔴 [2026-09-12 主人「好的」] 再加**波斯（PERSIAN 建筑风格）**：波斯本土城市同样是砖石城防
  *     （波斯波利斯/苏萨的砖石台地与城墙），木栅栏同样不对。 */
 import { REGION_TO_DE_STYLE } from './cityDeStyle';
+/** 🔴 [2026-10-02 主人定「城型即时代：城寨＝古典、小城＝封建、中城＝城堡、大城＝帝国」，小城围墙按**封建时代（公元 400~1050 年）**算]
+ *  小城围墙是石墙还是木栅，**按建筑风格（16 母体）定**，战略地图与战术模式都调这一个函数（不再按「区域」）。
+ *  判据：封建时代该文明的小城聚落，主流是夯土／砖石／土坯（→ 石墙）还是土垒木栅／原木栅（→ 木栅）。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
+ *  ✅ 石墙：东亚 ASIA · 东南欧（拜占庭／高加索）EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · 普鲁 PURU（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS（大陆：高棉／蒲甘／越南）· 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN
+ *  🌲 木栅：西欧 WEST（土丘木栅）· 东北欧 SLAV（原木堡寨）· 中亚 CEAS（游牧车阵木栅）· 安第斯 ANDE（原住民原木围栅）· 毡帐营地 YURT（营地自带栅栏，不走这里）
+ *  例外（按二三级风格／区域压过母体）：日本 JAPAN、女真 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域 WESTERN、印加 INCA → 石墙。
+ *  ⚠️ 斯巴达「不筑城墙」按木栅归（素材只有两种）。历史依据与逐文明考证见 AGENTS.md「三之四」。 */
+export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
+    ASIA: true, EAST: true, MEDI: true, ORIE: true, INDI: true, PURU: true, SEAS: true, MESO: true, AFRI: true, PERSIAN: true, GREEK: true, THRACIAN: true,
+    WEST: false, SLAV: false, CEAS: false, ANDE: false, YURT: false,
+};
+const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'NORTHEAST', 'MONGOL', 'MOBEI_MONGOL', 'CUMAN', 'MALAY']);
+/** 母体判木栅、但这个二三级风格史载是石／土坯墙 → 石墙：西域绿洲 WESTERN（高昌、交河、于阗屯堡，夯土土坯，母体落在中亚）、印加 INCA（安第斯干砌石，母体落在安第斯）。 */
+const SMALL_CITY_STONE_OVERRIDE = new Set(['WESTERN', 'INCA']);
+export function smallCityUsesStoneWall(deStyle: string | undefined | null, rawStyle?: string | null, region?: string | null): boolean {
+    if (rawStyle && SMALL_CITY_WOOD_OVERRIDE.has(rawStyle)) return false;
+    if (region && (region.includes('JAPAN') || SMALL_CITY_WOOD_OVERRIDE.has(region))) return false;
+    if (rawStyle && SMALL_CITY_STONE_OVERRIDE.has(rawStyle)) return true;
+    return !!deStyle && SMALL_CITY_STONE_BY_STYLE[deStyle] === true;
+}
+
 export function shouldUseStoneWall(region: string | undefined | null): boolean {
     if (!region) return false;
     // 🔴 [主人定 2026-10-02] 小城城墙按「城防材质历史传统」判：
@@ -948,6 +969,7 @@ export function resolveTacticalWallSetup(
     buildingStyle: string,
     regionCulture: string | undefined | null,
     cityId: string | undefined | null,
+    rawBuildingStyle?: string | null,   // 据点原始建筑风格（二三级，如 JAPAN／NORTHEAST），小城石木判据要用
 ): TacticalWallSetup {
     const isYurt = buildingStyle === 'YURT';
     const isStockade = cityType === 'stockade';
@@ -1018,7 +1040,7 @@ export function resolveTacticalWallSetup(
     }
 
     if (cityType === 'small_city') {
-        if (shouldUseStoneWall(regionCulture)) {
+        if (smallCityUsesStoneWall(buildingStyle, rawBuildingStyle, regionCulture)) {
             return {
                 wallMat: 'STONE',
                 wBase: `${buildingStyle}_WALL_STONE`,

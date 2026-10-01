@@ -1556,6 +1556,7 @@ import {
   DE_STONE_ANCHORS_BY_STYLE,
   DE_FORTIFIED_ANCHORS_BY_STYLE,
   shouldUseStoneWall,
+  smallCityUsesStoneWall,
   deHashString,
   STYLE_TO_STOCKADE_FENCE,
   STOCKADE_FENCE_SETS,
@@ -2257,8 +2258,8 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
   // 2. 周围建筑（中心城堡时取 4 栋，90° 扇区四角环卫；普通时取 8 栋 45° 扇区；主人 2026-09-10 定）
   const surroundCount = isCenterCastle ? 4 : 8;
   const RECT_STOCKADE_SLOTS = [
-    [-3.6, 2.2], [0, 2.2], [3.6, 2.2],
-    [-3.6, -2.2], [0, -2.2], [3.6, -2.2]
+    [-4.0, 2.0], [-1.8, 2.4], [-3.8, -1.9], [-1.6, -1.5],
+    [1.6, 1.6], [3.8, 2.0], [1.8, -2.4], [4.0, -1.9]
   ];
   const OVAL_STOCKADE_SLOTS = [
     [-3.2, -3.2], [3.2, 3.2],
@@ -2365,8 +2366,8 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
       anchors = getStoneAnchors(curStyle);
     } else {
       pieces = computeRingWall(baseSize, 5);
-      // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
-      anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
+      // 小城石墙／木栅：按建筑风格（封建时代口径，smallCityUsesStoneWall，与主游戏同一个函数）
+      anchors = smallCityUsesStoneWall(curStyle, curCulture, curCulture) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
     }
   } else if (type === 'stockade') {
     /* 城寨围栏六选一：0 正方 / 1 圆城 / 2 八角 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
@@ -2721,7 +2722,7 @@ function renderGateCloseup(style, type, forceShape = null) {
   } else if (type === 'small') {
     const useStone = (curSmallWall === 'stone2' || curSmallWall === 'stone4') ? true
       : (curSmallWall === 'palisade') ? false
-      : (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle));
+      : smallCityUsesStoneWall(curStyle, curCulture, curCulture);
     const a = (useStone ? getStoneAnchors(curStyle) : PALISADE_ANCHORS).GATE;
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');

@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
-import { legacyFenceClip, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
+import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
     buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing } from './cityWallShared';
@@ -104,8 +104,8 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
 };
 
 const RECT_STOCKADE_SLOTS: Array<[number, number]> = [
-    [-3.6, 2.2], [0, 2.2], [3.6, 2.2],
-    [-3.6, -2.2], [0, -2.2], [3.6, -2.2],
+    [-4.0, 2.0], [-1.8, 2.4], [-3.8, -1.9], [-1.6, -1.5],
+    [1.6, 1.6], [3.8, 2.0], [1.8, -2.4], [4.0, -1.9],
 ];
 
 /** 🔴 [2026-10-02 主人定] 椭圆山脊堡（城寨样式五）院内建筑位（中心1栋 + 环周6栋 = 7栋） */
@@ -2056,11 +2056,12 @@ export class TerritorySystem {
             region,
         } as unknown as City;
         const baseSize = getCitySiegeBaseSize(cityType);
-        const useStoneWall = shouldUseStoneWall(region);
+        let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
         const isJapan = !!region?.includes('JAPAN');
         const isTibet = !!region?.includes('TIBET');
         const centerCastle = isJapan || isTibet || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass');
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
+        useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region);
         const faction = factionId ?? '';
         if (deStyle) {
             if (cityType === 'big_city') {
@@ -2125,7 +2126,7 @@ export class TerritorySystem {
 
         // [2026-09-03 主人] 中原/北方/江南小城用中城同款石墙（默认木栅）；[2026-09-11 主人] 希腊文明古国小城也用石墙
         const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
-        const useStoneWall = shouldUseStoneWall(cityRegion);
+        let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
         const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
         const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
         const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
@@ -2133,6 +2134,7 @@ export class TerritorySystem {
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
+        useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion);
 
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
