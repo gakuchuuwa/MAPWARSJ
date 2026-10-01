@@ -2106,13 +2106,13 @@ export const FACTIONS: Faction[] = [
     { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
 
 
-    { id: 'sute', name: '粟特' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记
+    { id: 'sute', name: '诺塔卡' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记
     { id: 'xinde', name: '信德' },
     { id: 'jiduoluoxiya', name: '吉德罗西亚' },   // 普拉（行省首府）势力
     { id: 'aolitai', name: '奥里泰' },   // 兰巴基亚（奥里泰部落）势力
     { id: 'shiyuzu', name: '食鱼族' },   // 奥拉（欣戈尔河口食鱼族）势力
     { id: 'kamanniyaxingsheng', name: '卡曼尼亚行省' },   // 卡曼尼亚（会师与审判地）势力
-    { id: 'keerman', name: '克尔曼' },   // 锡尔詹（山前走廊中继点）势力
+    { id: 'keerman', name: '锡尔詹' },   // 锡尔詹（山前走廊中继点）势力
     { id: 'zhageluosi', name: '扎格罗斯' },   // 呼勒万（隘口）势力
     { id: 'lulisitan', name: '卢里斯坦' },   // 伊拉姆（西麓走廊）势力
     { id: 'golpayegan_diqu', name: '古尔帕耶甘地区' },   // 古尔帕耶甘（几何驿站）势力

@@ -1275,13 +1275,13 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xuliya': '叙利',
 
 
-    'sute': '粟特',
+    'sute': '诺塔',
     'xinde': '信德',
     'jiduoluoxiya': '吉德',
     'aolitai': '奥里',
     'shiyuzu': '食鱼',
     'kamanniyaxingsheng': '卡曼',
-    'keerman': '克尔曼',
+    'keerman': '锡詹',
     'zhageluosi': '扎格',
     'lulisitan': '卢里',
     'golpayegan_diqu': '古尔帕',

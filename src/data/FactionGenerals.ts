@@ -560,7 +560,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     dayuan: { generalId: 'dayuan_wugua', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png' },
     kokand: { generalId: 'kokand_alimukuli', generalName: '阿里木库力', portrait: '/assets/CENTRAL_ASIA/kokand_alimukuli.png' },
     dayuzi: { generalId: 'dayuzi_yinalechihei', generalName: '亦纳勒赤黑', portrait: '/assets/CENTRAL_ASIA/dayuzi_yinalechihei.png' },
-    maer_d: { generalId: 'maer_d_bahelamuchubin', generalName: '巴赫拉姆', portrait: '/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png' },
+    maer_d: { generalId: 'maer_d_bahelamuchubin', generalName: '巴赫拉姆·楚宾', portrait: '/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png' },
     wugu_d: { generalId: 'wugu_d_tugelile', generalName: '图格里勒', portrait: '/assets/CENTRAL_ASIA/wugu_d_tugelile.png' },
     adao_d: { generalId: 'adao_d_mafushou', generalName: '马福寿', portrait: '/assets/WESTERN/adao_d_mafushou.png' },
     wuyuan_d: { generalId: 'wuyuan_d_chengui', generalName: '陈龟', portrait: '/assets/liuhan/wuyuan_d_chengui.png' },
@@ -1142,7 +1142,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
-    ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克', portrait: '/assets/WEST_ASIA/ailan_shuteluke.png' },
+    ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/WEST_ASIA/ailan_shuteluke.png' },
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
     // 前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配
