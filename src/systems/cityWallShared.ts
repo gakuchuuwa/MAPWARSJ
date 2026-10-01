@@ -141,6 +141,79 @@ export const DE_FENCE_ANCHORS: Record<string, { pctX: number; pctY: number; widt
     },
 };
 
+export type StockadeFenceKey = 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE';
+
+/** 🔴 [2026-10-01 主人定案] 16 大建筑风格与 4 套城寨栅栏材质历史军事分配表（4 × 4）
+ *  - HARDWOOD（硬木粗桩）：东亚 (ASIA) / 印度 (INDI) / 波斯 (PERSIAN) / 中东 (ORIE)
+ *  - DARK（原木尖桩）：东北欧 (SLAV) / 西欧 (WEST) / 普鲁 (PURU) / 色雷斯 (THRACIAN)
+ *  - ARCHAIC（横木平切）：地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS)
+ *  - FENCE（密编荆篱）：中美 (MESO) / 安第斯 (ANDE) / 非洲 (AFRI) / 东南亚 (SEAS)
+ */
+export const STYLE_TO_STOCKADE_FENCE: Record<string, StockadeFenceKey> = {
+    // ① 硬木粗桩（HARDWOOD）
+    ASIA: 'HARDWOOD',
+    INDI: 'HARDWOOD',
+    PERSIAN: 'HARDWOOD',
+    ORIE: 'HARDWOOD',
+    // ② 原木尖桩（DARK）
+    SLAV: 'DARK',
+    WEST: 'DARK',
+    PURU: 'DARK',
+    THRACIAN: 'DARK',
+    // ③ 横木平切（ARCHAIC）
+    MEDI: 'ARCHAIC',
+    GREEK: 'ARCHAIC',
+    EAST: 'ARCHAIC',
+    CEAS: 'ARCHAIC',
+    // ④ 密编荆篱（FENCE）
+    MESO: 'FENCE',
+    ANDE: 'FENCE',
+    AFRI: 'FENCE',
+    SEAS: 'FENCE',
+};
+
+export interface StockadeFenceSet {
+    key: StockadeFenceKey;
+    label: string;
+    anchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }>;
+}
+
+export const STOCKADE_FENCE_SETS: Record<StockadeFenceKey, StockadeFenceSet> = {
+    HARDWOOD: {
+        key: 'HARDWOOD',
+        label: '硬木粗桩',
+        anchors: DE_PALISADE_ANCHORS,
+    },
+    DARK: {
+        key: 'DARK',
+        label: '原木尖桩',
+        anchors: DE_DARK_PALISADE_ANCHORS,
+    },
+    ARCHAIC: {
+        key: 'ARCHAIC',
+        label: '横木平切',
+        anchors: DE_ARCHAIC_PALISADE_ANCHORS,
+    },
+    FENCE: {
+        key: 'FENCE',
+        label: '密编荆篱',
+        anchors: DE_FENCE_ANCHORS,
+    },
+};
+
+export function getStockadeFenceSetByStyle(style: string | undefined | null): StockadeFenceSet {
+    const key: StockadeFenceKey = (style && STYLE_TO_STOCKADE_FENCE[style]) ? STYLE_TO_STOCKADE_FENCE[style] : 'HARDWOOD';
+    return STOCKADE_FENCE_SETS[key];
+}
+
+export function normalizeStockadeCorner(pieces: Array<{ type: string }>, fenceKey: StockadeFenceKey): void {
+    if (fenceKey !== 'FENCE') {
+        for (const p of pieces) {
+            if (p.type === 'CORNER') p.type = 'POST';
+        }
+    }
+}
+
 
 // 中城石墙（STONE_WALL）部件锚点：按建筑风格取各自素材与锚点（2026-08-27 从 DE _meta.json 提取，pct = anchor/box×100）
 // 每个风格用自己风格的城墙/城门素材（非统一 ASIA），锚点各风格独立（否则错位）

@@ -721,14 +721,13 @@
         <!-- 浮在图片旁边的样式切换工具栏 -->
         <div class="stk-img-toolbar">
           <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);">
-            <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（细编篱笆+L转角）">① 正方</button>
+            <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（菱形四角）">① 正方</button>
             <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形</button>
             <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角</button>
-            <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边对开双门）">④ 矩形</button>
-            <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城栅栏（硬木粗尖桩）">⑤ 硬木</button>
-            <button type="button" class="stk-pill-btn" data-shape="dark" title="样式六：原木木栅（经典尖原木木栅）">⑥ 原木</button>
-            <button type="button" class="stk-pill-btn" data-shape="archaic" title="样式七：平切木栅（古典横木加固栅）">⑦ 平切</button>
-            <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取七种之一">🎲</button>
+            <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边双门）">④ 矩形</button>
+            <button type="button" class="stk-pill-btn" data-shape="oval" title="样式五：椭圆山脊堡（顺脊展布）">⑤ 椭圆</button>
+            <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形</button>
+            <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取六种之一">🎲</button>
           </div>
           <button type="button" class="btn-stk-next stk-action-btn" title="点击在图片中切换下一种形制">🔄 其他样式 ▾</button>
         </div>
@@ -829,14 +828,13 @@
       <div id="singleStkToolbar" class="stk-img-toolbar" style="display:none;top:12px;left:12px;right:12px;">
         <div style="display:flex;flex-wrap:wrap;gap:4px;background:rgba(15,23,42,0.88);padding:4px 8px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 3px 8px rgba(0,0,0,0.5);">
           <span style="font-size:12px;color:#94a3b8;font-weight:bold;line-height:24px;margin-right:2px;">外围形制:</span>
-          <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（细编篱笆）">① 正方标准</button>
+          <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（菱形四角）">① 正方标准</button>
           <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形羊圈</button>
           <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角羊圈</button>
           <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边双门）">④ 矩形围栏</button>
-          <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城硬木栅栏（硬木粗尖桩）">⑤ 小城硬木</button>
-          <button type="button" class="stk-pill-btn" data-shape="dark" title="样式六：原木尖桩木栅（经典尖原木）">⑥ 原木尖桩</button>
-          <button type="button" class="stk-pill-btn" data-shape="archaic" title="样式七：古典平切木栅（横梁加固）">⑦ 平切木栅</button>
-          <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取">🎲 随机</button>
+          <button type="button" class="stk-pill-btn" data-shape="oval" title="样式五：椭圆山脊堡（顺脊展布）">⑤ 椭圆山脊堡</button>
+          <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形隘口寨</button>
+          <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取六种之一">🎲 随机</button>
         </div>
         <button type="button" class="btn-stk-next stk-action-btn" style="padding:6px 14px;font-size:13px;" title="点击在图片中切换下一种形制">🔄 切换其他样式 ▾</button>
       </div>
@@ -1524,6 +1522,10 @@ import {
   DE_FORTIFIED_ANCHORS_BY_STYLE,
   shouldUseStoneWall,
   deHashString,
+  STYLE_TO_STOCKADE_FENCE,
+  STOCKADE_FENCE_SETS,
+  getStockadeFenceSetByStyle,
+  normalizeStockadeCorner,
 } from '/src/systems/cityWallShared.ts';
 
 function getFortifiedAnchors(style) {
@@ -1757,6 +1759,93 @@ function computeCorralRectWall(baseSize) {
   for (let k = 1; k < W; k++) put(lerp(P1, P2, k / W), 'NE');
   // 左边 P3→P0（短边，不设门）
   for (let k = 1; k < W; k++) put(lerp(P3, P0, k / W), 'SE', true);
+
+  return pieces;
+}
+
+// 城寨方案D：椭圆山脊堡围栏（顺应山脊走势的长椭圆围场，两端收窄，前向开门，2026-10-02 主人定）
+function computeCorralOvalWall(baseSize) {
+  const sx = baseSize * 0.075;
+  const sy = sx * 0.58;
+  const Rx = 8.5 * sx;
+  const Ry = 5.2 * sy;
+  const pieces = [];
+  const N = 34;
+  for (let i = 0; i < N; i++) {
+    const angle = -90 + i * (360.0 / N);
+    const rad = angle * Math.PI / 180;
+    const x = Rx * Math.cos(rad);
+    const y = Ry * Math.sin(rad);
+    // 正前方东南开一扇木大门 (angle 在 50° ~ 75° 之间)
+    if (angle >= 50 && angle <= 75) {
+      if (Math.abs(angle - 62.5) < 7) {
+        pieces.push({ x, y, type: 'GATE' });
+      }
+      continue;
+    }
+    if (i % 4 === 0) {
+      pieces.push({ x, y, type: 'POST' });
+    } else if (angle > -90 && angle < 0) {
+      pieces.push({ x, y, type: 'SE' });
+    } else if (angle >= 0 && angle < 90) {
+      pieces.push({ x, y, type: 'SE', flipX: true });
+    } else if (angle >= 90 && angle < 180) {
+      pieces.push({ x, y, type: 'NE', flipX: true });
+    } else {
+      pieces.push({ x, y, type: 'NE' });
+    }
+  }
+  return pieces;
+}
+
+// 城寨方案E：梯形隘口寨围栏（背山面险的梯形关隘营寨，背窄前阔，正面长门，四角立垛，2026-10-02 主人定）
+function computeCorralTrapezoidWall(baseSize) {
+  const sx = baseSize * 0.075;
+  const sy = sx * 0.58;
+  const P = (u, v) => ({ x: (u + v) * sx, y: (u - v) * sy });
+  const P_fl = P(-6, -4);
+  const P_fr = P(6, -4);
+  const P_br = P(3, 4);
+  const P_bl = P(-3, 4);
+
+  const cx = (P_fl.x + P_fr.x + P_br.x + P_bl.x) / 4;
+  const cy = (P_fl.y + P_fr.y + P_br.y + P_bl.y) / 4;
+
+  const pieces = [];
+  const put = (p, type, flipX) => pieces.push({ x: p.x - cx, y: p.y - cy, type: type, flipX: !!flipX });
+  const lerp = (A, B, t) => ({ x: A.x + (B.x - A.x) * t, y: A.y + (B.y - A.y) * t });
+
+  // 四角：L 形转角件（与另外几种城寨同一套，由 normalizeStockadeCorner 规范）
+  put(P_fl, 'CORNER');
+  put(P_fr, 'CORNER');
+  put(P_br, 'CORNER');
+  put(P_bl, 'CORNER');
+
+  // 底边 P_fl→P_fr（长边，正面临街，中设大门，12段）
+  const N_front = 12;
+  const halfF = Math.floor(N_front / 2);
+  for (let k = 1; k < N_front; k++) {
+    if (k >= halfF - 1 && k <= halfF + 1) continue;
+    put(lerp(P_fl, P_fr, k / N_front), 'SE');
+  }
+  put(lerp(P_fl, P_fr, halfF / N_front), 'GATE', true);
+
+  // 顶边 P_br→P_bl（窄边，背山，6段）
+  const N_back = 6;
+  for (let k = 1; k < N_back; k++) {
+    put(lerp(P_br, P_bl, k / N_back), 'NE', true);
+  }
+
+  // 右斜边 P_fr→P_br（8段）
+  const N_side = 8;
+  for (let k = 1; k < N_side; k++) {
+    put(lerp(P_fr, P_br, k / N_side), 'NE');
+  }
+
+  // 左斜边 P_bl→P_fl（8段）
+  for (let k = 1; k < N_side; k++) {
+    put(lerp(P_bl, P_fl, k / N_side), 'SE', true);
+  }
 
   return pieces;
 }
@@ -2175,7 +2264,14 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       const rX = AX * stepX, rY = AX * stepY;
       clip = 'polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%)';
     }
-    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + clip + ';z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
+    if (type === 'stockade') {
+      // 🔴 [2026-10-01 主人「城寨的地基像小城一样，不要放大」] 同游戏 TerritorySystem.buildDeStockadeStackHtml：
+      //    无缝原图 sr2.png 平铺，单块 = 小城建筑地基宽（baseSize × 0.32 × 2.3），不再整张拉伸放大
+      const stkTileW = baseSize * 0.32 * 2.3;
+      parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + clip + ';z-index:5;pointer-events:none;background-image:url(/SUCAI_TERRAIN/sr2.png);background-repeat:repeat;background-position:50% 50%;background-size:' + stkTileW.toFixed(1) + 'px ' + (stkTileW * 0.58).toFixed(1) + 'px;opacity:0.95;"></div>');
+    } else {
+      parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + clip + ';z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
+    }
   }
 
   // 1. 中间建筑（中心城堡严格居中 0,0；普通建筑带自然微偏移）
@@ -2362,6 +2458,16 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
         for (const p of pieces) { p.x = -p.x; p.flipX = !p.flipX; }
       }
     }
+  }
+
+  // 🔴 [2026-10-01 主人「险要，地图铺呀和中城一样」] 城内满铺中城同款 rd2 石板（无缝原图平铺，单块 = 中城建筑地基宽，不拉伸放大），
+  //    裁切 = 8×4 矩形城墙四角；城墙镜像时地基跟着翻（同游戏 TerritorySystem.buildDePassStackHtml）
+  if (type === 'pass') {
+    const gsx = baseSize * 0.075, gsy = gsx * 0.58, gm = doMirror ? -1 : 1;
+    const gTile = baseSize * 0.32 * 1.1 * 2.3;   // = 中城建筑脚下地基宽；无缝原图 rd2.png 平铺，不拉伸放大
+    const gpt = (u, v) => 'calc(50% + ' + (u * gm * gsx).toFixed(1) + 'px) calc(50% + ' + (v * gsy).toFixed(1) + 'px)';
+    const gclip = 'polygon(' + gpt(-6, -2) + ', ' + gpt(-2, -6) + ', ' + gpt(6, 2) + ', ' + gpt(2, 6) + ')';
+    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + gclip + ';z-index:5;pointer-events:none;background-image:url(/SUCAI_TERRAIN/rd2.png);background-repeat:repeat;background-position:50% 50%;background-size:' + gTile.toFixed(1) + 'px ' + (gTile * 0.58).toFixed(1) + 'px;opacity:0.95;"></div>');
   }
 
   pieces.forEach(w => {
