@@ -789,15 +789,17 @@ export class PlayerQuestSystem {
         //    沿主人画的路开进战场，在离战场 BATTLE_STAND_KM 处停下列阵（见 startMarchToBattlefield）。
         const bfNode = scriptMode && !defCity ? battlefieldRoadNode(ev.battlefieldId) : null;
         this.marchBattlefieldId = bfNode ? ev.battlefieldId : null;
-        const stand = scriptMode && !bfNode ? this.deps.battlefields?.standOfGeneral?.(ev.battlefieldId, g.generalId) ?? null : null;
-        const marchTarget = (bfNode ? { lat: bfNode.lat, lng: bfNode.lng } : null) ?? stand
+        const stand = scriptMode && !bfNode && !defCity ? this.deps.battlefields?.standOfGeneral?.(ev.battlefieldId, g.generalId) ?? null : null;
+        const marchTarget = (bfNode ? { lat: bfNode.lat, lng: bfNode.lng } : null)
             ?? (defCity
                 ? { lat: defCity.latitude, lng: defCity.longitude }
-                : { lat: ev.lat, lng: ev.lng });
+                : null)
+            ?? stand
+            ?? { lat: ev.lat, lng: ev.lng };
         // 行军路标只在剧本模式走；乱斗模式照旧走最近的路
         this.marchWaypointsLeft = scriptMode ? [...(ev.marchWaypoints ?? [])] : [];
-        // 行军纵队（长蛇阵）由 Army.updateColumnMarch 统一管：起步才变纵队、离终点 40 公里展开
-        this.startMarchToBattlefield(host, marchTarget);
+        // 行军纵队（长蛇阵）由 Army.updateColumnMarch 统一管：起步才变纵队、离终点 40 公里展开；攻城战在城外 BATTLE_STAND_KM 停下列阵
+        this.startMarchToBattlefield(host, marchTarget, false, defCity ? BATTLE_STAND_KM : 0);
         // 与战场玩法同一条赶路播报（HUD 动向栏也跟着显示【XXX战役】）
         this.deps.hero.setTravelPointLabel(ev.title);
         // 🔴 [2026-09-25 主人「不是战斗结束后播报，是军团开始移动的时候播报」]
@@ -891,7 +893,7 @@ export class PlayerQuestSystem {
     /** 剧本野战沿路开进的战场（连了路的战场 id；null = 按旧的对阵位兜底） */
     private marchBattlefieldId: string | null = null;
 
-    private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }, resume = false): void {
+    private startMarchToBattlefield(host: Army, target: { lat: number; lng: number }, resume = false, standBeforeKm = 0): void {
         if (this.marchBattlefieldId && this.startMarchAlongBattlefieldRoad(host, resume)) return;
         // 🔴 [2026-09-19 主人定「把战场和据点分开」] **本来就在战场上**（战场自带攻守、军团就生成在战场）
         //    → 没有"赶路"这一段，立刻接战。否则 `moveAlongPath` 收到零长路径不会触发抵达回调，
@@ -934,6 +936,12 @@ export class PlayerQuestSystem {
         if (!path || path.length < 2) {
             this.deps.notify(`无路可达【${this.quest?.event?.battlefieldName ?? '战场'}】`, undefined, true);
             return;
+        }
+        // 攻城战沿路接近城池：在离城 standBeforeKm 处停步，直接在来路一侧城外列阵，不踩进城心
+        if (standBeforeKm > 0 && path.length >= 2) {
+            const cut = cutPathBeforeEnd(path, standBeforeKm);
+            path = cut.path;
+            target = cut.stand;
         }
         const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
         host.setTargetCity(null);
@@ -1442,7 +1450,9 @@ export class PlayerQuestSystem {
         if (!text) return;
         const key = bf?.id ?? `event:${titleOverride ?? ''}`;
         if (this.briefedBattlefields.has(key)) return;
-        this.briefedBattlefields.add(key);
+        // 🔴 [2026-10-01 主人报障「第二路没有播报：完全没有声音，字幕也没有」]
+        //    「已播过」改在**真正开口那一刻**才记（见 pushNext）：原来一调用就记，
+        //    若这次还没开口就被清掉（军团未迈步时行程重置／读档重玩），这一场就永远被跳过。
 
         const paragraphs = journeyBriefingParagraphs(text);
         if (!paragraphs.length) return;
@@ -1488,6 +1498,7 @@ export class PlayerQuestSystem {
             // 军团还没走（或正被我们按着等念完）→ 挂起，等 `updateSegmentBriefing` 每帧那一问
             if (!this.hostIsMoving() && !this.briefingHold) { suspendUntilMoving(pushNext); return; }
             this.briefingResume = null;
+            this.briefedBattlefields.add(key);   // 真正开口才算「已播过」
             const line = paragraphs[i];
             i++;
             this.briefingBusy = true;
@@ -1653,6 +1664,16 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-30 主人定「开战过程中可以播报」] **军团正在开打** → 也算「在走」：
         //    开打后军团原地不动，若答「没走」，这最后一段就会被挂起、再也等不到恢复（仗打完了也不走了）。
         if (this.hostInBattle()) return true;
+        // 🔴 [2026-10-01 主人报障「军团先移动，播报才有声音，可以同步吗」]
+        //    先问军团自己是不是在行军（有路、未抵达、不在休整/交战）—— 一迈步当帧就答「在走」，
+        //    不再等「位移 ≥0.9 公里 + 每 1.2 秒才重采一次」那几秒；位移判据只留作兜底。
+        const marchingHost = this.quest ? this.deps.legionManager.getLegionById(this.quest.legionId) : null;
+        if (marchingHost && !marchingHost.isDestroyed && marchingHost.isMarching()) {
+            const p0 = marchingHost.getPosition();
+            this.hostMoveSample = { lat: p0.lat, lng: p0.lng, t: performance.now() };
+            this.hostMovingCache = { ok: true, t: performance.now() };
+            return true;
+        }
         // 🔴 [2026-09-26 主人令] **是我们自己按住的** → 算「在走」：军团正停在 B 点等这一段念完，
         //    若这里答「没走」，`stillHeading()` 就会把正在念的这一段掐掉 —— 那就是自己把自己等死。
         const now = performance.now();
@@ -2322,6 +2343,8 @@ export class PlayerQuestSystem {
 
     public clearForRestore(): void {
         this.quest = null;
+        this.clearJourneyBriefing();
+        this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
         this.emitChange();
     }
 
