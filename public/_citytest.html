@@ -596,8 +596,9 @@
     </div>
 
     <button id="btnMirror" class="active" style="background:#b7791f;border-color:#f6e05e;color:#fff;">城墙镜像: 🎲 随机</button>
-    <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机二选一</button>
-    <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机五选一</button>
+    <button id="btnMedGates" style="background:#243246;border-color:#4a5568;">中城城门: 🎲 随机三选一</button>
+    <button id="btnStkShape" style="background:#243246;border-color:#4a5568;">城寨围栏: 🎲 随机六选一</button>
+    <button id="btnStockadeFence" style="background:#243246;border-color:#4a5568;">城寨栅栏材质: 自动 (按风格)</button>
     <button id="btnCenterCastle" style="background:#243246;border-color:#4a5568;">城心城堡: 自动 (按分支)</button>
     <button id="btnPalisadeSet" style="background:#243246;border-color:#4a5568;">营地栅栏: 🎲 随机二选一</button>
     <button id="btnBuildings" class="active">城内建筑: 开</button>
@@ -666,21 +667,36 @@
     </div>
 
     <!-- 2. 中城 -->
-    <div class="card">
-      <div class="card-header">
-        <span>🏯 中城 (Medium City)</span>
-        <span class="tag tag-med">S = 6 石墙双门</span>
+    <!-- 2. 中城 -->
+    <div class="card" id="cardMedium">
+      <div class="card-header" style="flex-wrap:wrap;gap:6px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span>🏯 中城 (Medium City)</span>
+          <span class="tag tag-med" id="tagMediumGates">样式一：双门标准 (S=6)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button type="button" class="btn-med-next" title="点击切换中城城门样式" style="background:#243246;border:1px solid #4a5568;color:#90cdf4;padding:2px 8px;border-radius:4px;font-size:12px;cursor:pointer;">🔄 切换样式</button>
+        </div>
       </div>
       <div class="viewport viewport-stage">
+        <!-- 浮在图片左上角的样式切换工具栏 -->
+        <div class="med-img-toolbar" style="position:absolute;top:8px;left:8px;z-index:20;display:flex;gap:4px;align-items:center;pointer-events:auto;">
+          <div style="display:flex;gap:3px;background:rgba(15,23,42,0.92);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);">
+            <button type="button" class="stk-pill-btn active" data-medwall="2" title="样式一：双门标准 (S=6 普通石墙，西北/东南两门)">① 双门</button>
+            <button type="button" class="stk-pill-btn" data-medwall="4" title="样式二：普通四门 (S=6 普通石墙，四面各开单拱门)">② 普通四门</button>
+            <button type="button" class="stk-pill-btn" data-medwall="fortified4" title="样式三：加固双塔四门 (S=6 大城同款加固石墙，四面双塔城门)">③ 加固四门</button>
+            <button type="button" class="stk-pill-btn" data-medwall="rnd" title="随机三选一">🎲 随机</button>
+          </div>
+          <button type="button" class="btn-med-next stk-action-btn" style="padding:3px 8px;font-size:11px;" title="点击切换下一种样式">🔄 切换 ▾</button>
+        </div>
         <div id="stageMedium" style="position:relative;width:100%;height:100%;pointer-events:none;"></div>
       </div>
       <div class="card-desc">
         <strong>架构体系：</strong>
         <ul>
-          <li><strong>城墙</strong>：S = 6 城堡时代重石墙（STONE）</li>
-          <li><strong>城门</strong>：<strong>关闭状态双塔石门</strong>（专属石门角塔）</li>
-          <li><strong>建筑</strong>：城堡时代 AGE3 9 建筑群（工坊/修道院）</li>
-          <li><strong>地基</strong>：rd1_plaza 城市铺石广场</li>
+          <li><strong>城墙与城门（三种样式）</strong>：① S=6 普通石墙双门 · ② S=6 普通石墙四门 · ③ <strong>S=6 大城同款加固石墙+双塔四门</strong>（可在图片上方直接点击切换）</li>
+          <li><strong>建筑</strong>：城堡时代 AGE3 9 建筑群（工坊/修道院/大学等，3×3 网格分布）</li>
+          <li><strong>地基</strong>：rd2_plaza 铺石广场（四门时十字全通达）</li>
         </ul>
       </div>
     </div>
@@ -692,6 +708,15 @@
         <span class="tag tag-sml">S = 5 木栅双门</span>
       </div>
       <div class="viewport viewport-stage">
+        <div class="stk-img-toolbar" style="justify-content:flex-start;">
+          <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);align-items:center;">
+            <span style="font-size:11px;color:#94a3b8;">城墙:</span>
+            <button type="button" class="stk-pill-btn active" data-smallwall="auto">自动</button>
+            <button type="button" class="stk-pill-btn" data-smallwall="stone2">石墙双门</button>
+            <button type="button" class="stk-pill-btn" data-smallwall="stone4">石墙四门</button>
+            <button type="button" class="stk-pill-btn" data-smallwall="palisade">栅栏</button>
+          </div>
+        </div>
         <div id="stageSmall" style="position:relative;width:100%;height:100%;pointer-events:none;"></div>
       </div>
       <div class="card-desc">
@@ -722,12 +747,20 @@
         <div class="stk-img-toolbar">
           <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);">
             <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（菱形四角）">① 正方</button>
-            <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形</button>
-            <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角</button>
+            <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆城（等轴正圆）">② 圆城</button>
+            <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角（世界格切角八边形）">③ 八角</button>
             <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边双门）">④ 矩形</button>
             <button type="button" class="stk-pill-btn" data-shape="oval" title="样式五：椭圆山脊堡（顺脊展布）">⑤ 椭圆</button>
             <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形</button>
             <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取六种之一">🎲</button>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:3px;background:rgba(15,23,42,0.88);padding:3px 6px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(0,0,0,0.4);align-items:center;">
+            <span style="font-size:11px;color:#94a3b8;">栅栏材质:</span>
+            <button type="button" class="stk-pill-btn active" data-fence="auto">自动</button>
+            <button type="button" class="stk-pill-btn" data-fence="HARDWOOD">① 硬木</button>
+            <button type="button" class="stk-pill-btn" data-fence="DARK">② 原木</button>
+            <button type="button" class="stk-pill-btn" data-fence="ARCHAIC">③ 平切</button>
+            <button type="button" class="stk-pill-btn" data-fence="FENCE">④ 篱笆</button>
           </div>
           <button type="button" class="btn-stk-next stk-action-btn" title="点击在图片中切换下一种形制">🔄 其他样式 ▾</button>
         </div>
@@ -829,8 +862,8 @@
         <div style="display:flex;flex-wrap:wrap;gap:4px;background:rgba(15,23,42,0.88);padding:4px 8px;border-radius:6px;border:1px solid #334155;backdrop-filter:blur(4px);box-shadow:0 3px 8px rgba(0,0,0,0.5);">
           <span style="font-size:12px;color:#94a3b8;font-weight:bold;line-height:24px;margin-right:2px;">外围形制:</span>
           <button type="button" class="stk-pill-btn active" data-shape="square" title="样式一：正方标准（菱形四角）">① 正方标准</button>
-          <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形羊圈</button>
-          <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角羊圈</button>
+          <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆城（等轴正圆）">② 圆城</button>
+          <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角（世界格切角八边形）">③ 八角</button>
           <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边双门）">④ 矩形围栏</button>
           <button type="button" class="stk-pill-btn" data-shape="oval" title="样式五：椭圆山脊堡（顺脊展布）">⑤ 椭圆山脊堡</button>
           <button type="button" class="stk-pill-btn" data-shape="trapezoid" title="样式六：梯形隘口寨（背窄前阔）">⑥ 梯形隘口寨</button>
@@ -1501,10 +1534,12 @@ let curGroundMult = 1.7;
 let curRadiusMult = 1.0;
 let curBldgScale = 1.0;
 let curGateScale = 1.0;
-let curMediumGates = 'rnd'; // 'rnd' | '2' | '4'
+let curMediumGates = 'rnd'; // 'rnd' | '2' | '4' | 'fortified4'
 let curStockadeShape = 'square'; // 'rnd' | 'square' | 'round' | 'octagon' | 'rect' | 'palisade'
 let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
 let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
+let curStockadeFence = 'auto'; // 'auto' | 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE'（城寨栅栏材质独立切换，看其它样式用）
+let curSmallWall = 'auto'; // 'auto' | 'stone2'（石墙双门）| 'stone4'（石墙四门）| 'palisade'（硬木栅栏）
 
 /** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐） */
 function isCenterCastleActive() {
@@ -1526,6 +1561,10 @@ import {
   STOCKADE_FENCE_SETS,
   getStockadeFenceSetByStyle,
   normalizeStockadeCorner,
+  // 🔴 [2026-10-02 主人令「重设计下城寨的圆城，八角，椭圆」] 曲线围栏的**轮廓参数与拼法只此一份**：
+  //    本页不再自留 corralPiecesFromLoop 与三个形制的轮廓数（游戏/评估页各留一份 → 已经漂移过一次）
+  buildStockadeCurveRing,
+  stockadeCurveShape,
 } from '/src/systems/cityWallShared.ts';
 
 function getFortifiedAnchors(style) {
@@ -1632,106 +1671,21 @@ function computeRectWall(baseSize, LSeg, WSeg, rnd, extraGateTower) {
   return pieces;
 }
 
-// 城寨方案A：圆形羊圈围栏（像真羊圈一样圆润饱满，等轴椭圆顺滑围场，2026-09-08 主人定优化）
-/** 🔴 [2026-10-01 主人定「围栏三件套标准」] 曲线围栏（圆形／椭圆／八角）的唯一拼法，游戏与评估页两边同一份：
- *  三件：城墙（NE／SE 两朝向，含镜像）、城垛（POST）、城门（GATE）。
- *  ① 沿轮廓等弧长取点；② 按走向定朝向（右上 NE／右下 SE／左下 SE 镜像／左上 NE 镜像），近水平、近竖直处沿用上一段朝向；
- *  ③ **朝向一变就放一个城垛**（城垛两边必为城墙、城垛之间必隔着墙）；
- *  ④ **只开一扇门**，放在「左下」那一边的 gateFrac 处，门两边各留墙（门不直接挨城垛）。
- *  返回的数组**按轮廓顺序**排列（验收脚本据此检查相邻关系）。 */
-function corralPiecesFromLoop(loop, step, gateFrac) {
-    const m = loop.length;
-    const segLen = [];
-    let total = 0;
-    for (let i = 0; i < m; i++) { const a = loop[i], b = loop[(i + 1) % m]; const d = Math.hypot(b.x - a.x, b.y - a.y); segLen.push(d); total += d; }
-    const n = Math.max(12, Math.round(total / step));
-    const st = total / n;
-    const samples = [];
-    let seg = 0, segStart = 0;
-    for (let k = 0; k < n; k++) {
-        const s = k * st;
-        while (seg < m - 1 && s >= segStart + segLen[seg] - 1e-9) { segStart += segLen[seg]; seg++; }
-        const a = loop[seg], b = loop[(seg + 1) % m];
-        const t = segLen[seg] > 0 ? (s - segStart) / segLen[seg] : 0;
-        samples.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, dx: b.x - a.x, dy: b.y - a.y, s });
-    }
-    // 朝向：0 右上(NE) 1 右下(SE) 2 左下(SE 镜像) 3 左上(NE 镜像)；近水平／近竖直（<0.3）不能定，沿用上一段
-    const orient = (dx, dy) => {
-        const len = Math.hypot(dx, dy);
-        if (len === 0 || Math.abs(dx) < 0.3 * len || Math.abs(dy) < 0.3 * len) return null;
-        return dx > 0 ? (dy < 0 ? 0 : 1) : (dy > 0 ? 2 : 3);
-    };
-    const raw = samples.map((p) => orient(p.dx, p.dy));
-    const f = raw.findIndex((v) => v !== null);
-    let prev = raw[f];
-    const oo = new Array(n);
-    for (let j = 0; j < n; j++) { const k = (f + j) % n; if (raw[k] !== null) prev = raw[k]; oo[k] = prev; }
-    const KIND = [['NE', false], ['SE', false], ['SE', true], ['NE', true]];
-    let pieces = samples.map((p, k) => (oo[k] !== oo[(k - 1 + n) % n]
-        ? { x: p.x, y: p.y, type: 'POST', flipX: false }
-        : { x: p.x, y: p.y, type: KIND[oo[k]][0], flipX: KIND[oo[k]][1] }));
-    // 城门：左下（朝向 2）那一边，按 gateFrac 取位置，左右各让出约 1 段
-    let first = -1, last = -1;
-    for (let k = 0; k < n; k++) if (oo[k] === 2) { if (first < 0) first = k; last = k; }
-    if (first >= 0) {
-        const sg = samples[first].s + (samples[last].s - samples[first].s) * gateFrac;
-        const out = [];
-        let placed = false;
-        for (let k = 0; k < n; k++) {
-            if (Math.abs(samples[k].s - sg) <= 1.0 * st && pieces[k].type !== 'POST') {
-                if (!placed) { out.push({ x: Rx_(sg), y: Ry_(sg), type: 'GATE', flipX: false }); placed = true; }
-                continue;
-            }
-            out.push(pieces[k]);
-        }
-        pieces = out;
-    }
-    // 🔴 [主人「城垛必须接城墙」重做] 连续墙段每隔 M 段补一个城垛：城墙规律有垛、更真实
-    //   （切换处垛照旧；补的垛不挨门、不挨垛、垛与垛之间必隔墙）
-    const M = 4;
-    let run = 0;
-    for (let k = 0; k < pieces.length; k++) {
-        const p = pieces[k];
-        if (p.type === 'POST' || p.type === 'GATE') { run = 0; continue; }
-        run++;
-        if (run === M) {
-            const next = pieces[(k + 1) % pieces.length];
-            if (next.type !== 'POST' && next.type !== 'GATE') {
-                p.type = 'POST';
-                p.flipX = false;
-                run = 0;
-            }
-        }
-    }
-    return pieces;
-    function Rx_(sg) { return pointAt(sg).x; }
-    function Ry_(sg) { return pointAt(sg).y; }
-    function pointAt(sg) {
-        let acc = 0;
-        for (let i = 0; i < m; i++) { if (sg <= acc + segLen[i] + 1e-9) { const t = segLen[i] > 0 ? (sg - acc) / segLen[i] : 0; const a = loop[i], b = loop[(i + 1) % m]; return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }; } acc += segLen[i]; }
-        return { x: loop[0].x, y: loop[0].y };
-    }
-}
-
-
-/** 城寨方案A：圆形羊圈围栏——三件套标准拼法（见 AGENTS.md「三之三」） */
+// 城寨方案A：圆城（等轴正圆，2026-10-02 重设计：圈放大到与直边形同档，院内建筑全在栏内）
+/* 🔴 [2026-10-02 主人令「重设计下城寨的圆城，八角，椭圆」]
+ * 曲线围栏（圆城／八角／椭圆）的拼法**已搬进 `cityWallShared.ts`**（`corralPiecesFromLoop` /
+ * `stockadeCurveShape` / `buildStockadeCurveRing`）——本页原先自留一份，与游戏那份已经漂移
+ * （验收脚本 `verify_stockade_shape_parity.mts` 第②项逐件比对当场报不一致）。
+ * 现在两个形制只剩这三行壳：**圈多大、件多密、门开在哪，全由共享模块说了算**。 */
+/** 城寨方案A：圆城（等轴正圆）——三件套标准拼法（见 AGENTS.md「三之三」） */
 function computeCorralRoundWall(baseSize) {
-  const sx = baseSize * 0.075;
-  const sy = sx * 0.58;
-  const Rx = 7.0 * sx, Ry = 7.0 * sx * 0.58;
-  const loop = [];
-  for (let i = 0; i < 72; i++) { const a = (-90 + i * 5) * Math.PI / 180; loop.push({ x: Rx * Math.cos(a), y: Ry * Math.sin(a) }); }
-  return corralPiecesFromLoop(loop, sx * 1.12, 0.5);
+  return buildStockadeCurveRing('round', baseSize);
 }
-/** 城寨方案B：八角羊圈围栏——世界格切角正方（半边 H=3.7、切角 c=1.2），三件套标准拼法 */
+/** 城寨方案B：八角（世界格切角八边形）——三件套标准拼法 */
 function computeCorralOctagonWall(baseSize) {
-  const sx = baseSize * 0.075;
-  const sy = sx * 0.58;
-  const H = 3.7, c = 1.2;
-  const P = (u, v) => ({ x: u * sx, y: v * sy });
-  const loop = [P(-c, c - 2 * H), P(c, c - 2 * H), P(2 * H - c, -c), P(2 * H - c, c), P(c, 2 * H - c), P(-c, 2 * H - c), P(-2 * H + c, c), P(-2 * H + c, -c)];
-  return corralPiecesFromLoop(loop, sx * 1.12, 0.45);
+  return buildStockadeCurveRing('octagon', baseSize);
 }
+
 function computeCorralRectWall(baseSize) {
   const sx = baseSize * 0.075, sy = sx * 0.58;   // 2:1 等轴网格（与其它三种城寨同一把尺）
   const L = 12, W = 8;                            // 长边 / 短边（段），长:宽 = 3:2
@@ -1774,14 +1728,9 @@ function computeCorralRectWall(baseSize) {
 }
 
 // 城寨方案D：椭圆山脊堡围栏（顺应山脊走势的长椭圆围场，两端收窄，前向开门，2026-10-02 主人定）
-/** 城寨方案D：椭圆山脊堡围栏——三件套标准拼法（见 AGENTS.md「三之三」） */
+/** 城寨方案D：椭圆山脊堡围栏——三件套标准拼法（轮廓参数与拼法都在共享模块） */
 function computeCorralOvalWall(baseSize) {
-  const sx = baseSize * 0.075;
-  const sy = sx * 0.58;
-  const Rx = 8.5 * sx, Ry = 5.2 * sy;
-  const loop = [];
-  for (let i = 0; i < 72; i++) { const a = (-90 + i * 5) * Math.PI / 180; loop.push({ x: Rx * Math.cos(a), y: Ry * Math.sin(a) }); }
-  return corralPiecesFromLoop(loop, sx * 1.12, 0.5);
+  return buildStockadeCurveRing('oval', baseSize);
 }
 function computeCorralTrapezoidWall(baseSize) {
   const sx = baseSize * 0.075;
@@ -2151,11 +2100,11 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     const groundParts = [];
     const fullGW = rX * 2.8, fullGH = rY * 5.6;
     groundParts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" />');
-    const isFourGates = (curMediumGates === '4')
+    const isFourGates = (curMediumGates === '4' || curMediumGates === 'fortified4')
       ? true
       : (curMediumGates === '2')
         ? false
-        : ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') & 1) === 1);
+        : ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') % 3) !== 0);
 
     const gateW = baseSize * 0.85, gateH = gateW * 0.58;
     groundParts.push('<img src="/SUCAI_TERRAIN/rd2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + gateW.toFixed(1) + 'px;height:' + gateH.toFixed(1) + 'px;transform:translate(calc(-50% - ' + (6*stepX).toFixed(1) + 'px),calc(-50% - ' + (6*stepY).toFixed(1) + 'px));opacity:0.95;pointer-events:none;" />');
@@ -2229,12 +2178,12 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
                   : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6));
     let clip = '';
     if (stkShape === 1) {
-      // 样式二：圆形羊圈 (Rx = 6.6 * stepX，严密贴合栅栏内侧脚线)
-      const rX = 6.6 * stepX, rY = 6.6 * stepY;
-      clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
+      // 样式二：圆城（等轴正圆）—— 地面裁切跟共享模块 `stockadeCurveShape('round')` 同一把尺（内缩 6%）
+      const c1 = stockadeCurveShape('round', baseSize);
+      clip = 'ellipse(' + c1.clipRx.toFixed(1) + 'px ' + c1.clipRy.toFixed(1) + 'px at 50% 50%)';
     } else if (stkShape === 2) {
-      // 样式三：八角羊圈 —— 地面裁成与围栏同一个八边形（H=3.7、切角 c=1.2，再内缩 6%，同游戏）
-      const H8 = 3.7, c8 = 1.2, k8 = 0.94;
+      // 样式三：八角 —— 地面裁成与围栏同一个八边形（H=5.2、切角 c=1.7，与共享模块同参数）
+      const H8 = 5.2, c8 = 1.7, k8 = 0.94;
       const oct = [[-c8, c8 - 2 * H8], [c8, c8 - 2 * H8], [2 * H8 - c8, -c8], [2 * H8 - c8, c8], [c8, 2 * H8 - c8], [-c8, 2 * H8 - c8], [-2 * H8 + c8, c8], [-2 * H8 + c8, -c8]];
       const off8 = (val) => val >= 0 ? ('calc(50% + ' + val.toFixed(1) + 'px)') : ('calc(50% - ' + (-val).toFixed(1) + 'px)');
       clip = 'polygon(' + oct.map(([u, v]) => off8(u * stepX * k8) + ' ' + off8(v * stepY * k8)).join(', ') + ')';
@@ -2244,9 +2193,9 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       const u2 = 1.9 * stepX, v2 = 9.4 * stepY;
       clip = 'polygon(calc(50% - ' + u2.toFixed(1) + 'px) calc(50% - ' + v2.toFixed(1) + 'px), calc(50% + ' + u1.toFixed(1) + 'px) calc(50% + ' + v1.toFixed(1) + 'px), calc(50% + ' + u2.toFixed(1) + 'px) calc(50% + ' + v2.toFixed(1) + 'px), calc(50% - ' + u1.toFixed(1) + 'px) calc(50% - ' + v1.toFixed(1) + 'px))';
     } else if (stkShape === 4) {
-      // 样式五：椭圆山脊堡 (Rx = 8.0 * stepX, Ry = 4.8 * stepY，严密贴合椭圆内侧脚线)
-      const rX = 8.0 * stepX, rY = 4.8 * stepY;
-      clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
+      // 样式五：椭圆山脊堡 —— 地面裁切跟共享模块 `stockadeCurveShape('oval')` 同一把尺
+      const c4 = stockadeCurveShape('oval', baseSize);
+      clip = 'ellipse(' + c4.clipRx.toFixed(1) + 'px ' + c4.clipRy.toFixed(1) + 'px at 50% 50%)';
     } else if (stkShape === 5) {
       // 样式六：梯形隘口寨 (背窄前阔，严密贴合梯形内侧脚线)
       const scale = 0.90;
@@ -2384,24 +2333,37 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
   let anchors = {};
   const AUTO = 1.2;
 
+  let isFortifiedMed = false;
   if (type === 'big') {
     pieces = computeRingWall(baseSize, 7, true);
     anchors = getFortifiedAnchors(style);
   } else if (type === 'medium') {
-    const isFourGates = (curMediumGates === '4')
-      ? true
-      : (curMediumGates === '2')
-        ? false
-        : ((hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_medwall') & 1) === 1);
+    isFortifiedMed = (curMediumGates === 'fortified4')
+      || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') % 3) === 2));
+    const isFourGates = isFortifiedMed
+      || (curMediumGates === '4')
+      || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') % 3) === 1));
     pieces = computeRingWall(baseSize, 6, isFourGates);
-    anchors = getStoneAnchors(style);
+    anchors = isFortifiedMed ? getFortifiedAnchors(style) : getStoneAnchors(style);
   } else if (type === 'small') {
-    pieces = computeRingWall(baseSize, 5);
-    // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
-    anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
+    // 小城城墙三套样式（主人定）：石墙双门 / 石墙四门 / 硬木栅栏
+    if (curSmallWall === 'stone4') {
+      pieces = computeRingWall(baseSize, 5, true);
+      anchors = getStoneAnchors(curStyle);
+    } else if (curSmallWall === 'palisade') {
+      pieces = computeRingWall(baseSize, 5);
+      anchors = PALISADE_ANCHORS;
+    } else if (curSmallWall === 'stone2') {
+      pieces = computeRingWall(baseSize, 5);
+      anchors = getStoneAnchors(curStyle);
+    } else {
+      pieces = computeRingWall(baseSize, 5);
+      // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
+      anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
+    }
   } else if (type === 'stockade') {
-    /* 城寨围栏六选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
-    const fenceSet = getStockadeFenceSetByStyle(style);
+    /* 城寨围栏六选一：0 正方 / 1 圆城 / 2 八角 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
+    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
     const stkShape = (forceShape !== null)
       ? forceShape
       : (curStockadeShape === 'square')
@@ -2457,7 +2419,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
 
   if (doMirror) {
     if (type !== 'big') {
-      const isMedFour = (type === 'medium') && ((curMediumGates === '4') || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_medwall') & 1) === 1)));
+      const isMedFour = (type === 'medium') && (isFourGates);
       if (!isMedFour) {
         for (const p of pieces) { p.x = -p.x; p.flipX = !p.flipX; }
       }
@@ -2479,7 +2441,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
     const zIndex = Math.round(500 + w.y);
     const baseGateScale = 1.0; // 和大城一致：门不额外放大（1.0x），墙段严密咬入门塔
     const gateMul = (w.type === 'GATE') ? (baseGateScale * curGateScale) : 1.0;
-    const pW = baseSize * a.widthFactor * (type === 'big' ? AUTO : 1.0) * gateMul;
+    const pW = baseSize * a.widthFactor * ((type === 'big' || isFortifiedMed) ? AUTO : 1.0) * gateMul;
     const pctX = w.flipX ? (100 - a.pctX) : a.pctX;
     const flip = w.flipX ? ' scaleX(-1)' : '';
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + pW.toFixed(1) + 'px;transform:translate(calc(-' + pctX.toFixed(1) + '% + ' + w.x.toFixed(1) + 'px),calc(-' + a.pctY.toFixed(1) + '% + ' + w.y.toFixed(1) + 'px))' + flip + ';z-index:' + zIndex + ';filter:drop-shadow(0 2px 3px rgba(0,0,0,0.45));pointer-events:none;" />');
@@ -2745,7 +2707,8 @@ function renderGateCloseup(style, type, forceShape = null) {
     const gW = baseW * 0.34 * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'medium') {
-    const a = getStoneAnchors(style).GATE;
+    const isFortifiedMed = (curMediumGates === 'fortified4');
+    const a = isFortifiedMed ? getFortifiedAnchors(style).GATE : getStoneAnchors(style).GATE;
     const gW = baseW * 0.34 * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'small') {
@@ -2753,7 +2716,7 @@ function renderGateCloseup(style, type, forceShape = null) {
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'stockade') {
-    const fenceSet = getStockadeFenceSetByStyle(style);
+    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
     const a = fenceSet.anchors.GATE;
     const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
@@ -2769,6 +2732,7 @@ function renderGateCloseup(style, type, forceShape = null) {
 
 function refresh() {
   syncStockadeShapeUI();
+  syncMediumGatesBtn();
   if (curType === 'all') {
     document.getElementById('viewAll').style.display = 'block';
     document.getElementById('singleViewContainer').classList.remove('active');
@@ -2874,24 +2838,28 @@ function refresh() {
         + '　· <b>分类标准</b>：城市（有人迹聚落）、险要（关隘要塞且有石头城墙）、战场（无人迹旷野）；<br>'
         + '　· <b>城市定级</b>：大城（>50万左右）、中城（>10万左右）、小城（>1万左右）、城寨（<1万左右）；<br>'
         + '　· <b>兜底铁律</b>：查不到史料人口的推算，算不出来的一律按小城和<b>城寨 (stockade)</b> 算！<br>'
-        + '　· <b>外围形制（五选一）</b>：① <b>正方标准</b>（细编篱笆+四角L形转角件） ② <b>圆形羊圈</b>（平滑椭圆围场） '
-        + '③ <b>八角羊圈</b>（八面切角圆润过渡） ④ <b>矩形围栏</b>（险要拓扑长边双门+两排6建筑） ⑤ <b>小城栅栏</b>（硬木尖桩木栅+四角木垛）；<br>'
-        + '　· <b>内部建筑（平权随机）</b>：定居点/棚屋A~G/简易帐篷A~D/哨站/<b>DE 黑暗时代房屋与磨坊</b> 共 16 款候选抽取 9 栋（矩形为 6 栋）；'
+        + '　· <b>外围形制（六选一）</b>：① <b>正方标准</b> ② <b>圆城</b>（等轴正圆 · 圈 144×84） ③ <b>八角</b>（世界格切角 · 圈 130×76） '
+        + '④ <b>矩形围栏</b>（长边双门 · 两排 6 建筑） ⑤ <b>椭圆山脊堡</b>（顺脊长椭圆 · 圈 149×57 · 7 建筑） ⑥ <b>梯形隘口寨</b>（背窄前阔 · 7 建筑）；<br>'
+        + '　· <b>围栏三件套标准（2026-10-01 主人定）</b>：一共三种件 —— <b>城门 GATE / 城垛 POST / 城墙 NE·SE</b>；'
+        + '<b>城墙朝向一变就必须有城垛</b>、<b>城门两边必须接城墙</b>、<b>城垛两边必须接城墙</b>（垛不挨垛）；一个围栏只开一扇门（左下边正中）。'
+        + '曲线三形（圆城/八角/椭圆）统一走共享拼法 <code>cityWallShared.buildStockadeCurveRing()</code>，与游戏**逐件一致**；<br>'
+        + '　· <b>内部建筑（平权随机）</b>：定居点/棚屋A~G/简易帐篷A~D/哨站/<b>DE 黑暗时代房屋与磨坊</b> 共 16 款候选抽取 9 栋（矩形 6 栋 / 椭圆与梯形 7 栋）；'
         + '草原/漠北蒙古特化为 8 蒙古包 + 1 亚洲瞭望塔；<br>'
-        + '　· <b>城门体系</b>：样式①~④配套<b>细编篱笆门</b>（FENCE_GATE），样式⑤配套<b>尖桩双塔木门</b>（DARK_GATE_PALISADE）。</div>';
+        + '　· <b>栅栏材质（四套 · 按建筑风格分配）</b>：硬木粗尖桩 HARDWOOD（东亚/印度/波斯/中东）、原木尖桩 DARK（东北欧/西欧/普鲁/色雷斯）、'
+        + '横木平切 ARCHAIC（地中海/希腊/东南欧/中亚）、密编荆篱 FENCE（中美/安第斯/非洲/东南亚）。</div>';
 
       stkGrid += stkHead('一、六大外围形制逐款对照（同尺寸脚印 · 6 种形制全览）');
       stkGrid += stkTile('样式一 · 正方标准', '菱形四角 · 9建筑', 0, false, 'stk_v0');
-      stkGrid += stkTile('样式二 · 圆形羊圈', '平滑椭圆 · 9建筑', 1, false, 'stk_v1');
-      stkGrid += stkTile('样式三 · 八角羊圈', '八面切角 · 9建筑', 2, false, 'stk_v2');
+      stkGrid += stkTile('样式二 · 圆城', '平滑椭圆 · 9建筑', 1, false, 'stk_v1');
+      stkGrid += stkTile('样式三 · 八角', '八面切角 · 9建筑', 2, false, 'stk_v2');
       stkGrid += stkTile('样式四 · 矩形围栏', '长边双门 · 6建筑两排', 3, false, 'stk_v3');
       stkGrid += stkTile('样式五 · 椭圆山脊堡', '顺脊展布 · 7建筑', 4, false, 'stk_v4');
       stkGrid += stkTile('样式六 · 梯形隘口寨', '背窄前阔 · 7建筑两排', 5, false, 'stk_v5');
 
       stkGrid += stkHead('二、特化形态 · 草原 / 漠北蒙古毡帐城寨（8 蒙古包 + 1 亚洲瞭望塔）');
       stkGrid += stkTile('草原毡帐城寨 · 正方标准', '草原特化 9 建筑', 0, true, 'stk_yurt0');
-      stkGrid += stkTile('草原毡帐城寨 · 圆形羊圈', '草原特化 9 建筑', 1, true, 'stk_yurt1');
-      stkGrid += stkTile('草原毡帐城寨 · 八角羊圈', '草原特化 9 建筑', 2, true, 'stk_yurt2');
+      stkGrid += stkTile('草原毡帐城寨 · 圆城', '草原特化 9 建筑', 1, true, 'stk_yurt1');
+      stkGrid += stkTile('草原毡帐城寨 · 八角', '草原特化 9 建筑', 2, true, 'stk_yurt2');
       stkGrid += stkTile('草原毡帐城寨 · 矩形围栏', '草原特化 6 建筑', 3, true, 'stk_yurt3');
       stkGrid += stkTile('草原毡帐城寨 · 椭圆山脊堡', '草原特化 7 建筑', 4, true, 'stk_yurt4');
       stkGrid += stkTile('草原毡帐城寨 · 梯形隘口寨', '草原特化 7 建筑', 5, true, 'stk_yurt5');
@@ -3205,49 +3173,65 @@ if (urlParams.has('centerCastle')) {
     curCenterCastle = cc;
   }
 }
-if (urlParams.has('mediumGates')) {
-  const g = urlParams.get('mediumGates');
-  if (['rnd', '2', '4'].includes(g)) {
-    curMediumGates = g;
-    const btn = document.getElementById('btnMedGates');
-    if (btn) {
-      if (g === '2') {
-        btn.innerText = '中城城门: 样式一 (双门标准)';
-        btn.style.background = '#2b6cb0';
-        btn.style.borderColor = '#63b3ed';
-      } else if (g === '4') {
-        btn.innerText = '中城城门: 样式二 (四门雄关)';
-        btn.style.background = '#805ad5';
-        btn.style.borderColor = '#b794f4';
-      } else {
-        btn.innerText = '中城城门: 🎲 随机二选一';
-        btn.style.background = '#243246';
-        btn.style.borderColor = '#4a5568';
-      }
+function syncMediumGatesBtn() {
+  const btn = document.getElementById('btnMedGates');
+  if (btn) {
+    if (curMediumGates === '2') {
+      btn.innerText = '中城城门: 样式一 (双门标准)';
+      btn.style.background = '#2b6cb0';
+      btn.style.borderColor = '#63b3ed';
+    } else if (curMediumGates === '4') {
+      btn.innerText = '中城城门: 样式二 (普通四门)';
+      btn.style.background = '#805ad5';
+      btn.style.borderColor = '#b794f4';
+    } else if (curMediumGates === 'fortified4') {
+      btn.innerText = '中城城门: 样式三 (加固双塔四门)';
+      btn.style.background = '#b7791f';
+      btn.style.borderColor = '#f6e05e';
+    } else {
+      btn.innerText = '中城城门: 🎲 随机三选一';
+      btn.style.background = '#243246';
+      btn.style.borderColor = '#4a5568';
     }
   }
+  const tagMed = document.getElementById('tagMediumGates');
+  if (tagMed) {
+    if (curMediumGates === '2') tagMed.innerText = '样式一：双门标准 (S=6)';
+    else if (curMediumGates === '4') tagMed.innerText = '样式二：普通四门 (S=6)';
+    else if (curMediumGates === 'fortified4') tagMed.innerText = '样式三：加固双塔四门 (S=6)';
+    else tagMed.innerText = '🎲 随机三选一 (S=6)';
+  }
+  document.querySelectorAll('.stk-pill-btn[data-medwall]').forEach(b => {
+    const s = b.getAttribute('data-medwall');
+    b.classList.toggle('active', s === curMediumGates);
+  });
 }
+
+function setMediumGates(g) {
+  curMediumGates = g;
+  syncMediumGatesBtn();
+  refresh();
+}
+
+function cycleMediumGates() {
+  const cycle = ['rnd', '2', '4', 'fortified4'];
+  const idx = cycle.indexOf(curMediumGates);
+  const next = (idx === -1) ? '2' : cycle[(idx + 1) % cycle.length];
+  setMediumGates(next);
+}
+
+if (urlParams.has('mediumGates')) {
+  const g = urlParams.get('mediumGates');
+  if (['rnd', '2', '4', 'fortified4', '3'].includes(g)) {
+    curMediumGates = (g === '3') ? 'fortified4' : g;
+  }
+}
+syncMediumGatesBtn();
 
 const btnMedGates = document.getElementById('btnMedGates');
 if (btnMedGates) {
   btnMedGates.addEventListener('click', () => {
-    if (curMediumGates === 'rnd') {
-      curMediumGates = '2';
-      btnMedGates.innerText = '中城城门: 样式一 (双门标准)';
-      btnMedGates.style.background = '#2b6cb0';
-      btnMedGates.style.borderColor = '#63b3ed';
-    } else if (curMediumGates === '2') {
-      curMediumGates = '4';
-      btnMedGates.innerText = '中城城门: 样式二 (四门雄关)';
-      btnMedGates.style.background = '#805ad5';
-      btnMedGates.style.borderColor = '#b794f4';
-    } else {
-      curMediumGates = 'rnd';
-      btnMedGates.innerText = '中城城门: 🎲 随机二选一';
-      btnMedGates.style.background = '#243246';
-      btnMedGates.style.borderColor = '#4a5568';
-    }
-    refresh();
+    cycleMediumGates();
   });
 }
 
@@ -3385,8 +3369,19 @@ if (btnStkShape) {
 document.addEventListener('click', e => {
   const pill = e.target.closest('.stk-pill-btn');
   if (pill) {
+    const mw = pill.getAttribute('data-medwall');
+    if (mw) { setMediumGates(mw); return; }
+    const f = pill.getAttribute('data-fence');
+    if (f) { curStockadeFence = f; syncStockadeFenceBtn(); refresh(); return; }
+    const w = pill.getAttribute('data-smallwall');
+    if (w) { curSmallWall = w; syncSmallWallBtn(); refresh(); return; }
     const s = pill.getAttribute('data-shape');
     if (s) setStockadeShape(s);
+    return;
+  }
+  const medNext = e.target.closest('.btn-med-next');
+  if (medNext) {
+    cycleMediumGates();
     return;
   }
   const nextBtn = e.target.closest('.btn-stk-next');
@@ -3446,6 +3441,46 @@ if (btnPalisadeSet) {
   });
 }
 
+/** 城寨栅栏材质按钮外观与状态同步（独立于建筑风格，看其它栅栏样式用） */
+function syncStockadeFenceBtn() {
+  const btn = document.getElementById('btnStockadeFence');
+  if (!btn) return;
+  const labels = {
+    auto: '城寨栅栏材质: 自动 (按风格)',
+    HARDWOOD: '城寨栅栏材质: ① 硬木粗桩',
+    DARK: '城寨栅栏材质: ② 原木尖桩',
+    ARCHAIC: '城寨栅栏材质: ③ 横木平切',
+    FENCE: '城寨栅栏材质: ④ 密编荆篱',
+  };
+  btn.innerText = labels[curStockadeFence] || labels.auto;
+  const active = curStockadeFence !== 'auto';
+  btn.style.background = active ? '#2b6cb0' : '#243246';
+  btn.style.borderColor = active ? '#63b3ed' : '#4a5568';
+  btn.style.color = '#fff';
+  // 同步城寨卡片旁材质胶囊按钮的 active 态
+  document.querySelectorAll('.stk-pill-btn[data-fence]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-fence') === curStockadeFence);
+  });
+}
+
+/** 小城城墙样式按钮 active 态同步（石墙双门/石墙四门/栅栏） */
+function syncSmallWallBtn() {
+  document.querySelectorAll('.stk-pill-btn[data-smallwall]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-smallwall') === curSmallWall);
+  });
+}
+
+const btnStockadeFence = document.getElementById('btnStockadeFence');
+if (btnStockadeFence) {
+  btnStockadeFence.addEventListener('click', () => {
+    const cycle = ['auto', 'HARDWOOD', 'DARK', 'ARCHAIC', 'FENCE'];
+    const idx = cycle.indexOf(curStockadeFence);
+    curStockadeFence = cycle[(idx + 1) % cycle.length];
+    syncStockadeFenceBtn();
+    refresh();
+  });
+}
+
 fillCultureSelect(); // 填充建筑风格分支下拉（严格 59 套文明分支→DE 16 种建筑风格+专属城堡联动）
 fillCustomSelect();  // 填充第三层专属定制下拉（青藏→底座 PURU + TIBET_CASTLE_AGE3 藏式宗堡）
 fillCastleSelect(); // 填充 59 种专属城堡（7 大历史文化圈对号入座）
@@ -3453,6 +3488,8 @@ fillStyleSelect();  // 16 套风格全部列进下拉（原 HTML 只写死了 10
 syncMirrorBtn();   // 无 ?mirror 参数时也要让按钮外观与默认态一致
 syncCenterCastleBtn(); // 初始化城心城堡按钮状态
 syncPalisadeSetBtn();  // 初始化营地栅栏套系按钮状态
+syncStockadeFenceBtn();  // 初始化城寨栅栏材质按钮状态
+syncSmallWallBtn();  // 初始化小城城墙样式按钮状态
 refresh();
 
 /* ==========================================================================
