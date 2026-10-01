@@ -46,7 +46,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
-import { shouldUseStoneWall } from '../systems/cityWallShared';
+import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE } from '../systems/cityWallShared';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
@@ -5238,12 +5238,14 @@ export class Scene13WarLayer {
              * 现在改用 buildingStyleFor(1)（= 战略地图那套 resolveCityDeBuildingStyle 的结果），
              * STEPPE 与 MOBEI_MONGOL 都映射成 YURT，一次覆盖。 */
             const isYurtDefender = style === 'YURT';
+            const isStockade = this.defenderCityType === 'stockade';
+            const stockadeFenceKey = isStockade ? (STYLE_TO_STOCKADE_FENCE[style] || 'HARDWOOD') : null;
             const wallMat = isYurtDefender
-                ? (this.defenderCityType === 'stockade' ? 'FENCE'
+                ? (isStockade ? (stockadeFenceKey === 'FENCE' ? 'FENCE' : 'PALISADE')
                     : this.defenderCityType === 'pass' ? 'NONE' : 'PALISADE')
                 : (this.defenderCityType === 'small_city' && shouldUseStoneWall(this.sideCulture[1])) ? 'STONE'
                 : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
-                : this.defenderCityType === 'stockade' ? 'FENCE'
+                : isStockade ? (stockadeFenceKey === 'FENCE' ? 'FENCE' : 'PALISADE')
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
             const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
             const gBase = wallMat === 'FENCE' ? 'FENCE_GATE' : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
