@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/10/1 11:48:09（共 53 条）
+ * 生成时间：2026/10/1 15:54:05（共 51 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -21,6 +21,7 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/PERSIAN/__暂留__PERSIAN_06.png": "/assets/CENTRAL_ASIA/gelujiya_tamaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_07.png": "/assets/CENTRAL_ASIA/kawusi_haidaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_08.png": "/assets/CENTRAL_ASIA/keerjisi_bagelate.png",
+    "/assets/PERSIAN/zhageluosi_bahelamu.png": "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png",
     "/assets/PERSIAN/__暂留__PERSIAN_09.png": "/assets/CENTRAL_ASIA/midi_daiaokaisi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_10.png": "/assets/CENTRAL_ASIA/muer_mujier.png",
     "/assets/PERSIAN/__暂留__PERSIAN_11.png": "/assets/CENTRAL_ASIA/sashan_aerdaxier.png",
@@ -42,7 +43,6 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_12.png": "/assets/DIANQIAN/ternate_babula.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_01.png": "/assets/DIANQIAN/__暂留__DIANQIAN_01.png",
     "/assets/SOUTHEAST_ASIA/__暂留__SOUTHEAST_ASIA_02.png": "/assets/DIANQIAN/__暂留__DIANQIAN_02.png",
-    "/assets/GERMANIC/yinggelan_hengliwushi.png": "/assets/GERMANIC/__多余__GERMANIC_01.png",
     "/assets/LATIN/__暂留__LATIN_01.png": "/assets/GREEK/__暂留__GREEK_01.png",
     "/assets/LATIN/bosi_puluosi_liukongyishi.png": "/assets/GREEK/__暂留__GREEK_02.png",
     "/assets/LATIN/fujisi_fujiweng.png": "/assets/GREEK/__暂留__GREEK_03.png",
@@ -54,7 +54,5 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__暂留__GREEK_09.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__暂留__GREEK_10.png",
     "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",
-    "/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png": "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png",
-    "/assets/SPANISH/trastamara_feidinanershi.png": "/assets/SPANISH/__多余__SPANISH_03.png",
-    "/assets/WESTERN/adao_d_mafushou.png": "/assets/WESTERN/__多余__WESTERN_01.png"
+    "/assets/WEST_ASIA/lulisitan_shuteluke.png": "/assets/WEST_ASIA/ailan_shuteluke.png"
 };

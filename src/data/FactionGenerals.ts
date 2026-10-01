@@ -547,7 +547,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kazakh: { generalId: 'kazakh_hasimu', generalName: '哈斯木', portrait: '/assets/CENTRAL_ASIA/kazakh_hasimu.png' },
     // 前327年索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes）；
     //    立绘按铁律留空走保底图，等主人亲自放图
-    suogediyana: { generalId: 'suogediyana_arimazes', generalName: '阿里马泽斯', portrait: '' },
+    suogediyana: { generalId: 'suogediyana_arimazes', generalName: '阿里马泽斯', portrait: '/assets/CENTRAL_ASIA/suogediyana_alimazeshi.png' },
     sogdian: [
         { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
         // 前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
@@ -1078,7 +1078,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xingwei: { generalId: 'xingwei_hanba', generalName: '罕拔', portrait: '/assets/DIANQIAN/xingwei_hanba.png' },
     saerbadaer: { generalId: 'saerbadaer_lazhake', generalName: '拉扎克', portrait: '/assets/CENTRAL_ASIA/saerbadaer_lazhake.png' },
     kumisi: { generalId: 'kumisi_aerpu', generalName: '阿尔普', portrait: '/assets/CENTRAL_ASIA/kumisi_aerpu.png' },
-    shahelude: { generalId: 'shahelude_weisitamu', generalName: '维斯塔姆', portrait: '' },
+    shahelude: { generalId: 'shahelude_weisitamu', generalName: '维斯塔姆', portrait: '/assets/PERSIAN/shahelude_weisitamu.png' },
     ribale: { generalId: 'ribale_faheerdaolai', generalName: '法赫尔道莱', portrait: '/assets/CENTRAL_ASIA/ribale_faheerdaolai.png' },
     safawei: { generalId: 'safawei_aisimaier', generalName: '艾斯迈尔', portrait: '/assets/CENTRAL_ASIA/safawei_aisimaier.png' },
     yilihanguo: { generalId: 'yilihanguo_yisimeier', generalName: '伊斯梅尔', portrait: '/assets/CENTRAL_ASIA/yilihanguo_yisimeier.png' },
@@ -1146,7 +1146,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
     // 前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配
-    yiaoniya: { generalId: 'yiaoniya_hegesistratus', generalName: '赫格西斯特', portrait: '' },
+    yiaoniya: { generalId: 'yiaoniya_hegesistratus', generalName: '赫格西斯特', portrait: '/assets/GREEK/yiaoniya_hegexisite.png' },
     jialatai: { generalId: 'jialatai_deaota', generalName: '德奥塔鲁斯', portrait: '/assets/WEST_ASIA/jialatai_deaotalusi.png' },
     guyashu: { generalId: 'guyashu_shamushi', generalName: '沙姆希阿达', portrait: '/assets/WEST_ASIA/guyashu_shamuxiada.png' },
     ansxi: { generalId: 'ansxi_aershake', generalName: '阿尔沙克', portrait: '/assets/CENTRAL_ASIA/ansxi_aershake.png' },
@@ -1270,54 +1270,54 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
     // 前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
-    aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '' },
+    aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '/assets/INDIA/aswaka_kelaiaofeisi.png' },
     // 前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
     //    立绘按铁律留空走保底图，等主人亲自放图
-    aornos: { generalId: 'aornos_aphrikes', generalName: '阿夫里凯斯', portrait: '' },
+    aornos: { generalId: 'aornos_aphrikes', generalName: '阿夫里凯斯', portrait: '/assets/INDIA/aornos_afulikaisi.png' },
     // 前329年居鲁士城围攻守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、奥诺斯首领同一记法）；
     //    立绘按铁律留空走保底图，等主人亲自放图
-    julushi: { generalId: 'julushi_catanes', generalName: '卡塔涅斯', portrait: '' },
+    julushi: { generalId: 'julushi_catanes', generalName: '卡塔涅斯', portrait: '/assets/CENTRAL_ASIA/julushi_kataniesi.png' },
     // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
-    malli: { generalId: 'malli_malavapala', generalName: '摩罗波罗', portrait: '' },
+    malli: { generalId: 'malli_malavapala', generalName: '摩罗波罗', portrait: '/assets/INDIA/malli_moluobaluo.png' },
     // 前324年科塞亚战役守帅（加喜特人国王阿古姆二世），立绘按铁律留空走回落、待主人亲自放图分配
-    kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '阿古姆二世', portrait: '' },
+    kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '阿古姆二世', portrait: '/assets/WEST_ASIA/kesaiya_agumuershi.png' },
     // 前331年乌克西亚隘口战役守帅（扎格罗斯山及乌克西亚地方首领提里巴斯），
     //    立绘按铁律留空走回落、待主人亲自放图分配
-    wukexiya: { generalId: 'wukexiya_madates', generalName: '提里巴斯', portrait: '' },
+    wukexiya: { generalId: 'wukexiya_madates', generalName: '提里巴斯', portrait: '/assets/PERSIAN/wukexiya_tilibasi.png' },
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
-    dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '' },
-    hesitiya: { generalId: 'hesitiya_yiasong', generalName: '伊阿宋', portrait: '' },
-    hekaniya: { generalId: 'hekaniya_artabazos', generalName: '阿尔塔巴佐斯', portrait: '' },
-    kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '' },
-    maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
-    ameng: { generalId: 'ameng_jisi', generalName: '阿曼阿托', portrait: '' },   // 锡瓦绿洲（阿蒙神庙大祭司）
-    eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '' },   // 里海门守将（立绘留空走回落）
-    aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '' },   // 赫拉特守将（立绘留空走回落）
-    xuliya: { generalId: 'xuliya_shoujiang', generalName: '马泽乌斯', portrait: '' },   // 塔普萨库斯（阿契美尼德王朝幼发拉底河重镇及两河流域总督）
+    dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '/assets/GREEK/dasaleiti_kelaitusi.png' },
+    hesitiya: { generalId: 'hesitiya_yiasong', generalName: '伊阿宋', portrait: '/assets/GREEK/hesitiya_yiasong.png' },
+    hekaniya: { generalId: 'hekaniya_artabazos', generalName: '阿尔塔巴佐斯', portrait: '/assets/PERSIAN/hekaniya_aertabazuosi.png' },
+    kapaduoxiya: { generalId: 'kapaduoxiya_sabiktas', generalName: '萨比克塔斯', portrait: '/assets/WEST_ASIA/kapaduoxiya_sabikatasi.png' },
+    maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '/assets/WEST_ASIA/maermajika_palayituosi.png' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
+    ameng: { generalId: 'ameng_jisi', generalName: '阿曼阿托', portrait: '/assets/WEST_ASIA/ameng_amanatuo.png' },   // 锡瓦绿洲（阿蒙神庙大祭司）
+    eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '/assets/PERSIAN/eerbulushi_beisusi.png' },   // 里海门守将（立绘留空走回落）
+    aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '/assets/CENTRAL_ASIA/aliya_satibazhanisi.png' },   // 赫拉特守将（立绘留空走回落）
+    xuliya: { generalId: 'xuliya_shoujiang', generalName: '马泽乌斯', portrait: '/assets/WEST_ASIA/xuliya_mazewusi.png' },   // 塔普萨库斯（阿契美尼德王朝幼发拉底河重镇及两河流域总督）
 
 
-    sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）
-    xinde: { generalId: 'xinde_patalawang', generalName: '涅阿库斯', portrait: '' },   // 帕塔拉（自帕塔拉起航开辟波斯湾航道之名将）
-    jiduoluoxiya: { generalId: 'jiduoluoxiya_xibiertiwusi', generalName: '西比尔提乌斯', portrait: '' },   // 普拉（亚历山大任命的吉德罗西亚总督，阿里安 VI.27）
-    aolitai: { generalId: 'aolitai_shouling', generalName: '拉托尼斯', portrait: '' },   // 兰巴基亚（奥里泰人首领）
-    shiyuzu: { generalId: 'shiyuzu_aolaqiuzhang', generalName: '阿波罗多洛斯', portrait: '' },  // 奥拉（格德罗西亚边缘防区希腊裔长官）
-    kamanniyaxingsheng: { generalId: 'kamanniya_zongdu', generalName: '阿斯普兰斯', portrait: '' },   // 卡曼尼亚（卡曼尼亚行省波斯总督）
-    keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '霍斯劳', portrait: '' },   // 锡尔詹（萨珊波斯克尔曼/锡尔詹守将）
-    zhageluosi: { generalId: 'zhageluosi_guanjiang', generalName: '巴赫拉姆', portrait: '' },   // 呼勒万（经守扎格罗斯要冲呼勒万关隘之将）
-    lulisitan: { generalId: 'lulisitan_shoujiang', generalName: '舒特鲁克', portrait: '' },   // 伊拉姆（统治伊拉姆与苏萨地区的埃兰君主）
-    golpayegan_diqu: { generalId: 'golpayegan_yicheng', generalName: '尼扎姆', portrait: '' },   // 古尔帕耶甘（经略波斯腹地交通与要道的统帅）
-    meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '萨宾', portrait: '' },   // 尼西比斯（东部边境名将，曾镇守尼西比斯）
-    panfeiliya: { generalId: 'panfeiliya_apollonios', generalName: '阿波罗尼奥斯', portrait: '' },
-    baihaliye: { generalId: 'baihaliye_djedkhonsu', generalName: '杰德孔苏', portrait: '' },
-    kuida: { generalId: 'kuida_chakar', generalName: '恰卡尔', portrait: '' },
-    zhalange: { generalId: 'zhalange_barsaentes', generalName: '巴尔塞恩特斯', portrait: '' },
-    maikelan: { generalId: 'maikelan_punong', generalName: '普农', portrait: '' },   // 特尔巴特（霍特氏族传奇首领，普纳古堡镇守者）
+    sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '/assets/CENTRAL_ASIA/sute_sipitaminisi.png' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）
+    xinde: { generalId: 'xinde_patalawang', generalName: '涅阿库斯', portrait: '/assets/INDIA/xinde_nieakusi.png' },   // 帕塔拉（自帕塔拉起航开辟波斯湾航道之名将）
+    jiduoluoxiya: { generalId: 'jiduoluoxiya_xibiertiwusi', generalName: '西比尔提乌斯', portrait: '/assets/PERSIAN/jiduoluoxiya_xibiertiwusi.png' },   // 普拉（亚历山大任命的吉德罗西亚总督，阿里安 VI.27）
+    aolitai: { generalId: 'aolitai_shouling', generalName: '拉托尼斯', portrait: '/assets/INDIA/aolitai_latuonisi.png' },   // 兰巴基亚（奥里泰人首领）
+    shiyuzu: { generalId: 'shiyuzu_aolaqiuzhang', generalName: '阿波罗多洛斯', portrait: '/assets/INDIA/shiyuzu_aboluoduoluosi.png' },  // 奥拉（格德罗西亚边缘防区希腊裔长官）
+    kamanniyaxingsheng: { generalId: 'kamanniya_zongdu', generalName: '阿斯普兰斯', portrait: '/assets/PERSIAN/kamanniyaxingsheng_asipulansi.png' },   // 卡曼尼亚（卡曼尼亚行省波斯总督）
+    keerman: { generalId: 'keerman_xierzhan_shoujiang', generalName: '霍斯劳', portrait: '/assets/PERSIAN/keerman_huosilao.png' },   // 锡尔詹（萨珊波斯克尔曼/锡尔詹守将）
+    zhageluosi: { generalId: 'zhageluosi_guanjiang', generalName: '巴赫拉姆', portrait: '/assets/PERSIAN/zhageluosi_bahelamu.png' },   // 呼勒万（经守扎格罗斯要冲呼勒万关隘之将）
+    lulisitan: { generalId: 'lulisitan_shoujiang', generalName: '舒特鲁克', portrait: '/assets/WEST_ASIA/lulisitan_shuteluke.png' },   // 伊拉姆（统治伊拉姆与苏萨地区的埃兰君主）
+    golpayegan_diqu: { generalId: 'golpayegan_yicheng', generalName: '尼扎姆', portrait: '/assets/PERSIAN/golpayegan_diqu_nizhamu.png' },   // 古尔帕耶甘（经略波斯腹地交通与要道的统帅）
+    meisuobudamiya: { generalId: 'meisuobudamiya_shoujiang', generalName: '萨宾', portrait: '/assets/WEST_ASIA/meisuobudamiya_sabin.png' },   // 尼西比斯（东部边境名将，曾镇守尼西比斯）
+    panfeiliya: { generalId: 'panfeiliya_apollonios', generalName: '阿波罗尼奥斯', portrait: '/assets/GREEK/panfeiliya_aboluoniaosi.png' },
+    baihaliye: { generalId: 'baihaliye_djedkhonsu', generalName: '杰德孔苏', portrait: '/assets/WEST_ASIA/baihaliye_jiedekongsu.png' },
+    kuida: { generalId: 'kuida_chakar', generalName: '恰卡尔', portrait: '/assets/CENTRAL_ASIA/kuida_qiakaer.png' },
+    zhalange: { generalId: 'zhalange_barsaentes', generalName: '巴尔塞恩特斯', portrait: '/assets/PERSIAN/zhalange_baersaientesi.png' },
+    maikelan: { generalId: 'maikelan_punong', generalName: '普农', portrait: '/assets/PERSIAN/maikelan_punong.png' },   // 特尔巴特（霍特氏族传奇首领，普纳古堡镇守者）
     // 🔴 [2026-09-19 主人令「都给我删了」] `kapaduoxiya`（卡帕多细亚）与其主帅欧迈尼斯的记录已删除 ——
     //    该势力是前321「赫勒斯滂战役」的产物，而那一仗已被主人令全删，势力成了没有任何战役在用的孤儿。,
-    muertan: { generalId: 'muertan_naxierding', generalName: '纳西尔丁', portrait: '' },
-    muxikani: { generalId: 'muxikani_muxikanuosi', generalName: '穆西卡诺斯', portrait: '' },
-    xindu: { generalId: 'xindu_bahelamuhan', generalName: '巴赫拉姆汗', portrait: '' },
+    muertan: { generalId: 'muertan_naxierding', generalName: '纳西尔丁', portrait: '/assets/INDIA/muertan_naxierding.png' },
+    muxikani: { generalId: 'muxikani_muxikanuosi', generalName: '穆西卡诺斯', portrait: '/assets/INDIA/muxikani_muxikanuosi.png' },
+    xindu: { generalId: 'xindu_bahelamuhan', generalName: '巴赫拉姆汗', portrait: '/assets/INDIA/xindu_bahelamuhan.png' },
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]

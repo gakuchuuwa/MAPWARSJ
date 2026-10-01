@@ -1212,6 +1212,9 @@ const _FIXED: Record<string, string> = {
     'kuida': '#8B4513', // 奎达·波兰山口（高地褐）
     'zhalange': '#7E5238', // 扎兰格·哈蒙湿地（红土赭褐）
     'maikelan': '#8A7A4A', // 麦克兰·特尔巴特（荒漠沙黄）
+    'muertan': '#24903C', // 木尔坦·纳西尔丁（绿、金、橙。伊斯兰绿金）
+    'muxikani': '#CD5228', // 穆西卡尼·穆西卡诺斯（橙红、金、绿。朱砂橙红）
+    'xindu': '#9C1438', // 信度·巴赫拉姆汗（绿、金、红。深绯红）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {

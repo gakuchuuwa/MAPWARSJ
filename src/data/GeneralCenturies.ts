@@ -1077,6 +1077,15 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'seleisi_shouling':                  -4,    // 色雷斯首领 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
     'jite_shouling':                     -4,    // 吉特人首领 · seleisi · 多瑙河渡河（前335年多瑙河渡河战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
+    'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（前328年粟特起义统帅）
+    'xinde_patalawang':                  -4,    // 涅阿库斯 · xinde · 帕塔拉（前325年信德印度洋航线提督）
+    'jiduoluoxiya_xibiertiwusi':         -4,    // 西比尔提乌斯 · jiduoluoxiya · 普拉（前325年吉德罗西亚总督）
+    'aolitai_shouling':                  -4,    // 拉托尼斯 · aolitai · 兰巴基亚（前325年奥里泰人首领）
+    'kamanniya_zongdu':                  -4,    // 阿斯普兰斯 · kamanniyaxingsheng · 卡曼尼亚（前325年卡曼尼亚总督）
+    'keerman_xierzhan_shoujiang':        -4,    // 霍斯劳 · keerman · 锡尔詹（克尔曼防守将领）
+    'zhageluosi_guanjiang':              -4,    // 巴赫拉姆 · zhageluosi · 呼勒万（扎格罗斯关隘守将）
+    'lulisitan_shoujiang':               -4,    // 舒特鲁克 · lulisitan · 伊拉姆（埃兰/苏萨守帅）
+    'golpayegan_yicheng':                -4,    // 尼扎姆 · golpayegan_diqu · 古尔帕耶甘（波斯腹地要道守将）
 
     // 🔴 [2026-09-19 主人令「全删除」→「都给我删了」] 拉米亚战争那几位的战役事件已删除，人物记录暂留；
     //    其中**欧迈尼斯已按「都给我删了」连同孤儿势力 kapaduoxiya 一并删除**（见下行注释）。

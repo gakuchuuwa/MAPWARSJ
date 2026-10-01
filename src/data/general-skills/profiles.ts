@@ -3341,6 +3341,22 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     muertan_naxierding: { generalId: 'muertan_naxierding', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
     muxikani_muxikanuosi: { generalId: 'muxikani_muxikanuosi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' },
     xindu_bahelamuhan: { generalId: 'xindu_bahelamuhan', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    kapaduoxiya_sabiktas: { generalId: 'kapaduoxiya_sabiktas', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    maermajika_paraetos: { generalId: 'maermajika_paraetos', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    ameng_jisi: { generalId: 'ameng_jisi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    eerbulushi_beisusi: { generalId: 'eerbulushi_beisusi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    aliya_satibazanishi: { generalId: 'aliya_satibazanishi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'defense' },
+    xuliya_shoujiang: { generalId: 'xuliya_shoujiang', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    sute_spitamenes: { generalId: 'sute_spitamenes', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    xinde_patalawang: { generalId: 'xinde_patalawang', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'balanced' },
+    jiduoluoxiya_xibiertiwusi: { generalId: 'jiduoluoxiya_xibiertiwusi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    aolitai_shouling: { generalId: 'aolitai_shouling', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    kamanniya_zongdu: { generalId: 'kamanniya_zongdu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    keerman_xierzhan_shoujiang: { generalId: 'keerman_xierzhan_shoujiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    zhageluosi_guanjiang: { generalId: 'zhageluosi_guanjiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    lulisitan_shoujiang: { generalId: 'lulisitan_shoujiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    golpayegan_yicheng: { generalId: 'golpayegan_yicheng', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    meisuobudamiya_shoujiang: { generalId: 'meisuobudamiya_shoujiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
 };
 
 

@@ -4821,7 +4821,8 @@ function serverValidateEntities(): {
     const cityById = new Map(data.cities.map(c => [c.id, c]));
     const factionById = new Map(data.factions.map(f => [f.id, f]));
     const factionSet = new Set(data.factions.map(f => f.id));
-    const skipFactions = new Set(['panjun']);
+    // 纯历史剧本野战守方势力（山地/游牧部落联军，无城市据点）：不参与沙盒争霸，豁免首府/旗号检查
+    const skipFactions = new Set(['panjun', 'kesaiya', 'wukexiya']);
     const validAttackStyles = new Set(['attack', 'defense', 'balanced']);
 
     // P-01 影子字段审计：只按 FactionGenerals 在册名册检查，孤儿 profile 不参与。
