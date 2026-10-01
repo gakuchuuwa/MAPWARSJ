@@ -964,6 +964,8 @@ export class GameApp {
             followCamera: () => this.cameraFollowUI.followPlayer(),
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
+            getSpeed: () => this.timeSystem.getSpeed(),
+            setSpeed: (mult: number) => this.timeSystem.setSpeed(mult),
             setCompanionPanelsExpanded: (expanded) => {
                 // 🔴 [2026-09-24 主人定] 剧本期：军团/军情两块不显示（CSS 藏）也不展开（免得白刷列表）。
                 // 🔴 [2026-09-26 主人两道令] 先令「把右下角的信息面板也隐藏」，随即报障

@@ -1663,6 +1663,7 @@ export class PlayerQuestSystem {
             //    （`BRIEFING_HOLD_NEAR_KM`）—— 上一句还没念完才停，念完接着走。
             this.briefingPending = idx;
             this.briefingHoldAnchor = { lat: b.lat, lng: b.lng };
+            this.briefingHoldLastKm = null;
             this.briefingHoldArmed = true;
         } else {
             this.briefingAdvance?.(idx);
@@ -1962,6 +1963,8 @@ export class PlayerQuestSystem {
     private briefingHoldArmed = false;
     /** 正在等念完的那个「点」（据点坐标）—— 军团走到它跟前才按停（见 settleBriefingHold） */
     private briefingHoldAnchor: { lat: number; lng: number } | null = null;
+    /** 上一帧到停驻点的距离（判「已经过点」） */
+    private briefingHoldLastKm: number | null = null;
 
     /**
      * 🔴 [2026-09-30 主人定「开战过程中可以播报」] **军团正在开打** —— 这一段时间里
@@ -1978,6 +1981,7 @@ export class PlayerQuestSystem {
     private releaseBriefingHold(): void {
         this.briefingHoldArmed = false;
         this.briefingHoldAnchor = null;
+        this.briefingHoldLastKm = null;
         if (!this.briefingHold) return;
         this.briefingHold = false;
         const q = this.quest;
@@ -2012,7 +2016,11 @@ export class PlayerQuestSystem {
         const a = this.briefingHoldAnchor;
         if (a) {
             const dKm = getEuclideanDistance(host.getPosition(), a) * 111;
-            if (dKm > BRIEFING_HOLD_NEAR_KM) return;   // 还没走到城下：照走，别按停
+            // 🔴 单帧步长可能大于城下窗口（高倍速）→ 军团一帧跨过去就永远按不上停；距离开始变大＝已经过点，当帧按停
+            const last = this.briefingHoldLastKm;
+            this.briefingHoldLastKm = dKm;
+            const passed = last !== null && dKm > last + 0.01;
+            if (dKm > BRIEFING_HOLD_NEAR_KM && !passed) return;   // 还没走到城下：照走，别按停
         }
         host.setMarchHold(true);   // 每帧重新按一次
         if (!this.briefingHold) {
