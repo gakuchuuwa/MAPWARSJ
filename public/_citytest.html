@@ -649,7 +649,7 @@
           <li><strong>城墙</strong>：S = 5 DE 真·细编织篱笆（FENCE）</li>
           <li><strong>城门</strong>：细篱小门 + L形转角件无缝过渡</li>
           <li><strong>建筑</strong>：大庄园、定居点、棚屋 A~G、蒙古包</li>
-          <li><strong>地基</strong>：pm1_plaza 自然平整土地</li>
+          <li><strong>地基</strong>：sr2_plaza 压实泥石地基（与小城一致）</li>
         </ul>
       </div>
     </div>
@@ -2047,7 +2047,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
 
   if (type !== 'big' && !isRectStockade) {
     const cgW = cW * (isCenterCastle ? 1.6 : 2.3), cgH = cgW * 0.58;
-    const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
+    const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small' || type === 'stockade') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
     parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + centerOffsetX.toFixed(1) + 'px),calc(-50% + ' + centerOffsetY.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
   }
   const cPath = isCenterCastle
@@ -2102,7 +2102,7 @@ function renderBuildings(baseSize, style, type, seedKey = '') {
 
     if (type !== 'big') {
       const gW = bW * 2.3, gH = gW * 0.58;
-      const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
+      const gImg = (type === 'medium') ? '/SUCAI_TERRAIN/rd1_plaza.png' : (type === 'small' || type === 'stockade') ? '/SUCAI_TERRAIN/sr2_plaza.png' : '/SUCAI_TERRAIN/pm1_plaza.png';
       parts.push('<img src="' + gImg + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;height:' + gH.toFixed(1) + 'px;transform:translate(calc(-50% + ' + x.toFixed(1) + 'px),calc(-50% + ' + y.toFixed(1) + 'px));z-index:10;opacity:0.92;pointer-events:none;" />');
     }
 
