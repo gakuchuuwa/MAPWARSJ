@@ -172,6 +172,17 @@ const BF_RETRY_COOLDOWN_MS = 60_000;
  */
 const HOST_MOVE_EPS_DEG = 0.008;
 /**
+ * 🔴 [2026-10-02 主人报障「军团不在安卡拉停驻」] **「到点」分成两个半径，别再合成一个**：
+ *   · `BRIEFING_ANCHOR_NEAR_KM = 15` —— **开始念这一段**的半径：军团走进挂点 15 公里就开始讲这一段的旁白；
+ *   · `BRIEFING_HOLD_NEAR_KM = 2.5` —— **真正按停军团**的半径：要走到**城下**才停。
+ *   来由（真机实测）：原来只有一个 15 公里半径，既管「开始念」又管「按停」，
+ *   于是「到了点没念完就驻足」把军团按在**离城 15 公里的野地**上 ——
+ *   第 8 场（前333 伊苏斯）实测停在**安卡拉城外 11.5 公里**、一停 10 秒，
+ *   主人看着就是「军团不在安卡拉停驻」。拉开之后：一路走到城下，上一句还没念完才停。
+ */
+const BRIEFING_ANCHOR_NEAR_KM = 15;
+const BRIEFING_HOLD_NEAR_KM = 2.5;
+/**
  * 🔴 [2026-09-30 主人定「**如果是战场不用等播报完，请直接开战，开战过程中可以播报**」]
  *    **撤掉「到战场/城下驻足等播报」这道闸**（原 `BRIEFING_HOLD_END_KM = 20`）。
  *    来由（主人报障）：「军团抵达底比斯后，为什么停驻了，不直接开战？是因为播报没有完吗」
@@ -1641,14 +1652,18 @@ export class PlayerQuestSystem {
         const b = this.briefingBounds[this.briefingBoundCursor];
         const dKm = getEuclideanDistance(host.getPosition(), { lat: b.lat, lng: b.lng }) * 111;
         gameLog('expedition', `[玩家][挂点检测] cursor=${this.briefingBoundCursor} 目标=${b.name} 距离=${dKm.toFixed(1)}km 阈值15 busy=${this.briefingBusy} armed=${this.briefingHoldArmed} hold=${this.briefingHold}`);
-        if (dKm > 15) return;
+        if (dKm > BRIEFING_ANCHOR_NEAR_KM) return;
         this.briefingBoundCursor++;
         const idx = this.briefingBoundCursor;   // 边界 k → 第 k 段的旁白（第 0 段起步时已念）
         if (this.briefingBusy) {
+            // 🔴 [2026-10-02 主人报障「军团不在安卡拉停驻」] **到点了才停，停在城下**：
+            //    原来这里立刻就 `setMarchHold(true)` —— 而判「到点」的半径是 15 公里，
+            //    军团于是被按在**离城 15 公里的野地**上（真机实测：安卡拉城外 11.5 公里，一停 10 秒）。
+            //    现在：15 公里只用来「开始念这一段」（走进圈就开始讲），**按停要等军团走到城下**
+            //    （`BRIEFING_HOLD_NEAR_KM`）—— 上一句还没念完才停，念完接着走。
             this.briefingPending = idx;
+            this.briefingHoldAnchor = { lat: b.lat, lng: b.lng };
             this.briefingHoldArmed = true;
-            host.setMarchHold(true);
-            this.briefingHold = true;
         } else {
             this.briefingAdvance?.(idx);
         }
@@ -1945,6 +1960,8 @@ export class PlayerQuestSystem {
     private pendingAfterHold: number | null = null;
     /** 已经到了下一个点、正在等这句念完（松闸＝`briefingBusy` 与 `briefingPending` 都空） */
     private briefingHoldArmed = false;
+    /** 正在等念完的那个「点」（据点坐标）—— 军团走到它跟前才按停（见 settleBriefingHold） */
+    private briefingHoldAnchor: { lat: number; lng: number } | null = null;
 
     /**
      * 🔴 [2026-09-30 主人定「开战过程中可以播报」] **军团正在开打** —— 这一段时间里
@@ -1960,6 +1977,7 @@ export class PlayerQuestSystem {
     /** 松闸（把军团放回路上）：`clearJourneyBriefing` 与 `settleBriefingHold` 共用的唯一出口 */
     private releaseBriefingHold(): void {
         this.briefingHoldArmed = false;
+        this.briefingHoldAnchor = null;
         if (!this.briefingHold) return;
         this.briefingHold = false;
         const q = this.quest;
@@ -1987,12 +2005,19 @@ export class PlayerQuestSystem {
             this.releaseBriefingHold();
             return;
         }
-        let near = this.briefingHoldArmed;
-        if (!near) return;
+        if (!this.briefingHoldArmed) return;
+        // 🔴 [2026-10-02 主人报障「军团不在安卡拉停驻」] **走到城下才按停**：
+        //    到点判据（15 公里）只用来开始念；真正按住军团要等它走到据点跟前（城下 ≈ 2.5 公里），
+        //    这样「停驻」就发生在城里／城下，而不是城外十几公里的野地上（真机实测：原来停在 11.5 公里外）。
+        const a = this.briefingHoldAnchor;
+        if (a) {
+            const dKm = getEuclideanDistance(host.getPosition(), a) * 111;
+            if (dKm > BRIEFING_HOLD_NEAR_KM) return;   // 还没走到城下：照走，别按停
+        }
         host.setMarchHold(true);   // 每帧重新按一次
         if (!this.briefingHold) {
             this.briefingHold = true;
-            gameLog('expedition', '[玩家] 到了点这一句还没念完：军团驻足听完再走（主人 2026-09-26 定）');
+            gameLog('expedition', '[玩家] 到了点这一句还没念完：军团在据点停驻听完再走（主人 2026-09-26 定 / 2026-10-02 改为城下停）');
         }
     }
     /**
