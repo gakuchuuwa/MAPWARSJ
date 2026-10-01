@@ -573,6 +573,134 @@ export default defineConfig({
                     });
                 });
 
+                // ========================================================
+                // 🔴 [2026-10-02 主人令「建立一个自助编辑器，让我自己安排城门/城垛/城墙，设计好后保存样式」]
+                //   围栏编辑器 /api/stockade-wall-editor/save（页面 /stockade-wall-editor.html）
+                //   一次写两处，免得手抄漏配：
+                //     ① public/assets/stockade_wall_styles.json —— 编辑器自己读回来接着改
+                //     ② src/data/stockadeWallStyles.ts        —— **游戏 import 用**（构建期就带上）
+                //   前端已按「围栏三件套标准」校验过（validateStockadeRing），服务端再兜一道：
+                //   有违规就拒绝写盘，绝不让不合标准的样式进游戏。
+                // ========================================================
+                server.middlewares.use('/api/stockade-wall-editor/save', (req, res) => {
+                    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: '仅支持 POST' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const body = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as { styles?: any[] };
+                            const styles = Array.isArray(body.styles) ? body.styles : [];
+                            // ── 兜底校验（与 cityWallShared.validateStockadeRing 同规则）──
+                            const KINDS = new Set(['NE', 'SE', 'POST', 'GATE', 'CORNER']);
+                            for (const st of styles) {
+                                if (!st || typeof st.key !== 'string' || !st.key) throw new Error('样式缺 key');
+                                if (!Array.isArray(st.pieces) || st.pieces.length < 4) throw new Error(`样式「${st.name || st.key}」件数太少`);
+                                const ps = st.pieces;
+                                for (const p of ps) {
+                                    if (!KINDS.has(p.type)) throw new Error(`样式「${st.name || st.key}」含非法件种 ${p.type}`);
+                                    if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) throw new Error(`样式「${st.name || st.key}」有非法坐标`);
+                                }
+                                const isWall = (p: any) => p.type === 'NE' || p.type === 'SE';
+                                const kind = (p: any) => `${p.type}${p.flipX ? '~' : ''}`;
+                                const gates = ps.filter((p) => p.type === 'GATE').length;
+                                if (gates !== 1) throw new Error(`样式「${st.name || st.key}」有 ${gates} 扇门（标准：只许一扇）`);
+                                for (let i = 0; i < ps.length; i++) {
+                                    const a = ps[i], b = ps[(i + 1) % ps.length], pa = ps[(i - 1 + ps.length) % ps.length];
+                                    if (a.type === 'POST' && b.type === 'POST') throw new Error(`样式「${st.name || st.key}」第${i}件：两个城垛挨着`);
+                                    if (a.type === 'POST' && !(isWall(pa) && isWall(b))) throw new Error(`样式「${st.name || st.key}」第${i}件：城垛两边不全是城墙`);
+                                    if (a.type === 'GATE' && !(isWall(pa) && isWall(b))) throw new Error(`样式「${st.name || st.key}」第${i}件：城门两边不全是城墙`);
+                                    if (isWall(a) && isWall(b) && kind(a) !== kind(b)) throw new Error(`样式「${st.name || st.key}」第${i}→${i + 1}件：城墙朝向变了却没城垛`);
+                                }
+                            }
+                            // ── ① JSON（编辑器读）──
+                            const jsonPath = path.resolve(__dirname, 'public/assets/stockade_wall_styles.json');
+                            serverSafeWriteFileSync(jsonPath, JSON.stringify({
+                                generatedFrom: 'stockade-wall-editor.html',
+                                rule: '围栏三件套标准：城门 / 城垛 / 城墙（NE·SE）—— 朝向一变必须有城垛、城门只一扇且两边接城墙、城垛两边接城墙',
+                                baseSizeRef: 100,
+                                styles,
+                            }, null, 2) + '\n');
+                            // ── ② TS（游戏 import）──
+                            const tsLines: string[] = [];
+                            tsLines.push('/**');
+                            tsLines.push(' * ⚠️ **本文件由「围栏编辑器」生成**（页面 `/stockade-wall-editor.html`，接口 `/api/stockade-wall-editor/save`）。');
+                            tsLines.push(' * **不要手改** —— 要改样式请回编辑器画好再存盘，这里会被整份覆盖。');
+                            tsLines.push(' *');
+                            tsLines.push(' * 坐标一律按 `baseSizeRef = 100` 存；游戏按据点实际 baseSize 等比缩放（见 TerritorySystem.buildDeStockadeStackHtml）。');
+                            tsLines.push(' * 件种 = 围栏三件套标准：城墙 NE / SE（含镜像）· 城垛 POST · 城门 GATE（CORNER 只在密编荆篱材质下画得出）。');
+                            tsLines.push(` * 生成时间：${new Date().toISOString()}`);
+                            tsLines.push(' */');
+                            tsLines.push('');
+                            tsLines.push("export type StockadeWallPieceType = 'NE' | 'SE' | 'POST' | 'GATE' | 'CORNER';");
+                            tsLines.push('');
+                            tsLines.push('export interface StockadeWallStylePiece {');
+                            tsLines.push('    x: number;');
+                            tsLines.push('    y: number;');
+                            tsLines.push('    type: StockadeWallPieceType;');
+                            tsLines.push('    flipX?: boolean;');
+                            tsLines.push('}');
+                            tsLines.push('');
+                            tsLines.push('export interface StockadeWallStyle {');
+                            tsLines.push('    key: string;');
+                            tsLines.push('    name: string;');
+                            tsLines.push("    material: 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE';");
+                            tsLines.push('    baseSizeRef: number;');
+                            tsLines.push('    clipRx: number;');
+                            tsLines.push('    clipRy: number;');
+                            tsLines.push('    /** 指派到这些据点（cityId）：游戏里这些城寨就用这一套 */');
+                            tsLines.push('    applyTo: string[];');
+                            tsLines.push('    pieces: StockadeWallStylePiece[];');
+                            tsLines.push('}');
+                            tsLines.push('');
+                            tsLines.push('export const STOCKADE_WALL_STYLES: StockadeWallStyle[] = [');
+                            for (const st of styles) {
+                                tsLines.push('    {');
+                                tsLines.push(`        key: ${JSON.stringify(st.key)},`);
+                                tsLines.push(`        name: ${JSON.stringify(st.name || st.key)},`);
+                                tsLines.push(`        material: ${JSON.stringify(st.material || 'HARDWOOD')},`);
+                                tsLines.push(`        baseSizeRef: ${Number(st.baseSizeRef) || 100},`);
+                                tsLines.push(`        clipRx: ${Number(st.clipRx) || 0},`);
+                                tsLines.push(`        clipRy: ${Number(st.clipRy) || 0},`);
+                                tsLines.push(`        applyTo: ${JSON.stringify(Array.isArray(st.applyTo) ? st.applyTo : [])},`);
+                                tsLines.push('        pieces: [');
+                                for (const p of st.pieces) {
+                                    tsLines.push(`            { x: ${Number(p.x)}, y: ${Number(p.y)}, type: '${p.type}'${p.flipX ? ', flipX: true' : ''} },`);
+                                }
+                                tsLines.push('        ],');
+                                tsLines.push('    },');
+                            }
+                            tsLines.push('];');
+                            tsLines.push('');
+                            tsLines.push('/** 据点 → 自定义样式（同一个据点被多套样式指派时，以最后保存的那套为准） */');
+                            tsLines.push('export const STOCKADE_WALL_STYLE_BY_CITY: Record<string, StockadeWallStyle> = (() => {');
+                            tsLines.push('    const m: Record<string, StockadeWallStyle> = {};');
+                            tsLines.push('    for (const s of STOCKADE_WALL_STYLES) for (const c of s.applyTo) m[c] = s;');
+                            tsLines.push('    return m;');
+                            tsLines.push('})();');
+                            tsLines.push('');
+                            tsLines.push('/** 这个据点有没有被指派自定义围栏（有 → 游戏优先用玩家的设计，不再走六形制哈希） */');
+                            tsLines.push('export function pickStockadeWallStyle(cityId: string): StockadeWallStyle | null {');
+                            tsLines.push('    return STOCKADE_WALL_STYLE_BY_CITY[cityId] ?? null;');
+                            tsLines.push('}');
+                            tsLines.push('');
+                            const tsPath = path.resolve(__dirname, 'src/data/stockadeWallStyles.ts');
+                            serverSafeWriteFileSync(tsPath, tsLines.join('\n'));
+                            const assigned = styles.reduce((n: number, s: any) => n + (Array.isArray(s.applyTo) ? s.applyTo.length : 0), 0);
+                            console.log(`[StockadeWallEditor] ✅ 保存 ${styles.length} 套样式（指派 ${assigned} 座据点）→ public/assets/stockade_wall_styles.json + src/data/stockadeWallStyles.ts`);
+                            res.end(JSON.stringify({ ok: true, styles: styles.length, assigned, files: 'stockade_wall_styles.json + stockadeWallStyles.ts' }));
+                        } catch (err: any) {
+                            console.error('[StockadeWallEditor] ❌ 保存失败:', err.message);
+                            res.statusCode = 400;
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+
                 // 删除一场战役（战场表 + 剧本两处一起删，含条目上方的史料注释块）
                 server.middlewares.use('/api/battlefield-editor/delete', (req, res) => {
                     res.setHeader('Content-Type', 'application/json; charset=utf-8');
