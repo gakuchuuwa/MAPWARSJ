@@ -400,7 +400,7 @@ function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
             }
             continue;
         }
-        if (i % 4 === 0) {
+        if (i % 6 === 0   /* 🔴 2026-10-01 主人「栅栏墩太多，墩子不能挨着，必须有栅栏间隔」：每 6 段一墩 */) {
             pieces.push({ x, y, type: 'POST' });
         } else if (angle > -90 && angle < 0) {
             pieces.push({ x, y, type: 'SE' });
@@ -426,10 +426,11 @@ function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
         const t = k / (N_seg - 1);
         pieces.push({ x: (2.6 + t * 3.8) * sx, y: (-6.4 + t * 3.8) * sy, type: 'SE' });
     }
+    // 🔴 [2026-10-01 主人「墩子不能挨着，必须有一个栅栏间隔」] 四个转角各只留正中 1 墩，两侧改栅栏
     // 2. 东角过渡弧
-    pieces.push({ x: 6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    pieces.push({ x: 6.8 * sx, y: -1.2 * sy, type: 'SE' });
     pieces.push({ x: 7.1 * sx, y: 0, type: 'POST' });
-    pieces.push({ x: 6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    pieces.push({ x: 6.8 * sx, y: 1.2 * sy, type: 'SE', flipX: true });
     // 3. 东南边 (右下，SE flipX段，带门)
     for (let k = 0; k < N_seg; k++) {
         const t = k / (N_seg - 1);
@@ -442,27 +443,27 @@ function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
         }
     }
     // 4. 南角过渡弧
-    pieces.push({ x: 1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    pieces.push({ x: 1.2 * sx, y: 6.8 * sy, type: 'SE', flipX: true });
     pieces.push({ x: 0, y: 7.1 * sy, type: 'POST' });
-    pieces.push({ x: -1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    pieces.push({ x: -1.2 * sx, y: 6.8 * sy, type: 'NE', flipX: true });
     // 5. 西南边 (左下，NE flipX段)
     for (let k = 0; k < N_seg; k++) {
         const t = k / (N_seg - 1);
         pieces.push({ x: (-2.6 - t * 3.8) * sx, y: (6.4 - t * 3.8) * sy, type: 'NE', flipX: true });
     }
     // 6. 西角过渡弧
-    pieces.push({ x: -6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    pieces.push({ x: -6.8 * sx, y: 1.2 * sy, type: 'NE', flipX: true });
     pieces.push({ x: -7.1 * sx, y: 0, type: 'POST' });
-    pieces.push({ x: -6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    pieces.push({ x: -6.8 * sx, y: -1.2 * sy, type: 'NE' });
     // 7. 西北边 (左上，NE段)
     for (let k = 0; k < N_seg; k++) {
         const t = k / (N_seg - 1);
         pieces.push({ x: (-6.4 + t * 3.8) * sx, y: (-2.6 - t * 3.8) * sy, type: 'NE' });
     }
     // 8. 北角过渡弧
-    pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'POST' });
+    pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'NE' });
     pieces.push({ x: 0, y: -7.1 * sy, type: 'POST' });
-    pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'POST' });
+    pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'SE' });
     return pieces;
 }
 
@@ -540,7 +541,7 @@ function computeCorralOvalWall(baseSize: number): PalisadeGridPiece[] {
             }
             continue;
         }
-        if (i % 4 === 0) {
+        if (i % 6 === 0   /* 🔴 2026-10-01 主人「栅栏墩太多，墩子不能挨着，必须有栅栏间隔」：每 6 段一墩 */) {
             pieces.push({ x, y, type: 'POST' });
         } else if (angle > -90 && angle < 0) {
             pieces.push({ x, y, type: 'SE' });
