@@ -48,7 +48,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 // 🔴 [2026-09-12 主人「你只改战略，不改战术呀…其他的战术也要同步」] 战术攻城的城墙材质
 //    与战略地图**共用同一个判据**（cityWallShared.shouldUseStoneWall），不再各判一次。
-import { shouldUseStoneWall } from '../systems/cityWallShared';
+import { shouldUseStoneWall, pickStockadeFenceSet } from '../systems/cityWallShared';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
@@ -1488,7 +1488,7 @@ function siegeBuildingScale(building: string): number {
     if (building === 'MARKET') return SIEGE_MARKET_SCALE;
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
     if (building === 'SETTLEMENT') return 1.0;
-    if (building.startsWith('HUT_') || building.startsWith('YURT_')) return 1.0;
+    if (building.startsWith('HUT_') || building.startsWith('YURT_') || building.startsWith('DARK_')) return 1.0;
     return SIEGE_CITY_BUILDING_SCALE;
 }
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
@@ -5247,10 +5247,16 @@ export class Scene13WarLayer {
                 : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
-            const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
-            const gBase = wallMat === 'FENCE' ? 'FENCE_GATE' : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
+            /* 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」]
+             *   城寨的栅栏材质由**据点 id** 落定，与战略地图**同一张表、同一个种子**
+             *   （`cityWallShared.pickStockadeFenceSet` + `|stockade_fence_set`）——
+             *   两处各判一次必然破功（本仓血训：小城石墙名单三处各判一次 → 三处不同步）。
+             *   攻进城时看到的栅栏，就是战略地图上那一圈栅栏。 */
+            const stkFence = pickStockadeFenceSet(this.defenderCityId ?? '');
+            const wBase = wallMat === 'FENCE' ? stkFence.wallBase : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
+            const gBase = wallMat === 'FENCE' ? stkFence.gateBase : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅/篱笆带材质后缀
-            const wallPost = wallMat === 'FENCE' ? 'FENCE_WALL_POST' : (wallMat === 'STONE' ? `${style}_WALL_POST`
+            const wallPost = wallMat === 'FENCE' ? stkFence.postBase : (wallMat === 'STONE' ? `${style}_WALL_POST`
                 : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`));
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
@@ -5449,10 +5455,13 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 城寨（stockade）：定居点/棚屋A~G/蒙古包A~D 随机9个（2026-09-03 主人定）
-            // 2026-09-03 主人删：FOLWARK（波兰风车磨坊庄园）— 草原城寨不用农庄。
+            // 城寨（stockade）：定居点/棚屋A~G/蒙古包A~D/哨站/黑暗时代房屋与磨坊 随机（2026-10-01 主人定）
             if (this.defenderCityType === 'stockade') {
-                const stockadePool = ['SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G', 'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D'];
+                const stockadePool = [
+                    'SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
+                    'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'OUTPOST', 'FORTIFIED_OUTPOST',
+                    'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
+                ];
                 const shuffledBuildings = [...stockadePool].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
                 const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSide.length; i++) {

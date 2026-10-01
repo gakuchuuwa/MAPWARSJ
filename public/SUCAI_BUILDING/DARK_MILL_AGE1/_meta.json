@@ -1,0 +1,9 @@
+{
+  "name": "DARK_MILL_AGE1",
+  "frames": 1,
+  "box_w": 228,
+  "box_h": 152,
+  "anchor_x": 122,
+  "anchor_y": 110,
+  "sld_source": "b_dark_mill_age1"
+}

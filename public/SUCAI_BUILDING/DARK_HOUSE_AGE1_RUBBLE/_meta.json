@@ -1,0 +1,9 @@
+{
+  "name": "DARK_HOUSE_AGE1_RUBBLE",
+  "frames": 1,
+  "box_w": 192,
+  "box_h": 92,
+  "anchor_x": 94,
+  "anchor_y": 46,
+  "sld_source": "b_dark_house_age1_rubble"
+}

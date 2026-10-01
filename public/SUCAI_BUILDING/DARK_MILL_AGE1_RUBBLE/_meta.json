@@ -1,0 +1,9 @@
+{
+  "name": "DARK_MILL_AGE1_RUBBLE",
+  "frames": 1,
+  "box_w": 268,
+  "box_h": 132,
+  "anchor_x": 128,
+  "anchor_y": 76,
+  "sld_source": "b_dark_mill_age1_rubble"
+}
