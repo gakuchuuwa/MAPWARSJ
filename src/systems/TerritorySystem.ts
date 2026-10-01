@@ -79,13 +79,14 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（16 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊，随机取 9 种，2026-10-01 主人定）
+// 城寨建筑池（20 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代牧场 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
     'OUTPOST', 'FORTIFIED_OUTPOST',
     'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
+    'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_PASTURE', 'DARK_TOWN_CENTER_AGE1',
 ];
 
 const DE_STOCKADE_SCALES: Record<string, number> = {
@@ -94,6 +95,7 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
     YURT_A: 0.25, YURT_B: 0.25, YURT_C: 0.25, YURT_D: 0.25,
     OUTPOST: 0.26, FORTIFIED_OUTPOST: 0.26,
     DARK_HOUSE_AGE1: 0.26, DARK_MILL_AGE1: 0.30,
+    DARK_BARRACKS_AGE1: 0.32, DARK_SETTLEMENT_AGE1: 0.34, DARK_PASTURE: 0.25, DARK_TOWN_CENTER_AGE1: 0.36,
 };
 
 /** 🔴 [2026-09-16 主人定「中间的建筑可以加减，改变摆放位置」] 矩形围栏（城寨样式四）院内的建筑位：
@@ -687,11 +689,14 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     }
     // 严密咬合的篱笆围墙与篱笆门：[2026-09-08 主人定] 样式随机；🔴 [2026-09-16 主人定] 补第 4 种「矩形围栏」；🔴 [2026-10-01 主人定] 补第 5 种「小城栅栏」：
     // 0: 原有正方形 (四角L形转角件 FENCE_CORNER，细编篱笆 DE_FENCE_ANCHORS)
-    // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈，细编篱笆 DE_FENCE_ANCHORS)
-    // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场，细编篱笆 DE_FENCE_ANCHORS)
-    // 3: 方案C (矩形围栏，走险要同款矩形拓扑，两排6建筑，细编篱笆 DE_FENCE_ANCHORS)
-    // 4: 方案D (小城栅栏，用小城同款硬木木栅栏套 DE_PALISADE_ANCHORS)
-    const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 5;
+    // 0: 样式一 (正方标准，四角 L 形转角件，细编篱笆 DE_FENCE_ANCHORS)
+    // 1: 样式二 (圆形羊圈，平滑椭圆弧，细编篱笆 DE_FENCE_ANCHORS)
+    // 2: 样式三 (八角羊圈，切去尖角八面围场，细编篱笆 DE_FENCE_ANCHORS)
+    // 3: 样式四 (矩形围栏，长边双门两排6建筑，细编篱笆 DE_FENCE_ANCHORS)
+    // 4: 样式五 (小城硬木栅栏，硬木粗尖桩 DE_PALISADE_ANCHORS)
+    // 5: 样式六 (原木木栅，经典削尖原木尖桩 DE_DARK_PALISADE_ANCHORS)
+    // 6: 样式七 (平切木栅，古典横木加固栅栏 DE_ARCHAIC_PALISADE_ANCHORS)
+    const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 7;
     /** 矩形围栏：院内改用「两排各 3 栋」的屯子排法，不摆中间那栋（见下方 RECT_STOCKADE_SLOTS） */
     const isRectStockade = stockadeStyle === 3;
 
@@ -703,6 +708,32 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     const H = baseSize * 2.0;
 
     const parts: string[] = [];
+
+    // 🔴 [2026-10-01 主人定「像图2小城一样城内铺地面满铺，撑满全城包括四角，城内饱满无漏黑，城外零溢出」]
+    const stepX = baseSize * 0.075, stepY = stepX * 0.58;
+    const fullGW = (10 * stepX) * 2.8, fullGH = (10 * stepY) * 5.6;
+    let clip = '';
+    if (stockadeStyle === 1) {
+        // 样式二：圆形羊圈 (Rx = 7.0 * stepX)
+        const rX = 7.0 * stepX, rY = 7.0 * stepY;
+        clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
+    } else if (stockadeStyle === 2) {
+        // 样式三：八角羊圈 (Rx = 7.1 * stepX)
+        const rX = 7.1 * stepX, rY = 7.1 * stepY;
+        clip = `ellipse(${rX.toFixed(1)}px ${rY.toFixed(1)}px at 50% 50%)`;
+    } else if (stockadeStyle === 3) {
+        // 样式四：矩形围栏 (12×8)
+        const u1 = 10 * stepX, v1 = 2 * stepY;
+        const u2 = 2 * stepX, v2 = 10 * stepY;
+        clip = `polygon(calc(50% - ${u2.toFixed(1)}px) calc(50% - ${v2.toFixed(1)}px), calc(50% + ${u1.toFixed(1)}px) calc(50% + ${v1.toFixed(1)}px), calc(50% + ${u2.toFixed(1)}px) calc(50% + ${v2.toFixed(1)}px), calc(50% - ${u1.toFixed(1)}px) calc(50% - ${v1.toFixed(1)}px))`;
+    } else {
+        // 样式一/五/六/七：正方菱形（与小城完全相同）
+        const rX = 10 * stepX, rY = 10 * stepY;
+        clip = `polygon(50% calc(50% - ${rY.toFixed(1)}px), calc(50% + ${rX.toFixed(1)}px) 50%, 50% calc(50% + ${rY.toFixed(1)}px), calc(50% - ${rX.toFixed(1)}px) 50%)`;
+    }
+    parts.push(
+        `<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:${clip};z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:${fullGW.toFixed(1)}px;height:${fullGH.toFixed(1)}px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>`
+    );
 
     // 🔴 [2026-10-01 主人定「不要中心主位、不放大1.15倍，保持9建筑随机」]：
     //    城寨 9 建筑纯粹平权随机（矩形围栏为 6 建筑两排），中心建筑与周围 8 栋同尺寸、同比例、无特殊主位特权
@@ -765,9 +796,17 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     } else if (stockadeStyle === 3) {
         wallPieces = computeCorralRectWall(baseSize);
     } else if (stockadeStyle === 4) {
-        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（正方拓扑，四角立木垛，套用小城同款硬木木栅栏）
+        // 样式五：小城硬木尖桩栅栏（正方拓扑，四角立木垛，套用小城同款硬木木栅栏 HARDWOOD）
         wallPieces = computePalisadeWallAndGate(baseSize);
         wallAnchors = DE_PALISADE_ANCHORS;
+    } else if (stockadeStyle === 5) {
+        // 样式六：经典原木尖桩木栅（正方拓扑，四角立木垛，套用经典尖桩木栅 DARK）
+        wallPieces = computePalisadeWallAndGate(baseSize);
+        wallAnchors = DE_DARK_PALISADE_ANCHORS;
+    } else if (stockadeStyle === 6) {
+        // 样式七：古典横木平切栅栏（正方拓扑，四角立木垛，套用古典横梁加固木栅 ARCHAIC）
+        wallPieces = computePalisadeWallAndGate(baseSize);
+        wallAnchors = DE_ARCHAIC_PALISADE_ANCHORS;
     } else {
         wallPieces = computePalisadeWallAndGate(baseSize);
         for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }

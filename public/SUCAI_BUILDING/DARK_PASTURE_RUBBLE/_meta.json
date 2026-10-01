@@ -1,0 +1,9 @@
+{
+  "name": "DARK_PASTURE_RUBBLE",
+  "frames": 1,
+  "box_w": 128,
+  "box_h": 60,
+  "anchor_x": 67,
+  "anchor_y": 31,
+  "sld_source": "b_dark_pasture_rubble"
+}

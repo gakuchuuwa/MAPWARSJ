@@ -1,0 +1,9 @@
+{
+  "name": "DARK_BARRACKS_AGE1_DESTR",
+  "frames": 1,
+  "box_w": 316,
+  "box_h": 212,
+  "anchor_x": 168,
+  "anchor_y": 136,
+  "sld_source": "b_dark_barracks_age1_destruction"
+}

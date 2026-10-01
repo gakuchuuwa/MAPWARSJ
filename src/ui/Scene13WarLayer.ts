@@ -5447,12 +5447,13 @@ export class Scene13WarLayer {
                 }
                 return;
             }
-            // 城寨（stockade）：定居点/棚屋A~G/蒙古包A~D/哨站/黑暗时代房屋与磨坊 随机（2026-10-01 主人定）
+            // 城寨（stockade）：定居点/棚屋A~G/蒙古包A~D/哨站/黑暗时代房屋与磨坊与兵营/长屋/牧场/部落中心 随机（2026-10-01 主人定）
             if (this.defenderCityType === 'stockade') {
                 const stockadePool = [
                     'SETTLEMENT', 'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
                     'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'OUTPOST', 'FORTIFIED_OUTPOST',
                     'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
+                    'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_PASTURE', 'DARK_TOWN_CENTER_AGE1',
                 ];
                 const shuffledBuildings = [...stockadePool].sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
                 const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
