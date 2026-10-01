@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
-import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
+import { legacyFenceClip, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, STYLE_TO_STOCKADE_FENCE, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, normalizeStockadeCorner, buildStockadeCurveRing, stockadeCurveShape,
     // 🔴 [2026-10-02] 六形制的几何**全部收进共享模块**（围栏编辑器也要用同一份）：直边三款从这里 import 回来，
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
     buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing } from './cityWallShared';
@@ -331,12 +331,12 @@ function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () 
  * **六形制的几何只有一份**，本文件与评估页、围栏编辑器都只许调共享模块。 */
 
 /** 城寨方案A：圆城（等轴正圆，圈 144×84）——三件套标准拼法（见 AGENTS.md「三之三」） */
-function computeCorralRoundWall(baseSize: number): PalisadeGridPiece[] {
-    return buildStockadeCurveRing('round', baseSize) as PalisadeGridPiece[];
+function computeCorralRoundWall(baseSize: number, material?: string): PalisadeGridPiece[] {
+    return buildStockadeCurveRing('round', baseSize, material) as PalisadeGridPiece[];
 }
 /** 城寨方案B：八角（世界格切角八边形，圈 130×76）——三件套标准拼法 */
-function computeCorralOctagonWall(baseSize: number): PalisadeGridPiece[] {
-    return buildStockadeCurveRing('octagon', baseSize) as PalisadeGridPiece[];
+function computeCorralOctagonWall(baseSize: number, material?: string): PalisadeGridPiece[] {
+    return buildStockadeCurveRing('octagon', baseSize, material) as PalisadeGridPiece[];
 }
 /** 城寨方案D：椭圆山脊堡（顺脊长椭圆，圈 149×57）——三件套标准拼法 */
 function computeCorralOvalWall(baseSize: number): PalisadeGridPiece[] {
@@ -479,7 +479,9 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 3. 严密咬合的围墙：默认硬木栅栏（木城门）；中原/北方/江南小城用中城同款石墙（主人 2026-09-03）
     //    （石墙沿用中城 DE_STONE_ANCHORS_BY_STYLE，锚点按风格独立、同 style='ASIA'）
-    const wallPieces = computePalisadeWallAndGate(baseSize);
+    // 🔴 [主人定] 小城三套城墙：石墙区随机「双门标准 / 四门雄关」，栅栏区固定双门栅栏
+    const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
+    const wallPieces = computePalisadeWallAndGate(baseSize, 5, useFourGates);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
@@ -562,7 +564,11 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         clip = `ellipse(${(customStyle.clipRx * k).toFixed(1)}px ${(customStyle.clipRy * k).toFixed(1)}px at 50% 50%)`;
     } else if (stockadeShape === 1) {
         // 样式二：圆城（等轴正圆）—— 地面裁切跟 `stockadeCurveShape('round')` **同一把尺**（内缩 6% 贴栅栏内侧脚线）
-        const c = stockadeCurveShape('round', baseSize);
+        const c = legacyFenceClip('round', baseSize, fenceSet.key) ?? stockadeCurveShape('round', baseSize);   // 篱笆套 = 原版裁切
+        clip = `ellipse(${c.clipRx.toFixed(1)}px ${c.clipRy.toFixed(1)}px at 50% 50%)`;
+    } else if (stockadeShape === 2 && legacyFenceClip('octagon', baseSize, fenceSet.key)) {
+        // 篱笆套八角 = 主人原版：地面裁切椭圆（6.7 格）
+        const c = legacyFenceClip('octagon', baseSize, fenceSet.key)!;
         clip = `ellipse(${c.clipRx.toFixed(1)}px ${c.clipRy.toFixed(1)}px at 50% 50%)`;
     } else if (stockadeShape === 2) {
         // 样式三：八角 —— 地面裁成与围栏同一个八边形（H=5.2、切角 c=1.7，与 `stockadeCurveShape('octagon')` 同参数）
@@ -664,9 +670,9 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
             x: p.x * k, y: p.y * k, type: p.type, flipX: !!p.flipX,
         })) as PalisadeGridPiece[];
     } else if (stockadeShape === 1) {
-        wallPieces = computeCorralRoundWall(baseSize);
+        wallPieces = computeCorralRoundWall(baseSize, fenceSet.key);
     } else if (stockadeShape === 2) {
-        wallPieces = computeCorralOctagonWall(baseSize);
+        wallPieces = computeCorralOctagonWall(baseSize, fenceSet.key);
     } else if (stockadeShape === 3) {
         wallPieces = computeCorralRectWall(baseSize);
     } else if (stockadeShape === 4) {

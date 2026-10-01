@@ -529,7 +529,7 @@
 </head>
 <body>
 
-<div class="editor-nav"><a href="/batch-manager.html">实体管理</a><a href="/portrait-tuner.html">立绘调校</a><a href="/skill-editor.html">技能管理</a><a href="/legion-editor.html">军团方阵</a><a href="/_citytest.html" class="active">据点编辑</a><a href="/scratch/_siege_preview.html">战场背景</a></div>
+<div class="editor-nav"><a href="/batch-manager.html">实体管理</a><a href="/portrait-tuner.html">立绘调校</a><a href="/skill-editor.html">技能管理</a><a href="/legion-editor.html">军团方阵</a><a href="/_citytest.html" class="active">据点编辑</a><a href="/stockade-wall-editor.html">围栏编辑</a><a href="/scratch/_siege_preview.html">战场背景</a></div>
 
 <div class="view-bar">
   <button class="view-btn active" data-view="cities">🏰 据点形态评估</button>
@@ -1564,6 +1564,7 @@ import {
   // 🔴 [2026-10-02 主人令「重设计下城寨的圆城，八角，椭圆」] 曲线围栏的**轮廓参数与拼法只此一份**：
   //    本页不再自留 corralPiecesFromLoop 与三个形制的轮廓数（游戏/评估页各留一份 → 已经漂移过一次）
   buildStockadeCurveRing,
+  legacyFenceClip,
   stockadeCurveShape,
 } from '/src/systems/cityWallShared.ts';
 
@@ -1678,12 +1679,12 @@ function computeRectWall(baseSize, LSeg, WSeg, rnd, extraGateTower) {
  * （验收脚本 `verify_stockade_shape_parity.mts` 第②项逐件比对当场报不一致）。
  * 现在两个形制只剩这三行壳：**圈多大、件多密、门开在哪，全由共享模块说了算**。 */
 /** 城寨方案A：圆城（等轴正圆）——三件套标准拼法（见 AGENTS.md「三之三」） */
-function computeCorralRoundWall(baseSize) {
-  return buildStockadeCurveRing('round', baseSize);
+function computeCorralRoundWall(baseSize, material) {
+  return buildStockadeCurveRing('round', baseSize, material);
 }
 /** 城寨方案B：八角（世界格切角八边形）——三件套标准拼法 */
-function computeCorralOctagonWall(baseSize) {
-  return buildStockadeCurveRing('octagon', baseSize);
+function computeCorralOctagonWall(baseSize, material) {
+  return buildStockadeCurveRing('octagon', baseSize, material);
 }
 
 function computeCorralRectWall(baseSize) {
@@ -2177,7 +2178,12 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
                   ? 5
                   : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6));
     let clip = '';
-    if (stkShape === 1) {
+    // 篱笆（密编荆篱）套的圆城／八角 = 主人原版，地面裁切也用原版椭圆（其余材质走新裁切）
+    const stkFenceKey = ((curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style)).key;
+    const legacyClip = (type === 'stockade') ? legacyFenceClip(stkShape === 1 ? 'round' : 'octagon', baseSize, stkFenceKey) : null;
+    if ((stkShape === 1 || stkShape === 2) && legacyClip) {
+      clip = 'ellipse(' + legacyClip.clipRx.toFixed(1) + 'px ' + legacyClip.clipRy.toFixed(1) + 'px at 50% 50%)';
+    } else if (stkShape === 1) {
       // 样式二：圆城（等轴正圆）—— 地面裁切跟共享模块 `stockadeCurveShape('round')` 同一把尺（内缩 6%）
       const c1 = stockadeCurveShape('round', baseSize);
       clip = 'ellipse(' + c1.clipRx.toFixed(1) + 'px ' + c1.clipRy.toFixed(1) + 'px at 50% 50%)';
@@ -2334,13 +2340,14 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
   const AUTO = 1.2;
 
   let isFortifiedMed = false;
+  let isFourGates = false;   // 声明提到外层：后面镜像守卫（doMirror）也要读它，原先写在中城分支里面，出了分支就是未定义
   if (type === 'big') {
     pieces = computeRingWall(baseSize, 7, true);
     anchors = getFortifiedAnchors(style);
   } else if (type === 'medium') {
     isFortifiedMed = (curMediumGates === 'fortified4')
       || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') % 3) === 2));
-    const isFourGates = isFortifiedMed
+    isFourGates = isFortifiedMed
       || (curMediumGates === '4')
       || (curMediumGates === 'rnd' && ((hashString(style + '_' + type + '_' + seedKey + '_' + randomSeedOffset + '_medwall') % 3) === 1));
     pieces = computeRingWall(baseSize, 6, isFourGates);
@@ -2381,9 +2388,9 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
                   : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6);
     var resolvedStkShape = stkShape;   // 供下方镜像守卫用（随机掷到的形制也要认）
     if (stkShape === 1) {
-      pieces = computeCorralRoundWall(baseSize);
+      pieces = computeCorralRoundWall(baseSize, fenceSet.key);
     } else if (stkShape === 2) {
-      pieces = computeCorralOctagonWall(baseSize);
+      pieces = computeCorralOctagonWall(baseSize, fenceSet.key);
     } else if (stkShape === 3) {
       pieces = computeCorralRectWall(baseSize);
     } else if (stkShape === 4) {
@@ -2712,7 +2719,10 @@ function renderGateCloseup(style, type, forceShape = null) {
     const gW = baseW * 0.34 * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'small') {
-    const a = ((shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS).GATE;
+    const useStone = (curSmallWall === 'stone2' || curSmallWall === 'stone4') ? true
+      : (curSmallWall === 'palisade') ? false
+      : (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle));
+    const a = (useStone ? getStoneAnchors(curStyle) : PALISADE_ANCHORS).GATE;
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'stockade') {
