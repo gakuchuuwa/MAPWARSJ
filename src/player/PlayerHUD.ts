@@ -86,6 +86,9 @@ export class PlayerHUD {
             releaseCamera?(): void;
             isFollowing?(): boolean;
             setCompanionPanelsExpanded(expanded: boolean): void;
+            /** 🔴 [2026-10-02 主人令「在玩家面板中添加一个十倍加速按钮」] 对局倍速（1 常规 / 10 加速） */
+            getSpeed?(): number;
+            setSpeed?(mult: number): void;
         },
     ) {
         this.createPanel();
@@ -521,6 +524,30 @@ export class PlayerHUD {
         nearLabel.appendChild(nearCheck);
         nearLabel.appendChild(document.createTextNode('📍 就近寻将'));
         secControls.appendChild(nearLabel);
+
+        // ⏩ 10× 加速（🔴 [2026-10-02 主人令]「在玩家面板中添加一个十倍加速按钮」）
+        if (this.deps.getSpeed && this.deps.setSpeed) {
+            const fast = this.deps.getSpeed() >= 10;
+            const speedBtn = document.createElement('button');
+            speedBtn.type = 'button';
+            speedBtn.id = 'player-speed-toggle';
+            speedBtn.textContent = fast ? '⏩ 10× 加速中' : '⏩ 10× 加速';
+            speedBtn.title = fast
+                ? '正在 10× 加速（点一下回到 1× 常规）——战略层整体快 10 倍：季节/年份、军团行军、AI、募兵、战败冷却一起加速'
+                : '点一下让对局整体快 10 倍（季节/年份、行军、AI、募兵一起加速）；战术层 13 战斗不受影响（它固定走真实秒），行军播报也仍按原速念';
+            speedBtn.style.cssText = `
+                cursor:pointer; font-size:11px; font-weight:700; padding:1px 5px; border-radius:4px; font-family:inherit; line-height:18px;
+                background:${fast ? 'rgba(255,138,76,0.22)' : 'rgba(212,175,55,0.14)'};
+                color:${fast ? '#ff8a4c' : '#dfc28c'};
+                border:1px solid ${fast ? 'rgba(255,138,76,0.55)' : 'rgba(212,175,55,0.35)'};
+                transition:all 0.2s ease;
+            `;
+            speedBtn.addEventListener('click', () => {
+                this.deps.setSpeed!(fast ? 1 : 10);
+                this.refresh();
+            });
+            secControls.appendChild(speedBtn);
+        }
 
         // 🎥 跟随视角
         if (this.deps.followCamera) {

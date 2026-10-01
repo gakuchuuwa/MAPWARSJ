@@ -133,6 +133,26 @@ export class TimeSystem {
         return this.isPaused;
     }
 
+    /**
+     * 🔴 [2026-10-02 主人令「在玩家面板中添加一个十倍加速按钮」] **对局倍速**（战略层）。
+     *   口径：把每帧的 `gameDelta` 乘上这个倍数（`GameAppLoop` 两处），于是**战略层的一切**——季节/年份推进、
+     *   军团行军、AI、募兵、战败冷却——**一起**快 10 倍；**战术层 13 不受影响**（它走真实秒，主人定「13 战斗固定 1 分钟」）。
+     *   ⚠️ 播报（TTS）是真实时间的，不跟着加速：10× 下行军播报仍按原速念，
+     *      而「到点没念完就在城下停驻」那条规矩照旧 —— 所以军团会比 1× 时更频繁地在挂点等旁白念完。
+     */
+    private speedMultiplier = 1;
+
+    /** 当前对局倍速（1 = 常规） */
+    public getSpeed(): number {
+        return this.speedMultiplier;
+    }
+
+    /** 设对局倍速（夹在 1~10；1 = 常规） */
+    public setSpeed(mult: number): void {
+        const v = Number.isFinite(mult) ? Math.max(1, Math.min(10, mult)) : 1;
+        this.speedMultiplier = v;
+    }
+
     /** 累计游戏秒（暂停冻结、倍速加速）；供战败冷却等绝对时间戳使用 */
     public getElapsedGameSeconds(): number {
         return this.elapsedGameSeconds;

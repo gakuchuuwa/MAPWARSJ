@@ -7966,6 +7966,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/PERSIAN/wukexiya_tilibasi.png": {
+            "scale": 1.1,
+            "offsetX": -17,
+            "offsetY": -25
         }
     },
     "folderGuides": {

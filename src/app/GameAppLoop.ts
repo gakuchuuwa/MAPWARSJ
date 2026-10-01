@@ -1,4 +1,4 @@
-import L from 'leaflet';
+﻿import L from 'leaflet';
 import { GameTime } from './GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { perfDoctor } from '../debug/PerfDoctor';
@@ -350,7 +350,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
             }
             return;
         }
-        const gameDelta = deltaTime;
+        const gameDelta = deltaTime * app.timeSystem.getSpeed();   // 🔴 [2026-10-02 主人令] 玩家面板 10× 加速：战略层整体乘倍速（战术层 13 走真实秒，不受影响）
         app.timeSystem.update(gameDelta);
         app.cityManager.updateYear(app.timeSystem.getYear());
         // [2026-09-03 查行军卡] 这条后台心跳路径此前**一个探针都没有**。
@@ -416,7 +416,7 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
         const isPaused = app.timeSystem.isGamePaused();
 
         if (!isPaused && app.cityManager) {
-            const gameDelta = deltaTime;
+            const gameDelta = deltaTime * app.timeSystem.getSpeed();   // 🔴 [2026-10-02 主人令] 玩家面板 10× 加速：战略层整体乘倍速（战术层 13 走真实秒，不受影响）
 
             perfMonitor.startTimer('calendar');
             const _tA = performance.now();
@@ -749,3 +749,4 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
     perfMonitor.endFrame();
     app.animationFrameId = requestAnimationFrame((t) => app.gameLoop(t));
 }
+
