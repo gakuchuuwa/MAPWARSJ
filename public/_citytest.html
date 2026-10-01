@@ -1686,6 +1686,23 @@ function corralPiecesFromLoop(loop, step, gateFrac) {
         }
         pieces = out;
     }
+    // 🔴 [主人「城垛必须接城墙」重做] 连续墙段每隔 M 段补一个城垛：城墙规律有垛、更真实
+    //   （切换处垛照旧；补的垛不挨门、不挨垛、垛与垛之间必隔墙）
+    const M = 4;
+    let run = 0;
+    for (let k = 0; k < pieces.length; k++) {
+        const p = pieces[k];
+        if (p.type === 'POST' || p.type === 'GATE') { run = 0; continue; }
+        run++;
+        if (run === M) {
+            const next = pieces[(k + 1) % pieces.length];
+            if (next.type !== 'POST' && next.type !== 'GATE') {
+                p.type = 'POST';
+                p.flipX = false;
+                run = 0;
+            }
+        }
+    }
     return pieces;
     function Rx_(sg) { return pointAt(sg).x; }
     function Ry_(sg) { return pointAt(sg).y; }
