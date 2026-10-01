@@ -8,6 +8,8 @@ import sharp from 'sharp';
 import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
 import { replaceUnitStats } from './tools/unit-stats-save';
 import { saveBattlefieldEvent, deleteBattlefieldEvent, type BattlefieldEventDraft } from './tools/battlefield-event-save';
+// 🔴 [2026-10-02] 围栏编辑器存盘兜底校验要用「弧形三种」的原版几何（认形状用），与游戏/评估页同一份
+import { buildStockadeShapeRing as buildStockadeShapeRingForSave } from './src/systems/cityWallShared';
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -607,6 +609,23 @@ export default defineConfig({
                                 }
                                 const isWall = (p: any) => p.type === 'NE' || p.type === 'SE';
                                 const kind = (p: any) => `${p.type}${p.flipX ? '~' : ''}`;
+                                // 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
+                                //    弧形三形只许配密编荆篱；这里**按几何认形状**（拿共享模块的三个弧形原版比件数 + 外形），
+                                //    认出来又配了别的材质 → 拒收。前端（编辑器）已拦，这一道是防手改 JSON。
+                                if (st.material && st.material !== 'FENCE') {
+                                    for (const sk of ['round', 'octagon', 'oval'] as const) {
+                                        const pre = buildStockadeShapeRingForSave(sk, 100);
+                                        if (pre.length !== ps.length) continue;
+                                        const bb = (arr: any[]) => {
+                                            const xs = arr.map((p) => p.x), ys = arr.map((p) => p.y);
+                                            return { w: Math.max(...xs) - Math.min(...xs), h: Math.max(...ys) - Math.min(...ys) };
+                                        };
+                                        const a = bb(ps), b = bb(pre);
+                                        if (Math.abs(a.w - b.w) <= 2 && Math.abs(a.h - b.h) <= 2) {
+                                            throw new Error(`样式「${st.name || st.key}」是弧形（${sk}）：弧形三形只许配密编荆篱 FENCE，不许配 ${st.material}`);
+                                        }
+                                    }
+                                }
                                 const gates = ps.filter((p) => p.type === 'GATE').length;
                                 if (gates !== 1) throw new Error(`样式「${st.name || st.key}」有 ${gates} 扇门（标准：只许一扇）`);
                                 for (let i = 0; i < ps.length; i++) {

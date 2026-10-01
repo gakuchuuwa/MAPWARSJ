@@ -303,6 +303,34 @@ export function buildStockadeShapeRing(shape: StockadeShapeKey, baseSize: number
     }
 }
 
+/**
+ * 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围**先停用**」]
+ *
+ * **弧形三种（圆城 / 八角 / 椭圆）只许配「密编荆篱」（FENCE）材质**；另外三套材质一律换成直边形制。
+ *
+ * 为什么（实测，见 AGENTS.md §三之三「素材走向实测」）：
+ *   · 四套材质里**只有密编荆篱那一套有 L 形转角件**（`FENCE_CORNER`），它是唯一能把拐角画圆的件；
+ *   · 硬木粗桩 / 原木尖桩 / 横木平切只有 `NE` / `SE` / `POST` 三个朝向的墙片，**没有一件弧形件**，
+ *     拿它们拼弧 = 斜片硬拼 → 画出来是**扇状重叠、双层木栅**（真素材试拼页 `/scratch/_wall_dir_test.html` 可复现）。
+ *
+ * 换法（一一对应，不改据点的其它一切）：**圆城 → 正方 · 八角 → 矩形围栏 · 椭圆 → 梯形隘口寨**。
+ * 游戏（`TerritorySystem`）、评估页（`_citytest.html`）、围栏编辑器三处**都调这两个函数**，不许各写各的。
+ */
+export const STOCKADE_FENCE_ONLY_SHAPES = ['round', 'octagon', 'oval'] as const;
+export const STOCKADE_SHAPE_FALLBACK: Record<string, StockadeShapeKey> = {
+    round: 'square', octagon: 'rect', oval: 'trapezoid',
+};
+/** 这个形制是不是「只许配密编荆篱」的弧形三形之一 */
+export function isFenceOnlyStockadeShape(shape: string): boolean {
+    return (STOCKADE_FENCE_ONLY_SHAPES as readonly string[]).includes(shape);
+}
+/** 按材质把形制落定：材质不是密编荆篱（FENCE）时，弧形三形自动换成对应直边形制；其余原样返回。 */
+export function resolveStockadeShapeByFence(shape: string, fenceKey: string | null | undefined): StockadeShapeKey {
+    if (!isFenceOnlyStockadeShape(shape)) return shape as StockadeShapeKey;
+    if (fenceKey === 'FENCE') return shape as StockadeShapeKey;
+    return STOCKADE_SHAPE_FALLBACK[shape] ?? 'square';
+}
+
 /** 曲线围栏的三种轮廓参数（唯一一份：游戏与评估页都从这里取，地面裁切也跟着这几个数） */
 export interface StockadeCurveShape {
     /** 轮廓点（px，闭合环；顺序即环的走向） */
@@ -495,27 +523,43 @@ export function buildStockadeCurveRing(shape: 'round' | 'octagon' | 'oval', base
 }
 
 /**
- * 🔴 **把一堆件按「环的顺序」串起来**（编辑器 / 校验器用）：按**绕质心的方位角**排一圈，
- * 再查相邻两件的间距——哪一处超过 `5.5 × 中位间距`（且不小于 2.5 格）就算**断口**，如实报出来。
- * ⚠️ 为什么不用「最近邻逐点走」：曲线形的门位一次让出 3~4 个采样，最近邻在那里就走不动了（假断口）；
- *    也不按数组顺序：现成的直边形是**先推四角、再逐边走**，数组顺序不是环序（早期把四个角垛误报成「两垛挨着」）。
+ * 🔴 **把一堆件按「环的顺序」串起来**（编辑器 / 校验器用）。
+ *
+ * 两条来源两把尺，**先看件表本身是不是环序**：
+ *   ① **件表就是环序**（编辑器画出来的、曲线形制、下面的「直角多边形」样式，都是顺着环 push 的）→ **直接用件表顺序**；
+ *   ② 件表不是环序（现成的直边形制是**先推四角、再逐边走**）→ 才退回**绕质心的方位角**排一圈。
+ * 两种都查相邻两件的间距：哪一处超过 `5.5 × 中位间距`（且不小于 2.5 格）就算**断口**，如实报出来。
+ *
+ * ⚠️ 血训（2026-10-02，做「直角多边形」据点样式时踩到）：
+ *   极角排序只对**凸且绕质心规整**的环靠得住。**凹多边形**（L 形 / 凹形 / 品字形）和**直边上的并列角**，
+ *   它会把件排乱 → 校验器当场报一堆假「城墙朝向变了没城垛 / 两个城垛挨着」（实测 U 形 14 处、品字形 21 处全是假的）。
+ *   所以**件表已经是环序时一律不许再排**。
+ * ⚠️ 为什么不用「最近邻逐点走」：曲线形的门位一次让出 3~4 个采样，最近邻在那里就走不动了（假断口）。
  */
 export function ringOrderOf(pieces: StockadeRingPiece[], baseSize: number = 100): { order: number[]; breakAt: number | null } {
     const n = pieces.length;
     if (n < 2) return { order: pieces.map((_, i) => i), breakAt: null };
+    const scan = (order: number[]) => {
+        const dists = order.map((idx, k) => {
+            const a = pieces[idx], b = pieces[order[(k + 1) % n]];
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        });
+        const sorted = [...dists].sort((a, b) => a - b);
+        const median = sorted[Math.floor(sorted.length / 2)] || 1;
+        const limit = Math.max(median * 5.5, baseSize * 0.075 * 2.5);
+        for (let k = 0; k < n; k++) if (dists[k] > limit) return { order, breakAt: order[k] as number | null };
+        return { order, breakAt: null as number | null };
+    };
+    // ① 件表本身成环（无断口）→ 就是它
+    const asIs = scan(pieces.map((_, i) => i));
+    if (asIs.breakAt === null) return asIs;
+    // ② 件表不成环 → 按方位角重排一遍，取没有断口的那一版
     const cx = pieces.reduce((s, p) => s + p.x, 0) / n;
     const cy = pieces.reduce((s, p) => s + p.y, 0) / n;
-    const order = pieces.map((_, i) => i).sort((a, b) =>
-        Math.atan2(pieces[a].y - cy, pieces[a].x - cx) - Math.atan2(pieces[b].y - cy, pieces[b].x - cx));
-    const dists = order.map((idx, k) => {
-        const a = pieces[idx], b = pieces[order[(k + 1) % n]];
-        return Math.hypot(a.x - b.x, a.y - b.y);
-    });
-    const sorted = [...dists].sort((a, b) => a - b);
-    const median = sorted[Math.floor(sorted.length / 2)] || 1;
-    const limit = Math.max(median * 5.5, baseSize * 0.075 * 2.5);
-    for (let k = 0; k < n; k++) if (dists[k] > limit) return { order, breakAt: order[k] };
-    return { order, breakAt: null };
+    const polar = scan(pieces.map((_, i) => i).sort((a, b) =>
+        Math.atan2(pieces[a].y - cy, pieces[a].x - cx) - Math.atan2(pieces[b].y - cy, pieces[b].x - cx)));
+    if (polar.breakAt === null) return polar;
+    return asIs;   // 两把尺都断 → 报件表那一版（如实报断口）
 }
 
 /**

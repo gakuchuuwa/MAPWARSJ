@@ -1567,7 +1567,18 @@ import {
   buildStockadeCurveRing,
   legacyFenceClip,
   stockadeCurveShape,
+  resolveStockadeShapeByFence,
 } from '/src/systems/cityWallShared.ts';
+
+/* 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
+ *   弧形三形（圆城 / 八角 / 椭圆）只许配**密编荆篱**（四套材质里只有它有 L 形转角件 FENCE_CORNER）；
+ *   材质不是荆篱时，形制自动换成直边形制：**圆城→正方 · 八角→矩形 · 椭圆→梯形**（落定函数在共享模块，游戏同款）。 */
+const STK_SHAPE_ORDER = ['square', 'round', 'octagon', 'rect', 'oval', 'trapezoid'];
+function stkShapeByFence(shapeIdx, fenceKey) {
+  const r = resolveStockadeShapeByFence(STK_SHAPE_ORDER[shapeIdx] || 'square', fenceKey);
+  const i = STK_SHAPE_ORDER.indexOf(r);
+  return i < 0 ? shapeIdx : i;
+}
 
 function getFortifiedAnchors(style) {
   return DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
@@ -2181,6 +2192,8 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     let clip = '';
     // 篱笆（密编荆篱）套的圆城／八角 = 主人原版，地面裁切也用原版椭圆（其余材质走新裁切）
     const stkFenceKey = ((curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style)).key;
+    // 🔴 主人令：弧形三形只许配密编荆篱；材质不是荆篱 → 换成直边形制（圆城→正方 / 八角→矩形 / 椭圆→梯形）
+    stkShape = stkShapeByFence(stkShape, stkFenceKey);
     const legacyClip = (type === 'stockade') ? legacyFenceClip(stkShape === 1 ? 'round' : 'octagon', baseSize, stkFenceKey) : null;
     if ((stkShape === 1 || stkShape === 2) && legacyClip) {
       clip = 'ellipse(' + legacyClip.clipRx.toFixed(1) + 'px ' + legacyClip.clipRy.toFixed(1) + 'px at 50% 50%)';
@@ -2372,7 +2385,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
   } else if (type === 'stockade') {
     /* 城寨围栏六选一：0 正方 / 1 圆城 / 2 八角 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
     const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
-    const stkShape = (forceShape !== null)
+    let stkShape = (forceShape !== null)
       ? forceShape
       : (curStockadeShape === 'square')
         ? 0
@@ -2387,6 +2400,8 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
                 : (curStockadeShape === 'trapezoid')
                   ? 5
                   : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6);
+    // 🔴 主人令：弧形三形只许配密编荆篱（这一处决定**砌哪一圈件**，与上面地面裁切那处必须同一结论）
+    stkShape = stkShapeByFence(stkShape, fenceSet.key);
     var resolvedStkShape = stkShape;   // 供下方镜像守卫用（随机掷到的形制也要认）
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize, fenceSet.key);

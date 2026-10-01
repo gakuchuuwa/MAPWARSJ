@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>据点样式实验台 · 直角多边形（u-v 两轴）</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0d1219; color:#e2e8f0; font:13px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; padding:14px 18px 60px; }
+  h1 { font-size:17px; color:#63b3ed; margin-bottom:4px; }
+  .lead { color:#a0aec0; font-size:12px; margin-bottom:12px; }
+  .grid { display:flex; flex-wrap:wrap; gap:14px; }
+  .card { background:#131b26; border:1px solid #243042; border-radius:8px; padding:10px 12px; width:440px; }
+  .card h3 { font-size:13px; color:#63b3ed; margin-bottom:2px; }
+  .card .meta { font-size:12px; color:#a0aec0; margin-bottom:6px; }
+  .card .ok { color:#68d391; } .card .err { color:#fc8181; }
+  .stage { position:relative; height:300px; overflow:hidden; background:radial-gradient(circle at 50% 45%, #1a2638 0%, #0c1017 100%); border-radius:6px; }
+  .stage img { position:absolute; left:0; top:0; pointer-events:none; }
+  .note { font-size:12px; color:#718096; margin-top:6px; }
+</style></head>
+<body>
+<h1>据点样式实验台 —— 只用「对角两轴」（u-v）拼直角多边形</h1>
+<div class="lead">
+  城墙素材只有两个走向能无缝拼接（NE = 走向 u、SE = 走向 v，各含镜像 → 地面上 ±u / ±v 四条边）。
+  所以围栏外形 = <b>等轴地面上的任意直角多边形</b>：长方形、L 形、凹形、凸角（马面）、瓮城、阶梯形、带中段凸台的长条关城……
+  全部是干净直边，不出现「斜片硬拼曲线」的扇状重叠。下面每一种都在真素材上画出来并跑三件套校验。
+</div>
+<div class="grid" id="grid"></div>
+
+<script type="module">
+import { STOCKADE_FENCE_SETS, validateStockadeRing } from '/src/systems/cityWallShared.ts';
+
+const REF = 100, STEP_X = REF * 0.075, STEP_Y = STEP_X * 0.58;
+const ZOOM = 3.2;
+const MAT = new URLSearchParams(location.search).get('mat') || 'HARDWOOD';
+
+/** (u,v) → 设计坐标：u = 格点 (1,-1)，v = 格点 (1,1) ⇒ i = u+v, j = v-u */
+const toXY = (u, v) => ({ x: (u + v) * STEP_X, y: (v - u) * STEP_Y });
+
+/** 走一圈直角多边形（顶点按 (u,v) 给，边必须平行 u 轴或 v 轴）→ 三件套的件表 */
+function buildFromVerts(verts) {
+  const n = verts.length;
+  const path = [];
+  for (let k = 0; k < n; k++) {                       // 逐边逐格走：每段起点 = 顶点 → 放城垛；其余是城墙
+    const [u0, v0] = verts[k], [u1, v1] = verts[(k + 1) % n];
+    const du = Math.sign(u1 - u0), dv = Math.sign(v1 - v0);
+    const steps = Math.abs(u1 - u0) + Math.abs(v1 - v0);
+    for (let s = 0; s < steps; s++) path.push([u0 + du * s, v0 + dv * s, s === 0]);
+  }
+  return path.map(([u, v, isCorner], k) => {
+    const [u2, v2] = path[(k + 1) % path.length];
+    const p0 = toXY(u, v), p1 = toXY(u2, v2);
+    const di = Math.round((p1.x - p0.x) / STEP_X), dj = Math.round((p1.y - p0.y) / STEP_Y);
+    const type = di > 0 ? (dj < 0 ? 'NE' : 'SE') : (dj > 0 ? 'SE' : 'NE');
+    return { x: p0.x, y: p0.y, type: isCorner ? 'POST' : type, flipX: !(di > 0) };
+  });
+}
+/** 城门：开在最靠下（屏幕 y 最大）那一段墙的正中（与现役形制同一条规律） */
+function putGate(pieces) {
+  const n = pieces.length;
+  const runs = [];
+  let cur = [];
+  for (let k = 0; k < n; k++) {                       // 先把「连续城墙」分段
+    if (pieces[k].type === 'POST' || pieces[k].type === 'GATE') { if (cur.length) runs.push(cur); cur = []; }
+    else cur.push(k);
+  }
+  if (cur.length) runs.push(cur);
+  if (runs.length > 1 && runs[0][0] === 0 && runs[runs.length - 1][runs[runs.length - 1].length - 1] === n - 1) {
+    runs[0] = runs.pop().concat(runs[0]);             // 首尾同段 → 合并
+  }
+  let best = null, bestY = -Infinity;
+  for (const r of runs) {
+    if (r.length < 3) continue;                       // 太短的一段放不下门（两边要各留一格墙）
+    const my = r.reduce((s, i) => s + (pieces[i].y + pieces[(i + 1) % n].y) / 2, 0) / r.length;
+    if (my > bestY) { bestY = my; best = r; }
+  }
+  if (best) { const mid = best[Math.floor(best.length / 2)]; pieces[mid].type = 'GATE'; pieces[mid].flipX = false; }
+  return pieces;
+}
+
+const LAYOUTS = [
+  { name: '① 方城（菱形底）', note: '基准：地面上 6×6 的方形', verts: [[0, 0], [6, 0], [6, 6], [0, 6]] },
+  { name: '② 长条关城（两端塔）', note: '10×3，适合关隘 / 长墙', verts: [[0, 0], [10, 0], [10, 3], [0, 3]] },
+  { name: '③ L 形寨', note: '依山傍河、地形卡角：缺一角的长方形', verts: [[0, 0], [7, 0], [7, 3], [3, 3], [3, 7], [0, 7]] },
+  { name: '④ 凹形（U 形）寨', note: '一面靠崖 / 靠河，缺口那面本来就不用墙', verts: [[0, 0], [8, 0], [8, 8], [5, 8], [5, 4], [3, 4], [3, 8], [0, 8]] },
+  { name: '⑤ 四面马面（中段外凸敌台）', note: '四条边中段各凸出 2×2 敌台 —— 正史里最常见的加筑法', verts: [[-2, 2], [-2, 6], [0, 6], [0, 8], [3, 8], [3, 10], [7, 10], [7, 8], [10, 8], [10, 6], [12, 6], [12, 2], [10, 2], [10, 0], [7, 0], [7, -2], [3, -2], [3, 0], [0, 0], [0, 2]] },
+  { name: '⑥ 瓮城（门外套小围）', note: '城门外再套一个方形小围 —— 前出的方框，可夹击', verts: [[0, 0], [3, 0], [3, -2], [7, -2], [7, 0], [10, 0], [10, 5], [0, 5]] },
+  { name: '⑦ 阶梯寨（依山逐级）', note: '一条边做成阶梯，配山坡地形', verts: [[0, 0], [9, 0], [9, 3], [7, 3], [7, 5], [5, 5], [5, 7], [5, 9], [0, 9]] },
+  { name: '⑧ 长墙带中段凸台（隘口）', note: '长条 + 中段凸出 2 格，卡隘口', verts: [[0, 0], [3, 0], [3, -2], [7, -2], [7, 0], [10, 0], [10, 2], [7, 2], [7, 4], [3, 4], [3, 2], [0, 2]] },
+  { name: '⑨ T 形（品字联堡）', note: '一横一竖：正面长墙 + 后凸营堡', verts: [[0, 0], [10, 0], [10, 4], [7, 4], [7, 8], [3, 8], [3, 4], [0, 4]] },
+];
+
+const anchors = STOCKADE_FENCE_SETS[MAT].anchors;
+const grid = document.getElementById('grid');
+let okAll = true;
+for (const L of LAYOUTS) {
+  const pieces = putGate(buildFromVerts(L.verts));
+  const errs = validateStockadeRing(pieces, REF);
+  if (errs.length) okAll = false;
+  const xs = pieces.map((p) => p.x), ys = pieces.map((p) => p.y);
+  const w = Math.max(...xs) - Math.min(...xs), h = Math.max(...ys) - Math.min(...ys);
+  const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+  const counts = pieces.reduce((m, p) => { m[p.type] = (m[p.type] || 0) + 1; return m; }, {});
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<h3>${L.name}</h3><div class="meta">${L.note}</div>
+    <div class="stage">${pieces.map((p) => {
+      const an = anchors[p.type] || anchors.POST;
+      const px = 220 + (p.x - cx) * ZOOM, py = 150 + (p.y - cy) * ZOOM;
+      const iw = REF * an.widthFactor * ZOOM;
+      const tx = p.flipX ? `calc(${px.toFixed(1)}px - ${(100 - an.pctX)}%)` : `calc(${px.toFixed(1)}px - ${an.pctX}%)`;
+      return `<img src="${an.path}" style="width:${iw.toFixed(1)}px;transform:translate(${tx}, calc(${py.toFixed(1)}px - ${an.pctY}%))${p.flipX ? ' scaleX(-1)' : ''};z-index:${Math.round(100 + p.y)}">`;
+    }).join('')}</div>
+    <div class="note">件数 <b>${pieces.length}</b>（城墙 ${(counts.NE || 0) + (counts.SE || 0)} · 城垛 ${counts.POST || 0} · 城门 ${counts.GATE || 0}）　
+      外形 <b>${w.toFixed(0)} × ${h.toFixed(0)}</b> px　地面裁切 <code>ellipse(${(w / 2 * 0.94).toFixed(0)}px ${(h / 2 * 0.94).toFixed(0)}px)</code></div>
+    <div class="${errs.length ? 'err' : 'ok'}">${errs.length ? '❌ ' + errs.length + ' 处：' + errs.slice(0, 3).join('；') : '✅ 合三件套标准'}</div>`;
+  grid.appendChild(card);
+}
+document.querySelector('.lead').insertAdjacentHTML('afterend',
+  `<div class="${okAll ? 'ok' : 'err'}" style="margin-bottom:10px;">全部样式：${okAll ? '✅ 九种全部合三件套标准' : '❌ 有不合规'}</div>`);
+await Promise.all([...document.images].map((i) => (i.complete ? 1 : new Promise((r) => { i.onload = i.onerror = r; }))));
+document.title = 'done';
+</script>
+</body></html>

@@ -186,7 +186,8 @@ export function nearestPointOnPolyline(
         const proj = { lat: a.lat + t * abLat, lng: interpolateLongitudeShortest(a.lng, b.lng, t) };
         const dist = getEuclideanDistance(point, proj);
         const along = accumulated + segLen * t;
-        if (dist < bestDist - tieEps || (dist <= bestDist + tieEps && along > bestAlong)) {
+        // 🔴 距离明显更近才更新；距离打平（例如回路重经同一据点/路口）必须保留前面的段，绝不能跳到后半程切掉整个回路
+        if (dist < bestDist - tieEps) {
             bestDist = dist;
             bestAlong = along;
             bestPoint = proj;
@@ -229,6 +230,16 @@ export function joinStartToRoadPolyline(startPos: LatLng, polyline: LatLng[], jo
         const d = getEuclideanDistance(startPos, polyline[0]);
         if (d <= joinEps) return [...polyline];
         return dedupeLatLngPath([startPos, polyline[0]]);
+    }
+
+    // 🔴 若起点已在折线开头附近（<= joinEps），军团已在出发位置，直接沿整条折线行军，
+    // 绝不能对全折线做全局检索切除前段（否则经由回环回到起点的路线如加沙→埃及回环→加沙会丢失全部埃及段）
+    const d0 = getEuclideanDistance(startPos, polyline[0]);
+    if (d0 <= joinEps) {
+        if (d0 <= 1e-6) {
+            return [...polyline];
+        }
+        return dedupeLatLngPath([startPos, ...polyline]);
     }
 
     const nearest = nearestPointOnPolyline(startPos, polyline);

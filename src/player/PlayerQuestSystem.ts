@@ -1698,7 +1698,7 @@ export class PlayerQuestSystem {
     /**
      * 本场行程里「每一段的起点」坐标（＝上一段路的终点；最后一段的终点是本场战场，不做钩子）。
      *
-     * 🔴 [2026-10-01 主人「82 次播报每路一段、不要括号」] **挂点一律从 82 路表读**：
+     * 🔴 [2026-10-02 主人令「81 次播报每路一段、不要括号」] **挂点一律从 81 路表读**：
      *   ① 旁白自带锚点（段落开头 `【据点名】`）→ 兼容旧数据的兜底，军团走到那座据点附近才念那一段。
      *   ② 没写锚点（现在是常态）→ 取 `SCRIPT_ROAD_SEGMENTS` 里本场每条路的 `to`（去掉末路到战场/终点），
      *      含战场节点（`⚔波斯门` 等从 `BATTLEFIELDS` 查坐标），一路一钩、走到哪讲到哪。
@@ -1721,7 +1721,7 @@ export class PlayerQuestSystem {
         }
         const findByName = (raw: string): { latitude: number; longitude: number; name: string } | undefined => {
             const s = String(raw);
-            // 🔴 [2026-10-01 主人「82 次播报每路一段」] 战场节点（⚔前缀）不是据点，
+            // 🔴 [2026-10-02 主人「81 次播报每路一段」] 战场节点（⚔前缀）不是据点，
             //    从 BATTLEFIELDS 查坐标（波斯门／乌克西亚隘口／科塞亚…），让战场路也能做挂点。
             const bfMatch = s.match(/^⚔(.+)$/);
             if (bfMatch) {
@@ -1748,7 +1748,7 @@ export class PlayerQuestSystem {
                 if (out.length === anchors.length) return out;   // 锚点全认出来才用；缺一个就退回段起点口径
             }
         }
-        // ② 段表口径：从 82 路表（SCRIPT_ROAD_SEGMENTS）读中间挂点（去掉末路到战场/终点），含战场节点
+        // ② 段表口径：从 81 路表（SCRIPT_ROAD_SEGMENTS）读中间挂点（去掉末路到战场/终点），含战场节点
         const n = HISTORICAL_EVENT_SCRIPT.indexOf(this.findScriptEvent(ev) as never);
         if (n < 0) return [];
         const seg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === n + 1);
