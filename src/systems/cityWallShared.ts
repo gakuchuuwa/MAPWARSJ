@@ -424,8 +424,72 @@ export function corralPiecesFromLoop(loop: CorralXY[], step: number, gateFrac: n
     return pieces;
 }
 
+/** 🔴 [2026-10-02 主人令「AI 把我以前篱笆做的圆城、八角改坏了，只改篱笆的」] **篱笆（密编荆篱 FENCE）这一套的圆城与八角，恢复主人 2026-09-08 手工做的原版**：
+ *  圆城＝34 等分椭圆（Rx=7.0 格）、每 4 件一垛；八角＝四条直边 + 四个 3 垛过渡角（约 7.1 格）。几何逐行照原版，不套「三件套标准」。
+ *  其余三套材质（硬木／原木／横木）仍走下面重设计过的拼法。 */
+export function legacyFenceRoundWall(baseSize: number): StockadeRingPiece[] {
+    const sx = baseSize * 0.075, sy = sx * 0.58;
+    const Rx = 7.0 * sx, Ry = Rx * 0.58;
+    const pieces: StockadeRingPiece[] = [];
+    const N = 34;
+    for (let i = 0; i < N; i++) {
+        const angle = -90 + i * (360.0 / N);
+        const rad = angle * Math.PI / 180;
+        const x = Rx * Math.cos(rad);
+        const y = Ry * Math.sin(rad);
+        if (angle >= 50 && angle <= 75) {
+            if (Math.abs(angle - 62.5) < 7) pieces.push({ x, y, type: 'GATE' });
+            continue;
+        }
+        if (i % 4 === 0) pieces.push({ x, y, type: 'POST' });
+        else if (angle > -90 && angle < 0) pieces.push({ x, y, type: 'SE' });
+        else if (angle >= 0 && angle < 90) pieces.push({ x, y, type: 'SE', flipX: true });
+        else if (angle >= 90 && angle < 180) pieces.push({ x, y, type: 'NE', flipX: true });
+        else pieces.push({ x, y, type: 'NE' });
+    }
+    return pieces;
+}
+
+export function legacyFenceOctagonWall(baseSize: number): StockadeRingPiece[] {
+    const sx = baseSize * 0.075, sy = sx * 0.58;
+    const pieces: StockadeRingPiece[] = [];
+    const N_seg = 5;
+    for (let k = 0; k < N_seg; k++) { const t = k / (N_seg - 1); pieces.push({ x: (2.6 + t * 3.8) * sx, y: (-6.4 + t * 3.8) * sy, type: 'SE' }); }
+    pieces.push({ x: 6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    pieces.push({ x: 7.1 * sx, y: 0, type: 'POST' });
+    pieces.push({ x: 6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    for (let k = 0; k < N_seg; k++) {
+        const t = k / (N_seg - 1);
+        const x = (6.4 - t * 3.8) * sx, y = (2.6 + t * 3.8) * sy;
+        if (k === 2) pieces.push({ x, y, type: 'GATE' });
+        else pieces.push({ x, y, type: 'SE', flipX: true });
+    }
+    pieces.push({ x: 1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    pieces.push({ x: 0, y: 7.1 * sy, type: 'POST' });
+    pieces.push({ x: -1.2 * sx, y: 6.8 * sy, type: 'POST' });
+    for (let k = 0; k < N_seg; k++) { const t = k / (N_seg - 1); pieces.push({ x: (-2.6 - t * 3.8) * sx, y: (6.4 - t * 3.8) * sy, type: 'NE', flipX: true }); }
+    pieces.push({ x: -6.8 * sx, y: 1.2 * sy, type: 'POST' });
+    pieces.push({ x: -7.1 * sx, y: 0, type: 'POST' });
+    pieces.push({ x: -6.8 * sx, y: -1.2 * sy, type: 'POST' });
+    for (let k = 0; k < N_seg; k++) { const t = k / (N_seg - 1); pieces.push({ x: (-6.4 + t * 3.8) * sx, y: (-2.6 - t * 3.8) * sy, type: 'NE' }); }
+    pieces.push({ x: -1.2 * sx, y: -6.8 * sy, type: 'POST' });
+    pieces.push({ x: 0, y: -7.1 * sy, type: 'POST' });
+    pieces.push({ x: 1.2 * sx, y: -6.8 * sy, type: 'POST' });
+    return pieces;
+}
+
+/** 篱笆套圆城／八角的地面裁切椭圆（原版：圆城 6.6 格、八角 6.7 格，贴原版围栏内侧）。非篱笆套返回 null，走各自的新裁切。 */
+export function legacyFenceClip(shape: 'round' | 'octagon' | 'oval', baseSize: number, material: string | null | undefined): { clipRx: number; clipRy: number } | null {
+    if (material !== 'FENCE' || (shape !== 'round' && shape !== 'octagon')) return null;
+    const sx = baseSize * 0.075, sy = sx * 0.58;
+    const r = shape === 'round' ? 6.6 : 6.7;
+    return { clipRx: r * sx, clipRy: r * sy };
+}
+
 /** 曲线围栏（圆城／八角／椭圆）成品：轮廓 + 拼法一步到位。游戏与评估页都调这一个。 */
-export function buildStockadeCurveRing(shape: 'round' | 'octagon' | 'oval', baseSize: number): StockadeRingPiece[] {
+export function buildStockadeCurveRing(shape: 'round' | 'octagon' | 'oval', baseSize: number, material?: string | null): StockadeRingPiece[] {
+    if (material === 'FENCE' && shape === 'round') return legacyFenceRoundWall(baseSize);      // 篱笆套 = 主人原版
+    if (material === 'FENCE' && shape === 'octagon') return legacyFenceOctagonWall(baseSize);
     const cfg = stockadeCurveShape(shape, baseSize);
     return corralPiecesFromLoop(cfg.loop, cfg.step, cfg.gateFrac);
 }
@@ -850,8 +914,169 @@ export const DE_FORTIFIED_ANCHORS_BY_STYLE: Record<string, Record<string, { pctX
  *     （波斯波利斯/苏萨的砖石台地与城墙），木栅栏同样不对。 */
 import { REGION_TO_DE_STYLE } from './cityDeStyle';
 export function shouldUseStoneWall(region: string | undefined | null): boolean {
-    if (region === 'CENTRAL' || region === 'NORTH' || region === 'JIANGNAN' || region === 'GREEK') return true;
     if (!region) return false;
+    // 🔴 [主人定 2026-10-02] 小城城墙按「城防材质历史传统」判：
+    //   非木构（石 / 砖 / 夯土 / 土坯 / 巨石）→ 石墙；真木构（木栅 / 木墙 / 竹木）→ 木栅栏。
+    // ① 明确石墙（木栅母体内的例外）：西域绿洲城邦 = 土坯/夯土城（交河、高昌、于阗、龟兹），非游牧木栅
+    if (region === 'WESTERN') return true;
+    // ② 明确木栅（石墙母体内的例外）：日本（中世馆 = 土垒+木栅）、蒙古/草原（毡帐木栅）、
+    //    马来（满剌加木石水寨）、南美非安第斯核心（图皮/穆伊斯卡/马普切 = 木/土）
+    if (region === 'JAPAN' || region === 'MONGOL' || region === 'MONGOLS' || region === 'MALAY') return false;
+    if (region === 'TUPI' || region === 'MUISCA' || region === 'MAPUCHE') return false;
+    if (region.includes('STEPPE') || region.includes('MOBEI_MONGOL')) return false;
     const style = (REGION_TO_DE_STYLE as Record<string, string>)[region];
-    return style === 'ORIE' || style === 'PERSIAN';
+    // ③ 木栅母体：中亚游牧(CEAS) / 西欧日耳曼(WEST) / 东北欧斯拉夫(SLAV) / 色雷斯(THRACIAN) / 草原毡帐(YURT)
+    if (style === 'CEAS' || style === 'WEST' || style === 'SLAV' || style === 'THRACIAN' || style === 'YURT') return false;
+    // ④ 其余母体（东亚中国系 ASIA / 印度 INDI / 普鲁 PURU / 中东 ORIE / 地中海 MEDI / 波斯 PERSIAN /
+    //    希腊 GREEK / 中美 MESO / 安第斯 ANDE / 东南欧 EAST / 非洲 AFRI / 东南亚 SEAS）→ 石墙
+    return true;
 }
+
+export interface TacticalWallSetup {
+    wallMat: 'FORTIFIED' | 'STONE' | 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE' | 'NONE';
+    wBase: string;
+    gBase: string;
+    wallPost: string;
+}
+
+/**
+ * 战术攻城战斗围墙材质与部件基名解析（100% 对齐战略地图据点围墙）：
+ * 保证战略地图上用哪种围墙，战术模式攻城战中就用哪种围墙。
+ */
+export function resolveTacticalWallSetup(
+    cityType: string | undefined | null,
+    buildingStyle: string,
+    regionCulture: string | undefined | null,
+    cityId: string | undefined | null,
+): TacticalWallSetup {
+    const isYurt = buildingStyle === 'YURT';
+    const isStockade = cityType === 'stockade';
+
+    if (isYurt) {
+        if (cityType === 'pass') {
+            return { wallMat: 'NONE', wBase: '', gBase: '', wallPost: '' };
+        }
+        if (isStockade) {
+            return {
+                wallMat: 'ARCHAIC',
+                wBase: 'ARCHAIC_WALL_PALISADE',
+                gBase: 'ARCHAIC_GATE_PALISADE',
+                wallPost: 'DARK_WALL_PALISADE_POST',
+            };
+        }
+        // 草原营地大/中/小城两套栅栏（DARK 或 ARCHAIC，按 cityId 确定性哈希，两端绝对同步）
+        const palisadeVariant = (deHashString((cityId || 'yurt') + '|palisade_variant') & 1) === 0 ? 'DARK' : 'ARCHAIC';
+        if (palisadeVariant === 'DARK') {
+            return {
+                wallMat: 'DARK',
+                wBase: 'DARK_WALL_PALISADE',
+                gBase: 'DARK_GATE_PALISADE',
+                wallPost: 'DARK_WALL_PALISADE_POST',
+            };
+        } else {
+            return {
+                wallMat: 'ARCHAIC',
+                wBase: 'ARCHAIC_WALL_PALISADE',
+                gBase: 'ARCHAIC_GATE_PALISADE',
+                wallPost: 'DARK_WALL_PALISADE_POST',
+            };
+        }
+    }
+
+    if (isStockade) {
+        const fenceKey = STYLE_TO_STOCKADE_FENCE[buildingStyle] || 'HARDWOOD';
+        switch (fenceKey) {
+            case 'FENCE':
+                return {
+                    wallMat: 'FENCE',
+                    wBase: 'FENCE_WALL',
+                    gBase: 'FENCE_GATE',
+                    wallPost: 'FENCE_WALL_POST',
+                };
+            case 'HARDWOOD':
+                return {
+                    wallMat: 'HARDWOOD',
+                    wBase: 'HARDWOOD_WALL_PALISADE',
+                    gBase: 'DARK_GATE_PALISADE',
+                    wallPost: 'HARDWOOD_WALL_PALISADE_POST',
+                };
+            case 'DARK':
+                return {
+                    wallMat: 'DARK',
+                    wBase: 'DARK_WALL_PALISADE',
+                    gBase: 'DARK_GATE_PALISADE',
+                    wallPost: 'DARK_WALL_PALISADE_POST',
+                };
+            case 'ARCHAIC':
+                return {
+                    wallMat: 'ARCHAIC',
+                    wBase: 'ARCHAIC_WALL_PALISADE',
+                    gBase: 'ARCHAIC_GATE_PALISADE',
+                    wallPost: 'DARK_WALL_PALISADE_POST',
+                };
+        }
+    }
+
+    if (cityType === 'small_city') {
+        if (shouldUseStoneWall(regionCulture)) {
+            return {
+                wallMat: 'STONE',
+                wBase: `${buildingStyle}_WALL_STONE`,
+                gBase: `${buildingStyle}_GATE_STONE`,
+                wallPost: `${buildingStyle}_WALL_POST`,
+            };
+        }
+        // 普通小城：硬木粗桩栅栏
+        return {
+            wallMat: 'HARDWOOD',
+            wBase: 'HARDWOOD_WALL_PALISADE',
+            gBase: 'DARK_GATE_PALISADE',
+            wallPost: 'HARDWOOD_WALL_PALISADE_POST',
+        };
+    }
+
+    if (cityType === 'medium_city') {
+        const isFortified = !!cityId && ((deHashString(cityId + '|medium_wall_style') % 3) === 2);
+        if (isFortified) {
+            return {
+                wallMat: 'FORTIFIED',
+                wBase: `${buildingStyle}_WALL_FORTIFIED`,
+                gBase: `${buildingStyle}_GATE_FORTIFIED`,
+                wallPost: `${buildingStyle}_WALL_FORTIFIED_POST`,
+            };
+        }
+        return {
+            wallMat: 'STONE',
+            wBase: `${buildingStyle}_WALL_STONE`,
+            gBase: `${buildingStyle}_GATE_STONE`,
+            wallPost: `${buildingStyle}_WALL_POST`,
+        };
+    }
+
+    if (cityType === 'big_city') {
+        return {
+            wallMat: 'FORTIFIED',
+            wBase: `${buildingStyle}_WALL_FORTIFIED`,
+            gBase: `${buildingStyle}_GATE_FORTIFIED`,
+            wallPost: `${buildingStyle}_WALL_FORTIFIED_POST`,
+        };
+    }
+
+    if (cityType === 'pass') {
+        return {
+            wallMat: 'STONE',
+            wBase: `${buildingStyle}_WALL_STONE`,
+            gBase: `${buildingStyle}_GATE_STONE`,
+            wallPost: `${buildingStyle}_WALL_POST`,
+        };
+    }
+
+    // 默认兜底
+    return {
+        wallMat: 'FORTIFIED',
+        wBase: `${buildingStyle}_WALL_FORTIFIED`,
+        gBase: `${buildingStyle}_GATE_FORTIFIED`,
+        wallPost: `${buildingStyle}_WALL_FORTIFIED_POST`,
+    };
+}
+

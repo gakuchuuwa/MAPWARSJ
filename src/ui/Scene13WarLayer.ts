@@ -46,7 +46,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
-import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString } from '../systems/cityWallShared';
+import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
@@ -5182,12 +5182,21 @@ export class Scene13WarLayer {
                     extraSprites.push(extra);
                 }
                 // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
-                const rubbleAsset = asset.includes('FENCE') ? 'FENCE_WALL_POST' : `${asset}_RUBBLE`;
-                if (!asset.includes('FENCE')) {
-                    this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
+                // 🔴 [2026-10-01 战术模式同步战略据点围墙] FENCE 与 ARCHAIC_GATE 安全兜底：
+                //    FENCE 篱笆无残骸（破门直接消失）；ARCHAIC_GATE 借用同门 DARK_GATE_PALISADE 的倒塌/残骸动画
+                const isFenceGate = asset.includes('FENCE');
+                const isArchaicGate = asset.includes('ARCHAIC_GATE');
+                const baseDestrName = isArchaicGate
+                    ? `DARK_GATE_PALISADE_${dir}`
+                    : asset;
+                const rubbleAsset = isFenceGate
+                    ? null
+                    : `${baseDestrName}_RUBBLE`;
+                if (!isFenceGate && rubbleAsset) {
+                    this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
                     this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
                 }
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset: rubbleAsset || undefined });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -5208,54 +5217,15 @@ export class Scene13WarLayer {
             const topWallY = midY - 8.5 * pitch;
             const botWallY = midY + 8.5 * pitch;
 
-            // 🔴 [2026-08-22 主人定] 城墙材质按城等级：小城硬木栅栏 / 中城+险要石墙 / 大城垛墙。
-            //    （2026-08-27 主人改「险要城墙与战略一致，用石墙」）
-            //    蒙古（STEPPE）游牧不筑石墙，四类城统一硬木栅栏（2026-08-22 主人定）。
-            //    占位一致（碰撞 0.5×0.5），仅换贴图。
-            // 🔴 [2026-08-22 修「下排栅栏没对齐」] PALISADE 素材源从 HARDWOOD_WALL_PALISADE
-            //   （DE 场景道具 b_scen_wall_palisade_fortified，参差尖桩丛，无平切口 → 等距平铺错落叠压）
-            //   换成 ARCHAIC_WALL_PALISADE（DE 可玩建筑 b_archaic_wall_palisade，两端平切口 →
-            //   像石墙一样 48/24 首尾咬合，斜墙段连成连续平直栅栏带）。
-            // 城寨用 DE 细编篱笆（s_archaic_fence），小城与游牧为 PALISADE 木栅（2026-09-03 主人改：用DE里的篱笆）
-            // 主人 2026-09-03：中原/北方/江南小城用中城同款石墙（STONE），其余小城与游牧仍用木栅
-            // 🔴 [2026-09-12 主人「你只改战略，不改战术呀，全面检查，其他的战术也要同步」]
-            //    这里原先**又硬编码了一份小城名单**（只有 CENTRAL/NORTH/JIANGNAN），与战略层
-            //    `cityWallShared.shouldUseStoneWall()` **两处各判一次** → 三处不同步：
-            //      ① 希腊（2026-09-11 战略层已加石墙）在战术层仍是木栅 ✗
-            //      ② 中东近东 ORIE（2026-09-12 战略层加石墙）战术层仍是木栅 ✗ ← 主人截图看到的
-            //      ③ 波斯 PERSIAN（同日）同上 ✗
-            //    现在改为**调用同一个共享判据**，战略/战术从此只有一处真相。
-            /* 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 毡帐据点（YURT）的围墙单独判，
-             * 逐条对齐 TerritorySystem 的战略地图画法：
-             *   大/中/小城 → buildYurtCampHtml(fence=true) = PALISADE 栅栏
-             *   城寨       → 保持 FENCE 细编篱笆（战略侧城寨本来就是篱笆）
-             *   险要       → buildYurtCampHtml(fence=false) = **无围墙**（下方 placeWall/placeGate 守卫拦掉）
-             *
-             * 改前判据是 `sideCulture[1] === 'STEPPE'`，只认草原文化区；而漠北蒙古的文化区是
-             * MOBEI_MONGOL，匹配不上 → 大城落到 'FORTIFIED'、中城与险要落到 'STONE'，
-             * 拼出 `YURT_WALL_FORTIFIED` / `YURT_WALL_STONE` —— public/SUCAI_BUILDING 下
-             * YURT_* 只有 A~L 十二个蒙古包，**根本没有墙/门/塔素材**，等于一堵看不见却挡路的墙。
-             * 现在改用 buildingStyleFor(1)（= 战略地图那套 resolveCityDeBuildingStyle 的结果），
-             * STEPPE 与 MOBEI_MONGOL 都映射成 YURT，一次覆盖。 */
+            // 🔴 [2026-10-01 主人定「战略地图上用的哪种围墙，战术模式中就要用哪个围墙」]
+            //    调用共享解析函数 resolveTacticalWallSetup，战略与战术 100% 同源对齐
             const isYurtDefender = style === 'YURT';
-            const isStockade = this.defenderCityType === 'stockade';
-            const stockadeFenceKey = isStockade ? (STYLE_TO_STOCKADE_FENCE[style] || 'HARDWOOD') : null;
-            const isFortifiedMedium = (this.defenderCityType === 'medium_city')
-                && !!this.defenderCityId
-                && ((deHashString(this.defenderCityId + '|medium_wall_style') % 3) === 2);
-            const wallMat = isYurtDefender
-                ? (isStockade ? (stockadeFenceKey === 'FENCE' ? 'FENCE' : 'PALISADE')
-                    : this.defenderCityType === 'pass' ? 'NONE' : 'PALISADE')
-                : (this.defenderCityType === 'small_city' && shouldUseStoneWall(this.sideCulture[1])) ? 'STONE'
-                : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
-                : isStockade ? (stockadeFenceKey === 'FENCE' ? 'FENCE' : 'PALISADE')
-                : isFortifiedMedium ? 'FORTIFIED'
-                : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
-            const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
-            const gBase = wallMat === 'FENCE' ? 'FENCE_GATE' : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
-            // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅/篱笆带材质后缀
-            const wallPost = wallMat === 'FENCE' ? 'FENCE_WALL_POST' : (wallMat === 'STONE' ? `${style}_WALL_POST`
-                : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`));
+            const { wallMat, wBase, gBase, wallPost } = resolveTacticalWallSetup(
+                this.defenderCityType,
+                style,
+                this.sideCulture[1],
+                this.defenderCityId,
+            );
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
@@ -6904,6 +6874,9 @@ export class Scene13WarLayer {
                 // 城门：无破损档（破则塌），残骸占 60%
                 this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
                 b.hp = 0;
+            } else {
+                b.sprite.destroyed = true;   // 篱笆门等无残骸门直接消失
+                b.hp = 0;
             }
         }
         for (const t of this.arrowTowers) {
@@ -7957,8 +7930,12 @@ export class Scene13WarLayer {
                             foe.sprite.obstructionDisabled = true;
                         }
                         // 城门提前被打爆（hp <= 0）→ 倒塌播动画切残骸并解除阻挡
-                        if (foe.key === 'STONE_GATE' && foe.hp <= 0 && !foe.sprite.collapse && foe.rubbleAsset) {
-                            this.collapseToRubble(foe.sprite, foe.rubbleAsset.slice(0, -'_RUBBLE'.length));
+                        if (foe.key === 'STONE_GATE' && foe.hp <= 0 && !foe.sprite.collapse && !foe.sprite.destroyed) {
+                            if (foe.rubbleAsset) {
+                                this.collapseToRubble(foe.sprite, foe.rubbleAsset.slice(0, -'_RUBBLE'.length));
+                            } else {
+                                foe.sprite.destroyed = true;
+                            }
                             foe.sprite.obstruction = undefined;
                             foe.sprite.obstructionDisabled = true;
                             if (foe.extraSprites) {
