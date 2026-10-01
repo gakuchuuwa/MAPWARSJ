@@ -431,36 +431,26 @@ export function buildStockadeCurveRing(shape: 'round' | 'octagon' | 'oval', base
 }
 
 /**
- * 🔴 **把一堆件按「环的顺序」串起来**（编辑器 / 校验器用）：从最左的件起，每次跳到最近的未用件；
- * 走不动了（最近件超过 `2.8 格`）或末件接不回首件 → 如实报「断口」，不假装成环。
- * ⚠️ 为什么不能直接用数组顺序：现成的直边形（正方/矩形/梯形）是**先推四角、再逐边走**，
- *    数组顺序并不是环序；早期校验器按数组比，把四个角垛误报成「两个城垛挨着」。
+ * 🔴 **把一堆件按「环的顺序」串起来**（编辑器 / 校验器用）：按**绕质心的方位角**排一圈，
+ * 再查相邻两件的间距——哪一处超过 `5.5 × 中位间距`（且不小于 2.5 格）就算**断口**，如实报出来。
+ * ⚠️ 为什么不用「最近邻逐点走」：曲线形的门位一次让出 3~4 个采样，最近邻在那里就走不动了（假断口）；
+ *    也不按数组顺序：现成的直边形是**先推四角、再逐边走**，数组顺序不是环序（早期把四个角垛误报成「两垛挨着」）。
  */
 export function ringOrderOf(pieces: StockadeRingPiece[], baseSize: number = 100): { order: number[]; breakAt: number | null } {
     const n = pieces.length;
-    const maxLink = baseSize * 0.075 * 2.8;
     if (n < 2) return { order: pieces.map((_, i) => i), breakAt: null };
-    let start = 0;
-    for (let i = 1; i < n; i++) {
-        if (pieces[i].x < pieces[start].x - 1e-6 || (Math.abs(pieces[i].x - pieces[start].x) < 1e-6 && pieces[i].y < pieces[start].y)) start = i;
-    }
-    const used = new Array(n).fill(false);
-    const order = [start];
-    used[start] = true;
-    for (let k = 1; k < n; k++) {
-        const cur = pieces[order[order.length - 1]];
-        let best = -1, bd = Infinity;
-        for (let i = 0; i < n; i++) {
-            if (used[i]) continue;
-            const d = Math.hypot(pieces[i].x - cur.x, pieces[i].y - cur.y);
-            if (d < bd) { bd = d; best = i; }
-        }
-        if (best < 0 || bd > maxLink) return { order, breakAt: order[order.length - 1] };
-        order.push(best);
-        used[best] = true;
-    }
-    const a = pieces[order[n - 1]], b = pieces[order[0]];
-    if (Math.hypot(a.x - b.x, a.y - b.y) > maxLink) return { order, breakAt: order[n - 1] };
+    const cx = pieces.reduce((s, p) => s + p.x, 0) / n;
+    const cy = pieces.reduce((s, p) => s + p.y, 0) / n;
+    const order = pieces.map((_, i) => i).sort((a, b) =>
+        Math.atan2(pieces[a].y - cy, pieces[a].x - cx) - Math.atan2(pieces[b].y - cy, pieces[b].x - cx));
+    const dists = order.map((idx, k) => {
+        const a = pieces[idx], b = pieces[order[(k + 1) % n]];
+        return Math.hypot(a.x - b.x, a.y - b.y);
+    });
+    const sorted = [...dists].sort((a, b) => a - b);
+    const median = sorted[Math.floor(sorted.length / 2)] || 1;
+    const limit = Math.max(median * 5.5, baseSize * 0.075 * 2.5);
+    for (let k = 0; k < n; k++) if (dists[k] > limit) return { order, breakAt: order[k] };
     return { order, breakAt: null };
 }
 
@@ -529,27 +519,30 @@ export function autoInsertStockadePosts(pieces: StockadeRingPiece[]): StockadeRi
 }
 
 /** 🔴 [2026-10-01 主人定案] 16 大建筑风格与 4 套城寨栅栏材质历史军事分配表（4 × 4）
- *  - HARDWOOD（硬木粗桩）：东亚 (ASIA) / 印度 (INDI) / 波斯 (PERSIAN) / 中东 (ORIE)
- *  - DARK（原木尖桩）：东北欧 (SLAV) / 西欧 (WEST) / 普鲁 (PURU) / 色雷斯 (THRACIAN)
- *  - ARCHAIC（横木平切）：地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS)
+ *  - HARDWOOD（硬木粗桩）：东亚 (ASIA) / 印度 (INDI) / **普鲁 (PURU)** / 波斯 (PERSIAN) / 中东 (ORIE)
+ *  - DARK（原木尖桩）：东北欧 (SLAV) / 西欧 (WEST) / 色雷斯 (THRACIAN)
+ *  - ARCHAIC（横木平切）：地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS) / **草原营地 (YURT)**
+ *  🔴 [2026-10-01 主人定「普鲁改成硬木粗桩，草原营地并入横木平切」]：PURU = 普鲁·南亚古典（旁遮普、阿托克一带，波鲁斯一脉），
+ *     不是东北欧的普鲁士；南亚早期城栅史载用硬木立栅（华氏城木栅），与印度同类。YURT 属草原，随中亚用横木平切。
  *  - FENCE（密编荆篱）：中美 (MESO) / 安第斯 (ANDE) / 非洲 (AFRI) / 东南亚 (SEAS)
  */
 export const STYLE_TO_STOCKADE_FENCE: Record<string, StockadeFenceKey> = {
     // ① 硬木粗桩（HARDWOOD）
     ASIA: 'HARDWOOD',
     INDI: 'HARDWOOD',
+    PURU: 'HARDWOOD',   // 普鲁·南亚古典（原误归原木尖桩）
     PERSIAN: 'HARDWOOD',
     ORIE: 'HARDWOOD',
     // ② 原木尖桩（DARK）
     SLAV: 'DARK',
     WEST: 'DARK',
-    PURU: 'DARK',
     THRACIAN: 'DARK',
     // ③ 横木平切（ARCHAIC）
     MEDI: 'ARCHAIC',
     GREEK: 'ARCHAIC',
     EAST: 'ARCHAIC',
     CEAS: 'ARCHAIC',
+    YURT: 'ARCHAIC',    // 草原营地（蒙古包）并入横木平切
     // ④ 密编荆篱（FENCE）
     MESO: 'FENCE',
     ANDE: 'FENCE',

@@ -183,7 +183,11 @@ const center = () => ({ cx: stage.clientWidth / 2, cy: stage.clientHeight / 2 })
 const toScreen = (i, j) => { const { cx, cy } = center(); const k = STEP_X * S.zoom; return { x: cx + i * k, y: cy + j * k * 0.58 }; };
 const toLattice = (px, py) => { const { cx, cy } = center(); const k = STEP_X * S.zoom; return { i: Math.round((px - cx) / k), j: Math.round((py - cy) / (k * 0.58)) }; };
 const stepOf = (a, b) => {
-  const di = Math.round((b.x - a.x) / STEP_X), dj = Math.round((b.y - a.y) / STEP_Y);
+  const fi = (b.x - a.x) / STEP_X, fj = (b.y - a.y) / STEP_Y;
+  // ⚠️ 必须**严格一格**（容差 0.15）：曲线形制的件距是 1.5 格，四舍五入会把它当成 1 格
+  //    重算朝向 → 把合规的曲线环改坏（实测：八角被「归一」后凭空多出 6 处朝向不接）。
+  if (Math.abs(fi - Math.round(fi)) > 0.15 || Math.abs(fj - Math.round(fj)) > 0.15) return null;
+  const di = Math.round(fi), dj = Math.round(fj);
   if (Math.abs(di) === 1 && Math.abs(dj) === 1) return { di, dj };
   return null;
 };
