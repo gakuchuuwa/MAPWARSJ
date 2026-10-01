@@ -1699,9 +1699,9 @@ function renderYurtCampHtml(baseSize, style, type) {
   // 🔴 [2026-09-16 主人「漠北蒙古的大中小城大小一样吗？」] 原来 5 张卡共用同一个 baseStage，
   //    而毡帐营地的构成与 type 无关 → 大/中/小城画出来一模一样 ✗。
   //    游戏侧 `src/systems/TerritorySystem.ts:1924-1940` 是按城型给尺寸的：
-  //      big_city 140 / medium_city 120 / small_city 100 / stockade 80 / pass 100
-  //    这里按**同一比例**缩放（以大城为 1.0，其余 120/140、100/140、80/140），保证不超出卡片。
-  const CAMP_SCALE = { big: 1.0, medium: 120 / 140, small: 100 / 140, pass: 100 / 140, stockade: 80 / 140 };
+  //      big_city 140 / medium_city 120 / small_city 100 / stockade 100 / pass 100
+  //    这里按**同一比例**缩放（以大城为 1.0，其余 120/140、100/140、100/140），保证不超出卡片。
+  const CAMP_SCALE = { big: 1.0, medium: 120 / 140, small: 100 / 140, pass: 100 / 140, stockade: 100 / 140 };
   baseSize = baseSize * (CAMP_SCALE[type] || 1.0);
   const rnd = mulberry32(hashString(style + '_' + type + '_yurt_' + randomSeedOffset));
   const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
