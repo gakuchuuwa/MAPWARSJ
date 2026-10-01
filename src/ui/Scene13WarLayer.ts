@@ -46,9 +46,7 @@ import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
-// 🔴 [2026-09-12 主人「你只改战略，不改战术呀…其他的战术也要同步」] 战术攻城的城墙材质
-//    与战略地图**共用同一个判据**（cityWallShared.shouldUseStoneWall），不再各判一次。
-import { shouldUseStoneWall, pickStockadeFenceSet } from '../systems/cityWallShared';
+import { shouldUseStoneWall } from '../systems/cityWallShared';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import DechromaWorker from '../workers/DechromaWorker?worker';
@@ -5247,16 +5245,10 @@ export class Scene13WarLayer {
                 : (this.sideCulture[1] === 'STEPPE' || this.defenderCityType === 'small_city') ? 'PALISADE'
                 : this.defenderCityType === 'stockade' ? 'FENCE'
                 : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass') ? 'STONE' : 'FORTIFIED';
-            /* 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」]
-             *   城寨的栅栏材质由**据点 id** 落定，与战略地图**同一张表、同一个种子**
-             *   （`cityWallShared.pickStockadeFenceSet` + `|stockade_fence_set`）——
-             *   两处各判一次必然破功（本仓血训：小城石墙名单三处各判一次 → 三处不同步）。
-             *   攻进城时看到的栅栏，就是战略地图上那一圈栅栏。 */
-            const stkFence = pickStockadeFenceSet(this.defenderCityId ?? '');
-            const wBase = wallMat === 'FENCE' ? stkFence.wallBase : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
-            const gBase = wallMat === 'FENCE' ? stkFence.gateBase : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
+            const wBase = wallMat === 'FENCE' ? 'FENCE_WALL' : (wallMat === 'PALISADE' ? 'ARCHAIC_WALL_PALISADE' : `${style}_WALL_${wallMat}`);
+            const gBase = wallMat === 'FENCE' ? 'FENCE_GATE' : (wallMat === 'PALISADE' ? 'DARK_GATE_PALISADE' : `${style}_GATE_${wallMat}`);
             // 石墙城垛立柱已提取为 _WALL_POST（无 STONE 后缀），垛墙/木栅/篱笆带材质后缀
-            const wallPost = wallMat === 'FENCE' ? stkFence.postBase : (wallMat === 'STONE' ? `${style}_WALL_POST`
+            const wallPost = wallMat === 'FENCE' ? 'FENCE_WALL_POST' : (wallMat === 'STONE' ? `${style}_WALL_POST`
                 : (wallMat === 'PALISADE' ? 'DARK_WALL_PALISADE_POST' : `${wBase}_POST`));
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)

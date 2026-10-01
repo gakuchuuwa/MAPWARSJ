@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from './cityDeStyle';
-import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString, pickStockadeFenceSet, normalizeStockadeCorner } from './cityWallShared';
+import { DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS, DE_FENCE_ANCHORS, DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, shouldUseStoneWall, deHashString } from './cityWallShared';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
 import { perfDoctor } from '../debug/PerfDoctor';
 import { GameMap } from '../map/GameMap';
@@ -686,21 +686,12 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     // 严密咬合的篱笆围墙与篱笆门：[2026-09-08 主人定] 样式随机；🔴 [2026-09-16 主人定] 补第 4 种「矩形围栏」；🔴 [2026-10-01 主人定] 补第 5 种「小城栅栏」：
-    // 0: 原有正方形 (四角L形转角件 FENCE_CORNER)
-    // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈)
-    // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场)
-    // 3: 方案C (矩形围栏，走险要同款矩形拓扑；🔴 2026-09-28 补进游戏)
-    // 4: 方案D (小城栅栏，正方拓扑但四角摆木垛、不转 L 形转角件)
+    // 0: 原有正方形 (四角L形转角件 FENCE_CORNER，细编篱笆 DE_FENCE_ANCHORS)
+    // 1: 方案A (圆形羊圈围栏，平滑椭圆弧，像真羊圈，细编篱笆 DE_FENCE_ANCHORS)
+    // 2: 方案B (圆润八角羊圈围栏，切去尖角八面围场，细编篱笆 DE_FENCE_ANCHORS)
+    // 3: 方案C (矩形围栏，走险要同款矩形拓扑，两排6建筑，细编篱笆 DE_FENCE_ANCHORS)
+    // 4: 方案D (小城栅栏，用小城同款硬木木栅栏套 DE_PALISADE_ANCHORS)
     const stockadeStyle = deHashString(cityId + '|stockade_wall_shape') % 5;
-    /* 🔴 [2026-10-02 主人令「请把 4 种全部用上，可以增加城寨的多样性」]
-     *   形制（几何）与**栅栏材质**是两个独立的轴，都按据点 id 落定：
-     *     · 形制 5 种（主人 2026-10-01 定，一个字不动）；
-     *     · 材质 4 套（`cityWallShared.STOCKADE_FENCE_SETS`）：细编篱笆 / 硬木尖桩 / 尖桩原木 / 横木加固。
-     *   → 全库城寨从原来的 5 种外观变成 **5 × 4 = 20 种组合**（旧观感一格不丢：形制1/2/3/0 配篱笆=旧样，
-     *     形制4「小城栅栏」配硬木=旧样）。
-     *   ⚠️ **L 形转角件只有细编篱笆套有**：另外三套四角必须改摆木垛（POST），否则取不到锚点、整圈墙静默不画
-     *      —— 归一由 `normalizeStockadeCorner` 统一做（见下）。 */
-    const fenceSet = pickStockadeFenceSet(cityId);
     /** 矩形围栏：院内改用「两排各 3 栋」的屯子排法，不摆中间那栋（见下方 RECT_STOCKADE_SLOTS） */
     const isRectStockade = stockadeStyle === 3;
 
@@ -766,7 +757,7 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     });
 
     let wallPieces: PalisadeGridPiece[];
-    const wallAnchors = fenceSet.anchors;   // 🔴 [2026-10-02] 锚点随**栅栏材质**走（四套），不再写死篱笆
+    let wallAnchors = DE_FENCE_ANCHORS;
     if (stockadeStyle === 1) {
         wallPieces = computeCorralRoundWall(baseSize);
     } else if (stockadeStyle === 2) {
@@ -774,16 +765,13 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
     } else if (stockadeStyle === 3) {
         wallPieces = computeCorralRectWall(baseSize);
     } else if (stockadeStyle === 4) {
-        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（正方拓扑，但四角摆木垛、不转 L 形转角件）
+        // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（正方拓扑，四角立木垛，套用小城同款硬木木栅栏）
         wallPieces = computePalisadeWallAndGate(baseSize);
+        wallAnchors = DE_PALISADE_ANCHORS;
     } else {
         wallPieces = computePalisadeWallAndGate(baseSize);
         for (const w of wallPieces) { if (w.type === 'POST') w.type = 'CORNER'; }
     }
-    // 🔴 [2026-10-02] 四角件归一：L 形转角件（FENCE_CORNER）**只有细编篱笆套有**，
-    //    换来硬木/尖桩原木/横木加固时 `anchors['CORNER']` 是 undefined（会静默画不出墙），
-    //    故本套没有转角件时，把四角的 CORNER 一律改成本套的木垛 POST（坐标不动）。
-    normalizeStockadeCorner(wallPieces, fenceSet);
     // 🔴 [2026-09-16 评估页实测踩到的坑] **矩形围栏不吃镜像**：镜像这一支是把围墙件的 x 取反，
     //    世界轴对齐的**正方/圆形/八角/小城栅栏**对 x 镜像**自对称**（镜像前后是同一圈墙），所以从来没暴露问题；
     //    但**长方形不对称** —— x 取反后长边跑到**另一条对角线**（12×8 变成 8×12），
