@@ -5225,6 +5225,7 @@ export class Scene13WarLayer {
                 style,
                 this.sideCulture[1],
                 this.defenderCityId,
+                (this.defenderCityId ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)?.buildingStyle : undefined) ?? null,
             );
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)

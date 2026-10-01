@@ -2927,11 +2927,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -13
         },
-        "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": {
-            "scale": 1.11,
-            "offsetX": 0,
-            "offsetY": -6
-        },
         "/assets/CENTRAL_ASIA/guzgan_abuhalisi.png": {
             "scale": 1.03,
             "offsetX": 0,
@@ -6683,9 +6678,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png": {
-            "scale": 1.13,
-            "offsetX": 0,
-            "offsetY": 23
+            "scale": 1.04,
+            "offsetX": 1,
+            "offsetY": 17
         },
         "/assets/WEST_ASIA/yelusalengwg_baodewensishi.png": {
             "scale": 1.13,
@@ -7392,11 +7387,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 20
         },
-        "/assets/WEST_ASIA/ailan_shuteluke.png": {
-            "scale": 1.04,
-            "offsetX": 1,
-            "offsetY": 17
-        },
         "/assets/CENTRAL_ASIA/huluo_jiyasiding.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -7921,6 +7911,41 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.97,
             "offsetX": 0,
             "offsetY": 1
+        },
+        "/assets/CENTRAL_ASIA/扎格罗斯 · 巴赫拉姆1.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_04.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": {
+            "scale": 1.01,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/PERSIAN/zhageluosi_bahelamu.png": {
+            "scale": 1.11,
+            "offsetX": 0,
+            "offsetY": -15
+        },
+        "/assets/CENTRAL_ASIA/卢里斯坦 · 舒特鲁克1.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/GREEK/dasaleiti_kelaitusi.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": -17
         }
     },
     "folderGuides": {

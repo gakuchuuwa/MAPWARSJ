@@ -64,7 +64,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     qiesuonisuosi: { generalId: 'gen_lysander', generalName: '吕山德', portrait: '/assets/GREEK/qiesuonisuosi_lvshande.png' },
     mixiya: { generalId: 'gen_parmenion', generalName: '帕曼纽', portrait: '/assets/GREEK/mixiya_pamanniu.png' },
     xiaaiji: { generalId: 'gen_perdiccas', generalName: '佩尔狄卡斯', portrait: '/assets/GREEK/xiaaiji_peierdikaosi.png' },
-    kaliya: { generalId: 'gen_artemisia', generalName: '阿尔特米西亚', portrait: '/assets/GREEK/kaliya_aertermixiya.png' },
+    kaliya: [
+        { generalId: 'gen_artemisia', generalName: '阿尔特米西亚', portrait: '/assets/GREEK/kaliya_aertermixiya.png' },
+        // 前334年哈利卡纳苏斯战役守帅（罗得岛的门农，波斯西部沿海统帅，阿里安 I.20 记其与卡里亚总督据城死守），立绘按铁律留空、待主人亲自放图分配
+        { generalId: 'halikanasu_memnon', generalName: '门农', portrait: '' },
+    ],
     bosidiguo: { generalId: 'gen_artaphernes', generalName: '阿尔塔弗涅斯', portrait: '/assets/PERSIAN/bosidiguo_aertafuniesi.png' },
     jikelazes: { generalId: 'gen_aristides', generalName: '阿里斯提德', portrait: '/assets/GREEK/jikelazes_alisitide.png' },
     adiyabeina: { generalId: 'gen_cleitus', generalName: '克雷图斯', portrait: '/assets/GREEK/adiyabeina_keleitusi.png' },
@@ -97,7 +101,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     malai: { generalId: 'gen_sang_nila_utama', generalName: '桑尼拉乌他马', portrait: '/assets/SOUTHEAST_ASIA/malai_sangnilawutama.png' },
     taimier: { generalId: 'gen_rajaram', generalName: '拉贾拉姆', portrait: '/assets/INDIA/taimier_lajialamu.png' },
 
-    boootiya: { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
+    boootiya: [
+        { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
+        // 前335年底比斯战役守帅（底比斯主将菲尼克斯，见剧本该场 description），立绘按铁律留空、待主人亲自放图分配
+        { generalId: 'dibisi_phoinix', generalName: '菲尼克斯', portrait: '' },
+    ],
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
     kelite: { generalId: 'gen_nikephoros_phokas', generalName: '福卡斯', portrait: '/assets/LATIN/kelite_fukasi.png' },
     leangongguo: { generalId: 'gen_alfonso_ix', generalName: '阿方索九世', portrait: '/assets/LATIN/leangongguo_afangsuojiushi.png' },
@@ -158,7 +166,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     jiatailuoniya: { generalId: 'gen_wifred_hairy', generalName: '威弗雷德', portrait: '/assets/LATIN/jiatailuoniya_weifuleide.png' },
     nasier: { generalId: 'gen_muhammad_i', generalName: '穆罕默德', portrait: '/assets/LATIN/nasier_muhanmode.png' },
     liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/LATIN/liguliya_andelieya.png' },
-    seleisi: { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
+    seleisi: [
+        { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
+        // 前335年多瑙河渡河战役守帅（多瑙河北岸吉特人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
+        { generalId: 'jite_shouling', generalName: '科托罗', portrait: '' },
+    ],
     bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },
     zhituo: { generalId: 'gen_zhytomyr', generalName: '日托米尔', portrait: '/assets/SLAVIC/zhituo_rituomier.png' },
 
@@ -1142,7 +1154,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'aosiruowen_baodewen', generalName: '鲍德温', portrait: '/assets/LATIN/aosiruowen_baodewen.png' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
-    ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/WEST_ASIA/ailan_shuteluke.png' },
+    ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png' },
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
     // 前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配

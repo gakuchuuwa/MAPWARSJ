@@ -8,6 +8,9 @@
 import { pinyin } from 'pinyin-pro';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
+import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
+import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { PORTRAIT_CANONICAL_MAP } from '../config/portrait_canonical';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import { getCultureLegionName } from '../types/CultureFormations';
@@ -2003,11 +2006,80 @@ async function handleFormSubmit(e: Event): Promise<void> {
 
 // ── Validation ──
 
+/** 🔴 [2026-10-02 主人令「战场的武将没有立绘，校验不报错？这得修复」] 剧本人物立绘检查（并入「运行校验」）。
+ *  剧本里每一场的攻方／守方武将（`attackerGeneralId` / `defenderGeneralId`）和剧本主角（`generalId`），逐个查：
+ *   ① 武将表里没有这个人；② 立绘是空的；③ 立绘文件不存在（被挪走／改名／删了）；
+ *   ④ 立绘内容去重映射指向的代表文件不存在；⑤ 同一张脸挂给了两位武将。
+ *  全部报 error，只检查、不改任何立绘与路径。主人 2026-10-02：别报「与随机池里的图相同」这类警告，也不要统计行。 */
+async function collectScriptPortraitIssues(): Promise<ValidationIssue[]> {
+    const out: ValidationIssue[] = [];
+    if (!entityData) return out;
+    // 剧本人物：id → 出现的场次标题
+    const people = new Map<string, Set<string>>();
+    const add = (id: unknown, title: string) => { if (typeof id === 'string' && id) (people.get(id) ?? people.set(id, new Set()).get(id)!).add(title); };
+    const walk = (o: unknown, title: string, depth = 0): void => {
+        if (!o || typeof o !== 'object' || depth > 6) return;
+        for (const [k, v] of Object.entries(o as Record<string, unknown>)) {
+            if (k === 'attackerGeneralId' || k === 'defenderGeneralId') add(v, title);
+            else if (v && typeof v === 'object') walk(v, title, depth + 1);
+        }
+    };
+    for (const ev of HISTORICAL_EVENT_SCRIPT as any[]) {
+        const title = String(ev.title ?? '').replace(/^公元前\s*\d+\s*年\s*/, '');
+        add(ev.generalId, title);
+        walk(ev, title);
+    }
+    // 武将表：generalId → 条目；立绘路径 → 持有人
+    const byGid = new Map<string, { fid: string; name: string; portrait: string }>();
+    const ownerOfPath = new Map<string, string[]>();
+    // 直接读游戏自己的武将表（一个势力可挂多位武将、写成数组；页面接口只给每势力一位，会漏人）
+    for (const [fid, raw] of Object.entries(FACTION_GENERALS as Record<string, any>)) {
+        for (const g of (Array.isArray(raw) ? raw : [raw])) {
+            if (!g) continue;
+            const pp = normalizePortraitPath(g.portrait ?? '');
+            if (g.generalId) byGid.set(g.generalId, { fid, name: g.generalName, portrait: pp });
+            if (pp) (ownerOfPath.get(pp) ?? ownerOfPath.set(pp, []).get(pp)!).push(`${g.generalName}（${fid}）`);
+        }
+    }
+    const catalog = new Set((await loadPortraitCatalog()).map(normalizePortraitPath));
+    const catalogLoaded = catalog.size > 0;
+    // 内容相同的一组图（去重映射：副本 → 代表）
+    const groupOf = new Map<string, string[]>();
+    for (const [copy, rep] of Object.entries(PORTRAIT_CANONICAL_MAP)) {
+        const c = normalizePortraitPath(copy), r = normalizePortraitPath(rep);
+        const g = groupOf.get(r) ?? groupOf.get(c) ?? [r];
+        if (!g.includes(r)) g.push(r);
+        if (!g.includes(c)) g.push(c);
+        groupOf.set(r, g); groupOf.set(c, g);
+    }
+    for (const [gid, titles] of [...people.entries()].sort()) {
+        const where = `（剧本：${[...titles].slice(0, 3).join('、')}${titles.size > 3 ? '…' : ''}）`;
+        const g = byGid.get(gid);
+        if (!g) { out.push({ level: 'error', msg: `剧本人物 ${gid} ${where} 在武将表里没有这个人（没有立绘）` }); continue; }
+        const who = `${g.name}（${gid} / ${g.fid}）${where}`;
+        if (!g.portrait) { out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 没有立绘` }); continue; }
+        if (catalogLoaded && !catalog.has(g.portrait)) { out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 立绘文件不存在：${g.portrait}（被挪走／改名／删了？）` }); continue; }
+        const grp = groupOf.get(g.portrait);
+        if (grp) {
+            for (const other of grp.filter(x => x !== g.portrait)) {
+                if (catalogLoaded && !catalog.has(other)) { out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 的立绘在「内容去重映射」里指向不存在的文件：${other}` }); continue; }
+                const owners = (ownerOfPath.get(other) ?? []).filter(n => !n.startsWith(`${g.name}（${g.fid}）`));
+                if (owners.length) out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 的立绘与 ${owners.join('、')} 是同一张图：${g.portrait} ≡ ${other}` });
+            }
+        }
+        const sameOwners = (ownerOfPath.get(g.portrait) ?? []).filter(n => !n.startsWith(`${g.name}（${g.fid}）`));
+        if (sameOwners.length) out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 的立绘路径同时挂给了 ${sameOwners.join('、')}：${g.portrait}` });
+    }
+    return out;
+}
+
 async function runValidation(): Promise<void> {
     try {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
         issues = data.issues ?? [];
+        // 剧本人物立绘（战场武将没有立绘、文件丢了、同一张脸挂两个人……）并入同一份校验结果
+        try { issues = [...issues, ...(await collectScriptPortraitIssues())]; } catch (e: any) { issues.push({ level: 'warn', msg: `剧本人物立绘检查没跑成：${e?.message ?? e}` }); }
         
         const errorsOrWarns = issues.filter(i => i.level === 'error' || i.level === 'warn');
         if (errorsOrWarns.length > 0) {

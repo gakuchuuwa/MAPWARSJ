@@ -1866,6 +1866,40 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
   ⚠️ 对账尺子的两个坑（都踩过）：① 材质由**建筑风格**决定 → 页面必须传与游戏同一个 `?style=`，否则比出来的「材质不同」是输入不同；
   ② 必须**等图片加载完**再量（图没加载时 `<img>` 高 0，而锚点位移是按图片高度百分比算的 → 误报 4~6px「位置差」）。
 
+#### 🧱 2026-10-02 主人令「**你能学习DE，然后建立一个自助编辑器吗？让我自己安排每个城门、城垛、城墙放在哪里，设计好后保存样式**」
+
+- **页面**：`/stockade-wall-editor.html`（顶栏入口「围栏编辑」，评估页顶栏也挂了）。
+  工具只有三件（**城墙 / 城垛 / 城门**）+ 橡皮；栅栏材质四套随时切换（所见即所得：DE 原图 + 同一套锚点）；
+  画面是**等轴格点网**，点相邻格点一路画过去，**朝向由走向自动定**（与游戏同一套约定：一件的朝向 = 它到下一件的那一步）。
+- **设计时就被标准管住**：右侧「标准校验」实时跑 `cityWallShared.validateStockadeRing()`，
+  **不合三件套标准一律不许存盘**；服务端 `/api/stockade-wall-editor/save` 再兜一道（同规则，违规拒写）。
+  载入现成形制会**自动归一**（只留一扇门 + 按标准补垛）；另有「闭合围栏 / 自动补垛 / 撤销 / 清空 / 导出导入 JSON」。
+- **存盘两处**（都由接口写，**别手改**）：① `public/assets/stockade_wall_styles.json`（编辑器读回来接着改）；
+  ② `src/data/stockadeWallStyles.ts`（**游戏 import**，构建期就带上；文件头注明「本文件由编辑器生成」）。
+- **怎么进游戏**：在样式面板勾「指派据点」→ 那些城寨以后就用玩家这套围栏
+  （`TerritorySystem` 里 `pickStockadeWallStyle(cityId)` 命中即优先，**不再走六形制哈希、也不随机镜像** —— 所见即所得）；
+  坐标按据点 baseSize 等比缩放（样式一律按 `baseSizeRef = 100` 存）。
+- **六形制几何如今也只有一份**：`cityWallShared.buildStockadeShapeRing()`（正方/圆城/八角/矩形/椭圆/梯形），
+  游戏、评估页、围栏编辑器三处共用 —— 直边三款（`buildRingWallAndGate` / `buildStockadeRectRing` /
+  `buildStockadeTrapezoidRing`）已从 `TerritorySystem` **搬进共享模块**（import 别名回来，调用点未变）。
+- **验收**：`node scratch/_probe_wall_editor.mjs`（真机：逐形制载入归一 → 命名/指派 → 保存 → 查两个文件）、
+  `node scratch/_verify_custom_style_in_game.mjs`（**编辑器存的件数/材质/门垛 = 游戏实渲染**）。
+- ⚠️ **一处口径打架，AI 未擅自改**：游戏里现成的**正方 / 矩形**两款城寨各有 **2 扇门**（2026-09-16 主人定的样子），
+  而上面 §三之三 写的是「一个围栏只开一扇」—— 编辑器里载入它们会**自动归一成一扇**后才允许保存。
+
+### 三之四、城型即时代 · 小城围墙材质（2026-10-02 主人定）
+
+> **主人原话**：「先不加时代维度。城寨代表古典，小城代表封建，中城是城堡，大城是帝国」「我们套用小城，就按封建时代这个时代算。」
+
+- **约定**：围墙的时代口径跟**城型**走：**城寨＝古典、小城＝封建（公元 400~1050）、中城＝城堡、大城＝帝国**。不再给围墙另加年代维度（剧本期的年份错位接受）。
+- **小城围墙是石墙还是木栅，按建筑风格定**（不再按「区域」）：唯一入口 `cityWallShared.smallCityUsesStoneWall(deStyle, rawStyle, region)`，战略地图 `TerritorySystem`、战术模式 `resolveTacticalWallSetup`、评估页**都调它**。
+  - ✅ 石墙：东亚 ASIA · 东南欧 EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · **普鲁 PURU**（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS · 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN
+  - 🌲 木栅：西欧 WEST（土丘木栅）· 东北欧 SLAV · 中亚 CEAS · 安第斯 ANDE · 毡帐营地 YURT（营地自带栅栏）
+  - 例外（二三级风格／区域压过母体）：日本 JAPAN、女真 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域绿洲 WESTERN（夯土土坯）、印加 INCA → 石墙。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
+  - 斯巴达「不筑城墙」按木栅归（素材所限）。依据：各文明封建时代小城聚落的主流筑法（土垒木栅 vs 夯土砖石），逐文明考证见该次讨论的 62 项判定表。
+- **普鲁的两面**：城寨（古典）用硬木粗桩（孔雀帝国早期木栅，麦加斯梯尼记华氏城），小城（封建）用石墙（达罗毗荼）——同一母体在两个城型取不同材质是**有意的**，不是冲突。
+- **验收**：`npx tsx --import ./tools/sim-preload.mjs scratch/verify_small_city_walls.mts`（16 母体战略⇄战术素材逐项一致 + 例外 + 全图小城新旧对比）。
+
 ## 四、势力名称定名规则——【细则已外置】
 
 > **外置**：完整规则见 **`docs/AGENTS/faction-naming.md`**（4.0 定名算法、4.1 五级优先级、4.2–4.8 各类型细则与示例表）。
