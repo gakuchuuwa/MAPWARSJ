@@ -725,8 +725,10 @@
             <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形</button>
             <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角</button>
             <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边对开双门）">④ 矩形</button>
-            <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城栅栏（硬木尖桩木栅）">⑤ 木栅</button>
-            <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取五种之一">🎲</button>
+            <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城栅栏（硬木粗尖桩）">⑤ 硬木</button>
+            <button type="button" class="stk-pill-btn" data-shape="dark" title="样式六：原木木栅（经典尖原木木栅）">⑥ 原木</button>
+            <button type="button" class="stk-pill-btn" data-shape="archaic" title="样式七：平切木栅（古典横木加固栅）">⑦ 平切</button>
+            <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取七种之一">🎲</button>
           </div>
           <button type="button" class="btn-stk-next stk-action-btn" title="点击在图片中切换下一种形制">🔄 其他样式 ▾</button>
         </div>
@@ -735,9 +737,9 @@
       <div class="card-desc">
         <strong>架构体系：</strong>
         <ul>
-          <li><strong>围栏</strong>：S = 5 —— <strong>五大外围形制</strong>（可在图片上方直接点击切换，或点击【🔄 其他样式】）</li>
+          <li><strong>围栏</strong>：S = 5 —— <strong>七大外围形制</strong>（可在图片上方直接点击切换，或点击【🔄 其他样式】）</li>
           <li><strong>样式一至四</strong>：DE 细编篱笆（正方/矩形四角咬合 L 形转角件，配细编篱笆门）</li>
-          <li><strong>样式五</strong>：小城同款硬木尖桩木栅栏（四角立木垛，配双塔尖桩木门）</li>
+          <li><strong>样式五至七</strong>：原木尖桩与横木加固栅栏（⑤ 小城硬木 ⑥ 黑暗尖原木 ⑦ 古典横木平切，配双塔尖桩木门）</li>
           <li><strong>建筑</strong>：定居点、棚屋 A~G、简易帐篷 A~D、哨站、DE 黑暗时代房屋与磨坊（16 候选抽 9 栋 / 矩形 6 栋）</li>
           <li><strong>地基</strong>：sr2_plaza 压实泥石地基（与小城一致）</li>
         </ul>
@@ -831,7 +833,9 @@
           <button type="button" class="stk-pill-btn" data-shape="round" title="样式二：圆形羊圈（平滑椭圆）">② 圆形羊圈</button>
           <button type="button" class="stk-pill-btn" data-shape="octagon" title="样式三：八角羊圈（八面切角）">③ 八角羊圈</button>
           <button type="button" class="stk-pill-btn" data-shape="rect" title="样式四：矩形围栏（长边双门）">④ 矩形围栏</button>
-          <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城栅栏（硬木尖桩）">⑤ 小城栅栏</button>
+          <button type="button" class="stk-pill-btn" data-shape="palisade" title="样式五：小城硬木栅栏（硬木粗尖桩）">⑤ 小城硬木</button>
+          <button type="button" class="stk-pill-btn" data-shape="dark" title="样式六：原木尖桩木栅（经典尖原木）">⑥ 原木尖桩</button>
+          <button type="button" class="stk-pill-btn" data-shape="archaic" title="样式七：古典平切木栅（横梁加固）">⑦ 平切木栅</button>
           <button type="button" class="stk-pill-btn" data-shape="rnd" title="随机抽取">🎲 随机</button>
         </div>
         <button type="button" class="btn-stk-next stk-action-btn" style="padding:6px 14px;font-size:13px;" title="点击在图片中切换下一种形制">🔄 切换其他样式 ▾</button>
@@ -1988,7 +1992,11 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       { b: 'OUTPOST', s: 0.26 },
       { b: 'FORTIFIED_OUTPOST', s: 0.26 },
       { b: 'DARK_HOUSE_AGE1', s: 0.26 },
-      { b: 'DARK_MILL_AGE1', s: 0.30 }
+      { b: 'DARK_MILL_AGE1', s: 0.30 },
+      { b: 'DARK_BARRACKS_AGE1', s: 0.32 },
+      { b: 'DARK_SETTLEMENT_AGE1', s: 0.34 },
+      { b: 'DARK_PASTURE', s: 0.25 },
+      { b: 'DARK_TOWN_CENTER_AGE1', s: 0.36 }
     ];
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」
     //    与毡帐营地同一套 9 件：8 蒙古包（YURT_E~L）+ 1 亚洲瞭望塔。
@@ -2127,14 +2135,47 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     return parts.join('');
   }
 
-  // [2026-09-08 主人定] 小城底层菱形 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（S=5, AX=10）
-  // 🔴 [2026-09-11 主人定] 险要不再走小城样式（含青藏/日本），此处只服务小城
-  if (type === 'small') {
+  // [2026-09-08 主人定] 小城/城寨底层 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（2026-10-01 主人定：城寨对齐小城满铺泥石地面，像图2小城一样）
+  if (type === 'small' || type === 'stockade') {
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
-    const AX = 10;
-    const rX = AX * stepX, rY = AX * stepY;
-    const fullGW = rX * 2.8, fullGH = rY * 5.6;
-    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%);z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
+    const fullGW = (10 * stepX) * 2.8, fullGH = (10 * stepY) * 5.6;
+    const stkShape = (type === 'small') ? 0 : ((forceShape !== null)
+      ? forceShape
+      : (curStockadeShape === 'square')
+        ? 0
+        : (curStockadeShape === 'round')
+          ? 1
+          : (curStockadeShape === 'octagon')
+            ? 2
+            : (curStockadeShape === 'rect')
+              ? 3
+              : (curStockadeShape === 'palisade')
+                ? 4
+                : (curStockadeShape === 'dark')
+                  ? 5
+                  : (curStockadeShape === 'archaic')
+                    ? 6
+                    : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 7));
+    let clip = '';
+    if (stkShape === 1) {
+      // 样式二：圆形羊圈 (Rx = 7.0 * stepX)
+      const rX = 7.0 * stepX, rY = 7.0 * stepY;
+      clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
+    } else if (stkShape === 2) {
+      // 样式三：八角羊圈 (Rx = 7.1 * stepX)
+      const rX = 7.1 * stepX, rY = 7.1 * stepY;
+      clip = 'ellipse(' + rX.toFixed(1) + 'px ' + rY.toFixed(1) + 'px at 50% 50%)';
+    } else if (stkShape === 3) {
+      // 样式四：矩形围栏 (12×8)
+      const u1 = 10 * stepX, v1 = 2 * stepY;
+      const u2 = 2 * stepX, v2 = 10 * stepY;
+      clip = 'polygon(calc(50% - ' + u2.toFixed(1) + 'px) calc(50% - ' + v2.toFixed(1) + 'px), calc(50% + ' + u1.toFixed(1) + 'px) calc(50% + ' + v1.toFixed(1) + 'px), calc(50% + ' + u2.toFixed(1) + 'px) calc(50% + ' + v2.toFixed(1) + 'px), calc(50% - ' + u1.toFixed(1) + 'px) calc(50% - ' + v1.toFixed(1) + 'px))';
+    } else {
+      // 样式一/五/六/七：正方菱形（与小城完全相同）
+      const rX = 10 * stepX, rY = 10 * stepY;
+      clip = 'polygon(50% calc(50% - ' + rY.toFixed(1) + 'px), calc(50% + ' + rX.toFixed(1) + 'px) 50%, 50% calc(50% + ' + rY.toFixed(1) + 'px), calc(50% - ' + rX.toFixed(1) + 'px) 50%)';
+    }
+    parts.push('<div style="position:absolute;left:50%;top:50%;width:100%;height:100%;transform:translate(-50%,-50%);clip-path:' + clip + ';z-index:5;pointer-events:none;"><img src="/SUCAI_TERRAIN/sr2_plaza.png" style="position:absolute;left:50%;top:50%;width:' + fullGW.toFixed(1) + 'px;height:' + fullGH.toFixed(1) + 'px;transform:translate(-50%,-50%);opacity:0.95;pointer-events:none;" /></div>');
   }
 
   // 1. 中间建筑（中心城堡严格居中 0,0；普通建筑带自然微偏移）
@@ -2252,7 +2293,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
     // 石墙例外：中原/北方/江南/希腊文明古国用中城同款石墙（shouldUseStoneWall，与主游戏同步）
     anchors = (shouldUseStoneWall(curCulture) || shouldUseStoneWall(curStyle)) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
   } else if (type === 'stockade') {
-    /* 城寨围栏五选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 小城栅栏（2026-10-01 主人定新增第 5 种） */
+    /* 城寨围栏七选一：0 正方 / 1 圆形羊圈 / 2 八角羊圈 / 3 矩形围栏 / 4 小城硬木 / 5 尖原木桩 / 6 古典横木平切 */
     const stkShape = (forceShape !== null)
       ? forceShape
       : (curStockadeShape === 'square')
@@ -2265,7 +2306,11 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
               ? 3
               : (curStockadeShape === 'palisade')
                 ? 4
-                : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 5);
+                : (curStockadeShape === 'dark')
+                  ? 5
+                  : (curStockadeShape === 'archaic')
+                    ? 6
+                    : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 7);
     if (stkShape === 1) {
       pieces = computeCorralRoundWall(baseSize);
       anchors = FENCE_ANCHORS;
@@ -2276,9 +2321,17 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
       pieces = computeCorralRectWall(baseSize);
       anchors = FENCE_ANCHORS;
     } else if (stkShape === 4) {
-      // 🔴 [2026-10-01 主人定] 第 5 种：小城栅栏（用小城同款硬木尖桩木栅栏，四角立木垛）
+      // 样式五：小城硬木尖桩木栅（HARDWOOD）
       pieces = computeRingWall(baseSize, 5);
       anchors = PALISADE_ANCHORS;
+    } else if (stkShape === 5) {
+      // 样式六：经典尖原木木栅（DARK）
+      pieces = computeRingWall(baseSize, 5);
+      anchors = DARK_PALISADE_ANCHORS;
+    } else if (stkShape === 6) {
+      // 样式七：古典横木平切栅栏（ARCHAIC）
+      pieces = computeRingWall(baseSize, 5);
+      anchors = ARCHAIC_PALISADE_ANCHORS;
     } else {
       // 样式一：正方标准（细编篱笆，四角咬合 L 形转角件）
       pieces = computeRingWall(baseSize, 5);
@@ -2602,8 +2655,12 @@ function renderGateCloseup(style, type, forceShape = null) {
               ? 3
               : (curStockadeShape === 'palisade')
                 ? 4
-                : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 5);
-    const a = (stkShape === 4) ? PALISADE_ANCHORS.GATE : FENCE_ANCHORS.GATE;
+                : (curStockadeShape === 'dark')
+                  ? 5
+                  : (curStockadeShape === 'archaic')
+                    ? 6
+                    : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape') % 7);
+    const a = (stkShape >= 4) ? PALISADE_ANCHORS.GATE : FENCE_ANCHORS.GATE;
     const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'pass') {
@@ -2729,19 +2786,23 @@ function refresh() {
         + '草原/漠北蒙古特化为 8 蒙古包 + 1 亚洲瞭望塔；<br>'
         + '　· <b>城门体系</b>：样式①~④配套<b>细编篱笆门</b>（FENCE_GATE），样式⑤配套<b>尖桩双塔木门</b>（DARK_GATE_PALISADE）。</div>';
 
-      stkGrid += stkHead('一、五大外围形制逐款对照（同尺寸脚印 · 5 种形制全览）');
+      stkGrid += stkHead('一、七大外围形制逐款对照（同尺寸脚印 · 7 种形制全览）');
       stkGrid += stkTile('样式一 · 正方标准', '细编篱笆 · 9建筑', 0, false, 'stk_v0');
       stkGrid += stkTile('样式二 · 圆形羊圈', '细编篱笆 · 9建筑', 1, false, 'stk_v1');
       stkGrid += stkTile('样式三 · 八角羊圈', '细编篱笆 · 9建筑', 2, false, 'stk_v2');
       stkGrid += stkTile('样式四 · 矩形围栏', '细编篱笆 · 6建筑两排', 3, false, 'stk_v3');
-      stkGrid += stkTile('样式五 · 小城栅栏', '硬木尖桩木栅 · 9建筑', 4, false, 'stk_v4');
+      stkGrid += stkTile('样式五 · 小城硬木', '硬木粗尖桩 · 9建筑', 4, false, 'stk_v4');
+      stkGrid += stkTile('样式六 · 原木尖桩', '经典尖原木 · 9建筑', 5, false, 'stk_v5');
+      stkGrid += stkTile('样式七 · 平切木栅', '古典横梁平切 · 9建筑', 6, false, 'stk_v6');
 
       stkGrid += stkHead('二、特化形态 · 草原 / 漠北蒙古毡帐城寨（8 蒙古包 + 1 亚洲瞭望塔）');
       stkGrid += stkTile('草原毡帐城寨 · 正方篱笆', '草原特化 9 建筑', 0, true, 'stk_yurt0');
       stkGrid += stkTile('草原毡帐城寨 · 圆形羊圈', '草原特化 9 建筑', 1, true, 'stk_yurt1');
       stkGrid += stkTile('草原毡帐城寨 · 八角羊圈', '草原特化 9 建筑', 2, true, 'stk_yurt2');
       stkGrid += stkTile('草原毡帐城寨 · 矩形围栏', '草原特化 6 建筑', 3, true, 'stk_yurt3');
-      stkGrid += stkTile('草原毡帐城寨 · 小城栅栏', '草原特化 9 建筑', 4, true, 'stk_yurt4');
+      stkGrid += stkTile('草原毡帐城寨 · 小城硬木', '草原特化 9 建筑', 4, true, 'stk_yurt4');
+      stkGrid += stkTile('草原毡帐城寨 · 原木尖桩', '草原特化 9 建筑', 5, true, 'stk_yurt5');
+      stkGrid += stkTile('草原毡帐城寨 · 平切木栅', '草原特化 9 建筑', 6, true, 'stk_yurt6');
 
       stkGrid += stkHead('三、两套城门特写对照');
       // 细编篱笆门
@@ -2754,15 +2815,19 @@ function refresh() {
       // 尖桩双塔木门
       const gate2 = PALISADE_ANCHORS.GATE;
       const gW2 = Math.round(140 * curZoom * gate2.widthFactor * 1.2 * curGateScale);
-      stkGrid += '<div class="card"><div class="card-header"><span>尖桩双塔木门 (DARK_GATE_PALISADE)</span><span class="tag tag-med">样式⑤小城栅栏标配</span></div>'
+      stkGrid += '<div class="card"><div class="card-header"><span>尖桩双塔木门 (DARK_GATE_PALISADE)</span><span class="tag tag-med">样式⑤~⑦标配</span></div>'
         + '<div class="mini-viewport" style="display:flex;align-items:center;justify-content:center;background:#0d1117;">'
         + '<img src="' + gate2.path + '" style="width:' + gW2 + 'px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />'
         + '</div></div>';
 
-      stkGrid += stkHead('四、城寨内部建筑候选池（16 款建筑 · 重点展示 DE 黑暗时代新增建筑）');
+      stkGrid += stkHead('四、城寨内部建筑候选池（20 款建筑 · 重点展示 DE 官方黑暗时代新增建筑）');
       const bldgShowcase = [
-        { id: 'DARK_HOUSE_AGE1', label: '⭐ DE 黑暗时代房屋（新增）' },
-        { id: 'DARK_MILL_AGE1', label: '⭐ DE 黑暗时代磨坊（新增）' },
+        { id: 'DARK_BARRACKS_AGE1', label: '⭐ DE 黑暗时代兵营（新增）' },
+        { id: 'DARK_SETTLEMENT_AGE1', label: '⭐ DE 黑暗时代定居点大屋（新增）' },
+        { id: 'DARK_PASTURE', label: '⭐ DE 黑暗时代牧场棚圈（新增）' },
+        { id: 'DARK_TOWN_CENTER_AGE1', label: '⭐ DE 黑暗时代部落中心（新增）' },
+        { id: 'DARK_HOUSE_AGE1', label: '⭐ DE 黑暗时代房屋' },
+        { id: 'DARK_MILL_AGE1', label: '⭐ DE 黑暗时代磨坊' },
         { id: 'SETTLEMENT', label: '原始定居点大屋' },
         { id: 'HUT_A', label: '原始棚屋 A' },
         { id: 'HUT_B', label: '原始棚屋 B' },
@@ -2785,10 +2850,10 @@ function refresh() {
           + '</div></div>';
       });
 
-      stkGrid += stkHead('五、随机实拍样本 · 真实据点 5 种外围 × 建筑完全随机洗牌效果');
+      stkGrid += stkHead('五、随机实拍样本 · 真实据点 7 种外围 × 建筑完全随机洗牌效果');
       for (let i = 1; i <= 8; i++) {
-        const shapeNames = ['正方标准', '圆形羊圈', '八角羊圈', '矩形围栏', '小城栅栏'];
-        const sIdx = (i - 1) % 5;
+        const shapeNames = ['正方标准', '圆形羊圈', '八角羊圈', '矩形围栏', '小城硬木', '原木尖桩', '平切木栅'];
+        const sIdx = (i - 1) % 7;
         stkGrid += stkTile('实机城寨样本 #' + i + '（' + shapeNames[sIdx] + '）', '随机种子 sample_' + i, sIdx, false, 'sample_' + i);
       }
 
@@ -3101,8 +3166,10 @@ const STK_SHAPE_NAMES = {
   round: '样式二：圆形羊圈 (平滑椭圆)',
   octagon: '样式三：八角羊圈 (八面切角)',
   rect: '样式四：矩形围栏 (双门6建筑)',
-  palisade: '样式五：小城栅栏 (硬木尖桩)',
-  rnd: '🎲 随机五选一'
+  palisade: '样式五：小城硬木 (硬木粗尖桩)',
+  dark: '样式六：原木木栅 (经典尖原木)',
+  archaic: '样式七：平切木栅 (古典横梁平切)',
+  rnd: '🎲 随机七选一'
 };
 
 const STK_SHAPE_SHORT_NAMES = {
@@ -3110,11 +3177,13 @@ const STK_SHAPE_SHORT_NAMES = {
   round: '样式二 圆形',
   octagon: '样式三 八角',
   rect: '样式四 矩形',
-  palisade: '样式五 木栅',
+  palisade: '样式五 硬木',
+  dark: '样式六 原木',
+  archaic: '样式七 平切',
   rnd: '随机'
 };
 
-const STK_SHAPES_CYCLE = ['square', 'round', 'octagon', 'rect', 'palisade'];
+const STK_SHAPES_CYCLE = ['square', 'round', 'octagon', 'rect', 'palisade', 'dark', 'archaic'];
 
 function syncStockadeShapeUI() {
   const currentKey = curStockadeShape || 'square';
@@ -3141,11 +3210,19 @@ function syncStockadeShapeUI() {
       btn.style.background = '#805ad5';
       btn.style.borderColor = '#b794f4';
     } else if (currentKey === 'palisade') {
-      btn.innerText = '城寨围栏: 样式五 (小城栅栏)';
+      btn.innerText = '城寨围栏: 样式五 (小城硬木)';
       btn.style.background = '#9b2c2c';
       btn.style.borderColor = '#fc8181';
+    } else if (currentKey === 'dark') {
+      btn.innerText = '城寨围栏: 样式六 (原木木栅)';
+      btn.style.background = '#b7791f';
+      btn.style.borderColor = '#f6e05e';
+    } else if (currentKey === 'archaic') {
+      btn.innerText = '城寨围栏: 样式七 (平切木栅)';
+      btn.style.background = '#4a5568';
+      btn.style.borderColor = '#a0aec0';
     } else {
-      btn.innerText = '城寨围栏: 🎲 随机五选一';
+      btn.innerText = '城寨围栏: 🎲 随机七选一';
       btn.style.background = '#243246';
       btn.style.borderColor = '#4a5568';
     }
@@ -3159,9 +3236,9 @@ function syncStockadeShapeUI() {
   const gTitle = document.getElementById('tagGateStockadeTitle');
   const gSub = document.getElementById('tagGateStockadeSub');
   if (gTitle && gSub) {
-    if (currentKey === 'palisade') {
+    if (currentKey === 'palisade' || currentKey === 'dark' || currentKey === 'archaic') {
       gTitle.innerText = '城寨：尖桩双塔木门';
-      gSub.innerText = '样式⑤木栅标配';
+      gSub.innerText = (currentKey === 'palisade' ? '样式⑤硬木' : currentKey === 'dark' ? '样式⑥原木' : '样式⑦平切') + '标配';
     } else {
       gTitle.innerText = '城寨：细编篱笆木门';
       gSub.innerText = '样式①~④标配';
@@ -3212,7 +3289,7 @@ function showStockadeGallery() {
 
 if (urlParams.has('stockadeShape')) {
   const s = urlParams.get('stockadeShape');
-  if (['rnd', 'square', 'round', 'octagon', 'rect', 'palisade'].includes(s)) {
+  if (['rnd', 'square', 'round', 'octagon', 'rect', 'palisade', 'dark', 'archaic'].includes(s)) {
     curStockadeShape = s;
   }
 }

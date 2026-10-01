@@ -1458,26 +1458,27 @@ node scratch/measure_citytest_page.mjs   # 第一页 6 张卡不越界 + 战场�
   新分组**不加进去就永远选不到**，数据在 JSON 里也白搭。新增分组必须同时加白名单。
 
 - 🔴 **评估页与游戏两侧的「形制个数」必须一致**（2026-09-28 主人问「我记得城寨有四个样式，项目中是不是缺少一个样式呀」）：
-  城寨篱笆围栏是 **四选一** —— **正方标准 / 圆形羊圈 / 八角羊圈 / 矩形围栏**
-  （🔴 2026-10-01 主人再定加第 5 种「小城栅栏」→ 现为 **五选一**）。
-  2026-09-16 评估页就加了第 4 种「矩形围栏」（主人原话「再添加一种，矩形的围栏城寨」），
-  游戏 `TerritorySystem.buildDeStockadeStackHtml` 却一直停在 `% 3` —— **矩形围栏从没在游戏里出现过**
-  （实测全库 281 座城寨据点/攻城战场里，本该有 46 座是矩形）。已补：`computeCorralRectWall`
-  ＋ 院内 `RECT_STOCKADE_SLOTS`（矩形不摆中间那栋、改**两排各 3 栋**、**不吃镜像**）。
+  城寨篱笆围栏经主人 2026-10-01 两次定案与扩充，现为 **七选一**（4 套材质全覆盖）：
+  - 样式一：正方标准（细编竹木篱笆 `DE_FENCE_ANCHORS`，四角 L 形转角件 `FENCE_CORNER`）
+  - 样式二：圆形羊圈（细编竹木篱笆 `DE_FENCE_ANCHORS`，平滑等轴椭圆）
+  - 样式三：八角羊圈（细编竹木篱笆 `DE_FENCE_ANCHORS`，八面切角圆润过渡）
+  - 样式四：矩形围栏（细编竹木篱笆 `DE_FENCE_ANCHORS`，两排 6 建筑，**不吃镜像**）
+  - 样式五：小城硬木栅栏（硬木粗尖桩 `DE_PALISADE_ANCHORS`，小城同款木栅栏）
+  - 样式六：经典原木木栅（黑暗时代经典尖原木木栅 `DE_DARK_PALISADE_ANCHORS`）
+  - 样式七：古典平切木栅（古典横木加固栅栏 `DE_ARCHAIC_PALISADE_ANCHORS`）
   **验收（权威）**：`npx tsx scratch/verify_stockade_shape_parity.mts`
-  （① 形制个数 ② 三个围墙函数逐件比对 ③ 槽位表 ④ 镜像守卫 ⑤ 真实据点分布，须 0 处不一致）
-  ＋ `node scratch/_probe_stockade_game_render.mjs`（真机并排出图，需 5173 的 vite dev 在跑）。
-  **教训：评估页改了、游戏侧不跟，主人以为有、游戏里其实没有；「个数」这种一眼可见的差，
-  每一条验收里都要有 —— 光验评估页自己，验不出缺件。**
+  （① 形制个数 7 种 ② 三个围墙函数逐件比对 ③ 槽位表 ④ 镜像守卫 ⑤ 真实据点分布 ⑥ 四套材质覆盖，须 0 处不一致）。
 
-- 🔴 **城寨外围形制五选一（2026-10-01 主人定）**：
-  城寨篱笆/栅栏围栏共有 **五种形制样式** —— **正方标准 / 圆形羊圈 / 八角羊圈 / 矩形围栏 / 小城栅栏**。
-  - **样式一：正方标准** —— 细编篱笆（`DE_FENCE_ANCHORS`），四角咬合 L 形篱笆转角件（`FENCE_CORNER`），单面正门（`FENCE_GATE`），内部 9 建筑环列。
+- 🔴 **城寨外围形制七选一（2026-10-01 主人定案扩充）**：
+  城寨篱笆/栅栏围栏共有 **七种形制样式**，完整覆盖 DE 四套栅栏材质：
+  - **样式一：正方标准** —— 细编篱笆（`DE_FENCE_ANCHORS`），四角咬合 L 形篱笆转角件（`FENCE_CORNER`），单面细编篱笆门（`FENCE_GATE`），内部 9 建筑环列。
   - **样式二：圆形羊圈** —— 细编篱笆（`DE_FENCE_ANCHORS`），平滑椭圆弧围场（`computeCorralRoundWall`），带间隔立柱与篱笆门，内部 9 建筑环列。
   - **样式三：八角羊圈** —— 细编篱笆（`DE_FENCE_ANCHORS`），八面切角圆润过渡（`computeCorralOctagonWall`），东南设门，内部 9 建筑环列。
   - **样式四：矩形围栏** —— 细编篱笆（`DE_FENCE_ANCHORS`），险要拓扑长方形（`computeCorralRectWall`），长边对开双门，内部两排各 3 栋（共 6 栋，`RECT_STOCKADE_SLOTS`），不吃镜像。
-  - **样式五：小城栅栏** —— 小城同款硬木尖桩木栅栏（`DE_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`POST`），尖桩原木双塔木门（`DARK_GATE_PALISADE`），内部 9 建筑环列。
-  - **内部建筑池**（常规城寨 16 候选随机抽 9 栋 / 矩形 6 栋）：定居点 `SETTLEMENT`、棚屋 `HUT_A~G`、简易帐篷 `YURT_A~D`、哨站 `OUTPOST`/`FORTIFIED_OUTPOST`，以及主人 2026-10-01 新增引入的 DE 黑暗时代房屋 `DARK_HOUSE_AGE1`、磨坊 `DARK_MILL_AGE1`。草原/漠北蒙古特化则为 8 蒙古包（`YURT_E~L`）+ 1 亚洲瞭望塔（`ASIA_TOWER_AGE2`）。
+  - **样式五：小城硬木** —— 小城同款硬木尖桩木栅栏（`DE_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`POST`），尖桩原木双塔木门（`DARK_GATE_PALISADE`），内部 9 建筑环列。
+  - **样式六：原木尖桩** —— 经典尖原木木栅栏（`DE_DARK_PALISADE_ANCHORS`），正方五格，四角立木垛立柱（`DARK_WALL_PALISADE_POST`），双塔木门，内部 9 建筑环列。
+  - **样式七：平切木栅** —— 古典横木加固栅栏（`DE_ARCHAIC_PALISADE_ANCHORS`），正方五格，两端平切横木加固，四角立木垛，双塔木门，内部 9 建筑环列。
+  - **内部建筑池**（常规城寨 20 候选随机抽 9 栋 / 矩形 6 栋）：定居点 `SETTLEMENT`、棚屋 `HUT_A~G`、简易帐篷 `YURT_A~D`、哨站 `OUTPOST`/`FORTIFIED_OUTPOST`，以及主人 2026-10-01 引入的 6 款 DE 官方黑暗时代核心建筑（兵营 `DARK_BARRACKS_AGE1`、定居点大屋 `DARK_SETTLEMENT_AGE1`、牧场棚圈 `DARK_PASTURE`、部落中心 `DARK_TOWN_CENTER_AGE1`、房屋 `DARK_HOUSE_AGE1`、磨坊 `DARK_MILL_AGE1`）。草原/漠北蒙古特化则为 8 蒙古包（`YURT_E~L`）+ 1 亚洲瞭望塔（`ASIA_TOWER_AGE2`）。
 
 
 #### 三之二、第一页 6 张据点卡的排布（2026-09-12 主人定）

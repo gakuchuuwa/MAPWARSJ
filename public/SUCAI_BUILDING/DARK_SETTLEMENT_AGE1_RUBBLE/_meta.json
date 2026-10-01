@@ -1,0 +1,9 @@
+{
+  "name": "DARK_SETTLEMENT_AGE1_RUBBLE",
+  "frames": 1,
+  "box_w": 284,
+  "box_h": 148,
+  "anchor_x": 152,
+  "anchor_y": 80,
+  "sld_source": "b_dark_settlement_age1_rubble"
+}

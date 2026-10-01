@@ -1,0 +1,9 @@
+{
+  "name": "DARK_BARRACKS_AGE1_RUBBLE",
+  "frames": 1,
+  "box_w": 308,
+  "box_h": 164,
+  "anchor_x": 156,
+  "anchor_y": 76,
+  "sld_source": "b_dark_barracks_age1_rubble"
+}
