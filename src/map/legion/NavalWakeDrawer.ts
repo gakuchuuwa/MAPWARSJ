@@ -41,6 +41,26 @@ export class NavalWakeDrawer {
     private static readonly BOW_ALIGN_MIN_MOVE_PX = 1.5;
     private static lastCleanup = 0;
 
+    /**
+     * 🔴 [2026-10-01 主人定「船头浪花和船尾浪花对齐」]
+     * DE 素材 16 向真实朝向角度映射（解决 (dir+14)%16 导致的 22.5° 偏航，东南/西南向严丝合缝）
+     */
+    private static readonly FRONT_ROW_BY_DIR: number[] = [14, 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, 8, 10, 11, 12, 13];
+    private static readonly BACK_ROW_BY_DIR: number[]  = [14, 15, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+
+    /**
+     * 贴图各行有效浪花图案相对于贴图几何中心 (width/2, height/2) 的真实物理重心偏移。
+     * 绘制时扣除此偏移，使浪花发源点与对称轴严格锚定在发射点 point 上，杜绝船头浪与船尾浪在法向上的漂移。
+     */
+    private static readonly FRONT_ROW_OFFSETS: Array<[number, number]> = [
+        [11.1, -3.7], [10.7, -0.7], [8.3, 2.2], [4.6, 4.2], [0.0, 4.9], [-4.6, 4.1], [-8.0, 2.1], [-10.2, -0.2],
+        [-10.8, -3.3], [-10.0, -6.0], [-7.8, -8.4], [-4.4, -10.0], [-0.8, -10.7], [3.6, -10.2], [7.4, -8.8], [9.9, -6.5]
+    ];
+    private static readonly BACK_ROW_OFFSETS: Array<[number, number]> = [
+        [-14.6, 2.2], [-14.3, -1.9], [-12.3, -5.4], [-7.8, -8.0], [-2.5, -9.0], [2.9, -8.6], [7.8, -6.5], [11.0, -3.5],
+        [12.0, 0.0], [11.2, 3.5], [8.8, 6.4], [5.3, 8.4], [0.7, 9.5], [-4.0, 9.2], [-8.4, 8.0], [-12.3, 5.4]
+    ];
+
     public static ensureLoaded(): void {
         if (this.loading || this.assets) return;
         this.loading = true;
@@ -129,10 +149,12 @@ export class NavalWakeDrawer {
                     const profile = this.assets[kind].profiles[ship.r === frontRank ? 'medium' : 'small'];
                     const sign = kind === 'back' ? -1 : 1;
                     const screen = { x: ship.x + axX * sign, y: ship.y + axY * sign };
+                    const wakeDir = kind === 'front'
+                        ? this.FRONT_ROW_BY_DIR[dir]
+                        : this.BACK_ROW_BY_DIR[dir];
                     fleet.particles.push({
                         position: projection?.toWorld(screen) ?? screen,
-                        // 🔴 [2026-09-12 主人报障「船尾水波不对」] 水迹贴图的行号按 DE 素材相位差补偿 −2：(shipDir + 14) % 16
-                        direction: (dir + 14) % 16,
+                        direction: wakeDir,
                         rot,
                         born: tick,
                         duration: 1000 * (profile.Duration1 + Math.random() * (profile.Duration2 - profile.Duration1)),
@@ -155,17 +177,24 @@ export class NavalWakeDrawer {
             const point = projection?.toScreen(particle.position) ?? particle.position;
             const size = scale * profile.Scale;
             const w = asset.width * size, h = asset.height * size;
+
+            // 🔴 扣除该向浪花在贴图内的物理重心偏移，使浪花发源点与中轴线 100% 对齐发射点
+            const offsets = particle.kind === 'front' ? this.FRONT_ROW_OFFSETS : this.BACK_ROW_OFFSETS;
+            const [rawOx, rawOy] = offsets[particle.direction] ?? [0, 0];
+            const ox = rawOx * size;
+            const oy = rawOy * size;
+
             // 🔴 叠加粒子发射时的船身残差微旋（rot），使浪花对称轴与船体中轴线 100% 严丝合缝
             if (particle.rot && Math.abs(particle.rot) > 0.001) {
                 ctx.save();
                 ctx.translate(point.x, point.y);
                 ctx.rotate(particle.rot);
                 ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
-                    asset.width, asset.height, -w / 2, -h / 2, w, h);
+                    asset.width, asset.height, -w / 2 - ox, -h / 2 - oy, w, h);
                 ctx.restore();
             } else {
                 ctx.drawImage(this.images[particle.kind]!, frame * asset.width, particle.direction * asset.height,
-                    asset.width, asset.height, point.x - w / 2, point.y - h / 2, w, h);
+                    asset.width, asset.height, point.x - w / 2 - ox, point.y - h / 2 - oy, w, h);
             }
         }
         ctx.restore();
