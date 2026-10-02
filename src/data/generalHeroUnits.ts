@@ -16,6 +16,7 @@ import { getScriptCommanderUnit } from '../events/scriptPeriod';
 /** 武将 → 专属英雄兵种（WAR_TYPES 键）。只登记有现成素材的 */
 export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gen_alexander_great: 'hero_mounted_alexander',
+    gen_bolusi: 'porus_elephant',
 };
 
 /** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 本军团前排兵种 */
