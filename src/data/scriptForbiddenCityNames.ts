@@ -38,6 +38,7 @@ export interface ForbiddenCityName {
 export const SCRIPT_FORBIDDEN_CITY_NAMES: ForbiddenCityName[] = [
     // ── 那年已成废墟，只当途经地理标记 ──
     { name: '尼尼微', cityId: 'city_niniwei', untilYear: -1, instead: '底格里斯河渡口那一带（废墟）', why: '前 612 年被米底与新巴比伦联军毁成废墟（阿里安也只在写旧事时提它）' },
+    { name: '巴格达', cityId: 'city_bageda', untilYear: -1, instead: '俄皮斯平原（古称西蒂斯）', why: '🔴 [2026-10-02 逐场复核查出] 「巴格达」是公元 762 年阿拔斯朝新建都城之名；那年这里是底格里斯河畔的俄皮斯/西蒂斯平原。库里 city_bageda 的年代记的是**地方成城年**（前 539 年欧皮斯战役），闸门拦不住**名字**（同阿托克、呼勒万）' },
     { name: '亚述城', cityId: 'city_yashucheng', untilYear: -1, instead: '底格里斯河西岸的旧城废墟', why: '前 614 年被毁，前 331／前 329 已成土丘' },
     // ── 名字是后世才有的（站过得了年代闸，闸门拦不住）──
     { name: '阿托克', cityId: 'city_atuoke', untilYear: -1, instead: '印度河渡口（乌达班达普拉／Ohind）', why: 'Attock 是 1583 年阿克巴筑阿托克堡以后的名字；前 326 这里是印度河渡口' },

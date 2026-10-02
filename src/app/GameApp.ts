@@ -346,7 +346,7 @@ export class GameApp {
                 const d = ev?.siegeData ?? ev?.fieldBattleData;
                 if (!d) return null;
                 // 🔴 [2026-09-24] 攻城数据没有 defenderFactionId：守方势力 = 被攻那座城当前的势力
-                //    （改前查不到 → 加沙守军显示成文化军团「古典时代腓利斯丁军团」而非剧本军团「阿契美尼德军」）
+                //    （改前查不到 → 加沙守军显示成文化军团「古典时代腓利斯丁军团」而非剧本军团「阿契美尼德军团」）
                 const defCityId = (d as { defenderCityId?: string }).defenderCityId;
                 const defFactionId = (d as { defenderFactionId?: string }).defenderFactionId
                     ?? (defCityId ? this.cityManager.getCity(defCityId)?.factionId : undefined);

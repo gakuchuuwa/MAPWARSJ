@@ -145,7 +145,7 @@ export type LegionEliteLookup = {
   getFactionId(): string;
   homeCityId?: string | null;
   getSourceCityId(): string | null;
-  /** 🔴 [2026-09-23] 战场事件的史实军团：番号直接挂在军团上（军团名只写「马其顿军」，不再拼番号） */
+  /** 🔴 [2026-09-23] 战场事件的史实军团：番号直接挂在军团上（军团名只写「马其顿军团」，不再拼番号） */
   eliteOverride?: EliteLegionConfig | null;
 };
 

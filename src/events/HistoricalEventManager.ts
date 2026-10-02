@@ -236,7 +236,7 @@ export class HistoricalEventManager {
      *    为什么不能从第一战场继续行军？历史上不是这样的吗？」]
      *    上面那三条是**「乱斗 ＋ 战场」时代**定的，那时每场军团都是凭空生成的，撤场是对的。
      *    但现在是**历史剧本**：亚历山大东征是一条连续战史（格拉尼库斯 → 伊苏斯 → 推罗 → 高加米拉
-     *    → …… → 印度），军队自始至终是**同一支马其顿军**，主帅也不该"回城等下一场"。
+     *    → …… → 印度），军队自始至终是**同一支马其顿军团**，主帅也不该"回城等下一场"。
      *    故 **剧本期主角那一方不撤场**（留在战场上，由 PlayerQuestSystem 直接开赴下一场），
      *    敌军照旧撤（下一场对手本来就不同）。**乱斗模式逐字不变**（照撤双方）。
      */
@@ -427,7 +427,7 @@ export class HistoricalEventManager {
     /**
      * 🔴 [2026-09-23 主人三问「为什么玩家要脱离军团？为什么不能从第一战场继续行军？历史上不是这样的吗？」]
      *
-     * **剧本期该复用哪支现成军团。** 历史上亚历山大东征自始至终是**同一支马其顿军**：
+     * **剧本期该复用哪支现成军团。** 历史上亚历山大东征自始至终是**同一支马其顿军团**：
      * 格拉尼库斯 → 伊苏斯 → 推罗 → 高加米拉 → …… 一路打下去，绝不每场凭空重造一支、
      * 打完就解散让主帅回城再重新起兵（那正是主人看到的「衔接不上 / 要脱离军团」）。
      *
@@ -600,7 +600,7 @@ export class HistoricalEventManager {
         //    （`CombatUI.getLegionEliteBadgeName` 优先取 `army.name`）；
         //    档位（战力第三环）由 `getUnitEliteTier` → `getLegionEliteConfig(army)` 取不到时，
         //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
-        // 🔴 [2026-09-23 主人定「军团只显示马其顿军就行了」] 军团名只写军团名；番号按势力挂到 eliteOverride
+        // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 军团名只写军团名；番号按势力挂到 eliteOverride
         army.name = legionName;
         army.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
