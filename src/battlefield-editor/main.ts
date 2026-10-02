@@ -518,6 +518,21 @@ function validate(d: BattleDraft): Issue[] {
     } else if (!d.foeCommanderUnit.startsWith('hero_') || !WAR_TYPES[d.foeCommanderUnit]) {
         out.push({ level: 'error', msg: `对手主将队兵种必须是存在的英雄兵模：${d.foeCommanderUnit}` });
     }
+    // 🔴 [2026-10-02 主人令「舰队不应该作为英雄的第10队」] 第 10 队是**陆上**主将队，不许是舰船。
+    //    判据 = 兵种 WAR_TYPES.armorTags 含 16（DE 战舰甲级；全部船与 4 个「英雄·旗舰」都带 16）。
+    //    血训：马萨加（前327）的守方女王克莱奥菲斯原选 hero_artemisia —— 那是**一艘紫帆战船**，
+    //    战术模式里第 10 队就成了一支舰队杵在城里。查法：scratch/_audit_hero_lane_is_fleet.mts
+    for (const [field, label] of [['commanderUnit', '主将队'], ['foeCommanderUnit', '对手主将队']] as const) {
+        const key = (d as unknown as Record<string, string | undefined>)[field];
+        if (!key || !WAR_TYPES[key]) continue;
+        if (WAR_TYPES[key].armorTags?.includes(16)) {
+            out.push({
+                level: 'error',
+                msg: `${label}兵种是舰船（${WAR_TYPES[key].name}）：第 10 队是陆上主将队，不能选舰队`
+                    + '；请按「先保年代、再尽样子」换一个同代的陆战英雄兵模',
+            });
+        }
+    }
     if (d.generalId && d.commanderUnit) {
         const diff = drafts.filter((x) => x.title !== d.title && x.generalId === d.generalId && x.commanderUnit && x.commanderUnit !== d.commanderUnit);
         if (diff.length) {
@@ -640,6 +655,13 @@ legend { color: #c9a33c; font-size: 13px; padding: 0 6px; }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .chip { background: #2a2520; border: 1px solid #4a4238; border-radius: 3px; padding: 2px 6px; font-size: 11px; }
 .chip button { background: none; border: none; color: #c98a8a; cursor: pointer; padding: 0 0 0 4px; }
+/* 主将队兵模：看样式点选（2026-10-02 主人定「不要看人名，看样式就行，不能是船」） */
+.hero-pick .hp-grid { display: flex; flex-wrap: wrap; gap: 4px; max-height: 176px; overflow: auto; padding: 4px; background: #16130f; border: 1px solid #443c32; border-radius: 5px; }
+.hero-pick .hp-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 62px; background: #221d18; border: 1px solid #3a332b; border-radius: 5px; padding: 3px; cursor: pointer; color: #b9ad9a; font-size: 9px; line-height: 1.15; font-family: inherit; }
+.hero-pick .hp-cell.on { border-color: #d8b45e; box-shadow: 0 0 0 1px #d8b45e inset; color: #f5d78e; }
+.hero-pick .hp-cell:hover { border-color: #8a7a52; }
+.hero-pick .hp-ships { font-size: 10px; color: #7a6a5a; margin-top: 3px; }
+.hero-pick .hp-ships b { color: #c98a8a; }
 `;
 const styleEl = document.createElement('style');
 styleEl.textContent = css;
@@ -799,15 +821,38 @@ function drawThumbs(): void {
         });
     });
 }
-/** 主将队兵种下拉：英雄在前，其余按名 */
-function commanderOptions(cur: string): string {
-    const all = Object.entries(WAR_TYPES as Record<string, { name: string }>)
-        .filter(([k]) => (SPRITE_PATHS.UNIT_ASSETS as Record<string, unknown>)[k]);
-    const heroes = all.filter(([k]) => k.startsWith('hero_')).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
-    const others = all.filter(([k]) => !k.startsWith('hero_')).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
-    return '<option value="">（未选）</option>'
-        + `<optgroup label="英雄">${heroes.map(([k, v]) => opt(k, v.name, cur)).join('')}</optgroup>`
-        + `<optgroup label="其他兵种">${others.map(([k, v]) => opt(k, v.name, cur)).join('')}</optgroup>`;
+/**
+ * 🔴 [2026-10-02 主人定「主将队必须是英雄，不要看人名，看样式就行，**不能是船**」]
+ *   主将队（第 10 队）兵模**看样式点选**：只列英雄兵模，每个画 idle 缩略图，点图即选中；
+ *   **船一律不给选**（甲级判据 = `armorTags` 含 16，DE 战舰；四个「英雄·旗舰」兵模都是船）。
+ *   原来那版是按中文名排的 `<select>` 下拉（还混着「其他兵种」），等于让人看名字选 —— 已废。
+ *   血训：前327 马萨加守方女王原选 `hero_artemisia`（英雄·阿尔特米西亚）—— 那素材**是一艘紫帆战船**，
+ *   战术模式里第 10 队就成了一支舰队杵在城里。查法：`scratch/_audit_hero_lane_is_fleet.mts`。
+ */
+const isFleetModel = (key: string): boolean => !!WAR_TYPES[key]?.armorTags?.includes(16);
+const hasSprite = (key: string): boolean => !!(SPRITE_PATHS.UNIT_ASSETS as Record<string, unknown>)[key];
+function heroPicker(id: string, cur: string): string {
+    const named = Object.entries(WAR_TYPES as Record<string, { name: string }>).filter(([k]) => k.startsWith('hero_') && hasSprite(k));
+    const heroes = named.filter(([k]) => !isFleetModel(k)).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
+    const ships = named.filter(([k]) => isFleetModel(k)).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
+    const badFleet = !!cur && isFleetModel(cur);
+    const badOther = !!cur && !badFleet && !heroes.some(([k]) => k === cur);
+    return `
+        <div class="hero-pick">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+                ${spriteThumb(cur, 64)}
+                <div>
+                    <div style="font-size:12px;color:${badFleet || badOther ? '#ff8a8a' : '#f5d78e'};">${escapeHtml(cur ? (WAR_TYPES[cur]?.name ?? cur) : '（未选）')}</div>
+                    ${badFleet ? '<div style="font-size:10px;color:#ff8a8a;">❌ 这是**船**（舰队兵模），第 10 队是陆上主将队，必须换成下面的英雄</div>' : ''}
+                    ${badOther ? '<div style="font-size:10px;color:#ff8a8a;">❌ 不是英雄兵模，必须换成下面的英雄</div>' : ''}
+                </div>
+            </div>
+            <div class="hp-grid">${heroes.map(([k, v]) => `
+                <button type="button" class="hp-cell${k === cur ? ' on' : ''}" data-hero-pick="${id}" data-hero-key="${escapeAttr(k)}" title="${escapeAttr(v.name)}">
+                    ${spriteThumb(k, 52)}<span>${escapeHtml(v.name.replace(/^英雄·/, ''))}</span>
+                </button>`).join('')}</div>
+            ${ships.length ? `<div class="hp-ships">船（舰队兵模，<b>不能当第 10 队</b>）：${ships.map(([, v]) => escapeHtml(v.name)).join('、')}</div>` : ''}
+        </div>`;
 }
 
 /** 选中的剧本军团长什么样：阵型 + 前中后三排兵种 + 史料出处（没选就显示乱斗那支的兵种，提醒没按史实核对） */
@@ -967,19 +1012,14 @@ function render(): void {
                         <span class="hint">同一武将可挂多场（按年份依次解锁）；留空 = 不归属任何武将</span>
                     </div>
                     <div class="fld">
-                        <label>主将队兵种 · 第 10 队，按素材样貌选，不看兵名</label>
-                        <div style="display:flex;gap:8px;align-items:center;">
-                            <select id="f-commander" style="flex:1;">${commanderOptions(working.commanderUnit)}</select>
-                            ${spriteThumb(working.commanderUnit, 72)}
-                        </div>
-                        <span class="hint">剧本模式每个主角武将的军团都是 10 队：编制 9 队 + 主将队 1 队（前排正中再往前）；第十队必须是英雄</span>
+                        <label>主将队兵种 · 第 10 队，🔴 看样式点选（缩略图），不看人名</label>
+                        ${heroPicker('f-commander', working.commanderUnit)}
+                        <span class="hint">剧本模式每个主角武将的军团都是 10 队：编制 9 队 + 主将队 1 队（前排正中再往前）；<b>第十队必须是英雄，绝不能是船</b></span>
                     </div>
                     <div class="fld">
-                        <label>对手主将队兵种 · 对面那位主帅的第 10 队，必须是英雄，按样貌或文化年代相近的人物选</label>
-                        <div style="display:flex;gap:8px;align-items:center;">
-                            <select id="f-foeCommander" style="flex:1;">${commanderOptions(working.foeCommanderUnit)}</select>
-                            ${spriteThumb(working.foeCommanderUnit, 72)}
-                        </div>
+                        <label>对手主将队兵种 · 对面那位主帅的第 10 队，同样看样式点选</label>
+                        ${heroPicker('f-foeCommander', working.foeCommanderUnit)}
+                        <span class="hint">必须是英雄兵模，<b>绝不能是船</b>；按样貌或文化年代相近的人物选</span>
                     </div>
                     <div class="fld">
                         <label>战役名称 · 历史上最知名的叫法</label>
@@ -1349,8 +1389,16 @@ function bind(): void {
         working.battleDescription = el.value;
     });
     on<HTMLTextAreaElement>('f-bfNote', 'input', (el) => { working.bfNote = el.value; });
-    on<HTMLSelectElement>('f-commander', 'change', (el) => { working.commanderUnit = el.value; render(); });
-    on<HTMLSelectElement>('f-foeCommander', 'change', (el) => { working.foeCommanderUnit = el.value; render(); });
+    // 主将队 / 对手主将队：看样式点选（缩略图网格，2026-10-02 主人定）
+    document.querySelectorAll<HTMLButtonElement>('[data-hero-key]').forEach((el) => {
+        el.addEventListener('click', () => {
+            const key = el.dataset.heroKey!;
+            if (!key) return;
+            if (el.dataset.heroPick === 'f-commander') working.commanderUnit = key;
+            else working.foeCommanderUnit = key;
+            render();
+        });
+    });
     on<HTMLSelectElement>('f-startCity', 'change', (el) => { working.startCityId = el.value; render(); });
     drawThumbs();
     // 那一年还不存在的途经据点：切换

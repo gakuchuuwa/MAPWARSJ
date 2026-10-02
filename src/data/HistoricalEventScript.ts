@@ -837,8 +837,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         // 对手主将队：🔴 照 §二.5「看样子和年代选，不看名字」，本时代没有印度/阿斯瓦卡的英雄兵模，
-        //    守城的是**女王**克莱奥菲斯 → 取古典段唯一的女将英雄兵模 hero_artemisia（英雄·阿尔特米西亚，前5世纪卡里亚女王）。
-        foeCommanderUnit: 'hero_artemisia',
+        //    守城的是**女王**克莱奥菲斯。古典段唯一的女将兵模 hero_artemisia（英雄·阿尔特米西亚）
+        //    素材**是一艘战船**（armorTags 含 16 = 战舰甲级）—— 🔴 [2026-10-02 主人令
+        //    「舰队不应该作为英雄的第10队」] 陆战第 10 队绝不能出舰队，故按「先保年代、再尽样子」
+        //    取同代骑马蛮族首领 hero_thracian_chieftain（与居鲁士城/奥诺斯岩/马里斯等本地首领同例）。
+        foeCommanderUnit: 'hero_thracian_chieftain',
         type: 'siege',
         title: '公元前327年 亚历山大东征马萨加战役',
         battleBriefing: '在斯瓦特谷地险要的马萨加要塞下，守军与雇佣兵凭借深沟高墙坚守，太后克莱奥菲斯亲临城头指挥。马其顿军筑起巨大的攻城塔，搭设木桥跨越深沟，亚历山大战中脚踝被流箭射中，血流不止却依然伫立阵前挥剑督战。巨型攻城槌重重轰击城墙，投石机向城内倾泻重石，马其顿突击队顺着搭上城头的桥板发起冲锋，双方在木桥与城墙防线间陷入拉锯鏖战。',
