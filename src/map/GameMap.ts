@@ -4,6 +4,7 @@ import { GameConfig } from '../config/GameConfig';
 import { TILE_CONFIG, tileToLatLng } from './TileMapConfig';
 import { HillshadeLayer } from './HillshadeLayer';
 import { RiverOverlayLayer } from './RiverOverlayLayer';
+import { CoastalWaveLayer } from './CoastalWaveLayer';
 import { VectorRiverLayer } from './VectorRiverLayer';
 import { setStrategicRiverProximityData } from './StrategicRiverProximity';
 import { buildRiverSegments } from './RiverStripData';
@@ -86,6 +87,7 @@ export class GameMap {
     private currentSourceKey: string = 'LOCAL';
     private hillshadeLayer: HillshadeLayer | null = null;
     private riverLayer: RiverOverlayLayer | null = null;
+    private coastalWaveLayer: CoastalWaveLayer | null = null;
     private vectorRiverLayer: VectorRiverLayer | null = null;
     private monumentLayer: MonumentLayer | null = null;
     /** 🔴 [2026-09-12 主人定] 战场图层（战场不是据点，是独立地名，类似奇观） */
@@ -611,6 +613,10 @@ export class GameMap {
                 this.map.removeLayer(this.riverLayer as any);
             }
         }
+        if (this.coastalWaveLayer) {
+            this.map.removeLayer(this.coastalWaveLayer);
+            this.coastalWaveLayer = null;
+        }
 
         // [NEW] Toggle Vector Layer logic
         this.isVectorRiverEnabled = enable;
@@ -632,6 +638,8 @@ export class GameMap {
             //    （2026-07-19 主人明确要求两套河流都保留，勿再停用）
             this.riverLayer = new RiverOverlayLayer();
             this.riverLayer.addTo(this.map);
+            this.coastalWaveLayer = new CoastalWaveLayer(this.riverLayer);
+            this.coastalWaveLayer.addTo(this.map);
 
             // 2. Load Vector Layer (Authentic Data)：河流条数多、线细
             if (!this.vectorRiverLayer) {

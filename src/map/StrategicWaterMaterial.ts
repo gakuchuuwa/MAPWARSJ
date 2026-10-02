@@ -2,10 +2,14 @@
 const SIZE = 128;
 /** 海、湖与矢量河流共用的水色；近岸增量只表达视觉过渡。 */
 export const STRATEGIC_WATER_PALETTE = {
-    base: [64, 117, 141] as const,
-    shoreLift: [24, 35, 27] as const,
+    base: [42, 98, 134] as const,
+    shoreLift: [12, 38, 28] as const,
     /** 深海色：水深越大越接近它（见 RiverWorker 的 depthT；湖、河、高处的水深度为 0，保持 base） */
-    deep: [24, 58, 88] as const,
+    deep: [18, 48, 76] as const,
+    /** 近海浅水与河流入海统一水色 (Coastal Azure & River Estuary) */
+    coastalAzure: [54, 136, 162] as const,
+    /** 贴岸浅滩/极浅清透水色 (Shore Shallows) */
+    shallowReef: [64, 156, 174] as const,
 };
 export const STRATEGIC_WATER_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.join(',')})`;
 export const STRATEGIC_RIVER_BANK_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(
@@ -70,12 +74,17 @@ export interface WaterTileMask {
     depthT?: Float32Array | null;
 }
 
+export interface StrategicWaterResult {
+    data: Uint8ClampedArray;
+    waves: Float32Array;
+}
+
 /** 邻接瓦片只提供真实水域掩膜，不改变海陆判定。 */
 export function renderStrategicWater(
     tile: WaterTileMask, tiles: ReadonlyMap<string, WaterTileMask>, detail: Float32Array | null,
-): Uint8ClampedArray {
+): StrategicWaterResult {
     const { width: w, height: h, mask } = tile;
-    const pad = 16, pw = w + pad * 2, ph = h + pad * 2;
+    const pad = 24, pw = w + pad * 2, ph = h + pad * 2;
     const distance = new Float32Array(pw * ph);
     const water = new Uint8Array(pw * ph);
     const worldWidth = 2 ** tile.z;
@@ -102,40 +111,102 @@ export function renderStrategicWater(
             distance[i+pw-1]+Math.SQRT2, distance[i+pw+1]+Math.SQRT2);
     }
     const out = new Uint8ClampedArray(w * h * 4);
-    const { base, shoreLift, deep } = STRATEGIC_WATER_PALETTE;
+    const { base, deep } = STRATEGIC_WATER_PALETTE;
     const depthT = tile.depthT ?? null;
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-        const i = (y + pad) * pw + x + pad, o = (y * w + x) * 4;
-        const wx = tile.x * w + x, wy = tile.y * h + y;
-        // 拉长 DE 水纹形成有方向的细浪，双线性采样避免斜向像素台阶。
-        const warp = Math.sin(wx / 143 + wy / 219) * 4;
-        const swell = waterDetailAt(detail, (wx + wy * 0.25) * 0.22, (wy - wx * 0.12) * 0.8 + warp);
-        const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
-        const tone = waterToneAt(wx, wy);
-        const reach = 10 + Math.sin(wx / 39 + wy / 57) * 3;
-        const shore = water[i] ? Math.pow(Math.max(0, 1 - distance[i] / reach), 1.4) : 0;
-        // 浪花仅少量点缀岸边，不连续描白边。
-        const glint = water[i] && distance[i] < 1.5
-            ? Math.max(0, Math.sin(wx / 7 + Math.sin(wy / 11)) - 0.65) * 38 : 0;
-        // 水深上色：河流层自己画深浅（不靠透明透出下层），湖/河/高处的水 depthT=0 → 与原来同色
-        const d = depthT ? depthT[y * w + x] : 0;
-        const b0 = base[0] + (deep[0] - base[0]) * d;
-        const b1 = base[1] + (deep[1] - base[1]) * d;
-        const b2 = base[2] + (deep[2] - base[2]) * d;
-        out[o] = b0 + tone * 0.8 + grain * 0.70 + shore * shoreLift[0] + glint;
-        out[o+1] = b1 + tone * 1.3 + grain + shore * shoreLift[1] + glint;
-        out[o+2] = b2 + tone * 1.4 + grain * 1.05 + shore * shoreLift[2] + glint;
-        // 🔴 [2026-09-30 血训] 曾把离岸 16 像素外的水面改透明想透出下层海深 —— 结果内陆湖（下层不画湖水）整片变空，
-        //    只剩一圈蓝边。这一层分不清湖和海，水面一律不透明，不许再改透明。
-        // [2026-10-01 主人批准试] 只有「高程 < 0」的水面（海底）才允许透明：下层恰好只在高程 < 0 处画水深，两边判据一致。
-        //    湖、河、高处的水、没取到高程的水面一律不透明。河口/死海/里海都按高程判，不靠「连通外海」。
-        // [2026-10-01 已撤回] 试过「高程<0 才透明」：同一片海里有的瓦片透明、有的不透明（高程瓦片/下层到得不一样快），
-        //    出现方块状刷不出的区域。水面一律不透明，不许再试透明。
-        if (water[i]) out[o+3] = 255;
-        else {
-            const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
-            out[o+3] = Math.round(coverage * 0.18 * 255);
+    const wavePoints: number[] = [];
+    const worldPx = 2 ** tile.z * w;
+
+    for (let y = 0; y < h; y++) {
+        const wy = tile.y * h + y;
+        // 计算当前行的全局纬度，实现全球水色气候自适应
+        const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (wy + 0.5) / worldPx))) * 180 / Math.PI;
+        const absLat = Math.abs(lat);
+        // 热带/暖海程度 (0~1) 与 极地/高纬寒海程度 (0~1)
+        const tropicalT = Math.max(0, Math.min(1, (28 - absLat) / 10)); // <18° 满热带，>28° 为 0
+        const arcticT = Math.max(0, Math.min(1, (absLat - 48) / 14));   // >62° 满寒带，<48° 为 0
+
+        // 全球自适应近海青蓝与浅滩水色（基准 coastalAzure [54, 136, 162] 与河流入海色完全同源）
+        const azureR = Math.round(54 + tropicalT * 4 - arcticT * 6);
+        const azureG = Math.round(136 + tropicalT * 12 - arcticT * 14);
+        const azureB = Math.round(162 + tropicalT * 6 - arcticT * 12);
+
+        const reefR = Math.round(64 + tropicalT * 6 - arcticT * 8);
+        const reefG = Math.round(156 + tropicalT * 12 - arcticT * 20);
+        const reefB = Math.round(174 + tropicalT * 4 - arcticT * 16);
+
+        for (let x = 0; x < w; x++) {
+            const i = (y + pad) * pw + x + pad, o = (y * w + x) * 4;
+            const wx = tile.x * w + x;
+
+            // 拉长 DE 水纹形成有方向的细浪，双线性采样避免斜向像素台阶。
+            const warp = Math.sin(wx / 143 + wy / 219) * 4;
+            const swell = waterDetailAt(detail, (wx + wy * 0.25) * 0.22, (wy - wx * 0.12) * 0.8 + warp);
+            const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
+            const tone = waterToneAt(wx, wy);
+
+            // 水深上色：大洋深海接近 deep，近海基调 base
+            const d = depthT ? depthT[y * w + x] : 0;
+            let r = base[0] + (deep[0] - base[0]) * d;
+            let g = base[1] + (deep[1] - base[1]) * d;
+            let b = base[2] + (deep[2] - base[2]) * d;
+
+            // 沿岸浅海过渡：与真实海底水深（DEM depthT）有机联动
+            // 陡峭海沟/岬角处水深直接坠下（浅水带极窄 4~6px），平缓大陆架/海湾处平缓开阔（11~15px）
+            const depthFactor = Math.max(0.35, 1 - d * 0.70);
+            const dist = distance[i];
+            const reach = (12 + Math.sin(wx / 37 + wy / 51) * 3.0 + Math.sin((wx - wy) / 23) * 1.5) * depthFactor;
+
+            if (water[i] && dist < reach) {
+                // 1. 近海与河口浅水渐变（舒缓平滑过渡，与河流入海口浑然一体）
+                const shelfT = Math.pow(1 - dist / reach, 1.35) * 0.75;
+                r = r * (1 - shelfT) + azureR * shelfT;
+                g = g * (1 - shelfT) + azureG * shelfT;
+                b = b * (1 - shelfT) + azureB * shelfT;
+
+                // 2. 贴岸极浅清透水层（距岸 3px 内极轻微透沙，透明度克制在 0.45）
+                if (dist < 3.0) {
+                    const reefT = Math.pow(1 - dist / 3.0, 1.4) * 0.45;
+                    r = r * (1 - reefT) + reefR * reefT;
+                    g = g * (1 - reefT) + reefG * reefT;
+                    b = b * (1 - reefT) + reefB * reefT;
+                }
+            }
+
+            // 岸边浪花微光 (距离 < 1.6 像素处的柔和白色细浪)
+            const glint = water[i] && dist < 1.6
+                ? Math.max(0, Math.sin(wx / 5 + Math.sin(wy / 8)) - 0.48) * 35 : 0;
+
+            out[o] = Math.min(255, Math.max(0, r + tone * 0.7 + grain * 0.65 + glint));
+            out[o+1] = Math.min(255, Math.max(0, g + tone * 1.1 + grain * 0.90 + glint * 1.05));
+            out[o+2] = Math.min(255, Math.max(0, b + tone * 1.2 + grain * 0.95 + glint * 1.05));
+
+            // 采样浪花微动点（在 2.0 ~ 4.8px 浪区疏朗采样，生成散落自然的潮汐微浪核）
+            if (water[i] && dist >= 2.0 && dist <= 4.8) {
+                if (((x * 13 + y * 17) % 29 === 0) && ((wx + wy) % 7 === 0)) {
+                    let nx = (distance[i + 1] - distance[i - 1]) * 0.5;
+                    let ny = (distance[i + pw] - distance[i - pw]) * 0.5;
+                    const len = Math.hypot(nx, ny);
+                    if (len > 0.05) {
+                        nx /= len;
+                        ny /= len;
+                        const noise = Math.sin(wx * 0.08 + wy * 0.06);
+                        wavePoints.push(x, y, dist, nx, ny, noise);
+                    }
+                }
+            }
+
+            // 🔴 [2026-09-30 血训] 曾把离岸 16 像素外的水面改透明想透出下层海深 —— 结果内陆湖整片变空。水面一律不透明。
+            if (water[i]) out[o+3] = 255;
+            else {
+                const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
+                if (coverage > 0) {
+                    out[o] = Math.round(reefR * 0.85);
+                    out[o+1] = Math.round(reefG * 0.85);
+                    out[o+2] = Math.round(reefB * 0.85);
+                    out[o+3] = Math.round(coverage * 0.22 * 255);
+                }
+            }
         }
     }
-    return out;
+    return { data: out, waves: new Float32Array(wavePoints) };
 }

@@ -12,6 +12,7 @@ import { gameLog } from '../utils/GameLogger';
 interface RiverWorkerResponse {
     id: number;
     data: Uint8ClampedArray;
+    waves?: Float32Array | null;
 }
 
 export class RiverOverlayLayer extends L.GridLayer {
@@ -51,11 +52,14 @@ export class RiverOverlayLayer extends L.GridLayer {
     }
 
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
-        const { id, data } = e.data;
+        const { id, data, waves } = e.data;
         const task = this.pendingTiles.get(id);
 
         if (task) {
             const { ctx, tile, done } = task;
+            if (waves && waves.length > 0) {
+                (tile as any)._coastalWaves = waves;
+            }
 
             // Create ImageData
             // [FIX] Cast to any to avoid strict "ArrayBufferLike vs ArrayBuffer" TS error
@@ -68,6 +72,22 @@ export class RiverOverlayLayer extends L.GridLayer {
                 done(undefined, tile);
             }
         }
+    }
+
+    
+
+    /** 获取当前加载到 DOM 中的所有带海岸浪潮数据的瓦片 */
+    public getActiveWaveTiles(): Array<{ tile: HTMLElement; waves: Float32Array }> {
+        const res: Array<{ tile: HTMLElement; waves: Float32Array }> = [];
+        const tiles = (this as any)._tiles;
+        if (!tiles) return res;
+        for (const key in tiles) {
+            const el = tiles[key]?.el as any;
+            if (el && el._coastalWaves && el._coastalWaves.length > 0) {
+                res.push({ tile: el, waves: el._coastalWaves });
+            }
+        }
+        return res;
     }
 
     // [OPTIMIZATION] Shared Canvas for image data extraction
