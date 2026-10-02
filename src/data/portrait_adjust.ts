@@ -7991,6 +7991,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.29,
             "offsetX": 0,
             "offsetY": 4
+        },
+        "/assets/WEST_ASIA/kesaiya_agumuershi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {
