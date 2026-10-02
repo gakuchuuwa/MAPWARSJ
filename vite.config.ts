@@ -1572,6 +1572,42 @@ export default defineConfig({
                     });
                 });
                 // ========================================================
+                //   /api/save-script-legion   body: { legionName, formationMode, slots, shipId?, source }
+                //   保存一支四级剧本军团（src/data/scriptLegions.ts）：阵型 + 三排 + 战船 + 史料出处。
+                // ========================================================
+                server.middlewares.use('/api/save-script-legion', (req, res) => {
+                    if (req.method !== 'POST') {
+                        res.statusCode = 405;
+                        res.end(JSON.stringify({ ok: false, error: 'Method not allowed' }));
+                        return;
+                    }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const data = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const legionName: string = String(data?.legionName ?? '').trim();
+                            if (!legionName) throw new Error('缺少军团名');
+                            if (!Array.isArray(data?.slots) || data.slots.length === 0) throw new Error('缺少三排兵种');
+                            markLegionSaveWrite();
+                            const p = path.resolve(__dirname, 'src/data/scriptLegions.ts');
+                            const out = serverReplaceScriptLegionEntry(
+                                safeReadFileSync(p), legionName, data.slots, data.formationMode, data.shipId, data.source,
+                            );
+                            if (out == null) throw new Error('剧本军团【' + legionName + '】不在 scriptLegions.ts 里');
+                            safeWriteFileSync(p, out);
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: true, file: 'scriptLegions.ts' }));
+                            console.log('[SaveScriptLegion] ✅ 【' + legionName + '】→ scriptLegions.ts');
+                        } catch (err: any) {
+                            console.error('❌ [SaveScriptLegion] Failed:', err);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(JSON.stringify({ ok: false, error: err.message }));
+                        }
+                    });
+                });
+                // ========================================================
                 // [NEW 2026-06-01] /api/save-culture-formations
                 //   保存某个文化的兵种阵型配置
                 //   body: { culture: string, slots: any[] }
@@ -3146,6 +3182,77 @@ function serverReplaceLegionShip(text: string, legionName: string, shipId: strin
     const valueEnd = text.indexOf("'", valueStart);
     if (valueEnd < 0) return null;
     return text.slice(0, valueStart) + shipId + text.slice(valueEnd);
+}
+
+/** 替换一支剧本军团（scriptLegions.ts）的 shipId；没有 shipId 行时新增、清空时删除整行。未命中返回原文本 */
+function serverReplaceScriptLegionShip(text: string, at: number, shipId: string | null | undefined): string {
+    const nextName = text.indexOf("name: '", at + 1);
+    const shipAt = text.indexOf("shipId: '", at);
+    const hasShip = shipAt >= 0 && (nextName < 0 || shipAt < nextName);
+    if (shipId) {
+        if (hasShip) {
+            const valueStart = shipAt + "shipId: '".length;
+            const valueEnd = text.indexOf("'", valueStart);
+            if (valueEnd < 0) return text;
+            return text.slice(0, valueStart) + shipId + text.slice(valueEnd);
+        }
+        // 没有 shipId 行 → 在 source 前插入一行（缩进 8 空格）
+        const srcAt = text.indexOf("source: '", at);
+        if (srcAt < 0) return text;
+        const lineStart = text.lastIndexOf('\n', srcAt) + 1;
+        return text.slice(0, lineStart) + "        shipId: '" + shipId + "',\n" + text.slice(lineStart);
+    }
+    if (hasShip) {
+        // 清空 → 删除整行 shipId
+        const lineStart = text.lastIndexOf('\n', shipAt) + 1;
+        const lineEnd = text.indexOf('\n', shipAt);
+        if (lineEnd < 0) return text;
+        return text.slice(0, lineStart) + text.slice(lineEnd + 1);
+    }
+    return text;
+}
+
+/** 替换一支剧本军团的 source 字段（原为多行 + 拼接，写成单行转义字符串）。未命中返回原文本 */
+function serverReplaceScriptLegionSource(text: string, at: number, source: string): string {
+    const srcAt = text.indexOf("source: '", at);
+    if (srcAt < 0) return text;
+    const closeAt = text.indexOf('\n    },', srcAt);
+    if (closeAt < 0) return text;
+    const escaped = String(source ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '')
+        .replace(/\n/g, '\\n');
+    return text.slice(0, srcAt + "source: '".length) + escaped + "'," + text.slice(closeAt);
+}
+
+/** 保存一支剧本军团（scriptLegions.ts）：阵型 + 三排 + 战船 + 史料出处。未命中返回 null */
+function serverReplaceScriptLegionEntry(
+    text: string,
+    legionName: string,
+    slots: any[],
+    mode: string,
+    shipId: string | null | undefined,
+    source: string,
+): string | null {
+    const at = text.indexOf("name: '" + legionName + "'");
+    if (at < 0) return null;
+    let out = text;
+    // 1. 三排（slots 数组）
+    const range = serverFindSlotsArray(out, at);
+    if (!range) return null;
+    out = out.slice(0, range.open + 1) + '\n' + serverSlotLines(slots, '            ') + '\n        ' + out.slice(range.close);
+    // 2. 阵型（slots 前的 head 里）
+    const headEnd = out.indexOf('slots: [', at);
+    if (headEnd > 0) {
+        const head = out.slice(at, headEnd);
+        out = out.slice(0, at) + head.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + out.slice(headEnd);
+    }
+    // 3. 战船
+    out = serverReplaceScriptLegionShip(out, at, shipId);
+    // 4. 史料出处
+    out = serverReplaceScriptLegionSource(out, at, source);
+    return out;
 }
 
 /** 一级 16 母体的战船 shipId 在 CultureFormations.ts 的 BASE_16_TIERS_MAP */
