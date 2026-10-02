@@ -916,23 +916,11 @@ function checkSideLegion(side: string, name: string, fallback: string): Issue[] 
                 + `${outsideCls.map((s) => s.type).join('、')}（军团只分这三类，不许分得更细）`,
         });
     }
-    // 🔴 [2026-10-02 主人令「军团五兵种，首先，符合历史，其次，三排尽量骑步远各一」]
-    //    五兵 ＝ 英雄队（主队·第 10 队）＋ 前排 ＋ 中排 ＋ 后排 ＋ 舰队。
-    //    「三排尽量骑／步／远各一」是**第二位的「尽量」**——**提示级、不拦存盘**：
-    //    第一位的判据是**符合历史**，史实上做不到的照史实写。
-    //    例：推罗军团 ＝ 前远程3（城头弓弩）／中步兵4（守城主力）／后投掷2（掷矛手，归远程类）
-    //        ＝ 远／步／远 —— 海岛城邦无战马，史上就是没有骑兵排，**合法**，只提示不报错。
-    const CLS_CN: Record<string, string> = { cav: '骑兵', melee: '步兵', ranged: '远程' };
-    const clsList = def.slots.map((sl) => String(clsOf(sl.type) ?? '?'));
-    const missingCls = CLS3.filter((c) => !clsList.includes(c));
-    if (def.slots.length === 3 && missingCls.length) {
-        out.push({
-            level: 'warn',
-            msg: `${side}剧本军团「${name}」三排没有骑／步／远各一（现为 `
-                + `${clsList.map((c) => CLS_CN[c] ?? c).join('／')}，缺 ${missingCls.map((c) => CLS_CN[c]).join('、')}）`
-                + `—— 第二位的要求是「尽量」各占一类；史实如此（如海岛城邦无战马）可不改`,
-        });
-    }
+    // 🔴🔴 [2026-10-02 主人令「你不要总是卡在步骑远上，**哪有军团一定是步骑远呀，你把这个规则取消吧，符合历史就行**」]
+    //    —— **「三排尽量骑／步／远各一」这条规则已取消，编辑器不再检查、不再提示。**
+    //    剧本军团的三排只有一个判据：**符合历史**（史料怎么写就怎么编）。
+    //    （本条上面那句「每个兵种必须归入骑／步／远三类」仍然保留：那管的是**兵种分类的粒度**
+    //     —— 2026-09-23 主人「军团中只有骑兵，步兵，远程，不要分的那么细」—— 与编制怎么排无关。）
     if (!slotsMatchFormation(def.slots, def.formationMode)) {
         out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排人数与阵型对不上（合计必须 9，按阵型分排）` });
     }

@@ -272,7 +272,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     //    拉平到基准 —— 主人听感就是它偏小。现在单独抬 3dB，落到约 **-16.6 LUFS**
     //    （比多数曲子响约 1.4dB，仍低于最响的一档，不会盖过音效与播报）。
     age_of_kings: 0.427,
-    fallen_army: 0.603,  // -16.6 LUFS · （2026-08-04 通用随机曲）
+    fallen_army: 0.48,  // -16.6 LUFS · （原 0.603，2026-10-02 主人报音量略大，-2dB → 0.48）
     game_of_thrones: 0.708,  // -18.0 LUFS · 用户要求单曲小幅提高约 1dB（通用随机曲）
     shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
