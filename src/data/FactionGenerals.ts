@@ -66,7 +66,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xiaaiji: { generalId: 'gen_perdiccas', generalName: '佩尔狄卡斯', portrait: '/assets/GREEK/xiaaiji_peierdikaosi.png' },
     kaliya: [
         { generalId: 'gen_artemisia', generalName: '阿尔特米西亚', portrait: '/assets/GREEK/kaliya_aertermixiya.png' },
-        // 前334年哈利卡纳苏斯战役守帅（罗得岛的门农，波斯西部沿海统帅，阿里安 I.20 记其与卡里亚总督据城死守），立绘按铁律留空、待主人亲自放图分配
+        // 公元前334年哈利卡纳苏斯战役守帅（罗得岛的门农，波斯西部沿海统帅，阿里安 I.20 记其与卡里亚总督据城死守），立绘按铁律留空、待主人亲自放图分配
         { generalId: 'halikanasu_memnon', generalName: '门农', portrait: '/assets/PERSIAN/kaliya_mennong.png' },
     ],
     bosidiguo: { generalId: 'gen_artaphernes', generalName: '阿尔塔弗涅斯', portrait: '/assets/PERSIAN/bosidiguo_aertafuniesi.png' },
@@ -103,7 +103,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     boootiya: [
         { generalId: 'gen_epaminondas', generalName: '伊巴密浓达', portrait: '/assets/GREEK/boootiya_yibaminongda.png' },
-        // 前335年底比斯战役守帅（底比斯主将菲尼克斯，见剧本该场 description），立绘按铁律留空、待主人亲自放图分配
+        // 公元前335年底比斯战役守帅（底比斯主将菲尼克斯，见剧本该场 description），立绘按铁律留空、待主人亲自放图分配
         { generalId: 'dibisi_phoinix', generalName: '菲尼克斯', portrait: '/assets/GREEK/boootiya_feinikesi.png' },
     ],
     luodesi: { generalId: 'gen_villaret', generalName: '维拉雷', portrait: '/assets/LATIN/luodesi_weilalei.png' },
@@ -117,11 +117,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     lagoniya: { generalId: 'gen_leonidas', generalName: '列奥尼达', portrait: '/assets/LATIN/lagoniya_lieaonida.png' },
     maqidun: [
         { generalId: 'gen_alexander_great', generalName: '亚历山大', portrait: '/assets/LATIN/maqidun_yalishanda.png' },
-        // 前323年普拉塔纳斯战役守帅（马其顿摄政、欧洲最高统帅安提帕特）。
+        // 公元前323年普拉塔纳斯战役守帅（马其顿摄政、欧洲最高统帅安提帕特）。
         // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除（武将无据点、事件触发不了）；**人物记录保留**。
         // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'maqidun_antipater', generalName: '安提帕特', portrait: '' },
-        // 前321年赫勒斯滂战役反摄政同盟统帅克拉特罗斯，立绘按铁律留空走回落、待主人亲自放图分配
+        // 公元前321年赫勒斯滂战役反摄政同盟统帅克拉特罗斯，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'maqidun_craterus', generalName: '克拉特罗斯', portrait: '' },
     ],
     lagusa: { generalId: 'gen_dragan', generalName: '德拉甘', portrait: '/assets/SLAVIC/lagusa_delagan.png' },
@@ -168,7 +168,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/LATIN/liguliya_andelieya.png' },
     seleisi: [
         { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
-        // 前335年多瑙河渡河战役守帅（多瑙河北岸吉特人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
+        // 公元前335年多瑙河渡河战役守帅（多瑙河北岸吉特人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
         { generalId: 'jite_shouling', generalName: '科托罗', portrait: '/assets/SLAVIC/seleisi_ketuoluo.png' },
     ],
     bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },
@@ -193,11 +193,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     feiniqi: { generalId: 'gen_hamilcar', generalName: '哈米尔卡', portrait: '/assets/LATIN/feiniqi_hamierka.png' },
     xila: [
         { generalId: 'gen_themistocles', generalName: '地米斯托', portrait: '/assets/GREEK/xila_dimisituo.png' },
-        // 前323年普拉塔纳斯战役统帅（希腊反马其顿联军统帅莱奥斯塞尼斯）。
+        // 公元前323年普拉塔纳斯战役统帅（希腊反马其顿联军统帅莱奥斯塞尼斯）。
         // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除；**人物记录保留**。
         // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'xila_leosthenes', generalName: '莱奥斯塞尼斯', portrait: '' },
-        // 前322年克兰农战役希腊同盟军总司令（接替阵亡莱奥斯塞尼斯之安提菲洛斯）。
+        // 公元前322年克兰农战役希腊同盟军总司令（接替阵亡莱奥斯塞尼斯之安提菲洛斯）。
         // 🔴 [2026-09-19 主人令「全删除」] 该战役事件已删除；**人物记录保留**。
         // 立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'xila_antiphilus', generalName: '安提菲洛斯', portrait: '' },
@@ -557,12 +557,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 // ── 中亚区 2026-06-18 ──
     huarazim: { generalId: 'huarazim_mohemo', generalName: '摩诃末', portrait: '/assets/CENTRAL_ASIA/huarazim_mohemo.png' },
     kazakh: { generalId: 'kazakh_hasimu', generalName: '哈斯木', portrait: '/assets/CENTRAL_ASIA/kazakh_hasimu.png' },
-    // 前327年索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes）；
+    // 公元前327年索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes）；
     //    立绘按铁律留空走保底图，等主人亲自放图
     suogediyana: { generalId: 'suogediyana_arimazes', generalName: '阿里马泽斯', portrait: '/assets/CENTRAL_ASIA/suogediyana_alimazeshi.png' },
     sogdian: [
         { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
-        // 前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
+        // 公元前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '' },
     ],
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
@@ -1143,7 +1143,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     aqimeinide: [
         { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
-        // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
+        // 公元前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿里奥巴赞斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
 
     ],
@@ -1157,7 +1157,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png' },
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
-    // 前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配
+    // 公元前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配
     yiaoniya: { generalId: 'yiaoniya_hegesistratus', generalName: '赫格西斯特', portrait: '/assets/GREEK/yiaoniya_hegexisite.png' },
     jialatai: { generalId: 'jialatai_deaota', generalName: '德奥塔鲁斯', portrait: '/assets/WEST_ASIA/jialatai_deaotalusi.png' },
     guyashu: { generalId: 'guyashu_shamushi', generalName: '沙姆希阿达', portrait: '/assets/WEST_ASIA/guyashu_shamuxiada.png' },
@@ -1171,7 +1171,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     mojietuo: { generalId: 'mojietuo_pinbisuoluo', generalName: '频毗娑罗', portrait: '/assets/INDIA/mojietuo_pinpisuoluo.png' },
     // 2026-09-12 主人三条规矩：军团要有武将・武将要有所属据点势力。
     // 古典时代孟加拉军团需要一位古典孟加拉武将 = 毗阇耶（大史记其自孟加拉僧伽补罗出海、
-    // 征服楞伽建僧伽罗王朝，约前543年，古典）。**数组第一位＝守将，仍是达磨波罗**（绝不挤掉）。
+    // 征服楞伽建僧伽罗王朝，约公元前543年，古典）。**数组第一位＝守将，仍是达磨波罗**（绝不挤掉）。
     // 立绘留空＝走文化池回落，由主人放图。
     boluo: [
         { generalId: 'boluo_damoboluo', generalName: '达磨波罗', portrait: '/assets/INDIA/boluo_damoboluo.png' },
@@ -1250,7 +1250,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xiadunhe: { generalId: 'xiadunhe_sviatoslav', generalName: '斯维亚托斯拉夫', portrait: '/assets/SLAVIC/xiadunhe_siweiyatuosilafu.png' },
     bulu: { generalId: 'gen_bolusi', generalName: '波鲁斯', portrait: '/assets/INDIA/bulu_bolusi.png' },
     xiaofulijiya: { generalId: 'xiaofulijiya_aerxitis', generalName: '阿尔西提斯', portrait: '/assets/WEST_ASIA/xiaofulijiya_aerxitisi.png' },
-    // 🔴 推罗·阿泽米尔库斯（Azemilcus，推罗末代国王，前332年守岛城）。显示名限 ≤5 字 → 「阿泽米尔」。
+    // 🔴 推罗·阿泽米尔库斯（Azemilcus，推罗末代国王，公元前332年守岛城）。显示名限 ≤5 字 → 「阿泽米尔」。
     //    portrait 留空 = 走文化池回落（见本文件既有约定），**立绘由主人放图后填，AI 不指定**。
     kanan: { generalId: 'kanan_azemier', generalName: '阿泽米尔', portrait: '/assets/WEST_ASIA/kanan_azemier.png' },
     // 🔴 加沙·巴提斯（Batis，史载波斯任命的加沙守将，围城中力竭被俘遭处决）。portrait 留空＝走文化池回落，立绘由主人放图
@@ -1276,29 +1276,29 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     naxos_ancient: { generalId: 'gen_chabrias', generalName: '卡布里亚斯', portrait: '/assets/GREEK/naxos_ancient_kabuliyasi.png' },
     sijitai: [
         { generalId: 'sijitai_ateas', generalName: '阿泰阿斯', portrait: '/assets/STEPPE/sijitai_ataiasi.png' },
-        // 前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
+        // 公元前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'sijitai_satraces', generalName: '萨特拉克斯', portrait: '/assets/STEPPE/sijitai_satraces.png' },
     ],
     yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
     wangdaer: { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '/assets/GERMANIC/wangdaer_gaisalike.png' },
-    // 前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
+    // 公元前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
     aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '/assets/INDIA/aswaka_kelaiaofeisi.png' },
-    // 前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
+    // 公元前326年奥诺斯岩围城战守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、科塞亚首领同一记法）；
     //    立绘按铁律留空走保底图，等主人亲自放图
     aornos: { generalId: 'aornos_aphrikes', generalName: '阿夫里凯斯', portrait: '/assets/INDIA/aornos_afulikaisi.png' },
-    // 前329年居鲁士城围攻守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、奥诺斯首领同一记法）；
+    // 公元前329年居鲁士城围攻守帅（史料未载守将姓名 → 按「地名＋首领」记，与马利首领、奥诺斯首领同一记法）；
     //    立绘按铁律留空走保底图，等主人亲自放图
     julushi: { generalId: 'julushi_catanes', generalName: '卡塔涅斯', portrait: '/assets/CENTRAL_ASIA/julushi_kataniesi.png' },
-    // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
+    // 公元前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_malavapala', generalName: '摩罗波罗', portrait: '/assets/INDIA/malli_moluobaluo.png' },
-    // 前324年科塞亚战役守帅（加喜特战王名卡什提利亚什，与史料依据、底本、武将 id 一致），立绘按铁律留空走回落、待主人亲自放图分配
+    // 公元前324年科塞亚战役守帅（加喜特战王名卡什提利亚什，与史料依据、底本、武将 id 一致），立绘按铁律留空走回落、待主人亲自放图分配
     kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '/assets/WEST_ASIA/kesaiya_agumuershi.png' },
-    // 前331年乌克西亚隘口战役守帅（扎格罗斯山乌克西亚部落首领马达泰斯；英文维基 Battle of the Uxian Defile
+    // 公元前331年乌克西亚隘口战役守帅（扎格罗斯山乌克西亚部落首领马达泰斯；英文维基 Battle of the Uxian Defile
     //    信息框 commander2 = Madates），立绘按铁律留空走回落、待主人亲自放图分配
     //    🔴 [2026-10-02 逐场复核查出] 旧名册名写「提里巴斯」（Tiribazus＝亚美尼亚总督，另一人），与武将 id
     //    `wukexiya_madates`、事件数据、史料依据、底本四处的「马达泰斯」全对不上，已统一为「马达泰斯」。
     wukexiya: { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '/assets/PERSIAN/wukexiya_tilibasi.png' },
-    // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
+    // 🔴 [2026-09-25 主人批准新建佩利昂] 公元前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '/assets/GREEK/dasaleiti_kelaitusi.png' },
     hesitiya: { generalId: 'hesitiya_yiasong', generalName: '伊阿宋', portrait: '/assets/GREEK/hesitiya_yiasong.png' },

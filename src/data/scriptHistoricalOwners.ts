@@ -3,7 +3,7 @@
  * **剧本期据点的史实归属**：剧本那一年，这座城实际归谁管，旗上就写谁。
  *
  * 为什么要这张表：`cities_v2` 的 `factionId` 是乱斗用的「一城一势力」身份，取的是这座城**最有名的那段历史**
- * （尼尼微挂亚述、哈图沙挂赫梯、伊科尼乌姆挂罗姆苏丹国、蓝氏城挂贵霜……），放进前335 年的剧本里就是穿越。
+ * （尼尼微挂亚述、哈图沙挂赫梯、伊科尼乌姆挂罗姆苏丹国、蓝氏城挂贵霜……），放进公元前335年的剧本里就是穿越。
  *
  * 规则：
  *   · 只在剧本期生效（`src/events/scriptHistoricalOwnersSync.ts` 按 `isScriptPeriod()` 套上 / 撤下），乱斗逐字不变；
@@ -26,64 +26,64 @@ export interface ScriptHistoricalOwner {
 
 export const SCRIPT_HISTORICAL_OWNERS: readonly ScriptHistoricalOwner[] = [
     // ── 马其顿王国本土与腓力二世的征服（前335 已属马其顿） ──
-    { year: -335, cityId: 'city_anfeibolisi', factionId: 'maqidun', source: '英文维基 Amphipolis：前357 年腓力二世攻取，派马其顿总督治理，货币历法全换马其顿制。' },
-    { year: -335, cityId: 'city_aolinsuosi', factionId: 'maqidun', source: '英文维基 Olynthus：前348 年被腓力二世围攻摧毁，卡尔基狄克同盟随之并入马其顿。' },
-    { year: -335, cityId: 'city_plovdiv', factionId: 'maqidun', source: '英文维基 Plovdiv：前342 年腓力二世征服此城、废黜奥德里西亚国王，移民两千马其顿人。' },
-    { year: -335, cityId: 'city_yanghe', factionId: 'maqidun', source: '英文维基 Thracian Chersonese：雅典与马其顿长期争夺，前338 年割让给腓力二世。' },
-    { year: -335, cityId: 'city_pelina', factionId: 'maqidun', source: '英文维基 Thessaly：前344–342 年腓力二世任色萨利执政（archon of Thessaly），色萨利同盟受马其顿节制；前335 年亚历山大继任执政，剧本期旗号归马其顿。' },
-    // 🔴 [2026-09-26 第三片] 埃及那座城是亚历山大前331 年亲手所建，建城那年起就是马其顿的；
-    //    乱斗旗号「托勒密」是前305 年托勒密一世称王以后的事（且本剧本第 10 场城名一律写「亚历山大城」）。
-    { year: -331, cityId: 'city_yalishanda', factionId: 'maqidun', source: '英文维基 Alexandria：公元前331 年由亚历山大大帝在尼罗河口择地建立（阿里安 III.1–2），属马其顿治下；托勒密王朝前305 年才立。' },
+    { year: -335, cityId: 'city_anfeibolisi', factionId: 'maqidun', source: '英文维基 Amphipolis：公元前357年腓力二世攻取，派马其顿总督治理，货币历法全换马其顿制。' },
+    { year: -335, cityId: 'city_aolinsuosi', factionId: 'maqidun', source: '英文维基 Olynthus：公元前348年被腓力二世围攻摧毁，卡尔基狄克同盟随之并入马其顿。' },
+    { year: -335, cityId: 'city_plovdiv', factionId: 'maqidun', source: '英文维基 Plovdiv：公元前342年腓力二世征服此城、废黜奥德里西亚国王，移民两千马其顿人。' },
+    { year: -335, cityId: 'city_yanghe', factionId: 'maqidun', source: '英文维基 Thracian Chersonese：雅典与马其顿长期争夺，公元前338年割让给腓力二世。' },
+    { year: -335, cityId: 'city_pelina', factionId: 'maqidun', source: '英文维基 Thessaly：前344–342 年腓力二世任色萨利执政（archon of Thessaly），色萨利同盟受马其顿节制；公元前335年亚历山大继任执政，剧本期旗号归马其顿。' },
+    // 🔴 [2026-09-26 第三片] 埃及那座城是亚历山大公元前331年亲手所建，建城那年起就是马其顿的；
+    //    乱斗旗号「托勒密」是公元前305年托勒密一世称王以后的事（且本剧本第 10 场城名一律写「亚历山大城」）。
+    { year: -331, cityId: 'city_yalishanda', factionId: 'maqidun', source: '英文维基 Alexandria：公元前331 年由亚历山大大帝在尼罗河口择地建立（阿里安 III.1–2），属马其顿治下；托勒密王朝公元前305年才立。' },
 
     // ── 阿契美尼德波斯·小亚细亚诸行省 ──
-    // 🔴 [2026-09-26 第二片逐座核旗号] 前334 年爱奥尼亚诸希腊城邦仍是波斯属地（前387《大王和约》划归波斯，
+    // 🔴 [2026-09-26 第二片逐座核旗号] 公元前334年爱奥尼亚诸希腊城邦仍是波斯属地（前387《大王和约》划归波斯，
     //    亚历山大东征才解放），与上一条「克拉佐美奈」同一口径 —— 乱斗旗号「爱奥尼亚」「伊奥尼亚」是这两座城
     //    最有名那段历史的旗号，放进前334 就是穿越。
-    { year: -335, cityId: 'city_yifusuo', factionId: 'aqimeinide', source: '英文维基 Ephesus / Peace of Antalcidas：前387 年《大王和约》把伊奥尼亚诸希腊城邦划归波斯，直到前334 年亚历山大东征才脱离波斯（与同表「克拉佐美奈」一条同一口径）。' },
-    { year: -335, cityId: 'city_miletus', factionId: 'aqimeinide', source: '英文维基 Siege of Miletus：前334 年米利都为波斯治下的希腊城邦，守将赫格西斯特拉图斯为波斯所任，另有波斯守军据内城；城破后归马其顿（本剧本第 5 场 `cityUpdates` 易主）。' },
-    { year: -335, cityId: 'city_damasikusi', factionId: 'aqimeinide', source: '英文维基 Damascus / Battle of Issus：前 4 世纪大马士革为阿契美尼德属地，是波斯王室与总督寄存战金的城；前333 年伊苏斯战后帕曼纽南下取之（阿里安《亚历山大远征记》II.11，本剧本第 7 场 `cityUpdates` 易主）。乱斗旗号「倭马亚」是 7 世纪以后的事。' },
+    { year: -335, cityId: 'city_yifusuo', factionId: 'aqimeinide', source: '英文维基 Ephesus / Peace of Antalcidas：公元前387年《大王和约》把伊奥尼亚诸希腊城邦划归波斯，直到公元前334年亚历山大东征才脱离波斯（与同表「克拉佐美奈」一条同一口径）。' },
+    { year: -335, cityId: 'city_miletus', factionId: 'aqimeinide', source: '英文维基 Siege of Miletus：公元前334年米利都为波斯治下的希腊城邦，守将赫格西斯特拉图斯为波斯所任，另有波斯守军据内城；城破后归马其顿（本剧本第 5 场 `cityUpdates` 易主）。' },
+    { year: -335, cityId: 'city_damasikusi', factionId: 'aqimeinide', source: '英文维基 Damascus / Battle of Issus：前 4 世纪大马士革为阿契美尼德属地，是波斯王室与总督寄存战金的城；公元前333年伊苏斯战后帕曼纽南下取之（阿里安《亚历山大远征记》II.11，本剧本第 7 场 `cityUpdates` 易主）。乱斗旗号「倭马亚」是 7 世纪以后的事。' },
     { year: -335, cityId: 'city_teluoyi', factionId: 'xiaofulijiya', source: '英文维基 Troad：直到亚历山大征服前，特洛阿德属阿契美尼德帝国赫勒斯滂弗里吉亚（小弗里吉亚）行省。' },
-    { year: -335, cityId: 'city_peierjiameng', factionId: 'xiaofulijiya', source: '英文维基 Pergamon / Mysia：佩尔加蒙由亲波斯的贡吉洛斯家族领有，直到亚历山大才脱离波斯；密细亚在阿契美尼德时代称「小弗里吉亚」。阿塔罗斯王国前282 年才建。' },
-    { year: -335, cityId: 'city_kelazuomeinai', factionId: 'aqimeinide', source: '英文维基 Clazomenae：前387 年《大王和约》把克拉佐美奈划归波斯。统一用阿契美尼德旗，免得同一帝国两面旗。' },
-    { year: -335, cityId: 'city_ankala', factionId: 'fulijiya', source: '英文维基 Ankara：安库拉原为弗里吉亚城市，阿契美尼德时属弗里吉亚行省；加拉太人前278 年后才来。' },
+    { year: -335, cityId: 'city_peierjiameng', factionId: 'xiaofulijiya', source: '英文维基 Pergamon / Mysia：佩尔加蒙由亲波斯的贡吉洛斯家族领有，直到亚历山大才脱离波斯；密细亚在阿契美尼德时代称「小弗里吉亚」。阿塔罗斯王国公元前282年才建。' },
+    { year: -335, cityId: 'city_kelazuomeinai', factionId: 'aqimeinide', source: '英文维基 Clazomenae：公元前387年《大王和约》把克拉佐美奈划归波斯。统一用阿契美尼德旗，免得同一帝国两面旗。' },
+    { year: -335, cityId: 'city_ankala', factionId: 'fulijiya', source: '英文维基 Ankara：安库拉原为弗里吉亚城市，阿契美尼德时属弗里吉亚行省；加拉太人公元前278年后才来。' },
     { year: -335, cityId: 'city_yikeniwumu', factionId: 'aqimeinide', source: '英文维基 Konya：伊科尼乌姆在阿契美尼德帝国治下，直到亚历山大征服；罗姆苏丹国是 11 世纪以后的事。' },
     { year: -335, cityId: 'city_hatusha', factionId: 'aqimeinide', source: '英文维基 Hattusa：赫梯帝国前 12 世纪已亡；前 4 世纪此地属阿契美尼德卡帕多西亚行省。' },
-    { year: -335, cityId: 'city_amaxiya', factionId: 'aqimeinide', source: '英文维基 Amasya / Kingdom of Pontus：本都王国前281 年才建，此前属阿契美尼德卡帕多西亚行省。' },
+    { year: -335, cityId: 'city_amaxiya', factionId: 'aqimeinide', source: '英文维基 Amasya / Kingdom of Pontus：本都王国公元前281年才建，此前属阿契美尼德卡帕多西亚行省。' },
     { year: -335, cityId: 'city_themiskyra', factionId: 'aqimeinide', source: '英文维基 Themiscyra：亚马逊人是传说；前 4 世纪黑海南岸属阿契美尼德卡帕多西亚行省。' },
-    { year: -335, cityId: 'city_tushpa', factionId: 'wulaertu', source: '英文维基 Urartu：乌拉尔图约前590 年灭亡；此后图什帕属阿契美尼德亚美尼亚行省（前 4 世纪总督奥龙特斯）。' },
+    { year: -335, cityId: 'city_tushpa', factionId: 'wulaertu', source: '英文维基 Urartu：乌拉尔图约公元前590年灭亡；此后图什帕属阿契美尼德亚美尼亚行省（前 4 世纪总督奥龙特斯）。' },
 
     // ── 阿契美尼德波斯·两河、黎凡特、伊朗 ──
-    { year: -335, cityId: 'city_niniwei', factionId: 'aqimeinide', source: '英文维基 Nineveh：亚述帝国前612 年亡；此后属阿契美尼德亚述（阿苏拉）行省。' },
-    { year: -335, cityId: 'city_yashucheng', factionId: 'aqimeinide', source: '英文维基 Assur：前614 年被米底攻毁，阿契美尼德时属亚述（阿苏拉）行省。' },
+    { year: -335, cityId: 'city_niniwei', factionId: 'aqimeinide', source: '英文维基 Nineveh：亚述帝国公元前612年亡；此后属阿契美尼德亚述（阿苏拉）行省。' },
+    { year: -335, cityId: 'city_yashucheng', factionId: 'aqimeinide', source: '英文维基 Assur：公元前614年被米底攻毁，阿契美尼德时属亚述（阿苏拉）行省。' },
     { year: -335, cityId: 'city_aerbeila', factionId: 'aqimeinide', source: '英文维基 Erbil：阿契美尼德时代属亚述行省，高加米拉战前大流士三世的辎重大营即在阿尔贝拉；阿迪亚波纳王国是前 1 世纪以后的事。' },
-    { year: -335, cityId: 'city_babilun', factionId: 'aqimeinide', source: '英文维基 Babylon：前539 年居鲁士攻取，此后为阿契美尼德巴比伦行省首府，直到前331 年开城迎亚历山大；迦勒底王朝前539 年已亡。' },
+    { year: -335, cityId: 'city_babilun', factionId: 'aqimeinide', source: '英文维基 Babylon：公元前539年居鲁士攻取，此后为阿契美尼德巴比伦行省首府，直到公元前331年开城迎亚历山大；迦勒底王朝公元前539年已亡。' },
     { year: -335, cityId: 'city_wuluke', factionId: 'aqimeinide', source: '英文维基 Uruk：阿契美尼德时代属巴比伦行省；苏美尔城邦时代早已过去。' },
     { year: -335, cityId: 'city_wuer', factionId: 'aqimeinide', source: '英文维基 Ur：阿契美尼德时代仍有人居，属巴比伦行省。' },
-    { year: -335, cityId: 'city_susa', factionId: 'aqimeinide', source: '英文维基 Susa：大流士一世以来为阿契美尼德帝国都城之一，前331 年降亚历山大；埃兰王国前 7 世纪已亡。' },
-    { year: -335, cityId: 'city_jiasa', factionId: 'aqimeinide', source: '英文维基 Siege of Gaza：前332 年加沙由波斯守将巴提斯据守；腓力斯丁人前 7 世纪末已被巴比伦灭掉。' },
+    { year: -335, cityId: 'city_susa', factionId: 'aqimeinide', source: '英文维基 Susa：大流士一世以来为阿契美尼德帝国都城之一，公元前331年降亚历山大；埃兰王国前 7 世纪已亡。' },
+    { year: -335, cityId: 'city_jiasa', factionId: 'aqimeinide', source: '英文维基 Siege of Gaza：公元前332年加沙由波斯守将巴提斯据守；腓力斯丁人前 7 世纪末已被巴比伦灭掉。' },
     { year: -335, cityId: 'city_yelusaleng', factionId: 'aqimeinide', source: '英文维基 Yehud (Persian province)：耶路撒冷为阿契美尼德耶胡德省首府，直到亚历山大征服。' },
     { year: -335, cityId: 'city_tademoer', factionId: 'aqimeinide', source: '英文维基 Palmyra：阿契美尼德时代属河西（阿巴尔纳哈拉）行省；帕尔米拉王国是 3 世纪的事。' },
-    // 🔴 [2026-09-26 第三片逐座核旗号] 前332 年黎凡特与美索不达米亚仍在波斯手里，这四座城的乱斗旗号
+    // 🔴 [2026-09-26 第三片逐座核旗号] 公元前332年黎凡特与美索不达米亚仍在波斯手里，这四座城的乱斗旗号
     //    要么是十字军邦国、要么是后世才有的区域名，放进前332 就是穿越。
-    { year: -335, cityId: 'city_tuile', factionId: 'aqimeinide', source: '英文维基 Siege of Tyre (332 BC) 与 Phoenicia：推罗是腓尼基海岛城邦，前 6–4 世纪臣属阿契美尼德帝国（本剧本第 8 场史料依据原文即「时属阿契美尼德波斯治下」），前332 年被亚历山大攻取后归马其顿。乱斗旗号「迦南」是地区古名，不是那一年的政权。' },
+    { year: -335, cityId: 'city_tuile', factionId: 'aqimeinide', source: '英文维基 Siege of Tyre (332 BC) 与 Phoenicia：推罗是腓尼基海岛城邦，前 6–4 世纪臣属阿契美尼德帝国（本剧本第 8 场史料依据原文即「时属阿契美尼德波斯治下」），公元前332年被亚历山大攻取后归马其顿。乱斗旗号「迦南」是地区古名，不是那一年的政权。' },
     { year: -335, cityId: 'city_ake', factionId: 'aqimeinide', source: '英文维基 Acre, Israel 与 Achaemenid Empire：阿卡为腓尼基沿海港口，波斯时期属阿契美尼德帝国辖区，亚历山大东征时归附。乱斗旗号「耶路撒冷王国」是 12 世纪十字军邦国。' },
-    { year: -335, cityId: 'city_tapusakusi', factionId: 'aqimeinide', source: '英文维基 Thapsacus：幼发拉底河上著名渡口，前 4 世纪属阿契美尼德帝国；前331 年亚历山大在此架浮桥渡河（阿里安 III.7）。乱斗旗号「叙利亚」是地区名，不是政权。' },
-    { year: -335, cityId: 'city_nixibisi', factionId: 'aqimeinide', source: '英文维基 Nusaybin（古 Nisibis）：前 4 世纪为阿契美尼德帝国美索不达米亚／亚述一带的城，前331 年亚历山大东进途中经此。乱斗旗号「美索不达米亚」是地区名，不是政权。' },
+    { year: -335, cityId: 'city_tapusakusi', factionId: 'aqimeinide', source: '英文维基 Thapsacus：幼发拉底河上著名渡口，前 4 世纪属阿契美尼德帝国；公元前331年亚历山大在此架浮桥渡河（阿里安 III.7）。乱斗旗号「叙利亚」是地区名，不是政权。' },
+    { year: -335, cityId: 'city_nixibisi', factionId: 'aqimeinide', source: '英文维基 Nusaybin（古 Nisibis）：前 4 世纪为阿契美尼德帝国美索不达米亚／亚述一带的城，公元前331年亚历山大东进途中经此。乱斗旗号「美索不达米亚」是地区名，不是政权。' },
 
-    // ── 阿契美尼德波斯·埃及行省（前343 年阿尔塔薛西斯三世再征服） ──
-    { year: -335, cityId: 'city_wasaite', factionId: 'aiji', source: '英文维基 Thirty-first Dynasty of Egypt：前343 年波斯再征服埃及，直到前332 年总督马扎克斯开城降亚历山大；上埃及亦在其内。' },
-    { year: -335, cityId: 'city_awalisi', factionId: 'aiji', source: '英文维基 Avaris / Thirty-first Dynasty of Egypt：喜克索斯人前 16 世纪已被逐；前335 年属波斯埃及行省。' },
-    { year: -335, cityId: 'city_peiluximu', factionId: 'aiji', source: '英文维基 Pelusium：前343 年波斯再征服埃及的门户，前332 年随埃及行省降亚历山大。' },
-    // 🔴 [2026-09-26 第三片逐座核旗号] 锡瓦绿洲与马特鲁港前332 年都在埃及（波斯埃及行省）境内。
-    { year: -335, cityId: 'city_xiwa', factionId: 'aiji', source: '英文维基 Siwa Oasis 与 Ammon：锡瓦是埃及西部沙漠中的绿洲与阿蒙神谕所，前 4 世纪在埃及（时属波斯埃及行省）境内；前331 年亚历山大亲赴该地求神谕（阿里安 III.3–4）。乱斗旗号「阿蒙」是神名，不是政权。' },
-    { year: -335, cityId: 'city_matelugang', factionId: 'aiji', source: '英文维基 Paraetonium：马特鲁即古帕莱托尼翁，埃及地中海沿岸重镇，前331 年亚历山大自此西行赴锡瓦绿洲。乱斗旗号「马尔马里卡」是后世对这一带地区的称呼。' },
+    // ── 阿契美尼德波斯·埃及行省（公元前343年阿尔塔薛西斯三世再征服） ──
+    { year: -335, cityId: 'city_wasaite', factionId: 'aiji', source: '英文维基 Thirty-first Dynasty of Egypt：公元前343年波斯再征服埃及，直到公元前332年总督马扎克斯开城降亚历山大；上埃及亦在其内。' },
+    { year: -335, cityId: 'city_awalisi', factionId: 'aiji', source: '英文维基 Avaris / Thirty-first Dynasty of Egypt：喜克索斯人前 16 世纪已被逐；公元前335年属波斯埃及行省。' },
+    { year: -335, cityId: 'city_peiluximu', factionId: 'aiji', source: '英文维基 Pelusium：公元前343年波斯再征服埃及的门户，公元前332年随埃及行省降亚历山大。' },
+    // 🔴 [2026-09-26 第三片逐座核旗号] 锡瓦绿洲与马特鲁港公元前332年都在埃及（波斯埃及行省）境内。
+    { year: -335, cityId: 'city_xiwa', factionId: 'aiji', source: '英文维基 Siwa Oasis 与 Ammon：锡瓦是埃及西部沙漠中的绿洲与阿蒙神谕所，前 4 世纪在埃及（时属波斯埃及行省）境内；公元前331年亚历山大亲赴该地求神谕（阿里安 III.3–4）。乱斗旗号「阿蒙」是神名，不是政权。' },
+    { year: -335, cityId: 'city_matelugang', factionId: 'aiji', source: '英文维基 Paraetonium：马特鲁即古帕莱托尼翁，埃及地中海沿岸重镇，公元前331年亚历山大自此西行赴锡瓦绿洲。乱斗旗号「马尔马里卡」是后世对这一带地区的称呼。' },
 
     // ── 阿契美尼德波斯·东方诸行省 ──
     { year: -335, cityId: 'city_salahesi', factionId: 'aqimeinide', source: '英文维基 Parthia (satrapy)：萨拉赫斯一带属阿契美尼德帕提亚行省；萨洛尔土库曼部落是中世纪的事。' },
     { year: -335, cityId: 'city_lanshi', factionId: 'aqimeinide', source: '英文维基 Bactria / Bessus：巴克特拉为阿契美尼德巴克特里亚行省首府，总督贝苏斯；贵霜帝国是 1 世纪的事。' },
 
-    // ── 印度：难陀王朝治下的摩揭陀（孔雀王朝前322 年才建） ──
-    { year: -335, cityId: 'city_huashicheng', factionId: 'mojietuo', source: '英文维基 Pataliputra / Nanda Empire：前 4 世纪华氏城为难陀王朝摩揭陀的都城；孔雀王朝前322 年才建。' },
+    // ── 印度：难陀王朝治下的摩揭陀（孔雀王朝公元前322年才建） ──
+    { year: -335, cityId: 'city_huashicheng', factionId: 'mojietuo', source: '英文维基 Pataliputra / Nanda Empire：前 4 世纪华氏城为难陀王朝摩揭陀的都城；孔雀王朝公元前322年才建。' },
     { year: -335, cityId: 'city_walanaxi', factionId: 'mojietuo', source: '英文维基 Kashi Kingdom：迦尸国前 5 世纪已被摩揭陀吞并，前 4 世纪属难陀王朝。' },
-    { year: -335, cityId: 'city_tiyana', factionId: 'aqimeinide', source: '英文维基 Tyana / Cappadocia (satrapy)：前 4 世纪卡帕多细亚属阿契美尼德波斯行省；前333 年亚历山大穿越该地、任命萨比克塔斯为总督（阿里安 II.4），此后归马其顿。🔴 [2026-09-25 主人令「可以请添加」] 新建据点，旗号按剧本年份定。' },
+    { year: -335, cityId: 'city_tiyana', factionId: 'aqimeinide', source: '英文维基 Tyana / Cappadocia (satrapy)：前 4 世纪卡帕多细亚属阿契美尼德波斯行省；公元前333年亚历山大穿越该地、任命萨比克塔斯为总督（阿里安 II.4），此后归马其顿。🔴 [2026-09-25 主人令「可以请添加」] 新建据点，旗号按剧本年份定。' },
 ];

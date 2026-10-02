@@ -15,12 +15,12 @@
  */
 export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     // ── 主奇观（CITY_WONDER）──
-    'MEDI_WONDER_ARMENIANS': -782,        // 埃里温：前782年乌拉尔图建埃勒布尼城堡（亚美尼亚纪年起点）
+    'MEDI_WONDER_ARMENIANS': -782,        // 埃里温：公元前782年乌拉尔图建埃勒布尼城堡（亚美尼亚纪年起点）
     'SEAS_WONDER_KHMER': 1113,            // 吴哥窟：苏利耶跋摩二世1113–1150建
     'WEST_WONDER_FRANKS': 1194,           // 沙特尔圣母主教座堂：1194–1220重建
     'ASIA_WONDER_CHINESE': 1420,          // 北京天坛：明永乐十八年（1420）建成
     'SCEN_HALL_OF_HEROES': 643,           // 长安凌烟阁：唐贞观十七年（643）置二十四功臣画像
-    'PERSIAN_WONDER_ACHAEMENIDS': -518,   // 波斯波利斯：大流士一世约前518年起建
+    'PERSIAN_WONDER_ACHAEMENIDS': -518,   // 波斯波利斯：大流士一世约公元前518年起建
     'SLAV_WONDER_MAGYARS': 1446,          // 科文城堡：约翰·匈雅提1446年起建
     'SLAV_WONDER_BOHEMIANS': 880,         // 布拉格城堡：约880年普热米斯尔王朝建（约）
     'ASIA_WONDER_SHU': 221,               // 成都：蜀汉章武元年（221）刘备称帝定都
@@ -70,7 +70,7 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'INDI_WONDER_GURJARAS': -500,         // 索姆纳特神庙：约前6世纪始建（约）
     'INDI_WONDER_BENGALIS': 770,          // 索玛普利大寺：帕拉王朝约770年
     'GREEK_WONDER_MACEDONIANS': -500,     // 佩拉：约前5世纪马其顿定都（约）
-    'THRACIAN_WONDER_THRACIANS': -342,    // 普罗夫迪夫（菲利普波利斯）：腓力二世前342年建
+    'THRACIAN_WONDER_THRACIANS': -342,    // 普罗夫迪夫（菲利普波利斯）：腓力二世公元前342年建
     'ORIE_WONDER_PERSIANS': 250,          // 泰西封拱门：萨珊约3世纪起建（约）
     'CEAS_WONDER_CUMANS': 834,            // 萨尔克尔（顿河白色堡垒）：可萨834年建
     'SCEN_WONDER_BRITONS': 648,           // 温彻斯特：韦塞克斯7世纪建主教座堂（约）
@@ -129,14 +129,14 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'BURM_CASTLE_AGE3': 1364,             // 因瓦王城：1364年
     'EAST_CASTLE_AGE3': 1446,             // 科文城堡：1446年
     'GOTH_CASTLE_AGE3': 550,              // 曼古普堡：克里米亚哥特约6世纪（约）
-    'GREAT_PYRAMID': -2560,               // 吉萨大金字塔：胡夫约前2560年
-    'GREEK_SHIPYARD_AGE2': -493,          // 比雷埃夫斯军港：地米斯托克利前493年
+    'GREAT_PYRAMID': -2560,               // 吉萨大金字塔：胡夫约公元前2560年
+    'GREEK_SHIPYARD_AGE2': -493,          // 比雷埃夫斯军港：地米斯托克利公元前493年
     'HIND_CASTLE_AGE3': 1546,             // 德里古堡：约1546年（约）
     'LITH_CASTLE_AGE3': 1323,             // 维尔纽斯城堡：1323年
     'MESO_CASTLE_AGE3': 1325,             // 特诺奇提特兰大神庙：1325年
     'MUIS_CASTLE_AGE3': 1000,             // 穆伊斯卡寨：约1000年（约）
     'PAGAN_SHRINE': -1000,                // 罗姆瓦圣殿：波罗的海古代圣所（约）
-    'PERSIAN_CASTLE_ACHAEMENIDS_AGE3': -518, // 波斯波利斯宫堡：前518年
+    'PERSIAN_CASTLE_ACHAEMENIDS_AGE3': -518, // 波斯波利斯宫堡：公元前518年
     'PERSIAN_CASTLE_AGE3': -3000,         // 苏萨王城：约前4千年建城（约）
     'SCEN_CASTLE_RUINS': 1210,            // 科洛西要塞：十字军约1210年（约）
     'SCEN_CHINESE_RUINS': 598,            // 天台山国清寺：隋开皇十八年（598）
@@ -145,7 +145,7 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'SCEN_PAGODA_E': 1630,                // 柴瓦塔纳兰寺：巴萨通王1630年
     'SCEN_ROMAN_RUINS': -600,             // 庞贝古城：约前6世纪建城（约）
     'SCEN_SPHINX': -600,                  // 底比斯斯芬克斯：古典希腊约前6世纪（约）
-    'SCEN_STONEHENGE': -3000,             // 巨石阵：约前3000年
+    'SCEN_STONEHENGE': -3000,             // 巨石阵：约公元前3000年
     'SCEN_TORII_GATE': 593,               // 严岛神社：593年
     'SEAS_CASTLE_AGE3': 1181,             // 吴哥王城：阇耶跋摩七世1181年
     'SICI_CASTLE_AGE3': 1239,             // 乌尔西诺堡：腓特烈二世1239年

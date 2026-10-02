@@ -35,7 +35,7 @@ export function formatRegnalYearSuffix(n: number): string {
     return ones === 0 ? `${CN_DIGITS[tens]}十` : `${CN_DIGITS[tens]}十${CN_DIGITS[ones]}`;
 }
 
-/** 公元前汉字纪年：前246年 */
+/** 公元前汉字纪年：公元前246年 */
 export function formatBcYearChinese(year: number): string {
     if (year < 0) return `前${Math.abs(year)}年`;
     if (year === 0) return '公元元年';
@@ -64,7 +64,7 @@ export function getQinRegnalYear(year: number): string | null {
     return null;
 }
 
-/** HUD / 日志：前246年 · 秦王政元年 */
+/** HUD / 日志：公元前246年 · 秦王政元年 */
 export function formatGameDateChinese(year: number): string {
     const bc = formatBcYearChinese(year);
     const regnal = getQinRegnalYear(year);

@@ -1451,7 +1451,7 @@ export class PlayerQuestSystem {
         if (!bfApi) return null;
 
         // 🔴 [2026-10-02 主人报障「乌克西亚→波斯门这一路之后的行军和播报都不对了」] 同一年里不能只靠年份排：
-        //    EVENT_SITES 是「战场表在前、攻城据点在后」，同为前329年的锡尔河（战场）就排到了居鲁士城（攻城）前面，
+        //    EVENT_SITES 是「战场表在前、攻城据点在后」，同为公元前329年的锡尔河（战场）就排到了居鲁士城（攻城）前面，
         //    波斯门打完军团直奔锡尔河、居鲁士城那 15 路行军与播报全被跳过。同年内按剧本表（HISTORICAL_EVENT_SCRIPT）的先后。
         const orderCache = new Map<string, number>();
         const order = (id: string): number => {

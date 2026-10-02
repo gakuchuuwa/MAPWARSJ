@@ -459,7 +459,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'saman_yisimayi': 9,                                // 伊斯玛仪 · saman · 阿母城
     'seljuq_sangjiaer': 12,                              // 桑贾尔 · seljuq · 木鹿
     'sogdian_dewasitiqi': 8,                            // 德瓦什提奇 · sogdian · 瓦拉赫沙
-    'sogdian_aokexiate': -4,                             // 奥克夏特斯 · sogdian · 索格底亚那岩山（前328年岩山之战守帅）
+    'sogdian_aokexiate': -4,                             // 奥克夏特斯 · sogdian · 索格底亚那岩山（公元前328年岩山之战守帅）
     'tiemuer_tiemuer': 14,                               // 帖木儿 · tiemuer · 撒马尔罕
     'wulaertu_ajishenti': 5,                             // 瓦尔丹 · wulaertu · 埃里温
     'xierwan_farukusha': 15,                             // 法鲁克沙 · xierwan · 巴库
@@ -627,7 +627,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'ailao_leilao': 1,                                  // 类牢 · ailao · 永昌
     'ava_minye_kyawswa': 15,                             // 明耶觉苏瓦 · ava · 因瓦
     'baiman_gaoshengtai': 11,                            // 高升泰 · baiman · 威楚
-    'boluo_vijaya': -6,                              // 毗阇耶 · 波罗帝国 · 高达城（约前543年，古典）
+    'boluo_vijaya': -6,                              // 毗阇耶 · 波罗帝国 · 高达城（约公元前543年，古典）
     'boluo_damoboluo': 8,                               // 达磨波罗 · boluo · 高达城
     'chenla_duyebamo': 12,                               // 阇耶跋摩 · chenla · 吴哥
     'cuanshi_cuanlongyan': 5,                           // 爨龙颜 · cuanshi · 曲靖
@@ -848,7 +848,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'abasi_mansuer': 8,                                 // 曼苏尔 · abasi · 巴格达
     'samaila_muataisuimu': 9,                           // 穆阿台绥姆 · samaila · 萨迈拉
     'aiaoniya_alisita': -5,                              // 阿里斯塔 · aiaoniya · 以弗所
-    'yiaoniya_hegesistratus': -4,                        // 赫格西斯特 · yiaoniya · 米利都（前334年米利都围城战守将）
+    'yiaoniya_hegesistratus': -4,                        // 赫格西斯特 · yiaoniya · 米利都（公元前334年米利都围城战守将）
     'aiji_lameisisi': -13,                                // 拉美西斯 · aiji · 孟菲斯
     'alabo_qiyade': 7,                                  // 齐亚德 · alabo · 巴士拉
     'aosiruowen_baodewen': 11,                           // 鲍德温 · aosiruowen · 埃德萨
@@ -1009,7 +1009,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_alexander_great': -4,                           // 亚历山大 · maqidun · 佩拉
     'xiaofulijiya_aerxitis': -4,
     'kanan_azemier': -4,
-    'feilisidin_batisi': -4,                            // 巴提斯 · 腓利斯丁 · 加沙（前332年加沙围城战守将）                               // 阿泽米尔 · 腓尼基 · 推罗（前332年推罗战役守将）                        // 阿尔西提斯 · 小弗里吉亚 · 达斯基利翁
+    'feilisidin_batisi': -4,                            // 巴提斯 · 腓利斯丁 · 加沙（公元前332年加沙围城战守将）                               // 阿泽米尔 · 腓尼基 · 推罗（公元前332年推罗战役守将）                        // 阿尔西提斯 · 小弗里吉亚 · 达斯基利翁
     'gen_city_syracuse': -4,                             // 阿加索克利 · xilagu · 锡拉库萨
     'gen_epaminondas': -4,                               // 伊巴密浓达 · boootiya · 底比斯
     'yipilusi_piluoshi': -3,                              // 皮洛士 · yipilusi · 安布拉基亚
@@ -1062,26 +1062,26 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'nuowei_halaer':                     9,     // 哈拉尔一世 · nuowei · 金发哈拉尔统一挪威（872-930在位）
     'sashan_aerdaxier':                  3,     // 阿尔达希尔一世 · sashan · 萨珊波斯开国君主（224-242在位）
     'gen_ezana':                         4,     // 埃扎纳 · ethiopia · 阿克苏姆帝国定教大帝（320-360在位）
-    'gen_bolusi':                        -4,    // 波鲁斯 · bulu · 古印度波鲁斯国王对抗亚历山大（前326年海达斯佩斯河战役）
-    'sijitai_ateas':                     -4,    // 阿泰阿斯 · sijitai · 斯基泰国王（前339年阵亡）
-    'sijitai_satraces':                  -4,    // 萨特拉克斯 · sijitai · 锡尔河（前329年锡尔河战役斯基泰统帅）
-    'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（前327年马萨加战役守帅）
-    'aornos_aphrikes':                   -4,    // 阿夫里凯斯 · aornos · 奥诺斯岩（前326年奥诺斯岩围城战守帅）
-    'julushi_catanes':                   -4,    // 卡塔涅斯 · julushi · 居鲁士城（前329年居鲁士城围攻守帅）
-    'malli_malavapala':                  -4,    // 摩罗波罗 · malli · 马里斯（前325年马里斯战役守帅）
+    'gen_bolusi':                        -4,    // 波鲁斯 · bulu · 古印度波鲁斯国王对抗亚历山大（公元前326年海达斯佩斯河战役）
+    'sijitai_ateas':                     -4,    // 阿泰阿斯 · sijitai · 斯基泰国王（公元前339年阵亡）
+    'sijitai_satraces':                  -4,    // 萨特拉克斯 · sijitai · 锡尔河（公元前329年锡尔河战役斯基泰统帅）
+    'aswaka_cleophis':                   -4,    // 克莱奥菲斯 · aswaka · 马萨加（公元前327年马萨加战役守帅）
+    'aornos_aphrikes':                   -4,    // 阿夫里凯斯 · aornos · 奥诺斯岩（公元前326年奥诺斯岩围城战守帅）
+    'julushi_catanes':                   -4,    // 卡塔涅斯 · julushi · 居鲁士城（公元前329年居鲁士城围攻守帅）
+    'malli_malavapala':                  -4,    // 摩罗波罗 · malli · 马里斯（公元前325年马里斯战役守帅）
     'kesaiya_kashtiliash':               -4,    // 卡什提利亚什 · kesaiya · 科塞亚（加喜特战王名，科塞亚地区；旧写「阿古姆二世」已改，2026-10-02）
-    'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（前334年哈利卡纳苏斯围城战守帅）
+    'halikanasu_memnon':             -4,    // 门农 · 罗得岛 · 哈利卡纳苏斯（公元前334年哈利卡纳苏斯围城战守帅）
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（扎格罗斯及乌克西亚部落首领；旧写「提里巴斯」已改，2026-10-02）
-    'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（前335年佩利昂围城战守帅）
-    'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（前335年底比斯战役守帅）
-    'seleisi_shouling':                  -4,    // 塞乌特斯 · seleisi · 海姆斯山（前335年海姆斯山战役守帅）
-    'jite_shouling':                     -4,    // 科托罗 · seleisi · 多瑙河渡河（前335年多瑙河渡河战役守帅）
-    'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（前327年索格狄亚那岩守将）
-    'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（前328年粟特起义统帅）
-    'xinde_patalawang':                  -4,    // 涅阿库斯 · xinde · 帕塔拉（前325年信德印度洋航线提督）
-    'jiduoluoxiya_xibiertiwusi':         -4,    // 西比尔提乌斯 · jiduoluoxiya · 普拉（前325年吉德罗西亚总督）
-    'aolitai_shouling':                  -4,    // 拉托尼斯 · aolitai · 兰巴基亚（前325年奥里泰人首领）
-    'kamanniya_zongdu':                  -4,    // 阿斯普兰斯 · kamanniyaxingsheng · 卡曼尼亚（前325年卡曼尼亚总督）
+    'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（公元前335年佩利昂围城战守帅）
+    'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（公元前335年底比斯战役守帅）
+    'seleisi_shouling':                  -4,    // 塞乌特斯 · seleisi · 海姆斯山（公元前335年海姆斯山战役守帅）
+    'jite_shouling':                     -4,    // 科托罗 · seleisi · 多瑙河渡河（公元前335年多瑙河渡河战役守帅）
+    'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（公元前327年索格狄亚那岩守将）
+    'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（公元前328年粟特起义统帅）
+    'xinde_patalawang':                  -4,    // 涅阿库斯 · xinde · 帕塔拉（公元前325年信德印度洋航线提督）
+    'jiduoluoxiya_xibiertiwusi':         -4,    // 西比尔提乌斯 · jiduoluoxiya · 普拉（公元前325年吉德罗西亚总督）
+    'aolitai_shouling':                  -4,    // 拉托尼斯 · aolitai · 兰巴基亚（公元前325年奥里泰人首领）
+    'kamanniya_zongdu':                  -4,    // 阿斯普兰斯 · kamanniyaxingsheng · 卡曼尼亚（公元前325年卡曼尼亚总督）
     'keerman_xierzhan_shoujiang':        -4,    // 霍斯劳 · keerman · 锡尔詹（克尔曼防守将领）
     'zhageluosi_guanjiang':              -4,    // 巴赫拉姆 · zhageluosi · 呼勒万（扎格罗斯关隘守将）
     'lulisitan_shoujiang':               -4,    // 舒特鲁克 · lulisitan · 伊拉姆（埃兰/苏萨守帅）
@@ -1089,17 +1089,17 @@ export const GENERAL_CENTURIES: Record<string, number> = {
 
     // 🔴 [2026-09-19 主人令「全删除」→「都给我删了」] 拉米亚战争那几位的战役事件已删除，人物记录暂留；
     //    其中**欧迈尼斯已按「都给我删了」连同孤儿势力 kapaduoxiya 一并删除**（见下行注释）。
-    'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（前323年普拉塔纳斯战役希腊联军统帅；该战役已删除）
-    'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（前323年普拉塔纳斯战役马其顿守帅；该战役已删除）
-    'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（前322年克兰农战役希腊同盟总司令；该战役已删除）
+    'xila_leosthenes':                   -4,    // 莱奥斯塞尼斯 · xila · 普拉塔纳斯（公元前323年普拉塔纳斯战役希腊联军统帅；该战役已删除）
+    'maqidun_antipater':                 -4,    // 安提帕特 · maqidun · 普拉塔纳斯/拉米亚（公元前323年普拉塔纳斯战役马其顿守帅；该战役已删除）
+    'xila_antiphilus':                   -4,    // 安提菲洛斯 · xila · 克兰农（公元前322年克兰农战役希腊同盟总司令；该战役已删除）
     // 🔴 [2026-09-19 主人令「都给我删了」] 欧迈尼斯（gen_eumenes）的记录已删除 —— 他挂的势力 kapaduoxiya 已删。
-    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（前321年赫勒斯滂战役守帅；该战役已删除）
+    'maqidun_craterus':                  -4,    // 克拉特罗斯 · maqidun · 赫勒斯滂（公元前321年赫勒斯滂战役守帅；该战役已删除）
     'yamaxun_xibolvte':                  -12,   // 希波吕忒 · yamaxun · 亚马逊女王神话时代（前12世纪）
     'wulaertu_guo_saerdu':               -9,    // 萨尔杜里一世 · wulaertu_guo · 乌拉尔图国王（前9世纪）
-    'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约前2112年）
+    'wuer_wuernamu':                     -21,   // 乌尔纳姆 · wuer · 乌尔第三王朝开国法典创立者（约公元前2112年）
     'fujisi_fujiweng':                   -4,    // 福基翁 · fujisi · 雅典城邦政治家军事家（前4世纪）
-    'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（前776年）
-    'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约前24年）
+    'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（公元前776年）
+    'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约公元前24年）
     'jiaye_jiaye':                       1,     // 金首露/伽耶 · jiaye · 伽耶开国君主（公元1世纪）
     'jiaye_punafamo':                    7,     // 普那伐摩 · jiaye · 摩揭陀国王护持菩提伽耶（7世纪初）
     'pidisha_pidisha':                   -2,    // 毗底沙 · pidisha · 巽伽王朝陪都名邑（前2世纪）
@@ -1143,12 +1143,12 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
     'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
     'panfeiliya_apollonios':             -3,    // 阿波罗尼奥斯 · panfeiliya · 佩尔格（圆锥曲线论作者）
-    'hesitiya_yiasong':               -4,    // 伊阿宋（费莱的伊阿宋） · hesitiya · 佩利纳（前4世纪色萨利霸主，前375年统一色萨利）
+    'hesitiya_yiasong':               -4,    // 伊阿宋（费莱的伊阿宋） · hesitiya · 佩利纳（前4世纪色萨利霸主，公元前375年统一色萨利）
     'hekaniya_artabazos':             -4,    // 阿尔塔巴佐斯 · hekaniya · 兹拉卡塔（前4世纪波斯宿将，大流士三世死后坐镇赫卡尼亚）
     'baihaliye_djedkhonsu':              -6,    // 杰德孔苏 · baihaliye · 拜哈里耶（第二十六王朝绿洲总督）
     'kuida_chakar':                      15,    // 恰卡尔 · kuida · 奎达（俾路支英雄）
     'zhalange_barsaentes':               -4,    // 巴尔塞恩特斯 · zhalange · 扎兰格（德兰吉亚总督）
-    'shiyuzu_aolaqiuzhang':              -4,    // 阿波罗多洛斯 · shiyuzu · 奥拉（前325年食鱼族阻截尼阿库斯舰队）
+    'shiyuzu_aolaqiuzhang':              -4,    // 阿波罗多洛斯 · shiyuzu · 奥拉（公元前325年食鱼族阻截尼阿库斯舰队）
     'maikelan_punong':                   10,    // 普农 · maikelan · 特尔巴特（俾路支霍特氏族传说英雄，约10世纪）
 };
 
