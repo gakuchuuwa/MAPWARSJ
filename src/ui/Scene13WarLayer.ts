@@ -3497,6 +3497,8 @@ export class Scene13WarLayer {
     private decorHasTerrain = false;
     /** 🔴 [2026-10-02 主人定] 等待行军播报完毕再播放战役战斗播报的轮询计时器 */
     private battleBriefingTimer: any = null;
+    /** 🔴 [2026-10-02 主人定] 战役战斗播报是否正在播放（播放期间与战斗音效互斥，绝不重叠） */
+    private battleBriefingSpeaking = false;
 
     private restoreStrategyMap(): void {
         const saved = this.coveredMap;
@@ -4339,10 +4341,16 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
                 const briefingText = init.battleBriefing;
+                this.battleBriefingSpeaking = true;
                 const triggerBattleBriefing = () => {
-                    if (!this.active) return;
+                    if (!this.active) {
+                        this.battleBriefingSpeaking = false;
+                        return;
+                    }
                     console.log('[Scene13WarLayer] ⚔️ 播放战役战斗播报:', briefingText.slice(0, 30) + '...');
-                    speechAnnouncer.announceBriefing(briefingText);
+                    speechAnnouncer.announceBriefing(briefingText, () => {
+                        this.battleBriefingSpeaking = false;
+                    });
                 };
 
                 if (speechAnnouncer.isSTierBusy()) {
@@ -4352,6 +4360,7 @@ export class Scene13WarLayer {
                         if (!this.active) {
                             clearInterval(this.battleBriefingTimer);
                             this.battleBriefingTimer = null;
+                            this.battleBriefingSpeaking = false;
                             return;
                         }
                         if (!speechAnnouncer.isSTierBusy()) {
@@ -4359,7 +4368,7 @@ export class Scene13WarLayer {
                             this.battleBriefingTimer = null;
                             triggerBattleBriefing();
                         }
-                    }, 300);
+                    }, 100);
                 } else {
                     triggerBattleBriefing();
                 }
@@ -4739,6 +4748,7 @@ export class Scene13WarLayer {
             clearInterval(this.battleBriefingTimer);
             this.battleBriefingTimer = null;
         }
+        this.battleBriefingSpeaking = false;
         // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局与大地图面板
         const game = (window as any).game;
         game?.combatUI?.applyScene13Layout?.(false);
@@ -7374,6 +7384,16 @@ export class Scene13WarLayer {
      * 且两者互相撤销：淡出途中又接上近战，会当场回到正常音量，不会先静音再重来。
      */
     private tickContactSfx(dt: number): void {
+        // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
+        // 播报（战役播报、剧情解说或任何语音）进行中绝不播放战斗音效，彻底杜绝重叠播放
+        if (this.battleBriefingSpeaking || audioManager.isSpeechDucking() || speechAnnouncer.isSpeaking()) {
+            if (this.contactSfxOn) {
+                this.contactSfxOn = false;
+                audioManager.stopSceneLoop('land_contact');
+            }
+            return;
+        }
+
         if (this.meleeContactCount > 0) {
             this.meleeQuietSec = 0;
             if (!this.contactSfxOn) {

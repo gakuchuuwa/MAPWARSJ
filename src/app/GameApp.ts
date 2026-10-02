@@ -345,13 +345,16 @@ export class GameApp {
                 const ev = this.scriptCityVisibility?.getCurrentEvent();
                 const d = ev?.siegeData ?? ev?.fieldBattleData;
                 if (!d) return null;
-                // 🔴 [2026-09-24] 攻城数据没有 defenderFactionId：守方势力 = 被攻那座城当前的势力
-                //    （改前查不到 → 加沙守军显示成文化军团「古典时代腓利斯丁军团」而非剧本军团「阿契美尼德军团」）
+                // 🔴 [2026-10-02 修复] 攻城守方双重匹配：既匹配事件中声明的 defenderFactionId，
+                //    也匹配被攻据点当前在地图上的实际势力（如推罗据点在剧本期为 aqimeinide，事件声明为 kanan）。
+                //    两处任一命中，均精准返回剧本指名的 defenderLegionName（推罗军团），绝不回退至带大象的常规军团！
                 const defCityId = (d as { defenderCityId?: string }).defenderCityId;
-                const defFactionId = (d as { defenderFactionId?: string }).defenderFactionId
-                    ?? (defCityId ? this.cityManager.getCity(defCityId)?.factionId : undefined);
+                const currentCityFaction = defCityId ? this.cityManager.getCity(defCityId)?.factionId : undefined;
+                const defFactionId = (d as { defenderFactionId?: string }).defenderFactionId;
+                const isDefender = (defFactionId && defFactionId === factionId)
+                    || (currentCityFaction && currentCityFaction === factionId);
                 const name = d.attackerFactionId === factionId ? d.attackerLegionName
-                    : defFactionId === factionId ? d.defenderLegionName
+                    : isDefender ? d.defenderLegionName
                         : undefined;
                 return name && SCRIPT_LEGION_MAP.has(name) ? name : null;
             });

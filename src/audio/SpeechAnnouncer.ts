@@ -468,6 +468,13 @@ export class SpeechAnnouncer {
     return Date.now() < this.sTierBusyUntilMs;
   }
 
+  /**
+   * 🔴 [2026-10-02 主人定] 判断当前是否有任何播报正在进行（用于与战斗音效互斥）
+   */
+  public isSpeaking(): boolean {
+    return this.speechDuckSession || this.isSTierBusy() || (typeof window !== "undefined" && ("speechSynthesis" in window) && (window.speechSynthesis.speaking || window.speechSynthesis.pending));
+  }
+
   public announceSiegeStart(opts: {
     attackerFactionId: string;
     cityName: string;
@@ -874,6 +881,9 @@ export class SpeechAnnouncer {
     // 旧句 synthesize 迟到 resolve 时凭此判定「已被取代」而放弃播放，杜绝新旧两句声音重叠。
     const mySeq = ++this.speechSeq;
     const isCurrent = () => this.speechSeq === mySeq;
+
+    // 🔴 [2026-10-02 主人定] 确定播报立即开启 duckSession（通知 AudioManager 避让），杜绝 Edge TTS 合成期间的重叠
+    this.beginSpeechDuckSession();
 
     // 语音列表偶发晚加载（Chrome 常见）：为空或无中文语音时延迟重试再开口
     const attempt = (retried: boolean): void => {
