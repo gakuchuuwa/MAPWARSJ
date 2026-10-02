@@ -509,13 +509,14 @@ function validate(d: BattleDraft): Issue[] {
     } else if (d.commanderUnit && !WAR_TYPES[d.commanderUnit]) {
         out.push({ level: 'error', msg: `主将队兵种不存在：${d.commanderUnit}` });
     }
-    // 🔴 [2026-09-23 主人定「第十队必须是英雄人物构成的」] 双方主将队都必须是英雄兵模
-    if (d.commanderUnit && !d.commanderUnit.startsWith('hero_')) {
+    // 🔴 [2026-09-23 主人定「第十队必须是英雄人物构成的」] 双方主将队都必须是英雄兵模（含御驾战象英雄 porus_elephant 等）
+    const isHeroUnitKey = (k: string): boolean => k.startsWith('hero_') || k === 'porus_elephant' || k === 'bayinnaung_elephant' || k === 'dagnajan_elephant';
+    if (d.commanderUnit && !isHeroUnitKey(d.commanderUnit)) {
         out.push({ level: 'error', msg: '主将队兵种必须是英雄兵模：第十队由英雄人物构成' });
     }
     if (!d.foeCommanderUnit) {
         out.push({ level: 'error', msg: '对手主将队兵种没选：对面主帅的军团也是 10 队，第十队必须是英雄，按样貌或文化年代相近的人物选' });
-    } else if (!d.foeCommanderUnit.startsWith('hero_') || !WAR_TYPES[d.foeCommanderUnit]) {
+    } else if (!isHeroUnitKey(d.foeCommanderUnit) || !WAR_TYPES[d.foeCommanderUnit]) {
         out.push({ level: 'error', msg: `对手主将队兵种必须是存在的英雄兵模：${d.foeCommanderUnit}` });
     }
     // 🔴 [2026-10-02 主人令「舰队不应该作为英雄的第10队」] 第 10 队是**陆上**主将队，不许是舰船。
@@ -834,7 +835,7 @@ function drawThumbs(): void {
 const isFleetModel = (key: string): boolean => !!WAR_TYPES[key]?.armorTags?.includes(16);
 const hasSprite = (key: string): boolean => !!(SPRITE_PATHS.UNIT_ASSETS as Record<string, unknown>)[key];
 function heroPicker(id: string, cur: string): string {
-    const named = Object.entries(WAR_TYPES as Record<string, { name: string }>).filter(([k]) => k.startsWith('hero_') && hasSprite(k));
+    const named = Object.entries(WAR_TYPES as Record<string, { name: string }>).filter(([k]) => (k.startsWith('hero_') || k === 'porus_elephant' || k === 'bayinnaung_elephant' || k === 'dagnajan_elephant') && hasSprite(k));
     const heroes = named.filter(([k]) => !isFleetModel(k)).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
     const ships = named.filter(([k]) => isFleetModel(k)).sort((a, b) => a[1].name.localeCompare(b[1].name, 'zh'));
     const badFleet = !!cur && isFleetModel(cur);
