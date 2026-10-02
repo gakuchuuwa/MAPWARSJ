@@ -298,7 +298,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         generalId: 'gen_alexander_great',
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         // 对手主将队：阿尔塔弗涅斯——阿契美尼德萨迪斯总督，与此役小亚细亚诸总督同文化同身份；素材样貌为金甲红马衣的波斯贵族骑将
-        foeCommanderUnit: 'hero_artaphernes',
+        foeCommanderUnit: 'hero_datis',   // 🔴 [2026-10-02 主人令「hero_datis 可以给其他军团」] 小亚细亚诸总督联军主帅阿尔西提斯 —— 取骑马执长矛的古典波斯统帅样（英雄·达提斯，同代同族）
         // 🔴 [2026-09-23] 武将邀约对白。史料：东征名义为报复薛西斯焚毁雅典神庙（阿里安《亚历山大远征记》II.14 致大流士书）；
         //    波斯小亚细亚诸总督集结于格拉尼库斯河迎战（同书 I.12）。
         // 途经但前334年还不存在的据点：鲁西翁为中世纪地名
@@ -446,7 +446,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    改用 hero_artaphernes（阿尔塔弗涅斯，前334年阿契美尼德萨迪斯总督）：**同时代**，
         //    样貌是金甲红披风的波斯贵族骑将，与「大流士三世御驾」这一路的形象相符。
         //    按主人令**只看样貌与年代，不看名字**（是谁不追究）。
-        foeCommanderUnit: 'hero_artaphernes',
+        foeCommanderUnit: 'hero_tsarkonstantin',   // 🔴 [2026-10-02 主人令「换」] 阿契美尼德军团主将队改用 hero_tsarkonstantin（双马具装车驾：大流士三世在伊苏斯、高加米拉皆乘战车督战）
         // 🔴 [2026-09-24 主人怒斥「怎么从加沙到的孟菲斯？」同一类毛病] 出兵据点＝军团此刻在哪＝哈利卡纳苏斯（上一场落点）；
         //    戈尔迪乌姆写在路标里（前333年春在此斩断戈尔迪之结），军团走过去，不瞬移 492 公里
         // 🔴 [2026-09-23] 资料清单：每项依据与可信级别（src/data/eventSources.ts）
@@ -594,7 +594,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         //    把军团从加沙白送 358 公里到孟菲斯，属瞬移。埃及那一节本来就在路标里（佩鲁西姆→孟菲斯→亚历山大城→佩鲁西姆→加沙），军团走过去。
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
         sources: { battle: { level: 'fact', text: '英文/中文维基百科 Battle of Gaugamela（高加米拉战役）：公元前331年马其顿与阿契美尼德波斯的决战，野战。' }, time: { level: 'fact', text: '维基百科高加米拉战役信息框：公元前331年10月1日，季节取秋。' }, place: { level: 'fact', text: '维基百科高加米拉战役信息框：战场可能在今伊拉克库尔德斯坦艾比尔附近的提尔·高美尔（Tel Gomel）周遭，坐标 36.56,43.444。' }, attacker: { level: 'fact', text: '维基百科高加米拉战役：马其顿王国与泛希腊同盟，亚历山大亲统，帕曼纽、菲罗塔斯、克拉特鲁斯、佩尔狄卡斯等分领各部。' }, attackerTroops: { level: 'fact', text: '维基百科高加米拉战役信息框：40,000 名步兵 + 7,000 名骑兵 = 47,000（Green 2013）。' }, attackerLegion: { level: 'fact', text: '维基百科高加米拉战役「Initial dispositions」：马其顿方阵居中双列推进，亚历山大率伙伴骑兵自右翼突破，帕曼纽率色萨利与色雷斯骑兵守左翼，克里特与希腊雇佣兵在右中；编成仍取马其顿军团（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2）。' }, defender: { level: 'fact', text: '维基百科高加米拉战役：阿契美尼德帝国，大流士三世亲统；贝苏斯领左翼（巴克特里亚、斯基泰等），马扎欧斯领右翼（叙利亚、米底、美索不达米亚等）。' }, defenderTroops: { level: 'fact', text: '维基百科高加米拉战役信息框 strength2 = 现代估计 50,000–250,000（Brill\'s Companion to Military Defeat，2017，第 78 页；古史作 250,000–1,000,000）。区间中值 150,000 超出主人定的「守方 ≤ 攻方×2」（47,000×2 = 94,000），故取区间内最近的 94,000。' }, defenderLegion: { level: 'fact', text: '维基百科高加米拉战役「Initial dispositions」：大流士居中率精锐步兵（「苹果持兵」/希腊人所称长生军）与马尔迪亚弓手，两翼为各地骑兵，阵前布镰刀战车，另有十五头印度战象（战中未见出动、后在营中被缴，推为撤走）；编成取剧本军团「阿契美尼德军团」（同一支波斯军，与伊苏斯、格拉尼库斯同一番号）。' }, route: { level: 'fact', text: '维基百科 Battle of Gaugamela 与 Siege of Gaza (332 BC)：加沙战后亚历山大南下埃及，波斯埃及总督马扎克斯不战而降（埃及无战事）；公元前331年在孟菲斯受冕为法老，并于尼罗河口建亚历山大城，随后西行锡瓦求阿蒙神谕，再回师北上推罗，经叙利亚北渡幼发拉底，东进至高加米拉。游戏路线：自上一处战场（加沙）开拔 → 佩鲁西姆 → 孟菲斯 → 亚历山大城 → 加沙 → 推罗 → 阿勒颇 → 塔普萨库斯（渡幼发拉底）→ 埃德萨 → 尼西比斯 → 尼尼微 → 高加米拉。（原数据写「自孟菲斯出发」＝把军团白送过去，已改为走出去。）' }, result: { level: 'fact', text: '维基百科高加米拉战役：马其顿决定性胜利。大流士弃阵东逃，波斯帝国半壁江山与巴比伦在内的美索不达米亚全境入亚历山大之手；阿契美尼德方面伤亡据库尔提乌斯约四万，马其顿方面伤亡极轻（阿里安记百名步兵、千名骑兵）。战后巴比伦总督马扎欧斯献城、波斯冬都苏萨随后亦入马其顿之手（英文维基百科 Battle of the Uxian Defile 背景节），故本场据点归属写巴比伦与苏萨归马其顿。' }, briefing: { level: 'fact', text: '维基百科高加米拉战役：大流士为之铲平战场植被以便镰刀战车驰突，并布十五头印度战象（战中撤回）；马其顿方阵居中推进、两翼后斜，亚历山大率伙伴骑兵绕至右翼缺口直扑大流士本阵。文案按主人规矩不写兵力确数。' } },
-        foeCommanderUnit: 'hero_artaphernes',
+        foeCommanderUnit: 'hero_tsarkonstantin',   // 🔴 [2026-10-02 主人令「换」] 阿契美尼德军团主将队改用 hero_tsarkonstantin（双马具装车驾：大流士三世在伊苏斯、高加米拉皆乘战车督战）
     },
 
     // ── 由战场事件编辑器生成（/battlefield-editor.html）──
@@ -695,9 +695,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Chronology 与 Battle of Jaxartes —— 大流士之死、北上米底取埃克巴坦那、出里海门入赫尔卡尼亚、东行阿里亚／德兰吉亚那／阿拉霍西亚、加兹尼过冬、越兴都库什取巴克特拉、贝苏斯被部下绑送处死；文案按主人规矩不写兵力确数。' },
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-        // 对手主将队：照 §二.5「先保年代，再尽样子」——本时代没有粟特首领的英雄兵模，
-        //    故取同代的骑马蛮族首领 hero_thracian_chieftain，与第 11、13 场岩堡／崖堡守将同一处理。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        // 对手主将队：🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行]
+        //    粟特武装以甲胄骑兵为招牌 —— 取 hero_kotyankhan（英雄·忽炭汗）：人马皆甲的具装骑领主，
+        //    与守方中排那支「粟特甲胄骑兵高级」同一路样式（原来借的色雷斯酋长是披风持剑的巴尔干样、不同源）。
+        foeCommanderUnit: 'hero_kotyankhan',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场14 居鲁士城·粟特军团 主帅阿里马泽斯/粟特甲骑领主
         type: 'siege',
         title: '公元前329年 亚历山大东征居鲁士城战役',
         battleBriefing: '面对粟特前线极为坚固的居鲁士城，克拉特鲁斯在城外用攻城槌和投石机持续轰击牵制守军注意力。亚历山大敏锐注意到一条贯穿城墙下方的干涸引水暗渠，亲自率领一队精兵猫腰潜入暗道，摸进城内强行撬开城门。城内粟特守军发现后蜂拥杀来，抛掷巨石打伤亚历山大的头颈，马其顿城外大军此时已顺着敞开的城门涌入城内，双方在城门广场与干涸水道口爆发血腥肉搏。',
@@ -743,12 +744,11 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         generalId: 'gen_alexander_great',
         sources: { battle: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：公元前329年亚历山大与塞种（Saka）在药杀水（今锡尔河）的野战，马其顿胜；中文维基百科「亚历山大三世」同记其渡河北击草原游牧。' }, time: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 date = 329 BC；同条目战役地图标注「Battle of Jaxartes October 329 BC」，故季节取秋。' }, place: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 coordinates 40°17′00″N 69°37′00″E、location = Syr Darya（今锡尔河，战场跨乌兹别克、塔吉克、吉尔吉斯、哈萨克边境，在古塔什干西南、苦盏东北）；本战场记录取 40.2833,69.6167。' }, attacker: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant1 = Macedonia、League of Corinth，commander1 = Alexander the Great —— 亚历山大亲统。' }, attackerTroops: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 strength1 = 6,000，攻方兵力取 6000；同信息框伤亡记马其顿阵亡 160、伤 1,000。' }, attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军团（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据英文维基正文：塞种低估马其顿「artillery、fleet、cavalry、infantry」的协同，亚历山大令全军**同时齐渡**、以砲兵与弓箭手掩护，渡后以弓箭手与骑兵击破塞种包围（Dani & Bernard 1994：crossed the river and broke through the encircling Sakas with the help of his archers and cavalry）。' }, defender: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 combatant2 = Saka（塞种/萨迦）、commander2 = Satraces（萨特拉克斯）；正文记约 1,200 名塞种被围歼、**含其主帅 Satraces**，另俘 150 人、缴马 1,800。' }, defenderTroops: { level: 'inferred', text: '英文维基百科 Battle of Jaxartes 信息框 strength2 = Unknown，条目与中文维基均未给塞种兵数。据其阵亡约 1,200（含主帅）、被俘 150、缴马 1,800，其众当以千计；取 6,000（并守守方 ≤ 攻方×2 = 12,000）—— 合理推定。' }, defenderLegion: { level: 'fact', text: '英文维基百科 Battle of Jaxartes：塞种据药杀水北岸，自信可在马其顿半渡登陆时取胜，以骑射手为主要打击手段。编成取剧本军团「斯基泰军团」：前骑兵=斯基泰骑射手 4、中步兵=塞种萨迦斧兵 3、后远程=巴克特里亚弓手 2，雁行 4-3-2（同一支军队整场战争不换）。' }, route: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 背景节（引 Dani & Bernard 1994）：亚历山大先据马拉坎达（撒马尔罕，粟特王夏都），因忧药杀水以北的塞种而北进，过居鲁士城沿途取七座要塞，抵阿契美尼德疆界药杀水，遂渡河破围。游戏路线（2026-09-25 补录居鲁士城之后）：自上一场落点居鲁士城开拔 → 忽毡（亚历山大·埃斯哈塔，前329 建于苦盏）→ 锡尔河战场（末段 5 公里），全程陆路：波斯波利斯 → 亚兹德 → 伊斯法罕 → 雷伊 → 达姆甘 → 尼沙布尔 → 图斯 → 萨拉赫斯 → 木鹿 → 阿母城（乌浒水渡口） → 布哈拉 → 撒马尔罕（马拉坎达） → 忽毡（居鲁士城）→ 锡尔河战场；编辑器「行军路线实测」已跑。' }, result: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 信息框 result = Macedonian victory。塞种约 1,200 阵亡（含主帅 Satraces）、150 被俘、1,800 匹马被缴；马其顿阵亡 160、伤 1,000。战后亚历山大在河南岸筑城（亚历山大·埃斯哈塔，今苦盏一带）以定北疆，故本场「战后归属」按历史写忽毡归马其顿。' }, briefing: { level: 'fact', text: '英文维基百科 Battle of Jaxartes 正文：塞种占北岸，自信能在马其顿登陆时将其击败，却低估了马其顿砲兵、舰队、骑兵与步兵的协同；亚历山大令全军同时齐渡，使对岸骑射手面对更多目标，随后以弓箭手与骑兵破其包围，约 1,200 塞种被围歼、含主帅。文案按主人规矩不写兵力确数。' } },
         commanderUnit: 'hero_mounted_alexander',
-        // 🔴 [2026-09-24 主人「速不台，13 世纪蒙古人，与塞种主帅年代差得远……符合历史」]
-        //    原来选 `hero_subotai`（速不台，13 世纪）＝与**前329 年的塞种主帅**差约 1600 年，不合历史。
-        //    照 §二.5「看样子和年代选，不看名字」改取 **英雄·塞乌特斯三世**（`hero_thracian_chieftain`）：
-        //    名册里没有塞种/斯基泰的英雄兵模（`SCYTHIAN_*` 是兵种不是英雄兵模，草原英雄兵模全是中世纪的：
-        //    阿提拉 5 世纪、库曼/钦察/蒙古 11–13 世纪），故取**与亚历山大同代**的骑马蛮族首领（色雷斯紧挨斯基泰）。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        // 对手主将队：🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行]
+        //    （2026-09-24 曾从「速不台」改到「色雷斯酋长」；本轮改按**样貌**定）
+        //    塞种是草原游牧骑射民族 —— 取 hero_kushluk（英雄·屈出律）：皮裘 + 大弓 + 草原坐骑，
+        //    库里唯一一副「弓骑首领」的样子。
+        foeCommanderUnit: 'hero_kushluk',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场15 锡尔河·斯基泰军团 塞种骑射首领
         type: 'field_battle',
         title: '公元前329年 亚历山大东征锡尔河战役',
         battleBriefing: '面对停留在锡尔河北岸不断射箭挑衅的塞迦游牧骑兵，亚历山大首次将城防弩炮与投石机架设于渡船上，向对岸倾泻重型巨矢掩护部队乘坐皮筏强渡。渡河后，亚历山大故意派出一支骑枪骑兵深入诱敌，引诱习惯游击围射的塞迦骑兵包围这支孤军；随后马其顿轻骑兵、弓箭手与长矛方阵从两侧迅速张开包围网，将机动游牧骑兵死死合拢在内圈，双方在河岸平原上展开密集的骑射与长矛混战。',
@@ -798,9 +798,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Spitamenes —— 公元前328年12月加拜之战科伊诺斯破斯皮塔米尼斯，斯皮塔米尼斯为马萨革泰首领所杀、首级送亚历山大；英文维基百科 Siege of the Sogdian Rock —— 公元前327年早春取岩堡，夜攀者摔死三十人，守军见旗而降。文案按主人规矩不写兵力确数。' },
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-        // 对手主将队：🔴 照 §二.5「看样子和年代选，不看名字」，本时代没有粟特英雄兵模（名册里草原/中亚英雄兵模全是中世纪的），
-        //    故取**与亚历山大同代**的骑马蛮族首领（hero_thracian_chieftain = 英雄·塞乌特斯三世，前331–300 在位）。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        // 对手主将队：🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行]
+        //    索格狄亚那岩的守军仍是粟特人 —— 与居鲁士城同一处理，取 hero_kotyankhan（人马皆甲的具装骑领主）。
+        foeCommanderUnit: 'hero_kotyankhan',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场16 索格狄亚那岩·粟特军团 岩堡首领
         type: 'siege',
         title: '公元前327年 亚历山大东征索格狄亚那岩战役',
         battleBriefing: '耸立于绝壁之上的索格狄亚那岩要塞守军居高临下嘲讽马其顿军团需要“长翅膀的人”才能攻克。亚历山大遴选一批精通攀岩的勇士，在深夜借着铁帐钉与麻绳，徒手攀爬垂直险绝的冰岩悬崖。拂晓时分，登顶战士在敌军后方的山峰绝顶挥舞白色布条发出信号，城下马其顿大军号角齐鸣，亚历山大派使者向守军高呼“翼人已至”，山顶上的攀岩勇士与下方大军同时摆出强攻姿态。',
@@ -857,9 +857,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         // 对手主将队：🔴 照 §二.5「看样子和年代选，不看名字」，本时代没有印度/阿斯瓦卡的英雄兵模，
         //    守城的是**女王**克莱奥菲斯。古典段唯一的女将兵模 hero_artemisia（英雄·阿尔特米西亚）
         //    素材**是一艘战船**（armorTags 含 16 = 战舰甲级）—— 🔴 [2026-10-02 主人令
-        //    「舰队不应该作为英雄的第10队」] 陆战第 10 队绝不能出舰队，故按「先保年代、再尽样子」
-        //    取同代骑马蛮族首领 hero_thracian_chieftain（与居鲁士城/奥诺斯岩/马里斯等本地首领同例）。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        //    「舰队不应该作为英雄的第10队」] 陆战第 10 队绝不能出舰队。
+        //    🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 阿斯瓦卡是印度河上游（斯瓦特谷）山民 ——
+        //    取 hero_prithviraj（英雄·普里特维拉吉）：缠头、长袍、持剑的印度部族首领样。
+        foeCommanderUnit: 'hero_prithviraj',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场17 马萨加·阿斯瓦卡军团 阿萨卡诺伊首领
         type: 'siege',
         title: '公元前327年 亚历山大东征马萨加战役',
         battleBriefing: '在斯瓦特谷地险要的马萨加要塞下，守军与雇佣兵凭借深沟高墙坚守，女王克莱奥菲斯亲临城头指挥。马其顿军团筑起巨大的攻城塔，搭设木桥跨越深沟，亚历山大战中脚踝被流箭射中，血流不止却依然伫立阵前挥剑督战。巨型攻城槌重重轰击城墙，投石机向城内倾泻重石，马其顿突击队顺着搭上城头的桥板发起冲锋，双方在木桥与城墙防线间陷入拉锯鏖战。',
@@ -913,10 +914,9 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Cophen campaign 的 Sieges of Bazira and Ora 节 —— 马萨加破后，亚历山大遣科伊诺斯往巴济拉、遣阿尔塞塔斯、阿塔罗斯与德米特里乌斯围奥拉；奥拉人出城突袭被击退，亚历山大闻阿比萨雷斯将渡印度河救奥拉而改道先取奥拉；奥拉陷落后巴济拉守军弃城投奔奥诺斯岩。同条 Siege of Aornus 节 —— 托勒密与书记官夺西侧山脊、填涧筑坡、夺相连小丘、守军弃岩夜遁、亚历山大攀崖登顶立坛。文案按主人规矩不写兵力确数。' },
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-        // 对手主将队：🔴 照 §二.5「先保年代，再尽样子」——本时代没有印度山民首领的英雄兵模
-        //    （porus_elephant 是骑象的王，用于岩堡山民不合），故取同代的骑马蛮族首领
-        //    hero_thracian_chieftain（英雄·塞乌特斯三世，前331–300 在位），与第 11 场岩堡守将同一处理。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        // 对手主将队：🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行]
+        //    阿斯瓦卡山民 —— 与马萨加同一处理，取 hero_prithviraj（缠头长袍持剑的印度部族首领样）。
+        foeCommanderUnit: 'hero_prithviraj',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场18 奥诺斯岩·阿斯瓦卡军团 崖堡首领
         type: 'siege',
         title: '公元前326年 亚历山大东征奥诺斯岩战役',
         battleBriefing: '面对耸立于印度河深谷之上、号称连大力神赫拉克勒斯都未能攻克的奥诺斯岩天险，亚历山大面对隔绝峡谷的悬崖深渊，下令砍伐树木填土筑造高耸的巨型土堆，将投石机推进至射程之内。投石机向对岸石壁倾泻矢石掩护，亚历山大率领先锋小队沿着麻绳攀爬最后一段近乎垂直的岩壁，强行登上天险顶峰的高地平台，登顶先锋与山顶守军在云雾缭绕的悬崖边缘展开近身缠斗。',
@@ -1022,10 +1022,10 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             briefing: { level: 'fact', text: '播报所据史事：英文维基百科 Mallian campaign 背景节 —— 海达斯佩斯河后亚历山大在波鲁斯境内停留三十天并排解波鲁斯与塔克西拉的旧怨、受降三十七座城、阿比萨雷斯来附；军至希法色斯河因久雨与伤亡而全军拒进，亚历山大被迫南返；其后造船沿河南下并穿旱地奇袭马利。文案按主人规矩不写兵力确数。' },
         },
         commanderUnit: 'hero_mounted_alexander',   // 主将队：素材样貌为骑马的亚历山大
-        // 对手主将队：照 §二.5「先保年代，再尽样子」——本时代没有印度部落首领的英雄兵模，
-        //    摩罗波罗是部落同盟推举之主帅，故取同代的骑马蛮族首领 hero_thracian_chieftain
-        //    （英雄·塞乌特斯三世，前331–300 在位），与第 11、13 场岩堡／崖堡守将同一处理。
-        foeCommanderUnit: 'hero_thracian_chieftain',
+        // 对手主将队：🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行]
+        //    马利人（摩罗婆）是旁遮普印度部族 —— 取 hero_rajendrachola（英雄·罗贞陀罗·朱罗）：
+        //    白袍金饰、持大弓的印度王／首领样。
+        foeCommanderUnit: 'hero_rajendrachola',   // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 场20 马里斯·马利军团 摩罗波罗
         type: 'siege',
         title: '公元前325年 亚历山大东征马里斯战役',
         battleBriefing: '在马利人要塞的围攻战中，亚历山大见云梯登城受阻，大怒之下亲自夺过云梯率先登顶，与佩乌塞斯塔斯等几名侍卫直接跳入城墙内侧。城内敌军蜂拥围攻，一支重箭贯穿了亚历山大的胸铠击中肺部，亚历山大倒在墙边血流如注。佩乌塞斯塔斯举起特洛伊雅典娜神盾死死守护在亚历山大身前，城外惊恐的马其顿士兵疯狂撞击城门、搭梯翻墙冲入城内，双方在城堡内院里围绕着倒下的国王展开决死血战。',

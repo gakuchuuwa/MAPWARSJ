@@ -94,7 +94,14 @@ function buildRows(): LegionRow[] {
     const push = (rawName: string, layer: Layer) => {
         // 改名后静态表还是旧名（要等 HMR），这里先换成新名再查编制
         const name = resolveRenamedLegion(rawName);
-        const c = getLegionCompositionByName(name);
+        // 🔴 [2026-10-02 主人报障「编辑器中为什么显示不全呢」] 四级剧本军团的编制**必须直接读 scriptLegions.ts**：
+        //    按名字走 `getLegionCompositionByName` 会撞名 —— 四级「色雷斯军团」与**色雷斯文化区那支同名**，
+        //    运行时名字表里被文化区占了，于是这一行显示成 衡轭4+2+3／希腊雇佣重步兵高级/色雷斯标枪手高级/塔兰丁骑兵
+        //    ＋希腊旗舰伦博斯重装，而它自己的 雁行4-3-2／色雷斯标枪手/长刃斩手/古典轻骑兵 反而看不见。
+        //    实测：getLegionCompositionByName('色雷斯军团') = balance_yoke + ELITE_LEMBOS；
+        //          SCRIPT_LEGION_MAP.get('色雷斯军团') = echelon、无船。以脚本表为准。
+        const scriptDef = layer === '四级' ? SCRIPT_LEGION_MAP.get(name) : undefined;
+        const c = scriptDef ?? getLegionCompositionByName(name);
         if (!c) return;
         out.push({
             name, layer, mode: c.formationMode,
@@ -121,6 +128,16 @@ const runtimeCreated = new Set<string>();
 
 let rows: LegionRow[] = [];
 let keyword = '';
+/** 🔴 [2026-10-02 主人报障「修改了兵种，无法保存」] **同名不同层会撞车**（一级文化军团「色雷斯军团」与四级剧本军团「色雷斯军团」同名），
+ *  所以选中项必须**按「名字 + 层」一起认**；只按名字 `rows.find(...)` 会拿到排在前面的一级那条，
+ *  于是 ① 右栏显示的是另一支军团的编制 ② 保存被路由到文化区表（写错文件、四级那条没写）。 */
+let selectedLayer: Layer | null = null;
+/** 当前选中的那一行（认层；没有层信息时退回按名字） */
+function currentRow(): LegionRow | undefined {
+    if (!selected) return undefined;
+    return (selectedLayer ? rows.find((r) => r.name === selected && r.layer === selectedLayer) : undefined)
+        ?? rows.find((r) => r.name === selected);
+}
 /** 🔴 [2026-09-16 主人「加一个势力排序」] 按「用它的势力家数」排：none=表原顺序（一→二→三级）/ desc=多在前 / asc=少在前。
  *  点「势力」表头循环切换。无人套用的军团要找出来，点两下切到 asc 就全在最上面。 */
 let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
@@ -338,7 +355,7 @@ function visible(): LegionRow[] {
 
 function render(): void {
     const list = visible();
-    const sel = selected ? rows.find(r => r.name === selected) : null;
+    const sel = selected ? currentRow() : null;
     if (sel && !draft) {
         draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''], shipId: sel.shipId ?? '', commanderUnit: sel.commanderUnit ?? '', source: sel.source ?? '' };
     }
@@ -376,6 +393,7 @@ function render(): void {
               <th style="padding:7px 10px;">层级</th>
               <th style="padding:7px 10px;">军团名</th>
               <th style="padding:7px 10px;">阵型</th>
+              <th style="padding:7px 10px;">英雄（主队 · 第 10 队）</th>
               <th style="padding:7px 10px;">前排</th>
               <th style="padding:7px 10px;">中坚</th>
               <th style="padding:7px 10px;">后排</th>
@@ -401,10 +419,17 @@ function render(): void {
                     : [r.slots[0]?.type, r.slots[1]?.type, r.slots[2]?.type];
                 const rShip = d ? d.shipId : r.shipId;
                 return `
-              <tr data-name="${esc(r.name)}" style="cursor:pointer;border-top:1px solid #221e19;${selected === r.name ? 'background:#2f2a20;' : ''}">
+              <tr data-name="${esc(r.name)}" data-layer="${r.layer}" style="cursor:pointer;border-top:1px solid #221e19;${selected === r.name && selectedLayer === r.layer ? 'background:#2f2a20;' : ''}">
                 <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : r.layer === '三级' ? '#c0a0e0' : '#8fd0a0'};">${r.layer}</td>
                 <td style="padding:6px 10px;color:#e8e0d0;">${esc(r.name)}</td>
                 <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[rMode] ?? rMode}</td>
+                ${/* 🔴 [2026-10-02 主人报障「显示不全」] 五兵 = 英雄队＋前＋中＋后＋舰队 —— 英雄（主队·第 10 队）这一兵原先只在右侧详情里，
+                     * 列表里根本没有这一列，四级剧本军团的五兵看起来只有四兵。现补上这一列（读 commanderUnit，与右侧同源）。 */''}
+                <td style="padding:4px 10px;color:#d8c898;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    ${(d ? d.commanderUnit : r.commanderUnit) ? `<canvas data-uid="${esc(String(d ? d.commanderUnit : r.commanderUnit))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                    <span>${esc((d ? d.commanderUnit : r.commanderUnit) ? cn(String(d ? d.commanderUnit : r.commanderUnit)) : '—')}</span>
+                  </div></td>
                 ${[0, 1, 2].map(i => {
                     const t = rTypes[i];
                     const c = d ? (rCnt[i] ?? 0) : (r.slots[i]?.count ?? 0);
@@ -466,6 +491,21 @@ function render(): void {
           </div>
           ` : ''}
 
+          ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
+            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
+            <div class="lp-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+                 background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+              <canvas id="lp-thumb-${i}" width="64" height="64"
+                style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+              <div style="flex:1;min-width:0;">
+                <div style="color:#e8e0d0;font-size:13px;">${esc(cn(draft!.types[i]))}</div>
+                <div style="color:#6a6358;font-size:11px;">
+                  ${esc(subLabelOf(draft!.types[i]))} · 点击更换
+                </div>
+              </div>
+              <span style="color:#8a8378;font-size:16px;">▾</span>
+            </div>`).join('')}
+
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队（战船）</div>
           <div id="lp-ship-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
@@ -484,21 +524,6 @@ function render(): void {
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">史料出处（必填）</div>
           <textarea id="lp-source" rows="6" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;font-size:12px;line-height:1.5;resize:vertical;">${esc(draft!.source ?? '')}</textarea>
           ` : ''}
-
-          ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
-            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
-            <div class="lp-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
-                 background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-              <canvas id="lp-thumb-${i}" width="64" height="64"
-                style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
-              <div style="flex:1;min-width:0;">
-                <div style="color:#e8e0d0;font-size:13px;">${esc(cn(draft!.types[i]))}</div>
-                <div style="color:#6a6358;font-size:11px;">
-                  ${esc(subLabelOf(draft!.types[i]))} · 点击更换
-                </div>
-              </div>
-              <span style="color:#8a8378;font-size:16px;">▾</span>
-            </div>`).join('')}
 
           <button id="lp-save" style="width:100%;padding:10px;background:${dirty ? '#5a3c28' : '#2a2520'};border:1px solid ${dirty ? '#8a6038' : '#3a342c'};color:#fff;border-radius:4px;font-size:14px;cursor:pointer;">
             💾 保存军团编制${dirty ? '（有改动未保存）' : ''}
@@ -552,6 +577,7 @@ function render(): void {
     host.querySelectorAll('tbody tr').forEach(tr => {
         tr.addEventListener('click', () => {
             selected = (tr as HTMLElement).dataset.name!;
+            selectedLayer = ((tr as HTMLElement).dataset.layer as Layer) ?? null;
             draft = null;
             render();
         });
@@ -633,6 +659,7 @@ async function rename(raw: string): Promise<void> {
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
         renameLegionInMemory(oldName, newName);
         selected = newName;
+        selectedLayer = '三级';
         draft = null;
         rows = buildRows();
         render();
@@ -841,6 +868,7 @@ async function createLegion(
         runtimeCreated.add(name);
         overlay.remove();
         selected = name;
+        selectedLayer = '三级';
         draft = null;
         rows = buildRows();
         render();
@@ -887,13 +915,13 @@ async function saveScriptLegion(): Promise<void> {
 async function save(): Promise<void> {
     if (!selected || !draft) return;
     // 🔴 [2026-10-02] 四级剧本军团走 scriptLegions.ts（含史料出处），单独保存
-    if (rows.find(r => r.name === selected)?.layer === '四级') {
+    if (currentRow()?.layer === '四级') {
         await saveScriptLegion();
         return;
     }
     const counts = MODE_ROWS[draft.mode];
     const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
-    const prevShip = rows.find(r => r.name === selected)?.shipId ?? '';
+    const prevShip = currentRow()?.shipId ?? '';
     const shipChanged = (draft.shipId ?? '') !== prevShip;
     try {
         const res = await fetch('/api/save-legion-composition', {
@@ -965,6 +993,7 @@ async function remove(): Promise<void> {
         }
         dropLegionFromMemory(name);
         selected = null;
+    selectedLayer = null;
         draft = null;
         rows = buildRows();
         render();

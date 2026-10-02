@@ -895,11 +895,43 @@ function checkSideLegion(side: string, name: string, fallback: string): Issue[] 
         out.push({ level: 'error', msg: `${side}军团「${name}」不是剧本军团：前三层的名字填进事件，运行时只改名不改兵（幽灵军团），请改选剧本军团` });
         return out;
     }
-    // 🔴 [2026-09-23 主人定「军团中只有骑兵，步兵，远程，不要分的那么细」] 三排 = 骑兵、步兵、远程各一排
+    // 🔴 [2026-10-02 主人令「三排不是骑／步／远各一排 —— **没有这个规定**」（看第 9 场推罗那一红时说）]
+    //    主人 2026-09-23 的原话是「军团中只有骑兵，步兵，远程，**不要分的那么细**」——
+    //    管的是**兵种分类的粒度**（只许归入这三类，不许再分出别的类别），
+    //    **不是**要求三排各占一类、也不要求三类齐全。
+    //    实例：推罗军团 前远程3（城头弓弩）／中步兵4（守城主力）／后投掷2（掷矛手，归远程类）
+    //    —— 海岛城邦无战马无战象，史料如此，合法。
+    //    旧尺子写成 `['cav','melee','ranged'].every(c => classes.includes(c))`＝要求三类齐全，
+    //    把主人的合法编制判成红、逼着改历史（正是血训 21／23 禁的「为了过检查动数据」）。
     const clsOf = (t: string) => WAR_TYPES[t]?.cls;
-    const classes = def.slots.map((sl) => clsOf(sl.type));
-    if (def.slots.length !== 3 || !['cav', 'melee', 'ranged'].every((c) => classes.includes(c as never))) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排不是骑兵、步兵、远程各一排：军团只分这三类兵种` });
+    const CLS3 = ['cav', 'melee', 'ranged'];
+    if (def.slots.length !== 3) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」不是三排（现 ${def.slots.length} 排）：军团按前／中／后三排编成` });
+    }
+    const outsideCls = def.slots.filter((sl) => !CLS3.includes(String(clsOf(sl.type) ?? '')));
+    if (outsideCls.length) {
+        out.push({
+            level: 'error',
+            msg: `${side}剧本军团「${name}」有兵种不属于骑兵／步兵／远程这三类：`
+                + `${outsideCls.map((s) => s.type).join('、')}（军团只分这三类，不许分得更细）`,
+        });
+    }
+    // 🔴 [2026-10-02 主人令「军团五兵种，首先，符合历史，其次，三排尽量骑步远各一」]
+    //    五兵 ＝ 英雄队（主队·第 10 队）＋ 前排 ＋ 中排 ＋ 后排 ＋ 舰队。
+    //    「三排尽量骑／步／远各一」是**第二位的「尽量」**——**提示级、不拦存盘**：
+    //    第一位的判据是**符合历史**，史实上做不到的照史实写。
+    //    例：推罗军团 ＝ 前远程3（城头弓弩）／中步兵4（守城主力）／后投掷2（掷矛手，归远程类）
+    //        ＝ 远／步／远 —— 海岛城邦无战马，史上就是没有骑兵排，**合法**，只提示不报错。
+    const CLS_CN: Record<string, string> = { cav: '骑兵', melee: '步兵', ranged: '远程' };
+    const clsList = def.slots.map((sl) => String(clsOf(sl.type) ?? '?'));
+    const missingCls = CLS3.filter((c) => !clsList.includes(c));
+    if (def.slots.length === 3 && missingCls.length) {
+        out.push({
+            level: 'warn',
+            msg: `${side}剧本军团「${name}」三排没有骑／步／远各一（现为 `
+                + `${clsList.map((c) => CLS_CN[c] ?? c).join('／')}，缺 ${missingCls.map((c) => CLS_CN[c]).join('、')}）`
+                + `—— 第二位的要求是「尽量」各占一类；史实如此（如海岛城邦无战马）可不改`,
+        });
     }
     if (!slotsMatchFormation(def.slots, def.formationMode)) {
         out.push({ level: 'error', msg: `${side}剧本军团「${name}」三排人数与阵型对不上（合计必须 9，按阵型分排）` });
