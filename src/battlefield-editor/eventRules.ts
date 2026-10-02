@@ -306,8 +306,8 @@ function cnNumber(str: string): number {
 }
 /** 套话与含数字的地名：看着像数，其实不是数量 */
 const NOT_A_QUANTITY = /^(?:千里|万仞|万丈|万千|千仞|千古|万王之王|百般|百战|万无一失|万古|千军万马|千早|千曲)/;
-/** 数字后面紧跟这些 = 说的是年龄、器械、距离、倍数，不是兵力 */
-const NOT_TROOP_UNIT = /^(?:岁|辆|头|艘|座|尺|丈|米|里|英里|公里|倍|年|月|日|世|天)/;
+/** 数字后面紧跟这些 = 说的是年龄、器械、距离、倍数、季节，不是兵力 */
+const NOT_TROOP_UNIT = /^(?:岁|辆|头|艘|座|尺|丈|米|里|英里|公里|倍|年|月|日|世|天|早春|初春|春|夏|秋|冬)/;
 /** 数字后 6 字内出现这些 = 说的是兵力 */
 const TROOP_WORD = /兵|骑|军|将士|武士|勇士|死士|士卒|健儿|精锐|别动队|主力|人|名/;
 function briefingSpecificNumbers(text: string): string[] {
@@ -322,6 +322,13 @@ function briefingSpecificNumbers(text: string): string[] {
         const value = /\d/.test(m[2]) ? Number(m[2]) : cnNumber(m[2]);
         if (value < 10) continue;                                      // 两军、三名护卫这类小数不拦
         if (text[m.index - 1] === '第') continue;                      // 第十军团：序数
+        if (text[m.index - 1] === '前') continue;                      // 前327早春：纪年（主人定：纪年照旧）
+        // 🔴 [2026-10-02 血训 26] 单字「万／千／百」若是**词尾**（地名「呼勒万」、「千难万险」），
+        //    前面那个字不是数字就不是数量 —— 否则「呼勒万。」会被当成「万」兵数误杀。
+        if (/^[万千百]$/.test(m[2])) {
+            const before = text[m.index - 1] ?? '';
+            if (before && !/[零〇一二两三四五六七八九十百千万\d]/.test(before)) continue;
+        }
         if (NOT_TROOP_UNIT.test(after) || !TROOP_WORD.test(after.slice(0, 6))) continue;
         out.push(m[0] + after.slice(0, 2));
     }

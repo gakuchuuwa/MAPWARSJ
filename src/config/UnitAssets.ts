@@ -1422,6 +1422,17 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BACTRIAN_ARCHER/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BACTRIAN_ARCHER/death_${dir}.png`),
         },
+        'elephant': {
+            // 【南亚战象】AoE2 DE 素材，2026-10-02 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
+            //    🔴 逐场复核第 19 场海达斯佩斯河查出的：四级剧本军团「保拉瓦军团」中排就是这一种，
+            //    没有素材声明 → 战术模式里那一排（波鲁斯的战象主力）整排看不见。
+            //    样子取 DE 的 Battle Elephant（南亚战象，与三级印度诸军团用的 elite_battle_elephant 同一族）。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/death_${dir}.png`),
+        },
         'battle_elephant': {
             // 【战斗象】AoE2 DE 素材，2026-08-17 补全接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BATTLEELEPHANT/move_${dir}.png`),
