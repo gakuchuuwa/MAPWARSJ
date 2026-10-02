@@ -682,9 +682,12 @@ export class PlayerQuestSystem {
     /** 末场战后班师这一路的待办（赶赴战场时备好，战毕再走） */
     private pendingEpilogue: { battlefieldId: string; pre: string; text: string; dest: City; title: string } | null = null;
     /** 战毕待开拔的班师（下一拍 tick 里军团脱离交战后再走） */
-    private queuedEpilogue: { text: string; dest: City; title: string } | null = null;
+    private queuedEpilogue: { text: string; dest: City; title: string; since: number } | null = null;
     /** 班师途中：arrived = 军团已到终点，等旁白念完再收尾 */
-    private epilogue: { title: string; dest: City; arrived: boolean; retries: number } | null = null;
+    private epilogue: {
+        title: string; dest: City; arrived: boolean; retries: number;
+        lastPos: { lat: number; lng: number } | null; lastMoveAt: number; lastRetryAt: number; arrivedAt: number | null;
+    } | null = null;
 
     /**
      * 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 这一场的路表若以「战场 → 某城」收尾，
@@ -714,7 +717,10 @@ export class PlayerQuestSystem {
             gameLog('expedition', `[玩家] 班师${epi.dest.name}：军团不在场，略过`);
             return;
         }
-        this.epilogue = { title: epi.title, dest: epi.dest, arrived: false, retries: 0 };
+        this.epilogue = {
+            title: epi.title, dest: epi.dest, arrived: false, retries: 0,
+            lastPos: null, lastMoveAt: Date.now(), lastRetryAt: 0, arrivedAt: null,
+        };
         if (!this.marchEpilogueHost(host, epi.dest)) {
             gameLog('expedition', `[玩家] 班师${epi.dest.name}：无路可达`);
             this.epilogue = null;
@@ -723,6 +729,14 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(epi.title);
         this.startJourneyBriefing(null, epi.title, epi.text, []);
         gameLog('expedition', `[玩家] 战毕班师：军团自战场开赴【${epi.dest.name}】`);
+    }
+
+    /** 班师收尾（正常到达或兜底放弃）：清动向栏与旁白，剧本随即转乱斗 */
+    private finishEpilogue(why: string | null): void {
+        if (why) gameLog('expedition', `[玩家] 班师收尾：${why}`);
+        this.deps.hero.setTravelPointLabel(null);
+        this.clearJourneyBriefing();
+        this.epilogue = null;
     }
 
     /** 给班师军团铺一条去终点的路（开拔与「路径被清掉后重铺」共用） */
@@ -1104,7 +1118,7 @@ export class PlayerQuestSystem {
         if (epi && epi.battlefieldId === bfId) {
             // 战斗收尾此刻还在跑（会清掉刚下的行军路径）→ 留到下一拍 tick 再开拔，与「连续行军」同一时机
             this.pendingEpilogue = null;
-            this.queuedEpilogue = epi;
+            this.queuedEpilogue = { ...epi, since: Date.now() };
         }
     }
 
@@ -1926,11 +1940,20 @@ export class PlayerQuestSystem {
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
         // 🔴 [2026-10-03] 班师：战毕后军团脱离交战再开拔（战斗收尾会清掉同一拍下的路径）；
         //    到了终点还要等最后一段旁白念完才收尾、才转乱斗
+        // 🔴 [2026-10-03 主人怒斥「卡死、不结束、接不动」] 班师这一段**绝不许死锁**：
+        //    每一道等待都带真实时间上限，到点就强行放行 / 收尾，宁可少走一段路，也不能把剧本钉死在科塞亚。
         if (this.queuedEpilogue) {
             const hid = this.deps.hero.getHostLegionId();
             const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
-            if (!h || h.isDestroyed) this.queuedEpilogue = null;
-            else if (!h.getIsInCombat()) {
+            const waited = Date.now() - this.queuedEpilogue.since;
+            if (!h || h.isDestroyed) {
+                this.queuedEpilogue = null;
+            } else if (!h.getIsInCombat() || waited > 10000) {
+                // 交战标记超过 10 秒还没放（战术模式的结算没放手）→ 强行解除，再开拔
+                if (h.getIsInCombat()) {
+                    gameLog('expedition', '[玩家] 班师：军团交战标记超过 10 秒未放，强行解除');
+                    h.clearExternalCombatState();
+                }
                 const epi = this.queuedEpilogue;
                 this.queuedEpilogue = null;
                 h.clearPostBattleRest();
@@ -1938,23 +1961,39 @@ export class PlayerQuestSystem {
             }
         }
         if (this.epilogue) {
-            // 路径被别处清掉（军团停着、没到终点）→ 重铺一次，不重念
+            const ep = this.epilogue;
+            const now = Date.now();
             const hid = this.deps.hero.getHostLegionId();
             const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
-            const d = this.epilogue.dest;
-            if (h && !h.isDestroyed && !this.epilogue.arrived && !h.isMarching() && !h.getIsInCombat()) {
-                if (getEuclideanDistance(h.getPosition(), { lat: d.latitude, lng: d.longitude }) * 111 <= 15) {
-                    this.epilogue.arrived = true;
-                } else if (this.epilogue.retries < 20) {
-                    this.epilogue.retries++;
+            const d = ep.dest;
+            if (!h || h.isDestroyed) {
+                this.finishEpilogue('军团已不在');
+            } else if (!ep.arrived) {
+                const pos = h.getPosition();
+                if (!ep.lastPos || getEuclideanDistance(pos, ep.lastPos) * 111 >= 0.5) {
+                    ep.lastPos = { lat: pos.lat, lng: pos.lng };
+                    ep.lastMoveAt = now;
+                }
+                if (getEuclideanDistance(pos, { lat: d.latitude, lng: d.longitude }) * 111 <= 15) {
+                    ep.arrived = true;
+                } else if (now - ep.lastMoveAt > 45000) {
+                    this.finishEpilogue('军团 45 秒原地不动，放弃班师');   // 兜底：不死锁
+                } else if (now - ep.lastMoveAt > 2500 && now - ep.lastRetryAt > 2500) {
+                    // 停着没走 → 解除可能残留的战斗 / 休整状态，重铺一次路径（不重念旁白）
+                    ep.lastRetryAt = now;
+                    ep.retries++;
+                    if (now - ep.lastMoveAt > 10000 && h.getIsInCombat()) h.clearExternalCombatState();
                     h.clearPostBattleRest();
                     this.marchEpilogueHost(h, d);
-                    gameLog('expedition', `[玩家] 班师${d.name}：军团停在半路，重铺路径（第 ${this.epilogue.retries} 次）`);
+                    gameLog('expedition', `[玩家] 班师${d.name}：军团停在原地，重铺路径（第 ${ep.retries} 次）`);
                 }
             }
-            if (this.epilogue.arrived && !this.briefingBusy && this.briefingPending === null) {
-                this.deps.hero.setTravelPointLabel(null);
-                this.epilogue = null;
+            if (this.epilogue && ep.arrived) {
+                if (ep.arrivedAt === null) ep.arrivedAt = now;
+                // 到了：等最后一段旁白念完才收尾；旁白卡住（语音掉线等）最多再等 45 秒
+                if ((!this.briefingBusy && this.briefingPending === null) || now - ep.arrivedAt > 45000) {
+                    this.finishEpilogue(null);
+                }
             }
         }
         if (this.deps.hero.autoPlan === 'script' && !this.quest && !this.epilogue && !this.queuedEpilogue

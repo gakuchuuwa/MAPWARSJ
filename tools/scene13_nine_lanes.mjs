@@ -36,7 +36,7 @@ if (/types\.length\s*===\s*9/.test(src)) ok('slotsOf 仍以 types.length === 9 �
 else bad('slotsOf 的「编制必须是 9 口」闸门不见了');
 if (/withCommander\(generalId, types\)/.test(src)) ok('slotsOf 追加主将队第 10 口');
 else bad('slotsOf 没有追加主将队（withCommander）');
-if (/const COMMANDER_CELL/.test(src) && /idx < 9 \? LAYOUT\[mode\]\[idx\] : COMMANDER_CELL/.test(src)) ok('第 10 口站 COMMANDER_CELL（前排正中再往前）');
+if (/const COMMANDER_CELL/.test(src) && /idx < 9 \? LAYOUT\[mode\]\[idx\] : COMMANDER_CELL/.test(src)) ok('第 10 口站 COMMANDER_CELL（前排三组则安置在两组中间）');
 else bad('第 10 口的站位 COMMANDER_CELL 不见了');
 const fb = src.slice(src.indexOf('编制槽位派生失败'), src.indexOf('编制槽位派生失败') + 900);
 const fbN = (fb.match(/\{\s*key:/g) || []).length;
