@@ -510,15 +510,22 @@ export class PlayerHero {
      * 关掉面板的「自动选择兵模」→ 只获得、不换装。
      */
     public onJoinLegion(): void {
+        const prevCount = this.learnedUnits.length;
         this.syncLearnedUnits();
         if (!this.autoPickUnit) return;   // 关掉自动选择 = 只用玩家手选的那个
+        // 若刚刚在 syncLearnedUnits 里已学到新兵模并自动换上，无需二次随机挑选
+        if (this.learnedUnits.length > prevCount) return;
+
         const keys = this.legionUnitKeys();
         if (!keys.length) return;
-        // 只在「该军团三排里、他已经拥有的」兵模中随机换一件（配额没到就换不了新的那件，属正常）
+        // 之前已收齐本军团兵模时，若当前穿的并非本军团兵模，则随机换上一件本军团兵模
         const owned = this.learnedUnits
             .map((u, i) => ({ u, i }))
             .filter((x) => keys.includes(x.u.unitKey));
         if (!owned.length) return;
+        const currentKey = this.getSelectedUnit()?.unitKey;
+        if (currentKey && keys.includes(currentKey)) return;
+
         const pick = owned[Math.floor(Math.random() * owned.length)];
         if (pick.i === this.selectedUnit) return;
         this.selectedUnit = pick.i;
@@ -529,33 +536,29 @@ export class PlayerHero {
 
     /**
      * 按当前官阶补齐应学的兵模。
-     * 🔴 [2026-09-07 主人定]「斥候学一个（三排随机）→ 探马再一个 → 先锋再一个，集齐三排」。
-     *    随机只在**还没学过的排**里抽，所以到先锋必然三排各一个，不会重复。
-     *    学到即可套用：玩家素材 = 选中的已学兵模（见 heroKey）。
-     * 规则全文见 docs/AGENTS/player-hero.md。
+     * 🔴 [2026-10-03 主人定死唯一顺序与自动换装]
+     *    「乱入者应该是先随机获得三个兵种素材，获得的时候就换上新的。然后是获得舰队的，最后获得英雄的。所以当玩家最后应该保持在英雄的兵模。」
+     *    1. 斥候/探马/先锋：从三排陆地兵种中随机获得，获得的时候立即换上新的！
+     *    2. 将军：获得本军团舰队战船！
+     *    3. 元帅：最后获得英雄兵模（主将队），获得的时候立即换上英雄兵模，并保持在英雄兵模！
+     * 规则全文见 docs/AGENTS/player-rules-verbatim.md 0-7。
      */
     public syncLearnedUnits(): void {
         // 🔴 [2026-09-09 主人定「这种是玩家奖励，终身获取的」]
         //    已学兵种**永不回收**：军团战败、脱离势力、改投他家、掉阶，一律保留。
-        //    改前有三处会把它清光——① factionId 为空就清空（军团战败 → detach 清 factionId，
-        //    奖励当场蒸发）；② 换势力清空重学；③ 掉阶按总数截断。全部去掉。
         //    配额只约束「本势力还能再学几个」，按**当前势力已学数**算，不看历史总数，
         //    所以改投新势力后照样能从头学三排，旧势力学的也还留着能选。
         const want = this.learnQuotaForRank(this.getRank().id);
         if (!this.factionId) return;               // 独行期：不新收，但旧的原样保留
-        // 🔴 [2026-09-24 主人定] 池子 = 所加入那支军团的五种兵模：三排 + 将军兵模 + 舰队兵模。
-        //    斥候/探马/先锋三阶先把三排随机收齐；三排齐了，将军/元帅两阶再在「将军兵模、舰队」里随机收。
-        //    （取代 2026-09-10「首抽只给陆地三排」那条：现在三排收齐之前，船和将军都不进池。）
+
         const landKeys = this.legionUnitKeys();
         const cmdKey = this.legionCommanderKey();
         const shipKeyOfLegion = this.legionShipKey();
         type Pick = { key: string; row: number; ship: boolean };
         const landPool: Pick[] = landKeys.map((key, row) => ({ key, row, ship: false }));
-        const highPool: Pick[] = [
-            ...(cmdKey ? [{ key: cmdKey, row: 3, ship: false }] : []),
-            ...(shipKeyOfLegion ? [{ key: shipKeyOfLegion, row: -1, ship: true }] : []),
-        ];
-        const pool = [...landPool, ...highPool];
+        const shipPool: Pick[] = shipKeyOfLegion ? [{ key: shipKeyOfLegion, row: -1, ship: true }] : [];
+        const heroPool: Pick[] = cmdKey ? [{ key: cmdKey, row: 3, ship: false }] : [];
+        const pool = [...landPool, ...shipPool, ...heroPool];
         if (!pool.length) return;
 
         // 「已收到几种」只数**这个池子里的**，与别处收的互不干扰
@@ -563,17 +566,38 @@ export class PlayerHero {
             ? this.learnedShips.includes(p.key)
             : this.learnedUnits.some((u) => u.unitKey === p.key);
         const got = () => pool.filter(owns).length;
+
         while (got() < want) {
             const landRest = landPool.filter((p) => !owns(p));
-            const rest = landRest.length ? landRest : highPool.filter((p) => !owns(p));
-            if (!rest.length) break;               // 这个军团的五种已收齐
-            const pick = rest[Math.floor(Math.random() * rest.length)];
+            const shipRest = shipPool.filter((p) => !owns(p));
+            const heroRest = heroPool.filter((p) => !owns(p));
+
+            let pick: Pick | undefined;
+            if (landRest.length > 0) {
+                // 1. 先随机获得三个兵种素材
+                pick = landRest[Math.floor(Math.random() * landRest.length)];
+            } else if (shipRest.length > 0) {
+                // 2. 然后是获得舰队的
+                pick = shipRest[0];
+            } else if (heroRest.length > 0) {
+                // 3. 最后获得英雄的
+                pick = heroRest[0];
+            } else {
+                break; // 该军团全部收齐
+            }
+
             if (pick.ship) {
                 this.learnedShips.push(pick.key);
+                this.deps.notify(`⛵ 获得本军团战船【${pick.key}】`);
             } else {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
-                if (this.selectedUnit < 0) this.selectedUnit = this.learnedUnits.length - 1;
+                // 🔴 [2026-10-03 主人定死] 获得的时候就换上新的，最后保持在英雄的兵模
+                if (this.autoPickUnit || this.selectedUnit < 0) {
+                    this.selectedUnit = this.learnedUnits.length - 1;
+                    this.syncMoveProfile();
+                    this.deps.notify(`🛡️ 换上新兵模【${name}】`);
+                }
             }
         }
     }
