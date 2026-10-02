@@ -6398,9 +6398,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 17
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png": {
-            "scale": 1.01,
+            "scale": 1.06,
             "offsetX": 0,
-            "offsetY": 8
+            "offsetY": -3
         },
         "/assets/CENTRAL_ASIA/wulaertu_guo_saerduli.png": {
             "scale": 1,
@@ -6438,9 +6438,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 29
         },
         "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_02.png": {
-            "scale": 0.96,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": 7
+            "offsetY": 6
         },
         "/assets/CENTRAL_ASIA/sashan_aerdaxier.png": {
             "scale": 1,
@@ -7912,11 +7912,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 1
         },
-        "/assets/CENTRAL_ASIA/扎格罗斯 · 巴赫拉姆1.png": {
-            "scale": 1.01,
-            "offsetX": 0,
-            "offsetY": 6
-        },
         "/assets/CENTRAL_ASIA/__暂留__CENTRAL_ASIA_04.png": {
             "scale": 1.11,
             "offsetX": 0,
@@ -7931,11 +7926,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.11,
             "offsetX": 0,
             "offsetY": -15
-        },
-        "/assets/CENTRAL_ASIA/卢里斯坦 · 舒特鲁克1.png": {
-            "scale": 1.06,
-            "offsetX": 0,
-            "offsetY": -3
         },
         "/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png": {
             "scale": 1.06,
@@ -7991,6 +7981,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.12,
             "offsetX": -3,
             "offsetY": 16
+        },
+        "/assets/CENTRAL/caoren.png": {
+            "scale": 1.25,
+            "offsetX": -9,
+            "offsetY": 0
         }
     },
     "folderGuides": {
