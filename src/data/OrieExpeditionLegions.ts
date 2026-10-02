@@ -15,7 +15,7 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     // ── T2 特色之兵 ──
     tuolemi: { name: '希腊方阵', tier: 2 },
     kanan: { name: '推罗水师', tier: 2 },
-    feilisidin: { name: '加沙雇佣兵', tier: 2 }, // 加沙·巴提斯：史载守军为阿拉伯雇佣兵+本地驻军约1万      // 推罗·阿泽米尔：推罗海军是波斯地中海舰队核心（前332年80艘战船守岛城）        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
+    feilisidin: { name: '加沙雇佣兵', tier: 2 }, // 加沙·巴提斯：史载守军为阿拉伯雇佣兵+本地驻军约1万      // 推罗·阿泽米尔：推罗海军是波斯地中海舰队核心（公元前332年80艘战船守岛城）        // 亚历山大·托勒密：拉菲亚之战与塞琉古银盾对决
     xibolai: { name: '基伯利姆', tier: 2 },        // 耶路撒冷·大卫：希伯来语 gibborim「勇士」，撒下载勇士团；避将名
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚

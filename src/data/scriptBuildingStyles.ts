@@ -34,13 +34,13 @@ export interface ScriptBuildingStyle {
 export const SCRIPT_BUILDING_STYLES: readonly ScriptBuildingStyle[] = [
     {
         cityId: 'city_sofia', meleeStyle: 'SLAV', scriptStyle: 'THRACIAN',
-        source: '英文维基 Serdica / Triballi：前 4 世纪索非亚一带是色雷斯人（塞尔迪部落）的聚落，前 29 年才入罗马；'
+        source: '英文维基 Serdica / Triballi：前 4 世纪索非亚一带是色雷斯人（塞尔迪部落）的聚落，公元前29年才入罗马；'
             + '「保加利亚」是 7 世纪以后的事，SLAV 套是那一层的观感 → 前 335 用色雷斯套。',
     },
     {
         cityId: 'city_bucharest', meleeStyle: 'SLAV', scriptStyle: 'THRACIAN',
         source: '英文维基 Getae / Histria：前 4 世纪多瑙河下游北岸是盖塔人（色雷斯语族）的地界；'
-            + '亚历山大前 335 年渡多瑙河击盖塔人即在北岸。SLAV 是中世纪斯拉夫套 → 前 335 用色雷斯套。',
+            + '亚历山大公元前335年渡多瑙河击盖塔人即在北岸。SLAV 是中世纪斯拉夫套 → 前 335 用色雷斯套。',
     },
     {
         cityId: 'city_delusitaer', meleeStyle: 'SLAV', scriptStyle: 'THRACIAN',
@@ -49,7 +49,7 @@ export const SCRIPT_BUILDING_STYLES: readonly ScriptBuildingStyle[] = [
     },
     {
         cityId: 'city_ake', meleeStyle: 'WEST', scriptStyle: 'ORIE',
-        source: '英文维基 Acre, Israel / Phoenicia：阿卡是腓尼基沿海城邦，前 332 年随腓尼基诸城归亚历山大；'
+        source: '英文维基 Acre, Israel / Phoenicia：阿卡是腓尼基沿海城邦，公元前332年随腓尼基诸城归亚历山大；'
             + '乱斗挂 CRUSADERS（耶路撒冷王国，12 世纪）→ 近东套才是那一年该有的样子。',
     },
     {
@@ -59,7 +59,7 @@ export const SCRIPT_BUILDING_STYLES: readonly ScriptBuildingStyle[] = [
     },
     {
         cityId: 'city_latajiya', meleeStyle: 'WEST', scriptStyle: 'ORIE',
-        source: '英文维基 Latakia / Laodicea ad Mare：拉塔基亚为塞琉古一世约前 300 年所建（前 332 尚不存在，'
+        source: '英文维基 Latakia / Laodicea ad Mare：拉塔基亚为塞琉古一世约公元前300年所建（前 332 尚不存在，'
             + '剧本里只作腓尼基海岸路标用，且已列 `absentCities` 那年不上图）；'
             + '画出来也应是腓尼基／叙利亚海岸的样子，而非十字军（CRUSADERS→WEST）套。',
     },

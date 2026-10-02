@@ -63,7 +63,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'luoma_diguo',
         portrait: '',
         portraitProposedPath: '/assets/LATIN/luoma_diguo_baolusi.png',
-        note: '卢基乌斯·埃米利乌斯·保卢斯，前216年罗马执政官，坎尼战役中阵亡。史料：波利比乌斯《历史·第三卷》、李维《罗马史·第二十二卷》。',
+        note: '卢基乌斯·埃米利乌斯·保卢斯，公元前216年罗马执政官，坎尼战役中阵亡。史料：波利比乌斯《历史·第三卷》、李维《罗马史·第二十二卷》。',
     },
     waluo: {
         generalId: 'waluo',
@@ -71,7 +71,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'luoma_diguo',
         portrait: '',
         portraitProposedPath: '/assets/LATIN/luoma_diguo_waluo.png',
-        note: '盖乌斯·特伦提乌斯·瓦罗，前216年罗马执政官，坎尼战役当日执掌罗马军令，战败后逃回。史料：李维《罗马史·第二十二卷》。',
+        note: '盖乌斯·特伦提乌斯·瓦罗，公元前216年罗马执政官，坎尼战役当日执掌罗马军令，战败后逃回。史料：李维《罗马史·第二十二卷》。',
     },
 
     // 🔴 [2026-09-19 主人令] 村上武吉**已归位为据点守将**（能岛城，伊予势力），
@@ -84,10 +84,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'aqimeinide',
         portrait: '',                       // 🔴 等主人放图；空 = 走池子回落
         portraitProposedPath: '/assets/PERSIAN/halikanasu_memnon.png',
-        note: '罗得岛的门农，波斯麾下希腊雇佣军名将。前334年米利都战后受任小亚细亚总指挥、统率波斯舰队，亲自布置哈利卡纳苏斯防御，携舰队泊于港内准备长期对抗；城破前夜与卡里亚总督欧戎托巴提斯一同弃城撤退，此后转攻爱琴海诸岛，前333年病死。史料：阿里安《亚历山大远征记》卷一、中文维基百科「哈利卡那索斯圍城戰」。',
+        note: '罗得岛的门农，波斯麾下希腊雇佣军名将。公元前334年米利都战后受任小亚细亚总指挥、统率波斯舰队，亲自布置哈利卡纳苏斯防御，携舰队泊于港内准备长期对抗；城破前夜与卡里亚总督欧戎托巴提斯一同弃城撤退，此后转攻爱琴海诸岛，公元前333年病死。史料：阿里安《亚历山大远征记》卷一、中文维基百科「哈利卡那索斯圍城戰」。',
     },
     // ── 巴尔干战役（前335）守方主帅 —— 🔴 [2026-09-25 主人「甲，批准」] ──────────
-    //    底比斯本城的锚定武将是伊巴密浓达（前362 年已死），不能动；这一仗的守将按史料另立，
+    //    底比斯本城的锚定武将是伊巴密浓达（公元前362年已死），不能动；这一仗的守将按史料另立，
     //    剧本攻城时由 scriptPeriod.getScriptSiegeDefenderGeneral 顶到城防上。
     dibisi_phoinix: {
         generalId: 'dibisi_phoinix',
@@ -95,7 +95,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'boootiya',
         portrait: '',
         portraitProposedPath: '/assets/GREEK/boootiya_feinikesi.png',
-        note: '底比斯主将菲尼克斯（Phoinix），前335年底比斯起兵反马其顿、据城死战，与普罗提特斯同为守方指挥，城破战死。史料：英文维基百科 Battle of Thebes 信息框 commander2 = Phoinix †、Prothytes †。',
+        note: '底比斯主将菲尼克斯（Phoinix），公元前335年底比斯起兵反马其顿、据城死战，与普罗提特斯同为守方指挥，城破战死。史料：英文维基百科 Battle of Thebes 信息框 commander2 = Phoinix †、Prothytes †。',
     },
     seleisi_shouling: {
         generalId: 'seleisi_shouling',

@@ -60,7 +60,7 @@ export function getScriptEventStart(): { generalId: string; cityId: string } | n
 
 /**
  * 🔴 [2026-09-25 主人「甲，批准」一次做完巴尔干三场] 剧本期攻城战：被攻那座城的守将按**事件**写（siegeData.defenderGeneralId）。
- * 改前城防守将只认该城势力的锚定武将：底比斯会出伊巴密浓达（前362 年已死），哈利卡纳苏斯出阿尔特米西亚而不是门农。
+ * 改前城防守将只认该城势力的锚定武将：底比斯会出伊巴密浓达（公元前362年已死），哈利卡纳苏斯出阿尔特米西亚而不是门农。
  * 只改剧本期、只改事件指定的那一座城；城池数据（势力、锚定武将）一概不动。乱斗恒 null。
  */
 let siegeDefenderResolver: (cityId: string) => string | null = () => null;

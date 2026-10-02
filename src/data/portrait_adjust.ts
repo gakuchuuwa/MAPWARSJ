@@ -7938,7 +7938,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -17
         },
         "/assets/SLAVIC/seleisi_ketuoluo.png": {
-            "scale": 1.12,
+            "scale": 1.1,
             "offsetX": -6,
             "offsetY": 8
         },

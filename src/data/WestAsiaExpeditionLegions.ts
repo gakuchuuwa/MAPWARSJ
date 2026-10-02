@@ -22,7 +22,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
 
     // ── T2 特色之兵：特定战役有明确战术高光 ──
     heti: { name: '赫梯战车', tier: 2 },           // 哈图沙·穆瓦塔利：亲统三千战车卡迭石突袭埃及先头军团
-    qiliqiya: { name: '行省辅军', tier: 2 },       // 阿达纳·庞培：前 67 年肃清奇里乞亚海盗、置行省，即其麾下行省军团
+    qiliqiya: { name: '行省辅军', tier: 2 },       // 阿达纳·庞培：公元前67年肃清奇里乞亚海盗、置行省，即其麾下行省军团
     teluoyi: { name: '特洛伊卫队', tier: 3 },
     alabo: { name: '海湾游骑', tier: 3 },          // 巴士拉·齐亚德：波斯湾阿拉伯骑兵
     jialedi: { name: '迦勒底战车', tier: 2 },      // 巴比伦·尼布甲尼撒：卡尔基米什之战（前 605）大破埃及军
@@ -32,7 +32,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     saipulusi: { name: '塞浦路斯骑', tier: 2 },        // 尼科西亚·居伊：塞浦路斯王国十字军重装铁骑
     bendou_d: { name: '本都铁骑', tier: 2 },       // 阿马西亚·密特里达梯：本都旧都，其骑兵泽拉之战击破罗马军
     kaliya: { name: '卡里亚水师', tier: 2 },       // 哈利卡纳苏斯·阿尔特米西亚：卡里亚女王萨拉米斯海战五舰助波斯
-    yiaoniya: { name: '米利都水师', tier: 3 },       // 米利都·伊奥尼亚：前494年拉德海战伊奥尼亚舰队主力，米利都以海军著称（史载其舰队为诸邦之冠）
+    yiaoniya: { name: '米利都水师', tier: 3 },       // 米利都·伊奥尼亚：公元前494年拉德海战伊奥尼亚舰队主力，米利都以海军著称（史载其舰队为诸邦之冠）
     bosidiguo: { name: '波斯骑军', tier: 1 },       // 克拉佐美奈·阿尔塔弗涅斯：波斯骑兵主力，以弗所会战全歼雅典远征军
 
     // ── T3 风土之兵：文化知名度或兵种特色，无可考大捷 ──

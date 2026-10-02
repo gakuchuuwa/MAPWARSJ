@@ -7,7 +7,7 @@
  *   也不许为了「消除审计警告」自己动手 —— 只做主人点名的那一处。细则见 `docs/AGENTS/no-arbitrary-additions.md`。
  *
  * 🔴 [2026-09-16 主人定] 一场历史战役要写清楚的东西，就是这张表单上的字段：
- *    年代（前 321 年这种）/ 战役名称（历史上最知名的那个名字，XXX战役）/ 战场坐标 /
+ *    年代（公元前321年这种）/ 战役名称（历史上最知名的那个名字，XXX战役）/ 战场坐标 /
  *    攻城战还是野战 / 双方武将 / 双方兵力 / 谁赢了 / 战役播报内容。
  *
  * 一场战役落在**两个**文件里，本编辑器一次写两处，避免手写漏配：
@@ -365,7 +365,7 @@ function validate(d: BattleDraft): Issue[] {
     const err = (msg: string) => out.push({ level: 'error', msg });
     const warn = (msg: string) => out.push({ level: 'warn', msg });
 
-    if (!Number.isFinite(d.year) || d.year === 0) err('年代必须填（公元前写负数，如前321年 = -321）');
+    if (!Number.isFinite(d.year) || d.year === 0) err('年代必须填（公元前写负数，如公元前321年 = -321）');
     if (!d.title.trim()) err('战役名称必须填');
     // 战役名一律「XXXX战役」、同将多场提示、归属武将可找到性… 全部交给 `eventRules.ts`（末尾统一并入）
     if (!d.eventTitle.trim()) warn('事件标题为空，建议写「公元前XXX年 XXX战役」');
@@ -489,7 +489,7 @@ function validate(d: BattleDraft): Issue[] {
     // 🔴 [2026-09-24 主人问「不按历史线路行军，这个问题如何解决」] **路网偷偷改道要当场看得见**：
     //    行军的路径是 `roadRegistry.findPathOnRoad(起点, 终点)` 算出来的（**路网最短路**），
     //    路标只约束你写出来的那几个点，两点之间走哪条路由路网说了算 —— 一个路标都没写时尤其如此。
-    //    血训：加沙一场没写路标，路网把它带去了**耶路撒冷**；高加米拉一场写着**大马士革**（那是前333年帕曼纽取财宝的路），
+    //    血训：加沙一场没写路标，路网把它带去了**耶路撒冷**；高加米拉一场写着**大马士革**（那是公元前333年帕曼纽取财宝的路），
     //    两处都不是史书上的走法。
     //    故：**本场一个路标都没写时**，把实测经过的城逐条点出来，请作者对照史料确认 ——
     //    史料里没写的城，要么加路标绕开它，要么在「史料依据·行军路线」里写明为什么经过它。
@@ -1045,7 +1045,7 @@ function render(): void {
                     <div class="fld" style="max-width:150px;">
                         <label>年代</label>
                         <input type="number" id="f-year" value="${working.year}">
-                        <span class="hint">公元前写负数：前321年 = -321</span>
+                        <span class="hint">公元前写负数：公元前321年 = -321</span>
                     </div>
                     <div class="fld" style="max-width:110px;">
                         <label>季节</label>

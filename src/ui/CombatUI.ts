@@ -208,7 +208,7 @@ export function resolveAttackStyleTagLabel(style: string, isAttacker: boolean): 
 
 /**
  * 🔴 [2026-09-16 主人定] 在战役名称前面添加真实的历史年份
- * 规则与示例：前331年-高加米拉战役，公元208年-赤壁之战
+ * 规则与示例：公元前331年-高加米拉战役，公元208年-赤壁之战
  */
 export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number | string | null): string {
     if (!rawTitle) return '';
@@ -221,7 +221,7 @@ export function formatBattleTitleWithYear(rawTitle: string, yearInput?: number |
     let year: number | null = null;
     let cleanTitle = rawTitle.trim();
 
-    // 1. 若标题本身包含年份前缀，如 "公元前334年 格拉尼库斯河战役" 或 "前331年-高加米拉战役"
+    // 1. 若标题本身包含年份前缀，如 "公元前334年 格拉尼库斯河战役" 或 "公元前331年-高加米拉战役"
     const inlineMatch = cleanTitle.match(/^(?:公元)?(前?\d+)年\s*[,，·\s-]?\s*(.+)$/);
     if (inlineMatch) {
         const yPart = inlineMatch[1];
@@ -3698,7 +3698,7 @@ export class CombatUI {
                 }
                 displayTitle = parts[parts.length - 1];
             } else if (parts.length >= 2) {
-                // Fallback: "前260年，秦赵长平战役"
+                // Fallback: "公元前260年，秦赵长平战役"
                 if (parts[0].includes('年')) {
                     displayYear = parts[0];
                 }
@@ -5182,7 +5182,7 @@ export class CombatUI {
             else if (Math.abs(getWonderCityCombatMultiplier(cityUnit) - 1) > 0.001) suffix = '名城';
         }
         
-        // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：前331年-高加米拉战役，公元208年-赤壁之战）
+        // 🔴 [2026-09-16 主人定] 在战役名称前面添加真实历史年份（例如：公元前331年-高加米拉战役，公元208年-赤壁之战）
         const formattedTitle = formatBattleTitleWithYear(title, year);
         const titleHtml = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">${formattedTitle}</span>`;
         this.battleTitle.style.background = 'none';
