@@ -5,7 +5,9 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     //     本地不再留副本 —— 名字保持原样（alias），调用点一个字不用改。
     buildRingWallAndGate as computePalisadeWallAndGate, buildStockadeRectRing as computeCorralRectWall, buildStockadeTrapezoidRing as computeCorralTrapezoidWall, buildStockadeShapeRing,
     // 🔴 [2026-10-02 主人令「弧形三种只许配密编荆篱」] 形制按材质落定，只许调这两个
-    STOCKADE_SHAPE_KEYS, resolveStockadeShapeByFence } from './cityWallShared';
+    STOCKADE_SHAPE_KEYS, resolveStockadeShapeByFence,
+    // 🔴 [2026-10-03 主人令「改为 9 个」] 城寨院内建筑位三张表**只此一份**（游戏与评估页共用）
+    RECT_STOCKADE_SLOTS, OVAL_STOCKADE_SLOTS, TRAPEZOID_STOCKADE_SLOTS } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
@@ -105,23 +107,10 @@ const DE_STOCKADE_SCALES: Record<string, number> = {
     DARK_BARRACKS_AGE1: 0.32, DARK_SETTLEMENT_AGE1: 0.34, DARK_TOWN_CENTER_AGE1: 0.36,
 };
 
-const RECT_STOCKADE_SLOTS: Array<[number, number]> = [
-    [-4.0, 2.0], [-1.8, 2.4], [-3.8, -1.9], [-1.6, -1.5],
-    [1.6, 1.6], [3.8, 2.0], [1.8, -2.4], [4.0, -1.9],
-];
-
-/** 🔴 [2026-10-02 主人定] 椭圆山脊堡（城寨样式五）院内建筑位（中心1栋 + 环周6栋 = 7栋） */
-const OVAL_STOCKADE_SLOTS: Array<[number, number]> = [
-    [-3.2, -3.2], [3.2, 3.2],
-    [-0.6, 2.2], [2.2, -0.6],
-    [-2.2, 0.6], [0.6, -2.2],
-];
-
-/** 🔴 [2026-10-02 主人定] 梯形隘口寨（城寨样式六）院内建筑位（后排3栋 + 前排4栋 = 7栋） */
-const TRAPEZOID_STOCKADE_SLOTS: Array<[number, number]> = [
-    [-2.2, 1.8], [0, 1.8], [2.2, 1.8],
-    [-3.8, -1.8], [-1.3, -1.8], [1.3, -1.8], [3.8, -1.8],
-];
+/* 🔴 [2026-10-03 主人令「改为 9 个」] 城寨「院内建筑位」三张表**已搬到共享模块**
+ *   （`cityWallShared.ts`：`RECT_/OVAL_/TRAPEZOID_STOCKADE_SLOTS`）——游戏与评估页 `public/_citytest.html`
+ *   原来各留一份，改椭圆栋数时评估页没跟着改、两边漂移（评估页仍画 7 栋）。
+ *   旧椭圆表是「中 1 ＋ 环周 6 ＝ 7 栋」，现为「中 1 ＋ 前后两排各 4 ＝ **9 栋**」。 */
 
 // 中城城堡时代建筑池（12 种，随机取 9：磨坊/民居/兵营/铁匠铺/靶场/警戒箭塔/城镇中心/马厩/市场 + 攻城武器厂/大学/修道院）
 const DE_MEDIUM_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY'];
@@ -561,7 +550,8 @@ function buildDeStockadeStackHtml(
     const isTrap = stockadeShape === 5;
     const hasCenterBldg = !isRect && !isTrap; // 正方/圆形/八角/椭圆 均保留中心建筑
 
-    const buildingCount = isRect ? RECT_STOCKADE_SLOTS.length : (isOval ? 7 : (isTrap ? TRAPEZOID_STOCKADE_SLOTS.length : 9));
+    // 🔴 [2026-10-03 主人令「改为 9 个」] 椭圆由 7 栋改 9 栋（中心 1 ＋ 环周 8），与其余形制同档
+    const buildingCount = isRect ? RECT_STOCKADE_SLOTS.length : (isOval ? 9 : (isTrap ? TRAPEZOID_STOCKADE_SLOTS.length : 9));
     const ring = pool.slice(0, buildingCount);
     const rotation = rnd() * 360;
 

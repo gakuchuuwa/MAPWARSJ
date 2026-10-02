@@ -1192,8 +1192,22 @@ const STALL_GUARD_ENFORCE = false;
  * 验收：npm run scene13:nine-lanes
  */
 const SIDE_LANES = 10;
-/** 第 10 口主将队的站位：row -1 = 前排再往前一层（全阵矛头），居中 */
-const COMMANDER_CELL = { col: 0, row: -1, cols: 1 } as const;
+/** 
+ * 各阵型第 10 口主将队/英雄队的站位：
+ * 🔴 [2026-10-03 主人定死]「如果前排是三组的阵型，那么英雄队请安置在有两组的中间」
+ * - 鱼鳞（fish_scale，3+4+2）：前排3组，后排2组（col 0 和 col 2，cols:3）→ 英雄队在后排两组正中间：col 1, row 2, cols 3；
+ * - 偃月（crescent，3+2+4）：前排3组，中排2组（col 0 和 col 1，cols:2）→ 英雄队在中排两组正中间：col 0.5, row 1, cols 2；
+ * - 前排非3组（如三角 2+3+4、鹤翼 2+4+3）或方阵（3+3+3）：保持 row -1 前排正中矛头位置。
+ */
+const COMMANDER_CELL: Record<FormationMode, { col: number; row: number; cols: number }> = {
+    triangle: { col: 0, row: -1, cols: 1 },
+    crane_wing: { col: 0, row: -1, cols: 1 },
+    echelon: { col: 0, row: -1, cols: 1 },
+    square: { col: 0, row: -1, cols: 1 },
+    balance_yoke: { col: 0, row: -1, cols: 1 },
+    fish_scale: { col: 1, row: 2, cols: 3 }, // 前排3组，安置在后排2组中间
+    crescent: { col: 0.5, row: 1, cols: 2 },   // 前排3组，安置在中排2组中间
+};
 const MELEE_QUIET_SEC = 1.5;
 const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
@@ -4220,8 +4234,8 @@ export class Scene13WarLayer {
                     if (this.statsFor(key, side.f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
                     if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
                     // 布局：row 0 最靠中线（越靠前越深入敌阵）；三阵型 9 口走 LAYOUT 查找表
-                    // 第 10 口（idx 9）= 主将队，站前排正中再往前
-                    const cell = idx < 9 ? LAYOUT[mode][idx] : COMMANDER_CELL;
+                    // 第 10 口（idx 9）= 主将队，按阵型安放（前排三组则安置在两组中间）
+                    const cell = idx < 9 ? LAYOUT[mode][idx] : COMMANDER_CELL[mode];
                     const back = mx + (2 - cell.row) * depth;
                     const x = side.f === 0 ? back : VW - back;
                     // 阵型间距 spanY/3
