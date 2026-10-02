@@ -1500,6 +1500,7 @@ export class PlayerQuestSystem {
         this.briefingBoundCursor = 0;
         this.briefingBusy = false;
         this.briefingPending = null;
+        this.briefingSpokenIdx = -1;        // 🔴 [2026-10-02 主人报障「抵达索非亚后等着第 4 路念完才走」] 「正在念第几段」——起步与作废都清掉
         // 🔴 [2026-09-25 主人重申「军团移动的时候才播报」] 这道闸**一直都在**（2026-09-16 定的）：
         //    途中只要军团不再赶这一趟（抵达／改道／入伍／关掉自动），没念完的直接掐掉。
         //    ⚠️ 2026-09-25 早些时候曾被误改成「念完为止」——主人当场纠正，已改回。
@@ -1531,6 +1532,9 @@ export class PlayerQuestSystem {
             const line = paragraphs[i];
             i++;
             this.briefingBusy = true;
+            // 🔴 [2026-10-02 主人报障「抵达索非亚后等着第 4 路念完才走」] 记下**正在念的是第几段**：
+            //    到点驻足时用它判「正在念的是不是已经是新这一段」——是就不停（见 updateSegmentBriefing）。
+            this.briefingSpokenIdx = i - 1;
             // 🔴 念完再推下一段：语音时长由 TTS 说了算，定时器猜出来的必然对不上口型
             const speak = this.deps.announceBriefing;
             if (speak) {
@@ -1676,10 +1680,24 @@ export class PlayerQuestSystem {
             //    军团于是被按在**离城 15 公里的野地**上（真机实测：安卡拉城外 11.5 公里，一停 10 秒）。
             //    现在：15 公里只用来「开始念这一段」（走进圈就开始讲），**按停要等军团走到城下**
             //    （`BRIEFING_HOLD_NEAR_KM`）—— 上一句还没念完才停，念完接着走。
-            this.briefingPending = idx;
-            this.briefingHoldAnchor = { lat: b.lat, lng: b.lng };
-            this.briefingHoldLastKm = null;
-            this.briefingHoldArmed = true;
+            //
+            // 🔴🔴 [2026-10-02 主人报障「军团抵达索非亚后不动了，**等着第 4 路：索非亚 ➜ 佩利昂念完才走**」]
+            //    **驻足只为自己那一条（上一段）驻足；正在念的若已经是新这一段，就没有停的理由。**
+            //    病灶：判「到点」的半径是 15 公里，而上一段的旁白常常**在这 15 公里窗口里就念完了** ——
+            //    那一刻 `briefingHold` 还没按下（军团离城还有十几公里），于是上面 `pushNext`
+            //    走的是「排队的这一段立刻接上」那一支 → **新这一段的旁白提前开了口**；
+            //    军团再往前走到城下 2.5 公里时，`settleBriefingHold` 看见 `briefingBusy` 还亮着，
+            //    照样把闸按下去 → 军团停在城里，**等这一段的旁白念完才走**（正是主人看到的「不动了」）。
+            //    与血训 22 主人定的通用铁律第 ② 条保持一致：**上一句已念完到点 → 直接穿城而过、无缝切换**。
+            if (this.briefingSpokenIdx < idx) {
+                this.briefingPending = idx;
+                this.briefingHoldAnchor = { lat: b.lat, lng: b.lng };
+                this.briefingHoldLastKm = null;
+                this.briefingHoldArmed = true;
+                this.briefingHoldIdx = idx;      // 要驻足等的是**第 idx 段之前的那一段**念完（见 settleBriefingHold）
+            }
+            // else：这一段的旁白**已经在念了**（它在 15 公里窗口里就开了口）→ 什么都不做，穿城而过。
+            //       ⚠️ 也**不许**再调 `briefingAdvance(idx)` —— 那会把同一段从头上重念一遍。
         } else {
             this.briefingAdvance?.(idx);
         }
@@ -1820,6 +1838,7 @@ export class PlayerQuestSystem {
         this.briefingBoundCursor = 0;
         this.briefingBusy = false;
         this.briefingPending = null;
+        this.briefingSpokenIdx = -1;        // 🔴 [2026-10-02 主人报障「抵达索非亚后等着第 4 路念完才走」] 「正在念第几段」——起步与作废都清掉
         this.pendingBriefingStart = null;   // 压着等军团动起来的那一条，一并丢掉
         this.briefingResume = null;         // 因「没在走」挂起的那一句，同样丢掉（这一趟已经作废）
         this.releaseBriefingHold();         // 🔴 这一趟播报结束 → 松闸，别把军团钉在点上
@@ -1956,6 +1975,13 @@ export class PlayerQuestSystem {
     private briefingBusy = false;
     private briefingPending: number | null = null;
     /**
+     * 🔴 [2026-10-02 主人报障「军团抵达索非亚后不动了，**等着第 4 路：索非亚 ➜ 佩利昂念完才走**」]
+     *   **正在念的是第几段**（-1 ＝ 没在念）。到点要不要驻足，就看它：
+     *   正在念的若**还是上一段** → 驻足等它念完（血训 22 铁律①）；
+     *   正在念的若**已经是新这一段**（上一段在 15 公里窗口里就念完了、新段提前开了口）→ **不停，穿城而过**（铁律②）。
+     */
+    private briefingSpokenIdx = -1;
+    /**
      * 🔴 [2026-09-25 主人「军团移动的时候才播报」「移动后再播报」]
      *    **严格判「人在不在动」**：拿军团本帧与上一次的位置比位移（站着不动 → 位移 0）。
      *   `stillHeading()`（行程还挂着）＋这一条＝「军团在走才念；不走一个字都不念」。
@@ -1978,6 +2004,11 @@ export class PlayerQuestSystem {
     private briefingHoldArmed = false;
     /** 正在等念完的那个「点」（据点坐标）—— 军团走到它跟前才按停（见 settleBriefingHold） */
     private briefingHoldAnchor: { lat: number; lng: number } | null = null;
+    /**
+     * 🔴 [2026-10-02 主人报障「抵达索非亚后等着第 4 路念完才走」] **这次驻足是为了等第几段之前的那一段念完**。
+     *    与 `briefingSpokenIdx` 一比就知道「新这一段是不是已经开了口」——已开口就不许再停。
+     */
+    private briefingHoldIdx = -1;
     /** 上一帧到停驻点的距离（判「已经过点」） */
     private briefingHoldLastKm: number | null = null;
 
@@ -1997,6 +2028,7 @@ export class PlayerQuestSystem {
         this.briefingHoldArmed = false;
         this.briefingHoldAnchor = null;
         this.briefingHoldLastKm = null;
+        this.briefingHoldIdx = -1;
         if (!this.briefingHold) return;
         this.briefingHold = false;
         const q = this.quest;
@@ -2025,6 +2057,15 @@ export class PlayerQuestSystem {
             return;
         }
         if (!this.briefingHoldArmed) return;
+        // 🔴 [2026-10-02 主人报障「抵达索非亚后不动了，等着第 4 路念完才走」] **走到城下再核一次**：
+        //    15 公里处挂上「准备驻足」时，正在念的还可能是上一段；但等军团真走到城下这十来秒里，
+        //    上一段往往就念完了 —— 那一刻 `pushNext` 走的是「排队的这一段立刻接上」那一支，
+        //    **新这一段已经开口**。再按闸，就是「为新课驻足」＝主人看到的「不动了」。
+        //    判据与血训 22 铁律②一致：**正在念的若已经是新这一段 → 不停，穿城而过。**
+        if (this.briefingHoldIdx >= 0 && this.briefingSpokenIdx >= this.briefingHoldIdx) {
+            this.releaseBriefingHold();
+            return;
+        }
         // 🔴 [2026-10-02 主人报障「军团不在安卡拉停驻」] **走到城下才按停**：
         //    到点判据（15 公里）只用来开始念；真正按住军团要等它走到据点跟前（城下 ≈ 2.5 公里），
         //    这样「停驻」就发生在城里／城下，而不是城外十几公里的野地上（真机实测：原来停在 11.5 公里外）。
