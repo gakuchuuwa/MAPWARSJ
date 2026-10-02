@@ -23,6 +23,7 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { isBattlefieldCharacter, getBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { stripBriefingAnchor } from '../player/JourneyBriefing';
+import { findDuplicateContent } from './copyDuplicate';
 import { forbiddenCityNamesIn } from '../data/scriptForbiddenCityNames';
 
 export interface EventRuleIssue { level: 'error' | 'warn'; msg: string; }
@@ -306,6 +307,27 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
             if (!DEATH.test(p) || MOTIVE.test(next)) return;
             warn(`赶路播报第 ${k + 1} 段写了关键人物败亡，第 ${k + 2} 段却没交代为什么还要继续往前走 —— 主人定：大转折之后要写清继续进军的缘由（追杀弑君者／为国王报仇／讨伐未服之地…）`);
         });
+    }
+
+    // ⑭ 同一场里两处文案不许说同一件事（2026-10-02 主人审第 59 路／第 18 场点出）──────
+    //    🔴 主人原话：「播报内容有的地方重复了，请检查。」
+    //    病灶：第 59 路（白沙瓦 ➜ 奥诺斯岩）写「相传赫拉克勒斯都攻不下这处绝壁」，
+    //    紧接着第 18 场的开战旁白又写「号称连大力神赫拉克勒斯都未能攻克的奥诺斯岩天险」。
+    //    口径：**赶路播报管「为什么要去」、开战旁白管「这仗怎么打」、战役说明管「战局始末」**，各司其职。
+    //    判据与自校见 `copyDuplicate.ts`（唯一尺子）：公共子串 ≥6 字、剥掉地名／人名／位置词后
+    //    实义 ≥4 字才算；**只点名（格拉尼库斯河／阿里奥巴赞斯／北岸吉特人）一律放行**。
+    //    ⚠️ 只作提示（warn），不锁保存 —— 重复与否最终由主人读文案定，程序只把候选挑出来。
+    {
+        const paras = String(d.bfBriefing ?? '')
+            .split(/\r?\n\r?\n/)
+            .map((p) => stripBriefingAnchor(p.trim()))
+            .filter(Boolean);
+        const pairs: Array<readonly [string, string, string]> = [];
+        for (let k = 0; k + 1 < paras.length; k++) pairs.push([`赶路播报第 ${k + 1} 段 ↔ 第 ${k + 2} 段`, paras[k], paras[k + 1]]);
+        for (let k = 0; k < paras.length; k++) pairs.push([`赶路播报第 ${k + 1} 段 ↔ 战役说明`, paras[k], String(d.description ?? '')]);
+        for (const hit of findDuplicateContent(pairs)) {
+            warn(`${hit.label} 内容重复：「${hit.run}」（${hit.contentChars} 字实义）—— 赶路播报写「为什么去」、开战旁白写「怎么打」、战役说明写「战局始末」，同一件事不许说两遍`);
+        }
     }
 
     return out;

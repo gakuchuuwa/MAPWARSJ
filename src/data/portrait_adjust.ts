@@ -7978,7 +7978,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 12
         },
         "/assets/INDIA/malli_moluobaluo.png": {
-            "scale": 1.12,
+            "scale": 1.08,
             "offsetX": -3,
             "offsetY": 16
         },
