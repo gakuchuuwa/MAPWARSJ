@@ -1144,7 +1144,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'aqimeinide_daliushi', generalName: '大流士一世', portrait: '/assets/CENTRAL_ASIA/aqimeinide_daliushi.png' },
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
         // 前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
-        { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿尔塔巴扎诺斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
+        { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿里奥巴赞斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
 
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
@@ -1291,11 +1291,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     julushi: { generalId: 'julushi_catanes', generalName: '卡塔涅斯', portrait: '/assets/CENTRAL_ASIA/julushi_kataniesi.png' },
     // 前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_malavapala', generalName: '摩罗波罗', portrait: '/assets/INDIA/malli_moluobaluo.png' },
-    // 前324年科塞亚战役守帅（加喜特人国王阿古姆二世），立绘按铁律留空走回落、待主人亲自放图分配
-    kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '阿古姆二世', portrait: '/assets/WEST_ASIA/kesaiya_agumuershi.png' },
-    // 前331年乌克西亚隘口战役守帅（扎格罗斯山及乌克西亚地方首领提里巴斯），
-    //    立绘按铁律留空走回落、待主人亲自放图分配
-    wukexiya: { generalId: 'wukexiya_madates', generalName: '提里巴斯', portrait: '/assets/PERSIAN/wukexiya_tilibasi.png' },
+    // 前324年科塞亚战役守帅（加喜特战王名卡什提利亚什，与史料依据、底本、武将 id 一致），立绘按铁律留空走回落、待主人亲自放图分配
+    kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '/assets/WEST_ASIA/kesaiya_agumuershi.png' },
+    // 前331年乌克西亚隘口战役守帅（扎格罗斯山乌克西亚部落首领马达泰斯；英文维基 Battle of the Uxian Defile
+    //    信息框 commander2 = Madates），立绘按铁律留空走回落、待主人亲自放图分配
+    //    🔴 [2026-10-02 逐场复核查出] 旧名册名写「提里巴斯」（Tiribazus＝亚美尼亚总督，另一人），与武将 id
+    //    `wukexiya_madates`、事件数据、史料依据、底本四处的「马达泰斯」全对不上，已统一为「马达泰斯」。
+    wukexiya: { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '/assets/PERSIAN/wukexiya_tilibasi.png' },
     // 🔴 [2026-09-25 主人批准新建佩利昂] 前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '/assets/GREEK/dasaleiti_kelaitusi.png' },
