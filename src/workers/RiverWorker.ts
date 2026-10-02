@@ -6,7 +6,7 @@ export interface RiverWorkerRequest {
     id: number; width: number; height: number; bitmap: ImageBitmap;
     x: number; y: number; z: number;
 }
-export interface RiverWorkerResponse { id: number; data: Uint8ClampedArray; }
+export interface RiverWorkerResponse { id: number; data: Uint8ClampedArray; waves?: Float32Array | null; }
 const tiles = new Map<string, WaterTileMask>();
 const keyOf = (t: {x: number; y: number; z: number}) => `${t.z}/${t.x}/${t.y}`;
 
@@ -18,7 +18,7 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
     const { id, width, height, bitmap, x, y, z } = e.data;
     if (!bitmap) {
         const data = new Uint8ClampedArray(width * height * 4);
-        self.postMessage({ id, data }, [data.buffer] as any);
+        self.postMessage({ id, data, waves: null }, [data.buffer] as any);
         return;
     }
     const canvas = new OffscreenCanvas(width, height);
@@ -48,10 +48,18 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         if (!neighbor) continue;
         // 邻块水深还没算好（undefined）就先别画它，等它自己算完再画 —— 否则会先出一块平色，再变深，拼成方块
         if (neighbor.depthT === undefined) continue;
-        const data = neighbor.mask.some(v => v !== 0)
-            ? renderStrategicWater(neighbor, tiles, texture)
-            : new Uint8ClampedArray(width * height * 4);
-        self.postMessage({ id: neighbor.id, data }, [data.buffer] as any);
+        let data: Uint8ClampedArray;
+        let waves: Float32Array | null = null;
+        if (neighbor.mask.some(v => v !== 0)) {
+            const res = renderStrategicWater(neighbor, tiles, texture);
+            data = res.data;
+            waves = res.waves;
+        } else {
+            data = new Uint8ClampedArray(width * height * 4);
+        }
+        const transferList: Transferable[] = [data.buffer];
+        if (waves && waves.buffer) transferList.push(waves.buffer);
+        self.postMessage({ id: neighbor.id, data, waves }, transferList as any);
     }
 };
 

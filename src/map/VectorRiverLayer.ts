@@ -2,15 +2,13 @@ import L from 'leaflet';
 import { smoothRiverLine } from './RiverGeometry';
 import { gameLog } from '../utils/GameLogger';
 import { STRATEGIC_WATER_PALETTE } from './StrategicWaterMaterial';
-// 矢量细河与栅格近岸水面共用色表；栅格仍保留岸距、波纹带来的明暗变化。
-const VECTOR_RIVER_BASE = STRATEGIC_WATER_PALETTE.base.map(
-    (value, channel) => Math.min(255, Math.max(0, Math.round(value + STRATEGIC_WATER_PALETTE.shoreLift[channel]))),
-);
+// 矢量细河与近海浅水共用统一水色（coastalAzure），呈现河流自然奔流入海的融贯水感。
+const VECTOR_RIVER_BASE = STRATEGIC_WATER_PALETTE.coastalAzure;
 const VECTOR_RIVER_WATER_COLOR = `rgb(${VECTOR_RIVER_BASE.join(',')})`;
 // 柔和河岸微阴影：从水体基色派生微暗半透明色，模拟细河嵌进地形的微河床边缘
 const RIVER_BED_SHADOW_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.round(v * 0.58)).join(',')})`;
-// 河心微光/反光：针对主要宽河轻微提亮
-const VECTOR_RIVER_TONE_COLOR = `rgb(${VECTOR_RIVER_BASE.map(v => Math.min(255, Math.round(v * 1.10))).join(',')})`;
+// 河心微光/反光：针对主要宽河轻微提亮，取浅滩透底色
+const VECTOR_RIVER_TONE_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.shallowReef.join(',')})`;
 
 /**
  * VectorRiverLayer
