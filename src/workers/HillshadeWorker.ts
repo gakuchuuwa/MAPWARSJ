@@ -436,16 +436,16 @@ function pickRuleTextures(src: Uint8ClampedArray, mayHaveWater: boolean, req: Hi
     const latMaxAbs = b ? Math.max(Math.abs(b.north), Math.abs(b.south)) : 90;
     const latMinAbs = b ? (b.north * b.south <= 0 ? 0 : Math.min(Math.abs(b.north), Math.abs(b.south))) : 0;
     const out: TerrainRuleTexture[] = [];
-    if (maxZ - minZ > 30) out.push('rck', 'rock_wet');                       // 坡面岩石（有起伏才有陡坡）
-    if (maxZ > 900) out.push('gr4', 'ds5');                                   // 山地带
+    if (maxZ - minZ > 25 || maxZ > 900) out.push('rck', 'rock_wet');          // 坡面岩石与高山裸岩
+    if (maxZ > 800) out.push('gr4', 'ds5');                                   // 山地与高山草甸/碎屑坡
     if (latMinAbs < 52) out.push('des', 'pm2');                               // 沙漠（全球沙漠都在 52° 以内）
     if (latMinAbs < 24) out.push('pc1', 'pc2');                               // 热带稀树草原
     if (latMinAbs < 52) out.push('gr2', 'grs');                               // 沙漠中的河流绿带（干旱带都在 52° 以内）
     if (hasWater) out.push('wt2', 'wt4', 'wt3', 'wt5', 'sha', 'bch', 'bc2', 'gravel_wet'); // 海水、浅礁、海岸
     if (hasWater && latMaxAbs > 76) out.push('ice', 'ic2');                   // 海冰
-    // 积雪：雪线最低的情形（该瓦片最高纬、不计任何抬升）再放宽 300m
-    const lowestSnowline = Math.max(700, 5100 - Math.max(0, latMaxAbs - 28) * 115);
-    if (maxZ > lowestSnowline - 300) out.push('sno', 'snf', 'snd');
+    // 积雪：雪线最低的情形（该瓦片最高纬、不计任何抬升）再放宽 350m
+    const lowestSnowline = snowlineAt(latMaxAbs, b ? (b.west + b.east) * 0.5 : 0);
+    if (maxZ > lowestSnowline - 350) out.push('sno', 'snf', 'snd');
     return out;
 }
 
@@ -612,9 +612,20 @@ const rampUp = (v: number, a: number, b: number) => {
  */
 function snowlineAt(lat: number, lng: number): number {
     const latDeg = Math.abs(lat);
-    // 1. 全球海洋/温湿基准雪线 (低纬度 ~5100m，中高纬度每度下降 115m；阿尔卑斯 2800~3100m，挪威 1100~1400m)
-    let snowline = latDeg > 28 ? 5100 - (latDeg - 28) * 115 : 5100;
-    snowline = Math.max(700, snowline);
+    // 1. 全球物理地理基准雪线（赤道~热带 4900~5100m；副热带高压干旱区 5200m；
+    //    30°~46° 温带与地中海平滑过渡至阿尔卑斯 2850~3050m；60° 斯堪的纳维亚 1400m；极地 600m）
+    let snowline: number;
+    if (latDeg <= 20) {
+        snowline = 4900 + (latDeg / 20) * 300;
+    } else if (latDeg <= 46) {
+        const t = (latDeg - 20) / 26;
+        snowline = 5200 - (t * 0.70 + t * t * 0.30) * 2350;
+    } else if (latDeg <= 65) {
+        const t = (latDeg - 46) / 19;
+        snowline = 2850 - t * 1550;
+    } else {
+        snowline = Math.max(550, 1300 - (latDeg - 65) * 40);
+    }
 
     // 2. 温带内陆干燥大陆度修正 (天山、阿勒泰、中亚、伊朗，降水减少使雪线自然抬升 350m)
     //    范围仍是 45°E~105°E、30°N~55°N，边界各留约 ±1.5~2° 过渡带
@@ -1041,31 +1052,33 @@ function renderHillshade(
                 const absLat = Math.abs(rowLat);
                 const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
 
+                const treeLine = Math.max(900, rowSnowline - 1200);
+                const alpineT = rampWorker(colorZ, treeLine, rowSnowline - 200);
+
                 if (climateMat && colorZ > 0 && climateMat[idx + 3] > 0) {
                     // 🔴 9-18 主人令「降低平原黄绿反差」：低地草地（含干草 gr7，它和青草交错正是黄绿反差的来源）保持 0.35 不动；
                     //    只有沙地（pal/qs 等）不存在黄绿反差问题，按沙地程度提到 0.60，让贴图成为主色。
-                    //    （曾按「贴图绿不绿」判，把 gr7 也提到 0.60，华北平原黄绿起伏 5.6 → 8.8，已改。）
                     const lowBlend = 0.35 + 0.25 * sandiness;
                     const baseBlend = colorZ < 400 ? lowBlend : Math.min(0.60, lowBlend + (colorZ - 400) * 0.0002);
-                    const blend = baseBlend * snowFade * climateMat[idx + 3] / 255;
+                    // 林线以上低地平原植被自然退隐，让位给高山植被与高寒裸岩
+                    const alpineTreeFade = 1.0 - alpineT * 0.55;
+                    const blend = baseBlend * snowFade * alpineTreeFade * climateMat[idx + 3] / 255;
                     r += (climateMat[idx] - r) * blend;
                     g += (climateMat[idx + 1] - g) * blend;
                     b += (climateMat[idx + 2] - b) * blend;
                 }
 
                 if (isLand && matTapA) {
-                    // ① 山地带（900~2200m 渐入）：湿润区褐色山地草甸 gr4，干旱区碎石坡 ds5
+                    // ① 山地与高山自然带：900m 起中山植被渐入；林线以上转为高寒草甸与碎屑流
                     const mont = rampWorker(colorZ, 900, 2200) * 0.38 * snowFade;
-                    if (mont > 0) {
-                        if (mix2(texGr4, humidity, texDs5, aridity, p)) {
-                            r += (TX[0] - r) * mont; g += (TX[1] - g) * mont; b += (TX[2] - b) * mont;
+                    const montWeight = Math.max(mont, alpineT * 0.52 * snowFade);
+                    if (montWeight > 0) {
+                        if (mix2(texGr4, humidity * 0.7, texDs5, aridity + 0.3 * (1 - humidity), p)) {
+                            r += (TX[0] - r) * montWeight; g += (TX[1] - g) * montWeight; b += (TX[2] - b) * montWeight;
                         }
                     }
                     // ② 沙漠成片：干旱低中海拔，按低频噪声成片铺橙色沙（热带 des，温带 pm2）
                     const patch = matPatch![p];
-                    // 🔴 [2026-09-30] 海拔 140m 以下渐隐（60~140m 过渡）：大河冲积平原（巴比伦、印度河下游、尼罗河三角洲、
-                    //    阿姆河下游）海拔中位 6~87m、9px 起伏 4~7m；沙丘沙漠除卡拉库姆西部外都在 120m 以上、起伏 10~80m。
-                    //    原来在两河、印度河平原上铺出大片橙色沙斑，像沙丘沙漠，与史实（古代最重要的灌溉农业区）相反。
                     const desert = sandiness > 0.3 && colorZ < 2600
                         ? rampWorker(sandiness, 0.3, 0.9) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade * rampWorker(colorZ, 60, 140) : 0;
                     if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
@@ -1080,8 +1093,6 @@ function renderHillshade(
                 }
 
                 // ⑦ 沙漠中的河流绿带：干旱区（aridity 0.6 起渐入；干草 gr7=0.5 这类温带干草原不算）大河两侧铺绿草，陡坡不铺（河谷崖壁留给岩石）
-                //    这里只算好颜色与权重，等历史区域沙漠染色、尼罗河冲积土试验层之后再叠 ——
-                //    大片沙漠椭圆（如尼罗河以西，强度 0.75）是底色，河流绿带是其中的例外；先叠会被刷回沙色（游戏实测三角洲绿带几乎看不见）
                 let riverGreenW = 0, riverGreenR = 0, riverGreenG = 0, riverGreenB = 0;
                 if (isLand && matTapA && riverStrip) {
                     const rs = riverStrip[p];
@@ -1094,19 +1105,20 @@ function renderHillshade(
                     }
                 }
 
-                // ④ 坡面岩石：坡度 0.14（约 8°）起露岩，0.55（约 29°）以上以岩石为主；
-                //    林线以下山坡多有植被，上限随海拔从 0.55（≤1500m）升到 0.85（≥3000m）。
-                //    阈值依据 zoom 9 实测坡度分布（scratch/terrain_ab）：华北平原 97% < 0.008；太行山中位 0.087；帕米尔中位 0.31。
-                //    干旱区用干岩 rck（向灰度收 45%、压暗 8%，与暖色谷地拉开），湿润区混入湿岩 rock_wet。
+                // ④ 坡面露岩与高山裸岩带：
+                // A. 坡面露岩：坡度 0.10（约 5.7°）起露岩，0.42（约 23°）以上陡崖以岩石为主；
+                // B. 高山裸岩带：林线以上随海拔升高土层变薄，高寒冰劈风化露岩；雪线下方 500m 内即使缓坡也露出岩石基底。
                 if (isLand && matTapA && texRck) {
-                    const t = Math.max(0, Math.min(1, (slopeGrad - 0.14) / 0.41));
-                    if (t > 0 && sampleTex(texRck, p)) {
-                        const rockMax = 0.55 + 0.30 * Math.max(0, Math.min(1, (zC - 1500) / 1500));
-                        const w = t * t * (3 - 2 * t) * rockMax;
+                    const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.10) / 0.32));
+                    const alpineRock = alpineT * rampWorker(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
+                    const rockT = Math.max(slopeT, alpineRock);
+                    if (rockT > 0 && sampleTex(texRck, p)) {
+                        const rockMax = 0.60 + 0.30 * Math.max(0, Math.min(1, (zC - 1200) / 1600));
+                        const w = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
                         const grey = TX[0] * 0.299 + TX[1] * 0.587 + TX[2] * 0.114;
-                        let tr = (TX[0] + (grey - TX[0]) * 0.45) * 0.92;
-                        let tg = (TX[1] + (grey - TX[1]) * 0.45) * 0.92;
-                        let tb = (TX[2] + (grey - TX[2]) * 0.45) * 0.92 + 4;
+                        let tr = (TX[0] + (grey - TX[0]) * 0.40) * 0.94;
+                        let tg = (TX[1] + (grey - TX[1]) * 0.40) * 0.94;
+                        let tb = (TX[2] + (grey - TX[2]) * 0.40) * 0.94 + 4;
                         const wet = humidity * 0.35;
                         if (wet > 0 && sampleTex(texRockWet, p)) {
                             tr += (TX[0] - tr) * wet; tg += (TX[1] - tg) * wet; tb += (TX[2] - tb) * wet;
@@ -1284,9 +1296,24 @@ function renderHillshade(
                     b *= 1 - k;
                 }
 
-                output[idx] = r * shadeFactor;
-                output[idx + 1] = g * shadeFactor;
-                output[idx + 2] = b * shadeFactor;
+                let outR = r * shadeFactor;
+                let outG = g * shadeFactor;
+                let outB = b * shadeFactor;
+
+                // 瑞士制图学天光散射（Imhof relief fill）：背阴山坡不陷入死黑，由清透冷调天光（瑞利散射）填充，
+                // 既保持阴阳立体反差，又让谷地与山脊背阴面纹理清晰可辨、质感通透巍峨。
+                if (!isWater && zC > 0 && shadeFactor < 0.95) {
+                    const shadowDepth = (0.95 - shadeFactor) / 0.95;
+                    const elevSky = Math.min(1.0, 0.60 + Math.max(0, zC) * 0.00015);
+                    const skyW = shadowDepth * shadowDepth * 0.22 * elevSky;
+                    outR += (130 - outR) * skyW * 0.35;
+                    outG += (160 - outG) * skyW * 0.45;
+                    outB += (195 - outB) * skyW * 0.70;
+                }
+
+                output[idx] = Math.min(255, Math.max(0, outR));
+                output[idx + 1] = Math.min(255, Math.max(0, outG));
+                output[idx + 2] = Math.min(255, Math.max(0, outB));
                 output[idx + 3] = 255;
             }
         }

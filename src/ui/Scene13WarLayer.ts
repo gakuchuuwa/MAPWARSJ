@@ -1487,7 +1487,12 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」，08-29 去箭塔补民居：磨坊/民居×2/兵营/铁匠铺/靶场/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
-/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。 */
+/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。
+ *  🔴 [2026-10-03 主人报障「战术模式下，攻击方的箭塔，和防守方的箭塔大小不一样，请按防守方的一致」]
+ *     ⇒ **攻方营地里那两座塔状工事（瞭望塔／强化哨站）改用守方箭塔的同一缩放 `SIEGE_CITY_BUILDING_SCALE`**：
+ *        守方城墙内侧的 4 座箭塔就是这一档缩放（见 `this.arrowTowers` 建塔处），而它们与守方的强化哨站是**同一族**工事
+ *        （城寨守方的 4 座里就有 2 座是 FORTIFIED_OUTPOST）—— 两边同类必须一样大。
+ *        营地其余陈设（营地/帐篷/蒙古包）**照旧保持原尺寸**，不动。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
 /** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。 */
 const SIEGE_CASTLE_SCALE = 0.84;
@@ -5170,7 +5175,7 @@ export class Scene13WarLayer {
 
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
         // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
-        const placeYurtCamp = (scale?: number, availableSpawns = side): void => {
+        const placeYurtCamp = (scale?: number, availableSpawns = side, towerScale = SIEGE_CITY_BUILDING_SCALE): void => {
             if (availableSpawns.length === 0) return;
             const shuffledSpawns = [...availableSpawns].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
@@ -5182,7 +5187,9 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
-            this.decorSprites.push(place(shuffledSpawns[shuffledSpawns.length - 1], 'ASIA_TOWER_AGE2', { scale }));
+            // 🔴 [2026-10-03 主人令] 塔（箭塔族）**不跟营帐用同一缩放**：一律与守方箭塔的 `SIEGE_CITY_BUILDING_SCALE` 对齐，
+            //    否则攻方营地的塔比守方城墙内侧的箭塔大一圈（营帐仍按调用方给的 scale，不动）。
+            this.decorSprites.push(place(shuffledSpawns[shuffledSpawns.length - 1], 'ASIA_TOWER_AGE2', { scale: towerScale }));
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -5617,8 +5624,10 @@ export class Scene13WarLayer {
         for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
         // 🔴 [2026-09-03 主人改] 哨站(OUTPOST)换成强化哨站（FORTIFIED_OUTPOST = DE b_archaic_fortified_outpost_age1）。
         //    强化哨站是哨站的加固升级版（能攻击），不是警戒塔/防卫塔（TOWER_AGE3）。
-        this.decorSprites.push(place(shuffledSpawns[7], 'FORTIFIED_OUTPOST'));
-        this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`));
+        // 🔴 [2026-10-03 主人令] 这两座塔状工事（强化哨站 + 瞭望塔）与**守方城墙内侧那 4 座箭塔同类**
+        //    （守方城寨的 4 座箭塔里就有 2 座是 FORTIFIED_OUTPOST）—— 一律用同一缩放，两边一样大。
+        this.decorSprites.push(place(shuffledSpawns[7], 'FORTIFIED_OUTPOST', { scale: SIEGE_CITY_BUILDING_SCALE }));
+        this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
     }
 
     /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
