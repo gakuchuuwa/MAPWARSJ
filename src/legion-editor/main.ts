@@ -636,12 +636,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'transport_ship', name: '运输船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI_TRADE/TRANSPORT_SHIP/' },
     { id: 'lou_chuan', name: '中国楼船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/LOU_CHUAN/' },
     { id: 'leviathan', name: '利维坦', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/LEVIATHAN/' },
-    // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 这条素材**本来就是完整 16 向战船**（不是陆上英雄兵模）：
-    //    已升为「古典时代马其顿军团」的舰队模型（`shipId: 'HERO_THEMISTOCLES'`），故归类 hero → **naval**：
-    //    ① `getShipInfo()` 只认 `category === 'naval'`，改后它在「选船弹窗 / 军团编辑·舰队卡片 / 船只栏目」都按船显示；
-    //    ② 不再混进「第十队必须是英雄」的英雄名册（主人 2026-10-02：船不能当主将队）。
-    //    主将队选择器不受影响：那边按 `hero_` 前缀列兵模、再按 armorTags 含 16 把船剔掉。
-    { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
+    // 🔴 [2026-10-02 纠正] 这条素材是完整 16 向战船旗舰，类别属于 hero（子类 naval_hero 旗舰），
+    //    与阿尔特米西亚等另外 3 艘旗舰完全同档，全库 4 艘英雄旗舰整齐划一。
+    { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
     { id: 'hero_aeginetan', name: '英雄·波利克里托斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 希罗多德点名记载的萨拉米斯海战埃伊纳英雄；素材是 u_shp 舰船类，须海军将领
@@ -660,7 +657,6 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     
     
     sunda_royal_fighter: 'spear',
-    envoy: 'melee_cav',
     lancer: 'melee_cav',
     scout_cavalry: 'melee_cav',
     light_cavalry: 'melee_cav',
@@ -832,8 +828,10 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero',
     hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero',
     hero_ulrichvonjungingen: 'mounted_hero', hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero',
+    envoy: 'mounted_hero', hero_khan: 'mounted_hero', hero_jadwiga: 'mounted_hero',
+    hero_tamar: 'mounted_hero', hero_bucephalus: 'mounted_hero',
 
-    // ── 英雄：步战（26 位）──
+    // ── 英雄：步战（27 位）──
     hero_arariboiamelee: 'foot_hero', hero_aristides: 'foot_hero', hero_ataulf: 'foot_hero',
     hero_brasidas: 'foot_hero', hero_cunhambebe: 'foot_hero', hero_cusiyupanqui: 'foot_hero',
     hero_dafyddapgruffydd: 'foot_hero', hero_dismounted_alexander: 'foot_hero', hero_gajahmada: 'foot_hero',
@@ -842,7 +840,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_liubei: 'foot_hero', hero_llywelynapgruffydd: 'foot_hero', hero_lysander: 'foot_hero',
     hero_macedonian_commander: 'foot_hero', hero_pacanchique: 'foot_hero', hero_pachacuti: 'foot_hero',
     hero_parmenion: 'foot_hero', hero_sforza: 'foot_hero', hero_williamwallace: 'foot_hero',
-    hero_yodit: 'foot_hero', hero_zhangfei: 'foot_hero',
+    hero_yodit: 'foot_hero', hero_zhangfei: 'foot_hero', hero_zhugeliang: 'foot_hero',
 
     // ── 英雄：旗舰（4 位）──
     hero_themistocles: 'naval_hero', hero_artemisia: 'naval_hero',
@@ -898,7 +896,7 @@ const NAVAL_WEAPON_LABEL: Record<NavalWeapon, string> = {
 
 /** 船只属性：武器（含 DE 依据）+ 哪些文化在用。战船不进 WAR_TYPES，属性从这两张表来。 */
 function getShipInfo(u: DeUnitDef): { weapons: string; why: string; regions: string[] } | undefined {
-    if (u.category !== 'naval') return undefined;
+    if (u.category !== 'naval' && getUnitSubcategory(u.id) !== 'naval_hero') return undefined;
     const dir = assetDirOf(u);
     const extra = listNavalShipWeapons()[dir];
     // 箭是所有船的基础层，NavalShipTiers 表里不写；表里没有的船 = 只有箭
