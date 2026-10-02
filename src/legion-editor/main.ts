@@ -636,7 +636,12 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'transport_ship', name: '运输船', category: 'naval', age: 'feudal', pathPrefix: '/SUCAI_TRADE/TRANSPORT_SHIP/' },
     { id: 'lou_chuan', name: '中国楼船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/LOU_CHUAN/' },
     { id: 'leviathan', name: '利维坦', category: 'naval', age: 'imperial', pathPrefix: '/SUCAI/LEVIATHAN/' },
-    { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
+    // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 这条素材**本来就是完整 16 向战船**（不是陆上英雄兵模）：
+    //    已升为「古典时代马其顿军团」的舰队模型（`shipId: 'HERO_THEMISTOCLES'`），故归类 hero → **naval**：
+    //    ① `getShipInfo()` 只认 `category === 'naval'`，改后它在「选船弹窗 / 军团编辑·舰队卡片 / 船只栏目」都按船显示；
+    //    ② 不再混进「第十队必须是英雄」的英雄名册（主人 2026-10-02：船不能当主将队）。
+    //    主将队选择器不受影响：那边按 `hero_` 前缀列兵模、再按 armorTags 含 16 把船剔掉。
+    { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
     { id: 'hero_aeginetan', name: '英雄·波利克里托斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 希罗多德点名记载的萨拉米斯海战埃伊纳英雄；素材是 u_shp 舰船类，须海军将领

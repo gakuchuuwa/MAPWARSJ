@@ -140,7 +140,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代马其顿军团', civ: '马其顿', age: 'antiquity', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         castleId: 'MACE_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'balance_yoke',
-        shipId: 'TRIREME',
+        // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 舰队模型 = **英雄·地米斯托克利**（旗舰）。
+        //    原为 TRIREME；按主人定的「不看人名、只看样式」比对：这条与 TRIREME **同型**
+        //    （同船体、同舷侧白圆盾列、同单桅桨列与船首冲角），只差帆色与帆上纹章，
+        //    故升为马其顿军团旗舰。素材是完整 16 向战船，登记见 UnitAssets 'HERO_THEMISTOCLES'。
+        shipId: 'HERO_THEMISTOCLES',
         slots: [
             { type: 'elite_phalangite', count: 4 },
             { type: 'companion_cavalry', count: 2 },
