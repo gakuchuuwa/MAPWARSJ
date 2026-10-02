@@ -74,6 +74,8 @@ export interface PlayerQuest {
          *    否则会停在史实地点、离城二十公里，这一仗永远触发不了。
          */
         defenderCityId: string | null;
+        /** 终局一路（战场 → 终局落点）：没有战斗，抵达即结束；只有末场战后才会有 */
+        terminal?: boolean;
     };
 }
 
@@ -227,10 +229,8 @@ export class PlayerQuestSystem {
         this.clearJourneyBriefing();
         const q = this.quest;
         if (q?.kind === 'general_event') {
-            const host = this.deps.legionManager.getLegionById(q.legionId);
             this.quest = null;
         }
-        this.followingEventGeneralId = null;
         this.armyMarchPoint = null;
         this.headingToEventGeneralId = null;
         this.pendingEventGeneralId = null;
@@ -328,8 +328,8 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const narrativeText = ev.dialogue
-                    || `${g.generalName}整肃大军，正欲提兵奔赴【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
+                // 🔴 [2026-10-03] 原为 `ev.dialogue || …`；`dialogue` 已按「全剧 0 对话」物理删除，一律用第三人称默认句。
+                const narrativeText = `${g.generalName}整肃大军，正欲提兵奔赴【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
@@ -602,9 +602,6 @@ export class PlayerQuestSystem {
     //   ③ 开打：抵达后走**现成的** `onBattlefieldClicked` → 选边 → `startBattlefieldBattle`。
     // ══════════════════════════════════════════════════════════════════
 
-    /** 正在执行的那位武将的战役（供 `isFollowingGeneralEvent` 判「这就是我随的这位武将的那一仗」） */
-    private followingEventGeneralId: string | null = null;
-
     /**
      * 这位武将**此刻该接的那一场史实战役**。
      *
@@ -646,8 +643,7 @@ export class PlayerQuestSystem {
         marchWaypoints: string[];
         /** 战役背景说明（第三人称纪实） */
         description?: string | null;
-        /** 武将邀约对白（第一人称台词） */
-        dialogue?: string | null;
+        // 🔴 [2026-10-03] 原有一个 `dialogue?: string | null`（武将邀约第一人称台词）—— 已按「全剧 0 对话」物理删除。
         /** 战役背景播报旁白（攻城战等没有独立战场记录的，旁白写在事件上） */
         briefing?: string | null;
     } | null {
@@ -674,24 +670,35 @@ export class PlayerQuestSystem {
                 : null,
             marchWaypoints: [...(data?.marchWaypoints ?? [])],
             description: hit.event.description?.trim() || null,
-            dialogue: hit.event.dialogue?.trim() || null,
+            // 🔴 [2026-10-03] `dialogue` 已按「全剧 0 对话」从类型与数据里物理删除，这里不再透出。
             briefing: hit.event.briefing?.trim() || null,
         };
     }
 
-    /** 末场战后班师这一路的待办（赶赴战场时备好，战毕再走） */
-    private pendingEpilogue: { battlefieldId: string; pre: string; text: string; dest: City; title: string } | null = null;
-    /** 战毕待开拔的班师（下一拍 tick 里军团脱离交战后再走） */
-    private queuedEpilogue: { text: string; dest: City; title: string; since: number } | null = null;
-    /** 班师途中：arrived = 军团已到终点，等旁白念完再收尾 */
-    private epilogue: {
-        title: string; dest: City; arrived: boolean; retries: number;
-        lastPos: { lat: number; lng: number } | null; lastMoveAt: number; lastRetryAt: number; arrivedAt: number | null;
-    } | null = null;
+    // ══════════════════════════════════════════════════════════════════
+    // 终局一路（战场 → 终局落点，如 科塞亚 ➜ 巴比伦）
+    //
+    // 🔴 [2026-10-03 主人怒斥「其他路都没问题，为什么偏偏最后一路修了这么多次？不能统一逻辑吗」]
+    //    病根：其余 76 路都是「任务 → 行军 → 抵达」同一条链；最后一路没有战斗，前两版另造了一套
+    //    独立状态机（pending / queued / epilogue 三个状态字段 + 自己的铺路 + 自己的抵达），
+    //    于是战斗刚结束那一拍的各种闸（交战标记、战后休整、路径被清）它全得自己再扛一遍。
+    //    现在：终局一路就是**一个没有战斗的 general_event 任务**（event.terminal），
+    //    铺路 `startMarchToBattlefield`、卡住重铺 `followPendingGeneralEvent`、抵达回调
+    //    `onHostReachBattlefield`、转乱斗前的 `!this.quest` 闸，全部复用现成的；
+    //    只多一个看门狗（watchTerminalLeg）：45 秒不动 / 旁白卡住就收尾，**绝不死锁**。
+    // ══════════════════════════════════════════════════════════════════
+
+    /** 终局一路已走完（或兜底放弃）；之后不再重启 */
+    private terminalSettled = false;
+    /** 终局一路的行军监视：抵达时刻 / 最近一次挪动 */
+    private terminalWatch: { arrivedAt: number | null; lastPos: { lat: number; lng: number } | null; lastMoveAt: number } | null = null;
+    /** 战斗刚结束、军团交战标记还没放手时，等待的起点（真实毫秒） */
+    private terminalWaitSince = 0;
+    private terminalInfoCache: { bfId: string; pre: string; text: string; dest: City; title: string } | null | undefined = undefined;
 
     /**
-     * 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 这一场的路表若以「战场 → 某城」收尾，
-     * 那一路是**战后班师**：旁白最后一段拆出来留到战毕念，赶赴战场的路上只念前面各段。
+     * 这一场的路表若以「战场 → 某城」收尾，那一路是**战后班师**：
+     * 旁白最后一段拆出来留到战毕念，赶赴战场的路上只念前面各段。
      */
     private epilogueOf(
         scriptEv: unknown, text: string,
@@ -709,46 +716,130 @@ export class PlayerQuestSystem {
         return { pre: parts.join('\n\n'), text: tail, dest, title: `班师${dest.name}` };
     }
 
-    /** 战毕：军团沿路网班师（终局落点），途中念最后一段旁白 */
-    private startEpilogue(epi: { text: string; dest: City; title: string }): void {
-        const hostId = this.deps.hero.getHostLegionId();
-        const host = hostId ? this.deps.legionManager.getLegionById(hostId) : null;
-        if (!host || host.isDestroyed || !roadRegistry.isInitialized()) {
-            gameLog('expedition', `[玩家] 班师${epi.dest.name}：军团不在场，略过`);
-            return;
-        }
-        this.epilogue = {
-            title: epi.title, dest: epi.dest, arrived: false, retries: 0,
-            lastPos: null, lastMoveAt: Date.now(), lastRetryAt: 0, arrivedAt: null,
+    /** 终局一路的静态信息（末场战场、落点、旁白最后一段）；据点没加载完时不缓存 */
+    private terminalLegInfo(): { bfId: string; pre: string; text: string; dest: City; title: string } | null {
+        if (this.terminalInfoCache !== undefined) return this.terminalInfoCache;
+        if (!this.deps.cityManager.getCities().length) return null;
+        const last = HISTORICAL_EVENT_SCRIPT[HISTORICAL_EVENT_SCRIPT.length - 1];
+        const posOf = (id: string) => {
+            const c = this.deps.cityManager.getCity(id);
+            return c ? { lat: c.latitude, lng: c.longitude } : undefined;
         };
-        if (!this.marchEpilogueHost(host, epi.dest)) {
-            gameLog('expedition', `[玩家] 班师${epi.dest.name}：无路可达`);
-            this.epilogue = null;
-            return;
-        }
-        this.deps.hero.setTravelPointLabel(epi.title);
-        this.startJourneyBriefing(null, epi.title, epi.text, []);
-        gameLog('expedition', `[玩家] 战毕班师：军团自战场开赴【${epi.dest.name}】`);
+        const bfId = last ? resolveEventBattlefieldId(last, posOf) : null;
+        const text = ((bfId ? findEventSite(bfId)?.briefing : null) ?? last?.briefing ?? '').trim();
+        const split = last && bfId ? this.epilogueOf(last, text) : null;
+        this.terminalInfoCache = split && bfId ? { bfId, ...split } : null;
+        return this.terminalInfoCache;
     }
 
-    /** 班师收尾（正常到达或兜底放弃）：清动向栏与旁白，剧本随即转乱斗 */
-    private finishEpilogue(why: string | null): void {
-        if (why) gameLog('expedition', `[玩家] 班师收尾：${why}`);
+    /** 终局一路此刻是否还没走：末场已打完、军团还没到落点（走完 / 放弃后恒 null） */
+    private terminalLegPending(): { bfId: string; pre: string; text: string; dest: City; title: string } | null {
+        if (this.terminalSettled || this.deps.hero.autoPlan !== 'script' || !this.deps.hero.autoMode) return null;
+        const info = this.terminalLegInfo();
+        if (!info || !isBattlefieldFought(info.bfId)) return null;
+        const hid = this.deps.hero.getHostLegionId();
+        const host = hid ? this.deps.legionManager.getLegionById(hid) : null;
+        if (!host || host.isDestroyed) return null;
+        if (getEuclideanDistance(host.getPosition(), { lat: info.dest.latitude, lng: info.dest.longitude }) * 111 <= 15) return null;
+        return info;
+    }
+
+    /** 接在「下一场战场」之后的链条上：没有下一场了，就开拔去终局落点。true = 已开拔 / 正在等 */
+    private startTerminalLeg(): boolean {
+        const info = this.terminalLegPending();
+        if (!info || this.quest || !roadRegistry.isInitialized()) return false;
+        const hid = this.deps.hero.getHostLegionId();
+        const host = hid ? this.deps.legionManager.getLegionById(hid) : null;
+        if (!host) return false;
+        // 战术模式刚结算完，交战标记可能还没放手：等一等，等不到就强行解除（别把剧本钉死）
+        if (host.getIsInCombat()) {
+            if (!this.terminalWaitSince) this.terminalWaitSince = Date.now();
+            if (Date.now() - this.terminalWaitSince < 10000) return true;
+            gameLog('expedition', '[玩家] 终局一路：军团交战标记超过 10 秒未放，强行解除');
+            host.clearExternalCombatState();
+        }
+        this.terminalWaitSince = 0;
+        host.clearPostBattleRest();
+        const dest = info.dest;
+        const last = HISTORICAL_EVENT_SCRIPT[HISTORICAL_EVENT_SCRIPT.length - 1];
+        const generalId = last?.generalId ?? host.generalId ?? '';
+        const factionId = host.getFactionId();
+        this.quest = {
+            kind: 'general_event',
+            cityId: dest.id,
+            cityName: dest.name,
+            factionId,
+            factionName: this.deps.cityManager.getFactionName(factionId),
+            generalId,
+            generalName: getGeneralRecordByGeneralId(generalId)?.generalName ?? '',
+            legionId: host.id,
+            targetCityId: dest.id,
+            targetCityName: dest.name,
+            event: {
+                battlefieldId: '',
+                battlefieldName: dest.name,
+                title: info.title,
+                lat: dest.latitude,
+                lng: dest.longitude,
+                defenderCityId: null,
+                terminal: true,
+            },
+        };
+        this.marchBattlefieldId = null;
+        this.marchWaypointsLeft = [];
+        this.armyMarchPoint = null;
+        this.terminalWatch = { arrivedAt: null, lastPos: null, lastMoveAt: Date.now() };
+        this.startMarchToBattlefield(host, { lat: dest.latitude, lng: dest.longitude }, false, 0);
+        this.deps.hero.setTravelPointLabel(info.title);
+        this.startJourneyBriefing(null, info.title, info.text, []);
+        gameLog('expedition', `[玩家] 终局一路：军团自战场开赴【${dest.name}】`);
+        this.emitChange();
+        return true;
+    }
+
+    /** 军团抵达终局落点（由 onHostReachBattlefield 转来）：停止重铺，等旁白念完由看门狗收尾 */
+    private onTerminalArrived(): void {
+        this.armyMarchPoint = null;
+        if (this.terminalWatch && this.terminalWatch.arrivedAt === null) this.terminalWatch.arrivedAt = Date.now();
+    }
+
+    /** 终局一路收尾（正常到达或兜底放弃）：清任务、动向栏与旁白，剧本随即转乱斗 */
+    private finishTerminalLeg(why: string | null): void {
+        if (why) gameLog('expedition', `[玩家] 终局一路收尾：${why}`);
+        this.terminalSettled = true;
+        this.terminalWatch = null;
+        this.quest = null;
+        this.armyMarchPoint = null;
         this.deps.hero.setTravelPointLabel(null);
         this.clearJourneyBriefing();
-        this.epilogue = null;
+        this.emitChange();
     }
 
-    /** 给班师军团铺一条去终点的路（开拔与「路径被清掉后重铺」共用） */
-    private marchEpilogueHost(host: Army, dest: City): boolean {
-        const from = host.getPosition();
-        const path = findPathFromPoint(from, { lat: dest.latitude, lng: dest.longitude });
-        if (!path || path.length < 2) return false;
-        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
-        host.setTargetCity(null);
-        host.setOnArriveCallback(() => { if (this.epilogue) this.epilogue.arrived = true; });
-        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
-        return true;
+    /**
+     * 终局一路的看门狗（每拍）：行军 / 重铺 / 抵达都走通用链，这里只管「别死锁」。
+     * 抵达 → 等最后一段旁白念完（卡住最多再等 45 秒）；45 秒原地不动 → 放弃班师。
+     */
+    private watchTerminalLeg(): void {
+        const q = this.quest;
+        const w = this.terminalWatch;
+        if (!q?.event?.terminal || !w) return;
+        const host = this.deps.legionManager.getLegionById(q.legionId);
+        const now = Date.now();
+        if (!host || host.isDestroyed) { this.finishTerminalLeg('军团已不在'); return; }
+        const pos = host.getPosition();
+        const dest = { lat: q.event.lat, lng: q.event.lng };
+        if (w.arrivedAt === null && getEuclideanDistance(pos, dest) * 111 <= 5) this.onTerminalArrived();
+        if (w.arrivedAt !== null) {
+            if ((!this.briefingBusy && this.briefingPending === null) || now - w.arrivedAt > 45000) this.finishTerminalLeg(null);
+            return;
+        }
+        if (!w.lastPos || getEuclideanDistance(pos, w.lastPos) * 111 >= 0.5) {
+            w.lastPos = { lat: pos.lat, lng: pos.lng };
+            w.lastMoveAt = now;
+        }
+        const idle = now - w.lastMoveAt;
+        if (idle > 10000 && host.getIsInCombat()) host.clearExternalCombatState();   // 交战标记残留 → 解除
+        if (idle > 45000) this.finishTerminalLeg('军团 45 秒原地不动，放弃班师');       // 兜底：不死锁
     }
 
     /** 玩家此刻随的这位武将，打的是不是这个战场（是 → 放行「在军中也能开打」） */
@@ -848,7 +939,6 @@ export class PlayerQuestSystem {
                 defenderCityId: ev.defenderCityId ?? null,
             },
         };
-        this.followingEventGeneralId = g.generalId;
         // 记一笔「这一仗还没打完、归属这位武将」：中途被打断（军团覆灭/离队）时靠它把战役接回来
         this.pendingEventGeneralId = g.generalId;
         if (!this.pendingEventOptions.includes(g.generalId)) this.pendingEventOptions.unshift(g.generalId);
@@ -906,7 +996,6 @@ export class PlayerQuestSystem {
         // 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 末场战后还有一路班师：
         //    旁白最后一段（挂在战场节点之后）不在赶赴战场的路上念，留到战毕后军团真走这一路时再念。
         const epi = scriptEv ? this.epilogueOf(scriptEv, briefText ?? '') : null;
-        this.pendingEpilogue = epi ? { battlefieldId: ev.battlefieldId, ...epi } : null;
         this.startJourneyBriefing(
             bfSite, ev.title, scriptEv?.briefing ?? undefined,
             this.scriptSegmentStarts(scriptEv ?? null, epi ? epi.pre : briefText, !!epi),
@@ -1090,6 +1179,7 @@ export class PlayerQuestSystem {
     private onHostReachBattlefield(): void {
         const q = this.quest;
         if (!q || q.kind !== 'general_event' || !q.event) return;
+        if (q.event.terminal) { this.onTerminalArrived(); return; }   // 终局一路：没有战斗，到了就是到了
         // 打完从这里开拔去下一场：先把入路直线上的海陆瓦片拉下来（见 prefetchEntrySea）
         if (this.armyMarchPoint) prefetchEntrySea(this.armyMarchPoint);
         this.armyMarchPoint = null;
@@ -1101,7 +1191,6 @@ export class PlayerQuestSystem {
         const q = this.quest;
         if (!q || q.kind !== 'general_event' || q.event?.battlefieldId !== bfId) return;
         this.quest = null;
-        this.followingEventGeneralId = null;
         this.armyMarchPoint = null;
         // 🔴 [2026-09-23 主人令「以后每个事件的衔接，都不要犯同样的错误」]
         //    这一仗打完了 → 「正在赶去与这位武将会面」的状态一律作废。
@@ -1114,12 +1203,6 @@ export class PlayerQuestSystem {
         this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== q.generalId);
         this.deps.hero.addMerit(500);
         gameLog('expedition', `[玩家] 武将史实战役战毕：【${battleTitle}】`);
-        const epi = this.pendingEpilogue;
-        if (epi && epi.battlefieldId === bfId) {
-            // 战斗收尾此刻还在跑（会清掉刚下的行军路径）→ 留到下一拍 tick 再开拔，与「连续行军」同一时机
-            this.pendingEpilogue = null;
-            this.queuedEpilogue = { ...epi, since: Date.now() };
-        }
     }
 
     /** 军团正在奔赴的战场坐标（抵达判定与失败重试用；null = 没在赶赴战场） */
@@ -1455,7 +1538,7 @@ export class PlayerQuestSystem {
      */
     private checkAndTriggerNextBattlefield(): boolean {
         const next = this.findNextAvailableBattlefield();
-        if (!next) return false;
+        if (!next) return this.startTerminalLeg();   // 没有下一场战场了：接终局一路（若有）
 
         const { bf, title } = next;
         const bfApi = this.deps.battlefields;
@@ -1940,64 +2023,8 @@ export class PlayerQuestSystem {
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
         // 🔴 [2026-10-03] 班师：战毕后军团脱离交战再开拔（战斗收尾会清掉同一拍下的路径）；
         //    到了终点还要等最后一段旁白念完才收尾、才转乱斗
-        // 🔴 [2026-10-03 主人怒斥「卡死、不结束、接不动」] 班师这一段**绝不许死锁**：
-        //    每一道等待都带真实时间上限，到点就强行放行 / 收尾，宁可少走一段路，也不能把剧本钉死在科塞亚。
-        if (this.queuedEpilogue) {
-            const hid = this.deps.hero.getHostLegionId();
-            const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
-            const waited = Date.now() - this.queuedEpilogue.since;
-            if (!h || h.isDestroyed) {
-                this.queuedEpilogue = null;
-            } else if (!h.getIsInCombat() || waited > 10000) {
-                // 交战标记超过 10 秒还没放（战术模式的结算没放手）→ 强行解除，再开拔
-                if (h.getIsInCombat()) {
-                    gameLog('expedition', '[玩家] 班师：军团交战标记超过 10 秒未放，强行解除');
-                    h.clearExternalCombatState();
-                }
-                const epi = this.queuedEpilogue;
-                this.queuedEpilogue = null;
-                h.clearPostBattleRest();
-                this.startEpilogue(epi);
-            }
-        }
-        if (this.epilogue) {
-            const ep = this.epilogue;
-            const now = Date.now();
-            const hid = this.deps.hero.getHostLegionId();
-            const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
-            const d = ep.dest;
-            if (!h || h.isDestroyed) {
-                this.finishEpilogue('军团已不在');
-            } else if (!ep.arrived) {
-                const pos = h.getPosition();
-                if (!ep.lastPos || getEuclideanDistance(pos, ep.lastPos) * 111 >= 0.5) {
-                    ep.lastPos = { lat: pos.lat, lng: pos.lng };
-                    ep.lastMoveAt = now;
-                }
-                if (getEuclideanDistance(pos, { lat: d.latitude, lng: d.longitude }) * 111 <= 15) {
-                    ep.arrived = true;
-                } else if (now - ep.lastMoveAt > 45000) {
-                    this.finishEpilogue('军团 45 秒原地不动，放弃班师');   // 兜底：不死锁
-                } else if (now - ep.lastMoveAt > 2500 && now - ep.lastRetryAt > 2500) {
-                    // 停着没走 → 解除可能残留的战斗 / 休整状态，重铺一次路径（不重念旁白）
-                    ep.lastRetryAt = now;
-                    ep.retries++;
-                    if (now - ep.lastMoveAt > 10000 && h.getIsInCombat()) h.clearExternalCombatState();
-                    h.clearPostBattleRest();
-                    this.marchEpilogueHost(h, d);
-                    gameLog('expedition', `[玩家] 班师${d.name}：军团停在原地，重铺路径（第 ${ep.retries} 次）`);
-                }
-            }
-            if (this.epilogue && ep.arrived) {
-                if (ep.arrivedAt === null) ep.arrivedAt = now;
-                // 到了：等最后一段旁白念完才收尾；旁白卡住（语音掉线等）最多再等 45 秒
-                if ((!this.briefingBusy && this.briefingPending === null) || now - ep.arrivedAt > 45000) {
-                    this.finishEpilogue(null);
-                }
-            }
-        }
-        if (this.deps.hero.autoPlan === 'script' && !this.quest && !this.epilogue && !this.queuedEpilogue
-            && this.findNextAvailableBattlefield() === null) {
+        if (this.deps.hero.autoPlan === 'script' && !this.quest && this.findNextAvailableBattlefield() === null
+            && !this.terminalLegPending()) {   // 终局一路还没走完 → 先别转乱斗
             this.deps.hero.setAutoPlan('melee');
             this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式', undefined, true);
             gameLog('expedition', '[玩家] 历史剧本全部结束 → 自动切换乱斗模式');
@@ -2039,14 +2066,14 @@ export class PlayerQuestSystem {
 
         // 🔴 武将史实战役：目标不是据点，而是**战场坐标**，故成败判据与出征/复国两条不同
         if (q.kind === 'general_event' && q.event) {
+            if (q.event.terminal) { this.watchTerminalLeg(); if (this.quest !== q) return; }
             this.followPendingGeneralEvent();
             const host = this.deps.legionManager.getLegionById(q.legionId);
             if (!host || host.isDestroyed || host.getTroops() <= 0) {
                 this.deps.notify(`❌ 军团覆灭，未能抵达【${q.event.title}】`, undefined, true);
                 gameLog('expedition', `[玩家] 武将史实战役中断：${q.event.title}`);
                 this.quest = null;
-                this.followingEventGeneralId = null;
-                this.armyMarchPoint = null;
+                        this.armyMarchPoint = null;
                 // 留下「这位武将那一仗还没打」的记事，好让自动模式把他找回来续上（见 resumePendingGeneralEvent）
                 this.pendingEventGeneralId = q.generalId;
                 if (!this.pendingEventOptions.includes(q.generalId)) this.pendingEventOptions.unshift(q.generalId);
@@ -2261,8 +2288,8 @@ export class PlayerQuestSystem {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
                 const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                const narrativeText = ev.dialogue
-                    || `${generalName}挥师前线，大军直指【${ev.battlefieldName}】，与${foe}决战于【${ev.title}】。军纪森严，三军枕戈待旦。`;
+                // 🔴 [2026-10-03] 同上：`dialogue` 已物理删除，一律用第三人称默认句。
+                const narrativeText = `${generalName}挥师前线，大军直指【${ev.battlefieldName}】，与${foe}决战于【${ev.title}】。军纪森严，三军枕戈待旦。`;
                 this.deps.showDialogue({
                     speaker: generalName,
                     portrait,

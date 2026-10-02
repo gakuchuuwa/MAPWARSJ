@@ -266,8 +266,9 @@ export interface HistoricalEvent {
     regnalYear?: string;
     season: number; // 0: Spring, 1: Summer, 2: Autumn, 3: Winter
     description: string;
-    /** 玩家会面时的武将对话（第一人称邀约对白） */
-    dialogue?: string;
+    // 🔴 [2026-10-03 主人令「请统一酌情处理」] 原 `dialogue?: string`（玩家会面时的武将第一人称邀约对白）
+    //    已按 AGENTS「全剧 0 对话、绝不许再加」「100% 第三人称传记体」**物理删除**：
+    //    邀约面板一律用 `PlayerQuestSystem` 里那句第三人称默认句。**新增剧情文本只许写 briefing／description。**
     type: EventType;
     siegeData?: SiegeData;
     fieldBattleData?: FieldBattleData;
