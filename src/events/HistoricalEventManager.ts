@@ -9,7 +9,7 @@ import { BATTLE_OFFSET } from '../combat/MultiLegionFieldBattle';
 import { EventVisualizer } from '../core/EventVisualizer';
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import type { Army } from '../legion/Army';
-import type { FieldBattleData, HistoricalEvent, SiegeData } from '../types/core';
+import type { FieldBattleData, SiegeData } from '../types/core';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCultureLegionName } from '../types/CultureFormations';
@@ -17,30 +17,14 @@ import { getCityRegion } from '../systems/RegionSystem';
 import { getGeneralRecordByGeneralId, getFactionIdOfGeneral } from '../data/FactionGenerals';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance } from '../core/DistanceUtils';
-import { joinStartToRoadPolyline } from '../core/DistanceUtils';
-import { roadRegistry } from '../roads/RoadRegistry';
 import { gameLog } from '../utils/GameLogger';
-import { GameConfig } from '../config/GameConfig';
 import { markBattlefieldFought, isBattlefieldFought, setActiveBattleTitle } from './battlefieldState';
-import { BATTLEFIELDS, matchesBattlefield } from '../data/Battlefields';
+import { matchesBattlefield } from '../data/Battlefields';
 import { findEventSite } from '../data/eventSites';
 import { isScriptPeriod } from './scriptPeriod';
 // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
 //    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
-
-/**
- * `ensureAttackerLegion` 的入参：**野战与攻城两种剧本数据共有的"攻方四件"**。
- * 🔴 [2026-09-12 主人令] 攻方军团的建立只有一套（起兵据点 / 主将 / 兵力 / 势力），
- *    野战 `FieldBattleData` 与攻城 `SiegeData` 的字段名完全一致 → 用这个交集类型共用，
- *    不复制第二份逻辑。
- */
-type ScriptAttackerSpec = {
-    attackerFactionId: string;
-    attackerGeneralId?: string;
-    attackerTroops?: number;
-    attackerSourceCityId?: string;
-};
 
 export class HistoricalEventManager {
     private timeSystem: TimeSystem;
@@ -183,17 +167,6 @@ export class HistoricalEventManager {
     // 起因：剧本拿 `expeditionTargetCityId` 当**行军航点**用，而玩家任务系统把它当
     // 「要攻占的目标城」，于是任务条把"路过安菲波利斯"显示成了"攻打安菲波利斯"。
     // ══════════════════════════════════════════════════════════════════
-
-    /** 距给定坐标最近的据点 id（欧氏度距，与全项目同口径） */
-    private nearestCityIdTo(lat: number, lng: number): string | null {
-        let best: string | null = null;
-        let bestD = Infinity;
-        for (const c of this.cityManager.getCities()) {
-            const d = getEuclideanDistance({ lat, lng }, { lat: c.latitude, lng: c.longitude });
-            if (d < bestD) { bestD = d; best = c.id; }
-        }
-        return best;
-    }
 
     /**
      * 🔴 [2026-09-14 主人定]「删除之前的剧本开关设定，以后没有剧本了，就是乱斗模式中加战场玩法。」
