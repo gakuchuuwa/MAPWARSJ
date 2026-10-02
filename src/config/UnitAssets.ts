@@ -1155,6 +1155,18 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/TRIREME/idle_${d}.png`),
             DEATH: [],
         },
+        'HERO_THEMISTOCLES': {
+            // 英雄·地米斯托克利（**旗舰**）：🔴 [2026-10-02 主人令「给马其顿军团套上」]
+            //   本图是完整 **16 向**战船（/SUCAI/HERO_THEMISTOCLES/ 有 move/attack/idle × 16 向 + `dirs16` meta），
+            //   与小写 `hero_themistocles`（陆上用 8 向登记）是**同一套图的两份登记**：舰队管线只认大写船型键。
+            //   样式与马其顿原先那条 TRIREME 同型（同船体、同舷侧白圆盾列、同单桅桨列与船首冲角），
+            //   差别只有帆色与帆上纹章 —— 故按「不看人名、只看样式」选它做马其顿军团的旗舰。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/idle_${d}.png`),
+            DEATH: [],
+        },
         'THIRISADAI': {
             // 达罗毗荼多桅楼船（南亚/印度）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/move_${d}.png`),
