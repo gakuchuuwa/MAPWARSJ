@@ -41,6 +41,8 @@ export function loadGameAppCityData(app: GameApp): void {
             mirror: hasCityExclusiveIcon(c.id) ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),
             startYear: c.startYear,
             endYear: c.endYear,
+            stockadeShape: c.stockadeShape,
+            stockadeFence: c.stockadeFence,
         };
     });
 
