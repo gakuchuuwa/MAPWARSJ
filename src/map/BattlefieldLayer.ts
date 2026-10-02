@@ -24,8 +24,8 @@ import type { TerritorySystem } from '../systems/TerritorySystem';
  *   独立后这些**整类不存在**：战场没有势力、没有兵力、不能攻占、不占据点名额。
  */
 
-/** 战场形态基准包络宽度（px，zoom 9）：与小城据点（约 184×160）同一视觉量级 */
-const BASE_ART_W = 230;
+/** 战场形态基准包络宽度（px，zoom 9）：调小至约 160px，与小城/城寨同量级，低调不抢戏 */
+const BASE_ART_W = 160;
 
 /**
  * 攻城战战场套**据点样式**时的容器尺寸（px）。
