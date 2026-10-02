@@ -681,8 +681,10 @@ export class PlayerQuestSystem {
 
     /** 末场战后班师这一路的待办（赶赴战场时备好，战毕再走） */
     private pendingEpilogue: { battlefieldId: string; pre: string; text: string; dest: City; title: string } | null = null;
+    /** 战毕待开拔的班师（下一拍 tick 里军团脱离交战后再走） */
+    private queuedEpilogue: { text: string; dest: City; title: string } | null = null;
     /** 班师途中：arrived = 军团已到终点，等旁白念完再收尾 */
-    private epilogue: { title: string; arrived: boolean } | null = null;
+    private epilogue: { title: string; dest: City; arrived: boolean; retries: number } | null = null;
 
     /**
      * 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 这一场的路表若以「战场 → 某城」收尾，
@@ -712,21 +714,27 @@ export class PlayerQuestSystem {
             gameLog('expedition', `[玩家] 班师${epi.dest.name}：军团不在场，略过`);
             return;
         }
-        const from = host.getPosition();
-        const target = { lat: epi.dest.latitude, lng: epi.dest.longitude };
-        const path = findPathFromPoint(from, target);
-        if (!path || path.length < 2) {
+        this.epilogue = { title: epi.title, dest: epi.dest, arrived: false, retries: 0 };
+        if (!this.marchEpilogueHost(host, epi.dest)) {
             gameLog('expedition', `[玩家] 班师${epi.dest.name}：无路可达`);
+            this.epilogue = null;
             return;
         }
-        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
-        this.epilogue = { title: epi.title, arrived: false };
-        host.setTargetCity(null);
-        host.setOnArriveCallback(() => { if (this.epilogue) this.epilogue.arrived = true; });
-        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
         this.deps.hero.setTravelPointLabel(epi.title);
         this.startJourneyBriefing(null, epi.title, epi.text, []);
         gameLog('expedition', `[玩家] 战毕班师：军团自战场开赴【${epi.dest.name}】`);
+    }
+
+    /** 给班师军团铺一条去终点的路（开拔与「路径被清掉后重铺」共用） */
+    private marchEpilogueHost(host: Army, dest: City): boolean {
+        const from = host.getPosition();
+        const path = findPathFromPoint(from, { lat: dest.latitude, lng: dest.longitude });
+        if (!path || path.length < 2) return false;
+        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
+        host.setTargetCity(null);
+        host.setOnArriveCallback(() => { if (this.epilogue) this.epilogue.arrived = true; });
+        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
+        return true;
     }
 
     /** 玩家此刻随的这位武将，打的是不是这个战场（是 → 放行「在军中也能开打」） */
@@ -1094,8 +1102,9 @@ export class PlayerQuestSystem {
         gameLog('expedition', `[玩家] 武将史实战役战毕：【${battleTitle}】`);
         const epi = this.pendingEpilogue;
         if (epi && epi.battlefieldId === bfId) {
+            // 战斗收尾此刻还在跑（会清掉刚下的行军路径）→ 留到下一拍 tick 再开拔，与「连续行军」同一时机
             this.pendingEpilogue = null;
-            this.startEpilogue(epi);
+            this.queuedEpilogue = epi;
         }
     }
 
@@ -1915,14 +1924,40 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
         //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
-        // 🔴 [2026-10-03] 班师途中：到了终点还要等最后一段旁白念完才收尾、才转乱斗
+        // 🔴 [2026-10-03] 班师：战毕后军团脱离交战再开拔（战斗收尾会清掉同一拍下的路径）；
+        //    到了终点还要等最后一段旁白念完才收尾、才转乱斗
+        if (this.queuedEpilogue) {
+            const hid = this.deps.hero.getHostLegionId();
+            const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
+            if (!h || h.isDestroyed) this.queuedEpilogue = null;
+            else if (!h.getIsInCombat()) {
+                const epi = this.queuedEpilogue;
+                this.queuedEpilogue = null;
+                h.clearPostBattleRest();
+                this.startEpilogue(epi);
+            }
+        }
         if (this.epilogue) {
+            // 路径被别处清掉（军团停着、没到终点）→ 重铺一次，不重念
+            const hid = this.deps.hero.getHostLegionId();
+            const h = hid ? this.deps.legionManager.getLegionById(hid) : null;
+            const d = this.epilogue.dest;
+            if (h && !h.isDestroyed && !this.epilogue.arrived && !h.isMarching() && !h.getIsInCombat()) {
+                if (getEuclideanDistance(h.getPosition(), { lat: d.latitude, lng: d.longitude }) * 111 <= 15) {
+                    this.epilogue.arrived = true;
+                } else if (this.epilogue.retries < 20) {
+                    this.epilogue.retries++;
+                    h.clearPostBattleRest();
+                    this.marchEpilogueHost(h, d);
+                    gameLog('expedition', `[玩家] 班师${d.name}：军团停在半路，重铺路径（第 ${this.epilogue.retries} 次）`);
+                }
+            }
             if (this.epilogue.arrived && !this.briefingBusy && this.briefingPending === null) {
                 this.deps.hero.setTravelPointLabel(null);
                 this.epilogue = null;
             }
         }
-        if (this.deps.hero.autoPlan === 'script' && !this.quest && !this.epilogue
+        if (this.deps.hero.autoPlan === 'script' && !this.quest && !this.epilogue && !this.queuedEpilogue
             && this.findNextAvailableBattlefield() === null) {
             this.deps.hero.setAutoPlan('melee');
             this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式', undefined, true);
