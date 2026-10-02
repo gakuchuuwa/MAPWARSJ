@@ -1918,7 +1918,8 @@ const ACCURACY_BY_TYPE: Record<string, number> = {
     traction_trebuchet: 30,
     flamethrower: 75,
     helepolis: 100,
-    siege_tower: 90,
+    siege_tower: 100,
+    antiquity_siege_tower: 100,
     immortal_ranged: 70,
     elite_immortal_ranged: 80,
     grenadier: 100,
@@ -1958,8 +1959,8 @@ function accuracyOf(key: string, wt: WarType): number {
     // 普通步弓（含火箭/火弓/象弓）
     return 80;
 }
-/** 平直弹道抛射物（弩炮箭/火枪弹/飞轮）：不抛弧、直线飞行。 */
-const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE']);
+/** 平直弹道抛射物（弩炮箭/攻城塔弩/火枪弹/飞轮）：不抛弧、直线飞行。 */
+const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_HELEPOLIS', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_BOMBARD_BALL', 'PROJ_MANGONEL', 'PROJ_ROCK', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
@@ -7890,6 +7891,10 @@ export class Scene13WarLayer {
                         const muzzleLift = muzzleOver !== undefined
                             ? muzzleOver * (WAR_TYPES[m.key]?.sz ?? 1)
                             : UNIT_PX * 0.45;
+                        const towerFlight = muzzleOver !== undefined ? {
+                            startLift: this.elevationLiftAt(m.x, m.y) + muzzleLift,
+                            endLift: this.elevationLiftAt(foe.x, foe.y) + UNIT_PX * 0.45,
+                        } : undefined;
                         for (let v = 0; v < volley; v++) {
                             // DE 胡斯战车每轮 = 1 发专属主弹 + 5 发 p_shot 次级弹。
                             const volleyProj = isHussiteVolley && v > 0 ? 'PROJ_GUNPOWDER' : proj;
@@ -7908,11 +7913,13 @@ export class Scene13WarLayer {
                             const ndx = (ax / ad) * c - (ay / ad) * s;
                             const ndy = (ax / ad) * s + (ay / ad) * c;
                             this.arrows.push({
-                                x: m.x, y: m.y - muzzleLift,   // 开火点高度：步兵胸口 / 塔类塔顶弩机（见 muzzleLift）
+                                x: m.x,
+                                y: towerFlight ? m.y : m.y - muzzleLift,   // 塔类通过 towerFlight 线性平滑插值（基准坐标用地面 m.x, m.y）；步兵维持原值
                                 dx: ndx, dy: ndy, len: ad,
                                 t: 0, dur: exactSpeed ? baseDur : baseDur + Math.random() * 0.05, f: m.f,
                                 proj: volleyProj,
                                 delay: v * PROJ_VOLLEY_DELAY,      // 连发：第 v 支延迟 v×80ms 射出
+                                ...(towerFlight ? { towerFlight } : {}),
                             });
                         }
                         // 火器炮口焰/枪口焰：发射瞬间喷出 DE 炮口焰特效（音效在 spawnFirearmMuzzle 内）
