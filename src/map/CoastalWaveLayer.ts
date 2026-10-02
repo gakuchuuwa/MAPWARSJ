@@ -161,20 +161,19 @@ export class CoastalWaveLayer extends L.Layer {
         nx: number, ny: number,
         phase: number, angle: number,
     ): void {
-        // 向岸推进 (沿着 -n 方向轻柔推进 2.8 像素)
-        const travel = (1 - phase) * 2.8;
+        // 向岸微推 (仅 2.0 像素)
+        const travel = (1 - phase) * 2.0;
         const wx = sx - nx * travel;
         const wy = sy - ny * travel;
 
-        // 极微弱、半透明白色泛浪呼吸曲线（峰值仅 0.22，纯净轻柔）
+        // 极轻微的微沫泛白呼吸（峰值仅 0.16）
         const crest = Math.sin(phase * Math.PI);
-        const alpha = Math.pow(crest, 2.6) * 0.22;
-        if (alpha < 0.02) return;
+        const alpha = Math.pow(crest, 3.0) * 0.16;
+        if (alpha < 0.015) return;
 
-        // 顺着海岸切线方向散落的细微白浪花
         g.fillStyle = `rgba(255, 255, 255, ${alpha.toFixed(3)})`;
         g.beginPath();
-        g.ellipse(wx, wy, 2.0 + phase * 0.8, 0.75, angle, 0, Math.PI * 2);
+        g.ellipse(wx, wy, 1.5 + phase * 0.5, 0.60, angle, 0, Math.PI * 2);
         g.fill();
     }
 }

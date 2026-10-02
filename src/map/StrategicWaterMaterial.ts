@@ -144,45 +144,45 @@ export function renderStrategicWater(
             const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
             const tone = waterToneAt(wx, wy);
 
-            // 水深上色：大洋深海接近 deep，近海基调 base
+            // 水深上色：大洋深海接近 deep，近海基调 base（由真实海底高程平滑呈现）
             const d = depthT ? depthT[y * w + x] : 0;
             let r = base[0] + (deep[0] - base[0]) * d;
             let g = base[1] + (deep[1] - base[1]) * d;
             let b = base[2] + (deep[2] - base[2]) * d;
 
-            // 沿岸浅海过渡：与真实海底水深（DEM depthT）有机联动
-            // 陡峭海沟/岬角处水深直接坠下（浅水带极窄 4~6px），平缓大陆架/海湾处平缓开阔（11~15px）
+            // 沿岸浅水与海湾过渡：与真实海底水深（DEM depthT）有机联动
+            // 平缓海湾、大陆架与入海口呈现 10~14px 宽的开阔浅滩（与矢量河流完全同色 coastalAzure），海沟处自然收窄
             const depthFactor = Math.max(0.35, 1 - d * 0.70);
             const dist = distance[i];
-            const reach = (12 + Math.sin(wx / 37 + wy / 51) * 3.0 + Math.sin((wx - wy) / 23) * 1.5) * depthFactor;
+            const reach = (11 + Math.sin(wx / 37 + wy / 51) * 2.5 + Math.sin((wx - wy) / 23) * 1.5) * depthFactor;
 
             if (water[i] && dist < reach) {
-                // 1. 近海与河口浅水渐变（舒缓平滑过渡，与河流入海口浑然一体）
-                const shelfT = Math.pow(1 - dist / reach, 1.35) * 0.75;
+                // 近海、海湾与河口浅水层（与矢量河流同色 coastalAzure，实现「百川入海、水色相融」）
+                const shelfT = Math.pow(1 - dist / reach, 1.25) * 0.75;
                 r = r * (1 - shelfT) + azureR * shelfT;
                 g = g * (1 - shelfT) + azureG * shelfT;
                 b = b * (1 - shelfT) + azureB * shelfT;
 
-                // 2. 贴岸极浅清透水层（距岸 3px 内极轻微透沙，透明度克制在 0.45）
-                if (dist < 3.0) {
-                    const reefT = Math.pow(1 - dist / 3.0, 1.4) * 0.45;
-                    r = r * (1 - reefT) + reefR * reefT;
-                    g = g * (1 - reefT) + reefG * reefT;
-                    b = b * (1 - reefT) + reefB * reefT;
+                // 贴岸 2.5px 内微透极浅清浅层
+                if (dist < 2.5) {
+                    const seamT = Math.pow(1 - dist / 2.5, 1.2) * 0.35;
+                    r = r * (1 - seamT) + reefR * seamT;
+                    g = g * (1 - seamT) + reefG * seamT;
+                    b = b * (1 - seamT) + reefB * seamT;
                 }
             }
 
-            // 岸边浪花微光 (距离 < 1.6 像素处的柔和白色细浪)
-            const glint = water[i] && dist < 1.6
-                ? Math.max(0, Math.sin(wx / 5 + Math.sin(wy / 8)) - 0.48) * 35 : 0;
+            // 岸边极细断续碎沫微光 (距岸 1.4 像素内的点缀微浪，绝不连成白线)
+            const glint = water[i] && dist < 1.4
+                ? Math.max(0, Math.sin(wx / 5 + Math.sin(wy / 8)) - 0.52) * 30 : 0;
 
             out[o] = Math.min(255, Math.max(0, r + tone * 0.7 + grain * 0.65 + glint));
             out[o+1] = Math.min(255, Math.max(0, g + tone * 1.1 + grain * 0.90 + glint * 1.05));
             out[o+2] = Math.min(255, Math.max(0, b + tone * 1.2 + grain * 0.95 + glint * 1.05));
 
-            // 采样浪花微动点（在 2.0 ~ 4.8px 浪区疏朗采样，生成散落自然的潮汐微浪核）
-            if (water[i] && dist >= 2.0 && dist <= 4.8) {
-                if (((x * 13 + y * 17) % 29 === 0) && ((wx + wy) % 7 === 0)) {
+            // 采样浪花微动点（仅在贴岸 1.0 ~ 2.2px 极稀疏采样偶发微沫核）
+            if (water[i] && dist >= 1.0 && dist <= 2.2) {
+                if (((x * 17 + y * 23) % 47 === 0) && ((wx + wy) % 11 === 0)) {
                     let nx = (distance[i + 1] - distance[i - 1]) * 0.5;
                     let ny = (distance[i + pw] - distance[i - pw]) * 0.5;
                     const len = Math.hypot(nx, ny);
@@ -200,10 +200,10 @@ export function renderStrategicWater(
             else {
                 const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
                 if (coverage > 0) {
-                    out[o] = Math.round(reefR * 0.85);
-                    out[o+1] = Math.round(reefG * 0.85);
-                    out[o+2] = Math.round(reefB * 0.85);
-                    out[o+3] = Math.round(coverage * 0.22 * 255);
+                    out[o] = Math.round(azureR * 0.75);
+                    out[o+1] = Math.round(azureG * 0.75);
+                    out[o+2] = Math.round(azureB * 0.75);
+                    out[o+3] = Math.round(coverage * 0.20 * 255);
                 }
             }
         }
