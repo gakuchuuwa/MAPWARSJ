@@ -4047,8 +4047,11 @@ export class Scene13WarLayer {
             type: init.battleType ?? 'field',
         });
         this.attach();
-        // [2026-09-16 主人定] 进战术模式换一首 BGM：换场景 = 换气氛
-        audioManager.rerollBgm();
+        // 🔴 [2026-10-02 主人定] 进战术模式不强制掐断当前 BGM（推翻 9-16 换场景强切歌，回归「BGM 完整循环播放、不被换场景强行掐断」铁律）
+        // 让大地图正听着的史诗 BGM 自然流淌进战术战场，彻底消除进场切歌造成的静音真空；仅在压根没有音乐在播时才起一首
+        if (!audioManager.isBgmPlaying()) {
+            audioManager.rerollBgm();
+        }
         this.active = true;
         this.over = false;
         this.spawns = [];
@@ -5969,8 +5972,8 @@ export class Scene13WarLayer {
 
             const drawY = m.y - this.elevationLiftAt(m.x, m.y);
             
-            // 双层同心外扩涟漪
-            const cycle1 = (t * 1.6 + (i * 0.17)) % 1.0;
+            // 双层同心外扩涟漪（放缓扩散周期，水纹更舒缓平滑）
+            const cycle1 = (t * 0.65 + (i * 0.17)) % 1.0;
             const cycle2 = (cycle1 + 0.5) % 1.0;
 
             const r1 = 3 + cycle1 * 14;
@@ -5998,13 +6001,13 @@ export class Scene13WarLayer {
             ctx.fill();
         }
 
-        // 2. 阵亡落水尸体（微弱静水缓波涟漪）
+        // 2. 阵亡落水尸体（微弱静水缓波涟漪，同样放缓）
         for (let i = 0; i < Math.min(this.corpses.length, 30); i++) {
             const c = this.corpses[i];
             if (!isWater(c.x, c.y)) continue;
 
             const drawY = c.y - this.elevationLiftAt(c.x, c.y);
-            const cycle = (t * 0.8 + (i * 0.25)) % 1.0;
+            const cycle = (t * 0.35 + (i * 0.25)) % 1.0;
             const r = 5 + cycle * 10;
             const a = (1 - cycle) * 0.25;
 
@@ -6027,12 +6030,16 @@ export class Scene13WarLayer {
         const na = this.natureCache[s.asset];
         if (!na || !na.img || !na.img.complete || !na.meta) return;
         const m = na.meta;
-        // 🔴 城门倒塌动画：collapse 状态存在时按 t/dur 推进帧（播完由 step 切 rubble、清状态）。
-        //    其余（静态装饰 / 城墙 D75 残垣单帧）走 s.frame 取模。
+        // 🔴 建筑/城门倒塌动画：collapse 状态存在时按 t/dur 推进帧（播完由 step 切 rubble、清状态）。
+        //    AoE2 DE 素材中，民房(HOUSE)等建筑包含 3 种造型变体（每个变体 100 帧，共 300 帧）。
+        //    战场建筑平时显示款式 0（变体 0）；倒塌时若拿 300 帧推进，会导致同一栋房子在 8 秒内连续「塌了又复原」3 遍，
+        //    且播放速度异常加快 3 倍，末帧更会超 64K/32K 纹理采样上限。
+        //    因此多变体建筑倒塌动画按单变体 100 帧播放，平滑过渡并完美衔接切入第 0 帧残骸。
         let fr: number;
         if (s.collapse) {
             const p = Math.min(1, s.collapse.t / s.collapse.dur);
-            fr = Math.min(m.frames - 1, Math.floor(p * m.frames));
+            const animFrames = m.frames >= 200 ? 100 : m.frames;
+            fr = Math.min(animFrames - 1, Math.floor(p * animFrames));
         } else {
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;
         }
