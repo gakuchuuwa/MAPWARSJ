@@ -275,8 +275,12 @@ export function checkEventRules(d: EventRuleInput, allDrafts: Array<{ generalId:
                 err(`${label}包含NPC搭话称呼「${g}」：严禁任何网游NPC套话，必须写成客观历史叙述文`);
             }
         }
-        if (raw.includes('大帝')) {
+        // 🔴 [2026-10-02 血训 · 尺子先自校] 「大帝」只盯**尊号**本身：
+        //    「决出欧亚两大帝国命运」里的「大帝」是「大 + 帝国」的巧合子串，不是尊号 ——
+        //    原来的 `raw.includes('大帝')` 当场把它判红，差点逼着把「两大帝国」改掉（绝不许为程序改历史文案）。
+        for (const _m of raw.matchAll(/大帝(?!国)/g)) {
             err(`${label}包含尊号「大帝」：严禁用尊号，一律直呼其名（如「亚历山大」）`);
+            break;
         }
     }
 

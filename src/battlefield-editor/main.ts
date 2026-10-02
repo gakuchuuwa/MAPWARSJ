@@ -585,6 +585,8 @@ function validate(d: BattleDraft): Issue[] {
     out.push(...checkSideLegion('攻方', d.attackerLegionName, resolveCurrentLegion(d.attackerFactionId, d.attackerSourceCityId)));
     out.push(...checkSideLegion('守方', d.defenderLegionName,
         resolveCurrentLegion(d.defenderFactionId, d.type === 'siege' ? d.defenderCityId : d.defenderSourceCityId)));
+    // 🔴 [2026-10-02 主人令] 全库剧本军团名一次扫（不选它也得合规矩）
+    out.push(...checkScriptLegionNames());
     // 🔴 [2026-09-23 主人：「这是亚历山大率领的远征军……下一场还要换军团吗？」]
     //    剧本军团是一支历史军队本身，同一武将的各场事件用同一支；只有史书记载编成确实变了才另立。
     for (const [side, gid, legion] of [['攻方', d.attackerGeneralId, d.attackerLegionName], ['守方', d.defenderGeneralId, d.defenderLegionName]] as const) {
@@ -907,7 +909,11 @@ function checkSideLegion(side: string, name: string, fallback: string): Issue[] 
     if (!def.source.trim()) out.push({ level: 'error', msg: `${side}剧本军团「${name}」没写史料出处` });
     // 🔴 [2026-09-23 主人定] 剧本军团不加时代：用真实历史名或后世通称
     if (/^(古典|封建|城堡|帝国)时代/.test(name)) {
-        out.push({ level: 'error', msg: `${side}剧本军团「${name}」带了时代前缀：剧本军团用真实历史名或后世通称（如「马其顿军」），不加时代` });
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」带了时代前缀：剧本军团用真实历史名或后世通称（如「马其顿军团」），不加时代` });
+    }
+    // 🔴 [2026-10-02 主人令「应该叫XX军团，不是XXX军」] 剧本军团名一律以「军团」结尾（与前三层同一构词）
+    if (!name.endsWith('军团')) {
+        out.push({ level: 'error', msg: `${side}剧本军团「${name}」名字不以「军团」结尾：剧本军团一律叫「XX军团」（如「马其顿军团」「阿契美尼德军团」「波斯驻军团」）` });
     }
     // 名字用史实原名，不硬加「军团」；但不许与精锐番号同名（军团 ≠ 精锐）
     if (Object.values(CITY_ELITE_LEGIONS).some((e) => e.name === name)) {
@@ -915,8 +921,26 @@ function checkSideLegion(side: string, name: string, fallback: string): Issue[] 
     }
     return out;
 }
-/** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */
-function filterLegionSelect(selectId: string, searchId: string): void {
+/**
+ * 🔴 [2026-10-02 主人令「应该叫XX军团，不是XXX军」] 全库剧本军团名一次扫：
+ *   名字必须以「军团」结尾、不带时代前缀、不与精锐番号同名 —— 定义在数据文件里，不选它也得合规矩。
+ */
+function checkScriptLegionNames(): Issue[] {
+    const out: Issue[] = [];
+    for (const l of SCRIPT_LEGIONS) {
+        if (!l.name.endsWith('军团')) {
+            out.push({ level: 'error', msg: `剧本军团「${l.name}」名字不以「军团」结尾：一律叫「XX军团」（如「马其顿军团」「阿契美尼德军团」「波斯驻军团」）` });
+        }
+        if (/^(古典|封建|城堡|帝国)时代/.test(l.name)) {
+            out.push({ level: 'error', msg: `剧本军团「${l.name}」带了时代前缀：剧本军团用真实历史名或后世通称，不加时代` });
+        }
+        if (Object.values(CITY_ELITE_LEGIONS).some((e) => e.name === l.name)) {
+            out.push({ level: 'error', msg: `剧本军团「${l.name}」和一个精锐番号同名：军团与精锐不能混用一个名字` });
+        }
+    }
+    return out;
+}
+/** 按搜索词过滤军团下拉（隐藏不匹配的 option + 空的 optgroup） */function filterLegionSelect(selectId: string, searchId: string): void {
     const sel = document.getElementById(selectId) as HTMLSelectElement | null;
     const inp = document.getElementById(searchId) as HTMLInputElement | null;
     if (!sel || !inp) return;

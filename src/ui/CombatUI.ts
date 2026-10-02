@@ -335,7 +335,7 @@ function getLegionEliteBadgeName(unit: IBattleUnit): string {
     }
     // 优先实时军团名（精锐改名/远征改名），勿死读 adapter 创建时快照
     const army = unit.getEntity?.() as Army | undefined;
-    // 🔴 [2026-09-23] 战场事件史实军团：军团名只写「马其顿军」，番号挂在 eliteOverride 上
+    // 🔴 [2026-09-23] 战场事件史实军团：军团名只写「马其顿军团」，番号挂在 eliteOverride 上
     if (army?.eliteOverride?.name) return army.eliteOverride.name;
     const live = (army?.name ?? '').trim();
     const elite = army ? getLegionEliteLegionName(army) : null;
@@ -1614,7 +1614,7 @@ export class CombatUI {
         const defRegion = init.defenderFactionId
             ? resolveUnitCultureRegion({ factionId: init.defenderFactionId, unitType: 'legion', getPosition: () => ({ lat: 0, lng: 0 }) } as any)
             : 'CENTRAL';
-        // 🔴 [2026-09-23 主人定「军团只显示马其顿军就行了」] 剧本期：当前这一仗用的剧本军团名优先
+        // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 剧本期：当前这一仗用的剧本军团名优先
         const attLegionName = (init.attackerFactionId && getScriptFactionLegionName(init.attackerFactionId))
             || ((init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
                 ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
@@ -6011,7 +6011,7 @@ export class CombatUI {
            只有**确实没有势力**时才允许退回文化区默认名。 */
         const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
         const factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
-        // ⓪ 🔴 [2026-09-23] 剧本期：当前这一仗用的剧本军团名（如「马其顿军」）
+        // ⓪ 🔴 [2026-09-23] 剧本期：当前这一仗用的剧本军团名（如「马其顿军团」）
         const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
         if (scriptLegion) return scriptLegion;
         // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。

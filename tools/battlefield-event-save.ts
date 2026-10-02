@@ -459,6 +459,14 @@ export function saveBattlefieldEvent(
             throw new Error(`${label}选了舰船（${wt.name}）：第 10 队必须是陆上的英雄兵模，不能是船`);
         }
     }
+    // 🔴 [2026-10-02 主人令「应该叫XX军团，不是XXX军」] 剧本军团名一律「XX军团」，末字必须是「团」。
+    //    编辑器 validate 已拦；这里再拦一道，防别的调用方绕过（与舰船那道同一用意）。
+    for (const [name, label] of [[d.attackerLegionName, '攻方军团'], [d.defenderLegionName, '守方军团']] as const) {
+        const n = (name || '').trim();
+        if (n && !n.endsWith('军团')) {
+            throw new Error(`${label}「${n}」名字不以「军团」结尾：剧本军团一律叫「XX军团」（如「马其顿军团」「阿契美尼德军团」「波斯驻军团」）`);
+        }
+    }
 
     const bfFile = path.resolve(rootDir, 'src/data/Battlefields.ts');
     const scFile = path.resolve(rootDir, 'src/data/HistoricalEventScript.ts');
