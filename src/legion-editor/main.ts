@@ -39,7 +39,7 @@ import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower, invalidateCombatPowerCache } from '../data/CombatPower';
-import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons, NAVAL_SHIP_CHINESE_NAMES } from '../types/NavalShipTiers';
+import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
 import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
 import {
     Level2CivLegionDef,
@@ -49,7 +49,6 @@ import {
     isCivEraLegion,
 } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
-import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 
@@ -1778,7 +1777,6 @@ function selectFaction(factionId: string): void {
 
     selectedLayerKey = '';
     selectedLayerTab = resolveCurrentLayer(row);
-    editingScriptLegion = false;
 
     renderTable();
     if (mainView === 'naval') renderNavalPanel(row);
@@ -1905,10 +1903,6 @@ function legionSummary(mode: FormationMode, slots: CompositionSlot[]): string {
 
 let selectedLayerTab: LegionLayer = 'culture';
 let selectedLayerKey: string = '';
-/** 四级剧本军团编辑态：点选剧本军团卡后为 true，编辑/保存走 scriptLegions.ts */
-let editingScriptLegion = false;
-let scriptLegionSource = '';
-let scriptLegionShipId: string | null = null;
 /** 第二步「选军团」卡片列表的搜索词（按军团名过滤） */
 let legionSearchQuery = '';
 /** 军团时代筛选（文化军团按四时代分开看） */
@@ -1945,8 +1939,6 @@ interface LayerLegionOption {
     description: string;
     shipId?: string;
     shipName?: string;
-    /** 四级剧本军团的史料出处（前三层没有） */
-    source?: string;
 }
 
 /** 16 母体的代表 region（一级文化军团 = 16 母体各一支；按母体默认军团名识别，覆盖「蒙古/罗马/罗斯/马来/克丘亚/墨西加/曼丁哥」等文明名） */
@@ -2000,7 +1992,7 @@ function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: stri
 }
 
 /** 🔴 [2026-09-11 主人定] **三级军团分类**（2026-10-02 加四级剧本军团） */
-export type LegionLayer = 'culture' | 'sub' | 'custom' | 'script';
+export type LegionLayer = 'culture' | 'sub' | 'custom';
 
 export { isCivEraLegion, LEVEL_2_CIV_59_LEGIONS, LEVEL_2_CIV_59_NAMES, LEVEL_2_CIV_59_MAP };
 export type { Level2CivLegionDef };
@@ -2152,25 +2144,6 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
     const all = getAllDistinctLegions();
     const options: LayerLegionOption[] = [];
 
-    // 🔴 [2026-10-02 主人令「添加四级军团编辑功能」] 四级：剧本军团（src/data/scriptLegions.ts）。
-    //    剧本军团只给历史剧本事件的攻/守方用，不挂势力；列名 + 三排 + 战船 + 史料出处。
-    if (layer === 'script') {
-        for (const l of SCRIPT_LEGIONS) {
-            options.push({
-                key: `script:${l.name}`,
-                label: `📜 ${l.name}`,
-                legionName: l.name,
-                formationMode: l.formationMode,
-                slots: l.slots.map(s => ({ ...s })),
-                description: `剧本军团 · ${legionSummary(l.formationMode, l.slots)}`,
-                shipId: l.shipId,
-                shipName: getNavalShipChineseName(l.shipId),
-                source: l.source,
-            });
-        }
-        return options.sort((a, b) => a.legionName.localeCompare(b.legionName, 'zh-Hans-CN'));
-    }
-
     // 🔴 [2026-09-10 主人定] 一级：文化军团（严格只收 16 母体文化军团，名字 = 地区名 + 军团，跨时代母体不带时代）
     if (layer === 'culture') {
         for (const rg of BASE_16_REGIONS) {
@@ -2232,7 +2205,6 @@ const LAYER_FULL_LABEL: Record<LegionLayer, string> = {
     culture: '一级：文化军团（16 母体）',
     sub: '二级：文明 × 时代（59 文明）',
     custom: '三级：自定义军团',
-    script: '四级：剧本军团',
 };
 
 /** 当前军团属于哪一类：一级16母体 / 二级文明×时代 / 三级自建 */
@@ -3025,11 +2997,9 @@ function renderEditPanel(row: FactionLegionRow): void {
     const optCulture = getLayerLegionOptions('culture', row.factionId);
     const optSub = getLayerLegionOptions('sub', row.factionId);
     const optCustom = getLayerLegionOptions('custom', row.factionId);
-    const optScript = getLayerLegionOptions('script', row.factionId);
     const activeLayerOpts = selectedLayerTab === 'culture' ? optCulture
-        : selectedLayerTab === 'sub' ? optSub
-        : selectedLayerTab === 'custom' ? optCustom : optScript;
-    const legionCounts = { culture: optCulture.length, sub: optSub.length, custom: optCustom.length, script: optScript.length };
+        : selectedLayerTab === 'sub' ? optSub : optCustom;
+    const legionCounts = { culture: optCulture.length, sub: optSub.length, custom: optCustom.length };
 
     const rowLabels = mode === 'triangle'
         ? ['前排尖刀 (2人)', '中坚突击 (3人)', '后排底边 (4人 · 4档主力)']
@@ -3059,8 +3029,7 @@ function renderEditPanel(row: FactionLegionRow): void {
 
     const conflictLegions = getMultiCompositionLegionNames();
     const isMultiComp = conflictLegions.has(currentLegionName);
-    const savedLegion = getAllDistinctLegions().get(currentLegionName)
-        ?? (editingScriptLegion ? SCRIPT_LEGION_MAP.get(currentLegionName) : undefined);
+    const savedLegion = getAllDistinctLegions().get(currentLegionName);
     const isModified = savedLegion && legionSig(savedLegion) !== legionSig(currentEditingLegion);
 
     const html = `
@@ -3082,8 +3051,8 @@ function renderEditPanel(row: FactionLegionRow): void {
     <div style="background:#141210;border:1px solid #2a2620;border-radius:6px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <span style="font-size:11px;color:#a89f8f;">当前军团：</span>
       <b style="color:#f5d78e;font-size:13px;">【${currentEditingLegion?.legionName?.trim() || (curLayer === 'culture' ? getCultureLegionName(row.region) : row.factionName + '军团')}】</b>
-      <span style="font-size:11px;color:#8ab4c4;">${LAYER_FULL_LABEL[editingScriptLegion ? 'script' : curLayer]} · ${legionSummary(mode, slots)}</span>
-      <span style="font-size:11px;padding:2px 7px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;">🚢 ${editingScriptLegion ? `剧本军团战舰：${getNavalShipChineseName(scriptLegionShipId)}` : `套用战舰：${getNavalShipChineseName(getCultureNavalShip(row.region, row.factionId))}`}</span>
+      <span style="font-size:11px;color:#8ab4c4;">${LAYER_FULL_LABEL[curLayer]} · ${legionSummary(mode, slots)}</span>
+      <span style="font-size:11px;padding:2px 7px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;">🚢 套用战舰：${getNavalShipChineseName(getCultureNavalShip(row.region, row.factionId))}</span>
     </div>
 
     ${isMultiComp ? `
@@ -3119,11 +3088,8 @@ function renderEditPanel(row: FactionLegionRow): void {
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'custom' ? 'active' : ''}" data-legiontab="custom">
           <div class="le-layer-title">✍️ 三级：自建军团 <span style="color:#e0c888;">${legionCounts.custom}</span></div>
         </button>
-        <button type="button" class="le-layer-btn ${selectedLayerTab === 'script' ? 'active' : ''}" data-legiontab="script">
-          <div class="le-layer-title">📜 四级：剧本军团 <span style="color:#e0c888;">${legionCounts.script}</span></div>
-        </button>
       </div>
-      <div class="le-era-tabs" style="${(selectedLayerTab === 'culture' || selectedLayerTab === 'script') ? 'display:none;' : ''}">
+      <div class="le-era-tabs" style="${selectedLayerTab === 'culture' ? 'display:none;' : ''}">
         <button type="button" class="le-era-btn ${legionEraFilter === 'all' ? 'active' : ''}" data-legionera="all">全部</button>
         ${AGE_ORDER.map(a => '<button type="button" class="le-era-btn ' + (legionEraFilter === a ? 'active' : '') + '" data-legionera="' + a + '" title="' + AGE_YEARS[a].span + '　' + AGE_YEARS[a].anchor + '">' + AGE_LABEL[a] + '</button>').join('')}
       </div>
@@ -3232,29 +3198,11 @@ function renderEditPanel(row: FactionLegionRow): void {
     <div class="le-form-section">
       <div class="le-section-title">
         <span>军团名称</span>
-        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">${editingScriptLegion ? '剧本军团名被战场事件引用，不可改名' : '须包含时代且以「军团」二字结尾'}</span>
+        <span style="font-size:11px;color:#a89f8f;font-weight:normal;">须包含时代且以「军团」二字结尾</span>
       </div>
-      ${editingScriptLegion ? `
-      <div style="width:100%;font-size:15px;font-weight:bold;color:#f5e6c8;padding:8px 0;">📜 ${currentEditingLegion?.legionName || ''}</div>
-      ` : `
       <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || ''}" placeholder="例如：古典时代秦汉军团、城堡时代蒙古军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
       ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''}</div>` : ''}
-      `}
     </div>
-    ${editingScriptLegion ? `
-    <!-- 四级剧本军团：战船 + 史料出处 -->
-    <div class="le-form-section">
-      <div class="le-section-title"><span>🚢 剧本军团战舰</span><span style="font-size:11px;color:#a89f8f;font-weight:normal;">留空按文化默认</span></div>
-      <select id="le-script-ship" class="le-input" style="width:100%;font-size:12px;">
-        <option value="">无战船（按文化默认）</option>
-        ${Object.keys(NAVAL_SHIP_CHINESE_NAMES).map(k => `<option value="${k}" ${scriptLegionShipId === k ? 'selected' : ''}>${NAVAL_SHIP_CHINESE_NAMES[k]}（${k}）</option>`).join('')}
-      </select>
-    </div>
-    <div class="le-form-section">
-      <div class="le-section-title"><span>📖 史料出处（必填）</span></div>
-      <textarea id="le-script-source" class="le-input" rows="8" style="width:100%;font-size:12px;line-height:1.5;resize:vertical;box-sizing:border-box;">${scriptLegionSource.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-    </div>
-    ` : ''}
 
     <!-- 实时预览（折叠） -->
     <details id="le-tune-details" class="le-form-section">
@@ -3291,7 +3239,6 @@ function renderEditPanel(row: FactionLegionRow): void {
     </details>
 
     <!-- 保存：两件事分开（2026-09-07 主人定「一个是武将套用军团，一个编辑军团，分开了」） -->
-    ${!editingScriptLegion ? `
     <div class="le-form-section">
       <div class="le-section-title"><span>① 保存武将换军团 · 只改归属</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
@@ -3300,17 +3247,15 @@ function renderEditPanel(row: FactionLegionRow): void {
       <button type="button" id="le-btn-apply-faction" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;">💾 保存武将换军团：【${row.generalName || row.factionName}】→【${currentLegionName}】</button>
       <button type="button" id="le-btn-revert-culture" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">↺ 恢复并保存归属：一级文化军团【${getCultureLegionName(row.region)}】</button>
     </div>
-    ` : ''}
 
     <div class="le-form-section">
-      <div class="le-section-title"><span>② ${editingScriptLegion ? '保存剧本军团编制' : '保存军团编制'}</span></div>
+      <div class="le-section-title"><span>② 保存军团编制</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
-        ${editingScriptLegion ? '把上面编好的三排兵种、阵型、战舰与史料出处，写进【' + currentLegionName + '】这一条剧本军团记录（scriptLegions.ts），战场事件用它。' : '把上面编好的三排兵种与阵型，写进【' + currentLegionName + '】这一条记录。用它的势力自动跟着变。'}
+        把上面编好的三排兵种与阵型，写进【${currentLegionName}】这一条记录。用它的势力自动跟着变。
       </div>
-      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">💾 ${editingScriptLegion ? '保存剧本军团编制' : '保存军团编制'}：【${currentLegionName}】（Ctrl+S）</button>
+      <button type="button" id="le-btn-save-single" class="le-btn le-btn-primary" style="width:100%;font-size:14px;padding:10px;background:#5a3c28;border-color:#8a6038;">💾 保存军团编制：【${currentLegionName}】（Ctrl+S）</button>
     </div>
 
-    ${!editingScriptLegion ? `
     <div class="le-form-section">
       <div class="le-section-title"><span>③ 另存为三级制定军团 · 新名称</span></div>
       <div style="font-size:11px;color:var(--muted-foreground);margin-bottom:8px;line-height:1.5;">
@@ -3318,7 +3263,6 @@ function renderEditPanel(row: FactionLegionRow): void {
       </div>
       <button type="button" id="le-btn-save-as" class="le-btn le-btn-ghost" style="width:100%;font-size:13px;padding:9px;margin-top:8px;">📄 另存为三级制定军团（起个新名字，只给这一家）</button>
     </div>
-    ` : ''}
     `;
 
     els.panelContent.innerHTML = html;
@@ -3336,7 +3280,7 @@ function renderEditPanel(row: FactionLegionRow): void {
             `${row.generalName || row.factionName} · ${row.factionName}`,
             `据点：${row.capitalCityName ?? '未知'} ｜ 文化区：${row.regionLabel}`
                 + (row.eliteName ? ` ｜ 精锐番号：${row.eliteName} T${row.eliteTier}` : ''),
-            `军团：${legionName}（${LAYER_FULL_LABEL[editingScriptLegion ? 'script' : curLayer]}）`,
+            `军团：${legionName}（${LAYER_FULL_LABEL[curLayer]}）`,
             `阵型：${getFormationModeLabel(mode)}`,
             ...slots.map((sl, i) => `${rowLabels[i] ?? '第' + (i + 1) + '排'}：${getUnitDisplayName(sl.type)} ×${sl.count}`),
             `战舰：${ship}`,
@@ -3478,11 +3422,6 @@ function bindPanelEvents(row: FactionLegionRow): void {
     //    用它的势力读的就是这一份，本来就会跟着变，没有第二份需要同步。
     document.getElementById('le-btn-save-single')?.addEventListener('click', async () => {
         if (!currentEditingLegion) return;
-        // 🔴 [2026-10-02 主人令「添加四级军团编辑功能」] 四级剧本军团走 scriptLegions.ts，单独保存
-        if (editingScriptLegion) {
-            await saveScriptLegion();
-            return;
-        }
         const legionName = currentEditingLegion.legionName?.trim() || fallbackLegionNameOf(row);
         if (legionName.includes('军军团')) {
             showToast('❌ 军团名不能含「军军团」（军+军团重复），请改为「XX军团」', true);
@@ -3598,14 +3537,6 @@ function bindPanelEvents(row: FactionLegionRow): void {
             currentEditingLegion.legionName = (e.target as HTMLInputElement).value;
         }
     });
-
-    // 四级剧本军团：史料出处 + 战舰
-    document.getElementById('le-script-source')?.addEventListener('input', (e) => {
-        scriptLegionSource = (e.target as HTMLTextAreaElement).value;
-    });
-    document.getElementById('le-script-ship')?.addEventListener('change', (e) => {
-        scriptLegionShipId = (e.target as HTMLSelectElement).value || null;
-    });
 }
 
 /** 按当前搜索词过滤「第二步」军团卡片（匹配军团名与所含兵种） */
@@ -3631,12 +3562,6 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
         const target = options.find(o => o.key === key);
         if (!target) { showToast('找不到该军团配置', true); return; }
 
-        editingScriptLegion = selectedLayerTab === 'script';
-        if (editingScriptLegion) {
-            scriptLegionSource = target.source ?? '';
-            scriptLegionShipId = target.shipId ?? null;
-        }
-
         currentEditingLegion = {
             legionName: target.legionName,
             formationMode: target.formationMode,
@@ -3646,9 +3571,7 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
         };
         selectedLayerKey = key;
         renderEditPanel(row);
-        showToast(editingScriptLegion
-            ? `已选中剧本军团【${target.legionName}】；修改三排/阵型/史料出处后点「保存剧本军团编制」`
-            : `已选中【${target.legionName}】；给【${row.generalName || row.factionName}】换军团请点「保存武将换军团」，修改编制请点「保存军团编制」`);
+        showToast(`已选中【${target.legionName}】；给【${row.generalName || row.factionName}】换军团请点「保存武将换军团」，修改编制请点「保存军团编制」`);
     });
 }
 
@@ -3657,21 +3580,19 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
     const gridEl = els.panelContent.querySelector('.le-legion-grid');
     if (!gridEl) return;
     const isCultureLayer = selectedLayerTab === 'culture';
-    const isScriptLayer = selectedLayerTab === 'script';
-    const hideEraTabs = isCultureLayer || isScriptLayer;
     const eraTabsEl = els.panelContent.querySelector('.le-era-tabs') as HTMLElement | null;
     if (eraTabsEl) {
-        eraTabsEl.style.display = hideEraTabs ? 'none' : 'flex';
+        eraTabsEl.style.display = isCultureLayer ? 'none' : 'flex';
     }
     const options = getLayerLegionOptions(selectedLayerTab, row.factionId);
     const visible = filterLegionOptionsByQuery(options)
-        .filter(o => hideEraTabs || legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
-    const isSubLayer = selectedLayerTab === 'sub' || selectedLayerTab === 'custom';   // 二级 / 三级都可删；一级 16 与四级剧本不可删
+        .filter(o => isCultureLayer || legionEraFilter === 'all' || getLegionEra(o.legionName, o.slots) === legionEraFilter);
+    const isSubLayer = selectedLayerTab !== 'culture';   // 二级 / 三级都算"非一级"（都可有时代筛选、都可删）
     const eraCount = (a: UnitAge) => options.filter(o => getLegionEra(o.legionName, o.slots) === a).length;
     gridEl.innerHTML = visible.map(opt => `
       <div class="le-legion-card ${isOptionActive(opt, currentEditingLegion) ? 'active' : ''}" data-key="${opt.key}" title="${opt.label}">
         <div class="lc-name">${opt.legionName}${isOptionActive(opt, currentEditingLegion) ? ' ✓' : ''}
-          ${isBase16CultureLegion(opt.legionName) || hideEraTabs ? '' : `<span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>`}
+          ${isBase16CultureLegion(opt.legionName) || isCultureLayer ? '' : `<span class="age-tag age-${getLegionEra(opt.legionName, opt.slots)}" style="font-size:9px;padding:1px 4px;margin-left:4px;">${AGE_LABEL[getLegionEra(opt.legionName, opt.slots)]}</span>`}
           ${opt.shipName ? `<span class="le-ship-tag" style="font-size:9px;padding:1px 5px;margin-left:4px;background:#182635;border:1px solid #284766;color:#7ec0ee;border-radius:3px;font-weight:normal;" title="套用战舰：${opt.shipName} (${opt.shipId})">🚢 ${opt.shipName}</span>` : ''}
           ${(() => {
             const lp = getLegionPower(opt.slots);
@@ -5542,31 +5463,6 @@ function startCanvasPreview(): void {
  *      而保存后又立刻 buildRows/renderTable 用这份旧内存重绘 —— 于是「选了阵型、点保存、
  *      阵型自己弹回去」。文件其实是对的，是界面拿旧数据把自己覆盖了。
  */
-/**
- * 保存一支四级剧本军团（scriptLegions.ts）：三排 + 阵型 + 战船 + 史料出处。
- * 只写军团自己那条记录；战场事件（attackerLegionName / defenderLegionName）按名引用，名字不改。
- */
-async function saveScriptLegion(): Promise<void> {
-    const legionName = currentEditingLegion?.legionName?.trim();
-    if (!legionName) { showToast('❌ 缺少剧本军团名', true); return; }
-    if (!legionName.endsWith('军团')) { showToast('❌ 剧本军团名必须以「军团」结尾', true); return; }
-    if (!scriptLegionSource.trim()) { showToast('❌ 剧本军团必须写史料出处', true); return; }
-    const slots = currentEditingLegion!.slots.map(s => ({ ...s }));
-    const formationMode = currentEditingLegion!.formationMode;
-    try {
-        const res = await fetch('/api/save-script-legion', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ legionName, formationMode, slots, shipId: scriptLegionShipId, source: scriptLegionSource }),
-        });
-        const json = await res.json();
-        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        showToast(`✅ 剧本军团【${legionName}】已保存（写入 scriptLegions.ts）`);
-    } catch (e: any) {
-        showToast('❌ 保存失败：' + (e?.message || e), true);
-    }
-}
-
 async function saveCultureComposition(culture: RegionType, legion: EditableLegion): Promise<void> {
     try {
         const legionName = legion.legionName?.trim() || getCultureLegionName(culture);
