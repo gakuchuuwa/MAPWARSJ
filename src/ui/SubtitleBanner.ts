@@ -91,27 +91,6 @@ export class SubtitleBanner {
                     text-align: justify;
                     text-justify: inter-ideograph;
                 }
-                #${BANNER_ID} .subtitle-header {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 12px;
-                    margin-bottom: 6px;
-                    font-size: 12px;
-                    font-weight: 700;
-                    letter-spacing: 4px;
-                    color: #dfb86c;
-                }
-                #${BANNER_ID} .subtitle-header::before,
-                #${BANNER_ID} .subtitle-header::after {
-                    content: '';
-                    height: 1px;
-                    width: 32px;
-                    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6));
-                }
-                #${BANNER_ID} .subtitle-header::after {
-                    background: linear-gradient(90deg, rgba(212,175,55,0.6), transparent);
-                }
                 #${BANNER_ID} .sub-content {
                     color: #f7eed8;
                     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95), 0 0 10px rgba(212, 175, 55, 0.12);
@@ -192,7 +171,7 @@ export class SubtitleBanner {
             // 单条模式
             el.classList.toggle('multiline', multiline);
             el.innerHTML = multiline
-                ? `<div class="subtitle-header">❖ 史实纪事 ❖</div><div class="sub-content">${chunks[0] || text}</div>`
+                ? `<div class="sub-content">${chunks[0] || text}</div>`
                 : (chunks[0] || text);
             void el.offsetWidth;
             el.style.opacity = '1';
@@ -219,7 +198,7 @@ export class SubtitleBanner {
             const holdMs = Math.max(2000, chunkTotalMs - FADE_MS);
 
             currentIndex++;
-            el.innerHTML = `<div class="subtitle-header">❖ 史实纪事 (${currentIndex}/${chunks.length}) ❖</div><div class="sub-content">${currentChunk}</div>`;
+            el.innerHTML = `<div class="sub-content">${currentChunk}</div>`;
             void el.offsetWidth;
 
             // 1. 优雅渐显

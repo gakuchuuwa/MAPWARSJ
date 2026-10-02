@@ -165,7 +165,10 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
      *      250ms 会叠到 8 层，糊成一片白噪。要调手感就改这一行的两个数。
      */
     arrow_fire: sounds('battle', ['naval_arrow_fire_1', 'naval_arrow_fire_2', 'naval_arrow_fire_3', 'naval_arrow_fire_4'], 0.48, 700),
-    land_contact: sound('battle', 'land_contact', 0.42, 0),
+    // 🔴 [2026-10-02 主人定]「战术模式下，有一个我自己做的战斗音效。请提高他的音量和播报一致，但是不要和播报重叠播放。」
+    // 陆战接触音景（主人 2026-08-19 提供 WAV，转 vorbis，66.9s）：两军接触起循环垫底、13 退场停。
+    // 音量与播报完全对齐 (getSpeechVolume())，播报期间平滑淡出避让（音量降为 0），杜绝重叠播放。
+    land_contact: sound('battle', 'land_contact', 1.0, 0),
     // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候请用城墙倒塌.WAV 音效」
     //    触发点唯一：Scene13WarLayer.collapseFrontWalls()（开战 30 秒保底随机塌一半城墙，
     //    全片唯一的塌墙处）→ 每场只响一次。
@@ -591,7 +594,7 @@ export class AudioManager {
         if (!baseAudio) return false;
 
         const audio = baseAudio.cloneNode(true) as HTMLAudioElement;
-        const targetVol = this.resolveVolume(definition);
+        const targetVol = this.resolveVolume(definition, key);
         const fadeInMs = opts?.fadeInMs ?? 0;
         audio.volume = fadeInMs > 0 ? 0 : targetVol;
         audio.currentTime = 0;
@@ -749,8 +752,13 @@ export class AudioManager {
     public setSpeechDucking(active: boolean): void {
         if (this.speechDucking === active) return;
         this.speechDucking = active;
-        // 平滑闪避：音效/音乐音量渐变到闪避目标，不生切
-        this.refreshLoopVolumes(FADE.duck);
+        // 🔴 [2026-10-02 主人定] 播报时平滑避让战斗音效：开启时 250ms 迅速淡出，结束时 500ms 平滑淡入
+        const fadeDuration = active ? 250 : 500;
+        this.refreshLoopVolumes(fadeDuration);
+    }
+
+    public isSpeechDucking(): boolean {
+        return this.speechDucking;
     }
 
     /** 播报有效音量（跟随主音量；TTS 感知偏轻，SPEECH_GAIN 补偿至与音效/音乐感知齐平） */
@@ -875,7 +883,7 @@ export class AudioManager {
                     this.warnMissingOnce(key, error);
                 });
             }
-            this.setVolume(audio, this.resolveVolume(definition), FADE.loop);
+            this.setVolume(audio, this.resolveVolume(definition, key), FADE.loop);
         });
     }
 
@@ -925,7 +933,7 @@ export class AudioManager {
                 if (audio && audio.paused) {
                     audio.volume = 0;
                     void audio.play().catch(() => {});
-                    this.setVolume(audio, this.resolveVolume(def), FADE.loop);
+                    this.setVolume(audio, this.resolveVolume(def, key), FADE.loop);
                 }
             }
         }
@@ -1126,7 +1134,7 @@ export class AudioManager {
             const definition = SOUND_DEFINITIONS[key];
             // 已停(未在期望中)的循环音不要被 duck 渐变重新拉响；停音自己的淡出各管各的
             if (!definition || !this.wantedLoops.has(key)) continue;
-            this.setVolume(audio, this.resolveVolume(definition), durationMs);
+            this.setVolume(audio, this.resolveVolume(definition, key), durationMs);
         }
         for (const [audio, definition] of this.activeOneShots.entries()) {
             if (audio.paused || audio.ended) continue;
@@ -1213,10 +1221,16 @@ export class AudioManager {
         }
     }
 
-    private resolveVolume(definition: SoundDefinition): number {
+    private resolveVolume(definition: SoundDefinition, key?: SoundKey): number {
+        if (key === 'land_contact') {
+            // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效音量提高到与播报一致 (1.0 * masterVolume)，
+            //    且不要和播报重叠播放（播报期间完全静音，播报结束后平滑淡入恢复）
+            if (this.speechDucking) return 0;
+            return this.getSpeechVolume();
+        }
         const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
         const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1);
-        return clamp01(base * this.duckFactor(definition.category));
+        return clamp01(base * this.duckFactor(definition.category, key));
     }
 
     /**
@@ -1246,7 +1260,7 @@ export class AudioManager {
         return { factor: 1, reason: '无' };
     }
 
-    private duckFactor(category: AudioCategory): number {
+    private duckFactor(category: AudioCategory, key?: SoundKey): number {
         if (category === 'bgm') {
             if (this.speechDucking) return DUCK.bgmUnderSpeech;
             if (this.wantedLoops.has('battle_loop') || this.wantedLoops.has('naval_battle_loop')) return DUCK.bgmUnderSfx;   // 战斗：0.30 原样
@@ -1259,6 +1273,8 @@ export class AudioManager {
             }
             return 1;
         }
+        // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效播报期间静音避让，不与播报重叠播放
+        if (key === 'land_contact' && this.speechDucking) return 0;
         // 音效层：ui / battle / feed——播报时静音，播报结束后恢复
         return this.speechDucking ? DUCK.sfxUnderSpeech : 1;
     }

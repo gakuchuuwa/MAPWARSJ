@@ -7986,6 +7986,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.25,
             "offsetX": -9,
             "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/julushi_kataniesi.png": {
+            "scale": 1.29,
+            "offsetX": 0,
+            "offsetY": 4
         }
     },
     "folderGuides": {
