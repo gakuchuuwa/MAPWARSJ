@@ -18,6 +18,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { WAR_TYPES } from '../src/data/WarTypes';
 
 export interface BattlefieldEventDraft {
     bfId: string;
@@ -448,6 +449,16 @@ export function saveBattlefieldEvent(
     }
     if (!(d.attackerTroops > 0) || !(d.defenderTroops > 0)) throw new Error('双方兵力必须 > 0');
     if (!d.attackerGeneralId || !d.defenderGeneralId) throw new Error('双方武将必须有');
+    // 🔴 [2026-10-02 主人定「主将队必须是英雄，不要看人名，看样式就行，**不能是船**」]
+    //    第 10 队是**陆上**主将队：舰船一律不许（判据 = armorTags 含 16，DE 战舰甲级；
+    //    四个「英雄·旗舰」兵模都是船）。编辑器那边已不给选，这里再拦一道，防别的调用方绕过。
+    for (const [key, label] of [[d.commanderUnit, '主将队'], [d.foeCommanderUnit, '对手主将队']] as const) {
+        if (!key) continue;
+        const wt = WAR_TYPES[key as keyof typeof WAR_TYPES];
+        if (wt?.armorTags?.includes(16)) {
+            throw new Error(`${label}选了舰船（${wt.name}）：第 10 队必须是陆上的英雄兵模，不能是船`);
+        }
+    }
 
     const bfFile = path.resolve(rootDir, 'src/data/Battlefields.ts');
     const scFile = path.resolve(rootDir, 'src/data/HistoricalEventScript.ts');
@@ -599,12 +610,10 @@ export function saveBattlefieldEvent(
             let p1Text = d.generalId
                 ? p1.text
                 : removeField(p1.text, hit.start, p1.objEnd, 'generalId');
-            // 邀约对白清空了同样真删字段（同一规矩）；删除后对象尾部下标变了，重新找本条对象的结尾
-            if (!invite) {
-                const objOpen = p1Text.indexOf('{', hit.start);
-                const objEnd = matchBraceEnd(p1Text, objOpen);
-                if (objEnd > 0) p1Text = removeField(p1Text, hit.start, objEnd, 'inviteText');
-            }
+            // 🔴 [2026-10-02 修] 这里原来还有一段「邀约对白清空了就删 inviteText 字段」——
+            //    `inviteText` 已按主人令彻底从全库与数据中物理删除（全剧 0 对话），
+            //    该段只剩一个未声明的 `invite`，**每次保存都会 ReferenceError 崩掉**，
+            //    编辑器保存链因此整条不通。已删。
             if (!d.startCityId) {
                 const objOpen = p1Text.indexOf('{', hit.start);
                 const objEnd = matchBraceEnd(p1Text, objOpen);
