@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/10/2 11:46:13（共 53 条）
+ * 生成时间：2026/10/2 12:30:30（共 51 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -16,13 +16,11 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_10.png": "/assets/AMERICA/yasuer_xipuliyanuo.png",
     "/assets/SPANISH/__暂留__SPANISH_11.png": "/assets/AMERICA/zhibuluotuo_enlike.png",
     "/assets/PERSIAN/__暂留__PERSIAN_04.png": "/assets/CENTRAL_ASIA/aba_shapuer.png",
-    "/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_01.png",
     "/assets/PERSIAN/__暂留__PERSIAN_05.png": "/assets/CENTRAL_ASIA/aqimeinide_daliushi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_02.png": "/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_06.png": "/assets/CENTRAL_ASIA/gelujiya_tamaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_07.png": "/assets/CENTRAL_ASIA/kawusi_haidaer.png",
     "/assets/PERSIAN/__暂留__PERSIAN_08.png": "/assets/CENTRAL_ASIA/keerjisi_bagelate.png",
-    "/assets/CENTRAL_ASIA/maer_d_bahelamuchubin.png": "/assets/CENTRAL_ASIA/__多余__CENTRAL_ASIA_02.png",
     "/assets/PERSIAN/__暂留__PERSIAN_09.png": "/assets/CENTRAL_ASIA/midi_daiaokaisi.png",
     "/assets/PERSIAN/__暂留__PERSIAN_10.png": "/assets/CENTRAL_ASIA/muer_mujier.png",
     "/assets/PERSIAN/__暂留__PERSIAN_11.png": "/assets/CENTRAL_ASIA/sashan_aerdaxier.png",

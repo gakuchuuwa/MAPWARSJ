@@ -49,6 +49,7 @@ import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
+import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';

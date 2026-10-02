@@ -77,6 +77,10 @@ export interface City {
     startYear?: number; // [NEW] Start Year (Visible from this year)
     endYear?: number;   // [NEW] End Year (Visible until this year)
     image?: string;     // [NEW] Image path injected by RegionSystem
+    /** 城寨显式固定形制（不填走六形制哈希）：square | round | octagon | rect | oval | trapezoid */
+    stockadeShape?: 'square' | 'round' | 'octagon' | 'rect' | 'oval' | 'trapezoid';
+    /** 城寨显式固定外围材质（不填按建筑风格匹配）：HARDWOOD | DARK | ARCHAIC | FENCE */
+    stockadeFence?: 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE';
 
     // [NEW] Advanced Gameplay Stats
     supply?: number;      // 补给值 (0-100)
@@ -173,6 +177,8 @@ export interface SiegeData {
         targetCityId?: string;
         speedMultiplier?: number;
     }>;
+    /** 战役战斗过程播报（进入战术模式后，等行军播报完毕再播放，只描述战斗过程、不说结果） */
+    battleBriefing?: string;
     destroyAfterBattle?: boolean; // 战后军队解散（通用标签，攻城战和野战均可用）
     /** 沙盒 AI/碰撞动态攻城：胜后空 chain → 交还 BT，不默认 garrison */
     isDynamic?: boolean;
@@ -218,6 +224,8 @@ export interface FieldBattleData {
     result?: 'attacker_win' | 'defender_win';
     title?: string;
     description?: string;
+    /** 战役战斗过程播报（进入战术模式后，等行军播报完毕再播放，只描述战斗过程、不说结果） */
+    battleBriefing?: string;
     autoEnterRTS?: boolean; // [NEW] Automatically enter RTS combat mode
     customDuration?: number; // [NEW] Director-controlled battle duration in seconds
     isNarrative?: boolean; // [NEW] 叙事模式（仅展示 UI，不创建军队实体）
@@ -322,6 +330,10 @@ export interface HistoricalEvent {
      * 攻城战的赶路播报。攻城战没有战场记录（战场只属于野战），播报存在事件本身；野战的播报仍在战场记录上。
      */
     briefing?: string;
+    /**
+     * 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
+     */
+    battleBriefing?: string;
 }
 
 

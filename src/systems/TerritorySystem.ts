@@ -515,7 +515,13 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
  *     **战略地图、攻城战场（Scene13WarLayer）、评估页三处共用同一张表**。
  *  🔴 [2026-10-02 主人令「重设计下城寨的圆城，八角，椭圆」] 曲线三形的圈放大到与直边形同档
  *     （圆城 144×84 / 八角 130×76 / 椭圆 149×57），院内建筑全在栏内（余量 11/9/7px）。 */
-function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: string): string {
+function buildDeStockadeStackHtml(
+    baseSize: number,
+    cityId: string,
+    style: string,
+    explicitShape?: 'square' | 'round' | 'octagon' | 'rect' | 'oval' | 'trapezoid',
+    explicitFence?: 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE'
+): string {
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
     //    改前只有大城/中城/小城/险要四处有 `style === 'YURT'` 分支，**唯独城寨漏了** ——
     //    于是漠北蒙古的城寨掉进通用池（大庄园/定居点/棚屋 A~G/哨所），混着抽 9 个，不是蒙古包。
@@ -528,23 +534,27 @@ function buildDeStockadeStackHtml(baseSize: number, cityId: string, style: strin
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
     // 🔴 [2026-10-02 主人定] 材质按文明历史风格匹配，形制六选一：
-    // 材质：由 getStockadeFenceSetByStyle(style) 决定（硬木/原木/平切/篱笆 四大套系）
-    // 形制（0: 正方标准, 1: 圆城, 2: 八角, 3: 矩形围栏, 4: 椭圆山脊堡, 5: 梯形隘口寨）
-    // 🔴 [2026-10-02 主人令「建立一个自助编辑器……设计好后可以保存样式」]
-    //   玩家在「围栏编辑器」(`/stockade-wall-editor.html`) 里设计并存盘的样式，一旦**指派**给某座据点，
-    //   这座城寨就直接用**玩家的设计**（不再走六形制哈希，也不随机镜像 —— 所见即所得）；
-    //   坐标按 baseSize 等比缩放（样式一律以 baseSizeRef = 100 存）。见 `src/data/stockadeWallStyles.ts`。
-    // 🔴 [2026-10-02 主人「我要改的是这一类，不是这一城」] 自定义样式**按分类取**：建筑风格 × 形制（`ASIA|round` 之类），不再按据点 id。
+    // 若据点显式固定了形制/材质，则优先使用显式指定的形制与材质；否则按哈希与建筑风格回退。
     const hashShape = deHashString(cityId + '|stockade_wall_shape') % 6;
+    const baseShapeIdx = (explicitShape && STOCKADE_SHAPE_KEYS.includes(explicitShape))
+        ? STOCKADE_SHAPE_KEYS.indexOf(explicitShape)
+        : hashShape;
+
+    // 材质：显式指定 或 由 getStockadeFenceSetByStyle(style) 决定（硬木/原木/平切/篱笆 四大套系）
+    const builtinFence = (explicitFence && STOCKADE_FENCE_SETS[explicitFence])
+        ? STOCKADE_FENCE_SETS[explicitFence]
+        : getStockadeFenceSetByStyle(style);
+
     // 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
     //   弧形三形**只许配密编荆篱**（只有它有 L 形转角件）；本城若掷到弧形三形而材质不是荆篱 → 换成直边形制
     //   （圆城→正方 · 八角→矩形 · 椭圆→梯形）。落定函数在 cityWallShared，评估页 / 编辑器共用同一份。
-    const builtinFence = getStockadeFenceSetByStyle(style);
-    const shapeIdx = STOCKADE_SHAPE_KEYS.indexOf(resolveStockadeShapeByFence(STOCKADE_SHAPE_KEYS[hashShape], builtinFence.key));
-    const customStyle = pickStockadeWallStyleByCategory(style, shapeIdx < 0 ? hashShape : shapeIdx);
+    const resolvedShapeKey = resolveStockadeShapeByFence(STOCKADE_SHAPE_KEYS[baseShapeIdx], builtinFence.key);
+    const shapeIdx = STOCKADE_SHAPE_KEYS.indexOf(resolvedShapeKey);
+
+    const customStyle = pickStockadeWallStyleByCategory(style, shapeIdx < 0 ? baseShapeIdx : shapeIdx);
     const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : builtinFence;
     const wallAnchors = fenceSet.anchors;
-    const stockadeShape = shapeIdx < 0 ? hashShape : shapeIdx;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
+    const stockadeShape = shapeIdx < 0 ? baseShapeIdx : shapeIdx;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
 
     const isRect = stockadeShape === 3;
     const isOval = stockadeShape === 4;
@@ -2236,7 +2246,7 @@ export class TerritorySystem {
                                           //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
                                           ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
                                           : city.type === 'stockade'
-                                              ? buildDeStockadeStackHtml(baseSize, city.id, deStyle)
+                                              ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
                                               : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle))
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="

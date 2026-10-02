@@ -461,6 +461,13 @@ export class SpeechAnnouncer {
     });
   }
 
+  /**
+   * 🔴 [2026-10-02 主人定] 判断当前是否有 S 级播报（行军解说/重要背景）正在进行
+   */
+  public isSTierBusy(): boolean {
+    return Date.now() < this.sTierBusyUntilMs;
+  }
+
   public announceSiegeStart(opts: {
     attackerFactionId: string;
     cityName: string;
