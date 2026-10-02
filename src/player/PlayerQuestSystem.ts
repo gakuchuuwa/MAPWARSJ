@@ -679,6 +679,56 @@ export class PlayerQuestSystem {
         };
     }
 
+    /** 末场战后班师这一路的待办（赶赴战场时备好，战毕再走） */
+    private pendingEpilogue: { battlefieldId: string; pre: string; text: string; dest: City; title: string } | null = null;
+    /** 班师途中：arrived = 军团已到终点，等旁白念完再收尾 */
+    private epilogue: { title: string; arrived: boolean } | null = null;
+
+    /**
+     * 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 这一场的路表若以「战场 → 某城」收尾，
+     * 那一路是**战后班师**：旁白最后一段拆出来留到战毕念，赶赴战场的路上只念前面各段。
+     */
+    private epilogueOf(
+        scriptEv: unknown, text: string,
+    ): { pre: string; text: string; dest: City; title: string } | null {
+        const n = HISTORICAL_EVENT_SCRIPT.indexOf(scriptEv as never);
+        if (n < 0) return null;
+        const seg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === n + 1);
+        const last = seg?.roads[seg.roads.length - 1];
+        if (!seg || !last || !last.from.startsWith('⚔')) return null;
+        const dest = this.deps.cityManager.getCities().find((c) => c.name === last.to);
+        if (!dest) return null;
+        const parts = text.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+        if (parts.length < 2) return null;
+        const tail = parts.pop() as string;
+        return { pre: parts.join('\n\n'), text: tail, dest, title: `班师${dest.name}` };
+    }
+
+    /** 战毕：军团沿路网班师（终局落点），途中念最后一段旁白 */
+    private startEpilogue(epi: { text: string; dest: City; title: string }): void {
+        const hostId = this.deps.hero.getHostLegionId();
+        const host = hostId ? this.deps.legionManager.getLegionById(hostId) : null;
+        if (!host || host.isDestroyed || !roadRegistry.isInitialized()) {
+            gameLog('expedition', `[玩家] 班师${epi.dest.name}：军团不在场，略过`);
+            return;
+        }
+        const from = host.getPosition();
+        const target = { lat: epi.dest.latitude, lng: epi.dest.longitude };
+        const path = findPathFromPoint(from, target);
+        if (!path || path.length < 2) {
+            gameLog('expedition', `[玩家] 班师${epi.dest.name}：无路可达`);
+            return;
+        }
+        const marchPath = joinStartToRoadPolyline(from, path, GameConfig.ROAD.JOIN_EPS);
+        this.epilogue = { title: epi.title, arrived: false };
+        host.setTargetCity(null);
+        host.setOnArriveCallback(() => { if (this.epilogue) this.epilogue.arrived = true; });
+        host.moveAlongPath(marchPath.slice(1).map((p) => ({ lat: p.lat, lng: p.lng, sea: (p as { sea?: boolean }).sea })));
+        this.deps.hero.setTravelPointLabel(epi.title);
+        this.startJourneyBriefing(null, epi.title, epi.text, []);
+        gameLog('expedition', `[玩家] 战毕班师：军团自战场开赴【${epi.dest.name}】`);
+    }
+
     /** 玩家此刻随的这位武将，打的是不是这个战场（是 → 放行「在军中也能开打」） */
     private isFollowingGeneralEvent(bfId: string): boolean {
         const q = this.quest;
@@ -831,9 +881,14 @@ export class PlayerQuestSystem {
         //    那几场全退回「起步一口气念完」（按路标分段白做了）。现按 bf 优先、事件兜底。
         const bfSite = findEventSite(ev.battlefieldId) ?? null;
         const briefText = (bfSite as any)?.briefing ?? scriptEv?.briefing ?? undefined;
+        // 🔴 [2026-10-03 主人报障「亚历山大剧本没有最后一路：科塞亚 ➜ 巴比伦」] 末场战后还有一路班师：
+        //    旁白最后一段（挂在战场节点之后）不在赶赴战场的路上念，留到战毕后军团真走这一路时再念。
+        const epi = scriptEv ? this.epilogueOf(scriptEv, briefText ?? '') : null;
+        this.pendingEpilogue = epi ? { battlefieldId: ev.battlefieldId, ...epi } : null;
         this.startJourneyBriefing(
             bfSite, ev.title, scriptEv?.briefing ?? undefined,
-            this.scriptSegmentStarts(scriptEv ?? null, briefText),
+            this.scriptSegmentStarts(scriptEv ?? null, epi ? epi.pre : briefText, !!epi),
+            epi?.pre,
         );
         if (!continuation) {
             gameLog('expedition',
@@ -1037,6 +1092,11 @@ export class PlayerQuestSystem {
         this.pendingEventOptions = this.pendingEventOptions.filter((id) => id !== q.generalId);
         this.deps.hero.addMerit(500);
         gameLog('expedition', `[玩家] 武将史实战役战毕：【${battleTitle}】`);
+        const epi = this.pendingEpilogue;
+        if (epi && epi.battlefieldId === bfId) {
+            this.pendingEpilogue = null;
+            this.startEpilogue(epi);
+        }
     }
 
     /** 军团正在奔赴的战场坐标（抵达判定与失败重试用；null = 没在赶赴战场） */
@@ -1474,8 +1534,9 @@ export class PlayerQuestSystem {
     private startJourneyBriefing(
         bf: BattlefieldData | null, titleOverride?: string, textOverride?: string,
         segmentStarts?: Array<{ lat: number; lng: number; name: string }>,
+        forcedText?: string,
     ): void {
-        const text = (bf?.briefing ?? textOverride ?? '').trim();
+        const text = (forcedText ?? bf?.briefing ?? textOverride ?? '').trim();
         if (!text) return;
         const key = bf?.id ?? `event:${titleOverride ?? ''}`;
         if (this.briefedBattlefields.has(key)) return;
@@ -1755,7 +1816,7 @@ export class PlayerQuestSystem {
      *      含战场节点（`⚔波斯门` 等从 `BATTLEFIELDS` 查坐标），一路一钩、走到哪讲到哪。
      * 找不齐 → 数组短一位 → 逐段口径自动不启用（回落成起步一口气念）。
      */
-    private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string): Array<{ lat: number; lng: number; name: string }> {
+    private scriptSegmentStarts(ev: { title?: string; briefing?: string } | null, text?: string, hasEpilogue = false): Array<{ lat: number; lng: number; name: string }> {
         if (!ev?.title) return [];
         const cities = this.deps.cityManager.getCities();
         // 🔴 [2026-09-28 主人令「一路一句」复查 · 真机实测]「挂点名要两种写法都认」；
@@ -1805,7 +1866,7 @@ export class PlayerQuestSystem {
         const seg = SCRIPT_ROAD_SEGMENTS.find((s) => s.scene === n + 1);
         if (!seg) return [];
         const out: Array<{ lat: number; lng: number; name: string }> = [];
-        for (const r of seg.roads.slice(0, -1)) {
+        for (const r of seg.roads.slice(0, hasEpilogue ? -2 : -1)) {
             const c = findByName(r.to);
             if (c) out.push({ lat: c.latitude, lng: c.longitude, name: c.name });
         }
@@ -1854,7 +1915,14 @@ export class PlayerQuestSystem {
         // 🔴 [2026-09-23 主人定]「只有等剧本都结束后，自动切换到乱斗模式。」
         //    剧本都结束 = 战场表里没有未打的战场（战场在战毕那一刻才标记打过，故此时已无战役在打）。
         //    切过去之后募兵（含推迟的开局首发）与 AI 寻敌随之恢复（二者都看 autoPlan）。
-        if (this.deps.hero.autoPlan === 'script' && !this.quest
+        // 🔴 [2026-10-03] 班师途中：到了终点还要等最后一段旁白念完才收尾、才转乱斗
+        if (this.epilogue) {
+            if (this.epilogue.arrived && !this.briefingBusy && this.briefingPending === null) {
+                this.deps.hero.setTravelPointLabel(null);
+                this.epilogue = null;
+            }
+        }
+        if (this.deps.hero.autoPlan === 'script' && !this.quest && !this.epilogue
             && this.findNextAvailableBattlefield() === null) {
             this.deps.hero.setAutoPlan('melee');
             this.deps.notify('📜 历史剧本已全部演完，转入乱斗模式', undefined, true);
