@@ -1727,6 +1727,25 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     elite_scythian_horse_archer: 7.5,
 };
 const DEFAULT_SHOOT_PHASE = 4;
+/**
+ * 开火点高度（锚点**上方**的屏幕像素）。默认值 `UNIT_PX * 0.45` = **步兵胸口高度**，
+ * 只对身高一个 UNIT_PX（64px）的步行兵成立；塔类攻城器械照它射出 = 弩箭从**塔身下段**（车轮上方）飞出来。
+ * 🔴 [2026-10-02 主人报障「战术模式攻城塔的攻击武器是弩箭，但是射出的位置不对」后查证]
+ *   DE 贴图 `_meta.json` 实测：SIEGTWR / ANTIQUITY_SIEGETOWER / HELEPOLIS 的画面高 fh=160~176、
+ *   hotspot hy=140~152 —— 塔比士兵（fh≈72）高出一倍多，锚点却在塔基。
+ *   逐帧像素 + 十字线叠图实测（scratch/_tower_inspect）：
+ *     · 攻城塔（SIEGTWR / 古典攻城塔，两套贴图同形）：**塔顶平台地板**在锚点上方 ≈110px；
+ *     · 赫勒波利斯：塔顶弩机只在**发射帧**（attack 第 20 帧；helepolis shootPhase 3.73 × 45 帧）露出，
+ *       位于锚点上方 ≈138px（另在朝向前方偏 ≈29px 处，此处不取：开火点须留在塔之轴线上，
+ *       否则 8 向贴图一切换，弹道起点就在塔顶左右跳）。
+ *   三者 sz 均为 1（与士兵同尺度），故 1 贴图像素 = 1 屏幕像素；乘 sz 以备日后改尺度。
+ *   不在表里的兵种（含象兵/战车等）**一律维持原值**，不动。
+ */
+const MUZZLE_LIFT_BY_TYPE: Record<string, number> = {
+    siege_tower: 110,
+    antiquity_siege_tower: 110,
+    helepolis: 138,
+};
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
 /** 火枪弹丸渲染放大：DE 原弹丸仅 4×8 像素（渲染 9px 肉眼不可见），放大到可见（游戏合理，主人 2026-08-20 定）。 */
@@ -3377,6 +3396,8 @@ export interface Scene13WarInit {
     defenderEliteName?: string | null;
     /** [2026-09-20 主人需求] 关隘城门大山自定义配置 */
     passMountainConfig?: PassMountainConfig;
+    /** [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果） */
+    battleBriefing?: string | null;
 }
 
 export interface PassMountainConfig {
@@ -3473,6 +3494,8 @@ export class Scene13WarLayer {
     private deferredAssetLoads: Array<() => void> = [];
     private coveredMap: { element: HTMLElement; visibility: string; priority: string } | null = null;
     private decorHasTerrain = false;
+    /** 🔴 [2026-10-02 主人定] 等待行军播报完毕再播放战役战斗播报的轮询计时器 */
+    private battleBriefingTimer: any = null;
 
     private restoreStrategyMap(): void {
         const saved = this.coveredMap;
@@ -4311,6 +4334,35 @@ export class Scene13WarLayer {
             // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
+
+            // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
+            if (init.battleBriefing) {
+                const briefingText = init.battleBriefing;
+                const triggerBattleBriefing = () => {
+                    if (!this.active) return;
+                    console.log('[Scene13WarLayer] ⚔️ 播放战役战斗播报:', briefingText.slice(0, 30) + '...');
+                    speechAnnouncer.announceBriefing(briefingText);
+                };
+
+                if (speechAnnouncer.isSTierBusy()) {
+                    console.log('[Scene13WarLayer] 🎙️ 行军播报正在进行，等待结束后播放战役播报...');
+                    if (this.battleBriefingTimer) clearInterval(this.battleBriefingTimer);
+                    this.battleBriefingTimer = setInterval(() => {
+                        if (!this.active) {
+                            clearInterval(this.battleBriefingTimer);
+                            this.battleBriefingTimer = null;
+                            return;
+                        }
+                        if (!speechAnnouncer.isSTierBusy()) {
+                            clearInterval(this.battleBriefingTimer);
+                            this.battleBriefingTimer = null;
+                            triggerBattleBriefing();
+                        }
+                    }, 300);
+                } else {
+                    triggerBattleBriefing();
+                }
+            }
         } catch (e) {
             // 🔴 初始化失败 → 立即停演并解冻（不让 active=true + spawns 残缺 → 战斗永不结束、
             //    跟随军团永远不动）。走 forceResultByRatio 判负通道：它调 onDecision →
@@ -4682,6 +4734,10 @@ export class Scene13WarLayer {
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
         this.lingering = false;
+        if (this.battleBriefingTimer) {
+            clearInterval(this.battleBriefingTimer);
+            this.battleBriefingTimer = null;
+        }
         // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局与大地图面板
         const game = (window as any).game;
         game?.combatUI?.applyScene13Layout?.(false);
@@ -7829,6 +7885,11 @@ export class Scene13WarLayer {
                         //    近战死绝、land_contact 淡出之后唯一还在动的那批兵，原先完全静音。
                         //    限流靠 AudioManager 的 cooldown（arrow_fire 700ms），这里不必自己数人。
                         if (!m.siegeW && !isFirearm) audioManager.play('arrow_fire');
+                        // 开火点高度：步兵 = 胸口（UNIT_PX*0.45）；塔类攻城器械 = 塔顶弩机（见表头 MUZZLE_LIFT_BY_TYPE）。
+                        const muzzleOver = MUZZLE_LIFT_BY_TYPE[m.key];
+                        const muzzleLift = muzzleOver !== undefined
+                            ? muzzleOver * (WAR_TYPES[m.key]?.sz ?? 1)
+                            : UNIT_PX * 0.45;
                         for (let v = 0; v < volley; v++) {
                             // DE 胡斯战车每轮 = 1 发专属主弹 + 5 发 p_shot 次级弹。
                             const volleyProj = isHussiteVolley && v > 0 ? 'PROJ_GUNPOWDER' : proj;
@@ -7847,7 +7908,7 @@ export class Scene13WarLayer {
                             const ndx = (ax / ad) * c - (ay / ad) * s;
                             const ndy = (ax / ad) * s + (ay / ad) * c;
                             this.arrows.push({
-                                x: m.x, y: m.y - UNIT_PX * 0.45,   // 从胸口高度射出，不是脚底
+                                x: m.x, y: m.y - muzzleLift,   // 开火点高度：步兵胸口 / 塔类塔顶弩机（见 muzzleLift）
                                 dx: ndx, dy: ndy, len: ad,
                                 t: 0, dur: exactSpeed ? baseDur : baseDur + Math.random() * 0.05, f: m.f,
                                 proj: volleyProj,

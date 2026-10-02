@@ -14,6 +14,7 @@ import {
     setGeneralSkillLegionManager,
     setOnTacticalSkillTriggered,
 } from '../../combat/GeneralSkillCombat';
+import { HISTORICAL_EVENT_SCRIPT } from '../../data/HistoricalEventScript';
 
 /** [2026-08-09 镜头定稿] 取攻击方将领编队实时位置作镜头落点（渲染中心 + 推进偏移），查不到退回逻辑坐标。
  * 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团（跟拍军团将领编队）——禁止改成跟战场中点/中心点。 */
@@ -112,6 +113,25 @@ function resolveUnitEliteName(unit: {
 }
 
 /**
+ * 🔴 [2026-10-02 主人定] 从历史事件表精准反查战役战斗过程播报（只描述战斗过程、不说结果）
+ */
+function resolveHistoricalBattleBriefing(title?: string | null, explicit?: string | null): string | null {
+    if (explicit) return explicit;
+    if (!title) return null;
+    const cleanTitle = title.replace(/^公元前\d+年\s*/, '').replace(/^前\d+年-/, '').replace(/^亚历山大东征/, '').trim();
+    for (const ev of HISTORICAL_EVENT_SCRIPT) {
+        if (ev.battleBriefing) {
+            const evTitle = (ev.title ?? '').trim();
+            const subTitle = (ev.fieldBattleData?.title ?? ev.siegeData?.title ?? '').trim();
+            if (cleanTitle === evTitle || cleanTitle === subTitle || title.includes(subTitle) || (subTitle && cleanTitle.includes(subTitle))) {
+                return ev.battleBriefing;
+            }
+        }
+    }
+    return null;
+}
+
+/**
  * [2026-08-11 13 v2] 启动出兵口互攻演出（Scene13WarLayer）。
  * 攻守双方文化区 + 兵力 + 势力 id 传给演出层（势力 id 用于势力本色染色）；
  * 演出判负 → onDecision 回调写回引擎。
@@ -131,6 +151,8 @@ function startScene13War(
     followedOnDefenderSide?: boolean,
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`），战斗面板大标题直接用它 */
     title?: string | null,
+    /** 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放） */
+    battleBriefing?: string | null,
 ): void {
     // 🔴 [2026-08-19] 兜底不许再用「攻方 CENTRAL / 守方 STEPPE」这种凭空指定的常量：
     //    那等于让查不到文化区的守方平白换一套科技树（叛军城曾因此全部按草原算）。
@@ -155,6 +177,7 @@ function startScene13War(
     if (!defenderEliteName && defenderCityId) {
         defenderEliteName = getCityEliteLegionName(defenderCityId);
     }
+    const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
         attackerRegion: attRegion,
@@ -190,6 +213,8 @@ function startScene13War(
         followedOnDefenderSide,
         // [2026-09-12] 剧本战斗标题（fieldBattleData.title），战斗面板大标题直接用它
         title,
+        // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放）
+        battleBriefing: resolvedBattleBriefing,
         // [军事科技] 年份 getter：战斗跨年时演出层据此刷新科技分表 + 播报新解锁
         getYear: () => app.timeSystem.getYear(),
     });
@@ -270,7 +295,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
                 isNavalVsFortress ? 'siege' : battle.type, isNavalBattle,
-                battle.defender.id === followedId);
+                battle.defender.id === followedId,
+                (battle as any).title ?? (battle as any).customTitle ?? null,
+                (battle as any).battleBriefing ?? (battle as any).siegeData?.battleBriefing ?? (battle as any).fieldBattleData?.battleBriefing ?? null);
             app.battleScene?.enter(t.id);
         }
     };
@@ -355,7 +382,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         isNavalVsFortress ? 'siege' : battleField.type,
                         isNavalBattle,
                         defenders.some((u) => u.id === followedId),
-                        title
+                        title,
+                        (battleField as any)?.battleBriefing ?? null
                     );
                 }
             }

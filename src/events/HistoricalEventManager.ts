@@ -297,7 +297,7 @@ export class HistoricalEventManager {
                 // 🔴 [2026-09-17] 配对判据统一到 matchesBattlefield（同年 + 坐标接近）。
                 //    改之前这里不看年份，同一地点第二场战役必配错；且容差与编辑器不一致。见该函数长注释。
                 if (matchesBattlefield(bf, ev.year, fb.location)) {
-                    return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates, scriptGeneralId: ev.generalId };
+                    return { ...fb, type: 'field_battle', cityUpdates: ev.cityUpdates, scriptGeneralId: ev.generalId, battleBriefing: ev.battleBriefing ?? fb.battleBriefing };
                 }
             } else if (ev.type === 'siege') {
                 const sd = ev.siegeData;
@@ -327,6 +327,7 @@ export class HistoricalEventManager {
                         scriptGeneralId: ev.generalId,
                         result: sd.result,
                         autoEnterRTS: sd.autoEnterRTS,
+                        battleBriefing: ev.battleBriefing ?? sd.battleBriefing,
                     };
                 }
                 if (!sd.defenderCityId) continue;
@@ -353,6 +354,7 @@ export class HistoricalEventManager {
                         scriptGeneralId: ev.generalId,
                         result: sd.result,
                         autoEnterRTS: sd.autoEnterRTS,
+                        battleBriefing: ev.battleBriefing ?? sd.battleBriefing,
                     };
                 }
             }
