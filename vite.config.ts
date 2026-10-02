@@ -1600,7 +1600,7 @@ export default defineConfig({
                             markLegionSaveWrite();
                             const p = path.resolve(__dirname, 'src/data/scriptLegions.ts');
                             const out = serverReplaceScriptLegionEntry(
-                                safeReadFileSync(p), legionName, data.slots, data.formationMode, data.shipId, data.source,
+                                safeReadFileSync(p), legionName, data.slots, data.formationMode, data.shipId, data.commanderUnit, data.source,
                             );
                             if (out == null) throw new Error('剧本军团【' + legionName + '】不在 scriptLegions.ts 里');
                             safeWriteFileSync(p, out);
@@ -3235,13 +3235,42 @@ function serverReplaceScriptLegionSource(text: string, at: number, source: strin
     return text.slice(0, srcAt + "source: '".length) + escaped + "'," + text.slice(closeAt);
 }
 
-/** 保存一支剧本军团（scriptLegions.ts）：阵型 + 三排 + 战船 + 史料出处。未命中返回 null */
+/** 替换一支剧本军团（scriptLegions.ts）的主队兵模 commanderUnit；没有该行时新增、清空时删除整行。未命中返回原文本 */
+function serverReplaceScriptLegionCommander(text: string, at: number, commanderUnit: string | null | undefined): string {
+    const nextName = text.indexOf("name: '", at + 1);
+    const cmdAt = text.indexOf("commanderUnit: '", at);
+    const hasCmd = cmdAt >= 0 && (nextName < 0 || cmdAt < nextName);
+    if (commanderUnit) {
+        if (hasCmd) {
+            const valueStart = cmdAt + "commanderUnit: '".length;
+            const valueEnd = text.indexOf("'", valueStart);
+            if (valueEnd < 0) return text;
+            return text.slice(0, valueStart) + commanderUnit + text.slice(valueEnd);
+        }
+        // 没有 commanderUnit 行 → 在 source 前插入一行（缩进 8 空格，CRLF）
+        const srcAt = text.indexOf("source: '", at);
+        if (srcAt < 0) return text;
+        const lineStart = text.lastIndexOf('\n', srcAt) + 1;
+        return text.slice(0, lineStart) + "        commanderUnit: '" + commanderUnit + "',\r\n" + text.slice(lineStart);
+    }
+    if (hasCmd) {
+        // 清空 → 删除整行 commanderUnit
+        const lineStart = text.lastIndexOf('\n', cmdAt) + 1;
+        const lineEnd = text.indexOf('\n', cmdAt);
+        if (lineEnd < 0) return text;
+        return text.slice(0, lineStart) + text.slice(lineEnd + 1);
+    }
+    return text;
+}
+
+/** 保存一支剧本军团（scriptLegions.ts）：阵型 + 三排 + 战船 + 主队兵模 + 史料出处。未命中返回 null */
 function serverReplaceScriptLegionEntry(
     text: string,
     legionName: string,
     slots: any[],
     mode: string,
     shipId: string | null | undefined,
+    commanderUnit: string | null | undefined,
     source: string,
 ): string | null {
     const at = text.indexOf("name: '" + legionName + "'");
@@ -3260,6 +3289,8 @@ function serverReplaceScriptLegionEntry(
     }
     // 3. 战船
     out = serverReplaceScriptLegionShip(out, at, shipId);
+    // 3.5 主队兵模（第 10 队英雄）
+    out = serverReplaceScriptLegionCommander(out, at, commanderUnit);
     // 4. 史料出处
     out = serverReplaceScriptLegionSource(out, at, source);
     return out;

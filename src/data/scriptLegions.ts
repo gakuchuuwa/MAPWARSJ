@@ -56,7 +56,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'thracian_peltast', count: 4 },          // 前排远程：色雷斯标枪手（素材样貌：持新月盾、投枪的色雷斯轻兵）
             { type: 'rhomphaia_warrior', count: 3 },         // 中排步兵：色雷斯长刃斩手（素材样貌：双手长刃的色雷斯步兵）
             { type: 'antiquity_light_cavalry', count: 2 },   // 后排骑兵：古典轻骑兵（素材样貌：无盔饰的部族轻骑）
-        ],
+        ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    色雷斯人 —— 骑马、戴盔、披风、持剑的色雷斯骑将（同 §二.5 同代同文化）
+        commanderUnit: 'hero_thracian_chieftain',
         source: '英文维基百科 Balkan campaign of Alexander the Great：前335年自治的色雷斯人据守海姆斯山脊、以大车为垒；'
             + '英文维基百科 Thracian warfare / Peltast：色雷斯人以轻装标枪手（佩尔塔斯特）著称，近战用长刃（罗姆法亚），山地作战骑兵为少。'
             + '比例无史载确数 → 按「标枪手最多、步兵次之、骑兵最少」取雁行阵 前远程4 / 中步兵3 / 后骑兵2（合理推定）。',
@@ -71,7 +73,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'hoplite', count: 4 },                   // 前排步兵：持盾长矛重步兵（素材样貌：希腊式头盔圆盾——伊利里亚武士同用此式盔盾）
             { type: 'elite_peltast', count: 3 },             // 中排远程：标枪手（素材样貌：持投枪与轻盾的巴尔干轻兵）
             { type: 'antiquity_light_cavalry', count: 2 },   // 后排骑兵：古典轻骑兵（部族轻骑）
-        ],
+        ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    伊利里亚与色雷斯同为巴尔干相邻部族，库中无伊利里亚专属英雄兵模（同 §二.5）
+        commanderUnit: 'hero_thracian_chieftain',
         source: '英文维基百科 Siege of Pelium：前335年克莱图斯据佩利昂、与陶兰提王格劳基亚斯合兵共七千人抗亚历山大，'
             + '先据山口高地迫退马其顿军团，后被夜袭击溃。英文维基百科 Illyrians（Warfare）：伊利里亚步兵持矛盾，兼用标枪与投石，骑兵不多。'
             + '比例无确数 → 按「步兵最多、远程次之、骑兵最少」取雁行阵 前步兵4 / 中远程3 / 后骑兵2（合理推定）。',
@@ -91,7 +95,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'sacred_band', count: 4 },               // 前排步兵：希腊底比斯圣队高级（素材样貌：希腊重装步兵、圆盾长矛）
             { type: 'greek_noble_cavalry', count: 3 },       // 中排骑兵：希腊贵族骑兵（素材样貌：希腊盔胸甲骑兵——维奥蒂亚骑兵）
             { type: 'gastraphetes', count: 2 },              // 后排远程：希腊腹弩手（素材样貌：希腊式轻装弩手）
-        ],
+        ],        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    持圆盾长矛的希腊重装步兵将领样（底比斯守城主将为重装步兵统领）
+        commanderUnit: 'hero_brasidas',
         source: '英文维基百科 Battle of Thebes：前335年底比斯起兵反马其顿，守方一万五千，城破后战死六千、被俘三万；'
             + '英文维基百科 Sacred Band of Thebes：圣队前338年于喀罗尼亚覆灭 —— **番号覆灭，样式不变**：'
             + '按主人 2026-10-02 口径「看样式不看名字」，前排取圣队兵模（与三级「古典时代希腊军团」前排同款）。'
@@ -110,6 +116,8 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    ⚠️ 剧本期这一处才是**真正生效**的那一处：`getCultureNavalShip()` 第 1 优先就是「军团自己绑的船」，
         //    剧本里马其顿军团名 =「马其顿军团」（不是势力挂的「古典时代马其顿军团」），所以两处都得写。
         shipId: 'HERO_THEMISTOCLES',
+        // 🔴 [2026-10-02 主人「五兵编制」] 主队（第 10 队）= 亚历山大亲统（hero_mounted_alexander，骑马亚历山大）
+        commanderUnit: 'hero_mounted_alexander',
         source: '维基百科 Ancient Macedonian army「Battle tactics」：自前358年伊里吉翁河谷之战至前331年高加米拉，'
             + '马其顿标准战法为斜线推进、由伙伴骑兵担任矛头发动决定性冲击、方阵随后跟进；「Light infantry / Archers」：'
             + '克里特弓箭手与轻装兵掩护主力。三排人数按兵种比例：英文维基百科 Battle of the Granicus 信息框'
@@ -124,7 +132,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'mercenary_hoplite', count: 3 },      // 中排步兵：列于其后高地，有数千希腊雇佣兵
             { type: 'immortal_ranged', count: 2 },        // 后排远程：素材样貌为波斯弓手（兵名带长生军，按样貌不按名字）
         ],
-        shipId: 'BIREME',
+        shipId: 'BIREME',        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    🔴 [2026-10-02 主人令「hero_datis 可以给其他军团」] 骑马执长矛的**古典波斯统帅**样（英雄·达提斯，前 490 年波斯名将，同代同族）
+        commanderUnit: 'hero_datis',
         source: '英文维基百科 Battle of the Granicus：波斯骑兵沿东岸列阵在前，步兵列于其后的高地，含四五千希腊雇佣兵；'
             + '信息框骑兵10000至20000、步兵4000至20000，取中值骑兵15000、步兵12000，比例约4比3，取雁行阵 前骑兵4 / 中步兵3 / 后远程2。'
             + '远程此役无明载，按阿契美尼德军团以弓手著称的通行说法补一排。',
@@ -139,6 +149,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'immortal_ranged', count: 3 },    // 后排远程：大量轻步兵、弓手（素材样貌：波斯弓手）
         ],
         shipId: 'BIREME',
+        // 🔴 [2026-10-02 主人令「换」] 主队（第 10 队）＝ 波斯王的御驾战车：
+        //    大流士三世在伊苏斯、高加米拉皆乘战车督战（波斯军另有卷镰战车）—— 取 hero_tsarkonstantin。
+        commanderUnit: 'hero_tsarkonstantin',
         source: '英文维基百科 Military of the Achaemenid Empire：职业常备军统称 spāda。Battle of Issus 信息框：骑兵约1.1万加亚美尼亚骑兵7千，'
             + '长生军1万、希腊雇佣兵1万、亚美尼亚步兵4万，轻步兵3万至8万；比例约 骑兵1.8万 : 步兵6万 : 远程5.5万，取鹤翼阵 前骑2 / 中步4 / 后远3。'
             + '战法：波斯骑兵率先渡河冲击帕曼纽一翼，步兵沿河列阵，故前骑兵、中步兵、后远程。',
@@ -164,7 +177,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'mercenary_hoplite', count: 4 },   // 中排步兵：守城主力＝雇佣重步兵（素材样貌：持矛大盾的重装步兵）
             { type: 'imperial_cavalry', count: 2 },    // 后排骑兵：城内预备/突围，最少（素材样貌：羽饰头盔、披甲战马的近东骑兵）
         ],
-        shipId: 'BIREME',   // 波斯海军由腓尼基人操舟（米利都港外 400 艘、哈利卡纳苏斯泊港策应）
+        shipId: 'BIREME',   // 波斯海军由腓尼基人操舟（米利都港外 400 艘、哈利卡纳苏斯泊港策应）        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    城防守将（希腊雇佣兵统领样；本军团 场6／7／10 皆用此兵模）
+        commanderUnit: 'hero_aristides',
         source: '四场守城／守隘口的守军构成（均取本项目已核过的史料）：'
             + '① 米利都（Siege of Miletus）——「守城主力为希腊雇佣兵，另有波斯守军据内城」，波斯舰队四百艘泊米克利；'
             + '② 哈利卡纳苏斯（Siege of Halicarnassus）——「守城主力为希腊雇佣军，另有波斯守军；波斯舰队泊于港内策应」；'
@@ -190,7 +205,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'elite_immortal', count: 4 },        // 中排步兵：守城主力（素材样貌：持矛配大盾的波斯系步兵）
             { type: 'antiquity_skirmisher', count: 2 },  // 后排投掷：要塞城防掷矛手（海岛城邦无战马大象，纯步战城防）
         ],
-        shipId: 'BIREME',   // 腓尼基双层桨座战船（推罗以海军见长，史料载战船约 80 艘）
+        shipId: 'BIREME',   // 腓尼基双层桨座战船（推罗以海军见长，史料载战船约 80 艘）        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    持圆盾长矛的希腊重装步兵将领样（腓尼基海岛城邦的守城统领）
+        commanderUnit: 'hero_brasidas',
         source: '英文维基百科 Siege of Tyre (332 BC)：城内正规守军约 8,000–10,000 人、战船约 80 艘，'
             + '另有避难军民 3–4 万（非战斗人员，不计入编成）；守方以城墙、弩炮与火船顽抗。'
             + '阿里安《亚历山大远征记》记推罗人以火船冲撞马其顿攻城塔、弩炮射击、蛙人破坏跨海长堤，城破后陷入巷战。'
@@ -213,7 +230,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'elite_immortal', count: 3 },     // 中排步兵：持矛短兵的部落战士（素材样貌：持矛配大盾的近东步兵）
             { type: 'imperial_cavalry', count: 2 },   // 后排骑兵：部落骑兵最少（素材样貌：羽饰头盔、披甲战马的近东骑兵）
         ],
-        // 战船留空：乌克西亚是扎格罗斯内陆山地部落，无 naval 传统，按文化默认
+        // 战船留空：乌克西亚是扎格罗斯内陆山地部落，无 naval 传统，按文化默认        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    金甲红披风的波斯贵族骑将样（乌克西亚为波斯治下山地部落联盟，首领马达泰斯）
+        commanderUnit: 'hero_artaphernes',
         source: '英文维基百科 Battle of the Uxian Defile：乌克西亚人据山隘抗拒马其顿大军，'
             + '亚历山大分兵走北路、由克拉特鲁斯占高地断其退路，袭取村落再强行军夺隘，'
             + '部落战士退往高地遭四面合围。英文维基百科 Uxians：其为扎格罗斯山中**非伊朗裔半游牧部落联盟**，'
@@ -233,15 +252,16 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         //    人数按英文维基百科 Battle of Jaxartes：塞种以骑射为主体，取最接近的雁行阵 4-3-2（前4/中3/后2）。
         formationMode: 'echelon',
         slots: [
-            { type: 'scythian_horse_archer', count: 4 }, // 前排骑兵：斯基泰骑射手（cls=cav）—— 游牧骑射主体，隔河先射、渡口先接敌
-            { type: 'sakan_axeman', count: 3 },          // 中排步兵：塞种萨迦斧兵高级（cls=melee）—— 同一族人（Saka）的近战步卒
-            { type: 'bactrian_archer', count: 2 },       // 后排远程：巴克特里亚弓手（cls=ranged）—— 中亚邻区步弓，掩护骑射
+            { type: 'scythian_horse_archer', count: 4 },
+            { type: 'sakan_axeman', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 2 },
         ],
         shipId: 'MONOREME', // 黑海斯基泰单列桨船传统
-        source: '英文维基百科 Battle of Jaxartes：斯基泰骑兵隔锡尔河以骑射嘲弄阻击，'
-            + '亚历山大以弩炮掩护强渡后，斯基泰游牧骑射手四散包围放风筝射击，'
-            + '随后双方爆发激烈近战白刃战，斯基泰主帅萨特拉克斯阵亡。'
-            + '三排按游牧战术「骑射手最多且最先接敌、同族步卒居中、邻区步弓殿后掩护」取雁行阵 前骑兵4 / 中步兵3 / 后远程2。',
+        // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
+        //    塞种/斯基泰是草原游牧骑射民族 —— 取 hero_kushluk（英雄·屈出律）：皮裘 + 大弓 + 草原坐骑，
+        //    兵模库里唯一一副「弓骑首领」的样子（原来借的色雷斯酋长是披风持剑的巴尔干样，与塞种不同源）。
+        commanderUnit: 'hero_kushluk',
+        source: '英文维基百科 Battle of Jaxartes：斯基泰骑兵隔锡尔河以骑射嘲弄阻击，亚历山大以弩炮掩护强渡后，斯基泰游牧骑射手四散包围放风筝射击，随后双方爆发激烈近战白刃战，斯基泰主帅萨特拉克斯阵亡。三排按游牧战术「骑射手最多且最先接敌、同族步卒居中、邻区步弓殿后掩护」取雁行阵 前骑兵4 / 中步兵3 / 后远程2。',
     },
     {
         // 史名：英文维基百科 Siege of the Sogdian Rock 记守方为 Sogdiana（粟特），无专名
@@ -256,6 +276,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'sakan_axeman', count: 4 },         // 中排步兵：塞种萨迦斧兵（cls=melee）—— 同一中亚文化区（挨着的邻族）步卒
             { type: 'bactrian_archer', count: 2 },      // 后排远程：巴克特里亚弓手（cls=ranged）—— 中亚步弓，掩护主力
         ],
+        // 战船留空：粟特是河中内陆城邦，无 naval 传统，按文化默认
+        // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
+        //    粟特武装的招牌是甲胄骑兵 —— 取 hero_kotyankhan（英雄·忽炭汗）：人马皆甲的具装骑领主，
+        //    与它对伍里的「粟特甲胄骑兵高级」同一路样式。
+        commanderUnit: 'hero_kotyankhan',
         source: '英文维基百科 Siege of the Sogdian Rock：守方为粟特，凭绝壁岩堡据守，主帅阿里马泽斯；'
             + '同条目记岩堡守军在山顶出现马其顿人之后即降，说明其战力以据险防守为主。'
             + '英文维基百科 Sogdia 与粟特甲胄骑兵相关条目：粟特为河中绿洲城邦，甲胄骑兵是其著名武装；'
@@ -275,6 +300,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'indian_tribesman', count: 3 },      // 中排步兵：印度部落民（cls=melee）—— 阿斯瓦卡山民与印度河对岸雇佣兵
             { type: 'shrivamsha_rider', count: 2 },      // 后排骑兵：什里瓦姆沙骑手（cls=cav）—— 山地骑兵最少
         ],
+        // 战船留空：斯瓦特山谷内陆山民，无 naval 传统，按文化默认
+        // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
+        //    阿斯瓦卡是印度河上游（斯瓦特谷）山民 —— 取 hero_prithviraj（英雄·普里特维拉吉）：
+        //    缠头、长袍、持剑的印度部族首领样，与它的印度系三排同一文化区。
+        commanderUnit: 'hero_prithviraj',
         source: '英文维基百科 Cophen campaign 的 Siege of Massaga 节（Dodge 1890、Fuller 1959）：'
             + '阿萨卡诺伊人雇自印度河对岸的雇佣兵为其主力，守军自城头抛射弓矢、石块与火球，'
             + '马其顿人以塔楼土垒强攻多日方下。三排按「城头弓矢为先、雇卒步战居中、山地骑兵最少」取雁行阵 前远程4 / 中步兵3 / 后骑兵2。',
@@ -290,11 +320,12 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         formationMode: 'crane_wing',
         slots: [
             { type: 'elite_shrivamsha_rider', count: 2 },   // 前排骑兵（cls=cav）：印度西北骑手 —— 两翼骑兵先接敌
-            { type: 'indian_tribesman', count: 3 },         // 中排步兵（cls=melee）：印度本土步兵为主体（信息框步兵20000–50000）
-            { type: 'elephant', count: 1 },                 // 中排战象（cls=melee）：战象分布在步兵阵前冲击敌阵（信息框战象85–200）
+            { type: 'indian_tribesman', count: 4 },         // 中排步兵（cls=melee）：印度本土步兵为主体（信息框步兵20000–50000）
             { type: 'pattiyoda_longbowman', count: 3 },     // 后排远程（cls=ranged）：印度长弓 —— 弓矢殿后
         ],
         // 战船留空：保拉瓦是内陆河国，无 naval 传统，按文化默认
+        // 🔴 [2026-10-02 主人「五兵编制」] 主队（第 10 队）= 波鲁斯亲乘御驾战象（porus_elephant）
+        commanderUnit: 'porus_elephant',
         source: '英文维基百科 Battle of the Hydaspes：印度军以战车列于两翼骑兵之前、步兵居中、战象每隔五十尺列于步兵阵前；'
             + '交战先由两翼骑兵接敌，被击溃后战象与步兵压上，马其顿方阵以萨里沙顶住、轻装兵砍象奴刺象眼。'
             + '信息框 strength2 骑兵 2000–4000、步兵 20000–50000、战象 85–200、战车 1000，'
@@ -317,6 +348,10 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'shrivamsha_rider', count: 2 },       // 后排骑兵（cls=cav）：印度西北骑手 —— 骑兵最少
         ],
         // 战船留空：马利是旁遮普内陆部落，无 naval 传统，按文化默认
+        // 🔴 [2026-10-02 主人令「换」→这 4 支，样貌符合历史就行] 主队（第 10 队）英雄兵模：
+        //    马利人（摩罗婆）是旁遮普印度部族 —— 取 hero_rajendrachola（英雄·罗贞陀罗·朱罗）：
+        //    白袍金饰、持大弓的印度王/首领样。
+        commanderUnit: 'hero_rajendrachola',
         source: '英文维基百科 Mallian campaign：马利人退入都城卫城据墙死守，以弓矢投石拒敌，'
             + '亚历山大破外门、掘墙基、亲自扛梯登城；同条记马利与奥克西德拉卡两族一度结盟，'
             + '合计步兵九万、骑兵一万、战车九百，骑兵占比最小。'
@@ -337,7 +372,9 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
             { type: 'elite_immortal', count: 3 },     // 中排步兵（cls=melee）：持矛步卒 —— 部落战士
             { type: 'imperial_cavalry', count: 2 },   // 后排骑兵（cls=cav）：近东骑兵 —— 山地骑兵最少
         ],
-        // 战船留空：扎格罗斯内陆山地部落，无 naval 传统，按文化默认
+        // 战船留空：扎格罗斯内陆山地部落，无 naval 传统，按文化默认        // 🔴 [2026-10-02 主人令「军团五兵种」：英雄队（主队 · 第 10 队）]
+        //    金甲红披风的波斯贵族骑将样（科塞亚为波斯治下扎格罗斯山地部落）
+        commanderUnit: 'hero_artaphernes',
         source: '英文维基百科 Cossaei：该族为扎格罗斯山地部落、科塞亚人后裔，善射、穴居，靠劫掠与向来往军队索取买路钱为生，'
             + '从未接受外族统治，波斯历代诸王都未能征服；狄奥多罗斯 17.111 记亚历山大以轻装部队征讨，先夺入山要道、屡战皆胜。'
             + '三排按「据山弓矢为先、部落步卒居中、山地骑兵最少」取雁行阵 前远程4 / 中步兵3 / 后骑兵2，'

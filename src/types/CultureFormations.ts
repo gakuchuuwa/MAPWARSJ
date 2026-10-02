@@ -1030,6 +1030,14 @@ export function getFactionLegionComposition(
     // 🔴 [2026-09-23] 剧本期：当前这一仗的攻 / 守方改用事件指名的剧本军团（第四层）；乱斗恒走下面原路
     const scriptLegion = getScriptFactionLegionName(factionId);
     if (scriptLegion) {
+        // 🔴 [2026-10-02 主人报障「编辑器中为什么显示不全呢」查出的同名撞车]
+        //    剧本军团必须**直接读 scriptLegions.ts 自己的定义**，不许按名字走三层表：
+        //    四级「色雷斯军团」与**色雷斯文化区那支同名**，`getLegionCompositionByName('色雷斯军团')`
+        //    实测返回的是文化区编制（衡轭 4+2+3／希腊雇佣重步兵高级/色雷斯标枪手高级/塔兰丁骑兵＋希腊旗舰伦博斯重装），
+        //    而剧本军团自己的是 雁行 4-3-2／色雷斯标枪手/色雷斯长刃斩手/古典轻骑兵、无船。
+        //    → 不修的话，第 1、2 场（守方＝色雷斯军团）真机上阵的是文化区那套编制，等于剧本白配。
+        const scr = SCRIPT_LEGION_MAP.get(scriptLegion);
+        if (scr) return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })) };
         const c = getLegionCompositionByName(scriptLegion);
         if (c) return c;
     }
