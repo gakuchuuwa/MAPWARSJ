@@ -1284,9 +1284,24 @@ export class PlayerQuestSystem {
         const bfApi = this.deps.battlefields;
         if (!bfApi) return null;
 
+        // 🔴 [2026-10-02 主人报障「乌克西亚→波斯门这一路之后的行军和播报都不对了」] 同一年里不能只靠年份排：
+        //    EVENT_SITES 是「战场表在前、攻城据点在后」，同为前329年的锡尔河（战场）就排到了居鲁士城（攻城）前面，
+        //    波斯门打完军团直奔锡尔河、居鲁士城那 15 路行军与播报全被跳过。同年内按剧本表（HISTORICAL_EVENT_SCRIPT）的先后。
+        const orderCache = new Map<string, number>();
+        const order = (id: string): number => {
+            const hit = orderCache.get(id);
+            if (hit !== undefined) return hit;
+            const idx = HISTORICAL_EVENT_SCRIPT.findIndex((ev) => resolveEventBattlefieldId(ev, (cid) => {
+                const c = this.deps.cityManager.getCity(cid);
+                return c ? { lat: c.latitude, lng: c.longitude } : undefined;
+            }) === id);
+            const v = idx < 0 ? Number.MAX_SAFE_INTEGER : idx;
+            orderCache.set(id, v);
+            return v;
+        };
         const available = EVENT_SITES
             .filter((bf) => !isBattlefieldFought(bf.id))
-            .sort((a, b) => a.scriptYear - b.scriptYear);
+            .sort((a, b) => (a.scriptYear - b.scriptYear) || (order(a.id) - order(b.id)));
 
         if (!available.length) return null;
         const nextBf = available[0];
