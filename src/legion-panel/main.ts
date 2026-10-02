@@ -23,6 +23,7 @@ import {
 } from '../types/CultureFormations';
 import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
 import { LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
+import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
 import { CITIES_V2 } from '../data/cities_v2';
 import { getCityRegion, type RegionType } from '../systems/RegionSystem';
@@ -56,7 +57,7 @@ const MODE_LABEL: Record<FormationMode, string> = {
     balance_yoke: '衡轭 4+2+3',
 };
 
-type Layer = '一级' | '二级' | '三级';
+type Layer = '一级' | '二级' | '三级' | '四级';
 interface LegionRow {
     name: string;
     layer: Layer;
@@ -64,6 +65,10 @@ interface LegionRow {
     slots: { type: string; count: number }[];
     users: number;
     shipId: string;
+    /** 四级剧本军团的主队（第 10 队）英雄兵模（前三层为空） */
+    commanderUnit: string;
+    /** 四级剧本军团的史料出处（前三层为空） */
+    source: string;
 }
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;
@@ -91,11 +96,20 @@ function buildRows(): LegionRow[] {
         const name = resolveRenamedLegion(rawName);
         const c = getLegionCompositionByName(name);
         if (!c) return;
-        out.push({ name, layer, mode: c.formationMode, slots: c.slots.map(s => ({ type: s.type, count: s.count })), users: users.get(name) ?? 0, shipId: c.shipId ?? '' });
+        out.push({
+            name, layer, mode: c.formationMode,
+            slots: c.slots.map(s => ({ type: s.type, count: s.count })),
+            users: users.get(name) ?? 0,
+            shipId: c.shipId ?? '',
+            commanderUnit: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.commanderUnit ?? '') : '',
+            source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
+        });
     };
     for (const n of Object.values(BASE_16_LEGION_NAMES)) push(n, '一级');
     for (const l of LEVEL_2_CIV_59_LEGIONS) push(l.name, '二级');
     for (const l of LEVEL_3_LEGIONS) push(l.name, '三级');
+    // 🔴 [2026-10-02 主人令「军团编辑里加四级」] 四级：剧本军团（scriptLegions.ts，只给历史剧本事件用）
+    for (const l of SCRIPT_LEGIONS) push(l.name, '四级');
     // 🔴 [2026-09-16] 本次会话里新建的三级军团：静态表要等 HMR 才有它，
     //    先从内存补进列表，新建完立刻能看见、能接着编（与保存编制「不等 HMR」同一套路）。
     for (const n of runtimeCreated) if (!out.some(r => r.name === n)) push(n, '三级');
@@ -113,7 +127,7 @@ let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
-let draft: { mode: FormationMode; types: [string, string, string]; shipId: string } | null = null;
+let draft: { mode: FormationMode; types: [string, string, string]; shipId: string; commanderUnit: string; source: string } | null = null;
 let host: HTMLElement;
 /** 🔴 [2026-09-15 主人报障「搜索框打不出汉字」]
  *  这两个搜索框每敲一下就 innerHTML 重建整块，输入框节点被换掉，
@@ -173,17 +187,18 @@ let pickerCat: string = 'all';
  *    共用一个 pickerCat 的话，选完船再点前排，弹窗会只剩船只、陆战兵种全被滤掉。
  */
 let pickerShipCat: string = 'naval';
-let pickerKind: 'unit' | 'ship' = 'unit';
+let pickerKind: 'unit' | 'ship' | 'hero' = 'unit';
 
 /**
  * @param onPick 给了就把选中的兵种交给它（新建军团弹窗、舰队选船用），不动 draft、不重绘主列表；
  *               不给就是原行为：写进当前编辑中的 draft 那一排。
  * @param kind   'ship' = 给「舰队（战船）」选船（分类默认停船只、标题写舰队）。
  */
-function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, pickedNow?: string, kind: 'unit' | 'ship' = 'unit'): void {
+function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, pickedNow?: string, kind: 'unit' | 'ship' | 'hero' = 'unit'): void {
     if (!draft && !onPick) return;
     pickerKind = kind;
     if (kind === 'ship') pickerCat = pickerShipCat;
+    else if (kind === 'hero') pickerCat = 'hero';
     // 🔴 高亮「当前这一排是谁」：编辑现有军团时读 draft，新建弹窗没有 draft，读调用方传来的值。
     //    原来这里直写 draft!.types[rowIdx]，新建那条路进来时 draft 是 null → 整个 paint 抛异常，
     //    弹窗开出来是**空白的**（overlay 在、一张卡都没有）。
@@ -240,7 +255,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         );
         box.innerHTML = `
           <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <b style="color:#f6e05e;">选兵种 · ${['前排', '中坚', '后排'][rowIdx] ?? '舰队'}</b>
+            <b style="color:#f6e05e;">选兵种 · ${kind === 'hero' ? '英雄（主队）' : (['前排', '中坚', '后排'][rowIdx] ?? '舰队')}</b>
             <input id="lp-pk-search" placeholder="搜兵种名 / 子分类 / ID" value="${esc(pickerKeyword)}"
               style="width:220px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
             ${cats.map(c => `<button data-cat="${c}" class="lp-pk-cat" style="background:${pickerCat === c ? '#5a3c28' : '#243246'};
@@ -325,14 +340,16 @@ function render(): void {
     const list = visible();
     const sel = selected ? rows.find(r => r.name === selected) : null;
     if (sel && !draft) {
-        draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''], shipId: sel.shipId ?? '' };
+        draft = { mode: sel.mode, types: [sel.slots[0]?.type ?? '', sel.slots[1]?.type ?? '', sel.slots[2]?.type ?? ''], shipId: sel.shipId ?? '', commanderUnit: sel.commanderUnit ?? '', source: sel.source ?? '' };
     }
-    const counts = { 一级: 0, 二级: 0, 三级: 0 } as Record<Layer, number>;
+    const counts = { 一级: 0, 二级: 0, 三级: 0, 四级: 0 } as Record<Layer, number>;
     for (const r of rows) counts[r.layer]++;
     const rowCnt = draft ? MODE_ROWS[draft.mode] : [0, 0, 0];
     const dirty = !!(sel && draft && (draft.mode !== sel.mode
         || draft.types.join(',') !== sel.slots.map(s => s.type).join(',')
-        || (draft.shipId ?? '') !== (sel.shipId ?? '')));
+        || (draft.shipId ?? '') !== (sel.shipId ?? '')
+        || (draft.commanderUnit ?? '') !== (sel.commanderUnit ?? '')
+        || (draft.source ?? '') !== (sel.source ?? '')));
 
     // 🔴 [2026-09-15] 整表是 innerHTML 重建的，点一支军团就换新节点，
     //     不记住滚动位置的话列表会弹回顶部，往下拉着编根本编不下去。
@@ -343,7 +360,7 @@ function render(): void {
       <input id="lp-search" placeholder="搜军团名 / 兵种" value="${esc(keyword)}"
         style="width:230px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
       <select id="lp-layer" style="background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
-        ${(['全部', '一级', '二级', '三级'] as const).map(l =>
+        ${(['全部', '一级', '二级', '三级', '四级'] as const).map(l =>
             `<option value="${l}" ${layerFilter === l ? 'selected' : ''}>${l}${l === '全部' ? `（${rows.length} 支）` : `（${counts[l as Layer]} 支）`}</option>`).join('')}
       </select>
       <span style="color:#8a8378;font-size:12px;">列出 ${list.length} 支</span>
@@ -385,7 +402,7 @@ function render(): void {
                 const rShip = d ? d.shipId : r.shipId;
                 return `
               <tr data-name="${esc(r.name)}" style="cursor:pointer;border-top:1px solid #221e19;${selected === r.name ? 'background:#2f2a20;' : ''}">
-                <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : '#c0a0e0'};">${r.layer}</td>
+                <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : r.layer === '三级' ? '#c0a0e0' : '#8fd0a0'};">${r.layer}</td>
                 <td style="padding:6px 10px;color:#e8e0d0;">${esc(r.name)}</td>
                 <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[rMode] ?? rMode}</td>
                 ${[0, 1, 2].map(i => {
@@ -416,9 +433,9 @@ function render(): void {
             ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
           </div>
 
-          ${sel.layer === '一级' ? `
+          ${sel.layer === '一级' || sel.layer === '四级' ? `
             <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
-              一级 16 母体是底座军团，不可改名。
+              ${sel.layer === '四级' ? '四级剧本军团名被战场事件引用，不可改名。' : '一级 16 母体是底座军团，不可改名。'}
             </div>` : `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
             <div style="display:flex;gap:6px;margin-bottom:14px;">
@@ -433,6 +450,22 @@ function render(): void {
                 `<option value="${m}" ${draft!.mode === m ? 'selected' : ''}>${MODE_LABEL[m]}</option>`).join('')}
           </select>
 
+          ${sel.layer === '四级' ? `
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">英雄（主队 · 第 10 队）</div>
+          <div id="lp-commander-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+               background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+            <canvas id="lp-thumb-commander" width="64" height="64"
+              style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#e8e0d0;font-size:13px;">${draft!.commanderUnit ? esc(cn(draft!.commanderUnit)) : '未选主队兵模'}</div>
+              <div style="color:#6a6358;font-size:11px;">
+                ${draft!.commanderUnit ? esc(subLabelOf(draft!.commanderUnit)) + ' · 点击更换' : '点击选择英雄兵模'}
+              </div>
+            </div>
+            <span style="color:#8a8378;font-size:16px;">▾</span>
+          </div>
+          ` : ''}
+
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队（战船）</div>
           <div id="lp-ship-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
@@ -446,6 +479,11 @@ function render(): void {
             </div>
             <span style="color:#8a8378;font-size:16px;">▾</span>
           </div>
+
+          ${sel.layer === '四级' ? `
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">史料出处（必填）</div>
+          <textarea id="lp-source" rows="6" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;margin-bottom:14px;font-size:12px;line-height:1.5;resize:vertical;">${esc(draft!.source ?? '')}</textarea>
+          ` : ''}
 
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
@@ -473,7 +511,7 @@ function render(): void {
               🗑 删除这支军团${sel.users ? `（${sel.users} 家势力会回落到文化区军团）` : ''}
             </button>` : `
             <div style="font-size:11px;color:#6a6358;margin-top:18px;line-height:1.7;">
-              ${sel.layer}军团不可删除（一级 16 母体是底座，二级 59 文明是定数）。
+              ${sel.layer === '四级' ? '四级剧本军团不可删除（被战场事件引用）。' : `${sel.layer}军团不可删除（一级 16 母体是底座，二级 59 文明是定数）。`}
             </div>`}
           <div style="font-size:11px;color:#6a6358;margin-top:14px;line-height:1.7;">
             保存只写这一支军团那一条记录，<b>不碰势力归属</b>。<br>
@@ -529,10 +567,18 @@ function render(): void {
         if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
         render();
     });
+    document.getElementById('lp-commander-card')?.addEventListener('click', () => {
+        if (!draft) return;
+        // 主队（第 10 队）选英雄兵模：分类默认停在「英雄」
+        openUnitPicker(-1, uid => { draft!.commanderUnit = uid; render(); }, draft!.commanderUnit, 'hero');
+    });
     document.getElementById('lp-ship-card')?.addEventListener('click', () => {
         if (!draft) return;
         // 选船走和三排兵种同一个弹窗（带图带子分类）：选中即写 draft.shipId，保存沿用 shipId 那条落盘路径
         openUnitPicker(-1, uid => { draft!.shipId = uid.toUpperCase(); render(); }, shipUnitId(draft.shipId), 'ship');
+    });
+    document.getElementById('lp-source')?.addEventListener('input', e => {
+        if (draft) draft.source = (e.target as HTMLTextAreaElement).value;
     });
     host.querySelectorAll('.lp-unit').forEach(el => {
         el.addEventListener('click', () => {
@@ -548,6 +594,8 @@ function render(): void {
         }
         const shipCv = document.getElementById('lp-thumb-ship') as HTMLCanvasElement | null;
         if (shipCv && draft.shipId) void drawUnitThumb(shipCv, shipUnitId(draft.shipId));
+        const cmdrCv = document.getElementById('lp-thumb-commander') as HTMLCanvasElement | null;
+        if (cmdrCv && draft.commanderUnit) void drawUnitThumb(cmdrCv, draft.commanderUnit);
     }
 
     document.getElementById('lp-reset')?.addEventListener('click', () => { draft = null; render(); });
@@ -813,8 +861,36 @@ async function createLegion(
     }
 }
 
+/** 保存一支四级剧本军团（scriptLegions.ts）：三排 + 阵型 + 战船 + 史料出处。 */
+async function saveScriptLegion(): Promise<void> {
+    if (!selected || !draft) return;
+    if (!draft.source.trim()) { toast('❌ 四级剧本军团必须写史料出处', true); return; }
+    const counts = MODE_ROWS[draft.mode];
+    const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
+    try {
+        const res = await fetch('/api/save-script-legion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ legionName: selected, formationMode: draft.mode, slots, shipId: draft.shipId || null, commanderUnit: draft.commanderUnit || null, source: draft.source }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        rows = buildRows();
+        draft = null;
+        render();
+        toast(`✅ 剧本军团【${selected}】已保存（写入 scriptLegions.ts）`);
+    } catch (e) {
+        toast('❌ 保存失败：' + ((e as Error)?.message ?? String(e)), true);
+    }
+}
+
 async function save(): Promise<void> {
     if (!selected || !draft) return;
+    // 🔴 [2026-10-02] 四级剧本军团走 scriptLegions.ts（含史料出处），单独保存
+    if (rows.find(r => r.name === selected)?.layer === '四级') {
+        await saveScriptLegion();
+        return;
+    }
     const counts = MODE_ROWS[draft.mode];
     const slots = draft.types.map((type, i) => ({ type, count: counts[i] }));
     const prevShip = rows.find(r => r.name === selected)?.shipId ?? '';

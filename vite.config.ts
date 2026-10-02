@@ -403,6 +403,14 @@ export default defineConfig({
                 };
             },
             handleHotUpdate({ file }) {
+                // 🔴 [2026-10-02 主人「编辑器不要自动刷新」] 军团编辑器源码变更时不推送
+                //   HMR / full-reload，页面保持现状（AI 改编辑器代码时不再把用户正在看的页面刷掉），
+                //   用户手动 F5 加载最新代码。其余文件照旧正常 HMR。
+                const f = file.replace(/\\/g, '/');
+                if (f.includes('/legion-editor/') || f.includes('/legion-panel/')) {
+                    console.log('[HMR-Suppress] 军团编辑器源码变更，不自动刷新：' + path.basename(file) + '（手动 F5 加载）');
+                    return [];
+                }
                 // F2 写盘期间（8 秒窗口）由 configureServer 的 ws.send 拦截器处理
                 // 其余时刻所有文件变更正常触发 HMR / 全页刷新
             },
@@ -3196,11 +3204,11 @@ function serverReplaceScriptLegionShip(text: string, at: number, shipId: string 
             if (valueEnd < 0) return text;
             return text.slice(0, valueStart) + shipId + text.slice(valueEnd);
         }
-        // 没有 shipId 行 → 在 source 前插入一行（缩进 8 空格）
+        // 没有 shipId 行 → 在 source 前插入一行（缩进 8 空格，CRLF）
         const srcAt = text.indexOf("source: '", at);
         if (srcAt < 0) return text;
         const lineStart = text.lastIndexOf('\n', srcAt) + 1;
-        return text.slice(0, lineStart) + "        shipId: '" + shipId + "',\n" + text.slice(lineStart);
+        return text.slice(0, lineStart) + "        shipId: '" + shipId + "',\r\n" + text.slice(lineStart);
     }
     if (hasShip) {
         // 清空 → 删除整行 shipId
@@ -3216,7 +3224,8 @@ function serverReplaceScriptLegionShip(text: string, at: number, shipId: string 
 function serverReplaceScriptLegionSource(text: string, at: number, source: string): string {
     const srcAt = text.indexOf("source: '", at);
     if (srcAt < 0) return text;
-    const closeAt = text.indexOf('\n    },', srcAt);
+    // 🔴 scriptLegions.ts 是 CRLF：入口闭合必须按 \r\n 找，否则会丢掉 CR 造成孤立 LF（血训 #8）
+    const closeAt = text.indexOf('\r\n    },', srcAt);
     if (closeAt < 0) return text;
     const escaped = String(source ?? '')
         .replace(/\\/g, '\\\\')
@@ -3238,10 +3247,11 @@ function serverReplaceScriptLegionEntry(
     const at = text.indexOf("name: '" + legionName + "'");
     if (at < 0) return null;
     let out = text;
-    // 1. 三排（slots 数组）
+    // 1. 三排（slots 数组；CRLF 换行，与 scriptLegions.ts 一致）
     const range = serverFindSlotsArray(out, at);
     if (!range) return null;
-    out = out.slice(0, range.open + 1) + '\n' + serverSlotLines(slots, '            ') + '\n        ' + out.slice(range.close);
+    const slotLines = slots.map((s: any) => '            { type: ' + JSON.stringify(s.type).replace(/"/g, "'") + ', count: ' + s.count + ' },').join('\r\n');
+    out = out.slice(0, range.open + 1) + '\r\n' + slotLines + '\r\n        ' + out.slice(range.close);
     // 2. 阵型（slots 前的 head 里）
     const headEnd = out.indexOf('slots: [', at);
     if (headEnd > 0) {

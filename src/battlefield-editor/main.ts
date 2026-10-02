@@ -690,7 +690,7 @@ function briefingSeconds(text: string): number {
 }
 /**
  * 🔴 [2026-09-27 主人定「一路一句」] 赶路播报的**逐句尺子**：
- *   段首 `【据点名】` ＝ 这一句的**挂点**（军团走到那座据点 15 公里内才念）；该写字数 ＝ 这条路的公里 × 0.336。
+ *   段首 `【据点名】` ＝ 这一句的**挂点**（军团走到那座据点 15 公里内才念）；该写字数 ＝ 这条路的公里 × 0.168（2026-10-02 主人令「砍一半」）。
  *   同名站在同一条路上出现两次时（第 10 段的加沙：南下一次、北上又一次），按行军顺序认**后**一次。
  * 返回每一句的挂点 / 那条路 / 公里 / 该写 / 现在写。
  */
@@ -1183,7 +1183,7 @@ function render(): void {
                         ${workingRoadSeg ? `
                         <div style="font-size:12px;color:#c0a980;margin:4px 0 10px;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid #3c3222;border-radius:4px;">
                             <b>第 ${workingRoadSeg.scene} 场行军征程</b>：${escapeHtml(workingRoadSeg.from)} ➜ ${escapeHtml(workingRoadSeg.to)}
-                            <span style="color:#8c8273;margin-left:8px;">共 ${workingRoadSeg.roads.length} 条路 · 全程 ${workingRoadSeg.km} 公里 · 建议总字数 ${workingRoadSeg.words} 字（按路网实测每公里约 0.336 字掐算）</span>
+                            <span style="color:#8c8273;margin-left:8px;">共 ${workingRoadSeg.roads.length} 条路 · 全程 ${workingRoadSeg.km} 公里 · 建议总字数 ${workingRoadSeg.words} 字（按每公里约 0.168 字掐算）</span>
                         </div>
                         ${workingRoadSeg.roads.map((r, i) => {
                             const body = _bfRows.bodies[i] ?? '';

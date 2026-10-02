@@ -37,6 +37,9 @@ export interface ScriptLegionDef {
     slots: CompositionSlot[];
     /** 战船（跨海时的船型），留空按文化默认 */
     shipId?: string;
+    /** 🔴 [2026-10-02 主人「五兵编制」] 主队（第 10 队）英雄兵模：五兵 = 英雄 + 前排 + 中排 + 后排 + 舰队。
+     *  必须是英雄兵模（hero_* 或御驾战象），留空按武将专属英雄 / 前排兵种兜底 */
+    commanderUnit?: string;
     /** 史料出处与兵种依据 */
     source: string;
 }
