@@ -6802,7 +6802,23 @@ export class Scene13WarLayer {
         return Math.max(1, (this.radiusOf(key) / 8) ** 2);
     }
 
-    private separate(dt: number): void {
+    /**
+     * @param laneLeaders 本帧各分队锚点（step 里选好的，见「分队机制」那段）。
+     *   🔴 [2026-10-03 主人选定「A：站定的归队队员推挤清零」] 归队后**已站定在自己槽位上**的队员，
+     *   本帧不吃软推挤 —— 照**攻城战待命期**那条现成先例办（见下面 `defenderHolding` 分支）：
+     *   主人 2026-08-23 定的那条让待命守军「站得笔直、纹丝不动」，画面他见过并认可。
+     *
+     *   病灶（主人 2026-10-03 报「军团还是会微颤」）：站定的队员被邻居推走 → 锚点又把他拉回 →
+     *   一推一拉就是那点微颤。**关键在"站定的人还吃不吃推挤"，不在"锚点选谁"** ——
+     *   攻城战之所以完全不颤，正因为那里两条都关了：① 不归队（`siegeWithWalls` → laneSlotTarget 返回 null）
+     *   ② 待命期推挤清零（`defenderHolding` 那一支）。
+     *
+     *   范围卡得很紧，绝不动交战中的人：只有「无目标（`!m.foe`）+ 归队满 LANE_REGROUP_SEC 秒 +
+     *   已有本队锚点且不是自己 + 已站到槽位上（≤ LANE_TRACK_EPS）」四条同时成立才清零。
+     *   交战中的人照旧互推（「弧形阵面就是这么长出来的」那条设计不动）；正在走向槽位的人照旧吃推。
+     *   别人推不动他，但推得动自己 —— 人群照样能散开（推挤是各人算自己那一份）。
+     */
+    private separate(dt: number, laneLeaders: Map<number, WarMan>): void {
         const push = SEP_SPD * dt;
         const applySeparation = (m: WarMan): void => {
             if (m.st === 0) {
@@ -6827,6 +6843,19 @@ export class Scene13WarLayer {
                 m.sepX = 0;
                 m.sepY = 0;
                 continue;
+            }
+            // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员：同样清零推挤（理由见本函数头注）
+            if (m.lane >= 0 && !m.hero && !m.foe) {
+                const L = laneLeaders.get(m.lane);
+                if (L && L !== m && (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC) {
+                    const sx = L.x + (m.f === 0 ? -(m.dep - L.dep) : (m.dep - L.dep));
+                    const sy = L.y + (m.slotY - L.slotY);
+                    if ((m.x - sx) ** 2 + (m.y - sy) ** 2 <= LANE_TRACK_EPS * LANE_TRACK_EPS) {
+                        m.sepX = 0;
+                        m.sepY = 0;
+                        continue;
+                    }
+                }
             }
             const cx = (m.x / CELL_S) | 0, cy = (m.y / CELL_S) | 0;
             // 两个兵的最小间距 = 各自占地半径之和（DE 同款）。象兵/攻城器械因此真的占地方，
@@ -7797,6 +7826,19 @@ export class Scene13WarLayer {
                 laneLeaderScore.set(m.lane, score);
             }
         }
+        // 🔴 [2026-10-03 主人令]「攻城就是不归队才没事，野战有归队所以颤抖。如果野战归队少，不就颤抖也少了。
+        //    附近有敌人就不用归队。」
+        //    → **净空判据**：本队锚点周围 MARCH_R（300px，现成的「行军索敌半径」，含义本来就是
+        //      「这个圈里出现敌兵就算遇敌」，不新造尺度）内有活敌 → 这队**本帧不设锚点** →
+        //      `laneSlotTarget` 拿不到锚点直接返回 null → 全队照旧各自索敌/散开，整队不归队。
+        //    实测（scratch/_probe_regroup_clearance.mjs，真机直接调游戏 search() 量距离分布）：
+        //      现役归队兵里，锚点 300px 内有敌的占 19.9%、450px 内占 60.4% —— 本条会把前者挡在归队之外，
+        //      且挡掉的正是最贴敌阵、锚点被挤得最乱的那批（颤抖的重灾区）。
+        //      要更狠只需把这个半径换成 450（挡掉约 60%），一个数的事。
+        //    reserve=false：只用来量距离，不占目标名额（不干扰索敌）。
+        for (const [lane, L] of laneLeaders) {
+            if (this.search(L, MARCH_R, 0, false)) laneLeaders.delete(lane);
+        }
 
         for (const m of this.men) {
             this.releaseReservedTarget(m);
@@ -8527,7 +8569,7 @@ export class Scene13WarLayer {
         for (const m of this.men) { m.claims = m.claimsNext; }
         for (const b of this.wallGates) { b.claims = b.claimsNext; }
 
-        this.separate(dt);
+        this.separate(dt, laneLeaders);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
         for (const object of this.decorSprites) object.obstructionTouched = false;
         const fieldW = this.canvas?.width ?? 0;
