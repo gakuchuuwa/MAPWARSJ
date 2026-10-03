@@ -1567,10 +1567,13 @@ let curSmallWall = 'auto'; // 'auto' | 'stone2'（石墙双门）| 'stone4'（�
 
 /** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐）；
  *  🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城 auto 时**一律开启**
- *  （与游戏 TerritorySystem 的 centerCastle 同一口径）；险要仍由调用处单独判（恒开启）；小城/城寨不受影响。 */
+ *  （与游戏 TerritorySystem 的 centerCastle 同一口径）；险要仍由调用处单独判（恒开启）。
+ *  🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+ *  小城 auto 时**一律关闭**（日本/青藏文化区的小城也不再例外）；小城若有著名城堡 → 走特殊建筑（城内奇观）。 */
 function isCenterCastleActive(type) {
   if (curCenterCastle === 'on') return true;
   if (curCenterCastle === 'off') return false;
+  if (type === 'small') return false;
   if (type === 'big' || type === 'medium') return true;
   return curCulture === 'JAPAN' || curCulture === 'TIBET';
 }

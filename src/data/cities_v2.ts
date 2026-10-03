@@ -1878,8 +1878,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         id: 'city_myson', name: '美山', factionId: 'champa',
         lat: 15.50, lng: 108.50, type: 'pass', region: 'KHMER',
         buildingStyle: 'SEAS', troops: 10000, tier: 4,
-        note: '美山；占婆圣地神庙要塞，制蓬峨驻防',
-    },
+        note: '美山；占婆圣地神庙要塞，制蓬峨驻防', mirror: true },
     
     {
         id: 'city_hoalu',

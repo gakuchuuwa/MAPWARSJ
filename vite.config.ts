@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import ts from 'typescript';
 import { execFile, execSync } from 'child_process';
 import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
@@ -4072,6 +4073,20 @@ function serverSaveCity(payload: {
 
     const out: string[] = [];
     const esc = (s: string): string => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    /**
+     * 在条目末尾**追加**一个字段（`setStr` / `setNum` / `setBool` 三处的「新增」分支共用这一份）。
+     *
+     * 🔴 [2026-10-03 主人报障「我点了下镜像保存，就多余那个逗号」] 病灶就在这里：
+     *    原先三处各自写 `block.replace(/\s*\}$/, ', key: value }')` —— 可 cities_v2 里**多行条目的最后一行常带尾逗号**
+     *    （如美山那条 `note: '美山；…制蓬峨驻防',` 后面再接 `}`），于是追加成
+     *    `…驻防',` ＋ `, mirror: true }` = **`,,`** → 整份 `cities_v2.ts` 语法坏掉 → Vite 转译 500
+     *    → 评估页脚本一行都不执行（页面空白、按钮点了没反应）。**一个标点写坏全站**，就是这么来的。
+     * 规矩：追加前**先把 `}` 前那个孤立尾逗号规整掉**，再补 `, key: value`
+     *    —— `note: 'x'` 与 `note: 'x',` 两种写法都吃得下，且结果一律是单逗号。
+     */
+    const appendField = (snippet: string): void => {
+        block = block.replace(/,\s*\}$/, ' }').replace(/\s*\}$/, `, ${snippet} }`);
+    };
     /** 字符串字段：有则替换，无则追加；值空串或 null => 删除该字段 */
     const setStr = (key: string, raw: unknown): void => {
         if (raw === undefined) return;
@@ -4099,7 +4114,7 @@ function serverSaveCity(payload: {
         if (hit) {
             if (hit !== next) { block = block.replace(re, next); out.push(key); }
         } else {
-            block = block.replace(/\s*\}$/, `, ${next} }`);
+            appendField(next);
             out.push(key + '(新增)');
         }
     };
@@ -4125,7 +4140,7 @@ function serverSaveCity(payload: {
         if (hit) {
             if (hit !== next) { block = block.replace(re, next); out.push(key); }
         } else {
-            block = block.replace(/\s*\}$/, `, ${next} }`);
+            appendField(next);
             out.push(key + '(新增)');
         }
     };
@@ -4136,7 +4151,7 @@ function serverSaveCity(payload: {
         const re = new RegExp(`,\\s*${key}:\\s*(?:true|false)`);
         const has = re.test(block);
         if (on) {
-            if (!has) { block = block.replace(/\s*\}$/, `, ${key}: true }`); out.push(key + '(新增)'); }
+            if (!has) { appendField(`${key}: true`); out.push(key + '(新增)'); }
         } else if (has) {
             block = block.replace(re, ''); out.push(key + '(删除)');
         }
@@ -4157,6 +4172,19 @@ function serverSaveCity(payload: {
 
     if (!out.length) return { ok: true, changed: [] };
     const nextText = text0.slice(0, open) + block + text0.slice(close + 1);
+    // 🔴 [2026-10-03 主人报障「点一下镜像保存就多一个逗号 → 页面全崩」] **写盘前语法自检**：
+    //    今后任何写法 bug 都不许再落盘 —— 数据文件写坏一次就是全站白屏（Vite 转译 500）。
+    //    自检不过 → 整条**不写盘**，把错处回报给调用方（前端有提示）。
+    const parsed = ts.createSourceFile(citiesPath, nextText, ts.ScriptTarget.Latest, true);
+    const diags = (parsed as unknown as { parseDiagnostics?: Array<{ messageText: unknown; start?: number }> }).parseDiagnostics ?? [];
+    if (diags.length) {
+        const d = diags[0];
+        const lineOf = (pos?: number): number => (pos === undefined ? 0 : nextText.slice(0, pos).split('\n').length);
+        return {
+            ok: false,
+            error: `写盘前语法自检不通过（**未写盘**）：第 ${lineOf(d.start)} 行 ${String(d.messageText)}`,
+        };
+    }
     fs.writeFileSync(citiesPath, nextText, 'utf-8');
     console.log(`[SaveCity] ${id}: ${out.join(', ')}`);
     return { ok: true, changed: out };
