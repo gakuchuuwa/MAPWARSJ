@@ -844,6 +844,23 @@ export class PlayerQuestSystem {
         this.armyMarchPoint = null;
         this.deps.hero.setTravelPointLabel(null);
         this.clearJourneyBriefing();
+        // 🔴 [2026-10-03 主人令]「剧本结束后，远征军要解散，这样才能正确进入乱斗模式」
+        //    病灶（改前）：本函数只清任务/动向栏/旁白，**人还 attach 在那支剧本军团（远征军）上**；
+        //      而乱斗模式的自动链要 `!hero.isAttached()` 才启动（见本文件 tick 里 canAdvance 的判据，
+        //      切乱斗后 scriptChain 为假）→ 模式切了、人却被钉在远征军上，
+        //      寻将 / 赶路 / 入伍一步都跑不起来，只能一路跟着那支军团走到底。
+        //    口径（主人 2026-10-03 亲定）：解散＝脱离军团，按**既有唯一口径**办 ——
+        //      `detach()` 的「功勋归零降职 + 退出势力」（见 PlayerHero.detach 头注那条统一铁律）。
+        //    ⚠️ 顺序：**先 disband 再 detach**，让 hostLegionId 在同一拍清空；
+        //      否则下一帧 PlayerHero.update 会走「军团没了」那条路触发 onHostLost，
+        //      而它会置 postDefeatHunt（「下次寻将避开战场周边」）—— 那是战败语义，收官不该沾。
+        const hostId = this.deps.hero.getHostLegionId();
+        const host = hostId ? this.deps.legionManager.getLegionById(hostId) : null;
+        if (host && !host.isDestroyed) {
+            host.disband();
+            gameLog('expedition', `[玩家] 剧本收官：远征军 ${host.name} 班师解散（玩家脱离军团，转乱斗）`);
+            this.deps.hero.detach();
+        }
         this.emitChange();
     }
 
