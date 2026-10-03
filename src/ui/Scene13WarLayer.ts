@@ -4085,6 +4085,8 @@ export class Scene13WarLayer {
         this.clouds = [];
         this.clearGround();
         this.restoreStrategyMap();
+        this.cancelCanvasFade();    // 上一场的淡出还没走完就开新一场：画布回到满不透明、正常大小
+        this.flushPanelRestore();   // 上一场延后的面板还原先做掉，再让下面的 onEnter 记「进场前状态」
         // [2026-08-16 修·进 13 闪旧尸体] 主画布同步清空：stop 只隐藏 canvas 不清内容，
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -4775,8 +4777,9 @@ export class Scene13WarLayer {
         // 🔴 [2026-08-26 主人定] 战后还原战斗面板布局与大地图面板
         const game = (window as any).game;
         game?.combatUI?.applyScene13Layout?.(false);
-        game?.cameraFollowUI?.onExitBattleScene13?.();
-        game?.brawlFeedPanel?.onExitBattleScene13?.();
+        // 🔴 [2026-10-03 主人「战术模式结束后切战略是硬切」] 画布淡出时（!keepFrame）面板延后到淡出过半再还原，
+        //    不与画布消失同一帧弹出；保留残局帧（keepFrame）的路径照旧立即还原。
+        if (keepFrame) this.restorePanels(); else this.schedulePanelRestore(450);
         if (this.active) {
             // [2026-08-11 诊断] 谁把演出停掉的。over=false 还被停 = 外部提前收场
             let field = 0, pool = 0;
@@ -4812,10 +4815,74 @@ export class Scene13WarLayer {
         this.heroRespawnTimer = 0;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
-        if (!keepFrame && this.canvas) {
-            this.canvas.style.display = 'none';
-            this.timeOfDay.end();
+        if (!keepFrame && this.canvas) this.fadeOutCanvas();
+    }
+
+    // ── 退场过渡（2026-10-03 主人「战术模式结束后，切换到战略模式是硬切」）──
+    //   原来是 `canvas.style.display = 'none'` 一帧切走，军团面板、军情面板同一帧弹出。
+    //   现在：画布 0.7 秒淡出并略微「拉远」（scale 1→1.08，纯 opacity/transform，走合成器，不重绘、不用混合模式——
+    //   混合模式叠在战术画布上会拖垮整页，见 perf-doctor）；底下的战略地图在 stop() 开头已先恢复，淡出时露出的就是真地图；
+    //   面板等淡出过半（450ms）再还原。**不碰地图缩放**（战术层期间地图 zoom 冻结是主人定的）。
+    private canvasFadeTimer: number | null = null;
+    private panelRestoreTimer: number | null = null;
+    private static readonly EXIT_FADE_MS = 700;
+
+    private resetCanvasFadeStyle(cv: HTMLCanvasElement): void {
+        cv.style.transition = '';
+        cv.style.opacity = '';
+        cv.style.transform = '';
+    }
+
+    /** 取消还没走完的淡出（新一场开战时调用，保证新场画布是满不透明、正常大小） */
+    private cancelCanvasFade(): void {
+        if (this.canvasFadeTimer !== null) {
+            window.clearTimeout(this.canvasFadeTimer);
+            this.canvasFadeTimer = null;
         }
+        if (this.canvas) this.resetCanvasFadeStyle(this.canvas);
+    }
+
+    private fadeOutCanvas(): void {
+        const cv = this.canvas;
+        if (!cv) return;
+        this.cancelCanvasFade();
+        if (cv.style.display === 'none') { this.timeOfDay.end(); return; }
+        cv.style.transformOrigin = '50% 50%';
+        cv.style.transition = `opacity ${Scene13WarLayer.EXIT_FADE_MS}ms ease-out, transform ${Scene13WarLayer.EXIT_FADE_MS}ms ease-out`;
+        cv.style.opacity = '0';
+        cv.style.transform = 'scale(1.08)';
+        this.canvasFadeTimer = window.setTimeout(() => {
+            this.canvasFadeTimer = null;
+            cv.style.display = 'none';
+            this.resetCanvasFadeStyle(cv);
+            this.timeOfDay.end();
+        }, Scene13WarLayer.EXIT_FADE_MS + 50);
+    }
+
+    private restorePanels(): void {
+        const game = (window as any).game;
+        game?.cameraFollowUI?.onExitBattleScene13?.();
+        game?.brawlFeedPanel?.onExitBattleScene13?.();
+    }
+
+    private schedulePanelRestore(delayMs: number): void {
+        if (this.panelRestoreTimer !== null) window.clearTimeout(this.panelRestoreTimer);
+        this.panelRestoreTimer = window.setTimeout(() => {
+            this.panelRestoreTimer = null;
+            this.restorePanels();
+        }, delayMs);
+    }
+
+    /**
+     * 立刻把延后的面板还原做掉（新一场进场前必须先调用）：
+     * 面板的「收起 / 还原」靠 `preScene13*` 标志成对记状态，若上一场的还原还挂在计时器上，
+     * 下一场 onEnter 就会把「已收起」记成「进场前的状态」，战后面板再也展不开。
+     */
+    public flushPanelRestore(): void {
+        if (this.panelRestoreTimer === null) return;
+        window.clearTimeout(this.panelRestoreTimer);
+        this.panelRestoreTimer = null;
+        this.restorePanels();
     }
 
     // ── 出兵口 = 编制槽位（getCultureTier(...).slots 展开）──
