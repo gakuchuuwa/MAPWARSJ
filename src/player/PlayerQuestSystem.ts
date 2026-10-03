@@ -93,6 +93,41 @@ export interface DialoguePayload {
     options: DialogueOption[];
 }
 
+/**
+ * 🔴 [2026-10-03 主人定] **「报名参军」这个面板，每位英雄只有一句话 —— 就是这位英雄对来投者最可能说的话。**
+ *
+ *   主人原话：「**这句话只能代表第一场战争。没有意义，玩家只需要开头加入一次。又不是连续加入。
+ *              所以这好像玩家准备参军，然后亚历山大应该对他说什么**」
+ *             「**你不要搞那么多，这种对话每个英雄人物只有一个就够了，就是玩家要去加入该英雄势力，
+ *              这个英雄最有可能对玩家说的话。**」
+ *
+ *   两条由此定死：
+ *   ① **一个英雄一句**（不是一仗一句、也不分城里见还是野外见）—— 原先那句「正欲提兵奔赴【战场】，
+ *      与【对手】展开【战役】」**只对得上第一场**，玩家一生只入伍一次（`onArrive` 第一句就是
+ *      `if (hero.isAttached()) return;`，在伍期间再到城根本不弹这个面板；入伍后 21 场是同一支军团连着打），
+ *      报战役名毫无意义。**哪一仗是什么，由各场的开战旁白／战役说明去讲。**
+ *   ② 这是**武将会面面板**上这位英雄对玩家说的话（面板抬头是武将名＋立绘），
+ *      与「剧本文案 0 对话、100% 第三人称」**不是同一类东西** —— 那条管的是播报／旁白／战役说明等叙述文案，
+ *      本面板是操作界面上的一句话，**只此一处**。
+ *
+ *   没写过的英雄一律用通用兜底句（表里加一行即给某位英雄定他这一句）。
+ */
+const ENLIST_LINES: Record<string, string> = {
+    // 亚历山大：东征是他的志业，对来投者要的是胆气与同行（阿里安《远征记》I.12 起，他一贯以亲率、共苦聚人）
+    gen_alexander_great: '壮士来得正好。我正要提兵东征，此去路远仗多，非有胆气者不能随行。愿去的，便随大军开拔。',
+};
+
+/** 通用兜底：表里没写过的英雄 */
+const ENLIST_LINE_DEFAULT = '壮士来得正好。军旅路远，正缺人手。愿随者，便随大军开拔。';
+
+/** 报名参军面板：这位英雄对来投者说的那一句（每位英雄只此一句） */
+export function enlistmentPanelText(generalId: string): string {
+    return ENLIST_LINES[generalId] ?? ENLIST_LINE_DEFAULT;
+}
+
+/** 参军面板第一颗按钮（两条会面链共用；剧本军没有「目标城」可写，故不带地名） */
+export const ENLIST_OPTION_LABEL = '⚔ 入伍随军';
+
 export interface PlayerQuestDeps {
     hero: PlayerHero;
     cityManager: {
@@ -327,16 +362,16 @@ export class PlayerQuestSystem {
         if (ge) {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
-                const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                // 🔴 [2026-10-03] 原为 `ev.dialogue || …`；`dialogue` 已按「全剧 0 对话」物理删除，一律用第三人称默认句。
-                const narrativeText = `${g.generalName}整肃大军，正欲提兵奔赴【${ev.battlefieldName}】，与${foe}展开【${ev.title}】。战事关乎大局，一触即发。`;
+                // 🔴 [2026-10-03 主人定] 面板讲**参军**，不报「本场是哪一仗、打谁」——
+                //    玩家只入伍一次、之后 21 场随军连打，报战役名那句只对得上第一场（见 `enlistmentPanelText`）。
+                const narrativeText = enlistmentPanelText(g.generalId);
                 this.deps.showDialogue({
                     speaker: g.generalName,
                     portrait,
                     factionName,
                     text: narrativeText,
                     options: [
-                        { label: `⚔ 见证/加入【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
+                        { label: ENLIST_OPTION_LABEL, accent: true, onPick: () => this.joinGeneralEvent(city, g, ev, null) },
                         { label: "告辞", onPick: () => this.deps.closeDialogue() },
                     ],
                 });
@@ -636,7 +671,7 @@ export class PlayerQuestSystem {
         hit: { event: HistoricalEvent; battlefieldId: string },
     ): {
         title: string; battlefieldId: string; battlefieldName: string;
-        lat: number; lng: number; foeGeneralName: string | null;
+        lat: number; lng: number;
         /** 攻城战：要打的那座城（赶路终点是**城**，不是史实战场坐标） */
         defenderCityId: string | null;
         /** 主人设定的行军路标（据点 id，按顺序经过） */
@@ -650,17 +685,14 @@ export class PlayerQuestSystem {
         const bf = findEventSite(hit.battlefieldId);
         if (!bf) return null;
         const data = hit.event.siegeData ?? hit.event.fieldBattleData;
-        const atk = data?.attackerGeneralId ?? '';
-        const def = data?.defenderGeneralId ?? '';
-        // 对手＝不是我这位武将在打的那一位（本事件归我，故对手取另一方主帅）
-        const foeId = atk === hit.event.generalId ? def : atk;
         return {
             title: this.getBattlefieldBattleTitle(bf.id, bf.name),
             battlefieldId: bf.id,
             battlefieldName: bf.name,
             lat: bf.lat,
             lng: bf.lng,
-            foeGeneralName: foeId ? (getGeneralRecordByGeneralId(foeId)?.generalName ?? null) : null,
+            // 🔴 [2026-10-03] 原有一个 `foeGeneralName`（对手主帅名）—— 只给会面面板那句「与【对手】展开【战役】」用；
+            //    面板改成「报名参军一句话，不报本场是哪一仗」后它再没人读，连同 `foeId` 一并删掉（不留死字段）。
             // 🔴 [2026-09-19 主人定「建立一个一之谷战场」] 攻城战的赶路终点：
             //   · **战场要塞**（`targetBattlefieldId`）→ 就是这块战场本身的坐标；
             //   · 普通攻城（打下某座**据点**）→ 那座城的坐标。
@@ -2287,16 +2319,15 @@ export class PlayerQuestSystem {
         if (ge) {
             const ev = this.describeGeneralEvent(ge);
             if (ev) {
-                const foe = ev.foeGeneralName ? `【${ev.foeGeneralName}】` : '敌军';
-                // 🔴 [2026-10-03] 同上：`dialogue` 已物理删除，一律用第三人称默认句。
-                const narrativeText = `${generalName}挥师前线，大军直指【${ev.battlefieldName}】，与${foe}决战于【${ev.title}】。军纪森严，三军枕戈待旦。`;
+                // 🔴 [2026-10-03 主人定] 与城中会面**同一句**（每位英雄只此一句，见 `enlistmentPanelText`）。
+                const narrativeText = enlistmentPanelText(gid);
                 this.deps.showDialogue({
                     speaker: generalName,
                     portrait,
                     factionName,
                     text: narrativeText,
                     options: [
-                        { label: `⚔ 见证/加入【${ev.title}】`, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? "" }, ev, army) },
+                        { label: ENLIST_OPTION_LABEL, accent: true, onPick: () => this.joinGeneralEvent(city, { generalId: gid, generalName, portrait: rec?.portrait ?? "" }, ev, army) },
                         { label: "告辞", onPick: () => this.deps.closeDialogue() },
                     ],
                 });

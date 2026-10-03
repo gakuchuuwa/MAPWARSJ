@@ -40,7 +40,7 @@ import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
-import { resolveTimeOfDay, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
+import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
 import { popCostOf } from '../data/UnitPopCost';
@@ -3531,6 +3531,8 @@ export class Scene13WarLayer {
         // 战场底图铺满后，底下的地图不再参与浏览器绘制/合成；保留尺寸和镜头状态。
         // 地形缺图时仍显示原地图，不能用空白战场盖住它。
         if (this.coveredMap || !this.decorHasTerrain) return;
+        // 淡入期间底下的战略地图要留着（画布半透明，盖掉地图会透出空白底）；淡入走完后的下一帧再盖
+        if (this.entryFadeActive) return;
         /* 🔴 [2026-09-17 主人报障「一直都是战略地图白屏」· 第二刀] 演出已停就绝不许再盖。
          * 只把 stop() 改成无条件 restore **不够** —— 实测调用序列（scratch/_probe_cover_hook.mjs）：
          *     306.9s restoreStrategyMap()  → covered=false vis=空      ← 恢复成功
@@ -4109,7 +4111,12 @@ export class Scene13WarLayer {
         this.last = performance.now();
 
         const cv = this.canvas;
-        if (cv) { cv.style.display = 'block'; }
+        if (cv) {
+            cv.style.display = 'block';
+            // 🔴 [2026-10-03 主人「添加一个丝滑进场」] 原来是画布一显示、第一帧画出整张战场底图，在战略地图上「啪」地盖上去。
+            //    现在先置为全透明 + 略缩（scale 0.96），等 render() 第一次真正画出来才淡入并归位（见 beginEntryFade）。
+            this.prepareEntryFade(cv);
+        }
         // [2026-08-19 主人需求] 战斗开始 → 显示退出按钮（13 演出期间可见）
         if (this.exitBtn) this.exitBtn.style.display = 'block';
 
@@ -4353,6 +4360,7 @@ export class Scene13WarLayer {
                     lat: init.centerLat ?? null,
                     isSiege: init.battleType === 'siege',
                     isNaval: !!init.isNaval,
+                    forceNight: isNightBattle(init),   // 🔴 [2026-10-03] 史实夜战才开夜晚滤镜
                 });
                 this.timeOfDay.begin(grade, performance.now());
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
@@ -4827,6 +4835,50 @@ export class Scene13WarLayer {
     private panelRestoreTimer: number | null = null;
     private static readonly EXIT_FADE_MS = 700;
 
+    // ── 进场过渡（2026-10-03 主人「添加一个丝滑进场」）──
+    //   start() 把画布置成「全透明 + scale(0.96)」，等 render() 第一次真正画出来才淡入并归位（与退场对称，
+    //   同样只用 opacity/transform，不用混合模式）。淡入期间战略地图保持可见（见 coverStrategyMap 的守卫），
+    //   画面就是「战略地图 → 战场」的交叉溶解；淡入走完才把地图盖起来（原有的性能优化）。
+    private entryFadePending = false;
+    /** 淡入进行中（从 beginEntryFade 到浏览器报告 opacity 渐变结束，或兜底超时）；期间不许盖地图 */
+    private entryFadeActive = false;
+    private entryFadeCleanup: (() => void) | null = null;
+    private static readonly ENTRY_FADE_MS = 600;
+
+    private prepareEntryFade(cv: HTMLCanvasElement): void {
+        this.cancelCanvasFade();   // 清掉上一场未走完的退场淡出 / 进场淡入
+        cv.style.transition = 'none';
+        cv.style.transformOrigin = '50% 50%';
+        cv.style.opacity = '0';
+        cv.style.transform = 'scale(0.96)';
+        this.entryFadePending = true;
+    }
+
+    private beginEntryFade(cv: HTMLCanvasElement): void {
+        this.entryFadePending = false;
+        void cv.offsetWidth;   // 强制样式落定：保证「透明 + 略缩」是过渡的起点
+        const ms = Scene13WarLayer.ENTRY_FADE_MS;
+        this.entryFadeActive = true;
+        // 🔴 淡入何时结束，以浏览器**真正的渐变结束事件**为准，不用「开始时刻 + 固定毫秒」：
+        //    进场这几百毫秒主线程在解码素材，渐变常常晚几百毫秒才真的开始走；
+        //    按固定毫秒算会在画布还半透明时就把地图盖掉（实测 12 帧里有 4 帧提前盖住，透出空白底）。
+        //    兜底超时 2 秒：渐变被取消 / 页面在后台时 transitionend 不会来，不能让地图永远盖不上。
+        const finish = (): void => {
+            cv.removeEventListener('transitionend', onEnd);
+            window.clearTimeout(fallback);
+            this.entryFadeCleanup = null;
+            this.entryFadeActive = false;
+            this.resetCanvasFadeStyle(cv);
+        };
+        const onEnd = (e: TransitionEvent): void => { if (e.propertyName === 'opacity') finish(); };
+        const fallback = window.setTimeout(finish, ms + 1400);
+        cv.addEventListener('transitionend', onEnd);
+        this.entryFadeCleanup = finish;
+        cv.style.transition = `opacity ${ms}ms ease-out, transform ${ms}ms ease-out`;
+        cv.style.opacity = '1';
+        cv.style.transform = 'scale(1)';
+    }
+
     private resetCanvasFadeStyle(cv: HTMLCanvasElement): void {
         cv.style.transition = '';
         cv.style.opacity = '';
@@ -4839,6 +4891,8 @@ export class Scene13WarLayer {
             window.clearTimeout(this.canvasFadeTimer);
             this.canvasFadeTimer = null;
         }
+        this.entryFadeCleanup?.();   // 进场淡入还没走完：摘监听、清兜底计时器、解除「不许盖地图」
+        this.entryFadePending = false;
         if (this.canvas) this.resetCanvasFadeStyle(this.canvas);
     }
 
@@ -8586,6 +8640,7 @@ export class Scene13WarLayer {
     private render(): void {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
+        if (this.entryFadePending) this.beginEntryFade(cv);   // 这一场的第一帧真正画出来 → 淡入
         // [2026-08-31 主人定] 攻守两侧左右对调（跟随军团固定左边）：整个战场水平镜像渲染。
         // 逻辑坐标（移动/索敌/碰撞/胜负/兵力）完全不变，只翻转「画出来的样子」——
         // 城门 NE/SE 素材翻转后自动朝右、士兵/特效/建筑跟着镜像。
@@ -9076,7 +9131,7 @@ export class Scene13WarLayer {
         if (flip) ctx.restore();
         this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
-        if (this.timeOfDay.active) {
+        if (this.timeOfDay.active && this.decorHasTerrain) {   // 地形缺图时画布不是满铺，不能整屏压色
             const _tt0 = import.meta.env.DEV ? performance.now() : 0;
             this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
             if (import.meta.env.DEV) {
