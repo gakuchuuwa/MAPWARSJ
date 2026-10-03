@@ -2204,6 +2204,13 @@ export class TerritorySystem {
         }
         if (!transform.trim()) transform = 'none';
 
+        // 🔴 [2026-10-03 主人令「战略地图上的城寨据点没有随机镜像，请随机镜像。所有据点都要随机镜像」
+        //    「但是大中小城寨，战场都要随机镜像」＋「对了,PASS不要随机镜像」]
+        //    大/中/小/城寨**整座左右翻一次**（`city.mirror` 每局随机掷一次，见 GameAppCityLoader）。
+        //    险要（pass）**不吃这层** —— 它照旧只认数据里的 mirror，已在 `buildDePassStackHtml` 里翻过。
+        //    翻转挂在建筑摞里面一层：`.city-building-stack` 自己的 transform 是攻城/停驻放大用的，不能动。
+        const settlementMirror = city.type !== 'pass' && !!city.mirror;
+
         const terrainClass = getCityImageContainerClass(city.id);
         const sizeClass = getCityMarkerSizeClass(city.type);
         const animClass = fadeIn ? 'map-fade-in' : '';
@@ -2221,7 +2228,7 @@ export class TerritorySystem {
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
-                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">
+                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
                           ${(deStyle
                               ? (city.type === 'big_city'
                                   ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
@@ -2244,7 +2251,7 @@ export class TerritorySystem {
                                       transform: ${transform};
                                   ">`
                                   : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`))}
-                      </div>` : ''}
+                      ${settlementMirror ? '</div>' : ''}</div>` : ''}
                      ${showFlag ? flagBodyHtml : ''}
                  </div>`,
             iconSize: [baseSize, baseSize + 80],

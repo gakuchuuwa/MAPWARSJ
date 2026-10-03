@@ -3,7 +3,6 @@ import { STARTING_CAPITALS } from '../../data/StartingCapitals';
 import { GameConfig } from '../../config/GameConfig';
 import { getCityImage } from '../../systems/RegionSystem';
 import { rollSessionCityMirror } from '../../systems/city-marker/CityBuildingMirror';
-import { hasCityExclusiveIcon } from '../../systems/city-marker/CityExclusiveIcons';
 import type { City } from '../../types/core';
 import type { GameApp } from '../GameApp';
 
@@ -38,7 +37,12 @@ export function loadGameAppCityData(app: GameApp): void {
             region: c.region,
             buildingStyle: c.buildingStyle,
             image: getCityImage(c),
-            mirror: hasCityExclusiveIcon(c.id) ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),
+            // 🔴 [2026-10-03 主人令「战略地图上的城寨据点没有随机镜像，请随机镜像。所有据点都要随机镜像」
+            //    「但是大中小城寨，战场都要随机镜像」＋「对了,PASS不要随机镜像」]
+            //    原样：带专属立绘的据点**整支走数据**（实测 146 座里 131 座数据没写 mirror → 永远不翻）。
+            //    现改：数据里**写明了 mirror 的**照数据（如洛阳 ↔ 新郑 镜像分布），其余一律每局随机掷一次；
+            //    险要（pass）不吃这签 —— `rollSessionCityMirror` 内部对 pass 只认数据。
+            mirror: c.mirror !== undefined ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),
             startYear: c.startYear,
             endYear: c.endYear,
             stockadeShape: c.stockadeShape,

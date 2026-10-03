@@ -3,6 +3,7 @@ import { BATTLEFIELDS, type BattlefieldData } from '../data/Battlefields';
 import { isBattlefieldFought, onBattlefieldFought } from '../events/battlefieldState';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { bfLayout, renderBattlefieldBoxHtml, randomizeBattlefieldSeed, BF_REF_W, BF_REF_H } from './battlefieldMorphology';
+import { deHashString } from '../systems/cityWallShared';
 import type { TerritorySystem } from '../systems/TerritorySystem';
 
 /**
@@ -109,9 +110,26 @@ export class BattlefieldLayer {
         //      而不是一堆残骸。样式全走据点同一套组装（TerritorySystem.buildSiegeCastleStackHtml），
         //      没有第二套画法 —— 以后据点样式改了，战场的砦一起变。
         if (bf.siegeCastleType && this.territorySystem) {
-            return this.territorySystem.buildSiegeCastleStackHtml(bf.id, bf.siegeCastleType, null);
+            return this.mirrorBattlefieldArt(bf, this.territorySystem.buildSiegeCastleStackHtml(bf.id, bf.siegeCastleType, null), true);
         }
-        return renderBattlefieldBoxHtml(BASE_ART_W, bf.id);
+        return this.mirrorBattlefieldArt(bf, renderBattlefieldBoxHtml(BASE_ART_W, bf.id), false);
+    }
+
+    /**
+     * 🔴 [2026-10-03 主人令「大中小城寨，战场都要随机镜像」] 战场标牌**整块左右翻一次**：
+     *   每局随机（`deHashString` 带每局会话种子，见 GameApp 的 `setCityStyleSessionSeed`）、**局内稳定** ——
+     *   战场不会中途变样。地名标牌在容器里、不在这层里，故文字不会被翻。
+     *   两路翻法不同，但**翻轴都取整块自己的中心，位置一分不动**：
+     *     · 砦（据点样式，`position:relative` 的整摞）→ 用缩到自身大小的 inline-block 层翻；
+     *     · 遗迹盒（`position:absolute` + translate(-50%,-50%) 居中于容器）→ 用同尺寸的定位层翻
+     *       （若用 inline-block，会把它变成「零尺寸包含块」，盒子会塌到左上角）。
+     */
+    private mirrorBattlefieldArt(bf: BattlefieldData, art: string, isCastleStack: boolean): string {
+        if ((deHashString(bf.id + '|mirror') & 1) === 0) return art;
+        const layer = isCastleStack
+            ? 'display:inline-block;'
+            : 'position:absolute;left:0;top:0;width:100%;height:100%;';
+        return `<div style="${layer}transform:scaleX(-1);">${art}</div>`;
     }
 
     /** 外部显示过滤（剧本期只显示已打过的战场与当前这一场，见 ScriptCityVisibility） */
