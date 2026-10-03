@@ -35,6 +35,7 @@ import {
 import {COMBAT_UI_TOKENS, uiPx} from '../config/combat-ui-tokens';
 import {summarizeTechEffects, summarizeSingleTechEffect} from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
+import { isScriptPeriod } from '../events/scriptPeriod';
 import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
@@ -1487,38 +1488,44 @@ export class CombatUI {
         if (topHud) {
             topHud.style.display = 'none';
         }
-        // ③ 科技 → 屏幕下方居中左右分列（位于血槽上方，科技折行时向上生长）
-        if (this.leftTechBox) {
-            this.leftTechBox.style.position = 'fixed';
-            this.leftTechBox.style.bottom = '38px';
-            this.leftTechBox.style.top = 'auto';
-            this.leftTechBox.style.right = '50.5vw';
-            this.leftTechBox.style.left = 'auto';
-            this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
-            this.leftTechBox.style.color = '#e8dcc0';
-            this.leftTechBox.style.alignItems = 'flex-end';
-        }
-        if (this.rightTechBox) {
-            this.rightTechBox.style.position = 'fixed';
-            this.rightTechBox.style.bottom = '38px';
-            this.rightTechBox.style.top = 'auto';
-            this.rightTechBox.style.left = '50.5vw';
-            this.rightTechBox.style.right = 'auto';
-            this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
-            this.rightTechBox.style.color = '#e8dcc0';
-            this.rightTechBox.style.alignItems = 'flex-end';
-        }
-        // 攻守分界徽记：钉在两侧科技胶囊的中缝上（血槽正上方中央）
-        if (this.techDivider) {
-            const size = uiPx(T.sideBar.centerVsIconSize);
-            this.techDivider.style.width = size;
-            this.techDivider.style.height = size;
-            this.techDivider.style.left = '50%';
-            this.techDivider.style.right = 'auto';
-            this.techDivider.style.top = 'auto';
-            this.techDivider.style.bottom = '40px';
-            this.techDivider.style.transform = 'translateX(-50%)';
-            this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
+        // ③ 科技与军团/精锐行 → 🔴 [2026-10-03 主人令] 剧本模式不用显示科技，双方军团名称与精锐番号也不用留，这一行都隐藏
+        if (isScriptPeriod()) {
+            if (this.leftTechBox) this.leftTechBox.style.display = 'none';
+            if (this.rightTechBox) this.rightTechBox.style.display = 'none';
+            if (this.techDivider) this.techDivider.style.display = 'none';
+        } else {
+            if (this.leftTechBox) {
+                this.leftTechBox.style.position = 'fixed';
+                this.leftTechBox.style.bottom = '38px';
+                this.leftTechBox.style.top = 'auto';
+                this.leftTechBox.style.right = '50.5vw';
+                this.leftTechBox.style.left = 'auto';
+                this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
+                this.leftTechBox.style.color = '#e8dcc0';
+                this.leftTechBox.style.alignItems = 'flex-end';
+            }
+            if (this.rightTechBox) {
+                this.rightTechBox.style.position = 'fixed';
+                this.rightTechBox.style.bottom = '38px';
+                this.rightTechBox.style.top = 'auto';
+                this.rightTechBox.style.left = '50.5vw';
+                this.rightTechBox.style.right = 'auto';
+                this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
+                this.rightTechBox.style.color = '#e8dcc0';
+                this.rightTechBox.style.alignItems = 'flex-end';
+            }
+            // 攻守分界徽记：钉在两侧科技胶囊的中缝上（血槽正上方中央）
+            if (this.techDivider) {
+                const size = uiPx(T.sideBar.centerVsIconSize);
+                this.techDivider.style.width = size;
+                this.techDivider.style.height = size;
+                this.techDivider.style.left = '50%';
+                this.techDivider.style.right = 'auto';
+                this.techDivider.style.top = 'auto';
+                this.techDivider.style.bottom = '40px';
+                this.techDivider.style.transform = 'translateX(-50%)';
+                this.techDivider.style.zIndex = String(T.zIndex.panel + 2);
+            }
         }
     }
 
@@ -5258,10 +5265,11 @@ export class CombatUI {
         // [13 布局] 跟随战术模式开关（幂等，进出各执行一次）
         this.applyScene13Layout((window as any).game?.scene13War?.isActive?.() === true);
 
-        // [军事科技与军团/精锐] 只在 13 战斗模式下显示（非 13 战斗模式隐藏）
+        // [军事科技与军团/精锐] 只在 13 战斗模式且非剧本模式下显示（🔴 [2026-10-03 主人令] 剧本模式不用显示科技，双方军团名称与精锐番号也不用留，这一行都隐藏）
         if (this.leftTechBox && this.rightTechBox) {
             const is13 = (window as any).game?.scene13War?.isActive?.() === true;
-            if (is13) {
+            const hideRow = isScriptPeriod();
+            if (is13 && !hideRow) {
                 const sideTechs = (window as any).game?.scene13War?.getSideTechs?.() ?? { attacker: [], defender: [] };
                 this.renderTechSide(
                     this.sideElement('attacker', this.leftTechBox, this.rightTechBox),
@@ -5275,7 +5283,7 @@ export class CombatUI {
                     this.techDivider.style.display = 'flex';
                     this.techDivider.style.opacity = '1';
                 }
-            } else if (this.leftTechBox.dataset.sig !== '') {
+            } else if (this.leftTechBox.dataset.sig !== '' || this.leftTechBox.style.display !== 'none') {
                 this.leftTechBox.dataset.sig = '';
                 this.rightTechBox.dataset.sig = '';
                 this.leftTechBox.textContent = '';

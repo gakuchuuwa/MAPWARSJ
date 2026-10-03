@@ -4223,7 +4223,8 @@ export class Scene13WarLayer {
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
             const mx = Math.max(60, VW * 0.07);
-            const depth = Math.min(150, VW * 0.075);
+            // 🔴 [2026-10-03 主人选定方案A] 前中后三排间距适度拉开至 180px（原 144px），消除营帐方阵局促挤压感，增强冲锋纵深
+            const depth = Math.min(190, Math.round(VW * 0.09375));
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
@@ -7387,7 +7388,11 @@ export class Scene13WarLayer {
         }
         if (front1 - front0 < MARCH_REL) {
             this.marching = false;
-            for (const m of this.men) m.march = false;   // 全军同时解除，双方一起炸开接战
+            for (const m of this.men) {
+                m.march = false;   // 全军同时解除，双方一起炸开接战
+                m.stuckT = 0;
+                m.netT = 0;
+            }
         }
     }
 
@@ -7752,6 +7757,8 @@ export class Scene13WarLayer {
                 if (!keepInMarch) {
                     m.march = false;
                     m.port = null;
+                    m.stuckT = 0;
+                    m.netT = 0;
                 }
             }
 
@@ -8344,6 +8351,13 @@ export class Scene13WarLayer {
         //    想走却被前面的人堵住时位移≈0，此时再播移动帧就是**原地迈腿**（主人实锤）。
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
         for (const m of this.men) {
+            // 🔴 [2026-10-03 修·冲锋静止] 列阵推进中等待槽位不属于卡死堵路，不累加 stuckT
+            if (m.march) {
+                m.stuckT = 0;
+                m.netT = 0;
+                m.prevX = m.x; m.prevY = m.y;
+                continue;
+            }
             const dx = m.x - m.prevX, dy = m.y - m.prevY;
             const spd = this.statsFor(m.key, m.f).spd || 0;
             const want = spd * dt;
@@ -8363,7 +8377,7 @@ export class Scene13WarLayer {
             }
             if (netStuck) m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + NET_STUCK_WINDOW);
             else if (frameStuck) m.stuckT += dt;
-            else m.stuckT = Math.max(0, m.stuckT - dt);
+            else m.stuckT = 0; // 🔴 [2026-10-03 修] 既然正常移动迈开腿了，当帧清零 stuckT（对齐「一旦真的挪起来，当帧就切回走路」原设计，彻底杜绝冲锋待命滑步）
             m.prevX = m.x; m.prevY = m.y;
         }
         // 旗手战死 → 原地留下一面倒下的军旗。men 数组只在这一处出人，死亡侦测放这里最稳。
