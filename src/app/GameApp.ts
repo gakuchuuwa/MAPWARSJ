@@ -335,6 +335,9 @@ export class GameApp {
                 () => this.cityManager.getCities(),
                 () => (this.playerHero?.autoPlan ?? 'script') === 'script',
             );
+            // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
+            //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
+            //    唯一一份定义 = `syncScriptOwners()`（年份每场在前进，故开局、切模式、打完一场都要重跑）。
             this.cityManager.setVisibilityFilter((city) => this.scriptCityVisibility!.isCityVisible(city));
             // 🔴 [2026-09-27 主人定「全图的据点名称都显示出来，样貌按年代」]
             //    渲染放宽到全库（名字都要看得见）；样貌照旧由年代闸门决定 —— 不过闸的只画灰字名字。
@@ -393,6 +396,8 @@ export class GameApp {
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
                 this.cityManager.refreshCityVisibility();
+                // 🔴 [2026-10-03 修] 换属也要跟着年份重跑（原缺这一行 → 前331 场次露出的亚历山大城仍是乱斗旗号「托勒」）
+                this.syncScriptOwners();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
                 // 打完一场 → 当前事件年份前进 → 奇观建成年代闸门按新年份重画
                 this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
@@ -814,6 +819,22 @@ export class GameApp {
      * 镜头开局对准该处，玩家可自行前往面见城中武将接任务入伍，或在世界大地图自由漫游。
      * 🔴 [2026-09-15 主人定]「请在游戏开局，让玩家随机出现在世界的某一处」
      */
+    /**
+     * 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
+     * 剧本期把据点旗号换成**那一年**的史实归属（数据 `src/data/scriptHistoricalOwners.ts`），
+     * 离开剧本期原样换回 —— 乱斗逐字不变。唯一一份定义，三处调用：开局套完名字后、乱斗↔剧本切换、
+     * **打完一场**（`onBattlefieldFought`）。
+     * 🔴 [2026-10-03 修] 打完一场也必须调：年份每场在前进，而本表是**按年份**查的，不重跑就会一直
+     *    挂着开局那一年的旗号（例：前331 才露出的亚历山大城，该挂「马其」却挂着乱斗的「托勒」）。
+     */
+    private syncScriptOwners(): void {
+        syncScriptHistoricalOwners(
+            this.cityManager,
+            (this.playerHero?.autoPlan ?? 'script') === 'script',
+            this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
+        );
+    }
+
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
@@ -870,13 +891,7 @@ export class GameApp {
         this.playerHero = hero;
         // 剧本 ↔ 乱斗切换：据点显示范围随之变（乱斗 = 全部据点）
         let lastPlan = hero.autoPlan;
-        // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
-        //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回
-        const syncHistoricalOwners = () => syncScriptHistoricalOwners(
-            this.cityManager,
-            hero.autoPlan === 'script',
-            this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
-        );
+        // （`syncHistoricalOwners` 已提到上面「打完一场」回调之前定义 —— 那里也要重跑）
         // 🔴 [2026-09-30 主人定「战略地图上只显示一种名字……不需要按年代显示名字」
         //     +「例如北京，这是明朝才有的名字吧。但是这个地方在周朝就有人迹了，所以应该显示在地图上」]
         //    **名字一处一名（最知名的那个），不按年代、不按模式换** —— 开局套一次即可
@@ -890,12 +905,12 @@ export class GameApp {
         const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, hero.autoPlan === 'script');
         //    名字不随模式变（上面已套完），故这里不再有 syncCityNames()
         syncBuildingStyles();
-        syncHistoricalOwners();
+        this.syncScriptOwners();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
             syncBuildingStyles();
-            syncHistoricalOwners();
+            this.syncScriptOwners();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
             this.map.getMonumentLayer()?.refresh();

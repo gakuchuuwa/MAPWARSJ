@@ -109,11 +109,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
     {
         // 史名：马其顿军团（Μακεδονικός στρατός），菲利普二世与亚历山大两代的军队；中文维基条目「马其顿阿吉德王朝陆军」
         name: '马其顿军团',
-        formationMode: 'fish_scale',   // 鱼鳞 3-4-2：前 3 / 中 4 / 后 2
+        formationMode: 'echelon',   // 鱼鳞 3-4-2：前 3 / 中 4 / 后 2
         slots: [
-            { type: 'elite_companion_cavalry', count: 3 },   // 前排：伙伴骑兵，担任决定性一击的矛头
-            { type: 'elite_phalangite', count: 4 },          // 中排：萨里沙方阵随后跟进，主体、人数最多
-            { type: 'cretan_archer', count: 2 },             // 后排：克里特弓箭手，掩护主力
+            { type: 'elite_phalangite', count: 4 },
+            { type: 'cretan_archer', count: 3 },
+            { type: 'elite_companion_cavalry', count: 2 },
         ],
         // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 舰队模型 = **英雄·地米斯托克利**（旗舰，原 TRIREME）。
         //    ⚠️ 剧本期这一处才是**真正生效**的那一处：`getCultureNavalShip()` 第 1 优先就是「军团自己绑的船」，
@@ -121,10 +121,7 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
         shipId: 'HERO_THEMISTOCLES',
         // 🔴 [2026-10-02 主人「五兵编制」] 主队（第 10 队）= 亚历山大亲统（hero_mounted_alexander，骑马亚历山大）
         commanderUnit: 'hero_mounted_alexander',
-        source: '维基百科 Ancient Macedonian army「Battle tactics」：自公元前358年伊里吉翁河谷之战至公元前331年高加米拉，'
-            + '马其顿标准战法为斜线推进、由伙伴骑兵担任矛头发动决定性冲击、方阵随后跟进；「Light infantry / Archers」：'
-            + '克里特弓箭手与轻装兵掩护主力。三排人数按兵种比例：英文维基百科 Battle of the Granicus 信息框'
-            + '骑兵5100、步兵12000、远程1000，取最接近的鱼鳞阵 前骑兵3 / 中步兵4 / 后远程2。',
+        source: '维基百科 Ancient Macedonian army「Battle tactics」：自公元前358年伊里吉翁河谷之战至公元前331年高加米拉，马其顿标准战法为斜线推进、由伙伴骑兵担任矛头发动决定性冲击、方阵随后跟进；「Light infantry / Archers」：克里特弓箭手与轻装兵掩护主力。三排人数按兵种比例：英文维基百科 Battle of the Granicus 信息框骑兵5100、步兵12000、远程1000，取最接近的鱼鳞阵 前骑兵3 / 中步兵4 / 后远程2。',
     },
     {
         // 史名：维基只记为阿契美尼德帝国一方、由小亚细亚诸总督统领，无专名 → 按「知名度最大 / 合理推定」称波斯总督军团
