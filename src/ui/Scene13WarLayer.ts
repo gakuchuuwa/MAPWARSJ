@@ -2259,8 +2259,6 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
     FX_WALL_DUST: { path: 'IMPACT_DUST', dirs: 8 },
     // 投石/巨石落地碎石烟尘（DE IMPACT_TREBUCHET_SMOKE，1 向）
     FX_TREBUCHET_SMOKE: { path: 'IMPACT_TREBUCHET_SMOKE', dirs: 1 },
-    // 夜战火把 / 篝火（DE FIRE_MEDIUM，10 帧循环火焰，素材库已有，不新提取）
-    FX_FIRE_MEDIUM: { path: 'FIRE/FIRE_MEDIUM', dirs: 1 },
 };
 /**
  * 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度）。
@@ -2281,7 +2279,6 @@ const FX_SCALE: Record<string, number> = {
     FX_MUZZLE_FIRELANCE: 0.40,    //  36px ≈ 0.72 倍：火矛是喷射，比枪口焰长
     FX_WALL_DUST: 0.8,            // 尘土 136px ≈ 2.2 倍兵高：破墙扬尘，压过墙段高度
     FX_TREBUCHET_SMOKE: 0.45,     // 投石碎石尘土冲击：约 1.5 倍兵高
-    FX_FIRE_MEDIUM: 0.36,         // 夜战火把：141×140 → 约 51×50px ≈ 1 倍兵高
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
 const FX_DUR: Record<string, number> = {
@@ -3467,15 +3464,6 @@ export class Scene13WarLayer {
     private sparks: WarSpark[] = [];
     /** DE 攻击特效实例（爆炸/炮口焰，一次性生命周期） */
     private fxs: WarFx[] = [];
-    // ── 夜战火光（2026-10-03 主人「夜战可以添加一些火焰素材吗」→「请执行」）──
-    //   只在夜战（night 滤镜开着）出现：火把 / 篝火摆在守方城墙塔、城防建筑旁，限 12 处；
-    //   火焰（DE FIRE_MEDIUM 循环）与暖色光晕**画在夜晚滤镜之后**，否则会被整画布 multiply 压暗，不像光源。
-    //   光晕是预渲染的小径向渐变图，每帧只贴图（screen 叠加），不做整画布运算。
-    private nightFires: Array<{ x: number; y: number; phase: number }> = [];
-    private nightFiresBuilt = false;
-    private nightMode = false;
-    private glowSprite: HTMLCanvasElement | null = null;
-    private static readonly NIGHT_FIRE_MAX = 12;
     /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
     private fxBank: Record<string, FxAsset> = {};
     private fallenFlags: WarFallenFlag[] = [];
@@ -4388,10 +4376,6 @@ export class Scene13WarLayer {
                     forceNight: isNightBattle(init),   // 🔴 [2026-10-03] 史实夜战才开夜晚滤镜
                 });
                 this.timeOfDay.begin(grade, performance.now());
-                this.nightMode = grade.phase === 'night' && grade.multiply[0] < 255;
-                this.nightFires = [];
-                this.nightFiresBuilt = false;
-                if (this.nightMode) this.ensureFx('FX_FIRE_MEDIUM');   // 随素材就绪闸一起等齐
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
             }
             const __d0 = performance.now();
@@ -4838,9 +4822,6 @@ export class Scene13WarLayer {
         this.fxs = [];
         this.fallenFlags = [];
         this.clouds = [];
-        this.nightFires = [];
-        this.nightFiresBuilt = false;
-        this.nightMode = false;
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
@@ -9205,55 +9186,5 @@ export class Scene13WarLayer {
                 if (this.perfTint.length > 1800) this.perfTint.shift();
             }
         }
-        if (this.nightMode && this.decorHasTerrain) this.paintNightFires(ctx, cv, flip);
-    }
-
-    /** 夜战火光：在夜晚滤镜之后画暖色光晕（screen）与循环火焰。 */
-    private paintNightFires(ctx: CanvasRenderingContext2D, cv: HTMLCanvasElement, flip: boolean): void {
-        const fx = this.fxBank['FX_FIRE_MEDIUM'];
-        const fd = fx?.dirs[0];
-        if (!fd?.img || !fd.fw) return;   // 火焰素材没到就不画（不阻塞）
-        if (!this.nightFiresBuilt) {
-            this.nightFiresBuilt = true;
-            // 火点：守方城墙内侧箭塔、城堡塔、城防建筑（前 6 座），合计 ≤ NIGHT_FIRE_MAX；位置在塔脚右侧，像塔边立的火把
-            const pts: Array<{ x: number; y: number }> = [];
-            for (const t of this.arrowTowers) pts.push({ x: t.x + 26, y: t.y - 6 });
-            for (const t of this.castleTowers) pts.push({ x: t.x + 30, y: t.y - 6 });
-            for (const b of this.cityBuildings.slice(0, 6)) pts.push({ x: b.sprite.x + 24, y: b.sprite.y - 4 });
-            this.nightFires = pts.slice(0, Scene13WarLayer.NIGHT_FIRE_MAX).map((p, i) => ({ ...p, phase: (i * 3.7) % fd.n }));
-        }
-        if (!this.nightFires.length) return;
-        if (!this.glowSprite) {
-            const g = document.createElement('canvas');
-            g.width = g.height = 128;
-            const gx = g.getContext('2d')!;
-            const grad = gx.createRadialGradient(64, 64, 4, 64, 64, 64);
-            grad.addColorStop(0, 'rgba(255,190,90,0.85)');
-            grad.addColorStop(0.35, 'rgba(255,140,50,0.38)');
-            grad.addColorStop(1, 'rgba(255,100,30,0)');
-            gx.fillStyle = grad;
-            gx.fillRect(0, 0, 128, 128);
-            this.glowSprite = g;
-        }
-        const now = performance.now();
-        ctx.save();
-        if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-        // ① 暖光晕：screen 叠加，随火焰轻微闪动
-        ctx.globalCompositeOperation = 'screen';
-        for (const f of this.nightFires) {
-            const flick = 0.82 + 0.18 * Math.sin(now * 0.011 + f.phase * 2.1) + 0.06 * Math.sin(now * 0.027 + f.phase);
-            const r = 92 * flick;
-            ctx.globalAlpha = 0.7 * flick;
-            ctx.drawImage(this.glowSprite, f.x - r, f.y - 18 - r, r * 2, r * 2);
-        }
-        // ② 火焰本体：10 帧循环（约 10 帧/秒），各火点错相
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = 1;
-        const s = FX_SCALE['FX_FIRE_MEDIUM'] ?? 0.36;
-        for (const f of this.nightFires) {
-            const fr = Math.floor(now * 0.01 + f.phase) % fd.n;
-            ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
-        }
-        ctx.restore();
     }
 }
