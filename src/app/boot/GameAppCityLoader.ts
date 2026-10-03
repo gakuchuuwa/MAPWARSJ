@@ -37,12 +37,11 @@ export function loadGameAppCityData(app: GameApp): void {
             region: c.region,
             buildingStyle: c.buildingStyle,
             image: getCityImage(c),
-            // 🔴 [2026-10-03 主人令「战略地图上的城寨据点没有随机镜像，请随机镜像。所有据点都要随机镜像」
-            //    「但是大中小城寨，战场都要随机镜像」＋「对了,PASS不要随机镜像」]
-            //    原样：带专属立绘的据点**整支走数据**（实测 146 座里 131 座数据没写 mirror → 永远不翻）。
-            //    现改：数据里**写明了 mirror 的**照数据（如洛阳 ↔ 新郑 镜像分布），其余一律每局随机掷一次；
-            //    险要（pass）不吃这签 —— `rollSessionCityMirror` 内部对 pass 只认数据。
-            mirror: c.mirror !== undefined ? !!c.mirror : rollSessionCityMirror(c.type, c.mirror),
+            // 🔴 [2026-10-03 主人令「大中小城寨，战场都要随机镜像。PASS不要随机镜像」]
+            //    大/中/小/城寨**一律每局随机掷一次**（原先「带专属立绘的据点整支照数据」那条约 131 座永远不翻、
+            //    以及数据里写了 mirror:true 的照数据的例外，按本条令一并去掉）；
+            //    险要（pass）**不掷签** —— `rollSessionCityMirror` 内部对 pass 只认数据。
+            mirror: rollSessionCityMirror(c.type, c.mirror),
             startYear: c.startYear,
             endYear: c.endYear,
             stockadeShape: c.stockadeShape,

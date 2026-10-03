@@ -4,6 +4,7 @@ import { WONDER_FOUNDED_YEAR } from '../data/wonderFoundedYears';
 import { WONDER_NAME } from '../data/WonderNames';
 import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
+import { deHashString } from '../systems/cityWallShared';
 import { isScriptPeriod } from '../events/scriptPeriod';
 
 /** 奇观 monument 数据（原 MonumentData 类型内联，野外奇观已全部转城内奇观挂靠据点） */
@@ -212,7 +213,11 @@ export class MonumentLayer {
 
     private createMonumentMarker(mon: PlacedMonument, fadeIn = false): L.Marker {
         // [2026-08-28 主人要求「奇观和所有建筑一样随机镜像」]：会话级随机左右镜像，与 CityBuildingMirror.rollSessionCityMirror 一致
-        const mirror = Math.random() < 0.5;
+        // 🔴 [2026-10-03 主人令「所有特殊建筑也要随机镜像」] 与据点／战场**同一套掷签**：
+        //    改前是 `Math.random() < 0.5`（每建一次 marker 掷一次）—— 奇观被撤下再放回（剧本期显隐、
+        //    据点显隐切换）就会换个方向；改后按 `deHashString(id + '|mirror')` 落定
+        //    （带每局会话种子，见 GameApp 的 `setCityStyleSessionSeed`）→ **每局随机、局内稳定、按 id 可复现**。
+        const mirror = (deHashString(mon.id + '|mirror') & 1) === 1;
         const w = BASE_SIZE * (mon.scale ?? 1);
         const h = w;
         const groundW = w * 1.6;

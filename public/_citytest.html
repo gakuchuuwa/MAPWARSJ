@@ -1565,10 +1565,13 @@ let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
 let curStockadeFence = 'auto'; // 'auto' | 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE'（城寨栅栏材质独立切换，看其它样式用）
 let curSmallWall = 'auto'; // 'auto' | 'stone2'（石墙双门）| 'stone4'（石墙四门）| 'palisade'（硬木栅栏）
 
-/** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐） */
-function isCenterCastleActive() {
+/** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐）；
+ *  🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城 auto 时**一律开启**
+ *  （与游戏 TerritorySystem 的 centerCastle 同一口径）；险要仍由调用处单独判（恒开启）；小城/城寨不受影响。 */
+function isCenterCastleActive(type) {
   if (curCenterCastle === 'on') return true;
   if (curCenterCastle === 'off') return false;
+  if (type === 'big' || type === 'medium') return true;
   return curCulture === 'JAPAN' || curCulture === 'TIBET';
 }
 
@@ -1903,7 +1906,7 @@ function renderYurtCampHtml(baseSize, style, type) {
   const srcOf = (k) => k === TOWER ? '/SUCAI_BUILDING/ASIA_TOWER_AGE2/preview.png' : '/SUCAI_BUILDING/' + k + '/preview.png';
   const sizeOf = (k, center) => k === TOWER ? baseSize * 0.26 : (center ? baseSize * 0.46 : baseSize * 0.30);
 
-  const isCastleMode = (type === 'pass') || (isCenterCastleActive() && (type === 'big' || type === 'medium'));
+  const isCastleMode = (type === 'pass') || (isCenterCastleActive(type) && (type === 'big' || type === 'medium'));
   const castleDir = (curCastle && curCastle !== 'auto') ? curCastle : 'MONG_CASTLE_AGE3';
 
   // 中间 1 个：若为城堡模式（险要或城心开启）则放置蒙古汗王要塞城堡，否则放置可汗牙帐大蒙古包
@@ -1967,7 +1970,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
   const tierScale = CITY_TIER_SCALE[type] || 1.00;
   const rotation = rnd() * 360; // 360 度随机主旋转角度（与 TerritorySystem 一模一样）
   const parts = [];
-  const isCenterCastle = (type !== 'stockade') && isCenterCastleActive();
+  const isCenterCastle = (type !== 'stockade') && isCenterCastleActive(type);
   const castleDir = (curCastle && curCastle !== 'auto') ? curCastle : resolvePassCastle(style);
 
   if (type === 'pass') {
@@ -3069,9 +3072,11 @@ if (selCastleEl) {
 function syncCenterCastleBtn() {
   const b = document.getElementById('btnCenterCastle');
   if (!b) return;
-  const active = isCenterCastleActive();
+  const active = isCenterCastleActive(curType);
   if (curCenterCastle === 'auto') {
-    b.innerText = '城心城堡: 自动 (' + (active ? '开启·' + (curCulture === 'JAPAN' ? '日本' : curCulture === 'TIBET' ? '青藏' : curCulture) : '关') + ')';
+    const why = (curType === 'big') ? '大城' : (curType === 'medium') ? '中城'
+      : (curCulture === 'JAPAN') ? '日本' : (curCulture === 'TIBET') ? '青藏' : curCulture;
+    b.innerText = '城心城堡: 自动 (' + (active ? '开启·' + why : '关') + ')';
     b.style.background = active ? '#2b6cb0' : '#243246';
     b.style.borderColor = active ? '#63b3ed' : '#4a5568';
     b.style.color = '#fff';
