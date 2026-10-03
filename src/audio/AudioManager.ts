@@ -1231,7 +1231,7 @@ export class AudioManager {
             // 🔴 [2026-10-02 主人定] 战术模式陆战接触音效音量提高到与播报一致 (1.0 * masterVolume)，
             //    且不要和播报重叠播放（播报期间完全静音，播报结束后平滑淡入恢复）
             if (this.speechDucking) return 0;
-            return this.getSpeechVolume();
+            return clamp01(this.getSpeechVolume() * 0.85);
         }
         const categoryVolume = this.settings.categoryVolume[definition.category] ?? 1;
         const base = this.settings.masterVolume * categoryVolume * (definition.volume ?? 1);
