@@ -111,25 +111,29 @@ export const CITY_WONDER: Record<string, string> = {
     'city_putijiaye': 'SCEN_BUDDHA_STATUE',  // 菩提伽耶（成道像）
     'city_jienei': 'AFRI_WONDER_MALIANS',  // 杰内城（大清真寺）
     'city_agesi': 'POENARI_CASTLE',  // 库尔泰亚（波耶纳里城堡）
+    // 🔴 [2026-10-03 主人令「战术模式中要显示城堡和特殊建筑，而且不是随机显示，是必须显示。
+    //    所以如果两个样式是重复的就删除特殊建筑」] 险要（pass）一律**城堡居中**，
+    //    下面这 14 座的主奇观**本身就是居中那一座城堡**（asset 完全相同）→ 一城里两座一样的城堡，
+    //    **主奇观已删**（城堡仍由正中那一格画 → 必须显示）：
+    //      巴巴维达 BULG_CASTLE_AGE3｜法西尔堡 ETHI_CASTLE_AGE3｜香波堡 FRAN_CASTLE_AGE3
+    //      阿哈尔齐赫 GEOR_CASTLE_AGE3｜瓜廖尔堡 GURJ_CASTLE_AGE3｜马丘比丘 INCA_CASTLE_AGE3
+    //      戈尔康达 INDI_CASTLE_AGE3｜乌斯马尔 MAYA_CASTLE_AGE3｜巴姆 PERS_CASTLE_AGE3
+    //      本津堡 POLE_CASTLE_AGE3｜布拉干萨 PORT_CASTLE_AGE3｜拉莫塔堡 SPAN_CASTLE_AGE3
+    //      塞乌托波利 THRACIANS_CASTLE_AGE3｜希马鲁塔 MACEDONIAN_CASTLE_AGE3
+    //    ⚠️ 保留不删的两条（**样式不重复** —— 小城不画居中城堡，这两条主奇观就是城里唯一的那座城堡）：
+    //      city_bishnupur BENG_CASTLE_AGE3｜city_pagaruyung MALA_CASTLE_AGE3
+    //    🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+    //      ⇒ 小城一律不画居中城堡（`TerritorySystem` 两处判据已按本令排除小城），
+    //        小城的城堡从此全部由「**特殊建筑（城内奇观）**」承担 —— 下面这些条目正是那个身份。
+    //    判据与逐条清单见 `scratch/_audit_wonder_castle_dup.mts`。
     'city_bishnupur': 'BENG_CASTLE_AGE3',
-    'city_baba_vida': 'BULG_CASTLE_AGE3',
-    'city_fasil_fort': 'ETHI_CASTLE_AGE3',
-    'city_chambord': 'FRAN_CASTLE_AGE3',
-    'city_akhaltsikhe': 'GEOR_CASTLE_AGE3',
-    'city_gwalior_fort': 'GURJ_CASTLE_AGE3',
-    'city_machu_picchu': 'INCA_CASTLE_AGE3',
-    'city_golconda': 'INDI_CASTLE_AGE3',
     'city_pagaruyung': 'MALA_CASTLE_AGE3',
-    'city_uxmal': 'MAYA_CASTLE_AGE3',
-    'city_bam_citadel': 'PERS_CASTLE_AGE3',
-    'city_bedzin': 'POLE_CASTLE_AGE3',
-    'city_braganca': 'PORT_CASTLE_AGE3',
-    'city_la_mota': 'SPAN_CASTLE_AGE3',
-    'city_seuthopolis': 'THRACIANS_CASTLE_AGE3',
-    'city_chimarros': 'MACEDONIAN_CASTLE_AGE3',
-    'city_atuoke': 'PURU_CASTLE_AGE3_ATTACKUP',
-    'city_huashicheng': 'PURU_CASTLE_AGE3_BOTHUP',
-    'city_wangshecheng': 'PURU_CASTLE_AGE3_DEFENSEUP',
+    'city_atuoke': 'PURU_CASTLE_AGE3_ATTACKUP',   // 阿托克：主奇观 PURU_CASTLE_AGE3_ATTACKUP ≠ 居中城堡（PURU_CASTLE_AGE3），不重复
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] 此处原有两条主奇观：
+    //    'city_huashicheng': 'PURU_CASTLE_AGE3_BOTHUP'（华氏城）
+    //    'city_wangshecheng': 'PURU_CASTLE_AGE3_DEFENSEUP'（王舍城）
+    //    它们与该城**九建筑里的居中城堡是同一个 asset**（asset 完全相同）→ 同一座城里两座一样的城堡，两条主奇观已删；
+    //    城堡并未消失 —— 仍由城池正中那一格（`centerCastle`）画。
 };
 
 /**
@@ -202,18 +206,23 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     ],
     'city_yadian': [
         { asset: 'GREEK_SHIPYARD_AGE2', name: '比雷埃夫斯军港', category: 'HERITAGE_FORT', lat: 37.943, lng: 23.647, description: '地米斯托克利为雅典修建的军港，古希腊最大海军基地与三层桨战船母港。' },
-        { asset: 'ATHENIANS_CASTLE_AGE3', name: '雅典卫城', category: 'HERITAGE_FORT', lat: 37.972, lng: 23.726, description: '雅典卫城设防高地；该素材为雅典编年史堡垒表现。' },
+        // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] 此处原有「雅典卫城」（ATHENIANS_CASTLE_AGE3）——
+        //    与雅典九建筑里的居中城堡同一 asset（卫城距城仅 1.0km）→ 已删；城堡仍在（居中那一格）。
     ],
     'city_malajiashen': [
-        { asset: 'BERB_CASTLE_AGE3', name: '马拉喀什城堡', category: 'HERITAGE_FORT', lat: 31.616, lng: -7.987, description: '马拉喀什旧城卡斯巴与城墙体系。' },
+        // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] 此处原有「马拉喀什城堡」（BERB_CASTLE_AGE3）——
+        //    与马拉喀什九建筑里的居中城堡同一 asset（距城 1.7km）→ 已删；城堡仍在（居中那一格）。
         { asset: 'AFRI_CASTLE_AGE3', name: '穆拉比特堡', category: 'HERITAGE_FORT', lat: 31.632, lng: -7.986, description: 'DE 西非城堡为穆拉比特建筑、泥堡与清真寺元素的复合设计，归其王都马拉喀什。' },
     ],
-    'city_bulage': [
-        { asset: 'BOHE_CASTLE_AGE3', name: '卡尔施泰因堡', category: 'HERITAGE_FORT', lat: 49.939, lng: 14.188, description: '查理四世营建的波希米亚王家城堡。' },
-    ],
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」]
+    //    `city_bulage` 原挂「卡尔施泰因堡」（BOHE_CASTLE_AGE3，距布拉格 22.6km）：与该城居中城堡同一 asset → 已删。
+    //    它是**别处的真实城堡**（查理四世所建），若主人要保留这条地标，恢复即可（但攻城战里仍会出现同款城堡两座）。
     'city_bulusaier': [
         { asset: 'BURG_CASTLE_AGE3', name: '贝尔瑟尔堡', category: 'HERITAGE_FORT', lat: 50.765, lng: 4.300, description: '布拉班特境内保存完整的中世纪环形城堡。' },
     ],
+    // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+    //    因瓦王城（BURM_CASTLE_AGE3）与苏萨王城（PERSIAN_CASTLE_AGE3）同理**保留**：
+    //    这两座小城不画居中城堡（战略/战术都不画）→ 这条特殊建筑就是城里唯一的那座城堡。
     'city_ava': [
         { asset: 'BURM_CASTLE_AGE3', name: '因瓦王城', category: 'HERITAGE_FORT', lat: 21.858, lng: 95.985, description: '缅甸因瓦城墙、宫门与佛塔群的复合城堡表现。' },
     ],
@@ -223,42 +232,42 @@ export const CITY_WONDER_EXTRA: Record<string, ExtraWonder[]> = {
     'city_heersongniesi': [
         { asset: 'GOTH_CASTLE_AGE3', name: '曼古普堡', category: 'HERITAGE_FORT', lat: 44.592, lng: 33.807, description: '克里米亚哥特人的山城曼古普及其城门。' },
     ],
-    'city_deli': [
-        { asset: 'HIND_CASTLE_AGE3', name: '德里古堡', category: 'HERITAGE_FORT', lat: 28.609, lng: 77.244, description: '德里诸王朝堡垒建筑的复合表现，以德里古堡为据点。' },
-    ],
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] `city_deli` 原挂「德里古堡」（HIND_CASTLE_AGE3，
+    //    距城 1.4km）：与该城居中城堡同一 asset → 已删；城堡仍在（居中那一格），主奇观 INDI_WONDER_HINDUSTANIS 未动。
     'city_weierniwusi': [
         { asset: 'LITH_CASTLE_AGE3', name: '维尔纽斯城堡', category: 'HERITAGE_FORT', lat: 54.686, lng: 25.291, description: '维尔纽斯上城堡与格迪米纳斯塔所在设防高地。' },
     ],
-    'city_tenochtitlan': [
-        { asset: 'MESO_CASTLE_AGE3', name: '大神庙堡区', category: 'HERITAGE_FORT', lat: 19.435, lng: -99.132, description: '特诺奇提特兰大神庙祭祀区；DE 中美洲城堡为多种中部美洲建筑元素的复合表现。' },
-    ],
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] `city_tenochtitlan` 原挂「大神庙堡区」（MESO_CASTLE_AGE3，
+    //    距城 0.6km）：与该城居中城堡同一 asset → 已删；城堡仍在（居中那一格）。
     'city_bosibolisi': [
         { asset: 'PERSIAN_CASTLE_ACHAEMENIDS_AGE3', name: '波斯波利斯宫堡', category: 'HERITAGE_FORT', lat: 29.935, lng: 52.890, description: '阿契美尼德王都波斯波利斯宫殿台地与万国门。' },
     ],
     'city_susa': [
         { asset: 'PERSIAN_CASTLE_AGE3', name: '苏萨王城', category: 'HERITAGE_FORT', lat: 32.191, lng: 48.258, description: '阿契美尼德苏萨王城；编年史波斯堡垒采用波斯宫殿复合形制。' },
     ],
-    'city_angkor': [
-        { asset: 'SEAS_CASTLE_AGE3', name: '吴哥城堡', category: 'HERITAGE_FORT', lat: 13.413, lng: 103.867, description: '吴哥王城与吴哥窟建筑群的城堡表现。' },
-    ],
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] `city_angkor` 原挂「吴哥城堡」（SEAS_CASTLE_AGE3，
+    //    距城 0.5km）：与该城居中城堡同一 asset → 已删；城堡仍在（居中那一格），主奇观 SEAS_WONDER_KHMER 未动。
+    // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+    //    以下三条**保留**（斯巴达堡垒 SPARTANS_CASTLE_AGE3 / 维尔纽斯城堡 LITH_CASTLE_AGE3 /
+    //    波斯波利斯宫堡 PERSIAN_CASTLE_ACHAEMENIDS_AGE3）：这三座都是**小城**，而小城**两处都不画居中城堡**
+    //    （战略地图：`TerritorySystem` 已按本令把小城排除；战术攻城战：`SIEGE_FEUDAL_BUILDINGS` 9 栋建筑里本就没有城堡）
+    //    → 这三条「特殊建筑」就是那三座城**唯一**的城堡 —— 正是本令说的「著名城堡视为特殊建筑」。
     'city_sparta': [
         { asset: 'SPARTANS_CASTLE_AGE3', name: '斯巴达堡垒', category: 'HERITAGE_FORT', lat: 37.067, lng: 22.383, description: '斯巴达与米斯特拉斯一带的拉科尼亚设防据点；素材为编年史斯巴达堡垒。' },
     ],
     'city_fuchun': [
         { asset: 'VIET_CASTLE_AGE3', name: '顺化皇城', category: 'HERITAGE_FORT', lat: 16.469, lng: 107.578, description: '富春顺化皇城及午门建筑群。' },
     ],
-    'city_gothenburg': [
-        { asset: 'VIKI_CASTLE_AGE3', name: '博胡斯堡', category: 'HERITAGE_FORT', lat: 57.862, lng: 11.998, description: '哥德堡以北约二十公里的博胡斯要塞。' },
-    ],
+    // 🔴 [2026-10-03 主人令「战术模式中要显示城堡和特殊建筑，而且不是随机显示，是必须显示。
+    //    所以如果两个样式是重复的就删除特殊建筑」] `city_gothenburg` 原挂「博胡斯堡」（VIKI_CASTLE_AGE3，
+    //    距城 18.1km）—— 哥德堡是**险要**，战术里城堡居中、与该地标同一 asset → 已删（城堡仍由正中那一格画）。
     'city_lundun': [
         { asset: 'WEST_CASTLE_AGE3', name: '罗切斯特堡', category: 'HERITAGE_FORT', lat: 51.389, lng: 0.502, description: '英格兰肯特郡罗切斯特城堡，DE 西欧旧式城堡原型。' },
     ],
-    'city_bacata': [
-        { asset: 'MUIS_CASTLE_AGE3', name: '穆伊斯卡寨', category: 'HERITAGE_FORT', lat: 4.711, lng: -74.072, description: '穆伊斯卡首领居所与博希奥圆屋围寨；该素材并非一座可考石堡。' },
-    ],
-    'city_syracuse': [
-        { asset: 'SICI_CASTLE_AGE3', name: '乌尔西诺堡', category: 'HERITAGE_FORT', lat: 37.499, lng: 15.085, description: '腓特烈二世在卡塔尼亚营建的乌尔西诺城堡；因距锡拉库萨仅约51公里，不另增过密据点。' },
-    ],
+    // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] `city_bacata` 原挂「穆伊斯卡寨」（MUIS_CASTLE_AGE3，
+    //    距城 0.2km）：与该城居中城堡同一 asset → 已删；城堡仍在（居中那一格）。
+    //    同批：`city_syracuse` 原挂「乌尔西诺堡」（SICI_CASTLE_AGE3，腓特烈二世在卡塔尼亚所建，距锡拉库萨 50.7km）
+    //    —— asset 与该城居中城堡相同 → 一并删除。⚠️ 它本是**别处的真实城堡**，若要恢复这条地标，说一声即可。
 };
 
 /**

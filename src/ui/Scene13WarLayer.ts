@@ -1487,7 +1487,9 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」，08-29 去箭塔补民居：磨坊/民居×2/兵营/铁匠铺/靶场/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
-/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门保持原尺寸。
+/** ZOOM 13 守方城郭内建筑统一缩放。
+ *  🔴🔴 [2026-10-03 主人令「**城墙这个不能动，切记**」] **城墙、城门、墙柱一律保持原尺寸（scale 不设 = 1.0）**：
+ *     它们是按固定步距严丝合缝拼接、自带碰撞格的，改缩放会漏缝/错位。**AI 永不许动这一支。**
  *  🔴 [2026-10-03 主人报障「战术模式下，攻击方的箭塔，和防守方的箭塔大小不一样，请按防守方的一致」]
  *     ⇒ **攻方营地里那两座塔状工事（瞭望塔／强化哨站）改用守方箭塔的同一缩放 `SIEGE_CITY_BUILDING_SCALE`**：
  *        守方城墙内侧的 4 座箭塔就是这一档缩放（见 `this.arrowTowers` 建塔处），而它们与守方的强化哨站是**同一族**工事
@@ -1496,8 +1498,9 @@ const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMIT
  *     ⇒ 攻方营地**整座**改 80%：3 营地（CAMP_ARCHERY_RANGE／CAMP_BARRACKS／CAMP_STABLE）、
  *        4 帐篷（GREEK_WAR_TENT）、蒙古包营地的 8 个 YURT_* 也一并按此缩放（改前这些是原尺寸 1.0）。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
-/** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。 */
-const SIEGE_CASTLE_SCALE = 0.84;
+/** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。
+ *  🔴 [2026-10-03 主人令「所有的城堡，奇观，特殊建筑一律改为0.85」] 0.84 → **0.85**。 */
+const SIEGE_CASTLE_SCALE = 0.85;
 /** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。
  *  🔴 [2026-10-03 主人令「改为0.7」] 0.65 → **0.7**。 */
 const SIEGE_MARKET_SCALE = 0.7;
@@ -1515,10 +1518,11 @@ function siegeBuildingScale(building: string): number {
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
     return SIEGE_CITY_BUILDING_SCALE;
 }
-/** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
+/** ZOOM 13 名城世界奇观（＝特殊建筑）地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
  *  用更小比例让奇观与周围建筑体量相当；2026-09-01 主人「特殊建筑略大一点」→ 0.5 略调大。
- *  🔴 [2026-10-03 主人令「改为0.7」] 0.55 → **0.7**。 */
-const SIEGE_WONDER_SCALE = 0.7;
+ *  🔴 [2026-10-03 主人令「改为0.7」] 0.55 → 0.7（同日再令）。
+ *  🔴 [2026-10-03 主人令「所有的城堡，奇观，特殊建筑一律改为0.85」] 0.7 → **0.85**（当前值，以后以此为准）。 */
+const SIEGE_WONDER_SCALE = 0.85;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
 const MAX_ROAD_STEPS = 80;

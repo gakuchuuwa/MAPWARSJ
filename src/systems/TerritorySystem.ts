@@ -2070,8 +2070,14 @@ export class TerritorySystem {
         const isTibet = !!region?.includes('TIBET');
         // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
         //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
-        const centerCastle = isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
-            || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass');
+        // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+        //    ⇒ 小城（small_city）一律不画居中城堡 —— 日本/青藏文化区与 59 名册名下的**小城**也不再例外
+        //      （原口径下 64 座小城中间有城堡：名册 9 + 日本 14 + 青藏 41）。
+        //      小城若确有著名城堡（斯巴达堡垒、维尔纽斯城堡、波斯波利斯宫堡、因瓦王城、苏萨王城…），
+        //      走「**特殊建筑（城内奇观）**」那条路 —— 见 `src/data/CityWonders.ts`。
+        const centerCastle = cityType !== 'small_city'
+            && (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
+                || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass'));
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
         useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region);
         const faction = factionId ?? '';
@@ -2144,8 +2150,11 @@ export class TerritorySystem {
         const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
         // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
         //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
-        const centerCastle = isJapan || isTibet || isRep52City
-            || city.type === 'big_city' || city.type === 'medium_city';
+        // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+        //    ⇒ 小城（small_city）一律不画居中城堡（原口径下 64 座小城有：名册 9 + 日本 14 + 青藏 41）；
+        //      小城若确有著名城堡，走「**特殊建筑（城内奇观）**」那条路（`src/data/CityWonders.ts`）。
+        const centerCastle = city.type !== 'small_city'
+            && (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
