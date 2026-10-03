@@ -42,6 +42,8 @@ export class BattleSceneLayer {
      *  （冲锋→接触→逐队阵亡），且大地图要快、战斗要慢的矛盾绑在一个时钟上无解。
      *  ⚠️ 用户自己按了暂停键的情况不接管（strategyPausedByScene=false），那是真暂停。 */
     public enter(followUnitId?: string | null): void {
+        // 上一场淡出退场时面板还原是延后的（见 Scene13WarLayer.schedulePanelRestore）：新一场进场前必须先做掉
+        (window as any).game?.scene13War?.flushPanelRestore?.();
         this.active = true;
         this.followUnitId = followUnitId ?? null;
         // [2026-08-11 战败停留] 新战斗进场 → 取消残留的停留（上一场战败的 linger 不带到下一场）
@@ -164,9 +166,13 @@ export class BattleSceneLayer {
             this.pauseHook?.setPaused(false);
         }
         // [2026-08-17 主人需求] 13 战斗模式结束后，恢复展开军团面板与军情面板
+        // 面板还原：`scene13War.stop()` 里已按「延后到淡出过半」处理（两处各调一次是重复的，且会让面板与画布消失同帧弹出）；
+        // 只有演出层不在时才在这里兜底直接还原。
         const game = (window as any).game;
-        game?.cameraFollowUI?.onExitBattleScene13?.();
-        game?.brawlFeedPanel?.onExitBattleScene13?.();
+        if (!game?.scene13War) {
+            game?.cameraFollowUI?.onExitBattleScene13?.();
+            game?.brawlFeedPanel?.onExitBattleScene13?.();
+        }
         // 🔴 [2026-09-12 主人定] 残局结束退场 → 重置尸体计时，让战略地图重新渐隐 15 秒
         //    （否则 FOLLOW_SWITCH_DELAY_MS 残局时长会吞掉 CORPSE_DISPLAY_MS 尸体时长，地图上看不到阵亡）。
         getGlobalUnitRenderer()?.resetCorpseTimers();
