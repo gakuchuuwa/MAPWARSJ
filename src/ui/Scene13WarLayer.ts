@@ -17,7 +17,6 @@
  */
 
 import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
-import { PHASE_START_RATIOS } from '../combat/TacticalConstants';
 import {
     Scene13GroundPainter,
     TILE_W,
@@ -2260,8 +2259,6 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
     FX_WALL_DUST: { path: 'IMPACT_DUST', dirs: 8 },
     // 投石/巨石落地碎石烟尘（DE IMPACT_TREBUCHET_SMOKE，1 向）
     FX_TREBUCHET_SMOKE: { path: 'IMPACT_TREBUCHET_SMOKE', dirs: 1 },
-    // 夜战城中起火：DE 原有的建筑着火叠层（多簇火焰覆在屋顶上，锚点 = 建筑脚点），素材库已有，不新提取
-    FX_FIRE_LARGE: { path: 'FIRE/FIRE_LARGE', dirs: 1 },
 };
 /**
  * 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度）。
@@ -3467,15 +3464,6 @@ export class Scene13WarLayer {
     private sparks: WarSpark[] = [];
     /** DE 攻击特效实例（爆炸/炮口焰，一次性生命周期） */
     private fxs: WarFx[] = [];
-    // ── 夜战城中起火（2026-10-03 主人「你最好用原有素材」→「请执行」）──
-    //   上一版自己拼的小火苗像鬼火，已撤。现在只用 DE 原有的建筑着火叠层（FIRE_LARGE），
-    //   **覆在守方城内建筑上**（锚点 = 建筑脚点，跟建筑同缩放，就是 DE 里房子着火的样子）；
-    //   按守军损耗的三幕进度依次点燃 3 座（0% / 40% / 80%，与全项目三幕分界同口径）——
-    //   史实：佩利昂城破，克莱图斯焚城而逃。只在夜战（夜晚滤镜开着）出现，画在夜晚滤镜之后，火才不被压暗。
-    private nightMode = false;
-    private nightBlazes: Array<{ b: CityBuildingEntry; at: number; litAt: number | null; phase: number }> = [];
-    private nightBlazesBuilt = false;
-    private defenderStartStrength = 0;
     /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
     private fxBank: Record<string, FxAsset> = {};
     private fallenFlags: WarFallenFlag[] = [];
@@ -3941,8 +3929,6 @@ export class Scene13WarLayer {
 
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
     private exitBtn: HTMLButtonElement | null = null;
-    /** 进场黑幕（画布之下、地图之上） */
-    private veil: HTMLDivElement | null = null;
 
     /** 挂到 body（全屏透明 canvas，叠在地图 DOM 之上；透明像素不遮挡地图，只画精灵） */
     public attach(): void {
@@ -3953,16 +3939,6 @@ export class Scene13WarLayer {
         cv.height = window.innerHeight;
         document.body.appendChild(cv);
         this.canvas = cv;
-        // 🔴 [2026-10-03 主人「请执行」· 进场黑场] 画布下方的黑幕，盖住战略地图：
-        //    进场等素材期间战略地图的瓦片还在分块加载、还有一圈暗角，原来全露在外面；现在先盖黑，战场从黑里显出来。
-        //    ⚠️ 层级：Leaflet 的 map-pane 是 z-index 400 的整体（里面的瓦片/标记/单位各层都在它的层叠上下文里），
-        //       所以黑幕不能用 399（会被整张地图盖住——实测第一版就是这样没盖住）；
-        //       取 400 并插在画布**之前**（同层按 DOM 先后：#map < 黑幕 < 画布），
-        //       战斗面板 / 玩家面板 z-index 都在 3000 以上，不受影响。
-        const veil = document.createElement('div');
-        veil.style.cssText = 'position:fixed;inset:0;z-index:400;background:#000;opacity:0;display:none;pointer-events:none;';
-        cv.before(veil);
-        this.veil = veil;
         this.ctx = cv.getContext('2d', { alpha: true });
         this.ground = document.createElement('canvas');
         this.ground.width = cv.width;
@@ -4388,11 +4364,6 @@ export class Scene13WarLayer {
                     forceNight: isNightBattle(init),   // 🔴 [2026-10-03] 史实夜战才开夜晚滤镜
                 });
                 this.timeOfDay.begin(grade, performance.now());
-                this.nightMode = grade.phase === 'night' && grade.multiply[0] < 255;
-                this.nightBlazes = [];
-                this.nightBlazesBuilt = false;
-                this.defenderStartStrength = 0;
-                if (this.nightMode && init.battleType === 'siege') this.ensureFx('FX_FIRE_LARGE');   // 随素材就绪闸一起等齐
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
             }
             const __d0 = performance.now();
@@ -4839,9 +4810,6 @@ export class Scene13WarLayer {
         this.fxs = [];
         this.fallenFlags = [];
         this.clouds = [];
-        this.nightMode = false;
-        this.nightBlazes = [];
-        this.nightBlazesBuilt = false;
         this.decorSprites = [];
         this.wallGates = [];
         this.arrowTowers = [];
@@ -4882,28 +4850,8 @@ export class Scene13WarLayer {
     private entryFadeCleanup: (() => void) | null = null;
     private static readonly ENTRY_FADE_MS = 600;
 
-    private showVeil(): void {
-        const v = this.veil;
-        if (!v) return;
-        v.style.transition = 'none';
-        v.style.display = 'block';
-        v.style.opacity = '0';
-        void v.offsetWidth;
-        v.style.transition = 'opacity 220ms ease-out';
-        v.style.opacity = '1';
-    }
-
-    private hideVeil(): void {
-        const v = this.veil;
-        if (!v) return;
-        v.style.transition = 'none';
-        v.style.opacity = '0';
-        v.style.display = 'none';
-    }
-
     private prepareEntryFade(cv: HTMLCanvasElement): void {
         this.cancelCanvasFade();   // 清掉上一场未走完的退场淡出 / 进场淡入
-        this.showVeil();           // 先把战略地图盖黑（220ms 内），等素材期间不露出加载中的地图
         cv.style.transition = 'none';
         cv.style.transformOrigin = '50% 50%';
         cv.style.opacity = '0';
@@ -4927,7 +4875,6 @@ export class Scene13WarLayer {
             this.entryFadeCleanup = null;
             this.entryFadeActive = false;
             this.resetCanvasFadeStyle(cv);
-            this.hideVeil();   // 画布已满不透明，黑幕完成使命
         };
         const onEnd = (e: TransitionEvent): void => { if (e.propertyName === 'opacity') finish(); };
         const fallback = window.setTimeout(finish, ms + 1400);
@@ -4952,7 +4899,6 @@ export class Scene13WarLayer {
         }
         this.entryFadeCleanup?.();   // 进场淡入还没走完：摘监听、清兜底计时器、解除「不许盖地图」
         this.entryFadePending = false;
-        this.hideVeil();
         if (this.canvas) this.resetCanvasFadeStyle(this.canvas);
     }
 
@@ -9206,46 +9152,6 @@ export class Scene13WarLayer {
                 if (this.perfTint.length > 1800) this.perfTint.shift();
             }
         }
-        if (this.nightMode && this.decorHasTerrain) this.paintNightBlazes(ctx, cv, flip);
     }
 
-    /** 守方剩余兵力（池 + 场上活着的） */
-    private defenderStrength(): number {
-        let n = 0;
-        for (const sp of this.spawns) if (sp.f === 1) n += Math.max(0, sp.pool);
-        for (const m of this.men) if (m.f === 1 && m.hp > 0) n++;
-        return n;
-    }
-
-    /** 夜战城中起火：按守军损耗三幕依次点燃城内建筑，DE 原有建筑着火叠层，画在夜晚滤镜之后。 */
-    private paintNightBlazes(ctx: CanvasRenderingContext2D, cv: HTMLCanvasElement, flip: boolean): void {
-        const fd = this.fxBank['FX_FIRE_LARGE']?.dirs[0];
-        if (!fd?.img || !fd.fw) return;
-        if (this.deployT > 0) return;   // 部署期还没开打，不起火
-        if (!this.nightBlazesBuilt) {
-            this.nightBlazesBuilt = true;
-            this.defenderStartStrength = this.defenderStrength();
-            // 选 3 座：城堡与奇观除外，按横坐标从城心往外均匀取（不扎堆）
-            const pool = this.cityBuildings.filter((b) => !b.sprite.indestructible && !b.name.includes('CASTLE'));
-            const picks: CityBuildingEntry[] = [];
-            const step = pool.length / 3;
-            for (let k = 0; k < 3 && k * step < pool.length; k++) picks.push(pool[Math.floor(k * step + step / 2)] ?? pool[0]);
-            this.nightBlazes = picks.map((b, k) => ({ b, at: PHASE_START_RATIOS[k] ?? 0, litAt: null, phase: k * 3.3 }));
-        }
-        if (!this.nightBlazes.length) return;
-        const now = performance.now();
-        const progress = this.defenderStartStrength > 0 ? 1 - this.defenderStrength() / this.defenderStartStrength : 0;
-        for (const z of this.nightBlazes) if (z.litAt === null && progress >= z.at) z.litAt = now;
-        ctx.save();
-        if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-        for (const z of this.nightBlazes) {
-            if (z.litAt === null) continue;
-            const sp = z.b.sprite;
-            const sc = sp.scale ?? 1;
-            ctx.globalAlpha = Math.min(1, (now - z.litAt) / 1500);   // 1.5 秒烧起来，不是一下子冒出
-            const fr = Math.floor(now * 0.012 + z.phase) % fd.n;
-            ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, sp.x - fd.hx * sc, sp.y - fd.hy * sc, fd.fw * sc, fd.fh * sc);
-        }
-        ctx.restore();
-    }
 }

@@ -693,6 +693,39 @@ export class GameMap {
                         <span id="control-panel-toggle-icon" style="color:#5b7a66;">▼</span>
                     </div>
                     <div id="control-panel-content" style="display:flex; flex-direction:column; gap:8px;">
+                `;
+
+                if (import.meta.env.DEV) {
+                    html += `
+                    <div style="background:rgba(255,255,255,0.45);padding:6px 8px;border-radius:6px;border:1px solid rgba(125,111,90,0.3);display:flex;flex-direction:column;gap:5px;">
+                        <div style="font-weight:bold;font-size:12px;color:#5c3e21;">🛠️ 编辑器</div>
+
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1b5e20;background:rgba(46,125,50,0.12);padding:3px 5px;border-radius:4px;border:1px solid rgba(46,125,50,0.25);" title="开启矢量道路/航线编辑器">
+                            <input type="checkbox" id="chk-editor-road">
+                            <b>🛤️ 道路编辑器</b>
+                        </label>
+
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#FF6F00;margin-top:2px;">
+                            <input type="checkbox" id="chk-editor-city"> 
+                            <b>🏯 城市编辑</b>
+                        </label>
+
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1565C0;margin-top:2px;">
+                            <input type="checkbox" id="chk-editor-event"> 
+                            <b>📜 事件编辑</b>
+                        </label>
+
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#C62828;margin-top:2px;">
+                            <input type="checkbox" id="chk-editor-army">
+                            <b>⚔ 军队编辑</b>
+                        </label>
+                    </div>
+
+                    <hr style="margin:2px 0;width:100%;border:0;border-top:1px dashed rgba(125, 111, 90, 0.4);">
+                    `;
+                }
+
+                html += `
                     <div style="font-weight:bold;margin-bottom:2px;font-size:12px;color:#666;">📍 坐标搜索</div>
                     <input type="text" id="inp-coord-search" placeholder="lat, lng（如 37.2833, 34.7833）" style="padding:6px;border:1px solid rgba(125,111,90,0.5);border-radius:4px;font-family:inherit;font-size:12px;color:#1d3326;background:rgba(255,255,255,0.6);width:100%;box-sizing:border-box;">
                     <div style="display:flex;gap:6px;margin-top:4px;">
@@ -846,38 +879,7 @@ export class GameMap {
                             测试音效
                         </button>
                     </div>
-                `;
-
-                if (import.meta.env.DEV) {
-                    html += `
-                    <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
-                    <div style="font-weight:bold;margin-bottom:4px;font-size:12px;color:#999;">编辑器</div>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#FF6F00;margin-top:2px;">
-                        <input type="checkbox" id="chk-editor-city"> 
-                        <b>🏯 城市编辑</b>
-                    </label>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#1565C0;margin-top:4px;">
-                        <input type="checkbox" id="chk-editor-event"> 
-                        <b>📜 事件编辑</b>
-                    </label>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#2E7D32;margin-top:4px;">
-                        <input type="checkbox" id="chk-editor-road">
-                        <b>🛤️ 路线编辑（陆路 / 🚢 海路）</b>
-                    </label>
-
-                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#C62828;margin-top:4px;">
-                        <input type="checkbox" id="chk-editor-army">
-                        <b>⚔ 军队编辑</b>
-                    </label>
-
-
-                    `;
-                }
-                
-                html += `</div>`; // Close control-panel-content
+                </div>`; // Close control-panel-content
                 
                 div.innerHTML = html;
 
