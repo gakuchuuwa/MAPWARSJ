@@ -13,7 +13,7 @@
  *    战场离那座城多远，军团就要直走多远：伊苏斯 62 公里、乌克西亚隘口 58 公里、波斯门 151 公里 ——
  *    可路网里**本来就有路从战场边上过**（伊苏斯 3 公里、乌克西亚 0 公里、波斯门 2 公里），
  *    是「末段吸城」把这条路整个丢掉了。
- *    → 末段超过 `LONG_HOP_KM` 时，改走「**绕到那条路远端那座城**」的走法：整条路落进路径，
+ *    → 末段超过 `HOP_MAX_KM` 时，改走「**绕到那条路远端那座城**」的走法：整条路落进路径，
  *      再在**这条路上离终点最近的点**下路（阈值 `LEAVE_ROAD_KM`＝15 公里，与运行时
  *      `PlayerQuestSystem.leaveRoadNearest` 同一口径），末段就只剩几公里。
  */
@@ -45,19 +45,25 @@ const ENTRY_CANDIDATES = 3;
  */
 const ENTRY_MAX_DEG = 3.0;
 
-/** 末段超过它（公里）才考虑改走法 —— 与编辑器「离路直行」的控制范围 40 公里同一个数 */
-const LONG_HOP_KM = 40;
 /**
- * 🔴 [2026-09-25 主人「该修复的修复」] **入路直行上限，与末段同一道闸（40 公里）。**
- *   起因：第 3 场（前335 底比斯）实测 —— 军团从佩利昂出发，路径第 0→1 点是一条 **139.6 公里的直线**
- *   （40.731,20.863 → 40.760,22.519），即**横穿品都斯山直插佩拉**，再从佩拉沿路南下 ✗；
- *   史料是走吕恩克斯提斯—埃泽萨那条道（后来的埃格纳提亚道）。编辑器不报这一处 ——
- *   它只量**末段离路**，入路直行原先没有上限（`ENTRY_MAX_DEG = 3.0` ≈ 333 公里）。
- *   为什么原先放到 3.0°：第 20 场起点「马里斯」离最近有路据点 313 公里，不放宽就铺不出路；
- *   那条路后来已补（路网伸进木尔坦一带），故这里收回同一道闸：入路直行 ≤40 公里，
- *   超过就不认这个入口，改从「沿离出发点最近那条路」走（与末段 `tryLeaveRoadNearTarget` 同一做法）。
+ * 🔴 **「直行」这道闸 ＝ 40 公里，全文件**只此一个数**。** 它同时管两头，本来就是同一件事：
+ *   ① **入路直行** —— 起点/入口那一段不走路网、直接怼过去的那一截；
+ *   ② **末段直行** —— 离开路网、直奔终点那一截（编辑器里「离路直行」的控制范围也是这个数）。
+ *   [2026-09-25 主人「该修复的修复」] 起因：第 3 场（前335 底比斯）实测 —— 军团从佩利昂出发，
+ *   路径第 0→1 点是一条 **139.6 公里的直线**（40.731,20.863 → 40.760,22.519），即**横穿品都斯山直插佩拉**，
+ *   再从佩拉沿路南下 ✗；史料是走吕恩克斯提斯—埃泽萨那条道（后来的埃格纳提亚道）。
+ *   为什么原先入路放到 3.0°（≈333 公里）：第 20 场起点「马里斯」离最近有路据点 313 公里，不放宽就铺不出路；
+ *   那条路后来已补（路网伸进木尔坦一带），故收回这道闸。超过 40 公里就不认这个入口，
+ *   改从「沿离出发点最近那条路」走（与末段 `tryLeaveRoadNearTarget` 同一做法）。
+ *
+ * 🔴 [2026-10-03 主人报「第 76 路：哈马丹 ➜ 科塞亚，不按路走」] **这道闸原先被抄成了两份，其中一份漏了。**
+ *   `findPathFromPoint` 的入路写了这道闸，`findPathToBattlefield` 的入路**又照抄了一遍却漏了它** ⇒
+ *   开进战场那一段可以「直行 146 公里」当入路（哈马丹 3.0° 内只有 4 个已接路节点，
+ *   其中就有战场自己 `bf_kesaiya` 146 公里 ⇒「入口＝终点」⇒ 2 点直线，丢开主人画的那条 232 公里真路）。
+ *   **修法不是补第二份，而是把两份合成一份**：入路那段逻辑现在只有 `enterRoadNetwork` 一处，
+ *   两个调用方共用 —— 闸漏在一份里、另一份修了也没用的这种事，从此不可能再发生。
  */
-const ENTRY_HOP_MAX_KM = 40;
+const HOP_MAX_KM = 40;
 /** 下路阈值（公里）—— 与 `PlayerQuestSystem.leaveRoadNearest` 的 15 公里同一口径 */
 const LEAVE_ROAD_KM = 15;
 /** 为走这条路，允许整条路径最多比原方案长这么多倍。
@@ -163,6 +169,48 @@ export function prefetchEntrySea(from: P): void {
     }
 }
 
+/**
+ * **入路 —— 从路网外的点（或路网上任一点）沿路网走到某个已接入路网的节点**（唯一一份，两个调用方共用）。
+ *
+ * 入口＝from 附近**已接入路网**的节点里挑一个（城与连了路的战场都算：上一场的阵位就在上一处战场的支线上），
+ * 取「直线走到入口 ＋ 沿路到 target」总长最省、且入口直行不跨海、不超 `HOP_MAX_KM`（40 公里）的那一条。
+ * 挑不出（附近 40 公里内没有任何已接路节点）→ null，由调用方决定怎么办（绝不在这里自造近道）。
+ *
+ * 🔴 **为什么只许有一份**（2026-10-03 主人报「第 76 路不按路走」）：这段逻辑原先在 `findPathFromPoint`
+ *    与 `findPathToBattlefield` 里**各写了一遍**，40 公里的闸只加在其中一份上，另一份照抄时漏掉了 ⇒
+ *    开进战场那一段能把「直行 146 公里」当成入路（入口＝战场自己）。**两份＝必定漂移**，已合成这一份。
+ *
+ * @param targetId 要走到的路网节点 id（已接入路网的城／战场；调用方先自己 resolve 好）
+ * @param tail     还要接上去的终点坐标（沿路之外的那一小截直行），没有就传 null
+ * @returns 从 from 起、到 tail（若有）止的整条折线；挑不出 → null
+ */
+function enterRoadNetwork(from: P, targetId: string, tail: P | null): Array<P & { sea?: boolean }> | null {
+    let best: Array<P & { sea?: boolean }> | null = null;
+    let bestCost = Infinity;
+    for (const c of roadRegistry.getNearestRoadNodes(from.lat, from.lng, ENTRY_CANDIDATES + 2, ENTRY_MAX_DEG)) {
+        if (c.dist * 111 > HOP_MAX_KM) continue;                              // 入路直行 ≤40 公里
+        if (c.dist * 111 > 0.5 && straightCrossesSea(from, c)) continue;      // 入路直行不许横穿海面
+        let leg: Array<P & { sea?: boolean }>;
+        if (c.id === targetId) {
+            leg = [{ lat: c.lat, lng: c.lng }];
+        } else {
+            const r = roadRegistry.findPath(c.id, targetId);
+            if (!r) continue;
+            leg = roadRegistry.pathToLatLngs(r);
+        }
+        if (!leg.length) continue;
+        const cost = c.dist + lenDeg(leg) + (tail ? lenDeg([leg[leg.length - 1], tail]) : 0);
+        if (cost < bestCost - 1e-9) {
+            bestCost = cost;
+            const head = leg[0];
+            const startsAtFrom = !!head && Math.hypot(head.lat - from.lat, head.lng - from.lng) < 1e-6;
+            best = [{ lat: from.lat, lng: from.lng }, ...(startsAtFrom ? leg.slice(1) : leg)];
+            if (tail) best.push({ lat: tail.lat, lng: tail.lng });
+        }
+    }
+    return best && best.length >= 2 ? best : null;
+}
+
 export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> | null {
     // 🔴 [2026-09-30 主人令「那你到是用呀」] 相邻两个路标若是**直接连着的一条路**，就走这条路（不让最短路绕开主人画的直连路）。
     const fromId = roadRegistry.getNearestCityId(from.lat, from.lng, 0.02);
@@ -176,10 +224,14 @@ export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> 
     let best = roadRegistry.findPathOnRoad(from, to) as Array<P & { sea?: boolean }> | null;
     if (best && best.length >= 2 && straightCrossesSea(from, best[1])) best = null;
     // 入路那一步直行了多远：超过 40 公里就不认这条路（与末段同一道闸）
-    if (best && best.length >= 2 && lenDeg([from, best[1]]) * 111 > ENTRY_HOP_MAX_KM) best = null;
+    if (best && best.length >= 2 && lenDeg([from, best[1]]) * 111 > HOP_MAX_KM) best = null;
     let bestCost = best && best.length >= 2 ? lenDeg(best) : Infinity;
+    // 🔴 这一段**不是**冗余，实测留着（2026-10-03 试删验证）：它是**按「城」入路 + 沿路投影**的老走法
+    //    （`findPathOnRoad` 两端都投影到路上），与下面按「路网节点」入路的 `enterRoadNetwork` **不是同一套**。
+    //    试删后拿 1450 对据点路径逐对比指纹 → **71 对不一样**（例：`city_salonica→city_hamadan`、
+    //    `city_wupusala→city_pusikefu`）⇒ 它还在兜住一批走法，**必须留**。删掉的只是那份**照抄的入路循环**。
     for (const c of roadRegistry.getNearestCityPositions(from.lat, from.lng, ENTRY_CANDIDATES, ENTRY_MAX_DEG)) {
-        if (c.dist * 111 > ENTRY_HOP_MAX_KM) continue;   // 入路直行不许超过 40 公里
+        if (c.dist * 111 > HOP_MAX_KM) continue;   // 入路直行不许超过 40 公里
         if (straightCrossesSea(from, c)) continue;   // 入路直线不许横穿海面
         if (Math.hypot(c.lat - to.lat, c.lng - to.lng) < 0.05) {
             const cost = c.dist;
@@ -201,33 +253,20 @@ export function findPathFromPoint(from: P, to: P): Array<P & { sea?: boolean }> 
     // 🔴 [2026-09-25 收闸后补] **入口不一定是城，也可以是路上任意一点。**
     //    起因：第 13 场起点「波斯门战场」正落在苏萨—波斯波利斯那条路上，可它离最近的城 151 公里 ——
     //    只认「城」当入口时，40 公里那道闸把候选全挡掉，当场报「无路可达」✗。
-    //    故再按**路网节点**找一遍入口（与 `findPathToBattlefield` 同一做法），仍受 40 公里上限约束。
-    const targetNodes = roadRegistry.getNearestRoadNodes(to.lat, to.lng, 1, ENTRY_MAX_DEG);
-    const targetNodeId = targetNodes.length ? targetNodes[0].id : null;
-    if (targetNodeId) {
-        for (const c of roadRegistry.getNearestRoadNodes(from.lat, from.lng, ENTRY_CANDIDATES + 2, ENTRY_MAX_DEG)) {
-            if (c.dist * 111 > ENTRY_HOP_MAX_KM) continue;
-            if (c.dist * 111 > 0.5 && straightCrossesSea(from, c)) continue;
-            let leg: Array<P & { sea?: boolean }> = [];
-            if (c.id === targetNodeId) {
-                leg = [{ lat: c.lat, lng: c.lng } as P & { sea?: boolean }];
-            } else {
-                const r = roadRegistry.findPath(c.id, targetNodeId);
-                if (!r) continue;
-                leg = roadRegistry.pathToLatLngs(r) as Array<P & { sea?: boolean }>;
-            }
-            if (!leg.length) continue;
-            const cost = c.dist + lenDeg(leg) + lenDeg([leg[leg.length - 1], to]);
-            if (cost < bestCost - 1e-9) {
-                bestCost = cost;
-                best = [{ lat: from.lat, lng: from.lng }, ...leg, { lat: to.lat, lng: to.lng }];
-            }
+    //    故再按**路网节点**找一遍入口（与 `findPathToBattlefield` **共用同一个 `enterRoadNetwork`**），
+    //    仍受 40 公里上限约束。
+    const targetNode = roadRegistry.getNearestRoadNodes(to.lat, to.lng, 1, ENTRY_MAX_DEG)[0];
+    if (targetNode) {
+        const viaNode = enterRoadNetwork(from, targetNode.id, to);
+        if (viaNode) {
+            const cost = lenDeg(viaNode);
+            if (cost < bestCost - 1e-9) { bestCost = cost; best = viaNode; }
         }
     }
 
     // 🔴 末段吸城吸得太远（> 40 公里）→ 改走「沿那条离终点最近的路走到边上再下路」
     const hopKm = best && best.length >= 2 ? lenDeg([best[best.length - 2], to]) * 111 : Infinity;
-    if (!best || hopKm > LONG_HOP_KM) {
+    if (!best || hopKm > HOP_MAX_KM) {
         const alt = tryLeaveRoadNearTarget(from, to);
         if (alt && (!best || lenDeg(alt) <= lenDeg(best) * MAX_ROAD_DETOUR)) return alt;
     }
@@ -255,34 +294,24 @@ export function battlefieldRoadNode(bfId: string): { id: string; lat: number; ln
 }
 
 /**
- * 从 from 沿路网走到战场节点的整条路。入口在附近已接入路网的节点里挑（城与连了路的战场都算，
- * 上一场的阵位就在上一处战场的支线上），取「直线走到入口 + 沿路到战场」总长最短、且入口直线不跨海的那个。
+ * 从 from 沿路网走到战场节点的整条路（阵位再往前截 `BATTLE_STAND_KM`，见 `cutPathBeforeEnd`）。
+ * 入路那一段**就一句**：`enterRoadNetwork(from, 战场节点, null)` —— 与 `findPathFromPoint`
+ * 走的是同一份入路逻辑（挑入口、40 公里闸、不跨海、入口＝终点时直着过去几十公里都在这一个函数里）。
+ *
+ * 🔴 [2026-10-03 主人报「第 76 路：哈马丹 ➜ 科塞亚，不按路走」] 这一支原先**自己抄了一份入路循环**，
+ *   而且抄的时候**漏了 40 公里那道闸**：哈马丹 3.0° 内已接入路网的节点只有 4 个 ——
+ *   `city_hamadan`(0 km)、**`bf_kesaiya`(146 km)**、`city_zanzhan`(208)、`city_jiaziwen`(212)；
+ *   候选池里既然有**战场自己**，`c.id === node.id` 那一支就成立 ⇒ 总代价＝「直行 146 公里」，
+ *   比真路还便宜（真路：`road_city_hamadan_bf_kesaiya_1790954910426`＝37 个坐标点 / 232 公里）
+ *   ⇒ 军团**丢开主人画的那条路，横穿扎格罗斯山走了一条 2 点直线**。同一个病还有第 15 场
+ *   （居鲁士城 → 锡尔河战场，2 点 / 67 公里直线）。**已删掉这份抄件，改为共用 `enterRoadNetwork`。**
+ * 战场没连路（`battlefieldRoadNode` 为 null）或入路挑不出来 → null，
+ * 交回调用方的 `findPathFromPoint` 兜底（它自带 `tryLeaveRoadNearTarget`），绝不在这里自造近道。
  */
 export function findPathToBattlefield(from: P, bfId: string): Array<P & { sea?: boolean }> | null {
     const node = battlefieldRoadNode(bfId);
     if (!node) return null;
-    let best: Array<P & { sea?: boolean }> | null = null;
-    let bestCost = Infinity;
-    for (const c of roadRegistry.getNearestRoadNodes(from.lat, from.lng, ENTRY_CANDIDATES + 1, ENTRY_MAX_DEG)) {
-        if (c.dist * 111 > 0.5 && straightCrossesSea(from, c)) continue;
-        let leg: Array<P & { sea?: boolean }>;
-        if (c.id === node.id) {
-            leg = [{ lat: c.lat, lng: c.lng }];
-        } else {
-            const r = roadRegistry.findPath(c.id, node.id);
-            if (!r) continue;
-            leg = roadRegistry.pathToLatLngs(r);
-        }
-        const cost = c.dist + lenDeg(leg);
-        if (cost < bestCost - 1e-9) {
-            bestCost = cost;
-            const head = leg[0];
-            best = head && Math.hypot(head.lat - from.lat, head.lng - from.lng) < 1e-6
-                ? [{ lat: from.lat, lng: from.lng }, ...leg.slice(1)]
-                : [{ lat: from.lat, lng: from.lng }, ...leg];
-        }
-    }
-    return best && best.length >= 2 ? best : null;
+    return enterRoadNetwork(from, node.id, null);
 }
 
 /**

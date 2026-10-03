@@ -43,6 +43,11 @@ export interface TimeOfDayGrade {
 }
 
 interface ResolveInput {
+    /**
+     * 🔴 [2026-10-03 主人令「21 场中有夜战，添加一个夜晚滤镜」] 这一场是不是史实上的夜战。
+     * 为真时返回夜晚滤镜；为假时照旧什么滤镜都没有（2026-09-17 主人已删除其余全部时段滤镜，恢复 DE 原色）。
+     */
+    forceNight?: boolean;
     seed: string;
     /** TimeSystem 枚举：春0 夏1 秋2 冬3 */
     calendarSeason: number;
@@ -133,7 +138,27 @@ function forcedPhase(): DayPhase | null {
     return (v && v in BASE_MULTIPLY) ? (v as DayPhase) : null;
 }
 
+/**
+ * 史实上「主战斗就在夜里」的场次（只收这一类；夜里行军 / 渡河、拂晓开打的不算夜战）。
+ *   · 佩利昂（公元前335年）：阿里安《远征记》I.6 —— 亚历山大趁夜率持盾卫队、弓箭手与阿格里安人渡河，
+ *     突袭疏于防备的伊利里亚营地，决定性的一仗就在夜里。
+ * 未收的（夜里行军或渡河、拂晓才开打）：多瑙河渡河（I.3–4）、乌克西亚隘口（III.17）、波斯门（III.18）、
+ *   索格狄亚那岩（IV.19）、海达斯佩斯河（V.9–12）。要加哪一场，往下面表里加一行并写出处。
+ * 键 = 攻城战守方据点 id（佩利昂是攻城战）或战斗标题关键字（野战）。
+ */
+const NIGHT_BATTLE_CITY_IDS: readonly string[] = ['city_peiliang'];
+const NIGHT_BATTLE_TITLE_KEYS: readonly string[] = [];
+
+export function isNightBattle(init: { defenderCityId?: string | null; title?: string | null }): boolean {
+    if (init.defenderCityId && NIGHT_BATTLE_CITY_IDS.includes(init.defenderCityId)) return true;
+    const t = init.title ?? '';
+    return !!t && NIGHT_BATTLE_TITLE_KEYS.some((k) => t.includes(k));
+}
+
 export function resolveTimeOfDay(input: ResolveInput): TimeOfDayGrade {
+    if (input.forceNight || forcedPhase() === 'night') {
+        return { phase: 'night', multiply: BASE_MULTIPLY.night, screen: BASE_SCREEN.night, driftTo: null };
+    }
     const phase = forcedPhase() ?? pickPhase(input.seed, input);
     // 🔴 [2026-09-17 主人定] 彻底删除战术模式全屏时段滤镜（黄昏/黎明/时段/季节压暗全面废除，恢复 DE 原版纯正清亮通透原色）。
     return {
@@ -170,8 +195,21 @@ export class Scene13TimeOfDayGrader {
 
     /** 在所有精灵画完之后调用（flip 之外：调色对称，翻不翻都一样） */
     paint(ctx: CanvasRenderingContext2D, w: number, h: number, now: number): void {
-        // 🔴 [2026-09-17 主人定] 全屏滤镜彻底停用：不再执行任何整画布 multiply 压暗与 screen 泛光合成
-        return;
+        // 🔴 [2026-09-17 主人定] 全屏滤镜彻底停用（黄昏 / 黎明 / 季节 / 群系全部不画，恢复 DE 原色）。
+        // 🔴 [2026-10-03 主人令「21 场中有夜战，添加一个夜晚滤镜」] 只给夜战开：其余时段依旧什么都不画。
+        const g = this.grade;
+        if (!g || g.phase !== 'night') return;
+        const k = Math.min(1, Math.max(0, (now - this.t0) / Scene13TimeOfDayGrader.FADE_MS));   // 进场 1.5 秒渐入
+        const m = round(mix([255, 255, 255], g.multiply, k));
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';          // ① 压色：整画布 1 次
+        ctx.fillStyle = `rgb(${m[0]},${m[1]},${m[2]})`;
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'screen';            // ② 月光冷色微亮：整画布 1 次（固定 2 次，与精灵数量无关）
+        ctx.globalAlpha = k;
+        ctx.fillStyle = this.screenFill(ctx, g.screen, w, h);
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
     }
 
     private screenFill(ctx: CanvasRenderingContext2D, s: ScreenGlow, w: number, h: number): CanvasGradient | string {
