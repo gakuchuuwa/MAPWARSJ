@@ -63,8 +63,6 @@ export interface PlayerSaveState {
     manualUnitPick?: boolean;
     /** 就近寻找武将（默认关 = 同档随机） */
     nearbyFirst?: boolean;
-    /** 自动选择兵模（默认开） */
-    autoPickUnit?: boolean;
     /** 已获海上兵模（战船 AssetId），终身保留 */
     learnedShips?: string[];
     /** 无势力时自选的战船下标；-1 = 独木舟 */
@@ -130,9 +128,8 @@ export class PlayerHero {
      */
     public learnedShips: string[] = [];
     /**
-     * ⚠️ 已废弃（2026-09-10）：原「玩家亲手换过就不再自动换装」的隐式锁，
-     * 已被面板上的显式开关 `autoPickUnit`（自动选择兵模）取代 —— 主人要的是一个看得见的功能，
-     * 而不是"点过一次就永久变了脾气"。字段只为读旧存档保留，不再参与任何判据。
+     * ⚠️ 已废弃：原「玩家亲手换过就不再自动换装」的隐式锁。
+     * 字段只为读旧存档保留，不再参与任何判据。
      */
     private manualUnitPick = false;
     /** 面板选中的已收兵模下标；-1 = 还没收到（用官阶兜底形象，白身=古典斥候骑兵） */
@@ -179,14 +176,6 @@ export class PlayerHero {
      *   两档都是在**一圈城里抽签**，不会锁死某一座，也不会横跨半个地球。
      */
     public nearbyFirst = false;
-    /**
-     * 🔴 [2026-09-10 主人定]「你在玩家面板添加一个功能，自动选择兵模」。
-     * 开（默认）：
-     *   · 有势力 → 按凑卡玩法走：加入军团时换成该军团的兵模；
-     *   · 无势力 → 已获形象按 骑兵 → 战车 → 象兵 → 步兵 自动优选。
-     * 关：一切自动换装停手，只用玩家在面板上选的那个。
-     */
-    public autoPickUnit = true;
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -251,7 +240,7 @@ export class PlayerHero {
     /** 同步玩家的地图行军大类（骑=CAVALRY 平原2.0 / 步=INFANTRY 平原1.4·山地1.1）。
      *  海上不归它管：登船后全军统一 SEA_SPEED_MULTIPLIER，兵种加成失效。 */
     private syncMoveProfile(): void {
-        if (!this.factionId && this.autoPickUnit) {
+        if (!this.factionId) {
             let picked = this.getSelectedUnit() ? this.selectedUnit : -1;
             for (let i = 0; i < this.learnedUnits.length; i++) {
                 if (picked < 0 || factionlessAppearancePriority(this.learnedUnits[i].unitKey)
@@ -298,12 +287,6 @@ export class PlayerHero {
     public setNearbyFirst(on: boolean): void {
         if (this.nearbyFirst === on) return;
         this.nearbyFirst = on;
-        this.emitChange();
-    }
-    public setAutoPickUnit(on: boolean): void {
-        if (this.autoPickUnit === on) return;
-        this.autoPickUnit = on;
-        if (on) this.syncMoveProfile();   // 打开即按当前状态重选一次
         this.emitChange();
     }
     public getHostLegion(): Army | undefined {
@@ -507,12 +490,11 @@ export class PlayerHero {
     /**
      * 🔴 [2026-09-09 主人定]「加入哪个军团，就变成此军团三排兵模的其中一种」。
      * 入伍时调用：先按官阶配额从**该军团**三排里补学，再自动换上该军团的兵模。
-     * 关掉面板的「自动选择兵模」→ 只获得、不换装。
+     * 🔴 [2026-10-04 主人令]「把自动选择兵模删除，默认就是自动换」—— 面板开关已删，这里恒定自动换。
      */
     public onJoinLegion(): void {
         const prevCount = this.learnedUnits.length;
         this.syncLearnedUnits();
-        if (!this.autoPickUnit) return;   // 关掉自动选择 = 只用玩家手选的那个
         // 若刚刚在 syncLearnedUnits 里已学到新兵模并自动换上，无需二次随机挑选
         if (this.learnedUnits.length > prevCount) return;
 
@@ -593,11 +575,11 @@ export class PlayerHero {
                 const name = WAR_TYPES[pick.key]?.name ?? pick.key;
                 this.learnedUnits.push({ unitKey: pick.key, unitName: name, factionId: this.factionId, row: pick.row });
                 // 🔴 [2026-10-03 主人定死] 获得的时候就换上新的，最后保持在英雄的兵模
-                if (this.autoPickUnit || this.selectedUnit < 0) {
-                    this.selectedUnit = this.learnedUnits.length - 1;
-                    this.syncMoveProfile();
-                    this.deps.notify(`🛡️ 换上新兵模【${name}】`);
-                }
+                // 🔴 [2026-10-04 主人令「把自动选择兵模删除，默认就是自动换」「现在玩家获得兵模，要自动换上」]
+                //    面板那个开关已删 → 无条件换上（拿到新的就穿新的，英雄兵模到手后便一直保持英雄形象）。
+                this.selectedUnit = this.learnedUnits.length - 1;
+                this.syncMoveProfile();
+                this.deps.notify(`🛡️ 换上新兵模【${name}】`);
             }
         }
     }
@@ -1010,7 +992,6 @@ export class PlayerHero {
             selectedUnit: this.selectedUnit,
             manualUnitPick: this.manualUnitPick,
             nearbyFirst: this.nearbyFirst,
-            autoPickUnit: this.autoPickUnit,
             learnedShips: [...this.learnedShips],
             selectedShip: this.selectedShip,
             lat: p.lat,
@@ -1028,7 +1009,6 @@ export class PlayerHero {
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;
         this.nearbyFirst = s.nearbyFirst ?? false;
-        this.autoPickUnit = s.autoPickUnit ?? true;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
         if (s.factionId) this.joinFaction(s.factionId);
