@@ -109,11 +109,11 @@ export const SCRIPT_LEGIONS: ScriptLegionDef[] = [
     {
         // 史名：马其顿军团（Μακεδονικός στρατός），菲利普二世与亚历山大两代的军队；中文维基条目「马其顿阿吉德王朝陆军」
         name: '马其顿军团',
-        formationMode: 'echelon',   // 鱼鳞 3-4-2：前 3 / 中 4 / 后 2
+        formationMode: 'balance_yoke',   // 鱼鳞 3-4-2：前 3 / 中 4 / 后 2
         slots: [
             { type: 'elite_phalangite', count: 4 },
-            { type: 'cretan_archer', count: 3 },
-            { type: 'elite_companion_cavalry', count: 2 },
+            { type: 'cretan_archer', count: 2 },
+            { type: 'elite_companion_cavalry', count: 3 },
         ],
         // 🔴 [2026-10-02 主人令「给马其顿军团套上」] 舰队模型 = **英雄·地米斯托克利**（旗舰，原 TRIREME）。
         //    ⚠️ 剧本期这一处才是**真正生效**的那一处：`getCultureNavalShip()` 第 1 优先就是「军团自己绑的船」，
