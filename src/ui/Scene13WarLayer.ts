@@ -2436,6 +2436,20 @@ const MARCH_REL = 160;
  */
 const LANE_REGROUP_SEC = 1.0;
 /**
+ * 🔴 [2026-10-03 主人报「战术模式中，有的士兵会不停的颤抖」] 跟随锚点的**连续跟随阈值**（px）。
+ *
+ * 病灶（真机逐帧轨迹，scratch/_probe_tremble_trace.mjs）：
+ *   归队中的队员跟着锚点走，却仍用固定目标那套 `ARRIVE_EPS = 8` 到达死区 ——
+ *   锚点在动，人只能「攒够 8px 才迈一步」，跟随被切成 **两帧一循环的碎步**：
+ *     `+4.00px / -0.25px / +4.01px / -0.26px / +4.00px …`（3~4Hz，位移与推挤方向每帧相反）。
+ *   对照实测（同一条轨迹的 OFF 段）：不归队的兵 0 个发抖，归队的兵 844 个 —— 就是这条锚点在抖。
+ *
+ * 所以：**跟着活动锚点走的队员**用本阈值（≈1px）+ 每次只走 `min(步长, 距离)` = 连续跟随；
+ *   固定目标（巡逻航点 / 敌军重心 / 追击点）**照旧用 ARRIVE_EPS** —— 那 8px 死区是防
+ *   「剩 2px 也照全速冲 → 冲过头 → 回头 → 原地来回抖」的既有防抖（见 movement 分支注释），别动它。
+ */
+const LANE_TRACK_EPS = 1;
+/**
  * 每个出兵口方阵的**横向列数**（files）。
  *
  * 主人 2026-08-18 定：**人 6 列、大体型 4 列**（战车体型大，36 辆横排就是一堵墙）。
@@ -7750,22 +7764,37 @@ export class Scene13WarLayer {
         // 先登记全体有效锁定，新索敌者才能看见排在自己后面的同伴已占用的名额。
         this.reserveExistingTargets(deploying);
 
-        // 🔴【分队机制：战斗时分散，移动时回归队形】每帧选出存活分队领队（优先存活旗手，旗手阵亡选首兵）
+        // 🔴【分队机制：战斗时分散，移动时回归队形】每帧选出存活分队的**锚点**（＝队员归队时的队形原点）。
+        //    🔴 [2026-10-03 主人令「换成中心兵」] 锚点＝**本队出生槽位最靠阵列中心的那位存活兵**
+        //       （原规则：优先存活旗手，否则本队最早出生的存活兵）。
+        //       他阵亡 → 下一帧自动换成「剩下的里面最靠中心的」，不需要计时器或额外状态。
+        //    ⚠️ 打分只用**出生槽位**（`dep` / `slotY`，出生时定死、终身不变）与阵列几何，
+        //       **与"现在谁还活着"无关** —— 这是实测逼出来的：第一版按「存活成员的槽位重心」取最近者，
+        //       重心会随阵亡微移，而 48 与 72 两格离重心几乎等距 ⇒ 锚点在并列候选间来回翻
+        //       （真机实测 87 次换锚点 / 38s，其中只有 4 次是真阵亡），全队跟着反复改坐标：
+        //       跟随断档率 0.93% → 2.24%、反转率 0.024 → 0.034（量具 scratch/_probe_center_anchor.mjs）。
+        //       改成固定打分后，**只在中心兵阵亡（或有更靠中心的新兵到位）时才换人**。
+        //    ⚠️ 绝不用实时坐标：实时坐标每帧都在动，那样算出来的"中心"会带着全队一起抖 ——
+        //       2026-10-03 刚修完「锚点抖 → 全队跟着抖」那一整条链（见 LANE_TRACK_EPS 与 _probe_tremble_trace.mjs）。
+        //    ⚠️ 玩家本人永不担任锚点：他是被锚定的一方（绑到本队），不能反过来当锚点把整队拖在身后；
+        //       他 dep=-10、slotY=0 离阵列中心也近，所以这条排除必须留着。
         const laneLeaders = new Map<number, WarMan>();
+        const laneLeaderScore = new Map<number, number>();
         for (const m of this.men) {
-            // 🔴 [2026-10-03] 玩家本人**永不担任领队**：他是被锚定的一方（绑到本队），
-            //    不能反过来当锚点把整队拖在自己身后。
-            //    血训：setupPlayerUnits 在建口之后、第一帧 spawnTick 之前就跑，而 this.men 从不排序，
-            //    玩家恒是本 lane 下标最小的一员 —— 只要该队没有活着的旗手他就会当选领队。
-            //    旗手每 20 人出一个（FLAG_EVERY），而每口精灵数 ≈ 出征兵力/200（10 口 × SPRITE_TROOPS 20），
-            //    即兵力 < 约 4000 的一方**整场没有旗手** → 玩家整场当领队、整队被他拖走，
-            //    与主人令「把玩家也绑上锚点，不然要他乱跑」正好相反。
             if (m.hp <= 0 || m.lane < 0 || m.hero) continue;
-            const cur = laneLeaders.get(m.lane);
-            if (!cur) {
+            // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
+            // 每批每口 36 个精灵（SIDE_CAP ÷ SIDE_LANES）→ 排数 = 36 ÷ 列数
+            const sp = marchSpacingOf(m.key);
+            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
+            const depC = ((ranks - 1) / 2) * spDep;
+            const ey = m.slotY / sp;
+            const ex = (m.dep - depC) / spDep;
+            const score = ex * ex + ey * ey;
+            const best = laneLeaderScore.get(m.lane);
+            if (best === undefined || score < best) {   // 平手时先遇到的（＝出生更早的）胜出，确定且稳定
                 laneLeaders.set(m.lane, m);
-            } else if (!cur.flag && m.flag) {
-                laneLeaders.set(m.lane, m);
+                laneLeaderScore.set(m.lane, score);
             }
         }
 
@@ -8460,12 +8489,21 @@ export class Scene13WarLayer {
                 // 🔴 到达判定：目标只剩几像素时**停下**，不要照全速冲过去。
                 //    没有这一条，目标剩 2px 也走 4px → 冲过头 → 下一帧回头 → 原地来回抖，
                 //    朝向又每帧按移动方向重算，就在 8 个方向之间乱跳 = 主人看到的「闪动、颤抖」。
+                //    ⚠️ 这一条只管**固定目标**（巡逻航点 / 敌军重心 / 追击点）。
+                //    跟着**活动锚点**走的归队队员不能套它 —— 锚点在动，8px 死区会把跟随切成
+                //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
+                //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = this.laneSlotTarget(m, laneLeaders);
                 const step = stats.spd * dt;
-                if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
-                    m.x += dx / d * step;
-                    m.y += dy / d * step;
-                    m.dir = this.dir8(dx, dy);        // 只在真的在走时更新朝向
+                const arriveAt = slot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
+                if (stats.spd > 0 && d > arriveAt) {
+                    const mv = slot ? Math.min(step, d) : step;   // 跟随锚点：连续跟随，不迈整步
+                    m.x += dx / d * mv;
+                    m.y += dy / d * mv;
+                    // 连续跟随的步子很小（1~2px），朝向不能照小向量每帧重算 ——
+                    // 「朝向每帧按移动方向重算 → 8 个方向之间乱跳 = 闪动、颤抖」（见本段上一条血训）。
+                    // 跟随锚点时走**带迟滞的 8 向**（与玩家键盘移动同一个 dir8Hyst），固定目标照旧 dir8。
+                    m.dir = slot ? this.dir8Hyst(m.dir, dx, dy) : this.dir8(dx, dy);
                 } else if (slot) {
                     // 归队入列后朝向与领队保持一致
                     const leader = laneLeaders.get(m.lane);
