@@ -111,7 +111,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         factionId: 'seleisi',
         portrait: '',
         portraitProposedPath: '/assets/THRACIAN/jite_shouling.png',
-        note: '多瑙河北岸吉特人（Getae，色雷斯北支，信永生）国王科托罗（Cothelas）。史料（阿里安《远征记》I.3）记吉特人约四千骑兵、一万余步兵列阵相阻。',
+        note: '多瑙河北岸盖塔人（Getae，色雷斯北支，信永生）国王科托罗（Cothelas）。史料（阿里安《远征记》I.3）记盖塔人约四千骑兵、一万余步兵列阵相阻。',
     },
     aitiliusi: {
         generalId: 'aitiliusi',

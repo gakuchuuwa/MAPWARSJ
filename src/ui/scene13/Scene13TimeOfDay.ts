@@ -198,7 +198,8 @@ export class Scene13TimeOfDayGrader {
         // 🔴 [2026-09-17 主人定] 全屏滤镜彻底停用（黄昏 / 黎明 / 季节 / 群系全部不画，恢复 DE 原色）。
         // 🔴 [2026-10-03 主人令「21 场中有夜战，添加一个夜晚滤镜」] 只给夜战开：其余时段依旧什么都不画。
         const g = this.grade;
-        if (!g || g.phase !== 'night') return;
+        // 随机抽到「night」时段但没开夜战的场次，multiply 是纯白（恒等）——也不许画；只认真有压色的夜晚滤镜
+        if (!g || g.phase !== 'night' || g.multiply[0] >= 255) return;
         const k = Math.min(1, Math.max(0, (now - this.t0) / Scene13TimeOfDayGrader.FADE_MS));   // 进场 1.5 秒渐入
         const m = round(mix([255, 255, 255], g.multiply, k));
         ctx.save();
