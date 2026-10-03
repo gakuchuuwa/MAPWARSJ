@@ -49,7 +49,7 @@ export const SCRIPT_FORBIDDEN_CITY_NAMES: ForbiddenCityName[] = [
     { name: '贵山城', cityId: 'city_guishancheng', untilYear: -1, instead: '药杀水／塞人边境', why: '贵山城是汉代大宛国都之称，亚历山大时代不用这个名字' },
     { name: '羯霜那', cityId: 'city_jieshuangna', untilYear: -1, instead: '诺塔卡（Nautaca）', why: '羯霜那（Kesh）是隋唐译名；希腊化时期叫诺塔卡，今沙赫里萨布兹' },
     { name: '白沙瓦', cityId: 'city_baishawa', untilYear: -1, instead: '佩乌克劳提斯（Peucelaotis／梵文 Pushkalavati）', why: 'Purushapura／白沙瓦是贵霜以后的名字（与第五、六片同一条口径）' },
-    { name: '忽毡', cityId: 'city_huzhan', untilYear: -1, instead: '药杀水南岸那座新城（绝域亚历山大城）', why: '库里这座城那几年过不了年代闸（锚定武将属城堡时代）—— 不显示就不念' },
+    { name: '忽毡', cityId: 'city_huzhan', untilYear: -1, instead: '药杀水南岸那座新城（绝域亚历山大城）', why: '🔴 [2026-10-03 更正过期的理由] 「忽毡」是后世（元代）译名；亚历山大时代这地方叫**绝域亚历山大城**（前329 他亲手所筑，今苦盏），故播报一律念古典名。旧理由写「库里这座城那几年过不了年代闸（锚定武将属城堡时代）—— 不显示就不念」**已不成立**：2026-09-29 已给它填建立年代 -329，前329 起就过闸、会上图（统计见 `scratch/_probe_huzhan_in_alexander_script.mts`），图上照「一处一名」写「忽毡」。' },
 ];
 
 /** 一座据点在某个年份**能不能上地图**（与游戏同一判据） */
