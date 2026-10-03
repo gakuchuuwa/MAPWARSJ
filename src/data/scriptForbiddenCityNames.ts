@@ -49,7 +49,8 @@ export const SCRIPT_FORBIDDEN_CITY_NAMES: ForbiddenCityName[] = [
     { name: '贵山城', cityId: 'city_guishancheng', untilYear: -1, instead: '药杀水／塞人边境', why: '贵山城是汉代大宛国都之称，亚历山大时代不用这个名字' },
     { name: '羯霜那', cityId: 'city_jieshuangna', untilYear: -1, instead: '诺塔卡（Nautaca）', why: '羯霜那（Kesh）是隋唐译名；希腊化时期叫诺塔卡，今沙赫里萨布兹' },
     { name: '白沙瓦', cityId: 'city_baishawa', untilYear: -1, instead: '佩乌克劳提斯（Peucelaotis／梵文 Pushkalavati）', why: 'Purushapura／白沙瓦是贵霜以后的名字（与第五、六片同一条口径）' },
-    { name: '忽毡', cityId: 'city_huzhan', untilYear: -1, instead: '药杀水南岸那座新城（绝域亚历山大城）', why: '🔴 [2026-10-03 更正过期的理由] 「忽毡」是后世（元代）译名；亚历山大时代这地方叫**绝域亚历山大城**（前329 他亲手所筑，今苦盏），故播报一律念古典名。旧理由写「库里这座城那几年过不了年代闸（锚定武将属城堡时代）—— 不显示就不念」**已不成立**：2026-09-29 已给它填建立年代 -329，前329 起就过闸、会上图（统计见 `scratch/_probe_huzhan_in_alexander_script.mts`），图上照「一处一名」写「忽毡」。' },
+    { name: '忽毡', cityId: 'city_huzhan', untilYear: -1, instead: '药杀水南岸那座新城（绝域亚历山大城）', why: '🔴 [2026-10-03 更正过期的理由] 「忽毡」是汉文旧译（蒙元时期史料所用）；亚历山大时代这地方叫**绝域亚历山大城**（前329 他亲手所筑，今苦盏），故播报一律念古典名。旧理由写「库里这座城那几年过不了年代闸（锚定武将属城堡时代）—— 不显示就不念」**已不成立**：2026-09-29 已给它填建立年代 -329，前329 起就过闸、会上图（统计见 `scratch/_probe_huzhan_in_alexander_script.mts`）。图上显示名自 2026-10-03 起为「苦盏」（`cityDisplayNames.ts`），但那是**地图上的名字**，播报同样不许念。' },
+    { name: '苦盏', cityId: 'city_huzhan', untilYear: -1, instead: '药杀水南岸那座新城（绝域亚历山大城）', why: '🔴 [2026-10-03 主人令「请修复」后新立的显示名] 「苦盏」是现代中文对这地方的通称（地图上的唯一显示名，见 `cityDisplayNames.ts`），前329 那年还没有这个名字 —— 那年它叫绝域亚历山大城，播报一律念古典名（与上一条「忽毡」同一条口径）。' },
 ];
 
 /** 一座据点在某个年份**能不能上地图**（与游戏同一判据） */
