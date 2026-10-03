@@ -20,9 +20,11 @@ export class SubtitleBanner {
 
     private static ensure(): HTMLDivElement {
         if (this.el && document.body.contains(this.el)) return this.el;
-        if (!document.getElementById(STYLE_ID)) {
-            const style = document.createElement('style');
-            style.id = STYLE_ID;
+        // 🔴 [2026-10-03 主人报「不是说字幕下移吗」] 原来只在样式标签**不存在**时写它 —— 于是
+        //    改完这条 CSS 后，正在跑的老页面（标签早已注入）永远拿不到新值，dev 热更新也不重建它，
+        //    看着就像「改了没用」。改为**每次都重写**（幂等、开销一次字符串赋值），改完即生效。
+        const style = document.getElementById(STYLE_ID) ?? document.createElement('style');
+        if (!style.id) { style.id = STYLE_ID; document.head.appendChild(style); }
             style.textContent = `
                 #${BANNER_ID} {
                     position: fixed;
@@ -30,7 +32,15 @@ export class SubtitleBanner {
                     /* 🔴 [2026-09-25 主人「这个字幕怎么总挡着道路编辑器，字幕放到下面去」]
                        编辑器页（道路/战场/据点编辑器，路径里带 editor）→ 贴到最下面（10px），不再压工具栏；
                        游戏内保持 84px（避开底部 HUD）。判据只看路径，不改任何游戏内位置。 */
-                    bottom: ${/editor/i.test(location.pathname) ? '10px' : '84px'};
+                    /* 🔴 [2026-10-03 主人选定「方案 A：按屏高缩放」] 游戏内 84px 固定值改成按屏高缩放：
+                       固定 px 与视口高度无关 —— 1920×1080 上 84px 占屏高 7.8%（正合适），
+                       矮窗口里却占 16%，字幕就飘在半空、压住中景（主人报的正是这个）。
+                       clamp(46px, 7.8vh, 84px)：大屏仍是 84px（观感不变）；小窗自动贴到 46px。
+                       46px 不是随手写的：底部战力条（#combat-ui-panel 的 combat-center）高 38px、
+                       其上沿离屏底 38px，留 8px 余量 → 46px 是实测出来的下限。
+                       量具：scratch/_probe_subtitle_room.mjs、scratch/_probe_bottom_bar.mjs（真机逐元素量坐标）。
+                       编辑器页仍走 10px，不受本条影响。 */
+                    bottom: ${/editor/i.test(location.pathname) ? '10px' : 'clamp(46px, 7.8vh, 84px)'};
                     transform: translateX(-50%);
                     z-index: 10003;
                     /* 🔴 [2026-09-25 主人「可以把屏幕做的更宽些」] left:50% 的收缩盒，可用宽度只算到屏幕右半
@@ -96,8 +106,6 @@ export class SubtitleBanner {
                     text-shadow: 0 2px 5px rgba(0, 0, 0, 0.95), 0 0 10px rgba(212, 175, 55, 0.12);
                 }
             `;
-            document.head.appendChild(style);
-        }
         const el = document.createElement('div');
         el.id = BANNER_ID;
         document.body.appendChild(el);
