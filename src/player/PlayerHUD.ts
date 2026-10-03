@@ -467,7 +467,7 @@ export class PlayerHUD {
 
         singleRow.appendChild(secMid);
 
-        // ── 3. 控制区：自动模式、剧本/乱斗下拉、自动兵模、就近寻将、跟随视角 ──
+        // ── 3. 控制区：自动模式、剧本/乱斗下拉、就近寻将、跟随视角 ──
         const secControls = document.createElement('div');
         secControls.className = 'player-hud-section';
 
@@ -498,19 +498,6 @@ export class PlayerHUD {
         }
         planSel.addEventListener('change', () => hero.setAutoPlan(planSel.value as PlayerAutoPlan));
         secControls.appendChild(planSel);
-
-        // 🎲 自动兵模
-        const autoUnitLabel = document.createElement('label');
-        autoUnitLabel.style.cssText = 'display:flex; align-items:center; gap:3px; cursor:pointer; font-size:11px; color:#dfc28c; font-weight:700; user-select:none;';
-        autoUnitLabel.title = '开：随军时按军团统一兵模自动换，独行按 骑兵→战车→象兵→步兵 优选；关：只用你手选的兵模';
-        const autoUnitCheck = document.createElement('input');
-        autoUnitCheck.type = 'checkbox';
-        autoUnitCheck.checked = hero.autoPickUnit;
-        autoUnitCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
-        autoUnitCheck.addEventListener('change', () => hero.setAutoPickUnit(autoUnitCheck.checked));
-        autoUnitLabel.appendChild(autoUnitCheck);
-        autoUnitLabel.appendChild(document.createTextNode('🎲 自动兵模'));
-        secControls.appendChild(autoUnitLabel);
 
         // 📍 就近寻将
         const nearLabel = document.createElement('label');
