@@ -2422,6 +2422,20 @@ const ARRIVE_EPS = 8;
 /** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
 const MARCH_REL = 160;
 /**
+ * 🔴 [2026-10-03 主人令「每一队战斗的时候就分散，移动的时候就回归队形」] 单兵「无敌人」门槛（秒）：
+ *    一个兵连续这么久视野里没有敌人（`m.foe` 为空），才准回本队队形；否则照旧各自索敌。
+ *
+ * 量具：`scratch/_measure_lane_regroup.mjs`（真机 puppeteer，2026-10-03；一场野战 732 帧 / 43.6 仿真秒、
+ *   场上 721 精灵、双方 20 队）。实测「一个兵无目标」的空窗 1666 次 / 43.6s = **38.2 次/秒**，
+ *   长度**天然分两簇**：
+ *     · ≤0.5s：856~916 次（约 55%）＝ 索敌 0.2s 节流 + 换目标那一下的**假空窗**，21 次/秒；
+ *     · ≥1.0s：只剩约 43.6% ＝ 真的没人可打（后排没轮上、被推离战线、收尾找残敌）。
+ *   0.5~1.0s 之间只有 0.5%（9 次 / 43.6s）—— 门槛取 1.0 即把假空窗**整簇挡住**（留 2 倍余量），
+ *   真脱战照样归队。取 0.5 会留下 21 次/秒「转身走两步又回头」的抽动；取 2.0 以上只多挡 0.4%，白推迟归队。
+ * 复现：`node scratch/_measure_lane_regroup.mjs`（看「② 逐兵无目标空窗」两行）。
+ */
+const LANE_REGROUP_SEC = 1.0;
+/**
  * 每个出兵口方阵的**横向列数**（files）。
  *
  * 主人 2026-08-18 定：**人 6 列、大体型 4 列**（战车体型大，36 辆横排就是一堵墙）。
@@ -2962,7 +2976,8 @@ interface WarSpawn {
 interface WarMan {
     f: 0 | 1;
     key: string;
-    /** [2026-09-05 玩家] 所属出兵口（WarSpawn.lane）；-1 = 攻城武器 / 玩家本人 */
+    /** [2026-09-05 玩家] 所属出兵口（WarSpawn.lane）；-1 = 攻城武器
+     *  🔴 [2026-10-03 主人令「玩家的兵模是什么就和那一队锚定」] 玩家本人不再是 -1，见 setupPlayerUnits */
     lane: number;
     /** [2026-09-05 玩家] 玩家本人（乱入者）：不计兵力、不留尸（落马后回本方边缘重整）、按键/点击可操控 */
     hero?: boolean;
@@ -2986,6 +3001,11 @@ interface WarMan {
     next: number;
     fightT: number;
     aimT: number;
+    /**
+     * 🔴 [2026-10-03] 本兵「无目标」已持续秒数：有目标当帧清零、无目标每帧累加（在 step 的索敌结算之后）。
+     * 只服务归队门槛（见 LANE_REGROUP_SEC）；与 fightT（够得着的缠斗计时）是两件事，别混用。
+     */
+    noFoeSec?: number;
     /** 出场渐显剩余时间（秒） */
     fadeT: number;
     /** 出场渐显总时长（秒，出生时定死）：render 算 alpha 的分母，勿与 FADE_IN 硬编码混用 */
@@ -3637,6 +3657,14 @@ export class Scene13WarLayer {
      * 开战 30 秒城墙随机塌一半（collapseHalfWalls）→ false → 守方开始反击（2026-08-22 主人定）。
      */
     private defenderHolding = false;
+    /**
+     * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
+     *    2026-09-19 主人定「城寨/漠北蒙古与野战一致：直接开战」）。
+     * 用途只有一个：**分队归队只给野战** —— 主人 2026-08-23 定过「攻城战不再列阵行军……30 秒城墙坍塌后
+     * 直接各自索敌接战（aimAt/search）；march 列阵只保留给野战」，所以攻城战不许从后门把队形放回来。
+     * 在 start() 里算一次：`isMobeiMongolDefender()` 要查据点表，不能逐帧逐兵算。
+     */
+    private siegeWithWalls = false;
     /** 两方阵型各自已推进的距离（px），列阵解除后不再使用 */
     private adv: [number, number] = [0, 0];
     /** 开局总兵力（精灵），攻/守各一 —— 补兵触发线按「剩余占比」缩放时当分母 */
@@ -3684,6 +3712,12 @@ export class Scene13WarLayer {
     private playerCmd: 'attack' | 'hold' = 'attack';
     /** 玩家键盘移动输入（屏幕方向单位向量；null = 没按） */
     private heroInput: { dx: number; dy: number } | null = null;
+    /**
+     * 🔴 [2026-10-03] 玩家本人「点地面」下的那道令（点那一下设上，走到就清）。
+     * 为什么必须单独记一笔：归队分支与 aimAt **都会改写玩家的目标点**，而光看 `m.tx/m.ty`
+     * 分不出这个点是玩家点的还是归队自己设的（拿「离目标还远」近似 → 英雄会一跳一跳跟队）。
+     */
+    private heroClickOrder: { x: number; y: number } | null = null;
     private heroMan: WarMan | null = null;
     /** 🔴 [2026-09-09 主人定] 玩家阵亡复活倒计时（秒；0=活着/未在倒计时） */
     private heroRespawnTimer = 0;
@@ -3695,6 +3729,8 @@ export class Scene13WarLayer {
     /** 键盘移动：屏幕方向 → 逻辑方向（左右对调时 x 取反） */
     public setHeroInput(v: { dx: number; dy: number } | null): void {
         this.heroInput = v;
+        // 松手 = 玩家交还控制权：作废还没走完的点地面那道令，让他回本队队形
+        if (!v) this.heroClickOrder = null;
         if (!v && this.heroMan && this.heroMan.hp > 0) { this.heroMan.tx = this.heroMan.x; this.heroMan.ty = this.heroMan.y; }
     }
 
@@ -3706,6 +3742,7 @@ export class Scene13WarLayer {
         const lx = this.flipSides ? W - x : x;
         [m.tx, m.ty] = this.fieldBound(lx, y);
         this.heroInput = null;
+        this.heroClickOrder = { x: m.tx, y: m.ty };   // 这道令归队与 aimAt 都不许改写，走到才清
     }
 
     /**
@@ -3770,6 +3807,7 @@ export class Scene13WarLayer {
         this.playerCtlLanes.clear();
         this.playerCmd = 'attack';
         this.heroInput = null;
+        this.heroClickOrder = null;
         this.heroMan = null;
         this.heroRespawnTimer = 0;
         this.playerKills = 0;
@@ -3796,7 +3834,8 @@ export class Scene13WarLayer {
          *   （原话表里那段「玩家带精锐入场时精锐顶替编制里的一口」是**表格外的 AI 注解**，已一并改正。）
          *
          * 现在：军团编制在 13 里**原样呈现**，9 口是军团自己的 9 口，玩家一个兵种都不改。
-         * 玩家本人照旧以 hero 身份在场（lane=-1，见下方 hero 精灵），按官阶控制军团**现有**的部队。
+         * 玩家本人照旧以 hero 身份在场（🔴 [2026-10-03] 已按主人令绑到本队 lane，见 setupPlayerUnits：
+         * 不再是 lane=-1），按官阶控制军团**现有**的部队。
          * ⚠️ 别再把这段加回来。要动编制必须有主人原话，不能从「必须 9 支」反推出「可以替换」。 */
         // 🔴 [2026-09-07 主人定]「探马控同兵种的一队、先锋控同兵种的一排」。
         //    setup.unitKey = 玩家面板选中的本势力兵种；本方阵中 key 相同的口才归他指挥。
@@ -3821,22 +3860,33 @@ export class Scene13WarLayer {
         }
 
         this.ensureType(setup.heroKey, f);
-        // 🔴 [2026-09-16 主人定]「野战的时候，玩家不要擅自先独立冲锋，第一波要跟着大部队，一起前进。」
-        //    1. 站位：置于本方前排队列正中（前沿微凸 10px 领军），绝不突前 0.9*depth 孤身送命；
-        //    2. 第一波行军：野战开局参与 march（列阵推进），锚定前排中心口，跟随大部队以全军行军速度整齐前进；
-        //    3. 接火前不擅自脱队冲锋：直到大部队整体碰撞接敌（!this.marching）才全军一同冲杀。
+        // 🔴 [2026-10-03 主人令]「把玩家也绑上锚点，不然要他乱跑。玩家的兵模是什么就和那一队锚定。」
+        const mySpawns = this.spawns.filter((s) => s.f === f);
+        let anchorPort = mySpawns.find((s) => s.key === setup.heroKey)
+            ?? (setup.unitKey ? mySpawns.find((s) => s.key === setup.unitKey) : null);
+        if (!anchorPort) {
+            const heroCls = WAR_TYPES[setup.heroKey]?.cls ?? (setup.unitKey ? WAR_TYPES[setup.unitKey]?.cls : undefined);
+            if (heroCls) {
+                anchorPort = mySpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls && s.row === 0)
+                    ?? mySpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls);
+            }
+        }
+        if (!anchorPort) {
+            const centerPort = row0.reduce(
+                (best, s) => (Math.abs(s.y - midY) < Math.abs(best.y - midY) ? s : best),
+                row0[0],
+            );
+            anchorPort = centerPort ?? row0[0] ?? mySpawns[0];
+        }
+
         const inMarch = this.battleType !== 'siege';
-        const centerPort = row0.reduce(
-            (best, s) => (Math.abs(s.y - midY) < Math.abs(best.y - midY) ? s : best),
-            row0[0],
-        );
-        const heroPort = centerPort ?? row0[0];
+        const heroPort = anchorPort;
         const heroDep = -10;
         const hx = heroPort.x + (toward > 0 ? 10 : -10);
-        const hy = midY;
+        const hy = heroPort.y;
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
-            f, key: setup.heroKey, jx: 0, jy: 0, lane: -1, hero: true,
+            f, key: setup.heroKey, jx: 0, jy: 0, lane: heroPort.lane, hero: true,
             zid: this.manSeq++,
             x: hx, y: hy, tx: hx, ty: hy,
             hp: this.heroMaxHp(setup.heroKey, f),
@@ -4185,7 +4235,8 @@ export class Scene13WarLayer {
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
-        this.defenderHolding = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
+        this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
+        this.defenderHolding = this.siegeWithWalls;
         // 攻城战「开战 N 秒自动塌墙」标志归位（每场重新计，见 WALL_AUTO_COLLAPSE_SEC）
         this.wallAutoCollapsed = false;
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
@@ -7446,6 +7497,29 @@ export class Scene13WarLayer {
         // 不停留的话，寻敌军团一路赶航点，敌方残兵追着打却追不上，双方永远打不起来。
         if (this.routeHoldT[m.f] > 0) return null;
 
+        // 用**本方共享**的航点进度（推进逻辑在 step 里按全军统一判定，见 advanceRoute）
+        const wp = this.routeWaypoint(m);
+        /* 🔴 [2026-09-12 修·「抵达屏幕右边后不动了」] 到点之后**不许再返回同一个航点**。
+         *   原来到点仍返回 wp：tx≈x，移动分支的 `d > ARRIVE_EPS` 不成立 → 人就停在航点上站死，
+         *   一直等到全军过半也到齐才转向；而交战的兵永远到不了，等于**永远站着**（实测见 advanceRoute 头注）。
+         *   改为退回**敌军重心**：重心每帧按存活敌兵重算，永远指向还有人的方向，
+         *   兵一路压过去，路上进 MARCH_R 就被上面 ① 接管锁敌 —— 这才是「不断寻敌」。
+         *   仍然只用共享航点，不是每人一套航点进度（那条 2026-08-18 已被主人否决：会朝四面八方乱走）；
+         *   到点后全军去的也是**同一个**重心，方向一致，不散。
+         */
+        this.markRouteArrival(m);
+        if (m.routeDone) {
+            const cen = this.enemyCen[1 - m.f];
+            if (cen) return jit(cen);
+        }
+        return jit(wp);
+    }
+
+    /**
+     * 本方的当前巡逻航点（4 段循环的第 `routeWp` 段）。
+     * 🔴 航点表**只此一份**：aimAt（走路用）与 markRouteArrival（到点判定用）共用，不许各写一份。
+     */
+    private routeWaypoint(m: WarMan): { x: number; y: number } {
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
         const homeX = m.f === 0 ? vw * 0.07 : vw * 0.93;   // 己方底边
@@ -7456,24 +7530,19 @@ export class Scene13WarLayer {
             { x: homeX, y: vh - m.y0 },
             { x: vw / 2, y: vh / 2 },
         ];
-        // 用**本方共享**的航点进度（推进逻辑在 step 里按全军统一判定，见 advanceRoute）
-        const wp = route[this.routeWp[m.f] % route.length];
-        /* 🔴 [2026-09-12 修·「抵达屏幕右边后不动了」] 到点之后**不许再返回同一个航点**。
-         *   原来到点仍返回 wp：tx≈x，移动分支的 `d > ARRIVE_EPS` 不成立 → 人就停在航点上站死，
-         *   一直等到全军过半也到齐才转向；而交战的兵永远到不了，等于**永远站着**（实测见 advanceRoute 头注）。
-         *   改为退回**敌军重心**：重心每帧按存活敌兵重算，永远指向还有人的方向，
-         *   兵一路压过去，路上进 MARCH_R 就被上面 ① 接管锁敌 —— 这才是「不断寻敌」。
-         *   仍然只用共享航点，不是每人一套航点进度（那条 2026-08-18 已被主人否决：会朝四面八方乱走）；
-         *   到点后全军去的也是**同一个**重心，方向一致，不散。
-         */
-        if (!m.routeDone && (wp.x - m.x) ** 2 + (wp.y - m.y) ** 2 < ROUTE_ARRIVE * ROUTE_ARRIVE) {
-            m.routeDone = true;
-        }
-        if (m.routeDone) {
-            const cen = this.enemyCen[1 - m.f];
-            if (cen) return jit(cen);
-        }
-        return jit(wp);
+        return route[this.routeWp[m.f] % route.length];
+    }
+
+    /**
+     * 「本兵搜过本方当前航点了」的**唯一判据**（advanceRoute 的分子就是数这个标记）。
+     * 🔴 [2026-10-03] 归队中的队员**不走 aimAt**（他们走领队槽位），所以必须在这里也能被打标记：
+     *    改前只有 aimAt 会置 routeDone，队员不补这一笔，分子就会比改前更低（改前人人走 aimAt）。
+     *    判据按**自己的位置**算，与 aimAt 那份逐字同一口径（航点表也共用 routeWaypoint）。
+     */
+    private markRouteArrival(m: WarMan): void {
+        if (m.routeDone) return;
+        const wp = this.routeWaypoint(m);
+        if ((wp.x - m.x) ** 2 + (wp.y - m.y) ** 2 < ROUTE_ARRIVE * ROUTE_ARRIVE) m.routeDone = true;
     }
 
     /**
@@ -7486,6 +7555,47 @@ export class Scene13WarLayer {
         if (vw <= 0 || vh <= 0) return [x, y];
         const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
         return [Math.min(Math.max(x, mx), vw - mx), Math.min(Math.max(y, my), vh - my)];
+    }
+
+    /**
+     * 本兵此刻该回本队队形吗：该回就返回自己的槽位坐标，不该回返回 null。
+     *
+     * 🔴 [2026-10-03 主人令「我们现在的战术模式是分10个分队……每一队战斗的时候就分散，
+     *    移动的时候就回归队形」] 本方法是**全文件唯一的槽位换算处** —— 脱战走位、4 秒换目标、
+     *    走位朝向三处都调它，不许各写一份（同一个算法两份副本必定漂移）。
+     * 判据三条，缺一不可：
+     *   ① 本队有领队、且不是自己 —— 领队走自己的 aimAt（寻敌/巡逻）领队前行，不被拖；
+     *   ② 自己「无敌人」已满 LANE_REGROUP_SEC —— 挡住索敌 0.2s 节流那批假空窗（见该常数）；
+     *   ③ 玩家本人例外：点地面下的那道令没走完就不归队（见 heroOrderPending）。
+     */
+    private laneSlotTarget(m: WarMan, leaders: Map<number, WarMan>): [number, number] | null {
+        // 攻城战（真有城墙那种）不归队：主人 2026-08-23 定「攻城战不再列阵行军，城墙坍塌后直接各自索敌接战」。
+        // 城寨 / 漠北蒙古守方按野战算（siegeWithWalls=false），照常归队。
+        if (this.siegeWithWalls) return null;
+        if (m.lane < 0) return null;
+        // lane 就是 spawns 的下标（建口时 lane = this.spawns.length，见 start），这里仍核一次防漂
+        const sp = this.spawns[m.lane];
+        if (!sp || sp.lane !== m.lane) return null;
+        const leader = leaders.get(m.lane);
+        if (!leader || leader === m) return null;
+        if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
+        if (this.heroOrderPending(m)) return null;
+        const sx = leader.x + (m.f === 0 ? -(m.dep - leader.dep) : (m.dep - leader.dep));
+        const sy = leader.y + (m.slotY - leader.slotY);
+        return this.fieldBound(sx, sy);
+    }
+
+    /**
+     * 玩家本人**有还没走完的令**（点地面）：这道令优先于一切自动换目标。
+     * 🔴 [2026-10-03] 为什么必须单独立这一条：UI 写的是「点战场地面：玩家前往该点」
+     *    （`PlayerScene13Control` 的提示原文），可真机实测（`scratch/_probe_lane_regroup_effects.mjs` ③）
+     *    点完之后 **25/25 帧**被自动逻辑改写：归队分支把它改成领队槽位、或 `aimAt` 把它改成
+     *    敌军重心/巡逻航点 —— 玩家点哪儿都没用。所以「点完没走到」这一整个窗口内，
+     *    既不许归队改写、也不许 aimAt 改写（**是调用点的事**：光让 laneSlotTarget 返回 null
+     *    不够，那样会掉进 aimAt 分支照样被改）。
+     */
+    private heroOrderPending(m: WarMan): boolean {
+        return m.hero === true && this.heroClickOrder !== null;
     }
 
     /**
@@ -7639,6 +7749,26 @@ export class Scene13WarLayer {
         this.rebuild();
         // 先登记全体有效锁定，新索敌者才能看见排在自己后面的同伴已占用的名额。
         this.reserveExistingTargets(deploying);
+
+        // 🔴【分队机制：战斗时分散，移动时回归队形】每帧选出存活分队领队（优先存活旗手，旗手阵亡选首兵）
+        const laneLeaders = new Map<number, WarMan>();
+        for (const m of this.men) {
+            // 🔴 [2026-10-03] 玩家本人**永不担任领队**：他是被锚定的一方（绑到本队），
+            //    不能反过来当锚点把整队拖在自己身后。
+            //    血训：setupPlayerUnits 在建口之后、第一帧 spawnTick 之前就跑，而 this.men 从不排序，
+            //    玩家恒是本 lane 下标最小的一员 —— 只要该队没有活着的旗手他就会当选领队。
+            //    旗手每 20 人出一个（FLAG_EVERY），而每口精灵数 ≈ 出征兵力/200（10 口 × SPRITE_TROOPS 20），
+            //    即兵力 < 约 4000 的一方**整场没有旗手** → 玩家整场当领队、整队被他拖走，
+            //    与主人令「把玩家也绑上锚点，不然要他乱跑」正好相反。
+            if (m.hp <= 0 || m.lane < 0 || m.hero) continue;
+            const cur = laneLeaders.get(m.lane);
+            if (!cur) {
+                laneLeaders.set(m.lane, m);
+            } else if (!cur.flag && m.flag) {
+                laneLeaders.set(m.lane, m);
+            }
+        }
+
         for (const m of this.men) {
             this.releaseReservedTarget(m);
             if (m.hp <= 0) continue;
@@ -7671,6 +7801,11 @@ export class Scene13WarLayer {
             }
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
+            // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）
+            if (m.hero && this.heroClickOrder
+                && (m.x - this.heroClickOrder.x) ** 2 + (m.y - this.heroClickOrder.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
+                this.heroClickOrder = null;
+            }
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
             const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
@@ -7745,6 +7880,9 @@ export class Scene13WarLayer {
                 m.fightT = 0;
                 m.rangeWait = 0;
             }
+            // 🔴 [2026-10-03] 无目标计时（归队门槛的唯一数据源，见 LANE_REGROUP_SEC）：
+            //    放在索敌结算之后 —— 这里 m.foe 已是本帧最终值；有目标当帧清零，无目标才累加。
+            m.noFoeSec = m.foe ? 0 : (m.noFoeSec ?? 0) + dt;
 
             // DE Attack Move：没有发现敌人时保持编队推进；个人视野内一旦锁敌，立即脱离编队交战。
             // 🔴 [2026-09-16 主人定]「野战的时候，玩家不要擅自先独立冲锋，第一波要跟着大部队，一起前进。」
@@ -7776,15 +7914,33 @@ export class Scene13WarLayer {
                 // 🔴 [2026-09-16 主人定] 野战第一波大部队还在行军（this.marching）时，玩家不独自 aimAt 冲锋
                 if (m.hero && this.marching) {
                     // 第一波跟随大部队行军，不主动向敌军重心单骑冲锋
+                } else if (this.heroOrderPending(m)) {
+                    // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
+                    //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
+                    //    什么都不做 = 目标点保持玩家点下的那一个。
                 } else {
-                    m.aimT = (m.aimT ?? 0) - dt;
-                    if (m.aimT <= 0) {
-                        // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
-                        //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
-                        //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
-                        const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
-                        if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
-                        m.aimT = 0.5;
+                    const slot = this.laneSlotTarget(m, laneLeaders);
+                    if (slot) {
+                        // 🔴【移动时回归队形】脱战的队员对齐本队领队的阵型槽位
+                        [m.tx, m.ty] = slot;
+                        // 🔴 队员不走 aimAt，所以要在这里补打「本航点已搜过」的标记（判据与 aimAt 同一份）。
+                        //    不补的话，advanceRoute 的分子会比**改前**更低：改前每个无目标兵都走 aimAt、
+                        //    人人都会打标记；现在队员只跟领队走槽位，一个标记都打不上。
+                        //    ⚠️ 别把「航点不推进」记在归队头上：真机 A/B（scratch/_probe_lane_regroup_effects.mjs，
+                        //    归队 ON/OFF/ON 三段各 12s）实测**两种情况航点都 0 次推进** ——
+                        //    本局无目标兵离当前航点最近只到 350~550px，而到点判据是 <200px，压根没进过圈。
+                        //    那是既有现象，与本次改动无关（大兵力局是否推进未测，不妄下结论）。
+                        this.markRouteArrival(m);
+                    } else {
+                        m.aimT = (m.aimT ?? 0) - dt;
+                        if (m.aimT <= 0) {
+                            // 🔴 [2026-09-09 主人报障「战术模式中玩家不会自动战斗」]
+                            //    原来写死 `m.hero ? null`：玩家本人**永远不索敌**，只能键盘手操。
+                            //    现在「自动」命令下本人照常索敌开打；「待命」下才不主动找目标。
+                            const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
+                            if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                            m.aimT = 0.5;
+                        }
                     }
                 }
             }
@@ -7891,8 +8047,13 @@ export class Scene13WarLayer {
                     const nearlyDead = foe.hp < foeMax * KEEP_TARGET_HP;
                     if (m.fightT > 4 && !nearlyDead) {
                         m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
-                        const aim = this.aimAt(m);
-                        if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                        const slot = this.laneSlotTarget(m, laneLeaders);
+                        if (slot) {
+                            [m.tx, m.ty] = slot;
+                        } else {
+                            const aim = this.aimAt(m);
+                            if (aim) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                        }
                         continue;
                     }
                 }
@@ -8299,11 +8460,16 @@ export class Scene13WarLayer {
                 // 🔴 到达判定：目标只剩几像素时**停下**，不要照全速冲过去。
                 //    没有这一条，目标剩 2px 也走 4px → 冲过头 → 下一帧回头 → 原地来回抖，
                 //    朝向又每帧按移动方向重算，就在 8 个方向之间乱跳 = 主人看到的「闪动、颤抖」。
+                const slot = this.laneSlotTarget(m, laneLeaders);
                 const step = stats.spd * dt;
                 if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
                     m.x += dx / d * step;
                     m.y += dy / d * step;
                     m.dir = this.dir8(dx, dy);        // 只在真的在走时更新朝向
+                } else if (slot) {
+                    // 归队入列后朝向与领队保持一致
+                    const leader = laneLeaders.get(m.lane);
+                    if (leader) m.dir = leader.dir;
                 }
             }
             if (m.fadeT > 0) m.fadeT -= dt;
