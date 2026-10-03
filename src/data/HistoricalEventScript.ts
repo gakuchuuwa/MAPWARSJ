@@ -697,7 +697,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
         sources: {
             battle: { level: 'fact', text: '英文维基百科 Siege of Cyropolis：公元前329年亚历山大攻取粟特七座城寨中最大最坚的居鲁士城，马其顿胜。该役有独立条目，故本场单列成场。' },
             time: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 date = 329 BC；同站 Chronology of the expedition of Alexander the Great into Asia 记该役在 7 月，故季节取夏。' },
-            place: { level: 'inferred', text: '该条目信息框给坐标 40.2833,69.6333，那正是库里「忽毡」所在地（相距约 4 公里，且忽毡在前329 过不了年代闸门：其锚定武将帖木儿灭里属城堡时代）；同站 Chronology 条目另记 Cyropolis = Uroteppa（今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），本场据点取后者 —— 合理推定。本场是攻城战，地点就是被攻据点「居鲁士城」。' },
+            place: { level: 'inferred', text: '该条目信息框给坐标 40.2833,69.6333，那正是库里「忽毡」所在地（相距约 4 公里；那一座城是亚历山大前329 所筑的绝域亚历山大城，自前329 起上图、同年旗归马其顿，与居鲁士城是两座城）；同站 Chronology 条目另记 Cyropolis = Uroteppa（今塔吉克斯坦伊斯塔拉夫尚 39.91,69.00），本场据点取后者 —— 合理推定。本场是攻城战，地点就是被攻据点「居鲁士城」。' },
             attacker: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 commander1 = 亚历山大（注明 WIA 负伤）与克拉特鲁斯（亦注明 WIA）；同条目记亚历山大先遣克拉特鲁斯围城，本人亲至城下并从干涸水道入城。' },
             attackerTroops: { level: 'fact', text: '英文维基百科 Siege of Cyropolis 信息框 strength1 = 10,000，取 10000。' },
             attackerLegion: { level: 'fact', text: '同东征诸役：马其顿军团（前伙伴骑兵、中方阵步兵、后克里特弓箭手，鱼鳞阵 3-4-2，整场战争不换）。此役据同条目：以弩炮轰城，命一队人自干涸水道潜入城内、开城门放入大军。' },
