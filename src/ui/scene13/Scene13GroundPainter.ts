@@ -210,6 +210,11 @@ export class Scene13GroundPainter {
         this.paintTerrain();   // 立即清掉上一场残留的旧铺地（尺寸不变时 set width 不清内容）
         // 同一地形再次进场或调整窗口，直接复用已解码图，不再等图片 onload 才接管地图。
         if (cached) return;
+        this.loadTerrainImage(tile, 0);
+    }
+
+    /** 加载地形贴图；失败时隔一会儿重试（偶发一次请求失败就整场没底图、露出战略地图） */
+    private loadTerrainImage(tile: string, attempt: number): void {
         const im = new Image();
         im.fetchPriority = 'high';
         this.terrainImages.set(tile, im);
@@ -221,8 +226,15 @@ export class Scene13GroundPainter {
             this.elevCacheReady = false;
             this.onNeedRepaint();
         };
-        im.onerror = () => { if (this.terrainImages.get(tile) === im) this.terrainImages.delete(tile); };
-        im.src = TERRAIN_BASE_URL + this.terrainTile + '.png';
+        im.onerror = () => {
+            if (this.terrainImages.get(tile) === im) this.terrainImages.delete(tile);
+            if (attempt < 5 && this.terrainTile === tile) {
+                window.setTimeout(() => {
+                    if (this.terrainTile === tile && !this.isTerrainReady()) this.loadTerrainImage(tile, attempt + 1);
+                }, 500 * (attempt + 1));
+            }
+        };
+        im.src = TERRAIN_BASE_URL + tile + '.png' + (attempt > 0 ? `?r=${attempt}` : '');
     }
 
     /**

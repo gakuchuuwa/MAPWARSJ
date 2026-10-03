@@ -86,4 +86,35 @@ export const SCRIPT_HISTORICAL_OWNERS: readonly ScriptHistoricalOwner[] = [
     { year: -335, cityId: 'city_huashicheng', factionId: 'mojietuo', source: '英文维基 Pataliputra / Nanda Empire：前 4 世纪华氏城为难陀王朝摩揭陀的都城；孔雀王朝公元前322年才建。' },
     { year: -335, cityId: 'city_walanaxi', factionId: 'mojietuo', source: '英文维基 Kashi Kingdom：迦尸国前 5 世纪已被摩揭陀吞并，前 4 世纪属难陀王朝。' },
     { year: -335, cityId: 'city_tiyana', factionId: 'aqimeinide', source: '英文维基 Tyana / Cappadocia (satrapy)：前 4 世纪卡帕多细亚属阿契美尼德波斯行省；公元前333年亚历山大穿越该地、任命萨比克塔斯为总督（阿里安 II.4），此后归马其顿。🔴 [2026-09-25 主人令「可以请添加」] 新建据点，旗号按剧本年份定。' },
+
+    // ── 🔴 [2026-10-03 主人令「看看所有的据点，起点，终点，途径点，都要看」→「请逐步修复」] 第一批 ──
+    //    **剧本路线上的途径点**原先挂的是乱斗旗号（乱斗取这城最有名那段历史），放进前331–前329 就是穿越：
+    //    「阿尤布」「萨法维」「杜兰尼」「伽色尼」「萨尔巴达尔」「图兰」…全是**这些城出名的那几百年**，不是那一年。
+    //    口径与上表一致：**亚历山大走到哪一年，这些地方就归马其顿**（他承袭了阿契美尼德行省体系，就地设总督）。
+    //    第一批 = 场 11–14 那一线（叙利亚 → 埃及绿洲 → 伊朗 → 呼罗珊 → 阿富汗 → 中亚），共 15 条。
+    { year: -331, cityId: 'city_alepo', factionId: 'maqidun', source: '英文维基 Aleppo：古名 Halab，前 3 千纪已是城；公元前331年亚历山大自腓尼基北上、渡幼发拉底河前经叙利亚北部（阿里安《远征记》III.6–7），此后归马其顿治下。乱斗旗号「阿尤布」是 12–13 世纪王朝。' },
+    { year: -331, cityId: 'city_baihaliye', factionId: 'maqidun', source: '英文维基 Bahariya Oasis：埃及西部绿洲；公元前332年埃及降亚历山大、前331年亚历山大赴锡瓦并经营各绿洲（阿里安《远征记》III.1–4），其时归马其顿。乱斗旗号「拜哈里耶」是绿洲自身的阿拉伯语地名，不是那一年管这地方的政权。' },
+    { year: -330, cityId: 'city_yisifahan', factionId: 'maqidun', source: '英文维基 Isfahan：「Aspadana」为阿契美尼德米底境内古城；公元前330年亚历山大取波斯波利斯、进埃克巴坦那后全波斯归马其顿（阿里安《远征记》III.19–20）。乱斗旗号「萨法维」是 16 世纪王朝。' },
+    { year: -330, cityId: 'city_leiyi', factionId: 'maqidun', source: '英文维基 Ray, Iran：Rhages 为米底古城（《阿维斯陀》已见其名）；公元前330年米底入马其顿治下（阿里安《远征记》III.19–20）。乱斗旗号「吉巴勒」是中世纪阿拉伯语对米底一带的称呼。' },
+    { year: -330, cityId: 'city_damugan', factionId: 'maqidun', source: '英文维基 Damghan 与 Hecatompylos：达姆甘侧的沙赫-伊科米斯即古赫卡顿皮洛斯（帕提亚要地）；公元前330年亚历山大东进经此（阿里安《远征记》III.23）。乱斗旗号「库米斯」是后世省名。' },
+    { year: -330, cityId: 'city_baihage', factionId: 'maqidun', source: '英文维基 Greater Khorasan：呼罗珊道（帕提亚→阿里亚）上的驿站；公元前330年亚历山大经帕提亚、阿里亚一线东进，沿途各部来降（阿里安《远征记》III.23–25）。乱斗旗号「萨尔巴达尔」是 14 世纪教团政权。' },
+    { year: -330, cityId: 'city_tusi', factionId: 'maqidun', source: '英文维基 Tus, Iran：古称苏西亚（Susia）；公元前330年阿里亚总督萨提巴赞尼斯在此出降亚历山大，随后复叛被平定（阿里安《远征记》III.25）。乱斗旗号「卡伦」是中世纪地方家族。' },
+    { year: -330, cityId: 'city_taibade', factionId: 'maqidun', source: '英文维基 Taybad / Aria：泰巴德在阿里亚道上；公元前330年亚历山大取阿里亚、筑亚历山大城（阿里安《远征记》III.25）。乱斗旗号「巴哈尔兹」是中世纪地区名。' },
+    { year: -330, cityId: 'city_kandaha', factionId: 'maqidun', source: '英文维基 Alexandria in Arachosia（今坎大哈）：公元前330年亚历山大东征时在阿拉霍西亚筑此城（阿里安《远征记》III.25），此后归马其顿。乱斗旗号「杜兰尼」是 18 世纪王朝。' },
+    { year: -330, cityId: 'city_jiaseni', factionId: 'maqidun', source: '英文维基 Ghazni / Arachosia：公元前330年亚历山大平阿拉霍西亚与扎兰吉一带后归马其顿治下（阿里安《远征记》III.25）。乱斗旗号「伽色尼」是 10–12 世纪王朝。' },
+    { year: -329, cityId: 'city_gaofu', factionId: 'maqidun', source: '英文维基 Kabul / Paropamisadae：公元前329年亚历山大翻兴都库什山前在此区筑「高加索的亚历山大城」（阿里安《远征记》III.28），此后归马其顿。乱斗旗号「喀布尔斯坦」是中世纪地区名。' },
+    { year: -329, cityId: 'city_samaerhan', factionId: 'maqidun', source: '英文维基 Samarkand（马拉坎达）：公元前329年亚历山大取马拉坎达（阿里安《远征记》III.30、IV.3），此后归马其顿（前329–前327 粟特叛乱期间亦为马其顿驻军所守）。乱斗旗号「图兰」是波斯史诗里的地区，不是政权。' },
+    { year: -329, cityId: 'city_jizhake', factionId: 'maqidun', source: '英文维基 Jizzakh / Sogdiana：撒马尔罕往药杀水道上的粟特城镇；公元前329年粟特随马拉坎达、居鲁士城一线归马其顿（阿里安《远征记》IV.1–3）。乱斗旗号「卡乌斯」是史诗传说中的王名。' },
+    { year: -329, cityId: 'city_fanyanna', factionId: 'maqidun', source: '英文维基 Bamiyan / Bactria：公元前329年贝苏斯弃巴克特拉，巴克特里亚归亚历山大（阿里安《远征记》III.29）；巴米扬在巴克特里亚境内。乱斗旗号「梵衍那」是 5–8 世纪的王国。' },
+    { year: -329, cityId: 'city_lanshi', factionId: 'maqidun', source: '英文维基 Bactra / Bactria：公元前329年贝苏斯弃城东走，巴克特拉归亚历山大，此后为马其顿治下的巴克特里亚首府（阿里安《远征记》III.29、IV.7 记其在巴克特拉处置贝苏斯）。本表前335 那条只说明「那一年是波斯行省」，此条把年份推进到前329 归马其顿。' },
+
+    // ── 第二批：印度河线（场 17–21，前327–前325） ──
+    { year: -327, cityId: 'city_dinggucheng', factionId: 'maqidun', source: '英文维基 Nangarhar / Paropamisadae：那竭即古 Nagarahara（今贾拉拉巴德一带）；公元前327年亚历山大自「高加索的亚历山大城」南下、沿喀布尔河谷进抵印度河（阿里安《远征记》IV.22 起），此区归马其顿。乱斗旗号「那竭」是 4–5 世纪法显所记的那竭国。' },
+    { year: -327, cityId: 'city_baishawa', factionId: 'maqidun', source: '英文维基 Pushkalavati / Peukelaotis：公元前327年亚历山大遣赫费斯提翁取此城、另遣阿斯克列皮奥多鲁斯平河谷（阿里安《远征记》IV.22），此后归马其顿。乱斗旗号「罽宾」是汉唐对克什米尔一带的称呼，不是那一年的政权。' },
+    { year: -326, cityId: 'city_atuoke', factionId: 'maqidun', source: '英文维基 Attock / Alexander\'s Indian campaign：阿托克为印度河渡口；公元前326年亚历山大在此架浮桥渡河、随后在海达斯佩斯河与波鲁斯决战（阿里安《远征记》V.7–8）。乱斗旗号「旁遮普」是中世纪波斯语地区名。' },
+    { year: -325, cityId: 'city_patala', factionId: 'maqidun', source: '英文维基 Patala / Indus Delta：公元前325年亚历山大抵帕塔拉、在印度河三角洲分兵（阿里安《远征记》VI.17–18 与《印度志》），留总督治理，此后归马其顿。乱斗旗号「信德」是中世纪地区名。' },
+
+    // ── 第三批：叙利亚沿海与两河（场 9、12、21） ──
+    { year: -332, cityId: 'city_latajiya', factionId: 'maqidun', source: '英文维基 Latakia：遗址为腓尼基城拉米塔（Ramitha）；前333 伊苏斯战后腓尼基沿海诸城相继归亚历山大（阿里安《远征记》II.13–15、II.20），公元前332年其地已属马其顿。乱斗旗号「安条克公国」是 11–13 世纪十字军邦国。' },
+    { year: -331, cityId: 'city_bageda', factionId: 'maqidun', source: '英文维基 Opis：底格里斯河畔古城欧皮斯（今巴格达一带）；公元前331年高加米拉战后巴比伦尼亚归亚历山大（阿里安《远征记》III.16），前324年亚历山大在此阅兵、马其顿军哗变（VII.8–11），此后归马其顿。乱斗旗号「阿拔斯」是 8–13 世纪王朝。（本据点成城年已按「地方年代」取前539，见 `cityFoundedYears.ts`。）' },
 ];
