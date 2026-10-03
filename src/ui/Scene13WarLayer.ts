@@ -1487,31 +1487,38 @@ const SIEGE_MEDIUM_BUILDINGS = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCH
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 攻城战守方（小城）9 种封建时代建筑（age2；2026-08-26 主人定「战略战术统一 9 建筑」，08-29 去箭塔补民居：磨坊/民居×2/兵营/铁匠铺/靶场/城镇中心/马厩/市场） */
 const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET'];
-/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门和攻方营地保持原尺寸。
+/** ZOOM 13 守方城郭内建筑统一缩放；城墙、城门保持原尺寸。
  *  🔴 [2026-10-03 主人报障「战术模式下，攻击方的箭塔，和防守方的箭塔大小不一样，请按防守方的一致」]
  *     ⇒ **攻方营地里那两座塔状工事（瞭望塔／强化哨站）改用守方箭塔的同一缩放 `SIEGE_CITY_BUILDING_SCALE`**：
  *        守方城墙内侧的 4 座箭塔就是这一档缩放（见 `this.arrowTowers` 建塔处），而它们与守方的强化哨站是**同一族**工事
  *        （城寨守方的 4 座里就有 2 座是 FORTIFIED_OUTPOST）—— 两边同类必须一样大。
- *        营地其余陈设（营地/帐篷/蒙古包）**照旧保持原尺寸**，不动。 */
+ *  🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」]
+ *     ⇒ 攻方营地**整座**改 80%：3 营地（CAMP_ARCHERY_RANGE／CAMP_BARRACKS／CAMP_STABLE）、
+ *        4 帐篷（GREEK_WAR_TENT）、蒙古包营地的 8 个 YURT_* 也一并按此缩放（改前这些是原尺寸 1.0）。 */
 const SIEGE_CITY_BUILDING_SCALE = 0.8;
 /** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。 */
 const SIEGE_CASTLE_SCALE = 0.84;
-/** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。 */
-const SIEGE_MARKET_SCALE = 0.65;
-/** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。 */
-const SIEGE_TOWN_CENTER_SCALE = 0.6;
-/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余统一 SIEGE_CITY_BUILDING_SCALE。
- *  2026-09-03 主人定：城寨(stockade)建筑(庄园/定居点/棚屋/蒙古包)放大到自然尺寸 1.0，与攻击方营地建筑一致。 */
+/** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。
+ *  🔴 [2026-10-03 主人令「改为0.7」] 0.65 → **0.7**。 */
+const SIEGE_MARKET_SCALE = 0.7;
+/** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。
+ *  🔴 [2026-10-03 主人令「改为0.7」] 0.6 → **0.7**。 */
+const SIEGE_TOWN_CENTER_SCALE = 0.7;
+/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余一律 SIEGE_CITY_BUILDING_SCALE。
+ *  2026-09-03 主人定：城寨(stockade)建筑(庄园/定居点/棚屋/蒙古包)放大到自然尺寸 1.0，与攻击方营地建筑一致。
+ *  🔴 [2026-10-03 主人令「一律都改为0.8，这样统一」＋「包括野战」] 上面那条 1.0 作废：
+ *     SETTLEMENT / HUT_* / YURT_* / DARK_* 四类**一律 0.8**（与攻方营地、拒马、箭塔同一个缩放）。
+ *     市场 0.65 / 城镇中心 0.6 是主人 2026-08-29「缩小一点，和其他差不多」按**素材 box 大**单独调的，
+ *     🔴 [2026-10-03 主人令「改为0.7」] 已改 0.7（见上面两个常数）。 */
 function siegeBuildingScale(building: string): number {
     if (building === 'MARKET') return SIEGE_MARKET_SCALE;
     if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
-    if (building === 'SETTLEMENT') return 1.0;
-    if (building.startsWith('HUT_') || building.startsWith('YURT_') || building.startsWith('DARK_')) return 1.0;
     return SIEGE_CITY_BUILDING_SCALE;
 }
 /** ZOOM 13 名城世界奇观地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
- *  用更小比例让奇观与周围建筑体量相当；2026-09-01 主人「特殊建筑略大一点」→ 0.5 略调大。 */
-const SIEGE_WONDER_SCALE = 0.55;
+ *  用更小比例让奇观与周围建筑体量相当；2026-09-01 主人「特殊建筑略大一点」→ 0.5 略调大。
+ *  🔴 [2026-10-03 主人令「改为0.7」] 0.55 → **0.7**。 */
+const SIEGE_WONDER_SCALE = 0.7;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
 const MAX_ROAD_STEPS = 80;
@@ -4532,8 +4539,11 @@ export class Scene13WarLayer {
      *    public/SUCAI_BUILDING/ 里**只有 CASTLE_AGE3**，没有配套的兵营/房屋，
      *    所以不能当风格集用，只能单独查。其余建筑照旧走 style。
      */
-    private castleAssetFor(style: string): string {
-        return resolveCastleAsset(style, this.sideFaction[1], this.sideCulture[1]);
+    private castleAssetFor(style: string, cityId?: string | null): string {
+        // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 可选传守城 id：
+        //    传了就与战略地图**同源**（`resolveCastleAsset` 里 59 代表名城名册优先）。
+        //    既有险要调用不传 cityId，行为一字不变。
+        return resolveCastleAsset(style, this.sideFaction[1], this.sideCulture[1], cityId ?? null);
     }
 
     /**
@@ -5312,6 +5322,8 @@ export class Scene13WarLayer {
                         x: frontX + offsetX,
                         y: topY + (bottomY - topY) * t,
                         flip: isAttacker ? false : true,
+                        // 🔴 [2026-10-03 主人令「战术模式中的拒马，显示改回1.0」]
+                        scale: 1.0,
                         layer: 'world', z: 0,
                         obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
                     });
@@ -5333,12 +5345,10 @@ export class Scene13WarLayer {
                 indestructible?: boolean;
             },
         ): DecorSprite => {
-            // 战略大城不含城堡：无论从哪个建筑入口传入，战术大城都禁止落入 CASTLE 素材。
-            const resolvedAsset = this.battleType === 'siege' && f === 1
-                && this.defenderCityType === 'big_city' && asset.includes('CASTLE')
-                ? `${this.buildingStyleFor(1)}_TOWN_CENTER_AGE4`
-                : asset;
-            const full = 'BUILDING:' + resolvedAsset;
+            // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 原先此处有一道硬闸：
+            //    「战略大城不含城堡」——凡战术大城（battleType=siege 守方）落 CASTLE 素材，一律换成 TOWN_CENTER_AGE4。
+            //    该闸来自旧口径（中城/大城九建筑都不含城堡），与主人本令直接冲突 → **已撤除**，大城城堡照落。
+            const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
             let px = s.x, py = s.y;
             // 🔴 安全占地修正（2026-08-26）：若出兵口建筑落在水域/浅滩，向干燥陆地推进，避免营帐直接泡在水里
@@ -5684,8 +5694,11 @@ export class Scene13WarLayer {
                 //    buildYurtCampHtml(fence=false, centerCastle=true)：无围墙 + 中心蒙古城堡 + 营帐环卫。
                 //    城墙已由 wallMat='NONE' 在 placeWall/placeGate 里拦掉，这里补上中心城堡；
                 //    城堡占掉最靠中线的那个位置，余下位置照常铺蒙古包与瞭望塔。
-                if (this.defenderCityType === 'pass' && buildingSide.length > 0) {
-                    const castleAsset = this.castleAssetFor(style);
+                // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 判据由「仅险要」
+                //    扩到中城/大城 —— 战略侧 buildYurtCampHtml(centerCastle=true) 三档同口径。
+                if ((this.defenderCityType === 'pass' || this.defenderCityType === 'medium_city'
+                    || this.defenderCityType === 'big_city') && buildingSide.length > 0) {
+                    const castleAsset = this.castleAssetFor(style, this.defenderCityId);
                     const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
                     const centerSpawn = buildingSide.reduce((best, s) =>
                         Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
@@ -5728,9 +5741,22 @@ export class Scene13WarLayer {
                 return;
             }
             // 中城：与战略模式套用相同建筑——12 种 AGE3 建筑随机取 9 种且不重复；落点随机（2026-08-29 主人定「除箭塔外其余在 9 出兵口随机摆放」）。
+            // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 城堡占最靠全军中线的那个落点，
+            //    其余 8 个落点铺建筑池（与战略侧「3×3 网格正中城堡 + 周围 8 栋」同一布局）。
             if (this.defenderCityType === 'medium_city') {
-                const shuffledBuildings = cityPoolBuildings(SIEGE_MEDIUM_BUILDINGS).sort(() => Math.random() - 0.5).slice(0, buildingSide.length);
-                const shuffledSide = [...buildingSide].sort(() => Math.random() - 0.5);
+                if (buildingSide.length === 0) return;
+                const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
+                const centerSpawn = buildingSide.reduce((best, s) =>
+                    Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
+                const castleSp = place(centerSpawn, this.castleAssetFor(style, this.defenderCityId), {
+                    scale: SIEGE_CASTLE_SCALE,
+                    indestructible: true,
+                });
+                this.decorSprites.push(castleSp);
+                this.trackCityBuilding(castleSp);
+                const shuffledBuildings = cityPoolBuildings(SIEGE_MEDIUM_BUILDINGS).sort(() => Math.random() - 0.5)
+                    .slice(0, buildingSide.length - 1);
+                const shuffledSide = buildingSide.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
                 for (let i = 0; i < shuffledSide.length; i++) {
                     const bk = shuffledBuildings[i];
                     const sp = place(shuffledSide[i], isYurtAsset(bk) ? bk : `${style}_${bk}_AGE3`, { scale: siegeBuildingScale(bk) });
@@ -5781,10 +5807,19 @@ export class Scene13WarLayer {
                 return;
             }
             // 大城：与战略模式套用相同建筑。九建筑落点全部随机（2026-08-29 主人定「9 建筑摆放位置随机」）。
-            const shuffledBig = [...buildingSide].sort(() => Math.random() - 0.5);
-            const tcSp = place(shuffledBig[0], `${style}_TOWN_CENTER_AGE4`, { scale: SIEGE_TOWN_CENTER_SCALE });
-            this.decorSprites.push(tcSp);
-            this.trackCityBuilding(tcSp);
+            // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 原来正中那格固定放城镇中心，
+            //    现改为城堡占最靠全军中线的落点（与战略侧「3×3 网格正中城堡 + 周围 8 栋」同一布局），
+            //    其余 8 个落点照旧铺 市场/大学 AGE4 + 6 栋 AGE3。
+            if (buildingSide.length === 0) return;
+            const avgYBig = side.reduce((n, s) => n + s.y, 0) / side.length;
+            const centerSpawnBig = buildingSide.reduce((best, s) =>
+                Math.abs(s.y - avgYBig) < Math.abs(best.y - avgYBig) ? s : best, buildingSide[0]);
+            const castleSpBig = place(centerSpawnBig, this.castleAssetFor(style, this.defenderCityId), {
+                scale: SIEGE_CASTLE_SCALE,
+                indestructible: true,
+            });
+            this.decorSprites.push(castleSpBig);
+            this.trackCityBuilding(castleSpBig);
             const age3Pool: Array<[string, string]> = [
                 ...SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3'),
                 // 🔴 [2026-09-16 主人定] 二级蒙古大城：辅助池掺入蒙古包（仍是 3 栋 AGE4 必有 + 6 栋辅助 = 9）
@@ -5795,7 +5830,7 @@ export class Scene13WarLayer {
                 ['UNIVERSITY', 'AGE4'],
                 ...age3Pool.slice(0, 6),
             ].sort(() => Math.random() - 0.5) as Array<[string, string]>;
-            const ringSpawns = shuffledBig.slice(1);
+            const ringSpawns = buildingSide.filter((s) => s !== centerSpawnBig).sort(() => Math.random() - 0.5);
             for (let i = 0; i < ringSpawns.length; i++) {
                 const [building, age] = ringBuildings[i];
                 const sp = place(ringSpawns[i], isYurtAsset(building) ? building : `${style}_${building}_${age}`, { scale: siegeBuildingScale(building) });
@@ -5808,13 +5843,16 @@ export class Scene13WarLayer {
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔
         // 🔴 [2026-09-18] 同上：判据改用建筑风格 YURT，覆盖 STEPPE 与 MOBEI_MONGOL 两种文化区
         if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
-            placeYurtCamp();
+            // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 蒙古包也按 80%（塔本来就是这个缩放）
+            placeYurtCamp(SIEGE_CITY_BUILDING_SCALE);
             return;
         }
         const style = this.buildingStyleFor(f as 0 | 1);
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
-        for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i]));
-        for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT'));
+        // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 3 营地 + 4 帐篷也改 80%
+        //    （改前是原尺寸 1.0；下方两座塔状工事本就 0.8，现在整座营地同一个缩放）。
+        for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
+        for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT', { scale: SIEGE_CITY_BUILDING_SCALE }));
         // 🔴 [2026-09-03 主人改] 哨站(OUTPOST)换成强化哨站（FORTIFIED_OUTPOST = DE b_archaic_fortified_outpost_age1）。
         //    强化哨站是哨站的加固升级版（能攻击），不是警戒塔/防卫塔（TOWER_AGE3）。
         // 🔴 [2026-10-03 主人令] 这两座塔状工事（强化哨站 + 瞭望塔）与**守方城墙内侧那 4 座箭塔同类**

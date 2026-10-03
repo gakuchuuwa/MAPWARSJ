@@ -2068,7 +2068,10 @@ export class TerritorySystem {
         let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
         const isJapan = !!region?.includes('JAPAN');
         const isTibet = !!region?.includes('TIBET');
-        const centerCastle = isJapan || isTibet || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass');
+        // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
+        //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
+        const centerCastle = isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
+            || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass');
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
         useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region);
         const faction = factionId ?? '';
@@ -2139,7 +2142,10 @@ export class TerritorySystem {
         const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
         const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
         const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
-        const centerCastle = isJapan || isTibet || isRep52City;
+        // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
+        //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
+        const centerCastle = isJapan || isTibet || isRep52City
+            || city.type === 'big_city' || city.type === 'medium_city';
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
@@ -2204,9 +2210,8 @@ export class TerritorySystem {
         }
         if (!transform.trim()) transform = 'none';
 
-        // 🔴 [2026-10-03 主人令「战略地图上的城寨据点没有随机镜像，请随机镜像。所有据点都要随机镜像」
-        //    「但是大中小城寨，战场都要随机镜像」＋「对了,PASS不要随机镜像」]
-        //    大/中/小/城寨**整座左右翻一次**（`city.mirror` 每局随机掷一次，见 GameAppCityLoader）。
+        // 🔴 [2026-10-03 主人令「大中小城寨，战场都要随机镜像。PASS不要随机镜像」]
+        //    大/中/小/城寨**整座左右翻一次**（`city.mirror` 每局随机掷一次，见 GameAppCityLoader）；
         //    险要（pass）**不吃这层** —— 它照旧只认数据里的 mirror，已在 `buildDePassStackHtml` 里翻过。
         //    翻转挂在建筑摞里面一层：`.city-building-stack` 自己的 transform 是攻城/停驻放大用的，不能动。
         const settlementMirror = city.type !== 'pass' && !!city.mirror;

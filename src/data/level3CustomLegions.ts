@@ -1343,13 +1343,13 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '帝国时代非洲军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'genitour', count: 3 },
-            { type: 'elite_genitour', count: 4 },
+            { type: 'camel_heavy', count: 3 },
+            { type: 'elite_camel_archer', count: 4 },
             { type: 'royal_janissary', count: 2 },
         ],
         regions: ['AFRICA_IMPERIAL'],
         parentLegion: '非洲军团',
-        shipId: 'CANOE',
+        shipId: 'CANNON_GALLEON',
     },
     {
         name: '古典时代魏晋军团',
