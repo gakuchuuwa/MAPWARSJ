@@ -168,7 +168,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     liguliya: { generalId: 'gen_andrea_doria', generalName: '安德烈亚', portrait: '/assets/LATIN/liguliya_andelieya.png' },
     seleisi: [
         { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
-        // 公元前335年多瑙河渡河战役守帅（多瑙河北岸吉特人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
+        // 公元前335年多瑙河渡河战役守帅（多瑙河北岸盖塔人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
         { generalId: 'jite_shouling', generalName: '科托罗', portrait: '/assets/SLAVIC/seleisi_ketuoluo.png' },
     ],
     bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },

@@ -3532,7 +3532,8 @@ export class Scene13WarLayer {
         // 地形缺图时仍显示原地图，不能用空白战场盖住它。
         if (this.coveredMap || !this.decorHasTerrain) return;
         // 淡入期间底下的战略地图要留着（画布半透明，盖掉地图会透出空白底）；淡入走完后的下一帧再盖
-        if (this.entryFadeActive) return;
+        // 等素材期间画布还是全透明，淡入期间半透明：都得留着底下的战略地图，不然透出空白底
+        if (this.entryFadePending || this.entryFadeActive) return;
         /* 🔴 [2026-09-17 主人报障「一直都是战略地图白屏」· 第二刀] 演出已停就绝不许再盖。
          * 只把 stop() 改成无条件 restore **不够** —— 实测调用序列（scratch/_probe_cover_hook.mjs）：
          *     306.9s restoreStrategyMap()  → covered=false vis=空      ← 恢复成功
@@ -4840,6 +4841,10 @@ export class Scene13WarLayer {
     //   同样只用 opacity/transform，不用混合模式）。淡入期间战略地图保持可见（见 coverStrategyMap 的守卫），
     //   画面就是「战略地图 → 战场」的交叉溶解；淡入走完才把地图盖起来（原有的性能优化）。
     private entryFadePending = false;
+    private entryStartedAt = 0;
+    /** 最多等素材这么久（真实毫秒），超时就让战场先淡入，不让玩家一直盯着静止的战略地图。
+     *  实测素材就绪时间波动很大（1.3 / 4.4 / 8.5 秒），4 秒的上限会在慢的时候把「一起出现」又拆成两段，故放宽到 10 秒。 */
+    private static readonly ENTRY_WAIT_MAX_MS = 10000;
     /** 淡入进行中（从 beginEntryFade 到浏览器报告 opacity 渐变结束，或兜底超时）；期间不许盖地图 */
     private entryFadeActive = false;
     private entryFadeCleanup: (() => void) | null = null;
@@ -4852,6 +4857,7 @@ export class Scene13WarLayer {
         cv.style.opacity = '0';
         cv.style.transform = 'scale(0.96)';
         this.entryFadePending = true;
+        this.entryStartedAt = performance.now();
     }
 
     private beginEntryFade(cv: HTMLCanvasElement): void {
@@ -8640,7 +8646,14 @@ export class Scene13WarLayer {
     private render(): void {
         const ctx = this.ctx, cv = this.canvas;
         if (!ctx || !cv) return;
-        if (this.entryFadePending) this.beginEntryFade(cv);   // 这一场的第一帧真正画出来 → 淡入
+        // 🔴 [2026-10-03 主人「先刷建筑再刷兵，一起更好吗」→「请修复」] 战场与军队**一起**出现：
+        //    原来第一帧画出来（地形/建筑，素材还在加载）就淡入，士兵要等素材就绪才开始渐显，中间是个空战场
+        //    （实测 3 秒；真机约 1~1.5 秒）。现在等素材就绪（士兵同一刻开始部署渐显）再淡入，
+        //    最多等 ENTRY_WAIT_MAX_MS，超时就让战场先淡入。
+        if (this.entryFadePending
+            && (this.assetsReadyOnce || performance.now() - this.entryStartedAt > Scene13WarLayer.ENTRY_WAIT_MAX_MS)) {
+            this.beginEntryFade(cv);
+        }
         // [2026-08-31 主人定] 攻守两侧左右对调（跟随军团固定左边）：整个战场水平镜像渲染。
         // 逻辑坐标（移动/索敌/碰撞/胜负/兵力）完全不变，只翻转「画出来的样子」——
         // 城门 NE/SE 素材翻转后自动朝右、士兵/特效/建筑跟着镜像。
