@@ -61,8 +61,6 @@ export interface PlayerSaveState {
     learnedUnits?: LearnedUnit[];
     /** 玩家亲手换过兵模：读档后不许再自动换装 */
     manualUnitPick?: boolean;
-    /** 就近寻找武将（默认关 = 同档随机） */
-    nearbyFirst?: boolean;
     /** 已获海上兵模（战船 AssetId），终身保留 */
     learnedShips?: string[];
     /** 无势力时自选的战船下标；-1 = 独木舟 */
@@ -167,15 +165,6 @@ export class PlayerHero {
      *   （9-17 曾定默认乱斗，已被本条取代。）
      */
     public autoPlan: PlayerAutoPlan = 'script';
-    /**
-     * 「就近寻将」开关，**默认关**。
-     * 🔴 [2026-09-15 主人报障「就近太近只在一个势力找，全随机又一直在奔波」] 语义已改：
-     *   它不再是「随机 / 取最近」的硬二选一，两头都被实测否掉了。
-     *   现在同档候选一律走**距离加权随机**（PlayerQuestSystem.pickAutoCity 第③步），
-     *   这个开关只决定软半径：开 = 500km（贴着身边一圈抽），关 = 1500km（一州之地）。
-     *   两档都是在**一圈城里抽签**，不会锁死某一座，也不会横跨半个地球。
-     */
-    public nearbyFirst = false;
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -282,11 +271,6 @@ export class PlayerHero {
         if (this.autoPlan === plan) return;
         this.autoPlan = plan;
         if (plan === 'melee' && this.travelPointLabel !== null) this.cancelTravel();
-        this.emitChange();
-    }
-    public setNearbyFirst(on: boolean): void {
-        if (this.nearbyFirst === on) return;
-        this.nearbyFirst = on;
         this.emitChange();
     }
     public getHostLegion(): Army | undefined {
@@ -991,7 +975,6 @@ export class PlayerHero {
             learnedUnits: this.learnedUnits.map((u) => ({ ...u })),
             selectedUnit: this.selectedUnit,
             manualUnitPick: this.manualUnitPick,
-            nearbyFirst: this.nearbyFirst,
             learnedShips: [...this.learnedShips],
             selectedShip: this.selectedShip,
             lat: p.lat,
@@ -1008,7 +991,6 @@ export class PlayerHero {
         this.learnedUnits = (s.learnedUnits ?? []).map((u) => ({ ...u }));
         this.selectedUnit = s.selectedUnit ?? -1;
         this.manualUnitPick = s.manualUnitPick ?? false;
-        this.nearbyFirst = s.nearbyFirst ?? false;
         this.learnedShips = [...(s.learnedShips ?? [])];
         this.selectedShip = s.selectedShip ?? -1;
         if (s.factionId) this.joinFaction(s.factionId);
