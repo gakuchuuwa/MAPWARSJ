@@ -268,7 +268,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'tiger_rider', count: 2 },
         ],
         regions: ['NORTH', 'HEXI'],
-        parentLegion: '古典时代华夏北方军团',
+        parentLegion: '古典时代华夏河朔军团',
         shipId: 'LOU_CHUAN',
     },
     {
@@ -1036,7 +1036,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_iron_pagoda', count: 2 },
         ],
         regions: ['MOHE'],
-        parentLegion: '封建时代契丹军团',
+        parentLegion: '封建时代河西军团',
         shipId: 'GALLEY',
     },
     {
@@ -1048,7 +1048,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'iron_pagoda', count: 2 },
         ],
         regions: ['KOREA'],
-        parentLegion: '封建时代契丹军团',
+        parentLegion: '封建时代河西军团',
         shipId: 'GALLEY',
     },
     {
@@ -1360,7 +1360,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_tiger_cavalry', count: 2 },
         ],
         regions: [],
-        parentLegion: '古典时代华夏北方军团',
+        parentLegion: '古典时代华夏河朔军团',
         shipId: 'LOU_CHUAN',
     },
     {

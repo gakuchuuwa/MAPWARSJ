@@ -60,8 +60,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '古典时代华夏北方军团', civ: '北方', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
-        castleId: 'WEI_CASTLE_AGE3', castleName: '北方 邺城重檐铜雀楼',
+        name: '古典时代华夏河朔军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'echelon',
         shipId: 'LOU_CHUAN',
         slots: [
@@ -312,8 +312,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '封建时代契丹军团', civ: '契丹', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        castleId: 'KHIT_CASTLE_AGE3', castleName: '契丹 辽阳八角木石塔楼',
+        name: '封建时代河西军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'echelon',
         shipId: 'GALLEY',
         slots: [
@@ -609,8 +609,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代女真军团', civ: '女真', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
-        castleId: 'JURC_CASTLE_AGE3', castleName: '女真 会宁府上京双檐角楼',
+        name: '城堡时代东北军团', civ: '东北', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
         slots: [
@@ -713,7 +713,7 @@ if (goryeoLegion) {
 LEVEL_2_CIV_59_MAP.set('古典华夏中原军团', LEVEL_2_CIV_59_LEGIONS[0]);
 LEVEL_2_CIV_59_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_59_LEGIONS[1]);
 LEVEL_2_CIV_59_MAP.set('古典华夏江南军团', LEVEL_2_CIV_59_LEGIONS[2]);
-LEVEL_2_CIV_59_MAP.set('古典华夏北方军团', LEVEL_2_CIV_59_LEGIONS[3]);
+LEVEL_2_CIV_59_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_59_LEGIONS[3]);
 
 /**
  * 军团名是否属于「**二级：文明 × 时代（59 文明专属军团）**」——

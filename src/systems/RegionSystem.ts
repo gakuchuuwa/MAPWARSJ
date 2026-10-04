@@ -117,7 +117,7 @@ export type RegionType =
     | 'SOGDIANS'     // 粟特（丝路昭武九姓双层锁甲武装商卫与重弩）
     | 'TANGUT'       // 党项（贺兰山灵夏铁索系鞍铁鹞子与步战山讹）
     | 'JAVANESE'     // 爪哇（婆罗浮屠夏连特拉波浪淬毒克利斯剑）
-    | 'JURCHEN'      // 女真（大金会宁府铁浮屠与拐子马）
+    | 'JURCHEN'      // 东北（大金会宁府铁浮屠与拐子马）
     | 'SELJUQ'       // 塞尔柱（木鹿梅尔夫大塞尔柱帝国丹丹纳骑）
     | 'OTTOMAN'      // 奥斯曼（布尔萨苏丹亲兵耶尼切里军团）
     | 'OTTOMAN_IMPERIAL' // 帝国奥斯曼（埃迪尔内塞利米耶清真寺）
@@ -455,7 +455,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SRIVIJAYA: '封建三佛齐',
     KUSHAN: '古典月氏',
     KUSH: '古典努比亚',
-    KHITAN: '封建契丹',
+    KHITAN: '封建河西',
     UIGHUR: '封建回鹘',
     MOHE: '封建靺鞨',
     ANGLO_SAXON: '封建盎格鲁-撒克逊',
@@ -467,7 +467,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     SOGDIANS: '封建粟特',
     TANGUT: '城堡党项',
     JAVANESE: '封建爪哇',
-    JURCHEN: '城堡女真',
+    JURCHEN: '城堡东北',
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
     OTTOMAN_IMPERIAL: '帝国奥斯曼',
@@ -639,7 +639,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SRIVIJAYA: '封建三佛齐',
     KUSHAN: '古典月氏',
     KUSH: '古典努比亚',
-    KHITAN: '封建契丹',
+    KHITAN: '封建河西',
     UIGHUR: '封建回鹘',
     MOHE: '封建靺鞨',
     ANGLO_SAXON: '封建盎格鲁-撒克逊',
@@ -651,7 +651,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     SOGDIANS: '封建粟特',
     TANGUT: '城堡党项',
     JAVANESE: '封建爪哇',
-    JURCHEN: '城堡女真',
+    JURCHEN: '城堡东北',
     SELJUQ: '城堡塞尔柱',
     OTTOMAN: '城堡奥斯曼',
     OTTOMAN_IMPERIAL: '帝国奥斯曼',

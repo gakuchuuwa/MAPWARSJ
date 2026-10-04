@@ -1515,7 +1515,7 @@ function buildRows(): void {
 
         const custom = localCustomCompositions[f.id];
 
-        // 🔴 [2026-09-15 治本·主人报「城堡时代女真军团有两个」]
+        // 🔴 [2026-09-15 治本·主人报「城堡时代东北军团有两个」]
         //    编制**只有一个权威 = 军团自己那条记录**，这里一律按军团名**实时**解析。
         //
         //    改前是「势力快照的 slots 优先、文化区实时解析兜底」，等于同一个军团名有两条取数路：
@@ -1985,7 +1985,7 @@ function isRegionLegionName(name: string): boolean {
  *    丢掉时代前缀，违反命名铁律（时代 + 民族 + 军团）；更要命的是这个名字匹配不上任何
  *    文化区，于是被当成**新建的三级自建军团**存了下去，原来的二级军团再也改不回来。
  *    实测已污染 6 个契丹系势力（后辽/契丹/辽/东丹/耶律/库莫奚），已一并改回。
- *    正确兜底 = 该势力所在文化区的军团名（「封建时代契丹军团」）。
+ *    正确兜底 = 该势力所在文化区的军团名（「封建时代河西军团」）。
  */
 function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: string }): string {
     return getCultureLegionName(r.region as RegionType) || `${r.factionName}军团`;
@@ -5488,7 +5488,7 @@ async function saveCultureComposition(culture: RegionType, legion: EditableLegio
             applyCultureFormationPatch(r as RegionType, slots, formationMode);
         }
 
-        // 🔴 [2026-09-15 主人报障「城堡时代女真军团有两个」] 保存后**必须整体重建快照**。
+        // 🔴 [2026-09-15 主人报障「城堡时代东北军团有两个」] 保存后**必须整体重建快照**。
         //    表格里同一个军团名之所以会裂成两种编制，是因为它有**两条解析路径**：
         //      · 势力有专属条目 → 读 localCustomCompositions[fid].slots（**页面加载时解出来的快照**）
         //      · 势力跟随文化区 → 读 getRegionLegionComposition(region)（**每次重绘实时解**）
