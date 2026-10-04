@@ -1309,6 +1309,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '/assets/PERSIAN/eerbulushi_beisusi.png' },   // 里海门守将（立绘留空走回落）
     aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '/assets/CENTRAL_ASIA/aliya_satibazhanisi.png' },   // 赫拉特守将（立绘留空走回落）
     xuliya: { generalId: 'xuliya_shoujiang', generalName: '马泽乌斯', portrait: '/assets/WEST_ASIA/xuliya_mazewusi.png' },   // 塔普萨库斯（阿契美尼德王朝幼发拉底河重镇及两河流域总督）
+    emesene: { generalId: 'emesene_xierkuhe', generalName: '希尔库赫', portrait: '/assets/WEST_ASIA/emesene_xierkuhe.png' },   // 🔴 [2026-10-04 建埃梅萨] 希尔库赫 Asad ad-Din Shirkuh（萨拉丁之叔、霍姆斯长官、三征埃及）。⚠️ 立绘文件尚未存在，待主人补
 
 
     sute: { generalId: 'sute_spitamenes', generalName: '斯皮塔米尼斯', portrait: '/assets/CENTRAL_ASIA/sute_sipitaminisi.png' },   // 诺塔卡守将（史料：在诺塔卡把贝苏斯交给托勒密，阿里安 IV.1）

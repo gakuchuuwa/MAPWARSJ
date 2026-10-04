@@ -918,6 +918,7 @@ export class CityAssetManager {
         'beileinisi': '红港',
         'dedan': '德丹',
         'maidina': '麦地',
+        'emesene': '埃梅',
         'gulaishi': '古莱',
         'xierwan': '希尔',
         'xiemian': '谢缅',

@@ -3872,11 +3872,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 25
         },
-        "/assets/WEST_ASIA/maidina_halide.png": {
-            "scale": 1.02,
-            "offsetX": 0,
-            "offsetY": 30
-        },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_48.png": {
             "scale": 0.97,
             "offsetX": 0,
@@ -8041,6 +8036,36 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -4
+        },
+        "/assets/WEST_ASIA/ameng_amanatuo.png": {
+            "scale": 1.15,
+            "offsetX": 0,
+            "offsetY": 11
+        },
+        "/assets/WEST_ASIA/duonaobaojia_qimisiji.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 10
+        },
+        "/assets/WEST_ASIA/fc38f15c-17e6-4620-b360-402a0a15aed3.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_62.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 30
+        },
+        "/assets/WEST_ASIA/maidina_halide.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/WEST_ASIA/emesene_xierkuhe.png": {
+            "scale": 0.94,
+            "offsetX": 4,
+            "offsetY": 25
         }
     },
     "folderGuides": {

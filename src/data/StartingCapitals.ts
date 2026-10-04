@@ -1091,6 +1091,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'beileinisi': 'city_beileinisi',
     'dedan': 'city_taima',
     'maidina': 'city_maidina',
+    'emesene': 'city_emesa',
     'gulaishi': 'city_maijia',
     'xierwan': 'city_baku',
     'xiemian': 'city_xiemianjieer',
