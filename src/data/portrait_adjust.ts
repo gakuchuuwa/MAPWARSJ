@@ -6823,7 +6823,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/INDIA/suomunate_kumalapala.png": {
-            "scale": 1.04,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": 15
         },
@@ -7968,14 +7968,14 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -1
         },
         "/assets/INDIA/aswaka_kelaiaofeisi.png": {
-            "scale": 1.1,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": 9
+            "offsetY": -5
         },
         "/assets/INDIA/aornos_afulikaisi.png": {
             "scale": 1.02,
             "offsetX": 0,
-            "offsetY": 12
+            "offsetY": 17
         },
         "/assets/INDIA/malli_moluobaluo.png": {
             "scale": 1.08,
@@ -8001,6 +8001,46 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.16,
             "offsetX": 1,
             "offsetY": -17
+        },
+        "/assets/INDIA/__闲置__INDIA_04.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 12
+        },
+        "/assets/INDIA/muertan_naxierding.png": {
+            "scale": 1.03,
+            "offsetX": 0,
+            "offsetY": 4
+        },
+        "/assets/INDIA/muxikani_muxikanuosi.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
+        },
+        "/assets/INDIA/pandiya_jiatawaerman.png": {
+            "scale": 0.97,
+            "offsetX": 0,
+            "offsetY": -3
+        },
+        "/assets/INDIA/pangzha_halixinge.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/INDIA/shiyuzu_aboluoduoluosi.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/INDIA/xinde_nieakusi.png": {
+            "scale": 1.12,
+            "offsetX": 0,
+            "offsetY": 6
+        },
+        "/assets/INDIA/xindu_bahelamuhan.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -4
         }
     },
     "folderGuides": {
