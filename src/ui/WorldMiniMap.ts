@@ -1,24 +1,25 @@
 import L from 'leaflet';
 
 /**
- * 右下角世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「右下角，加展开收起按钮，默认展开」）。
+ * 右上角世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」「放到右上角，贴着屏幕边缘」）。
  *
- * - 级别 1 ～ 4：1 = 全世界（按小图宽度把整个世界装进框里，固定不跟随）；2 ～ 4 依次放大，以玩家为中心并跟着走。
- * - 画三样：大地图当前镜头范围框、玩家位置闪动点、玩家走过的路线。
+ * - 级别 1 ～ 9（主人 2026-10-04 加到 9）：1 = 全世界（按小图宽度把整个世界装进框里，固定不跟随）；2 ～ 9 依次放大，以玩家为中心并跟着走。
+ * - 画三样：大地图当前镜头范围框、玩家位置点（不闪动，主人定「会吸引视线」）、玩家走过的路线。
  * - 战术模式（13）里整块隐藏。
- * - 只看不点：小图上的拖动、滚轮、双击一律关掉。
+ * - 小图上的拖动、滚轮、双击一律关掉；单击 = 大地图镜头跳到点击处（只动镜头，主人 2026-10-04 定）。
  */
 const MINI_W = 300;
 const MINI_H = 190;
 const LEVEL_MIN = 1;
-const LEVEL_MAX = 4;
+const LEVEL_MAX = 9;
 /** 级别 1 的 Leaflet 缩放：世界宽 256·2^z = 小图宽 */
 const FIT_ZOOM = Math.log2(MINI_W / 256);
 const TICK_MS = 250;
 /** 路线每隔这么远（度）记一个点；最多存这么多点 */
 const TRAIL_STEP_DEG = 0.05;
 const TRAIL_MAX = 6000;
-const ESRI_SHADED_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}';
+/** 底图：Esri 世界自然地形图（陆地绿褐、海蓝，海陆分界清楚；最高到 8 级）。原用晕渲图，陆地粉灰、海陆不分明，主人 2026-10-04 嫌弃后换掉 */
+const BASE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}';
 
 export class WorldMiniMap {
     private root: HTMLDivElement;
@@ -40,6 +41,8 @@ export class WorldMiniMap {
         private readonly mainMap: L.Map,
         private readonly getPlayerPos: () => { lat: number; lng: number } | null,
         private readonly isTactical: () => boolean,
+        /** 点小地图时先松开镜头跟随，不然跟随会马上把镜头拉回军团 */
+        private readonly releaseCamera: () => void,
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -76,7 +79,7 @@ export class WorldMiniMap {
             fadeAnimation: false,
             worldCopyJump: false,
         });
-        L.tileLayer(ESRI_SHADED_URL, { noWrap: true, minZoom: 0, maxZoom: 8 }).addTo(this.mini);
+        L.tileLayer(BASE_URL, { noWrap: true, minZoom: 0, maxZoom: 8 }).addTo(this.mini);
         this.viewRect = L.rectangle([[0, 0], [0, 0]], { color: '#f5d77a', weight: 1.5, fill: false, interactive: false }).addTo(this.mini);
         this.trail = L.polyline([], { color: '#e8452c', weight: 2, opacity: 0.9, interactive: false }).addTo(this.mini);
         this.dot = L.marker([0, 0], {
@@ -84,6 +87,12 @@ export class WorldMiniMap {
             icon: L.divIcon({ className: 'wm-dot', html: '<span></span>', iconSize: [12, 12], iconAnchor: [6, 6] }),
         }).addTo(this.mini);
 
+        // 🔴 [2026-10-04 主人定「只移动镜头」] 点小地图：大地图镜头跳到点击处（缩放级别不变），军团与玩家都不动
+        this.mini.on('click', (e: L.LeafletMouseEvent) => {
+            this.releaseCamera();
+            this.mainMap.setView(e.latlng, this.mainMap.getZoom(), { animate: false });
+            this.viewRect.setBounds(this.mainMap.getBounds());
+        });
         this.plusBtn.addEventListener('click', () => this.setLevel(this.level + 1));
         this.minusBtn.addEventListener('click', () => this.setLevel(this.level - 1));
         this.toggleBtn.addEventListener('click', () => this.setExpanded(!this.expanded));
@@ -91,6 +100,23 @@ export class WorldMiniMap {
         this.setExpanded(true);
         this.setLevel(LEVEL_MIN);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
+    }
+
+    /**
+     * 顶边固定在玩家面板（#player-hero-panel）**展开时**的高度下面：面板展开、收起时小图都原地不动，也不重叠
+     * （主人 2026-10-04「玩家面板缩放，小地图也跟着动，这样是不对的」）。
+     * offsetHeight 不受面板收起用的 translateY 影响，只在面板内容高度变了时才变。
+     */
+    private panelBound = false;
+    private bindPlayerPanel(): void {
+        const panel = document.getElementById('player-hero-panel');
+        if (!panel) return;
+        this.panelBound = true;
+        const sync = (): void => {
+            this.root.style.top = `${getComputedStyle(panel).display !== 'none' ? panel.offsetHeight : 0}px`;
+        };
+        new ResizeObserver(sync).observe(panel);
+        sync();
     }
 
     private setExpanded(on: boolean): void {
@@ -109,7 +135,7 @@ export class WorldMiniMap {
         this.applyView();
     }
 
-    /** 级别 1 固定显示全世界；2～4 以玩家为中心 */
+    /** 级别 1 固定显示全世界；2～9 以玩家为中心 */
     private applyView(): void {
         if (this.level <= LEVEL_MIN) {
             this.mini.setView([20, 0], FIT_ZOOM, { animate: false });
@@ -122,6 +148,7 @@ export class WorldMiniMap {
     private tick(): void {
         const hide = this.isTactical();
         this.root.style.display = hide ? 'none' : '';
+        if (!this.panelBound) this.bindPlayerPanel();
         const p = this.getPlayerPos();
         if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
             const last = this.trailPts[this.trailPts.length - 1];
@@ -149,12 +176,11 @@ export class WorldMiniMap {
         st.id = 'world-minimap-style';
         st.textContent = `
             .world-minimap {
-                position: fixed; right: 12px; z-index: 10002;
-                /* 贴在行军字幕条上方（字幕条 bottom 为 clamp(46px,7.8vh,84px)、两行约 90px 高），三者互不遮挡 */
-                bottom: calc(clamp(46px, 7.8vh, 84px) + 104px);
+                /* 右上角：右边贴玩家面板右缘（= 右侧军情面板宽，没开时为 0 即贴屏幕边），顶边由 bindPlayerPanel() 定在玩家面板展开高度下 */
+                position: fixed; right: var(--feed-panel-w, 0px); top: 0; z-index: 10002;
                 width: ${MINI_W}px;
                 background: rgba(25, 20, 14, 0.92);
-                border: 1px solid rgba(212, 175, 55, 0.55); border-radius: 6px;
+                border: 1px solid rgba(212, 175, 55, 0.55); border-right: none; border-radius: 0 0 0 6px;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
                 font-family: inherit; color: #f5e6c8; user-select: none;
             }
@@ -172,10 +198,9 @@ export class WorldMiniMap {
             }
             .world-minimap .wm-btn:disabled { opacity: 0.35; cursor: default; }
             .world-minimap .wm-body {
-                width: ${MINI_W}px; height: ${MINI_H}px; background: #6395b8;
-                border-top: 1px solid rgba(212, 175, 55, 0.35); border-radius: 0 0 6px 6px;
+                width: ${MINI_W}px; height: ${MINI_H}px; background: #6395b8; cursor: pointer;
+                border-top: 1px solid rgba(212, 175, 55, 0.35); border-radius: 0 0 0 6px;
             }
-            .world-minimap .wm-body .leaflet-tile-pane { filter: saturate(1.7) contrast(1.15) brightness(0.92); }
             /* 全局给瓦片加宽了半像素（GameMap.installTileSeamFix，给大地图堵缝用），在小图里反而画出一道白线（实测），小图里改回正好 256 */
             .world-minimap .wm-body img.leaflet-tile { width: 256px !important; height: 256px !important; }
             .world-minimap.is-collapsed .wm-body { display: none; }
@@ -183,9 +208,7 @@ export class WorldMiniMap {
             .world-minimap .wm-dot span {
                 display: block; width: 12px; height: 12px; border-radius: 50%;
                 background: #ff3b1f; border: 2px solid #fff; box-sizing: border-box;
-                animation: wm-pulse 1s ease-in-out infinite;
             }
-            @keyframes wm-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.6; } }
         `;
         document.head.appendChild(st);
     }
