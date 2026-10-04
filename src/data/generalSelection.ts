@@ -4,7 +4,7 @@
  * 🔴 军团出征（RecruitmentSystem.sortSpawnCandidates）用这一套，**未经主人指示不得改**。
  *
  * 🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将，去掉其他的条件」——
- *    玩家选将已**另走** `comparePlayerGeneralsByPriority`（只看兵多 + 名将），不再共用本函数。
+ *    玩家选将已**另走** `comparePlayerGeneralsByPriority`（只看名将 + 兵多），不再共用本函数。
  */
 import { getCityAnchoredGeneral } from './CityGeneralBridge';
 import { getGeneralProfile } from './general-skills/profiles';
@@ -46,8 +46,10 @@ export function compareGeneralsByPriority(a: GeneralCandidateLike, b: GeneralCan
  * 🔴 [2026-09-15 主人定]「玩家找武将，改为**兵多、名将**。去掉其他的条件。」
  *
  * 玩家自动寻将专用比较器：**只有两条判据**
- *   1 兵最多 → 2 名将；打平即随机。
+ *   1 名将 → 2 兵最多；打平即随机。
  * 原先那两条「双行」「擅攻」已按主人指示去掉，攻防风格**完全不参与**玩家选将。
+ * 🔴 [2026-10-05 主人令「优先名将，然后是兵力数」] 两条的**先后次序**已按主人原话定死：
+ *    **名将在前、兵力在后** —— 名将城永远压过非名将城，兵力只在同为名将（或同样不是名将）时比。
  *
  * ⚠️ 与 `compareGeneralsByPriority` 故意分开两个函数，**不要合并**：
  *    那一套仍是军团出征（RecruitmentSystem）的判据，主人这次只改玩家这一侧。
@@ -61,13 +63,13 @@ export function comparePlayerGeneralsByPriority(a: GeneralCandidateLike, b: Gene
     if (!pa && !pb) return Math.random() - 0.5;
     if (!pa) return 1;
     if (!pb) return -1;
-    // 1 兵最多（🔴 2026-09-15 方案A 主人定：按 500 兵阶梯分档，容差内同档继续比名将，避免各地季产兵几十人差值切碎同档）
-    const tierA = Math.floor((a.troops || 0) / 500);
-    const tierB = Math.floor((b.troops || 0) / 500);
-    if (tierA !== tierB) return tierB - tierA;
-    // 2 名将
+    // 1 名将（🔴 [2026-10-05 主人令]「优先名将，然后是兵力数」—— 名将排第一）
     const fa = pa.tier === 'famous';
     const fb = pb.tier === 'famous';
     if (fa !== fb) return fa ? -1 : 1;
+    // 2 兵最多（🔴 2026-09-15 方案A 主人定：按 500 兵阶梯分档，容差内同档继续比名将，避免各地季产兵几十人差值切碎同档）
+    const tierA = Math.floor((a.troops || 0) / 500);
+    const tierB = Math.floor((b.troops || 0) / 500);
+    if (tierA !== tierB) return tierB - tierA;
     return Math.random() - 0.5;
 }
