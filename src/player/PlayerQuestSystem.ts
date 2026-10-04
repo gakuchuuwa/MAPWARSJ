@@ -17,6 +17,7 @@ import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
+import { ALL_BRANCHES_MAP, CULTURE_59_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
@@ -37,6 +38,30 @@ import { CITY_DISPLAY_NAMES } from '../data/cityDisplayNames';
 import { SCRIPT_ROAD_SEGMENTS } from '../battlefield-editor/scriptSegments';
 
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
+
+/**
+ * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
+ *   62 类正名 = 二级 59 文明 + 三级 3 自建（与据点编辑器同一份数据）；
+ *   别名键（NORTH / STEPPE / WEST_ASIA / OTTOMAN / RUSSIAN / YURT）按**对象同一性**折回正名，不另抄字典。
+ */
+const STYLE62_KEYS: readonly string[] = [
+    ...CULTURE_59_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
+    ...LAYER3_CUSTOM_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
+];
+const STYLE62_SET: ReadonlySet<string> = new Set(STYLE62_KEYS);
+const STYLE62_ALIAS: ReadonlyMap<string, string> = new Map(
+    Object.keys(ALL_BRANCHES_MAP)
+        .filter((k) => !STYLE62_SET.has(k))
+        .map((k): [string, string] => [k, STYLE62_KEYS.find((c) => ALL_BRANCHES_MAP[c] === ALL_BRANCHES_MAP[k]) ?? ''])
+        .filter(([, canon]) => canon !== ''),
+);
+
+/** 一座据点属于 59+3 里的哪一类（取不到返回 null；实测全库 1127 座里 3 座取不到）。 */
+function style62OfCity(c: City): string | null {
+    const k = resolveCityHierarchy(c).branchKey;
+    if (!k) return null;
+    return STYLE62_SET.has(k) ? k : (STYLE62_ALIAS.get(k) ?? null);
+}
 
 export interface PlayerQuest {
     kind: PlayerQuestKind;
@@ -2416,7 +2441,8 @@ export class PlayerQuestSystem {
     /** 遍历据点，找城中武将在（未率军在外）的。
      *  🔴 [2026-09-15 主人定]「玩家找武将，改为**兵多、名将**。去掉其他的条件。」
      *     判据只剩两条，攻防风格（双行/擅攻）**完全不参与**。顺序是：
-     *       ① 先用 comparePlayerGeneralsByPriority 排出最优档（兵最多→名将）；
+     *       ① 先用 comparePlayerGeneralsByPriority 排出最优档（🔴 [2026-10-05 主人令]
+     *          「优先名将，然后是兵力数」→ **名将→兵最多**）；
      *       ② **只在与第一名完全同档的候选里**，按面板开关决定随机还是就近。
      *     绝不能反过来先按距离分圈再挑将——那样近处没名将时就会选到次优的，
      *     等于把「必须」降成了「优先」。 */
@@ -2483,9 +2509,15 @@ export class PlayerQuestSystem {
         }
         if (!candidates.length) return null;
 
+        // 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
+        //    先按 62 类建筑风格分组，取**离我最近、这一轮还没轮到**的那一类，只在这一类的城里挑。
+        const me = this.deps.hero.getPosition();
+        const pool = this.pickStyle62Pool(candidates, me);
+        if (!pool.length) return null;
+
         // ① [2026-09-15 主人定]「兵多、名将，去掉其他的条件」→ 玩家专用两条判据比较器。
         //    ⚠️ 不再用 compareGeneralsByPriority（那套含双行/擅攻，仍归军团出征用）。
-        const sorted = [...candidates].sort((a, b) => comparePlayerGeneralsByPriority(
+        const sorted = [...pool].sort((a, b) => comparePlayerGeneralsByPriority(
             { troops: a.troops || 0, cityId: a.id },
             { troops: b.troops || 0, cityId: b.id },
         ));
@@ -2535,7 +2567,6 @@ export class PlayerQuestSystem {
         //    实测 K=5 + 永久排除 + 远游20：摸到 295 位、平均每趟 554km。
         //    验算脚本：scratch/_hunt_compare.ts（各方案横向对比）、scratch/_hunt_verify.ts（照抄本实现跑验收）。
         //    两者都要 node --import tsx --import ./scratch/vhook.mjs 跑（vhook 把 virtual:portrait-manifest 桩掉）。
-        const me = this.deps.hero.getPosition();
         if (!me || typeof me.lat !== 'number') {
             return tied[Math.floor(Math.random() * tied.length)] ?? best;
         }
@@ -2581,6 +2612,51 @@ export class PlayerQuestSystem {
     private huntCount = 0;
     /** 已拜访过的城（**永久**排除，去遍全图才清空）。这是「别困在一个圈里」的唯一机制。 */
     private readonly visited = new Set<string>();
+    /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（62 类走完清空、重开一轮）。 */
+    private readonly visitedStyles = new Set<string>();
+
+    /**
+     * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
+     *
+     *   把候选按 **62 类建筑风格**（二级 59 文明 + 三级 3 自建）分组，取**离玩家最近、且这一轮
+     *   还没轮到的那一类**，只把这一类的城交给下面原有的链条（兵多 → 名将 → 同档就近）去挑。
+     *   · 某一类取不到候选（无人占 / 没锚定武将 / 兵不足 1 万）就不进轮次；
+     *   · 取不到 62 类风格的据点（实测全库 3 座）不进轮次；
+     *   · 62 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
+     *   · 玩家坐标取不到 → 在本轮未轮到的类里随机点一类（绝不卡死）。
+     *
+     *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（兵力分档 / 名将 / 远游 / 最近 K 座）
+     *      一个字都没动，仍在 `pickAutoCity` 里原样跑。
+     */
+    private pickStyle62Pool(candidates: City[], me: { lat: number; lng: number }): City[] {
+        const byStyle = new Map<string, City[]>();
+        for (const c of candidates) {
+            const k = style62OfCity(c);
+            if (!k) continue;
+            const arr = byStyle.get(k);
+            if (arr) arr.push(c);
+            else byStyle.set(k, [c]);
+        }
+        if (!byStyle.size) return [];
+
+        // 这一轮还没轮到过的类；全轮到过就清空重开一轮。
+        let fresh = [...byStyle.keys()].filter((k) => !this.visitedStyles.has(k));
+        if (!fresh.length) {
+            this.visitedStyles.clear();
+            fresh = [...byStyle.keys()];
+        }
+
+        // 「离哪个近就先选哪个」：一类的距离 = 该类里离玩家最近的那座城的距离。
+        const distOfStyle = (k: string): number => Math.min(
+            ...byStyle.get(k)!.map((c) => PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })),
+        );
+        let picked = fresh[Math.floor(Math.random() * fresh.length)];
+        if (me && typeof me.lat === 'number') {
+            picked = fresh.reduce((bestK, k) => (distOfStyle(k) < distOfStyle(bestK) ? k : bestK), fresh[0]);
+        }
+        this.visitedStyles.add(picked);
+        return byStyle.get(picked) ?? [];
+    }
 
     /** 选定一座城后记一笔，下次就不再选它了（直到全图走遍后清空）。 */
     private rememberVisit(city: City): void {

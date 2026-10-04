@@ -2204,7 +2204,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK' },
-    { id: 'city_rhodes', name: '罗得城', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST' },
+    { id: 'city_rhodes', name: '罗得城', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREEK', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 罗得岛自古为希腊人岛屿（多利安六城之一，后属拜占庭），医院骑士团 1309–1522 为外来政权 → 风格挂希腊（ATHENIANS / 一级 GREEK），不取法兰克。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：克里特岛诺索斯：961 年拜占庭名将福卡斯收复克里特，此后长期属东罗马
     { id: 'city_knossos', name: '诺索斯', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '克里特岛诺索斯·干地亚海防要塞，961年拜占庭名将福卡斯（后称帝为尼基弗鲁斯二世）大破萨拉森人收复克里特，地中海第一海防险要' },
 
@@ -2246,7 +2246,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'LATIN_CASTLE', buildingStyle: 'MEDI', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城' },
+    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'AFRI', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 休达在**摩洛哥北岸**（柏柏尔／马格里布故地；腓尼基、迦太基、毛里塔尼亚、马林王朝相继，葡萄牙 1415 为外来占领），风格改挂柏柏尔（BERBER / 一级 AFRI），不取意大利 LATIN。' },
 
 
 
@@ -3445,12 +3445,12 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_junshitandingbao', name: '君士坦丁堡', factionId: 'baizanting', lat: 41.01, lng: 28.97, type: 'big_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE' },
     { id: 'city_yikeniwumu', name: '伊科尼乌姆', factionId: 'luomu', lat: 37.8744, lng: 32.4931, type: 'small_city', troops: 10000, region: 'WEST_ASIA_CASTLE', buildingStyle: 'ORIE', note: '罗姆苏丹国首都（科尼亚），古典吕考尼亚核心大城，人口数万；依2026-10-01铁律定为小城。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.87,32.48 偏离科尼亚城 1.25 公里，按英文维基百科 Konya 坐标改为 37.8744,32.4931。' },
     { id: 'city_tiyana', name: '提亚纳', factionId: 'kapaduoxiya', lat: 37.848, lng: 34.611, type: 'small_city', troops: 8000, region: 'WEST_ASIA_ANTIQUITY', buildingStyle: 'ORIE', note: '卡帕多细亚重镇，安基拉南下奇里乞亚门古道必经之城。公元前333年亚历山大穿越卡帕多细亚、任命萨比克塔斯为卡帕多细亚总督（阿里安《远征记》II.4），本城归马其顿。坐标取英文维基 Tyana 条 37.84806,34.61111。🔴 [2026-09-25 主人令「可以请添加」] 新建，使第 7 场的线改走 安基拉→提亚纳→奇里乞亚门→塔尔苏斯。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
-        { id: 'city_nikexiya', name: '尼科西亚', factionId: 'saipulusi', lat: 35.18, lng: 33.38, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', note: '塞浦路斯王国都城·东地中海海岛要塞·居伊·德·吕西尼昂开国王都' },
+        { id: 'city_nikexiya', name: '尼科西亚', factionId: 'saipulusi', lat: 35.18, lng: 33.38, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREEK', note: '塞浦路斯王国都城·东地中海海岛要塞·居伊·德·吕西尼昂开国王都。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 塞浦路斯自古为**希腊人**岛屿（迈锡尼—希腊—拜占庭相继，吕西尼昂 1192 为外来王朝）→ 风格挂希腊（ATHENIANS / 一级 GREEK），不取法兰克。' },
 { id: 'city_antiejiya', name: '安提俄基亚', factionId: 'sailiugu', lat: 36.2, lng: 36.16, type: 'big_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', mirror: true },
     { id: 'city_teluowulan', name: '特罗武兰', factionId: 'manzheboyi', lat: -7.55, lng: 112.37, type: 'medium_city', troops: 10000, region: 'SEASIA_CASTLE', buildingStyle: 'MALAY', note: '满者伯夷王朝都城（东爪哇莫佐克托），加查马达帕拉帕誓言统一努山达拉' },
     { id: 'city_ajiemier', name: '阿杰梅尔', factionId: 'zhelouqi', lat: 26.45, lng: 74.64, type: 'medium_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'INDIA', note: '乔汉(遮娄其)王朝都城，普里特维抗古尔' },
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
-    { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国' },
+    { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 拉塔基亚为**叙利亚沿海**阿拉伯港市（塞琉古建城，后罗马、拜占庭、阿拉伯相继；十字军为外来政权）→ 风格挂中东（ORIE），不取法兰克。' },
     { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'WEST', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡那封：威尔士，凯尔特（爱德华一世威尔士城堡）
     { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地' },
@@ -3511,7 +3511,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_emesa', name: '埃梅萨', factionId: 'emesene', lat: 34.73, lng: 36.71, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '埃梅萨（Emesa，今叙利亚霍姆斯 Hims）。🔴 [2026-10-04 主人令建] 判定：性质＝**城市**（非要塞险要、非战场）；人口＝罗马/拜占庭及中世纪早期史料考证 2–5 万 ⇒ 按 §6.2 落**小城**。建城年代按主人 2026-10-04「据点显示标准」取 **前300（约）**：学界通行认定由塞琉古一世（Seleucus I Nicator）建于公元前 3 世纪初 ⇒ 亚历山大剧本（前334–前323）那年还没有城、不上图。势力「埃梅塞尼」（Emesene＝古代埃梅萨所在地区之名）；武将希尔库赫（霍姆斯长官、萨拉丁之叔）；精锐阿尤布重骑 T1。⚠️ 主人考据里的「哈马特-佐巴（Hamath-Zobah）」通行认定是**哈马（Hama）**、非本城，未采入。' },
 
     { id: 'city_yelusaleng', name: '耶路撒冷', factionId: 'xibolai', lat: 31.77, lng: 35.21, type: 'big_city', troops: 10000, region: 'HEBREWS', buildingStyle: 'ORIE', note: '大卫王定都与所罗门圣殿所在地，三大一神教圣城' },
-    { id: 'city_ake', name: '阿卡', factionId: 'yelusalengwg', lat: 32.92139, lng: 35.06889, type: 'small_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', mirror: true, note: '定级依据§6.2：阿卡非关隘/要塞/堡垒（十字军王国都城、黎凡特港市），按城市判级；13世纪盛期城居推测2–4万（1191围城守军5,000–10,000），>1万 → 小城。🔴 [2026-09-24 主人令「可以稍微移动一点坐标」] 锚点由现代市域 32.93,35.08 改为英文维基百科 **Old City of Acre（阿卡旧城）** 坐标 32.92139,35.06889，移动 1.41 公里，在 §2.1 允许的 1–2 公里微调之内：据点代表**历史城区**，取旧城比取现代市域中心更合史地。改后 阿卡↔推罗 = 40.63 公里，过 2026-09-24 新定的 ≥40 公里硬闸，原 40 km 特许例外清单随之清空。' },
+    { id: 'city_ake', name: '阿卡', factionId: 'yelusalengwg', lat: 32.92139, lng: 35.06889, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', mirror: true, note: '定级依据§6.2：阿卡非关隘/要塞/堡垒（十字军王国都城、黎凡特港市），按城市判级；13世纪盛期城居推测2–4万（1191围城守军5,000–10,000），>1万 → 小城。🔴 [2026-09-24 主人令「可以稍微移动一点坐标」] 锚点由现代市域 32.93,35.08 改为英文维基百科 **Old City of Acre（阿卡旧城）** 坐标 32.92139,35.06889，移动 1.41 公里，在 §2.1 允许的 1–2 公里微调之内：据点代表**历史城区**，取旧城比取现代市域中心更合史地。改后 阿卡↔推罗 = 40.63 公里，过 2026-09-24 新定的 ≥40 公里硬闸，原 40 km 特许例外清单随之清空。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 阿卡为**黎凡特阿拉伯港市**（古托勒密斯，阿拉伯人聚居；十字军 1104–1291 为外来政权）→ 风格挂中东（ORIE），不取法兰克。' },
     // 🔴 [2026-09-23 主人令「先添加据点」] 推罗城（腓尼基母城、黎凡特海岛港市）。
     //    id / 坐标取**英文维基百科 Tyre, Lebanon 的坐标 33.27083,35.19611**；2026-09-12 主人特批时它与阿卡相距 39.42 km、
     //    曾列入 §2.1.1.1 唯一一条特许例外；🔴 [2026-09-24 主人令「可以稍微移动一点坐标」] 阿卡锚点改取旧城坐标后，
@@ -3522,7 +3522,7 @@ buildingStyle: 'TIBET', troops: 10000,
     //    region 取 ORIE：迦南的番号「推罗水师」登记在 OrieExpeditionLegions（本区）；同区大马士革/加沙/耶路撒冷亦为 ORIE 系。
     { id: 'city_tuile', name: '推罗', factionId: 'kanan', lat: 33.2709, lng: 35.1962, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '定级依据§6.2：推罗非关隘/要塞/堡垒（腓尼基母城、黎凡特海岛港市），按城市判级；公元前332年围城时正规守军8,000–10,000、城破后约3万平民被贩为奴（英文维基 Siege of Tyre），>1万 → 小城。坐标取英文维基百科 Tyre, Lebanon 的 33.27083,35.19611；与阿卡相距 40.63 公里（阿卡锚点 2026-09-24 改取旧城坐标后），已过 ≥40 公里硬闸，AGENTS §2.1.1.1 特许例外清单已清空。' },
 
-    { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'pass', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST' },
+    { id: 'city_kolossi', name: '科洛西', factionId: 'shengdian_qishi', lat: 34.664, lng: 32.934, type: 'pass', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREEK', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 科洛西在**塞浦路斯**（希腊人岛屿；圣殿骑士团／吕西尼昂为外来政权）→ 风格挂希腊（ATHENIANS / 一级 GREEK），不取法兰克。' },
     { id: 'city_mengfeisi', name: '孟菲斯', factionId: 'aiji', lat: 29.85, lng: 31.25, type: 'small_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE' },
     { id: 'city_xiwa', name: '锡瓦绿洲', factionId: 'ameng', lat: 29.2, lng: 25.52, type: 'stockade', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', stockadeShape: 'octagon', stockadeFence: 'FENCE', note: '锡瓦绿洲，阿蒙神庙神谕所在。🔴 [2026-09-25 主人令「请添加」] 为第三片第 3 段补：前331 亚历山大亲率小队穿越沙漠来此，祭司称他为「阿蒙之子」，他随后回孟菲斯（阿里安 III.4；普鲁塔克《亚历山大传》27）。坐标取绿洲城镇 29.2,25.52。 🔴 [2026-09-25 主人定规「查不到史料的一律按小城和城寨算；险要位置的一律按 PASS 算」] 定级依据§6.2：查英文维基与当地语种维基均未见人口数字（2026-09-25 查证）→ 按此新规取值。' },
     { id: 'city_wasaite', name: '瓦塞特', factionId: 'dibisi', lat: 25.7, lng: 32.64, type: 'medium_city', troops: 10000, region: 'EGYPT', buildingStyle: 'ORIE', note: '古埃及新王国都城（底比斯/卢克索），百门之都，卡纳克神庙与帝王谷所在地，极盛期常住人口数十万；依2026-10-01铁律定为中城' },
@@ -3549,7 +3549,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_alepo', name: '阿勒颇', factionId: 'ayoubu', lat: 36.2, lng: 37.16, type: 'medium_city', troops: 10000, region: 'MAMLUKS', buildingStyle: 'ORIE', note: '阿尤布都，黎凡特商路枢纽' },
     { id: 'city_ayinzhaluete', name: '阿音贾鲁特', factionId: 'mamuluke', lat: 32.53, lng: 35.44, type: 'pass', troops: 10000, region: 'MAMLUKS', buildingStyle: 'ORIE', note: '1260阿音贾鲁特战役战场，拜巴尔斯/库图兹击败蒙古' },
     // ── 2026-08-04 新增：埃德萨（奥斯若恩国都；十字军埃德萨伯国首府）──
-    { id: 'city_aidesa', name: '埃德萨', factionId: 'aosiruowen', lat: 37.15, lng: 38.7825, type: 'medium_city', troops: 10000, region: 'CRUSADERS', buildingStyle: 'WEST', note: '今土耳其乌尔法（Şanlıurfa）；塞琉古建城名埃德萨，奥斯若恩王国国都；叙利亚基督教中心；1098–1144十字军埃德萨伯国首府；与尼尼微—阿勒颇走廊十字路口。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.1674,38.7955 偏离 2.25 公里，按英文维基百科 Edessa 坐标改为 37.15,38.7825。' },
+    { id: 'city_aidesa', name: '埃德萨', factionId: 'aosiruowen', lat: 37.15, lng: 38.7825, type: 'medium_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '今土耳其乌尔法（Şanlıurfa）；塞琉古建城名埃德萨，奥斯若恩王国国都；叙利亚基督教中心；1098–1144十字军埃德萨伯国首府；与尼尼微—阿勒颇走廊十字路口。🔴 [2026-09-24 主人令「据点坐标错误请修正」] 原 37.1674,38.7955 偏离 2.25 公里，按英文维基百科 Edessa 坐标改为 37.15,38.7825。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 埃德萨为**奥斯若恩（叙利亚语系）**故地，后罗马、拜占庭、阿拉伯相继；十字军伯国为外来政权 → 风格挂中东（ORIE），不取法兰克。' },
     { id: 'city_daerban', name: '打耳班', factionId: 'kesa', lat: 42.06, lng: 48.3, type: 'pass', troops: 10000, region: 'KHAZARS', buildingStyle: 'PERSIAN' },
     { id: 'city_miletus', name: '米利都', factionId: 'yiaoniya', lat: 37.5303, lng: 27.2783, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK', note: '伊奥尼亚第一城、爱琴海东岸大港，公元前334年米利都围城战的目标城（英文维基百科 Siege of Miletus 信息框坐标 37°31′49″N 27°16′42″E，即今土耳其艾登省迪迪姆）。定级依据§6.2：英文维基百科 Miletus 信息框未给人口（只给遗址面积 90 公顷），公元前334年人口无可靠数字 → 小城。' },
     { id: 'city_yifusuo', name: '以弗所', factionId: 'aiaoniya', lat: 37.94, lng: 27.34, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREEK' },
@@ -3628,13 +3628,13 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRI', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'MEDI', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
-    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'SPANISH', buildingStyle: 'MEDI', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府' },
+    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'ANDE', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 利马所在为**印加帝国**故地（1535 建城前属印加，库斯科以北的帕查卡马克神域），风格改挂印加（INCA / 一级 ANDE），不取西班牙。' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA' },
 
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 10000, region: 'AFRICA_ANTIQUITY', buildingStyle: 'ETHIOPIANS' },
 
     { id: 'city_malacca', name: '马六甲', factionId: 'malacca', lat: 2.19, lng: 102.25, type: 'medium_city', troops: 10000, region: 'MALAY', buildingStyle: 'MALAY', note: '满剌加苏丹国都城，马六甲海峡咽喉' },
-        { id: 'city_xibo', name: '希波', factionId: 'wangdaer', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 10000, region: 'VANDALS', buildingStyle: 'ORIE', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城' },
+        { id: 'city_xibo', name: '希波', factionId: 'wangdaer', lat: 36.90, lng: 7.76, type: 'medium_city', troops: 10000, region: 'BERBER', buildingStyle: 'AFRI', note: '汪达尔王国第一代都城希波（Hippo Regius），盖萨里克立国之基，圣奥古斯丁主教之城。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 希波（今阿尔及利亚安纳巴）本是**努米底亚／柏柏尔**故地（腓尼基—迦太基殖民城，后罗马、努米底亚），汪达尔 435 年为外来政权，风格改挂柏柏尔（BERBER / 一级 AFRI），不取日耳曼。' },
     { id: 'city_sanfoqi', name: '巨港', factionId: 'sanfoqi', lat: -2.99, lng: 104.75, type: 'big_city', troops: 10000, region: 'SRIVIJAYA', buildingStyle: 'MALAY', note: '室利佛逝都城巨港（Palembang），扼守马六甲海峡之海上佛教贸易霸权' },
     { id: 'city_kalasan', name: '卡拉桑', factionId: 'medang', lat: -7.756, lng: 110.445, type: 'small_city', troops: 10000, region: 'JAVANESE', buildingStyle: 'MALAY', note: '马打蓝王国赛伦德拉王朝佛寺圣地（778年建，爪哇中部日惹普兰巴南平原）；定级依据§6.2：无人口数字（778年铭文为授村建寺，僧舍仅6间），有特殊建筑不得为城寨 → 小城' },
     { id: 'city_deernate', name: '德尔纳特', factionId: 'ternate', lat: 0.7852, lng: 127.3832, type: 'small_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'SEAS', note: '特尔纳特苏丹国都城(维基作德那第)，世界香料之源丁香群岛核心，加马拉火山岛；巴布拉苏丹1570-1583在此亲统水军攻陷葡属卡斯特拉要塞，驱逐殖民者称霸东部印尼群岛' },
@@ -3642,7 +3642,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_manila', name: '马尼拉', factionId: 'xishudongyin', lat: 14.5904, lng: 120.9804, type: 'medium_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'SEAS', note: '马尼拉(Manila)，西属东印度首府，跨太平洋大帆船贸易终点与吕宋华人海商港；莱加斯皮1571年征服吕宋筑马尼拉王城(Intramuros)奠定西属菲律宾殖民地' },
     { id: 'city_patan', name: '帕坦', factionId: 'gurjara', lat: 23.84, lng: 72.12, type: 'medium_city', troops: 10000, region: 'GURJARAS', buildingStyle: 'GURJARAS', note: '阿纳希拉帕塔卡，查拉基王朝都城' },
     { id: 'city_suomunate', name: '索姆纳特', factionId: 'suomunate', lat: 20.8878, lng: 70.4014, type: 'small_city', troops: 10000, region: 'INDIA_CASTLE', buildingStyle: 'GURJARAS', note: '帕布哈斯帕坦，印度教湿婆神庙（十二光辉林伽之首），1026年遭马哈茂德·伽色尼洗劫，索兰基王朝重建；定级依据§6.2：城内数千（约2000–8000，量级推断；1901年邻港维拉瓦尔12111），有特殊建筑不得为城寨 → 小城' },
-    { id: 'city_guoa', name: '果阿', factionId: 'puxiangyindu', lat: 15.5023, lng: 73.9117, type: 'medium_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'MEDI', note: '果阿旧城(Velha Goa)，葡属印度(Estado da Índia)总督府首府1510-1843，欧洲人在亚洲的第一个永久殖民首府；阿尔布克尔克1510攻占后奠定葡萄牙印度洋海上帝国' },
+    { id: 'city_guoa', name: '果阿', factionId: 'puxiangyindu', lat: 15.5023, lng: 73.9117, type: 'medium_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDI', note: '果阿旧城(Velha Goa)，葡属印度(Estado da Índia)总督府首府1510-1843，欧洲人在亚洲的第一个永久殖民首府；阿尔布克尔克1510攻占后奠定葡萄牙印度洋海上帝国。🔴 [2026-10-05 主人令「建筑风格必须是当地的，和殖民者没有关系」] 建筑风格改挂**当地**：果阿在葡人来前为比贾普尔（阿迪尔沙希）辅都，更早为维贾亚纳加尔（1370-1469）、卡丹巴故地 —— 归南印度（达罗毗荼 INDIA / 一级 INDI），不取葡属印度。' },
     { id: 'city_tanjiawuer', name: '坦贾武尔', factionId: 'zhuluo', lat: 10.79, lng: 79.14, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '朱罗王朝都城，布里哈迪希瓦拉神庙（世界遗产）所在' },
     { id: 'city_madula', name: '马杜赖', factionId: 'pandiya', lat: 9.93, lng: 78.12, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '潘地亚王朝都城，米纳克希神庙所在' },
     { id: 'city_anulade', name: '阿努拉德', factionId: 'sengjialuo', lat: 8.3533, lng: 80.3956, type: 'medium_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '阿努拉德普勒(Anuradhapura)，斯里兰卡僧伽罗王朝千年佛教圣都与灌溉枢纽（圣菩提树/鲁梵维利萨亚塔）；杜图伽摩尼击溃南印度泰米尔埃拉兰统一全岛光复圣都' },
