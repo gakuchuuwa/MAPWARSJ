@@ -874,6 +874,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'luomu_jilijie': 11,                                 // 基利杰 · luomu · 伊科尼乌姆
     'osman_mehmed_ii': 15,                              // 穆罕默德二世 · osman · 布尔萨（1453 攻陷君士坦丁堡）
     'maidina_halide': 7,                                // 哈立德 · maidina · 麦地那
+    'emesene_xierkuhe': 12,                             // 希尔库赫 · emesene · 埃梅萨（今霍姆斯；1169 卒）
     'nabatai_aleitasi': -1,                              // 阿雷塔斯 · nabatai · 佩特拉
     'paermila_zhinuobiya': 3,                           // 芝诺比娅 · paermila · 塔德莫尔
     'pajiama_oumainisi': -3,                             // 欧迈尼斯 · pajiama · 佩尔加蒙

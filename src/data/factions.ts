@@ -2104,6 +2104,7 @@ export const FACTIONS: Faction[] = [
     { id: 'eerbulushi', name: '厄尔布尔士' },   // 里海门势力
     { id: 'aliya', name: '阿利亚' },   // 赫拉特势力
     { id: 'xuliya', name: '叙利亚' },   // 塔普萨库斯势力
+    { id: 'emesene', name: '埃梅塞尼' },   // 🔴 [2026-10-04 主人令建埃梅萨] Emesene＝古代埃梅萨所在地区之名（「势力是片」，大于据点；与据点名「埃梅萨」不逐字相同）
 
 
     { id: 'sute', name: '诺塔卡' },   // 诺塔卡（粟特南部要地）势力，与索格狄亚那分开记

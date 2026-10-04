@@ -28,6 +28,7 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     maermajika: { name: '利比亚标枪手', tier: 4 },   // 马特鲁港·帕拉伊托斯：利比亚标枪散兵（史载埃及军中的利比亚标枪手）
     ameng: { name: '绿洲弓手', tier: 4 },            // 锡瓦绿洲·阿曼阿托：沙漠绿洲弓手           // 孟菲斯·拉美西斯：麦查伊（Medjay）努比亚斥候，史载专名、兵种独特
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
+    emesene: { name: '阿尤布重骑', tier: 1 },      // 🔴 [2026-10-04 建埃梅萨] 埃梅萨（今霍姆斯）·希尔库赫：阿尤布重装骑兵（霍姆斯公国即其家族所开）
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表
     antiaokegongguo: { name: '安条克骑', tier: 2 },  // 拉塔基亚·博希蒙德：诺曼十字军骑（1098首占安条克）
     womaya: { name: '倭马亚卫', tier: 3 },         // 大马士革·穆阿维叶：其建都之地的哈里发近卫，文化辨识度高

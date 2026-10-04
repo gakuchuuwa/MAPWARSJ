@@ -697,6 +697,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'maer_d_bahelamuchubin': 'feudal',
     'maerta_qishi_walaite': 'imperial',
     'maidina_halide': 'feudal',
+    'emesene_xierkuhe': 'castle',
     'mamon_mameng': 'feudal',
     'mamuluke_baibaisi': 'castle',
     'manghuti_weidaer': 'castle',

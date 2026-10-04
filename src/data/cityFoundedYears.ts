@@ -26,12 +26,20 @@
  *    本表只管「这地方在不在」，图上叫什么名字与本表**毫不相干**。
  *
  * 显隐：`ScriptCityVisibility` 里 `值 > 当前事件年份 → 不显示`。
+ *
+ * 🔴 [2026-10-04 主人定「据点显示标准」] **只按这地方的「建城年代」或「历史上出现的年代」判**（两者都有取更早），
+ *    不看名字、也不再逐座问主人 —— 口径全文见 `docs/AGENTS/一据点一整套-单一口径.md` §六。
  */
 export const CITY_FOUNDED_YEAR: Record<string, number> = {
     // ── 希腊化城市（亚历山大及其继承者所建）──
     city_yalishanda: -331,      // 亚历山大城，公元前331年亚历山大所建（学界共识）
     city_seuthopolis: -330,     // 塞乌托波利斯，约公元前330年塞乌特斯三世营建（奥德里西亚王都）
     city_antiejiya: -300,       // 安条克，公元前300年塞琉古一世所建
+    // 🔴 [2026-10-04 建埃梅萨·主人定的「据点显示标准」] 埃梅萨（今叙利亚霍姆斯）：学界通行认定是**塞琉古一世
+    //    （Seleucus I Nicator）于公元前 3 世纪初所建、或此期始见于记载**（萨拉戈萨大学论文：Es probable que Emesa fuera
+    //    fundada por Seleuco I Nicátor en los primeros años del siglo III a.C.；同期塞琉古建城潮如 Zeugma「circa 300 BC」）
+    //    ⇒ 按标准取 **-300（约）** ⇒ **亚历山大剧本（前334–前323）那年还没有城，不上图**（第 25 路走霍姆斯缺口＝走地形，不是走城）。
+    city_emesa: -300,
     city_beileinisi: -280,      // 贝雷尼斯，约公元前280年托勒密二世建红海港
 
     // ── 安息 / 萨珊 ──

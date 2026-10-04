@@ -577,8 +577,13 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             //    公元前331年晚春或初夏自埃及出发，向东北穿过叙利亚，七八月至幼发拉底河塔普萨库斯，九月下旬至底格里斯河。
             //    路标取沿途已有据点：加沙（公元前332年加沙围城）、阿卡（推罗已是战场，取其近旁）、大马士革、
             //    塔普萨库斯（公元前331年7月渡幼发拉底，阿里安 III.7）、尼西比斯、尼尼微，全程陆路。
-            //    🔴 [2026-10-02 主人定案改走阿勒颇] 实测沿路网走的是 推罗→阿勒颇（468km）→塔普萨库斯（149km）→埃德萨→尼西比斯→尼尼微，全程陆路且避开叙利亚大漠。
-            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_matelugang', 'city_xiwa', 'city_baihaliye', 'city_mengfeisi', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_alepo', 'city_tapusakusi', 'city_nixibisi', 'city_niniwei'],   // 段3-3：加沙→佩鲁西姆→孟菲斯→亚历山大→马特鲁→锡瓦→拜哈里耶（东归穿黑白沙漠，363 km）→回孟菲斯（333 km）（阿里安 III.3-4）；段4-1：回程经佩鲁西姆→加沙→推罗→阿勒颇→塔普萨库斯（渡幼发拉底，III.7）→尼西比斯→尼尼微→高加米拉
+            // 🔴 [2026-10-02 主人定案改走阿勒颇] 实测沿路网走的是 推罗→阿勒颇（468km）→塔普萨库斯（149km）→埃德萨→尼西比斯→尼尼微，全程陆路且避开叙利亚大漠。
+            // 🔴 [2026-10-05 主人定案改走叙利亚内陆走廊] 第 25 路改为 **推罗 → 大马士革 → 埃梅萨（今霍姆斯）→ 阿勒颇**：
+            //    主人已画好「大马士革—埃梅萨」「埃梅萨—阿勒颇」两条路；实测 150＋151＋224＝**525 km**（直线 372＝1.41 倍 ✓），
+            //    三段各在 150–500 ⇒ 自然切成三条路。**必须写这两个路标**：不写，寻路照旧走较短的海岸线（468 km 经拉塔基亚→安提俄基亚）。
+            //    ⚠️ 埃梅萨按「据点显示标准」是前300（约）塞琉古一世所建 ⇒ **前331 那年还没有城**：路照走、图上只灰色名字、
+            //       播报不许念「埃梅萨／霍姆斯」（编辑器会照实报一条年代闸说明）。
+            marchWaypoints: ['city_peiluximu', 'city_mengfeisi', 'city_yalishanda', 'city_matelugang', 'city_xiwa', 'city_baihaliye', 'city_mengfeisi', 'city_peiluximu', 'city_jiasa', 'city_tuile', 'city_damasikusi', 'city_emesa', 'city_alepo', 'city_tapusakusi', 'city_nixibisi', 'city_niniwei'],   // 段3-3：加沙→佩鲁西姆→孟菲斯→亚历山大→马特鲁→锡瓦→拜哈里耶（东归穿黑白沙漠，363 km）→回孟菲斯（333 km）（阿里安 III.3-4）；段4-1：回程经佩鲁西姆→加沙→推罗→大马士革→埃梅萨→阿勒颇→塔普萨库斯（渡幼发拉底，III.7）→尼西比斯→尼尼微→高加米拉
 
             // ── 攻方：马其顿与希腊联军 亚历山大 ──
             attackerFactionId: 'maqidun',
