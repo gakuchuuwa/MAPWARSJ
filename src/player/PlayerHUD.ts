@@ -467,7 +467,7 @@ export class PlayerHUD {
 
         singleRow.appendChild(secMid);
 
-        // ── 3. 控制区：自动模式、剧本/乱斗下拉、就近寻将、跟随视角 ──
+        // ── 3. 控制区：自动模式、剧本/乱斗下拉、跟随视角 ──
         const secControls = document.createElement('div');
         secControls.className = 'player-hud-section';
 
@@ -498,19 +498,6 @@ export class PlayerHUD {
         }
         planSel.addEventListener('change', () => hero.setAutoPlan(planSel.value as PlayerAutoPlan));
         secControls.appendChild(planSel);
-
-        // 📍 就近寻将
-        const nearLabel = document.createElement('label');
-        nearLabel.style.cssText = 'display:flex; align-items:center; gap:3px; cursor:pointer; font-size:11px; color:#dfc28c; font-weight:700; user-select:none;';
-        nearLabel.title = '开：只在身边一圈里抽签寻访，赶路最短；关：放宽到一州之地，更容易遇上别处的名将。两档都是加权抽签，不会死盯同一座城';
-        const nearCheck = document.createElement('input');
-        nearCheck.type = 'checkbox';
-        nearCheck.checked = hero.nearbyFirst;
-        nearCheck.style.cssText = 'cursor:pointer; accent-color:#d4af37; margin:0;';
-        nearCheck.addEventListener('change', () => hero.setNearbyFirst(nearCheck.checked));
-        nearLabel.appendChild(nearCheck);
-        nearLabel.appendChild(document.createTextNode('📍 就近寻将'));
-        secControls.appendChild(nearLabel);
 
         // ⏩ 10× 加速（🔴 [2026-10-02 主人令]「在玩家面板中添加一个十倍加速按钮」）
         if (this.deps.getSpeed && this.deps.setSpeed) {

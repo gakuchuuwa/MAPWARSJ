@@ -2545,8 +2545,7 @@ export class PlayerQuestSystem {
             this.visited.clear();
             fresh = tied;
         }
-        // K 由面板「就近寻将」定：开 = 1（永远挑最近的那座没去过的，路程最短 436km），
-        // 关 = 5（最近五座里抽，554km，留出随机性）。摸到的数量两档一样，K 只管路程。
+        // K 固定 = NEAR_K（最近五座里抽，554km，留出随机性）；「就近寻将」开关已按主人令删除。
         // 战败后这一趟：先把战场周边 POST_DEFEAT_MIN_KM 内的城整片剔掉，再照常「最近 K 座里抽」。
         // 于是落点自然落在闸外最近的那一圈（约 300~400km），既离开了刚打完的那片，也没被甩到天边。
         // 实测（scratch/_hunt_mindist.ts，430 座名将城）：第 5 近的城距离中位 312km，
@@ -2558,7 +2557,7 @@ export class PlayerQuestSystem {
             ) >= PlayerQuestSystem.POST_DEFEAT_MIN_KM);
             if (far.length) fresh = far;
         }
-        const K = this.deps.hero.nearbyFirst ? 1 : PlayerQuestSystem.NEAR_K;
+        const K = PlayerQuestSystem.NEAR_K;
         const ranked = fresh
             .map((c) => ({ c, d: PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude }) }))
             .sort((a, b) => a.d - b.d)
