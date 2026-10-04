@@ -92,8 +92,23 @@ export class CameraFollowUI {
     }
 
     public followPlayer(): void {
-        if (!this.playerHero) return;
+        if (!this.playerHero || this.parked) return;
         this.setFollow(this.playerHero.id, this.playerHero.name);
+    }
+
+    /**
+     * 🔴 [2026-10-04 主人定] 点世界小地图移镜头后，镜头停在那里：游戏里的自动跟随（行军、入伍等）不再把它拉回，
+     *    直到玩家自己点顶栏「跟随」（走 followPlayerByUser）。
+     */
+    private parked = false;
+    public parkCamera(): void {
+        this.parked = true;
+        this.cancelFollow();
+    }
+    /** 玩家手点「跟随」：解除停泊再跟随 */
+    public followPlayerByUser(): void {
+        this.parked = false;
+        this.followPlayer();
     }
 
     /** 玩家入伍/离队/改名后：对外的跟随 id 变了（军团 ↔ 本人），重新广播给引擎侧监听者 */

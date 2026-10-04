@@ -453,11 +453,12 @@ export class GameApp {
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();
-            // 右下角世界小地图（2026-10-04 主人定）：玩家位置 + 镜头范围框 + 走过的路线，战术模式里隐藏
+            // 右上角世界小地图（2026-10-04 主人定）：玩家位置 + 镜头范围框 + 走过的路线，战术模式里隐藏
             this.worldMiniMap = new WorldMiniMap(
                 this.map.getLeafletMap(),
                 () => this.playerHero?.getPosition() ?? null,
                 () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
+                () => this.cameraFollowUI?.parkCamera(),
             );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
@@ -987,7 +988,7 @@ export class GameApp {
                 quests.leaveHost();
                 this.cameraFollowUI.refreshPlayerFollow();
             },
-            followCamera: () => this.cameraFollowUI.followPlayer(),
+            followCamera: () => this.cameraFollowUI.followPlayerByUser(),
             releaseCamera: () => this.cameraFollowUI.cancelFollow(),
             isFollowing: () => this.cameraFollowUI.isFollowingPlayer(),
             getSpeed: () => this.timeSystem.getSpeed(),
