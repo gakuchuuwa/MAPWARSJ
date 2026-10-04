@@ -221,9 +221,22 @@ function startScene13War(
     gameLog('battle', `🎬 [Scene13War] 出兵口互攻启动: ${attRegion} vs ${defRegion}`);
 }
 
+/**
+ * 🔴 [2026-10-04 主人定「按专业游戏设计」] 镜头被世界小地图停在别处时，玩家所在军团一开战就自动跟随回军团 ——
+ *    否则下面各钩子都要求「镜头正在跟随参战军团」，这一仗会不进战术模式、在后台直接结算掉。
+ */
+function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[]): void {
+    const cam = app.cameraFollowUI;
+    const hero = app.playerHero;
+    if (!cam?.isParked() || !hero) return;
+    const mine = hero.getHostLegionId() ?? hero.id;
+    if (ids.includes(mine)) cam.followPlayerByUser();
+}
+
 /** 战斗 UI：仅在镜头跟随军团参战时才弹出。 */
 export function wireGameAppCombatUiHooks(app: GameApp): void {
     app.combatSystem.onBattleStart = (battle) => {
+        returnParkedCameraIfPlayerFights(app, [battle.attacker.id, battle.defender.id]);
         const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (!followedId) return;
         const isInvolved = battle.attacker.id === followedId || battle.defender.id === followedId;
@@ -313,6 +326,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         isNarrative,
         battleField
     ) => {
+        returnParkedCameraIfPlayerFights(app, [...attackers.map((u) => u.id), ...defenders.map((u) => u.id)]);
         const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (!followedId) return;
         const allIds = [...attackers.map((u) => u.id), ...defenders.map((u) => u.id)];
@@ -434,6 +448,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     };
 
     app.combatSystem.onRegionalBattleReinforcement = (battleField, joinedUnit) => {
+        returnParkedCameraIfPlayerFights(app, [joinedUnit.id]);
         const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (app.combatUI.isBoundToBattleField(battleField)) {
             app.combatUI.syncRegionalParticipantsFromBattleField(battleField);

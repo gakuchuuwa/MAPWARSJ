@@ -105,6 +105,7 @@ export class CameraFollowUI {
         this.parked = true;
         this.cancelFollow();
     }
+    public isParked(): boolean { return this.parked; }
     /** 玩家手点「跟随」：解除停泊再跟随 */
     public followPlayerByUser(): void {
         this.parked = false;

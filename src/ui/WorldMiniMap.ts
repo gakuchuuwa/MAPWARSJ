@@ -12,6 +12,8 @@ const MINI_W = 300;
 const MINI_H = 190;
 const LEVEL_MIN = 1;
 const LEVEL_MAX = 9;
+/** 默认级别（主人 2026-10-04 由 1 改为 4） */
+const LEVEL_DEFAULT = 4;
 /** 级别 1 的 Leaflet 缩放：世界宽 256·2^z = 小图宽 */
 const FIT_ZOOM = Math.log2(MINI_W / 256);
 const TICK_MS = 250;
@@ -98,7 +100,7 @@ export class WorldMiniMap {
         this.toggleBtn.addEventListener('click', () => this.setExpanded(!this.expanded));
 
         this.setExpanded(true);
-        this.setLevel(LEVEL_MIN);
+        this.setLevel(LEVEL_DEFAULT);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
     }
 
