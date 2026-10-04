@@ -466,8 +466,17 @@ export class Army implements IBattleUnit {
         //    松闸（播报念完）后下一帧自然又按「在行军且离终点还有 40 公里以上」回到长蛇阵。
         if (this.isMarchHeld()) { this.columnMarch = false; return; }
         const end = this.isMarching() ? this.getMarchEndPoint() : null;
-        this.columnMarch = !!end
-            && Math.hypot(this.position.lat - end.lat, this.position.lng - end.lng) * 111 > Army.COLUMN_DEPLOY_KM;
+        if (!end) { this.columnMarch = false; return; }
+        // 离终点按**剩余路线**量，不按直线：路线从终点旁边经过（第 16 场撒马尔罕⇄蓝氏城路过索格狄亚那岩）时，
+        // 直线距离会误判成「快到了」而展开成阵。超过 40 公里即可停止累加。
+        let km = 0;
+        let px = this.position.lat, py = this.position.lng;
+        for (let i = this.destination ? -1 : 0; i < this.pathQueue.length && km <= Army.COLUMN_DEPLOY_KM; i++) {
+            const p = i < 0 ? this.destination! : this.pathQueue[i];
+            km += Math.hypot(p.lat - px, p.lng - py) * 111;
+            px = p.lat; py = p.lng;
+        }
+        this.columnMarch = km > Army.COLUMN_DEPLOY_KM;
     }
 
     /** 这一趟行军的终点（路径最后一点；没有剩余路径时是当前目的地） */
