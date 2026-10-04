@@ -1088,7 +1088,7 @@ import { REGION_TO_DE_STYLE } from './cityDeStyle';
  *  判据：封建时代该文明的小城聚落，主流是夯土／砖石／土坯（→ 石墙）还是土垒木栅／原木栅（→ 木栅）。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
  *  ✅ 石墙：东亚 ASIA · 东南欧（拜占庭／高加索）EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · 普鲁 PURU（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS（大陆：高棉／蒲甘／越南）· 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN
  *  🌲 木栅：西欧 WEST（土丘木栅）· 东北欧 SLAV（原木堡寨）· 中亚 CEAS（游牧车阵木栅）· 安第斯 ANDE（原住民原木围栅）· 毡帐营地 YURT（营地自带栅栏，不走这里）
- *  例外（按二三级风格／区域压过母体）：日本 JAPAN、女真 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域 WESTERN、印加 INCA → 石墙。
+ *  例外（按二三级风格／区域压过母体）：日本 JAPAN、东北 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域 WESTERN、印加 INCA → 石墙。
  *  ⚠️ 斯巴达「不筑城墙」按木栅归（素材只有两种）。历史依据与逐文明考证见 AGENTS.md「三之四」。 */
 export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
     ASIA: true, EAST: true, MEDI: true, ORIE: true, INDI: true, PURU: true, SEAS: true, MESO: true, AFRI: true, PERSIAN: true, GREEK: true, THRACIAN: true,

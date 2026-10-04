@@ -42,7 +42,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "jianzhou_nvzhen": {
-        legionName: "城堡时代女真军团",
+        legionName: "城堡时代东北军团",
         legionType: "sub",
     },
     "shizhou": {
@@ -316,7 +316,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "cao_d": {
-        legionName: "古典时代华夏北方军团",
+        legionName: "古典时代华夏河朔军团",
         legionType: "sub",
     },
     "sima_d": {
@@ -372,7 +372,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xiqin": {
-        legionName: "城堡时代女真军团",
+        legionName: "城堡时代东北军团",
         legionType: "sub",
     },
     "li_s": {
@@ -1494,7 +1494,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "houliao": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "xianhai": {
@@ -1662,23 +1662,23 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "qidan": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "liao_d": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "dongdan": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "yel": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "kumoxi": {
-        legionName: "封建时代契丹军团",
+        legionName: "封建时代河西军团",
         legionType: "sub",
     },
     "sumo": {
@@ -1942,11 +1942,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "dajin": {
-        legionName: "城堡时代女真军团",
+        legionName: "城堡时代东北军团",
         legionType: "sub",
     },
     "jurchen": {
-        legionName: "城堡时代女真军团",
+        legionName: "城堡时代东北军团",
         legionType: "sub",
     },
     "muisca": {

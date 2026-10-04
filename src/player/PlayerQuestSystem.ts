@@ -2540,20 +2540,13 @@ export class PlayerQuestSystem {
         });
         if (tied.length === 1) return best;
 
-        // ③-0 **远游**：每 VOYAGE_EVERY 次寻将放一次不看距离的均匀抽签。
-        //    🔴 [2026-09-15 主人定]「一般就是就近，N 次后有一次不就近」。
-        //    没有它玩家永远到不了美洲 —— 旧大陆到新大陆最短城距是里斯本→安格拉 1568km，
-        //    而「最近 K 座」里永远有 K 座更近的没去过的城挡着，实测美洲命中恒为 0。
-        //    这一签只看兵多名将、完全不看距离，在同档候选里均匀抽。
-        this.huntCount++;
+        // ③-0 🔴 [2026-10-05 主人令「既然已经按建筑地区轮换了，就不要远游了」] **「远游」签已删除**：
+        //    原先每 VOYAGE_EVERY 次寻将放一次不看距离的均匀抽签（为的是能摸到美洲），
+        //    现在 62 类建筑风格挨个轮换本身就会走到每一类，再远游只会打乱轮换。
         // 🔴 [2026-09-16 主人定]「军团战败后重新寻将，不要找太近的 —— 太近的话刚打完又碰上」
-        //    标志只管**战败后的这一次**寻将，取出来就清掉；远游那一签本来就跨洲，不必再过滤，
-        //    但同样要把标志消费掉，否则会顺延到下一次普通寻将上。
+        //    标志只管**战败后的这一次**寻将，取出来就清掉，否则会顺延到下一次寻将上。
         const avoidNear = this.postDefeatHunt;
         this.postDefeatHunt = false;
-        if (this.huntCount % PlayerQuestSystem.VOYAGE_EVERY === 0) {
-            return tied[Math.floor(Math.random() * tied.length)] ?? best;
-        }
 
         // ③ 同档之间怎么挑：**最近 K 座里随机 + 排除已访问**。
         //    🔴 [2026-09-15 主人报障 → DD 分析 → 实测拍板] 前两版都被否掉了：
@@ -2564,17 +2557,23 @@ export class PlayerQuestSystem {
         //    取 200 是 276 位，**永久**才是 301 位（≈ 走遍全图）。排除的都是身边去过的城，
         //    于是每走一趟就把附近摘掉一座，逼着范围一圈圈往外扩 —— 而且平均路程反而更短
         //    （永久 424km ＜ 窗口200 的 478km），不存在「永久排除会越跑越远」。
-        //    实测 K=5 + 永久排除 + 远游20：摸到 295 位、平均每趟 554km。
+        //    实测 K=5 + 永久排除（＋当时的远游20）：摸到 295 位、平均每趟 554km —— 远游签已按主人令删除，此数是删除前的。
         //    验算脚本：scratch/_hunt_compare.ts（各方案横向对比）、scratch/_hunt_verify.ts（照抄本实现跑验收）。
         //    两者都要 node --import tsx --import ./scratch/vhook.mjs 跑（vhook 把 virtual:portrait-manifest 桩掉）。
         if (!me || typeof me.lat !== 'number') {
             return tied[Math.floor(Math.random() * tied.length)] ?? best;
         }
-        // 全去遍了就清空重来：城会易主、武将会死，隔了一整圈再回去是合理的。
+        // 🔴 [2026-10-05 主人令「名将改成优先，不然有的地区没有名将怎么办」]
+        //    名将是**优先**、不是硬筛：这一档的名将城都去过了 → 退到**本类里**还没去过的城兜底；
+        //    本类全去过，才清空重来（城会易主、武将会死，隔了一整圈再回去是合理的）。
         let fresh = tied.filter((c) => !this.visited.has(c.id));
         if (!fresh.length) {
-            this.visited.clear();
-            fresh = tied;
+            const inStyle = pool.filter((c) => !this.visited.has(c.id));
+            if (inStyle.length) fresh = inStyle;
+            else {
+                this.visited.clear();
+                fresh = tied;
+            }
         }
         // K 固定 = NEAR_K（最近五座里抽，554km，留出随机性）；「就近寻将」开关已按主人令删除。
         // 战败后这一趟：先把战场周边 POST_DEFEAT_MIN_KM 内的城整片剔掉，再照常「最近 K 座里抽」。
@@ -2599,17 +2598,12 @@ export class PlayerQuestSystem {
     /** 「最近 K 座里随机」的 K。摸到多少位与 K 无关（那是排除已访问决定的），K 只管每趟路程：
      *  实测 K=1→436km、3→519km、5→554km、8→649km。取 5 是在「路程短」和「别太可预测」之间。 */
     private static readonly NEAR_K = 5;
-    /** 每多少次寻将放一次「远游」。实测 10 次太密（光远游就把平均路程从 424 抬到 830km），
-     *  20 次是 554~616km 且仍能摸到美洲。 */
-    private static readonly VOYAGE_EVERY = 20;
     /** 🔴 [2026-09-16 主人定] 军团战败后那一次寻将的最小距离（km）：刚打完别在原地附近再卷进去。
      *  取 300：正好是「第 5 近的名将城」的中位距离（312km），相当于把平时会抽中的那最近五座整体推到圈外；
-     *  再大就开始抢远游那一签的活了。 */
+     *  再大就超出「离开刚打完那片」的本意了。 */
     private static readonly POST_DEFEAT_MIN_KM = 300;
     /** 下一次寻将要不要避开近处（军团覆灭时置位，用掉即清）。 */
     private postDefeatHunt = false;
-    /** 已自动寻将次数，只用来数远游节拍。 */
-    private huntCount = 0;
     /** 已拜访过的城（**永久**排除，去遍全图才清空）。这是「别困在一个圈里」的唯一机制。 */
     private readonly visited = new Set<string>();
     /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（62 类走完清空、重开一轮）。 */
@@ -2625,8 +2619,8 @@ export class PlayerQuestSystem {
      *   · 62 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
      *   · 玩家坐标取不到 → 在本轮未轮到的类里随机点一类（绝不卡死）。
      *
-     *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（兵力分档 / 名将 / 远游 / 最近 K 座）
-     *      一个字都没动，仍在 `pickAutoCity` 里原样跑。
+     *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（名将 → 兵力 / 最近 K 座）
+     *      仍在 `pickAutoCity` 里跑（「远游」签与「名将硬筛」已按主人令另行处理）。
      */
     private pickStyle62Pool(candidates: City[], me: { lat: number; lng: number }): City[] {
         const byStyle = new Map<string, City[]>();

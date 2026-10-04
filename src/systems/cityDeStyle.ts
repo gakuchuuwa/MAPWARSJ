@@ -179,7 +179,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     //   59 文明值本身不是 DE 素材前缀（DE 只有 16 套母体素材），城墙/城镇必须回落到母体，
     //   城堡则走 resolveCastleAsset 的「代表据点→势力→文化区→分支」四层。此处补 5 个
     //   REGION_TO_DE_STYLE 里原本缺失的 59 文明 key（其余 49 个已在上方覆盖）。
-    WEI: 'ASIA',        // 曹魏（华夏）
+    WEI: 'ASIA',        // 河朔（华夏）
     ROMA: 'MEDI',       // 罗马（地中海）
     INCA: 'ANDE',       // 印加（安第斯）
     ATHENIANS: 'GREEK', // 雅典（希腊）

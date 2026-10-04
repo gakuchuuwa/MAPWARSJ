@@ -221,14 +221,14 @@ export const FACTION_CASTLE: Readonly<Record<string, string>> = {
  */
 export const REGION_CASTLE: Record<RegionType, string> = {
     // ── 1. 东亚 / 中华文化区 (13 个) ──
-    CENTRAL: 'WEI_CASTLE_AGE3',             // 中原：曹魏高台（主人 2026-09-08 定：中原=曹魏 / 川蜀=蜀汉 / 江南=孙吴，三国配套）
+    CENTRAL: 'WEI_CASTLE_AGE3',             // 中原：河朔高台（主人 2026-09-08 定：中原=河朔 / 川蜀=巴蜀 / 江南=江南水榭，三国配套）
 
-    NORTH: 'WEI_CASTLE_AGE3',               // 北方：曹魏高台（主人 2026-09-11 定：中原北方套曹魏）
-    JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：孙吴水榭坞堡
-                   // 巴蜀：BASHU 不在 RegionType 枚举，走 59 支兜底 → SHU_CASTLE_AGE3 蜀汉高台阙楼
-    HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用契丹/黑水城形制
+    NORTH: 'WEI_CASTLE_AGE3',               // 北方：河朔高台（主人 2026-09-11 定：中原北方套河朔）
+    JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：水榭坞堡
+                   // 巴蜀：BASHU 不在 RegionType 枚举，走 59 支兜底 → SHU_CASTLE_AGE3 巴蜀高台阙楼
+    HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用黑水城形制
 
-    NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：女真金代居庸关
+    NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：金代居庸关
     KOREA: 'KORE_CASTLE_AGE3',               // 朝鲜：高丽山城
     JAPAN: 'ASIA_CASTLE_AGE3',               // 日本：日式天守阁
     JAPAN_ANTIQUITY: 'ASIA_CASTLE_AGE3',
@@ -355,7 +355,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SRIVIJAYA: 'SEAS_CASTLE_AGE3',            // 三佛齐在苏门答腊，用东南亚风格集本套
     KUSHAN: 'INDI_CASTLE_AGE3',               // 贵霜（大月氏）据犍陀罗，建筑为希腊—印度混合的犍陀罗式
     KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
-    KHITAN: 'KHIT_CASTLE_AGE3',              // 契丹：辽式边墙要塞
+    KHITAN: 'KHIT_CASTLE_AGE3',              // 河西：辽式边墙要塞
     UIGHUR: 'CEAS_CASTLE_AGE3',              // 回鹘：漠北窝鲁朵八里高台
     MOHE: 'JURC_CASTLE_AGE3',                // 靺鞨：海东盛国山城木石要塞
     ANGLO_SAXON: 'CELT_CASTLE_AGE3',          // 盎格鲁—撒克逊在不列颠岛，用海岛系而非大陆西欧
@@ -365,9 +365,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     LOMBARDS: 'SICI_CASTLE_AGE3',             // 伦巴第在意大利本土，用意大利—西西里堡而非泛西欧
     ROURAN: 'MONG_CASTLE_AGE3',               // 柔然据蒙古高原，是突厥、蒙古之前的漠北霸主
     SOGDIANS: 'PERS_CASTLE_AGE3',             // 粟特是河中伊朗语族，文化上属波斯圈而非草原
-    TANGUT: 'KHIT_CASTLE_AGE3',               // 西夏党项：主人 2026-09-08 定，与河西同用契丹/黑水城形制
+    TANGUT: 'KHIT_CASTLE_AGE3',               // 西夏党项：主人 2026-09-08 定，与河西同用黑水城形制
     JAVANESE: 'MALA_CASTLE_AGE3',            // 爪哇：南洋热带水寨要塞
-    JURCHEN: 'JURC_CASTLE_AGE3',             // 女真：金式边墙要塞
+    JURCHEN: 'JURC_CASTLE_AGE3',             // 东北：金式边墙要塞
     SELJUQ: 'TURK_CASTLE_AGE3',              // 塞尔柱：塞尔柱苏丹要塞
     OTTOMAN: 'TURK_CASTLE_AGE3',             // 奥斯曼：鲁梅利海峡要塞
     OTTOMAN_IMPERIAL: 'TURK_CASTLE_AGE3',    // 帝国奥斯曼：鲁梅利海峡要塞（复用）
@@ -379,9 +379,9 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SIKH: 'INDI_CASTLE_AGE3',                // 锡克：拉合尔拉合尔古堡
     HEBREWS: 'ORIE_CASTLE_AGE3',             // 希伯来：耶路撒冷大卫塔圣殿石堡
     WUSUN: 'CEAS_CASTLE_AGE3',               // 乌孙：伊犁赤谷城大漠要塞
-    QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用契丹/黑水城形制
+    QIANG: 'KHIT_CASTLE_AGE3',                // 先零羌：主人 2026-09-08 定，与河西同用黑水城形制
     YARLUNG: 'TIBET_CASTLE_AGE3',             // 🔴 [2026-09-11 主人「萨噶是羌，是青藏，是吐蕃，请按历史修复」]
-                                              //    古典雅隆＝雅隆河谷＝吐蕃发祥地，宗堡用藏式金顶（原误挂 KHIT 契丹堡）
+                                              //    古典雅隆＝雅隆河谷＝吐蕃发祥地，宗堡用藏式金顶（原误挂 KHIT 河西堡）
     NABATAEANS: 'ORIE_CASTLE_AGE3',          // 纳巴泰：佩特拉玫瑰悬崖石要塞
     HEPHTHALITES: 'CEAS_CASTLE_AGE3',        // 嚈哒：阿姆河火国城大漠要塞
     AINU: 'ASIA_CASTLE_AGE3',                // 阿伊努：莫约罗森林木栅山寨
@@ -407,7 +407,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     MAMLUKS: 'ORIE_CASTLE_AGE3',             // 马穆鲁克：开罗与阿勒颇苏丹要塞
     CRUSADERS: 'MEDI_CASTLE_AGE3',          // 十字军（阿卡），无专属；十字军城堡是拉丁人所建，取地中海套
     RUS: 'SLAV_CASTLE_AGE3',                  // 罗斯的克里姆林是东斯拉夫木石城塞，归斯拉夫
-    KARA_KHITAN: 'KHIT_CASTLE_AGE3',          // 西辽即契丹西迁所建，直接沿用契丹形制
+    KARA_KHITAN: 'KHIT_CASTLE_AGE3',          // 西辽即契丹西迁所建，直接沿用河西形制
     TIMURID: 'TURK_CASTLE_AGE3',              // 帖木儿是突厥化蒙古贵族，撒马尔罕城防属突厥—伊斯兰体系
     DELHI: 'INDI_CASTLE_AGE3',               // 德里：德里苏丹国西里要塞与德里红堡
     CASTILE: 'SPAN_CASTLE_AGE3',             // 卡斯蒂利亚：塞哥维亚与托莱多石砌城堡
@@ -670,9 +670,9 @@ export const BRANCH_CASTLE: Record<string, string> = {
 export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
     // ── 古典时代 (13 座) ──
     city_luoyang: 'CHIN_CASTLE_AGE3',                 // 中国（洛阳）：北方华北·汉唐城楼
-    city_chengdu: 'SHU_CASTLE_AGE3',                  // 蜀（成都）：蜀汉高台斗拱望楼
-    city_gusu: 'WU_CASTLE_AGE3',                      // 吴（姑苏）：孙吴水乡飞檐水榭
-    city_hedong: 'WEI_CASTLE_AGE3',                   // 曹魏（安邑）：邺城重檐铜雀楼
+    city_chengdu: 'SHU_CASTLE_AGE3',                  // 巴蜀（成都）：高台斗拱望楼
+    city_gusu: 'WU_CASTLE_AGE3',                      // 江南（姑苏）：水乡飞檐水榭
+    city_hedong: 'WEI_CASTLE_AGE3',                   // 河朔（安邑）：邺城重檐铜雀楼
     city_dublin: 'CELT_CASTLE_AGE3',                  // 凯尔特（都柏林）：苏格兰高地圆塔
     city_gaodacheng: 'BENG_CASTLE_AGE3',              // 孟加拉（高达城）：恒河三角洲砖石堡
     city_luoma: 'ROMA_CASTLE_AGE3',                   // 罗马（罗马城）：帝国古典方石要塞
@@ -696,7 +696,7 @@ export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
     city_teernuowo: 'BULG_CASTLE_AGE3',               // 保加利亚（特尔诺沃）：普雷斯拉夫圆顶城堡
     city_patan: 'GURJ_CASTLE_AGE3',                   // 瞿折罗（帕坦）：索姆纳特多层砂岩堡
     city_ailiwen: 'ARME_CASTLE_AGE3',                 // 亚美尼亚（埃里温）：埃奇米阿津石砌山顶堡
-    city_linhuang: 'KHIT_CASTLE_AGE3',                // 契丹（临潢府）：辽阳八角木石塔楼
+    city_linhuang: 'KHIT_CASTLE_AGE3',                // 河西（临潢府）：辽阳八角木石塔楼
 
     // ── 城堡时代 (29 座) ──
     city_lundun: 'CELT_CASTLE_AGE3',                  // 不列颠（伦敦）：苏格兰高地圆塔
@@ -725,7 +725,7 @@ export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
     city_bulage: 'BOHE_CASTLE_AGE3',                  // 波希米亚（布拉格）：卡尔施泰因城堡
     city_tanjiawuer: 'INDI_CASTLE_AGE3',              // 达罗毗荼（坦贾武尔）：坦贾武尔寺庙高塔堡
     city_dibilisi: 'GEOR_CASTLE_AGE3',                // 格鲁吉亚（第比利斯）：高加索斯万石塔古堡
-    city_huining: 'JURC_CASTLE_AGE3',                 // 女真（会宁府）：会宁府上京双檐角楼
+    city_huining: 'JURC_CASTLE_AGE3',                 // 东北（会宁府）：会宁府上京双檐角楼
     city_bacata: 'MUIS_CASTLE_AGE3',                  // 穆伊斯卡（巴卡塔）：瓜塔维塔黄金湖石堡
     city_guanabara: 'TUPI_CASTLE_AGE3',               // 图皮（瓜纳巴拉）：亚马逊雨林木栅重垒 (关隘)
 

@@ -23,7 +23,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_bosibolisi': 'PERSIAN_WONDER_ACHAEMENIDS',  // 波斯波利斯（阿契美尼德）
     'city_huneiduolala': 'SLAV_WONDER_MAGYARS',  // 胡内多阿拉（马扎尔，科文城堡）
     'city_bulage': 'SLAV_WONDER_BOHEMIANS',  // 布拉格（波西米亚）
-    'city_chengdu': 'ASIA_WONDER_SHU',  // 成都（蜀汉）
+    'city_chengdu': 'ASIA_WONDER_SHU',  // 成都（巴蜀）
     'city_samaila': 'ORIE_WONDER_SARACENS',  // 萨迈拉（阿拔斯第二都，螺旋塔）
     'city_deli': 'INDI_WONDER_HINDUSTANIS',  // 德里（德里苏丹国）
     'city_dibilisi': 'MEDI_WONDER_GEORGIANS',  // 第比利斯（格鲁吉亚）
@@ -42,7 +42,7 @@ export const CITY_WONDER: Record<string, string> = {
     'city_kyoto': 'ASIA_WONDER_JAPANESE',  // 京都（日本）
     'city_zhangguojuncheng': 'ASIA_WONDER_KHITANS',  // 彰国军城（应州，佛宫寺释迦塔所在地）
     'city_lisiben': 'MEDI_WONDER_PORTUGUESE',  // 里斯本（葡萄牙）
-    'city_luoyang': 'ASIA_WONDER_WEI',  // 洛阳（曹魏）
+    'city_luoyang': 'ASIA_WONDER_WEI',  // 洛阳（河朔）
     'city_shanghai': 'ASIA_WONDER_WU',  // 上海（静安寺所在地）
     'city_pagan': 'SEAS_WONDER_BURMESE',  // 蒲甘（缅甸）
     'city_palermo': 'MEDI_WONDER_SICILIANS',  // 巴勒莫（西西里）
