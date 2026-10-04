@@ -42,6 +42,7 @@ import { CombatUI } from '../ui/CombatUI'; // [NEW]
 import { BattleSceneLayer } from '../ui/BattleSceneLayer'; // [2026-08-09] 独立战斗场景（空壳）
 import { Scene13WarLayer } from '../ui/Scene13WarLayer'; // [2026-08-11 13 v2] 出兵口互攻演出层
 import { GameTimeHUD } from '../ui/GameTimeHUD';
+import { WorldMiniMap } from '../ui/WorldMiniMap';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { Army } from '../legion/Army';
@@ -136,6 +137,7 @@ export class GameApp {
     /** [2026-08-11 13 v2] 出兵口互攻演出层（替代旧剧本法编队演出，只画精灵） */
     public scene13War!: Scene13WarLayer;
     private gameTimeHUD!: GameTimeHUD;
+    private worldMiniMap: WorldMiniMap | null = null;
     public brawlFeedPanel!: BrawlFeedPanel; // 远征播报（ExpeditionUI/行为树）经 window.game 调用
     public roadRenderer!: SimpleVectorRoadRenderer;
     public cameraFollowUI!: CameraFollowUI; // [NEW] 军团跟随视角
@@ -451,6 +453,12 @@ export class GameApp {
 
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();
+            // 右下角世界小地图（2026-10-04 主人定）：玩家位置 + 镜头范围框 + 走过的路线，战术模式里隐藏
+            this.worldMiniMap = new WorldMiniMap(
+                this.map.getLeafletMap(),
+                () => this.playerHero?.getPosition() ?? null,
+                () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
+            );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
             this.timeSystem.setPaused(true);
