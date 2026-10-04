@@ -506,7 +506,7 @@ export class PlayerHero {
             .filter((x) => keys.includes(x.u.unitKey));
         if (!owned.length) return;
         const currentKey = this.getSelectedUnit()?.unitKey;
-        if (currentKey && keys.includes(currentKey)) return;
+        if (currentKey && (keys.includes(currentKey) || currentKey === this.legionCommanderKey())) return;
 
         const pick = owned[Math.floor(Math.random() * owned.length)];
         if (pick.i === this.selectedUnit) return;
