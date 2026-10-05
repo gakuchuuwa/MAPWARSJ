@@ -669,18 +669,25 @@ export class BattleField implements IOpeningPulseSink {
         return this.skillPulseFirstSide;
     }
 
-    /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
-    private pickPredictedSides(): void {
-        if (this.presetResult === 'attacker_win') {
-            this.predictedStrongerGroup = this.attackerGroup;
-            this.predictedWeakerGroup = this.defenderGroup;
-            return;
-        }
-        if (this.presetResult === 'defender_win') {
-            this.predictedStrongerGroup = this.defenderGroup;
-            this.predictedWeakerGroup = this.attackerGroup;
-            return;
-        }
+    /**
+     * 开局「定势」前的**技能与命运相**（必须与预设胜负无关地跑）：
+     *   ① 上脉冲水槽（`setActiveOpeningPulseSink`）—— 开局技脉冲要靠它入队；
+     *   ② 对抗系战前拦截（否决/夺取敌方战术技）；
+     *   ③ `applyOpeningTacticalPreRoll` —— **真正"放技 + 发脉冲"的地方**；
+     *   ④ 双方命运 luck ＋ 战力掷色（含名将掷点 ③④⑤）。
+     *
+     * 🔴 [2026-10-05 主人报障「战术模式下武将不释放武将技，看不到武将技脉冲」] 病灶与修法：
+     *   原来这段整块写在 `pickPredictedSides()` 里、**位于预设胜负的早退之后** ——
+     *   `presetResult === 'attacker_win' / 'defender_win'`（＝**剧本 21 场写死胜负的历史战役**）
+     *   在函数开头就 `return`，于是这段一次都不跑：局技已经由 `assignSituationalSkills()` 分配好
+     *   （真机实测攻方 `battleOverriddenSkillId = ts_278` 已写入），**机制不释放、脉冲不入队、UI 一张都不亮**。
+     *   项目自己的铁律就是「局技未设会让开局脉冲/战力/卡片三处不一致」——这里是它的反面：
+     *   技设了却整条链被跳过，同样三处不一致。
+     *   修法：本段**抽出来在早退之前调用**，任何战斗（含剧本预设胜负）都跑同一条技链；
+     *   预设胜负只用于「直接指定强弱」，不再顺带跳过技能。
+     * @returns 双方战力掷色（攻/守），预设胜负时调用方不使用该值
+     */
+    private runOpeningSkillAndFateRolls(): { attRoll: number; defRoll: number } {
         const attUnits = this.attackerGroup.units.map((bu) => bu.unit);
         const defUnits = this.defenderGroup.units.map((bu) => bu.unit);
         setActiveOpeningPulseSink(this);
@@ -740,10 +747,29 @@ export class BattleField implements IOpeningPulseSink {
                 `(文化修正后 ${attAdj.toFixed(0)} vs ${defAdj.toFixed(0)}，` +
                 `原兵力 ${this.attackerGroup.initialTotalTroops} vs ${this.defenderGroup.initialTotalTroops}，含命运系 luck)`
             );
-            this.applyPredictedSidesFromRoll(strategic.attRoll, strategic.defRoll);
+            return { attRoll: strategic.attRoll, defRoll: strategic.defRoll };
         } finally {
             setActiveOpeningPulseSink(null);
         }
+    }
+
+    /** 预设结果或「初始兵力 × 随机系数」一次定胜负走向 */
+    private pickPredictedSides(): void {
+        // 🔴 [2026-10-05] 技能与命运相**先跑**（预设胜负也不例外）——见 runOpeningSkillAndFateRolls 头注
+        const rolls = this.runOpeningSkillAndFateRolls();
+
+        // 剧本写死的胜负：只用于直接指定强弱，不再跳过技能链
+        if (this.presetResult === 'attacker_win') {
+            this.predictedStrongerGroup = this.attackerGroup;
+            this.predictedWeakerGroup = this.defenderGroup;
+            return;
+        }
+        if (this.presetResult === 'defender_win') {
+            this.predictedStrongerGroup = this.defenderGroup;
+            this.predictedWeakerGroup = this.attackerGroup;
+            return;
+        }
+        this.applyPredictedSidesFromRoll(rolls.attRoll, rolls.defRoll);
     }
 
     private applyPredictedSidesFromRoll(attRoll: number, defRoll: number): void {

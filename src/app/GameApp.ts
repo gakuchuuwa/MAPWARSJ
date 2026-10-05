@@ -454,11 +454,13 @@ export class GameApp {
             this.gameTimeHUD = new GameTimeHUD();
             this.gameTimeHUD.init();
             // 右上角世界小地图（2026-10-04 主人定）：玩家位置 + 镜头范围框 + 走过的路线，战术模式里隐藏
+            // 🔴 [2026-10-05 主人令] 新增两条：① 小地图上加「🧭 线路开关」按钮；② 玩家换军团 → 清空旧轨迹并重新显示线路
             this.worldMiniMap = new WorldMiniMap(
                 this.map.getLeafletMap(),
                 () => this.playerHero?.getPosition() ?? null,
                 () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
                 () => this.cameraFollowUI?.parkCamera(),
+                () => this.playerHero?.getHostLegionId() ?? null,
             );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
