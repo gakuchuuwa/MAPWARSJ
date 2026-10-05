@@ -36,11 +36,17 @@ export class WorldMiniMap {
     private plusBtn: HTMLButtonElement;
     private minusBtn: HTMLButtonElement;
     private toggleBtn: HTMLButtonElement;
+    /** 🧭 行军线路开关按钮（主人 2026-10-05 令「添加一个按钮功能，显示线路和不显示线路」） */
+    private trailBtn: HTMLButtonElement;
     private mini: L.Map;
     private viewRect: L.Rectangle;
     private trail: L.Polyline;
     private dot: L.Marker;
     private trailPts: L.LatLng[] = [];
+    /** 线路是否显示（按钮切换；换军团时会被强制打开并清空重记） */
+    private trailOn = true;
+    /** 上一次记录的宿主军团 id：变了＝玩家换了军团 → 清空轨迹、重新显示线路 */
+    private lastHostId: string | null = null;
     private level = LEVEL_MIN;
     private expanded = true;
     private timer: number;
@@ -51,6 +57,13 @@ export class WorldMiniMap {
         private readonly isTactical: () => boolean,
         /** 点小地图时先松开镜头跟随，不然跟随会马上把镜头拉回军团 */
         private readonly releaseCamera: () => void,
+        /**
+         * 🔴 [2026-10-05 主人令「玩家如果换了军团，就要重新显示行军线路」]
+         * 玩家当前所随军团 id（`playerHero.getHostLegionId()`）。它一变就说明换了军团：
+         * **清空旧轨迹 + 重新打开线路**，从新军团的当前位置重新记。
+         * 不传时该功能自动失效（与加此参数前行为一致）。
+         */
+        private readonly getHostLegionId?: () => string | null,
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -63,6 +76,7 @@ export class WorldMiniMap {
                     <span class="wm-level"></span>
                     <button class="wm-btn wm-plus" title="放大">+</button>
                 </span>
+                <button class="wm-btn wm-trail" title="隐藏行军线路">🧭</button>
                 <button class="wm-btn wm-toggle" title="收起"></button>
             </div>
             <div class="wm-body"></div>`;
@@ -72,6 +86,7 @@ export class WorldMiniMap {
         this.plusBtn = this.root.querySelector('.wm-plus') as HTMLButtonElement;
         this.minusBtn = this.root.querySelector('.wm-minus') as HTMLButtonElement;
         this.toggleBtn = this.root.querySelector('.wm-toggle') as HTMLButtonElement;
+        this.trailBtn = this.root.querySelector('.wm-trail') as HTMLButtonElement;
 
         this.mini = L.map(this.body, {
             zoomControl: false,
@@ -104,10 +119,39 @@ export class WorldMiniMap {
         this.plusBtn.addEventListener('click', () => this.setLevel(this.level + 1));
         this.minusBtn.addEventListener('click', () => this.setLevel(this.level - 1));
         this.toggleBtn.addEventListener('click', () => this.setExpanded(!this.expanded));
+        // 🔴 [2026-10-05 主人令] 线路开关：显示 / 不显示
+        this.trailBtn.addEventListener('click', () => this.setTrailOn(!this.trailOn));
 
         this.setExpanded(true);
         this.setLevel(LEVEL_DEFAULT);
+        this.setTrailOn(true);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
+    }
+
+    /** 线路显示开关（🧭 按钮）：关＝把折线从图上撤掉，采样照常记着，再打开即恢复 */
+    private setTrailOn(on: boolean): void {
+        this.trailOn = on;
+        this.trailBtn.classList.toggle('is-off', !on);
+        this.trailBtn.title = on ? '隐藏行军线路' : '显示行军线路';
+        if (on) this.trail.setLatLngs(this.trailPts);
+        else this.trail.setLatLngs([]);
+    }
+
+    /**
+     * 🔴 [2026-10-05 主人令「玩家如果换了军团，就要重新显示行军线路」]
+     * 换军团侦测：宿主军团 id 变了（入伍新军团／离队／军团覆灭后改投）→
+     * **清空旧轨迹**（那是上一支军团走过的路）→ **强制把线路重新打开** → 从此刻起重新记。
+     * 返回 true 表示这一拍刚换了军团（调用方据此跳过本拍采样，免得把旧位置记进新线）。
+     */
+    private syncHostLegion(): boolean {
+        if (!this.getHostLegionId) return false;
+        const id = this.getHostLegionId() ?? null;
+        if (id === this.lastHostId) return false;
+        this.lastHostId = id;
+        this.trailPts.length = 0;
+        this.trail.setLatLngs([]);
+        if (!this.trailOn) this.setTrailOn(true);   // 换了军团 → 重新显示
+        return true;
     }
 
     private setExpanded(on: boolean): void {
@@ -139,8 +183,10 @@ export class WorldMiniMap {
     private tick(): void {
         const hide = this.isTactical();
         this.root.style.display = hide ? 'none' : '';
+        // 🔴 [2026-10-05] 先看有没有换军团：换了就清空轨迹 + 重新显示线路（本拍不再采样，免得把旧位置续进新线）
+        const hostChanged = this.syncHostLegion();
         const p = this.getPlayerPos();
-        if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
+        if (!hostChanged && p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
             const last = this.trailPts[this.trailPts.length - 1];
             if (!last || Math.hypot(last.lat - p.lat, last.lng - p.lng) >= TRAIL_STEP_DEG) {
                 this.trailPts.push(L.latLng(p.lat, p.lng));
@@ -148,7 +194,7 @@ export class WorldMiniMap {
             }
         }
         if (hide || !this.expanded) return;
-        this.trail.setLatLngs(this.trailPts);
+        if (this.trailOn) this.trail.setLatLngs(this.trailPts);
         if (p) this.dot.setLatLng([p.lat, p.lng]);
         this.viewRect.setBounds(this.mainMap.getBounds());
         if (this.level > LEVEL_MIN) this.applyView();
@@ -196,6 +242,8 @@ export class WorldMiniMap {
                 border: 1px solid rgba(212, 175, 55, 0.45); border-radius: 3px;
             }
             .world-minimap .wm-btn:disabled { opacity: 0.35; cursor: default; }
+            /* 🧭 线路开关：亮＝显示中，暗＝已隐藏（主人 2026-10-05 令） */
+            .world-minimap .wm-btn.wm-trail.is-off { opacity: 0.4; color: #8a7f6a; }
             .world-minimap .wm-body {
                 width: ${MINI_W}px; height: ${MINI_H}px; background: #6395b8; cursor: pointer;
                 border-top: 1px solid rgba(212, 175, 55, 0.35);
