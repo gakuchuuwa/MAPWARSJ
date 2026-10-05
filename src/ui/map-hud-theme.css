@@ -368,8 +368,13 @@ body:has(#event-display.event-panel.is-collapsed) {
     --gold-glow: var(--map-hud-gold);
     --stone-border: var(--map-hud-line);
     --panel-bg: #211d17f7;
-    right: 16px;
-    bottom: 16px;
+    /* 🔴 [2026-10-05 主人令「把小地图移至右下角，贴边，固定」] 右下角让给小地图（301×217）：
+       本叠整块移到它左边（右缘正好贴小图左缘），**底边与小图一样贴屏幕底边**——否则本叠底边
+       （原 bottom:16）会压住小图顶边 20px（实测）。再让开右侧军情面板（--feed-panel-w，收起时为 0）。
+       数值 301 = WorldMiniMap 的 MINI_W(300) + 1px 边框。
+       ⚠️ 本文件晚于 stitch_bottom_hud.css 加载，这里的 right 才是最终生效的那一处（别再往那边写第二份）。 */
+    right: calc(301px + var(--feed-panel-w, 0px));
+    bottom: 0;
 }
 #game-time-hud .game-time-btn { min-height: 32px; border-radius: 6px; }
 #game-time-hud .hud-date-inner { color: var(--map-hud-gold); letter-spacing: .08em; }

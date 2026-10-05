@@ -50,7 +50,6 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'GREEK_WONDER_SPARTANS': -900,        // 斯巴达：约前10世纪多利亚人建城（约）
     'SLAV_WONDER_BULGARIANS': 907,        // 普雷斯拉夫圆形金教堂：约907年
     'MEDI_WONDER_SPANISH': 1220,          // 塞维利亚黄金塔：1220年
-    'EAST_WONDER_HUNS': 400,              // 塞格德凯旋门废墟：匈人时期约5世纪（虚构奇观，按时代约）
     'SCEN_COLOSSEUM': 80,                 // 罗马斗兽场：80年（弗拉维圆形剧场）
     'MEDI_WONDER_ITALIANS': 1098,         // 热那亚圣洛伦佐大教堂：1098年
     'SLAV_WONDER_LITHUANIANS': 1323,      // 维尔纽斯：1323年格迪米纳斯大公建城

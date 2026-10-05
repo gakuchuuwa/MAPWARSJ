@@ -50,7 +50,11 @@ export const CITY_WONDER: Record<string, string> = {
     'city_sparta': 'GREEK_WONDER_SPARTANS',  // 斯巴达
     'city_puleisilafu': 'SLAV_WONDER_BULGARIANS',  // 普雷斯拉夫（第一保加利亚帝国·圆形金教堂）
     'city_seville': 'MEDI_WONDER_SPANISH',  // 塞维利亚（黄金塔所在地）
-    'city_saigede': 'EAST_WONDER_HUNS',  // 🔴虚构凯旋门废墟≠罗马君士坦丁凯旋门；位置禁止改动
+    // 🔴 [2026-10-05 主人令「把君士坦丁凯旋门废墟这个特殊建筑删除，位置也不对」]
+    //    此处原有 `'city_saigede': 'EAST_WONDER_HUNS'`（塞格德·匈人「君士坦丁凯旋门废墟」）—— **已删**。
+    //    它本来就是**虚构**表现（素材是罗马残破拱门，却挂在匈牙利平原的塞格德），这就是主人说的「位置也不对」。
+    //    ⚠️ 别与罗马城那条 `ARCH_OF_CONSTANTINE`（真在罗马、紧邻斗兽场的君士坦丁凯旋门，见本文件 CITY_WONDER_EXTRA）混为一谈。
+    //    素材目录 `public/SUCAI_BUILDING/EAST_WONDER_HUNS/` 未删（仓库规矩：AI 不动用户素材文件），只是不再挂给任何据点。
     'city_luoma': 'SCEN_COLOSSEUM',  // 罗马城（罗马斗兽场·弗拉维圆形剧场）
     'city_genoa': 'MEDI_WONDER_ITALIANS',  // 热那亚（意大利·圣洛伦佐大教堂）
     'city_weierniwusi': 'SLAV_WONDER_LITHUANIANS',  // 维尔纽斯（立陶宛）

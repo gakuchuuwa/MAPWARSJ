@@ -1,7 +1,13 @@
 import L from 'leaflet';
 
 /**
- * 右上角世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」「放到右上角，贴着屏幕边缘」）。
+ * 世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」；
+ * 2026-10-05 主人令「把小地图移至右下角，贴边，固定」→ 由右上角改挂**右下角、右/下都贴屏幕边**）。
+ *
+ * 🔴 贴右下角之后与右下角的**时间控制面板**（`#game-time-hud`：收起是「控制」按钮、展开是「坐标/播放」那一叠）
+ *    撞车 —— 实测小图 301×217 会整块压住它（也就点不到「播放」）。处置（2026-10-05 主人选定）：
+ *    小地图严格贴右下角，**时间面板整叠让到小地图左边**（`map-hud-theme.css` 的 `#game-time-hud`：
+ *    `right: calc(301px + var(--feed-panel-w))`、`bottom: 0`），两者都不挡。
  *
  * - 级别 1 ～ 9（主人 2026-10-04 加到 9）：1 = 全世界（按小图宽度把整个世界装进框里，固定不跟随）；2 ～ 9 依次放大，以玩家为中心并跟着走。
  * - 画三样：大地图当前镜头范围框、玩家位置点（不闪动，主人定「会吸引视线」）、玩家走过的路线。
@@ -104,23 +110,6 @@ export class WorldMiniMap {
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
     }
 
-    /**
-     * 顶边固定在玩家面板（#player-hero-panel）**展开时**的高度下面：面板展开、收起时小图都原地不动，也不重叠
-     * （主人 2026-10-04「玩家面板缩放，小地图也跟着动，这样是不对的」）。
-     * offsetHeight 不受面板收起用的 translateY 影响，只在面板内容高度变了时才变。
-     */
-    private panelBound = false;
-    private bindPlayerPanel(): void {
-        const panel = document.getElementById('player-hero-panel');
-        if (!panel) return;
-        this.panelBound = true;
-        const sync = (): void => {
-            this.root.style.top = `${getComputedStyle(panel).display !== 'none' ? panel.offsetHeight : 0}px`;
-        };
-        new ResizeObserver(sync).observe(panel);
-        sync();
-    }
-
     private setExpanded(on: boolean): void {
         this.expanded = on;
         this.root.classList.toggle('is-collapsed', !on);
@@ -150,7 +139,6 @@ export class WorldMiniMap {
     private tick(): void {
         const hide = this.isTactical();
         this.root.style.display = hide ? 'none' : '';
-        if (!this.panelBound) this.bindPlayerPanel();
         const p = this.getPlayerPos();
         if (p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
             const last = this.trailPts[this.trailPts.length - 1];
@@ -178,11 +166,14 @@ export class WorldMiniMap {
         st.id = 'world-minimap-style';
         st.textContent = `
             .world-minimap {
-                /* 右上角：右边贴玩家面板右缘（= 右侧军情面板宽，没开时为 0 即贴屏幕边），顶边由 bindPlayerPanel() 定在玩家面板展开高度下 */
-                position: fixed; right: var(--feed-panel-w, 0px); top: 0; z-index: 10002;
+                /* 右下角：右、下都贴屏幕边（不随任何面板伸缩移动，也不随镜头动） */
+                position: fixed; right: 0; bottom: 0; z-index: 10002;
                 width: ${MINI_W}px;
+                /* 高度写死 = 头 24 + 体 190 + 上边框 1（+ 2 为余量）＝217：
+                   下边贴屏幕边，头与体就能完整露出（不写死会被屏幕底裁掉一截） */
+                height: ${24 + MINI_H + 3}px; box-sizing: border-box;
                 background: rgba(25, 20, 14, 0.92);
-                border: 1px solid rgba(212, 175, 55, 0.55); border-right: none; border-radius: 0 0 0 6px;
+                border: 1px solid rgba(212, 175, 55, 0.55); border-right: none; border-bottom: none; border-radius: 6px 0 0 0;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
                 font-family: inherit; color: #f5e6c8; user-select: none;
             }
@@ -201,7 +192,7 @@ export class WorldMiniMap {
             .world-minimap .wm-btn:disabled { opacity: 0.35; cursor: default; }
             .world-minimap .wm-body {
                 width: ${MINI_W}px; height: ${MINI_H}px; background: #6395b8; cursor: pointer;
-                border-top: 1px solid rgba(212, 175, 55, 0.35); border-radius: 0 0 0 6px;
+                border-top: 1px solid rgba(212, 175, 55, 0.35);
             }
             /* 全局给瓦片加宽了半像素（GameMap.installTileSeamFix，给大地图堵缝用），在小图里反而画出一道白线（实测），小图里改回正好 256 */
             .world-minimap .wm-body img.leaflet-tile { width: 256px !important; height: 256px !important; }
