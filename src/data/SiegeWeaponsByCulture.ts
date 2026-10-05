@@ -340,7 +340,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },
-    '城堡时代东北军团': {
+    '城堡时代白山黑水军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },

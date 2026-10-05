@@ -647,6 +647,7 @@ export class PlayerHero {
             this.army.setPosition(p.lat, p.lng);
         }
         this.hostLegionId = null;
+        this.army.setVisible(true);   // 离队：不再跟随军团隐身
         // [2026-09-05 玩家] 退出势力：离队后不再属于该势力，不挂势力旗帜
         this.factionId = null;
         this.army.setFactionId('');
@@ -882,6 +883,8 @@ export class PlayerHero {
             const p = host.getPosition();
             this.army.setPosition(p.lat, p.lng);
             this.army.isOnSea = host.isOnSea;
+            // 随军军团隐身（神出鬼没等）时玩家精灵跟着隐身/现形
+            if (this.army.visible !== host.visible) this.army.setVisible(host.visible);
             const hr = host.getRenderer();
             if (host.isOnSea) {
                 // 🔴 [2026-09-09 主人定] 有势力 → 画势力舰队兵模（shipKey 内部已按势力/军团取），

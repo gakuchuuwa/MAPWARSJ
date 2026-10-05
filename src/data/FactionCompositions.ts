@@ -50,7 +50,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "jianzhou_nvzhen": {
-        legionName: "城堡时代东北军团",
+        legionName: "城堡时代白山黑水军团",
         legionType: "sub",
     },
     "shizhou": {
@@ -380,7 +380,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xiqin": {
-        legionName: "城堡时代东北军团",
+        legionName: "城堡时代白山黑水军团",
         legionType: "sub",
     },
     "li_s": {
@@ -1950,11 +1950,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "dajin": {
-        legionName: "城堡时代东北军团",
+        legionName: "城堡时代白山黑水军团",
         legionType: "sub",
     },
     "jurchen": {
-        legionName: "城堡时代东北军团",
+        legionName: "城堡时代白山黑水军团",
         legionType: "sub",
     },
     "muisca": {

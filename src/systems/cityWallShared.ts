@@ -1086,15 +1086,30 @@ import { REGION_TO_DE_STYLE } from './cityDeStyle';
 /** 🔴 [2026-10-02 主人定「城型即时代：城寨＝古典、小城＝封建、中城＝城堡、大城＝帝国」，小城围墙按**封建时代（公元 400~1050 年）**算]
  *  小城围墙是石墙还是木栅，**按建筑风格（16 母体）定**，战略地图与战术模式都调这一个函数（不再按「区域」）。
  *  判据：封建时代该文明的小城聚落，主流是夯土／砖石／土坯（→ 石墙）还是土垒木栅／原木栅（→ 木栅）。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
- *  ✅ 石墙：东亚 ASIA · 东南欧（拜占庭／高加索）EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · 普鲁 PURU（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS（大陆：高棉／蒲甘／越南）· 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN
- *  🌲 木栅：西欧 WEST（土丘木栅）· 东北欧 SLAV（原木堡寨）· 中亚 CEAS（游牧车阵木栅）· 安第斯 ANDE（原住民原木围栅）· 毡帐营地 YURT（营地自带栅栏，不走这里）
- *  例外（按二三级风格／区域压过母体）：日本 JAPAN、东北 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域 WESTERN、印加 INCA → 石墙。
- *  ⚠️ 斯巴达「不筑城墙」按木栅归（素材只有两种）。历史依据与逐文明考证见 AGENTS.md「三之四」。 */
+ *  ✅ 石墙：东亚 ASIA · 东南欧（拜占庭／高加索）EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · 普鲁 PURU（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS（大陆：高棉／蒲甘／越南）· 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN · **西欧 WEST（2026-10-05 改，见下）**
+ *  🌲 木栅：东北欧 SLAV（原木堡寨）· 中亚 CEAS（游牧车阵木栅）· 安第斯 ANDE（原住民原木围栅）· 毡帐营地 YURT（营地自带栅栏，不走这里）
+ *  例外（按二三级风格／区域压过母体）：日本 JAPAN、东北 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY、**维京 VIKINGS、凯尔特 CELTS** → 木栅；西域 WESTERN、印加 INCA → 石墙。
+ *  ⚠️ 斯巴达「不筑城墙」按木栅归（素材只有两种）。历史依据与逐文明考证见 AGENTS.md「三之四」。
+ *
+ *  🔴 [2026-10-05 主人令「WEST 这一档一刀切判木栅，不符合历史……按历史修复」→ 最小、最贴史实的一刀]
+ *    **WEST 由木栅改判石墙**，同时把 **VIKINGS / CELTS 补进木栅例外**（它们的城防传统是土垒木栅／环堡，与大陆石墙城不是一回事）。
+ *    史实依据：大陆中世纪西欧（法兰西／德意志／英格兰／低地）诸城，封建时代主流城防是**石／砖墙**——
+ *      布鲁日（1127 特许状即提石墙）、不莱梅（1229 石墙）、牛津（12 世纪）、科隆与美因茨（罗马旧墙续用并加固）、
+ *      图尔／纳博讷（罗马石墙）、约克（罗马石墙）、乌得勒支、什切青、海牙等皆为砖石城防；
+ *      而「土丘木栅（motte-and-bailey）／环形堡」是**维京**与**凯尔特**的传统形制 —— 那两档在库里已有自己的二三级风格键，
+ *      故木栅的典型归它们，WEST 这一档留石墙。
+ *    实测影响（`scratch/_audit_west_wall_flip.mts`，本次改动 vs 改前判据）：**木栅→石墙 24 座、石墙→木栅 0 座**。
+ *      母体落在 WEST 的小城 30 座 → **石墙 24 / 木栅 6**（木栅＝VIKINGS 2 ＋ CELTS 3 ＋ 拉赫修院 1）。
+ *    ⚠️ **BRITONS 那 3 座**（温彻斯特/格洛斯特有罗马石墙、坎佩尔是木栅）主人指定本次不动；
+ *      但它们的 deStyle 就是 WEST，随母体一并转石墙（现判：温彻斯特石、格洛斯特石、坎佩尔石）—— 逐座给依据后再定。 */
 export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
     ASIA: true, EAST: true, MEDI: true, ORIE: true, INDI: true, PURU: true, SEAS: true, MESO: true, AFRI: true, PERSIAN: true, GREEK: true, THRACIAN: true,
-    WEST: false, SLAV: false, CEAS: false, ANDE: false, YURT: false,
+    // 🔴 [2026-10-05 主人令] WEST：false → true（西欧大陆诸城史实是石／砖墙）
+    WEST: true, SLAV: false, CEAS: false, ANDE: false, YURT: false,
 };
-const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'NORTHEAST', 'MONGOL', 'MOBEI_MONGOL', 'CUMAN', 'MALAY']);
+// 🔴 [2026-10-05 主人令] 补入 VIKINGS（维京环形堡＝土垒木栅）与 CELTS（凯尔特环堡＝土垒木栅）：
+//    它们本来只靠"母体判木栅"间接得到木栅，WEST 改石墙后必须显式列出，否则会被顺手改成石墙。
+const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'NORTHEAST', 'MONGOL', 'MOBEI_MONGOL', 'CUMAN', 'MALAY', 'VIKINGS', 'CELTS']);
 /** 母体判木栅、但这个二三级风格史载是石／土坯墙 → 石墙：西域绿洲 WESTERN（高昌、交河、于阗屯堡，夯土土坯，母体落在中亚）、印加 INCA（安第斯干砌石，母体落在安第斯）。 */
 const SMALL_CITY_STONE_OVERRIDE = new Set(['WESTERN', 'INCA']);
 
