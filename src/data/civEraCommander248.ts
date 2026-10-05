@@ -10,7 +10,7 @@
  *    · 同一格有多个兵模时，每局从随机池里随机挑：本局开始时抽一个随机种子，同一局内同一武将始终是同一个，下一局重新抽。
  */
 import { GENERAL_ERA, type GeneralEra } from './GeneralEra';
-import { getFactionIdOfGeneral } from './FactionGenerals';
+import { getFactionIdOfGeneral, getFactionGeneral } from './FactionGenerals';
 import { CITIES_V2 } from './cities_v2';
 
 export type CivEraCell = readonly string[];
@@ -146,19 +146,48 @@ function stableHash(s: string): number {
     return Math.abs(h);
 }
 
+/** 该时代所有文明的兵模并集（去重）：武将查不到所属文明时的全局随机池。 */
+const _eraGlobalPool = new Map<GeneralEra, string[]>();
+function eraGlobalPool(era: GeneralEra): string[] {
+    let pool = _eraGlobalPool.get(era);
+    if (!pool) {
+        const set = new Set<string>();
+        for (const row of Object.values(CIV_ERA_COMMANDER_248)) for (const k of row[era]) set.add(k);
+        pool = [...set];
+        _eraGlobalPool.set(era, pool);
+    }
+    return pool;
+}
+
 /**
  * 248 主将兵模：武将 → 所属文明（按势力据点推）→ 按武将年代取该格兵模。
- * 武将没有势力、势力查不到文明、表里没这个文明时返回 null（由上层继续回落，绝不兜底成华夏）。
+ * 🔴 [2026-10-05 主人令「每个军团都有主将队」] 武将没有势力、势力查不到文明时，不再返回空，
+ *    改从该时代全部文明的兵模池里按本局种子随机取一个（宁可放错，不能不套；绝不兜底成华夏）。
  */
 export function resolveCivEraCommander(generalId: string | null | undefined): string | null {
     if (!generalId) return null;
     const era: GeneralEra = GENERAL_ERA[generalId] ?? 'castle';
     const factionId = getFactionIdOfGeneral(generalId);
-    if (!factionId) return null;
-    const civ = civOfFaction(factionId, era);
+    const civ = factionId ? civOfFaction(factionId, era) : null;
     const row = civ ? CIV_ERA_COMMANDER_248[civ] : undefined;
-    if (!row) return null;
-    const cell = row[era];
-    if (!cell || cell.length === 0) return null;
+    const own = row?.[era];
+    const cell = own && own.length > 0 ? own : eraGlobalPool(era);
+    if (cell.length === 0) return null;
     return cell[stableHash(generalId + ':' + SESSION_SEED) % cell.length];
+}
+
+/**
+ * 没有武将的军团的主将队兵模（🔴 [2026-10-05 主人令「没有武将的军团也用英雄，每个军团都必须有」]）。
+ * 按军团所属势力推：势力开局名将的时代 + 势力据点定的文明 → 取该格兵模；势力查不到就取该时代全局池。
+ * `seedKey` 只用来在池里稳定地挑一个（本局内同一势力永远同一个），传势力 id 或军团名即可。
+ */
+export function resolveFactionCommander(factionId: string | null | undefined, seedKey: string): string | null {
+    const gid = factionId ? getFactionGeneral(factionId)?.generalId : null;
+    const era: GeneralEra = (gid ? GENERAL_ERA[gid] : undefined) ?? 'castle';
+    const civ = factionId ? civOfFaction(factionId, era) : null;
+    const row = civ ? CIV_ERA_COMMANDER_248[civ] : undefined;
+    const own = row?.[era];
+    const cell = own && own.length > 0 ? own : eraGlobalPool(era);
+    if (cell.length === 0) return null;
+    return cell[stableHash((factionId ?? '') + ':' + seedKey + ':' + SESSION_SEED) % cell.length];
 }

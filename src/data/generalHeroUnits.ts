@@ -12,7 +12,7 @@
  * 🔴 剧本模式：每个主角武将的主将队兵种在事件编辑器里**必选**（事件字段 commanderUnit），按素材样貌选、不看兵名。
  */
 import { getScriptCommanderUnit } from '../events/scriptPeriod';
-import { resolveCivEraCommander } from './civEraCommander248';
+import { resolveCivEraCommander, resolveFactionCommander } from './civEraCommander248';
 
 /** 武将 → 专属英雄兵种（WAR_TYPES 键）。只登记有现成素材的 */
 export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
@@ -105,19 +105,22 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gelujiya_tamaer: 'hero_tamar',
     qincha_baqiman: 'hero_cumanchief',
     aiaoniya_alisita: 'hero_aristagoras',
+    gen_jogaila: 'hero_jogaila',
 };
 
 /** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
-export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[]): string | null {
+export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string }): string | null {
     const picked = generalId ? getScriptCommanderUnit(generalId) : null;
     const hero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
     const civEra = generalId ? resolveCivEraCommander(generalId) : null;
-    return picked ?? hero ?? civEra ?? expandedSlots[0] ?? null;
+    // 没有武将的军团：按所属势力取英雄（每个军团都必须有主将队，见 resolveFactionCommander）
+    const byFaction = !generalId && ctx ? resolveFactionCommander(ctx.factionId, ctx.seedKey ?? '') : null;
+    return picked ?? hero ?? civEra ?? byFaction ?? expandedSlots[0] ?? null;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */
-export function withCommander(generalId: string | null | undefined, expandedSlots: string[]): string[] {
+export function withCommander(generalId: string | null | undefined, expandedSlots: string[], ctx?: { factionId?: string | null; seedKey?: string }): string[] {
     if (expandedSlots.length !== 9) return expandedSlots;
-    const cmd = commanderUnitOf(generalId, expandedSlots);
+    const cmd = commanderUnitOf(generalId, expandedSlots, ctx);
     return cmd ? [...expandedSlots, cmd] : expandedSlots;
 }
