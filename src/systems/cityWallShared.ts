@@ -1140,6 +1140,7 @@ export function resolveTacticalWallSetup(
     regionCulture: string | undefined | null,
     cityId: string | undefined | null,
     rawBuildingStyle?: string | null,   // 据点原始建筑风格（二三级，如 JAPAN／NORTHEAST），小城石木判据要用
+    stockadeFenceKey?: StockadeFenceKey | null,   // 城寨：已按战略地图同一顺序定好的栅栏材质（见 resolveStockadeFenceKey），有就用它
 ): TacticalWallSetup {
     const isYurt = buildingStyle === 'YURT';
     const isStockade = cityType === 'stockade';
@@ -1176,7 +1177,7 @@ export function resolveTacticalWallSetup(
     }
 
     if (isStockade) {
-        const fenceKey = STYLE_TO_STOCKADE_FENCE[buildingStyle] || 'HARDWOOD';
+        const fenceKey = stockadeFenceKey || STYLE_TO_STOCKADE_FENCE[buildingStyle] || 'HARDWOOD';
         switch (fenceKey) {
             case 'FENCE':
                 return {

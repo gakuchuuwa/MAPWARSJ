@@ -8,6 +8,7 @@
  * 游戏取样式只许走这里，**不再按据点 id**（`stockadeWallStyles.ts` 里自动生成的 `pickStockadeWallStyle(cityId)` 作废不用）。
  */
 import { STOCKADE_WALL_STYLES, type StockadeWallStyle } from './stockadeWallStyles';
+import { STOCKADE_SHAPE_KEYS, STOCKADE_FENCE_SETS, getStockadeFenceSetByStyle, resolveStockadeShapeByFence, deHashString, type StockadeFenceKey } from '../systems/cityWallShared';
 
 export const STOCKADE_SHAPE_ORDER = ['square', 'round', 'octagon', 'rect', 'oval', 'trapezoid'] as const;
 export type StockadeShapeName = typeof STOCKADE_SHAPE_ORDER[number];
@@ -22,4 +23,24 @@ export function pickStockadeWallStyleByCategory(deStyle: string | null | undefin
         if (STOCKADE_WALL_STYLES[i].applyTo.includes(key)) return STOCKADE_WALL_STYLES[i];
     }
     return null;
+}
+
+/**
+ * 城寨最终用哪套栅栏材质 —— 与战略地图 TerritorySystem.buildDeStockadeStackHtml 同一顺序：
+ *   ① 据点单独指定的材质（stockadeFence），否则按建筑风格；② 形制（单独指定或按据点哈希）照材质落定；
+ *   ③ 这一类（建筑风格 × 形制）在围栏编辑器里存过自定义样式 → 用样式里的材质。
+ * 战术模式攻城战据此选城墙，保证与战略地图画的是同一套（2026-10-05 主人令「请修复」）。
+ */
+export function resolveStockadeFenceKey(
+    cityId: string,
+    deStyle: string,
+    explicitShape?: string | null,
+    explicitFence?: StockadeFenceKey | null,
+): StockadeFenceKey {
+    const builtin = (explicitFence && STOCKADE_FENCE_SETS[explicitFence]) ? STOCKADE_FENCE_SETS[explicitFence] : getStockadeFenceSetByStyle(deStyle);
+    const keys = STOCKADE_SHAPE_KEYS as readonly string[];
+    const baseIdx = explicitShape && keys.includes(explicitShape) ? keys.indexOf(explicitShape) : deHashString(cityId + '|stockade_wall_shape') % 6;
+    const shapeIdx = keys.indexOf(resolveStockadeShapeByFence(keys[baseIdx] as any, builtin.key));
+    const custom = pickStockadeWallStyleByCategory(deStyle, shapeIdx < 0 ? baseIdx : shapeIdx);
+    return custom ? custom.material : builtin.key;
 }

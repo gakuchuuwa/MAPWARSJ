@@ -47,6 +47,7 @@ import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
+import { resolveStockadeFenceKey } from '../data/stockadeWallStyleLookup';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { audioManager } from '../audio/AudioManager';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
@@ -4249,9 +4250,7 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-09-11 主人「和游戏同步」] 守方据点建筑风格：与战略地图同一解析源（只算一次，存起来）
         this.defenderMapStyle = (() => {
-            const c: any = this.defenderCityId
-                ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
-                : null;
+            const c: any = this.defenderCityRecord();
             if (!c) return null;
             return resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
         })();
@@ -4526,13 +4525,23 @@ export class Scene13WarLayer {
      * 守方是否为漠北蒙古风格（MOBEI_MONGOL / YURT 毡帐营地）。
      * 🔴 [2026-09-19 主人定] 漠北蒙古风格的战术模式应该和城寨野战一样：直接开战，没有攻城武器，没有坍塌。
      */
+    /**
+     * 守城据点数据：优先取游戏正在用的据点（剧本期按史实换过建筑风格的城，这里是换过的风格），取不到才退回原始数据表。
+     * 读守城建筑风格一律走这里，战术模式才与战略地图画的同一套（2026-10-05 主人令「请修复」）。
+     */
+    private defenderCityRecord(): any {
+        const id = this.defenderCityId;
+        if (!id) return null;
+        const rt: any = (window as any).game?.cityManager?.getCity?.(id);
+        if (rt) return { ...rt, lat: rt.latitude, lng: rt.longitude };
+        return (CITIES_V2 as any[]).find((x) => x.id === id) ?? null;
+    }
+
     private isMobeiMongolDefender(): boolean {
         if (this.battleType !== 'siege') return false;
         if (this.defenderMapStyle === 'YURT') return true;
         if (this.buildingStyleFor(1) === 'YURT') return true;
-        const c: any = this.defenderCityId
-            ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
-            : null;
+        const c: any = this.defenderCityRecord();
         return c?.buildingStyle === 'MOBEI_MONGOL' || c?.buildingStyle === 'YURT';
     }
 
@@ -5438,9 +5447,7 @@ export class Scene13WarLayer {
             //    守城方是**二级「蒙古」**（据点 buildingStyle === 'MONGOL'，不是三级漠北蒙古）时，
             //    大/中/小城的 9 建筑池里随机掺入 8 个真蒙古包（YURT_E~L，目录名直传 place() → 无风格前缀问题），
             //    最终栋数**恒为 9**（与战略地图 TerritorySystem、据点编辑页完全同一口径）。
-            const defenderCity: any = this.defenderCityId
-                ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)
-                : null;
+            const defenderCity: any = this.defenderCityRecord();
             const defenderIsMongol = !!defenderCity && defenderCity.buildingStyle === 'MONGOL';
             const cityPoolBuildings = (base: string[]): string[] =>
                 defenderIsMongol ? [...base, ...MONGOL_CITY_YURTS] : [...base];
@@ -5525,7 +5532,11 @@ export class Scene13WarLayer {
                 style,
                 this.sideCulture[1],
                 this.defenderCityId,
-                (this.defenderCityId ? (CITIES_V2 as any[]).find((x) => x.id === this.defenderCityId)?.buildingStyle : undefined) ?? null,
+                this.defenderCityRecord()?.buildingStyle ?? null,
+                // 城寨栅栏材质：与战略地图同一顺序（单独指定 → 建筑风格 → 编辑器分类样式）
+                this.defenderCityType === 'stockade' && this.defenderCityId
+                    ? resolveStockadeFenceKey(this.defenderCityId, style, this.defenderCityRecord()?.stockadeShape, this.defenderCityRecord()?.stockadeFence)
+                    : null,
             );
 
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
