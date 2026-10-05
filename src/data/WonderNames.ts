@@ -33,7 +33,6 @@ export const WONDER_NAME: Record<string, string> = {
     // ── 东欧/日耳曼 ──
     'EAST_WONDER_TEUTONS': '玛丽亚拉赫修道院',
     'EAST_WONDER_GOTHS': '狄奥多里克陵墓',
-    'EAST_WONDER_HUNS': '君士坦丁凯旋门废墟',
     'EAST_WONDER_VIKINGS': '博尔贡木板教堂',
     // ── 希腊（编年史 DLC） ──
     'GREEK_WONDER_ATHENIANS': '帕特农神庙',

@@ -676,6 +676,15 @@ export class PlayerQuestSystem {
         generalId: string,
     ): { event: HistoricalEvent; battlefieldId: string } | null {
         if (!generalId) return null;
+        // 🔴 [2026-10-05 主人报障「我选乱斗模式，自动后，依然会执行剧本」]
+        //    实测（headless Chrome，真 UI 下拉切乱斗）：抵达据点弹出的「⚔ 入伍随军」对话框
+        //    3 秒后自动确认（见 `PlayerHUD.showDialogue` 的 accent 自动点）→ 走
+        //    `onArrive` → 这条链 → 又接了亚历山大的「海姆斯山战役」，77 路 21 场照跑。
+        //    口径（主人 2026-10-05）：「剧本的自动是去找亚历山大，走剧本 21 场；
+        //      乱斗的自动是去找武将、找名将，按 59+3 个地区去找」——**两套玩法分开**。
+        //    本函数是剧本链的唯一入口（`onArrive` 城中会面、`onMeetArmy` 野外会面两处都只经它），
+        //    乱斗期返回 null → 两处都落回原有乱斗路（出征 / 复国 / 随军），剧本一场都不触发。
+        if (this.deps.hero.autoPlan !== 'script') return null;
         const all = findHistoricalEventsOfGeneral(generalId, (id) => {
             const c = this.deps.cityManager.getCity(id);
             return c ? { lat: c.latitude, lng: c.longitude } : undefined;
