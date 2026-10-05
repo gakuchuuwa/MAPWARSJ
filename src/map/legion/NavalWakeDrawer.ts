@@ -45,8 +45,8 @@ export class NavalWakeDrawer {
      * 🔴 [2026-10-01 主人定「船头浪花和船尾浪花对齐」]
      * DE 素材 16 向真实朝向角度映射（解决 (dir+14)%16 导致的 22.5° 偏航，东南/西南向严丝合缝）
      */
-    private static readonly FRONT_ROW_BY_DIR: number[] = [14, 0, 1, 2, 3, 4, 4, 4, 5, 6, 7, 8, 10, 11, 12, 13];
-    private static readonly BACK_ROW_BY_DIR: number[]  = [14, 15, 1, 2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    private static readonly FRONT_ROW_BY_DIR: number[] = [14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    private static readonly BACK_ROW_BY_DIR: number[]  = [14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
     /**
      * 贴图各行有效浪花图案相对于贴图几何中心 (width/2, height/2) 的真实物理重心偏移。

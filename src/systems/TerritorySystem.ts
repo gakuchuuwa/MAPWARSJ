@@ -2079,7 +2079,8 @@ export class TerritorySystem {
             && (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
                 || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass'));
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
-        useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region);
+        // 🔴 [2026-10-05] 传 bf.id：逐城石墙例外（维也纳）
+        useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region, bf.id);
         const faction = factionId ?? '';
         if (deStyle) {
             if (cityType === 'big_city') {
@@ -2158,7 +2159,8 @@ export class TerritorySystem {
 
         // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
         const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
-        useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion);
+        // 🔴 [2026-10-05] 传 city.id：逐城石墙例外（维也纳）
+        useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion, city.id);
 
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);

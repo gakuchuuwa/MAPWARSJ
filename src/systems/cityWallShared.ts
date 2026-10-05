@@ -1097,7 +1097,33 @@ export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
 const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'NORTHEAST', 'MONGOL', 'MOBEI_MONGOL', 'CUMAN', 'MALAY']);
 /** 母体判木栅、但这个二三级风格史载是石／土坯墙 → 石墙：西域绿洲 WESTERN（高昌、交河、于阗屯堡，夯土土坯，母体落在中亚）、印加 INCA（安第斯干砌石，母体落在安第斯）。 */
 const SMALL_CITY_STONE_OVERRIDE = new Set(['WESTERN', 'INCA']);
-export function smallCityUsesStoneWall(deStyle: string | undefined | null, rawStyle?: string | null, region?: string | null): boolean {
+
+/**
+ * 🔴 [2026-10-05 主人令「维也纳在游戏里是木栅小城，这条才是看起来最不伦不类的地方……按历史修复」]
+ *    **逐城石墙例外**（母体判木栅、但这**一座城**史载砖石城防者）。
+ *   为什么按城列而不动 `SMALL_CITY_STONE_BY_STYLE.WEST` 那一刀切：
+ *     WEST 母体底下压着 30 座解析到 WEST 的小城，其中确有一批（不莱梅/牛津/图尔/约克/乌得勒支…）
+ *     史上也是石墙，但**改母体会一次改掉 30 座城**，那超出主人这次点名的范围；
+ *     先把维也纳（主人点名的那一座）按史实定死，其余按同一标准逐座复核后另行呈报。
+ *
+ * 维也纳（`city_weiyeena`）史实：
+ *   · **1190 年代即有石城墙** —— 建城经费正是英王「狮心王」理查一世的赎金（1194 年交付）；
+ *   · 13 世纪城墙成环，**16 世纪（1529 年第一次土耳其围城前后）加筑意大利式棱堡**；
+ *   · 罗马时期此地为 Vindobona 军营（已有石构），中世纪为哈布斯堡治所与帝国都城。
+ *   故维也纳在任何一档都不是「土丘木栅」的聚落 —— 木栅小城与史实不符。
+ */
+const SMALL_CITY_STONE_BY_CITY = new Set<string>([
+    'city_weiyeena',   // 维也纳：1190s 石城墙（理查赎金）→ 16 世纪棱堡
+]);
+
+export function smallCityUsesStoneWall(
+    deStyle: string | undefined | null,
+    rawStyle?: string | null,
+    region?: string | null,
+    /** 据点 id（逐城例外用；不传则退化为按风格/区域判，行为与加此参数前一致） */
+    cityId?: string | null,
+): boolean {
+    if (cityId && SMALL_CITY_STONE_BY_CITY.has(cityId)) return true;   // 逐城例外优先于母体
     if (rawStyle && SMALL_CITY_WOOD_OVERRIDE.has(rawStyle)) return false;
     if (region && (region.includes('JAPAN') || SMALL_CITY_WOOD_OVERRIDE.has(region))) return false;
     if (rawStyle && SMALL_CITY_STONE_OVERRIDE.has(rawStyle)) return true;
@@ -1211,7 +1237,8 @@ export function resolveTacticalWallSetup(
     }
 
     if (cityType === 'small_city') {
-        if (smallCityUsesStoneWall(buildingStyle, rawBuildingStyle, regionCulture)) {
+        // 🔴 [2026-10-05] 传 cityId：逐城石墙例外（维也纳等，见 SMALL_CITY_STONE_BY_CITY）
+        if (smallCityUsesStoneWall(buildingStyle, rawBuildingStyle, regionCulture, cityId)) {
             return {
                 wallMat: 'STONE',
                 wBase: `${buildingStyle}_WALL_STONE`,

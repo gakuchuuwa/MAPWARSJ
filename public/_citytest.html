@@ -715,6 +715,15 @@
             <button type="button" class="stk-pill-btn" data-smallwall="stone2">石墙双门</button>
             <button type="button" class="stk-pill-btn" data-smallwall="stone4">石墙四门</button>
             <button type="button" class="stk-pill-btn" data-smallwall="palisade">栅栏</button>
+            <!-- 🔴 [2026-10-05 主人令「维也纳在游戏里是木栅小城……按历史修复」] 逐城石墙例外预览：
+                 `smallCityUsesStoneWall()` 新增第 4 参 cityId，本页把当前选的据点 id 传进去，
+                 两侧才与游戏同源（维也纳 city_weiyeena → 石墙）。不选＝不指定（行为与加此参前一致）。 -->
+            <span style="font-size:11px;color:#94a3b8;margin-left:6px;">据点:</span>
+            <select id="citytest-preview-city" title="逐城石墙例外预览（维也纳：1190s 石城墙）"
+                    style="font-size:11px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;padding:1px 4px;">
+              <option value="">（不指定）</option>
+              <option value="city_weiyeena">维也纳（逐城例外→石墙）</option>
+            </select>
           </div>
         </div>
         <div id="stageSmall" style="position:relative;width:100%;height:100%;pointer-events:none;"></div>
@@ -1564,6 +1573,9 @@ let curCenterCastle = 'auto'; // 'auto' | 'on' | 'off'
 let curPalisadeSet = 'rnd'; // 'rnd' | 'dark' | 'archaic'
 let curStockadeFence = 'auto'; // 'auto' | 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE'（城寨栅栏材质独立切换，看其它样式用）
 let curSmallWall = 'auto'; // 'auto' | 'stone2'（石墙双门）| 'stone4'（石墙四门）| 'palisade'（硬木栅栏）
+// 🔴 [2026-10-05] 逐城石墙例外预览用：当前指定的据点 id（空＝不指定）。
+//   与游戏同源：`smallCityUsesStoneWall(style, culture, culture, cityId)` 的第 4 参。
+let curPreviewCityId = '';
 
 /** 判断是否在城中心放置核心城堡：auto 时，日本（JAPAN）与青藏（TIBET）自动开启（与 TerritorySystem 对齐）；
  *  🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城 auto 时**一律开启**
@@ -2417,7 +2429,8 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
     } else {
       pieces = computeRingWall(baseSize, 5);
       // 小城石墙／木栅：按建筑风格（封建时代口径，smallCityUsesStoneWall，与主游戏同一个函数）
-      anchors = smallCityUsesStoneWall(curStyle, curCulture, curCulture) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
+      // 🔴 [2026-10-05] 加第 4 参 curPreviewCityId：逐城石墙例外（维也纳）与游戏同源
+      anchors = smallCityUsesStoneWall(curStyle, curCulture, curCulture, curPreviewCityId) ? getStoneAnchors(curStyle) : PALISADE_ANCHORS;
     }
   } else if (type === 'stockade') {
     /* 城寨围栏六选一：0 正方 / 1 圆城 / 2 八角 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
@@ -2769,7 +2782,7 @@ function renderGateCloseup(style, type, forceShape = null) {
   } else if (type === 'small') {
     const useStone = (curSmallWall === 'stone2' || curSmallWall === 'stone4') ? true
       : (curSmallWall === 'palisade') ? false
-      : smallCityUsesStoneWall(curStyle, curCulture, curCulture);
+      : smallCityUsesStoneWall(curStyle, curCulture, curCulture, curPreviewCityId);
     const a = (useStone ? getStoneAnchors(curStyle) : PALISADE_ANCHORS).GATE;
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
@@ -3452,6 +3465,13 @@ if (btnStkShape) {
 }
 
 // 事件委托：处理所有图片旁边的“其他样式”与形制胶囊按钮
+// 🔴 [2026-10-05] 逐城石墙例外预览：切换据点 → 重画（与游戏 smallCityUsesStoneWall 第 4 参同源）
+document.addEventListener('change', e => {
+  if (e.target && e.target.id === 'citytest-preview-city') {
+    curPreviewCityId = e.target.value || '';
+    refresh();
+  }
+});
 document.addEventListener('click', e => {
   const pill = e.target.closest('.stk-pill-btn');
   if (pill) {

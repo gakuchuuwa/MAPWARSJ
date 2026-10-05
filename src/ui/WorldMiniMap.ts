@@ -202,6 +202,7 @@ export class WorldMiniMap {
             }
             /* 全局给瓦片加宽了半像素（GameMap.installTileSeamFix，给大地图堵缝用），在小图里反而画出一道白线（实测），小图里改回正好 256 */
             .world-minimap .wm-body img.leaflet-tile { width: 256px !important; height: 256px !important; }
+            .world-minimap.is-collapsed { height: auto; width: auto; }
             .world-minimap.is-collapsed .wm-body { display: none; }
             .world-minimap.is-collapsed .wm-zoom { display: none; }
             .world-minimap .wm-dot span {

@@ -580,6 +580,12 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '东北欧军团_castle': {
         age: 'castle',
+        // 🔴 [2026-10-05 主人纠正「掷弹兵是城堡时代的，不是你说的哪种」→ 上一轮改动**已撤回**，恢复原值]
+        //    史实（我上一轮判错了，留档别重犯）：手榴弹**15 世纪已在用** ——
+        //      胡斯战争（1419–1434，Urbánek《Žižka a husitské válečnictví》）；
+        //      捷克军报：「手榴弹原理自 15 世纪起没怎么变」；奥斯曼法提赫时期 1475 斯库台围城亦用。
+        //    15 世纪正落在**城堡档（1050–1500）**，故本表 `SIEGE_UNITS.grenadier.age = 'castle'` 本来就是对的。
+        //    ⚠️ 别再拿「1667 年法国设掷弹兵连」当判据 —— 那是**兵种番号**的成立时间，不是兵器的出现时间。
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'grenadier', 'grenadier'],
     },
     '东北欧军团_imperial': {
