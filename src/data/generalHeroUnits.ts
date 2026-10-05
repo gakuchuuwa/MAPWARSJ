@@ -12,6 +12,7 @@
  * 🔴 剧本模式：每个主角武将的主将队兵种在事件编辑器里**必选**（事件字段 commanderUnit），按素材样貌选、不看兵名。
  */
 import { getScriptCommanderUnit } from '../events/scriptPeriod';
+import { resolveCivEraCommander } from './civEraCommander248';
 
 /** 武将 → 专属英雄兵种（WAR_TYPES 键）。只登记有现成素材的 */
 export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
@@ -102,11 +103,12 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gen_cunhambebe: 'hero_cunhambebe',
 };
 
-/** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 本军团前排兵种 */
+/** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
 export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[]): string | null {
     const picked = generalId ? getScriptCommanderUnit(generalId) : null;
     const hero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
-    return picked ?? hero ?? expandedSlots[0] ?? null;
+    const civEra = generalId ? resolveCivEraCommander(generalId) : null;
+    return picked ?? hero ?? civEra ?? expandedSlots[0] ?? null;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */

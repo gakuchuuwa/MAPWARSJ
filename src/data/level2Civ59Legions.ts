@@ -367,7 +367,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代蒙古军团', civ: '鲜卑漠南', age: 'castle', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
+        name: '城堡时代蒙古军团', civ: '漠北蒙古', age: 'castle', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
@@ -708,7 +708,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '封建时代鲜卑军团', civ: '漠北蒙古', age: 'feudal', deStyle: 'ASIA', region: 'STEPPE_FEUDAL' as RegionType,
+        name: '封建时代鲜卑军团', civ: '鲜卑漠南', age: 'feudal', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'crescent',
         shipId: 'CANOE',

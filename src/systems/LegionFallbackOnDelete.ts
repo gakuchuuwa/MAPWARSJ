@@ -75,7 +75,7 @@ export interface FallbackPlan {
 export const TIER3_FALLBACK_LEGION: Record<'TIBET' | 'WESTERN' | 'YURT', string> = {
     TIBET: '封建时代吐蕃军团',
     WESTERN: '古典时代西域军团',
-    YURT: '封建时代鲜卑军团',
+    YURT: '城堡时代蒙古军团',
 };
 
 /**
