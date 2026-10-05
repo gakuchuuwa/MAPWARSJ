@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 势力自定义军团方阵数据表 (Faction Legion Compositions)
  * 由独立军团编辑器 (http://localhost:5173/legion-editor.html) 生成与维护。
  *
@@ -1009,115 +1009,115 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "nifuhe": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "bailian": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "manzhou": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "manzhou_d": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "aisin_d": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "haixi_nvzhen": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "yeren_nvzhen": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "hezhe": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "agui": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "gumie": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "nanai": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "feiyaka": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "dawoer": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "suolun": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "jilin": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "keerqin": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "eluoke": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "kuye": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "ewenki": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "dongping": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "maomingan": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "aola": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "yehe": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "wula": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "qinghai": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "wenling": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "elunchunzu": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "weiyuan": {
-        legionName: "帝国时代满清军团",
+        legionName: "帝国时代八旗军团",
         legionType: "region",
     },
     "jiujiang": {
