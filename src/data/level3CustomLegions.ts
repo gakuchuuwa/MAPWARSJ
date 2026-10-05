@@ -160,7 +160,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'gastraphetes', count: 2 },
         ],
         regions: ['GREEK'],
-        parentLegion: '古典时代雅典军团',
+        // 🔴 [2026-10-05 主人定「这66的父级都是一级」] 三级基础军团的父级＝一级母体 → 古典希腊属希腊军团。
+        parentLegion: '希腊军团',
         shipId: 'HERO_DIONYSUS',
     },
     {
@@ -290,7 +291,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CANOE',
     },
     {
-        name: '古典时代匈奴军团',
+        name: '古典漠北军团',
         formationMode: 'echelon',
         slots: [
             { type: 'elite_tarkan', count: 4 },
@@ -340,18 +341,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '古典时代羌族军团',
         shipId: 'CANOE',
     },
-    {
-        name: '古典时代鲜卑军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'tiger_rider', count: 3 },
-            { type: 'xianbei_raider', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-        ],
-        regions: ['NORTHEAST'],
-        parentLegion: '东亚军团',
-        shipId: 'CANOE',
-    },
+    // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代鲜卑军团」。
+    //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
+    //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
     {
         name: '城堡时代宋禁军团',
         formationMode: 'balance_yoke',
@@ -762,7 +754,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DEMO_RAFT',
     },
     {
-        name: '封建时代回鹘军团',
+        name: '封建漠北军团',
         formationMode: 'triangle',
         slots: [
             { type: 'steppe_lancer', count: 2 },
@@ -810,18 +802,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '西欧军团',
         shipId: 'ELITE_LONGBOAT',
     },
-    {
-        name: '封建时代柔然军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'raider', count: 2 },
-            { type: 'cav_archer_heavy', count: 3 },
-            { type: 'elite_steppe_lancer', count: 4 },
-        ],
-        regions: ['ROURAN'],
-        parentLegion: '封建时代匈人军团',
-        shipId: 'DEMO_RAFT',
-    },
+    // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
+    //    文化区 `ROURAN` 的默认军团与挂它的势力一并改指「封建漠北军团」。
     {
         name: '封建时代格鲁吉亚军团',
         formationMode: 'fish_scale',
@@ -1498,15 +1480,19 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '中亚军团',
         shipId: 'CANOE',
     },
+    // 🔴 [2026-10-05 主人怒斥「谁他妈让你删了，瞎删。改回来」] —— 恢复「封建时代鲜卑军团」。
+    //    对应三级建筑风格 `XIANBEI`（漠南鲜卑）。编制按主人令三兵种：鲜卑骑兵 ＋ 草原轻骑兵 ＋ 南北朝黑光铠甲骑兵。
     {
         name: '封建时代鲜卑军团',
         formationMode: 'crescent',
         slots: [
-            { type: 'tiger_rider', count: 3 },
-            { type: 'xianbei_raider', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'xianbei_raider', count: 3 },        // 鲜卑骑兵（鲜卑掠骑兵）
+            { type: 'antiquity_light_cavalry', count: 2 }, // 草原轻骑兵（古典轻骑兵）
+            { type: 'hei_kuang_heavy', count: 4 },       // 南北朝黑光铠骑兵高级
         ],
-        regions: ['MONGOL'],
+        regions: ['XIANBEI'],
+        // 🔴 [2026-10-05 主人定「这66的父级都是一级」] 三级基础军团的父级＝一级母体，
+        //    漠南鲜卑属东亚（一级落 ASIA）→ 父级＝东亚军团。
         parentLegion: '东亚军团',
         shipId: 'CANOE',
     },

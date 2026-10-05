@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -1533,14 +1533,14 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
 export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     CENTRAL: '古典时代华夏中原军团',
     NORTH: '古典时代秦汉军团',
-    NORTHEAST: '古典时代鲜卑军团',
+    NORTHEAST: '古典时代羌族军团',
     KOREA: "封建时代新罗军团",
     JAPAN: "城堡时代幕府军团",
     JAPAN_ANTIQUITY: '封建时代大和军团',
     JAPAN_IMPERIAL: '帝王时代幕藩军团',
     STEPPE: "城堡时代蒙古军团",
     STEPPE_IMPERIAL: "帝国时代蒙古军团",
-    STEPPE_ANTIQUITY: "古典时代匈奴军团",
+    STEPPE_ANTIQUITY: "古典漠北军团",
     STEPPE_FEUDAL: "封建时代草原军团",
     HEXI: "古典时代秦汉军团",
     JIANGNAN: "封建时代隋唐军团",
@@ -1655,14 +1655,14 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     KUSHAN: '古典时代贵霜军团',
     KUSH: '古典时代努比亚军团',
     KHITAN: "封建时代河西军团",
-    UIGHUR: '封建时代回鹘军团',
+    UIGHUR: '封建漠北军团',
     MOHE: '封建时代白山黑水军团',
     ANGLO_SAXON: '封建时代盎格鲁-撒克逊军团',
     GHANA: '封建时代加纳军团',
     KHAZARS: '封建时代可萨军团',
     VANDALS: '封建时代汪达尔军团',
     LOMBARDS: '封建时代伦巴第军团',
-    ROURAN: '封建时代柔然军团',
+    ROURAN: '封建漠北军团',
     SOGDIANS: '封建时代粟特军团',
     TANGUT: "城堡时代党项军团",
     JAVANESE: '封建时代爪哇军团',
