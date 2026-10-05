@@ -133,7 +133,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_hippeus', count: 4 },
             { type: 'hippeus', count: 3 },
-            { type: 'paragon', count: 2 },
+            { type: 'mercenary_hoplite', count: 2 },
         ],
     },
     {

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Culture Formations
  * 15 文化区 → 各自军队阵型 (CompositionTier 复用)
  *
@@ -1569,7 +1569,8 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     LATIN_IMPERIAL: '帝国时代拉丁军团',
     LATIN_FEUDAL: "封建时代拉丁军团",
     IMPERIAL_ROME: '古典时代罗马禁卫军团',
-    GREEK_MERCENARY: '古典时代希腊雇佣军团',
+    // 🔴 [2026-10-05 主人令「删除吧」] `古典时代希腊雇佣军团` 已删（同族同时代不另立）→
+    //    本表指向它的悬空条目 `GREEK_MERCENARY` 一并删除（该文化区 0 座据点、0 势力挂，无影响）。
     MAGNA_GRAECIA: '古典时代大希腊军团',
     ACHAEMENIDS: '古典时代阿契美尼德军团',
     AMAZONS: '古典时代亚马逊军团',

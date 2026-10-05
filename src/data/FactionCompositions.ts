@@ -46,7 +46,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "teluoyi": {
-        legionName: "古典时代希腊雇佣军团",
+        legionName: "古典时代色雷斯军团",
         legionType: "sub",
     },
     "jianzhou_nvzhen": {
@@ -182,7 +182,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yipilusi": {
-        legionName: "古典时代希腊雇佣军团",
+        legionName: "古典时代马其顿军团",
         legionType: "sub",
     },
     "kushi": {
