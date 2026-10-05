@@ -1304,12 +1304,21 @@ const LAYER3_CUSTOM_GROUPS = [
     ]
   },
   {
-    // 🔴 [2026-09-16 主人定] 第三层第三个专属建筑风格：漠北蒙古
-    //    🔴 [2026-09-16 主人定]「漠北蒙古属于东亚」→ 一级底座 = ASIA（东亚），
-    //    形态仍走三级自建的蒙古包毡帐营地（8 个真蒙古包 E~L + 栅栏），城堡 MONG_CASTLE_AGE3（木石大斡耳朵）。
-    group: '🏕️ 漠北蒙古毡帐营地',
+    // 🔴 [2026-10-05 主人怒斥「你搞两个漠北蒙古是什么意思呀，这世界上有两个漠北蒙古吗」]
+    //    原第三层第三条 `MOBEI_MONGOL`（漠北蒙古·毡帐营地）与**二级 `MONGOL`（漠北蒙古）重复** → **已删**。
+    //    漠北蒙古只保留二级那一格（`CULTURE_GROUPS` 的 ASIA 组：`MONGOL`）。
+    //    草原营盘（原写 `buildingStyle: 'MOBEI_MONGOL'` 的 45 座）由「草原区 → 毡帐营地」兜底规则继续画毡帐营地。
+    // 🔴 [2026-10-05 主人定「三级新建一个漠南鲜卑。漠南鲜卑。漠南鲜卑。跟青藏，西域一个意思」] 三级自建专属风格。
+    group: '⛺ 漠南鲜卑与塞外王帐',
     branches: [
-      { key: 'MOBEI_MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
+      { key: 'XIANBEI', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '⛺ 漠南鲜卑（塞外王帐石堡）' },
+    ]
+  },
+  {
+    // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」] 三级自建专属风格：古典希腊。
+    group: '🏛️ 古典希腊与城邦专属卫堡',
+    branches: [
+      { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 古典希腊（希腊古典通用要塞）' },
     ]
   },
 ];

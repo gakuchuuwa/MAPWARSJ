@@ -17,7 +17,10 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
     HEXI: 'ASIA', WESTERN: 'CEAS', JAPAN: 'ASIA', KOREA: 'ASIA', NORTHEAST: 'ASIA',
     TIBET: 'PURU', // 2026-09-11 主人定：吐蕃三层建筑风格套用南亚古典 PURU 粗石红褐石墙 + TIBET_CASTLE_AGE3
-    STEPPE: 'YURT', MONGOL: 'ASIA', MONGOLS: 'YURT', MOBEI_MONGOL: 'YURT', // [2026-09-16] 二级蒙古→东亚建筑+蒙古城堡；三级漠北蒙古→毡帐
+    // 🔴 [2026-10-05 主人怒斥「这世界上有两个漠北蒙古吗」] 原 `MOBEI_MONGOL: 'YURT'` 已删 ——
+    //    三级 `MOBEI_MONGOL` 与二级 `MONGOL` 重复，三级那一条已删；漠北蒙古只留二级 `MONGOL`。
+    //    草原区（STEPPE*）的毡帐营地渲染由下方「region.includes('STEPPE') → YURT」那条兜底规则承担，不靠本表。
+    STEPPE: 'YURT', MONGOL: 'ASIA', MONGOLS: 'YURT',
     SLAVIC: 'SLAV', SLAVIC_FEUDAL: 'SLAV', SLAVIC_CASTLE: 'SLAV', SLAVIC_IMPERIAL: 'SLAV', GERMANIC: 'WEST', GERMANIC_FEUDAL: 'WEST', GERMANIC_IMPERIAL: 'WEST', GERMANIC_CASTLE: 'WEST', LATIN: 'MEDI', LATIN_CASTLE: 'MEDI', LATIN_IMPERIAL: 'MEDI',
     INDIA: 'INDI', WEST_ASIA: 'ORIE', CENTRAL_ASIA: 'CEAS',
     AFRICA: 'AFRI',
@@ -205,14 +208,20 @@ export function resolveCityDeBuildingStyle(cityId: string, cityType: string, cit
     //    三级漠北蒙古(MOBEI_MONGOL)毡帐营地（YURT），不再被 region 的 STEPPE/MONGOL 兜底强制覆盖。
     if (buildingStyle) {
         if (buildingStyle === 'YURT') return 'YURT';
+        // 🔴 [2026-10-05 主人怒斥「你搞两个漠北蒙古是什么意思呀，这世界上有两个漠北蒙古吗」]
+        //    三级 `MOBEI_MONGOL` 已删（与二级 `MONGOL` 重复）。原先 45 座据点仍写 `buildingStyle: 'MOBEI_MONGOL'`
+        //    （那是它们的营盘皮肤标记，数据不动）→ 这里统一归到**毡帐营地皮肤 `YURT`**，
+        //    否则原字返回会让一级风格落空（验收曾报「一级风格落空 45 座」）。
+        if (buildingStyle === 'MOBEI_MONGOL') return 'YURT';
         return REGION_TO_DE_STYLE[buildingStyle] ?? buildingStyle;
     }
-    // 无显式 buildingStyle，按 region 兜底：草原(STEPPE*)/漠北蒙古 → YURT 毡帐营地
-    // 🔴 [2026-09-16 主人「二级蒙古的建筑，大中小城采用正常的城墙」] 兜底**不再含裸 MONGOL** ——
-    //    二级蒙古走东亚建筑（REGION_TO_DE_STYLE.MONGOL='ASIA'），只有 MOBEI_MONGOL（三级漠北蒙古）才是毡帐；
-    //    注意 'MOBEI_MONGOL'.includes('MONGOL') 为真，所以这里必须写 MOBEI_MONGOL，不能写 MONGOL。
-    if (region && (region.includes('STEPPE') || region.includes('MOBEI_MONGOL'))) return 'YURT';
-    if (cityRegion && (cityRegion.includes('STEPPE') || cityRegion.includes('MOBEI_MONGOL'))) return 'YURT';
+    // 无显式 buildingStyle，按 region 兜底：草原(STEPPE*) → YURT 毡帐营地
+    // 🔴 [2026-10-05 主人怒斥「这世界上有两个漠北蒙古吗」] 原注释写「只有 MOBEI_MONGOL（三级漠北蒙古）才是毡帐」——
+    //    三级 `MOBEI_MONGOL` 已删（与二级 `MONGOL` 重复）。现口径：**草原区(STEPPE*／UIGHUR) → 毡帐营地**；
+    //    二级 `MONGOL`（漠北蒙古，DE 可玩文明 Mongols）按 `REGION_TO_DE_STYLE.MONGOL='ASIA'` 走东亚建筑。
+    //    ⚠️ 写 `buildingStyle: 'MOBEI_MONGOL'` 的 45 座据点，命中本行 STEPPE 判据 → 仍为毡帐营地，渲染未变。
+    if (region && region.includes('STEPPE')) return 'YURT';
+    if (cityRegion && cityRegion.includes('STEPPE')) return 'YURT';
     return REGION_TO_DE_STYLE[region] ?? null;
 }
 
@@ -258,6 +267,11 @@ export const TIER3_STYLE_TO_BASE16: Record<string, string> = {
     YURT: 'ASIA',
     TIBET: 'PURU',
     WESTERN: 'CEAS',
+    // 🔴 [2026-10-05 主人定「三级新建一个漠南鲜卑，跟青藏、西域一个意思」] 新建三级专属风格 `XIANBEI`（漠南鲜卑）
+    //    → 一级落 ASIA 东亚（与漠北蒙古同底座；形态为塞外王帐石堡，城堡 MONG_CASTLE_AGE3）。
+    XIANBEI: 'ASIA',
+    // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」] 新建三级专属风格 `GREECE`（古典希腊）→ 一级 GREEK。
+    GREECE: 'GREEK',
 };
 
 /** 某据点的**一级建筑风格**（16 选 1，永不返回三级皮肤）。
