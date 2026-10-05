@@ -718,6 +718,42 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
+    // 🔴 [2026-10-05 主人令「62 个可玩文明对应 62 支军团」] DE 新增三文明：撒克逊 / 丹麦 / 瓦良格。
+    //    时代按其专属兵种的史实定（撒克逊 5 世纪至 1066 年 = 封建；丹麦约姆斯维京 10 世纪 = 封建；瓦良格卫队 1050–1204 年 = 城堡）。
+    //    编制 = 本势力精锐（前排 4）+ 城堡兵（中排 3）+ 缺补兵（后排 2）。region 用建筑风格键（SAXONS / DANES / VARANGIANS，不在 RegionType 联合里）。
+    {
+        name: '封建时代撒克逊军团', civ: '撒克逊', age: 'feudal', deStyle: 'WEST', region: 'SAXONS' as unknown as RegionType,
+        castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
+        formationMode: 'echelon',
+        shipId: 'ELITE_LONGBOAT',
+        slots: [
+            { type: 'elite_hearth_troop', count: 4 },
+            { type: 'hearth_troop', count: 3 },
+            { type: 'throwing_axeman', count: 2 },
+        ],
+    },
+    {
+        name: '封建时代丹麦军团', civ: '丹麦', age: 'feudal', deStyle: 'WEST', region: 'DANES' as unknown as RegionType,
+        castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
+        formationMode: 'echelon',
+        shipId: 'ELITE_LONGBOAT',
+        slots: [
+            { type: 'elite_jomsviking', count: 4 },
+            { type: 'jomsviking', count: 3 },
+            { type: 'throwing_axeman', count: 2 },
+        ],
+    },
+    {
+        name: '城堡时代瓦良格军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as unknown as RegionType,
+        castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
+        formationMode: 'echelon',
+        shipId: 'ELITE_LONGBOAT',
+        slots: [
+            { type: 'elite_varangian_guard', count: 4 },
+            { type: 'varangian_jarl', count: 3 },
+            { type: 'cretan_archer', count: 2 },
+        ],
+    },
 ];
 
 export const LEVEL_2_CIV_59_NAMES: Set<string> = new Set(LEVEL_2_CIV_59_LEGIONS.map(l => l.name));

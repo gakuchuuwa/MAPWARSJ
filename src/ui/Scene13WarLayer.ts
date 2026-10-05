@@ -61,7 +61,7 @@ import { withCommander } from '../data/generalHeroUnits';
 // ── 帧族（与 __war.html / docs/03-runtime/s10db-frame-layout.md 一致）──
 // 远程/弓骑的「第 2 组 = 近战抡砸、第 5 组 = 射击」，UNIT_ASSETS 已按组拆分：
 //   ATTACK = 近战（+8）  SHOOT = 射击（+40）  —— 直接取数组，不再手算偏移。
-const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'elite_immortal_ranged', 'elite_pattiyoda_longbowman', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis', 'siege_ballista']);
+const RANGED_TYPES = new Set(['archer', 'crossbow', 'ballista', 'horse_archer', 'fire_archer', 'kipchak', 'longbowman_elite', 'cav_archer', 'cav_archer_heavy', 'chukonu', 'rattan_archer', 'elite_fire_archer', 'elite_chukonu', 'imperial_skirmisher', 'elite_composite_bowman', 'composite_bowman', 'crossbowman', 'arbalest', 'throwing_axeman', 'arambai', 'mangudai', 'mangudai_elite', 'elite_kipchak', 'pattiyoda_longbowman', 'ballista_elephant', 'elephant_archer', 'dagnajan_elephant', 'rattan_archer_elite', 'amazon_archer', 'bactrian_archer', 'blackwood_archer', 'bolas_rider', 'bombard_cannon', 'camel_archer', 'chakram_thrower', 'conquistador', 'cretan_archer', 'elite_arambai', 'elite_ballista_elephant', 'elite_blackwood_archer', 'elite_bolas_rider', 'elite_camel_archer', 'elite_chakram_thrower', 'elite_conquistador', 'elite_elephant_archer', 'elite_gbeto', 'elite_genitour', 'elite_genoese_crossbowman', 'elite_guecha_warrior', 'elite_hussite_wagon', 'elite_janissary', 'elite_mameluke', 'elite_organ_gun', 'elite_plumed_archer', 'elite_ratha_ranged', 'elite_scythian_horse_archer', 'elite_skirmisher', 'elite_throwing_axeman', 'elite_war_wagon', 'gbeto', 'genitour', 'genoese_crossbowman', 'grenadier', 'guecha_warrior', 'hand_cannoneer', 'heavy_rocket_cart', 'heavy_scorpion', 'houfnice', 'hussite_wagon', 'immortal_ranged', 'elite_immortal_ranged', 'elite_pattiyoda_longbowman', 'janissary', 'longbowman', 'mameluke', 'mangonel', 'mounted_trebuchet', 'onager', 'organ_gun', 'plumed_archer', 'ratha_ranged', 'rhodian_slinger', 'rocket_cart', 'royal_janissary', 'scorpion', 'scythian_horse_archer', 'siege_onager', 'siege_tower', 'skirmisher', 'slinger', 'tarantine_cavalry', 'hero_harald', 'hero_arariboiaranged', 'varangian_jarl', 'elite_varangian_jarl', 'thracian_peltast', 'traction_trebuchet', 'war_chariot_ranged', 'war_wagon', 'xianbei_raider', 'gastraphetes', 'laminated_bowman', 'recurve_bowman', 'elite_peltast', 'bowman', 'antiquity_skirmisher', 'elite_antiquity_skirmisher', 'antiquity_cavalry_archer', 'antiquity_heavy_cavalry_archer', 'antiquity_scorpion', 'antiquity_heavy_scorpion', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager', 'antiquity_siege_tower', 'flamethrower', 'helepolis', 'siege_ballista']);
 
 /** 🔴 上策（2026-08-16 主人定）：抠绿 + Base64 结果跨战斗缓存。
  *  抠绿（getImageData 逐像素去绿幕）+ toDataURL（PNG 编码）是素材处理最耗时的一步，
@@ -482,6 +482,10 @@ const SIGHT_MAP: Record<string, number> = {
     sosso_guard: 160,
     vanguard: 160,
     tarantine_cavalry: 240,
+    varangian_jarl: 240,
+    hero_harald: 240,
+    hero_arariboiaranged: 240,
+    elite_varangian_jarl: 280,
     amazon_archer: 240,
     amazon_warrior: 120,
     arambai: 280,
@@ -559,6 +563,12 @@ const SIGHT_MAP: Record<string, number> = {
     elite_guecha_warrior: 200,
     elite_hippeus: 160,
     elite_huskarl: 200,
+    hearth_troop: 200,
+    elite_hearth_troop: 200,
+    jomsviking: 200,
+    elite_jomsviking: 200,
+    varangian_guard: 200,
+    elite_varangian_guard: 200,
     elite_hussite_wagon: 320,
     elite_ibirapema_warrior: 200,
     elite_iron_pagoda: 200,
@@ -1437,6 +1447,8 @@ const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     recurve_bowman: 3.73,
     siege_tower: 3.73,
     tarantine_cavalry: 3.2,
+    varangian_jarl: 3.2,
+    elite_varangian_jarl: 3.2,
     // [2026-08-17 补全] 用 DE 真实数据精确对齐每个远程兵种的放箭相位：
     //   shootPhase = type_50.frame_delay（攻击前摇帧）÷ attack_graphic.frame_count（动画总帧）× 8。
     //   替代此前只登记 26 个特殊兵种、其余远程全吃 DEFAULT=4 大锅饭的表（「远程动作和箭不同步」的次要根因）。
@@ -1621,6 +1633,9 @@ const PROJ_TYPE: Record<string, string> = {
     rocket_cart: 'PROJ_ARROW_FIRE',
     heavy_rocket_cart: 'PROJ_ARROW_FIRE',
     tarantine_cavalry: 'PROJ_SPEAR',
+    varangian_jarl: 'PROJ_SPEAR',
+    hero_harald: 'PROJ_SPEAR',
+    elite_varangian_jarl: 'PROJ_SPEAR',
     // 🔴 [2026-09-14 主人「弩箭是不是应该直一点？和标枪」] 弩兵此前与弓兵共用 PROJ_ARROW，
     //    于是跟着吃 0.3 的弓箭弧度 —— 而弩射程最远（280~320），min(len×0.3,100) 让它峰值 84~96px，
     //    **比弓兵还高一倍**，正好反了：弩射得远恰恰因为初速高、弹道平。
@@ -1692,6 +1707,8 @@ const PROJ_TYPE: Record<string, string> = {
 /** DE 本体逐单位命中率；0% 散射武器在本引擎中单独按散射结算，不放进整轮 miss 判定。 */
 const ACCURACY_BY_TYPE: Record<string, number> = {
     tarantine_cavalry: 90,
+    varangian_jarl: 90,
+    elite_varangian_jarl: 90,
     kipchak: 90,
     elite_kipchak: 90,
     elite_fire_archer: 85,
@@ -2481,6 +2498,12 @@ const UNIT_RADIUS: Record<string, number> = {
     elite_guardsman: 8.0,
     elite_guecha_warrior: 8.0,
     elite_huskarl: 8.0,
+    hearth_troop: 8.0,
+    elite_hearth_troop: 8.0,
+    jomsviking: 8.0,
+    elite_jomsviking: 8.0,
+    varangian_guard: 8.0,
+    elite_varangian_guard: 8.0,
     elite_hussite_wagon: 18.0,
     elite_jaguar_warrior: 8.0,
     elite_janissary: 8.0,
@@ -2641,6 +2664,8 @@ const UNIT_RADIUS: Record<string, number> = {
     swordsman: 8.0,
     sakan_axeman: 8.0,
     tarantine_cavalry: 10.0,
+    varangian_jarl: 10.0,
+    elite_varangian_jarl: 10.0,
     tarkan: 10.0,
     temple_guard: 8.0,
     teutonic_knight: 8.0,
