@@ -687,7 +687,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     },
     // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
     //    原在本表（二级）的三条**时代外兜底条目**已移入三级表 `level3CustomLegions.ts`：
-    //      `封建时代吐蕃军团`（region TIBET）｜`古典时代西域军团`（region WESTERN）｜`封建时代鲜卑军团`（region MONGOL）
+    //      `封建时代吐蕃军团`（region TIBET）｜`古典时代西域军团`（region WESTERN）｜~~`封建时代鲜卑军团`~~（region MONGOL，2026-10-05 已删）
     //    理由（与 `LegionFallbackOnDelete.ts` 里主人原话一致）：青藏／西域／漠北蒙古毡帐是**三级专属建筑风格**，
     //    二级 59 里本来就没有同 region 的条目，《一级16／二级59／三级自建》三层口径里它们属**三级自建**。
     //    它们的时代细分军团（城堡时代吐蕃／帝国时代青藏／封建时代安西／帝王时代维吾尔／帝国时代蒙古…）本就在三级表。
