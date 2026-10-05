@@ -1,0 +1,9 @@
+{
+  "name": "SAXO_CASTLE_AGE3_RUBBLE",
+  "frames": 1,
+  "box_w": 424,
+  "box_h": 288,
+  "anchor_x": 216,
+  "anchor_y": 200,
+  "sld_source": "b_saxo_castle_age3_rubble"
+}

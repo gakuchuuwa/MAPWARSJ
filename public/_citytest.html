@@ -1135,12 +1135,12 @@ const CULTURE_GROUPS = [
     ]
   },
   {
-    group: '🛡️ WEST 西欧 (7套)',
+    group: '🛡️ WEST 西欧 (10套)',
     branches: [
-      { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 条顿（西欧通用石堡）' },
+      { key: 'GERMANIC',    deStyle: 'WEST', castle: 'EAST_CASTLE_AGE3',       label: '🛡️ 条顿（东欧石堡）' },
       { key: 'FRANKS',      deStyle: 'WEST', castle: 'FRAN_CASTLE_AGE3',       label: '🛡️ 法兰克（加洛林石堡）' },
       { key: 'BURGUNDIANS', deStyle: 'WEST', castle: 'BURG_CASTLE_AGE3',       label: '🛡️ 勃艮第（重装城堡）' },
-      { key: 'BRITONS',     deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 不列颠（苏格兰高地圆塔）' },
+      { key: 'BRITONS',     deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 不列颠（西欧通用石堡）' },
       /* 🔴 [2026-09-16 主人「二级只有 59 个，名字我给过三次了」]
          凯尔特补齐：原来页面把「不列颠/凯尔特」挤在一条、又凭空多一条「东南欧」（DE 没这文明），
          与权威文档 §三之二「WEST 7 座（不列颠、法兰克、哥特、条顿、凯尔特、勃艮第、维京）+
@@ -1151,6 +1151,11 @@ const CULTURE_GROUPS = [
       { key: 'CELTS',       deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 凯尔特（苏格兰高地圆塔）' },
       { key: 'VIKINGS',     deStyle: 'WEST', castle: 'VIKI_CASTLE_AGE3',       label: '🛡️ 维京（诺斯长屋环形要塞）' },
       { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3',       label: '🛡️ 哥特（蛮族厚重石堡）' },
+      /* 🔴 [2026-10-05 主人令] 按 DE 改：条顿用 EAST 城堡、不列颠用 WEST 城堡（DE 本体口径）；
+         并补上 DE 新增的三个文明城堡：撒克逊 SAXO、瓦良格 VARA、丹麦 DANE（素材已从 DE 提取到 SUCAI_BUILDING）。 */
+      { key: 'SAXONS',      deStyle: 'WEST', castle: 'SAXO_CASTLE_AGE3',       label: '🛡️ 撒克逊（石木混筑塔堡）' },
+      { key: 'VARANGIANS',  deStyle: 'WEST', castle: 'VARA_CASTLE_AGE3',       label: '🛡️ 瓦良格（诺斯山形屋顶要塞）' },
+      { key: 'DANES',       deStyle: 'WEST', castle: 'DANE_CASTLE_AGE3',       label: '🛡️ 丹麦（圆塔木石堡）' },
     ]
   },
   {
@@ -1399,7 +1404,7 @@ const CASTLE_GROUPS = [
     ]
   },
   {
-    group: '🛡️ WEST 西欧 (6 座)',
+    group: '🛡️ WEST 西欧 (9 座)',
     castles: [
       { id: 'WEST_CASTLE_AGE3', name: '西欧重装石堡（WEST）' },
       { id: 'FRAN_CASTLE_AGE3', name: '法兰克加洛林石堡' },
@@ -1407,6 +1412,9 @@ const CASTLE_GROUPS = [
       { id: 'CELT_CASTLE_AGE3', name: '苏格兰圆形高地塔堡' },
       { id: 'VIKI_CASTLE_AGE3', name: '维京诺斯长屋环形要塞' },
       { id: 'GOTH_CASTLE_AGE3', name: '哥特蛮族厚重石堡' },
+      { id: 'SAXO_CASTLE_AGE3', name: '撒克逊石木混筑塔堡' },
+      { id: 'VARA_CASTLE_AGE3', name: '瓦良格诺斯山形屋顶要塞' },
+      { id: 'DANE_CASTLE_AGE3', name: '丹麦圆塔木石堡' },
     ]
   },
   {

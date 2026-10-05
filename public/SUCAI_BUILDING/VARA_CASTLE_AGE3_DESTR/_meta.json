@@ -1,0 +1,9 @@
+{
+  "name": "VARA_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 564,
+  "box_h": 504,
+  "anchor_x": 316,
+  "anchor_y": 384,
+  "sld_source": "b_vara_castle_age3_destruction"
+}

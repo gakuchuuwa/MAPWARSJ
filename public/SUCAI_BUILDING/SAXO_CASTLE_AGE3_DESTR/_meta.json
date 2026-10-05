@@ -1,0 +1,9 @@
+{
+  "name": "SAXO_CASTLE_AGE3_DESTR",
+  "frames": 150,
+  "box_w": 636,
+  "box_h": 536,
+  "anchor_x": 352,
+  "anchor_y": 396,
+  "sld_source": "b_saxo_castle_age3_destruction"
+}

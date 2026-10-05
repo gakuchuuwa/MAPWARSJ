@@ -72,7 +72,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     },
     {
         name: '古典时代凯尔特军团', civ: '凯尔特', age: 'antiquity', deStyle: 'WEST', region: 'CELTS' as RegionType,
-        castleId: 'CELT_CASTLE_AGE3', castleName: '不列颠/凯尔特 苏格兰高地圆塔',
+        castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
@@ -335,7 +335,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     },
     {
         name: '城堡时代条顿军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
-        castleId: 'WEST_CASTLE_AGE3', castleName: '西欧/条顿 莱茵河方型石砌堡',
+        castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'echelon',
         shipId: 'ELITE_CARAVEL',
         slots: [
