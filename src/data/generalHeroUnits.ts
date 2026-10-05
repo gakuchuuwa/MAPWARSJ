@@ -106,6 +106,7 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     qincha_baqiman: 'hero_cumanchief',
     aiaoniya_alisita: 'hero_aristagoras',
     gen_jogaila: 'hero_jogaila',
+    nuowei_halaer: 'hero_harald',   // 挪威哈拉尔（DE 新提取的英雄·哈拉尔）
 };
 
 /** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
