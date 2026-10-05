@@ -6673,9 +6673,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -3
         },
         "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png": {
-            "scale": 1.04,
-            "offsetX": 1,
-            "offsetY": 17
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 12
         },
         "/assets/WEST_ASIA/yelusalengwg_baodewensishi.png": {
             "scale": 1.13,
@@ -8046,11 +8046,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 10
-        },
-        "/assets/WEST_ASIA/fc38f15c-17e6-4620-b360-402a0a15aed3.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 12
         },
         "/assets/WEST_ASIA/__闲置__WEST_ASIA_62.png": {
             "scale": 1.02,
