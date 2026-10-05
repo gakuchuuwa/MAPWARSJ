@@ -1,11 +1,13 @@
 /**
  * 248 类主将兵模表：62 个二级文明 × 4 个时代，每格一到多个兵模（英雄 / 精锐 / 高级）。
- * 🔴 [2026-10-05 主人令] 62 个文明全部用英雄兵模（按文化与样子分配），不分时代；不用精锐 / 高级兵种。
+ * 🔴 [2026-10-05 主人令] 62 个文明按文化与样子分配英雄兵模，不分时代；战车、战象可当英雄兵模用（高丽战车、孟加拉战车、波斯战象精锐、桑纳亚战象高级等，热兵器的不用）；不用别的精锐 / 高级兵种。
+ *    吕布与孙权的攻击都是弩，不放进同一个文明；日本用马上枪（孙策），不用马上刀（关羽）。
  * 🔴 [2026-10-05 主人定稿] 来源 = docs/02-design/248分类-英雄兵模归类-草稿.md（主人过目定稿，一格一格归的）。
  *    · 年代界线：古典 ≤400｜封建 400–1050｜城堡 1050–1500｜帝国 1500–1900。
  *    · 武将的年代 = GENERAL_ERA（按成名盛年算，不按出生）。
  *    · 查表入口 resolveCivEraCommander：按武将**所属文明**查，查不到文明就返回 null，绝不兜底成华夏。
- *    · 同一格有多个兵模时，按武将 id 取稳定哈希挑一个（同一武将永远是同一个）。
+ *    · 游戏里有同名英雄的武将，直接用同名英雄（见 generalHeroUnits.ts 的 GENERAL_HERO_UNITS，例：曹操用曹操）；没有的才查本表。
+ *    · 同一格有多个兵模时，每局从随机池里随机挑：本局开始时抽一个随机种子，同一局内同一武将始终是同一个，下一局重新抽。
  */
 import { GENERAL_ERA, type GeneralEra } from './GeneralEra';
 import { getFactionIdOfGeneral } from './FactionGenerals';
@@ -21,8 +23,8 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '河朔': { antiquity: ['hero_caocao', 'hero_lubu'], feudal: ['hero_caocao', 'hero_lubu'], castle: ['hero_caocao', 'hero_lubu'], imperial: ['hero_caocao', 'hero_lubu'] },
     '河西': { antiquity: ['hero_girgenkhan', 'hero_qutlugh'], feudal: ['hero_girgenkhan', 'hero_qutlugh'], castle: ['hero_girgenkhan', 'hero_qutlugh'], imperial: ['hero_girgenkhan', 'hero_qutlugh'] },
     '白山黑水': { antiquity: ['hero_girgenkhan', 'hero_kotyankhan'], feudal: ['hero_girgenkhan', 'hero_kotyankhan'], castle: ['hero_girgenkhan', 'hero_kotyankhan'], imperial: ['hero_girgenkhan', 'hero_kotyankhan'] },
-    '高丽': { antiquity: ['hero_lubu', 'hero_sunquan'], feudal: ['hero_lubu', 'hero_sunquan'], castle: ['hero_lubu', 'hero_sunquan'], imperial: ['hero_lubu', 'hero_sunquan'] },
-    '日本': { antiquity: ['hero_caocao', 'hero_guanyu'], feudal: ['hero_caocao', 'hero_guanyu'], castle: ['hero_caocao', 'hero_guanyu'], imperial: ['hero_caocao', 'hero_guanyu'] },
+    '高丽': { antiquity: ['elite_war_wagon', 'hero_sunquan'], feudal: ['elite_war_wagon', 'hero_sunquan'], castle: ['elite_war_wagon', 'hero_sunquan'], imperial: ['elite_war_wagon', 'hero_sunquan'] },
+    '日本': { antiquity: ['hero_sunce', 'hero_sunjian'], feudal: ['hero_sunce', 'hero_sunjian'], castle: ['hero_sunce', 'hero_sunjian'], imperial: ['hero_sunce', 'hero_sunjian'] },
     '鲜卑漠南': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
     '漠北蒙古': { antiquity: ['hero_khan', 'hero_subotai', 'hero_kushluk'], feudal: ['hero_khan', 'hero_subotai', 'hero_kushluk'], castle: ['hero_khan', 'hero_subotai', 'hero_kushluk'], imperial: ['hero_khan', 'hero_subotai', 'hero_kushluk'] },
     '条顿': { antiquity: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], feudal: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], castle: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], imperial: ['hero_ulrichvonjungingen', 'hero_johnthefearless'] },
@@ -52,15 +54,15 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '奥斯曼': { antiquity: ['hero_osman', 'hero_qutlugh'], feudal: ['hero_osman', 'hero_qutlugh'], castle: ['hero_osman', 'hero_qutlugh'], imperial: ['hero_osman', 'hero_qutlugh'] },
     '鞑靼': { antiquity: ['hero_qutlugh', 'hero_kushluk'], feudal: ['hero_qutlugh', 'hero_kushluk'], castle: ['hero_qutlugh', 'hero_kushluk'], imperial: ['hero_qutlugh', 'hero_kushluk'] },
     '西域': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
-    '达罗毗荼': { antiquity: ['hero_generalaraiyan', 'hero_rajendrachola'], feudal: ['hero_generalaraiyan', 'hero_rajendrachola'], castle: ['hero_generalaraiyan', 'hero_rajendrachola'], imperial: ['hero_generalaraiyan', 'hero_rajendrachola'] },
-    '印度斯坦': { antiquity: ['hero_prithviraj', 'hero_rajendrachola'], feudal: ['hero_prithviraj', 'hero_rajendrachola'], castle: ['hero_prithviraj', 'hero_rajendrachola'], imperial: ['hero_prithviraj', 'hero_rajendrachola'] },
-    '孟加拉': { antiquity: ['hero_generalaraiyan', 'hero_rajendrachola'], feudal: ['hero_generalaraiyan', 'hero_rajendrachola'], castle: ['hero_generalaraiyan', 'hero_rajendrachola'], imperial: ['hero_generalaraiyan', 'hero_rajendrachola'] },
-    '瞿折罗': { antiquity: ['hero_prithviraj', 'hero_rajendrachola'], feudal: ['hero_prithviraj', 'hero_rajendrachola'], castle: ['hero_prithviraj', 'hero_rajendrachola'], imperial: ['hero_prithviraj', 'hero_rajendrachola'] },
+    '达罗毗荼': { antiquity: ['hero_generalaraiyan', 'hero_rajendrachola', 'elite_sannahya'], feudal: ['hero_generalaraiyan', 'hero_rajendrachola', 'elite_sannahya'], castle: ['hero_generalaraiyan', 'hero_rajendrachola', 'elite_sannahya'], imperial: ['hero_generalaraiyan', 'hero_rajendrachola', 'elite_sannahya'] },
+    '印度斯坦': { antiquity: ['elite_battle_elephant', 'hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], feudal: ['elite_battle_elephant', 'hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], castle: ['elite_battle_elephant', 'hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], imperial: ['elite_battle_elephant', 'hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'] },
+    '孟加拉': { antiquity: ['elite_ratha_melee', 'hero_generalaraiyan', 'hero_rajendrachola'], feudal: ['elite_ratha_melee', 'hero_generalaraiyan', 'hero_rajendrachola'], castle: ['elite_ratha_melee', 'hero_generalaraiyan', 'hero_rajendrachola'], imperial: ['elite_ratha_melee', 'hero_generalaraiyan', 'hero_rajendrachola'] },
+    '瞿折罗': { antiquity: ['hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], feudal: ['hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], castle: ['hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'], imperial: ['hero_prithviraj', 'hero_rajendrachola', 'elite_sannahya'] },
     '普鲁': { antiquity: ['porus_elephant', 'hero_prithviraj'], feudal: ['porus_elephant', 'hero_prithviraj'], castle: ['porus_elephant', 'hero_prithviraj'], imperial: ['porus_elephant', 'hero_prithviraj'] },
     '青藏': { antiquity: ['hero_prithviraj', 'hero_guanyu'], feudal: ['hero_prithviraj', 'hero_guanyu'], castle: ['hero_prithviraj', 'hero_guanyu'], imperial: ['hero_prithviraj', 'hero_guanyu'] },
-    '高棉': { antiquity: ['hero_gajahmada', 'hero_leloi'], feudal: ['hero_gajahmada', 'hero_leloi'], castle: ['hero_gajahmada', 'hero_leloi'], imperial: ['hero_gajahmada', 'hero_leloi'] },
-    '缅甸': { antiquity: ['bayinnaung_elephant', 'hero_gajahmada'], feudal: ['bayinnaung_elephant', 'hero_gajahmada'], castle: ['bayinnaung_elephant', 'hero_gajahmada'], imperial: ['bayinnaung_elephant', 'hero_gajahmada'] },
-    '越南': { antiquity: ['hero_dinhle', 'hero_leloi'], feudal: ['hero_dinhle', 'hero_leloi'], castle: ['hero_dinhle', 'hero_leloi'], imperial: ['hero_dinhle', 'hero_leloi'] },
+    '高棉': { antiquity: ['elite_ballista_elephant', 'hero_gajahmada', 'hero_leloi', 'elite_elephant_archer'], feudal: ['elite_ballista_elephant', 'hero_gajahmada', 'hero_leloi', 'elite_elephant_archer'], castle: ['elite_ballista_elephant', 'hero_gajahmada', 'hero_leloi', 'elite_elephant_archer'], imperial: ['elite_ballista_elephant', 'hero_gajahmada', 'hero_leloi', 'elite_elephant_archer'] },
+    '缅甸': { antiquity: ['bayinnaung_elephant', 'hero_gajahmada', 'elite_battle_elephant', 'elite_elephant_archer'], feudal: ['bayinnaung_elephant', 'hero_gajahmada', 'elite_battle_elephant', 'elite_elephant_archer'], castle: ['bayinnaung_elephant', 'hero_gajahmada', 'elite_battle_elephant', 'elite_elephant_archer'], imperial: ['bayinnaung_elephant', 'hero_gajahmada', 'elite_battle_elephant', 'elite_elephant_archer'] },
+    '越南': { antiquity: ['hero_dinhle', 'hero_leloi', 'elite_battle_elephant'], feudal: ['hero_dinhle', 'hero_leloi', 'elite_battle_elephant'], castle: ['hero_dinhle', 'hero_leloi', 'elite_battle_elephant'], imperial: ['hero_dinhle', 'hero_leloi', 'elite_battle_elephant'] },
     '马来': { antiquity: ['hero_gajahmada', 'hero_dinhle'], feudal: ['hero_gajahmada', 'hero_dinhle'], castle: ['hero_gajahmada', 'hero_dinhle'], imperial: ['hero_gajahmada', 'hero_dinhle'] },
     '玛雅': { antiquity: ['hero_cunhambebe', 'hero_cusiyupanqui'], feudal: ['hero_cunhambebe', 'hero_cusiyupanqui'], castle: ['hero_cunhambebe', 'hero_cusiyupanqui'], imperial: ['hero_cunhambebe', 'hero_cusiyupanqui'] },
     '阿兹特克': { antiquity: ['hero_cunhambebe', 'hero_arariboiamelee'], feudal: ['hero_cunhambebe', 'hero_arariboiamelee'], castle: ['hero_cunhambebe', 'hero_arariboiamelee'], imperial: ['hero_cunhambebe', 'hero_arariboiamelee'] },
@@ -71,7 +73,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '柏柏尔': { antiquity: ['hero_tariqibnziyad', 'hero_sumanguru'], feudal: ['hero_tariqibnziyad', 'hero_sumanguru'], castle: ['hero_tariqibnziyad', 'hero_sumanguru'], imperial: ['hero_tariqibnziyad', 'hero_sumanguru'] },
     '马里': { antiquity: ['hero_sumanguru', 'hero_sundjata'], feudal: ['hero_sumanguru', 'hero_sundjata'], castle: ['hero_sumanguru', 'hero_sundjata'], imperial: ['hero_sumanguru', 'hero_sundjata'] },
     '埃塞俄比亚': { antiquity: ['hero_yodit', 'dagnajan_elephant', 'hero_gidajan'], feudal: ['hero_yodit', 'dagnajan_elephant', 'hero_gidajan'], castle: ['hero_yodit', 'dagnajan_elephant', 'hero_gidajan'], imperial: ['hero_yodit', 'dagnajan_elephant', 'hero_gidajan'] },
-    '波斯': { antiquity: ['hero_shahismail', 'hero_artaphernes'], feudal: ['hero_shahismail', 'hero_artaphernes'], castle: ['hero_shahismail', 'hero_artaphernes'], imperial: ['hero_shahismail', 'hero_artaphernes'] },
+    '波斯': { antiquity: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], feudal: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], castle: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], imperial: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'] },
     '阿契美尼德': { antiquity: ['hero_artaphernes', 'hero_datis'], feudal: ['hero_artaphernes', 'hero_datis'], castle: ['hero_artaphernes', 'hero_datis'], imperial: ['hero_artaphernes', 'hero_datis'] },
     '雅典': { antiquity: ['hero_aristagoras', 'hero_aristides'], feudal: ['hero_aristagoras', 'hero_aristides'], castle: ['hero_aristagoras', 'hero_aristides'], imperial: ['hero_aristagoras', 'hero_aristides'] },
     '斯巴达': { antiquity: ['hero_brasidas', 'hero_lysander'], feudal: ['hero_brasidas', 'hero_lysander'], castle: ['hero_brasidas', 'hero_lysander'], imperial: ['hero_brasidas', 'hero_lysander'] },
@@ -135,6 +137,9 @@ function civOfFaction(factionId: string, era: GeneralEra): string | null {
     return result;
 }
 
+/** 本局随机种子：每局（页面加载一次）抽一次，保证同一局内同一武将的形象不变，不同局之间不同。 */
+const SESSION_SEED = Math.floor(Math.random() * 0x7fffffff);
+
 function stableHash(s: string): number {
     let h = 0;
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
@@ -155,5 +160,5 @@ export function resolveCivEraCommander(generalId: string | null | undefined): st
     if (!row) return null;
     const cell = row[era];
     if (!cell || cell.length === 0) return null;
-    return cell[stableHash(generalId) % cell.length];
+    return cell[stableHash(generalId + ':' + SESSION_SEED) % cell.length];
 }
