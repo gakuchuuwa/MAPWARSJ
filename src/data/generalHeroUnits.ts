@@ -15,8 +15,91 @@ import { getScriptCommanderUnit } from '../events/scriptPeriod';
 
 /** 武将 → 专属英雄兵种（WAR_TYPES 键）。只登记有现成素材的 */
 export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
+    // 华夏/三国
+    cao_d_caocao: 'hero_caocao',
+    shu_liubei: 'hero_liubei',
+    huizhou_zhugeliang: 'hero_zhugeliang',
+    chu_guanyu: 'hero_guanyu',
+    langzhou_zhangfei: 'hero_zhangfei',
+    pizhou_lvbu: 'hero_lubu',
+    ruzhou_sunjian: 'hero_sunjian',
+    shanyue_sunce: 'hero_sunce',
+    sunwu_d_sunquan: 'hero_sunquan',
+
+    // 草原游牧
+    menggu_d_chengjisihan: 'hero_khan',
+    wuliangha_subutai: 'hero_subotai',
+    xiongren_atila: 'hero_attila',
+    gen_kotyan: 'hero_kotyankhan',
+    gen_kuchlug: 'hero_kushluk',
+    gen_girgen: 'hero_girgenkhan',
+    gen_qutlugh: 'hero_qutlugh',
+
+    // 希腊/马其顿
     gen_alexander_great: 'hero_mounted_alexander',
+    gen_philip_ii: 'hero_macedonian_commander',
+    gen_parmenion: 'hero_parmenion',
+    gen_perdiccas: 'hero_perdiccas',
+    gen_cleitus: 'hero_cleitus',
+    gen_brasidas: 'hero_brasidas',
+    gen_lysander: 'hero_lysander',
+    gen_aristides: 'hero_aristides',
+    gen_seuthes_iii: 'hero_thracian_chieftain',
+
+    // 波斯
+    gen_artaphernes: 'hero_artaphernes',
+    gen_datis: 'hero_datis',
+    saman_yisimayi: 'hero_shahismail',
+    gen_thoros: 'hero_thoros',
+
+    // 西欧
+    gen_edward_longshanks: 'hero_edwardlongshanks',
+    gen_william_wallace: 'hero_williamwallace',
+    gen_joanofarc: 'hero_joanofarc',
+    gen_john_fearless: 'hero_johnthefearless',
+    gen_philip_good: 'hero_philipthegood',
+    gen_bernard_armagnac: 'hero_bernardarmagnac',
+    gen_ulrich_jungingen: 'hero_ulrichvonjungingen',
+    gen_gilbert: 'hero_gilbertdeclare',
+    gen_llywelyn: 'hero_llywelynapgruffydd',
+    gen_dafydd: 'hero_dafyddapgruffydd',
+
+    // 地中海
+    gen_robert_guiscard: 'hero_robertguiscard',
+    gen_bohemond: 'hero_bohemond',
+
+    // 东欧斯拉夫蛮族
+    gen_alaric: 'hero_alaric',
+    gen_ataulf: 'hero_ataulf',
+    gen_jadwiga: 'hero_jadwiga',
+    gen_vytautas_great: 'hero_vytautasthegreat',
+    gen_kestutis: 'hero_kestutis',
+    gen_algirdas: 'hero_algirdas',
+    gen_jan_zizka: 'hero_janzizka',
+    gen_ivaylo: 'hero_ivaylo',
+
+    // 中东/南亚/东南亚/非洲/美洲
+    talike_talike: 'hero_tariqibnziyad',
+    gen_osman_i: 'hero_osman',
     gen_bolusi: 'porus_elephant',
+    gen_prithviraj: 'hero_prithviraj',
+    zhuluo_lajialajia: 'hero_generalaraiyan',
+    gen_gajah_mada: 'hero_gajahmada',
+    leloi: 'hero_leloi',
+    gen_dinhle: 'hero_dinhle',
+    hantawadi_mangyinglong: 'bayinnaung_elephant',
+    gen_dagnajan: 'dagnajan_elephant',
+    gen_gidajan: 'hero_gidajan',
+    gen_yodit: 'hero_yodit',
+    gen_sundjata: 'hero_sundjata',
+    gen_sumanguru: 'hero_sumanguru',
+    gen_pachacuti: 'hero_pachacuti',
+    gen_pacanchiq: 'hero_pacanchique',
+    gen_lautaro: 'hero_lautaro',
+    gen_galvarino: 'hero_galvarino',
+    gen_guacolda: 'hero_guacolda',
+    gen_arariboia: 'hero_arariboiamelee',
+    gen_cunhambebe: 'hero_cunhambebe',
 };
 
 /** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 本军团前排兵种 */

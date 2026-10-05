@@ -104,18 +104,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'MONOREME',
     },
     {
-        name: '古典时代西域军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'sakan_axeman', count: 3 },
-            { type: 'scythian_axe_cavalry', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
-        ],
-        regions: ['WESTERN'],
-        parentLegion: '中亚军团',
-        shipId: 'CANOE',
-    },
-    {
         name: '古典时代大希腊军团',
         formationMode: 'echelon',
         slots: [
@@ -750,18 +738,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['KHAZARS'],
         parentLegion: '东北欧军团',
         shipId: 'MONOREME',
-    },
-    {
-        name: '封建时代吐蕃军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'hei_kuang_heavy', count: 4 },
-            { type: 'cav_archer', count: 3 },
-        ],
-        regions: ['TIBET'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
     },
     {
         name: '封建时代嚈哒军团',

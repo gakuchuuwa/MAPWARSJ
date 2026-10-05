@@ -367,7 +367,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代蒙古军团', civ: '蒙古', age: 'castle', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
+        name: '城堡时代蒙古军团', civ: '鲜卑漠南', age: 'castle', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
@@ -683,6 +683,39 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_kona', count: 2 },
             { type: 'kona', count: 3 },
             { type: 'elite_bolas_rider', count: 4 },
+        ],
+    },
+    {
+        name: '封建时代吐蕃军团', civ: '青藏', age: 'feudal', deStyle: 'PURU', region: 'TIBET' as RegionType,
+        castleId: '', castleName: '',
+        formationMode: 'crane_wing',
+        shipId: 'DEMO_RAFT',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'hei_kuang_heavy', count: 4 },
+            { type: 'cav_archer', count: 3 },
+        ],
+    },
+    {
+        name: '古典时代西域军团', civ: '西域', age: 'antiquity', deStyle: 'CEAS', region: 'WESTERN' as RegionType,
+        castleId: '', castleName: '',
+        formationMode: 'crescent',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'sakan_axeman', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
+        ],
+    },
+    {
+        name: '封建时代鲜卑军团', civ: '漠北蒙古', age: 'feudal', deStyle: 'ASIA', region: 'STEPPE_FEUDAL' as RegionType,
+        castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
+        formationMode: 'crescent',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'tiger_rider', count: 3 },
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
 ];
