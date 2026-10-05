@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs';
 import { CITIES_V2 } from '../src/data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../src/data/CityWonders';
 import { FACTION_CASTLE, REGION_CASTLE, resolveCastleAsset } from '../src/config/deCastleAssets';
+import { resolveCityDeBuildingStyle } from '../src/systems/cityDeStyle';
 
 const DIR = 'public/SUCAI_BUILDING';
 const USER_MADE = new Set([
@@ -33,10 +34,15 @@ for (const extras of Object.values(CITY_WONDER_EXTRA)) {
     for (const extra of extras) reachable.add(extra.asset);
 }
 
-// 真实显示入口二：关隘在战略地图及 ZOOM13 会调用 resolveCastleAsset。
+// 真实显示入口二：关隘在战略地图及 ZOOM13 会调用 resolveCastleAsset（**必须带 cityId**）。
+// 🔴 [2026-10-05 修尺子] 原来这里只喂 `('', factionId, region)`——漏了第 4 个参数 `cityId`，
+//    而 `resolveCastleAsset` 第一句就是 `REP_59_CITY_CASTLES[cityId]` 优先；
+//    更要命的是**只挑了 type==='pass' 的城**，中城/小城/大城一律不算，
+//    于是雅典(ATHENIANS_)/布拉格(BOHE_)/布达佩斯(MAGY_)/巴卡塔(MUIS_)/朱罗(PURU_) 等
+//    **明明已按势力挂好**的城堡全被判「不可达」。改：所有城、按游戏同一签名算。
 for (const city of CITIES_V2) {
-    if (city.type !== 'pass') continue;
-    reachable.add(resolveCastleAsset('', city.factionId, city.region));
+    const style = resolveCityDeBuildingStyle(city.id, String(city.type), city.region, city.latitude, city.longitude);
+    reachable.add(resolveCastleAsset(style, city.factionId, city.region, city.id));
 }
 
 const used = allDeBase.filter((asset) => reachable.has(asset));

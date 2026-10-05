@@ -248,18 +248,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CANOE',
     },
     {
-        name: '古典时代波斯军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'immortal', count: 3 },
-            { type: 'immortal_ranged', count: 4 },
-            { type: 'imperial_cavalry', count: 2 },
-        ],
-        regions: ['PERSIAN'],
-        parentLegion: '古典时代阿契美尼德军团',
-        shipId: 'BIREME',
-    },
-    {
         name: '古典时代秦汉军团',
         formationMode: 'fish_scale',
         slots: [

@@ -7298,9 +7298,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -12
         },
         "/assets/GERMANIC/vidin_tsardom_yifansilaqi.png": {
-            "scale": 1.16,
+            "scale": 1.2,
             "offsetX": 0,
-            "offsetY": 25
+            "offsetY": 23
         },
         "/assets/AFRICA/a8086659-75b7-434b-b8ec-4bf3dd259ff9.png": {
             "scale": 0.95,

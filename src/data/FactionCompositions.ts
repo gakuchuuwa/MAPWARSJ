@@ -2034,8 +2034,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "haerjijiji": {
-        legionName: "希腊军团",
-        legionType: "region",
+        legionName: "古典时代马其顿军团",
+        legionType: "sub",
     },
     "odrysian_late": {
         legionName: "色雷斯军团",
