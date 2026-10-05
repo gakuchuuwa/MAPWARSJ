@@ -2265,10 +2265,14 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     SOUTHAM_IMPERIAL: 'ANDE',
     SPANISH: 'SPANISH',
     SRIVIJAYA: 'MALAY',
-    STEPPE: 'MOBEI_MONGOL',
+    // 🔴 [2026-10-05 主人怒斥「你搞两个漠北蒙古是什么意思呀，这世界上有两个漠北蒙古吗」]
+    //    三级 `MOBEI_MONGOL` 已删（与二级 `MONGOL` 重复）→ 这 4 个草原／回鹘文化区的建筑风格指针
+    //    由 `MOBEI_MONGOL` **改指二级 `MONGOL`**（漠北蒙古），否则指针指向已删键（悬空）。
+    //    ⚠️ 据点侧仍由 `cityDeStyle` 的「草原区 → 毡帐营地(YURT)」兜底规则命中，渲染不变。
+    STEPPE: 'MONGOL',
     STEPPE_ANTIQUITY: 'CEAS',
-    STEPPE_FEUDAL: 'MOBEI_MONGOL',
-    STEPPE_IMPERIAL: 'MOBEI_MONGOL',
+    STEPPE_FEUDAL: 'MONGOL',
+    STEPPE_IMPERIAL: 'MONGOL',
     SWEDISH: 'WEST',
     TAIRONA: 'ANDE',
     TANGUT: 'KHITAN',
@@ -2282,7 +2286,8 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     TIMURID: 'CEAS',
     TUPI: 'TUPI',
     TURKS: 'TURKS',
-    UIGHUR: 'MOBEI_MONGOL',
+    // 🔴 [2026-10-05 同上] 原指三级 `MOBEI_MONGOL`（已删）→ 改指二级 `MONGOL`。
+    UIGHUR: 'MONGOL',
     VANDALS: 'ORIE',
     // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] DE 三个新文明补登
     //   （本表漏登 → getCultureLegionName 的建筑风格保底取不到，会掉到最末兜底「东亚军团」）。
@@ -2293,6 +2298,8 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」] 新建三级建筑风格键 `GREECE`（古典希腊）→ 回落一级 GREEK。
     //   本表（getCultureLegionName 的建筑风格保底）漏登记会掉到最末兜底「东亚军团」。
     GREECE: 'GREEK',
+    // 🔴 [2026-10-05 主人定「三级新建一个漠南鲜卑」] 新建三级建筑风格键 `XIANBEI`（漠南鲜卑）→ 回落一级 ASIA 东亚。
+    XIANBEI: 'ASIA',
     VIETNAMESE: 'VIETNAMESE',
     VIKINGS: 'VIKINGS',
     WEI: 'WEI',
