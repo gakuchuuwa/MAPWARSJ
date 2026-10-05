@@ -359,10 +359,14 @@
 > **主人原话**：「先不加时代维度。城寨代表古典，小城代表封建，中城是城堡，大城是帝国」「我们套用小城，就按封建时代这个时代算。」
 
 - **约定**：围墙的时代口径跟**城型**走：**城寨＝古典、小城＝封建（公元 400~1050）、中城＝城堡、大城＝帝国**。不再给围墙另加年代维度（剧本期的年份错位接受）。
-- **小城围墙是石墙还是木栅，按建筑风格定**（不再按「区域」）：唯一入口 `cityWallShared.smallCityUsesStoneWall(deStyle, rawStyle, region)`，战略地图 `TerritorySystem`、战术模式 `resolveTacticalWallSetup`、评估页**都调它**。
-  - ✅ 石墙：东亚 ASIA · 东南欧 EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · **普鲁 PURU**（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS · 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN
-  - 🌲 木栅：西欧 WEST（土丘木栅）· 东北欧 SLAV · 中亚 CEAS · 安第斯 ANDE · 毡帐营地 YURT（营地自带栅栏）
-  - 例外（二三级风格／区域压过母体）：日本 JAPAN、女真 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY → 木栅；西域绿洲 WESTERN（夯土土坯）、印加 INCA → 石墙。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
+- **小城围墙是石墙还是木栅，按建筑风格定**（不再按「区域」）：唯一入口 `cityWallShared.smallCityUsesStoneWall(deStyle, rawStyle, region, cityId)`，战略地图 `TerritorySystem`、战术模式 `resolveTacticalWallSetup`、评估页**都调它**。
+  - ✅ 石墙：东亚 ASIA · 东南欧 EAST · 地中海 MEDI · 中东 ORIE · 印度 INDI · **普鲁 PURU**（封建＝达罗毗荼，朱罗花岗岩石构）· 东南亚 SEAS · 中美 MESO · 非洲 AFRI · 波斯 PERSIAN · 希腊 GREEK · 色雷斯 THRACIAN · **西欧 WEST（2026-10-05 由木栅改判石墙）**
+  - 🌲 木栅：东北欧 SLAV · 中亚 CEAS · 安第斯 ANDE · 毡帐营地 YURT（营地自带栅栏）
+  - 例外（二三级风格／区域压过母体）：日本 JAPAN、女真 NORTHEAST、蒙古 MONGOL／漠北蒙古 MOBEI_MONGOL、库曼 CUMAN、马来群岛 MALAY、**维京 VIKINGS、凯尔特 CELTS** → 木栅；西域绿洲 WESTERN（夯土土坯）、印加 INCA → 石墙。夯土、土坯归入石墙大类（素材只有石墙与木栅两种）。
+  - 逐城石墙例外：`SMALL_CITY_STONE_BY_CITY`（现收维也纳 `city_weiyeena`；WEST 转石墙后它对维也纳已冗余，值不变故保留）。
+  - 🔴 **[2026-10-05 主人令「WEST 这一档一刀切判木栅，这个符合历史吗？」→「按历史修复」]** WEST 由木栅**改判石墙**（大陆中世纪西欧诸城主流是石／砖墙：布鲁日 1127 特许状即提石墙、不莱梅 1229、牛津 12 世纪、科隆／美因茨罗马旧墙续用、图尔／纳博讷／约克罗马石墙…）；同时把 **VIKINGS / CELTS 补进木栅例外**（土丘木栅／环形堡是这两档的传统形制，库里本就有各自的二三级风格键）。
+    实测影响：母体落在 WEST 的小城 30 座 → **石墙 24 / 木栅 6**（木栅＝VIKINGS 2 ＋ CELTS 3 ＋ 拉赫修院 1）。
+    ⚠️ **BRITONS 三座（温彻斯特／格洛斯特／坎佩尔）主人指定本次不动**，因母体转石墙现判石墙（温彻斯特、格洛斯特有罗马石墙；坎佩尔为木栅）—— 待逐座裁定。
   - 斯巴达「不筑城墙」按木栅归（素材所限）。依据：各文明封建时代小城聚落的主流筑法（土垒木栅 vs 夯土砖石），逐文明考证见该次讨论的 62 项判定表。
 - **普鲁的两面**：城寨（古典）用硬木粗桩（孔雀帝国早期木栅，麦加斯梯尼记华氏城），小城（封建）用石墙（达罗毗荼）——同一母体在两个城型取不同材质是**有意的**，不是冲突。
 - **验收**：`npx tsx --import ./tools/sim-preload.mjs scratch/verify_small_city_walls.mts`（16 母体战略⇄战术素材逐项一致 + 例外 + 全图小城新旧对比）。

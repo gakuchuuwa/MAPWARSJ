@@ -1515,7 +1515,7 @@ function buildRows(): void {
 
         const custom = localCustomCompositions[f.id];
 
-        // 🔴 [2026-09-15 治本·主人报「城堡时代东北军团有两个」]
+        // 🔴 [2026-09-15 治本·主人报「城堡时代白山黑水军团有两个」]
         //    编制**只有一个权威 = 军团自己那条记录**，这里一律按军团名**实时**解析。
         //
         //    改前是「势力快照的 slots 优先、文化区实时解析兜底」，等于同一个军团名有两条取数路：
@@ -5488,7 +5488,7 @@ async function saveCultureComposition(culture: RegionType, legion: EditableLegio
             applyCultureFormationPatch(r as RegionType, slots, formationMode);
         }
 
-        // 🔴 [2026-09-15 主人报障「城堡时代东北军团有两个」] 保存后**必须整体重建快照**。
+        // 🔴 [2026-09-15 主人报障「城堡时代白山黑水军团有两个」] 保存后**必须整体重建快照**。
         //    表格里同一个军团名之所以会裂成两种编制，是因为它有**两条解析路径**：
         //      · 势力有专属条目 → 读 localCustomCompositions[fid].slots（**页面加载时解出来的快照**）
         //      · 势力跟随文化区 → 读 getRegionLegionComposition(region)（**每次重绘实时解**）

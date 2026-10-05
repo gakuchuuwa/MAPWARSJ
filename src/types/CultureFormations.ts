@@ -1663,7 +1663,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     SOGDIANS: '封建时代粟特军团',
     TANGUT: "城堡时代党项军团",
     JAVANESE: '封建时代爪哇军团',
-    JURCHEN: "城堡时代东北军团",
+    JURCHEN: "城堡时代白山黑水军团",
     SELJUQ: '城堡时代塞尔柱军团',
     OTTOMAN: "帝国时代奥斯曼军团",
     OTTOMAN_IMPERIAL: '帝国时代奥斯曼军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核

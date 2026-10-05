@@ -609,7 +609,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代东北军团', civ: '东北', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        name: '城堡时代白山黑水军团', civ: '白山黑水', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
         formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
