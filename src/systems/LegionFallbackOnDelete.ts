@@ -75,7 +75,7 @@ export interface FallbackPlan {
 export const TIER3_FALLBACK_LEGION: Record<'TIBET' | 'WESTERN' | 'YURT', string> = {
     TIBET: '封建时代吐蕃军团',
     WESTERN: '古典时代西域军团',
-    YURT: '城堡时代蒙古军团',
+    YURT: '封建时代鲜卑军团',
 };
 
 /**
@@ -91,7 +91,7 @@ export function isBaseFallbackLegion(name: string): boolean {
 
 /** 三级风格的中文名（给 note 用） */
 const TIER3_LABEL: Record<'TIBET' | 'WESTERN' | 'YURT', string> = {
-    TIBET: '青藏', WESTERN: '西域', YURT: '漠北蒙古毡帐',
+    TIBET: '青藏', WESTERN: '西域', YURT: '漠北蒙古',
 };
 
 /** 据点属于哪一种三级专属风格；都不是则 null。
