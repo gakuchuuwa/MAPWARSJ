@@ -1583,7 +1583,13 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     AFRICA_CASTLE: "城堡时代非洲军团",
     MALAY: '城堡时代马来军团',
     SEASIA_IMPERIAL: '帝王时代缅甸军团',
-    SEASIA_CASTLE: '城堡时代东南亚军团',
+    // 🔴 [2026-10-05 主人令「请修复」→ 清掉幽灵指针] 本表原有 5 条指向**不存在的军团**（一/二/三级与剧本表全查无此军）：
+    //    SEASIA_CASTLE→城堡时代东南亚军团 ｜ PERSIAN_CASTLE→城堡时代波斯军团 ｜ CHIMU→城堡时代奇穆军团
+    //    ｜ TARASCAN→城堡时代塔拉斯科军团 ｜ KARA_KHITAN→城堡时代西辽军团
+    //    它们**已删**：查无此军的指针本来就不作数（`getCultureLegionName` 里 `legionNameExists` 挡掉），
+    //    实得走「建筑风格保底」，删前删后**逐区实得完全相同**（实测 PERSIAN_CASTLE 6 城→波斯军团｜
+    //    CHIMU 昌昌→安第斯军团｜TARASCAN 钦聪灿→中美军团｜SEASIA_CASTLE 特罗武兰→城堡时代马来军团｜
+    //    KARA_KHITAN 碎叶→中亚军团）。尺子：`scratch/audit_ghost_legions.mts`（清完不再有「查无此军」）。
     SEASIA_FEUDAL: '古典时代高棉军团',
     ANDE: '城堡时代克丘亚军团',
     SOUTHAM_IMPERIAL: '帝国时代南美军团',
@@ -1602,7 +1608,6 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    ⚠️ 指针必须显式改指：若只删三级会悬空，这 15 座波斯城会掉到「建筑风格保底」。
     PERSIAN: '古典时代阿契美尼德军团',
     ARMENIANS: '封建时代亚美尼亚军团',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 59 表这一支自己声明 region=ARMENIANS
-    PERSIAN_CASTLE: '城堡时代波斯军团',
     CUMAN: '城堡时代库曼军团',
     BRITONS: '城堡时代不列颠军团',
     GOTHS: '封建时代哥特军团',
@@ -1631,8 +1636,6 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     MUISCA: '城堡时代穆伊斯卡军团',
     TUPI: '帝国时代图皮军团',
     IROQUOIS: '城堡时代易洛魁军团',
-    CHIMU: '城堡时代奇穆军团',
-    TARASCAN: '城堡时代塔拉斯科军团',
     TAIRONA: '城堡时代泰罗纳军团',
     TEHUELCHE: '帝国时代特维尔切军团',
     GEORGIANS: '封建时代格鲁吉亚军团',
@@ -1698,7 +1701,6 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     MAMLUKS: "城堡时代马穆鲁克军团",
     CRUSADERS: "城堡时代十字军团",
     RUS: '城堡时代罗斯军团',
-    KARA_KHITAN: '城堡时代西辽军团',
     TIMURID: "城堡时代鞑靼军团",
     DELHI: "城堡时代印度斯坦军团",
     CASTILE: '城堡时代卡斯蒂利亚军团',
@@ -2171,6 +2173,12 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     GREEK: 'GREEK',
     GURJARAS: 'GURJARAS',
     HEBREWS: 'ORIE',
+    // 🔴 [2026-10-05 主人令「请修复」] 补 HELLENIC（古典希伦＝雅典/斯巴达城邦同盟，本表此前漏配）：
+    //    同表希腊诸键（GREEK / MACEDONIAN / GREEK_MERCENARY / MAGNA_GRAECIA）都归 GREEK 建筑风格，
+    //    `cityDeStyle.REGION_TO_DE_STYLE` 也早已写 HELLENIC:'GREEK' —— 只此一表漏了，
+    //    于是 `getCultureLegionName('HELLENIC')` 保底取不到 → 掉到最末兜底「东亚军团」。
+    //    补后实得「希腊军团」（与 GREEK 区同军团）。该区当前 0 座城，属潜在错、非现患。
+    HELLENIC: 'GREEK',
     HEPHTHALITES: 'CEAS',
     HEXI: 'KHITAN',
     HITTITES: 'ORIE',

@@ -101,6 +101,10 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     gen_guacolda: 'hero_guacolda',
     gen_arariboia: 'hero_arariboiamelee',
     gen_cunhambebe: 'hero_cunhambebe',
+    // 2026-10-05 主人令「英雄对齐游戏中的英雄」：游戏里同名武将直接用同名英雄
+    gelujiya_tamaer: 'hero_tamar',
+    qincha_baqiman: 'hero_cumanchief',
+    aiaoniya_alisita: 'hero_aristagoras',
 };
 
 /** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
