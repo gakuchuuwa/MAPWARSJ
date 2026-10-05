@@ -154,6 +154,13 @@ export function isNightBattle(init: { defenderCityId?: string | null; title?: st
     const t = init.title ?? '';
     return !!t && NIGHT_BATTLE_TITLE_KEYS.some((k) => t.includes(k));
 }
+/**
+ * ⚠️ 本函数**只判「这一场在史书上是不是夜战」**，不判现在是不是剧本 —— 调用方必须自己再加剧本期闸：
+ *    `Scene13WarLayer` 是 `forceNight: isScriptPeriod() && isNightBattle(init)`。
+ *    🔴 [2026-10-05 主人令「佩利昂的战术，只有在剧本中才套用夜晚滤镜，乱斗和夜晚滤镜没有关系」]
+ *      同一座城在乱斗里被攻是现打的遭遇战，不是史书上那一场夜袭 → 乱斗一律不开滤镜。
+ *    别处要复用它，必须照抄那道闸，否则乱斗里的佩利昂又会变黑。
+ */
 
 export function resolveTimeOfDay(input: ResolveInput): TimeOfDayGrade {
     if (input.forceNight || forcedPhase() === 'night') {

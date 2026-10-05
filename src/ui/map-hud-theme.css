@@ -368,12 +368,16 @@ body:has(#event-display.event-panel.is-collapsed) {
     --gold-glow: var(--map-hud-gold);
     --stone-border: var(--map-hud-line);
     --panel-bg: #211d17f7;
-    /* 🔴 [2026-10-05 主人令「把小地图移至右下角，贴边，固定」] 右下角让给小地图（301×217）：
-       本叠整块移到它左边（右缘正好贴小图左缘），**底边与小图一样贴屏幕底边**——否则本叠底边
-       （原 bottom:16）会压住小图顶边 20px（实测）。再让开右侧军情面板（--feed-panel-w，收起时为 0）。
-       数值 301 = WorldMiniMap 的 MINI_W(300) + 1px 边框。
-       ⚠️ 本文件晚于 stitch_bottom_hud.css 加载，这里的 right 才是最终生效的那一处（别再往那边写第二份）。 */
-    right: calc(301px + var(--feed-panel-w, 0px));
+    /* 🔴 [2026-10-05 主人令「信息面板没有移植左下角」→ 移到左下角] 本叠改挂**左下角、左/下都贴屏幕边**，
+       与小地图（右下角）左右对称。
+       历史：2026-10-05 早先那版为给小地图让位，写的是 `right: calc(301px + var(--feed-panel-w))`、`bottom: 0`
+       —— 现整条作废（不再需要给谁让位）。
+       ⚠️ 两种形态都贴左下角：
+         · 收起 = 只有「控制」按钮（20px 高）；展开 = 按钮在上、整叠在下，两者**底边都落在屏幕底边**；
+         · 军团·势力榜（z=3000）展开时会被本叠（z=5000）压住左下角一块 —— 2026-10-05 主人选定「就贴左下角，压住就压住」。
+       ⚠️ 本文件晚于 stitch_bottom_hud.css 加载，这里才是最终生效的那一处（别再往那边写第二份 left/right）。 */
+    left: 0;
+    right: auto;
     bottom: 0;
 }
 #game-time-hud .game-time-btn { min-height: 32px; border-radius: 6px; }
