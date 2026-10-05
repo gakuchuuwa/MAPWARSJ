@@ -466,7 +466,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "luosi": {
-        legionName: "城堡时代斯拉夫军团",
+        legionName: "封建时代瓦良格卫队军团",
         legionType: "sub",
     },
     "qiernigeweifu_gongguo": {
@@ -1806,11 +1806,21 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "danmai": {
-        legionName: "封建时代维京军团",
+        legionName: "封建时代丹麦军团",
         legionType: "sub",
     },
     "nuowei": {
         legionName: "封建时代维京军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-05 主人令「去找合适的套用上」] 三支新二级军团的势力：
+    //    撒克逊 → 麦西亚（奥法）、盎格鲁（阿尔弗雷德，见上）；丹麦 → 丹麦（见上）；瓦良格 → 瑞典（瓦良格卫队主要出自瑞典人）
+    "maixiya": {
+        legionName: "封建时代撒克逊军团",
+        legionType: "sub",
+    },
+    "ruidian_si": {
+        legionName: "城堡时代瓦良格军团",
         legionType: "sub",
     },
     "xiongren": {
@@ -1842,7 +1852,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "anggelu": {
-        legionName: "城堡时代不列颠军团",
+        legionName: "封建时代撒克逊军团",
         legionType: "sub",
     },
     "ashikaga": {

@@ -1003,6 +1003,14 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DEMO_RAFT/idle_${d}.png`),
             DEATH: [],
         },
+        'DREKI': {
+            // 【龙船 Dreki】DE 英雄船（HLNGS）。完整 16 向（/SUCAI/DREKI/，dirs16 meta），2026-10-05 主人令登记。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/death_${d}.png`),
+        },
         'ELITE_LONGBOAT': {
             // 盖尔长船（凯尔特）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/move_${d}.png`),
@@ -1165,6 +1173,30 @@ export const SPRITE_PATHS = {
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/attack_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/idle_${d}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_THEMISTOCLES/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HERO_ARTEMISIA': {
+            // 英雄·阿耳忒弥斯（旗舰）：卡里亚女王阿耳忒弥斯的旗舰（萨拉米斯海战，波斯一方）。完整 16 向（/SUCAI/HERO_ARTEMISIA/，dirs16 meta），2026-10-05 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_ARTEMISIA/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_ARTEMISIA/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_ARTEMISIA/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_ARTEMISIA/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HERO_DIONYSUS': {
+            // 英雄·狄奥尼索斯（旗舰）：福凯亚人狄奥尼索斯的旗舰（拉德海战，爱奥尼亚希腊一方）。完整 16 向（/SUCAI/HERO_DIONYSUS/，dirs16 meta），2026-10-05 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_DIONYSUS/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_DIONYSUS/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_DIONYSUS/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_DIONYSUS/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HERO_AEGINETAN': {
+            // 英雄·波律克利托斯（旗舰）：埃伊那人波律克利托斯的旗舰（萨拉米斯海战，希腊一方）。完整 16 向（/SUCAI/HERO_AEGINETAN/，dirs16 meta），2026-10-05 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_AEGINETAN/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_AEGINETAN/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_AEGINETAN/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_AEGINETAN/idle_${d}.png`),
             DEATH: [],
         },
         'THIRISADAI': {
@@ -3414,6 +3446,54 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/death_${dir}.png`),
         },
+        // 【英雄·塔克修士】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_friartuck': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/death_${dir}.png`),
+        },
+        // 【英雄·伊玛目】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_imam': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ORIE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ORIE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ORIE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ORIE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ORIE/death_${dir}.png`),
+        },
+        // 【英雄·昌德·菩达一】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_chandbardai': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/death_${dir}.png`),
+        },
+        // 【英雄·贝拉四世国王】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_belaiv': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/death_${dir}.png`),
+        },
+        // 【英雄·沙阿王】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_shahking': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_ORIE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_ORIE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_ORIE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_ORIE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_ORIE/death_${dir}.png`),
+        },
+        // 【英雄·贾亚纳加拉】8方向，AoE2 DE SLD 素材（2026-10-05 补，DE 本体攻击为 0，数值见 WarTypes）
+        'hero_jayanegara': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/death_${dir}.png`),
+        },
         'hero_arariboiamelee': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIAMELEE/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIAMELEE/attack_${dir}.png`),
@@ -4206,6 +4286,22 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_ARTEMISIA/idle_${dir}.png`),
         },
         // 【英雄·狄奥尼索斯】8方向，AoE2 DE SLD 素材
+        // 【英雄·龙船】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_dreki': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DREKI/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DREKI/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DREKI/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DREKI/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DREKI/death_${dir}.png`),
+        },
+        // 【英雄·斯托尔特贝克】DE 里它没有专属船体，立绘就是通用「重型爆破船」（CRMSH_FNE），沿用 /SUCAI/HEAVY_DEMO_SHIP/（2026-10-05 登记）
+        'hero_stoertebeker': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_DEMO_SHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_DEMO_SHIP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_DEMO_SHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_DEMO_SHIP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEAVY_DEMO_SHIP/idle_${dir}.png`),
+        },
         'hero_dionysus': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_DIONYSUS/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_DIONYSUS/attack_${dir}.png`),

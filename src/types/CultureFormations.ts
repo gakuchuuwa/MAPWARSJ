@@ -2290,6 +2290,9 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     SAXONS: 'WEST',
     DANES: 'WEST',
     VARANGIANS: 'WEST',
+    // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」] 新建三级建筑风格键 `GREECE`（古典希腊）→ 回落一级 GREEK。
+    //   本表（getCultureLegionName 的建筑风格保底）漏登记会掉到最末兜底「东亚军团」。
+    GREECE: 'GREEK',
     VIETNAMESE: 'VIETNAMESE',
     VIKINGS: 'VIKINGS',
     WEI: 'WEI',

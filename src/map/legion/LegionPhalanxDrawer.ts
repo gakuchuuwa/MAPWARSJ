@@ -91,7 +91,7 @@ export type PhalanxAnimState = 'IDLE' | 'MOVE' | 'ATTACK' | 'DAMAGE' | 'DEATH';
 
 /** 库中 18 艘拥有完整 16 向 move 划桨/动效动画的战船（其余 28 艘为 1 帧静态中世纪帆船/木筏） */
 const NAVAL_OARED_ANIMATED_SHIPS = new Set([
-    'BIREME', 'CANOE', 'CATAPULT_SHIP', 'DRAGON_SHIP', 'DROMON',
+    'BIREME', 'CANOE', 'CATAPULT_SHIP', 'DRAGON_SHIP', 'DREKI', 'DROMON',
     'ELITE_LEMBOS', 'ELITE_TURTLE_SHIP', 'HEAVY_LEMBOS', 'HERO_ARTEMISIA',
     'HERO_THEMISTOCLES', 'LEMBOS', 'LEVIATHAN', 'LOU_CHUAN', 'MONOREME',
     'ONAGER_SHIP', 'TRIREME', 'TURTLE_SHIP', 'WAR_LEMBOS',

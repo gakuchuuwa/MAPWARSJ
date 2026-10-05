@@ -38,6 +38,7 @@ const SHIP_SIDE_WIDTH: Record<string, number> = {
     ELITE_CARAVEL: 208,
     ELITE_LEMBOS: 160,
     ELITE_LONGBOAT: 144,
+    DREKI: 144,
     ELITE_TURTLE_SHIP: 292,
     FAST_FIRE_SHIP: 192,
     FIRE_GALLEY: 156,
@@ -49,6 +50,9 @@ const SHIP_SIDE_WIDTH: Record<string, number> = {
     HEAVY_LEMBOS: 128,
     /** 英雄·地米斯托克利（旗舰）：与小写 `hero_themistocles` 同一套图；侧向船长实测 = TRIREME 同值 176 */
     HERO_THEMISTOCLES: 176,
+    HERO_ARTEMISIA: 176,
+    HERO_DIONYSUS: 206,
+    HERO_AEGINETAN: 201,
     HULK: 128,
     INCENDIARY_RAFT: 104,
     INCENDIARY_SHIP: 156,
@@ -319,6 +323,9 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     TRIREME: '三列桨座战船',
     /** 旗舰：与小写 `hero_themistocles` 同名（兵种表名），马其顿军团的舰队模型 */
     HERO_THEMISTOCLES: '英雄·地米斯托克利',
+    HERO_ARTEMISIA: '英雄·阿耳忒弥斯',
+    HERO_DIONYSUS: '英雄·狄奥尼索斯',
+    HERO_AEGINETAN: '英雄·波律克利托斯',
     BIREME: '双列桨座战船',
     MONOREME: '单列桨座战船',
     HEAVY_LEMBOS: '希腊重型伦博斯重装',
@@ -326,6 +333,7 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     DROMON: '德罗蒙战舰',
     LONGBOAT: '维京长船',
     ELITE_LONGBOAT: '维京长船高级',
+    DREKI: '英雄·龙船',
     ELITE_CARAVEL: '卡拉维尔帆船高级',
     CARAVEL: '卡拉维尔帆船',
     FIRE_GALLEY: '喷火桨帆船',
@@ -417,6 +425,7 @@ const SHIP_EXTRA_WEAPONS: Record<string, { weapons: NavalWeapon[]; why: string }
     // ── 撞角 / 接舷 / 自爆（近战，甲板弓手仍照常放箭）──────────
     TRIREME: { weapons: ['ram'], why: 'DE 原文 "Melee Warship powerful charged attack"：古典三列桨靠撞角' },
     /** 马其顿军团旗舰：与 TRIREME 同型（同一套 16 向图）→ 同样靠撞角 */
+    HERO_ARTEMISIA: { weapons: ['ram'], why: '与 HERO_THEMISTOCLES 同型（同一套 16 向旗舰图、同尺寸）：DE 原文近战战船，靠撞角' },
     HERO_THEMISTOCLES: { weapons: ['ram'], why: '与 TRIREME 同型：DE 原文 "Melee Warship powerful charged attack"——古典三列桨靠撞角' },
     BIREME: { weapons: ['ram'], why: '同上（双列桨）' },
     MONOREME: { weapons: ['ram'], why: '同上（单列桨）' },

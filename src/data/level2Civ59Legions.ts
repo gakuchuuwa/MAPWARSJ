@@ -107,7 +107,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代阿契美尼德军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         castleId: 'ACHA_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
         formationMode: 'triangle',
-        shipId: 'BIREME',
+        shipId: 'HERO_ARTEMISIA',
         slots: [
             { type: 'war_elephant', count: 2 },
             { type: 'immortal', count: 3 },
@@ -129,7 +129,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代斯巴达军团', civ: '斯巴达', age: 'antiquity', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
         castleId: 'SPAR_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'echelon',
-        shipId: 'TRIREME',
+        shipId: 'HERO_AEGINETAN',
         slots: [
             { type: 'elite_hippeus', count: 4 },
             { type: 'hippeus', count: 3 },
@@ -221,7 +221,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代维京军团', civ: '维京', age: 'feudal', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
-        shipId: 'ELITE_LONGBOAT',
+        shipId: 'DREKI',
         slots: [
             { type: 'elite_berserk', count: 4 },
             { type: 'berserk', count: 3 },
@@ -685,39 +685,12 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_bolas_rider', count: 4 },
         ],
     },
-    {
-        name: '封建时代吐蕃军团', civ: '青藏', age: 'feudal', deStyle: 'PURU', region: 'TIBET' as RegionType,
-        castleId: '', castleName: '',
-        formationMode: 'crane_wing',
-        shipId: 'DEMO_RAFT',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'hei_kuang_heavy', count: 4 },
-            { type: 'cav_archer', count: 3 },
-        ],
-    },
-    {
-        name: '古典时代西域军团', civ: '西域', age: 'antiquity', deStyle: 'CEAS', region: 'WESTERN' as RegionType,
-        castleId: '', castleName: '',
-        formationMode: 'crescent',
-        shipId: 'CANOE',
-        slots: [
-            { type: 'sakan_axeman', count: 3 },
-            { type: 'scythian_axe_cavalry', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
-        ],
-    },
-    {
-        name: '封建时代鲜卑军团', civ: '鲜卑漠南', age: 'feudal', deStyle: 'ASIA', region: 'MONGOL' as RegionType,
-        castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
-        formationMode: 'crescent',
-        shipId: 'CANOE',
-        slots: [
-            { type: 'tiger_rider', count: 3 },
-            { type: 'xianbei_raider', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-        ],
-    },
+    // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
+    //    原在本表（二级）的三条**时代外兜底条目**已移入三级表 `level3CustomLegions.ts`：
+    //      `封建时代吐蕃军团`（region TIBET）｜`古典时代西域军团`（region WESTERN）｜`封建时代鲜卑军团`（region MONGOL）
+    //    理由（与 `LegionFallbackOnDelete.ts` 里主人原话一致）：青藏／西域／漠北蒙古毡帐是**三级专属建筑风格**，
+    //    二级 59 里本来就没有同 region 的条目，《一级16／二级59／三级自建》三层口径里它们属**三级自建**。
+    //    它们的时代细分军团（城堡时代吐蕃／帝国时代青藏／封建时代安西／帝王时代维吾尔／帝国时代蒙古…）本就在三级表。
     // 🔴 [2026-10-05 主人令「62 个可玩文明对应 62 支军团」] DE 新增三文明：撒克逊 / 丹麦 / 瓦良格。
     //    时代按其专属兵种的史实定（撒克逊 5 世纪至 1066 年 = 封建；丹麦约姆斯维京 10 世纪 = 封建；瓦良格卫队 1050–1204 年 = 城堡）。
     //    编制 = 本势力精锐（前排 4）+ 城堡兵（中排 3）+ 缺补兵（后排 2）。region 用建筑风格键（SAXONS / DANES / VARANGIANS，不在 RegionType 联合里）。
@@ -725,7 +698,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代撒克逊军团', civ: '撒克逊', age: 'feudal', deStyle: 'WEST', region: 'SAXONS' as unknown as RegionType,
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
-        shipId: 'ELITE_LONGBOAT',
+        shipId: 'LONGBOAT',
         slots: [
             { type: 'elite_hearth_troop', count: 4 },
             { type: 'hearth_troop', count: 3 },

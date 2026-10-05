@@ -152,7 +152,7 @@ export type SubCategory =
     // 船只
     | 'galley' | 'fire_ship' | 'cannon_ship' | 'demo_ship' | 'warship'
     // 英雄
-    | 'mounted_hero' | 'foot_hero' | 'elephant_hero' | 'naval_hero';
+    | 'mounted_hero' | 'foot_hero' | 'elephant_hero' | 'naval_hero' | 'noncombat_hero';
 
 export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
     sword_shield: '刀盾',
@@ -177,6 +177,7 @@ export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
     foot_hero: '步战',
     elephant_hero: '象驾',
     naval_hero: '旗舰',
+    noncombat_hero: '非战斗',
 };
 
 /** 每个大类下有哪些子类（图鉴子类过滤下拉 + 排序都用它） */
@@ -186,7 +187,7 @@ export const SUBCATEGORY_BY_CATEGORY: Record<UnitCategory, SubCategory[]> = {
     cavalry: ['melee_cav', 'horse_archer', 'elephant', 'chariot'],
     siege: ['gunpowder_siege', 'mechanical'],
     naval: ['galley', 'fire_ship', 'cannon_ship', 'demo_ship', 'warship'],
-    hero: ['mounted_hero', 'foot_hero', 'elephant_hero', 'naval_hero'],
+    hero: ['mounted_hero', 'foot_hero', 'elephant_hero', 'naval_hero', 'noncombat_hero'],
 };
 
 export interface DeUnitDef {
@@ -470,7 +471,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
     { id: 'halberdier', name: '欧洲戟兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
     { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
-    { id: 'sosso_guard', name: '西非索索禁卫高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
+    { id: 'sosso_guard', name: '西非索索禁卫高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
     { id: 'elite_greek_cavalry', name: '希腊贵族骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
     { id: 'jian_swordman_shielded', name: '华夏步兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
     { id: 'levy', name: '近东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEVY/' },
@@ -539,6 +540,12 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_alaric', name: '英雄·亚拉里克', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ALARIC/' },
     { id: 'hero_algirdas', name: '英雄·阿尔吉尔达斯', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ALGIRDAS/' },
     { id: 'hero_arariboiamelee', name: '英雄·阿拉里博亚', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ARARIBOIAMELEE/' },
+    { id: 'hero_friartuck', name: '英雄·塔克修士', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_WEST/' },
+    { id: 'hero_imam', name: '英雄·伊玛目', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_ORIE/' },
+    { id: 'hero_chandbardai', name: '英雄·昌德·菩达一', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_ASIA/' },
+    { id: 'hero_belaiv', name: '英雄·贝拉四世国王', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KING_WEST/' },
+    { id: 'hero_shahking', name: '英雄·沙阿王', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KING_ORIE/' },
+    { id: 'hero_jayanegara', name: '英雄·贾亚纳加拉', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KING_SEAS/' },
     { id: 'hero_harald', name: '英雄·哈拉尔', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/HARALD/' },
     { id: 'hero_ulf', name: '英雄·乌尔夫·奥斯帕克松', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ULF/' },
     { id: 'hero_halldor', name: '英雄·哈尔多尔·斯诺拉松', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/HALLDOR/' },
@@ -620,12 +627,12 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
     { id: 'manatarms', name: '装甲步兵', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
-    { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
+    { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
-    { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
+    { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
@@ -655,6 +662,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_themistocles', name: '英雄·地米斯托克利', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_THEMISTOCLES/' },
     { id: 'hero_artemisia', name: '英雄·阿尔特米西亚', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_ARTEMISIA/' },
     { id: 'hero_dionysus', name: '英雄·狄奥尼索斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_DIONYSUS/' },
+    { id: 'hero_dreki', name: '英雄·龙船', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/DREKI/' },
+    { id: 'hero_stoertebeker', name: '英雄·斯托尔特贝克', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HEAVY_DEMO_SHIP/' },
     { id: 'hero_aeginetan', name: '英雄·波利克里托斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 希罗多德点名记载的萨拉米斯海战埃伊纳英雄；素材是 u_shp 舰船类，须海军将领
 ]
 
@@ -670,11 +679,11 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     manatarms: 'sword_shield',
     
     
-    sunda_royal_fighter: 'spear',
+    sunda_royal_fighter: 'foot_hero',
     lancer: 'melee_cav',
     scout_cavalry: 'melee_cav',
     light_cavalry: 'melee_cav',
-    frankish_paladin: 'melee_cav',
+    frankish_paladin: 'mounted_hero',
     jarl: 'melee_cav',
     siege_ballista: 'mechanical',
     monoreme: 'galley',
@@ -728,7 +737,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     ghulam: 'spear', elite_ghulam: 'spear',
     elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', elite_hippeus: 'spear', hoplite: 'spear', elite_hoplite: 'spear', immortal: 'spear', elite_immortal: 'spear', mercenary_hoplite: 'spear',
-    phalangite: 'spear', elite_phalangite: 'spear', sosso_guard: 'spear', sparabara: 'spear', spearman: 'spear',
+    phalangite: 'spear', elite_phalangite: 'spear', sosso_guard: 'foot_hero', sparabara: 'spear', spearman: 'spear',
     sacred_band: 'spear', amazon_warrior: 'spear',
     temple_guard: 'spear', elite_temple_guard: 'spear', hill_tribesman: 'spear', indian_tribesman: 'spear',
     guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
@@ -828,7 +837,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
 
     // ── 英雄：骑马（51 位）──
     hero_alaric: 'mounted_hero', hero_algirdas: 'mounted_hero', hero_aristagoras: 'mounted_hero',
-    hero_artaphernes: 'mounted_hero', hero_attila: 'mounted_hero', hero_basileus: 'mounted_hero',
+    hero_artaphernes: 'mounted_hero', hero_attila: 'mounted_hero', hero_basileus: 'noncombat_hero',
     hero_bernardarmagnac: 'mounted_hero', hero_bohemond: 'mounted_hero', hero_caocao: 'mounted_hero',
     hero_cleitus: 'mounted_hero', hero_cumanchief: 'mounted_hero', hero_datis: 'mounted_hero',
     hero_dinhle: 'mounted_hero', hero_mounted_alexander: 'mounted_hero', hero_edwardlongshanks: 'mounted_hero',
@@ -844,11 +853,12 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero',
     hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero',
     hero_ulrichvonjungingen: 'mounted_hero', hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero',
-    envoy: 'mounted_hero', hero_khan: 'mounted_hero', hero_jadwiga: 'mounted_hero',
-    hero_tamar: 'mounted_hero', hero_bucephalus: 'mounted_hero',
+    envoy: 'mounted_hero', hero_khan: 'mounted_hero', hero_jadwiga: 'noncombat_hero',
+    hero_tamar: 'noncombat_hero', hero_bucephalus: 'noncombat_hero',
 
     // ── 英雄：步战（27 位）──
     hero_arariboiamelee: 'foot_hero', hero_aristides: 'foot_hero', hero_ataulf: 'foot_hero',
+    hero_friartuck: 'noncombat_hero', hero_imam: 'noncombat_hero', hero_chandbardai: 'noncombat_hero', hero_belaiv: 'noncombat_hero', hero_shahking: 'noncombat_hero', hero_jayanegara: 'noncombat_hero',
     hero_harald: 'foot_hero', hero_ulf: 'foot_hero', hero_halldor: 'foot_hero', hero_tostig: 'mounted_hero',
     hero_themistocles_hoplite: 'foot_hero', hero_arariboiaranged: 'foot_hero',
     hero_brasidas: 'foot_hero', hero_cunhambebe: 'foot_hero', hero_cusiyupanqui: 'foot_hero',
@@ -858,10 +868,10 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_liubei: 'foot_hero', hero_llywelynapgruffydd: 'foot_hero', hero_lysander: 'foot_hero',
     hero_macedonian_commander: 'foot_hero', hero_pacanchique: 'foot_hero', hero_pachacuti: 'foot_hero',
     hero_parmenion: 'foot_hero', hero_sforza: 'foot_hero', hero_williamwallace: 'foot_hero',
-    hero_yodit: 'foot_hero', hero_zhangfei: 'foot_hero', hero_zhugeliang: 'foot_hero',
+    hero_yodit: 'foot_hero', hero_zhangfei: 'foot_hero', hero_zhugeliang: 'noncombat_hero',
 
     // ── 英雄：旗舰（4 位）──
-    hero_themistocles: 'naval_hero', hero_artemisia: 'naval_hero',
+    hero_themistocles: 'naval_hero', hero_artemisia: 'naval_hero', hero_dreki: 'naval_hero', hero_stoertebeker: 'naval_hero',
     hero_dionysus: 'naval_hero', hero_aeginetan: 'naval_hero',
 
     // ── 英雄：象驾（3 位）──

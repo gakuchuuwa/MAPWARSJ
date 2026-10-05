@@ -161,7 +161,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['GREEK'],
         parentLegion: '古典时代雅典军团',
-        shipId: 'TRIREME',
+        shipId: 'HERO_DIONYSUS',
     },
     {
         name: '古典时代希腊雇佣军团',
@@ -1458,6 +1458,61 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '中亚军团',
         shipId: 'TRANSPORT_SHIP',
+    },
+    // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
+    //    由二级表（`level2Civ59Legions.ts`）移入：这三支是**三级专属建筑风格**（青藏 TIBET／西域 WESTERN／漠南鲜卑 MONGOL）
+    //    的**保底军团**，与 `LegionFallbackOnDelete.ts` 的 `TIER3_FALLBACK_LEGION` 主人口述一致；
+    //    二级 59 里本就没有同 region 的条目，故《一级16／二级59／三级自建》三层口径下它们属三级。
+    //    ⚠️ 编制、阵型、战船一字未改，仅换表并补三级必填的 `parentLegion`（一级母体名）。
+    {
+        name: '封建时代吐蕃军团',
+        formationMode: 'crane_wing',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'hei_kuang_heavy', count: 4 },
+            { type: 'cav_archer', count: 3 },
+        ],
+        regions: ['TIBET'],
+        parentLegion: '普鲁军团',
+        shipId: 'DEMO_RAFT',
+    },
+    {
+        name: '古典时代西域军团',
+        formationMode: 'crescent',
+        slots: [
+            { type: 'sakan_axeman', count: 3 },
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
+        ],
+        regions: ['WESTERN'],
+        parentLegion: '中亚军团',
+        shipId: 'CANOE',
+    },
+    {
+        name: '封建时代鲜卑军团',
+        formationMode: 'crescent',
+        slots: [
+            { type: 'tiger_rider', count: 3 },
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+        ],
+        regions: ['MONGOL'],
+        parentLegion: '东亚军团',
+        shipId: 'CANOE',
+    },
+    // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
+    //    给罗斯（雅罗斯拉夫，瓦良格卫队的发源地）用；时代按 988 年起的卫队与雅罗斯拉夫在位（1019–1054）定为封建。
+    {
+        name: '封建时代瓦良格卫队军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'varangian_guard', count: 4 },
+            { type: 'elite_varangian_jarl', count: 3 },
+            { type: 'throwing_axeman', count: 2 },
+        ],
+        regions: ['VARANGIANS'],
+        parentLegion: '城堡时代瓦良格军团',
+        shipId: 'ELITE_LONGBOAT',
     },
 ];
 

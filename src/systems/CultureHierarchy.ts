@@ -76,7 +76,8 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
             { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',  label: '🏯 巴蜀（巴蜀剑阁木关）' },
             { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3', label: '🏯 河西（辽式边墙要塞）' },
             { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3', label: '🏯 白山黑水（居庸金代山城）' },
-            { key: 'MONGOL',    deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '⛺ 蒙古（塞外王帐石堡）' },
+            // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
+            //    `MONGOL`（鲜卑漠南）已由本表（二级）移入三级段落 `LAYER3_CUSTOM_GROUPS`。
             { key: 'KOREA',     deStyle: 'ASIA', castle: 'KORE_CASTLE_AGE3', label: '🏯 高丽（半岛山城要塞）' },
         ],
     },
@@ -121,7 +122,7 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
         ],
     },
     {
-        group: '🏛️ MEDI 地中海 (5套)',
+        group: '🏛️ MEDI 地中海 (6套)',
         deStyle: 'MEDI',
         branches: [
             { key: 'LATIN',      deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3', label: '🏛️ 意大利（通用古典石堡）' },
@@ -129,6 +130,11 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
             { key: 'SICILIANS',  deStyle: 'MEDI', castle: 'SICI_CASTLE_AGE3', label: '🏛️ 西西里（诺曼阿拉伯石堡）' },
             { key: 'SPANISH',    deStyle: 'MEDI', castle: 'SPAN_CASTLE_AGE3', label: '🛡️ 西班牙（塞哥维亚高塔要塞）' },
             { key: 'PORTUGUESE', deStyle: 'MEDI', castle: 'PORT_CASTLE_AGE3', label: '🛡️ 葡萄牙（贝伦塔大西洋海堡）' },
+            // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] 补 ITALIANS（意大利，DE 可玩）：
+            //   本表此前漏登记 —— 而 `cityDeStyle`(ITALIANS→MEDI)、`CultureBase16`(→LATIN)、
+            //   `deCastleAssets`(MEDI_CASTLE_AGE3) 与二级军团表（城堡时代意大利军团，region=ITALIANS）**四处都已有**，
+            //   只有本表缺 → 二级只有 61 套，与 DE 的 62 个可玩文明差这一套。
+            { key: 'ITALIANS',   deStyle: 'MEDI', castle: 'MEDI_CASTLE_AGE3', label: '🏛️ 意大利（威尼斯总督红顶宫）' },
         ],
     },
     {
@@ -249,6 +255,24 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
         deStyle: 'ASIA',
         branches: [
             { key: 'MOBEI_MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '🏕️ 漠北蒙古（毡帐营地）' },
+            // 🔴 [2026-10-05 主人令「……漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
+            //    `MONGOL`（鲜卑漠南）由二级 `CULTURE_59_GROUPS` 移入本三级段落，
+            //    与 `封建时代鲜卑军团`（已移入 `level3CustomLegions.ts` 三级表）同一支。
+            { key: 'MONGOL', deStyle: 'ASIA', castle: 'MONG_CASTLE_AGE3', label: '⛺ 鲜卑漠南（塞外王帐石堡）' },
+        ],
+    },
+    // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」]
+    //    三级此前 4 套（青藏 TIBET／西域 WESTERN／漠北蒙古 MOBEI_MONGOL／鲜卑漠南 MONGOL），**希腊系空缺** ——
+    //    古典希腊现有的城堡素材 `GREEK_CASTLE_AGE3` 正是被当「母体通用套」用的那一支（DE 本体 62 个可玩文明里
+    //    没有名为 Greek 的文明，只有雅典／斯巴达共用 CivGreek 建筑组），故希腊属三级自建风格。
+    //    键用 `GREECE`（不能再用 `GREEK` —— 那个键已是二级建筑风格，重键会让 ALL_BRANCHES_MAP 互相覆盖）。
+    //    一级落 `GREEK`（返回 16 之一），城堡沿用 `GREEK_CASTLE_AGE3`。
+    //    ⚠️ 军团沿用已存在的三级「古典时代希腊军团」（`level3CustomLegions.ts`，regions=['GREEK']）。
+    {
+        group: '🏛️ 古典希腊与城邦专属卫堡',
+        deStyle: 'GREEK',
+        branches: [
+            { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 古典希腊（希腊古典通用要塞）' },
         ],
     },
 ];
