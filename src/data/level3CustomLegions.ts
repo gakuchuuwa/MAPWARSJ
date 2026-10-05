@@ -196,7 +196,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'rattan_archer', count: 2 },
         ],
         regions: ['JAPAN_ANTIQUITY'],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「这肯定是挂日本呀，封建大和，城堡镰仓，帝国幕府」]
+        //    日本这条线的地区主干＝二级「城堡时代幕府军团」（DE 可玩文明·日本，region=JAPAN）。
+        parentLegion: '城堡时代幕府军团',
         shipId: 'ANT_ELITE_GALLEY',
     },
     {
@@ -232,7 +234,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_cavalry_archer', count: 2 },
         ],
         regions: ['GOJOSEON'],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「挂高丽呀，封建新罗，城堡高丽，帝国朝鲜」]
+        //    朝鲜半岛地区主干＝二级「城堡时代高丽军团」。
+        parentLegion: '城堡时代高丽军团',
         shipId: 'CANOE',
     },
     {
@@ -280,7 +284,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },
         ],
         regions: ['QIANG'],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
+        //    河西这条线：主干＝二级「封建时代河西军团」。
+        parentLegion: '封建时代河西军团',
         shipId: 'CANOE',
     },
     {
@@ -292,7 +298,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai', count: 2 },
         ],
         regions: ['STEPPE_ANTIQUITY'],
-        parentLegion: '中亚军团',
+        // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」，
+        //    四代＝古典匈奴／封建回鹘／城堡蒙古／帝国蒙古。
+        parentLegion: '城堡时代蒙古军团',
         shipId: 'CANOE',
     },
     {
@@ -328,7 +336,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
         regions: ['YARLUNG'],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「归到古典时代羌族军团」] 雅隆（西藏雅鲁藏布江谷地）属羌藏古族。
+        parentLegion: '古典时代羌族军团',
         shipId: 'CANOE',
     },
     {
@@ -400,7 +409,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_keshik', count: 3 },
         ],
         regions: ['TANGUT'],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
+        parentLegion: '封建时代河西军团',
         shipId: 'DEMO_RAFT',
     },
     {
@@ -760,7 +770,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_scythian_horse_archer', count: 4 },
         ],
         regions: ['UIGHUR'],
-        parentLegion: '封建时代匈人军团',
+        // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」。
+        parentLegion: '城堡时代蒙古军团',
         shipId: 'DEMO_RAFT',
     },
     {
@@ -992,7 +1003,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'LOU_CHUAN',
     },
     {
-        name: '封建时代渤海军团',
+        // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除，
+        //    另一个改名为封建白山黑水军团。挂白山黑水」] —— 原「封建时代渤海军团」改名而来。
+        name: '封建时代白山黑水军团',
         formationMode: 'fish_scale',
         slots: [
             { type: 'pikeman', count: 3 },
@@ -1000,21 +1013,12 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_iron_pagoda', count: 2 },
         ],
         regions: ['MOHE'],
-        parentLegion: '封建时代河西军团',
+        parentLegion: '城堡时代白山黑水军团',
         shipId: 'GALLEY',
     },
-    {
-        name: '封建时代高句丽军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'jian_swordman_unshielded', count: 4 },
-            { type: 'bowman', count: 3 },
-            { type: 'iron_pagoda', count: 2 },
-        ],
-        regions: ['KOREA'],
-        parentLegion: '封建时代河西军团',
-        shipId: 'GALLEY',
-    },
+    // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除」] —— 已删「封建时代高句丽军团」。
+    //    理由：`KOREA` 那 9 座（国内城／平壤／开城／金城／泗沘…）在**朝鲜半岛**，划归朝鲜半岛那条线；
+    //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线保留改名后的「封建时代白山黑水军团」。
     {
         name: '帝王时代缅甸军团',
         formationMode: 'crane_wing',
@@ -1156,7 +1160,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'ninja', count: 2 },
         ],
         regions: ['JAPAN_IMPERIAL'],
-        parentLegion: '城堡时代日本军团',
+        // 🔴 [2026-10-05 主人定「这肯定是挂日本呀，封建大和，城堡镰仓，帝国幕府」]
+        //    原写 parentLegion: '城堡时代日本军团' —— **该军团不存在**（悬空），
+        //    地区主干＝二级「城堡时代幕府军团」。
+        parentLegion: '城堡时代幕府军团',
         shipId: 'ANT_ELITE_GALLEY',
     },
     {
@@ -1208,7 +1215,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'WAR_GALLEY',
     },
     {
-        name: '帝国时代满清军团',
+        // 🔴 [2026-10-05 主人定「满清不就是八旗军吗」] 改名「帝国时代满清军团」→「帝国时代八旗军团」。
+        name: '帝国时代八旗军团',
         formationMode: 'balance_yoke',
         slots: [
             { type: 'elite_fire_archer', count: 4 },
@@ -1216,7 +1224,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'kipchak', count: 3 },
         ],
         regions: ['MANCHU'],
-        parentLegion: '东亚军团',
+        parentLegion: '城堡时代白山黑水军团',
         shipId: 'WAR_GALLEY',
     },
     {
@@ -1252,7 +1260,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'mangudai_elite', count: 3 },
         ],
         regions: ['STEPPE_IMPERIAL'],
-        parentLegion: '中亚军团',
+        // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」。
+        parentLegion: '城堡时代蒙古军团',
         shipId: 'DEMO_RAFT',
     },
     {
@@ -1444,7 +1453,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'hei_kuang_heavy', count: 2 },
         ],
         regions: [],
-        parentLegion: '东亚军团',
+        // 🔴 [2026-10-05 主人定「挂高丽呀，封建新罗，城堡高丽，帝国朝鲜」]
+        parentLegion: '城堡时代高丽军团',
         shipId: 'LOU_CHUAN',
     },
     {
