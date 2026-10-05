@@ -1787,6 +1787,72 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGUECHAWARRIOR/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGUECHAWARRIOR/death_${dir}.png`),
         },
+        'hearth_troop': {
+            // 【撒克逊扈从部队】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEARTHTROOP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEARTHTROOP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEARTHTROOP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEARTHTROOP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEARTHTROOP/death_${dir}.png`),
+        },
+        'elite_hearth_troop': {
+            // 【撒克逊扈从部队精锐】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHEARTHTROOP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHEARTHTROOP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHEARTHTROOP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHEARTHTROOP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHEARTHTROOP/death_${dir}.png`),
+        },
+        'jomsviking': {
+            // 【丹麦约姆斯维京】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOMSVIKING/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOMSVIKING/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOMSVIKING/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOMSVIKING/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOMSVIKING/death_${dir}.png`),
+        },
+        'elite_jomsviking': {
+            // 【丹麦约姆斯维京精锐】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJOMSVIKING/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJOMSVIKING/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJOMSVIKING/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJOMSVIKING/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJOMSVIKING/death_${dir}.png`),
+        },
+        'varangian_guard': {
+            // 【瓦良格卫队】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VARANGIANGUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VARANGIANGUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VARANGIANGUARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VARANGIANGUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VARANGIANGUARD/death_${dir}.png`),
+        },
+        'elite_varangian_guard': {
+            // 【瓦良格卫队高级】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEVARANGIANGUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEVARANGIANGUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEVARANGIANGUARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEVARANGIANGUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEVARANGIANGUARD/death_${dir}.png`),
+        },
+        'varangian_jarl': {
+            // 【瓦良格首领】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/death_${dir}.png`),
+        },
+        'elite_varangian_jarl': {
+            // 【瓦良格首领精锐】AoE2 DE 素材，2026-10-05 主人令补（撒克逊 / 瓦良格 / 丹麦三个新文明的专属兵种）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJARL/death_${dir}.png`),
+        },
         'elite_huskarl': {
             // 【精锐哥特近卫军】AoE2 DE 素材，2026-08-16 全兵种批量接入
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/move_${dir}.png`),
@@ -3298,6 +3364,56 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALGIRDAS/death_${dir}.png`),
         },
         // 【英雄·阿拉里博亚】8方向，AoE2 DE SLD 素材
+        // 【英雄·哈拉尔】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_harald': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HARALD/death_${dir}.png`),
+        },
+        // 【英雄·乌尔夫·奥斯帕克松】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_ulf': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ULF/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ULF/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ULF/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ULF/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ULF/death_${dir}.png`),
+        },
+        // 【英雄·哈尔多尔·斯诺拉松】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_halldor': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALLDOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALLDOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALLDOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALLDOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALLDOR/death_${dir}.png`),
+        },
+        // 【英雄·托斯蒂格·葛温森】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_tostig': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TOSTIG/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TOSTIG/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TOSTIG/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TOSTIG/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TOSTIG/death_${dir}.png`),
+        },
+        // 【英雄·地米斯托克利（步战）】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_themistocles_hoplite': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THEMISTOCLES/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THEMISTOCLES/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THEMISTOCLES/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THEMISTOCLES/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/THEMISTOCLES/death_${dir}.png`),
+        },
+        // 【英雄·阿拉里博亚（弓手）】8方向，AoE2 DE SLD 素材（2026-10-05 补）
+        'hero_arariboiaranged': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIARANGED/death_${dir}.png`),
+        },
         'hero_arariboiamelee': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIAMELEE/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARARIBOIAMELEE/attack_${dir}.png`),

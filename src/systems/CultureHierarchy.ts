@@ -81,7 +81,7 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
         ],
     },
     {
-        group: '🛡️ WEST 西欧 (7套)',
+        group: '🛡️ WEST 西欧 (10套)',
         deStyle: 'WEST',
         branches: [
             { key: 'GERMANIC',    deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3', label: '🛡️ 条顿（西欧通用石堡）' },
@@ -91,6 +91,12 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
             { key: 'CELTS',       deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3', label: '🛡️ 凯尔特（苏格兰高地圆塔）' },
             { key: 'VIKINGS',     deStyle: 'WEST', castle: 'VIKI_CASTLE_AGE3', label: '🛡️ 维京（诺斯长屋环形要塞）' },
             { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3', label: '🛡️ 哥特（蛮族厚重石堡）' },
+            // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] DE 三个新文明补入本表：
+            //   此前只在二级军团表与城堡表登记，本表漏登记。DE hud_style：Saxons=CivWest、Danes/Varangians=CivNord
+            //   （项目把 VIKINGS 归 WEST 同口径）—— 补后本表 59+3=62，与 DE 可玩文明数严格相等。
+            { key: 'SAXONS',      deStyle: 'WEST', castle: 'SAXO_CASTLE_AGE3', label: '🛡️ 撒克逊（石木混筑塔堡）' },
+            { key: 'DANES',       deStyle: 'WEST', castle: 'DANE_CASTLE_AGE3', label: '🛡️ 丹麦（圆塔木石堡）' },
+            { key: 'VARANGIANS',  deStyle: 'WEST', castle: 'VARA_CASTLE_AGE3', label: '🛡️ 瓦良格（诺斯山形屋顶要塞）' },
         ],
     },
     {

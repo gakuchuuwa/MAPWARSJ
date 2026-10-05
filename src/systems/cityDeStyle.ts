@@ -177,13 +177,21 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     ARAGON: 'MEDI',
     // ── [2026-09-16 主人定] 59 二级文明值（buildingStyle）→ 母体风格集前缀。
     //   59 文明值本身不是 DE 素材前缀（DE 只有 16 套母体素材），城墙/城镇必须回落到母体，
-    //   城堡则走 resolveCastleAsset 的「代表据点→势力→文化区→分支」四层。此处补 5 个
-    //   REGION_TO_DE_STYLE 里原本缺失的 59 文明 key（其余 49 个已在上方覆盖）。
+    //   城堡则走 resolveCastleAsset 的「代表据点→势力→文化区→分支」四层。此处补 8 个
+    //   REGION_TO_DE_STYLE 里原本缺失的 59/62 文明 key（其余已在上方覆盖）。
     WEI: 'ASIA',        // 河朔（华夏）
     ROMA: 'MEDI',       // 罗马（地中海）
     INCA: 'ANDE',       // 印加（安第斯）
     ATHENIANS: 'GREEK', // 雅典（希腊）
     SPARTANS: 'GREEK',  // 斯巴达（希腊）
+    // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] 补 DE 三个新文明：
+    //   它们此前只在二级军团表（level2Civ59Legions: 封建撒克逊/封建丹麦/城堡瓦良格）与城堡表
+    //   （deCastleAssets: SAXO/DANE/VARA_CASTLE_AGE3）里登记，本表漏登 → resolveCityDeBuildingStyle 落空、
+    //   一级风格取不到。DE 官方 civilizations.json 的 hud_style：Saxons=CivWest、Danes/Varangians=CivNord，
+    //   与项目把 VIKINGS 归 WEST 同口径，故三者一级皆 WEST 西欧。
+    SAXONS: 'WEST',       // 撒克逊（DE「维京传奇」新增，CivWest）
+    DANES: 'WEST',        // 丹麦（CivNord）
+    VARANGIANS: 'WEST',   // 瓦良格（CivNord）
 };
 
 /** 判断某城是否用小城/关隘/中城/大城 DE 建筑组合渲染；优先取据点显式配置的 buildingStyle，否则按区域推导，返回 DE 建筑风格前缀，否则 null。

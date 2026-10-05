@@ -2284,6 +2284,12 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
     TURKS: 'TURKS',
     UIGHUR: 'MOBEI_MONGOL',
     VANDALS: 'ORIE',
+    // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] DE 三个新文明补登
+    //   （本表漏登 → getCultureLegionName 的建筑风格保底取不到，会掉到最末兜底「东亚军团」）。
+    //   与同组 TEUTONS/SWEDISH 同口径，建筑风格一律回落到 WEST。
+    SAXONS: 'WEST',
+    DANES: 'WEST',
+    VARANGIANS: 'WEST',
     VIETNAMESE: 'VIETNAMESE',
     VIKINGS: 'VIKINGS',
     WEI: 'WEI',
