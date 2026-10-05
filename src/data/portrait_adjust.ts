@@ -8063,7 +8063,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 25
         },
         "/assets/GREEK/hesitiya_yiasong.png": {
-            "scale": 1.14,
+            "scale": 1.16,
             "offsetX": 0,
             "offsetY": 12
         },
@@ -8071,6 +8071,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 12
+        },
+        "/assets/PERSIAN/bosidiguo_aertafuniesi.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

@@ -12,8 +12,8 @@
     --cinnabar-bot: #681b1d;  /* 朱砂红底 */
     
     position: fixed;
-    /* 右边的让位值（给小地图）写在 map-hud-theme.css 的 #game-time-hud —— 那份后加载、最终生效，别在这里写第二份 */
-    left: auto;
+    /* 左右与底边的定位（现已改挂左下角）写在 map-hud-theme.css 的 #game-time-hud
+       —— 那份后加载、最终生效，别在这里写第二份 left/right */
     bottom: 18px;
     z-index: 5000;
     display: none;

@@ -49,6 +49,7 @@ import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
 import { resolveStockadeFenceKey } from '../data/stockadeWallStyleLookup';
 import { isMountainPass } from '../systems/passMountainDecision';
+import { isScriptPeriod } from '../events/scriptPeriod';
 import { audioManager } from '../audio/AudioManager';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import DechromaWorker from '../workers/DechromaWorker?worker';
@@ -4437,7 +4438,12 @@ export class Scene13WarLayer {
                     lat: init.centerLat ?? null,
                     isSiege: init.battleType === 'siege',
                     isNaval: !!init.isNaval,
-                    forceNight: isNightBattle(init),   // 🔴 [2026-10-03] 史实夜战才开夜晚滤镜
+                    // 🔴 [2026-10-05 主人令「佩利昂的战术，只有在剧本中才套用夜晚滤镜，乱斗和夜晚滤镜没有关系」]
+                    //    夜晚滤镜（2026-10-03「21 场中有夜战」）**只属于剧本**：同一座城在乱斗里被攻，
+                    //    那一仗是现打的遭遇战，不是史书上那一场夜袭，故乱斗一律不开（乱斗照旧 DE 原色）。
+                    //    `isNightBattle(init)` 只认守方据点 id（佩利昂=city_peiliang），它不知道现在是不是剧本，
+                    //    所以剧本期这道闸必须加在这里，不能写在 Scene13TimeOfDay 里（那边没有剧本概念）。
+                    forceNight: isScriptPeriod() && isNightBattle(init),
                 });
                 this.timeOfDay.begin(grade, performance.now());
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
