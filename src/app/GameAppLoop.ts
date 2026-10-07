@@ -334,7 +334,7 @@ export function tickGameLogicOnly(app: GameApp, timestamp: number): void {
         if (app.timeSystem.isGamePaused() || !app.cityManager) {
             // 🔴 [2026-08-10 修死锁] 战术层期间 timeSystem 是暂停的，但战斗必须继续推进。
             // 漏了这一条的后果：标签页不可见（切窗口/切 OBS/最小化）→ rAF 被节流 → 主循环
-            // 走到这条后台心跳 → 直接 return → 战斗 elapsed 永远不涨 → 60 秒永远走不完 →
+            // 走到这条后台心跳 → 直接 return → 战斗 elapsed 永远不涨 → 战斗永远打不完 →
             // 场景不退出 → 暂停不解除 → **整个世界永久卡死**，且 ReloadGate 因场景激活还
             // 挡着热更新，刷都刷不回来。实测采样：elapsed 十次全是 0。
             if (app.cityManager && app.battleScene?.isStrategyPausedByScene()) {
@@ -486,10 +486,9 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
             // 跑的：只有被跟拍的那一场战斗（军团行军不再放行，见下）
             // [2026-08-16 主人定·含援军] 军团行军一并冻结：进 13 时开战圈（0.35°）内援军
             //   已全部编入（GameAppCombatHooks「开战时编入的援军就是全部、不会有中途加入」），
-            //   13 期间放行行军只会让全图无关军团偷跑 60 秒——走到目标城因 AI 冻结傻等、
+            //   13 期间放行行军只会让全图无关军团偷跑一整场仗的时间——走到目标城因 AI 冻结傻等、
             //   途中撞敌因其他战斗冻结傻站。彻底定格 = 大战略 100% 冻结、时钟不再割裂。
-            // 战术层走**真实秒**，不乘游戏倍速：主人定「13 战斗固定 1 分钟」，
-            // 乘倍速的话开 4x 就变成 15 秒，固定时长就名存实亡了。
+            // 战术层走**真实秒**，不乘游戏倍速：开 4x 倍速时战术演出也按正常速度播放。
             const sceneDelta = deltaTime * GameConfig.COMBAT.SCENE13_TIME_SCALE;
             if (app.combatSystem) {
                 perfMonitor.startTimer('combat');

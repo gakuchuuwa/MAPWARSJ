@@ -115,14 +115,6 @@ export class Battle {
     private predictedWinner: IBattleUnit;
 
     /**
-     * [2026-08-10 13 战术层固定时长] 进 13 的 1v1 野战同样打满固定时长（主人定：1 分钟）。
-     * DPS 按剩余时间反推（update 里的 troops/timeLeft），拉长时长不会让谁提前打光。
-     */
-    public applySceneFixedDuration(sec: number): void {
-        this.targetDuration = sec;
-    }
-
-    /**
      * [2026-08-11 13 v2 出兵口互攻] 13 期间引擎冻结标志。
      * true = 本场战斗完全由 13 演出（Scene13WarLayer）接管：update 不推进、不结算，
      * 胜负等演出判负后经 forceScene13Result 写回。8/9/10 永不置位，行为不变。

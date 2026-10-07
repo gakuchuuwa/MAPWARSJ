@@ -1985,7 +1985,8 @@ export class GlobalUnitRenderer {
         const userPaused = scene?.pauseHook?.isGamePaused?.() === true
             && scene?.isStrategyPausedByScene?.() !== true;
         if (userPaused) return;
-        const totalMs = Math.max(1000, GameConfig.COMBAT.SCENE13_BATTLE_DURATION_SEC * 1000);
+        // 只是旧地图 13 级编队三幕动画的节奏（60 秒走完三幕），不是战斗时长；战斗打到一方全灭为止。
+        const totalMs = 60 * 1000;
         this.scene13Progress = Math.min(1, this.scene13Progress + this.frameDeltaMs / totalMs);
     }
 

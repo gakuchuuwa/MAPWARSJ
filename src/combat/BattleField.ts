@@ -115,19 +115,6 @@ export class BattleField implements IOpeningPulseSink {
     public elapsed: number = 0;
     public type: BattleType;
     public targetDuration: number = 0; // [NEW] Public property
-    /**
-     * [2026-08-10 13 战术层固定时长] 非 null = 本场进了 13 战术层，时长固定为此值（秒），
-     * 覆盖兵力比动态(10–30)、援军加时、导演时长。战术层的 delta 走**真实秒**（见 GameAppLoop），
-     * 所以这里填 60 就是墙钟整 1 分钟，与游戏倍速无关。
-     * 血条/三幕火/脉冲全部按 elapsed÷targetDuration 的比例算，自动铺满 60 秒，无需另调。
-     */
-    public sceneFixedDurationSec: number | null = null;
-
-    /** 进 13 战术层时调用：把本场时长钉死为 sec 秒（立即生效，援军重算也改不动） */
-    public applySceneFixedDuration(sec: number): void {
-        this.sceneFixedDurationSec = sec;
-        this.targetDuration = sec;
-    }
 
     /**
      * [2026-08-11 13 v2 出兵口互攻] 13 期间引擎冻结标志。
@@ -472,9 +459,6 @@ export class BattleField implements IOpeningPulseSink {
      *   导演指定 → 尊重剧本，只钳制（上限跟着援军放宽，不强行抬高剧本时长）
      */
     private resolveFinalTargetDuration(): number {
-        // [2026-08-10 13 战术层固定时长] 主人定：进 13 的战斗固定打满 1 分钟。
-        // 放在最前面拦截，援军入场重算（enrollUnit 里的 resolveFinalTargetDuration）也钉不动它。
-        if (this.sceneFixedDurationSec !== null) return this.sceneFixedDurationSec;
         if (!this.bothSidesHaveGeneral()) {
             return GameConfig.COMBAT.BATTLE_DURATION_PARTIAL_GENERAL_SEC;
         }
