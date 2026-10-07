@@ -9,6 +9,7 @@ import { getFactionGeneral } from '../data/FactionGenerals';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { pickRandomStrategicSkill, setStrategicSkillOverride } from '../combat/GeneralSkillCombat';
 import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
+import { applyLegionCultureComposition } from '../types/CultureFormations';
 import type { Army } from './Army';
 
 export type LegionSpawnTierOutcome = 'plain' | 'elite' | 'general' | 'elite_general';
@@ -91,6 +92,7 @@ export function attachFactionGeneralToArmy(army: Army): boolean {
     if (getGeneralProfile(general.generalId)?.tier === 'famous') {
         setStrategicSkillOverride(army.id, pickRandomStrategicSkill());
     }
+    applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
     return true;
 }
 

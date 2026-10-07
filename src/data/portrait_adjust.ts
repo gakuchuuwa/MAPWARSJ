@@ -6093,7 +6093,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 6
         },
         "/assets/LATIN/baizanting_fulajimier.png": {
-            "scale": 1,
+            "scale": 1.02,
             "offsetX": 0,
             "offsetY": 5
         },
@@ -7593,7 +7593,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/PERSIAN/youbeiya_datisi.png": {
-            "scale": 1,
+            "scale": 0.94,
             "offsetX": 0,
             "offsetY": 0
         },
@@ -8074,6 +8074,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         },
         "/assets/PERSIAN/bosidiguo_aertafuniesi.png": {
             "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "/assets/GREEK/mixiya_pamanniu.png": {
+            "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
         }
