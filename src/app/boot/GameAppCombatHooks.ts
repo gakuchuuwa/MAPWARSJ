@@ -294,8 +294,6 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         if (eligible) {
             const centerUnit = battle.attacker.id === followedId ? battle.attacker : battle.defender;
             const t = battleSceneTarget(centerUnit);
-            // [2026-08-10] 进 13 = 战术层：时长钉死 1 分钟（真实秒），覆盖引擎的动态时长
-            battle.applySceneFixedDuration(GameConfig.COMBAT.SCENE13_BATTLE_DURATION_SEC);
             // [2026-08-11 13 v2] 13 演出接管：冻结引擎（不推进不结算），胜负由出兵口互攻判负写回
             battle.scene13Frozen = true;
             app.battleScene?.setFrozenBattle(battle);   // 退场未判负时据此解冻（见 BattleSceneLayer.unfreezeScene13Battle）
@@ -366,8 +364,6 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             const t = battleSceneTarget(centerUnit);
             // 🔴 [2026-08-10 主人铁律] 镜头永远跟随军团——进场落点 = 跟拍军团将领编队，
             // 禁止改成两军中点（曾擅改被主人怒斥）。
-            // [2026-08-10] 进 13 = 战术层：时长钉死 1 分钟（真实秒），覆盖动态时长/援军加时
-            battleField?.applySceneFixedDuration(GameConfig.COMBAT.SCENE13_BATTLE_DURATION_SEC);
             // [2026-08-11 13 v2] 13 演出接管：冻结引擎（不推进不结算），胜负由出兵口互攻判负写回
             if (battleField) {
                 battleField.scene13Frozen = true;
@@ -403,8 +399,6 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             }
             app.battleScene?.enter(t.id);
         }
-        // 🔴 dur 必须在钉死时长**之后**取：战斗 UI 的进度条/倒计时按它铺，
-        //    先取就会拿到引擎原来的动态时长（30s），UI 走完了战斗还在打。
         const dur = battleField?.targetDuration ?? 17;
         try {
             app.combatUI.showRegional(
