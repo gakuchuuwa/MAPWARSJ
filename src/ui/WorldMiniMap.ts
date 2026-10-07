@@ -138,20 +138,31 @@ export class WorldMiniMap {
     }
 
     /**
-     * 🔴 [2026-10-05 主人令「玩家如果换了军团，就要重新显示行军线路」]
-     * 换军团侦测：宿主军团 id 变了（入伍新军团／离队／军团覆灭后改投）→
-     * **清空旧轨迹**（那是上一支军团走过的路）→ **强制把线路重新打开** → 从此刻起重新记。
-     * 返回 true 表示这一拍刚换了军团（调用方据此跳过本拍采样，免得把旧位置记进新线）。
+     * 🔴 [2026-10-07 主人令「小地图行军线路是用来画军团的行军线路，玩家加入一个势力后，这个军团的行军线路，如果离开势力就不画，再次加入势力再画」]
+     * 宿主军团状态侦测：
+     * 1. 离开势力（id == null）：不画军团线路，清空已有折线与采样点；
+     * 2. 加入势力（id != null）：若换了军团或刚从无势力加入，清空旧轨迹 + 重新打开线路，本拍不采样；
+     * 返回当前有效军团 id（非空表示在势力军团中，null 表示离开势力不画）。
      */
-    private syncHostLegion(): boolean {
-        if (!this.getHostLegionId) return false;
+    private syncHostLegion(): string | null {
+        if (!this.getHostLegionId) return null;
         const id = this.getHostLegionId() ?? null;
-        if (id === this.lastHostId) return false;
-        this.lastHostId = id;
-        this.trailPts.length = 0;
-        this.trail.setLatLngs([]);
-        if (!this.trailOn) this.setTrailOn(true);   // 换了军团 → 重新显示
-        return true;
+        if (id === null) {
+            if (this.lastHostId !== null || this.trailPts.length > 0) {
+                this.trailPts.length = 0;
+                this.trail.setLatLngs([]);
+                this.lastHostId = null;
+            }
+            return null;
+        }
+        if (id !== this.lastHostId) {
+            this.lastHostId = id;
+            this.trailPts.length = 0;
+            this.trail.setLatLngs([]);
+            if (!this.trailOn) this.setTrailOn(true);   // 换军团/重新加入势力 → 重新显示
+            return null; // 本拍跳过采样，免得把上一军团/上一位置接进新线
+        }
+        return id;
     }
 
     private setExpanded(on: boolean): void {
@@ -183,10 +194,10 @@ export class WorldMiniMap {
     private tick(): void {
         const hide = this.isTactical();
         this.root.style.display = hide ? 'none' : '';
-        // 🔴 [2026-10-05] 先看有没有换军团：换了就清空轨迹 + 重新显示线路（本拍不再采样，免得把旧位置续进新线）
-        const hostChanged = this.syncHostLegion();
+        // 🔴 [2026-10-07 主人令] 仅加入势力军团期间记录与绘制行军线路，离开势力不画，再次加入再画
+        const currentHostId = this.syncHostLegion();
         const p = this.getPlayerPos();
-        if (!hostChanged && p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
+        if (currentHostId && p && Number.isFinite(p.lat) && Number.isFinite(p.lng)) {
             const last = this.trailPts[this.trailPts.length - 1];
             if (!last || Math.hypot(last.lat - p.lat, last.lng - p.lng) >= TRAIL_STEP_DEG) {
                 this.trailPts.push(L.latLng(p.lat, p.lng));
@@ -194,7 +205,8 @@ export class WorldMiniMap {
             }
         }
         if (hide || !this.expanded) return;
-        if (this.trailOn) this.trail.setLatLngs(this.trailPts);
+        if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
+        else this.trail.setLatLngs([]);
         if (p) this.dot.setLatLng([p.lat, p.lng]);
         this.viewRect.setBounds(this.mainMap.getBounds());
         if (this.level > LEVEL_MIN) this.applyView();
