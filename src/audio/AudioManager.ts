@@ -189,9 +189,11 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     //    DE **没有公开音效名字表**（dat 的 sound_id 全 -1、sounds.json 只有 49 条 UI 音、
     //    社区 wwnames 没收录 AoE2 DE、按命名规律猜的 4428 个候选零匹配），
     //    所以只能提取全部 6732 个再靠人耳指认。原始素材留在 scratch/de_audio/。
-    siege_impact: sound('battle', 'siege_impact_de', 0.62, 260),
-    // ⚠️ siege_launch 仍是**借用**（DE 同批的火炮发射声），主人还没指认到投石车/弩炮的原声。
-    siege_launch: sounds('battle', ['naval_cannon_fire_2', 'naval_cannon_fire_4', 'naval_cannon_fire_6'], 0.30, 600),   // 0.70→0.42（约 -4.4dB，主人 2026-08-19「有点吵」）：它从接触响到退场，是底噪不是主角
+    // 🔴 [2026-10-07 主人令「按这套官方对应关系为您直接换上」] DE 攻城原声（wwiser 从 bank00.txt 精确对应）
+    //    siege_impact = 冲车撞门 (wem 109308349, 229010215) + 石弹砸墙 (wem 241430262, 270594082, 453205371)
+    siege_impact: sounds('battle', ['siege_impact_1', 'siege_impact_2', 'siege_impact_3', 'siege_impact_4', 'siege_impact_de'], 0.62, 260),
+    //    siege_launch = 投石车/中投发射 (wem 37765250, 630102252) + 巨投配重抛石 (wem 425532147, 479664391)
+    siege_launch: sounds('battle', ['siege_launch_1', 'siege_launch_2', 'siege_launch_3', 'siege_launch_4'], 0.55, 350),
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 

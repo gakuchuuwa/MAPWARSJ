@@ -1350,8 +1350,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "boootiya": {
-        legionName: "希腊军团",   // 🔴 [2026-09-18] 原挂【古典时代希伦军团】全仓查无此军=幽灵；按保底规则（底比斯 GREEK 风格 → 二级无同时代 → 退一级母体）安置
-        legionType: "region",
+        legionName: "古典时代希腊军团",
+        legionType: "sub",
     },
     "yamaxun": {
         legionName: "古典时代亚马逊军团",
@@ -1698,8 +1698,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "funan": {
-        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【古典时代东南亚军团】全仓查无此军=幽灵；按保底规则（毗耶陀 KHMER 风格 → 二级无同时代 → 退一级母体）安置
-        legionType: "region",
+        legionName: "古典时代高棉军团",
+        legionType: "sub",
     },
     "xichu": {
         legionName: "古典时代秦汉军团",
@@ -2000,68 +2000,68 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "wusun": {
-        legionName: "东亚军团",
-        legionType: "region",
+        legionName: "古典时代西域军团",
+        legionType: "sub",
     },
     "xiliao": {
-        legionName: "中亚军团",
-        legionType: "region",
+        legionName: "城堡时代鞑靼军团",
+        legionType: "sub",
     },
     "kanata": {
-        legionName: "印度军团",
-        legionType: "region",
+        legionName: "城堡时代达罗毗荼军团",
+        legionType: "sub",
     },
     "rierman": {
-        legionName: "西欧军团",
-        legionType: "region",
+        legionName: "封建时代日耳曼军团",
+        legionType: "sub",
     },
     "bulu": {
-        legionName: "普鲁军团",
-        legionType: "region",
+        legionName: "古典时代普鲁军团",
+        legionType: "sub",
     },
     "abasi": {
-        legionName: "中东军团",
-        legionType: "region",
+        legionName: "封建时代阿拉伯军团",
+        legionType: "sub",
     },
     "buni": {
-        legionName: "地中海军团",
-        legionType: "region",
+        legionName: "古典时代腓利斯丁军团",
+        legionType: "sub",
     },
     "liulike": {
-        legionName: "东北欧军团",
-        legionType: "region",
+        legionName: "城堡时代罗斯军团",
+        legionType: "sub",
     },
     "bendou": {
-        legionName: "东南欧军团",
-        legionType: "region",
+        legionName: "封建时代拜占庭军团",
+        legionType: "sub",
     },
     "ansxi": {
-        legionName: "波斯军团",
-        legionType: "region",
+        legionName: "古典时代波斯联合军团",
+        legionType: "sub",
     },
     "champa": {
-        legionName: "东南亚军团",
-        legionType: "region",
+        legionName: "城堡时代越南军团",
+        legionType: "sub",
     },
     "haerjijiji": {
         legionName: "古典时代马其顿军团",
         legionType: "sub",
     },
     "odrysian_late": {
-        legionName: "色雷斯军团",
-        legionType: "region",
+        legionName: "古典时代色雷斯军团",
+        legionType: "sub",
     },
     "qimu": {
-        legionName: "安第斯军团",
-        legionType: "region",
+        legionName: "城堡时代克丘亚军团",
+        legionType: "sub",
     },
     "talasike": {
-        legionName: "中美军团",
-        legionType: "region",
+        legionName: "城堡时代阿兹特克军团",
+        legionType: "sub",
     },
     "adal": {
-        legionName: "非洲军团",
-        legionType: "region",
+        legionName: "帝国时代非洲军团",
+        legionType: "sub",
     },
     "liang_d": {
         legionName: "封建时代隋唐军团",
@@ -2208,8 +2208,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "luohu": {
-        legionName: "东南亚军团",
-        legionType: "region",
+        legionName: "封建时代吴哥军团",
+        legionType: "sub",
     },
     "xie_cj_d": {
         legionName: "城堡时代宋禁军团",
@@ -2385,16 +2385,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "suke": {
-        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（素可泰 SEAS 风格 → 二级无同时代 → 退一级母体）安置
-        legionType: "region",
+        legionName: "封建时代吴哥军团",
+        legionType: "sub",
     },
     "lancang": {
-        legionName: "东南亚军团",   // 🔴 [2026-09-18] 原挂【城堡时代东南亚军团】全仓查无此军=幽灵；按保底规则（琅勃拉邦 SEAS 风格 → 二级无同时代 → 退一级母体）安置
-        legionType: "region",
+        legionName: "封建时代吴哥军团",
+        legionType: "sub",
     },
     "taiyuan": {
-        legionName: "东南亚军团",
-        legionType: "region",
+        legionName: "封建时代吴哥军团",
+        legionType: "sub",
     },
     "ryukyu": {
         legionName: "城堡时代幕府军团",
@@ -2479,6 +2479,47 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "yuwen": {             // 武川镇·宇文泰（鲜卑，封建）
         legionName: "封建时代鲜卑军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-07 主人令「符合历史就行」] 原未登记回落一级母体的 10 家势力改套二级/三级军团
+    "muer": {
+        legionName: "城堡时代帖木儿军团",
+        legionType: "sub",
+    },
+    "xisi": {
+        legionName: "城堡时代帖木儿军团",
+        legionType: "sub",
+    },
+    "baha": {
+        legionName: "城堡时代帖木儿军团",
+        legionType: "sub",
+    },
+    "huluo": {
+        legionName: "城堡时代帖木儿军团",
+        legionType: "sub",
+    },
+    "saerbadaer": {
+        legionName: "城堡时代伊利汗军团",
+        legionType: "sub",
+    },
+    "kumisi": {
+        legionName: "城堡时代塞尔柱军团",
+        legionType: "sub",
+    },
+    "bendou_d": {
+        legionName: "古典时代波斯联合军团",
+        legionType: "sub",
+    },
+    "fulijiya": {
+        legionName: "古典时代赫梯军团",
+        legionType: "sub",
+    },
+    "ldiya": {
+        legionName: "古典时代赫梯军团",
+        legionType: "sub",
+    },
+    "kapaduoxiya": {
+        legionName: "古典时代赫梯军团",
         legionType: "sub",
     },
 };
