@@ -177,6 +177,16 @@ function startScene13War(
     if (!defenderEliteName && defenderCityId) {
         defenderEliteName = getCityEliteLegionName(defenderCityId);
     }
+    // 🔴 同场唯一：攻守双方精锐番号同名时守方避让，禁止同名精锐自己打自己
+    if (attackerEliteName && defenderEliteName && attackerEliteName === defenderEliteName) {
+        defenderEliteName = null;
+    }
+    // 🔴 同场唯一：攻守双方武将相同时守方避让，禁止同一武将影分身自己打自己
+    const attackerGeneralId = attacker.generalId ?? null;
+    let defenderGeneralId = defender.generalId ?? null;
+    if (attackerGeneralId && defenderGeneralId && attackerGeneralId === defenderGeneralId) {
+        defenderGeneralId = null;
+    }
     const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
@@ -185,8 +195,8 @@ function startScene13War(
         attackerFactionId: attacker.factionId,
         defenderFactionId: defender.factionId,
         // 武将 id 传给编制层：武将专属编制（秦及先秦雁行阵等）在 13 里也要生效
-        attackerGeneralId: attacker.generalId ?? null,
-        defenderGeneralId: defender.generalId ?? null,
+        attackerGeneralId,
+        defenderGeneralId,
         attackerTroops: attacker.troops,
         defenderTroops: defender.troops,
         attackerBonus: bonus?.attacker,

@@ -1647,10 +1647,12 @@ export class CombatUI {
             undefined,
             'attacker',
         );
+        const isDuplicateGen = !!(init.attackerGeneralId && init.defenderGeneralId && init.attackerGeneralId === init.defenderGeneralId);
+        const resolvedDefGeneralId = isDuplicateGen ? undefined : (init.defenderGeneralId || undefined);
         this.setPortrait(
             defenderPortrait,
             undefined,
-            init.defenderGeneralId || undefined,
+            resolvedDefGeneralId,
             init.defenderFactionId || undefined,
             undefined,
             'defender',
@@ -1667,16 +1669,24 @@ export class CombatUI {
                 attackerNameTag.dataset.generalId = init.attackerGeneralId;
                 attackerNameTag.dataset.side = 'attacker';
                 attackerNameTag.style.display = 'block';
+            } else {
+                attackerNameTag.style.display = 'none';
             }
+        } else {
+            attackerNameTag.style.display = 'none';
         }
-        if (init.defenderGeneralId) {
-            const defGen = getGeneralRecordByGeneralId(init.defenderGeneralId);
+        if (resolvedDefGeneralId) {
+            const defGen = getGeneralRecordByGeneralId(resolvedDefGeneralId);
             if (defGen) {
                 defenderNameTag.textContent = defGen.generalName;
-                defenderNameTag.dataset.generalId = init.defenderGeneralId;
+                defenderNameTag.dataset.generalId = resolvedDefGeneralId;
                 defenderNameTag.dataset.side = 'defender';
                 defenderNameTag.style.display = 'block';
+            } else {
+                defenderNameTag.style.display = 'none';
             }
+        } else {
+            defenderNameTag.style.display = 'none';
         }
 
         // 标题设置：剧本战斗用 fieldBattleData.title（「格拉尼库斯河战役」「伊苏斯战役」），
@@ -5262,7 +5272,8 @@ export class CombatUI {
         
         this.currentBattleKey = title || `battle_${Date.now()}`;
         this.setPortrait(this.leftPortrait, att, att.generalId, att.factionId, undefined, 'attacker');
-        this.setPortrait(this.rightPortrait, def, def.generalId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
+        const defGenId = (att.generalId && def.generalId === att.generalId) ? undefined : def.generalId;
+        this.setPortrait(this.rightPortrait, def, defGenId, def.factionId, undefined, 'defender', this.leftPortrait.src || undefined);
         this.updateStats();
     }
 

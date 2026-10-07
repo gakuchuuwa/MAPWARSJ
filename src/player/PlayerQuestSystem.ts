@@ -41,7 +41,7 @@ export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
 
 /**
  * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
- *   62 类正名 = 二级 59 文明 + 三级 3 自建（与据点编辑器同一份数据）；
+ *   66 类正名 = 二级 62 文明 + 三级 4 自建（与据点编辑器同一份数据）；
  *   别名键（NORTH / STEPPE / WEST_ASIA / OTTOMAN / RUSSIAN / YURT）按**对象同一性**折回正名，不另抄字典。
  */
 const STYLE62_KEYS: readonly string[] = [
@@ -56,7 +56,7 @@ const STYLE62_ALIAS: ReadonlyMap<string, string> = new Map(
         .filter(([, canon]) => canon !== ''),
 );
 
-/** 一座据点属于 59+3 里的哪一类（取不到返回 null；实测全库 1127 座里 3 座取不到）。 */
+/** 一座据点属于 66 类里的哪一类（取不到返回 null；2026-10-07 实测全库 1127 座全部取得到）。 */
 function style62OfCity(c: City): string | null {
     const k = resolveCityHierarchy(c).branchKey;
     if (!k) return null;
@@ -2519,7 +2519,7 @@ export class PlayerQuestSystem {
         if (!candidates.length) return null;
 
         // 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
-        //    先按 62 类建筑风格分组，取**离我最近、这一轮还没轮到**的那一类，只在这一类的城里挑。
+        //    先按 66 类建筑风格分组，按 pickStyle62Pool 的轮换规则（每轮先最近一类，之后由东向西）取一类，只在这一类的城里挑。
         const me = this.deps.hero.getPosition();
         const pool = this.pickStyle62Pool(candidates, me);
         if (!pool.length) return null;
@@ -2551,7 +2551,7 @@ export class PlayerQuestSystem {
 
         // ③-0 🔴 [2026-10-05 主人令「既然已经按建筑地区轮换了，就不要远游了」] **「远游」签已删除**：
         //    原先每 VOYAGE_EVERY 次寻将放一次不看距离的均匀抽签（为的是能摸到美洲），
-        //    现在 62 类建筑风格挨个轮换本身就会走到每一类，再远游只会打乱轮换。
+        //    现在 66 类建筑风格挨个轮换本身就会走到每一类，再远游只会打乱轮换。
         // 🔴 [2026-09-16 主人定]「军团战败后重新寻将，不要找太近的 —— 太近的话刚打完又碰上」
         //    标志只管**战败后的这一次**寻将，取出来就清掉，否则会顺延到下一次寻将上。
         const avoidNear = this.postDefeatHunt;
@@ -2615,7 +2615,7 @@ export class PlayerQuestSystem {
     private postDefeatHunt = false;
     /** 已拜访过的城（**永久**排除，去遍全图才清空）。这是「别困在一个圈里」的唯一机制。 */
     private readonly visited = new Set<string>();
-    /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（62 类走完清空、重开一轮）。 */
+    /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（66 类走完清空、重开一轮）。 */
     private readonly visitedStyles = new Set<string>();
     /** 🔴 [2026-10-07 主人令「由东向西」] 上一次轮到的那一类的经度（该类候选城经度中位数）；每轮开头置空。 */
     private lastStyleLng: number | null = null;
@@ -2628,8 +2628,8 @@ export class PlayerQuestSystem {
      *   选哪一类：每轮第一次取**离玩家最近**的一类；之后取**上一类西边最近、这一轮还没轮到**的一类
      *   （一类的东西位置 = 该类候选城经度的中位数），走到最西头就从最东边还没轮到的接着走。
      *   · 某一类取不到候选（无人占 / 没锚定武将 / 兵不足 1 万）就不进轮次；
-     *   · 取不到 62 类风格的据点（实测全库 3 座）不进轮次；
-     *   · 62 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
+     *   · 取不到 66 类风格的据点不进轮次（2026-10-07 实测 0 座）；
+     *   · 66 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
      *   · 玩家坐标取不到 → 在本轮未轮到的类里随机点一类（绝不卡死）。
      *
      *   ⚠️ 本方法**只加「按类轮流」这一层**；类内的判据（名将 → 兵力 / 最近 K 座）

@@ -691,7 +691,7 @@ export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
     city_toledo: 'GOTH_CASTLE_AGE3',                  // 哥特（托莱多）：早期蛮族石砌据点
     city_junshitandingbao: 'BYZA_CASTLE_AGE3',         // 拜占庭（君士坦丁堡）：君士坦丁堡红砖穹顶堡
     city_feiluzhabade: 'PERS_CASTLE_AGE3',            // 波斯（菲鲁扎巴德）：萨珊泰西封砖石穹顶堡 (关隘)
-    city_wupusala: 'VIKI_CASTLE_AGE3',                // 维京（乌普萨拉）：斯堪的纳维亚环形堡垒 (关隘)
+    city_wupusala: 'VARA_CASTLE_AGE3',                // 瓦良格（乌普萨拉）：诺斯山形屋顶要塞 (关隘)；2026-10-07 风格按史归瓦良格（瓦良格人多出自乌普兰），城堡同步
     city_saigede: 'HUNS_CASTLE_AGE3',                 // 匈人（塞格德）：简易木石混合要塞 (关隘)
     city_aksum: 'ETHI_CASTLE_AGE3',                   // 埃塞俄比亚（阿克苏姆）：阿克苏姆巨石柱堡
     city_feisi: 'BERB_CASTLE_AGE3',                   // 柏柏尔（非斯）：撒哈拉泥砖防御碉堡
