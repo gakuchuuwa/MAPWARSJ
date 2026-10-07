@@ -522,8 +522,8 @@ export class GlobalUnitRenderer {
     private projectileSystem: ProjectileRenderer;
 
     /** [2026-07-18] 攻城器械渐隐锚点：军团乘胜开拔后器械留在城下原地淡出（经纬度+冻结朝向） */
-    /** 航迹采样：unitId → 上次采样时的屏幕坐标（按屏幕距离判断是否推入新航迹点） */
-    private navalTrailLast = new Map<string, { x: number; y: number }>();
+    /** 航迹采样：unitId → 上次采样时的经纬度（换算到当前屏幕再量距离，判断是否推入新航迹点） */
+    private navalTrailLast = new Map<string, { lat: number; lng: number }>();
     /** 航迹采样最小屏幕间距（px）：约 0.4 旗舰船身，太密会 40 点覆盖不足 8 艘总长 */
     private static readonly NAVAL_TRAIL_SAMPLE_PX = 16;
     /** [2026-08-27 §C 转向限速] 船的朝向平滑上一帧时刻：unitId → performance.now()（只船用，陆军不进这条路径） */
@@ -2607,10 +2607,16 @@ export class GlobalUnitRenderer {
                 // 航迹采样（屏幕距离判断）+ 投影（lat/lng → 屏幕坐标），后随船沿航迹排开、转弯不穿岸
                 let navalTrail: { x: number; y: number }[] = navalFieldPose?.trail ?? [];
                 if (!navalFieldPose && unit.id) {
+                    // 🔴 [2026-10-07 主人报「船队转弯时后面的船不跟着转弯」] 上次采样点存经纬度、换算到**当前**屏幕再量距离。
+                    //    原先存的是上次的屏幕坐标：镜头跟拍时舰队一直钉在屏幕中心，屏幕坐标几乎不变，
+                    //    16px 永远凑不够 → 航迹不再更新，后随船沿旧航迹直线外推，拐弯时不跟着拐。
                     const prev = this.navalTrailLast.get(unit.id);
-                    if (!prev || Math.hypot(centerPoint.x - prev.x, centerPoint.y - prev.y) >= GlobalUnitRenderer.NAVAL_TRAIL_SAMPLE_PX) {
+                    //    两端都用逻辑坐标换算（不用 centerPoint：攻城外推会给它加一段视觉偏移）。
+                    const prevPt = prev ? this.map.latLngToContainerPoint([prev.lat, prev.lng]) : null;
+                    const curPt = this.map.latLngToContainerPoint([unitPos.lat, unitPos.lng]);
+                    if (!prevPt || Math.hypot(curPt.x - prevPt.x, curPt.y - prevPt.y) >= GlobalUnitRenderer.NAVAL_TRAIL_SAMPLE_PX) {
                         NavalPhalanxStateManager.pushTrail(unit.id, unitPos.lat, unitPos.lng);
-                        this.navalTrailLast.set(unit.id, { x: centerPoint.x, y: centerPoint.y });
+                        this.navalTrailLast.set(unit.id, { lat: unitPos.lat, lng: unitPos.lng });
                     }
                     navalTrail = (NavalPhalanxStateManager.getState(unit.id)?.trail ?? []).map(p => {
                         const c = this.map.latLngToContainerPoint([p.lat, p.lng]);

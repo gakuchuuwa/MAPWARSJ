@@ -195,6 +195,11 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
     SAXONS: 'WEST',       // 撒克逊（DE「维京传奇」新增，CivWest）
     DANES: 'WEST',        // 丹麦（CivNord）
     VARANGIANS: 'WEST',   // 瓦良格（CivNord）
+    // 🔴 [2026-10-07 主人令「66 个建筑风格都必须有据点」] 三级漠南鲜卑 / 古典希腊 2026-10-05 建立时本表漏登：
+    //   据点写 buildingStyle 'XIANBEI' / 'GREECE' 会原字返回，建筑图按 `GREECE_HOUSE_AGE2` 这类路径去找 —— 全部不存在。
+    //   与青藏 TIBET→PURU、西域 WESTERN→CEAS 同一做法，折回各自的一级底座（同 TIER3_STYLE_TO_BASE16）。
+    XIANBEI: 'ASIA',      // 漠南鲜卑 → 东亚
+    GREECE: 'GREEK',      // 古典希腊 → 希腊
 };
 
 /** 判断某城是否用小城/关隘/中城/大城 DE 建筑组合渲染；优先取据点显式配置的 buildingStyle，否则按区域推导，返回 DE 建筑风格前缀，否则 null。

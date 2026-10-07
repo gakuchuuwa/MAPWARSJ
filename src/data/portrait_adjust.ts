@@ -8081,6 +8081,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.98,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/kuida_qiakaer.png": {
+            "scale": 1.09,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

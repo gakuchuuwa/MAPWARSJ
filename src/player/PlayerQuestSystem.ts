@@ -2617,12 +2617,16 @@ export class PlayerQuestSystem {
     private readonly visited = new Set<string>();
     /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（62 类走完清空、重开一轮）。 */
     private readonly visitedStyles = new Set<string>();
+    /** 🔴 [2026-10-07 主人令「由东向西」] 上一次轮到的那一类的经度（该类候选城经度中位数）；每轮开头置空。 */
+    private lastStyleLng: number | null = null;
 
     /**
      * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
+     * 🔴 [2026-10-07 主人令]「由东向西」：让玩家挨个投奔势力、挨个体验不同文化区，直至全球兜一圈。
      *
-     *   把候选按 **62 类建筑风格**（二级 59 文明 + 三级 3 自建）分组，取**离玩家最近、且这一轮
-     *   还没轮到的那一类**，只把这一类的城交给下面原有的链条（兵多 → 名将 → 同档就近）去挑。
+     *   把候选按建筑风格分组，只把选中的那一类的城交给下面原有的链条（兵多 → 名将 → 同档就近）去挑。
+     *   选哪一类：每轮第一次取**离玩家最近**的一类；之后取**上一类西边最近、这一轮还没轮到**的一类
+     *   （一类的东西位置 = 该类候选城经度的中位数），走到最西头就从最东边还没轮到的接着走。
      *   · 某一类取不到候选（无人占 / 没锚定武将 / 兵不足 1 万）就不进轮次；
      *   · 取不到 62 类风格的据点（实测全库 3 座）不进轮次；
      *   · 62 类全轮到过 → 清空、重开一轮（城会易主、武将会死，隔一圈再回来是合理的）；
@@ -2646,18 +2650,33 @@ export class PlayerQuestSystem {
         let fresh = [...byStyle.keys()].filter((k) => !this.visitedStyles.has(k));
         if (!fresh.length) {
             this.visitedStyles.clear();
+            this.lastStyleLng = null;
             fresh = [...byStyle.keys()];
         }
 
-        // 「离哪个近就先选哪个」：一类的距离 = 该类里离玩家最近的那座城的距离。
-        const distOfStyle = (k: string): number => Math.min(
-            ...byStyle.get(k)!.map((c) => PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })),
-        );
-        let picked = fresh[Math.floor(Math.random() * fresh.length)];
-        if (me && typeof me.lat === 'number') {
-            picked = fresh.reduce((bestK, k) => (distOfStyle(k) < distOfStyle(bestK) ? k : bestK), fresh[0]);
+        // 一类的东西位置 = 该类候选城经度的中位数
+        const lngOfStyle = (k: string): number => {
+            const a = byStyle.get(k)!.map((c) => c.longitude).sort((x, y) => x - y);
+            return a[Math.floor(a.length / 2)];
+        };
+        let picked: string;
+        if (this.lastStyleLng !== null) {
+            // 由东向西：上一类西边最近的一类；西边没有了 → 绕回最东边
+            const byLng = [...fresh].sort((a, b) => lngOfStyle(b) - lngOfStyle(a));
+            const last = this.lastStyleLng;
+            picked = byLng.find((k) => lngOfStyle(k) <= last) ?? byLng[0];
+        } else {
+            // 每轮第一次「离哪个近就先选哪个」：一类的距离 = 该类里离玩家最近的那座城的距离。
+            const distOfStyle = (k: string): number => Math.min(
+                ...byStyle.get(k)!.map((c) => PlayerQuestSystem.distKm(me, { lat: c.latitude, lng: c.longitude })),
+            );
+            picked = fresh[Math.floor(Math.random() * fresh.length)];
+            if (me && typeof me.lat === 'number') {
+                picked = fresh.reduce((bestK, k) => (distOfStyle(k) < distOfStyle(bestK) ? k : bestK), fresh[0]);
+            }
         }
         this.visitedStyles.add(picked);
+        this.lastStyleLng = lngOfStyle(picked);
         return byStyle.get(picked) ?? [];
     }
 
