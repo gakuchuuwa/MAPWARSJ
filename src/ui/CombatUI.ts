@@ -654,11 +654,6 @@ export class CombatUI {
                 15% { transform: scale(1.10); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
                 100% { transform: scale(1); }
             }
-            @keyframes portrait-skill-surge-min {
-                0% { transform: scale(0.55); animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
-                15% { transform: scale(0.62); animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
-                100% { transform: scale(0.55); }
-            }
             @keyframes skill-cut-in {
                 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
                 10% { 
@@ -760,12 +755,23 @@ export class CombatUI {
             .combat-portrait-frame.is-right {
                 transform-origin: right bottom !important;
             }
-            .combat-portrait-frame.is-minimized {
-                transform: scale(0.55);
+            .combat-portrait-frame.is-left.is-minimized {
+                transform: translateX(-100%);
+            }
+            .combat-portrait-frame.is-right.is-minimized {
+                transform: translateX(100%);
+            }
+            .combat-portrait-frame.is-minimized .combat-portrait-wrap,
+            .combat-portrait-frame.is-minimized .combat-general-name-tag,
+            .combat-portrait-frame.is-minimized .combat-legion-name-tag,
+            .combat-portrait-frame.is-minimized .combat-famous-badge {
+                opacity: 0 !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
             }
             .combat-portrait-min-btn {
                 position: absolute;
-                bottom: calc(52% + 56px);
+                top: 14px;
                 width: 22px;
                 height: 22px;
                 display: flex;
@@ -783,7 +789,7 @@ export class CombatUI {
                 pointer-events: auto;
                 z-index: 45;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), inset 0 0 4px rgba(255, 215, 0, 0.2);
-                transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.25s;
+                transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.25s, right 0.25s, left 0.25s, top 0.25s, bottom 0.25s;
                 user-select: none;
                 padding: 0;
             }
@@ -797,14 +803,20 @@ export class CombatUI {
                 filter: brightness(0.9);
             }
             .combat-portrait-frame.is-left .combat-portrait-min-btn {
-                right: -25px;
+                right: 12px;
             }
             .combat-portrait-frame.is-right .combat-portrait-min-btn {
-                left: -25px;
+                left: 12px;
             }
-            .combat-portrait-frame.is-minimized .combat-portrait-min-btn {
-                transform: scale(1.6);
-                transform-origin: center center;
+            .combat-portrait-frame.is-left.is-minimized .combat-portrait-min-btn {
+                right: -24px;
+                top: auto;
+                bottom: 50px;
+            }
+            .combat-portrait-frame.is-right.is-minimized .combat-portrait-min-btn {
+                left: -24px;
+                top: auto;
+                bottom: 50px;
             }
         `;
         document.head.appendChild(style);
@@ -4113,9 +4125,9 @@ export class CombatUI {
         st.pulsed = true; // 放完不再二次收缩；同侧后续脉冲 --pre-scale 已是 1 附近，行为同旧版
         st.scale = 1;
         frame.style.animation = 'none';
-        void frame.offsetWidth;
-        const anim = this.isPortraitMinimized ? 'portrait-skill-surge-min' : 'portrait-skill-surge';
-        frame.style.animation = `${anim} 1.6s cubic-bezier(0.22, 1, 0.36, 1) both`;
+        if (!this.isPortraitMinimized) {
+            frame.style.animation = 'portrait-skill-surge 1.6s cubic-bezier(0.22, 1, 0.36, 1) both';
+        }
     }
 
     public isBoundToBattleField(battleField: BattleField): boolean {
@@ -5986,7 +5998,7 @@ export class CombatUI {
         btn.className = `combat-portrait-min-btn is-${side}`;
         btn.type = 'button';
         btn.textContent = this.isPortraitMinimized ? '▲' : '▼';
-        btn.title = this.isPortraitMinimized ? '还原立绘大小' : '缩小立绘大小';
+        btn.title = this.isPortraitMinimized ? '还原立绘' : '最小化立绘';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.togglePortraitMinimize();
@@ -6014,7 +6026,7 @@ export class CombatUI {
         for (const btn of [this.leftMinBtn, this.rightMinBtn]) {
             if (btn) {
                 btn.textContent = minimized ? '▲' : '▼';
-                btn.title = minimized ? '还原立绘大小' : '缩小立绘大小';
+                btn.title = minimized ? '还原立绘' : '最小化立绘';
             }
         }
     }

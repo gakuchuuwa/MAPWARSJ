@@ -115,7 +115,7 @@ const BASE_16_MAP: Record<string, string> = {
     BERBER: 'AFRICA', TANGUT: 'ORIE',
     LATIN: 'LATIN', ROMA: 'LATIN', ITALIANS: 'LATIN', SPANISH: 'LATIN', PORTUGUESE: 'LATIN', SICILIANS: 'LATIN',
     LATIN_FEUDAL: 'LATIN', LATIN_CASTLE: 'LATIN', LATIN_IMPERIAL: 'LATIN',
-    SLAVIC: 'SLAVIC', BULGARIANS: 'SLAVIC', POLES: 'SLAVIC', BOHEMIANS: 'SLAVIC', LITHUANIANS: 'SLAVIC', MAGYAR: 'SLAVIC',
+    SLAVIC: 'SLAVIC', BULGARIANS: 'SLAVIC', POLES: 'SLAVIC', BOHEMIANS: 'SLAVIC', LITHUANIANS: 'SLAVIC', MAGYAR: 'SLAVIC', SERBIA: 'SLAVIC',
     EAST: 'EAST', BYZANTINE: 'EAST', ARMENIANS: 'EAST', GEORGIANS: 'EAST',
     PERSIAN: 'PERSIAN', ACHAEMENIDS: 'PERSIAN', SASANIAN: 'PERSIAN', PERSIAN_CASTLE: 'PERSIAN',
     MALAY: 'MALAY', KHMER: 'MALAY', BURMESE: 'MALAY', SEASIA_ANTIQUITY: 'MALAY', SEASIA_FEUDAL: 'MALAY', SEASIA_CASTLE: 'MALAY', SEASIA_IMPERIAL: 'MALAY',
@@ -325,6 +325,10 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'grenadier', 'grenadier'],
     },
     '城堡时代马扎尔军团': {
+        age: 'castle',
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'grenadier', 'grenadier'],
+    },
+    '城堡时代塞尔维亚军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'grenadier', 'grenadier'],
     },
