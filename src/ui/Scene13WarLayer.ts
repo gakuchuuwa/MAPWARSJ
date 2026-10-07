@@ -39,7 +39,8 @@ import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from '../systems/cityD
 import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
-import { generateEnvironment, type Scene13EnvironmentPlan } from './scene13/Scene13EnvironmentGenerator';
+import { generateEnvironment, type Scene13EnvironmentPlan, type Scene13EnvironmentInput } from './scene13/Scene13EnvironmentGenerator';
+import { loadRealGeography, buildRealGeoPlan, bearingDeg, type RealGeoFrame } from './scene13/Scene13RealGeography';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
@@ -4193,7 +4194,7 @@ export class Scene13WarLayer {
             this.scatterClouds(VW, VH);
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
             const __e0 = performance.now();
-            this.environmentPlan = generateEnvironment({
+            const envInput: Scene13EnvironmentInput = {
                 lat: init.centerLat,
                 lng: init.centerLng,
                 waterProbeLat: init.defenderCityLat,
@@ -4233,7 +4234,8 @@ export class Scene13WarLayer {
                     const s = (window as any).game?.timeSystem?.getSeason?.();
                     return (typeof s === 'number' && s >= 0 && s <= 3 ? s : 0) as 0 | 1 | 2 | 3;
                 },
-            });
+            };
+            this.environmentPlan = generateEnvironment(envInput);
             const __envMs = performance.now() - __e0;
             this.sceneSeason = this.environmentPlan.season;
             // [2026-09-03 主人定] 时段色调：按环境种子确定性抽时段，叠季节/群系/纬度偏色，每场看起来都不一样
@@ -4260,6 +4262,8 @@ export class Scene13WarLayer {
             // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
+            // [2026-10-07 主人令「打仗的那块地就是地图上那个地方」] 试验开关打开时，开战前换成真实地理
+            if (Scene13WarLayer.realGeographyEnabled()) this.requestRealGeography(envInput, init, VW, VH, siegeWallFrontX);
 
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
@@ -5687,6 +5691,111 @@ export class Scene13WarLayer {
         //    （守方城寨的 4 座箭塔里就有 2 座是 FORTIFIED_OUTPOST）—— 一律用同一缩放，两边一样大。
         this.decorSprites.push(place(shuffledSpawns[7], 'FORTIFIED_OUTPOST', { scale: SIEGE_CITY_BUILDING_SCALE }));
         this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+    }
+
+    /**
+     * 真实地理试验开关（2026-10-07）：默认关，主人看过试验截图点头后再开。
+     * 打开：浏览器控制台 `localStorage.setItem('mapwar.realGeography','1')`，下一场战术战斗生效。
+     */
+    private static realGeographyEnabled(): boolean {
+        try { return localStorage.getItem('mapwar.realGeography') === '1'; } catch { return false; }
+    }
+
+    /** 真实地理最多让开战多等多久（毫秒）；超时照旧开打，保留原生成的战场 */
+    private static readonly REAL_GEOGRAPHY_WAIT_MS = 3000;
+
+    /**
+     * [2026-10-07 主人令「打仗的那块地就是地图上那个地方」，帝国时代 2 画风]
+     * 城池在画面里的位置不变，以城为原点铺开真实地理，并把攻方来的方位转到画面左边。
+     * 只在开战前（素材闸未放行）生效：期间占 1 个 pending，最多等 REAL_GEOGRAPHY_WAIT_MS；
+     * 晚到、失败、换场都直接丢弃，战场保持原生成器的结果。
+     */
+    private requestRealGeography(
+        envInput: Scene13EnvironmentInput,
+        init: Scene13WarInit,
+        VW: number,
+        VH: number,
+        siegeWallFrontX: number | undefined,
+    ): void {
+        const plan = this.environmentPlan;
+        if (!plan || this.flipSides) return;   // 跟随守方左右对调的场次先不接（城会到左边）
+        const isSiege = init.battleType === 'siege';
+        const city = this.spawns.filter((s) => s.f === 1 && !s.commander);
+        let frame: RealGeoFrame;
+        if (isSiege && init.defenderCityLat !== undefined && init.defenderCityLng !== undefined && city.length > 0) {
+            // 城心 = 守方建筑位的中心；攻方方位 = 城 → 攻方军团（开战时镜头跟拍的位置）
+            const ax = city.reduce((n, s) => n + s.x, 0) / city.length;
+            const ay = city.reduce((n, s) => n + s.y, 0) / city.length;
+            const hasApproach = init.centerLat !== undefined && init.centerLng !== undefined
+                && Math.hypot(init.centerLat - init.defenderCityLat, init.centerLng - init.defenderCityLng) > 0.002;
+            frame = {
+                lat: init.defenderCityLat, lng: init.defenderCityLng, ax, ay,
+                bearingDeg: hasApproach
+                    ? bearingDeg(init.defenderCityLat, init.defenderCityLng, init.centerLat!, init.centerLng!)
+                    : 270,
+            };
+        } else if (init.centerLat !== undefined && init.centerLng !== undefined) {
+            frame = { lat: init.centerLat, lng: init.centerLng, ax: VW / 2, ay: VH / 2, bearingDeg: 270 };
+        } else {
+            return;
+        }
+        const gen = this.assetGen;
+        this.pending++;
+        let released = false;
+        const release = () => {
+            if (released) return;
+            released = true;
+            if (gen === this.assetGen) this.pending--;
+        };
+        window.setTimeout(release, Scene13WarLayer.REAL_GEOGRAPHY_WAIT_MS);
+        const t0 = performance.now();
+        // 城池与守方建筑位必须是陆地且平。攻方一侧放开：真实的海可以铺到攻方营地
+        // （原规矩就是「海在左、攻方破浪抢滩」，营地建筑落水时 place() 会自己推上岸）。
+        const keepClear = this.spawns.filter((s) => s.f === 1 && !s.commander).map((s) => ({ x: s.x, y: s.y, r: (isSiege ? 4 : 2) * TILE_W }));
+        const keepDryFlat = (x: number, y: number): boolean =>
+            (siegeWallFrontX !== undefined && x >= siegeWallFrontX - TILE_W)
+            || keepClear.some((k) => (x - k.x) ** 2 + (y - k.y) ** 2 <= k.r * k.r);
+        void loadRealGeography(frame, VW, VH).then((source) => {
+            const late = released;
+            release();
+            if (gen !== this.assetGen || this.environmentPlan !== plan) return;
+            if (!source || late || this.assetsReadyOnce) {
+                this.diagPush('realGeography', { applied: false, reason: !source ? 'noData' : 'late', ms: Math.round(performance.now() - t0) });
+                return;
+            }
+            // 挑方位：城在右、攻方在左是铁律，城背后的地理落在画面外 —— 死守攻方来向时，
+            // 海和河常常正好在城背后看不见。按 30° 一档试方位，取画面里真实水面与丘陵最多的：
+            //   陆军：只在攻方真实来向 ±90° 内挑，水落在攻方营地带（画面左 22%）扣分 —— 陆路来的兵不能从海里出发；
+            //   水军：12 个方位都试，水在攻方一侧加分（原规矩「海在左、攻方破浪抢滩」）。
+            // 分数相差不到一成时取攻方来向。
+            const approach = frame.bearingDeg;
+            const naval = init.isNaval === true;
+            const { ox: gox } = plan.grid;
+            const score = (g: ReturnType<typeof buildRealGeoPlan>) => {
+                let atkW = 0;
+                for (const [gx, gy] of [...g.deep, ...g.shallow]) if ((gx - gy) * (TILE_W / 2) + gox < VW * 0.22) atkW++;
+                const otherW = g.waterCells - atkW;
+                return naval
+                    ? atkW + otherW * 0.5 + g.raisedCells * 0.3
+                    : otherW + g.raisedCells * 0.3 - atkW * 2;
+            };
+            let best = buildRealGeoPlan({ source, frame, grid: plan.grid, width: VW, height: VH, keepDryFlat });
+            let bestScore = score(best);
+            const steps = naval ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [-3, -2, -1, 1, 2, 3];
+            for (const k of steps) {
+                const f2 = { ...frame, bearingDeg: (approach + k * 30 + 360) % 360 };
+                const g = buildRealGeoPlan({ source, frame: f2, grid: plan.grid, width: VW, height: VH, keepDryFlat });
+                const s = score(g);
+                if (s > bestScore * 1.1 + 1) { best = g; bestScore = s; frame = f2; }
+            }
+            const geo = best;
+            this.environmentPlan = generateEnvironment({ ...envInput, realGeo: geo });
+            this.initDecor();
+            this.diagPush('realGeography', {
+                applied: true, ms: Math.round(performance.now() - t0), bearing: Math.round(frame.bearingDeg), approach: Math.round(approach),
+                waterCells: geo.waterCells, sea: geo.hasSea, reliefM: Math.round(geo.reliefM), raisedCells: geo.raisedCells,
+            });
+        }).catch(() => release());
     }
 
     /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */

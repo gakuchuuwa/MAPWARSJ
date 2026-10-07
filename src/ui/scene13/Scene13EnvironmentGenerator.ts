@@ -44,6 +44,7 @@ import {
     type DeMapThemeId,
     type DeMapThemePalette,
 } from './Scene13DeMapThemes';
+import type { RealGeoPlan } from './Scene13RealGeography';
 
 /** 等距菱形瓦片（2:1，DE 同款投影） */
 const TILE_W = 64;
@@ -182,6 +183,11 @@ export interface Scene13EnvironmentInput {
     isSiege?: boolean;
     /** 攻防战正面城墙的实际屏幕 X；临城河据此贴墙生成。 */
     siegeWallFrontX?: number;
+    /**
+     * [2026-10-07 主人令「打仗的那块地就是地图上那个地方」] 真实地理方案（Scene13RealGeography）。
+     * 给了就用真实的水面与丘陵，替换随机海岸 / 河 / 湖与随机丘陵；不给则一切照旧。
+     */
+    realGeo?: RealGeoPlan;
 }
 
 /** 河岸只允许河滩鹅卵石/湿石（如 ROCK_BEACH/ROCK1/ROCK2/ROCK3）；排除巨型风蚀岩柱(ROCK_FORMATION/ROCK_PILLAR)、海礁与非石物件。 */
@@ -644,8 +650,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         ?? (hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland');
     const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
     const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
-    const waterKind = input.forceWaterKind
-        ?? probeWater(input.waterProbeLat ?? input.lat, input.waterProbeLng ?? input.lng);
+    const realGeo = input.realGeo;
+    const waterKind = realGeo
+        ? (realGeo.hasSea ? 'sea' : realGeo.waterCells > 0 ? 'river' : 'none')
+        : input.forceWaterKind
+            ?? probeWater(input.waterProbeLat ?? input.lat, input.waterProbeLng ?? input.lng);
     const topology: Scene13Topology = resolveBattleTopology(hasCoord, waterKind, elev, slope, biome, rng);
     const theme = input.forceTheme
         ? DE_MAP_THEMES[input.forceTheme]
@@ -683,7 +692,9 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
     if (hasCoord) {
         // ── 第 2 层 ELEVATION：clump 生长 + 高度等级（低地少丘、高地多丘） ──
-        const elevation = generateElevation(gw, gh, ox, oy, VW, VH, elev, slope, topology, rng);
+        const elevation = realGeo
+            ? realGeo.elevation.map((row) => row.slice())
+            : generateElevation(gw, gh, ox, oy, VW, VH, elev, slope, topology, rng);
 
         // ── 第 3 层 WATER ──
         // 战斗层尚无山体碰撞/寻路：高程只用地面明暗表现可行走坡地，
@@ -694,7 +705,21 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 🔴 [严格遵循 DE 与史实]：
         // 攻城战为城郭攻防战场，核心为城前平原与城防阵线，绝不擅自横插切断战场的假河；
         // 仅在真正的野战江河渡口 (river_crossing) 或大江野战时生成自然江河。
-        if (waterKind === 'sea') {
+        if (realGeo) {
+            // 真实水面：与 buildLake 同一套由外向内的铺法（沙滩 → 浅水 → 深水）
+            isWater = realGeo.isWater;
+            for (const [x, y] of [...realGeo.deep, ...realGeo.shallow, ...realGeo.sand]) occupied.add(x + ',' + y);
+            const geoLat = input.lat ?? 35;
+            if (realGeo.sand.length > 0) {
+                patches.push({ tile: beachTerrainForTheme(theme!, season, geoLat, elev, biome, input.lng), cells: realGeo.sand, alpha: 0.85, category: 'shore', blur: 14 });
+            }
+            if (realGeo.shallow.length > 0) {
+                patches.push({ tile: 'sh2', cells: realGeo.shallow, alpha: 0.72, category: 'shore', blur: 12 });
+            }
+            if (realGeo.deep.length > 0) {
+                patches.push({ tile: waterTerrainForTheme(theme!, season, geoLat, elev, biome, input.lng), cells: realGeo.deep, alpha: 0.96, category: 'shore', blur: 8 });
+            }
+        } else if (waterKind === 'sea') {
             // 🔴 [2026-08-21 主人定，2026-08-24 恢复] 攻方恒在左侧，海岸线恒定在左侧（sideLeft = true），
             //    呈现攻方破浪抢滩突击、守方陆地坚守的登陆战演出；严禁海在右侧导致守方出生在水中。
             //    野战与攻防战都出海：主人九成战斗是攻防战，只在野战出就等于看不见。
