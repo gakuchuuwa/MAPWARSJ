@@ -1077,7 +1077,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     if (!slots) return;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
-    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots));
+    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture });
     const scales9 = expandCompositionScales(slots);
     army.cultureScales = army.cultureSlots.length > scales9.length ? [...scales9, 1] : scales9;
     army.legionType =
@@ -1113,8 +1113,9 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     //    绝不反过来把阵型回落成编成推出来的那个（那会丢掉朝代/势力的阵型设计）。
     if (army.formationMode && !slotsMatchFormation(slots, army.formationMode)) {
         const fixed = convertSlotsToMode(slots, army.formationMode);
-        army.cultureSlots = expandCompositionSlots(fixed);
-        army.cultureScales = expandCompositionScales(fixed);
+        army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(fixed), { factionId: army.factionId, seedKey: culture });
+        const fixedScales9 = expandCompositionScales(fixed);
+        army.cultureScales = army.cultureSlots.length > fixedScales9.length ? [...fixedScales9, 1] : fixedScales9;
     }
 }
 

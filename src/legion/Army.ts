@@ -252,7 +252,7 @@ export class Army implements IBattleUnit {
      *  🔴 [2026-09-11 主人定「玩家移动速度平地慢一小点，山地快一小点」]
      *     不能去改 MOVEMENT_MATRIX —— 那张表全体军团共用，改一行等于改全世界同类军团。
      *     null = 不缩放（所有 AI 军团都走这条，行为与本字段加入前完全一致）。 */
-    public terrainSpeedScale: Readonly<{ plain: number; mountain: number }> | null = null;
+    public terrainSpeedScale: Readonly<{ plain: number; mountain: number; sea?: number }> | null = null;
 
     // [NEW] Home City ID (One Legion Per City Rule)
     public homeCityId: string | null = null;
@@ -1107,9 +1107,9 @@ export class Army implements IBattleUnit {
             this.navalShipAssetLock = null;
         }
 
-        // 水域：登船后全军统一速度（兵种加成失效）
+        // 水域：登船后全军统一速度（兵种加成失效，玩家应用专属海速缩放）
         if (this.isOnSea) {
-            this.terrainSpeedTarget = SEA_SPEED_MULTIPLIER;
+            this.terrainSpeedTarget = SEA_SPEED_MULTIPLIER * (this.terrainSpeedScale?.sea ?? 1);
             this.confirmedLandKind = null;
             this.landFlipFrames = 0;
         } else {

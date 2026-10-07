@@ -33,6 +33,7 @@ import {
     PLAYER_HERO_SPEED_MULT,
     PLAYER_PLAIN_SPEED_SCALE,
     PLAYER_MOUNTAIN_SPEED_SCALE,
+    PLAYER_SEA_SPEED_SCALE,
     PLAYER_RANKS,
     rankForMerit,
     rankFor,
@@ -250,6 +251,7 @@ export class PlayerHero {
         this.army.terrainSpeedScale = {
             plain: PLAYER_PLAIN_SPEED_SCALE,
             mountain: PLAYER_MOUNTAIN_SPEED_SCALE,
+            sea: PLAYER_SEA_SPEED_SCALE,
         };
     }
 

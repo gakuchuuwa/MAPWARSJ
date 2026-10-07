@@ -121,7 +121,7 @@ export class LegionPhalanxStateManager {
         }
 
         // Check Resize
-        if (state.rows !== rows || state.cols !== cols) {
+        if (state.rows !== rows || state.cols !== cols || state.slots.length !== count) {
             state.rows = rows;
             state.cols = cols;
             // Regenerate

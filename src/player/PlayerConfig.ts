@@ -212,4 +212,5 @@ export const PLAYER_DEFEAT_HOLD_MS = 5000;
  *    PLAYER_HERO_SPEED_MULT，2026-09-24 起 = 1.0）。海上不受影响：上船走 SEA_SPEED_MULTIPLIER，兵种/地形加成整个失效。
  */
 export const PLAYER_PLAIN_SPEED_SCALE = 0.90;
-export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.15;
+export const PLAYER_MOUNTAIN_SPEED_SCALE = 1.35;
+export const PLAYER_SEA_SPEED_SCALE = 1.30;
