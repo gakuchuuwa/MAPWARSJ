@@ -11,6 +11,12 @@
 import { getCityRegion, type RegionType } from './RegionSystem';
 
 export const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
+/**
+ * 🔴 [2026-10-07 主人令「按历史」] 逐城：史上是**游牧牧地**（不是城镇）的据点，画面一律用毡帐营地（YURT）。
+ *   只改画面皮肤，不改建筑风格归类（仍按地域归漠南鲜卑等）。
+ *   · 乌里雅斯太：东乌珠穆沁旗旗府牧地（锡林郭勒），原为毡帐营地；划入漠南鲜卑后被画成东亚屋舍，与史不符。
+ */
+export const NOMAD_CAMP_CITIES: ReadonlySet<string> = new Set(['city_wuliyasitai']);
 
 
 export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = {
@@ -207,6 +213,7 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
  *     否则「编辑器里改建筑风格，战略地图变了、战场没变」（实测曾有 77 座地图↔战场不一致）。 */
 export function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion: string | undefined, lat: number, lng: number, buildingStyle?: string): string | null {
     if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
+    if (NOMAD_CAMP_CITIES.has(cityId)) return 'YURT';  // 逐城：游牧牧地画毡帐营地（风格归类不变，见 NOMAD_CAMP_CITIES）
     // 小城/关隘/中城/大城都按建筑风格套用 DE 建筑（2026-08-27 扩充大城，帝国时代）
     const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
     // 🔴 [2026-09-16 主人定] 显式 buildingStyle 优先：二级蒙古(MONGOL)套东亚建筑+蒙古城堡，

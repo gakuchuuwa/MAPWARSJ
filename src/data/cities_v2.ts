@@ -933,7 +933,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 迪化 — 且弥清新都 (原庭州已删除)
     // 鹰娑川 — 土尔扈特 (天山尤鲁都斯/巴音布鲁克)
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：鹰娑川：西突厥/突骑施牧地，归突厥 TURKS
-    { id: 'city_yingsuochuan', name: '鹰娑川', factionId: 'tuerhute', lat: 42.869899, lng: 83.773499, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'TURKS' },
+    { id: 'city_yingsuochuan', name: '鹰娑川', factionId: 'tuerhute', lat: 42.869899, lng: 83.773499, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CENTRAL_ASIA' },
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
@@ -1408,11 +1408,11 @@ buildingStyle: 'ASIA', troops: 10000,
     { id: 'city_urgench', name: '玉龙杰赤', factionId: 'huarazim', lat: 42.24, lng: 59.63, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true },
 
 
-    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'SELJUQ', buildingStyle: 'PERSIAN', troops: 10000, note: '大塞尔柱帝国东部都城马鲁/梅尔夫；苏丹桑贾尔王陵与突厥铁骑大本营' },
+    { id: 'city_merv', name: '木鹿', factionId: 'seljuq', lat: 37.616410, lng: 62.234802, type: 'big_city', region: 'SELJUQ', buildingStyle: 'SASANIAN', troops: 10000, note: '大塞尔柱帝国东部都城马鲁/梅尔夫；苏丹桑贾尔王陵与突厥铁骑大本营' },
     { id: 'city_pagan', name: '蒲甘', factionId: 'pagan', lat: 21.207449, lng: 94.894409, type: 'medium_city', troops: 10000, tier: 1, region: 'BURMESE', buildingStyle: 'BURMESE', note: '蒲甘王朝都，万塔之城' },
         // 第二类：四大汗国
     { id: 'city_almaliq', name: '弓月城', factionId: 'geluolu', lat: 43.979013, lng: 79.648132, type: 'small_city', region: 'TURKS',
-buildingStyle: 'CEAS', troops: 10000, mirror: true,
+buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
         note: '弓月城；葛逻禄小城',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：也迷里：乃蛮/窝阔台汗国建牙处，归鞑靼（中亚草原）
@@ -1420,7 +1420,7 @@ buildingStyle: 'CEAS', troops: 10000, mirror: true,
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'pass', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
-    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', troops: 10000, region: 'TURKS', buildingStyle: 'CEAS' },
+    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', troops: 10000, region: 'TURKS', buildingStyle: 'CENTRAL_ASIA' },
 
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'stockade', region: 'STEPPE',
 // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：福海：乃蛮小城，归鞑靼（中亚草原）
@@ -2611,11 +2611,11 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_beiluocheng', name: '孛罗营', factionId: 'duolu', lat: 44.9, lng: 82.07, type: 'stockade', region: 'TURKS',
-buildingStyle: 'CEAS', troops: 10000,
+buildingStyle: 'CENTRAL_ASIA', troops: 10000,
         note: '孛罗城；咄陆小城',
     },
 
-    { id: 'city_dushancheng', name: '独山营', factionId: 'chuyue', lat: 44.42, lng: 84.92, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'CEAS' },
+    { id: 'city_dushancheng', name: '独山营', factionId: 'chuyue', lat: 44.42, lng: 84.92, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'CENTRAL_ASIA' },
 
 
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：迪化城（乌鲁木齐）：准噶尔牧地，归鞑靼（中亚草原）
@@ -3043,7 +3043,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
     { id: 'city_kuanchengzi', name: '宽城屯', factionId: 'jilin', lat: 43.8725, lng: 125.3595, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_wuliyasitai', name: '古尔班赛堪', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'XIANBEI' },
+    { id: 'city_wuliyasitai', name: '乌里雅斯太', factionId: 'wuzhumuqin', lat: 45.519, lng: 116.9604, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'XIANBEI', note: '乌里雅斯太；东乌珠穆沁旗旗府牧地（锡林郭勒）。🔴 [2026-10-07 按真实地理更名] 原名「古尔班赛堪」是蒙古国南戈壁地名，与 id、坐标不符' },
 
     { id: 'city_saihantala', name: '赛汉塔拉', factionId: 'sunite', lat: 42.7701, lng: 112.6099, type: 'stockade', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'XIANBEI', troops: 10000,
@@ -3116,9 +3116,9 @@ buildingStyle: 'PERSIAN', troops: 10000, tier: 1,
     { id: 'city_pula', name: '普拉', factionId: 'jiduoluoxiya', lat: 27.2025, lng: 60.6858, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '吉德罗西亚行省首府（今伊朗伊朗沙赫尔）。公元前325年亚历山大率残军走完约 60 天的吉德罗西亚沙漠后抵此，获粮食牲畜补给（阿里安《远征记》VI.26）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_kamanniya', name: '卡曼尼亚', factionId: 'kamanniyaxingsheng', lat: 28.67, lng: 57.74, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', note: '卡曼尼亚行省核心（今伊朗吉罗夫特/克尔曼地区）。公元前325年亚历山大走出吉德罗西亚沙漠后在此与克拉特鲁斯的北路陆军、尼阿尔库斯的水师会师，并开庭清算远征期间乱政贪腐的地方官吏、举行盛大祭祀庆典（阿里安《远征记》VI.27-28）。🔴 [2026-09-25 主人令「重要据点先建」] 类型按标准：行省核心、非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_xierzhan', name: '锡尔詹', factionId: 'keerman', lat: 29.45, lng: 55.68, type: 'stockade', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '扎格罗斯山前走廊的中继据点（今伊朗锡尔詹）。🔴 [2026-09-25 主人令「只建锡尔詹」] 建它的依据：卡曼尼亚→帕萨尔加德 约 500 公里（>300）且路上没有据点 → 取锡尔詹把这段切成两段（各约 250 公里）。⚠️ 它是**几何中继点**，阿里安未点名亚历山大经过；但锡尔詹（古称 Sirgan/Sirkan）即英文维基 Carmania 信息框 Capital 所记卡曼尼亚后期首府之一，**非史料无名**。类型：城市、古代人口查无史料 → 城寨。' },
-    { id: 'city_hulewan', name: '呼勒万', factionId: 'zhageluosi', lat: 34.35, lng: 45.9, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', stockadeShape: 'trapezoid', stockadeFence: 'ARCHAIC', note: '扎格罗斯门（Pai-Taq 隘口）一带（今伊朗萨尔波勒扎哈卜）。从美索不达米亚平原进米底高原的必经山口；亚历山大自苏萨北上、进出米底均经此（阿里安《远征记》VII 前后）。🔴 [2026-09-25 主人令「建呼勒万」] 建它的依据：巴格达→哈马丹 约 420 公里（>300）且这一段路上没有据点。类型按标准（2026-09-30 新口径）：险要/关隘须**有石头城墙**才是 PASS；本处是山口小镇（今萨尔波勒扎哈卜），无石头城墙 → 落城寨。', mirror: true },
-    { id: 'city_yilamu', name: '伊拉姆', factionId: 'lulisitan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', note: '扎格罗斯山脉西麓山前走廊的中继据点（今伊朗伊拉姆）。🔴 [2026-09-25 主人令「添加据点，伊拉姆」] 建它的依据：苏萨→巴格达 沿路 >300 公里且这一段路上没有关键节点。⚠️ 它是**几何中继点**：史料里没有「伊拉姆」这座城的记载；类型按标准（史料无名 → 城寨）。' },
-    { id: 'city_guerpayegan', name: '古尔帕耶甘', factionId: 'golpayegan_diqu', lat: 33.4536, lng: 50.2884, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'MEDI', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '扎格罗斯山间谷地出口（今伊朗古尔帕耶甘）。🔴 [2026-09-25 主人令「纳哈万德改为古尔帕耶甘」] 它是这一段走廊上的**几何/驿站路点**（切入山间谷地的出口）。类型按标准：几何驿站、非险要、查不到人口史料 → 城寨。' },
+    { id: 'city_hulewan', name: '呼勒万', factionId: 'zhageluosi', lat: 34.35, lng: 45.9, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', stockadeShape: 'trapezoid', stockadeFence: 'ARCHAIC', note: '扎格罗斯门（Pai-Taq 隘口）一带（今伊朗萨尔波勒扎哈卜）。从美索不达米亚平原进米底高原的必经山口；亚历山大自苏萨北上、进出米底均经此（阿里安《远征记》VII 前后）。🔴 [2026-09-25 主人令「建呼勒万」] 建它的依据：巴格达→哈马丹 约 420 公里（>300）且这一段路上没有据点。类型按标准（2026-09-30 新口径）：险要/关隘须**有石头城墙**才是 PASS；本处是山口小镇（今萨尔波勒扎哈卜），无石头城墙 → 落城寨。', mirror: true },
+    { id: 'city_yilamu', name: '伊拉姆', factionId: 'lulisitan', lat: 33.64, lng: 46.42, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', note: '扎格罗斯山脉西麓山前走廊的中继据点（今伊朗伊拉姆）。🔴 [2026-09-25 主人令「添加据点，伊拉姆」] 建它的依据：苏萨→巴格达 沿路 >300 公里且这一段路上没有关键节点。⚠️ 它是**几何中继点**：史料里没有「伊拉姆」这座城的记载；类型按标准（史料无名 → 城寨）。' },
+    { id: 'city_guerpayegan', name: '古尔帕耶甘', factionId: 'golpayegan_diqu', lat: 33.4536, lng: 50.2884, type: 'stockade', troops: 10000, region: 'MEDI', buildingStyle: 'SASANIAN', stockadeShape: 'rect', stockadeFence: 'HARDWOOD', note: '扎格罗斯山间谷地出口（今伊朗古尔帕耶甘）。🔴 [2026-09-25 主人令「纳哈万德改为古尔帕耶甘」] 它是这一段走廊上的**几何/驿站路点**（切入山间谷地的出口）。类型按标准：几何驿站、非险要、查不到人口史料 → 城寨。' },
     { id: 'city_lanbaqiya', name: '兰巴基亚', factionId: 'aolitai', lat: 26.23, lng: 66.3, type: 'small_city', troops: 10000, region: 'INDIA', buildingStyle: 'INDIA', note: '奥里泰人最大村落（今巴基斯坦拉斯贝拉）。亚历山大在此建城、留兵驻守，作为进入吉德罗西亚沙漠前最后的基地（阿里安 VI.21-22）。🔴 [2026-09-25 主人令「先添加重要据点」] 类型按标准：非要塞堡垒、查不到人口史料 → 小城。' },
     { id: 'city_malisi', name: '马里斯', factionId: 'malli', lat: 30.198, lng: 71.468, type: 'small_city', troops: 10000, region: 'PURU', buildingStyle: 'PURU', note: '马里斯，马利人的都城与卫城，即今巴基斯坦木尔坦。英文维基百科 Mallian campaign 的 Siege of the citadel 节记该城被认定为今日木尔坦，卫城墙高沟深、绕城足有一英里。公元前325年亚历山大亲自扛梯登城，中箭重伤。' },
     // 🔴 [2026-09-24 §二之二 授权] 第 13 场「前326 奥诺斯岩」是攻城战，必须有真据点，库里没有 → 按授权添加，
@@ -3582,7 +3582,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_weishen', name: '维申斯卡亚', factionId: 'dunhe', lat: 49.63, lng: 41.74, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '顿河哥萨克重镇，肖洛霍夫《静静的顿河》的故乡；真·顿河军府切尔卡斯克/新切尔卡斯克因距塔纳伊斯<50km 放不下' },
     { id: 'city_salaichuke', name: '萨莱楚克', factionId: 'salai', lat: 47.5, lng: 51.7, type: 'medium_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CEAS', note: '金帐汗国乌拉尔河渡口大城，草原丝路伏尔加-中亚段枢纽' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 TURKS：曼格什拉克：里海东岸乌古斯—塞尔柱草原，归突厥 TURKS
-    { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'TURKS', note: '里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
+    { id: 'city_mangshilake', name: '曼格什拉克', factionId: 'mangshi', lat: 44, lng: 52, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'CENTRAL_ASIA', note: '里海东岸曼格什拉克半岛，乌古斯/塞尔柱草原商路门户' },
     { id: 'city_kefu', name: '科孚', factionId: 'kejila', lat: 39.62, lng: 19.92, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREECE', note: '古科基拉城邦都城（前8世纪-公元前229年独立），威尼斯堡垒扼亚得里亚海出口，四次围城。🔴 [2026-10-05 主人令「建筑风格必须当地／判不出就跟最近的确据点走」] 科孚自古是**希腊人城邦**（科林斯殖民城，后拜占庭、威尼斯），最近的确据点 安布拉基亚（104km，希腊）→ 挂 ATHENIANS（一级 GREEK）；旧值 LATIN（意大利／威尼斯）与本地民族不符。' },
     { id: 'city_malta', name: '马耳他', factionId: 'maerta_qishi', lat: 35.9, lng: 14.44, type: 'pass', troops: 10000, region: 'LATIN_IMPERIAL', buildingStyle: 'MEDI', note: '医院骑士团堡垒岛驻地（1530起），1565马耳他大围攻圣埃尔莫堡血战' },
     { id: 'city_gebenhagen', name: '哥本哈根', factionId: 'danmai', lat: 55.68, lng: 12.57, type: 'small_city', troops: 10000, region: 'GERMANIC_CASTLE', buildingStyle: 'DANES', note: '哥本哈根；丹麦，阿布萨隆 1167 建城' },

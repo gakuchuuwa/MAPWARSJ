@@ -98,7 +98,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wulianghai_chelingwubashen': 18,                    // 车凌乌巴什 · wulianghai · 布尔根
     'wuxi_shamoke': 3,                                  // 沙摩柯 · wuxi · 八面山
     'wuzhou_limu': -3,                                   // 李牧 · wuzhou · 善无
-    'wuzhumuqin_duoerji': 17,                            // 多尔济 · wuzhumuqin · 古尔班赛堪
+    'wuzhumuqin_duoerji': 17,                            // 多尔济 · wuzhumuqin · 乌里雅斯太
     'xiajiasi_are': 9,                                  // 阿热 · xiajiasi · 乌布萨泊
     'xianhai_shamalike': 11,                             // 沙马利克 · xianhai · 养吉干
     'xibo_d_tubote': 18,                                 // 图伯特 · xibo_d · 固尔札

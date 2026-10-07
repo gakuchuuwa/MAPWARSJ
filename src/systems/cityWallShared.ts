@@ -1129,6 +1129,7 @@ const SMALL_CITY_STONE_OVERRIDE = new Set(['WESTERN', 'INCA']);
  */
 const SMALL_CITY_STONE_BY_CITY = new Set<string>([
     'city_weiyeena',   // 维也纳：1190s 石城墙（理查赎金）→ 16 世纪棱堡
+    'city_york',       // 约克（2026-10-07 按历史修）：罗马埃博拉库姆石墙，13–14 世纪中世纪石城墙至今尚存；区域字段写「维京」被判成木栅
 ]);
 
 export function smallCityUsesStoneWall(

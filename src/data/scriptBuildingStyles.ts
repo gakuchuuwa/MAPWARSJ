@@ -15,9 +15,7 @@
  *   · 索非亚：前 335 是色雷斯人的塞尔迪卡（Triballi／色雷斯地界）→ THRACIAN。
  *   · 布加勒斯特：前 335 多瑙河北岸是盖塔人（色雷斯语族）聚落 → THRACIAN。
  *   · 德鲁斯塔尔：同上，多瑙河畔的盖塔／色雷斯渡口（后世 Durostorum）→ THRACIAN。
- *   · 阿卡：前 332 是腓尼基沿海城邦 → ORIE（近东），不是十字军（12 世纪）→ WEST。
- *   · 埃德萨：前 333 是上美索不达米亚的阿拉米城 → ORIE，与十字军伯爵领无关。
- *   · 拉塔基亚：前 332 那地方是腓尼基／叙利亚海岸聚落（剧本里当比布鲁斯、西顿的替身用）→ ORIE。
+ *   · （阿卡／埃德萨／拉塔基亚三条已删：2026-10-04 乱斗按「建筑风格必须当地」已改为 ORIE，与剧本期相同，无需覆盖。）
  *   · 呼勒万／伊拉姆／古尔帕耶甘：扎格罗斯山地与米底的伊朗城镇，原挂 MEDI（**地中海**）套，
  *     应为 PERSIAN（波斯套）。
  */
@@ -48,33 +46,17 @@ export const SCRIPT_BUILDING_STYLES: readonly ScriptBuildingStyle[] = [
             + '罗马军团要塞是 1 世纪之事 → 前 335 用色雷斯套。',
     },
     {
-        cityId: 'city_ake', meleeStyle: 'WEST', scriptStyle: 'ORIE',
-        source: '英文维基 Acre, Israel / Phoenicia：阿卡是腓尼基沿海城邦，公元前332年随腓尼基诸城归亚历山大；'
-            + '乱斗挂 CRUSADERS（耶路撒冷王国，12 世纪）→ 近东套才是那一年该有的样子。',
-    },
-    {
-        cityId: 'city_aidesa', meleeStyle: 'WEST', scriptStyle: 'ORIE',
-        source: '英文维基 Edessa / Osroene：埃德萨（今乌尔法）前 4 世纪是上美索不达米亚的阿拉米城，'
-            + '亚历山大东征途中经过；十字军埃德萨伯国是 1098 年的事 → 前 333 用近东套。',
-    },
-    {
-        cityId: 'city_latajiya', meleeStyle: 'WEST', scriptStyle: 'ORIE',
-        source: '英文维基 Latakia / Laodicea ad Mare：拉塔基亚为塞琉古一世约公元前300年所建（前 332 尚不存在，'
-            + '剧本里只作腓尼基海岸路标用，且已列 `absentCities` 那年不上图）；'
-            + '画出来也应是腓尼基／叙利亚海岸的样子，而非十字军（CRUSADERS→WEST）套。',
-    },
-    {
-        cityId: 'city_hulewan', meleeStyle: 'MEDI', scriptStyle: 'PERSIAN',
+        cityId: 'city_hulewan', meleeStyle: 'SASANIAN', scriptStyle: 'PERSIAN',
         source: '英文维基 Hulwan / Media (region)：呼勒万是扎格罗斯山西麓的伊朗城镇（米底／埃兰一带），'
             + '阿契美尼德与后世波斯的驿道重镇；原挂 MEDI（地中海套）与史地不符 → 波斯套。',
     },
     {
-        cityId: 'city_yilamu', meleeStyle: 'MEDI', scriptStyle: 'PERSIAN',
+        cityId: 'city_yilamu', meleeStyle: 'SASANIAN', scriptStyle: 'PERSIAN',
         source: '英文维基 Elam / Ilam province：伊拉姆即古埃兰之地，前 4 世纪属阿契美尼德波斯；'
             + '原挂 MEDI（地中海套）与史地不符 → 波斯套。',
     },
     {
-        cityId: 'city_guerpayegan', meleeStyle: 'MEDI', scriptStyle: 'PERSIAN',
+        cityId: 'city_guerpayegan', meleeStyle: 'SASANIAN', scriptStyle: 'PERSIAN',
         source: '英文维基 Golpayegan / Media (region)：古尔帕耶甘在米底腹地（今伊斯法罕省西北），'
             + '阿契美尼德波斯属地；原挂 MEDI（地中海套）与史地不符 → 波斯套。',
     },
