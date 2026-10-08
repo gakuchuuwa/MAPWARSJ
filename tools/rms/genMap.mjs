@@ -50,8 +50,15 @@ const deName = new Map();
 try { for (const o of JSON.parse(fs.readFileSync('public/de-maps/de_map_1.json', 'utf8')).objects) if (!deName.has(o.const)) deName.set(o.const, o.name); } catch { /* 没有就算了 */ }
 const nameOf = (id) => deName.get(id) ?? oNames.get(id) ?? (datUnitName.get(id) ? String(datUnitName.get(id)).toUpperCase().replace(/[^A-Z0-9]+/g, '_') : null);
 
+/** dat 的 unit.terrain_restriction（放置类别号）→ 判「只能放水里」；缺表则退回按名字判（scratch/de_unit_restriction.json） */
+let unitRestrict = null;
+try {
+    const raw = JSON.parse(fs.readFileSync('scratch/de_unit_restriction.json', 'utf8'));
+    unitRestrict = new Map(Object.entries(raw).map(([k, v]) => [Number(k), v]));
+} catch { /* 没有就算了 */ }
+
 const { sections, pre } = loadScript(scriptName, { seed, size, defines: [] });
-const eng = new MapEngine(sections, { size, players: 2, seed, names: tNames, info: tInfo, objNames: oNames, terrainUnits }).run();
+const eng = new MapEngine(sections, { size, players: 2, seed, names: tNames, info: tInfo, objNames: oNames, terrainUnits, unitRestrict }).run();
 
 // ── 统计 ──
 const N = size, total = N * N;

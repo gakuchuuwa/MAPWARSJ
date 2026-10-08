@@ -10,6 +10,18 @@
  */
 import { makeRng } from './rmsParse.mjs';
 
+/** <CLIFF_GENERATION> 的 cliff_type → dat 里该种悬崖 _1 变体的 unit id（每类 9 个变体、id 连续） */
+export const CLIFF_BASE = { 0: 264, 1: 1849, 2: 1858, 3: 2178, 4: 2069 };
+
+/**
+ * dat 的 `unit.terrain_restriction` 里属于「只能放水里」的类别号。
+ * ⚠️ 类别号语义是 **dat 实测反推**（scratch/_probe_restriction_groups.py）：
+ *    13 = 鲸/海豚/渔船(FSHSP) ｜ 19 = 鱼(FISHX) ｜ 3 / 30 = 战船
+ *    陆地类对照：7 单位/动物、11 植被、8 矿脉、4 建筑、10 城墙、28 骑兵/攻城。
+ * 表：scratch/de_unit_restriction.json（export_de_unit_restriction.py 导出）。
+ */
+export const WATER_RESTRICTIONS = new Set([3, 13, 19, 30]);
+
 /** 未证实 / 需校准的取值（对照 DE 真图逐项校准） */
 export const TUNE = {
     /** 玩家出生点避让半径（set_avoid_player_start_areas）——推断 */
@@ -28,7 +40,7 @@ function props(block = []) {
 const D4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 
 export class MapEngine {
-    constructor(sections, { size = 144, players = 2, seed = 1, names = new Map(), info = null, objNames = new Map(), terrainUnits = null } = {}) {
+    constructor(sections, { size = 144, players = 2, seed = 1, names = new Map(), info = null, objNames = new Map(), terrainUnits = null, unitRestrict = null } = {}) {
         this.sections = sections;
         this.N = size;
         this.players = players;
@@ -40,6 +52,8 @@ export class MapEngine {
         this.objNames = objNames;
         /** 地形编号 → dat 登记的自动单位 [{unit, density, masked}]（scratch/de_terrain_units.json，来自 empires2_x2_p1.dat） */
         this.terrainUnits = terrainUnits;
+        /** 物件 id → dat 的 terrain_restriction（放置类别号）；见 scratch/de_unit_restriction.json */
+        this.unitRestrict = unitRestrict;
         const n = size * size;
         this.terrain = new Int16Array(n);
         /** 视觉图层（terrain_mask）：-1 = 无，否则画这一层；逻辑地形（物件/森林/通行）仍看 terrain */
@@ -55,6 +69,12 @@ export class MapEngine {
         this.waterTerrains = new Set();
         /** create_object_group 组名 → [{id, weight}]：物件组，放置时按权重逐个随机取（见 collectObjectGroups） */
         this.objectGroups = new Map();
+        // <CLIFF_GENERATION> 段级参数（平铺指令，不在块里）；max <= 0 表示不生成（RND_GLOBAL_CLIFFS_NONE）
+        this.cliffMin = 0; this.cliffMax = 0;
+        this.cliffMinLen = 3; this.cliffMaxLen = 5;
+        this.cliffGap = 1; this.cliffCurliness = 0; this.cliffType = 0;
+        /** min_terrain_distance：候选块周围这个范围内有水就不放悬崖（genie-rms 同名处理），单位=粗网格格 */
+        this.cliffTerrDist = 0;
         /** 手册「Map sizes」：Scaling factor 以 100×100 为基准 ＝ 面积 / 10000 */
         this.areaScale = (size * size) / 10000;
     }
@@ -84,6 +104,8 @@ export class MapEngine {
         for (const c of S.TERRAIN_GENERATION ?? []) this.terrainCmd(c);
         this.applyBeaches();
         this.plantTerrainUnits();
+        for (const c of S.CLIFF_GENERATION ?? []) this.cliffCmd(c);
+        this.generateCliffs();
         this.collectObjectGroups();
         for (const c of S.OBJECTS_GENERATION ?? []) this.objectCmd(c);
         return this;
@@ -123,11 +145,11 @@ export class MapEngine {
             const cx = Math.round(this.N / 2 + Math.cos(ang) * rr);
             const cy = Math.round(this.N / 2 + Math.sin(ang) * rr);
             this.starts.push({ x: cx, y: cy });
-            this.createLand(P, { x: cx, y: cy }, 100 + p);
+            this.createLand(P, { x: cx, y: cy }, 100 + p, true);
         }
     }
 
-    createLand(P, at, forcedId) {
+    createLand(P, at, forcedId, overwrite = false) {
         const N = this.N;
         const terr = Number(P.terrain_type?.[0] ?? 0);
         const id = forcedId ?? Number(P.land_id?.[0] ?? this.rng.int(200, 400));
@@ -137,15 +159,61 @@ export class MapEngine {
         const baseR = Number(P.base_size?.[0] ?? 0);              // 手册：base_size = 陆地生长的最小半径
         const avoid = Number(P.other_zone_avoidance_distance?.[0] ?? 0);
         const clump = Number(P.clumping_factor?.[0] ?? 8);        // 手册：陆地默认 8，范围 1–15
+        // 手册：left/right/top/bottom_border ＝「Percent from edge to stop land growth」——
+        // 从边缘往里这个百分比之内**不许长陆地**（原文：In Mediterranean and Baltic maps, this instruction
+        // places the inland sea near the center of the map.  border 25 → 陆地靠近地图中部）。
+        // 实测差距：Mediterranean.rms 的 create_land { terrain_type VODA  land_percent 80  borders 17 }
+        //   未实现 border 时水占 80.0%，而 DE 真图只有 21.8%。
+        const bp = (k) => Number(P[k]?.[0] ?? 0);
+        const bx0 = Math.round(bp('left_border') / 100 * N), bx1 = N - Math.round(bp('right_border') / 100 * N);
+        const by0 = Math.round(bp('top_border') / 100 * N), by1 = N - Math.round(bp('bottom_border') / 100 * N);
+        // 官方手册：地图陆地有「硬编码的圆角」——
+        //   "the map land had a hard-coded feature to round off edges … As maps get smaller (border > 20%)
+        //    they may look less like rectangles and more like circles or octagons."
+        // 实测 DE 的水「中部最宽、两端收窄」（每行跨度 29→70→58→86…），而我们是恒定 96 的矩形。
+        // 近似：把 border 的矩形可用区按内切椭圆裁切；**没有 border 时不裁**（保持其它脚本原行为）。
+        const hasBorder = bx0 > 0 || bx1 < N || by0 > 0 || by1 < N;
+        const ex = (bx0 + bx1) / 2, ey = (by0 + by1) / 2;
+        const erx = (bx1 - bx0) / 2, ery = (by1 - by0) / 2;
         let cx, cy;
         if (at) { cx = at.x; cy = at.y; }
         else if (P.land_position) { cx = Math.round(Number(P.land_position[0]) / 100 * N); cy = Math.round(Number(P.land_position[1]) / 100 * N); }
-        else { cx = this.rng.int(10, N - 10); cy = this.rng.int(10, N - 10); }
+        else {
+            // 中心点必须落在可用区内（椭圆裁切下还要留出内接方框）：否则 base 圆盘整个落在外圈，一格都长不出来
+            const lox = Math.max(10, bx0, Math.round(ex - erx / Math.SQRT2)), hix = Math.min(N - 11, bx1 - 1, Math.round(ex + erx / Math.SQRT2));
+            const loy = Math.max(10, by0, Math.round(ey - ery / Math.SQRT2)), hiy = Math.min(N - 11, by1 - 1, Math.round(ey + ery / Math.SQRT2));
+            cx = this.rng.int(Math.min(lox, hix), hix);
+            cy = this.rng.int(Math.min(loy, hiy), hiy);
+        }
         const mine = [];
         const claim = (x, y) => { const i = this.idx(x, y); this.landId[i] = id; this.terrain[i] = terr; mine.push(i); };
+        // 官方手册：border_fuzziness ＝「percent chance per tile of stopping at a border」——
+        // 不写 → 边界是直线；写了 → 每格按该概率决定「停 / 继续」，于是边缘参差、并且会略微越过 border
+        // （实测 DE 的水 x 范围 22~122，而 border 17% 对应 [24,120) —— 确实越过了约 2 格）。
+        const fuzz = Number(P.border_fuzziness?.[0] ?? 0);
         const free = (x, y) => {
             if (!this.inb(x, y)) return false;
-            if (this.landId[this.idx(x, y)] !== -1) return false;
+            if (x < bx0 || x >= bx1 || y < by0 || y >= by1) {
+                if (fuzz <= 0) return false;                                   // 硬边界（直线）
+                const over = Math.max(bx0 - x, x - (bx1 - 1), by0 - y, y - (by1 - 1));
+                if (this.rng() * 100 >= fuzz / (1 + over)) return false;       // 越界越远，越难继续
+            }
+            if (hasBorder && erx > 0 && ery > 0) {
+                const r2 = ((x - ex) / erx) ** 2 + ((y - ey) / ery) ** 2;
+                if (r2 > 1) {
+                    // 圆角边界同样受 border_fuzziness 影响：不写 → 光滑椭圆；写了 → 边缘参差并略微外溢
+                    if (fuzz <= 0) return false;
+                    const over = Math.sqrt(r2) - 1;
+                    if (this.rng() * 100 >= fuzz / (1 + over * 20)) return false;
+                }
+            }
+            // 覆盖规则：玩家陆地（create_player_lands）**可以压在「中立 land」之上**。
+            // 实证：DE 基准图（Mediterranean.rms）的内海被玩家陆地 LAYER_A(Dirt 3) 切成两块
+            //       （水呈 y24~72 右半 + y76~120 左半 两片）；而我们原来一律拒绝已占格，
+            //       所以内海是一整块、填充率 79%，DE 只有 45%。
+            // 仍不许覆盖别的玩家陆地（id >= 100），避免两个出生地互相吃掉。
+            const occ = this.landId[this.idx(x, y)];
+            if (occ !== -1 && !(overwrite && occ < 100)) return false;
             if (avoid > 0) {
                 for (let dy = -avoid; dy <= avoid; dy++) for (let dx = -avoid; dx <= avoid; dx++) {
                     const xx = x + dx, yy = y + dy;
@@ -405,6 +473,108 @@ export class MapEngine {
     constOf(name) { for (const [v, n] of this.names) if (n === name) return v; return null; }
 
     // ───────────────────────── OBJECTS ─────────────────────────
+    /** <CLIFF_GENERATION> 段级指令（平铺，不在块里） */
+    cliffCmd(c) {
+        switch (c.cmd) {
+            case 'min_number_of_cliffs': this.cliffMin = Number(c.args[0]); break;
+            case 'max_number_of_cliffs': this.cliffMax = Number(c.args[0]); break;
+            case 'min_length_of_cliff': this.cliffMinLen = Number(c.args[0]); break;
+            case 'max_length_of_cliff': this.cliffMaxLen = Number(c.args[0]); break;
+            case 'min_distance_cliffs': this.cliffGap = Number(c.args[0]); break;
+            case 'min_terrain_distance': this.cliffTerrDist = Number(c.args[0]); break;
+            case 'cliff_curliness': this.cliffCurliness = Number(c.args[0]); break;
+            case 'cliff_type': this.cliffType = Number(c.args[0]); break;
+            default: this.note('CLIFF:' + c.cmd);
+        }
+    }
+
+    /**
+     * 生成悬崖。DE 里悬崖是**物件**（dat：`Cliff (X) NN` / `Marble Cliff N`，每类 9 个连接变体），
+     * **不是地形** —— dat 的地形表里没有任何 cliff。
+     * 算法结构参照 genie-rms 的 CliffGenerator（只借结构，代码未抄）：
+     *   ① 3×3 粗网格上找候选：9 格必须非水、且高程完全相同
+     *   ② 条数 = min + rng(max-min)；max <= 0 → 不生成
+     *   ③ 起点 → 按 cliff_curliness 方向游走，只走向「同高程」的合格候选
+     *   ④ 落笔：路径格 ×3+1 回到细网格放 cliff 物件；按 min_distance_cliffs 排除周围候选
+     * ⚠️ 变体 _1.._9 的形状语义未证实；实测 de_map_1 只出现 `CLIFF_DEFAULT_1`，故先统一用 _1。
+     */
+    generateCliffs() {
+        if (this.cliffMax <= 0) return;
+        const N = this.N;
+        const minN = Math.max(0, this.cliffMin), maxN = Math.max(minN, this.cliffMax);
+        const n = minN + this.rng.int(0, maxN - minN);
+        const W = Math.floor(N / 3), H = Math.floor(N / 3);
+        if (W <= 1 || H <= 1 || n <= 0) return;
+
+        // ① 候选：3×3 块内 9 格「非水 + 同高程」；再按 min_terrain_distance 排除靠水的块
+        //    （genie-rms 同名处理：含水块 → invalidateArea(minDistanceToTerrain)）
+        const wet = new Uint8Array(W * H);
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+            for (let dy = 0; dy < 3; dy++) for (let dx = 0; dx < 3; dx++) {
+                if (this.waterTerrains.has(this.terrain[(y * 3 + dy) * N + (x * 3 + dx)])) { wet[y * W + x] = 1; break; }
+            }
+        }
+        const terrDist = Math.max(0, this.cliffTerrDist);
+        const cand = new Map();
+        for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+            if (wet[y * W + x]) continue;
+            let nearWater = false;
+            for (let dy = -terrDist; dy <= terrDist && !nearWater; dy++) for (let dx = -terrDist; dx <= terrDist; dx++) {
+                const xx = x + dx, yy = y + dy;
+                if (xx < 0 || yy < 0 || xx >= W || yy >= H) continue;
+                if (wet[yy * W + xx]) { nearWater = true; break; }
+            }
+            if (nearWater) continue;
+            let h = -1, ok = true;
+            for (let dy = 0; dy < 3 && ok; dy++) for (let dx = 0; dx < 3; dx++) {
+                const e = this.elev[(y * 3 + dy) * N + (x * 3 + dx)];
+                if (h < 0) h = e; else if (h !== e) { ok = false; break; }
+            }
+            if (ok) cand.set(y * W + x, h);
+        }
+        if (!cand.size) return;
+
+        const base = CLIFF_BASE[this.cliffType] ?? CLIFF_BASE[0];
+        const gap = Math.max(0, this.cliffGap);
+        const clearArea = (cx, cy) => {
+            for (let dy = -gap; dy <= gap; dy++) for (let dx = -gap; dx <= gap; dx++) cand.delete((cy + dy) * W + (cx + dx));
+        };
+        const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+
+        for (let k = 0; k < n; k++) {
+            const len = this.cliffMinLen + this.rng.int(0, Math.max(0, this.cliffMaxLen - this.cliffMinLen));
+            if (len < 3) continue;
+            const left = [...cand.keys()];
+            if (!left.length) break;
+            let key = left[Math.floor(this.rng() * left.length)];
+            let cx = key % W, cy = Math.floor(key / W);
+            const height = cand.get(key);
+            let dir = this.rng.int(0, 3);
+            const path = [];
+            for (let i = 0; i < len; i++) {
+                if (cand.get(cy * W + cx) !== height) break;
+                path.push([cx, cy]);
+                const r = this.rng() * 100;
+                if (r < this.cliffCurliness / 2) dir = (dir + 3) % 4;
+                else if (r < this.cliffCurliness) dir = (dir + 1) % 4;
+                let moved = false;
+                for (const d2 of [dir, dir + 1, dir - 1]) {
+                    const dd = ((d2 % 4) + 4) % 4;
+                    const nx = cx + DIRS[dd][0], ny = cy + DIRS[dd][1];
+                    if (cand.get(ny * W + nx) === height) { cx = nx; cy = ny; dir = dd; moved = true; break; }
+                }
+                if (!moved) break;
+            }
+            if (!path.length) continue;
+            // ④ 落笔（细网格坐标）+ 排除周围候选
+            for (const [px, py] of path) {
+                this.objects.push({ id: base, cliff: true, x: px * 3 + 1, y: py * 3 + 1 });
+                clearArea(px, py);
+            }
+            this.cliffMade = (this.cliffMade ?? 0) + 1;
+        }
+    }
+
     /**
      * 收集 create_object_group 定义：`create_object_group NAME { add_object <物件id> <权重> … }`
      * （racket 文档：*"List a selection of objects with probabilities…"*；块内只有 add_object，权重是千分/百分比）
@@ -471,7 +641,12 @@ export class MapEngine {
         const gapAll = Number(P.min_distance_group_placement?.[0] ?? 0);
         const gapSame = Math.max(gapAll, Number(P.temp_min_distance_group_placement?.[0] ?? 0));
         // 只能在水里的物件（鱼类）：陆地上放不下（推断；DE 的 dat 里每个单位有通行地形限制，待换成以 dat 为准）
-        const waterOnly = /FISH|DORADO|SALMON|SNAPPER|TUNA|PERCH|MARLIN|DOLPHIN|SHARK|WHALE/.test(this.objNames.get(id) ?? '');
+        // 只能放水里的物件：**以 dat 的 terrain_restriction 为准**（不再靠名字正则猜）
+        // 类别号见 WATER_RESTRICTIONS；没有这张表时退回按名字判（老写法）。
+        const restrict = this.unitRestrict ? this.unitRestrict.get(id) : undefined;
+        const waterOnly = restrict !== undefined
+            ? WATER_RESTRICTIONS.has(restrict)
+            : /FISH|DORADO|SALMON|SNAPPER|TUNA|PERCH|MARLIN|DOLPHIN|SHARK|WHALE/.test(this.objNames.get(id) ?? '');
         const isMarker = !!P.actor_area;
         const markerArea = isMarker ? Number(P.actor_area[0]) : 0;
         const markerR = Number(P.actor_area_radius?.[0] ?? 1);
@@ -489,7 +664,20 @@ export class MapEngine {
             if (onLand !== null && this.landId[gi] !== onLand) return false;
             for (const a of avoidAreas) if (this.areaGrid.get(a)?.[gi]) return false;
             if (inArea !== null && !this.areaGrid.get(inArea)?.[gi]) return false;
-            if (s) { const d = Math.hypot(s.x - x, s.y - y); if (d < minP || d > maxP) return false; }
+            // 距玩家：perPlayer 时按「当前玩家」算；否则按「最近的玩家」算。
+            // 🔴 max/min_distance_to_players **不依赖 set_place_for_every_player**（官方手册的鱼/金矿例子都没写它）。
+            //    原写法 `if (s) {…}` 在 s=null（未写 set_place_for_every_player）时**整段跳过** ——
+            //    object_setup.inc:3/16/29 那 3 条 PLACEHOLDER_GENERIC 因此全图乱放，
+            //    实测 1902 有 36% 落在 max_distance_to_players 之外（DE 真图一个都没有）。
+            if (minP > 0 || maxP < 9999) {
+                let d;
+                if (s) d = Math.hypot(s.x - x, s.y - y);
+                else {
+                    d = Infinity;
+                    for (const st of this.starts) { const dd = Math.hypot(st.x - x, st.y - y); if (dd < d) d = dd; }
+                }
+                if (d < minP || d > maxP) return false;
+            }
             if (avoidForest > 0) {
                 for (let dy = -avoidForest; dy <= avoidForest; dy += 2) for (let dx = -avoidForest; dx <= avoidForest; dx += 2) {
                     const xx = x + dx, yy = y + dy;
@@ -521,12 +709,27 @@ export class MapEngine {
         const nGroups = hasGroups ? groups : count;
         const perGroup = hasGroups ? count : 1;
         const capGroups = Math.min(nGroups, Math.floor((N * N) / 6));   // 标记物常写 2048/4096 表示「尽量多」，按可放格数封顶
+        // set_circular_placement：物件只落在「距玩家 ≈ 固定半径」的圆环上，而不是圆环内的任意位置。
+        // 官方手册与 racket 均无此词条，依据来自实证：
+        //   ① 本机脚本里它总是与 min_distance_to_players 配对（Arabia.rms:1624-1625 / 1713-1714 / 1736-1737）；
+        //   ② DE 真图侧证 —— SOLID_OBJECT（脚本 number_of_objects 4 + min_distance_to_players 32）在 de_map_1 里只出现 2 个，
+        //      说明它是「收紧候选到一圈」，再被 avoid_forest_zone / max_distance_to_other_zones 排掉一部分。
+        // 半径取 min_distance_to_players；未给 min 时取 max_distance_to_players（object_setup.inc:3/16/29 的 1902 属这类）。
+        const circular = !!P.set_circular_placement;
+        const ringR = minP > 0 ? minP : (maxP < 9999 ? maxP : 0);
+        const onRing = (ox, oy) => {
+            const ang = this.rng() * Math.PI * 2;
+            const d = ringR + (this.rng() - 0.5) * 2;          // ±1 格抖动，避免整格化后挤在同一点
+            return [Math.round(ox + Math.cos(ang) * d), Math.round(oy + Math.sin(ang) * d)];
+        };
         const once = (s) => {
             for (let g = 0; g < capGroups; g++) {
                 let cx = -1, cy = -1;
                 for (let a = 0; a < 60; a++) {
                     let x, y;
-                    if (s) { const ang = this.rng() * Math.PI * 2, d = minP + this.rng() * (Math.min(maxP, N) - minP); x = Math.round(s.x + Math.cos(ang) * d); y = Math.round(s.y + Math.sin(ang) * d); }
+                    if (s && circular && ringR > 0) { const p = onRing(s.x, s.y); x = p[0]; y = p[1]; }
+                    else if (s) { const ang = this.rng() * Math.PI * 2, d = minP + this.rng() * (Math.min(maxP, N) - minP); x = Math.round(s.x + Math.cos(ang) * d); y = Math.round(s.y + Math.sin(ang) * d); }
+                    else if (circular && ringR > 0 && this.starts.length) { const st = this.starts[this.rng.int(0, this.starts.length - 1)]; const p = onRing(st.x, st.y); x = p[0]; y = p[1]; }
                     else { x = this.rng.int(0, N - 1); y = this.rng.int(0, N - 1); }
                     if (!this.inb(x, y) || !okTile(x, y, s)) continue;
                     if (gapSame > 0 && placedCenters.some((p) => Math.abs(p.x - x) < gapSame && Math.abs(p.y - y) < gapSame && Math.hypot(p.x - x, p.y - y) < gapSame)) continue;
