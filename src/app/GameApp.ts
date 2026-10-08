@@ -43,6 +43,7 @@ import { BattleSceneLayer } from '../ui/BattleSceneLayer'; // [2026-08-09] 独�
 import { Scene13WarLayer } from '../ui/Scene13WarLayer'; // [2026-08-11 13 v2] 出兵口互攻演出层
 import { GameTimeHUD } from '../ui/GameTimeHUD';
 import { WorldMiniMap } from '../ui/WorldMiniMap';
+import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
 import { BrawlFeedPanel } from '../ui/BrawlFeedPanel';
 import { isRegionCenter, REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { Army } from '../legion/Army';
@@ -461,6 +462,13 @@ export class GameApp {
                 () => this.scene13War?.isActive?.() === true || this.battleScene?.isActive?.() === true,
                 () => this.cameraFollowUI?.parkCamera(),
                 () => this.playerHero?.getHostLegionId() ?? null,
+                // 🔴 [2026-10-08 主人「小地图是不是可以添加上势力色」] 可见据点 + 当前所属势力的势力色（固定色优先，再读 FactionManager，与旗号染色同口径）
+                () => (this.cityManager?.getCities() ?? [])
+                    .filter((c) => this.cityManager.isCityVisible(c))
+                    .map((c) => ({
+                        id: c.id, lat: c.latitude, lng: c.longitude,
+                        color: HISTORICAL_FACTION_COLORS[c.factionId] ?? this.factionManager?.getFactionColor(c.factionId) ?? '#999999',
+                    })),
             );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
