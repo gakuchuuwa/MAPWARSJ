@@ -93,6 +93,9 @@
 .city-image-container.city-icon--size-small.city-under-siege .city-building-stack {
     transform: scale(2.730666667);
 }
+.city-image-container.city-icon--size-stockade.city-under-siege .city-building-stack {
+    transform: scale(3.413333333);   /* 城寨底宽 80：1024×0.4/(80×1.5)，屏幕宽与其他城型一致 */
+}
 
 /* 跟拍军团停驻据点：建筑放大到与攻城战同一尺寸（倍数同上），但不带火光投影与蓝描边（那是战斗的）。
    只在战略地图；由 src/app/GarrisonCityZoom.ts 每帧维护 .city-garrisoned。 */
@@ -110,6 +113,9 @@
 .city-image-container.city-icon--size-small.city-garrisoned .city-building-stack {
     transform: scale(2.730666667);
 }
+.city-image-container.city-icon--size-stockade.city-garrisoned .city-building-stack {
+    transform: scale(3.413333333);
+}
 
 /* [2026-08-10 13 战斗场景城图 6 折] 攻守编队对垒 + 守军锚点在城图边缘，13 城图放大到原图 0.6
    （0.4 基准 ×1.5 = 0.6）。class 由 TerritorySystem.updateCityScales 在 zoom≥13 时对攻城放大中的
@@ -124,6 +130,9 @@
 }
 .city-image-container.city-icon--size-small.city-under-siege.scene13-zoom .city-building-stack {
     transform: scale(4.096);
+}
+.city-image-container.city-icon--size-stockade.city-under-siege.scene13-zoom .city-building-stack {
+    transform: scale(5.12);   /* 1024×0.6/(80×1.5) */
 }
 
 /* 攻城态建筑描边加强 + 地面投影 */

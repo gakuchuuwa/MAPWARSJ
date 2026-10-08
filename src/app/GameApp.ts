@@ -330,12 +330,12 @@ export class GameApp {
             this.cityManager.bindViewportCitySync();
             // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
-            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'script') === 'script');
+            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'melee') === 'script');
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
-                () => (this.playerHero?.autoPlan ?? 'script') === 'script',
+                () => (this.playerHero?.autoPlan ?? 'melee') === 'script',
             );
             // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
             //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
@@ -634,7 +634,7 @@ export class GameApp {
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`，默认）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
-            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'script') === 'script';
+            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'melee') === 'script';
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -841,7 +841,7 @@ export class GameApp {
     private syncScriptOwners(): void {
         syncScriptHistoricalOwners(
             this.cityManager,
-            (this.playerHero?.autoPlan ?? 'script') === 'script',
+            (this.playerHero?.autoPlan ?? 'melee') === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
     }
@@ -852,7 +852,8 @@ export class GameApp {
         // 🔴 [2026-09-23 主人定「把玩家拉到附近」] 剧本模式（开局默认）：出生在当前这一场历史事件
         //    归属武将的城外（格拉尼库斯河战役 = 佩拉）；乱斗模式照旧在全世界随机挑一个据点。
         const scriptStart = findCurrentScriptEventCity(allCities);
-        const startCity = scriptStart ?? allCities[Math.floor(Math.random() * allCities.length)];
+        // 🔴 [2026-10-08 主人令「开局玩家出现的位置请随机」] 不再绑定剧本事件城：一律在全部据点里随机挑一个（scriptStart 只留给下面的出生距离判定）
+        const startCity = allCities[Math.floor(Math.random() * allCities.length)];
 
         let spawnPos = { lat: startCity.latitude, lng: startCity.longitude };
         const edges = roadRegistry.isInitialized() ? roadRegistry.getAdjacencyList().get(startCity.id) : undefined;

@@ -8,14 +8,15 @@ export const CITY_MARKER_BUILDING_CLASS = 'city-building-sprite';
 export const CITY_MARKER_SIZE_BIG_CLASS = 'city-icon--size-big';
 export const CITY_MARKER_SIZE_MEDIUM_CLASS = 'city-icon--size-medium';
 export const CITY_MARKER_SIZE_SMALL_CLASS = 'city-icon--size-small';
+export const CITY_MARKER_SIZE_STOCKADE_CLASS = 'city-icon--size-stockade';
 
 /** 平时据点建筑图宽（px）：大 140 / 中 120 / 小与关 100 —— 攻城统一放大不改此表 */
 export const CITY_MARKER_BASE_WIDTH_BY_TYPE: Readonly<Record<string, number>> = {
     big_city: 120,     // 2026-10-01 主人定：原 140
     medium_city: 110,  // 2026-10-01 主人定：原 120
     small_city: 100,
-    stockade: 100,   // 城寨与小城/关隘同档
-    pass: 100,
+    stockade: 80,    // 🔴 [2026-10-08 主人「城寨应该小一点」] 100→80（取 2026-10-01 改前的原值）
+    pass: 120,       // 🔴 [2026-10-08] 与 TerritorySystem 地图实际画的 120 一致（原表写 100，攻城几何偏小一圈）
 };
 
 /** 据点素材常见原图宽（多数 1024×765） */
@@ -67,12 +68,13 @@ export function getSiegeCityBuildingStackScale(cityType: string): number {
 export function getCityMarkerSizeClass(cityType: string): string {
     switch (cityType) {
         case 'big_city':
+        case 'pass':   // 险要底宽 120，与大城同档（攻城倍数按 120 算）
             return CITY_MARKER_SIZE_BIG_CLASS;
         case 'medium_city':
             return CITY_MARKER_SIZE_MEDIUM_CLASS;
-        case 'pass':
-        case 'small_city':
         case 'stockade':
+            return CITY_MARKER_SIZE_STOCKADE_CLASS;
+        case 'small_city':
             return CITY_MARKER_SIZE_SMALL_CLASS;
         default:
             return CITY_MARKER_SIZE_SMALL_CLASS;
