@@ -57,16 +57,81 @@ export const DE_OBJECT_TO_ASSET: Record<string, string> = {
     BUSH_A: 'BUSH_GREEN',
     BUSH_B: 'BUSH_GREEN',
     FRUIT_BUSH: 'FORAGE_BUSH',
-    GOLD_MINE: 'GOLD_MINE',
-    STONE_MINE: 'STONE_MINE',
+    // 🔴 [2026-10-09 修·目录名对不上] 素材目录实际叫 MINE_GOLD / MINE_STONE；
+    //    原值 'GOLD_MINE' / 'STONE_MINE' 指向不存在的目录 → 金矿与石矿**一个都画不出来**
+    //    （实测 Arabia seed2 的 15 金 + 6 石全部被静默丢弃）。
+    GOLD_MINE: 'MINE_GOLD',
+    STONE_MINE: 'MINE_STONE',
     STUMP: 'STUMP_GENERIC',
+    // ── 2026-10-09 补：为「我们 vs DE」同口径对比补齐映射（此前能画率仅 4.5%）──
+    //    实测出现次数来自 scratch/rms-out/Arabia_2.json；素材名来自 public/SUCAI_NATURE 实列。
+    GRASS_GREEN: 'GRASS_GREEN',              // 219 个，此前无映射
+    GRASS_GREEN_PATCH: 'GRASS_GREEN_PATCH',
+    GRASS_DRY_PATCH: 'GRASS_DRY_PATCH',
+    FOREST_TREE: 'OAK',                      // ⚠️推断：DE 的「通用森林树」占位，按温带默认树画（102 个）
+    OAKTREE: 'OAK',                          // 9 个
+    TREE_OAK_FOREST: 'OAK',
+    PLAN_WEED_GREEN: 'WEED',                 // ⚠️推断（18 个）
+    PLAN_BUSH_GREEN: 'BUSH_GREEN',           // ⚠️推断（5 个）
+    FORAGE: 'FORAGE_BUSH',                   // 5 个
+    BUSH_TREE_A: 'BUSH_TREE_A',
+    BUSH_TREE_B: 'BUSH_TREE_B',
+    BUSH_TREE_C: 'BUSH_TREE_C',
+    BAMBOO: 'BAMBOO',
+    LUSH_BAMBOO: 'LUSH_BAMBOO',
+    FELLED_BAMBOO: 'FELLED_BAMBOO',
+    DEAD_TREE: 'DEAD_TREE',
+    PALM: 'PALM',
+    UNDERBRUSH: 'BUSH_GREEN',                // ⚠️推断
+    TREE_BIRCH: 'BIRCH_GREEN',
+    TREE_ASIAN_MAPLE: 'ASIAN_MAPLE_GREEN',
+    // ── 2026-10-09 补：动物（素材在 public/SUCAI_ANIMAL；渲染器已支持查该目录）──
+    //    右侧名字取自 SUCAI_ANIMAL 实列目录名。⚠️标注者为推断（DE 名与素材名不同名）。
+    GOAT: 'GOAT',
+    SHEEP: 'SHEEP',
+    DEER: 'DEER',
+    MOUFLON: 'MOUFLON',
+    WILD_BOAR: 'BOAR',                       // ⚠️推断：DE WILD_BOAR → 素材 BOAR
+    WILD_HORSE_C: 'HORSE',                   // ⚠️推断
+    HARE_A: 'HARE_BROWN',                    // ⚠️推断
+    HARE_B: 'HARE_GREY',                     // ⚠️推断
+    OWL: 'OWL',
+    HAWK: 'HAWK',
+    FALCON: 'FALCON',
+    VULTURE: 'VULTURE',
+    FLAMINGO: 'FLAMINGO',
+    TURKEY: 'TURKEY',
+    CHICKEN: 'CHICKEN',
+    PIG: 'PIG',
+    COW: 'COW_BROWN',                        // ⚠️推断
+    WOLF: 'WOLF',
+    BEAR: 'BEAR',
+    LION: 'LION',
+    TIGER: 'TIGER',
+    ELEPHANT: 'ELEPHANT',
+    RHINO: 'RHINO',
+    ZEBRA: 'ZEBRA',
+    OSTRICH: 'OSTRICH',
+    CAMEL: 'CAMEL',
+    DROMEDARY: 'DROMEDARY',
+    CROCODILE: 'CROCODILE',
+    MONKEY: 'MONKEY',
+    GAZELLE: 'GAZELLE',
+    IBEX: 'IBEX',
+    LLAMA: 'LLAMA',
 };
 
 /**
  * PLACEHOLDER2 是 DE 内部标记林地地块用的占位物（RMS 里的 FOREST_PLACEHOLDER），
  * 游戏里不显示。数量很大（这张图 1063 个），画出来会糊满全屏，必须跳过。
+ *
+ * 🔴 [2026-10-09 修] 导出侧（de-map-export.py:60-66）在查不到枚举时给的是 `UNKNOWN_{const}`，
+ *    所以 de_map_1 里的 PLACEHOLDER2 实际叫 **`UNKNOWN_1902`**（已用 genieutils 反查 dat 确认：
+ *    dat 的 unit 1902 就是 PLACEHOLDER2，hp=0、standing_graphic=(-1,-1)）。
+ *    原来只写 'PLACEHOLDER2' → **两个键永远匹配不上**，1780 个占位物是靠「恰好不在映射表里」躲过去的。
+ *    同批还有 `UNKNOWN_647` = dat 的 `HRICH_D`（hp=-1，`_D`=残骸占位），一并显式跳过。
  */
-export const DE_INVISIBLE = new Set(['PLACEHOLDER2', 'PLACEHOLDER']);
+export const DE_INVISIBLE = new Set(['PLACEHOLDER2', 'PLACEHOLDER', 'UNKNOWN_1902', 'UNKNOWN_647']);
 
 /** 我们的地面贴花（烙进地面、不挡路），其余按世界对象走脚点排序 */
 const GROUND_LAYER_ASSETS = new Set([
