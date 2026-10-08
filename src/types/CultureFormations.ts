@@ -35,6 +35,7 @@ import type { LegionType } from './UnitTypes';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { getScriptFactionLegionName } from '../events/scriptPeriod';
 import { withCommander } from '../data/generalHeroUnits';
+import { getLegionEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
 
 /** 军队编辑器可选阵型（2026-08-20 七大经典阵型，均 9 人）：
  *  square       方阵   = 3+3+3（前3/中3/后3，九宫等边·攻守均衡）
@@ -1058,6 +1059,17 @@ export interface LegionCompositionTarget {
     getTroops(): number;
 }
 
+/**
+ * 🔴 [2026-10-08] 战略侧「有没有精锐」：与战术侧（GameAppCombatHooks.resolveUnitEliteName）同一口径 ——
+ * 已是精锐，或军团出身据点／所属势力有精锐番号。两边必须同源，否则会出现「战术里有主将队、战略地图上没有」。
+ */
+function armyHasElite(army: LegionCompositionTarget): boolean {
+    if (army.isElite) return true;
+    const a = army as unknown as { getSourceCityId?: () => unknown };
+    if (typeof a.getSourceCityId === 'function' && getLegionEliteLegionName(army as never) != null) return true;
+    return !!army.factionId && getExpeditionEliteLegionName(army.factionId) != null;
+}
+
 /** 写入军团 cultureSlots / cultureScales / legionType / formationMode（武将与势力专属优先于文化区） */
 export function applyLegionCultureComposition(army: LegionCompositionTarget, region?: RegionType): void {
     const isQin = isQinDynasty(army.factionId, army.generalId);
@@ -1079,7 +1091,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     if (!slots) return;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
-    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture, hasElite: !!army.isElite });
+    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army) });
     const scales9 = expandCompositionScales(slots);
     army.cultureScales = army.cultureSlots.length > scales9.length ? [...scales9, 1] : scales9;
     army.legionType =
@@ -1115,7 +1127,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     //    绝不反过来把阵型回落成编成推出来的那个（那会丢掉朝代/势力的阵型设计）。
     if (army.formationMode && !slotsMatchFormation(slots, army.formationMode)) {
         const fixed = convertSlotsToMode(slots, army.formationMode);
-        army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(fixed), { factionId: army.factionId, seedKey: culture, hasElite: !!army.isElite });
+        army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(fixed), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army) });
         const fixedScales9 = expandCompositionScales(fixed);
         army.cultureScales = army.cultureSlots.length > fixedScales9.length ? [...fixedScales9, 1] : fixedScales9;
     }

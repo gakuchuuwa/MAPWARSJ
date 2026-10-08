@@ -38,6 +38,9 @@ export class WorldMiniMap {
     private toggleBtn: HTMLButtonElement;
     /** 🧭 行军线路开关按钮（主人 2026-10-05 令「添加一个按钮功能，显示线路和不显示线路」） */
     private trailBtn: HTMLButtonElement;
+    /** 🎨 势力色开关按钮（主人 2026-10-08 令「显示势力色，不显示势力色」） */
+    private colorBtn: HTMLButtonElement;
+    private colorOn = true;
     private mini: L.Map;
     private viewRect: L.Rectangle;
     private trail: L.Polyline;
@@ -86,6 +89,7 @@ export class WorldMiniMap {
                     <span class="wm-level"></span>
                     <button class="wm-btn wm-plus" title="放大">+</button>
                 </span>
+                <button class="wm-btn wm-color" title="隐藏势力色">🎨</button>
                 <button class="wm-btn wm-trail" title="隐藏行军线路">🧭</button>
                 <button class="wm-btn wm-toggle" title="收起"></button>
             </div>
@@ -97,6 +101,7 @@ export class WorldMiniMap {
         this.minusBtn = this.root.querySelector('.wm-minus') as HTMLButtonElement;
         this.toggleBtn = this.root.querySelector('.wm-toggle') as HTMLButtonElement;
         this.trailBtn = this.root.querySelector('.wm-trail') as HTMLButtonElement;
+        this.colorBtn = this.root.querySelector('.wm-color') as HTMLButtonElement;
 
         this.mini = L.map(this.body, {
             zoomControl: false,
@@ -131,11 +136,24 @@ export class WorldMiniMap {
         this.toggleBtn.addEventListener('click', () => this.setExpanded(!this.expanded));
         // 🔴 [2026-10-05 主人令] 线路开关：显示 / 不显示
         this.trailBtn.addEventListener('click', () => this.setTrailOn(!this.trailOn));
+        // 🔴 [2026-10-08 主人令] 势力色开关：显示 / 不显示
+        this.colorBtn.addEventListener('click', () => this.setColorOn(!this.colorOn));
 
         this.setExpanded(true);
         this.setLevel(LEVEL_DEFAULT);
         this.setTrailOn(true);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
+    }
+
+    /** 势力色开关（🎨 按钮）：关＝撤掉全部圆点并停止同步；开＝立刻重画 */
+    private setColorOn(on: boolean): void {
+        this.colorOn = on;
+        this.colorBtn.classList.toggle('is-off', !on);
+        this.colorBtn.title = on ? '隐藏势力色' : '显示势力色';
+        if (on) { this.syncCityDots(); return; }
+        for (const dot of this.cityDots.values()) dot.remove();
+        this.cityDots.clear();
+        this.cityDotColor.clear();
     }
 
     /** 线路显示开关（🧭 按钮）：关＝把折线从图上撤掉，采样照常记着，再打开即恢复 */
@@ -225,7 +243,7 @@ export class WorldMiniMap {
 
     /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉 */
     private syncCityDots(): void {
-        if (!this.getCityMarks) return;
+        if (!this.getCityMarks || !this.colorOn) return;
         const seen = new Set<string>();
         for (const m of this.getCityMarks()) {
             if (!Number.isFinite(m.lat) || !Number.isFinite(m.lng)) continue;
@@ -295,6 +313,7 @@ export class WorldMiniMap {
             .world-minimap .wm-btn:disabled { opacity: 0.35; cursor: default; }
             /* 🧭 线路开关：亮＝显示中，暗＝已隐藏（主人 2026-10-05 令） */
             .world-minimap .wm-btn.wm-trail.is-off { opacity: 0.4; color: #8a7f6a; }
+            .world-minimap .wm-btn.wm-color.is-off { opacity: 0.4; color: #8a7f6a; }
             .world-minimap .wm-body {
                 width: ${MINI_W}px; height: ${MINI_H}px; background: #6395b8; cursor: pointer;
                 border-top: 1px solid rgba(212, 175, 55, 0.35);
