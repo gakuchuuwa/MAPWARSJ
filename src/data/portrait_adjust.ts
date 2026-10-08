@@ -6318,9 +6318,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -7
         },
         "/assets/AMERICA/muisca_saguamanqika.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": 2
+            "offsetY": 3
         },
         "/assets/AMERICA/tupi_alaliboya.png": {
             "scale": 1.12,
@@ -7628,9 +7628,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -19
         },
         "/assets/SOUTH_AMERICA/qibucha_pakanqike.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
-            "offsetY": -40
+            "offsetY": -42
         },
         "/assets/SOUTH_AMERICA/naweierbuta_jiaerwalinuo.png": {
             "scale": 0.96,
