@@ -196,7 +196,7 @@ INCREDIBLE 360 / MONSTREOUS 400 / LUDICROUS 480
 ### B. 可推断（有上下文证据，**建议实测确认**）
 | 指令 | 反推结论 | 证据 |
 |---|---|---|
-| **`terrain_mask`** | **1 ＝ 铺在陆地域；2 ＝ 铺在水域** | 取值只有 1(1855)/2(482)。mask=1 所在块：`BASE_TERRAIN`(238)、`BASE_BLEND_A/B/C/D`、`SNOW_LIGHT`、`LAYER_A/C`、`DIRT3`、`OUTSIDE_TERRAIN/FOREST`、`DLC_DRYGRASS` —— **全是陆地**；mask=2 所在块：`WATER_SHALLOW`(base `WATER_MEDIUM`)、`WATER_MEDIUM`(base `WATER_DEEP`)、`POND_OVERLAY`、`SPAWN_TERRAIN` —— **全是水/覆盖层**。`coastal_blending.inc:20` 的海岸过渡层用 mask 1 |
+| **`terrain_mask`** | ✅ **已由官方 DE 文档证实**：*"force a terrain to **mask over or under** another with values 1 and 2 respectively"* —— **1 ＝ 遮罩在基础地形之上**（官方注释 `/* SNOW is masked on top of GRASS */`）、**2 ＝ 遮罩在基础地形之下**。⚠️ **我原先反推的「1=陆地域／2=水域」是错的**（那只是"水通常铺在下层"的巧合），已更正。**联动**：用 `terrain_mask 1` 时后续物件须用 `layer_to_place_on` 引用它；`terrain_mask 2` 或未遮罩才用 `terrain_to_place_on`。出处：<https://www.forgottenempires.net/age-of-empires-ii-definitive-edition/rms-features> | 取值只有 1(1855)/2(482)。**观测分布**（仅作佐证、不作判据）：mask=1 所在块多为陆地层（`BASE_TERRAIN`、`BASE_BLEND_A/B/C/D`、`SNOW_LIGHT`、`LAYER_A/C`、`DIRT3`）；mask=2 多为水/覆盖层（`WATER_SHALLOW`←`WATER_MEDIUM`、`WATER_MEDIUM`←`WATER_DEEP`、`POND_OVERLAY`）——**符合"水被压在下层"的用法，但不是语义本身** |
 | `set_facet rnd(0,8)` | 物件外观变体/朝向 | `Aquarena.rms:991`，与 `set_gaia_object_only` 同块 |
 | `land_conformity` | 陆地形状规整度 | `includes/islands.inc:19`，与 `set_circular_base`、`clumping_factor` 同块 |
 | `generate_mode 1` | 区域填满模式 | `Graveyards.rms:119`，与 `border_fuzziness`、`min_placement_distance` 同块 |

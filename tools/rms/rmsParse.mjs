@@ -260,7 +260,8 @@ export function buildAst(tokens, commandNames) {
             const t = tokens[i];
             if (t === '}') { i++; return cmds; }
             if (typeof t === 'string' && t.startsWith('<') && t.endsWith('>')) return cmds;
-            if (t === '{') { i++; const blk = parseBlock(); if (cmds.length) cmds[cmds.length - 1].block = blk; continue; }
+            // 一条 create_* 可以吃多个块（如 Loch Ness.rms）：后来的块并入，不覆盖
+            if (t === '{') { i++; const blk = parseBlock(); if (cmds.length) { const last = cmds[cmds.length - 1]; last.block = (last.block ?? []).concat(blk); } continue; }
             if (typeof t === 'string' && commandNames.has(t)) {
                 const cmd = { cmd: t, args: [] };
                 i++;
@@ -295,10 +296,14 @@ export function buildAst(tokens, commandNames) {
 
 /** 一次性：脚本文件 → { sections, pre } */
 export function loadScript(file, env = {}) {
+    // 尺寸档旗标：按 scaling.inc 的 MAPSIDE_* 反查（120=TINY / 144=SMALL / 168=MEDIUM …）。
+    // ⚠️ 界面档位 ↔ 格数的真实对应待 DE 导出实测（见 docs/02-design/RMS引擎语义-给CC.md §1）。
+    const SIZE_FLAG = { 80: 'MINI', 120: 'TINY', 144: 'SMALL', 168: 'MEDIUM', 200: 'NORMAL', 220: 'LARGE', 240: 'HUGE', 252: 'GIANT' };
+    const flag = SIZE_FLAG[env.size ?? 144] ?? 'SMALL';
     const defaultEnv = {
-        defines: ['MAPSIZE_TINY', '2_PLAYER_GAME', 'PLAYER1_TEAM0', 'PLAYER2_TEAM0', ...(env.defines ?? [])],
+        defines: [`MAPSIZE_${flag}`, `${flag}_MAP`, '2_PLAYER_GAME', 'PLAYER1_TEAM0', 'PLAYER2_TEAM0', ...(env.defines ?? [])],
         // 引擎对不存在的玩家席位也认 PLAYERn_ALLY_COUNT：默认 0（脚本里有 #const 会覆盖）
-        consts: { PLAYER1_ALLY_COUNT: 0, PLAYER2_ALLY_COUNT: 0, PLAYER3_ALLY_COUNT: 0, PLAYER4_ALLY_COUNT: 0, PLAYER5_ALLY_COUNT: 0, PLAYER6_ALLY_COUNT: 0, PLAYER7_ALLY_COUNT: 0, PLAYER8_ALLY_COUNT: 0, ADDITIONAL_VILLAGERS: 0, MAPSIZE_SIDE: 120, ...(env.consts ?? {}) },
+        consts: { PLAYER1_ALLY_COUNT: 0, PLAYER2_ALLY_COUNT: 0, PLAYER3_ALLY_COUNT: 0, PLAYER4_ALLY_COUNT: 0, PLAYER5_ALLY_COUNT: 0, PLAYER6_ALLY_COUNT: 0, PLAYER7_ALLY_COUNT: 0, PLAYER8_ALLY_COUNT: 0, ADDITIONAL_VILLAGERS: 0, MAPSIZE_SIDE: env.size ?? 144, ...(env.consts ?? {}) },
         seed: env.seed ?? 1,
     };
     const pre = new Preprocessor(defaultEnv);
