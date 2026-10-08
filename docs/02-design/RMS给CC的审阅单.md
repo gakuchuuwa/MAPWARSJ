@@ -487,3 +487,275 @@ Arabia 种子 2 → 物件 5478 ｜ 森林 9.4% ｜ 有高度 14.0% ｜ 对象 1
 ## 10.5 本轮新增/复用的度量工具（`scratch/`，未入库）
 
 `_probe_land_contour.mjs`（水陆轮廓并排 + land 一览 + 出生点到水距离）｜`_probe_resource_spacing.mjs`｜`_report_cc31.mjs`
+
+---
+
+# 十一、第 34 轮报告
+
+## 11.1 第 1 条：多种子统计（我方 10 个种子）vs DE 基准
+
+**工具**：`scratch/_report_multiseed.mjs 10`（新增）
+
+| 指标 | 我方均值 | **[最小,最大]** | DE | DE 是否在范围内 |
+|---|---|---|---|---|
+| `Dirt 3` | 43.9% | [38.4, 49.4] | 41.6% | ✅ |
+| `Underbrush` | 18.9% | [18.6, 19.2] | 18.7% | ✅ |
+| **水占比** | 20.6% | **[15.5, 26.2]** | **21.8%** | ✅ **在范围内** |
+| **水连通块数** | 1 | [1, 1] | 1 | ✅ |
+| 物件总数 | 9342 | [9075, 9582] | 9254 | ✅ |
+| `TREE_ITALIAN_PINE` | 956 | [929, 985] | 929 | ✅ |
+| `GOLD_MINE` | 36 | [36, 36] | 36 | ✅ |
+| `STONE_MINE` | 22 | [20, 22] | 22 | ✅ |
+| `GOAT` | 22 | [8, 28] | 26 | ✅ |
+| `FORAGE_BUSH` | 12 | [10, 12] | 12 | ✅ |
+| `MOUFLON` | 5 | [0, 8] | 6 | ✅ |
+| `Water, Shallow` | 19.7% | [14.8, 24.8] | 11.3% | ❌ |
+| 中/浅水比 | 0.05 | [0.04, 0.06] | 0.93 | ❌ |
+| `SHORE_FISH` | 282 | [257, 300] | 37 | ❌ |
+| `FISH_SNAPPER` | 147 | [136, 154] | 31 | ❌ |
+| `FISH_SALMON` | 6 | [6, 6] | 12 | ❌ |
+| `HAWK` | 4 | [4, 4] | 8 | ❌ |
+| `TREE_OLIVE` | 759 | [732, 786] | 874 | ❌ |
+| `Beach` | 1.7% | [1.2, 2.3] | 2.5% | ❌ |
+| `Forest` | 0.9% | [0.6, 1.0] | 1.02% | ❌（差 0.1pp） |
+| `Forest, Mediterranean` | 9.0% | [9.0, 9.0] | 9.19% | ❌（差 0.19pp） |
+| `Dry Grass` | 5.0% | [5.0, 5.0] | 5.16% | ❌（差 0.16pp） |
+
+**结论**：**10 项落在范围内**（含最关键的**水占比**与**水连通块数**）。**范围外**分两类：
+- **真差距**：深浅比、鱼（`SHORE_FISH`/`FISH_SNAPPER`）、`TREE_OLIVE`、`Beach`
+- **只是范围退化成一点**：`Forest,Med`/`Dry Grass`/`Forest` —— 这几项的格数是 `land_percent` **直接算出来的确定值**（9% / 5% 就是 9% / 5%），十个种子完全相同，所以"DE 落在范围内"这条判据对它们**没有区分力**。
+
+🔴 **请 CC 裁一条口径**：对**由 `land_percent` 定死的确定性地形**，是否改用你的完成标准里那条"**各差 ≤1pp**"来判？（按 ≤1pp 判，这三项**都达标**：0.19 / 0.16 / 0.1pp。）
+
+## 11.2 第 2 条：按原因计数的被拒分布
+
+**工具**：`scratch/_probe_terrain_reject.mjs`（新增；引擎里加了可选计数器 `this.traceReject`，默认关、零影响）
+
+```
+  #  目标地形              底地形              底格数   target  实铺  | notBase  claimed  height  flat  avoidStart  spacing
+   1  Water, Medium        Water, Shallow        3997    3997   2535  |   16739     6591       0     0          0     1763
+   2  Water, Medium        Water, Shallow        1462    1462      0  |   19274        0       0     0          0     1462   ← 🔴
+   3  Water, Deep Ocean    Water, Medium         2535    2535    165  |   18201     2454       0     0          0    30188
+   4  Water, Shallow       Water, Medium         2370    2370   2370  |   19680     7062       0     0          0        0
+```
+
+**第 2 条那 1462 个候选格：`spacing` 拒了 1462 格（100%）**，其它原因（高度／平地／出生点避让／非底地形／已认领）**全为 0**。
+
+→ **不是猜测，是计数**：#2 的候选区**整片都落在 #1 已铺格的 5×5 邻域内**，在 CC 裁定的严格 spacing 下**必然为 0**。
+→ 水遮罩链 10 条合计被拒原因占比：`notBase` 79.6%｜`spacing` 13.5%｜`claimed` 7.0%｜高度/平地/避让 **全 0**。
+
+## 11.3 顺带查清的两件事（都与"不猜"有关）
+
+**① `terrain_mask` 语义：官方 DE 文档证实，我们的实现是对的** ✅
+> 官方 [RMS Features](https://www.forgottenempires.net/age-of-empires-ii-definitive-edition/rms-features)：*"force a terrain to **mask over or under** another with values 1 and 2 respectively"*，例子 `terrain_mask 1 /* SNOW is masked on top of GRASS */`、`terrain_mask 2 /* SNOW is masked underneath GRASS */`。
+> 同页 `layer_to_place_on`：*"if a terrain is masked **on top** with terrain_mask 1, it should later be referred to with **layer_to_place_on**… if masked with terrain_mask 2 (underneath) or not masked, **terrain_to_place_on** can still be used."*
+
+我们的 `mask===1 → layer=T、逻辑不变`、`mask===2 → 逻辑=T、layer=旧` **与该定义一致**。
+
+**② 🔴 官方同页给了一条我们**可能错**的规则（`circle_radius`）**
+> *"NOTE: left_border, right_border, bottom_border, top_border **do not affect the players' starting positions when circle_radius is used**."*
+
+我们的 `planLand` 对**所有** land（含玩家陆地）一律按 `*_border` 裁切。地中海这张图玩家陆地没写 border 所以看不出问题；但**若某脚本同时写了 `circle_radius` 与 `*_border`，我们就会把玩家陆地裁错**。
+→ 记为**待验证**（未证实是否真有脚本这么写），请 CC 决定要不要查。
+
+## 11.4 第 3 条：`beach_terrain` 的查证结果
+
+| 来源 | 结论 |
+|---|---|
+| AoC 手册 `tc-rms-guide.md` | ❌ **没有** `beach_terrain` |
+| 官方 DE 页 [RMS Features](https://www.forgottenempires.net/age-of-empires-ii-definitive-edition/rms-features) | ❌ **没有** `beach_terrain`（该页只讲了 rnd / direct_placement / terrain_mask / circle_radius / resource_delta / create_connect_to_nonplayer_land / color_correction / enable_waves / place_on_forest_zone / find_closest / actor_area / force_placement / layer_to_place_on） |
+| **DE 脚本里的真实用法** | ✅ **是 `create_terrain` 块的参数**，且**总与 `terrain_mask 1` 同块** |
+
+```rms
+includes/coastal_blending.inc:14-21   （另有 :40/:68/:96 三处同构）
+create_terrain COASTAL_TERRAIN
+{
+	base_terrain COASTAL_BASE
+	land_percent 100
+	number_of_clumps 512
+	beach_terrain BEACH_TERRAIN     ← 这条地形临水的那一圈 → BEACH_TERRAIN
+	terrain_mask 1
+}
+```
+另有 `includes/forest.inc:1632-1637` 六处、`Acclivity.rms:81 #const BEACH_TERRAIN 2` 之类的按主题取值。
+
+🔴 **我们的差距**：`applyBeaches()`（`rmsEngine.mjs:534-544`）是**全局后处理** —— "陆地格四邻有水 → `BEACH`(const 2) / 雪冰 → `ICE_BEACH`(37)"，**从不读 `beach_terrain` 参数**，也不区分是哪条地形临水。所以：
+- 沙滩**种类**可能错（脚本说用 `BEACH_TERRAIN`，我们一律用 `BEACH`）；
+- 沙滩**位置**可能错（我们给所有陆地贴一圈，而脚本的 `beach_terrain` 只贴**那一条地形**的边）。
+
+→ 这与第 34 轮第 3 条的怀疑**一致**。**改法等 CC 定**：把 `beach_terrain` 做成 `create_terrain` 的参数（只改该地形的临水边），全局那套退为兜底。
+
+## 11.5 本轮改动与回归
+
+| | |
+|---|---|
+| 实质改动 | **0 处**（本轮只加**可选**诊断计数器 `this.traceReject`，默认关、零影响） |
+| 新增工具 | `_report_multiseed.mjs`、`_probe_terrain_reject.mjs` |
+| 回归 | `parseAll` **179/180** ✅｜`Arabia` 种子 2 → **5478 / 森林 9.4%**（与上轮一致） |
+
+## 11.6 未做（等你裁定后继续）
+
+- **第 3 条改法**（`beach_terrain` 参数化）—— 已查清，**等你点头再改**
+- **第 4 条**（鱼的数量按原因计数 + zone 口径）
+- **第 5 条**（180 脚本全量生成不报错）
+- **第 6 条**（阿拉伯基准图）—— 等 CC 在 DE 里生成后给我路径
+- 11.1 那条口径裁定（确定性地形用 ≤1pp 判？）与 11.3② 的 `circle_radius`×border 待验证
+
+---
+
+# 十二、第 35 轮报告
+
+## 12.0 CC 的裁定已记录并生效
+
+| CC 裁定 | 处置 |
+|---|---|
+| **确定性地形改用 ≤1pp 判**（有随机性的用 10 种子范围） | 已采纳，写进 §十二 的判定表 |
+| **收回"同类型一律算其他地形"**（严格版） | 已在 §12.1 用三方案实测复核 |
+| `beach_terrain` 参数化 + 兜底与否对比 | 待做（本轮先做第 1 条） |
+| `circle_radius` 只改起始位置、生长标"未证实" | 待做 |
+
+## 12.1 第 1 条：地形间距三方案并排测（**结果是一个平局，请你裁**）
+
+**工具**：`scratch/_probe_spacing_variants.mjs`（单种子两把尺）＋ `scratch/_probe_spacing_multiseed.mjs`（10 种子分布）
+
+### 三方案的写法（就是 `:505` 那一行）
+
+| 方案 | 判定式 |
+|---|---|
+| **A 严格** | `regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base` |
+| **B 折中** | `regOf[j] !== -1 ? regOf[j] !== r : (this.terrain[j] !== base && this.terrain[j] !== T)` |
+| **C 全放开** | `this.terrain[j] !== base && this.terrain[j] !== T` |
+
+### 尺子① 水（10 个种子，DE 值是否落在范围内）
+
+| 指标 | DE | **A 严格** | **B 折中** | **C 全放开** |
+|---|---|---|---|---|
+| 中水% | 10.5 | 0.9 [0.7, 1.4] ❌ | 1.7 [1.2, 2.4] ❌ | **11.2 [7.8, 16.6]** ✅ |
+| 浅水% | 11.3 | 19.7 [14.8, 24.8] ❌ | 18.8 [14.3, 23.8] ❌ | **9.4 [6.4, 12.7]** ✅ |
+| 中/浅比 | 0.93 | 0.05 [0.04, 0.06] ❌ | 0.09 [0.07, 0.11] ❌ | **1.22 [0.62, 1.73]** ✅ |
+
+→ **只有 C 覆盖 DE 的三项水指标。**
+
+### 尺子② 森林（10 个种子）
+
+| 指标 | DE | **A 严格** | **B 折中** | **C 全放开** |
+|---|---|---|---|---|
+| 森林块数 | 29 | 31 [31, 31] | 31 [31, 31] | 20 [17, 24] |
+| **森林最大块** | **149** | **82 [75, 131]** | 76 [75, 79] | **358 [222, 529]** |
+| 森林中位块 | 79 | 75 [75, 76] | 76 [75, 78] | 75 [74, 76] |
+| 森林格数 | 2116 | 2043 [1990, 2073] | 2040 [1981, 2073] | 2067 [2016, 2073] |
+
+→ **A/B 明显更接近 DE（最大块 82/76 vs DE 149），C 最差（358）** —— 与你的预判一致（"全放开让树林连成一片"）。
+→ ⚠️ 但注意：**DE 的 149 比 A 的上限 131 还大**，即**A/B 也覆盖不了 DE** —— 真值落在 A 与 C **之间**。
+
+### 🔴 机制（按原因计数的 trace 查出来的）
+
+C 之所以水对得上，**不是**因为"同类型放行"本身，而是因为**水遮罩 10 条链能一路跑到底**：
+
+| 条 | A（严格） | B（折中） | **C（全放开）** |
+|---|---|---|---|
+| 1 VODA→中水 | 2535 | 2535 | **3258** |
+| 2 VODA→中水 | **0** | 654 | 0 |
+| 3 中水→水4 | 165 | 380 | 2315 |
+| 4 中水→浅水 | 2370 | 2809 | 943 |
+| 5 水4→中水 | 165 | 380 | 2315 |
+| 7 中水→深水 | **0** | **0** | **1600** |
+| 9/10 水4/深水→中水 | **0** | **0** | 1272 / 328 |
+
+→ **A/B 下 #7/#9/#10 的 base 根本不存在，级联直接断掉**；C 下整条链跑完，浅/中/深水三层都出来了。水最终成分的差异**全部**来自这里。
+
+### 请你裁（我的建议，但**没有自行拍板**）
+
+- **完成标准里列的是**：主要地形占比 ≤1pp、水占比 ≤2pp、水连通块数相同、资源物件 ≤15%、物件总数 ≤5% —— **森林"块形"不在其中**，是你本轮为打破平局引入的第二把尺子。
+- 按**完成标准**：C 全面胜出（中水 +0.7pp ✅、`Underbrush` +0.2、`Forest,Med` −0.2、`Dry Grass` −0.2、`Forest` 0.0、`GOLD_MINE`/`STONE_MINE`/`GOAT`/`FORAGE_BUSH` **四个资源物件全部 0%**）。
+- 按**森林尺子**：A/B 胜（但两者也都覆盖不了 DE 的 149）。
+- **我的建议**：**采用 C**，把"同一条指令自己的各团也会合并"（这正是 358 的来源）**当成另一个问题单独查**（可能与 `number_of_clumps`／种子分离有关，而不是 spacing）。理由是：水遮罩链的级联断掉是**结构性**的（A/B 永远出不了中水 10.5%），而森林过并可能是**可单独修**的。
+- ⚠️ **当前代码停在 C，标注"待 CC 批准"**；改回 A/B 的写法已写在 `:500-504` 的注释里，一行可换。
+
+## 12.2 本轮改动与回归
+
+| | |
+|---|---|
+| 实质改动 | **1 行**（`:505` 的 spacing 判定式）＋ 注释；diff **7 增 1 删** |
+| 新增工具 | `_probe_spacing_variants.mjs`、`_probe_spacing_multiseed.mjs` |
+| 回归 | `parseAll` **179/180** ✅｜`Arabia` 种子 2 → **物件 6121 ｜ 森林 9.8%**（A/B 下是 5478 / 9.4%） |
+| 范围 | `src/` 与素材 **0 改动** ✅ |
+
+⚠️ **`Arabia` 在 C 下变了**（5478 → 6121）。同 §10.3：**缺 DE 阿拉伯基准图，无法判优劣**。
+
+## 12.3 未做（等你裁定后按序继续）
+
+2. `beach_terrain` 参数化 + 兜底与否对比
+3. `circle_radius` 只改起始位置（生长是否受边界约束标"未证实"）
+4. 鱼：按原因计数 → 再做 zone 口径
+5. 180 个脚本全量生成不报错
+6. 阿拉伯基准图（等 CC 给路径）
+
+---
+
+# 十三、第 36 轮报告
+
+## 13.1 第 1 条：查证 + 方案 D
+
+### ① 查证结果（CC 的问题：间距检查在放种子还是生长时调用）
+
+我早前抓的 genie-rms 源码结构（`RMS引擎语义-给CC.md` §12.3）明确：
+
+```
+const baseArea = Math.min(2, 2 * Math.sqrt(desc.tiles / desc.numberOfClumps))
+① 放种子：每放一个，就从全局栈里 removeArea(x, y, baseArea) 挖掉周围 → 保证团与团不挨着
+② 各团在自己的栈里长到 tiles 总数
+spacing_to_other_terrain_types（在 canPlaceTerrainOn() 里，生长时当 preference 用）：
+    if (tile.terrain !== desc.baseTerrain && tile.terrain !== desc.type) return 0
+```
+
+→ **答案是"两套独立机制"**：`spacing_to_other_terrain_types` 在**生长**时用（且**只容忍 base 和自己** ＝ 我们的方案 C 谓词）；**种子分离**是另一套（`removeArea`）。
+→ 🔴 **我们的 `seed()` 原本没有 `removeArea`**，而 C 的谓词看的是 `terrain`（要到指令末尾才写），所以**同一条指令的种子可以紧挨着放** → 团块从起点就连着 → 这正是 358 的来源。**CC 的假设方向完全正确。**
+
+### ② 方案 D 的实现
+
+`seed(n, ok, mark, seedRadius)`：每放一个种子就把周围 `seedRadius` 的格子挖掉（对应 `removeArea`）。
+
+**半径用推导值，不是拟合值**：
+> 每团平均格数 = `tiles / numberOfClumps`；团近似圆盘 → **团半径 = √(每团格数 / π)**。
+> 种子相隔"一个团半径" → 各团长满后**刚好相切**：既不像 A/B 被 spacing 判死（水链断掉），也不像 C 从起点就重叠。
+> 验算：森林 `tiles=1866, clumps=12` → √(1866/12/π) = **7.04**。
+
+⚠️ **genie-rms 写的 `min(2, 2*sqrt(tiles/clumps))` 恒等于 2，实测无效**（最大块只从 358 降到 329）——那是 AoC 近似，不适用于 DE。
+
+### ③ 四方案对比（森林＝10 种子分布；水同前）
+
+| 指标 | DE | A 严格 | B 折中 | **C 全放开** | D（半径 2） | **D（团半径）** ⬅ 采用 |
+|---|---|---|---|---|---|---|
+| 中水% | 10.5 | 0.9 ❌ | 1.7 ❌ | 11.2 ✅ | 11.2 ✅ | **11.2 ✅** |
+| 浅水% | 11.3 | 19.7 ❌ | 18.8 ❌ | 9.4 ✅ | 9.4 ✅ | **9.4 ✅** |
+| 中/浅比 | 0.93 | 0.05 ❌ | 0.09 ❌ | 1.22 ✅ | 1.22 ✅ | **1.22 ✅** |
+| 森林块数 | 29 | 31 | 31 | 20 [17,24] | 21 [18,23] | **23 [21,25]** |
+| **森林最大块** | **149** | 82 [75,131] | 76 [75,79] | 358 [222,529] | 329 [223,449] | **247 [150,299]** |
+| 森林中位块 | 79 | 75 | 76 | 75 | 75 | **75 [74,75]** |
+
+**判定（按 CC 的规则）**：D 的**水三项不退步**（与 C 逐位相同）且**森林更接近 DE**（最大块 358→247）→ **采用 D** ✅
+
+### ④ 仍差的部分（诚实报告，不掩盖）
+
+- DE 的 **149 比 D 的下限 150 还小 1** —— 即 **D 也没能覆盖 DE 的最大块**（只差 1）。
+- 块数 23 [21,25] vs DE 29，中位 75 vs 79 → DE 的森林比我们**更碎一点**。
+- 单种子（种子 1）在半径 8 时曾给出**最大块 150**（与 DE 149 几乎逐格吻合），但 10 种子范围是 [150,299] → **种子分离只能解释一部分**，剩下的可能来自：我方森林的两条链（§5.2）产出的地形种类不同、被我的"10+88 合并成一个 mask"的尺子并成一块。
+
+## 13.2 本轮改动与回归
+
+| | |
+|---|---|
+| 实质改动 | **2 处**：`seed()` 支持 `seedRadius`（对应 genie-rms `removeArea`）；`terrainCmd` 传"团半径"；`spacing` 谓词维持 C（已获 CC 批准） |
+| 回归 | `parseAll` **179/180** ✅｜`Arabia` 种子 2 → **物件 5902 ｜ 森林 9.6%** |
+| 范围 | `src/` 与素材 **0 改动** ✅ |
+
+⚠️ **`Arabia` 又变了**（C: 6121 → D: 5902；A/B: 5478）。**第 6 条（阿拉伯基准图）现在是唯一瓶颈** —— 没有它，阿拉伯的数字每改一次都在变，无法判断好坏。
+
+## 13.3 未做（按序）
+
+2. `beach_terrain` 参数化 + 有/无兜底对比
+3. `circle_radius`：起始位置不受边界约束（生长标"未证实"）
+4. 鱼：按原因计数 → zone 口径
+5. 180 个脚本全量生成不报错
+6. 阿拉伯基准图（等 CC 给文件路径）

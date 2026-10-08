@@ -71,6 +71,13 @@ export class MapEngine {
         this.landId = new Int32Array(n).fill(-1);
         /** land id → zone（`create_land` 的 `zone` 参数）；供 `max_distance_to_other_zones` 判「别的 zone」 */
         this.landZone = new Map();
+        /**
+         * 地形 id → 该地形临水那一圈要变成的沙滩地形（`create_terrain` 的 `beach_terrain` 参数）。
+         * 官方手册与官方 DE RMS 页**都没有**这条的定义；用法见 DE 脚本：`includes/coastal_blending.inc:19/47/75/103`
+         *   `create_terrain COASTAL_TERRAIN { … beach_terrain BEACH_TERRAIN  terrain_mask 1 }`
+         * —— 即「**这条地形**临水的那一圈 → 指定的沙滩」，与 genie-rms 的全局 `checkBorders()` 是两回事。
+         */
+        this.beachOf = new Map();
         /** 每格的 zone（物件段之前构建）；-1 = 未知 */
         this.zoneGrid = null;
         this.objects = [];
@@ -444,8 +451,18 @@ export class MapEngine {
         }
     }
 
-    /** 在满足 ok 的格子里随机放 n 个种子，返回各团初始格子数组 */
-    seed(n, ok, mark) {
+    /**
+     * 在满足 ok 的格子里随机放 n 个种子，返回各团初始格子数组。
+     * `seedRadius`：每放一个种子就把周围这个半径的格子挖掉，**保证团与团不挨着**
+     *   —— 对应 genie-rms `TerrainGenerator.generateTerrain()` 的 `removeArea(x, y, baseArea)`，
+     *   `baseArea = Math.min(2, 2 * Math.sqrt(tiles / numberOfClumps))`。
+     *   ⚠️ 这与 `spacing_to_other_terrain_types` 是**两套独立机制**：这个管**种子起点**，那个管**生长时的候选判定**。
+     *   （之前没有这一步：方案 C 的 spacing 谓词看的是 `terrain`，而 `terrain` 要到指令末尾才写，
+     *     所以同一条指令的种子可以紧挨着放 → 团块从起点就是连的 → 森林最大块 358 vs DE 149。）
+     */
+    seed(n, ok, mark, seedRadius = 0) {
+        const banned = seedRadius > 0 ? new Uint8Array(this.terrain.length) : null;
+        const N = this.N;
         const cand = [];
         for (let i = 0; i < this.terrain.length; i++) if (ok(i)) cand.push(i);
         const regions = [];
@@ -453,8 +470,16 @@ export class MapEngine {
         while (regions.length < n && cand.length && tries++ < n * 30) {
             const i = cand[Math.floor(this.rng() * cand.length)];
             if (!ok(i)) continue;
+            if (banned && banned[i]) continue;
             mark(i, regions.length);
             regions.push([i]);
+            if (banned) {
+                const x = i % N, y = (i / N) | 0;
+                for (let dy = -seedRadius; dy <= seedRadius; dy++) for (let dx = -seedRadius; dx <= seedRadius; dx++) {
+                    const xx = x + dx, yy = y + dy;
+                    if (this.inb(xx, yy)) banned[this.idx(xx, yy)] = 1;
+                }
+            }
         }
         return regions;
     }
@@ -464,6 +489,8 @@ export class MapEngine {
         if (c.cmd !== 'create_terrain') { if (!['color_correction', 'base_terrain'].includes(c.cmd)) this.note('TERR:' + c.cmd); return; }
         const T = Number(c.args[0]);
         const P = props(c.block);
+        // `beach_terrain <地形>`：本条地形临水的那一圈要变成哪个沙滩地形（DE 新增参数，官方文档未收录）
+        if (P.beach_terrain) this.beachOf.set(T, Number(P.beach_terrain[0]));
         const base = Number(P.base_terrain?.[0] ?? this.terrain[0]);
         let baseCount = 0;
         for (let i = 0; i < this.terrain.length; i++) if (this.terrain[i] === base) baseCount++;
@@ -496,12 +523,26 @@ export class MapEngine {
                     const xx = x + dx, yy = y + dy;
                     if (!this.inb(xx, yy)) continue;
                     const j = this.idx(xx, yy);
-                    if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) { if (rj) rj.spacing++; return false; }
+                    // 【方案 C 全放开 —— 第 35 轮实验选出，**第 36 轮已获 CC 批准**】只隔开「底地形」与「本地形」以外的地形。
+                    //   与 genie-rms `canPlaceTerrainOn()` 的 spacing 判定一致（只容忍 base 与自己）。
+                    //   数据（10 种子）：中水 11.2% [7.8,16.6] 覆盖 DE 10.5；浅水 9.4% 覆盖 DE 11.3；中/浅 1.22 覆盖 DE 0.93。
+                    //   团块过大由**种子分离**（见 seed() 的 seedRadius）解决，不靠 spacing —— 见下方 seedR。
+                    //   若要回 A：if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) { … }
+                    //   若要回 B：if (regOf[j] !== -1 ? regOf[j] !== r : (this.terrain[j] !== base && this.terrain[j] !== T)) { … }
+                    if (this.terrain[j] !== base && this.terrain[j] !== T) { if (rj) rj.spacing++; return false; }
                 }
             }
             return true;
         };
-        const regions = this.seed(Math.min(clumps, target || 1), (i) => ok(i, -1), (i, r) => { regOf[i] = r; });
+        // genie-rms：种子之间用 removeArea 挖开，半径 baseArea = min(2, 2*sqrt(tiles/numberOfClumps))
+        // 种子之间的挖空半径 ＝ **一个团长满后的半径**（推导，非拟合）：
+        //   每团平均格数 = tiles / numberOfClumps，团若近似圆盘则半径 = sqrt(每团格数 / π)。
+        //   种子相隔"一个团半径"→ 各团长满后**刚好相切**，既不像 A/B 那样被 spacing 判死（水链断掉），
+        //   也不像 C 那样从起点就重叠成一整片。
+        //   实测（地中海 10 种子）：森林最大块 150 vs DE 149；块数 27 vs 29；中位 74 vs 79；水三项与 C 完全相同。
+        //   ⚠️ genie-rms 写的是 `min(2, 2*sqrt(tiles/clumps))`（恒等于 2）—— 那是 AoC 近似，实测半径 2 无效（最大块仍 358→329）。
+        const seedR = Math.max(1, Math.round(Math.sqrt((target || 1) / Math.max(1, clumps) / Math.PI)));
+        const regions = this.seed(Math.min(clumps, target || 1), (i) => ok(i, -1), (i, r) => { regOf[i] = r; }, seedR);
         if (target > 0) this.grow(regions, target, clumpF, (j, r) => ok(j, r), (j, r) => { regOf[j] = r; }, (j, r) => regOf[j] === r);
         // 官方（Forgotten Empires DE RMS 文档）：terrain_mask 1 = 盖在基础地形之上（物件改用 layer_to_place_on），
         //   2 = 垫在之下。实现（推断）：1 → 只改视觉图层，逻辑地形不变（森林被草盖住，树仍在）；
@@ -541,7 +582,10 @@ export class MapEngine {
             const x = i % N, y = (i / N) | 0;
             if (D4.some((d) => this.inb(x + d[0], y + d[1]) && this.waterTerrains.has(this.terrain[this.idx(x + d[0], y + d[1])]))) {
                 const nm = this.info?.get(t)?.name ?? this.names.get(t) ?? '';
-                change.push([i, /SNOW|ICE|Snow|Ice/.test(nm) ? ICE_BEACH : BEACH]);
+                // 脚本参数优先（`beach_terrain`）：这条地形临水 → 用它指定的沙滩地形；没指定才走全局兜底
+                const scriptBeach = this.beachOf.get(t);
+                // 脚本参数优先；没指定就走全局兜底（实测：去掉兜底后本地中海沙滩 1.5% → **0%**，而 DE 是 2.5%）
+                change.push([i, scriptBeach !== undefined ? scriptBeach : (/SNOW|ICE|Snow|Ice/.test(nm) ? ICE_BEACH : BEACH)]);
             }
         }
         for (const [i, b] of change) { this.terrain[i] = b; this.layer[i] = -1; }
