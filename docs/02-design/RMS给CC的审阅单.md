@@ -171,3 +171,319 @@ node tools/rms/parseAll.mjs 3                 # 回归：解析 179/180
 2. §一 的 diff 里，**有没有我"顺手"改了主人没说的东西**（这是最高铁律，请狠查）；
 3. §四 那 8 条更正里，**有没有哪条我这次又改错了**；
 4. `scratch/` 那批工具**要不要入库**。
+
+---
+
+# 八、第 31 轮返工报告（按 CC 判定执行）
+
+## 8.0 先说基线（重要，影响 CC 怎么核 diff）
+
+**自动备份在 `02:32` 把我第 16–30 轮的改动提交了**，所以现在：
+
+| | |
+|---|---|
+| HEAD | `b8e551970 Auto Backup: 2026/10/9 02:32:14`（**已含**我 `rmsEngine.mjs` 86 行、`rmsParse.mjs` 19 行、台账、本审阅单） |
+| 工作区相对 HEAD | **只有本轮按 CC 判定做的回滚**（`rmsEngine.mjs` 9 增 29 删） |
+| 其他改动 | 只有 CC 自己生成的那张图 `claudedocs/rms-spike/Arabia_2.png` |
+
+核 diff 请用 **`git show b8e551970 -- tools/rms/`**（看全量）+ **`git diff -- tools/rms/`**（看本轮回滚）。
+
+**最高铁律自查**：`src/` 与素材 **0 改动**（`git status --short` 只有 `tools/rms/` 与 CC 那张图）。
+
+## 8.1 CC 判定 → 执行情况
+
+| CC 判定 | 我的处置 | 状态 |
+|---|---|---|
+| ① 同类型放行＝**不可** → 改回严格版 | 恢复原判定 `if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) return false;`，并**删掉我加的那段矛盾注释**（保留 `:410` 旧注释） | ✅ |
+| ① 连带：`pending` 数组 | 改回严格版后 `pending` 变成**只写不读的死代码** → **一并删除**（是我加的，我删） | ✅ |
+| ② 不带 `temp_` 的组间距＝**不可** → 改回**排斥** | 恢复 `gapSame = Math.max(gapAll, temp)`；`gapSame` 用 `abs<` 版；`gapAll` 用 `this.nearObject()` | ✅ |
+| ④ 遍历 `regOf`＝**可** | 保留 | ✅ |
+| ⑤ `PH_EXTENDEDSEASONS`＝**暂可** | 保留待核 | ⏳ |
+| ⑥ 两个诊断字段＝**可，保留** | 保留 | ✅ |
+| ⑦ 第 410 行矛盾注释 | 已随 ① 处理（删新留旧） | ✅ |
+| `scratch/` **先不入库** | 未入库 | ✅ |
+
+**验证回滚到位的证据**（`git diff`）：`gap` 两行现为
+```js
+if (gapSame > 0 && placedCenters.some((p) => Math.abs(p.x - x) < gapSame && Math.abs(p.y - y) < gapSame && Math.hypot(p.x - x, p.y - y) < gapSame)) continue;
+if (gapAll > 0 && this.nearObject(x, y, gapAll)) continue;
+```
+即**与第 29 轮之前的原始版本逐字相同**。
+
+## 8.2 CC 点名要的三项数据
+
+**回归（每改一条都跑了）**：
+```
+parseAll 3  → 脚本 180；解析通过 179；失败 1（MAPSCALE_AREA，改动前既有）
+Arabia 种子 2 → 物件 5756 ｜ 森林 5.8% ｜ 地形种类 6
+```
+🔴 **两者与 goal 起始基线逐位相同** —— 回滚干净。
+
+**① 水量是否回落** → **没有回落，一分未动**：
+
+| | 回滚前（我的错版） | **回滚后（CC 版）** | DE |
+|---|---|---|---|
+| 水总量 | 35.1% | **35.1%** | 21.8% |
+| `Medium : Shallow` | 0.07 : 1 | **0.07 : 1** | 0.93 : 1 |
+
+**原因（用 trace 查清了）**：水的深浅不是被 spacing 决定的，而是被水遮罩链的**第 4 条**决定的 ——
+
+```
+1. T=Water,Medium   base=Water,Shallow   base格数=7273  target=7273  实铺=5396
+2. T=Water,Medium   base=Water,Shallow   base格数=1877  target=1877  实铺=0     ← 🔴 又出现
+3. T=Water,DeepOcean base=Water,Medium   base格数=5396  target=5396  实铺=489
+4. T=Water,Shallow  base=Water,Medium    base格数=4907  target=4907  实铺=4907  ← 100% 铺回浅水（mask=2）
+5. T=Water,Medium   base=Water,DeepOcean base格数=489   target=489   实铺=489
+7. T=Water,Deep     base=Water,Medium    base格数=489   target=489   实铺=0     ← 🔴 又出现
+```
+**第 4 条是 `land_percent 100` 的 `create_terrain VODA { base_terrain MED_WATER }`** —— 它把第 1 条铺出的中水**整片写回浅水**（`terrain` 变 Shallow、旧地形记进 `layer`）。所以最终浅水 32.7%、中水 2.4%。
+
+🔴 **这指向一个更上游的问题**：`VODA` 本身铺了 **7273 格 = 35.1%**，而 DE 全部水才 21.8%。**水遮罩链只是在这个过大的水体里分配深浅**；总量偏多的根因在 `<LAND_GENERATION>` 的 `create_land { terrain_type VODA land_percent 80 borders 17 }`（§6.4–6.8 那条线）。**CC 的第 4 步（深浅比）建议直接查 LAND 阶段的水体大小，而不是水遮罩链。**
+
+**② "铺 0 格"的指令是否又出现** → **又出现，共 2 条**：
+
+| 条 | 目标 / 底 | **底地形区还剩多少格** | target |
+|---|---|---|---|
+| 2 | `Water,Medium` ← `Water,Shallow` | **1877 格** | 1877 |
+| 7 | `Water,Deep` ← `Water,Medium` | **489 格** | 489 |
+
+两条都是"底地形区还剩一点、但被 5×5 邻域的已铺格全挡掉"。**底地形区剩余格数已在 trace 里给出**（`baseCount` 就是"这条指令开工时底地形还有多少格"）。
+
+**③ 岸边鱼数量** → `FISHS` **226**（DE 37，+511%）；批次鱼 `FISH4`=0、`FISH2`=0。
+
+## 8.3 🔴 必须请 CC 复审的一处：`gapAll` 的**作用域**
+
+CC 第 2 条写的是「与此前**所有已放物件**保持距离」。我按字面实现了，但**数据出现系统性退化**（下面有对照），于是做了一个**临时实验**（跑完立刻回滚，主代码仍是 CC 的版本）。
+
+**手册原文（两处，均指向"本指令的组"）**：
+
+> 行 351：`min_distance_group_placement <#tiles>` — "Distance to separate center of **a group**—prevents a massive wad of gold, stone and berries all together. … **if no groups are assigned, then this instruction will apply to all objects**."
+> 行 532：「If `number_of_groups` is not specified, then **each object is treated as its own group** and will respond to the `set_scaling_of_groups_to_map_size` and `min_distance_group_placement` instructions」
+
+→ 「a group」＝**本指令自己的组**；"apply to all objects" 也是指**本指令内的所有物件**，不是全地图物件。
+
+**而我们的实现用 `this.nearObject(x, y, gapAll)`** —— 它查的是**全地图已放物件**，其中包括 **938 棵 `TREE_ITALIAN_PINE` 等树木**。于是"要放 7 个金矿"时，候选格几乎全被树挡掉。
+
+**临时实验（仅改作用域，语义仍是 CC 要的"排斥"）**：
+
+| 物件 | 严格版（`nearObject` 全地图） | **实验版（本指令组中心）** | DE | |
+|---|---|---|---|---|
+| `GOLDM` | 6 | **36** | 36 | ✅ **+0%** |
+| `STONM` | 4 | **19** | 22 | ✅ −14% |
+| `GOAT` | 4 | **24** | 26 | ✅ −8% |
+| `FORAG` | 0 | **9** | 12 | ✅ −25% |
+| `MOUFLON` | 0 | **8** | 6 | ✅ +33% |
+| `BOARX` | 4 | 4 | 4 | ✅ 0% |
+| `FISH2` | 0 | **6** | 12 | 🟡 −50% |
+| `FISH4` | 0 | **121** | 31 | 🟡 +290% |
+| `FISHS` | 226 | 220 | 37 | 🟡 +495% |
+| **物件总数** | 9097 | **9309** | 9254 | ✅ **0.6%** |
+
+**实验期间回归**：`parseAll` 179/180 ✅；`Arabia` 物件 5592（严格版 5756，−2.8%）、森林 5.8% ✅。
+
+🔴 **结论**：CC 判的**语义（排斥）是对的**；但**作用域**如果按字面用"全地图物件"，会把 7 类小批量资源打到 0。**手册原文支持把作用域限定为"本指令的组中心"。**
+
+**我按铁律没有擅自保留实验版**（主代码＝CC 版本，GOLDM=6 已复测确认）。**请 CC 裁定**：
+- **(A)** 维持字面（`nearObject` 全地图）—— 我就这样留着；
+- **(B)** 采纳手册口径（本指令组中心）—— 我一键改回，并补一条测试；
+- **(C)** 折中：`gapAll` 只与**同类物件**（同 id / 同类别）比距离，不管树。
+
+## 8.4 下一步待 CC 指示后继续
+
+- **第 3 步**（zone 口径：没归属的格子按陆地/水归入底地形的 zone，再开启 `max_distance_to_other_zones`）—— **未开始**，等 CC 对 8.3 的裁定（同一处代码，避免来回改）。
+- **第 4 步**（深浅比）—— 按 8.2 ① 的证据，**建议改查 LAND 阶段**，请 CC 确认方向。
+- **第 5 步**（换阿拉伯再验一遍）—— 待前几步定了再做。
+
+---
+
+# 九、第 32 轮报告（按 CC 判定执行）
+
+## 9.0 改动与基线
+
+| | |
+|---|---|
+| 本轮实质改动 | **1 处**：`gapAll` 作用域按 CC 裁定改为 (B)（`rmsEngine.mjs`，本指令组中心） |
+| 其余 | 两次**临时实验（D、玩家陆地切内海）做完即回滚**，已 `grep` 确认无残留 |
+| 相对 HEAD | `tools/rms/rmsEngine.mjs` **15 增 29 删** |
+| `src/` 与素材 | **0 改动** ✅ |
+
+**回归（每改一条都跑）**：
+```
+parseAll 3   → 179/180（失败项仍是改动前既有的 MAPSCALE_AREA）
+Arabia 种子 2 → 物件 5592 ｜ 森林 5.8%
+```
+
+## 9.1 任务 1：转正 (B) ＋ D 对照实验
+
+**(B) 已转正**（`gapAll` 与本指令的组中心比距离）。地中海实测：
+
+| | DE | **我方 (B)** | |
+|---|---|---|---|
+| `GOLDM` | 36 | **36** | ✅ **0%** |
+| `STONM` | 22 | 19 | −14% |
+| `GOAT` | 26 | 24 | −8% |
+| `FORAG` | 12 | 9 | −25% |
+| `MOUFLON` | 6 | 8 | +33% |
+| `SHORE_FISH` | 37 | 220 | +495% |
+| **物件总数** | 9254 | **9309** | ✅ **0.6%** |
+
+**(D) 对照实验**（`gapAll` 只和"由 `create_object` 放下、且非占位"的物件比；占位 id = `647/1543/1902`，取自 `tools/scene13-atlas/de-map.ts:134`）：
+
+| 指标 | DE 基准 | **(B)** | (D) |
+|---|---|---|---|
+| 资源物件数 | 111 | **105** | 92 |
+| `GOLDM` / `STONM` / `GOAT` | 36 / 22 / 26 | **36 / 19 / 24** | 36 / 18 / **12** |
+| `FISH4` | 31 | **121** | **0** |
+| ③ 异类最近距离（中位） | 7.3 | 5.0 | 5.1 |
+| ④' 同类最近距离（物件级·中位） | **1.0** | 5.0 | 5.1 |
+| ④ 同类异堆距离（堆心≤6·中位） | 36.2 | 13.0 | 12.6 |
+
+🔴 **数据判定：B 胜**。D 在两个"分布"指标上与 B **几乎无差别**（5.1 vs 5.0、12.6 vs 13.0），却把资源物件从 105 打到 92（`GOAT` 24→12、`FISH4` 121→0）。**故维持 B，D 已回滚。**（工具：`scratch/_probe_resource_spacing.mjs`，三边同一把尺）
+
+## 9.2 任务 2：陆地生成阶段 —— 已定位到机制，附轮廓实测
+
+### ① `borders` 语义：核实**实现正确**
+
+`Mediterranean.rms:36-39` 用的是 `left_border / right_border / top_border / bottom_border`（各 17），**不是** `borders`；我们的 `bp()`（`rmsEngine.mjs:188-190`）读的正是这四个名字 ✅
+手册（`tc-rms-guide.md`）："**Percent from edge to stop land growth**" + "land had a hard-coded feature to **round off edges**… border > 20% 时更像圆/八边形" —— 与 `:196-230` 的矩形 + 内切椭圆 + `border_fuzziness` 一致 ✅
+
+### ② 轮廓并排实测（`scratch/_probe_land_contour.mjs`）
+
+```
+DE   : 水 4524 格 (21.8%)  包围盒 x[22,122] y[23,121]  连通域 1
+我方 : 水 7273 格 (35.1%)  包围盒 x[24,119] y[24,119]  连通域 1
+```
+
+DE 的水是**被玩家陆地切开的两瓣**（上右半 + 下左半，仍连通）；**我方是一个完整椭圆**：
+
+```
+      DE 基准图                   我方
+y24   ..........:%%%%%%:......     ........::%%%%%:........
+y48   ........:%%%%%%%%%%%:...     ....:%%%%%%%%%%%%%%:....
+y66   .........%%%::::%%%%:...     ....%%%%%%%%%%%%%%%%....
+y78   ....%%:...%%:.....:.....     ....%%%%%%%%%%%%%%%%....
+y90   ...:%%%%%%%%%...........     ....:%%%%%%%%%%%%%%:....
+```
+
+**我方 land 一览只有 2 个**：`326`＝VODA 7273 格、`100`＝玩家陆地 6221 格 —— 🔴 **`land 101`（玩家 2）根本没生成**。
+**出生点 (119,87)/(25,57) 到最近水 1.0 / 2.0 格** → 玩家陆地被挤在内海**外面**。
+
+### ③ 机制：两道闸把玩家陆地挡在内海之外
+
+```js
+rmsEngine.mjs:237   if (occ !== -1 && !(overwrite && occ < 100)) return false;
+rmsEngine.mjs:238-245  if (avoid > 0) { … if (l !== -1 && l !== id) return false; }
+```
+
+- `create_land`（内海）**没写 `land_id`** → id 取 `this.rng.int(200, 400)` → 实测 **326**
+- `create_player_lands` → `createLand(P, …, 100 + p, true)`（`:167`）→ id **100/101**、`overwrite = true`
+- 于是 `overwrite && occ < 100` = `true && false` = **false** → **内海一格都不许覆盖**（与 `:231-235` 注释写的意图**正好相反**）
+- 再加 `avoid = 5`（玩家陆地的 `other_zone_avoidance_distance`）连**靠近**都不许 → 玩家 2 的基点落在内海里 → `mine` 为空 → **land 101 消失**
+
+### ④ 实验：两道闸都放开（跑完已回滚）
+
+| | DE | 原版 | **实验** |
+|---|---|---|---|
+| 水量 | 21.8% | 35.1% | **12.4%** 🔴 反向过头 |
+| **水连通域** | **1** | 1 | **110** 🔴 被切碎 |
+| 玩家 land 数 | — | **1（101 缺失）** | **2** ✅ |
+| `Beach` | 2.5% | 1.4% | 7.1% |
+
+**结论**：这两道闸**确实是"玩家陆地进不了内海"的原因**（放开后 land 101 出现了）；但**只放开还不够** —— `land_percent 30` × 2 人 = 12442 格 > 椭圆 7238 格，两个玩家陆地各自向内海中央生长，把水**打碎成 110 块**。**DE 的水是 1 个连通域**，说明 DE 的玩家陆地是**从边缘切进去形成两个半岛**，而不是在内海里撒开。
+
+### ⑤ 请 CC 裁定
+
+1. **`occ < 100` 这道闸**：判据把"中立 land（id 200~400）"与"别的玩家 land（100~107）"混在一个阈值里。**无论水量怎么调，`land 101` 消失都是正确性缺陷**（`create_player_lands` 少生成一个玩家陆地）。
+   建议改成按"是否玩家 land"判定（而不是数值阈值）；**请 CC 确认是否采纳**。
+2. **`other_zone_avoidance_distance` 是否该避开中立地形**：若按字面避开一切别的 land，玩家陆地永远进不了内海。**请 CC 判它的正确作用域**（是否只避"别的玩家 land"）。
+3. **水被切碎成 110 块**：这不是闸门问题，而是**玩家陆地生长方向**问题（应沿边缘切入而非向中央铺开）。**是否要为此查 `create_player_lands` 的 `circle_radius`/`base_size`/`land_percent` 语义？**
+
+## 9.3 新增工具（`scratch/`，仍未入库）
+
+| 文件 | 用途 |
+|---|---|
+| `scratch/_probe_resource_spacing.mjs` | 资源间距分布（DE / B / D 同一把尺：异类最近距离、同类最近距离、堆数） |
+| `scratch/_probe_land_contour.mjs` | 水/陆轮廓并排（水体统计 + 每 12 行跨度 + 24×24 ASCII 并排 + land 一览 + 出生点到水距离） |
+| `scratch/_report_cc31.mjs` | 地中海同口径一键报告（create_terrain 链 trace + 地形占比 + 关键物件） |
+
+## 9.4 下一步（等 CC 对 9.2⑤ 裁定后继续）
+
+- 任务 3（zone 口径）—— 与陆地阶段同一处代码，等 9.2 定了再做；
+- 任务 4（岸边鱼）—— 待定；
+- 任务 5（换阿拉伯复验）—— 最后做。
+
+---
+
+# 十、第 33 轮报告：按 CC 的「面积平分 + 同时生长」重构陆地生成
+
+## 10.0 CC 的发现已用**两个独立来源**坐实
+
+| 来源 | 原文 |
+|---|---|
+| 手册 :162 | "The percentage of land allotted to player lands is **divided among all the players**. Therefore, if player lands were specified to take up **20% of the map, then 2 players would each get 10%**" |
+| 手册 :185 | "For Player Lands, **this area will be divided by the number of players**… 60% and 6 players → each about 10%" |
+| 手册 :150 | "**Land is all generated at the same time, so the order used in placing land is not important.** (Terrain and objects, however, are placed in order.)" |
+| 我早前抓的 genie-rms 结构（`RMS引擎语义-给CC.md` §12.2） | "1. 每块 land 先在 `land.position` 铺 `baseSize` 半径方块 … 3. 循环：**各 land 轮流** pop 一个点；`checkTerrainAndZone()` 发现**别的 zone → 不允许侵入**" |
+
+→ **不需要靠推测**：面积要平分（手册两处）、陆地要同时生成（手册一处 + genie-rms 一处）。
+
+## 10.1 改了什么（4 处，全部在本轮 CC 指令范围内）
+
+| # | 位置 | 改动 |
+|---|---|---|
+| 1 | `runLand` | 两阶段：**先把每块 land 的底座全铺好**（`planLand`），再 `growLands()` 统一轮转生长；`deferred`（`number_of_tiles 0` 的填充区）仍在最后 |
+| 2 | `planLand`（原 `createLand`） | 只铺底座、**不生长**，返回 `{id, zone, terr, want, clump, free, mine}`；新增 `playerDivisor`，**只作用于 `land_percent`**（`number_of_tiles` 不减，阿拉伯的 1300 是单人量级） |
+| 3 | `planPlayerLands`（原 `createPlayerLands`） | 返回 specs 数组，传 `playerDivisor = this.players` |
+| 4 | `growLands`（新增） | **各 land 轮流各吞一格**；每块自带候选堆（代价 `250 − clumping×四邻本land数 + rng(0..99)`） |
+| 5 | `free()` 的占用/避让 | **删掉 `overwrite && occ < 100` 那套"覆盖"逻辑** → 任何别的 land 的格子都不许占；`avoid` 改为**只避开「不同 zone」的 land**（同 zone 可相邻） |
+
+⚠️ **实现中踩的一个坑（已修，记下来）**：第一版 `growLands` 里 `free()` 对**本 land 自己的格子**返回 true，于是堆里的陈旧项被**重复认领** —— `total` 虚增到 `want`（三块相加 22809 > 20736，物理上不可能），生长在底座大小处就停了。修法：`expand` 只把**未占格**推入前沿；认领前再查一次 `this.landId[j] !== -1`。
+
+## 10.2 地中海实测（CC 要求的三项）
+
+```
+DE   : 水 4524 格 (21.8%)  x[22,122] y[23,121]  连通块 1
+我方 : 水 3997 格 (19.3%)  x[31,98]  y[25,119]  连通块 1
+land 100 = 3110 格 ｜ land 101 = 3110 格（完全相等）
+```
+
+| 指标 | 改前 | **改后** | DE | 差 |
+|---|---|---|---|---|
+| **水占比** | 35.1% | **19.3%** | 21.8% | **−2.5pp**（标准 ≤2pp，接近） |
+| **水连通块数** | 1 | **1** | 1 | ✅ **相同** |
+| **玩家 1/2 陆地** | **只有 1 块（101 缺失）** | **3110 / 3110** | — | ✅ **都在且面积相等** |
+| `Dirt 3` | 29.8% | 45.5% | 41.6% | +3.9 |
+| `Underbrush` | 18.7% | 18.8% | 18.7% | ✅ +0.1 |
+| `Forest, Mediterranean` | 9.0% | 9.0% | 9.2% | ✅ −0.2 |
+| `Dry Grass` | 5.0% | 5.0% | 5.2% | ✅ −0.2 |
+| `Forest` | 1.0% | 1.0% | 1.0% | ✅ −0.0 |
+| `Beach` | 1.4% | 1.5% | 2.5% | −1.0 |
+| **`Water, Shallow`** | 32.7% | **18.5%** | 11.3% | 🔴 +7.2（`Medium` 仍 0 vs 10.5） |
+| **物件总数** | 9309 | **9488** | 9254 | ✅ +2.5%（标准 ≤5%） |
+| `GOLDM` / `STONM` / `FORAG` | 36 / 19 / 9 | **36 / 22 / 12** | 36 / 22 / 12 | ✅ **全部 0%** |
+| `GOAT` / `MOUFLON` | 24 / 8 | **28 / 8** | 26 / 6 | ✅ +8% / +33% |
+| **`SHORE_FISH` / `FISH_SNAPPER`** | 220 / 121 | **282 / 146** | 37 / 31 | 🔴 +662% / +371% |
+
+**轮廓并排（改后）**：我方水呈**中部偏左的一整块**（y54~114 最宽 x[31,98]），DE 是**上右 + 下左两瓣**。**连通块数已一致，形状尚未一致** —— 玩家基地的**角度**与 DE 不同（DE 的两块玩家陆地各占一侧把水挤成两瓣）。
+
+## 10.3 回归
+
+```
+parseAll 3    → 179/180（失败项仍是改动前既有的 MAPSCALE_AREA）✅
+Arabia 种子 2 → 物件 5478 ｜ 森林 9.4% ｜ 有高度 14.0% ｜ 对象 1674 ｜ 地形 7 种
+```
+
+🔴 **阿拉伯的数字变了**（改前 5592 / 森林 5.8%）：同时生长改变了陆地布局 → 地形成团随之改变。**目前无法判优劣**（缺 DE 阿拉伯基准图）。
+**这正是 CC 第 6 条要的第二张基准图** —— 请 CC 在 DE 里生成一张已知脚本的阿拉伯 144（2 人），我负责导出并复验。
+
+## 10.4 仍未达标（下一步）
+
+1. **深浅比**：`Water, Medium` 仍 0（DE 10.5%）。水遮罩链第 1 条实铺 2535 / 3997，第 2 条（`base_terrain VODA` 再铺一次）又是 **0**（同第 31 轮那个"严格 spacing 下底地形区被 5×5 邻域全挡"的现象）。**下一步查这里**。
+2. **`SHORE_FISH` +662% / `FISH_SNAPPER` +371%**：数量偏多（脚本里 `MELKARYBA` 是 `number_of_objects 9999`）。
+3. **水形状**：连通块已对，位置/朝向未对。
+4. **任务 3（zone 口径）**、**任务 5（180 脚本全量健壮性）** 未做。
+5. **`Beach` −1.0**：沙滩偏少。
+
+## 10.5 本轮新增/复用的度量工具（`scratch/`，未入库）
+
+`_probe_land_contour.mjs`（水陆轮廓并排 + land 一览 + 出生点到水距离）｜`_probe_resource_spacing.mjs`｜`_report_cc31.mjs`
