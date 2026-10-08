@@ -342,7 +342,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     urumi_swordsman: { name: '达罗毗荼软剑士', cls: 'melee', sz: 1, hp: 55, atk: 9, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31] },
     war_chariot: { name: '双轮战车', cls: 'cav', sz: 1, hp: 100, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2.0, spd: 130, dmgType: 'melee', bonus: { 1: 5 }, armorTags: [8, 19, 31] },
     // 🔴 [2026-09-17 主人定 / 2026-10-08 改定] 先秦军团战车射程恢复为 240
-    war_chariot_ranged: { name: '先秦远程战车', cls: 'cav', sz: 1, hp: 65, atk: 10, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 3.0, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [8, 20, 19, 31, 37] },
+    war_chariot_ranged: { name: '先秦远程战车', cls: 'cav', sz: 1, hp: 65, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 240, reload: 6.5, spd: 130, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [8, 20, 19, 31, 37] },
     war_dog: { name: '战犬', cls: 'melee', sz: 1, hp: 50, atk: 9, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1.7, spd: 55, dmgType: 'melee', armorTags: [29, 31] },
     war_wagon: { name: '高丽战车', cls: 'cav', sz: 1, hp: 150, atk: 9, meleeArmor: 0, pierceArmor: 2, rng: 160, reload: 2.5, spd: 130, dmgType: 'pierce', bonus: { 21: 2 }, armorTags: [15, 8, 19, 28, 31] },
     warrior_priest: { name: '亚美尼亚修士战士高级', cls: 'melee', sz: 1, hp: 80, atk: 11, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 55, dmgType: 'melee', armorTags: [1, 25, 19, 31] },
@@ -463,7 +463,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_leloi: { name: '英雄·黎利', cls: 'cav', sz: 1, hp: 350, atk: 22, meleeArmor: 2, pierceArmor: 4, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 30: 0 }, armorTags: [31, 36] },
     hero_liubei: { name: '英雄·刘备', cls: 'cav', sz: 1, hp: 425, atk: 15, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 11: 0, 15: 0, 20: 0, 29: 3, 38: 0 }, armorTags: [1, 19, 31, 36] },
     hero_llywelynapgruffydd: { name: '英雄·卢埃林', cls: 'cav', sz: 1, hp: 250, atk: 14, meleeArmor: 2, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 11: 2, 15: 5, 30: 0 }, armorTags: [1, 19, 31, 36] },
-    hero_lubu: { name: '英雄·吕布', cls: 'cav', sz: 1, hp: 425, atk: 18, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 2, 20: 0, 30: 1, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
+    hero_lubu: { name: '英雄·吕布', cls: 'cav', sz: 1, hp: 425, atk: 18, meleeArmor: 4, pierceArmor: 3, rng: 200, reload: 2, spd: 130, dmgType: 'pierce', bonus: { 8: 2, 20: 0, 30: 1, 38: 0, 39: -3 }, armorTags: [8, 31, 36] },
     hero_lysander: { name: '英雄·吕山德', cls: 'cav', sz: 1, hp: 350, atk: 14, meleeArmor: 2, pierceArmor: 6, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 8: 0, 15: 0, 21: 5, 29: 0, 30: 0 }, armorTags: [1, 19, 31] },
     hero_macedonian_commander: { name: '英雄·腓力二世', cls: 'cav', sz: 1, hp: 300, atk: 13, meleeArmor: 5, pierceArmor: 5, rng: 0, reload: 2, spd: 130, dmgType: 'melee', bonus: { 38: 0 }, armorTags: [1, 31, 36] },
     hero_osman: { name: '英雄·奥斯曼一世', cls: 'cav', sz: 1, hp: 180, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2, spd: 130, dmgType: 'pierce', bonus: { 15: 0, 17: 0, 21: 10, 27: 6, 38: 0, 39: -3 }, armorTags: [8, 15, 28, 31, 36] },

@@ -3821,7 +3821,7 @@ export class Scene13WarLayer {
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
     private exitBtn: HTMLButtonElement | null = null;
 
-    /** 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」] 战术模式战场画面缩放比例（0.6~2.5） */
+    /** 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」] 战术模式战场画面缩放比例（1~2.5；1 = 基础画面，只许放大不许拉远，2026-10-08 主人定） */
     private tacticalZoom = 1.0;
 
     /** 挂到 body（全屏透明 canvas，叠在地图 DOM 之上；透明像素不遮挡地图，只画精灵） */
@@ -3870,7 +3870,7 @@ export class Scene13WarLayer {
             e.stopPropagation();   // 捕获阶段拦下，底下的 Leaflet 战略地图不许跟着缩放
             const zoomDelta = -e.deltaY * 0.0015;
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
-            this.tacticalZoom = Math.max(0.6, Math.min(2.5, nextZoom));
+            this.tacticalZoom = Math.max(1, Math.min(2.5, nextZoom));
         };
         window.addEventListener('wheel', onWheel, { passive: false, capture: true });
     }
@@ -5428,14 +5428,24 @@ export class Scene13WarLayer {
             );
 
             if (shouldSpawnMountain) {
-                const MOUNTAIN_POOL = [
-                    'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05',
-                    'MOUNTAIN_06', 'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
-                ];
-                const pickRandomMountain = () => MOUNTAIN_POOL[Math.floor(Math.random() * MOUNTAIN_POOL.length)];
+                // 🔴 [2026-10-08 主人「险要的防守方的两座山一个有雪一个没雪」修复]
+                //    根据当前战场季节（冬=2）与地貌（冻原雪地 tundra_snow / 冰雪底图）区分雪山池与青山池，
+                //    两座大山处于同一气候池，彻底根除「同一道关卡一座有雪、一座没雪」的视觉割裂。
+                const isSnowScene = this.sceneSeason === 2
+                    || this.environmentPlan?.biome === 'tundra_snow'
+                    || !!(this.environmentPlan?.baseTerrain && /snow|snd|ice/i.test(this.environmentPlan.baseTerrain));
 
-                // 1. 南翼大山（默认从 11 种大山中随机抽取样式，支持翻转；纯贴图不卡兵）
-                const mAsset = this.passMountainConfig.asset || pickRandomMountain();
+                const GREEN_MOUNTAIN_POOL = [
+                    'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06',
+                ];
+                const SNOW_MOUNTAIN_POOL = [
+                    'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
+                ];
+                const pool = isSnowScene ? SNOW_MOUNTAIN_POOL : GREEN_MOUNTAIN_POOL;
+                const pickMountain = () => pool[Math.floor(Math.random() * pool.length)];
+
+                // 1. 南翼大山（根据战场地貌气候从对应池中抽取样式，支持翻转；纯贴图不卡兵）
+                const mAsset = this.passMountainConfig.asset || pickMountain();
                 this.ensureNatureAsset(mAsset);
                 // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
                 const mX = this.passMountainConfig.x ?? (wallFrontX + 230);
@@ -5458,14 +5468,14 @@ export class Scene13WarLayer {
                     obstructionDisabled: true,
                 });
 
-                // 2. 北翼大山（上方「两山夹一关」天险，默认从 11 种大山中随机抽取样式；纯贴图不卡兵）
-                const northAsset = this.passMountainConfig.northAsset || pickRandomMountain();
+                // 2. 北翼大山（上方「两山夹一关」天险，与南翼处于同一气候风貌池中抽取；翻转互补）
+                const northAsset = this.passMountainConfig.northAsset || pickMountain();
                 this.ensureNatureAsset(northAsset);
                 // 默认坐标：严格置于战场北翼斜城墙背侧上端，绝不遮挡北城门通道与冲锋交战路线
                 const nX = this.passMountainConfig.northX ?? (wallFrontX + 230);
                 const nY = this.passMountainConfig.northY ?? (topWallY - 210);
                 const nScale = this.passMountainConfig.northScale ?? 1.2;
-                const nFlip = this.passMountainConfig.northFlip ?? (Math.random() > 0.5);
+                const nFlip = this.passMountainConfig.northFlip ?? !mFlip;
                 this.decorSprites.push({
                     asset: northAsset,
                     frame: 0,
