@@ -27,9 +27,14 @@ export function makeRng(seed) {
 }
 
 const fileCache = new Map();
-function tokenizeFile(rel) {
+/**
+ * rel 先在官方 RMS 目录里找；找不到时若给了 extraDir（loadScript 的 env.rmsDir），再到那里找。
+ * 用途：把官方脚本**复制到项目内**改一处（例如锁死季节分支）后做「同口径对比」，**不碰 DE 安装目录**。
+ */
+function tokenizeFile(rel, extraDir = null) {
     if (fileCache.has(rel)) return fileCache.get(rel);
-    const p = path.join(DE_RMS_DIR, rel);
+    let p = path.join(DE_RMS_DIR, rel);
+    if (!fs.existsSync(p) && extraDir) p = path.join(extraDir, rel);
     if (!fs.existsSync(p)) throw new Error(`找不到脚本文件：${rel}`);
     let text = fs.readFileSync(p, 'utf8');
     text = text.replace(/\/\*[\s\S]*?\*\//g, ' ');
@@ -51,6 +56,8 @@ export class Preprocessor {
         this.defs = new Set(env.defines ?? []);
         this.consts = new Map(Object.entries(env.consts ?? {}));
         this.rng = makeRng(env.seed ?? 1);
+        /** 官方 RMS 目录里找不到时的回退目录（项目内改过的脚本用；见 loadScript 的 env.rmsDir） */
+        this.extraDir = env.rmsDir ?? null;
         /** if 里查过、但从未定义过的符号（多半是引擎注入的开关）→ 便于发现缺的环境量 */
         this.unknownIf = new Map();
         this.out = [];
@@ -150,7 +157,7 @@ export class Preprocessor {
                 this.includeDepth++;
                 // 本机缺少的 include（如 defend_wonder.inc，属游戏模式专属）：记录后跳过，不中断解析
                 let sub = null;
-                try { sub = tokenizeFile(rel); } catch { (this.missingIncludes ??= new Set()).add(rel); }
+                try { sub = tokenizeFile(rel, this.extraDir); } catch { (this.missingIncludes ??= new Set()).add(rel); }
                 if (sub) this.run(sub);
                 this.includeDepth--;
                 i += 2; continue;
@@ -301,16 +308,16 @@ export function loadScript(file, env = {}) {
     const SIZE_FLAG = { 80: 'MINI', 120: 'TINY', 144: 'SMALL', 168: 'MEDIUM', 200: 'NORMAL', 220: 'LARGE', 240: 'HUGE', 252: 'GIANT' };
     const flag = SIZE_FLAG[env.size ?? 144] ?? 'SMALL';
     const defaultEnv = {
-        defines: [`MAPSIZE_${flag}`, `${flag}_MAP`, '2_PLAYER_GAME', 'PLAYER1_TEAM0', 'PLAYER2_TEAM0', ...(env.defines ?? [])],
+        defines: [`MAPSIZE_${flag}`, `${flag}_MAP`, '2_PLAYER_GAME', 'PH_EXTENDEDSEASONS', 'PLAYER1_TEAM0', 'PLAYER2_TEAM0', ...(env.defines ?? [])],
         // 引擎对不存在的玩家席位也认 PLAYERn_ALLY_COUNT：默认 0（脚本里有 #const 会覆盖）
         consts: { PLAYER1_ALLY_COUNT: 0, PLAYER2_ALLY_COUNT: 0, PLAYER3_ALLY_COUNT: 0, PLAYER4_ALLY_COUNT: 0, PLAYER5_ALLY_COUNT: 0, PLAYER6_ALLY_COUNT: 0, PLAYER7_ALLY_COUNT: 0, PLAYER8_ALLY_COUNT: 0, ADDITIONAL_VILLAGERS: 0, MAPSIZE_SIDE: env.size ?? 144, ...(env.consts ?? {}) },
         seed: env.seed ?? 1,
     };
-    const pre = new Preprocessor(defaultEnv);
+    const pre = new Preprocessor({ ...defaultEnv, rmsDir: env.rmsDir ?? null });
     // 引擎隐式载入的常量定义
     pre.run(tokenizeFile('random_map.def'));
     pre.out.length = 0;
-    pre.run(tokenizeFile(file));
+    pre.run(tokenizeFile(file, env.rmsDir ?? null));
     const names = collectCommandNames();
     const sections = buildAst(pre.out, names);
     return { sections, pre };

@@ -28,6 +28,13 @@ export const TUNE = {
     avoidStartRadius: 14,
     /** 成团紧凑度：gamma = clumping_factor / 此值（越大越方正）——推断 */
     clumpScale: 10,
+    /**
+     * 是否启用 `max_distance_to_other_zones`（第 30 轮实现，**默认关**）。
+     * ⚠️ 待校准：按 genie-rms 的「8 方向 N 格」实现后，同主题对比里 `GOLD_MINE` 35→20、`STONE_MINE` 19→5（**过严**），
+     *    但物件总数反而更接近 DE（9319 vs 9254，差 0.7%）。语义方向应是对的（手册："keeping objects away from the shore"），
+     *    存疑的是「zone」的口径 —— 我们用 `landZone`（内海 16 / 玩家陆地 1），DE 可能指**玩家 zone**。
+     */
+    useMaxZone: false,
 };
 
 /** 把块里的子指令整理成 { 名: 参数数组 }（后者覆盖前者），旗标类指令值为 [] */
@@ -38,6 +45,8 @@ function props(block = []) {
 }
 
 const D4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+/** 8 邻域（含四角）：`max_distance_to_other_zones` 按 genie-rms 在这 8 个方向上取检查点 */
+const D8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
 export class MapEngine {
     constructor(sections, { size = 144, players = 2, seed = 1, names = new Map(), info = null, objNames = new Map(), terrainUnits = null, unitRestrict = null } = {}) {
@@ -60,6 +69,10 @@ export class MapEngine {
         this.layer = new Int16Array(n).fill(-1);
         this.elev = new Int8Array(n);
         this.landId = new Int32Array(n).fill(-1);
+        /** land id → zone（`create_land` 的 `zone` 参数）；供 `max_distance_to_other_zones` 判「别的 zone」 */
+        this.landZone = new Map();
+        /** 每格的 zone（物件段之前构建）；-1 = 未知 */
+        this.zoneGrid = null;
         this.objects = [];
         this.markers = [];                          // actor_area 逻辑标记（不可见）
         this.areaGrid = new Map();                  // 区域号 → 占位网格
@@ -106,6 +119,12 @@ export class MapEngine {
         this.plantTerrainUnits();
         for (const c of S.CLIFF_GENERATION ?? []) this.cliffCmd(c);
         this.generateCliffs();
+        // 构建 zone 网格：手册 `max_distance_to_other_zones` 需要知道「别的 zone」在哪
+        this.zoneGrid = new Int16Array(this.terrain.length).fill(-1);
+        for (let i = 0; i < this.terrain.length; i++) {
+            const z = this.landZone.get(this.landId[i]);
+            this.zoneGrid[i] = z === undefined ? -1 : z;
+        }
         this.collectObjectGroups();
         for (const c of S.OBJECTS_GENERATION ?? []) this.objectCmd(c);
         return this;
@@ -153,6 +172,8 @@ export class MapEngine {
         const N = this.N;
         const terr = Number(P.terrain_type?.[0] ?? 0);
         const id = forcedId ?? Number(P.land_id?.[0] ?? this.rng.int(200, 400));
+        // 记录该 land 的 zone（手册：`create_land` 的 `zone` 参数；物件段的 max_distance_to_other_zones 要用）
+        this.landZone.set(id, Number(P.zone?.[0] ?? 0));
         let want = Number(P.number_of_tiles?.[0] ?? 0);
         // 手册：land_percent 随地图缩放，number_of_tiles 不缩放；二者只用其一
         if (P.land_percent) want = Math.round(Number(P.land_percent[0]) / 100 * N * N);
@@ -377,6 +398,8 @@ export class MapEngine {
         const avoidR = P.set_avoid_player_start_areas ? (P.set_avoid_player_start_areas.length ? Number(P.set_avoid_player_start_areas[0]) : TUNE.avoidStartRadius) : 0;
         const N = this.N;
         const regOf = new Int32Array(this.terrain.length).fill(-1);
+        /** 本指令将把格子改成什么地形（`terrain` 要到末尾才统一写，spacing 判「同类」时得看这个） */
+        const pending = new Int32Array(this.terrain.length).fill(-1);
         const ok = (i, r) => {
             if (this.terrain[i] !== base || regOf[i] !== -1) return false;
             const x = i % N, y = (i / N) | 0;
@@ -389,18 +412,44 @@ export class MapEngine {
                     const xx = x + dx, yy = y + dy;
                     if (!this.inb(xx, yy)) continue;
                     const j = this.idx(xx, yy);
-                    if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) return false;
+                    // 手册：spacing_to_other_terrain_types ＝ 与**其它地形类型**保持距离
+                    //   （"including terrain of the same type" 指「同类型的**其它团**也算」，不是「同一种地形互相排斥」）。
+                    // 🔴 原写法只比「是不是本团」，把「本指令同类型、但已被前一条同名指令铺过」的格子也当成"其它类型" →
+                    //   Mediterranean.rms 第 2 条 `create_terrain MED_WATER { base_terrain VODA land_percent 40 }`
+                    //   直接铺 0 格（实测 got=0；它前面那条同 T 的指令刚好留下 1877 格没铺）。
+                    const tj = regOf[j] !== -1 ? pending[j] : this.terrain[j];
+                    // 同类（T）或「仍是本条的底（base，即尚未铺的候选区）」都不算「其它地形类型」。
+                    // ⚠️ base 必须放行：5×5 邻域**包含自己**，否则每个候选格都会被自己拒掉（实测 got 全 0，Arabia 森林直接归零）。
+                    if (tj !== T && tj !== base) return false;
                 }
             }
             return true;
         };
-        const regions = this.seed(Math.min(clumps, target || 1), (i) => ok(i, -1), (i, r) => { regOf[i] = r; });
-        if (target > 0) this.grow(regions, target, clumpF, (j, r) => ok(j, r), (j, r) => { regOf[j] = r; }, (j, r) => regOf[j] === r);
+        const regions = this.seed(Math.min(clumps, target || 1), (i) => ok(i, -1), (i, r) => { regOf[i] = r; pending[i] = T; });
+        if (target > 0) {
+            this.grow(regions, target, clumpF,
+                (j, r) => ok(j, r),
+                (j, r) => { regOf[j] = r; pending[j] = T; },
+                (j, r) => regOf[j] === r);
+        }
         // 官方（Forgotten Empires DE RMS 文档）：terrain_mask 1 = 盖在基础地形之上（物件改用 layer_to_place_on），
         //   2 = 垫在之下。实现（推断）：1 → 只改视觉图层，逻辑地形不变（森林被草盖住，树仍在）；
         //   2 → 逻辑地形换成新地形，视觉上仍显示原地形。
+        // 诊断（第 21 轮）：逐条记录 base/baseCount/target/实铺 —— 查「链式 base_terrain」在哪一步断掉。
+        // 只在调用方设了 this.traceTerrain 时才收集（默认不开，零影响）。
+        if (this.traceTerrain) {
+            let got = 0;
+            for (let i = 0; i < regOf.length; i++) if (regOf[i] >= 0) got++;
+            this.traceTerrain.push({ T, base, baseCount, target, clumps, got, mask: Number(P.terrain_mask?.[0] ?? 0) });
+        }
         const mask = Number(P.terrain_mask?.[0] ?? 0);
-        for (const reg of regions) for (const i of reg) {
+        // 🔴 修（第 21 轮）：原来只遍历 `regions`，而 `regions` 是「每个团的**种子格**」——
+        //   `grow` 只把吞下的格子记进 `regOf`、**从不回填 regions**，于是除种子外的格子地形根本没换。
+        //   实测后果：Mediterranean.rms 的水遮罩共 10 条 create_terrain（1→23→57→23→22→57…），
+        //   每条都只改掉 clumps 个格子 → 最终 23 只剩 2.4%、22/57 一个都没出现。
+        //   改为遍历 `regOf` 里属于本条指令的全部格子。
+        for (let i = 0; i < this.terrain.length; i++) {
+            if (regOf[i] < 0) continue;
             if (mask === 1) this.layer[i] = T;
             else if (mask === 2) { this.layer[i] = this.layer[i] >= 0 ? this.layer[i] : this.terrain[i]; this.terrain[i] = T; }
             else { this.terrain[i] = T; this.layer[i] = -1; }
@@ -636,10 +685,17 @@ export class MapEngine {
         const minP = Number(P.min_distance_to_players?.[0] ?? 0), maxP = Number(P.max_distance_to_players?.[0] ?? 9999);
         const edge = Number(P.min_distance_to_map_edge?.[0] ?? 1);
         const avoidForest = Number(P.avoid_forest_zone?.[0] ?? 0);
+        const maxZone = Number(P.max_distance_to_other_zones?.[0] ?? 0);
         // 两种组间距（推断，依 DE 社区文档的用法）：
         //   temp_min_distance_group_placement ＝ 本条指令各组之间；min_distance_group_placement ＝ 与此前所有已放物件之间
+        // 🔴 第 29 轮修：官方手册（鱼例子）—— `min_distance_group_placement 4` →
+        //   "Creates 50 fish … but **never more than 4 tiles from another fish**."
+        //   ⇒ 它是「必须离已有物件 **≤** N 格」的**聚集约束**（防孤岛），**不是排斥**。
+        //   第 28 轮的 trace 是实证：当成排斥时，`FISH2`/`FISH4`/`GOLDM`/`STONM`/`GOAT`/`FORAG`/`MOUFLON`
+        //   这些小批量 create_object **全部实放 0** —— 先放的同类占满后，后来的一个都插不进去。
+        // 两个参数分工（沿用原注释的推断）：`temp_` = 本条指令内各组之间；不带 temp 的 = 与此前所有已放物件之间。
         const gapAll = Number(P.min_distance_group_placement?.[0] ?? 0);
-        const gapSame = Math.max(gapAll, Number(P.temp_min_distance_group_placement?.[0] ?? 0));
+        const gapSame = Number(P.temp_min_distance_group_placement?.[0] ?? 0);
         // 只能在水里的物件（鱼类）：陆地上放不下（推断；DE 的 dat 里每个单位有通行地形限制，待换成以 dat 为准）
         // 只能放水里的物件：**以 dat 的 terrain_restriction 为准**（不再靠名字正则猜）
         // 类别号见 WATER_RESTRICTIONS；没有这张表时退回按名字判（老写法）。
@@ -678,6 +734,16 @@ export class MapEngine {
                 }
                 if (d < minP || d > maxP) return false;
             }
+            // 手册：max_distance_to_other_zones ＝「物件能离**别的 zone** 多近」（防靠岸、防敌船）。
+            //   实现依 genie-rms：在**上/下/左/右 + 四角共 8 个方向**、距离 N 处检查 zone 是否与中心一致。
+            if (TUNE.useMaxZone && maxZone > 0 && this.zoneGrid) {
+                const zc = this.zoneGrid[gi];
+                for (const [dx, dy] of D8) {
+                    const xx = x + dx * maxZone, yy = y + dy * maxZone;
+                    if (!this.inb(xx, yy)) continue;
+                    if (this.zoneGrid[this.idx(xx, yy)] !== zc) return false;
+                }
+            }
             if (avoidForest > 0) {
                 for (let dy = -avoidForest; dy <= avoidForest; dy += 2) for (let dx = -avoidForest; dx <= avoidForest; dx += 2) {
                     const xx = x + dx, yy = y + dy;
@@ -688,7 +754,9 @@ export class MapEngine {
         };
         // actor_area：物件「自己」在周围划出一块区域，供后面的物件 avoid_actor_area / actor_area_to_place_in 引用。
         // 物件本身照常放出（金矿、羊、鹿都带 actor_area）；不可见的占位物件（如 1902）由出图端按名字过滤。
+        let emitted = 0;                       // 诊断用（第 28 轮）：本条 create_object 的实放数
         const emit = (x, y) => {
+            emitted++;
             // 物件组：每个都独立随机（racket 文档原话）—— 所以每次放置都重新按权重抽
             const o = { id: groupList ? this.pickFromGroup(groupList) : id, x: x + 0.5, y: y + 0.5 };
             this.objects.push(o);
@@ -732,8 +800,10 @@ export class MapEngine {
                     else if (circular && ringR > 0 && this.starts.length) { const st = this.starts[this.rng.int(0, this.starts.length - 1)]; const p = onRing(st.x, st.y); x = p[0]; y = p[1]; }
                     else { x = this.rng.int(0, N - 1); y = this.rng.int(0, N - 1); }
                     if (!this.inb(x, y) || !okTile(x, y, s)) continue;
-                    if (gapSame > 0 && placedCenters.some((p) => Math.abs(p.x - x) < gapSame && Math.abs(p.y - y) < gapSame && Math.hypot(p.x - x, p.y - y) < gapSame)) continue;
-                    if (gapAll > 0 && this.nearObject(x, y, gapAll)) continue;
+                    // temp_ 版 ＝ **排斥**（本条指令内各组之间保持距离；"临时"＝放完即忘，不影响后面的指令）
+                    if (gapSame > 0 && placedCenters.some((p) => Math.hypot(p.x - x, p.y - y) < gapSame)) continue;
+                    // 不带 temp 的 ＝ **聚集**（官方鱼例子："never more than N tiles from another fish"）；⚠️ 第一个必须放行
+                    if (gapAll > 0 && this.objBuckets && this.objBuckets.size > 0 && !this.nearObject(x, y, gapAll)) continue;
                     cx = x; cy = y; break;
                 }
                 if (cx < 0) continue;
@@ -751,5 +821,7 @@ export class MapEngine {
             }
         };
         if (perPlayer) for (const s of this.starts) once(s); else once(null);
+        // 诊断（第 28 轮）：逐条记录 create_object 的参数与实放数（默认不开，零影响）
+        if (this.traceObjects) this.traceObjects.push({ id, name: this.objNames?.get?.(id) ?? null, count, hasGroups, capGroups, emitted });
     }
 }
