@@ -193,5 +193,5 @@ export function resolveFactionCommander(factionId: string | null | undefined, se
     const own = row?.[era];
     const cell = own && own.length > 0 ? own : eraGlobalPool(era);
     if (cell.length === 0) return null;
-    return cell[stableHash((factionId ?? '') + ':' + seedKey + ':' + SESSION_SEED) % cell.length];
+    return cell[stableHash((factionId ?? '') + ':' + SESSION_SEED) % cell.length];
 }

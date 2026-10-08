@@ -771,7 +771,7 @@ export class CombatUI {
             }
             .combat-portrait-min-btn {
                 position: absolute;
-                top: 14px;
+                bottom: 50px;
                 width: 22px;
                 height: 22px;
                 display: flex;
@@ -787,7 +787,7 @@ export class CombatUI {
                 line-height: 1;
                 cursor: pointer;
                 pointer-events: auto;
-                z-index: 45;
+                z-index: 1;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), inset 0 0 4px rgba(255, 215, 0, 0.2);
                 transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.25s, right 0.25s, left 0.25s, top 0.25s, bottom 0.25s;
                 user-select: none;
@@ -803,20 +803,26 @@ export class CombatUI {
                 filter: brightness(0.9);
             }
             .combat-portrait-frame.is-left .combat-portrait-min-btn {
-                right: 12px;
+                left: 12px;
+                right: auto;
             }
             .combat-portrait-frame.is-right .combat-portrait-min-btn {
-                left: 12px;
+                right: 12px;
+                left: auto;
             }
             .combat-portrait-frame.is-left.is-minimized .combat-portrait-min-btn {
                 right: -24px;
+                left: auto;
                 top: auto;
                 bottom: 50px;
+                z-index: 45;
             }
             .combat-portrait-frame.is-right.is-minimized .combat-portrait-min-btn {
                 left: -24px;
+                right: auto;
                 top: auto;
                 bottom: 50px;
+                z-index: 45;
             }
         `;
         document.head.appendChild(style);
@@ -3541,6 +3547,7 @@ export class CombatUI {
             transform-origin: center bottom;
             pointer-events: none;
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8));
+            z-index: 2;
         `;
         return wrap;
     }

@@ -275,7 +275,6 @@ const BGM_REGION_GAIN: Record<string, number> = {
     //    （比多数曲子响约 1.4dB，仍低于最响的一档，不会盖过音效与播报）。
     age_of_kings: 0.427,
     fallen_army: 0.48,  // -16.6 LUFS · （原 0.603，2026-10-02 主人报音量略大，-2dB → 0.48）
-    game_of_thrones: 0.708,  // -18.0 LUFS · 用户要求单曲小幅提高约 1dB（通用随机曲）
     shadow_assassin: 0.624,  // -16.9 LUFS · （2026-08-04 通用随机曲·暗影刺客）
     GERMANIC: 0.596,  // -16.5 LUFS · （2026-08-04 新增 The Mass）
     daming: 0.767,  // -18.7 LUFS · （2026-08-04 换为 8月4日伴奏，原 Nijamena 移给 india）
@@ -338,7 +337,7 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
     ],
     STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
     INDIA: ['INDIA'],
-    GERMANIC: ['GERMANIC', 'game_of_thrones', 'helmet_to_helmet'],
+    GERMANIC: ['GERMANIC', 'helmet_to_helmet'],
     PURU: ['TIBET', 'litang'],
     ORIE: ['WEST_ASIA', 'BERBER'],
     LATIN: ['LATIN', 'victory'],
@@ -370,14 +369,14 @@ const GENERIC_BGM_FALLBACK = 'age_of_kings';
  * 判据 = 曲目真实来源（西方电影 / 游戏 / 史诗配乐），不是 folder 名字：
  *   LATIN=Star Sky(TSFH)、WEST_ASIA=出埃及记、BERBER=征服天堂(Vangelis)、GERMANIC=The Mass(Era)、
  *   victory=Victory(TSFH)、rock_house_jail=勇闯夺命岛、fallen_army=Audiomachine、helmet_to_helmet=Brand X、
- *   hes_a_pirate=加勒比海盗(Hans Zimmer)、game_of_thrones=GoT主题(Ramin Djawadi)、age_of_kings=帝国时代2主题。
+ *   hes_a_pirate=加勒比海盗(Hans Zimmer)、age_of_kings=帝国时代2主题。
  * 排除：shadow_assassin（暗影刺客·中国琵琶曲）、SLAVIC（北欧瑞典曲）、AFRICA（自制非洲器乐：鼓组+kora+木琴），
  *   以及全部中国 / 日本 / 朝鲜 / 草原 / 中亚 / 青藏 / 印度 / 东南亚 / 南美曲。
  */
 const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
     'LATIN', 'WEST_ASIA', 'BERBER', 'GERMANIC',
     'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet',
-    'hes_a_pirate', 'game_of_thrones', 'age_of_kings',
+    'hes_a_pirate', 'age_of_kings',
 ]);
 
 function resolveAvailableBgmFolder(folder: string): string {
