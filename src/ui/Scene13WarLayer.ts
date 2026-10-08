@@ -3864,7 +3864,8 @@ export class Scene13WarLayer {
             if ((window as any).game?.combatUI?.isCorrectorOpen?.()) return;
             // 只认战场地面（13 画布 pointer-events:none，滚轮落在底下的地图容器上）；面板/列表照常滚动
             const t = e.target as HTMLElement | null;
-            if (!t || !(t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
+            // 🔴 战术期间 #map 被盖成 visibility:hidden，不参与命中测试，滚轮的 target 实测是 BODY/HTML —— 也要放行
+            if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
             e.preventDefault();
             e.stopPropagation();   // 捕获阶段拦下，底下的 Leaflet 战略地图不许跟着缩放
             const zoomDelta = -e.deltaY * 0.0015;

@@ -158,6 +158,7 @@ export class PlayerHero {
      *   · `'script'` 剧本模式 —— 到了年份优先奔赴历史战场，没有可打的战场才去找武将乱斗（9-16 定的那套）；
      *   · `'melee'`  乱斗模式 —— **完全不碰战场**，一直找武将入伍打乱斗。
      *
+     * 🔴 [2026-10-08 主人令「开局默认模式从剧本改为乱斗」] 默认改为 'melee' 乱斗（取代 2026-09-23 的默认剧本）。
      * 🔴 [2026-09-23 主人定] 默认改回 `'script'` 剧本模式，且剧本模式是**整个世界的模式**：
      *   「既然是历史剧本，就不能出现不符合历史的事情，这个总功能中包括其他军团不能随机产生。
      *     军团在历史剧本期间，不能随意寻敌，只有等剧本都结束后，自动切换到乱斗模式。」
@@ -166,7 +167,7 @@ export class PlayerHero {
      *   原面板「🚫 不出军团」勾选已并入本项（主人：把不出军团功能放到剧本模式中）。
      *   （9-17 曾定默认乱斗，已被本条取代。）
      */
-    public autoPlan: PlayerAutoPlan = 'script';
+    public autoPlan: PlayerAutoPlan = 'melee';
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
