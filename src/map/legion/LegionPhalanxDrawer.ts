@@ -2472,8 +2472,13 @@ export class LegionPhalanxDrawer {
             //       僚舰因此和旗舰同向、转弯即时跟手，不会再有"船头朝西、人往北走"。
             let shipDeg = (faceAng + Math.PI / 2) * 180 / Math.PI;
             shipDeg = ((shipDeg % 360) + 360) % 360;
-            const shipDir = ((Math.round((shipDeg - 45) / 22.5) % 16) + 16) % 16;
-            let resDeg = shipDeg - (45 + 22.5 * shipDir);
+            // 🔴 [2026-10-08 主人「浪花要和船的朝向为一条线」] 船身 16 向帧与浪花行都按**等距地面朝向**排（屏幕竖向压 0.5），
+            //    shipDeg 是屏幕行进角：先换算成地面朝向再选帧，残差角取「屏幕行进角 − 该帧的屏幕角」，船身才对准真实航向。
+            const shipRad = shipDeg * Math.PI / 180;
+            const worldDeg = ((Math.atan2(Math.sin(shipRad), 2 * Math.cos(shipRad)) * 180 / Math.PI) % 360 + 360) % 360;
+            const shipDir = ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16;
+            const frameRad = (45 + 22.5 * shipDir) * Math.PI / 180;
+            let resDeg = shipDeg - Math.atan2(Math.sin(frameRad), 0.5 * Math.cos(frameRad)) * 180 / Math.PI;
             while (resDeg > 180) resDeg -= 360;
             while (resDeg < -180) resDeg += 360;
             const shipRot = resDeg * Math.PI / 180;

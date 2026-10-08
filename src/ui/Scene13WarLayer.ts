@@ -3574,8 +3574,12 @@ export class Scene13WarLayer {
         const m = this.heroMan;
         if (!m || !this.active || m.hp <= 0) return;
         const W = this.canvas?.width ?? window.innerWidth;
-        const lx = this.flipSides ? W - x : x;
-        [m.tx, m.ty] = this.fieldBound(lx, y);
+        const H = this.canvas?.height ?? window.innerHeight;
+        // 渲染是「缩放（外）→ 左右对调（内）」，反算顺序相反：先去缩放，再去对调
+        const ux = W / 2 + (x - W / 2) / this.tacticalZoom;
+        const uy = H / 2 + (y - H / 2) / this.tacticalZoom;
+        const lx = this.flipSides ? W - ux : ux;
+        [m.tx, m.ty] = this.fieldBound(lx, uy);
         this.heroInput = null;
         this.heroClickOrder = { x: m.tx, y: m.ty };   // 这道令归队与 aimAt 都不许改写，走到才清
     }
@@ -3630,7 +3634,9 @@ export class Scene13WarLayer {
         const m = this.heroMan;
         if (!m || m.hp <= 0) return null;
         const W = this.canvas?.width ?? window.innerWidth;
-        return { x: this.flipSides ? W - m.x : m.x, y: m.y };
+        const H = this.canvas?.height ?? window.innerHeight;
+        const sx = this.flipSides ? W - m.x : m.x;
+        return { x: W / 2 + (sx - W / 2) * this.tacticalZoom, y: H / 2 + (m.y - H / 2) * this.tacticalZoom };
     }
 
     /**
@@ -3815,6 +3821,9 @@ export class Scene13WarLayer {
     /** [2026-08-19 主人需求] 13 战斗退出按钮（点击后按当前兵力比自动结算战果，走 onDecision 通道） */
     private exitBtn: HTMLButtonElement | null = null;
 
+    /** 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」] 战术模式战场画面缩放比例（0.6~2.5） */
+    private tacticalZoom = 1.0;
+
     /** 挂到 body（全屏透明 canvas，叠在地图 DOM 之上；透明像素不遮挡地图，只画精灵） */
     public attach(): void {
         if (this.canvas) return;
@@ -3848,6 +3857,21 @@ export class Scene13WarLayer {
             }
         };
         window.addEventListener('resize', onResize);
+
+        // 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」]
+        const onWheel = (e: WheelEvent) => {
+            if (!this.active && !this.lingering) return;
+            if ((window as any).game?.combatUI?.isCorrectorOpen?.()) return;
+            // 只认战场地面（13 画布 pointer-events:none，滚轮落在底下的地图容器上）；面板/列表照常滚动
+            const t = e.target as HTMLElement | null;
+            if (!t || !(t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
+            e.preventDefault();
+            e.stopPropagation();   // 捕获阶段拦下，底下的 Leaflet 战略地图不许跟着缩放
+            const zoomDelta = -e.deltaY * 0.0015;
+            const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
+            this.tacticalZoom = Math.max(0.6, Math.min(2.5, nextZoom));
+        };
+        window.addEventListener('wheel', onWheel, { passive: false, capture: true });
     }
 
     public isActive(): boolean {
@@ -3978,6 +4002,7 @@ export class Scene13WarLayer {
         // [2026-08-16 修·进 13 闪旧尸体] 主画布同步清空：stop 只隐藏 canvas 不清内容，
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.tacticalZoom = 1.0;
         this.bank = {};
         this.bankSides.clear();
         this.deferredAssetLoads = [];
@@ -4680,6 +4705,7 @@ export class Scene13WarLayer {
          * ⚠️ 光靠这一刀不够：stop 之后仍有一帧已排队的 render 会再调 coverStrategyMap()，
          *    所以那边另加了「演出已停不许盖」的守卫，两处配合才真正修好。 */
         this.restoreStrategyMap();
+        this.tacticalZoom = 1.0;
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
@@ -8889,6 +8915,24 @@ export class Scene13WarLayer {
             && (this.assetsReadyOnce || performance.now() - this.entryStartedAt > Scene13WarLayer.ENTRY_WAIT_MAX_MS)) {
             this.beginEntryFade(cv);
         }
+        // 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」]
+        const zoom = this.tacticalZoom;
+        const hasZoom = Math.abs(zoom - 1) > 0.001;
+        const cx = cv.width / 2;
+        const cy = cv.height / 2;
+
+        if (hasZoom) {
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            // 缩小模式下垫底平铺地形，防止边缘漏黑底
+            if (zoom < 1 && this.decorHasTerrain && this.groundPainter.terrain) {
+                ctx.drawImage(this.groundPainter.terrain, 0, 0);
+            }
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(zoom, zoom);
+            ctx.translate(-cx, -cy);
+        }
+
         // [2026-08-31 主人定] 攻守两侧左右对调（跟随军团固定左边）：整个战场水平镜像渲染。
         // 逻辑坐标（移动/索敌/碰撞/胜负/兵力）完全不变，只翻转「画出来的样子」——
         // 城门 NE/SE 素材翻转后自动朝右、士兵/特效/建筑跟着镜像。
@@ -8898,9 +8942,13 @@ export class Scene13WarLayer {
         // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
         // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
         if (this.decor) {
-            ctx.globalCompositeOperation = 'copy';
-            ctx.drawImage(this.decor, 0, 0);
-            ctx.globalCompositeOperation = 'source-over';
+            if (!hasZoom) {
+                ctx.globalCompositeOperation = 'copy';
+                ctx.drawImage(this.decor, 0, 0);
+                ctx.globalCompositeOperation = 'source-over';
+            } else {
+                ctx.drawImage(this.decor, 0, 0);
+            }
         } else {
             ctx.clearRect(0, 0, cv.width, cv.height);
         }
@@ -9377,6 +9425,7 @@ export class Scene13WarLayer {
             }
         }
         if (flip) ctx.restore();
+        if (hasZoom) ctx.restore();
         this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
         if (this.timeOfDay.active && this.decorHasTerrain) {   // 地形缺图时画布不是满铺，不能整屏压色

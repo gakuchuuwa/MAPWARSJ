@@ -1,8 +1,7 @@
 /**
  * PlayerScene13Control —— 战术模式（13）里的玩家输入与指挥条（玩家面板）。
  *
- *   · WASD / 方向键：移动玩家（屏幕方向，左右对调由 Scene13WarLayer 自己换算）
- *   · 点战场地面：玩家前往该点
+ *   · 🔴 [2026-10-08 主人定] 玩家不能点击移动、也不能 WASD，只有「自动 / 待命」两态
  *   · Q：受控编队全军攻击（自动索敌）；E：待命（不移动，够得着照打）
  *   · 退出战斗：按当前战况自动结算战果并退出
  *   · 指挥条/玩家面板（顶部居中）：官阶 / 本场击杀 / 攻击·待命·退出战斗按钮 / 受控编队数
@@ -70,10 +69,9 @@ export class PlayerScene13Control {
             a: 'left', arrowleft: 'left', d: 'right', arrowright: 'right',
         };
         if (moveKeys[k]) {
+            // 🔴 [2026-10-08 主人「玩家不能点击移动，也不能WASD，只能自动和待命」] 只拦截按键（免得平移底下的地图），不再驱动玩家移动
             e.preventDefault();
             e.stopImmediatePropagation();
-            if (down) this.keys.add(moveKeys[k]); else this.keys.delete(moveKeys[k]);
-            this.pushInput();
             return;
         }
         if (!down) return;
@@ -99,8 +97,7 @@ export class PlayerScene13Control {
         // 只认战场地面（13 画布 pointer-events:none，点击落到底下的地图容器上）；按钮/面板照常
         if (!t || !(t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
         e.preventDefault();
-        e.stopPropagation();
-        this.scene.setHeroMoveToScreen(e.clientX, e.clientY);
+        e.stopPropagation();   // 🔴 [2026-10-08] 点地面不再前往，只吞掉点击
     }
 
     // ── 指挥条 / 战术模式玩家面板 ────────────────────────────
@@ -159,7 +156,7 @@ export class PlayerScene13Control {
 
         const hint = document.createElement('span');
         hint.style.cssText = 'font-size:11px; color:#c9b58a;';
-        hint.textContent = 'WASD 移动 · 点地面前往';
+        hint.textContent = 'Q 自动 · E 待命（原地可攻击）';
         bar.appendChild(hint);
         this.hint = hint;
 

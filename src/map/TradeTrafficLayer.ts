@@ -565,7 +565,8 @@ export class TradeTrafficLayer {
                     // 海上的单位进队列（船身罗盘角/朝向/船长都按这一帧算出来的真值给）
                     // 🔴 [2026-09-28 主人「船头和船尾的浪花应该在一条线上」] deg 给**画出来的船身角**（16 向扇区中心），
                     //    不给带 10° 死区的行进角 lastDeg —— 船身不旋转、只按扇区换帧，浪花要沿船身轴发，才落在船头船尾上。
-                    const hullDeg = asset.dirs16 ? 45 + 22.5 * dirIdx : dirRes.deg;
+                    const hullRad = (45 + 22.5 * dirIdx) * Math.PI / 180;
+                    const hullDeg = asset.dirs16 ? Math.atan2(Math.sin(hullRad), 0.5 * Math.cos(hullRad)) * 180 / Math.PI : dirRes.deg;
                     seaShips.push({ x: pt.x, y: pt.y, r: u, isAlive: true, dir: dirIdx, deg: hullDeg, shipLen: fw * scale });
                 }
             }
@@ -607,8 +608,11 @@ export class TradeTrafficLayer {
             if (diff > 180) diff -= 360;
             if (Math.abs(diff) <= half + 10) return { idx: lastIdx, deg: lastDeg };
         }
+        // 🔴 [2026-10-08 主人「浪花要和船的朝向为一条线」] 16 向帧按等距地面朝向排（竖向压 0.5），屏幕角先换算成地面朝向再取帧
+        const rad = deg * Math.PI / 180;
+        const worldDeg = Math.atan2(Math.sin(rad), 2 * Math.cos(rad)) * 180 / Math.PI;
         const idx = asset.dirs16
-            ? ((Math.round((deg - 45) / 22.5) % 16) + 16) % 16
+            ? ((Math.round((worldDeg - 45) / 22.5) % 16) + 16) % 16
             : OrientationSystem.get8DirectionFromAngle(deg);
         return { idx, deg };
     }
