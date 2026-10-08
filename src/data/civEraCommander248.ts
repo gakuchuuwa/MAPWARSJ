@@ -177,6 +177,7 @@ export function resolveCivEraCommander(generalId: string | null | undefined): st
     const own = row?.[era];
     const cell = own && own.length > 0 ? own : eraGlobalPool(era);
     if (cell.length === 0) return null;
+    // 🔴 [2026-10-08 主人「一局，一个武将只套一个兵模」] 键 = 武将 id + 本局种子：同一位武将整局永远同一个兵模
     return cell[stableHash(generalId + ':' + SESSION_SEED) % cell.length];
 }
 
@@ -193,5 +194,5 @@ export function resolveFactionCommander(factionId: string | null | undefined, se
     const own = row?.[era];
     const cell = own && own.length > 0 ? own : eraGlobalPool(era);
     if (cell.length === 0) return null;
-    return cell[stableHash((factionId ?? '') + ':' + SESSION_SEED) % cell.length];
+    return cell[stableHash((factionId ?? '') + ':' + SESSION_SEED) % cell.length];   // 无武将：键 = 势力 id + 本局种子
 }

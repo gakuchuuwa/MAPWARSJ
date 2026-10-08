@@ -120,8 +120,10 @@ export function commanderUnitOf(generalId: string | null | undefined, expandedSl
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */
-export function withCommander(generalId: string | null | undefined, expandedSlots: string[], ctx?: { factionId?: string | null; seedKey?: string }): string[] {
+export function withCommander(generalId: string | null | undefined, expandedSlots: string[], ctx?: { factionId?: string | null; seedKey?: string; hasElite?: boolean }): string[] {
     if (expandedSlots.length !== 9) return expandedSlots;
+    // 🔴 [2026-10-08 主人令「没有武将，或者没有精锐的军团，不要出现第十队」] 无将、或明确无精锐 → 不追加主将队（取代 2026-10-05「每个军团都必须有主将队」）
+    if (!generalId || ctx?.hasElite === false) return expandedSlots;
     const cmd = commanderUnitOf(generalId, expandedSlots, ctx);
     return cmd ? [...expandedSlots, cmd] : expandedSlots;
 }

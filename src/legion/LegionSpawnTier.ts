@@ -107,6 +107,8 @@ export function makeArmyElite(army: Army, eliteName: string, withGeneral: boolea
         army.name = eliteName;
         army.isElite = true;
         elite = true;
+        // 🔴 [2026-10-08] 已有将、后升精锐：第 10 队的条件刚满足，刷新一次编制
+        if (army.generalId) applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
     }
     if (withGeneral && !army.generalId) {
         general = attachFactionGeneralToArmy(army);

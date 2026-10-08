@@ -3576,8 +3576,8 @@ export class Scene13WarLayer {
         const W = this.canvas?.width ?? window.innerWidth;
         const H = this.canvas?.height ?? window.innerHeight;
         // 渲染是「缩放（外）→ 左右对调（内）」，反算顺序相反：先去缩放，再去对调
-        const ux = W / 2 + (x - W / 2) / this.tacticalZoom;
-        const uy = H / 2 + (y - H / 2) / this.tacticalZoom;
+        const ux = W / 2 + (x - W / 2 - this.tacticalPanX) / this.tacticalZoom;
+        const uy = H / 2 + (y - H / 2 - this.tacticalPanY) / this.tacticalZoom;
         const lx = this.flipSides ? W - ux : ux;
         [m.tx, m.ty] = this.fieldBound(lx, uy);
         this.heroInput = null;
@@ -3636,7 +3636,7 @@ export class Scene13WarLayer {
         const W = this.canvas?.width ?? window.innerWidth;
         const H = this.canvas?.height ?? window.innerHeight;
         const sx = this.flipSides ? W - m.x : m.x;
-        return { x: W / 2 + (sx - W / 2) * this.tacticalZoom, y: H / 2 + (m.y - H / 2) * this.tacticalZoom };
+        return { x: W / 2 + this.tacticalPanX + (sx - W / 2) * this.tacticalZoom, y: H / 2 + this.tacticalPanY + (m.y - H / 2) * this.tacticalZoom };
     }
 
     /**
@@ -3823,6 +3823,18 @@ export class Scene13WarLayer {
 
     /** 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」] 战术模式战场画面缩放比例（1~2.5；1 = 基础画面，只许放大不许拉远，2026-10-08 主人定） */
     private tacticalZoom = 1.0;
+    /** 🔴 [2026-10-08 主人「战术模式放大后，可以拖拽镜头视角」] 放大后的镜头平移（屏幕像素，相对屏幕中心；缩放为 1 时恒为 0） */
+    private tacticalPanX = 0;
+    private tacticalPanY = 0;
+    /** 把平移卡在「放大后的画面不露边」的范围内 */
+    private clampTacticalPan(): void {
+        const cv = this.canvas;
+        if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
+        const limX = (this.tacticalZoom - 1) * cv.width / 2;
+        const limY = (this.tacticalZoom - 1) * cv.height / 2;
+        this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
+        this.tacticalPanY = Math.max(-limY, Math.min(limY, this.tacticalPanY));
+    }
 
     /** 挂到 body（全屏透明 canvas，叠在地图 DOM 之上；透明像素不遮挡地图，只画精灵） */
     public attach(): void {
@@ -3871,8 +3883,37 @@ export class Scene13WarLayer {
             const zoomDelta = -e.deltaY * 0.0015;
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
             this.tacticalZoom = Math.max(1, Math.min(2.5, nextZoom));
+            this.clampTacticalPan();
         };
         window.addEventListener('wheel', onWheel, { passive: false, capture: true });
+
+        // 🔴 [2026-10-08 主人「战术模式放大后，可以拖拽镜头视角」] 放大后按住左键拖动平移；目标判定同滚轮（战术期间 #map 隐藏，命中 BODY）
+        let dragging = false;
+        let lastX = 0, lastY = 0;
+        const onDown = (e: MouseEvent) => {
+            if (e.button !== 0 || !this.active || this.tacticalZoom <= 1.001) return;
+            const t = e.target as HTMLElement | null;
+            if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
+            dragging = true; lastX = e.clientX; lastY = e.clientY;
+            document.body.style.cursor = 'grabbing';
+            e.preventDefault();
+        };
+        const onMove = (e: MouseEvent) => {
+            if (!dragging) return;
+            this.tacticalPanX += e.clientX - lastX;
+            this.tacticalPanY += e.clientY - lastY;
+            lastX = e.clientX; lastY = e.clientY;
+            this.clampTacticalPan();
+        };
+        const onUp = () => {
+            if (!dragging) return;
+            dragging = false;
+            document.body.style.cursor = '';
+        };
+        window.addEventListener('mousedown', onDown, { capture: true });
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('blur', onUp);
     }
 
     public isActive(): boolean {
@@ -4004,6 +4045,7 @@ export class Scene13WarLayer {
         // start 后素材加载期 pending>0 → tick 不 render，会把上一场最后一帧（含尸体）亮出来。
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0;
         this.bank = {};
         this.bankSides.clear();
         this.deferredAssetLoads = [];
@@ -4126,9 +4168,9 @@ export class Scene13WarLayer {
 
         try {
             // 攻守各一侧：row 0 最靠中线（攻方在左、守方在右）
-            const sides: { region: string; troops: number; f: 0 | 1; factionId?: string | null; generalId?: string | null }[] = [
-                { region: init.attackerRegion, troops: init.attackerTroops, f: 0, factionId: init.attackerFactionId, generalId: init.attackerGeneralId },
-                { region: init.defenderRegion, troops: init.defenderTroops, f: 1, factionId: init.defenderFactionId, generalId: init.defenderGeneralId },
+            const sides: { region: string; troops: number; f: 0 | 1; factionId?: string | null; generalId?: string | null; hasElite: boolean }[] = [
+                { region: init.attackerRegion, troops: init.attackerTroops, f: 0, factionId: init.attackerFactionId, generalId: init.attackerGeneralId, hasElite: !!init.attackerEliteName },
+                { region: init.defenderRegion, troops: init.defenderTroops, f: 1, factionId: init.defenderFactionId, generalId: init.defenderGeneralId, hasElite: !!init.defenderEliteName },
             ];
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
@@ -4139,7 +4181,7 @@ export class Scene13WarLayer {
             const spanY = VH * 0.80;
 
             for (const side of sides) {
-                const lanes = this.slotsOf(side.region, side.factionId, side.generalId);
+                const lanes = this.slotsOf(side.region, side.factionId, side.generalId, side.hasElite);
                 const n = lanes.length;
                 const mode = this.formationModeOf(side.region, side.factionId, side.generalId);
                 // 🔴 前中后固定（主人 2026-08-15 定）：不再随机换序，出兵口顺序 = 编制槽位展开序
@@ -4707,6 +4749,7 @@ export class Scene13WarLayer {
          *    所以那边另加了「演出已停不许盖」的守卫，两处配合才真正修好。 */
         this.restoreStrategyMap();
         this.tacticalZoom = 1.0;
+        this.tacticalPanX = 0; this.tacticalPanY = 0;
         this.deferredAssetLoads = [];
         this.diagPush('stop', { reason, keepFrame, active: this.active, over: this.over });
         this.diagFlush('stop:' + reason);
@@ -4884,7 +4927,7 @@ export class Scene13WarLayer {
      *   - 三阵型（鱼鳞 3×3 / 三角 2+3+4 / 雁行 4+3+2）展开后均为 9 口，展开序 = 前/中/后三排
      * 口内 key 为兵种 id，与 UNIT_ASSETS 键一致。
      */
-    private slotsOf(region: string, factionId?: string | null, generalId?: string | null): { key: string }[] {
+    private slotsOf(region: string, factionId?: string | null, generalId?: string | null, hasElite?: boolean): { key: string }[] {
         try {
             // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
             const factionSlots = factionId ? getFactionCompositionSlots(factionId, generalId) : null;
@@ -4895,7 +4938,7 @@ export class Scene13WarLayer {
                 if (types.length === 9) {
                     // 🔴 防御：WAR_TYPES 没有的兵种（势力专属/新兵种）替换成轻步，防运行时 wt.cls 崩溃
                     // 🔴 [2026-09-23] 编制 9 口 + 主将队第 10 口
-                    return withCommander(generalId, types, { factionId, seedKey: region }).map((key) => ({
+                    return withCommander(generalId, types, { factionId, seedKey: region, hasElite }).map((key) => ({
                         key: WAR_TYPES[key] ? key : 'light_infantry',
                     }));
                 }
@@ -8118,7 +8161,8 @@ export class Scene13WarLayer {
                     //   · 攻城武器不算 —— 砸墙有 siege_impact 管；
                     //   · 目标是建筑（'sprite' in foe）不算 —— 打墙不是绞杀。
                     // 不在列阵期计数（deploying 分支已 continue）。
-                    if (stats.rng <= 65 && !m.siegeW && !('sprite' in foe)) this.meleeContactCount++;
+                    // 🔴 [2026-10-08 主人定] 远程攻击时也播放自制战斗音效，攻城武器除外；两军交战即播，无战斗再停
+                    if (!m.siegeW && !('sprite' in foe)) this.meleeContactCount++;
                     m.fightT = (m.fightT || 0) + dt;
                     // 🔴 [2026-08-17 主人拍板] 目标只剩半血以下就**不换人**，把他打死再走。
                     //    原来不看血量：跟一个人打满 4 秒，哪怕对方只剩一口气也照样掉头去找别人 ——
@@ -8939,7 +8983,7 @@ export class Scene13WarLayer {
                 ctx.drawImage(this.groundPainter.terrain, 0, 0);
             }
             ctx.save();
-            ctx.translate(cx, cy);
+            ctx.translate(cx + this.tacticalPanX, cy + this.tacticalPanY);
             ctx.scale(zoom, zoom);
             ctx.translate(-cx, -cy);
         }
