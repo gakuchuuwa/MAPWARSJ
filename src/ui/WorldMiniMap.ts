@@ -50,6 +50,11 @@ export class WorldMiniMap {
     private level = LEVEL_MIN;
     private expanded = true;
     private timer: number;
+    /** 据点势力色圆点：id → 圆点；单独一个 canvas 渲染器，上千个点也不卡 */
+    private cityDots = new Map<string, L.CircleMarker>();
+    private cityDotColor = new Map<string, string>();
+    private cityRenderer = L.canvas({ padding: 0.5 });
+    private tickN = 0;
 
     constructor(
         private readonly mainMap: L.Map,
@@ -64,6 +69,11 @@ export class WorldMiniMap {
          * 不传时该功能自动失效（与加此参数前行为一致）。
          */
         private readonly getHostLegionId?: () => string | null,
+        /**
+         * 🔴 [2026-10-08 主人「小地图是不是可以添加上势力色」] 据点圆点：每座可见据点一个点，填当前所属势力的势力色（易主即换色）。
+         * 不传时不画（与加此参数前行为一致）。
+         */
+        private readonly getCityMarks?: () => { id: string; lat: number; lng: number; color: string }[],
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -205,11 +215,40 @@ export class WorldMiniMap {
             }
         }
         if (hide || !this.expanded) return;
+        if (++this.tickN % 4 === 0) this.syncCityDots();   // 约每秒同步一次势力色
         if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
         else this.trail.setLatLngs([]);
         if (p) this.dot.setLatLng([p.lat, p.lng]);
         this.viewRect.setBounds(this.mainMap.getBounds());
         if (this.level > LEVEL_MIN) this.applyView();
+    }
+
+    /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉 */
+    private syncCityDots(): void {
+        if (!this.getCityMarks) return;
+        const seen = new Set<string>();
+        for (const m of this.getCityMarks()) {
+            if (!Number.isFinite(m.lat) || !Number.isFinite(m.lng)) continue;
+            seen.add(m.id);
+            const dot = this.cityDots.get(m.id);
+            if (!dot) {
+                const c = L.circleMarker([m.lat, m.lng], {
+                    renderer: this.cityRenderer, radius: 2.5, weight: 0.8, color: '#1a1a1a', opacity: 0.85,
+                    fillColor: m.color, fillOpacity: 1, interactive: false,
+                }).addTo(this.mini);
+                this.cityDots.set(m.id, c);
+                this.cityDotColor.set(m.id, m.color);
+            } else if (this.cityDotColor.get(m.id) !== m.color) {
+                dot.setStyle({ fillColor: m.color });
+                this.cityDotColor.set(m.id, m.color);
+            }
+        }
+        for (const [id, dot] of this.cityDots) {
+            if (seen.has(id)) continue;
+            dot.remove();
+            this.cityDots.delete(id);
+            this.cityDotColor.delete(id);
+        }
     }
 
     public destroy(): void {
