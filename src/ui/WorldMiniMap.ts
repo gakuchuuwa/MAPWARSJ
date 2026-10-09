@@ -1,4 +1,7 @@
 import L from 'leaflet';
+import { GridSystem } from '../systems/GridSystem';
+import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
+import { City } from '../types/core';
 
 /**
  * 世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」；
@@ -41,6 +44,10 @@ export class WorldMiniMap {
     /** 🎨 势力色开关按钮（主人 2026-10-08 令「显示势力色，不显示势力色」） */
     private colorBtn: HTMLButtonElement;
     private colorOn = true;
+    /** 🔴 [2026-10-09 主人令] 领土多边形：势力 id -> L.Polygon；小地图独立合并与绘制 */
+    private territoryPolygons = new Map<string, L.Polygon>();
+    private lastOwnership: Map<number, City> | null = null;
+    private territoryDirty = true;
     private mini: L.Map;
     private viewRect: L.Rectangle;
     private trail: L.Polyline;
@@ -57,6 +64,8 @@ export class WorldMiniMap {
     private cityDots = new Map<string, L.CircleMarker>();
     private cityDotColor = new Map<string, string>();
     private cityRenderer = L.canvas({ padding: 0.5 });
+    /** 领土多边形单独一层 canvas，压在镜头框、行军线、据点圆点下面 */
+    private territoryRenderer = L.canvas({ padding: 0.5, pane: "wm-territory" });
     private tickN = 0;
 
     constructor(
@@ -77,6 +86,11 @@ export class WorldMiniMap {
          * 不传时不画（与加此参数前行为一致）。
          */
         private readonly getCityMarks?: () => { id: string; lat: number; lng: number; color: string }[],
+        /**
+         * 🔴 [2026-10-09 主人令] 六边形归属快照：小地图自己算合并多边形，不论大地图缩放几级都实时反映。
+         * 不传时不画领土多边形。
+         */
+        private readonly getHexOwnership?: () => Map<number, City> | null,
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -118,6 +132,7 @@ export class WorldMiniMap {
             worldCopyJump: false,
         });
         L.tileLayer(BASE_URL, { noWrap: true, minZoom: 0, maxZoom: 8 }).addTo(this.mini);
+        this.mini.createPane("wm-territory").style.zIndex = "350";
         this.viewRect = L.rectangle([[0, 0], [0, 0]], { color: '#f5d77a', weight: 1.5, fill: false, interactive: false }).addTo(this.mini);
         this.trail = L.polyline([], { color: '#e8452c', weight: 2, opacity: 0.9, interactive: false }).addTo(this.mini);
         this.dot = L.marker([0, 0], {
@@ -145,16 +160,24 @@ export class WorldMiniMap {
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
     }
 
-    /** 势力色开关（🎨 按钮）：关＝撤掉全部圆点并停止同步；开＝立刻重画 */
+    /** 势力色开关（🎨 按钮）：控制色块和圆点一起显示或隐藏 */
     private setColorOn(on: boolean): void {
         this.colorOn = on;
         this.colorBtn.classList.toggle('is-off', !on);
         this.colorBtn.title = on ? '隐藏势力色' : '显示势力色';
-        if (on) { this.syncCityDots(); return; }
+        if (on) {
+            this.territoryDirty = true;
+            this.syncTerritoryPolygons();
+            this.syncCityDots();
+            return;
+        }
+        for (const poly of this.territoryPolygons.values()) poly.remove();
+        this.territoryPolygons.clear();
         for (const dot of this.cityDots.values()) dot.remove();
         this.cityDots.clear();
         this.cityDotColor.clear();
     }
+
 
     /** 线路显示开关（🧭 按钮）：关＝把折线从图上撤掉，采样照常记着，再打开即恢复 */
     private setTrailOn(on: boolean): void {
@@ -233,7 +256,10 @@ export class WorldMiniMap {
             }
         }
         if (hide || !this.expanded) return;
-        if (++this.tickN % 4 === 0) this.syncCityDots();   // 约每秒同步一次势力色
+        if (++this.tickN % 4 === 0) {
+            const colorChanged = this.syncCityDots();
+            this.syncTerritoryPolygons(colorChanged);
+        }
         if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
         else this.trail.setLatLngs([]);
         if (p) this.dot.setLatLng([p.lat, p.lng]);
@@ -241,9 +267,10 @@ export class WorldMiniMap {
         if (this.level > LEVEL_MIN) this.applyView();
     }
 
-    /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉 */
-    private syncCityDots(): void {
-        if (!this.getCityMarks || !this.colorOn) return;
+    /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉；返回是否有据点换色 */
+    private syncCityDots(): boolean {
+        if (!this.getCityMarks || !this.colorOn) return false;
+        let colorChanged = false;
         const seen = new Set<string>();
         for (const m of this.getCityMarks()) {
             if (!Number.isFinite(m.lat) || !Number.isFinite(m.lng)) continue;
@@ -259,6 +286,7 @@ export class WorldMiniMap {
             } else if (this.cityDotColor.get(m.id) !== m.color) {
                 dot.setStyle({ fillColor: m.color });
                 this.cityDotColor.set(m.id, m.color);
+                colorChanged = true;
             }
         }
         for (const [id, dot] of this.cityDots) {
@@ -266,11 +294,147 @@ export class WorldMiniMap {
             dot.remove();
             this.cityDots.delete(id);
             this.cityDotColor.delete(id);
+            colorChanged = true;
         }
+        return colorChanged;
+    }
+
+    /**
+     * 🔴 [2026-10-09 主人令] 小地图独立合并势力领土多边形并绘制
+     * 满足任一条重算，否则不动：
+     * ① Map 换了一个新对象（ownership !== this.lastOwnership）
+     * ② 有据点换了颜色（colorChanged || this.territoryDirty）
+     */
+    private syncTerritoryPolygons(colorChanged = false): void {
+        if (!this.getHexOwnership || !this.colorOn) return;
+        const ownership = this.getHexOwnership();
+        if (!ownership) return;
+
+        const ownershipChanged = ownership !== this.lastOwnership;
+        if (!ownershipChanged && !colorChanged && !this.territoryDirty) return;
+        this.lastOwnership = ownership;
+        this.territoryDirty = false;
+
+        // 剧本期里看不见的据点，它的格子也不画
+        const visibleCityIds = new Set<string>();
+        const cityColorMap = new Map<string, string>();
+        const factionColorMap = new Map<string, string>();
+        if (this.getCityMarks) {
+            for (const m of this.getCityMarks()) {
+                visibleCityIds.add(m.id);
+                cityColorMap.set(m.id, m.color);
+            }
+        }
+
+        // 按 city.factionId 给格子分组，跳过 panjun
+        const factionHexes = new Map<string, { q: number; r: number; key: number }[]>();
+        for (const [key, city] of ownership) {
+            if (!city || !city.factionId || city.factionId === 'panjun') continue;
+            if (visibleCityIds.size > 0 && !visibleCityIds.has(city.id)) continue;
+            const fid = city.factionId;
+            let list = factionHexes.get(fid);
+            if (!list) {
+                list = [];
+                factionHexes.set(fid, list);
+            }
+            const { q, r } = GridSystem.getCoordsFromKey(key);
+            list.push({ q, r, key });
+
+            if (!factionColorMap.has(fid)) {
+                const cColor = cityColorMap.get(city.id) ?? HISTORICAL_FACTION_COLORS[fid];
+                if (cColor) factionColorMap.set(fid, cColor);
+            }
+        }
+
+        const seenFactions = new Set<string>();
+        for (const [fid, hexes] of factionHexes) {
+            seenFactions.add(fid);
+            const color = factionColorMap.get(fid) ?? HISTORICAL_FACTION_COLORS[fid] ?? '#888888';
+            const paths = this.getMergedPaths(hexes);
+            if (paths.length === 0) continue;
+
+            const existing = this.territoryPolygons.get(fid);
+            if (existing) {
+                existing.setLatLngs(paths);
+                existing.setStyle({ fillColor: color });
+            } else {
+                const poly = L.polygon(paths, {
+                    renderer: this.territoryRenderer,
+                    fillColor: color,
+                    fillOpacity: 0.35,
+                    color: '#1a1a1a',
+                    weight: 1,
+                    opacity: 0.85,
+                    interactive: false,
+                }).addTo(this.mini);
+                this.territoryPolygons.set(fid, poly);
+            }
+        }
+
+        for (const [fid, poly] of this.territoryPolygons) {
+            if (!seenFactions.has(fid)) {
+                poly.remove();
+                this.territoryPolygons.delete(fid);
+            }
+        }
+    }
+
+    /**
+     * 🔴 [2026-10-09 主人令] 小地图独立六边形合并算法（不改动大地图代码）：
+     * 消除相邻公共内边，保留外轮廓段并拼接成闭合路径。
+     */
+    private getMergedPaths(hexList: { q: number; r: number; key: number }[]): L.LatLng[][] {
+        if (hexList.length === 0) return [];
+        const segments = new Set<string>();
+        const coordMap = new Map<string, { lat: number; lng: number }>();
+        const pKey = (lat: number, lng: number) => `${lat.toFixed(5)},${lng.toFixed(5)}`;
+
+        for (const h of hexList) {
+            const center = GridSystem.axialToLatLng(h.q, h.r);
+            const corners = GridSystem.getHexagonCorners(center);
+            for (let i = 0; i < 6; i++) {
+                const c1 = corners[i];
+                const c2 = corners[(i + 1) % 6];
+                const k1 = pKey(c1.lat, c1.lng);
+                const k2 = pKey(c2.lat, c2.lng);
+                const forward = `${k1}|${k2}`;
+                const backward = `${k2}|${k1}`;
+                if (segments.has(backward)) segments.delete(backward);
+                else {
+                    segments.add(forward);
+                    coordMap.set(k1, c1);
+                    coordMap.set(k2, c2);
+                }
+            }
+        }
+
+        const paths: L.LatLng[][] = [];
+        const nextMap = new Map<string, string>();
+        for (const seg of segments) {
+            const [k1, k2] = seg.split('|');
+            nextMap.set(k1, k2);
+        }
+        while (nextMap.size > 0) {
+            const loop: L.LatLng[] = [];
+            const startKey = nextMap.keys().next().value!;
+            let curr = startKey;
+            let safety = 0;
+            while (nextMap.has(curr) && safety++ < 5000) {
+                loop.push(L.latLng(coordMap.get(curr)!));
+                const next = nextMap.get(curr)!;
+                nextMap.delete(curr);
+                curr = next;
+                if (curr === startKey) break;
+            }
+            if (loop.length > 0) paths.push(loop);
+        }
+        return paths;
     }
 
     public destroy(): void {
         window.clearInterval(this.timer);
+        for (const poly of this.territoryPolygons.values()) poly.remove();
+        this.territoryPolygons.clear();
         this.mini.remove();
         this.root.remove();
     }

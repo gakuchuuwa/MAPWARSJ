@@ -469,6 +469,8 @@ export class GameApp {
                         id: c.id, lat: c.latitude, lng: c.longitude,
                         color: HISTORICAL_FACTION_COLORS[c.factionId] ?? this.factionManager?.getFactionColor(c.factionId) ?? '#999999',
                     })),
+                // 🔴 [2026-10-09 主人令] 六边形归属快照（小地图独立合并势力领土多边形）
+                () => this.cityManager?.getTerritorySystem?.()?.getHexOwnershipSnapshot?.() ?? null,
             );
 
             // 尽早启动主循环，避免 lengthy 同步初始化占死主线程（F12/拖动都失效）
