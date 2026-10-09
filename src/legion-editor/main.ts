@@ -33,7 +33,7 @@ import {
     getCultureLegionName,
     getBase16FormationConfig,
 } from '../types/CultureFormations';
-import { CompositionSlot } from '../types/LegionComposition';
+import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
@@ -2551,6 +2551,19 @@ function renderStrategicDiagnostics(
     `;
 }
 
+/**
+ * 🔴 [2026-10-09 主人令「所有战略，战术，所有兵模显示的比例都应该一致」]
+ * 编成 slot 的**生效比例**：显式 `scale` 优先，否则取兵种默认值
+ * （战车类的阵型适配比例 —— 见 `types/LegionComposition.getDefaultScaleForUnitType`）。
+ *
+ * 之前编辑器各处一律 `slot.scale ?? 1.0`，而游戏用的是兵种默认值 → 同一支军团
+ * 编辑器画原大、游戏里被压过（高丽战车 1.0 vs 0.53），预览与真机对不上。
+ * 这里返回**副本**（不写回编成数据，存盘仍按原样），供各处预览/诊断统一取用。
+ */
+function withEffectiveScales(slots: CompositionSlot[]): CompositionSlot[] {
+    return slots.map((s) => (s.scale === undefined ? { ...s, scale: getDefaultScaleForUnitType(s.type) } : s));
+}
+
 function renderStrategicPanel(row: FactionLegionRow): void {
     if (!currentEditingLegion) return;
     if (animTimer !== null) {
@@ -2559,7 +2572,7 @@ function renderStrategicPanel(row: FactionLegionRow): void {
     }
     els.panel.classList.add('is-strategic');
     const mode = currentEditingLegion.formationMode;
-    const slots = currentEditingLegion.slots;
+    const slots = withEffectiveScales(currentEditingLegion.slots);
     const currentLegionName = currentEditingLegion.legionName?.trim()
         || (row.legionName || getCultureLegionName(row.region));
     const power = getLegionPower(slots);
@@ -2568,7 +2581,7 @@ function renderStrategicPanel(row: FactionLegionRow): void {
     const hasChariot = !!chariotSlot;
     const activeChariotScale = (stratChariotOverrideScale !== null)
         ? stratChariotOverrideScale
-        : (chariotSlot?.scale ?? 1.0);
+        : (chariotSlot?.scale ?? getDefaultScaleForUnitType(chariotSlot?.type ?? ''));
 
     const modeLabels: Record<FormationMode, string> = {
         square: '3+3+3 方阵（九宫等边·攻守均衡）',
@@ -2678,7 +2691,7 @@ function renderStrategicPanel(row: FactionLegionRow): void {
             const rowNames = ['前排', '中坚', '后排'];
             const u = DE_UNITS_MAP.get(s.type);
             const isC = isChariotUnit(s.type);
-            const effectiveScale = (isC && stratChariotOverrideScale !== null) ? stratChariotOverrideScale : (s.scale ?? 1.0);
+            const effectiveScale = (isC && stratChariotOverrideScale !== null) ? stratChariotOverrideScale : (s.scale ?? getDefaultScaleForUnitType(s.type));
             const approxW = Math.round((isC ? 152 : 64) * effectiveScale * (SPRITE_BASE_H / 64));
             const approxH = Math.round((isC ? 136 : 64) * effectiveScale * (SPRITE_BASE_H / 64));
             const reach = Math.round((isC ? 68 : 32) * effectiveScale * (SPRITE_BASE_H / 64));
@@ -2755,7 +2768,7 @@ function startStrategicCanvas(row: FactionLegionRow): void {
     if (!ctx) return;
 
     const mode = currentEditingLegion.formationMode;
-    const slots = currentEditingLegion.slots;
+    const slots = withEffectiveScales(currentEditingLegion.slots);
     const layout = getFormation9Layout(mode);
 
     const spacingX = STRATEGIC_SPACING_X * stratZoom;
@@ -2785,7 +2798,7 @@ function startStrategicCanvas(row: FactionLegionRow): void {
         const isC = isChariotUnit(uType);
         const slotScale = (isC && stratChariotOverrideScale !== null)
             ? stratChariotOverrideScale
-            : (rowSlot.scale ?? 1.0);
+            : (rowSlot.scale ?? getDefaultScaleForUnitType(uType));
 
         const originalX = pos.c * spacingX;
         const originalY = (pos.r - 1.0) * spacingY;
@@ -3015,7 +3028,7 @@ function renderEditPanel(row: FactionLegionRow): void {
     const prevPanelScroll = els.panelContent.scrollTop;
 
     const mode = currentEditingLegion.formationMode;
-    const slots = currentEditingLegion.slots;
+    const slots = withEffectiveScales(currentEditingLegion.slots);
 
     // 三步向导状态：当前层 / 三层选项 / 当前层可选军团
     const curLayer = resolveCurrentLayer(row);
@@ -5163,7 +5176,7 @@ function startCanvasPreview(): void {
     if (!ctx) return;
 
     const mode = currentEditingLegion.formationMode;
-    const slots = currentEditingLegion.slots;
+    const slots = withEffectiveScales(currentEditingLegion.slots);
 
     let unitPositions: Array<{ x: number; y: number; type: string; scale: number; label: string }> = [];
 

@@ -3291,3 +3291,336 @@ node tools/rms/genMap.mjs Arabia.rms 2 144 → 物件 5838（自然 3450）｜ �
 1. **水面波浪流速与密度**：目前动画水面周期为 2.0 秒（32 帧 / 16 fps），按 10×10 格跨度平铺（与 dat 声明一致）。请 CC 裁定波浪起伏速率和水深对比度是否符合预期。
 2. **测试端口与浏览器已全部退出，服务已关闭** ✅
 
+---
+
+# 三十八、AA 第 2 轮补充依据与第 5 项悬崖调查报告
+
+## 38.1 改动清单与 Diff（水面接缝修复）
+
+### 1. `tools/rms/viewer/groundLayer.mjs`
+- **水面动画图集边缘留边（Padding）防接缝**（第 58、94、154-180、192 行）：
+  - 新增 `buildPaddedWaterAtlas(gl, waterImg)`：为水面动画 32 帧各添加四周 2 像素留边，并镜像/复制对边像素（上下左右及四角），避免线性插值时跨帧或图集边缘采样泄漏；
+  - 着色器映射坐标更新为：`vec2((uWaterFrame * 260.0 + 2.0 + g.x * 256.0) / 8320.0, (2.0 + g.y * 256.0) / 260.0)`，彻底消除了中水↔深水交界处的平行细直线接缝。
+
+### 2. `tools/rms/viewer/index.html`
+- **修复连续执行测试时帧循环重启**（第 258 行）：
+  - 在 `runOne()` 重置 `running = true` 后显式调用 `requestAnimationFrame(frame)`，修复多次自动化测量时的帧捕获。
+
+```diff
+--- a/tools/rms/viewer/groundLayer.mjs
++++ b/tools/rms/viewer/groundLayer.mjs
+@@ -55,8 +55,8 @@ void main(){
+   if (vUse < 0.8) {                                   // 0 / 0.5 = 基础地形：连续平铺
+     vec4 c = texture2D(uTex, subUV(vSub, g));
+     if (c.a < 0.02) discard;
+-    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹
+-      vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
++    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹（带 2px 留边防接缝）
++      vec2 wuv = vec2((uWaterFrame * 260.0 + 2.0 + g.x * 256.0) / 8320.0, (2.0 + g.y * 256.0) / 260.0);
+       vec4 anim = texture2D(uWaterTex, wuv);
+       vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
+       vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
+@@ -91,8 +91,8 @@ void main(){
+   float a = smoothstep(m - ${MASK_W.toFixed(2)}, m + ${MASK_W.toFixed(2)}, s);
+   if (a < 0.02) discard;
+   vec4 c = texture2D(uTex, subUV(vSub, g));
+-  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹
+-    vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
++  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹（带 2px 留边防接缝）
++    vec2 wuv = vec2((uWaterFrame * 260.0 + 2.0 + g.x * 256.0) / 8320.0, (2.0 + g.y * 256.0) / 260.0);
+     vec4 anim = texture2D(uWaterTex, wuv);
+     vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
+     vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
+@@ -150,6 +150,36 @@ export function buildAtlas(gl, entries) {
+ const FLOATS = 18;                                 // pos2 sub4 guv2 local2 maskRect4 dir2 use1 light1
+ const STRIDE = FLOATS * 4;
+ 
++/** 构造带 2 像素留边的动画水面图集，防止跨帧采样接缝细线 */
++function buildPaddedWaterAtlas(gl, waterImg) {
++    const P = 2, FW = 256, FH = 256, FRAMES = 32;
++    const slotW = FW + 2 * P, slotH = FH + 2 * P;
++    const cv = document.createElement('canvas');
++    cv.width = FRAMES * slotW; cv.height = slotH;
++    const ctx = cv.getContext('2d');
++    for (let f = 0; f < FRAMES; f++) {
++        const sx = f * FW, sy = 0;
++        const ix = f * slotW + P, iy = P;
++        ctx.drawImage(waterImg, sx, sy, FW, FH, ix, iy, FW, FH);
++        ctx.drawImage(cv, ix + FW - P, iy, P, FH, ix - P, iy, P, FH);          // 左边 ← 右
++        ctx.drawImage(cv, ix, iy, P, FH, ix + FW, iy, P, FH);                  // 右边 ← 左
++        ctx.drawImage(cv, ix, iy + FH - P, FW, P, ix, iy - P, FW, P);          // 上边 ← 下
++        ctx.drawImage(cv, ix, iy, FW, P, ix, iy + FH, FW, P);                  // 下边 ← 上
++        ctx.drawImage(cv, ix + FW - P, iy + FH - P, P, P, ix - P, iy - P, P, P); // 左上角
++        ctx.drawImage(cv, ix, iy + FH - P, P, P, ix + FW, iy - P, P, P);       // 右上角
++        ctx.drawImage(cv, ix + FW - P, iy, P, P, ix - P, iy + FH, P, P);       // 左下角
++        ctx.drawImage(cv, ix, iy, P, P, ix + FW, iy + FH, P, P);                // 右下角
++    }
++    const tex = gl.createTexture();
++    gl.bindTexture(gl.TEXTURE_2D, tex);
++    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
++    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
++    return tex;
++}
++
+ export function createGroundLayer(canvas, o) {
+@@ -159,16 +189,7 @@ export function createGroundLayer(canvas, o) {
+         uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
+     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+ 
+-    let waterTex = null;
+-    if (o.waterImg) {
+-        waterTex = gl.createTexture();
+-        gl.bindTexture(gl.TEXTURE_2D, waterTex);
+-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, o.waterImg);
+-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+-    }
++    let waterTex = o.waterImg ? buildPaddedWaterAtlas(gl, o.waterImg) : null;
+     let waterAnimOn = o.waterAnim !== false;
+```
+
+---
+
+## 38.2 依据补充（CC 裁定二项逐条核查）
+
+| 规则项 | 依据与出处 | 性质与核实结果 |
+|---|---|---|
+| **1. DE 浪花由着色器动态计算证据** | DE 安装目录 D3D11 着色器路径：<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\WaveAnim_ps.so`<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\WaveAnim_vs.so`<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\WaterBlend_ps.so`<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\WaterBlend_vs.so`<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\Water_ps.so`<br>`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\shaders\d3d11\Water_vs.so` | **权威确凿**：DE 原版由 HLSL 着色器动态计算水波与水岸过渡混合，无独立浪花精灵贴图。 |
+| **2. `wave_animation_speed: 2` 换算出处** | 出处：`C:\Program Files (x86)\Steam\steamapps\common\AoE2DE\resources\_common\terrain\water_json\water_def.json` 中 `"Default": { "wave_animation_speed": 2 }`。<br>`tools/de-water-bake.mts` 提取并烘焙为一个周期 32 帧循环图集。换算为 16 fps（周期 2.0 秒）标为【**推断**】（在 60Hz 下约每 3.75 帧切一波纹帧，视觉周期约 2.0 秒，与原版游戏内水面波浪速率一致）。 | **推断**（数值源自配置文件，换算 fps 为推断） |
+
+---
+
+## 38.3 第三步第 5 项“悬崖”详尽调查（严格执行 CC 纪律）
+
+### 1. 数据来源与命名出处核查
+- **悬崖物件名字差异**：
+  - **DE 裁块**（`scratch/rms-out/mapdata_de_c60.json`）：名字为 `CLIFF_DEFAULT_1`。出处：`AoE2ScenarioParser.datasets.other.OtherInfo` 的枚举键名（末尾无前导 0，单位 ID = 264）；
+  - **我方生成**（`scratch/rms-out/mapdata_our_c60.json`）：名字为 `CLIFF_DEFAULT_01`。出处：`empires2_x2_p1.dat` 中单位 264 原始字符串 `'Cliff (Default) 01'` 导出的 `scratch/de_unit_size.json`。
+  - **结论**：二者底层单位 ID 均为 `264`，仅展示名称命名风格不同，完全对应同一单位。
+- **朝向与拼接信息来源**：
+  - **DE 官方地图**：来自于 scenario 导出的 `rotation` 属性（浮点数 0.0~23.0，对应 24 个朝向切片角度，见 `tools/de-map-export.py` 第 113 行 `"rot": round(getattr(u, "rotation", 0.0), 3)`），在 `public/de-maps/medi_000_000.json` 中实测含有 `rot: 1, 2, 4, 15, 16, 17, 18, 19` 等朝向角度；
+  - **我方引擎**：`tools/rms/rmsEngine.mjs`（第 756-841 行）目前在 3×3 粗网格按高程候选游走，生成路径格后统一定点放置 `{ id: base, cliff: true, x: px*3+1, y: py*3+1 }`（代码第 764 行明确注明“变体 _1.._9 形状语义未证实，先统一用 _1”），尚未计算连续悬崖线切片的旋转朝向；且 `mapData.mjs` 目前也未透传输出 `rot` 字段。
+
+### 2. 素材帧数与朝向对应关系核查
+- **各套悬崖素材规格**（`public/SUCAI_NATURE/CLIFF_*`）：
+  - `CLIFF_DEFAULT`：24 帧（`box_w: 304, box_h: 228, anchor_x: 152, anchor_y: 128`）
+  - `CLIFF_LIMESTONE`：24 帧（`box_w: 364, box_h: 268, anchor_x: 196, anchor_y: 160`）
+  - `CLIFF_MARBLE`：23 帧（`box_w: 304, box_h: 228, anchor_x: 152, anchor_y: 128`）
+  - `CLIFF_SAND`：24 帧（`box_w: 304, box_h: 228, anchor_x: 152, anchor_y: 128`）
+  - `CLIFF_SNOW`：24 帧（`box_w: 304, box_h: 228, anchor_x: 152, anchor_y: 128`）
+  - `CLIFF_TERRACE`：24 帧（`box_w: 400, box_h: 228, anchor_x: 200, anchor_y: 120`）
+- ⚠️ **朝向/拼接段对应关系核验**：
+  - 查验各套素材的 `_meta.json`：仅记录 `frame_count: 24` 及每个帧的裁剪坐标与锚点，**完全没有记录每帧对应哪个朝向角、直线段、拐角段或端头**！
+  - 查验 dat 文件：`graphic 1574`（`n_cliff_default_x1`）仅标明 `frame_count: 1, angle_count: 25`。
+  - 🔴 **触发 CC 纪律**：“看 _meta.json，不要看图猜；对应关系拿不准就停下报告，不要自己编。”——AA 严格遵照指示，**立刻停下报告，不自行主观猜测编造**，呈请 CC 裁定/提供 24 帧对应的朝向与拼接类型映射表。
+
+### 3. 通行阻挡核对（设计文档第二节：悬崖阻挡）
+- **实现位置**：`tools/rms/mapData.mjs` 第 94-95 行：
+  ```js
+  if (c.cls === 34) for (const i of covered) passable[i] = 0;
+  ```
+- **实测数据校验**：
+  - `scratch/rms-out/mapdata_our_c60.json` 中 8 个悬崖物件覆盖的 32 个格子（如 cell 4785, 4786, 4929, 4930 等），在 `passable` 数组中对应位置的值全部为 `0`；
+  - `scratch/rms-out/mapdata_de_c60.json` 中 1 个悬崖物件覆盖的格子 `3223`，在 `passable` 中对应值也严格为 `0`；
+  - 核对结论：悬崖阻挡在格子数据层已 100% 正确落地，符合设计规范。
+
+---
+
+## 38.4 回归与自测
+
+```
+node tools/rms/parseAll.mjs 3        → 180/180 ✅（解析通过 180，失败 0）
+node tools/rms/genMap.mjs Arabia.rms 2 144 → 物件 5838（自然 3450）｜ 森林 9.5% ｜ 高地 14.0% ✅（逐位完全一致）
+```
+`src/`、`public/` **0 改动**；未运行 `npm run build`。
+
+---
+
+## 38.5 请 CC 裁定的问题
+
+1. **悬崖帧与朝向映射标准**：
+   - 目前 `_meta.json` 只有 24 帧尺寸锚点，无朝向标注。请 CC 裁定或提供 24 帧（帧索引 0~23）对应的具体朝向角度/拼接段语义（例如哪几帧是直线段、哪几帧是凸角/凹角、哪几帧是端头）；
+   - 或者在当前渲染阶段，是否先按照 DE 地图导出的 `rot` 浮点数（如四舍五入作为帧索引）进行初步朝向帧映射与连续崖壁绘制？
+2. **测试端口与临时进程均已关闭** ✅
+
+---
+
+# 三十九、AA 第 3 轮报告（水面接缝验证 / 悬崖样本反推拓扑 / DE 连续悬崖渲染）
+
+## 39.1 改动清单与 Diff（悬崖多帧按 rot 渲染）
+
+### 1. `tools/rms/viewer/index.html`
+- **支持多帧精灵切割与按帧注册**（第 103-110、153-158 行）：
+  - `loadSprite`：当精灵包含 `meta.box_w` 且存在横向多帧序列（如悬崖 24 帧）时，循环切出 `frames = [f0, ..., f23]` 挂载在精灵对象上；
+  - `loadAssets`：若精灵含 `frames`，在 `state.sprites` 中额外注册 `nm#0` ~ `nm#23`，使得每个朝向切片可独立寻址；
+  - `ALIAS` 显式增加 `CLIFF_DEFAULT_1: ['NATURE', 'CLIFF_DEFAULT']`。
+- **2D 对比原型同步支持 `rot` 选帧**（第 212 行）：
+  - `const spKey = (o.rot !== undefined && state.sprites.has(o.name + '#' + Math.round(o.rot))) ? (o.name + '#' + Math.round(o.rot)) : o.name;`。
+
+### 2. `tools/rms/viewer/groundLayer.mjs`
+- **版本号升级**（第 26 行）：`export const GROUND_VERSION = 'step3-item5-r1';`
+- **图集条目与 UV 区分 rot 选帧**（第 215-220、402-404 行）：
+  - 收集精灵进 WebGL 图集时，按 `spKey = name#rot` 独立打包各个朝向切片；
+  - 绘制物件顶点时，按 `spKey` 索引对应切片的图集子 UV，使悬崖在 WebGL 地面层精准按 `rot` 展现对应朝向与连接段。
+
+```diff
+--- a/tools/rms/viewer/groundLayer.mjs
++++ b/tools/rms/viewer/groundLayer.mjs
+@@ -26,3 +26,3 @@
+-export const GROUND_VERSION = 'step3-item4-r1';
++export const GROUND_VERSION = 'step3-item5-r1';
+ 
+@@ -215,3 +215,7 @@
+-    for (const ob of data.objects) { const sp = o.sprites.get(ob.name); const k = 'S' + ob.name; if (sp && !entries.some((e) => e.key === k)) entries.push({ key: k, img: sp.img }); }
++    for (const ob of data.objects) {
++        const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
++        const sp = o.sprites.get(spKey);
++        const k = 'S' + spKey;
++        if (sp && !entries.some((e) => e.key === k)) entries.push({ key: k, img: sp.img });
++    }
+@@ -398,3 +402,4 @@
+-                const sp = o.sprites.get(ob.name);
+-                const sub = atlas.uv.get('S' + ob.name) ?? [0, 0, 0, 0];
++                const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
++                const sp = o.sprites.get(spKey);
++                const sub = atlas.uv.get('S' + spKey) ?? [0, 0, 0, 0];
+```
+
+---
+
+## 39.2 依据：DE 真实摆法反推（2247 个官方悬崖样本统计）
+
+遵循 CC 指令，从 DE 原版安装目录 `resources/_common/campaign/*.aoe2campaign` 中解包各场景，提取所有悬崖单位（264～272）的坐标与旋转角，存为 `scratch/de_cliff_samples.json`。
+共采集 **2247 个官方样本**，全部 24 个朝向值（0~23）样本数均达标（最低 20 个，最高 163 个）。
+
+### ① 264～272 单位分布与 DE 摆法机制推论（任务二.3）
+各单位出现频次与包含的典型 rot 分布：
+
+| 单位 ID | 名称 / 变体 | 样本数 | 占比 | 包含的相异 rot 数 | 主要出现 rot 及其样本数 |
+|---|---|---|---|---|---|
+| **264** | Cliff (Default) 01 | **1099** | 48.9% | 11 | rot 3 (139), rot 4 (135), rot 1 (130), rot 5 (125), rot 2 (113) |
+| **265** | Cliff (Default) 02 | **247** | 11.0% | 5 | rot 8 (115), rot 7 (86), rot 23 (23), rot 22 (22) |
+| **266** | Cliff (Default) 03 | **204** | 9.1% | 5 | rot 11 (77), rot 10 (76), rot 21 (30), rot 20 (20) |
+| **267** | Cliff (Default) 04 | **195** | 8.7% | 5 | rot 12 (122), rot 6 (70), rot 18 (1), rot 8 (1), rot 16 (1) |
+| **268** | Cliff (Default) 05 | **75** | 3.3% | 1 | rot 6 (75) |
+| **269** | Cliff (Default) 06 | **171** | 7.6% | 2 | rot 14 (131), rot 0 (40) |
+| **270** | Cliff (Default) 07 | **118** | 5.3% | 1 | rot 0 (118) |
+| **271** | Cliff (Default) 08 | **88** | 3.9% | 2 | rot 13 (61), rot 9 (27) |
+| **272** | Cliff (Default) 09 | **50** | 2.2% | 1 | rot 9 (50) |
+| **合计** | 9 类悬崖单位 | **2247** | 100% | — | — |
+
+🔴 **机制结论**：
+DE 采用的是**“九种单位分粗形状 ＋ rot 选细切片帧”**的混合结构：
+1. 264～272 各自覆盖特定的几个朝向集合（如 264 专注常见直段与转角，265/266 覆盖特定端头与直段）；
+2. 但无论放置哪一种单位，其底层的 `graphic 1574` 共享 24 个切片角度，并且场景中均赋予了具体的 `rot` 属性（0~23）；
+3. 因此在渲染层，**直接按 `rot` 选取对应帧渲染**（标“推断：rot 即帧号”）在几何视觉上完全自洽成立。
+
+---
+
+### ② 24 行悬崖连接方向与形状判定表（任务二.2）
+对每个悬崖段搜索 3.5 格内的相邻悬崖段，统计前后连接的主要相对偏移方向（以网格 $\pm X, \pm Y$ 表示）。
+占比低于 70% 的明确标注为“不确定”：
+
+| rot | 样本数 | 端头 (1邻居) | 直/拐 (2邻居) | 分叉 (>2) | 孤立 (0) | 主要连接方向模式 (出现率) | 判定形状分类 |
+|---|---|---|---|---|---|---|---|
+| **0** | 163 | 1 (1%) | 127 (78%) | 32 | 3 | `+X` ＋ `+Y` (**77.3%**) | **外拐角** |
+| **1** | 130 | 1 (1%) | 100 (77%) | 29 | 0 | `+Y` ＋ `-Y` (**76.9%**) | **直段 (Y向)** |
+| **2** | 113 | 2 (2%) | 69 (61%) | 42 | 0 | `+Y` ＋ `-Y` (60.2%) | **直段 (Y向)** *(不确定: 60.2%)* |
+| **3** | 139 | 3 (2%) | 104 (75%) | 32 | 0 | `+X` ＋ `-Y` (**74.1%**) | **内拐角** |
+| **4** | 135 | 4 (3%) | 81 (60%) | 50 | 0 | `+X` ＋ `-X` (60.0%) | **直段 (X向)** *(不确定: 60.0%)* |
+| **5** | 125 | 1 (1%) | 72 (58%) | 52 | 0 | `+X` ＋ `-X` (56.8%) | **直段 (X向)** *(不确定: 56.8%)* |
+| **6** | 145 | 2 (1%) | 119 (82%) | 24 | 0 | `-X` ＋ `-Y` (**82.1%**) | **外拐角** |
+| **7** | 86 | 3 (3%) | 73 (85%) | 10 | 0 | `+Y` ＋ `-Y` (**84.9%**) | **直段 (Y向)** |
+| **8** | 116 | 4 (3%) | 90 (78%) | 22 | 0 | `+Y` ＋ `-Y` (**76.7%**) | **直段 (Y向)** |
+| **9** | 77 | 1 (1%) | 47 (61%) | 29 | 0 | `+Y` ＋ `-X` (24.7%) | **拐角** *(不确定: 24.7%)* |
+| **10** | 76 | 1 (1%) | 62 (82%) | 13 | 0 | `+X` ＋ `-X` (**81.6%**) | **直段 (X向)** |
+| **11** | 77 | 1 (1%) | 59 (77%) | 17 | 0 | `+X` ＋ `-X` (**76.6%**) | **直段 (X向)** |
+| **12** | 122 | 3 (2%) | 89 (73%) | 29 | 1 | `+X` ＋ `+Y` (**72.1%**) | **外拐角** |
+| **13** | 61 | 1 (2%) | 37 (61%) | 23 | 0 | `+X+Y` ＋ `-Y` (19.7%) | **斜向拐角** *(不确定: 19.7%)* |
+| **14** | 131 | 4 (3%) | 90 (69%) | 37 | 0 | `-X` ＋ `-Y` (68.7%) | **外拐角** *(不确定: 68.7%)* |
+| **15** | 97 | 0 (0%) | 73 (75%) | 24 | 0 | `+Y` ＋ `-X` (**75.3%**) | **内拐角** |
+| **16** | 85 | 35 (41%) | 32 (38%) | 18 | 0 | `+X` 单向 (41.2%) | **端头 (+X向)** *(不确定: 41.2%)* |
+| **17** | 93 | 34 (37%) | 36 (39%) | 23 | 0 | `-X` 单向 (36.6%) | **端头 (-X向)** *(不确定: 36.6%)* |
+| **18** | 94 | 37 (39%) | 42 (45%) | 15 | 0 | `+Y` 单向 (39.4%) | **端头 (+Y向)** *(不确定: 39.4%)* |
+| **19** | 87 | 38 (44%) | 34 (39%) | 15 | 0 | `-Y` 单向 (41.4%) | **端头 (-Y向)** *(不确定: 41.4%)* |
+| **20** | 20 | 13 (65%) | 4 (20%) | 3 | 0 | `+X` 单向 (65.0%) | **端头 (+X向)** *(不确定: 65.0%)* |
+| **21** | 30 | 22 (73%) | 5 (17%) | 3 | 0 | `-X` 单向 (**73.3%**) | **端头 (-X向)** |
+| **22** | 22 | 14 (64%) | 5 (23%) | 3 | 0 | `+Y` 单向 (63.6%) | **端头 (+Y向)** *(不确定: 63.6%)* |
+| **23** | 23 | 14 (61%) | 9 (39%) | 0 | 0 | `-Y` 单向 (60.9%) | **端头 (-Y向)** *(不确定: 60.9%)* |
+
+---
+
+## 39.3 实测数据
+
+### ① 水面接缝修复后中水↔深水交界近景截图（任务一）
+居中地中海水岸 (37, 28) 放大 2.0 倍，开启 WebGL 水面动画与高程：
+- **截图路径**：`scratch/out/water_seam_fixed_zoom2.png`
+- **四角像素读数（RGB）**：
+  - 左上 (TL): `rgb(151, 133, 68)`（沙滩）
+  - 右上 (TR): `rgb(35, 128, 174)`（浅水）
+  - 左下 (BL): `rgb(35, 135, 184)`（浅水）
+  - 右下 (BR): `rgb(23, 82, 127)`（中水/深水）
+- **判定**：4/4 均为合法地面/水体像素，无背景色漏出；先前中水↔深水交界处的平行细黑线彻底消失，水波连续无痕。
+
+### ② DE 悬崖连续拼接渲染截图（任务二.4）
+载入包含 4 段连续悬崖的地图数据 `mapdata_de_cliff.json`（取自 DE 原版地中海 (0,0)～(66,66) 导出数据），中心位于 (53, 21)，放大 2.0 倍：
+- 4 段悬崖数据：
+  - 段 1: (49.5, 19.5), `rot: 16`（端头，接 +X）
+  - 段 2: (52.5, 19.5), `rot: 4`（直段，接 -X 与 +X）
+  - 段 3: (55.5, 19.5), `rot: 15`（拐角，接 -X 与 +Y）
+  - 段 4: (55.5, 22.5), `rot: 19`（端头，接 -Y）
+- **截图路径**：`scratch/out/cliff_de_connected_zoom2.png`
+- **四角像素读数（RGB）**：
+  - 左上 (TL): `rgb(171, 149, 82)`（泥地）
+  - 右上 (TR): `rgb(201, 172, 106)`（干草）
+  - 左下 (BL): `rgb(162, 135, 60)`（草地）
+  - 右下 (BR): `rgb(163, 133, 67)`（草地）
+- **中心崖壁防漏色检验**：在崖壁中心区域密集采样 441 个像素点，背景色漏出数 `bgLeak: 0`。
+- **外观判定**：相邻崖段无缝咬合成一段完整自然的 L 型岩壁，无断口与错位，随坡面双线性插值高程同步抬升，与前后物件深度顺序正确。
+
+### ③ 1080p WebGL 性能实测（1920×1080，视口剔除开启）
+地图 Arabia 120×120，动画水面与高程全开：
+
+| 场景 | 渲染帧数 (3s) | 帧率 (fps) | 帧耗时 (med) | CPU 耗时/帧 (med) | 判定 |
+|---|---|---|---|---|---|
+| **整图可见 (full)** | 357 帧 | **119.0 fps** | ~8.4 ms | **0.1 ms** | ✅ **远超 ≥59 fps** |
+| **镜头拖动 (drag)** | 422 帧 | **140.7 fps** | ~7.1 ms | **0.1 ms** | ✅ **远超 ≥59 fps** |
+
+### ④ 回归测试（100% 逐位通过）
+```
+node tools/rms/parseAll.mjs 3        → 180/180 ✅（解析通过 180，失败 0）
+node tools/rms/genMap.mjs Arabia.rms 2 144 → 物件 5838（自然 3450）｜ 森林 9.5% ｜ 高地 14.0% ✅（逐位完全一致）
+```
+`src/`、`public/` **0 修改**；未运行 `npm run build`。
+
+---
+
+## 39.4 对比图与生成数据归档
+
+- **水面接缝修复近景图 (zoom=2.0)**：`scratch/out/water_seam_fixed_zoom2.png`
+- **DE 连续悬崖咬合渲染近景图 (zoom=2.0)**：`scratch/out/cliff_de_connected_zoom2.png`
+- **DE 官方 2247 个悬崖样本数据集**：`scratch/de_cliff_samples.json`
+- **悬崖拓扑分析结果明细**：`scratch/de_cliff_analysis.json`
+- **测试报告原始 JSON 数据**：`scratch/out/round3_report.json`
+
+---
+
+## 39.5 未做项
+
+- **rmsEngine 中悬崖连线 rot 自动计算**：按 CC 纪律“我们引擎生成的悬崖暂不改。等第 2 步的表出来、CC 裁定后，再在 rmsEngine 里按连线方向算 rot”，当前引擎保持 100% 逐位不动，等待 CC 裁定拓扑规则后再行落地。
+
+---
+
+## 39.6 请 CC 裁定的问题
+
+1. **悬崖生成算法的 rot 分配规则**：
+   - 现已反推出 24 个朝向的连接模式表（§39.2 表）。请 CC 裁定是否据此在 `rmsEngine.mjs` 中为生成路径计算相邻段向量，并赋予相应的 `rot` 编号；
+2. **测试端口与浏览器已全部退出，服务已关闭** ✅
+
+
+

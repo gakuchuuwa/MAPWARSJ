@@ -23,7 +23,7 @@
  *   `alpha = smoothstep(mask − 0.15, mask + 0.15, s)`；多层按优先级从低到高逐层叠；角邻居只在两条相邻边
  *   都不是该地形时才算。调试：`?debug=shape|mask|dir`。
  */
-export const GROUND_VERSION = 'step3-item4-r1';
+export const GROUND_VERSION = 'step3-item5-r1';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
 const TW = 64, TH = 32;
@@ -55,8 +55,8 @@ void main(){
   if (vUse < 0.8) {                                   // 0 / 0.5 = 基础地形：连续平铺
     vec4 c = texture2D(uTex, subUV(vSub, g));
     if (c.a < 0.02) discard;
-    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹
-      vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
+    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹（带 2px 留边防接缝）
+      vec2 wuv = vec2((uWaterFrame * 260.0 + 2.0 + g.x * 256.0) / 8320.0, (2.0 + g.y * 256.0) / 260.0);
       vec4 anim = texture2D(uWaterTex, wuv);
       vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
       vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
@@ -91,8 +91,8 @@ void main(){
   float a = smoothstep(m - ${MASK_W.toFixed(2)}, m + ${MASK_W.toFixed(2)}, s);
   if (a < 0.02) discard;
   vec4 c = texture2D(uTex, subUV(vSub, g));
-  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹
-    vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
+  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹（带 2px 留边防接缝）
+    vec2 wuv = vec2((uWaterFrame * 260.0 + 2.0 + g.x * 256.0) / 8320.0, (2.0 + g.y * 256.0) / 260.0);
     vec4 anim = texture2D(uWaterTex, wuv);
     vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
     vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
@@ -150,6 +150,36 @@ export function buildAtlas(gl, entries) {
 const FLOATS = 18;                                 // pos2 sub4 guv2 local2 maskRect4 dir2 use1 light1
 const STRIDE = FLOATS * 4;
 
+/** 构造带 2 像素留边的动画水面图集，防止跨帧采样接缝细线 */
+function buildPaddedWaterAtlas(gl, waterImg) {
+    const P = 2, FW = 256, FH = 256, FRAMES = 32;
+    const slotW = FW + 2 * P, slotH = FH + 2 * P;
+    const cv = document.createElement('canvas');
+    cv.width = FRAMES * slotW; cv.height = slotH;
+    const ctx = cv.getContext('2d');
+    for (let f = 0; f < FRAMES; f++) {
+        const sx = f * FW, sy = 0;
+        const ix = f * slotW + P, iy = P;
+        ctx.drawImage(waterImg, sx, sy, FW, FH, ix, iy, FW, FH);
+        ctx.drawImage(cv, ix + FW - P, iy, P, FH, ix - P, iy, P, FH);          // 左边 ← 右
+        ctx.drawImage(cv, ix, iy, P, FH, ix + FW, iy, P, FH);                  // 右边 ← 左
+        ctx.drawImage(cv, ix, iy + FH - P, FW, P, ix, iy - P, FW, P);          // 上边 ← 下
+        ctx.drawImage(cv, ix, iy, FW, P, ix, iy + FH, FW, P);                  // 下边 ← 上
+        ctx.drawImage(cv, ix + FW - P, iy + FH - P, P, P, ix - P, iy - P, P, P); // 左上角
+        ctx.drawImage(cv, ix, iy + FH - P, P, P, ix + FW, iy - P, P, P);       // 右上角
+        ctx.drawImage(cv, ix + FW - P, iy, P, P, ix - P, iy + FH, P, P);       // 左下角
+        ctx.drawImage(cv, ix, iy, P, P, ix + FW, iy + FH, P, P);                // 右下角
+    }
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return tex;
+}
+
 export function createGroundLayer(canvas, o) {
     const gl = canvas.getContext('webgl', { antialias: false, alpha: false, premultipliedAlpha: false });
     if (!gl) throw new Error('WebGL 不可用');
@@ -159,16 +189,7 @@ export function createGroundLayer(canvas, o) {
         uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-    let waterTex = null;
-    if (o.waterImg) {
-        waterTex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, waterTex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, o.waterImg);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    }
+    let waterTex = o.waterImg ? buildPaddedWaterAtlas(gl, o.waterImg) : null;
     let waterAnimOn = o.waterAnim !== false;
 
     const data = o.data, N = data.width;
@@ -191,7 +212,12 @@ export function createGroundLayer(canvas, o) {
     const entries = [];
     const terKey = new Map();
     for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) { const c = texCode(id); const im = c && o.textures.get(c); if (im) { terKey.set(id, 'T' + id); entries.push({ key: 'T' + id, img: im }); } }
-    for (const ob of data.objects) { const sp = o.sprites.get(ob.name); const k = 'S' + ob.name; if (sp && !entries.some((e) => e.key === k)) entries.push({ key: k, img: sp.img }); }
+    for (const ob of data.objects) {
+        const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
+        const sp = o.sprites.get(spKey);
+        const k = 'S' + spKey;
+        if (sp && !entries.some((e) => e.key === k)) entries.push({ key: k, img: sp.img });
+    }
     const maskKey = new Map();
     for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) {
         const mn = maskOf(id); if (!mn || maskKey.has(mn)) continue;
@@ -373,8 +399,9 @@ export function createGroundLayer(canvas, o) {
                 const objElev = objElevAt(ox, oy);
                 const px = isoX(ox, oy, offX), py = isoY(ox, oy) - objElev * 16.0;
                 if (px < wx0 || px > wx1 || py < wy0 || py > wy1) continue;
-                const sp = o.sprites.get(ob.name);
-                const sub = atlas.uv.get('S' + ob.name) ?? [0, 0, 0, 0];
+                const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
+                const sp = o.sprites.get(spKey);
+                const sub = atlas.uv.get('S' + spKey) ?? [0, 0, 0, 0];
                 let ww = 40, hh = 40, ax = 20, ay = 40;
                 if (sp) { ww = sp.img.width * SPRITE_SCALE; hh = sp.img.height * SPRITE_SCALE; ax = sp.ax * SPRITE_SCALE; ay = sp.ay * SPRITE_SCALE; }
                 const x0 = px - ax, y0 = py - ay + TH / 2;

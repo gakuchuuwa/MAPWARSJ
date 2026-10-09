@@ -49,6 +49,7 @@ const ALIAS = {
     ROCKX: ['NATURE', 'ROCK1'], ROCKSX: ['NATURE', 'ROCK2'], ROCKGX: ['NATURE', 'ROCK3'],
     ROCKF1: ['NATURE', 'ROCK_FORMATION1'], ROCKF2: ['NATURE', 'ROCK_FORMATION2'], ROCKF3: ['NATURE', 'ROCK_FORMATION3'],
     CLIFF_DESERT_01: ['NATURE', 'CLIFF_SAND'], CLIFF_SNOW_01: ['NATURE', 'CLIFF_SNOW'], CLIFF_DEFAULT_01: ['NATURE', 'CLIFF_DEFAULT'],
+    CLIFF_DEFAULT_1: ['NATURE', 'CLIFF_DEFAULT'],
     TREEA: ['NATURE', 'OAK'], TREEB: ['NATURE', 'OAK'], TREEC: ['NATURE', 'OAK'], FORTR: ['NATURE', 'OAK'],
     GOLDM: ['RESOURCE', 'GOLD_MINE'], STONM: ['RESOURCE', 'STONE_MINE'], PSTM: ['RESOURCE', 'STONE_MINE'],
     FORAGM: ['RESOURCE', 'FORAGE_BUSH'], FORAG: ['RESOURCE', 'FORAGE_BUSH'], FORAGGURJ: ['RESOURCE', 'FORAGE_BUSH'],
@@ -100,7 +101,14 @@ async function loadSprite(base) {
         const sheet = await loadImg(base + '/frames.png'); if (!sheet) return null;
         const cv = document.createElement('canvas'); cv.width = meta.box_w; cv.height = meta.box_h;
         cv.getContext('2d').drawImage(sheet, 0, 0, meta.box_w, meta.box_h, 0, 0, meta.box_w, meta.box_h);
-        return { img: cv, ax: meta.anchor_x ?? meta.box_w / 2, ay: meta.anchor_y ?? meta.box_h };
+        const fCount = meta.frames ?? Math.floor(sheet.width / meta.box_w);
+        const frames = [];
+        for (let f = 0; f < fCount; f++) {
+            const fcv = document.createElement('canvas'); fcv.width = meta.box_w; fcv.height = meta.box_h;
+            fcv.getContext('2d').drawImage(sheet, f * meta.box_w, 0, meta.box_w, meta.box_h, 0, 0, meta.box_w, meta.box_h);
+            frames.push(fcv);
+        }
+        return { img: cv, ax: meta.anchor_x ?? meta.box_w / 2, ay: meta.anchor_y ?? meta.box_h, frames };
     }
     const im = await loadImg(base + '/idle_0.png');
     if (!im) return null;
@@ -148,7 +156,18 @@ async function loadAssets() {
     let s = 0; const miss = [];
     await Promise.all(names.map(async (nm) => {
         const r = resolveSprite(nm);
-        if (r) { const sp = await loadSprite(`../../../public/SUCAI_${r[0]}/${r[1]}`); if (sp) { state.sprites.set(nm, sp); s++; return; } }
+        if (r) {
+            const sp = await loadSprite(`../../../public/SUCAI_${r[0]}/${r[1]}`);
+            if (sp) {
+                state.sprites.set(nm, sp);
+                if (sp.frames) {
+                    for (let f = 0; f < sp.frames.length; f++) {
+                        state.sprites.set(`${nm}#${f}`, { img: sp.frames[f], ax: sp.ax, ay: sp.ay });
+                    }
+                }
+                s++; return;
+            }
+        }
         miss.push(nm);
     }));
     state.waterImg = await loadImg('../../../public/SUCAI_TERRAIN/water-anim/default.png');
@@ -191,7 +210,8 @@ function draw2d(view) {
             elev = (1 - u) * (1 - v) * e0 + u * (1 - v) * e1 + u * v * e2 + (1 - u) * v * e3;
         }
         const px = isoX(ox, oy, OX), py = isoY(ox, oy) - elev * 16;
-        const sp = state.sprites.get(o.name);
+        const spKey = (o.rot !== undefined && state.sprites.has(o.name + '#' + Math.round(o.rot))) ? (o.name + '#' + Math.round(o.rot)) : o.name;
+        const sp = state.sprites.get(spKey);
         if (sp) ctx2d.drawImage(sp.img, px - sp.ax, py - sp.ay + TH / 2);
     }
     ctx2d.setTransform(1, 0, 0, 1, 0, 0);
@@ -255,6 +275,7 @@ async function runOne(scenario, mode, cull, seconds) {
     switchCanvas(); document.getElementById('bcull').className = cull ? 'on' : '';
     if (mode === 'gl') { await ensureLayer(); state.layer.setCull(cull); } else ctx2d = document.getElementById('cv').getContext('2d');
     frames = []; lastT = 0; running = true;
+    requestAnimationFrame(frame);
     const t0 = performance.now();
     const anim = () => {
         const el = (performance.now() - t0) / 1000;

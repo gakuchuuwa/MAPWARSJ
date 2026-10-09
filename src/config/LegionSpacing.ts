@@ -3,10 +3,16 @@
  *
  * 🔴 [2026-09-03 主人定：士兵比例统一、不搞特殊、看着真实] 只有一条规则：
  *
- *      单兵绘制尺寸 = DE 帧框 × (SPRITE_BASE_H × scale / DE_REF_FRAME_H)
+ *      单兵绘制尺寸 = DE 帧框 × (SPRITE_BASE_H × scale × slot比例 × sz / DE_REF_FRAME_H)
  *      格位间距     = STRATEGIC_SPACING_X / _Y × scale（与兵种无关的常数）
  *
  * 兵模大小按 DE 原比例（象比步兵大 2.96 倍，与 DE 帧高比一致），**但站位间距与兵种无关**。
+ * 🔴 [2026-10-09 主人令「所有战略，战术，所有兵模显示的比例都应该一致」] 公式里补进了 **sz（尺寸倍率）**：
+ *    sz 以前只在 13 战术生效（Scene13WarLayer 的 UNIT_PX×sz/64），战略地图漏读，
+ *    导致战象在地图上比 13 里大 1.25~1.8 倍、骑兵（sz 1.15/1.2）小 13%。
+ *    现两边同源：13 = UNIT_PX × sz / 64；地图 = SPRITE_BASE_H × 地图倍率 × slot比例 × sz / 64。
+ *    13 **不乘** slot比例：战术场地按 dat 真值占地半径排布（步兵 8 / 战车 20），素材原大即正确
+ *    （2026-09-09 主人定「素材本身的车身尺寸就是它该有的大小」）。
  *
  * ⚠️ 已删除、禁止写回：
  *   · 按行/按兵种算间距的 `rowMetrics`（2026-09-01 加的）。它让每排间距随该排兵种的帧框变化，
@@ -15,7 +21,7 @@
  *   · 与素材无关的常数间距下限（「只抬不降」）。
  *   · `kongque` 势力专属行距系数 0.58/0.75。
  *
- * 🔴 [2026-09-08 主人定「走A」] 唯一例外：**战车类 slot 带 `scale`**。
+ * 🔴 [2026-09-08 主人定「走A」] 唯一例外：**战车类带阵型适配比例**。
  *    起因：主人「战略地图上，古典时代先秦军团的阵型，不规整呀」。实测 DE 战车帧框远超格位间距 ——
  *    先秦远程战车 move 最宽 152×136 → 绘制 162×144px，而 STRATEGIC_SPACING_X 只有 46px；
  *    雁行阵后排那 2 格在 c=±0.5（中心距 = 1×46px，七个阵型里最窄的一对），
@@ -24,15 +30,21 @@
  *      **战车类绘制宽度上限 = 2 × STRATEGIC_SPACING_X = 92px**（一对战车各露一半，整排不超前排 footprint）
  *      scale = 92 ÷ (move 最宽帧 × SPRITE_BASE_H / DE_REF_FRAME_H)
  *      war_chariot 0.66 / war_chariot_ranged 0.57 / elite_war_chariot 0.66
- *      war_wagon 0.59 / elite_war_wagon 0.53
+ *      war_wagon 0.59 / elite_war_wagon 0.53 ／ ratha* 0.70 ／ hussite_wagon* 0.83
  *    落地后绘制高 78~88px：仍高于步兵 68px、低于战象 115px，量级排序不乱。
- *    ⚠️ slot scale 只乘绘制尺寸，不进 spacingX/Y；13 的 computeDenseSpacing 取 max(cultureScales)，
+ *    ⚠️ [2026-10-09] 这些值现在**只住一处**：`src/types/LegionComposition.ts` 的
+ *       `CHARIOT_FIT_SCALE`／`getDefaultScaleForUnitType()`。原先是各军团编成里的 slot.scale 字段，
+ *       2026-09-14 编制大迁移时 16 处全被漏拷（只剩先秦远程战车一处），战车又变回原大压垮方阵 ——
+ *       所以改成按兵种查表：编成怎么搬都不会丢。编成里显式写 scale 的仍以它为准。
+ *    ⚠️ 阵型适配比例**只乘地图侧的绘制尺寸**，不进 spacingX/Y；13 的 computeDenseSpacing 取 max(cultureScales)，
  *       同编成里其余 slot 都是 1.0，故 13 的密集间距逐像素不变。
+ *    ⚠️ 13 战术侧**不乘**这个比例：那边按 dat 真值占地半径排布（步兵 8 / 战车 20），素材原大即正确。
  *    ⚠️ 这是**战车类专属**，不是「按兵种算尺寸」的口子。别推广到别的兵种，也别据此复活 rowMetrics。
  *
  * ⚠️ 只管战略地图。zoom 13 走 LegionPhalanxDrawer.computeDenseSpacing，是另一套，别混。
  *
  * 验收：`npm run legion:spacing-audit`（全势力编成扫一遍，「间距÷绘制尺寸」必须全局唯一）
+ *      ＋ `npx tsx scratch/_verify_unit_size_parity.mts`（战车比例逐兵种对 DE `_meta.json` 复核）
  */
 
 /** DE / S10DB 素材的参考帧高，换算绘制缩放用。素材换代前不要动。 */

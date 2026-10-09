@@ -8,6 +8,16 @@
     transform-origin: 50% 50%;
 }
 
+/* 🔴 [2026-10-09 主人令「旗帜不要被建筑遮挡」（旗面＋旗杆一起）]
+   据点旗已从据点 marker（cityPane 610）挪到城名所在的 labelsPane（660）——
+   奇观 marker 在 monumentPane 615，原先整面旗被奇观塔压住（富春·顺化皇城实拍）。
+   host 的 left/top/transform-origin 由 TerritorySystem.renderSingleCity 内联写死（逐像素复刻原位置），
+   这里只管两件事：① 缩放变量在 labelsPane 上也有一份（updateCityScales 写）；
+   ② zoom ≤ 7 宏观视图不插旗 —— 与据点层同一个闸门（否则会只剩一面浮旗、城没了）。 */
+.leaflet-labels-pane.hide-city-flags .city-flag-host {
+    display: none;
+}
+
 .city-image-container .city-building-stack {
     position: relative;
     z-index: 1;
