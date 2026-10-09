@@ -123,6 +123,7 @@ export class MapEngine {
         this.N = size;
         this.players = players;
         this.rng = makeRng(seed);
+        this.cliffRng = makeRng((seed ^ 0x5bf03635) >>> 0);   // 悬崖单开一条随机流（CC 第 61 轮裁定 a：改崖路不再扰动别的物件）
         this.names = names;                         // 地形常量值 → 名字（random_map.def）
         /** 地形编号 → dat 里的 { name, name_2, blend_type }（scratch/de_terrain_manifest.json，来自 empires2_x2_p1.dat） */
         this.info = info;
@@ -175,6 +176,7 @@ export class MapEngine {
         this.cliffMin = 0; this.cliffMax = 0;
         this.cliffMinLen = 3; this.cliffMaxLen = 5;
         this.cliffGap = 1; this.cliffCurliness = 0; this.cliffType = 0;
+        this.cliffNoTurn = false;      // 预案（CC 第 61 轮，默认关）：开启后崖路只走直线、不转向，两端用端头帧
         /** min_terrain_distance：候选块周围这个范围内有水就不放悬崖（genie-rms 同名处理），单位=粗网格格 */
         this.cliffTerrDist = 0;
         /** 手册「Map sizes」：Scaling factor 以 100×100 为基准 ＝ 面积 / 10000 */
@@ -876,25 +878,27 @@ export class MapEngine {
         const DIRS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
         for (let k = 0; k < n; k++) {
-            const len = this.cliffMinLen + this.rng.int(0, Math.max(0, this.cliffMaxLen - this.cliffMinLen));
+            const len = this.cliffMinLen + this.cliffRng.int(0, Math.max(0, this.cliffMaxLen - this.cliffMinLen));
             if (len < 3) continue;
             const left = [...cand.keys()];
             if (!left.length) break;
-            let key = left[Math.floor(this.rng() * left.length)];
+            let key = left[Math.floor(this.cliffRng() * left.length)];
             let cx = key % W, cy = Math.floor(key / W);
             const height = cand.get(key);
-            let dir = this.rng.int(0, 3);
+            let dir = this.cliffRng.int(0, 3);
             const path = [];
             const visited = new Set();          // 本段已走的格：不许踩回自己（否则会绕圈/回头 ⇒ 前后邻居同向）
             for (let i = 0; i < len; i++) {
                 if (cand.get(cy * W + cx) !== height) break;
                 path.push([cx, cy]);
                 visited.add(cy * W + cx);
-                const r = this.rng() * 100;
-                if (r < this.cliffCurliness / 2) dir = (dir + 3) % 4;
-                else if (r < this.cliffCurliness) dir = (dir + 1) % 4;
+                if (!this.cliffNoTurn) {
+                    const r = this.cliffRng() * 100;
+                    if (r < this.cliffCurliness / 2) dir = (dir + 3) % 4;
+                    else if (r < this.cliffCurliness) dir = (dir + 1) % 4;
+                }
                 let moved = false;
-                for (const d2 of [dir, dir + 1, dir - 1]) {
+                for (const d2 of (this.cliffNoTurn ? [dir] : [dir, dir + 1, dir - 1])) {
                     const dd = ((d2 % 4) + 4) % 4;
                     const nx = cx + DIRS[dd][0], ny = cy + DIRS[dd][1];
                     const nk = ny * W + nx;
