@@ -29,7 +29,7 @@
 <canvas id="cvg" width="1280" height="720"></canvas>
 <canvas id="cv" width="1280" height="720" style="display:none"></canvas>
 <script type="module">
-import { createGroundLayer } from './groundLayer.mjs';
+import { createGroundLayer, transposeMapData } from './groundLayer.mjs';
 
 const TW = 64, TH = 32, dx = TW / 2, dy = TH / 2;
 const isoX = (x, y, ox) => (x - y) * dx + ox;
@@ -237,10 +237,10 @@ function camView() {
     return { ox: (cv.width - mapW * z) / 2 + (state.cam.x || 0) * z, oy: (cv.height - mapH * z) / 2 + (state.cam.y || 0) * z, z };
 }
 
-let frames = [], lastT = 0, running = false;
+let frames = [], lastT = 0, running = false, rafId = 0;   // rafId：保证只有一条帧循环（CC 第 60 轮代修）
 function frame(ts) {
     if (!running) return;
-    if (!state.data) { requestAnimationFrame(frame); return; }
+    if (!state.data) { rafId = requestAnimationFrame(frame); return; }
     try {
         const view = camView();
         let dt = 0;
@@ -249,7 +249,7 @@ function frame(ts) {
         if (lastT) frames.push({ wall: ts - lastT, cpu: dt });
     } catch (e) { msg('渲染出错：' + e.message); }
     lastT = ts;
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
 }
 /** 同步兜底建层（帧循环里不能 await） */
 function ensureLayerSync() {
@@ -275,13 +275,13 @@ async function runOne(scenario, mode, cull, seconds) {
     switchCanvas(); document.getElementById('bcull').className = cull ? 'on' : '';
     if (mode === 'gl') { await ensureLayer(); state.layer.setCull(cull); } else ctx2d = document.getElementById('cv').getContext('2d');
     frames = []; lastT = 0; running = true;
-    requestAnimationFrame(frame);
+    cancelAnimationFrame(rafId); rafId = requestAnimationFrame(frame);
     const t0 = performance.now();
     const anim = () => {
         const el = (performance.now() - t0) / 1000;
         if (scenario === 'drag') { state.cam.x = Math.sin(el * 2) * 900; state.cam.y = Math.cos(el * 2) * 900; }
         if (scenario === 'zoom') state.cam.zoom = 1 + 1.5 * (1 + Math.sin(el * 2)) / 2;
-        if (scenario !== 'full') requestAnimationFrame(anim);
+        if (scenario !== 'full' && running) requestAnimationFrame(anim);
     };
     anim();
     await new Promise((r) => setTimeout(r, seconds * 1000));
@@ -308,39 +308,6 @@ window.__stats = () => ({ loaded: { tex: state.textures.size, spr: state.sprites
 /** 给外部工具（截图/基准脚本）用 */
 window.__state = state;
 
-function transposeMapData(d) {
-    if (!d || !d.width || !d.height) return d;
-    const w = d.width, h = d.height;
-    const transposeArray = (arr) => {
-        if (!arr || !arr.length) return arr;
-        const out = new Array(w * h);
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
-                out[x * h + y] = arr[y * w + x];
-            }
-        }
-        return Array.isArray(arr) ? out : new arr.constructor(out);
-    };
-    const newObjs = (d.objects || []).map((o) => {
-        const no = { ...o };
-        no.x = o.y;
-        no.y = o.x;
-        no.cell = Math.floor(no.y) * h + Math.floor(no.x);
-        return no;
-    });
-    return {
-        ...d,
-        width: h,
-        height: w,
-        terrain: transposeArray(d.terrain),
-        layer: transposeArray(d.layer),
-        elev: transposeArray(d.elev),
-        passable: transposeArray(d.passable),
-        speed: transposeArray(d.speed),
-        objects: newObjs,
-    };
-}
-
 async function boot() {
     const fit = () => { for (const id of ['cv', 'cvg']) { const c = document.getElementById(id); c.width = window.innerWidth; c.height = window.innerHeight - 52; } if (state.layer) state.layer.resize(window.innerWidth, window.innerHeight - 52); };
     fit(); window.addEventListener('resize', fit);
@@ -360,8 +327,17 @@ async function boot() {
     if (waterParam !== null) state.waterAnim = waterParam === '1';
     document.getElementById('bwater').className = state.waterAnim ? 'on' : '';
     document.getElementById('bwater').textContent = state.waterAnim ? '开' : '关';
-    msg(`地图 ${state.data.source ?? ''} ｜ 贴图 ${a.tex}(已缩 x1) ｜ 遮罩 ${a.mask} ｜ 精灵 ${a.spr}` + (a.miss.length ? ` ｜ 无精灵：${a.miss.slice(0, 4).join(',')}` : '') + (a.maskStat ? `\n遮罩分布 ${a.maskStat}` : '') + (state.debug ? `  ｜ **调试模式 debug=${dbg}**` : ''));
-    switchCanvas(); running = true; requestAnimationFrame(frame);
+    await ensureLayer();
+    const st = state.layer?.stats();
+    let atlasMsg = '';
+    if (st) {
+        atlasMsg = ` ｜ 图集: 地形 ${st.terrainAtlas.size.w}×${st.terrainAtlas.size.h}(${st.terrainAtlas.count}块) · 遮罩 ${st.maskAtlas.size.w}×${st.maskAtlas.size.h}(${st.maskAtlas.count}块) · 精灵 ${st.spriteAtlas.size.w}×${st.spriteAtlas.size.h}(${st.spriteAtlas.count}块)`;
+        if (st.skippedCount > 0) {
+            atlasMsg += ` ｜ 跳过无图物件 ${st.skippedCount}个: ${st.skippedList.map((x) => `${x.name}(${x.count})`).join(', ')}`;
+        }
+    }
+    msg(`地图 ${state.data.source ?? ''} ｜ 贴图 ${a.tex}(已缩 x1) ｜ 遮罩 ${a.mask} ｜ 精灵 ${a.spr}${atlasMsg}` + (a.miss.length ? ` ｜ 无精灵：${a.miss.slice(0, 4).join(',')}` : '') + (a.maskStat ? `\n遮罩分布 ${a.maskStat}` : '') + (state.debug ? `  ｜ **调试模式 debug=${dbg}**` : ''));
+    switchCanvas(); running = true; rafId = requestAnimationFrame(frame);
 }
 document.getElementById('bgl').onclick = async () => { state.mode = 'gl'; switchCanvas(); await ensureLayer(); };
 document.getElementById('b2d').onclick = () => { state.mode = '2d'; switchCanvas(); ctx2d = document.getElementById('cv').getContext('2d'); };
