@@ -13,6 +13,24 @@ import { makeRng } from './rmsParse.mjs';
 /** <CLIFF_GENERATION> 的 cliff_type → dat 里该种悬崖 _1 变体的 unit id（每类 9 个变体、id 连续） */
 export const CLIFF_BASE = { 0: 264, 1: 1849, 2: 1858, 3: 2178, 4: 2069 };
 
+/** 悬崖相邻拓扑 8 向查表（来自 DE 官方 2247 个样本统计，以相邻段量化方向为键） */
+export const CLIFF_TOPOLOGY_TABLE = {
+    '+X|+Y': { rot: 0, constId: 270 },
+    '+Y|-Y': { rot: 1, constId: 264 },
+    '+X|-Y': { rot: 3, constId: 264 },
+    '+X|-X': { rot: 4, constId: 264 },
+    '-X|-Y': { rot: 6, constId: 269 },
+    '+Y|-X': { rot: 15, constId: 264 },
+    '+X': { rot: 16, constId: 264 },
+    '-X': { rot: 17, constId: 264 },
+    '+Y': { rot: 18, constId: 264 },
+    '-Y': { rot: 19, constId: 264 },
+    '+X+Y': { rot: 0, constId: 270 },
+    '-X-Y': { rot: 6, constId: 269 },
+    '+X-Y': { rot: 3, constId: 264 },
+    '-X+Y': { rot: 15, constId: 264 },
+};
+
 /**
  * dat 的 `unit.terrain_restriction` 里属于「只能放水里」的类别号。
  * ⚠️ 类别号语义是 **dat 实测反推**（scratch/_probe_restriction_groups.py）：
@@ -832,8 +850,24 @@ export class MapEngine {
             }
             if (!path.length) continue;
             // ④ 落笔（细网格坐标）+ 排除周围候选
-            for (const [px, py] of path) {
-                this.objects.push({ id: base, cliff: true, x: px * 3 + 1, y: py * 3 + 1 });
+            for (let i = 0; i < path.length; i++) {
+                const [px, py] = path[i];
+                const nbrs = [];
+                if (i > 0) {
+                    const [prevX, prevY] = path[i - 1];
+                    const dx = prevX - px, dy = prevY - py;
+                    if (dx > 0) nbrs.push('+X'); else if (dx < 0) nbrs.push('-X');
+                    if (dy > 0) nbrs.push('+Y'); else if (dy < 0) nbrs.push('-Y');
+                }
+                if (i < path.length - 1) {
+                    const [nextX, nextY] = path[i + 1];
+                    const dx = nextX - px, dy = nextY - py;
+                    if (dx > 0) nbrs.push('+X'); else if (dx < 0) nbrs.push('-X');
+                    if (dy > 0) nbrs.push('+Y'); else if (dy < 0) nbrs.push('-Y');
+                }
+                const key = nbrs.sort().join('|');
+                const rot = CLIFF_TOPOLOGY_TABLE[key]?.rot ?? 0;
+                this.objects.push({ id: base, cliff: true, x: px * 3 + 1, y: py * 3 + 1, rot });
                 clearArea(px, py);
             }
             this.cliffMade = (this.cliffMade ?? 0) + 1;

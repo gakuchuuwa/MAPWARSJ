@@ -113,14 +113,18 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
  * **战车类「阵型适配」比例 —— 唯一出处（按兵种查表，不再靠编成数据里的 scale 字段）。**
  *
  * 规矩（原文见 `src/config/LegionSpacing.ts`）：战略地图的方阵格距是**常数**（横 46 / 纵 63，不看兵种），
- * 而战车素材帧框远大于格距 —— 所以战车类绘制宽度压到 **2 × 46 = 92px** 上限：
+ * 而战车素材帧框远大于格距 —— 所以要压绘制尺寸。**判据（2026-10-09 实测后定）：**
  *
- *      scale = 92 ÷ (move 最宽帧 × SPRITE_BASE_H / DE_REF_FRAME_H)      （68 / 64）
+ *      🔴 地图上「连马带车」的整乘，不得矮于一个骑兵  ⇒  适配 = 骑兵图形高(71) ÷ 该支图形高
  *
- * 数值全部按 DE `_meta.json` 实测帧框算出（四舍五入到两位）：
- *   war_wagon 148 → 0.59 ／ elite_war_wagon 164 → 0.53
- *   war_chariot 132 → 0.66 ／ elite_war_chariot 132 → 0.66 ／ war_chariot_ranged 152 → 0.57
- *   ratha_melee / ratha_ranged / elite_ratha_* 124 → 0.70
+ * （旧口径是"宽度上限 2 × 46 = 92px、scale = 92 ÷ (move 最宽帧 × 68/64)"。实测它把整车连马一起压到
+ *   0.67~0.81 个骑兵高：双轮战车 / 拉塔战车这两族本来就只比骑兵高 1~3%，被压后**比骑马的人还矮三成**，
+ *   而 92px 的原意（一对战车各露一半、排面不糊）在它们身上也没换来更清楚的排面 —— 2026-10-09 作废。）
+ *
+ * 数值按**素材图形高（不透明包围盒）实测**算出：适配 = 骑兵图形高(71) ÷ 该支图形高（四舍五入到两位）。
+ *   war_wagon 89 → 0.80 ／ elite_war_wagon 101 → 0.70
+ *   war_chariot 73 → 0.97 ／ elite_war_chariot 72 → 0.99 ／ war_chariot_ranged 101 → 0.70
+ *   ratha_melee / ratha_ranged / elite_ratha_* 72 → 0.99
  *   hussite_wagon / elite_hussite_wagon 104 → 0.83
  *
  * ⚠️ 为什么放在这张表、而不是各军团编成的 slot.scale 字段：
@@ -134,15 +138,15 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
  * 验收：`npx tsx scratch/_verify_unit_size_parity.mts`（逐兵种拿真 `_meta.json` 复核本表）。
  */
 const CHARIOT_FIT_SCALE: Record<string, number> = {
-    war_chariot: 0.66,
-    elite_war_chariot: 0.66,
-    war_chariot_ranged: 0.57,
-    war_wagon: 0.59,
-    elite_war_wagon: 0.53,
-    ratha_melee: 0.70,
-    ratha_ranged: 0.70,
-    elite_ratha_melee: 0.70,
-    elite_ratha_ranged: 0.70,
+    war_chariot: 0.97,
+    elite_war_chariot: 0.99,
+    war_chariot_ranged: 0.70,
+    war_wagon: 0.80,
+    elite_war_wagon: 0.70,
+    ratha_melee: 0.99,
+    ratha_ranged: 0.99,
+    elite_ratha_melee: 0.99,
+    elite_ratha_ranged: 0.99,
     hussite_wagon: 0.83,
     elite_hussite_wagon: 0.83,
 };

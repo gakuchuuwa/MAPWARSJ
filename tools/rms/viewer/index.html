@@ -308,13 +308,46 @@ window.__stats = () => ({ loaded: { tex: state.textures.size, spr: state.sprites
 /** 给外部工具（截图/基准脚本）用 */
 window.__state = state;
 
+function transposeMapData(d) {
+    if (!d || !d.width || !d.height) return d;
+    const w = d.width, h = d.height;
+    const transposeArray = (arr) => {
+        if (!arr || !arr.length) return arr;
+        const out = new Array(w * h);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                out[x * h + y] = arr[y * w + x];
+            }
+        }
+        return Array.isArray(arr) ? out : new arr.constructor(out);
+    };
+    const newObjs = (d.objects || []).map((o) => {
+        const no = { ...o };
+        no.x = o.y;
+        no.y = o.x;
+        no.cell = Math.floor(no.y) * h + Math.floor(no.x);
+        return no;
+    });
+    return {
+        ...d,
+        width: h,
+        height: w,
+        terrain: transposeArray(d.terrain),
+        layer: transposeArray(d.layer),
+        elev: transposeArray(d.elev),
+        passable: transposeArray(d.passable),
+        speed: transposeArray(d.speed),
+        objects: newObjs,
+    };
+}
+
 async function boot() {
     const fit = () => { for (const id of ['cv', 'cvg']) { const c = document.getElementById(id); c.width = window.innerWidth; c.height = window.innerHeight - 52; } if (state.layer) state.layer.resize(window.innerWidth, window.innerHeight - 52); };
     fit(); window.addEventListener('resize', fit);
     state.manifest = Object.fromEntries((await loadJson('../../../scratch/de_terrain_manifest.json')).terrains.map((t) => [t.terrain_id, t]));
     state.blendTable = await loadJson('../../../scratch/de_terrain_blend.json').catch(() => null);
     const mapUrl = new URLSearchParams(location.search).get('map') ?? '../../../scratch/rms-out/mapdata_arabia_120.json';
-    state.data = await loadJson(mapUrl);
+    state.data = transposeMapData(await loadJson(mapUrl));
     const a = await loadAssets();
     const q = new URLSearchParams(location.search);
     const dbg = q.get('debug');

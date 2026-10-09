@@ -130,10 +130,13 @@ export function buildAtlas(gl, entries) {
         c.drawImage(e.img, ix, iy, w, h);
         // 边里填**对边**的像素（让这一块能无缝重复；线性取色就不会采到隔壁块）
         c.drawImage(cv, ix + w - P, iy, P, h, ix - P, iy, P, h);                    // 左边 ← 右
+        c.drawImage(cv, ix, iy, P, h, ix + w, iy, P, h);                            // 右边 ← 左
         c.drawImage(cv, ix, iy + h - P, w, P, ix, iy - P, w, P);                    // 上边 ← 下
         c.drawImage(cv, ix, iy, w, P, ix, iy + h, w, P);                            // 下边 ← 上
+        c.drawImage(cv, ix + w - P, iy + h - P, P, P, ix - P, iy - P, P, P);        // 左上角
+        c.drawImage(cv, ix, iy + h - P, P, P, ix + w, iy - P, P, P);                // 右上角
         c.drawImage(cv, ix + w - P, iy, P, P, ix - P, iy + h, P, P);                // 左下角
-        c.drawImage(cv, ix, iy + h - P, P, P, ix + w, iy + h - P, P, P);            // 右下角
+        c.drawImage(cv, ix, iy, P, P, ix + w, iy + h, P, P);                        // 右下角
         // 该块在图集里的**内容矩形**（不含留边）
         uv.set(e.key, [ix / cv.width, iy / cv.height, (ix + w) / cv.width, (iy + h) / cv.height]);
         uv.set(e.key + '#pad', P / CELL);

@@ -86,11 +86,13 @@ export function buildMapData(eng, { size, source = '', tInfo, classTable, sizeTa
             }
         }
         const kind = KIND_OF[`${c.cls}/${c.type}`] ?? '其他';
-        objects.push({
+        const objItem = {
             id: o.id, name: sz?.name ?? c.name, kind,
             x: +o.x.toFixed(3), y: +o.y.toFixed(3), cell: (cy >= 0 && cy < N && cx >= 0 && cx < N) ? cy * N + cx : -1,
             clearW: w, clearH: h, cells: covered,
-        });
+        };
+        if (o.rot !== undefined) objItem.rot = o.rot;
+        objects.push(objItem);
         // 悬崖物件 → 覆盖格不可通行
         if (c.cls === 34) for (const i of covered) passable[i] = 0;
     }
