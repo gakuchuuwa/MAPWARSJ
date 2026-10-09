@@ -54,6 +54,8 @@ export class Preprocessor {
      */
     constructor(env = {}) {
         this.defs = new Set(env.defines ?? []);
+        /** 强制主题时要挡掉的 #define（见 loadScript 的 env.theme） */
+        this.blockDefines = env.blockDefines ?? null;
         this.consts = new Map(Object.entries(env.consts ?? {}));
         this.rng = makeRng(env.seed ?? 1);
         /** 官方 RMS 目录里找不到时的回退目录（项目内改过的脚本用；见 loadScript 的 env.rmsDir） */
@@ -149,7 +151,8 @@ export class Preprocessor {
                 else this.consts.set(name, v); // 字符串常量（极少见）
                 i = j; continue;
             }
-            if (t === '#define') { this.defs.add(toks[i + 1]); i += 2; continue; }
+            // 【第 46 轮】`blockDefines`：强制主题时，把「其余主题的 #define」挡掉（见 loadScript 的 env.theme）。
+            if (t === '#define') { if (!this.blockDefines?.has(toks[i + 1])) this.defs.add(toks[i + 1]); i += 2; continue; }
             if (t === '#undefine') { this.defs.delete(toks[i + 1]); this.consts.delete(toks[i + 1]); i += 2; continue; }
             if (t === '#include_drs' || t === '#include') {
                 const rel = toks[i + 1];
@@ -307,13 +310,49 @@ export function loadScript(file, env = {}) {
     // ⚠️ 界面档位 ↔ 格数的真实对应待 DE 导出实测（见 docs/02-design/RMS引擎语义-给CC.md §1）。
     const SIZE_FLAG = { 80: 'MINI', 120: 'TINY', 144: 'SMALL', 168: 'MEDIUM', 200: 'NORMAL', 220: 'LARGE', 240: 'HUGE', 252: 'GIANT' };
     const flag = SIZE_FLAG[env.size ?? 144] ?? 'SMALL';
+    const side = env.size ?? 144;
     const defaultEnv = {
         defines: [`MAPSIZE_${flag}`, `${flag}_MAP`, '2_PLAYER_GAME', 'PH_EXTENDEDSEASONS', 'PLAYER1_TEAM0', 'PLAYER2_TEAM0', ...(env.defines ?? [])],
         // 引擎对不存在的玩家席位也认 PLAYERn_ALLY_COUNT：默认 0（脚本里有 #const 会覆盖）
-        consts: { PLAYER1_ALLY_COUNT: 0, PLAYER2_ALLY_COUNT: 0, PLAYER3_ALLY_COUNT: 0, PLAYER4_ALLY_COUNT: 0, PLAYER5_ALLY_COUNT: 0, PLAYER6_ALLY_COUNT: 0, PLAYER7_ALLY_COUNT: 0, PLAYER8_ALLY_COUNT: 0, ADDITIONAL_VILLAGERS: 0, MAPSIZE_SIDE: env.size ?? 144, ...(env.consts ?? {}) },
+        // ── `includes/scaling.inc` 那一族常量（CC 第 46 轮：作为引擎默认常量提供，值照 scaling.inc 原定义）──
+        //   起因：`real_world_manchuria.rms` **没有 include `scaling.inc`**，于是用到 `MAPSCALE_AREA` 时解析直接失败
+        //   （该常量全库用了 **155 处**，如 `Arabia.rms:924 number_of_tiles (… * MAPSCALE_AREA)`）。
+        //   定义逐字照抄 scaling.inc：
+        //     :1-15  MAPSIDE_MINI 80 … MAPSIDE_LUDICROUS 480（含 MAPSIDE_BASE 100）
+        //     :49    MAPSCALE_SIDE = MAPSIZE_SIDE / MAPSIDE_BASE
+        //     :53    MAPSIZE_AREA  = MAPSIZE_SIDE * MAPSIZE_SIDE
+        //     :54    MAPSCALE_AREA = MAPSIZE_AREA / 10000
+        //   `MAPSIZE_SIDE` 早先已同样提供（= 边长）。**脚本自己 include 了 scaling.inc 时，`#const` 会覆盖成同值**，
+        //   所以这一组默认值不会改变任何原本能跑的脚本（这一点用全量 180 指纹逐位验证）。
+        consts: {
+            PLAYER1_ALLY_COUNT: 0, PLAYER2_ALLY_COUNT: 0, PLAYER3_ALLY_COUNT: 0, PLAYER4_ALLY_COUNT: 0,
+            PLAYER5_ALLY_COUNT: 0, PLAYER6_ALLY_COUNT: 0, PLAYER7_ALLY_COUNT: 0, PLAYER8_ALLY_COUNT: 0,
+            ADDITIONAL_VILLAGERS: 0,
+            MAPSIDE_MINI: 80, MAPSIDE_BASE: 100, MAPSIDE_TINY: 120, MAPSIDE_SMALL: 144, MAPSIDE_MEDIUM: 168,
+            MAPSIDE_NORMAL: 200, MAPSIDE_LARGE: 220, MAPSIDE_HUGE: 240, MAPSIDE_GIANT: 252, MAPSIDE_MASSIVE: 276,
+            MAPSIDE_ENORMOUS: 300, MAPSIDE_COLOSSAL: 320, MAPSIDE_INCREDIBLE: 360, MAPSIDE_MONSTREOUS: 400,
+            MAPSIDE_LUDICROUS: 480,
+            MAPSIZE_SIDE: side,
+            MAPSCALE_SIDE: side / 100,
+            MAPSIZE_AREA: side * side,
+            MAPSCALE_AREA: (side * side) / 10000,
+            ...(env.consts ?? {}),
+        },
         seed: env.seed ?? 1,
     };
     const pre = new Preprocessor({ ...defaultEnv, rmsDir: env.rmsDir ?? null });
+    // 【第 46 轮 · CC 第一步第 6 条】**强制指定主题**：`env.theme = 'PALAEARCTIC_MIDDLE_EAST_DESERT'`
+    //   做法：① 把该主题 `#define` 注入；② 把脚本里**其余主题**的 `#define` 挡掉。
+    //   依据：主题在各脚本里是用 `elseif <主题>` **互斥链**消费的（例 `Arabia.rms:553` / `themes.inc:1789`），
+    //   所以只要保证"只有被强制的那一个成立"，链上就只会走它 —— 不依赖链的顺序。
+    //   主题名集合是照 DE 的命名法扫出来的（AFROTROPICAL/NEOTROPICAL/NEARCTIC/INDOMALAYAN/PALAEARCTIC/AUSTRALASIAN）
+    if (env.theme) {
+        const src = fs.readFileSync(path.join(env.rmsDir ?? DE_RMS_DIR, file), 'utf8');
+        const all = new Set((src.match(/\b(?:AFROTROPICAL|NEOTROPICAL|NEARCTIC|INDOMALAYAN|PALAEARCTIC|AUSTRALASIAN)_[A-Z0-9_]+\b/g) ?? []));
+        const block = new Set([...all].filter((x) => x !== env.theme));
+        pre.blockDefines = block;
+        pre.defs.add(env.theme);
+    }
     // 引擎隐式载入的常量定义
     pre.run(tokenizeFile('random_map.def'));
     pre.out.length = 0;

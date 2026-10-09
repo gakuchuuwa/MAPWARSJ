@@ -8,6 +8,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { DE_RMS_DIR, loadScript } from './rmsParse.mjs';
 import { MapEngine } from './rmsEngine.mjs';
+import { loadUnitClassTable, filterNaturalObjects } from './naturalObjects.mjs';
 
 const [, , scriptName = 'Arabia.rms', seedArg = '1', sizeArg = '144', outArg] = process.argv;
 const seed = Number(seedArg), size = Number(sizeArg);
@@ -60,12 +61,17 @@ try {
 const { sections, pre } = loadScript(scriptName, { seed, size, defines: [] });
 const eng = new MapEngine(sections, { size, players: 2, seed, names: tNames, info: tInfo, objNames: oNames, terrainUnits, unitRestrict }).run();
 
+// ── 自然物件过滤（只在**导出/出图**层；引擎内部照旧全部放出，保证互相避让与 DE 一致）──
+//   判据 = dat 的 (class, type)，见 tools/rms/naturalObjects.mjs（CC 2026-10-09 确认白名单）
+const unitClass = loadUnitClassTable();
+const natural = filterNaturalObjects(eng.objects, unitClass);
+
 // ── 统计 ──
 const N = size, total = N * N;
 const hist = new Map();
 for (const t of eng.terrain) hist.set(t, (hist.get(t) ?? 0) + 1);
 const pct = (n) => (100 * n / total).toFixed(1) + '%';
-console.log(`脚本 ${scriptName}  种子 ${seed}  边长 ${N}  物件 ${eng.objects.length}  主题 ${[...pre.defs].filter((d) => /_(TEMPERATE|TROPICAL|DESERT|TAIGA|MEDITERRANEAN|TUNDRA)$/.test(d)).join(',') || '—'}`);
+console.log(`脚本 ${scriptName}  种子 ${seed}  边长 ${N}  物件 ${eng.objects.length}（其中自然物件 ${natural.length}）  主题 ${[...pre.defs].filter((d) => /_(TEMPERATE|TROPICAL|DESERT|TAIGA|MEDITERRANEAN|TUNDRA)$/.test(d)).join(',') || '—'}`);
 // 与 DE 真图同口径：144 图正中 66×66（de_map_1 的 crop.offset = 39）
 {
     const C = 66, off = Math.floor((N - C) / 2);
@@ -131,7 +137,7 @@ const dot = (cx, cy, rad, c) => {
 };
 const COL = { 树: [14, 54, 20], 金: [255, 215, 0], 石: [120, 120, 130], 浆果: [200, 40, 90], 动物: [140, 90, 40], 其他: [255, 255, 255] };
 // 没有名字的物件（如 1902 = 森林占位物 PLACEHOLDER2）是引擎用的不可见占位，不画
-for (const o of eng.objects) { if (o.tree === undefined && !nameOf(o.id)) continue; const c = cat(o); if (c === '草') continue; dot(o.x, o.y, c === '树' ? 2 : 3, COL[c] ?? COL['其他']); }
+for (const o of natural) { if (o.tree === undefined && !nameOf(o.id)) continue; const c = cat(o); if (c === '草') continue; dot(o.x, o.y, c === '树' ? 2 : 3, COL[c] ?? COL['其他']); }
 for (const s of eng.starts) dot(s.x + 0.5, s.y + 0.5, 9, [220, 30, 30]);
 
 function png(width, height, rgb) {
@@ -170,7 +176,7 @@ console.log('已输出', out);
         terrainTable[t] = { tile: String(info.name_2).replace(/^g_/, ''), name: info.name, blendPriority: info.blend_priority, blendType: info.blend_type, isWater: info.blend_type === 3 };
     }
     const objects = [];
-    for (const o of eng.objects) {
+    for (const o of natural) {
         if (o.x < off || o.x >= off + C || o.y < off || o.y >= off + C) continue;
         const name = nameOf(o.id);
         if (!name) continue;

@@ -286,6 +286,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     JIANGNAN: 0.708,  // -18.0 LUFS
     KOREA: 0.708,  // -18.0 LUFS
     LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
+    ezios_family: 0.380,  // -12.6 LUFS · 艾吉奥家族全版本合集（2009-2020）
     // 🔴 [2026-09-16] 主人报「这首音量很小」，一度提到 0.85；随后查明真因是**闪避**
     //    （军团常年行军 → BGM 长期挂在 50%），已在 DUCK 表取消音效三路的压低。
     //    标定本身实测是准的（整首 I=-18.2 LUFS，0.716 正好拉到 -21.05），故回到标定值，
@@ -340,7 +341,7 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
     GERMANIC: ['GERMANIC', 'helmet_to_helmet'],
     PURU: ['TIBET', 'litang'],
     ORIE: ['WEST_ASIA', 'BERBER'],
-    LATIN: ['LATIN', 'victory'],
+    LATIN: ['LATIN', 'victory', 'ezios_family'],
     SLAVIC: ['SLAVIC'],
     EAST: ['age_of_kings'],
     PERSIAN: ['shadow_assassin'],
@@ -376,7 +377,7 @@ const GENERIC_BGM_FALLBACK = 'age_of_kings';
 const SCRIPT_WESTERN_BGM_FOLDERS: readonly string[] = Object.freeze([
     'LATIN', 'WEST_ASIA', 'BERBER', 'GERMANIC',
     'victory', 'rock_house_jail', 'fallen_army', 'helmet_to_helmet',
-    'hes_a_pirate', 'age_of_kings',
+    'hes_a_pirate', 'age_of_kings', 'ezios_family',
 ]);
 
 function resolveAvailableBgmFolder(folder: string): string {

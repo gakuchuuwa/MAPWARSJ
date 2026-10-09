@@ -49,7 +49,7 @@ const D4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 const D8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
 export class MapEngine {
-    constructor(sections, { size = 144, players = 2, seed = 1, names = new Map(), info = null, objNames = new Map(), terrainUnits = null, unitRestrict = null } = {}) {
+    constructor(sections, { size = 144, players = 2, seed = 1, names = new Map(), info = null, objNames = new Map(), terrainUnits = null, unitRestrict = null, skeleton = null } = {}) {
         this.sections = sections;
         this.N = size;
         this.players = players;
@@ -63,6 +63,19 @@ export class MapEngine {
         this.terrainUnits = terrainUnits;
         /** 物件 id → dat 的 terrain_restriction（放置类别号）；见 scratch/de_unit_restriction.json */
         this.unitRestrict = unitRestrict;
+        /** 外部地理骨架（第 46 轮）：给了就跳过脚本的 LAND / ELEVATION 段，见 applySkeleton() */
+        this.skeleton = skeleton;
+        // ── 缺表即报错（第 40 轮，CC 裁定）──
+        // 水生判定（`okTile`）依赖两张表：`unitRestrict`（dat 的通行类别）与 `objNames`（id → 名）。
+        //   两者**同时**缺失时会**静默**把所有"只能在水里"的物件放到陆地上
+        //   —— 第 39 轮实测踩过：探针漏传这两张表 → `FISHS` 292 条**全落在 `Dirt 3` 上**，而且不报错。
+        //   宁可早失败：缺哪张就报哪张，不允许静默运行。
+        {
+            const missing = [];
+            if (!unitRestrict || unitRestrict.size === 0) missing.push('unitRestrict（dat 的 unit.terrain_restriction 表 → scratch/de_unit_restriction.json）');
+            if (!objNames || objNames.size === 0) missing.push('objNames（random_map.def 的物件名表）');
+            if (missing.length) throw new Error(`MapEngine 缺少必需查表（缺任一张都会静默错放水生物件）：${missing.join('；')}`);
+        }
         const n = size * size;
         this.terrain = new Int16Array(n);
         /** 视觉图层（terrain_mask）：-1 = 无，否则画这一层；逻辑地形（物件/森林/通行）仍看 terrain */
@@ -119,8 +132,14 @@ export class MapEngine {
                 if (/WATER|SHALLOW|OCEAN|SEA$|SWAMP/.test(name)) this.waterTerrains.add(v);
             }
         }
-        this.runLand(S.LAND_GENERATION ?? []);
-        for (const c of S.ELEVATION_GENERATION ?? []) this.elevCmd(c);
+        // 【第 46 轮 · CC 任务书第一步第 6 条】外部地理骨架：
+        //   战术模式的战场是「大形状用战略地图的真实地理（陆地/水、河流、高度）＋ 细节用 DE 样式」，
+        //   所以允许调用方直接传一份骨架，**跳过脚本的 LAND / ELEVATION 两段**，只跑 TERRAIN / OBJECTS。
+        if (this.skeleton) this.applySkeleton();
+        else {
+            this.runLand(S.LAND_GENERATION ?? []);
+            for (const c of S.ELEVATION_GENERATION ?? []) this.elevCmd(c);
+        }
         for (const c of S.TERRAIN_GENERATION ?? []) this.terrainCmd(c);
         this.applyBeaches();
         this.plantTerrainUnits();
@@ -138,6 +157,27 @@ export class MapEngine {
     }
 
     // ───────────────────────── LAND ─────────────────────────
+    /**
+     * 铺外部地理骨架（第 46 轮，CC 任务书第一步第 6 条）。
+     *   `skeleton = { land, elev, landTerrain, waterTerrain, landId }`
+     *     · `land`：Uint8Array(边长²)，1 = 陆地、0 = 水（**河流就是水**）
+     *     · `elev`：Int8Array(边长²)，每格高度（可省，省则全 0）
+     *     · `landTerrain` / `waterTerrain`：陆地与水的底地形编号（脚本的 TERRAIN 段会在上面继续铺）
+     *     · `landId`：给陆地格一个中立 land id（默认 200），让 TERRAIN/OBJECTS 的避让与 zone 逻辑有依据
+     *   调用方给了骨架时，`run()` **不执行** 脚本的 LAND / ELEVATION 段（否则脚本会造内海、覆盖真实地理）。
+     */
+    applySkeleton() {
+        const N = this.N, sk = this.skeleton;
+        const landId = sk.landId ?? 200;
+        for (let i = 0; i < N * N; i++) {
+            const isLand = sk.land[i] ? 1 : 0;
+            this.terrain[i] = isLand ? sk.landTerrain : sk.waterTerrain;
+            if (sk.elev) this.elev[i] = sk.elev[i];
+            if (isLand) this.landId[i] = landId;
+        }
+        if (!this.landZone.has(landId)) this.landZone.set(landId, 0);
+    }
+
     runLand(cmds) {
         const deferred = [];
         // 手册 :150「Land is all generated **at the same time**, so the order used in placing land is not important.」
@@ -183,7 +223,7 @@ export class MapEngine {
             const cx = Math.round(this.N / 2 + Math.cos(ang) * rr);
             const cy = Math.round(this.N / 2 + Math.sin(ang) * rr);
             this.starts.push({ x: cx, y: cy });
-            specs.push(this.planLand(P, { x: cx, y: cy }, 100 + p, this.players));
+            specs.push(this.planLand(P, { x: cx, y: cy }, 100 + p, this.players, !!P.circle_radius));
         }
         return specs;
     }
@@ -193,7 +233,7 @@ export class MapEngine {
      * `playerDivisor`：只作用于 `land_percent`（玩家陆地要按玩家数平分，手册 :162/:185）；
      *   `number_of_tiles` 不减 —— 脚本里写的就是单个玩家的量级（如 Arabia 的 1300）。
      */
-    planLand(P, at, forcedId, playerDivisor = 1) {
+    planLand(P, at, forcedId, playerDivisor = 1, ignoreBorders = false) {
         const N = this.N;
         const terr = Number(P.terrain_type?.[0] ?? 0);
         const id = forcedId ?? Number(P.land_id?.[0] ?? this.rng.int(200, 400));
@@ -212,6 +252,8 @@ export class MapEngine {
         // 实测差距：Mediterranean.rms 的 create_land { terrain_type VODA  land_percent 80  borders 17 }
         //   未实现 border 时水占 80.0%，而 DE 真图只有 21.8%。
         const bp = (k) => Number(P[k]?.[0] ?? 0);
+        // ⚠️ 边界**照常按脚本计算**（下一条注释里那个"免边界"只作用于**底座**，由 freeSeed 决定是否跳过检查）。
+        //   （第 41 轮踩过：曾在这里按 ignoreBorders 把 bx0/bx1/by0/by1 清零 → inBorders 也一起失效 → 生长其实没被约束。）
         const bx0 = Math.round(bp('left_border') / 100 * N), bx1 = N - Math.round(bp('right_border') / 100 * N);
         const by0 = Math.round(bp('top_border') / 100 * N), by1 = N - Math.round(bp('bottom_border') / 100 * N);
         // 官方手册：地图陆地有「硬编码的圆角」——
@@ -238,8 +280,8 @@ export class MapEngine {
         // 不写 → 边界是直线；写了 → 每格按该概率决定「停 / 继续」，于是边缘参差、并且会略微越过 border
         // （实测 DE 的水 x 范围 22~122，而 border 17% 对应 [24,120) —— 确实越过了约 2 格）。
         const fuzz = Number(P.border_fuzziness?.[0] ?? 0);
-        const free = (x, y) => {
-            if (!this.inb(x, y)) return false;
+        // 边界（矩形 + 内切椭圆 + border_fuzziness）单独抽出来：**底座要能"免边界"，生长不能**（见下方 freeSeed）。
+        const inBorders = (x, y) => {
             if (x < bx0 || x >= bx1 || y < by0 || y >= by1) {
                 if (fuzz <= 0) return false;                                   // 硬边界（直线）
                 const over = Math.max(bx0 - x, x - (bx1 - 1), by0 - y, y - (by1 - 1));
@@ -254,6 +296,11 @@ export class MapEngine {
                     if (this.rng() * 100 >= fuzz / (1 + over * 20)) return false;
                 }
             }
+            return true;
+        };
+        const freeCore = (x, y, skipBorders) => {
+            if (!this.inb(x, y)) return false;
+            if (!skipBorders && !inBorders(x, y)) return false;
             // 手册 :150 陆地「同时生成」＋ genie-rms `checkTerrainAndZone()`「在 land.area 内发现别的 zone → 不允许侵入」
             //   ⇒ **任何别的 land 的格子都不许占**。原先那套 `overwrite && occ < 100` 的「覆盖」逻辑已废除
             //     （它把「中立 land（id 200~400）」与「别的玩家 land（100~107）」混在一个数值阈值里，且意图与手册相反）。
@@ -271,11 +318,16 @@ export class MapEngine {
             }
             return true;
         };
+        const free = (x, y) => freeCore(x, y, false);                 // 生长用：受边界约束
+        // 【第 41 轮 · CC 修正裁定】用 circle_radius 时：**起始位置与底座**免 `*_border`，**生长仍受约束**。
+        //   （上一版把生长也免了 → Team_Islands 玩家陆地 20736 格＝整张图、岛图几乎没有水，不可能是 DE 的结果。
+        //    官方只明说"起始位置"不受约束；底座是起点的一部分，所以免；生长没有依据，所以不免。）
+        const freeSeed = ignoreBorders ? ((x, y) => freeCore(x, y, true)) : free;
         for (let dy = -baseR; dy <= baseR; dy++) for (let dx = -baseR; dx <= baseR; dx++) {
             if (dx * dx + dy * dy > baseR * baseR) continue;
-            if (free(cx + dx, cy + dy)) claim(cx + dx, cy + dy);
+            if (freeSeed(cx + dx, cy + dy)) claim(cx + dx, cy + dy);
         }
-        if (mine.length === 0 && free(cx, cy)) claim(cx, cy);
+        if (mine.length === 0 && freeSeed(cx, cy)) claim(cx, cy);
         return { id, zone, terr, want, clump, free, mine };
     }
 
@@ -502,7 +554,13 @@ export class MapEngine {
         // 手册：set_scale_by_groups 缩放团数（基准 100×100）
         const clumps = Math.max(1, Math.round(Number(P.number_of_clumps?.[0] ?? 1) * (P.set_scale_by_groups ? this.areaScale : 1)));
         const clumpF = Number(P.clumping_factor?.[0] ?? 20);       // 手册：地形默认 20
-        const spacing = Number(P.spacing_to_other_terrain_types?.[0] ?? 0);
+        // 【第 45 轮修 · CC 裁定】非整数 spacing **向下取整**：DE 地图是整数格，取整才是 DE 的行为。
+        //   老写法的病灶：`for (dy = -1.656; dy <= 1.656; dy++)` 步长错开 → 算出非整数坐标 →
+        //   `this.idx()` 取到 undefined → 被当成"坏格" → **几乎拒掉所有格子**（实测 `Murkwood.rms` 的 1.656 / 3.312）。
+        //   那是我们的缺陷，不是 DE 的行为。取整后一律走下面的整数前缀和路径（O(1)）。
+        //   验收（CC 定）：**只允许 `Murkwood.rms` 的结果变化**，其余 179 个脚本逐位不变。
+        let spacing = Number(P.spacing_to_other_terrain_types?.[0] ?? 0);
+        if (Number.isFinite(spacing)) spacing = Math.floor(spacing);
         const hl = P.height_limits ? [Number(P.height_limits[0]), Number(P.height_limits[1])] : null;
         const flatOnly = !!P.set_flat_terrain_only;
         // DE 写法 set_avoid_player_start_areas [距离]：带参数用参数（0 = 不避让），不带用默认值（推断）
@@ -511,25 +569,60 @@ export class MapEngine {
         const regOf = new Int32Array(this.terrain.length).fill(-1);
         // 诊断（第 34 轮）：按**原因**统计候选格被拒的次数 —— 只在调用方设了 this.traceReject 时收集
         const rj = this.traceReject ? { notBase: 0, claimed: 0, height: 0, flat: 0, avoidStart: 0, spacing: 0 } : null;
+        // ── spacing 的 O(1) 化（第 38 轮提速，语义**逐格等价**）──
+        // 【spacing 判定】只看 `this.terrain[j]`（`!== base && !== T` 即算"别的类型"），而 `this.terrain` 在
+        //   **本指令执行期间完全不变**（要到函数末尾才统一写入）⇒ "半径 spacing 的方形邻域内有没有坏格" 是个
+        //   **静态**问题，可以建一次二维前缀和（O(N²)），之后每次判定 O(1)，替掉原来的 (2·spacing+1)² 逐格扫描。
+        //   原写法（保留备查，语义完全一致）：
+        //     for (dy=-spacing..spacing) for (dx=-spacing..spacing) { if (越界) continue;
+        //         if (terrain[j] !== base && terrain[j] !== T) return false; }
+        //   越界格在原写法里被 `continue` 跳过 ⇒ 前缀窗口取「与网格的交集」即可，两者逐格等价。
+        // ⚠️ 只有**整数** spacing 才能这样替：非整数（实测 `Murkwood.rms` 用 1.656 / 3.312）时，原写法的
+        //   `dy++` 会在非整数起点上步长错开，算出**非整数** xx/yy；原实现用 `this.idx()` 取到 undefined，
+        //   于是把该格当"坏格"拒绝。这个怪行为**必须原样保留**（否则那些脚本的结果会变），所以非整数走老循环。
+        const spacingInt = Number.isInteger(spacing) && spacing > 0;
+        let badPre = null;
+        const W1 = N + 1;
+        if (spacingInt) {
+            badPre = new Int32Array(W1 * W1);
+            for (let y = 0; y < N; y++) {
+                let bad = 0;
+                const rowBase = y * N, preRow = (y + 1) * W1, prevRow = y * W1;
+                for (let x = 0; x < N; x++) {
+                    const t = this.terrain[rowBase + x];
+                    if (t !== base && t !== T) bad++;
+                    badPre[preRow + x + 1] = badPre[prevRow + x + 1] + bad;
+                }
+            }
+        }
+        const anyBadNear = (x, y) => {
+            const x0 = x - spacing < 0 ? 0 : x - spacing, x1 = x + spacing >= N ? N - 1 : x + spacing;
+            const y0 = y - spacing < 0 ? 0 : y - spacing, y1 = y + spacing >= N ? N - 1 : y + spacing;
+            return badPre[(y1 + 1) * W1 + (x1 + 1)] - badPre[y0 * W1 + (x1 + 1)] - badPre[(y1 + 1) * W1 + x0] + badPre[y0 * W1 + x0] > 0;
+        };
         const ok = (i, r) => {
             if (this.terrain[i] !== base || regOf[i] !== -1) { if (rj) { if (this.terrain[i] !== base) rj.notBase++; else rj.claimed++; } return false; }
             const x = i % N, y = (i / N) | 0;
             if (hl && (this.elev[i] < hl[0] || this.elev[i] > hl[1])) { if (rj) rj.height++; return false; }
             if (flatOnly && D4.some((dd) => this.inb(x + dd[0], y + dd[1]) && this.elev[this.idx(x + dd[0], y + dd[1])] !== this.elev[i])) { if (rj) rj.flat++; return false; }
             if (avoidR > 0) for (const s of this.starts) if (Math.hypot(s.x - x, s.y - y) < avoidR) { if (rj) rj.avoidStart++; return false; }
+            // 【方案 C 全放开 —— 第 35 轮实验选出，**第 36 轮已获 CC 批准**】只隔开「底地形」与「本地形」以外的地形。
+            //   与 genie-rms `canPlaceTerrainOn()` 的 spacing 判定一致（只容忍 base 与自己）。
+            //   团块过大由**种子分离**（见 seed() 的 seedRadius）解决，不靠 spacing —— 见下方 seedR。
+            //   若要回 A：if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) { … }
+            //   若要回 B：if (regOf[j] !== -1 ? regOf[j] !== r : (this.terrain[j] !== base && this.terrain[j] !== T)) { … }
+            //   判定已 O(1) 化（见上方 anyBadNear）：`badPre` ＝「是本条 base 与 T 之外的地形」的二维前缀和。
             if (spacing > 0) {
-                // 手册：与其它地形保持距离，「包括同类型」——即别的团（哪怕同一种地形）也要隔开，只有本团自己不算
-                for (let dy = -spacing; dy <= spacing; dy++) for (let dx = -spacing; dx <= spacing; dx++) {
-                    const xx = x + dx, yy = y + dy;
-                    if (!this.inb(xx, yy)) continue;
-                    const j = this.idx(xx, yy);
-                    // 【方案 C 全放开 —— 第 35 轮实验选出，**第 36 轮已获 CC 批准**】只隔开「底地形」与「本地形」以外的地形。
-                    //   与 genie-rms `canPlaceTerrainOn()` 的 spacing 判定一致（只容忍 base 与自己）。
-                    //   数据（10 种子）：中水 11.2% [7.8,16.6] 覆盖 DE 10.5；浅水 9.4% 覆盖 DE 11.3；中/浅 1.22 覆盖 DE 0.93。
-                    //   团块过大由**种子分离**（见 seed() 的 seedRadius）解决，不靠 spacing —— 见下方 seedR。
-                    //   若要回 A：if (regOf[j] !== -1 ? regOf[j] !== r : this.terrain[j] !== base) { … }
-                    //   若要回 B：if (regOf[j] !== -1 ? regOf[j] !== r : (this.terrain[j] !== base && this.terrain[j] !== T)) { … }
-                    if (this.terrain[j] !== base && this.terrain[j] !== T) { if (rj) rj.spacing++; return false; }
+                if (spacingInt) {
+                    if (anyBadNear(x, y)) { if (rj) rj.spacing++; return false; }
+                } else {
+                    // 非整数 spacing：**原样保留**老写法（含上面注释里那个"非整数下标 → undefined → 当坏格"的行为）
+                    for (let dy = -spacing; dy <= spacing; dy++) for (let dx = -spacing; dx <= spacing; dx++) {
+                        const xx = x + dx, yy = y + dy;
+                        if (!this.inb(xx, yy)) continue;
+                        const j = this.idx(xx, yy);
+                        if (this.terrain[j] !== base && this.terrain[j] !== T) { if (rj) rj.spacing++; return false; }
+                    }
                 }
             }
             return true;
@@ -580,7 +673,10 @@ export class MapEngine {
             const t = this.terrain[i];
             if (this.waterTerrains.has(t)) continue;   // 森林格邻水也变沙滩（DE 真图：林中水塘四周有一圈沙滩）
             const x = i % N, y = (i / N) | 0;
-            if (D4.some((d) => this.inb(x + d[0], y + d[1]) && this.waterTerrains.has(this.terrain[this.idx(x + d[0], y + d[1])]))) {
+            // 【第 41 轮修 · 依据 DE 基准图实测】沙滩用**八邻**判定，不是四邻：
+            //   DE 的 526 个沙滩格里，八邻有水 = **100.0%**、四邻有水只有 77.6%、**仅斜对角邻水 22.4%**
+            //   （那 118 格正是之前被误算成"距水 2 格"的那些）⇒ 四邻判定会漏掉整条斜向海岸线。
+            if (D8.some((d) => this.inb(x + d[0], y + d[1]) && this.waterTerrains.has(this.terrain[this.idx(x + d[0], y + d[1])]))) {
                 const nm = this.info?.get(t)?.name ?? this.names.get(t) ?? '';
                 // 脚本参数优先（`beach_terrain`）：这条地形临水 → 用它指定的沙滩地形；没指定才走全局兜底
                 const scriptBeach = this.beachOf.get(t);
@@ -617,6 +713,11 @@ export class MapEngine {
             const src = lay >= 0 ? this.terrainUnits.get(lay) : list;
             if (!src || (src.length && src[src.length - 1].density >= 1000)) continue;
             for (const u of src) {
+                // 【第 45 轮实验 · 已回退】试过把 `lay >= 0 ? u.masked : u.density` 改成一律 `u.density`：
+                //   结果**更差**（我方地面装饰 295 → 336，DE 是 234）—— 因为分层格子用的是**遮罩地形的种类表**，
+                //   而遮罩地形的普通密度往往更高（例 Dry Grass 的 GRASS_DRY 80‰）⇒ 真正起作用的是"用哪张表"，不是密度字段。
+                //   实验数据（DE 自己的地形格上算期望）：普通密度口径 258（对 DE 234 差 +10%）｜遮罩密度口径 129（差 −45%）｜
+                //   但 **DE 基准图没有图层信息**，无法把"用哪张表"与"用哪个密度"分开 ⇒ 判为**查不清**，按 CC 规则回退、记为已知偏差。
                 const d = lay >= 0 ? u.masked : u.density;
                 if (d > 0 && this.rng() * 1000 < d) put(u.unit, i);
             }

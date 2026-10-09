@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<!--
+  第三步 · 渲染原型与性能实测（CC 2026-10-09）
+    · 地面层 = WebGL 独立模块（tools/rms/viewer/groundLayer.mjs），镜头参数由外部传入
+    · 士兵/特效/界面层将来继续用 Canvas 2D（本页保留一个 Canvas 2D 原型用于对比）
+    · 只读 public/ 的 DE 素材与 scratch/ 的地图数据，**不碰 src/ 与 public/**
+  用法：node tools/rms/viewer/serve.mjs → http://127.0.0.1:8787/tools/rms/viewer/index.html[?map=…json]
+-->
+<meta charset="utf-8" />
+<title>战术地图 · 地面层（WebGL）性能原型</title>
+<style>
+    body { margin: 0; background: #111; color: #ddd; font: 13px/1.5 Consolas, monospace; }
+    #bar { padding: 6px 10px; background: #1b1b1b; border-bottom: 1px solid #333; }
+    button { background: #2a2a2a; color: #ddd; border: 1px solid #444; padding: 3px 10px; margin-right: 6px; cursor: pointer; }
+    button.on { background: #2d4a2d; border-color: #4a7a4a; }
+    canvas { display: block; }
+    #msg { padding: 2px 10px; color: #9c9; }
+</style>
+<div id="bar">
+    渲染器：<button id="bgl" class="on">WebGL 地面层</button><button id="b2d">Canvas 2D（对比用）</button>
+    ｜ 视野剔除：<button id="bcull" class="on">开</button>
+    ｜ 过渡：<button id="bblend" class="on">开</button>
+    ｜ 场景：<button data-s="full">整图可见</button><button data-s="drag">拖动镜头</button><button data-s="zoom">缩放</button>
+    ｜ <button id="run">跑基准</button>
+    <div id="msg">就绪</div>
+</div>
+<canvas id="cvg" width="1280" height="720"></canvas>
+<canvas id="cv" width="1280" height="720" style="display:none"></canvas>
+<script type="module">
+import { createGroundLayer } from './groundLayer.mjs';
+
+const TW = 64, TH = 32, dx = TW / 2, dy = TH / 2;
+const isoX = (x, y, ox) => (x - y) * dx + ox;
+const isoY = (x, y) => (x + y) * dy;
+
+const NATURE_DIRS = `ACACIA ASIAN_MAPLE_AUTUMN ASIAN_MAPLE_GREEN ASIAN_PINE AUTUMN_OAK BAMBOO BAOBAB BIRCH_AUTUMN BIRCH_GREEN BIRCH_WINTER BRAZILWOOD BUSH_GREEN BUSH_TREE_A BUSH_TREE_B BUSH_TREE_C CACTUS CLIFF_DEFAULT CLIFF_LIMESTONE CLIFF_MARBLE CLIFF_SAND CLIFF_SNOW CLIFF_TERRACE CYPRESS CYPRESS_DEC DEAD_TREE DRAGON_TREE FERNPATCH FLOWER FLOWERBED FLOWER_1 FLOWER_2 FLOWER_3 FLOWER_4 FORAGE_BUSH FORAGE_FRUIT FORAGE_PAPAYA FORAGE_PINEAPPLE GRASS_DRY GRASS_DRY_PATCH GRASS_GREEN GRASS_GREEN_PATCH GREEN_OAK ITALIAN_PINE JUNGLE LUSH_BAMBOO MANGROVE MINE_GOLD MINE_STONE OAK OLIVE OYSTERS PALM PEACH_BLOSSOM PINE PLANT PLANT_DEAD PLANT_JUNGLE PLANT_RAINFOREST RAINFOREST REEDS ROCK1 ROCK2 ROCK3 ROCK_BEACH ROCK_FORMATION1 ROCK_FORMATION2 ROCK_FORMATION3 ROCK_JUNGLE ROCK_LIMESTONE ROCK_PILLAR ROCK_SEA1 ROCK_SEA2 SHRUB_GREEN SNOW_AUTUMN_OAK SNOW_PINE UNDERBRUSH UNDERBRUSH_JUNGLE UNDERBRUSH_RAINFOREST WATER_LILY WAX_PALM WEED WILLOW`.split(' ');
+
+/** 物件名 → [素材目录大类, 目录名]（依据：素材目录名与 dat/random_map.def 的规范名对应；拿不准的标"推断"） */
+const ALIAS = {
+    FDRA: ['NATURE', 'PALM'], FPAL: ['NATURE', 'PALM'], FBAM: ['NATURE', 'BAMBOO'], BIRCH: ['NATURE', 'BIRCH_GREEN'],
+    FJUN: ['NATURE', 'JUNGLE'], FSNO: ['NATURE', 'SNOW_PINE'], FOAK: ['NATURE', 'OAK'], FPIN: ['NATURE', 'PINE'],
+    ITPINE: ['NATURE', 'ITALIAN_PINE'], OLIVE: ['NATURE', 'OLIVE'], CYPRESS: ['NATURE', 'CYPRESS'],
+    GREENOAK: ['NATURE', 'GREEN_OAK'], BUSH: ['NATURE', 'BUSH_GREEN'], BUSH2: ['NATURE', 'BUSH_TREE_A'], BUSH3: ['NATURE', 'BUSH_TREE_B'],
+    PLANT: ['NATURE', 'PLANT'], PLANTS: ['NATURE', 'PLANT'], PLANT_DEAD: ['NATURE', 'PLANT_DEAD'], PLANT_JUNGLE: ['NATURE', 'PLANT_JUNGLE'],
+    PLAN_SHRUB_GREEN: ['NATURE', 'SHRUB_GREEN'], PLANT_SHRUB_DRY: ['NATURE', 'SHRUB_GREEN'],
+    GRASS_GREEN: ['NATURE', 'GRASS_GREEN'], GRASS_DRY: ['NATURE', 'GRASS_DRY'], PLANT_FLOWER: ['NATURE', 'FLOWER'],
+    ROCKX: ['NATURE', 'ROCK1'], ROCKSX: ['NATURE', 'ROCK2'], ROCKGX: ['NATURE', 'ROCK3'],
+    ROCKF1: ['NATURE', 'ROCK_FORMATION1'], ROCKF2: ['NATURE', 'ROCK_FORMATION2'], ROCKF3: ['NATURE', 'ROCK_FORMATION3'],
+    CLIFF_DESERT_01: ['NATURE', 'CLIFF_SAND'], CLIFF_SNOW_01: ['NATURE', 'CLIFF_SNOW'], CLIFF_DEFAULT_01: ['NATURE', 'CLIFF_DEFAULT'],
+    TREEA: ['NATURE', 'OAK'], TREEB: ['NATURE', 'OAK'], TREEC: ['NATURE', 'OAK'], FORTR: ['NATURE', 'OAK'],
+    GOLDM: ['RESOURCE', 'GOLD_MINE'], STONM: ['RESOURCE', 'STONE_MINE'], PSTM: ['RESOURCE', 'STONE_MINE'],
+    FORAGM: ['RESOURCE', 'FORAGE_BUSH'], FORAG: ['RESOURCE', 'FORAGE_BUSH'], FORAGGURJ: ['RESOURCE', 'FORAGE_BUSH'],
+    FORAGPINEAPPLE: ['RESOURCE', 'FORAGE_PINEAPPLE'], FISHS: ['RESOURCE', 'DORADO_FISH'], FISHX: ['RESOURCE', 'DORADO_FISH'],
+    FISH1: ['RESOURCE', 'DORADO_FISH'], FISH2: ['RESOURCE', 'MARLIN_FISH'], FISH4: ['RESOURCE', 'DORADO_FISH'],
+    OYSTERS: ['RESOURCE', 'OYSTERS'], TURTLES: ['RESOURCE', 'BOX_TURTLES'], WHALE: ['RESOURCE', 'BOX_TURTLES'],
+    DEERX: ['ANIMAL', 'DEER'], BOARX: ['ANIMAL', 'BOAR'], WOLFX: ['ANIMAL', 'WOLF'], DWOLF: ['ANIMAL', 'WOLF'],
+    SHEEPG: ['ANIMAL', 'SHEEP'], GOAT: ['ANIMAL', 'GOAT'], MOUFLON: ['ANIMAL', 'MOUFLON'],
+    HAREA: ['ANIMAL', 'HARE_GREY'], HAREB: ['ANIMAL', 'HARE_BROWN'], GOOSE: ['ANIMAL', 'GOOSE'], OSTRICH: ['ANIMAL', 'OSTRICH'],
+    RHINO: ['ANIMAL', 'RHINO'], REDFOX: ['ANIMAL', 'FOX_RED'], GJAGR: ['ANIMAL', 'JAGUAR'], SNAKE: ['ANIMAL', 'SNAKE_GROUND'],
+    WMONKEY: ['ANIMAL', 'MONKEY'], WCHICKENA: ['ANIMAL', 'CHICKEN'], WCHICKENB: ['ANIMAL', 'CHICKEN'], WCHICKENC: ['ANIMAL', 'CHICKEN'],
+    HORSE: ['ANIMAL', 'HORSE'], CAMEL: ['ANIMAL', 'CAMEL'], ELEPHANT: ['ANIMAL', 'ELEPHANT'], LION: ['ANIMAL', 'LION'],
+    TIGER: ['ANIMAL', 'TIGER'], ZEBRA: ['ANIMAL', 'ZEBRA'], BEAR: ['ANIMAL', 'BEAR'], MACAW: ['ANIMAL', 'MACAW'], OWL: ['ANIMAL', 'OWL'],
+    // de_map_1 导出的"规范名"形态（DE 真图侧用这些名字）
+    GOLD_MINE: ['RESOURCE', 'GOLD_MINE'], STONE_MINE: ['RESOURCE', 'STONE_MINE'], FORAGE_BUSH: ['RESOURCE', 'FORAGE_BUSH'],
+    SHORE_FISH: ['RESOURCE', 'DORADO_FISH'], FISH_SNAPPER: ['RESOURCE', 'DORADO_FISH'], FISH_SALMON: ['RESOURCE', 'MARLIN_FISH'],
+    WILD_BOAR: ['ANIMAL', 'BOAR'], DEER: ['ANIMAL', 'DEER'], WOLF: ['ANIMAL', 'WOLF'], HAWK: ['ANIMAL', 'FALCON'],
+    TREE_ITALIAN_PINE: ['NATURE', 'ITALIAN_PINE'], TREE_OLIVE: ['NATURE', 'OLIVE'], TREE_CYPRESS: ['NATURE', 'CYPRESS'],
+    TREE_OAK_FOREST: ['NATURE', 'OAK'], TREE_BIRCH_FOREST: ['NATURE', 'BIRCH_GREEN'], TREE_PINE_FOREST: ['NATURE', 'PINE'],
+    TREE_PALM_FOREST: ['NATURE', 'PALM'], TREE_JUNGLE: ['NATURE', 'JUNGLE'], TREE_MANGROVE: ['NATURE', 'MANGROVE'],
+    TREE_BAOBAB: ['NATURE', 'BAOBAB'], TREE_DRAGON: ['NATURE', 'DRAGON_TREE'], TREE_ACACIA: ['NATURE', 'ACACIA'],
+    BUSH_FOREST: ['NATURE', 'BUSH_GREEN'], BUSH: ['NATURE', 'BUSH_GREEN'], PLANT_UNDERBRUSH: ['NATURE', 'UNDERBRUSH'],
+    LEAVES: ['NATURE', 'UNDERBRUSH'], REEDS: ['NATURE', 'REEDS'], ROCK_FORMATION: ['NATURE', 'ROCK_FORMATION1'],
+};
+function resolveSprite(name) {
+    if (!name) return null;
+    if (ALIAS[name]) return ALIAS[name];
+    if (NATURE_DIRS.includes(name)) return ['NATURE', name];
+    if (/^CLIFF/.test(name)) return ['NATURE', NATURE_DIRS.find((d) => d.startsWith('CLIFF') && name.includes((d.split('_')[1] ?? '').toLowerCase())) ?? 'CLIFF_DEFAULT'];
+    for (const t of [name, name.replace(/^TREE_/, ''), name.replace(/^TREE/, '')]) if (NATURE_DIRS.includes(t)) return ['NATURE', t];
+    for (const d of NATURE_DIRS) if (name.includes(d)) return ['NATURE', d];
+    return null;
+}
+
+const state = { mode: 'gl', scenario: 'full', cull: true, blend: true, debug: 0, data: null, manifest: {}, textures: new Map(), sprites: new Map(), masks: new Map(), blendTable: null, cam: { x: 0, y: 0, zoom: 1 }, layer: null };
+const msg = (s) => { document.getElementById('msg').textContent = s; };
+const activeCanvas = () => (state.mode === 'gl' ? document.getElementById('cvg') : document.getElementById('cv'));
+function switchCanvas() {
+    document.getElementById('cvg').style.display = state.mode === 'gl' ? 'block' : 'none';
+    document.getElementById('cv').style.display = state.mode === 'gl' ? 'none' : 'block';
+    document.getElementById('bgl').className = state.mode === 'gl' ? 'on' : '';
+    document.getElementById('b2d').className = state.mode === '2d' ? 'on' : '';
+}
+const loadJson = async (u) => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' HTTP ' + r.status); return r.json(); };
+const loadImg = (u) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = u; });
+async function loadSprite(base) {
+    const meta = await loadJson(base + '/_meta.json').catch(() => null);
+    if (meta?.box_w) {
+        const sheet = await loadImg(base + '/frames.png'); if (!sheet) return null;
+        const cv = document.createElement('canvas'); cv.width = meta.box_w; cv.height = meta.box_h;
+        cv.getContext('2d').drawImage(sheet, 0, 0, meta.box_w, meta.box_h, 0, 0, meta.box_w, meta.box_h);
+        return { img: cv, ax: meta.anchor_x ?? meta.box_w / 2, ay: meta.anchor_y ?? meta.box_h };
+    }
+    const im = await loadImg(base + '/idle_0.png');
+    if (!im) return null;
+    // 动物的 idle_0.png 是一整条横向序列帧（例：山羊 2160×44 = 60 帧 × 36），只取第一帧（CC 第 59 轮代修）
+    const f0 = meta?.idle?.dirs?.['0'];
+    if (f0?.fw && im.width > f0.fw) {
+        const cv = document.createElement('canvas'); cv.width = f0.fw; cv.height = f0.fh;
+        cv.getContext('2d').drawImage(im, 0, 0, f0.fw, f0.fh, 0, 0, f0.fw, f0.fh);
+        return { img: cv, ax: f0.hx ?? f0.fw / 2, ay: f0.hy ?? f0.fh };
+    }
+    return { img: im, ax: im.width / 2, ay: im.height };
+}
+/** **x1 统一（CC 第 53 轮裁定 A）**：DE 安装目录只有 `terrain/textures/2x`（512×512），而我们用的精灵是 x1
+ *  （`*_x1.sld`）⇒ 把地形贴图与遮罩**缩到一半（512→256）**，统一到 x1 像素空间（内存也只有 2x 的 1/4）。 */
+function toX1(img, half = 2) {
+    if (!img || img.width <= 64) return img;
+    const cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.round(img.width / half)); cv.height = Math.max(1, Math.round(img.height / half));
+    const c = cv.getContext('2d'); c.imageSmoothingQuality = 'high';
+    c.drawImage(img, 0, 0, cv.width, cv.height);
+    return cv;
+}
+async function loadAssets() {
+    const ids = [...new Set([...state.data.terrain, ...state.data.layer.filter((v) => v >= 0)])];
+    const codes = new Set(), maskNames = new Set(['default_weak']);   // default_weak = 空遮罩地形的兜底（推断）
+    for (const id of ids) {
+        const m = state.manifest[id]; if (m?.name_2) codes.add(String(m.name_2).replace(/^g_/, ''));
+        const mn = state.blendTable?.[String(id)]?.mask; if (mn) maskNames.add(String(mn).replace(/\.png$/i, ''));
+    }
+    let n = 0;
+    await Promise.all([...codes].map(async (c) => { const im = await loadImg('../../../public/SUCAI_TERRAIN/' + c + '.png'); if (im) { state.textures.set(c, toX1(im)); n++; } }));
+    let mk = 0, maskStat = null;
+    await Promise.all([...maskNames].map(async (mn) => {
+        const im = await loadImg('../../../public/SUCAI_TERRAIN/masks/' + mn + '.png');
+        if (!im) return;
+        const cv = toX1(im); state.masks.set(mn, cv); mk++;
+        // 报缩半后遮罩 R 的分布（min/mean/max + >0.85 占比）
+        const c2 = cv.getContext('2d'); const d = c2.getImageData(0, 0, cv.width, cv.height).data;
+        let lo = 255, hi = 0, sum = 0, n2 = 0, over = 0;
+        for (let i = 0; i < d.length; i += 4) { const v = d[i]; if (v < lo) lo = v; if (v > hi) hi = v; sum += v; n2++; if (v > 217) over++; }
+        const s2 = `${mn}: R min ${lo} 均值 ${(sum / n2).toFixed(0)} max ${hi} >0.85 占 ${(100 * over / n2).toFixed(1)}%`;
+        maskStat = maskStat ? maskStat + ' ｜ ' + s2 : s2;
+    }));
+    const names = [...new Set(state.data.objects.map((o) => o.name))];
+    let s = 0; const miss = [];
+    await Promise.all(names.map(async (nm) => {
+        const r = resolveSprite(nm);
+        if (r) { const sp = await loadSprite(`../../../public/SUCAI_${r[0]}/${r[1]}`); if (sp) { state.sprites.set(nm, sp); s++; return; } }
+        miss.push(nm);
+    }));
+    return { tex: `${n}/${codes.size}`, spr: `${s}/${names.length}`, mask: `${mk}/${maskNames.size}`, maskStat, miss };
+}
+
+// ───── Canvas 2D 对比原型（与地面层内容相同，便于对照） ─────
+let ctx2d = null;
+function draw2d(view) {
+    const d = state.data, N = d.width, OX = (N - 1) * dx;
+    const cv = document.getElementById('cv');
+    const t0 = performance.now();
+    ctx2d.setTransform(1, 0, 0, 1, 0, 0); ctx2d.fillStyle = '#0d0d0d'; ctx2d.fillRect(0, 0, cv.width, cv.height);
+    ctx2d.setTransform(view.z, 0, 0, view.z, view.ox, view.oy);
+    const inView = state.cull ? visibleTiles(view, cv.width, cv.height) : { x0: 0, x1: N - 1, y0: 0, y1: N - 1 };
+    for (let y = inView.y0; y <= inView.y1; y++) for (let x = inView.x0; x <= inView.x1; x++) {
+        const id = d.layer[y * N + x] >= 0 ? d.layer[y * N + x] : d.terrain[y * N + x];
+        const m = state.manifest[id]; const code = m?.name_2 ? String(m.name_2).replace(/^g_/, '') : null;
+        const img = code && state.textures.get(code);
+        const px = isoX(x, y, OX), py = isoY(x, y);
+        if (img) ctx2d.drawImage(img, px - TW / 2, py, TW, TH);
+    }
+    for (const o of d.objects) {
+        const px = isoX(o.x, o.y, OX), py = isoY(o.x, o.y);
+        const sp = state.sprites.get(o.name);
+        if (sp) ctx2d.drawImage(sp.img, px - sp.ax, py - sp.ay + TH / 2);
+    }
+    ctx2d.setTransform(1, 0, 0, 1, 0, 0);
+    return performance.now() - t0;
+}
+function visibleTiles(view, w, h) {
+    const N = state.data.width, OX = (N - 1) * dx;
+    const wx0 = -view.ox / view.z - TW, wx1 = (w - view.ox) / view.z + TW;
+    const wy0 = -view.oy / view.z - TH, wy1 = (h - view.oy) / view.z + TH;
+    const inv = (wx, wy) => { const a = (wx - OX) / dx, b = wy / dy; return [(a + b) / 2, (b - a) / 2]; };
+    const cs = [inv(wx0, wy0), inv(wx1, wy0), inv(wx0, wy1), inv(wx1, wy1)];
+    const gx = cs.map((c) => c[0]), gy = cs.map((c) => c[1]);
+    return { x0: Math.max(0, Math.floor(Math.min(...gx)) - 1), x1: Math.min(N - 1, Math.ceil(Math.max(...gx)) + 1), y0: Math.max(0, Math.floor(Math.min(...gy)) - 1), y1: Math.min(N - 1, Math.ceil(Math.max(...gy)) + 1) };
+}
+function camView() {
+    const d = state.data, cv = activeCanvas();
+    const N = d.width;
+    const mapW = 2 * (N - 1) * dx, mapH = 2 * (N - 1) * dy;
+    let z = state.cam.zoom;
+    if (state.scenario === 'full') z = Math.min(cv.width / mapW, cv.height / mapH);
+    return { ox: (cv.width - mapW * z) / 2 + (state.cam.x || 0) * z, oy: (cv.height - mapH * z) / 2 + (state.cam.y || 0) * z, z };
+}
+
+let frames = [], lastT = 0, running = false;
+function frame(ts) {
+    if (!running) return;
+    if (!state.data) { requestAnimationFrame(frame); return; }
+    try {
+        const view = camView();
+        let dt = 0;
+        if (state.mode === 'gl') { ensureLayerSync().setCamera({ x: view.ox, y: view.oy, zoom: view.z }); dt = state.layer.render(); }
+        else dt = draw2d(view);
+        if (lastT) frames.push({ wall: ts - lastT, cpu: dt });
+    } catch (e) { msg('渲染出错：' + e.message); }
+    lastT = ts;
+    requestAnimationFrame(frame);
+}
+/** 同步兜底建层（帧循环里不能 await） */
+function ensureLayerSync() {
+    if (!state.layer) {
+        const q = new URLSearchParams(location.search);
+        const sc = Number(q.get('scale') || 0);
+        state.layer = createGroundLayer(document.getElementById('cvg'), {
+            data: state.data, manifest: state.manifest, textures: state.textures, sprites: state.sprites,
+            masks: state.masks, blend: state.blendTable,
+            spriteScale: sc > 0 ? sc : undefined,
+            blendEnabled: state.blend, debug: state.debug,
+            texMode: q.get('tscale') === 'tile' ? 'tile' : 'world',
+        });
+        state.layer.setCull(state.cull);
+    }
+    return state.layer;
+}
+
+async function ensureLayer() { ensureLayerSync(); }
+async function runOne(scenario, mode, cull, seconds) {
+    state.scenario = scenario; state.mode = mode; state.cull = cull;
+    switchCanvas(); document.getElementById('bcull').className = cull ? 'on' : '';
+    if (mode === 'gl') { await ensureLayer(); state.layer.setCull(cull); } else ctx2d = document.getElementById('cv').getContext('2d');
+    frames = []; lastT = 0; running = true;
+    const t0 = performance.now();
+    const anim = () => {
+        const el = (performance.now() - t0) / 1000;
+        if (scenario === 'drag') { state.cam.x = Math.sin(el * 2) * 900; state.cam.y = Math.cos(el * 2) * 900; }
+        if (scenario === 'zoom') state.cam.zoom = 1 + 1.5 * (1 + Math.sin(el * 2)) / 2;
+        if (scenario !== 'full') requestAnimationFrame(anim);
+    };
+    anim();
+    await new Promise((r) => setTimeout(r, seconds * 1000));
+    running = false;
+    const med = (a) => a.length ? a[Math.floor(a.length / 2)] : 0;
+    const p95 = (a) => a.length ? a[Math.min(a.length - 1, Math.floor(a.length * 0.95))] : 0;
+    const wall = frames.map((f) => f.wall).sort((a, b) => a - b), cpu = frames.map((f) => f.cpu).sort((a, b) => a - b);
+    const st = state.mode === 'gl' ? state.layer.stats() : null;
+    return { mode, cull, scenario, frames: frames.length, fps: +(frames.length / seconds).toFixed(1), frameMs: +med(wall).toFixed(2), p95Ms: +p95(wall).toFixed(2), cpuMs: +med(cpu).toFixed(2), tiles: st?.tiles ?? null, objs: st?.objs ?? null };
+}
+window.__bench = null;
+window.__runAll = async (seconds = 3) => {
+    const out = [];
+    for (const scenario of ['full', 'drag', 'zoom']) {
+        out.push(await runOne(scenario, 'gl', true, seconds));
+        out.push(await runOne(scenario, 'gl', false, seconds));
+        out.push(await runOne(scenario, '2d', true, seconds));
+    }
+    window.__bench = out; msg('基准完成');
+    return out;
+};
+window.__stats = () => ({ loaded: { tex: state.textures.size, spr: state.sprites.size }, stats: state.layer?.stats() ?? null });
+/** 给外部工具（截图/基准脚本）用 */
+window.__state = state;
+
+async function boot() {
+    const fit = () => { for (const id of ['cv', 'cvg']) { const c = document.getElementById(id); c.width = window.innerWidth; c.height = window.innerHeight - 52; } if (state.layer) state.layer.resize(window.innerWidth, window.innerHeight - 52); };
+    fit(); window.addEventListener('resize', fit);
+    state.manifest = Object.fromEntries((await loadJson('../../../scratch/de_terrain_manifest.json')).terrains.map((t) => [t.terrain_id, t]));
+    state.blendTable = await loadJson('../../../scratch/de_terrain_blend.json').catch(() => null);
+    const mapUrl = new URLSearchParams(location.search).get('map') ?? '../../../scratch/rms-out/mapdata_arabia_120.json';
+    state.data = await loadJson(mapUrl);
+    const a = await loadAssets();
+    const q = new URLSearchParams(location.search);
+    const dbg = q.get('debug');
+    state.debug = dbg === 'shape' ? 1 : dbg === 'mask' ? 2 : dbg === 'dir' ? 3 : 0;
+    msg(`地图 ${state.data.source ?? ''} ｜ 贴图 ${a.tex}(已缩 x1) ｜ 遮罩 ${a.mask} ｜ 精灵 ${a.spr}` + (a.miss.length ? ` ｜ 无精灵：${a.miss.slice(0, 4).join(',')}` : '') + (a.maskStat ? `\n遮罩分布 ${a.maskStat}` : '') + (state.debug ? `  ｜ **调试模式 debug=${dbg}**` : ''));
+    switchCanvas(); running = true; requestAnimationFrame(frame);
+}
+document.getElementById('bgl').onclick = async () => { state.mode = 'gl'; switchCanvas(); await ensureLayer(); };
+document.getElementById('b2d').onclick = () => { state.mode = '2d'; switchCanvas(); ctx2d = document.getElementById('cv').getContext('2d'); };
+document.getElementById('bcull').onclick = () => { state.cull = !state.cull; if (state.layer) state.layer.setCull(state.cull); document.getElementById('bcull').className = state.cull ? 'on' : ''; document.getElementById('bcull').textContent = state.cull ? '开' : '关'; };
+document.getElementById('bblend').onclick = () => { state.blend = !state.blend; if (state.layer) state.layer.setBlend(state.blend); document.getElementById('bblend').className = state.blend ? 'on' : ''; document.getElementById('bblend').textContent = state.blend ? '开' : '关'; };
+for (const b of document.querySelectorAll('[data-s]')) b.onclick = () => { state.scenario = b.dataset.s; state.cam.x = state.cam.y = 0; state.cam.zoom = 1; };
+document.getElementById('run').onclick = () => window.__runAll(3);
+boot().catch((e) => msg('加载失败：' + e.message));
+</script>
