@@ -7,6 +7,7 @@ import {LegionPhalanxStateManager} from './LegionPhalanxState';
 import { LegionType } from '../../types/UnitTypes';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import {getCompositionTier, expandCompositionSlots} from '../../types/LegionComposition';
+import { WAR_TYPES } from '../../data/WarTypes';
 import type { FormationMode } from '../../types/CultureFormations';
 import { getNavalShipDrawScale, getCultureNavalShip, getNavalWeapons, type NavalShipAssetId } from '../../types/NavalShipTiers';
 import { gameLog } from '../../utils/GameLogger';
@@ -1738,6 +1739,14 @@ export class LegionPhalanxDrawer {
             if (cultureScales && i < cultureScales.length) {
                 scalingFactor = cultureScales[i];
             }
+            // 🔴 [2026-10-09 主人令「所有战略，战术，所有兵模显示的比例都应该一致」]
+            //   尺寸倍率 sz（WarTypes，主人定的「这个兵种该多大」）**以前只在 13 战术生效**
+            //   （Scene13WarLayer：UNIT_PX × sz / 64），战略地图这一路根本没读它 ——
+            //   于是同一个兵种在两个模式里相对大小不同：战象（sz 0.55~0.8）在地图上比 13 里大 1.25~1.8 倍，
+            //   骑兵（sz 1.15/1.2）在地图上小 13%。这里补上，两处同源。
+            //   与 13 的分工：13 只乘 sz（场地按 dat 真值占地半径排布，素材原大即正确）；
+            //   地图再乘一遍战车阵型适配比例（那 16 处曾丢，现已收进 getDefaultScaleForUnitType）。
+            scalingFactor *= WAR_TYPES[resolvedUnitType]?.sz ?? 1;
             // Apply dynamic scale (spawn animation etc.) into the single scaling factor
             scalingFactor *= dynamicScale;
 

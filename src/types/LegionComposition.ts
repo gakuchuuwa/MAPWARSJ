@@ -107,9 +107,49 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
     return slot.scale ?? getDefaultScaleForUnitType(slot.type);
 }
 
-/** 所有兵种默认比例统一为 1.0 */
-export function getDefaultScaleForUnitType(_type: string): number {
-    return 1.0;
+/**
+ * 🔴 [2026-09-08 主人令「好的走A」/ 2026-10-09 主人令「所有战略、战术、所有兵模显示的比例都应该一致」]
+ *
+ * **战车类「阵型适配」比例 —— 唯一出处（按兵种查表，不再靠编成数据里的 scale 字段）。**
+ *
+ * 规矩（原文见 `src/config/LegionSpacing.ts`）：战略地图的方阵格距是**常数**（横 46 / 纵 63，不看兵种），
+ * 而战车素材帧框远大于格距 —— 所以战车类绘制宽度压到 **2 × 46 = 92px** 上限：
+ *
+ *      scale = 92 ÷ (move 最宽帧 × SPRITE_BASE_H / DE_REF_FRAME_H)      （68 / 64）
+ *
+ * 数值全部按 DE `_meta.json` 实测帧框算出（四舍五入到两位）：
+ *   war_wagon 148 → 0.59 ／ elite_war_wagon 164 → 0.53
+ *   war_chariot 132 → 0.66 ／ elite_war_chariot 132 → 0.66 ／ war_chariot_ranged 152 → 0.57
+ *   ratha_melee / ratha_ranged / elite_ratha_* 124 → 0.70
+ *   hussite_wagon / elite_hussite_wagon 104 → 0.83
+ *
+ * ⚠️ 为什么放在这张表、而不是各军团编成的 slot.scale 字段：
+ *   2026-09-08 那次是把值写进编成数据的；2026-09-14 编制大迁移（新建 level2/level3 军团文件、
+ *   砍掉 CultureFormations 4307 行）时这 16 处 scale **全被漏拷**，只剩先秦远程战车一处幸存
+ *   —— 战车在地图上重新变成原大、压垮方阵。改成按兵种查表，编成怎么搬都不会再丢。
+ *
+ * 只有战车类 < 1，其余兵种一律 1.0（含攻城器械：2026-09-09 主人定「素材本身的车身尺寸就是该有的大小」）。
+ * 编成里显式写了 `scale` 的 slot 仍以它为准（见 getEffectiveSlotScale）。
+ *
+ * 验收：`npx tsx scratch/_verify_unit_size_parity.mts`（逐兵种拿真 `_meta.json` 复核本表）。
+ */
+const CHARIOT_FIT_SCALE: Record<string, number> = {
+    war_chariot: 0.66,
+    elite_war_chariot: 0.66,
+    war_chariot_ranged: 0.57,
+    war_wagon: 0.59,
+    elite_war_wagon: 0.53,
+    ratha_melee: 0.70,
+    ratha_ranged: 0.70,
+    elite_ratha_melee: 0.70,
+    elite_ratha_ranged: 0.70,
+    hussite_wagon: 0.83,
+    elite_hussite_wagon: 0.83,
+};
+
+/** 兵种默认比例：战车类＝阵型适配值（上表），其余一律 1.0。 */
+export function getDefaultScaleForUnitType(type: string): number {
+    return CHARIOT_FIT_SCALE[type] ?? 1.0;
 }
 
 /**

@@ -2158,7 +2158,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/LINGNAN/leloi.png": {
-            "scale": 0.85,
+            "scale": 0.83,
             "offsetX": 0,
             "offsetY": -16
         },
@@ -7643,7 +7643,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 19
         },
         "/assets/SOUTHEAST_ASIA/huanzhou_dingli.png": {
-            "scale": 1,
+            "scale": 1.04,
             "offsetX": 0,
             "offsetY": -7
         },

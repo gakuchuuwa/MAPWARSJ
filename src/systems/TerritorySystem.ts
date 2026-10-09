@@ -2231,6 +2231,37 @@ export class TerritorySystem {
         const sizeClass = getCityMarkerSizeClass(city.type);
         const animClass = fadeIn ? 'map-fade-in' : '';
         const containerClass = [terrainClass, sizeClass, animClass].filter(Boolean).join(' ');
+
+        /**
+         * 🔴 [2026-10-09 主人令「旗帜不要被建筑遮挡」——**旗面与旗杆一起修**]
+         *
+         * 病根不在据点自己的建筑，而在**奇观层**：旗原先挂在据点 marker（`cityPane` z-index 610）里，
+         * 而奇观 marker 在 `monumentPane` **615** —— 顺化皇城那类「奇观压在据点上」的城，
+         * 整面旗（连旗杆）被奇观塔盖住。实测（富春·顺化皇城，zoom 11）：旗面矩形 25 个采样点里
+         * **20 个点命中的是奇观图**，只有 5 个点命中旗面。同 marker 内部抬 z-index 治不了跨 pane 遮挡。
+         *
+         * 处置：旗（旗杆＋旗面）改挂**城名所在的 `labelsPane`（660，在奇观 615 之上）**。
+         *   ① 语义正确：旗号与城名、兵力同属**信息层**，本来就该压在装饰性美术之上；
+         *   ② 不新增 marker：标签 marker 本来就每城一个，refresh/patch/淡入链路现成；
+         *   ③ 几何逐像素不变：这个 host 复刻据点容器的锚点与缩放 ——
+         *      iconAnchor = [baseSize/2, (baseSize+80)/2]、缩放原点 = [baseSize/2, (baseSize+80)/2+4]、
+         *      同一个 `--city-scale`（updateCityScales 同步写到 labelsPane）。
+         *      ⚠️ 标签 marker 的 divIcon 实测是 **12×12、锚点在中心**（Leaflet 给它
+         *      margin -6/-6 + width/height 12），所以它的元素左上角在「据点坐标 −6,−6」处；
+         *      host 的 left/top 要**补回这 6px** 才能与原位置逐像素重合（下面那两个 +6）。
+         */
+        const flagHostHtml = showFlag ? `<div class="city-flag-host${animClass ? ' ' + animClass : ''}" style="
+                     position: absolute; left: ${-baseSize / 2 + 6}px; top: ${-(baseSize + 80) / 2 + 6}px;
+                     width: ${baseSize}px; height: ${baseSize + 80}px;
+                     transform: scale(var(--city-scale, 1));
+                     transform-origin: ${baseSize / 2}px ${(baseSize + 80) / 2 + 4}px;
+                     pointer-events: none;
+                 ">${(flagPole ? `<img src="${flagPole}" style="
+                         position: absolute; top: 15px; left: 50%;
+                         transform: translateX(-30%);
+                         height: ${poleHeight}px; width: auto; z-index: -1;
+                     ">` : '')}${flagBodyHtml}</div>` : '';
+
         const icon = L.divIcon({
             className: 'city-icon',
             html: `<div class="city-image-container ${containerClass}" style="
@@ -2239,11 +2270,6 @@ export class TerritorySystem {
                      transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
                      ${ghostStyle}
                  ">
-                     ${(flagPole && showFlag) ? `<img src="${flagPole}" style="
-                         position: absolute; top: 15px; left: 50%;
-                         transform: translateX(-30%);
-                         height: ${poleHeight}px; width: auto; z-index: -1;
-                     ">` : ''}
                      ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
                           ${(deStyle
                               ? (city.type === 'big_city'
@@ -2268,7 +2294,6 @@ export class TerritorySystem {
                                   ">`
                                   : `<div class="city-building-placeholder" style="width: ${baseSize}px; height: ${baseSize}px;"></div>`))}
                       ${settlementMirror ? '</div>' : ''}</div>` : ''}
-                     ${showFlag ? flagBodyHtml : ''}
                  </div>`,
             iconSize: [baseSize, baseSize + 80],
             iconAnchor: [baseSize / 2, (baseSize + 80) / 2]
@@ -2316,7 +2341,7 @@ export class TerritorySystem {
 
         scheduleCityMarkerTerrainSample(city.id, displayLat, displayLng, (id) => this.getCityImageContainer(id));
 
-        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap, labelFadeIn);
+        this.renderCityLabel(city, displayLat, displayLng, targetLayerGroup, labelsMap, labelFadeIn, flagHostHtml);
     }
 
     /** 兵力标签文案：纯数字显示（与军团一致） */
@@ -2365,12 +2390,15 @@ export class TerritorySystem {
         lng: number,
         targetLayerGroup: L.LayerGroup,
         labelsMap: Map<string, L.Marker>,
-        fadeIn: boolean = false
+        fadeIn: boolean = false,
+        /** 🔴 [2026-10-09 主人令「旗帜不要被建筑遮挡」] 旗（旗杆＋旗面）挂在标签 marker 里，
+         *  与城名同处 labelsPane(660) —— 在奇观层(615)之上。见 renderSingleCity 里的 flagHostHtml。 */
+        flagHtml: string = ''
     ) {
         const spriteOk = TerritorySystem.hasCitySprite(city);
         const html = TerritorySystem.buildCityLabelHtml(city, fadeIn, !spriteOk);
 
-        const labelIcon = L.divIcon({ className: 'city-troop-label', html: html });
+        const labelIcon = L.divIcon({ className: 'city-troop-label', html: flagHtml + html });
 
         const label = L.marker([lat, lng], {
             icon: labelIcon,
@@ -2451,7 +2479,9 @@ export class TerritorySystem {
         const marker = this.cityMarkers.get(city.id);
         if (!marker) return false;
 
-        const root = marker.getElement()?.querySelector('.city-image-container');
+        // 🔴 [2026-10-09] 旗面挂在**标签 marker**（labelsPane）里，不在据点 marker 内 ——
+        //    见 renderSingleCity 的 flagHostHtml（旗要压在奇观层之上）。
+        const root = this.cityLabels.get(city.id)?.getElement();
         if (!root) return false;
 
         const flagBodies = root.querySelectorAll<HTMLElement>('.city-flag-body');
@@ -2486,8 +2516,8 @@ export class TerritorySystem {
         //     → 字早就在缓存里了，却永远贴不到旗上（实测跳过去 24 秒也不出）。
         //   改为直接遍历 cityMarkers（marker 注册表，追加过的都在里面），
         //   用旗面 class 判势力，不再依赖 this.cities 这个"启动时的快照"。
-        for (const marker of this.cityMarkers.values()) {
-            const root = marker.getElement()?.querySelector('.city-image-container');
+        for (const label of this.cityLabels.values()) {
+            const root = label.getElement();
             if (!root) continue;
             for (const el of root.querySelectorAll<HTMLElement>('.city-flag-body')) {
                 const m = /flag-faction-([A-Za-z_0-9]+)/.exec(el.className);
@@ -2707,6 +2737,13 @@ export class TerritorySystem {
         if (cityPane) {
             cityPane.style.setProperty('--city-scale', String(scale));
         }
+        // 🔴 [2026-10-09] 据点旗已挪到 labelsPane（见 renderSingleCity 的 flagHostHtml），
+        //    它的 .city-flag-host 也吃同一个 --city-scale；CSS 变量按 DOM 树继承，而 labelsPane
+        //    与 cityPane 是兄弟 → 必须也写一份，否则旗不随缩放放大（会与据点脱节）。
+        const labelsPane = this.map.getLeafletMap().getPane('labelsPane');
+        if (labelsPane) {
+            labelsPane.style.setProperty('--city-scale', String(scale));
+        }
     }
 
     /** 按缩放档位切换图层：6 界线无势力色；7 界线+城名；8 据点+势力色；≥9 常规 */
@@ -2721,7 +2758,13 @@ export class TerritorySystem {
 
         // 城名（labelsPane）：zoom 6 界线视图隐藏；zoom 7 宏观浏览显示城名；zoom ≥ 8 显示
         const labelsPane = leafletMap.getPane('labelsPane');
-        if (labelsPane) labelsPane.style.display = (floorZoom === 6) ? 'none' : '';
+        if (labelsPane) {
+            labelsPane.style.display = (floorZoom === 6) ? 'none' : '';
+            // 🔴 [2026-10-09 主人令「旗帜不要被建筑遮挡」] 据点旗现挂在 labelsPane（在奇观层之上），
+            //    但闸门必须照旧跟**据点层**走：zoom ≤ 7 宏观视图不插旗（城名仍显示）——
+            //    否则 zoom 7 会出现「只有旗、没有城」的浮旗。规则见上一条 cityPane 注释。
+            labelsPane.classList.toggle('hide-city-flags', floorZoom < 8);
+        }
 
         MACRO_HIDDEN_INFRA_PANES.forEach((paneName) => {
             const pane = leafletMap.getPane(paneName);
@@ -2807,11 +2850,4 @@ export class TerritorySystem {
 
     /** 返回城市图标标记数量 */
     public getMarkerCount(): number {
-        return this.cityMarkers.size;
-    }
-
-    /** 返回城市标签数量 */
-    public getLabelCount(): number {
-        return this.cityLabels.size;
-    }
-}
+        return this.cityM

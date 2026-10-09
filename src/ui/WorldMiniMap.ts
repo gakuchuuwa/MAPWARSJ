@@ -2,6 +2,7 @@ import L from 'leaflet';
 import { GridSystem } from '../systems/GridSystem';
 import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
 import { CityType } from '../types/core';
+import { ESRI_SHADED_RELIEF_URL, buildWaterMask } from '../world/land-sea/WaterMask';
 
 /**
  * 世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」；
@@ -26,6 +27,10 @@ const LEVEL_DEFAULT = 5;
 /** 级别 1 的 Leaflet 缩放：世界宽 256·2^z = 小图宽 */
 const FIT_ZOOM = Math.log2(MINI_W / 256);
 const TICK_MS = 250;
+/** 🔴 [2026-10-09 主人定] 小地图势力范围：每座据点占它周围这么远（公里）以内的格子，重叠归最近的城 */
+const TERRITORY_CAP_KM = 150;
+/** 判水用的 ESRI 瓦片级别：3 级全世界 64 块，里海／咸海／贝加尔湖／五大湖都认得出 */
+const WATER_MASK_ZOOM = 3;
 /** 路线每隔这么远（度）记一个点；最多存这么多点 */
 const TRAIL_STEP_DEG = 0.05;
 const TRAIL_MAX = 6000;
@@ -52,6 +57,12 @@ export class WorldMiniMap {
     /** 势力 id -> 上次合并时的格子校验串与颜色：没变就不重合并、不重画 */
     private territoryCache = new Map<string, { checksum: string; color: string }>();
     private lastCityIds = new Set<string>();
+    /** 占格结果：据点 id → 格子 key 列表；claimsKey 是算它时的可见据点清单 */
+    private cityHexes = new Map<string, number[]>();
+    private claimsKey = '';
+    /** 水域掩膜（1＝水）；null＝还没拉到，不画色块 */
+    private waterMask: Uint8Array | null = null;
+    private waterMaskW = 0;
     private territoryDirty = true;
     private mini: L.Map;
     private viewRect: L.Rectangle;
@@ -159,6 +170,7 @@ export class WorldMiniMap {
         this.setLevel(LEVEL_DEFAULT);
         this.setTrailOn(true);
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
+        void this.loadWaterMask();
     }
 
     /** 🎨 按钮四态：据点＋势力色 → 只显示势力色 → 只显示据点 → 都不显示 */
@@ -329,70 +341,45 @@ export class WorldMiniMap {
     }
 
     /**
-     * 🔴 [2026-10-09 主人令] 小地图独立分配六边形并合并势力领土多边形
-     * 按城型占圈：big_city 3 圈，medium_city / pass 2 圈，其余 1 圈；
-     * 一个格子被多座城占到时，归离它最近的那座城；
-     * 满足任一条重算，否则不动：
-     * ① 有据点换了颜色（colorChanged）
-     * ② 可见据点集合变了（citiesChanged）
-     * ③ 首次脏标记（this.territoryDirty）
+     * 🔴 [2026-10-09 主人令「就用150公里」「不应该把海洋的格子算进去」] 小地图独立分配六边形并合并势力领土多边形
+     * 每座可见据点占它周围 TERRITORY_CAP_KM 以内的格子，一个格子被多座城占到时归最近的那座城；
+     * 海、湖上的格子不算（据点自己脚下那一格除外）；水域图没拉到之前不画色块。
+     * 格子归哪座城只与据点位置有关 → 只在可见据点集合变了或水域图到了时重新占格；
+     * 换主只按城重新分组，势力的城没变就不重合并、不重画。
      */
     private syncTerritoryPolygons(
         needsRecalc: boolean,
         marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[]
     ): void {
-        if (!this.showTerritory) return;
+        if (!this.showTerritory || !this.waterMask) return;
         if (!needsRecalc && !this.territoryDirty) return;
         this.territoryDirty = false;
 
-        // 格子归属表：hexKey -> { fid, color, distSq }
-        const hexMap = new Map<number, { fid: string; color: string; distSq: number }>();
-
-        for (const city of marks) {
-            if (!city.factionId || city.factionId === 'panjun') continue;
-            if (!Number.isFinite(city.lat) || !Number.isFinite(city.lng)) continue;
-            const radius = city.type === 'big_city' ? 3 : (city.type === 'medium_city' || city.type === 'pass' ? 2 : 1);
-            const centerHex = GridSystem.latLngToAxial(city.lat, city.lng);
-
-            for (let dq = -radius; dq <= radius; dq++) {
-                const drMin = Math.max(-radius, -dq - radius);
-                const drMax = Math.min(radius, -dq + radius);
-                for (let dr = drMin; dr <= drMax; dr++) {
-                    const q = centerHex.q + dq;
-                    const r = centerHex.r + dr;
-                    const hexKey = GridSystem.getSpatialKey(q, r);
-                    const hexCenter = GridSystem.axialToLatLng(q, r);
-                    const dLat = hexCenter.lat - city.lat;
-                    const dLng = hexCenter.lng - city.lng;
-                    const distSq = dLat * dLat + dLng * dLng;
-
-                    const cur = hexMap.get(hexKey);
-                    if (!cur || distSq < cur.distSq) {
-                        hexMap.set(hexKey, { fid: city.factionId, color: city.color, distSq });
-                    }
-                }
-            }
+        const claimsKey = marks.map((m) => m.id).join('|');
+        if (claimsKey !== this.claimsKey) {
+            this.claimsKey = claimsKey;
+            this.cityHexes = this.computeCityHexes(marks);
         }
 
-        // 按势力分组收集格子
-        const factionHexes = new Map<string, { q: number; r: number; key: number }[]>();
+        // 按势力分组收集据点，跳过 panjun
+        const factionCities = new Map<string, string[]>();
         const factionColorMap = new Map<string, string>();
-        for (const [key, item] of hexMap) {
-            let list = factionHexes.get(item.fid);
+        for (const m of marks) {
+            if (!m.factionId || m.factionId === 'panjun' || !this.cityHexes.has(m.id)) continue;
+            let list = factionCities.get(m.factionId);
             if (!list) {
                 list = [];
-                factionHexes.set(item.fid, list);
-                factionColorMap.set(item.fid, item.color);
+                factionCities.set(m.factionId, list);
+                factionColorMap.set(m.factionId, m.color);
             }
-            const { q, r } = GridSystem.getCoordsFromKey(key);
-            list.push({ q, r, key });
+            list.push(m.id);
         }
 
         const seenFactions = new Set<string>();
-        for (const [fid, hexes] of factionHexes) {
+        for (const [fid, cityIds] of factionCities) {
             seenFactions.add(fid);
             const color = factionColorMap.get(fid) ?? HISTORICAL_FACTION_COLORS[fid] ?? '#888888';
-            const checksum = hexes.map((h) => h.key).sort((a, b) => a - b).join('|');
+            const checksum = cityIds.slice().sort().join('|');
             const existing = this.territoryPolygons.get(fid);
             const cached = this.territoryCache.get(fid);
             if (existing && cached && cached.checksum === checksum) {
@@ -401,6 +388,13 @@ export class WorldMiniMap {
                     cached.color = color;
                 }
                 continue;
+            }
+            const hexes: { q: number; r: number; key: number }[] = [];
+            for (const id of cityIds) {
+                for (const key of this.cityHexes.get(id)!) {
+                    const { q, r } = GridSystem.getCoordsFromKey(key);
+                    hexes.push({ q, r, key });
+                }
             }
             const paths = this.getMergedPaths(hexes);
             if (paths.length === 0) continue;
@@ -413,7 +407,7 @@ export class WorldMiniMap {
                 const poly = L.polygon(paths, {
                     renderer: this.territoryRenderer,
                     fillColor: color,
-                    fillOpacity: 0.35,
+                    fillOpacity: 0.65,
                     color: '#1a1a1a',
                     weight: 1,
                     opacity: 0.85,
@@ -430,6 +424,74 @@ export class WorldMiniMap {
                 this.territoryCache.delete(fid);
             }
         }
+    }
+
+    /** 占格：每座据点 TERRITORY_CAP_KM 以内、不在水上的格子归最近的城；返回 据点 id → 格子 key 列表 */
+    private computeCityHexes(marks: { id: string; lat: number; lng: number }[]): Map<string, number[]> {
+        const best = new Map<number, { id: string; d: number }>();
+        const rings = Math.ceil(TERRITORY_CAP_KM / 28) + 1;
+        for (const city of marks) {
+            if (!Number.isFinite(city.lat) || !Number.isFinite(city.lng)) continue;
+            const center = GridSystem.latLngToAxial(city.lat, city.lng);
+            const cosLat = Math.cos((city.lat * Math.PI) / 180);
+            for (let dq = -rings; dq <= rings; dq++) {
+                const drMin = Math.max(-rings, -dq - rings);
+                const drMax = Math.min(rings, -dq + rings);
+                for (let dr = drMin; dr <= drMax; dr++) {
+                    const q = center.q + dq;
+                    const r = center.r + dr;
+                    const p = GridSystem.axialToLatLng(q, r);
+                    const d = Math.hypot(p.lat - city.lat, (p.lng - city.lng) * cosLat) * 111;
+                    if (d > TERRITORY_CAP_KM) continue;
+                    if ((dq !== 0 || dr !== 0) && this.isWater(p.lat, p.lng)) continue;
+                    const key = GridSystem.getSpatialKey(q, r);
+                    const cur = best.get(key);
+                    if (!cur || d < cur.d) best.set(key, { id: city.id, d });
+                }
+            }
+        }
+        const out = new Map<string, number[]>();
+        for (const [key, { id }] of best) {
+            let list = out.get(id);
+            if (!list) {
+                list = [];
+                out.set(id, list);
+            }
+            list.push(key);
+        }
+        return out;
+    }
+
+    /** 水域图（ESRI 晕渲 WATER_MASK_ZOOM 级全世界瓦片 → 判水掩膜，与海岸线描边同一判据）；拉完重新占格 */
+    private async loadWaterMask(): Promise<void> {
+        const n = 1 << WATER_MASK_ZOOM;
+        const size = 256;
+        const canvas = document.createElement('canvas');
+        canvas.width = n * size;
+        canvas.height = n * size;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+        await Promise.all(Array.from({ length: n * n }, (_, k) => new Promise<void>((resolve) => {
+            const x = k % n;
+            const y = Math.floor(k / n);
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => { ctx.drawImage(img, x * size, y * size); resolve(); };
+            img.onerror = () => resolve();
+            img.src = ESRI_SHADED_RELIEF_URL.replace('{z}', String(WATER_MASK_ZOOM)).replace('{y}', String(y)).replace('{x}', String(x));
+        })));
+        const w = n * size;
+        this.waterMaskW = w;
+        this.waterMask = buildWaterMask(ctx.getImageData(0, 0, w, w).data, w * w);
+        this.claimsKey = '';
+        this.territoryDirty = true;
+    }
+
+    private isWater(lat: number, lng: number): boolean {
+        const w = this.waterMaskW;
+        const s = Math.sin((Math.max(-85, Math.min(85, lat)) * Math.PI) / 180);
+        const px = Math.min(w - 1, Math.max(0, Math.floor(((lng + 180) / 360) * w)));
+        const py = Math.min(w - 1, Math.max(0, Math.floor((0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * w)));
+        return this.waterMask![py * w + px] === 1;
     }
 
     /**
