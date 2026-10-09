@@ -2850,4 +2850,11 @@ export class TerritorySystem {
 
     /** 返回城市图标标记数量 */
     public getMarkerCount(): number {
-        return this.cityM
+        return this.cityMarkers.size;
+    }
+
+    /** 返回城市标签数量 */
+    public getLabelCount(): number {
+        return this.cityLabels.size;
+    }
+}

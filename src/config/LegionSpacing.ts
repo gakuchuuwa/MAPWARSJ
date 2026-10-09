@@ -27,10 +27,12 @@
  *    雁行阵后排那 2 格在 c=±0.5（中心距 = 1×46px，七个阵型里最窄的一对），
  *    两乘重叠 116px 糊成一坨，纵向 144px 又压进中排，整排比 4 人前排还宽。
  *    间距是常数不许动（上面那条铁律），所以只能压绘制尺寸：
- *      **战车类绘制宽度上限 = 2 × STRATEGIC_SPACING_X = 92px**（一对战车各露一半，整排不超前排 footprint）
- *      scale = 92 ÷ (move 最宽帧 × SPRITE_BASE_H / DE_REF_FRAME_H)
- *      war_chariot 0.66 / war_chariot_ranged 0.57 / elite_war_chariot 0.66
- *      war_wagon 0.59 / elite_war_wagon 0.53 ／ ratha* 0.70 ／ hussite_wagon* 0.83
+ *      **🔴 判据（2026-10-09 实测后改定）：地图上「连马带车」的整乘不得矮于一个骑兵**
+ *        ⇒ 适配 = 骑兵图形高(71) ÷ 该支图形高（逐支算，值表在 `LegionComposition.CHARIOT_FIT_SCALE`）
+ *      war_chariot 0.97 / elite_war_chariot 0.99 / war_chariot_ranged 0.70
+ *      war_wagon 0.80 / elite_war_wagon 0.70 ／ ratha* 0.99 ／ hussite_wagon* 0.83
+ *      （旧口径「宽度上限 2 × 46 = 92px、scale = 92 ÷ (move 最宽帧 × 68/64)」**已作废**：
+ *        它按一支车的宽高比反推、却统一套 11 支，实测把双轮/拉塔压到**比骑马的人还矮三成**。）
  *    落地后绘制高 78~88px：仍高于步兵 68px、低于战象 115px，量级排序不乱。
  *    ⚠️ [2026-10-09] 这些值现在**只住一处**：`src/types/LegionComposition.ts` 的
  *       `CHARIOT_FIT_SCALE`／`getDefaultScaleForUnitType()`。原先是各军团编成里的 slot.scale 字段，
@@ -45,6 +47,10 @@
  *
  * 验收：`npm run legion:spacing-audit`（全势力编成扫一遍，「间距÷绘制尺寸」必须全局唯一）
  *      ＋ `npx tsx scratch/_verify_unit_size_parity.mts`（战车比例逐兵种对 DE `_meta.json` 复核）
+ *
+ * 🔴 [2026-10-09 主人令「请记录下来」] 本规则的完整实测记录（人/马/象/车 的素材图形高实测、
+ *    「地图上整车 0.75~0.81 个骑兵高 → 马比人小」这一发现、以及 92px / 123px / 不限 三个方案的数字）
+ *    单列在 `docs/AGENTS/unit-sprite-scale.md`。**92px 这组数是主人 2026-09-08 亲自批的，未点头不许改。**
  */
 
 /** DE / S10DB 素材的参考帧高，换算绘制缩放用。素材换代前不要动。 */
