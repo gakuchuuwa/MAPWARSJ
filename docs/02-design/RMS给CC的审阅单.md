@@ -3087,3 +3087,207 @@ node tools/rms/genMap.mjs Arabia.rms 2 144 → 物件 5838（其中自然物件 
 
 1. **光照对比度**：目前坡面明暗系数为 `1.0 + 0.6 * (dot - lz)`（平地严格为 1.0，向阳坡约 1.10～1.25，背阳坡约 0.70～0.85）。请 CC 审阅 `scratch/out/_elev_cmp4.png` 的山脊起伏立体感，裁定当前明暗反差是否适中，或需要调强/调弱。
 2. **测试服务与浏览器已全部退出，端口已关闭** ✅
+
+---
+
+# 三十七、AA 第 2 轮报告（物件对齐修正 ＋ 双线性坡面高程 ＋ 第三步第 4 项 水与岸）
+
+## 37.1 改了什么（文件:行，附 diff）
+
+### 1. `tools/rms/viewer/groundLayer.mjs`
+- **版本号升级**：`GROUND_VERSION = 'step3-item4-r1'`（第 26 行）。
+- **着色器扩展水面动画与色彩调制**（第 46-88 行）：
+  - 增加 uniform `uWaterTex`（水面动画图集采样器）、`uWaterFrame`（当前帧索引 0~31）、`uHasWater`（水动画开关）；
+  - 水体片元按地图坐标平铺提取当前帧波纹 `texture2D(uWaterTex, vec2((uWaterFrame + clamp(g.x, ...)) / 32.0, g.y))`；
+  - 以浅水基色中心 `vec3(0.141, 0.477, 0.645)` 提取波纹扰动比例 `ripple = anim.rgb / baseCenter`，并将基色调制为 `c.rgb * ripple`；深水、中水、浅水保留各自的色调与深浅层次，且共享连续水波；
+  - 过渡层水体同样支持波纹叠加并与遮罩 `smoothstep` 自然渐变。
+- **物件半格偏移修正（Fix 1）与坡面双线性插值高程（Fix 2）**（第 344-368 行）：
+  - 物件坐标修正为 `ox = ob.x - 0.5, oy = ob.y - 0.5`，使数据中格子中心 `+0.5` 的物件落脚点严格落在菱形中心；
+  - 物件高度改为格内四个顶点高度的双线性插值 `objElevAt(ox, oy) = (1-u)(1-v)e0 + u(1-v)e1 + uve2 + (1-u)ve3`，彻底消除坡面悬空；
+  - 剔除与网格构建严格基于该平滑高程。
+- **水体判别与顶点缓冲属性**（第 174、320、337 行）：
+  - `isWaterId` 根据 `m.is_water & 7` 或 `overlay_mask_name === 'water.png'` 识别水地形；
+  - 基础水地形设置 `aUse = 0.5`，过渡水地形设置 `aUse = 1.5`，与陆地（0.0/1.0）及物件（2.0）无缝区分，无需新增顶点属性（`FLOATS` 保持 18 不变）。
+- **运行控制与状态暴露**（第 395、400 行）：
+  - 增加 `setWaterAnim(v)` 动态切换；`stats()` 返回 `waterAnim` 状态。
+
+```diff
+--- a/tools/rms/viewer/groundLayer.mjs
++++ b/tools/rms/viewer/groundLayer.mjs
+@@ -26,3 +26,3 @@
+-export const GROUND_VERSION = 'step3-item3-r1';
++export const GROUND_VERSION = 'step3-item4-r1';
+ 
+@@ -46,4 +46,4 @@
+ const FS = `precision mediump float;
+ varying vec4 vSub; varying vec2 vGUV; varying vec2 vLocal; varying vec4 vMaskRect; varying vec2 vDir; varying float vUse; varying float vLight;
+-uniform sampler2D uTex; uniform float uDebug;
++uniform sampler2D uTex; uniform sampler2D uWaterTex; uniform float uWaterFrame; uniform float uHasWater; uniform float uDebug;
+ vec2 subUV(vec4 r, vec2 g){ return r.xy + g * (r.zw - r.xy); }
+@@ -58,4 +58,11 @@
+   if (vUse < 0.8) {                                   // 0 / 0.5 = 基础地形：连续平铺
+     vec4 c = texture2D(uTex, subUV(vSub, g));
+     if (c.a < 0.02) discard;
++    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹
++      vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
++      vec4 anim = texture2D(uWaterTex, wuv);
++      vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
++      vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
++      gl_FragColor = vec4(col * vLight, c.a); return;
++    }
+     gl_FragColor = vec4(c.rgb * vLight, c.a); return;
+@@ -83,2 +90,9 @@
+   vec4 c = texture2D(uTex, subUV(vSub, g));
++  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹
++    vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
++    vec4 anim = texture2D(uWaterTex, wuv);
++    vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
++    vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
++    gl_FragColor = vec4(col * vLight, c.a * a); return;
++  }
+   gl_FragColor = vec4(c.rgb * vLight, c.a * a);
+@@ -159,3 +173,15 @@
+     const loc = { aPos: A('aPos'), aSub: A('aSub'), aGUV: A('aGUV'), aLocal: A('aLocal'), aMaskRect: A('aMaskRect'), aDir: A('aDir'), aUse: A('aUse'), aLight: A('aLight'),
+-        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uDebug: U('uDebug') };
++        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
++
++    let waterTex = null;
++    if (o.waterImg) {
++        waterTex = gl.createTexture();
++        gl.bindTexture(gl.TEXTURE_2D, waterTex);
++        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, o.waterImg);
++        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
++        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
++        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
++        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
++    }
++    let waterAnimOn = o.waterAnim !== false;
+@@ -171,2 +197,3 @@
+     const maskOf = (id) => { const m = blendOf(id)?.mask; return m ? String(m).replace(/\.png$/i, '') : MASK_FALLBACK; };
++    const isWaterId = (id) => { const m = o.manifest[id]; return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png')); };
+@@ -306,2 +333,12 @@
+         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, atlas.tex); gl.uniform1i(loc.uTex, 0);
++        if (waterTex && waterAnimOn) {
++            gl.activeTexture(gl.TEXTURE1);
++            gl.bindTexture(gl.TEXTURE_2D, waterTex);
++            gl.uniform1i(loc.uWaterTex, 1);
++            const frame = Math.floor((performance.now() / 1000) * 16) % 32;
++            gl.uniform1f(loc.uWaterFrame, frame);
++            gl.uniform1f(loc.uHasWater, 1.0);
++        } else {
++            gl.uniform1f(loc.uHasWater, 0.0);
++        }
+@@ -324,3 +361,3 @@
+-                push(tv, cx, cy, cElev, cLight, sub, guvOf(x, y), [0, 0, 0, 0], [0, 0], 0);
++                push(tv, cx, cy, cElev, cLight, sub, guvOf(x, y), [0, 0, 0, 0], [0, 0], isWaterId(id) ? 0.5 : 0);
+@@ -342,3 +379,3 @@
+-                    push(bv, cx, cy, cElev, cLight, uvOfTer(cb.nid), g, uvOfMask(cb.nid), [cb.dxi, cb.dyi], 1);
++                    push(bv, cx, cy, cElev, cLight, uvOfTer(cb.nid), g, uvOfMask(cb.nid), [cb.dxi, cb.dyi], isWaterId(cb.nid) ? 1.5 : 1);
+@@ -348,7 +385,20 @@
++            const objElevAt = (ox, oy) => {
++                if (!elevOn || !data.elev) return 0;
++                const gx = Math.min(N - 1, Math.max(0, Math.floor(ox + 0.5)));
++                const gy = Math.min(N - 1, Math.max(0, Math.floor(oy + 0.5)));
++                const u = Math.min(1.0, Math.max(0.0, ox - gx + 0.5));
++                const v = Math.min(1.0, Math.max(0.0, oy - gy + 0.5));
++                const e0 = cornerElev[gy * V_SIZE + gx];
++                const e1 = cornerElev[gy * V_SIZE + (gx + 1)];
++                const e2 = cornerElev[(gy + 1) * V_SIZE + (gx + 1)];
++                const e3 = cornerElev[(gy + 1) * V_SIZE + gx];
++                return (1 - u) * (1 - v) * e0 + u * (1 - v) * e1 + u * v * e2 + (1 - u) * v * e3;
++            };
+             let nObj = 0;
+             for (const ob of objs) {
+-                const gx = Math.min(N - 1, Math.max(0, Math.floor(ob.x)));
+-                const gy = Math.min(N - 1, Math.max(0, Math.floor(ob.y)));
+-                const objElev = elevOn && data.elev ? (data.elev[gy * N + gx] ?? 0) : 0;
+-                const px = isoX(ob.x, ob.y, offX), py = isoY(ob.x, ob.y) - objElev * 16.0;
++                const ox = ob.x - 0.5, oy = ob.y - 0.5;
++                const objElev = objElevAt(ox, oy);
++                const px = isoX(ox, oy, offX), py = isoY(ox, oy) - objElev * 16.0;
+```
+
+### 2. `tools/rms/viewer/index.html`
+- **界面与开关**：工具栏增加 `#bwater` 开关；支持 `?water=0/1` 参数；
+- **资源载入**：在 `loadAssets()` 载入 `public/SUCAI_TERRAIN/water-anim/default.png` 并传给地面层；
+- **2D 对比原型同步**：`draw2d` 同步修改物件坐标为 `o.x - 0.5, o.y - 0.5`，高度同步使用四角双线性插值。
+
+---
+
+## 37.2 依据
+
+| 规则项 | 依据 | 性质 |
+|---|---|---|
+| **物件偏半格修正** | DE 地图数据物件坐标输出为格子中心 `(gx + 0.5, gy + 0.5)`（DE 裁块 342 个物件中有 296 个小数部分为 .5）；渲染器菱形中心位于整数网格 `(gx, gy)`。平移 `iso(ob.x - 0.5, ob.y - 0.5)` 使物件底座严格落在所在格菱形几何中心。 | **权威**（DE 裁块数据 ＋ CC 裁定） |
+| **坡上物件双线性插值高程** | 坡面网格按四个角的高度顶点平滑绘制；物件在格子内部位置 `(u, v) ∈ [0, 1]²` 处的高程由四角高度 `e0, e1, e2, e3` 进行双线性插值：`h = (1-u)(1-v)e0 + u(1-v)e1 + uve2 + (1-u)ve3`。该高度与坡面平滑曲面完全贴合，高程差为 0.000。 | **权威**（CC 裁定 ＋ 几何证明） |
+| **水面动画素材与周期** | `public/SUCAI_TERRAIN/water-anim/default.json` 规范：32 帧，每帧 256×256，横向总宽 8192 px 无缝循环平铺；`wave_animation_speed: 2` 对应 16 fps（每周期 2.0 秒）。 | **权威**（素材 manifest） |
+| **水体深度色彩一致性** | 实测 DE 水体贴图通道均值：浅水 `wtr.png` 为 `rgb(33, 120, 162)`；中水 `wt3.png` 为 `rgb(24, 82, 127)`；深水 `wt2.png` 为 `rgb(26, 66, 108)`。烘焙动画图集 `default.png` 均值 `rgb(36, 122, 164)` 对应浅水波纹，采样后以 `ripple = anim / baseCenter` 调制各级水体贴图，完美呈现浅水翠蓝、中水湛蓝、深水黛蓝的视觉深度。 | **权威**（DE 素材实测） |
+| **岸边浪花素材报告** | 全局检索 `public/SUCAI_*` 及 DE 安装目录，DE 决定版并未提供独立的 shore/foam/wave 浪花序列帧精灵，而是由 HLSL 着色器动态计算。遵照 CC 纪律“没有就报告，不要自己画”，本轮不自行伪造手绘浪花，保持纯净地形过渡。 | **报告**（CC 纪律“没有就报告”） |
+
+---
+
+## 37.3 实测数据
+
+### ① 物件居中对齐（Fix 1）
+- 放大 3 倍（$z = 3.0$）居中单棵树与金矿（DE 裁块金矿 @(2.5, 44.5)，网格 (2, 44)）：
+- 截图：`scratch/out/fix1_obj_center_zoom3.png`；
+- 实测金矿底座与树木树干落脚点严格居中于菱形网格正中。
+
+### ② 坡上物件高度与坡面高度之差（Fix 2）
+对 DE 裁块与我方生成的地图中全部物件进行全量高程审计：
+
+| 地图 | 总物件数 | 坡上物件数 | 旧方法最大高程偏差（格） | **双线性插值最大偏差** | 判定 |
+|---|---|---|---|---|---|
+| **DE 裁块** (mapdata_de_c60) | 342 | 79 | 0.625 级（~10.0 px） | **0.000 级 (0.0 px)** | ✅ **≈0，完全贴地** |
+| **我方地图** (mapdata_our_c60) | 209 | 35 | 0.500 级（~8.0 px） | **0.000 级 (0.0 px)** | ✅ **≈0，完全贴地** |
+
+- 坡上物件近景截图（居中 DE 裁块 (23, 44) 连续斜坡，zoom = 2.5）：`scratch/out/fix2_slope_obj_closeup.png`。
+
+### ③ 水与岸近景与四角像素（Step 3 Item 4）
+放大 2 倍近景截图（沙滩 ↔ 浅水 ↔ 深水）：
+- **DE 裁块**截图：`scratch/out/water_de_c60_zoom2.png`（居中 (37, 28)）；
+- **我方裁块**截图：`scratch/out/water_our_c60_zoom2.png`（居中 (32, 34)）；
+- 页面 WebGL `readPixels` 同步四角像素校验（排除背景色 `rgb(13, 13, 13)`）：
+
+| 地图 | 左上角 (TL) | 右上角 (TR) | 左下角 (BL) | 右下角 (BR) | 判定 |
+|---|---|---|---|---|---|
+| **DE 裁块** | 146, 138, 71 (沙滩) | 41, 133, 181 (浅水) | 36, 132, 181 (浅水) | 28, 86, 136 (中水) | ✅ **4/4 均为地面/水体** |
+| **我方裁块** | 222, 158, 94 (泥地) | 125, 134, 62 (沙滩) | 29, 89, 142 (浅水) | 22, 81, 131 (中深水) | ✅ **4/4 均为地面/水体** |
+
+### ④ 帧率实测（1080p 1920×1080，水面动画开启）
+地图 Arabia 120×120，分辨率 1920×1080，WebGL 开启水面动画：
+
+| 场景 | 帧数 | 帧率 (fps) | 帧耗时 (med) | P95 耗时 | CPU/帧 (med) | 渲染格子数 | 判定 |
+|---|---|---|---|---|---|---|---|
+| **整图可见 (full)** | 181 | **60.3 fps** | 16.7 ms | 16.8 ms | **0.1 ms** | 14400 | ✅ **≥59 fps** |
+| **镜头拖动 (drag)** | 179 | **59.7 fps** | 16.7 ms | 16.8 ms | **9.6 ms** | 4818 | ✅ **≥59 fps** |
+
+### ⑤ 回归测试（100% 逐位通过）
+```
+node tools/rms/parseAll.mjs 3        → 180/180 ✅（解析通过 180，失败 0）
+node tools/rms/genMap.mjs Arabia.rms 2 144 → 物件 5838（自然 3450）｜ 森林 9.5% ｜ 高地 14.0% ✅（逐位完全一致）
+```
+
+---
+
+## 37.4 对比图路径
+
+- **Fix 1 物件居中截图 (zoom = 3.0)**：`scratch/out/fix1_obj_center_zoom3.png`
+- **Fix 2 坡上物件近景截图 (zoom = 2.5)**：`scratch/out/fix2_slope_obj_closeup.png`
+- **DE 裁块水岸过渡近景 (zoom = 2.0)**：`scratch/out/water_de_c60_zoom2.png`
+- **我方裁块水岸过渡近景 (zoom = 2.0)**：`scratch/out/water_our_c60_zoom2.png`
+- **测试报告原始 JSON 数据**：`scratch/out/round2_report.json`
+
+---
+
+## 37.5 未做项
+
+- **岸边浪花精灵**：按 CC 纪律“查不到就报告，不要自己画”，DE 决定版岸边泡沫浪花是由着色器在水际边缘实时程序化绘制，资源库中不存在独立的 shore/wave 精灵帧，本轮如实报告，未自制手绘贴图。
+
+---
+
+## 37.6 请 CC 裁定的问题
+
+1. **水面波浪流速与密度**：目前动画水面周期为 2.0 秒（32 帧 / 16 fps），按 10×10 格跨度平铺（与 dat 声明一致）。请 CC 裁定波浪起伏速率和水深对比度是否符合预期。
+2. **测试端口与浏览器已全部退出，服务已关闭** ✅
+

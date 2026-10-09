@@ -21,8 +21,8 @@ const MINI_W = 300;
 const MINI_H = 190;
 const LEVEL_MIN = 1;
 const LEVEL_MAX = 9;
-/** 默认级别（主人 2026-10-04 由 1 改为 4） */
-const LEVEL_DEFAULT = 4;
+/** 默认级别（主人 2026-10-04 由 1 改为 4；2026-10-09 主人定改为 5） */
+const LEVEL_DEFAULT = 5;
 /** 级别 1 的 Leaflet 缩放：世界宽 256·2^z = 小图宽 */
 const FIT_ZOOM = Math.log2(MINI_W / 256);
 const TICK_MS = 250;
@@ -43,9 +43,14 @@ export class WorldMiniMap {
     private trailBtn: HTMLButtonElement;
     /** 🎨 势力色开关按钮（主人 2026-10-08 令「显示势力色，不显示势力色」） */
     private colorBtn: HTMLButtonElement;
-    private colorOn = true;
+    /** 🔴 [2026-10-09 主人令] 🎨 按钮四态循环：0 据点＋势力色 / 1 只显示势力色 / 2 只显示据点 / 3 都不显示 */
+    private colorMode = 0;
+    private get showDots(): boolean { return this.colorMode === 0 || this.colorMode === 2; }
+    private get showTerritory(): boolean { return this.colorMode === 0 || this.colorMode === 1; }
     /** 🔴 [2026-10-09 主人令] 领土多边形：势力 id -> L.Polygon；小地图独立合并与绘制 */
     private territoryPolygons = new Map<string, L.Polygon>();
+    /** 势力 id -> 上次合并时的格子校验串与颜色：没变就不重合并、不重画 */
+    private territoryCache = new Map<string, { checksum: string; color: string }>();
     private lastCityIds = new Set<string>();
     private territoryDirty = true;
     private mini: L.Map;
@@ -99,7 +104,7 @@ export class WorldMiniMap {
                     <span class="wm-level"></span>
                     <button class="wm-btn wm-plus" title="放大">+</button>
                 </span>
-                <button class="wm-btn wm-color" title="隐藏势力色">🎨</button>
+                <button class="wm-btn wm-color" title="当前：据点＋势力色（点击切换）">🎨</button>
                 <button class="wm-btn wm-trail" title="隐藏行军线路">🧭</button>
                 <button class="wm-btn wm-toggle" title="收起"></button>
             </div>
@@ -148,7 +153,7 @@ export class WorldMiniMap {
         // 🔴 [2026-10-05 主人令] 线路开关：显示 / 不显示
         this.trailBtn.addEventListener('click', () => this.setTrailOn(!this.trailOn));
         // 🔴 [2026-10-08 主人令] 势力色开关：显示 / 不显示
-        this.colorBtn.addEventListener('click', () => this.setColorOn(!this.colorOn));
+        this.colorBtn.addEventListener('click', () => this.setColorMode((this.colorMode + 1) % 4));
 
         this.setExpanded(true);
         this.setLevel(LEVEL_DEFAULT);
@@ -156,22 +161,30 @@ export class WorldMiniMap {
         this.timer = window.setInterval(() => this.tick(), TICK_MS);
     }
 
-    /** 势力色开关（🎨 按钮）：控制色块和圆点一起显示或隐藏 */
-    private setColorOn(on: boolean): void {
-        this.colorOn = on;
-        this.colorBtn.classList.toggle('is-off', !on);
-        this.colorBtn.title = on ? '隐藏势力色' : '显示势力色';
-        if (on) {
-            this.territoryDirty = true;
-            const res = this.syncCityDots();
-            this.syncTerritoryPolygons(true, res.marks);
+    /** 🎨 按钮四态：据点＋势力色 → 只显示势力色 → 只显示据点 → 都不显示 */
+    private setColorMode(mode: number): void {
+        this.colorMode = mode;
+        const names = ['据点＋势力色', '只显示势力色', '只显示据点', '都不显示'];
+        this.colorBtn.classList.toggle('is-off', mode === 3);
+        this.colorBtn.title = `当前：${names[mode]}（点击切换）`;
+        if (!this.showTerritory) {
+            for (const poly of this.territoryPolygons.values()) poly.remove();
+            this.territoryPolygons.clear();
+            this.territoryCache.clear();
+        }
+        if (mode === 3) {
+            for (const dot of this.cityDots.values()) dot.remove();
+            this.cityDots.clear();
+            this.cityDotColor.clear();
             return;
         }
-        for (const poly of this.territoryPolygons.values()) poly.remove();
-        this.territoryPolygons.clear();
-        for (const dot of this.cityDots.values()) dot.remove();
-        this.cityDots.clear();
-        this.cityDotColor.clear();
+        for (const dot of this.cityDots.values()) {
+            if (this.showDots) dot.addTo(this.mini);
+            else dot.remove();
+        }
+        this.territoryDirty = true;
+        const res = this.syncCityDots();
+        this.syncTerritoryPolygons(true, res.marks);
     }
 
 
@@ -269,7 +282,7 @@ export class WorldMiniMap {
         citiesChanged: boolean;
         marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[];
     } {
-        if (!this.getCityMarks || !this.colorOn) return { colorChanged: false, citiesChanged: false, marks: [] };
+        if (!this.getCityMarks || this.colorMode === 3) return { colorChanged: false, citiesChanged: false, marks: [] };
         let colorChanged = false;
         const marks = this.getCityMarks();
         const seen = new Set<string>();
@@ -281,7 +294,8 @@ export class WorldMiniMap {
                 const c = L.circleMarker([m.lat, m.lng], {
                     renderer: this.cityRenderer, radius: 2.5, weight: 0.8, color: '#1a1a1a', opacity: 0.85,
                     fillColor: m.color, fillOpacity: 1, interactive: false,
-                }).addTo(this.mini);
+                });
+                if (this.showDots) c.addTo(this.mini);
                 this.cityDots.set(m.id, c);
                 this.cityDotColor.set(m.id, m.color);
             } else if (this.cityDotColor.get(m.id) !== m.color) {
@@ -327,7 +341,7 @@ export class WorldMiniMap {
         needsRecalc: boolean,
         marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[]
     ): void {
-        if (!this.colorOn) return;
+        if (!this.showTerritory) return;
         if (!needsRecalc && !this.territoryDirty) return;
         this.territoryDirty = false;
 
@@ -378,10 +392,20 @@ export class WorldMiniMap {
         for (const [fid, hexes] of factionHexes) {
             seenFactions.add(fid);
             const color = factionColorMap.get(fid) ?? HISTORICAL_FACTION_COLORS[fid] ?? '#888888';
+            const checksum = hexes.map((h) => h.key).sort((a, b) => a - b).join('|');
+            const existing = this.territoryPolygons.get(fid);
+            const cached = this.territoryCache.get(fid);
+            if (existing && cached && cached.checksum === checksum) {
+                if (cached.color !== color) {
+                    existing.setStyle({ fillColor: color });
+                    cached.color = color;
+                }
+                continue;
+            }
             const paths = this.getMergedPaths(hexes);
             if (paths.length === 0) continue;
+            this.territoryCache.set(fid, { checksum, color });
 
-            const existing = this.territoryPolygons.get(fid);
             if (existing) {
                 existing.setLatLngs(paths);
                 existing.setStyle({ fillColor: color });
@@ -403,6 +427,7 @@ export class WorldMiniMap {
             if (!seenFactions.has(fid)) {
                 poly.remove();
                 this.territoryPolygons.delete(fid);
+                this.territoryCache.delete(fid);
             }
         }
     }
@@ -463,6 +488,7 @@ export class WorldMiniMap {
         window.clearInterval(this.timer);
         for (const poly of this.territoryPolygons.values()) poly.remove();
         this.territoryPolygons.clear();
+        this.territoryCache.clear();
         this.mini.remove();
         this.root.remove();
     }

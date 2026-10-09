@@ -23,7 +23,7 @@
  *   `alpha = smoothstep(mask − 0.15, mask + 0.15, s)`；多层按优先级从低到高逐层叠；角邻居只在两条相邻边
  *   都不是该地形时才算。调试：`?debug=shape|mask|dir`。
  */
-export const GROUND_VERSION = 'step3-item3-r1';
+export const GROUND_VERSION = 'step3-item4-r1';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
 const TW = 64, TH = 32;
@@ -44,19 +44,27 @@ void main(){ vSub=aSub; vGUV=aGUV; vLocal=aLocal; vMaskRect=aMaskRect; vDir=aDir
 
 const FS = `precision mediump float;
 varying vec4 vSub; varying vec2 vGUV; varying vec2 vLocal; varying vec4 vMaskRect; varying vec2 vDir; varying float vUse; varying float vLight;
-uniform sampler2D uTex; uniform float uDebug;
+uniform sampler2D uTex; uniform sampler2D uWaterTex; uniform float uWaterFrame; uniform float uHasWater; uniform float uDebug;
 vec2 subUV(vec4 r, vec2 g){ return r.xy + g * (r.zw - r.xy); }
 void main(){
   vec2 g = clamp(fract(vGUV), 0.5 / 256.0, 1.0 - 0.5 / 256.0);   // 钳制，避免采到图集邻块
-  if (vUse > 1.5) {                                   // 2 = 精灵：UV 直接用
+  if (vUse > 1.8) {                                   // 2 = 精灵：UV 直接用
     vec4 c = texture2D(uTex, subUV(vSub, vGUV));
     if (c.a < 0.02) discard; gl_FragColor = c; return;
   }
-  if (vUse < 0.5) {                                   // 0 = 基础地形：连续平铺
+  if (vUse < 0.8) {                                   // 0 / 0.5 = 基础地形：连续平铺
     vec4 c = texture2D(uTex, subUV(vSub, g));
-    if (c.a < 0.02) discard; gl_FragColor = vec4(c.rgb * vLight, c.a); return;
+    if (c.a < 0.02) discard;
+    if (vUse > 0.2 && uHasWater > 0.5) {             // 0.5 = 基础水体：按地图坐标连续平铺动画波纹
+      vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
+      vec4 anim = texture2D(uWaterTex, wuv);
+      vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
+      vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
+      gl_FragColor = vec4(col * vLight, c.a); return;
+    }
+    gl_FragColor = vec4(c.rgb * vLight, c.a); return;
   }
-  // 1 = 过渡层
+  // 1 / 1.5 = 过渡层
   float ex = vDir.x > 0.0 ? (0.5 - vLocal.x) : (vLocal.x + 0.5);
   float ey = vDir.y > 0.0 ? (0.5 - vLocal.y) : (vLocal.y + 0.5);
   float d;
@@ -83,6 +91,13 @@ void main(){
   float a = smoothstep(m - ${MASK_W.toFixed(2)}, m + ${MASK_W.toFixed(2)}, s);
   if (a < 0.02) discard;
   vec4 c = texture2D(uTex, subUV(vSub, g));
+  if (vUse > 1.2 && uHasWater > 0.5) {               // 1.5 = 过渡水体：叠加水面动画波纹
+    vec2 wuv = vec2((uWaterFrame + clamp(g.x, 0.5 / 256.0, 1.0 - 0.5 / 256.0)) / 32.0, g.y);
+    vec4 anim = texture2D(uWaterTex, wuv);
+    vec3 ripple = anim.rgb / vec3(0.141, 0.477, 0.645);
+    vec3 col = clamp(c.rgb * ripple, 0.0, 1.0);
+    gl_FragColor = vec4(col * vLight, c.a * a); return;
+  }
   gl_FragColor = vec4(c.rgb * vLight, c.a * a);
 }`;
 
@@ -141,8 +156,20 @@ export function createGroundLayer(canvas, o) {
     const prog = mkProgram(gl); gl.useProgram(prog);
     const A = (n) => gl.getAttribLocation(prog, n), U = (n) => gl.getUniformLocation(prog, n);
     const loc = { aPos: A('aPos'), aSub: A('aSub'), aGUV: A('aGUV'), aLocal: A('aLocal'), aMaskRect: A('aMaskRect'), aDir: A('aDir'), aUse: A('aUse'), aLight: A('aLight'),
-        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uDebug: U('uDebug') };
+        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    let waterTex = null;
+    if (o.waterImg) {
+        waterTex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, waterTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, o.waterImg);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    }
+    let waterAnimOn = o.waterAnim !== false;
 
     const data = o.data, N = data.width;
     const SPRITE_SCALE = o.spriteScale ?? SPRITE_SCALE_DEFAULT;
@@ -157,6 +184,7 @@ export function createGroundLayer(canvas, o) {
     const dimOf = (id) => { const d = blendOf(id)?.dim; return d && d[0] > 0 ? d : null; };
     const prioOf = (id) => blendOf(id)?.prio ?? 0;
     const maskOf = (id) => { const m = blendOf(id)?.mask; return m ? String(m).replace(/\.png$/i, '') : MASK_FALLBACK; };
+    const isWaterId = (id) => { const m = o.manifest[id]; return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png')); };
     const offX = (N - 1) * dx;
     const texCode = (id) => { const m = o.manifest[id]; return m?.name_2 ? String(m.name_2).replace(/^g_/, '') : null; };
 
@@ -276,6 +304,16 @@ export function createGroundLayer(canvas, o) {
         gl.uniform1f(loc.uZoom, cam.zoom);
         gl.uniform1f(loc.uDebug, debug);
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, atlas.tex); gl.uniform1i(loc.uTex, 0);
+        if (waterTex && waterAnimOn) {
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, waterTex);
+            gl.uniform1i(loc.uWaterTex, 1);
+            const frame = Math.floor((performance.now() / 1000) * 16) % 32;
+            gl.uniform1f(loc.uWaterFrame, frame);
+            gl.uniform1f(loc.uHasWater, 1.0);
+        } else {
+            gl.uniform1f(loc.uHasWater, 0.0);
+        }
         for (const n of ['aPos', 'aSub', 'aGUV', 'aLocal', 'aMaskRect', 'aDir', 'aUse', 'aLight']) gl.enableVertexAttribArray(loc[n]);
 
         const key = keyOf(w, h);
@@ -293,7 +331,7 @@ export function createGroundLayer(canvas, o) {
                 const i3 = (y + 1) * V_SIZE + x;
                 const cElev = [cornerElev[i0], cornerElev[i1], cornerElev[i2], cornerElev[i3]];
                 const cLight = [cornerLight[i0], cornerLight[i1], cornerLight[i2], cornerLight[i3]];
-                push(tv, cx, cy, cElev, cLight, sub, guvOf(x, y), [0, 0, 0, 0], [0, 0], 0);
+                push(tv, cx, cy, cElev, cLight, sub, guvOf(x, y), [0, 0, 0, 0], [0, 0], isWaterId(id) ? 0.5 : 0);
                 if (!blendOn) continue;
                 const mine = prioOf(id);
                 const cand = [];
@@ -311,18 +349,29 @@ export function createGroundLayer(canvas, o) {
                 candSeen += cand.length;
                 const g = guvOf(x, y);
                 for (const cb of cand) {
-                    push(bv, cx, cy, cElev, cLight, uvOfTer(cb.nid), g, uvOfMask(cb.nid), [cb.dxi, cb.dyi], 1);
+                    push(bv, cx, cy, cElev, cLight, uvOfTer(cb.nid), g, uvOfMask(cb.nid), [cb.dxi, cb.dyi], isWaterId(cb.nid) ? 1.5 : 1);
                 }
             }
             const margin = elevOn ? elevMargin : 0;
             const wx0 = -cam.x / cam.zoom - 128, wx1 = (w - cam.x) / cam.zoom + 128;
             const wy0 = -cam.y / cam.zoom - 256 - margin, wy1 = (h - cam.y) / cam.zoom + 256 + margin;
+            const objElevAt = (ox, oy) => {
+                if (!elevOn || !data.elev) return 0;
+                const gx = Math.min(N - 1, Math.max(0, Math.floor(ox + 0.5)));
+                const gy = Math.min(N - 1, Math.max(0, Math.floor(oy + 0.5)));
+                const u = Math.min(1.0, Math.max(0.0, ox - gx + 0.5));
+                const v = Math.min(1.0, Math.max(0.0, oy - gy + 0.5));
+                const e0 = cornerElev[gy * V_SIZE + gx];
+                const e1 = cornerElev[gy * V_SIZE + (gx + 1)];
+                const e2 = cornerElev[(gy + 1) * V_SIZE + (gx + 1)];
+                const e3 = cornerElev[(gy + 1) * V_SIZE + gx];
+                return (1 - u) * (1 - v) * e0 + u * (1 - v) * e1 + u * v * e2 + (1 - u) * v * e3;
+            };
             let nObj = 0;
             for (const ob of objs) {
-                const gx = Math.min(N - 1, Math.max(0, Math.floor(ob.x)));
-                const gy = Math.min(N - 1, Math.max(0, Math.floor(ob.y)));
-                const objElev = elevOn && data.elev ? (data.elev[gy * N + gx] ?? 0) : 0;
-                const px = isoX(ob.x, ob.y, offX), py = isoY(ob.x, ob.y) - objElev * 16.0;
+                const ox = ob.x - 0.5, oy = ob.y - 0.5;
+                const objElev = objElevAt(ox, oy);
+                const px = isoX(ox, oy, offX), py = isoY(ox, oy) - objElev * 16.0;
                 if (px < wx0 || px > wx1 || py < wy0 || py > wy1) continue;
                 const sp = o.sprites.get(ob.name);
                 const sub = atlas.uv.get('S' + ob.name) ?? [0, 0, 0, 0];
@@ -368,10 +417,11 @@ export function createGroundLayer(canvas, o) {
         setCull(v) { cull = !!v; },
         setBlend(v) { blendOn = !!v; builtKey = null; },
         setElev(v) { elevOn = !!v; computeCornerElev(); builtKey = null; },
+        setWaterAnim(v) { waterAnimOn = !!v; },
         setTexMode(m) { texMode = m; builtKey = null; },
         setDebug(d) { debug = d | 0; builtKey = null; },
         resize(w, h) { canvas.width = w; canvas.height = h; },
-        stats() { return { ...last, atlas: entries.length, maxElev, elevEnabled: elevOn, masks: maskKey.size, maskNames: [...maskKey.keys()], totalTiles: N * N, totalObjs: objs.length, atlasSize: atlas.size }; },
+        stats() { return { ...last, atlas: entries.length, maxElev, elevEnabled: elevOn, waterAnim: waterAnimOn, masks: maskKey.size, maskNames: [...maskKey.keys()], totalTiles: N * N, totalObjs: objs.length, atlasSize: atlas.size }; },
         gl,
     };
 }

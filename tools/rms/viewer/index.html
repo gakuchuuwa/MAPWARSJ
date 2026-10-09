@@ -21,6 +21,7 @@
     ｜ 视野剔除：<button id="bcull" class="on">开</button>
     ｜ 过渡：<button id="bblend" class="on">开</button>
     ｜ 高程：<button id="belev" class="on">开</button>
+    ｜ 水动：<button id="bwater" class="on">开</button>
     ｜ 场景：<button data-s="full">整图可见</button><button data-s="drag">拖动镜头</button><button data-s="zoom">缩放</button>
     ｜ <button id="run">跑基准</button>
     <div id="msg">就绪</div>
@@ -82,7 +83,7 @@ function resolveSprite(name) {
     return null;
 }
 
-const state = { mode: 'gl', scenario: 'full', cull: true, blend: true, elev: true, debug: 0, data: null, manifest: {}, textures: new Map(), sprites: new Map(), masks: new Map(), blendTable: null, cam: { x: 0, y: 0, zoom: 1 }, layer: null };
+const state = { mode: 'gl', scenario: 'full', cull: true, blend: true, elev: true, waterAnim: true, waterImg: null, debug: 0, data: null, manifest: {}, textures: new Map(), sprites: new Map(), masks: new Map(), blendTable: null, cam: { x: 0, y: 0, zoom: 1 }, layer: null };
 const msg = (s) => { document.getElementById('msg').textContent = s; };
 const activeCanvas = () => (state.mode === 'gl' ? document.getElementById('cvg') : document.getElementById('cv'));
 function switchCanvas() {
@@ -150,7 +151,8 @@ async function loadAssets() {
         if (r) { const sp = await loadSprite(`../../../public/SUCAI_${r[0]}/${r[1]}`); if (sp) { state.sprites.set(nm, sp); s++; return; } }
         miss.push(nm);
     }));
-    return { tex: `${n}/${codes.size}`, spr: `${s}/${names.length}`, mask: `${mk}/${maskNames.size}`, maskStat, miss };
+    state.waterImg = await loadImg('../../../public/SUCAI_TERRAIN/water-anim/default.png');
+    return { tex: `${n}/${codes.size}`, spr: `${s}/${names.length}`, mask: `${mk}/${maskNames.size}`, maskStat, miss, water: !!state.waterImg };
 }
 
 // ───── Canvas 2D 对比原型（与地面层内容相同，便于对照） ─────
@@ -171,9 +173,24 @@ function draw2d(view) {
         if (img) ctx2d.drawImage(img, px - TW / 2, py, TW, TH);
     }
     for (const o of d.objects) {
-        const gx = Math.min(N - 1, Math.max(0, Math.floor(o.x))), gy = Math.min(N - 1, Math.max(0, Math.floor(o.y)));
-        const elev = state.elev && d.elev ? (d.elev[gy * N + gx] ?? 0) : 0;
-        const px = isoX(o.x, o.y, OX), py = isoY(o.x, o.y) - elev * 16;
+        const ox = o.x - 0.5, oy = o.y - 0.5;
+        const gx = Math.min(N - 1, Math.max(0, Math.floor(ox + 0.5))), gy = Math.min(N - 1, Math.max(0, Math.floor(oy + 0.5)));
+        const u = Math.min(1.0, Math.max(0.0, ox - gx + 0.5)), v = Math.min(1.0, Math.max(0.0, oy - gy + 0.5));
+        let elev = 0;
+        if (state.elev && d.elev) {
+            const elevAt = (x, y) => (x < 0 || y < 0 || x >= N || y >= N ? 0 : (d.elev[y * N + x] ?? 0));
+            const corner = (cx, cy) => {
+                let sum = 0, count = 0;
+                if (cx > 0 && cy > 0) { sum += elevAt(cx - 1, cy - 1); count++; }
+                if (cx < N && cy > 0) { sum += elevAt(cx, cy - 1); count++; }
+                if (cx > 0 && cy < N) { sum += elevAt(cx - 1, cy); count++; }
+                if (cx < N && cy < N) { sum += elevAt(cx, cy); count++; }
+                return count > 0 ? sum / count : 0;
+            };
+            const e0 = corner(gx, gy), e1 = corner(gx + 1, gy), e2 = corner(gx + 1, gy + 1), e3 = corner(gx, gy + 1);
+            elev = (1 - u) * (1 - v) * e0 + u * (1 - v) * e1 + u * v * e2 + (1 - u) * v * e3;
+        }
+        const px = isoX(ox, oy, OX), py = isoY(ox, oy) - elev * 16;
         const sp = state.sprites.get(o.name);
         if (sp) ctx2d.drawImage(sp.img, px - sp.ax, py - sp.ay + TH / 2);
     }
@@ -222,6 +239,7 @@ function ensureLayerSync() {
         state.layer = createGroundLayer(document.getElementById('cvg'), {
             data: state.data, manifest: state.manifest, textures: state.textures, sprites: state.sprites,
             masks: state.masks, blend: state.blendTable,
+            waterImg: state.waterImg, waterAnim: state.waterAnim,
             spriteScale: sc > 0 ? sc : undefined,
             blendEnabled: state.blend, elevEnabled: state.elev, debug: state.debug,
             texMode: q.get('tscale') === 'tile' ? 'tile' : 'world',
@@ -284,6 +302,10 @@ async function boot() {
     if (elevParam !== null) state.elev = elevParam === '1';
     document.getElementById('belev').className = state.elev ? 'on' : '';
     document.getElementById('belev').textContent = state.elev ? '开' : '关';
+    const waterParam = q.get('water');
+    if (waterParam !== null) state.waterAnim = waterParam === '1';
+    document.getElementById('bwater').className = state.waterAnim ? 'on' : '';
+    document.getElementById('bwater').textContent = state.waterAnim ? '开' : '关';
     msg(`地图 ${state.data.source ?? ''} ｜ 贴图 ${a.tex}(已缩 x1) ｜ 遮罩 ${a.mask} ｜ 精灵 ${a.spr}` + (a.miss.length ? ` ｜ 无精灵：${a.miss.slice(0, 4).join(',')}` : '') + (a.maskStat ? `\n遮罩分布 ${a.maskStat}` : '') + (state.debug ? `  ｜ **调试模式 debug=${dbg}**` : ''));
     switchCanvas(); running = true; requestAnimationFrame(frame);
 }
@@ -292,6 +314,7 @@ document.getElementById('b2d').onclick = () => { state.mode = '2d'; switchCanvas
 document.getElementById('bcull').onclick = () => { state.cull = !state.cull; if (state.layer) state.layer.setCull(state.cull); document.getElementById('bcull').className = state.cull ? 'on' : ''; document.getElementById('bcull').textContent = state.cull ? '开' : '关'; };
 document.getElementById('bblend').onclick = () => { state.blend = !state.blend; if (state.layer) state.layer.setBlend(state.blend); document.getElementById('bblend').className = state.blend ? 'on' : ''; document.getElementById('bblend').textContent = state.blend ? '开' : '关'; };
 document.getElementById('belev').onclick = () => { state.elev = !state.elev; if (state.layer) state.layer.setElev(state.elev); document.getElementById('belev').className = state.elev ? 'on' : ''; document.getElementById('belev').textContent = state.elev ? '开' : '关'; };
+document.getElementById('bwater').onclick = () => { state.waterAnim = !state.waterAnim; if (state.layer) state.layer.setWaterAnim(state.waterAnim); document.getElementById('bwater').className = state.waterAnim ? 'on' : ''; document.getElementById('bwater').textContent = state.waterAnim ? '开' : '关'; };
 for (const b of document.querySelectorAll('[data-s]')) b.onclick = () => { state.scenario = b.dataset.s; state.cam.x = state.cam.y = 0; state.cam.zoom = 1; };
 document.getElementById('run').onclick = () => window.__runAll(3);
 boot().catch((e) => msg('加载失败：' + e.message));
