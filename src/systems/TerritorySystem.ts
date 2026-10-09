@@ -1072,13 +1072,6 @@ export class TerritorySystem {
     private hexOwnershipCache: Map<number, City> = new Map();
     private ownershipCacheValid = false;
 
-    /**
-     * 小地图只读快照：获取六边形归属表（不论缩放几级均实时更新）
-     */
-    public getHexOwnershipSnapshot(): Map<number, City> {
-        return this.hexOwnershipCache;
-    }
-
     // [PERF] Worker for territory calculation
     private worker: Worker;
     private workerMsgId: number = 0;

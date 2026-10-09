@@ -20,6 +20,7 @@
     渲染器：<button id="bgl" class="on">WebGL 地面层</button><button id="b2d">Canvas 2D（对比用）</button>
     ｜ 视野剔除：<button id="bcull" class="on">开</button>
     ｜ 过渡：<button id="bblend" class="on">开</button>
+    ｜ 高程：<button id="belev" class="on">开</button>
     ｜ 场景：<button data-s="full">整图可见</button><button data-s="drag">拖动镜头</button><button data-s="zoom">缩放</button>
     ｜ <button id="run">跑基准</button>
     <div id="msg">就绪</div>
@@ -81,7 +82,7 @@ function resolveSprite(name) {
     return null;
 }
 
-const state = { mode: 'gl', scenario: 'full', cull: true, blend: true, debug: 0, data: null, manifest: {}, textures: new Map(), sprites: new Map(), masks: new Map(), blendTable: null, cam: { x: 0, y: 0, zoom: 1 }, layer: null };
+const state = { mode: 'gl', scenario: 'full', cull: true, blend: true, elev: true, debug: 0, data: null, manifest: {}, textures: new Map(), sprites: new Map(), masks: new Map(), blendTable: null, cam: { x: 0, y: 0, zoom: 1 }, layer: null };
 const msg = (s) => { document.getElementById('msg').textContent = s; };
 const activeCanvas = () => (state.mode === 'gl' ? document.getElementById('cvg') : document.getElementById('cv'));
 function switchCanvas() {
@@ -165,11 +166,14 @@ function draw2d(view) {
         const id = d.layer[y * N + x] >= 0 ? d.layer[y * N + x] : d.terrain[y * N + x];
         const m = state.manifest[id]; const code = m?.name_2 ? String(m.name_2).replace(/^g_/, '') : null;
         const img = code && state.textures.get(code);
-        const px = isoX(x, y, OX), py = isoY(x, y);
+        const elev = state.elev && d.elev ? (d.elev[y * N + x] ?? 0) : 0;
+        const px = isoX(x, y, OX), py = isoY(x, y) - elev * 16;
         if (img) ctx2d.drawImage(img, px - TW / 2, py, TW, TH);
     }
     for (const o of d.objects) {
-        const px = isoX(o.x, o.y, OX), py = isoY(o.x, o.y);
+        const gx = Math.min(N - 1, Math.max(0, Math.floor(o.x))), gy = Math.min(N - 1, Math.max(0, Math.floor(o.y)));
+        const elev = state.elev && d.elev ? (d.elev[gy * N + gx] ?? 0) : 0;
+        const px = isoX(o.x, o.y, OX), py = isoY(o.x, o.y) - elev * 16;
         const sp = state.sprites.get(o.name);
         if (sp) ctx2d.drawImage(sp.img, px - sp.ax, py - sp.ay + TH / 2);
     }
@@ -178,8 +182,10 @@ function draw2d(view) {
 }
 function visibleTiles(view, w, h) {
     const N = state.data.width, OX = (N - 1) * dx;
+    const maxElev = state.data.elev && state.data.elev.length ? Math.max(0, ...state.data.elev) : 0;
+    const margin = state.elev ? maxElev * 16 : 0;
     const wx0 = -view.ox / view.z - TW, wx1 = (w - view.ox) / view.z + TW;
-    const wy0 = -view.oy / view.z - TH, wy1 = (h - view.oy) / view.z + TH;
+    const wy0 = -view.oy / view.z - TH - margin, wy1 = (h - view.oy) / view.z + TH + margin;
     const inv = (wx, wy) => { const a = (wx - OX) / dx, b = wy / dy; return [(a + b) / 2, (b - a) / 2]; };
     const cs = [inv(wx0, wy0), inv(wx1, wy0), inv(wx0, wy1), inv(wx1, wy1)];
     const gx = cs.map((c) => c[0]), gy = cs.map((c) => c[1]);
@@ -217,7 +223,7 @@ function ensureLayerSync() {
             data: state.data, manifest: state.manifest, textures: state.textures, sprites: state.sprites,
             masks: state.masks, blend: state.blendTable,
             spriteScale: sc > 0 ? sc : undefined,
-            blendEnabled: state.blend, debug: state.debug,
+            blendEnabled: state.blend, elevEnabled: state.elev, debug: state.debug,
             texMode: q.get('tscale') === 'tile' ? 'tile' : 'world',
         });
         state.layer.setCull(state.cull);
@@ -247,6 +253,7 @@ async function runOne(scenario, mode, cull, seconds) {
     const st = state.mode === 'gl' ? state.layer.stats() : null;
     return { mode, cull, scenario, frames: frames.length, fps: +(frames.length / seconds).toFixed(1), frameMs: +med(wall).toFixed(2), p95Ms: +p95(wall).toFixed(2), cpuMs: +med(cpu).toFixed(2), tiles: st?.tiles ?? null, objs: st?.objs ?? null };
 }
+window.__runOne = runOne;
 window.__bench = null;
 window.__runAll = async (seconds = 3) => {
     const out = [];
@@ -273,6 +280,10 @@ async function boot() {
     const q = new URLSearchParams(location.search);
     const dbg = q.get('debug');
     state.debug = dbg === 'shape' ? 1 : dbg === 'mask' ? 2 : dbg === 'dir' ? 3 : 0;
+    const elevParam = q.get('elev');
+    if (elevParam !== null) state.elev = elevParam === '1';
+    document.getElementById('belev').className = state.elev ? 'on' : '';
+    document.getElementById('belev').textContent = state.elev ? '开' : '关';
     msg(`地图 ${state.data.source ?? ''} ｜ 贴图 ${a.tex}(已缩 x1) ｜ 遮罩 ${a.mask} ｜ 精灵 ${a.spr}` + (a.miss.length ? ` ｜ 无精灵：${a.miss.slice(0, 4).join(',')}` : '') + (a.maskStat ? `\n遮罩分布 ${a.maskStat}` : '') + (state.debug ? `  ｜ **调试模式 debug=${dbg}**` : ''));
     switchCanvas(); running = true; requestAnimationFrame(frame);
 }
@@ -280,6 +291,7 @@ document.getElementById('bgl').onclick = async () => { state.mode = 'gl'; switch
 document.getElementById('b2d').onclick = () => { state.mode = '2d'; switchCanvas(); ctx2d = document.getElementById('cv').getContext('2d'); };
 document.getElementById('bcull').onclick = () => { state.cull = !state.cull; if (state.layer) state.layer.setCull(state.cull); document.getElementById('bcull').className = state.cull ? 'on' : ''; document.getElementById('bcull').textContent = state.cull ? '开' : '关'; };
 document.getElementById('bblend').onclick = () => { state.blend = !state.blend; if (state.layer) state.layer.setBlend(state.blend); document.getElementById('bblend').className = state.blend ? 'on' : ''; document.getElementById('bblend').textContent = state.blend ? '开' : '关'; };
+document.getElementById('belev').onclick = () => { state.elev = !state.elev; if (state.layer) state.layer.setElev(state.elev); document.getElementById('belev').className = state.elev ? 'on' : ''; document.getElementById('belev').textContent = state.elev ? '开' : '关'; };
 for (const b of document.querySelectorAll('[data-s]')) b.onclick = () => { state.scenario = b.dataset.s; state.cam.x = state.cam.y = 0; state.cam.zoom = 1; };
 document.getElementById('run').onclick = () => window.__runAll(3);
 boot().catch((e) => msg('加载失败：' + e.message));

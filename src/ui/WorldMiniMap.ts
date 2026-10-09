@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import { GridSystem } from '../systems/GridSystem';
 import { HISTORICAL_FACTION_COLORS } from '../data/HistoricalFactionColors';
-import { City } from '../types/core';
+import { CityType } from '../types/core';
 
 /**
  * 世界小地图（2026-10-04 主人定「画全世界」「学文明 6，加 +- 按钮，默认 ZOOM1」「加展开收起按钮，默认展开」；
@@ -46,7 +46,7 @@ export class WorldMiniMap {
     private colorOn = true;
     /** 🔴 [2026-10-09 主人令] 领土多边形：势力 id -> L.Polygon；小地图独立合并与绘制 */
     private territoryPolygons = new Map<string, L.Polygon>();
-    private lastOwnership: Map<number, City> | null = null;
+    private lastCityIds = new Set<string>();
     private territoryDirty = true;
     private mini: L.Map;
     private viewRect: L.Rectangle;
@@ -83,14 +83,10 @@ export class WorldMiniMap {
         private readonly getHostLegionId?: () => string | null,
         /**
          * 🔴 [2026-10-08 主人「小地图是不是可以添加上势力色」] 据点圆点：每座可见据点一个点，填当前所属势力的势力色（易主即换色）。
+         * 🔴 [2026-10-09 主人令] 增加 type（城型定圈）与 factionId（势力归属）供小地图独立圈地。
          * 不传时不画（与加此参数前行为一致）。
          */
-        private readonly getCityMarks?: () => { id: string; lat: number; lng: number; color: string }[],
-        /**
-         * 🔴 [2026-10-09 主人令] 六边形归属快照：小地图自己算合并多边形，不论大地图缩放几级都实时反映。
-         * 不传时不画领土多边形。
-         */
-        private readonly getHexOwnership?: () => Map<number, City> | null,
+        private readonly getCityMarks?: () => { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[],
     ) {
         this.injectStyle();
         this.root = document.createElement('div');
@@ -167,8 +163,8 @@ export class WorldMiniMap {
         this.colorBtn.title = on ? '隐藏势力色' : '显示势力色';
         if (on) {
             this.territoryDirty = true;
-            this.syncTerritoryPolygons();
-            this.syncCityDots();
+            const res = this.syncCityDots();
+            this.syncTerritoryPolygons(true, res.marks);
             return;
         }
         for (const poly of this.territoryPolygons.values()) poly.remove();
@@ -257,8 +253,8 @@ export class WorldMiniMap {
         }
         if (hide || !this.expanded) return;
         if (++this.tickN % 4 === 0) {
-            const colorChanged = this.syncCityDots();
-            this.syncTerritoryPolygons(colorChanged);
+            const { colorChanged, citiesChanged, marks } = this.syncCityDots();
+            this.syncTerritoryPolygons(colorChanged || citiesChanged, marks);
         }
         if (this.trailOn && currentHostId) this.trail.setLatLngs(this.trailPts);
         else this.trail.setLatLngs([]);
@@ -267,12 +263,17 @@ export class WorldMiniMap {
         if (this.level > LEVEL_MIN) this.applyView();
     }
 
-    /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉；返回是否有据点换色 */
-    private syncCityDots(): boolean {
-        if (!this.getCityMarks || !this.colorOn) return false;
+    /** 据点势力色圆点：新增 / 换色 / 不再可见的撤掉；返回是否有据点换色或集合变动 */
+    private syncCityDots(): {
+        colorChanged: boolean;
+        citiesChanged: boolean;
+        marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[];
+    } {
+        if (!this.getCityMarks || !this.colorOn) return { colorChanged: false, citiesChanged: false, marks: [] };
         let colorChanged = false;
+        const marks = this.getCityMarks();
         const seen = new Set<string>();
-        for (const m of this.getCityMarks()) {
+        for (const m of marks) {
             if (!Number.isFinite(m.lat) || !Number.isFinite(m.lng)) continue;
             seen.add(m.id);
             const dot = this.cityDots.get(m.id);
@@ -296,54 +297,81 @@ export class WorldMiniMap {
             this.cityDotColor.delete(id);
             colorChanged = true;
         }
-        return colorChanged;
+
+        let citiesChanged = seen.size !== this.lastCityIds.size;
+        if (!citiesChanged) {
+            for (const id of seen) {
+                if (!this.lastCityIds.has(id)) {
+                    citiesChanged = true;
+                    break;
+                }
+            }
+        }
+        if (citiesChanged) {
+            this.lastCityIds = seen;
+        }
+
+        return { colorChanged, citiesChanged, marks };
     }
 
     /**
-     * 🔴 [2026-10-09 主人令] 小地图独立合并势力领土多边形并绘制
+     * 🔴 [2026-10-09 主人令] 小地图独立分配六边形并合并势力领土多边形
+     * 按城型占圈：big_city 3 圈，medium_city / pass 2 圈，其余 1 圈；
+     * 一个格子被多座城占到时，归离它最近的那座城；
      * 满足任一条重算，否则不动：
-     * ① Map 换了一个新对象（ownership !== this.lastOwnership）
-     * ② 有据点换了颜色（colorChanged || this.territoryDirty）
+     * ① 有据点换了颜色（colorChanged）
+     * ② 可见据点集合变了（citiesChanged）
+     * ③ 首次脏标记（this.territoryDirty）
      */
-    private syncTerritoryPolygons(colorChanged = false): void {
-        if (!this.getHexOwnership || !this.colorOn) return;
-        const ownership = this.getHexOwnership();
-        if (!ownership) return;
-
-        const ownershipChanged = ownership !== this.lastOwnership;
-        if (!ownershipChanged && !colorChanged && !this.territoryDirty) return;
-        this.lastOwnership = ownership;
+    private syncTerritoryPolygons(
+        needsRecalc: boolean,
+        marks: { id: string; lat: number; lng: number; color: string; type?: CityType; factionId?: string }[]
+    ): void {
+        if (!this.colorOn) return;
+        if (!needsRecalc && !this.territoryDirty) return;
         this.territoryDirty = false;
 
-        // 剧本期里看不见的据点，它的格子也不画
-        const visibleCityIds = new Set<string>();
-        const cityColorMap = new Map<string, string>();
-        const factionColorMap = new Map<string, string>();
-        if (this.getCityMarks) {
-            for (const m of this.getCityMarks()) {
-                visibleCityIds.add(m.id);
-                cityColorMap.set(m.id, m.color);
+        // 格子归属表：hexKey -> { fid, color, distSq }
+        const hexMap = new Map<number, { fid: string; color: string; distSq: number }>();
+
+        for (const city of marks) {
+            if (!city.factionId || city.factionId === 'panjun') continue;
+            if (!Number.isFinite(city.lat) || !Number.isFinite(city.lng)) continue;
+            const radius = city.type === 'big_city' ? 3 : (city.type === 'medium_city' || city.type === 'pass' ? 2 : 1);
+            const centerHex = GridSystem.latLngToAxial(city.lat, city.lng);
+
+            for (let dq = -radius; dq <= radius; dq++) {
+                const drMin = Math.max(-radius, -dq - radius);
+                const drMax = Math.min(radius, -dq + radius);
+                for (let dr = drMin; dr <= drMax; dr++) {
+                    const q = centerHex.q + dq;
+                    const r = centerHex.r + dr;
+                    const hexKey = GridSystem.getSpatialKey(q, r);
+                    const hexCenter = GridSystem.axialToLatLng(q, r);
+                    const dLat = hexCenter.lat - city.lat;
+                    const dLng = hexCenter.lng - city.lng;
+                    const distSq = dLat * dLat + dLng * dLng;
+
+                    const cur = hexMap.get(hexKey);
+                    if (!cur || distSq < cur.distSq) {
+                        hexMap.set(hexKey, { fid: city.factionId, color: city.color, distSq });
+                    }
+                }
             }
         }
 
-        // 按 city.factionId 给格子分组，跳过 panjun
+        // 按势力分组收集格子
         const factionHexes = new Map<string, { q: number; r: number; key: number }[]>();
-        for (const [key, city] of ownership) {
-            if (!city || !city.factionId || city.factionId === 'panjun') continue;
-            if (visibleCityIds.size > 0 && !visibleCityIds.has(city.id)) continue;
-            const fid = city.factionId;
-            let list = factionHexes.get(fid);
+        const factionColorMap = new Map<string, string>();
+        for (const [key, item] of hexMap) {
+            let list = factionHexes.get(item.fid);
             if (!list) {
                 list = [];
-                factionHexes.set(fid, list);
+                factionHexes.set(item.fid, list);
+                factionColorMap.set(item.fid, item.color);
             }
             const { q, r } = GridSystem.getCoordsFromKey(key);
             list.push({ q, r, key });
-
-            if (!factionColorMap.has(fid)) {
-                const cColor = cityColorMap.get(city.id) ?? HISTORICAL_FACTION_COLORS[fid];
-                if (cColor) factionColorMap.set(fid, cColor);
-            }
         }
 
         const seenFactions = new Set<string>();
