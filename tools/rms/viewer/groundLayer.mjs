@@ -44,7 +44,7 @@ void main(){ vSub=aSub; vGUV=aGUV; vLocal=aLocal; vMaskRect=aMaskRect; vDir=aDir
 
 const FS = `precision mediump float;
 varying vec4 vSub; varying vec2 vGUV; varying vec2 vLocal; varying vec4 vMaskRect; varying vec2 vDir; varying float vUse; varying float vLight;
-uniform sampler2D uTex; uniform sampler2D uWaterTex; uniform float uWaterFrame; uniform float uHasWater; uniform float uDebug;
+uniform sampler2D uTex; uniform sampler2D uWaterTex; uniform sampler2D uMaskTex; uniform float uWaterFrame; uniform float uHasWater; uniform float uDebug;
 vec2 subUV(vec4 r, vec2 g){ return r.xy + g * (r.zw - r.xy); }
 void main(){
   vec2 g = clamp(fract(vGUV), 0.5 / 256.0, 1.0 - 0.5 / 256.0);   // 钳制，避免采到图集邻块
@@ -84,10 +84,10 @@ void main(){
     else col = vec3(1.0, 0.2, 1.0);
     gl_FragColor = vec4(col, 1.0); return;
   }
-  if (uDebug > 1.5) { float m0 = texture2D(uTex, subUV(vMaskRect, g)).r; gl_FragColor = vec4(m0, m0, m0, 1.0); return; }
+  if (uDebug > 1.5) { float m0 = texture2D(uMaskTex, subUV(vMaskRect, g)).r; gl_FragColor = vec4(m0, m0, m0, 1.0); return; }
   if (uDebug > 0.5) { gl_FragColor = vec4(s, s, s, 1.0); return; }
   if (s <= 0.0) discard;
-  float m = texture2D(uTex, subUV(vMaskRect, g)).r;
+  float m = texture2D(uMaskTex, subUV(vMaskRect, g)).r;
   float a = smoothstep(m - ${MASK_W.toFixed(2)}, m + ${MASK_W.toFixed(2)}, s);
   if (a < 0.02) discard;
   vec4 c = texture2D(uTex, subUV(vSub, g));
@@ -108,38 +108,69 @@ function mkProgram(gl) {
     return p;
 }
 
-/** 把所有要用的贴图/精灵/遮罩打进一张图集 */
-export function buildAtlas(gl, entries) {
-    const maxSide = entries.reduce((m, e) => Math.max(m, e.img.width, e.img.height), 128);
-    const glMax = Math.min(gl.getParameter(gl.MAX_TEXTURE_SIZE) || 2048, 2048);
-    const n = Math.max(1, entries.length);
-    let CELL = Math.max(64, 1 << Math.ceil(Math.log2(maxSide)));
-    const colsOf = () => Math.max(1, Math.ceil(Math.sqrt(n)));
-    while (CELL > 32 && colsOf() * CELL > glMax) CELL >>= 1;
-    const COLS = colsOf(), ROWS = Math.max(1, Math.ceil(entries.length / COLS));
-    const cv = document.createElement('canvas'); cv.width = COLS * CELL; cv.height = ROWS * CELL;
-    const c = cv.getContext('2d');
+/**
+ * 将 DE 坐标系的地图数据进行 x、y 对调（在等距投影渲染时纠正左右镜像）
+ * 地形、图层、高程、通行、速度矩阵以及所有物件坐标统一对调。
+ */
+export function transposeMapData(d) {
+    if (!d || !d.width || !d.height) return d;
+    const w = d.width, h = d.height;
+    const transposeArray = (arr) => {
+        if (!arr || !arr.length) return arr;
+        const out = new Array(w * h);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                out[x * h + y] = arr[y * w + x];
+            }
+        }
+        return Array.isArray(arr) ? out : new arr.constructor(out);
+    };
+    const newObjs = (d.objects || []).map((o) => {
+        const no = { ...o };
+        no.x = o.y;
+        no.y = o.x;
+        no.cell = Math.floor(no.y) * h + Math.floor(no.x);
+        return no;
+    });
+    return {
+        ...d,
+        width: h,
+        height: w,
+        terrain: transposeArray(d.terrain),
+        layer: transposeArray(d.layer),
+        elev: transposeArray(d.elev),
+        passable: transposeArray(d.passable),
+        speed: transposeArray(d.speed),
+        objects: newObjs,
+    };
+}
+
+/** 构建网格排布图集（针对等大贴图如 256x256 地形/遮罩，原尺寸放入、绝不缩小） */
+export function buildGridAtlas(gl, entries, pad = 2) {
+    if (!entries.length) return { tex: null, uv: new Map(), count: 0, size: { w: 0, h: 0 } };
+    const n = entries.length;
+    const cols = Math.max(1, Math.ceil(Math.sqrt(n)));
+    const rows = Math.max(1, Math.ceil(n / cols));
+    const cellW = entries[0].img.width, cellH = entries[0].img.height;
+    const slotW = cellW + 2 * pad, slotH = cellH + 2 * pad;
+    const cv = document.createElement('canvas');
+    cv.width = cols * slotW; cv.height = rows * slotH;
+    const ctx = cv.getContext('2d');
     const uv = new Map();
     entries.forEach((e, i) => {
-        const cx = (i % COLS) * CELL, cy = Math.floor(i / COLS) * CELL;
-        const P = 2;                                   // 四周留 2 像素边（修"每 10 格一条细黑线"）
-        const inner = CELL - 2 * P;
-        const r = Math.min(inner / e.img.width, inner / e.img.height);
-        const w = e.img.width * r, h = e.img.height * r;
-        const ix = cx + P + (inner - w) / 2, iy = cy + P + (inner - h) / 2;
-        c.drawImage(e.img, ix, iy, w, h);
-        // 边里填**对边**的像素（让这一块能无缝重复；线性取色就不会采到隔壁块）
-        c.drawImage(cv, ix + w - P, iy, P, h, ix - P, iy, P, h);                    // 左边 ← 右
-        c.drawImage(cv, ix, iy, P, h, ix + w, iy, P, h);                            // 右边 ← 左
-        c.drawImage(cv, ix, iy + h - P, w, P, ix, iy - P, w, P);                    // 上边 ← 下
-        c.drawImage(cv, ix, iy, w, P, ix, iy + h, w, P);                            // 下边 ← 上
-        c.drawImage(cv, ix + w - P, iy + h - P, P, P, ix - P, iy - P, P, P);        // 左上角
-        c.drawImage(cv, ix, iy + h - P, P, P, ix + w, iy - P, P, P);                // 右上角
-        c.drawImage(cv, ix + w - P, iy, P, P, ix - P, iy + h, P, P);                // 左下角
-        c.drawImage(cv, ix, iy, P, P, ix + w, iy + h, P, P);                        // 右下角
-        // 该块在图集里的**内容矩形**（不含留边）
+        const cx = (i % cols) * slotW, cy = Math.floor(i / cols) * slotH;
+        const ix = cx + pad, iy = cy + pad, w = e.img.width, h = e.img.height;
+        ctx.drawImage(e.img, ix, iy, w, h);
+        // 四周留边填充对边像素（避免线性采样接缝细黑线）
+        ctx.drawImage(cv, ix + w - pad, iy, pad, h, ix - pad, iy, pad, h);          // 左边 ← 右
+        ctx.drawImage(cv, ix, iy, pad, h, ix + w, iy, pad, h);                      // 右边 ← 左
+        ctx.drawImage(cv, ix, iy + h - pad, w, pad, ix, iy - pad, w, pad);          // 上边 ← 下
+        ctx.drawImage(cv, ix, iy, w, pad, ix, iy + h, w, pad);                      // 下边 ← 上
+        ctx.drawImage(cv, ix + w - pad, iy + h - pad, pad, pad, ix - pad, iy - pad, pad, pad); // 左上角
+        ctx.drawImage(cv, ix, iy + h - pad, pad, pad, ix + w, iy - pad, pad, pad); // 右上角
+        ctx.drawImage(cv, ix + w - pad, iy, pad, pad, ix - pad, iy + h, pad, pad); // 左下角
+        ctx.drawImage(cv, ix, iy, pad, pad, ix + w, iy + h, pad, pad);             // 右下角
         uv.set(e.key, [ix / cv.width, iy / cv.height, (ix + w) / cv.width, (iy + h) / cv.height]);
-        uv.set(e.key + '#pad', P / CELL);
     });
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -147,7 +178,53 @@ export function buildAtlas(gl, entries) {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    return { tex, uv, cell: CELL, size: { w: cv.width, h: cv.height } };
+    return { tex, uv, count: n, size: { w: cv.width, h: cv.height } };
+}
+
+/** 构建货架排布精灵图集（针对大小不一的悬崖/植被等，原尺寸放入、绝不缩小） */
+export function buildShelfAtlas(gl, entries, pad = 2, maxW = 2048) {
+    if (!entries.length) return { tex: null, uv: new Map(), count: 0, size: { w: 0, h: 0 } };
+    const sorted = entries.slice().sort((a, b) => b.img.height - a.img.height);
+    let curX = 0, curY = 0, shelfH = 0, maxCanvasW = 0;
+    const placements = [];
+    for (const e of sorted) {
+        const sw = e.img.width + 2 * pad, sh = e.img.height + 2 * pad;
+        if (curX + sw > maxW && curX > 0) {
+            curY += shelfH;
+            curX = 0;
+            shelfH = 0;
+        }
+        placements.push({ e, x: curX, y: curY, w: e.img.width, h: e.img.height });
+        curX += sw;
+        shelfH = Math.max(shelfH, sh);
+        if (curX > maxCanvasW) maxCanvasW = curX;
+    }
+    const cvW = Math.max(64, maxCanvasW);
+    const cvH = Math.max(64, curY + shelfH);
+    const cv = document.createElement('canvas');
+    cv.width = cvW; cv.height = cvH;
+    const ctx = cv.getContext('2d');
+    const uv = new Map();
+    for (const p of placements) {
+        const ix = p.x + pad, iy = p.y + pad, w = p.w, h = p.h;
+        ctx.drawImage(p.e.img, ix, iy, w, h);
+        ctx.drawImage(cv, ix + w - pad, iy, pad, h, ix - pad, iy, pad, h);
+        ctx.drawImage(cv, ix, iy, pad, h, ix + w, iy, pad, h);
+        ctx.drawImage(cv, ix, iy + h - pad, w, pad, ix, iy - pad, w, pad);
+        ctx.drawImage(cv, ix, iy, w, pad, ix, iy + h, w, pad);
+        ctx.drawImage(cv, ix + w - pad, iy + h - pad, pad, pad, ix - pad, iy - pad, pad, pad);
+        ctx.drawImage(cv, ix, iy + h - pad, pad, pad, ix + w, iy - pad, pad, pad);
+        ctx.drawImage(cv, ix + w - pad, iy, pad, pad, ix - pad, iy + h, pad, pad);
+        ctx.drawImage(cv, ix, iy, pad, pad, ix + w, iy + h, pad, pad);
+        uv.set(p.e.key, [ix / cvW, iy / cvH, (ix + w) / cvW, (iy + h) / cvH]);
+    }
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, cv);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return { tex, uv, count: entries.length, size: { w: cvW, h: cvH } };
 }
 
 const FLOATS = 18;                                 // pos2 sub4 guv2 local2 maskRect4 dir2 use1 light1
@@ -189,7 +266,7 @@ export function createGroundLayer(canvas, o) {
     const prog = mkProgram(gl); gl.useProgram(prog);
     const A = (n) => gl.getAttribLocation(prog, n), U = (n) => gl.getUniformLocation(prog, n);
     const loc = { aPos: A('aPos'), aSub: A('aSub'), aGUV: A('aGUV'), aLocal: A('aLocal'), aMaskRect: A('aMaskRect'), aDir: A('aDir'), aUse: A('aUse'), aLight: A('aLight'),
-        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
+        uRes: U('uRes'), uCam: U('uCam'), uZoom: U('uZoom'), uTex: U('uTex'), uWaterTex: U('uWaterTex'), uMaskTex: U('uMaskTex'), uWaterFrame: U('uWaterFrame'), uHasWater: U('uHasWater'), uDebug: U('uDebug') };
     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     let waterTex = o.waterImg ? buildPaddedWaterAtlas(gl, o.waterImg) : null;
@@ -212,24 +289,49 @@ export function createGroundLayer(canvas, o) {
     const offX = (N - 1) * dx;
     const texCode = (id) => { const m = o.manifest[id]; return m?.name_2 ? String(m.name_2).replace(/^g_/, '') : null; };
 
-    const entries = [];
+    // 1. 地形贴图图集（独立、绝不缩小）
+    const terEntries = [];
     const terKey = new Map();
-    for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) { const c = texCode(id); const im = c && o.textures.get(c); if (im) { terKey.set(id, 'T' + id); entries.push({ key: 'T' + id, img: im }); } }
+    for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) {
+        const c = texCode(id);
+        const im = c && o.textures.get(c);
+        if (im && !terEntries.some((e) => e.key === 'T' + id)) {
+            terKey.set(id, 'T' + id);
+            terEntries.push({ key: 'T' + id, img: im });
+        }
+    }
+    const terrainAtlas = buildGridAtlas(gl, terEntries);
+
+    // 2. 遮罩图集（独立、绝不缩小）
+    const maskEntries = [];
+    const maskKey = new Map();
+    for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) {
+        const mn = maskOf(id);
+        if (!mn || maskKey.has(mn)) continue;
+        const im = o.masks?.get(mn);
+        if (!im) continue;
+        maskKey.set(mn, 'M' + mn);
+        maskEntries.push({ key: 'M' + mn, img: im });
+    }
+    const maskAtlas = buildGridAtlas(gl, maskEntries);
+
+    // 3. 精灵图集（独立、货架排布、绝不缩小）
+    const sprEntries = [];
+    const skippedObjs = new Map();
     for (const ob of data.objects) {
         const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
         const sp = o.sprites.get(spKey);
+        if (!sp) {
+            skippedObjs.set(ob.name, (skippedObjs.get(ob.name) || 0) + 1);
+            continue;
+        }
         const k = 'S' + spKey;
-        if (sp && !entries.some((e) => e.key === k)) entries.push({ key: k, img: sp.img });
+        if (!sprEntries.some((e) => e.key === k)) sprEntries.push({ key: k, img: sp.img });
     }
-    const maskKey = new Map();
-    for (const id of new Set([...data.terrain, ...data.layer.filter((v) => v >= 0)])) {
-        const mn = maskOf(id); if (!mn || maskKey.has(mn)) continue;
-        const im = o.masks?.get(mn); if (!im) continue;
-        maskKey.set(mn, 'M' + mn); entries.push({ key: 'M' + mn, img: im });
-    }
-    const atlas = buildAtlas(gl, entries);
-    const uvOfTer = (id) => atlas.uv.get(terKey.get(id));
-    const uvOfMask = (id) => { const mn = maskOf(id); return mn ? atlas.uv.get(maskKey.get(mn)) : null; };
+    const spriteAtlas = buildShelfAtlas(gl, sprEntries);
+
+    const uvOfTer = (id) => terrainAtlas.uv.get(terKey.get(id));
+    const uvOfMask = (id) => { const mn = maskOf(id); return mn ? maskAtlas.uv.get(maskKey.get(mn)) : null; };
 
     const objs = data.objects.slice().sort((a, b) => (a.x + a.y) - (b.x + b.y));
     let cam = { x: 0, y: 0, zoom: 1 };
@@ -332,7 +434,11 @@ export function createGroundLayer(canvas, o) {
         gl.uniform2f(loc.uCam, cam.x / cam.zoom, cam.y / cam.zoom);   // ⚠️ CC 代修：正号，不许改回
         gl.uniform1f(loc.uZoom, cam.zoom);
         gl.uniform1f(loc.uDebug, debug);
-        gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, atlas.tex); gl.uniform1i(loc.uTex, 0);
+        if (maskAtlas.tex) {
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, maskAtlas.tex);
+            gl.uniform1i(loc.uMaskTex, 2);
+        }
         if (waterTex && waterAnimOn) {
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, waterTex);
@@ -404,9 +510,10 @@ export function createGroundLayer(canvas, o) {
                 if (px < wx0 || px > wx1 || py < wy0 || py > wy1) continue;
                 const spKey = (ob.rot !== undefined && o.sprites.has(ob.name + '#' + Math.round(ob.rot))) ? (ob.name + '#' + Math.round(ob.rot)) : ob.name;
                 const sp = o.sprites.get(spKey);
-                const sub = atlas.uv.get('S' + spKey) ?? [0, 0, 0, 0];
-                let ww = 40, hh = 40, ax = 20, ay = 40;
-                if (sp) { ww = sp.img.width * SPRITE_SCALE; hh = sp.img.height * SPRITE_SCALE; ax = sp.ax * SPRITE_SCALE; ay = sp.ay * SPRITE_SCALE; }
+                if (!sp || !spriteAtlas.uv.has('S' + spKey)) continue;
+                const sub = spriteAtlas.uv.get('S' + spKey);
+                const ww = sp.img.width * SPRITE_SCALE, hh = sp.img.height * SPRITE_SCALE;
+                const ax = sp.ax * SPRITE_SCALE, ay = sp.ay * SPRITE_SCALE;
                 const x0 = px - ax, y0 = py - ay + TH / 2;
                 const pts = [[x0, y0], [x0 + ww, y0], [x0 + ww, y0 + hh], [x0, y0 + hh]];
                 const uvs = [[0, 0], [1, 0], [1, 1], [0, 1]];
@@ -422,8 +529,11 @@ export function createGroundLayer(canvas, o) {
             last = { ...last, tiles: (r.x1 - r.x0 + 1) * (r.y1 - r.y0 + 1), objs: nObj, blends: cnt[1] / 6, candSeen, rebuilt: true };
         } else last = { ...last, rebuilt: false };
 
-        const draw = (b, n) => {
-            if (!b || !n) return;
+        const draw = (b, n, tex) => {
+            if (!b || !n || !tex) return;
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.uniform1i(loc.uTex, 0);
             gl.bindBuffer(gl.ARRAY_BUFFER, b);
             gl.vertexAttribPointer(loc.aPos, 2, gl.FLOAT, false, STRIDE, 0);
             gl.vertexAttribPointer(loc.aSub, 4, gl.FLOAT, false, STRIDE, 8);
@@ -435,8 +545,12 @@ export function createGroundLayer(canvas, o) {
             gl.vertexAttribPointer(loc.aLight, 1, gl.FLOAT, false, STRIDE, 68);
             gl.drawArrays(gl.TRIANGLES, 0, n);
         };
-        if (debug > 0) draw(bufs[1], cnt[1]);
-        else { draw(bufs[0], cnt[0]); draw(bufs[1], cnt[1]); draw(bufs[2], cnt[2]); }
+        if (debug > 0) draw(bufs[1], cnt[1], terrainAtlas.tex);
+        else {
+            draw(bufs[0], cnt[0], terrainAtlas.tex);
+            draw(bufs[1], cnt[1], terrainAtlas.tex);
+            draw(bufs[2], cnt[2], spriteAtlas.tex);
+        }
         last = { ...last, cpuMs: performance.now() - t0 };
         return last.cpuMs;
     }
@@ -451,7 +565,29 @@ export function createGroundLayer(canvas, o) {
         setTexMode(m) { texMode = m; builtKey = null; },
         setDebug(d) { debug = d | 0; builtKey = null; },
         resize(w, h) { canvas.width = w; canvas.height = h; },
-        stats() { return { ...last, atlas: entries.length, maxElev, elevEnabled: elevOn, waterAnim: waterAnimOn, masks: maskKey.size, maskNames: [...maskKey.keys()], totalTiles: N * N, totalObjs: objs.length, atlasSize: atlas.size }; },
+        stats() {
+            let skippedCount = 0;
+            const skippedList = [];
+            for (const [name, count] of skippedObjs.entries()) {
+                skippedCount += count;
+                skippedList.push({ name, count });
+            }
+            return {
+                ...last,
+                maxElev,
+                elevEnabled: elevOn,
+                waterAnim: waterAnimOn,
+                masks: maskKey.size,
+                maskNames: [...maskKey.keys()],
+                totalTiles: N * N,
+                totalObjs: objs.length,
+                terrainAtlas: { count: terrainAtlas.count, size: terrainAtlas.size },
+                maskAtlas: { count: maskAtlas.count, size: maskAtlas.size },
+                spriteAtlas: { count: spriteAtlas.count, size: spriteAtlas.size },
+                skippedCount,
+                skippedList,
+            };
+        },
         gl,
     };
 }

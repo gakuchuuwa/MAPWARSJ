@@ -13,23 +13,74 @@ import { makeRng } from './rmsParse.mjs';
 /** <CLIFF_GENERATION> 的 cliff_type → dat 里该种悬崖 _1 变体的 unit id（每类 9 个变体、id 连续） */
 export const CLIFF_BASE = { 0: 264, 1: 1849, 2: 1858, 3: 2178, 4: 2069 };
 
-/** 悬崖相邻拓扑 8 向查表（来自 DE 官方 2247 个样本统计，以相邻段量化方向为键） */
+/** 与 DE 样本统计**同一套 8 向量化**（= `scratch/collect_cliff_samples.py` 的 getDir）：
+ *  按 45° 分桶，**一个邻居只给一个方向** —— 斜向邻居是 '+X+Y' 这一个键，**不许拆成 '+X' + '+Y'**。 */
+export const CLIFF_DIR8 = ['+X', '+X+Y', '+Y', '-X+Y', '-X', '-X-Y', '-Y', '+X-Y'];
+export function cliffDir8(dx, dy) {
+    const d = Math.hypot(dx, dy);
+    if (d < 0.5 || d > 3.6) return null;
+    const deg = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+    return CLIFF_DIR8[Math.floor((deg + 22.5) / 45) % 8];
+}
+
+/** 悬崖相邻拓扑查表 —— **DE 官方 2247 个样本统计**（`scratch/cliff_lookup_table.json`），
+ *  键 = 相邻段方向**排序后**用 `|` 连接；值是 rot（帧号）。**推断**：统计归纳，非 DE 规则原文。 */
 export const CLIFF_TOPOLOGY_TABLE = {
-    '+X|+Y': { rot: 0, constId: 270 },
-    '+Y|-Y': { rot: 1, constId: 264 },
-    '+X|-Y': { rot: 3, constId: 264 },
-    '+X|-X': { rot: 4, constId: 264 },
-    '-X|-Y': { rot: 6, constId: 269 },
-    '+Y|-X': { rot: 15, constId: 264 },
-    '+X': { rot: 16, constId: 264 },
-    '-X': { rot: 17, constId: 264 },
-    '+Y': { rot: 18, constId: 264 },
-    '-Y': { rot: 19, constId: 264 },
-    '+X+Y': { rot: 0, constId: 270 },
-    '-X-Y': { rot: 6, constId: 269 },
-    '+X-Y': { rot: 3, constId: 264 },
-    '-X+Y': { rot: 15, constId: 264 },
+    '+Y|-Y': 1,
+    '+X|-X': 4,
+    '+X|+Y': 0,
+    '-X|-Y': 6,
+    '+X|-Y': 3,
+    '+Y|-X': 15,
+    '+X|+Y|-X': 4,
+    '+X|-X|-Y': 5,
+    '+Y|-X|-Y': 2,
+    '+X|+Y|-Y': 2,
+    '+X|+Y|-X|-Y': 3,
+    '-X': 17,
+    '+Y': 18,
+    '-Y': 19,
+    '+X': 16,
+    '+Y|-X-Y': 9,
+    '+X+Y|-Y': 13,
+    '+X+Y|-X': 9,
+    '+X|-X-Y': 13,
+    '+Y|-X|-X+Y': 9,
+    '+X|+X-Y|-Y': 13,
+    '+X+Y|-X-Y': 13,
+    '+X|+X-Y|-X|-Y': 4,
+    '+Y|-X|-X+Y|-Y': 6,
+    '+X|+X-Y|+Y|-Y': 19,
+    '+X|+Y|-X|-X+Y': 0,
+    '+X|+X-Y|+Y|-X|-Y': 12,
+    '': 0,
+    '+X+Y|+X-Y|-Y': 13,
+    '+Y|-X+Y|-X-Y': 9,
+    '+Y|-X-Y|-Y': 9,
+    '+X+Y|-X|-X+Y': 9,
+    '+X|+Y|-X|-X+Y|-Y': 15,
+    '+Y|-X+Y|-X-Y|-Y': 9,
+    '+X+Y|+Y|-Y': 13,
+    '+X+Y|+X-Y|+Y|-Y': 13,
+    '+X+Y|-X|-X-Y': 13,
+    '+X+Y|-X|-Y': 13,
+    '+X|+Y|-X-Y': 9,
+    '+Y|+Y': 0,
+    '-X|-Y|-Y': 14,
+    '-X|-X-Y|-Y': 14,
+    '+X|+X+Y|+Y|-Y': 12,
+    '+X+Y|+Y|-X-Y': 13,
+    '+X|+X+Y|-X|-X+Y': 9,
+    '-X-Y': 9,
+    '+X|+X-Y|-X|-X-Y': 13,
+    '+X+Y|-X-Y|-Y': 9,
+    '+X|+X-Y|+Y|-X|-X+Y|-Y': 2,
+    '+X|+X+Y|-X': 9,
+    '+X|+X-Y|-X-Y': 13,
+    '+X+Y|+Y|-X|-X-Y': 13,
 };
+/** 查不到时的兜底：取**该段直行方向的直段帧**（实测 +X→16 / −X→17 / +Y→18 / −Y→19）。**推断** */
+export const CLIFF_STRAIGHT_ROT = { '+X': 16, '-X': 17, '+Y': 18, '-Y': 19 };
 
 /**
  * dat 的 `unit.terrain_restriction` 里属于「只能放水里」的类别号。
@@ -834,9 +885,11 @@ export class MapEngine {
             const height = cand.get(key);
             let dir = this.rng.int(0, 3);
             const path = [];
+            const visited = new Set();          // 本段已走的格：不许踩回自己（否则会绕圈/回头 ⇒ 前后邻居同向）
             for (let i = 0; i < len; i++) {
                 if (cand.get(cy * W + cx) !== height) break;
                 path.push([cx, cy]);
+                visited.add(cy * W + cx);
                 const r = this.rng() * 100;
                 if (r < this.cliffCurliness / 2) dir = (dir + 3) % 4;
                 else if (r < this.cliffCurliness) dir = (dir + 1) % 4;
@@ -844,7 +897,9 @@ export class MapEngine {
                 for (const d2 of [dir, dir + 1, dir - 1]) {
                     const dd = ((d2 % 4) + 4) % 4;
                     const nx = cx + DIRS[dd][0], ny = cy + DIRS[dd][1];
-                    if (cand.get(ny * W + nx) === height) { cx = nx; cy = ny; dir = dd; moved = true; break; }
+                    const nk = ny * W + nx;
+                    if (visited.has(nk)) continue;
+                    if (cand.get(nk) === height) { cx = nx; cy = ny; dir = dd; moved = true; break; }
                 }
                 if (!moved) break;
             }
@@ -853,20 +908,19 @@ export class MapEngine {
             for (let i = 0; i < path.length; i++) {
                 const [px, py] = path[i];
                 const nbrs = [];
-                if (i > 0) {
-                    const [prevX, prevY] = path[i - 1];
-                    const dx = prevX - px, dy = prevY - py;
-                    if (dx > 0) nbrs.push('+X'); else if (dx < 0) nbrs.push('-X');
-                    if (dy > 0) nbrs.push('+Y'); else if (dy < 0) nbrs.push('-Y');
-                }
-                if (i < path.length - 1) {
-                    const [nextX, nextY] = path[i + 1];
-                    const dx = nextX - px, dy = nextY - py;
-                    if (dx > 0) nbrs.push('+X'); else if (dx < 0) nbrs.push('-X');
-                    if (dy > 0) nbrs.push('+Y'); else if (dy < 0) nbrs.push('-Y');
+                for (const j of [i - 1, i + 1]) {
+                    if (j < 0 || j >= path.length) continue;
+                    const dir = cliffDir8(path[j][0] - px, path[j][1] - py);
+                    if (dir) nbrs.push(dir);
                 }
                 const key = nbrs.sort().join('|');
-                const rot = CLIFF_TOPOLOGY_TABLE[key]?.rot ?? 0;
+                let rot = CLIFF_TOPOLOGY_TABLE[key];
+                if (rot === undefined) {
+                    this.cliffMiss = this.cliffMiss ?? new Map();
+                    this.cliffMiss.set(key, (this.cliffMiss.get(key) ?? 0) + 1);
+                    const seg = cliffDir8(path[path.length - 1][0] - path[0][0], path[path.length - 1][1] - path[0][1]);
+                    rot = CLIFF_STRAIGHT_ROT[seg] ?? 0;
+                }
                 this.objects.push({ id: base, cliff: true, x: px * 3 + 1, y: py * 3 + 1, rot });
                 clearArea(px, py);
             }
