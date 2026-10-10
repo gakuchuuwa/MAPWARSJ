@@ -7268,3 +7268,141 @@ export const LAND_WAR_ALL_PASSABLE = true;
 
 **现行例外（唯一一条）**：`hero_lubu.rng = 200`（主人 2026-10-11 令；DE#2032 是纯近战 rng 0）。
 ⇒ 以后任何"按 DE 对齐"的动作，都必须先过 `EXCEPTIONS` 表 + 这把尺子；**再有主人特意留的值，一律先登记进这两处**。
+
+---
+
+# 八十六、第 111 轮报告（CC · 主人令「DE 中没有攻击的英雄兵模做成**法师类**」＋「**套用希腊火**」——已落地并真机验收）
+
+## 86.1 主人原话（逐字照录，2026-10-11）
+
+> 「我像把这类DE中没有攻击的英雄兵模，做成法师类，请合理安排数值和攻击特效。」
+> 「**不是猛火油柜，是希腊火。**」
+
+## 86.2 范围（数据说话）
+
+DE dat 里 **atk=0（没有攻击）的英雄 = 4 个**：
+
+| 英雄 | 素材攻击动作 | 处置 |
+|---|---|---|
+| **诸葛亮** `hero_zhugeliang` | **连 attack 帧都没有**（`_meta.json` 无 attack；目录 0 个攻击帧） | ✅ **法师（谋士）** |
+| **雅德维加** `hero_jadwiga` | 有 30 帧（举旗冲击） | ✅ **圣旗法师**（DE 里她也 atk=0） |
+| **塔玛尔** `hero_tamar` | 有 30 帧 | ✅ **圣旗法师**（同上） |
+| **布塞法洛斯** `hero_bucephalus` | **没有 attack 帧** | ❌ **不进法师类**（马无法施法）——保持近战，只吃"无攻击动作"的渲染兜底；要它施法请主人一句话 |
+
+## 86.3 数值（AI 按"法师"定位安排，主人已授权）
+
+| 兵种 | 血 | 攻 | 近防/远防 | 射程 | 射速 | 移速 | 说明 |
+|---|---|---|---|---|---|---|---|
+| 诸葛亮（谋士） | 160 | **22** | 0/0 | **320** | 3.0s | 34 | 近战 → 施法：攻 8→22、射程 0→320、护甲 4/3→0/0 |
+| 雅德维加（圣旗法师） | 200 | **26** | 1/2 | 280 | 3.2s | 38 | 血 270→200、攻 10→26、射速 1.6→3.2、移速 56→38 |
+| 塔玛尔（圣旗法师） | 220 | **28** | 2/2 | 300 | 3.4s | 38 | 血 320→220、攻 10→28、射速 1.6→3.4、移速 56→38 |
+
+**定位**：远（280~320）· 慢（3.0~3.4s）· 高单发（22~28）· 皮薄（护甲 0~2）· 走得慢（34~38）——与现成的「火枪手／苏丹亲兵」同档（远·慢·高单发），**秒伤 7.3~8.2** 与精英远程同级，不破平衡。
+
+## 86.4 攻击特效（**希腊火**，不新造美术）
+
+| 环节 | 用什么 |
+|---|---|
+| 投射物 | **`FLAMETHROWER_FLAME`** —— 本仓 `docs/03-runtime/de-assets-2026-08-19.md` §四 明确标注「火焰：**FLAMETHROWER_FLAME（希腊火）**」。**按主人指正：不是猛火油柜那套 `PROJ_FIRE`**（两套图内容相同，但口径按主人：叫希腊火、用希腊火这一套） |
+| 飞行 | 平直飞行（登记进 `PROJ_FLAT`）＋按素材斜 45° 补偿（`PROJ_ANGLE_OFFSET`），30 帧火焰循环 |
+| 出手瞬间 | 身上爆一层**火焰施法光**（`GREEK_FIRE_COLORS`）——`CASTER_TYPES` 那条分支 |
+| 本人动作 | 素材没有攻击帧 → **退回待命帧**（见下"顺手修的"） |
+
+## 86.5 顺手修的一个真 bug（原来一出手就**闪没**）
+
+渲染层取不到当前动作的帧就 `if (!img) continue` —— **整个兵模被跳过**。诸葛亮/布塞法洛斯原本攻击时就"闪一下不见"。已在渲染循环加兜底：**攻击/近战/冲锋帧集为空 → 退回待命帧**（无待命帧才退移动帧）。
+
+## 86.6 真机验收（`node scratch/verify_caster_greekfire.mjs`，端口 5184，跑完自动停服务）
+
+```
+✅ ① 法师射出**希腊火**弹丸 —— 轮询 68 次，见过 FLAMETHROWER_FLAME（同场还有 PROJ_CROSSBOW）
+✅ ② 希腊火素材已就位 —— img=true frames=30
+✅ ③ 法师兵模一直画得出来（不闪没）—— 两名法师同时在渲染列表里的采样占比 **100%**；动作集 [move, atk, idle, die]（含 idle＝空帧集兜底生效）
+🎉 三项判据全过（报告 scratch/caster_greekfire_report.json，截图 scratch/caster_greekfire.png）
+npx tsc --noEmit → exit 0
+```
+（探针两次自我纠错：第一次取样太早、全场还在行军；第二次把"已在肉搏的前排兵"换成法师、22 秒里被砍死——判据③因此改成**读渲染列表**而不是"存活"。）
+
+## 86.7 防再被 DE 对齐改坏
+
+法师数值**本来会被"所有属性数值和 DE 一样"的对齐抹平**（DE 里诸葛亮 rng=0），所以已登记进两处：
+- `scratch/_de_align_all.mjs` 的 **`EXCEPTIONS`**（现在 4 条：吕布 rng 200 ＋ 三位法师全套数值）——每次对齐**强制写回**；
+- 新增看守尺子 **`scratch/_check_casters.mts`**（自校：把诸葛亮 rng 改掉必报 1 条）。
+复验：`node scratch/_de_align_all.mjs` → **需改 0 处**（例外生效）；`_check_lubu_range.mts` / `_check_casters.mts` 双绿；`tsc` exit 0。
+
+## 86.8 本轮动的文件
+
+`src/data/WarTypes.ts`（三位法师数值＋行内注释）、`src/ui/Scene13WarLayer.ts`（`CASTER_TYPES`／`GREEK_FIRE_COLORS`／`PROJ_TYPE` 三条／`PROJ_FLAT`／`PROJ_ANGLE_OFFSET`／火焰 30 帧分支／施法光分支／**空帧集退待命帧兜底**）、文档两处、`scratch/` 探针与尺子。**未碰** `public/` 素材、其它模块。
+
+---
+
+# 八十七、第 112 轮报告（CC · 主人令「整合战术地图中的各个场景的素材」——A 批已落地并真机验收）
+
+## 87.1 主人原话（逐字照录，2026-10-11）
+
+> 「CC说让你做，你做的更好。请整合战术地图中的各个场景的素材。」
+
+主人选定范围（本人确认）：**A. 先统一材质**（水/沙/林/底图四张全部按战场气候主题取）；B 批（按主题烘焙 120×120 地形分布数据）另行请示。
+
+## 87.2 病灶（读码确认，未另跑实测）
+
+新地面层（WebGL）四张基底素材里**只有主底图接了气候**，沙/林/水三张写死：
+
+| WebGL 用哪张 | 改前 | 气候主题表本该给 |
+|---|---|---|
+| 草地底图 | `environmentPlan.baseTerrain`（上一轮接的） | ✅ |
+| 沙 / 滩 | 写死 `bch.png` | `beachTerrainForTheme()` → 沙漠 `des`、草原 `ds2`、温带 `beach_wet` |
+| 森林底 | 写死 `for.png` | `forestFloorTilesForTheme()` → 沙漠 `pal`、雪原 `snf` |
+| 水 | 写死 `river_clean_green.png` | `waterTerrainForTheme()` → 海/无水域 `wtr`、雪原 `ic2`、沼泽 `wt6` |
+
+而这两套表（`Scene13DeMapThemes`）**环境生成器早就在用**（`terrainForTheme` 等 12 个调用点），
+所以同一场战斗里 canvas 侧按气候取贴片、WebGL 侧恒用写死图 —— 一个战场两套素材。
+
+## 87.3 改了什么（文件:行 · 逐个）
+
+| 文件 | 处 | 改动 |
+|---|---|---|
+| `src/ui/scene13/Scene13EnvironmentGenerator.ts` | `:108`（新） | 新增接口 `Scene13GroundTiles`（grass/sand/forest/water 四个字段名） |
+| 同上 | `:138` | `Scene13EnvironmentPlan` 增一个字段 `groundTiles: Partial<Scene13GroundTiles>`（无主题时为 `{}`） |
+| 同上 | `:800`（有坐标分支） | 按**同一份气候主题表**算好四张素材：`grass=baseTerrain`、`sand=beachTerrainForTheme(...)`、`forest=forestFloorTilesForTheme(...)[0]`、`water=（river/lake → river_clean_green，其余 → waterTerrainForTheme(...)）` |
+| 同上 | `:827`（防御分支） | `groundTiles: {}` |
+| `src/ui/scene13/Scene13GroundLayerGL.ts` | `:18` | import 类型 `Scene13GroundTiles` |
+| 同上 | `:260`（新） | 新增 `attachTexImage()`：把源图与**文件名**挂在纹理上（只给探针读，无行为影响） |
+| 同上 | `:419` | `makeRepeatTex()` 调 `attachTexImage`（第二处调用带文件名，在 `create()` 里） |
+| 同上 | `:735` | `create(canvas, mapData, tiles?)`：四张素材分别按 `tiles?.x` 取，**取不到就退回原写死的 gr2/bch/for/river_clean_green** 并记下最终文件名 |
+| `src/ui/Scene13WarLayer.ts` | `:6128` | 调用处改传 `this.environmentPlan?.groundTiles`（一行；注释同步） |
+
+**没碰**：canvas 侧 `Scene13GroundPainter`、`Scene13DeMapThemes` 任何一张表、树木/草花/岩石/资源精灵、
+城池地基与镜头、走位与战斗数值、战略地图、`public/` 素材（本批零新增文件）。
+
+**一处须主人知道的接口变化**：上一轮那条「草地底图按气候带选」的接线（`create(cv, mapData, baseTerrain)`）
+被本轮**换成同一个参数的完整版** `create(cv, mapData, groundTiles)`——`grass` 字段就是原来的 `baseTerrain`，
+行为不丢，只是同一次把其余三张也一起传进去（`Scene13WarLayer:5183` 那处 canvas 侧调用未动）。
+
+## 87.4 实测（真机 + 数值）
+
+- 探针：`node scratch/verify_scene13_theme_ground.mjs`（自带 Vite 启停，端口 5185，跑完自动关服务）
+  —— **五条判据全绿**（`scratch/m3_theme_ground_report.json`）：
+  ① 沙漠战场四张＝`des/des/pal/wtr`；温带攻城四张＝`ds3/beach_wet/for/river_clean_green`（与主题表逐字段一致）
+  ② 两场地面层**实际加载的文件名**不同（`__probeTile` 读回）
+  ③ `des` 与旧写死的 `gr2` 逐像素相近比例 **0**（确实不是同一张图）
+  ④ 两场地面 `gl.readPixels` 读回像素不同（沙漠 `[213,150,65]` ／ 温带 `[209,175,84]`）
+  ⑤ **回归**：不传主题素材时四张仍退回 `gr2/bch/for/river_clean_green`
+- 截图（两张同尺寸并排看）：`scratch/out/theme_ground/desert_egypt.png`（黄沙地）、`scratch/out/theme_ground/temperate_vienna.png`（温带泥土＋蓝灰河水）
+- 全气候取数表：`npx tsx --import ./tools/sim-preload.mjs scratch/_probe_ground_theme_tiles.mts`
+  —— 维也纳 `ds3/beach_wet/for/river_clean_green`｜埃及沙漠 `des/des/pal/wtr`｜漠北草原 `gr7/ds2/ds3/wtr`｜
+  策马特高山 `gr7/bch/for/river_clean_green`｜武汉 `ds3/beach_wet/for/river_clean_green`｜莫斯科 `gr2/beach_wet/for/river_clean_green`，**六处全部 ✅与主题表一致**
+- `npx tsc --noEmit` → **exit 0**
+
+## 87.5 未做 / 已知局限（如实记）
+
+1. **地形分布（哪里水、哪里林、高程）仍是维也纳那一份** —— `requestGroundLayerGL()` 照旧读
+   `scratch/rms-out/mapdata_vienna_danube_120.json`。所以沙漠截图中间仍有一汪湖、一片林子（画面里看得到）。
+   这属 **B 批**（按主题用 RMS 引擎烘焙 120×120 到 `public/`，再按 `climateRegion` 加载），**未做，等主人点头**。
+2. 沙地上的草花、树种、岩石精灵**仍按旧素材**（`decorForTheme` 那条链本就在跑，但精灵池没按气候收窄）——未动。
+3. 只真机验了沙漠＋温带两场（各一张截图），雪原/草原/热带**只验了取数表**，未各开一场截图。
+4. 本批未跑完整引擎回归（未改引擎）。改动只涉及素材选图，未碰 `tools/rms/`。
+
+## 87.6 状态
+
+A 批（材质统一）**完成**；B 批（地形分布按主题烘焙）**等主人决策**。

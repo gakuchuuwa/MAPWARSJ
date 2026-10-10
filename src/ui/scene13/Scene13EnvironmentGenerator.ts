@@ -104,6 +104,22 @@ export interface ObjectRule {
     minSpacing?: number;
 }
 
+/**
+ * 战场地面四张基底素材（气候主题取到的值，由环境生成器算好写给地面层）。
+ * 🔴 与 Scene13DeMapThemes 的 terrainForTheme / beachTerrainForTheme / forestFloorTilesForTheme /
+ *    waterTerrainForTheme **同一份表**：这两处都从这里取，不许再各判一次（否则两边漂移）。
+ */
+export interface Scene13GroundTiles {
+    /** 草地/主底图 */
+    grass: string;
+    /** 沙 / 滩 */
+    sand: string;
+    /** 森林底（林下腐殖土等） */
+    forest: string;
+    /** 水体 */
+    water: string;
+}
+
 export interface Scene13EnvironmentPlan {
     seed: string;
     /** DE 179 张官方地图提炼出的 7 大核心战场拓扑原型 */
@@ -118,6 +134,8 @@ export interface Scene13EnvironmentPlan {
     deMapTheme: DeMapThemeId | null;
     season: 0 | 1 | 2;
     baseTerrain: string;
+    /** 地面层四张基底素材（同 baseTerrain 一份口径）；无主题时为 {}，由调用方走各自的兜底图 */
+    groundTiles: Partial<Scene13GroundTiles>;
     waterKind: 'sea' | 'lake' | 'river' | 'none';
     grid: { gw: number; gh: number; ox: number; oy: number };
     elevation: number[][];
@@ -778,9 +796,19 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
 
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
+        // 地面层四张基底素材：与 baseTerrain 同一份气候主题表，算好一次，渲染层两处共用
+        const groundTiles: Partial<Scene13GroundTiles> = {
+            grass: baseTerrain,
+            sand: beachTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
+            forest: forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
+            // 🔴 [2026-08-22 主人定] 绿是河、蓝是海：内陆河湖沿用墨绿 river_clean_green，海与无水域走主题水色
+            water: (waterKind === 'river' || waterKind === 'lake')
+                ? 'river_clean_green'
+                : waterTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
+        };
         return {
             seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
-            biome, deMapTheme: theme!.id, season, baseTerrain, waterKind, grid, elevation, terrainPatches: patches, objects, isWater,
+            biome, deMapTheme: theme!.id, season, baseTerrain, groundTiles, waterKind, grid, elevation, terrainPatches: patches, objects, isWater,
         };
     }
 
@@ -795,6 +823,7 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         deMapTheme: null,
         season,
         baseTerrain,
+        groundTiles: {},
         waterKind,
         grid,
         elevation: Array.from({ length: gh }, () => new Array(gw).fill(0)),
