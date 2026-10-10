@@ -2232,8 +2232,8 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     //   攻城战：倒毁攻城器械残骸 + 拒马鹿角 + 插地烽火；野战：古战场骷髅冢/穿刺遗骸。
     if (isSiege) {
         // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
-        //    城池在中心：残骸分布在城郭外围开阔平原，避让正中央城郭核心圈
-        const outsideCityLeft = (x: number, y: number): boolean => inArmyCorridor(x, y) || Math.hypot(x - VW / 2, (y - VH / 2) * 1.6) < 380;
+        //    城池在中心：残骸与烽火分布在城郭外围平原，避让正中央城郭核心圈
+        const outsideCityLeft = (x: number, y: number): boolean => Math.hypot(x - VW / 2, (y - VH / 2) * 1.6) < 320;
         const DECAY_POOL = ['BATTLEFIELD:DECAY_TREBUCHET', 'BATTLEFIELD:DECAY_MANGONEL', 'BATTLEFIELD:DECAY_ONAGER', 'BATTLEFIELD:DECAY_BATTERING_RAM', 'BATTLEFIELD:DECAY_SCORPION'];
         const TORCH_POOL = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
         // 攻城器械残骸 1~2 个（大型，限量）

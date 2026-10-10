@@ -21,7 +21,6 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
-    xueyantuo: { name: '薛延陀鹰师', tier: 3 },
   naiman: { name: '乃蛮重骑', tier: 4 },       // 福海·乃蛮重装骑兵（§6 #19）（缺乏极其著名的战术高光，降T3）
   ongut: { name: '汪古骑', tier: 4 },        // 净州塞·汪古部阿剌兀思
   wala: { name: '瓦剌铁骑', tier: 1 },         // 土木堡之变生擒明英宗的元凶，与鞑靼并列的大明两百年草原死敌，升入T1战略
@@ -107,4 +106,5 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     xiongnu: { name: '鸣镝精骑', tier: 1 },
     aertai: { name: '乃蛮残骑', tier: 3 },          // 也儿的石·屈出律：乃蛮残部骑兵,
     hongirad: { name: '弘吉剌护卫', tier: 4 },
+    xueyantuo: { name: '薛延陀鹰师', tier: 3 },
 };

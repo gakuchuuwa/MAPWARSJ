@@ -1158,7 +1158,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 
     { id: 'city_guanglu', name: '光禄城', factionId: 'shatuo', lat: 41.9, lng: 108.2, type: 'small_city', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI' },
 
-    { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MOBEI_MONGOL' },
+    { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'pass', troops: 20000, region: 'MONGOL', buildingStyle: 'ASIA' },
 
 
     { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.58829, lng: 104.661255, type: 'pass', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MOBEI_MONGOL' },

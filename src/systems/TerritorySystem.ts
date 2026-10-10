@@ -170,6 +170,9 @@ function cityBuildingScale(b: string, fallback: number): number {
 export interface CityNativeSizes {
     widths: Record<string, number>;
     castleW?: number;
+    /** 墙体/城门/城垛**逐件**的 DE 原生框宽（键＝素材目录名，如 `WEST_WALL_POST`）。
+     *  🔴 墙、门、垛三者的素材框宽各不相同（107 / 307 / 163），按同一个 widthFactor 画必然有两个偏小。 */
+    spriteW?: Record<string, number>;
 }
 
 /** 取某建筑的原生宽：先 AGE 前缀，再裸名 */
@@ -330,12 +333,13 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     const rotation = rnd() * 360;
 
     // 容器尺寸（紧凑包裹闭合围墙与木大门）
-    const W = baseSize * 2.3;
-    const H = baseSize * 2.0;
+    // 🔴 [2026-10-11 战术侧 1.0] 墙圈提到 9 段/边后外接 1806×1047（实测件表），容器与地基层跟着放大
+    const W = baseSize * (native ? 3.6 : 2.3);
+    const H = baseSize * (native ? 3.1 : 2.0);
 
     const parts: string[] = [];
 
-    // [2026-09-08 主人定] 小城底层菱形 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（S=5, AX=10）
+    // [2026-09-08 主人定] 小城底层菱形 clip-path 裁切泥石广场地基：撑满全城包括四角，城内饱满无漏黑，城外零溢出（S=9, AX=10）
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 10;
     const rX = AX * stepX, rY = AX * stepY;
@@ -367,12 +371,14 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        // 🔴 [2026-10-11 战术侧 1.0] 建筑按 DE 原生像素画；环半径按**该栋自己的放大倍数**再留 1.25 倍余量外推，
-        //    否则建筑变大后会互相压成一团（实测：只按 1.0 倍外推仍有 33 对重叠）。
+        // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」「该扩大就扩大呀」]
+        //    建筑按 DE 原生像素画；环半径 = baseSize × 该栋**原生宽占基准的比例** × 1.12（排布密度），
+        //    再**夹到墙圈以内**（外缘不出墙）：不这么夹，城镇中心（420px）会顶穿 9 段/边的墙。
         const bNative = nw(b);
-        const NATIVE_RING_HEADROOM = 1.25;
-        const mul = (bNative ? (bNative / (baseSize * cityBuildingScale(b, 0.32))) : 1) * (bNative ? NATIVE_RING_HEADROOM : 1);
-        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize * mul;
+        const bRef = baseSize * cityBuildingScale(b, 0.32);
+        const wallInnerR = W / 2 - baseSize * 0.16;          // 墙内缘（离城心的最大可用半径）
+        const rRaw = bNative ? (0.32 + rnd() * 0.10) * baseSize * (bNative / bRef) * 1.12 : (0.32 + rnd() * 0.10) * baseSize;
+        const r = bNative ? Math.min(rRaw, wallInnerR - bNative / 2) : rRaw;
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
         const bW = bNative ?? (baseSize * cityBuildingScale(b, 0.32));
@@ -396,7 +402,11 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     //    （石墙沿用中城 DE_STONE_ANCHORS_BY_STYLE，锚点按风格独立、同 style='ASIA'）
     // 🔴 [主人定] 小城三套城墙：石墙区随机「双门标准 / 四门雄关」，栅栏区固定双门栅栏
     const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
-    const wallPieces = computePalisadeWallAndGate(baseSize, 5, useFourGates);
+    // 🔴 [2026-10-11 主人令「该扩大就扩大呀」] 战术侧 1.0 时，5 段/边的圈装不下 DE 原生尺寸的 9 栋建筑
+    //    （实测：建筑×建筑重叠 25 对、压墙 70 对）⇒ 段数提到 **9 段/边**：
+    //    圈外接由 1003×582 涨到 **1806×1047**（城内可用面积 19.8 万→64.3 万 px²），≈ DE 小城真实的 17 格见方。
+    //    墙段本身仍是 107px 的 DE 原件、步距不变（只增加段数）。战略侧不传 native ⇒ 段数仍是 5。
+    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
@@ -406,7 +416,9 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     wallPieces.forEach((w) => {
         const anchor = (useStoneWall && stoneAnchors) ? stoneAnchors[w.type] : DE_PALISADE_ANCHORS[w.type];
         const zIndex = Math.round(100 + w.y);
-        const pieceW = baseSize * anchor.widthFactor;
+        // 🔴 [2026-10-11 战术侧 1.0] 墙体三类的素材框宽各不相同（墙 107 / 门 307 / 垛 163），
+        //    按同一个 widthFactor 画必然有两件偏小 ⇒ 有原生表时逐件按**素材框宽**画。
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor);
         // 镜像段：素材 anchor 翻转后落在 (100-pctX)%，故 translate 用 (100-pctX) 对齐，再 scaleX(-1)
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
@@ -417,6 +429,14 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     });
 
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
+
+/** 从素材路径取目录名，再查 DE 原生框宽（拿不到就返回 null，回落战略压缩值） */
+function spriteNativeW(native: CityNativeSizes | undefined, path: string): number | null {
+    if (!native?.spriteW) return null;
+    const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(path);
+    if (!m) return null;
+    return native.spriteW[m[1]] ?? null;
 }
 
 /** 城寨（stockade）DE 建筑渲染：大庄园、定居点、棚屋 A~G、蒙古包 A~D 随机 9 建筑（中1+周8，DE 编织篱笆围墙）
@@ -642,7 +662,7 @@ function buildDeStockadeStackHtml(
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
 
     // 险要矩形城容器（长8段+门 × 宽4段）
@@ -827,7 +847,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     wallPieces.forEach((w) => {
         const anchor = wallAnchors[w.type];
         const zIndex = Math.round(500 + w.y);
-        const pieceW = baseSize * anchor.widthFactor * (isFortified ? AUTO : 1.0);
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor * (isFortified ? AUTO : 1.0));
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
@@ -959,7 +979,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     wallPieces.forEach((w) => {
         const anchor = fortifiedAnchors[w.type];
         const zIndex = Math.round(500 + w.y);
-        const pieceW = baseSize * anchor.widthFactor * AUTO;
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor * AUTO);
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
@@ -1011,7 +1031,7 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
             //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
             //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
             //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
-            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
+            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native)
             : city.type === 'stockade'
                 ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
                 : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));

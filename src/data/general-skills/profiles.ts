@@ -653,7 +653,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    xueyantuo_yinan: { generalId: 'xueyantuo_yinan', tier: 'famous', tacticalSkillId: 'ts_244', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_244', atkBalanceSkillId: 'ts_275', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_376', aptitude: 'create' , attackStyle: 'attack'},
+    xueyantuo_yinan: { generalId: 'xueyantuo_yinan', tier: 'famous', tacticalSkillId: 'ts_244', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_244', atkBalanceSkillId: 'ts_275', atkDisadvantageSkillId: 'ts_688', defAdvantageSkillId: 'ts_399', defBalanceSkillId: 'ts_631', defDisadvantageSkillId: 'ts_376', aptitude: 'create', attackStyle: 'attack' },
 
 
 
