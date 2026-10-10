@@ -178,6 +178,16 @@ export type StockadeFenceKey = 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE';
  * ========================================================================== */
 export type CorralXY = { x: number; y: number };
 export interface StockadeRingPiece { x: number; y: number; type: 'NE' | 'SE' | 'POST' | 'GATE' | 'CORNER'; flipX?: boolean }
+/** 险要 / 大城围墙件（比 `StockadeRingPiece` 多两种箭塔）。
+ *  🔴 [M4 件表版 · 2026-10-11] **纯搬迁自 `TerritorySystem`**（原 `interface PalisadeGridPiece`，一字未改）——
+ *     战术侧要拿「与战略地图同一份」的围墙件表，就必须直接调真函数，故与本文件同住。 */
+export interface PalisadeGridPiece {
+    x: number;
+    y: number;
+    type: 'NE' | 'SE' | 'POST' | 'GATE' | 'CORNER' | 'TOWER_AGE3' | 'TOWER_AGE4';
+    /** 等轴镜像：素材只有右上(NE)/右下(SE)两种斜段，东南边/西南边须 scaleX(-1) 翻转成左下/左上段 */
+    flipX?: boolean;
+}
 
 /* ── 直边形三款（正方 / 矩形 / 梯形）的拼法 ──────────────────────────────────
  * 与曲线三形一样收进共享模块：**六形制只有这一份**，游戏 / 评估页 / 围栏编辑器都调它。
@@ -1314,5 +1324,108 @@ export function resolveTacticalWallSetup(
         gBase: `${buildingStyle}_GATE_FORTIFIED`,
         wallPost: `${buildingStyle}_WALL_FORTIFIED_POST`,
     };
+}
+
+/* ==========================================================================
+ * 险要 / 大城的围墙件表（🔴 [M4 件表版 · 2026-10-11] **纯搬迁自 `TerritorySystem`，逐行照搬、一字未改**）
+ *   搬迁缘由：战术模式要把城池摆到地图正中、且形制与战略地图**同一份**，
+ *   就必须直接调真函数（不许复刻一份，本仓血训：小城石墙名单三处各判一次 → 三处不同步）。
+ *   `TerritorySystem` 侧改成 import 回来（名字无 alias）⇒ **调用点一个字不用改**。
+ * ========================================================================== */
+
+/** 险要矩形城墙：长 = LSeg 个 SE 段+门，宽 = WSeg 个 NE 段，两门朝外一致、四角箭塔随机洗牌（2026-08 主人定矩形城样式，2026-09-08 主人定四角箭塔随机分布） */
+/**
+ * 矩形险要围墙拓扑。
+ * @param extraGateTower 🔴 [2026-09-11 主人定] 日本 / 青藏 险要：城堡 + **5** 座箭塔（比通用险要多一座门楼箭塔）。
+ *   城门所在长边（底边）的 k=halfL±1 两个槽位本来就是给门留的**空位**，正好放这座门楼箭塔，不动任何墙段。
+ */
+export function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rnd?: () => number, extraGateTower = false): PalisadeGridPiece[] {
+    const sx = baseSize * 0.075, sy = sx * 0.58;
+    const P0 = { x: 0, y: 0 };
+    const P1 = { x: LSeg * sx, y: LSeg * sy };
+    const P2 = { x: (LSeg + WSeg) * sx, y: (LSeg - WSeg) * sy };
+    const P3 = { x: WSeg * sx, y: -WSeg * sy };
+    const cx = (P0.x + P1.x + P2.x + P3.x) / 4, cy = (P0.y + P1.y + P2.y + P3.y) / 4;
+    const pieces: PalisadeGridPiece[] = [];
+    const put = (x: number, y: number, type: 'NE' | 'SE' | 'POST' | 'GATE' | 'TOWER_AGE3' | 'TOWER_AGE4', flipX?: boolean) =>
+        pieces.push({ x: x - cx, y: y - cy, type, flipX: !!flipX });
+
+    // 四角随机洗牌放置 2 大型箭塔 + 2 警戒箭塔，位置不再固定（2026-09-08 主人定）
+    const towerPool: ('TOWER_AGE3' | 'TOWER_AGE4')[] = ['TOWER_AGE4', 'TOWER_AGE4', 'TOWER_AGE3', 'TOWER_AGE3'];
+    if (rnd) {
+        for (let i = towerPool.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            [towerPool[i], towerPool[j]] = [towerPool[j], towerPool[i]];
+        }
+    }
+    put(P0.x, P0.y, towerPool[0]);
+    put(P1.x, P1.y, towerPool[1]);
+    put(P2.x, P2.y, towerPool[2]);
+    put(P3.x, P3.y, towerPool[3]);
+    const halfL = Math.floor(LSeg / 2);
+    // 底边 P0→P1（右下=SE）长边+门
+    for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P0.x + k * sx, P0.y + k * sy, 'SE'); }
+    put(P0.x + halfL * sx, P0.y + halfL * sy, 'GATE', true);
+    // 🔴 [2026-09-11 主人定] 日本 / 青藏 险要额外加第 5 座箭塔（门楼箭塔，占城门右侧那个本来就空着的槽位）
+    if (extraGateTower) put(P0.x + (halfL + 1) * sx, P0.y + (halfL + 1) * sy, 'TOWER_AGE4');
+    // 右边 P1→P2（右上=NE）短边纯墙
+    for (let k = 1; k < WSeg; k++) put(P1.x + k * sx, P1.y - k * sy, 'NE');
+    // 顶边 P2→P3（左上=NE镜像）长边+门（与底门同翻转=朝外一致）
+    for (let k = 1; k < LSeg; k++) { if (k >= halfL - 1 && k <= halfL + 1) continue; put(P2.x - k * sx, P2.y - k * sy, 'NE', true); }
+    put(P2.x - halfL * sx, P2.y - halfL * sy, 'GATE', true);
+    // 左边 P3→P0（左下=SE镜像）短边纯墙
+    for (let k = 1; k < WSeg; k++) put(P3.x - k * sx, P3.y + k * sy, 'SE', true);
+    return pieces;
+}
+
+/** 大城加固城墙与双塔门楼体系：
+ *  加固城门采用 AoE2 DE 标准关闭状态双塔城门（closed + gate corner），左右自带门塔，
+ *  在西北与东南墙段中部各设一门（k = S-1..S+1 留空让给双塔门楼），两端城墙严丝合缝咬入门塔外壁。 */
+export function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeGridPiece[] {
+    const stepX = baseSize * 0.075;
+    const stepY = stepX * 0.58;
+    const AX = 2 * S;
+    const pieces: PalisadeGridPiece[] = [];
+
+    const westX = -AX * stepX;
+    const eastX = AX * stepX;
+    const northY = -AX * stepY;
+    const southY = AX * stepY;
+
+    // 四角加固角楼
+    pieces.push({ x: westX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: northY, type: 'POST' });
+    pieces.push({ x: eastX, y: 0, type: 'POST' });
+    pieces.push({ x: 0, y: southY, type: 'POST' });
+
+    // 西北边：西角→北角（NE右上走向），k=S-1..S+1 让给城门（嵌墙中部）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
+    }
+    pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部双塔加固城门（原门，东北西南走向）
+
+    // 东北边：北角→东角（SE右下走向），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
+    }
+    pieces.push({ x: S * stepX, y: northY + S * stepY, type: 'GATE', flipX: true }); // 东北墙中部双塔加固城门（镜像门）
+
+    // 东南边：东角→南角（SE左下走向，带镜像），k=S-1..S+1 让给城门
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
+    }
+    pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部双塔加固城门（原门，东北西南走向）
+
+    // 西南边：南角→西角（NE左上走向，带镜像），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
+    for (let k = 1; k < AX; k++) {
+        if (k >= S - 1 && k <= S + 1) continue;
+        pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
+    }
+    pieces.push({ x: -S * stepX, y: southY - S * stepY, type: 'GATE', flipX: true }); // 西南墙中部双塔加固城门（镜像门）
+
+    return pieces;
 }
 

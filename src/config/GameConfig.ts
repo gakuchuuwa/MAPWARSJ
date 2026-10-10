@@ -164,8 +164,8 @@ export class GameConfig {
          *    判据是 `>=`（与出兵门槛同口径，5000 兵整正好够）。
          */
         SCENE13_MIN_TROOPS: 5000,
-        /** 战术层时间微调倍率：1.0 = 真实秒。调小 = 慢镜头（战斗随之变长） */
-        SCENE13_TIME_SCALE: 1.0,
+        /** 战术层时间微调倍率：1.0 = 真实秒。调小 = 慢镜头（战斗随之变长）｜🔴 2026-10-11 主人令「试 1.2」：1.0 → 1.2 */
+        SCENE13_TIME_SCALE: 1.2,
         THRESHOLD_SMALL: 20000,
         THRESHOLD_LARGE: 100000,
         /**
