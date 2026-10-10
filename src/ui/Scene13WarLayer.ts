@@ -28,7 +28,7 @@ import {
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
-import { strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
+import { strategicCityHtml, strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
@@ -4284,8 +4284,9 @@ export class Scene13WarLayer {
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
             const mx = Math.max(60, VW * 0.07);
-            // 🔴 [2026-10-03 主人选定方案A] 前中后三排间距适度拉开至 180px（原 144px），消除营帐方阵局促挤压感，增强冲锋纵深
-            const depth = Math.min(190, Math.round(VW * 0.09375));
+            // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
+            //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
+            const depth = Math.min(240, Math.max(200, Math.round(VW * 0.11)));
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
@@ -4296,15 +4297,9 @@ export class Scene13WarLayer {
             if (this.realGeographyEnabled() && this.battleType === 'siege') {
                 const rec: any = this.defenderCityRecord();
                 const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
-                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 战术侧按 **DE 原生像素**建城：
-                //    `strategicCityHtmlNative` 先读素材 `_meta.json` 的 box_w（DE 原生素材像素宽），
-                //    再让件表逐类按原生像素定宽（战略地图那条路不传原生表，一个像素不动）。
-                this.deCity = null;
-                void strategicCityHtmlNative(city).then((h) => {
-                    if (this.battleType !== 'siege') return;
-                    this.deCity = h;
-                    this.applyDeCityToGround();
-                });
+                // 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」]
+                //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
+                this.deCity = city ? strategicCityHtml(city) : null;
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
             let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || !!this.deCity);
@@ -4389,7 +4384,9 @@ export class Scene13WarLayer {
                         const uFwd = this.advanceVec[side.f];
                         const uSide = this.sideVec[side.f];
                         const forwardOffset = (1 - cell.row) * depth;
-                        const colSpacing = Math.min(110, spanY / 6);
+                        // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
+                        //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
+                        const colSpacing = Math.min(240, Math.max(200, spanY / 4));
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -4404,7 +4401,8 @@ export class Scene13WarLayer {
                     } else {
                         const back = mx + (2 - cell.row) * depth;
                         x = side.f === 0 ? back : VW - back;
-                        y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
+                        const colSpacing = Math.min(240, Math.max(200, spanY / 4));
+                        y = midY + (cell.col - (cell.cols - 1) / 2) * colSpacing;
                     }
                     this.spawns.push({
                         f: side.f, key, x, y,
@@ -4677,18 +4675,20 @@ export class Scene13WarLayer {
         const midY = VH / 2, spanY = VH * 0.8;
         const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
-        for (const key of nine) {
+        const siegeCount = nine.length;
+        for (let idx = 0; idx < siegeCount; idx++) {
+            const key = nine[idx];
             this.ensureType(key, 0);
             let x = lineX;
             let y = yMin + Math.random() * (yMax - yMin);
             const hp = this.statsFor(key, 0).hp;
             let tgtX = VW - mx, tgtY = y;
-            // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械排在攻方阵前（沿来向），目标＝地图中心的城池
+            // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械规整展开在攻方军阵前沿（depth * 2.8），目标＝地图中心的城池
             if (this.deCity) {
                 const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
-                const side = (Math.random() - 0.5) * spanY * 0.6;
-                x = base.x + fwd.x * depth * 2 + sv.x * side;
-                y = base.y + fwd.y * depth * 2 + sv.y * side;
+                const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
+                x = base.x + fwd.x * (depth * 2.8) + sv.x * sideOffset;
+                y = base.y + fwd.y * (depth * 2.8) + sv.y * sideOffset;
                 tgtX = this.deCityCenter.x; tgtY = this.deCityCenter.y;
             }
             this.men.push({
@@ -7385,7 +7385,7 @@ export class Scene13WarLayer {
                         flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
                     }
                 }
-                const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+                const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
                 const uFwd = this.advanceVec[s.f];
                 const uSide = this.sideVec[s.f];
                 let spawnX = isFlank ? flankX : (useFieldPlan ? s.x - uFwd.x * dep + uSide.x * slotY : s.x + (s.f === 0 ? -dep : dep));

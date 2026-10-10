@@ -11,6 +11,7 @@
 import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
 import { resolveCastleAsset } from '../../config/deCastleAssets';
+import { DE_STONE_ANCHORS_BY_STYLE } from '../../systems/cityWallShared';
 import type { RegionType } from '../../systems/RegionSystem';
 
 /** 城墙段（widthFactor 0.16）在战术里画成 **DE 一格** ⇒ baseSize = 107 / 0.16 = 668.75
@@ -91,7 +92,24 @@ async function buildNativeSizes(city: City, deStyle: string): Promise<CityNative
         const w = boxOf.get(`${deStyle}_${n}_${age}`);
         if (w) widths[`${age}:${n}`] = w;
     }
-    return { widths, castleW: castleDir ? boxOf.get(castleDir) : undefined };
+    // 墙体/城门/城跺逐件原生框宽（墙 107 / 门 307 / 垛 163 各不相同）
+    const spriteW: Record<string, number> = {};
+    const anchors = DE_STONE_ANCHORS_BY_STYLE[deStyle];
+    const wallDirs = new Set<string>();
+    for (const a of Object.values(anchors ?? {})) {
+        const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(a.path);
+        if (m) wallDirs.add(m[1]);
+    }
+    await Promise.all([...wallDirs].map(async (dir) => {
+        if (boxOf.has(dir)) { spriteW[dir] = boxOf.get(dir)!; return; }
+        try {
+            const r = await fetch('/SUCAI_BUILDING/' + dir + '/_meta.json');
+            if (!r.ok) return;
+            const m: any = await r.json();
+            if (m?.box_w > 0) { boxOf.set(dir, m.box_w); spriteW[dir] = m.box_w; }
+        } catch { /* 回落战略压缩值 */ }
+    }));
+    return { widths, castleW: castleDir ? boxOf.get(castleDir) : undefined, spriteW };
 }
 
 /** 战术用：按 DE 原生像素生成建筑栈（战略地图走下面那个不传原生表的版本） */
