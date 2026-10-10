@@ -300,6 +300,8 @@ export class Scene13GroundLayerGL {
   private readonly offX: number;
 
   private fieldTex: WebGLTexture | null = null;
+  private fieldPixels: Uint8Array | null = null;
+  private fieldDirty = false;
   private grassTex: WebGLTexture | null = null;
   private sandTex: WebGLTexture | null = null;
   private forestTex: WebGLTexture | null = null;
@@ -395,6 +397,7 @@ export class Scene13GroundLayerGL {
       fieldPixels[i * 4 + 3] = 255;
     }
 
+    this.fieldPixels = fieldPixels;
     this.fieldTex = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, this.fieldTex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, N, N, 0, gl.RGBA, gl.UNSIGNED_BYTE, fieldPixels);
@@ -672,6 +675,42 @@ export class Scene13GroundLayerGL {
     const ry = Math.round(gy);
     if (rx < 0 || ry < 0 || rx >= this.N || ry >= this.N) return false;
     return (this.smoothWater[ry * this.N + rx] ?? 0) >= 0.45;
+  }
+
+  /**
+   * 地基：把以屏幕逻辑坐标 (screenX, screenY) 为中心、radiusCells 格内的水 / 沙 / 林势场清零（边缘平滑过渡），
+   * 让城池建筑与营地站在干燥平地上，而不是漂在水里或压在树林上。同步更新水体查询用的平滑场。
+   */
+  public carveFoundation(screenX: number, screenY: number, W: number, H: number, radiusCells: number): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    const px = this.fieldPixels;
+    if (!c || !px || !this.fieldTex) return;
+    const N = this.N;
+    const r = radiusCells;
+    const x0 = Math.max(0, Math.floor(c.gx - r - 1)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + 1));
+    const y0 = Math.max(0, Math.floor(c.gy - r - 1)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + 1));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const d = Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy);
+        const t = Math.min(1, Math.max(0, (d - (r - 1)) / 1.5));   // 内圈 0（全清）→ 外缘 1（原样）
+        if (t >= 1) continue;
+        const i = y * N + x;
+        this.smoothWater[i] *= t;
+        px[i * 4 + 0] = Math.round(px[i * 4 + 0] * t);
+        px[i * 4 + 1] = Math.round(px[i * 4 + 1] * t);
+        px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
+      }
+    }
+    this.fieldDirty = true;
+  }
+
+  /** 地基改动攒够后一次上传（carveFoundation 之后调用一次） */
+  public flushFoundation(): void {
+    if (!this.fieldDirty || !this.fieldPixels || !this.fieldTex) return;
+    const gl = this.gl;
+    gl.bindTexture(gl.TEXTURE_2D, this.fieldTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.N, this.N, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.fieldPixels);
+    this.fieldDirty = false;
   }
 
   public destroy(): void {
