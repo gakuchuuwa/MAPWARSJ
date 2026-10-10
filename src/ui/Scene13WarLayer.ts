@@ -4301,7 +4301,16 @@ export class Scene13WarLayer {
                 //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
                 // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 改用 **DE 原生像素**版：先读素材 `_meta.json`
                 //    的 box_w（＝DE 原生素材像素宽），再让件表按原生像素逐类/逐件定宽（战略地图那条路不传原生表，不动）。
-                this.deCity = city ? strategicCityHtml(city) : null;
+                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 必须走 **DE 原生像素**版：
+                //    先读素材 `_meta.json` 的 box_w（＝DE 原生素材像素宽），再让件表按原生像素逐类/逐件定宽。
+                //    ⚠️ 这一行被外部进程回退过 4 次（每次都表现为「改了却不生效」），改这里请连带跑
+                //    `scratch/verify_all_citytypes_scale.mjs` 复核。
+                this.deCity = null;
+                void strategicCityHtmlNative(city).then((h) => {
+                    if (this.battleType !== 'siege') return;
+                    this.deCity = h;
+                    this.applyDeCityToGround();
+                });
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
             let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || !!this.deCity);
