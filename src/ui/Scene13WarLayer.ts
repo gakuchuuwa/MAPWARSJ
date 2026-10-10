@@ -28,7 +28,7 @@ import {
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
-import { strategicCityHtml, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
+import { strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
@@ -4296,7 +4296,15 @@ export class Scene13WarLayer {
             if (this.realGeographyEnabled() && this.battleType === 'siege') {
                 const rec: any = this.defenderCityRecord();
                 const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
-                this.deCity = city ? strategicCityHtml(city) : null;
+                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 战术侧按 **DE 原生像素**建城：
+                //    `strategicCityHtmlNative` 先读素材 `_meta.json` 的 box_w（DE 原生素材像素宽），
+                //    再让件表逐类按原生像素定宽（战略地图那条路不传原生表，一个像素不动）。
+                this.deCity = null;
+                void strategicCityHtmlNative(city).then((h) => {
+                    if (this.battleType !== 'siege') return;
+                    this.deCity = h;
+                    this.applyDeCityToGround();
+                });
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
             let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || !!this.deCity);
@@ -4340,11 +4348,18 @@ export class Scene13WarLayer {
                     const uSide1 = { x: -uSide0.x, y: -uSide0.y };
                     this.advanceVec = [uFwd0, uFwd1];
                     this.sideVec = [uSide0, uSide1];
-                    const midSpawnX = (attSX + defSX) / 2;
-                    const midSpawnY = (attSY + defSY) / 2;
-                    this.tacticalPanX = (VW / 2 - midSpawnX) * this.tacticalZoom;
-                    this.tacticalPanY = (VH / 2 - midSpawnY) * this.tacticalZoom;
-                    this.clampTacticalPan();
+                    // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
+                    //    攻城战城池稳居正中心（VW/2, VH/2），镜头默认居中对齐城池；野战才居中于两军中点
+                    if (this.deCity || this.battleType === 'siege') {
+                        this.tacticalPanX = 0;
+                        this.tacticalPanY = 0;
+                    } else {
+                        const midSpawnX = (attSX + defSX) / 2;
+                        const midSpawnY = (attSY + defSY) / 2;
+                        this.tacticalPanX = (VW / 2 - midSpawnX) * this.tacticalZoom;
+                        this.tacticalPanY = (VH / 2 - midSpawnY) * this.tacticalZoom;
+                        this.clampTacticalPan();
+                    }
                 }
             }
             if (!useFieldPlan) {
@@ -9416,6 +9431,12 @@ export class Scene13WarLayer {
                     targetFocusX = this.flipSides ? this.canvas.width - this.heroMan.x : this.heroMan.x;   // 左右对调场次：镜头要对准他的屏幕位置
                     targetFocusY = this.heroMan.y;
                     count = 1;
+                } else if (this.battleType === 'siege' || this.deCity) {
+                    // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
+                    //    攻城战城池稳居正中心，镜头始终居中对齐正中央城郭，绝不可被交战部队拖跑甩到屏幕角落
+                    targetFocusX = this.canvas.width / 2;
+                    targetFocusY = this.canvas.height / 2;
+                    count = 1;
                 } else {
                     // 本场没有乱入者（未随军/观战）⇒ 沿用原来的「跟随交战最激烈处」
                     let sumX = 0, sumY = 0;
@@ -9798,14 +9819,10 @@ export class Scene13WarLayer {
         const vMinY = (0 - cy - this.tacticalPanY) / zoom + cy - vMargin;
         const vMaxY = (cv.height - cy - this.tacticalPanY) / zoom + cy + vMargin;
         let decorDrawnCount = 0;
-        const isFarZoom = zoom <= 0.5;
         for (const sprite of this.decorSprites) {
             if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
             const testX = (this.flipSides && cv) ? (cv.width - sprite.x) : sprite.x;
             if (cullDecor && ((testX < vMinX || testX > vMaxX) && (sprite.x < vMinX || sprite.x > vMaxX) || sprite.y < vMinY || sprite.y > vMaxY)) continue;
-            // 远景优化：缩放到 0.5 以下时微小草花贴花不到 2 像素，略过以保障高帧率
-            if (isFarZoom && (sprite.asset.startsWith('GRASS_') || sprite.asset.startsWith('FLOWER') || sprite.asset.startsWith('PLANT') || sprite.asset.startsWith('SHRUB') || sprite.asset.startsWith('BUSH') || sprite.asset.startsWith('REEDS') || sprite.asset.startsWith('WEED') || sprite.asset.startsWith('UNDERBRUSH') || sprite.asset.startsWith('FERN'))) continue;
-            if (isFarZoom && (sprite.densityHash !== undefined ? (sprite.densityHash % 3 !== 0) : ((sprite.frame % 2) === 1)) && (sprite.asset.includes('OAK') || sprite.asset.includes('PINE') || sprite.asset.includes('TREE') || sprite.asset.includes('MAPLE') || sprite.asset.includes('BIRCH'))) continue;
             if (sprite.layer === 'world' || (this.useGroundGL && sprite.layer === 'ground')) {
                 const it = take();
                 it.kind = 'environment';

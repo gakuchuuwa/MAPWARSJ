@@ -1713,8 +1713,11 @@ function buildVegetation(
             || Math.abs(mapY) >= TREE_MIN_CENTER_SPACING_TILES;
     });
 
+    // 🔴 [2026-10-10 主人「这个区域怎么什么元素都没有呀」]
+    //    原先判定覆盖了横向 18%~82% × 纵向 12%~88%（全屏 70% 区域），导致整场大半被判定为走廊而全空。
+    //    缩减为正中央核心冲锋通道（纵向 38%~62%），两翼与原野大面积开放给自然林木与地表植被。
     const inArmyCorridor = (x: number, y: number): boolean => {
-        return x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
+        return x >= VW * 0.25 && x <= VW * 0.75 && y >= VH * 0.38 && y <= VH * 0.62;
     };
     // 🔴 守方城池/城门前石路上不长树。走廊拦不住这块：守方最后排在 x≈93% VW，
     //    走廊只到 82%，实测平均 3.8 棵树戳在城基上。
@@ -1761,40 +1764,30 @@ function buildVegetation(
     const availableSet = new Set(availableCells.map(([x, y]) => `${x},${y}`));
     const forestBudget = Math.round(availableCells.length * treeFactor[elevationBand]
         * (density ? density.forestCover : forestCoverOfUsableFor(biome)));
-    // 🔴 [2026-08-24] 预算太小就**整个不要林块**，树全走林外散株。
-    //    原来 perClumpTarget 有 `Math.max(4, ...)` 兜底，于是库斯科（安第斯高原，
-    //    forestCover 只有 0.0066、预算不到 3 格）照样铺出一小撮 8 格的林地地表，
-    //    alpha 0.85 几乎不透明，树又稀得没长上去——屏幕上就是一块孤零零的深色菱形斑。
-    //    干旱区/高原本来就没有成片林，只有散树，这才是对的。
-    //    clumps 归零即可：后面铺地表和长树都以 forestCells 为准，空了自然全跳过。
-    const MIN_FOREST_BUDGET = 12;
+    const MIN_FOREST_BUDGET = 4;
     const forestClumps = forestBudget < MIN_FOREST_BUDGET
         ? 0
-        : 12 + rng.int(0, 5);                        // DE: number_of_clumps 10~14（我们可用区是环形，多切几块才散得开）
-    const perClumpTarget = Math.max(4, Math.round(forestBudget / forestClumps));
+        : Math.max(3, Math.min(16, Math.round(forestBudget / 6)));
+    const perClumpTarget = Math.max(4, Math.round(forestBudget / Math.max(1, forestClumps)));
     const forestCells: Array<[number, number]> = [];
     const forestTaken = new Set<string>();
 
-    // 🔴 林块必须**彼此分开**，否则会连成一圈环。
-    //    可用区本身就是个环（走廊外那圈），clump 又随便挑种子随便长，长着长着就首尾相接，
-    //    出来是一条围着战场的绿框——DE 的林子是几个各自独立、大小不一的团，中间有断口。
-    //    所以：种子之间强制留距离，块大小随机浮动。
     const seeds: Array<[number, number]> = [];
-    const MIN_SEED_DIST = 9;                          // 格。小于这个数相邻两块会粘连成片
+    const minSeedDist = isSiege ? 5 : 9;
     for (let c = 0; c < forestClumps && forestCells.length < forestBudget; c++) {
         let seed: [number, number] | null = null;
         for (let a = 0; a < 80; a++) {
             const cand = availableCells[rng.int(0, availableCells.length - 1)];
             if (forestTaken.has(`${cand[0]},${cand[1]}`)) continue;
-            // 🔴 [2026-10-10 主人定「攻城战中，树林尽量摆放在周边，中间要放城」]
+            // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
+            //    城池坐落于地图正中心（VW/2, VH/2），密林种子严格避让中央城郭核心圈（半径 360px），环绕周边摆放
             if (isSiege) {
                 const cx = isoCellX(cand[0], cand[1], ox), cy = isoCellY(cand[0], cand[1], oy);
-                // 排除中央战场与城池区域，确保树林尽量摆放在周边
-                if (cx > VW * 0.20 && cx < VW * 0.85 && cy > VH * 0.15 && cy < VH * 0.85) continue;
+                if (Math.hypot(cx - VW / 2, (cy - VH / 2) * 1.6) < 360) continue;
             }
             let tooClose = false;
             for (const s of seeds) {
-                if (Math.hypot(cand[0] - s[0], cand[1] - s[1]) < MIN_SEED_DIST) { tooClose = true; break; }
+                if (Math.hypot(cand[0] - s[0], cand[1] - s[1]) < minSeedDist) { tooClose = true; break; }
             }
             if (tooClose) continue;
             seed = cand; break;
@@ -1855,8 +1848,8 @@ function buildVegetation(
         for (let a = 0; a < 40; a++) {
             const px = VW * (0.05 + rng.next() * 0.90);
             const py = VH * (0.05 + rng.next() * 0.90);
-            // 🔴 [2026-10-10 主人定「攻城战中，树林尽量摆放在周边，中间要放城」]
-            if (isSiege && px > VW * 0.20 && px < VW * 0.85 && py > VH * 0.15 && py < VH * 0.85) continue;
+            // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
+            //    散株避让守城城郭核心与出兵道（inKeepClear/inArmyCorridor），允许在广袤原野零星点缀孤树
             if (isWater(px, py) || inArmyCorridor(px, py) || inKeepClear(px, py)) continue;
             if (!hasTreePassage(px, py)) continue;
             if (isObjectOverlapping(px, py, 'PINE', objects)) continue;
@@ -1873,7 +1866,7 @@ function buildVegetation(
             const companionAsset = rng.pick(['SHRUB_GREEN', 'BUSH_GREEN', 'FERNPATCH', 'FELLED_GENERIC', 'STUMP_GENERIC']);
             const compX = tx + (rng.next() - 0.5) * 36;
             const compY = ty + (rng.next() - 0.5) * 20;
-            if (!isWater(compX, compY) && !inArmyCorridor(compX, compY)) {
+            if (!isWater(compX, compY) && !inKeepClear(compX, compY)) {
                 objects.push({
                     asset: companionAsset,
                     x: compX,
@@ -2042,7 +2035,7 @@ function buildVegetation(
                     const dist = 18 + rng.next() * 20;
                     const bx = p.x + Math.cos(ang) * dist;
                     const by = p.y + Math.sin(ang) * dist * 0.6;
-                    if (bx >= 0 && bx <= VW && by >= 0 && by <= VH && !isWater(bx, by) && !inArmyCorridor(bx, by)) {
+                    if (bx >= 0 && bx <= VW && by >= 0 && by <= VH && !isWater(bx, by) && !inKeepClear(bx, by)) {
                         // 🔴 [2026-08-24] 和伴生碎石同一个毛病：写死了喜湿灌木，
                         //    于是**沙漠里的岩石旁长出蕨类**（播仙、玉门关、贝雷尼斯…）。
                         //    改从该底图配的 flat 列表里取——沙漠取到的是枯枝/仙人掌。
@@ -2070,12 +2063,11 @@ function buildVegetation(
         }
     }
 
-    // 🔴【荒原枯荣伴生】：干旱荒原与沙漠生成枯木、动物骨骸与干草
-    // 🔴 [2026-08-24 主人定] 攻城战不出枯树——城郊的枯木早被拾去当柴烧了。
-    if (!isSiege && (biome === 'desert' || biome === 'cold_steppe' || biome === 'savanna')) {
+    // 🔴【荒原枯荣伴生】：干旱荒原与沙漠生成枯木、动物骨骸与干草，避让城池与通道
+    if (biome === 'desert' || biome === 'cold_steppe' || biome === 'savanna') {
         const wasteCount = 2 + rng.int(0, 2);
         for (let i = 0; i < wasteCount; i++) {
-            const p = sampleLandPos(VW, VH, rng, isWater, 'DEAD_TREE', objects, inArmyCorridor);
+            const p = sampleLandPos(VW, VH, rng, isWater, 'DEAD_TREE', objects, isSiege ? inKeepClear : inArmyCorridor);
             if (p) {
                 objects.push({
                     asset: 'DEAD_TREE',
@@ -2117,8 +2109,9 @@ function buildVegetation(
     const flatAsset = rng.pick(themeDecor.flat);
     // 同样按覆盖率反推：FLOWER_1 一个占 57 格，BUSH_GREEN 只占 3 格，
     // 写死簇数会让前者铺满、后者看不见。
-    const flatTotal = countForCover(flatAsset, availableCells.length, FLAT_COVER);
-    const flatClusters = Math.max(2, Math.min(10, Math.round(flatTotal / 3)));
+    const totalTilesForCover = Math.max(gw * gh * 0.45, availableCells.length);
+    const flatTotal = countForCover(flatAsset, totalTilesForCover, FLAT_COVER);
+    const flatClusters = Math.max(3, Math.min(10, Math.round(flatTotal / 3)));
     for (let c = 0; c < flatClusters; c++) {
         const anchor = sampleLandPos(VW, VH, rng, isWater, flatAsset, objects, undefined, decorLimits);
         if (!anchor) continue;
@@ -2171,7 +2164,7 @@ function buildVegetation(
         //    我们原来逐株 rng.pick，出来是杂乱的混合噪点。
         //    这和主人定的「一个底图一种树」是同一条逻辑——底图定基调，图上不混种。
         const scatterAsset = rng.pick(groundDecorAssets);
-        const groundDecorCount = countForCover(scatterAsset, availableCells.length, SCATTER_COVER);
+        const groundDecorCount = countForCover(scatterAsset, totalTilesForCover, SCATTER_COVER);
         for (let i = 0; i < groundDecorCount; i++) {
             const asset = scatterAsset;
             // 满地草不避林（林下本来就有草），但要避悬崖和图边
@@ -2220,7 +2213,7 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     }
     const resCount = 2 + rng.int(0, 2);
     const inArmyCorridor = (x: number, y: number): boolean => {
-        return x >= VW * 0.15 && x <= VW * 0.85 && y >= VH * 0.10 && y <= VH * 0.90;
+        return x >= VW * 0.25 && x <= VW * 0.75 && y >= VH * 0.38 && y <= VH * 0.62;
     };
     const inDefenderCity = (x: number, y: number): boolean =>
         keepClear.some((k) => (x - k.x) * (x - k.x) + (y - k.y) * (y - k.y) <= k.r * k.r);
@@ -2238,9 +2231,9 @@ function buildResources(VW: number, VH: number, season: 0 | 1 | 2, rng: RandomSo
     // ── [2026-08-31] 战场遗存氛围（BATTLEFIELD: 前缀 = SUCAI_BATTLEFIELD 素材，preview.png 单帧）──
     //   攻城战：倒毁攻城器械残骸 + 拒马鹿角 + 插地烽火；野战：古战场骷髅冢/穿刺遗骸。
     if (isSiege) {
-        // 🔴 [2026-08-31] 攻方从左入场、守方城在右侧：残骸是攻方攻城器械倒下的遗存，
-        //    只放左侧（城外）。右侧（城内）与中间军团走廊一并排除，免得残骸戳进城里。
-        const outsideCityLeft = (x: number, y: number): boolean => inArmyCorridor(x, y) || x >= VW * 0.5;
+        // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
+        //    城池在中心：残骸分布在城郭外围开阔平原，避让正中央城郭核心圈
+        const outsideCityLeft = (x: number, y: number): boolean => inArmyCorridor(x, y) || Math.hypot(x - VW / 2, (y - VH / 2) * 1.6) < 380;
         const DECAY_POOL = ['BATTLEFIELD:DECAY_TREBUCHET', 'BATTLEFIELD:DECAY_MANGONEL', 'BATTLEFIELD:DECAY_ONAGER', 'BATTLEFIELD:DECAY_BATTERING_RAM', 'BATTLEFIELD:DECAY_SCORPION'];
         const TORCH_POOL = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
         // 攻城器械残骸 1~2 个（大型，限量）

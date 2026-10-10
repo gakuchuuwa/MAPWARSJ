@@ -9,14 +9,16 @@
  * DOM 里，叠在 WebGL 地面与士兵画布之间，跟着镜头平移缩放。
  */
 import type { City } from '../../types/core';
-import { cityStackParams, buildCityStackInnerHtml } from '../../systems/TerritorySystem';
+import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
+import { resolveCastleAsset } from '../../config/deCastleAssets';
+import type { RegionType } from '../../systems/RegionSystem';
 
-/** 城墙段（widthFactor 0.16）在战术里画成 **DE 素材原尺寸** ⇒ baseSize = 77 / 0.16
- *  🔴 [2026-10-11 主人令「如果所有的显示比例都和 DE 一致，是不是更好呢」] 107 → **77**：
- *     107 是城墙素材的**盒子**宽（左右各有透明边，可见内容只有 77px），按盒子铺等于把整个城放大了 107/77 ≈ 1.39 倍；
- *     改成 77 后，城墙段、城门、建筑、城内间距**整城一起**回到 DE 原生比例（建筑之间的比例本来就是照 DE 排的，
- *     只需改这一个基准）。⚠️ 士兵是屏幕固定尺寸（24×64px）不随此缩放 —— 城变小后房子相对士兵会更小，这是已知代价。 */
-export const TACTICAL_CITY_BASE_SIZE = 77 / 0.16;
+/** 城墙段（widthFactor 0.16）在战术里画成 **DE 一格** ⇒ baseSize = 107 / 0.16 = 668.75
+ *  🔴 [2026-10-11 主人令「你先把所有都改为1.0」＋「DE 这么设定，一定是设计好的」]
+ *     DE 城墙段素材盒宽 = **107px**（＝1.11 格；战术格 = 96×48px，与 DE 一格等大），锚点 `widthFactor = 0.16`
+ *     ⇒ `pieceW = baseSize × 0.16`；要画到 107px，baseSize 必须 = 107/0.16。
+ *     前一轮按「可见内容宽 77px」设成 77/0.16 —— 那是**把素材裁窄**，不是 DE 原尺寸；本轮按 DE 原尺寸改回。 */
+export const TACTICAL_CITY_BASE_SIZE = 107 / 0.16;
 
 export interface StrategicCityHtml {
     html: string;
@@ -59,10 +61,60 @@ function pxOf(expr: string): number {
 }
 
 /** 生成战略地图同款建筑栈 HTML（同步）；该据点没有 DE 建筑栈（整图据点）返回 null */
+/**
+ * 🔴 [2026-10-11 主人令「你先把所有都改为1.0」＋「DE 这么设定，一定是设计好的」]
+ * 战术侧取「DE 原生尺寸表」：逐件读素材 `_meta.json` 的 `box_w`（＝DE 原生素材像素宽），
+ * 交给件表按**原生像素**定宽；**战略地图不传这张表，一个像素不动**。
+ */
+async function buildNativeSizes(city: City, deStyle: string): Promise<CityNativeSizes | undefined> {
+    const ages: Array<'AGE2' | 'AGE3'> = ['AGE2', 'AGE3'];
+    const names = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY', 'TOWER'];
+    const dirs = new Set<string>();
+    for (const age of ages) for (const n of names) dirs.add(`${deStyle}_${n}_${age}`);
+    let castleDir: string | null = null;
+    if (city.type !== 'small_city') {
+        try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id); } catch { castleDir = null; }
+        if (castleDir) dirs.add(castleDir);
+    }
+    const boxOf = new Map<string, number>();
+    await Promise.all([...dirs].map(async (dir) => {
+        try {
+            const r = await fetch('/SUCAI_BUILDING/' + dir + '/_meta.json');
+            if (!r.ok) return;
+            const m: any = await r.json();
+            if (m?.box_w > 0) boxOf.set(dir, m.box_w);
+        } catch { /* 缺一件就少一件，回落到战略压缩值 */ }
+    }));
+    if (boxOf.size === 0) return undefined;
+    const widths: Record<string, number> = {};
+    for (const age of ages) for (const n of names) {
+        const w = boxOf.get(`${deStyle}_${n}_${age}`);
+        if (w) widths[`${age}:${n}`] = w;
+    }
+    return { widths, castleW: castleDir ? boxOf.get(castleDir) : undefined };
+}
+
+/** 战术用：按 DE 原生像素生成建筑栈（战略地图走下面那个不传原生表的版本） */
+export async function strategicCityHtmlNative(city: City): Promise<StrategicCityHtml | null> {
+    const p = cityStackParams(city);
+    if (!p.deStyle) return null;
+    const native = await buildNativeSizes(city, p.deStyle);
+    return strategicCityHtmlWith(city, p, native);
+}
+
 export function strategicCityHtml(city: City): StrategicCityHtml | null {
     const p = cityStackParams(city);
     if (!p.deStyle) return null;
-    const html = buildCityStackInnerHtml(city, TACTICAL_CITY_BASE_SIZE, p.deStyle, p.centerCastle, p.useStoneWall, p.cityRegion);
+    return strategicCityHtmlWith(city, p, undefined);
+}
+
+function strategicCityHtmlWith(
+    city: City,
+    p: { cityRegion: RegionType; centerCastle: boolean; deStyle: string | null; useStoneWall: boolean },
+    native?: CityNativeSizes,
+): StrategicCityHtml | null {
+    if (!p.deStyle) return null;
+    const html = buildCityStackInnerHtml(city, TACTICAL_CITY_BASE_SIZE, p.deStyle, p.centerCastle, p.useStoneWall, p.cityRegion, native);
     const mirror = city.type !== 'pass' && !!city.mirror;
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const root = doc.body.firstElementChild as HTMLElement | null;
