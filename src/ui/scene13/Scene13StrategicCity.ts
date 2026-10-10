@@ -12,6 +12,7 @@ import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
 import { resolveCastleAsset } from '../../config/deCastleAssets';
 import { DE_STONE_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS } from '../../systems/cityWallShared';
+import { DE_SPRITE_BOX_W } from '../../systems/battlefield/deSpriteSizes';
 import type { RegionType } from '../../systems/RegionSystem';
 
 /** 城墙段（widthFactor 0.16）在战术里画成 **DE 一格** ⇒ baseSize = 107 / 0.16 = 668.75
@@ -63,75 +64,54 @@ function pxOf(expr: string): number {
 
 /** 生成战略地图同款建筑栈 HTML（同步）；该据点没有 DE 建筑栈（整图据点）返回 null */
 /**
- * 🔴 [2026-10-11 主人令「你先把所有都改为1.0」＋「DE 这么设定，一定是设计好的」]
- * 战术侧取「DE 原生尺寸表」：逐件读素材 `_meta.json` 的 `box_w`（＝DE 原生素材像素宽），
- * 交给件表按**原生像素**定宽；**战略地图不传这张表，一个像素不动**。
+ * 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 战术侧取「DE 原生尺寸表」：**同步**查
+ * `DE_SPRITE_BOX_W`（构建期由素材 `_meta.json` 的 box_w 生成，见 `scratch/_gen_sprite_sizes.mjs`）。
+ *
+ * 为什么必须同步：早先这表是开战时 fetch 出来的，城池件表于是晚于「出兵口布阵」就绪 ⇒
+ * 开战时 `deCity` 还是 null，八方向出兵整支落到旧 13 回退阵型（实测八个方向基座恒为 512,450）。
+ * 改成构建期常量表后建城恢复同步，出兵口回到真实来向。
+ * **战略地图不传这张表，一个像素不动。**
  */
-async function buildNativeSizes(city: City, deStyle: string): Promise<CityNativeSizes | undefined> {
+function buildNativeSizes(city: City, deStyle: string): CityNativeSizes | undefined {
     const ages: Array<'AGE2' | 'AGE3'> = ['AGE2', 'AGE3'];
     const names = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY', 'TOWER'];
-    const dirs = new Set<string>();
-    for (const age of ages) for (const n of names) dirs.add(`${deStyle}_${n}_${age}`);
-    // 城寨/毡帐营地的建筑素材（棚屋 HUT_*、蒙古包 YURT_*、定居点等）：战术侧按原生宽画
-    const stockadeNames = ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
-        'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
-        'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
-        'OUTPOST', 'FORTIFIED_OUTPOST'];
-    const extraDirs = new Set<string>();
-    for (const n of stockadeNames) { dirs.add(`${deStyle}_${n}`); extraDirs.add(`${deStyle}_${n}`); extraDirs.add(n); }
     let castleDir: string | null = null;
     if (city.type !== 'small_city') {
         try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id); } catch { castleDir = null; }
-        if (castleDir) dirs.add(castleDir);
     }
-    const boxOf = new Map<string, number>();
-    await Promise.all([...dirs].map(async (dir) => {
-        try {
-            const r = await fetch('/SUCAI_BUILDING/' + dir + '/_meta.json');
-            if (!r.ok) return;
-            const m: any = await r.json();
-            if (m?.box_w > 0) boxOf.set(dir, m.box_w);
-        } catch { /* 缺一件就少一件，回落到战略压缩值 */ }
-    }));
-    if (boxOf.size === 0) return undefined;
     const widths: Record<string, number> = {};
     for (const age of ages) for (const n of names) {
-        const w = boxOf.get(`${deStyle}_${n}_${age}`);
+        const w = DE_SPRITE_BOX_W[`${deStyle}_${n}_${age}`];
         if (w) widths[`${age}:${n}`] = w;
     }
-    // 墙体/城门/城垛/箭塔/中心城堡 逐件原生框宽（墙 107 / 门 307 / 垛 163 / 箭塔 AGE3 216 / AGE4 236 各不相同）
+    // 墙体/城门/城垛/箭塔/中心城堡 逐件原生框宽（墙 107 / 门 307 / 垛 163 / 箭塔 AGE3 216 各不相同）＋ 城寨/营地素材
     const spriteW: Record<string, number> = {};
-    const wallDirs = new Set<string>();
     const addAnchorDirs = (tbl: any) => {
         for (const a of Object.values(tbl ?? {})) {
             const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec((a as any)?.path ?? '');
-            if (m) wallDirs.add(m[1]);
+            if (m && DE_SPRITE_BOX_W[m[1]]) spriteW[m[1]] = DE_SPRITE_BOX_W[m[1]];
         }
     };
     addAnchorDirs(DE_STONE_ANCHORS_BY_STYLE[deStyle]);
     addAnchorDirs(DE_PALISADE_ANCHORS);
     addAnchorDirs(DE_DARK_PALISADE_ANCHORS);
     addAnchorDirs(DE_ARCHAIC_PALISADE_ANCHORS);
-    for (const d of extraDirs) wallDirs.add(d);
-    if (castleDir) wallDirs.add(castleDir);
-    await Promise.all([...wallDirs].map(async (dir) => {
-        if (boxOf.has(dir)) { spriteW[dir] = boxOf.get(dir)!; return; }
-        try {
-            const r = await fetch('/SUCAI_BUILDING/' + dir + '/_meta.json');
-            if (!r.ok) return;
-            const m: any = await r.json();
-            if (m?.box_w > 0) { boxOf.set(dir, m.box_w); spriteW[dir] = m.box_w; }
-        } catch { /* 回落战略压缩值 */ }
-    }));
-    return { widths, castleW: castleDir ? boxOf.get(castleDir) : undefined, spriteW };
+    if (castleDir && DE_SPRITE_BOX_W[castleDir]) spriteW[castleDir] = DE_SPRITE_BOX_W[castleDir];
+    for (const n of ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
+        'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
+        'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
+        'OUTPOST', 'FORTIFIED_OUTPOST']) {
+        for (const key of [`${deStyle}_${n}`, n]) if (DE_SPRITE_BOX_W[key]) spriteW[key] = DE_SPRITE_BOX_W[key];
+    }
+    if (Object.keys(widths).length === 0 && Object.keys(spriteW).length === 0) return undefined;
+    return { widths, castleW: castleDir ? DE_SPRITE_BOX_W[castleDir] : undefined, spriteW };
 }
 
-/** 战术用：按 DE 原生像素生成建筑栈（战略地图走下面那个不传原生表的版本） */
-export async function strategicCityHtmlNative(city: City): Promise<StrategicCityHtml | null> {
+/** 战术用：按 DE 原生像素生成建筑栈（**同步**，出兵口布阵要用它；战略地图走不传原生表的那个版本） */
+export function strategicCityHtmlNative(city: City): StrategicCityHtml | null {
     const p = cityStackParams(city);
     if (!p.deStyle) return null;
-    const native = await buildNativeSizes(city, p.deStyle);
-    return strategicCityHtmlWith(city, p, native);
+    return strategicCityHtmlWith(city, p, buildNativeSizes(city, p.deStyle));
 }
 
 export function strategicCityHtml(city: City): StrategicCityHtml | null {
