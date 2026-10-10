@@ -1063,6 +1063,10 @@ const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 const BATTLEFIELD_BASE_URL = '/SUCAI_BATTLEFIELD/';
+/** 🔴 [2026-10-11 B 批] 按 DE 主题烘焙的战术战场地图数据目录（`scratch/_bake_theme_maps.mjs` 产出） */
+const THEME_MAPDATA_DIR = '/battlefields/';
+/** 主题图取不到时的兜底（维也纳多瑙河测试图，M3 第一步那份） */
+const FALLBACK_MAPDATA_URL = '/scratch/rms-out/mapdata_vienna_danube_120.json';
 /** 攻城战守方建筑：按守方文化区匹配 DE 建筑风格前缀（2026-08-22 主人定）。
  *  风格前缀 + 建筑名 + AGE3 = 素材目录名（如 `WEST_CASTLE_AGE3`、`ASIA_BARRACKS_AGE3`）。 */
 const REGION_BUILDING_STYLE: Record<RegionType, string> = {
@@ -6105,14 +6109,26 @@ export class Scene13WarLayer {
         const gen = this.assetGen;
         const cv = this.glCanvas;
 
-        // 🔴【M3 第一步临时调试桩 · 待 DD 烘焙数据到位后替换】
-        // 当前优先读 window.__M3_TEST_MAPDATA__，默认读 scratch/rms-out/mapdata_vienna_danube_120.json
-        // 下一步接入 DD 的 1137 地点烘焙数据后按 init.centerLat/Lng / 据点动态加载，画面与走位同一数据源
+        // 🔴 [2026-10-11 B 批「整合各场景素材 · 地形分布侧」] 地图数据按**战场气候主题**取：
+        //    ① 探针注入 window.__M3_TEST_MAPDATA__（真机验收用，保留最高优先）；
+        //    ② public/battlefields/theme_<环境计划的 deMapTheme>.json —— 由 scratch/_bake_theme_maps.mjs
+        //       用 tools/rms 引擎按 DE 主题烘焙（沙漠＝沙漠地形，不再长出维也纳的湖与林子）；
+        //    ③ 取不到（无坐标 / 未烘焙的主题）→ 退回维也纳测试图，保证战斗照样能开。
         const getMapData = async () => {
             if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
+            const theme = this.environmentPlan?.deMapTheme;
+            if (theme) {
+                try {
+                    const res = await fetch(THEME_MAPDATA_DIR + 'theme_' + theme + '.json');
+                    if (res.ok) return await res.json();
+                } catch {}
+            }
             try {
-                const res = await fetch('/scratch/rms-out/mapdata_vienna_danube_120.json');
-                if (res.ok) return await res.json();
+                const res = await fetch(FALLBACK_MAPDATA_URL);
+                if (res.ok) {
+                    console.warn(`[Scene13WarLayer] 主题图缺失（theme=${theme ?? '无'}），地面退回维也纳测试图`);
+                    return await res.json();
+                }
             } catch {}
             return null;
         };
@@ -6125,7 +6141,8 @@ export class Scene13WarLayer {
             }
             try {
                 if (this.groundLayerGL) this.groundLayerGL.destroy();
-                const glLayer = await Scene13GroundLayerGL.create(cv, mapData);
+                // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
+                const glLayer = await Scene13GroundLayerGL.create(cv, mapData, this.environmentPlan?.groundTiles);
                 if (gen !== this.assetGen) {
                     glLayer.destroy();
                     return;

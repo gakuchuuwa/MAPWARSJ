@@ -14,6 +14,7 @@
  */
 
 import { DE_TERRAIN_MANIFEST, DE_TERRAIN_BLEND, type DeTerrainManifestItem } from '../../data/battlefield/deTerrainData';
+import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
 const TW = 64, TH = 32;
@@ -255,6 +256,13 @@ function loadImg(u: string): Promise<HTMLImageElement | null> {
   });
 }
 
+/** 把源图与文件名挂在纹理上，供探针读「这一场到底用了哪张图」（无行为影响） */
+export function attachTexImage(tex: WebGLTexture, img: any, tile?: string): WebGLTexture {
+  (tex as any).__probeImg = img;
+  if (tile) (tex as any).__probeTile = tile;
+  return tex;
+}
+
 function blurGrid2D(src: Float32Array, N: number): Float32Array {
   const tmp = new Float32Array(N * N);
   const dst = new Float32Array(N * N);
@@ -408,7 +416,7 @@ export class Scene13GroundLayerGL {
 
     // 2. 加载四种基底平铺纹理
     const makeRepeatTex = (img: any): WebGLTexture => {
-      const tex = gl.createTexture()!;
+      const tex = attachTexImage(gl.createTexture()!, img);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
@@ -726,17 +734,34 @@ export class Scene13GroundLayerGL {
 
   /**
    * 静态异步工厂方法：按 mapData 按需加载贴图并创建图层
+   * 🔴 [2026-10-11] 四张基底素材（草/沙/林/水）按**战场所在气候主题**取，
+   *    来源统一为一份 `environmentPlan.groundTiles`（＝ Scene13DeMapThemes 那张表，
+   *    与旧 canvas 地面同一份口径）；不传或取不到就各自退回原写死的图，行为与从前一致。
    */
-  public static async create(canvas: HTMLCanvasElement, mapData: any): Promise<Scene13GroundLayerGL> {
+  public static async create(canvas: HTMLCanvasElement, mapData: any, tiles?: Partial<Scene13GroundTiles>): Promise<Scene13GroundLayerGL> {
     const data = transposeMapData(mapData);
 
-    const [imgGrass, imgSand, imgForest, imgWater] = await Promise.all([
-      loadImg('/SUCAI_TERRAIN/gr2.png'),
-      loadImg('/SUCAI_TERRAIN/bch.png'),
-      loadImg('/SUCAI_TERRAIN/for.png'),
-      loadImg('/SUCAI_TERRAIN/river_clean_green.png'),
+    /** 取图并记下最终用了哪个文件名（取不到 → 退回 fallback；两者都失败 → null） */
+    const loadTile = async (tile: string | undefined, fallback: string): Promise<{ img: HTMLImageElement | null; tile: string }> => {
+      const want = tile ?? fallback;
+      const img = await loadImg('/SUCAI_TERRAIN/' + want + '.png');
+      if (img) return { img, tile: want };
+      if (want === fallback) return { img: null, tile: fallback };
+      return { img: await loadImg('/SUCAI_TERRAIN/' + fallback + '.png'), tile: fallback };
+    };
+
+    const [grass, sand, forest, water] = await Promise.all([
+      loadTile(tiles?.grass, 'gr2'),
+      loadTile(tiles?.sand, 'bch'),
+      loadTile(tiles?.forest, 'for'),
+      loadTile(tiles?.water, 'river_clean_green'),
     ]);
 
-    return new Scene13GroundLayerGL(canvas, data, imgGrass, imgSand, imgForest, imgWater);
+    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img);
+    if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
+    if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
+    if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);
+    if (layer.waterTex) attachTexImage(layer.waterTex, water.img, water.tile);
+    return layer;
   }
 }
