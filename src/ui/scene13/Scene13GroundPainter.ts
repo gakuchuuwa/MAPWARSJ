@@ -122,6 +122,7 @@ export interface GroundPatch {
     alpha: number;
     isWater?: boolean;
     isRoad?: boolean;
+    category?: string;
     /** 边缘高斯模糊半径（px）；缺省 polygon=16 / cells=24。 */
     blur?: number;
     bbox?: { x: number; y: number; w: number; h: number };
@@ -631,18 +632,20 @@ export class Scene13GroundPainter {
         }
         // 2. 边缘处理
         const blendKind = blendForTile(p.tile);
-        // 🔴 [2026-08-23 主人定] 道路与地基（isRoad 或 roadland 系列）边缘走高斯模糊（平顺硬化路面/地基），不做撕边与硬化切边。
+        // 🔴 [2026-08-23 主人定] 道路与地基边缘走高斯模糊；[2026-10-10 主人定] 森林周边和水一样圆滑更自然，取消硬犬牙撕边
+        const isForestFloor = p.category === 'forest-floor' || p.tile.startsWith('for') || p.tile.startsWith('fo2') || p.tile.startsWith('underbrush') || p.tile === 'snf';
         let ragged = false;
-        if (!p.polygon && blendKind !== 'roadland' && !p.isRoad) {
+        if (!p.polygon && blendKind !== 'roadland' && !p.isRoad && !isForestFloor) {
             const bmask = this.blendFor(blendKind);
             if (bmask) {
                 ragged = this.raggedEdgeMask(mcv, bw, bh, bmask, blurRadius);
             }
         }
         if (!ragged) {
-            // 高斯模糊（polygon 斑块 / 道路 / 地基 / 无 blend 图时）：平滑软化边界，形成自然柔和的渐变羽化
+            // 高斯模糊（polygon 斑块 / 道路 / 地基 / 森林地基）：平滑软化边界，形成自然圆润柔和的过渡
+            const finalBlur = isForestFloor ? Math.max(28, blurRadius) : blurRadius;
             bctx.clearRect(0, 0, mw, mh);
-            bctx.filter = `blur(${blurRadius}px)`;
+            bctx.filter = `blur(${finalBlur}px)`;
             bctx.drawImage(mcv, 0, 0);
             bctx.filter = 'none';
         }

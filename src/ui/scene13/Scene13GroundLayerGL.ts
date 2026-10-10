@@ -124,7 +124,11 @@ void main() {
   
   // 沙滩与森林底床判定
   float isSand = clamp(field.g * 1.5 + smoothstep(0.32, 0.45, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater);
-  float isForest = clamp(field.b * 1.4, 0.0, 1.0) * (1.0 - isWater);
+  // 森林有机扰动：彻底打破方格棱角，呈现如水体般圆滑蜿蜒的自然树林边缘
+  float fn1 = snoise(vGUV * 2.8 + vec2(27.4, 61.8));
+  float fn2 = snoise(vGUV * 6.5 + vec2(73.1, 14.5));
+  float fPerturb = field.b + fn1 * 0.055 + fn2 * 0.025;
+  float isForest = smoothstep(0.36, 0.54, fPerturb) * (1.0 - isWater);
   
   // 纹理采样（无缝平铺）
   vec2 texUV = fract(vGUV * 0.5);
@@ -151,7 +155,7 @@ void main() {
   
   // 地面材质过渡（林地、沙滩、草地）
   vec3 landCol = colGrass;
-  landCol = mix(landCol, colForest, smoothstep(0.12, 0.65, isForest));
+  landCol = mix(landCol, colForest, isForest);
   landCol = mix(landCol, colSand, smoothstep(0.12, 0.65, isSand));
   
   // ── 水体渲染（水底河床、深浅渐变、流动波光、岸边浪花） ──

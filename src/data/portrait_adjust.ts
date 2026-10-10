@@ -2478,9 +2478,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/xianlingqiang_dianling.png": {
-            "scale": 1.15,
-            "offsetX": 4,
-            "offsetY": -5
+            "scale": 1.09,
+            "offsetX": 8,
+            "offsetY": -2
         },
         "/assets/STEPPE/oirat_ming_gaerdan.png": {
             "scale": 1.21,

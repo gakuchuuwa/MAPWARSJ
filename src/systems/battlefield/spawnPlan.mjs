@@ -9,11 +9,16 @@
  *   ② 野战：双方各从自己来处方向出现；攻城战：攻方从来的方向，**守方在中心**；
  *   ③ 双方同向或相邻方向 ⇒ 守方改到中心一带，攻方从边上进；
  *   ④ 出生点落在水或悬崖 ⇒ 沿该方向的弧线滑到最近可走陆地；整条边是水 ⇒ 从最近可走的边进。
+ *      🔴 陆战口径下（`LAND_WAR_ALL_PASSABLE = true`，主人 2026-10-11 令）**本规则不触发**：
+ *         水、树林、建筑、悬崖一律可通行，默认判定只挡出图；将来要做地形阻挡时把该常量置 false。
  * 坐标：**DE 格坐标**（x 向东、y 向北；屏幕方向由渲染层负责，见第 68 轮方向公式）。
  */
 export const VERSION_SPAWN = 1;
 export const SPAWN_RADIUS_FRAC = 1 / 3;   // 设计值，待实看调整
 export const CENTER_BAND_FRAC = 0.12;     // 设计值，待实看调整
+/** 🔴 主人 2026-10-11 令：**新战术模式先只做陆战——水、树林、建筑一律可通行，不许设计不可通行区域**。
+ *  开启时默认 walkable 恒为 true（滑弧只会被调用方显式传入的 walkableAt 触发）；将来要做地形阻挡时置 false 即可。 */
+export const LAND_WAR_ALL_PASSABLE = true;
 const DIRS8 = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
 /** 经纬度 → 八方向（从战场中心指向来处） */
@@ -52,6 +57,7 @@ export function planSpawns(o) {
   const notes = [];
   const C = o.cells ?? 120, c = (C - 1) / 2;
   const walk = o.walkableAt ?? ((x, y) => {
+    if (LAND_WAR_ALL_PASSABLE) return x >= 0 && y >= 0 && x < C && y < C;   // 陆战：一切可通行（只挡出图）
     if (x < 0 || y < 0 || x >= C || y >= C) return false;
     const i = Math.round(y) * C + Math.round(x);
     const water = o.skeleton ? ((o.skeleton.water[i >> 3] >> (i & 7)) & 1) === 1 : false;

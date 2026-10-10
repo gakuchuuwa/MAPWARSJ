@@ -3073,6 +3073,10 @@ interface DecorSprite {
     obstructionDisabled: boolean;
     /** 已销毁装饰（城门倒塌动画播完且无残骸兜底）→ 不再绘制、不再阻挡 */
     destroyed?: boolean;
+    /** 地面高程抬升预计算值（静态物件避免逐帧双线性插值） */
+    lift?: number;
+    /** 空间密度哈希（远景 LOD 快速抽稀） */
+    densityHash?: number;
     /** 奇观、城堡等特殊建筑：任何随机破损、倒塌与残骸入口都不得处理。 */
     indestructible?: boolean;
     /**
@@ -3952,7 +3956,7 @@ export class Scene13WarLayer {
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
             const minZoom = this.useGroundGL ? 0.45 : 1.0;
             this.tacticalZoom = Math.max(minZoom, Math.min(2.5, nextZoom));
-            this.userInteractingTimer = 4.0;
+            this.userInteractingTimer = 9.0;
             this.clampTacticalPan();
         };
         window.addEventListener('wheel', onWheel, { passive: false, capture: true });
@@ -3966,13 +3970,13 @@ export class Scene13WarLayer {
             const t = e.target as HTMLElement | null;
             if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
             dragging = true; lastX = e.clientX; lastY = e.clientY;
-            this.userInteractingTimer = 4.0;
+            this.userInteractingTimer = 9.0;
             document.body.style.cursor = 'grabbing';
             e.preventDefault();
         };
         const onMove = (e: MouseEvent) => {
             if (!dragging) return;
-            this.userInteractingTimer = 4.0;
+            this.userInteractingTimer = 9.0;
             this.tacticalPanX += e.clientX - lastX;
             this.tacticalPanY += e.clientY - lastY;
             lastX = e.clientX; lastY = e.clientY;
@@ -4278,17 +4282,9 @@ export class Scene13WarLayer {
                         attackerFrom: { lat: attFromLat, lng: attFromLng },
                         defenderFrom: defFromLat && defFromLng ? { lat: defFromLat, lng: defFromLng } : null,
                         battleType: 'field',
-                        walkableAt: (x: number, y: number) => {
-                            if (this.groundLayerGL) return !this.groundLayerGL.isWaterAtCell(x, y);
-                            if (cachedViennaMapData) {
-                                const N = cachedViennaMapData.width || 120;
-                                const rx = Math.round(x), ry = Math.round(y);
-                                if (rx < 0 || ry < 0 || rx >= N || ry >= N) return false;
-                                const t = cachedViennaMapData.terrain[ry * N + rx];
-                                return t !== 23 && t !== 1;
-                            }
-                            return true;
-                        },
+                        // 🔴 [2026-10-11 主人令] 新战术模式只做陆战，**不许设计任何不可通行区域**：
+                        //    水、树林、建筑、悬崖一律可通行 ⇒ 不再传 walkableAt（默认判定只挡出图，
+                        //    见 systems/battlefield/spawnPlan.mjs 的 LAND_WAR_ALL_PASSABLE）。
                     });
                     const attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
                     const attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
@@ -4341,16 +4337,7 @@ export class Scene13WarLayer {
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
-                        if (this.isWaterAt(x, y)) {
-                            for (let step = 1; step <= 20; step++) {
-                                const tx = x + (base.x - x) * (step / 20);
-                                const ty = y + (base.y - y) * (step / 20);
-                                if (!this.isWaterAt(tx, ty)) {
-                                    x = tx; y = ty;
-                                    break;
-                                }
-                            }
-                        }
+                        // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 阵位不再避水（原「落水则向本阵锚点退」已删）
                     } else {
                         const back = mx + (2 - cell.row) * depth;
                         x = side.f === 0 ? back : VW - back;
@@ -5238,11 +5225,16 @@ export class Scene13WarLayer {
         const visited = new Set<string>();
 
         // 围绕守方各个建筑点向外辐射 2~3 格，形成连贯自然的城池石基与街道网
+        let minGx = Infinity, maxGx = -Infinity, minGy = Infinity, maxGy = -Infinity;
         for (const s of defenderSpawns) {
             const a = (s.x - this.isoOx) * 2 / TILE_W;
             const b = (s.y - this.isoOy) * 2 / TILE_H;
             const cgx = Math.round((a + b) / 2);
             const cgy = Math.round((b - a) / 2);
+            minGx = Math.min(minGx, cgx);
+            maxGx = Math.max(maxGx, cgx);
+            minGy = Math.min(minGy, cgy);
+            maxGy = Math.max(maxGy, cgy);
             const radius = 4; // 🔴 [2026-08-23 主人需求] 石头路面积稍微大一点：建筑周围覆盖半径 3→4 格（曼哈顿≤5 菱形，格数 41→61 ≈1.5倍），roadland 走高斯平滑不受 blend 咬合切碎
 
             for (let dy = -radius; dy <= radius; dy++) {
@@ -5256,6 +5248,21 @@ export class Scene13WarLayer {
                             visited.add(key);
                             roadCells.push([gx, gy]);
                         }
+                    }
+                }
+            }
+        }
+
+        // 🔴 [2026-10-10 主人定「树林建筑等，为什么不是固定在地基上呢」]
+        // 城内建筑群内部必须是完整闭合地基，将建筑群外接包围盒内部全部铺满城池地基，杜绝建筑之间漏草或踩泥
+        if (isFinite(minGx) && isFinite(maxGx)) {
+            for (let gy = minGy - 1; gy <= maxGy + 1; gy++) {
+                for (let gx = minGx - 1; gx <= maxGx + 1; gx++) {
+                    if (gx < 0 || gy < 0 || gx >= this.isoGw || gy >= this.isoGh) continue;
+                    const key = `${gx},${gy}`;
+                    if (!visited.has(key)) {
+                        visited.add(key);
+                        roadCells.push([gx, gy]);
                     }
                 }
             }
@@ -6106,39 +6113,8 @@ export class Scene13WarLayer {
                 this.useGroundGL = true;
                 cv.style.display = 'block';
 
-                // 保障所有出兵口与初始士兵不落入水体
-                for (const s of this.spawns) {
-                    if (glLayer.isWaterAt(s.x, s.y, VW, VH)) {
-                        const base = this.spawnBases?.[s.f];
-                        if (base) {
-                            for (let step = 1; step <= 20; step++) {
-                                const tx = s.x + (base.x - s.x) * (step / 20);
-                                const ty = s.y + (base.y - s.y) * (step / 20);
-                                if (!glLayer.isWaterAt(tx, ty, VW, VH)) {
-                                    s.x = tx; s.y = ty;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                for (const m of this.men) {
-                    if (glLayer.isWaterAt(m.x, m.y, VW, VH)) {
-                        const base = this.spawnBases?.[m.f] || m.port;
-                        if (base) {
-                            for (let step = 1; step <= 20; step++) {
-                                const tx = m.x + (base.x - m.x) * (step / 20);
-                                const ty = m.y + (base.y - m.y) * (step / 20);
-                                if (!glLayer.isWaterAt(tx, ty, VW, VH)) {
-                                    m.x = tx; m.y = ty;
-                                    m.prevX = tx; m.prevY = ty;
-                                    m.anchorX = tx; m.anchorY = ty;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
+                //    （原逻辑在建好 WebGL 地面层后把落水的出兵口与士兵推回岸上，等于把水当不可通行区域）
 
                 // CC 补项 1：新地图物件进 vis Y 排序，替换旧 13 随机草木
                 const data = transposeMapData(mapData);
@@ -6155,14 +6131,18 @@ export class Scene13WarLayer {
                             const sx = px - 3808 + VW / 2;
                             const sy = py - 1904 + VH / 2;
                             this.ensureNatureAsset(r[1]);
+                            const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
+                            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
                             this.decorSprites.push({
                                 asset: r[1],
-                                frame: ob.rot !== undefined ? Math.round(ob.rot) : 0,
+                                frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
                                 x: sx,
                                 y: sy,
                                 flip: false,
                                 layer: 'world',
                                 z: 0,
+                                lift,
+                                densityHash: hash,
                                 obstructionContactSec: 0,
                                 obstructionTouched: false,
                                 obstructionDisabled: false,
@@ -6182,15 +6162,19 @@ export class Scene13WarLayer {
                                 const sy = py - 1904 + VH / 2;
                                 const isLily = dens > 0.44 && ((gx + gy) % 3 === 0);
                                 const asset = isLily ? 'WATER_LILY' : 'REEDS';
+                                const hash = (gx * 11 + gy * 7) % 100;
+                                const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
                                 this.ensureNatureAsset(asset);
                                 this.decorSprites.push({
                                     asset,
-                                    frame: (gx * 11 + gy * 7) % 100,
+                                    frame: hash,
                                     x: sx,
                                     y: sy,
                                     flip: (gx % 2 === 0),
                                     layer: 'world',
                                     z: 0,
+                                    lift,
+                                    densityHash: hash,
                                     obstructionContactSec: 0,
                                     obstructionTouched: false,
                                     obstructionDisabled: false,
@@ -6217,7 +6201,7 @@ export class Scene13WarLayer {
         this.groundPainter.setGrid(plan.grid.ox, plan.grid.oy, plan.grid.gw, plan.grid.gh, plan.elevation);
         this.groundPainter.paintTerrain();
         for (const p of plan.terrainPatches) {
-            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur);
+            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur, undefined, p.category);
         }
         for (const o of plan.objects) {
             this.ensureNatureAsset(o.asset);
@@ -6270,10 +6254,11 @@ export class Scene13WarLayer {
         polygon?: Array<{ x: number; y: number }>,
         blur?: number,
         isRoad?: boolean,
+        category?: string,
     ): void {
         if (cells.length === 0) return;
         const isWater = isWaterTile(tile);
-        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur, isRoad };
+        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur, isRoad, category };
         this.decorPatches.push(p);
         const im = new Image();
         im.onload = () => { p.img = im; this.scheduleDecorRepaint(); };
@@ -7119,35 +7104,7 @@ export class Scene13WarLayer {
                 const uSide = this.sideVec[s.f];
                 let spawnX = isFlank ? flankX : (useFieldPlan ? s.x - uFwd.x * dep + uSide.x * slotY : s.x + (s.f === 0 ? -dep : dep));
                 let spawnY = isFlank ? flankY : (useFieldPlan ? s.y - uFwd.y * dep + uSide.y * slotY : s.y + slotY);
-                if (useFieldPlan && this.isWaterAt(spawnX, spawnY)) {
-                    for (let step = 1; step <= 10; step++) {
-                        const tx = spawnX + (s.x - spawnX) * (step / 10);
-                        const ty = spawnY + (s.y - spawnY) * (step / 10);
-                        if (!this.isWaterAt(tx, ty)) {
-                            spawnX = tx; spawnY = ty;
-                            break;
-                        }
-                    }
-                    if (this.isWaterAt(spawnX, spawnY)) {
-                        spawnX = s.x; spawnY = s.y;
-                    }
-                    if (this.isWaterAt(spawnX, spawnY)) {
-                        for (let r = 16; r <= 320; r += 16) {
-                            let found = false;
-                            for (let a = 0; a < 8; a++) {
-                                const ang = (a * Math.PI) / 4;
-                                const tx = spawnX + Math.cos(ang) * r;
-                                const ty = spawnY + Math.sin(ang) * r;
-                                if (!this.isWaterAt(tx, ty)) {
-                                    spawnX = tx; spawnY = ty;
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (found) break;
-                        }
-                    }
-                }
+                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
                     zid: this.manSeq++,
@@ -8461,16 +8418,7 @@ export class Scene13WarLayer {
                     const fwdDist = this.adv[m.f] - m.dep;
                     sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
                     sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
-                    if (this.isWaterAt(sx, sy)) {
-                        for (let frac = 0.8; frac >= 0; frac -= 0.2) {
-                            const tsx = m.port.x + uFwd.x * fwdDist + uSide.x * (m.slotY * frac);
-                            const tsy = m.port.y + uFwd.y * fwdDist + uSide.y * (m.slotY * frac);
-                            if (!this.isWaterAt(tsx, tsy)) {
-                                sx = tsx; sy = tsy;
-                                break;
-                            }
-                        }
-                    }
+                    // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                 } else {
                     sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
                     sy = m.port.y + m.slotY;
@@ -8637,13 +8585,10 @@ export class Scene13WarLayer {
                     if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
                         const nx = m.x + (dx / d) * step;
                         const ny = m.y + (dy / d) * step;
-                        if (this.realGeographyEnabled() && this.isWaterAt(nx, ny)) {
-                            // 遇到水体停在岸边，不踏入深水
-                        } else {
-                            m.x = nx;
-                            m.y = ny;
-                            m.dir = this.dir8(dx, dy);
-                        }
+                        // 🔴 [2026-10-11 主人令] 陆战口径：水可通行 ⇒ 不再「遇到水体停在岸边，不踏入深水」
+                        m.x = nx;
+                        m.y = ny;
+                        m.dir = this.dir8(dx, dy);
                     }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
@@ -9136,26 +9081,8 @@ export class Scene13WarLayer {
             if (m.hp <= 0 && m.flag) this.fallenFlags.push({ x: m.x, y: m.y, f: m.f, t: 0, fo: m.fo });
         }
         this.men = this.men.filter(m => m.hp > 0);
-        if (this.useGroundGL && this.groundLayerGL && this.canvas) {
-            const cvW = this.canvas.width, cvH = this.canvas.height;
-            for (const m of this.men) {
-                if (this.groundLayerGL.isWaterAt(m.x, m.y, cvW, cvH)) {
-                    const base = this.spawnBases?.[m.f] || m.port;
-                    if (base) {
-                        for (let step = 1; step <= 20; step++) {
-                            const tx = m.x + (base.x - m.x) * (step / 20);
-                            const ty = m.y + (base.y - m.y) * (step / 20);
-                            if (!this.groundLayerGL.isWaterAt(tx, ty, cvW, cvH)) {
-                                m.x = tx; m.y = ty;
-                                m.prevX = tx; m.prevY = ty;
-                                m.anchorX = tx; m.anchorY = ty;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「逐帧把落水的士兵推回岸上」
+        //    （原逻辑等于把水体当成不可通行区域，与新令冲突）
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         this.stepEffects(dt);
@@ -9201,33 +9128,42 @@ export class Scene13WarLayer {
         }
         this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
 
-        // 🔴 [M3 导播镜头] 开关打开时平滑跟随交战最激烈处（手操挂起 4 秒）
+        // 🔴 [2026-10-11 主人令] **平时镜头自动跟随乱入者**；玩家可以拖拽（滚轮缩放）镜头，**9 秒**不再操作就自动回到乱入者。
+        //    本块只在新战术模式跑（useGroundGL）；旧 13 无平移/缩放，不受影响。
         if (this.useGroundGL && this.canvas) {
             if (this.userInteractingTimer > 0) {
                 this.userInteractingTimer -= dt;
             } else {
-                let sumX = 0, sumY = 0, count = 0;
-                for (const m of this.men) {
-                    if (m.hp > 0 && m.foe) {
-                        sumX += m.x;
-                        sumY += m.y;
-                        count++;
-                    }
-                }
-                if (count === 0) {
+                let targetFocusX = 0, targetFocusY = 0, count = 0;
+                if (this.heroMan) {
+                    // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后跟到本方后方重生点）
+                    targetFocusX = this.heroMan.x;
+                    targetFocusY = this.heroMan.y;
+                    count = 1;
+                } else {
+                    // 本场没有乱入者（未随军/观战）⇒ 沿用原来的「跟随交战最激烈处」
+                    let sumX = 0, sumY = 0;
                     for (const m of this.men) {
-                        if (m.hp > 0) {
+                        if (m.hp > 0 && m.foe) {
                             sumX += m.x;
                             sumY += m.y;
                             count++;
                         }
                     }
+                    if (count === 0) {
+                        for (const m of this.men) {
+                            if (m.hp > 0) {
+                                sumX += m.x;
+                                sumY += m.y;
+                                count++;
+                            }
+                        }
+                    }
+                    if (count > 0) { targetFocusX = sumX / count; targetFocusY = sumY / count; }
                 }
                 if (count > 0) {
                     const cx = this.canvas.width / 2;
                     const cy = this.canvas.height / 2;
-                    const targetFocusX = sumX / count;
-                    const targetFocusY = sumY / count;
                     const desiredPanX = (cx - targetFocusX) * this.tacticalZoom;
                     const desiredPanY = (cy - targetFocusY) * this.tacticalZoom;
                     const smooth = Math.min(1.0, 1.5 * dt);
@@ -9586,11 +9522,11 @@ export class Scene13WarLayer {
             if (cullDecor && (sprite.x < vMinX || sprite.x > vMaxX || sprite.y < vMinY || sprite.y > vMaxY)) continue;
             // 远景优化：缩放到 0.5 以下时微小草花贴花不到 2 像素，略过以保障高帧率
             if (isFarZoom && (sprite.asset.startsWith('GRASS_') || sprite.asset.startsWith('FLOWER') || sprite.asset.startsWith('PLANT') || sprite.asset.startsWith('SHRUB') || sprite.asset.startsWith('BUSH') || sprite.asset.startsWith('REEDS') || sprite.asset.startsWith('WEED') || sprite.asset.startsWith('UNDERBRUSH') || sprite.asset.startsWith('FERN'))) continue;
-            if (isFarZoom && ((sprite.frame % 2) === 1) && (sprite.asset.includes('OAK') || sprite.asset.includes('PINE') || sprite.asset.includes('TREE') || sprite.asset.includes('MAPLE') || sprite.asset.includes('BIRCH'))) continue;
+            if (isFarZoom && (sprite.densityHash !== undefined ? (sprite.densityHash % 3 !== 0) : ((sprite.frame % 2) === 1)) && (sprite.asset.includes('OAK') || sprite.asset.includes('PINE') || sprite.asset.includes('TREE') || sprite.asset.includes('MAPLE') || sprite.asset.includes('BIRCH'))) continue;
             if (sprite.layer === 'world') {
                 const it = take();
                 it.kind = 'environment';
-                it.y = sprite.y - this.elevationLiftAt(sprite.x, sprite.y);
+                it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
                 it.z = sprite.z;
                 it.zid = 0;
                 it.sprite = sprite;

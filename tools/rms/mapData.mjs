@@ -6,13 +6,16 @@
  *   terrain[]   逻辑地形 id（引擎的 terrain：物件/森林/通行看它）
  *   layer[]     视觉图层 id（terrain_mask 的图层，-1 = 无）
  *   elev[]      高度
- *   passable[]  能否通行（1/0）—— **除悬崖外全部可通行**（设计文档第二节）
+ *   passable[]  能否通行（1/0）—— 默认「除悬崖外全部可通行」；`passableAll: true` ⇒ 全 1（见下）
  *   speed[]     速度系数 ×100 的整数（100 / 50 / 60 / 30），避免浮点误差
  *   objects[]   物件清单（**只含白名单内的自然物件**），每个带 dat 的占地尺寸与覆盖格
  *
- * 通行与速度（CC 第 47 轮）：
- *   · 悬崖物件占据的格子 → 不可通行
- *   · 森林 0.5 ｜ 浅滩/沼泽 0.6 ｜ 深水 0.3 ｜ 其余 1.0
+ * 通行与速度：
+ *   · 默认（`passableAll: false`）：悬崖物件占据的格子 → 不可通行（CC 第 47 轮）
+ *   · **新战术模式陆战口径（`passableAll: true`）**：🔴 主人 2026-10-11 令
+ *     「新战术模式，先只设计陆战，**不要设计无法通行的任何区域**，包括水，树林，建筑，都是可以通行的。」
+ *     ⇒ 水、树林、建筑、悬崖一律可通行，`passable` 全 1（只有地图边界外不可走）
+ *   · 速度系数两口径相同：森林 0.5 ｜ 浅滩/沼泽 0.6 ｜ 深水 0.3 ｜ 其余 1.0（设计值，待主人实看后调）
  *   · 丘陵可走；上下坡是否减速 —— **未证实**，先按 1.0
  *
  * 占地（CC：从 dat 读，不要估）：`scratch/de_unit_size.json` 的 `clearance_size` (x, y)，单位＝格。
@@ -48,9 +51,10 @@ export function speedOf(terrainId, tInfo, forestTerrains) {
 /**
  * 生成格子数据模型。
  * @param {object} eng     MapEngine 跑完的结果
- * @param {object} opt     { size, source, tInfo, classTable, sizeTable, excludeObjectId? }
+ * @param {object} opt     { passableAll, size, source, tInfo, classTable, sizeTable, keepObject }
+ *                         passableAll = true ⇒ 陆战口径（水/树林/建筑/悬崖一律可通行，passable 全 1）
  */
-export function buildMapData(eng, { size, source = '', tInfo, classTable, sizeTable, keepObject = null } = {}) {
+export function buildMapData(eng, { passableAll = false, size, source = '', tInfo, classTable, sizeTable, keepObject = null } = {}) {
     const N = size ?? eng.N;
     const cls = classTable ?? loadUnitClassTable();
     const sizes = sizeTable ?? loadUnitSizeTable();
@@ -93,8 +97,8 @@ export function buildMapData(eng, { size, source = '', tInfo, classTable, sizeTa
         };
         if (o.rot !== undefined) objItem.rot = o.rot;
         objects.push(objItem);
-        // 悬崖物件 → 覆盖格不可通行
-        if (c.cls === 34) for (const i of covered) passable[i] = 0;
+        // 悬崖物件 → 覆盖格不可通行（陆战口径下不置 0：悬崖也可通行）
+        if (!passableAll && c.cls === 34) for (const i of covered) passable[i] = 0;
     }
 
     return { size: N, source, terrain, layer, elev, passable, speed, objects };

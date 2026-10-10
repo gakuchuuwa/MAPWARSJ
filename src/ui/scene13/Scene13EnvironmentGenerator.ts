@@ -748,9 +748,11 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             isWater = buildRiver(gw, gh, ox, oy, VW, VH, rng, patches, objects, occupied, theme!, season, input.lat, elev, biome, input.lng,
                                  input.isSiege ? 'moat' : 'crossing', input.siegeWallFrontX);
         } else if (waterKind === 'lake') {
-            // 内陆湖 / 绿洲水塘。攻防战也出——水塘只占战场一角，不像江河那样横切战场。
+            // 内陆湖 / 绿洲水塘。攻城战中坚决排除中央城池区域，确保城郭地面干燥无浸水
             const corridor = (x: number, y: number): boolean =>
-                x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88;
+                input.isSiege
+                    ? (x >= VW * 0.18 && x <= VW * 0.88 && y >= VH * 0.12 && y <= VH * 0.88)
+                    : (x >= VW * 0.18 && x <= VW * 0.82 && y >= VH * 0.12 && y <= VH * 0.88);
             isWater = buildLake(gw, gh, ox, oy, VW, VH, rng, patches, occupied,
                                 theme!, season, input.lat ?? 35, elev, biome, corridor, input.lng);
         }
@@ -1755,10 +1757,12 @@ function buildVegetation(
         for (let a = 0; a < 80; a++) {
             const cand = availableCells[rng.int(0, availableCells.length - 1)];
             if (forestTaken.has(`${cand[0]},${cand[1]}`)) continue;
-            // 🔴 [2026-08-24 主人定] 攻方从左入场、守方在右，右侧要摆城池——
-            //    树尽量长在左边（攻方那侧），右半只留少量，免得挡住城。
-            //    只在攻城战偏：野战没有城要护，偏左会让右半光秃一片。
-            if (isSiege && isoCellX(cand[0], cand[1], ox) > VW * 0.5 && !rng.chance(0.22)) continue;
+            // 🔴 [2026-10-10 主人定「攻城战中，树林尽量摆放在周边，中间要放城」]
+            if (isSiege) {
+                const cx = isoCellX(cand[0], cand[1], ox), cy = isoCellY(cand[0], cand[1], oy);
+                // 排除中央战场与城池区域，确保树林尽量摆放在周边
+                if (cx > VW * 0.20 && cx < VW * 0.85 && cy > VH * 0.15 && cy < VH * 0.85) continue;
+            }
             let tooClose = false;
             for (const s of seeds) {
                 if (Math.hypot(cand[0] - s[0], cand[1] - s[1]) < MIN_SEED_DIST) { tooClose = true; break; }
@@ -1822,8 +1826,8 @@ function buildVegetation(
         for (let a = 0; a < 40; a++) {
             const px = VW * (0.05 + rng.next() * 0.90);
             const py = VH * (0.05 + rng.next() * 0.90);
-            // 散株同样偏左。原先只有林块偏、散株照撒右半，攻城战右侧仍是一片树。
-            if (isSiege && px > VW * 0.5 && !rng.chance(0.22)) continue;
+            // 🔴 [2026-10-10 主人定「攻城战中，树林尽量摆放在周边，中间要放城」]
+            if (isSiege && px > VW * 0.20 && px < VW * 0.85 && py > VH * 0.15 && py < VH * 0.85) continue;
             if (isWater(px, py) || inArmyCorridor(px, py) || inKeepClear(px, py)) continue;
             if (!hasTreePassage(px, py)) continue;
             if (isObjectOverlapping(px, py, 'PINE', objects)) continue;
