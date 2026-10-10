@@ -197,7 +197,7 @@ function nativeW(native: CityNativeSizes | undefined, name: string, age: 'AGE2' 
  *  9 物件 = 8 蒙古包（全用满，与战术攻城战一致）+ 1 亚洲瞭望箭塔（随机占位，中间/周围随机，不单例）。
  *  若为险要或开启城心城堡，中间耸立成吉思汗蒙古王帐城堡（MONG_CASTLE_AGE3），四周4蒙古包环卫。
  *  2026-09-03 主人定：草原**大城/中城/小城/险要**围一圈硬木栅栏（fence=true，同战术 PALISADE），城寨仍无栅栏（纯游牧驻牧）。 */
-function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, centerCastle = false, factionId?: string, region?: string): string {
+function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, centerCastle = false, factionId?: string, region?: string, native?: CityNativeSizes): string {
     const rnd = deMulberry32(deHashString(cityId));
     const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L']; // 8 蒙古包全用满（不剔，与战术一致）
     const TOWER = 'TOWER';
@@ -272,7 +272,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         wallPieces.forEach((w) => {
             const anchor = palisadeSet[w.type];
             const zIndex = Math.round(100 + w.y);
-            const pieceW = baseSize * anchor.widthFactor;
+            const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor);   // 🔴 [2026-10-11 战术侧 1.0] 毡帐营地栅栏同理
             const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
             const flip = w.flipX ? ' scaleX(-1)' : '';
             parts.push(
@@ -319,7 +319,7 @@ function getCitySiegeBaseSize(cityType: string): number {
     }
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
     const rnd = deMulberry32(deHashString(cityId));
@@ -453,7 +453,8 @@ function buildDeStockadeStackHtml(
     cityId: string,
     style: string,
     explicitShape?: 'square' | 'round' | 'octagon' | 'rect' | 'oval' | 'trapezoid',
-    explicitFence?: 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE'
+    explicitFence?: 'HARDWOOD' | 'DARK' | 'ARCHAIC' | 'FENCE',
+    native?: CityNativeSizes,
 ): string {
     // 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
     //    改前只有大城/中城/小城/险要四处有 `style === 'YURT'` 分支，**唯独城寨漏了** ——
@@ -554,7 +555,7 @@ function buildDeStockadeStackHtml(
     // 中心建筑
     if (hasCenterBldg) {
         const centerB = ring[0];
-        const centerW = baseSize * (DE_STOCKADE_SCALES[centerB] || 0.25);
+        const centerW = native?.spriteW?.[centerB] ?? (baseSize * (DE_STOCKADE_SCALES[centerB] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨中心建筑按素材原生宽
         const centerGroundW = centerW * 2.3;
         const centerGroundH = centerGroundW * 0.58;
         const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1;
@@ -600,7 +601,7 @@ function buildDeStockadeStackHtml(
             x = Math.cos(angle) * r;
             y = Math.sin(angle) * r * 0.58;
         }
-        const bW = baseSize * (DE_STOCKADE_SCALES[b] || 0.25);
+        const bW = native?.spriteW?.[b] ?? (baseSize * (DE_STOCKADE_SCALES[b] || 0.25));   // 🔴 [2026-10-11 战术侧 1.0] 城寨环周建筑按素材原生宽
         const zIndex = Math.round(100 + y);
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1;
 
@@ -648,7 +649,7 @@ function buildDeStockadeStackHtml(
     wallPieces.forEach((w) => {
         const anchor = wallAnchors[w.type] || wallAnchors.POST;
         const zIndex = Math.round(100 + w.y);
-        const pieceW = baseSize * anchor.widthFactor;
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor);   // 🔴 [2026-10-11 战术侧 1.0] 城寨栅栏/木垛/门各按素材原生宽
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
 
@@ -663,7 +664,7 @@ function buildDeStockadeStackHtml(
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
 
     // 险要矩形城容器（长8段+门 × 宽4段）
     const W = baseSize * 2.6;
@@ -688,7 +689,8 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认，ANDE 自动对号入座 INCA_CASTLE_AGE3）
     const castleDir = resolveCastleAsset(style, factionId, region, cityId);
     // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
-    const centerW = baseSize * 0.56;
+    // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
+    const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.56);
     const centerGroundW = centerW * 1.55;
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
@@ -710,7 +712,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(500 + w.y);
-        const pieceW = baseSize * anchor.widthFactor; // 城门1.0x，城墙也是1.0x，两相完全一致自然咬合
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor); // 🔴 [2026-10-11 战术侧 1.0] 四角箭塔/城门/墙各按素材原生宽
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
@@ -728,7 +730,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 // 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城；城门与城墙完全1.0x自然咬合）
 function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原中城围栅栏
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
     // 12 种城堡时代建筑随机洗牌，取前 9 栋（二级蒙古：候选池再掺入 8 个蒙古包，仍取前 9 栋）
@@ -860,7 +862,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
 // 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城）
 function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原大城围栅栏
+    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
     // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 9 选 6 辅助建筑（含大型箭塔），共 9 栋建筑
@@ -1033,7 +1035,7 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
             //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
             ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native)
             : city.type === 'stockade'
-                ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
+                ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence, native)
                 : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));
 }
 

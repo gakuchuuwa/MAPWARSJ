@@ -4299,6 +4299,8 @@ export class Scene13WarLayer {
                 const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
                 // 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」]
                 //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
+                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 改用 **DE 原生像素**版：先读素材 `_meta.json`
+                //    的 box_w（＝DE 原生素材像素宽），再让件表按原生像素逐类/逐件定宽（战略地图那条路不传原生表，不动）。
                 this.deCity = city ? strategicCityHtml(city) : null;
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
@@ -6301,7 +6303,28 @@ export class Scene13WarLayer {
             }
             const theme = this.environmentPlan?.deMapTheme;
             if (theme) {
-                const themed = await load('theme_' + theme + '.json');
+                const THEME_MAP_FILES: Record<string, string> = {
+                    afrotropical_tropical: 'theme_afrotropical_tropical.json',
+                    neotropical_temperate: 'theme_neotropical_temperate.json',
+                    neotropical_tropical: 'theme_neotropical_tropical.json',
+                    nearctic_temperate: 'theme_nearctic_temperate.json',
+                    indomalayan_tropical: 'theme_indomalayan_tropical.json',
+                    palaearctic_asia_temperate: 'theme_palaearctic_asia_temperate.json',
+                    palaearctic_middle_east_desert: 'theme_palaearctic_middle_east_desert.json',
+                    palaearctic_europe_taiga: 'theme_palaearctic_europe_taiga.json',
+                    palaearctic_europe_temperate: 'theme_palaearctic_europe_temperate.json',
+                    palaearctic_europe_mediterranean: 'theme_palaearctic_europe_mediterranean.json',
+                    australasian_temperate: 'theme_australasian_temperate.json',
+                    palaearctic_asia_desert: 'theme_palaearctic_middle_east_desert.json',
+                    palaearctic_salt_desert: 'theme_palaearctic_middle_east_desert.json',
+                    palaearctic_asia_steppe: 'theme_palaearctic_asia_temperate.json',
+                    palaearctic_tibetan_plateau: 'theme_palaearctic_asia_temperate.json',
+                    palaearctic_middle_east_highland: 'theme_palaearctic_asia_temperate.json',
+                    serengeti: 'theme_afrotropical_tropical.json',
+                    palustrine_swamp: 'theme_afrotropical_tropical.json',
+                };
+                const targetFile = THEME_MAP_FILES[theme] ?? ('theme_' + theme + '.json');
+                const themed = await load(targetFile);
                 if (themed) return themed;
             }
             try {
@@ -6332,6 +6355,12 @@ export class Scene13WarLayer {
                 this.realGeoMapData = mapData;
                 cachedViennaMapData = glLayer.data;
                 this.useGroundGL = true;
+                // 🔴 [2026-10-11 主人令「这个菱形的周边黑色很丑，可以换成底图吗」]
+                // WebGL 画布底层平铺当前气候主题的自然底图，任何缩放与平移下满屏铺满，彻底消除菱形周边黑边
+                const baseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+                cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
+                cv.style.backgroundRepeat = 'repeat';
+                cv.style.backgroundPosition = 'center center';
                 cv.style.display = 'block';
 
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
@@ -6363,6 +6392,7 @@ export class Scene13WarLayer {
                     });
 
                     for (const ob of data.objects) {
+                        if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
@@ -6445,6 +6475,7 @@ export class Scene13WarLayer {
             this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur, undefined, p.category);
         }
         for (const o of plan.objects) {
+            if (o.asset && o.asset.includes('CLIFF')) continue;
             this.ensureNatureAsset(o.asset);
             this.decorSprites.push({
                 asset: o.asset,
