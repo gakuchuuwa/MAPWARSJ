@@ -4356,25 +4356,6 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
         {
             type: "Feature",
             properties: {
-                name: "巴拿马-卡塔赫纳",
-                type: "sea",
-                id: "sea_city_banama_city_katachena_1788797545406",
-                startConnection: "city_banama",
-                endConnection: "city_katachena"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [-79.4858, 9.0056],
-                    [-80, 9.75],
-                    [-76.110589, 10.250306],
-                    [-75.5442, 10.4266],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "圣胡利安港-圣维森特",
                 type: "sea",
                 id: "sea_city_sanjulian_city_saovicente_1788797637995",

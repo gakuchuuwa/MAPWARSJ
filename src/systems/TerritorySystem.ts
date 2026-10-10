@@ -159,6 +159,25 @@ function cityBuildingScale(b: string, fallback: number): number {
     return isYurtItem(b) ? MONGOL_YURT_SCALE : (DE_BUILDING_SCALES[b] || fallback);
 }
 
+/**
+ * 🔴 [2026-10-11 主人令「你先把所有都改为1.0」＋「DE 这么设定，一定是设计好的」] **战术侧专用**的 DE 原生尺寸表。
+ *
+ * 战略地图的件表尺寸是**压缩值**（`DE_BUILDING_SCALES` 清一色 0.40/0.36/0.42，为一屏看清一城）；
+ * 战术攻城战要 DE 原生像素（1.0）。两者共用 `buildCityStackInnerHtml`，故开这条只给战术侧的通道：
+ * 传了 `widths` 就按素材原生像素逐类定宽，并让环半径按**该栋自己的放大倍数**外推（防重叠）；
+ * **不传就是战略地图原样，一个像素不动**。键：`AGE2:HOUSE` / `AGE3:MARKET`（也接受裸名，两代通用）。
+ */
+export interface CityNativeSizes {
+    widths: Record<string, number>;
+    castleW?: number;
+}
+
+/** 取某建筑的原生宽：先 AGE 前缀，再裸名 */
+function nativeW(native: CityNativeSizes | undefined, name: string, age: 'AGE2' | 'AGE3'): number | null {
+    if (!native || !native.widths) return null;
+    return native.widths[`${age}:${name}`] ?? native.widths[name] ?? null;
+}
+
 // ── [2026-08-26 第三步] 文化区 → DE 建筑风格（所有小城/关隘/中城按文化套用）──
 // 主人定：中国8区/日本/朝鲜/东北→ASIA；西藏→INDI；草原→YURT(蒙古包，参照战斗模式)。
 // 其余按 cities_v2.ts 实际城市构成 + CityWonders 奇观锚定真实文明（2026-08-27 修正）：
@@ -297,7 +316,9 @@ function getCitySiegeBaseSize(cityType: string): number {
     }
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原小城也围栅栏
+    /** 本栋的原生宽（没有就回落战略压缩值） */
+    const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
     const rnd = deMulberry32(deHashString(cityId));
     // 🔴 [2026-09-16 主人定] 二级蒙古小城：9 建筑池里随机掺入蒙古包（见 MONGOL_CITY_YURTS 注释），总数仍恒为 9
     const ring = [...DE_SMALL_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
@@ -325,7 +346,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 中间 1 个建筑（随机选，居中）+ 地基；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
-    const centerW = baseSize * (centerCastle ? 0.55 : cityBuildingScale(centerB, 0.4));
+    // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画（否则沿用战略压缩值）
+    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.55 : cityBuildingScale(centerB, 0.4)));
     const centerGroundW = centerW * (centerCastle ? 1.6 : 2.3);
     const centerGroundH = centerGroundW * 0.58;
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
@@ -345,10 +367,15 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;               // 半径错落
+        // 🔴 [2026-10-11 战术侧 1.0] 建筑按 DE 原生像素画；环半径按**该栋自己的放大倍数**再留 1.25 倍余量外推，
+        //    否则建筑变大后会互相压成一团（实测：只按 1.0 倍外推仍有 33 对重叠）。
+        const bNative = nw(b);
+        const NATIVE_RING_HEADROOM = 1.25;
+        const mul = (bNative ? (bNative / (baseSize * cityBuildingScale(b, 0.32))) : 1) * (bNative ? NATIVE_RING_HEADROOM : 1);
+        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize * mul;
         const x = Math.cos(angle) * r;
         const y = Math.sin(angle) * r * 0.58;                     // 等轴压缩（0.58 = 2.5D 地面纵横比）
-        const bW = baseSize * cityBuildingScale(b, 0.32);
+        const bW = bNative ?? (baseSize * cityBuildingScale(b, 0.32));
         const zIndex = Math.round(100 + y);                       // 动态深度
         const bFlip = (deHashString(cityId + '|' + b + '|' + i) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
 
@@ -680,7 +707,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 /** 中城（城堡时代）DE 建筑组合：12 种城堡建筑随机取 9（中1+周8），石墙绕城，建筑比例比小城大一些。
  *  主人 2026-08-27「一律用城堡时代建筑，磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场+攻城武器厂+大学+修道院，这些9随机，布局中1+周8，城墙用石墙，图片比例比小城大一些」。 */
 // 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城；城门与城墙完全1.0x自然咬合）
-function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
+function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
@@ -755,7 +782,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
-            const cW = baseSize * 0.48;
+            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
+            const cW = native?.castleW ?? (baseSize * 0.48);
             const cGroundW = cW * 1.5;
             const cGroundH = cGroundW * 0.58;
             const zIndex = Math.round(500 + slot.y);
@@ -768,7 +796,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
             );
         } else {
             const b = centerCastle ? pool[otherIdx++] : pool[i];
-            const bW = baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO; // 统一大小 0.32（蒙古包按 MONGOL_YURT_SCALE）
+            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
+            const bW = nativeW(native, b, 'AGE3') ?? (baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO);
             const zIndex = Math.round(500 + slot.y);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
 
@@ -810,7 +839,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 }
 
 // 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层 clip-path 广场地基彻底覆盖城北角楼与全城）
-function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string): string {
+function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = deMulberry32(deHashString(cityId));
 
@@ -889,7 +918,8 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
-            const cW = baseSize * 0.48;
+            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
+            const cW = native?.castleW ?? (baseSize * 0.48);
             const cGroundW = cW * 1.5;
             const cGroundH = cGroundW * 0.58;
             const zIndex = Math.round(500 + slot.y);
@@ -901,8 +931,9 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
                 `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
         } else {
-            const [b, age] = centerCastle ? pool[otherIdx++] : pool[i];
-            const bW = baseSize * 0.32 * AUTO; // 9 建筑统一大小 0.32
+            const [b, age] = (centerCastle ? pool[otherIdx++] : pool[i]) as [string, 'AGE2' | 'AGE3'];
+            // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
+            const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
             const zIndex = Math.round(500 + slot.y);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
 
@@ -968,11 +999,11 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
 }
 
 /** 据点建筑栈（城墙 / 城门 / 建筑 / 地基）HTML —— 战略地图与战术攻城战同一份；baseSize 由调用方给（战术按 DE 原尺寸放大）。 */
-export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType): string {
+export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType, native?: CityNativeSizes): string {
     return (city.type === 'big_city'
-    ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
+    ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native)
     : city.type === 'medium_city'
-        ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
+        ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native)
         : city.type === 'pass'
             // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，
             //    统一走通用险要：**石墙墙圈(8+4段+双门) + 中心城堡 + 四角4座箭塔，不留民政建筑**。
@@ -983,7 +1014,7 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
             ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
             : city.type === 'stockade'
                 ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
-                : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle));
+                : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));
 }
 
 export class TerritorySystem {
