@@ -33,9 +33,14 @@ const NATURE_ALIAS: Record<string, [string, string]> = {
   CLIFF_DESERT_01: ['NATURE', 'CLIFF_SAND'], CLIFF_SNOW_01: ['NATURE', 'CLIFF_SNOW'], CLIFF_DEFAULT_01: ['NATURE', 'CLIFF_DEFAULT'],
   CLIFF_DEFAULT_1: ['NATURE', 'CLIFF_DEFAULT'],
   TREEA: ['NATURE', 'OAK'], TREEB: ['NATURE', 'OAK'], TREEC: ['NATURE', 'OAK'], FORTR: ['NATURE', 'OAK'],
-  FAUTUM: ['NATURE', 'AUTUMN_OAK'],
-  GOLDM: ['RESOURCE', 'GOLD_MINE'], STONM: ['RESOURCE', 'STONE_MINE'], PSTM: ['RESOURCE', 'STONE_MINE'],
-  FORAGM: ['RESOURCE', 'FORAGE_BUSH'], FORAG: ['RESOURCE', 'FORAGE_BUSH'],
+  FAUTUM: ['NATURE', 'AUTUMN_OAK'], FAUTUMS: ['NATURE', 'AUTUMN_OAK'],
+  FDEAD: ['NATURE', 'DEAD_TREE'], FLBAM: ['NATURE', 'LUSH_BAMBOO'], FRAIN: ['NATURE', 'RAINFOREST'], FACA: ['NATURE', 'ACACIA'],
+  PLAN_WEED_GREEN: ['NATURE', 'WEED'], PLAN_BUSH_GREEN: ['NATURE', 'BUSH_GREEN'],
+  PLANT_UNDERBRUSH_JUNGLE: ['NATURE', 'UNDERBRUSH_JUNGLE'], PLANT_UNDERBRUSH_RAINFOREST: ['NATURE', 'UNDERBRUSH_RAINFOREST'],
+  PLANT_RAINFOREST: ['NATURE', 'RAINFOREST'], FLWRB: ['NATURE', 'FLOWERBED'], STUMP2: ['NATURE', 'DEAD_TREE'],
+  CLIFF_LIMESTONE_01: ['NATURE', 'CLIFF_LIMESTONE'], MARBLE_CLIFF_1: ['NATURE', 'CLIFF_LIMESTONE'],
+  GOLDM: ['NATURE', 'MINE_GOLD'], STONM: ['NATURE', 'MINE_STONE'], PSTM: ['NATURE', 'MINE_STONE'],
+  FORAGM: ['NATURE', 'FORAGE_BUSH'], FORAG: ['NATURE', 'FORAGE_BUSH'], FORAGPINEAPPLE: ['NATURE', 'FORAGE_PINEAPPLE'],
   DEERX: ['ANIMAL', 'DEER'], BOARX: ['ANIMAL', 'BOAR'], WOLFX: ['ANIMAL', 'WOLF'], HAWK: ['ANIMAL', 'FALCON']
 };
 
@@ -131,30 +136,13 @@ void main() {
   float fPerturb = field.b + fn1 * 0.055 + fn2 * 0.025;
   float isForest = smoothstep(0.36, 0.54, fPerturb) * (1.0 - isWater);
   
-  // 纹理采样（无缝平铺）
-  vec2 texUV = fract(vGUV * 0.5);
+  // 纹理采样（无缝平铺，1:1 DE 经典原寸高清晰度）
+  vec2 texUV = fract(vGUV * 1.0);
   vec3 colGrass = texture2D(uGrassTex, texUV).rgb * vec3(0.97, 0.99, 0.92);
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;
   
-  // ── 地面斑块与大尺度明暗变化（彻底告别一整片单色） ──
-  float mLow = snoise(vGUV * 0.065);  // 15格大尺度
-  float mMid = snoise(vGUV * 0.20);   // 5格中尺度
-  float mottling = mLow * 0.65 + mMid * 0.35;
-  
-  // 1. 暖阳照耀 vs 阴凉青翠
-  vec3 sunWarm = colGrass * vec3(1.09, 1.05, 0.91);
-  vec3 coolShade = colGrass * vec3(0.91, 0.96, 0.92);
-  colGrass = mix(coolShade, sunWarm, smoothstep(-0.35, 0.35, mottling));
-  
-  // 2. 土壤干湿/黄褐泥土斑块
-  vec3 soilTint = colGrass * vec3(0.86, 0.81, 0.68);
-  colGrass = mix(colGrass, soilTint, smoothstep(0.25, 0.65, mMid) * 0.70);
-  
-  // 3. 地表裸露沙泥土块
-  colGrass = mix(colGrass, colSand * 0.88, smoothstep(0.50, 0.85, mottling) * 0.55);
-  
-  // 地面材质过渡（林地、沙滩、草地）
+  // ── DE 原版纯正地面：基底纹理 1:1 自然平铺，辅以林地与沙地自然过渡 ──
   vec3 landCol = colGrass;
   landCol = mix(landCol, colForest, isForest);
   landCol = mix(landCol, colSand, smoothstep(0.12, 0.65, isSand));
@@ -181,12 +169,9 @@ void main() {
   float foam = shoreBand * (0.35 + 0.55 * waveBreath);
   waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), foam * 0.75);
   
-  // 最终合成与光照
+  // 最终合成与 DE 原生高程坡度光照
   vec3 finalCol = mix(landCol, waterCol, isWater);
   finalCol *= vLight;
-  if (vLight > 1.05) {
-    finalCol += vec3(0.06, 0.05, 0.02) * (vLight - 1.05);
-  }
   gl_FragColor = vec4(finalCol, 1.0);
 }`;
 
