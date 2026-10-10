@@ -68,10 +68,12 @@ uniform vec2 uCam;
 uniform float uZoom;
 uniform float uFlip;
 varying vec2 vGUV;
+varying vec2 vWorldPos;
 varying float vLight;
 
 void main() {
   vGUV = aGUV;
+  vWorldPos = aPos;
   vLight = aLight;
   vec2 p = (aPos + uCam) * uZoom;
   if (uFlip > 0.5) { p.x = uRes.x - p.x; }
@@ -81,6 +83,7 @@ void main() {
 
 const FS = `precision mediump float;
 varying vec2 vGUV;
+varying vec2 vWorldPos;
 varying float vLight;
 
 uniform sampler2D uFieldTex;
@@ -136,8 +139,8 @@ void main() {
   float fPerturb = field.b + fn1 * 0.055 + fn2 * 0.025;
   float isForest = smoothstep(0.36, 0.54, fPerturb) * (1.0 - isWater);
   
-  // 纹理采样（无缝平铺，1:1 DE 经典原寸高清晰度）
-  vec2 texUV = fract(vGUV * 1.0);
+  // 纹理采样（DE 原版：按真实世界像素坐标 1:1 无缝平铺 512px 原图）
+  vec2 texUV = fract(vWorldPos / 512.0);
   vec3 colGrass = texture2D(uGrassTex, texUV).rgb * vec3(0.97, 0.99, 0.92);
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;

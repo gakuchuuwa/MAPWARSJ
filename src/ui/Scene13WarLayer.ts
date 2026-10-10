@@ -1311,32 +1311,19 @@ const SIEGE_FEUDAL_BUILDINGS = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMIT
  *  🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」]
  *     ⇒ 攻方营地**整座**改 80%：3 营地（CAMP_ARCHERY_RANGE／CAMP_BARRACKS／CAMP_STABLE）、
  *        4 帐篷（GREEK_WAR_TENT）、蒙古包营地的 8 个 YURT_* 也一并按此缩放（改前这些是原尺寸 1.0）。 */
-const SIEGE_CITY_BUILDING_SCALE = 0.8;
-/** 险要九建筑中的守城城堡专用缩放。2026-09-01 主人「特殊建筑略大一点」→ 0.76 略调大。
- *  🔴 [2026-10-03 主人令「所有的城堡，奇观，特殊建筑一律改为0.85」] 0.84 → **0.85**。 */
-const SIEGE_CASTLE_SCALE = 0.85;
-/** [2026-08-29 主人「市场图片缩小一点」] 市场单独缩放：DE 市场 4×4 格 box 大，与城堡同档调小。
- *  🔴 [2026-10-03 主人令「改为0.7」] 0.65 → **0.7**。 */
-const SIEGE_MARKET_SCALE = 0.7;
-/** [2026-08-29 主人「市镇中心也缩小一点，和其他差不多」] 城镇中心单独缩放：DE 城镇中心 4×4 格 box 大。
- *  🔴 [2026-10-03 主人令「改为0.7」] 0.6 → **0.7**。 */
-const SIEGE_TOWN_CENTER_SCALE = 0.7;
-/** 按建筑类型取攻城战守城缩放：市场/城镇中心单独调小（box 大），其余一律 SIEGE_CITY_BUILDING_SCALE。
- *  2026-09-03 主人定：城寨(stockade)建筑(庄园/定居点/棚屋/蒙古包)放大到自然尺寸 1.0，与攻击方营地建筑一致。
- *  🔴 [2026-10-03 主人令「一律都改为0.8，这样统一」＋「包括野战」] 上面那条 1.0 作废：
- *     SETTLEMENT / HUT_* / YURT_* / DARK_* 四类**一律 0.8**（与攻方营地、拒马、箭塔同一个缩放）。
- *     市场 0.65 / 城镇中心 0.6 是主人 2026-08-29「缩小一点，和其他差不多」按**素材 box 大**单独调的，
- *     🔴 [2026-10-03 主人令「改为0.7」] 已改 0.7（见上面两个常数）。 */
+const SIEGE_CITY_BUILDING_SCALE = 1.0;
+/** 险要九建筑中的守城城堡专用缩放。🔴 [2026-10-10 主人令「全部恢复为 DE 原版的 100%（scale = 1.0），让建筑、植被和兵模全部与 DE 绝对一致」] */
+const SIEGE_CASTLE_SCALE = 1.0;
+/** 市场单独缩放：🔴 [2026-10-10 主人令「全部恢复为 DE 原版的 100%（scale = 1.0）」] */
+const SIEGE_MARKET_SCALE = 1.0;
+/** 城镇中心单独缩放：🔴 [2026-10-10 主人令「全部恢复为 DE 原版的 100%（scale = 1.0）」] */
+const SIEGE_TOWN_CENTER_SCALE = 1.0;
+/** 按建筑类型取攻城战守城缩放：🔴 [2026-10-10 主人令「全部恢复为 DE 原版的 100%（scale = 1.0）」] 全部 1.0 */
 function siegeBuildingScale(building: string): number {
-    if (building === 'MARKET') return SIEGE_MARKET_SCALE;
-    if (building === 'TOWN_CENTER') return SIEGE_TOWN_CENTER_SCALE;
-    return SIEGE_CITY_BUILDING_SCALE;
+    return 1.0;
 }
-/** ZOOM 13 名城世界奇观（＝特殊建筑）地标单独缩放：奇观素材 box 比普通建筑大（如 ASIA_WONDER_CHINESE 448×396 vs 民居 244×172），
- *  用更小比例让奇观与周围建筑体量相当；2026-09-01 主人「特殊建筑略大一点」→ 0.5 略调大。
- *  🔴 [2026-10-03 主人令「改为0.7」] 0.55 → 0.7（同日再令）。
- *  🔴 [2026-10-03 主人令「所有的城堡，奇观，特殊建筑一律改为0.85」] 0.7 → **0.85**（当前值，以后以此为准）。 */
-const SIEGE_WONDER_SCALE = 0.85;
+/** ZOOM 13 名城世界奇观地标缩放：🔴 [2026-10-10 主人令「全部恢复为 DE 原版的 100%（scale = 1.0）」] */
+const SIEGE_WONDER_SCALE = 1.0;
 /** 斑块边界羽化半径（px）：软化菱形边缘，避免出现明显格子方块 */
 /** 城门进场大道的最大铺设步数（一步一格，够横穿任何分辨率的战场；实际由屏幕西缘截断） */
 const MAX_ROAD_STEPS = 80;
@@ -6333,20 +6320,14 @@ export class Scene13WarLayer {
                 cv.style.display = 'block';
 
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
-                //    （原逻辑在建好 WebGL 地面层后把落水的出兵口与士兵推回岸上，等于把水当不可通行区域）
-
-                // CC 补项 1：新地图物件进 vis Y 排序，替换旧 13 随机草木
                 const data = transposeMapData(mapData);
                 if (data && data.objects) {
-                    const siegeOnly = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
-                    this.decorSprites = siegeOnly;
-
-                    // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 地面是整张底图（含水 / 树林），城池与营地建筑按出兵口摆位，
-                    //    不看底图 ⇒ 建筑漂在水里、压在树林上。给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
-                    //    并拿掉落在地基上的底图树，不让树长在建筑里。
+                    // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
+                    //    并拿掉落在地基上的树木与建筑冲突物。
                     const foundations: Array<{ x: number; y: number; r: number }> = [];
+                    const siegeBuildings = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
                     for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
-                    for (const sp of siegeOnly) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
+                    for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
                     for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
                     glLayer.flushFoundation();
                     this.applyDeCityToGround();
@@ -6358,6 +6339,13 @@ export class Scene13WarLayer {
                             return !!f && Math.hypot(c.gx - f.gx, c.gy - f.gy) < fd.r;
                         });
                     };
+
+                    // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
+                    //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
+                    this.decorSprites = this.decorSprites.filter((s) => {
+                        const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
+                        return isBuilding || !onFoundation(s.x, s.y);
+                    });
 
                     for (const ob of data.objects) {
                         const r = resolveNatureSprite(ob.name);
@@ -9574,6 +9562,8 @@ export class Scene13WarLayer {
             //   之前走 S10DB 正方形假设（dieFw = b.fh = 84）切 DE 动态 sheet（fw 40~120 不等），
             //   末帧切片错位/越界 → 烙进地面是空白或碎片 → 保留的 1/3 尸体视觉上全丢。
             //   这里与渲染循环同一套 hotspot 对齐 + 动态帧框。
+            // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数），已恢复：
+            //   尸体尺寸必须与兵模同一把尺子（UNIT_PX * sz / 64），否则同一场里尸体会和活人不一样大。
             const s = UNIT_PX * (wt?.sz ?? 1) / 64;
             g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, c.x - dm.hx * s, drawY - dm.hy * s, dm.fw * s, dm.fh * s);
         } else {
@@ -9811,15 +9801,16 @@ export class Scene13WarLayer {
         const isFarZoom = zoom <= 0.5;
         for (const sprite of this.decorSprites) {
             if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
-            if (cullDecor && (sprite.x < vMinX || sprite.x > vMaxX || sprite.y < vMinY || sprite.y > vMaxY)) continue;
+            const testX = (this.flipSides && cv) ? (cv.width - sprite.x) : sprite.x;
+            if (cullDecor && ((testX < vMinX || testX > vMaxX) && (sprite.x < vMinX || sprite.x > vMaxX) || sprite.y < vMinY || sprite.y > vMaxY)) continue;
             // 远景优化：缩放到 0.5 以下时微小草花贴花不到 2 像素，略过以保障高帧率
             if (isFarZoom && (sprite.asset.startsWith('GRASS_') || sprite.asset.startsWith('FLOWER') || sprite.asset.startsWith('PLANT') || sprite.asset.startsWith('SHRUB') || sprite.asset.startsWith('BUSH') || sprite.asset.startsWith('REEDS') || sprite.asset.startsWith('WEED') || sprite.asset.startsWith('UNDERBRUSH') || sprite.asset.startsWith('FERN'))) continue;
             if (isFarZoom && (sprite.densityHash !== undefined ? (sprite.densityHash % 3 !== 0) : ((sprite.frame % 2) === 1)) && (sprite.asset.includes('OAK') || sprite.asset.includes('PINE') || sprite.asset.includes('TREE') || sprite.asset.includes('MAPLE') || sprite.asset.includes('BIRCH'))) continue;
-            if (sprite.layer === 'world') {
+            if (sprite.layer === 'world' || (this.useGroundGL && sprite.layer === 'ground')) {
                 const it = take();
                 it.kind = 'environment';
                 it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
-                it.z = sprite.z;
+                it.z = sprite.layer === 'ground' ? -10 : sprite.z;
                 it.zid = 0;
                 it.sprite = sprite;
                 decorDrawnCount++;
@@ -9975,6 +9966,9 @@ export class Scene13WarLayer {
                 // 🔴 AoE2 DE 动态帧框（hotspot 对齐，2026-08-15 定稿）：
                 //   游戏里 hotspot = canvas 中心，渲染时 hotspot 对齐单位位置，脚底随动作浮动（倒地时大幅下移）。
                 //   这里把 box 里的 hotspot(dm.hx/dm.hy) 对齐 v.x/v.y，统一缩放 s —— 站立帧/横躺帧都完整，无裁切。
+                // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数 sz），已恢复：
+                //   UNIT_PX = 64 ⇒ 基准缩放本来就是 1.0（DE 原生），`sz` 是**兵种之间的相对尺子**
+                //   （骑兵 1.15~1.2、战象 0.7~0.8、法师 0.55，共 25 支），删掉它等于把战象凭空放大 25~43%。
                 const s = UNIT_PX * (wt?.sz ?? 1) / 64;   // 统一缩放（站立高度 64 参考）
                 ctx.drawImage(img, fr * dm.fw, 0, dm.fw, dm.fh, v.x - dm.hx * s, v.y - dm.hy * s, dm.fw * s, dm.fh * s);
             } else {

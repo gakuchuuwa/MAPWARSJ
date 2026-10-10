@@ -11,8 +11,12 @@
 import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml } from '../../systems/TerritorySystem';
 
-/** 城墙段（widthFactor 0.16）在战术里画成 DE 素材原宽 107px ⇒ baseSize = 107 / 0.16 */
-export const TACTICAL_CITY_BASE_SIZE = 107 / 0.16;
+/** 城墙段（widthFactor 0.16）在战术里画成 **DE 素材原尺寸** ⇒ baseSize = 77 / 0.16
+ *  🔴 [2026-10-11 主人令「如果所有的显示比例都和 DE 一致，是不是更好呢」] 107 → **77**：
+ *     107 是城墙素材的**盒子**宽（左右各有透明边，可见内容只有 77px），按盒子铺等于把整个城放大了 107/77 ≈ 1.39 倍；
+ *     改成 77 后，城墙段、城门、建筑、城内间距**整城一起**回到 DE 原生比例（建筑之间的比例本来就是照 DE 排的，
+ *     只需改这一个基准）。⚠️ 士兵是屏幕固定尺寸（24×64px）不随此缩放 —— 城变小后房子相对士兵会更小，这是已知代价。 */
+export const TACTICAL_CITY_BASE_SIZE = 77 / 0.16;
 
 export interface StrategicCityHtml {
     html: string;
