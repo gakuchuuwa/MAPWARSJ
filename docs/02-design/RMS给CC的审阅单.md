@@ -7406,3 +7406,116 @@ npx tsc --noEmit → exit 0
 ## 87.6 状态
 
 A 批（材质统一）**完成**；B 批（地形分布按主题烘焙）**等主人决策**。
+
+---
+
+# 八十八、第 113 轮报告（CC · 主人令「整合战术地图中的各个场景的素材」——**B 批：地形分布也按主题**，已落地并真机验收）
+
+## 88.1 范围（主人在 A 批后选定）
+
+> 主人选定：**「做 B：按主题烘焙地图」** —— 用 RMS 引擎按气候主题烘焙 120×120 地图数据到 `public/`，战斗按 `climateRegion` 加载，取不到退回维也纳图。
+
+## 88.2 实测先摆两条硬事实（本轮量出来的，决定了做法）
+
+1. **主题链只有 Arabia 一份**：`Mediterranean.rms` 换任何主题**输出逐字相同**（它不消费主题参数）；
+   `Arabia.rms` 只消费 **11 个**能出内容的 DE 主题（`includes/themes.inc` 里存在 12 个，
+   但 `PALAEARCTIC_ASIA_DESERT` 虽然存在、Arabia 地形链不消费 → 烘出来是「Grass 100%」空图，不收）。
+2. **项目那 18 个主题 ID 有 6 个在 DE 里不存在**（`PALAEARCTIC_ASIA_STEPPE` / `TIBETAN_PLATEAU` /
+   `SALT_DESERT` / `MIDDLE_EAST_HIGHLAND` / `SERENGETI` / `PALUSTRINE_SWAMP` —— `themes.inc` 无此名）。
+   ⇒ 只能**按生物群系就近借用**（推断，表就一处，见下）。
+
+## 88.3 改了什么
+
+| 文件 | 处 | 改动 |
+|---|---|---|
+| `scratch/_bake_theme_maps.mjs` | 新文件 | 烘焙脚本：`loadScript(Arabia.rms, { theme })` → `MapEngine` → `buildMapData(passableAll:true)` → JSON；固定 seed=7，同主题可复现；逐张跑 `verifyAgainstEngine` 自校 |
+| 同上 | 表 `PROJECT_TO_DE` | 18 个项目主题 → DE 主题：**12 条同名直通 + 6 条就近借用**（`palaeearctic_asia_desert`/`salt_desert` → 中东沙漠；`asia_steppe`/`tibetan_plateau`/`middle_east_highland` → 亚洲温带；`serengeti`/`palustrine_swamp` → 非洲热带） |
+| 同上 | `consts.BIRD_COUNT: 0` | `includes/birds.inc` 把 `BIRD_COUNT` 定义在**各主题块内部**，强制某些主题时那块被挡掉 → `#const` 表达式报「未定义常量」。它不被引擎消费、也不被 Arabia 引用（grep 各 0 处），故注入 0 兜底 |
+| `public/battlefields/*.json` | **新目录（12 个文件）** | 11 张主题图 ＋ `index.json`（含每张的统计与「哪几个项目主题用它」），合计 **3.30 MB**（均 307 KB） |
+| `src/ui/Scene13WarLayer.ts` | `:1066-1069`（新常量） | `THEME_MAPDATA_DIR = '/battlefields/'`、`FALLBACK_MAPDATA_URL = '/scratch/rms-out/mapdata_vienna_danube_120.json'` |
+| 同上 | `:6113` 一带（取数桩） | 取数顺序改为：① `window.__M3_TEST_MAPDATA__`（探针，保留）→ ② `/battlefields/theme_<environmentPlan.deMapTheme>.json` → ③ 维也纳兜底图 ＋ 一行 `console.warn` |
+
+**没碰**：A 批那三处素材接线、城池地基与镜头、走位与战斗数值、战略地图、`tools/rms/` 引擎本体。
+
+## 88.4 实测（真机 · `node scratch/verify_scene13_theme_map.mjs`，端口 5186，跑完自动关服务）
+
+本轮**不注入** `__M3_TEST_MAPDATA__`，走真实的按主题 fetch。五条判据全绿（`scratch/m3_theme_map_report.json`）：
+
+| # | 判据 | 实测 |
+|---|---|---|
+| ① | 沙漠战场（埃及西部 29.2N/25.5E）加载沙漠主题图 | `header.theme=palaearctic_middle_east_desert`、objects=1726、**有棕榈 PALM**、无 OAK/AUTUMN_OAK |
+| ② | 沙漠战场水体≈0 | 水格 **23/14400**（维也纳图 3366，含河 3366 格）；②b 温带树（OAK/AUTUMN_OAK/PINE）全部为 false |
+| ③ | 温带战场（维也纳 48.2082N/16.3738E）加载温带主题图 | `header.theme=palaearctic_europe_temperate`、objects=2384、有 OAK/AUTUMN_OAK、无 PALM |
+| ④ | 主题图缺失时兜底 | 拦截该主题图为 404 → 加载维也纳图（水格 3366、`header.theme` 大写、objects=1882）＋ 1 条 warn「主题图缺失（theme=palaearctic_europe_temperate），地面退回维也纳测试图」 |
+| ⑤ | 无 PageError | 0 个 |
+
+截图：`scratch/out/theme_map/desert_egypt_theme.png`（黄沙＋棕榈，无温带林）、
+`scratch/out/theme_map/temperate_vienna_theme.png`（温带草地＋橡树）、`fallback_vienna.png`。
+`npx tsc --noEmit` → **exit 0**。烘焙自校：11 张**逐格一致全部 OK**（`verifyAgainstEngine`）。
+
+## 88.5 🔴 要主人裁定的两件事（如实报，不擅自定）
+
+1. **维也纳多瑙河没有了**：改成按主题取图后，维也纳那场用的是 Arabia 模板的温带图
+   （23 格绿洲水 + 草地），**M3 第一步那张维也纳多瑙河图（3366 格河）只作兜底**，画面里那条河不见了。
+   要恢复「据点真实水系」，得走**骨架模式**（真实高程/WorldCover 水体喂进引擎，即 M2 那条链），未做。
+2. **6 个项目主题是借用的**（88.3 那张表）：`palaearctic_asia_steppe`（草原霸主主题）现在借用「亚洲温带」
+   → 草原战场是**枯草＋少量林**，不是纯干草原；沙漠类三个主题共用同一张中东沙漠图。
+   主人若指定每个主题该长什么样，改 `PROJECT_TO_DE` 一处即可（重跑烘焙 6 秒）。
+
+## 88.6 未做 / 局限
+
+1. 地形**形状**仍是「Arabia 脚本的随机地貌」（同主题每次同一种子 ⇒ 同一张图），不是该据点的真实地形；
+2. 沙地上的草花/树种/岩石**精灵池**仍按旧链（`decorForTheme`），没按气候收窄（沙漠图里长的是棕榈/BIRCH，已随地图物件走，但点缀精灵未单独收窄）；
+3. 雪原主题（`palaearctic_europe_taiga` 等）只验了取数，未各开一场截图；
+4. 烘焙脚本是手动运行（`node scratch/_bake_theme_maps.mjs`），未接进任何自动流程。
+
+---
+
+# 八十九、第 114 轮报告（CC · 主人令「做骨架模式」——**C 批：据点真实地理骨架**，已落地并真机验收）
+
+## 89.1 范围（主人在 B 批后选定）
+
+> 主人选定：**「做骨架模式（推荐）：把真实高程＋WorldCover 水体喂进引擎，维也纳重新长出多瑙河，其他据点也是真实水系。」**
+
+## 89.2 引擎的骨架模式（读码确认，本轮第一次真正用起来）
+
+`tools/rms/rmsEngine.mjs:238-344`：调用方给 `skeleton = { land, elev, elevMeters, landTerrain, waterTerrain, landId }` 时，
+`run()` **不执行**脚本的 LAND / ELEVATION 段（不造内海、不覆盖真实地形），只跑 TERRAIN / OBJECTS；
+`reassertSkeletonWater()` 还会把脚本 TERRAIN 段造出来的水抹掉（水只认骨架）。
+几何用 `tools/rms/skeleton.mjs:30 cellLatLng()`（格心经纬度，含 transposeMapData 对调约定）。
+
+## 89.3 改了什么
+
+| 文件 | 处 | 改动 |
+|---|---|---|
+| `scratch/_bake_site_maps.mjs` | 新文件 | 骨架烘焙：真实高程（z13 Terrarium，`scratch/tiles_z13`，缺瓦片如实报缺、不联网）＋ 真实水体（`scratch/worldcover/site_cache` 的 `waterGrid`）→ 骨架 → 引擎骨架模式 → `buildMapData(passableAll:true)` → JSON；主题由 Köppen（游戏源码 `resolveClimateRegion`）经 `pickTheme` 定 |
+| `public/battlefields/site_<据点id>.json` | **新增 45 个**（＋`site_index.json`） | 11.58 MB；每张**逐格一致 OK** |
+| `src/ui/Scene13WarLayer.ts` | `:1066` | 常量改名：`THEME_MAPDATA_DIR` → **`MAPDATA_DIR`**（现在同时放据点图与主题图）；`FALLBACK_MAPDATA_URL` 不变 |
+| 同上 | `:6113` 取数桩 | 三级 → **四级**：① 探针注入 → ② `site_<defenderCityId>.json` → ③ `theme_<deMapTheme>.json` → ④ 维也纳图（＋warn） |
+
+**没碰**：A 批素材接线、canvas 侧 painter、城池地基/镜头/走位/战斗数值、战略地图、`tools/rms/` 引擎本体。
+
+## 89.4 实测（真机 · `node scratch/verify_scene13_site_map.mjs`，端口 5187，跑完自动关服务，五项全绿）
+
+| # | 判据 | 实测 |
+|---|---|---|
+| ① | 维也纳加载**据点骨架图** | `header.skeleton={id:city_weiyeena, lat:48.2, lng:16.37, koppen:Dfb, water:WorldCover, waterOffsetKm:4.15, hmin:156, hmax:208, step:25, cliffFromSlope:0}` |
+| ② | 维也纳**有多瑙河** | 水格 **3023**（B 批主题图只有 23 格）；地面层水面占比 **18.2%**、`smoothWater max=1` |
+| ③ | 换据点换图 | 格但斯克（city_gdansk）水格 **304**、高程 −2~73 m、objects 2061 —— 与维也纳不同 ⇒ 确实是按据点 |
+| ④ | 据点无图 | 退回主题图（`header.skeleton=null`、`header.theme=palaearctic_europe_temperate`），不报错、不打兜底 warn |
+| ⑤ | PageError | 0 个 |
+
+截图：`scratch/out/site_map/vienna_skeleton.png`（多瑙河真实弯曲＋河心洲＋两岸绿地/林地）、`gdansk_skeleton.png`。
+45 个据点烘焙统计见 `public/battlefields/site_index.json`（例：钓鱼岛水 92.4%、新阿姆斯特丹水 50.7%＋高差 708 m、喀山 21.1%）。
+`npx tsc --noEmit` → **exit 0**。
+
+## 89.5 未做 / 局限（如实报）
+
+1. **覆盖率**：1137 个据点/战场里只有 **45 个**烘出了据点骨架图（＝`scratch/worldcover/site_cache` 里有水网格缓存的那些）。
+   其余仍走主题图（B 批）。要铺开需要按据点批量取 WorldCover 水网格与 z13 高程瓦片。
+2. 🔴 **水网格有约 4 km 偏移**：缓存文件名与据点坐标不一致（例：维也纳据点 48.2/16.37，缓存在 48.226/16.41 ≈ **4.15 km**），
+   本脚本按「5 km 内取最近」匹配并把 `waterOffsetKm` 写进 header。**偏移会不会让某些据点的河挪了位置，请主人实看裁定**。
+   （已见可疑样例：喀山 21.1% 水 —— 喀山在卡赞河畔本就有水，但以真实图为准。）
+3. **水只有一种（Water, Shallow）**：深水/浅水细分仍由引擎脚本段决定，未按真实水深分级；速度系数（深 0.3/浅 0.6）也还没消费者（属 M5）。
+4. 高程瓦片缺的地方**不自动联网**（按 skeleton.mjs 的既有规矩），缺就报缺、不烘。
+5. 45 张里未逐张人眼核对，只逐张过了 `verifyAgainstEngine` 与统计。
