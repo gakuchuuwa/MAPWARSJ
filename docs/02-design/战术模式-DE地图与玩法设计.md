@@ -1,4 +1,4 @@
-# 战术模式 · DE 地图与玩法设计
+﻿# 战术模式 · DE 地图与玩法设计
 
 > 2026-10-09 定稿（主人认可 CC 的推荐方案）。本文是战术模式改造的**唯一设计依据**；实现细节另见
 > `docs/02-design/RMS引擎语义-给CC.md`（地图生成语义）与 `docs/02-design/RMS给CC的审阅单.md`（逐轮审阅记录）。
@@ -78,6 +78,49 @@
 
 ## 五、攻城战
 
+### 5.x 据点摆法（DD 第 75~81 轮 · 保布局、按真实比例重排）
+
+**总入口（唯一，不另写）**：`TerritorySystem.buildSiegeCastleStackHtml(bfId, cityType, factionId?)`（`:2051`，输出 HTML）
+→ 五分支 `buildDeStockadeStackHtml(:507)` / `buildDeSmallCityStackHtml(:403)` / `buildDeMediumCityStackHtml(:786)` / `buildDeBigCityStackHtml(:916)` / `buildDePassStackHtml(:721)`。
+**战场已经在用它**：`src/map/BattlefieldLayer.ts:113` ⇒ 第四步只需把这条既有路改成"输出件表、HTML 由件表生成"（同源）。
+
+**两条硬线**
+1. **素材比例**：城墙/建筑/城堡与树、悬崖、士兵**同一硬线** = DE 原尺寸 × 2/3（口径统一：一格 = 96×48 px）。
+2. **摆放**：**保布局**（中心 1 栋 + 环列、槽位次序、门的数量与朝向、墙的材质与形制**全部照抄战略件表**），
+   **不保比例**（战略图标是故意不按比例的：实测同一小城 城镇中心 0.10 / 房屋 0.20 / 墙段 0.16）。
+   环列**保方位先后次序**，角度按"占地算出的最小角距"在圆周上重分配；半径取"建筑互不重叠 + 间隔 ≥1 格"的最小值。
+
+**各城型实际调用的形制函数与参数（实测）**
+
+| 城型 | 函数（调用点） | 参数 | 实测件数/门数 |
+|---|---|---|---|
+| 城寨 | `buildStockadeRectRing`（`computeCorralRectWall` 别名，`:686`） | `(baseSize)`——**无每边段数参数** | 36 件，门 **2** |
+| 小城 | `buildRingWallAndGate`（`computePalisadeWallAndGate` 别名，`:475`） | `(baseSize, 5, useFourGates)`；`useFourGates = 石墙 && hash(cityId+'|small_fourgates')&1===1` | 32 件，门 4（city_lintao 实算 true） |
+| 中城 | `:893 computeFortifiedWallAndGate(baseSize, 6)` / `:894 computePalisadeWallAndGate(baseSize, 6, isFourGates)` | S=6 | 40 件，门 4 ｜ 布局 **18×18 格（450×450 m）** |
+| 大城 | `computeFortifiedWallAndGate(baseSize, 7)`（`:1026`，私有 `:339`） | S=7 | 48 件，门 **4** |
+| 险要 | `computeRectWall(baseSize, 8, 4, passTowerRnd, isJpTibet)`（定义 `:279`／调用 `:765`） | LSeg=8, WSeg=4 | **本地复刻**出 26 件、门 **2**、四角箭塔 4（`TOWER_AGE4`×2+`TOWER_AGE3`×2）｜ 布局 **12×12 格（300×300 m）** |
+
+**占格表（战术一格 = 25 m）**
+
+| 城型 | 布局占格 | 外围圈（含 1 格墙） | 米 | 现实对照 |
+|---|---|---|---|---|
+| 城寨（city_ledu rect+HARDWOOD） | 15×15 | 20×20 | 500×500 m | 设防聚落/军寨量级 ✅ |
+| 小城（city_lintao ASIA 石墙） | 21×21 | **24×24**（S=6，围住 21×21 + 1 格） | **600×600 m** | 卡尔卡松式小城约 500 m ✅ |
+| 大城（computeFortifiedWallAndGate(1280,7)） | 23×23 | 28×28 | 700×700 m | 王城核心区量级（维也纳内城 ~1 km）✅ |
+
+**门数随形制/据点变**：正方形/矩形城寨 2 扇（主人 2026-09-16 定）；小城 2 或 4 扇（按上式哈希）；大城 4 扇；险要 **2 扇**（rect 8×4 关城，件表 `SLAV_GATE_STONE_NE` × 2）。
+
+**第四步改动清单（届时才动 `src/`）**
+1. `cityWallShared.buildStockadeRectRing(baseSize, S?)` —— **新增每边段数**（段数↑圈↑、件距不变）；同类梯形等一并加；
+2. `computeFortifiedWallAndGate` 从 `TerritorySystem` 私有函数**搬进 `cityWallShared` 并导出**；
+3. 总入口增加**"输出件表"版本**，HTML 由件表生成（保持同源）；
+4. 战场侧 `BattlefieldLayer.ts:113` 改调件表版本。
+
+**已知卡点（未解决，如实记）**
+- `buildStockadeRectRing` 等**无段数参数** ⇒ 战术放大只能拉开件距、会出缺口 ⇒ 靠上面第 1 条解决；
+- 建筑占地**按 CC 第 75 轮裁定的关键词表**取（不是按战略显示尺寸）：城镇中心/城堡/市场/大学 **4** 格、兵营/靶场/马厩/铁匠/修道院 **3** 格、磨坊/房屋 **2** 格、塔/哨站 **1** 格；棚屋/帐篷/定居点 dat 未对上，**暂按 2（推断）**。
+- 本文所有布局尺寸（城寨 15×15 / 小城 21×21 / 大城 23×23）**都是按这张表算的**（`scratch/_plan3.py` 的 `foot()` 与 `scratch/_fig.py` 同一份关键词表）。
+
 - 城池按 DE 的城墙、城门、塔楼摆在地图上（城池风格沿用项目已有的建筑风格规则）。
 - 攻方：攻城器械砸门、砸墙；步兵在破口处突入。
 - 守方：城墙和塔楼上放箭，城内守军堵门。
@@ -115,6 +158,13 @@
   - 城池（城墙形制、城门、塔楼、城内建筑及其相对位置、建筑风格）与战略地图上该据点的摆法**同一份**，只是按战术比例放大，摆在地图中央；城池占地及四周留空，脚本生成的物件不进这块地。
   - 战略地图上落在这 3×3 公里范围内、看得见的其他摆设（树林、道路等），按同样的相对位置放进战术地图；其余细节再由 DE 脚本补。
   - 实现上与战略地图共用同一套摆放数据和函数，不另写一份（避免两边漂移）。
+- **出兵位置与战略地图一致（2026-10-10 主人定，CC 补细节）**：
+  - 方向：从战场中心指向该军在战略地图上的来处，取方位角，归到八个方向（北、东北、东、东南、南、西南、西、西北）；新地图上北下南，屏幕上方向即真实方向。
+  - 野战：双方各从自己来的方向出现。攻城战：攻方从来的方向出现，守方在地图中间（城池摆在中间属 M4，之前守方先站中心一带）。
+  - 双方来自同一或相邻方向：守方改到中心一带固守，攻方从边上进来。
+  - 该方向边上是水或悬崖：沿边缘滑到最近的陆地出兵；整条边都是水则从最近可走的边进来。
+  - 出生点离中心约三分之一半径（设计值，接上后看行军时长再调），不从地图最边上出。
+  - 配套镜头：允许缩小看更大范围；导播镜头自动跟随交战处。
 - **新战术模式与旧 13 并存（2026-10-09）**：
   - 旧 13 战术模式已存档为 git 标签 `定档-20261009-13战术模式`，代码一行不改。
   - 新模式写成独立模块，用开关切换，默认先用旧 13；新模式出错自动退回旧 13。
@@ -125,6 +175,68 @@
 ---
 
 ## 九、实施顺序与验收
+
+### 9.x 第四步实施方案（真实地理地图接入 · **草案，只写文档，未改 src/**）
+
+> 目标：战术模式的地图从"旧 13 张"换成"以战斗地点经纬度实时生成的 120×120 骨架"；
+> **铁律：新路任何一步出错，自动退回旧 13，玩法与打法一律不变。**
+
+**① 新模块与对外接口**
+- 位置：`src/systems/battlefield/`（新目录，与 `TerritorySystem` 平级），四个文件：
+  `skeletonSample.ts`（浏览器版取样，**公式与 `tools/rms/skeleton.mjs` 同源**，`fs` 换成 `fetch`）、
+  `themePick.ts`（Köppen 由 `src/ui/Scene13Biome.resolveClimateRegion` 取，八区表 + 大区规则照 `skeleton.mjs`）、
+  `cityAssemble.ts`（调据点总入口的**件表版**）、`battlefieldCache.ts`（内存 + IndexedDB）。
+- 接口（唯一入口）：
+```
+buildBattlefieldSketch({
+  lat, lng,                 // 战斗地点（必填）
+  cityType, cityId,         // 城型/据点 id（可选；不给则无城池）
+  attacker, defender,       // 双方（决定 landId 与初始可通行）
+  seed,                     // 同地点同种子可复现
+}) → {
+  mapData: { terrain, layer, elev, passable, speed, width:120, height:120 },
+  cityPieces: Piece[],      // { x, y, type, flipX }（由 src/ 的件表版产出）
+  groundCanvas: HTMLCanvasElement | OffscreenCanvas,   // 地面层（WebGL 画布）
+  meta: { theme, elevStats, tilesUsed, ms }
+}
+```
+
+**② 开关与自动退回**
+- 开关位置：**沿用已有的这一个开关** `localStorage['mapwar.realGeography'] === '1'`（读点 `src/ui/Scene13WarLayer.ts:5780 realGeographyEnabled()`，调用点 `:4334 requestRealGeography`；**默认关 ＝旧 13**）。**禁止再开第二个开关**（原稿的 `realGeographyBattlefield` 作废）。
+- **退回点（每处都要兜底，任一失败即回旧 13 并打一行日志）**：
+  ① 高程瓦片缺失/超时（**单瓦片 5 s、整图 20 s**）；② 骨架生成超时（**总预算 3 s**）；
+  ③ 主题判定返回空；④ 据点件表为空；⑤ WebGL/Canvas 初始化或渲染抛错；⑥ Worker 启动失败。
+- 退回实现：`try { new } catch { old13 }` + `finally { 记录 meta }`；**不允许"半新半旧"**（地图与画布必须同源）。
+
+**③ src/ 要改的文件逐个列出**
+
+| # | 文件 | 改什么 | 为什么 | 怎样证明战略地图外观不变 |
+|---|---|---|---|---|
+| 1 | `src/systems/cityWallShared.ts` | `buildStockadeRectRing(baseSize, S?)` **加每边段数**（梯形等同族一并加） | 战术放大要"段数↑圈↑、件距不变"，否则拉开件距会缺口 | **不传 S 时输出必须与今天逐字节相同**：对全部形制各跑一次，JSON 逐字比对 |
+| 2 | 同上 | 把 `computeFortifiedWallAndGate`、`computeRectWall` 从 `TerritorySystem` **搬进来并导出** | 战术地图要直接调真函数（不是复刻） | 搬迁后调用点改 import 别名，**调用处一行不改**；搬迁前后对同一据点出 38/48 件逐件比对 |
+| 3 | `src/systems/TerritorySystem.ts` | 总入口增加**件表版** `buildSiegeCastlePieces(...)`，HTML 版改为**读件表再拼串** | 两版同源，避免"战略长得一个样、战场另一个样" | **全库据点（城寨/小城/中城/大城/险要各取若干）改前改后 HTML 逐字比对，必须 0 差异** |
+| 4 | `src/map/BattlefieldLayer.ts:113` | 改调**件表版**（现在是 `buildSiegeCastleStackHtml` 的 HTML 版） | 战术地图只吃件表 | 现有战场截图 **逐像素比对**（改前/改后应完全相同） |
+| 5 | 新增 `src/systems/battlefield/*`（见 ①） | — | 承载新路 | 单测：三点（菏泽/维也纳/策马特）与 `tools/rms/skeleton.mjs` **同一输入同一输出** |
+| 6 | **已定位**：`src/ui/Scene13WarLayer.ts`（旧 13 与真实地理的调用点 `:4334`／开关 `:5780`）＋ `src/ui/scene13/Scene13RealGeography.ts`（`loadRealGeography` / `buildRealGeoPlan` / `RealGeoPlan`）＋ `src/ui/scene13/Scene13EnvironmentGenerator.ts:47,187`（消费 `RealGeoPlan`，"打仗的那块地就是地图上那个地方" 2026-10-07 主人令） | **复用并扩展**这套既有试验（**不是替换、不是并存**）：把新模块的 120×120 骨架喂给 `buildRealGeoPlan`／环境生成器；开关仍只有 `mapwar.realGeography` 一个 | 接线 | 开/关该开关各跑一场：开＝真实地理，关＝旧 13 **逐位一致** |
+
+**④ 高程瓦片在游戏运行时怎么取**
+- 复用**已有**的 `src/world/land-sea/ElevationSampler` + `TerrariumCodec`（同一个源 `s3.amazonaws.com/elevation-tiles-prod/terrarium`），不另写 fetcher。🔴 **不许改全局 `DEM_ZOOM`（9）**——它被战略地图的树/植被等图层共用，改了战略地图会按 16 倍精度拉瓦片、外观也变。**战术侧改为逐次调用传级别**（`LandSeaSystem.getElevationAtMapPixel` 已有 zoom 参数）。
+- 一个战场约需 **4~9 张**（3×3 km、z13≈15.6 m/px）；**按需联网**，内存 LRU（上限按 500 张估）＋ **IndexedDB 持久缓存**；🔴 **战术缓存与战略缓存分开**（战略用 z9、战术用 z13，键里带级别，互不污染）。
+- **断网/超时**：① 命中持久缓存 ⇒ 正常生成；② 没缓存 ⇒ **退回旧 13** 并提示"地理数据不可用"；③ **绝不阻塞**：取样异步、超时即退回。
+
+**⑤ 后台线程与缓存**
+- 骨架生成放 **Worker**（项目已有 Vite `?worker` 用法，见 `workers/TerritoryWorker`），主线程只收结果。
+- 缓存键 `lat|lng|cityType|cityId|seed` ⇒ 同地点同种子**直接复用**（确定性）；缓存值 = `mapData + cityPieces + meta`。
+- 生成过程**可复现**：不引随机；一切随机（物件摆放）走引擎的 `seed`。
+
+**⑥ 分步上线与每步验收**
+| 步 | 做什么 | 验收 |
+|---|---|---|
+| **1** | **只换地图**（地形/地面层，先不做据点、不加新物件） | 能进战术模式、**能拖动缩放**（WebGL ≥59 fps）；**打法不变**（单位/指令/胜负判定与旧图一致）；关掉开关能回旧 13 |
+| 2 | 加**据点**（件表 + 占地留空 + 城门通道） | 各城型占格与第五节表一致；建筑互不重叠、墙与建筑 ≥1 格；城门能通行 |
+| 3 | 加**地物/主题**（树、动物、资源按主题） | 分布表（§41/§65）仍覆盖 DE 参考；森林/高地比例不跑偏 |
+| 4 | 加**高程表现**（高度级、真实陡坡生成悬崖） | 高地对战斗的影响与旧图一致；悬崖由陡坡生成（本轮先不做） |
+| 每步 | 都保留开关 + 一键回退 | 回退后与旧 13 **逐位一致**（同一战场同一种子） |
 
 | 阶段 | 内容 | 验收 |
 |---|---|---|

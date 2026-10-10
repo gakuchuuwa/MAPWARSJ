@@ -25,6 +25,9 @@ import {
     isWaterTile,
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
+import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData } from './scene13/Scene13GroundLayerGL';
+// @ts-ignore
+import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
@@ -81,6 +84,16 @@ const EVICTED_DECROMA = new Set<string>();
 function rememberEvicted(set: Set<string>, key: string): void {
     if (set.size > 4000) set.clear();
     set.add(key);
+}
+
+let cachedViennaMapData: any = null;
+if (typeof window !== 'undefined') {
+    fetch('/scratch/rms-out/mapdata_vienna_danube_120.json')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+            if (d) cachedViennaMapData = transposeMapData(d);
+        })
+        .catch(() => {});
 }
 
 const DECROMA_CACHE = new Map<string, string>();
@@ -3247,6 +3260,12 @@ export interface Scene13WarInit {
     /** 战场中心坐标（由 GameAppCombatHooks 传入；P2 地形 biome 判定用） */
     centerLat?: number;
     centerLng?: number;
+    /** 攻方战略地图来向坐标（出兵点八方向计算） */
+    attackerFromLat?: number;
+    attackerFromLng?: number;
+    /** 守方战略地图来向坐标（出兵点八方向计算） */
+    defenderFromLat?: number;
+    defenderFromLng?: number;
     /** 攻防战守方据点坐标，仅供环境层判定该城是否临水。 */
     defenderCityLat?: number;
     defenderCityLng?: number;
@@ -3359,6 +3378,22 @@ export class Scene13WarLayer {
     private natureCache: Record<string, NatureAsset> = {};
     private waterCv: HTMLCanvasElement | null = null;
     private waterCtx: CanvasRenderingContext2D | null = null;
+    /** M3 WebGL 地面层渲染器与底层画布（默认关，realGeography 开关开启时启用） */
+    private glCanvas: HTMLCanvasElement | null = null;
+    private groundLayerGL: Scene13GroundLayerGL | null = null;
+    private useGroundGL = false;
+    private realGeoMapData: any = null;
+    private attackerFromLat?: number;
+    private attackerFromLng?: number;
+    private defenderFromLat?: number;
+    private defenderFromLng?: number;
+    private userInteractingTimer = 0;
+    /** 八方向行军前进单位向量（两军对冲） */
+    private advanceVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
+    /** 八方向行军侧翼单位向量 */
+    private sideVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 1 }, { x: 0, y: -1 }];
+    /** 攻守双方阵营出兵中心（屏幕逻辑坐标） */
+    private spawnBases: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
     /** [2026-08-21 性能] 素材加载风暴合并：onload 高频触发 repaintDecor，rAF 合并到一帧一次 */
     private decorRepaintQueued = false;
     private over = false;
@@ -3826,10 +3861,29 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-08 主人「战术模式放大后，可以拖拽镜头视角」] 放大后的镜头平移（屏幕像素，相对屏幕中心；缩放为 1 时恒为 0） */
     private tacticalPanX = 0;
     private tacticalPanY = 0;
+    public perfStats = {
+        decorTotal: 0,
+        decorDrawn: 0,
+        decorCulled: 0,
+        tGL: 0,
+        tCull: 0,
+        tSort: 0,
+        tDrawDecor: 0,
+        tDrawUnits: 0,
+        tTotal: 0,
+    };
     /** 把平移卡在「放大后的画面不露边」的范围内 */
     private clampTacticalPan(): void {
         const cv = this.canvas;
         if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
+        if (this.useGroundGL) {
+            const mapW = 7616, mapH = 3808;
+            const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
+            const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
+            this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
+            this.tacticalPanY = Math.max(-limY, Math.min(limY, this.tacticalPanY));
+            return;
+        }
         const limX = (this.tacticalZoom - 1) * cv.width / 2;
         const limY = (this.tacticalZoom - 1) * cv.height / 2;
         this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
@@ -3846,6 +3900,15 @@ export class Scene13WarLayer {
         document.body.appendChild(cv);
         this.canvas = cv;
         this.ctx = cv.getContext('2d', { alpha: true });
+
+        // M3 WebGL 地面层底层画布（挂在士兵画布下面，z-index: 390）
+        const glCv = document.createElement('canvas');
+        glCv.style.cssText = 'position:fixed;inset:0;z-index:390;pointer-events:none;display:none;';
+        glCv.width = window.innerWidth;
+        glCv.height = window.innerHeight;
+        document.body.appendChild(glCv);
+        this.glCanvas = glCv;
+
         this.ground = document.createElement('canvas');
         this.ground.width = cv.width;
         this.ground.height = cv.height;
@@ -3856,6 +3919,11 @@ export class Scene13WarLayer {
             this.restoreStrategyMap();
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
+            if (this.glCanvas) {
+                this.glCanvas.width = this.canvas.width;
+                this.glCanvas.height = this.canvas.height;
+                this.groundLayerGL?.resize(this.canvas.width, this.canvas.height);
+            }
             if (this.ground) {
                 this.ground.width = this.canvas.width;
                 this.ground.height = this.canvas.height;   // 尺寸一变内容即清空（已烙的尸体丢失）
@@ -3882,7 +3950,9 @@ export class Scene13WarLayer {
             e.stopPropagation();   // 捕获阶段拦下，底下的 Leaflet 战略地图不许跟着缩放
             const zoomDelta = -e.deltaY * 0.0015;
             const nextZoom = this.tacticalZoom * Math.exp(zoomDelta);
-            this.tacticalZoom = Math.max(1, Math.min(2.5, nextZoom));
+            const minZoom = this.useGroundGL ? 0.45 : 1.0;
+            this.tacticalZoom = Math.max(minZoom, Math.min(2.5, nextZoom));
+            this.userInteractingTimer = 4.0;
             this.clampTacticalPan();
         };
         window.addEventListener('wheel', onWheel, { passive: false, capture: true });
@@ -3891,15 +3961,18 @@ export class Scene13WarLayer {
         let dragging = false;
         let lastX = 0, lastY = 0;
         const onDown = (e: MouseEvent) => {
-            if (e.button !== 0 || !this.active || this.tacticalZoom <= 1.001) return;
+            const canDrag = this.useGroundGL || this.tacticalZoom > 1.001;
+            if (e.button !== 0 || !this.active || !canDrag) return;
             const t = e.target as HTMLElement | null;
             if (!t || !(t === document.body || t === document.documentElement || t.id === 'map' || t.closest('#map') || t.tagName === 'CANVAS')) return;
             dragging = true; lastX = e.clientX; lastY = e.clientY;
+            this.userInteractingTimer = 4.0;
             document.body.style.cursor = 'grabbing';
             e.preventDefault();
         };
         const onMove = (e: MouseEvent) => {
             if (!dragging) return;
+            this.userInteractingTimer = 4.0;
             this.tacticalPanX += e.clientX - lastX;
             this.tacticalPanY += e.clientY - lastY;
             lastX = e.clientX; lastY = e.clientY;
@@ -4046,6 +4119,8 @@ export class Scene13WarLayer {
         if (this.ctx && this.canvas) this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.tacticalZoom = 1.0;
         this.tacticalPanX = 0; this.tacticalPanY = 0;
+        this.useGroundGL = false;
+        if (this.glCanvas) this.glCanvas.style.display = 'none';
         this.bank = {};
         this.bankSides.clear();
         this.deferredAssetLoads = [];
@@ -4132,7 +4207,8 @@ export class Scene13WarLayer {
             return resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
         })();
         // [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边。
-        this.flipSides = init.followedOnDefenderSide === true;
+        // 🔴 [CC 裁定] 开关打开时方向是真实方位（上北下南），一律不做 flipSides 翻转；开关关闭照旧。
+        this.flipSides = this.realGeographyEnabled() ? false : (init.followedOnDefenderSide === true);
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
@@ -4164,6 +4240,10 @@ export class Scene13WarLayer {
         this.adv = [0, 0];
         this.centerLat = init.centerLat;
         this.centerLng = init.centerLng;
+        this.attackerFromLat = init.attackerFromLat;
+        this.attackerFromLng = init.attackerFromLng;
+        this.defenderFromLat = init.defenderFromLat;
+        this.defenderFromLng = init.defenderFromLng;
         this.attackerGeneralId = init.attackerGeneralId ?? null;
 
         try {
@@ -4180,6 +4260,62 @@ export class Scene13WarLayer {
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
+            // 🔴 [CC 裁定] 野战八方向出兵；攻城战本步保持旧 13 城池与阵型，M4 再换
+            let useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+            if (useFieldPlan) {
+                const centerLat = init.centerLat;
+                const centerLng = init.centerLng;
+                const attFromLat = init.attackerFromLat;
+                const attFromLng = init.attackerFromLng;
+                const defFromLat = init.defenderFromLat;
+                const defFromLng = init.defenderFromLng;
+                if (!centerLat || !centerLng || !attFromLat || !attFromLng) {
+                    console.warn(`[Scene13War] 缺少真实来处经纬度数据，八方向出兵退回旧 13 左右布阵 (center=${centerLat},${centerLng}; att=${attFromLat},${attFromLng})`);
+                    useFieldPlan = false;
+                } else {
+                    const plan = planSpawns({
+                        center: { lat: centerLat, lng: centerLng },
+                        attackerFrom: { lat: attFromLat, lng: attFromLng },
+                        defenderFrom: defFromLat && defFromLng ? { lat: defFromLat, lng: defFromLng } : null,
+                        battleType: 'field',
+                        walkableAt: (x: number, y: number) => {
+                            if (this.groundLayerGL) return !this.groundLayerGL.isWaterAtCell(x, y);
+                            if (cachedViennaMapData) {
+                                const N = cachedViennaMapData.width || 120;
+                                const rx = Math.round(x), ry = Math.round(y);
+                                if (rx < 0 || ry < 0 || rx >= N || ry >= N) return false;
+                                const t = cachedViennaMapData.terrain[ry * N + rx];
+                                return t !== 23 && t !== 1;
+                            }
+                            return true;
+                        },
+                    });
+                    const attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
+                    const attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
+                    const defSX = VW / 2 + (plan.defender.x - plan.defender.y) * 32;
+                    const defSY = VH / 2 + (plan.defender.x + plan.defender.y - 119) * 16;
+                    this.spawnBases = [{ x: attSX, y: attSY }, { x: defSX, y: defSY }];
+                    const fwdDx = defSX - attSX, fwdDy = defSY - attSY;
+                    const fwdLen = Math.hypot(fwdDx, fwdDy) || 1;
+                    const uFwd0 = { x: fwdDx / fwdLen, y: fwdDy / fwdLen };
+                    const uSide0 = { x: -uFwd0.y, y: uFwd0.x };
+                    const uFwd1 = { x: -uFwd0.x, y: -uFwd0.y };
+                    const uSide1 = { x: -uSide0.x, y: -uSide0.y };
+                    this.advanceVec = [uFwd0, uFwd1];
+                    this.sideVec = [uSide0, uSide1];
+                    const midSpawnX = (attSX + defSX) / 2;
+                    const midSpawnY = (attSY + defSY) / 2;
+                    this.tacticalPanX = (VW / 2 - midSpawnX) * this.tacticalZoom;
+                    this.tacticalPanY = (VH / 2 - midSpawnY) * this.tacticalZoom;
+                    this.clampTacticalPan();
+                }
+            }
+            if (!useFieldPlan) {
+                this.spawnBases = [{ x: mx + 2 * depth, y: midY }, { x: VW - mx - 2 * depth, y: midY }];
+                this.advanceVec = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
+                this.sideVec = [{ x: 0, y: 1 }, { x: 0, y: -1 }];
+            }
+
             for (const side of sides) {
                 const lanes = this.slotsOf(side.region, side.factionId, side.generalId, side.hasElite);
                 const n = lanes.length;
@@ -4192,22 +4328,34 @@ export class Scene13WarLayer {
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key, side.f);
-                    // 🔴 [2026-08-17 修·「刚一交战就卡一下」] 抛射物素材必须**开战前**就跟着兵种一起预载。
-                    //    原来是第一次放箭那一刻才 ensureProj（懒加载），而 ensureProj 会把 pending +1，
-                    //    tick() 只要 pending>0 就整场 return —— 不推进也不渲染。
-                    //    于是每个远程兵种第一次出手，整个战场**当场冻住**，等一次 meta.json + 一张图
-                    //    （两趟请求，冷启动时几百毫秒）。主人实锤：「每次远程准备攻击的时候就卡一下」。
-                    //    放到这里 = 并进开场那批素材，由列阵待命阶段吸收，战斗中途不再有任何懒加载。
-                    //    口径与出手那一处保持一致：射程 > 65 才会真的放弹丸，未登记的一律落 PROJ_ARROW。
                     if (this.statsFor(key, side.f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
                     if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
-                    // 布局：row 0 最靠中线（越靠前越深入敌阵）；三阵型 9 口走 LAYOUT 查找表
-                    // 第 10 口（idx 9）= 主将队，按阵型安放（前排三组则安置在两组中间）
+                    let x: number, y: number;
                     const cell = idx < 9 ? LAYOUT[mode][idx] : COMMANDER_CELL[mode];
-                    const back = mx + (2 - cell.row) * depth;
-                    const x = side.f === 0 ? back : VW - back;
-                    // 阵型间距 spanY/3
-                    const y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
+                    if (useFieldPlan) {
+                        const base = this.spawnBases[side.f];
+                        const uFwd = this.advanceVec[side.f];
+                        const uSide = this.sideVec[side.f];
+                        const forwardOffset = (1 - cell.row) * depth;
+                        const colSpacing = Math.min(110, spanY / 6);
+                        let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
+                        x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
+                        y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
+                        if (this.isWaterAt(x, y)) {
+                            for (let step = 1; step <= 20; step++) {
+                                const tx = x + (base.x - x) * (step / 20);
+                                const ty = y + (base.y - y) * (step / 20);
+                                if (!this.isWaterAt(tx, ty)) {
+                                    x = tx; y = ty;
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        const back = mx + (2 - cell.row) * depth;
+                        x = side.f === 0 ? back : VW - back;
+                        y = midY + (cell.col - (cell.cols - 1) / 2) * (spanY / 3);
+                    }
                     this.spawns.push({
                         f: side.f, key, x, y,
                         // 人口折算：象/车 2、炮 3 → 精灵数按比例减少，单个精灵代表的兵额同比增加，总兵力守恒
@@ -4331,7 +4479,10 @@ export class Scene13WarLayer {
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
             // [2026-10-07 主人令「打仗的那块地就是地图上那个地方」] 试验开关打开时，开战前换成真实地理
-            if (Scene13WarLayer.realGeographyEnabled()) this.requestRealGeography(envInput, init, VW, VH, siegeWallFrontX);
+            if (Scene13WarLayer.realGeographyEnabled()) {
+                this.requestRealGeography(envInput, init, VW, VH, siegeWallFrontX);
+                this.requestGroundLayerGL(init, VW, VH);
+            }
 
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
@@ -4800,6 +4951,8 @@ export class Scene13WarLayer {
         this.heroRespawnTimer = 0;
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
+        this.useGroundGL = false;
+        if (this.glCanvas) this.glCanvas.style.display = 'none';
         if (!keepFrame && this.canvas) this.fadeOutCanvas();
     }
 
@@ -5035,7 +5188,12 @@ export class Scene13WarLayer {
     private isoCellX(gx: number, gy: number): number { return this.groundPainter.isoCellX(gx, gy); }
     private isoCellY(gx: number, gy: number): number { return this.groundPainter.isoCellY(gx, gy); }
     private elevationAt(x: number, y: number): number { return this.groundPainter.elevationAt(x, y); }
-    private elevationLiftAt(x: number, y: number): number { return this.groundPainter.elevationLiftAt(x, y); }
+    private elevationLiftAt(x: number, y: number): number {
+        if (this.useGroundGL && this.groundLayerGL && this.canvas) {
+            return this.groundLayerGL.elevationLiftAt(x, y, this.canvas.width, this.canvas.height);
+        }
+        return this.groundPainter.elevationLiftAt(x, y);
+    }
     private cellLift(gx: number, gy: number): number { return this.groundPainter.cellLift(gx, gy); }
 
 
@@ -5252,9 +5410,12 @@ export class Scene13WarLayer {
             this.ensureNatureAsset(full);
             let px = s.x, py = s.y;
             // 🔴 安全占地修正（2026-08-26）：若出兵口建筑落在水域/浅滩，向干燥陆地推进，避免营帐直接泡在水里
-            if (this.environmentPlan?.isWater) {
+            const isWater = (this.useGroundGL && this.groundLayerGL && this.canvas)
+                ? ((x: number, y: number) => this.groundLayerGL!.isWaterAt(x, y, this.canvas!.width, this.canvas!.height))
+                : this.environmentPlan?.isWater;
+            if (isWater) {
                 let safetyWalk = 0;
-                while (this.environmentPlan.isWater(px, py) && safetyWalk < 15) {
+                while (isWater(px, py) && safetyWalk < 15) {
                     px += (f === 0 ? 25 : -25);
                     safetyWalk++;
                 }
@@ -5778,7 +5939,34 @@ export class Scene13WarLayer {
      * 打开：浏览器控制台 `localStorage.setItem('mapwar.realGeography','1')`，下一场战术战斗生效。
      */
     private static realGeographyEnabled(): boolean {
-        try { return localStorage.getItem('mapwar.realGeography') === '1'; } catch { return false; }
+        try { return localStorage.getItem('mapwar.realGeography') !== '0'; } catch { return true; }
+    }
+
+    private realGeographyEnabled(): boolean {
+        return Scene13WarLayer.realGeographyEnabled();
+    }
+
+    private isWaterAt(screenX: number, screenY: number): boolean {
+        if (this.groundLayerGL && this.canvas) {
+            return this.groundLayerGL.isWaterAt(screenX, screenY, this.canvas.width, this.canvas.height);
+        }
+        if (cachedViennaMapData) {
+            const VW = this.canvas?.width ?? 1920, VH = this.canvas?.height ?? 1080;
+            const N = cachedViennaMapData.width || 120;
+            const dx = 32, dy = 16, offX = (N - 1) * dx;
+            const worldX = screenX - VW / 2 + offX;
+            const worldY = screenY - VH / 2 + (N - 1) * dy;
+            const a = (worldX - offX) / dx;
+            const b = worldY / dy;
+            const gx = (a + b) / 2;
+            const gy = (b - a) / 2;
+            const rx = Math.round(gx);
+            const ry = Math.round(gy);
+            if (rx < 0 || ry < 0 || rx >= N || ry >= N) return false;
+            const t = cachedViennaMapData.terrain[ry * N + rx];
+            return t === 23 || t === 1;
+        }
+        return false;
     }
 
     /** 真实地理最多让开战多等多久（毫秒）；超时照旧开打，保留原生成的战场 */
@@ -5876,6 +6064,147 @@ export class Scene13WarLayer {
                 waterCells: geo.waterCells, sea: geo.hasSea, reliefM: Math.round(geo.reliefM), raisedCells: geo.raisedCells,
             });
         }).catch(() => release());
+    }
+
+    /**
+     * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
+     * 并加载新地图物件，替换旧 13 随机树木与岩石。
+     */
+    private requestGroundLayerGL(init: Scene13WarInit, VW: number, VH: number): void {
+        if (!this.glCanvas) return;
+        const gen = this.assetGen;
+        const cv = this.glCanvas;
+
+        // 🔴【M3 第一步临时调试桩 · 待 DD 烘焙数据到位后替换】
+        // 当前优先读 window.__M3_TEST_MAPDATA__，默认读 scratch/rms-out/mapdata_vienna_danube_120.json
+        // 下一步接入 DD 的 1137 地点烘焙数据后按 init.centerLat/Lng / 据点动态加载，画面与走位同一数据源
+        const getMapData = async () => {
+            if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
+            try {
+                const res = await fetch('/scratch/rms-out/mapdata_vienna_danube_120.json');
+                if (res.ok) return await res.json();
+            } catch {}
+            return null;
+        };
+
+        void getMapData().then(async (mapData) => {
+            if (gen !== this.assetGen || !mapData) {
+                this.useGroundGL = false;
+                cv.style.display = 'none';
+                return;
+            }
+            try {
+                if (this.groundLayerGL) this.groundLayerGL.destroy();
+                const glLayer = await Scene13GroundLayerGL.create(cv, mapData);
+                if (gen !== this.assetGen) {
+                    glLayer.destroy();
+                    return;
+                }
+                this.groundLayerGL = glLayer;
+                this.realGeoMapData = mapData;
+                cachedViennaMapData = glLayer.data;
+                this.useGroundGL = true;
+                cv.style.display = 'block';
+
+                // 保障所有出兵口与初始士兵不落入水体
+                for (const s of this.spawns) {
+                    if (glLayer.isWaterAt(s.x, s.y, VW, VH)) {
+                        const base = this.spawnBases?.[s.f];
+                        if (base) {
+                            for (let step = 1; step <= 20; step++) {
+                                const tx = s.x + (base.x - s.x) * (step / 20);
+                                const ty = s.y + (base.y - s.y) * (step / 20);
+                                if (!glLayer.isWaterAt(tx, ty, VW, VH)) {
+                                    s.x = tx; s.y = ty;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                for (const m of this.men) {
+                    if (glLayer.isWaterAt(m.x, m.y, VW, VH)) {
+                        const base = this.spawnBases?.[m.f] || m.port;
+                        if (base) {
+                            for (let step = 1; step <= 20; step++) {
+                                const tx = m.x + (base.x - m.x) * (step / 20);
+                                const ty = m.y + (base.y - m.y) * (step / 20);
+                                if (!glLayer.isWaterAt(tx, ty, VW, VH)) {
+                                    m.x = tx; m.y = ty;
+                                    m.prevX = tx; m.prevY = ty;
+                                    m.anchorX = tx; m.anchorY = ty;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // CC 补项 1：新地图物件进 vis Y 排序，替换旧 13 随机草木
+                const data = transposeMapData(mapData);
+                if (data && data.objects) {
+                    const siegeOnly = this.decorSprites.filter((s) => s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
+                    this.decorSprites = siegeOnly;
+
+                    for (const ob of data.objects) {
+                        const r = resolveNatureSprite(ob.name);
+                        if (r && r[0] === 'NATURE') {
+                            const ox = ob.x - 0.5, oy = ob.y - 0.5;
+                            const px = (ox - oy) * 32 + (119 * 32);
+                            const py = (ox + oy) * 16;
+                            const sx = px - 3808 + VW / 2;
+                            const sy = py - 1904 + VH / 2;
+                            this.ensureNatureAsset(r[1]);
+                            this.decorSprites.push({
+                                asset: r[1],
+                                frame: ob.rot !== undefined ? Math.round(ob.rot) : 0,
+                                x: sx,
+                                y: sy,
+                                flip: false,
+                                layer: 'world',
+                                z: 0,
+                                obstructionContactSec: 0,
+                                obstructionTouched: false,
+                                obstructionDisabled: false,
+                            });
+                        }
+                    }
+
+                    // 自然水岸生态：沿多瑙河蜿蜒岸线点缀芦苇与睡莲（同旧 13 经典水岸生态）
+                    for (let gy = 2; gy < 118; gy += 2) {
+                        for (let gx = 2; gx < 118; gx += 2) {
+                            const dens = glLayer.getWaterDensityAt(gx, gy);
+                            if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
+                                const ox = gx - 0.5, oy = gy - 0.5;
+                                const px = (ox - oy) * 32 + (119 * 32);
+                                const py = (ox + oy) * 16;
+                                const sx = px - 3808 + VW / 2;
+                                const sy = py - 1904 + VH / 2;
+                                const isLily = dens > 0.44 && ((gx + gy) % 3 === 0);
+                                const asset = isLily ? 'WATER_LILY' : 'REEDS';
+                                this.ensureNatureAsset(asset);
+                                this.decorSprites.push({
+                                    asset,
+                                    frame: (gx * 11 + gy * 7) % 100,
+                                    x: sx,
+                                    y: sy,
+                                    flip: (gx % 2 === 0),
+                                    layer: 'world',
+                                    z: 0,
+                                    obstructionContactSec: 0,
+                                    obstructionTouched: false,
+                                    obstructionDisabled: false,
+                                });
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败，退回旧 13 地面:', err);
+                this.useGroundGL = false;
+                cv.style.display = 'none';
+            }
+        });
     }
 
     /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
@@ -6230,7 +6559,9 @@ export class Scene13WarLayer {
 
     /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪与水花 */
     private renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
-        const isWater = this.environmentPlan?.isWater;
+        const isWater = (this.useGroundGL && this.groundLayerGL && this.canvas)
+            ? ((x: number, y: number) => this.groundLayerGL!.isWaterAt(x, y, this.canvas!.width, this.canvas!.height))
+            : this.environmentPlan?.isWater;
         if (!isWater) return;
 
         ctx.save();
@@ -6318,12 +6649,14 @@ export class Scene13WarLayer {
         const sx = fr * sw;
         // scale 未设置 = 原尺寸原路径（其余装饰逐像素不变）；设置时尺寸与锚点等比缩放，脚点仍落在 (s.x, drawY)
         const k = s.scale ?? 1;
-        if (s.flip || k !== 1) {
+        if (s.flip) {
             g.save();
             g.translate(s.x, drawY);
-            g.scale(s.flip ? -k : k, k);
+            g.scale(-k, k);
             g.drawImage(na.img, sx, 0, sw, sh, -m.anchor_x, -m.anchor_y, sw, sh);
             g.restore();
+        } else if (k !== 1) {
+            g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x * k, drawY - m.anchor_y * k, sw * k, sh * k);
         } else {
             g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
         }
@@ -6781,18 +7114,52 @@ export class Scene13WarLayer {
                         flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
                     }
                 }
+                const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+                const uFwd = this.advanceVec[s.f];
+                const uSide = this.sideVec[s.f];
+                let spawnX = isFlank ? flankX : (useFieldPlan ? s.x - uFwd.x * dep + uSide.x * slotY : s.x + (s.f === 0 ? -dep : dep));
+                let spawnY = isFlank ? flankY : (useFieldPlan ? s.y - uFwd.y * dep + uSide.y * slotY : s.y + slotY);
+                if (useFieldPlan && this.isWaterAt(spawnX, spawnY)) {
+                    for (let step = 1; step <= 10; step++) {
+                        const tx = spawnX + (s.x - spawnX) * (step / 10);
+                        const ty = spawnY + (s.y - spawnY) * (step / 10);
+                        if (!this.isWaterAt(tx, ty)) {
+                            spawnX = tx; spawnY = ty;
+                            break;
+                        }
+                    }
+                    if (this.isWaterAt(spawnX, spawnY)) {
+                        spawnX = s.x; spawnY = s.y;
+                    }
+                    if (this.isWaterAt(spawnX, spawnY)) {
+                        for (let r = 16; r <= 320; r += 16) {
+                            let found = false;
+                            for (let a = 0; a < 8; a++) {
+                                const ang = (a * Math.PI) / 4;
+                                const tx = spawnX + Math.cos(ang) * r;
+                                const ty = spawnY + Math.sin(ang) * r;
+                                if (!this.isWaterAt(tx, ty)) {
+                                    spawnX = tx; spawnY = ty;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) break;
+                        }
+                    }
+                }
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
                     zid: this.manSeq++,
-                    x: isFlank ? flankX : s.x + (s.f === 0 ? -dep : dep),
-                    y: (isFlank ? flankY : s.y) + slotY,
+                    x: spawnX,
+                    y: spawnY,
                     tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp,
                     // 出生朝向按**实际出生点**算：奇袭兵生在敌后，用本方出兵口算会背对敌人
                     dir: this.dir8(tgt.x - (isFlank ? flankX : s.x), tgt.y - (isFlank ? flankY : s.y)),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
-                    prevX: isFlank ? flankX : s.x, prevY: (isFlank ? flankY : s.y),
-                    anchorX: isFlank ? flankX : s.x, anchorY: (isFlank ? flankY : s.y), netT: 0,
+                    prevX: spawnX, prevY: spawnY,
+                    anchorX: spawnX, anchorY: spawnY, netT: 0,
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
@@ -7530,17 +7897,41 @@ export class Scene13WarLayer {
         for (let f = 0; f < 2; f++) if (spdMin[f] < Infinity) this.adv[f] += spdMin[f] * dt;
         // 前锋线 = 本方最靠前那排出兵口的 x ± 已推进距离。
         // 阵型是刚体，直接由锚点算即可，不受个别掉队/落单兵影响（拿存活兵均值算会被拖后腿）。
-        let front0 = -Infinity, front1 = Infinity;
-        for (const sp of this.spawns) {
-            if (sp.f === 0) front0 = Math.max(front0, sp.x + this.adv[0]);
-            else front1 = Math.min(front1, sp.x - this.adv[1]);
-        }
-        if (front1 - front0 < MARCH_REL) {
-            this.marching = false;
-            for (const m of this.men) {
-                m.march = false;   // 全军同时解除，双方一起炸开接战
-                m.stuckT = 0;
-                m.netT = 0;
+        const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+        if (useFieldPlan && this.spawnBases) {
+            const baseDist = Math.hypot(this.spawnBases[1].x - this.spawnBases[0].x, this.spawnBases[1].y - this.spawnBases[0].y);
+            let front0 = 0, front1 = 0;
+            const u0 = this.advanceVec[0], u1 = this.advanceVec[1];
+            for (const sp of this.spawns) {
+                if (sp.f === 0) {
+                    const p = (sp.x - this.spawnBases[0].x) * u0.x + (sp.y - this.spawnBases[0].y) * u0.y;
+                    if (p > front0) front0 = p;
+                } else {
+                    const p = (sp.x - this.spawnBases[1].x) * u1.x + (sp.y - this.spawnBases[1].y) * u1.y;
+                    if (p > front1) front1 = p;
+                }
+            }
+            if (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || this.battleSec >= 15.0) {
+                this.marching = false;
+                for (const m of this.men) {
+                    m.march = false;   // 全军同时解除，双方一起炸开接战
+                    m.stuckT = 0;
+                    m.netT = 0;
+                }
+            }
+        } else {
+            let front0 = -Infinity, front1 = Infinity;
+            for (const sp of this.spawns) {
+                if (sp.f === 0) front0 = Math.max(front0, sp.x + this.adv[0]);
+                else front1 = Math.min(front1, sp.x - this.adv[1]);
+            }
+            if (front1 - front0 < MARCH_REL) {
+                this.marching = false;
+                for (const m of this.men) {
+                    m.march = false;   // 全军同时解除，双方一起炸开接战
+                    m.stuckT = 0;
+                    m.netT = 0;
+                }
             }
         }
     }
@@ -7620,6 +8011,21 @@ export class Scene13WarLayer {
     private routeWaypoint(m: WarMan): { x: number; y: number } {
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
+        const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+        if (useFieldPlan && this.spawnBases) {
+            const foeBase = this.spawnBases[1 - m.f];
+            const homeBase = this.spawnBases[m.f];
+            const uSide = this.sideVec[m.f];
+            const sideOff = (m.slotY ?? 0);
+            const mid = { x: (homeBase.x + foeBase.x) / 2, y: (homeBase.y + foeBase.y) / 2 };
+            const route = [
+                { x: foeBase.x + uSide.x * sideOff, y: foeBase.y + uSide.y * sideOff },
+                mid,
+                { x: homeBase.x - uSide.x * sideOff, y: homeBase.y - uSide.y * sideOff },
+                mid,
+            ];
+            return route[this.routeWp[m.f] % route.length];
+        }
         const homeX = m.f === 0 ? vw * 0.07 : vw * 0.93;   // 己方底边
         const foeX = m.f === 0 ? vw * 0.93 : vw * 0.07;    // 敌方底边
         const route = [
@@ -7652,6 +8058,11 @@ export class Scene13WarLayer {
         const vw = this.canvas?.width ?? 0, vh = this.canvas?.height ?? 0;
         if (vw <= 0 || vh <= 0) return [x, y];
         const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
+        if (this.useGroundGL) {
+            const minX = vw / 2 - 3808 + mx, maxX = vw / 2 + 3808 - mx;
+            const minY = vh / 2 - 1904 + my, maxY = vh / 2 + 1904 - my;
+            return [Math.min(Math.max(x, minX), maxX), Math.min(Math.max(y, minY), maxY)];
+        }
         return [Math.min(Math.max(x, mx), vw - mx), Math.min(Math.max(y, my), vh - my)];
     }
 
@@ -7678,8 +8089,19 @@ export class Scene13WarLayer {
         if (!leader || leader === m) return null;
         if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
         if (this.heroOrderPending(m)) return null;
-        const sx = leader.x + (m.f === 0 ? -(m.dep - leader.dep) : (m.dep - leader.dep));
-        const sy = leader.y + (m.slotY - leader.slotY);
+        const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+        let sx: number, sy: number;
+        if (useFieldPlan) {
+            const uFwd = this.advanceVec[m.f];
+            const uSide = this.sideVec[m.f];
+            const dDep = m.dep - leader.dep;
+            const dSide = m.slotY - leader.slotY;
+            sx = leader.x - uFwd.x * dDep + uSide.x * dSide;
+            sy = leader.y - uFwd.y * dDep + uSide.y * dSide;
+        } else {
+            sx = leader.x + (m.f === 0 ? -(m.dep - leader.dep) : (m.dep - leader.dep));
+            sy = leader.y + (m.slotY - leader.slotY);
+        }
         return this.fieldBound(sx, sy);
     }
 
@@ -8031,8 +8453,29 @@ export class Scene13WarLayer {
             if (m.march && m.port && !holdCmd) {
                 // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
                 //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
-                const sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
-                [m.tx, m.ty] = this.fieldBound(sx, m.port.y + m.slotY);
+                const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+                let sx: number, sy: number;
+                if (useFieldPlan) {
+                    const uFwd = this.advanceVec[m.f];
+                    const uSide = this.sideVec[m.f];
+                    const fwdDist = this.adv[m.f] - m.dep;
+                    sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
+                    sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
+                    if (this.isWaterAt(sx, sy)) {
+                        for (let frac = 0.8; frac >= 0; frac -= 0.2) {
+                            const tsx = m.port.x + uFwd.x * fwdDist + uSide.x * (m.slotY * frac);
+                            const tsy = m.port.y + uFwd.y * fwdDist + uSide.y * (m.slotY * frac);
+                            if (!this.isWaterAt(tsx, tsy)) {
+                                sx = tsx; sy = tsy;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
+                    sy = m.port.y + m.slotY;
+                }
+                [m.tx, m.ty] = this.fieldBound(sx, sy);
             } else if (!m.foe && !holdSiege && !holdCmd) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
@@ -8192,9 +8635,15 @@ export class Scene13WarLayer {
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
                     const step = stats.spd * dt;
                     if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
-                        m.x += dx / d * step;
-                        m.y += dy / d * step;
-                        m.dir = this.dir8(dx, dy);
+                        const nx = m.x + (dx / d) * step;
+                        const ny = m.y + (dy / d) * step;
+                        if (this.realGeographyEnabled() && this.isWaterAt(nx, ny)) {
+                            // 遇到水体停在岸边，不踏入深水
+                        } else {
+                            m.x = nx;
+                            m.y = ny;
+                            m.dir = this.dir8(dx, dy);
+                        }
                     }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
@@ -8687,6 +9136,26 @@ export class Scene13WarLayer {
             if (m.hp <= 0 && m.flag) this.fallenFlags.push({ x: m.x, y: m.y, f: m.f, t: 0, fo: m.fo });
         }
         this.men = this.men.filter(m => m.hp > 0);
+        if (this.useGroundGL && this.groundLayerGL && this.canvas) {
+            const cvW = this.canvas.width, cvH = this.canvas.height;
+            for (const m of this.men) {
+                if (this.groundLayerGL.isWaterAt(m.x, m.y, cvW, cvH)) {
+                    const base = this.spawnBases?.[m.f] || m.port;
+                    if (base) {
+                        for (let step = 1; step <= 20; step++) {
+                            const tx = m.x + (base.x - m.x) * (step / 20);
+                            const ty = m.y + (base.y - m.y) * (step / 20);
+                            if (!this.groundLayerGL.isWaterAt(tx, ty, cvW, cvH)) {
+                                m.x = tx; m.y = ty;
+                                m.prevX = tx; m.prevY = ty;
+                                m.anchorX = tx; m.anchorY = ty;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         for (const ff of this.fallenFlags) ff.t += dt;
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         this.stepEffects(dt);
@@ -8731,6 +9200,43 @@ export class Scene13WarLayer {
             f.ph += dt * 8;
         }
         this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);
+
+        // 🔴 [M3 导播镜头] 开关打开时平滑跟随交战最激烈处（手操挂起 4 秒）
+        if (this.useGroundGL && this.canvas) {
+            if (this.userInteractingTimer > 0) {
+                this.userInteractingTimer -= dt;
+            } else {
+                let sumX = 0, sumY = 0, count = 0;
+                for (const m of this.men) {
+                    if (m.hp > 0 && m.foe) {
+                        sumX += m.x;
+                        sumY += m.y;
+                        count++;
+                    }
+                }
+                if (count === 0) {
+                    for (const m of this.men) {
+                        if (m.hp > 0) {
+                            sumX += m.x;
+                            sumY += m.y;
+                            count++;
+                        }
+                    }
+                }
+                if (count > 0) {
+                    const cx = this.canvas.width / 2;
+                    const cy = this.canvas.height / 2;
+                    const targetFocusX = sumX / count;
+                    const targetFocusY = sumY / count;
+                    const desiredPanX = (cx - targetFocusX) * this.tacticalZoom;
+                    const desiredPanY = (cy - targetFocusY) * this.tacticalZoom;
+                    const smooth = Math.min(1.0, 1.5 * dt);
+                    this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;
+                    this.tacticalPanY += (desiredPanY - this.tacticalPanY) * smooth;
+                    this.clampTacticalPan();
+                }
+            }
+        }
 
         // 胜负：一方兵力枯竭（池 + 场上全灭）才算输（2026-08-11 主人修复后口径）
         const alive = [0, 0];
@@ -8781,14 +9287,30 @@ export class Scene13WarLayer {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
-        const back = m.f === 0 ? -1 : 1;   // 攻方在左往左逃、守方在右往右逃
-        this.fleers.push({
-            x: m.x, y: m.y, f: m.f, key: m.key,
-            dir: this.dir8(back, (Math.random() - 0.5) * 0.8),
-            ph: Math.random() * 8, t: 0,
-            vx: back * FLEE_SPD * (0.9 + Math.random() * 0.2),
-            vy: (Math.random() - 0.5) * FLEE_SPD * 0.6,
-        });
+        const useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+        if (useFieldPlan) {
+            const uBack = { x: -this.advanceVec[m.f].x, y: -this.advanceVec[m.f].y };
+            const uSide = this.sideVec[m.f];
+            const jitter = (Math.random() - 0.5) * 0.4;
+            const spd = FLEE_SPD * (0.9 + Math.random() * 0.2);
+            const vx = (uBack.x + uSide.x * jitter) * spd;
+            const vy = (uBack.y + uSide.y * jitter) * spd;
+            this.fleers.push({
+                x: m.x, y: m.y, f: m.f, key: m.key,
+                dir: this.dir8(vx, vy),
+                ph: Math.random() * 8, t: 0,
+                vx, vy,
+            });
+        } else {
+            const back = m.f === 0 ? -1 : 1;   // 攻方在左往左逃、守方在右往右逃
+            this.fleers.push({
+                x: m.x, y: m.y, f: m.f, key: m.key,
+                dir: this.dir8(back, (Math.random() - 0.5) * 0.8),
+                ph: Math.random() * 8, t: 0,
+                vx: back * FLEE_SPD * (0.9 + Math.random() * 0.2),
+                vy: (Math.random() - 0.5) * FLEE_SPD * 0.6,
+            });
+        }
     }
 
     /**
@@ -8970,6 +9492,8 @@ export class Scene13WarLayer {
             && (this.assetsReadyOnce || performance.now() - this.entryStartedAt > Scene13WarLayer.ENTRY_WAIT_MAX_MS)) {
             this.beginEntryFade(cv);
         }
+        const _tFrameStart = performance.now();
+        let _tGL = 0, _tCull = 0, _tSort = 0, _tDrawDecor = 0, _tDrawUnits = 0;
         // 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」]
         const zoom = this.tacticalZoom;
         const hasZoom = Math.abs(zoom - 1) > 0.001;
@@ -8994,30 +9518,48 @@ export class Scene13WarLayer {
         // 旗帜文字是预渲染图片（LegionFlagDrawer），会跟着镜像变反字，故下方旗帜三段循环内部反翻转回来。
         const flip = this.flipSides;
         if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-        // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
-        // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
-        if (this.decor) {
+        if (this.useGroundGL && this.groundLayerGL) {
+            const _tgl0 = performance.now();
+            const camZoom = zoom;
+            const camX = cv.width / 2 + this.tacticalPanX - 3808 * camZoom;
+            const camY = cv.height / 2 + this.tacticalPanY - 1904 * camZoom;
+            this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom }, this.flipSides);
+            this.groundLayerGL.render();
+            _tGL = performance.now() - _tgl0;
             if (!hasZoom) {
-                ctx.globalCompositeOperation = 'copy';
-                ctx.drawImage(this.decor, 0, 0);
-                ctx.globalCompositeOperation = 'source-over';
-            } else {
-                ctx.drawImage(this.decor, 0, 0);
+                ctx.save();
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, cv.width, cv.height);
+                ctx.restore();
             }
+            // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
+            this.renderWadingRipples(ctx, performance.now() * 0.001);
         } else {
-            ctx.clearRect(0, 0, cv.width, cv.height);
-        }
+            // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
+            // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
+            if (this.decor) {
+                if (!hasZoom) {
+                    ctx.globalCompositeOperation = 'copy';
+                    ctx.drawImage(this.decor, 0, 0);
+                    ctx.globalCompositeOperation = 'source-over';
+                } else {
+                    ctx.drawImage(this.decor, 0, 0);
+                }
+            } else {
+                ctx.clearRect(0, 0, cv.width, cv.height);
+            }
 
-        // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
-        const _wt0 = import.meta.env.DEV ? performance.now() : 0;
-        this.renderDynamicWater(ctx, performance.now() * 0.001);
+            // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
+            const _wt0 = import.meta.env.DEV ? performance.now() : 0;
+            this.renderDynamicWater(ctx, performance.now() * 0.001);
 
-        // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
-        this.renderWadingRipples(ctx, performance.now() * 0.001);
-        if (import.meta.env.DEV) {
-            this.perfWater.push(performance.now() - _wt0);
-            if (this.perfWater.length > 1800) this.perfWater.shift();
-            this.perfWaterPatches = this.decorPatches.reduce((n, q) => n + (q.isWater ? 1 : 0), 0);
+            // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
+            this.renderWadingRipples(ctx, performance.now() * 0.001);
+            if (import.meta.env.DEV) {
+                this.perfWater.push(performance.now() - _wt0);
+                if (this.perfWater.length > 1800) this.perfWater.shift();
+                this.perfWaterPatches = this.decorPatches.reduce((n, q) => n + (q.isWater ? 1 : 0), 0);
+            }
         }
 
         // [PERF 2026-08-29] 对象池复用：原来每帧 new 700+ 个临时对象（vis 数组 + 每个元素），加剧 GC。
@@ -9030,8 +9572,21 @@ export class Scene13WarLayer {
             return it;
         };
         // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
+        const _tcull0 = performance.now();
+        const cullDecor = this.useGroundGL;
+        const vMargin = 120;
+        const vMinX = (0 - cx - this.tacticalPanX) / zoom + cx - vMargin;
+        const vMaxX = (cv.width - cx - this.tacticalPanX) / zoom + cx + vMargin;
+        const vMinY = (0 - cy - this.tacticalPanY) / zoom + cy - vMargin;
+        const vMaxY = (cv.height - cy - this.tacticalPanY) / zoom + cy + vMargin;
+        let decorDrawnCount = 0;
+        const isFarZoom = zoom <= 0.5;
         for (const sprite of this.decorSprites) {
             if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
+            if (cullDecor && (sprite.x < vMinX || sprite.x > vMaxX || sprite.y < vMinY || sprite.y > vMaxY)) continue;
+            // 远景优化：缩放到 0.5 以下时微小草花贴花不到 2 像素，略过以保障高帧率
+            if (isFarZoom && (sprite.asset.startsWith('GRASS_') || sprite.asset.startsWith('FLOWER') || sprite.asset.startsWith('PLANT') || sprite.asset.startsWith('SHRUB') || sprite.asset.startsWith('BUSH') || sprite.asset.startsWith('REEDS') || sprite.asset.startsWith('WEED') || sprite.asset.startsWith('UNDERBRUSH') || sprite.asset.startsWith('FERN'))) continue;
+            if (isFarZoom && ((sprite.frame % 2) === 1) && (sprite.asset.includes('OAK') || sprite.asset.includes('PINE') || sprite.asset.includes('TREE') || sprite.asset.includes('MAPLE') || sprite.asset.includes('BIRCH'))) continue;
             if (sprite.layer === 'world') {
                 const it = take();
                 it.kind = 'environment';
@@ -9039,8 +9594,13 @@ export class Scene13WarLayer {
                 it.z = sprite.z;
                 it.zid = 0;
                 it.sprite = sprite;
+                decorDrawnCount++;
             }
         }
+        _tCull = performance.now() - _tcull0;
+        this.perfStats.decorTotal = this.decorSprites.length;
+        this.perfStats.decorDrawn = decorDrawnCount;
+        this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
         // 已烙的尸体：一张图搞定（在所有活人之下）
         if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, 0, 0);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
@@ -9107,12 +9667,14 @@ export class Scene13WarLayer {
             it.z = 0; it.zid = m.zid; it.sprite = null;
         }
         vis.length = vi;
+        const _tsort0 = performance.now();
         vis.sort((a, b) => {
             const dy = a.y - b.y;
             // 拥挤时 y 每帧抖 1~2px，严格按 y 排会让重叠兵「谁上谁下」狂闪 → 接近时用出生序号 zid 定序（终身不变）
             if (Math.abs(dy) < ZORDER_EPS) return a.zid - b.zid;
             return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
         });
+        _tSort = performance.now() - _tsort0;
 
         // ── [2026-09-05 玩家] 受控编队脚下标记环（画在人之下）：攻击=绿 / 待命=蓝；玩家脚下金环 ──
         if (this.playerSetup && this.playerCtlLanes.size) {
@@ -9153,9 +9715,12 @@ export class Scene13WarLayer {
 
         for (const v of vis) {
             if (v.kind === 'environment') {
+                const _td0 = performance.now();
                 this.drawDecorSprite(ctx, v.sprite!, v.y);
+                _tDrawDecor += performance.now() - _td0;
                 continue;
             }
+            const _tu0 = performance.now();
             const b = this.bank[v.key];
             if (!b) continue;
             const img = b.sets[v.set]?.[v.f]?.[v.dir];
@@ -9185,6 +9750,7 @@ export class Scene13WarLayer {
                 ctx.drawImage(img, fr * b.fh, 0, b.fh, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
             }
             if (v.a < 1) ctx.globalAlpha = 1;
+            _tDrawUnits += performance.now() - _tu0;
         }
 
         // ── 旗面：画在所有人之上（旗杆已在士兵层之下画过）──
@@ -9491,6 +10057,12 @@ export class Scene13WarLayer {
                 if (this.perfTint.length > 1800) this.perfTint.shift();
             }
         }
+        this.perfStats.tGL = +_tGL.toFixed(2);
+        this.perfStats.tCull = +_tCull.toFixed(2);
+        this.perfStats.tSort = +_tSort.toFixed(2);
+        this.perfStats.tDrawDecor = +_tDrawDecor.toFixed(2);
+        this.perfStats.tDrawUnits = +_tDrawUnits.toFixed(2);
+        this.perfStats.tTotal = +(performance.now() - _tFrameStart).toFixed(2);
     }
 
 }
