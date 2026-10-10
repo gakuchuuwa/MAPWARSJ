@@ -1608,6 +1608,13 @@ const PROJ_ASSET_KEY: Record<string, string> = {
  * 弩箭：元戎弩/重弩战象/**高丽战车**（平直穿透）。
  */
 const PROJ_TYPE: Record<string, string> = {
+    // ── [2026-10-11 主人令] 法师类英雄：施法，弹丸**套用希腊火** ──
+    //    🔴 主人 2026-10-11 指正：「**不是猛火油柜，是希腊火**」——
+    //    所以用 `FLAMETHROWER_FLAME`（本仓 `docs/03-runtime/de-assets-2026-08-19.md` §四 明确标注「火焰：FLAMETHROWER_FLAME（希腊火）」），
+    //    不是猛火油柜那套 `PROJ_FIRE`。（两套图内容相同，但口径按主人：叫希腊火、用希腊火这一套。）
+    hero_zhugeliang: 'FLAMETHROWER_FLAME',
+    hero_jadwiga: 'FLAMETHROWER_FLAME',
+    hero_tamar: 'FLAMETHROWER_FLAME',
     // ── [2026-08-18 补] 这些范围伤远程原本没映射，会退回默认的 PROJ_ARROW（投石车射箭矢）──
     antiquity_mangonel: 'PROJ_MANGONEL',
     antiquity_onager: 'PROJ_MANGONEL',
@@ -1805,7 +1812,7 @@ function accuracyOf(key: string, wt: WarType): number {
     return 80;
 }
 /** 平直弹道抛射物（弩炮箭/攻城塔弩/火枪弹/飞轮）：不抛弧、直线飞行。 */
-const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_HELEPOLIS', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE']);
+const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_HELEPOLIS', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE', 'FLAMETHROWER_FLAME']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_BOMBARD_BALL', 'PROJ_MANGONEL', 'PROJ_ROCK', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
@@ -1885,6 +1892,21 @@ const NO_ATTACK_ANIM = new Set([
 
 /** 无攻击动画的车辆开火时的尘烟配色（素色木屑/尘土，区别于火器的橙黄炮口焰） */
 const SHOT_DUST_COLORS = ['#D8CDB8', '#B9A98C', '#8C7F66', '#EDE6D6'] as const;
+
+/**
+ * 🔴 [2026-10-11 主人令]「把 DE 中没有攻击的英雄兵模做成**法师类**」＋「**我觉得可以套用希腊火**」。
+ *
+ * 这些英雄在 DE 的 dat 里本来就 **atk=0（没有攻击）**、素材里也没有攻击动作帧，
+ * 所以不能按"兵"来演；改成**施法者**，攻击演出**整套套用现成的希腊火**（不新造美术）：
+ *   · 投射物 = `PROJ_FIRE`（猛火油柜的火舌，30 帧循环）—— 与喷火兵同一套；
+ *   · 施法口焰 = `FX_MUZZLE_FIRELANCE`（`MUZZLE_FIRE_LANCER` 火焰口焰，8 向）—— 与火矛手同一套；
+ *   · 本人没有攻击帧 → 渲染兜底退回待命帧（见渲染循环里那三行，绝不让兵模消失）。
+ * 现值：诸葛亮（谋士）、雅德维加／塔玛尔（圣旗法师）。
+ * ⚠️ 布塞法洛斯（亚历山大的战马）**不在法师类**：马无法施法，它按"无攻击动作"的替代演出走（NO_ATTACK_ANIM 那条分支）。
+ */
+const CASTER_TYPES = new Set(['hero_zhugeliang', 'hero_jadwiga', 'hero_tamar']);
+/** 希腊火（`FLAMETHROWER_FLAME`）施法光的配色 —— 只用现成火焰素材的色系，不新造美术 */
+const GREEK_FIRE_COLORS = ['#FFF3C4', '#FFC24A', '#FF7A18', '#FFFFFF'] as const;
 const FIREARM_TYPES = new Set([
     'hussite_wagon', 'elite_hussite_wagon',   // 胡斯火铳车（2026-08-18）
     'bombard_cannon', 'houfnice', 'hand_cannoneer',
@@ -1896,6 +1918,7 @@ const PROJ_ANGLE_OFFSET: Record<string, number> = {
     PROJ_SHOT: Math.PI / 2,
     PROJ_GUNPOWDER: Math.PI / 2,
     PROJ_FIRE: Math.PI / 4,    // 猛火油柜喷火：素材等轴测斜 45°，补偿 π/4 使火舌正向水平喷射
+    FLAMETHROWER_FLAME: Math.PI / 4,   // 希腊火：同一套火焰素材，同样斜 45°
 };
 /** 连弩/火箭车连发箭数（AoE2 wiki：诸葛弩 3/5 支；风琴炮 5 弹；火箭车 5 支；其余远程每轮 1 支）。 */
 const PROJ_VOLLEY: Record<string, number> = {
@@ -6122,6 +6145,23 @@ export class Scene13WarLayer {
                     const siegeOnly = this.decorSprites.filter((s) => s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
                     this.decorSprites = siegeOnly;
 
+                    // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 地面是整张底图（含水 / 树林），城池与营地建筑按出兵口摆位，
+                    //    不看底图 ⇒ 建筑漂在水里、压在树林上。给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
+                    //    并拿掉落在地基上的底图树，不让树长在建筑里。
+                    const foundations: Array<{ x: number; y: number; r: number }> = [];
+                    for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
+                    for (const sp of siegeOnly) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
+                    for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
+                    glLayer.flushFoundation();
+                    const onFoundation = (x: number, y: number): boolean => {
+                        const c = glLayer.screenToCell(x, y, VW, VH);
+                        if (!c) return false;
+                        return foundations.some((fd) => {
+                            const f = glLayer.screenToCell(fd.x, fd.y, VW, VH);
+                            return !!f && Math.hypot(c.gx - f.gx, c.gy - f.gy) < fd.r;
+                        });
+                    };
+
                     for (const ob of data.objects) {
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
@@ -6130,6 +6170,7 @@ export class Scene13WarLayer {
                             const py = (ox + oy) * 16;
                             const sx = px - 3808 + VW / 2;
                             const sy = py - 1904 + VH / 2;
+                            if (onFoundation(sx, sy)) continue;
                             this.ensureNatureAsset(r[1]);
                             const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
                             const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
@@ -6613,6 +6654,51 @@ export class Scene13WarLayer {
 
 
     /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
+    /** 战略地图同款「建筑脚下地基底图」贴图：按城型取（与 TerritorySystem 逐一对应）。毡帐营地（YURT）无地基。 */
+    private cityPlazaTile(): string | null {
+        if (this.buildingStyleFor(1) === 'YURT') return null;
+        switch (this.defenderCityType) {
+            case 'stockade': return 'pm1_plaza';
+            case 'small_city': return 'sr2_plaza';
+            case 'medium_city': return 'rd2_plaza';
+            case 'big_city': return 'rd1_plaza';
+            case 'pass': return 'rck_plaza';
+            default: return null;
+        }
+    }
+    private plazaImgs: Record<string, HTMLImageElement> = {};
+
+    /** 🔴 [2026-10-11 主人「底图让战略地图和战术地图一致」] 新战术模式（WebGL 地面）里，守方每栋建筑脚下垫战略地图同款
+     *  `*_plaza.png` 地基底图：宽 = 建筑宽 × 2.3、高 = 宽 × 0.58，与建筑同中心（同 TerritorySystem 的 bGroundW / bGroundH）。 */
+    private drawCityPlazas(ctx: CanvasRenderingContext2D): void {
+        if (this.battleType !== 'siege') return;
+        const tile = this.cityPlazaTile();
+        if (!tile) return;
+        let img = this.plazaImgs[tile];
+        if (!img) { img = new Image(); img.src = '/SUCAI_TERRAIN/' + tile + '.png'; this.plazaImgs[tile] = img; }
+        if (!img.complete || !img.naturalWidth) return;
+        const spawns = this.spawns.filter((sp) => sp.f === 1 && !sp.commander);
+        const used = new Set<DecorSprite>();
+        for (const sp of spawns) {
+            let best: DecorSprite | null = null, bestD = 60 * 60;
+            for (const d of this.decorSprites) {
+                if (used.has(d) || !d.asset.startsWith('BUILDING:') || /GATE|TOWER|WALL/.test(d.asset)) continue;
+                const dd = (d.x - sp.x) ** 2 + (d.y - sp.y) ** 2;
+                if (dd < bestD) { bestD = dd; best = d; }
+            }
+            if (!best) continue;
+            used.add(best);
+            const na = this.natureCache[best.asset];
+            if (!na || !na.meta) continue;
+            const k = best.scale ?? 1;
+            const bW = na.meta.box_w * k;
+            const cx = best.x - na.meta.anchor_x * k * (best.flip ? -1 : 1) + (best.flip ? -1 : 1) * bW / 2;
+            const cy = best.y - na.meta.anchor_y * k + na.meta.box_h * k / 2 - this.elevationLiftAt(best.x, best.y);
+            const gw = bW * 2.3, gh = gw * 0.58;
+            ctx.drawImage(img, cx - gw / 2, cy - gh / 2, gw, gh);
+        }
+    }
+
     private drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite, drawY: number = s.y): void {
         const na = this.natureCache[s.asset];
         if (!na || !na.img || !na.img.complete || !na.meta) return;
@@ -8795,6 +8881,11 @@ export class Scene13WarLayer {
                         // 🔴 [2026-09-17 主人定] 先秦战车改配精锐连弩的武器 → 一并排除尘烟：连弩开火没有尘烟，
                         //    留着就不叫「和精锐连弩相同」了。它仍在 NO_ATTACK_ANIM 里（DE 素材的攻击图=待命图，
                         //    那是素材事实、不能动），开火提示改由连弩的 5 连发弩矢承担，与高丽战车同理。
+                        else if (CASTER_TYPES.has(m.key)) {
+                            // 🔴 [2026-10-11 主人令] 法师类：没有攻击动作，改为**施法**——
+                            //    口焰用希腊火同色系的火焰光（投射物本身就是希腊火素材 FLAMETHROWER_FLAME）
+                            this.muzzleFlash(m, ax, ay, GREEK_FIRE_COLORS);
+                        }
                         else if (this.bank[m.key]?.noAttackAnim && m.key !== 'war_wagon' && m.key !== 'elite_war_wagon' && m.key !== 'war_chariot_ranged') {
                             this.muzzleFlash(m, ax, ay, SHOT_DUST_COLORS);
                         }
@@ -9137,7 +9228,7 @@ export class Scene13WarLayer {
                 let targetFocusX = 0, targetFocusY = 0, count = 0;
                 if (this.heroMan) {
                     // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后跟到本方后方重生点）
-                    targetFocusX = this.heroMan.x;
+                    targetFocusX = this.flipSides ? this.canvas.width - this.heroMan.x : this.heroMan.x;   // 左右对调场次：镜头要对准他的屏幕位置
                     targetFocusY = this.heroMan.y;
                     count = 1;
                 } else {
@@ -9469,6 +9560,7 @@ export class Scene13WarLayer {
                 ctx.restore();
             }
             // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
+            this.drawCityPlazas(ctx);
             this.renderWadingRipples(ctx, performance.now() * 0.001);
         } else {
             // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
@@ -9596,6 +9688,11 @@ export class Scene13WarLayer {
             else if (m.st === 2) set = 'melee';
             else if (m.atkFlip && hasChg) set = 'charge';
             else set = 'atk';
+            // 🔴 [2026-10-11 主人令] 法师类／无攻击动作的兵种：**攻击帧集为空时退回待命帧**。
+            //    否则渲染层取不到图会 `if (!img) continue` —— 整个兵模被跳过，一出手就闪没（诸葛亮/布塞法洛斯原来就是这样）。
+            if ((set === 'atk' || set === 'melee' || set === 'charge') && !this.bank[m.key]?.sets[set]?.[m.f]?.length) {
+                set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
+            }
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
             const it = take();
             it.kind = 'unit';
@@ -9823,8 +9920,8 @@ export class Scene13WarLayer {
                 } else if (a.proj === 'PROJ_THROWING_AXE') {
                     // 飞斧空中 360° 旋转
                     fr = Math.floor(p * 24) % pa.n;
-                } else if (a.proj === 'PROJ_FIRE') {
-                    // 猛火油柜喷火：30 帧火焰动画循环播放
+                } else if (a.proj === 'PROJ_FIRE' || a.proj === 'FLAMETHROWER_FLAME') {
+                    // 猛火油柜喷火 / 法师的希腊火：30 帧火焰动画循环播放
                     fr = Math.floor(p * pa.n) % pa.n;
                 } else if (PROJ_FRAME_DUR[a.proj]) {
                     fr = Math.floor((a.t - delay) / PROJ_FRAME_DUR[a.proj]) % pa.n;
