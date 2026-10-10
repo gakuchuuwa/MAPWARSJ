@@ -939,6 +939,53 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
+
+/**
+ * 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」] 据点建筑栈的派生参数（区域 / 城心城堡 / DE 建筑风格 / 小城石墙）。
+ *    战略地图 renderSingleCity 与战术模式攻城战摆城**同调这一份**，两边不各算各的。
+ */
+export function cityStackParams(city: City): { cityRegion: RegionType; centerCastle: boolean; deStyle: string | null; useStoneWall: boolean } {
+    const displayLat = city.latitude;
+    const displayLng = city.longitude;
+    const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
+    let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
+    const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
+    const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
+    const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
+    // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
+    //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
+    // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
+    //    ⇒ 小城（small_city）一律不画居中城堡（原口径下 64 座小城有：名册 9 + 日本 14 + 青藏 41）；
+    //      小城若确有著名城堡，走「**特殊建筑（城内奇观）**」那条路（`src/data/CityWonders.ts`）。
+    const centerCastle = city.type !== 'small_city'
+        && (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
+
+    // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
+    const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
+    // 🔴 [2026-10-05] 传 city.id：逐城石墙例外（维也纳）
+    useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion, city.id);
+    return { cityRegion, centerCastle, deStyle, useStoneWall };
+}
+
+/** 据点建筑栈（城墙 / 城门 / 建筑 / 地基）HTML —— 战略地图与战术攻城战同一份；baseSize 由调用方给（战术按 DE 原尺寸放大）。 */
+export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType): string {
+    return (city.type === 'big_city'
+    ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
+    : city.type === 'medium_city'
+        ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
+        : city.type === 'pass'
+            // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，
+            //    统一走通用险要：**石墙墙圈(8+4段+双门) + 中心城堡 + 四角4座箭塔，不留民政建筑**。
+            //    理由：① 藏式宗堡是石砌宗山+碉楼，硬木尖桩栅栏是汉地小城/游牧语汇，不合历史；
+            //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
+            //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
+            //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
+            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
+            : city.type === 'stockade'
+                ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
+                : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle));
+}
+
 export class TerritorySystem {
     private map: GameMap;
     private factionManager: FactionManager;
@@ -2041,23 +2088,8 @@ export class TerritorySystem {
         }
 
         // [2026-09-03 主人] 中原/北方/江南小城用中城同款石墙（默认木栅）；[2026-09-11 主人] 希腊文明古国小城也用石墙
-        const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
-        let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
-        const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
-        const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
-        const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
-        // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
-        //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
-        // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
-        //    ⇒ 小城（small_city）一律不画居中城堡（原口径下 64 座小城有：名册 9 + 日本 14 + 青藏 41）；
-        //      小城若确有著名城堡，走「**特殊建筑（城内奇观）**」那条路（`src/data/CityWonders.ts`）。
-        const centerCastle = city.type !== 'small_city'
-            && (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
-
-        // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
-        const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
-        // 🔴 [2026-10-05] 传 city.id：逐城石墙例外（维也纳）
-        useStoneWall = smallCityUsesStoneWall(deStyle, city.buildingStyle, cityRegion, city.id);
+        // 🔴 [2026-10-11] 派生参数抽到 cityStackParams（战术模式攻城战摆城同调，一份不漂移）
+        const { cityRegion, centerCastle, deStyle, useStoneWall } = cityStackParams(city);
 
         // Assets (Using CSS Classes for better performance instead of inline Base64)
         const flagClass = resolveCityFlagClass(city);
@@ -2169,21 +2201,7 @@ export class TerritorySystem {
                  ">
                      ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
                           ${(deStyle
-                              ? (city.type === 'big_city'
-                                  ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
-                                  : city.type === 'medium_city'
-                                      ? buildDeMediumCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle)
-                                      : city.type === 'pass'
-                                          // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，
-                                          //    统一走通用险要：**石墙墙圈(8+4段+双门) + 中心城堡 + 四角4座箭塔，不留民政建筑**。
-                                          //    理由：① 藏式宗堡是石砌宗山+碉楼，硬木尖桩栅栏是汉地小城/游牧语汇，不合历史；
-                                          //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
-                                          //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
-                                          //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
-                                          ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror)
-                                          : city.type === 'stockade'
-                                              ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence)
-                                              : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle))
+                              ? buildCityStackInnerHtml(city, baseSize, deStyle, centerCastle, useStoneWall, cityRegion)
                               : (city.image
                                   ? `<img class="${CITY_MARKER_BUILDING_CLASS}" src="${city.image}" style="
                                       width: ${baseSize}px; height: auto;

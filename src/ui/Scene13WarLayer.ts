@@ -28,6 +28,7 @@ import {
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
+import { strategicCityHtml, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
 import { expandCompositionSlots } from '../types/LegionComposition';
@@ -3412,6 +3413,14 @@ export class Scene13WarLayer {
     private waterCtx: CanvasRenderingContext2D | null = null;
     /** M3 WebGL 地面层渲染器与底层画布（默认关，realGeography 开关开启时启用） */
     private glCanvas: HTMLCanvasElement | null = null;
+    /** 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」] 新战术模式攻城战：战略地图同款城池（null = 旧 13 左右布阵） */
+    private deCity: StrategicCityHtml | null = null;
+    /** 城心（逻辑坐标）＝地图中心 */
+    private deCityCenter = { x: 0, y: 0 };
+    /** 城池地基层（战略地图同款 SUCAI_TERRAIN 贴图，DOM，叠在 WebGL 地面与士兵画布之间） */
+    private deCityGround: HTMLDivElement | null = null;
+    /** 城池建筑与城墙已摆好（量完尺寸、精灵已入场） */
+    private deCityBuilt = false;
     private groundLayerGL: Scene13GroundLayerGL | null = null;
     private useGroundGL = false;
     private realGeoMapData: any = null;
@@ -4153,6 +4162,7 @@ export class Scene13WarLayer {
         this.tacticalPanX = 0; this.tacticalPanY = 0;
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
+        this.clearDeCity();
         this.bank = {};
         this.bankSides.clear();
         this.deferredAssetLoads = [];
@@ -4292,8 +4302,17 @@ export class Scene13WarLayer {
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
-            // 🔴 [CC 裁定] 野战八方向出兵；攻城战本步保持旧 13 城池与阵型，M4 再换
-            let useFieldPlan = this.realGeographyEnabled() && this.battleType === 'field';
+            // 🔴 [CC 裁定] 野战八方向出兵
+            // 🔴 [2026-10-11 主人「攻击方出现在地图的攻击方向，防守方在地图的中间」「城池在中心，样式和战略地图一致」]
+            //    攻城战同走八方向：城池＝战略地图同款建筑栈，摆在地图正中；攻方从真实来向出现。
+            //    该据点没有 DE 建筑栈（整图据点）时退回旧 13 左右布阵。
+            if (this.realGeographyEnabled() && this.battleType === 'siege') {
+                const rec: any = this.defenderCityRecord();
+                const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
+                this.deCity = city ? strategicCityHtml(city) : null;
+                this.deCityCenter = { x: VW / 2, y: VH / 2 };
+            }
+            let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || !!this.deCity);
             if (useFieldPlan) {
                 const centerLat = init.centerLat;
                 const centerLng = init.centerLng;
@@ -4309,13 +4328,20 @@ export class Scene13WarLayer {
                         center: { lat: centerLat, lng: centerLng },
                         attackerFrom: { lat: attFromLat, lng: attFromLng },
                         defenderFrom: defFromLat && defFromLng ? { lat: defFromLat, lng: defFromLng } : null,
-                        battleType: 'field',
+                        battleType: this.deCity ? 'siege' : 'field',
                         // 🔴 [2026-10-11 主人令] 新战术模式只做陆战，**不许设计任何不可通行区域**：
                         //    水、树林、建筑、悬崖一律可通行 ⇒ 不再传 walkableAt（默认判定只挡出图，
                         //    见 systems/battlefield/spawnPlan.mjs 的 LAND_WAR_ALL_PASSABLE）。
                     });
-                    const attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
-                    const attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
+                    let attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
+                    let attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
+                    if (this.deCity) {
+                        // 攻城战：攻方沿来向退到城外 —— 城池外接半径 ＋ 野战同一出生距离（700 px）
+                        const ux = attSX - VW / 2, uy = attSY - VH / 2, ul = Math.hypot(ux, uy) || 1;
+                        const cityR = Math.hypot(this.deCity.width, this.deCity.height) / 2;
+                        attSX = VW / 2 + (ux / ul) * (cityR + 700);
+                        attSY = VH / 2 + (uy / ul) * (cityR + 700);
+                    }
                     const defSX = VW / 2 + (plan.defender.x - plan.defender.y) * 32;
                     const defSY = VH / 2 + (plan.defender.x + plan.defender.y - 119) * 16;
                     this.spawnBases = [{ x: attSX, y: attSY }, { x: defSX, y: defSY }];
@@ -4365,6 +4391,13 @@ export class Scene13WarLayer {
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
+                        // 攻城战守方：九口落在战略地图同款城池的九栋建筑上（主将队在城心）
+                        if (this.deCity && side.f === 1) {
+                            const slots = this.deCity.slots;
+                            const sl = idx < 9 && slots.length > 0 ? slots[idx % slots.length] : { x: 0, y: 0 };
+                            x = this.deCityCenter.x + sl.x;
+                            y = this.deCityCenter.y + sl.y;
+                        }
                         // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 阵位不再避水（原「落水则向本阵锚点退」已删）
                     } else {
                         const back = mx + (2 - cell.row) * depth;
@@ -4644,10 +4677,18 @@ export class Scene13WarLayer {
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
         for (const key of nine) {
             this.ensureType(key, 0);
-            const x = lineX;
-            const y = yMin + Math.random() * (yMax - yMin);
+            let x = lineX;
+            let y = yMin + Math.random() * (yMax - yMin);
             const hp = this.statsFor(key, 0).hp;
-            const tgtX = VW - mx, tgtY = y;
+            let tgtX = VW - mx, tgtY = y;
+            // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械排在攻方阵前（沿来向），目标＝地图中心的城池
+            if (this.deCity) {
+                const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
+                const side = (Math.random() - 0.5) * spanY * 0.6;
+                x = base.x + fwd.x * depth * 2 + sv.x * side;
+                y = base.y + fwd.y * depth * 2 + sv.y * side;
+                tgtX = this.deCityCenter.x; tgtY = this.deCityCenter.y;
+            }
             this.men.push({
                 f: 0, key, jx: 0, jy: 0,
                 zid: this.manSeq++,
@@ -4968,6 +5009,7 @@ export class Scene13WarLayer {
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
         if (this.glCanvas) this.glCanvas.style.display = 'none';
+        this.clearDeCity();
         if (!keepFrame && this.canvas) this.fadeOutCanvas();
     }
 
@@ -5380,6 +5422,123 @@ export class Scene13WarLayer {
      *  🔴 [2026-08-22 主人改] 9 建筑摆放位置**全部随机**（不再按离质心距离分层），建筑朝向随机（左右镜像随机）。
      *  🔴 [2026-08-22 主人改] 攻击方（野战双方+攻城攻方）：3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔。
      *  🔴 [2026-08-22 主人改] 攻城战守方按城等级分时代：大城=帝国 age4（城堡+全建筑）、中城=城堡 age3（城堡+基础+警戒塔）、险要=封建 age2+城堡（要塞，7 封建+警戒塔）、小城=封建 age2（无城堡，7 封建+瞭望塔+警戒塔）。 */
+    /** 收起新战术模式攻城战的城池（地基层 DOM 摘掉、状态清零） */
+    private clearDeCity(): void {
+        this.deCity = null;
+        this.deCityBuilt = false;
+        if (this.deCityGround) { this.deCityGround.remove(); this.deCityGround = null; }
+    }
+
+    /**
+     * 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」] 摆战略地图同款城池：
+     *    屏外排版量出每张图的矩形 → 建筑 / 城墙 / 城门入场为世界精灵（与士兵按脚点排序），
+     *    城墙城门照旧可攻击、可破（WALL_GATE_STATS 同一套）；地基贴图留在 DOM 地基层。
+     */
+    private buildDeCity(): void {
+        const c = this.deCity;
+        if (!c) return;
+        const gen = this.assetGen;
+        this.pending++;
+        let released = false;
+        const release = () => { if (released) return; released = true; if (gen === this.assetGen) this.pending--; };
+        window.setTimeout(release, 8000);
+        this.deCityGround = strategicCityGroundElement(c);
+        void measureStrategicCity(c).then(async (pieces) => {
+            if (gen !== this.assetGen || this.deCity !== c) return;
+            const metas = await Promise.all(pieces.map((p) =>
+                fetch('/SUCAI_BUILDING/' + p.dir + '/_meta.json').then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+            if (gen !== this.assetGen || this.deCity !== c) return;
+            const { x: cx, y: cy } = this.deCityCenter;
+            pieces.forEach((p, i) => {
+                const meta = metas[i];
+                if (!meta || !meta.box_w) return;
+                const asset = 'BUILDING:' + p.dir;
+                this.ensureNatureAsset(asset);
+                const k = p.width / meta.box_w;
+                const x = cx + (p.flip ? p.left + p.width - meta.anchor_x * k : p.left + meta.anchor_x * k);
+                const y = cy + p.top + meta.anchor_y * k;
+                const sprite: DecorSprite = {
+                    asset, frame: 0, x, y, flip: p.flip, layer: 'world', z: 1, scale: k,
+                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                };
+                this.decorSprites.push(sprite);
+                if (p.kind === 'building') { this.trackCityBuilding(sprite); return; }
+                sprite.obstruction = { x: 0.95, y: 0.95 };
+                if (p.kind === 'wall') {
+                    // 木栅栏/篱笆走 WOOD_WALL 档、无破损档；石墙/垛墙 STONE_WALL、破墙前按 HP 切 D25/D50/D75
+                    const wood = /PALISADE|FENCE/.test(p.dir);
+                    const wKey = wood ? 'WOOD_WALL' : 'STONE_WALL';
+                    const st = WALL_GATE_STATS[wKey];
+                    const destrAssets = wood ? undefined : ['D25', 'D50', 'D75'].map((t) => `${p.dir}_${t}`);
+                    if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
+                    this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets });
+                    return;
+                }
+                // 城门：沿门线铺 6 点碰撞体堵两侧缝隙（同旧 13 placeGate）；破门播倒塌动画 → 残骸
+                const dSign = (/_SE$/.test(p.dir) ? 1 : -1) * (p.flip ? -1 : 1);
+                const extraSprites: DecorSprite[] = [];
+                for (let step = -3; step <= 3; step++) {
+                    if (step === 0) continue;
+                    const extra: DecorSprite = {
+                        asset: '', frame: 0, x: x + step * 24 * k, y: y + step * 12 * k * dSign, flip: false, layer: 'world', z: 1,
+                        obstruction: { x: 0.95, y: 0.95 },
+                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                    };
+                    this.decorSprites.push(extra);
+                    extraSprites.push(extra);
+                }
+                const isFenceGate = p.dir.includes('FENCE');
+                const baseDestrName = p.dir.includes('ARCHAIC_GATE') ? `DARK_GATE_PALISADE_${/_SE$/.test(p.dir) ? 'SE' : 'NE'}` : p.dir;
+                const rubbleAsset = isFenceGate ? undefined : `${baseDestrName}_RUBBLE`;
+                if (rubbleAsset) {
+                    this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
+                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                }
+                const st = WALL_GATE_STATS.STONE_GATE;
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
+            });
+            this.deCityBuilt = true;
+            this.applyDeCityToGround();
+        }).finally(release);
+    }
+
+    /** 城池落地：城址范围内清掉底图的水 / 林、整平高程，并拿掉压在城里的底图树（WebGL 地面与城池哪个后就绪，哪个调） */
+    private applyDeCityToGround(): void {
+        const c = this.deCity, gl = this.groundLayerGL, cv = this.canvas;
+        if (!c || !this.deCityBuilt || !gl || !cv) return;
+        const { x: cx, y: cy } = this.deCityCenter;
+        const W = cv.width, H = cv.height;
+        const rx = c.width / 2, ry = c.height / 2;
+        const level = gl.elevationLevelAt(cx, cy, W, H);
+        // 城池外接椭圆换算成格半径（等轴格：横向约 45 px、纵向约 22 px 一格）
+        const rCells = Math.max(rx / 45, ry / 22) + 1;
+        gl.flattenFoundation(cx, cy, W, H, rCells, level);
+        for (let py = -ry; py <= ry; py += 24) {
+            for (let px = -rx; px <= rx; px += 48) {
+                if ((px * px) / (rx * rx) + (py * py) / (ry * ry) > 1) continue;
+                gl.carveFoundation(cx + px, cy + py, W, H, 2);
+            }
+        }
+        gl.flushFoundation();
+        const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
+        this.decorSprites = this.decorSprites.filter((sp) => sp.asset.startsWith('BUILDING') || sp.asset === '' || !inCity(sp.x, sp.y));
+        for (const sp of this.decorSprites) if (inCity(sp.x, sp.y)) sp.lift = undefined;   // 整平后重取高程
+    }
+
+    /** 地基层 DOM 跟着镜头走：城心屏幕位置 ＝ 画布中心 ＋ 平移 ＋ (城心 − 中心) × 缩放 */
+    private syncDeCityGround(): void {
+        const el = this.deCityGround, c = this.deCity, cv = this.canvas;
+        if (!el || !c || !cv) return;
+        if (!this.useGroundGL || (!this.active && !this.lingering)) { el.style.display = 'none'; return; }
+        const z = this.tacticalZoom;
+        const lift = this.elevationLiftAt(this.deCityCenter.x, this.deCityCenter.y);
+        const sx = cv.width / 2 + this.tacticalPanX + (this.deCityCenter.x - cv.width / 2) * z;
+        const sy = cv.height / 2 + this.tacticalPanY + (this.deCityCenter.y - lift - cv.height / 2) * z;
+        el.style.display = 'block';
+        el.style.opacity = cv.style.opacity;
+        el.style.transform = `translate(${sx - (c.width / 2) * z}px, ${sy - (c.height / 2) * z}px) scale(${z})`;
+    }
+
     private applySpawnBuildings(): void {
         const sides: Array<0 | 1> = [0, 1];
         for (const f of sides) this.applyBuildingsForSide(f);
@@ -5390,6 +5549,8 @@ export class Scene13WarLayer {
         // 若把它计入这里，守城方会因 10 !== 9 提前返回，整座城墙都不生成。
         // 🔴 [2026-09-23] 主将队（第 10 口，前排再往前）不是编制建筑位：不计入，否则拒马挤在主将一口前、营地城墙因 10≠9 全不生成
         const side = this.spawns.filter((s) => s.f === f && !s.playerElite && !s.commander);
+        // 🔴 [2026-10-11] 新战术模式攻城战守方：城池＝战略地图同款，整座摆在地图中心（不再走下面旧 13 的「右侧直墙＋九口建筑」）
+        if (f === 1 && this.deCity) { this.buildDeCity(); return; }
         // 攻击方（攻城/野战）、野战防守方，以及**攻城城寨(stockade)/漠北蒙古(MOBEI_MONGOL)守方**都在最前排营地前铺一道木桩拒马线。
         // 其余攻城守方（中城/大城/关隘）有城墙，不摆（主人 2026-09-03：城寨前面用拒马，不用篱笆）。
         const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
@@ -6171,7 +6332,7 @@ export class Scene13WarLayer {
                 // CC 补项 1：新地图物件进 vis Y 排序，替换旧 13 随机草木
                 const data = transposeMapData(mapData);
                 if (data && data.objects) {
-                    const siegeOnly = this.decorSprites.filter((s) => s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
+                    const siegeOnly = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
                     this.decorSprites = siegeOnly;
 
                     // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 地面是整张底图（含水 / 树林），城池与营地建筑按出兵口摆位，
@@ -6182,6 +6343,7 @@ export class Scene13WarLayer {
                     for (const sp of siegeOnly) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
                     for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
                     glLayer.flushFoundation();
+                    this.applyDeCityToGround();
                     const onFoundation = (x: number, y: number): boolean => {
                         const c = glLayer.screenToCell(x, y, VW, VH);
                         if (!c) return false;
@@ -6700,7 +6862,7 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-11 主人「底图让战略地图和战术地图一致」] 新战术模式（WebGL 地面）里，守方每栋建筑脚下垫战略地图同款
      *  `*_plaza.png` 地基底图：宽 = 建筑宽 × 2.3、高 = 宽 × 0.58，与建筑同中心（同 TerritorySystem 的 bGroundW / bGroundH）。 */
     private drawCityPlazas(ctx: CanvasRenderingContext2D): void {
-        if (this.battleType !== 'siege') return;
+        if (this.battleType !== 'siege' || this.deCity) return;   // 战略同款城池自带地基层
         const tile = this.cityPlazaTile();
         if (!tile) return;
         let img = this.plazaImgs[tile];
@@ -9590,6 +9752,7 @@ export class Scene13WarLayer {
             }
             // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
             this.drawCityPlazas(ctx);
+            this.syncDeCityGround();
             this.renderWadingRipples(ctx, performance.now() * 0.001);
         } else {
             // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage

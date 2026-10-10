@@ -310,6 +310,7 @@ export class Scene13GroundLayerGL {
   private fieldTex: WebGLTexture | null = null;
   private fieldPixels: Uint8Array | null = null;
   private fieldDirty = false;
+  private elevDirty = false;
   private grassTex: WebGLTexture | null = null;
   private sandTex: WebGLTexture | null = null;
   private forestTex: WebGLTexture | null = null;
@@ -712,8 +713,42 @@ export class Scene13GroundLayerGL {
     this.fieldDirty = true;
   }
 
+  /**
+   * 城池地基整平：以屏幕逻辑坐标为中心、radiusCells 格内的高程拉平到 level（边缘平滑过渡），
+   * 让整座城（建筑 / 城墙 / 地基层）站在同一高度上。改完调 flushFoundation 生效。
+   */
+  public flattenFoundation(screenX: number, screenY: number, W: number, H: number, radiusCells: number, level: number): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    if (!c) return;
+    const V = this.N + 1;
+    const r = radiusCells;
+    const x0 = Math.max(0, Math.floor(c.gx - r - 2)), x1 = Math.min(this.N, Math.ceil(c.gx + r + 2));
+    const y0 = Math.max(0, Math.floor(c.gy - r - 2)), y1 = Math.min(this.N, Math.ceil(c.gy + r + 2));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const d = Math.hypot(x - c.gx, y - c.gy);
+        const t = Math.min(1, Math.max(0, (d - r) / 2));   // 圈内 0（整平）→ 外缘 2 格过渡到原样
+        if (t >= 1) continue;
+        const i = y * V + x;
+        this.cornerElev[i] = level + (this.cornerElev[i] - level) * t;
+        this.cornerLight[i] = 1 + (this.cornerLight[i] - 1) * t;
+      }
+    }
+    this.elevDirty = true;
+  }
+
+  /** 按屏幕逻辑坐标取地面高程级（未乘 16） */
+  public elevationLevelAt(screenX: number, screenY: number, W: number, H: number): number {
+    return this.elevationLiftAt(screenX, screenY, W, H) / 16;
+  }
+
   /** 地基改动攒够后一次上传（carveFoundation 之后调用一次） */
   public flushFoundation(): void {
+    if (this.elevDirty) {
+      if (this.buf) this.gl.deleteBuffer(this.buf);
+      this.buf = null;                 // render() 里按新高程重建顶点
+      this.elevDirty = false;
+    }
     if (!this.fieldDirty || !this.fieldPixels || !this.fieldTex) return;
     const gl = this.gl;
     gl.bindTexture(gl.TEXTURE_2D, this.fieldTex);
