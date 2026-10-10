@@ -77,14 +77,14 @@ export class RiverOverlayLayer extends L.GridLayer {
     
 
     /** 获取当前加载到 DOM 中的所有带海岸浪潮数据的瓦片 */
-    public getActiveWaveTiles(): Array<{ tile: HTMLElement; waves: Float32Array }> {
-        const res: Array<{ tile: HTMLElement; waves: Float32Array }> = [];
+    public getActiveWaveTiles(): Array<{ tile: HTMLElement; waves: Float32Array; coords: L.Coords }> {
+        const res: Array<{ tile: HTMLElement; waves: Float32Array; coords: L.Coords }> = [];
         const tiles = (this as any)._tiles;
         if (!tiles) return res;
         for (const key in tiles) {
             const el = tiles[key]?.el as any;
             if (el && el._coastalWaves && el._coastalWaves.length > 0) {
-                res.push({ tile: el, waves: el._coastalWaves });
+                res.push({ tile: el, waves: el._coastalWaves, coords: tiles[key].coords });
             }
         }
         return res;

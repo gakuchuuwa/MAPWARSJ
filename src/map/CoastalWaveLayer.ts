@@ -114,16 +114,20 @@ export class CoastalWaveLayer extends L.Layer {
         const g = this.ctx;
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const canvasRect = this.canvas.getBoundingClientRect();
+        // 🔴 [2026-10-11 主人「玩家在战略地图移动时掉帧」] 不再每帧 getBoundingClientRect：
+        //    本层自有 rAF 紧跟在主循环 panBy 之后，读矩形会逼浏览器同步重排整张地图 DOM（实测 15 秒 793ms，全是它）。
+        //    改用 Leaflet 坐标换算（只读已存的位置，不触发排版）：画布左上角 = 它的 layer 位置，瓦片左上角 = 瓦片坐标反投影。
+        const map = this.map;
+        const canvasPt = map.layerPointToContainerPoint(L.DomUtil.getPosition(this.canvas) ?? L.point(0, 0));
         const t = now / 1000;
         const cw = this.canvas.width;
         const ch = this.canvas.height;
 
         for (let ti = 0; ti < activeTiles.length; ti++) {
-            const { tile, waves } = activeTiles[ti];
-            const tileRect = tile.getBoundingClientRect();
-            const tx = tileRect.left - canvasRect.left;
-            const ty = tileRect.top - canvasRect.top;
+            const { waves, coords } = activeTiles[ti];
+            const tilePt = map.latLngToContainerPoint(map.unproject(L.point(coords.x * 256, coords.y * 256), coords.z));
+            const tx = tilePt.x - canvasPt.x;
+            const ty = tilePt.y - canvasPt.y;
 
             // 视口粗裁剪
             if (tx > cw || tx + 256 < 0 || ty > ch || ty + 256 < 0) continue;

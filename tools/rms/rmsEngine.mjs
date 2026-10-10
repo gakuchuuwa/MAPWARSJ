@@ -1,4 +1,4 @@
-﻿/**
+/**
  * RMS 地图引擎（验证性程序，2026-10-09）：把 rmsParse 展平后的指令，按 DE 顺序跑成一张地图。
  *
  *   LAND → ELEVATION → TERRAIN → OBJECTS（悬崖 / 连接暂不做）
@@ -98,12 +98,9 @@ export const TUNE = {
     /** 成团紧凑度：gamma = clumping_factor / 此值（越大越方正）——推断 */
     clumpScale: 10,
     /**
-     * 是否启用 `max_distance_to_other_zones`（第 30 轮实现，**默认关**）。
-     * ⚠️ 待校准：按 genie-rms 的「8 方向 N 格」实现后，同主题对比里 `GOLD_MINE` 35→20、`STONE_MINE` 19→5（**过严**），
-     *    但物件总数反而更接近 DE（9319 vs 9254，差 0.7%）。语义方向应是对的（手册："keeping objects away from the shore"），
-     *    存疑的是「zone」的口径 —— 我们用 `landZone`（内海 16 / 玩家陆地 1），DE 可能指**玩家 zone**。
+     * 是否启用 `max_distance_to_other_zones`（DE 官方参数，用于鱼类离开岸边）。
      */
-    useMaxZone: false,
+    useMaxZone: true,
 };
 
 /** 把块里的子指令整理成 { 名: 参数数组 }（后者覆盖前者），旗标类指令值为 [] */
@@ -1135,7 +1132,8 @@ export class MapEngine {
             }
             // 手册：max_distance_to_other_zones ＝「物件能离**别的 zone** 多近」（防靠岸、防敌船）。
             //   实现依 genie-rms：在**上/下/左/右 + 四角共 8 个方向**、距离 N 处检查 zone 是否与中心一致。
-            if (TUNE.useMaxZone && maxZone > 0 && this.zoneGrid) {
+            //   ⚠️ 官方 DE 语义：此约束只限制水生物件或有明确地形指定的物件（如海鱼离陆地 zone），不误砍陆地常规矿产。
+            if (TUNE.useMaxZone && maxZone > 0 && this.zoneGrid && (waterOnly || onT !== null)) {
                 const zc = this.zoneGrid[gi];
                 for (const [dx, dy] of D8) {
                     const xx = x + dx * maxZone, yy = y + dy * maxZone;
