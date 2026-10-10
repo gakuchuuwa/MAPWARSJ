@@ -203,7 +203,8 @@ http.createServer(async (req, res) => {
                 }
 
                 // 5. 生成 mapdata 数据模型
-                const mapData = buildMapData(eng, { size: N, source: `real_geo_${name}`, tInfo });
+                //    🔴 新战术模式只做陆战（主人 2026-10-11 令）：水/树林/建筑/悬崖一律可通行 ⇒ passable 全 1
+                const mapData = buildMapData(eng, { size: N, source: `real_geo_${name}`, tInfo, passableAll: true });
                 const mapDataJson = toJson(mapData, { theme, usedSkeleton: true });
                 const engineMs = performance.now() - t0;
 
