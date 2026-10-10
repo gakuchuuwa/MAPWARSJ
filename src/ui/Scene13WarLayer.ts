@@ -5294,6 +5294,13 @@ export class Scene13WarLayer {
         const roadCells: Array<[number, number]> = [];
         const visited = new Set<string>();
 
+        // 🔴 [2026-10-11 主人报「建筑和地基没有对齐」] 城池走的是**战略地图地基层**那条路（`this.deCity`，
+        //    那一层 HTML 自带 `clip-path` 菱形裁切 + `rd2.png` 平铺，2026-09-08 主人定过「城内饱满无漏黑、城外零溢出」）。
+        //    而下面这段是按**出兵口**另算一套格坐标再铺圆＋外接矩形 —— 两套几何必然错位
+        //    （实测：地垫比建筑脚点宽 1.85 倍、中心偏 dx −17 / dy −13px，还盖在地基层上面、比城池大一圈）。
+        //    ⇒ 有战略同款城池时**一层就够**：地基层自己就是地基，这里不再铺。
+        if (this.deCity) return;
+
         // 围绕守方各个建筑点向外辐射 2~3 格，形成连贯自然的城池石基与街道网
         let minGx = Infinity, maxGx = -Infinity, minGy = Infinity, maxGy = -Infinity;
         for (const s of defenderSpawns) {
@@ -6131,8 +6138,7 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 真实地理试验开关（2026-10-07）：默认关，主人看过试验截图点头后再开。
-     * 打开：浏览器控制台 `localStorage.setItem('mapwar.realGeography','1')`，下一场战术战斗生效。
+     * 真实地理开关（2026-10-07）：默认开，保持最新战术模式。
      */
     private static realGeographyEnabled(): boolean {
         try { return localStorage.getItem('mapwar.realGeography') !== '0'; } catch { return true; }
@@ -9715,10 +9721,12 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」]
         const zoom = this.tacticalZoom;
         const hasZoom = Math.abs(zoom - 1) > 0.001;
+        const hasPan = Math.abs(this.tacticalPanX) > 0.5 || Math.abs(this.tacticalPanY) > 0.5;
+        const hasTransform = hasZoom || hasPan;
         const cx = cv.width / 2;
         const cy = cv.height / 2;
 
-        if (hasZoom) {
+        if (hasTransform) {
             ctx.clearRect(0, 0, cv.width, cv.height);
             // 缩小模式下垫底平铺地形，防止边缘漏黑底
             if (zoom < 1 && this.decorHasTerrain && this.groundPainter.terrain) {
@@ -9744,7 +9752,7 @@ export class Scene13WarLayer {
             this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom }, this.flipSides);
             this.groundLayerGL.render();
             _tGL = performance.now() - _tgl0;
-            if (!hasZoom) {
+            if (!hasTransform) {
                 ctx.save();
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 ctx.clearRect(0, 0, cv.width, cv.height);
@@ -9758,7 +9766,7 @@ export class Scene13WarLayer {
             // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
             // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
             if (this.decor) {
-                if (!hasZoom) {
+                if (!hasTransform) {
                     ctx.globalCompositeOperation = 'copy';
                     ctx.drawImage(this.decor, 0, 0);
                     ctx.globalCompositeOperation = 'source-over';
@@ -10271,7 +10279,7 @@ export class Scene13WarLayer {
             }
         }
         if (flip) ctx.restore();
-        if (hasZoom) ctx.restore();
+        if (hasTransform) ctx.restore();
         this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
         if (this.timeOfDay.active && this.decorHasTerrain) {   // 地形缺图时画布不是满铺，不能整屏压色

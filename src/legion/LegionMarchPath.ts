@@ -6,7 +6,7 @@ import {
     nearestPointOnPolyline,
 } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { interpolateLongitudeShortest } from '../utils/GeoLongitude';
+import { interpolateLongitudeShortest, shortestLongitudeDelta } from '../utils/GeoLongitude';
 
 export interface MarchCityAccess {
     getCity(id: string): City | undefined;
@@ -57,8 +57,28 @@ export function findFirstHostileAlongPolyline(
         : null;
     let bestAlong = fallbackProjection?.along ?? Infinity;
 
+    // 🔴 [2026-10-11 主人「玩家在战略地图移动时掉帧」] 先用路径外接框（外扩 ZOC）筛掉离路远的城，
+    //    再做逐段投影。原来是全部 1100 座城 × 全路径逐段投影，AI 改道那一帧单军团实测 213ms。
+    //    框外的城到折线任一点的距离必 > ZOC（欧氏距离 ≥ 各轴差），本来就会被下面的 distance > zoc 跳过 ⇒ 结果不变。
+    const lng0 = path[0].lng;
+    let minLat = Infinity, maxLat = -Infinity, minDLng = Infinity, maxDLng = -Infinity;
+    for (const p of path) {
+        const dLng = shortestLongitudeDelta(lng0, p.lng);
+        if (p.lat < minLat) minLat = p.lat;
+        if (p.lat > maxLat) maxLat = p.lat;
+        if (dLng < minDLng) minDLng = dLng;
+        if (dLng > maxDLng) maxDLng = dLng;
+    }
+    // 路径横跨超过半个地球时经度差会绕回，框不可靠 ⇒ 不筛（保持原逻辑）
+    const useBox = maxDLng - minDLng < 170;
+
     for (const city of cities.getCities()) {
         if (!city.factionId || city.factionId === factionId) continue;
+        if (useBox) {
+            if (city.latitude < minLat - zoc || city.latitude > maxLat + zoc) continue;
+            const dLng = shortestLongitudeDelta(lng0, city.longitude);
+            if (dLng < minDLng - zoc || dLng > maxDLng + zoc) continue;
+        }
         const cpos = { lat: city.latitude, lng: city.longitude };
         // 军团脚下的城不算行军目标（路径会退化成 0 点）；交给 ZOC 就地开战
         if (getEuclideanDistance(cpos, path[0]) <= zoc) continue;

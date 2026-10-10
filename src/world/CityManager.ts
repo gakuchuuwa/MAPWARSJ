@@ -610,8 +610,23 @@ export class CityManager {
         PerformanceMonitor.getInstance().noteAsyncWork('cityFactionChange', performance.now() - t0);
     }
 
+    /** id → 数组下标的查找索引（只作加速；每次命中都回数组核对，对不上就回退线性查找并重建，结果与原线性查找一致） */
+    private cityIndexById: Map<string, number> = new Map();
+
     public getCity(id: string): City | undefined {
-        return this.cities.find(c => c.id === id);
+        // 🔴 [2026-10-11 主人「玩家在战略地图移动时掉帧」] 原来每次都线性扫 1100 座城，
+        //    AI 行为树每帧成百上千次调用（实测 60 秒 357ms，集中在 AI 尖峰帧里）。
+        const idx = this.cityIndexById.get(id);
+        if (idx !== undefined) {
+            const c = this.cities[idx];
+            if (c && c.id === id) return c;
+        }
+        const found = this.cities.find(c => c.id === id);
+        if (found) {
+            this.cityIndexById.clear();
+            for (let i = 0; i < this.cities.length; i++) this.cityIndexById.set(this.cities[i].id, i);
+        }
+        return found;
     }
 
     public getCityById(id: string): City | undefined {
