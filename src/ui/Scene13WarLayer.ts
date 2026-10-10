@@ -4299,18 +4299,11 @@ export class Scene13WarLayer {
                 const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
                 // 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」]
                 //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
-                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 改用 **DE 原生像素**版：先读素材 `_meta.json`
-                //    的 box_w（＝DE 原生素材像素宽），再让件表按原生像素逐类/逐件定宽（战略地图那条路不传原生表，不动）。
-                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 必须走 **DE 原生像素**版：
-                //    先读素材 `_meta.json` 的 box_w（＝DE 原生素材像素宽），再让件表按原生像素逐类/逐件定宽。
-                //    ⚠️ 这一行被外部进程回退过 4 次（每次都表现为「改了却不生效」），改这里请连带跑
-                //    `scratch/verify_all_citytypes_scale.mjs` 复核。
-                this.deCity = null;
-                void strategicCityHtmlNative(city).then((h) => {
-                    if (this.battleType !== 'siege') return;
-                    this.deCity = h;
-                    this.applyDeCityToGround();
-                });
+                // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 走 **DE 原生像素**版：件表按素材原生像素
+                //    逐类（建筑）/逐件（墙·门·垛·箭塔）定宽；尺寸来自构建期常量表 `DE_SPRITE_BOX_W`，**同步可取**。
+                //    必须是同步的：异步会让城池件表晚于「出兵口布阵」就绪 ⇒ 八方向出兵整支落到旧 13 回退阵型
+                //    （实测八个方向基座恒为 512,450）。战略地图那条路不传原生表，一个像素不动。
+                this.deCity = city ? strategicCityHtmlNative(city) : null;
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
             let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || !!this.deCity);
