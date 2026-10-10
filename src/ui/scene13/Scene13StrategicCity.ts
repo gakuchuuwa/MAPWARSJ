@@ -11,7 +11,7 @@
 import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
 import { resolveCastleAsset } from '../../config/deCastleAssets';
-import { DE_STONE_ANCHORS_BY_STYLE } from '../../systems/cityWallShared';
+import { DE_STONE_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS } from '../../systems/cityWallShared';
 import type { RegionType } from '../../systems/RegionSystem';
 
 /** 城墙段（widthFactor 0.16）在战术里画成 **DE 一格** ⇒ baseSize = 107 / 0.16 = 668.75
@@ -72,6 +72,13 @@ async function buildNativeSizes(city: City, deStyle: string): Promise<CityNative
     const names = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY', 'TOWER'];
     const dirs = new Set<string>();
     for (const age of ages) for (const n of names) dirs.add(`${deStyle}_${n}_${age}`);
+    // 城寨/毡帐营地的建筑素材（棚屋 HUT_*、蒙古包 YURT_*、定居点等）：战术侧按原生宽画
+    const stockadeNames = ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
+        'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
+        'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
+        'OUTPOST', 'FORTIFIED_OUTPOST'];
+    const extraDirs = new Set<string>();
+    for (const n of stockadeNames) { dirs.add(`${deStyle}_${n}`); extraDirs.add(`${deStyle}_${n}`); extraDirs.add(n); }
     let castleDir: string | null = null;
     if (city.type !== 'small_city') {
         try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id); } catch { castleDir = null; }
@@ -92,14 +99,21 @@ async function buildNativeSizes(city: City, deStyle: string): Promise<CityNative
         const w = boxOf.get(`${deStyle}_${n}_${age}`);
         if (w) widths[`${age}:${n}`] = w;
     }
-    // 墙体/城门/城跺逐件原生框宽（墙 107 / 门 307 / 垛 163 各不相同）
+    // 墙体/城门/城垛/箭塔/中心城堡 逐件原生框宽（墙 107 / 门 307 / 垛 163 / 箭塔 AGE3 216 / AGE4 236 各不相同）
     const spriteW: Record<string, number> = {};
-    const anchors = DE_STONE_ANCHORS_BY_STYLE[deStyle];
     const wallDirs = new Set<string>();
-    for (const a of Object.values(anchors ?? {})) {
-        const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(a.path);
-        if (m) wallDirs.add(m[1]);
-    }
+    const addAnchorDirs = (tbl: any) => {
+        for (const a of Object.values(tbl ?? {})) {
+            const m = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec((a as any)?.path ?? '');
+            if (m) wallDirs.add(m[1]);
+        }
+    };
+    addAnchorDirs(DE_STONE_ANCHORS_BY_STYLE[deStyle]);
+    addAnchorDirs(DE_PALISADE_ANCHORS);
+    addAnchorDirs(DE_DARK_PALISADE_ANCHORS);
+    addAnchorDirs(DE_ARCHAIC_PALISADE_ANCHORS);
+    for (const d of extraDirs) wallDirs.add(d);
+    if (castleDir) wallDirs.add(castleDir);
     await Promise.all([...wallDirs].map(async (dir) => {
         if (boxOf.has(dir)) { spriteW[dir] = boxOf.get(dir)!; return; }
         try {

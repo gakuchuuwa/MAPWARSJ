@@ -30,15 +30,12 @@ const NATURE_ALIAS: Record<string, [string, string]> = {
   GRASS_GREEN: ['NATURE', 'GRASS_GREEN'], GRASS_DRY: ['NATURE', 'GRASS_DRY'], PLANT_FLOWER: ['NATURE', 'FLOWER'],
   ROCKX: ['NATURE', 'ROCK1'], ROCKSX: ['NATURE', 'ROCK2'], ROCKGX: ['NATURE', 'ROCK3'],
   ROCKF1: ['NATURE', 'ROCK_FORMATION1'], ROCKF2: ['NATURE', 'ROCK_FORMATION2'], ROCKF3: ['NATURE', 'ROCK_FORMATION3'],
-  CLIFF_DESERT_01: ['NATURE', 'CLIFF_SAND'], CLIFF_SNOW_01: ['NATURE', 'CLIFF_SNOW'], CLIFF_DEFAULT_01: ['NATURE', 'CLIFF_DEFAULT'],
-  CLIFF_DEFAULT_1: ['NATURE', 'CLIFF_DEFAULT'],
   TREEA: ['NATURE', 'OAK'], TREEB: ['NATURE', 'OAK'], TREEC: ['NATURE', 'OAK'], FORTR: ['NATURE', 'OAK'],
   FAUTUM: ['NATURE', 'AUTUMN_OAK'], FAUTUMS: ['NATURE', 'AUTUMN_OAK'],
   FDEAD: ['NATURE', 'DEAD_TREE'], FLBAM: ['NATURE', 'LUSH_BAMBOO'], FRAIN: ['NATURE', 'RAINFOREST'], FACA: ['NATURE', 'ACACIA'],
   PLAN_WEED_GREEN: ['NATURE', 'WEED'], PLAN_BUSH_GREEN: ['NATURE', 'BUSH_GREEN'],
   PLANT_UNDERBRUSH_JUNGLE: ['NATURE', 'UNDERBRUSH_JUNGLE'], PLANT_UNDERBRUSH_RAINFOREST: ['NATURE', 'UNDERBRUSH_RAINFOREST'],
   PLANT_RAINFOREST: ['NATURE', 'RAINFOREST'], FLWRB: ['NATURE', 'FLOWERBED'], STUMP2: ['NATURE', 'DEAD_TREE'],
-  CLIFF_LIMESTONE_01: ['NATURE', 'CLIFF_LIMESTONE'], MARBLE_CLIFF_1: ['NATURE', 'CLIFF_LIMESTONE'],
   GOLDM: ['NATURE', 'MINE_GOLD'], STONM: ['NATURE', 'MINE_STONE'], PSTM: ['NATURE', 'MINE_STONE'],
   FORAGM: ['NATURE', 'FORAGE_BUSH'], FORAG: ['NATURE', 'FORAGE_BUSH'], FORAGPINEAPPLE: ['NATURE', 'FORAGE_PINEAPPLE'],
   DEERX: ['ANIMAL', 'DEER'], BOARX: ['ANIMAL', 'BOAR'], WOLFX: ['ANIMAL', 'WOLF'], HAWK: ['ANIMAL', 'FALCON']
@@ -48,12 +45,10 @@ const NATURE_DIRS = new Set(`ACACIA ASIAN_MAPLE_AUTUMN ASIAN_MAPLE_GREEN ASIAN_P
 
 export function resolveNatureSprite(name: string): [string, string] | null {
   if (!name) return null;
+  // 🔴 [2026-10-11 主人令] 先把这个悬崖删除，摆放不对 ⇒ 一律不解析悬崖
+  if (name.includes('CLIFF')) return null;
   if (NATURE_ALIAS[name]) return NATURE_ALIAS[name];
   if (NATURE_DIRS.has(name)) return ['NATURE', name];
-  if (/^CLIFF/.test(name)) {
-    const found = Array.from(NATURE_DIRS).find((d) => d.startsWith('CLIFF') && name.includes((d.split('_')[1] ?? '').toLowerCase()));
-    return ['NATURE', found ?? 'CLIFF_DEFAULT'];
-  }
   for (const t of [name, name.replace(/^TREE_/, ''), name.replace(/^TREE/, '')]) {
     if (NATURE_DIRS.has(t)) return ['NATURE', t];
   }
@@ -175,7 +170,12 @@ void main() {
   // 最终合成与 DE 原生高程坡度光照
   vec3 finalCol = mix(landCol, waterCol, isWater);
   finalCol *= vLight;
-  gl_FragColor = vec4(finalCol, 1.0);
+  // 🔴 [2026-10-11 主人令「菱形周边黑色换成底图」]
+  // 菱形网格最外圈边缘平滑羽化渐变，无缝融入底层满铺的自然气候底图
+  vec2 edgeDist = min(vGUV, vec2(uMapSize) - vGUV);
+  float minEdge = min(edgeDist.x, edgeDist.y);
+  float edgeAlpha = smoothstep(0.0, 2.5, minEdge);
+  gl_FragColor = vec4(finalCol, edgeAlpha);
 }`;
 
 function mkProgram(gl: WebGLRenderingContext): WebGLProgram {
@@ -326,7 +326,7 @@ export class Scene13GroundLayerGL {
     this.N = data.width;
     this.offX = (this.N - 1) * dx;
 
-    const gl = canvas.getContext('webgl', { antialias: true, alpha: false, premultipliedAlpha: false });
+    const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: false });
     if (!gl) throw new Error('WebGL 不可用');
     this.gl = gl;
 
@@ -484,7 +484,7 @@ export class Scene13GroundLayerGL {
     const gl = this.gl;
     const w = this.canvas.width, h = this.canvas.height;
     gl.viewport(0, 0, w, h);
-    gl.clearColor(0.05, 0.05, 0.05, 1);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.useProgram(this.prog);
