@@ -1,0 +1,9122 @@
+[
+  {
+    "id": "zermatt",
+    "name": "策马特",
+    "lat": 46.02,
+    "lng": 7.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "heze",
+    "name": "菏泽",
+    "lat": 35.24,
+    "lng": 115.44,
+    "kind": "city",
+    "level": "medium_city"
+  },
+  {
+    "id": "wuhan",
+    "name": "武汉",
+    "lat": 30.5367,
+    "lng": 114.2645,
+    "kind": "city",
+    "level": "big_city"
+  },
+  {
+    "id": "city_moyoro",
+    "name": "莫约罗",
+    "lat": 44.02,
+    "lng": 144.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_thebes",
+    "name": "底比斯",
+    "lat": 38.32,
+    "lng": 23.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_rhodes",
+    "name": "罗得城",
+    "lat": 36.44,
+    "lng": 28.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_knossos",
+    "name": "诺索斯",
+    "lat": 35.33,
+    "lng": 25.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salamanca",
+    "name": "萨拉曼卡",
+    "lat": 40.96,
+    "lng": -5.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_verona",
+    "name": "维罗纳",
+    "lat": 45.43,
+    "lng": 10.99,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_palermo",
+    "name": "巴勒莫",
+    "lat": 38.11,
+    "lng": 13.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bremen",
+    "name": "不莱梅",
+    "lat": 53.07,
+    "lng": 8.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anbulajiya",
+    "name": "安布拉基亚",
+    "lat": 39.16,
+    "lng": 20.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sparta",
+    "name": "斯巴达",
+    "lat": 37.07,
+    "lng": 22.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salonica",
+    "name": "佩拉",
+    "lat": 40.76,
+    "lng": 22.5192,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ragusa",
+    "name": "拉古萨",
+    "lat": 42.65,
+    "lng": 18.09,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gothenburg",
+    "name": "哥德堡",
+    "lat": 57.7,
+    "lng": 11.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_rostock",
+    "name": "罗斯托克",
+    "lat": 54.09,
+    "lng": 12.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bruges",
+    "name": "布鲁日",
+    "lat": 51.21,
+    "lng": 3.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bulusaier",
+    "name": "布鲁塞尔",
+    "lat": 50.8465,
+    "lng": 4.3518,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pisa",
+    "name": "比萨",
+    "lat": 43.72,
+    "lng": 10.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_seville",
+    "name": "塞维利亚",
+    "lat": 37.38,
+    "lng": -5.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_valencia",
+    "name": "巴伦西亚",
+    "lat": 39.47,
+    "lng": -0.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_messina",
+    "name": "梅西纳",
+    "lat": 38.19,
+    "lng": 15.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cagliari",
+    "name": "卡利亚里",
+    "lat": 39.22,
+    "lng": 9.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_feisi",
+    "name": "非斯",
+    "lat": 34.03,
+    "lng": -5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cherkasy",
+    "name": "切尔卡瑟",
+    "lat": 49.44,
+    "lng": 32.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sofia",
+    "name": "索非亚",
+    "lat": 42.7,
+    "lng": 23.32,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sarajevo",
+    "name": "萨拉热窝",
+    "lat": 43.85,
+    "lng": 18.41,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gradeci",
+    "name": "格拉代茨",
+    "lat": 45.81,
+    "lng": 15.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malajiashen",
+    "name": "马拉喀什",
+    "lat": 31.63,
+    "lng": -7.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiuta",
+    "name": "休达",
+    "lat": 35.89,
+    "lng": -5.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_danjier",
+    "name": "丹吉尔",
+    "lat": 35.74,
+    "lng": -5.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teleimusen",
+    "name": "特莱姆森",
+    "lat": 34.88,
+    "lng": -1.32,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aerjier",
+    "name": "阿尔及尔",
+    "lat": 36.75,
+    "lng": 3.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bujiaya",
+    "name": "布佳亚",
+    "lat": 36.75,
+    "lng": 5.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiataji",
+    "name": "迦太基",
+    "lat": 36.85,
+    "lng": 10.32,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kailuwan",
+    "name": "凯鲁万",
+    "lat": 35.67,
+    "lng": 10.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_deliboli",
+    "name": "的黎波里",
+    "lat": 32.88,
+    "lng": 13.19,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_banjiaxi",
+    "name": "班加西",
+    "lat": 32.11,
+    "lng": 20.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_labate",
+    "name": "拉巴特",
+    "lat": 34.024,
+    "lng": -6.822,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_oxford",
+    "name": "牛津",
+    "lat": 51.75,
+    "lng": -1.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hague",
+    "name": "海牙",
+    "lat": 52.07,
+    "lng": 4.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gdansk",
+    "name": "格但斯克",
+    "lat": 54.35,
+    "lng": 18.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shiqieqing",
+    "name": "什切青",
+    "lat": 53.43,
+    "lng": 14.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_toulouse",
+    "name": "图卢兹",
+    "lat": 43.6,
+    "lng": 1.44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nantes",
+    "name": "南特",
+    "lat": 47.21,
+    "lng": -1.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_florence",
+    "name": "佛罗伦萨",
+    "lat": 43.76,
+    "lng": 11.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_venice",
+    "name": "威尼斯",
+    "lat": 45.44,
+    "lng": 12.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_talanduo",
+    "name": "塔兰托",
+    "lat": 40.47,
+    "lng": 17.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_naples",
+    "name": "那不勒斯",
+    "lat": 40.85,
+    "lng": 14.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_barcelona",
+    "name": "巴塞罗那",
+    "lat": 41.38,
+    "lng": 2.17,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_granada",
+    "name": "格拉纳达",
+    "lat": 37.17,
+    "lng": -3.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_genoa",
+    "name": "热那亚",
+    "lat": 44.4,
+    "lng": 8.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teernuowo",
+    "name": "特尔诺沃",
+    "lat": 43.08,
+    "lng": 25.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_plovdiv",
+    "name": "普罗夫迪夫",
+    "lat": 42.14,
+    "lng": 24.74,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_brest",
+    "name": "布列斯特",
+    "lat": 52.09,
+    "lng": 23.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhytomyr",
+    "name": "日托米尔",
+    "lat": 50.25,
+    "lng": 28.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_heidelberg",
+    "name": "海德堡",
+    "lat": 49.4,
+    "lng": 8.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hamburg",
+    "name": "汉堡",
+    "lat": 53.55,
+    "lng": 9.99,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_utrecht",
+    "name": "乌特勒支",
+    "lat": 52.09,
+    "lng": 5.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_york",
+    "name": "约克",
+    "lat": 53.95,
+    "lng": -1.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_carlisle",
+    "name": "卡莱尔",
+    "lat": 54.89,
+    "lng": -2.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dijon",
+    "name": "第戎",
+    "lat": 47.32,
+    "lng": 5.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangbeili",
+    "name": "尚贝里",
+    "lat": 45.57,
+    "lng": 5.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lyon",
+    "name": "里昂",
+    "lat": 45.76,
+    "lng": 4.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bordeaux",
+    "name": "波尔多",
+    "lat": 44.83,
+    "lng": -0.57,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_avignon",
+    "name": "阿维尼翁",
+    "lat": 43.94,
+    "lng": 4.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_milan",
+    "name": "米兰",
+    "lat": 45.46,
+    "lng": 9.19,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ravenna",
+    "name": "拉文纳",
+    "lat": 44.41,
+    "lng": 12.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_toledo",
+    "name": "托莱多",
+    "lat": 39.86,
+    "lng": -4.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cordoba",
+    "name": "科尔多瓦",
+    "lat": 37.88,
+    "lng": -4.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zaragoza",
+    "name": "萨拉戈萨",
+    "lat": 41.65,
+    "lng": -0.88,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_eger",
+    "name": "维雷茨基",
+    "lat": 48.77,
+    "lng": 23.17,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dublin",
+    "name": "都柏林",
+    "lat": 53.34,
+    "lng": -6.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kasheer",
+    "name": "卡舍尔",
+    "lat": 52.5202,
+    "lng": -7.8907,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_limerick",
+    "name": "利默里克",
+    "lat": 52.6664,
+    "lng": -8.6957,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_calais",
+    "name": "加莱",
+    "lat": 50.95,
+    "lng": 1.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_rennes",
+    "name": "雷恩",
+    "lat": 48.11,
+    "lng": -1.67,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_syracuse",
+    "name": "锡拉库萨",
+    "lat": 37.07,
+    "lng": 15.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bucharest",
+    "name": "布加勒斯特",
+    "lat": 44.43,
+    "lng": 26.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_belgrade",
+    "name": "贝尔格莱德",
+    "lat": 44.78,
+    "lng": 20.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aidingbao",
+    "name": "爱丁堡",
+    "lat": 55.95,
+    "lng": -3.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wupusala",
+    "name": "乌普萨拉",
+    "lat": 59.85,
+    "lng": 17.63,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lundun",
+    "name": "伦敦",
+    "lat": 51.5,
+    "lng": -0.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_winchester",
+    "name": "温彻斯特",
+    "lat": 51.06,
+    "lng": -1.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bali",
+    "name": "巴黎",
+    "lat": 48.85,
+    "lng": 2.35,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shatteer",
+    "name": "沙特尔",
+    "lat": 48.448,
+    "lng": 1.488,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luoma",
+    "name": "罗马城",
+    "lat": 41.9,
+    "lng": 12.49,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yadian",
+    "name": "雅典",
+    "lat": 37.98,
+    "lng": 23.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiadisi",
+    "name": "加的斯",
+    "lat": 36.52,
+    "lng": -6.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lisiben",
+    "name": "里斯本",
+    "lat": 38.72,
+    "lng": -9.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weiyeena",
+    "name": "维也纳",
+    "lat": 48.2,
+    "lng": 16.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bulage",
+    "name": "布拉格",
+    "lat": 50.07,
+    "lng": 14.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_budapeisi",
+    "name": "布达佩斯",
+    "lat": 47.49,
+    "lng": 19.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huneiduolala",
+    "name": "胡内多阿拉",
+    "lat": 45.749,
+    "lng": 22.888,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saigede",
+    "name": "塞格德",
+    "lat": 46.25,
+    "lng": 20.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kelong",
+    "name": "科隆",
+    "lat": 50.93,
+    "lng": 6.95,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lahexiuyuan",
+    "name": "拉赫修院",
+    "lat": 50.4024,
+    "lng": 7.2522,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yachen",
+    "name": "亚琛",
+    "lat": 50.77,
+    "lng": 6.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_meiyinci",
+    "name": "美因茨",
+    "lat": 50,
+    "lng": 8.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aogesibao",
+    "name": "奥格斯堡",
+    "lat": 48.37,
+    "lng": 10.89,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bolandengbao",
+    "name": "勃兰登堡",
+    "lat": 52.41,
+    "lng": 12.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_magedebao",
+    "name": "马格德堡",
+    "lat": 52.13,
+    "lng": 11.61,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leigensibao",
+    "name": "雷根斯堡",
+    "lat": 49.01,
+    "lng": 12.09,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_niulunbao",
+    "name": "纽伦堡",
+    "lat": 49.45,
+    "lng": 11.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teerier",
+    "name": "特里尔",
+    "lat": 49.75,
+    "lng": 6.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_basaier",
+    "name": "巴塞尔",
+    "lat": 47.55,
+    "lng": 7.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sitelasibao",
+    "name": "斯特拉斯堡",
+    "lat": 48.57,
+    "lng": 7.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aoermuci",
+    "name": "奥尔穆茨",
+    "lat": 49.59,
+    "lng": 17.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_buernuo",
+    "name": "布尔诺",
+    "lat": 49.19,
+    "lng": 16.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jifu",
+    "name": "基辅",
+    "lat": 50.45,
+    "lng": 30.52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nuofugeerdede",
+    "name": "诺夫哥罗德",
+    "lat": 58.52,
+    "lng": 31.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mosike",
+    "name": "莫斯科",
+    "lat": 55.75,
+    "lng": 37.61,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shengpidebao",
+    "name": "圣彼得堡",
+    "lat": 59.9387,
+    "lng": 30.3162,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xieerpuhuofu",
+    "name": "谢尔普霍夫",
+    "lat": 54.92,
+    "lng": 37.41,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fulajimier",
+    "name": "弗拉基米尔",
+    "lat": 56.12,
+    "lng": 40.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_simolengsike",
+    "name": "斯摩棱斯克",
+    "lat": 54.78,
+    "lng": 32.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiernigeweifu",
+    "name": "切尔尼戈夫",
+    "lat": 51.49,
+    "lng": 31.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jialiqi",
+    "name": "加利奇",
+    "lat": 49.12,
+    "lng": 24.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pusikefu",
+    "name": "普斯科夫",
+    "lat": 57.82,
+    "lng": 28.33,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liangzan",
+    "name": "梁赞",
+    "lat": 54.62,
+    "lng": 39.74,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boluocike",
+    "name": "波洛茨克",
+    "lat": 55.48,
+    "lng": 28.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salai",
+    "name": "萨莱",
+    "lat": 48.15,
+    "lng": 47.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kashan",
+    "name": "喀山",
+    "lat": 55.79,
+    "lng": 49.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_heersongniesi",
+    "name": "赫尔松涅斯",
+    "lat": 44.61,
+    "lng": 33.49,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pantika",
+    "name": "潘提卡彭",
+    "lat": 45.36,
+    "lng": 36.47,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kafa",
+    "name": "卡法",
+    "lat": 45.03,
+    "lng": 35.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salatuofu",
+    "name": "萨拉托夫",
+    "lat": 51.53,
+    "lng": 46.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weierniwusi",
+    "name": "维尔纽斯",
+    "lat": 54.68,
+    "lng": 25.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huasha",
+    "name": "华沙",
+    "lat": 52.22,
+    "lng": 21.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_poznan",
+    "name": "波兹南",
+    "lat": 52.4064,
+    "lng": 16.9252,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kelakefu",
+    "name": "克拉科夫",
+    "lat": 50.06,
+    "lng": 19.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liweifu",
+    "name": "利沃夫",
+    "lat": 49.84,
+    "lng": 24.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liga",
+    "name": "里加",
+    "lat": 56.95,
+    "lng": 24.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teweier",
+    "name": "特维尔",
+    "lat": 56.86,
+    "lng": 35.9,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xianuofugeerdede",
+    "name": "下诺城",
+    "lat": 56.32,
+    "lng": 44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhapoluore",
+    "name": "塞契",
+    "lat": 47.83,
+    "lng": 35.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yaxi",
+    "name": "雅西",
+    "lat": 47.16,
+    "lng": 27.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teergewishite",
+    "name": "特尔戈维",
+    "lat": 44.86,
+    "lng": 25.46,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kenisibao",
+    "name": "柯尼斯堡",
+    "lat": 54.71,
+    "lng": 20.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_talin",
+    "name": "塔林",
+    "lat": 59.43,
+    "lng": 24.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_youliyefu",
+    "name": "尤里耶夫",
+    "lat": 58.37,
+    "lng": 26.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiridao",
+    "name": "基日岛",
+    "lat": 62.0667,
+    "lng": 35.225,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_akeman",
+    "name": "阿克曼",
+    "lat": 46.19,
+    "lng": 30.34,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_asu",
+    "name": "塔纳伊斯",
+    "lat": 47.23,
+    "lng": 39.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geluodenuo",
+    "name": "格罗德诺",
+    "lat": 53.68,
+    "lng": 23.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chalijin",
+    "name": "察里津",
+    "lat": 48.7,
+    "lng": 44.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_samala",
+    "name": "萨马拉",
+    "lat": 53.2,
+    "lng": 50.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wufa",
+    "name": "乌法",
+    "lat": 54.73,
+    "lng": 55.96,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bieergeleide",
+    "name": "别尔哥罗德",
+    "lat": 50.6,
+    "lng": 36.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_haerkefu",
+    "name": "哈尔科夫",
+    "lat": 49.9935,
+    "lng": 36.2304,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_woluonerizh",
+    "name": "沃罗涅日",
+    "lat": 51.6608,
+    "lng": 39.2003,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peilieyasilafu",
+    "name": "佩列斯拉夫",
+    "lat": 50.07,
+    "lng": 31.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weijiebusike",
+    "name": "维捷布斯克",
+    "lat": 55.19,
+    "lng": 30.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_changan",
+    "name": "长安",
+    "lat": 34.27,
+    "lng": 108.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chengdu",
+    "name": "成都",
+    "lat": 30.57,
+    "lng": 104.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luoyang",
+    "name": "洛阳",
+    "lat": 34.62,
+    "lng": 112.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anyang",
+    "name": "安阳",
+    "lat": 36.1,
+    "lng": 114.39,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hedong",
+    "name": "安邑",
+    "lat": 35.15,
+    "lng": 111,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_beijing",
+    "name": "北京",
+    "lat": 39.9,
+    "lng": 116.41,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_datong",
+    "name": "大同",
+    "lat": 40.08,
+    "lng": 113.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nanjing",
+    "name": "金陵",
+    "lat": 32.05,
+    "lng": 118.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hangzhou",
+    "name": "杭州",
+    "lat": 30.25,
+    "lng": 120.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taiyuan",
+    "name": "晋阳",
+    "lat": 37.87,
+    "lng": 112.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiangyang",
+    "name": "襄阳",
+    "lat": 32.01,
+    "lng": 112.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shouxian",
+    "name": "寿春",
+    "lat": 32.59,
+    "lng": 116.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ueda",
+    "name": "上田城",
+    "lat": 36.4025,
+    "lng": 138.2464,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anding",
+    "name": "安定",
+    "lat": 35.3275,
+    "lng": 107.3584,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hanzhong",
+    "name": "南郑",
+    "lat": 33.07,
+    "lng": 107.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guozhou",
+    "name": "南充",
+    "lat": 30.83,
+    "lng": 106.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mianyang",
+    "name": "涪城",
+    "lat": 31.4825,
+    "lng": 104.7189,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chongqing",
+    "name": "重庆",
+    "lat": 29.56,
+    "lng": 106.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zizhou",
+    "name": "盘石",
+    "lat": 29.78,
+    "lng": 104.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_handan",
+    "name": "邯郸",
+    "lat": 36.61,
+    "lng": 114.49,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhending",
+    "name": "真定",
+    "lat": 38.1302,
+    "lng": 114.5901,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baoding",
+    "name": "保定",
+    "lat": 38.87,
+    "lng": 115.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hejian",
+    "name": "乐成",
+    "lat": 38.18,
+    "lng": 116.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingzhou2",
+    "name": "蓨城",
+    "lat": 37.68,
+    "lng": 116.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pingyuan",
+    "name": "平原城",
+    "lat": 37.16,
+    "lng": 116.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linfen",
+    "name": "临汾",
+    "lat": 36.088,
+    "lng": 111.5167,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangqiu",
+    "name": "商丘",
+    "lat": 34.41,
+    "lng": 115.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pengcheng",
+    "name": "彭城",
+    "lat": 34.27,
+    "lng": 117.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_langya",
+    "name": "琅琊",
+    "lat": 35.0772,
+    "lng": 118.364,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ju",
+    "name": "莒城",
+    "lat": 35.578,
+    "lng": 118.832,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lanling",
+    "name": "氶城",
+    "lat": 34.798,
+    "lng": 117.6471,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dingtao",
+    "name": "定陶",
+    "lat": 35.2007,
+    "lng": 115.4718,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jimo",
+    "name": "即墨",
+    "lat": 36.4036,
+    "lng": 120.4459,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boyang",
+    "name": "奉高",
+    "lat": 36.15,
+    "lng": 117.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_licheng",
+    "name": "历下",
+    "lat": 36.67,
+    "lng": 117,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linzi",
+    "name": "临淄",
+    "lat": 36.88,
+    "lng": 118.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bushan",
+    "name": "布山",
+    "lat": 23.1,
+    "lng": 109.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuzhou",
+    "name": "冶城",
+    "lat": 26.07,
+    "lng": 119.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huaiyang",
+    "name": "宛丘",
+    "lat": 33.63,
+    "lng": 114.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shunchang",
+    "name": "顺昌",
+    "lat": 32.9,
+    "lng": 115.81,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiaojun",
+    "name": "谯县",
+    "lat": 33.88,
+    "lng": 115.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hefei",
+    "name": "合肥",
+    "lat": 31.82,
+    "lng": 117.23,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yangzhou",
+    "name": "广陵",
+    "lat": 32.393,
+    "lng": 119.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nanyang",
+    "name": "宛城",
+    "lat": 32.9557,
+    "lng": 112.5165,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuling",
+    "name": "涪陵",
+    "lat": 29.7,
+    "lng": 107.39,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yiling",
+    "name": "夷陵",
+    "lat": 30.7,
+    "lng": 111.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ying",
+    "name": "江陵",
+    "lat": 30.35,
+    "lng": 112.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suizhou",
+    "name": "汉东",
+    "lat": 31.71,
+    "lng": 113.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chaisang",
+    "name": "柴桑",
+    "lat": 29.6802,
+    "lng": 115.9964,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_changsha",
+    "name": "长沙",
+    "lat": 28.19,
+    "lng": 112.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_changzhou",
+    "name": "延陵",
+    "lat": 31.78,
+    "lng": 119.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gusu",
+    "name": "姑苏",
+    "lat": 31.3,
+    "lng": 120.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiaxing",
+    "name": "嘉兴",
+    "lat": 30.75,
+    "lng": 120.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shanxian",
+    "name": "剡城",
+    "lat": 29.5567,
+    "lng": 120.8221,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tianshui",
+    "name": "天水",
+    "lat": 34.58,
+    "lng": 105.73,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longzhou",
+    "name": "汧源",
+    "lat": 34.89,
+    "lng": 106.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longxi",
+    "name": "襄武",
+    "lat": 35.0322,
+    "lng": 104.5871,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuwei",
+    "name": "姑臧",
+    "lat": 37.93,
+    "lng": 102.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhangye",
+    "name": "张掖",
+    "lat": 38.93,
+    "lng": 100.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiuquan",
+    "name": "嘉峪关",
+    "lat": 39.7822,
+    "lng": 98.3414,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhizhicheng",
+    "name": "郅支城",
+    "lat": 42.9062,
+    "lng": 72.7652,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chigucheng",
+    "name": "赤谷城",
+    "lat": 42.1533,
+    "lng": 77.5854,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guishancheng",
+    "name": "贵山城",
+    "lat": 41.2902,
+    "lng": 71.6666,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_loulan",
+    "name": "扜泥城",
+    "lat": 40.5158,
+    "lng": 89.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shache",
+    "name": "渠莎",
+    "lat": 38.41,
+    "lng": 77.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shule",
+    "name": "盘橐",
+    "lat": 39.485,
+    "lng": 76.0007,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanqi",
+    "name": "员渠城",
+    "lat": 42.06,
+    "lng": 86.56,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dunhuang",
+    "name": "敦煌",
+    "lat": 40.14,
+    "lng": 94.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lanzhou",
+    "name": "皋兰",
+    "lat": 36.0624,
+    "lng": 103.7659,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ledu",
+    "name": "浇河",
+    "lat": 35.7264,
+    "lng": 101.2061,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lintao",
+    "name": "狄道",
+    "lat": 35.37,
+    "lng": 103.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_songzhou",
+    "name": "嘉诚",
+    "lat": 32.7872,
+    "lng": 103.6258,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jianchang",
+    "name": "邛都",
+    "lat": 27.8707,
+    "lng": 102.3102,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_toumancheng",
+    "name": "头曼城",
+    "lat": 41.3026,
+    "lng": 108.5065,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guangnan",
+    "name": "广南",
+    "lat": 23.7553,
+    "lng": 105.3864,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liaoyang",
+    "name": "襄平",
+    "lat": 41.27,
+    "lng": 123.17,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chaoyang",
+    "name": "朝阳",
+    "lat": 41.57,
+    "lng": 120.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jicheng",
+    "name": "棘城",
+    "lat": 41.58,
+    "lng": 121.055,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bailangshan",
+    "name": "白狼山",
+    "lat": 41.4,
+    "lng": 119.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chifeng",
+    "name": "木叶山",
+    "lat": 42.7188,
+    "lng": 120.726,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiangsheng",
+    "name": "降圣",
+    "lat": 42.561,
+    "lng": 119.4818,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linhuang",
+    "name": "临潢府",
+    "lat": 43.96,
+    "lng": 119.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hezhang",
+    "name": "可乐寨",
+    "lat": 27.0958,
+    "lng": 104.7189,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tancheng",
+    "name": "郯城",
+    "lat": 34.5496,
+    "lng": 118.3173,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qucheng",
+    "name": "朐城",
+    "lat": 34.5292,
+    "lng": 119.133,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baibogu",
+    "name": "白波谷",
+    "lat": 36.1356,
+    "lng": 112.2061,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baoshan",
+    "name": "永昌",
+    "lat": 25.11,
+    "lng": 99.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guoneicheng",
+    "name": "国内城",
+    "lat": 41.13,
+    "lng": 126.19,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuyu",
+    "name": "黄龙府",
+    "lat": 44.4278,
+    "lng": 125.1758,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuling",
+    "name": "常德",
+    "lat": 29.03,
+    "lng": 111.69,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dasanguan",
+    "name": "大散关",
+    "lat": 34.28,
+    "lng": 106.95,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dusong",
+    "name": "独松关",
+    "lat": 30.567,
+    "lng": 119.6796,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xianxia",
+    "name": "仙霞关",
+    "lat": 28.35,
+    "lng": 118.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuzhou",
+    "name": "金华",
+    "lat": 29.08,
+    "lng": 119.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_quzhou",
+    "name": "信安",
+    "lat": 28.96,
+    "lng": 118.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_raozhou",
+    "name": "鄱阳",
+    "lat": 28.99,
+    "lng": 116.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qianzhou",
+    "name": "南康",
+    "lat": 25.8509,
+    "lng": 114.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jianmenguan",
+    "name": "剑门关",
+    "lat": 32.28,
+    "lng": 105.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baishuiguan",
+    "name": "白水关",
+    "lat": 32.74,
+    "lng": 105.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ziwu",
+    "name": "子午谷",
+    "lat": 33.3122,
+    "lng": 108.1247,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mianzhuguan",
+    "name": "鹿头关",
+    "lat": 31.3255,
+    "lng": 104.1724,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hanguguan",
+    "name": "函谷关",
+    "lat": 34.6151,
+    "lng": 110.9152,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tongguan",
+    "name": "潼关",
+    "lat": 34.54,
+    "lng": 110.29,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hulaoguan",
+    "name": "虎牢关",
+    "lat": 34.81,
+    "lng": 113.17,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guangchengguan",
+    "name": "广成关",
+    "lat": 34.1391,
+    "lng": 112.8873,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_juyongguan",
+    "name": "居庸关",
+    "lat": 40.28,
+    "lng": 116.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_piantouguan",
+    "name": "偏头关",
+    "lat": 39.43,
+    "lng": 111.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pingxingguan",
+    "name": "平型关",
+    "lat": 39.2812,
+    "lng": 113.7442,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lingshiguan",
+    "name": "灵石关",
+    "lat": 36.8445,
+    "lng": 111.7969,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuguan",
+    "name": "武关",
+    "lat": 33.6,
+    "lng": 110.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiaoguan",
+    "name": "萧关",
+    "lat": 35.6573,
+    "lng": 106.3202,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jinsuoguan",
+    "name": "金锁关",
+    "lat": 35.19,
+    "lng": 109.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhiguan",
+    "name": "轵关",
+    "lat": 35.15,
+    "lng": 112.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingxingguan",
+    "name": "井陉关",
+    "lat": 38.02,
+    "lng": 114,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_daomaguan",
+    "name": "倒马关",
+    "lat": 38.8611,
+    "lng": 114.7687,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_feihu",
+    "name": "飞狐",
+    "lat": 39.3487,
+    "lng": 114.6986,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zijingguan",
+    "name": "紫荆关",
+    "lat": 39.4722,
+    "lng": 115.2658,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shanhaiguan",
+    "name": "山海关",
+    "lat": 40,
+    "lng": 119.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wushengguan",
+    "name": "武胜关",
+    "lat": 31.83,
+    "lng": 114.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mulingguan",
+    "name": "大岘关",
+    "lat": 36.2753,
+    "lng": 118.6606,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingshiguan",
+    "name": "青石关",
+    "lat": 36.2465,
+    "lng": 117.7158,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_diaoyucheng",
+    "name": "钓鱼城",
+    "lat": 30.04,
+    "lng": 106.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_diezhou",
+    "name": "迭部",
+    "lat": 33.9753,
+    "lng": 103.483,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_panzhou",
+    "name": "潘寨",
+    "lat": 33.578,
+    "lng": 103.0298,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_maozhou",
+    "name": "汶山城",
+    "lat": 31.6931,
+    "lng": 103.8675,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingyuan",
+    "name": "清远",
+    "lat": 23.68,
+    "lng": 113.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaoque",
+    "name": "高阙塞",
+    "lat": 41.1952,
+    "lng": 107.1661,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hengpuguan",
+    "name": "横浦关",
+    "lat": 25.32,
+    "lng": 114.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yangshanguan",
+    "name": "阳山关",
+    "lat": 24.78,
+    "lng": 112.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huangxiguan",
+    "name": "湟溪关",
+    "lat": 24.16,
+    "lng": 113.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yinzhou",
+    "name": "绥德",
+    "lat": 37.5119,
+    "lng": 110.2396,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dongshengzhou",
+    "name": "增山",
+    "lat": 39.8106,
+    "lng": 109.9594,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lueyang",
+    "name": "略阳",
+    "lat": 33.33,
+    "lng": 106.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mianchi",
+    "name": "渑池",
+    "lat": 34.76,
+    "lng": 111.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huaiyin",
+    "name": "淮安",
+    "lat": 33.5,
+    "lng": 119.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dangyang",
+    "name": "当阳",
+    "lat": 30.82,
+    "lng": 111.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zaoyang",
+    "name": "枣阳",
+    "lat": 32.13,
+    "lng": 112.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ruoqiang",
+    "name": "卡克里克",
+    "lat": 38.9872,
+    "lng": 88.9481,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiemo",
+    "name": "播仙",
+    "lat": 38.14,
+    "lng": 85.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingjue",
+    "name": "精绝",
+    "lat": 37.06,
+    "lng": 82.69,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pishan",
+    "name": "固玛",
+    "lat": 37.5707,
+    "lng": 78.2501,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weili",
+    "name": "库尔勒",
+    "lat": 41.33,
+    "lng": 86.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yingsuochuan",
+    "name": "鹰娑川",
+    "lat": 42.8699,
+    "lng": 83.7735,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xingxingxia",
+    "name": "五峰燧",
+    "lat": 41.6114,
+    "lng": 95.2679,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chiting",
+    "name": "赤亭关",
+    "lat": 42.85,
+    "lng": 91.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiye",
+    "name": "叶城",
+    "lat": 37.884,
+    "lng": 77.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiuxun",
+    "name": "休循",
+    "lat": 39.7093,
+    "lng": 73.2294,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yinai",
+    "name": "英吉沙尔",
+    "lat": 38.9295,
+    "lng": 76.2259,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yumenguan",
+    "name": "玉门关",
+    "lat": 40.35,
+    "lng": 93.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yangguan",
+    "name": "阳关",
+    "lat": 39.92,
+    "lng": 94.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuzhousai",
+    "name": "善无",
+    "lat": 39.9982,
+    "lng": 112.4203,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_eyangling",
+    "name": "恶阳岭",
+    "lat": 39.91,
+    "lng": 111.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jilusai",
+    "name": "鸡鹿塞",
+    "lat": 40.46,
+    "lng": 106.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guyangsai",
+    "name": "固阳塞",
+    "lat": 41.1,
+    "lng": 110.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiayangdu",
+    "name": "龙门",
+    "lat": 35.602,
+    "lng": 110.452,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_piaoyujin",
+    "name": "漂渝津",
+    "lat": 39.02,
+    "lng": 117.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tianjinguan",
+    "name": "天井关",
+    "lat": 35.27,
+    "lng": 112.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dali_city",
+    "name": "羊苴咩",
+    "lat": 25.6983,
+    "lng": 100.1488,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengshe",
+    "name": "蒙舍城",
+    "lat": 25.0583,
+    "lng": 100.5002,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hanseong",
+    "name": "汉城",
+    "lat": 37.52,
+    "lng": 126.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pyongyang",
+    "name": "平壤",
+    "lat": 39.02,
+    "lng": 125.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kaesong",
+    "name": "开城",
+    "lat": 37.97,
+    "lng": 126.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hamhung",
+    "name": "咸兴",
+    "lat": 39.9687,
+    "lng": 127.4991,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longer",
+    "name": "笼耳",
+    "lat": 40.967,
+    "lng": 129.551,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guoyuancheng",
+    "name": "国原城",
+    "lat": 36.991,
+    "lng": 127.926,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geumseong",
+    "name": "锦城",
+    "lat": 35.015,
+    "lng": 126.71,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jeonju",
+    "name": "完山",
+    "lat": 35.75,
+    "lng": 127.14,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jindo",
+    "name": "鸣梁",
+    "lat": 34.487,
+    "lng": 126.263,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suncheon_k",
+    "name": "顺天",
+    "lat": 34.9652,
+    "lng": 127.4991,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gimhae",
+    "name": "金海",
+    "lat": 35.23,
+    "lng": 128.88,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jincheng_silla",
+    "name": "金城",
+    "lat": 35.8089,
+    "lng": 129.2102,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_haeju",
+    "name": "瀑池",
+    "lat": 38.03,
+    "lng": 125.71,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longwan",
+    "name": "龙湾",
+    "lat": 40.1967,
+    "lng": 124.5306,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuhan",
+    "name": "枹罕",
+    "lat": 35.6,
+    "lng": 103.21,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qishan",
+    "name": "岐山",
+    "lat": 34.5065,
+    "lng": 107.4875,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tongwancheng",
+    "name": "统万城",
+    "lat": 38.0243,
+    "lng": 109.1492,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiuchi",
+    "name": "上禄",
+    "lat": 33.86,
+    "lng": 105.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ganquanyi",
+    "name": "武都",
+    "lat": 33.4293,
+    "lng": 105.1419,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dangchang",
+    "name": "阴平",
+    "lat": 33.6997,
+    "lng": 104.5239,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_daixian",
+    "name": "灵仙",
+    "lat": 39.8423,
+    "lng": 114.4089,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ningan",
+    "name": "龙泉府",
+    "lat": 44.129,
+    "lng": 129.2953,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yalu",
+    "name": "鸭绿府",
+    "lat": 41.81,
+    "lng": 126.91,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jilishan",
+    "name": "蒺藜山",
+    "lat": 42.25,
+    "lng": 121.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huining",
+    "name": "会宁府",
+    "lat": 45.5198,
+    "lng": 126.9717,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangdu",
+    "name": "上都",
+    "lat": 42.2753,
+    "lng": 115.7602,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hetuala",
+    "name": "赫图阿拉",
+    "lat": 41.716,
+    "lng": 125.0327,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuguo",
+    "name": "五国城",
+    "lat": 46.32,
+    "lng": 129.56,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanran",
+    "name": "燕然山",
+    "lat": 46.2767,
+    "lng": 102.8018,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_langjuxu",
+    "name": "狼居胥山",
+    "lat": 47.6876,
+    "lng": 108.5284,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luoxie",
+    "name": "逻些",
+    "lat": 29.65,
+    "lng": 91.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guanglu",
+    "name": "光禄城",
+    "lat": 41.9,
+    "lng": 108.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanran_stone",
+    "name": "燕然勒石",
+    "lat": 45.2033,
+    "lng": 104.6777,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luhun",
+    "name": "涿邪山",
+    "lat": 43.5883,
+    "lng": 104.6613,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chilechuan",
+    "name": "九原",
+    "lat": 40.591,
+    "lng": 110.0446,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lanshi",
+    "name": "蓝氏城",
+    "lat": 36.7125,
+    "lng": 67.0825,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sabi",
+    "name": "泗沘",
+    "lat": 36.2554,
+    "lng": 126.9498,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_edo",
+    "name": "江户城",
+    "lat": 35.75,
+    "lng": 139.8007,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kyoto",
+    "name": "京都",
+    "lat": 35.01,
+    "lng": 135.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tainan",
+    "name": "承天",
+    "lat": 22.99,
+    "lng": 120.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weirong",
+    "name": "威戎",
+    "lat": 35.5858,
+    "lng": 105.5127,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xingtai",
+    "name": "邢台",
+    "lat": 37.07,
+    "lng": 114.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shengle",
+    "name": "盛乐",
+    "lat": 40.38,
+    "lng": 111.82,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_izumo",
+    "name": "月山富田",
+    "lat": 35.3779,
+    "lng": 133.1488,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_satsuma",
+    "name": "鹿儿岛城",
+    "lat": 31.6003,
+    "lng": 130.5583,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shuri",
+    "name": "首里",
+    "lat": 26.22,
+    "lng": 127.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tsushima",
+    "name": "金石馆",
+    "lat": 34.2031,
+    "lng": 129.2892,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yoshida",
+    "name": "吉田郡山",
+    "lat": 34.4386,
+    "lng": 132.5308,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kasugayama",
+    "name": "春日山",
+    "lat": 37.16,
+    "lng": 138.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tsutsujigasaki",
+    "name": "躑躅崎馆",
+    "lat": 35.6688,
+    "lng": 138.4991,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_okafu",
+    "name": "冈丰城",
+    "lat": 33.5972,
+    "lng": 133.5756,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_himeji",
+    "name": "姬路城",
+    "lat": 34.8394,
+    "lng": 134.6939,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_utsunomiya",
+    "name": "宇都宫城",
+    "lat": 36.6045,
+    "lng": 139.8587,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tsuruga",
+    "name": "鹤之城",
+    "lat": 37.4878,
+    "lng": 139.9297,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nabari",
+    "name": "名张",
+    "lat": 34.627,
+    "lng": 136.108,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jianghu",
+    "name": "金泽",
+    "lat": 36.56,
+    "lng": 136.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiantai",
+    "name": "青叶馆",
+    "lat": 38.27,
+    "lng": 140.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiongben",
+    "name": "熊本",
+    "lat": 32.81,
+    "lng": 130.71,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_songshan",
+    "name": "松山",
+    "lat": 33.8185,
+    "lng": 132.7505,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_noshima",
+    "name": "能岛城",
+    "lat": 34.1824,
+    "lng": 133.0811,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_funei",
+    "name": "府内",
+    "lat": 33.24,
+    "lng": 131.61,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaodao",
+    "name": "高岛",
+    "lat": 36.0138,
+    "lng": 137.9662,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangdang",
+    "name": "长子",
+    "lat": 36.149,
+    "lng": 113.0081,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fanyang",
+    "name": "范阳",
+    "lat": 39.48,
+    "lng": 115.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chenjun",
+    "name": "新蔡",
+    "lat": 32.75,
+    "lng": 114.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qufu",
+    "name": "曲阜",
+    "lat": 35.6,
+    "lng": 116.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fusicheng",
+    "name": "伏俟城",
+    "lat": 36.7609,
+    "lng": 99.7421,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xianglin",
+    "name": "象林",
+    "lat": 15,
+    "lng": 108.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lushi",
+    "name": "陆浑关",
+    "lat": 34.05,
+    "lng": 111.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_puyang",
+    "name": "濮阳",
+    "lat": 35.7621,
+    "lng": 115.0291,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xucheng",
+    "name": "符离",
+    "lat": 33.65,
+    "lng": 116.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhaoge",
+    "name": "朝歌",
+    "lat": 35.6,
+    "lng": 114.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liuxian",
+    "name": "六安",
+    "lat": 31.74,
+    "lng": 116.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiapi",
+    "name": "下邳",
+    "lat": 33.8886,
+    "lng": 117.8778,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiurongchuan",
+    "name": "秀容川",
+    "lat": 38.42,
+    "lng": 112.73,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_songmo",
+    "name": "马盂山",
+    "lat": 41.0174,
+    "lng": 118.699,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaoliang",
+    "name": "高凉",
+    "lat": 21.9,
+    "lng": 110.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_beishacheng",
+    "name": "卑沙城",
+    "lat": 39.4447,
+    "lng": 121.9592,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suiye",
+    "name": "碎叶",
+    "lat": 42.8,
+    "lng": 75.2667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nieduo",
+    "name": "孽多",
+    "lat": 35.92,
+    "lng": 74.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_woluduobali",
+    "name": "卜古罕城",
+    "lat": 47.8,
+    "lng": 107.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jinshan",
+    "name": "额尔齐斯",
+    "lat": 46.939,
+    "lng": 89.599,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dafang",
+    "name": "大方城",
+    "lat": 27.0469,
+    "lng": 105.7077,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongzhou",
+    "name": "晋兴",
+    "lat": 22.81,
+    "lng": 108.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingxi",
+    "name": "帮源洞",
+    "lat": 29.6,
+    "lng": 119.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dengzhou",
+    "name": "蓬莱",
+    "lat": 37.82,
+    "lng": 120.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiaoxi",
+    "name": "黔陬",
+    "lat": 36.2288,
+    "lng": 119.924,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_urgench",
+    "name": "玉龙杰赤",
+    "lat": 42.24,
+    "lng": 59.63,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_merv",
+    "name": "木鹿",
+    "lat": 37.6164,
+    "lng": 62.2348,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pagan",
+    "name": "蒲甘",
+    "lat": 21.2074,
+    "lng": 94.8944,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_almaliq",
+    "name": "弓月城",
+    "lat": 43.979,
+    "lng": 79.6481,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_emil",
+    "name": "也迷里",
+    "lat": 46.4814,
+    "lng": 83.6334,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kereyid",
+    "name": "汪吉河",
+    "lat": 46.6001,
+    "lng": 104.5706,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_naiman",
+    "name": "金微山",
+    "lat": 47.64,
+    "lng": 88.29,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuhai",
+    "name": "福海",
+    "lat": 47.0365,
+    "lng": 87.3523,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tatar",
+    "name": "额布都格",
+    "lat": 47.1823,
+    "lng": 117.7267,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_merkit",
+    "name": "买卖城",
+    "lat": 50.2648,
+    "lng": 106.1526,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xinhui",
+    "name": "厓山",
+    "lat": 22.53,
+    "lng": 113.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ninghai",
+    "name": "白峤",
+    "lat": 29.2757,
+    "lng": 121.4182,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhenghe",
+    "name": "政和",
+    "lat": 27.37,
+    "lng": 118.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhangzhou",
+    "name": "龙溪",
+    "lat": 24.51,
+    "lng": 117.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tingzhou",
+    "name": "黄连",
+    "lat": 26.26,
+    "lng": 116.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ruijin",
+    "name": "瑞金",
+    "lat": 25.9262,
+    "lng": 116.0458,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingyuan_zj",
+    "name": "宁波",
+    "lat": 29.87,
+    "lng": 121.54,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taizhou_zj",
+    "name": "临海",
+    "lat": 28.66,
+    "lng": 121.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wenzhou",
+    "name": "永嘉",
+    "lat": 28,
+    "lng": 120.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shaxian",
+    "name": "沙戍堡",
+    "lat": 26.4,
+    "lng": 117.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanping",
+    "name": "延平",
+    "lat": 26.67,
+    "lng": 118.21,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jianning",
+    "name": "建宁",
+    "lat": 27.12,
+    "lng": 118.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chuzhou_zj",
+    "name": "丽水",
+    "lat": 28.46,
+    "lng": 119.91,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wenan",
+    "name": "文安",
+    "lat": 38.87,
+    "lng": 116.46,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wudingzhou",
+    "name": "乐安",
+    "lat": 37.501,
+    "lng": 117.518,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hetao",
+    "name": "河套",
+    "lat": 40.4428,
+    "lng": 109.3332,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kobdo",
+    "name": "科布多",
+    "lat": 48.01,
+    "lng": 91.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yeren_base",
+    "name": "瑷珲",
+    "lat": 50.25,
+    "lng": 127.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chijin",
+    "name": "赤金堡",
+    "lat": 40.0002,
+    "lng": 97.4377,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dafeichuan",
+    "name": "大非川",
+    "lat": 36.1379,
+    "lng": 100.7611,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ayutthaya",
+    "name": "阿瑜陀耶",
+    "lat": 14.35,
+    "lng": 100.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_angkor",
+    "name": "吴哥",
+    "lat": 13.41,
+    "lng": 103.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shenyang",
+    "name": "沈阳",
+    "lat": 41.802,
+    "lng": 123.4369,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guihua",
+    "name": "归化城",
+    "lat": 40.84,
+    "lng": 111.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kulun",
+    "name": "库伦",
+    "lat": 47.92,
+    "lng": 106.84,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yili",
+    "name": "固尔札",
+    "lat": 43.9019,
+    "lng": 81.3153,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yadong",
+    "name": "卓木",
+    "lat": 28.2437,
+    "lng": 89.3765,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leweizhai",
+    "name": "勒乌围",
+    "lat": 31.8121,
+    "lng": 101.9312,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_meinuozhai",
+    "name": "美诺寨",
+    "lat": 31,
+    "lng": 102.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhaoqing",
+    "name": "肇庆",
+    "lat": 23.05,
+    "lng": 112.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_haiyang",
+    "name": "海阳",
+    "lat": 23.6697,
+    "lng": 116.6394,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_changhua_tw",
+    "name": "彰化",
+    "lat": 24.08,
+    "lng": 120.56,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pinglong",
+    "name": "平陇",
+    "lat": 28.3044,
+    "lng": 109.671,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kathmandu",
+    "name": "加德满都",
+    "lat": 27.7151,
+    "lng": 85.1852,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_turkestan",
+    "name": "亚西",
+    "lat": 43.297,
+    "lng": 68.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kokand",
+    "name": "浩罕",
+    "lat": 40.5333,
+    "lng": 70.9333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fayzabad",
+    "name": "法扎巴德",
+    "lat": 37.0683,
+    "lng": 70.675,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jintian",
+    "name": "金田村",
+    "lat": 23.4,
+    "lng": 110.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shanghai",
+    "name": "上海",
+    "lat": 31.23,
+    "lng": 121.47,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yangxian",
+    "name": "兴势山",
+    "lat": 33.352,
+    "lng": 107.582,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_piandaoshui",
+    "name": "偏刀水",
+    "lat": 27.9216,
+    "lng": 107.6852,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuliyasutai",
+    "name": "乌城",
+    "lat": 47.74,
+    "lng": 96.84,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tuokexun",
+    "name": "托克逊",
+    "lat": 42.79,
+    "lng": 88.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dabancheng",
+    "name": "达坂城",
+    "lat": 43.3392,
+    "lng": 88.2587,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nanghar",
+    "name": "囊哈儿",
+    "lat": 52.2093,
+    "lng": 141.9516,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_katsuyama",
+    "name": "胜山馆",
+    "lat": 41.8008,
+    "lng": 140.0994,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanaginogosho",
+    "name": "柳之御所",
+    "lat": 38.99,
+    "lng": 141.1208,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fenglin",
+    "name": "凤林寨",
+    "lat": 46.3185,
+    "lng": 132.1875,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pidao",
+    "name": "皮岛",
+    "lat": 39.5539,
+    "lng": 124.6611,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tongjiajiang",
+    "name": "浑江",
+    "lat": 41.2681,
+    "lng": 125.3625,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiaoyenisei",
+    "name": "贝加尔",
+    "lat": 51.8368,
+    "lng": 107.6138,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaxian",
+    "name": "嘎仙洞",
+    "lat": 49.3234,
+    "lng": 120.7095,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_junjishan",
+    "name": "浚稽山",
+    "lat": 45.7675,
+    "lng": 106.2845,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_otuken",
+    "name": "于都斤山",
+    "lat": 47.6025,
+    "lng": 101.2308,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yingchang",
+    "name": "应昌",
+    "lat": 43.3851,
+    "lng": 116.8231,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ordos",
+    "name": "延恩",
+    "lat": 39.6205,
+    "lng": 108.8525,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ruoshui",
+    "name": "弱水畔",
+    "lat": 42.4579,
+    "lng": 101.1868,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suoling",
+    "name": "娑陵",
+    "lat": 49.3645,
+    "lng": 102.8403,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_burhan",
+    "name": "不儿罕山",
+    "lat": 48.5,
+    "lng": 109,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kerulen",
+    "name": "巴拉斯城",
+    "lat": 47.9697,
+    "lng": 113.0054,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_erguna",
+    "name": "捕鱼儿海",
+    "lat": 48.0615,
+    "lng": 117.7872,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dzungar_basin",
+    "name": "和博克",
+    "lat": 46.7135,
+    "lng": 85.6851,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hanhai",
+    "name": "瀚海",
+    "lat": 44.1448,
+    "lng": 103.6972,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_keyimen",
+    "name": "克夷门",
+    "lat": 39.2896,
+    "lng": 106.7761,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_talas",
+    "name": "怛罗斯",
+    "lat": 42.886,
+    "lng": 71.348,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bukhara",
+    "name": "布哈拉",
+    "lat": 39.7667,
+    "lng": 64.4333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tashkent",
+    "name": "柘折城",
+    "lat": 41.3,
+    "lng": 69.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qionglong",
+    "name": "穹窿银",
+    "lat": 31.194,
+    "lng": 80.7715,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leh",
+    "name": "列城",
+    "lat": 34.16,
+    "lng": 77.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingtang",
+    "name": "青唐城",
+    "lat": 36.6442,
+    "lng": 101.7389,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dangxiong",
+    "name": "当雄",
+    "lat": 30.48,
+    "lng": 91.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_buerhanbuda",
+    "name": "白海堡",
+    "lat": 34.91,
+    "lng": 98.21,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mapangyongcuo",
+    "name": "玛旁雍错",
+    "lat": 30.815,
+    "lng": 81.4307,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kangyanchuan",
+    "name": "察木多",
+    "lat": 31.1333,
+    "lng": 97.1667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_heizong",
+    "name": "黑河宗",
+    "lat": 31.4568,
+    "lng": 92.0407,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cuona",
+    "name": "错那",
+    "lat": 27.9798,
+    "lng": 91.9281,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_metuo",
+    "name": "墨脱",
+    "lat": 29.2505,
+    "lng": 95.213,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chubusi",
+    "name": "楚布寺",
+    "lat": 30.0595,
+    "lng": 90.5328,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ava",
+    "name": "因瓦",
+    "lat": 21.85,
+    "lng": 96.0667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bago",
+    "name": "勃固",
+    "lat": 17.3333,
+    "lng": 96.4667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wumeng",
+    "name": "乌蒙山",
+    "lat": 26.4976,
+    "lng": 103.8977,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leigong",
+    "name": "雷公山",
+    "lat": 26.5738,
+    "lng": 108.0917,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_srikshetra",
+    "name": "室利差罗",
+    "lat": 18.8333,
+    "lng": 95.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_thaton",
+    "name": "直通",
+    "lat": 16.5333,
+    "lng": 97.6333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tonghai",
+    "name": "通海城",
+    "lat": 24.11,
+    "lng": 102.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hailongtun",
+    "name": "海龙屯",
+    "lat": 27.7516,
+    "lng": 106.9244,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhenyuan",
+    "name": "㵲溪",
+    "lat": 27.05,
+    "lng": 108.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mufu",
+    "name": "独克宗",
+    "lat": 27.82,
+    "lng": 99.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dongxu_old",
+    "name": "凯图玛蒂",
+    "lat": 18.8,
+    "lng": 96.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kangla",
+    "name": "康格拉",
+    "lat": 24.82,
+    "lng": 93.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lingqu",
+    "name": "始安",
+    "lat": 25.27,
+    "lng": 110.29,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huashan",
+    "name": "花山",
+    "lat": 22.1594,
+    "lng": 107.4188,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hepu",
+    "name": "海门",
+    "lat": 21.663,
+    "lng": 109.207,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_haikang",
+    "name": "海康",
+    "lat": 20.91,
+    "lng": 110.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_myson",
+    "name": "美山",
+    "lat": 15.5,
+    "lng": 108.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hoalu",
+    "name": "华闾",
+    "lat": 20.25,
+    "lng": 105.9167,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hoabinh",
+    "name": "和平",
+    "lat": 20.7667,
+    "lng": 105.3333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mudan",
+    "name": "牡丹社",
+    "lat": 22.2,
+    "lng": 120.8333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cen",
+    "name": "凌云",
+    "lat": 24.4621,
+    "lng": 106.6278,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xidu",
+    "name": "蓝山",
+    "lat": 19.8,
+    "lng": 105.7833,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuchun",
+    "name": "富春",
+    "lat": 16.4667,
+    "lng": 107.5833,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dangqu",
+    "name": "宕渠",
+    "lat": 30.87,
+    "lng": 106.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_langzhong_gucheng",
+    "name": "隆城",
+    "lat": 31.583,
+    "lng": 105.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuzhou_fugu",
+    "name": "府谷",
+    "lat": 39.0278,
+    "lng": 111.0583,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wanling",
+    "name": "宛陵",
+    "lat": 30.9333,
+    "lng": 118.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chimushan",
+    "name": "敕木山",
+    "lat": 27.925,
+    "lng": 119.6333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingjingsi",
+    "name": "刺桐",
+    "lat": 24.9,
+    "lng": 118.5833,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wulingshan",
+    "name": "壶头山",
+    "lat": 29.1167,
+    "lng": 110.4667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ningwuguan",
+    "name": "宁武关",
+    "lat": 39.05,
+    "lng": 112.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanmenguan",
+    "name": "雁门关",
+    "lat": 39.19,
+    "lng": 112.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xingqing",
+    "name": "合水",
+    "lat": 36.01,
+    "lng": 107.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongan",
+    "name": "永安",
+    "lat": 24.0666,
+    "lng": 110.6268,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xinzheng",
+    "name": "新郑",
+    "lat": 34.4,
+    "lng": 113.74,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xuchang",
+    "name": "许昌",
+    "lat": 34.02,
+    "lng": 113.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dongkang",
+    "name": "东康",
+    "lat": 44.4279,
+    "lng": 131.3882,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kanka",
+    "name": "康卡",
+    "lat": 40.8325,
+    "lng": 68.6343,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_asuka",
+    "name": "千早城",
+    "lat": 34.3367,
+    "lng": 135.6894,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shenglong",
+    "name": "昇龙",
+    "lat": 21.03,
+    "lng": 105.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boduo",
+    "name": "伯都",
+    "lat": 45.4265,
+    "lng": 124.6591,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suogediyanayan",
+    "name": "索格狄亚那岩",
+    "lat": 38.21,
+    "lng": 67.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nuotaka",
+    "name": "诺塔卡",
+    "lat": 39.0578,
+    "lng": 66.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_julushicheng",
+    "name": "居鲁士城",
+    "lat": 39.91,
+    "lng": 69,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_varaksha",
+    "name": "瓦拉赫沙",
+    "lat": 40.403,
+    "lng": 63.089,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_raoleshui",
+    "name": "饶乐水",
+    "lat": 43.27,
+    "lng": 118.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuchuanzhen",
+    "name": "武川镇",
+    "lat": 41.2661,
+    "lng": 111.1322,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gubeikou",
+    "name": "古北口",
+    "lat": 40.69,
+    "lng": 117.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shimenguan",
+    "name": "石门关",
+    "lat": 28.0793,
+    "lng": 104.2548,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yixian",
+    "name": "黟寨",
+    "lat": 29.93,
+    "lng": 117.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_laifeng",
+    "name": "散毛关",
+    "lat": 29.49,
+    "lng": 109.41,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cili",
+    "name": "慈利",
+    "lat": 29.43,
+    "lng": 111.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiushan",
+    "name": "秀山",
+    "lat": 28.3793,
+    "lng": 109.0613,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qianshan",
+    "name": "潜山",
+    "lat": 30.6166,
+    "lng": 116.4853,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bamian",
+    "name": "八面山",
+    "lat": 28.83,
+    "lng": 109.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiading",
+    "name": "甲定",
+    "lat": 26.4853,
+    "lng": 107.5232,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qielancheng",
+    "name": "且兰",
+    "lat": 27.2472,
+    "lng": 107.8802,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yunwu",
+    "name": "允吾",
+    "lat": 36.3018,
+    "lng": 102.8979,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fangling",
+    "name": "房陵",
+    "lat": 32.043,
+    "lng": 110.6927,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangyong",
+    "name": "竹山",
+    "lat": 32.3498,
+    "lng": 109.8853,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_junzhou",
+    "name": "武当",
+    "lat": 32.5417,
+    "lng": 111.5133,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jinzhou_shanxi",
+    "name": "安康",
+    "lat": 32.68,
+    "lng": 109.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leshan",
+    "name": "乐山",
+    "lat": 29.6,
+    "lng": 103.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hanchang",
+    "name": "汉昌",
+    "lat": 31.86,
+    "lng": 106.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_maqu",
+    "name": "玛曲",
+    "lat": 34.3093,
+    "lng": 101.5137,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guyanguan",
+    "name": "古严关",
+    "lat": 25.68,
+    "lng": 110.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hezhou",
+    "name": "临贺",
+    "lat": 24.4,
+    "lng": 111.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mailingguan",
+    "name": "麦岭关",
+    "lat": 25.02,
+    "lng": 111.23,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongzhou_hn",
+    "name": "泉陵",
+    "lat": 26.2318,
+    "lng": 111.5881,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yazhou",
+    "name": "珠崖",
+    "lat": 18.4327,
+    "lng": 108.9899,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pibo",
+    "name": "匹播",
+    "lat": 29.224,
+    "lng": 91.7468,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huashixia",
+    "name": "花石峡",
+    "lat": 35.1962,
+    "lng": 98.9072,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wendeng",
+    "name": "文登",
+    "lat": 37.2,
+    "lng": 122.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guangyuan",
+    "name": "广源",
+    "lat": 22.6444,
+    "lng": 106.2735,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongning2",
+    "name": "叙永",
+    "lat": 28.17,
+    "lng": 105.44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiangyang",
+    "name": "江阳",
+    "lat": 28.87,
+    "lng": 105.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_juzhou",
+    "name": "顺元",
+    "lat": 26.5762,
+    "lng": 106.6855,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_genjo",
+    "name": "根城",
+    "lat": 40.5047,
+    "lng": 141.4644,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_amucheng",
+    "name": "阿母城",
+    "lat": 39.0833,
+    "lng": 63.5786,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hepancheng",
+    "name": "石头城",
+    "lat": 37.7725,
+    "lng": 75.2264,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_humicheng",
+    "name": "护密",
+    "lat": 36.7266,
+    "lng": 71.6133,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huoguocheng",
+    "name": "德拉普萨卡",
+    "lat": 36.7286,
+    "lng": 68.8681,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dargan",
+    "name": "达尔甘",
+    "lat": 40.5333,
+    "lng": 62.2667,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fariyab",
+    "name": "法里亚布",
+    "lat": 35.92,
+    "lng": 64.78,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengle",
+    "name": "勐泐城",
+    "lat": 22,
+    "lng": 100.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chingkham",
+    "name": "清坎寨",
+    "lat": 19.52,
+    "lng": 100.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shuanghe",
+    "name": "素可泰",
+    "lat": 17.017,
+    "lng": 99.704,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_khorat",
+    "name": "呵叻城",
+    "lat": 14.97,
+    "lng": 102.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lahasusu",
+    "name": "拉哈苏苏",
+    "lat": 47.6542,
+    "lng": 132.4979,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_valen",
+    "name": "瓦伦",
+    "lat": 50.55,
+    "lng": 137,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiji",
+    "name": "普禄",
+    "lat": 51.58,
+    "lng": 140,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dadoubagu",
+    "name": "大斗拔谷",
+    "lat": 38.0011,
+    "lng": 100.9125,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_khiva",
+    "name": "希瓦",
+    "lat": 41.564,
+    "lng": 60.7104,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_rituzong",
+    "name": "日土宗",
+    "lat": 33.3672,
+    "lng": 79.7058,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhadunzong",
+    "name": "扎敦宗",
+    "lat": 29.6451,
+    "lng": 84.1718,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sanlongsha",
+    "name": "三陇沙",
+    "lat": 40.4,
+    "lng": 92.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jianshuijinguan",
+    "name": "肩水金关",
+    "lat": 40.4134,
+    "lng": 99.4345,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_porbazhyn",
+    "name": "博尔巴任",
+    "lat": 49.6643,
+    "lng": 95.7678,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_moergen",
+    "name": "莫尔根",
+    "lat": 49.176,
+    "lng": 125.228,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_donghai",
+    "name": "洞海城",
+    "lat": 17.6204,
+    "lng": 106.496,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baidalik",
+    "name": "拜达里克",
+    "lat": 46.1893,
+    "lng": 99.1599,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiegu",
+    "name": "结古宗",
+    "lat": 33.0018,
+    "lng": 97.012,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qiongbu",
+    "name": "丁青宗",
+    "lat": 31.41,
+    "lng": 95.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bukui",
+    "name": "卜奎",
+    "lat": 47.3053,
+    "lng": 123.7527,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teshuolankalun",
+    "name": "唐努",
+    "lat": 49.4199,
+    "lng": 98.432,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_akaogicheng",
+    "name": "赤尾木城",
+    "lat": 30.73,
+    "lng": 131,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_akakinagusuku",
+    "name": "赤木名城",
+    "lat": 28.454,
+    "lng": 129.674,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_riwoche",
+    "name": "类乌齐",
+    "lat": 31.36,
+    "lng": 96.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_derge",
+    "name": "德格",
+    "lat": 31.9242,
+    "lng": 99.1818,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ganzi",
+    "name": "甘孜",
+    "lat": 31.616,
+    "lng": 99.9811,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dajianlu",
+    "name": "打箭炉",
+    "lat": 30.05,
+    "lng": 101.96,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_basu",
+    "name": "八宿宗",
+    "lat": 30.1855,
+    "lng": 97.2839,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yinsheng",
+    "name": "银生城",
+    "lat": 23.8734,
+    "lng": 100.9149,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suozong",
+    "name": "索宗",
+    "lat": 31.8892,
+    "lng": 93.804,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nangqian",
+    "name": "囊谦宗",
+    "lat": 32.2,
+    "lng": 96.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nichi",
+    "name": "太昭",
+    "lat": 29.752,
+    "lng": 93.232,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_litangzong",
+    "name": "理塘宗",
+    "lat": 30,
+    "lng": 100.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_heishacheng",
+    "name": "黑沙牙帐",
+    "lat": 43.5,
+    "lng": 96.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_beiluocheng",
+    "name": "孛罗营",
+    "lat": 44.9,
+    "lng": 82.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dushancheng",
+    "name": "独山营",
+    "lat": 44.42,
+    "lng": 84.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wutucheng",
+    "name": "迪化城",
+    "lat": 43.7354,
+    "lng": 87.5748,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaochangcheng",
+    "name": "高昌",
+    "lat": 42.8533,
+    "lng": 89.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jinchangcheng",
+    "name": "晋昌",
+    "lat": 40.5346,
+    "lng": 95.82,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jieshuangna",
+    "name": "羯霜那",
+    "lat": 40.1243,
+    "lng": 65.3412,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_samaerhan",
+    "name": "撒马尔罕",
+    "lat": 39.6525,
+    "lng": 66.9714,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jizhake",
+    "name": "吉扎克",
+    "lat": 40.1167,
+    "lng": 67.8333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yierkeshentan",
+    "name": "斯姆哈纳",
+    "lat": 39.67,
+    "lng": 73.9,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luntai",
+    "name": "轮台",
+    "lat": 41.77,
+    "lng": 84.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_duluohe",
+    "name": "推河堡",
+    "lat": 45.8269,
+    "lng": 101.879,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guyanshan",
+    "name": "姑衍山",
+    "lat": 48.6184,
+    "lng": 110.6488,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_naomaohu",
+    "name": "淖毛湖",
+    "lat": 43.2793,
+    "lng": 94.7131,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiluoshan",
+    "name": "稽落山",
+    "lat": 44.9744,
+    "lng": 99.1132,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aodongcheng",
+    "name": "敖东城",
+    "lat": 43.37,
+    "lng": 128.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longtanshancheng",
+    "name": "龙潭山",
+    "lat": 43.8345,
+    "lng": 126.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bamiancheng",
+    "name": "八面关",
+    "lat": 43.1892,
+    "lng": 124.3542,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tuhe",
+    "name": "徒河",
+    "lat": 41.12,
+    "lng": 121.14,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_feiru",
+    "name": "肥如",
+    "lat": 39.89,
+    "lng": 118.89,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuzhong",
+    "name": "无终",
+    "lat": 39.95,
+    "lng": 117.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wugucheng",
+    "name": "乌骨城",
+    "lat": 40.7685,
+    "lng": 123.9395,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangzhou",
+    "name": "三白",
+    "lat": 36.41,
+    "lng": 128.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yuanzhishi",
+    "name": "原之辻",
+    "lat": 33.791,
+    "lng": 129.703,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taizaifu",
+    "name": "太宰府",
+    "lat": 33.51,
+    "lng": 130.52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chijianguan",
+    "name": "赤间关",
+    "lat": 33.95,
+    "lng": 130.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guizhicheng",
+    "name": "备中高松城",
+    "lat": 34.69,
+    "lng": 133.82,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_junfucheng",
+    "name": "骏府",
+    "lat": 34.97,
+    "lng": 138.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hamamatsu",
+    "name": "浜松城",
+    "lat": 34.71,
+    "lng": 137.73,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_atsuta",
+    "name": "热田社",
+    "lat": 35.12,
+    "lng": 136.95,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xuanhua",
+    "name": "宣化",
+    "lat": 40.609,
+    "lng": 115.052,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xinghe",
+    "name": "兴和城",
+    "lat": 41.15,
+    "lng": 114.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jining",
+    "name": "集宁",
+    "lat": 41.03,
+    "lng": 113.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingzhou",
+    "name": "净州塞",
+    "lat": 41.56,
+    "lng": 111.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saierwusu",
+    "name": "赛尔乌苏",
+    "lat": 44.8189,
+    "lng": 106.8008,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tongdi",
+    "name": "铜鞮",
+    "lat": 36.7741,
+    "lng": 112.6675,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huixian",
+    "name": "河池",
+    "lat": 33.8,
+    "lng": 106.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huojia",
+    "name": "获嘉",
+    "lat": 35.26,
+    "lng": 113.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_eyu",
+    "name": "阏与",
+    "lat": 36.487,
+    "lng": 113.381,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fushi",
+    "name": "肤施",
+    "lat": 36.59,
+    "lng": 109.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_changze",
+    "name": "长泽",
+    "lat": 39.1,
+    "lng": 107.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linrong",
+    "name": "临戎",
+    "lat": 40.3,
+    "lng": 107,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aowei",
+    "name": "媪围",
+    "lat": 37.3963,
+    "lng": 104.1119,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mingsha",
+    "name": "鸣沙",
+    "lat": 37.51,
+    "lng": 105.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xingqingfu2",
+    "name": "兴庆府",
+    "lat": 38.5374,
+    "lng": 106.2955,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lingju",
+    "name": "令居",
+    "lat": 36.73,
+    "lng": 103.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zuli",
+    "name": "祖厉",
+    "lat": 36.56,
+    "lng": 104.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhedi",
+    "name": "真宁",
+    "lat": 35.5,
+    "lng": 107.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingling",
+    "name": "竟陵",
+    "lat": 30.662,
+    "lng": 113.166,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yunmeng",
+    "name": "云梦",
+    "lat": 31.02,
+    "lng": 113.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_daming",
+    "name": "大名",
+    "lat": 36.5138,
+    "lng": 115.3043,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shizhu",
+    "name": "石柱",
+    "lat": 30,
+    "lng": 108.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bijie",
+    "name": "毕节",
+    "lat": 27.302,
+    "lng": 105.285,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tianyang",
+    "name": "田阳",
+    "lat": 23.72,
+    "lng": 106.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hailing",
+    "name": "海陵",
+    "lat": 32.55,
+    "lng": 120,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingkou",
+    "name": "濡须口",
+    "lat": 31.58,
+    "lng": 117.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liyang",
+    "name": "巨鹿",
+    "lat": 37.22,
+    "lng": 115.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ningyuan",
+    "name": "宁远城",
+    "lat": 40.618,
+    "lng": 120.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salhu",
+    "name": "萨尔浒",
+    "lat": 41.841,
+    "lng": 124.046,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuchang",
+    "name": "武昌",
+    "lat": 30.53,
+    "lng": 114.32,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_quwo",
+    "name": "曲沃",
+    "lat": 35.631,
+    "lng": 111.474,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tacheng",
+    "name": "塔城",
+    "lat": 46.746,
+    "lng": 82.983,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hamiwei",
+    "name": "哈密卫",
+    "lat": 42.8,
+    "lng": 93.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bieshibali",
+    "name": "务涂城",
+    "lat": 43.9889,
+    "lng": 89.5798,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_balikun",
+    "name": "巴里坤",
+    "lat": 43.6,
+    "lng": 93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_buergenjuntai",
+    "name": "布尔根",
+    "lat": 46.09,
+    "lng": 91.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhabuhanjuntai",
+    "name": "扎布汗",
+    "lat": 47.8445,
+    "lng": 94.1748,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teerhunjuntai",
+    "name": "特尔浑",
+    "lat": 48.0891,
+    "lng": 99.5389,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_woluduocheng",
+    "name": "青岭牙帐",
+    "lat": 47.6986,
+    "lng": 102.6315,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_douweihunhe",
+    "name": "都尉溷河",
+    "lat": 47.8592,
+    "lng": 103.9664,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xicheng",
+    "name": "息谷",
+    "lat": 39.62,
+    "lng": 125.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qudiaoalan",
+    "name": "曲雕阿兰",
+    "lat": 47.1468,
+    "lng": 109.2041,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bayanwula",
+    "name": "巴彦乌拉",
+    "lat": 44.53,
+    "lng": 117.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_halagaitu2",
+    "name": "哈拉盖图",
+    "lat": 45.7809,
+    "lng": 119.2456,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kuoyitian",
+    "name": "阔亦田",
+    "lat": 47.1357,
+    "lng": 115.2905,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sangguer",
+    "name": "温都尔汗",
+    "lat": 47.2625,
+    "lng": 110.7175,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bayantumen",
+    "name": "巴彦图门",
+    "lat": 48.053,
+    "lng": 114.538,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huzhan",
+    "name": "忽毡",
+    "lat": 40.2481,
+    "lng": 69.6588,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aoshen",
+    "name": "奥什",
+    "lat": 40.53,
+    "lng": 72.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dawushenkate",
+    "name": "大乌什",
+    "lat": 41.13,
+    "lng": 82.78,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kungang",
+    "name": "昆岗",
+    "lat": 40.54,
+    "lng": 81.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mazhatage",
+    "name": "麻扎塔格",
+    "lat": 38.58,
+    "lng": 80.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yutian2",
+    "name": "于阗",
+    "lat": 37.1,
+    "lng": 79.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yumi",
+    "name": "阿赫雅尔",
+    "lat": 36.85,
+    "lng": 81.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_keliyashankou",
+    "name": "阿什库尔",
+    "lat": 35.45,
+    "lng": 81.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longmucuo",
+    "name": "龙木错",
+    "lat": 34.5722,
+    "lng": 80.3485,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gadake",
+    "name": "噶大克",
+    "lat": 31.9405,
+    "lng": 80.1398,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_payangyi",
+    "name": "帕羊驿",
+    "lat": 30.1402,
+    "lng": 83.2819,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saga",
+    "name": "萨噶",
+    "lat": 29.33,
+    "lng": 85.23,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sajia",
+    "name": "萨迦",
+    "lat": 29.1018,
+    "lng": 87.6654,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sangzhuzi",
+    "name": "桑珠孜",
+    "lat": 29.3032,
+    "lng": 88.8629,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiamachikang",
+    "name": "甲玛赤康",
+    "lat": 29.74,
+    "lng": 91.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_juemuzong",
+    "name": "觉木宗",
+    "lat": 29.5711,
+    "lng": 94.4769,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_galangzong",
+    "name": "噶朗宗",
+    "lat": 29.86,
+    "lng": 95.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mangkangzong",
+    "name": "芒康宗",
+    "lat": 29.67,
+    "lng": 98.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_adunzi",
+    "name": "阿墩子",
+    "lat": 28.48,
+    "lng": 98.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dayan",
+    "name": "大研",
+    "lat": 26.87,
+    "lng": 100.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tengyuecheng",
+    "name": "腾越城",
+    "lat": 25.02,
+    "lng": 98.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengmao",
+    "name": "勐卯",
+    "lat": 24.01,
+    "lng": 97.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiwanjin",
+    "name": "悉万斤",
+    "lat": 36.66,
+    "lng": 65.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hunduduo",
+    "name": "昏度多",
+    "lat": 37.0223,
+    "lng": 72.6279,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_puticheng",
+    "name": "菩提营",
+    "lat": 35.3,
+    "lng": 75.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kajier",
+    "name": "喀吉尔",
+    "lat": 34.55,
+    "lng": 76.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhaburang2",
+    "name": "札布让",
+    "lat": 31.4966,
+    "lng": 79.7992,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiangzi",
+    "name": "江孜",
+    "lat": 28.92,
+    "lng": 89.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linqiong",
+    "name": "临邛",
+    "lat": 30.4149,
+    "lng": 103.4619,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yandao",
+    "name": "严道",
+    "lat": 30.0001,
+    "lng": 102.9721,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingxiguan",
+    "name": "清溪关",
+    "lat": 29.3667,
+    "lng": 102.6333,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yuegui",
+    "name": "越嶲",
+    "lat": 28.4229,
+    "lng": 102.681,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huichuan",
+    "name": "会川",
+    "lat": 26.6545,
+    "lng": 102.2454,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chenzhou2",
+    "name": "沅陵",
+    "lat": 28.227,
+    "lng": 110.2917,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yuanzhou",
+    "name": "芷江",
+    "lat": 27.5667,
+    "lng": 109.91,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_puding",
+    "name": "普定",
+    "lat": 26.25,
+    "lng": 105.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shengjingguan",
+    "name": "胜境关",
+    "lat": 25.6514,
+    "lng": 104.3509,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weixian2",
+    "name": "曲靖",
+    "lat": 25.49,
+    "lng": 103.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weichu",
+    "name": "威楚",
+    "lat": 25.0458,
+    "lng": 101.5741,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tuodongcheng",
+    "name": "滇池",
+    "lat": 25.05,
+    "lng": 102.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luoxiong",
+    "name": "罗雄",
+    "lat": 24.7693,
+    "lng": 104.2245,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wanwen",
+    "name": "宛温",
+    "lat": 25.09,
+    "lng": 104.89,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cangwu",
+    "name": "苍梧",
+    "lat": 23.47,
+    "lng": 111.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_panyu",
+    "name": "番禺",
+    "lat": 23.12,
+    "lng": 113.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_longchuan",
+    "name": "龙川",
+    "lat": 24.1,
+    "lng": 115.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kuaiji",
+    "name": "会稽",
+    "lat": 29.987,
+    "lng": 120.582,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luling",
+    "name": "庐陵",
+    "lat": 27.1133,
+    "lng": 114.9806,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hongzhou",
+    "name": "豫章",
+    "lat": 28.68,
+    "lng": 115.88,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingliuguan",
+    "name": "清流关",
+    "lat": 32.28,
+    "lng": 118.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhongli",
+    "name": "盱眙",
+    "lat": 33.011,
+    "lng": 118.497,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bianliang",
+    "name": "开封",
+    "lat": 34.8,
+    "lng": 114.31,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangluo",
+    "name": "商邑",
+    "lat": 33.87,
+    "lng": 109.94,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shicheng",
+    "name": "郊郢",
+    "lat": 31.16,
+    "lng": 112.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baling",
+    "name": "巴陵",
+    "lat": 29.35,
+    "lng": 113.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linzheng",
+    "name": "临烝",
+    "lat": 26.89,
+    "lng": 112.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guiyang",
+    "name": "桂阳",
+    "lat": 25.78,
+    "lng": 113,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qujiang",
+    "name": "韶关",
+    "lat": 24.8,
+    "lng": 113.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bodao",
+    "name": "珙县",
+    "lat": 28.76,
+    "lng": 104.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nanpu",
+    "name": "南浦",
+    "lat": 30.82,
+    "lng": 108.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baidicheng2",
+    "name": "白帝城",
+    "lat": 31.043,
+    "lng": 109.57,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qichun",
+    "name": "蕲春",
+    "lat": 30.23,
+    "lng": 115.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wancheng",
+    "name": "皖口",
+    "lat": 30.51,
+    "lng": 117.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiuzi",
+    "name": "姑孰",
+    "lat": 31.55,
+    "lng": 118.47,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_datong2",
+    "name": "大通",
+    "lat": 30.8188,
+    "lng": 117.7762,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_karakorum",
+    "name": "哈拉和林",
+    "lat": 47.1374,
+    "lng": 103.0353,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xingzhuting",
+    "name": "星主厅",
+    "lat": 33.5131,
+    "lng": 126.5215,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_deokwon",
+    "name": "德源",
+    "lat": 39.54,
+    "lng": 127.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yuezhi",
+    "name": "大木岳",
+    "lat": 36.8353,
+    "lng": 127.0417,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_heseluo",
+    "name": "何瑟罗",
+    "lat": 37.75,
+    "lng": 128.89,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wushecheng",
+    "name": "乌舍寨",
+    "lat": 45.8211,
+    "lng": 128.161,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xianping",
+    "name": "咸平",
+    "lat": 42.5794,
+    "lng": 124.0796,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xupin",
+    "name": "恤品",
+    "lat": 42.9946,
+    "lng": 129.8282,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huifa",
+    "name": "辉发",
+    "lat": 42.7046,
+    "lng": 125.9225,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_julunbo",
+    "name": "俱轮泊",
+    "lat": 49.2516,
+    "lng": 118.2623,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boli2",
+    "name": "勃利",
+    "lat": 48.48,
+    "lng": 135.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kuanchengzi",
+    "name": "宽城屯",
+    "lat": 43.8725,
+    "lng": 125.3595,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuliyasitai",
+    "name": "乌里雅斯太",
+    "lat": 45.519,
+    "lng": 116.9604,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saihantala",
+    "name": "赛汉塔拉",
+    "lat": 42.7701,
+    "lng": 112.6099,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sailan",
+    "name": "讹答剌",
+    "lat": 42.2863,
+    "lng": 69.5709,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saiyinshanda",
+    "name": "薛灵哥",
+    "lat": 49.4378,
+    "lng": 101.4285,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saiyinsanda",
+    "name": "赛音山达",
+    "lat": 44.887,
+    "lng": 110.1407,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_temermen",
+    "name": "特尔门",
+    "lat": 48.7386,
+    "lng": 97.8387,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yancheng2",
+    "name": "郾城",
+    "lat": 33.58,
+    "lng": 114.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xuanhu",
+    "name": "悬瓠",
+    "lat": 33.01,
+    "lng": 114.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yiluolucheng",
+    "name": "伊逻卢",
+    "lat": 41.72,
+    "lng": 82.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yuergun",
+    "name": "玉尔滚",
+    "lat": 41.35,
+    "lng": 81.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bohuancheng",
+    "name": "拨换城",
+    "lat": 41.17,
+    "lng": 80.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dashicheng",
+    "name": "大石堡",
+    "lat": 41.28,
+    "lng": 79.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weitoucheng",
+    "name": "阿合奇",
+    "lat": 40.3,
+    "lng": 79.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wosedecheng",
+    "name": "握瑟德",
+    "lat": 39.77,
+    "lng": 78.56,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiaseni",
+    "name": "哥疾宁",
+    "lat": 33.55,
+    "lng": 68.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaofu",
+    "name": "喀布尔",
+    "lat": 34.55,
+    "lng": 69.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_masaga",
+    "name": "马萨加",
+    "lat": 34.65,
+    "lng": 72.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_patala",
+    "name": "帕塔拉",
+    "lat": 25.39,
+    "lng": 68.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pula",
+    "name": "普拉",
+    "lat": 27.2025,
+    "lng": 60.6858,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kamanniya",
+    "name": "卡曼尼亚",
+    "lat": 28.67,
+    "lng": 57.74,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xierzhan",
+    "name": "锡尔詹",
+    "lat": 29.45,
+    "lng": 55.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hulewan",
+    "name": "呼勒万",
+    "lat": 34.35,
+    "lng": 45.9,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yilamu",
+    "name": "伊拉姆",
+    "lat": 33.64,
+    "lng": 46.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guerpayegan",
+    "name": "古尔帕耶甘",
+    "lat": 33.4536,
+    "lng": 50.2884,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lanbaqiya",
+    "name": "兰巴基亚",
+    "lat": 26.23,
+    "lng": 66.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malisi",
+    "name": "马里斯",
+    "lat": 30.198,
+    "lng": 71.468,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aonuosiyan",
+    "name": "奥诺斯岩",
+    "lat": 34.82,
+    "lng": 72.88,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baishawa",
+    "name": "白沙瓦",
+    "lat": 34.01,
+    "lng": 71.52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fanyanna",
+    "name": "巴米扬",
+    "lat": 34.8659,
+    "lng": 67.9807,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_paixiucheng",
+    "name": "涓笃",
+    "lat": 39.48,
+    "lng": 76.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_daerhan",
+    "name": "达尔罕",
+    "lat": 43.6064,
+    "lng": 122.2229,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yiyang",
+    "name": "葛溪",
+    "lat": 28.3524,
+    "lng": 117.4466,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_linchuan",
+    "name": "临川",
+    "lat": 27.9779,
+    "lng": 116.3562,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_binzhou2",
+    "name": "新平",
+    "lat": 35.03,
+    "lng": 108.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fangqu",
+    "name": "方渠",
+    "lat": 36.58,
+    "lng": 107.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingsai",
+    "name": "静塞",
+    "lat": 37.4486,
+    "lng": 106.6745,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lingzhou",
+    "name": "回乐",
+    "lat": 37.9983,
+    "lng": 106.2955,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nuergan",
+    "name": "特林",
+    "lat": 52.92,
+    "lng": 139.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pennuli",
+    "name": "盆奴里",
+    "lat": 47.7081,
+    "lng": 130.9337,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malulude",
+    "name": "马尔夫鲁德",
+    "lat": 35.58,
+    "lng": 63.32,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pengdi",
+    "name": "彭迪",
+    "lat": 36,
+    "lng": 62.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wubusabo",
+    "name": "乌布萨泊",
+    "lat": 49.9762,
+    "lng": 92.0929,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhenzhuhe",
+    "name": "真珠河",
+    "lat": 41.2773,
+    "lng": 67.9312,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuyun",
+    "name": "乌云",
+    "lat": 49.018,
+    "lng": 129.9154,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dupan",
+    "name": "阇槃",
+    "lat": 13.93,
+    "lng": 109.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bangdun",
+    "name": "邦敦",
+    "lat": 12.87,
+    "lng": 107.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sanpu",
+    "name": "三菩",
+    "lat": 12.77,
+    "lng": 105.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_juyansai",
+    "name": "遮虏障",
+    "lat": 41.8942,
+    "lng": 101.044,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gongzhubao",
+    "name": "公主堡",
+    "lat": 37.2008,
+    "lng": 75.3745,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jimai",
+    "name": "吉麦",
+    "lat": 29.3012,
+    "lng": 90.6812,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nuotuoluo",
+    "name": "诺托罗",
+    "lat": 49.2,
+    "lng": 143.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baizhu",
+    "name": "白主",
+    "lat": 46.71,
+    "lng": 142.52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bailao",
+    "name": "白老",
+    "lat": 42.55,
+    "lng": 141.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zonggu",
+    "name": "宗谷",
+    "lat": 45.5,
+    "lng": 141.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xierka",
+    "name": "锡尔喀",
+    "lat": 46.9,
+    "lng": 134.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_niman",
+    "name": "尼满",
+    "lat": 45.51,
+    "lng": 131.96,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nibuchu",
+    "name": "尼布楚",
+    "lat": 51.99,
+    "lng": 116.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yakesa",
+    "name": "雅克萨",
+    "lat": 53.3906,
+    "lng": 124.0775,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geerbiqi",
+    "name": "格尔必齐",
+    "lat": 53.33,
+    "lng": 121.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shilekahe",
+    "name": "石勒喀堡",
+    "lat": 51.7321,
+    "lng": 115.8151,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chita",
+    "name": "赤塔",
+    "lat": 52.0333,
+    "lng": 113.5017,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yangjigan",
+    "name": "养吉干",
+    "lat": 45.6,
+    "lng": 62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhande",
+    "name": "毡的",
+    "lat": 44.85,
+    "lng": 65.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengjia",
+    "name": "艋舺",
+    "lat": 25.03,
+    "lng": 121.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_diaoyudao",
+    "name": "钓鱼岛",
+    "lat": 25.75,
+    "lng": 123.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gugudao",
+    "name": "平良",
+    "lat": 24.805,
+    "lng": 125.281,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qihe",
+    "name": "哲德",
+    "lat": 44.2219,
+    "lng": 64.3332,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taibade",
+    "name": "泰巴德",
+    "lat": 34.7763,
+    "lng": 60.7764,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_helate_city",
+    "name": "赫拉特",
+    "lat": 34.34,
+    "lng": 62.19,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salahesi",
+    "name": "萨拉赫斯",
+    "lat": 36.5449,
+    "lng": 61.1577,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tusi",
+    "name": "图斯",
+    "lat": 36.45,
+    "lng": 59.57,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bosite",
+    "name": "博斯特",
+    "lat": 31.5833,
+    "lng": 64.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fala",
+    "name": "法拉",
+    "lat": 32.37,
+    "lng": 62.11,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kandaha",
+    "name": "坎大哈",
+    "lat": 31.6289,
+    "lng": 65.7372,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_helate",
+    "name": "菲鲁兹库赫",
+    "lat": 34.396,
+    "lng": 64.516,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nishabuer",
+    "name": "尼沙布尔",
+    "lat": 36.2133,
+    "lng": 58.7958,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dinggucheng",
+    "name": "难揭",
+    "lat": 34.43,
+    "lng": 70.45,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_atuoke",
+    "name": "阿托克",
+    "lat": 33.7666,
+    "lng": 72.3608,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_meng",
+    "name": "蒙格",
+    "lat": 32.6474,
+    "lng": 73.5091,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shwebo",
+    "name": "瑞波",
+    "lat": 22.57,
+    "lng": 95.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hengyu",
+    "name": "横屿",
+    "lat": 26.77,
+    "lng": 119.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luobo",
+    "name": "罗博",
+    "lat": 25.4112,
+    "lng": 106.7377,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_situo",
+    "name": "思陀",
+    "lat": 23.2243,
+    "lng": 102.8485,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shangding",
+    "name": "上丁",
+    "lat": 13.5581,
+    "lng": 106.0098,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tingbu",
+    "name": "廷布",
+    "lat": 27.472,
+    "lng": 89.639,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huangchuan",
+    "name": "弋阳",
+    "lat": 32.131,
+    "lng": 115.051,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongqiu",
+    "name": "雍丘",
+    "lat": 34.55,
+    "lng": 114.78,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengcheng",
+    "name": "蒙城",
+    "lat": 33.27,
+    "lng": 116.56,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yongcheng",
+    "name": "永城",
+    "lat": 33.93,
+    "lng": 116.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kunyang",
+    "name": "昆阳",
+    "lat": 33.22,
+    "lng": 113.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yucheng",
+    "name": "虞城",
+    "lat": 34.7758,
+    "lng": 116.0678,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bengbu",
+    "name": "钟离",
+    "lat": 32.92,
+    "lng": 117.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_liaocheng",
+    "name": "聊城",
+    "lat": 36.4322,
+    "lng": 115.9552,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sapi",
+    "name": "萨毗营",
+    "lat": 37.6315,
+    "lng": 88.8849,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shayuan",
+    "name": "长宁",
+    "lat": 35.0032,
+    "lng": 109.9319,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gasikou",
+    "name": "噶斯口",
+    "lat": 38.0783,
+    "lng": 89.2886,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_niubiziliang",
+    "name": "牛鼻子梁",
+    "lat": 37.8382,
+    "lng": 91.6782,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mahaitai",
+    "name": "马海台",
+    "lat": 38.046,
+    "lng": 94.6225,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taijinaier",
+    "name": "台吉乃尔",
+    "lat": 36.4266,
+    "lng": 94.896,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gasinaoer",
+    "name": "尕斯淖尔",
+    "lat": 38.3593,
+    "lng": 90.1334,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jieqiao",
+    "name": "界桥",
+    "lat": 36.95,
+    "lng": 115.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_biaoshi",
+    "name": "表氏",
+    "lat": 39.8,
+    "lng": 99.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hakone",
+    "name": "箱根关",
+    "lat": 35.1861,
+    "lng": 138.9999,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kamakura",
+    "name": "镰仓",
+    "lat": 35.3195,
+    "lng": 139.5503,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fuwa",
+    "name": "不破关",
+    "lat": 35.3577,
+    "lng": 136.4602,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cheollyeong",
+    "name": "铁岭关",
+    "lat": 38.8102,
+    "lng": 127.4959,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_penghu",
+    "name": "澎湖",
+    "lat": 23.5,
+    "lng": 119.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fengtian",
+    "name": "奉天",
+    "lat": 34.53,
+    "lng": 108.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taqian",
+    "name": "它乾城",
+    "lat": 41.875,
+    "lng": 83.59,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shaozhou",
+    "name": "邵州",
+    "lat": 27.24,
+    "lng": 111.47,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zizhou_d",
+    "name": "梓州",
+    "lat": 31.0788,
+    "lng": 105.0925,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qingchi",
+    "name": "清池",
+    "lat": 38.3,
+    "lng": 116.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shandan",
+    "name": "删丹",
+    "lat": 38.78,
+    "lng": 101.08,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chongan",
+    "name": "崇安",
+    "lat": 27.76,
+    "lng": 118.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_piyetuo",
+    "name": "毗耶陀",
+    "lat": 11.66,
+    "lng": 104.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_langbolabang",
+    "name": "琅勃拉邦",
+    "lat": 20.0469,
+    "lng": 102.2292,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geergang",
+    "name": "戈尔冈",
+    "lat": 27.479,
+    "lng": 94.8889,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huma",
+    "name": "呼玛",
+    "lat": 51.72,
+    "lng": 126.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cangyuan",
+    "name": "沧源",
+    "lat": 23.3725,
+    "lng": 99.4263,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huoluoge",
+    "name": "霍罗格",
+    "lat": 37.49,
+    "lng": 71.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mizhina",
+    "name": "密支那",
+    "lat": 25.38,
+    "lng": 97.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sandou",
+    "name": "三都",
+    "lat": 25.98,
+    "lng": 107.87,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tanzhong",
+    "name": "潭中",
+    "lat": 24.28,
+    "lng": 109.41,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yunyang",
+    "name": "郧阳",
+    "lat": 32.8127,
+    "lng": 110.8122,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhongshan",
+    "name": "中山",
+    "lat": 38.4708,
+    "lng": 115.0626,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ledou",
+    "name": "乐都",
+    "lat": 36.49,
+    "lng": 102.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xuecheng",
+    "name": "薛寨",
+    "lat": 31.43,
+    "lng": 103.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhangguojuncheng",
+    "name": "彰国军城",
+    "lat": 39.5761,
+    "lng": 113.1894,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yunzhongcheng",
+    "name": "君子津",
+    "lat": 40.2732,
+    "lng": 111.1404,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_haomen",
+    "name": "浩门",
+    "lat": 37.464,
+    "lng": 101.4258,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yulin",
+    "name": "榆林",
+    "lat": 38.3567,
+    "lng": 109.7644,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jingbianbao",
+    "name": "靖边堡",
+    "lat": 37.5685,
+    "lng": 108.8608,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_quyancheng",
+    "name": "朐衍",
+    "lat": 37.7794,
+    "lng": 107.4078,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lishi",
+    "name": "离石",
+    "lat": 37.48,
+    "lng": 111.09,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chiwubao",
+    "name": "赤乌堡",
+    "lat": 37.477,
+    "lng": 102.8815,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wulihong",
+    "name": "乌利洪",
+    "lat": 49.53,
+    "lng": 112.54,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mubang",
+    "name": "木邦",
+    "lat": 23.32,
+    "lng": 97.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baihage",
+    "name": "白哈格",
+    "lat": 36.21,
+    "lng": 57.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_damugan",
+    "name": "达姆甘",
+    "lat": 36.17,
+    "lng": 54.35,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bistam",
+    "name": "比斯塔姆",
+    "lat": 36.48,
+    "lng": 55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_leiyi",
+    "name": "雷伊",
+    "lat": 35.6,
+    "lng": 51.44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lihaimen",
+    "name": "里海门",
+    "lat": 35.25,
+    "lng": 52.34,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiaziwen",
+    "name": "加兹温",
+    "lat": 36.27,
+    "lng": 50,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zanzhan",
+    "name": "赞詹",
+    "lat": 36.67,
+    "lng": 48.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dabulishi",
+    "name": "大不里士",
+    "lat": 38.08,
+    "lng": 46.29,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malagai",
+    "name": "马拉盖",
+    "lat": 37.39,
+    "lng": 46.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ailiwen",
+    "name": "埃里温",
+    "lat": 40.18,
+    "lng": 44.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tushpa",
+    "name": "图什帕",
+    "lat": 38.5,
+    "lng": 43.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dibilisi",
+    "name": "第比利斯",
+    "lat": 41.72,
+    "lng": 44.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_telabuzong",
+    "name": "特拉布宗",
+    "lat": 41,
+    "lng": 39.73,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kutayixi",
+    "name": "库塔伊西",
+    "lat": 42.27,
+    "lng": 42.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_amaxiya",
+    "name": "阿马西亚",
+    "lat": 40.65,
+    "lng": 35.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hatusha",
+    "name": "哈图沙",
+    "lat": 40.02,
+    "lng": 34.61,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geerdiweng",
+    "name": "戈尔迪乌姆",
+    "lat": 39.65,
+    "lng": 31.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sifaerde",
+    "name": "斯法尔德",
+    "lat": 38.48,
+    "lng": 28.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peierjiameng",
+    "name": "佩尔加蒙",
+    "lat": 39.12,
+    "lng": 27.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nixiya",
+    "name": "尼凯亚",
+    "lat": 40.43,
+    "lng": 29.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_junshitandingbao",
+    "name": "君士坦丁堡",
+    "lat": 41.01,
+    "lng": 28.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yikeniwumu",
+    "name": "伊科尼乌姆",
+    "lat": 37.8744,
+    "lng": 32.4931,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tiyana",
+    "name": "提亚纳",
+    "lat": 37.848,
+    "lng": 34.611,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nikexiya",
+    "name": "尼科西亚",
+    "lat": 35.18,
+    "lng": 33.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_antiejiya",
+    "name": "安提俄基亚",
+    "lat": 36.2,
+    "lng": 36.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teluowulan",
+    "name": "特罗武兰",
+    "lat": -7.55,
+    "lng": 112.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ajiemier",
+    "name": "阿杰梅尔",
+    "lat": 26.45,
+    "lng": 74.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kumubi",
+    "name": "库姆比萨利赫",
+    "lat": 15.77,
+    "lng": -7.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_latajiya",
+    "name": "拉塔基亚",
+    "lat": 35.52,
+    "lng": 35.79,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lansi",
+    "name": "兰斯",
+    "lat": 49.26,
+    "lng": 4.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kanafeng",
+    "name": "卡那封",
+    "lat": 53.14,
+    "lng": -4.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_meierfei",
+    "name": "梅尔菲",
+    "lat": 40.99,
+    "lng": 15.65,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saimien",
+    "name": "塞米恩",
+    "lat": 13.3,
+    "lng": 38.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_seyute",
+    "name": "瑟于特",
+    "lat": 40.03,
+    "lng": 30.18,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anfeibolisi",
+    "name": "安菲波利斯",
+    "lat": 40.82,
+    "lng": 23.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yanghe",
+    "name": "羊河",
+    "lat": 40.332,
+    "lng": 26.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gelanikusi",
+    "name": "格拉尼库斯",
+    "lat": 40.32,
+    "lng": 27.28,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peiluximu",
+    "name": "佩鲁西姆",
+    "lat": 31.04,
+    "lng": 32.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_matelugang",
+    "name": "马特鲁港",
+    "lat": 31.35,
+    "lng": 27.23,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_halikanasu",
+    "name": "哈利卡纳苏斯",
+    "lat": 37.03,
+    "lng": 27.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kelazuomeinai",
+    "name": "克拉佐美奈",
+    "lat": 38.36,
+    "lng": 26.77,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tiluo",
+    "name": "提洛",
+    "lat": 37.39,
+    "lng": 25.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aerbeila",
+    "name": "阿尔贝拉",
+    "lat": 36.19,
+    "lng": 44.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kalisituosi",
+    "name": "卡里斯托斯",
+    "lat": 38.01,
+    "lng": 24.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_antiwali",
+    "name": "安提瓦里",
+    "lat": 42.1,
+    "lng": 19.1,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aolinsuosi",
+    "name": "奥林索斯",
+    "lat": 40.29,
+    "lng": 23.35,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kawunas",
+    "name": "卡乌纳斯",
+    "lat": 54.9,
+    "lng": 23.91,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_delusitaer",
+    "name": "德鲁斯塔尔",
+    "lat": 44.12,
+    "lng": 27.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yeerdishi",
+    "name": "也儿的石",
+    "lat": 47.85,
+    "lng": 85.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kaerkahe",
+    "name": "卡尔卡河",
+    "lat": 47.27,
+    "lng": 37.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mierkefu",
+    "name": "密尔科夫",
+    "lat": 45.65,
+    "lng": 27.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ahexikesi",
+    "name": "阿赫西克特",
+    "lat": 40.89,
+    "lng": 71.34,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hongsa",
+    "name": "洪萨",
+    "lat": 5.53,
+    "lng": -73.36,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kabufoliwu",
+    "name": "卡布弗里乌",
+    "lat": -22.88,
+    "lng": -42.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kelipuli",
+    "name": "科利普利",
+    "lat": -37.95,
+    "lng": -72.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bideluoa",
+    "name": "彼得罗阿",
+    "lat": -35.03,
+    "lng": -71.55,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengteluo",
+    "name": "蒙特罗",
+    "lat": 48.39,
+    "lng": 2.95,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_oushi",
+    "name": "欧什",
+    "lat": 43.65,
+    "lng": 0.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_geluosite",
+    "name": "格洛斯特",
+    "lat": 51.86,
+    "lng": -2.24,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kesenza",
+    "name": "科森扎",
+    "lat": 39.3,
+    "lng": 16.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nabone",
+    "name": "纳博讷",
+    "lat": 43.18,
+    "lng": 3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lier",
+    "name": "里尔",
+    "lat": 50.63,
+    "lng": 3.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hawadeng",
+    "name": "哈瓦登",
+    "lat": 53.18,
+    "lng": -3.03,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_buyiersi",
+    "name": "布伊尔斯",
+    "lat": 52.15,
+    "lng": -3.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yian",
+    "name": "义安",
+    "lat": 18.67,
+    "lng": 105.68,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_debuleidamo",
+    "name": "德布雷达莫",
+    "lat": 14.37,
+    "lng": 39.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_waka",
+    "name": "瓦卡",
+    "lat": 37.81,
+    "lng": 35.91,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_debuleilibanuosi",
+    "name": "德布雷利巴诺斯",
+    "lat": 9.71,
+    "lng": 38.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_santaguan",
+    "name": "三塔关",
+    "lat": 14.35,
+    "lng": 98.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_danmaxi",
+    "name": "淡马锡",
+    "lat": 1.29,
+    "lng": 103.85,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jinqi",
+    "name": "金奇",
+    "lat": 12.25,
+    "lng": 79.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_damasikusi",
+    "name": "大马士革",
+    "lat": 33.5131,
+    "lng": 36.3094,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_emesa",
+    "name": "埃梅萨",
+    "lat": 34.73,
+    "lng": 36.71,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yelusaleng",
+    "name": "耶路撒冷",
+    "lat": 31.77,
+    "lng": 35.21,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ake",
+    "name": "阿卡",
+    "lat": 32.9214,
+    "lng": 35.0689,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tuile",
+    "name": "推罗",
+    "lat": 33.2709,
+    "lng": 35.1962,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kolossi",
+    "name": "科洛西",
+    "lat": 34.664,
+    "lng": 32.934,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mengfeisi",
+    "name": "孟菲斯",
+    "lat": 29.85,
+    "lng": 31.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiwa",
+    "name": "锡瓦绿洲",
+    "lat": 29.2,
+    "lng": 25.52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wasaite",
+    "name": "瓦塞特",
+    "lat": 25.7,
+    "lng": 32.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yalishanda",
+    "name": "亚历山大",
+    "lat": 31.1975,
+    "lng": 29.8925,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_babilun",
+    "name": "巴比伦",
+    "lat": 32.5425,
+    "lng": 44.4211,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tademoer",
+    "name": "塔德莫尔",
+    "lat": 34.55,
+    "lng": 38.27,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bageda",
+    "name": "巴格达",
+    "lat": 33.33,
+    "lng": 44.37,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_samaila",
+    "name": "萨迈拉",
+    "lat": 34.206,
+    "lng": 43.88,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_awalisi",
+    "name": "阿瓦里斯",
+    "lat": 30.79,
+    "lng": 31.83,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_niniwei",
+    "name": "尼尼微",
+    "lat": 36.36,
+    "lng": 43.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tapusakusi",
+    "name": "塔普萨库斯",
+    "lat": 35.91,
+    "lng": 38.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nixibisi",
+    "name": "尼西比斯",
+    "lat": 37.07,
+    "lng": 41.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anate",
+    "name": "阿纳特",
+    "lat": 34.47,
+    "lng": 41.96,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hamadan",
+    "name": "哈马丹",
+    "lat": 34.8,
+    "lng": 48.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_adana",
+    "name": "阿达纳",
+    "lat": 37,
+    "lng": 35.3213,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bosibolisi",
+    "name": "波斯波利斯",
+    "lat": 29.93,
+    "lng": 52.89,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_feiluzhabade",
+    "name": "菲鲁扎巴德",
+    "lat": 28.85,
+    "lng": 52.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_susa",
+    "name": "苏萨",
+    "lat": 32.1906,
+    "lng": 48.2578,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yisifahan",
+    "name": "伊斯法罕",
+    "lat": 32.65,
+    "lng": 51.66,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuluke",
+    "name": "乌鲁克",
+    "lat": 31.32,
+    "lng": 45.64,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_alepo",
+    "name": "阿勒颇",
+    "lat": 36.2,
+    "lng": 37.16,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ayinzhaluete",
+    "name": "阿音贾鲁特",
+    "lat": 32.53,
+    "lng": 35.44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aidesa",
+    "name": "埃德萨",
+    "lat": 37.15,
+    "lng": 38.7825,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_daerban",
+    "name": "打耳班",
+    "lat": 42.06,
+    "lng": 48.3,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_miletus",
+    "name": "米利都",
+    "lat": 37.5303,
+    "lng": 27.2783,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yifusuo",
+    "name": "以弗所",
+    "lat": 37.94,
+    "lng": 27.34,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ankala",
+    "name": "安卡拉",
+    "lat": 39.9289,
+    "lng": 32.8547,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_buersa",
+    "name": "布尔萨",
+    "lat": 40.18,
+    "lng": 29.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yashucheng",
+    "name": "亚述城",
+    "lat": 35.46,
+    "lng": 43.26,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_nisa",
+    "name": "尼萨",
+    "lat": 37.9,
+    "lng": 58.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peitra",
+    "name": "佩特拉",
+    "lat": 30.3,
+    "lng": 35.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_laheer",
+    "name": "拉合尔",
+    "lat": 31.55,
+    "lng": 74.35,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_deli",
+    "name": "德里",
+    "lat": 28.61,
+    "lng": 77.23,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_agela",
+    "name": "阿格拉",
+    "lat": 27.18,
+    "lng": 78.02,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_qunvcheng",
+    "name": "曲女城",
+    "lat": 27.05,
+    "lng": 79.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_walanaxi",
+    "name": "瓦拉纳西",
+    "lat": 25.32,
+    "lng": 83.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huashicheng",
+    "name": "华氏城",
+    "lat": 25.61,
+    "lng": 85.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wangshecheng",
+    "name": "王舍城",
+    "lat": 25.03,
+    "lng": 85.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gaodacheng",
+    "name": "高达城",
+    "lat": 24.88,
+    "lng": 88.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suomapuli",
+    "name": "索玛普利",
+    "lat": 25.0311,
+    "lng": 88.9769,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jidagang",
+    "name": "吉大港",
+    "lat": 22.335,
+    "lng": 91.8325,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_danmoledi",
+    "name": "耽摩栗底",
+    "lat": 22.28,
+    "lng": 87.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_beileinisi",
+    "name": "贝雷尼斯",
+    "lat": 23.91,
+    "lng": 35.48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_taima",
+    "name": "泰马",
+    "lat": 27.6,
+    "lng": 38.5,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_maidina",
+    "name": "麦地那",
+    "lat": 24.5,
+    "lng": 39.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_maijia",
+    "name": "麦加",
+    "lat": 21.4,
+    "lng": 39.8,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baku",
+    "name": "巴库",
+    "lat": 40.4,
+    "lng": 49.9,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xiemianjieer",
+    "name": "谢缅杰尔",
+    "lat": 43,
+    "lng": 47.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yidier",
+    "name": "伊蒂尔",
+    "lat": 46,
+    "lng": 48,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saerkeer",
+    "name": "萨尔克尔",
+    "lat": 47.705,
+    "lng": 42.2731,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_weishen",
+    "name": "维申斯卡亚",
+    "lat": 49.63,
+    "lng": 41.74,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salaichuke",
+    "name": "萨莱楚克",
+    "lat": 47.5,
+    "lng": 51.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mangshilake",
+    "name": "曼格什拉克",
+    "lat": 44,
+    "lng": 52,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kefu",
+    "name": "科孚",
+    "lat": 39.62,
+    "lng": 19.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malta",
+    "name": "马耳他",
+    "lat": 35.9,
+    "lng": 14.44,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gebenhagen",
+    "name": "哥本哈根",
+    "lat": 55.68,
+    "lng": 12.57,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sidedegelmo",
+    "name": "斯德哥尔摩",
+    "lat": 59.32,
+    "lng": 18.06,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_madeli",
+    "name": "马德里",
+    "lat": 40.41,
+    "lng": -3.7,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boertu",
+    "name": "波尔图",
+    "lat": 41.15,
+    "lng": -8.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teluoyi",
+    "name": "特洛伊",
+    "lat": 39.9575,
+    "lng": 26.2389,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bashila",
+    "name": "巴士拉",
+    "lat": 30.5,
+    "lng": 47.78,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tenochtitlan",
+    "name": "特诺奇提特兰",
+    "lat": 19.43,
+    "lng": -99.13,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_cusco",
+    "name": "库斯科",
+    "lat": -13.52,
+    "lng": -71.97,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tikal",
+    "name": "蒂卡尔",
+    "lat": 17.22,
+    "lng": -89.62,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tucapel",
+    "name": "图卡佩尔",
+    "lat": -37.7,
+    "lng": -73.4,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bacata",
+    "name": "巴卡塔",
+    "lat": 4.71,
+    "lng": -74.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guanabara",
+    "name": "瓜纳巴拉",
+    "lat": -22.9,
+    "lng": -43.2,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_onondaga",
+    "name": "奥农多加",
+    "lat": 43.05,
+    "lng": -76.15,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chanchan",
+    "name": "昌昌",
+    "lat": -8.11,
+    "lng": -79.07,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tzintzuntzan",
+    "name": "钦聪灿",
+    "lat": 19.63,
+    "lng": -101.58,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_newamsterdam",
+    "name": "新阿姆斯特丹",
+    "lat": 40.71,
+    "lng": -74.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_quebec",
+    "name": "魁北克",
+    "lat": 46.81,
+    "lng": -71.21,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_acapulco",
+    "name": "阿卡普尔科",
+    "lat": 16.85,
+    "lng": -99.92,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teyuna",
+    "name": "特尤纳",
+    "lat": 11.04,
+    "lng": -73.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sanjulian",
+    "name": "圣胡利安港",
+    "lat": -49.31,
+    "lng": -67.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_ribeira",
+    "name": "里贝拉",
+    "lat": 14.92,
+    "lng": -23.6,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_salvador",
+    "name": "萨尔瓦多",
+    "lat": -12.97,
+    "lng": -38.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_saovicente",
+    "name": "圣维森特",
+    "lat": -23.96,
+    "lng": -46.39,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_veracruz",
+    "name": "韦拉克鲁斯",
+    "lat": 19.19,
+    "lng": -96.14,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_havana",
+    "name": "哈瓦那",
+    "lat": 23.13,
+    "lng": -82.38,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_telde",
+    "name": "特尔德",
+    "lat": 28,
+    "lng": -15.42,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_angra",
+    "name": "安格拉",
+    "lat": 38.66,
+    "lng": -27.22,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lima",
+    "name": "利马",
+    "lat": -12.05,
+    "lng": -77.04,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_timbuktu",
+    "name": "廷巴克图",
+    "lat": 16.77,
+    "lng": -3.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aksum",
+    "name": "阿克苏姆",
+    "lat": 14.13,
+    "lng": 38.72,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_malacca",
+    "name": "马六甲",
+    "lat": 2.19,
+    "lng": 102.25,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_xibo",
+    "name": "希波",
+    "lat": 36.9,
+    "lng": 7.76,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sanfoqi",
+    "name": "巨港",
+    "lat": -2.99,
+    "lng": 104.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kalasan",
+    "name": "卡拉桑",
+    "lat": -7.756,
+    "lng": 110.445,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_deernate",
+    "name": "德尔纳特",
+    "lat": 0.7852,
+    "lng": 127.3832,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_huoluo",
+    "name": "霍洛",
+    "lat": 6.0531,
+    "lng": 121.0008,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_manila",
+    "name": "马尼拉",
+    "lat": 14.5904,
+    "lng": 120.9804,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_patan",
+    "name": "帕坦",
+    "lat": 23.84,
+    "lng": 72.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suomunate",
+    "name": "索姆纳特",
+    "lat": 20.8878,
+    "lng": 70.4014,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_guoa",
+    "name": "果阿",
+    "lat": 15.5023,
+    "lng": 73.9117,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_tanjiawuer",
+    "name": "坦贾武尔",
+    "lat": 10.79,
+    "lng": 79.14,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_madula",
+    "name": "马杜赖",
+    "lat": 9.93,
+    "lng": 78.12,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_anulade",
+    "name": "阿努拉德",
+    "lat": 8.3533,
+    "lng": 80.3956,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wanxiang",
+    "name": "万象",
+    "lat": 17.976,
+    "lng": 102.636,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_mailuoe",
+    "name": "麦罗埃",
+    "lat": 16.938,
+    "lng": 33.75,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_diyawanake",
+    "name": "蒂亚瓦纳科",
+    "lat": -16.554,
+    "lng": -68.673,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_puli",
+    "name": "普里",
+    "lat": 19.81,
+    "lng": 85.831,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_hengbi",
+    "name": "亨比",
+    "lat": 15.335,
+    "lng": 76.46,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bijiabuer",
+    "name": "比贾布尔",
+    "lat": 16.83,
+    "lng": 75.736,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shengaogusiding",
+    "name": "圣奥古斯丁",
+    "lat": 29.897,
+    "lng": -81.313,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_deerfei",
+    "name": "德尔斐",
+    "lat": 38.482,
+    "lng": 22.501,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aolinpiya",
+    "name": "奥林匹亚",
+    "lat": 37.639,
+    "lng": 21.631,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_boergong",
+    "name": "博尔贡",
+    "lat": 61.047,
+    "lng": 7.812,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kanpeier",
+    "name": "坎佩尔",
+    "lat": 47.995,
+    "lng": -4.103,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_waerna",
+    "name": "瓦尔纳",
+    "lat": 43.214,
+    "lng": 27.915,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiemu",
+    "name": "杰姆",
+    "lat": 35.296,
+    "lng": 10.706,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yazide",
+    "name": "亚兹德",
+    "lat": 31.897,
+    "lng": 54.356,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuer",
+    "name": "乌尔城",
+    "lat": 30.962,
+    "lng": 46.103,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_sangqi",
+    "name": "桑奇",
+    "lat": 23.48,
+    "lng": 77.739,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_putijiaye",
+    "name": "菩提伽耶",
+    "lat": 24.696,
+    "lng": 84.991,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jienei",
+    "name": "杰内城",
+    "lat": 13.905,
+    "lng": -4.555,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_agesi",
+    "name": "库尔泰亚",
+    "lat": 45.353,
+    "lng": 24.635,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_puleisilafu",
+    "name": "普雷斯拉夫",
+    "lat": 43.1423,
+    "lng": 26.8131,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aidiernei",
+    "name": "埃迪尔内",
+    "lat": 41.6781,
+    "lng": 26.5591,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_luxiweng",
+    "name": "鲁西翁",
+    "lat": 40.88,
+    "lng": 26.63,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_suojiamosuo",
+    "name": "索加莫索",
+    "lat": 5.715,
+    "lng": -72.933,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_yiguasu",
+    "name": "伊瓜苏",
+    "lat": -25.695,
+    "lng": -54.437,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_banama",
+    "name": "巴拿马",
+    "lat": 9.0056,
+    "lng": -79.4858,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_shengduomingge",
+    "name": "圣多明各",
+    "lat": 18.4715,
+    "lng": -69.8868,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_katachena",
+    "name": "卡塔赫纳",
+    "lat": 10.4266,
+    "lng": -75.5442,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_lalibeila",
+    "name": "拉利贝拉",
+    "lat": 12.0337,
+    "lng": 39.0433,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zeila",
+    "name": "塞拉",
+    "lat": 11.3533,
+    "lng": 43.4731,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_dasijiliweng",
+    "name": "达斯基利翁",
+    "lat": 40.1322,
+    "lng": 28.0504,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bishnupur",
+    "name": "比什努普尔",
+    "lat": 23.075,
+    "lng": 87.317,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baba_vida",
+    "name": "巴巴维达",
+    "lat": 43.9931,
+    "lng": 22.8867,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_fasil_fort",
+    "name": "法西尔堡",
+    "lat": 12.6075,
+    "lng": 37.469,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chambord",
+    "name": "香波堡",
+    "lat": 47.616,
+    "lng": 1.517,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_akhaltsikhe",
+    "name": "阿哈尔齐赫",
+    "lat": 41.642,
+    "lng": 42.975,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_gwalior_fort",
+    "name": "瓜廖尔堡",
+    "lat": 26.231,
+    "lng": 78.169,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_machu_picchu",
+    "name": "马丘比丘",
+    "lat": -13.1631,
+    "lng": -72.545,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_golconda",
+    "name": "戈尔康达",
+    "lat": 17.3833,
+    "lng": 78.4011,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pagaruyung",
+    "name": "帕加鲁荣",
+    "lat": -0.471,
+    "lng": 100.621,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_uxmal",
+    "name": "乌斯马尔",
+    "lat": 20.359,
+    "lng": -89.771,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bam_citadel",
+    "name": "巴姆",
+    "lat": 29.116,
+    "lng": 58.368,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_bedzin",
+    "name": "本津堡",
+    "lat": 50.3272,
+    "lng": 19.1291,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_braganca",
+    "name": "布拉干萨",
+    "lat": 41.8042,
+    "lng": -6.7492,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_la_mota",
+    "name": "拉莫塔堡",
+    "lat": 41.309,
+    "lng": -4.9085,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_seuthopolis",
+    "name": "塞乌托波利",
+    "lat": 42.6181,
+    "lng": 25.3056,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_chimarros",
+    "name": "希马鲁塔",
+    "lat": 36.965,
+    "lng": 25.53,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_themiskyra",
+    "name": "忒弥斯基拉",
+    "lat": 41.2,
+    "lng": 36.98,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_jiasa",
+    "name": "加沙",
+    "lat": 31.5017,
+    "lng": 34.4668,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_pelina",
+    "name": "佩利纳",
+    "lat": 39.57,
+    "lng": 21.93,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zilakata",
+    "name": "兹拉卡塔",
+    "lat": 36.84,
+    "lng": 54.43,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peiliang",
+    "name": "佩利昂",
+    "lat": 40.7306,
+    "lng": 20.8625,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_peierge",
+    "name": "阿斯彭杜斯",
+    "lat": 36.9389,
+    "lng": 31.1722,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_baihaliye",
+    "name": "拜哈里耶",
+    "lat": 28.35,
+    "lng": 28.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kuida",
+    "name": "奎达",
+    "lat": 30.58,
+    "lng": 67.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_zhalange",
+    "name": "扎兰格",
+    "lat": 30.96,
+    "lng": 61.86,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_teerbate",
+    "name": "特尔巴特",
+    "lat": 26,
+    "lng": 63.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aola",
+    "name": "奥拉",
+    "lat": 25.51,
+    "lng": 65.51,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_wuqi",
+    "name": "乌奇",
+    "lat": 29.24,
+    "lng": 71.05,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_aluoer",
+    "name": "阿罗尔",
+    "lat": 27.68,
+    "lng": 68.9,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "city_kalaqi",
+    "name": "卡拉奇",
+    "lat": 24.86,
+    "lng": 67.01,
+    "kind": "city",
+    "level": "small_city"
+  },
+  {
+    "id": "bf_haimusishan",
+    "name": "海姆斯山",
+    "lat": 42.767,
+    "lng": 25.317,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_duonaohe",
+    "name": "多瑙河渡河",
+    "lat": 44.19,
+    "lng": 27.26,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_gelanikusihe",
+    "name": "格拉尼库斯河",
+    "lat": 40.3167,
+    "lng": 27.2811,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_yisusi",
+    "name": "伊苏斯",
+    "lat": 36.7525,
+    "lng": 36.1923,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_gaojiamila",
+    "name": "高加米拉",
+    "lat": 36.56,
+    "lng": 43.444,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_wukexiya",
+    "name": "乌克西亚隘口",
+    "lat": 32.0457,
+    "lng": 48.8506,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_bosimen",
+    "name": "波斯门",
+    "lat": 30.7083,
+    "lng": 51.5986,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_xierhe",
+    "name": "锡尔河",
+    "lat": 40.2833,
+    "lng": 69.6167,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_haidasipaisihe",
+    "name": "海达斯佩斯河",
+    "lat": 32.8278,
+    "lng": 73.6389,
+    "kind": "battlefield",
+    "level": "battlefield"
+  },
+  {
+    "id": "bf_kesaiya",
+    "name": "科塞亚",
+    "lat": 33.49,
+    "lng": 48.36,
+    "kind": "battlefield",
+    "level": "battlefield"
+  }
+]

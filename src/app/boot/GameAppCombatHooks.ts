@@ -138,8 +138,8 @@ function resolveHistoricalBattleBriefing(title?: string | null, explicit?: strin
  */
 function startScene13War(
     app: GameApp,
-    attacker: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any },
-    defender: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any },
+    attacker: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any; getPosition?(): any },
+    defender: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any; getPosition?(): any },
     onDecision: (winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void,
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
@@ -187,6 +187,42 @@ function startScene13War(
     if (attackerGeneralId && defenderGeneralId && attackerGeneralId === defenderGeneralId) {
         defenderGeneralId = null;
     }
+
+    // 双方战略地图来向解析：距中心不足 2km 时沿 lastPath 倒查历史路点；攻城战守方即据点
+    const resolveOrigin = (u: any, isDefenderSiege: boolean): { lat: number; lng: number } | undefined => {
+        if (!center) return undefined;
+        if (isDefenderSiege) {
+            if (typeof defenderCityLat === 'number' && typeof defenderCityLng === 'number') {
+                return { lat: defenderCityLat, lng: defenderCityLng };
+            }
+            return undefined;
+        }
+        const pos = (typeof u?.getPosition === 'function' ? u.getPosition() : null)
+            ?? (typeof u?.latitude === 'number' ? { lat: u.latitude, lng: u.longitude } : null)
+            ?? u?.getEntity?.()?.getPosition?.()
+            ?? null;
+        if (!pos) return undefined;
+        const dLat = (pos.lat - center.lat) * 111.32;
+        const dLng = (pos.lng - center.lng) * 111.32 * Math.cos((center.lat * Math.PI) / 180);
+        const distKm = Math.hypot(dLat, dLng);
+        if (distKm >= 2.0) return pos;
+        const entity = u.getEntity?.();
+        if (Array.isArray(entity?.lastPath) && entity.lastPath.length > 0) {
+            for (let i = entity.lastPath.length - 1; i >= 0; i--) {
+                const wp = entity.lastPath[i];
+                const wDist = Math.hypot((wp.lat - center.lat) * 111.32, (wp.lng - center.lng) * 111.32 * Math.cos((center.lat * Math.PI) / 180));
+                if (wDist >= 2.0) return wp;
+            }
+            return entity.lastPath[0];
+        }
+        if (entity?.lastPosition && Number.isFinite(entity.lastPosition.lat) && Number.isFinite(entity.lastPosition.lng)) {
+            return entity.lastPosition;
+        }
+        return pos;
+    };
+    const attackerFrom = resolveOrigin(attacker, false);
+    const defenderFrom = resolveOrigin(defender, battleType === 'siege');
+
     const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
     app.scene13War?.start({
@@ -207,6 +243,10 @@ function startScene13War(
         // 战场中心坐标 → 树/湖季节按真实海拔判定（2026-08-12 主人定「应该根据海拔」）
         centerLat: center?.lat,
         centerLng: center?.lng,
+        attackerFromLat: attackerFrom?.lat,
+        attackerFromLng: attackerFrom?.lng,
+        defenderFromLat: defenderFrom?.lat,
+        defenderFromLng: defenderFrom?.lng,
         // 环境唯一种子（Hook 战斗开始时生成一次，同场可复现、不同场不重复）
         environmentSeed,
         // [2026-08-21] 战斗类型（野战双方都布出兵口建筑、攻城只攻方布）
@@ -388,8 +428,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 if (att && def) {
                     startScene13War(
                         app,
-                        { factionId: att.factionId, troops: attTroops, generalId: att.generalId, unitType: att.unitType, getEntity: () => att.getEntity?.() },
-                        { factionId: def.factionId, troops: defTroops, generalId: def.generalId, unitType: defEntity?.unitType, getEntity: () => defEntity?.getEntity?.() },
+                        { factionId: att.factionId, troops: attTroops, generalId: att.generalId, unitType: att.unitType, getEntity: () => att.getEntity?.(), getPosition: () => att.getPosition() },
+                        { factionId: def.factionId, troops: defTroops, generalId: def.generalId, unitType: defEntity?.unitType, getEntity: () => defEntity?.getEntity?.(), getPosition: () => defEntity?.getPosition?.() ?? def.getPosition() },
                         (winner, sv) => {
                             // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负，演出判负不得覆盖。
                             const scripted = battleField.getScriptedWinner();

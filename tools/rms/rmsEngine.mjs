@@ -1,4 +1,4 @@
-/**
+﻿/**
  * RMS 地图引擎（验证性程序，2026-10-09）：把 rmsParse 展平后的指令，按 DE 顺序跑成一张地图。
  *
  *   LAND → ELEVATION → TERRAIN → OBJECTS（悬崖 / 连接暂不做）
@@ -212,10 +212,17 @@ export class MapEngine {
             for (const c of S.ELEVATION_GENERATION ?? []) this.elevCmd(c);
         }
         for (const c of S.TERRAIN_GENERATION ?? []) this.terrainCmd(c);
+        // 骨架模式：脚本不许造水（水只认真实地理骨架）—— CC 第 87 轮裁定；第 89 轮 CC 代修：原调用误并入注释行从未执行，且须在沙滩/地形装饰之前
+        if (this.skeleton) this.reassertSkeletonWater();
         this.applyBeaches();
         this.plantTerrainUnits();
-        for (const c of S.CLIFF_GENERATION ?? []) this.cliffCmd(c);
-        this.generateCliffs();
+        // 骨架模式不跑悬崖段（设计只跑「地形」「物件」两段；真实悬崖以后由真实陡坡生成）—— CC 第 85 轮代修
+        if (!this.skeleton) {
+            for (const c of S.CLIFF_GENERATION ?? []) this.cliffCmd(c);
+            this.generateCliffs();
+        }
+        // 骨架模式 + 有米制高程：按真实陡坡生成悬崖（DD 第 91～92 轮方案；第 93 轮 CC 代接：须在上面 if 块之外）
+        if (this.skeleton && this.skeleton.elevMeters) this.generateCliffsFromSlope();
         // 构建 zone 网格：手册 `max_distance_to_other_zones` 需要知道「别的 zone」在哪
         this.zoneGrid = new Int16Array(this.terrain.length).fill(-1);
         for (let i = 0; i < this.terrain.length; i++) {
@@ -237,6 +244,93 @@ export class MapEngine {
      *     · `landId`：给陆地格一个中立 land id（默认 200），让 TERRAIN/OBJECTS 的避让与 zone 逻辑有依据
      *   调用方给了骨架时，`run()` **不执行** 脚本的 LAND / ELEVATION 段（否则脚本会造内海、覆盖真实地理）。
      */
+    /** 真实陡坡生成悬崖（**骨架模式专用**，CC 第 92 轮）：沿高度级分界线走线、段间 ≥3 格、覆盖 ≤5%。**推断** */
+    generateCliffsFromSlope() {
+        const N = this.N, sk = this.skeleton, H = sk && sk.elevMeters;
+        if (!H || H.length !== N * N) return;   // 骨架与地图尺寸必须一致（CC 第 93 轮）
+        const TH = 25, C = N;
+        let hmin = Infinity, hmax = -Infinity;
+        for (let i = 0; i < C * C; i++) { const v = H[i]; if (v < hmin) hmin = v; if (v > hmax) hmax = v; }
+        const relief = hmax - hmin, step = relief < 25 ? 25 : (relief <= 175 ? 25 : relief / 7);
+        const lv = new Int8Array(C * C);
+        for (let i = 0; i < C * C; i++) lv[i] = relief < 25 ? 0 : Math.max(0, Math.min(7, Math.floor((H[i] - hmin) / step)));
+        const slope = new Float32Array(C * C);
+        for (let y = 1; y < C - 1; y++) for (let x = 1; x < C - 1; x++) {
+            const i = y * C + x, v = H[i];
+            slope[i] = Math.max(Math.abs(v - H[i - 1]), Math.abs(v - H[i + 1]), Math.abs(v - H[i - C]), Math.abs(v - H[i + C]));
+        }
+        const bnd = new Uint8Array(C * C);
+        for (let y = 1; y < C - 1; y++) for (let x = 1; x < C - 1; x++) {
+            const i = y * C + x;
+            if (slope[i] < TH) continue;
+            if (lv[i] !== lv[i - 1] || lv[i] !== lv[i + 1] || lv[i] !== lv[i - C] || lv[i] !== lv[i + C]) bnd[i] = 1;
+        }
+        const seen = new Uint8Array(C * C), lines = [];
+        const NB8 = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+        for (let y = 1; y < C - 1; y++) for (let x = 1; x < C - 1; x++) {
+            if (!bnd[y * C + x] || seen[y * C + x]) continue;
+            let cx = x, cy = y; const line = []; seen[y * C + x] = 1;
+            for (;;) {
+                line.push([cx, cy]);
+                let best = null, bs = -1;
+                for (const [dx, dy] of NB8) {
+                    const nx = cx + dx, ny = cy + dy;
+                    if (nx < 0 || ny < 0 || nx >= C || ny >= C) continue;
+                    const j = ny * C + nx;
+                    if (!bnd[j] || seen[j]) continue;
+                    if (slope[j] > bs) { bs = slope[j]; best = [nx, ny]; }
+                }
+                if (!best) break;
+                cx = best[0]; cy = best[1]; seen[cy * C + cx] = 1;
+            }
+            if (line.length >= 3) lines.push(line);
+        }
+        lines.sort((a, b) => b.length - a.length);
+        const base = CLIFF_BASE[this.cliffType] ?? CLIFF_BASE[0];
+        const taken = new Set(); let made = 0;
+        const cap = Math.floor((C * C * 0.05) / 9);
+        for (const line of lines) {
+            for (let i = 0; i < line.length; i += 3) {
+                if (made >= cap) break;
+                const px = line[i][0], py = line[i][1];
+                let clash = false;
+                for (let dx = -2; dx <= 2 && !clash; dx++) for (let dy = -2; dy <= 2; dy++) if (taken.has((py + dy) * C + (px + dx))) { clash = true; break; }
+                if (clash) continue;
+                taken.add(py * C + px);
+                let rot;
+                if (this.cliffNoTurn) {
+                    const seg = cliffDir8(line[line.length - 1][0] - line[0][0], line[line.length - 1][1] - line[0][1]);
+                    rot = CLIFF_STRAIGHT_ROT[seg] ?? 0;
+                } else {
+                    const nbrs = [];
+                    for (const j of [i - 3, i + 3]) {
+                        if (j < 0 || j >= line.length) continue;
+                        const dir = cliffDir8(line[j][0] - px, line[j][1] - py);
+                        if (dir) nbrs.push(dir);
+                    }
+                    rot = CLIFF_TOPOLOGY_TABLE[nbrs.sort().join('|')] ?? 0;
+                }
+                this.objects.push({ id: base, cliff: true, x: px + 0.5, y: py + 0.5, rot });   // 线上的点已是细格，取格心（原 px*3+1 是粗网格口径，CC 第 93 轮改）
+                made++;
+            }
+            if (made >= cap) break;
+        }
+        this.cliffMade = (this.cliffMade ?? 0) + made;
+        this.cliffFromSlope = made;
+    }
+
+    /** 骨架模式：把脚本 TERRAIN 段造出来的水**抹掉**（水只认骨架）；陆地格若被脚本改成水 ⇒ 还原成陆地底地形。**推断** */
+    /** 骨架模式：把脚本 TERRAIN 段造出来的水**抹掉**（水只认骨架）；陆地格若被脚本改成水 ⇒ 还原成陆地底地形。**推断** */
+    reassertSkeletonWater() {
+        const N = this.N, sk = this.skeleton;
+        for (let i = 0; i < N * N; i++) {
+            const isLand = sk.land[i] ? 1 : 0;
+            const curWater = this.waterTerrains.has(this.terrain[i]);
+            if (isLand && curWater) this.terrain[i] = sk.landTerrain;   // 通行由 mapData 按地形另算，引擎里没有 passable（CC 第 89 轮代修）
+            else if (!isLand && !curWater) this.terrain[i] = sk.waterTerrain;
+        }
+    }
+
     applySkeleton() {
         const N = this.N, sk = this.skeleton;
         const landId = sk.landId ?? 200;

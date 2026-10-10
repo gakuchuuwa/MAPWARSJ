@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<!--
+  真实战场预览页（CC 第 87 轮）
+    · 任意据点或战场下拉选择（1140个地点）或手填经纬度
+    · 前端原生 Image / Canvas 离屏像素解码与双线性插值采样（高程 + WaterMask）
+    · 矢量河流 Chaikin 平滑与河宽加粗
+    · Köppen 气候网格与主题自动判定
+    · 引擎生成并在 WebGL 地面层（groundLayer.mjs）无缝渲染
+-->
+<meta charset="utf-8" />
+<title>真实地理战场 · 端到端预览</title>
+<script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
+<style>
+    body { margin: 0; background: #111; color: #ddd; font: 13px/1.5 Consolas, "PingFang SC", "Microsoft YaHei", monospace; overflow: hidden; }
+    #header { padding: 8px 12px; background: #1c1f24; border-bottom: 1px solid #333a42; display: flex; flex-direction: column; gap: 6px; }
+    .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    button { background: #2b323c; color: #e1e7ed; border: 1px solid #475362; padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; }
+    button:hover { background: #384250; border-color: #607388; }
+    button.primary { background: #1b5e20; border-color: #2e7d32; font-weight: bold; color: #fff; }
+    button.primary:hover { background: #2e7d32; }
+    button.preset { background: #1c3b57; border-color: #2a5885; }
+    button.preset:hover { background: #244b70; }
+    button.on { background: #2d4a2d; border-color: #4a7a4a; }
+    input, select { background: #121519; color: #e1e7ed; border: 1px solid #3c4652; padding: 3px 8px; border-radius: 3px; font-size: 12px; }
+    input[type="number"] { width: 75px; }
+    #siteSearch { width: 140px; }
+    #siteSelect { width: 220px; }
+    #statsBar { background: #14181d; padding: 6px 12px; border-bottom: 1px solid #282f38; display: flex; gap: 16px; font-size: 12px; flex-wrap: wrap; }
+    .stat-item { display: flex; gap: 4px; }
+    .stat-label { color: #8a99a8; }
+    .stat-val { color: #5ce6b0; font-weight: bold; }
+    .stat-val.highlight { color: #ffd166; }
+    #canvasWrap { position: relative; width: 100vw; height: calc(100vh - 86px); }
+    canvas { display: block; width: 100%; height: 100%; }
+    #overlayMsg { position: absolute; top: 12px; left: 12px; background: rgba(15, 20, 25, 0.85); border: 1px solid #3a4756; padding: 8px 12px; border-radius: 4px; pointer-events: none; font-size: 12px; line-height: 1.6; max-width: 480px; }
+    .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; background: #263342; color: #9bc5f0; margin-right: 4px; font-size: 11px; }
+</style>
+
+<div id="header">
+    <div class="row">
+        <span><b>地点选择：</b></span>
+        <input type="text" id="siteSearch" placeholder="搜索据点/战场..." />
+        <select id="siteSelect"></select>
+        <button class="preset" data-site="vienna">维也纳·多瑙河</button>
+        <button class="preset" data-site="wuhan">武汉·长江</button>
+        <button class="preset" data-site="heze">菏泽·中原</button>
+        <button class="preset" data-site="zermatt">策马特·高山</button>
+        <span style="color:#555">｜</span>
+        <span><b>坐标手填：</b></span>
+        <input type="text" id="customName" placeholder="地名" style="width:90px" value="维也纳" />
+        纬度:<input type="number" id="inLat" step="0.0001" value="48.2260" />
+        经度:<input type="number" id="inLng" step="0.0001" value="16.4100" />
+        <button id="btnGen" class="primary">⚡ 一键生成真实战场</button>
+    </div>
+    <div class="row">
+        <span><b>镜头视角：</b></span>
+        <button class="cam-btn on" data-s="full">整图可见</button>
+        <button class="cam-btn" data-s="zoom1">放大 1 倍</button>
+        <button class="cam-btn" data-s="zoom2">放大 2 倍</button>
+        <button class="cam-btn" data-s="drag">拖动浏览</button>
+        <span style="color:#555">｜</span>
+        <span><b>图层控制：</b></span>
+        <button id="bblend" class="on">过渡: 开</button>
+        <button id="belev" class="on">高程: 开</button>
+        <button id="bwater" class="on">水动: 开</button>
+        <span style="color:#555">｜</span>
+        <span><b>水体来源：</b></span>
+        <button id="bwaterSource" class="on">水体: WorldCover (10m)</button>
+        <span style="color:#555">｜</span>
+        <span style="color:#789; font-size:11px;">※ 瓦片像素由浏览器原生 Image 与离屏 Canvas 2D 独立解码与插值，无 Node/sharp 专有依赖</span>
+    </div>
+</div>
+
+<div id="statsBar">
+    <div class="stat-item"><span class="stat-label">地点:</span><span class="stat-val" id="stName">维也纳 (Innere Stadt)</span></div>
+    <div class="stat-item"><span class="stat-label">经纬度:</span><span class="stat-val" id="stCoords">(48.2082, 16.3738)</span></div>
+    <div class="stat-item"><span class="stat-label">水体源:</span><span class="stat-val highlight" id="stWaterSource">WorldCover (10m)</span></div>
+    <div class="stat-item"><span class="stat-label">Köppen:</span><span class="stat-val highlight" id="stKoppen">Cfb (温带海洋)</span></div>
+    <div class="stat-item"><span class="stat-label">主题:</span><span class="stat-val highlight" id="stTheme">EUROPEAN_TEMPERATE</span></div>
+    <div class="stat-item"><span class="stat-label">高差:</span><span class="stat-val" id="stElev">21.0m (0级)</span></div>
+    <div class="stat-item"><span class="stat-label">水格占比:</span><span class="stat-val" id="stWater">1.8%</span></div>
+    <div class="stat-item"><span class="stat-label">总耗时:</span><span class="stat-val" id="stTime">-- ms</span></div>
+</div>
+
+<div id="canvasWrap">
+    <canvas id="cvg"></canvas>
+    <div id="overlayMsg">
+        <div style="color:#5ce6b0; font-weight:bold; margin-bottom:4px;" id="ovTitle">正在初始化环境...</div>
+        <div id="ovDetail" style="color:#bbb;">正在加载 Köppen 网格、矢量河流与据点列表...</div>
+    </div>
+    <div id="credit" style="position:absolute; bottom:6px; right:12px; font-size:11px; color:#789; pointer-events:none; background:rgba(15,20,25,0.7); padding:2px 8px; border-radius:3px; border:1px solid #2f3844;">© ESA WorldCover project / Contains modified Copernicus Sentinel data</div>
+</div>
+
+<script type="module">
+import { createGroundLayer, transposeMapData } from './groundLayer.mjs';
+import { pickTheme } from '../theme.mjs';
+const CELLS = 120, CELL_M = 25, S = 25, C0 = 59.5, TILE = 256;
+const TW = 64, TH = 32, dx = TW / 2, dy = TH / 2;
+
+function cellLatLng(x, y, lat0, lng0) {
+  const u = x - C0, v = y - C0, s = CELL_M, k = Math.SQRT2 / 2;
+  const dE = (v - u) * s * k, dN = -(u + v) * s * k;
+  return [lat0 + dN / 111320, lng0 + dE / (111320 * Math.cos((lat0 * Math.PI) / 180))];
+}
+
+
+// 1. 河宽校准表
+const CALIBRATED_RIVERS = {
+    'yangtze': 1100.0, 'chang': 1100.0, 'huang': 650.0, 'yellow': 650.0,
+    'donau': 300.0, 'danube': 300.0, 'thames': 250.0, 'han': 250.0
+};
+const SCALERANK_FALLBACK = {
+    0: 1000.0, 1: 1000.0, 2: 600.0, 3: 450.0, 4: 350.0,
+    5: 275.0, 6: 200.0, 7: 150.0, 8: 100.0, 9: 60.0, 10: 40.0
+};
+function getRiverWidth(name, rank) {
+    const nm = (name || '').toLowerCase();
+    for (const [k, w] of Object.entries(CALIBRATED_RIVERS)) {
+        if (nm.includes(k)) return w;
+    }
+    return SCALERANK_FALLBACK[rank] ?? 150.0;
+}
+
+// 2. 浏览器原生瓦片加载与像素提取
+const offCanvas = document.createElement('canvas');
+offCanvas.width = TILE; offCanvas.height = TILE;
+const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+
+function loadTilePixels(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            offCtx.clearRect(0, 0, TILE, TILE);
+            offCtx.drawImage(img, 0, 0);
+            const imgData = offCtx.getImageData(0, 0, TILE, TILE);
+            resolve(imgData.data);
+        };
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+}
+
+// 3. ESRI 水域判别公式
+function isWaterPixel(r, g, b) {
+    const brightness = (r + g + b) / 3.0;
+    const blueDominance = b - Math.max(r, g);
+    return (
+        b > r + 20 &&
+        b > g + 16 &&
+        blueDominance > 15 &&
+        b > 95 &&
+        brightness > 60 &&
+        brightness < 215 &&
+        (r < 245 || g < 245 || b < 245)
+    );
+}
+
+// 4. 2次 Chaikin 折线平滑
+function chaikin(line, iters = 2) {
+    let pts = line;
+    for (let it = 0; it < iters; it++) {
+        if (pts.length < 2) break;
+        const npts = [pts[0]];
+        for (let i = 0; i < pts.length - 1; i++) {
+            const p0 = pts[i], p1 = pts[i + 1];
+            npts.push([0.75 * p0[0] + 0.25 * p1[0], 0.75 * p0[1] + 0.25 * p1[1]]);
+            npts.push([0.25 * p0[0] + 0.75 * p1[0], 0.25 * p0[1] + 0.75 * p1[1]]);
+        }
+        npts.push(pts[pts.length - 1]);
+        pts = npts;
+    }
+    return pts;
+}
+
+function pointSegDistSq(px, py, ax, ay, bx, by) {
+    const abx = bx - ax, aby = by - ay;
+    const apx = px - ax, apy = py - ay;
+    const len2 = abx * abx + aby * aby;
+    if (len2 === 0) return apx * apx + apy * apy;
+    const t = Math.max(0, Math.min(1, (apx * abx + apy * aby) / len2));
+    const dx = px - (ax + abx * t), dy = py - (ay + aby * t);
+    return dx * dx + dy * dy;
+}
+
+// 5. 全局状态
+const state = {
+    sites: [],
+    koppenGrid: null,
+    riversGeo: null,
+    manifest: {},
+    textures: new Map(),
+    masks: new Map(),
+    sprites: new Map(),
+    blendTable: null,
+    layer: null,
+    mapData: null,
+    cam: { x: 0, y: 0, zoom: 1 },
+    drag: { down: false, x: 0, y: 0 },
+    scenario: 'full',
+    blend: true,
+    elev: true,
+    waterAnim: true,
+    waterImg: null,
+    waterSource: 'worldcover'
+};
+window.__state = state;
+
+let decodedKoppenGrid = null;
+function decodeKoppenGrid() {
+    if (decodedKoppenGrid) return decodedKoppenGrid;
+    if (!state.koppenGrid?.rle) return null;
+    const raw = atob(state.koppenGrid.rle);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    const grid = new Uint8Array(state.koppenGrid.width * state.koppenGrid.height);
+    let source = 0, target = 0;
+    while (source + 2 < bytes.length) {
+        const val = bytes[source];
+        const cnt = bytes[source + 1] | (bytes[source + 2] << 8);
+        grid.fill(val, target, target + cnt);
+        source += 3;
+        target += cnt;
+    }
+    decodedKoppenGrid = grid;
+    return grid;
+}
+
+function getKoppen(lat, lng) {
+    if (!state.koppenGrid) return 'Cfb';
+    const grid = decodeKoppenGrid();
+    if (!grid) return 'Cfb';
+    const W = state.koppenGrid.width, H = state.koppenGrid.height, step = state.koppenGrid.step;
+    const classes = state.koppenGrid.classes;
+    const x = Math.max(0, Math.min(W - 1, Math.floor((lng + 180) / step)));
+    const y = Math.max(0, Math.min(H - 1, Math.floor((90 - lat) / step)));
+    const direct = grid[y * W + x];
+    if (direct > 0 && classes[direct]) return classes[direct];
+    for (let radius = 1; radius <= 20; radius++) {
+        let best = null;
+        for (let dy = -radius; dy <= radius; dy++) {
+            for (let dx = -radius; dx <= radius; dx++) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) continue;
+                const nx = x + dx, ny = y + dy;
+                if (nx < 0 || nx >= W || ny < 0 || ny >= H) continue;
+                const val = grid[ny * W + nx];
+                if (val <= 0) continue;
+                const d2 = dx * dx + dy * dy;
+                if (!best || d2 < best.d2) best = { val, d2 };
+            }
+        }
+        if (best && classes[best.val]) return classes[best.val];
+    }
+    return 'Cfb';
+}
+
+const webMerc = (lat, lng, z) => {
+    const n = (2 ** z) * TILE, r = (lat * Math.PI) / 180;
+    return [(lng + 180) / 360 * n, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n];
+};
+
+// 6. 细陆地条与桥梁消除（CC 第 92 轮：消除“两侧都是水、宽度 ≤ 2 格（50 米）的细陆地条”，真实江心洲保留）
+function filterBridges(waterGrid) {
+    const out = new Uint8Array(waterGrid);
+    const DIRS = [
+        [1, 0],   // 水平
+        [0, 1],   // 垂直
+        [1, 1],   // 对角 45°
+        [1, -1],  // 对角 135°
+    ];
+
+    let removed = 0;
+    for (let y = 0; y < CELLS; y++) {
+        for (let x = 0; x < CELLS; x++) {
+            const idx = y * CELLS + x;
+            if (waterGrid[idx] !== 0) continue; // 只检查陆地格
+
+            let isBridge = false;
+            for (const [dx, dy] of DIRS) {
+                let stepPos = 0, hitWaterPos = false;
+                for (let s = 1; s < CELLS; s++) {
+                    const nx = x + s * dx, ny = y + s * dy;
+                    if (nx < 0 || nx >= CELLS || ny < 0 || ny >= CELLS) break;
+                    if (waterGrid[ny * CELLS + nx] === 1) {
+                        stepPos = s; hitWaterPos = true; break;
+                    }
+                }
+
+                let stepNeg = 0, hitWaterNeg = false;
+                for (let s = 1; s < CELLS; s++) {
+                    const nx = x - s * dx, ny = y - s * dy;
+                    if (nx < 0 || nx >= CELLS || ny < 0 || ny >= CELLS) break;
+                    if (waterGrid[ny * CELLS + nx] === 1) {
+                        stepNeg = s; hitWaterNeg = true; break;
+                    }
+                }
+
+                if (hitWaterPos && hitWaterNeg) {
+                    const width = stepPos + stepNeg - 1;
+                    if (width <= 2) {
+                        isBridge = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isBridge) {
+                out[idx] = 1;
+                removed++;
+            }
+        }
+    }
+    return { filteredGrid: out, removedCount: removed };
+}
+
+// 7. ESA WorldCover 10m 水体采样（窗口只读 + 方向公式重采样 + 地点级缓存）
+async function sampleWorldCoverWater(siteName, lat0, lng0, cellLats, cellLngs, cos_lat0) {
+    const t0 = performance.now();
+    const siteKey = `${lat0.toFixed(4)}_${lng0.toFixed(4)}`;
+
+    // 优先检查本地地点级缓存 (目标: 有缓存时 ≤ 1 秒)
+    try {
+        const cResp = await fetch(`/api/worldcover/cache?key=${encodeURIComponent(siteKey)}`);
+        if (cResp.ok) {
+            const cData = await cResp.json();
+            if (cData && cData.waterGrid) {
+                const timeMs = Number((performance.now() - t0).toFixed(0));
+                console.log(`[WorldCover Cache Hit] ${siteName} (${siteKey}) loaded in ${timeMs}ms`);
+                return {
+                    ok: true,
+                    waterGrid: new Uint8Array(cData.waterGrid),
+                    waterCount: cData.waterCount,
+                    waterRatio: cData.waterRatio,
+                    bridgeRemoved: cData.bridgeRemoved ?? 0,
+                    timeMs,
+                    cached: true
+                };
+            }
+        }
+    } catch (e) {
+        // 缓存未命中，继续正常采样
+    }
+
+    let minL = Infinity, maxL = -Infinity, minA = Infinity, maxA = -Infinity;
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        if (cellLngs[i] < minL) minL = cellLngs[i];
+        if (cellLngs[i] > maxL) maxL = cellLngs[i];
+        if (cellLats[i] < minA) minA = cellLats[i];
+        if (cellLats[i] > maxA) maxA = cellLats[i];
+    }
+    const bbox = [minL, minA, maxL, maxA];
+
+    const sResp = await fetch('/api/worldcover/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bbox })
+    });
+    if (!sResp.ok) throw new Error(`STAC sign failed: ${sResp.status}`);
+    const sData = await sResp.json();
+    if (!sData.ok) throw new Error(sData.error || 'Failed to sign WorldCover asset');
+
+    const proxyUrl = `/api/worldcover/proxy?url=${encodeURIComponent(sData.signedUrl)}`;
+    const tiff = await GeoTIFF.fromUrl(proxyUrl);
+    const image = await tiff.getImage();
+
+    const [dx_deg, , originX, , dy_deg, originY] = sData.transform;
+    const px0 = Math.max(0, Math.floor((minL - originX) / dx_deg));
+    const px1 = Math.min(sData.shape[1] - 1, Math.ceil((maxL - originX) / dx_deg));
+    const py0 = Math.max(0, Math.floor((maxA - originY) / dy_deg));
+    const py1 = Math.min(sData.shape[0] - 1, Math.ceil((minA - originY) / dy_deg));
+    const winX0 = Math.min(px0, px1), winX1 = Math.max(px0, px1);
+    const winY0 = Math.min(py0, py1), winY1 = Math.max(py0, py1);
+    const winW = winX1 - winX0 + 1, winH = winY1 - winY0 + 1;
+
+    const rasters = await image.readRasters({ window: [winX0, winY0, winX1 + 1, winY1 + 1] });
+    const rasterData = rasters[0];
+
+    // 方向公式重采样到 120x120 格
+    const rawWaterGrid = new Uint8Array(CELLS * CELLS);
+    const degPer25mLat = 25.0 / 111320.0;
+    const degPer25mLng = 25.0 / (111320.0 * cos_lat0);
+
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        const cLat = cellLats[i], cLng = cellLngs[i];
+        const hLat = degPer25mLat * 0.5, hLng = degPer25mLng * 0.5;
+        const gpx0 = Math.max(0, Math.min(winW - 1, Math.floor(((cLng - hLng) - (originX + winX0 * dx_deg)) / dx_deg)));
+        const gpx1 = Math.max(0, Math.min(winW - 1, Math.ceil(((cLng + hLng) - (originX + winX0 * dx_deg)) / dx_deg)));
+        const gpy0 = Math.max(0, Math.min(winH - 1, Math.floor(((cLat + hLat) - (originY + winY0 * dy_deg)) / dy_deg)));
+        const gpy1 = Math.max(0, Math.min(winH - 1, Math.ceil(((cLat - hLat) - (originY + winY0 * dy_deg)) / dy_deg)));
+
+        const minGX = Math.min(gpx0, gpx1), maxGX = Math.max(gpx0, gpx1);
+        const minGY = Math.min(gpy0, gpy1), maxGY = Math.max(gpy0, gpy1);
+
+        let waterPix = 0, totalPix = 0;
+        for (let gy = minGY; gy <= maxGY; gy++) {
+            for (let gx = minGX; gx <= maxGX; gx++) {
+                const val = rasterData[gy * winW + gx];
+                if (val === 80) waterPix++;
+                totalPix++;
+            }
+        }
+        rawWaterGrid[i] = (totalPix > 0 && (waterPix / totalPix >= 0.5)) ? 1 : 0;
+    }
+
+    // 细陆地条与桥梁消除
+    const { filteredGrid, removedCount } = filterBridges(rawWaterGrid);
+
+    let totalWaterCount = 0;
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        if (filteredGrid[i] === 1) totalWaterCount++;
+    }
+    const finalWaterRatio = Number((totalWaterCount / (CELLS * CELLS) * 100).toFixed(1));
+    const timeMs = Number((performance.now() - t0).toFixed(0));
+
+    // 异步保存地点级缓存
+    fetch('/api/worldcover/cache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            key: siteKey,
+            site: siteName,
+            waterGrid: Array.from(filteredGrid),
+            waterCount: totalWaterCount,
+            waterRatio: finalWaterRatio,
+            bridgeRemoved: removedCount,
+            timeMs
+        })
+    }).catch(() => {});
+
+    return {
+        ok: true,
+        waterGrid: filteredGrid,
+        waterCount: totalWaterCount,
+        waterRatio: finalWaterRatio,
+        bridgeRemoved: removedCount,
+        timeMs,
+        cached: false
+    };
+}
+
+// 7. 前端执行核心采样
+async function sampleRealGeology(name, lat0, lng0) {
+    const tStart = performance.now();
+    const cos_lat0 = Math.cos((lat0 * Math.PI) / 180);
+
+    // 1. Köppen 与主题判定
+    const koppen = getKoppen(lat0, lng0);
+    const { theme, why } = pickTheme(lat0, lng0, koppen);
+
+    // 2. 收集所需瓦片
+    const elevTilesNeeded = new Set();
+    const esriTilesNeeded = new Set();
+    const cellLats = new Float64Array(CELLS * CELLS);
+    const cellLngs = new Float64Array(CELLS * CELLS);
+    const cellDEs = new Float64Array(CELLS * CELLS);
+    const cellDNs = new Float64Array(CELLS * CELLS);
+
+    for (let yi = 0; yi < CELLS; yi++) {
+        for (let xi = 0; xi < CELLS; xi++) {
+            const idx = yi * CELLS + xi;
+            const u = xi - C0, v = yi - C0;
+            const dE = (v - u) * S * Math.SQRT1_2;
+            const dN = -(u + v) * S * Math.SQRT1_2;
+            const lat = lat0 + dN / 111320.0;
+            const lng = lng0 + dE / (111320.0 * cos_lat0);
+            cellLats[idx] = lat; cellLngs[idx] = lng;
+            cellDEs[idx] = dE; cellDNs[idx] = dN;
+
+            const [ex, ey] = webMerc(lat, lng, 13);
+            elevTilesNeeded.add(`${Math.floor(ex / TILE)}_${Math.floor(ey / TILE)}`);
+
+            const [mx, my] = webMerc(lat, lng, 10);
+            esriTilesNeeded.add(`${Math.floor(mx / TILE)}_${Math.floor(my / TILE)}`);
+        }
+    }
+
+    // 3. 原生 Canvas 离屏解码瓦片像素
+    const elevPixels = new Map();
+    for (const key of elevTilesNeeded) {
+        const [tx, ty] = key.split('_');
+        const px = await loadTilePixels(`/api/tile/elev?z=13&x=${tx}&y=${ty}`);
+        if (px) elevPixels.set(key, px);
+    }
+
+    const esriPixels = new Map();
+    for (const key of esriTilesNeeded) {
+        const [tx, ty] = key.split('_');
+        const px = await loadTilePixels(`/api/tile/esri?z=10&x=${tx}&y=${ty}`);
+        if (px) esriPixels.set(key, px);
+    }
+
+    // 4. 采样高程 (z13 双线性)
+    const H_grid = new Float64Array(CELLS * CELLS).fill(NaN);
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        const [gx, gy] = webMerc(cellLats[i], cellLngs[i], 13);
+        const tx = Math.floor(gx / TILE), ty = Math.floor(gy / TILE);
+        const px = elevPixels.get(`${tx}_${ty}`);
+        if (!px) continue;
+        const fx = gx - tx * TILE, fy = gy - ty * TILE;
+        const ix = Math.min(TILE - 2, Math.floor(fx)), iy = Math.min(TILE - 2, Math.floor(fy));
+        const tx2 = fx - ix, ty2 = fy - iy;
+        const getH = (dx, dy) => {
+            const o = ((iy + dy) * TILE + (ix + dx)) * 4;
+            return px[o] * 256 + px[o + 1] + px[o + 2] / 256 - 32768;
+        };
+        H_grid[i] = getH(0,0)*(1-tx2)*(1-ty2) + getH(1,0)*tx2*(1-ty2) + getH(0,1)*(1-tx2)*ty2 + getH(1,1)*tx2*ty2;
+    }
+
+    // 5. 高程分级 (0..7)
+    let hmin = Infinity, hmax = -Infinity;
+    for (const v of H_grid) {
+        if (!Number.isNaN(v)) {
+            if (v < hmin) hmin = v;
+            if (v > hmax) hmax = v;
+        }
+    }
+    if (hmin === Infinity) { hmin = 0; hmax = 0; }
+    const relief = hmax - hmin;
+    const step = relief < 25.0 ? 25.0 : (relief <= 175.0 ? 25.0 : relief / 7.0);
+    const elev_lv = new Int8Array(CELLS * CELLS);
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        const v = Number.isNaN(H_grid[i]) ? hmin : H_grid[i];
+        elev_lv[i] = relief < 25.0 ? 0 : Math.max(0, Math.min(7, Math.floor((v - hmin) / step)));
+    }
+
+    // 6. 采样 WaterMask (z10 双线性)
+    const mask_grid = new Float64Array(CELLS * CELLS);
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        const [gx, gy] = webMerc(cellLats[i], cellLngs[i], 10);
+        const tx = Math.floor(gx / TILE), ty = Math.floor(gy / TILE);
+        const px = esriPixels.get(`${tx}_${ty}`);
+        if (!px) continue;
+        const fx = gx - tx * TILE, fy = gy - ty * TILE;
+        const ix = Math.min(TILE - 2, Math.floor(fx)), iy = Math.min(TILE - 2, Math.floor(fy));
+        const tx2 = fx - ix, ty2 = fy - iy;
+        const isW = (dx, dy) => {
+            const o = ((iy + dy) * TILE + (ix + dx)) * 4;
+            return isWaterPixel(px[o], px[o+1], px[o+2]) ? 1.0 : 0.0;
+        };
+        mask_grid[i] = isW(0,0)*(1-tx2)*(1-ty2) + isW(1,0)*tx2*(1-ty2) + isW(0,1)*(1-tx2)*ty2 + isW(1,1)*tx2*ty2;
+    }
+
+    // 7. 矢量河流平滑加粗
+    const river_water = new Uint8Array(CELLS * CELLS);
+    if (state.riversGeo) {
+        const nearby = [];
+        for (const f of state.riversGeo.features) {
+            if (f.properties?.featurecla === 'Lake Centerline') continue;
+            const nm = f.properties?.name || f.properties?.name_en || '';
+            const rank = f.properties?.scalerank ?? 6;
+            const width_m = getRiverWidth(nm, rank);
+            const coords = f.geometry.coordinates;
+            const lines = f.geometry.type === 'LineString' ? [coords] : coords;
+            for (const line of lines) {
+                let close = false;
+                for (const p of line) {
+                    const dist = Math.hypot((p[0] - lng0) * 111320 * cos_lat0, (p[1] - lat0) * 111320);
+                    if (dist < 8000.0) { close = true; break; }
+                }
+                if (close) {
+                    const sline = chaikin(line, 2);
+                    const localLine = sline.map(p => [(p[0] - lng0) * 111320 * cos_lat0, (p[1] - lat0) * 111320]);
+                    nearby.push({ width_m, line: localLine });
+                }
+            }
+        }
+
+        for (const riv of nearby) {
+            const wHalf = riv.width_m / 2.0;
+            const wHalfSq = wHalf * wHalf;
+            const line = riv.line;
+            for (let i = 0; i < CELLS * CELLS; i++) {
+                if (river_water[i]) continue;
+                const dE = cellDEs[i], dN = cellDNs[i];
+                for (let pi = 0; pi < line.length - 1; pi++) {
+                    const d2 = pointSegDistSq(dE, dN, line[pi][0], line[pi][1], line[pi+1][0], line[pi+1][1]);
+                    if (d2 <= wHalfSq) {
+                        river_water[i] = 1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // 8. 陆水合成（WorldCover 10m 真实水体 vs 现行掩膜+河流中心线）
+    const land = new Uint8Array(CELLS * CELLS);
+    let totalWaterCount = 0;
+    let actualWaterSource = '现行掩膜 (125m+矢量)';
+
+    if (state.waterSource === 'worldcover') {
+        try {
+            document.getElementById('ovDetail').textContent = '①-b 正在从 Planetary Computer 读取 WorldCover 10m 永久水体...';
+            const wc = await sampleWorldCoverWater(name, lat0, lng0, cellLats, cellLngs, cos_lat0);
+            for (let i = 0; i < CELLS * CELLS; i++) {
+                land[i] = wc.waterGrid[i] ? 0 : 1;
+            }
+            totalWaterCount = wc.waterCount;
+            actualWaterSource = `WorldCover (10m, ${wc.cached ? '缓存 ' : ''}${wc.timeMs}ms${wc.bridgeRemoved ? `, 去桥${wc.bridgeRemoved}格` : ''})`;
+        } catch (err) {
+            console.warn('[WorldCover Fallback]', err);
+            actualWaterSource = '退回现行掩膜 (125m+矢量)';
+            for (let i = 0; i < CELLS * CELLS; i++) {
+                const isWater = mask_grid[i] >= 0.5 || river_water[i] === 1;
+                land[i] = isWater ? 0 : 1;
+                if (isWater) totalWaterCount++;
+            }
+        }
+    } else {
+        actualWaterSource = '现行掩膜 (125m+矢量)';
+        for (let i = 0; i < CELLS * CELLS; i++) {
+            const isWater = mask_grid[i] >= 0.5 || river_water[i] === 1;
+            land[i] = isWater ? 0 : 1;
+            if (isWater) totalWaterCount++;
+        }
+    }
+
+    const sampleMs = performance.now() - tStart;
+
+    const cleanH = new Float32Array(CELLS * CELLS);
+    for (let i = 0; i < CELLS * CELLS; i++) {
+        cleanH[i] = Number.isNaN(H_grid[i]) ? hmin : H_grid[i];
+    }
+
+    return {
+        name,
+        lat0, lng0,
+        koppen,
+        theme,
+        why,
+        hmin: Number(hmin.toFixed(1)),
+        hmax: Number(hmax.toFixed(1)),
+        relief: Number(relief.toFixed(1)),
+        step: Number(step.toFixed(1)),
+        waterSource: actualWaterSource,
+        waterRatio: Number((totalWaterCount / (CELLS * CELLS) * 100).toFixed(1)),
+        sampleMs: Number(sampleMs.toFixed(1)),
+        skeleton: {
+            size: CELLS,
+            land: Array.from(land),
+            elev: Array.from(elev_lv),
+            elevMeters: Array.from(cleanH)
+        }
+    };
+}
+
+    // 7. 物件精灵映射
+    const ALIAS = {
+        FDRA: ['NATURE', 'PALM'], FPAL: ['NATURE', 'PALM'], FBAM: ['NATURE', 'BAMBOO'], BIRCH: ['NATURE', 'BIRCH_GREEN'],
+        FJUN: ['NATURE', 'JUNGLE'], FSNO: ['NATURE', 'SNOW_PINE'], FOAK: ['NATURE', 'OAK'], FPIN: ['NATURE', 'PINE'],
+        ITPINE: ['NATURE', 'ITALIAN_PINE'], OLIVE: ['NATURE', 'OLIVE'], CYPRESS: ['NATURE', 'CYPRESS'],
+        GREENOAK: ['NATURE', 'GREEN_OAK'], BUSH: ['NATURE', 'BUSH_GREEN'], BUSH2: ['NATURE', 'BUSH_TREE_A'], BUSH3: ['NATURE', 'BUSH_TREE_B'],
+        PLANT: ['NATURE', 'PLANT'], PLANTS: ['NATURE', 'PLANT'], PLANT_DEAD: ['NATURE', 'PLANT_DEAD'], PLANT_JUNGLE: ['NATURE', 'PLANT_JUNGLE'],
+        PLAN_SHRUB_GREEN: ['NATURE', 'SHRUB_GREEN'], PLANT_SHRUB_DRY: ['NATURE', 'SHRUB_GREEN'],
+        GRASS_GREEN: ['NATURE', 'GRASS_GREEN'], GRASS_DRY: ['NATURE', 'GRASS_DRY'], PLANT_FLOWER: ['NATURE', 'FLOWER'],
+        ROCKX: ['NATURE', 'ROCK1'], ROCKSX: ['NATURE', 'ROCK2'], ROCKGX: ['NATURE', 'ROCK3'],
+        ROCKF1: ['NATURE', 'ROCK_FORMATION1'], ROCKF2: ['NATURE', 'ROCK_FORMATION2'], ROCKF3: ['NATURE', 'ROCK_FORMATION3'],
+        CLIFF_DESERT_01: ['NATURE', 'CLIFF_SAND'], CLIFF_SNOW_01: ['NATURE', 'CLIFF_SNOW'], CLIFF_DEFAULT_01: ['NATURE', 'CLIFF_DEFAULT'],
+        CLIFF_DEFAULT_1: ['NATURE', 'CLIFF_DEFAULT'],
+        TREEA: ['NATURE', 'OAK'], TREEB: ['NATURE', 'OAK'], TREEC: ['NATURE', 'OAK'], FORTR: ['NATURE', 'OAK'],
+        GOLDM: ['RESOURCE', 'GOLD_MINE'], STONM: ['RESOURCE', 'STONE_MINE'], PSTM: ['RESOURCE', 'STONE_MINE'],
+        FORAGM: ['RESOURCE', 'FORAGE_BUSH'], FORAG: ['RESOURCE', 'FORAGE_BUSH'],
+        DEERX: ['ANIMAL', 'DEER'], BOARX: ['ANIMAL', 'BOAR'], WOLFX: ['ANIMAL', 'WOLF'], HAWK: ['ANIMAL', 'FALCON']
+    };
+    const NATURE_DIRS = `ACACIA ASIAN_MAPLE_AUTUMN ASIAN_MAPLE_GREEN ASIAN_PINE AUTUMN_OAK BAMBOO BAOBAB BIRCH_AUTUMN BIRCH_GREEN BIRCH_WINTER BRAZILWOOD BUSH_GREEN BUSH_TREE_A BUSH_TREE_B BUSH_TREE_C CACTUS CYPRESS CYPRESS_DEC DEAD_TREE DRAGON_TREE FERNPATCH FLOWER FLOWERBED FLOWER_1 FLOWER_2 FLOWER_3 FLOWER_4 FORAGE_BUSH FORAGE_FRUIT FORAGE_PAPAYA FORAGE_PINEAPPLE GRASS_DRY GRASS_DRY_PATCH GRASS_GREEN GRASS_GREEN_PATCH GREEN_OAK ITALIAN_PINE JUNGLE LUSH_BAMBOO MANGROVE MINE_GOLD MINE_STONE OAK OLIVE OYSTERS PALM PEACH_BLOSSOM PINE PLANT PLANT_DEAD PLANT_JUNGLE PLANT_RAINFOREST RAINFOREST REEDS ROCK1 ROCK2 ROCK3 ROCK_BEACH ROCK_FORMATION1 ROCK_FORMATION2 ROCK_FORMATION3 ROCK_JUNGLE ROCK_LIMESTONE ROCK_PILLAR ROCK_SEA1 ROCK_SEA2 SHRUB_GREEN SNOW_AUTUMN_OAK SNOW_PINE UNDERBRUSH UNDERBRUSH_JUNGLE UNDERBRUSH_RAINFOREST WATER_LILY WAX_PALM WEED WILLOW`.split(' ');
+    function resolveSprite(name) {
+        if (!name) return null;
+        if (ALIAS[name]) return ALIAS[name];
+        if (NATURE_DIRS.includes(name)) return ['NATURE', name];
+        if (/^CLIFF/.test(name)) return ['NATURE', NATURE_DIRS.find((d) => d.startsWith('CLIFF') && name.includes((d.split('_')[1] ?? '').toLowerCase())) ?? 'CLIFF_DEFAULT'];
+        for (const t of [name, name.replace(/^TREE_/, ''), name.replace(/^TREE/, '')]) if (NATURE_DIRS.includes(t)) return ['NATURE', t];
+        return null;
+    }
+
+// 8. 资源加载
+const loadJson = async (u) => { const r = await fetch(u); if (!r.ok) throw new Error(u + ' HTTP ' + r.status); return r.json(); };
+const loadImg = (u) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = u; });
+
+function toX1(img, half = 2) {
+    if (!img || img.width <= 64) return img;
+    const cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.round(img.width / half)); cv.height = Math.max(1, Math.round(img.height / half));
+    const c = cv.getContext('2d'); c.imageSmoothingQuality = 'high';
+    c.drawImage(img, 0, 0, cv.width, cv.height);
+    return cv;
+}
+
+async function loadSprite(base) {
+    const meta = await loadJson(base + '/_meta.json').catch(() => null);
+    if (meta?.box_w) {
+        const sheet = await loadImg(base + '/frames.png'); if (!sheet) return null;
+        const cv = document.createElement('canvas'); cv.width = meta.box_w; cv.height = meta.box_h;
+        cv.getContext('2d').drawImage(sheet, 0, 0, meta.box_w, meta.box_h, 0, 0, meta.box_w, meta.box_h);
+        const fCount = meta.frames ?? Math.floor(sheet.width / meta.box_w);
+        const frames = [];
+        for (let f = 0; f < fCount; f++) {
+            const fcv = document.createElement('canvas'); fcv.width = meta.box_w; fcv.height = meta.box_h;
+            fcv.getContext('2d').drawImage(sheet, f * meta.box_w, 0, meta.box_w, meta.box_h, 0, 0, meta.box_w, meta.box_h);
+            frames.push(fcv);
+        }
+        return { img: cv, ax: meta.anchor_x ?? meta.box_w / 2, ay: meta.anchor_y ?? meta.box_h, frames };
+    }
+    const im = (await loadImg(base + '/idle_0.png')) || (await loadImg(base + '/fly_0.png'));
+    if (!im) return null;
+    const f0 = meta?.idle?.dirs?.['0'] ?? meta?.fly?.dirs?.['0'];
+    if (f0?.fw && im.width > f0.fw) {
+        const cv = document.createElement('canvas'); cv.width = f0.fw; cv.height = f0.fh;
+        cv.getContext('2d').drawImage(im, 0, 0, f0.fw, f0.fh, 0, 0, f0.fw, f0.fh);
+        return { img: cv, ax: f0.hx ?? f0.fw / 2, ay: f0.hy ?? f0.fh };
+    }
+    return { img: im, ax: im.width / 2, ay: im.height };
+}
+
+async function initEnvironment() {
+    document.getElementById('ovTitle').textContent = '正在初始化基础资源...';
+    try {
+        const [sites, koppen, rivers, manRaw, blendTab, water] = await Promise.all([
+            loadJson('./sites.json'),
+            loadJson('./koppen_01deg.json'),
+            loadJson('/public/assets/ne_10m_rivers_lake_centerlines.geojson'),
+            loadJson('../../../scratch/de_terrain_manifest.json'),
+            loadJson('../../../scratch/de_terrain_blend.json').catch(() => null),
+            loadImg('../../../public/SUCAI_TERRAIN/water-anim/default.png')
+        ]);
+        state.sites = sites;
+        state.koppenGrid = koppen;
+        state.riversGeo = rivers;
+        state.manifest = Object.fromEntries(manRaw.terrains.map((t) => [t.terrain_id, t]));
+        state.blendTable = blendTab;
+        state.waterImg = water;
+
+        // 填充下拉框
+        const sel = document.getElementById('siteSelect');
+        sel.innerHTML = sites.map((s, idx) => `<option value="${idx}">${s.name} (${s.kind === 'battlefield' ? '战场' : s.level})</option>`).join('');
+
+        // 初始生成默认维也纳·多瑙河
+        await generateBattlefield('维也纳', 48.2260, 16.4100);
+    } catch (e) {
+        console.error(e);
+        document.getElementById('ovTitle').textContent = '初始化失败';
+        document.getElementById('ovDetail').textContent = String(e);
+    }
+}
+
+// 9. 一键生成核心流程
+async function generateBattlefield(name, lat, lng) {
+    const ov = document.getElementById('overlayMsg');
+    ov.style.display = 'block';
+    document.getElementById('ovTitle').textContent = `正在生成战场：${name}...`;
+    document.getElementById('ovDetail').textContent = '① 前端双线性插值采样高程与 WaterMask 遥感像素...';
+
+    const tStart = performance.now();
+
+    // 1. 前端地理采样
+    const geo = await sampleRealGeology(name, lat, lng);
+
+    document.getElementById('ovDetail').textContent = '② 调用 RMS 引擎执行 TERRAIN / OBJECTS 段生成地形与自然物件...';
+
+    // 2. 调用引擎生成
+    const resp = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+            name,
+            theme: geo.theme,
+            skeleton: geo.skeleton
+        })
+    });
+    const engRes = await resp.json();
+    if (!engRes.ok) {
+        throw new Error(engRes.error || '引擎生成失败');
+    }
+
+    document.getElementById('ovDetail').textContent = '③ 载入所需 DE 地形贴图与物件精灵...';
+
+    const mapData = engRes.mapData;
+    state.mapData = mapData;
+
+    // 3. 动态加载地形贴图与遮罩
+    const ids = [...new Set([...mapData.terrain, ...mapData.layer.filter((v) => v >= 0)])];
+    const codes = new Set(), maskNames = new Set(['default_weak']);
+    for (const id of ids) {
+        const m = state.manifest[id]; if (m?.name_2) codes.add(String(m.name_2).replace(/^g_/, ''));
+        const mn = state.blendTable?.[String(id)]?.mask; if (mn) maskNames.add(String(mn).replace(/\.png$/i, ''));
+    }
+    for (const c of codes) {
+        if (!state.textures.has(c)) {
+            const im = await loadImg('../../../public/SUCAI_TERRAIN/' + c + '.png');
+            if (im) state.textures.set(c, toX1(im));
+        }
+    }
+    for (const mn of maskNames) {
+        if (!state.masks.has(mn)) {
+            const im = await loadImg('../../../public/SUCAI_TERRAIN/masks/' + mn + '.png');
+            if (im) state.masks.set(mn, toX1(im));
+        }
+    }
+
+    // 4. 动态加载物件精灵
+    const objNames = [...new Set(mapData.objects.map((o) => o.name))];
+    for (const nm of objNames) {
+        if (!state.sprites.has(nm)) {
+            const r = resolveSprite(nm);
+            if (r) {
+                const sp = await loadSprite(`../../../public/SUCAI_${r[0]}/${r[1]}`);
+                if (sp) {
+                    state.sprites.set(nm, sp);
+                    if (sp.frames) {
+                        for (let f = 0; f < sp.frames.length; f++) {
+                            state.sprites.set(`${nm}#${f}`, { img: sp.frames[f], ax: sp.ax, ay: sp.ay });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    document.getElementById('ovDetail').textContent = '④ 构建 WebGL 地面图层并重置镜头...';
+
+    // 6. 重构 WebGL 地面层
+    // 6. 重构 WebGL 地面层
+    state.data = transposeMapData(mapData);
+    if (state.layer?.destroy) state.layer.destroy();
+    state.layer = createGroundLayer(document.getElementById('cvg'), {
+        data: state.data,
+        manifest: state.manifest,
+        textures: state.textures,
+        sprites: state.sprites,
+        masks: state.masks,
+        blend: state.blendTable,
+        waterImg: state.waterImg,
+        waterAnim: state.waterAnim,
+        blendEnabled: state.blend,
+        elevEnabled: state.elev,
+        debug: 0
+    });
+
+    // 7. 更新界面状态指标
+    const totalMs = (performance.now() - tStart).toFixed(0);
+    document.getElementById('stName').textContent = name;
+    document.getElementById('stCoords').textContent = `(${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+    document.getElementById('stWaterSource').textContent = geo.waterSource;
+    document.getElementById('stKoppen').textContent = `${geo.koppen}`;
+    document.getElementById('stTheme').textContent = `${geo.theme}`;
+    document.getElementById('stElev').textContent = `高差 ${geo.relief}m (${geo.hmin}m ~ ${geo.hmax}m), 步长 ${geo.step}m`;
+    document.getElementById('stWater').textContent = `${geo.waterRatio}%`;
+    document.getElementById('stTime').textContent = `采样 ${geo.sampleMs}ms + 引擎 ${engRes.engineMs}ms = 总计 ${totalMs}ms`;
+
+    resetCamera(state.scenario);
+    ov.style.display = 'none';
+}
+
+// 10. 镜头与渲染循环
+function camView() {
+    const d = state.data, cv = document.getElementById('cvg');
+    if (!d) return { ox: 0, oy: 0, z: 1 };
+    const N = d.width;
+    const mapW = 2 * (N - 1) * dx, mapH = 2 * (N - 1) * dy;
+    let z = state.cam.zoom;
+    if (state.scenario === 'full') z = Math.min(cv.width / mapW, cv.height / mapH);
+    else if (state.scenario === 'zoom1') z = 1.0;
+    else if (state.scenario === 'zoom2') z = 2.0;
+    return { ox: (cv.width - mapW * z) / 2 + (state.cam.x || 0) * z, oy: (cv.height - mapH * z) / 2 + (state.cam.y || 0) * z, z };
+}
+
+function resetCamera(mode) {
+    state.scenario = mode;
+    state.cam.x = 0;
+    state.cam.y = 0;
+    if (mode === 'zoom1') state.cam.zoom = 1.0;
+    else if (mode === 'zoom2') state.cam.zoom = 2.0;
+    else state.cam.zoom = 1.0;
+}
+
+function resizeCanvas() {
+    const wrap = document.getElementById('canvasWrap');
+    const cvg = document.getElementById('cvg');
+    if (cvg.width !== wrap.clientWidth || cvg.height !== wrap.clientHeight) {
+        cvg.width = wrap.clientWidth;
+        cvg.height = wrap.clientHeight;
+        if (state.layer?.resize) state.layer.resize(wrap.clientWidth, wrap.clientHeight);
+    }
+}
+window.addEventListener('resize', resizeCanvas);
+
+function frame() {
+    resizeCanvas();
+    if (state.layer && state.data) {
+        const view = camView();
+        state.layer.setCamera({ x: view.ox, y: view.oy, zoom: view.z });
+        state.layer.render();
+    }
+    requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// 11. 交互绑定
+document.getElementById('btnGen').addEventListener('click', () => {
+    const name = document.getElementById('customName').value || '自定义地点';
+    const lat = parseFloat(document.getElementById('inLat').value);
+    const lng = parseFloat(document.getElementById('inLng').value);
+    generateBattlefield(name, lat, lng);
+});
+
+document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const s = btn.dataset.site;
+        if (s === 'vienna') {
+            document.getElementById('customName').value = '维也纳';
+            document.getElementById('inLat').value = '48.2260';
+            document.getElementById('inLng').value = '16.4100';
+            generateBattlefield('维也纳', 48.2260, 16.4100);
+        } else if (s === 'wuhan') {
+            document.getElementById('customName').value = '武汉';
+            document.getElementById('inLat').value = '30.5367';
+            document.getElementById('inLng').value = '114.2645';
+            generateBattlefield('武汉', 30.5367, 114.2645);
+        } else if (s === 'heze') {
+            document.getElementById('customName').value = '菏泽';
+            document.getElementById('inLat').value = '35.2400';
+            document.getElementById('inLng').value = '115.4400';
+            generateBattlefield('菏泽', 35.2400, 115.4400);
+        } else if (s === 'zermatt') {
+            document.getElementById('customName').value = '策马特';
+            document.getElementById('inLat').value = '46.0200';
+            document.getElementById('inLng').value = '7.7500';
+            generateBattlefield('策马特', 46.0200, 7.7500);
+        }
+    });
+});
+
+document.getElementById('siteSearch').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    const sel = document.getElementById('siteSelect');
+    const filtered = state.sites.map((s, idx) => ({ ...s, idx })).filter(s => s.name.toLowerCase().includes(q));
+    sel.innerHTML = filtered.map(s => `<option value="${s.idx}">${s.name} (${s.kind === 'battlefield' ? '战场' : s.level})</option>`).join('');
+    if (filtered.length > 0) {
+        sel.selectedIndex = 0;
+        syncSiteFields(filtered[0].idx);
+    }
+});
+
+function syncSiteFields(idx) {
+    const s = state.sites[idx];
+    if (!s) return;
+    document.getElementById('customName').value = s.name;
+    document.getElementById('inLat').value = s.lat;
+    document.getElementById('inLng').value = s.lng;
+}
+
+document.getElementById('siteSelect').addEventListener('change', (e) => {
+    syncSiteFields(parseInt(e.target.value, 10));
+    const s = state.sites[parseInt(e.target.value, 10)];
+    if (s) generateBattlefield(s.name, s.lat, s.lng);
+});
+
+document.querySelectorAll('.cam-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.cam-btn').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        resetCamera(btn.dataset.s);
+    });
+});
+
+document.getElementById('bblend').addEventListener('click', (e) => {
+    state.blend = !state.blend;
+    e.target.className = state.blend ? 'on' : '';
+    e.target.textContent = `过渡: ${state.blend ? '开' : '关'}`;
+    if (state.layer?.setBlend) state.layer.setBlend(state.blend);
+});
+document.getElementById('belev').addEventListener('click', (e) => {
+    state.elev = !state.elev;
+    e.target.className = state.elev ? 'on' : '';
+    e.target.textContent = `高程: ${state.elev ? '开' : '关'}`;
+    if (state.layer?.setElev) state.layer.setElev(state.elev);
+});
+document.getElementById('bwater').addEventListener('click', (e) => {
+    state.waterAnim = !state.waterAnim;
+    e.target.className = state.waterAnim ? 'on' : '';
+    e.target.textContent = `水动: ${state.waterAnim ? '开' : '关'}`;
+    if (state.layer?.setWaterAnim) state.layer.setWaterAnim(state.waterAnim);
+});
+document.getElementById('bwaterSource').addEventListener('click', (e) => {
+    state.waterSource = state.waterSource === 'worldcover' ? 'current' : 'worldcover';
+    e.target.className = state.waterSource === 'worldcover' ? 'on' : '';
+    e.target.textContent = state.waterSource === 'worldcover' ? '水体: WorldCover (10m)' : '水体: 现行掩膜 (125m+矢量)';
+    const name = document.getElementById('customName').value || '自定义地点';
+    const lat = parseFloat(document.getElementById('inLat').value);
+    const lng = parseFloat(document.getElementById('inLng').value);
+    generateBattlefield(name, lat, lng);
+});
+
+// 鼠标拖拽平移
+const cvWrap = document.getElementById('canvasWrap');
+cvWrap.addEventListener('mousedown', (e) => {
+    state.drag.down = true;
+    state.drag.x = e.clientX;
+    state.drag.y = e.clientY;
+});
+window.addEventListener('mousemove', (e) => {
+    if (!state.drag.down) return;
+    const dx = e.clientX - state.drag.x;
+    const dy = e.clientY - state.drag.y;
+    state.drag.x = e.clientX;
+    state.drag.y = e.clientY;
+    state.cam.x += dx;
+    state.cam.y += dy;
+});
+window.addEventListener('mouseup', () => { state.drag.down = false; });
+cvWrap.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 0.85;
+    state.cam.zoom = Math.max(0.1, Math.min(5.0, state.cam.zoom * factor));
+});
+
+initEnvironment();
+</script>
