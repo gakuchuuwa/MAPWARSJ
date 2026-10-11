@@ -5566,32 +5566,39 @@ export class Scene13WarLayer {
         const skipBarricade = this.battleType === 'siege' && f === 1 && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         if (!skipBarricade && side.length > 0) {
             const barricadeAsset = 'BATTLEFIELD:STAKE_BARRICADE';
-            const isAttacker = f === 0;
-            const frontX = isAttacker
-                ? Math.max(...side.map((p) => p.x))
-                : Math.min(...side.map((p) => p.x));
-            const frontRow = side.filter((p) => Math.abs(p.x - frontX) < 5).sort((a, b) => a.y - b.y);
-            if (frontRow.length > 0) {
-                const barricadeCount = 6 + Math.floor(Math.random() * 4);
-                const topY = frontRow[0].y - 135;
-                const bottomY = frontRow[frontRow.length - 1].y + 135;
-                const offsetX = isAttacker ? 180
-                    // 主人 2026-09-03：城寨/漠北蒙古守方拒马顶到正面墙原位置(-380)，在箭塔(-320)之前（拒马在前、箭塔在后）；其余守方 -180
-                    : ((this.defenderCityType === 'stockade' || this.isMobeiMongolDefender()) ? -380 : -180);
-                this.ensureNatureAsset(barricadeAsset);
-                for (let i = 0; i < barricadeCount; i++) {
-                    const t = i / (barricadeCount - 1);
-                    this.decorSprites.push({
-                        asset: barricadeAsset, frame: 0,
-                        x: frontX + offsetX,
-                        y: topY + (bottomY - topY) * t,
-                        flip: isAttacker ? false : true,
-                        // 🔴 [2026-10-03 主人令「战术模式中的拒马，显示改回1.0」]
-                        scale: 1.0,
-                        layer: 'world', z: 0,
-                        obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
-                    });
-                }
+            // 🔴 [2026-10-11 主人令「攻方在右，拒马就反了，营地应该放一圈拒马」＋「拒马应该是照着敌方的方向」]
+            //    原实现：只在「最前排那一列」外侧铺一条竖线，`x = frontX ± 180`、`flip` 按攻/守写死 ——
+            //    攻方被镜像到右边时，这条线画在哪一侧、朝哪边全是反的。
+            //    现改成：**围营地一圈**，且每一根的朝向**照敌方**——把「朝敌那一侧」的拒马镜像过去，
+            //    使拒马正面一律与营心→敌方的方向对齐（不再按攻/守写死，也不受左右镜像影响）。
+            const CEN = { x: side.reduce((a, p) => a + p.x, 0) / side.length, y: side.reduce((a, p) => a + p.y, 0) / side.length };
+            const spread = Math.max(...side.map((p) => Math.hypot(p.x - CEN.x, p.y - CEN.y)));
+            const ringR = spread + 48;                               // 圈比营地外接再放 48px，免得拒马压在营帐上
+            const BAR_HALF_W = 48;                                   // 素材框宽 96
+            const barricadeCount = Math.max(12, Math.round((2 * Math.PI * ringR) / (BAR_HALF_W * 1.8)));
+            // 敌方方向：由「己方营心 → 敌方营心」定；拿不到就用本阵前进向量兜底
+            const foeSide = this.spawns.filter((s) => s.f !== f);
+            const foeCen = foeSide.length
+                ? { x: foeSide.reduce((a, p) => a + p.x, 0) / foeSide.length, y: foeSide.reduce((a, p) => a + p.y, 0) / foeSide.length }
+                : { x: CEN.x + this.advanceVec[f].x * 1000, y: CEN.y + this.advanceVec[f].y * 1000 };
+            const EX = foeCen.x - CEN.x, EY = foeCen.y - CEN.y;
+            const eLen = Math.hypot(EX, EY) || 1;
+            const ex = EX / eLen, ey = EY / eLen;
+            /** 拒马正面是否朝敌：素材正面朝西南（屏幕 (-0.707,+0.707)），用「由营心指向该根」的法线点乘敌方向判定 */
+            const faceEnemy = (dx: number, dy: number): boolean => (dx * ex + dy * ey) > 0;
+            this.ensureNatureAsset(barricadeAsset);
+            for (let i = 0; i < barricadeCount; i++) {
+                const a = (i / barricadeCount) * Math.PI * 2;
+                const dx = Math.cos(a), dy = Math.sin(a) * 0.58;     // 等距压缩（与地面同一 2.5D 比例）
+                this.decorSprites.push({
+                    asset: barricadeAsset, frame: 0,
+                    x: CEN.x + dx * ringR,
+                    y: CEN.y + dy * ringR,
+                    flip: faceEnemy(dx, dy),
+                    scale: 1.0,
+                    layer: 'world', z: 0,
+                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                });
             }
         }
         if (side.length !== 9) return;
@@ -5625,6 +5632,13 @@ export class Scene13WarLayer {
                     px += (f === 0 ? 25 : -25);
                     safetyWalk++;
                 }
+                // 🔴 [2026-10-11 主人令「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
+                //    上面这段避水修正会把这栋建筑从出兵口挪走（实测最多挪 15×25 = 375px），
+                //    而士兵仍然从**原格**出来 —— 于是「士兵不出现在出兵口/营帐」。
+                //    修法：建筑挪到哪，出兵口就跟到哪（s 是 this.spawns 里的同一个对象，
+                //    改它 = 士兵改从这栋建筑出来）；避水这条老规矩因此仍然成立。
+                s.x = px;
+                s.y = py;
             }
             return {
                 asset: full,
