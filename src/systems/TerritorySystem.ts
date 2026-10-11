@@ -796,6 +796,21 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     const isFourGates = mediumWallStyle !== 0;
     const isFortified = mediumWallStyle === 2;
 
+    // 🔴 [2026-10-12 主人令「请继续中城」] 战术侧（传了原生尺寸表）按 DE 格子摆放，做法同大城（buildDeCityGridHtml）；战略地图不传 native，走下面原写法一个像素不动。
+    //    中城：每段 10 ⇒ 角到角 25（< 大城 27）；三款城墙照旧：普通双门（左上、右下两边开门）/ 普通四门 / 加固四门；
+    //    9 栋＝城堡 + 8（每象限 2）；近 3 远 8（逐格核对：不重叠、不压大道、栋间 ≥ 1、离墙 2）。
+    if (native) {
+        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
+            pool.map((b): [string, string] => [b, 'AGE3']), native, {
+                seg: 10, near: 3, far: 8, corner: false,
+                gateEdges: isFourGates ? [true, true, true, true] : [true, false, true, false],
+                wallAnchors: isFortified
+                    ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
+                    : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
+                groundTile: 'rd2',
+            });
+    }
+
     // 🔴 [2026-10-11 主人定] 中城城内只留一层：用与建筑独立地基完全相同显示比例的无缝原图 rd2.png 铺满城墙圈（S=6, AX=12），四周边缘柔和渐变
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 12; // 中城 S=6, AX=12
@@ -829,7 +844,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = native?.castleW ?? (baseSize * 0.48);
+            const cW = baseSize * 0.48;   // 战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             parts.push(
@@ -901,7 +916,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
-    // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆放，先改大城」] 战术侧（传了原生尺寸表）走**按格摆放**的版本；
+    // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆放，先改大城」] 战术侧（传了原生尺寸表）走**按格摆放**的版本（buildDeCityGridHtml）；
     //    战略地图（native 缺省）继续走下面原来的写法，一个像素不动。
     // 🔴 [2026-10-12 主人「大城可以添加所有建筑……一样一种」] 战术侧大城：建筑池 12 种**一样一栋**（另加城心城堡＝13 栋）；
     //    战略地图仍是上面的 9 栋（主人「总体不能超过 9 个」那条只管战略，不动）。16 种风格 12 种素材均齐（已逐一核对）。
@@ -911,7 +926,11 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             const j = Math.floor(rnd() * (i + 1));
             [full[i], full[j]] = [full[j], full[i]];
         }
-        return buildDeBigCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full, native, rnd);
+        // 大城：每段 11 ⇒ 角到角 27；13 栋＝城堡 + 12（每象限 3）；近 3.5 远 9（逐格核对：离墙 2、栋间 ≥ 1）
+        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full, native, {
+            seg: 11, near: 3.5, far: 9, corner: true, gateEdges: [true, true, true, true],
+            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'], groundTile: 'rd1',
+        });
     }
 
     // 容器尺寸（比中城更大，容纳更宽的布局与石城墙）
@@ -1018,15 +1037,31 @@ function deBuildingFootprint(b: string): number {
  *   · 城墙按格逐件（cityWallShared.buildFortifiedRingOnGrid）：每边 角楼＋墙 11＋城门 4＋墙 11＋角楼，全在格心上；
  *   · 地面按墙圈菱形铺。
  */
-function buildDeBigCityGridHtml(
+/** 战术侧「按格摆放」城池的城型参数（每个数都要先逐格核对：不重叠、不压大道、两栋间 ≥ 1 格、离墙 ≥ 2 格） */
+interface CityGridSpec {
+    /** 每段墙格数（角到角 = 2·seg + 5） */
+    seg: number;
+    /** 个位中心离圈心的近 / 远距离（格） */
+    near: number;
+    far: number;
+    /** 每象限是否再放外角一栋（大城 13 栋用） */
+    corner: boolean;
+    /** 四条边是否开门：[左上, 右上, 右下, 左下] */
+    gateEdges: readonly boolean[];
+    /** 墙段 / 角楼 / 城门素材表（加固墙或普通石墙） */
+    wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }>;
+    /** 城内地面贴图 */
+    groundTile: string;
+}
+
+function buildDeCityGridHtml(
     baseSize: number, cityId: string, style: string, centerCastle: boolean, factionId: string | undefined, region: string | undefined,
-    pool: Array<[string, string]>, native: CityNativeSizes, rnd: () => number,
+    pool: Array<[string, string]>, native: CityNativeSizes, g: CityGridSpec,
 ): string {
     const TW = DE_ISO_TILE_W, TH = DE_ISO_TILE_H;
-    // 墙圈按格逐件生成：每边 = 角楼 + 墙 11 格 + 城门 4 格 + 墙 11 格 + 角楼 ⇒ 角到角 27 步；
-    // 全城 4 城门 + 4 角楼 + 8 段 × 11 = 88 件墙（主人 2026-10-12「先计算下……每段多少个城墙」）
-    const WALLS_PER_SEGMENT = 11;
-    const ring = buildFortifiedRingOnGrid(WALLS_PER_SEGMENT, TW, TH);
+    // 墙圈按格逐件生成：每边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 2·seg + 5 步
+    // （主人 2026-10-12「先计算下……每段多少个城墙」；不开门的边整边是墙）
+    const ring = buildFortifiedRingOnGrid(g.seg, TW, TH, g.gateEdges);
     const rX = ring.L * TW / 2, rY = ring.L * TH / 2;           // 墙圈菱形半宽 / 半高（px）
     const ringCy = (2 * ring.a + ring.L) * TH / 2;              // 圈心的屏幕 y（L 为奇数时圈心在半格处）
     const W = 2 * rX + 400, H = 2 * (rY + Math.abs(ringCy)) + 600;   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
@@ -1034,22 +1069,22 @@ function buildDeBigCityGridHtml(
     const parts: string[] = [];
 
     parts.push(featheredPolygonGroundDiv(
-        W, H, '/SUCAI_TERRAIN/rd1.png', baseSize * 0.32 * AUTO * 2.3,
+        W, H, `/SUCAI_TERRAIN/${g.groundTile}.png`, baseSize * 0.32 * AUTO * 2.3,
         [[0, ringCy - rY], [rX, ringCy], [0, ringCy + rY], [-rX, ringCy]],
         TW * 0.5, 0.93, 10,
     ));
 
-    // 🔴 [2026-10-12 主人选「铺开成街区」＋「一样一种」] 13 个个位按街区摆（墙圈不变）：
+    // 🔴 [2026-10-12 主人选「铺开成街区」] 个位按街区摆：
     //    · 两条 2 格宽大道从四门直通城心成十字：i ∈ {0,1}、j ∈ {0,1}（门心在 0.5，正对大道）；
     //    · 城堡（4×4）坐十字路口正中，个位中心 (0.5, 0.5) ⇒ 占 −1…2；
-    //    · 其余 12 栋四个象限各 3 栋（大道两侧各一 + 外角一），个位中心 = 圈心 0.5 ± (3.5, 9)、± (9, 3.5)、± (9, 9)。
-    //    逐格核对（全按 4×4 最坏情况）：不重叠、不压大道、两栋间至少隔 1 格、离墙（−13 / 14）至少空 2 格。
-    const NEAR = 3.5, FAR = 9, MID = 0.5;
+    //    · 其余每个象限 2 栋（大道两侧各一）或 3 栋（+ 外角一，g.corner），个位中心 = 0.5 ± (near, far)、± (far, near)[、± (far, far)]。
+    //    near / far 由调用方按墙圈大小逐格核对后给定（见 CityGridSpec 各城型取值处）。
+    const NEAR = g.near, FAR = g.far, MID = 0.5;
     const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = [{ ci: MID, cj: MID, isCenter: true, y: 0 }];
     for (const si of [-1, 1]) for (const sj of [-1, 1]) {
         slots.push({ ci: MID + si * NEAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
         slots.push({ ci: MID + si * FAR, cj: MID + sj * NEAR, isCenter: false, y: 0 });
-        slots.push({ ci: MID + si * FAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
+        if (g.corner) slots.push({ ci: MID + si * FAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
     }
     for (const sl of slots) sl.y = (sl.ci + sl.cj) * TH / 2;
     slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
@@ -1079,7 +1114,7 @@ function buildDeBigCityGridHtml(
             placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
         } else {
             const entry = centerCastle ? pool[otherIdx++] : pool[i];
-            if (!entry) return;   // 无城堡时个位比建筑多一个（13 位 / 12 栋），空着
+            if (!entry) return;   // 个位比建筑多时空着（如无城堡时 13 位 / 12 栋）
             const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
             const src = cityBuildingSrc(style, b, age);
             const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
@@ -1088,11 +1123,11 @@ function buildDeBigCityGridHtml(
         }
     });
 
-    // 加固城墙：按格逐件（见上 ring）。🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] 不镜像（原来 50% 整圈翻转，
+    // 城墙：按格逐件（见上 ring）。🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] 不镜像（原来 50% 整圈翻转，
     //    把东北向素材镜像去顶替东南向 ⇒ 门塔接墙处错位）；每件按朝向取 DE 素材，宽度、锚点都取素材原值。
-    const fortifiedAnchors = DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
+    const wallAnchors = g.wallAnchors;
     ring.pieces.forEach((w) => {
-        const base = fortifiedAnchors[w.type === 'GATE' ? 'GATE' : w.type];
+        const base = wallAnchors[w.type === 'GATE' ? 'GATE' : w.type];
         const path = w.type === 'GATE' && w.gateDir === 'SE' ? base.path.replace('_NE/preview.png', '_SE/preview.png') : base.path;
         const dir = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(path)?.[1] ?? '';
         const anc = DE_SPRITE_ANCHOR[dir];

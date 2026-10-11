@@ -1658,9 +1658,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 0
         },
         "/assets/TIBET/pazhu_redangunsangpa.png": {
-            "scale": 0.92,
+            "scale": 0.88,
             "offsetX": 0,
-            "offsetY": -28
+            "offsetY": -26
         },
         "/assets/STEPPE/naiman_taiyanghan.png": {
             "scale": 0.98,

@@ -1441,7 +1441,7 @@ export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, nar
  * 🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] **一律不镜像**：等轴素材的侧面、阴影按单一朝向绘制，镜像顶替会让门塔接墙处错位。
  *    DE 东北向、东南向的墙段与城门各有一套素材 ⇒ 左上边、右下边（走向 ↗↙）用 NE；右上边、左下边（走向 ↘↖）用 SE。
  */
-export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: number): { pieces: PalisadeGridPiece[]; L: number; a: number } {
+export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: number, gateEdges: readonly boolean[] = [true, true, true, true]): { pieces: PalisadeGridPiece[]; L: number; a: number } {
     const L = 2 * seg + 5;
     const a = -Math.floor(L / 2);
     const hx = tileW / 2, hy = tileH / 2;
@@ -1458,13 +1458,14 @@ export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: numb
         { from: E, di: 0, dj: 1, dir: 'NE' },    // 右下边：东角 → 南角（屏幕 ↙，与 ↗ 同一走向）
         { from: S, di: -1, dj: 0, dir: 'SE' },   // 左下边：南角 → 西角（屏幕 ↖，与 ↘ 同一走向）
     ];
-    for (const e of edges) {
+    edges.forEach((e, k) => {
+        const hasGate = gateEdges[k] !== false;   // 不开门的边整边是墙（中城普通双门款：只开左上、右下两边）
         for (let t = 1; t <= L - 1; t++) {
-            if (!isWall(t)) continue;
+            if (hasGate && !isWall(t)) continue;
             pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
         }
-        pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', gateDir: e.dir });
-    }
+        if (hasGate) pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', gateDir: e.dir });
+    });
     return { pieces, L, a };
 }
 
