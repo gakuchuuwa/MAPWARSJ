@@ -5552,7 +5552,7 @@ export class Scene13WarLayer {
         const W = cv.width, H = cv.height;
         const rx = c.width / 2, ry = c.height / 2;
         // 城池外接椭圆换算成格半径（等轴格：横向约 45 px、纵向约 22 px 一格）
-        const rCells = Math.max(rx / 64, ry / 32) + 1;
+        const rCells = Math.min(7.5, Math.max(4.5, Math.max(rx / 160, ry / 80)));
         // 🔴 [2026-10-11 主人令「据点城池在地图中心，高地大概率设计在地图中心地带，注意大概率而非绝对」]
         const peakLevel = gl.maxElevationLevelInRadius(cx, cy, W, H, rCells * 0.8);
         const seedStr = String(this.defenderCityId || this.environmentPlan?.seed || 'default');
@@ -7555,7 +7555,7 @@ export class Scene13WarLayer {
                     // 出生朝向按**实际出生点**算：奇袭兵生在敌后，用本方出兵口算会背对敌人
                     dir: this.dir8(tgt.x - (isFlank ? flankX : s.x), tgt.y - (isFlank ? flankY : s.y)),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
-                    fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                    fightT: 0, aimT: (s.spawned % 15) * 0.033, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: spawnX, prevY: spawnY,
                     anchorX: spawnX, anchorY: spawnY, netT: 0,
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
@@ -7659,7 +7659,7 @@ export class Scene13WarLayer {
         };
         for (const m of this.men) {
             if (m.hp <= 0) continue;
-            if (false && this.defenderHolding && !m.siegeW) {
+            if (this.defenderHolding && m.f === 1 && !m.siegeW) {   // 🔴 [2026-10-11 主人令「守方不要动」] 原来是 `false &&` 死条件，现恢复并**限定守方**
                 m.sepX = 0;
                 m.sepY = 0;
                 continue;
@@ -7843,29 +7843,44 @@ export class Scene13WarLayer {
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
-        for (let ring = 0; ring <= span; ring++) {
-            // 只有找到未满且满足最小射程的目标才能提前结束；兜底目标不能遮蔽外环的合适敌人。
-            if (free) {
-                const floor = (ring - 1) * cell;
-                if (floor > 0 && fd < floor * floor) break;
+        if (span >= 6) {
+            for (let i = 0; i < this.men.length; i++) {
+                const o = this.men[i];
+                if (o.f === m.f || o.hp <= 0) continue;
+                const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                if (d >= r2) continue;
+                const tooNear = minR2 > 0 && d < minR2;
+                if (d < bd) { bd = d; best = o; }
+                if (!tooNear && d < rd) { rd = d; inRange = o; }
+                if (o.claims >= SPREAD_CAP) continue;
+                if (!tooNear && d < fd) { fd = d; free = o; }
             }
-            for (let gx = cx - ring; gx <= cx + ring; gx++) {
-                for (let gy = cy - ring; gy <= cy + ring; gy++) {
-                    if (Math.max(Math.abs(gx - cx), Math.abs(gy - cy)) !== ring) continue;   // 只走本环
-                    const a = map.get(HKEY(gx, gy));
-                    if (!a) continue;
-                    for (let i = 0; i < a.length; i++) {
-                        const o = a[i];
-                        if (o.f === m.f || o.hp <= 0) continue;
-                        const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
-                        if (d >= r2) continue;
-                        const tooNear = minR2 > 0 && d < minR2;
-                        // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
-                        // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
-                        if (d < bd) { bd = d; best = o; }
-                        if (!tooNear && d < rd) { rd = d; inRange = o; }
-                        if (o.claims >= SPREAD_CAP) continue;
-                        if (!tooNear && d < fd) { fd = d; free = o; }
+        } else {
+            for (let ring = 0; ring <= span; ring++) {
+                // 只有找到未满且满足最小射程的目标才能提前结束；兜底目标不能遮蔽外环的合适敌人。
+                if (free) {
+                    const floor = (ring - 1) * cell;
+                    if (floor > 0 && fd < floor * floor) break;
+                }
+                for (let gx = cx - ring; gx <= cx + ring; gx++) {
+                    const isEdgeX = gx === cx - ring || gx === cx + ring;
+                    const gyStep = (ring > 0 && !isEdgeX) ? ring * 2 : 1;
+                    for (let gy = cy - ring; gy <= cy + ring; gy += gyStep) {
+                        const a = map.get(HKEY(gx, gy));
+                        if (!a) continue;
+                        for (let i = 0; i < a.length; i++) {
+                            const o = a[i];
+                            if (o.f === m.f || o.hp <= 0) continue;
+                            const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                            if (d >= r2) continue;
+                            const tooNear = minR2 > 0 && d < minR2;
+                            // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
+                            // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
+                            if (d < bd) { bd = d; best = o; }
+                            if (!tooNear && d < rd) { rd = d; inRange = o; }
+                            if (o.claims >= SPREAD_CAP) continue;
+                            if (!tooNear && d < fd) { fd = d; free = o; }
+                        }
                     }
                 }
             }
@@ -7875,8 +7890,15 @@ export class Scene13WarLayer {
         //    远程原地站桩射墙、近战贴墙砍。斜墙不参与优先（兜底循环照打，破墙同样触发全墙联动）。
         // [2026-09-05 玩家] 玩家不砍墙：破墙前无目标（等），破墙后只打人（下面的城墙兜底循环也跳过）
         const isHero = (m as { hero?: boolean }).hero === true;
+        const manChosen = free ?? inRange ?? best;
+        // 🔴 [2026-10-11 主人令「该修复的修复」] 攻城待命期只能被「**已出城**」的守军解除：
+        //    `search` 是穿墙的，城内待命的守军也会被搜到 ⇒ 原来会把待命一并解除、攻方顶墙蹭。
+        //    这里只认「落在城郭占地之外」的敌人（`deCity` 的宽高 + 中心，全在既有字段里，未新增任何东西）。
+        const _hc = this.deCity ? this.deCityCenter : null;
+        const _hw = this.deCity ? this.deCity.width / 2 : 0, _hh = this.deCity ? this.deCity.height / 2 : 0;
+        const manOut = (manChosen && _hc && (Math.abs(manChosen.x - _hc.x) <= _hw && Math.abs(manChosen.y - _hc.y) <= _hh)) ? null : manChosen;
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
-            if (this.defenderHolding) return null;
+            if (this.defenderHolding && !manOut) return null;
         } else if (this.battleType === 'siege' && m.f === 0) {
             let bw: WarBuilding | null = null, bwd = r2;
             for (const b of this.wallGates) {
@@ -7891,10 +7913,10 @@ export class Scene13WarLayer {
                 if (d < bwd) { bwd = d; bw = b; }
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
-            if (bw) { if (reserve) bw.claims++; return bw; }
-            // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙
-            //    → 不锁城内守军（守方按兵不动），返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭。
-            if (this.defenderHolding) return null;
+            if (bw && (!manOut || bwd <= bd)) { if (reserve) bw.claims++; return bw; }
+            // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙且无迎战守军
+            //    → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭；若有已出城迎战的守军则正常交战。
+            if (this.defenderHolding && !manOut) return null;
         }
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
@@ -8380,6 +8402,7 @@ export class Scene13WarLayer {
     }
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
+        this.releaseReservedTarget(m);
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         // 🔴 [2026-10-11 AA #3 前半 属实] 原为 `search(m, MARCH_R, …, false)`（reserve=false）⇒ 不占围殴名额，
         //    同一分队 36 人在**移动目标**上全部选出同一个最近敌兵 ⇒ 集体涌向一个点。
@@ -8390,6 +8413,7 @@ export class Scene13WarLayer {
         //    改成 DE 式：**每个兵带着自己固定的阵位偏移去接敌** —— 用每人出生时就定死的 `m.jx/m.jy`
         //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
         if (near) {
+            m.reservedFoe = near;
             const ra = Math.atan2(m.jy, m.jx);
             return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
         }
@@ -8418,6 +8442,7 @@ export class Scene13WarLayer {
         }
         const midFoe = !m.march ? this.search(m, 1200, MIN_RANGE_TYPES[m.key] ?? 0, true) : null;   // 🔴 [2026-10-11 CC 复核] 列阵推进期间不让中距层接管（否则方阵被 1200px 内的敌人拉散）
         if (midFoe) {
+            m.reservedFoe = midFoe;
             return { x: midFoe.x + ringX, y: midFoe.y + ringY };
         }
 
@@ -8433,7 +8458,7 @@ export class Scene13WarLayer {
 
         // 🔴 [2026-10-11 CC 复核] 原来这里每个兵手扫全场 = O(N²)（720 人局约 500 万次/秒）。
         //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
-        const globalNearest = this.search(m, 9000, MIN_RANGE_TYPES[m.key] ?? 0, true)   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。9000 = 地图对角线（7616×3808）。;
+        const globalNearest = this.search(m, 9000, MIN_RANGE_TYPES[m.key] ?? 0, false);   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。9000 = 地图对角线（7616×3808）。
         if (globalNearest) {
             return { x: globalNearest.x + m.jx * 0.5, y: globalNearest.y + m.jy * 0.5 };
         }
@@ -8610,14 +8635,13 @@ export class Scene13WarLayer {
      * 把单位推出 DE 地图对象的占地矩形。碰撞尺寸来自 DAT 的地图格口径，
      * 在 2:1 投影中先还原为地图坐标，沿较浅穿透轴推出，因而会沿树/岩石边缘滑行。
      */
-    private resolveWorldObstructions(m: WarMan): void {
+    private resolveWorldObstructions(m: WarMan, activeObstructions: typeof this.decorSprites): void {
         let px = m.x, py = m.y;
         const unitTileRadius = this.radiusOf(m.key) / 40;
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
-            for (const object of this.decorSprites) {
-                const obstruction = object.obstruction;
-                if (object.layer !== 'world' || !obstruction || object.obstructionDisabled || object.destroyed) continue;
+            for (const object of activeObstructions) {
+                const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
                 let mapX = dx / TILE_W + dy / TILE_H;
                 let mapY = dy / TILE_H - dx / TILE_W;
@@ -8847,7 +8871,11 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
-            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
+            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane))
+            // 🔴 [2026-10-11 主人令「30秒攻城战的时候，守方不要动」] 攻城战开战前 30 秒（defenderHolding）内，
+            //    **守方原地不动**：直接复用既有 holdCmd 机制（下一行 m.tx/m.ty 钉住 + 各处 !holdCmd 闸），
+            //    不新增字段、不新增机制。攻方不受影响（仍按列阵推进/砸墙）。
+            || (this.battleType === 'siege' && m.f === 1 && this.defenderHolding);
             if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
@@ -9582,14 +9610,22 @@ export class Scene13WarLayer {
 
         this.separate(dt, laneLeaders);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
-        for (const object of this.decorSprites) object.obstructionTouched = false;
+        const activeObstructions: typeof this.decorSprites = [];
+        for (const object of this.decorSprites) {
+            object.obstructionTouched = false;
+            if (object.layer === 'world' && object.obstruction && !object.obstructionDisabled && !object.destroyed) {
+                activeObstructions.push(object);
+            }
+        }
         // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **这里才是真正每帧生效的旧 13 界限**：
         //    原为按**屏幕宽高**夹取（fieldW/fieldH ± 半身），注释却写着「见 fieldBound」——名不副实。
         //    现在统一走 `fieldBound`（= 120×120 格地图菱形 ±3808 / ±1904）。
         for (const m of this.men) {
             [m.x, m.y] = this.fieldBound(m.x, m.y);
-            this.resolveWorldObstructions(m);
-            [m.x, m.y] = this.fieldBound(m.x, m.y);
+            if (activeObstructions.length > 0) {
+                this.resolveWorldObstructions(m, activeObstructions);
+                [m.x, m.y] = this.fieldBound(m.x, m.y);
+            }
         }
         for (const object of this.decorSprites) {
             const releaseAfter = object.obstructionReleaseAfterSec;
