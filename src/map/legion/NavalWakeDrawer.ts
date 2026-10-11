@@ -29,7 +29,7 @@ export class NavalWakeDrawer {
     private static images: Partial<Record<'back' | 'front', HTMLImageElement>> = {};
     private static loading = false;
     private static fleets = new Map<string, FleetWake>();
-    private static readonly EMISSION_MS = 125;
+    private static readonly EMISSION_MS = 45;
     /**
      * 🔴 [2026-09-28 主人「船头和船尾的浪花是不是应该在一条线上？现在有的时候不在一条线」]
      *    船身画出来的朝向（限速转向、僚舰随旗舰）与实际行进方向偏差超过这个角度时，**只发船尾、不发船头**：
@@ -171,7 +171,7 @@ export class NavalWakeDrawer {
             const profile = particle.profile;
             const fadeIn = Math.min(1, age / (profile.StartDuration * 1000));
             const fadeOut = Math.min(1, (particle.duration - age) / (profile.StopDuration * 1000));
-            ctx.globalAlpha = opacity * (profile.AlphaStart + (profile.AlphaEnd - profile.AlphaStart) * progress) * fadeIn * fadeOut;
+            ctx.globalAlpha = opacity * 0.58 * (profile.AlphaStart + (profile.AlphaEnd - profile.AlphaStart) * progress) * fadeIn * fadeOut;
             const asset = this.assets[particle.kind];
             const frame = Math.min(asset.frames - 1, Math.floor(progress * asset.frames));
             const point = projection?.toScreen(particle.position) ?? particle.position;

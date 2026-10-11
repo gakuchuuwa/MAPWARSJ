@@ -7464,14 +7464,17 @@ export class Scene13WarLayer {
                 // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
                 const sp = marchSpacingOf(s.key);
                 const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
-                // 🔴 [2026-10-11 主人令「士兵的出兵口不对，出兵口应该在营地，不是这样一条线」]
-                //    `dep` 是**列阵行军的「向后排」纵深**：野战整队从营地列阵推进时这是对的。
-                //    **但攻城战不列阵行军**（`inMarch = deployT>0 && battleType!=='siege'` 恒为 false），
-                //    这段纵深却在生成算式里照旧生效 ⇒ 兵被生成在出兵口前后一条线上（实测离自己出兵口
-                //    360~374px），而营地建筑留在出兵口上，看着就是「兵不在营地上」。
-                //    故：**攻城战 dep 取 0** ⇒ 兵生成在自己的出兵口（＝营地建筑）上，只保留横向位。
-                //    野战（含补兵方阵）维持原样，不动。
-                const dep = this.battleType === 'siege' ? 0 : (((slotIdx / files) | 0) * spDep);
+                // 🔴 [2026-10-11 主人令「士兵的出兵口不对，出兵口应该在营地，不是这样一条线」→
+                //     「为什么军团不在出兵口列 6×6 方阵，却都拥挤在一排呢」]
+                //    这两令合起来的要求是：**方阵要成 6×6 方块，且这块方阵落在出兵口（＝营地建筑）上**。
+                //    · 野战（`inMarch`）：整队从营地列阵推进 —— 行号从 0 起、向**后排**（保持原样，不动）。
+                //    · 攻城战：不列阵行军，若把纵深抹成 0（上一版做法）⇒ 36 人塌成一排（就是主人看到的「拥挤在一排」）；
+                //      所以要**保留纵深**、但让方阵**以出兵口为中心**：行号 −(R−1)/2 … +(R−1)/2。
+                const rank = (slotIdx / files) | 0;
+                const ranks = Math.max(1, Math.ceil((s.pool || 1) / files));
+                const dep = this.battleType === 'siege'
+                    ? (rank - (ranks - 1) / 2) * spDep
+                    : rank * spDep;
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
 
                 // 🔴 [2026-09-17 主人定] 背刺奇袭出生点改造：在敌方最后排（row===2）出兵口随机抽取出生

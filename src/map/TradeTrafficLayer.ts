@@ -501,13 +501,13 @@ export class TradeTrafficLayer {
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
         /** 本帧待画的精灵：位置先全部算完 —— **先画水迹、后画船体**，浪花才垫在船底下 */
-        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; dx: number; dy: number }> = [];
+        const pending: Array<{ sheet: HTMLImageElement; frame: number; fw: number; fh: number; ax: number; ay: number; ox: number; oy: number; rot: number }> = [];
 
         for (const c of this.caravans) {
             const cartAsset = this.assetFor(c.cartDir);
             const shipAsset = this.assetFor(c.shipDir);
             /** 这一支车队里**正在海上**的单位（给它们画拖尾水迹） */
-            const seaShips: Array<{ x: number; y: number; r: number; isAlive: boolean; dir: number; deg: number; shipLen: number }> = [];
+            const seaShips: Array<{ x: number; y: number; r: number; isAlive: boolean; dir: number; rot: number; deg: number; shipLen: number }> = [];
 
             for (let u = 0; u < c.count; u++) {
                 const ud = c.dist - u * UNIT_SPACING_DEG;
@@ -558,16 +558,27 @@ export class TradeTrafficLayer {
 
                 const pt = this.map.latLngToContainerPoint([pos.lat, pos.lng]);
                 const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
-                const dx = pt.x - hx * scale;
-                const dy = pt.y - hy * scale;
-                pending.push({ sheet, frame, fw, fh, dx, dy });
-                if (sea) {
-                    // 海上的单位进队列（船身罗盘角/朝向/船长都按这一帧算出来的真值给）
-                    // 🔴 [2026-09-28 主人「船头和船尾的浪花应该在一条线上」] deg 给**画出来的船身角**（16 向扇区中心），
-                    //    不给带 10° 死区的行进角 lastDeg —— 船身不旋转、只按扇区换帧，浪花要沿船身轴发，才落在船头船尾上。
+                let shipRot = 0;
+                let shipDeg = dirRes.deg;
+                if (sea && asset.dirs16) {
+                    // 🔴 [2026-10-11 修「商船的浪花为什么是一段一段的」]
+                    //    与 LegionPhalanxDrawer.drawNaval 同源：取当前路径真实屏幕航向角 shipDeg，
+                    //    减去 16 向帧的等距屏幕角得到残差角 shipRot，船身与水迹同步微旋对齐航线，
+                    //    杜绝离散扇区夹角导致的阶梯状斜向断节水迹。
+                    shipDeg = OrientationSystem.getScreenCompassDeg(prevPos, pos);
                     const hullRad = (45 + 22.5 * dirIdx) * Math.PI / 180;
-                    const hullDeg = asset.dirs16 ? Math.atan2(Math.sin(hullRad), 0.5 * Math.cos(hullRad)) * 180 / Math.PI : dirRes.deg;
-                    seaShips.push({ x: pt.x, y: pt.y, r: u, isAlive: true, dir: dirIdx, deg: hullDeg, shipLen: fw * scale });
+                    const frameScreenDeg = Math.atan2(Math.sin(hullRad), 0.5 * Math.cos(hullRad)) * 180 / Math.PI;
+                    let resDeg = shipDeg - frameScreenDeg;
+                    while (resDeg > 180) resDeg -= 360;
+                    while (resDeg < -180) resDeg += 360;
+                    shipRot = resDeg * Math.PI / 180;
+                }
+                pending.push({ sheet, frame, fw, fh, ax: pt.x, ay: pt.y, ox: -hx * scale, oy: -hy * scale, rot: shipRot });
+                if (sea) {
+                    seaShips.push({
+                        x: pt.x, y: pt.y, r: c.count - u, isAlive: true,
+                        dir: dirIdx, rot: shipRot, deg: shipDeg, shipLen: Math.max(fw, fh) * scale,
+                    });
                 }
             }
 
@@ -577,7 +588,7 @@ export class TradeTrafficLayer {
             //    海陆判据沿用本层已有的 `sea`（优先看走的是哪条路，掩膜兜底），不另立一套。
             if (seaShips.length) {
                 NavalWakeDrawer.drawNavalWakes(
-                    ctx, seaShips, seaShips[0].dir, scale, this.nowMs, true,
+                    ctx, seaShips, seaShips[0].dir, scale * 1.45, this.nowMs, true,
                     undefined, seaShips[0].shipLen, `trade:${c.id}`,
                     {
                         toWorld: (point) => {
@@ -591,7 +602,15 @@ export class TradeTrafficLayer {
         }
 
         for (const p of pending) {
-            ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.dx, p.dy, p.fw * scale, p.fh * scale);
+            if (Math.abs(p.rot) > 0.001) {
+                ctx.save();
+                ctx.translate(p.ax, p.ay);
+                ctx.rotate(p.rot);
+                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ox, p.oy, p.fw * scale, p.fh * scale);
+                ctx.restore();
+            } else {
+                ctx.drawImage(p.sheet, p.frame * p.fw, 0, p.fw, p.fh, p.ax + p.ox, p.ay + p.oy, p.fw * scale, p.fh * scale);
+            }
         }
     }
 
