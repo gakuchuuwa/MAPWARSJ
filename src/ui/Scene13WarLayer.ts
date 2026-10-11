@@ -25,7 +25,7 @@ import {
     isWaterTile,
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
-import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData } from './scene13/Scene13GroundLayerGL';
+import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { strategicCityHtml, strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
@@ -3910,7 +3910,7 @@ export class Scene13WarLayer {
         const cv = this.canvas;
         if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
         if (this.useGroundGL || Scene13WarLayer.realGeographyEnabled()) {
-            const mapW = 7616, mapH = 3808;
+            const mapW = TAC_MAP_HALF_W * 2, mapH = TAC_MAP_HALF_H * 2;
             const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
             const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
             this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
@@ -4345,8 +4345,9 @@ export class Scene13WarLayer {
                     });
                     // 🔴 [2026-10-11 AA 把底图改为「16:9 满铺矩形」(每格 64×32、中心 (60,60))] 出兵基座同步换矩形映射，
                     //    否则出兵口仍按旧等距菱形落位 ⇒ 位置错、uFwd/uSide 跟着歪（主人「重新整理出兵口位置」）。
-                    let attSX = VW / 2 + (plan.attacker.x - 60) * 64;
-                    let attSY = VH / 2 + (plan.attacker.y - 60) * 32;
+                    //    🔴 [2026-10-12] 每格 64×32 → TAC_TILE_W×TAC_TILE_H（96×48，与 spawnPlan.cellFromOffset 同步）
+                    let attSX = VW / 2 + (plan.attacker.x - 60) * TAC_TILE_W;
+                    let attSY = VH / 2 + (plan.attacker.y - 60) * TAC_TILE_H;
                     if (this.deCity) {
                         // 攻城战：攻方沿来向退到城外，退到「地图还装得下」为止。
                         // 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」
@@ -4371,8 +4372,8 @@ export class Scene13WarLayer {
                         attSX = VW / 2 + nx * dist;
                         attSY = VH / 2 + ny * dist;
                     }
-                    const defSX = VW / 2 + (plan.defender.x - 60) * 64;
-                    const defSY = VH / 2 + (plan.defender.y - 60) * 32;
+                    const defSX = VW / 2 + (plan.defender.x - 60) * TAC_TILE_W;
+                    const defSY = VH / 2 + (plan.defender.y - 60) * TAC_TILE_H;
                     this.spawnBases = [{ x: attSX, y: attSY }, { x: defSX, y: defSY }];
                     const fwdDx = defSX - attSX, fwdDy = defSY - attSY;
                     const fwdLen = Math.hypot(fwdDx, fwdDy) || 1;
@@ -6229,16 +6230,15 @@ export class Scene13WarLayer {
      * 出兵环在**指定来向**上的地图安全半径（px）：基准点沿 (ux,uy) 能退到的最远处，
      * 且保证**九口阵面全部留在图内**（九口的横向/纵向外延一并算进去）。
      * 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」]
-     *   · 地图世界是**菱形**（与 `Scene13GroundLayerGL.cellToScreen` 同一式 `dx=32, dy=16`）：
-     *     东西半幅 `(N−1)×32`、南北半幅 `(N−1)×16`（N=120 时 3808 / 1904，与真机包围盒一致）。
+     *   · 地图世界半幅取 `Scene13GroundLayerGL` 的 `TAC_MAP_HALF_W / TAC_MAP_HALF_H`
+     *     （2026-10-12 起每格 96×48 ⇒ 5712 / 2856；地面已是 16:9 矩形，下面按矩形判是否出图）。
      *   · 菱形不是圆：同一个半径下东西最宽松、斜向最紧，所以**必须按方向算**（原来八向取同一个最小值
      *     会让东西向被斜向的紧约束拖近，营帐压进城里，实测压进 312px）。
      *   · 每条边留 `EDGE` 余量，免得营地贴到图边。
      */
     private spawnRingSafeRadius(ux: number, uy: number): number {
-        const N = this.groundLayerGL?.data?.width ?? 120;
-        const hw = Math.max(1, (N - 1) * 32);            // 东西半幅（世界 px）
-        const hh = Math.max(1, (N - 1) * 16);            // 南北半幅（世界 px）
+        const hw = TAC_MAP_HALF_W;                       // 东西半幅（世界 px）
+        const hh = TAC_MAP_HALF_H;                       // 南北半幅（世界 px）
         const EDGE = 120;                                // 离图边余量
         // 九口阵面自身的最大外延（与 LAYOUT / colSpacing 上限 240 / depth 上限 240 一致）：
         //   横向 1.5×240 = 360、纵深 ±240。基准点往外推时，这几个角点最先出图。
@@ -6269,13 +6269,10 @@ export class Scene13WarLayer {
         if (cachedViennaMapData) {
             const VW = this.canvas?.width ?? 1920, VH = this.canvas?.height ?? 1080;
             const N = cachedViennaMapData.width || 120;
-            const dx = 32, dy = 16, offX = (N - 1) * dx;
-            const worldX = screenX - VW / 2 + offX;
-            const worldY = screenY - VH / 2 + (N - 1) * dy;
-            const a = (worldX - offX) / dx;
-            const b = worldY / dy;
-            const gx = (a + b) / 2;
-            const gy = (b - a) / 2;
+            // 🔴 [2026-10-12] 原为等距菱形逆式（dx=32, dy=16），与地面层的 16:9 矩形网格对不上；
+            //    改为与 `Scene13GroundLayerGL.screenToCell` 同一式（每格 TAC_TILE_W×TAC_TILE_H）。
+            const gx = (screenX - VW / 2) / TAC_TILE_W + N * 0.5;
+            const gy = (screenY - VH / 2) / TAC_TILE_H + N * 0.5;
             const rx = Math.round(gx);
             const ry = Math.round(gy);
             if (rx < 0 || ry < 0 || rx >= N || ry >= N) return false;
@@ -6514,10 +6511,8 @@ export class Scene13WarLayer {
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
-                            const px = (ox - 60) * 64 + 3808;
-                            const py = (oy - 60) * 32 + 1904;
-                            const sx = px - 3808 + VW / 2;
-                            const sy = py - 1904 + VH / 2;
+                            const sx = (ox - 60) * TAC_TILE_W + VW / 2;   // 🔴 [2026-10-12] 64×32 → 96×48（与地面网格同一式）
+                            const sy = (oy - 60) * TAC_TILE_H + VH / 2;
                             if (onFoundation(sx, sy)) continue;
                             this.ensureNatureAsset(r[1]);
                             const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
@@ -6545,10 +6540,8 @@ export class Scene13WarLayer {
                             const dens = glLayer.getWaterDensityAt(gx, gy);
                             if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
                                 const ox = gx - 0.5, oy = gy - 0.5;
-                                const px = (ox - 60) * 64 + 3808;
-                                const py = (oy - 60) * 32 + 1904;
-                                const sx = px - 3808 + VW / 2;
-                                const sy = py - 1904 + VH / 2;
+                                const sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                                const sy = (oy - 60) * TAC_TILE_H + VH / 2;
                                 const isLily = dens > 0.44 && ((gx + gy) % 3 === 0);
                                 const asset = isLily ? 'WATER_LILY' : 'REEDS';
                                 const hash = (gx * 11 + gy * 7) % 100;
@@ -6598,8 +6591,8 @@ export class Scene13WarLayer {
         const mapToDiamond = Scene13WarLayer.realGeographyEnabled() && !!this.glCanvas;
         for (const o of plan.objects) {
             const u = o.x / envVW, v = o.y / envVH;
-            const ox = mapToDiamond ? envVW / 2 + (u - 0.5) * 7616 : o.x;
-            const oy = mapToDiamond ? envVH / 2 + (v - 0.5) * 3808 : o.y;
+            const ox = mapToDiamond ? envVW / 2 + (u - 0.5) * TAC_MAP_HALF_W * 2 : o.x;
+            const oy = mapToDiamond ? envVH / 2 + (v - 0.5) * TAC_MAP_HALF_H * 2 : o.y;
             if (o.asset && o.asset.includes('CLIFF')) continue;
             this.ensureNatureAsset(o.asset);
             this.decorSprites.push({
@@ -8454,7 +8447,7 @@ export class Scene13WarLayer {
 
         // 🔴 [2026-10-11 CC 复核] 原来这里每个兵手扫全场 = O(N²)（720 人局约 500 万次/秒）。
         //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
-        const globalNearest = this.search(m, 9000, MIN_RANGE_TYPES[m.key] ?? 0, false);   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。9000 = 地图对角线（7616×3808）。
+        const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。13000 ≥ 地图对角线（2026-10-12 每格 96×48 ⇒ 11424×5712，对角 ≈12772；原 9000 对应旧 7616×3808）。
         if (globalNearest) {
             return { x: globalNearest.x + m.jx * 0.5, y: globalNearest.y + m.jy * 0.5 };
         }
@@ -8552,9 +8545,9 @@ export class Scene13WarLayer {
         const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
         // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **旧 13 的界限就是这条兜底**：
         //    拿不到 WebGL 地面层时退回「夹在屏幕内」(vw ± mx)。已删除。
-        //    现在无论用哪种地面渲染，战场界限一律 = 120×120 格地图的菱形（±3808 / ±1904，屏幕居中）。
-        const minX = vw / 2 - 3808 + mx, maxX = vw / 2 + 3808 - mx;
-        const minY = vh / 2 - 1904 + my, maxY = vh / 2 + 1904 - my;
+        //    现在无论用哪种地面渲染，战场界限一律 = 120×120 格地图的矩形（±TAC_MAP_HALF_W / ±TAC_MAP_HALF_H，屏幕居中）。
+        const minX = vw / 2 - TAC_MAP_HALF_W + mx, maxX = vw / 2 + TAC_MAP_HALF_W - mx;
+        const minY = vh / 2 - TAC_MAP_HALF_H + my, maxY = vh / 2 + TAC_MAP_HALF_H - my;
         return [Math.min(Math.max(x, minX), maxX), Math.min(Math.max(y, minY), maxY)];
     }
 
@@ -8613,6 +8606,8 @@ export class Scene13WarLayer {
     private resolveWorldObstructions(m: WarMan, activeObstructions: typeof this.decorSprites): void {
         let px = m.x, py = m.y;
         const unitTileRadius = this.radiusOf(m.key) / 40;
+        // 🔴 [2026-10-12] 占地按 DE 原生一格（96×48）换算：物件素材按原生像素画，原用旧网格 64×32 ⇒ 碰撞框只有画面的 2/3
+        const TILE_W = TAC_TILE_W, TILE_H = TAC_TILE_H;
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
             for (const object of activeObstructions) {
@@ -9574,7 +9569,7 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **这里才是真正每帧生效的旧 13 界限**：
         //    原为按**屏幕宽高**夹取（fieldW/fieldH ± 半身），注释却写着「见 fieldBound」——名不副实。
-        //    现在统一走 `fieldBound`（= 120×120 格地图菱形 ±3808 / ±1904）。
+        //    现在统一走 `fieldBound`（= 120×120 格地图矩形 ±TAC_MAP_HALF_W / ±TAC_MAP_HALF_H）。
         for (const m of this.men) {
             [m.x, m.y] = this.fieldBound(m.x, m.y);
             if (activeObstructions.length > 0) {
@@ -10019,8 +10014,8 @@ export class Scene13WarLayer {
         if (this.useGroundGL && this.groundLayerGL) {
             const _tgl0 = performance.now();
             const camZoom = zoom;
-            const camX = cv.width / 2 + this.tacticalPanX - 3808 * camZoom;
-            const camY = cv.height / 2 + this.tacticalPanY - 1904 * camZoom;
+            const camX = cv.width / 2 + this.tacticalPanX - TAC_MAP_HALF_W * camZoom;
+            const camY = cv.height / 2 + this.tacticalPanY - TAC_MAP_HALF_H * camZoom;
             this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom }, this.flipSides);
             this.groundLayerGL.render();
             _tGL = performance.now() - _tgl0;

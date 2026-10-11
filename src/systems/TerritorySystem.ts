@@ -24,6 +24,7 @@ import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
 import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAssets';
+import { DE_SPRITE_ANCHOR } from './battlefield/deSpriteSizes';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
@@ -455,7 +456,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     //    （实测：建筑×建筑重叠 25 对、压墙 70 对）⇒ 段数提到 **9 段/边**：
     //    圈外接由 1003×582 涨到 **1806×1047**（城内可用面积 19.8 万→64.3 万 px²），≈ DE 小城真实的 17 格见方。
     //    墙段本身仍是 107px 的 DE 原件、步距不变（只增加段数）。战略侧不传 native ⇒ 段数仍是 5。
-    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates);
+    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates, !!native);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
@@ -849,8 +850,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
     // 城墙绕城一圈（S=6；城门与城墙自然咬合；随机三种之一：样式一普通双门 / 样式二普通四门 / 样式三加固双塔四门）
     const wallPieces = isFortified
-        ? computeFortifiedWallAndGate(baseSize, 11)   // 🔴 [2026-10-11 主人「该修复的修复」] 尺寸分级：中城墙圈必须大于小城(S=9) ⇒ S=11
-        : computePalisadeWallAndGate(baseSize, 11, isFourGates);
+        ? computeFortifiedWallAndGate(baseSize, native ? 11 : 6, !!native)
+        : computePalisadeWallAndGate(baseSize, native ? 11 : 6, isFourGates, !!native);
     if (!isFourGates && rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -900,6 +901,10 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
+    // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆放，先改大城」] 战术侧（传了原生尺寸表）走**按格摆放**的版本；
+    //    战略地图（native 缺省）继续走下面原来的写法，一个像素不动。
+    if (native) return buildDeBigCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, pool, native, rnd);
+
     // 容器尺寸（比中城更大，容纳更宽的布局与石城墙）
     const W = baseSize * 2.8;
     const H = baseSize * 2.5;
@@ -940,7 +945,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = native?.castleW ?? (baseSize * 0.48);
+            const cW = baseSize * 0.48;   // 战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             parts.push(
@@ -960,7 +965,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     });
 
     // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
-    const wallPieces = computeFortifiedWallAndGate(baseSize, 13);   // 🔴 [2026-10-11] 尺寸分级：大城墙圈必须大于中城(S=11) ⇒ S=13
+    const wallPieces = computeFortifiedWallAndGate(baseSize, native ? 13 : 7, !!native);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -979,6 +984,107 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
 
+
+/** DE 一格（等轴）：地面格子 96×48；建筑占地按整数格、墙段逐格沿格线走。与 Scene13GroundLayerGL 的 TAC_TILE_W/H 同值（本文件不依赖 UI 层，故此处另写，两边必须同改）。 */
+const DE_ISO_TILE_W = 96, DE_ISO_TILE_H = 48;
+
+/** DE 建筑占地（格，边长）。数据来自本机 DE 的 empires2_x2_p1.dat 里建筑的 collision_size（半边长，格）×2：
+ *  城镇中心/市场/大学/攻城武器厂/城堡 2.0→4×4；兵营/靶场/马厩/铁匠铺/修道院 1.5→3×3；房屋/磨坊 1.0→2×2；箭塔 0.5→1×1。
+ *  蒙古包取 2×2；表里没有的取 3×3。 */
+function deBuildingFootprint(b: string): number {
+    if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY') || b.includes('SIEGE_WORKSHOP')) return 4;
+    if (b.includes('WONDER')) return 5;
+    if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY')) return 3;
+    if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_')) return 2;
+    if (b.includes('TOWER')) return 1;
+    return 3;
+}
+
+/**
+ * 🔴 [2026-10-12 主人令「DE 的建筑是按格子摆放的，先改大城，改动大也得改」] 大城（**战术侧专用**）：建筑按 DE 格摆放。
+ *   · 格坐标 (i, j)：x = (i − j)·48，y = (i + j)·24（等轴，一格 96×48）；格心在整数点；
+ *     占地 s×s 的建筑中心 = 左上格 + (s−1)/2，所以 4×4 的中心在半整数点；
+ *   · 3×3 个位，位距 5 格（≥ 最大占地 4 + 1 格路）；每栋按自身占地吸附到整格（不重叠由位距保证）；
+ *   · 建筑用素材**锚点**（DE 里锚点 = 占地中心）对位，不再用画框中心；
+ *   · 城墙逐格沿格线走（isoStep 48×24），墙圈 S=13 ⇒ 每边 26 格，墙在格心上；
+ *   · 地面按墙圈菱形铺。
+ */
+function buildDeBigCityGridHtml(
+    baseSize: number, cityId: string, style: string, centerCastle: boolean, factionId: string | undefined, region: string | undefined,
+    pool: Array<[string, string]>, native: CityNativeSizes, rnd: () => number,
+): string {
+    const TW = DE_ISO_TILE_W, TH = DE_ISO_TILE_H;
+    const S = 13, AX = 2 * S;                                   // 墙圈：每边 26 格
+    const rX = AX * TW / 2, rY = AX * TH / 2;                   // 墙圈菱形半宽 / 半高（px）
+    const W = 2 * rX + 400, H = 2 * rY + 600;                   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
+    const AUTO = 1.2;
+    const parts: string[] = [];
+
+    parts.push(featheredPolygonGroundDiv(
+        W, H, '/SUCAI_TERRAIN/rd1.png', baseSize * 0.32 * AUTO * 2.3,
+        [[0, -rY], [rX, 0], [0, rY], [-rX, 0]],
+        TW * 0.5, 0.93, 10,
+    ));
+
+    // 3×3 个位（行 r、列 c ∈ {-1,0,1}），位距 5 格；按屏幕 y 升序（与战略版同序，保证选建筑的顺序一致）
+    const PITCH = 5;
+    const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = [];
+    for (let r = -1; r <= 1; r++) for (let c = -1; c <= 1; c++) {
+        slots.push({ ci: c * PITCH, cj: r * PITCH, isCenter: r === 0 && c === 0, y: (c * PITCH + r * PITCH) * TH / 2 });
+    }
+    slots.sort((a, b) => a.y - b.y);
+
+    /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
+    const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean): void => {
+        const a0i = Math.round(ci - (s - 1) / 2), a0j = Math.round(cj - (s - 1) / 2);   // 占地左上格（吸附到整格）
+        const ti = a0i + (s - 1) / 2, tj = a0j + (s - 1) / 2;                           // 占地中心（格坐标）
+        const px = (ti - tj) * TW / 2, py = (ti + tj) * TH / 2;
+        const anc = DE_SPRITE_ANCHOR[dir];
+        const bh = anc ? anc[2] : boxW * 0.85;
+        const pctX0 = anc ? anc[0] / boxW * 100 : 50;
+        const pctY = anc ? anc[1] / bh * 100 : 65;
+        const pctX = flip ? 100 - pctX0 : pctX0;
+        parts.push(
+            `<img src="${src}" style="position:absolute;left:50%;top:50%;width:${boxW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${px.toFixed(1)}px),calc(-${pctY.toFixed(1)}% + ${py.toFixed(1)}px))${flip ? ' scaleX(-1)' : ''};z-index:${Math.round(500 + py)};" />`
+        );
+    };
+    const dirOf = (src: string): string => /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(src)?.[1] ?? '';
+
+    let otherIdx = 0;
+    slots.forEach((slot, i) => {
+        if (centerCastle && slot.isCenter) {
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
+            const cW = native.castleW ?? (baseSize * 0.48);
+            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
+        } else {
+            const [b, age] = (centerCastle ? pool[otherIdx++] : pool[i]) as [string, 'AGE2' | 'AGE3'];
+            const src = cityBuildingSrc(style, b, age);
+            const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
+            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
+            placeBuilding(dirOf(src), src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
+        }
+    });
+
+    // 加固城墙：墙段逐格沿格线走（isoStep），城门占 1 槽
+    const wallPieces = computeFortifiedWallAndGate(baseSize, S, true, { x: TW / 2, y: TH / 2 });
+    if (rnd() < 0.5) {
+        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
+    }
+    const fortifiedAnchors = DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
+    wallPieces.forEach((w) => {
+        const anchor = fortifiedAnchors[w.type];
+        const zIndex = Math.round(500 + w.y);
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor * AUTO);
+        const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
+        const flip = w.flipX ? ' scaleX(-1)' : '';
+        parts.push(
+            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};pointer-events:none;" />`
+        );
+    });
+
+    return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
+}
 
 /**
  * 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」] 据点建筑栈的派生参数（区域 / 城心城堡 / DE 建筑风格 / 小城石墙）。

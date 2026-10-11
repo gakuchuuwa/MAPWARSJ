@@ -17,8 +17,15 @@ import { DE_TERRAIN_MANIFEST, DE_TERRAIN_BLEND, type DeTerrainManifestItem } fro
 import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
-const TW = 64, TH = 32;
+// 🔴 [2026-10-12 主人令「地面放大到 96×48」「保留长方形」] 原 64×32：建筑/城墙/兵模按 DE 原生像素画（1.0），
+//    DE 原生素材对应的一格是 96×48（墙段原生宽 107 ≈ 1 格、城堡 468 ≈ 4×4 格），地面用 64×32 ⇒ 建筑相对地图大 1.5 倍。
+const TW = DE_TILE_W, TH = DE_TILE_H;
 const dx = TW / 2, dy = TH / 2;
+/** 地图（120×120）半幅（世界 px）＝ 地面网格原点偏移 offX / centerY。全文件与 Scene13WarLayer 只认这一处。 */
+export const TAC_MAP_N = 120;
+export const TAC_MAP_HALF_W = (TAC_MAP_N - 1) * dx;   // 5712
+export const TAC_MAP_HALF_H = (TAC_MAP_N - 1) * dy;   // 2856
+export const TAC_TILE_W = TW, TAC_TILE_H = TH;
 
 const NATURE_ALIAS: Record<string, [string, string]> = {
   FDRA: ['NATURE', 'PALM'], FPAL: ['NATURE', 'PALM'], FBAM: ['NATURE', 'BAMBOO'], BIRCH: ['NATURE', 'BIRCH_GREEN'],
@@ -604,7 +611,7 @@ export class Scene13GroundLayerGL {
           const gx = guv[t][0], gy = guv[t][1];
           verts.push(
             this.offX + (gx - N * 0.5) * TW,
-            centerY + (gy - N * 0.5) * TH - (cElev[t] * 16.0),
+            centerY + (gy - N * 0.5) * TH - (cElev[t] * DE_ELEV_H),
             gx,
             gy,
             cLight[t]
@@ -639,7 +646,7 @@ export class Scene13GroundLayerGL {
     const e01 = this.cornerElev[y1 * V_SIZE + x0];
     const e11 = this.cornerElev[y1 * V_SIZE + x1];
     const elev = (e00 * (1 - tx) + e10 * tx) * (1 - ty) + (e01 * (1 - tx) + e11 * tx) * ty;
-    return elev * 16.0;
+    return elev * DE_ELEV_H;
   }
 
   /**
