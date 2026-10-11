@@ -919,9 +919,16 @@ export class Army implements IBattleUnit {
         const nextLng = this.position.lng + Math.sin(this.navalHeadingRad) * advance;
         const onWaterNow = LandSeaSystem.isSeaAtMajority(this.position.lat, this.position.lng);
         const onWaterNext = LandSeaSystem.isSeaAtMajority(nextLat, nextLng);
-        if (onWaterNow && !onWaterNext) {
-            this.navalPrevDistToNext = distToNext;   // 保持绕圈兜底计时的一致性
-            return;                                   // 落陆：本帧不推进
+        if (onWaterNow && !onWaterNext && LandSeaSystem.probeLandSea(nextLat, nextLng) !== 'pending') {
+            // 船队抵岸：改为陆军登陆，踏上 (nextLat, nextLng) 陆地并立即切换为陆军形态继续进发
+            this.position.lat = nextLat;
+            this.position.lng = nextLng;
+            this.lastDirection = targetHeading;
+            this.isOnSea = false;
+            this.seaFlipDist = 0;
+            this.seaFlipElapsed = 0;
+            this.applySeaOrLandSpeed(true, this.position, deltaTime);
+            return;
         }
         this.position.lat = nextLat;
         this.position.lng = nextLng;
@@ -1040,9 +1047,11 @@ export class Army implements IBattleUnit {
         const legSea = this.currentLegSea();
         this.prevLegSea = legSea;
         if (legSea === true || legSea === false) {
-            const acceptedSea = legSea === true && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG;
-            if (legSea === false || acceptedSea) {
-                this.isOnSea = legSea;
+            const onConfirmedLand = !LandSeaSystem.isSeaAtMajority(pos.lat, pos.lng)
+                && LandSeaSystem.probeLandSea(pos.lat, pos.lng) !== 'pending';
+            const acceptedSea = legSea === true && !onConfirmedLand && this.seaStretchAheadDeg() >= Army.SEA_FLIP_CONFIRM_DEG;
+            if (legSea === false || onConfirmedLand || acceptedSea) {
+                this.isOnSea = legSea === true && !onConfirmedLand;
                 this.seaFlipDist = 0;
                 this.seaFlipElapsed = 0;
                 this.applySeaOrLandSpeed(wasOnSea, pos, deltaTime);
