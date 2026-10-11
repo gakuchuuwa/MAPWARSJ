@@ -3954,11 +3954,7 @@ export class Scene13WarLayer {
                 this.glCanvas.height = this.canvas.height;
                 this.groundLayerGL?.resize(this.canvas.width, this.canvas.height);
             }
-            if (false && this.ground) {
-                this.ground.width = this.canvas.width;
-                this.ground.height = this.canvas.height;   // 尺寸一变内容即清空（已烙的尸体丢失）
-                this.groundHasContent = false;
-            }
+            // 🔴 [2026-10-11] 这里的 2D ground 画布路径已被 GL 地面层取代，早已是死代码；
             this.initTerrain();        // 尺寸变了 → 按新尺寸重铺（贴图已缓存则立即铺满）
             if (this.decor) {
                 this.decor.width = this.canvas.width;
@@ -4298,7 +4294,9 @@ export class Scene13WarLayer {
             //    该据点没有 DE 建筑栈（整图据点）时退回旧 13 左右布阵。
             if (this.realGeographyEnabled() && this.battleType === 'siege') {
                 const rec: any = this.defenderCityRecord();
-                const city = rec ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type } : null;
+                const city: any = rec
+                    ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type }
+                    : { id: this.defenderCityId || 'siege_city', name: '城池', type: this.defenderCityType || 'medium_city', region: init.defenderRegion || 'CENTRAL', factionId: init.defenderFactionId ?? null, latitude: init.defenderCityLat ?? init.centerLat ?? 30, longitude: init.defenderCityLng ?? init.centerLng ?? 110 };
                 // 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」]
                 //    战术攻城战守方据点同步生成战略地图同款建筑栈，确保 initWar 立即就绪，彻底避免异步延迟导致 fallback 进旧 13 左右布阵与残垣旧墙
                 // 🔴 [2026-10-11 主人令「你先把所有都改为1.0」] 走 **DE 原生像素**版：件表按素材原生像素
@@ -4308,7 +4306,7 @@ export class Scene13WarLayer {
                 this.deCity = city ? strategicCityHtmlNative(city) : null;
                 this.deCityCenter = { x: VW / 2, y: VH / 2 };
             }
-            let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+            let useFieldPlan = true;
             if (useFieldPlan) {
                 const centerLat = init.centerLat || 30;
                 const centerLng = init.centerLng || 110;
@@ -6206,7 +6204,7 @@ export class Scene13WarLayer {
      * 真实地理开关（2026-10-07）：默认开，保持最新战术模式。
      */
     private static realGeographyEnabled(): boolean {
-        try { return localStorage.getItem('mapwar.realGeography') !== '0'; } catch { return true; }
+        return true;
     }
 
     /**
@@ -7421,8 +7419,9 @@ export class Scene13WarLayer {
         let best: WarSpawn | null = null, bd = Infinity;
         for (const t of this.spawns) {
             if (t.f === s.f || t.pool <= 0) continue;
-            const dy = (t.y - s.y) * LANE_W;                 // 纵向加权 = 优先同一路（见 LANE_W）
-            const d = (t.x - s.x) ** 2 + dy * dy;
+            const uF = this.advanceVec[s.f], uS = this.sideVec[s.f], dx = t.x - s.x, dy = t.y - s.y;
+            const df = dx * uF.x + dy * uF.y, ds = (dx * uS.x + dy * uS.y) * LANE_W;
+            const d = df * df + ds * ds;
             if (d < bd) { bd = d; best = t; }
         }
         return best;
@@ -7536,15 +7535,16 @@ export class Scene13WarLayer {
                         [flankX, flankY] = this.fieldBound(rawX, rawY);
                     } else {
                         const edge = Math.max(60, VW * 0.07) * 0.5;
-                        flankX = s.f === 0 ? VW - edge : edge;
-                        flankY = (this.enemyCen[1 - s.f]?.y ?? s.y);
+                        const _eb = this.spawnBases[1 - s.f] ?? { x: VW / 2, y: s.y };   // 🔴 [2026-10-11 CC] 奇袭落点 x/y 统一到**敌方基座**一个来源（原先 x 取基座、y 取重心，南北向会偏轴）
+                        flankX = _eb.x;
+                        flankY = _eb.y;
                     }
                 }
                 const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
                 const uFwd = this.advanceVec[s.f];
                 const uSide = this.sideVec[s.f];
-                let spawnX = isFlank ? flankX : (useFieldPlan ? s.x - uFwd.x * dep + uSide.x * slotY : s.x + (s.f === 0 ? -dep : dep));
-                let spawnY = isFlank ? flankY : (useFieldPlan ? s.y - uFwd.y * dep + uSide.y * slotY : s.y + slotY);
+                let spawnX = isFlank ? flankX : (s.x - uFwd.x * dep + uSide.x * slotY);
+                let spawnY = isFlank ? flankY : (s.y - uFwd.y * dep + uSide.y * slotY);
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
@@ -7672,8 +7672,9 @@ export class Scene13WarLayer {
             if (m.lane >= 0 && !m.hero && !m.foe) {
                 const L = laneLeaders.get(m.lane);
                 if (L && L !== m && (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC) {
-                    const sx = L.x + (m.f === 0 ? -(m.dep - L.dep) : (m.dep - L.dep));
-                    const sy = L.y + (m.slotY - L.slotY);
+                    const uFwd = this.advanceVec[m.f], uSide = this.sideVec[m.f], dDep = m.dep - L.dep, dSide = m.slotY - L.slotY;
+                    const sx = L.x - uFwd.x * dDep + uSide.x * dSide;
+                    const sy = L.y - uFwd.y * dDep + uSide.y * dSide;
                     if ((m.x - sx) ** 2 + (m.y - sy) ** 2 <= LANE_TRACK_EPS * LANE_TRACK_EPS) {
                         m.sepX = 0;
                         m.sepY = 0;
@@ -8307,7 +8308,7 @@ export class Scene13WarLayer {
         for (let f = 0; f < 2; f++) if (spdMin[f] < Infinity) this.adv[f] += spdMin[f] * dt;
         // 前锋线 = 本方最靠前那排出兵口的 x ± 已推进距离。
         // 阵型是刚体，直接由锚点算即可，不受个别掉队/落单兵影响（拿存活兵均值算会被拖后腿）。
-        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+        const useFieldPlan = true;
         if (useFieldPlan && this.spawnBases) {
             const baseDist = Math.hypot(this.spawnBases[1].x - this.spawnBases[0].x, this.spawnBases[1].y - this.spawnBases[0].y);
             let front0 = 0, front1 = 0;
@@ -8432,7 +8433,7 @@ export class Scene13WarLayer {
 
         // 🔴 [2026-10-11 CC 复核] 原来这里每个兵手扫全场 = O(N²)（720 人局约 500 万次/秒）。
         //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
-        const globalNearest = this.search(m, 1e9, MIN_RANGE_TYPES[m.key] ?? 0, true);
+        const globalNearest = this.search(m, 9000, MIN_RANGE_TYPES[m.key] ?? 0, true)   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。9000 = 地图对角线（7616×3808）。;
         if (globalNearest) {
             return { x: globalNearest.x + m.jx * 0.5, y: globalNearest.y + m.jy * 0.5 };
         }
@@ -8495,7 +8496,7 @@ export class Scene13WarLayer {
     private routeWaypoint(m: WarMan): { x: number; y: number } {
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
-        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+        const useFieldPlan = true;
         if (useFieldPlan && this.spawnBases) {
             const foeBase = this.spawnBases[1 - m.f];
             const homeBase = this.spawnBases[m.f];
@@ -8576,7 +8577,7 @@ export class Scene13WarLayer {
         if (!leader || leader === m) return null;
         if (!m.hero && (m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
         if (this.heroOrderPending(m)) return null;
-        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+        const useFieldPlan = true;
         let sx: number, sy: number;
         if (useFieldPlan) {
             const uFwd = this.advanceVec[m.f];
@@ -8954,7 +8955,7 @@ export class Scene13WarLayer {
             if (m.march && m.port && !holdCmd) {
                 // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
                 //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
-                const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+                const useFieldPlan = true;
                 let sx: number, sy: number;
                 if (useFieldPlan) {
                     const uFwd = this.advanceVec[m.f];
@@ -9028,7 +9029,9 @@ export class Scene13WarLayer {
                     //    敌人真挥刀砍过来（dmgType=melee）才拨马后撤。
                     if (!m.kiting && kd < 65 && this.statsFor(foe.key, foe.f).dmgType === 'melee') { m.kiting = true; m.kiteLeg = 0; }
                     if (m.kiting) {
-                        const dx = m.x - foe.x, dy = m.y - foe.y, d = kd || 1;
+                        const uB = this.advanceVec[m.f], rx = (m.x - foe.x) / (kd || 1), ry = (m.y - foe.y) / (kd || 1);
+                        const backOk = (rx * -uB.x + ry * -uB.y) >= -0.2;
+                        const dx = backOk ? -uB.x : rx, dy = backOk ? -uB.y : ry, d = 1;
                         const step = stats.spd * dt;
                         const nx = m.x + dx / d * step, ny = m.y + dy / d * step;
                         const [bx, by] = this.fieldBound(nx, ny);
@@ -9036,8 +9039,11 @@ export class Scene13WarLayer {
                         //    fieldBound 会把越界的坐标 clamp 回场内，位置不再变化，
                         //    但 kiting 仍为 true（敌人还在触发距离内）→ 贴着边一直播跑动画、
                         //    一直不还手，站着白挨打。退不动就说明退无可退，转身射比装死强。
-                        if (Math.abs(bx - nx) > 0.5 || Math.abs(by - ny) > 0.5) {
-                            m.kiting = false;
+                        const hb = this.spawnBases[m.f];
+                        const pastBase = !!hb && ((nx - hb.x) * uB.x + (ny - hb.y) * uB.y < -120);
+                        if (Math.abs(bx - nx) > 0.5 || Math.abs(by - ny) > 0.5 || pastBase) {
+                            m.kiteGaveUp = true; m.kiting = false;
+                        // 越过地图边界或本方大本营底线即停止风筝
                         } else {
                             m.x = bx; m.y = by;
                             m.dir = this.dir8(dx, dy);   // 朝向 = 逃跑方向 → 转身跑，不是倒着滑
@@ -9053,7 +9059,7 @@ export class Scene13WarLayer {
                             // 跑够一段：拉开到安全距离（kd ≥ KITE_SAFE）才算停，否则本段白跑、继续跑
                             else if (m.kiteLeg >= KITE_RETREAT_DIST) {
                                 if (kd >= KITE_SAFE) {
-                                    m.kiting = false; m.kiteLeg = 0; m.kiteDist = 0;   // 甩开了，停下回身站撸
+                                    m.kiting = false; m.kiteLeg = 0;                   // 甩开了，停下回身站撸（kiteDist 不清零，累计满 3 段即止）
                                 } else {
                                     m.kiteLeg = 0;                                      // 没甩开，重置本段继续跑
                                 }
@@ -9656,7 +9662,7 @@ export class Scene13WarLayer {
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > vw + w) c.x = -w;
+                if (c.x > vw / 2 + 3808 + w) c.x = vw / 2 - 3808 - w;
             }
         }
         // 留下的尸体：死亡动画播完 → 烙进地面图永久保留（不再逐帧重画、不再参与排序）
@@ -9796,7 +9802,7 @@ export class Scene13WarLayer {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
-        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
+        const useFieldPlan = true;
         if (useFieldPlan) {
             const uBack = { x: -this.advanceVec[m.f].x, y: -this.advanceVec[m.f].y };
             const uSide = this.sideVec[m.f];

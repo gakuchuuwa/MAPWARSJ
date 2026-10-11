@@ -1679,10 +1679,10 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     
     {
         id: 'city_pidao', name: '皮岛', factionId: 'mao_wenlong',
-        lat: 39.5539, lng: 124.6611, type: 'pass', troops: 10000,
+        lat: 39.5539, lng: 124.6611, type: 'stockade', troops: 10000,
         
-        note: '皮岛；毛文龙关隘', region: 'MING',
-        buildingStyle: 'KOREA' },
+        note: '皮岛；毛文龙关隘', region: 'KOREA',
+        buildingStyle: 'ASIA' },
 
     // ── 2026-05-26 新增：满洲贵族世家 ──
     {
