@@ -5621,25 +5621,14 @@ export class Scene13WarLayer {
             //    该闸来自旧口径（中城/大城九建筑都不含城堡），与主人本令直接冲突 → **已撤除**，大城城堡照落。
             const full = 'BUILDING:' + asset;
             this.ensureNatureAsset(full);
-            let px = s.x, py = s.y;
-            // 🔴 安全占地修正（2026-08-26）：若出兵口建筑落在水域/浅滩，向干燥陆地推进，避免营帐直接泡在水里
-            const isWater = (this.useGroundGL && this.groundLayerGL && this.canvas)
-                ? ((x: number, y: number) => this.groundLayerGL!.isWaterAt(x, y, this.canvas!.width, this.canvas!.height))
-                : this.environmentPlan?.isWater;
-            if (isWater) {
-                let safetyWalk = 0;
-                while (isWater(px, py) && safetyWalk < 15) {
-                    px += (f === 0 ? 25 : -25);
-                    safetyWalk++;
-                }
-                // 🔴 [2026-10-11 主人令「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
-                //    上面这段避水修正会把这栋建筑从出兵口挪走（实测最多挪 15×25 = 375px），
-                //    而士兵仍然从**原格**出来 —— 于是「士兵不出现在出兵口/营帐」。
-                //    修法：建筑挪到哪，出兵口就跟到哪（s 是 this.spawns 里的同一个对象，
-                //    改它 = 士兵改从这栋建筑出来）；避水这条老规矩因此仍然成立。
-                s.x = px;
-                s.y = py;
-            }
+            const px = s.x, py = s.y;
+            // 🔴 [2026-10-11 主人令「我们现在这里的战术地图都是陆战，就算地图中有水，也都是属于浅水可以通行的区域。请酌情处理。」
+            //    ＋ 上一条「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
+            //    **撤除 2026-08-26 的「安全占地修正」**（原逻辑：出兵口建筑若落在水域就沿 x 一步步挪开，最多 15×25=375px）。
+            //    撤除理由：① 本模式全是陆战、水一律是**可通行的浅水**，营帐落在浅水上不必避；
+            //    ② 那段挪移会让**建筑离开出兵口**，而士兵仍从原格出来 ⇒ 「有的地图里士兵不出现在营帐」。
+            //    撤掉之后：出兵口与营地建筑**永远同格**（实测逐格 0px），士兵一律从自己的营帐里出来。
+            //    对照：士兵阵位的避水更早（2026-10-11 主人令「水/树林/建筑一律可通行」）就已删除，此行是补齐同一口径。
             return {
                 asset: full,
                 frame: options?.frame ?? 0,
@@ -8615,6 +8604,21 @@ export class Scene13WarLayer {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
+                // 🔴 [2026-10-11 主人报「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
+                //    生成那一帧的 dt 是开战前准备期攒下的大值（实测 0.12s），
+                //    「按 spd×dt 朝目标走一步」被放大成一次瞬移：生成位置本在出兵口
+                //    （`anchorY` = 出兵口 y，实测 −450），同帧就被推到 482px 之外
+                //    （实测离自己出兵口：步兵 485px、弩兵 684px、虎骑 884px，越快推得越远），
+                //    而营地建筑还留在出兵口 ⇒ 看着就是「士兵不从营帐出来」。
+                //    待命期的口径本来就是「全军静止渐显」，这里把坐标钉回生成锚点（＝出兵口），
+                //    待命结束（deployT 归零）后才照常列阵推进。
+                m.x = m.anchorX;
+                m.y = m.anchorY;
+                m.prevX = m.anchorX;
+                m.prevY = m.anchorY;
+                m.sepX = 0;
+                m.sepY = 0;
+                if ((window as any).__PIN !== undefined) (window as any).__PIN++;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
