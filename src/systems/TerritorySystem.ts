@@ -375,6 +375,33 @@ function featheredEllipseGroundDiv(
     );
 }
 
+/**
+ * 只给战术侧用：让城门两侧第一段墙**贴住门**（其余墙保持常规间距）。
+ * 背景：战术侧每段墙按 DE 原件宽画（如 128px），而城门件更宽（如 306px）；间距拉大到 2 格后，
+ * 门与它两侧第一段墙之间会空出约 77px（实测）⇒ 门两边看着没对齐。
+ * 只挪门左右各一段的位置（沿该边走向），件数、件宽、墙圈外接一律不动；战略侧不调用。
+ */
+function alignWallsToGates(pieces: PalisadeGridPiece[]): void {
+    const gates = pieces.filter((p) => p.type === 'GATE');
+    if (!gates.length) return;
+    for (const g of gates) {
+        for (const sgn of [1, -1]) {
+            let best: PalisadeGridPiece | null = null;
+            let bestD = Infinity;
+            for (const p of pieces) {
+                if (p.type === 'GATE') continue;
+                if ((p.x - g.x) * sgn <= 1) continue;                 // 只看该侧
+                const d = Math.hypot(p.x - g.x, p.y - g.y);
+                if (d < bestD) { bestD = d; best = p; }
+            }
+            if (!best) continue;
+            // 立面件向右下走 u 轴、镜像件向右上走 v 轴；(u+v) 恒等于锚点 x
+            if (best.flipX) best.y = sgn > 0 ? g.y - 59.8 : g.y + 59.8;
+            else best.x = sgn > 0 ? g.x + 59.8 : g.x - 59.8;
+        }
+    }
+}
+
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
@@ -455,7 +482,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     //    （实测：建筑×建筑重叠 25 对、压墙 70 对）⇒ 段数提到 **9 段/边**：
     //    圈外接由 1003×582 涨到 **1806×1047**（城内可用面积 19.8 万→64.3 万 px²），≈ DE 小城真实的 17 格见方。
     //    墙段本身仍是 107px 的 DE 原件、步距不变（只增加段数）。战略侧不传 native ⇒ 段数仍是 5。
-    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates, !!native);
+    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates, !!native, native ? 2 : 1);
+    if (native) alignWallsToGates(wallPieces);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
@@ -849,8 +877,9 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
     // 城墙绕城一圈（S=6；城门与城墙自然咬合；随机三种之一：样式一普通双门 / 样式二普通四门 / 样式三加固双塔四门）
     const wallPieces = isFortified
-        ? computeFortifiedWallAndGate(baseSize, native ? 11 : 6, !!native)
-        : computePalisadeWallAndGate(baseSize, native ? 11 : 6, isFourGates, !!native);
+        ? computeFortifiedWallAndGate(baseSize, native ? 11 : 6, !!native, native ? 2 : 1)
+        : computePalisadeWallAndGate(baseSize, native ? 11 : 6, isFourGates, !!native, native ? 2 : 1);
+    if (native) alignWallsToGates(wallPieces);
     if (!isFourGates && rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -960,7 +989,8 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     });
 
     // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
-    const wallPieces = computeFortifiedWallAndGate(baseSize, native ? 13 : 7, !!native);
+    const wallPieces = computeFortifiedWallAndGate(baseSize, native ? 13 : 7, !!native, native ? 2 : 1);
+    if (native) alignWallsToGates(wallPieces);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
