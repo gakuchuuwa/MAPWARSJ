@@ -36,6 +36,8 @@ export class PlayerScene13Control {
     private btnHold: HTMLButtonElement | null = null;
     private btnExit: HTMLButtonElement | null = null;
     private hint: HTMLSpanElement | null = null;
+    private zoomSlider: HTMLInputElement | null = null;
+    private zoomLabel: HTMLSpanElement | null = null;
     private keys = new Set<string>();
     private timer: number | null = null;
 
@@ -46,6 +48,41 @@ export class PlayerScene13Control {
         window.addEventListener('blur', () => { this.keys.clear(); this.pushInput(); });
         document.addEventListener('mousedown', (e) => this.onMouseDown(e), true);
         this.timer = window.setInterval(() => this.refresh(), 200);
+    }
+
+    private getZoomBounds(): { min: number; max: number } {
+        const s = this.scene as any;
+        return { min: s?.useGroundGL ? 0.45 : 0.5, max: 2.5 };
+    }
+
+    private getTacticalZoom(): number {
+        const s = this.scene as any;
+        return typeof s?.tacticalZoom === 'number' ? s.tacticalZoom : 1.0;
+    }
+
+    private setTacticalZoom(nextZoom: number): void {
+        const s = this.scene as any;
+        if (!s) return;
+        const { min, max } = this.getZoomBounds();
+        const clamped = Math.max(min, Math.min(max, nextZoom));
+        s.tacticalZoom = clamped;
+        s.userInteractingTimer = 9.0;
+        if (typeof s.clampTacticalPan === 'function') s.clampTacticalPan();
+        if (typeof s.syncDeCityGround === 'function') s.syncDeCityGround();
+        this.syncZoomUI();
+    }
+
+    private syncZoomUI(): void {
+        const z = this.getTacticalZoom();
+        const { min, max } = this.getZoomBounds();
+        if (this.zoomSlider) {
+            this.zoomSlider.min = String(min);
+            this.zoomSlider.max = String(max);
+            this.zoomSlider.value = String(z);
+        }
+        if (this.zoomLabel) {
+            this.zoomLabel.textContent = `${Math.round(z * 100)}%`;
+        }
     }
 
     /** 玩家是否正在战术模式里操作（GameInputManager 据此让出 WASD） */
@@ -127,6 +164,55 @@ export class PlayerScene13Control {
         this.btnAttack = mk('Q 自动', 'attack');
         this.btnHold = mk('E 待命', 'hold');
 
+        // 🔴 [2026-10-11 主人令「在上方的玩家面板中，给战术模式添加一个地图缩放功能」]
+        const zoomWrap = document.createElement('div');
+        zoomWrap.style.cssText = `
+            display:inline-flex; align-items:center; gap:5px; padding:2px 8px;
+            background:rgba(255,255,255,0.04); border:1px solid rgba(212,175,55,0.45); border-radius:6px;`;
+        const mkZoomBtn = (txt: string, title: string, delta: number) => {
+            const b = document.createElement('button');
+            b.textContent = txt;
+            b.title = title;
+            b.style.cssText = `
+                width:22px; height:22px; line-height:20px; padding:0; cursor:pointer;
+                font-family:inherit; font-weight:900; font-size:14px; color:#ffd27a;
+                background:rgba(255,255,255,0.08); border:1px solid rgba(212,175,55,0.5); border-radius:4px;`;
+            b.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.setTacticalZoom(this.getTacticalZoom() + delta);
+            });
+            return b;
+        };
+        const btnZoomOut = mkZoomBtn('−', '缩小战场画面', -0.15);
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '0.45';
+        slider.max = '2.5';
+        slider.step = '0.05';
+        slider.value = '1';
+        slider.title = '拖动缩放战术地图视角';
+        slider.style.cssText = 'width:76px; height:14px; cursor:pointer; accent-color:#d4af37; margin:0;';
+        slider.addEventListener('input', (e) => {
+            e.stopPropagation();
+            this.setTacticalZoom( parseFloat(slider.value) || 1.0 );
+        });
+        const btnZoomIn = mkZoomBtn('+', '放大战场画面', 0.15);
+        const zoomLabel = document.createElement('span');
+        zoomLabel.textContent = '100%';
+        zoomLabel.title = '点击重置为 100% 默认缩放';
+        zoomLabel.style.cssText = 'min-width:38px; text-align:right; font-size:12px; font-weight:700; color:#ffd27a; cursor:pointer;';
+        zoomLabel.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.setTacticalZoom(1.0);
+        });
+        zoomWrap.appendChild(btnZoomOut);
+        zoomWrap.appendChild(slider);
+        zoomWrap.appendChild(btnZoomIn);
+        zoomWrap.appendChild(zoomLabel);
+        bar.appendChild(zoomWrap);
+        this.zoomSlider = slider;
+        this.zoomLabel = zoomLabel;
+
         // 🔴 [2026-09-10 主人定] 战术模式退出战斗按钮移入战术模式玩家面板
         const btnExit = document.createElement('button');
         btnExit.textContent = '退出战斗';
@@ -173,6 +259,7 @@ export class PlayerScene13Control {
             return;
         }
         this.bar.style.display = 'flex';
+        this.syncZoomUI();
         const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
         if (st) {
             const rank = this.hero.getRank();

@@ -25,6 +25,10 @@ const NATURE_ALIAS: Record<string, [string, string]> = {
   FJUN: ['NATURE', 'JUNGLE'], FSNO: ['NATURE', 'SNOW_PINE'], FOAK: ['NATURE', 'OAK'], FPIN: ['NATURE', 'PINE'],
   ITPINE: ['NATURE', 'ITALIAN_PINE'], OLIVE: ['NATURE', 'OLIVE'], CYPRESS: ['NATURE', 'CYPRESS'],
   GREENOAK: ['NATURE', 'GREEN_OAK'], BUSH: ['NATURE', 'BUSH_GREEN'], BUSH2: ['NATURE', 'BUSH_TREE_A'], BUSH3: ['NATURE', 'BUSH_TREE_B'],
+  // 🔴 [2026-10-11 主人「AA又添加了地图，请检查」＋分工「模型分布归我」] RMS 里这种树叫 `MONKEYPUZZLE`（猴谜树），
+  //    素材目录叫 `MONKEY_PUZZLE` —— 原名三条解析路（别名表／目录名／去 TREE_ 前缀）都不中，
+  //    实测 4 张图（新热带温带及其 lake/river/sea）共 92 棵**在游戏里画不出来**，补这一行别名。
+  MONKEYPUZZLE: ['NATURE', 'MONKEY_PUZZLE'],
   PLANT: ['NATURE', 'PLANT'], PLANTS: ['NATURE', 'PLANT'], PLANT_DEAD: ['NATURE', 'PLANT_DEAD'], PLANT_JUNGLE: ['NATURE', 'PLANT_JUNGLE'],
   PLAN_SHRUB_GREEN: ['NATURE', 'SHRUB_GREEN'], PLANT_SHRUB_DRY: ['NATURE', 'SHRUB_GREEN'],
   GRASS_GREEN: ['NATURE', 'GRASS_GREEN'], GRASS_DRY: ['NATURE', 'GRASS_DRY'], PLANT_FLOWER: ['NATURE', 'FLOWER'],
