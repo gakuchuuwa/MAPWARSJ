@@ -64,8 +64,8 @@ const unitOf = (idx) => [
 /** 相对中心的屏幕偏移 (dX,dY) → DE 格坐标（`cellToScreen` 的逆式；**不取整**，
  *  调用方按 `screenX = W/2 + (x-y)·DX`、`screenY = H/2 + (x+y-(N-1))·DY` 换算即得原像素点） */
 const cellFromOffset = (dX, dY, c) => ({
-  x: c + (dX / DX + dY / DY) / 2,
-  y: c + (dY / DY - dX / DX) / 2,
+  x: c + dX / 64,   // 🔴 [2026-10-11 AA 底图改「16:9 满铺矩形」(每格 64×32)] 逆变换同步换矩形：
+  y: c + dY / 32,   //    旧式是等距菱形 (dX/DX+dY/DY)/2，投影一变出兵口就会落错格子。
 });
 
 /**

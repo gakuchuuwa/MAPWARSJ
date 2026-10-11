@@ -493,7 +493,7 @@ buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
 
     // ── 塞北与西域中城 ──
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 HUNS：郅支城：匈奴郅支单于西迁所筑（《汉书·陈汤传》），归匈人 HUNS
-    { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'pass', troops: 10000, region: 'STEPPE_ANTIQUITY', buildingStyle: 'CENTRAL_ASIA' },
+    { id: 'city_zhizhicheng', name: '郅支城', factionId: 'xijue', lat: 42.906205, lng: 72.765198, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
 
 
 
