@@ -122,22 +122,22 @@ void main() {
   vec2 fieldUV = clamp(vGUV / uMapSize, 0.001, 0.999);
   vec4 field = texture2D(uFieldTex, fieldUV);
   
-  // 有机扰动：彻底打破方格阶梯，呈现真实蜿蜒自然岸线
-  float n1 = snoise(vGUV * 3.2);
-  float n2 = snoise(vGUV * 7.5);
-  float wPerturb = field.r + n1 * 0.045 + n2 * 0.020;
+  // 有机扰动：低频大尺度舒缓曲线打破方格阶梯，彻底消除高频毛刺锯齿，呈现圆润蜿蜒河岸
+  float n1 = snoise(vGUV * 0.22);
+  float n2 = snoise(vGUV * 0.50);
+  float wPerturb = field.r + n1 * 0.038 + n2 * 0.014;
   
-  // 水体判定
-  float isWater = smoothstep(0.44, 0.465, wPerturb);
-  float isDeepWater = smoothstep(0.55, 0.76, wPerturb);
+  // 水体圆滑宽幅渐变判定（从干沙 → 湿滩 → 半透明浅水 → 深水河心连续柔和过渡）
+  float isWater = smoothstep(0.35, 0.56, wPerturb);
+  float isDeepWater = smoothstep(0.50, 0.78, wPerturb);
   
   // 沙滩与森林底床判定
-  float isSand = clamp(field.g * 1.5 + smoothstep(0.32, 0.45, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater);
-  // 森林有机扰动：彻底打破方格棱角，呈现如水体般圆滑蜿蜒的自然树林边缘
-  float fn1 = snoise(vGUV * 2.8 + vec2(27.4, 61.8));
-  float fn2 = snoise(vGUV * 6.5 + vec2(73.1, 14.5));
-  float fPerturb = field.b + fn1 * 0.055 + fn2 * 0.025;
-  float isForest = smoothstep(0.36, 0.54, fPerturb) * (1.0 - isWater);
+  float isSand = clamp(field.g * 1.45 + smoothstep(0.24, 0.48, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
+  // 森林有机扰动：低频圆滑自然树林边缘
+  float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8));
+  float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5));
+  float fPerturb = field.b + fn1 * 0.045 + fn2 * 0.020;
+  float isForest = smoothstep(0.34, 0.56, fPerturb) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   
   // 纹理采样（DE 原版：按真实世界像素坐标 1:1 无缝平铺 512px 原图）
   vec2 texUV = fract(vWorldPos / 512.0);
@@ -148,19 +148,23 @@ void main() {
   // ── DE 原版纯正地面：基底纹理 1:1 自然平铺，辅以林地与沙地自然过渡 ──
   vec3 landCol = colGrass;
   landCol = mix(landCol, colForest, isForest);
-  landCol = mix(landCol, colSand, smoothstep(0.12, 0.65, isSand));
+  landCol = mix(landCol, colSand, smoothstep(0.10, 0.65, isSand));
+  // 近水湿润河滩：岸边沙土向水际自然加深润泽，衔接浅水河床无断层
+  float wetShore = smoothstep(0.28, 0.48, wPerturb);
+  vec3 riverbedCol = colSand * vec3(0.84, 0.80, 0.72);
+  landCol = mix(landCol, riverbedCol, wetShore * 0.65);
   
   // ── 水体与冬季冰面渲染（保留气候水体贴图本色 + 深浅渐变 + 冰面静止质感） ──
-  vec3 riverbedCol = colSand * vec3(0.82, 0.78, 0.70);
   vec3 waterCol;
+  float waterDepthMix = smoothstep(0.36, 0.62, wPerturb);
   if (uIsIce > 0.5) {
-    // 冬季封冻冰面：静止无流动波浪，保留 ic2/ice 冰层纹理与岸边霜雪过渡
+    // 冬季封冻冰面：静止无流动波浪，保留 ic2/ice 冰层纹理与岸边霜雪柔和过渡
     vec3 iceTex1 = texture2D(uWaterTex, texUV).rgb;
     vec3 iceTex2 = texture2D(uWaterTex, fract(vGUV * 0.18 + vec2(0.13, 0.29))).rgb;
     vec3 iceBody = mix(iceTex1, iceTex2, 0.35) * (1.02 + 0.06 * n1);
-    waterCol = mix(riverbedCol, iceBody, 0.72 + isDeepWater * 0.28);
-    float frostBand = smoothstep(0.440, 0.460, wPerturb) * (1.0 - smoothstep(0.460, 0.500, wPerturb));
-    waterCol = mix(waterCol, vec3(0.92, 0.96, 1.0), frostBand * 0.65);
+    waterCol = mix(riverbedCol, iceBody, 0.35 + waterDepthMix * 0.65);
+    float frostBand = smoothstep(0.38, 0.48, wPerturb) * (1.0 - smoothstep(0.48, 0.58, wPerturb));
+    waterCol = mix(waterCol, vec3(0.92, 0.96, 1.0), frostBand * 0.40);
   } else {
     // 液态水体：以气候水体贴图 uWaterTex 本色为基底（碧绿河水/浑浊沼泽/蔚蓝海面各司其职）
     vec2 wuv1 = fract(vGUV * 0.22 + vec2(uTime * 0.028, uTime * 0.014));
@@ -173,13 +177,13 @@ void main() {
     vec3 shallowBody = clamp(rawWater * (liftScale * 1.12) + vec3(0.04, 0.08, 0.08), 0.0, 1.0);
     vec3 deepBody = clamp(rawWater * (liftScale * 0.92), 0.0, 1.0);
     vec3 waterBody = mix(shallowBody, deepBody, isDeepWater);
-    waterCol = mix(riverbedCol, waterBody, 0.52 + isDeepWater * 0.48);
+    waterCol = mix(riverbedCol, waterBody, 0.25 + waterDepthMix * 0.75);
 
-    // 岸边浪花/柔和洁白微浪泡沫带
-    float shoreBand = smoothstep(0.442, 0.456, wPerturb) * (1.0 - smoothstep(0.456, 0.485, wPerturb));
-    float waveBreath = sin(uTime * 2.0 + (vGUV.x + vGUV.y) * 0.35) * 0.5 + 0.5;
-    float foam = shoreBand * (0.35 + 0.55 * waveBreath);
-    waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), foam * 0.75);
+    // 岸边柔和微浪晕染（宽幅柔化，不描硬白线）
+    float shoreBand = smoothstep(0.40, 0.47, wPerturb) * (1.0 - smoothstep(0.47, 0.56, wPerturb));
+    float waveBreath = sin(uTime * 1.8 + (vGUV.x + vGUV.y) * 0.35) * 0.5 + 0.5;
+    float foam = shoreBand * (0.20 + 0.35 * waveBreath);
+    waterCol = mix(waterCol, vec3(0.94, 0.97, 1.0), foam * 0.42);
   }
   
   // 最终合成与 DE 原生高程坡度光照
@@ -389,16 +393,16 @@ export class Scene13GroundLayerGL {
       }
     }
 
-    const sw = blurGrid2D(rawWater, N);
-    const sb = blurGrid2D(rawBeach, N);
-    const sf = blurGrid2D(rawForest, N);
+    const sw = blurGrid2D(blurGrid2D(rawWater, N), N);
+    const sb = blurGrid2D(blurGrid2D(rawBeach, N), N);
+    const sf = blurGrid2D(blurGrid2D(rawForest, N), N);
     this.smoothWater = sw;
 
-    // 沿水陆交界岸线铺设自然过渡沙带
+    // 沿水陆交界岸线铺设宽幅圆滑过渡沙带
     for (let i = 0; i < N * N; i++) {
       const w = sw[i];
-      if (w > 0.28 && w < 0.52) {
-        const shoreSand = 1.0 - Math.abs(w - 0.40) / 0.12;
+      if (w > 0.18 && w < 0.58) {
+        const shoreSand = 1.0 - Math.abs(w - 0.38) / 0.20;
         sb[i] = Math.max(sb[i], shoreSand * 0.92);
       }
     }

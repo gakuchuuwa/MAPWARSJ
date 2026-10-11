@@ -8086,6 +8086,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.09,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/GERMANIC/jinquehua_changtuiaidehua.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": 16
+        },
+        "/assets/GERMANIC/gewennesi_daifeide.png": {
+            "scale": 0.96,
+            "offsetX": 0,
+            "offsetY": 12
         }
     },
     "folderGuides": {
