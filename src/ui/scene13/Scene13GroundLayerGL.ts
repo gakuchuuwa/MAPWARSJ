@@ -189,12 +189,7 @@ void main() {
   // 最终合成与 DE 原生高程坡度光照
   vec3 finalCol = mix(landCol, waterCol, isWater);
   finalCol *= vLight;
-  // 🔴 [2026-10-11 主人令「菱形周边黑色换成底图」]
-  // 菱形网格最外圈边缘平滑羽化渐变，无缝融入底层满铺的自然气候底图
-  vec2 edgeDist = min(vGUV, vec2(uMapSize) - vGUV);
-  float minEdge = min(edgeDist.x, edgeDist.y);
-  float edgeAlpha = smoothstep(0.0, 2.5, minEdge);
-  gl_FragColor = vec4(finalCol, edgeAlpha);
+  gl_FragColor = vec4(finalCol, 1.0);
 }`;
 
 function mkProgram(gl: WebGLRenderingContext): WebGLProgram {
@@ -452,12 +447,50 @@ export class Scene13GroundLayerGL {
     const N = this.N;
     const V_SIZE = N + 1;
     const elev = this.data.elev;
-    if (!elev || !elev.length) {
-      this.cornerElev.fill(0);
-      this.cornerLight.fill(1.0);
-      return;
+    const elevAt = (x: number, y: number) => (x < 0 || y < 0 || x >= N || y >= N || !elev ? 0 : (elev[y * N + x] ?? 0));
+    const waterAt = (x: number, y: number) => {
+      const cx = Math.min(N - 1, Math.max(0, Math.floor(x)));
+      const cy = Math.min(N - 1, Math.max(0, Math.floor(y)));
+      return this.smoothWater ? (this.smoothWater[cy * N + cx] ?? 0) : 0;
+    };
+
+    // 基于当前地图地形确定性生成中心地带（距中心 0..38 格）的高地与丘陵群
+    let seed = 2166136261;
+    if (elev && elev.length) {
+      for (let i = 0; i < elev.length; i += 37) seed = Math.imul(seed ^ (elev[i] + i), 16777619);
     }
-    const elevAt = (x: number, y: number) => (x < 0 || y < 0 || x >= N || y >= N ? 0 : (elev[y * N + x] ?? 0));
+    const rand = () => {
+      seed = Math.imul(seed ^ (seed >>> 15), 2246822507);
+      seed = Math.imul(seed ^ (seed >>> 13), 3266489909);
+      return ((seed ^= seed >>> 16) >>> 0) / 4294967296;
+    };
+
+    const cx0 = N * 0.5, cy0 = N * 0.5;
+    const hills: Array<{ x: number; y: number; rx: number; ry: number; h: number; rot: number }> = [];
+    // 1. 正中心主高地/台地（统领中央战场）
+    hills.push({
+      x: cx0 + (rand() - 0.5) * 8,
+      y: cy0 + (rand() - 0.5) * 8,
+      rx: 12 + rand() * 5,
+      ry: 10 + rand() * 5,
+      h: 2.8 + rand() * 1.0,
+      rot: rand() * Math.PI,
+    });
+    // 2. 环绕中心地带的 5 处战术丘陵/高坡（分布在距中心 12~34 格的中心交战圈内）
+    const hillCount = 5;
+    for (let k = 0; k < hillCount; k++) {
+      const ang = (k / hillCount) * Math.PI * 2 + (rand() - 0.5) * 0.55;
+      const dist = 14 + rand() * 19;
+      hills.push({
+        x: cx0 + Math.cos(ang) * dist,
+        y: cy0 + Math.sin(ang) * dist,
+        rx: 8 + rand() * 6,
+        ry: 7 + rand() * 5,
+        h: 2.2 + rand() * 1.4,
+        rot: rand() * Math.PI,
+      });
+    }
+
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
         let sum = 0, count = 0;
@@ -465,7 +498,33 @@ export class Scene13GroundLayerGL {
         if (gx < N && gy > 0) { sum += elevAt(gx, gy - 1); count++; }
         if (gx > 0 && gy < N) { sum += elevAt(gx - 1, gy); count++; }
         if (gx < N && gy < N) { sum += elevAt(gx, gy); count++; }
-        this.cornerElev[gy * V_SIZE + gx] = count > 0 ? sum / count : 0;
+        const baseE = (count > 0 ? sum / count : 0) * 1.35;
+
+        // 叠加中心地带高地与丘陵（平顶缓坡 DE 台地曲线：内圈 45% 为平顶高台，外圈平滑缓坡）
+        let centralE = 0;
+        for (const hl of hills) {
+          const dx0 = gx - hl.x, dy0 = gy - hl.y;
+          const c = Math.cos(hl.rot), s = Math.sin(hl.rot);
+          const lx = (dx0 * c + dy0 * s) / hl.rx;
+          const ly = (-dx0 * s + dy0 * c) / hl.ry;
+          const d = Math.hypot(lx, ly);
+          if (d < 1.35) {
+            const u = Math.max(0, Math.min(1, (1.35 - d) / 0.90));
+            const profile = u * u * (3 - 2 * u);
+            if (hl.h * profile > centralE) centralE = hl.h * profile;
+          }
+        }
+
+        // 水体及近岸湿滩自动压平高程，杜绝河面/湖面悬空
+        const w = Math.max(
+          waterAt(gx, gy),
+          waterAt(gx - 1, gy),
+          waterAt(gx + 1, gy),
+          waterAt(gx, gy - 1),
+          waterAt(gx, gy + 1)
+        );
+        const dryMask = 1.0 - Math.min(1.0, Math.max(0.0, (w - 0.12) / 0.26));
+        this.cornerElev[gy * V_SIZE + gx] = Math.max(baseE, centralE) * dryMask;
       }
     }
     this.updateCornerLight();
@@ -474,25 +533,27 @@ export class Scene13GroundLayerGL {
   private updateCornerLight(): void {
     const N = this.N;
     const V_SIZE = N + 1;
-    const Lx = -0.35, Ly = -0.55, Lz = 0.75;
+    const Lx = -0.42, Ly = -0.52, Lz = 0.74;
     const Llen = Math.hypot(Lx, Ly, Lz);
     const lx = Lx / Llen, ly = Ly / Llen, lz = Lz / Llen;
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
-        const hL = gx > 0 ? this.cornerElev[gy * V_SIZE + (gx - 1)] : this.cornerElev[gy * V_SIZE + gx];
-        const hR = gx < N ? this.cornerElev[gy * V_SIZE + (gx + 1)] : this.cornerElev[gy * V_SIZE + gx];
-        const hU = gy > 0 ? this.cornerElev[(gy - 1) * V_SIZE + gx] : this.cornerElev[gy * V_SIZE + gx];
-        const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : this.cornerElev[gy * V_SIZE + gx];
+        const hC = this.cornerElev[gy * V_SIZE + gx];
+        const hL = gx > 0 ? this.cornerElev[gy * V_SIZE + (gx - 1)] : hC;
+        const hR = gx < N ? this.cornerElev[gy * V_SIZE + (gx + 1)] : hC;
+        const hU = gy > 0 ? this.cornerElev[(gy - 1) * V_SIZE + gx] : hC;
+        const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
         const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
-        const Nx = 0.25 * (dhy - dhx);
-        const Ny = -0.5 * (dhx + dhy);
+        const Nx = -0.85 * dhx;
+        const Ny = -0.85 * dhy;
         const Nz = 1.0;
         const nlen = Math.hypot(Nx, Ny, Nz);
         const nx = Nx / nlen, ny = Ny / nlen, nz = Nz / nlen;
         const dot = nx * lx + ny * ly + nz * lz;
-        const light = 1.0 + 0.6 * (dot - lz);
-        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.75, Math.min(1.25, light));
+        const elevBoost = Math.min(0.08, hC * 0.02);
+        const light = 1.0 + 0.95 * (dot - lz) + elevBoost;
+        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.68, Math.min(1.28, light));
       }
     }
   }
@@ -570,17 +631,13 @@ export class Scene13GroundLayerGL {
     const gl = this.gl;
     const N = this.N;
     const V_SIZE = N + 1;
-    const PTS = [[0, -TH / 2], [TW / 2, 0], [0, TH / 2], [-TW / 2, 0]];
     const TRI = [0, 1, 2, 0, 2, 3];
-
-    const isoX = (x: number, y: number) => (x - y) * dx + this.offX;
-    const isoY = (x: number, y: number) => (x + y) * dy;
+    const centerY = (N - 1) * dy;
 
     const verts: number[] = [];
 
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
-        const cx = isoX(x, y), cy = isoY(x, y);
         const i0 = y * V_SIZE + x;
         const i1 = y * V_SIZE + (x + 1);
         const i2 = (y + 1) * V_SIZE + (x + 1);
@@ -596,11 +653,12 @@ export class Scene13GroundLayerGL {
         ];
 
         for (const t of TRI) {
+          const gx = guv[t][0], gy = guv[t][1];
           verts.push(
-            cx + PTS[t][0],
-            cy + PTS[t][1] - (cElev[t] * 16.0),
-            guv[t][0],
-            guv[t][1],
+            this.offX + (gx - N * 0.5) * TW,
+            centerY + (gy - N * 0.5) * TH - (cElev[t] * 16.0),
+            gx,
+            gy,
             cLight[t]
           );
         }
@@ -620,13 +678,9 @@ export class Scene13GroundLayerGL {
    * 采用四角双线性插值，每级高程对应 16 像素抬升。
    */
   public elevationLiftAt(screenX: number, screenY: number, W: number, H: number): number {
-    const worldX = screenX - W / 2 + this.offX;
-    const worldY = screenY - H / 2 + (this.N - 1) * dy;
-    const a = (worldX - this.offX) / dx;
-    const b = worldY / dy;
-    const gx = (a + b) / 2;
-    const gy = (b - a) / 2;
     const N = this.N;
+    const gx = (screenX - W / 2) / TW + N * 0.5;
+    const gy = (screenY - H / 2) / TH + N * 0.5;
     const V_SIZE = N + 1;
     if (gx < 0 || gy < 0 || gx >= N || gy >= N) return 0;
     const x0 = Math.floor(gx), y0 = Math.floor(gy);
@@ -644,13 +698,9 @@ export class Scene13GroundLayerGL {
    * 从屏幕逻辑坐标 (screenX, screenY) 查询新地图是否为水体（基于平滑水体势场双线性插值）
    */
   public isWaterAt(screenX: number, screenY: number, W: number, H: number): boolean {
-    const worldX = screenX - W / 2 + this.offX;
-    const worldY = screenY - H / 2 + (this.N - 1) * dy;
-    const a = (worldX - this.offX) / dx;
-    const b = worldY / dy;
-    const gx = (a + b) / 2;
-    const gy = (b - a) / 2;
     const N = this.N;
+    const gx = (screenX - W / 2) / TW + N * 0.5;
+    const gy = (screenY - H / 2) / TH + N * 0.5;
     if (gx < 0 || gy < 0 || gx >= N || gy >= N) return false;
 
     const x0 = Math.floor(gx), y0 = Math.floor(gy);
@@ -673,12 +723,8 @@ export class Scene13GroundLayerGL {
    * 屏幕逻辑坐标 (screenX, screenY) → DE 格坐标 (gx, gy)
    */
   public screenToCell(screenX: number, screenY: number, W: number, H: number): { gx: number; gy: number } | null {
-    const worldX = screenX - W / 2 + this.offX;
-    const worldY = screenY - H / 2 + (this.N - 1) * dy;
-    const a = (worldX - this.offX) / dx;
-    const b = worldY / dy;
-    const gx = (a + b) / 2;
-    const gy = (b - a) / 2;
+    const gx = (screenX - W / 2) / TW + this.N * 0.5;
+    const gy = (screenY - H / 2) / TH + this.N * 0.5;
     if (gx < 0 || gy < 0 || gx >= this.N || gy >= this.N) return null;
     return { gx, gy };
   }
@@ -687,8 +733,8 @@ export class Scene13GroundLayerGL {
    * DE 格坐标 (gx, gy) → 屏幕逻辑坐标 (screenX, screenY)
    */
   public cellToScreen(gx: number, gy: number, W: number, H: number): { x: number; y: number } {
-    const screenX = W / 2 + (gx - gy) * dx;
-    const screenY = H / 2 + (gx + gy - (this.N - 1)) * dy;
+    const screenX = W / 2 + (gx - this.N * 0.5) * TW;
+    const screenY = H / 2 + (gy - this.N * 0.5) * TH;
     return { x: screenX, y: screenY };
   }
 

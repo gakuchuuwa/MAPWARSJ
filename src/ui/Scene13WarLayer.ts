@@ -3861,7 +3861,11 @@ export class Scene13WarLayer {
         const vw = this.canvas?.width ?? 1920;
         const vh = this.canvas?.height ?? 1080;
         const mx = Math.max(60, vw * 0.07);
-        const x = m.f === 0 ? mx * 0.6 : vw - mx * 0.6;
+        // 🔴 [2026-10-11 AA #9 后半 属实] 复活点原先写死「屏幕最左/最右」(mx*0.6 / vw − mx*0.6)，
+        //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
+        //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
+        const _base = this.spawnBases[m.f] ?? { x: vw / 2, y: vh / 2 };
+        const x = _base.x;
         const y = vh / 2;
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
@@ -3898,7 +3902,7 @@ export class Scene13WarLayer {
     private clampTacticalPan(): void {
         const cv = this.canvas;
         if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
-        if (this.useGroundGL) {
+        if (this.useGroundGL || Scene13WarLayer.realGeographyEnabled()) {
             const mapW = 7616, mapH = 3808;
             const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
             const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
@@ -4320,8 +4324,10 @@ export class Scene13WarLayer {
                         //    水、树林、建筑、悬崖一律可通行 ⇒ 不再传 walkableAt（默认判定只挡出图，
                         //    见 systems/battlefield/spawnPlan.mjs 的 LAND_WAR_ALL_PASSABLE）。
                     });
-                    let attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
-                    let attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
+                    // 🔴 [2026-10-11 AA 把底图改为「16:9 满铺矩形」(每格 64×32、中心 (60,60))] 出兵基座同步换矩形映射，
+                    //    否则出兵口仍按旧等距菱形落位 ⇒ 位置错、uFwd/uSide 跟着歪（主人「重新整理出兵口位置」）。
+                    let attSX = VW / 2 + (plan.attacker.x - 60) * 64;
+                    let attSY = VH / 2 + (plan.attacker.y - 60) * 32;
                     if (this.deCity) {
                         // 攻城战：攻方沿来向退到城外，退到「地图还装得下」为止。
                         // 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」
@@ -4346,8 +4352,8 @@ export class Scene13WarLayer {
                         attSX = VW / 2 + nx * dist;
                         attSY = VH / 2 + ny * dist;
                     }
-                    const defSX = VW / 2 + (plan.defender.x - plan.defender.y) * 32;
-                    const defSY = VH / 2 + (plan.defender.x + plan.defender.y - 119) * 16;
+                    const defSX = VW / 2 + (plan.defender.x - 60) * 64;
+                    const defSY = VH / 2 + (plan.defender.y - 60) * 32;
                     this.spawnBases = [{ x: attSX, y: attSY }, { x: defSX, y: defSY }];
                     const fwdDx = defSX - attSX, fwdDy = defSY - attSY;
                     const fwdLen = Math.hypot(fwdDx, fwdDy) || 1;
@@ -4400,7 +4406,7 @@ export class Scene13WarLayer {
                         const forwardOffset = (1 - cell.row) * depth;
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
-                        const colSpacing = Math.min(140, Math.max(120, spanY / 7));
+                        const colSpacing = Math.min(260, Math.max(240, spanY / 4));   // 🔴 [2026-10-11] 与排距 depth(240~280) 同档：横向间距过小 + 排距过大 = 全军被拉成一条纵柱（主人截图）
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -4422,7 +4428,7 @@ export class Scene13WarLayer {
                     } else {
                         const back = mx + (2 - cell.row) * depth;
                         x = side.f === 0 ? back : VW - back;
-                        const colSpacing = Math.min(140, Math.max(120, spanY / 7));
+                        const colSpacing = Math.min(260, Math.max(240, spanY / 4));   // 🔴 [2026-10-11] 与排距 depth(240~280) 同档：横向间距过小 + 排距过大 = 全军被拉成一条纵柱（主人截图）
                         y = midY + (cell.col - (cell.cols - 1) / 2) * colSpacing;
                     }
                     this.spawns.push({
@@ -5541,7 +5547,7 @@ export class Scene13WarLayer {
         const W = cv.width, H = cv.height;
         const rx = c.width / 2, ry = c.height / 2;
         // 城池外接椭圆换算成格半径（等轴格：横向约 45 px、纵向约 22 px 一格）
-        const rCells = Math.max(rx / 45, ry / 22) + 1;
+        const rCells = Math.max(rx / 64, ry / 32) + 1;
         // 🔴 [2026-10-11 主人令「据点城池在地图中心，高地大概率设计在地图中心地带，注意大概率而非绝对」]
         const peakLevel = gl.maxElevationLevelInRadius(cx, cy, W, H, rCells * 0.8);
         const seedStr = String(this.defenderCityId || this.environmentPlan?.seed || 'default');
@@ -6207,7 +6213,7 @@ export class Scene13WarLayer {
         //   横向 1.5×240 = 360、纵深 ±240。基准点往外推时，这几个角点最先出图。
         const LAT = 360, DEP = 240;
         const sx = -uy, sy = ux;                         // 侧向单位向量
-        const inside = (x: number, y: number) => Math.abs(x) / (hw - EDGE) + Math.abs(y) / (hh - EDGE) <= 1;
+        const inside = (x: number, y: number) => Math.abs(x) <= hw - EDGE && Math.abs(y) <= hh - EDGE;
         // 数值求解：该方向上「九口全部在图内」的最大基准半径（1px 步长足够）
         let d = 0;
         for (let t = 0; t <= 8000; t++) {
@@ -6466,7 +6472,10 @@ export class Scene13WarLayer {
                     //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
                     this.decorSprites = this.decorSprites.filter((s) => {
                         const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
-                        return isBuilding || !onFoundation(s.x, s.y);
+                        const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
+                        const c = glLayer.screenToCell(s.x, s.y, VW, VH);
+                        const inWater = !!c && glLayer.getWaterDensityAt(Math.round(c.gx), Math.round(c.gy)) > 0.42;
+                        return isBuilding || (!onFoundation(s.x, s.y) && (isWaterPlant ? inWater : !inWater));
                     });
 
                     for (const ob of data.objects) {
@@ -6474,8 +6483,8 @@ export class Scene13WarLayer {
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
-                            const px = (ox - oy) * 32 + (119 * 32);
-                            const py = (ox + oy) * 16;
+                            const px = (ox - 60) * 64 + 3808;
+                            const py = (oy - 60) * 32 + 1904;
                             const sx = px - 3808 + VW / 2;
                             const sy = py - 1904 + VH / 2;
                             if (onFoundation(sx, sy)) continue;
@@ -6505,8 +6514,8 @@ export class Scene13WarLayer {
                             const dens = glLayer.getWaterDensityAt(gx, gy);
                             if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
                                 const ox = gx - 0.5, oy = gy - 0.5;
-                                const px = (ox - oy) * 32 + (119 * 32);
-                                const py = (ox + oy) * 16;
+                                const px = (ox - 60) * 64 + 3808;
+                                const py = (oy - 60) * 32 + 1904;
                                 const sx = px - 3808 + VW / 2;
                                 const sy = py - 1904 + VH / 2;
                                 const isLily = dens > 0.44 && ((gx + gy) % 3 === 0);
@@ -6532,6 +6541,8 @@ export class Scene13WarLayer {
                         }
                     }
                 }
+                this.applyDeCityToGround();
+                this.repaintDecor();
             } catch (err) {
                 console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败，退回旧 13 地面:', err);
                 this.useGroundGL = false;
@@ -6556,8 +6567,8 @@ export class Scene13WarLayer {
         const mapToDiamond = Scene13WarLayer.realGeographyEnabled() && !!this.glCanvas;
         for (const o of plan.objects) {
             const u = o.x / envVW, v = o.y / envVH;
-            const ox = mapToDiamond ? envVW / 2 + (u - v) * 3808 : o.x;
-            const oy = mapToDiamond ? envVH / 2 + (u + v - 1) * 1904 : o.y;
+            const ox = mapToDiamond ? envVW / 2 + (u - 0.5) * 7616 : o.x;
+            const oy = mapToDiamond ? envVH / 2 + (v - 0.5) * 3808 : o.y;
             if (o.asset && o.asset.includes('CLIFF')) continue;
             this.ensureNatureAsset(o.asset);
             this.decorSprites.push({
@@ -7507,8 +7518,7 @@ export class Scene13WarLayer {
                         const _uF = this.advanceVec[s.f], _uS = this.sideVec[s.f];
                         const rawX = rndPort.x - _uF.x * dep + _uS.x * slotY;
                         const rawY = rndPort.y - _uF.y * dep + _uS.y * slotY;
-                        flankX = Math.max(20, Math.min(VW - 20, rawX));
-                        flankY = rawY;
+                        [flankX, flankY] = this.fieldBound(rawX, rawY);
                     } else {
                         const edge = Math.max(60, VW * 0.07) * 0.5;
                         flankX = s.f === 0 ? VW - edge : edge;
@@ -7526,7 +7536,7 @@ export class Scene13WarLayer {
                     zid: this.manSeq++,
                     x: spawnX,
                     y: spawnY,
-                    tx: tgt.x + jx, ty: tgt.y + jy, hp: this.statsFor(s.key, s.f).hp,
+                    tx: spawnX, ty: spawnY, hp: this.statsFor(s.key, s.f).hp,
                     // 出生朝向按**实际出生点**算：奇袭兵生在敌后，用本方出兵口算会背对敌人
                     dir: this.dir8(tgt.x - (isFlank ? flankX : s.x), tgt.y - (isFlank ? flankY : s.y)),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
@@ -7639,6 +7649,10 @@ export class Scene13WarLayer {
                 m.sepY = 0;
                 continue;
             }
+            // 🔴 [2026-10-11 主人报「还是拥挤在一排」] 列阵推进中的兵**不吃横向推挤**：
+            //    推挤会把 6 列挤成 12 列、把纵深压掉（探针实测 hei_kuang_heavy 216×53 = 一排）。
+            //    推进期他们本就按固定槽位走（够不着不追），推挤只会破坏方阵；接敌后（m.march=false）照常。
+            if (m.march) { m.sepX = 0; m.sepY = 0; continue; }
             // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员：同样清零推挤（理由见本函数头注）
             if (m.lane >= 0 && !m.hero && !m.foe) {
                 const L = laneLeaders.get(m.lane);
@@ -8276,6 +8290,7 @@ export class Scene13WarLayer {
             let front0 = 0, front1 = 0;
             const u0 = this.advanceVec[0], u1 = this.advanceVec[1];
             for (const sp of this.spawns) {
+                if (sp.commander || sp.playerElite) continue;
                 if (sp.f === 0) {
                     const p = (sp.x - this.spawnBases[0].x) * u0.x + (sp.y - this.spawnBases[0].y) * u0.y;
                     if (p > front0) front0 = p;
@@ -8284,10 +8299,13 @@ export class Scene13WarLayer {
                     if (p > front1) front1 = p;
                 }
             }
-            if (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || this.battleSec >= 15.0) {
+            if (this.deCity) front1 = Math.min(front1, 320);
+            const marchedDist = this.adv[0] + this.adv[1];
+            if ((marchedDist >= 180 && baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL) || this.battleSec >= 15.0) {
                 this.marching = false;
                 for (const m of this.men) {
                     m.march = false;   // 全军同时解除，双方一起炸开接战
+                    m.noFoeSec = LANE_REGROUP_SEC;
                     m.stuckT = 0;
                     m.netT = 0;
                 }
@@ -8328,18 +8346,29 @@ export class Scene13WarLayer {
         const ours = this.spawns.filter((s) => s.f === mine.f && key(s));
         const foes = this.spawns.filter((s) => s.f !== mine.f && key(s));
         if (!foes.length) return null;
-        const i = ours.indexOf(mine);
-        return foes[Math.min(Math.max(i, 0), foes.length - 1)] ?? null;
+        // 🔴 [2026-10-11 主人报「一开战就挤成一条竖线」] 原按「本方序号 → 对面同序号」配对：
+        //    一旦 indexOf 取不到（该口被 key() 过滤、或双方口数不等）就 Math.max(i,0)=0 ⇒
+        //    **所有口全部落到 foes[0]** ⇒ 9 个口目标点叠在一起 ⇒ 全军收成一条竖线（主人截图）。
+        //    改成**就近配对**：本口 → 离它最近的敌口（必然各不相同，方向也自然）。
+        let _best = foes[0], _bd = Infinity;
+        for (const _p of foes) { const _d = (_p.x - mine.x) ** 2 + (_p.y - mine.y) ** 2; if (_d < _bd) { _bd = _d; _best = _p; } }
+        return _best;
     }
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
-        const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, false);
+        // 🔴 [2026-10-11 AA #3 前半 属实] 原为 `search(m, MARCH_R, …, false)`（reserve=false）⇒ 不占围殴名额，
+        //    同一分队 36 人在**移动目标**上全部选出同一个最近敌兵 ⇒ 集体涌向一个点。
+        //    改成 reserve=true：按 claims 上限分流到不同敌兵（与出手索敌同一套分流口径）。
+        const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, true);
         // 🔴 [2026-10-11 主人令「整个战术模式的寻敌都还是以前旧的战术模式左右对战的寻敌方式，这个应该修改下」]
         //    旧内核：**全队追同一个「最近敌兵」的一个点**（注释原本写明「不加散开偏移」）⇒ 相邻几十人叠成一团。
         //    改成 DE 式：**每个兵带着自己固定的阵位偏移去接敌** —— 用每人出生时就定死的 `m.jx/m.jy`
         //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
-        if (near) return { x: near.x + m.jx, y: near.y + m.jy };
+        if (near) {
+            const uF = this.advanceVec[m.f], uS = this.sideVec[m.f];
+            return { x: near.x - uF.x * m.dep + uS.x * m.slotY, y: near.y - uF.y * m.dep + uS.y * m.slotY };
+        }
         // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
         //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
         if (m.siegeW && this.defenderHolding) {
@@ -8471,12 +8500,12 @@ export class Scene13WarLayer {
         const vw = this.canvas?.width ?? 0, vh = this.canvas?.height ?? 0;
         if (vw <= 0 || vh <= 0) return [x, y];
         const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
-        if (this.useGroundGL) {
-            const minX = vw / 2 - 3808 + mx, maxX = vw / 2 + 3808 - mx;
-            const minY = vh / 2 - 1904 + my, maxY = vh / 2 + 1904 - my;
-            return [Math.min(Math.max(x, minX), maxX), Math.min(Math.max(y, minY), maxY)];
-        }
-        return [Math.min(Math.max(x, mx), vw - mx), Math.min(Math.max(y, my), vh - my)];
+        // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **旧 13 的界限就是这条兜底**：
+        //    拿不到 WebGL 地面层时退回「夹在屏幕内」(vw ± mx)。已删除。
+        //    现在无论用哪种地面渲染，战场界限一律 = 120×120 格地图的菱形（±3808 / ±1904，屏幕居中）。
+        const minX = vw / 2 - 3808 + mx, maxX = vw / 2 + 3808 - mx;
+        const minY = vh / 2 - 1904 + my, maxY = vh / 2 + 1904 - my;
+        return [Math.min(Math.max(x, minX), maxX), Math.min(Math.max(y, minY), maxY)];
     }
 
     /**
@@ -8699,7 +8728,7 @@ export class Scene13WarLayer {
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
             // 每批每口 36 个精灵（SIDE_CAP ÷ SIDE_LANES）→ 排数 = 36 ÷ 列数
             const sp = marchSpacingOf(m.key);
-            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+            const spDep = Math.min(sp * 2, MARCH_SP_DEPTH_MAX);
             const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
             const depC = ((ranks - 1) / 2) * spDep;
             const ey = m.slotY / sp;
@@ -8722,7 +8751,7 @@ export class Scene13WarLayer {
         //      要更狠只需把这个半径换成 450（挡掉约 60%），一个数的事。
         //    reserve=false：只用来量距离，不占目标名额（不干扰索敌）。
         for (const [lane, L] of laneLeaders) {
-            if (this.search(L, MARCH_R, 0, false)) laneLeaders.delete(lane);
+            if (this.search(L, 90, 0, false)) laneLeaders.delete(lane);
         }
 
         for (const m of this.men) {
@@ -8842,9 +8871,17 @@ export class Scene13WarLayer {
             //    若按「锁敌即脱队」，全队 36 人第一轮索敌就锁定同一段墙、集体脱队压成一排。
             //    Attack Move 的脱队只对**真敌兵**生效（建筑目标用 'sprite' in foe 区分，见上方交战时计数那段）。
             if (m.march && m.foe && !('sprite' in m.foe)) {
-                const keepInMarch = m.hero && this.marching && !(
-                    (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 < 65 * 65 || hb
-                );
+                // 🔴 [2026-10-11 主人「按专业游戏修复」] **DE 的 Attack-Move 是「接触才脱队」，不是「看见就脱队」**。
+                //    改前：非英雄兵 `keepInMarch` 恒 false ⇒ 视野内一看到敌人（SIGHT 160~440px，远大于交战距离）
+                //    当场 m.march=false / m.port=null ⇒ 全队各自追同一个目标，分离推挤把方阵摊成「宽而扁」
+                //    （实测：横向 127~217px × 纵深 27~53px = 10~13 列 × 3~5 行，而要求是 6×6）。
+                //    现在：**只有进入交战距离（自身射程 + 一个槽位间距）才脱队**，之前一律保持方阵推进。
+                const _rng = this.statsFor(m.key, m.f).rng ?? 0;
+                const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
+                const _contact = _d2 <= (Math.max(_rng, 65) + MARCH_SP) ** 2;
+                const keepInMarch = m.hero
+                    ? (this.marching && !(_d2 < 65 * 65 || hb || _contact))
+                    : !_contact;
                 if (!keepInMarch) {
                     m.march = false;
                     m.port = null;
@@ -9481,20 +9518,13 @@ export class Scene13WarLayer {
         this.separate(dt, laneLeaders);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）
         for (const object of this.decorSprites) object.obstructionTouched = false;
-        const fieldW = this.canvas?.width ?? 0;
-        const fieldH = this.canvas?.height ?? 0;
-        const fieldMx = UNIT_PX * 0.5;
-        const fieldMy = UNIT_PX * 0.5;
+        // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **这里才是真正每帧生效的旧 13 界限**：
+        //    原为按**屏幕宽高**夹取（fieldW/fieldH ± 半身），注释却写着「见 fieldBound」——名不副实。
+        //    现在统一走 `fieldBound`（= 120×120 格地图菱形 ±3808 / ±1904）。
         for (const m of this.men) {
-            if (fieldW > 0 && fieldH > 0) {
-                m.x = Math.min(Math.max(m.x, fieldMx), fieldW - fieldMx);
-                m.y = Math.min(Math.max(m.y, fieldMy), fieldH - fieldMy);
-            }
+            [m.x, m.y] = this.fieldBound(m.x, m.y);
             this.resolveWorldObstructions(m);
-            if (fieldW > 0 && fieldH > 0) {
-                m.x = Math.min(Math.max(m.x, fieldMx), fieldW - fieldMx);
-                m.y = Math.min(Math.max(m.y, fieldMy), fieldH - fieldMy);
-            }
+            [m.x, m.y] = this.fieldBound(m.x, m.y);
         }
         for (const object of this.decorSprites) {
             const releaseAfter = object.obstructionReleaseAfterSec;
