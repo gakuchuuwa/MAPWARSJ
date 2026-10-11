@@ -195,15 +195,17 @@ export async function measureStrategicCity(c: StrategicCityHtml): Promise<Strate
 function featherGroundClipPaths(root: HTMLElement, W: number, H: number): void {
     if (W <= 0 || H <= 0) return;
     const cx = W / 2, cy = H / 2;
-    const blur = 36;
-    const shrink = 0.90;
+    const s = 0.25;
+    const blur = 12;
+    const shrink = 0.96;
     for (const node of Array.from(root.querySelectorAll<HTMLElement>('[style*="clip-path"]'))) {
         const cp = node.style.clipPath || '';
         const cv = document.createElement('canvas');
-        cv.width = Math.round(W);
-        cv.height = Math.round(H);
+        cv.width = Math.max(32, Math.round(W * s));
+        cv.height = Math.max(32, Math.round(H * s));
         const ctx = cv.getContext('2d');
         if (!ctx) continue;
+        ctx.scale(s, s);
         ctx.filter = `blur(${blur}px)`;
         ctx.fillStyle = '#ffffff';
         let drawn = false;
