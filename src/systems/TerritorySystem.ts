@@ -455,7 +455,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     //    （实测：建筑×建筑重叠 25 对、压墙 70 对）⇒ 段数提到 **9 段/边**：
     //    圈外接由 1003×582 涨到 **1806×1047**（城内可用面积 19.8 万→64.3 万 px²），≈ DE 小城真实的 17 格见方。
     //    墙段本身仍是 107px 的 DE 原件、步距不变（只增加段数）。战略侧不传 native ⇒ 段数仍是 5。
-    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates);
+    const wallPieces = computePalisadeWallAndGate(baseSize, native ? 9 : 5, useFourGates, !!native);
     // 城墙整体镜像（主人 2026-08-26「城门朝向多样化」）：随机沿垂直轴翻转，
     // 两门从「西北+东南」换成「东北+西南」，城门朝向随之翻转（NE ↔ SW），两门仍同向一致。
     if (rnd() < 0.5) {
@@ -849,8 +849,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
     // 城墙绕城一圈（S=6；城门与城墙自然咬合；随机三种之一：样式一普通双门 / 样式二普通四门 / 样式三加固双塔四门）
     const wallPieces = isFortified
-        ? computeFortifiedWallAndGate(baseSize, 11)   // 🔴 [2026-10-11 主人「该修复的修复」] 尺寸分级：中城墙圈必须大于小城(S=9) ⇒ S=11
-        : computePalisadeWallAndGate(baseSize, 11, isFourGates);
+        ? computeFortifiedWallAndGate(baseSize, native ? 11 : 6, !!native)
+        : computePalisadeWallAndGate(baseSize, native ? 11 : 6, isFourGates, !!native);
     if (!isFourGates && rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -960,7 +960,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     });
 
     // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
-    const wallPieces = computeFortifiedWallAndGate(baseSize, 13);   // 🔴 [2026-10-11] 尺寸分级：大城墙圈必须大于中城(S=11) ⇒ S=13
+    const wallPieces = computeFortifiedWallAndGate(baseSize, native ? 13 : 7, !!native);
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
