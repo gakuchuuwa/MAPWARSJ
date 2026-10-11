@@ -1,9 +1,11 @@
 {
   "code": "DOLPHIN",
-  "source": "a_fish_dolphin",
+  "source": "a_fish_dolphin_x1 + a_fish_dolphin_underwater_x1",
   "frames": 104,
-  "box_w": 40,
-  "box_h": 60,
-  "anchor_x": 52,
-  "anchor_y": 56
+  "cols": 26,
+  "rows": 4,
+  "box_w": 126,
+  "box_h": 102,
+  "anchor_x": 96,
+  "anchor_y": 55
 }

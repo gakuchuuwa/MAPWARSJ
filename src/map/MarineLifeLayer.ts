@@ -19,6 +19,7 @@ const MAX_ZOOM = 10;
 interface CreatureAsset {
     url: string;
     frames: number;
+    cols: number;
     boxW: number;
     boxH: number;
     anchorX: number;
@@ -27,10 +28,10 @@ interface CreatureAsset {
 }
 
 const ASSETS: Record<'DOLPHIN' | 'WHALE' | 'BOX_TURTLES', CreatureAsset> = {
-    // 硬编码来自 _meta.json（加载时再 fetch 覆盖一次，保证一致）
-    DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, boxW: 40, boxH: 60, anchorX: 52, anchorY: 56, screenW: 34 },
-    WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, boxW: 148, boxH: 64, anchorX: 82, anchorY: 58, screenW: 118 },
-    BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, boxW: 68, boxH: 28, anchorX: 32, anchorY: 16, screenW: 42 },
+    // 硬编码来自 _meta.json（DE 水下潜游层 + 水上破水层 + 白色跃水浪花/涟漪合成，加载时再 fetch 覆盖一次）
+    DOLPHIN:     { url: '/SUCAI_RESOURCE/DOLPHIN/frames.png',     frames: 104, cols: 26, boxW: 126, boxH: 102, anchorX: 96,  anchorY: 55, screenW: 104 },
+    WHALE:       { url: '/SUCAI_RESOURCE/WHALE/frames.png',       frames: 241, cols: 25, boxW: 212, boxH: 115, anchorX: 113, anchorY: 59, screenW: 168 },
+    BOX_TURTLES: { url: '/SUCAI_RESOURCE/BOX_TURTLES/frames.png', frames: 180, cols: 30, boxW: 76,  boxH: 41,  anchorX: 35,  anchorY: 17, screenW: 56 },
 };
 
 interface Creature {
@@ -39,6 +40,7 @@ interface Creature {
     lat: number;
     lng: number;
     frame: number;
+    spawnedAt: number;
     expiresAt: number;
     lastFrameAt: number;
 }
@@ -131,6 +133,7 @@ export class MarineLifeLayer extends L.Layer {
                     const m = await r.json();
                     if (m) {
                         a.frames = m.frames ?? a.frames;
+                        a.cols = m.cols ?? a.cols;
                         a.boxW = m.box_w ?? a.boxW;
                         a.boxH = m.box_h ?? a.boxH;
                         a.anchorX = m.anchor_x ?? a.anchorX;
@@ -157,7 +160,7 @@ export class MarineLifeLayer extends L.Layer {
         if (!this.map || !this.ctx) return;
         const zoom = this.map.getZoom();
         if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
-            this.render();
+            this.render(now);
             return;
         }
 
@@ -181,7 +184,7 @@ export class MarineLifeLayer extends L.Layer {
             }
         }
 
-        this.render();
+        this.render(now);
     }
 
     private tryTrigger(now: number): void {
@@ -254,12 +257,13 @@ export class MarineLifeLayer extends L.Layer {
             lat: spawnLat,
             lng: spawnLng,
             frame: Math.floor(Math.random() * ASSETS[kind].frames),
+            spawnedAt: now,
             expiresAt: now + 16000 + Math.random() * 10000,
             lastFrameAt: now,
         });
     }
 
-    private render(): void {
+    private render(now = performance.now()): void {
         if (!this.map || !this.ctx) return;
         const g = this.ctx;
         g.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -280,10 +284,19 @@ export class MarineLifeLayer extends L.Layer {
             const p = this.map.latLngToContainerPoint(L.latLng(c.lat, c.lng));
             const w = a.screenW;
             const h = (a.boxH / a.boxW) * w;
-            const sx = c.frame * a.boxW;
+            const cols = a.cols || Math.max(1, Math.round(img.naturalWidth / a.boxW));
+            const sx = (c.frame % cols) * a.boxW;
+            const sy = Math.floor(c.frame / cols) * a.boxH;
+            const ax = (a.anchorX / a.boxW) * w;
+            const ay = (a.anchorY / a.boxH) * h;
 
-            // 切帧绘制（源图水平雪碧图，只取当前帧）
-            g.drawImage(img, sx, 0, a.boxW, a.boxH, p.x - w / 2, p.y - h * 0.5, w, h);
+            // 生成与消失平滑淡入淡出
+            const fadeIn = Math.min(1, Math.max(0, (now - c.spawnedAt) / 1200));
+            const fadeOut = Math.min(1, Math.max(0, (c.expiresAt - now) / 1500));
+            g.save();
+            g.globalAlpha = fadeIn * fadeOut;
+            g.drawImage(img, sx, sy, a.boxW, a.boxH, p.x - ax, p.y - ay, w, h);
+            g.restore();
         }
     }
 }
