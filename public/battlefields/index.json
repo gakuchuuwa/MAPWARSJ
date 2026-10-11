@@ -3,7 +3,7 @@
  "script": "Arabia.rms",
  "size": 120,
  "passableAll": true,
- "generatedAt": "2026-10-11T03:38:10.964Z",
+ "generatedAt": "2026-10-11T13:29:21.561Z",
  "projectToDeTheme": {
   "afrotropical_tropical": "afrotropical_tropical",
   "neotropical_temperate": "neotropical_temperate",
@@ -41,7 +41,7 @@
    "trees": 1397,
    "forestPct": 12.5,
    "waterPct": 0.2,
-   "elevPct": 23.8,
+   "elevPct": 18.1,
    "top": "Dirt 86.8% · Dragon Forest 8.1% · Forest, Bush 3.2% · Forest, Birch 1.2%"
   },
   {
@@ -60,7 +60,7 @@
    "trees": 1702,
    "forestPct": 11.6,
    "waterPct": 0.3,
-   "elevPct": 25.9,
+   "elevPct": 22,
    "top": "Grass 87.4% · Forest, Dry South American 11.4% · Beach 0.7% · Water, Shallow 0.3%"
   },
   {
@@ -79,7 +79,7 @@
    "trees": 1804,
    "forestPct": 100,
    "waterPct": 0,
-   "elevPct": 15.9,
+   "elevPct": 19,
    "top": "Jungle Grass 87.5% · Jungle 10.1% · Rainforest 2.4%"
   },
   {
@@ -98,7 +98,7 @@
    "trees": 1539,
    "forestPct": 13.2,
    "waterPct": 0,
-   "elevPct": 27,
+   "elevPct": 26.3,
    "top": "Dirt 3 86.8% · Pine Forest 8.3% · Forest, Bush 2.7% · Forest 2%"
   },
   {
@@ -117,7 +117,7 @@
    "trees": 1311,
    "forestPct": 12.1,
    "waterPct": 0.2,
-   "elevPct": 23.7,
+   "elevPct": 24.8,
    "top": "Dry Grass 87.4% · Forest, Lush Bamboo 6.7% · Forest, Bush 3.2% · Bamboo 2.2%"
   },
   {
@@ -136,7 +136,7 @@
    "trees": 1214,
    "forestPct": 10.1,
    "waterPct": 0.2,
-   "elevPct": 25.2,
+   "elevPct": 23.9,
    "top": "Dry Grass 89.4% · Forest, Autumn 4.8% · Bamboo 2.2% · Forest, Bush 1.9%"
   },
   {
@@ -155,7 +155,7 @@
    "trees": 1622,
    "forestPct": 2.4,
    "waterPct": 0.2,
-   "elevPct": 14,
+   "elevPct": 23.6,
    "top": "Desert 88.4% · Palm Desert 8.7% · Forest, Birch 2.2% · Beach 0.4%"
   },
   {
@@ -174,7 +174,7 @@
    "trees": 1388,
    "forestPct": 11.6,
    "waterPct": 0,
-   "elevPct": 26.9,
+   "elevPct": 18.1,
    "top": "Dry Grass 88.4% · Dead Forest 6% · Forest, Bush 2.1% · Forest, Snow Autumn 2%"
   },
   {
@@ -193,7 +193,7 @@
    "trees": 1247,
    "forestPct": 9.8,
    "waterPct": 0.2,
-   "elevPct": 15.6,
+   "elevPct": 19,
    "top": "Grass 2 89.5% · Forest 5.3% · Pine Forest 2.2% · Forest, Bush 1.3%"
   },
   {
@@ -212,7 +212,7 @@
    "trees": 1596,
    "forestPct": 15.7,
    "waterPct": 0.2,
-   "elevPct": 30.3,
+   "elevPct": 23.9,
    "top": "Grass 3 83.7% · Forest, Mediterranean 7.7% · Forest, Bush 4.8% · Pine Forest 2.2%"
   },
   {
@@ -231,7 +231,7 @@
    "trees": 1286,
    "forestPct": 11.5,
    "waterPct": 0.3,
-   "elevPct": 26.9,
+   "elevPct": 23.6,
    "top": "Dry Grass 87.4% · Forest, Birch 5.5% · Forest 3% · Forest, Bush 2.8%"
   },
   {
@@ -250,7 +250,7 @@
    "trees": 231,
    "forestPct": 1.1,
    "waterPct": 0,
-   "elevPct": 26.8,
+   "elevPct": 17.5,
    "top": "Dry Grass 88.4% · Grass 10.5% · Forest, Autumn 0.6% · Forest, Bush 0.2%"
   },
   {
@@ -269,7 +269,7 @@
    "trees": 375,
    "forestPct": 2.3,
    "waterPct": 0,
-   "elevPct": 28.3,
+   "elevPct": 19,
    "top": "Dry Grass 86.8% · Grass 10.8% · Dead Forest 1.1% · Forest, Bush 0.6%"
   },
   {
@@ -288,7 +288,7 @@
    "trees": 369,
    "forestPct": 0.6,
    "waterPct": 0.5,
-   "elevPct": 27.4,
+   "elevPct": 24.8,
    "top": "Desert 86.8% · Palm Desert 9.4% · Grass 1.6% · Beach 1%"
   },
   {
@@ -307,7 +307,7 @@
    "trees": 169,
    "forestPct": 0.5,
    "waterPct": 0.3,
-   "elevPct": 28.2,
+   "elevPct": 18.1,
    "top": "Desert 88.8% · Palm Desert 7.8% · Grass 1.8% · Beach 0.7%"
   },
   {
@@ -319,15 +319,15 @@
     "theme_palaearctic_salt_desert_sea.json",
     "theme_palaearctic_salt_desert_lake.json"
    ],
-   "bytes": 102356,
+   "bytes": 102947,
    "centerGround": false,
    "centerHeight": 0,
-   "objects": 256,
+   "objects": 262,
    "trees": 92,
    "forestPct": 0.3,
-   "waterPct": 2.7,
-   "elevPct": 11.9,
-   "top": "Desert 81.6% · Palm Desert 9.3% · Beach 4.2% · Water, Shallow 2.7%"
+   "waterPct": 2.9,
+   "elevPct": 19.3,
+   "top": "Desert 81.1% · Palm Desert 9.5% · Beach 4.3% · Water, Shallow 2.9%"
   },
   {
    "themeId": "serengeti",
@@ -345,7 +345,7 @@
    "trees": 328,
    "forestPct": 2.2,
    "waterPct": 0.5,
-   "elevPct": 25.3,
+   "elevPct": 22,
    "top": "Dirt 89% · Grass 7.1% · Dragon Forest 1.4% · Beach 1%"
   },
   {
@@ -357,15 +357,15 @@
     "theme_palustrine_swamp_sea.json",
     "theme_palustrine_swamp_lake.json"
    ],
-   "bytes": 183707,
+   "bytes": 189856,
    "centerGround": false,
    "centerHeight": 1,
-   "objects": 1026,
-   "trees": 791,
-   "forestPct": 5.4,
-   "waterPct": 20,
-   "elevPct": 8.9,
-   "top": "Dirt 64.1% · Water, Medium 10.1% · Water, Shallow 9.9% · Beach 6%"
+   "objects": 1079,
+   "trees": 826,
+   "forestPct": 5.7,
+   "waterPct": 16.6,
+   "elevPct": 15,
+   "top": "Dirt 67.3% · Water, Medium 8.5% · Water, Shallow 8.1% · Beach 5.6%"
   }
  ],
  "failures": []

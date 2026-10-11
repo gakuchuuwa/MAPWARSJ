@@ -454,43 +454,6 @@ export class Scene13GroundLayerGL {
       return this.smoothWater ? (this.smoothWater[cy * N + cx] ?? 0) : 0;
     };
 
-    // 基于当前地图地形确定性生成中心地带（距中心 0..38 格）的高地与丘陵群
-    let seed = 2166136261;
-    if (elev && elev.length) {
-      for (let i = 0; i < elev.length; i += 37) seed = Math.imul(seed ^ (elev[i] + i), 16777619);
-    }
-    const rand = () => {
-      seed = Math.imul(seed ^ (seed >>> 15), 2246822507);
-      seed = Math.imul(seed ^ (seed >>> 13), 3266489909);
-      return ((seed ^= seed >>> 16) >>> 0) / 4294967296;
-    };
-
-    const cx0 = N * 0.5, cy0 = N * 0.5;
-    const hills: Array<{ x: number; y: number; rx: number; ry: number; h: number; rot: number }> = [];
-    // 1. 正中心小巧高地（紧凑范围 4.2~6.0 格，不再占满中央）
-    hills.push({
-      x: cx0 + (rand() - 0.5) * 4,
-      y: cy0 + (rand() - 0.5) * 4,
-      rx: 4.2 + rand() * 1.8,
-      ry: 3.6 + rand() * 1.6,
-      h: 2.0 + rand() * 0.7,
-      rot: rand() * Math.PI,
-    });
-    // 2. 全场「小而多」的高地与丘陵群（20 处小型山包，分布在距中心 9~48 格范围内）
-    const hillCount = 20;
-    for (let k = 0; k < hillCount; k++) {
-      const ang = k * 2.399963 + (rand() - 0.5) * 0.32;
-      const dist = 9 + Math.sqrt((k + 0.5) / hillCount) * 39 + (rand() - 0.5) * 3.5;
-      hills.push({
-        x: cx0 + Math.cos(ang) * dist,
-        y: cy0 + Math.sin(ang) * dist,
-        rx: 2.4 + rand() * 2.2,
-        ry: 2.0 + rand() * 2.0,
-        h: 1.5 + rand() * 1.3,
-        rot: rand() * Math.PI,
-      });
-    }
-
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
         let sum = 0, count = 0;
@@ -498,25 +461,7 @@ export class Scene13GroundLayerGL {
         if (gx < N && gy > 0) { sum += elevAt(gx, gy - 1); count++; }
         if (gx > 0 && gy < N) { sum += elevAt(gx - 1, gy); count++; }
         if (gx < N && gy < N) { sum += elevAt(gx, gy); count++; }
-        // 压掉 JSON 地图预烘焙在正中央（距中心 < 34 格）的那块 40×40 巨型方台，仅保留外围边缘地貌起伏
-        const distCenter = Math.hypot(gx - cx0, gy - cy0);
-        const edgeMask = Math.min(1.0, Math.max(0.0, (distCenter - 28.0) / 8.0));
-        const baseE = (count > 0 ? sum / count : 0) * 1.15 * edgeMask;
-
-        // 叠加小而多的中心高地与丘陵群
-        let centralE = 0;
-        for (const hl of hills) {
-          const dx0 = gx - hl.x, dy0 = gy - hl.y;
-          const c = Math.cos(hl.rot), s = Math.sin(hl.rot);
-          const lx = (dx0 * c + dy0 * s) / hl.rx;
-          const ly = (-dx0 * s + dy0 * c) / hl.ry;
-          const d = Math.hypot(lx, ly);
-          if (d < 1.15) {
-            const u = Math.max(0, Math.min(1, (1.15 - d) / 0.75));
-            const profile = u * u * (3 - 2 * u);
-            if (hl.h * profile > centralE) centralE = hl.h * profile;
-          }
-        }
+        const baseE = count > 0 ? sum / count : 0;
 
         // 水体及近岸湿滩自动压平高程，杜绝河面/湖面悬空
         const w = Math.max(
@@ -527,7 +472,7 @@ export class Scene13GroundLayerGL {
           waterAt(gx, gy + 1)
         );
         const dryMask = 1.0 - Math.min(1.0, Math.max(0.0, (w - 0.12) / 0.26));
-        this.cornerElev[gy * V_SIZE + gx] = Math.max(baseE, centralE) * dryMask;
+        this.cornerElev[gy * V_SIZE + gx] = baseE * dryMask;
       }
     }
     this.updateCornerLight();
