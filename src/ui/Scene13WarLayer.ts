@@ -3720,8 +3720,8 @@ export class Scene13WarLayer {
         const f = setup.side;
         const row0 = this.spawns.filter((s) => s.f === f && s.row === 0);
         if (!row0.length) return;
-        const frontX = f === 0 ? Math.max(...row0.map((s) => s.x)) : Math.min(...row0.map((s) => s.x));
-        const toward = f === 0 ? 1 : -1;
+        const base = this.spawnBases[f] ?? { x: row0[0].x, y: row0[0].y };
+
         this.playerSetup = setup;
 
         /* 🔴 [2026-09-18 主人定]「玩家自带精锐顶替编制里的一口，胡说八道，**玩家永远不能改变军团的兵种**。
@@ -3775,7 +3775,7 @@ export class Scene13WarLayer {
         }
         if (!anchorPort) {
             const centerPort = row0.reduce(
-                (best, s) => (Math.abs(s.y - midY) < Math.abs(best.y - midY) ? s : best),
+                (best, s) => (Math.hypot(s.x - base.x, s.y - base.y) < Math.hypot(best.x - base.x, best.y - base.y) ? s : best),
                 row0[0],
             );
             anchorPort = centerPort ?? row0[0] ?? mySpawns[0];
@@ -3784,15 +3784,15 @@ export class Scene13WarLayer {
         const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
         const heroDep = -10;
-        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity); const uFwd = this.advanceVec[f]; const hx = useFieldPlan ? heroPort.x - uFwd.x * heroDep : heroPort.x + (toward > 0 ? -heroDep : heroDep);
-        const hy = useFieldPlan ? heroPort.y - uFwd.y * heroDep : heroPort.y;
+        const uFwd = this.advanceVec[f]; const hx = heroPort.x - uFwd.x * heroDep;
+        const hy = heroPort.y - uFwd.y * heroDep;
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
             f, key: setup.heroKey, jx: 0, jy: 0, lane: heroPort.lane, hero: true,
             zid: this.manSeq++,
             x: hx, y: hy, tx: hx, ty: hy,
             hp: this.heroMaxHp(setup.heroKey, f),
-            dir: useFieldPlan ? this.dir8(uFwd.x, uFwd.y) : (f === 0 ? 2 : 6),
+            dir: this.dir8(uFwd.x, uFwd.y),
             ph: 0, st: 0, foe: null, next: 0.1,
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
@@ -3870,7 +3870,7 @@ export class Scene13WarLayer {
         //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
         const _base = this.spawnBases[m.f] ?? { x: vw / 2, y: vh / 2 };
         const x = _base.x;
-        const y = vh / 2;
+        const y = _base.y;
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
@@ -4310,10 +4310,10 @@ export class Scene13WarLayer {
             }
             let useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
             if (useFieldPlan) {
-                const centerLat = init.centerLat;
-                const centerLng = init.centerLng;
-                const attFromLat = init.attackerFromLat;
-                const attFromLng = init.attackerFromLng;
+                const centerLat = init.centerLat || 30;
+                const centerLng = init.centerLng || 110;
+                const attFromLat = init.attackerFromLat || centerLat;
+                const attFromLng = init.attackerFromLng || (centerLng - 1);
                 const defFromLat = init.defenderFromLat;
                 const defFromLng = init.defenderFromLng;
                 if (!centerLat || !centerLng || !attFromLat || !attFromLng) {
@@ -4484,7 +4484,7 @@ export class Scene13WarLayer {
 
             // 主将队（第 10 口，前排再往前）不是建筑位，不参与城墙前沿计算
             const defenderSpawnXs = this.spawns.filter((s) => s.f === 1 && !s.commander).map((s) => s.x);
-            const siegeWallFrontX = this.battleType === 'siege' && defenderSpawnXs.length > 0
+            const siegeWallFrontX = this.battleType === 'siege' && !this.deCity && defenderSpawnXs.length > 0
                 ? Math.round(Math.min(...defenderSpawnXs) - 380)
                 : undefined;
 
@@ -4718,12 +4718,12 @@ export class Scene13WarLayer {
             const hp = this.statsFor(key, 0).hp;
             let tgtX = VW - mx, tgtY = y;
             // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械规整展开在攻方军阵前沿（depth * 2.8），目标＝地图中心的城池
-            if (this.deCity) {
+            if (this.spawnBases[0]) {
                 const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
                 const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
                 x = base.x + fwd.x * (depth * 2.8) + sv.x * sideOffset;
                 y = base.y + fwd.y * (depth * 2.8) + sv.y * sideOffset;
-                tgtX = this.deCityCenter.x; tgtY = this.deCityCenter.y;
+                const tgt = this.deCity ? this.deCityCenter : this.spawnBases[1]; tgtX = tgt.x; tgtY = tgt.y;
             }
             this.men.push({
                 f: 0, key, jx: 0, jy: 0,
@@ -4881,7 +4881,7 @@ export class Scene13WarLayer {
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > vw + w) c.x = -w;
+                if (c.x > vw / 2 + 3808 + w) c.x = vw / 2 - 3808 - w;
             }
         }
     }
@@ -5230,8 +5230,8 @@ export class Scene13WarLayer {
         const count = CLOUD_COUNT_MIN + ((Math.random() * (CLOUD_COUNT_MAX - CLOUD_COUNT_MIN + 1)) | 0);
         for (let i = 0; i < count; i++) {
             const c: SceneCloud = {
-                x: Math.random() * VW,
-                y: Math.random() * VH,
+                x: VW / 2 + (Math.random() - 0.5) * 7616,
+                y: VH / 2 + (Math.random() - 0.5) * 3808,
                 // 🔴 一律**从左往右**（主人 2026-08-12）：全场风向必须一致 ——
                 //    攻方 f=0 永远在左（出兵口 x = f===0 ? back : VW-back），所以「左→右」
                 //    就是「攻方→守方」；旗帜固定 row 5 走 facingLeft 分支、旗面画在杆的右侧，
