@@ -3941,7 +3941,7 @@ export class Scene13WarLayer {
 
         this.ground = document.createElement('canvas');
         this.ground.width = 7616;
-        this.ground.height = cv.height;
+        this.ground.height = 3808;
         this.groundCtx = this.ground.getContext('2d', { alpha: true });
         // [2026-09-10 主人需求] 战术模式右上角退出战斗按钮已删除/移入战术模式玩家面板（PlayerScene13Control）
         const onResize = () => {
@@ -3954,7 +3954,7 @@ export class Scene13WarLayer {
                 this.glCanvas.height = this.canvas.height;
                 this.groundLayerGL?.resize(this.canvas.width, this.canvas.height);
             }
-            if (this.ground) {
+            if (false && this.ground) {
                 this.ground.width = this.canvas.width;
                 this.ground.height = this.canvas.height;   // 尺寸一变内容即清空（已烙的尸体丢失）
                 this.groundHasContent = false;
@@ -9862,12 +9862,12 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数），已恢复：
             //   尸体尺寸必须与兵模同一把尺子（UNIT_PX * sz / 64），否则同一场里尸体会和活人不一样大。
             const s = UNIT_PX * (wt?.sz ?? 1) / 64;
-            g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, c.x - dm.hx * s, drawY - dm.hy * s, dm.fw * s, dm.fh * s);
+            const gx = c.x - ((this.canvas?.width ?? 1920) / 2 - 3808), gy = drawY - ((this.canvas?.height ?? 1080) / 2 - 1904); g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
         } else {
             // S10DB 正方形帧（原逻辑不变）
             const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
             const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
-            g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, c.x - px / 2, drawY - px * 0.9, px, px);
+            const gx = c.x - ((this.canvas?.width ?? 1920) / 2 - 3808), gy = drawY - ((this.canvas?.height ?? 1080) / 2 - 1904); g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, gx - px / 2, gy - px * 0.9, px, px);
         }
         g.restore();
         this.groundHasContent = true;
@@ -10114,7 +10114,7 @@ export class Scene13WarLayer {
         this.perfStats.decorDrawn = decorDrawnCount;
         this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
         // 已烙的尸体：一张图搞定（在所有活人之下）
-        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, 0, 0);
+        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, cx - 3808, cy - 1904);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) {
             const it = take();
