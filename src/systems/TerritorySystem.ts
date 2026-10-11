@@ -721,7 +721,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
     // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
     //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
-    const centerW = baseSize * 0.56;
+    const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.56);   // 1.0：原生宽
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     const cOffsetY = -8;
     const castleZ = Math.round(500 + cOffsetY);
@@ -734,15 +734,22 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //   多出来的第 5 座是**门楼箭塔**，见 computeRectWall 的 extraGateTower。
     const isJpTibet = !!region && (region.includes('JAPAN') || region.includes('TIBET'));
     const passTowerRnd = deMulberry32(deHashString(cityId + '|pass_towers'));
-    const wallPieces = computeRectWall(baseSize, 8, 4, passTowerRnd, isJpTibet);
+    // 🔴 [2026-10-11] 险要要做到「**每件 1.0 且无缝**」：墙件宽 pieceW＝素材原生宽（99/100px），
+    //    而墙件步距＝baseSize × widthFactor ⇒ 必须让 **步距的 baseSize 与原生宽同源**，
+    //    即 wallBase ＝ 原生宽 ÷ widthFactor。只改宽度不改步距就会断成一截一截（主人截图实锤）。
+    const _anchorNE = DE_STONE_ANCHORS_BY_STYLE[style]?.NE;
+    const _nativeNE = spriteNativeW(native, _anchorNE?.path);
+    const wallBase = (_nativeNE && _anchorNE?.widthFactor) ? _nativeNE / _anchorNE.widthFactor : baseSize;
+    const wallPieces = computeRectWall(wallBase, 8, 4, passTowerRnd, isJpTibet);
     wallPieces.forEach((w) => {
         const anchor = DE_STONE_ANCHORS_BY_STYLE[style][w.type];
         const zIndex = Math.round(500 + w.y);
         // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：险要的墙/门/箭塔曾经被我改成
         //    「按素材原生宽（107px）」——但**墙件的步距 `computeRectWall` 是按 `baseSize × widthFactor` 算的**，
-        //    只改宽度不改步距 ⇒ 宽度与间距对不上，城墙断成一截一截的孤立场墩（主人截图实锤）。
-        //    这里回到原始公式：宽度与步距同源，永远咬合。
-        const pieceW = baseSize * anchor.widthFactor;
+        // 🔴 [2026-10-11 主人两令合一] 「所有都要 1.0」＋「别乱改 PASS」在这里的统一解：
+        //    宽度用**素材原生宽**（1.0），而上面 `computeRectWall` 的**步距已用同一个原生宽反推**
+        //    （`wallBase = 原生宽 ÷ widthFactor`）⇒ 宽度与步距同源，既 1.0 又无缝。
+        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor);
         const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
         const flip = w.flipX ? ' scaleX(-1)' : '';
         parts.push(
