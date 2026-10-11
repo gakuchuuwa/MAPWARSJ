@@ -2336,7 +2336,7 @@ function marchSpacingOf(key: string): number {
  */
 const LANE_W = 6;
 /** 行军索敌半径：视野内找不到敌兵才退回敌军重心（所有兵一个规矩，无中军特权） */
-const MARCH_R = 300;
+const MARCH_R = 450;
 /**
  * 移动时冲锋/移动**逐轮交替**（主人 2026-08-12 拍板，取代原先按距离切的「最后冲刺段」方案）。
  * 一轮 = 一个 8 帧循环（≈1 秒）：走一轮 → 冲一轮 → 走一轮…… 只有有冲锋组的兵种（象兵/突骑）受影响。
@@ -3416,6 +3416,8 @@ export class Scene13WarLayer {
     private advanceVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
     /** 八方向行军侧翼单位向量 */
     private sideVec: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 1 }, { x: 0, y: -1 }];
+    /** 🔴 [2026-10-11 CC 复核] 每帧预计算：每队正在交战的最近敌目标（把 aimAt 里的 O(N²) 手扫降成 O(N)） */
+    private laneFoeCache = new Map<number, { x: number; y: number; d2: number }>();
     /** 攻守双方阵营出兵中心（屏幕逻辑坐标） */
     private spawnBases: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
     /** [2026-08-21 性能] 素材加载风暴合并：onload 高频触发 repaintDecor，rAF 合并到一帧一次 */
@@ -3551,6 +3553,8 @@ export class Scene13WarLayer {
      * 开战 30 秒城墙随机塌一半（collapseHalfWalls）→ false → 守方开始反击（2026-08-22 主人定）。
      */
     private defenderHolding = false;
+    /** 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙/城门/城垛」] 每场只塌一次 */
+    private wallAutoCollapsed = false;
     /**
      * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
      *    2026-09-19 主人定「城寨/漠北蒙古与野战一致：直接开战」）。
@@ -3777,18 +3781,18 @@ export class Scene13WarLayer {
             anchorPort = centerPort ?? row0[0] ?? mySpawns[0];
         }
 
-        const inMarch = this.battleType !== 'siege';
+        const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
         const heroDep = -10;
-        const hx = heroPort.x + (toward > 0 ? 10 : -10);
-        const hy = heroPort.y;
+        const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity); const uFwd = this.advanceVec[f]; const hx = useFieldPlan ? heroPort.x - uFwd.x * heroDep : heroPort.x + (toward > 0 ? -heroDep : heroDep);
+        const hy = useFieldPlan ? heroPort.y - uFwd.y * heroDep : heroPort.y;
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
             f, key: setup.heroKey, jx: 0, jy: 0, lane: heroPort.lane, hero: true,
             zid: this.manSeq++,
             x: hx, y: hy, tx: hx, ty: hy,
             hp: this.heroMaxHp(setup.heroKey, f),
-            dir: f === 0 ? 2 : 6,
+            dir: useFieldPlan ? this.dir8(uFwd.x, uFwd.y) : (f === 0 ? 2 : 6),
             ph: 0, st: 0, foe: null, next: 0.1,
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
@@ -3869,7 +3873,7 @@ export class Scene13WarLayer {
         const y = vh / 2;
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
-        m.dir = m.f === 0 ? 2 : 6;
+        m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
         m.foe = null; m.lock = 0; m.st = 0; m.fightT = 0; m.stuckT = 0; m.kiting = false;
         m.fadeT = 2; m.fadeMax = 2;
         this.heroInput = null;
@@ -3936,7 +3940,7 @@ export class Scene13WarLayer {
         this.glCanvas = glCv;
 
         this.ground = document.createElement('canvas');
-        this.ground.width = cv.width;
+        this.ground.width = 7616;
         this.ground.height = cv.height;
         this.groundCtx = this.ground.getContext('2d', { alpha: true });
         // [2026-09-10 主人需求] 战术模式右上角退出战斗按钮已删除/移入战术模式玩家面板（PlayerScene13Control）
@@ -4241,6 +4245,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         this.defenderHolding = this.siegeWithWalls;
+        this.wallAutoCollapsed = false;   // 每场重新计（30 秒保底塌墙，见 step）
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
         //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
         this.wallsCollapsed = false;
@@ -4471,7 +4476,9 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-22 主人定] 攻城战：按守方城级给攻方配备攻城武器（正常参战兵种，前置到攻方前排）
             // 🔴 [2026-09-03 主人定] 城寨(stockade)攻击方不带攻城武器——和野战一样直接开战
             // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)攻击方不带攻城武器——和城寨野战一样
-            if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender()) {
+            // 🔴 [2026-10-11 主人令「**现在所有攻城战都要有攻城武器**」] 旧的「城寨不带 / 漠北蒙古不带」两条排除**已废**：
+            //    只要 battleType === 'siege'（含城寨、含漠北蒙古）一律配攻城武器。
+            if (this.battleType === 'siege') {
                 this.spawnSiegeWeapons(VW, VH, mx, depth);
             }
 
@@ -5851,6 +5858,14 @@ export class Scene13WarLayer {
             // 2. 正面城墙：整排连续垂直主城墙（2026-08-22 主人定：正面中央是城墙，城门只留北翼/南翼 2 座）
             //    正面墙段 linked=true（参与「一处破 → 前排全倒」联动）
             //    主人 2026-09-03：城寨(stockade)只换**前排**——正面不铺篱笆墙（改拒马线，见 applyBuildingsForSide），两侧篱笆保留
+            // 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 城内建筑一律**去掉碰撞**（纯贴图）：
+            //    只有墙/门/城垛/围栏保留阻挡（它们由 30 秒坍塌或被打穿解除，见 collapseFrontWalls）。
+            for (const sp of this.decorSprites) {
+                const _a = String(sp.asset || '');
+                if (/WALL|GATE|POST|PALISADE|FENCE|TOWER/i.test(_a)) continue;
+                sp.obstruction = undefined;
+                sp.obstructionDisabled = true;
+            }
             //    🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样正面不铺墙，直接开战
             if (this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender()) {
                 for (let i = -8.5; i <= 8.5; i += 1.0) {
@@ -7644,7 +7659,7 @@ export class Scene13WarLayer {
         };
         for (const m of this.men) {
             if (m.hp <= 0) continue;
-            if (this.defenderHolding && !m.siegeW) {
+            if (false && this.defenderHolding && !m.siegeW) {
                 m.sepX = 0;
                 m.sepY = 0;
                 continue;
@@ -7792,7 +7807,7 @@ export class Scene13WarLayer {
         for (const target of this.wallGates) target.claims = 0;
         for (const m of this.men) {
             m.reservedFoe = null;
-            if (deploying || m.hp <= 0 || (this.defenderHolding && !m.siegeW)) continue;
+            if (deploying || m.hp <= 0) continue;
             if (this.canKeepTarget(m, this.statsFor(m.key, m.f).sight ?? 160)) {
                 m.reservedFoe = m.foe;
                 m.foe!.claims++;
@@ -7943,6 +7958,14 @@ export class Scene13WarLayer {
         //    再因为还没接触而淡出、接触了又淡入，来回抽。
         // 🔴 [2026-08-29 主人定] 30 秒：城门/城墙/箭塔/建筑随机均分三形态（完整/破损/残骸），全为贴图
         this.applyRandomCollapseForms();
+        // 🔴 [2026-10-11 主人令「墙/门/城垛（含围栏）所有建筑，所有元素一律在 30 秒坍塌后改为贴图」]
+        //    原实现只清 wallGates 的碰撞；现在**全场清空**：任何还带 obstruction 的精灵（墙上件、建筑、
+        //    拒马、装饰…）一并改成纯贴图 ⇒ 30 秒后整张战场**处处可通行**。
+        for (const sp of this.decorSprites) {
+            if (!sp.obstruction && sp.obstructionDisabled) continue;
+            sp.obstruction = undefined;
+            sp.obstructionDisabled = true;
+        }
     }
 
     /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
@@ -8366,8 +8389,8 @@ export class Scene13WarLayer {
         //    改成 DE 式：**每个兵带着自己固定的阵位偏移去接敌** —— 用每人出生时就定死的 `m.jx/m.jy`
         //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
         if (near) {
-            const uF = this.advanceVec[m.f], uS = this.sideVec[m.f];
-            return { x: near.x - uF.x * m.dep + uS.x * m.slotY, y: near.y - uF.y * m.dep + uS.y * m.slotY };
+            const ra = Math.atan2(m.jy, m.jx);
+            return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
         }
         // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
         //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
@@ -8382,17 +8405,36 @@ export class Scene13WarLayer {
             return null;
         }
 
-        // ── ② 没人可打时：**朝对面「对应编号」的那一口推进**（主人 2026-10-11 定：十点对十点 = 十条线）────
-        //    两队沿同一条线迎面而行 ⇒ 必然在中途碰上并开打（双方都走这条规则，不会像旧版那样只有一方扑空口）。
-        //    带上每人自己的阵位偏移 m.jx/m.jy ⇒ 整队方阵平移，不叠成一团。
+        const ra = Math.atan2(m.jy, m.jx);
+        const ringX = Math.cos(ra) * CHASE_RING;
+        const ringY = Math.sin(ra) * CHASE_RING;
+        // 🔴 [2026-10-11 CC 复核] 读每帧预计算的「本队战团目标」（原来这里每个兵手扫全场 = O(N²)）。
+        if (m.lane >= 0) {
+            const c = this.laneFoeCache.get(m.lane);
+            if (c && c.d2 <= 1200 * 1200) {
+                return { x: c.x + ringX, y: c.y + ringY };
+            }
+        }
+        const midFoe = !m.march ? this.search(m, 1200, MIN_RANGE_TYPES[m.key] ?? 0, true) : null;   // 🔴 [2026-10-11 CC 复核] 列阵推进期间不让中距层接管（否则方阵被 1200px 内的敌人拉散）
+        if (midFoe) {
+            return { x: midFoe.x + ringX, y: midFoe.y + ringY };
+        }
+
         const foePort = this.foePortOf(m.lane);
         if (foePort) {
-            // 🔴 [2026-10-11 主人报「挤成一排」] 改前返回「对面那一口的一个坐标」⇒ 全队 36 人奔向同一点。
-            //    改成**整块平移**：把「本人在本口的阵位偏移」整体搬到对面那一口上 ⇒ 方阵走过去而不是收拢。
-            // 🔴 [2026-10-11] 改前用实时坐标 `m.x - mine.x` —— 对全队是**常数向量**，等于没保持阵型（AA 指出，属实）。
-            //    现在改成**固定槽位**：与出生公式同源（dep 沿 uFwd 向后、slotY 沿 uSide 横排）⇒ 整块方阵平移。
             const uF = this.advanceVec[m.f], uS = this.sideVec[m.f];
-            return { x: foePort.x - uF.x * m.dep + uS.x * m.slotY, y: foePort.y - uF.y * m.dep + uS.y * m.slotY };
+            const remainFwd = (foePort.x - m.x) * uF.x + (foePort.y - m.y) * uF.y;
+            const distToPort2 = (foePort.x - m.x) ** 2 + (foePort.y - m.y) ** 2;
+            if (remainFwd > 360 && distToPort2 > 420 * 420) {
+                return { x: foePort.x - uF.x * m.dep + uS.x * m.slotY, y: foePort.y - uF.y * m.dep + uS.y * m.slotY };
+            }
+        }
+
+        // 🔴 [2026-10-11 CC 复核] 原来这里每个兵手扫全场 = O(N²)（720 人局约 500 万次/秒）。
+        //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
+        const globalNearest = this.search(m, 1e9, MIN_RANGE_TYPES[m.key] ?? 0, true);
+        if (globalNearest) {
+            return { x: globalNearest.x + m.jx * 0.5, y: globalNearest.y + m.jy * 0.5 };
         }
 
         // ── ③ 配对也拿不到（理论上到不了）时才走「巡逻航路」（主人 2026-08-17 定）────────────
@@ -8532,7 +8574,7 @@ export class Scene13WarLayer {
         if (!sp || sp.lane !== m.lane) return null;
         const leader = leaders.get(m.lane);
         if (!leader || leader === m) return null;
-        if ((m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
+        if (!m.hero && (m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
         if (this.heroOrderPending(m)) return null;
         const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
         let sx: number, sy: number;
@@ -8682,6 +8724,13 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
+        // 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙，城门，城垛」] —— 本会话早前按旧令删过，现按新令恢复：
+        //    collapseFrontWalls 只遍历 wallGates（墙/门/城垛），塌后 obstruction=undefined ⇒ 士兵 100% 通行；
+        //    **不碰任何城内建筑**（建筑另有登录，不在 wallGates 内）。每场只塌一次。
+        if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= 30) {
+            this.wallAutoCollapsed = true;
+            this.collapseFrontWalls();
+        }
         this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) {
@@ -8750,8 +8799,18 @@ export class Scene13WarLayer {
         //      且挡掉的正是最贴敌阵、锚点被挤得最乱的那批（颤抖的重灾区）。
         //      要更狠只需把这个半径换成 450（挡掉约 60%），一个数的事。
         //    reserve=false：只用来量距离，不占目标名额（不干扰索敌）。
+        // 🔴 [2026-10-11 CC 复核] 同队战团目标**每帧只算一次**（原来每个兵都扫全场 = O(N²)）。
+        this.laneFoeCache.clear();
+        for (const u of this.men) {
+            if (u.hp <= 0 || u.lane < 0 || !u.foe || u.foe.hp <= 0) continue;
+            if ("sprite" in u.foe && (u.foe.sprite.destroyed || u.foe.sprite.obstructionDisabled)) continue;
+            const c = this.laneFoeCache.get(u.lane);
+            const d2 = (u.foe.x - u.x) ** 2 + (u.foe.y - u.y) ** 2;
+            if (!c || d2 < c.d2) this.laneFoeCache.set(u.lane, { x: u.foe.x, y: u.foe.y, d2 });
+        }
         for (const [lane, L] of laneLeaders) {
-            if (this.search(L, 90, 0, false)) laneLeaders.delete(lane);
+            const laneFighting = this.men.some((u) => u.hp > 0 && u.f === L.f && u.lane === lane && u.foe && !('sprite' in u.foe) && u.foe.hp > 0);
+            if (laneFighting || this.search(L, MARCH_R, 0, false)) laneLeaders.delete(lane);
         }
 
         for (const m of this.men) {
@@ -8880,7 +8939,7 @@ export class Scene13WarLayer {
                 const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
                 const _contact = _d2 <= (Math.max(_rng, 65) + MARCH_SP) ** 2;
                 const keepInMarch = m.hero
-                    ? (this.marching && !(_d2 < 65 * 65 || hb || _contact))
+                    ? !_contact
                     : !_contact;
                 if (!keepInMarch) {
                     m.march = false;
@@ -8914,7 +8973,7 @@ export class Scene13WarLayer {
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
                 // 🔴 [2026-09-16 主人定] 野战第一波大部队还在行军（this.marching）时，玩家不独自 aimAt 冲锋
-                if (m.hero && this.marching) {
+                if (false && m.hero && this.marching) {
                     // 第一波跟随大部队行军，不主动向敌军重心单骑冲锋
                 } else if (this.heroOrderPending(m)) {
                     // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
@@ -9073,7 +9132,7 @@ export class Scene13WarLayer {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
                     const step = stats.spd * dt;
-                    if (stats.spd > 0 && d > Math.max(ARRIVE_EPS, step)) {
+                    if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); } else if (false) {
                         const nx = m.x + (dx / d) * step;
                         const ny = m.y + (dy / d) * step;
                         // 🔴 [2026-10-11 主人令] 陆战口径：水可通行 ⇒ 不再「遇到水体停在岸边，不踏入深水」
@@ -9482,10 +9541,10 @@ export class Scene13WarLayer {
                 //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = this.laneSlotTarget(m, laneLeaders);
-                const step = stats.spd * dt;
-                const arriveAt = slot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
+                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * dt;
+                const arriveAt = (slot || m.march) ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
-                    const mv = slot ? Math.min(step, d) : step;   // 跟随锚点：连续跟随，不迈整步
+                    const mv = (slot || m.march) ? Math.min(step, d) : step;   // 跟随锚点/列阵推进：连续跟随，不迈整步
                     m.x += dx / d * mv;
                     m.y += dy / d * mv;
                     // 连续跟随的步子很小（1~2px），朝向不能照小向量每帧重算 ——
@@ -9537,7 +9596,7 @@ export class Scene13WarLayer {
         //    这里只记录，渲染层据此改播待命帧；用累计时间而不是单帧，避免在走/停边界上每帧切动画。
         for (const m of this.men) {
             // 🔴 [2026-10-03 修·冲锋静止] 列阵推进中等待槽位不属于卡死堵路，不累加 stuckT
-            if (m.march) {
+            if (deploying || m.march) {
                 m.stuckT = 0;
                 m.netT = 0;
                 m.prevX = m.x; m.prevY = m.y;
@@ -10086,7 +10145,7 @@ export class Scene13WarLayer {
             //    marchTick 也 return，所以部署期全军（含列阵兵、攻城武器）都静止，应统一播 idle。
             //    之前误加 !m.march && !m.siegeW，让静止的列阵兵播走路帧 = 原地踏步/滑步。
             //    攻城武器真正开动是 deployT 归零后的 defenderHolding 打墙阶段，由下面 !m.siegeW 单独管。
-            if (this.lingering || this.deployT > 0 || (this.defenderHolding && !m.siegeW)) {
+            if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
@@ -10094,7 +10153,13 @@ export class Scene13WarLayer {
             //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
             // 首批列阵仍在整体推进时，骑兵会用自身高速追上按最慢兵种前移的槽位，随后多帧停在
             // ARRIVE_EPS 内等槽位继续前移；这不是堵死，不能因 stuckT 改播 idle，避免骑兵静止滑行。
-            else if (!m.march && m.stuckT > STUCK_IDLE_SEC && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
+            // 🔴 [2026-10-11 主人报「移动时贴图滑步、没有移动动作」] 原来只看 m.stuckT > STUCK_IDLE_SEC 就播 idle，
+            //    而 stuckT 是**部署期待命期间**累起来的 ⇒ 一开拔位移已发生、渲染却继续选 idle = 滑步
+            //    （塌墙函数里那条注释正是描述这个现象）。现在**再加一条「本帧真的没动」**才许播 idle：
+            //    |Δx|<0.5 且 |Δy|<0.5（prevX/prevY 是上一帧位置）⇒ 移动中永远播走路帧。
+            else if (!m.march && m.stuckT > STUCK_IDLE_SEC
+                && Math.abs(m.x - (m.prevX ?? m.x)) < 0.5 && Math.abs(m.y - (m.prevY ?? m.y)) < 0.5
+                && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
             else if (m.st === 0) {
