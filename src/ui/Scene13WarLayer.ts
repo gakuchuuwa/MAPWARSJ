@@ -2298,8 +2298,8 @@ const LANE_TRACK_EPS = 1;
  * 🔴 files 只决定「每排几个」，**不决定出兵数**：出兵数 = poolPer / popCost（见 spawns 那处）。
  *   只改 files 不改 popCost = 排得更窄更长，总兵额不变 → 兵力仍守恒。
  */
-const MARCH_FILES_DEFAULT = 6;
-const MARCH_FILES_WAGON = 4;
+const MARCH_FILES_DEFAULT = 9;   // 🔴 [2026-10-12 主人令「按9列×4排做」「应该是左右长」] 原 6（6×6 正方）
+const MARCH_FILES_WAGON = 9;   // 🔴 [2026-10-12 主人令「大体型兵种也改成左右长」选方案 2] 原 4（4×9 前后长）
 function marchFilesOf(key: string): number {
     return popCostOf(key) >= 2 ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
@@ -2316,6 +2316,9 @@ const MARCH_SP = 24;
 const MARCH_SP_DEPTH_MAX = 48;
 /** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
 function marchSpacingOf(key: string): number {
+    // 🔴 [2026-10-12 主人选方案 2「大体型兵种在 DE 里本来就是挤着走的，叠一点不难看」]
+    //    9 列 × 两倍半径（40~44）宽达 396px，压进隔壁队（出兵口只隔 300）⇒ 大体型列距收到 30（宽约 284），允许互叠
+    if (popCostOf(key) >= 2) return 30;
     const r = UNIT_RADIUS[key] ?? 8;
     return Math.max(MARCH_SP, r * 2 + 4);
 }
@@ -4422,7 +4425,7 @@ export class Scene13WarLayer {
                         const forwardOffset = (1 - cell.row) * depth;
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
-                        const colSpacing = Math.min(260, Math.max(240, spanY / 4));   // 🔴 [2026-10-11] 与排距 depth(240~280) 同档：横向间距过小 + 排距过大 = 全军被拉成一条纵柱（主人截图）
+                        const colSpacing = Math.min(320, Math.max(300, spanY / 4));   // 🔴 [2026-10-12 主人令「拉开队与队的间距」] 9 列方阵宽 216px，原 240~260 只剩 ~24px 空隙 ⇒ 300~320
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -4444,7 +4447,7 @@ export class Scene13WarLayer {
                     } else {
                         const back = mx + (2 - cell.row) * depth;
                         x = side.f === 0 ? back : VW - back;
-                        const colSpacing = Math.min(260, Math.max(240, spanY / 4));   // 🔴 [2026-10-11] 与排距 depth(240~280) 同档：横向间距过小 + 排距过大 = 全军被拉成一条纵柱（主人截图）
+                        const colSpacing = Math.min(320, Math.max(300, spanY / 4));   // 🔴 [2026-10-12 主人令「拉开队与队的间距」] 9 列方阵宽 216px，原 240~260 只剩 ~24px 空隙 ⇒ 300~320
                         y = midY + (cell.col - (cell.cols - 1) / 2) * colSpacing;
                     }
                     this.spawns.push({
@@ -7515,10 +7518,10 @@ export class Scene13WarLayer {
                 // 战车 4 排若也用 44 就是 132px，窄屏（1366→102px）会直接压到前后排的口上。
                 // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
                 const sp = marchSpacingOf(s.key);
-                // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 等距纵深补偿：世界 y 在屏幕上**减半**显示，
-                //    若行距＝列距，6×6 的方块在屏幕上会变成 2:1 的扁条（看着就是「一排」）。
-                //    故行距取列距的 2 倍 ⇒ 屏幕上呈正方。
-                const spDep = Math.min(sp * 2, MARCH_SP_DEPTH_MAX);
+                // 🔴 [2026-10-12 主人「现在的方阵有问题，是前后长，应该是左右长」「先试A」]
+                //    原「行距取列距 2 倍」（2026-10-11）实测（scratch 探针，攻城战弋阳）：方阵纵深 82 / 横向 41，
+                //    前后是左右的 2 倍，且同排兵上下叠成竖线、排间露空 ⇒ 看着「一条一条」。改为行距＝列距。
+                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
                 // 🔴 [2026-10-11 主人令「你看看以前的13战术模式是如何排列的」]
                 //    旧 13 的排法（`!useFieldPlan` 那条路）就是：**每队 = rank×spDep 行 × slotY 列，
                 //    整块贴在出兵口、向后方排开**（`spawnX = s.x ± dep`、`spawnY = s.y + slotY`）。
@@ -8345,8 +8348,7 @@ export class Scene13WarLayer {
         for (let f = 0; f < 2; f++) if (spdMin[f] < Infinity) this.adv[f] += spdMin[f] * dt;
         // 前锋线 = 本方最靠前那排出兵口的 x ± 已推进距离。
         // 阵型是刚体，直接由锚点算即可，不受个别掉队/落单兵影响（拿存活兵均值算会被拖后腿）。
-        const useFieldPlan = true;
-        if (useFieldPlan && this.spawnBases) {
+        if (this.spawnBases) {
             const baseDist = Math.hypot(this.spawnBases[1].x - this.spawnBases[0].x, this.spawnBases[1].y - this.spawnBases[0].y);
             let front0 = 0, front1 = 0;
             const u0 = this.advanceVec[0], u1 = this.advanceVec[1];
@@ -8367,27 +8369,6 @@ export class Scene13WarLayer {
                 for (const m of this.men) {
                     m.march = false;   // 全军同时解除，双方一起炸开接战
                     m.noFoeSec = LANE_REGROUP_SEC;
-                    m.stuckT = 0;
-                    m.netT = 0;
-                }
-            }
-        } else {
-            let front0 = -Infinity, front1 = Infinity;
-            for (const sp of this.spawns) {
-                if (sp.f === 0) front0 = Math.max(front0, sp.x + this.adv[0]);
-                else front1 = Math.min(front1, sp.x - this.adv[1]);
-            }
-            // 🔴 [2026-10-11 主人报「开战前是方阵，**当攻城武器开始移动的时候，所有方阵瞬间拥挤在一起**」]
-            //    原判据 `front1 - front0 < MARCH_REL` **假定两军出生点分居 x 左右**（旧 13 布阵）：
-            //    攻方在西（x 小）、守方在东（x 大）⇒ 差值为正，只有真正逼近才解除。
-            //    但新八方向／攻城布局下**攻方可以在东、守方在城心** ⇒ 差值**一开始就是负数**，
-            //    永远 `< MARCH_REL` ⇒ **列阵推进当场被解除**，全军立刻各自扑向同一个目标
-            //    = 主人看到的「瞬间挤在一起」（野战走上面那支带 15 秒保底的判据，所以野战不出这毛病）。
-            //    改成按**前后沿的绝对间距**判 + 与野战同款 15 秒保底。
-            if (Math.abs(front1 - front0) < MARCH_REL || this.battleSec >= 15.0) {
-                this.marching = false;
-                for (const m of this.men) {
-                    m.march = false;   // 全军同时解除，双方一起炸开接战
                     m.stuckT = 0;
                     m.netT = 0;
                 }
@@ -8534,30 +8515,16 @@ export class Scene13WarLayer {
      * 🔴 航点表**只此一份**：aimAt（走路用）与 markRouteArrival（到点判定用）共用，不许各写一份。
      */
     private routeWaypoint(m: WarMan): { x: number; y: number } {
-        const vw = this.canvas?.width ?? 1920;
-        const vh = this.canvas?.height ?? 1080;
-        const useFieldPlan = true;
-        if (useFieldPlan && this.spawnBases) {
-            const foeBase = this.spawnBases[1 - m.f];
-            const homeBase = this.spawnBases[m.f];
-            const uSide = this.sideVec[m.f];
-            const sideOff = (m.slotY ?? 0);
-            const mid = { x: (homeBase.x + foeBase.x) / 2, y: (homeBase.y + foeBase.y) / 2 };
-            const route = [
-                { x: foeBase.x + uSide.x * sideOff, y: foeBase.y + uSide.y * sideOff },
-                mid,
-                { x: homeBase.x - uSide.x * sideOff, y: homeBase.y - uSide.y * sideOff },
-                mid,
-            ];
-            return route[this.routeWp[m.f] % route.length];
-        }
-        const homeX = m.f === 0 ? vw * 0.07 : vw * 0.93;   // 己方底边
-        const foeX = m.f === 0 ? vw * 0.93 : vw * 0.07;    // 敌方底边
+        const foeBase = this.spawnBases[1 - m.f];
+        const homeBase = this.spawnBases[m.f];
+        const uSide = this.sideVec[m.f];
+        const sideOff = (m.slotY ?? 0);
+        const mid = { x: (homeBase.x + foeBase.x) / 2, y: (homeBase.y + foeBase.y) / 2 };
         const route = [
-            { x: foeX, y: m.y0 },
-            { x: vw / 2, y: vh / 2 },
-            { x: homeX, y: vh - m.y0 },
-            { x: vw / 2, y: vh / 2 },
+            { x: foeBase.x + uSide.x * sideOff, y: foeBase.y + uSide.y * sideOff },
+            mid,
+            { x: homeBase.x - uSide.x * sideOff, y: homeBase.y - uSide.y * sideOff },
+            mid,
         ];
         return route[this.routeWp[m.f] % route.length];
     }
@@ -8617,19 +8584,12 @@ export class Scene13WarLayer {
         if (!leader || leader === m) return null;
         if (!m.hero && (m.noFoeSec ?? 0) < LANE_REGROUP_SEC) return null;
         if (this.heroOrderPending(m)) return null;
-        const useFieldPlan = true;
-        let sx: number, sy: number;
-        if (useFieldPlan) {
-            const uFwd = this.advanceVec[m.f];
-            const uSide = this.sideVec[m.f];
-            const dDep = m.dep - leader.dep;
-            const dSide = m.slotY - leader.slotY;
-            sx = leader.x - uFwd.x * dDep + uSide.x * dSide;
-            sy = leader.y - uFwd.y * dDep + uSide.y * dSide;
-        } else {
-            sx = leader.x + (m.f === 0 ? -(m.dep - leader.dep) : (m.dep - leader.dep));
-            sy = leader.y + (m.slotY - leader.slotY);
-        }
+        const uFwd = this.advanceVec[m.f];
+        const uSide = this.sideVec[m.f];
+        const dDep = m.dep - leader.dep;
+        const dSide = m.slotY - leader.slotY;
+        const sx = leader.x - uFwd.x * dDep + uSide.x * dSide;
+        const sy = leader.y - uFwd.y * dDep + uSide.y * dSide;
         return this.fieldBound(sx, sy);
     }
 
@@ -8817,7 +8777,7 @@ export class Scene13WarLayer {
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
             // 每批每口 36 个精灵（SIDE_CAP ÷ SIDE_LANES）→ 排数 = 36 ÷ 列数
             const sp = marchSpacingOf(m.key);
-            const spDep = Math.min(sp * 2, MARCH_SP_DEPTH_MAX);
+            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);   // 与出兵排阵同一式（行距＝列距）
             const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
             const depC = ((ranks - 1) / 2) * spDep;
             const ey = m.slotY / sp;
@@ -8982,10 +8942,7 @@ export class Scene13WarLayer {
                 const _rng = this.statsFor(m.key, m.f).rng ?? 0;
                 const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
                 const _contact = _d2 <= (Math.max(_rng, 65) + MARCH_SP) ** 2;
-                const keepInMarch = m.hero
-                    ? !_contact
-                    : !_contact;
-                if (!keepInMarch) {
+                if (_contact) {
                     m.march = false;
                     m.port = null;
                     m.stuckT = 0;
@@ -8998,28 +8955,18 @@ export class Scene13WarLayer {
             if (m.march && m.port && !holdCmd) {
                 // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
                 //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
-                const useFieldPlan = true;
-                let sx: number, sy: number;
-                if (useFieldPlan) {
-                    const uFwd = this.advanceVec[m.f];
-                    const uSide = this.sideVec[m.f];
-                    const fwdDist = this.adv[m.f] - m.dep;
-                    sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
-                    sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
-                    // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
-                } else {
-                    sx = m.port.x + (m.f === 0 ? this.adv[0] - m.dep : -this.adv[1] + m.dep);
-                    sy = m.port.y + m.slotY;
-                }
+                const uFwd = this.advanceVec[m.f];
+                const uSide = this.sideVec[m.f];
+                const fwdDist = this.adv[m.f] - m.dep;
+                const sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
+                const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
+                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                 [m.tx, m.ty] = this.fieldBound(sx, sy);
             } else if (!m.foe && !holdCmd) {
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
-                // 🔴 [2026-09-16 主人定] 野战第一波大部队还在行军（this.marching）时，玩家不独自 aimAt 冲锋
-                if (false && m.hero && this.marching) {
-                    // 第一波跟随大部队行军，不主动向敌军重心单骑冲锋
-                } else if (this.heroOrderPending(m)) {
+                if (this.heroOrderPending(m)) {
                     // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
                     //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
                     //    什么都不做 = 目标点保持玩家点下的那一个。
@@ -9181,14 +9128,7 @@ export class Scene13WarLayer {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
                     const step = stats.spd * dt;
-                    if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); } else if (false) {
-                        const nx = m.x + (dx / d) * step;
-                        const ny = m.y + (dy / d) * step;
-                        // 🔴 [2026-10-11 主人令] 陆战口径：水可通行 ⇒ 不再「遇到水体停在岸边，不踏入深水」
-                        m.x = nx;
-                        m.y = ny;
-                        m.dir = this.dir8(dx, dy);
-                    }
+                    if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -9853,30 +9793,18 @@ export class Scene13WarLayer {
             this.corpses.push({ x: m.x, y: m.y, f: m.f, key: m.key, dir: Math.floor(Math.random() * 8), t: 0 });
             return;
         }
-        const useFieldPlan = true;
-        if (useFieldPlan) {
-            const uBack = { x: -this.advanceVec[m.f].x, y: -this.advanceVec[m.f].y };
-            const uSide = this.sideVec[m.f];
-            const jitter = (Math.random() - 0.5) * 0.4;
-            const spd = FLEE_SPD * (0.9 + Math.random() * 0.2);
-            const vx = (uBack.x + uSide.x * jitter) * spd;
-            const vy = (uBack.y + uSide.y * jitter) * spd;
-            this.fleers.push({
-                x: m.x, y: m.y, f: m.f, key: m.key,
-                dir: this.dir8(vx, vy),
-                ph: Math.random() * 8, t: 0,
-                vx, vy,
-            });
-        } else {
-            const back = m.f === 0 ? -1 : 1;   // 攻方在左往左逃、守方在右往右逃
-            this.fleers.push({
-                x: m.x, y: m.y, f: m.f, key: m.key,
-                dir: this.dir8(back, (Math.random() - 0.5) * 0.8),
-                ph: Math.random() * 8, t: 0,
-                vx: back * FLEE_SPD * (0.9 + Math.random() * 0.2),
-                vy: (Math.random() - 0.5) * FLEE_SPD * 0.6,
-            });
-        }
+        const uBack = { x: -this.advanceVec[m.f].x, y: -this.advanceVec[m.f].y };
+        const uSide = this.sideVec[m.f];
+        const jitter = (Math.random() - 0.5) * 0.4;
+        const spd = FLEE_SPD * (0.9 + Math.random() * 0.2);
+        const vx = (uBack.x + uSide.x * jitter) * spd;
+        const vy = (uBack.y + uSide.y * jitter) * spd;
+        this.fleers.push({
+            x: m.x, y: m.y, f: m.f, key: m.key,
+            dir: this.dir8(vx, vy),
+            ph: Math.random() * 8, t: 0,
+            vx, vy,
+        });
     }
 
     /**
