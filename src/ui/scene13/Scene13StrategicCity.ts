@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」「攻击方出现在地图的攻击方向，防守方在地图的中间」]
  *
  * 新战术模式（WebGL 地面）攻城战：守方城池 = 战略地图上该据点的**同一份**建筑栈（TerritorySystem.buildCityStackInnerHtml），
@@ -11,7 +11,7 @@
 import type { City } from '../../types/core';
 import { cityStackParams, buildCityStackInnerHtml, type CityNativeSizes } from '../../systems/TerritorySystem';
 import { resolveCastleAsset } from '../../config/deCastleAssets';
-import { DE_STONE_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS } from '../../systems/cityWallShared';
+import { DE_STONE_ANCHORS_BY_STYLE, DE_FORTIFIED_ANCHORS_BY_STYLE, DE_PALISADE_ANCHORS, DE_DARK_PALISADE_ANCHORS, DE_ARCHAIC_PALISADE_ANCHORS } from '../../systems/cityWallShared';
 import { DE_SPRITE_BOX_W } from '../../systems/battlefield/deSpriteSizes';
 import type { RegionType } from '../../systems/RegionSystem';
 
@@ -73,7 +73,7 @@ function pxOf(expr: string): number {
  * **战略地图不传这张表，一个像素不动。**
  */
 function buildNativeSizes(city: City, deStyle: string): CityNativeSizes | undefined {
-    const ages: Array<'AGE2' | 'AGE3'> = ['AGE2', 'AGE3'];
+    const ages: Array<'AGE2' | 'AGE3' | 'AGE4'> = ['AGE2', 'AGE3', 'AGE4'];   // 🔴 大城用 AGE4（帝国时代）
     const names = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY', 'TOWER'];
     let castleDir: string | null = null;
     if (city.type !== 'small_city') {
@@ -93,6 +93,7 @@ function buildNativeSizes(city: City, deStyle: string): CityNativeSizes | undefi
         }
     };
     addAnchorDirs(DE_STONE_ANCHORS_BY_STYLE[deStyle]);
+    addAnchorDirs(DE_FORTIFIED_ANCHORS_BY_STYLE[deStyle]);   // 大城的加固墙/双塔门走这一套
     addAnchorDirs(DE_PALISADE_ANCHORS);
     addAnchorDirs(DE_DARK_PALISADE_ANCHORS);
     addAnchorDirs(DE_ARCHAIC_PALISADE_ANCHORS);

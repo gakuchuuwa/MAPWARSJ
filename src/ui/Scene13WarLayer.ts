@@ -5863,7 +5863,9 @@ export class Scene13WarLayer {
                 // 默认坐标：严格置于战场最底部边缘、南翼斜城墙正下方，绝不遮挡中央冲锋路线、城门通道与出兵口
                 const mX = this.passMountainConfig.x ?? (wallFrontX + 230);
                 const mY = this.passMountainConfig.y ?? (botWallY + 230);
-                const mScale = this.passMountainConfig.scale ?? 1.2;
+                // 🔴 [2026-10-11 主人令「它是地貌装饰不是建筑——要也拉回 1.0」] 险要山体默认缩放 1.2 → **1.0**
+                //    （第 116 轮曾按「回滚被改坏的」恢复成 1.2；本轮按主人令统一到 DE 原生 100%）
+                const mScale = this.passMountainConfig.scale ?? 1.0;
                 const mFlip = this.passMountainConfig.flip ?? (Math.random() > 0.5);
                 this.decorSprites.push({
                     asset: mAsset,
