@@ -4442,8 +4442,15 @@ refresh();
             msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → ' + (TYPE_CN[ctype.value] || ctype.value) + ' / 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + (fields.mirror !== undefined ? ' / 镜像 ' + (fields.mirror ? '开' : '关') : '') + '（正在刷新预览…）';
             // 本页是静态页、不 import cities_v2.ts → Vite 不会自动重载 ✗，所以保存成功后自己刷新一次；
             // 选择已存 localStorage，刷新后会回到原处（下面 render(true) 那套恢复逻辑）。
-            setTimeout(function () { location.reload(); }, 700); }
-          else { msg.style.color = '#fc8181'; msg.textContent = '❌ ' + (res.error || '保存失败'); }
+            // 🔴 [2026-10-11 主人令「修改据点属性，保存后刷新特别慢，请优化」]
+            //    改前：保存成功就 `location.reload()` —— 本页 260KB 单页，重载要重解析整页、
+            //    重拉 de_buildings_catalog.json、重渲染整座据点堆栈；改一个属性就全量重来一遍。
+            //    而上面已经把 CITIES 里的那条**就地更新**了 ⇒ 直接 `render(true)` 就地重渲染即可
+            //    （重建下拉 + syncFromCity 刷新预览），选择已 remember() 在 localStorage，位置不丢。
+            //    万一就地刷新出错，再退回整页重载兜底。
+            try { render(true); msg.textContent += '（已就地刷新）'; }
+            catch (e) { location.reload(); }
+          } else { msg.style.color = '#fc8181'; msg.textContent = '❌ ' + (res.error || '保存失败'); }
         }).catch(function (e) { msg.style.color = '#fc8181'; msg.textContent = '❌ ' + e.message; });
     });
     fetch('/api/entity-data').then(function (r) { return r.json(); }).then(function (d) {

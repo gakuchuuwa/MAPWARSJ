@@ -141,9 +141,12 @@ export class WorldMiniMap {
             zoomSnap: 0,
             zoomAnimation: false,
             fadeAnimation: false,
-            worldCopyJump: false,
+            // 🔴 [2026-10-11 主人报「小地图不循环，请修复」] 小地图自己那份瓦片层此前是
+            //    `worldCopyJump:false` + 瓦片 `noWrap:true` ⇒ 过了 180° 经线就是空白
+            //    （截图里右下角那块「map data not available」）。与大地图同款：开循环、去 noWrap。
+            worldCopyJump: true,
         });
-        L.tileLayer(BASE_URL, { noWrap: true, minZoom: 0, maxZoom: 8 }).addTo(this.mini);
+        L.tileLayer(BASE_URL, { minZoom: 0, maxZoom: 8 }).addTo(this.mini);
         this.mini.createPane("wm-territory").style.zIndex = "350";
         this.viewRect = L.rectangle([[0, 0], [0, 0]], { color: '#f5d77a', weight: 1.5, fill: false, interactive: false }).addTo(this.mini);
         this.trail = L.polyline([], { color: '#e8452c', weight: 2, opacity: 0.9, interactive: false }).addTo(this.mini);
@@ -155,7 +158,13 @@ export class WorldMiniMap {
         // 🔴 [2026-10-11 主人令「小地图显示的比例和位置应该和大地图一直保持一致」]
         //    改前：视口框只在「展开」且**每 4 拍**才更新一次（tick 里早退在更新之前）⇒ 收起时是旧框、
         //    拖动/缩放大地图时框滞后。现改为**跟随大地图的 move/zoom 事件实时同步**，与是否展开无关。
-        const syncViewRect = () => this.viewRect.setBounds(this.mainMap.getBounds());
+        const syncViewRect = () => {
+            this.viewRect.setBounds(this.mainMap.getBounds());
+            // 🔴 [2026-10-11 主人报「拖战略大地图，小地图不跟着动」] 小地图**视野**也一起跟：
+            //    tick 里那句 `if (hide || !this.expanded) return;` 在**收起状态就早退了**，
+            //    所以普通（收起）小地图从来不会跟随 —— 这里挂在 move/zoom 事件上，收起时也跟。
+            if (!this.isTactical()) this.applyView();
+        };
         this.mainMap.on('move zoom moveend zoomend', syncViewRect);
         this.mainMap.on('resize', syncViewRect);
         syncViewRect();
@@ -261,14 +270,21 @@ export class WorldMiniMap {
         this.applyView();
     }
 
-    /** 级别 1 固定显示全世界；2～9 以玩家为中心 */
+    /**
+     * 级别 1 固定显示全世界；2～9 **以大地图当前视野为中心**。
+     * 🔴 [2026-10-11 主人报「我用鼠标拖拽战略大地图，小地图不跟着动」]
+     *    改前：这里用 `getPlayerPos()`（以玩家为中心）⇒ 拖大地图时小地图纹丝不动。
+     *    改后：中心取 `mainMap.getCenter()` ⇒ 大地图拖到哪，小地图就跟到哪；
+     *    拿不到大地图中心时（极端兜底）才退回玩家位置。
+     */
     private applyView(): void {
         if (this.level <= LEVEL_MIN) {
             this.mini.setView([20, 0], FIT_ZOOM, { animate: false });
             return;
         }
-        const p = this.getPlayerPos() ?? this.mainMap.getCenter();
-        this.mini.setView([p.lat, p.lng], this.level - 1, { animate: false });
+        const c = (() => { try { return this.mainMap.getCenter(); } catch { return null; } })() ?? this.getPlayerPos();
+        if (!c) return;
+        this.mini.setView([c.lat, c.lng], this.level - 1, { animate: false });
     }
 
     private tick(): void {
