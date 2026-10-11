@@ -849,8 +849,8 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
     // 城墙绕城一圈（S=6；城门与城墙自然咬合；随机三种之一：样式一普通双门 / 样式二普通四门 / 样式三加固双塔四门）
     const wallPieces = isFortified
-        ? computeFortifiedWallAndGate(baseSize, 6)
-        : computePalisadeWallAndGate(baseSize, 6, isFourGates);
+        ? computeFortifiedWallAndGate(baseSize, 11)   // 🔴 [2026-10-11 主人「该修复的修复」] 尺寸分级：中城墙圈必须大于小城(S=9) ⇒ S=11
+        : computePalisadeWallAndGate(baseSize, 11, isFourGates);
     if (!isFourGates && rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
@@ -960,7 +960,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     });
 
     // 加固城墙绕城一圈（S=7，比中城 6 更外扩；大城用加固垛墙体系与两翼双角楼门楼体系）
-    const wallPieces = computeFortifiedWallAndGate(baseSize, 7);
+    const wallPieces = computeFortifiedWallAndGate(baseSize, 13);   // 🔴 [2026-10-11] 尺寸分级：大城墙圈必须大于中城(S=11) ⇒ S=13
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }
