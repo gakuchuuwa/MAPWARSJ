@@ -797,14 +797,15 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         enforceAllObjectSpacing(objects);
         attachDeObjectObstruction(objects);
         // 地面层四张基底素材：与 baseTerrain 同一份气候主题表，算好一次，渲染层两处共用
+        const themeWater = waterTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng);
         const groundTiles: Partial<Scene13GroundTiles> = {
             grass: baseTerrain,
             sand: beachTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
             forest: forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
-            // 🔴 [2026-08-22 主人定] 绿是河、蓝是海：内陆河湖沿用墨绿 river_clean_green，海与无水域走主题水色
-            water: (waterKind === 'river' || waterKind === 'lake')
-                ? 'river_clean_green'
-                : waterTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
+            // 🔴 [2026-08-22 主人定] 绿是河、蓝是海；冬季封冻冰面(ic2/ice)与沼泽水(wt6)优先保留主题本色
+            water: (themeWater === 'ic2' || themeWater === 'ice' || themeWater === 'wt6')
+                ? themeWater
+                : ((waterKind === 'river' || waterKind === 'lake') ? 'river_clean_green' : themeWater),
         };
         return {
             seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
@@ -965,72 +966,49 @@ function generateElevation(
     }
     const hills: HillSpec[] = [];
 
-    // 1. 大丘陵（低概率 0 ~ 1 个，高海拔 1 ~ 2 个）
-    let largeCount = 0;
-    if (elev !== null && elev >= 800) {
-        largeCount = rng.chance(0.60) ? rng.int(1, 2) : 0;
-    } else if (elev !== null && elev >= 300) {
-        largeCount = rng.chance(0.35) ? 1 : 0;
-    } else {
-        largeCount = rng.chance(0.25) ? 1 : 0;
-    }
-
-    if (largeCount === 1) {
+    // 1. 中央主高地（大概率 ~68% 位于地图中心地带，高海拔可达 82%，非绝对死板）
+    const centerProb = (elev !== null && elev >= 800) ? 0.82 : (elev !== null && elev >= 300) ? 0.72 : 0.65;
+    if (rng.chance(centerProb)) {
         hills.push({
-            regionX: 0.42 + (rng.next() - 0.5) * 0.16,
-            regionY: 0.48 + (rng.next() - 0.5) * 0.16,
-            rx: 11.0 + rng.next() * 4.0, // 11 ~ 15 格宏大跨度
-            ry: 7.5 + rng.next() * 2.8,  // 7.5 ~ 10.3 格纵向跨度
-            hMax: (elev !== null && elev >= 800) ? 3 : 2,
-        });
-    } else if (largeCount === 2) {
-        hills.push({
-            regionX: 0.33 + (rng.next() - 0.5) * 0.10,
-            regionY: 0.38 + (rng.next() - 0.5) * 0.10,
-            rx: 9.0 + rng.next() * 3.0,
-            ry: 6.0 + rng.next() * 2.2,
-            hMax: (elev !== null && elev >= 800) ? 3 : 2,
-        });
-        hills.push({
-            regionX: 0.63 + (rng.next() - 0.5) * 0.10,
-            regionY: 0.60 + (rng.next() - 0.5) * 0.10,
-            rx: 9.0 + rng.next() * 3.0,
-            ry: 6.0 + rng.next() * 2.2,
-            hMax: (elev !== null && elev >= 800) ? 3 : 2,
+            regionX: 0.50 + (rng.next() - 0.5) * 0.08,
+            regionY: 0.50 + (rng.next() - 0.5) * 0.08,
+            rx: 12.0 + rng.next() * 3.5, // 12 ~ 15.5 格中央高地跨度，足以托起中心城池
+            ry: 8.2 + rng.next() * 2.5,  // 8.2 ~ 10.7 格纵向跨度
+            hMax: (elev !== null && elev >= 600) ? 3 : (rng.chance(0.35) ? 3 : 2),
         });
     }
 
-    // 2. 中丘陵（中等概率 1 ~ 3 个）
-    const mediumCount = rng.int(1, 3);
-    const medSlots = [
-        { x: 0.32, y: 0.35 },
-        { x: 0.62, y: 0.58 },
-        { x: 0.36, y: 0.68 },
-        { x: 0.60, y: 0.32 },
-        { x: 0.48, y: 0.50 },
+    // 2. 外围中丘陵（按 4 象限对角均匀分布 2 ~ 4 个，避免扎堆某角或半场留白）
+    const medQuadrants = [
+        { x: 0.28, y: 0.30 },
+        { x: 0.72, y: 0.30 },
+        { x: 0.28, y: 0.70 },
+        { x: 0.72, y: 0.70 },
     ];
-    const shuffledSlots = [...medSlots].sort(() => rng.next() - 0.5);
+    const startQ = rng.int(0, 3);
+    const mediumCount = rng.int(2, 4);
     for (let i = 0; i < mediumCount; i++) {
-        const slot = shuffledSlots[i % shuffledSlots.length];
+        const slot = medQuadrants[(startQ + i) % 4];
         hills.push({
-            regionX: slot.x + (rng.next() - 0.5) * 0.12,
-            regionY: slot.y + (rng.next() - 0.5) * 0.12,
-            rx: 5.5 + rng.next() * 2.8,  // 5.5 ~ 8.3 格
-            ry: 3.8 + rng.next() * 2.0,  // 3.8 ~ 5.8 格
-            hMax: (i === 0 && elev !== null && elev >= 800) ? 3 : 2,
+            regionX: slot.x + (rng.next() - 0.5) * 0.09,
+            regionY: slot.y + (rng.next() - 0.5) * 0.09,
+            rx: 5.5 + rng.next() * 2.5,  // 5.5 ~ 8.0 格
+            ry: 3.8 + rng.next() * 1.8,  // 3.8 ~ 5.6 格
+            hMax: 2,
         });
     }
 
-    // 3. 小丘陵（高频出现 4 ~ 8 个微地形起伏群）
-    const smallCount = rng.int(4, 8);
+    // 3. 外围小丘陵（按 8 扇区环形均匀分布 6 ~ 8 个微地形起伏群）
+    const smallCount = rng.int(6, 8);
+    const sectorOffset = rng.next() * Math.PI * 2;
     for (let i = 0; i < smallCount; i++) {
-        const col = i % 3;
-        const row = Math.floor(i / 3);
+        const theta = sectorOffset + (i / smallCount) * Math.PI * 2 + (rng.next() - 0.5) * 0.35;
+        const rad = 0.26 + rng.next() * 0.08;
         hills.push({
-            regionX: col * 0.22 + 0.28 + (rng.next() - 0.5) * 0.12,
-            regionY: row * 0.24 + 0.26 + (rng.next() - 0.5) * 0.12,
-            rx: 2.6 + rng.next() * 1.8,  // 2.6 ~ 4.4 格
-            ry: 1.8 + rng.next() * 1.3,  // 1.8 ~ 3.1 格
+            regionX: 0.50 + Math.cos(theta) * rad,
+            regionY: 0.50 + Math.sin(theta) * rad,
+            rx: 2.8 + rng.next() * 1.6,  // 2.8 ~ 4.4 格
+            ry: 1.9 + rng.next() * 1.2,  // 1.9 ~ 3.1 格
             hMax: 1,                     // 纯 1 档微起伏
         });
     }
