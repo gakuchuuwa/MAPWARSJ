@@ -208,12 +208,23 @@ function startScene13War(
         if (distKm >= 2.0) return pos;
         const entity = u.getEntity?.();
         if (Array.isArray(entity?.lastPath) && entity.lastPath.length > 0) {
-            for (let i = entity.lastPath.length - 1; i >= 0; i--) {
+            // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
+            //    **必须取「进 2km 圈之前的那一点」**—— 交战半径=2km（与上面 `distKm >= 2.0`、与
+            //    Scene13WarLayer 用同一门槛），那一点才是这支军队**最后一段来向**。
+            // 🔴 原判据取的是**反方向那一点**：`lastPath` 的顺序是 [起始位置 … 城侧]
+            //    （`buildRoadMarchPath` 把城锚点收在末尾，实测末点距城 0.0km），
+            //    「从尾部往前扫、取第一个 ≥2km 的点」命中的是**很久以前**的某个路点
+            //    （军团在城下停驻后城锚点也在末尾 ⇒ 一退就退到几十上百公里外），
+            //    于是八方里差出几十度，看着就是「东北来的出现在西边」。
+            //    改成「从起点往后扫、记最后一个 ≥2km 的点」，即贴着城的那一个路点，
+            //    与 `src/systems/battlefield/spawnPlan.mjs` 里「来向 = 城 → 来处」同一口径。
+            let lastOutside: { lat: number; lng: number } | null = null;
+            for (let i = 0; i < entity.lastPath.length - 1; i++) {
                 const wp = entity.lastPath[i];
                 const wDist = Math.hypot((wp.lat - center.lat) * 111.32, (wp.lng - center.lng) * 111.32 * Math.cos((center.lat * Math.PI) / 180));
-                if (wDist >= 2.0) return wp;
+                if (wDist >= 2.0) lastOutside = wp;
             }
-            return entity.lastPath[0];
+            return lastOutside ?? entity.lastPath[0];
         }
         if (entity?.lastPosition && Number.isFinite(entity.lastPosition.lat) && Number.isFinite(entity.lastPosition.lng)) {
             return entity.lastPosition;

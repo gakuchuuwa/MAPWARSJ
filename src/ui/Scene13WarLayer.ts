@@ -5484,7 +5484,9 @@ export class Scene13WarLayer {
         const release = () => { if (released) return; released = true; if (gen === this.assetGen) this.pending--; };
         window.setTimeout(release, 8000);
         if (this.deCityGround) { this.deCityGround.remove(); this.deCityGround = null; }
-        this.deCityGround = strategicCityGroundElement(c);
+        if (this.defenderCityType !== 'stockade') {
+            this.deCityGround = strategicCityGroundElement(c);
+        }
         void measureStrategicCity(c).then(async (pieces) => {
             if (gen !== this.assetGen || this.deCity !== c) return;
             const metas = await Promise.all(pieces.map((p) =>
@@ -10189,6 +10191,16 @@ export class Scene13WarLayer {
             //    攻城武器真正开动是 deployT 归零后的 defenderHolding 打墙阶段，由下面 !m.siegeW 单独管。
             if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
+            }
+            // 🔴 [2026-10-11 主人令「攻城30秒，守方等待的时候，请使用待机动作」] 攻城战开战前 30 秒
+            //    （defenderHolding，见 step 里那条「守方不要动」）守方被钉在原地，位移恒为 0 ⇒ 下面
+            //    `m.stuckT > STUCK_IDLE_SEC` 那条因为 `deploying || m.march` 每帧清 stuckT 而永不成立，
+            //    于是落进 `m.st === 0 → move`，360 个守兵原地迈腿（探针实测 0~25s 全部 move）。
+            //    这里按同一个判据（战场类型 + 阵营 + defenderHolding）直接选待机帧；没有 idle 素材的
+            //    退回 move，与上面部署期/残局待命同口径。
+            else if (this.battleType === 'siege' && m.f === 1 && this.defenderHolding
+                && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
+                set = 'idle';
             }
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
             //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
