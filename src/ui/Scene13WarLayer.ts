@@ -4318,8 +4318,21 @@ export class Scene13WarLayer {
                     console.warn(`[Scene13War] 缺少真实来处经纬度数据，八方向出兵退回旧 13 左右布阵 (center=${centerLat},${centerLng}; att=${attFromLat},${attFromLng})`);
                     useFieldPlan = false;
                 } else {
+                    // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
+                    //    八方向派生的**原点必须是城**，不是战场中心：本层把城摆在屏幕正中
+                    //    （`deCityCenter = {x: VW/2, y: VH/2}`），而 `init.centerLat/Lng` 是**跟拍军团的渲染中心**
+                    //    （`battleSceneTarget` → `getRenderedCenter(跟随单位.id)`，攻城外推后离城十几到几十公里）。
+                    //    实测一场真机攻城战：城 43.76,11.25 ｜ center 43.6798,11.4807（离城 20.6km）
+                    //    ｜ 攻方 43.6793,11.4814（在城南 20.7km，与 center 同一格）。
+                    //    拿 center 当原点算出来的「来向」与「城→来处」差出一大截，`planSpawns` 再按这个方向
+                    //    把攻方基座摆到原点外 1500~2000px ⇒ 攻方整支落到城的**另一侧**，看着就是
+                    //    「东北杀来、出现在西边」。改成用被攻据点的坐标当原点，与 `spawnPlan.mjs`
+                    //    头注「方位角由战场中心（＝城）→该军来处算出」同一口径。
+                    const planCenter = (this.deCity && typeof init.defenderCityLat === 'number' && typeof init.defenderCityLng === 'number')
+                        ? { lat: init.defenderCityLat, lng: init.defenderCityLng }
+                        : { lat: centerLat, lng: centerLng };
                     const plan = planSpawns({
-                        center: { lat: centerLat, lng: centerLng },
+                        center: planCenter,
                         attackerFrom: { lat: attFromLat, lng: attFromLng },
                         defenderFrom: defFromLat && defFromLng ? { lat: defFromLat, lng: defFromLng } : null,
                         battleType: this.deCity ? 'siege' : 'field',

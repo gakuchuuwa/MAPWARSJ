@@ -189,8 +189,8 @@ function startScene13War(
     }
 
     // 双方战略地图来向解析：距中心不足 2km 时沿 lastPath 倒查历史路点；攻城战守方即据点
-    const resolveOrigin = (u: any, isDefenderSiege: boolean): { lat: number; lng: number } | undefined => {
-        if (!center) return undefined;
+    const resolveOrigin = (u: any, isDefenderSiege: boolean, ref?: { lat: number; lng: number }): { lat: number; lng: number } | undefined => {
+        if (!ref) return undefined;
         if (isDefenderSiege) {
             if (typeof defenderCityLat === 'number' && typeof defenderCityLng === 'number') {
                 return { lat: defenderCityLat, lng: defenderCityLng };
@@ -202,37 +202,39 @@ function startScene13War(
             ?? u?.getEntity?.()?.getPosition?.()
             ?? null;
         if (!pos) return undefined;
-        const dLat = (pos.lat - center.lat) * 111.32;
-        const dLng = (pos.lng - center.lng) * 111.32 * Math.cos((center.lat * Math.PI) / 180);
+        const dLat = (pos.lat - ref.lat) * 111.32;
+        const dLng = (pos.lng - ref.lng) * 111.32 * Math.cos((ref.lat * Math.PI) / 180);
         const distKm = Math.hypot(dLat, dLng);
         if (distKm >= 2.0) return pos;
         const entity = u.getEntity?.();
         if (Array.isArray(entity?.lastPath) && entity.lastPath.length > 0) {
-            // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
-            //    **必须取「进 2km 圈之前的那一点」**—— 交战半径=2km（与上面 `distKm >= 2.0`、与
-            //    Scene13WarLayer 用同一门槛），那一点才是这支军队**最后一段来向**。
-            // 🔴 原判据取的是**反方向那一点**：`lastPath` 的顺序是 [起始位置 … 城侧]
-            //    （`buildRoadMarchPath` 把城锚点收在末尾，实测末点距城 0.0km），
-            //    「从尾部往前扫、取第一个 ≥2km 的点」命中的是**很久以前**的某个路点
-            //    （军团在城下停驻后城锚点也在末尾 ⇒ 一退就退到几十上百公里外），
-            //    于是八方里差出几十度，看着就是「东北来的出现在西边」。
-            //    改成「从起点往后扫、记最后一个 ≥2km 的点」，即贴着城的那一个路点，
-            //    与 `src/systems/battlefield/spawnPlan.mjs` 里「来向 = 城 → 来处」同一口径。
-            let lastOutside: { lat: number; lng: number } | null = null;
-            for (let i = 0; i < entity.lastPath.length - 1; i++) {
+            for (let i = entity.lastPath.length - 1; i >= 0; i--) {
                 const wp = entity.lastPath[i];
-                const wDist = Math.hypot((wp.lat - center.lat) * 111.32, (wp.lng - center.lng) * 111.32 * Math.cos((center.lat * Math.PI) / 180));
-                if (wDist >= 2.0) lastOutside = wp;
+                const wDist = Math.hypot((wp.lat - ref.lat) * 111.32, (wp.lng - ref.lng) * 111.32 * Math.cos((ref.lat * Math.PI) / 180));
+                if (wDist >= 2.0) return wp;
             }
-            return lastOutside ?? entity.lastPath[0];
+            return entity.lastPath[0];
         }
         if (entity?.lastPosition && Number.isFinite(entity.lastPosition.lat) && Number.isFinite(entity.lastPosition.lng)) {
             return entity.lastPosition;
         }
         return pos;
     };
-    const attackerFrom = resolveOrigin(attacker, false);
-    const defenderFrom = resolveOrigin(defender, battleType === 'siege');
+    // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
+    //    来向必须相对**城**算，不能相对**战场中心**算 —— 攻城战里城被摆在屏幕正中
+    //    （Scene13WarLayer：`deCityCenter = {x: VW/2, y: VH/2}`），
+    //    而战场中心 = 跟拍军团的渲染中心（`battleSceneTarget` 取的是 `getRenderedCenter(跟随单位.id)`，
+    //    攻城外推后它离城十几到几十公里）。实测一场真机攻城战：
+    //      被攻城（布鲁塞尔）50.8465, 4.3518 ｜ 战场中心 50.6164, 4.2902 ｜ 攻方真实位置 50.6945, 4.2948
+    //      ⇒ 攻方其实在城**南** 17.4km，可「相对战场中心」算出来却是**正北 2.2°**；
+    //      `planSpawns` 再按这个方向把攻方基座摆到中心外 1534~1955px（≈160~200km 的图面距离）
+    //      ⇒ 攻方整支落到城的**对侧**，看着就是「东北杀来、出现在西边」。
+    //    改成「城 → 来处」，与 `spawnPlan.mjs` 头注「方位角由**战场中心**（＝城）→该军来处算出」同一口径。
+    const originRef = battleType === 'siege' && typeof defenderCityLat === 'number' && typeof defenderCityLng === 'number'
+        ? { lat: defenderCityLat, lng: defenderCityLng }
+        : center;
+    const attackerFrom = resolveOrigin(attacker, false, originRef);
+    const defenderFrom = resolveOrigin(defender, battleType === 'siege', center);
 
     const resolvedBattleBriefing = resolveHistoricalBattleBriefing(title, battleBriefing);
     app.scene13War.onDecision = onDecision;   // 🔴 必须先于 start 赋值：start 失败走 forceResultByRatio 判负需要回调
