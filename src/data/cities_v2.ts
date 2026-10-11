@@ -786,7 +786,7 @@ buildingStyle: 'WEI', troops: 10000, mirror: true,
     { id: 'city_shanhaiguan', name: '山海关', factionId: 'linyu', lat: 40, lng: 119.8, type: 'pass', troops: 10000, region: 'MING', buildingStyle: 'WEI' },
 
     { id: 'city_wushengguan', name: '武胜关', factionId: 'yiyang_d', lat: 31.83, lng: 114.01, type: 'pass', region: 'JIANGNAN',
-buildingStyle: 'JIANGNAN', mirror: true, 
+buildingStyle: 'ASIA', 
         note: '武胜关；义阳关隘', troops: 10000 },
     // ── 齐鲁关隘 ──
     { id: 'city_mulingguan', name: '大岘关', factionId: 'mushi', lat: 36.275259, lng: 118.660583, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'CENTRAL', mirror: true },
