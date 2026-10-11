@@ -1,202 +1,371 @@
 {
- "note": "按 DE 主题烘焙的战术战场地图数据（tools/rms 引擎）；游戏按环境计划的 deMapTheme 取用，取不到退回维也纳图",
+ "note": "按 18 套项目气候主题 1:1 独立烘焙的战术战场地图数据（含中央大概率平顶高台 + 外围 8 扇区均匀缓丘 + river/sea/lake 水系变体）",
  "script": "Arabia.rms",
- "seed": 7,
  "size": 120,
  "passableAll": true,
- "generatedAt": "2026-10-10T10:56:09.847Z",
+ "generatedAt": "2026-10-11T03:38:10.964Z",
  "projectToDeTheme": {
-  "afrotropical_tropical": "AFROTROPICAL_TROPICAL",
-  "neotropical_temperate": "NEOTROPICAL_TEMPERATE",
-  "neotropical_tropical": "NEOTROPICAL_TROPICAL",
-  "nearctic_temperate": "NEARCTIC_TEMPERATE",
-  "indomalayan_tropical": "INDOMALAYAN_TROPICAL",
-  "palaearctic_asia_temperate": "PALAEARCTIC_ASIA_TEMPERATE",
-  "palaearctic_middle_east_desert": "PALAEARCTIC_MIDDLE_EAST_DESERT",
-  "palaearctic_europe_taiga": "PALAEARCTIC_EUROPE_TAIGA",
-  "palaearctic_europe_temperate": "PALAEARCTIC_EUROPE_TEMPERATE",
-  "palaearctic_europe_mediterranean": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
-  "australasian_temperate": "AUSTRALASIAN_TEMPERATE",
-  "palaearctic_asia_desert": "PALAEARCTIC_MIDDLE_EAST_DESERT",
-  "palaearctic_salt_desert": "PALAEARCTIC_MIDDLE_EAST_DESERT",
-  "palaearctic_asia_steppe": "PALAEARCTIC_ASIA_TEMPERATE",
-  "palaearctic_tibetan_plateau": "PALAEARCTIC_ASIA_TEMPERATE",
-  "palaearctic_middle_east_highland": "PALAEARCTIC_ASIA_TEMPERATE",
-  "serengeti": "AFROTROPICAL_TROPICAL",
-  "palustrine_swamp": "AFROTROPICAL_TROPICAL"
+  "afrotropical_tropical": "afrotropical_tropical",
+  "neotropical_temperate": "neotropical_temperate",
+  "neotropical_tropical": "neotropical_tropical",
+  "nearctic_temperate": "nearctic_temperate",
+  "indomalayan_tropical": "indomalayan_tropical",
+  "palaearctic_asia_temperate": "palaearctic_asia_temperate",
+  "palaearctic_middle_east_desert": "palaearctic_middle_east_desert",
+  "palaearctic_europe_taiga": "palaearctic_europe_taiga",
+  "palaearctic_europe_temperate": "palaearctic_europe_temperate",
+  "palaearctic_europe_mediterranean": "palaearctic_europe_mediterranean",
+  "australasian_temperate": "australasian_temperate",
+  "palaearctic_asia_steppe": "palaearctic_asia_steppe",
+  "palaearctic_tibetan_plateau": "palaearctic_tibetan_plateau",
+  "palaearctic_middle_east_highland": "palaearctic_middle_east_highland",
+  "palaearctic_asia_desert": "palaearctic_asia_desert",
+  "palaearctic_salt_desert": "palaearctic_salt_desert",
+  "serengeti": "serengeti",
+  "palustrine_swamp": "palustrine_swamp"
  },
  "records": [
   {
-   "deTheme": "AFROTROPICAL_TROPICAL",
+   "themeId": "afrotropical_tropical",
+   "baseDeTheme": "AFROTROPICAL_TROPICAL",
    "file": "theme_afrotropical_tropical.json",
-   "bytes": 242368,
-   "objects": 1541,
-   "trees": 1254,
-   "forestPct": 10.4,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dirt 88.8% · Dragon Forest 7.1% · Forest, Bush 2.1% · Forest, Birch 1.2%",
-   "usedBy": [
-    "afrotropical_tropical",
-    "serengeti",
-    "palustrine_swamp"
+   "variants": [
+    "theme_afrotropical_tropical_river.json",
+    "theme_afrotropical_tropical_sea.json",
+    "theme_afrotropical_tropical_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 259446,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 1679,
+   "trees": 1397,
+   "forestPct": 12.5,
+   "waterPct": 0.2,
+   "elevPct": 23.8,
+   "top": "Dirt 86.8% · Dragon Forest 8.1% · Forest, Bush 3.2% · Forest, Birch 1.2%"
   },
   {
-   "deTheme": "NEOTROPICAL_TEMPERATE",
+   "themeId": "neotropical_temperate",
+   "baseDeTheme": "NEOTROPICAL_TEMPERATE",
    "file": "theme_neotropical_temperate.json",
-   "bytes": 348103,
-   "objects": 2394,
-   "trees": 1566,
-   "forestPct": 10.7,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Grass 88.8% · Forest, Dry South American 10.5% · Beach 0.3% · Jungle 0.2%",
-   "usedBy": [
-    "neotropical_temperate"
+   "variants": [
+    "theme_neotropical_temperate_river.json",
+    "theme_neotropical_temperate_sea.json",
+    "theme_neotropical_temperate_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 355491,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 2448,
+   "trees": 1702,
+   "forestPct": 11.6,
+   "waterPct": 0.3,
+   "elevPct": 25.9,
+   "top": "Grass 87.4% · Forest, Dry South American 11.4% · Beach 0.7% · Water, Shallow 0.3%"
   },
   {
-   "deTheme": "NEOTROPICAL_TROPICAL",
+   "themeId": "neotropical_tropical",
+   "baseDeTheme": "NEOTROPICAL_TROPICAL",
    "file": "theme_neotropical_tropical.json",
-   "bytes": 341049,
-   "objects": 2275,
-   "trees": 1533,
-   "forestPct": 99.5,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Jungle Grass 88.8% · Jungle 8.3% · Rainforest 2.4% · Beach 0.3%",
-   "usedBy": [
-    "neotropical_tropical"
+   "variants": [
+    "theme_neotropical_tropical_river.json",
+    "theme_neotropical_tropical_sea.json",
+    "theme_neotropical_tropical_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 371276,
+   "centerGround": false,
+   "centerHeight": 0,
+   "objects": 2532,
+   "trees": 1804,
+   "forestPct": 100,
+   "waterPct": 0,
+   "elevPct": 15.9,
+   "top": "Jungle Grass 87.5% · Jungle 10.1% · Rainforest 2.4%"
   },
   {
-   "deTheme": "NEARCTIC_TEMPERATE",
+   "themeId": "nearctic_temperate",
+   "baseDeTheme": "NEARCTIC_TEMPERATE",
    "file": "theme_nearctic_temperate.json",
-   "bytes": 255009,
-   "objects": 1654,
-   "trees": 1202,
-   "forestPct": 10.6,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dirt 3 88.8% · Pine Forest 5.9% · Forest, Bush 2.5% · Forest 2%",
-   "usedBy": [
-    "nearctic_temperate"
+   "variants": [
+    "theme_nearctic_temperate_river.json",
+    "theme_nearctic_temperate_sea.json",
+    "theme_nearctic_temperate_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 291644,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 1964,
+   "trees": 1539,
+   "forestPct": 13.2,
+   "waterPct": 0,
+   "elevPct": 27,
+   "top": "Dirt 3 86.8% · Pine Forest 8.3% · Forest, Bush 2.7% · Forest 2%"
   },
   {
-   "deTheme": "INDOMALAYAN_TROPICAL",
+   "themeId": "indomalayan_tropical",
+   "baseDeTheme": "INDOMALAYAN_TROPICAL",
    "file": "theme_indomalayan_tropical.json",
-   "bytes": 351791,
-   "objects": 2246,
-   "trees": 1256,
-   "forestPct": 10.6,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dry Grass 88.8% · Forest, Lush Bamboo 6.3% · Bamboo 2.2% · Forest, Bush 2.1%",
-   "usedBy": [
-    "indomalayan_tropical"
+   "variants": [
+    "theme_indomalayan_tropical_river.json",
+    "theme_indomalayan_tropical_sea.json",
+    "theme_indomalayan_tropical_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 355274,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 2278,
+   "trees": 1311,
+   "forestPct": 12.1,
+   "waterPct": 0.2,
+   "elevPct": 23.7,
+   "top": "Dry Grass 87.4% · Forest, Lush Bamboo 6.7% · Forest, Bush 3.2% · Bamboo 2.2%"
   },
   {
-   "deTheme": "PALAEARCTIC_ASIA_TEMPERATE",
+   "themeId": "palaearctic_asia_temperate",
+   "baseDeTheme": "PALAEARCTIC_ASIA_TEMPERATE",
    "file": "theme_palaearctic_asia_temperate.json",
-   "bytes": 338611,
-   "objects": 2132,
-   "trees": 1255,
-   "forestPct": 10.6,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dry Grass 88.8% · Forest, Autumn 5.1% · Bamboo 2.2% · Forest, Bush 2.1%",
-   "usedBy": [
-    "palaearctic_asia_temperate",
-    "palaearctic_asia_steppe",
-    "palaearctic_tibetan_plateau",
-    "palaearctic_middle_east_highland"
+   "variants": [
+    "theme_palaearctic_asia_temperate_river.json",
+    "theme_palaearctic_asia_temperate_sea.json",
+    "theme_palaearctic_asia_temperate_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 340971,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 2153,
+   "trees": 1214,
+   "forestPct": 10.1,
+   "waterPct": 0.2,
+   "elevPct": 25.2,
+   "top": "Dry Grass 89.4% · Forest, Autumn 4.8% · Bamboo 2.2% · Forest, Bush 1.9%"
   },
   {
-   "deTheme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "themeId": "palaearctic_middle_east_desert",
+   "baseDeTheme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "file": "theme_palaearctic_middle_east_desert.json",
-   "bytes": 276475,
-   "objects": 1726,
-   "trees": 1566,
-   "forestPct": 2.3,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Desert 88.8% · Palm Desert 8.3% · Forest, Birch 2.1% · Beach 0.3%",
-   "usedBy": [
-    "palaearctic_middle_east_desert",
-    "palaearctic_asia_desert",
-    "palaearctic_salt_desert"
+   "variants": [
+    "theme_palaearctic_middle_east_desert_river.json",
+    "theme_palaearctic_middle_east_desert_sea.json",
+    "theme_palaearctic_middle_east_desert_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 281713,
+   "centerGround": false,
+   "centerHeight": 0,
+   "objects": 1770,
+   "trees": 1622,
+   "forestPct": 2.4,
+   "waterPct": 0.2,
+   "elevPct": 14,
+   "top": "Desert 88.4% · Palm Desert 8.7% · Forest, Birch 2.2% · Beach 0.4%"
   },
   {
-   "deTheme": "PALAEARCTIC_EUROPE_TAIGA",
+   "themeId": "palaearctic_europe_taiga",
+   "baseDeTheme": "PALAEARCTIC_EUROPE_TAIGA",
    "file": "theme_palaearctic_europe_taiga.json",
-   "bytes": 332100,
-   "objects": 2067,
-   "trees": 1239,
-   "forestPct": 10.6,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dry Grass 88.8% · Dead Forest 5% · Forest, Bush 2.3% · Forest, Snow Autumn 2%",
-   "usedBy": [
-    "palaearctic_europe_taiga"
+   "variants": [
+    "theme_palaearctic_europe_taiga_river.json",
+    "theme_palaearctic_europe_taiga_sea.json",
+    "theme_palaearctic_europe_taiga_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 340715,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 2142,
+   "trees": 1388,
+   "forestPct": 11.6,
+   "waterPct": 0,
+   "elevPct": 26.9,
+   "top": "Dry Grass 88.4% · Dead Forest 6% · Forest, Bush 2.1% · Forest, Snow Autumn 2%"
   },
   {
-   "deTheme": "PALAEARCTIC_EUROPE_TEMPERATE",
+   "themeId": "palaearctic_europe_temperate",
+   "baseDeTheme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "file": "theme_palaearctic_europe_temperate.json",
-   "bytes": 355758,
-   "objects": 2384,
-   "trees": 1220,
-   "forestPct": 10.4,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Grass 2 88.8% · Forest 5.1% · Pine Forest 2.2% · Forest, Bush 2.1%",
-   "usedBy": [
-    "palaearctic_europe_temperate"
+   "variants": [
+    "theme_palaearctic_europe_temperate_river.json",
+    "theme_palaearctic_europe_temperate_sea.json",
+    "theme_palaearctic_europe_temperate_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 343823,
+   "centerGround": false,
+   "centerHeight": 0,
+   "objects": 2292,
+   "trees": 1247,
+   "forestPct": 9.8,
+   "waterPct": 0.2,
+   "elevPct": 15.6,
+   "top": "Grass 2 89.5% · Forest 5.3% · Pine Forest 2.2% · Forest, Bush 1.3%"
   },
   {
-   "deTheme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
+   "themeId": "palaearctic_europe_mediterranean",
+   "baseDeTheme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
    "file": "theme_palaearctic_europe_mediterranean.json",
-   "bytes": 293166,
-   "objects": 1965,
-   "trees": 1220,
-   "forestPct": 10.4,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Grass 3 88.8% · Forest, Mediterranean 5.1% · Pine Forest 2.2% · Forest, Bush 2.1%",
-   "usedBy": [
-    "palaearctic_europe_mediterranean"
+   "variants": [
+    "theme_palaearctic_europe_mediterranean_river.json",
+    "theme_palaearctic_europe_mediterranean_sea.json",
+    "theme_palaearctic_europe_mediterranean_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 333429,
+   "centerGround": true,
+   "centerHeight": 3,
+   "objects": 2297,
+   "trees": 1596,
+   "forestPct": 15.7,
+   "waterPct": 0.2,
+   "elevPct": 30.3,
+   "top": "Grass 3 83.7% · Forest, Mediterranean 7.7% · Forest, Bush 4.8% · Pine Forest 2.2%"
   },
   {
-   "deTheme": "AUSTRALASIAN_TEMPERATE",
+   "themeId": "australasian_temperate",
+   "baseDeTheme": "AUSTRALASIAN_TEMPERATE",
    "file": "theme_australasian_temperate.json",
-   "bytes": 325283,
-   "objects": 2024,
-   "trees": 1202,
-   "forestPct": 10.6,
-   "waterPct": 0.2,
-   "elevPct": 18.1,
-   "top": "Dry Grass 88.8% · Forest, Birch 4.9% · Forest 3% · Forest, Bush 2.5%",
-   "usedBy": [
-    "australasian_temperate"
+   "variants": [
+    "theme_australasian_temperate_river.json",
+    "theme_australasian_temperate_sea.json",
+    "theme_australasian_temperate_lake.json"
    ],
-   "verify": "ok"
+   "bytes": 333907,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 2101,
+   "trees": 1286,
+   "forestPct": 11.5,
+   "waterPct": 0.3,
+   "elevPct": 26.9,
+   "top": "Dry Grass 87.4% · Forest, Birch 5.5% · Forest 3% · Forest, Bush 2.8%"
+  },
+  {
+   "themeId": "palaearctic_asia_steppe",
+   "baseDeTheme": "PALAEARCTIC_ASIA_TEMPERATE",
+   "file": "theme_palaearctic_asia_steppe.json",
+   "variants": [
+    "theme_palaearctic_asia_steppe_river.json",
+    "theme_palaearctic_asia_steppe_sea.json",
+    "theme_palaearctic_asia_steppe_lake.json"
+   ],
+   "bytes": 215918,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 1116,
+   "trees": 231,
+   "forestPct": 1.1,
+   "waterPct": 0,
+   "elevPct": 26.8,
+   "top": "Dry Grass 88.4% · Grass 10.5% · Forest, Autumn 0.6% · Forest, Bush 0.2%"
+  },
+  {
+   "themeId": "palaearctic_tibetan_plateau",
+   "baseDeTheme": "PALAEARCTIC_EUROPE_TAIGA",
+   "file": "theme_palaearctic_tibetan_plateau.json",
+   "variants": [
+    "theme_palaearctic_tibetan_plateau_river.json",
+    "theme_palaearctic_tibetan_plateau_sea.json",
+    "theme_palaearctic_tibetan_plateau_lake.json"
+   ],
+   "bytes": 231065,
+   "centerGround": true,
+   "centerHeight": 3,
+   "objects": 1249,
+   "trees": 375,
+   "forestPct": 2.3,
+   "waterPct": 0,
+   "elevPct": 28.3,
+   "top": "Dry Grass 86.8% · Grass 10.8% · Dead Forest 1.1% · Forest, Bush 0.6%"
+  },
+  {
+   "themeId": "palaearctic_middle_east_highland",
+   "baseDeTheme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "file": "theme_palaearctic_middle_east_highland.json",
+   "variants": [
+    "theme_palaearctic_middle_east_highland_river.json",
+    "theme_palaearctic_middle_east_highland_sea.json",
+    "theme_palaearctic_middle_east_highland_lake.json"
+   ],
+   "bytes": 137974,
+   "centerGround": true,
+   "centerHeight": 3,
+   "objects": 556,
+   "trees": 369,
+   "forestPct": 0.6,
+   "waterPct": 0.5,
+   "elevPct": 27.4,
+   "top": "Desert 86.8% · Palm Desert 9.4% · Grass 1.6% · Beach 1%"
+  },
+  {
+   "themeId": "palaearctic_asia_desert",
+   "baseDeTheme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "file": "theme_palaearctic_asia_desert.json",
+   "variants": [
+    "theme_palaearctic_asia_desert_river.json",
+    "theme_palaearctic_asia_desert_sea.json",
+    "theme_palaearctic_asia_desert_lake.json"
+   ],
+   "bytes": 115185,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 358,
+   "trees": 169,
+   "forestPct": 0.5,
+   "waterPct": 0.3,
+   "elevPct": 28.2,
+   "top": "Desert 88.8% · Palm Desert 7.8% · Grass 1.8% · Beach 0.7%"
+  },
+  {
+   "themeId": "palaearctic_salt_desert",
+   "baseDeTheme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "file": "theme_palaearctic_salt_desert.json",
+   "variants": [
+    "theme_palaearctic_salt_desert_river.json",
+    "theme_palaearctic_salt_desert_sea.json",
+    "theme_palaearctic_salt_desert_lake.json"
+   ],
+   "bytes": 102356,
+   "centerGround": false,
+   "centerHeight": 0,
+   "objects": 256,
+   "trees": 92,
+   "forestPct": 0.3,
+   "waterPct": 2.7,
+   "elevPct": 11.9,
+   "top": "Desert 81.6% · Palm Desert 9.3% · Beach 4.2% · Water, Shallow 2.7%"
+  },
+  {
+   "themeId": "serengeti",
+   "baseDeTheme": "AFROTROPICAL_TROPICAL",
+   "file": "theme_serengeti.json",
+   "variants": [
+    "theme_serengeti_river.json",
+    "theme_serengeti_sea.json",
+    "theme_serengeti_lake.json"
+   ],
+   "bytes": 138835,
+   "centerGround": true,
+   "centerHeight": 2,
+   "objects": 665,
+   "trees": 328,
+   "forestPct": 2.2,
+   "waterPct": 0.5,
+   "elevPct": 25.3,
+   "top": "Dirt 89% · Grass 7.1% · Dragon Forest 1.4% · Beach 1%"
+  },
+  {
+   "themeId": "palustrine_swamp",
+   "baseDeTheme": "AFROTROPICAL_TROPICAL",
+   "file": "theme_palustrine_swamp.json",
+   "variants": [
+    "theme_palustrine_swamp_river.json",
+    "theme_palustrine_swamp_sea.json",
+    "theme_palustrine_swamp_lake.json"
+   ],
+   "bytes": 183707,
+   "centerGround": false,
+   "centerHeight": 1,
+   "objects": 1026,
+   "trees": 791,
+   "forestPct": 5.4,
+   "waterPct": 20,
+   "elevPct": 8.9,
+   "top": "Dirt 64.1% · Water, Medium 10.1% · Water, Shallow 9.9% · Beach 6%"
   }
  ],
  "failures": []

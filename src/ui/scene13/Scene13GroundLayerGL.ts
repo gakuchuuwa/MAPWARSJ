@@ -88,6 +88,7 @@ uniform sampler2D uForestTex;
 uniform sampler2D uWaterTex;
 uniform float uMapSize;
 uniform float uTime;
+uniform float uIsIce;
 
 // 2D Simplex Noise (Ashima Arts)
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -145,27 +146,37 @@ void main() {
   landCol = mix(landCol, colForest, isForest);
   landCol = mix(landCol, colSand, smoothstep(0.12, 0.65, isSand));
   
-  // ── 水体渲染（水底河床、深浅渐变、流动波光、岸边浪花） ──
+  // ── 水体与冬季冰面渲染（保留气候水体贴图本色 + 深浅渐变 + 冰面静止质感） ──
   vec3 riverbedCol = colSand * vec3(0.82, 0.78, 0.70);
-  vec3 shallowCol = vec3(0.24, 0.62, 0.72); // 清澈近岸浅水（明澈翡翠青）
-  vec3 deepCol = vec3(0.12, 0.40, 0.62);    // 蔚蓝深水河心（多瑙河明亮水蓝）
-  vec3 waterTint = mix(shallowCol, deepCol, isDeepWater);
-  
-  // 双层同向流动波纹
-  vec2 wuv1 = fract(vGUV * 0.22 + vec2(uTime * 0.028, uTime * 0.014));
-  vec2 wuv2 = fract(vGUV * 0.27 + vec2(-uTime * 0.019, uTime * 0.022));
-  vec3 wave1 = texture2D(uWaterTex, wuv1).rgb / vec3(0.141, 0.477, 0.645);
-  vec3 wave2 = texture2D(uWaterTex, wuv2).rgb / vec3(0.141, 0.477, 0.645);
-  vec3 waves = (wave1 + wave2) * 0.5;
-  
-  vec3 waterBody = waterTint * waves;
-  vec3 waterCol = mix(riverbedCol, waterBody, 0.48 + isDeepWater * 0.52);
-  
-  // 岸边浪花/柔和洁白微浪泡沫带（连绵起伏微浪冲刷）
-  float shoreBand = smoothstep(0.442, 0.456, wPerturb) * (1.0 - smoothstep(0.456, 0.485, wPerturb));
-  float waveBreath = sin(uTime * 2.0 + (vGUV.x + vGUV.y) * 0.35) * 0.5 + 0.5;
-  float foam = shoreBand * (0.35 + 0.55 * waveBreath);
-  waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), foam * 0.75);
+  vec3 waterCol;
+  if (uIsIce > 0.5) {
+    // 冬季封冻冰面：静止无流动波浪，保留 ic2/ice 冰层纹理与岸边霜雪过渡
+    vec3 iceTex1 = texture2D(uWaterTex, texUV).rgb;
+    vec3 iceTex2 = texture2D(uWaterTex, fract(vGUV * 0.18 + vec2(0.13, 0.29))).rgb;
+    vec3 iceBody = mix(iceTex1, iceTex2, 0.35) * (1.02 + 0.06 * n1);
+    waterCol = mix(riverbedCol, iceBody, 0.72 + isDeepWater * 0.28);
+    float frostBand = smoothstep(0.440, 0.460, wPerturb) * (1.0 - smoothstep(0.460, 0.500, wPerturb));
+    waterCol = mix(waterCol, vec3(0.92, 0.96, 1.0), frostBand * 0.65);
+  } else {
+    // 液态水体：以气候水体贴图 uWaterTex 本色为基底（碧绿河水/浑浊沼泽/蔚蓝海面各司其职）
+    vec2 wuv1 = fract(vGUV * 0.22 + vec2(uTime * 0.028, uTime * 0.014));
+    vec2 wuv2 = fract(vGUV * 0.27 + vec2(-uTime * 0.019, uTime * 0.022));
+    vec3 wave1 = texture2D(uWaterTex, wuv1).rgb;
+    vec3 wave2 = texture2D(uWaterTex, wuv2).rgb;
+    vec3 rawWater = (wave1 + wave2) * 0.5;
+    float luma = dot(rawWater, vec3(0.299, 0.587, 0.114));
+    float liftScale = luma < 0.26 ? 1.48 : 1.12;
+    vec3 shallowBody = clamp(rawWater * (liftScale * 1.12) + vec3(0.04, 0.08, 0.08), 0.0, 1.0);
+    vec3 deepBody = clamp(rawWater * (liftScale * 0.92), 0.0, 1.0);
+    vec3 waterBody = mix(shallowBody, deepBody, isDeepWater);
+    waterCol = mix(riverbedCol, waterBody, 0.52 + isDeepWater * 0.48);
+
+    // 岸边浪花/柔和洁白微浪泡沫带
+    float shoreBand = smoothstep(0.442, 0.456, wPerturb) * (1.0 - smoothstep(0.456, 0.485, wPerturb));
+    float waveBreath = sin(uTime * 2.0 + (vGUV.x + vGUV.y) * 0.35) * 0.5 + 0.5;
+    float foam = shoreBand * (0.35 + 0.55 * waveBreath);
+    waterCol = mix(waterCol, vec3(0.95, 0.98, 1.0), foam * 0.75);
+  }
   
   // 最终合成与 DE 原生高程坡度光照
   vec3 finalCol = mix(landCol, waterCol, isWater);
@@ -303,6 +314,7 @@ export class Scene13GroundLayerGL {
   private sandTex: WebGLTexture | null = null;
   private forestTex: WebGLTexture | null = null;
   private waterTex: WebGLTexture | null = null;
+  public isIce = false;
 
   public readonly smoothWater: Float32Array;
   private cornerElev: Float32Array;
@@ -345,6 +357,7 @@ export class Scene13GroundLayerGL {
       uFlip: U('uFlip'),
       uMapSize: U('uMapSize'),
       uTime: U('uTime'),
+      uIsIce: U('uIsIce'),
       uFieldTex: U('uFieldTex'),
       uGrassTex: U('uGrassTex'),
       uSandTex: U('uSandTex'),
@@ -447,6 +460,12 @@ export class Scene13GroundLayerGL {
         this.cornerElev[gy * V_SIZE + gx] = count > 0 ? sum / count : 0;
       }
     }
+    this.updateCornerLight();
+  }
+
+  private updateCornerLight(): void {
+    const N = this.N;
+    const V_SIZE = N + 1;
     const Lx = -0.35, Ly = -0.55, Lz = 0.75;
     const Llen = Math.hypot(Lx, Ly, Lz);
     const lx = Lx / Llen, ly = Ly / Llen, lz = Lz / Llen;
@@ -494,6 +513,7 @@ export class Scene13GroundLayerGL {
     gl.uniform1f(this.loc.uFlip as WebGLUniformLocation, this.flip ? 1.0 : 0.0);
     gl.uniform1f(this.loc.uMapSize as WebGLUniformLocation, this.N);
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
+    gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
 
     if (this.fieldTex) {
       gl.activeTexture(gl.TEXTURE0);
@@ -702,24 +722,25 @@ export class Scene13GroundLayerGL {
   }
 
   /**
-   * 城池地基整平：以屏幕逻辑坐标为中心、radiusCells 格内的高程拉平到 level（边缘平滑过渡），
-   * 让整座城（建筑 / 城墙 / 地基层）站在同一高度上。改完调 flushFoundation 生效。
+   * 城池地基整平：以屏幕逻辑坐标为中心、radiusCells 格内的高程拉平到 level（外缘 4.5 格 S 曲线缓坡过渡），
+   * 让整座城（建筑 / 城墙 / 地基层）站在同一高度的高台/平地上。改完调 flushFoundation 生效。
    */
   public flattenFoundation(screenX: number, screenY: number, W: number, H: number, radiusCells: number, level: number): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return;
     const V = this.N + 1;
     const r = radiusCells;
-    const x0 = Math.max(0, Math.floor(c.gx - r - 2)), x1 = Math.min(this.N, Math.ceil(c.gx + r + 2));
-    const y0 = Math.max(0, Math.floor(c.gy - r - 2)), y1 = Math.min(this.N, Math.ceil(c.gy + r + 2));
+    const slopeW = 4.5;
+    const x0 = Math.max(0, Math.floor(c.gx - r - slopeW - 1)), x1 = Math.min(this.N, Math.ceil(c.gx + r + slopeW + 1));
+    const y0 = Math.max(0, Math.floor(c.gy - r - slopeW - 1)), y1 = Math.min(this.N, Math.ceil(c.gy + r + slopeW + 1));
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
         const d = Math.hypot(x - c.gx, y - c.gy);
-        const t = Math.min(1, Math.max(0, (d - r) / 2));   // 圈内 0（整平）→ 外缘 2 格过渡到原样
-        if (t >= 1) continue;
+        const s = Math.min(1, Math.max(0, (d - r) / slopeW));
+        if (s >= 1) continue;
+        const t = s * s * (3 - 2 * s); // Smoothstep 缓坡过渡：圈内 0（整平）→ 外缘 1（原样）
         const i = y * V + x;
         this.cornerElev[i] = level + (this.cornerElev[i] - level) * t;
-        this.cornerLight[i] = 1 + (this.cornerLight[i] - 1) * t;
       }
     }
     this.elevDirty = true;
@@ -730,9 +751,29 @@ export class Scene13GroundLayerGL {
     return this.elevationLiftAt(screenX, screenY, W, H) / 16;
   }
 
-  /** 地基改动攒够后一次上传（carveFoundation 之后调用一次） */
+  /** 取以屏幕坐标为中心、radiusCells 格内的最高高程级（用于城池就势托举在中央高地上） */
+  public maxElevationLevelInRadius(screenX: number, screenY: number, W: number, H: number, radiusCells: number): number {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    if (!c) return 0;
+    const V = this.N + 1;
+    const r = radiusCells;
+    const x0 = Math.max(0, Math.floor(c.gx - r)), x1 = Math.min(this.N, Math.ceil(c.gx + r));
+    const y0 = Math.max(0, Math.floor(c.gy - r)), y1 = Math.min(this.N, Math.ceil(c.gy + r));
+    let maxE = 0;
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        if (Math.hypot(x - c.gx, y - c.gy) > r) continue;
+        const e = this.cornerElev[y * V + x] ?? 0;
+        if (e > maxE) maxE = e;
+      }
+    }
+    return maxE;
+  }
+
+  /** 地基改动攒够后一次上传（carveFoundation / flattenFoundation 之后调用一次） */
   public flushFoundation(): void {
     if (this.elevDirty) {
+      this.updateCornerLight();
       if (this.buf) this.gl.deleteBuffer(this.buf);
       this.buf = null;                 // render() 里按新高程重建顶点
       this.elevDirty = false;
@@ -781,6 +822,7 @@ export class Scene13GroundLayerGL {
     ]);
 
     const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img);
+    layer.isIce = water.tile === 'ic2' || water.tile === 'ice';
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
     if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);

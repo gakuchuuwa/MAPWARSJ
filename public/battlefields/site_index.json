@@ -4,12 +4,12 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-10T11:14:34.405Z",
+ "generatedAt": "2026-10-11T03:39:27.282Z",
  "records": [
   {
    "id": "city_weiyeena",
    "file": "site_city_weiyeena.json",
-   "bytes": 282086,
+   "bytes": 283991,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
@@ -23,7 +23,7 @@
   {
    "id": "city_ueda",
    "file": "site_city_ueda.json",
-   "bytes": 299660,
+   "bytes": 306438,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -37,7 +37,7 @@
   {
    "id": "city_jiaxing",
    "file": "site_city_jiaxing.json",
-   "bytes": 287526,
+   "bytes": 287775,
    "koppen": "Cfa",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -51,7 +51,7 @@
   {
    "id": "city_zhizhicheng",
    "file": "site_city_zhizhicheng.json",
-   "bytes": 213243,
+   "bytes": 213821,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -65,7 +65,7 @@
   {
    "id": "city_jianchang",
    "file": "site_city_jianchang.json",
-   "bytes": 303651,
+   "bytes": 300719,
    "koppen": "Cwb",
    "theme": "PALAEARCTIC_EUROPE_TAIGA",
    "water": "WorldCover",
@@ -79,7 +79,7 @@
   {
    "id": "city_guangnan",
    "file": "site_city_guangnan.json",
-   "bytes": 334380,
+   "bytes": 336626,
    "koppen": "Cwa",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -93,7 +93,7 @@
   {
    "id": "city_hanguguan",
    "file": "site_city_hanguguan.json",
-   "bytes": 308459,
+   "bytes": 307111,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -107,7 +107,7 @@
   {
    "id": "city_panzhou",
    "file": "site_city_panzhou.json",
-   "bytes": 312317,
+   "bytes": 313703,
    "koppen": "Dwc",
    "theme": "PALAEARCTIC_EUROPE_TAIGA",
    "water": "WorldCover",
@@ -121,7 +121,7 @@
   {
    "id": "city_jeonju",
    "file": "site_city_jeonju.json",
-   "bytes": 311766,
+   "bytes": 309739,
    "koppen": "Dfa",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -135,7 +135,7 @@
   {
    "id": "city_daixian",
    "file": "site_city_daixian.json",
-   "bytes": 319811,
+   "bytes": 319864,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -149,7 +149,7 @@
   {
    "id": "city_wuguo",
    "file": "site_city_wuguo.json",
-   "bytes": 299274,
+   "bytes": 294636,
    "koppen": "Dwa",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -163,7 +163,7 @@
   {
    "id": "city_xingtai",
    "file": "site_city_xingtai.json",
-   "bytes": 308763,
+   "bytes": 312080,
    "koppen": "BSk",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -177,7 +177,7 @@
   {
    "id": "city_xianglin",
    "file": "site_city_xianglin.json",
-   "bytes": 308890,
+   "bytes": 316564,
    "koppen": "Am",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -191,7 +191,7 @@
   {
    "id": "city_ayutthaya",
    "file": "site_city_ayutthaya.json",
-   "bytes": 310048,
+   "bytes": 307210,
    "koppen": "Aw",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -205,7 +205,7 @@
   {
    "id": "city_nanghar",
    "file": "site_city_nanghar.json",
-   "bytes": 305160,
+   "bytes": 307088,
    "koppen": "Dfc",
    "theme": "PALAEARCTIC_EUROPE_TAIGA",
    "water": "WorldCover",
@@ -219,7 +219,7 @@
   {
    "id": "city_cili",
    "file": "site_city_cili.json",
-   "bytes": 289717,
+   "bytes": 289419,
    "koppen": "Cfa",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -233,7 +233,7 @@
   {
    "id": "city_yazhou",
    "file": "site_city_yazhou.json",
-   "bytes": 327173,
+   "bytes": 328123,
    "koppen": "Aw",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -247,7 +247,7 @@
   {
    "id": "city_thebes",
    "file": "site_city_thebes.json",
-   "bytes": 266119,
+   "bytes": 265501,
    "koppen": "Csa",
    "theme": "PALAEARCTIC_EUROPE_MEDITERRANEAN",
    "water": "WorldCover",
@@ -275,7 +275,7 @@
   {
    "id": "city_bremen",
    "file": "site_city_bremen.json",
-   "bytes": 303580,
+   "bytes": 304530,
    "koppen": "Cfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
@@ -289,7 +289,7 @@
   {
    "id": "city_gdansk",
    "file": "site_city_gdansk.json",
-   "bytes": 314704,
+   "bytes": 312248,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
@@ -303,7 +303,7 @@
   {
    "id": "city_kashan",
    "file": "site_city_kashan.json",
-   "bytes": 287377,
+   "bytes": 288313,
    "koppen": "Dfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
@@ -317,7 +317,7 @@
   {
    "id": "city_bamiancheng",
    "file": "site_city_bamiancheng.json",
-   "bytes": 303333,
+   "bytes": 304587,
    "koppen": "Dwa",
    "theme": "PALAEARCTIC_ASIA_TEMPERATE",
    "water": "WorldCover",
@@ -331,7 +331,7 @@
   {
    "id": "city_gadake",
    "file": "site_city_gadake.json",
-   "bytes": 309365,
+   "bytes": 310339,
    "koppen": "ET",
    "theme": "PALAEARCTIC_EUROPE_TAIGA",
    "water": "WorldCover",
@@ -359,7 +359,7 @@
   {
    "id": "city_patala",
    "file": "site_city_patala.json",
-   "bytes": 213412,
+   "bytes": 213182,
    "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -387,7 +387,7 @@
   {
    "id": "city_gasinaoer",
    "file": "site_city_gasinaoer.json",
-   "bytes": 213556,
+   "bytes": 213559,
    "koppen": "BWk",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -401,7 +401,7 @@
   {
    "id": "city_teluowulan",
    "file": "site_city_teluowulan.json",
-   "bytes": 323860,
+   "bytes": 321900,
    "koppen": "Am",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -415,7 +415,7 @@
   {
    "id": "city_kumubi",
    "file": "site_city_kumubi.json",
-   "bytes": 213000,
+   "bytes": 213234,
    "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -429,7 +429,7 @@
   {
    "id": "city_saimien",
    "file": "site_city_saimien.json",
-   "bytes": 224470,
+   "bytes": 224816,
    "koppen": "Cwb",
    "theme": "AFROTROPICAL_TROPICAL",
    "water": "WorldCover",
@@ -443,7 +443,7 @@
   {
    "id": "city_hongsa",
    "file": "site_city_hongsa.json",
-   "bytes": 224989,
+   "bytes": 228667,
    "koppen": "Csb",
    "theme": "NEARCTIC_TEMPERATE",
    "water": "WorldCover",
@@ -457,7 +457,7 @@
   {
    "id": "city_kabufoliwu",
    "file": "site_city_kabufoliwu.json",
-   "bytes": 282645,
+   "bytes": 281096,
    "koppen": "Aw",
    "theme": "NEOTROPICAL_TROPICAL",
    "water": "WorldCover",
@@ -499,7 +499,7 @@
   {
    "id": "city_danmaxi",
    "file": "site_city_danmaxi.json",
-   "bytes": 314174,
+   "bytes": 315194,
    "koppen": "Af",
    "theme": "INDOMALAYAN_TROPICAL",
    "water": "WorldCover",
@@ -513,7 +513,7 @@
   {
    "id": "city_tenochtitlan",
    "file": "site_city_tenochtitlan.json",
-   "bytes": 227007,
+   "bytes": 222493,
    "koppen": "Cwb",
    "theme": "NEARCTIC_TEMPERATE",
    "water": "WorldCover",
@@ -527,7 +527,7 @@
   {
    "id": "city_cusco",
    "file": "site_city_cusco.json",
-   "bytes": 304608,
+   "bytes": 304484,
    "koppen": "ET",
    "theme": "PALAEARCTIC_EUROPE_TAIGA",
    "water": "WorldCover",
@@ -541,7 +541,7 @@
   {
    "id": "city_onondaga",
    "file": "site_city_onondaga.json",
-   "bytes": 225744,
+   "bytes": 226261,
    "koppen": "Dfb",
    "theme": "NEARCTIC_TEMPERATE",
    "water": "WorldCover",
@@ -555,7 +555,7 @@
   {
    "id": "city_chanchan",
    "file": "site_city_chanchan.json",
-   "bytes": 213255,
+   "bytes": 213254,
    "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -583,7 +583,7 @@
   {
    "id": "city_teyuna",
    "file": "site_city_teyuna.json",
-   "bytes": 233479,
+   "bytes": 230901,
    "koppen": "Cwb",
    "theme": "NEARCTIC_TEMPERATE",
    "water": "WorldCover",
@@ -611,7 +611,7 @@
   {
    "id": "city_angra",
    "file": "site_city_angra.json",
-   "bytes": 313312,
+   "bytes": 311254,
    "koppen": "Cfb",
    "theme": "PALAEARCTIC_EUROPE_TEMPERATE",
    "water": "WorldCover",
@@ -625,7 +625,7 @@
   {
    "id": "city_lima",
    "file": "site_city_lima.json",
-   "bytes": 213916,
+   "bytes": 213913,
    "koppen": "BWh",
    "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
    "water": "WorldCover",
@@ -634,6 +634,20 @@
    "reliefM": 70,
    "cliffs": 0,
    "top": "Desert 89.9% · Palm Desert 5.8% · Forest, Birch 2.2% · Beach 1.3%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_merkit",
+   "file": "site_city_merkit.json",
+   "bytes": 316649,
+   "koppen": "Dwb",
+   "theme": "PALAEARCTIC_ASIA_TEMPERATE",
+   "water": "none",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 257,
+   "cliffs": 0,
+   "top": "Dry Grass 91.7% · Forest, Autumn 5% · Bamboo 2.2% · Forest 0.5%",
    "verify": "ok"
   }
  ],

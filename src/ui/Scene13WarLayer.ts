@@ -4327,11 +4327,28 @@ export class Scene13WarLayer {
                     let attSX = VW / 2 + (plan.attacker.x - plan.attacker.y) * 32;
                     let attSY = VH / 2 + (plan.attacker.x + plan.attacker.y - 119) * 16;
                     if (this.deCity) {
-                        // 攻城战：攻方沿来向退到城外 —— 城池外接半径 ＋ 野战同一出生距离（700 px）
+                        // 攻城战：攻方沿来向退到城外，退到「地图还装得下」为止。
+                        // 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」
+                        //    ＋ 2026-10-10「攻城战城池稳居正中心」]
+                        //    三条硬约束，按优先级：
+                        //      ① 九口必须全在图内（菱形世界，斜向最紧）；
+                        //      ② 攻方营地不得压进城池的菱形地面（否则营帐插在城墙上）；
+                        //      ③ 在满足①②的前提下，尽量保持野战同款的 700px 攻城距（城半径＋700）。
+                        //    ⇒ 由于城池原生尺寸很大（小城 2408×2073），「八向等距」与①②在这张 120×120 图上
+                        //      不可兼得（八向等距上限 1335px，而东西向要 1524px 才不压城）——
+                        //      按 DE 场景的做法让**距离随来向变**（攻方贴着自己那侧的图边列阵），
+                        //      所以这里改成**按方向取安全半径**，而不是八向取同一个最小值。
                         const ux = attSX - VW / 2, uy = attSY - VH / 2, ul = Math.hypot(ux, uy) || 1;
-                        const cityR = Math.hypot(this.deCity.width, this.deCity.height) / 2;
-                        attSX = VW / 2 + (ux / ul) * (cityR + 700);
-                        attSY = VH / 2 + (uy / ul) * (cityR + 700);
+                        const nx = ux / ul, ny = uy / ul;
+                        const rx = this.deCity.width / 2, ry = this.deCity.height / 2;
+                        const cityR = Math.hypot(rx, ry);
+                        const safe = this.spawnRingSafeRadius(nx, ny);              // ①该方向能退多远
+                        const cityEdge = 1 / (Math.abs(nx) / rx + Math.abs(ny) / ry); // 城菱形在该方向的边界
+                        const need = cityEdge + 320;                                // ②营地纵深+余量
+                        let dist = Math.min(cityR + 700, safe);                     // ③先取攻城距
+                        if (dist < need) dist = Math.min(need, safe);               // ②不够就退到不压城（但仍不越图）
+                        attSX = VW / 2 + nx * dist;
+                        attSY = VH / 2 + ny * dist;
                     }
                     const defSX = VW / 2 + (plan.defender.x - plan.defender.y) * 32;
                     const defSY = VH / 2 + (plan.defender.x + plan.defender.y - 119) * 16;
@@ -5512,16 +5529,24 @@ export class Scene13WarLayer {
         }).finally(release);
     }
 
-    /** 城池落地：城址范围内清掉底图的水 / 林、整平高程，并拿掉压在城里的底图树（WebGL 地面与城池哪个后就绪，哪个调） */
+    /** 城池落地：城址范围内清掉底图的水 / 林、整平高程（大概率形成中央平顶高台），并拿掉压在城里的底图树 */
     private applyDeCityToGround(): void {
         const c = this.deCity, gl = this.groundLayerGL, cv = this.canvas;
         if (!c || !this.deCityBuilt || !gl || !cv) return;
         const { x: cx, y: cy } = this.deCityCenter;
         const W = cv.width, H = cv.height;
         const rx = c.width / 2, ry = c.height / 2;
-        const level = gl.elevationLevelAt(cx, cy, W, H);
         // 城池外接椭圆换算成格半径（等轴格：横向约 45 px、纵向约 22 px 一格）
         const rCells = Math.max(rx / 45, ry / 22) + 1;
+        // 🔴 [2026-10-11 主人令「据点城池在地图中心，高地大概率设计在地图中心地带，注意大概率而非绝对」]
+        const peakLevel = gl.maxElevationLevelInRadius(cx, cy, W, H, rCells * 0.8);
+        const seedStr = String(this.defenderCityId || this.environmentPlan?.seed || 'default');
+        let hash = 2166136261;
+        for (let i = 0; i < seedStr.length; i++) hash = Math.imul(hash ^ seedStr.charCodeAt(i), 16777619);
+        const roll = (hash >>> 0) % 100;
+        const level = peakLevel >= 1.5
+            ? Math.min(4, Math.max(2, Math.round(peakLevel)))
+            : (roll < 68 ? (roll < 24 ? 3 : 2) : Math.round(peakLevel));
         gl.flattenFoundation(cx, cy, W, H, rCells, level);
         for (let py = -ry; py <= ry; py += 24) {
             for (let px = -rx; px <= rx; px += 48) {
@@ -5532,7 +5557,9 @@ export class Scene13WarLayer {
         gl.flushFoundation();
         const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
         this.decorSprites = this.decorSprites.filter((sp) => sp.asset.startsWith('BUILDING') || sp.asset === '' || !inCity(sp.x, sp.y));
-        for (const sp of this.decorSprites) if (inCity(sp.x, sp.y)) sp.lift = undefined;   // 整平后重取高程
+        for (const sp of this.decorSprites) {
+            sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
+        }
     }
 
     /** 地基层 DOM 跟着镜头走：城心屏幕位置 ＝ 画布中心 ＋ 平移 ＋ (城心 − 中心) × 缩放 */
@@ -6153,6 +6180,39 @@ export class Scene13WarLayer {
         try { return localStorage.getItem('mapwar.realGeography') !== '0'; } catch { return true; }
     }
 
+    /**
+     * 出兵环在**指定来向**上的地图安全半径（px）：基准点沿 (ux,uy) 能退到的最远处，
+     * 且保证**九口阵面全部留在图内**（九口的横向/纵向外延一并算进去）。
+     * 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」]
+     *   · 地图世界是**菱形**（与 `Scene13GroundLayerGL.cellToScreen` 同一式 `dx=32, dy=16`）：
+     *     东西半幅 `(N−1)×32`、南北半幅 `(N−1)×16`（N=120 时 3808 / 1904，与真机包围盒一致）。
+     *   · 菱形不是圆：同一个半径下东西最宽松、斜向最紧，所以**必须按方向算**（原来八向取同一个最小值
+     *     会让东西向被斜向的紧约束拖近，营帐压进城里，实测压进 312px）。
+     *   · 每条边留 `EDGE` 余量，免得营地贴到图边。
+     */
+    private spawnRingSafeRadius(ux: number, uy: number): number {
+        const N = this.groundLayerGL?.data?.width ?? 120;
+        const hw = Math.max(1, (N - 1) * 32);            // 东西半幅（世界 px）
+        const hh = Math.max(1, (N - 1) * 16);            // 南北半幅（世界 px）
+        const EDGE = 120;                                // 离图边余量
+        // 九口阵面自身的最大外延（与 LAYOUT / colSpacing 上限 240 / depth 上限 240 一致）：
+        //   横向 1.5×240 = 360、纵深 ±240。基准点往外推时，这几个角点最先出图。
+        const LAT = 360, DEP = 240;
+        const sx = -uy, sy = ux;                         // 侧向单位向量
+        const inside = (x: number, y: number) => Math.abs(x) / (hw - EDGE) + Math.abs(y) / (hh - EDGE) <= 1;
+        // 数值求解：该方向上「九口全部在图内」的最大基准半径（1px 步长足够）
+        let d = 0;
+        for (let t = 0; t <= 8000; t++) {
+            let ok = true;
+            for (const [l, f] of [[LAT, DEP], [-LAT, DEP], [LAT, -DEP], [-LAT, -DEP]] as Array<[number, number]>) {
+                if (!inside(ux * t + sx * l + ux * f, uy * t + sy * l + uy * f)) { ok = false; break; }
+            }
+            if (!ok) break;
+            d = t;
+        }
+        return d;
+    }
+
     private realGeographyEnabled(): boolean {
         return Scene13WarLayer.realGeographyEnabled();
     }
@@ -6320,14 +6380,19 @@ export class Scene13WarLayer {
                     palaearctic_europe_temperate: 'theme_palaearctic_europe_temperate.json',
                     palaearctic_europe_mediterranean: 'theme_palaearctic_europe_mediterranean.json',
                     australasian_temperate: 'theme_australasian_temperate.json',
-                    palaearctic_asia_desert: 'theme_palaearctic_middle_east_desert.json',
-                    palaearctic_salt_desert: 'theme_palaearctic_middle_east_desert.json',
-                    palaearctic_asia_steppe: 'theme_palaearctic_asia_temperate.json',
-                    palaearctic_tibetan_plateau: 'theme_palaearctic_asia_temperate.json',
-                    palaearctic_middle_east_highland: 'theme_palaearctic_asia_temperate.json',
-                    serengeti: 'theme_afrotropical_tropical.json',
-                    palustrine_swamp: 'theme_afrotropical_tropical.json',
+                    palaearctic_asia_desert: 'theme_palaearctic_asia_desert.json',
+                    palaearctic_salt_desert: 'theme_palaearctic_salt_desert.json',
+                    palaearctic_asia_steppe: 'theme_palaearctic_asia_steppe.json',
+                    palaearctic_tibetan_plateau: 'theme_palaearctic_tibetan_plateau.json',
+                    palaearctic_middle_east_highland: 'theme_palaearctic_middle_east_highland.json',
+                    serengeti: 'theme_serengeti.json',
+                    palustrine_swamp: 'theme_palustrine_swamp.json',
                 };
+                const waterKind = this.environmentPlan?.waterKind;
+                if (waterKind && waterKind !== 'none') {
+                    const waterVariant = await load(`theme_${theme}_${waterKind}.json`);
+                    if (waterVariant) return waterVariant;
+                }
                 const targetFile = THEME_MAP_FILES[theme] ?? ('theme_' + theme + '.json');
                 const themed = await load(targetFile);
                 if (themed) return themed;
@@ -8604,21 +8669,6 @@ export class Scene13WarLayer {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
-                // 🔴 [2026-10-11 主人报「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
-                //    生成那一帧的 dt 是开战前准备期攒下的大值（实测 0.12s），
-                //    「按 spd×dt 朝目标走一步」被放大成一次瞬移：生成位置本在出兵口
-                //    （`anchorY` = 出兵口 y，实测 −450），同帧就被推到 482px 之外
-                //    （实测离自己出兵口：步兵 485px、弩兵 684px、虎骑 884px，越快推得越远），
-                //    而营地建筑还留在出兵口 ⇒ 看着就是「士兵不从营帐出来」。
-                //    待命期的口径本来就是「全军静止渐显」，这里把坐标钉回生成锚点（＝出兵口），
-                //    待命结束（deployT 归零）后才照常列阵推进。
-                m.x = m.anchorX;
-                m.y = m.anchorY;
-                m.prevX = m.anchorX;
-                m.prevY = m.anchorY;
-                m.sepX = 0;
-                m.sepY = 0;
-                if ((window as any).__PIN !== undefined) (window as any).__PIN++;
                 if (m.fadeT > 0) m.fadeT -= dt;
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
@@ -9542,6 +9592,25 @@ export class Scene13WarLayer {
                 attackerLost ? 'defender' : 'attacker',
                 { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
             );
+        }
+        // 🔴 [2026-10-11 主人报「有的地图中，士兵不出现在出兵口，出兵口应该是营地的建筑」]
+        //    开场待命期（deployT>0，实测 2.5 秒渐显倒计时）结束前，把列阵兵**钉回各自的出生点**
+        //    （＝出兵口＝营地建筑所在格）。放在 step() 最末尾：本帧所有位移过程（逐兵推进/推挤/
+        //    障碍推出/边界收口）都跑完之后再复位，渲染拿到的就是出生点坐标。
+        //    起因（实测）：兵**生成位置本身是对的**（`anchorY` = 出兵口 y，实测 −450），
+        //    但同一帧就被推离出兵口 —— 离自己出兵口的距离：步兵 485px、弩兵 684px、虎骑 884px，
+        //    即越快的推得越远；而营地建筑留在出兵口上，画面就是「士兵不从营帐里出来」。
+        //    待命期的既定口径本就是「全军静止渐显」（见上面 deploying 分支），故此处只是把它钉死。
+        if (this.deployT > 0) {
+            for (const m of this.men) {
+                if (m.hp <= 0) continue;
+                m.x = m.anchorX;
+                m.y = m.anchorY;
+                m.prevX = m.anchorX;
+                m.prevY = m.anchorY;
+                m.sepX = 0;
+                m.sepY = 0;
+            }
         }
     }
 
