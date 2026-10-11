@@ -11,7 +11,7 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     // 🔴 [M4 件表版 · 2026-10-11 主人令「按文档顺序先做①件表版」] 险要/大城的两个围墙函数与件类型
     //     **搬进共享模块**（纯搬迁、一字未改）：战术侧要直接调真函数、不许复刻一份；
     //     名字保持原样（无 alias）⇒ 本文件里的调用点一个字不用改。
-    computeRectWall, computeFortifiedWallAndGate, type PalisadeGridPiece } from './cityWallShared';
+    computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, type PalisadeGridPiece } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
@@ -1006,7 +1006,7 @@ function deBuildingFootprint(b: string): number {
  *     占地 s×s 的建筑中心 = 左上格 + (s−1)/2，所以 4×4 的中心在半整数点；
  *   · 3×3 个位，位距 5 格（≥ 最大占地 4 + 1 格路）；每栋按自身占地吸附到整格（不重叠由位距保证）；
  *   · 建筑用素材**锚点**（DE 里锚点 = 占地中心）对位，不再用画框中心；
- *   · 城墙逐格沿格线走（isoStep 48×24），墙圈 S=13 ⇒ 每边 26 格，墙在格心上；
+ *   · 城墙按格逐件（cityWallShared.buildFortifiedRingOnGrid）：每边 角楼＋墙 11＋城门 4＋墙 11＋角楼，全在格心上；
  *   · 地面按墙圈菱形铺。
  */
 function buildDeBigCityGridHtml(
@@ -1014,15 +1014,19 @@ function buildDeBigCityGridHtml(
     pool: Array<[string, string]>, native: CityNativeSizes, rnd: () => number,
 ): string {
     const TW = DE_ISO_TILE_W, TH = DE_ISO_TILE_H;
-    const S = 13, AX = 2 * S;                                   // 墙圈：每边 26 格
-    const rX = AX * TW / 2, rY = AX * TH / 2;                   // 墙圈菱形半宽 / 半高（px）
-    const W = 2 * rX + 400, H = 2 * rY + 600;                   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
+    // 墙圈按格逐件生成：每边 = 角楼 + 墙 11 格 + 城门 4 格 + 墙 11 格 + 角楼 ⇒ 角到角 27 步；
+    // 全城 4 城门 + 4 角楼 + 8 段 × 11 = 88 件墙（主人 2026-10-12「先计算下……每段多少个城墙」）
+    const WALLS_PER_SEGMENT = 11;
+    const ring = buildFortifiedRingOnGrid(WALLS_PER_SEGMENT, TW, TH);
+    const rX = ring.L * TW / 2, rY = ring.L * TH / 2;           // 墙圈菱形半宽 / 半高（px）
+    const ringCy = (2 * ring.a + ring.L) * TH / 2;              // 圈心的屏幕 y（L 为奇数时圈心在半格处）
+    const W = 2 * rX + 400, H = 2 * (rY + Math.abs(ringCy)) + 600;   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
     const AUTO = 1.2;
     const parts: string[] = [];
 
     parts.push(featheredPolygonGroundDiv(
         W, H, '/SUCAI_TERRAIN/rd1.png', baseSize * 0.32 * AUTO * 2.3,
-        [[0, -rY], [rX, 0], [0, rY], [-rX, 0]],
+        [[0, ringCy - rY], [rX, ringCy], [0, ringCy + rY], [-rX, ringCy]],
         TW * 0.5, 0.93, 10,
     ));
 
@@ -1066,8 +1070,8 @@ function buildDeBigCityGridHtml(
         }
     });
 
-    // 加固城墙：墙段逐格沿格线走（isoStep），城门占 1 槽
-    const wallPieces = computeFortifiedWallAndGate(baseSize, S, true, { x: TW / 2, y: TH / 2 });
+    // 加固城墙：按格逐件（见上 ring）
+    const wallPieces = ring.pieces;
     if (rnd() < 0.5) {
         for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
     }

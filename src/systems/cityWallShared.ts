@@ -1381,11 +1381,9 @@ export function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rn
 /** 大城加固城墙与双塔门楼体系：
  *  加固城门采用 AoE2 DE 标准关闭状态双塔城门（closed + gate corner），左右自带门塔，
  *  在西北与东南墙段中部各设一门（k = S-1..S+1 留空让给双塔门楼），两端城墙严丝合缝咬入门塔外壁。 */
-export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, narrowGate: boolean = false, isoStep?: { x: number; y: number }): PalisadeGridPiece[] {
-    // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆，先改大城」] 战术侧传 isoStep＝DE 一格的等轴步长（48×24），墙段逐格沿格线走；
-    //    不传（战略地图）仍是 baseSize×0.075 ／ ×0.58，一个像素不动。
-    const stepX = isoStep ? isoStep.x : baseSize * 0.075;
-    const stepY = isoStep ? isoStep.y : stepX * 0.58;
+export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, narrowGate: boolean = false): PalisadeGridPiece[] {
+    const stepX = baseSize * 0.075;
+    const stepY = stepX * 0.58;
     const AX = 2 * S;
     const pieces: PalisadeGridPiece[] = [];
 
@@ -1429,5 +1427,41 @@ export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, nar
     pieces.push({ x: -S * stepX, y: southY - S * stepY, type: 'GATE', flipX: true }); // 西南墙中部双塔加固城门（镜像门）
 
     return pieces;
+}
+
+/**
+ * 🔴 [2026-10-12 主人「是不是应该先计算下，四个城门，四个城垛，八段城墙，每段多少个城墙？」]
+ * 战术侧大城的加固墙圈，**按 DE 格子逐格生成**（不按比例缩放）。
+ *   格坐标 (i, j)：格心在整数点，屏幕 x = (i − j)·tileW/2、y = (i + j)·tileH/2。
+ *   一边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 L = 2·seg + 5 步；
+ *   城门 4 格（门 2 + 门塔 2，DE DAT：门本体 2×1 格）⇒ 门心在两格之间（半整数点），两侧墙段等长。
+ *   墙圈占 i, j ∈ [a, a + L]，a = −⌊L/2⌋（四个角楼都在格心上；圈心在 (a + L/2, a + L/2)）。
+ * 件类型与镜像沿用 computeFortifiedWallAndGate 的约定（左上边 NE、右上边 SE、右下边 SE 镜像、左下边 NE 镜像；门：左上/右下不镜像，右上/左下镜像）。
+ */
+export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: number): { pieces: PalisadeGridPiece[]; L: number; a: number } {
+    const L = 2 * seg + 5;
+    const a = -Math.floor(L / 2);
+    const hx = tileW / 2, hy = tileH / 2;
+    const at = (i: number, j: number) => ({ x: (i - j) * hx, y: (i + j) * hy });
+    const pieces: PalisadeGridPiece[] = [];
+    const N = { i: a, j: a }, E = { i: a + L, j: a }, S = { i: a + L, j: a + L }, W = { i: a, j: a + L };
+    for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
+    const gateMid = seg + 2.5;                               // 从起点角楼数，门心所在的步数（半整数）
+    const isWall = (t: number) => t <= seg || t >= seg + 5;   // t = 1 … L−1
+    // 四条边：起点角、每步增量、墙件类型/镜像、门镜像
+    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; type: 'NE' | 'SE'; flip: boolean; gateFlip: boolean }> = [
+        { from: W, di: 0, dj: -1, type: 'NE', flip: false, gateFlip: false },   // 左上边：西角 → 北角（屏幕右上）
+        { from: N, di: 1, dj: 0, type: 'SE', flip: false, gateFlip: true },     // 右上边：北角 → 东角（屏幕右下）
+        { from: E, di: 0, dj: 1, type: 'SE', flip: true, gateFlip: false },     // 右下边：东角 → 南角（屏幕左下）
+        { from: S, di: -1, dj: 0, type: 'NE', flip: true, gateFlip: true },     // 左下边：南角 → 西角（屏幕左上）
+    ];
+    for (const e of edges) {
+        for (let t = 1; t <= L - 1; t++) {
+            if (!isWall(t)) continue;
+            pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.type, flipX: e.flip || undefined });
+        }
+        pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', flipX: e.gateFlip || undefined });
+    }
+    return { pieces, L, a };
 }
 
