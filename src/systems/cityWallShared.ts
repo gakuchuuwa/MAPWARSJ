@@ -185,6 +185,8 @@ export interface PalisadeGridPiece {
     x: number;
     y: number;
     type: 'NE' | 'SE' | 'POST' | 'GATE' | 'CORNER' | 'TOWER_AGE3' | 'TOWER_AGE4';
+    /** 城门朝向（仅按格生成的墙圈用：DE 东北向 / 东南向各有一套城门素材，不靠镜像） */
+    gateDir?: 'NE' | 'SE';
     /** 等轴镜像：素材只有右上(NE)/右下(SE)两种斜段，东南边/西南边须 scaleX(-1) 翻转成左下/左上段 */
     flipX?: boolean;
 }
@@ -1436,7 +1438,8 @@ export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, nar
  *   一边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 L = 2·seg + 5 步；
  *   城门 4 格（门 2 + 门塔 2，DE DAT：门本体 2×1 格）⇒ 门心在两格之间（半整数点），两侧墙段等长。
  *   墙圈占 i, j ∈ [a, a + L]，a = −⌊L/2⌋（四个角楼都在格心上；圈心在 (a + L/2, a + L/2)）。
- * 件类型与镜像沿用 computeFortifiedWallAndGate 的约定（左上边 NE、右上边 SE、右下边 SE 镜像、左下边 NE 镜像；门：左上/右下不镜像，右上/左下镜像）。
+ * 🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] **一律不镜像**：等轴素材的侧面、阴影按单一朝向绘制，镜像顶替会让门塔接墙处错位。
+ *    DE 东北向、东南向的墙段与城门各有一套素材 ⇒ 左上边、右下边（走向 ↗↙）用 NE；右上边、左下边（走向 ↘↖）用 SE。
  */
 export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: number): { pieces: PalisadeGridPiece[]; L: number; a: number } {
     const L = 2 * seg + 5;
@@ -1448,19 +1451,19 @@ export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: numb
     for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
     const gateMid = seg + 2.5;                               // 从起点角楼数，门心所在的步数（半整数）
     const isWall = (t: number) => t <= seg || t >= seg + 5;   // t = 1 … L−1
-    // 四条边：起点角、每步增量、墙件类型/镜像、门镜像
-    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; type: 'NE' | 'SE'; flip: boolean; gateFlip: boolean }> = [
-        { from: W, di: 0, dj: -1, type: 'NE', flip: false, gateFlip: false },   // 左上边：西角 → 北角（屏幕右上）
-        { from: N, di: 1, dj: 0, type: 'SE', flip: false, gateFlip: true },     // 右上边：北角 → 东角（屏幕右下）
-        { from: E, di: 0, dj: 1, type: 'SE', flip: true, gateFlip: false },     // 右下边：东角 → 南角（屏幕左下）
-        { from: S, di: -1, dj: 0, type: 'NE', flip: true, gateFlip: true },     // 左下边：南角 → 西角（屏幕左上）
+    // 四条边：起点角、每步增量、墙段 / 城门朝向（DE 两套素材，不镜像）
+    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE' }> = [
+        { from: W, di: 0, dj: -1, dir: 'NE' },   // 左上边：西角 → 北角（屏幕 ↗）
+        { from: N, di: 1, dj: 0, dir: 'SE' },    // 右上边：北角 → 东角（屏幕 ↘）
+        { from: E, di: 0, dj: 1, dir: 'NE' },    // 右下边：东角 → 南角（屏幕 ↙，与 ↗ 同一走向）
+        { from: S, di: -1, dj: 0, dir: 'SE' },   // 左下边：南角 → 西角（屏幕 ↖，与 ↘ 同一走向）
     ];
     for (const e of edges) {
         for (let t = 1; t <= L - 1; t++) {
             if (!isWall(t)) continue;
-            pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.type, flipX: e.flip || undefined });
+            pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
         }
-        pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', flipX: e.gateFlip || undefined });
+        pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', gateDir: e.dir });
     }
     return { pieces, L, a };
 }
