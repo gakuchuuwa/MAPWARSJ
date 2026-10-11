@@ -195,7 +195,7 @@ export interface PalisadeGridPiece {
 
 /** 绕城一圈：四角城垛 + 四条边（每边 AX−1 段）+ 中部城门（`fourGates` 时四边皆门）。
  *  小城 / 中城 / 大城 / 城寨「正方」都用它（S 不同）。 */
-export function buildRingWallAndGate(baseSize: number, S: number = 5, fourGates: boolean = false): StockadeRingPiece[] {
+export function buildRingWallAndGate(baseSize: number, S: number = 5, fourGates: boolean = false, narrowGate: boolean = false): StockadeRingPiece[] {
     const stepX = baseSize * 0.075;
     const stepY = stepX * 0.58;
     const AX = 2 * S;
@@ -214,14 +214,14 @@ export function buildRingWallAndGate(baseSize: number, S: number = 5, fourGates:
 
     // 西北边：西角→北角（右上 = NE 段），k=S-1..S+1 让给城门（嵌墙中部）
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;   // 🔴 [2026-10-11 主人「四边不对称不合理」] 城门只占 1 槽 ⇒ 四边件数恒为 2S−1
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
     }
     pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部城门
 
     // 东北边：北角→东角（右下 = SE 段），fourGates 为 true 时添加镜像城门
     for (let k = 1; k < AX; k++) {
-        if (fourGates && k === S) continue;   // 同上（四门时也各占 1 槽）
+        if (fourGates && (narrowGate ? k === S : (k >= S - 1 && k <= S + 1))) continue;
         pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
     }
     if (fourGates) {
@@ -230,14 +230,14 @@ export function buildRingWallAndGate(baseSize: number, S: number = 5, fourGates:
 
     // 东南边：东角→南门（左下 = SE 镜像），k=S-1..S+1 让给城门
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
     }
     pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部城门
 
     // 西南边：南门→西角（左上 = NE 镜像），fourGates 为 true 时添加镜像城门
     for (let k = 1; k < AX; k++) {
-        if (fourGates && k === S) continue;
+        if (fourGates && (narrowGate ? k === S : (k >= S - 1 && k <= S + 1))) continue;
         pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
     }
     if (fourGates) {
@@ -1381,9 +1381,11 @@ export function computeRectWall(baseSize: number, LSeg: number, WSeg: number, rn
 /** 大城加固城墙与双塔门楼体系：
  *  加固城门采用 AoE2 DE 标准关闭状态双塔城门（closed + gate corner），左右自带门塔，
  *  在西北与东南墙段中部各设一门（k = S-1..S+1 留空让给双塔门楼），两端城墙严丝合缝咬入门塔外壁。 */
-export function computeFortifiedWallAndGate(baseSize: number, S: number = 7): PalisadeGridPiece[] {
-    const stepX = baseSize * 0.075;
-    const stepY = stepX * 0.58;
+export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, narrowGate: boolean = false, isoStep?: { x: number; y: number }): PalisadeGridPiece[] {
+    // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆，先改大城」] 战术侧传 isoStep＝DE 一格的等轴步长（48×24），墙段逐格沿格线走；
+    //    不传（战略地图）仍是 baseSize×0.075 ／ ×0.58，一个像素不动。
+    const stepX = isoStep ? isoStep.x : baseSize * 0.075;
+    const stepY = isoStep ? isoStep.y : stepX * 0.58;
     const AX = 2 * S;
     const pieces: PalisadeGridPiece[] = [];
 
@@ -1400,28 +1402,28 @@ export function computeFortifiedWallAndGate(baseSize: number, S: number = 7): Pa
 
     // 西北边：西角→北角（NE右上走向），k=S-1..S+1 让给城门（嵌墙中部）
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: westX + k * stepX, y: -k * stepY, type: 'NE' });
     }
     pieces.push({ x: westX + S * stepX, y: -S * stepY, type: 'GATE' });   // 西北墙中部双塔加固城门（原门，东北西南走向）
 
     // 东北边：北角→东角（SE右下走向），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: k * stepX, y: northY + k * stepY, type: 'SE' });
     }
     pieces.push({ x: S * stepX, y: northY + S * stepY, type: 'GATE', flipX: true }); // 东北墙中部双塔加固城门（镜像门）
 
     // 东南边：东角→南角（SE左下走向，带镜像），k=S-1..S+1 让给城门
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: eastX - k * stepX, y: k * stepY, type: 'SE', flipX: true });
     }
     pieces.push({ x: eastX - S * stepX, y: S * stepY, type: 'GATE' });    // 东南墙中部双塔加固城门（原门，东北西南走向）
 
     // 西南边：南角→西角（NE左上走向，带镜像），[2026-09-08 主人定] 添加西北东南走向城门（镜像）
     for (let k = 1; k < AX; k++) {
-        if (k === S) continue;
+        if (narrowGate ? k === S : (k >= S - 1 && k <= S + 1)) continue;
         pieces.push({ x: -k * stepX, y: southY - k * stepY, type: 'NE', flipX: true });
     }
     pieces.push({ x: -S * stepX, y: southY - S * stepY, type: 'GATE', flipX: true }); // 西南墙中部双塔加固城门（镜像门）
