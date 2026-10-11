@@ -4283,7 +4283,8 @@ export class Scene13WarLayer {
             const mx = Math.max(60, VW * 0.07);
             // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
             //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
-            const depth = Math.min(240, Math.max(200, Math.round(VW * 0.11)));
+            // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 三排排距收紧（原 200~240 让全军摊得太开，像一条线）
+    const depth = Math.min(170, Math.max(130, Math.round(VW * 0.085)));
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
@@ -7455,7 +7456,10 @@ export class Scene13WarLayer {
                 // 但只有开局那批 march=true 整体平移迁就最慢，补兵 march=false 各自按兵种速度走。
                 // 🔴 [2026-08-23 主人定] 攻城战不再列阵行军：开局双方按兵不动（见 holdSiege），
                 //    40 秒城墙坍塌后直接各自索敌接战（aimAt/search）；march 列阵只保留给野战。
-                const inMarch = this.deployT > 0 && this.battleType !== 'siege';
+                // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] **攻城战也列阵推进**：原为 `&& battleType !== 'siege'`
+                //    ⇒ 攻城时每个兵各自扑向城门，十队方阵立刻散成一条横线（主人多张截图实锤）。
+                //    现在与野战同款：整队方块推进，到城墙下再散开接战。
+                const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
                 const files = marchFilesOf(s.key);
                 // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
@@ -7463,7 +7467,10 @@ export class Scene13WarLayer {
                 // 战车 4 排若也用 44 就是 132px，窄屏（1366→102px）会直接压到前后排的口上。
                 // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
                 const sp = marchSpacingOf(s.key);
-                const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+                // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 等距纵深补偿：世界 y 在屏幕上**减半**显示，
+                //    若行距＝列距，6×6 的方块在屏幕上会变成 2:1 的扁条（看着就是「一排」）。
+                //    故行距取列距的 2 倍 ⇒ 屏幕上呈正方。
+                const spDep = Math.min(sp * 2, MARCH_SP_DEPTH_MAX);
                 // 🔴 [2026-10-11 主人令「你看看以前的13战术模式是如何排列的」]
                 //    旧 13 的排法（`!useFieldPlan` 那条路）就是：**每队 = rank×spDep 行 × slotY 列，
                 //    整块贴在出兵口、向后方排开**（`spawnX = s.x ± dep`、`spawnY = s.y + slotY`）。
@@ -8278,7 +8285,14 @@ export class Scene13WarLayer {
                 if (sp.f === 0) front0 = Math.max(front0, sp.x + this.adv[0]);
                 else front1 = Math.min(front1, sp.x - this.adv[1]);
             }
-            if (front1 - front0 < MARCH_REL) {
+            // 🔴 [2026-10-11 主人报「开战前是方阵，**当攻城武器开始移动的时候，所有方阵瞬间拥挤在一起**」]
+            //    原判据 `front1 - front0 < MARCH_REL` **假定两军出生点分居 x 左右**（旧 13 布阵）：
+            //    攻方在西（x 小）、守方在东（x 大）⇒ 差值为正，只有真正逼近才解除。
+            //    但新八方向／攻城布局下**攻方可以在东、守方在城心** ⇒ 差值**一开始就是负数**，
+            //    永远 `< MARCH_REL` ⇒ **列阵推进当场被解除**，全军立刻各自扑向同一个目标
+            //    = 主人看到的「瞬间挤在一起」（野战走上面那支带 15 秒保底的判据，所以野战不出这毛病）。
+            //    改成按**前后沿的绝对间距**判 + 与野战同款 15 秒保底。
+            if (Math.abs(front1 - front0) < MARCH_REL || this.battleSec >= 15.0) {
                 this.marching = false;
                 for (const m of this.men) {
                     m.march = false;   // 全军同时解除，双方一起炸开接战
@@ -8289,10 +8303,30 @@ export class Scene13WarLayer {
         }
     }
 
+    /**
+     * 🔴 [2026-10-11 主人令「攻方去防守方的，防守方去攻方的……攻守各 10 个点 = 10 条线」]
+     * 对面「对应编号」的那一口：按本方第 i 口 ↔ 对面第 i 口配对（主将队/玩家精锐不计入编号），
+     * 于是每一对点连成一条推进线，两条相邻线上的两队**在中途迎面相遇**即接战，十条线互不重叠。
+     */
+    private foePortOf(lane: number): { x: number; y: number } | null {
+        const mine = this.spawns[lane];
+        if (!mine) return null;
+        const key = (s: { commander?: boolean; playerElite?: boolean }) => !s.commander && !s.playerElite;
+        const ours = this.spawns.filter((s) => s.f === mine.f && key(s));
+        const foes = this.spawns.filter((s) => s.f !== mine.f && key(s));
+        if (!foes.length) return null;
+        const i = ours.indexOf(mine);
+        return foes[Math.min(Math.max(i, 0), foes.length - 1)] ?? null;
+    }
+
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, false);
-        if (near) return { x: near.x, y: near.y };
+        // 🔴 [2026-10-11 主人令「整个战术模式的寻敌都还是以前旧的战术模式左右对战的寻敌方式，这个应该修改下」]
+        //    旧内核：**全队追同一个「最近敌兵」的一个点**（注释原本写明「不加散开偏移」）⇒ 相邻几十人叠成一团。
+        //    改成 DE 式：**每个兵带着自己固定的阵位偏移去接敌** —— 用每人出生时就定死的 `m.jx/m.jy`
+        //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
+        if (near) return { x: near.x + m.jx, y: near.y + m.jy };
         // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
         //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
         if (m.siegeW && this.defenderHolding) {
@@ -8306,7 +8340,13 @@ export class Scene13WarLayer {
             return null;
         }
 
-        // ── ② 没人可打时走「巡逻航路」（主人 2026-08-17 定）──────────────────────────
+        // ── ② 没人可打时：**朝对面「对应编号」的那一口推进**（主人 2026-10-11 定：十点对十点 = 十条线）────
+        //    两队沿同一条线迎面而行 ⇒ 必然在中途碰上并开打（双方都走这条规则，不会像旧版那样只有一方扑空口）。
+        //    带上每人自己的阵位偏移 m.jx/m.jy ⇒ 整队方阵平移，不叠成一团。
+        const foePort = this.foePortOf(m.lane);
+        if (foePort) return { x: foePort.x + m.jx, y: foePort.y + m.jy };
+
+        // ── ③ 配对也拿不到（理论上到不了）时才走「巡逻航路」（主人 2026-08-17 定）────────────
         //
         // 为什么不再用「走敌方出兵口 → 扑敌军重心」那套：
         //   出兵口是**静止的路标**，兵冲到敌方底边发现没人，下一个候选还是另一个出兵口
@@ -8696,7 +8736,11 @@ export class Scene13WarLayer {
             //    去掉 2026-09-05 加的 `!m.hero`（原为「玩家自己操控故不受约束」）——
             //    现在玩家与普通军团同规矩：攻城战开局一起按兵不动，等攻城器把墙砸塌
             //    （defenderHolding=false）再一起开打。期间键盘输入同样不生效，因为本分支先 continue。
-            const holdSiege = this.defenderHolding && !m.siegeW;
+            // 🔴 [2026-10-11 主人令「先去掉 30 秒的攻城模式，然后对应出兵点……双方就能碰面并战斗」]
+        //    步兵/骑兵/远程**不再被 30 秒待命冻住**（原 `this.defenderHolding && !m.siegeW` 会把全军按住，
+        //    等攻城器砸墙；主人现在要的是十队各自沿「本口 → 对面那一口」推进、中途迎面开打）。
+        //    攻城武器保留「先砸最近的 linked 墙」的目标逻辑（aimAt 里那一支照旧），所以 != 取消攻城。
+        const holdSiege = false;
             if (holdSiege) {
                 m.st = 0;
                 m.foe = null;
