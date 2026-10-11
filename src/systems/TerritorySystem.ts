@@ -24,7 +24,7 @@ import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
 import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAssets';
-import { DE_SPRITE_ANCHOR } from './battlefield/deSpriteSizes';
+import { DE_SPRITE_ANCHOR, DE_SPRITE_BOX_W } from './battlefield/deSpriteSizes';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { CityAssetManager } from '../assets/CityAssetManager';
@@ -903,7 +903,16 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
 
     // 🔴 [2026-10-12 主人令「DE 的建筑按格子摆放，先改大城」] 战术侧（传了原生尺寸表）走**按格摆放**的版本；
     //    战略地图（native 缺省）继续走下面原来的写法，一个像素不动。
-    if (native) return buildDeBigCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, pool, native, rnd);
+    // 🔴 [2026-10-12 主人「大城可以添加所有建筑……一样一种」] 战术侧大城：建筑池 12 种**一样一栋**（另加城心城堡＝13 栋）；
+    //    战略地图仍是上面的 9 栋（主人「总体不能超过 9 个」那条只管战略，不动）。16 种风格 12 种素材均齐（已逐一核对）。
+    if (native) {
+        const full: Array<[string, string]> = [...DE_IMPERIAL_CITY_POOL];
+        for (let i = full.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            [full[i], full[j]] = [full[j], full[i]];
+        }
+        return buildDeBigCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full, native, rnd);
+    }
 
     // 容器尺寸（比中城更大，容纳更宽的布局与石城墙）
     const W = baseSize * 2.8;
@@ -1030,13 +1039,20 @@ function buildDeBigCityGridHtml(
         TW * 0.5, 0.93, 10,
     ));
 
-    // 3×3 个位（行 r、列 c ∈ {-1,0,1}），位距 5 格；按屏幕 y 升序（与战略版同序，保证选建筑的顺序一致）
-    const PITCH = 5;
-    const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = [];
-    for (let r = -1; r <= 1; r++) for (let c = -1; c <= 1; c++) {
-        slots.push({ ci: c * PITCH, cj: r * PITCH, isCenter: r === 0 && c === 0, y: (c * PITCH + r * PITCH) * TH / 2 });
+    // 🔴 [2026-10-12 主人选「铺开成街区」＋「一样一种」] 13 个个位按街区摆（墙圈不变）：
+    //    · 两条 2 格宽大道从四门直通城心成十字：i ∈ {0,1}、j ∈ {0,1}（门心在 0.5，正对大道）；
+    //    · 城堡（4×4）坐十字路口正中，个位中心 (0.5, 0.5) ⇒ 占 −1…2；
+    //    · 其余 12 栋四个象限各 3 栋（大道两侧各一 + 外角一），个位中心 = 圈心 0.5 ± (3.5, 9)、± (9, 3.5)、± (9, 9)。
+    //    逐格核对（全按 4×4 最坏情况）：不重叠、不压大道、两栋间至少隔 1 格、离墙（−13 / 14）至少空 2 格。
+    const NEAR = 3.5, FAR = 9, MID = 0.5;
+    const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = [{ ci: MID, cj: MID, isCenter: true, y: 0 }];
+    for (const si of [-1, 1]) for (const sj of [-1, 1]) {
+        slots.push({ ci: MID + si * NEAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
+        slots.push({ ci: MID + si * FAR, cj: MID + sj * NEAR, isCenter: false, y: 0 });
+        slots.push({ ci: MID + si * FAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
     }
-    slots.sort((a, b) => a.y - b.y);
+    for (const sl of slots) sl.y = (sl.ci + sl.cj) * TH / 2;
+    slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
 
     /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
     const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean): void => {
@@ -1062,7 +1078,9 @@ function buildDeBigCityGridHtml(
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
         } else {
-            const [b, age] = (centerCastle ? pool[otherIdx++] : pool[i]) as [string, 'AGE2' | 'AGE3'];
+            const entry = centerCastle ? pool[otherIdx++] : pool[i];
+            if (!entry) return;   // 无城堡时个位比建筑多一个（13 位 / 12 栋），空着
+            const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
             const src = cityBuildingSrc(style, b, age);
             const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
@@ -1070,20 +1088,19 @@ function buildDeBigCityGridHtml(
         }
     });
 
-    // 加固城墙：按格逐件（见上 ring）
-    const wallPieces = ring.pieces;
-    if (rnd() < 0.5) {
-        for (const w of wallPieces) { w.x = -w.x; w.flipX = !w.flipX; }
-    }
+    // 加固城墙：按格逐件（见上 ring）。🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] 不镜像（原来 50% 整圈翻转，
+    //    把东北向素材镜像去顶替东南向 ⇒ 门塔接墙处错位）；每件按朝向取 DE 素材，宽度、锚点都取素材原值。
     const fortifiedAnchors = DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'];
-    wallPieces.forEach((w) => {
-        const anchor = fortifiedAnchors[w.type];
-        const zIndex = Math.round(500 + w.y);
-        const pieceW = spriteNativeW(native, anchor.path) ?? (baseSize * anchor.widthFactor * AUTO);
-        const pctX = w.flipX ? (100 - anchor.pctX) : anchor.pctX;
-        const flip = w.flipX ? ' scaleX(-1)' : '';
+    ring.pieces.forEach((w) => {
+        const base = fortifiedAnchors[w.type === 'GATE' ? 'GATE' : w.type];
+        const path = w.type === 'GATE' && w.gateDir === 'SE' ? base.path.replace('_NE/preview.png', '_SE/preview.png') : base.path;
+        const dir = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(path)?.[1] ?? '';
+        const anc = DE_SPRITE_ANCHOR[dir];
+        const boxW = DE_SPRITE_BOX_W[dir] ?? (baseSize * base.widthFactor * AUTO);
+        const pctX = anc ? anc[0] / boxW * 100 : base.pctX;
+        const pctY = anc ? anc[1] / anc[2] * 100 : base.pctY;
         parts.push(
-            `<img src="${anchor.path}" style="position:absolute;left:50%;top:50%;width:${pieceW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${anchor.pctY.toFixed(1)}% + ${w.y.toFixed(1)}px))${flip};z-index:${zIndex};pointer-events:none;" />`
+            `<img src="${path}" style="position:absolute;left:50%;top:50%;width:${boxW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${pctY.toFixed(1)}% + ${w.y.toFixed(1)}px));z-index:${Math.round(500 + w.y)};pointer-events:none;" />`
         );
     });
 
