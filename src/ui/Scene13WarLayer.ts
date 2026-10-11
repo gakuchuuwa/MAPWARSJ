@@ -2314,7 +2314,7 @@ function marchFilesOf(key: string): number {
  */
 const MARCH_SP = 24;
 /** 列阵纵深方向的槽位间距上限：受出兵口前后行间距（depth，1920 屏 144px）约束，见使用处。 */
-const MARCH_SP_DEPTH_MAX = 36;
+const MARCH_SP_DEPTH_MAX = 48;
 /** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
 function marchSpacingOf(key: string): number {
     const r = UNIT_RADIUS[key] ?? 8;
@@ -4404,7 +4404,7 @@ export class Scene13WarLayer {
                         const forwardOffset = (1 - cell.row) * depth;
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
-                        const colSpacing = Math.min(240, Math.max(200, spanY / 4));
+                        const colSpacing = Math.min(140, Math.max(120, spanY / 7));
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -4419,7 +4419,7 @@ export class Scene13WarLayer {
                     } else {
                         const back = mx + (2 - cell.row) * depth;
                         x = side.f === 0 ? back : VW - back;
-                        const colSpacing = Math.min(240, Math.max(200, spanY / 4));
+                        const colSpacing = Math.min(140, Math.max(120, spanY / 7));
                         y = midY + (cell.col - (cell.cols - 1) / 2) * colSpacing;
                     }
                     this.spawns.push({
@@ -7464,17 +7464,12 @@ export class Scene13WarLayer {
                 // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
                 const sp = marchSpacingOf(s.key);
                 const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
-                // 🔴 [2026-10-11 主人令「士兵的出兵口不对，出兵口应该在营地，不是这样一条线」→
-                //     「为什么军团不在出兵口列 6×6 方阵，却都拥挤在一排呢」]
-                //    这两令合起来的要求是：**方阵要成 6×6 方块，且这块方阵落在出兵口（＝营地建筑）上**。
-                //    · 野战（`inMarch`）：整队从营地列阵推进 —— 行号从 0 起、向**后排**（保持原样，不动）。
-                //    · 攻城战：不列阵行军，若把纵深抹成 0（上一版做法）⇒ 36 人塌成一排（就是主人看到的「拥挤在一排」）；
-                //      所以要**保留纵深**、但让方阵**以出兵口为中心**：行号 −(R−1)/2 … +(R−1)/2。
-                const rank = (slotIdx / files) | 0;
-                const ranks = Math.max(1, Math.ceil((s.pool || 1) / files));
-                const dep = this.battleType === 'siege'
-                    ? (rank - (ranks - 1) / 2) * spDep
-                    : rank * spDep;
+                // 🔴 [2026-10-11 主人令「你看看以前的13战术模式是如何排列的」]
+                //    旧 13 的排法（`!useFieldPlan` 那条路）就是：**每队 = rank×spDep 行 × slotY 列，
+                //    整块贴在出兵口、向后方排开**（`spawnX = s.x ± dep`、`spawnY = s.y + slotY`）。
+                //    本人先前给攻城战单独改成「以出兵口为中心」，**偏离了旧 13 口径** ⇒ 已退回，
+                //    三种情况（野战 / 攻城 / 退回旧 13）现在**统一用旧 13 的排法**：行号 0 起、向后排。
+                const dep = ((slotIdx / files) | 0) * spDep;
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
 
                 // 🔴 [2026-09-17 主人定] 背刺奇袭出生点改造：在敌方最后排（row===2）出兵口随机抽取出生
@@ -8601,6 +8596,12 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender() && !this.wallAutoCollapsed && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
+        }
+        // 🔴 [2026-10-11 主人令「我要的是方阵，不是一排」] 无城墙的攻城战（城寨 / 漠北蒙古）：
+        //    没有墙可塌，但同样要「先列阵待命、再开打」——按同一个 WALL_AUTO_COLLAPSE_SEC 闸放行，
+        //    否则 defenderHolding 永远为真、全军站到天荒地老（这就是必须配这一支的原因）。
+        if (this.defenderHolding && !this.siegeWithWalls && this.battleSec >= WALL_AUTO_COLLAPSE_SEC) {
+            this.defenderHolding = false;
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
         this.stepArrowTowers(dt);
