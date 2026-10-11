@@ -802,10 +802,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
             grass: baseTerrain,
             sand: beachTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
             forest: forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
-            // 🔴 [2026-08-22 主人定] 绿是河、蓝是海；冬季封冻冰面(ic2/ice)与沼泽水(wt6)优先保留主题本色
-            water: (themeWater === 'ic2' || themeWater === 'ice' || themeWater === 'wt6')
-                ? themeWater
-                : ((waterKind === 'river' || waterKind === 'lake') ? 'river_clean_green' : themeWater),
+            // 🔴 [2026-10-11 偏灰水面清零] 统一由 waterTerrainForTheme 决定（非雪区蓝水 wtr/wt5，冬季雪区 ic2 冰面）
+            water: themeWater,
         };
         return {
             seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,

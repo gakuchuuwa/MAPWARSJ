@@ -753,24 +753,12 @@ export function waterTerrainForTheme(
     if (biome === 'tundra_snow') {
         return 'wtr'; // 极地融水清澈冷水
     }
-    // 2. 华南 / 东南亚 / 非洲热带雨林水乡 / 湿润地区：DE 经典清澈碧绿翡翠水 (river_clean_green)
-    if (
-        theme.id === 'indomalayan_tropical' ||
-        theme.id === 'afrotropical_tropical' ||
-        theme.id === 'neotropical_tropical'
-    ) {
-        return 'river_clean_green';
-    }
-    // 3. 地中海 / 蔚蓝沿海：清澈蔚蓝海水色 (wt5)
+    // 2. 地中海 / 蔚蓝沿海：清澈蔚蓝海水色 (wt5)
     if (biome === 'mediterranean') {
         return 'wt5';
     }
-    // 4. 低洼内陆沼泽 / 湿地：暗绿水苔泥沼 (wt6)
-    if (theme.id === 'palustrine_swamp') {
-        return 'wt6';
-    }
-    // 5. 寒带针叶林 / 温带森林 / 草原 / 沿海近海：清澈明亮蔚蓝水 (wtr)
-    // 🔴 [2026-08-26 主人定] 海边不要用深海颜色，河流不要用暗浊泥水，统一为清澈明亮近岸江海水色
+    // 3. 其余全部非结冰水域（含原 river_clean_green rgb(38,71,59) 与 wt6 rgb(71,104,104)）：
+    //    🔴 [2026-10-11 偏灰水面清零] 按既有口径统一改为清澈明亮蓝水 wtr (rgb(32,119,162) 饱和 0.80)，冬雪区才换 ic2 冰面
     return 'wtr';
 }
 

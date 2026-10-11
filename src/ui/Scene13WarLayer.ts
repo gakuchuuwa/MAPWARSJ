@@ -5600,9 +5600,13 @@ export class Scene13WarLayer {
             //    使拒马正面一律与营心→敌方的方向对齐（不再按攻/守写死，也不受左右镜像影响）。
             const CEN = { x: side.reduce((a, p) => a + p.x, 0) / side.length, y: side.reduce((a, p) => a + p.y, 0) / side.length };
             const spread = Math.max(...side.map((p) => Math.hypot(p.x - CEN.x, p.y - CEN.y)));
-            const ringR = spread + 48;                               // 圈比营地外接再放 48px，免得拒马压在营帐上
+            // 🔴 [2026-10-11 主人令「拒马太密，太多了，应该分布在营地外」]
+            //    改前：圈半径 = spread + 48 ⇒ 紧贴九口外接、**压在营帐上**；桩距 = 0.9×素材宽 ⇒ 密到看不出是拒马。
+            //    改后：圈半径 = spread + 200（**挪到营地外**，清开帐篷/箭塔/哨站的外沿）；
+            //          桩距 = 3.4×素材宽（约 163px，**根数减少约一半**），一圈只留必要的疏朗几根。
+            const ringR = spread + 200;                              // 营地外沿再放 200px
             const BAR_HALF_W = 48;                                   // 素材框宽 96
-            const barricadeCount = Math.max(12, Math.round((2 * Math.PI * ringR) / (BAR_HALF_W * 1.8)));
+            const barricadeCount = Math.max(8, Math.round((2 * Math.PI * ringR) / (BAR_HALF_W * 3.4)));
             // 敌方方向：由「己方营心 → 敌方营心」定；拿不到就用本阵前进向量兜底
             const foeSide = this.spawns.filter((s) => s.f !== f);
             const foeCen = foeSide.length
@@ -7460,7 +7464,14 @@ export class Scene13WarLayer {
                 // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
                 const sp = marchSpacingOf(s.key);
                 const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
-                const dep = ((slotIdx / files) | 0) * spDep;
+                // 🔴 [2026-10-11 主人令「士兵的出兵口不对，出兵口应该在营地，不是这样一条线」]
+                //    `dep` 是**列阵行军的「向后排」纵深**：野战整队从营地列阵推进时这是对的。
+                //    **但攻城战不列阵行军**（`inMarch = deployT>0 && battleType!=='siege'` 恒为 false），
+                //    这段纵深却在生成算式里照旧生效 ⇒ 兵被生成在出兵口前后一条线上（实测离自己出兵口
+                //    360~374px），而营地建筑留在出兵口上，看着就是「兵不在营地上」。
+                //    故：**攻城战 dep 取 0** ⇒ 兵生成在自己的出兵口（＝营地建筑）上，只保留横向位。
+                //    野战（含补兵方阵）维持原样，不动。
+                const dep = this.battleType === 'siege' ? 0 : (((slotIdx / files) | 0) * spDep);
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
 
                 // 🔴 [2026-09-17 主人定] 背刺奇袭出生点改造：在敌方最后排（row===2）出兵口随机抽取出生
