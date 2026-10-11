@@ -908,8 +908,23 @@ export class Army implements IBattleUnit {
 
         // 换点/脱出都不打断本帧位移：船一帧都不停，避免换点那一帧出现停顿。
         if (this.hasArrived) return;
-        this.position.lat += Math.cos(this.navalHeadingRad) * advance;
-        this.position.lng += Math.sin(this.navalHeadingRad) * advance;
+        // 🔴 [2026-10-11 主人报「船横穿陆地」（截图：乱入者的船开进内陆）]
+        //    海行推进此前**完全不做海陆判定** ⇒ 船能直接开上陆地。
+        //    这里加一道**保守**闸门：只在「当前在水、下一位置是陆」这一种情形下不推进
+        //    （原地转首，下一帧换个方向再试）。
+        //    为什么必须保守：大陆深处/大洋无瓦片区 `isSeaAtMajority` 会判成陆，
+        //    若只要「下一位置是陆」就拦，会把大洋里无瓦片区的船**冻死**。
+        //    要求 `当前在水` 才算过渡 ⇒ 掩膜不可用时两边都判陆 ⇒ 不拦，绝不卡住行军。
+        const nextLat = this.position.lat + Math.cos(this.navalHeadingRad) * advance;
+        const nextLng = this.position.lng + Math.sin(this.navalHeadingRad) * advance;
+        const onWaterNow = LandSeaSystem.isSeaAtMajority(this.position.lat, this.position.lng);
+        const onWaterNext = LandSeaSystem.isSeaAtMajority(nextLat, nextLng);
+        if (onWaterNow && !onWaterNext) {
+            this.navalPrevDistToNext = distToNext;   // 保持绕圈兜底计时的一致性
+            return;                                   // 落陆：本帧不推进
+        }
+        this.position.lat = nextLat;
+        this.position.lng = nextLng;
         this.lastDirection = this.navalHeadingRad;
     }
 

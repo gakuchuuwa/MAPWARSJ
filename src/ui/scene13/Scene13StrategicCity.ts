@@ -128,7 +128,7 @@ function strategicCityHtmlWith(
 ): StrategicCityHtml | null {
     if (!p.deStyle) return null;
     const html = buildCityStackInnerHtml(city, TACTICAL_CITY_BASE_SIZE, p.deStyle, p.centerCastle, p.useStoneWall, p.cityRegion, native);
-    const mirror = city.type !== 'pass' && !!city.mirror;
+    const mirror = !!city.mirror;   // [2026-10-11] 险要(pass)也吃镜像（原先被排除，守军出兵口与画出的建筑左右相反）
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const root = doc.body.firstElementChild as HTMLElement | null;
     const width = root ? parseFloat(root.style.width) || 0 : 0;

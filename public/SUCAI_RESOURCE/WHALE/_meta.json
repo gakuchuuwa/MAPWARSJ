@@ -1,9 +1,11 @@
 {
   "code": "WHALE",
-  "source": "a_fish_whale",
+  "source": "a_fish_whale_x1 + a_fish_whale_underwater_x1",
   "frames": 241,
-  "box_w": 148,
-  "box_h": 64,
-  "anchor_x": 82,
-  "anchor_y": 58
+  "cols": 25,
+  "rows": 10,
+  "box_w": 212,
+  "box_h": 115,
+  "anchor_x": 113,
+  "anchor_y": 59
 }
