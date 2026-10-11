@@ -152,6 +152,14 @@ export class WorldMiniMap {
             icon: L.divIcon({ className: 'wm-dot', html: '<span></span>', iconSize: [12, 12], iconAnchor: [6, 6] }),
         }).addTo(this.mini);
 
+        // 🔴 [2026-10-11 主人令「小地图显示的比例和位置应该和大地图一直保持一致」]
+        //    改前：视口框只在「展开」且**每 4 拍**才更新一次（tick 里早退在更新之前）⇒ 收起时是旧框、
+        //    拖动/缩放大地图时框滞后。现改为**跟随大地图的 move/zoom 事件实时同步**，与是否展开无关。
+        const syncViewRect = () => this.viewRect.setBounds(this.mainMap.getBounds());
+        this.mainMap.on('move zoom moveend zoomend', syncViewRect);
+        this.mainMap.on('resize', syncViewRect);
+        syncViewRect();
+
         // 🔴 [2026-10-04 主人定「只移动镜头」] 点小地图：大地图镜头跳到点击处（缩放级别不变），军团与玩家都不动
         this.mini.on('click', (e: L.LeafletMouseEvent) => {
             this.releaseCamera();

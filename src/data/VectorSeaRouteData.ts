@@ -6396,5 +6396,36 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿卡普尔科-马尼拉",
+                type: "sea",
+                id: "sea_city_acapulco_city_manila_1791701167125",
+                startConnection: "city_acapulco",
+                endConnection: "city_manila"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [-99.92, 16.85],
+                    [-105, 15],
+                    [-112, 13],
+                    [-120, 11.5],
+                    [-130, 10.5],
+                    [-142, 10],
+                    [-155, 10.2],
+                    [-168, 11],
+                    [178, 11.8],
+                    [165, 12.5],
+                    [152, 13],
+                    [144.8, 13.45],
+                    [138, 13.8],
+                    [130, 14.2],
+                    [120.98, 14.59],
+
+                ]
+            }
+        },
     ]
 };
