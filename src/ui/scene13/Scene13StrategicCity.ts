@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」「攻击方出现在地图的攻击方向，防守方在地图的中间」]
  *
  * 新战术模式（WebGL 地面）攻城战：守方城池 = 战略地图上该据点的**同一份**建筑栈（TerritorySystem.buildCityStackInnerHtml），
@@ -191,7 +191,63 @@ export async function measureStrategicCity(c: StrategicCityHtml): Promise<Strate
     }
 }
 
-/** 地基层：同一段 HTML 去掉建筑 / 城墙 / 城门，只留 SUCAI_TERRAIN 贴图与平铺底图（含 clip-path 裁切） */
+/** 把地基层里的硬边 clip-path（polygon / ellipse）转成高斯羽化的 Canvas 遮罩，使地基与底图边缘自然渐变过渡 */
+function featherGroundClipPaths(root: HTMLElement, W: number, H: number): void {
+    if (W <= 0 || H <= 0) return;
+    const cx = W / 2, cy = H / 2;
+    const blur = 36;
+    const shrink = 0.90;
+    for (const node of Array.from(root.querySelectorAll<HTMLElement>('[style*="clip-path"]'))) {
+        const cp = node.style.clipPath || '';
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(W);
+        cv.height = Math.round(H);
+        const ctx = cv.getContext('2d');
+        if (!ctx) continue;
+        ctx.filter = `blur(${blur}px)`;
+        ctx.fillStyle = '#ffffff';
+        let drawn = false;
+        if (cp.startsWith('polygon(')) {
+            const inner = cp.slice(8, -1);
+            const pts: Array<[number, number]> = [];
+            for (const vert of inner.split(',')) {
+                const toks = vert.trim().match(/calc\([^)]+\)|[^\s]+/g);
+                if (!toks || toks.length < 2) continue;
+                pts.push([cx + pxOf(toks[0]) * shrink, cy + pxOf(toks[1]) * shrink]);
+            }
+            if (pts.length >= 3) {
+                ctx.beginPath();
+                ctx.moveTo(pts[0][0], pts[0][1]);
+                for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+                ctx.closePath();
+                ctx.fill();
+                drawn = true;
+            }
+        } else if (cp.startsWith('ellipse(')) {
+            const m = /ellipse\(\s*([\d.]+)px\s+([\d.]+)px/i.exec(cp);
+            if (m) {
+                const rx = parseFloat(m[1]) * shrink;
+                const ry = parseFloat(m[2]) * shrink;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                ctx.fill();
+                drawn = true;
+            }
+        }
+        if (!drawn) continue;
+        const maskUrl = `url("${cv.toDataURL('image/png')}")`;
+        node.style.clipPath = 'none';
+        (node.style as any).webkitClipPath = 'none';
+        node.style.maskImage = maskUrl;
+        (node.style as any).webkitMaskImage = maskUrl;
+        node.style.maskSize = '100% 100%';
+        (node.style as any).webkitMaskSize = '100% 100%';
+        node.style.maskRepeat = 'no-repeat';
+        (node.style as any).webkitMaskRepeat = 'no-repeat';
+    }
+}
+
+/** 地基层：同一段 HTML 去掉建筑 / 城墙 / 城门，只留 SUCAI_TERRAIN 贴图与平铺底图（边缘羽化渐变） */
 export function strategicCityGroundElement(c: StrategicCityHtml): HTMLDivElement {
     const el = document.createElement('div');
     el.style.cssText = 'position:fixed;left:0;top:0;z-index:395;pointer-events:none;transform-origin:0 0;display:none;';
@@ -199,6 +255,8 @@ export function strategicCityGroundElement(c: StrategicCityHtml): HTMLDivElement
     for (const im of Array.from(el.querySelectorAll('img'))) {
         if (BUILDING_RE.test(im.getAttribute('src') ?? '')) im.remove();
     }
+    featherGroundClipPaths(el, c.width, c.height);
     document.body.appendChild(el);
     return el;
 }
+

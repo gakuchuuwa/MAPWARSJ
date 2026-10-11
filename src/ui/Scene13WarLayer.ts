@@ -1042,8 +1042,8 @@ const CLOUD_COUNT_MAX = 2;
  * 云的缩放区间（目前 0.5 算最大，大小随机：0.28 ~ 0.50）。
  * ⚠️ 云**可以缩**：9/10 两张尺寸完全相同（927×817），纯缩小不会有清晰度参差。
  */
-const CLOUD_SCALE_MAX = 0.5;
-const CLOUD_SCALE_MIN = 0.28;
+const CLOUD_SCALE_MAX = 1.0;   // 🔴 [2026-10-11 主人令「全部 1.0」] 原 0.5
+const CLOUD_SCALE_MIN = 1.0;  // 🔴 [2026-10-11 主人令「全部 1.0」] 原 0.28
 /** 漂移速度区间（px/秒）：慢到"看得出在动但不抢戏" */
 const CLOUD_SPD_MIN = 6;
 const CLOUD_SPD_MAX = 16;
@@ -1581,9 +1581,10 @@ const MUZZLE_LIFT_BY_TYPE: Record<string, number> = {
 };
 /** DE 抛射物缩放 = 士兵同款（UNIT_PX / 64）。DE 素材像素已反映真实比例（标枪 56px 是箭 28px 的 2 倍），统一缩放即可。 */
 const PROJ_SCALE = UNIT_PX / 64;
-/** 火枪弹丸渲染放大：DE 原弹丸仅 4×8 像素（渲染 9px 肉眼不可见），放大到可见（游戏合理，主人 2026-08-20 定）。 */
+/** 火枪弹丸渲染放大：DE 原弹丸仅 4×8 像素（渲染 9px 肉眼不可见），原先放大到可见（游戏合理，主人 2026-08-20 定）。
+ *  🔴 [2026-10-11 主人令「所有，全部，都是1.0，一个也不能剩下」] 2.6 → **1.0**（弹丸也按 DE 原生像素画）。 */
 const PROJ_SCALE_OVERRIDE: Record<string, number> = {
-    PROJ_SHOT: 2.6,
+    PROJ_SHOT: 1.0,
 };
 /** 多种 DE 弹丸单位可以共用同一张 SLD，但保留独立 key 以使用各自的飞行参数。 */
 const PROJ_ASSET_KEY: Record<string, string> = {
@@ -2112,15 +2113,11 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
  * 仍是初值：真机看一局再微调，但量级已经对了。
  */
 const FX_SCALE: Record<string, number> = {
-    FX_EXPLOSION: 0.6,            //  94px ≈ 1.9 倍兵高：炮弹落点火球，压得住场又不埋人
-    FX_PETARD: 0.4,               // 147px ≈ 2.9 倍兵高：自爆比炮弹更炸，但不许糊住半屏
-    FX_MUZZLE_BOMBARD: 0.35,      //  38px ≈ 0.76 倍：大炮口径最大，焰也最大
-    FX_MUZZLE_ORGAN: 0.30,        //  26px ≈ 0.53 倍
-    FX_MUZZLE_HAND: 0.42,         //  33px ≈ 0.66 倍：火枪枪口焰放大，让开火可见（原 0.30 太小）
-    FX_MUZZLE_CONQ: 0.40,         //  40px ≈ 0.80 倍
-    FX_MUZZLE_FIRELANCE: 0.40,    //  36px ≈ 0.72 倍：火矛是喷射，比枪口焰长
-    FX_WALL_DUST: 0.8,            // 尘土 136px ≈ 2.2 倍兵高：破墙扬尘，压过墙段高度
-    FX_TREBUCHET_SMOKE: 0.45,     // 投石碎石尘土冲击：约 1.5 倍兵高
+    // 🔴 [2026-10-11 主人令「所有，全部，都是1.0，一个也不能剩下」] 原 0.30~0.80 的逐项缩放**全部改 1.0**：
+    //    特效素材与建筑/兵模同一把尺子（DE 原生像素），不再逐项压小。
+    FX_EXPLOSION: 1.0, FX_PETARD: 1.0, FX_MUZZLE_BOMBARD: 1.0, FX_MUZZLE_ORGAN: 1.0,
+    FX_MUZZLE_HAND: 1.0, FX_MUZZLE_CONQ: 1.0, FX_MUZZLE_FIRELANCE: 1.0,
+    FX_WALL_DUST: 1.0, FX_TREBUCHET_SMOKE: 1.0,
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
 const FX_DUR: Record<string, number> = {
@@ -2206,7 +2203,7 @@ const FLAG_EVERY = 20;
  * 0.9（初版，主人嫌大）→ 0.7 → 0.8（恢复文字后给字留像素）→ **0.65**。
  * 这个数管**整体**（旗面 + 杆）。只想动杆用 FLAG_POLE_RATIO，两个旋钮各管各的。
  */
-const FLAG_SCALE = 0.65;
+const FLAG_SCALE = 1.0;        // 🔴 [2026-10-11 主人令「所有，全部，都是1.0」] 原 0.65（旗为项目自绘，非 DE 素材）
 /** 旗手战死 → 军旗倒地淡出的时长（秒）。「军旗倒下」是战场上最强的叙事符号，不让它啪一下消失 */
 const FLAG_FALL = 1.2;
 /**
@@ -5889,7 +5886,8 @@ export class Scene13WarLayer {
                 // 默认坐标：严格置于战场北翼斜城墙背侧上端，绝不遮挡北城门通道与冲锋交战路线
                 const nX = this.passMountainConfig.northX ?? (wallFrontX + 230);
                 const nY = this.passMountainConfig.northY ?? (topWallY - 210);
-                const nScale = this.passMountainConfig.northScale ?? 1.2;
+                // 🔴 [2026-10-11 主人令「它是地貌装饰不是建筑——要也拉回 1.0」] 北翼山体默认缩放 1.2 → **1.0**
+                const nScale = this.passMountainConfig.northScale ?? 1.0;
                 const nFlip = this.passMountainConfig.northFlip ?? !mFlip;
                 this.decorSprites.push({
                     asset: northAsset,
