@@ -140,7 +140,10 @@ export class GameMap {
             zoomDelta: 1,
             zoomControl: false,
             attributionControl: false,
-            doubleClickZoom: false // [FIX] 禁用双击放大
+            doubleClickZoom: false, // [FIX] 禁用双击放大
+            // 🔴 [2026-10-11 主人令「我们是全世界的地图，要可以环游世界的」] 战略地图横向循环第 1 步：
+            //    `worldCopyJump` ⇒ 视图越过 180° 经线时无缝接上另一侧的世界副本（环游地球不断档）。
+            worldCopyJump: true,
         });
 
         installZoomProjectSlicing();
@@ -416,8 +419,8 @@ export class GameMap {
                     tileSize: 256,
                     minZoom: TILE_CONFIG.MIN_ZOOM,
                     maxZoom: 7,
-                    noWrap: true,
-                    bounds: L.latLngBounds([[-85.0511287798, -180], [85.0511287798, 180]]),
+                    // 🔴 [2026-10-11 主人令「要可以环游世界的」] 去掉 `noWrap` 与 `bounds` 夹取：
+                    //    留着这两个，瓦片只画 ±180° 那一份、且被夹住 ⇒ 过了接缝就是空白。
                     zIndex: 0,
                 }
             );
