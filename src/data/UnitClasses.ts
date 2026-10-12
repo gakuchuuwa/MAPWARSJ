@@ -1,51 +1,45 @@
 /**
  * 【兵种 → DE 组织分类（unit class）】——**由数据生成，别手改**。
- * 重新生成：WAR_TYPES 兵种 294 个：命中 269，未命中 25
-类别分布: {
-  '弓骑': 24,
-  '步兵': 98,
-  '骑兵': 74,
-  '弓箭手': 36,
-  '散兵/掷矛': 4,
-  '类55': 7,
-  '攻城器械': 19,
-  '火枪': 5,
-  '类28': 2
-}
-定类来源: { fingerprint: 255, manual: 14 }   （unresolved = 歧义未人工指定，必须补进 MANUAL 才能进科技表）
-
-未命中（需人工指定 class）: heavy_infantry, elite_armored_elephant, bayinnaung_elephant, dagnajan_elephant, porus_elephant, elite_elephant_archer, flaming_camel, petard, ant_scout, flamethrower, helepolis, siege_tower, sosso_guard, gastraphetes, laminated_bowman, paragon, shock_cavalry, imperial_cavalry, equites, sarmatian, elite_peltast, vanguard, bowman, antiquity_scout_cavalry, antiquity_siege_tower
-
-→ scratch/unit_class_by_stats.json 后把产物 unitClass 列刷进来。
  *
- * 用途：军事科技的作用面按 unit class 判（见 src/data/MilitaryTechs.ts）。
- *
- * 🔴 两套编号别混：
- *   · unit class（本表）：步兵 6、骑兵 12（**战象、战车也归 12**）、弓骑 36、弓箭手 0、
- *     骑乘火器 23、火药步兵 44、攻城 13、弩炮/战车 55
- *   · armor class（WAR_TYPES.armorTags，加成伤害用）：步兵 1、骑兵 8、战象 5
- *   网上（Liquipedia 等）能搜到的是后者；**unit class 只能从 empires2_x2_p1.dat 反查**。
- *
- * 🔴 别用 armorTags 当科技作用面：那是受击分类，弓骑带 [28,15,8,…] 会同时吃马铠和射手甲，双份。
- *
- * 来源：数值指纹（hp/atk/rng÷40/reload）反查 DE 原型 → 该原型的 class。
- * 指纹命中 255 条 + 人工指定 13 条；编制上场的 129 个兵种已 100% 定类。
+ * 🔴 [2026-10-13 对账治本] **枪兵族 13 条从 46 改回 6**（DE 全表 class 46 = 0 单位）：
+ *    `spear/spearman/pikeman/halberdier/heavy_pikeman/guardsman/elite_guardsman/phalangite/elite_phalangite/
+ *     kamayuk/flemish_pikeman/flemish_pikeman_f/sparabara` —— 权威表 `scratch/unit_class_by_stats.json`
+ *    对这 13 条一律认 **class 6**（source=fingerprint，de=ISPKM/HLBDM/PKEMN/KAMAY/Phalangite…）。
+ *    原来登记 46 = 在 DE 里**不存在的类** ⇒ 与 `MilitaryTechs` 的 `[6,46]` 写法打架：
+ *    面板汇总（`MilitaryTechState` 按 6/46 分家统计）与 13 条专属科技的判断会各算一套。
+ *    改回 6 后，`[6,46]` 里的 46 成为永假的冗余分支，但**行为与 DE 完全一致**（枪兵=步兵）。
  */
+/**
+ * 🔴 [2026-10-13 治本] 本表已改为 **`scratch/unit_class_by_stats.json` 的产物**（权威表，数值指纹反查 DE 原型）。
+ *    重生成：`node scratch/gen_unit_classes_ts.mjs`（该脚本读 json → 写本文件）。
+ *    为什么必须生成：本表原先**手写 312 条**，与权威表漂了 13 条（枪兵族被写成 DE 不存在的 class 46），
+ *    导致科技作用面与面板统计两套口径（血训 42：没有尺子看守的规则 = 没有规则）。
+ *    现在源只有一份：`build_unit_class_by_stats.mjs → unit_class_by_stats.json → 本文件`。
+ */
+
+/** 268 个兵种（= 权威表全部已定类条目；WAR_TYPES 里已删兵种的残留 47 条随之清除） */
+/**
+ * 🔴 [2026-10-13 治本] 本表已改为 **`scratch/unit_class_by_stats.json` 的产物**（权威表，数值指纹反查 DE 原型）。
+ *    重生成：`node scratch/gen_unit_classes_ts.mjs`（读 json → 写本文件）。
+ *    为什么必须生成：本表原先**手写 312 条**，与权威表漂了 13 条（枪兵族被写成 DE 不存在的 class 46），
+ *    导致科技作用面与面板统计两套口径（血训 42：没有尺子看守的规则 = 没有规则）。
+ *    现在源只有一份：`build_unit_class_by_stats.mjs → unit_class_by_stats.json → 本文件`。
+ *    幂等性：连跑两次本脚本，文件哈希必须一致（已实测）。
+ */
+/* @@GENERATED:UnitClasses@@ */
+/**
+ * 🔴 [2026-10-13 治本] 本表是 **`scratch/unit_class_by_stats.json` 的产物**（权威表，数值指纹反查 DE 原型）。
+ *    重生成：`node scratch/gen_unit_classes_ts.mjs`（读 json → 写本文件）；**不要手改**。
+ *    为什么必须生成：本表原先**手写 312 条**，与权威表漂了 13 条（枪兵族被写成 DE 不存在的 class 46），
+ *    导致科技作用面与面板统计两套口径。
+ *    现在源只有一份：`build_unit_class_by_stats.mjs → unit_class_by_stats.json → 本文件`。
+ *
+ * 用途：军事科技的作用面按 unit class 判（见 `src/data/MilitaryTechs.ts`）。
+ * 两套编号别混：unit class（本表：步兵 6 / 骑兵 12（战象战车也是 12）/ 弓骑 36 / 弓箭手 0 /
+ * 骑乘火器 23 / 火药步兵 44 / 攻城 13 / 弩炮 55）≠ armor class（`WAR_TYPES.armorTags`，受击分类）。
+ */
+/** 268 个兵种（= 权威表全部已定类条目；手写表里 47 条已删兵种的残留随之清除） */
 export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
-    ji_infantry: 6,
-    ji_infantry_elite: 6,
-    aztec_raider: 12,
-    siege_elephant: 12,
-
-    manatarms: 6,
-    sunda_royal_fighter: 6,
-    envoy: 12,
-    scout_cavalry: 12,
-    light_cavalry: 12,
-    frankish_paladin: 12,
-    jarl: 12,
-    siege_ballista: 55,
-
     amazon_archer: 0,
     amazon_warrior: 6,
     antiquity_battering_ram: 13,
@@ -72,12 +66,10 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     ballista_elephant: 12,
     battering_ram: 13,
     battle_elephant: 12,
-    bayinnaung_elephant: 12,
     berserk: 6,
     blackwood_archer: 0,
     bolas_rider: 36,
     bombard_cannon: 13,
-    bowman: 0,
     boyar: 12,
     camel_archer: 36,
     camel_heavy: 12,
@@ -95,6 +87,8 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     champi_scout: 6,
     champi_warrior: 6,
     champion: 6,
+    champion_runner: 6,
+    champion_scout: 6,
     chukonu: 0,
     companion_cavalry: 12,
     composite_bowman: 0,
@@ -105,7 +99,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     crossbow: 0,
     crossbowman: 0,
     crusader_knight: 12,
-    dagnajan_elephant: 12,
     eagle_scout: 6,
     eagle_warrior: 6,
     eastern_swordsman: 6,
@@ -127,11 +120,9 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     elite_champi_warrior: 6,
     elite_chukonu: 0,
     elite_composite_bowman: 0,
-    elite_companion_cavalry: 12,
     elite_conquistador: 23,
     elite_coustillier: 12,
     elite_eagle_warrior: 6,
-    elite_elephant_archer: 36,
     elite_fire_archer: 0,
     elite_fire_lancer: 6,
     elite_gbeto: 6,
@@ -139,23 +130,11 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     elite_genoese_crossbowman: 0,
     elite_ghulam: 6,
     elite_greek_cavalry: 12,
-    elite_guardsman: 46,
+    elite_guardsman: 6,
     elite_guecha_warrior: 0,
-    elite_hippeus: 6,
-    elite_hoplite: 6,
     elite_huskarl: 6,
-    hearth_troop: 6,
-    elite_hearth_troop: 6,
-    jomsviking: 6,
-    elite_jomsviking: 6,
-    varangian_guard: 6,
-    elite_varangian_guard: 6,
-    varangian_jarl: 12,
-    elite_varangian_jarl: 12,
     elite_hussite_wagon: 55,
     elite_ibirapema_warrior: 6,
-    elite_immortal: 6,
-    elite_immortal_ranged: 0,
     elite_iron_pagoda: 12,
     elite_jaguar_warrior: 6,
     elite_janissary: 44,
@@ -167,26 +146,19 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     elite_konnik_foot: 6,
     elite_leitis: 12,
     elite_liao_dao: 6,
-    elite_magyar_huszar: 12,
     elite_mameluke: 12,
     elite_monaspa: 12,
     elite_obuch: 6,
     elite_organ_gun: 13,
-    elite_pattiyoda_longbowman: 0,
-    elite_phalangite: 46,
-    elite_peltast: 0,
     elite_plumed_archer: 0,
     elite_ratha_melee: 12,
     elite_ratha_ranged: 36,
-    elite_rhomphaia_warrior: 6,
-    elite_sannahya: 12,
     elite_scythian_horse_archer: 36,
     elite_serjeant: 6,
     elite_shotel_warrior: 6,
     elite_shrivamsha_rider: 12,
     elite_skirmisher: 0,
     elite_steppe_lancer: 12,
-    elite_strategos: 6,
     elite_tarkan: 12,
     elite_temple_guard: 6,
     elite_teutonic_knight: 6,
@@ -199,13 +171,10 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     elite_war_wagon: 36,
     elite_white_feather_guard: 6,
     elite_woad_raider: 6,
-    equites: 12,
     fire_archer: 0,
     fire_lancer: 6,
-    flaming_camel: 12,
-    flemish_pikeman: 46,
-    flemish_pikeman_f: 46,
-    gastraphetes: 0,
+    flemish_pikeman: 6,
+    flemish_pikeman_f: 6,
     gbeto: 6,
     general_cavalry: 12,
     genitour: 36,
@@ -213,12 +182,11 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     ghulam: 6,
     greek_noble_cavalry: 12,
     grenadier: 44,
-    guardsman: 46,
     guecha_warrior: 0,
-    halberdier: 46,
+    halberdier: 6,
     hand_cannoneer: 44,
     heavy_cavalry: 12,
-    heavy_pikeman: 46,
+    heavy_pikeman: 6,
     heavy_rocket_cart: 13,
     heavy_scorpion: 55,
     hei_kuang: 12,
@@ -235,7 +203,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     immortal: 6,
     immortal_ranged: 0,
     imperial_camel_rider: 12,
-    imperial_cavalry: 12,
     imperial_centurion: 12,
     imperial_skirmisher: 0,
     indian_tribesman: 6,
@@ -246,7 +213,7 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     jian_swordman_shielded: 6,
     jian_swordman_unshielded: 6,
     jian_swordsman: 6,
-    kamayuk: 46,
+    kamayuk: 6,
     karambit_warrior: 6,
     karambit_warrior_elite: 6,
     keshik: 12,
@@ -280,12 +247,10 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     onager: 13,
     organ_gun: 13,
     paladin: 12,
-    paragon: 6,
     pattiyoda_longbowman: 0,
-    phalangite: 46,
-    pikeman: 46,
+    phalangite: 6,
+    pikeman: 6,
     plumed_archer: 0,
-    porus_elephant: 12,
     qizilbash_warrior: 12,
     raider: 12,
     ratha_melee: 12,
@@ -301,14 +266,12 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     samurai: 6,
     samurai_elite: 6,
     sannahya: 12,
-    sarmatian: 12,
     savar: 12,
     scorpion: 55,
     scythian_axe_cavalry: 12,
     scythian_horse_archer: 36,
     serjeant: 6,
     shield: 6,
-    shock_cavalry: 12,
     shotel_warrior: 6,
     shrivamsha_rider: 12,
     sickle_warrior: 6,
@@ -317,13 +280,13 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     skirmisher: 0,
     slinger: 0,
     sogdian_cataphract: 12,
-    sparabara: 46,
-    spear: 46,
-    spearman: 46,
+    sparabara: 6,
+    spear: 6,
+    spearman: 6,
     steppe_lancer: 12,
     strategos: 6,
     swordsman: 6,
-    sakan_axeman: 6,
+    takabara: 6,
     tarantine_cavalry: 36,
     tarkan: 12,
     temple_guard: 6,
@@ -334,7 +297,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     traction_trebuchet: 13,
     two_handed_swordsman: 6,
     urumi_swordsman: 6,
-    vanguard: 6,
     war_chariot: 12,
     war_chariot_ranged: 12,
     war_dog: 28,
@@ -348,7 +310,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     xolotl_warrior: 12,
 };
 
-/** 取兵种的 DE 组织分类；未登记的按步兵(6) 兜底 */
 export function getUnitClass(key: string): number {
     return UNIT_CLASS_BY_KEY[key] ?? 6;
 }

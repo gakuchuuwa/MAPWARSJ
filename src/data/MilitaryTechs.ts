@@ -133,21 +133,21 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'forging', name: '锻造', de: 'Forging', year: null,
         era: 'antiquity',
         basis: '铁兵器普及早于时间线起点（-334 已是铁器时代）',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 原含 45/50（DE 全表 0 单位）；46=本项目枪兵系、47=斥候（DE 确有）保留
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 删 45/46/50（DE 全表 0 单位）；47=斥候（DE 确有）
         cultures: null,
     },
     {
         id: 'iron_casting', name: '铸铁', de: 'Iron casting', year: -100,
         era: 'antiquity',
         basis: '汉代炒钢／百炼钢工艺成熟',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 原含 45/50（DE 全表 0 单位）；46=本项目枪兵系、47=斥候（DE 确有）保留
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 删 45/46/50（DE 全表 0 单位）；47=斥候（DE 确有）
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
         era: 'antiquity',
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 同锻造线：删 45/50（DE 空类）
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 47] }],   // 🔴 [2026-10-13 对账清空类] 同锻造线：删 45/46/50（DE 空类）
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
@@ -157,7 +157,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '鳞甲远早于时间线起点',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: null,
@@ -167,7 +167,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '凯尔特人前 3 世纪发明，罗马前 1 世纪普遍装备',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
@@ -177,7 +177,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'castle',
         basis: '欧洲全身板甲成熟期；板甲是西欧独有工艺',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },   // 🔴 [2026-10-13 治本] 枪兵族按权威表已归 **6**（`UnitClasses.ts`），46 是 DE 空类 ⇒ 删除
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
         cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
@@ -330,7 +330,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'squires', name: '护卫', de: 'Squires', year: 1000,
         era: 'feudal',
         basis: '步兵行军与耐力训练',
-        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6, 46] }],
+        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],   // 🔴 [2026-10-13 治本] 同上：枪兵已归 6，删 DE 空类 46
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
@@ -681,6 +681,41 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         //    这是**图皮**的专属科技，补 6/12 会把范围扩到全部步兵与骑兵；按 DE 原样保留三系（宁可宽，不空转）。
         effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0, 6, 12] }],
         cultures: ['TUPI'],
+    },
+
+    // ── 🔴 [2026-10-13 主人令「你建议做不赶紧做」] 补「0 条专属科技」的一级大区 ──────────────
+    //    量出来的缺口（`scratch/_audit_tech_10.ts`）：89 个文化区一条专属科技都没有，其中
+    //    **WEST_ASIA（阿拉伯/萨拉森）、CENTRAL_ASIA（波斯/阿契美尼德）**是一级大区、挂据点多、影响面最大；
+    //    KOREA 同理。三条全部按 DE 原始表（`scratch/de_techs.json`）的 civ_specific 条目搬，**不发明数值**。
+    {
+        id: 'saracen_zealotry', name: '萨拉森狂热', de: 'Saracen Zealotry', year: 700,
+        era: 'feudal',
+        basis: '萨拉森（阿拉伯）狂热教团，骆驼系血量强化',
+        // DE tech 9：`hp +20` 打在 u282/556(DERVI/UDERV c12)、u1755(CAMELSC c12)、u329/330(CVLRY/HCLRY c12)、
+        // u207(SHCLRY c12)、u1007/1009(CAMAR/ECAMAR **c36** 骆驼弓骑)。⇒ 作用面 [12,36]。
+        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 36] }],
+        cultures: ['WEST_ASIA'],
+    },
+    {
+        id: 'counterweights', name: '反击配重', de: 'Counterweights', year: 1100,
+        era: 'castle',
+        basis: '萨拉森反击配重（配重投石机改良），攻城器械对建筑加成提升',
+        // DE tech 454：`attack ×1.15`(2941=11×256+5) 打在 c54/c51（投石机/重型投石机系）与 u280/550/588
+        // (MANGO/ONAGR/SNAGR c13)、u1942(TRTREB c13)、u1923(SIEGECAMEL c12)。
+        // 项目里 c51/c54 无兵种，故只落 **c13 攻城器械**（数值取 ×1.15）。
+        effects: [{ attr: 'bonus', op: 'mul', value: 1.15, classes: [13], bonusClass: 11 }],
+        cultures: ['WEST_ASIA'],
+    },
+    {
+        id: 'korean_catapults', name: '朝鲜投石机', de: 'Korean catapults', year: 1400,
+        era: 'castle',
+        basis: '朝鲜神机箭改良（李舜臣时代），火箭车射程与装填提升',
+        // DE tech 445：u1904/1907(RCKTCRT/HRCKTCRT c13) `range+1 los+1 reload-0.35`；u831/832 是龟船（项目走船表）。
+        // ⇒ 只落 c13（火箭车在项目里是 class 13）。reload 是「越小越快」，DE 给的是 **-0.35 加法**。
+        effects: [{ attr: 'range', op: 'add', value: 1, classes: [13] },
+            { attr: 'los', op: 'add', value: 1, classes: [13] },
+            { attr: 'reload', op: 'add', value: -0.35, classes: [13] }],
+        cultures: ['KOREA'],
     },
 ];
 

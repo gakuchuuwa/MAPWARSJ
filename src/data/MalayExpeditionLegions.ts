@@ -14,4 +14,8 @@ export const MALAY_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
     sulu: { name: '苏禄珠海勇', tier: 3 },   // 霍洛·巴杜卡：苏禄苏丹近卫，潜水夺船/马来短剑吹箭，兵种特色鲜明
     xishudongyin: { name: '王城守备队', tier: 1 },   // 马尼拉·莱加斯皮：西属东印度正规军，驻守马尼拉王城(Intramuros)，重炮火枪，建制延续1571-1898
     minangkabau: { name: '胡卢巴朗', tier: 3 },
+    // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 阿加尼亚·查莫罗（太平洋南岛系，本项目归 SEASIA）
+    //    番号取查莫罗社会分层「Matua（马图阿，拉特石时期的上层/武士）」—— 建制可考、且是同时代独树一帜的兵种构成，
+    //    但**无明确战术大捷记录** ⇒ 按 v3 五级制落 **T3 知名**（文化辨识度／兵种特色，而非战术战绩）。
+    chamorro: { name: '马图阿武士', tier: 3 },   // 阿加尼亚·Hurao：查莫罗 Matua 阶层武士（拉特石时期）
 };

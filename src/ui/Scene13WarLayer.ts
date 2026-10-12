@@ -3180,6 +3180,26 @@ interface DecorSprite {
      */
     collapse?: { t: number; dur: number; rubbleAsset: string | null };
 }
+
+/** 战术野生动物与生灵动态生态（食草动物群聚逃窜、猛兽避让、高空盘旋飞鸟） */
+interface TacticalAnimal {
+    sprite: DecorSprite;
+    species: string;
+    category: 'prey' | 'predator' | 'livestock' | 'bird';
+    action: 'idle' | 'walk' | 'run' | 'hover' | 'fly';
+    dir: number;
+    originX: number;
+    originY: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    fleeTimer: number;
+    animPhase: number;
+    orbitAngle?: number;
+    orbitRadius?: number;
+}
+
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
 
 
@@ -3463,6 +3483,8 @@ export class Scene13WarLayer {
     private decor: HTMLCanvasElement | null = null;
     private decorCtx: CanvasRenderingContext2D | null = null;
     private decorSprites: DecorSprite[] = [];
+    private tacticalAnimals: TacticalAnimal[] = [];
+    private animalMetaCache: Record<string, any> = {};
     private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
@@ -4463,7 +4485,12 @@ export class Scene13WarLayer {
                         const safe = this.spawnRingSafeRadius(nx, ny);              // ①该方向能退多远
                         const cityEdge = 1 / (Math.abs(nx) / rx + Math.abs(ny) / ry); // 城菱形在该方向的边界
                         const need = cityEdge + 320;                                // ②营地纵深+余量
-                        let dist = Math.min(cityR + 700, safe);                     // ③先取攻城距
+                        // 🔴 [2026-10-13 主人令「攻方营地离城寨太近了。请远一点」]
+                        //    城寨尺寸紧凑，原 cityR+700 导致攻方营帐离栅栏过近；城寨攻城距提升至 cityR+1300（保底 2100px），大幅拉开扎营纵深
+                        const siegeBaseDist = (this.defenderCityType === 'stockade' || this.isMobeiMongolDefender())
+                            ? Math.max(cityR + 1300, 2100)
+                            : (cityR + 700);
+                        let dist = Math.min(siegeBaseDist, safe);                     // ③先取攻城距
                         if (dist < need) dist = Math.min(need, safe);               // ②不够就退到不压城（但仍不越图）
                         attSX = VW / 2 + nx * dist;
                         attSY = VH / 2 + ny * dist;
@@ -5156,6 +5183,7 @@ export class Scene13WarLayer {
         this.fallenFlags = [];
         this.clouds = [];
         this.decorSprites = [];
+        this.tacticalAnimals = [];
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
@@ -5490,6 +5518,7 @@ export class Scene13WarLayer {
         this.decor.width = this.canvas.width;
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
+        this.tacticalAnimals = [];
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
@@ -6809,24 +6838,149 @@ export class Scene13WarLayer {
                         }
                     }
 
+                    // 🔴 [2026-10-13 主人令「动物分布的都不对」]
+                    // DE 官方动物分类与避让：城池/城郭内部绝无野生动物、攻方营帐避让、猛兽外围分布、草食动物松散成群
+                    const BIRDS = new Set(['CONDOR', 'CRANE', 'FALCON', 'FLAMINGO', 'HAWK', 'MACAW', 'OWL', 'STORK', 'VULTURE']);
+                    const PREDATORS = new Set(['WOLF', 'WOLF_ARABIAN', 'WOLF_ARCTIC', 'BEAR', 'BEAR_BLACK', 'BEAR_POLAR', 'LION', 'TIGER', 'BLACK_PANTHER', 'JAGUAR', 'SNOWLEOPARD', 'CROCODILE', 'CAIMAN', 'KOMODO', 'WAR_DOG']);
+                    const LIVESTOCK = new Set(['SHEEP', 'GOAT', 'COW_BROWN', 'COW_BLACK', 'COW_BW', 'PIG', 'CHICKEN', 'GOOSE', 'TURKEY', 'HORSE', 'DONKEY', 'CAMEL', 'DROMEDARY', 'LLAMA', 'ALPACA']);
+
+                    const inCityZone = (x: number, y: number): boolean => {
+                        if (this.insideRing(x, y)) return true;
+                        if (this.deCity) {
+                            const cx = this.deCityCenter ? this.deCityCenter.x : VW / 2;
+                            const cy = this.deCityCenter ? this.deCityCenter.y : VH / 2;
+                            const rx = this.deCity.width / 2 + 180;
+                            const ry = this.deCity.height / 2 + 120;
+                            if (((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1) return true;
+                        }
+                        return false;
+                    };
+                    const inCampZone = (x: number, y: number): boolean => {
+                        for (const sp of this.spawns) {
+                            if (sp.f === 0 && Math.hypot(x - sp.x, y - sp.y) < 220) return true;
+                        }
+                        return false;
+                    };
+
                     for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
                         const ob = data.objects[obIdx];
                         if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
                         if (r && (r[0] === 'NATURE' || r[0] === 'ANIMAL')) {
                             const isAnimal = r[0] === 'ANIMAL';
-                            let asset = isAnimal ? ('ANIMAL:' + r[1]) : (treeClumpDominant.get(obIdx) ?? r[1]);
-                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
-                            if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
                             const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
-                            // 🔴 [2026-10-12 任务1：树的摆放] 错落成团、打破横平竖直方阵：
-                            //    树木在格内加入确定性伪随机微抖动（±0.23 格），树木扎根依然在林地格内，但视觉呈现错落自然
+                            let sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                            let sy = (oy - 60) * TAC_TILE_H + VH / 2;
+
+                            if (isAnimal) {
+                                const species = r[1];
+                                const isBird = BIRDS.has(species);
+                                const isPredator = PREDATORS.has(species);
+                                const isLivestock = LIVESTOCK.has(species);
+                                const isPrey = !isBird && !isPredator && !isLivestock;
+
+                                // ① 严禁野生动物进入城内、要塞内圈、攻方营帐或建筑地基
+                                if (inCityZone(sx, sy) || inCampZone(sx, sy) || onFoundation(sx, sy)) continue;
+
+                                // ② 猛兽（狼/熊/狮/豹等）置于荒野外围（离城心/两军中心至少 1400px）
+                                if (isPredator && Math.hypot(sx - VW / 2, sy - VH / 2) < 1400) continue;
+
+                                // ③ 空中飞鸟：高空盘旋，独立高程
+                                if (isBird) {
+                                    const animSprite: DecorSprite = {
+                                        asset: `ANIMAL:${species}/hover_0`,
+                                        frame: 0,
+                                        x: sx,
+                                        y: sy,
+                                        flip: false,
+                                        layer: 'world',
+                                        z: 0,
+                                        lift: 180,
+                                        obstructionContactSec: 0,
+                                        obstructionTouched: false,
+                                        obstructionDisabled: true,
+                                    };
+                                    this.ensureNatureAsset(animSprite.asset);
+                                    this.decorSprites.push(animSprite);
+                                    this.tacticalAnimals.push({
+                                        sprite: animSprite,
+                                        species,
+                                        category: 'bird',
+                                        action: 'hover',
+                                        dir: 0,
+                                        originX: sx,
+                                        originY: sy,
+                                        x: sx,
+                                        y: sy,
+                                        vx: 0,
+                                        vy: 0,
+                                        fleeTimer: 0,
+                                        animPhase: hash,
+                                        orbitRadius: 220 + (hash % 80),
+                                        orbitAngle: (hash % 360) * Math.PI / 180,
+                                    });
+                                    continue;
+                                }
+
+                                // ④ 草食猎物（鹿群/羚羊等）松散成群生成（3~4 只），分布在林缘草场
+                                const herdCount = isPrey ? 3 : 1;
+                                const herdOffsets = [
+                                    { dx: 0, dy: 0 },
+                                    { dx: -38, dy: 24 },
+                                    { dx: 44, dy: -22 },
+                                    { dx: -24, dy: -36 },
+                                ];
+                                for (let h = 0; h < herdCount; h++) {
+                                    const hx = sx + herdOffsets[h].dx;
+                                    const hy = sy + herdOffsets[h].dy;
+                                    if (inCityZone(hx, hy) || inCampZone(hx, hy) || onFoundation(hx, hy)) continue;
+                                    const initialDir = (hash + h * 3) % 8;
+                                    const initialAsset = `ANIMAL:${species}/idle_${initialDir}`;
+                                    const animSprite: DecorSprite = {
+                                        asset: initialAsset,
+                                        frame: hash + h * 7,
+                                        x: hx,
+                                        y: hy,
+                                        flip: false,
+                                        layer: 'world',
+                                        z: 0,
+                                        lift: glLayer.elevationLiftAt(hx, hy, VW, VH),
+                                        densityHash: hash,
+                                        obstructionContactSec: 0,
+                                        obstructionTouched: false,
+                                        obstructionDisabled: true,
+                                    };
+                                    this.ensureNatureAsset(initialAsset);
+                                    this.decorSprites.push(animSprite);
+                                    this.tacticalAnimals.push({
+                                        sprite: animSprite,
+                                        species,
+                                        category: isPrey ? 'prey' : (isPredator ? 'predator' : 'livestock'),
+                                        action: 'idle',
+                                        dir: initialDir,
+                                        originX: hx,
+                                        originY: hy,
+                                        x: hx,
+                                        y: hy,
+                                        vx: 0,
+                                        vy: 0,
+                                        fleeTimer: 0,
+                                        animPhase: hash + h * 7,
+                                    });
+                                }
+                                continue;
+                            }
+
+                            // 静态自然植被与矿石资源
+                            let asset = treeClumpDominant.get(obIdx) ?? r[1];
+                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
+                            if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const isTree = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB/i.test(asset);
                             const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
                             const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
-                            const sx = (ox - 60) * TAC_TILE_W + VW / 2 + jx;
-                            const sy = (oy - 60) * TAC_TILE_H + VH / 2 + jy;
+                            sx += jx;
+                            sy += jy;
                             if (onFoundation(sx, sy)) continue;
                             this.ensureNatureAsset(asset);
                             const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
@@ -6943,28 +7097,51 @@ export class Scene13WarLayer {
         const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : NATURE_BASE_URL));
         const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : asset)));
         if (isAnimal) {
-            // 🔴 [2026-10-12 第四阶段] 动物素材：先 fetch _meta.json 确定动作类型（idle/hover/fly），
-            //    飞鸟没有 idle，只有 hover 和 fly；地面动物用 idle。确定后再加载正确的方向 0 图片。
-            fetch(base + name + '/_meta.json')
-                .then((r) => (r.ok ? r.json() : null))
-                .then((m) => {
-                    if (!m) return;
-                    const actName = m.idle ? 'idle' : (m.hover ? 'hover' : (m.fly ? 'fly' : 'walk'));
-                    const actMeta = m[actName];
-                    const d0 = actMeta?.dirs?.['0'] ?? actMeta?.dirs?.[0];
-                    if (d0) {
-                        m.box_w = d0.fw;
-                        m.box_h = d0.fh;
-                        m.anchor_x = d0.hx;
-                        m.anchor_y = d0.hy;
+            // 🔴 [2026-10-13 主人令「动物要会动」] 支持动物各种动作与朝向（ANIMAL:<species>/<action>_<dir>）
+            const slashIdx = name.indexOf('/');
+            const species = slashIdx >= 0 ? name.slice(0, slashIdx) : name;
+            const actDirStr = slashIdx >= 0 ? name.slice(slashIdx + 1) : '';
+            const getMeta = async () => {
+                if (this.animalMetaCache[species]) return this.animalMetaCache[species];
+                try {
+                    const r = await fetch(base + species + '/_meta.json');
+                    if (r.ok) {
+                        const j = await r.json();
+                        this.animalMetaCache[species] = j;
+                        return j;
                     }
-                    m.frames = actMeta?.frames ?? 1;
-                    na.meta = m as NatureMeta;
-                    const im = new Image();
-                    im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
-                    im.src = base + name + '/' + actName + '_0.png';
-                })
-                .catch(() => {});
+                } catch {}
+                return null;
+            };
+            void getMeta().then((m) => {
+                if (!m) return;
+                let actName = 'idle';
+                let dirNum = 0;
+                if (actDirStr) {
+                    const under = actDirStr.lastIndexOf('_');
+                    if (under >= 0) {
+                        actName = actDirStr.slice(0, under);
+                        dirNum = parseInt(actDirStr.slice(under + 1), 10) || 0;
+                    } else {
+                        actName = actDirStr;
+                    }
+                } else {
+                    actName = m.idle ? 'idle' : (m.hover ? 'hover' : (m.fly ? 'fly' : 'walk'));
+                }
+                const actMeta = m[actName];
+                const d = actMeta?.dirs?.[String(dirNum)] ?? actMeta?.dirs?.[dirNum] ?? actMeta?.dirs?.['0'] ?? actMeta?.dirs?.[0];
+                const finalMeta: NatureMeta = {
+                    box_w: d?.fw ?? 40,
+                    box_h: d?.fh ?? 40,
+                    anchor_x: d?.hx ?? 20,
+                    anchor_y: d?.hy ?? 35,
+                    frames: actMeta?.frames ?? 1,
+                };
+                na.meta = finalMeta;
+                const im = new Image();
+                im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
+                im.src = base + species + '/' + actName + '_' + dirNum + '.png';
+            });
         } else {
             const im = new Image();
             im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
@@ -8198,18 +8375,19 @@ export class Scene13WarLayer {
         return null;
     }
 
-    /** 攻城武器当前的目标档：城门 → 箭塔 → 中心建筑 → 其余建筑 → 城墙；取第一个非空档。 */
+    /** 攻城武器当前的目标档：**城门 + 城墙**（合并为第一档，谁离自己近就打谁） → 箭塔 → 中心建筑 → 其余建筑；取第一个非空档。
+     *  🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」]
+     *    城门与城墙合并为并列最高档：攻城武器在所有还立着的城门和城墙中，优先选择离自己最近的那个（不再绕远跨全图去找远处的门）。 */
     private siegeFirstTier(): WarBuilding[] {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
-        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE' && b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE') && !b.sprite.obstructionDisabled);
-        if (gates.length) return gates;
+        const gatesAndWalls = this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
+        if (gatesAndWalls.length) return gatesAndWalls;
         const towers = this.defBuildings.filter(b => (b.bld!.tower !== undefined || b.bld!.name.includes('TOWER') || b.bld!.name.includes('OUTPOST')) && bldOk(b));
         if (towers.length) return towers;
         if (this.centerBld && bldOk(this.centerBld)) return [this.centerBld];
         const others = this.defBuildings.filter(b => b !== this.centerBld && bldOk(b));
         if (others.length) return others;
-        // 最后才是城墙（还挡路的墙段）
-        return this.wallGates.filter(b => b.key !== 'STONE_GATE' && !b.sprite.destroyed && !b.sprite.obstructionDisabled);
+        return [];
     }
 
     private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
@@ -8294,8 +8472,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const _hc = this.deCity ? this.deCityCenter : null;
         const _hw = this.deCity ? this.deCity.width / 2 : 0, _hh = this.deCity ? this.deCity.height / 2 : 0;
         const manOut = (manChosen && _hc && (Math.abs(manChosen.x - _hc.x) <= _hw && Math.abs(manChosen.y - _hc.y) <= _hh)) ? null : manChosen;
-        // 🔴 [2026-10-12 主人令「开战初攻城武器优先攻击离自己近的城门，摧毁后优先攻击箭塔、中心建筑」]
-        //    只取「当前第一档还立着的目标」（siegeFirstTier）里射程内最近的；够不着就返回 null 继续靠近（见 aimAt）。
+        // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」] 取「当前第一档还立着的目标」
+        //    （`siegeFirstTier` = 城门 → 城墙 → 箭塔 → 中心建筑 → 其余建筑）里**射程内离自己最近**的那个；
+        //    够不着就返回 null 继续靠近（见 aimAt）。距离比较用的是平方距离 `d`，等价于最近。
         if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
             const tier = this.siegeFirstTier();
             if (tier.length > 0) {
@@ -8963,21 +9142,34 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
     }
 
-    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去 */
+    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去。
+     *
+     *  🔴 [2026-10-13 主人报「我设计了守方可以通过城门，为什么不管用」] **病灶：`aim` 为 null 时被第一步短路。**
+     *    城墙未破的待命期，守方在城内拿不到任何城外目标（`search()` 的两条闸：
+     *    ① 城内守方近战不锁城外敌兵；② `defenderHolding && !manOut → return null`）⇒ `aimAtRaw` 返回 **null**
+     *    ⇒ 下面第一行的 `!aim` 直接 return ⇒ **本机制从未真正生效过**，守方原地等墙塌。
+     *    修法：`aim` 为空但「守方 + 在城内 + 攻城战有墙」时，仍按「离城心最近的那座城门」算出城目标 ——
+     *    这样守方才**真的会走出城门**去迎战/到门前对峙。攻城方（f=0）、无墙攻城（城寨/漠北）、军团以外一律不受影响。
+     */
     private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (!aim || m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls) return aim;
+        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls) return aim;
         this.ensureGateInfo();
-        if (!this.insideRing(m.x, m.y) || this.insideRing(aim.x, aim.y)) return aim;
+        const insideSelf = this.insideRing(m.x, m.y);
+        if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
+        if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
+        if (!this.ringBox) return aim;
+        const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
+        const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
+        // 选门：aim 在城外就选「离敌人最近的那座门」（出门即到敌人一侧）；aim 为空就选「离自己最近的那座门」
         let g: WarBuilding | null = null, gd = Infinity;
         for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
-            const d = (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2;   // 走离目标最近的那座城门，出门就到敌人那一侧
+            const d = aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d < gd) { gd = d; g = b; }
         }
         if (!g) return aim;
         // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
-        const r = this.ringBox!, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
-        const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2), ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
         const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
         return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
     }
@@ -8998,7 +9190,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             const ra = Math.atan2(m.jy, m.jx);
             return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
         }
-        // 🔴 [2026-10-12 主人令] 攻城武器走向当前第一档目标里离自己最近的那个（城门 → 箭塔 → 中心建筑），不深入城内乱走。
+        // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」] 攻城武器走向「第一档目标里离自己最近」的那个
+        //    （现在第一档 = **城门 → 城墙** → 箭塔 → 中心建筑 → 其余建筑），不深入城内乱走。
         if (m.siegeW && this.battleType === 'siege') {
             let g: WarBuilding | null = null, gd = Infinity;
             for (const b of this.siegeFirstTier()) {
@@ -10389,6 +10582,121 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 m.sepX = 0;
                 m.sepY = 0;
             }
+        }
+        this.updateTacticalAnimals(dt);
+    }
+
+    /**
+     * 🔴 [2026-10-13 主人令「动物分布的都不对。而且人来了也不动，你看看DE是怎么做的。请修复」]
+     * DE 原生动物生态与惊扰逃窜机制（Spooked Flee AI）：
+     * 1. 飞鸟（鹰/隼/秃鹫/仙鹤）：16 向在天空盘旋翱翔（高空抬升 lift=180），环状滑翔；
+     * 2. 地面生灵（食草鹿群/猛兽/家畜）：当活人士兵接近（<220px）时受惊，切换 run/walk，背向敌方逃跑；
+     * 3. 食草动物群体惊扰传递：一只受惊，周围同伴一同起跑；
+     * 4. 逃跑 3.2 秒后脱离危险，平滑切回 idle 吃草待命。
+     */
+    private updateTacticalAnimals(dt: number): void {
+        if (!this.tacticalAnimals.length) return;
+        const cv = this.canvas;
+        const VW = cv?.width ?? 7616;
+        const VH = cv?.height ?? 3808;
+
+        for (const an of this.tacticalAnimals) {
+            // ① 空中生灵：高空沿扁椭圆轨迹盘旋翱翔
+            if (an.category === 'bird') {
+                an.orbitAngle = (an.orbitAngle ?? 0) + 0.32 * dt;
+                const ox = an.originX;
+                const oy = an.originY;
+                const r = an.orbitRadius ?? 260;
+                an.x = ox + Math.cos(an.orbitAngle) * r;
+                an.y = oy + Math.sin(an.orbitAngle) * r * 0.48;
+                // 鸟的 16 向朝向：沿椭圆切线方向
+                const tangX = -Math.sin(an.orbitAngle);
+                const tangY = Math.cos(an.orbitAngle) * 0.48;
+                let a = Math.atan2(-tangY, tangX) * 180 / Math.PI;
+                a = ((a % 360) + 360) % 360;
+                an.dir = (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
+                an.sprite.x = an.x;
+                an.sprite.y = an.y;
+                an.sprite.asset = `ANIMAL:${an.species}/hover_${an.dir}`;
+                this.ensureNatureAsset(an.sprite.asset);
+                continue;
+            }
+
+            // ② 地面生灵：检测与附近活人士兵的距离
+            let nearestDist = Infinity;
+            let repelX = 0, repelY = 0;
+            let nearbyThreats = 0;
+            const detectR = an.category === 'prey' ? 240 : (an.category === 'predator' ? 210 : 170);
+            const detectR2 = detectR * detectR;
+
+            for (const m of this.men) {
+                if (m.hp <= 0) continue;
+                const dx = an.x - m.x;
+                const dy = an.y - m.y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < detectR2) {
+                    const d = Math.sqrt(d2);
+                    if (d < nearestDist) nearestDist = d;
+                    repelX += dx / (d + 1);
+                    repelY += dy / (d + 1);
+                    nearbyThreats++;
+                }
+            }
+
+            // 触发受惊逃跑
+            if (nearbyThreats > 0) {
+                an.fleeTimer = 3.2;
+                an.action = (an.species === 'SHEEP' || an.species === 'GOAT' || an.species === 'PIG' || an.species === 'HORSE') ? 'walk' : 'run';
+                const runSpd = an.action === 'run' ? (an.category === 'prey' ? 120 : 110) : 60;
+                const len = Math.hypot(repelX, repelY) || 1;
+                an.vx = (repelX / len) * runSpd;
+                an.vy = (repelY / len) * runSpd;
+                an.dir = this.dir8(an.vx, an.vy);
+
+                // 群体惊扰传染：同伴感知到惊吓后一同起跑
+                if (an.category === 'prey') {
+                    for (const mate of this.tacticalAnimals) {
+                        if (mate === an || mate.category !== 'prey') continue;
+                        const mateD2 = (mate.x - an.x) ** 2 + (mate.y - an.y) ** 2;
+                        if (mateD2 < 140 * 140 && mate.fleeTimer < 1.0) {
+                            mate.fleeTimer = 3.0;
+                            mate.action = 'run';
+                            mate.vx = an.vx;
+                            mate.vy = an.vy;
+                            mate.dir = an.dir;
+                        }
+                    }
+                }
+            }
+
+            // 逃跑状态推进与减速恢复
+            if (an.fleeTimer > 0) {
+                an.fleeTimer -= dt;
+                an.x += an.vx * dt;
+                an.y += an.vy * dt;
+
+                // 地图边界约束（留 180px 边距，碰到反弹转向）
+                const margin = 180;
+                if (an.x < margin) { an.x = margin; an.vx = Math.abs(an.vx); an.dir = this.dir8(an.vx, an.vy); }
+                if (an.x > VW - margin) { an.x = VW - margin; an.vx = -Math.abs(an.vx); an.dir = this.dir8(an.vx, an.vy); }
+                if (an.y < margin) { an.y = margin; an.vy = Math.abs(an.vy); an.dir = this.dir8(an.vx, an.vy); }
+                if (an.y > VH - margin) { an.y = VH - margin; an.vy = -Math.abs(an.vy); an.dir = this.dir8(an.vx, an.vy); }
+
+                // 倒计时结束且无近距威胁：恢复 idle
+                if (an.fleeTimer <= 0 && nearestDist > detectR * 1.25) {
+                    an.action = 'idle';
+                    an.vx = 0;
+                    an.vy = 0;
+                }
+            } else {
+                an.action = 'idle';
+            }
+
+            an.sprite.x = an.x;
+            an.sprite.y = an.y;
+            an.sprite.asset = `ANIMAL:${an.species}/${an.action}_${an.dir}`;
+            an.sprite.flip = false;
+            this.ensureNatureAsset(an.sprite.asset);
         }
     }
 

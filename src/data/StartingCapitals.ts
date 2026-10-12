@@ -11,6 +11,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
   'fodejiao': 'city_ribeira',
   'baiyiya': 'city_salvador',
   'tupinijin': 'city_saovicente',
+  // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 太平洋：查莫罗（主邑阿加尼亚）
+  'chamorro': 'city_hagatna',
 
   'ayinu_ezo': 'city_moyoro',
 
