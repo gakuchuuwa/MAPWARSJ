@@ -1469,3 +1469,35 @@ export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: numb
     return { pieces, L, a };
 }
 
+/**
+ * 🔴 [2026-10-12 主人令「险要外围再套一圈普通石墙，四门，错开，用正南北东西朝向的城门」]
+ * 外圈墙：与 `buildFortifiedRingOnGrid` 同一套格坐标与走向（圈心同在 (a + L/2, a + L/2)），但**门不开在边中间，开在菱形四个顶点**
+ *（屏幕正西 W / 正北 N / 正东 E / 正南 S），与内圈边中间的门自然错开。
+ *   · 每个顶点：照常放城垛（两条边的墙在城垛处转角，同内圈）；🔴 [2026-10-12 主人报「下方的这个城门和城墙对不上」]
+ *     原先门塔直接坐在顶点上、另一条边的墙从垂直方向顶到门塔，接不上 ⇒ 门沿「以它为起点的那条边」开，城垛与门之间隔一段墙（见下）；
+ *   · 上一条边的墙一直接到该顶点的城垛（t = L−1）。
+ *   · DE 门素材只有 NE / SE 两种走向（无真正朝正向的门），所以每个顶点的门只能顺着一条边开。
+ */
+export function buildCornerGateRingOnGrid(seg: number, tileW: number, tileH: number): { pieces: PalisadeGridPiece[]; L: number; a: number } {
+    const L = 2 * seg + 5;
+    const a = -Math.floor(L / 2);
+    const hx = tileW / 2, hy = tileH / 2;
+    const at = (i: number, j: number) => ({ x: (i - j) * hx, y: (i + j) * hy });
+    const pieces: PalisadeGridPiece[] = [];
+    const N = { i: a, j: a }, E = { i: a + L, j: a }, S = { i: a + L, j: a + L }, W = { i: a, j: a + L };
+    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE' }> = [
+        { from: W, di: 0, dj: -1, dir: 'NE' },
+        { from: N, di: 1, dj: 0, dir: 'SE' },
+        { from: E, di: 0, dj: 1, dir: 'NE' },
+        { from: S, di: -1, dj: 0, dir: 'SE' },
+    ];
+    for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
+    for (const e of edges) {
+        // 🔴 [2026-10-12 主人令「把城门再次移动，在城垛和城门之间添加一个城墙」] 城垛(t=0) → 墙(t=1) → 门(t=2…5，门心 3.5) → 墙(t=6…L−1)
+        pieces.push({ ...at(e.from.i + e.di * 1, e.from.j + e.dj * 1), type: e.dir });
+        for (let t = 6; t <= L - 1; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
+        pieces.push({ ...at(e.from.i + e.di * 3.5, e.from.j + e.dj * 3.5), type: 'GATE', gateDir: e.dir });
+    }
+    return { pieces, L, a };
+}
+
