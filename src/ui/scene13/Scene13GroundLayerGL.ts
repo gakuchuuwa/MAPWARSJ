@@ -112,6 +112,8 @@ uniform sampler2D uGrassTex;
 uniform sampler2D uSandTex;
 uniform sampler2D uForestTex;
 uniform sampler2D uWaterTex;
+uniform sampler2D uDirtTex;
+uniform sampler2D uDryTex;
 uniform float uMapSize;
 uniform float uTime;
 uniform float uIsIce;
@@ -168,18 +170,32 @@ void main() {
   vec3 colGrass = texture2D(uGrassTex, texUV).rgb * vec3(0.97, 0.99, 0.92);
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;
+  vec3 colDirt = texture2D(uDirtTex, texUV).rgb;
+  vec3 colDry = texture2D(uDryTex, texUV).rgb;
   
-  // ── DE 第二阶段：地表地貌（TERRAIN）自然斑块与过渡（AESTHETIC_FLAT、干草斑、泥土过渡） ──
-  // 低频巨幅地貌斑块（天然干草色、泥泞枯草交织），打破单一底土单调感
+  // ── DE 原版多底图混搭机制（主草地 + 旱草/枯草 + 泥土/黄褐土 + 森林底土 + 水际沙滩） ──
+  // 1. 低频地貌斑块（AESTHETIC_FLAT 原野起伏微噪）
   float tn1 = snoise(vGUV * 0.08 + vec2(11.3, 47.9));
   float tn2 = snoise(vGUV * 0.18 + vec2(83.1, 29.5));
   float terrainPatch = tn1 * 0.65 + tn2 * 0.35;
-  // 自然枯草斑微调（+4%暖黄微噪，呈现原野深浅不一的生命力与呼吸感）
-  vec3 colGrassVar = colGrass * mix(vec3(0.94, 0.95, 0.88), vec3(1.04, 1.03, 0.96), smoothstep(-0.4, 0.4, terrainPatch));
   
-  // ── DE 原版纯正地面：基底纹理自然平铺，辅以林地与沙地自然过渡 ──
-  vec3 landCol = colGrassVar;
+  // 2. 泥土斑块判定：地图数据层 DIRT 势场 (field.a) + 原野低频泥斑微露（打破单一草皮塑料感）
+  float dirtNoise = clamp(tn1 * 0.6 + tn2 * 0.4, -1.0, 1.0);
+  float dirtMix = clamp(field.a * 1.5 + smoothstep(0.18, 0.52, dirtNoise) * 0.38, 0.0, 1.0);
+  
+  // 3. 旱草/副草皮微斑驳判定：原野向阳干燥地貌双色草交织
+  float dryMix = clamp(smoothstep(-0.25, 0.35, terrainPatch) * 0.55, 0.0, 1.0) * (1.0 - dirtMix * 0.65);
+  
+  // 4. 基底草皮与旱草/副草皮混搭（DE 经典原野双色草交织）
+  vec3 baseLand = mix(colGrass, colDry, dryMix);
+  
+  // 5. 混入大块黄褐色泥土斑块（还原 DE 经典原野泥斑）
+  vec3 landCol = mix(baseLand, colDirt, dirtMix);
+  
+  // 6. 森林底土与落叶垫底（树林下铺满专属落叶腐殖土）
   landCol = mix(landCol, colForest, isForest);
+  
+  // 7. 水际沙滩与湿滩过渡
   landCol = mix(landCol, colSand, smoothstep(0.10, 0.65, isSand));
   // 近水湿润河滩：岸边沙土向水际自然加深润泽，衔接浅水河床无断层
   float wetShore = smoothstep(0.28, 0.48, wPerturb);
@@ -349,6 +365,8 @@ export class Scene13GroundLayerGL {
   private sandTex: WebGLTexture | null = null;
   private forestTex: WebGLTexture | null = null;
   private waterTex: WebGLTexture | null = null;
+  private dirtTex: WebGLTexture | null = null;
+  private dryTex: WebGLTexture | null = null;
   public isIce = false;
 
   public readonly smoothWater: Float32Array;
@@ -367,7 +385,9 @@ export class Scene13GroundLayerGL {
     imgGrass: any,
     imgSand: any,
     imgForest: any,
-    imgWater: any
+    imgWater: any,
+    imgDirt?: any,
+    imgDry?: any
   ) {
     this.canvas = canvas;
     this.data = data;
@@ -498,13 +518,16 @@ export class Scene13GroundLayerGL {
       uSandTex: U('uSandTex'),
       uForestTex: U('uForestTex'),
       uWaterTex: U('uWaterTex'),
+      uDirtTex: U('uDirtTex'),
+      uDryTex: U('uDryTex'),
     };
 
-    // 1. 构建高精度势能场纹理
+    // 1. 构建高精度势能场纹理（水体 / 沙滩 / 森林底土 / 泥土斑块）
     const N = this.N;
     const rawWater = new Float32Array(N * N);
     const rawBeach = new Float32Array(N * N);
     const rawForest = new Float32Array(N * N);
+    const rawDirt = new Float32Array(N * N);
 
     const isWaterId = (id: number) => {
       const m = DE_TERRAIN_MANIFEST[id];
@@ -516,12 +539,17 @@ export class Scene13GroundLayerGL {
         const id = data.terrain[y * N + x];
         if (id === 1 || id === 23 || isWaterId(id)) rawWater[y * N + x] = 1.0;
         if (id === 2) rawBeach[y * N + x] = 1.0;
+        const m = DE_TERRAIN_MANIFEST[id];
+        const fname = m?.name_2 ?? '';
+        const tname = m?.name ?? '';
+        // 泥土/荒土判定（DE 原生 DIRT 斑块：3=Dirt 3, 6=Dirt, 11=Dirt 2, 42=Dirt 4, 76=Dirt Mud, 102 等）
+        if (id === 3 || id === 6 || id === 11 || id === 42 || id === 76 || id === 102 ||
+            /dirt|mud/i.test(tname) || /ds|des|rd/i.test(fname)) {
+          rawDirt[y * N + x] = 1.0;
+        }
         // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」「森林地下是铺满整块 forestFloorTile 的」]
         // 彻底按 DE dat 的所有森林/林地地形类型判定林地：
         // 包含 g_for / g_fo2 / g_snf（雪林）/ 71 / 13 (Palm Desert) / 48 (Dragon Forest) / 以及所有 name 含 Forest, Jungle, Leaves, Palm 的地形
-        const m = DE_TERRAIN_MANIFEST[id];
-        const fname = m?.name_2;
-        const tname = m?.name ?? '';
         const isForestTerrain = fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
           tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm');
         if (isForestTerrain) rawForest[y * N + x] = 1.0;
@@ -531,6 +559,7 @@ export class Scene13GroundLayerGL {
     const sw = blurGrid2D(blurGrid2D(rawWater, N), N);
     const sb = blurGrid2D(blurGrid2D(rawBeach, N), N);
     const sf = blurGrid2D(blurGrid2D(rawForest, N), N);
+    const sd = blurGrid2D(blurGrid2D(rawDirt, N), N);
     this.smoothWater = sw;
     this.smoothForest = sf;
 
@@ -548,7 +577,7 @@ export class Scene13GroundLayerGL {
       fieldPixels[i * 4 + 0] = Math.round(Math.min(1, Math.max(0, sw[i])) * 255);
       fieldPixels[i * 4 + 1] = Math.round(Math.min(1, Math.max(0, sb[i])) * 255);
       fieldPixels[i * 4 + 2] = Math.round(Math.min(1, Math.max(0, sf[i])) * 255);
-      fieldPixels[i * 4 + 3] = 255;
+      fieldPixels[i * 4 + 3] = Math.round(Math.min(1, Math.max(0, sd[i])) * 255);
     }
 
     this.fieldPixels = fieldPixels;
@@ -560,7 +589,7 @@ export class Scene13GroundLayerGL {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    // 2. 加载四种基底平铺纹理
+    // 2. 加载基底平铺纹理（主草皮 / 沙滩 / 森林底土 / 水体 / 泥土斑块 / 旱草副草皮）
     const makeRepeatTex = (img: any): WebGLTexture => {
       const tex = attachTexImage(gl.createTexture()!, img);
       gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -576,6 +605,8 @@ export class Scene13GroundLayerGL {
     if (imgSand) this.sandTex = makeRepeatTex(imgSand);
     if (imgForest) this.forestTex = makeRepeatTex(imgForest);
     if (imgWater) this.waterTex = makeRepeatTex(imgWater);
+    if (imgDirt) this.dirtTex = makeRepeatTex(imgDirt);
+    if (imgDry) this.dryTex = makeRepeatTex(imgDry);
 
     // 3. 高程与法线打光
     const V_SIZE = this.N + 1;
@@ -722,6 +753,16 @@ export class Scene13GroundLayerGL {
       gl.activeTexture(gl.TEXTURE4);
       gl.bindTexture(gl.TEXTURE_2D, this.waterTex);
       gl.uniform1i(this.loc.uWaterTex as WebGLUniformLocation, 4);
+    }
+    if (this.dirtTex) {
+      gl.activeTexture(gl.TEXTURE5);
+      gl.bindTexture(gl.TEXTURE_2D, this.dirtTex);
+      gl.uniform1i(this.loc.uDirtTex as WebGLUniformLocation, 5);
+    }
+    if (this.dryTex) {
+      gl.activeTexture(gl.TEXTURE6);
+      gl.bindTexture(gl.TEXTURE_2D, this.dryTex);
+      gl.uniform1i(this.loc.uDryTex as WebGLUniformLocation, 6);
     }
 
     gl.enableVertexAttribArray(this.loc.aPos as number);
@@ -1688,14 +1729,16 @@ export class Scene13GroundLayerGL {
     if (this.sandTex) gl.deleteTexture(this.sandTex);
     if (this.forestTex) gl.deleteTexture(this.forestTex);
     if (this.waterTex) gl.deleteTexture(this.waterTex);
+    if (this.dirtTex) gl.deleteTexture(this.dirtTex);
+    if (this.dryTex) gl.deleteTexture(this.dryTex);
     gl.deleteProgram(this.prog);
   }
 
   /**
    * 静态异步工厂方法：按 mapData 按需加载贴图并创建图层
-   * 🔴 [2026-10-11] 四张基底素材（草/沙/林/水）按**战场所在气候主题**取，
-   *    来源统一为一份 `environmentPlan.groundTiles`（＝ Scene13DeMapThemes 那张表，
-   *    与旧 canvas 地面同一份口径）；不传或取不到就各自退回原写死的图，行为与从前一致。
+   * 🔴 [2026-10-11] 底层素材（草/沙/林/水/泥/枯）按**战场所在气候主题**取，
+   *    来源统一为一份 `environmentPlan.groundTiles`（＝ Scene13DeMapThemes 那张表）；
+   *    彻底实现 DE 原版多底图混搭原野。
    */
   public static async create(canvas: HTMLCanvasElement, mapData: any, tiles?: Partial<Scene13GroundTiles>): Promise<Scene13GroundLayerGL> {
     const data = transposeMapData(mapData);
@@ -1709,19 +1752,23 @@ export class Scene13GroundLayerGL {
       return { img: await loadImg('/SUCAI_TERRAIN/' + fallback + '.png'), tile: fallback };
     };
 
-    const [grass, sand, forest, water] = await Promise.all([
+    const [grass, sand, forest, water, dirt, dry] = await Promise.all([
       loadTile(tiles?.grass, 'gr2'),
       loadTile(tiles?.sand, 'bch'),
       loadTile(tiles?.forest, 'for'),
       loadTile(tiles?.water, 'river_clean_green'),
+      loadTile(tiles?.dirt, 'ds3'),
+      loadTile(tiles?.dry, 'gr7'),
     ]);
 
-    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img);
+    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img, dirt.img, dry.img);
     layer.isIce = water.tile === 'ic2' || water.tile === 'ice';
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);
     if (layer.forestTex) attachTexImage(layer.forestTex, forest.img, forest.tile);
     if (layer.waterTex) attachTexImage(layer.waterTex, water.img, water.tile);
+    if (layer.dirtTex) attachTexImage(layer.dirtTex, dirt.img, dirt.tile);
+    if (layer.dryTex) attachTexImage(layer.dryTex, dry.img, dry.tile);
     return layer;
   }
 }

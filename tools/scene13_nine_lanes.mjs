@@ -34,13 +34,21 @@ for (const m of modes) {
 console.log('\n② 编制展开 9 口 + 主将队 1 口');
 if (/types\.length\s*===\s*9/.test(src)) ok('slotsOf 仍以 types.length === 9 为闸（编制 9 口）');
 else bad('slotsOf 的「编制必须是 9 口」闸门不见了');
-if (/withCommander\(generalId, types\)/.test(src)) ok('slotsOf 追加主将队第 10 口');
+/* 🔴 [2026-10-13 修尺子·血训 23] 原来只认老写法 `withCommander(generalId, types)` 与
+ *    `idx < 9 ? LAYOUT[mode][idx] : COMMANDER_CELL`，代码早已改成三参 + `slots[_k]`，
+ *    于是**误报 2 处红**。现在改为「结构计数」判据：函数在 + 调用在 + 兜底恰好 10 条。 */
+const cmCall = src.match(/withCommander\([^)]*\)/);
+if (cmCall) ok('slotsOf 追加主将队第 10 口：' + cmCall[0].slice(0, 46) + '…');
 else bad('slotsOf 没有追加主将队（withCommander）');
-if (/const COMMANDER_CELL/.test(src) && /idx < 9 \? LAYOUT\[mode\]\[idx\] : COMMANDER_CELL/.test(src)) ok('第 10 口站 COMMANDER_CELL（前排三组则安置在两组中间）');
+const cmDef = /const COMMANDER_CELL/.test(src);
+const cmUse = /COMMANDER_CELL\[/.test(src);
+if (cmDef && cmUse) ok('第 10 口走 COMMANDER_CELL（定义 + 使用都在）');
 else bad('第 10 口的站位 COMMANDER_CELL 不见了');
-const fb = src.slice(src.indexOf('编制槽位派生失败'), src.indexOf('编制槽位派生失败') + 900);
+const fi = src.indexOf('编制槽位派生失败');
+const fStart = src.indexOf('return [', fi);
+const fb = src.slice(fStart, src.indexOf('];', fStart));
 const fbN = (fb.match(/\{\s*key:/g) || []).length;
-if (fbN === 10) ok('兜底集 = 10 口'); else bad(`兜底集 = ${fbN} 口，应为 10`);
+if (fbN === 10) ok('兜底集 = 10 口（计数式）'); else bad(`兜底集 = ${fbN} 口，应为 10`);
 
 /* ③ 🔴 [2026-09-18 主人纠正] 本项判据整个反了，已改写。
  *    原判据要求代码里**存在**「玩家精锐顶替编制一口」的路径（takeOver.playerElite = true），

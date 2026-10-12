@@ -3494,7 +3494,9 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kesenza', name: '科森扎', factionId: 'baerta', lat: 39.30, lng: 16.25, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'MEDI', note: '亚拉里克410年病逝葬布森托河底之地' },
     { id: 'city_nabone', name: '纳博讷', factionId: 'saiputimanniya', lat: 43.18, lng: 3.00, type: 'small_city', troops: 10000, region: 'GOTHS', buildingStyle: 'WEST', note: '阿陶尔夫414年娶加拉·普拉西狄亚建宫廷之地' },
     // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 太平洋新增据点（全库此前无马里亚纳/查莫罗任何记录）
-    { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'small_city', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'SEAS', note: '阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；接触前查莫罗约 4–10 万、阿加尼亚为首邑，人口算不出 → 按「算不出来一律按小城和城寨」落小城(small_city)。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
+    // 🔴 [2026-10-13 主人令「查不到的一律城寨」] 定级：非险要（拉特石柱是屋基、无石头城墙）→ 城市档；
+    //    阿加尼亚**单邑城居人口史料查不到**，不许拿全岛 4–10 万去推一个村落 ⇒ 按「算不出来一律按城寨」落 **城寨(stockade)**。
+    { id: 'city_hagatna', name: '阿加尼亚', factionId: 'chamorro', lat: 13.4757, lng: 144.7500, type: 'stockade', troops: 10000, region: 'SEASIA_IMPERIAL', buildingStyle: 'SEAS', stockadeShape: 'square', stockadeFence: 'DARK', note: '阿加尼亚（Hagåtña），关岛西岸阿加尼亚河口聚落，查莫罗人的首要村落与统治中心，1521 年麦哲伦抵达时的查莫罗主邑，后为西班牙殖民首府。查莫罗语 Guåhan（关岛）本义「我们所有的」。定级依据§6.2：非关隘/要塞/堡垒（拉特石柱 Latte 是屋基非城防，无石头城墙）→ 城市；查英文维基与当地语种维基均未见阿加尼亚城居人口数字，算不出来 → 按「查不到的一律城寨」落城寨(stockade)。围栏取原木尖桩（查莫罗传统木栅/茅屋聚落）。文化：东南亚（太平洋南岛系，借 SEAS 素材）。坐标取阿加尼亚 13.4757,144.7500。归属：势力「查莫罗」（此处原住民族、民族发源核心，按§「以民族命名」），旗号「查」。' },
     { id: 'city_lier', name: '里尔', factionId: 'bogengnidielan', lat: 50.63, lng: 3.06, type: 'small_city', troops: 10000, region: 'BURGUNDIANS', buildingStyle: 'BURGUNDIANS', note: '好人菲利普1454年野鸡宴会誓师东征之地' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：哈瓦登：威尔士东北，凯尔特
     { id: 'city_hawadeng', name: '哈瓦登', factionId: 'gewennesi', lat: 53.18, lng: -3.03, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '戴菲德1282年突袭英军城堡点燃威尔士抗英终战' },

@@ -9187,6 +9187,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
         if (near) {
             m.reservedFoe = near;
+            // 🔴 [2026-10-13 回退·违红线] 先前把 `m.jx/m.jy`(±120) 直接加到**具体敌兵**的落点上，
+            //    违反本文件 984 / 1010 两条红线：「加在最近的那个敌兵上会让兵停在敌人身旁 120px 处够不着，
+            //    接战距离只有 65px，等于把所有近战废掉」「偏移绝不能套到具体敌兵身上」。
+            //    改回 CHASE_RING(45) 环内 —— 45 < 65，够得着；且环上位置按终身偏移定，仍不是同一个点。
             const ra = Math.atan2(m.jy, m.jx);
             return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
         }
@@ -9198,7 +9202,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
                 if (d < gd) { gd = d; g = b; }
             }
-            if (g) return { x: g.x, y: g.y };
+            if (g) return { x: g.x + m.jx, y: g.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 攻城武器同样吃终身偏移，别都朝门/墙的同一格
             if (this.defenderHolding) return null;
         }
         // 🔴 [2026-10-12 主人报「攻方开局不向城中走，有的分队往其他地方走」] 攻城战攻方士兵：视野内没敌兵就一律朝城中心走
@@ -9207,8 +9211,28 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
             const c = this.centerBld ?? (this.deCity ? this.deCityCenter : null);
             if (c) {
-                const ra0 = Math.atan2(m.jy, m.jx);
-                return { x: c.x + Math.cos(ra0) * CHASE_RING, y: c.y + Math.sin(ra0) * CHASE_RING };
+                // 🔴 [2026-10-13 审计抓出的回归·已修] 城门分支必须带「我是否已在城内」判据：
+                //    缺了它，**已进城的兵**（流场带进来的）在城内无活敌时又被指到**城外**的门前点，
+                //    而 flowRedirect 对城中心附近（du 很小）不接管 ⇒ 在中心建筑附近来回踱步（约 2Hz）。
+                //    已在城内 → 直接去中心建筑，不再往门外折返。
+                this.ensureGateInfo();
+                if (!this.insideRing(m.x, m.y)) {
+                    // 🔴 [2026-10-13 主人令「让士兵先到最近的城门，然后去往中心点去打中心建筑」] A 方案：
+                    //    攻方目标点由「城中心」改为「**离自己最近的那座还立着的城门的外侧 150px**」；
+                    //    门破后上面的 flowRedirect 会自动改走流场，把人从缺口带进城 → 再转向中心建筑。
+                    let gate: WarBuilding | null = null, gd = Infinity;
+                    for (const b of this.wallGates) {
+                        if (b.key !== 'STONE_GATE' || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
+                        const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                        if (d < gd) { gd = d; gate = b; }
+                    }
+                    if (gate) {
+                        const vx = gate.x - c.x, vy = gate.y - c.y, vl = Math.hypot(vx, vy) || 1;
+                        return { x: gate.x + (vx / vl) * 150 + m.jx, y: gate.y + (vy / vl) * 150 + m.jy };
+                    }
+                }
+                // 🔴 [2026-10-13 修拥挤] 朝城中心走时也把终身偏移加进落点，否则十队齐步走全叠在城中心那一点。
+                return { x: c.x + m.jx, y: c.y + m.jy };
             }
         }
 
@@ -9219,13 +9243,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (m.lane >= 0) {
             const c = this.laneFoeCache.get(m.lane);
             if (c && c.d2 <= 1200 * 1200) {
-                return { x: c.x + ringX, y: c.y + ringY };
+                return { x: c.x + ringX + m.jx, y: c.y + ringY + m.jy };   // 🔴 [2026-10-13 修拥挤] 环形站位 + 终身偏移叠加
             }
         }
         const midFoe = !m.march ? this.search(m, 1200, MIN_RANGE_TYPES[m.key] ?? 0, true) : null;   // 🔴 [2026-10-11 CC 复核] 列阵推进期间不让中距层接管（否则方阵被 1200px 内的敌人拉散）
         if (midFoe) {
             m.reservedFoe = midFoe;
-            return { x: midFoe.x + ringX, y: midFoe.y + ringY };
+            return { x: midFoe.x + ringX + m.jx, y: midFoe.y + ringY + m.jy };   // 🔴 [2026-10-13 修拥挤] 同上
         }
 
         const foePort = this.foePortOf(m.lane);
@@ -9242,7 +9266,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
         const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。13000 ≥ 地图对角线（2026-10-12 每格 96×48 ⇒ 11424×5712，对角 ≈12772；原 9000 对应旧 7616×3808）。
         if (globalNearest) {
-            return { x: globalNearest.x + m.jx * 0.5, y: globalNearest.y + m.jy * 0.5 };
+            return { x: globalNearest.x + m.jx, y: globalNearest.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 由 *0.5 改全额偏移
         }
 
         // ── ③ 配对也拿不到（理论上到不了）时才走「巡逻航路」（主人 2026-08-17 定）────────────
