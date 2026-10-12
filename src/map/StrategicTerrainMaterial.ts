@@ -368,7 +368,7 @@ export type TerrainRuleTexture = typeof TERRAIN_RULE_TEXTURES[number];
  * 按「红大于绿」推会被当成沙漠，实测在晋中盆地、挪威苔原冒出橙色沙斑）。
  * arid：0 湿润 ~ 1 极干；sand：是不是真沙地（只有它才铺成片的橙色沙）。未列出的按 arid 0.5 / sand 0。
  */
-const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number }>> = {
+export const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number }>> = {
     gr6: { arid: 0, sand: 0 }, gr2: { arid: 0, sand: 0 }, grs: { arid: 0.05, sand: 0 }, fo2: { arid: 0, sand: 0 },
     for: { arid: 0.1, sand: 0 }, underbrush_leaves: { arid: 0.1, sand: 0 }, sh4: { arid: 0, sand: 0 },
     gr3: { arid: 0.2, sand: 0 }, qs2: { arid: 0.2, sand: 0 }, gr4: { arid: 0.35, sand: 0 },
@@ -376,6 +376,131 @@ const CLIMATE_CLASS: Readonly<Record<string, { arid: number; sand: number }>> = 
     ds4: { arid: 0.75, sand: 0 }, gravel_default: { arid: 0.8, sand: 0 }, ds2: { arid: 0.8, sand: 0.25 },
     ds5: { arid: 0.9, sand: 0.1 }, pal: { arid: 1, sand: 1 }, pal1: { arid: 1, sand: 1 }, qs: { arid: 1, sand: 1 },
 };
+
+const rampUpStrategic = (v: number, a: number, b: number) => {
+    const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
+    return t * t * (3 - 2 * t);
+};
+
+/** 与 HillshadeWorker.snowlineAt 完全同源的自然雪线高度（米） */
+export function snowlineAt(lat: number, lng: number): number {
+    const latDeg = Math.abs(lat);
+    let snowline: number;
+    if (latDeg <= 20) {
+        snowline = 4900 + (latDeg / 20) * 300;
+    } else if (latDeg <= 46) {
+        const t = (latDeg - 20) / 26;
+        snowline = 5200 - (t * 0.70 + t * t * 0.30) * 2350;
+    } else if (latDeg <= 65) {
+        const t = (latDeg - 46) / 19;
+        snowline = 2850 - t * 1550;
+    } else {
+        snowline = Math.max(550, 1300 - (latDeg - 65) * 40);
+    }
+    const wLng = rampUpStrategic(lng, 43, 47) * (1 - rampUpStrategic(lng, 103, 107));
+    const wLat = rampUpStrategic(lat, 28.5, 31.5) * (1 - rampUpStrategic(lat, 53.5, 56.5));
+    snowline += 350 * wLng * wLat;
+    const dLng = (lng - 88.5) / 13.5;
+    const dLat = (lat - 32.8) / 5.2;
+    const dist2 = dLng * dLng + dLat * dLat;
+    if (dist2 < 1.0) {
+        const tibetBoost = (1.0 - dist2 * 0.25) * 480 * (1 - rampUpStrategic(dist2, 0.8, 1.0));
+        const southGradient = lat < 28.6 ? Math.max(0, (lat - 27.2) / 1.4) : 1.0;
+        snowline += tibetBoost * southGradient;
+    }
+    return snowline;
+}
+
+/**
+ * 在开战坐标 (lat, lng) 按战略地图（HillshadeWorker + StrategicTerrainMaterial）同一套公式，
+ * 算出战略地图在该点实际呈现的主导底图贴图，使战术底图与战略底图 100% 同源一致。
+ */
+export function queryStrategicBaseTile(q: {
+    lat: number;
+    lng: number;
+    isSiege?: boolean;
+    isWinter: boolean;
+    elevM?: number | null;
+    slopeDeg?: number | null;
+    nearRiver?: boolean;
+}): string | null {
+    const rawBase = queryBaseTile({ lat: q.lat, lng: q.lng, isSiege: q.isSiege ?? false, isWinter: q.isWinter });
+    if (!rawBase) return null;
+    // 冬季已进入积雪贴图（sno/sn2/snf/snd）时直接返回
+    if (q.isWinter && (rawBase === 'sno' || rawBase === 'sn2' || rawBase === 'snf' || rawBase === 'snd')) {
+        return rawBase;
+    }
+
+    // 1. 战略气候基底 + 温带草林交错噪声（varyTemperateMaterials）
+    const baseMap = new Map<string, number>([[rawBase, 1.0]]);
+    const varied = varyTemperateMaterials(baseMap, q.lat, q.lng);
+    let dominant = rawBase;
+    let bestW = -1;
+    for (const [k, w] of varied) {
+        if (w > bestW) { bestW = w; dominant = k; }
+    }
+
+    const colorZ = q.elevM ?? null;
+    if (colorZ === null) return dominant;
+
+    const aridity = classOf(varied, 'arid', 0.5);
+    const sandiness = classOf(varied, 'sand', 0);
+    const humidity = 1 - aridity;
+    const absLat = Math.abs(q.lat);
+    const rowSnowline = snowlineAt(q.lat, q.lng);
+
+    // 2. 雪线规则（HillshadeWorker 1255-1280）：常年雪线以上为积雪
+    if (colorZ > rowSnowline - 100) {
+        const snowT = Math.min(1.0, (colorZ - (rowSnowline - 250)) / 450);
+        if (snowT >= 0.5) return 'sno';
+        return humidity >= aridity ? 'snf' : 'snd';
+    }
+
+    const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
+    const treeLine = Math.max(900, rowSnowline - 1200);
+    const alpineT = rampUpStrategic(colorZ, treeLine, rowSnowline - 200);
+    const slopeGrad = q.slopeDeg != null ? Math.tan(q.slopeDeg * Math.PI / 180) : 0;
+
+    // zoom 9 全局像素坐标 → patchNoise（与 HillshadeWorker 规则②③⑦完全一致）
+    const Z9_PIXELS = 256 * 512;
+    const x9 = ((q.lng + 180) / 360) * Z9_PIXELS;
+    const latRad = Math.max(-85, Math.min(85, q.lat)) * Math.PI / 180;
+    const y9 = (1 - Math.asinh(Math.tan(latRad)) / Math.PI) * 0.5 * Z9_PIXELS;
+    const patch = patchNoise(x9, y9);
+
+    // 3. 规则④ 陡崖与高山裸岩带（HillshadeWorker 1111-1130）
+    const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.10) / 0.32));
+    const alpineRock = alpineT * rampUpStrategic(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
+    const rockT = Math.max(slopeT, alpineRock);
+    const rockMax = 0.60 + 0.30 * Math.max(0, Math.min(1, (colorZ - 1200) / 1600));
+    const rockW = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
+    if (rockW >= 0.48) {
+        return 'rck';
+    }
+
+    // 4. 规则⑦ 干旱区大河两侧绿洲草带（HillshadeWorker 1096-1106）
+    if (q.nearRiver && aridity >= 0.6 && slopeGrad < 0.08) {
+        const riverGreenW = rampUpStrategic(aridity, 0.6, 0.85) * (1 - rampUpStrategic(slopeGrad, 0.03, 0.08)) * 0.62 * snowFade;
+        if (riverGreenW >= 0.35) {
+            return (1 - patch) >= patch ? 'gr2' : 'grs';
+        }
+    }
+
+    // 5. 规则② 沙漠成片橙沙（HillshadeWorker 1081-1086；pm2 为牧场斑块不做主底图，温带沙丘归 des）
+    const desertW = sandiness > 0.3 && colorZ < 2600
+        ? rampUpStrategic(sandiness, 0.3, 0.9) * rampUpStrategic(patch, 0.40, 0.70) * 0.55 * snowFade * rampUpStrategic(colorZ, 60, 140)
+        : 0;
+    if (desertW >= 0.35 && absLat < 34) {
+        return 'des';
+    }
+
+    // 6. 规则① 山地与高山自然带（HillshadeWorker 1072-1079）：只在低地草林底图爬升到林线以上时生效，不覆盖世界查找表已专门细分的 gravel_default 等高山砾石
+    if (alpineT >= 0.65 && (dominant === 'grs' || dominant === 'gr2' || dominant === 'gr3' || dominant === 'for')) {
+        return humidity * 0.7 >= aridity + 0.3 * (1 - humidity) ? 'gr4' : 'ds5';
+    }
+
+    return dominant;
+}
 
 export type TerrainMaterial = {
     /** 气候地表（草/林/沙/雪…），alpha = 有效权重 */

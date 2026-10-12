@@ -376,6 +376,118 @@ function featheredEllipseGroundDiv(
     );
 }
 
+/** 小城 9 栋的**最坏占地组成**（`DE_SMALL_CITY_POOL` 逐类算：城镇中心/市场 4×4，兵营/靶场/马厩/铁匠铺 3×3，民居/磨坊 2×2，箭塔 1×1；
+ *  🔴 掺入 `MONGOL_CITY_YURTS`（8 个 2×2 蒙古包）后，1×1 的箭塔可能**不是**第 9 栋 ⇒ 最后一位必须按 **2×2** 预留，
+ *  故取 `4/4/3/3/3/3/2/2/2`（实测最坏 9 栋 ＝ 城镇中心·市场 4×4 ＋ 4 个 3×3 ＋ 3 个 2×2）。
+ *  个位表按这份最坏组成求解 ⇒ 任何一座城随机抽到的 9 栋都放得下（实际占地只会更小，不会越位）。 */
+const SMALL_CITY_SLOT_SIZES: readonly number[] = [4, 4, 3, 3, 3, 3, 2, 2, 2];
+
+/** 🔴 [2026-10-12 主人「小城的建筑摆放还是不对」] 小城城内**固定骨架**（与 `SMALL_CITY_SLOT_SIZES` 一一对应，由大到小）：
+ *  · **两个 4×4（城镇中心 / 市场）坐对角**（`(-3,3)` 与 `(3,-3)`），各自临街、互为 180° 对偶 ⇒ 主街两端有门面；
+ *  · 其余 3×3 / 2×2 就近铺开：每栋都贴十字大道或紧邻城心，**都离墙 ≥2.5 格**；
+ *  · 四象限占地 17 / 16 / 20 / 27（极差 11）—— 这是这个 23 格圈里**能搜到的最优**：
+ *    实测「四象（四向）对称」不存在（D4 轨道必自撞）、「每象限强塞 ≥2 栋」反而把极差推到 14（见 `_probe_small_city_balance2.mts`）。
+ *  表内每一行都在 `packSmallCitySlots` 里逐条自检（不相交 / 不压路 / 离墙 ≥ margin / 不撞墙件），不合规**自动退回**通用搜索。 */
+const SMALL_CITY_SLOT_PLAN: readonly { i: number; j: number }[] = [
+    { i: -3, j: 3 },      // 4×4 城镇中心（临街·西北）
+    { i: 3, j: -3 },      // 4×4 市场（临街·东南，与上者 180° 对偶）
+    { i: -2, j: -2 },     // 3×3（紧邻城心·西南）
+    { i: 2.5, j: 2.5 },   // 3×3（紧邻城心·东北）
+    { i: -5, j: -2 },     // 3×3
+    { i: -2, j: -5 },     // 3×3
+    { i: 2, j: 5 },       // 2×2
+    { i: 5, j: 2 },       // 2×2
+    { i: -5.5, j: 2.5 },  // 2×2
+];
+
+/**
+ * 🔴 [2026-10-12 主人令「小城按 A 方案：小城墙圈 25 格、9 栋真实占地、城心不摆大建筑」→ 同日改 B 方案]
+ *  把 9 个建筑位**按真实占地**摆进墙圈内，返回「与 `sizes`（由大到小）一一对应」的个位表。
+ *
+ *  小城不能沿用大城/中城的 near / far 个位：那套是按「2 格宽大道 + 城心一栋 4×4 + 离墙 ≥2 格」同时成立反算的，
+ *  这几条在 23/25 格圈里对不上。小城改用「整体求解」：占地边长 s 的建筑，其四角到墙线 |i|+|j| = L/2 的距离都要 ≥ margin
+ *  ⇒ 占地内 max(|i|+|j|) ≤ L/2 − margin − (s−1)/2；再排除压在 2 格宽大道（i∈[0,1] / j∈[0,1]）上的位置。
+ *
+ *  🔴 [2026-10-12 主人报「中城 88 件、小城 94 件、大城 96 件，你这样设计小城对吗？」—— 等级账反了，已修]
+ *  为什么不是 seg=10（25 格）：**9 栋 + 离墙 ≥2 格 ⇒ 墙圈最小 25 格，正好与中城同大，件数还更多**。
+ *  扫描结论（面板件数＝墙＋门）：seg=9 ⇒ 4 门 76 / 2 门 82；seg=10 ⇒ 4 门 84 / 2 门 90。中城（25 格、4 门）＝ 88。
+ *  ⇒ 小城取 **seg=9**（23 格）并把**离墙余量放宽到 1 格**（实测最小余量 2.5 格，仍不贴墙），
+ *    件数才严格小于中城，等级账为正：**城寨 < 小城 23 < 中城 25 < 大城 27**。
+ */
+function packSmallCitySlots(
+    seg: number, tileW: number, tileH: number, margin: number, sizes: readonly number[],
+): Array<{ ci: number; cj: number; isCenter: boolean }> | null {
+    const half = (2 * seg + 5) / 2;
+    const limitOf = (s: number) => half - margin - (s - 1) / 2;
+    const boxesOf = (s: number, p: { i: number; j: number }) => {
+        const i0 = Math.round(p.i - (s - 1) / 2), j0 = Math.round(p.j - (s - 1) / 2);
+        return { i0, i1: i0 + s - 1, j0, j1: j0 + s - 1 };
+    };
+    const overWallLimit = (s: number, b: { i0: number; i1: number; j0: number; j1: number }) => {
+        let worst = 0;
+        for (const x of [b.i0, b.i1]) for (const y of [b.j0, b.j1]) worst = Math.max(worst, Math.abs(x) + Math.abs(y));
+        return worst - limitOf(s);
+    };
+    void tileW; void tileH;
+
+    // ── ① 固定骨架（两个 4×4 坐对角、其余铺开），落库前逐条自检，不合规就退回 ② ──
+    if (seg === 9 && margin === 1 && sizes.length === SMALL_CITY_SLOT_PLAN.length) {
+        const ringCells: Array<{ i0: number; i1: number; j0: number; j1: number }> = [];
+        for (const p of buildFortifiedRingOnGrid(seg, DE_ISO_TILE_W, DE_ISO_TILE_H, [true, true, true, true]).pieces) {
+            const i = Math.round((p.x / (DE_ISO_TILE_W / 2) + p.y / (DE_ISO_TILE_H / 2)) / 2);
+            const j = Math.round((p.y / (DE_ISO_TILE_H / 2) - p.x / (DE_ISO_TILE_W / 2)) / 2);
+            ringCells.push(boxesOf(p.type === 'GATE' ? 2 : 1, { i, j }));
+        }
+        const bs = sizes.map((s, k) => boxesOf(s, SMALL_CITY_SLOT_PLAN[k]));
+        let ok = true;
+        for (let x = 0; x < bs.length && ok; x++) {
+            if (overWallLimit(sizes[x], bs[x]) > 0) ok = false;                                    // 离墙 ≥ margin
+            if ((bs[x].i0 <= 1 && bs[x].i1 >= 0) || (bs[x].j0 <= 1 && bs[x].j1 >= 0)) ok = false;  // 不压 2 格宽大道
+            for (let y = x + 1; y < bs.length; y++) {
+                if (bs[x].i0 <= bs[y].i1 && bs[y].i0 <= bs[x].i1 && bs[x].j0 <= bs[y].j1 && bs[y].j0 <= bs[x].j1) ok = false;
+            }
+            for (const w of ringCells) if (bs[x].i0 <= w.i1 && w.i0 <= bs[x].i1 && bs[x].j0 <= w.j1 && w.j0 <= bs[x].j1) ok = false;
+        }
+        if (ok) return SMALL_CITY_SLOT_PLAN.map((p, k) => ({ ci: p.i, cj: p.j, isCenter: k === 0 }));
+    }
+
+    // ── ② 通用回退搜索（靠城心优先）──
+    const candidatesOf = (s: number): Array<{ i: number; j: number }> => {
+        const out: Array<{ i: number; j: number }> = [];
+        const span = Math.ceil(half) + 2;
+        for (let i = -span; i <= span; i += 0.5) for (let j = -span; j <= span; j += 0.5) {
+            if (Number.isInteger(i) !== Number.isInteger(j)) continue;   // i、j 必须同为整数或同为半整数
+            const b = boxesOf(s, { i, j });
+            if (overWallLimit(s, b) > 0) continue;                       // 离墙 ≥ margin
+            if ((b.i0 <= 1 && b.i1 >= 0) || (b.j0 <= 1 && b.j1 >= 0)) continue;  // 不压 2 格宽大道
+            out.push({ i, j });
+        }
+        return out.sort((a, b) => ((a.i * a.i + a.j * a.j) - (b.i * b.i + b.j * b.j)) || ((a.i + a.j) - (b.i + b.j)) || (a.i - b.i));
+    };
+    const taken = sizes.map((s) => candidatesOf(s));
+    const chosen: Array<{ i: number; j: number; s: number }> = [];
+    let steps = 0;
+    const rec = (k: number): boolean => {
+        if (k >= sizes.length) return true;
+        if (++steps > 400000) return false;
+        const s = sizes[k];
+        for (const p of taken[k]) {
+            const b = boxesOf(s, p);
+            const clash = chosen.some((c) => {
+                const o = boxesOf(c.s, c);
+                return b.i0 <= o.i1 && o.i0 <= b.i1 && b.j0 <= o.j1 && o.j0 <= b.j1;
+            });
+            if (clash) continue;
+            chosen.push({ i: p.i, j: p.j, s });
+            if (rec(k + 1)) return true;
+            chosen.pop();
+        }
+        return false;
+    };
+    if (!rec(0)) return null;
+    return chosen.map((c, k) => ({ ci: c.i, cj: c.j, isCenter: k === 0 }));
+}
+
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
@@ -388,6 +500,31 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     }
     if (ring.length > 9) ring.length = 9;   // ⚠️ 掺入蒙古包后必须截到 9 栋（主人：总体不能超过 9 个）
     const rotation = rnd() * 360;
+
+    // 🔴 [2026-10-12 主人报件数等级反了 → 改 B 方案；同日又报「城内建筑摆放还是不对」→ 固定骨架]
+    //    战术侧（传了原生尺寸表）走**按 DE 格子摆放**：墙圈 seg=9 ⇒ 角到角 **23 格**（严格小于中城 25、大城 27）；
+    //    9 栋按 `SMALL_CITY_SLOT_PLAN` 的固定骨架摆（两个 4×4 坐对角、其余铺开，见该表注释）；
+    //    小城一律**不摆居中城堡**（centerCastle 恒 false，见 cityStackParams）⇒ 城心位那栋落单在第一象限。
+    //    战略地图（native 缺省）走下面原写法，一个像素不动。
+    if (native) {
+        // 城墙款式照旧：石墙区随机「双门标准 / 四门雄关」，木栅区固定双门（与战略侧 useFourGates 同一判据）
+        const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
+        const SMALL_CITY_SEG = 9, SMALL_CITY_WALL_MARGIN = 1;
+        const slotCenters = packSmallCitySlots(SMALL_CITY_SEG, DE_ISO_TILE_W, DE_ISO_TILE_H, SMALL_CITY_WALL_MARGIN, SMALL_CITY_SLOT_SIZES);
+        if (slotCenters) {
+            // 取建筑顺序：占地由大到小（并列按池序）—— 与 packSmallCitySlots 的固定骨架一一对应
+            const ordered = ring.map((b, i) => ({ b, i })).sort((x, y) => (deBuildingFootprint(y.b) - deBuildingFootprint(x.b)) || (x.i - y.i));
+            const stoneAnchors = DE_STONE_ANCHORS_BY_STYLE[style];
+            return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
+                ordered.map((o): [string, string] => [o.b, 'AGE2']), native, {
+                    seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false,
+                    gateEdges: useFourGates ? [true, true, true, true] : [true, false, true, false],
+                    wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : DE_PALISADE_ANCHORS,
+                    groundTile: 'sr2',
+                    slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
+                });
+        }
+    }
 
     // 容器尺寸（紧凑包裹闭合围墙与木大门）
     // 🔴 [2026-10-11 战术侧 1.0] 墙圈提到 9 段/边后外接 1806×1047（实测件表），容器与地基层跟着放大
@@ -1052,6 +1189,9 @@ interface CityGridSpec {
     wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }>;
     /** 城内地面贴图 */
     groundTile: string;
+    /** 🔴 [2026-10-12 主人「小城的建筑摆放还是不对」] 显式个位表（与**取建筑顺序**一一对应，第 1 个是中心位）。
+     *  不传＝按 near / far / corner 合成（大城、中城照旧、一个像素不动）。小城用 `packSmallCitySlots` 的固定骨架。 */
+    slotCenters?: ReadonlyArray<{ ci: number; cj: number; isCenter: boolean }>;
 }
 
 function buildDeCityGridHtml(
@@ -1080,14 +1220,20 @@ function buildDeCityGridHtml(
     //    · 其余每个象限 2 栋（大道两侧各一）或 3 栋（+ 外角一，g.corner），个位中心 = 0.5 ± (near, far)、± (far, near)[、± (far, far)]。
     //    near / far 由调用方按墙圈大小逐格核对后给定（见 CityGridSpec 各城型取值处）。
     const NEAR = g.near, FAR = g.far, MID = 0.5;
-    const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = [{ ci: MID, cj: MID, isCenter: true, y: 0 }];
-    for (const si of [-1, 1]) for (const sj of [-1, 1]) {
-        slots.push({ ci: MID + si * NEAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
-        slots.push({ ci: MID + si * FAR, cj: MID + sj * NEAR, isCenter: false, y: 0 });
-        if (g.corner) slots.push({ ci: MID + si * FAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
+    //    · 小城（g.slotCenters）例外：个位由 packSmallCitySlots 给定（第 1 个是中心位），
+    //      这里**不再**按屏幕 y 重排 —— 表序就是「取建筑的顺序」。
+    const slots: Array<{ ci: number; cj: number; isCenter: boolean; y: number }> = g.slotCenters
+        ? g.slotCenters.map((s) => ({ ci: s.ci, cj: s.cj, isCenter: s.isCenter, y: 0 }))
+        : [{ ci: MID, cj: MID, isCenter: true, y: 0 }];
+    if (!g.slotCenters) {
+        for (const si of [-1, 1]) for (const sj of [-1, 1]) {
+            slots.push({ ci: MID + si * NEAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
+            slots.push({ ci: MID + si * FAR, cj: MID + sj * NEAR, isCenter: false, y: 0 });
+            if (g.corner) slots.push({ ci: MID + si * FAR, cj: MID + sj * FAR, isCenter: false, y: 0 });
+        }
     }
     for (const sl of slots) sl.y = (sl.ci + sl.cj) * TH / 2;
-    slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
+    if (!g.slotCenters) slots.sort((a, b) => a.y - b.y);   // 按屏幕 y 升序取建筑（与战略版同一取法）
 
     /** 放一栋：给素材目录名 + 占地 s + 位中心 (ci,cj) + 是否镜像 */
     const placeBuilding = (dir: string, src: string, boxW: number, s: number, ci: number, cj: number, flip: boolean): void => {

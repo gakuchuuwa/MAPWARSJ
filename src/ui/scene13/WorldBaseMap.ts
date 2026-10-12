@@ -180,11 +180,6 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
                 // 🔴 标志 4 = 零星残雪（最冷月 -3~+2°C，会下雪但存不住）：
                 //    **底图不换**，仍用非冬季那张；雪由引擎在上面铺少量斑块表现。
                 //    见 climate-regions.md §5.6.17。
-                if (q.isSiege) {
-                    // 冬季长期积雪 → 城郊是踩实的雪地地基
-                    if (q.isWinter && winterFlag > 0 && winterFlag !== 4) return SIEGE_TILES[7] ?? null;
-                    return SIEGE_TILES[siegeCode] ?? null;
-                }
                 if (q.isWinter && winterFlag > 0 && winterFlag !== 4) {
                     // 3=雪林地（林区）  2=深雪（极寒/终年冰冻）  1=雪地
                     const code = winterFlag === 3 ? 23 : winterFlag === 2 ? 22 : 21;

@@ -4508,8 +4508,8 @@ export class Scene13WarLayer {
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
             const __e0 = performance.now();
             const envInput: Scene13EnvironmentInput = {
-                lat: init.centerLat,
-                lng: init.centerLng,
+                lat: init.defenderCityLat ?? init.centerLat,
+                lng: init.defenderCityLng ?? init.centerLng,
                 waterProbeLat: init.defenderCityLat,
                 waterProbeLng: init.defenderCityLng,
                 seed: init.environmentSeed,
@@ -6510,15 +6510,18 @@ export class Scene13WarLayer {
                         if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
+                            let asset = r[1];
+                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
+                            if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
                             const sx = (ox - 60) * TAC_TILE_W + VW / 2;   // 🔴 [2026-10-12] 64×32 → 96×48（与地面网格同一式）
                             const sy = (oy - 60) * TAC_TILE_H + VH / 2;
                             if (onFoundation(sx, sy)) continue;
-                            this.ensureNatureAsset(r[1]);
+                            this.ensureNatureAsset(asset);
                             const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
                             const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
                             this.decorSprites.push({
-                                asset: r[1],
+                                asset,
                                 frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
                                 x: sx,
                                 y: sy,
