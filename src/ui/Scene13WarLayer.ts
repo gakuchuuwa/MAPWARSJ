@@ -3582,6 +3582,8 @@ export class Scene13WarLayer {
     private defenderHolding = false;
     /** 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙/城门/城垛」] 每场只塌一次 */
     private wallAutoCollapsed = false;
+    /** 🔴 [2026-10-12] 下一处墙缺口坍塌的时刻（battleSec）；1e9 = 墙已塌完 */
+    private nextWallGapSec = 10;
     /**
      * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
      *    2026-09-19 主人定「城寨/漠北蒙古与野战一致：直接开战」）。
@@ -4268,6 +4270,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         this.defenderHolding = this.siegeWithWalls;
+        this.nextWallGapSec = 10;
         this.wallAutoCollapsed = false;   // 每场重新计（30 秒保底塌墙，见 step）
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
         //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
@@ -5665,6 +5668,10 @@ export class Scene13WarLayer {
             ? Math.min(4, Math.max(2, Math.round(peakLevel)))
             : (roll < 68 ? (roll < 24 ? 3 : 2) : Math.round(peakLevel));
         // 🔴 [2026-10-12 主人令「PASS与城寨分别支持专属的多层阶梯高台与多样化随机起伏小山包」]
+        // 🔴 [2026-10-12 主人令「设计中城护城河，比大城窄一点，2 格就行；小城 1 格；城寨不用」] 河宽按城型：大城 3 / 中城 2 / 小城 1 / 其余不挖；
+        //    毡帐营地（蒙古包那套，不是按格摆放的墙圈）跳过，免得河开错位置。
+        const moatW = this.defenderCityType === 'big_city' ? 3 : this.defenderCityType === 'medium_city' ? 2 : this.defenderCityType === 'small_city' ? 1 : 0;
+        const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT';
         if (this.defenderCityType === 'pass') {
             gl.flattenPassTerraces(cx, cy, W, H, seedStr);
         } else if (this.defenderCityType === 'stockade') {
@@ -5675,7 +5682,14 @@ export class Scene13WarLayer {
             let flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
             // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 河在墙外 1.5~4.5 格，整平范围要盖住它，河面才和城池地基同高
             if (this.defenderCityType === 'big_city' && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 5);
-            gl.flattenFoundation(cx, cy, W, H, flatCells, level);
+            else if (moatOn && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + (1.5 + moatW) / Math.SQRT2 + 1.5);   // 中城、小城：盖住河（圆角处最远）
+            if (this.defenderCityType === 'big_city') {
+                gl.flattenBigCityTerrain(cx, cy, W, H, seedStr, flatCells);
+            } else if (this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city') {
+                gl.flattenMediumSmallCityTerrain(cx, cy, W, H, seedStr, flatCells, this.defenderCityType);
+            } else {
+                gl.flattenFoundation(cx, cy, W, H, flatCells, level);
+            }
         }
         for (let py = -ry; py <= ry; py += 24) {
             for (let px = -rx; px <= rx; px += 48) {
@@ -5688,18 +5702,33 @@ export class Scene13WarLayer {
         //    四个门正前方（|i−0.5| 或 |j−0.5| ≤ 2，即门洞同宽 4 格）不挖，留作土堤桥。
         const ringLm = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
         let inMoat: ((x: number, y: number) => boolean) | null = null;
-        if (this.defenderCityType === 'big_city' && ringLm > 0) {
-            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河（原先按方形距离，城角处是直角）：城角处是圆弧；河宽 3 格、离墙 1.5 格不变
+        if (moatOn && ringLm > 0) {
+            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河（原先按方形距离，城角处是直角）：城角处是圆弧；离墙 1.5 格，河宽按城型
             const half = ringLm / 2;
+            // 土堤：城门正前方（门洞同宽 4 格）不挖。门的位置取实际摆出来的城门（两门款只有两扇，没门的边河不断开）
+            const lanes: Array<{ axis: 'i' | 'j'; sign: number; along: number }> = [];
+            for (const gt of this.wallGates) {
+                if (gt.f !== 1 || !/GATE/.test(gt.key)) continue;
+                const gu = (gt.x - cx) / (TAC_TILE_W / 2), gv = (gt.y - cy) / (TAC_TILE_H / 2);
+                const gi = (gu + gv) / 2 - 0.5, gj = (gv - gu) / 2 - 0.5;
+                if (Math.abs(gi) >= Math.abs(gj)) lanes.push({ axis: 'i', sign: Math.sign(gi), along: gj });
+                else lanes.push({ axis: 'j', sign: Math.sign(gj), along: gi });
+            }
             inMoat = (x, y) => {
                 const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
-                const mi = Math.abs((u + v) / 2 - 0.5), mj = Math.abs((v - u) / 2 - 0.5);
-                if (Math.min(mi, mj) <= 2) return false;                                  // 城门正前方：土堤
+                const ci = (u + v) / 2 - 0.5, cj = (v - u) / 2 - 0.5;
+                const mi = Math.abs(ci), mj = Math.abs(cj);
                 const ex = mi - half, ey = mj - half;
                 const d = (ex > 0 && ey > 0) ? Math.hypot(ex, ey) : Math.max(ex, ey);
-                return d >= 1.5 && d < 4.5;
+                if (d < 1.5 || d >= 1.5 + moatW) return false;
+                for (const ln of lanes) {
+                    if (ln.axis === 'i' ? (Math.sign(ci) === ln.sign && Math.abs(cj - ln.along) <= 2)
+                        : (Math.sign(cj) === ln.sign && Math.abs(ci - ln.along) <= 2)) return false;
+                }
+                return true;
             };
-            gl.addWaterWhere(inMoat, W, H);
+            if (moatW < 3) gl.addWaterCoverage(inMoat, W, H);   // 中城、小城：窄河按覆盖率写水，保证连续
+            else gl.addWaterWhere(inMoat, W, H);
         }
         gl.flushFoundation();
         const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
@@ -8149,54 +8178,82 @@ export class Scene13WarLayer {
      */
     private collapseFrontWalls(): void {
         this.lastCollapseAt = performance.now();
-        // 🔴 [2026-08-23] 只塌一半且只塌一次：已塌过（wallsCollapsed）就不再重复塌——
-        //    否则士兵每打破一段残墙又触发一次"塌一半"，反复迭代到全塌。
-        if (this.wallsCollapsed) { this.defenderHolding = false; return; }
-        this.wallsCollapsed = true;
-        // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候请用城墙倒塌.WAV 音效」
-        //    这里是**全片唯一**的塌墙点：开战 WALL_AUTO_COLLAPSE_SEC(30s) 保底随机塌一半城墙；
-        //    士兵凿墙只做破损贴图、墙 hp 归零也不破墙不联动（见 step 里 2026-08-23 那条注释），
-        //    所以这一声 = 「30 秒城墙倒塌」那一下。放在 wallsCollapsed 闸门之后 → 每场只响一次。
-        audioManager.play('wall_collapse');
-        // 🔴 [2026-08-23 主人定] 坍塌后**彻底移除碰撞体**：obstruction = undefined（字段语义
-        //    「未设置即不阻挡」，resolveWorldObstructions 第一关 !obstruction 直接跳过）+
-        //    obstructionDisabled = true 双保险。遍历**所有** wallGates（含已 hp=0、城门 extra），
-        //    贴图照常绘制（残垣断壁观感），士兵 100% 不再被挡。
-        for (const b of this.wallGates) {
-            b.sprite.obstruction = undefined;
-            b.sprite.obstructionDisabled = true;
-            if (b.extraSprites) for (const sp of b.extraSprites) {
-                sp.obstruction = undefined;
-                sp.obstructionDisabled = true;
-            }
-        }
-        // 破墙 → 守方开始反击（近战出击、远程正常机动）
+        // 🔴 [2026-10-12 主人令「10秒坍塌一个」] 城墙/城门/城垛改由 collapseNextWallGap 每 10 秒塌一处缺口；
+        //    本函数只剩 30 秒这一下：城内箭塔/建筑随机三形态 + 非墙装饰改纯贴图（墙段不在此处理）。
         this.defenderHolding = false;
-        // 待命期间普通士兵会被静止检测累计为 stuck；解除待命时同步清零，
-        // 否则首批士兵虽已开始位移，渲染仍会继续选 idle，形成无移动动作的滑步。
-        for (const m of this.men) {
-            if (m.siegeW) continue;
-            m.stuckT = 0;
-            m.netT = 0;
-            m.anchorX = m.x;
-            m.anchorY = m.y;
-            m.prevX = m.x;
-            m.prevY = m.y;
-        }
-        // 🔴 [2026-08-23 定的「塌墙时起接触音景」已于 2026-09-15 取消]：
-        //    音景改由「近战接触人数」实时驱动（见 meleeContactCount），塌墙前两军够不着活人、
-        //    自然不响；塌墙后近战一接上就自己淡入。在这里另起一次反而会让它先响、
-        //    再因为还没接触而淡出、接触了又淡入，来回抽。
-        // 🔴 [2026-08-29 主人定] 30 秒：城门/城墙/箭塔/建筑随机均分三形态（完整/破损/残骸），全为贴图
         this.applyRandomCollapseForms();
-        // 🔴 [2026-10-11 主人令「墙/门/城垛（含围栏）所有建筑，所有元素一律在 30 秒坍塌后改为贴图」]
-        //    原实现只清 wallGates 的碰撞；现在**全场清空**：任何还带 obstruction 的精灵（墙上件、建筑、
-        //    拒马、装饰…）一并改成纯贴图 ⇒ 30 秒后整张战场**处处可通行**。
+        const wallSprites = new Set<DecorSprite>();
+        for (const b of this.wallGates) { wallSprites.add(b.sprite); if (b.extraSprites) for (const sp of b.extraSprites) wallSprites.add(sp); }
         for (const sp of this.decorSprites) {
+            if (wallSprites.has(sp)) continue;
             if (!sp.obstruction && sp.obstructionDisabled) continue;
             sp.obstruction = undefined;
             sp.obstructionDisabled = true;
         }
+    }
+
+    /** 🔴 [2026-10-12 主人令「10秒坍塌一个，靠近敌方或受到攻击的先塌」] 墙段是否还立着 */
+    private wallStanding(b: WarBuilding): boolean {
+        return b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+    }
+
+    /**
+     * 每 10 秒塌一处缺口：先城门；之后优先「受损最重（被打过）」的墙段，没人打过则取离攻方重心最近者；
+     * 缺口 = 选中段 + 离它最近的 2 段。塌后这几段取消阻挡、改贴图。
+     */
+    private collapseNextWallGap(): boolean {
+        const alive = this.wallGates.filter(b => this.wallStanding(b));
+        if (alive.length === 0) return false;
+        let pick: WarBuilding | undefined = alive.find(b => b.key === 'STONE_GATE');
+        if (!pick) {
+            let best = 0;
+            for (const b of alive) { const d = b.maxHp - b.hp; if (d > best) { best = d; pick = b; } }
+            if (!pick) {
+                const c = this.enemyCen[0];
+                if (c) {
+                    let bd = Infinity;
+                    for (const b of alive) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
+                } else pick = alive[0];
+            }
+        }
+        const p = pick!;
+        const group = [p, ...alive.filter(b => b !== p)
+            .sort((u, v) => ((u.x - p.x) ** 2 + (u.y - p.y) ** 2) - ((v.x - p.x) ** 2 + (v.y - p.y) ** 2))
+            .slice(0, 2)];
+        for (const b of group) this.collapseOneWall(b);
+        audioManager.play('wall_collapse');
+        this.lastCollapseAt = performance.now();
+        // 缺口出现 → 守方开始反击；待命期累计的静止计时清零（避免滑步）
+        if (this.defenderHolding) {
+            this.defenderHolding = false;
+            for (const m of this.men) {
+                if (m.siegeW) continue;
+                m.stuckT = 0; m.netT = 0;
+                m.anchorX = m.x; m.anchorY = m.y; m.prevX = m.x; m.prevY = m.y;
+            }
+        }
+        return true;
+    }
+
+    /** 单个墙/门/垛段坍塌：取消阻挡 + 改贴图（石墙 D50/D75，木栅消失，城门 DESTR→RUBBLE） */
+    private collapseOneWall(b: WarBuilding): void {
+        b.sprite.obstruction = undefined;
+        b.sprite.obstructionDisabled = true;
+        if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+        if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
+            const destr = b.destrAssets;
+            if (destr) {
+                b.sprite.asset = 'BUILDINGANIM:' + (Math.random() < 0.6 ? destr[1] : destr[2]);
+                b.sprite.frame = 0;
+            } else {
+                b.sprite.destroyed = true;
+            }
+        } else if (b.rubbleAsset) {
+            this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
+        } else {
+            b.sprite.destroyed = true;
+        }
+        b.hp = 0;
     }
 
     /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
@@ -8232,38 +8289,7 @@ export class Scene13WarLayer {
      *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
      */
     private applyRandomCollapseForms(): void {
-        for (const b of this.wallGates) {
-            // 🔴 [2026-09-18 主人定] **已经破掉的墙/门不再参与这次保底坍塌**（只修「同一个门塌两次」，
-            //    血量一律不动）：30 秒前被攻城武器打穿的城门（`hp<=0`、DESTR 倒塌动画已播完、停在 `_RUBBLE`）
-            //    若在这里再走一遍城门分支，`collapseToRubble` 会把 asset 重新指回 `DESTR`、帧归 0 ——
-            //    画面上就是「城门塌了两次」。石墙段同理：已打到 D75 残垣的会被改回 D50，等于自行「修好」一档。
-            //    跳过之后，30 秒这一下只处理**还立着**的墙/门（原来的 40% 完整 / 60% 坍塌比例不变）。
-            //    ⚠️ 判据绝不能加 `obstructionDisabled`：collapseFrontWalls() 在调本函数**之前**就已把
-            //    全体 wallGates 的 obstructionDisabled 置 true（解除阻挡），拿它判会把整排墙全跳过。
-            if (b.hp <= 0 || b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) continue;
-            const r = Math.random();
-            // 🔴 [2026-09-20 主人定] 城门必坍塌：城门（STONE_GATE）跳过 40% 保持完整的随机，30 秒时必塌
-            if (b.key !== 'STONE_GATE' && r < 0.4) continue;   // 40% 保持完整（城门除外）
-            if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
-                const destr = b.destrAssets;   // [D25, D50, D75]
-                if (destr) {
-                    // 石墙/垛墙：破损(D50) 占 40% / 残骸(D75) 占 20%，参差残垣断壁
-                    const d = r < 0.8 ? destr[1] : destr[2];
-                    b.sprite.asset = 'BUILDINGANIM:' + d;
-                    b.sprite.frame = 0;
-                } else {
-                    b.sprite.destroyed = true;   // 木栅栏无残垣 → 直接消失
-                }
-                b.hp = 0;
-            } else if (b.rubbleAsset) {
-                // 城门：无破损档（破则塌），残骸占 60%
-                this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
-                b.hp = 0;
-            } else {
-                b.sprite.destroyed = true;   // 篱笆门等无残骸门直接消失
-                b.hp = 0;
-            }
-        }
+        // 墙/门/垛不在此处理：见 collapseNextWallGap（每 10 秒一处缺口）
         for (const t of this.arrowTowers) {
             // 🔴 [主人需求] 只有「残骸」停火：完整 40% / 破损 30% 都还立着 → 继续射；残骸 30% → 停火。
             const r = Math.random();
@@ -8919,6 +8945,10 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙，城门，城垛」] —— 本会话早前按旧令删过，现按新令恢复：
         //    collapseFrontWalls 只遍历 wallGates（墙/门/城垛），塌后 obstruction=undefined ⇒ 士兵 100% 通行；
         //    **不碰任何城内建筑**（建筑另有登录，不在 wallGates 内）。每场只塌一次。
+        // 🔴 [2026-10-12 主人令「10秒坍塌一个」] 墙/门/垛每 10 秒塌一处缺口（collapseNextWallGap）；30 秒仍做建筑/箭塔那一下。
+        if (this.battleType === 'siege' && this.battleSec >= this.nextWallGapSec && this.nextWallGapSec < 1e9) {
+            this.nextWallGapSec = this.collapseNextWallGap() ? this.nextWallGapSec + 10 : 1e9;
+        }
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= 30) {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
@@ -9046,6 +9076,8 @@ export class Scene13WarLayer {
             if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
+            // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）
+            const spdK = this.isWaterAt(m.x, m.y) ? 0.6 : 1;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
             const REACH = Math.max(stats.rng, 65);   // 出手扣血（近战贴身 65 / 远程 rng）
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
@@ -9214,7 +9246,7 @@ export class Scene13WarLayer {
                         const uB = this.advanceVec[m.f], rx = (m.x - foe.x) / (kd || 1), ry = (m.y - foe.y) / (kd || 1);
                         const backOk = (rx * -uB.x + ry * -uB.y) >= -0.2;
                         const dx = backOk ? -uB.x : rx, dy = backOk ? -uB.y : ry, d = 1;
-                        const step = stats.spd * dt;
+                        const step = stats.spd * spdK * dt;
                         const nx = m.x + dx / d * step, ny = m.y + dy / d * step;
                         const [bx, by] = this.fieldBound(nx, ny);
                         // 🔴 退到屏幕边上就**别退了，回身打**（主人 2026-08-19 定）：
@@ -9319,7 +9351,7 @@ export class Scene13WarLayer {
                 if (m.march && !inReach && !holdCmd) {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
-                    const step = stats.spd * dt;
+                    const step = stats.spd * spdK * dt;
                     if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
@@ -9388,8 +9420,8 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    m.x += mvx * stats.spd * (avoiding ? SLIDE_RATE : 1) * dt;
-                    m.y += mvy * stats.spd * (avoiding ? SLIDE_RATE : 1) * dt;
+                    m.x += mvx * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
+                    m.y += mvy * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
                     m.dir = this.dir8Hyst(m.dir, mvx, mvy);   // 朝向跟着实际走向（绕行时朝侧面）
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
@@ -9722,7 +9754,7 @@ export class Scene13WarLayer {
                 //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
                 const slot = this.laneSlotTarget(m, laneLeaders);
-                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * dt;
+                const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * dt;
                 const arriveAt = (slot || m.march) ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
                     const mv = (slot || m.march) ? Math.min(step, d) : step;   // 跟随锚点/列阵推进：连续跟随，不迈整步
