@@ -1951,6 +1951,7 @@ export const FACTIONS: Faction[] = [
   { id: 'tuotuonake', name: '托托纳克' },  // 别名：韦拉克鲁斯中部原住民（Totonac），都城森波阿拉
   { id: 'taino', name: '泰诺人' },  // 别名：古巴/大安的列斯原住民（Taíno）
   { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系
+  { id: 'chamorro', name: '查莫罗' },  // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 马里亚纳群岛原住民（Chamorro），主邑阿加尼亚；此处民族发源核心，故以民族命名（旗号「查」）
   { id: 'yasuer', name: '亚速尔' },  // 别名：Azores，葡属大西洋群岛，首府安格拉
   { id: 'inca', name: '印加' },
              // 库斯科·印加帝国
