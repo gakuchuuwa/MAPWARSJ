@@ -455,6 +455,8 @@ interface WarBuilding {
     destrAssets?: string[];
     /** 🔴 [2026-10-12 主人令] 城内建筑/箭塔（DE 血量）：name = 素材名；tower = 对应箭塔（倒塌即停火） */
     bld?: { name: string; tower?: ArrowTower };
+    /** 🔴 [2026-10-12] 第一次挨打的时刻（battleSec）；10 秒坍塌按它先后排 */
+    hitAt?: number;
     /** 城门倒塌动画素材目录名（DESTR，50 帧），破门时播放；播完切 rubbleAsset 残骸常驻 */
     collapseAsset?: string;
     /** 城门倒塌后残骸素材目录名（RUBBLE，1 帧），常驻地面不再阻挡 */
@@ -8215,13 +8217,15 @@ export class Scene13WarLayer {
                 if (d < bwd) { bwd = d; bw = b; }
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
-            if (bw && (!manOut || bwd <= bd)) { if (reserve) bw.claims++; return bw; }
+            // 🔴 [2026-10-12 主人令「士兵优先攻击士兵」] 有敌兵就打兵，没兵才打墙（待命期只认已出城的守军）
+            if (bw && !(this.defenderHolding ? manOut : manChosen)) { if (reserve) bw.claims++; return bw; }
             // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙且无迎战守军
             //    → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭；若有已出城迎战的守军则正常交战。
             if (this.defenderHolding && !manOut) return null;
         }
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
+            if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -8258,27 +8262,32 @@ export class Scene13WarLayer {
 
     /** 🔴 [2026-10-12 主人令「10秒坍塌一个，靠近敌方或受到攻击的先塌」] 墙段是否还立着 */
     private wallStanding(b: WarBuilding): boolean {
-        return b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+        if (b.bld) return b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+        return !b.sprite.destroyed && !b.sprite.obstructionDisabled && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
     }
 
     /**
-     * 每 10 秒塌一处缺口：先城门；之后优先「受损最重（被打过）」的墙段，没人打过则取离攻方重心最近者；
-     * 缺口 = 选中段 + 离它最近的 2 段。塌后这几段取消阻挡、改贴图。
+     * 🔴 [2026-10-12 主人令「哪个先受到攻击，哪个先坍塌」] 每 10 秒塌一个：城门/城墙/城垛/城内建筑/箭塔一起排，
+     * 最早挨打的先塌；都没挨过打则取离攻方重心最近的。墙段连同离它最近的 2 段一起塌成缺口；建筑单独塌。
      */
     private collapseNextWallGap(): boolean {
         const alive = this.wallGates.filter(b => this.wallStanding(b));
-        if (alive.length === 0) return false;
-        let pick: WarBuilding | undefined = alive.find(b => b.key === 'STONE_GATE');
+        const all = [...alive, ...this.defBuildings.filter(b => this.wallStanding(b))];
+        if (all.length === 0) return false;
+        let pick: WarBuilding | undefined;
+        for (const b of all) if (b.hitAt !== undefined && (!pick || b.hitAt < pick.hitAt!)) pick = b;
         if (!pick) {
-            let best = 0;
-            for (const b of alive) { const d = b.maxHp - b.hp; if (d > best) { best = d; pick = b; } }
-            if (!pick) {
-                const c = this.enemyCen[0];
-                if (c) {
-                    let bd = Infinity;
-                    for (const b of alive) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
-                } else pick = alive[0];
-            }
+            const c = this.enemyCen[0];
+            if (c) {
+                let bd = Infinity;
+                for (const b of all) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
+            } else pick = all[0];
+        }
+        if (pick!.bld) {
+            pick!.hp = 0;
+            this.onDefBuildingHit(pick!);
+            this.releaseHold();
+            return true;
         }
         const p = pick!;
         const group = [p, ...alive.filter(b => b !== p)
@@ -8287,7 +8296,12 @@ export class Scene13WarLayer {
         for (const b of group) this.collapseOneWall(b);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
-        // 缺口出现 → 守方开始反击；待命期累计的静止计时清零（避免滑步）
+        this.releaseHold();
+        return true;
+    }
+
+    /** 缺口出现 → 守方开始反击；待命期累计的静止计时清零（避免滑步） */
+    private releaseHold(): void {
         if (this.defenderHolding) {
             this.defenderHolding = false;
             for (const m of this.men) {
@@ -8296,7 +8310,6 @@ export class Scene13WarLayer {
                 m.anchorX = m.x; m.anchorY = m.y; m.prevX = m.x; m.prevY = m.y;
             }
         }
-        return true;
     }
 
     /** 单个墙/门/垛段坍塌：取消阻挡 + 改贴图（石墙 D50/D75，木栅消失，城门 DESTR→RUBBLE） */
@@ -9657,6 +9670,7 @@ export class Scene13WarLayer {
                     //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！
                     foe.atkNext++;
                     if (dps > 0) {
+                        if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt;
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
