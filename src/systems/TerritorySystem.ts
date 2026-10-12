@@ -509,7 +509,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     if (native) {
         // 城墙款式照旧：石墙区随机「双门标准 / 四门雄关」，木栅区固定双门（与战略侧 useFourGates 同一判据）
         const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
-        const SMALL_CITY_SEG = 9, SMALL_CITY_WALL_MARGIN = 1;
+        const SMALL_CITY_SEG = 7, SMALL_CITY_WALL_MARGIN = 1;
         // 🔴 [2026-10-12 主人令「小城，间距 1」] 9 栋排成 3×3 方阵（无城堡，正中也是建筑，取建筑顺序＝占地由大到小，最大的坐正中）：
         //    每个位按 4×4 算、位与位隔 1 格 ⇒ 位距 5 格（同中城、大城排法）。
         const SMALL_PITCH = 4 + 1;
@@ -679,6 +679,20 @@ function buildDeStockadeStackHtml(
     const customStyle = pickStockadeWallStyleByCategory(style, shapeIdx < 0 ? baseShapeIdx : shapeIdx);
     const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : builtinFence;
     const wallAnchors = fenceSet.anchors;
+    // 🔴 [2026-10-12 主人令「城寨用每段 6，城中建筑按 3*3，间距 1 试试」] 战术侧（传了原生尺寸表）城寨也按 DE 格摆放：
+    //    墙圈 seg=6 ⇒ 角到角 17 步、墙内 16×16 格；一扇门开在左下边；材质仍按建筑风格（硬木/原木/平切/篱笆）；
+    //    9 栋排 3×3 方阵，每位按 4×4 算、位间隔 1 格 ⇒ 位距 5（方阵宽 14，离墙 1 格）。形制六选一在战术侧暂不用（战略地图不变）。
+    const STOCKADE_PITCH = 4 + 1;
+    const stockadePos: ReadonlyArray<readonly [number, number]> = [[0, 0], [-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+    const gridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, false, undefined, undefined,
+        pool.slice(0, 9).map((b): [string, string] => [b, 'AGE1']), native, {
+            seg: 6, near: 0, far: 0, corner: false, rawDirNames: true,
+            gateEdges: [false, false, false, true],
+            wallAnchors,
+            groundTile: 'sr2',
+            slotCenters: stockadePos.map(([bi, bj], k) => ({ ci: 0.5 + bi * STOCKADE_PITCH, cj: 0.5 + bj * STOCKADE_PITCH, isCenter: k === 0 })),
+        }) : null;
+    if (gridHtml) return gridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
     const stockadeShape = shapeIdx < 0 ? baseShapeIdx : shapeIdx;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
 
     const isRect = stockadeShape === 3;
@@ -837,6 +851,32 @@ function buildDeStockadeStackHtml(
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
+
+    // 🔴 [2026-10-12 主人令「所有 PASS 改为城寨的样式大小，但要用石墙；中心城堡，除了各种箭塔不要其他建筑」]
+    //    战术侧（传了原生尺寸表）：墙圈 seg=6（同城寨：角到角 17 步、墙内 16×16 格）、石墙、四门（主人定）；
+    //    正中城堡；墙圈四角保持原样的城垛（角楼）。战略地图不变。
+    //    🔴 [2026-10-12 主人令「城中 9 建筑，一律为箭塔」] 城堡居中 + 外圈 8 个位全是箭塔（AGE3×4 + AGE4×4 随机洗牌，同样按据点 id 定）；
+    //    箭塔占 1×1，位心取 −5 / 0.5 / 6（离城堡 3 格空隙，关于城心对称，吸附整格后落在 −5 / 1 / 6）。
+    const passInnerTowers: Array<[string, string]> = [['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4']];
+    {
+        const r = deMulberry32(deHashString(cityId + '|pass_inner_towers'));
+        for (let i = passInnerTowers.length - 1; i > 0; i--) {
+            const j = Math.floor(r() * (i + 1));
+            [passInnerTowers[i], passInnerTowers[j]] = [passInnerTowers[j], passInnerTowers[i]];
+        }
+    }
+    const passTowerAt = (b: number): number => (b === 0 ? 0.5 : (b < 0 ? -5 : 6));
+    const passRing: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+    const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, true, factionId, region,
+        passInnerTowers, native, {
+            seg: 6, near: 0, far: 0, corner: false,
+            gateEdges: [true, true, true, true],
+            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],   // 🔴 [2026-10-12 主人令「城墙改为加强的城墙，就是大城那种」]
+            groundTile: 'rd2',
+            slotCenters: [{ ci: 0.5, cj: 0.5, isCenter: true },
+                ...passRing.map(([bi, bj]) => ({ ci: passTowerAt(bi), cj: passTowerAt(bj), isCenter: false }))],
+        }) : null;
+    if (passGridHtml) return passGridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
 
     // 险要矩形城容器（长8段+门 × 宽4段）
     const W = baseSize * 2.6;
@@ -1208,6 +1248,8 @@ interface CityGridSpec {
     /** 🔴 [2026-10-12 主人「小城的建筑摆放还是不对」] 显式个位表（与**取建筑顺序**一一对应，第 1 个是中心位）。
      *  不传＝按 near / far / corner 合成（大城、中城照旧、一个像素不动）。小城用 `packSmallCitySlots` 的固定骨架。 */
     slotCenters?: ReadonlyArray<{ ci: number; cj: number; isCenter: boolean }>;
+    /** 🔴 [2026-10-12 主人令「城寨每段 6」] 城寨的建筑名本身就是完整素材目录名（HUT_A、DARK_HOUSE_AGE1…），不再拼「风格_名_时代」；宽度取 native.spriteW[目录名] */
+    rawDirNames?: boolean;
 }
 
 function buildDeCityGridHtml(
@@ -1278,8 +1320,8 @@ function buildDeCityGridHtml(
             const entry = centerCastle ? pool[otherIdx++] : pool[i];
             if (!entry) return;   // 个位比建筑多时空着（如无城堡时 13 位 / 12 栋）
             const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
-            const src = cityBuildingSrc(style, b, age);
-            const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
+            const src = g.rawDirNames ? `/SUCAI_BUILDING/${b}/preview.png` : cityBuildingSrc(style, b, age);
+            const bW = (g.rawDirNames ? native.spriteW?.[b] : nativeW(native, b, age)) ?? (baseSize * 0.32 * AUTO);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
             placeBuilding(dirOf(src), src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
         }
