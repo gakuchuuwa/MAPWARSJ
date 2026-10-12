@@ -26,6 +26,7 @@ import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { isNearStrategicRiver } from '../../map/StrategicRiverProximity';
 import { RandomSource, createRandom, hashString } from './Random';
 import {queryBaseTile} from './WorldBaseMap';
+import { queryStrategicBaseTile } from '../../map/StrategicTerrainMaterial';
 import { pickTree, treeDensityFor, type TreeSeason } from './TreeAssignment';
 import { filterDecor, groundDecorFor, countForCover, assetTiles,
          SCATTER_COVER, FLAT_COVER, type DecorFitQuery } from './DecorFit';
@@ -684,11 +685,14 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     //    查找表见 public/world/world-base.png，判据见 docs/02-design/climate-regions.md。
     //    查不到（数据没加载 / 落在海面）才回退到旧的主题逻辑，不在这里编默认值。
     const fromWorld = (input.lat !== undefined && input.lng !== undefined)
-        ? queryBaseTile({
+        ? queryStrategicBaseTile({
             lat: input.lat,
             lng: input.lng,
             isSiege: input.isSiege ?? false,
             isWinter: season === 2,
+            elevM: elev,
+            slopeDeg: slope,
+            nearRiver: isNearStrategicRiver(input.lat, input.lng, 8),
         })
         : null;
     const baseTerrain: string = fromWorld ?? (theme
@@ -702,7 +706,15 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
     //    那 7 张全是宜居地的泥土，天然比当地实际的戈壁/流沙/干草原「湿润」。
     //    攻城战的「树更少」由 treeDensityFor 的 isSiege 折扣负责，不靠底图差异。
     const vegetationTile: string = (input.lat !== undefined && input.lng !== undefined
-        ? queryBaseTile({ lat: input.lat, lng: input.lng, isSiege: false, isWinter: season === 2 })
+        ? queryStrategicBaseTile({
+            lat: input.lat,
+            lng: input.lng,
+            isSiege: false,
+            isWinter: season === 2,
+            elevM: elev,
+            slopeDeg: slope,
+            nearRiver: isNearStrategicRiver(input.lat, input.lng, 8),
+        })
         : null) ?? baseTerrain;
     const patches: TerrainPatchPlan[] = [];
     const objects: EnvironmentObjectPlan[] = [];
@@ -801,7 +813,9 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         const groundTiles: Partial<Scene13GroundTiles> = {
             grass: baseTerrain,
             sand: beachTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
-            forest: forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
+            forest: baseTerrain === 'gravel_default'
+                ? 'gravel_default'
+                : forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
             // 🔴 [2026-10-11 偏灰水面清零] 统一由 waterTerrainForTheme 决定（非雪区蓝水 wtr/wt5，冬季雪区 ic2 冰面）
             water: themeWater,
         };

@@ -270,7 +270,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
     },
     palaearctic_tibetan_plateau: {
         id: 'palaearctic_tibetan_plateau',
-        baseTerrain: 'gr2', // 夏季为绿意盎然的羌塘/藏南高寒草甸
+        baseTerrain: 'gravel_default', // 青藏高原高山砾石
         // 高原多变地表：绿草、高寒冷土、向阳干草、碎石岩地、冷岩 sr2
         groundTiles: ['gr2', 'pm2', 'gr4', 'ds5', 'rck', 'rc3', 'sr2'],
         forestFloorTiles: ['ds3', 'grs'],
@@ -496,7 +496,7 @@ function siegeSoil(theme: DeMapThemePalette, biome: Biome): { base: string; vari
         return { base: 'gr4', variations: ['gr4', 'ds3'] }; // 泰加针叶林（暗色湿冷土）
     }
     if (t === 'palaearctic_tibetan_plateau') {
-        return { base: 'ds2', variations: ['ds2', 'gr4'] }; // 高寒枯草 + 冻土
+        return { base: 'gravel_default', variations: ['gravel_default', 'gr4'] }; // 高山砾石 + 冻土
     }
     // ── 其余按 biome（气候植被梯度） ──
     switch (biome) {
