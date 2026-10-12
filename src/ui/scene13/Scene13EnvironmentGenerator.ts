@@ -119,6 +119,10 @@ export interface Scene13GroundTiles {
     forest: string;
     /** 水体 */
     water: string;
+    /** 泥土/黄褐土斑块（DIRT） */
+    dirt?: string;
+    /** 旱草/枯草/副地表（DRY GRASS / GRAVEL） */
+    dry?: string;
 }
 
 export interface Scene13EnvironmentPlan {
@@ -810,6 +814,10 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         attachDeObjectObstruction(objects);
         // 地面层四张基底素材：与 baseTerrain 同一份气候主题表，算好一次，渲染层两处共用
         const themeWater = waterTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng);
+        const gList = Array.isArray(theme?.groundTiles) ? theme.groundTiles : [];
+        const themeDirt = gList.find((t) => /ds|des|rd|mud/i.test(t)) ?? 'ds3';
+        const themeDry = gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
+            ?? (baseTerrain === 'gr7' ? 'gr3' : 'gr7');
         const groundTiles: Partial<Scene13GroundTiles> = {
             grass: baseTerrain,
             sand: beachTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng),
@@ -818,6 +826,8 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
                 : forestFloorTilesForTheme(theme!, biome, season, input.lat ?? 35, elev, input.lng)[0],
             // 🔴 [2026-10-11 偏灰水面清零] 统一由 waterTerrainForTheme 决定（非雪区蓝水 wtr/wt5，冬季雪区 ic2 冰面）
             water: themeWater,
+            dirt: themeDirt,
+            dry: themeDry,
         };
         return {
             seed, topology, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
