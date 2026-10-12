@@ -4435,8 +4435,10 @@ refresh();
       if (ctype.value === 'pass' && mirrorBox) fields.mirror = mirrorBox.checked;
       remember();                                   // 先记住选择：Vite 因写盘整页重载后能回到原处
       msg.style.color = '#f6e05e'; msg.textContent = '保存中…（写盘后页面会自动重载，选择已记住）';
+      var tSave0 = performance.now();   // 🔴 [2026-10-12 主人报「保存据点风格要等好久」] 计时：接口 / 前端刷新 各花多少，显示在提示行里
       fetch('/api/save-city', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: x.id, fields: fields }) })
         .then(function (r) { return r.json(); }).then(function (res) {
+          var tApi = Math.round(performance.now() - tSave0);
           if (res.ok) { x.buildingStyle = wall.value; x.type = ctype.value; if (fields.region) x.region = fields.region;
             if (fields.mirror !== undefined) x.mirror = fields.mirror || undefined;
             msg.style.color = '#68d391'; msg.textContent = '✅ ' + x.name + ' → ' + (TYPE_CN[ctype.value] || ctype.value) + ' / 墙 ' + wall.value + (fields.region ? ' / 区 ' + fields.region : '') + (fields.mirror !== undefined ? ' / 镜像 ' + (fields.mirror ? '开' : '关') : '') + '（正在刷新预览…）';
@@ -4448,8 +4450,11 @@ refresh();
             //    而上面已经把 CITIES 里的那条**就地更新**了 ⇒ 直接 `render(true)` 就地重渲染即可
             //    （重建下拉 + syncFromCity 刷新预览），选择已 remember() 在 localStorage，位置不丢。
             //    万一就地刷新出错，再退回整页重载兜底。
-            try { render(true); msg.textContent += '（已就地刷新）'; }
-            catch (e) { location.reload(); }
+            try {
+              var tR0 = performance.now(); render(true);
+              msg.textContent += '（已就地刷新 · 接口 ' + tApi + 'ms · 前端刷新 ' + Math.round(performance.now() - tR0) + 'ms）';
+            }
+            catch (e) { msg.textContent += '（就地刷新出错：' + e.message + '，整页重载）'; location.reload(); }
           } else { msg.style.color = '#fc8181'; msg.textContent = '❌ ' + (res.error || '保存失败'); }
         }).catch(function (e) { msg.style.color = '#fc8181'; msg.textContent = '❌ ' + e.message; });
     });

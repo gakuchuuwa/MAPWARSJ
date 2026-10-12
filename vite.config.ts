@@ -142,6 +142,13 @@ function markRoadSaveWrite(): void {
     roadSaveSuppressReloadUntil = Date.now() + 8000;
 }
 
+// 据点保存（/api/save-city）：写 cities_v2.ts，而有 47 个文件依赖它，Vite 会把整页刷新推给开着的游戏页，
+// 游戏重载很慢（2026-10-12 主人报「保存据点风格后，刷新很慢」）。同军团编辑器：只拦不补，需要时手动 F5。
+let citySaveSuppressReloadUntil = 0;
+function markCitySaveWrite(): void {
+    citySaveSuppressReloadUntil = Date.now() + 8000;
+}
+
 // 军团编辑器保存（/api/save-culture-formations 与 /api/save-faction-compositions）
 // 抑制整页刷新，防止用户编辑军团时页面突然重载重置当前选中的势力
 let legionSaveSuppressReloadUntil = 0;
@@ -320,7 +327,7 @@ export default defineConfig({
                 let pendingBatchReloadTimer: ReturnType<typeof setTimeout> | null = null;
                 const sendQueuedFullReload = (): void => {
                     // 若任一抑制窗仍开着（期间又有保存顺延了窗口），继续等到全部关闭
-                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil, roadSaveSuppressReloadUntil, legionSaveSuppressReloadUntil) - Date.now();
+                    const wait = Math.max(portraitDevSuppressReloadUntil, batchSaveSuppressReloadUntil, roadSaveSuppressReloadUntil, legionSaveSuppressReloadUntil, citySaveSuppressReloadUntil) - Date.now();
                     if (wait > 0) {
                         pendingBatchReloadTimer = setTimeout(sendQueuedFullReload, wait + 250);
                         return;
@@ -383,7 +390,7 @@ export default defineConfig({
                         const inPortrait = now < portraitDevSuppressReloadUntil;
                         const inBatch = now < batchSaveSuppressReloadUntil;
                         const inRoad = now < roadSaveSuppressReloadUntil;
-                        const inLegion = now < legionSaveSuppressReloadUntil;
+                        const inLegion = now < legionSaveSuppressReloadUntil || now < citySaveSuppressReloadUntil;   // 据点保存与军团同口径：只拦不补
                         if (!inPortrait && !inBatch && !inRoad && !inLegion && isRunGateClosed()) {
                             markReloadNeeded();
                             console.log('[HMR-Suppress] 已拦截整页刷新（推演运行中；暂停推演即刷新）');
@@ -992,6 +999,7 @@ export default defineConfig({
                     req.on('end', () => {
                         try {
                             const data = JSON.parse(Buffer.concat(bodyChunks).toString('utf-8'));
+                            markCitySaveWrite();   // 必须在写盘前开窗：Vite 的文件监听在写盘后的下一轮事件循环就会触发整页刷新
                             const result = serverSaveCity(data);
                             res.setHeader('Content-Type', 'application/json');
                             res.statusCode = result.ok ? 200 : 400;

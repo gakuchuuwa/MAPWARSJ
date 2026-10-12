@@ -1764,6 +1764,8 @@ function buildVegetation(
 
     const seeds: Array<[number, number]> = [];
     const minSeedDist = isSiege ? 5 : 9;
+    // 记录每个团块及其树种，保证「一块林基本一个树种，错落成团」
+    const clumpsData: Array<{ cells: Array<[number, number]>; tree: string }> = [];
     for (let c = 0; c < forestClumps && forestCells.length < forestBudget; c++) {
         let seed: [number, number] | null = null;
         for (let a = 0; a < 80; a++) {
@@ -1786,10 +1788,17 @@ function buildVegetation(
         seeds.push(seed);
         // 块大小 0.55~1.45 倍浮动：DE 的林块有大有小，一律同尺寸会显得是刷出来的
         const target = Math.max(4, Math.round(perClumpTarget * (0.55 + rng.next() * 0.9)));
+        const thisClumpCells: Array<[number, number]> = [];
         for (const cell of growClump(seed[0], seed[1], target, gw, gh, forestTaken, rng)) {
             // clump 会长出可用区，逐格再筛一次
             if (!availableSet.has(`${cell[0]},${cell[1]}`)) continue;
             forestCells.push(cell);
+            thisClumpCells.push(cell);
+        }
+        if (thisClumpCells.length > 0) {
+            // 每块林基本一个树种：绝大多数为 primaryTree，小概率为 secondaryTree
+            const clumpMainTree = (secondaryTree && rng.chance(0.20)) ? secondaryTree : primaryTree;
+            clumpsData.push({ cells: thisClumpCells, tree: clumpMainTree });
         }
     }
 
@@ -1807,26 +1816,26 @@ function buildVegetation(
     // 在林地格上长树。DE 实测 472 棵 / 542 格 ≈ 0.87 棵每格，基本一格一棵、树冠互相压着，
     // 所以这里**不套用 hasTreePassage 的最小间距**——那条约束正是旧版长不出林子的原因。
     let placed = 0;
-    for (const [gx, gy] of forestCells) {
-        if (!rng.chance(TREES_PER_FOREST_TILE)) continue;
-        const jx = (rng.next() - 0.5) * TILE_W * 0.5;   // 格内轻微抖动，免得排成棋盘
-        const jy = (rng.next() - 0.5) * TILE_H * 0.5;
-        const tx = isoCellX(gx, gy, ox) + jx;
-        const ty = isoCellY(gx, gy, oy) + jy;
-        if (tx < 0 || tx > VW || ty < 0 || ty > VH) continue;
-        if (isWater(tx, ty)) continue; // 格内偏移后重新检查，树根不能越过岸线。
-        const asset = (secondaryTree && rng.chance(0.15)) ? secondaryTree : primaryTree;
-        // 🔴 placementGroup 让同组物件互不排斥。没有它，enforceAllObjectSpacing 会按
-        //    树的斥力半径 65px（两棵树最小间距 130px ≈ 隔两格）把密林剔成稀疏散点——
-        //    这正是「林地铺了 444 格却只长出 58 棵树」的原因。DE 的森林就是一格一棵、
-        //    树冠互相压着，同一片林子内部不该有间距约束。
-        objects.push({
-            asset, x: tx, y: ty, layer: 'world', z: 1,
-            flip: rng.chance(0.5), frame: rng.int(0, 99999),
-            placementGroup: 'forest',
-        });
-        treePositions.push({ x: tx, y: ty });
-        placed++;
+    for (const clump of clumpsData) {
+        for (const [gx, gy] of clump.cells) {
+            if (!rng.chance(TREES_PER_FOREST_TILE)) continue;
+            const jx = (rng.next() - 0.5) * TILE_W * 0.5;   // 格内轻微抖动，免得排成棋盘
+            const jy = (rng.next() - 0.5) * TILE_H * 0.5;
+            const tx = isoCellX(gx, gy, ox) + jx;
+            const ty = isoCellY(gx, gy, oy) + jy;
+            if (tx < 0 || tx > VW || ty < 0 || ty > VH) continue;
+            if (isWater(tx, ty)) continue; // 格内偏移后重新检查，树根不能越过岸线。
+            // 一块林基本全是一个树种，偶见 1~2 棵杂树（极低概率 3%）
+            const otherTree = (clump.tree === primaryTree) ? secondaryTree : primaryTree;
+            const asset = (otherTree && rng.chance(0.03)) ? otherTree : clump.tree;
+            objects.push({
+                asset, x: tx, y: ty, layer: 'world', z: 1,
+                flip: rng.chance(0.5), frame: rng.int(0, 99999),
+                placementGroup: 'forest',
+            });
+            treePositions.push({ x: tx, y: ty });
+            placed++;
+        }
     }
 
     // 林外散株（DE: STRAGGLER_FOREST，number_of_tiles 64 / number_of_clumps 3）：
