@@ -5664,12 +5664,17 @@ export class Scene13WarLayer {
         const level = peakLevel >= 1.5
             ? Math.min(4, Math.max(2, Math.round(peakLevel)))
             : (roll < 68 ? (roll < 24 ? 3 : 2) : Math.round(peakLevel));
-        // 🔴 [2026-10-12 主人令「改整平半径」「中间的高地范围太大了吧」]
-        //    在 Scene13GroundLayerGL 的 96×48 格坐标 (gx, gy) 下，墙圈菱形四角在 (±L/2, 0) 与 (0, ±L/2)，
-        //    四边满足 |gx - c.gx| + |gy - c.gy| = L/2；取 L/2 + 0.5 恰好贴合城墙外沿，不再外扩成巨型圆台。
-        const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
-        const flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
-        gl.flattenFoundation(cx, cy, W, H, flatCells, level);
+        // 🔴 [2026-10-12 主人令「PASS与城寨分别支持专属的多层阶梯高台与多样化随机起伏小山包」]
+        if (this.defenderCityType === 'pass') {
+            gl.flattenPassTerraces(cx, cy, W, H, seedStr);
+        } else if (this.defenderCityType === 'stockade') {
+            gl.flattenStockadeTerraces(cx, cy, W, H, seedStr);
+        } else {
+            // 普通城市保持原有的整体地基整平
+            const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
+            const flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
+            gl.flattenFoundation(cx, cy, W, H, flatCells, level);
+        }
         for (let py = -ry; py <= ry; py += 24) {
             for (let px = -rx; px <= rx; px += 48) {
                 if ((px * px) / (rx * rx) + (py * py) / (ry * ry) > 1) continue;
@@ -5688,7 +5693,10 @@ export class Scene13WarLayer {
     private syncDeCityGround(): void {
         const el = this.deCityGround, c = this.deCity, cv = this.canvas;
         if (!el || !c || !cv) return;
-        if (!this.useGroundGL || (!this.active && !this.lingering)) { el.style.display = 'none'; return; }
+        if (!this.useGroundGL || (!this.active && !this.lingering) || this.defenderCityType === 'pass') {
+            el.style.display = 'none';
+            return;
+        }
         const z = this.tacticalZoom;
         const lift = this.elevationLiftAt(this.deCityCenter.x, this.deCityCenter.y);
         const sx = cv.width / 2 + this.tacticalPanX + (this.deCityCenter.x - cv.width / 2) * z;
