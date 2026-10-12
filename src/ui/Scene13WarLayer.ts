@@ -3466,6 +3466,10 @@ export class Scene13WarLayer {
     private flowDist: Int16Array | null = null;
     private flowR = 0;
     private flowBlocked: Uint8Array | null = null;   // 调试探针用
+    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 城门精灵（含附属碰撞件）：守方穿行不受阻；null = 未建 */
+    private gateSpriteSet: Set<DecorSprite> | null = null;
+    /** 城墙外圈在地块坐标里的范围（判断「在城内」），null = 未建 / 本场无城墙 */
+    private ringBox: { a0: number; a1: number; b0: number; b1: number } | null | undefined = undefined;
     private flowBuiltAt = -99;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
@@ -5135,6 +5139,8 @@ export class Scene13WarLayer {
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
+        this.gateSpriteSet = null;
+        this.ringBox = undefined;
         this.flowDist = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
@@ -5467,6 +5473,8 @@ export class Scene13WarLayer {
         this.wallGates = [];
         this.defBuildings = [];
         this.centerBld = undefined;
+        this.gateSpriteSet = null;
+        this.ringBox = undefined;
         this.flowDist = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
@@ -8155,6 +8163,20 @@ export class Scene13WarLayer {
         return inBand && m.rangeWait <= 0.2;
     }
 
+    /** 攻城武器当前的目标档：城门 → 箭塔 → 中心建筑 → 其余建筑 → 城墙；取第一个非空档。 */
+    private siegeFirstTier(): WarBuilding[] {
+        const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE' && b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE') && !b.sprite.obstructionDisabled);
+        if (gates.length) return gates;
+        const towers = this.defBuildings.filter(b => (b.bld!.tower !== undefined || b.bld!.name.includes('TOWER') || b.bld!.name.includes('OUTPOST')) && bldOk(b));
+        if (towers.length) return towers;
+        if (this.centerBld && bldOk(this.centerBld)) return [this.centerBld];
+        const others = this.defBuildings.filter(b => b !== this.centerBld && bldOk(b));
+        if (others.length) return others;
+        // 最后才是城墙（还挡路的墙段）
+        return this.wallGates.filter(b => b.key !== 'STONE_GATE' && !b.sprite.destroyed && !b.sprite.obstructionDisabled);
+    }
+
     private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
         const useR = radius > CELL_M;
         const map: Map<number, WarMan[]> = useR ? this.gr : this.gm; const cell = useR ? CELL_R : CELL_M;
@@ -8169,12 +8191,18 @@ export class Scene13WarLayer {
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
+        // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
+        //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
+        const wm = m as Partial<WarMan>;
+        const inOnly = m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
+            && !!wm.key && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         if (span >= 6) {
             for (let i = 0; i < this.men.length; i++) {
                 const o = this.men[i];
                 if (o.f === m.f || o.hp <= 0) continue;
                 const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                 if (d >= r2) continue;
+                if (inOnly && !this.insideRing(o.x, o.y)) continue;
                 const tooNear = minR2 > 0 && d < minR2;
                 if (d < bd) { bd = d; best = o; }
                 if (!tooNear && d < rd) { rd = d; inRange = o; }
@@ -8199,6 +8227,7 @@ export class Scene13WarLayer {
                             if (o.f === m.f || o.hp <= 0) continue;
                             const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                             if (d >= r2) continue;
+                            if (inOnly && !this.insideRing(o.x, o.y)) continue;
                             const tooNear = minR2 > 0 && d < minR2;
                             // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
                             // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
@@ -8223,49 +8252,28 @@ export class Scene13WarLayer {
         const _hc = this.deCity ? this.deCityCenter : null;
         const _hw = this.deCity ? this.deCity.width / 2 : 0, _hh = this.deCity ? this.deCity.height / 2 : 0;
         const manOut = (manChosen && _hc && (Math.abs(manChosen.x - _hc.x) <= _hw && Math.abs(manChosen.y - _hc.y) <= _hh)) ? null : manChosen;
-        // 🔴 [2026-10-12 主人令「所有攻城武器优先自动攻击建筑」] 攻城武器目标顺序：
-        //    射程内城门/城墙 → 城内建筑和箭塔 → 都没了才打人。墙/建筑还有但够不着时不改打人（返回 null 继续靠近）。
+        // 🔴 [2026-10-12 主人令「开战初攻城武器优先攻击离自己近的城门，摧毁后优先攻击箭塔、中心建筑」]
+        //    只取「当前第一档还立着的目标」（siegeFirstTier）里射程内最近的；够不着就返回 null 继续靠近（见 aimAt）。
         if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
-            const nearest = (list: WarBuilding[], ok: (b: WarBuilding) => boolean): WarBuilding | null => {
+            const tier = this.siegeFirstTier();
+            if (tier.length > 0) {
                 let pick: WarBuilding | null = null, pd = r2, far: WarBuilding | null = null, fard = r2;
-                for (const b of list) {
-                    if (!ok(b)) continue;
+                for (const b of tier) {
                     const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
                     if (d >= r2) continue;
                     if (d < fard) { fard = d; far = b; }
                     if (minR2 > 0 && d < minR2) continue;
                     if (d < pd) { pd = d; pick = b; }
                 }
-                return pick ?? far;
-            };
-            const wallOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.obstructionDisabled;
-            const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
-            // 🔴 [2026-10-12 主人令「攻城武器：城门、箭塔、城内中心建筑」] 优先序：城门 → 箭塔 → 中心建筑 → 其余城墙/建筑
-            const t = nearest(this.wallGates, (b) => b.key === 'STONE_GATE' && wallOk(b))
-                ?? nearest(this.defBuildings, (b) => (b.bld!.tower !== undefined || b.bld!.name.includes('TOWER') || b.bld!.name.includes('OUTPOST')) && bldOk(b))
-                ?? (this.centerBld && bldOk(this.centerBld) ? nearest([this.centerBld], bldOk) : null)
-                ?? nearest(this.wallGates, wallOk) ?? nearest(this.defBuildings, bldOk);
-            if (t) { if (reserve) t.claims++; return t; }
-            if (this.wallGates.some(wallOk) || this.defBuildings.some(bldOk)) return null;
+                const t = pick ?? far;
+                if (t) { if (reserve) t.claims++; return t; }
+                return null;
+            }
         }
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
             if (this.defenderHolding && !manOut) return null;
         } else if (this.battleType === 'siege' && m.f === 0) {
-            let bw: WarBuilding | null = null, bwd = r2;
-            for (const b of this.wallGates) {
-                // 🔴 [2026-08-23] 墙已坍塌（obstructionDisabled = 纯贴图不挡路）→ 士兵不再锁定它打，
-                //    防士兵持续打剩余墙 → 反复触发塌一半 → 全塌。改打城内守军。
-                if (!b.linked || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
-                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-                if (d >= r2) continue;
-                const tooNear = minR2 > 0 && d < minR2;
-                // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方正面墙打墙不封顶（见 keep 的 siegeWallKeep），
-                //    否则 300+ 攻方兵只有 ~85 名额锁到墙，其余穿墙蹭。墙靠 separate 软推挤沿墙铺开，不挤一个点。
-                if (d < bwd) { bwd = d; bw = b; }
-                if (!tooNear && d < fd) { fd = d; free = b; }
-            }
-            // 🔴 [2026-10-12 主人令「士兵优先攻击士兵」] 有敌兵就打兵，没兵才打墙（待命期只认已出城的守军）
-            if (bw && !(this.defenderHolding ? manOut : manChosen) && !this.flowOpenAt(m.x, m.y)) { if (reserve) bw.claims++; return bw; }
+            // 🔴 [2026-10-12 主人令「不要让士兵打城墙，只要有兵就去打兵」] 攻方士兵（非攻城武器）不再锁定城墙/建筑，只打兵。
             // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙且无迎战守军
             //    → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭；若有已出城迎战的守军则正常交战。
             if (this.defenderHolding && !manOut) return null;
@@ -8273,7 +8281,8 @@ export class Scene13WarLayer {
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
-            if (this.battleType === 'siege' && m.f === 0 && this.flowOpenAt(m.x, m.y)) break;   // 有路进城就不打墙
+            // 🔴 [2026-10-12 主人令「优先攻击其他，最后考虑城墙」] 攻方士兵：视野内没敌兵、又没有进城的路时才打墙
+            if (this.battleType === 'siege' && m.f === 0 && this.flowOpenAt(m.x, m.y)) break;
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -8315,34 +8324,17 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-10-12 主人令「哪个先受到攻击，哪个先坍塌」] 每 10 秒塌一个：城门/城墙/城垛/城内建筑/箭塔一起排，
-     * 最早挨打的先塌；都没挨过打则取离攻方重心最近的。墙段连同离它最近的 2 段一起塌成缺口；建筑单独塌。
+     * 🔴 [2026-10-12 主人令「10秒坍塌只适用于城墙、城门、城垛」「没受到攻击/满血的不要坍塌」]
+     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有符合的这一轮不塌。
+     * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
      */
     private collapseNextWallGap(): boolean {
         const alive = this.wallGates.filter(b => this.wallStanding(b));
-        // 中心建筑不参与 10 秒坍塌（它塌了就是城破判负，只能靠真打掉血）
-        const all = [...alive, ...this.defBuildings.filter(b => b !== this.centerBld && this.wallStanding(b))];
-        if (all.length === 0) return false;
+        if (alive.length === 0) return false;
         let pick: WarBuilding | undefined;
-        for (const b of all) if (b.hitAt !== undefined && (!pick || b.hitAt < pick.hitAt!)) pick = b;
-        if (!pick) {
-            const c = this.enemyCen[0];
-            if (c) {
-                let bd = Infinity;
-                for (const b of all) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
-            } else pick = all[0];
-        }
-        if (pick!.bld) {
-            pick!.hp = 0;
-            this.onDefBuildingHit(pick!);
-            this.releaseHold();
-            return true;
-        }
-        const p = pick!;
-        const group = [p, ...alive.filter(b => b !== p)
-            .sort((u, v) => ((u.x - p.x) ** 2 + (u.y - p.y) ** 2) - ((v.x - p.x) ** 2 + (v.y - p.y) ** 2))
-            .slice(0, 2)];
-        for (const b of group) this.collapseOneWall(b);
+        for (const b of alive) if (b.hitAt !== undefined && b.hp < b.maxHp && (!pick || b.hitAt < pick.hitAt!)) pick = b;
+        if (!pick) return true;
+        this.collapseOneWall(pick);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
         this.releaseHold();
@@ -8868,12 +8860,59 @@ export class Scene13WarLayer {
         const target = aim ?? (this.centerBld ? { x: this.centerBld.x, y: this.centerBld.y } : null);
         if (!target) return aim;
         const dt2 = this.flowDistAt(target.x, target.y);
-        if (Number.isFinite(dt2) && dt2 > du) return aim;   // 目的地在更外面：照旧
+        if (!Number.isFinite(dt2) || dt2 > du) return aim;   // 目的地在更外面 / 本身在墙上（如城门）：照旧直走
         return this.flowWaypoint(m.x, m.y) ?? aim;
     }
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
-        return this.flowRedirect(m, this.aimAtRaw(m));
+        return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
+    }
+
+    /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
+    private tileAB(x: number, y: number): [number, number] {
+        const dx = x - (this.canvas?.width ?? 0) / 2, dy = y - (this.canvas?.height ?? 0) / 2;
+        return [dx / TAC_TILE_W + dy / TAC_TILE_H, dy / TAC_TILE_H - dx / TAC_TILE_W];
+    }
+
+    /** 城门集合与城墙外圈范围（每场建一次） */
+    private ensureGateInfo(): void {
+        if (this.gateSpriteSet && this.ringBox !== undefined) return;
+        this.gateSpriteSet = new Set();
+        let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
+        for (const g of this.wallGates) {
+            const [a, b] = this.tileAB(g.x, g.y);
+            a0 = Math.min(a0, a); a1 = Math.max(a1, a); b0 = Math.min(b0, b); b1 = Math.max(b1, b);
+            if (g.key !== 'STONE_GATE') continue;
+            this.gateSpriteSet.add(g.sprite);
+            if (g.extraSprites) for (const sp of g.extraSprites) this.gateSpriteSet.add(sp);
+        }
+        this.ringBox = this.wallGates.length ? { a0, a1, b0, b1 } : null;
+    }
+
+    private insideRing(x: number, y: number): boolean {
+        const r = this.ringBox;
+        if (!r) return false;
+        const [a, b] = this.tileAB(x, y);
+        return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
+    }
+
+    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去 */
+    private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
+        if (!aim || m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls) return aim;
+        this.ensureGateInfo();
+        if (!this.insideRing(m.x, m.y) || this.insideRing(aim.x, aim.y)) return aim;
+        let g: WarBuilding | null = null, gd = Infinity;
+        for (const b of this.wallGates) {
+            if (b.key !== 'STONE_GATE') continue;
+            const d = (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2;   // 走离目标最近的那座城门，出门就到敌人那一侧
+            if (d < gd) { gd = d; g = b; }
+        }
+        if (!g) return aim;
+        // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
+        const r = this.ringBox!, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2), ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
+        const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+        return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
     }
 
     private aimAtRaw(m: WarMan): { x: number; y: number } | null {
@@ -8892,17 +8931,25 @@ export class Scene13WarLayer {
             const ra = Math.atan2(m.jy, m.jx);
             return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
         }
-        // 🔴 [2026-08-23 主人定·重设计] 攻城武器 40 秒墙塌前：目标 = 最近的 linked 墙（不限 hp——
-        //    hp=0 的继续凿到 40 秒），不走巡逻航路深入城内撞墙；视野内无墙才原地待命。
-        if (m.siegeW && this.defenderHolding) {
-            let bw: WarBuilding | null = null, bwd = Infinity;
-            for (const b of this.wallGates) {
-                if (!b.linked || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
+        // 🔴 [2026-10-12 主人令] 攻城武器走向当前第一档目标里离自己最近的那个（城门 → 箭塔 → 中心建筑），不深入城内乱走。
+        if (m.siegeW && this.battleType === 'siege') {
+            let g: WarBuilding | null = null, gd = Infinity;
+            for (const b of this.siegeFirstTier()) {
                 const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-                if (d < bwd) { bwd = d; bw = b; }
+                if (d < gd) { gd = d; g = b; }
             }
-            if (bw) return { x: bw.x, y: bw.y };
-            return null;
+            if (g) return { x: g.x, y: g.y };
+            if (this.defenderHolding) return null;
+        }
+        // 🔴 [2026-10-12 主人报「攻方开局不向城中走，有的分队往其他地方走」] 攻城战攻方士兵：视野内没敌兵就一律朝城中心走
+        //    （有缺口时 flowRedirect 再改走流场绕进城），不再走出兵口/航路那几级。
+        if (this.battleType === 'siege' && m.f === 0 && !m.hero && !m.siegeW) {
+            if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+            const c = this.centerBld ?? (this.deCity ? this.deCityCenter : null);
+            if (c) {
+                const ra0 = Math.atan2(m.jy, m.jx);
+                return { x: c.x + Math.cos(ra0) * CHASE_RING, y: c.y + Math.sin(ra0) * CHASE_RING };
+            }
         }
 
         const ra = Math.atan2(m.jy, m.jx);
@@ -9056,6 +9103,8 @@ export class Scene13WarLayer {
         //    现在攻城战同样走阵位：列阵推进时整队方块平移，够不着不追（见 step 里 m.march 分支）。
         //    旧令「攻城不列阵行军」由 step 的 inReach 判定照顾：接敌即自由接战，不再回槽位。
         if (m.lane < 0) return null;
+        // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时守方不归队：各自走城门出城，免得跟着卡在城里的领队打转
+        if (m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls) return null;
         // lane 就是 spawns 的下标（建口时 lane = this.spawns.length，见 start），这里仍核一次防漂
         const sp = this.spawns[m.lane];
         if (!sp || sp.lane !== m.lane) return null;
@@ -9097,6 +9146,7 @@ export class Scene13WarLayer {
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
             for (const object of activeObstructions) {
+                if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
                 let mapX = dx / TILE_W + dy / TILE_H;
@@ -9216,6 +9266,7 @@ export class Scene13WarLayer {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
         }
+        if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
         this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
@@ -9388,7 +9439,7 @@ export class Scene13WarLayer {
             //    视野里出现敌兵就改打兵（search 已是兵优先；没兵会重新选回墙）。
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0);
-            const hb = this.recentAttacker(m, SIGHT);
+            const hb = m.siegeW && this.battleType === 'siege' ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
                 && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
                 && (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 < 65 * 65;

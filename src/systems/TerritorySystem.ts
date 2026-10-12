@@ -215,7 +215,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
 
     if (centerCastle) {
         const castleDir = resolveCastleAsset('YURT', factionId, region, cityId);
-        const cW = baseSize * 0.56;
+        const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.56 → 0.54（毡帐系中心城堡，与通用险要口径统一）
         const cgW = cW * 1.6;
         const cgH = cgW * 0.58;
         const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
@@ -912,7 +912,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
     // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
     //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
-    const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.56);   // 1.0：原生宽
+    const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
     const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
     const cOffsetY = -8;
     const castleZ = Math.round(500 + cOffsetY);
@@ -1040,7 +1040,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = baseSize * 0.48;   // 战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版
+            const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（中城中心城堡；战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             parts.push(
@@ -1175,7 +1175,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
-            const cW = baseSize * 0.48;   // 战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版
+            const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（大城中心城堡；战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             parts.push(
