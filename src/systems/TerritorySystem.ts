@@ -510,7 +510,11 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         // 城墙款式照旧：石墙区随机「双门标准 / 四门雄关」，木栅区固定双门（与战略侧 useFourGates 同一判据）
         const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
         const SMALL_CITY_SEG = 9, SMALL_CITY_WALL_MARGIN = 1;
-        const slotCenters = packSmallCitySlots(SMALL_CITY_SEG, DE_ISO_TILE_W, DE_ISO_TILE_H, SMALL_CITY_WALL_MARGIN, SMALL_CITY_SLOT_SIZES);
+        // 🔴 [2026-10-12 主人令「小城，间距 1」] 9 栋排成 3×3 方阵（无城堡，正中也是建筑，取建筑顺序＝占地由大到小，最大的坐正中）：
+        //    每个位按 4×4 算、位与位隔 1 格 ⇒ 位距 5 格（同中城、大城排法）。
+        const SMALL_PITCH = 4 + 1;
+        const smallPos: ReadonlyArray<readonly [number, number]> = [[0, 0], [-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+        const slotCenters = smallPos.map(([bi, bj], k) => ({ ci: 0.5 + bi * SMALL_PITCH, cj: 0.5 + bj * SMALL_PITCH, isCenter: k === 0 }));
         if (slotCenters) {
             // 取建筑顺序：占地由大到小（并列按池序）—— 与 packSmallCitySlots 的固定骨架一一对应
             const ordered = ring.map((b, i) => ({ b, i })).sort((x, y) => (deBuildingFootprint(y.b) - deBuildingFootprint(x.b)) || (x.i - y.i));
@@ -937,9 +941,15 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     //    中城：每段 10 ⇒ 角到角 25（< 大城 27）；三款城墙照旧：普通双门（左上、右下两边开门）/ 普通四门 / 加固四门；
     //    9 栋＝城堡 + 8（每象限 2）；近 3 远 8（逐格核对：不重叠、不压大道、栋间 ≥ 1、离墙 2）。
     if (native) {
+        // 🔴 [2026-10-12 主人令「假设所有建筑都是 4*4，建筑间距改为 2 格」] 城堡居中；其余 8 栋排成 3×3 方阵的外圈，
+        //    每个位一律按 4×4 算、位与位之间隔 2 格 ⇒ 位距 6 格（个位表序＝取建筑顺序）。
+        const LATTICE_PITCH = 4 + 2;
+        const ringPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+        const slotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
+            ...ringPos.map(([bi, bj]) => ({ ci: 0.5 + bi * LATTICE_PITCH, cj: 0.5 + bj * LATTICE_PITCH, isCenter: false }))];
         return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
             pool.map((b): [string, string] => [b, 'AGE3']), native, {
-                seg: 10, near: 3, far: 8, corner: false,
+                seg: 8, near: 3, far: 8, corner: false, slotCenters,
                 gateEdges: isFourGates ? [true, true, true, true] : [true, false, true, false],
                 wallAnchors: isFortified
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
@@ -1064,8 +1074,14 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             [full[i], full[j]] = [full[j], full[i]];
         }
         // 大城：每段 11 ⇒ 角到角 27；13 栋＝城堡 + 12（每象限 3）；近 3.5 远 9（逐格核对：离墙 2、栋间 ≥ 1）
-        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full, native, {
-            seg: 11, near: 3.5, far: 9, corner: true, gateEdges: [true, true, true, true],
+        // 🔴 [2026-10-12 主人令「大城先把城中建筑改为 9 个，然后间隔为 3」] 城堡 + 8 栋（取洗牌后建筑池前 8 种）；
+        //    每个位按 4×4 算、位与位隔 3 格 ⇒ 位距 7 格，排成 3×3 方阵（同中城排法）。
+        const BIG_PITCH = 4 + 3;
+        const bigRingPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+        const bigSlotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
+            ...bigRingPos.map(([bi, bj]) => ({ ci: 0.5 + bi * BIG_PITCH, cj: 0.5 + bj * BIG_PITCH, isCenter: false }))];
+        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full.slice(0, 8), native, {
+            seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'], groundTile: 'rd1',
         });
     }
