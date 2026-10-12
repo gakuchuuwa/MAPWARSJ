@@ -327,6 +327,7 @@ export class Scene13GroundLayerGL {
   public isIce = false;
 
   public readonly smoothWater: Float32Array;
+  public readonly smoothForest: Float32Array;
   private cornerElev: Float32Array;
   private cornerLight: Float32Array;
 
@@ -490,10 +491,14 @@ export class Scene13GroundLayerGL {
         const id = data.terrain[y * N + x];
         if (id === 1 || id === 23 || isWaterId(id)) rawWater[y * N + x] = 1.0;
         if (id === 2) rawBeach[y * N + x] = 1.0;
-        // 🔴 [2026-10-12 主人令「先补林地地形」] 林地判据按 DE dat 的地面贴图名：g_for（标准林地）/ g_fo2（雨林·竹林落叶）都铺林地；
-        //    原先写死 10/19/71/89/104 五个编号，竹林 18、繁茂竹林 113、地中海林 88、桦树林 110 等全漏掉 ⇒ 树下画成草地。71 落叶灌木地照旧保留。
-        const fname = DE_TERRAIN_MANIFEST[id]?.name_2;
-        if (fname === 'g_for' || fname === 'g_fo2' || id === 71) rawForest[y * N + x] = 1.0;
+        // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」]
+        // 彻底按 DE dat 的所有森林地形类型判定林地：
+        // 包含 g_for / g_fo2 / g_snf（雪林）/ 71 / 以及所有 name 含 Forest 或 Jungle 的地形（如 48 Dragon Forest、49 Baobab 等）
+        const m = DE_TERRAIN_MANIFEST[id];
+        const fname = m?.name_2;
+        const isForestTerrain = fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 ||
+          (m && (m.name.includes('Forest') || m.name.includes('Jungle') || m.name.includes('Leaves')));
+        if (isForestTerrain) rawForest[y * N + x] = 1.0;
       }
     }
 
@@ -501,6 +506,7 @@ export class Scene13GroundLayerGL {
     const sb = blurGrid2D(blurGrid2D(rawBeach, N), N);
     const sf = blurGrid2D(blurGrid2D(rawForest, N), N);
     this.smoothWater = sw;
+    this.smoothForest = sf;
 
     // 沿水陆交界岸线铺设宽幅圆滑过渡沙带
     for (let i = 0; i < N * N; i++) {
@@ -1043,55 +1049,45 @@ export class Scene13GroundLayerGL {
     else if (isPass) clumpCount = 4 + Math.floor(rnd() * 3);
     else if (isStockade) clumpCount = 2 + Math.floor(rnd() * 3);
 
-    // 3. 元胞蔓延生长函数（仿 DE <ELEVATION_GENERATION>）
-    const growClump = (
-      seedX: number,
-      seedY: number,
-      targetLevel: number,
-      numTiles: number,
-      requireBaseLevel: number
-    ): Set<number> => {
+    // 3. 仿 DE 原版 <ELEVATION_GENERATION>：
+    // 每个山头团块（Clump）先生长出一片连续多边形区域，然后通过 BFS 边界距离场计算高度：
+    // 到团块外边缘的距离 = 抬升高度（最大封顶到 peakH）
+    // 这正是 DE Genie 引擎（及 tools/rms/rmsEngine.mjs:642）纯正的原生算法！
+    const D4 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+
+    // 随机生长一个自然多边形团块
+    const growClumpRegion = (seedX: number, seedY: number, targetTiles: number): Set<number> => {
       const clump = new Set<number>();
       const frontier: number[] = [];
       const startIdx = seedY * N + seedX;
 
       if (seedX < 2 || seedX >= N - 2 || seedY < 2 || seedY >= N - 2) return clump;
-      if (inProtect(seedX, seedY)) return clump;
-      if (tileElev[startIdx] < requireBaseLevel) return clump;
+      if (inProtect(seedX, seedY) || tileElev[startIdx] > 0) return clump;
 
       clump.add(startIdx);
-      tileElev[startIdx] = targetLevel;
       frontier.push(startIdx);
 
-      const dirs = [-1, 1, -N, N, -N - 1, -N + 1, N - 1, N + 1];
-
-      while (frontier.length > 0 && clump.size < numTiles) {
-        // 从前沿候选队列中随机抽取一个活跃点
+      while (frontier.length > 0 && clump.size < targetTiles) {
         const pickIdx = Math.floor(rnd() * frontier.length);
         const cur = frontier[pickIdx];
         const cx0 = cur % N, cy0 = Math.floor(cur / N);
 
-        // 寻找合法邻居
         let expanded = false;
-        // 打乱邻域探索顺序，产生自然曲折山脊
-        const shuffledDirs = [...dirs].sort(() => rnd() - 0.5);
-        for (const d of shuffledDirs) {
-          const nbr = cur + d;
-          const nx = nbr % N, ny = Math.floor(nbr / N);
+        const shuffled = [...D4].sort(() => rnd() - 0.5);
+        for (const [dx, dy] of shuffled) {
+          const nx = cx0 + dx, ny = cy0 + dy;
           if (nx < 2 || nx >= N - 2 || ny < 2 || ny >= N - 2) continue;
           if (inProtect(nx, ny)) continue;
-          if (clump.has(nbr)) continue;
-          if (tileElev[nbr] < requireBaseLevel) continue;
+          const nbr = ny * N + nx;
+          if (clump.has(nbr) || tileElev[nbr] > 0) continue;
 
           clump.add(nbr);
-          tileElev[nbr] = targetLevel;
           frontier.push(nbr);
           expanded = true;
-          if (clump.size >= numTiles) break;
+          if (clump.size >= targetTiles) break;
         }
 
         if (!expanded) {
-          // 该点四周已无处可长，从前沿移除
           frontier[pickIdx] = frontier[frontier.length - 1];
           frontier.pop();
         }
@@ -1100,90 +1096,127 @@ export class Scene13GroundLayerGL {
       return clump;
     };
 
-    // 4. 逐个生成「中心高、周围低」的多层金字塔山丘
-    for (let c = 0; c < clumpCount; c++) {
-      // 随机挑选山头中心种子位置（保证在保护区外、地图内）
+    // 🔴 [2026-10-12 主人令「我觉得有树的地方该有丘陵」]
+    // 找出地图中所有森林/树木聚集的密集区核心，优先作为山头种子，确保有树林的地方脚下必然升起丘陵！
+    const forestSeeds: Array<{ x: number; y: number }> = [];
+    const sf = this.smoothForest;
+    if (sf) {
+      for (let y = 4; y < N - 4; y += 4) {
+        for (let x = 4; x < N - 4; x += 4) {
+          if (inProtect(x, y)) continue;
+          if (sf[y * N + x] >= 0.45) {
+            // 检查是否与已有林地种子保持一定间距
+            const close = forestSeeds.some(s => Math.hypot(s.x - x, s.y - y) < 8);
+            if (!close) forestSeeds.push({ x, y });
+          }
+        }
+      }
+    }
+
+    // 4. 逐个团块生成并计算 DE 原版「边缘距离场」
+    // DE 原版规则：离团边缘越近，高度越低（1级）；越向内部深入，高度递增（直到 peakH）。
+    // 总团数 = 森林所在山丘数 + 原野自然开阔山丘数
+    const totalClumps = Math.max(clumpCount, forestSeeds.length + 2);
+    for (let c = 0; c < totalClumps; c++) {
       let seedX = 0, seedY = 0, found = false;
-      for (let attempt = 0; attempt < 50; attempt++) {
-        const sx = 4 + Math.floor(rnd() * (N - 8));
-        const sy = 4 + Math.floor(rnd() * (N - 8));
-        if (!inProtect(sx, sy) && tileElev[sy * N + sx] === 0) {
-          seedX = sx;
-          seedY = sy;
+
+      // 优先从森林核心点取种子（确保每个有树林的地方都有丘陵托举）
+      if (c < forestSeeds.length) {
+        const fs = forestSeeds[c];
+        if (!inProtect(fs.x, fs.y) && tileElev[fs.y * N + fs.x] === 0) {
+          seedX = fs.x;
+          seedY = fs.y;
           found = true;
-          break;
+        }
+      }
+
+      if (!found) {
+        for (let attempt = 0; attempt < 60; attempt++) {
+          const sx = 4 + Math.floor(rnd() * (N - 8));
+          const sy = 4 + Math.floor(rnd() * (N - 8));
+          if (!inProtect(sx, sy) && tileElev[sy * N + sx] === 0) {
+            seedX = sx;
+            seedY = sy;
+            found = true;
+            break;
+          }
         }
       }
       if (!found) continue;
 
-      // 决定该座山丘的主峰高度（中心高度）
-      // 大城 1~3 级；中城 2~4 级；关隘/山寨 3~6 级
+      // 主峰高度：大城 2~3 级；中城 3~4 级；关隘/山寨 4~6 级
       let peakH = 2;
-      if (isBig) {
-        peakH = 1 + Math.floor(rnd() * Math.min(3, maxLevel));
-      } else if (isPass) {
-        peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
-      } else if (isStockade) {
-        peakH = 2 + Math.floor(rnd() * (maxLevel - 1));
-      } else {
-        peakH = 2 + Math.floor(rnd() * (maxLevel - 1));
-      }
+      if (isBig) peakH = 2 + (rnd() < 0.4 ? 1 : 0);
+      else if (isPass) peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
+      else if (isStockade) peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
+      else peakH = 2 + Math.floor(rnd() * (maxLevel - 1));
       peakH = Math.max(1, Math.min(maxLevel, peakH));
 
-      // 基础 1 级台地瓦片规模（按山丘大小随机 60 ~ 220 块瓦片）
-      const baseTiles = isBig ? (80 + Math.floor(rnd() * 140)) : (50 + Math.floor(rnd() * 90));
+      // 团块瓦片数：DE 规模，足够形成宽阔起伏山体（大城 120~260 格，中小城 90~180 格）
+      const clumpTiles = isBig ? (120 + Math.floor(rnd() * 140)) : (90 + Math.floor(rnd() * 100));
+      const region = growClumpRegion(seedX, seedY, clumpTiles);
+      if (region.size < 16) continue;
 
-      // ── 第 1 步：生长第 1 层基础大底座（1 级台地）──
-      let prevClump = growClump(seedX, seedY, 1, baseTiles, 0);
-      if (prevClump.size < 12) continue;
+      // ── DE 原生距离场算法（BFS 边缘向心剥洋葱）──
+      // 找出所有紧邻外部边界的格子，标记为 1 级（边缘坡脚），入队列
+      const dist = new Map<number, number>();
+      let q: number[] = [];
 
-      // ── 第 2~peakH 步：向中心内聚生长更高层（层层收敛，造就「中心高、四周低」）──
-      for (let lvl = 2; lvl <= peakH; lvl++) {
-        // 面积逐级按比例收缩（每一级比上一级小 45%~60%）
-        const shrinkRate = 0.45 + rnd() * 0.15;
-        const nextTiles = Math.max(8, Math.floor(prevClump.size * shrinkRate));
-
-        // 种子必须落在上一级团块内部，且尽量偏向核心（远离边缘）
-        const candidates = Array.from(prevClump);
-        let bestSeed = candidates[Math.floor(rnd() * candidates.length)];
-        let bestDist = 0;
-        // 抽选若干候选点，挑选与山心 seedX, seedY 最近的点作为更高层核心
-        for (let k = 0; k < Math.min(10, candidates.length); k++) {
-          const cand = candidates[Math.floor(rnd() * candidates.length)];
-          const cX = cand % N, cY = Math.floor(cand / N);
-          const d = Math.hypot(cX - seedX, cY - seedY);
-          if (k === 0 || d < bestDist) {
-            bestDist = d;
-            bestSeed = cand;
+      for (const idx of region) {
+        const x = idx % N, y = Math.floor(idx / N);
+        let isEdge = false;
+        for (const [dx, dy] of D4) {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || nx >= N || ny < 0 || ny >= N || !region.has(ny * N + nx)) {
+            isEdge = true;
+            break;
           }
         }
+        if (isEdge) {
+          dist.set(idx, 1);
+          q.push(idx);
+        }
+      }
 
-        const nextSeedX = bestSeed % N, nextSeedY = Math.floor(bestSeed / N);
-        const nextClump = growClump(nextSeedX, nextSeedY, lvl, nextTiles, lvl - 1);
-        if (nextClump.size < 6) break;
-        prevClump = nextClump;
+      // 逐层向内扩散，每向里走一步，高度 +1
+      while (q.length > 0) {
+        const nextQ: number[] = [];
+        for (const idx of q) {
+          const curD = dist.get(idx)!;
+          const x = idx % N, y = Math.floor(idx / N);
+          for (const [dx, dy] of D4) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+            const nbr = ny * N + nx;
+            if (region.has(nbr) && !dist.has(nbr)) {
+              dist.set(nbr, curD + 1);
+              nextQ.push(nbr);
+            }
+          }
+        }
+        q = nextQ;
+      }
+
+      // 将计算出的高度写入 tileElev，最高封顶至 peakH
+      for (const idx of region) {
+        const d = dist.get(idx) ?? 1;
+        const h = Math.min(peakH, d);
+        tileElev[idx] = Math.max(tileElev[idx], h);
       }
     }
 
-    // 5. 坡度梯级平滑限制（Slope Clamping / Smoothing Pass）
-    // DE 原版铁律：相邻两格之间的高度差绝对不能大于 1 级。
-    // 多遍扫描收敛，如果有落差 > 1，自动用阶梯坡度平滑补充。
-    for (let pass = 0; pass < 4; pass++) {
+    // 5. 坡度阶梯扫描限制（Slope Clamping）
+    // 保证相邻两格落差绝对不能大于 1 级，形成标准 45° 台阶斜坡
+    for (let pass = 0; pass < 3; pass++) {
       let changed = false;
       for (let y = 1; y < N - 1; y++) {
         for (let x = 1; x < N - 1; x++) {
           if (inProtect(x, y)) continue;
           const cur = tileElev[y * N + x];
-          // 4 邻居
-          const neighbors = [
-            tileElev[y * N + (x - 1)],
-            tileElev[y * N + (x + 1)],
-            tileElev[(y - 1) * N + x],
-            tileElev[(y + 1) * N + x]
-          ];
-          for (const nbr of neighbors) {
-            if (cur - nbr > 1) {
-              tileElev[y * N + x] = nbr + 1;
+          for (const [dx, dy] of D4) {
+            const nbrH = tileElev[(y + dy) * N + (x + dx)];
+            if (cur - nbrH > 1) {
+              tileElev[y * N + x] = nbrH + 1;
               changed = true;
               break;
             }
