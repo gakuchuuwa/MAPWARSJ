@@ -25,7 +25,7 @@ import {
     isWaterTile,
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
-import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
+import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H, TAC_MAP_N } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { strategicCityHtml, strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
@@ -60,6 +60,11 @@ import { speechAnnouncer } from '../audio/SpeechAnnouncer';
 import DechromaWorker from '../workers/DechromaWorker?worker';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
+// ── DE 自动排布（2026-10-12 新增）────────────────────────────────────────────
+//   DE 的阵型算法（group.cpp FUN_1410da2d0，二进制实证见 claudedocs/DE阵型算法-二进制实证-2026-10-12.md）
+//   只用来算**出兵口阵位**，与主人拍板的七种经典阵型并存、可开关。
+import { categorizeUnit } from '../legion/formation/deUnitCategories';
+import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero'; // [2026-09-05 玩家] 战术模式玩家布置
 import { withCommander } from '../data/generalHeroUnits';
 
@@ -842,6 +847,25 @@ const HUSSITE_SECONDARY_SHOT: WarType = {
  *  fish_scale 鱼鳞 3+4+2 = 前3 / 中4 / 后2（前抵·鳞叠·尾收）
  *  crane_wing 鹤翼 2+4+3 = 双锋2 / 鹤翼4 / 中军3（双锋引敌·两翼合围）
  *  square 方阵 3+3+3 = 前3 / 中3 / 后3（九宫等边·坚若磐石） */
+/**
+ * 🔴 DE 自动排布开关（默认开）。
+ *
+ * 只影响**出兵口的阵位表**（谁站第几列/第几排），**不动**任何主人拍板的东西：
+ *   - 七种经典阵型的 `LAYOUT` 表原样保留（DE 算法算不出「鹤翼双锋」「鱼鳞错位」这类手工形状，
+ *     所以它不是替换，而是并存的一套可选排布）；
+ *   - 编制（CultureFormations / LegionComposition）、间距（colSpacing / marchSpacingOf）**一个字不改**。
+ *
+ * 关掉即完全回到现状：网址后加 `?deForm=0`。
+ */
+const DE_FORMATION_LAYOUT = (() => {
+    try {
+        if (typeof location === 'undefined') return true;
+        return new URLSearchParams(location.search).get('deForm') !== '0';
+    } catch {
+        return true;
+    }
+})();
+
 const LAYOUT: Record<FormationMode, { col: number; row: number; cols: number }[]> = {
     triangle: [
         { col: 0, row: 0, cols: 2 }, { col: 1, row: 0, cols: 2 },
@@ -4418,7 +4442,12 @@ export class Scene13WarLayer {
                     if (this.statsFor(key, side.f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
                     if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
                     let x: number, y: number;
-                    const cell = idx < 9 ? LAYOUT[mode][idx] : COMMANDER_CELL[mode];
+                    // 阵位：DE 自动排布（开关见 DE_FORMATION_LAYOUT）｜关掉即回到七种经典阵型的 LAYOUT 表
+                    const cell = idx >= 9
+                        ? COMMANDER_CELL[mode]
+                        : DE_FORMATION_LAYOUT
+                            ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
+                            : LAYOUT[mode][idx];
                     if (useFieldPlan) {
                         const base = this.spawnBases[side.f];
                         const uFwd = this.advanceVec[side.f];
@@ -5188,6 +5217,60 @@ export class Scene13WarLayer {
      *   - 三阵型（鱼鳞 3×3 / 三角 2+3+4 / 雁行 4+3+2）展开后均为 9 口，展开序 = 前/中/后三排
      * 口内 key 为兵种 id，与 UNIT_ASSETS 键一致。
      */
+    /**
+     * DE 自动排布：用 DE 的算法（group.cpp `FUN_1410da2d0`）算这支队的九个阵位。
+     *
+     * 契约与 `LAYOUT` 完全一致（`{col,row,cols}`：row 0/1/2＝前/中/后，cols＝该行人数，col＝行内序号），
+     * 所以下游（forwardOffset / sideOffset / colSpacing）一行都不用改。
+     *
+     * 两条纪律：
+     *   ① **分类顺序按编制里首次出现的顺序**（`order:'given'`）—— 保住我们自己的前/中/后语义，
+     *      不会被 DE 的引擎索引顺序把骑兵排到步兵前面（主人 2026-10-12 批准的方案 A）；
+     *   ② **主将队（第 10 口）不参与**队内分类，走 `COMMANDER_CELL`。
+     */
+    private deFormationCells(lanes: { key: string }[], mode: FormationMode): { col: number; row: number; cols: number }[] {
+        const body = lanes.slice(0, 9);
+        const cacheKey = mode + '|' + body.map((l) => l.key).join(',');
+        const hit = this.deCellCache.get(cacheKey);
+        if (hit) return hit;
+
+        const groups: (DeCategoryGroup & { idx: number[] })[] = [];
+        const byCat = new Map<number, DeCategoryGroup & { idx: number[] }>();
+        body.forEach((lane, idx) => {
+            const wt = WAR_TYPES[lane.key];
+            const cat = categorizeUnit(lane.key, wt?.cls) as number;
+            let g = byCat.get(cat);
+            if (!g) {
+                // 该兵种的间距 = UNIT_PX × sz（对应 DE 的「每个单位自己的间距」*(float*)(unit+6)）
+                g = { category: cat as DeCategoryGroup['category'], count: 0, spacing: UNIT_PX * (wt?.sz ?? 1), idx: [] };
+                byCat.set(cat, g);
+                groups.push(g);
+            }
+            g.count += 1;
+            g.idx.push(idx);
+        });
+
+        const r = computeDeFormationLayout(groups, { axis: 'line', order: 'given' });
+        const out: { col: number; row: number; cols: number }[] = body.map(() => ({ col: 0, row: 0, cols: 1 }));
+        let rowBase = 0;
+        for (const gl of r.groups) {
+            const src = byCat.get(gl.category as number);
+            if (!src) continue;
+            for (let i = 0; i < gl.count; i++) {
+                const col = i % gl.columns;
+                const rw = Math.floor(i / gl.columns);
+                const inRow = Math.min(gl.columns, gl.count - rw * gl.columns);
+                out[src.idx[i]] = { col, row: rowBase + rw, cols: inRow };
+            }
+            rowBase += gl.lines;
+        }
+        this.deCellCache.set(cacheKey, out);
+        return out;
+    }
+
+    /** DE 自动排布的阵位缓存（键 = 阵型 + 九个兵种键） */
+    private deCellCache = new Map<string, { col: number; row: number; cols: number }[]>();
+
     private slotsOf(region: string, factionId?: string | null, generalId?: string | null, hasElite?: boolean): { key: string }[] {
         try {
             // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
@@ -6513,11 +6596,80 @@ export class Scene13WarLayer {
                         return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
                     });
 
-                    for (const ob of data.objects) {
+                    // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
+                    // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），杜绝秋枫、绿橡、竹子在一片林里杂混
+                    const treeClumpDominant = new Map<number, string>();
+                    const rawTreeIndices: number[] = [];
+                    data.objects.forEach((ob: any, idx: number) => {
+                        if (ob.name && !ob.name.includes('CLIFF')) {
+                            const r = resolveNatureSprite(ob.name);
+                            if (r && r[0] === 'NATURE' && /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB/i.test(r[1])) {
+                                rawTreeIndices.push(idx);
+                            }
+                        }
+                    });
+
+                    // 空间网格桶快速连通聚类 (网格大小 2 格)
+                    const treeGrid = new Map<string, number[]>();
+                    for (const tidx of rawTreeIndices) {
+                        const ob = data.objects[tidx];
+                        const key = `${Math.floor(ob.x / 2)},${Math.floor(ob.y / 2)}`;
+                        if (!treeGrid.has(key)) treeGrid.set(key, []);
+                        treeGrid.get(key)!.push(tidx);
+                    }
+
+                    const visitedTree = new Set<number>();
+                    let clumpCounter = 0;
+                    for (const startIdx of rawTreeIndices) {
+                        if (visitedTree.has(startIdx)) continue;
+                        const cId = clumpCounter++;
+                        const clumpMembers: number[] = [];
+                        const queue = [startIdx];
+                        visitedTree.add(startIdx);
+                        while (queue.length > 0) {
+                            const curIdx = queue.shift()!;
+                            clumpMembers.push(curIdx);
+                            const curOb = data.objects[curIdx];
+                            const gx = Math.floor(curOb.x / 2), gy = Math.floor(curOb.y / 2);
+                            for (let dx = -1; dx <= 1; dx++) {
+                                for (let dy = -1; dy <= 1; dy++) {
+                                    const bucket = treeGrid.get(`${gx + dx},${gy + dy}`);
+                                    if (bucket) {
+                                        for (const nbrIdx of bucket) {
+                                            if (!visitedTree.has(nbrIdx)) {
+                                                const nbrOb = data.objects[nbrIdx];
+                                                if (Math.hypot(curOb.x - nbrOb.x, curOb.y - nbrOb.y) <= 1.6) {
+                                                    visitedTree.add(nbrIdx);
+                                                    queue.push(nbrIdx);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // 统计该林块内的主导树种
+                        const counts: Record<string, number> = {};
+                        for (const mIdx of clumpMembers) {
+                            const r = resolveNatureSprite(data.objects[mIdx].name);
+                            if (r) counts[r[1]] = (counts[r[1]] || 0) + 1;
+                        }
+                        let maxCnt = 0, bestAsset = '';
+                        for (const [ast, cnt] of Object.entries(counts)) {
+                            if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
+                        }
+                        for (const mIdx of clumpMembers) {
+                            treeClumpDominant.set(mIdx, bestAsset);
+                        }
+                    }
+
+                    for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
+                        const ob = data.objects[obIdx];
                         if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
                         if (r && r[0] === 'NATURE') {
-                            let asset = r[1];
+                            let asset = treeClumpDominant.get(obIdx) ?? r[1];
                             if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
                             if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
@@ -6535,6 +6687,77 @@ export class Scene13WarLayer {
                             this.decorSprites.push({
                                 asset,
                                 frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
+                                x: sx,
+                                y: sy,
+                                flip: (hash % 2 === 0),
+                                layer: 'world',
+                                z: 0,
+                                lift,
+                                densityHash: hash,
+                                obstructionContactSec: 0,
+                                obstructionTouched: false,
+                                obstructionDisabled: false,
+                            });
+                        }
+                    }
+
+                    // 🔴 [2026-10-12 任务3：点缀物密度] 依据 DE AESTHETICS 规范补足原野点缀物种类与密度至 DE 标准（~0.20/格）
+                    // 现状自然物件密度约 0.14，种类单一（绝大多数为大树与枯草）；补足绿灌木、成团野花、原野碎石与草地斑块至 ~0.20
+                    const N = data.width || TAC_MAP_N || 120;
+                    const curNatureCount = this.decorSprites.filter((s) => !s.asset.startsWith('BUILDING') && !s.asset.startsWith('BATTLEFIELD')).length;
+                    const targetDensity = 0.200;
+                    const targetCount = Math.round(N * N * targetDensity);
+                    const deficit = targetCount - curNatureCount;
+                    if (deficit > 0) {
+                        const occupiedCells = new Set<string>();
+                        for (const s of this.decorSprites) {
+                            const c = glLayer.screenToCell(s.x, s.y, VW, VH);
+                            if (c) occupiedCells.add(`${Math.round(c.gx)},${Math.round(c.gy)}`);
+                        }
+                        const aestheticCandidates = [
+                            // 1. 矮灌木 / 绿树丛 (~35%)
+                            'SHRUB_GREEN', 'BUSH_GREEN', 'BUSH_TREE_A', 'BUSH_TREE_B',
+                            // 2. 野花与花坛 (~20%)
+                            'FLOWER', 'FLOWER', 'FLOWERBED',
+                            // 3. 原野岩石与碎石 (~15%)
+                            'ROCK1', 'ROCK2', 'ROCK3',
+                            // 4. 绿草地斑与疏林下木 (~30%)
+                            'GRASS_GREEN', 'GRASS_GREEN', 'UNDERBRUSH', 'WEED', 'PLANT_DEAD'
+                        ];
+                        const candidates: Array<{ gx: number; gy: number; r: number }> = [];
+                        const rngAesthetic = (gx: number, gy: number) => {
+                            let h = Math.imul(gx ^ 0x45d9f3b, 0x27d4eb2d) ^ Math.imul(gy ^ 0x165667b1, 0x1b56c4e9);
+                            h = Math.imul(h ^ (h >>> 15), 0x27d4eb2d);
+                            return ((h ^ (h >>> 15)) >>> 0) / 4294967296;
+                        };
+                        for (let gy = 4; gy < N - 4; gy++) {
+                            for (let gx = 4; gx < N - 4; gx++) {
+                                if (occupiedCells.has(`${gx},${gy}`)) continue;
+                                const ox = gx - 0.5, oy = gy - 0.5;
+                                const sx = (ox - N * 0.5) * TAC_TILE_W + VW / 2;
+                                const sy = (oy - N * 0.5) * TAC_TILE_H + VH / 2;
+                                if (onFoundation(sx, sy)) continue;
+                                const waterDens = glLayer.getWaterDensityAt(gx, gy);
+                                if (waterDens > 0.35) continue;
+                                candidates.push({ gx, gy, r: rngAesthetic(gx, gy) });
+                            }
+                        }
+                        // 按确定性伪随机数排序后取前 deficit 个放入
+                        candidates.sort((a, b) => a.r - b.r);
+                        const toAdd = candidates.slice(0, deficit);
+                        for (const item of toAdd) {
+                            const { gx, gy, r } = item;
+                            const ox = gx - 0.5, oy = gy - 0.5;
+                            const sx = (ox - N * 0.5) * TAC_TILE_W + VW / 2;
+                            const sy = (oy - N * 0.5) * TAC_TILE_H + VH / 2;
+                            const assetIdx = Math.floor(rngAesthetic(gx + 101, gy + 307) * aestheticCandidates.length);
+                            const asset = aestheticCandidates[assetIdx];
+                            const hash = Math.floor(r * 1000) % 100;
+                            this.ensureNatureAsset(asset);
+                            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+                            this.decorSprites.push({
+                                asset,
+                                frame: hash,
                                 x: sx,
                                 y: sy,
                                 flip: (hash % 2 === 0),
