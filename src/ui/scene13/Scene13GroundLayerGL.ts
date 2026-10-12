@@ -348,6 +348,105 @@ export class Scene13GroundLayerGL {
     this.N = data.width;
     this.offX = (this.N - 1) * dx;
 
+    // 🔴 [2026-10-12 REA逆向：DE 原版有机山丘扩散算法 (依据反编译 _base_elevation_generate_14135e990)]
+    // 彻底告别圆规余弦波与金字塔，基于多团波前并发队列随机扩散，生成平顶山头与自然有机山脊
+    if (data.elev && data.elev.length === this.N * this.N) {
+      const N = this.N;
+      let seed = 2166136261;
+      for (let i = 0; i < Math.min(200, data.elev.length); i++) {
+        seed = Math.imul(seed ^ (data.elev[i] + i), 16777619) >>> 0;
+      }
+      const rnd = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+
+      const elev = data.elev;
+
+      // 1. 中央广阔平顶台地（城郭自然安坐于高冈之上，开阔平展无切糕感）
+      const cx = Math.floor(N / 2), cy = Math.floor(N / 2);
+      const plateauTiles = Math.floor(N * N * 0.18); // 覆盖约 18% 面积的广阔高台
+      const qPlateau: Array<[number, number]> = [[cx, cy]];
+      const inPlateau = new Uint8Array(N * N);
+      inPlateau[cy * N + cx] = 1;
+      let countP = 0;
+      while (qPlateau.length > 0 && countP < plateauTiles) {
+        const idx = Math.floor(rnd() * qPlateau.length);
+        const [x, y] = qPlateau.splice(idx, 1)[0];
+        countP++;
+        // 距中心较近核心区（约 28 格内）为稳固 2 级平顶，边缘为 1 级缓阶
+        const distCenter = Math.hypot(x - cx, y - cy);
+        const h = distCenter < 28 ? 2 : 1;
+        elev[y * N + x] = Math.max(elev[y * N + x] ?? 0, h);
+
+        const neighbors: Array<[number, number]> = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
+        for (const [nx, ny] of neighbors) {
+          if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && !inPlateau[ny * N + nx]) {
+            // 椭圆等轴权重偏向
+            const dIso = Math.hypot(nx - cx, (ny - cy) * 1.25);
+            if (dIso < 44) {
+              inPlateau[ny * N + nx] = 1;
+              qPlateau.push([nx, ny]);
+            }
+          }
+        }
+      }
+
+      // 2. 原野有机山丘（依据 Arabia.rms：24 个小团波前并发扩散，形成 1~5 级有机起伏山脊）
+      const clumps = 24;
+      const qClumps: Array<Array<[number, number]>> = [];
+      const clumpTargetH: number[] = [];
+      const clumpMaxTiles: number[] = [];
+      for (let c = 0; c < clumps; c++) {
+        const sx = 8 + Math.floor(rnd() * (N - 16));
+        const sy = 8 + Math.floor(rnd() * (N - 16));
+        // 避开城池核心菱形区，在原野山峦间起伏
+        if (Math.hypot(sx - cx, sy - cy) < 20) continue;
+        const targetH = 1 + Math.floor(rnd() * 3); // 额外抬升 1~3 级
+        const maxT = 60 + Math.floor(rnd() * 120);
+        qClumps.push([[sx, sy]]);
+        clumpTargetH.push(targetH);
+        clumpMaxTiles.push(maxT);
+      }
+
+      for (let c = 0; c < qClumps.length; c++) {
+        const q = qClumps[c];
+        const hAdd = clumpTargetH[c];
+        const maxT = clumpMaxTiles[c];
+        let placed = 0;
+        const visitedClump = new Uint8Array(N * N);
+        if (q.length > 0) visitedClump[q[0][1] * N + q[0][0]] = 1;
+
+        while (q.length > 0 && placed < maxT) {
+          const idx = Math.floor(rnd() * q.length);
+          const [x, y] = q.splice(idx, 1)[0];
+          placed++;
+          elev[y * N + x] = Math.min(6, (elev[y * N + x] ?? 0) + hAdd);
+
+          const neighbors: Array<[number, number]> = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
+          for (const [nx, ny] of neighbors) {
+            if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && !visitedClump[ny * N + nx]) {
+              visitedClump[ny * N + nx] = 1;
+              q.push([nx, ny]);
+            }
+          }
+        }
+      }
+
+      // 3. DE 原版平滑梯级约束：强制保证全图相邻格落差 ≤ 1（消除任何悬空或垂直阶梯破面）
+      for (let pass = 0; pass < 3; pass++) {
+        for (let y = 1; y < N - 1; y++) {
+          for (let x = 1; x < N - 1; x++) {
+            const cur = elev[y * N + x];
+            const maxNbr = Math.max(elev[y * N + (x - 1)], elev[y * N + (x + 1)], elev[(y - 1) * N + x], elev[(y + 1) * N + x]);
+            if (cur < maxNbr - 1) {
+              elev[y * N + x] = maxNbr - 1;
+            }
+          }
+        }
+      }
+    }
+
     const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: false });
     if (!gl) throw new Error('WebGL 不可用');
     this.gl = gl;
@@ -491,9 +590,6 @@ export class Scene13GroundLayerGL {
   private updateCornerLight(): void {
     const N = this.N;
     const V_SIZE = N + 1;
-    const Lx = -0.45, Ly = -0.55, Lz = 0.70;
-    const Llen = Math.hypot(Lx, Ly, Lz);
-    const lx = Lx / Llen, ly = Ly / Llen, lz = Lz / Llen;
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
         const hC = this.cornerElev[gy * V_SIZE + gx];
@@ -503,15 +599,22 @@ export class Scene13GroundLayerGL {
         const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
         const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
-        const Nx = -1.35 * dhx;
-        const Ny = -1.35 * dhy;
-        const Nz = 1.0;
-        const nlen = Math.hypot(Nx, Ny, Nz);
-        const nx = Nx / nlen, ny = Ny / nlen, nz = Nz / nlen;
-        const dot = nx * lx + ny * ly + nz * lz;
-        const elevBoost = Math.min(0.12, hC * 0.03);
-        const light = 1.0 + 1.35 * (dot - lz) + elevBoost;
-        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.58, Math.min(1.36, light));
+
+        // 🔴 [2026-10-12 REA逆向：DE 真实等轴浮雕坡面光照 Hill Shading]
+        // 等轴视线下：西北方（屏幕左上）为迎光向阳面，东南方（屏幕右下）为背光阴影面
+        // sx 方向为 (dhx - dhy)，sy 方向为 (dhx + dhy)
+        const slopeTowardSun = -(dhx + dhy) * 0.65 + (dhx - dhy) * 0.20;
+        let light = 1.0;
+        if (slopeTowardSun > 0.01) {
+          // 向阳受光坡面：明亮柔和，轮廓清晰
+          light = 1.0 + Math.min(0.28, slopeTowardSun * 0.38);
+        } else if (slopeTowardSun < -0.01) {
+          // 背阳阴影坡面：深邃阴影，形成明显等高线阶梯浮雕感
+          light = 1.0 + Math.max(-0.35, slopeTowardSun * 0.45);
+        }
+        // 高地微弱大气透光增益
+        const elevBoost = Math.min(0.08, hC * 0.02);
+        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.62, Math.min(1.32, light + elevBoost));
       }
     }
   }

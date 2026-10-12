@@ -25,7 +25,7 @@ import {
     isWaterTile,
     type GroundPatch,
 } from './scene13/Scene13GroundPainter';
-import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H, TAC_MAP_N } from './scene13/Scene13GroundLayerGL';
+import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { strategicCityHtml, strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
@@ -6701,76 +6701,7 @@ export class Scene13WarLayer {
                         }
                     }
 
-                    // 🔴 [2026-10-12 任务3：点缀物密度] 依据 DE AESTHETICS 规范补足原野点缀物种类与密度至 DE 标准（~0.20/格）
-                    // 现状自然物件密度约 0.14，种类单一（绝大多数为大树与枯草）；补足绿灌木、成团野花、原野碎石与草地斑块至 ~0.20
-                    const N = data.width || TAC_MAP_N || 120;
-                    const curNatureCount = this.decorSprites.filter((s) => !s.asset.startsWith('BUILDING') && !s.asset.startsWith('BATTLEFIELD')).length;
-                    const targetDensity = 0.200;
-                    const targetCount = Math.round(N * N * targetDensity);
-                    const deficit = targetCount - curNatureCount;
-                    if (deficit > 0) {
-                        const occupiedCells = new Set<string>();
-                        for (const s of this.decorSprites) {
-                            const c = glLayer.screenToCell(s.x, s.y, VW, VH);
-                            if (c) occupiedCells.add(`${Math.round(c.gx)},${Math.round(c.gy)}`);
-                        }
-                        const aestheticCandidates = [
-                            // 1. 矮灌木 / 绿树丛 (~35%)
-                            'SHRUB_GREEN', 'BUSH_GREEN', 'BUSH_TREE_A', 'BUSH_TREE_B',
-                            // 2. 野花与花坛 (~20%)
-                            'FLOWER', 'FLOWER', 'FLOWERBED',
-                            // 3. 原野岩石与碎石 (~15%)
-                            'ROCK1', 'ROCK2', 'ROCK3',
-                            // 4. 绿草地斑与疏林下木 (~30%)
-                            'GRASS_GREEN', 'GRASS_GREEN', 'UNDERBRUSH', 'WEED', 'PLANT_DEAD'
-                        ];
-                        const candidates: Array<{ gx: number; gy: number; r: number }> = [];
-                        const rngAesthetic = (gx: number, gy: number) => {
-                            let h = Math.imul(gx ^ 0x45d9f3b, 0x27d4eb2d) ^ Math.imul(gy ^ 0x165667b1, 0x1b56c4e9);
-                            h = Math.imul(h ^ (h >>> 15), 0x27d4eb2d);
-                            return ((h ^ (h >>> 15)) >>> 0) / 4294967296;
-                        };
-                        for (let gy = 4; gy < N - 4; gy++) {
-                            for (let gx = 4; gx < N - 4; gx++) {
-                                if (occupiedCells.has(`${gx},${gy}`)) continue;
-                                const ox = gx - 0.5, oy = gy - 0.5;
-                                const sx = (ox - N * 0.5) * TAC_TILE_W + VW / 2;
-                                const sy = (oy - N * 0.5) * TAC_TILE_H + VH / 2;
-                                if (onFoundation(sx, sy)) continue;
-                                const waterDens = glLayer.getWaterDensityAt(gx, gy);
-                                if (waterDens > 0.35) continue;
-                                candidates.push({ gx, gy, r: rngAesthetic(gx, gy) });
-                            }
-                        }
-                        // 按确定性伪随机数排序后取前 deficit 个放入
-                        candidates.sort((a, b) => a.r - b.r);
-                        const toAdd = candidates.slice(0, deficit);
-                        for (const item of toAdd) {
-                            const { gx, gy, r } = item;
-                            const ox = gx - 0.5, oy = gy - 0.5;
-                            const sx = (ox - N * 0.5) * TAC_TILE_W + VW / 2;
-                            const sy = (oy - N * 0.5) * TAC_TILE_H + VH / 2;
-                            const assetIdx = Math.floor(rngAesthetic(gx + 101, gy + 307) * aestheticCandidates.length);
-                            const asset = aestheticCandidates[assetIdx];
-                            const hash = Math.floor(r * 1000) % 100;
-                            this.ensureNatureAsset(asset);
-                            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-                            this.decorSprites.push({
-                                asset,
-                                frame: hash,
-                                x: sx,
-                                y: sy,
-                                flip: (hash % 2 === 0),
-                                layer: 'world',
-                                z: 0,
-                                lift,
-                                densityHash: hash,
-                                obstructionContactSec: 0,
-                                obstructionTouched: false,
-                                obstructionDisabled: false,
-                            });
-                        }
-                    }
+
 
                     // 自然水岸生态：沿多瑙河蜿蜒岸线点缀芦苇与睡莲（同旧 13 经典水岸生态）
                     for (let gy = 2; gy < 118; gy += 2) {
