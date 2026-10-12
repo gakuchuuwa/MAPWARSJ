@@ -11,7 +11,7 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     // 🔴 [M4 件表版 · 2026-10-11 主人令「按文档顺序先做①件表版」] 险要/大城的两个围墙函数与件类型
     //     **搬进共享模块**（纯搬迁、一字未改）：战术侧要直接调真函数、不许复刻一份；
     //     名字保持原样（无 alias）⇒ 本文件里的调用点一个字不用改。
-    computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, type PalisadeGridPiece } from './cityWallShared';
+    computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, buildCornerGateRingOnGrid, type PalisadeGridPiece } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
@@ -875,6 +875,9 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             groundTile: 'rd2',
             slotCenters: [{ ci: 0.5, cj: 0.5, isCenter: true },
                 ...passRing.map(([bi, bj]) => ({ ci: passTowerAt(bi), cj: passTowerAt(bj), isCenter: false }))],
+            // 🔴 [2026-10-12 主人令「在外围再套一圈城墙，用普通石墙」＋「四门、错开对不齐、正南北东西朝向」]
+            //    外圈每段 10（角到角 25，与内圈隔 3 格；该间距是我算的，主人未定），普通石墙，四门开在菱形四个顶点。
+            outer: { seg: 10, wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'] },
         }) : null;
     if (passGridHtml) return passGridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
 
@@ -1250,6 +1253,8 @@ interface CityGridSpec {
     slotCenters?: ReadonlyArray<{ ci: number; cj: number; isCenter: boolean }>;
     /** 🔴 [2026-10-12 主人令「城寨每段 6」] 城寨的建筑名本身就是完整素材目录名（HUT_A、DARK_HOUSE_AGE1…），不再拼「风格_名_时代」；宽度取 native.spriteW[目录名] */
     rawDirNames?: boolean;
+    /** 🔴 [2026-10-12 主人令「险要外围再套一圈普通石墙」] 外圈墙：同心、门开在四个顶点（见 buildCornerGateRingOnGrid）；不传＝只有一圈 */
+    outer?: { seg: number; wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> };
 }
 
 function buildDeCityGridHtml(
@@ -1260,8 +1265,10 @@ function buildDeCityGridHtml(
     // 墙圈按格逐件生成：每边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 2·seg + 5 步
     // （主人 2026-10-12「先计算下……每段多少个城墙」；不开门的边整边是墙）
     const ring = buildFortifiedRingOnGrid(g.seg, TW, TH, g.gateEdges);
-    const rX = ring.L * TW / 2, rY = ring.L * TH / 2;           // 墙圈菱形半宽 / 半高（px）
-    const ringCy = (2 * ring.a + ring.L) * TH / 2;              // 圈心的屏幕 y（L 为奇数时圈心在半格处）
+    const outerRing = g.outer ? buildCornerGateRingOnGrid(g.outer.seg, TW, TH) : null;
+    const frame = outerRing ?? ring;                            // 地面与容器跟最外一圈走
+    const rX = frame.L * TW / 2, rY = frame.L * TH / 2;         // 墙圈菱形半宽 / 半高（px）
+    const ringCy = (2 * frame.a + frame.L) * TH / 2;            // 圈心的屏幕 y（L 为奇数时圈心在半格处）
     const W = 2 * rX + 400, H = 2 * (rY + Math.abs(ringCy)) + 600;   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
     const AUTO = 1.2;
     const parts: string[] = [];
@@ -1329,8 +1336,7 @@ function buildDeCityGridHtml(
 
     // 城墙：按格逐件（见上 ring）。🔴 [2026-10-12 主人「为什么只有巴黎这里缺一块」] 不镜像（原来 50% 整圈翻转，
     //    把东北向素材镜像去顶替东南向 ⇒ 门塔接墙处错位）；每件按朝向取 DE 素材，宽度、锚点都取素材原值。
-    const wallAnchors = g.wallAnchors;
-    ring.pieces.forEach((w) => {
+    const drawWalls = (pieces: PalisadeGridPiece[], wallAnchors: CityGridSpec['wallAnchors']): void => pieces.forEach((w) => {
         const base = wallAnchors[w.type === 'GATE' ? 'GATE' : w.type];
         const path = w.type === 'GATE' && w.gateDir === 'SE' ? base.path.replace('_NE/preview.png', '_SE/preview.png') : base.path;
         const dir = /\/SUCAI_BUILDING\/([^/]+)\/preview\.png/.exec(path)?.[1] ?? '';
@@ -1342,6 +1348,8 @@ function buildDeCityGridHtml(
             `<img src="${path}" style="position:absolute;left:50%;top:50%;width:${boxW.toFixed(1)}px;transform:translate(calc(-${pctX.toFixed(1)}% + ${w.x.toFixed(1)}px),calc(-${pctY.toFixed(1)}% + ${w.y.toFixed(1)}px));z-index:${Math.round(500 + w.y)};pointer-events:none;" />`
         );
     });
+    drawWalls(ring.pieces, g.wallAnchors);
+    if (outerRing && g.outer) drawWalls(outerRing.pieces, g.outer.wallAnchors);
 
     return `<div style="position:relative;width:${W.toFixed(0)}px;height:${H.toFixed(0)}px;">${parts.join('')}</div>`;
 }
