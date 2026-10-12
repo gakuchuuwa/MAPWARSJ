@@ -8096,6 +8096,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 0.96,
             "offsetX": 0,
             "offsetY": 12
+        },
+        "/assets/GERMANIC/lunbadi_aerboyin.png": {
+            "scale": 1.06,
+            "offsetX": 0,
+            "offsetY": -14
         }
     },
     "folderGuides": {
