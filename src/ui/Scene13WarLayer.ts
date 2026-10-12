@@ -5581,7 +5581,12 @@ export class Scene13WarLayer {
         const level = peakLevel >= 1.5
             ? Math.min(4, Math.max(2, Math.round(peakLevel)))
             : (roll < 68 ? (roll < 24 ? 3 : 2) : Math.round(peakLevel));
-        gl.flattenFoundation(cx, cy, W, H, rCells, level);
+        // 🔴 [2026-10-12 主人令「改整平半径」] 原来整平也用 rCells（封顶 7.5 格），险要外圈墙（离城心 12.5 格、角在 17.7 格）整圈落在起伏地形上，
+        //    实测外圈墙件抬升 0~42px 参差不齐 ⇒ 接缝错位。整平半径改按墙圈算：城池宽 = L·TAC_TILE_W/2·2 + 400 ⇒ L；
+        //    墙圈在格坐标里是正方形，半边 L/2，角到圈心 L/2·√2，再多 1 格。台地高度（上面 peakLevel）仍按 rCells 取，不动。
+        const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
+        const flatCells = Math.max(rCells, ringL / 2 * Math.SQRT2 + 1);
+        gl.flattenFoundation(cx, cy, W, H, flatCells, level);
         for (let py = -ry; py <= ry; py += 24) {
             for (let px = -rx; px <= rx; px += 48) {
                 if ((px * px) / (rx * rx) + (py * py) / (ry * ry) > 1) continue;

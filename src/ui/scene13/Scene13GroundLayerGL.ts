@@ -391,7 +391,10 @@ export class Scene13GroundLayerGL {
         const id = data.terrain[y * N + x];
         if (id === 1 || id === 23 || isWaterId(id)) rawWater[y * N + x] = 1.0;
         if (id === 2) rawBeach[y * N + x] = 1.0;
-        if (id === 10 || id === 19 || id === 71 || id === 89 || id === 104) rawForest[y * N + x] = 1.0;
+        // 🔴 [2026-10-12 主人令「先补林地地形」] 林地判据按 DE dat 的地面贴图名：g_for（标准林地）/ g_fo2（雨林·竹林落叶）都铺林地；
+        //    原先写死 10/19/71/89/104 五个编号，竹林 18、繁茂竹林 113、地中海林 88、桦树林 110 等全漏掉 ⇒ 树下画成草地。71 落叶灌木地照旧保留。
+        const fname = DE_TERRAIN_MANIFEST[id]?.name_2;
+        if (fname === 'g_for' || fname === 'g_fo2' || id === 71) rawForest[y * N + x] = 1.0;
       }
     }
 
