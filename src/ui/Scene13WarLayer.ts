@@ -5672,7 +5672,9 @@ export class Scene13WarLayer {
         } else {
             // 普通城市保持原有的整体地基整平
             const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
-            const flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
+            let flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
+            // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 河在墙外 1.5~4.5 格，整平范围要盖住它，河面才和城池地基同高
+            if (this.defenderCityType === 'big_city' && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 5);
             gl.flattenFoundation(cx, cy, W, H, flatCells, level);
         }
         for (let py = -ry; py <= ry; py += 24) {
@@ -5681,9 +5683,27 @@ export class Scene13WarLayer {
                 gl.carveFoundation(cx + px, cy + py, W, H, 2);
             }
         }
+        // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」＋ 答复：3 格宽、四个门前各留一座桥、只加战术地图]
+        //    河按墙圈的格坐标（i,j：x=(i−j)·48、y=(i+j)·24，圈心 (0.5,0.5)）挖：墙心在 ringL/2，墙外空 1 格后开河，河宽 3 格；
+        //    四个门正前方（|i−0.5| 或 |j−0.5| ≤ 2，即门洞同宽 4 格）不挖，留作土堤桥。
+        const ringLm = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
+        let inMoat: ((x: number, y: number) => boolean) | null = null;
+        if (this.defenderCityType === 'big_city' && ringLm > 0) {
+            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河（原先按方形距离，城角处是直角）：城角处是圆弧；河宽 3 格、离墙 1.5 格不变
+            const half = ringLm / 2;
+            inMoat = (x, y) => {
+                const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
+                const mi = Math.abs((u + v) / 2 - 0.5), mj = Math.abs((v - u) / 2 - 0.5);
+                if (Math.min(mi, mj) <= 2) return false;                                  // 城门正前方：土堤
+                const ex = mi - half, ey = mj - half;
+                const d = (ex > 0 && ey > 0) ? Math.hypot(ex, ey) : Math.max(ex, ey);
+                return d >= 1.5 && d < 4.5;
+            };
+            gl.addWaterWhere(inMoat, W, H);
+        }
         gl.flushFoundation();
         const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
-        this.decorSprites = this.decorSprites.filter((sp) => sp.asset.startsWith('BUILDING') || sp.asset === '' || !inCity(sp.x, sp.y));
+        this.decorSprites = this.decorSprites.filter((sp) => sp.asset.startsWith('BUILDING') || sp.asset === '' || (!inCity(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y))));
         for (const sp of this.decorSprites) {
             sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
         }

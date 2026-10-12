@@ -244,7 +244,10 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const baseAngle = rotation + i * (360 / surround.length);
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);
         const angle = (baseAngle + angleJitter) * Math.PI / 180;
-        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize;
+        // 🔴 [2026-10-12 主人令「漠北蒙古的建筑分布过于紧凑，请分开些」] 战术侧（native）且无栅栏（险要/城寨）时，环半径放大 1.75 倍：
+        //    原 0.36~0.44×baseSize 小于「城堡半宽 0.28 + 蒙古包半宽 0.15」，包贴着城堡甚至压叠；战略地图与有栅栏的毡帐城（栅栏圈固定）不动。
+        const spread = (native && !fence) ? 1.75 : 1;
+        const r = (centerCastle ? (0.36 + rnd() * 0.08) : (0.32 + rnd() * 0.10)) * baseSize * spread;
         const x = Math.cos(angle) * r;
         const yy = Math.sin(angle) * r * 0.58;
         const yw = sizeOf(y, false);
@@ -850,7 +853,9 @@ function buildDeStockadeStackHtml(
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
 function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes): string {
-    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native); // 2026-09-10 主人定：草原险要去掉围墙（fence=false），中心耸立蒙古要塞城堡+营帐环卫
+    // 2026-09-10 主人定：草原险要去掉围墙，中心耸立蒙古要塞城堡+营帐环卫 —— 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」]
+    //    现只留给**战略地图**（没传原生尺寸表）；战术侧毡帐险要也走下面按格摆放的同一套（加固墙+外圈石墙+四门+城堡+箭塔）。
+    if (style === 'YURT' && !native) return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native);
 
     // 🔴 [2026-10-12 主人令「所有 PASS 改为城寨的样式大小，但要用石墙；中心城堡，除了各种箭塔不要其他建筑」]
     //    战术侧（传了原生尺寸表）：墙圈 seg=6（同城寨：角到角 17 步、墙内 16×16 格）、石墙、四门（主人定）；
@@ -873,6 +878,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],   // 🔴 [2026-10-12 主人令「城墙改为加强的城墙，就是大城那种」]
             groundTile: 'rd2',
+            buildingStyle: style === 'YURT' ? 'ASIA' : style,   // 毡帐系箭塔借亚洲木塔
             slotCenters: [{ ci: 0.5, cj: 0.5, isCenter: true },
                 ...passRing.map(([bi, bj]) => ({ ci: passTowerAt(bi), cj: passTowerAt(bj), isCenter: false }))],
             // 🔴 [2026-10-12 主人令「在外围再套一圈城墙，用普通石墙」＋「四门、错开对不齐、正南北东西朝向」]
@@ -1255,6 +1261,8 @@ interface CityGridSpec {
     rawDirNames?: boolean;
     /** 🔴 [2026-10-12 主人令「险要外围再套一圈普通石墙」] 外圈墙：同心、门开在四个顶点（见 buildCornerGateRingOnGrid）；不传＝只有一圈 */
     outer?: { seg: number; wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> };
+    /** 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」] 城内建筑取素材用的风格名（不传＝用 style）。毡帐系没有 `YURT_TOWER_AGE3`，箭塔借亚洲木塔：传 'ASIA'。 */
+    buildingStyle?: string;
 }
 
 function buildDeCityGridHtml(
@@ -1327,8 +1335,9 @@ function buildDeCityGridHtml(
             const entry = centerCastle ? pool[otherIdx++] : pool[i];
             if (!entry) return;   // 个位比建筑多时空着（如无城堡时 13 位 / 12 栋）
             const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
-            const src = g.rawDirNames ? `/SUCAI_BUILDING/${b}/preview.png` : cityBuildingSrc(style, b, age);
-            const bW = (g.rawDirNames ? native.spriteW?.[b] : nativeW(native, b, age)) ?? (baseSize * 0.32 * AUTO);
+            const bStyle = g.buildingStyle ?? style;
+            const src = g.rawDirNames ? `/SUCAI_BUILDING/${b}/preview.png` : cityBuildingSrc(bStyle, b, age);
+            const bW = (g.rawDirNames ? native.spriteW?.[b] : (nativeW(native, b, age) ?? DE_SPRITE_BOX_W[`${bStyle}_${b}_${age}`])) ?? (baseSize * 0.32 * AUTO);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
             placeBuilding(dirOf(src), src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
         }
