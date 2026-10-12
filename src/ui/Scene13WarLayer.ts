@@ -889,21 +889,26 @@ const HUSSITE_SECONDARY_SHOT: WarType = {
  *  crane_wing 鹤翼 2+4+3 = 双锋2 / 鹤翼4 / 中军3（双锋引敌·两翼合围）
  *  square 方阵 3+3+3 = 前3 / 中3 / 后3（九宫等边·坚若磐石） */
 /**
- * 🔴 DE 自动排布开关（默认开）。
+ * 🔴 DE 自动排布开关（🔴 [2026-10-12 主人令「战术模式中，军团应该是三排，不是二排……请恢复」] **默认关**）。
+ *
+ * ⚠️ 病根（2026-10-12 主人报「为什么把阵型改为两排了」）：
+ *    `deFormationCells()` 走 DE 算法时，**每个分类各自算列/行**，行数由人数与间距现算
+ *    （3-4-2、2-3-4 这类编制会被拆成 2~4 行），于是原来手工定好的**前/中/后三排**被挤变形
+ *    —— 最极端时只剩两排。**恢复三排的唯一正解就是走回主人设计的 `LAYOUT` 表**。
  *
  * 只影响**出兵口的阵位表**（谁站第几列/第几排），**不动**任何主人拍板的东西：
  *   - 七种经典阵型的 `LAYOUT` 表原样保留（DE 算法算不出「鹤翼双锋」「鱼鳞错位」这类手工形状，
  *     所以它不是替换，而是并存的一套可选排布）；
  *   - 编制（CultureFormations / LegionComposition）、间距（colSpacing / marchSpacingOf）**一个字不改**。
  *
- * 关掉即完全回到现状：网址后加 `?deForm=0`。
+ * 关 = 走 `LAYOUT`（主人设计的三排，默认）；要试 DE 排布：网址后加 `?deForm=1`。
  */
 const DE_FORMATION_LAYOUT = (() => {
     try {
-        if (typeof location === 'undefined') return true;
-        return new URLSearchParams(location.search).get('deForm') !== '0';
+        if (typeof location === 'undefined') return false;
+        return new URLSearchParams(location.search).get('deForm') === '1';
     } catch {
-        return true;
+        return false;
     }
 })();
 
@@ -3034,6 +3039,9 @@ interface WarMan {
     /** 🔴 [2026-08-23 主人定] 攻城战专用攻城武器（spawnSiegeWeapons 生成）：开战即行动，
      *  不受「双方按兵不动」限制（见 holdSiege）；普通编制里的火箭车/投石车不算（无此标记）。 */
     siegeW?: boolean;
+    /** 🔴 [2026-10-12 主人令「只有城墙挡路时才打城墙」] 最近一次把本兵挡住的城墙段与时刻（battleSec） */
+    blockedBy?: WarBuilding | null;
+    blockedAt?: number;
     /** 列阵槽位所属出兵口（阵型锚点；非列阵兵为 null） */
     port: WarSpawn | null;
     /** 列阵槽位：dep = 沿推进方向的纵深（0 = 最前排，越大越靠后）；sy = 横向偏移 */
@@ -3468,6 +3476,8 @@ export class Scene13WarLayer {
     private flowBlocked: Uint8Array | null = null;   // 调试探针用
     /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 城门精灵（含附属碰撞件）：守方穿行不受阻；null = 未建 */
     private gateSpriteSet: Set<DecorSprite> | null = null;
+    /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
+    private wallBySprite = new Map<DecorSprite, WarBuilding>();
     /** 城墙外圈在地块坐标里的范围（判断「在城内」），null = 未建 / 本场无城墙 */
     private ringBox: { a0: number; a1: number; b0: number; b1: number } | null | undefined = undefined;
     private flowBuiltAt = -99;
@@ -8163,6 +8173,15 @@ export class Scene13WarLayer {
         return inBand && m.rangeWait <= 0.2;
     }
 
+    /** 🔴 [2026-10-12 主人令「只有在城墙挡路的时候攻击城墙，打完就不要再打了」]
+     *  正挡着本兵的墙段：最近 1.5 秒内被它推开过（或正在打它），且它还立着；否则 null。 */
+    private blockedWall(m: Partial<WarMan>): WarBuilding | null {
+        const b = m.blockedBy;
+        if (!b || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) return null;
+        if (m.foe === b || this.battleSec - (m.blockedAt ?? -99) < 1.5) return b;
+        return null;
+    }
+
     /** 攻城武器当前的目标档：城门 → 箭塔 → 中心建筑 → 其余建筑 → 城墙；取第一个非空档。 */
     private siegeFirstTier(): WarBuilding[] {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
@@ -8196,6 +8215,11 @@ export class Scene13WarLayer {
         const wm = m as Partial<WarMan>;
         const inOnly = m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
             && !!wm.key && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
+        // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
+        //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
+        const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key && !wm.hero
+            && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, 0).rng <= 65
+            && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && this.blockedWall(wm) !== null;
         if (span >= 6) {
             for (let i = 0; i < this.men.length; i++) {
                 const o = this.men[i];
@@ -8203,6 +8227,7 @@ export class Scene13WarLayer {
                 const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                 if (d >= r2) continue;
                 if (inOnly && !this.insideRing(o.x, o.y)) continue;
+if (outOnly && this.insideRing(o.x, o.y)) continue;
                 const tooNear = minR2 > 0 && d < minR2;
                 if (d < bd) { bd = d; best = o; }
                 if (!tooNear && d < rd) { rd = d; inRange = o; }
@@ -8228,6 +8253,7 @@ export class Scene13WarLayer {
                             const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                             if (d >= r2) continue;
                             if (inOnly && !this.insideRing(o.x, o.y)) continue;
+if (outOnly && this.insideRing(o.x, o.y)) continue;
                             const tooNear = minR2 > 0 && d < minR2;
                             // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
                             // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
@@ -8282,13 +8308,13 @@ export class Scene13WarLayer {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
             // 🔴 [2026-10-12 主人令「优先攻击其他，最后考虑城墙」] 攻方士兵：视野内没敌兵、又没有进城的路时才打墙
-            if (this.battleType === 'siege' && m.f === 0 && this.flowOpenAt(m.x, m.y)) break;
+            if (this.battleType === 'siege' && m.f === 0 && b !== this.blockedWall(m as Partial<WarMan>)) continue;   // 只打正挡着自己的那段墙
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d >= r2) continue;
             const tooNear = minR2 > 0 && d < minR2;
-            if (b.claims >= SPREAD_CAP) continue;
+            if (b.claims >= SPREAD_CAP && !(m.f === 0 && this.battleType === 'siege')) continue;   // 攻方打墙不封顶（墙靠推挤沿线铺开）
             if (d < bd) { bd = d; best = b; }
             if (!tooNear && d < fd) { fd = d; free = b; }
         }
@@ -8325,7 +8351,7 @@ export class Scene13WarLayer {
 
     /**
      * 🔴 [2026-10-12 主人令「10秒坍塌只适用于城墙、城门、城垛」「没受到攻击/满血的不要坍塌」]
-     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有符合的这一轮不塌。
+     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有时，若双方已有兵交战则塌一段挡路的墙（满血也塌），否则不塌。
      * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
      */
     private collapseNextWallGap(): boolean {
@@ -8333,7 +8359,30 @@ export class Scene13WarLayer {
         if (alive.length === 0) return false;
         let pick: WarBuilding | undefined;
         for (const b of alive) if (b.hitAt !== undefined && b.hp < b.maxHp && (!pick || b.hitAt < pick.hitAt!)) pick = b;
-        if (!pick) return true;
+        if (!pick) {
+            // 🔴 [2026-10-12 主人令「双方兵力交战，就算城墙满血也要开始坍塌，不然城墙一直不动过不去」]
+            //    没有挨过打的墙，但双方已有兵在互相交战 ⇒ 塌一段：优先最近挡过攻方士兵的墙，其次离攻方重心最近的墙。
+            let atkEngaged = false, defEngaged = false;
+            for (const m of this.men) {
+                if (m.hp <= 0 || !m.foe || 'sprite' in m.foe) continue;
+                if (m.f === 0) atkEngaged = true; else defEngaged = true;
+                if (atkEngaged && defEngaged) break;
+            }
+            if (!(atkEngaged && defEngaged)) return true;
+            let latest = this.battleSec - 3;
+            for (const m of this.men) {
+                const b = m.f === 0 && m.hp > 0 ? m.blockedBy : null;
+                if (b && this.wallStanding(b) && (m.blockedAt ?? -99) >= latest) { latest = m.blockedAt!; pick = b; }
+            }
+            if (!pick) {
+                const c = this.enemyCen[0];
+                if (c) {
+                    let bd = Infinity;
+                    for (const b of alive) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
+                }
+            }
+            if (!pick) return true;
+        }
         this.collapseOneWall(pick);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
@@ -8878,6 +8927,8 @@ export class Scene13WarLayer {
     private ensureGateInfo(): void {
         if (this.gateSpriteSet && this.ringBox !== undefined) return;
         this.gateSpriteSet = new Set();
+        this.wallBySprite = new Map();
+        for (const g of this.wallGates) { this.wallBySprite.set(g.sprite, g); if (g.extraSprites) for (const sp of g.extraSprites) this.wallBySprite.set(sp, g); }
         let a0 = Infinity, a1 = -Infinity, b0 = Infinity, b1 = -Infinity;
         for (const g of this.wallGates) {
             const [a, b] = this.tileAB(g.x, g.y);
@@ -9171,6 +9222,7 @@ export class Scene13WarLayer {
                     const sign = Math.sign(mapY) || Math.sign(prevMapY) || (m.jy >= 0 ? 1 : -1);
                     mapY = sign * limitY;
                 }
+                if (m.f === 0) { const wb = this.wallBySprite.get(object); if (wb) { m.blockedBy = wb; m.blockedAt = this.battleSec; } }
                 px = object.x + (mapX - mapY) * (TILE_W / 2);
                 py = object.y + (mapX + mapY) * (TILE_H / 2);
                 changed = true;
@@ -9949,6 +10001,11 @@ export class Scene13WarLayer {
                         //    栅栏没有破损档（destrAssets 为空），改前 hp 归零后既不换贴图也不破墙，
                         //    只能干等 30 秒保底坍塌 —— 画面上就是「一直砸，栅栏纹丝不动」。
                         //    与 applyRandomCollapseForms 里「栅栏无残垣 → 直接消失」同一口径。
+                        // 🔴 [2026-10-12 主人令「打完就不要再打了」] 石墙打到 0 血 = 打穿：留残垣贴图，取消碰撞（之前 0 血仍挡路）
+                        if (foe.key === 'STONE_WALL' && foe.hp <= 0 && !foe.sprite.obstructionDisabled) {
+                            foe.sprite.obstruction = undefined;
+                            foe.sprite.obstructionDisabled = true;
+                        }
                         if (foe.key === 'WOOD_WALL' && foe.hp <= 0 && !foe.sprite.destroyed) {
                             foe.sprite.destroyed = true;
                             foe.sprite.obstruction = undefined;

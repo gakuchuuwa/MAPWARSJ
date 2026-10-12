@@ -215,7 +215,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
 
     if (centerCastle) {
         const castleDir = resolveCastleAsset('YURT', factionId, region, cityId);
-        const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.56 → 0.54（毡帐系中心城堡，与通用险要口径统一）
+        const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「毡帐系（YURT）险要走的是另一个 0.56，也改为0.54，全世界统一」] 0.56 → 0.54（毡帐系中心城堡，与全库城堡口径统一）
         const cgW = cW * 1.6;
         const cgH = cgW * 0.58;
         const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
@@ -510,8 +510,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     //    小城一律**不摆居中城堡**（centerCastle 恒 false，见 cityStackParams）⇒ 城心位那栋落单在第一象限。
     //    战略地图（native 缺省）走下面原写法，一个像素不动。
     if (native) {
-        // 城墙款式照旧：石墙区随机「双门标准 / 四门雄关」，木栅区固定双门（与战略侧 useFourGates 同一判据）
-        const useFourGates = useStoneWall && ((deHashString(cityId + '|small_fourgates') & 1) === 1);
+        // 🔴 [2026-10-12 主人令「战术模式中，大中小城寨，一律改为四门吧」] 小城城门：原「石墙区随机双门/四门、
+        //    木栅区固定双门」→ **一律四门**（随机的那一颗掷签连同 `useFourGates` 变量一起撤掉，不再有双门款）。
         const SMALL_CITY_SEG = 7, SMALL_CITY_WALL_MARGIN = 1;
         // 🔴 [2026-10-12 主人令「小城，间距 1」] 9 栋排成 3×3 方阵（无城堡，正中也是建筑，取建筑顺序＝占地由大到小，最大的坐正中）：
         //    每个位按 4×4 算、位与位隔 1 格 ⇒ 位距 5 格（同中城、大城排法）。
@@ -525,7 +525,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
             return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
                 ordered.map((o): [string, string] => [o.b, 'AGE2']), native, {
                     seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false,
-                    gateEdges: useFourGates ? [true, true, true, true] : [true, false, true, false],
+                    gateEdges: [true, true, true, true],   // 🔴 [2026-10-12 主人令「大中小城寨，一律改为四门吧」] 小城四门
                     wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : DE_PALISADE_ANCHORS,
                     groundTile: 'sr2',
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
@@ -557,7 +557,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 中间 1 个建筑（随机选，居中）；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
     // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画（否则沿用战略压缩值）
-    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.55 : cityBuildingScale(centerB, 0.4)));
+    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));   // 🔴 [2026-10-12 主人令「全世界统一」] 城堡兜底 0.55 → 0.54（战略分支：小城 centerCastle 恒 false，故实际不达；与评估页同口径）
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId) : null;
     const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : cityBuildingSrc(style, centerB, 'AGE2');
@@ -683,14 +683,18 @@ function buildDeStockadeStackHtml(
     const fenceSet = customStyle ? STOCKADE_FENCE_SETS[customStyle.material] : builtinFence;
     const wallAnchors = fenceSet.anchors;
     // 🔴 [2026-10-12 主人令「城寨用每段 6，城中建筑按 3*3，间距 1 试试」] 战术侧（传了原生尺寸表）城寨也按 DE 格摆放：
-    //    墙圈 seg=6 ⇒ 角到角 17 步、墙内 16×16 格；一扇门开在左下边；材质仍按建筑风格（硬木/原木/平切/篱笆）；
+    //    墙圈 seg=6 ⇒ 角到角 17 步、墙内 16×16 格；材质仍按建筑风格（硬木/原木/平切/篱笆）；
     //    9 栋排 3×3 方阵，每位按 4×4 算、位间隔 1 格 ⇒ 位距 5（方阵宽 14，离墙 1 格）。形制六选一在战术侧暂不用（战略地图不变）。
+    // 🔴 [2026-10-12 主人令「所有城寨改为双门……我说的是战术模式，和战略地图无关」→「战术模式中，大中小城寨，一律改为四门吧」]
+    //    战术城寨城门：原 `[false,false,false,true]`（只左下边一扇）→ 先改双门 `[f,f,t,t]` → **现按新令一律四门 `[t,t,t,t]`**
+    //    （菱形的四条边正中各一扇，与中城/小城同一套 `buildFortifiedRingOnGrid` 口径）。
+    //    ⚠️ 只动战术这一份（`native` 分支，即 `strategicCityHtmlNative`）；**战略地图那条路（`buildStockadeShapeRing`）一个字节没动**。
     const STOCKADE_PITCH = 4 + 1;
     const stockadePos: ReadonlyArray<readonly [number, number]> = [[0, 0], [-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
     const gridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, false, undefined, undefined,
         pool.slice(0, 9).map((b): [string, string] => [b, 'AGE1']), native, {
             seg: 6, near: 0, far: 0, corner: false, rawDirNames: true,
-            gateEdges: [false, false, false, true],
+            gateEdges: [true, true, true, true],
             wallAnchors,
             groundTile: 'sr2',
             slotCenters: stockadePos.map(([bi, bj], k) => ({ ci: 0.5 + bi * STOCKADE_PITCH, cj: 0.5 + bj * STOCKADE_PITCH, isCenter: k === 0 })),
@@ -987,7 +991,9 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     const isFortified = mediumWallStyle === 2;
 
     // 🔴 [2026-10-12 主人令「请继续中城」] 战术侧（传了原生尺寸表）按 DE 格子摆放，做法同大城（buildDeCityGridHtml）；战略地图不传 native，走下面原写法一个像素不动。
-    //    中城：每段 10 ⇒ 角到角 25（< 大城 27）；三款城墙照旧：普通双门（左上、右下两边开门）/ 普通四门 / 加固四门；
+    //    🔴 [2026-10-12 主人令「战术模式中，大中小城寨，一律改为四门吧」] **战术侧中城城门：原随机三款（普通双门 / 普通四门 / 加固四门）
+    //    → 一律四门**（普通四门 或 加固四门，仍按 cityId 掷签区分加固与否）；战略侧（本函数不传 native 那条路）那套三款照旧不动。
+    //    中城：每段 10 ⇒ 角到角 25（< 大城 27）；
     //    9 栋＝城堡 + 8（每象限 2）；近 3 远 8（逐格核对：不重叠、不压大道、栋间 ≥ 1、离墙 2）。
     if (native) {
         // 🔴 [2026-10-12 主人令「假设所有建筑都是 4*4，建筑间距改为 2 格」] 城堡居中；其余 8 栋排成 3×3 方阵的外圈，
@@ -999,7 +1005,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
         return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
             pool.map((b): [string, string] => [b, 'AGE3']), native, {
                 seg: 8, near: 3, far: 8, corner: false, slotCenters,
-                gateEdges: isFourGates ? [true, true, true, true] : [true, false, true, false],
+                gateEdges: [true, true, true, true],   // 🔴 [2026-10-12 主人令「大中小城寨，一律改为四门吧」] 中城四门（原为随机双门/四门）
                 wallAnchors: isFortified
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
@@ -1125,6 +1131,8 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         // 大城：每段 11 ⇒ 角到角 27；13 栋＝城堡 + 12（每象限 3）；近 3.5 远 9（逐格核对：离墙 2、栋间 ≥ 1）
         // 🔴 [2026-10-12 主人令「大城先把城中建筑改为 9 个，然后间隔为 3」] 城堡 + 8 栋（取洗牌后建筑池前 8 种）；
         //    每个位按 4×4 算、位与位隔 3 格 ⇒ 位距 7 格，排成 3×3 方阵（同中城排法）。
+        // 🔴 [2026-10-12 主人令「战术模式中，大中小城寨，一律改为四门吧」] 大城本来就是四门（`gateEdges` 四边皆门），
+        //    这一处**数值未动**，只按新令补记依据：大城／中城／小城／城寨四条战术路线现在一律四门。
         const BIG_PITCH = 4 + 3;
         const bigRingPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
         const bigSlotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
@@ -1328,7 +1336,7 @@ function buildDeCityGridHtml(
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
             const castleDir = resolveCastleAsset(style, factionId, region, cityId);
-            const cW = native.castleW ?? (baseSize * 0.48);
+            const cW = native.castleW ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「全世界统一」] 兜底 0.48 → 0.54（战术按格摆放；通常走 native.castleW 素材原生宽）
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
         } else {

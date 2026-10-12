@@ -21,8 +21,10 @@ interface MonumentData {
     cityId: string;
 }
 
-/** 奇观 marker 基准宽度（px）：与城堡地标（baseSize×0.68）一般大小，比普通据点建筑（×0.40）略大更显眼 */
-const BASE_SIZE = 90;
+/** 奇观 marker 基准宽度（px）：= 大城/险要据点底宽 120 × 0.54 —— 与中心城堡同一把尺（120×0.54=64.8），
+ *  不再比城堡大；个别奇观仍按 WONDER_SCALE_OVERRIDE 相对本基准缩放。
+ *  🔴 [2026-10-12 主人令「全图所有，特殊建筑也改为0.54」] 原 90 → 64.8（90 相当于底宽 ×0.75，比城堡还大 ⇒ 不真实）。 */
+const BASE_SIZE = 120 * 0.54;
 /** [2026-08-28 主人要求「杰姆宣礼塔图改大」、「斯芬克斯雕像缩小」、「德尔斐神谕缩小」]：单独调整相对基准宽的倍数 */
 const WONDER_SCALE_OVERRIDE: Record<string, number> = {
     'MINARET_OF_JAM': 1.15,         // 杰姆宣礼塔（贾姆宣礼塔）：缩小至 1.15 倍，保持修长协调
