@@ -138,13 +138,15 @@ void main() {
   float isWater = smoothstep(0.35, 0.56, wPerturb);
   float isDeepWater = smoothstep(0.50, 0.78, wPerturb);
   
-  // 沙滩与森林底床判定
+  // 沙滩判定（近岸浅滩与干沙）
   float isSand = clamp(field.g * 1.45 + smoothstep(0.24, 0.48, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
-  // 森林有机扰动：低频圆滑自然树林边缘
+  // 森林有机扰动：低频圆滑自然树林边缘与专属林下落叶底床（DE 原版：树下铺满落叶泥土）
   float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8));
   float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5));
-  float fPerturb = field.b + fn1 * 0.045 + fn2 * 0.020;
-  float isForest = smoothstep(0.34, 0.56, fPerturb) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
+  float fPerturb = field.b + fn1 * 0.035 + fn2 * 0.015;
+  // 🔴 [2026-10-12 主人令「森林地下是铺满整块 forestFloorTile 的，树木扎根在林地下」]
+  // 门槛从 0.34 拓宽至 0.16~0.42，使整片林块边缘完全被专属落叶泥土垫底包围，绝不露光秃草地
+  float isForest = smoothstep(0.16, 0.42, fPerturb) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   
   // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，随高程抬升产生真实山坡拉伸与压缩）
   vec2 texUV = fract((vGUV * vec2(96.0, 48.0)) / 512.0);
@@ -152,8 +154,16 @@ void main() {
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;
   
-  // ── DE 原版纯正地面：基底纹理 1:1 自然平铺，辅以林地与沙地自然过渡 ──
-  vec3 landCol = colGrass;
+  // ── DE 第二阶段：地表地貌（TERRAIN）自然斑块与过渡（AESTHETIC_FLAT、干草斑、泥土过渡） ──
+  // 低频巨幅地貌斑块（天然干草色、泥泞枯草交织），打破单一底土单调感
+  float tn1 = snoise(vGUV * 0.08 + vec2(11.3, 47.9));
+  float tn2 = snoise(vGUV * 0.18 + vec2(83.1, 29.5));
+  float terrainPatch = tn1 * 0.65 + tn2 * 0.35;
+  // 自然枯草斑微调（+4%暖黄微噪，呈现原野深浅不一的生命力与呼吸感）
+  vec3 colGrassVar = colGrass * mix(vec3(0.94, 0.95, 0.88), vec3(1.04, 1.03, 0.96), smoothstep(-0.4, 0.4, terrainPatch));
+  
+  // ── DE 原版纯正地面：基底纹理自然平铺，辅以林地与沙地自然过渡 ──
+  vec3 landCol = colGrassVar;
   landCol = mix(landCol, colForest, isForest);
   landCol = mix(landCol, colSand, smoothstep(0.10, 0.65, isSand));
   // 近水湿润河滩：岸边沙土向水际自然加深润泽，衔接浅水河床无断层
@@ -491,13 +501,14 @@ export class Scene13GroundLayerGL {
         const id = data.terrain[y * N + x];
         if (id === 1 || id === 23 || isWaterId(id)) rawWater[y * N + x] = 1.0;
         if (id === 2) rawBeach[y * N + x] = 1.0;
-        // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」]
-        // 彻底按 DE dat 的所有森林地形类型判定林地：
-        // 包含 g_for / g_fo2 / g_snf（雪林）/ 71 / 以及所有 name 含 Forest 或 Jungle 的地形（如 48 Dragon Forest、49 Baobab 等）
+        // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」「森林地下是铺满整块 forestFloorTile 的」]
+        // 彻底按 DE dat 的所有森林/林地地形类型判定林地：
+        // 包含 g_for / g_fo2 / g_snf（雪林）/ 71 / 13 (Palm Desert) / 48 (Dragon Forest) / 以及所有 name 含 Forest, Jungle, Leaves, Palm 的地形
         const m = DE_TERRAIN_MANIFEST[id];
         const fname = m?.name_2;
-        const isForestTerrain = fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 ||
-          (m && (m.name.includes('Forest') || m.name.includes('Jungle') || m.name.includes('Leaves')));
+        const tname = m?.name ?? '';
+        const isForestTerrain = fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
+          tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm');
         if (isForestTerrain) rawForest[y * N + x] = 1.0;
       }
     }
@@ -1096,17 +1107,17 @@ export class Scene13GroundLayerGL {
       return clump;
     };
 
-    // 🔴 [2026-10-12 主人令「我觉得有树的地方该有丘陵」]
+    // 🔴 [2026-10-12 主人令「我觉得有树的地方该有丘陵」「森林地下是铺满整块 forestFloorTile 的」]
     // 找出地图中所有森林/树木聚集的密集区核心，优先作为山头种子，确保有树林的地方脚下必然升起丘陵！
     const forestSeeds: Array<{ x: number; y: number }> = [];
     const sf = this.smoothForest;
     if (sf) {
-      for (let y = 4; y < N - 4; y += 4) {
-        for (let x = 4; x < N - 4; x += 4) {
+      for (let y = 3; y < N - 3; y += 3) {
+        for (let x = 3; x < N - 3; x += 3) {
           if (inProtect(x, y)) continue;
-          if (sf[y * N + x] >= 0.45) {
-            // 检查是否与已有林地种子保持一定间距
-            const close = forestSeeds.some(s => Math.hypot(s.x - x, s.y - y) < 8);
+          if (sf[y * N + x] >= 0.18) {
+            // 间距 5 格：足够密集覆盖全图大大小小所有林块与林缘
+            const close = forestSeeds.some(s => Math.hypot(s.x - x, s.y - y) < 5);
             if (!close) forestSeeds.push({ x, y });
           }
         }
@@ -1116,7 +1127,7 @@ export class Scene13GroundLayerGL {
     // 4. 逐个团块生成并计算 DE 原版「边缘距离场」
     // DE 原版规则：离团边缘越近，高度越低（1级）；越向内部深入，高度递增（直到 peakH）。
     // 总团数 = 森林所在山丘数 + 原野自然开阔山丘数
-    const totalClumps = Math.max(clumpCount, forestSeeds.length + 2);
+    const totalClumps = Math.max(clumpCount, forestSeeds.length + (isBig ? 4 : 2));
     for (let c = 0; c < totalClumps; c++) {
       let seedX = 0, seedY = 0, found = false;
 
