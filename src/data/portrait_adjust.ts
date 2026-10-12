@@ -4448,9 +4448,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -5
         },
         "/assets/TIBET/spurgyal_dariniansai.png": {
-            "scale": 0.97,
+            "scale": 1.01,
             "offsetX": 0,
-            "offsetY": 24
+            "offsetY": 27
         },
         "/assets/TIBET/xiangxiong_limixia.png": {
             "scale": 1.12,

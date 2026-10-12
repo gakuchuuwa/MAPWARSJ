@@ -413,18 +413,20 @@ const DE_BLD_TABLE: Record<string, Array<[number, number, number]>> = {
     MONASTERY: [[2100, 0, 7], [2100, 1, 8], [2100, 2, 9], [2100, 3, 10]],
     TOWER: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
     OUTPOST: [[500, 0, 0], [500, 0, 0], [500, 0, 0], [500, 0, 0]],
+    CASTLE: [[4800, 8, 11], [4800, 8, 11], [4800, 8, 11], [4800, 8, 11]],
+    WONDER: [[4800, 3, 10], [4800, 3, 10], [4800, 3, 10], [4800, 3, 10]],
 };
 
 /** 素材名 → DE 建筑属性；护甲类 11(石质防御)+21(建筑) 与城墙同，攻城武器加成照 dmgVs 自然结算。 */
-function deBuildingStats(name: string): WarType {
+function deBuildingStats(name: string, forceKind?: string): WarType {
     const m = name.match(/_AGE([1-4])/);
     const age = m ? Number(m[1]) - 1 : 1;
-    let kind = 'HOUSE';
-    for (const k of ['ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
+    let kind = forceKind ?? 'HOUSE';
+    if (!forceKind) for (const k of ['CASTLE', 'ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
         if (name.includes(k)) { kind = k; break; }
     }
     const dark = name.startsWith('DARK_') || name.startsWith('HUT_') || name === 'SETTLEMENT';
-    const [hp, melee, pierce] = DE_BLD_TABLE[kind][dark ? 0 : age];
+    const [hp, melee, pierce] = DE_BLD_TABLE[kind][dark && !forceKind ? 0 : age];
     return { name, cls: 'melee', sz: 1, hp, atk: 0, meleeArmor: melee, pierceArmor: pierce, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] };
 }
 
@@ -1082,6 +1084,10 @@ const COMMANDER_CELL: Record<FormationMode, { col: number; row: number; cols: nu
 const MELEE_QUIET_SEC = 1.5;
 const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
+/** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */
+const BATTLE_LIMIT_SEC = 300;
+/** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */
+const FLOW_SUB = 2;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -1126,6 +1132,7 @@ const NATURE_BASE_URL = '/SUCAI_NATURE/';
 /** DE 出兵口军事建筑（营帐/堡垒，`public/SUCAI_BUILDING/`）素材目录 */
 const BUILDING_BASE_URL = '/SUCAI_BUILDING/';
 const BATTLEFIELD_BASE_URL = '/SUCAI_BATTLEFIELD/';
+const ANIMAL_BASE_URL = '/SUCAI_ANIMAL/';
 /** 🔴 [2026-10-11「整合各场景素材」] 按据点真实地理骨架 / 按 DE 主题烘焙的战术战场地图数据目录
  *  （`scratch/_bake_site_maps.mjs` 与 `scratch/_bake_theme_maps.mjs` 产出） */
 const MAPDATA_DIR = '/battlefields/';
@@ -3453,6 +3460,13 @@ export class Scene13WarLayer {
     private wallGates: WarBuilding[] = [];
     /** 🔴 [2026-10-12] 守方城内可攻击建筑/箭塔（攻城武器第二优先目标，城墙城门之后） */
     private defBuildings: WarBuilding[] = [];
+    /** 🔴 [2026-10-12] 攻城战中心建筑（城堡 > 城镇中心 > 最居中的一栋）；undefined = 未选，null = 本场没有 */
+    private centerBld: WarBuilding | null | undefined = undefined;
+    /** 🔴 [2026-10-12 主人令「开始」流场寻敌] 攻城战流场：每格到中心建筑的步数（INF=不通），格 = 1 个等轴地块，a/b 为地块坐标 */
+    private flowDist: Int16Array | null = null;
+    private flowR = 0;
+    private flowBlocked: Uint8Array | null = null;   // 调试探针用
+    private flowBuiltAt = -99;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
     /** 🔴 [主人需求] 攻城战守方城堡射手（险要专属；30 秒不坍塌，持续射击） */
@@ -5120,6 +5134,9 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.defBuildings = [];
+        this.centerBld = undefined;
+        this.flowDist = null;
+        this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
@@ -5449,6 +5466,9 @@ export class Scene13WarLayer {
         this.decorSprites = [];
         this.wallGates = [];
         this.defBuildings = [];
+        this.centerBld = undefined;
+        this.flowDist = null;
+        this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
@@ -5941,11 +5961,9 @@ export class Scene13WarLayer {
                 for (let i = 0; i < wonderAssets.length; i++) {
                     const spot = centerPrioritySide[Math.min(i, centerPrioritySide.length - 1)];
                     wonderSpots.push(spot);
-                    this.decorSprites.push(place(
-                        { x: spot.x, y: spot.y },
-                        wonderAssets[i],
-                        { z: 2, scale: SIEGE_WONDER_SCALE, indestructible: true },
-                    ));
+                    const wsp = place({ x: spot.x, y: spot.y }, wonderAssets[i], { z: 2, scale: SIEGE_WONDER_SCALE });
+                    this.decorSprites.push(wsp);
+                    this.trackCityBuilding(wsp, 'WONDER');
                 }
             }
             // 普通建筑池避开特殊建筑占用的落点，不与其重叠。
@@ -6249,9 +6267,9 @@ export class Scene13WarLayer {
                     const avgY = side.reduce((n, s) => n + s.y, 0) / side.length;
                     const centerSpawn = buildingSide.reduce((best, s) =>
                         Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
-                    const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE, indestructible: true });
+                    const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
                     this.decorSprites.push(castleSp);
-                    this.trackCityBuilding(castleSp);
+                    this.trackCityBuilding(castleSp, 'CASTLE');
                     placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn));
                     return;
                 }
@@ -6297,10 +6315,9 @@ export class Scene13WarLayer {
                     Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
                 const castleSp = place(centerSpawn, this.castleAssetFor(style, this.defenderCityId), {
                     scale: SIEGE_CASTLE_SCALE,
-                    indestructible: true,
                 });
                 this.decorSprites.push(castleSp);
-                this.trackCityBuilding(castleSp);
+                this.trackCityBuilding(castleSp, 'CASTLE');
                 const shuffledBuildings = cityPoolBuildings(SIEGE_MEDIUM_BUILDINGS).sort(() => Math.random() - 0.5)
                     .slice(0, buildingSide.length - 1);
                 const shuffledSide = buildingSide.filter((s) => s !== centerSpawn).sort(() => Math.random() - 0.5);
@@ -6332,10 +6349,9 @@ export class Scene13WarLayer {
                     Math.abs(s.y - avgY) < Math.abs(best.y - avgY) ? s : best, buildingSide[0]);
                 const castleSp = place(centerSpawn, castleAsset, {
                     scale: SIEGE_CASTLE_SCALE,
-                    indestructible: true,
                 });
                 this.decorSprites.push(castleSp);
-                this.trackCityBuilding(castleSp);
+                this.trackCityBuilding(castleSp, 'CASTLE');
                 // 🔴 [主人需求] 城堡射箭（DE 城堡：攻 11、装填 2.0s；射程与高级箭塔同档 400）。
                 //    30 秒不坍塌（applyRandomCollapseForms 跳过 CASTLE），持续射击。
                 this.castleTowers.push({
@@ -6363,10 +6379,9 @@ export class Scene13WarLayer {
                 Math.abs(s.y - avgYBig) < Math.abs(best.y - avgYBig) ? s : best, buildingSide[0]);
             const castleSpBig = place(centerSpawnBig, this.castleAssetFor(style, this.defenderCityId), {
                 scale: SIEGE_CASTLE_SCALE,
-                indestructible: true,
             });
             this.decorSprites.push(castleSpBig);
-            this.trackCityBuilding(castleSpBig);
+            this.trackCityBuilding(castleSpBig, 'CASTLE');
             const age3Pool: Array<[string, string]> = [
                 ...SIEGE_IMPERIAL_BUILDINGS.filter(([, age]) => age === 'AGE3'),
                 // 🔴 [2026-09-16 主人定] 二级蒙古大城：辅助池掺入蒙古包（仍是 3 栋 AGE4 必有 + 6 栋辅助 = 9）
@@ -6769,8 +6784,9 @@ export class Scene13WarLayer {
                         const ob = data.objects[obIdx];
                         if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
-                        if (r && r[0] === 'NATURE') {
-                            let asset = treeClumpDominant.get(obIdx) ?? r[1];
+                        if (r && (r[0] === 'NATURE' || r[0] === 'ANIMAL')) {
+                            const isAnimal = r[0] === 'ANIMAL';
+                            let asset = isAnimal ? ('ANIMAL:' + r[1]) : (treeClumpDominant.get(obIdx) ?? r[1]);
                             if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
                             if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
@@ -6894,16 +6910,43 @@ export class Scene13WarLayer {
         const isAnim = asset.startsWith('BUILDINGANIM:');
         const isBuilding = asset.startsWith('BUILDING:') || isAnim;
         const isBattlefield = asset.startsWith('BATTLEFIELD:');
-        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : NATURE_BASE_URL);
-        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : asset));
-        const im = new Image();
-        im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
-        // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）
-        im.src = base + name + '/' + (isBattlefield ? 'preview.png' : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png')));
-        fetch(base + name + '/_meta.json')
-            .then((r) => (r.ok ? r.json() : null))
-            .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
-            .catch(() => {});
+        const isAnimal = asset.startsWith('ANIMAL:');
+        const base = isBattlefield ? BATTLEFIELD_BASE_URL : (isBuilding ? BUILDING_BASE_URL : (isAnimal ? ANIMAL_BASE_URL : NATURE_BASE_URL));
+        const name = isBattlefield ? asset.slice('BATTLEFIELD:'.length) : (isAnim ? asset.slice('BUILDINGANIM:'.length) : (isBuilding ? asset.slice('BUILDING:'.length) : (isAnimal ? asset.slice('ANIMAL:'.length) : asset)));
+        if (isAnimal) {
+            // 🔴 [2026-10-12 第四阶段] 动物素材：先 fetch _meta.json 确定动作类型（idle/hover/fly），
+            //    飞鸟没有 idle，只有 hover 和 fly；地面动物用 idle。确定后再加载正确的方向 0 图片。
+            fetch(base + name + '/_meta.json')
+                .then((r) => (r.ok ? r.json() : null))
+                .then((m) => {
+                    if (!m) return;
+                    const actName = m.idle ? 'idle' : (m.hover ? 'hover' : (m.fly ? 'fly' : 'walk'));
+                    const actMeta = m[actName];
+                    const d0 = actMeta?.dirs?.['0'] ?? actMeta?.dirs?.[0];
+                    if (d0) {
+                        m.box_w = d0.fw;
+                        m.box_h = d0.fh;
+                        m.anchor_x = d0.hx;
+                        m.anchor_y = d0.hy;
+                    }
+                    m.frames = actMeta?.frames ?? 1;
+                    na.meta = m as NatureMeta;
+                    const im = new Image();
+                    im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
+                    im.src = base + name + '/' + actName + '_0.png';
+                })
+                .catch(() => {});
+        } else {
+            const im = new Image();
+            im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
+            // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）
+            const file = isBattlefield ? 'preview.png' : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
+            im.src = base + name + '/' + file;
+            fetch(base + name + '/_meta.json')
+                .then((r) => (r.ok ? r.json() : null))
+                .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
+                .catch(() => {});
+        }
     }
 
     /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，等距菱形渲染） */
@@ -8197,7 +8240,11 @@ export class Scene13WarLayer {
             };
             const wallOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.obstructionDisabled;
             const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
-            const t = nearest(this.wallGates, wallOk) ?? nearest(this.defBuildings, bldOk);
+            // 🔴 [2026-10-12 主人令「攻城武器：城门、箭塔、城内中心建筑」] 优先序：城门 → 箭塔 → 中心建筑 → 其余城墙/建筑
+            const t = nearest(this.wallGates, (b) => b.key === 'STONE_GATE' && wallOk(b))
+                ?? nearest(this.defBuildings, (b) => (b.bld!.tower !== undefined || b.bld!.name.includes('TOWER') || b.bld!.name.includes('OUTPOST')) && bldOk(b))
+                ?? (this.centerBld && bldOk(this.centerBld) ? nearest([this.centerBld], bldOk) : null)
+                ?? nearest(this.wallGates, wallOk) ?? nearest(this.defBuildings, bldOk);
             if (t) { if (reserve) t.claims++; return t; }
             if (this.wallGates.some(wallOk) || this.defBuildings.some(bldOk)) return null;
         }
@@ -8218,7 +8265,7 @@ export class Scene13WarLayer {
                 if (!tooNear && d < fd) { fd = d; free = b; }
             }
             // 🔴 [2026-10-12 主人令「士兵优先攻击士兵」] 有敌兵就打兵，没兵才打墙（待命期只认已出城的守军）
-            if (bw && !(this.defenderHolding ? manOut : manChosen)) { if (reserve) bw.claims++; return bw; }
+            if (bw && !(this.defenderHolding ? manOut : manChosen) && !this.flowOpenAt(m.x, m.y)) { if (reserve) bw.claims++; return bw; }
             // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙且无迎战守军
             //    → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭；若有已出城迎战的守军则正常交战。
             if (this.defenderHolding && !manOut) return null;
@@ -8226,6 +8273,7 @@ export class Scene13WarLayer {
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
+            if (this.battleType === 'siege' && m.f === 0 && this.flowOpenAt(m.x, m.y)) break;   // 有路进城就不打墙
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
@@ -8272,7 +8320,8 @@ export class Scene13WarLayer {
      */
     private collapseNextWallGap(): boolean {
         const alive = this.wallGates.filter(b => this.wallStanding(b));
-        const all = [...alive, ...this.defBuildings.filter(b => this.wallStanding(b))];
+        // 中心建筑不参与 10 秒坍塌（它塌了就是城破判负，只能靠真打掉血）
+        const all = [...alive, ...this.defBuildings.filter(b => b !== this.centerBld && this.wallStanding(b))];
         if (all.length === 0) return false;
         let pick: WarBuilding | undefined;
         for (const b of all) if (b.hitAt !== undefined && (!pick || b.hitAt < pick.hitAt!)) pick = b;
@@ -8358,11 +8407,26 @@ export class Scene13WarLayer {
     }
 
     /** 登记一座可攻击的守城建筑/箭塔（城堡 indestructible 不登记）。 */
-    private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower): void {
+    private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower, kind?: string): void {
         if (sp.indestructible) return;
-        const key = 'BLD:' + name;
-        const st = WALL_GATE_STATS[key] ?? (WALL_GATE_STATS[key] = deBuildingStats(name));
+        const key = 'BLD:' + (kind ? kind + ':' : '') + name;
+        const st = WALL_GATE_STATS[key] ?? (WALL_GATE_STATS[key] = deBuildingStats(name, kind));
         this.defBuildings.push({ f: 1, key, x: sp.x, y: sp.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite: sp, bld: { name, tower } });
+    }
+
+    /** 中心建筑：只在攻城战选。城堡优先，其次城镇中心，都没有取离城内建筑群中心最近的一栋（箭塔除外）。 */
+    private pickCenterBuilding(): WarBuilding | null {
+        if (this.battleType !== 'siege') return null;
+        const list = this.defBuildings.filter(b => !b.bld!.tower);
+        if (list.length === 0) return null;
+        const castle = list.find(b => b.key.startsWith('BLD:CASTLE:') || b.bld!.name.includes('CASTLE'));
+        if (castle) return castle;
+        const tc = list.find(b => b.bld!.name.includes('TOWN_CENTER'));
+        if (tc) return tc;
+        const cx = list.reduce((n, b) => n + b.x, 0) / list.length, cy = list.reduce((n, b) => n + b.y, 0) / list.length;
+        let pick = list[0], pd = Infinity;
+        for (const b of list) { const d = (b.x - cx) ** 2 + (b.y - cy) ** 2; if (d < pd) { pd = d; pick = b; } }
+        return pick;
     }
 
     /** 建筑挨打后的表现：血≤50% 换破损贴图；血≤0 倒塌成残骸并停火。 */
@@ -8371,6 +8435,8 @@ export class Scene13WarLayer {
         if (sp.destroyed || sp.collapse || sp.asset.includes('_RUBBLE')) return;
         if (b.hp <= 0) {
             if (b.bld!.tower) b.bld!.tower.down = true;
+            for (const t of this.castleTowers) if (t.sprite === sp) t.down = true;
+            for (const t of this.arrowTowers) if (t.sprite === sp) t.down = true;
             sp.obstruction = undefined;
             sp.obstructionDisabled = true;
             this.collapseToRubble(sp, name);
@@ -8382,7 +8448,7 @@ export class Scene13WarLayer {
     }
 
     /** 记录一座守城建筑（供 30 秒随机三形态 + 未坍塌射冷箭用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
-    private trackCityBuilding(sp: DecorSprite): void {
+    private trackCityBuilding(sp: DecorSprite, kind?: string): void {
         const name = sp.asset.slice('BUILDING:'.length);
         this.cityBuildings.push({
             sprite: sp,
@@ -8392,7 +8458,7 @@ export class Scene13WarLayer {
             reload: 3.2,                  // 装填时间 3.0 ~ 3.5 秒
             atk: 3,                       // 窗台民兵冷箭 (攻击力 2 ~ 3)
         });
-        this.registerDefBuilding(sp, name);
+        this.registerDefBuilding(sp, name, undefined, kind);
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
         this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
         this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
@@ -8677,7 +8743,140 @@ export class Scene13WarLayer {
         return _best;
     }
 
+    /**
+     * 🔴 [2026-10-12 主人令] 流场寻敌：以中心建筑为目标，把还立着的墙/建筑当障碍，算出每个地块到中心的步数。
+     * 士兵沿「步数递减」的方向走，墙塌出缺口后自然绕进城；墙全封死时没有路 ⇒ 返回 INF，退回旧行为（打墙）。
+     * 地块坐标与 resolveWorldObstructions 同一套：a = x/TW + y/TH，b = y/TH − x/TW（以画布中心为原点）。
+     */
+    private buildFlowField(): void {
+        this.flowBuiltAt = this.battleSec;
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; return; }
+        if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+        const goal = this.centerBld;
+        if (!goal || goal.hp <= 0) { this.flowDist = null; return; }
+        const TW = TAC_TILE_W, TH = TAC_TILE_H;
+        const S = FLOW_SUB;   // 每个地块切 S×S 小格：1 格宽的缺口才走得通
+        const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
+        const N = 2 * R + 1;
+        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const ab = (x: number, y: number): [number, number] => {
+            const dx = x - cx, dy = y - cy;
+            return [(dx / TW + dy / TH) * S, (dy / TH - dx / TW) * S];
+        };
+        const blocked = new Uint8Array(N * N);
+        for (const sp of this.decorSprites) {
+            const ob = sp.obstruction;
+            if (!ob || sp.obstructionDisabled || sp.destroyed || sp === goal.sprite) continue;
+            const [ca, cb] = ab(sp.x, sp.y);
+            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;   // 多留 0.25 地块 = 士兵身位
+            for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
+                for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
+                    if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
+                    if (a < -R || a > R || b < -R || b > R) continue;
+                    blocked[(a + R) * N + (b + R)] = 1;
+                }
+            }
+        }
+        const [ga0, gb0] = ab(goal.x, goal.y);
+        const ga = Math.round(ga0), gb = Math.round(gb0);
+        for (let a = ga - 4 * S; a <= ga + 4 * S; a++) for (let b = gb - 4 * S; b <= gb + 4 * S; b++) {
+            if (a >= -R && a <= R && b >= -R && b <= R) blocked[(a + R) * N + (b + R)] = 0;   // 目标周围留空，BFS 才出得来
+        }
+        const INF = 32767;
+        const dist = new Int16Array(N * N).fill(INF);
+        const queue = new Int32Array(N * N);
+        let qh = 0, qt = 0;
+        const g = (ga + R) * N + (gb + R);
+        dist[g] = 0; queue[qt++] = g;
+        while (qh < qt) {
+            const c = queue[qh++];
+            const ca = (c / N) | 0, cb = c % N;
+            const nd = dist[c] + 1;
+            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                if (!da && !db) continue;
+                const a2 = ca + da, b2 = cb + db;
+                if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                const n = a2 * N + b2;
+                if (blocked[n] || dist[n] <= nd) continue;
+                if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                dist[n] = nd; queue[qt++] = n;
+            }
+        }
+        this.flowDist = dist;
+        this.flowBlocked = blocked;
+        this.flowR = R;
+    }
+
+    /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
+    private flowDistAt(x: number, y: number): number {
+        const f = this.flowDist;
+        if (!f || !this.canvas) return Infinity;
+        const R = this.flowR, N = 2 * R + 1;
+        const dx = x - this.canvas.width / 2, dy = y - this.canvas.height / 2;
+        const a = Math.round((dx / TAC_TILE_W + dy / TAC_TILE_H) * FLOW_SUB) + R, b = Math.round((dy / TAC_TILE_H - dx / TAC_TILE_W) * FLOW_SUB) + R;
+        if (a < 0 || a >= N || b < 0 || b >= N) return Infinity;
+        const d = f[a * N + b];
+        return d >= 32767 ? Infinity : d;
+    }
+
+    /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
+    private flowWaypoint(x: number, y: number): { x: number; y: number } | null {
+        const f = this.flowDist;
+        if (!f || !this.canvas) return null;
+        const R = this.flowR, N = 2 * R + 1;
+        const TW = TAC_TILE_W, TH = TAC_TILE_H;
+        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const dx = x - cx, dy = y - cy;
+        let a = Math.round((dx / TW + dy / TH) * FLOW_SUB) + R, b = Math.round((dy / TH - dx / TW) * FLOW_SUB) + R;
+        if (a < 1 || a >= N - 1 || b < 1 || b >= N - 1) return null;
+        const cur = (): number => f[a * N + b];
+        const best = (): [number, number, number] => {
+            let bd = cur(), ba = a, bb = b;
+            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                if (!da && !db) continue;
+                const d = f[(a + da) * N + (b + db)];
+                if (d < bd) { bd = d; ba = a + da; bb = b + db; }
+            }
+            return [bd, ba, bb];
+        };
+        if (cur() >= 32767) {   // 站在被膨胀的障碍格里：先挪到相邻可走格
+            const [bd, ba, bb] = best();
+            if (bd >= 32767) return null;
+            a = ba; b = bb;
+        }
+        if (cur() <= 6 * FLOW_SUB) return null;   // 已到中心附近，交还正常索敌
+        for (let i = 0; i < 6 * FLOW_SUB; i++) {
+            const [bd, ba, bb] = best();
+            if (bd >= cur()) break;
+            a = ba; b = bb;
+            if (bd <= 3 * FLOW_SUB) break;
+        }
+        const wa = (a - R) / FLOW_SUB, wb = (b - R) / FLOW_SUB;
+        return { x: cx + (wa - wb) * (TW / 2), y: cy + (wa + wb) * (TH / 2) };
+    }
+
+    /** 攻方士兵目前能不能走进城（有路）：有路时不必打墙 */
+    private flowOpenAt(x: number, y: number): boolean {
+        return this.flowDist !== null && Number.isFinite(this.flowDistAt(x, y));
+    }
+
+    /** 寻敌结果过一道流场：攻方在城外、目的地更靠近中心时，改走流场路径（绕缺口进城） */
+    private flowRedirect(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
+        if (!this.flowDist || m.f !== 0 || m.hero) return aim;
+        const du = this.flowDistAt(m.x, m.y);
+        if (!Number.isFinite(du) || du <= 6 * FLOW_SUB) return aim;
+        const target = aim ?? (this.centerBld ? { x: this.centerBld.x, y: this.centerBld.y } : null);
+        if (!target) return aim;
+        const dt2 = this.flowDistAt(target.x, target.y);
+        if (Number.isFinite(dt2) && dt2 > du) return aim;   // 目的地在更外面：照旧
+        return this.flowWaypoint(m.x, m.y) ?? aim;
+    }
+
     private aimAt(m: WarMan): { x: number; y: number } | null {
+        return this.flowRedirect(m, this.aimAtRaw(m));
+    }
+
+    private aimAtRaw(m: WarMan): { x: number; y: number } | null {
         this.releaseReservedTarget(m);
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         // 🔴 [2026-10-11 AA #3 前半 属实] 原为 `search(m, MARCH_R, …, false)`（reserve=false）⇒ 不占围殴名额，
@@ -9017,6 +9216,7 @@ export class Scene13WarLayer {
             this.wallAutoCollapsed = true;
             this.collapseFrontWalls();
         }
+        if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
         this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) {
@@ -9184,7 +9384,10 @@ export class Scene13WarLayer {
             //    「让第 5 个人去找次近的空闲目标」），不是把已经在交战的人赶走。DE 同理：
             //    单位锁定目标后打到目标死，不会因为「这人已经被 4 个人打了」自己走开。
             const previousTarget = m.foe;
-            const keep = this.canKeepTarget(m, SIGHT);
+            // 🔴 [2026-10-12 主人令「士兵优先攻击士兵」] 普通士兵正在打墙/建筑时，每个索敌周期重搜一次：
+            //    视野里出现敌兵就改打兵（search 已是兵优先；没兵会重新选回墙）。
+            const keep = this.canKeepTarget(m, SIGHT)
+                && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0);
             const hb = this.recentAttacker(m, SIGHT);
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
                 && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
@@ -10025,9 +10228,14 @@ export class Scene13WarLayer {
         // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
         this.tickContactSfx(dt);
 
-        if (alive[0] <= 0 || alive[1] <= 0) {
+        // 🔴 [2026-10-12 主人令] 胜负条件：① 一方全灭；② 攻城战中心建筑被摧毁 → 守方输；
+        //    ③ 5 分钟（BATTLE_LIMIT_SEC）到点仍未分出 → 攻方输（攻城、野战同口径）。
+        if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+        const centerDown = !!this.centerBld && this.centerBld.hp <= 0;
+        const timeUp = this.battleSec >= BATTLE_LIMIT_SEC;
+        if (alive[0] <= 0 || alive[1] <= 0 || centerDown || timeUp) {
             this.over = true;
-            const attackerLost = alive[0] <= 0;
+            const attackerLost = alive[0] <= 0 || (!centerDown && alive[1] > 0 && timeUp);
             // [2026-08-11 诊断] 主人报「兵没死光就结束」。这条日志证明是不是演出自己判的：
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
