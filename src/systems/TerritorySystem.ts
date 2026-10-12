@@ -1289,9 +1289,13 @@ function buildDeCityGridHtml(
     const AUTO = 1.2;
     const parts: string[] = [];
 
+    // 🔴 [2026-10-13 主人令「PASS的内城套上和中城一样的地基地图」]
+    // 有外圈墙（如 PASS 双层城）时，地基底图严格对应内城墙圈（ring），与中城地基尺寸范围完全对齐；单层城则沿用 frame。
+    const innerRX = ring.L * TW / 2, innerRY = ring.L * TH / 2;
+    const innerCy = (2 * ring.a + ring.L) * TH / 2;
     parts.push(featheredPolygonGroundDiv(
         W, H, `/SUCAI_TERRAIN/${g.groundTile}.png`, baseSize * 0.32 * AUTO * 2.3,
-        [[0, ringCy - rY], [rX, ringCy], [0, ringCy + rY], [-rX, ringCy]],
+        [[0, innerCy - innerRY], [innerRX, innerCy], [0, innerCy + innerRY], [-innerRX, innerCy]],
         TW * 0.5, 0.93, 10,
     ));
 

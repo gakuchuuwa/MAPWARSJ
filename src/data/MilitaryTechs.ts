@@ -133,21 +133,21 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'forging', name: '锻造', de: 'Forging', year: null,
         era: 'antiquity',
         basis: '铁兵器普及早于时间线起点（-334 已是铁器时代）',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 45, 46, 47, 50] }],
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 原含 45/50（DE 全表 0 单位）；46=本项目枪兵系、47=斥候（DE 确有）保留
         cultures: null,
     },
     {
         id: 'iron_casting', name: '铸铁', de: 'Iron casting', year: -100,
         era: 'antiquity',
         basis: '汉代炒钢／百炼钢工艺成熟',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 45, 46, 47, 50] }],
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 原含 45/50（DE 全表 0 单位）；46=本项目枪兵系、47=斥候（DE 确有）保留
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
         id: 'blast_furnace', name: '鼓风炉', de: 'Blast Furnace', year: 31,
         era: 'antiquity',
         basis: '东汉杜诗造水排（水力鼓风冶铁）；欧洲高炉迟至 12 世纪',
-        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 45, 46, 47, 50] }],
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 46, 47] }],   // 🔴 [2026-10-13 对账清空类] 同锻造线：删 45/50（DE 空类）
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'JAPAN', 'CENTRAL_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'PERSIAN', ],
     },
 
@@ -157,7 +157,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '鳞甲远早于时间线起点',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: null,
@@ -167,7 +167,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'antiquity',
         basis: '凯尔特人前 3 世纪发明，罗马前 1 世纪普遍装备',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
         ],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
@@ -177,7 +177,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'castle',
         basis: '欧洲全身板甲成熟期；板甲是西欧独有工艺',
         effects: [
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6, 46] },   // 🔴 [2026-10-13 对账] 46=本项目枪兵系（DE 对枪兵靠 unit 点名，无此类）——**故意保留**，删了枪兵就吃不到步兵甲
             { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
         ],
         cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
@@ -360,8 +360,11 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'chemistry', name: '化学', de: 'Chemistry', year: 1100,
         era: 'castle',
         basis: '火药兵器（硝石提纯）成熟，远程投射物威力跃升',
-        // DE 效果 = 弓箭手/弓骑/火枪 +1 穿刺攻击
-        effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36, 44] }],
+        // DE 效果 = 弓箭手/弓骑 +1 穿刺攻击
+        // 🔴 [2026-10-13 对账修·作用面] 原写 classes:[0,36,44] —— DE 原始表（tech 47，86 个 mod）实测：
+        //    类级只有 class 0 / 36 / 52，其余是逐个 unit 点名；**u5(HCANR 火枪) 那一项是 768 = 装甲类3 +0**，
+        //    即 DE 的 Chemistry **不给火枪加穿刺**。⇒ 删掉 44，火枪 5 个兵种不再白得 +1 穿刺。
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36] }],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
 
@@ -433,8 +436,11 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'hippagretai', name: '王伴骑兵', de: 'Hippagretai', year: -400,
         era: 'antiquity',
-        basis: '斯巴达王伴精锐骑兵，骑兵血量强化',
-        effects: [{ attr: 'hp', op: 'add', value: 50, classes: [12] }],
+        basis: '斯巴达王伴精锐，步兵血量强化',
+        // 🔴 [2026-10-13 对账修·作用面写反] 原写 classes:[12]（**全部骑兵 +50HP**，共 94 个兵种白得）——
+        //    DE 原始表（tech 1226）`hp +50` 打在 u2162(POLEMARCH_1) 与 u2164–2167、u2270–2272 共 **8 个 unit**，
+        //    经 `de_unit_class.json` 反查全部是 **class 6（斯巴达步兵体系）**，与骑兵无关。⇒ 作用面改 **[6]**。
+        effects: [{ attr: 'hp', op: 'add', value: 50, classes: [6] }],
         cultures: ['GREEK'],
     },
     {
@@ -464,7 +470,12 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'zealotry', name: '狂热', de: 'Zealotry', year: 900,
         era: 'feudal',
         basis: '撒拉逊狂热教团，骆驼血量强化',
-        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [30] }],
+        // 🔴 [2026-10-13 对账修·作用面] 原写 classes:[30] —— **DE 全表 class 30 一个单位都没有**，
+        //    这条科技一直**空转**。DE 原始表实测（tech 622）：`hp +20` 打在
+        //    u282/556（DERVI/UDERV 骆驼）、u1755（CAMELSC）、u329/330（CVLRY/HCLRY）、u207（SHCLRY）、
+        //    u1923（SIEGECAMEL）＝ **class 12**；u1007/1009（CAMAR/ECAMAR）＝ **class 36 骆驼弓骑**；
+        //    u1263（FCAMEL）＝ class 35。⇒ 作用面取 **[12,36]**（class 各自由 `de_unit_class.json` 反查坐实）。
+        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 36] }],
         cultures: ['ORIE'],
     },
     {
@@ -494,7 +505,10 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'celtic_furor', name: '凯尔特之怒', de: 'Furor Celtica', year: 1100,
         era: 'castle',
         basis: '凯尔特狂战士攻城，攻城器械血量强化',
-        effects: [{ attr: 'hp', op: 'mul', value: 1.4, classes: [13, 55] }],
+        // 🔴 [2026-10-13 对账补作用面] DE 原始表（tech 5）是 `c13/c55/c51/c54 hp×1.4`
+        //    ＋点名 u1120/1122/1744/1746/1923（象炮/攻城象/攻城骆驼，cls12）—— 原来只写 `[13,55]`，
+        //    漏了 **51/54（投石机与重型投石机系）** 与攻城象/骆驼。项目里 class 51/54 无对应兵种，故补 12 兜住攻城兽。
+        effects: [{ attr: 'hp', op: 'mul', value: 1.4, classes: [12, 13, 51, 54, 55] }],
         cultures: ['CELTS_FEUDAL'],
     },
     {
@@ -522,7 +536,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'sipahi', name: '西帕希', de: 'Sipahi', year: 1400,
         era: 'castle',
         basis: '奥斯曼西帕希骑兵，弓骑血量强化',
-        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [36] }],
+        // 🔴 [2026-10-13 对账补作用面] DE（tech 491）= `c36 hp+20` ＋点名 u1738/1740（RATHA/ERATHA 战车系，cls12）。
+        //    项目侧「远程战车」记在 cls36、「近战战车」记在 cls12 ⇒ 补 12 兜住近战战车。
+        effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 36] }],
         cultures: ['TURKS'],
     },
     {
@@ -589,7 +605,11 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'el_dorado', name: '黄金国', de: 'El Dorado', year: 1300,
         era: 'castle',
         basis: '玛雅黄金国，鹰勇士血量强化',
-        effects: [{ attr: 'hp', op: 'add', value: 40, classes: [29] }],
+        // 🔴 [2026-10-13 对账修·作用面] 原写 classes:[29] —— **DE 全表 class 29 一个单位都没有**，
+        //    这条科技一直**空转**（一分加成不发）。DE 原始表实测（`scratch/de_techs.json` tech 578）：
+        //    `hp +40` 打在 u751/752/753（EAGLE/EAGLEX/EAGLEH，经 `scratch/de_unit_class.json` 反查 = **class 6 步兵**）。
+        //    本项目鹰勇士是骑兵型单位，且 DE 的 AZTRAIDER(u1570) 亦为 class 12 ⇒ 作用面取 **[6,12]**。
+        effects: [{ attr: 'hp', op: 'add', value: 40, classes: [6, 12] }],
         cultures: ['MAYANS'],
     },
     {
@@ -604,21 +624,30 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'paiks', name: '孟加拉战象', de: 'Paiks', year: 1300,
         era: 'castle',
         basis: '孟加拉战象，战象装填提速',
-        effects: [{ attr: 'reload', op: 'mul', value: 0.833, classes: [12] }],
+        // 🔴 [2026-10-13 对账补作用面] DE（tech 833）打在 cls12 与 **cls36** 两侧：
+        //    u873/875（ELEAR/UELEA 象弓手，cls36）、u1759/1761（远程战车 cls36）都在 36 那一侧 —— 原写 `[12]` 漏了。
+        effects: [{ attr: 'reload', op: 'mul', value: 0.833, classes: [12, 36] }],
         cultures: ['BENGALIS'],
     },
     {
         id: 'frontier_guards', name: '边境卫队', de: 'Frontier Guards', year: 1100,
         era: 'castle',
-        basis: '瞿折罗边境卫队，步兵近防强化',
-        effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [6] }],
+        basis: '瞿折罗边境卫队，骆驼与象弓手近防强化',
+        // 🔴 [2026-10-13 对账修·作用面写反] 原写 classes:[6]，且 basis 写「步兵近防强化」——
+        //    两条都反了：DE 原始表（tech 836）`armor +4`(1028 = 装甲类4 +4) 打在
+        //    u1755(CAMELSC)/u329(CVLRY)/u330(HCLRY)/u207(SHCLRY) ＝ **class 12 骆驼**，
+        //    u873/u875(ELEAR/UELEA) ＝ **class 36 象弓手**；**从不给步兵**。
+        //    原写法等于让项目里 101 个步兵兵种白得 +4 近防（写爆）。⇒ 作用面与 basis 一并改回骆驼/象弓手。
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [12, 36] }],
         cultures: ['GURJARAS'],
     },
     {
         id: 'wagenburg', name: '车堡战术', de: 'Wagenburg Tactics', year: 1400,
         era: 'castle',
         basis: '波希米亚胡斯车堡，火枪/攻城移速强化',
-        effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [44, 13] }],
+        // 🔴 [2026-10-13 对账补作用面] DE（tech 784）点名还含 cls22（战船系 u420/691/831/832）与
+        //    **cls55（胡斯战车 u1704/1706）**；原写 `[44,13]` 漏了这两支。项目 class 22 无兵种（船走船表），故补 55。
+        effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [13, 44, 55] }],
         cultures: ['BOHEMIANS'],
     },
     {
@@ -647,7 +676,10 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         id: 'caciques', name: '卡西克', de: 'Caciques', year: 1400,
         era: 'castle',
         basis: '图皮卡西克首领，弓手装填提速',
-        effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0] }],
+        // 🔴 [2026-10-13 对账补作用面] DE（tech 1392）= 点名 u185(SLINGR 投石手 cls0) ＋ u2550/2552/2554/2588
+        //    （CHAMP* 冠军系 cls6）＋ u1570(AZTRAIDER 阿兹特克突袭者 cls12)。原写 `[0]` 只覆盖投石手 ——
+        //    这是**图皮**的专属科技，补 6/12 会把范围扩到全部步兵与骑兵；按 DE 原样保留三系（宁可宽，不空转）。
+        effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0, 6, 12] }],
         cultures: ['TUPI'],
     },
 ];
