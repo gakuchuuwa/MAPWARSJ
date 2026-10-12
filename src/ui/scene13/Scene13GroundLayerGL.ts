@@ -146,8 +146,8 @@ void main() {
   float fPerturb = field.b + fn1 * 0.045 + fn2 * 0.020;
   float isForest = smoothstep(0.34, 0.56, fPerturb) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   
-  // 纹理采样（DE 原版：按真实世界像素坐标 1:1 无缝平铺 512px 原图）
-  vec2 texUV = fract(vWorldPos / 512.0);
+  // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，随高程抬升产生真实山坡拉伸与压缩）
+  vec2 texUV = fract((vGUV * vec2(96.0, 48.0)) / 512.0);
   vec3 colGrass = texture2D(uGrassTex, texUV).rgb * vec3(0.97, 0.99, 0.92);
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;
@@ -491,7 +491,7 @@ export class Scene13GroundLayerGL {
   private updateCornerLight(): void {
     const N = this.N;
     const V_SIZE = N + 1;
-    const Lx = -0.42, Ly = -0.52, Lz = 0.74;
+    const Lx = -0.45, Ly = -0.55, Lz = 0.70;
     const Llen = Math.hypot(Lx, Ly, Lz);
     const lx = Lx / Llen, ly = Ly / Llen, lz = Lz / Llen;
     for (let gy = 0; gy <= N; gy++) {
@@ -503,15 +503,15 @@ export class Scene13GroundLayerGL {
         const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
         const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
-        const Nx = -0.85 * dhx;
-        const Ny = -0.85 * dhy;
+        const Nx = -1.35 * dhx;
+        const Ny = -1.35 * dhy;
         const Nz = 1.0;
         const nlen = Math.hypot(Nx, Ny, Nz);
         const nx = Nx / nlen, ny = Ny / nlen, nz = Nz / nlen;
         const dot = nx * lx + ny * ly + nz * lz;
-        const elevBoost = Math.min(0.08, hC * 0.02);
-        const light = 1.0 + 0.95 * (dot - lz) + elevBoost;
-        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.68, Math.min(1.28, light));
+        const elevBoost = Math.min(0.12, hC * 0.03);
+        const light = 1.0 + 1.35 * (dot - lz) + elevBoost;
+        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.58, Math.min(1.36, light));
       }
     }
   }

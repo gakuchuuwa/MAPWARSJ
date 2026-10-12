@@ -1,4 +1,4 @@
-﻿/** 战场骨架烘焙（手动运行：npx tsx --import ./tools/sim-preload.mjs tools/rms/bakeBattlefields.mjs）
+/** 战场骨架烘焙（手动运行：npx tsx --import ./tools/sim-preload.mjs tools/rms/bakeBattlefields.mjs）
  *  只读：scratch/worldcover/site_cache/grid_*.json（AA 的 WorldCover 10m 去桥网格，键 waterGrid = 120×120）
  *        scratch/tiles_z13/*.png（z13 Terrarium 高程）
  *  Köppen/主题：用**游戏源码**的 resolveClimateRegion ＋ tools/rms/theme.mjs 的 pickTheme（不另写判定）
@@ -7,8 +7,12 @@
 import fs from 'node:fs'; import path from 'node:path'; import zlib from 'node:zlib';
 import sharp from 'sharp';
 import { pickTheme } from './theme.mjs';
-import { encodeSkeleton } from '../src/systems/battlefield/bakeFormat.mjs';
+import { loadScript } from './rmsParse.mjs';
+import { MapEngine } from './rmsEngine.mjs';
+import { loadDatTables } from '../../scratch/_dat.mjs';
+import { encodeSkeleton } from '../../src/systems/battlefield/bakeFormat.mjs';
 import { resolveClimateRegion } from '../../src/ui/Scene13Biome';
+const { tInfo, terrainUnits, unitRestrict, objNames, names } = loadDatTables();
 const Z = 13, NT = 2 ** Z, TS = 256, S = 25, C = 120, C0 = 59.5;
 const OUT = 'scratch/out/battlefields'; fs.mkdirSync(OUT, { recursive: true });
 const WC = 'scratch/worldcover/site_cache';
@@ -35,18 +39,29 @@ for (const [id, lat0, lng0] of PLACES) {
     H[y*C+x] = g(0,0)*(1-a)*(1-b)+g(1,0)*a*(1-b)+g(0,1)*(1-a)*b+g(1,1)*a*b;
   }
   let hmin = Infinity, hmax = -Infinity; for (let i = 0; i < C*C; i++) if (!Number.isNaN(H[i])) { if (H[i] < hmin) hmin = H[i]; if (H[i] > hmax) hmax = H[i]; }
+  if (!Number.isFinite(hmin)) { hmin = 0; hmax = 0; }
   const relief = hmax - hmin, step = relief < 25 ? 25 : (relief <= 175 ? 25 : relief/7);
-  const lv = new Uint8Array(C*C); for (let i = 0; i < C*C; i++) { const v0 = Number.isNaN(H[i]) ? hmin : H[i]; lv[i] = relief < 25 ? 0 : Math.max(0, Math.min(7, Math.floor((v0-hmin)/step))); }
   const wc = wcLoad(lat0, lng0);
   const waterMask = new Uint8Array((C*C + 7) >> 3);
   if (wc && Array.isArray(wc.waterGrid)) for (let i = 0; i < C*C; i++) if (wc.waterGrid[i]) waterMask[i >> 3] |= 1 << (i & 7);
-  const slope = new Float32Array(C*C);
-  for (let y = 1; y < C-1; y++) for (let x = 1; x < C-1; x++) { const i = y*C+x, v0 = H[i]; if (Number.isNaN(v0) || Number.isNaN(H[i-1]) || Number.isNaN(H[i+1]) || Number.isNaN(H[i-C]) || Number.isNaN(H[i+C])) continue; slope[i] = Math.max(Math.abs(v0-H[i-1]), Math.abs(v0-H[i+1]), Math.abs(v0-H[i-C]), Math.abs(v0-H[i+C])); }
-  const bnd = new Uint8Array(C*C);
-  for (let y = 1; y < C-1; y++) for (let x = 1; x < C-1; x++) { const i = y*C+x; if (slope[i] < 25) continue; if (lv[i] !== lv[i-1] || lv[i] !== lv[i+1] || lv[i] !== lv[i-C] || lv[i] !== lv[i+C]) bnd[i] = 1; }
-  const cliffs = []; for (let i = 0; i < C*C; i++) if (bnd[i] && !Number.isNaN(H[i])) cliffs.push(i);
   const kcode = resolveClimateRegion(lat0, lng0); const th = pickTheme(lat0, lng0, kcode);
   const theme = (th && th.theme) ? th.theme : String(th);
+  let elevSeed = 2166136261;
+  for (const ch of id) elevSeed = Math.imul(elevSeed ^ ch.charCodeAt(0), 16777619) >>> 0;
+  elevSeed = (elevSeed % 99991) + 1;
+  const { sections: elevSec, pre: elevPre } = loadScript('Arabia.rms', { seed: elevSeed, size: C, theme, consts: { BIRD_COUNT: 0 } });
+  const landTerrain = Number(elevPre.consts.get('BASE_TERRAIN') ?? 12);
+  const land = new Uint8Array(C * C);
+  for (let i = 0; i < C * C; i++) land[i] = (waterMask[i >> 3] & (1 << (i & 7))) ? 0 : 1;
+  const lv = new Uint8Array(C * C);
+  const elevEng = new MapEngine(elevSec, {
+    size: C, players: 2, seed: elevSeed, names, info: tInfo, objNames, terrainUnits, unitRestrict,
+    skeleton: { land, elev: lv, landTerrain, waterTerrain: 1, landId: 200 },
+  });
+  elevEng.applySkeleton();
+  for (const cmd of elevSec.ELEVATION_GENERATION || []) elevEng.elevCmd(cmd);
+  for (let i = 0; i < C * C; i++) if (land[i]) lv[i] = elevEng.elev[i];
+  const cliffs = [];
   const raw = encodeSkeleton({ header: { id, lat: lat0, lng: lng0, hmin: Math.round(hmin), hmax: Math.round(hmax), step: Math.round(step), koppen: kcode, theme, water: !!wc }, levels: lv, water: waterMask, cliffs });
   const z = zlib.deflateSync(raw, { level: 9 });
   fs.writeFileSync(path.join(OUT, id + '.bin'), z);

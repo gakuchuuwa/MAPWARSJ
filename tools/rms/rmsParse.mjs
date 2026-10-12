@@ -369,6 +369,17 @@ export function loadScript(file, env = {}) {
     pre.run(tokenizeFile(file, env.rmsDir ?? null));
     const names = collectCommandNames();
     const sections = buildAst(pre.out, names);
+    if (extraThemeConsts && (env.theme === 'NEARCTIC_TUNDRA' || env.theme === 'ANTARCTIC_TUNDRA') && sections.TERRAIN_GENERATION) {
+        const baseT = pre.consts.get('BASE_TERRAIN');
+        const blendIds = new Set(['BASE_BLEND_A', 'BASE_BLEND_B', 'BASE_BLEND_C', 'BASE_BLEND_D'].map((k) => pre.consts.get(k)).filter((v) => v !== undefined && v !== baseT));
+        for (const c of sections.TERRAIN_GENERATION) {
+            if (c.cmd !== 'create_terrain' || !blendIds.has(Number(c.args[0]))) continue;
+            const bt = c.block?.find((b) => b.cmd === 'base_terrain');
+            if (bt && Number(bt.args[0]) !== baseT) continue;
+            const tm = c.block?.find((b) => b.cmd === 'terrain_mask');
+            if (tm && Number(tm.args[0]) === 1) tm.args[0] = 2;
+        }
+    }
     return { sections, pre };
 }
 
