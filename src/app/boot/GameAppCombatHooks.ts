@@ -208,7 +208,17 @@ function startScene13War(
         if (distKm >= 2.0) return pos;
         const entity = u.getEntity?.();
         if (Array.isArray(entity?.lastPath) && entity.lastPath.length > 0) {
-            for (let i = entity.lastPath.length - 1; i >= 0; i--) {
+            let bestIdx = entity.lastPath.length - 1;
+            let bestDist = Infinity;
+            for (let i = 0; i < entity.lastPath.length; i++) {
+                const wp = entity.lastPath[i];
+                const d = Math.hypot((wp.lat - pos.lat) * 111.32, (wp.lng - pos.lng) * 111.32 * Math.cos((pos.lat * Math.PI) / 180));
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestIdx = i;
+                }
+            }
+            for (let i = bestIdx; i >= 0; i--) {
                 const wp = entity.lastPath[i];
                 const wDist = Math.hypot((wp.lat - ref.lat) * 111.32, (wp.lng - ref.lng) * 111.32 * Math.cos((ref.lat * Math.PI) / 180));
                 if (wDist >= 2.0) return wp;

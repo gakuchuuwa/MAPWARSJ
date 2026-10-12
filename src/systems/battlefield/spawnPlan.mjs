@@ -28,10 +28,10 @@ export const VERSION_SPAWN = 1;
  *    两军前排实际只隔约 450px，画面里看着几乎贴在一起。拉到 2200（重心 ~1600、前排 ~1250）才拉开纵深。
  *    ⚠️ 攻城战不走这个值（攻方基座＝城半径＋700，见 Scene13WarLayer），只有野战受影响。
  */
-export const SPAWN_GAP_PX = 2200;
-/** 出生点离中心的屏幕距离（px，八方向统一）＝ 对进间距的一半（1100） */
+export const SPAWN_GAP_PX = 3600;
+/** 出生点离中心的屏幕距离（px，八方向统一）＝ 对进间距的一半（1800） */
 export const SPAWN_DIST_FROM_CENTER_PX = SPAWN_GAP_PX / 2;
-/** 双方同向/相邻时守方改到「中心一带」的距离（px）＝ 0.36 倍（旧 0.12 ÷ 0.3333）＝ 396 */
+/** 双方同向/相邻时守方改到「中心一带」的距离（px）＝ 0.36 倍（旧 0.12 ÷ 0.3333）＝ 648 */
 export const CENTER_BAND_DIST_FROM_CENTER_PX = SPAWN_DIST_FROM_CENTER_PX * 0.36;
 /** 格 ⇄ 屏幕系数：与 `Scene13GroundLayerGL.cellToScreen` 同一式（`dx = 32, dy = 16`） */
 const DX = 32, DY = 16;
@@ -91,7 +91,7 @@ export function planSpawns(o) {
     return !water && !cliff;
   });
   const A = bearing8(o.center.lat, o.center.lng, o.attackerFrom.lat, o.attackerFrom.lng);
-  const isSiege = String(o.battleType) === 'siege' || !o.defenderFrom;
+  const isSiege = String(o.battleType) === 'siege';
   let D = null;
   if (o.defenderFrom) D = bearing8(o.center.lat, o.center.lng, o.defenderFrom.lat, o.defenderFrom.lng);
   const R = SPAWN_DIST_FROM_CENTER_PX;
@@ -114,12 +114,18 @@ export function planSpawns(o) {
   const a = slide(A.idx, R);
   if (a.slid) notes.push(`攻方方向 ${A.dir} 不可走（水/悬崖）⇒ 沿弧滑到 ${DIRS8[a.idx]}`);
   let def, atCenter = false;
-  if (isSiege || !D) { atCenter = true; def = { x: c, y: c, idx: (A.idx + 4) % 8 }; notes.push('攻城战/无守方来处 ⇒ 守方在中心'); }
-  else if (adjacent(A.idx, D.idx)) {
-    atCenter = true;
-    const s = slide(D.idx, CENTER_BAND_DIST_FROM_CENTER_PX);
+  if (isSiege) { atCenter = true; def = { x: c, y: c, idx: (A.idx + 4) % 8 }; notes.push('攻城战 ⇒ 守方在中心'); }
+  else if (!D) {
+    const oppIdx = (a.idx + 4) % 8;
+    const s = slide(oppIdx, R);
     def = { x: s.x, y: s.y, idx: s.idx };
-    notes.push(`双方同向或相邻（攻 ${A.dir} / 守 ${D.dir}）⇒ 守方改到中心一带固守`);
+    notes.push(`野战无守方来处 ⇒ 守方在对向 ${DIRS8[def.idx]} 扎营`);
+  } else if (adjacent(A.idx, D.idx)) {
+    atCenter = true;
+    const oppIdx = (a.idx + 4) % 8;
+    const s = slide(oppIdx, CENTER_BAND_DIST_FROM_CENTER_PX);
+    def = { x: s.x, y: s.y, idx: s.idx };
+    notes.push(`双方同向或相邻（攻 ${A.dir} / 守 ${D.dir}）⇒ 守方改到中心背攻方一侧固守`);
   } else {
     const s = slide(D.idx, R);
     def = { x: s.x, y: s.y, idx: s.idx };
