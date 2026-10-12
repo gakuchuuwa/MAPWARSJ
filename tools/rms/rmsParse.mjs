@@ -346,18 +346,81 @@ export function loadScript(file, env = {}) {
     //   依据：主题在各脚本里是用 `elseif <主题>` **互斥链**消费的（例 `Arabia.rms:553` / `themes.inc:1789`），
     //   所以只要保证"只有被强制的那一个成立"，链上就只会走它 —— 不依赖链的顺序。
     //   主题名集合是照 DE 的命名法扫出来的（AFROTROPICAL/NEOTROPICAL/NEARCTIC/INDOMALAYAN/PALAEARCTIC/AUSTRALASIAN）
+    let extraThemeConsts = null;
     if (env.theme) {
-        const src = fs.readFileSync(path.join(env.rmsDir ?? DE_RMS_DIR, file), 'utf8');
-        const all = new Set((src.match(/\b(?:AFROTROPICAL|NEOTROPICAL|NEARCTIC|INDOMALAYAN|PALAEARCTIC|AUSTRALASIAN)_[A-Z0-9_]+\b/g) ?? []));
+        const rmsDir = env.rmsDir ?? DE_RMS_DIR;
+        const src = fs.readFileSync(path.join(rmsDir, file), 'utf8');
+        const all = new Set((src.match(/\b(?:AFROTROPICAL|NEOTROPICAL|NEARCTIC|INDOMALAYAN|PALAEARCTIC|AUSTRALASIAN|ANTARCTIC|OCEANIAN)_[A-Z0-9_]+\b/g) ?? []));
         const block = new Set([...all].filter((x) => x !== env.theme));
         pre.blockDefines = block;
         pre.defs.add(env.theme);
+        if (!all.has(env.theme)) {
+            extraThemeConsts = loadThemeConstsFromScripts(env.theme, rmsDir);
+        }
     }
     // 引擎隐式载入的常量定义
     pre.run(tokenizeFile('random_map.def'));
+    if (extraThemeConsts) {
+        for (const [k, v] of Object.entries(extraThemeConsts)) {
+            pre.consts.set(k, v);
+        }
+    }
     pre.out.length = 0;
     pre.run(tokenizeFile(file, env.rmsDir ?? null));
     const names = collectCommandNames();
     const sections = buildAst(pre.out, names);
     return { sections, pre };
+}
+
+/**
+ * 当目标布局脚本（如 Arabia.rms）未定义某 DE 原生主题的 MAP_CONSTANTS 时，
+ * 按顺序从定义了该主题的 DE 明文脚本中读取地形、林地、散树、装饰物常量表。
+ */
+const THEME_DONOR_SCRIPTS = {
+    PALAEARCTIC_ASIA_TAIGA: ['Baltic.rms', 'Coastal.rms', 'Migration.rms', 'Team_Islands.rms', 'Arena.rms'],
+    NEOTROPICAL_DESERT: ['Oasis.rms', 'nomad.rms', 'LandNomad.rms', 'CoastalForest.rms', 'Border Dispute.rms'],
+    NEARCTIC_TUNDRA: ['Baltic.rms', 'Coastal.rms', 'Migration.rms', 'Team_Islands.rms', 'Arena.rms', 'Oasis.rms', 'CoastalForest.rms'],
+    ANTARCTIC_TUNDRA: ['nomad.rms', 'Capricious.rms', 'LandNomad.rms', 'Metropolis.rms', 'Moats.rms', 'Pilgrims.rms'],
+};
+
+export function loadThemeConstsFromScripts(theme, rmsDir = DE_RMS_DIR) {
+    const files = THEME_DONOR_SCRIPTS[theme] ?? fs.readdirSync(rmsDir).filter((f) => f.endsWith('.rms')).sort();
+    const raw = {};
+    for (const f of files) {
+        const p = path.join(rmsDir, f);
+        if (!fs.existsSync(p)) continue;
+        const s = fs.readFileSync(p, 'utf8');
+        const mc = s.match(/if MAP_CONSTANTS([\s\S]*?)#include_drs includes\/themes\.inc/);
+        if (!mc) continue;
+        const m = mc[1].match(new RegExp('(?:if|elseif)\\s+' + theme + '\\b([\\s\\S]*?)(?=\\n\\t*(?:elseif|endif)\\b)'));
+        if (!m) continue;
+        for (const cm of m[1].matchAll(/#const\s+(\w+)\s+(-?\d+)/g)) {
+            if (raw[cm[1]] === undefined) raw[cm[1]] = Number(cm[2]);
+        }
+    }
+    if (raw.BASE_TERRAIN === undefined) return raw;
+    const baseForestEdge = raw.BASE_FOREST_EDGE ?? raw.FOREST_EDGE ?? raw.OUTSIDE_FOREST ?? raw.BASE_FOREST;
+    const isSnowBase = [32, 74, 124, 125, 126].includes(raw.BASE_TERRAIN);
+    return {
+        ...raw,
+        SPAWN_TERRAIN: raw.BASE_TERRAIN,
+        SPAWN_FOREST: baseForestEdge,
+        BASE_FOREST_EDGE: baseForestEdge,
+        BASE_FOREST_VARIATION_A: raw.BASE_FOREST_VARIATION_A ?? raw.BASE_FOREST_VARIATION ?? raw.MIDDLE_FOREST_VARIATION ?? raw.FOREST_VARIATION_A ?? raw.BASE_FOREST,
+        BASE_FOREST_VARIATION_B: raw.BASE_FOREST_VARIATION_B ?? raw.FOREST_VARIATION_B ?? raw.MIDDLE_FOREST ?? raw.SPAWN_FOREST_VARIATION ?? raw.BASE_FOREST_VARIATION ?? raw.BASE_FOREST,
+        BASE_FOREST_BLEND: isSnowBase
+            ? (raw.FOREST_BLEND ?? raw.BLOCKER_BLEND ?? raw.BASE_TERRAIN)
+            : (raw.BASE_FOREST_BLEND ?? raw.BASE_BLEND_A ?? raw.BASE_TERRAIN),
+        BASE_BLEND_D: raw.BASE_BLEND_D ?? raw.BASE_BLEND_C,
+        STRAGGLER_FOREST: raw.STRAGGLER_FOREST ?? raw.MIDDLE_FOREST ?? raw.SPAWN_FOREST ?? raw.FOREST_TERRAIN ?? raw.BASE_FOREST,
+        STRAGGLER_FOREST_VARIATION: raw.STRAGGLER_FOREST_VARIATION ?? raw.MIDDLE_FOREST_VARIATION ?? raw.SPAWN_FOREST_VARIATION ?? raw.FOREST_VARIATION_A ?? raw.BASE_FOREST_VARIATION ?? raw.BASE_FOREST,
+        POND_TERRAIN: raw.POND_TERRAIN ?? 1,
+        MARKET_TERRAIN: raw.MARKET_TERRAIN ?? 78,
+        AESTHETIC_FLAT: raw.AESTHETIC_FLAT ?? raw.BASE_AESTHETIC_A ?? raw.SPAWN_AESTHETIC ?? raw.AESTHETIC_A ?? 1365,
+        AESTHETIC_GROUPED: raw.AESTHETIC_GROUPED ?? raw.AESTHETIC_B ?? raw.FOREST_AESTHETIC ?? raw.STUMP_OBJECT ?? 809,
+        AESTHETIC_SCATTER: raw.AESTHETIC_SCATTER ?? raw.AESTHETIC_A ?? raw.MIDDLE_AESTHETIC_A ?? raw.AESTHETIC_OBJECT_A ?? 1365,
+        SOLID_OBJECT: raw.SOLID_OBJECT ?? raw.QUARRY_SOLID ?? raw.FOREST_BLOCKER ?? 623,
+        SOLID_UNDERBRUSH: raw.SOLID_UNDERBRUSH ?? raw.BASE_AESTHETIC_A ?? raw.SPAWN_AESTHETIC ?? raw.AESTHETIC_A ?? 1365,
+        SOLID_SURROUND: raw.SOLID_SURROUND ?? raw.BASE_AESTHETIC_B ?? raw.MIDDLE_AESTHETIC_A ?? raw.AESTHETIC_A ?? 710,
+    };
 }
