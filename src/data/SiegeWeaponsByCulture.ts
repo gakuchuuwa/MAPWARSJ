@@ -702,7 +702,16 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '安第斯军团_imperial': {
         age: 'imperial',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'capped_ram', 'capped_ram', 'capped_ram', 'siege_ram', 'siege_ram', 'siege_ram'],
+        // 🔴 [2026-10-13 主人令「请按符合历史修复」] 原为 `battering_ram×3 + capped_ram×3 + siege_ram×3`
+        //    —— 那是**城堡档整条抄过来的**（与上方 `安第斯军团_castle` 一字不差），于是帝国时代的美洲军团
+        //    反而在用**封建档的轻型冲车**，且全游戏 27 个帝国档里只有安第斯、中美两条缺帝国级器械。
+        // 判据①（史实／游戏内权威）：DE 官方设定里阿兹特克/玛雅/印加三个美洲文明**都是无马厩文明、且没有火药线**
+        //    （化学、手推炮、风琴炮 NotAvailable；见 `src/de-wiki/deData.ts` 美洲三文明条目「focus: 步兵文明 (无马厩)」）。
+        //    ⇒ **不许给火炮**（bombard_cannon / organ_gun / elite_organ_gun / grenadier 一律禁），
+        //    但 DE 里美洲**有**攻城武器厂：冲车、投石车、弩炮照常可造（美洲没有的是火药，不是投石车）。
+        // 判据②（项目铁律）：每档恒 9 件、每样 ≥2、必有冲车（`SiegeWeaponsByCulture.ts` 头 8 条）。
+        // ⇒ 帝国级重器械补齐：重型冲车×3 + 装甲冲车×2 + 重型投石车×2 + 重型弩炮×2（**无火药**）。
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
 
     // AMERICA 中美军团
@@ -720,7 +729,9 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '中美军团_imperial': {
         age: 'imperial',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'capped_ram', 'capped_ram', 'capped_ram', 'siege_ram', 'siege_ram', 'siege_ram'],
+        // 🔴 [2026-10-13 主人令「请按符合历史修复」] 同一病灶（原与 `中美军团_castle` 一字不差，缺帝国级器械、
+        //    混着封建档轻型冲车）。口径与「安第斯军团_imperial」完全一致：**美洲无火药，重器械补齐 9 件**。
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
 
     // AFRICA 非洲军团

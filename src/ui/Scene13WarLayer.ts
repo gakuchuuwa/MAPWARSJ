@@ -4815,8 +4815,18 @@ export class Scene13WarLayer {
      */
     private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
-        const nine = getSiegeWeaponsForCulture(culture, this.sideLegionName(0), this.attackerGeneralId);
-        // 美洲原住民不发攻城器械（没有冲车/投石机传统），城墙走 30 秒随机坍塌那条路
+        // 🔴 [2026-10-13 主人令「请按符合历史修复」] 原注释写「美洲原住民不发攻城器械」——
+        //    那条**从未生效过**（`getSiegeWeaponsForCulture` 对美洲档一直返回 9 件，下面的 `!nine.length` 是死代码），
+        //    而且与主人 2026-10-11 令「现在所有攻城战都要有攻城武器」冲突。**现按实情改写并落地**：
+        //    ① 美洲（安第斯/中美）照发攻城武器，但**限非火药**（阿兹特克/玛雅/印加在 DE 里都无火药线）；
+        //       这条已落在 `SiegeWeaponsByCulture.ts` 的两个 `_imperial` 档数据里（火炮/风琴炮/掷弹兵一律不出现）。
+        //    ② 这里只兜底：万一以后有人给美洲档塞进火药件，就地滤掉；滤空则退回「城墙 30 秒随机坍塌」。
+        const AMERICAS = new Set(['ANDE', 'AMERICA', 'MAYANS', 'INCA', 'MUISCA', 'MAPUCHE', 'TUPI', 'CHIMU',
+            'TARASCAN', 'TAIRONA', 'TEHUELCHE', 'IROQUOIS', 'SOUTHAM_IMPERIAL', 'NORTHAM_IMPERIAL', 'MESO']);
+        const GUNPOWDER_SIEGE = new Set(['bombard_cannon', 'organ_gun', 'elite_organ_gun', 'grenadier', 'houfnice']);
+        const nine = AMERICAS.has(String(culture))
+            ? getSiegeWeaponsForCulture(culture, this.sideLegionName(0), this.attackerGeneralId).filter((k) => !GUNPOWDER_SIEGE.has(k))
+            : getSiegeWeaponsForCulture(culture, this.sideLegionName(0), this.attackerGeneralId);
         if (!nine.length) return;
 
         // 位置：攻方出兵口（row0）与城墙之间的中间。
@@ -5823,7 +5833,8 @@ export class Scene13WarLayer {
     private syncDeCityGround(): void {
         const el = this.deCityGround, c = this.deCity, cv = this.canvas;
         if (!el || !c || !cv) return;
-        if (!this.useGroundGL || (!this.active && !this.lingering) || this.defenderCityType === 'pass') {
+        // 🔴 [2026-10-13 主人令「PASS的内城套上和中城一样的地基地图」] 允许 pass 正常展示内城地基
+        if (!this.useGroundGL || (!this.active && !this.lingering)) {
             el.style.display = 'none';
             return;
         }
@@ -7393,6 +7404,11 @@ export class Scene13WarLayer {
             const p = Math.min(1, s.collapse.t / s.collapse.dur);
             const animFrames = m.frames >= 200 ? 100 : m.frames;
             fr = Math.min(animFrames - 1, Math.floor(p * animFrames));
+        } else if (s.asset.startsWith('ANIMAL:') && m.frames > 1) {
+            // 🔴 [2026-10-13 主人令「动物要会动」]
+            //    动物（鹿/狼/野猪/猛兽/牛羊/飞鸟等）按 DE 原生 15fps 节奏推进动作帧，
+            //    叠加 s.frame 随机相位避免群体动物机械同步；其他植物/岩石/建筑保持静态。
+            fr = Math.floor(this.battleSec * 15 + s.frame) % m.frames;
         } else {
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;
         }
