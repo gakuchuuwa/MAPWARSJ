@@ -1943,7 +1943,7 @@ function renderYurtCampHtml(baseSize, style, type) {
 
   // 中间 1 个：若为城堡模式（险要或城心开启）则放置蒙古汗王要塞城堡，否则放置可汗牙帐大蒙古包
   if (isCastleMode) {
-    const cW = baseSize * 0.60 * curBldgScale;
+    const cW = baseSize * 0.54 * curBldgScale;   // 🔴 [2026-10-12 主人令「毡帐系（YURT）险要走的是另一个 0.56，也改为0.54，全世界统一」] 0.60 → 0.54（与游戏 TerritorySystem 毡帐中心城堡同一口径）
     const cgW = cW * 1.6, cgH = cgW * 0.58;
     const cFlip = rnd() < 0.5;
     parts.push('<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:' + cgW.toFixed(1) + 'px;height:' + cgH.toFixed(1) + 'px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />');
@@ -2009,7 +2009,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     // 🔴 [2026-09-11 主人定] 青藏/日本险要取消「小城样式（木栅栏+周4建筑）」特例，统一走通用险要：
     //    石墙墙圈 + 中心城堡 + 四角箭塔，不留民政建筑（与 TerritorySystem.buildDePassStackHtml 同步）。
     //    险要：核心城堡 + 警戒箭塔（统一采用 500 + y 地面深度系统；8x4保持不变；比例微调并Y轴后移8px，恢复随机镜像翻转不出圈）
-    const cW = baseSize * 0.42 * tierScale * curBldgScale;
+    const cW = baseSize * 0.54 * tierScale * curBldgScale;   // 🔴 [2026-10-12 主人令「全世界统一」] 0.42 → 0.54（险要中心城堡，与游戏 TerritorySystem 0.54 同口径）
     const cgW = cW * 1.55, cgH = cgW * 0.58;
     const cFlip = rnd() < 0.5;
     const cOffsetY = -8;
@@ -2158,7 +2158,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     // 位置随机（洗牌后的 pool 分配到 9 个槽位）+ 随机镜像
     slots.forEach((slot, i) => {
       if (isCenterCastle && slot.isCenter) {
-        const cW = baseSize * 0.48 * tierScale * curBldgScale;
+        const cW = baseSize * 0.54 * tierScale * curBldgScale;   // 🔴 [2026-10-12 主人令「全世界统一」] 0.48 → 0.54（中城中心城堡）
         const cgW = cW * 1.6, cgH = cgW * 0.58;
         const zIndex = Math.round(500 + slot.y);
         const cFlip = rnd() < 0.5;
@@ -2223,7 +2223,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
     // 9 建筑统一大小 0.32、位置完全随机打乱、独立随机镜像
     slots.forEach((slot, i) => {
       if (isCenterCastle && slot.isCenter) {
-        const cW = baseSize * 0.48 * tierScale * curBldgScale;
+        const cW = baseSize * 0.54 * tierScale * curBldgScale;   // 🔴 [2026-10-12 主人令「全世界统一」] 0.48 → 0.54（大城中心城堡）
         const cgW = cW * 1.6, cgH = cgW * 0.58;
         const zIndex = Math.round(500 + slot.y);
         const cFlip = rnd() < 0.5;
@@ -2322,7 +2322,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
   const centerOffsetX = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12;
   const centerOffsetY = isCenterCastle ? 0 : (rnd() - 0.5) * baseSize * 0.12 * 0.58;
   const cW = isCenterCastle
-    ? (baseSize * 0.68 * curBldgScale)
+    ? (baseSize * 0.54 * curBldgScale)   // 🔴 [2026-10-12 主人令「全世界统一」] 0.68 → 0.54（城寨/小城中心建筑，与游戏 TerritorySystem 同口径）
     : (baseSize * centerItem.s * tierScale * curBldgScale);
   const cFlip = rnd() < 0.5;
   const cZIndex = Math.round(500 + centerOffsetY);
