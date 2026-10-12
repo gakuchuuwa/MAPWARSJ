@@ -742,12 +742,12 @@ export class Scene13GroundLayerGL {
     if (!c) return;
     const V = this.N + 1;
     const r = radiusCells;
-    const slopeW = 2.0;
+    const slopeW = 1.5;
     const x0 = Math.max(0, Math.floor(c.gx - r - slopeW - 1)), x1 = Math.min(this.N, Math.ceil(c.gx + r + slopeW + 1));
     const y0 = Math.max(0, Math.floor(c.gy - r - slopeW - 1)), y1 = Math.min(this.N, Math.ceil(c.gy + r + slopeW + 1));
     for (let y = y0; y <= y1; y++) {
       for (let x = x0; x <= x1; x++) {
-        const d = Math.hypot(x - c.gx, y - c.gy);
+        const d = Math.abs(x - c.gx) + Math.abs(y - c.gy);
         const s = Math.min(1, Math.max(0, (d - r) / slopeW));
         if (s >= 1) continue;
         const t = s * s * (3 - 2 * s); // Smoothstep 缓坡过渡：圈内 0（整平）→ 外缘 1（原样）

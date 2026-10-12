@@ -861,14 +861,60 @@ export class MapEngine {
     plantTerrainUnits() {
         const N = this.N;
         const put = (unit, i) => this.objects.push({ id: unit, auto: true, x: (i % N) + 0.5, y: ((i / N) | 0) + 0.5 });
+
+        // 🔴 [2026-10-12 任务1：树的摆放] 错落成团，一块林基本一个树种
+        // 先连通聚类森林格子：每个连续林地块选定一个主导树种，只偶尔（3%）夹别的树种
+        const clumpMap = new Int32Array(N * N).fill(-1);
+        const clumpDominant = new Map();
+        let nextClumpId = 0;
+
+        for (let y = 0; y < N; y++) {
+            for (let x = 0; x < N; x++) {
+                const i = y * N + x;
+                const t = this.terrain[i];
+                const list = this.terrainUnits?.get(t);
+                const isDenseForest = list?.length && list[list.length - 1].density >= 1000;
+                if (!isDenseForest || clumpMap[i] >= 0) continue;
+
+                const cId = nextClumpId++;
+                const r = this.rng() * 1000;
+                const dom = list.find((u) => r < u.density)?.unit ?? list[0].unit;
+                const sub = (list.length > 1 && this.rng() < 0.35)
+                    ? (list.find((u) => u.unit !== dom)?.unit ?? dom)
+                    : dom;
+                clumpDominant.set(cId, { dom, sub });
+
+                // BFS 搜索相连森林格
+                const q = [i];
+                clumpMap[i] = cId;
+                while (q.length) {
+                    const cur = q.shift();
+                    const cx = cur % N, cy = Math.floor(cur / N);
+                    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+                        const nx = cx + dx, ny = cy + dy;
+                        if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+                        const ni = ny * N + nx;
+                        if (clumpMap[ni] >= 0) continue;
+                        const nt = this.terrain[ni];
+                        const nlist = this.terrainUnits?.get(nt);
+                        if (nlist?.length && nlist[nlist.length - 1].density >= 1000) {
+                            clumpMap[ni] = cId;
+                            q.push(ni);
+                        }
+                    }
+                }
+            }
+        }
+
         for (let i = 0; i < this.terrain.length; i++) {
             const t = this.terrain[i];
             if (!this.terrainUnits) { if (this.forestTerrains.has(t)) this.objects.push({ id: -1, tree: t, x: (i % N) + 0.5, y: ((i / N) | 0) + 0.5 }); continue; }
             const list = this.terrainUnits.get(t);
             if (list?.length && list[list.length - 1].density >= 1000) {
-                const r = this.rng() * 1000;
-                const pick = list.find((u) => r < u.density);
-                if (pick && pick.density > 0) put(pick.unit, i);
+                const cId = clumpMap[i];
+                const cd = cId >= 0 ? clumpDominant.get(cId) : null;
+                const unit = (cd && this.rng() >= 0.04) ? cd.dom : (cd?.sub ?? list[0].unit);
+                put(unit, i);
                 continue;
             }
             const lay = this.layer[i];

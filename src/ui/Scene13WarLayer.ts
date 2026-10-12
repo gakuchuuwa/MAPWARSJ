@@ -5581,11 +5581,11 @@ export class Scene13WarLayer {
         const level = peakLevel >= 1.5
             ? Math.min(4, Math.max(2, Math.round(peakLevel)))
             : (roll < 68 ? (roll < 24 ? 3 : 2) : Math.round(peakLevel));
-        // 🔴 [2026-10-12 主人令「改整平半径」] 原来整平也用 rCells（封顶 7.5 格），险要外圈墙（离城心 12.5 格、角在 17.7 格）整圈落在起伏地形上，
-        //    实测外圈墙件抬升 0~42px 参差不齐 ⇒ 接缝错位。整平半径改按墙圈算：城池宽 = L·TAC_TILE_W/2·2 + 400 ⇒ L；
-        //    墙圈在格坐标里是正方形，半边 L/2，角到圈心 L/2·√2，再多 1 格。台地高度（上面 peakLevel）仍按 rCells 取，不动。
+        // 🔴 [2026-10-12 主人令「改整平半径」「中间的高地范围太大了吧」]
+        //    在 Scene13GroundLayerGL 的 96×48 格坐标 (gx, gy) 下，墙圈菱形四角在 (±L/2, 0) 与 (0, ±L/2)，
+        //    四边满足 |gx - c.gx| + |gy - c.gy| = L/2；取 L/2 + 0.5 恰好贴合城墙外沿，不再外扩成巨型圆台。
         const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
-        const flatCells = Math.max(rCells, ringL / 2 * Math.SQRT2 + 1);
+        const flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
         gl.flattenFoundation(cx, cy, W, H, flatCells, level);
         for (let py = -ry; py <= ry; py += 24) {
             for (let px = -rx; px <= rx; px += 48) {
@@ -6503,12 +6503,14 @@ export class Scene13WarLayer {
 
                     // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
                     //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
+                    // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
                     this.decorSprites = this.decorSprites.filter((s) => {
                         const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
                         const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
+                        const isOldTree = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD/i.test(s.asset);
                         const c = glLayer.screenToCell(s.x, s.y, VW, VH);
                         const inWater = !!c && glLayer.getWaterDensityAt(Math.round(c.gx), Math.round(c.gy)) > 0.42;
-                        return isBuilding || (!onFoundation(s.x, s.y) && (isWaterPlant ? inWater : !inWater));
+                        return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
                     });
 
                     for (const ob of data.objects) {
@@ -6519,18 +6521,23 @@ export class Scene13WarLayer {
                             if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
                             if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
                             const ox = ob.x - 0.5, oy = ob.y - 0.5;
-                            const sx = (ox - 60) * TAC_TILE_W + VW / 2;   // 🔴 [2026-10-12] 64×32 → 96×48（与地面网格同一式）
-                            const sy = (oy - 60) * TAC_TILE_H + VH / 2;
+                            const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
+                            // 🔴 [2026-10-12 任务1：树的摆放] 错落成团、打破横平竖直方阵：
+                            //    树木在格内加入确定性伪随机微抖动（±0.23 格），树木扎根依然在林地格内，但视觉呈现错落自然
+                            const isTree = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB/i.test(asset);
+                            const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
+                            const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
+                            const sx = (ox - 60) * TAC_TILE_W + VW / 2 + jx;
+                            const sy = (oy - 60) * TAC_TILE_H + VH / 2 + jy;
                             if (onFoundation(sx, sy)) continue;
                             this.ensureNatureAsset(asset);
-                            const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
                             const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
                             this.decorSprites.push({
                                 asset,
                                 frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
                                 x: sx,
                                 y: sy,
-                                flip: false,
+                                flip: (hash % 2 === 0),
                                 layer: 'world',
                                 z: 0,
                                 lift,
