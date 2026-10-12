@@ -2508,8 +2508,8 @@ buildingStyle: 'TIBET', troops: 10000,
 
     { id: 'city_sanlongsha', name: '三陇沙', factionId: 'bailong', lat: 40.4, lng: 92.5, type: 'stockade', troops: 10000, region: 'WESTERN', buildingStyle: 'WESTERN' },
 
-    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'pass', region: 'HEXI',
-buildingStyle: 'KHITAN', troops: 10000, mirror: true,
+    { id: 'city_jianshuijinguan', name: '肩水金关', factionId: 'hunxie', lat: 40.413414, lng: 99.434509, type: 'stockade', region: 'KHITAN',
+buildingStyle: 'ASIA', troops: 10000, mirror: true,
         note: '肩水金关；浑邪关隘',
     },//镜像
 
