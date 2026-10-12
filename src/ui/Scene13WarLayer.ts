@@ -393,6 +393,41 @@ const WALL_GATE_STATS: Record<string, WarType> = {
     WOOD_WALL: { name: '木栅栏', cls: 'melee', sz: 1, hp: 540, atk: 0, meleeArmor: 2, pierceArmor: 5, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
 };
 
+/**
+ * 🔴 [2026-10-12 主人令「城内建筑和箭塔按 DE 设计血量」] 血量/近防/远防逐项取自 DE 本体
+ * （empires2_x2_p1.dat，genieutils 读出；护甲类 4=近战 3=穿刺，与上面石墙 1080/8/10 同口径）。
+ * 行 = [血, 近防, 远防]，下标 0~3 = 黑暗/封建/城堡/帝国（AGE1~AGE4）；DE 没有的时代沿用相邻档。
+ * 蒙古包/棚屋/定居点按民居，无 DE 对应项。
+ */
+const DE_BLD_TABLE: Record<string, Array<[number, number, number]>> = {
+    HOUSE: [[550, -2, 7], [750, -1, 8], [900, 1, 9], [900, 3, 10]],
+    MILL: [[600, 0, 7], [800, 1, 8], [1000, 2, 9], [1000, 3, 10]],
+    BARRACKS: [[1200, 0, 7], [1500, 1, 8], [1800, 2, 9], [2100, 3, 10]],
+    ARCHERY_RANGE: [[1500, 1, 8], [1500, 1, 8], [1800, 2, 9], [2100, 3, 10]],
+    STABLE: [[1500, 1, 8], [1500, 1, 8], [1800, 2, 9], [2100, 3, 10]],
+    BLACKSMITH: [[1800, 0, 7], [1800, 1, 8], [2100, 2, 9], [2100, 3, 10]],
+    TOWN_CENTER: [[2400, 3, 5], [2400, 4, 6], [2400, 5, 7], [2400, 6, 8]],
+    MARKET: [[1800, 1, 8], [1800, 1, 8], [2100, 2, 9], [2100, 3, 10]],
+    SIEGE_WORKSHOP: [[1500, 1, 8], [1500, 1, 8], [1500, 1, 8], [1800, 2, 9]],
+    UNIVERSITY: [[2100, 2, 9], [2100, 2, 9], [2100, 2, 9], [2100, 3, 10]],
+    MONASTERY: [[2100, 0, 7], [2100, 1, 8], [2100, 2, 9], [2100, 3, 10]],
+    TOWER: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
+    OUTPOST: [[500, 0, 0], [500, 0, 0], [500, 0, 0], [500, 0, 0]],
+};
+
+/** 素材名 → DE 建筑属性；护甲类 11(石质防御)+21(建筑) 与城墙同，攻城武器加成照 dmgVs 自然结算。 */
+function deBuildingStats(name: string): WarType {
+    const m = name.match(/_AGE([1-4])/);
+    const age = m ? Number(m[1]) - 1 : 1;
+    let kind = 'HOUSE';
+    for (const k of ['ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
+        if (name.includes(k)) { kind = k; break; }
+    }
+    const dark = name.startsWith('DARK_') || name.startsWith('HUT_') || name === 'SETTLEMENT';
+    const [hp, melee, pierce] = DE_BLD_TABLE[kind][dark ? 0 : age];
+    return { name, cls: 'melee', sz: 1, hp, atk: 0, meleeArmor: melee, pierceArmor: pierce, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] };
+}
+
 /** 攻城战守方城墙/城门：可攻击建筑目标（士兵能打、HP 归零即破，照 DE）。不进 WarMan 网格，独立维护。 */
 interface WarBuilding {
     f: 0 | 1;
@@ -418,6 +453,8 @@ interface WarBuilding {
     linked?: boolean;
     /** 城墙破损档素材目录名数组 [D25, D50, D75]；有值 → 破墙前按 HP 比例渐进切换，破墙后切 D75 残垣；无值（木栅栏）→ 直接消失 */
     destrAssets?: string[];
+    /** 🔴 [2026-10-12 主人令] 城内建筑/箭塔（DE 血量）：name = 素材名；tower = 对应箭塔（倒塌即停火） */
+    bld?: { name: string; tower?: ArrowTower };
     /** 城门倒塌动画素材目录名（DESTR，50 帧），破门时播放；播完切 rubbleAsset 残骸常驻 */
     collapseAsset?: string;
     /** 城门倒塌后残骸素材目录名（RUBBLE，1 帧），常驻地面不再阻挡 */
@@ -3412,6 +3449,8 @@ export class Scene13WarLayer {
     private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
+    /** 🔴 [2026-10-12] 守方城内可攻击建筑/箭塔（攻城武器第二优先目标，城墙城门之后） */
+    private defBuildings: WarBuilding[] = [];
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
     /** 🔴 [主人需求] 攻城战守方城堡射手（险要专属；30 秒不坍塌，持续射击） */
@@ -5078,6 +5117,7 @@ export class Scene13WarLayer {
         this.clouds = [];
         this.decorSprites = [];
         this.wallGates = [];
+        this.defBuildings = [];
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
@@ -5406,6 +5446,7 @@ export class Scene13WarLayer {
         this.decor.height = this.canvas.height;
         this.decorSprites = [];
         this.wallGates = [];
+        this.defBuildings = [];
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
@@ -6183,6 +6224,7 @@ export class Scene13WarLayer {
                     rubbleAsset: towerRubble,
                     down: false,
                 });
+                this.registerDefBuilding(sprite, towerAsset, this.arrowTowers[this.arrowTowers.length - 1]);
             });
 
             // 蒙古守方：城墙 + 8 蒙古包 + 瞭望塔（不按城等级分时代）
@@ -8019,7 +8061,8 @@ export class Scene13WarLayer {
     private canKeepTarget(m: WarMan, sight: number): boolean {
         const target = m.foe;
         if (!target || target.f === m.f) return false;
-        if ('sprite' in target && (target.sprite.destroyed || target.sprite.obstructionDisabled)) return false;
+        if ('sprite' in target && (target.sprite.destroyed || (!target.bld && target.sprite.obstructionDisabled))) return false;
+        if ('sprite' in target && target.bld && (target.sprite.collapse || target.sprite.asset.includes('_RUBBLE'))) return false;
         const wallKeep = 'sprite' in target && target.linked === true && !target.sprite.obstructionDisabled
             && this.battleType === 'siege' && m.f === 0 && this.defenderHolding;
         return (target.hp > 0 || wallKeep)
@@ -8043,6 +8086,7 @@ export class Scene13WarLayer {
     private reserveExistingTargets(deploying: boolean): void {
         for (const target of this.men) target.claims = 0;
         for (const target of this.wallGates) target.claims = 0;
+        for (const target of this.defBuildings) target.claims = 0;
         for (const m of this.men) {
             m.reservedFoe = null;
             if (deploying || m.hp <= 0) continue;
@@ -8134,6 +8178,27 @@ export class Scene13WarLayer {
         const _hc = this.deCity ? this.deCityCenter : null;
         const _hw = this.deCity ? this.deCity.width / 2 : 0, _hh = this.deCity ? this.deCity.height / 2 : 0;
         const manOut = (manChosen && _hc && (Math.abs(manChosen.x - _hc.x) <= _hw && Math.abs(manChosen.y - _hc.y) <= _hh)) ? null : manChosen;
+        // 🔴 [2026-10-12 主人令「所有攻城武器优先自动攻击建筑」] 攻城武器目标顺序：
+        //    射程内城门/城墙 → 城内建筑和箭塔 → 都没了才打人。墙/建筑还有但够不着时不改打人（返回 null 继续靠近）。
+        if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
+            const nearest = (list: WarBuilding[], ok: (b: WarBuilding) => boolean): WarBuilding | null => {
+                let pick: WarBuilding | null = null, pd = r2, far: WarBuilding | null = null, fard = r2;
+                for (const b of list) {
+                    if (!ok(b)) continue;
+                    const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                    if (d >= r2) continue;
+                    if (d < fard) { fard = d; far = b; }
+                    if (minR2 > 0 && d < minR2) continue;
+                    if (d < pd) { pd = d; pick = b; }
+                }
+                return pick ?? far;
+            };
+            const wallOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.obstructionDisabled;
+            const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+            const t = nearest(this.wallGates, wallOk) ?? nearest(this.defBuildings, bldOk);
+            if (t) { if (reserve) t.claims++; return t; }
+            if (this.wallGates.some(wallOk) || this.defBuildings.some(bldOk)) return null;
+        }
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
             if (this.defenderHolding && !manOut) return null;
         } else if (this.battleType === 'siege' && m.f === 0) {
@@ -8181,7 +8246,6 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-12 主人令「10秒坍塌一个」] 城墙/城门/城垛改由 collapseNextWallGap 每 10 秒塌一处缺口；
         //    本函数只剩 30 秒这一下：城内箭塔/建筑随机三形态 + 非墙装饰改纯贴图（墙段不在此处理）。
         this.defenderHolding = false;
-        this.applyRandomCollapseForms();
         const wallSprites = new Set<DecorSprite>();
         for (const b of this.wallGates) { wallSprites.add(b.sprite); if (b.extraSprites) for (const sp of b.extraSprites) wallSprites.add(sp); }
         for (const sp of this.decorSprites) {
@@ -8280,41 +8344,27 @@ export class Scene13WarLayer {
         }
     }
 
-    /**
-     * 🔴 [2026-08-29 主人修正] 30 秒：每个建筑单元独立随机，完整 40% / 损毁 60%，
-     *    损毁里「破损」占主体（残垣断壁感），「残骸」少一些（不全是废墟）（纯视觉、不碰撞）：
-     *    石墙/垛墙段：完整 40% / 破损 D50 40% / 残骸 D75 20%；栅栏：完整 40% / 直接消失 60%（无残垣档）；
-     *    城门：无破损档，完整 40% / 残骸(DESTR→RUBBLE) 60%；
-     *    箭塔：完整 40% / 破损(DAMAGED) 30%（都继续射击）/ 残骸(直接切 RUBBLE) 30%（停火）；
-     *    建筑：完整 40% / 破损(DAMAGED) 40% / 残骸(DESTR→RUBBLE) 20%。
-     */
-    private applyRandomCollapseForms(): void {
-        // 墙/门/垛不在此处理：见 collapseNextWallGap（每 10 秒一处缺口）
-        for (const t of this.arrowTowers) {
-            // 🔴 [主人需求] 只有「残骸」停火：完整 40% / 破损 30% 都还立着 → 继续射；残骸 30% → 停火。
-            const r = Math.random();
-            const towerName = t.sprite.asset.slice('BUILDING:'.length);
-            if (r < 0.4) continue;   // 40% 完整：照旧继续射
-            if (r < 0.7) {
-                // 破损(DAMAGED 30%)：换焦黑贴图，塔还立着 → 继续射
-                const damaged = 'BUILDING:' + towerName + '_DAMAGED';
-                if (this.natureCache[damaged]?.img?.complete) { t.sprite.asset = damaged; t.sprite.frame = 0; }
-            } else {
-                // 🔴 残骸(DESTR → RUBBLE 30%)：播放倒塌动画，停火（不可直接切 rubble 绕过倒塌动画）
-                t.down = true;
-                this.collapseToRubble(t.sprite, towerName);
-            }
-        }
-        // 🔴 [2026-09-15 主人定] 所有坍塌模式中，50%的建筑坍塌，只有城堡不坍塌
-        const targetBuildings = this.cityBuildings.filter(b => !b.sprite.indestructible && !b.name.includes('CASTLE'));
-        const shuffled = [...targetBuildings].sort(() => Math.random() - 0.5);
-        const collapseCount = Math.round(shuffled.length * 0.5);
-        for (let i = 0; i < shuffled.length; i++) {
-            if (i < collapseCount) {
-                // 50% 坍塌：播放倒塌动画，最终转为残骸
-                this.collapseToRubble(shuffled[i].sprite, shuffled[i].name);
-            }
-            // 剩余 50% 保持完好立着
+    /** 登记一座可攻击的守城建筑/箭塔（城堡 indestructible 不登记）。 */
+    private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower): void {
+        if (sp.indestructible) return;
+        const key = 'BLD:' + name;
+        const st = WALL_GATE_STATS[key] ?? (WALL_GATE_STATS[key] = deBuildingStats(name));
+        this.defBuildings.push({ f: 1, key, x: sp.x, y: sp.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite: sp, bld: { name, tower } });
+    }
+
+    /** 建筑挨打后的表现：血≤50% 换破损贴图；血≤0 倒塌成残骸并停火。 */
+    private onDefBuildingHit(b: WarBuilding): void {
+        const sp = b.sprite, name = b.bld!.name;
+        if (sp.destroyed || sp.collapse || sp.asset.includes('_RUBBLE')) return;
+        if (b.hp <= 0) {
+            if (b.bld!.tower) b.bld!.tower.down = true;
+            sp.obstruction = undefined;
+            sp.obstructionDisabled = true;
+            this.collapseToRubble(sp, name);
+            if (!sp.collapse && !sp.asset.includes('_RUBBLE')) sp.destroyed = true;
+        } else if (b.hp <= b.maxHp * 0.5) {
+            const dmg = 'BUILDING:' + name + '_DAMAGED';
+            if (sp.asset !== dmg && this.natureCache[dmg]?.img?.complete) { sp.asset = dmg; sp.frame = 0; }
         }
     }
 
@@ -8329,6 +8379,7 @@ export class Scene13WarLayer {
             reload: 3.2,                  // 装填时间 3.0 ~ 3.5 秒
             atk: 3,                       // 窗台民兵冷箭 (攻击力 2 ~ 3)
         });
+        this.registerDefBuilding(sp, name);
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
         this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
         this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
@@ -9625,6 +9676,7 @@ export class Scene13WarLayer {
                                 }
                             }
                         }
+                        if (foe.bld) this.onDefBuildingHit(foe);
                         // 🔴 [2026-09-18] 木栅栏/篱笆打爆（hp <= 0）→ 直接消失并解除阻挡。
                         //    栅栏没有破损档（destrAssets 为空），改前 hp 归零后既不换贴图也不破墙，
                         //    只能干等 30 秒保底坍塌 —— 画面上就是「一直砸，栅栏纹丝不动」。
@@ -9780,12 +9832,15 @@ export class Scene13WarLayer {
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
         for (const m of this.men) { m.atkers = m.atkNext; m.atkNext = 0; }
         for (const b of this.wallGates) { b.atkers = b.atkNext; b.atkNext = 0; }
+        for (const b of this.defBuildings) { b.atkers = b.atkNext; b.atkNext = 0; }
         // 按本帧最终锁定关系核对计数；下一帧会从零重新登记追击名额。
         for (const m of this.men) { m.claimsNext = 0; }
         for (const b of this.wallGates) { b.claimsNext = 0; }
+        for (const b of this.defBuildings) { b.claimsNext = 0; }
         for (const m of this.men) { if (m.foe && m.foe.hp > 0) m.foe.claimsNext++; }
         for (const m of this.men) { m.claims = m.claimsNext; }
         for (const b of this.wallGates) { b.claims = b.claimsNext; }
+        for (const b of this.defBuildings) { b.claims = b.claimsNext; }
 
         this.separate(dt, laneLeaders);
         // 边界收口：追目标/风筝/推挤都可能把兵推出屏幕，统一 clamp 回场内（见 fieldBound）

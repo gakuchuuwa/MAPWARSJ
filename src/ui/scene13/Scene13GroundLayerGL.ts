@@ -982,22 +982,12 @@ export class Scene13GroundLayerGL {
     const cx = c.gx, cy = c.gy;
     const rFlat = flatCells;
 
-    // 1. 主城与护城河广袤平原整平：整平到 0 级，外围 2.5 格平滑过渡
-    for (let y = 0; y <= N; y++) {
-      for (let x = 0; x <= N; x++) {
-        const dist = Math.hypot(x - cx, (y - cy) * 1.5);
-        if (dist <= rFlat) {
-          this.cornerElev[y * V + x] = 0;
-        } else if (dist <= rFlat + 2.5) {
-          const s = (dist - rFlat) / 2.5;
-          const t = s * s * (3 - 2 * s);
-          this.cornerElev[y * V + x] = this.cornerElev[y * V + x] * t;
-        }
-      }
-    }
+    // 🔴 [彻底根除固定底图残留] 大城坐落开阔平原，全图基底高程统一重置为 0 级！
+    // 杜绝构造函数中默认写死种子生成的中央高台边缘残留，确保平原纯净开阔
+    this.cornerElev.fill(0);
 
-    // 2. 远景原野：全随机 6 大宏观格局（新月环抱/单侧屏障/峡谷廊道/散落群丘/平原孤峰/斜贯山脊）连绵平缓远山
-    this.generateDiverseWildHills(cx, cy, rFlat + 4.5, 3.5, rnd, 'big_city');
+    // 2. 远景原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
+    this.generateDeElevationGrid(cx, cy, rFlat + 4.5, 3.0, rnd, 'big_city');
 
     this.updateCornerLight();
     this.elevDirty = true;
@@ -1015,7 +1005,19 @@ export class Scene13GroundLayerGL {
    *  5. chain_range (斜贯山脊余脉)：整条斜向山梁切过原野；
    * 每座山包的半径、高度、等轴椭圆长宽比、主轴旋转角、谐波轮廓扰动均全面随机，彻底杜绝任何固定象限或千篇一律！
    */
-  private generateDiverseWildHills(
+  /**
+   * 🔴 [2026-10-12 主人令「所有地图的丘陵分布要中心高，周围低，分布随机」]
+   * 彻底废除数学公式圆包，采用纯正 DE（帝国时代2 Genie 引擎 RMS）分层内聚元胞团块蔓延算法：
+   * 1. 纯整数瓦片高程（0~7 级）；
+   * 2. 城池保护区避让（`rProtect` 内强制保持基础平坦或专属台地高度）；
+   * 3. 团块元胞邻域随机蔓延（Cellular Growth）：
+   *    - 第 1 级基础山基：在地图空闲区域随机撒种子，向四周邻域随机生长出大面积平缓 1 级台地；
+   *    - 第 2 级山腰台地：严格在 1 级核心区域内部撒种子，缩小面积向外蔓延出 2 级；
+   *    - 第 3~N 级主峰：逐级向核心收敛生长，天然呈现「中心最高，向四周层层台阶跌落，山脊走向有机随机」的真实山貌！
+   * 4. 坡度落差约束（Slope Clamping）：相邻两格整数落差绝对不能大于 1 级（形成标准 45° 阶梯斜坡）；
+   * 5. 角点网格双线性转换并赋予西北光照。
+   */
+  private generateDeElevationGrid(
     cx: number,
     cy: number,
     rProtect: number,
@@ -1023,194 +1025,190 @@ export class Scene13GroundLayerGL {
     rnd: () => number,
     category: 'big_city' | 'medium_city' | 'small_city' | 'stockade' | 'pass'
   ): void {
-    const N = this.N, V = N + 1;
-    const hills: Array<{
-      sx: number;
-      sy: number;
-      radius: number;
-      targetH: number;
-      aspect: number;
-      rotAngle: number;
-      deformAmp: number;
-      phase1: number;
-      phase2: number;
-    }> = [];
+    const N = this.N;
+    const V = N + 1;
+    const tileElev = new Int8Array(N * N);
 
-    const patternRoll = rnd();
-    let pattern: 'crescent' | 'single_massif' | 'ridge_corridor' | 'scattered_cluster' | 'isolated_peaks' | 'chain_range' = 'scattered_cluster';
-    if (patternRoll < 0.20) pattern = 'crescent';
-    else if (patternRoll < 0.38) pattern = 'single_massif';
-    else if (patternRoll < 0.55) pattern = 'ridge_corridor';
-    else if (patternRoll < 0.72) pattern = 'scattered_cluster';
-    else if (patternRoll < 0.86) pattern = 'isolated_peaks';
-    else pattern = 'chain_range';
+    // 1. 识别保护区（城池或据点地基），初始化当前地基的最高基础高度
+    const inProtect = (gx: number, gy: number) => Math.hypot(gx - cx, (gy - cy) * 1.35) < rProtect;
 
+    // 2. 根据场景类型，决定野外山体群（Hill Clusters）的数量与规格
+    // 大城周围远山平缓开阔；关隘与山寨崇山峻岭巍峨；中城小城参差起伏
     const isBig = category === 'big_city';
     const isPass = category === 'pass';
     const isStockade = category === 'stockade';
 
-    const hScale = isBig ? 0.65 : (isPass ? 1.0 : (isStockade ? 0.9 : 0.8));
-    const radScale = isBig ? 1.4 : (isStockade ? 0.85 : 1.0);
+    let clumpCount = 3 + Math.floor(rnd() * 4); // 3 ~ 6 组独立山丘群
+    if (isBig) clumpCount = 3 + Math.floor(rnd() * 3);
+    else if (isPass) clumpCount = 4 + Math.floor(rnd() * 3);
+    else if (isStockade) clumpCount = 2 + Math.floor(rnd() * 3);
 
-    if (pattern === 'crescent') {
-      // ── 格局 0：新月环抱 ──
-      const centerAngle = rnd() * 6.28;
-      const arcSpan = 1.8 + rnd() * 2.0;
-      const count = 3 + Math.floor(rnd() * 4);
-      for (let i = 0; i < count; i++) {
-        const t = (i / (count - 1 || 1) - 0.5);
-        const ang = centerAngle + t * arcSpan + (rnd() - 0.5) * 0.35;
-        const dist = rProtect + (isBig ? 16 : 8) + rnd() * (isBig ? 16 : 10);
-        hills.push({
-          sx: cx + Math.cos(ang) * dist,
-          sy: cy + Math.sin(ang) * dist * 0.65,
-          radius: (7.0 + rnd() * 6.0) * radScale,
-          targetH: Math.min(maxLevel, (1.2 + rnd() * (maxLevel - 1.2)) * hScale),
-          aspect: 0.8 + rnd() * 1.0,
-          rotAngle: ang + Math.PI / 2 + (rnd() - 0.5) * 0.5,
-          deformAmp: 0.08 + rnd() * 0.08,
-          phase1: rnd() * 6.28,
-          phase2: rnd() * 6.28,
-        });
-      }
-    } else if (pattern === 'single_massif') {
-      // ── 格局 1：单侧崇山屏障 ──
-      const mainAngle = rnd() * 6.28;
-      const mainDist = rProtect + (isBig ? 18 : 9) + rnd() * (isBig ? 10 : 6);
-      hills.push({
-        sx: cx + Math.cos(mainAngle) * mainDist,
-        sy: cy + Math.sin(mainAngle) * mainDist * 0.65,
-        radius: (13.0 + rnd() * 8.0) * radScale,
-        targetH: Math.min(maxLevel, (maxLevel * 0.75 + rnd() * (maxLevel * 0.25)) * hScale),
-        aspect: 1.2 + rnd() * 0.8,
-        rotAngle: rnd() * 3.14,
-        deformAmp: 0.10 + rnd() * 0.08,
-        phase1: rnd() * 6.28,
-        phase2: rnd() * 6.28,
-      });
-      const subCount = 2 + Math.floor(rnd() * 2);
-      for (let i = 0; i < subCount; i++) {
-        const subAng = mainAngle + (i === 0 ? -0.8 : 0.8) + (rnd() - 0.5) * 0.4;
-        const subDist = mainDist + (rnd() - 0.5) * 6;
-        hills.push({
-          sx: cx + Math.cos(subAng) * subDist,
-          sy: cy + Math.sin(subAng) * subDist * 0.65,
-          radius: (6.5 + rnd() * 5.0) * radScale,
-          targetH: Math.min(maxLevel, (1.0 + rnd() * (maxLevel * 0.6)) * hScale),
-          aspect: 0.9 + rnd() * 0.8,
-          rotAngle: rnd() * 3.14,
-          deformAmp: 0.08 + rnd() * 0.06,
-          phase1: rnd() * 6.28,
-          phase2: rnd() * 6.28,
-        });
-      }
-    } else if (pattern === 'ridge_corridor') {
-      // ── 格局 2：峡谷走廊通道 ──
-      const axisAngle = rnd() * 3.14;
-      const norm1 = axisAngle + 1.57, norm2 = axisAngle - 1.57;
-      const countPerSide = 2 + Math.floor(rnd() * 2);
-      for (const norm of [norm1, norm2]) {
-        for (let i = 0; i < countPerSide; i++) {
-          const shift = (i - (countPerSide - 1) / 2) * (isBig ? 16 : 10) + (rnd() - 0.5) * 4;
-          const distNorm = rProtect + (isBig ? 14 : 7) + rnd() * (isBig ? 10 : 6);
-          const px = cx + Math.cos(norm) * distNorm + Math.cos(axisAngle) * shift;
-          const py = cy + Math.sin(norm) * distNorm * 0.65 + Math.sin(axisAngle) * shift * 0.65;
-          hills.push({
-            sx: px, sy: py,
-            radius: (7.0 + rnd() * 5.5) * radScale,
-            targetH: Math.min(maxLevel, (1.5 + rnd() * (maxLevel - 1.5)) * hScale),
-            aspect: 1.3 + rnd() * 0.8,
-            rotAngle: axisAngle + (rnd() - 0.5) * 0.3,
-            deformAmp: 0.08 + rnd() * 0.06,
-            phase1: rnd() * 6.28, phase2: rnd() * 6.28,
-          });
+    // 3. 元胞蔓延生长函数（仿 DE <ELEVATION_GENERATION>）
+    const growClump = (
+      seedX: number,
+      seedY: number,
+      targetLevel: number,
+      numTiles: number,
+      requireBaseLevel: number
+    ): Set<number> => {
+      const clump = new Set<number>();
+      const frontier: number[] = [];
+      const startIdx = seedY * N + seedX;
+
+      if (seedX < 2 || seedX >= N - 2 || seedY < 2 || seedY >= N - 2) return clump;
+      if (inProtect(seedX, seedY)) return clump;
+      if (tileElev[startIdx] < requireBaseLevel) return clump;
+
+      clump.add(startIdx);
+      tileElev[startIdx] = targetLevel;
+      frontier.push(startIdx);
+
+      const dirs = [-1, 1, -N, N, -N - 1, -N + 1, N - 1, N + 1];
+
+      while (frontier.length > 0 && clump.size < numTiles) {
+        // 从前沿候选队列中随机抽取一个活跃点
+        const pickIdx = Math.floor(rnd() * frontier.length);
+        const cur = frontier[pickIdx];
+        const cx0 = cur % N, cy0 = Math.floor(cur / N);
+
+        // 寻找合法邻居
+        let expanded = false;
+        // 打乱邻域探索顺序，产生自然曲折山脊
+        const shuffledDirs = [...dirs].sort(() => rnd() - 0.5);
+        for (const d of shuffledDirs) {
+          const nbr = cur + d;
+          const nx = nbr % N, ny = Math.floor(nbr / N);
+          if (nx < 2 || nx >= N - 2 || ny < 2 || ny >= N - 2) continue;
+          if (inProtect(nx, ny)) continue;
+          if (clump.has(nbr)) continue;
+          if (tileElev[nbr] < requireBaseLevel) continue;
+
+          clump.add(nbr);
+          tileElev[nbr] = targetLevel;
+          frontier.push(nbr);
+          expanded = true;
+          if (clump.size >= numTiles) break;
+        }
+
+        if (!expanded) {
+          // 该点四周已无处可长，从前沿移除
+          frontier[pickIdx] = frontier[frontier.length - 1];
+          frontier.pop();
         }
       }
-    } else if (pattern === 'scattered_cluster') {
-      // ── 格局 3：错落起伏群丘 ──
-      const count = 3 + Math.floor(rnd() * 5);
-      for (let i = 0; i < count; i++) {
-        const ang = rnd() * 6.28;
-        const dist = rProtect + (isBig ? 10 : 5) + rnd() * (isBig ? 24 : 16);
-        hills.push({
-          sx: cx + Math.cos(ang) * dist,
-          sy: cy + Math.sin(ang) * dist * 0.65,
-          radius: (5.5 + rnd() * 7.5) * radScale,
-          targetH: Math.min(maxLevel, (1.2 + rnd() * (maxLevel - 1.2)) * hScale),
-          aspect: 0.8 + rnd() * 1.1,
-          rotAngle: rnd() * 3.14,
-          deformAmp: 0.08 + rnd() * 0.08,
-          phase1: rnd() * 6.28, phase2: rnd() * 6.28,
-        });
+
+      return clump;
+    };
+
+    // 4. 逐个生成「中心高、周围低」的多层金字塔山丘
+    for (let c = 0; c < clumpCount; c++) {
+      // 随机挑选山头中心种子位置（保证在保护区外、地图内）
+      let seedX = 0, seedY = 0, found = false;
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const sx = 4 + Math.floor(rnd() * (N - 8));
+        const sy = 4 + Math.floor(rnd() * (N - 8));
+        if (!inProtect(sx, sy) && tileElev[sy * N + sx] === 0) {
+          seedX = sx;
+          seedY = sy;
+          found = true;
+          break;
+        }
       }
-    } else if (pattern === 'isolated_peaks') {
-      // ── 格局 4：广袤平原孤峰/双峰 ──
-      const peakCount = 1 + (rnd() < 0.45 ? 1 : 0);
-      for (let i = 0; i < peakCount; i++) {
-        const ang = rnd() * 6.28;
-        const dist = rProtect + (isBig ? 16 : 8) + rnd() * (isBig ? 14 : 10);
-        hills.push({
-          sx: cx + Math.cos(ang) * dist,
-          sy: cy + Math.sin(ang) * dist * 0.65,
-          radius: (8.0 + rnd() * 7.0) * radScale,
-          targetH: Math.min(maxLevel, (2.0 + rnd() * (maxLevel - 1.5)) * hScale),
-          aspect: 0.85 + rnd() * 0.5,
-          rotAngle: rnd() * 3.14,
-          deformAmp: 0.06 + rnd() * 0.06,
-          phase1: rnd() * 6.28, phase2: rnd() * 6.28,
-        });
+      if (!found) continue;
+
+      // 决定该座山丘的主峰高度（中心高度）
+      // 大城 1~3 级；中城 2~4 级；关隘/山寨 3~6 级
+      let peakH = 2;
+      if (isBig) {
+        peakH = 1 + Math.floor(rnd() * Math.min(3, maxLevel));
+      } else if (isPass) {
+        peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
+      } else if (isStockade) {
+        peakH = 2 + Math.floor(rnd() * (maxLevel - 1));
+      } else {
+        peakH = 2 + Math.floor(rnd() * (maxLevel - 1));
       }
-    } else {
-      // ── 格局 5：斜贯山脊余脉 ──
-      const chainAng = rnd() * 3.14;
-      const count = 3 + Math.floor(rnd() * 3);
-      const offsetDist = rProtect + (isBig ? 16 : 8) + rnd() * (isBig ? 8 : 5);
-      const offAngle = chainAng + 1.57;
-      const midX = cx + Math.cos(offAngle) * offsetDist;
-      const midY = cy + Math.sin(offAngle) * offsetDist * 0.65;
-      for (let i = 0; i < count; i++) {
-        const stepAlong = (i - (count - 1) / 2) * (isBig ? 14 : 8) + (rnd() - 0.5) * 3;
-        hills.push({
-          sx: midX + Math.cos(chainAng) * stepAlong,
-          sy: midY + Math.sin(chainAng) * stepAlong * 0.65,
-          radius: (7.0 + rnd() * 5.0) * radScale,
-          targetH: Math.min(maxLevel, (1.5 + rnd() * (maxLevel - 1.5)) * hScale),
-          aspect: 1.4 + rnd() * 0.8,
-          rotAngle: chainAng + (rnd() - 0.5) * 0.25,
-          deformAmp: 0.08 + rnd() * 0.06,
-          phase1: rnd() * 6.28, phase2: rnd() * 6.28,
-        });
+      peakH = Math.max(1, Math.min(maxLevel, peakH));
+
+      // 基础 1 级台地瓦片规模（按山丘大小随机 60 ~ 220 块瓦片）
+      const baseTiles = isBig ? (80 + Math.floor(rnd() * 140)) : (50 + Math.floor(rnd() * 90));
+
+      // ── 第 1 步：生长第 1 层基础大底座（1 级台地）──
+      let prevClump = growClump(seedX, seedY, 1, baseTiles, 0);
+      if (prevClump.size < 12) continue;
+
+      // ── 第 2~peakH 步：向中心内聚生长更高层（层层收敛，造就「中心高、四周低」）──
+      for (let lvl = 2; lvl <= peakH; lvl++) {
+        // 面积逐级按比例收缩（每一级比上一级小 45%~60%）
+        const shrinkRate = 0.45 + rnd() * 0.15;
+        const nextTiles = Math.max(8, Math.floor(prevClump.size * shrinkRate));
+
+        // 种子必须落在上一级团块内部，且尽量偏向核心（远离边缘）
+        const candidates = Array.from(prevClump);
+        let bestSeed = candidates[Math.floor(rnd() * candidates.length)];
+        let bestDist = 0;
+        // 抽选若干候选点，挑选与山心 seedX, seedY 最近的点作为更高层核心
+        for (let k = 0; k < Math.min(10, candidates.length); k++) {
+          const cand = candidates[Math.floor(rnd() * candidates.length)];
+          const cX = cand % N, cY = Math.floor(cand / N);
+          const d = Math.hypot(cX - seedX, cY - seedY);
+          if (k === 0 || d < bestDist) {
+            bestDist = d;
+            bestSeed = cand;
+          }
+        }
+
+        const nextSeedX = bestSeed % N, nextSeedY = Math.floor(bestSeed / N);
+        const nextClump = growClump(nextSeedX, nextSeedY, lvl, nextTiles, lvl - 1);
+        if (nextClump.size < 6) break;
+        prevClump = nextClump;
       }
     }
 
-    // 统一将生成的丘陵山峦平滑投射至高程网格（C1 连续四次多项式衰减，导数严格归零，绝对无马赛克方块锯齿）
-    for (const h of hills) {
-      if (h.sx < 5 || h.sx >= N - 5 || h.sy < 5 || h.sy >= N - 5) continue;
-      const maxR = h.radius * Math.max(1.0, h.aspect) * 1.35;
-      const minX = Math.max(1, Math.floor(h.sx - maxR));
-      const maxX = Math.min(N - 1, Math.ceil(h.sx + maxR));
-      const minY = Math.max(1, Math.floor(h.sy - maxR / 1.3));
-      const maxY = Math.min(N - 1, Math.ceil(h.sy + maxR / 1.3));
-      const cosA = Math.cos(h.rotAngle), sinA = Math.sin(h.rotAngle);
-
-      for (let y = minY; y <= maxY; y++) {
-        for (let x = minX; x <= maxX; x++) {
-          if (Math.hypot(x - cx, (y - cy) * 1.4) < rProtect) continue;
-
-          const dx = x - h.sx, dy = y - h.sy;
-          const rx = dx * cosA + dy * sinA;
-          const ry = -dx * sinA + dy * cosA;
-          const dist = Math.hypot(rx / h.aspect, ry * 1.35);
-          const theta = Math.atan2(dy, dx);
-          const rLocal = h.radius * (1.0 + h.deformAmp * Math.sin(2 * theta + h.phase1) + (h.deformAmp * 0.6) * Math.cos(3 * theta + h.phase2));
-
-          if (dist < rLocal) {
-            const s = dist / rLocal;
-            const fade = (1.0 - s * s) * (1.0 - s * s);
-            const hillH = h.targetH * fade;
-            const idx = y * V + x;
-            this.cornerElev[idx] = Math.max(this.cornerElev[idx], hillH);
+    // 5. 坡度梯级平滑限制（Slope Clamping / Smoothing Pass）
+    // DE 原版铁律：相邻两格之间的高度差绝对不能大于 1 级。
+    // 多遍扫描收敛，如果有落差 > 1，自动用阶梯坡度平滑补充。
+    for (let pass = 0; pass < 4; pass++) {
+      let changed = false;
+      for (let y = 1; y < N - 1; y++) {
+        for (let x = 1; x < N - 1; x++) {
+          if (inProtect(x, y)) continue;
+          const cur = tileElev[y * N + x];
+          // 4 邻居
+          const neighbors = [
+            tileElev[y * N + (x - 1)],
+            tileElev[y * N + (x + 1)],
+            tileElev[(y - 1) * N + x],
+            tileElev[(y + 1) * N + x]
+          ];
+          for (const nbr of neighbors) {
+            if (cur - nbr > 1) {
+              tileElev[y * N + x] = nbr + 1;
+              changed = true;
+              break;
+            }
           }
+        }
+      }
+      if (!changed) break;
+    }
+
+    // 6. 将整数瓦片高程叠加/融合至 cornerElev 角点网格中
+    // 角点 (gx, gy) 的高度由相邻 4 个整数格子的均值决定，形成标准等轴斜坡与台地
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        if (inProtect(gx, gy)) continue; // 保护区保留原有城址整平值
+
+        let sum = 0, count = 0;
+        if (gx > 0 && gy > 0) { sum += tileElev[(gy - 1) * N + (gx - 1)]; count++; }
+        if (gx < N && gy > 0) { sum += tileElev[(gy - 1) * N + gx]; count++; }
+        if (gx > 0 && gy < N) { sum += tileElev[gy * N + (gx - 1)]; count++; }
+        if (gx < N && gy < N) { sum += tileElev[gy * N + gx]; count++; }
+
+        const h = count > 0 ? sum / count : 0;
+        if (h > 0) {
+          const idx = gy * V + gx;
+          this.cornerElev[idx] = Math.max(this.cornerElev[idx], h);
         }
       }
     }
@@ -1247,7 +1245,8 @@ export class Scene13GroundLayerGL {
     const rFlat = flatCells;
     const isMedium = cityType === 'medium_city';
 
-    // 随机抽选地理环境原型
+    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保城池与丘陵纯粹由本地原型驱动
+    this.cornerElev.fill(0);
     const archeRoll = rnd();
     let archeMode: 'bluff' | 'mountain_spur' | 'rolling_hills' = 'bluff';
     if (archeRoll < 0.35) {
@@ -1307,11 +1306,11 @@ export class Scene13GroundLayerGL {
       }
     }
 
-    // 🔴 [2026-10-12 主人令「所有的高地丘陵分布，请随机，千万不要一致，都一样的话太单调了」]
-    // 外围高地丘陵全随机多样化宏观格局生成（6 大格局抽选，参数全随机）
+    // 🔴 [2026-10-12 主人令「所有地图的丘陵分布要中心高，周围低，分布随机」]
+    // 外围高地丘陵采用 DE 真实团块元胞生长（中心高四周低，全随机分布）
     const rProt = rFlat + (isMedium ? 3.0 : 2.5);
-    const maxH = isMedium ? 5.0 : 4.0;
-    this.generateDiverseWildHills(cx, cy, rProt, maxH, rnd, cityType);
+    const maxH = isMedium ? 4.0 : 3.0;
+    this.generateDeElevationGrid(cx, cy, rProt, maxH, rnd, cityType);
 
     this.updateCornerLight();
     this.elevDirty = true;
@@ -1381,6 +1380,9 @@ export class Scene13GroundLayerGL {
 
     const cx = c.gx, cy = c.gy;
 
+    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保关隘台地与外围峡谷崇山由算法纯粹驱动
+    this.cornerElev.fill(0);
+
     for (let y = 0; y <= N; y++) {
       for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
@@ -1420,9 +1422,8 @@ export class Scene13GroundLayerGL {
       }
     }
 
-    // 4. 外围城墙外围：全随机 6 大宏观地势格局（新月环抱/单侧崇山屏障/峡谷廊道/错落群丘/平原孤峰/斜贯山脊）
-    // 彻底根除离散方块锯齿，采用 C1 平滑连续四次多项式衰减核
-    this.generateDiverseWildHills(cx, cy, R3 + 3.0, 7.0, rnd, 'pass');
+    // 4. 外围城墙外围：DE 真实团块元胞生长（中心高四周低，全随机分布）
+    this.generateDeElevationGrid(cx, cy, R3 + 3.0, 6.0, rnd, 'pass');
 
     // 6. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
@@ -1498,6 +1499,9 @@ export class Scene13GroundLayerGL {
 
     const cx = c.gx, cy = c.gy;
 
+    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保山寨高台与外围丘陵由算法纯粹驱动
+    this.cornerElev.fill(0);
+
     for (let y = 0; y <= N; y++) {
       for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
@@ -1562,9 +1566,8 @@ export class Scene13GroundLayerGL {
       }
     }
 
-    // 4. 外围原野：全随机 6 大宏观格局（新月环抱/单侧崇山屏障/峡谷廊道/错落群丘/平原孤峰/斜贯山脊）
-    // 采用 C1 平滑径向衰减核，绝不超越山寨主峰高度
-    this.generateDiverseWildHills(cx, cy, R3 + 3.0, 5.0, rnd, 'stockade');
+    // 4. 外围原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
+    this.generateDeElevationGrid(cx, cy, R3 + 3.0, 4.0, rnd, 'stockade');
 
     // 5. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
