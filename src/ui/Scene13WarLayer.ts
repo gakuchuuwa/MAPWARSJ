@@ -5985,7 +5985,9 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-12 主人令「设计中城护城河，比大城窄一点，2 格就行；小城 1 格；城寨不用」] 河宽按城型：大城 3 / 中城 2 / 小城 1 / 其余不挖；
         //    毡帐营地（蒙古包那套，不是按格摆放的墙圈）跳过，免得河开错位置。
         const moatW = this.defenderCityType === 'big_city' ? 3 : this.defenderCityType === 'medium_city' ? 2 : this.defenderCityType === 'small_city' ? 1 : 0;
-        const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT';
+        // 🔴 [2026-10-13 主人令「护城河按史实区分，没有水的城不要挖」] 护城河要有水源：城郊 25km 内没有河 / 湖 / 海（waterKind === 'none'，
+        //    即内陆干旱区的城）不挖——历史上这类城要么是干壕、要么根本无壕，凭空挖一圈水不符合地理。
+        const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
         if (this.defenderCityType === 'pass') {
             gl.flattenPassTerraces(cx, cy, W, H, seedStr);
         } else if (this.defenderCityType === 'stockade') {
@@ -6079,14 +6081,25 @@ export class Scene13WarLayer {
                 let crossesCity = false;
                 if (a && b) for (let t = 0; t <= 1; t += 0.05) if (inCityE(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)) { crossesCity = true; break; }
                 if (a && b && bestD <= MAX_LEN && !crossesCity) {
-                    const A = a, B = b;
-                    const half = Math.max(0.5, moatW) * Math.hypot(TAC_TILE_W / 2, TAC_TILE_H) / 2;   // 护城河宽（等轴格）换算到地平面
-                    const ax = A[0], ay = A[1] * 2, bx = B[0], by = B[1] * 2;
-                    const L2 = (bx - ax) ** 2 + (by - ay) ** 2 || 1;
+                    // 🔴 [2026-10-13 主人报「河流和护城河衔接的不太好」] 原来是一根等宽直棒、两头直角：
+                    //    ① 两端各延长（渠首缩进护城河、渠尾伸进河心），不留缝；
+                    //    ② 两端做喇叭口（宽度向端点平滑放大 ~1.8 倍），与河、与护城河都是圆滑倒角而不是直角；
+                    //    ③ 渠身带一个轻微的 S 形弯（振幅 0.7 格），不再是尺子画的直线。
+                    const half0 = Math.max(0.5, moatW) * Math.hypot(TAC_TILE_W / 2, TAC_TILE_H) / 2;   // 护城河宽（等轴格）换算到地平面
+                    let ax = a[0], ay = a[1] * 2, bx = b[0], by = b[1] * 2;
+                    const L0 = Math.hypot(bx - ax, by - ay) || 1, ux = (bx - ax) / L0, uy = (by - ay) / L0;
+                    const EXT_A = TAC_TILE_W * 0.8, EXT_B = TAC_TILE_W * 1.6;
+                    ax -= ux * EXT_A; ay -= uy * EXT_A; bx += ux * EXT_B; by += uy * EXT_B;
+                    const L1 = Math.hypot(bx - ax, by - ay) || 1, vx = (bx - ax) / L1, vy = (by - ay) / L1;
+                    const AMP = TAC_TILE_W * 0.7, FLARE = Math.min(0.3, (TAC_TILE_W * 3) / L1);
                     const inCanal = (x: number, y: number): boolean => {
-                        const gy2 = y * 2;
-                        const t = Math.max(0, Math.min(1, ((x - ax) * (bx - ax) + (gy2 - ay) * (by - ay)) / L2));
-                        return Math.hypot(x - (ax + (bx - ax) * t), gy2 - (ay + (by - ay) * t)) <= half && !inCityE(x, y);
+                        const gx2 = x - ax, gy2 = y * 2 - ay;
+                        const along = gx2 * vx + gy2 * vy, t = along / L1;
+                        if (t < -0.02 || t > 1.02) return false;
+                        const lat = -gx2 * vy + gy2 * vx - AMP * Math.sin(Math.PI * 2 * Math.max(0, Math.min(1, t)));
+                        const fa = Math.max(0, 1 - t / FLARE), fb = Math.max(0, 1 - (1 - t) / FLARE);
+                        const w = half0 * (1 + 0.8 * fa * fa + 0.8 * fb * fb);
+                        return Math.abs(lat) <= w && !inCityE(x, y);
                     };
                     gl.addWaterCoverage(inCanal, W, H);
                     const moatOnly = inMoat;

@@ -127,8 +127,8 @@ export const CITY_WONDER: Record<string, string> = {
     //    ⚠️ 保留不删的两条（**样式不重复** —— 小城不画居中城堡，这两条主奇观就是城里唯一的那座城堡）：
     //      city_bishnupur BENG_CASTLE_AGE3｜city_pagaruyung MALA_CASTLE_AGE3
     //    🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
-    //      ⇒ 小城一律不画居中城堡（`TerritorySystem` 两处判据已按本令排除小城），
-    //        小城的城堡从此全部由「**特殊建筑（城内奇观）**」承担 —— 下面这些条目正是那个身份。
+    //      ⇒ 小城一律不画居中城堡（`TerritorySystem` 两处判据已按本令排除小城；**日本建筑风格的小城**自
+    //        2026-10-13 主人令起例外、城心摆城堡），小城的城堡从此全部由「**特殊建筑（城内奇观）**」承担 —— 下面这些条目正是那个身份。
     //    判据与逐条清单见 `scratch/_audit_wonder_castle_dup.mts`。
     'city_bishnupur': 'BENG_CASTLE_AGE3',
     'city_pagaruyung': 'MALA_CASTLE_AGE3',
