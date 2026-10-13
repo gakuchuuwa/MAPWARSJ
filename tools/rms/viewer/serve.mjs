@@ -323,7 +323,11 @@ http.createServer(async (req, res) => {
         const rangeKey = (range || 'ALL').replace(/[^a-zA-Z0-9_-]/g, '_');
         const cacheFile = path.join(cogCacheDir, `${fileName}_${rangeKey}.bin`);
 
-        if (fs.existsSync(cacheFile)) {
+        // 🔴 [2026-10-14] geotiff 只认 `bytes a-b/总长`，回 `/*` 会直接解析失败（批量取水时同一瓦片第二个据点起必败）
+        //    ⇒ 下载时把文件总长记进 <瓦片名>.total，命中缓存时带上；没记总长的旧缓存不走缓存，重新下载。
+        const totalFile = path.join(cogCacheDir, `${fileName}.total`);
+        const cachedTotal = fs.existsSync(totalFile) ? fs.readFileSync(totalFile, 'utf8').trim() : null;
+        if (fs.existsSync(cacheFile) && (!range || cachedTotal)) {
             const buf = fs.readFileSync(cacheFile);
             const status = range ? 206 : 200;
             const resHeaders = {
@@ -336,7 +340,7 @@ http.createServer(async (req, res) => {
             if (range) {
                 const match = /bytes=(\d+)-(\d+)/.exec(range);
                 if (match) {
-                    resHeaders['content-range'] = `bytes ${match[1]}-${match[2]}/*`;
+                    resHeaders['content-range'] = `bytes ${match[1]}-${match[2]}/${cachedTotal}`;
                 }
             }
             res.writeHead(status, resHeaders);
@@ -360,7 +364,11 @@ http.createServer(async (req, res) => {
             }
             res.writeHead(status, resHeaders);
             const buf = Buffer.from(await resp.arrayBuffer());
-            fs.writeFileSync(cacheFile, buf);
+            if (resp.ok) {   // 出错的响应不进缓存
+                fs.writeFileSync(cacheFile, buf);
+                const total = /\/(\d+)$/.exec(resp.headers.get('content-range') ?? '')?.[1];
+                if (total) fs.writeFileSync(totalFile, total);
+            }
             const ms = (performance.now() - t0).toFixed(0);
             console.log(`[WorldCover Proxy] Range: ${range ?? 'ALL'} -> ${status} (${buf.length} bytes, ${ms}ms) [Cached]`);
             res.end(buf);
