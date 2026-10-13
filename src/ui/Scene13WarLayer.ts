@@ -11214,10 +11214,15 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
             const canMove = de.acts.includes('walk');
             let mx = 0, my = 0, spd = 0, fleeing = false;
+            // 🔴 [2026-10-13 修「动物频繁颤抖」] 本帧「追击」任务是否已接管移动（见下方 `!hunting` 闸）：
+            //    猛兽扑人期间不许再被「回窝 / 吃草 / 踱步」那条低优先级分支碰 `want`（原来同一帧被改写成 idle/attack，
+            //    却沿用扑人的 mx/my/spd 滑行 = 播着吃草的动作以 42px/s 挪过去，且朝向再不更新）
+            let hunting = false;
             let want: AnimalAction = 'idle';
 
             if (de.kind === 'predator' && near && nearD < de.los) {
                 // 猛兽扑人
+                hunting = true;
                 if (nearD > BITE_RANGE) {
                     mx = near.x - an.x;
                     my = near.y - an.y;
@@ -11277,7 +11282,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     an.wanderY = an.y;
                     an.idleTimer = 4 + Math.random() * 6; // 逃跑结束就地停下吃草
                 }
-            } else if (canMove) {
+            } else if (canMove && !hunting) {
                 const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
                 if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
                     // DE：不被追就回窝（走回去，不留在逃跑落点）
