@@ -103,7 +103,7 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
     if (castleDir && DE_SPRITE_BOX_W[castleDir]) spriteW[castleDir] = DE_SPRITE_BOX_W[castleDir];
     for (const n of ['HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
         'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D', 'YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L',
-        'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
+        'ASIA_TOWER_AGE2', 'SETTLEMENT', 'DARK_SETTLEMENT_AGE1', 'DARK_BARRACKS_AGE1', 'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1', 'DARK_TOWN_CENTER_AGE1',
         'OUTPOST', 'FORTIFIED_OUTPOST']) {
         for (const key of [`${deStyle}_${n}`, n]) if (DE_SPRITE_BOX_W[key]) spriteW[key] = DE_SPRITE_BOX_W[key];
     }

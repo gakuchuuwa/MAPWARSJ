@@ -519,7 +519,7 @@ function packSmallCitySlots(
     return chosen.map((c, k) => ({ ci: c.i, cj: c.j, isCenter: k === 0 }));
 }
 
-function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
+function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT' && !native) return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
     const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
@@ -550,6 +550,24 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
             // 取建筑顺序：占地由大到小（并列按池序）—— 与 packSmallCitySlots 的固定骨架一一对应
             const ordered = ring.map((b, i) => ({ b, i })).sort((x, y) => (deBuildingFootprint(y.b) - deBuildingFootprint(x.b)) || (x.i - y.i));
             const stoneAnchors = DE_STONE_ANCHORS_BY_STYLE[style];
+            if (style === 'YURT') {
+                // 毡帐小城：8 蒙古包 + 1 瞭望塔，栅栏仍用原来的两套随机（DARK / ARCHAIC），只改成小城同款 3×3 摆位
+                const yurtPool = [...YURT_STOCKADE_NINE];
+                for (let i = yurtPool.length - 1; i > 0; i--) {
+                    const j = Math.floor(rnd() * (i + 1));
+                    [yurtPool[i], yurtPool[j]] = [yurtPool[j], yurtPool[i]];
+                }
+                const yurtOrdered = yurtPool.sort((x, y) => deBuildingFootprint(y) - deBuildingFootprint(x));
+                return buildDeCityGridHtml(baseSize, cityId, style, false, factionId, region,
+                    yurtOrdered.map((b): [string, string] => [b, 'AGE2']), native, {
+                        seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false, rawDirNames: true,
+                        gateEdges: [true, true, true, true],
+                        wallAnchors: (deHashString(cityId + '|palisade_variant') & 1) === 0 ? DE_DARK_PALISADE_ANCHORS : DE_ARCHAIC_PALISADE_ANCHORS,
+                        groundTile: 'sr2',
+                        noGround: true,
+                        slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
+                    });
+            }
             return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
                 ordered.map((o): [string, string] => [o.b, 'AGE2']), native, {
                     seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false,
@@ -1299,6 +1317,8 @@ interface CityGridSpec {
     outer?: { seg: number; wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> };
     /** 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」] 城内建筑取素材用的风格名（不传＝用 style）。毡帐系没有 `YURT_TOWER_AGE3`，箭塔借亚洲木塔：传 'ASIA'。 */
     buildingStyle?: string;
+    /** 不铺城内整片地面（游牧毡帐直接立在草地上，无地基） */
+    noGround?: boolean;
 }
 
 function buildDeCityGridHtml(
@@ -1321,7 +1341,7 @@ function buildDeCityGridHtml(
     // 有外圈墙（如 PASS 双层城）时，地基底图严格对应内城墙圈（ring），与中城地基尺寸范围完全对齐；单层城则沿用 frame。
     const innerRX = ring.L * TW / 2, innerRY = ring.L * TH / 2;
     const innerCy = (2 * ring.a + ring.L) * TH / 2;
-    parts.push(featheredPolygonGroundDiv(
+    if (!g.noGround) parts.push(featheredPolygonGroundDiv(
         W, H, `/SUCAI_TERRAIN/${g.groundTile}.png`, baseSize * 0.32 * AUTO * 2.3,
         [[0, innerCy - innerRY], [innerRX, innerCy], [0, innerCy + innerRY], [-innerRX, innerCy]],
         TW * 0.5, 0.93, 10,

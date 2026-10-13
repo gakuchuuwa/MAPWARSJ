@@ -23,6 +23,8 @@ export function makeRng(seed) {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
     next.int = (lo, hi) => lo + Math.floor(next() * (hi - lo + 1));
+    next.state = () => a;
+    next.setState = (v) => { a = v >>> 0; };
     return next;
 }
 
