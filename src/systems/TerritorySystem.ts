@@ -71,6 +71,34 @@ function deMulberry32(seed: number): () => number {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 }
+
+/**
+ * 🔴 [2026-10-13 主人定「每个据点，每局一次，然后就固定好。战略和战术一致。这样最真实。」]
+ * 城内 9 建筑的布局随机源：**每局一次 + 局内固定**。
+ *
+ * 口径（三句话）：
+ *   ① **每开一局**（页面加载／新对局）→ 生成一个全新的「局种子」；
+ *   ② 每座城的布局 = `deMulberry32(hash(cityId + '|' + 该局种子))` —— 同局内**恒定**：
+ *      战略地图反复重绘、缩放、进战术再回来，都是同一套布局（不会跳、不会闪）；
+ *   ③ 战略地图与战术模式**走同一个函数**（战术侧也 import 本文件）⇒ 两边天然一致。
+ *
+ * ⚠️ 为什么不能直接用 `Math.random()`：战略地图会随缩放重绘，第二次调用就会换一套，
+ *    建筑会在玩家眼前跳动；且与战术侧的调用时机不同 ⇒ 两边对不上。
+ * ⚠️ 为什么不能只用 `hash(cityId)`（旧口径）：那样同一座城**永远**是同一个布局，
+ *    跨局也不会变。现在改成 `cityId + 局种子`，两个诉求同时满足。
+ */
+let _citySessionSeed: number | null = null;
+const _citySeedCache = new Map<string, number>();
+function cityRnd(cityId: string): () => number {
+    // 本局种子：只在**第一次**取用时生成一次（Math.random 全局只掷一回），此后整局不变
+    if (_citySessionSeed === null) _citySessionSeed = Math.floor(Math.random() * 0xFFFFFFFF);
+    let s = _citySeedCache.get(cityId);
+    if (s === undefined) {
+        s = deHashString(String(cityId) + '|' + _citySessionSeed);
+        _citySeedCache.set(cityId, s);
+    }
+    return deMulberry32(s);
+}
 // 实验白名单：先只对特诺奇提特兰（阿兹特克 MESO）做小城组合渲染
 
 // 各类建筑在据点内的相对占地尺寸比例（2026-08-26 主人定「建筑大小尽量一致」：统一 0.40，塔细高略小 0.36，城镇中心稍大 0.42）
@@ -199,7 +227,7 @@ function nativeW(native: CityNativeSizes | undefined, name: string, age: 'AGE2' 
  *  若为险要或开启城心城堡，中间耸立成吉思汗蒙古王帐城堡（MONG_CASTLE_AGE3），四周4蒙古包环卫。
  *  2026-09-03 主人定：草原**大城/中城/小城/险要**围一圈硬木栅栏（fence=true，同战术 PALISADE），城寨仍无栅栏（纯游牧驻牧）。 */
 function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, centerCastle = false, factionId?: string, region?: string, native?: CityNativeSizes): string {
-    const rnd = deMulberry32(deHashString(cityId));
+    const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
     const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L']; // 8 蒙古包全用满（不剔，与战术一致）
     const TOWER = 'TOWER';
     const items: string[] = [...yurts, TOWER]; // 8 帐篷 + 1 亚洲塔 = 9 物件
@@ -494,7 +522,7 @@ function packSmallCitySlots(
 function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: string, useStoneWall = false, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {    if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原小城也围栅栏
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
-    const rnd = deMulberry32(deHashString(cityId));
+    const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
     // 🔴 [2026-09-16 主人定] 二级蒙古小城：9 建筑池里随机掺入蒙古包（见 MONGOL_CITY_YURTS 注释），总数仍恒为 9
     const ring = [...DE_SMALL_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
     for (let i = ring.length - 1; i > 0; i--) {
@@ -655,7 +683,7 @@ function buildDeStockadeStackHtml(
     //    于是漠北蒙古的城寨掉进通用池（大庄园/定居点/棚屋 A~G/哨所），混着抽 9 个，不是蒙古包。
     //    ⚠️ 只换这 9 个建筑：**篱笆围墙、布局、缩放、地基一律不动**（主人 2026-09-18：
     //       「我说只改 9 建筑，你把篱笆墙怎么也给我删了」）。城寨仍是城寨，只是住的换成蒙古包。
-    const rnd = deMulberry32(deHashString(cityId));
+    const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
     const pool = [...(style === 'YURT' ? YURT_STOCKADE_NINE : DE_STOCKADE_BUILDING_POOL)];
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
@@ -963,7 +991,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
 // 中城城堡时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层广场地基彻底覆盖城北角楼与全城；城门与城墙完全1.0x自然咬合）
 function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原中城围栅栏
-    const rnd = deMulberry32(deHashString(cityId));
+    const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
 
     // 12 种城堡时代建筑随机洗牌，取前 9 栋（二级蒙古：候选池再掺入 8 个蒙古包，仍取前 9 栋）
     const ring = [...DE_MEDIUM_CITY_POOL, ...(isMongolStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
@@ -1092,7 +1120,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 // 大城帝国时代建筑渲染（2026-09-08 主人定：9 建筑按 3*3 网格排列，位置完全随机，独立随机镜像，尺寸统一 0.32；底层广场地基彻底覆盖城北角楼与全城）
 function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string, centerCastle = false, factionId?: string, region?: string, buildingStyle?: string, native?: CityNativeSizes): string {
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原大城围栅栏
-    const rnd = deMulberry32(deHashString(cityId));
+    const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
 
     // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 9 选 6 辅助建筑（含大型箭塔），共 9 栋建筑
     const noble: Array<[string, string]> = [
