@@ -3298,6 +3298,9 @@ const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, numbe
 
     // ── 危险猎物（受惊冲刺脱离，65~75 px/s）──
     ['BOAR', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],       // 野猪（凶猛冲撞脱离）
+    ['BEAR', 'danger', 30, 75, 75, 7, 5, ANIMAL_ACTS.beast],       // 棕熊（凶猛厚重冲刺脱离）
+    ['BEAR_BLACK', 'danger', 30, 75, 75, 7, 5, ANIMAL_ACTS.beast], // 黑熊
+    ['BEAR_POLAR', 'danger', 30, 75, 80, 8, 5, ANIMAL_ACTS.beast], // 北极熊
     ['RHINO', 'danger', 30, 70, 75, 7, 4, ANIMAL_ACTS.beast],      // 犀牛（厚重冲刺）
     ['ELEPHANT', 'danger', 30, 65, 75, 7, 4, ANIMAL_ACTS.beast],   // 大象（践踏狂奔）
     ['TAPIR', 'danger', 28, 65, 75, 7, 4, ANIMAL_ACTS.beast],      // 貘
@@ -3311,9 +3314,6 @@ const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, numbe
     ['WOLF', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],          // 狼（迅猛扑杀）
     ['WOLF_ARABIAN', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],  // 阿拉伯狼
     ['WOLF_ARCTIC', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],   // 北极狼
-    ['BEAR', 'predator', 28, 68, 30, 3, 10, ANIMAL_ACTS.beast],          // 棕熊（重型突进）
-    ['BEAR_BLACK', 'predator', 28, 68, 25, 3, 10, ANIMAL_ACTS.beast],    // 黑熊
-    ['BEAR_POLAR', 'predator', 28, 68, 30, 4, 10, ANIMAL_ACTS.beast],    // 北极熊
     ['CROCODILE', 'predator', 24, 55, 25, 3, 12, ANIMAL_ACTS.beastSlow], // 鳄鱼（短程扑咬）
     ['CAIMAN', 'predator', 24, 55, 20, 2, 12, ANIMAL_ACTS.beastSlow],    // 凯门鳄
     ['KOMODO', 'predator', 26, 58, 25, 3, 12, ANIMAL_ACTS.beastSlow],    // 科莫多巨蜥
@@ -4558,7 +4558,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
-        this.defenderHolding = this.siegeWithWalls;
+        this.defenderHolding = false;
         this.nextWallGapSec = 10;
         this.wallAutoCollapsed = false;   // 每场重新计（30 秒保底塌墙，见 step）
         // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
@@ -7240,7 +7240,9 @@ export class Scene13WarLayer {
                 cv.style.display = 'none';
                 return;
             }
-            const mapData = this.relocateTemplateWater(await this.adaptMapDataSeaOrientation(rawMapData));
+            // 🔴 [2026-10-13 主人令「做出一套干净、可靠的真实地理」] 据点真实图（header.skeleton）的水就是真实水体，不许抹掉重挖
+            const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
+            const mapData = rawMapData?.header?.skeleton ? oriented : this.relocateTemplateWater(oriented);
             try {
                 if (this.groundLayerGL) this.groundLayerGL.destroy();
                 // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
@@ -8644,8 +8646,7 @@ export class Scene13WarLayer {
     /**
      * @param laneLeaders 本帧各分队锚点（step 里选好的，见「分队机制」那段）。
      *   🔴 [2026-10-03 主人选定「A：站定的归队队员推挤清零」] 归队后**已站定在自己槽位上**的队员，
-     *   本帧不吃软推挤 —— 照**攻城战待命期**那条现成先例办（见下面 `defenderHolding` 分支）：
-     *   主人 2026-08-23 定的那条让待命守军「站得笔直、纹丝不动」，画面他见过并认可。
+     *   本帧不吃软推挤 —— 取其「站得笔直、纹丝不动」的画面效果（主人见过并认可）。
      *
      *   病灶（主人 2026-10-03 报「军团还是会微颤」）：站定的队员被邻居推走 → 锚点又把他拉回 →
      *   一推一拉就是那点微颤。**关键在"站定的人还吃不吃推挤"，不在"锚点选谁"** ——
@@ -8678,11 +8679,6 @@ export class Scene13WarLayer {
         };
         for (const m of this.men) {
             if (m.hp <= 0) continue;
-            if (this.defenderHolding && m.f === 1 && !m.siegeW) {   // 🔴 [2026-10-11 主人令「守方不要动」] 原来是 `false &&` 死条件，现恢复并**限定守方**
-                m.sepX = 0;
-                m.sepY = 0;
-                continue;
-            }
             // 🔴 [2026-10-11 主人报「还是拥挤在一排」] 列阵推进中的兵**不吃横向推挤**：
             //    推挤会把 6 列挤成 12 列、把纵深压掉（探针实测 hei_kuang_heavy 216×53 = 一排）。
             //    推进期他们本就按固定槽位走（够不着不追），推挤只会破坏方阵；接敌后（m.march=false）照常。
@@ -8809,7 +8805,7 @@ export class Scene13WarLayer {
         if ('sprite' in target && (target.sprite.destroyed || (!target.bld && target.sprite.obstructionDisabled))) return false;
         if ('sprite' in target && target.bld && (target.sprite.collapse || target.sprite.asset.includes('_RUBBLE'))) return false;
         const wallKeep = 'sprite' in target && target.linked === true && !target.sprite.obstructionDisabled
-            && this.battleType === 'siege' && m.f === 0 && this.defenderHolding;
+            && this.battleType === 'siege' && m.f === 0;
         return (target.hp > 0 || wallKeep)
             && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight * 1.44;
     }
@@ -8981,12 +8977,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             }
         }
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
-            if (this.defenderHolding && !manOut) return null;
+            if (!manOut) return null;
         } else if (this.battleType === 'siege' && m.f === 0) {
             // 🔴 [2026-10-12 主人令「不要让士兵打城墙，只要有兵就去打兵」] 攻方士兵（非攻城武器）不再锁定城墙/建筑，只打兵。
-            // 🔴 [2026-08-23 主人定·重设计] 40 秒墙塌前（defenderHolding）：攻方视野内没有 hp>0 的墙且无迎战守军
-            //    → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭；若有已出城迎战的守军则正常交战。
-            if (this.defenderHolding && !manOut) return null;
+            // 🔴 [2026-08-23 定] 视野内没有出城迎战的守军 → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭。
+            // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 待命期（defenderHolding）已删，本闸只剩「有无出城守军」这一条。
+            if (!manOut) return null;
         }
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
@@ -9736,7 +9732,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 if (d < gd) { gd = d; g = b; }
             }
             if (g) return { x: g.x + m.jx, y: g.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 攻城武器同样吃终身偏移，别都朝门/墙的同一格
-            if (this.defenderHolding) return null;
         }
         // 🔴 [2026-10-12 主人报「攻方开局不向城中走，有的分队往其他地方走」] 攻城战攻方士兵：视野内没敌兵就一律朝城中心走
         //    （有缺口时 flowRedirect 再改走流场绕进城），不再走出兵口/航路那几级。
@@ -10203,11 +10198,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             }
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
-            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane))
-            // 🔴 [2026-10-11 主人令「30秒攻城战的时候，守方不要动」] 攻城战开战前 30 秒（defenderHolding）内，
-            //    **守方原地不动**：直接复用既有 holdCmd 机制（下一行 m.tx/m.ty 钉住 + 各处 !holdCmd 闸），
-            //    不新增字段、不新增机制。攻方不受影响（仍按列阵推进/砸墙）。
-            || (this.battleType === 'siege' && m.f === 1 && this.defenderHolding);
+            const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
             if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
