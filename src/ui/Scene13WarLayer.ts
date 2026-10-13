@@ -8897,12 +8897,9 @@ export class Scene13WarLayer {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
         const gatesAndWalls = this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
         if (gatesAndWalls.length) return gatesAndWalls;
-        const towers = this.defBuildings.filter(b => (b.bld!.tower !== undefined || b.bld!.name.includes('TOWER') || b.bld!.name.includes('OUTPOST')) && bldOk(b));
-        if (towers.length) return towers;
-        if (this.centerBld && bldOk(this.centerBld)) return [this.centerBld];
-        const others = this.defBuildings.filter(b => b !== this.centerBld && bldOk(b));
-        if (others.length) return others;
-        return [];
+        // 🔴 [2026-10-14 主人定「攻城武器攻击顺序：城门，城墙，建筑包括箭塔」「所有都是只打近的」]
+        //    门墙之后：箭塔与其余建筑（含中心建筑）并为一档，谁近打谁（原为 箭塔 → 中心建筑 → 其余建筑 三档）。
+        return this.defBuildings.filter(b => bldOk(b));
     }
 
     private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
@@ -9012,12 +9009,27 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
             if (!manOut) return null;
         }
+        // 🔴 [2026-10-14 主人定「士兵攻击顺序：士兵，城门，建筑包括箭塔」「所有都是只打近的」「士兵只认城门，不砍墙」]
+        //    攻方士兵：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。城墙一律不砍。
+        if (this.battleType === 'siege' && m.f === 0 && !isHero && this.siegeWithWalls) {
+            if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
+            this.ensureGateInfo();
+            const gatesOnly = !this.ringOpen() && !this.insideRing(m.x, m.y);
+            const pool = gatesOnly ? this.wallGates.filter(b => b.key === 'STONE_GATE') : this.defBuildings;
+            let t: WarBuilding | null = null, td = r2;
+            for (const b of pool) {
+                if (b.f === m.f || !this.wallStanding(b)) continue;
+                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                if (d < td) { td = d; t = b; }
+            }
+            if (t && reserve) t.claims++;
+            return t;
+        }
         for (const b of this.wallGates) {
             if (isHero) break;   // [2026-09-05 玩家] 玩家不锁墙
             if (manChosen) break;   // 🔴 [2026-10-12] 士兵优先打兵
             // 🔴 [2026-10-12 主人令「优先攻击其他，最后考虑城墙」] 攻方士兵：视野内没敌兵、又没有进城的路时才打墙
-            if (this.battleType === 'siege' && m.f === 0 && b !== this.blockedWall(m as Partial<WarMan>)
-                && !(outOnly && b.key === 'STONE_GATE')) continue;   // 只打正挡着自己的那段墙；城墙完整时视野内的城门也打（主人 2026-10-13「挤在城门，也不打城门」）
+            if (this.battleType === 'siege' && m.f === 0 && b !== this.blockedWall(m as Partial<WarMan>)) continue;   // 只打正挡着自己的那段墙
             // 🔴 [2026-08-23] 墙已坍塌 → 不再锁定（兜底循环同样跳过，防全塌）
             if (b.f === m.f || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
             const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;

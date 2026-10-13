@@ -876,7 +876,26 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
             if (!laneLeader.has(m.sp)) laneLeader.set(m.sp, m);
         }
 
-        for (const m of men) {
+        // 🔴 [2026-10-14 修·镜像偏袒 第 1/2 项]
+        //   **已知事实**（200 种子，N=1350，WING=0/SPREAD=4/AIM_JITTER=120，逐种子可复现）：
+        //     cav 73:127 p=0.0002 ｜ ranged 131:69 p=0.0000 ｜ melee 87:113 p=0.077 —— 偏袒确实存在。
+        //   **病灶**：`men` 由出兵循环**按方分块** push（先 f=0 全部、再 f=1 全部），而所有
+        //     「按数组顺序逐个处理、且处理结果互相影响」的循环（出手、抢名额、推挤）都按这个顺序走
+        //     ⇒ f=0 那一方系统性排在前面。镜像对战本不该有任何左右差。
+        //   **修法（两项业内标准做法，互补）**：
+        //     ① 两相结算：帧内只登记伤害，帧末统一扣血 ⇒ 堵死「先扣血/先杀人」这条通路。
+        //     ② 每帧打乱处理顺序（下面 order）⇒ 堵死其余「先处理」通路（抢名额、抢目标等）。
+        //     ⚠️ 必须用**带种子的** rnd()，不许 Math.random —— 否则同种子跑两次结果不同（验收第 3 条）。
+        //     ⚠️ 只打乱遍历顺序；`men` 本身、位置、朝向、数值一律不动。
+        const dmgAcc = new Map();
+
+        const order = men.slice();
+        for (let i = order.length - 1; i > 0; i--) {
+            const j = (rnd() * (i + 1)) | 0;
+            const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+        }
+
+        for (const m of order) {
 
             if (m.hp <= 0) continue;
 
@@ -1199,7 +1218,8 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
 
                 m.foe.atkNext++;
 
-                m.foe.hp -= dps * DT * o.SIDE[m.f] * (o.GANG ? gangMul(m.foe) : 1) * attrMul(t) * braceTaken;
+                // 🔴 [2026-10-14 两相结算] 只登记，不立即扣血（帧末统一结算，消除先手偏袒）。
+                dmgAcc.set(m.foe, (dmgAcc.get(m.foe) ?? 0) + dps * DT * o.SIDE[m.f] * (o.GANG ? gangMul(m.foe) : 1) * attrMul(t) * braceTaken);
 
             } else {
 
@@ -1215,11 +1235,21 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
 
         }
 
+        // 🔴 [2026-10-14 两相结算] 帧末统一扣血：本帧所有出手都已登记完，双方伤害同时落地 ⇒
+        //    「谁先被遍历到」不再改变结果。判死仍在下一帧开头（两边一致）。
+        for (const [victim, total] of dmgAcc) victim.hp -= total;
+
         // 软推挤
 
         const push = SEP_SPD * DT, d2 = SEP * SEP;
 
-        for (const m of men) {
+        // 🔴 [2026-10-14 修·镜像偏袒 第 3 项] 推挤同样改两相：先按**同一份位置快照**算完全部位移，
+        //    再统一应用。原来 `m.x += vx` 是边算边写，后面的人会读到「已被推走」的邻居 ⇒
+        //    「谁先被遍历到」会改变推挤结果，又是一条左右偏袒通路。
+        //    ⚠️ 只改结算时序，推力公式、`sepX/sepY` 平滑、探针统计一律不动。
+        const sepApply = [];
+
+        for (const m of order) {
 
             if (m.hp <= 0) continue;
 
@@ -1305,9 +1335,11 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
 
             }
 
-            m.x += vx; m.y += vy;
+            sepApply.push([m, vx, vy]);   // 🔴 两相：只登记，循环后统一应用（见本节头注）
 
         }
+
+        for (const [m, vx, vy] of sepApply) { m.x += vx; m.y += vy; }
 
         frame++;
 
