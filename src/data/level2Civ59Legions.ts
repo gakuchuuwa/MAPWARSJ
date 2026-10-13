@@ -99,7 +99,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'paragon', count: 2 },
             { type: 'elite_centurion', count: 3 },
         ],
     },
@@ -179,8 +179,8 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'MONOREME',
         slots: [
-            { type: 'paladin', count: 3 },
-            { type: 'paragon', count: 2 },
+            { type: 'knight', count: 3 },
+            { type: 'swordsman', count: 2 },
             { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
@@ -329,7 +329,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CARRACK',
         slots: [
             { type: 'cavalier', count: 2 },
-            { type: 'longbowman', count: 3 },
+            { type: 'manatarms', count: 3 },
             { type: 'longbowman_elite', count: 4 },
         ],
     },
