@@ -24,7 +24,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代华夏中原军团', civ: '华夏', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
-        formationMode: 'echelon',
+        formationMode: 'crescent',
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-09-14 主人定] 二级军团一律「城堡兵 + 精锐兵 + 缺补兵」。
         //    原先三排全是精锐（白毦精锐/诸葛弩精锐/火焰弓精锐），凑不出「城堡兵 + 该兵精锐」这一对。
@@ -32,53 +32,53 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         //    缺补兵取蜀白毦兵 —— 《三国志》裴注引《零陵先贤传》「先主帐下白毦，西方上兵也」，
         //    陈到所领近卫精兵，古典中原本土，合史实。
         slots: [
-            { type: 'jian_swordman_unshielded', count: 4 },
-            { type: 'chukonu', count: 3 },
-            { type: 'elite_chukonu', count: 2 },
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'war_chariot_ranged', count: 2 },
+            { type: 'elite_chukonu', count: 4 },
         ],
     },
     {
         name: '古典时代华夏巴蜀军团', civ: '巴蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
         slots: [
             { type: 'elite_white_feather_guard', count: 4 },
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'elite_chukonu', count: 2 },
+            { type: 'fire_archer', count: 2 },
+            { type: 'elite_chukonu', count: 3 },
         ],
     },
     {
         name: '古典时代华夏江南军团', civ: '江南', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'triangle',
-        shipId: 'DRAGON_SHIP',
+        formationMode: 'crescent',
+        shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'jian_swordman_shielded', count: 2 },
-            { type: 'fire_archer', count: 3 },
+            { type: 'jian_swordman_shielded', count: 3 },
+            { type: 'chukonu', count: 2 },
             { type: 'elite_fire_archer', count: 4 },
         ],
     },
     {
         name: '古典时代华夏河朔军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'tiger_rider', count: 3 },
-            { type: 'elite_chukonu', count: 2 },
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_chukonu', count: 4 },
+            { type: 'tiger_rider', count: 2 },
         ],
     },
     {
         name: '古典时代凯尔特军团', civ: '凯尔特', age: 'antiquity', deStyle: 'WEST', region: 'CELTS' as RegionType,
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
-        formationMode: 'echelon',
+        formationMode: 'balance_yoke',
         shipId: 'MONOREME',
         slots: [
             { type: 'elite_woad_raider', count: 4 },
-            { type: 'woad_raider', count: 3 },
-            { type: 'longbowman_elite', count: 2 },
+            { type: 'woad_raider', count: 2 },
+            { type: 'longbowman', count: 3 },
         ],
     },
     {

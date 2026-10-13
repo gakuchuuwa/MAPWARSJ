@@ -313,8 +313,8 @@ export class AnimalAmbientLayer {
     public debugAssetCount(): number { return this.assets.size; }
     public debugAssetBytes(): number { return this.totalAssetBytes(); }
 
-    // ── 撒点 ────────────────────────────────────────────────────────────
-    private recomputeEntries(): void {
+    // ── 陆地动物更新与撒点（含渐显与渐隐） ────────────────────────────────
+    private updateLandEntries(dt: number): void {
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
         const colMin = Math.floor((sw.lng - CULL_MARGIN_DEG) / CELL_DEG);
@@ -322,35 +322,54 @@ export class AnimalAmbientLayer {
         const rowMin = Math.floor((sw.lat - CULL_MARGIN_DEG) / CELL_DEG);
         const rowMax = Math.floor((ne.lat + CULL_MARGIN_DEG) / CELL_DEG);
 
-        const key = `${colMin},${colMax},${rowMin},${rowMax}`;
-        if (key === this.lastCellRange) return;
-        this.lastCellRange = key;
+        const activeIds = new Set<string>();
 
-        const next: AnimalEntry[] = [];
-        for (let col = colMin; col <= colMax; col++) {
-            for (let row = rowMin; row <= rowMax; row++) {
-                const clat = (row + 0.5) * CELL_DEG;
-                const clng = (col + 0.5) * CELL_DEG;
-                const region = getRegion(clat, clng);
-                const { land } = animalsForRegion(region);
-
-                // 陆上动物（基于网格确定性撒点，固定位置张望/吃草）
-                const lh = hash01(col, row, 1);
-                if (this.landVisible && lh < LAND_DENSITY) {
-                    const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
-                    const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
-                    const pos = { lat: clat + offLat, lng: clng + offLng };
-                    if (!this.isSea(pos)) {
-                        const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
-                        const facing = Math.floor(hash01(col, row, 6) * 8) % 8;
-                        const phase = Math.floor(hash01(col, row, 7) * 1000);
-                        this.loadAsset(dir, 'idle', false);
-                        next.push({ dir, pos, facing, phase });
+        if (this.landVisible) {
+            for (let col = colMin; col <= colMax; col++) {
+                for (let row = rowMin; row <= rowMax; row++) {
+                    const id = `${col},${row}`;
+                    const lh = hash01(col, row, 1);
+                    if (lh < LAND_DENSITY) {
+                        const clat = (row + 0.5) * CELL_DEG;
+                        const clng = (col + 0.5) * CELL_DEG;
+                        const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
+                        const offLng = (hash01(col, row, 4) - 0.5) * CELL_DEG * 0.8;
+                        const pos = { lat: clat + offLat, lng: clng + offLng };
+                        if (!this.isSea(pos)) {
+                            activeIds.add(id);
+                            // 若尚未在 entries 中，则新生成一只并从 alpha = 0 开始渐显
+                            let entry = this.entries.find((e) => e.id === id);
+                            if (!entry) {
+                                const region = getRegion(clat, clng);
+                                const { land } = animalsForRegion(region);
+                                const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
+                                const facing = Math.floor(hash01(col, row, 6) * 8) % 8;
+                                const phase = Math.floor(hash01(col, row, 7) * 1000);
+                                this.loadAsset(dir, 'idle', false);
+                                this.entries.push({ id, dir, pos, facing, phase, alpha: 0, fadingOut: false });
+                            }
+                        }
                     }
                 }
             }
         }
-        this.entries = next;
+
+        const FADE_DUR = 1.0; // 渐显/渐隐时长（秒）
+        for (let i = this.entries.length - 1; i >= 0; i--) {
+            const e = this.entries[i];
+            if (activeIds.has(e.id)) {
+                // 处于可见区：渐显
+                e.fadingOut = false;
+                e.alpha = Math.min(1, e.alpha + dt / FADE_DUR);
+            } else {
+                // 移出可见区或关闭：渐隐
+                e.fadingOut = true;
+                e.alpha = Math.max(0, e.alpha - dt / FADE_DUR);
+                if (e.alpha <= 0) {
+                    this.entries.splice(i, 1);
+                }
+            }
+        }
     }
 
     private isSea(pos: Pt): boolean {
@@ -392,23 +411,24 @@ export class AnimalAmbientLayer {
             hovering: Math.random() < 0.5,
             timer: 3.0 + Math.random() * 4.0, // 3~7 秒交替
             phase: Math.random() * 1000,
+            alpha: 0.0,       // 初始透明度 0（渐显）
+            fadingOut: false,
         });
     }
 
-    /** 飞鸟长途巡航更新：长距直线巡游 + fly 振翅 ⇄ hover 滑翔交替 */
+    /** 飞鸟长途巡航更新：长距直线巡游 + fly 振翅 ⇄ hover 滑翔交替 + 渐显/渐隐 */
     private updateBirds(dt: number): void {
-        if (!this.birdsVisible) {
-            this.birds = [];
-            return;
-        }
         const bounds = this.map.getBounds();
         const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-        const margin = 0.5; // 视口外缓冲边界
+        const FADE_DUR = 1.2; // 渐显/渐隐时长（秒）
 
-        // 维持视口内 2~3 只飞鸟，纯净点缀不喧宾夺主
+        // 维持视口内 2~3 只活跃飞鸟（渐隐中的飞鸟不计入配额，确保渐显平滑补位）
         const MAX_BIRDS = 3;
-        while (this.birds.length < MAX_BIRDS) {
-            this.spawnBirdInBounds(sw, ne);
+        if (this.birdsVisible) {
+            const activeCount = this.birds.filter((b) => !b.fadingOut).length;
+            if (activeCount < MAX_BIRDS) {
+                this.spawnBirdInBounds(sw, ne);
+            }
         }
 
         const speedDeg = 0.09; // 战略巡航速度（度/秒，约 70~100 屏幕像素/秒）
@@ -421,15 +441,27 @@ export class AnimalAmbientLayer {
                 b.timer = 3.0 + Math.random() * 4.0;
             }
 
+            // 飞鸟渐隐判定：不可见状态、或飞临视口边缘缓冲带时触发渐隐
+            const margin = 0.3;
+            const nearEdge = b.lat < sw.lat - margin || b.lat > ne.lat + margin || b.lng < sw.lng - margin || b.lng > ne.lng + margin;
+            if (!this.birdsVisible || nearEdge) {
+                b.fadingOut = true;
+            }
+
+            // 透明度更新（渐显 / 渐隐）
+            if (b.fadingOut) {
+                b.alpha = Math.max(0, b.alpha - dt / FADE_DUR);
+                if (b.alpha <= 0) {
+                    this.birds.splice(i, 1);
+                    continue;
+                }
+            } else {
+                b.alpha = Math.min(1, b.alpha + dt / FADE_DUR);
+            }
+
             const dLat = b.targetLat - b.lat;
             const dLng = b.targetLng - b.lng;
             const dist = Math.hypot(dLat, dLng);
-
-            // 飞出视口缓冲区外则移除，后续自动在视口边缘补新鸟
-            if (b.lat < sw.lat - margin || b.lat > ne.lat + margin || b.lng < sw.lng - margin || b.lng > ne.lng + margin) {
-                this.birds.splice(i, 1);
-                continue;
-            }
 
             if (dist < 0.05) {
                 // 到达当前目标点，选一个新远方目标继续巡航
@@ -460,7 +492,7 @@ export class AnimalAmbientLayer {
         }
         this.clearedWhileHidden = false;
         const _t0 = performance.now();
-        this.recomputeEntries();
+        this.updateLandEntries(dt);
         this.updateBirds(dt);
         this.evictAssets();
         this.draw();
@@ -497,52 +529,56 @@ export class AnimalAmbientLayer {
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
         const m = 40; // 屏幕裁剪余量
 
-        // 1. 绘制陆地动物（idle 吃草/张望，位置固定）
-        if (this.landVisible) {
-            for (const e of this.entries) {
-                const asset = this.assetFor(`${e.dir}:idle`);
-                if (!asset) continue;
-                const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
-                if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
-                const box = asset.dirs[String(e.facing)];
-                if (!box) continue;
-                const sheet = asset.sheets[e.facing];
-                if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
+        // 1. 绘制陆地动物（idle 吃草/张望，位置固定，渐显/渐隐）
+        for (const e of this.entries) {
+            if (e.alpha <= 0) continue;
+            const asset = this.assetFor(`${e.dir}:idle`);
+            if (!asset) continue;
+            const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
+            if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
+            const box = asset.dirs[String(e.facing)];
+            if (!box) continue;
+            const sheet = asset.sheets[e.facing];
+            if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-                const frame = Math.floor((this.nowMs / 1000) * 14 + e.phase) % asset.frames;
-                const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
-                const dx = pt.x - hx * scale;
-                const dy = pt.y - hy * scale;
-                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
-            }
+            const frame = Math.floor((this.nowMs / 1000) * 14 + e.phase) % asset.frames;
+            const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
+            const dx = pt.x - hx * scale;
+            const dy = pt.y - hy * scale;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, Math.min(1, e.alpha));
+            ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            ctx.restore();
         }
 
-        // 2. 绘制 DE 巡航飞鸟（跨屏直线长途巡游 + fly 振翅 ⇄ hover 滑翔交替）
-        if (this.birdsVisible) {
-            for (const b of this.birds) {
-                const act = b.hovering ? 'hover' : 'fly';
-                const asset = this.assetFor(`${b.dir}:${act}`);
-                if (!asset) continue;
+        // 2. 绘制 DE 巡航飞鸟（跨屏直线长途巡游 + fly 振翅 ⇄ hover 滑翔交替 + 渐显/渐隐）
+        for (const b of this.birds) {
+            if (b.alpha <= 0) continue;
+            const act = b.hovering ? 'hover' : 'fly';
+            const asset = this.assetFor(`${b.dir}:${act}`);
+            if (!asset) continue;
 
-                const pt = this.map.latLngToContainerPoint([b.lat, b.lng]);
-                if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
+            const pt = this.map.latLngToContainerPoint([b.lat, b.lng]);
+            if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
-                const targetPt = this.map.latLngToContainerPoint([b.targetLat, b.targetLng]);
-                const curDx = targetPt.x - pt.x;
-                const curDy = targetPt.y - pt.y;
-                const facing = this.birdDir(curDx, curDy);
+            const targetPt = this.map.latLngToContainerPoint([b.targetLat, b.targetLng]);
+            const curDx = targetPt.x - pt.x;
+            const curDy = targetPt.y - pt.y;
+            const facing = this.birdDir(curDx, curDy);
 
-                const box = asset.dirs[String(facing)];
-                if (!box) continue;
-                const sheet = asset.sheets[facing];
-                if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
+            const box = asset.dirs[String(facing)];
+            if (!box) continue;
+            const sheet = asset.sheets[facing];
+            if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-                const frame = Math.floor((this.nowMs / 1000) * 14 + b.phase) % asset.frames;
-                const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
-                const dx = pt.x - hx * scale;
-                const dy = pt.y - hy * scale;
-                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
-            }
+            const frame = Math.floor((this.nowMs / 1000) * 14 + b.phase) % asset.frames;
+            const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
+            const dx = pt.x - hx * scale;
+            const dy = pt.y - hy * scale;
+            ctx.save();
+            ctx.globalAlpha = Math.max(0, Math.min(1, b.alpha));
+            ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            ctx.restore();
         }
     }
 }
