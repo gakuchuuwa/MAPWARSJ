@@ -65,8 +65,9 @@ const RG_AFRICA: RegionType[] = ['AFRICA', 'BERBER', 'ETHIOPIANS'];
 const RG_INDIA: RegionType[] = ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'];
 const RG_SEASIA: RegionType[] = ['MALAY', 'VIETNAMESE', 'KHMER'];
 const RG_EASTASIA: RegionType[] = [
-    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'KOREA', 'JAPAN',
+    'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'KOREA',
 ];
+const RG_JAPAN: RegionType[] = ['JAPAN'];
 const RG_CENTRALASIA: RegionType[] = ['CENTRAL_ASIA', 'TIBET', 'WESTERN', 'PERSIAN'];
 const RG_STEPPE: RegionType[] = ['STEPPE', 'NORTHEAST', 'CUMAN'];
 const RG_MIDEAST: RegionType[] = ['ORIE', 'WEST_ASIA'];
@@ -82,6 +83,7 @@ const LAND_AFRICA = ['LION', 'ZEBRA', 'GAZELLE', 'OSTRICH', 'ELEPHANT', 'RHINO',
 const LAND_INDIA = ['TIGER', 'PEACOCK', 'ELEPHANT', 'RHINO', 'MONKEY', 'CROCODILE', 'SNAKE_WATER'];
 const LAND_SEASIA = ['TIGER', 'PEACOCK', 'MONKEY', 'TAPIR', 'CROCODILE', 'KOMODO'];
 const LAND_EASTASIA = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY', 'TIGER'];
+const LAND_JAPAN = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'BEAR_BLACK', 'FOX_RED', 'HARE_BROWN', 'MONKEY'];
 const LAND_CENTRALASIA = ['SNOWLEOPARD', 'IBEX', 'ARGALI', 'MOUFLON', 'WOLF', 'BEAR'];
 const LAND_STEPPE = ['WOLF', 'DEER', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'BOAR'];
 const LAND_MIDEAST = ['GAZELLE', 'WOLF_ARABIAN', 'SNAKE_GROUND', 'IBEX'];
@@ -101,6 +103,7 @@ function animalsForRegion(region: RegionType): { land: string[]; birds: string[]
     if (RG_AFRICA.includes(region)) return { land: LAND_AFRICA, birds: BIRD_AFRICA };
     if (RG_INDIA.includes(region)) return { land: LAND_INDIA, birds: BIRD_OTHER };
     if (RG_SEASIA.includes(region)) return { land: LAND_SEASIA, birds: BIRD_OTHER };
+    if (RG_JAPAN.includes(region)) return { land: LAND_JAPAN, birds: BIRD_EASTASIA };
     if (RG_EASTASIA.includes(region)) return { land: LAND_EASTASIA, birds: BIRD_EASTASIA };
     if (RG_CENTRALASIA.includes(region)) return { land: LAND_CENTRALASIA, birds: BIRD_OTHER };
     if (RG_STEPPE.includes(region)) return { land: LAND_STEPPE, birds: BIRD_OTHER };

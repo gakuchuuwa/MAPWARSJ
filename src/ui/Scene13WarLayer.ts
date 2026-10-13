@@ -3348,6 +3348,43 @@ for (const [sp, kind, spd, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
     ANIMAL_DE[sp] = { kind, walk: spd * 40, run: spd * (kind === 'predator' ? 1.5 : 1.9) * 40, los: los * 40, hp, atk, reload: 2.0, acts };
 }
 
+/**
+ * 🔴 [2026-10-13 主人令「不要让日本出现老虎狮子」] 物种原产地（粗框，[latMin, latMax, lngMin, lngMax]）。
+ * DE 地图的动物是一张通用图里摆好的，不看据点所在地；这里按战场中心经纬度剔掉**不属于当地**的物种。
+ * 没列的物种（狼、熊、鹿、牛羊猪鸡鹅等）各地皆有，不限；缺经纬度也不限。
+ */
+const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number, number, number]>> = (() => {
+    const AFR: [number, number, number, number] = [-35, 37, -20, 52];
+    const SASIA: [number, number, number, number] = [5, 42, 25, 100];        // 西亚—南亚
+    const AMER: [number, number, number, number] = [-56, 40, -120, -30];      // 中南美
+    const LION: [number, number, number, number][] = [AFR, SASIA, [36, 45, 19, 30]];   // 非洲、西亚南亚、古希腊巴尔干
+    const TIGER: [number, number, number, number][] = [[-8, 55, 45, 129.5], [41, 55, 129.5, 137]];
+    const OLD_DRY: [number, number, number, number][] = [AFR, [10, 50, 25, 110]];
+    return {
+        LION, TIGER,
+        WOLF_ARABIAN: [[12, 40, 30, 60]], BLACK_PANTHER: [AFR, [-8, 30, 60, 125]], SNOWLEOPARD: [[25, 50, 65, 110]],
+        ELEPHANT: [AFR, [5, 30, 70, 110]], RHINO: [AFR, [5, 30, 70, 110]], OSTRICH: [AFR, [12, 40, 30, 60]],
+        GAZELLE: OLD_DRY, MOUFLON: [[30, 45, -10, 50]], ARGALI: [[35, 55, 60, 120]], IBEX: [[28, 48, -10, 100]],
+        CAMEL: OLD_DRY, DROMEDARY: OLD_DRY, MONKEY: [AFR, [-10, 35, 60, 128]],
+        CROCODILE: [[-40, 28, -20, 150], [-35, 32, -20, 52]], CAIMAN: [AMER], KOMODO: [[-12, -7, 115, 125]],
+        BEAR_POLAR: [[60, 90, -180, 180]], FOX_ARCTIC: [[52, 90, -180, 180]], HARE_ARCTIC: [[52, 90, -180, 180]],
+        JAGUAR: [AMER], TAPIR: [AMER, [-8, 20, 95, 120]], CAPYBARA: [AMER], MACAW: [AMER], LLAMA: [AMER], ALPACA: [AMER],
+        CONDOR: [AMER], RHEA: [AMER],
+        SNAKE_GROUND: [[-40, 60, -180, 180]],
+    };
+})();
+
+function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined): boolean {
+    if (lat !== undefined && lng !== undefined) {
+        // 日本四至矩形（冲绳至北海道）：自然界绝无野生老虎、狮子
+        const isJapan = lat >= 24 && lat <= 46 && lng >= 122.5 && lng <= 146;
+        if (isJapan && (species === 'TIGER' || species === 'LION')) return false;
+    }
+    const r = ANIMAL_RANGE[species];
+    if (!r || lat === undefined || lng === undefined) return true;
+    return r.some(([a, b, c, d]) => lat >= a && lat <= b && lng >= c && lng <= d);
+}
+
 /** 表里没有的物种（以后地图新增）按 DE 最常见的胆小猎物走，不许崩 */
 function animalDeOf(species: string): AnimalDe {
     return ANIMAL_DE[species] ?? { kind: 'prey', walk: 0.737 * 40, run: 1.4 * 40, los: 80, hp: 5, atk: 0, reload: 2.0, acts: ANIMAL_ACTS.flee };
@@ -4640,9 +4677,7 @@ export class Scene13WarLayer {
                         const need = cityEdge + 320;                                // ②营地纵深+余量
                         // 🔴 [2026-10-13 主人令「攻方营地离城寨太近了。请远一点」]
                         //    城寨尺寸紧凑，原 cityR+700 导致攻方营帐离栅栏过近；城寨攻城距提升至 cityR+1300（保底 2100px），大幅拉开扎营纵深
-                        const siegeBaseDist = (this.defenderCityType === 'stockade' || this.isMobeiMongolDefender())
-                            ? Math.max(cityR + 1300, 2100)
-                            : (cityR + 700);
+                        const siegeBaseDist = Math.max(cityR + 1300, 2100);   // 🔴 [2026-10-13 主人令] 不再只限城寨：所有攻城战都拉远
                         let dist = Math.min(siegeBaseDist, safe);                     // ③先取攻城距
                         if (dist < need) dist = Math.min(need, safe);               // ②不够就退到不压城（但仍不越图）
                         attSX = VW / 2 + nx * dist;
@@ -7091,8 +7126,8 @@ export class Scene13WarLayer {
                         if (this.deCity) {
                             const cx = this.deCityCenter ? this.deCityCenter.x : VW / 2;
                             const cy = this.deCityCenter ? this.deCityCenter.y : VH / 2;
-                            const rx = this.deCity.width / 2 + 180;
-                            const ry = this.deCity.height / 2 + 120;
+                            const rx = this.deCity.width / 2 + 500;   // 🔴 [2026-10-13 主人令] 野生动物离城墙外 500px（原 180/120）
+                            const ry = this.deCity.height / 2 + 500;
                             if (((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1) return true;
                         }
                         return false;
@@ -7118,6 +7153,10 @@ export class Scene13WarLayer {
                             if (isAnimal) {
                                 const species = r[1];
                                 const de = animalDeOf(species);
+                                const defCity = this.defenderCityRecord();
+                                const lat = defCity?.lat ?? this.centerLat;
+                                const lng = defCity?.lng ?? this.centerLng;
+                                if (!animalNativeAt(species, lat, lng)) continue;   // 非当地物种不放
 
                                 // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
                                 //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
@@ -10877,6 +10916,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const VW = cv?.width ?? 7616;
         const VH = cv?.height ?? 3808;
         const MARGIN = 120;
+        // 🔴 [2026-10-13 修] 活动边界按**地图世界**（中心 ± TAC_MAP_HALF），不是屏幕画布宽高 —— 原来按画布 0~VW 夹，动物全被关进城边一个小框、贴边排成一条线
+        const X0 = VW / 2 - TAC_MAP_HALF_W + MARGIN, X1 = VW / 2 + TAC_MAP_HALF_W - MARGIN;
+        const Y0 = VH / 2 - TAC_MAP_HALF_H + MARGIN, Y1 = VH / 2 + TAC_MAP_HALF_H - MARGIN;
         const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
         const HOME_BACK = 30;       // 猎物离家多远就往回走
         const BITE_RANGE = 22;      // 猛兽贴身咬的距离
@@ -10912,8 +10954,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     an.hovering = false;
                     an.idleTimer = 4 + Math.random() * 4;
                     const ang = Math.random() * Math.PI * 2, r = 500 + Math.random() * 900;
-                    an.flyX = Math.min(VW - MARGIN, Math.max(MARGIN, an.x + Math.cos(ang) * r));
-                    an.flyY = Math.min(VH - MARGIN, Math.max(MARGIN, an.y + Math.sin(ang) * r));
+                    an.flyX = Math.min(X1, Math.max(X0, an.x + Math.cos(ang) * r));
+                    an.flyY = Math.min(Y1, Math.max(Y0, an.y + Math.sin(ang) * r));
                 }
                 an.sprite.x = an.x;
                 an.sprite.y = an.y;
@@ -10960,10 +11002,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                         if (an.hp <= 0) { an.sprite.destroyed = true; continue; }
                     }
                 }
-            } else if ((de.kind === 'prey' || de.kind === 'livestock') && canMove && near && nearD < de.los) {
+            // 🔴 [2026-10-13 主人报「动物见到人不会逃跑」] DE 猎物视野仅 2 格(80px)，士兵走到 80px 内时已贴脸、且 5 万像素的大图里几乎遇不上 ⇒ 看上去不逃。
+            //    猎物的警戒距离放宽到至少 220px（约 5.5 格）；没有 run 动作的物种（马/羊驼/猴/鸡）也按 run 速度逃，只是播 walk 动画。
+            } else if ((de.kind === 'prey' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'prey' ? Math.max(de.los, 220) : de.los)) {
                 // 胆小猎物逃、家畜让开：都是背对那个士兵
-                an.fleeTimer = de.kind === 'prey' ? 2.5 : 1.2;
-                const fleeSpd = de.kind === 'prey' ? (de.acts.includes('run') ? de.run : de.walk) : de.walk;
+                an.fleeTimer = de.kind === 'prey' ? 6 : 1.2;   // 🔴 [2026-10-13 主人令「加大逃跑距离」] 猎物 2.5→6 秒（约 340px，原约 140px）
+                const fleeSpd = de.kind === 'prey' ? de.run : de.walk;
                 const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
                 an.vx = (dx / d) * fleeSpd;
                 an.vy = (dy / d) * fleeSpd;
@@ -10979,6 +11023,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 an.fleeTimer -= dt;
                 an.x += an.vx * dt;
                 an.y += an.vy * dt;
+                // 🔴 [2026-10-13 主人令「A 方案」] 猎物不再回窝：窝跟着它走，逃到哪停在哪、就在那儿吃草（原先逃完又走回士兵堆里再逃，被拴在出生点）
+                if (de.kind === 'prey') { an.homeX = an.x; an.homeY = an.y; }
                 // 家畜只让开一小段：超出活动半径就往回走
                 if (de.kind === 'livestock' && Math.hypot(an.x - an.homeX, an.y - an.homeY) > HOME_LEASH) {
                     const bx = an.homeX - an.x, by = an.homeY - an.y, bd = Math.hypot(bx, by) || 1;
@@ -10986,6 +11032,11 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     an.y += (by / bd) * de.walk * dt;
                 }
                 an.dir = this.dir8(an.vx, an.vy);
+                if (an.fleeTimer <= 0) {
+                    an.wanderX = an.x;
+                    an.wanderY = an.y;
+                    an.idleTimer = 4 + Math.random() * 6; // 逃跑结束就地停下吃草
+                }
             } else if (canMove) {
                 const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
                 if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
@@ -10995,24 +11046,42 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     spd = de.walk;
                     want = 'walk';
                 } else {
-                    // 日常闲逛吃草：窝边随机走走，隔几秒换方向
+                    // 🔴 [2026-10-13 主人令「野马为什么不停的动？请修复」]
+                    //    DE 原生食草动物节奏：70%~80% 的时间在原地吃草/甩尾（idle 4~10 秒），吃饱了才偶尔踱步换个地方（walk 2~3 秒）。
                     an.idleTimer -= dt;
                     const wx = an.wanderX - an.x, wy = an.wanderY - an.y;
                     const wd = Math.hypot(wx, wy);
-                    if (an.idleTimer <= 0 || wd < 6) {
-                        const c = centroids.get(an.species);
-                        const cx = c && c.n > 1 ? c.x / c.n : an.homeX;
-                        const cy = c && c.n > 1 ? c.y / c.n : an.homeY;
-                        const ang = Math.random() * Math.PI * 2, r = 20 + Math.random() * 60;
-                        // DE 的松散牵引：0.6 随机方向 + 0.4 朝群心（仍夹在窝边一小片里，不至整群走散）
-                        an.wanderX = Math.max(MARGIN, Math.min(VW - MARGIN, an.homeX + Math.cos(ang) * r * 0.6 + (cx - an.homeX) * 0.4));
-                        an.wanderY = Math.max(MARGIN, Math.min(VH - MARGIN, an.homeY + Math.sin(ang) * r * 0.6 + (cy - an.homeY) * 0.4));
-                        an.idleTimer = 1.5 + Math.random() * 3;
+                    if (wd < 6) {
+                        // ① 已经在目标点：原地吃草/甩尾
+                        if (an.idleTimer <= 0) {
+                            // 吃草时间结束，挑选新目标踱步过去
+                            const c = centroids.get(an.species);
+                            const cx = c && c.n > 1 ? c.x / c.n : an.homeX;
+                            const cy = c && c.n > 1 ? c.y / c.n : an.homeY;
+                            const ang = Math.random() * Math.PI * 2, r = 20 + Math.random() * 50;
+                            const leash = (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK) * 0.8;
+                            let ox = Math.cos(ang) * r * 0.6 + (cx - an.homeX) * 0.4, oy = Math.sin(ang) * r * 0.6 + (cy - an.homeY) * 0.4;
+                            const ol = Math.hypot(ox, oy);
+                            if (ol > leash) { ox *= leash / ol; oy *= leash / ol; }
+                            an.wanderX = Math.max(X0, Math.min(X1, an.homeX + ox));
+                            an.wanderY = Math.max(Y0, Math.min(Y1, an.homeY + oy));
+                            an.idleTimer = 2.0 + Math.random() * 2.0; // 踱步 2~4 秒
+                        }
+                        want = 'idle';
                     } else {
-                        mx = wx;
-                        my = wy;
-                        spd = de.walk;
-                        want = 'walk';
+                        // ② 正在踱步走向目标点
+                        if (an.idleTimer <= 0) {
+                            // 踱步超时：就地停下吃草
+                            an.wanderX = an.x;
+                            an.wanderY = an.y;
+                            an.idleTimer = 4.0 + Math.random() * 6.0; // 原地吃草 4~10 秒
+                            want = 'idle';
+                        } else {
+                            mx = wx;
+                            my = wy;
+                            spd = de.walk;
+                            want = 'walk';
+                        }
                     }
                 }
             } else {
@@ -11026,8 +11095,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 an.dir = this.dir8(mx, my);
             }
 
-            an.x = Math.max(MARGIN, Math.min(VW - MARGIN, an.x));
-            an.y = Math.max(MARGIN, Math.min(VH - MARGIN, an.y));
+            // 逃到图边被夹住时沿边滑走（原先顶在边上不动、等着被追上）
+            if (fleeing && de.kind === 'prey') {
+                if (an.x <= X0 || an.x >= X1) { an.vy = (an.vy >= 0 ? 1 : -1) * Math.hypot(an.vx, an.vy); an.vx = 0; }
+                else if (an.y <= Y0 || an.y >= Y1) { an.vx = (an.vx >= 0 ? 1 : -1) * Math.hypot(an.vx, an.vy); an.vy = 0; }
+            }
+            an.x = Math.max(X0, Math.min(X1, an.x));
+            an.y = Math.max(Y0, Math.min(Y1, an.y));
             an.sprite.x = an.x;
             an.sprite.y = an.y;
             an.sprite.flip = false;
@@ -11480,6 +11554,18 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (Math.abs(dy) < ZORDER_EPS) return a.zid - b.zid;
             return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
         });
+        // 🔴 [2026-10-13 主人令「飞鸟应该显示在建筑上层」] 飞鸟在空中：排序后整体挪到队尾，最后画 ⇒ 压在建筑、塔、士兵之上
+        {
+            let w = 0;
+            const birds: typeof vis = [];
+            for (let i = 0; i < vis.length; i++) {
+                const v = vis[i];
+                const a = v.kind === 'environment' && v.sprite ? v.sprite.asset : '';
+                if (a.startsWith('ANIMAL:') && animalDeOf(a.slice(7, a.indexOf('/'))).kind === 'bird') birds.push(v);
+                else vis[w++] = v;
+            }
+            for (const b of birds) vis[w++] = b;
+        }
         _tSort = performance.now() - _tsort0;
 
         // ── [2026-09-05 玩家] 受控编队脚下标记环（画在人之下）：攻击=绿 / 待命=蓝；玩家脚下金环 ──
