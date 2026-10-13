@@ -132,7 +132,6 @@ export const CITY_WONDER: Record<string, string> = {
     //    判据与逐条清单见 `scratch/_audit_wonder_castle_dup.mts`。
     'city_bishnupur': 'BENG_CASTLE_AGE3',
     'city_pagaruyung': 'MALA_CASTLE_AGE3',
-    'city_atuoke': 'PURU_CASTLE_AGE3_ATTACKUP',   // 阿托克：主奇观 PURU_CASTLE_AGE3_ATTACKUP ≠ 居中城堡（PURU_CASTLE_AGE3），不重复
     // 🔴 [2026-10-03 主人令「样式相同的城堡，就把特殊建筑删除」] 此处原有两条主奇观：
     //    'city_huashicheng': 'PURU_CASTLE_AGE3_BOTHUP'（华氏城）
     //    'city_wangshecheng': 'PURU_CASTLE_AGE3_DEFENSEUP'（王舍城）

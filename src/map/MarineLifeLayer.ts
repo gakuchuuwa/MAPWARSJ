@@ -45,6 +45,29 @@ interface Creature {
     lastFrameAt: number;
 }
 
+/**
+ * 🔴 [2026-10-13] 生成点必须「周围一圈大半也是海」（九点多数投票，半径 0.08° ≈ 9km），而不是单点判海：
+ *   单点 isSeaAt（掩膜 AND 海拔<0）会把沙漠盆地/干涸湖床里零星的「掩膜水 + 低洼」像素当成海，海豚就生在沙地上。
+ */
+const MARINE_SPAWN_RADIUS_DEG = 0.08;
+
+/**
+ * 🔴 [2026-10-13 主人令] 海洋生物（海豚/抹香鲸/海龟）只在大洋与边缘海生成：
+ *    排除里海（Caspian Basin）、死海（Dead Sea）等海拔在 0 以下但与大洋不相通的内陆封闭咸水盆地。
+ */
+function isOpenOcean(lat: number, lng: number): boolean {
+    // 里海盆地（36.5°N~47.5°N, 46.5°E~55.0°E）：内陆咸水湖，无鲸鱼/海豚/海龟
+    if (lat >= 36.5 && lat <= 47.5 && lng >= 46.5 && lng <= 55.0) return false;
+    // 死海（31.0°N~31.9°N, 35.2°E~35.7°E）：极咸内陆湖
+    if (lat >= 31.0 && lat <= 31.9 && lng >= 35.2 && lng <= 35.7) return false;
+    // 其余海拔在 0 以下、水体掩膜又是水、但不通大洋的内陆湖（同样会被 isSeaAt 误判成海）：
+    if (lat >= 32.6 && lat <= 33.0 && lng >= 35.4 && lng <= 35.7) return false;       // 加利利海（−210m）
+    if (lat >= 33.0 && lat <= 33.6 && lng >= -116.2 && lng <= -115.6) return false;   // 索尔顿湖（−70m，美国加州）
+    if (lat >= 11.4 && lat <= 11.9 && lng >= 42.2 && lng <= 42.6) return false;       // 阿萨勒湖（−155m，吉布提）
+    if (lat >= 18.3 && lat <= 18.7 && lng >= -71.9 && lng <= -71.4) return false;     // 恩里基略湖（−40m，多米尼加）
+    return true;
+}
+
 export class MarineLifeLayer extends L.Layer {
     private map: L.Map | null = null;
     private canvas = document.createElement('canvas');
@@ -166,7 +189,8 @@ export class MarineLifeLayer extends L.Layer {
 
         // 清理过期生物
         if (this.creatures.length > 0) {
-            this.creatures = this.creatures.filter(c => now <= c.expiresAt);
+            // 🔴 [2026-10-13 主人报「沙地中出现海洋生物」] 存活期内点位若不再是海（或位于内陆盆地里海/死海）就立刻撤掉
+            this.creatures = this.creatures.filter(c => now <= c.expiresAt && isOpenOcean(c.lat, c.lng) && LandSeaSystem.isSeaAt(L.latLng(c.lat, c.lng)));
         }
 
         // 尝试生成新生物
@@ -195,19 +219,19 @@ export class MarineLifeLayer extends L.Layer {
         let spawnLng = 0;
         let found = false;
 
-        // 优先 1：检查是否有正在跟拍且航行在海面上的舰队
+        // 优先 1：检查是否有正在跟拍且航行在大洋海面上的舰队
         const followedId = getFollowedArmyId();
         const game = (window as any).game as { legionManager?: { getLegionById(id: string): { getPosition(): { lat: number; lng: number } } | undefined } } | undefined;
         const army = followedId ? game?.legionManager?.getLegionById(followedId) : null;
         const armyPos = army?.getPosition();
 
-        if (armyPos && Number.isFinite(armyPos.lat) && Number.isFinite(armyPos.lng) && LandSeaSystem.isSeaAt(L.latLng(armyPos.lat, armyPos.lng))) {
+        if (armyPos && Number.isFinite(armyPos.lat) && Number.isFinite(armyPos.lng) && isOpenOcean(armyPos.lat, armyPos.lng) && LandSeaSystem.isSeaAt(L.latLng(armyPos.lat, armyPos.lng))) {
             for (let i = 0; i < 12; i++) {
                 const ang = Math.random() * Math.PI * 2;
                 const d = 0.04 + Math.random() * 0.08;
                 const tLat = armyPos.lat + Math.sin(ang) * d;
                 const tLng = armyPos.lng + Math.cos(ang) * d;
-                if (LandSeaSystem.isSeaAt(L.latLng(tLat, tLng))) {
+                if (isOpenOcean(tLat, tLng) && LandSeaSystem.isSeaAtMajority(tLat, tLng, MARINE_SPAWN_RADIUS_DEG)) {
                     spawnLat = tLat;
                     spawnLng = tLng;
                     found = true;
@@ -216,7 +240,7 @@ export class MarineLifeLayer extends L.Layer {
             }
         }
 
-        // 优先 2：视野内的开阔海面自然撒点
+        // 优先 2：视野内的大洋开阔海面自然撒点
         if (!found) {
             const bounds = this.map.getBounds();
             const minLat = bounds.getSouth();
@@ -227,7 +251,7 @@ export class MarineLifeLayer extends L.Layer {
             for (let i = 0; i < 16; i++) {
                 const rLat = minLat + Math.random() * (maxLat - minLat);
                 const rLng = minLng + Math.random() * (maxLng - minLng);
-                if (LandSeaSystem.isSeaAt(L.latLng(rLat, rLng))) {
+                if (isOpenOcean(rLat, rLng) && LandSeaSystem.isSeaAtMajority(rLat, rLng, MARINE_SPAWN_RADIUS_DEG)) {
                     spawnLat = rLat;
                     spawnLng = rLng;
                     found = true;

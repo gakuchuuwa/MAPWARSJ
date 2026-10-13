@@ -11164,7 +11164,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const X0 = VW / 2 - TAC_MAP_HALF_W + MARGIN, X1 = VW / 2 + TAC_MAP_HALF_W - MARGIN;
         const Y0 = VH / 2 - TAC_MAP_HALF_H + MARGIN, Y1 = VH / 2 + TAC_MAP_HALF_H - MARGIN;
         const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
-        const HOME_BACK = 30;       // 猎物离家多远就往回走
+        const HOME_BACK = 120;      // 猎物活动半径（3 格，避免 30px 过小导致乒乓回头颤抖）
         const BITE_RANGE = 22;      // 猛兽贴身咬的距离
 
         // 同类群重心：DE 的松散群聚（同伴在哪，闲逛就往那边偏一点）
@@ -11242,19 +11242,21 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 }
             // 🔴 [2026-10-13 主人报「动物见到人不会逃跑」] DE 猎物视野仅 2 格(80px)，士兵走到 80px 内时已贴脸、且 5 万像素的大图里几乎遇不上 ⇒ 看上去不逃。
             //    猎物的警戒距离放宽到至少 220px（约 5.5 格）；没有 run 动作的物种（马/羊驼/猴/鸡）也按 run 速度逃，只是播 walk 动画。
+            // 🔴 [2026-10-13 修颤抖] DE 状态锁机制：逃跑单次触发锁定，一口气跑完，中途绝不每帧重算改向
+            } else if (an.fleeTimer > 0 && canMove) {
+                // ① 正在逃跑中：保持锁定的既定速度与朝向闭眼跑完，绝不被周围其他士兵拉扯方向
+                fleeing = true;
+                want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
             } else if ((de.kind === 'prey' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'prey' ? Math.max(de.los, 220) : de.los)) {
-                // 胆小猎物逃、家畜让开：都是背对那个士兵
-                an.fleeTimer = de.kind === 'prey' ? 6 : 1.2;   // 🔴 [2026-10-13 主人令「加大逃跑距离」] 猎物 2.5→6 秒（约 340px，原约 140px）
+                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长
+                an.fleeTimer = de.kind === 'prey' ? 5.0 : 1.5;   // 跑 5 秒（约 300px）远离人群
                 const fleeSpd = de.kind === 'prey' ? de.run : de.walk;
                 const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
                 an.vx = (dx / d) * fleeSpd;
                 an.vy = (dy / d) * fleeSpd;
+                an.dir = this.dir8(an.vx, an.vy);
                 fleeing = true;
                 want = fleeSpd > de.walk * 1.2 ? 'run' : 'walk';
-            }
-            if (!fleeing && an.fleeTimer > 0 && canMove) {
-                fleeing = true;
-                want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
             }
 
             if (fleeing) {

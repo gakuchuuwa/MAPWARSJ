@@ -76,7 +76,8 @@ const SHIP_SIDE_WIDTH: Record<string, number> = {
 
 /** 缩放基准：主人当初按楼船调出来的观感 */
 const BASE_SHIP = 'LOU_CHUAN';
-const BASE_SCALE = 0.38;
+// 🔴 [2026-10-13 主人令「船也要和 DE 一致，战略战术全部 1.0」] 原 0.38 取消：船与陆军兵模同一基准（1.0）。
+const BASE_SCALE = 1.0;
 /**
  * 尺寸归一化强度 k ∈ [0,1]：0 = 完全按原始像素（差 3.2 倍），1 = 所有船屏幕一样大。
  * 🔴 [2026-09-01 修「很多船的模型有问题」] 原来 41 种船共用一个 0.38，而侧向帧宽
@@ -84,7 +85,8 @@ const BASE_SCALE = 0.38;
  *    有的占掉一大片。k=0.7 把差异压到约 1.4 倍：既不再失衡，又保留「独木舟小、巨舰大」
  *    的次序和手感。要更整齐就调大，要更还原原始比例就调小。
  */
-const SIZE_NORMALIZE_K = 0.7;
+// 🔴 [2026-10-13 主人令] 原 0.7（把 41 种船的大小差从 3.2 倍压到 1.4 倍）取消：0 ＝ 完全按 DE 原始像素，不再归一化。
+const SIZE_NORMALIZE_K = 0;
 
 /** 按船型归一化后的绘制缩放：表里没有的船退回基准值。 */
 export function getNavalShipDrawScale(shipId?: string): number {

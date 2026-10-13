@@ -118,7 +118,6 @@ export const WONDER_NAME: Record<string, string> = {
     'SPAN_CASTLE_AGE3': '拉莫塔堡',
     'THRACIANS_CASTLE_AGE3': '塞乌托波利城堡',
     'MACEDONIAN_CASTLE_AGE3': '希马鲁塔',
-    'PURU_CASTLE_AGE3_ATTACKUP': '阿托克强化堡',
     'PURU_CASTLE_AGE3_BOTHUP': '华氏城强化堡',
     'PURU_CASTLE_AGE3_DEFENSEUP': '王舍城强化堡',
 };

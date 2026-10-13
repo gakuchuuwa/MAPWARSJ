@@ -442,7 +442,7 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
  */
 export const QIN_FACTION_COMPOSITION: readonly CompositionSlot[] = [
     { type: 'kamayuk', count: 4 },             // Row 0 前排·步兵前锋 = 枪兵长 4人
-    { type: 'war_chariot_ranged', count: 3, scale: 0.57 },  // Row 1 中排 = 先秦远程战车 3乘
+    { type: 'war_chariot_ranged', count: 3, scale: 1.0 },  // Row 1 中排 = 先秦远程战车 3乘
     { type: 'chukonu', count: 2 },             // Row 2 后排压阵 = 诸葛弩 2人
 ];
 

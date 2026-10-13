@@ -112,7 +112,6 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'SPAN_CASTLE_AGE3': 1050,             // 拉莫塔城堡：约11世纪（约）
     'THRACIANS_CASTLE_AGE3': -325,        // 塞乌托波利斯：塞乌特斯三世约前4世纪（约）
     'MACEDONIAN_CASTLE_AGE3': -350,       // 希马罗斯城堡：马其顿约前4世纪（约）
-    'PURU_CASTLE_AGE3_ATTACKUP': 1581,    // 阿托克堡：1581年
     'PURU_CASTLE_AGE3_BOTHUP': -490,      // 华氏城：摩揭陀约前5世纪建（约）
     'PURU_CASTLE_AGE3_DEFENSEUP': -550,   // 王舍城：摩揭陀约前6世纪（约）
 
