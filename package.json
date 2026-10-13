@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "node tools/rename_duplicate_idle_portraits.mjs && concurrently \"vite\" \"node auto_backup.cjs\" \"cd tools/PortraitMatting && py app.py\"",
+    "dev": "node tools/rename_duplicate_idle_portraits.mjs && concurrently \"vite\" \"node auto_backup.cjs\" \"cd tools/PortraitMatting && py app.py\" \"node tools/siteMapWatcher.mjs\"",
     "build": "vite build",
     "preview": "vite preview",
     "assets:case-check": "node scratch/audit_assets_case.mjs",
