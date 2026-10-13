@@ -72,11 +72,14 @@ function pxOf(expr: string): number {
  * 改成构建期常量表后建城恢复同步，出兵口回到真实来向。
  * **战略地图不传这张表，一个像素不动。**
  */
-function buildNativeSizes(city: City, deStyle: string): CityNativeSizes | undefined {
+function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): CityNativeSizes | undefined {
     const ages: Array<'AGE2' | 'AGE3' | 'AGE4'> = ['AGE2', 'AGE3', 'AGE4'];   // 🔴 大城用 AGE4（帝国时代）
     const names = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWN_CENTER', 'STABLE', 'MARKET', 'SIEGE_WORKSHOP', 'UNIVERSITY', 'MONASTERY', 'TOWER'];
     let castleDir: string | null = null;
-    if (city.type !== 'small_city') {
+    // 🔴 [2026-10-13 主人令「日本建筑风格的小城城心放一个城堡」] 判据改用 centerCastle：
+    //    小城原本恒无城心城堡（故一律不解析），现在日本风格的小城要摆 → 必须取到素材原生宽，
+    //    否则 `native.castleW` 缺省、城堡按 baseSize×0.54 的兜底值画小（DE 原生 468 vs 兜底 361）。
+    if (city.type !== 'small_city' || centerCastle) {
         try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id); } catch { castleDir = null; }
     }
     const widths: Record<string, number> = {};
@@ -112,7 +115,7 @@ function buildNativeSizes(city: City, deStyle: string): CityNativeSizes | undefi
 export function strategicCityHtmlNative(city: City): StrategicCityHtml | null {
     const p = cityStackParams(city);
     if (!p.deStyle) return null;
-    return strategicCityHtmlWith(city, p, buildNativeSizes(city, p.deStyle));
+    return strategicCityHtmlWith(city, p, buildNativeSizes(city, p.deStyle, p.centerCastle));
 }
 
 export function strategicCityHtml(city: City): StrategicCityHtml | null {

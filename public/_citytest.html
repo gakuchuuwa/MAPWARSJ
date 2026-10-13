@@ -1598,13 +1598,16 @@ let curPreviewCityId = '';
  *  🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城 auto 时**一律开启**
  *  （与游戏 TerritorySystem 的 centerCastle 同一口径）；险要仍由调用处单独判（恒开启）。
  *  🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
- *  小城 auto 时**一律关闭**（日本/青藏文化区的小城也不再例外）；小城若有著名城堡 → 走特殊建筑（城内奇观）。 */
+ *  小城 auto 时**一律关闭**（日本/青藏文化区的小城也不再例外）；小城若有著名城堡 → 走特殊建筑（城内奇观）。
+ *  🔴 [2026-10-13 主人令] **日本建筑风格的小城城心放一个城堡**（与 TerritorySystem.cityStackParams 同一口径）：
+ *  小城 auto 时**日本文化区开启、其余关闭**（青藏小城仍关闭）。 */
 function isCenterCastleActive(type) {
   if (curCenterCastle === 'on') return true;
   if (curCenterCastle === 'off') return false;
+  if (curCulture === 'JAPAN') return true;
   if (type === 'small') return false;
   if (type === 'big' || type === 'medium') return true;
-  return curCulture === 'JAPAN' || curCulture === 'TIBET';
+  return curCulture === 'TIBET';
 }
 
 import {
@@ -2345,14 +2348,16 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
   }
 
   // 2. 周围建筑（中心城堡时取 4 栋，90° 扇区四角环卫；普通时取 8 栋 45° 扇区；主人 2026-09-10 定）
-  const surroundCount = isCenterCastle ? 4 : 8;
+  // 🔴 [2026-10-13 主人令「日本建筑风格的小城，城心放一个城堡；城堡占城心、城内仍 9 格」]
+  //    小城有城心城堡时，周围照旧 **8 栋**（8 + 城堡 = 9 格，与全库「9 建筑」口径一致）；中城/大城仍是 4 栋环卫，不动。
+  const surroundCount = (isCenterCastle && type === 'small') ? 8 : (isCenterCastle ? 4 : 8);
   // 🔴 [2026-10-03 主人令「改为 9 个」] 三张「院内建筑位」表**已收进共享模块**，本页不再自留副本：
   //    原来本页与 `TerritorySystem.buildDeStockadeStackHtml` 各留一份，椭圆改 9 栋时本页没跟着改、
   //    仍画 7 栋（两边漂移）——与 2026-10-02 曲线围栏「各留一份 → 已经漂移过一次」是同一个坑。
   const surround = isRectStockade ? pool.slice(0, RECT_STOCKADE_SLOTS.length)
     : isOvalStockade ? pool.slice(1, 1 + OVAL_STOCKADE_SLOTS.length)
     : isTrapStockade ? pool.slice(0, TRAPEZOID_STOCKADE_SLOTS.length)
-    : (isCenterCastle ? pool.slice(0, surroundCount) : pool.slice(1));
+    : ((isCenterCastle && type === 'small') ? pool.slice(0, surroundCount) : (isCenterCastle ? pool.slice(0, 4) : pool.slice(1)));
 
   surround.forEach((b, i) => {
     let x, y;
