@@ -184,6 +184,10 @@ export class MapEngine {
     inb(x, y) { return x >= 0 && y >= 0 && x < this.N && y < this.N; }
     note(cmd) { this.unsupported.set(cmd, (this.unsupported.get(cmd) ?? 0) + 1); }
 
+    /** 随机流快照 / 回灌（诊断与「重烘不重排」专用）：只暴露 makeRng 的内部计数，别的什么都不动。 */
+    rngState() { return this.rng.state(); }
+    setRngState(s) { this.rng.setState(s); }
+
     run() {
         const S = this.sections;
         if (this.info) {
@@ -1268,7 +1272,8 @@ export class MapEngine {
             }
         };
         if (perPlayer) for (const s of this.starts) once(s); else once(null);
+        if (perPlayer && this.starts.length === 0) this.note('OBJ:perPlayer-no-starts:' + (this.objNames?.get?.(id) ?? id));
         // 诊断（第 28 轮）：逐条记录 create_object 的参数与实放数（默认不开，零影响）
-        if (this.traceObjects) this.traceObjects.push({ id, name: this.objNames?.get?.(id) ?? null, count, hasGroups, capGroups, emitted });
+        if (this.traceObjects) this.traceObjects.push({ id, name: this.objNames?.get?.(id) ?? null, count, hasGroups, capGroups, emitted, perPlayer });
     }
 }
