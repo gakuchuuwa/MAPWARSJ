@@ -10189,6 +10189,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    步兵/骑兵/远程**不再被 30 秒待命冻住**（原 `this.defenderHolding && !m.siegeW` 会把全军按住，
         //    等攻城器砸墙；主人现在要的是十队各自沿「本口 → 对面那一口」推进、中途迎面开打）。
         //    攻城武器保留「先砸最近的 linked 墙」的目标逻辑（aimAt 里那一支照旧），所以 != 取消攻城。
+        // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 上一条「30 秒双方按兵不动」的语义**已整体作废**：
+        //    那个闸（`this.defenderHolding && !m.siegeW`）已在 2026-10-11 被去掉，残存的 `defenderHolding`
+        //    也在本轮随「守方开局就动」全部删除 ⇒ 现在只有上面的 `deploying`（列阵渐显 2.5 秒）会让人站住。
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）
@@ -11742,20 +11745,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             // 🔴 [2026-08-30 修·滑步] 部署期（deployT>0）step 的 deploying 分支对**所有**兵 continue（静止）、
             //    marchTick 也 return，所以部署期全军（含列阵兵、攻城武器）都静止，应统一播 idle。
             //    之前误加 !m.march && !m.siegeW，让静止的列阵兵播走路帧 = 原地踏步/滑步。
-            //    攻城武器真正开动是 deployT 归零后的 defenderHolding 打墙阶段，由下面 !m.siegeW 单独管。
+            //    攻城武器真正开动是 deployT 归零后开打阶段，由下面 !m.siegeW 单独管。
             if (this.lingering || this.deployT > 0) {
                 set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
             }
-            // 🔴 [2026-10-11 主人令「攻城30秒，守方等待的时候，请使用待机动作」] 攻城战开战前 30 秒
-            //    （defenderHolding，见 step 里那条「守方不要动」）守方被钉在原地，位移恒为 0 ⇒ 下面
-            //    `m.stuckT > STUCK_IDLE_SEC` 那条因为 `deploying || m.march` 每帧清 stuckT 而永不成立，
-            //    于是落进 `m.st === 0 → move`，360 个守兵原地迈腿（探针实测 0~25s 全部 move）。
-            //    这里按同一个判据（战场类型 + 阵营 + defenderHolding）直接选待机帧；没有 idle 素材的
-            //    退回 move，与上面部署期/残局待命同口径。
-            else if (this.battleType === 'siege' && m.f === 1 && this.defenderHolding
-                && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
-                set = 'idle';
-            }
+            // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 原「攻城战开战前 30 秒守方播待机帧」那条分支
+            //    （判据 `battleType === 'siege' && m.f === 1 && defenderHolding`）随待命期一并删除；
+            //    守方不动的判据只剩上面的 deployT / lingering，以及下面按 `stuckT` 的结果判。
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
             //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
             //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
