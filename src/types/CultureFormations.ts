@@ -1582,7 +1582,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     LATIN: '古典时代罗马军团',
     LATIN_CASTLE: '城堡时代拉丁军团',
     LATIN_IMPERIAL: '帝国时代拉丁军团',
-    LATIN_FEUDAL: "封建时代拉丁军团",
+    LATIN_FEUDAL: "封建时代罗马军团",
     IMPERIAL_ROME: '古典时代罗马禁卫军团',
     // 🔴 [2026-10-05 主人令「删除吧」] `古典时代希腊雇佣军团` 已删（同族同时代不另立）→
     //    本表指向它的悬空条目 `GREEK_MERCENARY` 一并删除（该文化区 0 座据点、0 势力挂，无影响）。
@@ -1721,7 +1721,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     DELHI: "城堡时代印度斯坦军团",
     CASTILE: '城堡时代卡斯蒂利亚军团',
     SCOTLAND: '城堡时代苏格兰军团',
-    HRE: '城堡时代神圣罗马军团',
+    HRE: '城堡时代罗马军团',
     ALMOHAD: '城堡时代摩洛哥军团',
     SERBIA: '城堡时代塞尔维亚军团',
     ILKHANATE: '城堡时代伊利汗军团',
