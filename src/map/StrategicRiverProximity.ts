@@ -70,3 +70,38 @@ export function isNearStrategicRiver(lat: number, lng: number, maxDistanceKm = 2
     }
     return false;
 }
+
+/**
+ * 🔴 [2026-10-13 主人令「河流都在战术地图右上角、不在城边」→ 战术地图按真实河道重挖河] 最近的一段河道：
+ *   distKm  据点到河道中心线的距离；
+ *   dirE/dirN  该段河道的走向（单位向量，东、北为正）；
+ *   sideE/sideN  从据点指向河道最近点的方向（单位向量；据点正在河上时为 0,0）。
+ * 没有河流数据或范围内没有河 → null。
+ */
+export function nearestStrategicRiver(lat: number, lng: number, maxDistanceKm = 25):
+    { distKm: number; dirE: number; dirN: number; sideE: number; sideN: number } | null {
+    if (riverIndex.length === 0) return null;
+    const latPad = maxDistanceKm / 111.32;
+    const lngPad = latPad / Math.max(0.01, Math.cos(lat * Math.PI / 180));
+    const cosLat = Math.max(0.01, Math.cos(lat * Math.PI / 180));
+    let best: { distKm: number; dirE: number; dirN: number; sideE: number; sideN: number } | null = null;
+    for (const entry of riverIndex) {
+        const [minLng, minLat, maxLng, maxLat] = entry.bbox;
+        if (maxLng < lng - lngPad || minLng > lng + lngPad || maxLat < lat - latPad || minLat > lat + latPad) continue;
+        for (const line of entry.lines) {
+            for (let i = 1; i < line.length; i++) {
+                const a = line[i - 1], b = line[i];
+                const ax = (a[0] - lng) * cosLat * 111.32, ay = (a[1] - lat) * 111.32;
+                const bx = (b[0] - lng) * cosLat * 111.32, by = (b[1] - lat) * 111.32;
+                const dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
+                if (len2 <= 0) continue;
+                const t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / len2));
+                const px = ax + dx * t, py = ay + dy * t, d = Math.hypot(px, py);
+                if (d > maxDistanceKm || (best && d >= best.distKm)) continue;
+                const len = Math.sqrt(len2);
+                best = { distKm: d, dirE: dx / len, dirN: dy / len, sideE: d > 1e-6 ? px / d : 0, sideN: d > 1e-6 ? py / d : 0 };
+            }
+        }
+    }
+    return best;
+}

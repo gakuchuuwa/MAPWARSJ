@@ -44,6 +44,8 @@ import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
+import { DE_TERRAIN_MANIFEST } from '../data/battlefield/deTerrainData';
+import { nearestStrategicRiver } from '../map/StrategicRiverProximity';
 import { generateEnvironment, type Scene13EnvironmentPlan, type Scene13EnvironmentInput } from './scene13/Scene13EnvironmentGenerator';
 import { loadRealGeography, buildRealGeoPlan, bearingDeg, type RealGeoFrame } from './scene13/Scene13RealGeography';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
@@ -6039,8 +6041,58 @@ export class Scene13WarLayer {
                 }
                 return true;
             };
+            // 🔴 [2026-10-13 主人令「有河流的可以和护城河连上」→「按这个方案做」] 护城河引水渠：
+            //    只在**河流**地图（waterKind === 'river'）做；海、湖、城寨（无护城河）不连。
+            //    挖河之前先记下天然河水格，再找「护城河格 ↔ 河水格」最近的一对，≤ 15 格才挖一条直渠（宽 = 护城河宽）。
+            //    地面格在地平面上是正方形（96×48 屏幕 px ＝ 地平面 96×96），所以距离按 (x, 2y) 量。
+            // 「城内」按墙圈算（离墙方框 < 1.5 格 ＝ 护城河内沿以内），不用城池素材椭圆：
+            //    椭圆的高含建筑立面（洛阳 ry 876px ≈ 18 格），会把护城河整圈、连同河与壕之间的空地都算进城里 ⇒ 渠永远挖不出来。
+            const inCityE = (x: number, y: number): boolean => {
+                const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
+                const ex = Math.abs((u + v) / 2 - 0.5) - half, ey = Math.abs((v - u) / 2 - 0.5) - half;
+                return ((ex > 0 && ey > 0) ? Math.hypot(ex, ey) : Math.max(ex, ey)) < 1.5;
+            };
+            const N: number = gl.data?.width ?? 0;
+            const riverCells: Array<[number, number]> = [];
+            if (this.environmentPlan?.waterKind === 'river' && N > 0) {
+                for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
+                    if (!gl.isWaterAtCell(gx, gy)) continue;
+                    const p = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                    if (!inCityE(p.x, p.y) && !inMoat(p.x, p.y)) riverCells.push([p.x, p.y]);
+                }
+            }
             if (moatW < 3) gl.addWaterCoverage(inMoat, W, H);   // 中城、小城：窄河按覆盖率写水，保证连续
             else gl.addWaterWhere(inMoat, W, H);
+            if (riverCells.length > 0) {
+                const moatPts: Array<[number, number]> = [];
+                for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
+                    const p = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                    if (inMoat(p.x, p.y)) moatPts.push([p.x, p.y]);
+                }
+                let bestD = Infinity, a: [number, number] | null = null, b: [number, number] | null = null;
+                for (const m of moatPts) for (const r of riverCells) {
+                    const d = Math.hypot(r[0] - m[0], (r[1] - m[1]) * 2);
+                    if (d < bestD) { bestD = d; a = m; b = r; }
+                }
+                const MAX_LEN = 15 * TAC_TILE_W;   // 15 个地面格
+                // 渠不许穿城：沿线抽样，有一点落进城池椭圆就放弃
+                let crossesCity = false;
+                if (a && b) for (let t = 0; t <= 1; t += 0.05) if (inCityE(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)) { crossesCity = true; break; }
+                if (a && b && bestD <= MAX_LEN && !crossesCity) {
+                    const A = a, B = b;
+                    const half = Math.max(0.5, moatW) * Math.hypot(TAC_TILE_W / 2, TAC_TILE_H) / 2;   // 护城河宽（等轴格）换算到地平面
+                    const ax = A[0], ay = A[1] * 2, bx = B[0], by = B[1] * 2;
+                    const L2 = (bx - ax) ** 2 + (by - ay) ** 2 || 1;
+                    const inCanal = (x: number, y: number): boolean => {
+                        const gy2 = y * 2;
+                        const t = Math.max(0, Math.min(1, ((x - ax) * (bx - ax) + (gy2 - ay) * (by - ay)) / L2));
+                        return Math.hypot(x - (ax + (bx - ax) * t), gy2 - (ay + (by - ay) * t)) <= half && !inCityE(x, y);
+                    };
+                    gl.addWaterCoverage(inCanal, W, H);
+                    const moatOnly = inMoat;
+                    inMoat = (x, y) => moatOnly(x, y) || inCanal(x, y);   // 下面清树/石头时一并清掉渠上的
+                }
+            }
         }
         gl.flushFoundation();
         const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
@@ -6837,82 +6889,258 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-10-13 主人令「有的城海在西边，战术地图中却在东边。请采用合理处理方式」]
-     * 自适应校正战术地图水体的东西方位：
-     * 若真实地理海在西边（如推罗、加沙、米利都、哈利卡纳苏斯、里斯本等），而战术地图数据水体主要分布在东边，
-     * 则自动水平镜像翻转地图数据，使海岸线与战略地图及真实世界地理方位严格一致。
+     * 🔴 [2026-10-13 主人报「所有的河流都在战术地图的右上方，不在城边，根本看不到」→「按这个方案做」]
+     * 河流 / 湖泊模板（theme_*_river / _lake.json）的水全挤在东北角、离图心 30~40 格（实测 36 个模板皆然）。
+     * 这里把模板自带的水（连同沙岸）抹成陆地，按真实地理在城边重挖：
+     *   · 河：方向取战略地图 Natural Earth 河道（nearestStrategicRiver，30km 内最近一段的走向；河在城的哪一侧也照真实），
+     *         取不到就按种子随机；中心线离城心 = 城半径 + 7 格（护城河外约 5~10 格），宽约 3.5 格，正弦弯曲，两岸 1 格沙岸，贯穿全图；
+     *   · 湖：城的一侧（种子随机方位），湖心离城心 = 城半径 + 14 格，半径约 6 格、边缘起伏；
+     *   · 海（_sea）不动（海岸方向由 adaptMapDataSeaOrientation 校正）。
+     * 只改地形数组（terrain / passable / speed），旧水面上的水生物件与压在新水面/沙岸上的树石一并去掉。
+     * 坐标约定：原始数据 (x, y)、下标 y*w+x → 屏幕格 (sx, sy) = (y, x)；屏幕东 = +sx、南 = +sy；地面格在地平面上是正方形。
      */
-    private adaptMapDataSeaOrientation(mapData: any): any {
+    private relocateTemplateWater(mapData: any): any {
+        const kind = this.environmentPlan?.waterKind;
+        if (!mapData || !mapData.terrain || (kind !== 'river' && kind !== 'lake')) return mapData;
+        const w = mapData.width, h = mapData.height;
+        const terrain: number[] = Array.from(mapData.terrain as ArrayLike<number>);
+        const isWaterId = (tid: number): boolean => {
+            if (tid === 1 || tid === 15 || tid === 22 || tid === 23) return true;
+            const m: any = DE_TERRAIN_MANIFEST[tid];
+            return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
+        };
+        const isShoreId = (tid: number): boolean => {
+            if (tid === 2) return true;
+            const m: any = DE_TERRAIN_MANIFEST[tid];
+            return !!m && /beach|shore/i.test(String(m.name ?? '') + String(m.name_2 ?? ''));
+        };
+        // 模板里最常见的陆地 / 水地形，及各自的 passable / speed 取样
+        const landCount = new Map<number, number>(), waterCount = new Map<number, number>();
+        for (const t of terrain) {
+            if (isWaterId(t)) waterCount.set(t, (waterCount.get(t) ?? 0) + 1);
+            else if (!isShoreId(t)) landCount.set(t, (landCount.get(t) ?? 0) + 1);
+        }
+        let landId = 0, landN = -1, waterId = 23, waterN = -1;
+        for (const [t, n] of landCount) if (n > landN) { landN = n; landId = t; }
+        for (const [t, n] of waterCount) if (n > waterN) { waterN = n; waterId = t; }
+        const shoreId = 2;
+        const sampleOf = (pred: (t: number) => boolean) => {
+            const k = terrain.findIndex(pred);
+            return k >= 0 ? { p: mapData.passable?.[k], s: mapData.speed?.[k] } : null;
+        };
+        const landS = sampleOf((t) => t === landId), waterS = sampleOf(isWaterId), shoreS = sampleOf(isShoreId) ?? landS;
+        const passable = mapData.passable ? Array.from(mapData.passable as ArrayLike<number>) : null;
+        const speed = mapData.speed ? Array.from(mapData.speed as ArrayLike<number>) : null;
+        const setCell = (k: number, t: number, smp: { p: any; s: any } | null) => {
+            terrain[k] = t;
+            if (!smp) return;
+            if (passable && smp.p !== undefined) passable[k] = smp.p;
+            if (speed && smp.s !== undefined) speed[k] = smp.s;
+        };
+
+        // ① 抹掉模板水与沙岸
+        const oldWet = new Uint8Array(w * h);
+        for (let k = 0; k < w * h; k++) {
+            if (isWaterId(terrain[k]) || isShoreId(terrain[k])) { oldWet[k] = 1; setCell(k, landId, landS); }
+        }
+
+        // ② 城的尺度（地面格）与种子
+        const cS = (h - 1) / 2, cT = (w - 1) / 2;   // 图心（sx, sy）
+        // 只按宽算：城池素材的高含建筑立面（小城 2408×2073，地面菱形其实只有 2408×1204），按高算会把河推到 28 格外
+        const cityR = this.deCity ? this.deCity.width / 2 / TAC_TILE_W : 4;
+        const seedStr = String(this.defenderCityId || this.environmentPlan?.seed || 'default') + '|water';
+        let hsh = 2166136261;
+        for (let i = 0; i < seedStr.length; i++) hsh = Math.imul(hsh ^ seedStr.charCodeAt(i), 16777619);
+        const rnd = (): number => { hsh = Math.imul(hsh ^ (hsh >>> 15), 2246822507) ^ Math.imul(hsh ^ (hsh >>> 13), 3266489909); return ((hsh >>> 0) % 100000) / 100000; };
+
+        const rec: any = this.defenderCityRecord();
+        const lat = rec?.lat ?? this.centerLat, lng = rec?.lng ?? this.centerLng;
+        // 新水面：field ≤ 0 为水、≤ 1 为沙岸（单位：地面格）
+        let field: (sx: number, sy: number) => number;
+        let how: string;
+        if (kind === 'river') {
+            const real = (lat !== undefined && lng !== undefined) ? nearestStrategicRiver(lat, lng, 30) : null;
+            let tx: number, ty: number, nx: number, ny: number;
+            if (real) {
+                tx = real.dirE; ty = -real.dirN;                        // 屏幕：东 +x、南 +y
+                nx = real.sideE; ny = -real.sideN;
+                const dot = nx * tx + ny * ty; nx -= dot * tx; ny -= dot * ty;   // 侧向只取与河道垂直的分量
+                let nl = Math.hypot(nx, ny);
+                if (nl < 0.2) { nx = -ty; ny = tx; nl = 1; }            // 城就在河上：任取一侧
+                nx /= nl; ny /= nl;
+                how = `真实河道 ${real.distKm.toFixed(1)}km 外`;
+            } else {
+                const a = rnd() * Math.PI * 2;
+                tx = Math.cos(a); ty = Math.sin(a); nx = -ty; ny = tx;
+                if (rnd() < 0.5) { nx = -nx; ny = -ny; }
+                how = '无河道数据，随机方向';
+            }
+            const D = cityR + 7, HALF = 1.75, AMP = 1.5, WAVE = 2 * Math.PI / (24 + rnd() * 12), PH = rnd() * Math.PI * 2;
+            field = (sx, sy) => {
+                const dx = sx - cS, dy = sy - cT;
+                const along = dx * tx + dy * ty, across = dx * nx + dy * ny;
+                return Math.abs(across - (D + AMP * Math.sin(along * WAVE + PH))) - HALF;
+            };
+        } else {
+            const a = rnd() * Math.PI * 2, R = 6, D = cityR + 14;
+            const lx = cS + Math.cos(a) * D, ly = cT + Math.sin(a) * D;
+            const k1 = 2 + Math.floor(rnd() * 3), p1 = rnd() * Math.PI * 2, p2 = rnd() * Math.PI * 2;
+            field = (sx, sy) => {
+                const dx = sx - lx, dy = sy - ly, th = Math.atan2(dy, dx);
+                const r = R * (1 + 0.18 * Math.sin(th * k1 + p1) + 0.1 * Math.sin(th * (k1 + 2) + p2));
+                return Math.hypot(dx, dy) - r;
+            };
+            how = '城侧随机方位';
+        }
+
+        // ③ 挖新水面
+        const newWet = new Uint8Array(w * h);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const idx = y * w + x;
+                const d = field(y, x);   // 屏幕 (sx, sy) = (y, x)
+                if (d <= 0) { setCell(idx, waterId, waterS); newWet[idx] = 2; }
+                else if (d <= 1) { setCell(idx, shoreId, shoreS); newWet[idx] = 1; }
+            }
+        }
+        // ④ 物件：旧水面上的（水生植物、鱼）与压在新水面/沙岸上的一律去掉
+        const objects = (mapData.objects || []).filter((o: any) => {
+            const ox = Math.floor(o.x), oy = Math.floor(o.y);
+            if (ox < 0 || oy < 0 || ox >= w || oy >= h) return true;
+            const idx = oy * w + ox;
+            return !oldWet[idx] && !newWet[idx];
+        });
+        console.info(`[Scene13WarLayer] 🏞 ${kind === 'river' ? '河' : '湖'}已从模板东北角移到城边（${how}）`);
+        return { ...mapData, terrain, passable: passable ?? mapData.passable, speed: speed ?? mapData.speed, objects };
+    }
+
+    /**
+     * 🔴 [2026-10-13 主人令「有的城海在西边，战术地图中却在东边。请采用合理处理方式」
+     *    ＋「战略地图中海在西边，战术地图中却在东边，请全面修复所有错误的战术地图」]
+     * 自适应校正战术地图水体方位，使海岸线朝向与真实地理（＝战略地图）一致。
+     *
+     * 旧版只比「东半/西半」水量、只会左右翻一种，且同步取海陆数据（瓦片没到就当成陆地）——
+     * 拉塔基亚这类「海在西、地图水在东北」的斜向海岸翻不过来，或干脆没判出海在哪边。
+     * 现在：
+     *   ① 真实海向：城池周围 8 个方向 × 4 个距离（约 4~30km）采样海陆，**等瓦片到齐**（最多 4 秒）再判，合成一个海向量；
+     *   ② 地图水向：数据里所有水格相对图心的平均方向（屏幕坐标：东 = +x，南 = +y）；
+     *   ③ 在网格的 8 种对称（不变 / 左右翻 / 上下翻 / 转 180° / 及四种对角转置）里挑让两个方向最一致的那一个。
+     * 坐标约定：原始数据 (x, y) → 屏幕 (sx, sy) = (y, x)（见 transposeMapData）。
+     */
+    private async adaptMapDataSeaOrientation(mapData: any): Promise<any> {
         if (!mapData || !mapData.width || !mapData.height || !mapData.terrain) return mapData;
         const rec: any = this.defenderCityRecord();
         const lat = rec?.lat ?? this.centerLat;
         const lng = rec?.lng ?? this.centerLng;
         if (lat === undefined || lng === undefined) return mapData;
 
-        // 1. 采样真实地理中城池东西两侧的海水分布（经度范围约 5km ~ 35km）
-        const offsets = [0.04, 0.09, 0.18, 0.28];
-        let westSea = 0, eastSea = 0;
-        for (const d of offsets) {
-            for (const dlat of [-0.04, 0, 0.04]) {
-                if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng - d })) westSea++;
-                if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng + d })) eastSea++;
+        // ① 真实海向（屏幕坐标：东 = +x，北 = −y）
+        const DIRS: Array<[number, number]> = [[1, 0], [0.707, -0.707], [0, -1], [-0.707, -0.707], [-1, 0], [-0.707, 0.707], [0, 1], [0.707, 0.707]];
+        const DISTS = [0.04, 0.09, 0.18, 0.28];
+        const cosLat = Math.cos(lat * Math.PI / 180) || 1;
+        const pts = DIRS.flatMap(([ex, sy]) => DISTS.map((d) => ({ ex, sy, lat: lat - sy * d, lng: lng + ex * d / cosLat })));
+        // 判海：水体掩膜说是水 **且** 海拔 ≤ 1m（排除高处的湖/河）。
+        //   不用 LandSeaSystem.probeLandSea：它要求海拔 < 0，而实测近岸海面海拔多为 0（拉塔基亚以西 35.3~35.7°E 全是 0）⇒ 一律判成陆。
+        const ws = LandSeaSystem.getWaterSampler(), es = LandSeaSystem.getSampler();
+        const probe = (la: number, ln: number): 'sea' | 'land' | 'pending' => {
+            const wv = ws.isWaterSync(la, ln);
+            if (wv === false) return 'land';
+            const ev = es.getElevationSync(la, ln);
+            if (wv === null || ev === null) {
+                if (wv === null) ws.scheduleFetch(la, ln);
+                if (ev === null) es.scheduleFetch(la, ln);
+                return 'pending';
             }
+            return ev <= 1 ? 'sea' : 'land';
+        };
+        let probes: Array<'sea' | 'land' | 'pending'> = [];
+        for (let tries = 0; tries < 20; tries++) {
+            probes = pts.map((p) => probe(p.lat, p.lng));
+            if (!probes.includes('pending')) break;
+            await new Promise((r) => setTimeout(r, 200));
         }
-        const realSeaWest = westSea >= eastSea + 2;
-        const realSeaEast = eastSea >= westSea + 2;
-        if (!realSeaWest && !realSeaEast) return mapData;
+        let rx = 0, ry = 0, seaN = 0;
+        pts.forEach((p, i) => { if (probes[i] === 'sea') { rx += p.ex; ry += p.sy; seaN++; } });
+        const rl = Math.hypot(rx, ry);
+        // 海太少（内陆）或四面皆海（小岛，方向无意义）就不动
+        if (seaN < 3 || rl < seaN * 0.25) return mapData;
 
-        // 2. 统计地图数据在屏幕视角（转置后）的东西侧水体分布
-        // 注：未转置数据的 y 轴对应转置后屏幕水平 x 轴 (gx)
+        // ② 地图水向
         const w = mapData.width, h = mapData.height;
-        let screenWestWater = 0, screenEastWater = 0;
+        const isWater = (tid: number): boolean => {
+            if (tid === 1 || tid === 23 || tid === 15 || tid === 22) return true;   // 14 是沙漠(g_pal)，不是水（旧版误收，沙漠模板会被当成满图是水）
+            const m: any = DE_TERRAIN_MANIFEST[tid];
+            return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
+        };
+        let mx = 0, my = 0, waterN = 0;
         for (let y = 0; y < h; y++) {
             for (let x = 0; x < w; x++) {
-                const tid = mapData.terrain[y * w + x];
-                if (tid === 1 || tid === 23 || tid === 14 || tid === 15 || tid === 22) {
-                    if (y < h / 2) screenWestWater++;
-                    else screenEastWater++;
-                }
+                if (!isWater(mapData.terrain[y * w + x])) continue;
+                mx += y - (h - 1) / 2;   // 屏幕 x ← 原始 y
+                my += x - (w - 1) / 2;   // 屏幕 y ← 原始 x
+                waterN++;
             }
         }
-        const totalWater = screenWestWater + screenEastWater;
-        if (totalWater < 300) return mapData;
+        if (waterN < 300) return mapData;
+        const ml = Math.hypot(mx, my);
+        if (ml < waterN * 3) return mapData;   // 水均匀散在全图（多条小河），没有明确海岸方向
 
-        const mapWaterEast = screenEastWater > screenWestWater * 1.4;
-        const mapWaterWest = screenWestWater > screenEastWater * 1.4;
+        // ③ 8 种对称：作用在屏幕向量 (u, v) 上
+        type Sym = { name: string; f: (u: number, v: number) => [number, number] };
+        const SYMS: Sym[] = [
+            { name: '不变', f: (u, v) => [u, v] },
+            { name: '左右翻', f: (u, v) => [-u, v] },
+            { name: '上下翻', f: (u, v) => [u, -v] },
+            { name: '转180°', f: (u, v) => [-u, -v] },
+        ];
+        if (w === h) {
+            SYMS.push(
+                { name: '主对角转置', f: (u, v) => [v, u] },
+                { name: '副对角转置', f: (u, v) => [-v, -u] },
+                { name: '顺转90°', f: (u, v) => [-v, u] },
+                { name: '逆转90°', f: (u, v) => [v, -u] },
+            );
+        }
+        const ux = rx / rl, uy = ry / rl;
+        let best = SYMS[0], bestDot = -Infinity;
+        for (const sym of SYMS) {
+            const [a1, b1] = sym.f(mx / ml, my / ml);
+            const dot = a1 * ux + b1 * uy;
+            if (dot > bestDot + 1e-6) { bestDot = dot; best = sym; }
+        }
+        if (best === SYMS[0]) return mapData;
 
-        // 3. 当真实海洋与地图数据水体东西方位相悖时，执行水平镜像翻转
-        const needFlip = (realSeaWest && mapWaterEast) || (realSeaEast && mapWaterWest);
-        if (!needFlip) return mapData;
-
-        const flipArrayY = (arr: any) => {
+        // 屏幕格 (sx, sy) 以图心为原点做对称，再换回原始数据坐标
+        const cS = (h - 1) / 2, cT = (w - 1) / 2;   // sx ∈ [0,h)，sy ∈ [0,w)
+        const mapCell = (x: number, y: number): [number, number] => {
+            const [u, v] = best.f(y - cS, x - cT);
+            return [Math.round(v + cT), Math.round(u + cS)];   // → 新原始 (x', y')
+        };
+        const remap = (arr: any) => {
             if (!arr || !arr.length) return arr;
             const out = new Array(w * h);
             for (let y = 0; y < h; y++) {
-                const srcRow = y * w;
-                const dstRow = (h - 1 - y) * w;
                 for (let x = 0; x < w; x++) {
-                    out[dstRow + x] = arr[srcRow + x];
+                    const [nx, ny] = mapCell(x, y);
+                    out[ny * w + nx] = arr[y * w + x];
                 }
             }
             return Array.isArray(arr) ? out : new (arr.constructor as any)(out);
         };
-
         const newObjs = (mapData.objects || []).map((o: any) => {
-            const no = { ...o };
-            no.y = h - 1 - o.y;
+            const [u, v] = best.f(o.y - cS, o.x - cT);
+            const no = { ...o, x: v + cT, y: u + cS };
             no.cell = Math.floor(no.y) * w + Math.floor(no.x);
             return no;
         });
-
-        console.info(`[Scene13WarLayer] 🌊 真实海洋在${realSeaWest ? '西侧' : '东侧'}，自适应翻转战术地图水体方位与真实地理严格一致`);
+        console.info(`[Scene13WarLayer] 🌊 真实海向 (${ux.toFixed(2)}, ${uy.toFixed(2)})，地图水向已按「${best.name}」校正（一致度 ${bestDot.toFixed(2)}）`);
         return {
             ...mapData,
-            terrain: flipArrayY(mapData.terrain),
-            layer: flipArrayY(mapData.layer),
-            elev: flipArrayY(mapData.elev),
-            passable: flipArrayY(mapData.passable),
-            speed: flipArrayY(mapData.speed),
+            terrain: remap(mapData.terrain),
+            layer: remap(mapData.layer),
+            elev: remap(mapData.elev),
+            passable: remap(mapData.passable),
+            speed: remap(mapData.speed),
             objects: newObjs,
         };
     }
@@ -6993,7 +7221,7 @@ export class Scene13WarLayer {
                 cv.style.display = 'none';
                 return;
             }
-            const mapData = this.adaptMapDataSeaOrientation(rawMapData);
+            const mapData = this.relocateTemplateWater(await this.adaptMapDataSeaOrientation(rawMapData));
             try {
                 if (this.groundLayerGL) this.groundLayerGL.destroy();
                 // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
@@ -7166,7 +7394,7 @@ export class Scene13WarLayer {
                                 // ② 一个 DE 物件 = 一只动物（DE 的群由 RMS 一只只摆好，不再复制成群）
                                 const dir = hash % 8;
                                 const isBird = de.kind === 'bird';
-                                const startAct: AnimalAction = isBird ? 'hover' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
+                                const startAct: AnimalAction = isBird ? 'fly' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
                                 const animSprite: DecorSprite = {
                                     asset: `ANIMAL:${species}/${startAct}_${isBird ? 0 : dir}`,
                                     frame: hash,
@@ -7202,9 +7430,9 @@ export class Scene13WarLayer {
                                     animPhase: hash,
                                     hp: de.hp,
                                     atkNext: 0,
-                                    flyX: sx,
-                                    flyY: sy,
-                                    hovering: true,
+                                    flyX: sx + Math.cos(hash * 0.1) * 800,
+                                    flyY: sy + Math.sin(hash * 0.1) * 800,
+                                    hovering: false,
                                 });
                                 continue;
                             }
@@ -10322,7 +10550,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     continue;
                 }
                 // 炸药自爆兵（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性范围 AoE 伤害并自爆牺牲）
-                if (SUICIDE_TYPES.has(m.key) && close && m.hp > 0) {
+                // 🔴 [2026-10-13 主人报「自爆骆驼不爆炸」] 原判据 `close`（固定 65px）与追击停步用的 `inReach`（= max(射程,65) + **自身半径**）不是同一把尺：
+                //    骆驼体型大，追到 inReach（>65px）就停步转入攻击姿态，而 `close` 永远 <65 才成立 ⇒ 停在 65~78px 之间既不追也不炸（与攻城槌够不着墙同一病根，见 REACH 注释）。
+                //    改用 inReach：停步的那一刻就引爆。爆破兵体型小、radius 本就 ≤ 贴身圈，行为不变。
+                if (SUICIDE_TYPES.has(m.key) && inReach && m.hp > 0) {
                     this.explode('FX_PETARD', m.x, m.y);
                     // 自爆兵 key 出生时已校验在 WAR_TYPES（原 petard 兜底不会触发；statsFor 内部有 light_infantry 防崩）
                     // [性能] 复用本轮已取的 wt，别再查一遍分表（同一循环内同一个兵，结果必然相同）
@@ -10906,7 +11137,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      *  · predator 猛兽（狼/熊/狮/虎/豹/鳄/蛇/科莫多）：单位进 DE 视野（狼 12 格＝480px）就扑上去，
      *             贴身每 DE 装填 2 秒咬一口（DE 攻击力，吃近防）；咬的同时被身边士兵捅 —— 扑进阵里活不过两口，与 DE 一致。
      *  · livestock 家畜：不惊；人贴进 DE 视野（3 格＝120px）只是慢慢让开、离家不超 2.5 格，人走回窝。
-     *  · bird     飞鸟：DE 1.32 格/秒巡航（fly）＋到点定点盘旋（hover），不再是自造的绕圈。
+     *  · bird     飞鸟：DE 原生 1.32 格/秒飞行（fly 振翅 ⇄ hover 滑翔交替），空中持续移动不停滞。
      * 没人时所有地面动物都在窝边慢慢走动吃草（DE 的 idle/walk ＋ 同类松散牵引）。
      */
     private updateTacticalAnimals(dt: number): void {
@@ -10936,27 +11167,21 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (an.sprite.destroyed) continue;
             const de = animalDeOf(an.species);
 
-            // ── 飞鸟：fly 巡航 ⇄ hover 定点盘旋（DE 两种动作都用）──
+            // ── 飞鸟：fly 巡航 ⇄ hover 展翅滑翔（DE 两种动作交替，空间位置永不停顿）──
             if (de.kind === 'bird') {
                 an.idleTimer -= dt;
-                if (!an.hovering) {
-                    const dx = an.flyX - an.x, dy = an.flyY - an.y, d = Math.hypot(dx, dy) || 1;
-                    if (d < 10 || an.idleTimer <= 0) {
-                        an.hovering = true;
-                        an.idleTimer = 2 + Math.random() * 3;
-                    } else {
-                        an.x += (dx / d) * de.walk * dt;
-                        an.y += (dy / d) * de.walk * dt;
-                        an.dir = this.birdDir(dx, dy);
-                    }
-                }
-                if (an.hovering && an.idleTimer <= 0) {
-                    an.hovering = false;
-                    an.idleTimer = 4 + Math.random() * 4;
-                    const ang = Math.random() * Math.PI * 2, r = 500 + Math.random() * 900;
+                const dx = an.flyX - an.x, dy = an.flyY - an.y, d = Math.hypot(dx, dy) || 1;
+                if (d < 20 || an.idleTimer <= 0) {
+                    an.hovering = !an.hovering;
+                    an.idleTimer = 3 + Math.random() * 4;
+                    const ang = Math.random() * Math.PI * 2, r = 600 + Math.random() * 1000;
                     an.flyX = Math.min(X1, Math.max(X0, an.x + Math.cos(ang) * r));
                     an.flyY = Math.min(Y1, Math.max(Y0, an.y + Math.sin(ang) * r));
                 }
+                const curDx = an.flyX - an.x, curDy = an.flyY - an.y, curD = Math.hypot(curDx, curDy) || 1;
+                an.x += (curDx / curD) * de.walk * dt;
+                an.y += (curDy / curD) * de.walk * dt;
+                an.dir = this.birdDir(curDx, curDy);
                 an.sprite.x = an.x;
                 an.sprite.y = an.y;
                 this.setAnimalAction(an, an.hovering ? 'hover' : 'fly');

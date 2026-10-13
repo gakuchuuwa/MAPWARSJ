@@ -582,7 +582,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         name: '白狼山',
         factionId: 'wuhuan',
         lat: 41.40, lng: 119.64,
-        type: 'pass',
+        type: 'stockade',
         region: 'NORTHEAST',
         buildingStyle: 'XIANBEI',
         troops: 10000,
@@ -916,7 +916,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         name: '精绝',
         factionId: 'loulan',
         lat: 37.06, lng: 82.69,
-        type: 'pass',
+        type: 'stockade',
         region: 'WESTERN',
         buildingStyle: 'WESTERN',
         troops: 10000,
@@ -975,7 +975,7 @@ buildingStyle: 'WESTERN', troops: 10000,
     { id: 'city_wuzhousai', name: '善无', factionId: 'wuzhou', lat: 39.998214, lng: 112.420349, type: 'stockade', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
     // ── 2026-06-18 新增：李靖@恶阳岭（贞观四年定襄夜袭）──
-    { id: 'city_eyangling', name: '恶阳岭', factionId: 'dingxiang_d', lat: 39.910000, lng: 111.650000, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'XIANBEI', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
+    { id: 'city_eyangling', name: '恶阳岭', factionId: 'dingxiang_d', lat: 39.910000, lng: 111.650000, type: 'stockade', troops: 10000, region: 'NORTH', buildingStyle: 'XIANBEI', mirror: true, note: '贞观四年李靖三千骑出恶阳岭夜袭定襄城（《旧唐书·李靖传》）；清水河南缘，距盛乐≥50km' },
     { id: 'city_jilusai', name: '鸡鹿塞', factionId: 'weiming', lat: 40.46, lng: 106.26, type: 'pass', troops: 10000, region: 'TANGUT', buildingStyle: 'KHITAN' },
 
 
@@ -993,7 +993,7 @@ buildingStyle: 'WESTERN', troops: 10000,
         troops: 10000,
         tier: 2,
         note: '五原郡北塞；秦汉防匈奴长城烽燧（陈龟《后汉书》度辽将军）' },
-    { id: 'city_xiayangdu', name: '龙门', factionId: 'xiayang_d', lat: 35.602, lng: 110.452, type: 'pass', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
+    { id: 'city_xiayangdu', name: '龙门', factionId: 'xiayang_d', lat: 35.602, lng: 110.452, type: 'stockade', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
     // ── 战略渡口 ──
     { id: 'city_piaoyujin', name: '漂渝津', factionId: 'pinghai', lat: 39.02, lng: 117.6, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
@@ -1049,7 +1049,7 @@ buildingStyle: 'ASIA', troops: 10000,
     { id: 'city_jeonju', name: '完山', factionId: 'zhen', lat: 35.75, lng: 127.14, type: 'small_city', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA' },
 
 
-    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'pass', troops: 10000, region: 'JOSEON', buildingStyle: 'ASIA', mirror: true },
+    { id: 'city_jindo', name: '鸣梁', factionId: 'sambyeol', lat: 34.487, lng: 126.263, type: 'stockade', troops: 10000, region: 'JOSEON', buildingStyle: 'ASIA', mirror: true },
 
 
     {
@@ -1080,7 +1080,7 @@ buildingStyle: 'KOREA', troops: 10000, tier: 0,
     }, // [2026-05-30] 升 big_city: 新罗 57BC-935AD = 992 年首都
         { id: 'city_haeju', name: '瀑池', factionId: 'hai2', lat: 38.03, lng: 125.71, type: 'stockade', troops: 10000, region: 'GORYEO', buildingStyle: 'ASIA' },
 
-    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'pass', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA', mirror: true },
+    { id: 'city_longwan', name: '龙湾', factionId: 'xingliao', lat: 40.1967, lng: 124.5306, type: 'stockade', troops: 10000, region: 'KOREA', buildingStyle: 'ASIA', mirror: true },
 
     // === 第三批新增据点 ===
     { id: 'city_fuhan', name: '枹罕', factionId: 'qifu_d', lat: 35.6, lng: 103.21, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
@@ -1101,7 +1101,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
 
 
 
-    { id: 'city_dangchang', name: '阴平', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'pass', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
+    { id: 'city_dangchang', name: '阴平', factionId: 'dangzhou', lat: 33.6997, lng: 104.5239, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
 
     { id: 'city_daixian', name: '灵仙', factionId: 'dai_d', lat: 39.842285, lng: 114.408875, type: 'small_city', region: 'NORTH',
@@ -1378,9 +1378,9 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
 
     
-    { id: 'city_jinshan', name: '额尔齐斯', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'pass', region: 'STEPPE_IMPERIAL',
+    { id: 'city_jinshan', name: '额尔齐斯', factionId: 'huite', lat: 46.939014, lng: 89.598999, type: 'stockade', region: 'CENTRAL_ASIA',
 // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：额尔齐斯：辉特（卫拉特蒙古）关隘，归鞑靼（中亚草原）
-buildingStyle: 'CENTRAL_ASIA', troops: 10000,
+buildingStyle: 'CEAS', troops: 10000,
         note: '额尔齐斯；辉特关隘',
     },
     { id: 'city_dafang', name: '大方城', factionId: 'luodian', lat: 27.046910, lng: 105.707703, type: 'small_city', region: 'SONG',
@@ -1420,7 +1420,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
     // 第三类：蒙古草原部落
     { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'pass', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
-    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'pass', troops: 10000, region: 'TURKS', buildingStyle: 'CENTRAL_ASIA' },
+    { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
 
     { id: 'city_fuhai', name: '福海', factionId: 'naiman', lat: 47.036450, lng: 87.352295, type: 'stockade', region: 'STEPPE',
 // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：福海：乃蛮小城，归鞑靼（中亚草原）
@@ -2790,8 +2790,7 @@ buildingStyle: 'ASIA', troops: 10000,
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：巴里坤：天山北路，汉—准噶尔通道
     { id: 'city_balikun', name: '巴里坤', factionId: 'pulei', lat: 43.6, lng: 93, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'CENTRAL_ASIA' },
 
-    { id: 'city_buergenjuntai', name: '布尔根', factionId: 'wulianghai', lat: 46.09, lng: 91.53, type: 'pass', region: 'STEPPE_IMPERIAL',
-buildingStyle: 'MOBEI_MONGOL', troops: 10000,
+    { id: 'city_buergenjuntai', name: '布尔根', factionId: 'wulianghai', lat: 46.09, lng: 91.53, type: 'stockade', region: 'STEPPE_IMPERIAL', troops: 10000,
         note: '布尔根；乌梁海关隘',
     },
     { id: 'city_zhabuhanjuntai', name: '扎布汗', factionId: 'wuli_d', lat: 47.844489, lng: 94.174805, type: 'stockade', region: 'STEPPE_IMPERIAL', buildingStyle: 'MOBEI_MONGOL', troops: 10000, note: '乌里雅苏台将军辖区；策楞定边左副将军驻节' },
