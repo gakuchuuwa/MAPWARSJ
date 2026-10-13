@@ -8101,6 +8101,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.06,
             "offsetX": 0,
             "offsetY": -14
+        },
+        "/assets/WEST_ASIA/kapaduoxiya_sabikatasi.png": {
+            "scale": 1.14,
+            "offsetX": -9,
+            "offsetY": -5
         }
     },
     "folderGuides": {

@@ -63,6 +63,9 @@ const NATURE_ALIAS: Record<string, [string, string]> = {
   VULTURE: ['ANIMAL', 'VULTURE'], HAWKX: ['ANIMAL', 'HAWK'], CRANE: ['ANIMAL', 'CRANE'], IBEX: ['ANIMAL', 'IBEX'],
   DEER: ['ANIMAL', 'DEER'], BOAR: ['ANIMAL', 'BOAR'], WOLF: ['ANIMAL', 'WOLF'], HAWK: ['ANIMAL', 'FALCON'],
   MOUFLON: ['ANIMAL', 'MOUFLON'], LION: ['ANIMAL', 'LION'],
+  // 🔴 [2026-10-13 动物核对抓出·已补] 鸵鸟素材就在库里，但 RMS 名 `OSTRICH` 一直没进别名表
+  //    ⇒ 全图 26 只鸵鸟**一只都画不出来**（resolveNatureSprite 返 null，物件被静默丢掉）。
+  OSTRICH: ['ANIMAL', 'OSTRICH'],
   // 🔴 [2026-10-13 第五阶段：气候专属点缀物] 枯骨残骸、墓冢碎石与杂物
   SKELA: ['NATURE', 'SKELETON'], GRAVES: ['NATURE', 'GRAVES'], BARRELS: ['NATURE', 'BARRELS'], CONDOR: ['ANIMAL', 'CONDOR'], RAVEN: ['ANIMAL', 'FALCON']
 };

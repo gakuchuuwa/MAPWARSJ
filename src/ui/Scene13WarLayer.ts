@@ -43,6 +43,7 @@ import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from '../systems/cityD
 import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
+import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { generateEnvironment, type Scene13EnvironmentPlan, type Scene13EnvironmentInput } from './scene13/Scene13EnvironmentGenerator';
 import { loadRealGeography, buildRealGeoPlan, bearingDeg, type RealGeoFrame } from './scene13/Scene13RealGeography';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
@@ -385,6 +386,9 @@ const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'batte
 const WALL_GATE_STATS: Record<string, WarType> = {
     STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
     STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 1650, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    // 🔴 [2026-10-13 全面体检抓出·已修] **木栅栏门 / 篱笆门**原来套的是 `STONE_GATE`（1650 血 + 6/6 甲），
+    //    与相邻木墙（`WOOD_WALL` 540/2/5）差 3 倍 —— 一排木栅栏上却嵌着一扇比石墙还硬的门。
+    //    木门与木墙同一材质，照 `WOOD_WALL` 档（键名仍写 `STONE_GATE`，见下方建门处的说明）。
     // 🔴 [2026-09-18 主人定] 木栅栏/篱笆单开一档：hp 540（= 石墙 1080 的一半）、近防 2、远防 5（木质，照 DE）。
     //    改前栅栏直接套 STONE_WALL（hp 1080、防 8/10）—— 一排木桩和石墙一样硬，正是主人实锤的
     //    「攻城武器打很久栅栏都不坏」。
@@ -2060,6 +2064,19 @@ const PROJ_FRAME_DUR: Record<string, number> = {
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
 const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
+/**
+ * 🔴 [2026-10-13 全面审计抓出·自爆对建筑] 自爆伤害打到**建筑**时的倍率。
+ *
+ * 🔴 取 **1**（＝与对兵同一口径，不额外放大）。
+ *   曾想取 8 放大「毁灭性」，但算了一遍发现不对：自爆的 bonus 本来就是**对建筑的点名值**
+ *   （petard `11:1200`、flaming_camel `11:800`），`mult` 只为对齐 `dt` 量纲而设（普通攻击链里它是攻速量级）。
+ *   实测（petard，甲照 `WALL_GATE_STATS`）：
+ *     · 对石墙：25 + 1200 − 8  = 1197 /轮 ⇒ 1080 血 **1.20 轮**破（外围石墙）；
+ *     · 对石城门：25 + 1200 − 6 = 1199 /轮 ⇒ 1650 血 **2.76 轮**破（石城门）。
+ *   即：**自爆兵对「墙」一炸一段、对「城门」要两三炸**，正合 DE 里 petard「破墙开路、不是万能钥匙」的定位。
+ *   取 8 会让墙与门都被**单发秒破**，那是新型攻城核武、不是爆破兵 —— 故不取。
+ */
+const SUICIDE_BLD_MULT = 1;
 /** 具有最小射程盲区的远程/器械单位（原版 DE：投石车 min range 3 格、巨投 min range 4 格；1 格 = 40px，与 rng 同换算）。
  *  🔴 [2026-09-18 主人定·攻城武器无法近身攻击] 远程重型攻城武器严禁近身肉搏，贴脸时伤害归零。 */
 const MIN_RANGE_TYPES: Record<string, number> = {
@@ -3181,23 +3198,159 @@ interface DecorSprite {
     collapse?: { t: number; dur: number; rubbleAsset: string | null };
 }
 
-/** 战术野生动物与生灵动态生态（食草动物群聚逃窜、猛兽避让、高空盘旋飞鸟） */
+/**
+ * 战术野生动物与家畜（2026-10-13 按 DE 数据重写）。
+ * 分类 / 速度 / 视野 / 血量 / 攻击 / 素材动作 —— 全部照 DE 本体，见下表 ANIMAL_DE。
+ */
+type AnimalKind = 'prey' | 'danger' | 'predator' | 'livestock' | 'bird';
+type AnimalAction = 'idle' | 'walk' | 'run' | 'attack' | 'hover' | 'fly';
+
 interface TacticalAnimal {
     sprite: DecorSprite;
     species: string;
-    category: 'prey' | 'predator' | 'livestock' | 'bird';
-    action: 'idle' | 'walk' | 'run' | 'hover' | 'fly';
+    kind: AnimalKind;
+    action: AnimalAction;
     dir: number;
-    originX: number;
-    originY: number;
+    /** 出生点：DE 的胆小猎物不被追就回自己的窝（不是就地停住） */
+    homeX: number;
+    homeY: number;
     x: number;
     y: number;
     vx: number;
     vy: number;
+    /** 受惊 / 被追赶的剩余秒数 */
     fleeTimer: number;
+    /** 闲逛：下一次换方向的倒计时（飞鸟：盘旋/巡航的剩余秒数） */
+    idleTimer: number;
+    wanderX: number;
+    wanderY: number;
     animPhase: number;
-    orbitAngle?: number;
-    orbitRadius?: number;
+    hp: number;
+    /** 下次咬人时刻（DE 装填 2 秒） */
+    atkNext: number;
+    flyX: number;
+    flyY: number;
+    hovering: boolean;
+}
+
+/** DE 素材实际有的动作（本机 public/SUCAI_ANIMAL/<物种>/_meta.json 实测）。
+ *  🔴 缺的动作一律不许请求：请求了就是 404 → 那只动物整只不画（2026-10-13 核出来的消失病根）。 */
+const ANIMAL_ACTS = {
+    /** 只有 idle/walk：家畜、野马、野羊驼、野鸡 */
+    graze: ['idle', 'walk'],
+    /** idle/walk/run：鹿、瞪羚、野兔等胆小猎物 */
+    flee: ['idle', 'walk', 'run'],
+    /** 只有 idle：盘羊（素材缺 walk/run） */
+    still: ['idle'],
+    /** idle/walk/run/attack：狼熊狮虎豹、野猪、狐 */
+    beast: ['idle', 'walk', 'run', 'attack'],
+    /** idle/walk/attack：鳄、凯门鳄、科莫多、蛇、猴（素材无 run） */
+    beastSlow: ['idle', 'walk', 'attack'],
+    /** 飞鸟：hover/fly 各 16 向 */
+    bird: ['hover', 'fly'],
+} as const satisfies Record<string, readonly AnimalAction[]>;
+
+interface AnimalDe {
+    kind: AnimalKind;
+    walk: number;
+    run: number;
+    los: number;
+    hp: number;
+    atk: number;
+    reload: number;
+    acts: readonly AnimalAction[];
+}
+
+/**
+ * DE 动物数据表（唯一口径：本机 aoE2DE `empires2_x2_p1.dat` 实测，抽取脚本 `scratch/extract_de_animals.py`）
+ * 列 = 物种 / 类别 / DE 步行速度(格/秒) / DE 血量 / DE 近战攻击(0 = 不咬人) / DE 视野(格) / 素材动作
+ *
+ * 换算 = 本仓唯一那把尺：**1 格 = 40px**（与 `scratch/de_los_map.json` 的 `los_g 4.0 → los_px 160`、
+ * `WarTypes` 长矛兵 `spd 40` = DE 1.0 格/秒 同一把尺）。
+ * · 步行 = DE `speed` 实测；逃跑 DE 未单列字段 → 猎物按鹿实测 0.737→1.4（×1.9）、猛兽按狼 0.7→1.05（×1.5）。
+ * · 视野 = DE `line_of_sight`（鹿 2 格 / 狼 12 格 / 家畜 3 格）。
+ * 类别：
+ *   prey     胆小猎物 —— 见任何单位就逃；不被追就回窝（DE：胆小猎物回出生点）。
+ *   danger   危险猎物 —— 不逃；DE 里被攻击才反击（野猪/犀牛/貘/战象/麋），战术模式没有猎杀故只闲逛。
+ *   predator 猛兽 —— 主动扑人（狼/熊/狮/虎/豹/鳄/蛇/科莫多）。
+ *   livestock 家畜 —— 不惊、只是慢慢让开（DE：家畜是被人接管，出生在 TC 旁）。
+ *   bird     飞鸟 —— fly 巡航 + hover 定点盘旋。
+ */
+const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, number, number, number, readonly AnimalAction[]]> = [
+    // ── 胆小猎物（DE class 9 / 65）──
+    ['DEER', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['OSTRICH', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['GAZELLE', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['IBEX', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['MOUFLON', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['RHEA', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
+    ['HORSE', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.graze],       // HORSW 野马（class 9）；素材只有 idle/walk
+    ['ALPACA', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.graze],      // WALPACA 野羊驼（class 9）
+    ['MONKEY', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.beastSlow],  // WMONKEY；素材无 run
+    ['ARGALI', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.still],      // 素材只有 idle
+    ['TURKEY', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.graze],       // PHEASANT 野鸡：不弃窝（DE unpushable）
+    ['HARE_BROWN', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
+    ['HARE_GREY', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
+    ['HARE_ARCTIC', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
+    ['FOX_RED', 'prey', 0.5, 3, 0, 2, ANIMAL_ACTS.beast],
+    ['FOX_ARCTIC', 'prey', 0.5, 3, 0, 2, ANIMAL_ACTS.beast],
+    // ── 危险猎物（DE class 10，被惹才反击）：不逃 ──
+    ['BOAR', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
+    ['RHINO', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
+    ['TAPIR', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
+    ['ELEPHANT', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
+    // ⚠️ 地图里的 `ELK`（DE 危险猎物）没有独立素材，别名表把它当 `DEER` 画（见 Scene13GroundLayerGL 的 ELK 行）
+    //    ⇒ 运行时物种名就是 DEER，按胆小猎物走。要让它按 DE 的麋（hp75/atk5/不逃）走，得先有麋的素材。
+    // ── 猛兽（DE class 10，主动扑人）──
+    ['WOLF', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['WOLF_ARABIAN', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['WOLF_ARCTIC', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['LION', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['TIGER', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['BLACK_PANTHER', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['JAGUAR', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['SNOWLEOPARD', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
+    ['BEAR', 'predator', 0.59, 30, 3, 10, ANIMAL_ACTS.beast],
+    ['BEAR_BLACK', 'predator', 0.59, 25, 3, 10, ANIMAL_ACTS.beast],
+    ['BEAR_POLAR', 'predator', 0.59, 30, 4, 10, ANIMAL_ACTS.beast],
+    ['CROCODILE', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
+    ['CAIMAN', 'predator', 0.59, 20, 2, 12, ANIMAL_ACTS.beastSlow],
+    ['KOMODO', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
+    ['SNAKE_GROUND', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
+    // ── 家畜（DE class 58 / 61 / 38）：不被惊，只是慢慢让开 ──
+    ['SHEEP', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['GOAT', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['PIG', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['GOOSE', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['LLAMA', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['CAPYBARA', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
+    ['COW_BROWN', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
+    ['COW_BLACK', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
+    ['COW_BW', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
+    ['CHICKEN', 'livestock', 0.75, 5, 0, 3, ANIMAL_ACTS.graze],
+    ['CAMEL', 'livestock', 1.2, 50, 0, 4, ANIMAL_ACTS.graze],
+    ['DROMEDARY', 'livestock', 1.2, 50, 0, 4, ANIMAL_ACTS.graze],
+    // ── 飞鸟（DE class 11）──
+    ['FALCON', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['HAWK', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['OWL', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['STORK', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['CRANE', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['VULTURE', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['FLAMINGO', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['CONDOR', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['MACAW', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+];
+
+/** 表展开成查表（速度 px/s = DE 格/秒 × 40；逃跑倍率见上表说明） */
+const ANIMAL_DE: Record<string, AnimalDe> = {};
+for (const [sp, kind, spd, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
+    ANIMAL_DE[sp] = { kind, walk: spd * 40, run: spd * (kind === 'predator' ? 1.5 : 1.9) * 40, los: los * 40, hp, atk, reload: 2.0, acts };
+}
+
+/** 表里没有的物种（以后地图新增）按 DE 最常见的胆小猎物走，不许崩 */
+function animalDeOf(species: string): AnimalDe {
+    return ANIMAL_DE[species] ?? { kind: 'prey', walk: 0.737 * 40, run: 1.4 * 40, los: 80, hp: 5, atk: 0, reload: 2.0, acts: ANIMAL_ACTS.flee };
 }
 
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
@@ -5761,7 +5914,11 @@ export class Scene13WarLayer {
                     this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
                     this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
                 }
-                const st = WALL_GATE_STATS.STONE_GATE;
+                const st = isFenceGate ? WALL_GATE_STATS.WOOD_WALL : WALL_GATE_STATS.STONE_GATE;
+                // 🔴 [2026-10-13] key 仍写 'STONE_GATE'（**不新增键**）：城门倒塌/残骸那几条链
+                //    只认 'STONE_GATE'（见两处 `foe.key === 'STONE_GATE' && hp<=0`），
+                //    若另立 'WOOD_GATE' 键，木门 0 血时不会倒塌 —— 会变成打不烂的墙。
+                //    木材质只体现在**血甲**上（540/2/5 照 WOOD_WALL），行为链完全通用。
                 this.wallGates.push({ f: 1, key: 'STONE_GATE', x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
             });
             this.deCityBuilt = true;
@@ -6061,7 +6218,10 @@ export class Scene13WarLayer {
                 if (wallMat === 'NONE') return;
                 const sprite = place(s, asset, { flip: false, z: 1, obstruction: { x: 0.95, y: 0.95 } });
                 this.decorSprites.push(sprite);
-                const st = WALL_GATE_STATS.STONE_GATE;
+                // 🔴 [2026-10-13 全面体检抓出·已修] 木栅栏门/篱笆门原套 `STONE_GATE` 的血甲（1650 + 6/6），
+                //    与相邻木墙（`WOOD_WALL` 540/2/5）差 3 倍。木门照木墙档；**key 仍写 'STONE_GATE'**（不新增键，
+                //    否则城门倒塌链认不出它 —— 木门会打不烂）。
+                const st = (asset.includes('FENCE') || asset.includes('PALISADE')) ? WALL_GATE_STATS.WOOD_WALL : WALL_GATE_STATS.STONE_GATE;
                 const extraSprites: DecorSprite[] = [];
                 const dSign = dir === 'NE' ? -1 : 1;
                 for (let step = -3; step <= 3; step++) {
@@ -6642,6 +6802,87 @@ export class Scene13WarLayer {
     }
 
     /**
+     * 🔴 [2026-10-13 主人令「有的城海在西边，战术地图中却在东边。请采用合理处理方式」]
+     * 自适应校正战术地图水体的东西方位：
+     * 若真实地理海在西边（如推罗、加沙、米利都、哈利卡纳苏斯、里斯本等），而战术地图数据水体主要分布在东边，
+     * 则自动水平镜像翻转地图数据，使海岸线与战略地图及真实世界地理方位严格一致。
+     */
+    private adaptMapDataSeaOrientation(mapData: any): any {
+        if (!mapData || !mapData.width || !mapData.height || !mapData.terrain) return mapData;
+        const rec: any = this.defenderCityRecord();
+        const lat = rec?.lat ?? this.centerLat;
+        const lng = rec?.lng ?? this.centerLng;
+        if (lat === undefined || lng === undefined) return mapData;
+
+        // 1. 采样真实地理中城池东西两侧的海水分布（经度范围约 5km ~ 35km）
+        const offsets = [0.04, 0.09, 0.18, 0.28];
+        let westSea = 0, eastSea = 0;
+        for (const d of offsets) {
+            for (const dlat of [-0.04, 0, 0.04]) {
+                if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng - d })) westSea++;
+                if (LandSeaSystem.isSeaAt({ lat: lat + dlat, lng: lng + d })) eastSea++;
+            }
+        }
+        const realSeaWest = westSea >= eastSea + 2;
+        const realSeaEast = eastSea >= westSea + 2;
+        if (!realSeaWest && !realSeaEast) return mapData;
+
+        // 2. 统计地图数据在屏幕视角（转置后）的东西侧水体分布
+        // 注：未转置数据的 y 轴对应转置后屏幕水平 x 轴 (gx)
+        const w = mapData.width, h = mapData.height;
+        let screenWestWater = 0, screenEastWater = 0;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const tid = mapData.terrain[y * w + x];
+                if (tid === 1 || tid === 23 || tid === 14 || tid === 15 || tid === 22) {
+                    if (y < h / 2) screenWestWater++;
+                    else screenEastWater++;
+                }
+            }
+        }
+        const totalWater = screenWestWater + screenEastWater;
+        if (totalWater < 300) return mapData;
+
+        const mapWaterEast = screenEastWater > screenWestWater * 1.4;
+        const mapWaterWest = screenWestWater > screenEastWater * 1.4;
+
+        // 3. 当真实海洋与地图数据水体东西方位相悖时，执行水平镜像翻转
+        const needFlip = (realSeaWest && mapWaterEast) || (realSeaEast && mapWaterWest);
+        if (!needFlip) return mapData;
+
+        const flipArrayY = (arr: any) => {
+            if (!arr || !arr.length) return arr;
+            const out = new Array(w * h);
+            for (let y = 0; y < h; y++) {
+                const srcRow = y * w;
+                const dstRow = (h - 1 - y) * w;
+                for (let x = 0; x < w; x++) {
+                    out[dstRow + x] = arr[srcRow + x];
+                }
+            }
+            return Array.isArray(arr) ? out : new (arr.constructor as any)(out);
+        };
+
+        const newObjs = (mapData.objects || []).map((o: any) => {
+            const no = { ...o };
+            no.y = h - 1 - o.y;
+            no.cell = Math.floor(no.y) * w + Math.floor(no.x);
+            return no;
+        });
+
+        console.info(`[Scene13WarLayer] 🌊 真实海洋在${realSeaWest ? '西侧' : '东侧'}，自适应翻转战术地图水体方位与真实地理严格一致`);
+        return {
+            ...mapData,
+            terrain: flipArrayY(mapData.terrain),
+            layer: flipArrayY(mapData.layer),
+            elev: flipArrayY(mapData.elev),
+            passable: flipArrayY(mapData.passable),
+            speed: flipArrayY(mapData.speed),
+            objects: newObjs,
+        };
+    }
+
+    /**
      * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
      * 并加载新地图物件，替换旧 13 随机树木与岩石。
      */
@@ -6711,12 +6952,13 @@ export class Scene13WarLayer {
             return null;
         };
 
-        void getMapData().then(async (mapData) => {
-            if (gen !== this.assetGen || !mapData) {
+        void getMapData().then(async (rawMapData) => {
+            if (gen !== this.assetGen || !rawMapData) {
                 this.useGroundGL = false;
                 cv.style.display = 'none';
                 return;
             }
+            const mapData = this.adaptMapDataSeaOrientation(rawMapData);
             try {
                 if (this.groundLayerGL) this.groundLayerGL.destroy();
                 // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
@@ -6838,11 +7080,11 @@ export class Scene13WarLayer {
                         }
                     }
 
-                    // 🔴 [2026-10-13 主人令「动物分布的都不对」]
-                    // DE 官方动物分类与避让：城池/城郭内部绝无野生动物、攻方营帐避让、猛兽外围分布、草食动物松散成群
-                    const BIRDS = new Set(['CONDOR', 'CRANE', 'FALCON', 'FLAMINGO', 'HAWK', 'MACAW', 'OWL', 'STORK', 'VULTURE']);
-                    const PREDATORS = new Set(['WOLF', 'WOLF_ARABIAN', 'WOLF_ARCTIC', 'BEAR', 'BEAR_BLACK', 'BEAR_POLAR', 'LION', 'TIGER', 'BLACK_PANTHER', 'JAGUAR', 'SNOWLEOPARD', 'CROCODILE', 'CAIMAN', 'KOMODO', 'WAR_DOG']);
-                    const LIVESTOCK = new Set(['SHEEP', 'GOAT', 'COW_BROWN', 'COW_BLACK', 'COW_BW', 'PIG', 'CHICKEN', 'GOOSE', 'TURKEY', 'HORSE', 'DONKEY', 'CAMEL', 'DROMEDARY', 'LLAMA', 'ALPACA']);
+                    // 🔴 [2026-10-13 主人令「动物逻辑和DE不一样，请核对清楚」＋「尽量真实，游戏合理」]
+                    //    分类 / 速度 / 视野 / 血量 / 攻击一律照 DE 本体（表 ANIMAL_DE，见文件上方），不再手写三张 Set。
+                    //    旧版自造的三条已废：① 城池/营帐内动物一律删（DE 的牲畜本来就出生在 TC 旁，删了就没牲畜）
+                    //    ② 猛兽离图心 1400px 删（DE 用 min_distance_to_players，从不看图心；实测白删 31% 猛兽）
+                    //    ③ 猎物复制 3 只（DE 的群是 RMS 一只只摆好的，复制＝平白多三倍）。
 
                     const inCityZone = (x: number, y: number): boolean => {
                         if (this.insideRing(x, y)) return true;
@@ -6875,100 +7117,56 @@ export class Scene13WarLayer {
 
                             if (isAnimal) {
                                 const species = r[1];
-                                const isBird = BIRDS.has(species);
-                                const isPredator = PREDATORS.has(species);
-                                const isLivestock = LIVESTOCK.has(species);
-                                const isPrey = !isBird && !isPredator && !isLivestock;
+                                const de = animalDeOf(species);
 
-                                // ① 严禁野生动物进入城内、要塞内圈、攻方营帐或建筑地基
-                                if (inCityZone(sx, sy) || inCampZone(sx, sy) || onFoundation(sx, sy)) continue;
+                                // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
+                                //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
+                                if (onFoundation(sx, sy)) continue;
+                                if (de.kind !== 'livestock' && (inCityZone(sx, sy) || inCampZone(sx, sy))) continue;
 
-                                // ② 猛兽（狼/熊/狮/豹等）置于荒野外围（离城心/两军中心至少 1400px）
-                                if (isPredator && Math.hypot(sx - VW / 2, sy - VH / 2) < 1400) continue;
-
-                                // ③ 空中飞鸟：高空盘旋，独立高程
-                                if (isBird) {
-                                    const animSprite: DecorSprite = {
-                                        asset: `ANIMAL:${species}/hover_0`,
-                                        frame: 0,
-                                        x: sx,
-                                        y: sy,
-                                        flip: false,
-                                        layer: 'world',
-                                        z: 0,
-                                        lift: 180,
-                                        obstructionContactSec: 0,
-                                        obstructionTouched: false,
-                                        obstructionDisabled: true,
-                                    };
-                                    this.ensureNatureAsset(animSprite.asset);
-                                    this.decorSprites.push(animSprite);
-                                    this.tacticalAnimals.push({
-                                        sprite: animSprite,
-                                        species,
-                                        category: 'bird',
-                                        action: 'hover',
-                                        dir: 0,
-                                        originX: sx,
-                                        originY: sy,
-                                        x: sx,
-                                        y: sy,
-                                        vx: 0,
-                                        vy: 0,
-                                        fleeTimer: 0,
-                                        animPhase: hash,
-                                        orbitRadius: 220 + (hash % 80),
-                                        orbitAngle: (hash % 360) * Math.PI / 180,
-                                    });
-                                    continue;
-                                }
-
-                                // ④ 草食猎物（鹿群/羚羊等）松散成群生成（3~4 只），分布在林缘草场
-                                const herdCount = isPrey ? 3 : 1;
-                                const herdOffsets = [
-                                    { dx: 0, dy: 0 },
-                                    { dx: -38, dy: 24 },
-                                    { dx: 44, dy: -22 },
-                                    { dx: -24, dy: -36 },
-                                ];
-                                for (let h = 0; h < herdCount; h++) {
-                                    const hx = sx + herdOffsets[h].dx;
-                                    const hy = sy + herdOffsets[h].dy;
-                                    if (inCityZone(hx, hy) || inCampZone(hx, hy) || onFoundation(hx, hy)) continue;
-                                    const initialDir = (hash + h * 3) % 8;
-                                    const initialAsset = `ANIMAL:${species}/idle_${initialDir}`;
-                                    const animSprite: DecorSprite = {
-                                        asset: initialAsset,
-                                        frame: hash + h * 7,
-                                        x: hx,
-                                        y: hy,
-                                        flip: false,
-                                        layer: 'world',
-                                        z: 0,
-                                        lift: glLayer.elevationLiftAt(hx, hy, VW, VH),
-                                        densityHash: hash,
-                                        obstructionContactSec: 0,
-                                        obstructionTouched: false,
-                                        obstructionDisabled: true,
-                                    };
-                                    this.ensureNatureAsset(initialAsset);
-                                    this.decorSprites.push(animSprite);
-                                    this.tacticalAnimals.push({
-                                        sprite: animSprite,
-                                        species,
-                                        category: isPrey ? 'prey' : (isPredator ? 'predator' : 'livestock'),
-                                        action: 'idle',
-                                        dir: initialDir,
-                                        originX: hx,
-                                        originY: hy,
-                                        x: hx,
-                                        y: hy,
-                                        vx: 0,
-                                        vy: 0,
-                                        fleeTimer: 0,
-                                        animPhase: hash + h * 7,
-                                    });
-                                }
+                                // ② 一个 DE 物件 = 一只动物（DE 的群由 RMS 一只只摆好，不再复制成群）
+                                const dir = hash % 8;
+                                const isBird = de.kind === 'bird';
+                                const startAct: AnimalAction = isBird ? 'hover' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
+                                const animSprite: DecorSprite = {
+                                    asset: `ANIMAL:${species}/${startAct}_${isBird ? 0 : dir}`,
+                                    frame: hash,
+                                    x: sx,
+                                    y: sy,
+                                    flip: false,
+                                    layer: 'world',
+                                    z: 0,
+                                    lift: isBird ? 180 : glLayer.elevationLiftAt(sx, sy, VW, VH),
+                                    densityHash: hash,
+                                    obstructionContactSec: 0,
+                                    obstructionTouched: false,
+                                    obstructionDisabled: true,
+                                };
+                                this.ensureNatureAsset(animSprite.asset);
+                                this.decorSprites.push(animSprite);
+                                this.tacticalAnimals.push({
+                                    sprite: animSprite,
+                                    species,
+                                    kind: de.kind,
+                                    action: startAct,
+                                    dir: isBird ? 0 : dir,
+                                    homeX: sx,
+                                    homeY: sy,
+                                    x: sx,
+                                    y: sy,
+                                    vx: 0,
+                                    vy: 0,
+                                    fleeTimer: 0,
+                                    idleTimer: Math.random() * 3,
+                                    wanderX: sx,
+                                    wanderY: sy,
+                                    animPhase: hash,
+                                    hp: de.hp,
+                                    atkNext: 0,
+                                    flyX: sx,
+                                    flyY: sy,
+                                    hovering: true,
+                                });
                                 continue;
                             }
 
@@ -8866,6 +9064,50 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 }
             }
         }
+        // 🔴 [2026-10-13 全面审计抓出·已修] **自爆伤害原本只遍历兵网格 `this.gm`，建筑不在其中** ——
+        //    爆破兵/火焰骆驼的 `bonus 11:1200 / 800`（对石质防御 / 建筑）是**永远用不到的死值**：
+        //    够得着（<65px）就自爆只炸小兵，够不着就永远砸不到，对墙/门伤害恒为 0。
+        //    这里把**城墙 / 城门 / 城内建筑**一并纳入自爆范围，并复用与普通攻击**逐字同一条**的
+        //    破损档与 0 血破坏链（`onDefBuildingHit` + D25/D50/D75 + 解碰撞），不另写一份。
+        //    倍率 `SUICIDE_BLD_MULT` 说明见常量定义处。
+        if (SUICIDE_TYPES.has(m.key)) {
+            for (const b of this.wallGates) {
+                if (b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
+                if ((b.x - m.x) ** 2 + (b.y - m.y) ** 2 > radius * radius) continue;
+                const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * SUICIDE_BLD_MULT / shooter.reload;
+                b.atkNext++;
+                if (b.hitAt === undefined) b.hitAt = this.battleSec;
+                b.hp -= bdps * this.sideBonus[m.f] * gangMul(b) * this.attritionMul() * dt;
+                if (b.destrAssets && b.maxHp > 0) {
+                    const ratio = b.hp / b.maxHp;
+                    let stage = -1;
+                    if (ratio <= 0.25) stage = 2;
+                    else if (ratio <= 0.5) stage = 1;
+                    else if (ratio <= 0.75) stage = 0;
+                    if (stage >= 0) {
+                        const asset = 'BUILDINGANIM:' + b.destrAssets[stage];
+                        if (b.sprite.asset !== asset) { b.sprite.asset = asset; b.sprite.frame = 0; }
+                    }
+                }
+                if (b.bld) this.onDefBuildingHit(b);
+                if (b.key === 'STONE_WALL' && b.hp <= 0 && !b.sprite.obstructionDisabled) {
+                    b.sprite.obstruction = undefined;
+                    b.sprite.obstructionDisabled = true;
+                }
+                if (b.key === 'WOOD_WALL' && b.hp <= 0 && !b.sprite.destroyed) {
+                    b.sprite.destroyed = true;
+                    b.sprite.obstruction = undefined;
+                    b.sprite.obstructionDisabled = true;
+                }
+                if (b.key === 'STONE_GATE' && b.hp <= 0 && !b.sprite.collapse && !b.sprite.destroyed) {
+                    if (b.rubbleAsset) this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
+                    else b.sprite.destroyed = true;
+                    b.sprite.obstruction = undefined;
+                    b.sprite.obstructionDisabled = true;
+                    if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+                }
+            }
+        }
     }
 
     /**
@@ -9679,7 +9921,14 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）
             const spdK = this.isWaterAt(m.x, m.y) ? 0.6 : 1;
             const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
-            const REACH = Math.max(stats.rng, 65);   // 出手扣血（近战贴身 65 / 远程 rng）
+            // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
+            //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
+            //    （53.67 = √(TAC_TILE_W²/4 + TAC_TILE_H²/4) 的等轴换算，见 resolveWorldObstructions）。
+            //    实测：步兵 r=8 → 61.7px、骑兵 r=10 → 64.4px（都 <65 ✅），
+            //    但**攻城槌 r=18 → 75.1px、重型攻城 r=20 → 77.8px（恒 >65 ❌）** ⇒ 这两类对墙/门的攻击
+            //    整条链（扣血、D25/D50/D75 破损档、`hitAt` 十秒坍塌排序）**从未生效过**，只剩定时坍塌在动。
+            //    加回自身半径后攻城槌 65+18=83px > 75.1 ⇒ 够得着；步兵/骑兵仍然按 65 且远大于 61.7/64.4 ⇒ 行为不变。
+            const REACH = Math.max(stats.rng, 65) + this.radiusOf(m.key);   // 出手扣血（近战贴身 65 + 自身半径 / 远程 rng）
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
@@ -10611,117 +10860,199 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     /**
-     * 🔴 [2026-10-13 主人令「动物分布的都不对。而且人来了也不动，你看看DE是怎么做的。请修复」]
-     * DE 原生动物生态与惊扰逃窜机制（Spooked Flee AI）：
-     * 1. 飞鸟（鹰/隼/秃鹫/仙鹤）：16 向在天空盘旋翱翔（高空抬升 lift=180），环状滑翔；
-     * 2. 地面生灵（食草鹿群/猛兽/家畜）：当活人士兵接近（<220px）时受惊，切换 run/walk，背向敌方逃跑；
-     * 3. 食草动物群体惊扰传递：一只受惊，周围同伴一同起跑；
-     * 4. 逃跑 3.2 秒后脱离危险，平滑切回 idle 吃草待命。
+     * 🔴 [2026-10-13 主人令「动物逻辑和DE不一样，请核对清楚」＋「尽量真实，游戏合理」]
+     * 战术动物 AI —— 五类各按 DE 的行为走（数值全部来自上方 ANIMAL_DE 表，DE 本体实测）：
+     *  · prey     胆小猎物：单位进 DE 视野（鹿 2 格＝80px）就逃；脱险后**走回窝**（DE：不被追就回出生点，不是就地停）。
+     *  · danger   危险猎物（野猪/犀牛/貘/战象/麋）：不逃（DE 仅被攻击才反击；本模式没有猎杀，故只闲逛）。
+     *  · predator 猛兽（狼/熊/狮/虎/豹/鳄/蛇/科莫多）：单位进 DE 视野（狼 12 格＝480px）就扑上去，
+     *             贴身每 DE 装填 2 秒咬一口（DE 攻击力，吃近防）；咬的同时被身边士兵捅 —— 扑进阵里活不过两口，与 DE 一致。
+     *  · livestock 家畜：不惊；人贴进 DE 视野（3 格＝120px）只是慢慢让开、离家不超 2.5 格，人走回窝。
+     *  · bird     飞鸟：DE 1.32 格/秒巡航（fly）＋到点定点盘旋（hover），不再是自造的绕圈。
+     * 没人时所有地面动物都在窝边慢慢走动吃草（DE 的 idle/walk ＋ 同类松散牵引）。
      */
     private updateTacticalAnimals(dt: number): void {
-        if (!this.tacticalAnimals.length) return;
+        const list = this.tacticalAnimals;
+        if (!list.length) return;
         const cv = this.canvas;
         const VW = cv?.width ?? 7616;
         const VH = cv?.height ?? 3808;
+        const MARGIN = 120;
+        const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
+        const HOME_BACK = 30;       // 猎物离家多远就往回走
+        const BITE_RANGE = 22;      // 猛兽贴身咬的距离
 
-        for (const an of this.tacticalAnimals) {
-            // ① 空中生灵：高空沿扁椭圆轨迹盘旋翱翔
-            if (an.category === 'bird') {
-                an.orbitAngle = (an.orbitAngle ?? 0) + 0.32 * dt;
-                const ox = an.originX;
-                const oy = an.originY;
-                const r = an.orbitRadius ?? 260;
-                an.x = ox + Math.cos(an.orbitAngle) * r;
-                an.y = oy + Math.sin(an.orbitAngle) * r * 0.48;
-                // 鸟的 16 向朝向：沿椭圆切线方向
-                const tangX = -Math.sin(an.orbitAngle);
-                const tangY = Math.cos(an.orbitAngle) * 0.48;
-                let a = Math.atan2(-tangY, tangX) * 180 / Math.PI;
-                a = ((a % 360) + 360) % 360;
-                an.dir = (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
+        // 同类群重心：DE 的松散群聚（同伴在哪，闲逛就往那边偏一点）
+        const centroids = new Map<string, { x: number; y: number; n: number }>();
+        for (const a of list) {
+            if (a.sprite.destroyed) continue;
+            const c = centroids.get(a.species) ?? { x: 0, y: 0, n: 0 };
+            c.x += a.x; c.y += a.y; c.n++;
+            centroids.set(a.species, c);
+        }
+
+        for (const an of list) {
+            if (an.sprite.destroyed) continue;
+            const de = animalDeOf(an.species);
+
+            // ── 飞鸟：fly 巡航 ⇄ hover 定点盘旋（DE 两种动作都用）──
+            if (de.kind === 'bird') {
+                an.idleTimer -= dt;
+                if (!an.hovering) {
+                    const dx = an.flyX - an.x, dy = an.flyY - an.y, d = Math.hypot(dx, dy) || 1;
+                    if (d < 10 || an.idleTimer <= 0) {
+                        an.hovering = true;
+                        an.idleTimer = 2 + Math.random() * 3;
+                    } else {
+                        an.x += (dx / d) * de.walk * dt;
+                        an.y += (dy / d) * de.walk * dt;
+                        an.dir = this.birdDir(dx, dy);
+                    }
+                }
+                if (an.hovering && an.idleTimer <= 0) {
+                    an.hovering = false;
+                    an.idleTimer = 4 + Math.random() * 4;
+                    const ang = Math.random() * Math.PI * 2, r = 500 + Math.random() * 900;
+                    an.flyX = Math.min(VW - MARGIN, Math.max(MARGIN, an.x + Math.cos(ang) * r));
+                    an.flyY = Math.min(VH - MARGIN, Math.max(MARGIN, an.y + Math.sin(ang) * r));
+                }
                 an.sprite.x = an.x;
                 an.sprite.y = an.y;
-                an.sprite.asset = `ANIMAL:${an.species}/hover_${an.dir}`;
-                this.ensureNatureAsset(an.sprite.asset);
+                this.setAnimalAction(an, an.hovering ? 'hover' : 'fly');
                 continue;
             }
 
-            // ② 地面生灵：检测与附近活人士兵的距离
-            let nearestDist = Infinity;
-            let repelX = 0, repelY = 0;
-            let nearbyThreats = 0;
-            const detectR = an.category === 'prey' ? 240 : (an.category === 'predator' ? 210 : 170);
-            const detectR2 = detectR * detectR;
-
+            // ── 地面生灵：找最近的活人士兵（顺带累计 60px 内的反击火力）──
+            let near: WarMan | null = null;
+            let nearD = Infinity;
+            let fightBack = 0;
             for (const m of this.men) {
                 if (m.hp <= 0) continue;
-                const dx = an.x - m.x;
-                const dy = an.y - m.y;
-                const d2 = dx * dx + dy * dy;
-                if (d2 < detectR2) {
-                    const d = Math.sqrt(d2);
-                    if (d < nearestDist) nearestDist = d;
-                    repelX += dx / (d + 1);
-                    repelY += dy / (d + 1);
-                    nearbyThreats++;
-                }
+                const d = Math.hypot(m.x - an.x, m.y - an.y);
+                if (d < nearD) { nearD = d; near = m; }
+                if (d < 60) fightBack += this.statsFor(m.key, m.f).atk;
             }
 
-            // 触发受惊逃跑
-            if (nearbyThreats > 0) {
-                an.fleeTimer = 3.2;
-                an.action = (an.species === 'SHEEP' || an.species === 'GOAT' || an.species === 'PIG' || an.species === 'HORSE') ? 'walk' : 'run';
-                const runSpd = an.action === 'run' ? (an.category === 'prey' ? 120 : 110) : 60;
-                const len = Math.hypot(repelX, repelY) || 1;
-                an.vx = (repelX / len) * runSpd;
-                an.vy = (repelY / len) * runSpd;
-                an.dir = this.dir8(an.vx, an.vy);
+            const canMove = de.acts.includes('walk');
+            let mx = 0, my = 0, spd = 0, fleeing = false;
+            let want: AnimalAction = 'idle';
 
-                // 群体惊扰传染：同伴感知到惊吓后一同起跑
-                if (an.category === 'prey') {
-                    for (const mate of this.tacticalAnimals) {
-                        if (mate === an || mate.category !== 'prey') continue;
-                        const mateD2 = (mate.x - an.x) ** 2 + (mate.y - an.y) ** 2;
-                        if (mateD2 < 140 * 140 && mate.fleeTimer < 1.0) {
-                            mate.fleeTimer = 3.0;
-                            mate.action = 'run';
-                            mate.vx = an.vx;
-                            mate.vy = an.vy;
-                            mate.dir = an.dir;
+            if (de.kind === 'predator' && near && nearD < de.los) {
+                // 猛兽扑人
+                if (nearD > BITE_RANGE) {
+                    mx = near.x - an.x;
+                    my = near.y - an.y;
+                    spd = de.run;
+                    want = de.acts.includes('run') ? 'run' : 'walk';
+                } else {
+                    want = 'attack';
+                    an.dir = this.dir8(near.x - an.x, near.y - an.y);
+                    if (this.battleSec >= an.atkNext) {
+                        an.atkNext = this.battleSec + (de.reload || 2);
+                        const victim = near;
+                        const vStats = this.statsFor(victim.key, victim.f);
+                        victim.hp -= Math.max(1, de.atk - vStats.meleeArmor);
+                        if (victim.hp <= 0) {
+                            if (victim.hero) this.heroDown(victim);
+                            else this.pushCorpse(victim);
                         }
+                        // 嘴里的猛兽同时挨身边士兵的刀：一口下去往往就完了（DE 里扑进阵里的狼也活不久）
+                        an.hp -= Math.max(1, fightBack);
+                        if (an.hp <= 0) { an.sprite.destroyed = true; continue; }
                     }
                 }
+            } else if ((de.kind === 'prey' || de.kind === 'livestock') && canMove && near && nearD < de.los) {
+                // 胆小猎物逃、家畜让开：都是背对那个士兵
+                an.fleeTimer = de.kind === 'prey' ? 2.5 : 1.2;
+                const fleeSpd = de.kind === 'prey' ? (de.acts.includes('run') ? de.run : de.walk) : de.walk;
+                const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
+                an.vx = (dx / d) * fleeSpd;
+                an.vy = (dy / d) * fleeSpd;
+                fleeing = true;
+                want = fleeSpd > de.walk * 1.2 ? 'run' : 'walk';
+            }
+            if (!fleeing && an.fleeTimer > 0 && canMove) {
+                fleeing = true;
+                want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
             }
 
-            // 逃跑状态推进与减速恢复
-            if (an.fleeTimer > 0) {
+            if (fleeing) {
                 an.fleeTimer -= dt;
                 an.x += an.vx * dt;
                 an.y += an.vy * dt;
-
-                // 地图边界约束（留 180px 边距，碰到反弹转向）
-                const margin = 180;
-                if (an.x < margin) { an.x = margin; an.vx = Math.abs(an.vx); an.dir = this.dir8(an.vx, an.vy); }
-                if (an.x > VW - margin) { an.x = VW - margin; an.vx = -Math.abs(an.vx); an.dir = this.dir8(an.vx, an.vy); }
-                if (an.y < margin) { an.y = margin; an.vy = Math.abs(an.vy); an.dir = this.dir8(an.vx, an.vy); }
-                if (an.y > VH - margin) { an.y = VH - margin; an.vy = -Math.abs(an.vy); an.dir = this.dir8(an.vx, an.vy); }
-
-                // 倒计时结束且无近距威胁：恢复 idle
-                if (an.fleeTimer <= 0 && nearestDist > detectR * 1.25) {
-                    an.action = 'idle';
-                    an.vx = 0;
-                    an.vy = 0;
+                // 家畜只让开一小段：超出活动半径就往回走
+                if (de.kind === 'livestock' && Math.hypot(an.x - an.homeX, an.y - an.homeY) > HOME_LEASH) {
+                    const bx = an.homeX - an.x, by = an.homeY - an.y, bd = Math.hypot(bx, by) || 1;
+                    an.x += (bx / bd) * de.walk * dt;
+                    an.y += (by / bd) * de.walk * dt;
+                }
+                an.dir = this.dir8(an.vx, an.vy);
+            } else if (canMove) {
+                const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
+                if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
+                    // DE：不被追就回窝（走回去，不留在逃跑落点）
+                    mx = an.homeX - an.x;
+                    my = an.homeY - an.y;
+                    spd = de.walk;
+                    want = 'walk';
+                } else {
+                    // 日常闲逛吃草：窝边随机走走，隔几秒换方向
+                    an.idleTimer -= dt;
+                    const wx = an.wanderX - an.x, wy = an.wanderY - an.y;
+                    const wd = Math.hypot(wx, wy);
+                    if (an.idleTimer <= 0 || wd < 6) {
+                        const c = centroids.get(an.species);
+                        const cx = c && c.n > 1 ? c.x / c.n : an.homeX;
+                        const cy = c && c.n > 1 ? c.y / c.n : an.homeY;
+                        const ang = Math.random() * Math.PI * 2, r = 20 + Math.random() * 60;
+                        // DE 的松散牵引：0.6 随机方向 + 0.4 朝群心（仍夹在窝边一小片里，不至整群走散）
+                        an.wanderX = Math.max(MARGIN, Math.min(VW - MARGIN, an.homeX + Math.cos(ang) * r * 0.6 + (cx - an.homeX) * 0.4));
+                        an.wanderY = Math.max(MARGIN, Math.min(VH - MARGIN, an.homeY + Math.sin(ang) * r * 0.6 + (cy - an.homeY) * 0.4));
+                        an.idleTimer = 1.5 + Math.random() * 3;
+                    } else {
+                        mx = wx;
+                        my = wy;
+                        spd = de.walk;
+                        want = 'walk';
+                    }
                 }
             } else {
-                an.action = 'idle';
+                want = 'idle';
             }
 
+            if (spd > 0 && canMove && (mx || my)) {
+                const d = Math.hypot(mx, my) || 1;
+                an.x += (mx / d) * spd * dt;
+                an.y += (my / d) * spd * dt;
+                an.dir = this.dir8(mx, my);
+            }
+
+            an.x = Math.max(MARGIN, Math.min(VW - MARGIN, an.x));
+            an.y = Math.max(MARGIN, Math.min(VH - MARGIN, an.y));
             an.sprite.x = an.x;
             an.sprite.y = an.y;
-            an.sprite.asset = `ANIMAL:${an.species}/${an.action}_${an.dir}`;
             an.sprite.flip = false;
-            this.ensureNatureAsset(an.sprite.asset);
+            this.setAnimalAction(an, want);
         }
+
+        if (list.some((a) => a.sprite.destroyed)) this.tacticalAnimals = list.filter((a) => !a.sprite.destroyed);
+    }
+
+    /** 设动物动作：素材没有的动作自动回退（run→walk→idle），绝不请求不存在的帧（否则整只不画） */
+    private setAnimalAction(an: TacticalAnimal, want: AnimalAction): void {
+        const de = animalDeOf(an.species);
+        let act = want;
+        if (!de.acts.includes(act)) act = de.acts.includes('walk') ? 'walk' : de.acts[0];
+        an.action = act;
+        const asset = `ANIMAL:${an.species}/${act}_${an.dir}`;
+        if (an.sprite.asset !== asset) an.sprite.asset = asset;
+        this.ensureNatureAsset(asset);
+    }
+
+    /** 飞鸟 16 向朝向（与 DE 素材 hover/fly 的 16 向同一约定） */
+    private birdDir(dx: number, dy: number): number {
+        let a = Math.atan2(-dy, dx) * 180 / Math.PI;
+        a = ((a % 360) + 360) % 360;
+        return (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
     }
 
     private clearGround(): void {
