@@ -1128,7 +1128,7 @@ buildingStyle: 'WEI', troops: 10000,
         buildingStyle: 'NORTHEAST', troops: 10000,
         note: '鸭绿府；渌州小城（渤海西京鸭绿府）',
     },
-    { id: 'city_jilishan', name: '蒺藜山', factionId: 'yizhou', lat: 42.25, lng: 121.80, type: 'pass', troops: 10000, 
+    { id: 'city_jilishan', name: '蒺藜山', factionId: 'yizhou', lat: 42.25, lng: 121.80, type: 'stockade', troops: 10000, 
         note: '蒺藜山；懿州关隘', region: 'JURCHEN',
         buildingStyle: 'XIANBEI' },
 
@@ -1161,7 +1161,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     { id: 'city_yanran_stone', name: '燕然勒石', factionId: 'xueyantuo', lat: 45.203318, lng: 104.677734, type: 'stockade', troops: 20000, region: 'MONGOL', buildingStyle: 'ASIA' },
 
 
-    { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.58829, lng: 104.661255, type: 'pass', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MOBEI_MONGOL' },
+    { id: 'city_luhun', name: '涿邪山', factionId: 'jiluo_d', lat: 43.58829, lng: 104.661255, type: 'stockade', troops: 10000, region: 'STEPPE_FEUDAL', buildingStyle: 'MOBEI_MONGOL' },
     { id: 'city_chilechuan', name: '九原', factionId: 'chile', lat: 40.591029, lng: 110.044556, type: 'small_city', troops: 10000, region: 'HEXI', buildingStyle: 'XIANBEI' },
 
     { id: 'city_lanshi', name: '蓝氏城', factionId: 'guishuang', lat: 36.71248, lng: 67.08252, type: 'medium_city', troops: 10000, region: 'KUSHAN', buildingStyle: 'CEAS' },
@@ -1206,13 +1206,13 @@ buildingStyle: 'KOREA', troops: 10000,
     { id: 'city_tsushima', name: '金石馆', factionId: 'so', lat: 34.2031, lng: 129.2892, type: 'stockade', troops: 10000, 
         note: '金石城；对马小城', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
-    { id: 'city_yoshida', name: '吉田郡山', factionId: 'aki', lat: 34.438616, lng: 132.530823, type: 'pass', troops: 10000, 
+    { id: 'city_yoshida', name: '吉田郡山', factionId: 'aki', lat: 34.438616, lng: 132.530823, type: 'stockade', troops: 10000, 
         note: '吉田郡山；安艺关隘', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'ASIA' },
     { id: 'city_kasugayama', name: '春日山', factionId: 'echigo', lat: 37.16, lng: 138.24, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '越后国春日山城；上杉氏（轩猿众）' },
-    { id: 'city_tsutsujigasaki', name: '躑躅崎馆', factionId: 'kai', lat: 35.6688, lng: 138.4991, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
+    { id: 'city_tsutsujigasaki', name: '躑躅崎馆', factionId: 'kai', lat: 35.6688, lng: 138.4991, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
-    { id: 'city_okafu', name: '冈丰城', factionId: 'chosokabe', lat: 33.5972, lng: 133.5756, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '土佐国冈丰城；长宗我部氏（一领具足）' },
+    { id: 'city_okafu', name: '冈丰城', factionId: 'chosokabe', lat: 33.5972, lng: 133.5756, type: 'stockade', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '土佐国冈丰城；长宗我部氏（一领具足）' },
     { id: 'city_himeji', name: '姬路城', factionId: 'hashiba', lat: 34.8394, lng: 134.6939, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
     { id: 'city_utsunomiya', name: '宇都宫城', factionId: 'shimotsuke', lat: 36.604491, lng: 139.858704, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '下野国宇都宫城；宇都宫氏' },
@@ -1249,7 +1249,7 @@ buildingStyle: 'JAPAN', troops: 10000,
     { id: 'city_noshima', name: '能岛城', factionId: 'iyo_d', lat: 34.18238, lng: 133.08109, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', note: '伊予国能岛；能岛村上氏（村上武吉）本据，国指定史迹能岛城迹，村上水军中枢' },
 
     { id: 'city_funei', name: '府内', factionId: 'otomo_d', lat: 33.24, lng: 131.61, type: 'small_city', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '丰后国府内；大友氏九州据地（府内为大友氏居城旧称）' },
-    { id: 'city_gaodao', name: '高岛', factionId: 'suwa_d', lat: 36.0138, lng: 137.9662, type: 'pass', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '信浓国诹访郡高岛；诹访氏中世本据（考据138.0515°E；与躑躅崎馆<50km，经度西移约7.7km）' },
+    { id: 'city_gaodao', name: '高岛', factionId: 'suwa_d', lat: 36.0138, lng: 137.9662, type: 'stockade', region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN', troops: 10000, note: '信浓国诹访郡高岛；诹访氏中世本据（考据138.0515°E；与躑躅崎馆<50km，经度西移约7.7km）' },
     { id: 'city_shangdang', name: '长子', factionId: 'xin', lat: 36.148974, lng: 113.008118, type: 'small_city', troops: 10000, region: 'CENTRAL', buildingStyle: 'CENTRAL' },
 
 
@@ -1342,7 +1342,7 @@ buildingStyle: 'JAPAN', troops: 10000,
         name: '秀容川',
         factionId: 'erzhu',
         lat: 38.42, lng: 112.73,
-        type: 'pass',
+        type: 'stockade',
         region: 'NORTH',
         buildingStyle: 'WEI',
         troops: 10000,
@@ -1355,7 +1355,7 @@ buildingStyle: 'JAPAN', troops: 10000,
     
     
 
-    { id: 'city_songmo', name: '马盂山', factionId: 'kumo', lat: 41.017350, lng: 118.699036, type: 'pass', region: 'STEPPE',
+    { id: 'city_songmo', name: '马盂山', factionId: 'kumo', lat: 41.017350, lng: 118.699036, type: 'stockade', region: 'STEPPE',
 buildingStyle: 'XIANBEI', troops: 10000,
         note: '马盂山；奚族关隘',
     },
@@ -1416,9 +1416,9 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
         note: '弓月城；葛逻禄小城',
     },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：也迷里：乃蛮/窝阔台汗国建牙处，归鞑靼（中亚草原）
-    { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'pass', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '草原环线锚点；环线所称也迷离即本据点' },
+    { id: 'city_emil', name: '也迷里', factionId: 'ogodei', lat: 46.481378, lng: 83.633423, type: 'small_city', region: 'STEPPE', buildingStyle: 'CENTRAL_ASIA', troops: 10000, note: '草原环线锚点；环线所称也迷离即本据点' },
     // 第三类：蒙古草原部落
-    { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'pass', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
+    { id: 'city_kereyid', name: '汪吉河', factionId: 'kereyid', lat: 46.600064, lng: 104.570618, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'MOBEI_MONGOL' },
 
     { id: 'city_naiman', name: '金微山', factionId: 'ashina', lat: 47.64, lng: 88.29, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
 
@@ -1427,7 +1427,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000, mirror: true,
 buildingStyle: 'CENTRAL_ASIA', troops: 10000,
         note: '福海；乃蛮小城',
     },
-    { id: 'city_tatar', name: '额布都格', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'pass', region: 'STEPPE',
+    { id: 'city_tatar', name: '额布都格', factionId: 'tatar', lat: 47.182253, lng: 117.726746, type: 'stockade', region: 'STEPPE',
 buildingStyle: 'MOBEI_MONGOL', troops: 10000,
         note: '哈拉哈河汊清额布都格卡伦；塔塔儿牧地/答阑捏木儿格思战场景域',
     },
@@ -1439,7 +1439,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     
     {
         id: 'city_xinhui', name: '厓山', factionId: 'luoping',
-        lat: 22.53, lng: 113.04, type: 'pass', troops: 10000, tier: 4,
+        lat: 22.53, lng: 113.04, type: 'stockade', troops: 10000, tier: 4,
         
         note: '厓山；海口防线关隘要塞', region: 'SONG',
         // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「VIETNAMESE」推出的二级与史实不符 → 归 CENTRAL：厓山（广东新会）：宋末海战处，汉地
@@ -1483,7 +1483,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
     {
         id: 'city_shaxian', name: '沙戍堡', factionId: 'dengmaoqi',
-        lat: 26.40, lng: 117.79, type: 'pass', troops: 10000, tier: 4,
+        lat: 26.40, lng: 117.79, type: 'stockade', troops: 10000, tier: 4,
         
         note: '沙戍堡；铲平关隘', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN' },
@@ -1506,7 +1506,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
 
 
     // 第五类：边疆民族
-    { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'pass', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI' },
+    { id: 'city_hetao', name: '河套', factionId: 'dada_ming', lat: 40.442769, lng: 109.333191, type: 'stockade', troops: 10000, region: 'STEPPE', buildingStyle: 'XIANBEI' },
 
     { id: 'city_kobdo', name: '科布多', factionId: 'oirat_ming', lat: 48.01, lng: 91.64, type: 'small_city', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'MOBEI_MONGOL' },
 
@@ -1582,7 +1582,7 @@ buildingStyle: 'TIBET', troops: 10000,
         buildingStyle: 'CENTRAL', note: '海阳；马发潮州义勇' },
     { id: 'city_changhua_tw', name: '彰化', factionId: 'shuntian', lat: 24.08, lng: 120.56, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
 
-    { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'pass', region: 'BASHU',
+    { id: 'city_pinglong', name: '平陇', factionId: 'miaomin', lat: 28.304379, lng: 109.671021, type: 'stockade', region: 'BASHU',
 buildingStyle: 'JIANGNAN', troops: 10000,
         note: '平陇；苗民关隘',
     },
@@ -1617,7 +1617,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
 
 
     // ── 洋州@兴势山（王平·兴势之战/无当飞军T1）──
-    { id: 'city_yangxian', name: '兴势山', factionId: 'yangzhou', lat: 33.352, lng: 107.582, type: 'pass', troops: 10000, region: 'NORTH', buildingStyle: 'BASHU' },
+    { id: 'city_yangxian', name: '兴势山', factionId: 'yangzhou', lat: 33.352, lng: 107.582, type: 'stockade', troops: 10000, region: 'NORTH', buildingStyle: 'BASHU' },
 
 
     // 第六类：平南国（杜文秀）
@@ -1626,7 +1626,7 @@ buildingStyle: 'CENTRAL_ASIA', troops: 10000,
     // 第七类：陕甘回军
     // 第八类：号军/江汉政权
     
-    { id: 'city_piandaoshui', name: '偏刀水', factionId: 'qianhui', lat: 27.921633, lng: 107.685242, type: 'pass', region: 'BASHU',
+    { id: 'city_piandaoshui', name: '偏刀水', factionId: 'qianhui', lat: 27.921633, lng: 107.685242, type: 'stockade', region: 'BASHU',
 buildingStyle: 'BASHU', troops: 10000,
         note: '偏刀水；回军小城',
     },
@@ -1645,7 +1645,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     // 第十四类：回疆割据（托克逊等）
     { id: 'city_tuokexun', name: '托克逊', factionId: 'duerbote', lat: 42.79, lng: 88.65, type: 'stockade', region: 'WESTERN_IMPERIAL', buildingStyle: 'WESTERN', troops: 10000, note: '杜尔伯特部游牧骑兵' },
 
-    { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'pass', region: 'CENTRAL_ASIA',
+    { id: 'city_dabancheng', name: '达坂城', factionId: 'tuoming', lat: 43.339165, lng: 88.258667, type: 'stockade', region: 'CENTRAL_ASIA',
 // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」只是一级母体、取不到 62 类 → 归 CENTRAL_ASIA：达坂城：天山北麓白杨沟通道，准噶尔—回部交界，归鞑靼（中亚）
 buildingStyle: 'CEAS', troops: 10000,
         note: '达坂城；清真关隘', mirror: true },
@@ -1657,7 +1657,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     },
     {
         id: 'city_katsuyama', name: '胜山馆', factionId: 'kakizaki',
-        lat: 41.8008, lng: 140.0994, type: 'pass', troops: 10000, tier: 4,
+        lat: 41.8008, lng: 140.0994, type: 'stockade', troops: 10000, tier: 4,
         
         note: '胜山馆；松前关隘', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'ASIA' },
@@ -1699,14 +1699,14 @@ buildingStyle: 'NORTHEAST', troops: 10000,
     
     // ── 2026-05-26 新增：渤海国王族大氏 ──
     // ── 2026-05-26 新增：漠北草原势力 ──
-    { id: 'city_xiaoyenisei', name: '贝加尔', factionId: 'dingling', lat: 51.8368, lng: 107.6138, type: 'pass', region: 'STEPPE_ANTIQUITY', buildingStyle: 'MOBEI_MONGOL', troops: 10000, note: '丁零王统丁零游骑牧北海' },
+    { id: 'city_xiaoyenisei', name: '贝加尔', factionId: 'dingling', lat: 51.8368, lng: 107.6138, type: 'stockade', region: 'STEPPE_ANTIQUITY', buildingStyle: 'MOBEI_MONGOL', troops: 10000, note: '丁零王统丁零游骑牧北海' },
     { id: 'city_gaxian', name: '嘎仙洞', factionId: 'xianbei', lat: 49.323391, lng: 120.709534, type: 'stockade', troops: 10000, region: 'NORTHEAST', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'pass', region: 'STEPPE_FEUDAL',
+    { id: 'city_junjishan', name: '浚稽山', factionId: 'gaoche', lat: 45.767504, lng: 106.284485, type: 'stockade', region: 'STEPPE_FEUDAL',
 buildingStyle: 'MOBEI_MONGOL', troops: 10000,
         note: '浚稽山；高车关隘',
     },
-    { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'pass', region: 'STEPPE',
+    { id: 'city_otuken', name: '于都斤山', factionId: 'tujue', lat: 47.602542, lng: 101.230774, type: 'stockade', region: 'STEPPE',
 buildingStyle: 'MOBEI_MONGOL', troops: 10000,
         note: '于都斤山；突厥关隘',
     },
@@ -1726,7 +1726,7 @@ buildingStyle: 'XIANBEI', troops: 10000,
 
     {
         id: 'city_burhan', name: '不儿罕山', factionId: 'kiyad',
-        lat: 48.50, lng: 109.00, type: 'pass', troops: 10000, tier: 4,
+        lat: 48.50, lng: 109.00, type: 'stockade', troops: 10000, tier: 4,
         
         note: '不儿罕山；乞颜关隘', region: 'STEPPE',
         buildingStyle: 'MOBEI_MONGOL' },
@@ -1771,7 +1771,7 @@ buildingStyle: 'TIBET', troops: 10000,
     },
 
     // === 第二类：雪域土著与古老强族 ===
-    { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'pass', region: 'HEXI',
+    { id: 'city_buerhanbuda', name: '白海堡', factionId: 'duomi', lat: 34.9100, lng: 98.2100, type: 'stockade', region: 'HEXI',
 buildingStyle: 'KHITAN', troops: 10000,
         note: '白海堡；多弥关隘',
     },
@@ -1810,11 +1810,11 @@ buildingStyle: 'TIBET', troops: 10000,
         buildingStyle: 'SEAS', troops: 10000, tier: 1,
         note: '勃固；汉达瓦底王国都城。🔴 [2026-10-05 主人令「建筑风格必须当地／判不出就跟最近的确据点走」] 勃固是**孟族汉达瓦底（勃固）王朝都城**，在缅甸；最近的确据点 直通（153km）、凯图玛蒂（163km）、蒲甘 全是缅甸 BURMESE → 挂 BURMESE；旧值 MALAY（马来）与本地不符。',
     },
-    { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'pass', region: 'NANZHAO',
+    { id: 'city_wumeng', name: '乌蒙山', factionId: 'wuman', lat: 26.497640, lng: 103.897705, type: 'stockade', region: 'NANZHAO',
 buildingStyle: 'ASIA', troops: 10000,
         note: '乌蒙山；乌蛮关隘，东爨乌蛮首领盖聘镇守',
     },
-    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'pass', region: 'SONG',
+    { id: 'city_leigong', name: '雷公山', factionId: 'dongzu', lat: 26.573781, lng: 108.091736, type: 'stockade', region: 'SONG',
 buildingStyle: 'ASIA', troops: 10000,
         note: '雷公山；侗族关隘',
     },
@@ -1877,7 +1877,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         buildingStyle: 'CENTRAL' },
     {
         id: 'city_myson', name: '美山', factionId: 'champa',
-        lat: 15.50, lng: 108.50, type: 'pass', region: 'KHMER',
+        lat: 15.50, lng: 108.50, type: 'stockade', region: 'KHMER',
         buildingStyle: 'SEAS', troops: 10000, tier: 4,
         note: '美山；占婆圣地神庙要塞，制蓬峨驻防', mirror: true },
     
@@ -1887,7 +1887,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
         factionId: 'jing',
         lat: 20.25,
         lng: 105.9167,
-        type: 'pass',
+        type: 'small_city',
         troops: 10000,
         tier: 1,
         
@@ -1935,7 +1935,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     },
     {
         id: 'city_chimushan', name: '敕木山', factionId: 'she_ethnic',
-        lat: 27.9250, lng: 119.6333, type: 'pass', region: 'JIANGNAN',
+        lat: 27.9250, lng: 119.6333, type: 'stockade', region: 'JIANGNAN',
         buildingStyle: 'JIANGNAN', troops: 10000, tier: 4,
         note: '敕木山；畲族关隘',
     },
@@ -1947,7 +1947,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     },
     // ── 2026-05-26 Phase 3i：新增朴(新罗门阀)、土(巴人后裔) ──
     
-    { id: 'city_wulingshan', name: '壶头山', factionId: 'wuling', lat: 29.1167, lng: 110.4667, type: 'pass', troops: 10000, region: 'BASHU', buildingStyle: 'JIANGNAN' },
+    { id: 'city_wulingshan', name: '壶头山', factionId: 'wuling', lat: 29.1167, lng: 110.4667, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'JIANGNAN' },
 
 ];
 
@@ -1997,7 +1997,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
 buildingStyle: 'WESTERN', troops: 10000,
         note: '康卡；康居小城',
     },
-    { id: 'city_asuka', name: '千早城', factionId: 'yamato', lat: 34.336668, lng: 135.689392, type: 'pass', region: 'JAPAN',
+    { id: 'city_asuka', name: '千早城', factionId: 'yamato', lat: 34.336668, lng: 135.689392, type: 'stockade', region: 'JAPAN',
 buildingStyle: 'JAPAN', troops: 10000,
         note: '千早城；大和关隘',
     },
@@ -2042,7 +2042,7 @@ buildingStyle: 'NORTHEAST', troops: 10000,
         troops: 10000,
         note: '西拉木伦河（饶乐水）；库莫奚本部牧地（《魏书·库莫奚传》）' },
     // ── 武川镇 ──
-    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'pass', troops: 10000, region: 'JIANGNAN', buildingStyle: 'XIANBEI' },
+    { id: 'city_wuchuanzhen', name: '武川镇', factionId: 'yuwen', lat: 41.2661, lng: 111.1322, type: 'small_city', troops: 10000, region: 'JIANGNAN', buildingStyle: 'XIANBEI' },
 
 
 
@@ -2072,7 +2072,7 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
     // ── 2026-05-27 新增：青衣(雅州) ──
     // ── 2026-05-27 新增：五溪(八面山) ──
-    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'pass', troops: 10000, region: 'BASHU', buildingStyle: 'JIANGNAN' },
+    { id: 'city_bamian', name: '八面山', factionId: 'wuxi', lat: 28.83, lng: 109.28, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'JIANGNAN' },
 
 
 
@@ -2206,8 +2206,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
     { id: 'city_rhodes', name: '罗得城', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREECE', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 罗得岛自古为希腊人岛屿（多利安六城之一，后属拜占庭），医院骑士团 1309–1522 为外来政权 → 风格挂希腊（ATHENIANS / 一级 GREEK），不取法兰克。' },
-    // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：克里特岛诺索斯：961 年拜占庭名将福卡斯收复克里特，此后长期属东罗马
-    { id: 'city_knossos', name: '诺索斯', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '克里特岛诺索斯·干地亚海防要塞，961年拜占庭名将福卡斯（后称帝为尼基弗鲁斯二世）大破萨拉森人收复克里特，地中海第一海防险要' },
+    // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：克里特岛干地亚要塞：961 年拜占庭名将福卡斯收复克里特，此后长期属东罗马
+    { id: 'city_knossos', name: '干地亚要塞', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '克里特岛诺索斯·干地亚海防要塞，961年拜占庭名将福卡斯（后称帝为尼基弗鲁斯二世）大破萨拉森人收复克里特，地中海第一海防险要' },
 
     { id: 'city_salamanca', name: '萨拉曼卡', factionId: 'leangongguo', lat: 40.96, lng: -5.66, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'MEDI' },
 
@@ -2229,7 +2229,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_ragusa', name: '拉古萨', factionId: 'lagusa', lat: 42.65, lng: 18.09, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAV' },
 
-    { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'pass', troops: 10000, region: 'SWEDISH', buildingStyle: 'WEST' },
+    { id: 'city_gothenburg', name: '哥德堡', factionId: 'ruidian_yota', lat: 57.7, lng: 11.97, type: 'small_city', troops: 10000, region: 'SWEDISH', buildingStyle: 'WEST' },
     { id: 'city_rostock', name: '罗斯托克', factionId: 'meikelunbao', lat: 54.09, lng: 12.13, type: 'stockade', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
     { id: 'city_bruges', name: '布鲁日', factionId: 'didi', lat: 51.21, lng: 3.22, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
     { id: 'city_bulusaier', name: '布鲁塞尔', factionId: 'bulabante', lat: 50.8465, lng: 4.3518, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST', note: '布拉班特公国城市，布鲁塞尔市政厅（1402-1480，布拉班特哥特式）所在' },
@@ -2254,7 +2254,7 @@ export const CITIES_V2: CityDataV2[] = [
 
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：丹吉尔：摩洛哥，柏柏尔—马格里布（与非斯/马拉喀什同口径）
-    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'pass', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
+    { id: 'city_danjier', name: '丹吉尔', factionId: 'talike', lat: 35.74, lng: -5.87, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '塔里克驻守地，711渡直布罗陀征服伊比利亚' },
 
     { id: 'city_teleimusen', name: '特莱姆森', factionId: 'zhayan', lat: 34.88, lng: -1.32, type: 'small_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
@@ -2290,7 +2290,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_zhytomyr', name: '日托米尔', factionId: 'zhituo', lat: 50.25, lng: 28.65, type: 'stockade', troops: 10000, region: 'SLAVIC', buildingStyle: 'SLAV' },
 
     { id: 'city_heidelberg', name: '海德堡', factionId: 'pufaerci', lat: 49.4, lng: 8.68, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
-    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
+    { id: 'city_hamburg', name: '汉堡', factionId: 'hansa', lat: 53.55, lng: 9.99, type: 'medium_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
     { id: 'city_utrecht', name: '乌特勒支', factionId: 'batawei', lat: 52.09, lng: 5.12, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'WEST' },
     { id: 'city_york', name: '约克', factionId: 'weijing_york', lat: 53.95, lng: -1.08, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'DANES' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：卡莱尔：苏格兰—英格兰边境（region=SCOTLAND），苏格兰王国故地
@@ -2335,7 +2335,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「BRITONS」→ 归 CELTS：爱丁堡：苏格兰，凯尔特／皮克特故地
     { id: 'city_aidingbao', name: '爱丁堡', factionId: 'piketai', lat: 55.95, lng: -3.18, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'CELTS' },
-    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'pass', troops: 10000, region: 'VIKINGS', buildingStyle: 'VARANGIANS' },
+    { id: 'city_wupusala', name: '乌普萨拉', factionId: 'nuosi', lat: 59.85, lng: 17.63, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'VARANGIANS' },
     { id: 'city_lundun', name: '伦敦', factionId: 'anggelu', lat: 51.5, lng: -0.12, type: 'medium_city', troops: 10000, region: 'ANGLO_SAXON', buildingStyle: 'SAXONS' },
 
 
@@ -2353,19 +2353,19 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_bulage', name: '布拉格', factionId: 'boximiya', lat: 50.07, lng: 14.43, type: 'medium_city', troops: 10000, region: 'BOHEMIANS', buildingStyle: 'SLAV' },
     { id: 'city_budapeisi', name: '布达佩斯', factionId: 'mazhaer', lat: 47.49, lng: 19.04, type: 'medium_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR' },
     { id: 'city_huneiduolala', name: '胡内多阿拉', factionId: 'xiongyati', lat: 45.749, lng: 22.888, type: 'small_city', troops: 10000, region: 'MAGYAR', buildingStyle: 'MAGYAR', note: '定级依据§6.2：胡内多阿拉非关隘/要塞/堡垒，按城市判级；1512年oppidum仅196户约900人，17世纪约1100–1250，人口未达1万但属有特殊建筑的城市 → 小城' },
-    { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'pass', troops: 10000, region: 'HUNS', buildingStyle: 'HUNS', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
+    { id: 'city_saigede', name: '塞格德', factionId: 'xiongren', lat: 46.25, lng: 20.15, type: 'stockade', troops: 10000, region: 'HUNS', buildingStyle: 'HUNS', note: '蒂萨河营地·阿提拉王庭（匈人帝国大本营）' },
     { id: 'city_kelong', name: '科隆', factionId: 'falanji', lat: 50.93, lng: 6.95, type: 'medium_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
     { id: 'city_lahexiuyuan', name: '拉赫修院', factionId: 'pelianci', lat: 50.402359, lng: 7.252187, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST', note: '1093年拉赫的亨利二世在拉赫湖畔创建的本笃会修院；中世纪称拉赫修院，19世纪始称玛丽亚拉赫；定级依据§6.2：修士约40人（12世纪本笃会），非城居万人级，有特殊建筑不得为城寨 → 小城' },
     { id: 'city_yachen', name: '亚琛', factionId: 'jialuolin', lat: 50.77, lng: 6.08, type: 'small_city', troops: 10000, region: 'FRANKS', buildingStyle: 'FRANKS' },
     { id: 'city_meiyinci', name: '美因茨', factionId: 'rierman', lat: 50, lng: 8.27, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
-    { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'pass', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
-    { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
-    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'pass', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
-    { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'pass', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
-    { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'pass', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
+    { id: 'city_aogesibao', name: '奥格斯堡', factionId: 'shiwaben', lat: 48.37, lng: 10.89, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
+    { id: 'city_bolandengbao', name: '勃兰登堡', factionId: 'asikanani', lat: 52.41, lng: 12.55, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
+    { id: 'city_magedebao', name: '马格德堡', factionId: 'wende', lat: 52.13, lng: 11.61, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
+    { id: 'city_leigensibao', name: '雷根斯堡', factionId: 'bafaliya', lat: 49.01, lng: 12.09, type: 'small_city', troops: 10000, region: 'GERMANIC_FEUDAL', buildingStyle: 'WEST' },
+    { id: 'city_niulunbao', name: '纽伦堡', factionId: 'huohengsuolun', lat: 49.45, lng: 11.07, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'WEST' },
     { id: 'city_teerier', name: '特里尔', factionId: 'mozeer', lat: 49.75, lng: 6.64, type: 'small_city', troops: 10000, region: 'LATIN', buildingStyle: 'MEDI' },
     { id: 'city_basaier', name: '巴塞尔', factionId: 'ruishi', lat: 47.55, lng: 7.58, type: 'small_city', troops: 10000, region: 'GERMANIC_IMPERIAL', buildingStyle: 'WEST' },
-    { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'aersasi', lat: 48.57, lng: 7.75, type: 'pass', troops: 10000, region: 'GERMANIC', buildingStyle: 'WEST' },
+    { id: 'city_sitelasibao', name: '斯特拉斯堡', factionId: 'aersasi', lat: 48.57, lng: 7.75, type: 'small_city', troops: 10000, region: 'GERMANIC', buildingStyle: 'WEST' },
     { id: 'city_aoermuci', name: '奥尔穆茨', factionId: 'molaweiya', lat: 49.59, lng: 17.25, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'BOHEMIANS' },
     { id: 'city_buernuo', name: '布尔诺', factionId: 'damolaweiya', lat: 49.19, lng: 16.6, type: 'stockade', troops: 10000, region: 'SLAVIC_FEUDAL', buildingStyle: 'BOHEMIANS', note: '定级依据§6.2：布尔诺非关隘/要塞/堡垒，按城市判级；1389年berní rejstřík城墙内999栋房约8400人，未达1万 → 城寨（与同区奥尔穆茨同为城寨，口径一致）' },
 
@@ -2384,12 +2384,12 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_salai', name: '萨莱', factionId: 'jinzhang', lat: 48.15, lng: 47.15, type: 'big_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CEAS', note: '金帐汗国都城（新萨莱）；盛期人口高估约60万，约40万门槛从宽升 big_city' },
     { id: 'city_kashan', name: '喀山', factionId: 'baojiaer', lat: 55.79, lng: 49.11, type: 'medium_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN' },
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「EAST」推出的二级与史实不符 → 归 BYZANTINE：赫尔松涅斯（克里米亚）：拜占庭海防要塞（961 年福卡斯收复克里特前的黑海基地）
-    { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'pass', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'BYZANTINE' },
+    { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'BYZANTINE' },
     { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '希腊化博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
 // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-05 主人裁定「归拜占庭，二选一绝不能归库曼」] 卡法建在古希腊—拜占庭城市**塞奥多西亚**废墟上，城内是希腊人／亚美尼亚人／热那亚人的东地中海海洋城邦，草原库曼是城外的围攻者（1346 年金帐汗扎尼别围城投尸）→ 风格归**拜占庭**（BYZANTINE／一级 EAST）；相邻 156km 的赫尔松涅斯即拜占庭城，符合「相邻据点同风格」。' },
 
-    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'pass', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN' },
+    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' },
 
     { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' },
@@ -2402,7 +2402,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_liga', name: '里加', factionId: 'baojian_qishi', lat: 56.95, lng: 24.1, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：里加非关隘/要塞/堡垒，按城市判级；16世纪中叶城墙内约1万–1.5万（1558年约1.2万，Dunsdorfs 谓可达1.6万）>1万 → 小城。🔴 [2026-10-05 主人裁定] 里加原住民是利沃尼亚人（芬-乌戈尔）与拉脱维亚诸部（波罗的语族），**不是东斯拉夫**；条顿／立窝尼亚骑士团的死敌正是诺夫哥罗德、普斯科夫等罗斯公国 → 归**立陶宛**（波罗的海大类代理，LITHUANIANS／一级 SLAV）；相邻 228km 卡乌纳斯、263km 维尔纽斯即立陶宛城。' },
     { id: 'city_teweier', name: '特维尔', factionId: 'teweier_gongguo', lat: 56.86, lng: 35.9, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAV' },
     { id: 'city_xianuofugeerdede', name: '下诺城', factionId: 'suzidaer', lat: 56.32, lng: 44, type: 'small_city', troops: 10000, region: 'RUS', buildingStyle: 'SLAV' },
-    { id: 'city_zhapoluore', name: '塞契', factionId: 'gesake', lat: 47.83, lng: 35.16, type: 'pass', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '扎波罗热哥萨克军事营地（Sich=设防要塞）' },
+    { id: 'city_zhapoluore', name: '塞契', factionId: 'gesake', lat: 47.83, lng: 35.16, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '扎波罗热哥萨克军事营地（Sich=设防要塞）' },
     { id: 'city_yaxi', name: '雅西', factionId: 'moerdaweiya', lat: 47.16, lng: 27.58, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAV' },
     { id: 'city_teergewishite', name: '特尔戈维', factionId: 'walajiyia', lat: 44.86, lng: 25.46, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAV', note: '特尔戈维什泰；瓦拉几亚长期王都' },
     { id: 'city_kenisibao', name: '柯尼斯堡', factionId: 'tiaodun_qishi', lat: 54.71, lng: 20.51, type: 'pass', troops: 10000, region: 'TEUTONS', buildingStyle: 'WEST' },
@@ -2420,9 +2420,9 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_wufa', name: '乌法', factionId: 'bashekeer', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'CUMAN' },
     { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'beisilafu', lat: 50.6, lng: 36.58, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV' },
     // ── 2026-08-04 新增：哈尔科夫（1654哥萨克要塞；斯洛博达乌克兰·哈尔科夫团治所）──
-    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'siluoboda', lat: 49.9935, lng: 36.2304, type: 'pass', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '乌克兰哈尔科夫；1654年哥萨克筑要塞于哈尔科夫河与洛潘河交汇；1659–1765为斯洛博达乌克兰哈尔科夫团治所；团校多涅茨等抗克里米亚鞑靼' },
+    { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'siluoboda', lat: 49.9935, lng: 36.2304, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '乌克兰哈尔科夫；1654年哥萨克筑要塞于哈尔科夫河与洛潘河交汇；1659–1765为斯洛博达乌克兰哈尔科夫团治所；团校多涅茨等抗克里米亚鞑靼' },
     // ── 2026-08-04 新增：沃罗涅日（1586南疆要塞，守穆拉夫小道防鞑靼）──
-    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'yedi', lat: 51.6608, lng: 39.2003, type: 'pass', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '俄国沃罗涅日；1586年费奥多尔一世诏建要塞于沃罗涅日河畔，督军萨布罗夫主持；守穆拉夫小道，防克里米亚/诺盖鞑靼；后入别尔哥罗德防线；彼得一世顿河舰队造船基地' },
+    { id: 'city_woluonerizh', name: '沃罗涅日', factionId: 'yedi', lat: 51.6608, lng: 39.2003, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAV', note: '俄国沃罗涅日；1586年费奥多尔一世诏建要塞于沃罗涅日河畔，督军萨布罗夫主持；守穆拉夫小道，防克里米亚/诺盖鞑靼；后入别尔哥罗德防线；彼得一世顿河舰队造船基地' },
     { id: 'city_peilieyasilafu', name: '佩列斯拉夫', factionId: 'peilieya_gongguo', lat: 50.07, lng: 31.45, type: 'stockade', troops: 10000, region: 'RUS', buildingStyle: 'SLAV' },
     { id: 'city_weijiebusike', name: '维捷布斯克', factionId: 'weijiebusike_gongguo', lat: 55.19, lng: 30.2, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'SLAV', note: '定级依据§6.2：维捷布斯克非关隘/要塞/堡垒，按城市判级；17世纪前无房屋/居民数据（白俄两部百科明文），最早1641年990栋房约5000人，未达1万 → 城寨' },
 
@@ -2446,7 +2446,7 @@ buildingStyle: 'BASHU', troops: 10000,
     { id: 'city_juzhou', name: '顺元', factionId: 'qian', lat: 26.576247, lng: 106.685486, type: 'small_city', region: 'JIANGNAN', buildingStyle: 'BASHU', troops: 10000, note: '宋景阳入矩州戍黔中' },
 
     // ── 2026-05-28 新增：南部(根城/日本)、萨曼(阿母城/中亚)、西域四政权 ──
-    { id: 'city_genjo', name: '根城', factionId: 'nanbu', lat: 40.5047, lng: 141.4644, type: 'pass', region: 'JAPAN_IMPERIAL',
+    { id: 'city_genjo', name: '根城', factionId: 'nanbu', lat: 40.5047, lng: 141.4644, type: 'stockade', region: 'JAPAN_IMPERIAL',
 buildingStyle: 'JAPAN', troops: 10000, tier: 4,
         note: '根城；陆奥小城',
     },
@@ -2497,7 +2497,7 @@ buildingStyle: 'NORTHEAST', troops: 10000, tier: 4,
 
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：希瓦：花剌子模希瓦汗国，中亚
     { id: 'city_khiva', name: '希瓦', factionId: 'anushidgin', lat: 41.564038, lng: 60.710449, type: 'medium_city', troops: 10000, region: 'CENTRAL_ASIA_CASTLE', buildingStyle: 'CENTRAL_ASIA', mirror: true },
-    { id: 'city_rituzong', name: '日土宗', factionId: 'nanjie', lat: 33.367241, lng: 79.705811, type: 'pass', region: 'TIBET_IMPERIAL',
+    { id: 'city_rituzong', name: '日土宗', factionId: 'nanjie', lat: 33.367241, lng: 79.705811, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
         note: '日土宗；南杰小城',
     },
@@ -2521,7 +2521,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     },
     { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.176, lng: 125.228, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_donghai', name: '洞海城', factionId: 'guangping', lat: 17.620424, lng: 106.495972, type: 'pass', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', mirror: true, note: '占城北境·阮文张抗西山' },
+    { id: 'city_donghai', name: '洞海城', factionId: 'guangping', lat: 17.620424, lng: 106.495972, type: 'stockade', troops: 10000, region: 'HUAXIA_IMPERIAL', buildingStyle: 'VIETNAMESE', mirror: true, note: '占城北境·阮文张抗西山' },
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐) ──
     { id: 'city_baidalik', name: '拜达里克', factionId: 'tumengken', lat: 46.189304, lng: 99.159851, type: 'stockade', region: 'STEPPE_IMPERIAL',
@@ -2530,7 +2530,7 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     },
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
-    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'pass', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET' },
+    { id: 'city_jiegu', name: '结古宗', factionId: 'gling', lat: 33.001753, lng: 97.012024, type: 'stockade', troops: 10000, region: 'TIBET_CASTLE', buildingStyle: 'TIBET' },
 
 
 
@@ -2547,10 +2547,10 @@ buildingStyle: 'MOBEI_MONGOL', troops: 10000,
     },
 
     // ── 2026-05-28 新增：大隅(赤尾木城/九州)、奄美(赤木名城/琉球) ──
-    { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'osumi', lat: 30.7300, lng: 131.0000, type: 'pass', troops: 10000, tier: 4, 
+    { id: 'city_akaogicheng', name: '赤尾木城', factionId: 'osumi', lat: 30.7300, lng: 131.0000, type: 'stockade', troops: 10000, tier: 4, 
         note: '赤尾木城；大隅小城', region: 'JAPAN_IMPERIAL',
         buildingStyle: 'JAPAN' },
-    { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'anmei', lat: 28.4540, lng: 129.6740, type: 'pass', region: 'JAPAN_IMPERIAL',
+    { id: 'city_akakinagusuku', name: '赤木名城', factionId: 'anmei', lat: 28.4540, lng: 129.6740, type: 'stockade', region: 'JAPAN_IMPERIAL',
 buildingStyle: 'ASIA', troops: 10000, tier: 4,
         note: '赤木名城；奄美关隘',
     },
@@ -2574,7 +2574,7 @@ buildingStyle: 'ASIA', troops: 10000, tier: 4,
     },
     // ── 2026-05-28 新增：波密(博窝/西藏) ──
     // ── 2026-05-28 新增：达擦(八宿宗/达察呼图克图/家族) ──
-    { id: 'city_basu', name: '八宿宗', factionId: 'daca', lat: 30.185461, lng: 97.283936, type: 'pass', region: 'TIBET_IMPERIAL',
+    { id: 'city_basu', name: '八宿宗', factionId: 'daca', lat: 30.185461, lng: 97.283936, type: 'stockade', region: 'TIBET_IMPERIAL',
 buildingStyle: 'TIBET', troops: 10000,
         note: '八宿宗；达擦小城',
     },
@@ -2593,17 +2593,17 @@ buildingStyle: 'TIBET', troops: 10000,
     },
 
     // ── 2026-05-28 新增：董(囊谦宗/玉树/家族) ──
-    { id: 'city_nangqian', name: '囊谦宗', factionId: 'dong', lat: 32.2000, lng: 96.4800, type: 'pass', region: 'TIBET_CASTLE',
+    { id: 'city_nangqian', name: '囊谦宗', factionId: 'dong', lat: 32.2000, lng: 96.4800, type: 'stockade', region: 'TIBET_CASTLE',
 buildingStyle: 'TIBET', troops: 10000, tier: 4,
         note: '囊谦宗；隆庆小城',
     },
 
     // ── 工布土王(尼池/林芝)；巴塘宗改叛军点 ──
-    { id: 'city_nichi', name: '太昭', factionId: 'gongbu', lat: 29.752, lng: 93.232, type: 'pass', region: 'TIBET',
+    { id: 'city_nichi', name: '太昭', factionId: 'gongbu', lat: 29.752, lng: 93.232, type: 'stockade', region: 'TIBET',
 buildingStyle: 'TIBET', troops: 10000,
         note: '太昭；工布小城',
     },
-    { id: 'city_litangzong', name: '理塘宗', factionId: 'kangba', lat: 30.0000, lng: 100.2700, type: 'pass', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '康巴骁骑招抚理塘' },
+    { id: 'city_litangzong', name: '理塘宗', factionId: 'kangba', lat: 30.0000, lng: 100.2700, type: 'stockade', region: 'TIBET_IMPERIAL', buildingStyle: 'TIBET', troops: 10000, note: '康巴骁骑招抚理塘' },
 
     // ── 2026-05-28 新增：后突(黑沙城/阴山北麓) ──
     { id: 'city_heishacheng', name: '黑沙牙帐', factionId: 'ashide', lat: 43.5, lng: 96.6, type: 'stockade', troops: 10000, region: 'TURKS', buildingStyle: 'MOBEI_MONGOL' },
@@ -2635,7 +2635,7 @@ buildingStyle: 'CEAS', troops: 10000,
     },
     { id: 'city_samaerhan', name: '撒马尔罕', factionId: 'tiemuer', lat: 39.6525, lng: 66.9714, type: 'medium_city', troops: 10000, region: 'TIMURID', buildingStyle: 'CEAS' },
 
-    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'pass', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
+    { id: 'city_jizhake', name: '吉扎克', factionId: 'kawusi', lat: 40.1167, lng: 67.8333, type: 'small_city', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CEAS' },
 
 
 
@@ -2646,9 +2646,9 @@ buildingStyle: 'CEAS', troops: 10000,
     },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 59+3 选 1（套城堡素材）」] 原「CEAS」推出的二级与史实不符 → 归 CENTRAL_ASIA：轮台：汉轮台屯田、西域都护地，塔里木
-    { id: 'city_luntai', name: '轮台', factionId: 'quli', lat: 41.77, lng: 84.25, type: 'pass', troops: 10000, region: 'WESTERN', buildingStyle: 'CENTRAL_ASIA' },
+    { id: 'city_luntai', name: '轮台', factionId: 'quli', lat: 41.77, lng: 84.25, type: 'small_city', troops: 10000, region: 'WESTERN', buildingStyle: 'CENTRAL_ASIA' },
 
-    { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'pass', region: 'STEPPE_IMPERIAL',
+    { id: 'city_duluohe', name: '推河堡', factionId: 'kaerka', lat: 45.826868, lng: 101.878967, type: 'stockade', region: 'STEPPE_IMPERIAL',
 buildingStyle: 'MOBEI_MONGOL', troops: 10000,
         note: '清雍正九年推河城（图音河西岸设戍）；非独逻/土拉；喀尔喀',
     },
@@ -2690,7 +2690,7 @@ buildingStyle: 'KOREA', troops: 10000,
 buildingStyle: 'JAPAN', troops: 10000,
         note: '骏府；骏河治所/重镇',
     },
-    { id: 'city_hamamatsu', name: '浜松城', factionId: 'totomi', lat: 34.71, lng: 137.73, type: 'pass', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
+    { id: 'city_hamamatsu', name: '浜松城', factionId: 'totomi', lat: 34.71, lng: 137.73, type: 'small_city', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
 
     { id: 'city_atsuta', name: '热田社', factionId: 'owari', lat: 35.12, lng: 136.95, type: 'stockade', troops: 10000, region: 'JAPAN_IMPERIAL', buildingStyle: 'JAPAN' },
     { id: 'city_xuanhua', name: '宣化', factionId: 'xuan', lat: 40.609, lng: 115.052, type: 'medium_city', troops: 10000, region: 'SONG', buildingStyle: 'ASIA' },

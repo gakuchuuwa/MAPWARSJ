@@ -535,7 +535,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 🔴 [2026-10-12 主人报件数等级反了 → 改 B 方案；同日又报「城内建筑摆放还是不对」→ 固定骨架]
     //    战术侧（传了原生尺寸表）走**按 DE 格子摆放**：墙圈 seg=9 ⇒ 角到角 **23 格**（严格小于中城 25、大城 27）；
     //    9 栋按 `SMALL_CITY_SLOT_PLAN` 的固定骨架摆（两个 4×4 坐对角、其余铺开，见该表注释）；
-    //    小城一律**不摆居中城堡**（centerCastle 恒 false，见 cityStackParams）⇒ 城心位那栋落单在第一象限。
+    //    小城城心：日本风格由 `centerCastle` 摆城堡（2026-10-13 主人令），其余小城城心摆那栋建筑。
     //    战略地图（native 缺省）走下面原写法，一个像素不动。
     if (native) {
         // 🔴 [2026-10-12 主人令「战术模式中，大中小城寨，一律改为四门吧」] 小城城门：原「石墙区随机双门/四门、
@@ -585,7 +585,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 中间 1 个建筑（随机选，居中）；主人 2026-08-26「中间一个，其余6个周围分布」
     const centerB = centerCastle ? 'CASTLE' : ring[0];
     // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画（否则沿用战略压缩值）
-    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));   // 🔴 [2026-10-12 主人令「全世界统一」] 城堡兜底 0.55 → 0.54（战略分支：小城 centerCastle 恒 false，故实际不达；与评估页同口径）
+    const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));   // 🔴 [2026-10-12 主人令「全世界统一」] 城堡兜底 0.55 → 0.54（与评估页同口径）
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
     const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId) : null;
     const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : cityBuildingSrc(style, centerB, 'AGE2');
@@ -1420,8 +1420,12 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
     //    ⇒ 小城（small_city）一律不画居中城堡（原口径下 64 座小城有：名册 9 + 日本 14 + 青藏 41）；
     //      小城若确有著名城堡，走「**特殊建筑（城内奇观）**」那条路（`src/data/CityWonders.ts`）。
-    const centerCastle = city.type !== 'small_city'
-        && (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
+    // 🔴 [2026-10-13 主人令] **日本建筑风格的小城放一个城堡**（城心、城堡占城心、城内仍 9 格）：
+    //    判据是日本建筑风格（`isJapan`：建筑风格或文化区含 JAPAN）—— 全库 5 座
+    //    鹿儿岛城／宇都宫城／熊本／府内／浜松城。**日本以外的小城照旧无城堡**（2026-10-03 令不变）。
+    const centerCastle = city.type === 'small_city'
+        ? isJapan
+        : (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
 
     // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）
     const deStyle = resolveCityDeBuildingStyle(city.id, city.type, city.region, displayLat, displayLng, city.buildingStyle);
@@ -2482,8 +2486,10 @@ export class TerritorySystem {
         //      （原口径下 64 座小城中间有城堡：名册 9 + 日本 14 + 青藏 41）。
         //      小城若确有著名城堡（斯巴达堡垒、维尔纽斯城堡、波斯波利斯宫堡、因瓦王城、苏萨王城…），
         //      走「**特殊建筑（城内奇观）**」那条路 —— 见 `src/data/CityWonders.ts`。
-        const centerCastle = cityType !== 'small_city'
-            && (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
+        // 🔴 [2026-10-13 主人令] 日本建筑风格的小城例外：**城心放一个城堡**（与 `cityStackParams` 同一口径）。
+        const centerCastle = cityType === 'small_city'
+            ? isJapan
+            : (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
                 || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass'));
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
         // 🔴 [2026-10-05] 传 bf.id：逐城石墙例外（维也纳）
