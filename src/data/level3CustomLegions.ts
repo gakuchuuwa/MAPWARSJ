@@ -463,40 +463,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'HEAVY_INCENDIARY_SHIP',
     },
     {
-        name: '城堡时代拉丁军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'champion', count: 2 },
-            { type: 'halberdier', count: 3 },
-            { type: 'arbalest', count: 4 },
-        ],
-        regions: ['LATIN_CASTLE'],
-        parentLegion: '城堡时代意大利军团',
-        shipId: 'ELITE_CARAVEL',
-    },
-    {
         name: '城堡时代摩洛哥军团',
         formationMode: 'crane_wing',
         slots: [
             { type: 'elite_camel_archer', count: 2 },
             { type: 'cavalier', count: 4 },
-            { type: 'elite_genitour', count: 3 },
+            { type: 'bowman', count: 3 },
         ],
         regions: ['ALMOHAD'],
         parentLegion: '封建时代柏柏尔军团',
         shipId: 'WAR_GALLEY',
-    },
-    {
-        name: '城堡时代日耳曼军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'knight', count: 2 },
-            { type: 'two_handed_swordsman', count: 4 },
-            { type: 'crossbowman', count: 3 },
-        ],
-        regions: ['GERMANIC_CASTLE'],
-        parentLegion: '西欧军团',
-        shipId: 'ELITE_CARAVEL',
     },
     {
         name: '城堡时代易洛魁军团',
@@ -512,11 +488,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '城堡时代法兰西军团',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'coustillier', count: 2 },
-            { type: 'genoese_crossbowman', count: 3 },
-            { type: 'frankish_paladin', count: 4 },
+            { type: 'paladin', count: 3 },
+            { type: 'swordsman', count: 4 },
+            { type: 'longbowman', count: 2 },
         ],
         regions: ['FRENCH'],
         parentLegion: '城堡时代不列颠军团',
@@ -802,18 +778,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DROMON',
     },
     {
-        name: '封建时代汪达尔军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'cavalier', count: 4 },
-            { type: 'swordsman', count: 3 },
-            { type: 'laminated_bowman', count: 2 },
-        ],
-        regions: ['VANDALS'],
-        parentLegion: '封建时代哥特军团',
-        shipId: 'ELITE_LEMBOS',
-    },
-    {
         name: '封建时代河中军团',
         formationMode: 'triangle',
         slots: [
@@ -860,18 +824,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NANZHAO'],
         parentLegion: '东亚军团',
         shipId: 'FIRE_GALLEY',
-    },
-    {
-        name: '封建时代盎格鲁-撒克逊军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'manatarms', count: 3 },
-            { type: 'champion', count: 4 },
-            { type: 'longbowman', count: 2 },
-        ],
-        regions: ['ANGLO_SAXON'],
-        parentLegion: '封建时代法兰克军团',
-        shipId: 'MONOREME',
     },
     {
         name: '封建时代突厥军团',
