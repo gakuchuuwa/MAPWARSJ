@@ -13,6 +13,7 @@ import { perfDoctor } from '../debug/PerfDoctor';
 import {
     normalizeLongitude,
     shortestLongitudeDelta,
+    unwrapLongitudeNear,
     unwrapLongitudePath,
 } from '../utils/GeoLongitude';
 import { ROAD_TERRAIN_COST } from '../data/RoadTerrainCost';
@@ -261,7 +262,9 @@ export class RoadRegistry {
             }
             const path = unwrapLongitudePath(coords.map((c) => [c[0], c[1]] as [number, number]));
             path[0] = [fromNode.lng, fromNode.lat];
-            path[path.length - 1] = [toNode.lng, toNode.lat];
+            // 🔴 [2026-10-13] 终点也要展开到前一点同侧：跨 180° 经线的海路（关岛→阿卡普尔科）展开后终点在 ~260°，
+            //    直接写回城池的 -99.92° 会多出一段横跨 358° 的线 —— 军团走这条海路就绕地球一圈。
+            path[path.length - 1] = [unwrapLongitudeNear(toNode.lng, path[path.length - 2][0]), toNode.lat];
 
             const seaLengthKm = this.calculatePathLength(path);
             this.addEdge({

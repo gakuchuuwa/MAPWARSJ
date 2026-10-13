@@ -2136,6 +2136,15 @@ const FLANK_TYPES = new Set([
     'kona', 'elite_kona',            // 🔴 [2026-09-17 主人定] 马普切科纳勇士：劳塔罗伏击奇袭（图卡佩尔）
 ]);
 
+/** 穿墙（攀爬城垣/潜行渗透）特种兵白名单：
+ *  🔴 [2026-10-13 主人令] 忍者 + 马来爪刀勇士 + 凯尔特靛蓝突袭者 + 图皮战棍勇士（各含普通与精锐） */
+const WALL_PASS_TYPES = new Set([
+    'ninja',
+    'karambit_warrior', 'karambit_warrior_elite',
+    'woad_raider', 'elite_woad_raider',
+    'ibirapema_warrior', 'elite_ibirapema_warrior',
+]);
+
 /** 冲击型奇袭：绕后次数**按兵力配额**（🔴 2026-09-17 主人定「一万兵力一次，两万兵力两次，三万兵力三次」）。
  *
  *  为什么要分这一类：补兵规则是「场上活人 < TRIGGER 就补 SIDE_CAP」，波次随出征兵力线性增长——
@@ -2172,11 +2181,9 @@ export function flankQuotaOf(troops: number): number {
  *  - 攻城战：**守城方（side=1）可绕后偷袭，攻城方（side=0）不绕后**（🔴 2026-09-17 主人定：攻城方
  *    从敌方出兵口背后出生等于凭空出现在城墙之内，不合理；守城方绕到攻城方侧后是出城偷袭，成立）。
  *  waveNo = 本方已发生的补兵波次，quota = flankQuotaOf(本方兵力)。side = 0 攻方 / 1 守方。导出=供离线自检 */
-export function shouldFlankSpawn(key: string, battleType: string, isSupplyWave: boolean, waveNo: number, quota: number, side: number): boolean {
-    if (!isSupplyWave || !FLANK_TYPES.has(key)) return false;
-    if (FLANK_LIMITED_TYPES.has(key) && waveNo > quota) return false;
-    if (battleType === 'field') return true;
-    if (battleType === 'siege') return side === 1;
+export function shouldFlankSpawn(_key: string, _battleType: string, _isSupplyWave: boolean, _waveNo: number, _quota: number, _side: number): boolean {
+    // 🔴 [2026-10-13 主人令「现在地图太大了。请把战术模式中，从地方出兵口出兵的逻辑取消。例如忍者。」]
+    // 取消所有兵种从敌方出兵口出兵的逻辑，一律从己方出兵口正常出兵
     return false;
 }
 
@@ -8886,7 +8893,7 @@ export class Scene13WarLayer {
         //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
         const wm = m as Partial<WarMan>;
         const inOnly = m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
-            && !!wm.key && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
+            && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
         const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key && !wm.hero
@@ -9620,7 +9627,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
     /** 寻敌结果过一道流场：攻方在城外、目的地更靠近中心时，改走流场路径（绕缺口进城） */
     private flowRedirect(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (!this.flowDist || m.f !== 0 || m.hero) return aim;
+        if (!this.flowDist || m.f !== 0 || m.hero || WALL_PASS_TYPES.has(m.key)) return aim;
         const du = this.flowDistAt(m.x, m.y);
         if (!Number.isFinite(du) || du <= 6 * FLOW_SUB) return aim;
         const target = aim ?? (this.centerBld ? { x: this.centerBld.x, y: this.centerBld.y } : null);
@@ -9674,7 +9681,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      *    这样守方才**真的会走出城门**去迎战/到门前对峙。攻城方（f=0）、无墙攻城（城寨/漠北）、军团以外一律不受影响。
      */
     private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls) return aim;
+        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
         this.ensureGateInfo();
         const insideSelf = this.insideRing(m.x, m.y);
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
@@ -9738,7 +9745,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 //    而 flowRedirect 对城中心附近（du 很小）不接管 ⇒ 在中心建筑附近来回踱步（约 2Hz）。
                 //    已在城内 → 直接去中心建筑，不再往门外折返。
                 this.ensureGateInfo();
-                if (!this.insideRing(m.x, m.y)) {
+                if (!this.insideRing(m.x, m.y) && !WALL_PASS_TYPES.has(m.key)) {
                     // 🔴 [2026-10-13 主人令「让士兵先到最近的城门，然后去往中心点去打中心建筑」] A 方案：
                     //    攻方目标点由「城中心」改为「**离自己最近的那座还立着的城门的外侧 150px**」；
                     //    门破后上面的 flowRedirect 会自动改走流场，把人从缺口带进城 → 再转向中心建筑。
@@ -9949,10 +9956,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const unitTileRadius = this.radiusOf(m.key) / 40;
         // 🔴 [2026-10-12] 占地按 DE 原生一格（96×48）换算：物件素材按原生像素画，原用旧网格 64×32 ⇒ 碰撞框只有画面的 2/3
         const TILE_W = TAC_TILE_W, TILE_H = TAC_TILE_H;
+        if (WALL_PASS_TYPES.has(m.key)) this.ensureGateInfo();
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
             for (const object of activeObstructions) {
                 if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
+                if (WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
                 let mapX = dx / TILE_W + dy / TILE_H;
