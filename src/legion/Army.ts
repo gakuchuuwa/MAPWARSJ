@@ -18,6 +18,7 @@ import type { RegionType } from '../systems/RegionSystem';
 
 import { IBattleUnit } from '../combat/CombatSystem';
 import { gameLog } from '../utils/GameLogger';
+import { normalizeLongitude, shortestLongitudeDelta } from '../utils/GeoLongitude';
 import { getRandomFactionPortrait } from '../config/portrait_defaults';
 import type { StrategicEffect } from '../data/GeneralSkills';
 import {
@@ -726,7 +727,10 @@ export class Army implements IBattleUnit {
         const targetLng = dest.lng;
 
         const dx = targetLat - currentPos.lat;
-        const dy = targetLng - currentPos.lng;
+        // 🔴 [2026-10-13 主人报「玩家抵达阿卡普尔科后没有下海，反而脱离了道路」] 经度差一律取最短：
+        //    跨 180° 经线的海路（关岛⇄阿卡普尔科）路点展开成 260°，玩家站在 -99.92°，直接相减差 360°，
+        //    就朝反方向走了一整圈经度（上了墨西哥内陆）。
+        const dy = shortestLongitudeDelta(currentPos.lng, targetLng);
         const distance = Math.sqrt(dx * dx + dy * dy);
 
 
@@ -758,7 +762,7 @@ export class Army implements IBattleUnit {
         // [VECTOR MOVEMENT] Consume path points until distance exhausted
         while (remainingDist > 0) {
             const dx = this.destination.lat - this.position.lat;
-            const dy = this.destination.lng - this.position.lng;
+            const dy = shortestLongitudeDelta(this.position.lng, this.destination.lng);
             const distToNext = Math.sqrt(dx * dx + dy * dy);
 
             // [FIX] Update direction (simple calculation)
@@ -769,7 +773,7 @@ export class Army implements IBattleUnit {
             if (distToNext <= remainingDist) {
                 // Reached waypoint: Snap to it and consume distance
                 this.position.lat = this.destination.lat;
-                this.position.lng = this.destination.lng;
+                this.position.lng = normalizeLongitude(this.destination.lng);
                 remainingDist -= distToNext;
 
                 // Move to next point if available
@@ -790,7 +794,7 @@ export class Army implements IBattleUnit {
                 // Not enough distance to reach next point: Interpolate
                 const ratio = remainingDist / distToNext;
                 this.position.lat += dx * ratio;
-                this.position.lng += dy * ratio;
+                this.position.lng = normalizeLongitude(this.position.lng + dy * ratio);
                 remainingDist = 0;
             }
         }
@@ -812,7 +816,7 @@ export class Army implements IBattleUnit {
         if (moveDist <= 0 || deltaTime <= 0 || this.hasArrived) return;
 
         const dx = this.destination.lat - this.position.lat;
-        const dy = this.destination.lng - this.position.lng;
+        const dy = shortestLongitudeDelta(this.position.lng, this.destination.lng);
         const distToNext = Math.hypot(dx, dy);
         if (distToNext <= 0.000001) {
             this.reachCurrentWaypoint();
@@ -871,7 +875,7 @@ export class Army implements IBattleUnit {
 
         if (distToNext <= captureRadius) {
             this.position.lat = this.destination.lat;
-            this.position.lng = this.destination.lng;
+            this.position.lng = normalizeLongitude(this.destination.lng);
             this.navalOrbitSec = 0;
             this.reachCurrentWaypoint();
             return;
@@ -916,7 +920,7 @@ export class Army implements IBattleUnit {
         //    若只要「下一位置是陆」就拦，会把大洋里无瓦片区的船**冻死**。
         //    要求 `当前在水` 才算过渡 ⇒ 掩膜不可用时两边都判陆 ⇒ 不拦，绝不卡住行军。
         const nextLat = this.position.lat + Math.cos(this.navalHeadingRad) * advance;
-        const nextLng = this.position.lng + Math.sin(this.navalHeadingRad) * advance;
+        const nextLng = normalizeLongitude(this.position.lng + Math.sin(this.navalHeadingRad) * advance);
         const onWaterNow = LandSeaSystem.isSeaAtMajority(this.position.lat, this.position.lng);
         const onWaterNext = LandSeaSystem.isSeaAtMajority(nextLat, nextLng);
         if (onWaterNow && !onWaterNext && LandSeaSystem.probeLandSea(nextLat, nextLng) !== 'pending') {
@@ -1106,14 +1110,14 @@ export class Army implements IBattleUnit {
         if (queue.length === 0) {
             const dest = this.destination as { lat: number; lng: number; sea?: boolean } | null;
             return dest?.sea === true
-                ? Math.hypot(dest.lat - this.position.lat, dest.lng - this.position.lng)
+                ? Math.hypot(dest.lat - this.position.lat, shortestLongitudeDelta(this.position.lng, dest.lng))
                 : 0;
         }
-        deg += Math.hypot(queue[0].lat - this.position.lat, queue[0].lng - this.position.lng);
+        deg += Math.hypot(queue[0].lat - this.position.lat, shortestLongitudeDelta(this.position.lng, queue[0].lng));
         for (let i = 0; i < queue.length; i++) {
             if (queue[i].sea !== true) break;
             const next = queue[i + 1];
-            if (next) deg += Math.hypot(next.lat - queue[i].lat, next.lng - queue[i].lng);
+            if (next) deg += Math.hypot(next.lat - queue[i].lat, shortestLongitudeDelta(queue[i].lng, next.lng));
         }
         return deg;
     }

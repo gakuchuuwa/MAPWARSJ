@@ -1,4 +1,5 @@
 import { LatLng } from '../types/core';
+import { shortestLongitudeDelta } from '../utils/GeoLongitude';
 
 /**
  * Unified Orientation System
@@ -86,7 +87,8 @@ export class OrientationSystem {
     /** 经纬度位移 → 屏幕轴位移（dx 向东为正，dy 向北为正；单位任意，只用比值） */
     public static screenDelta(from: LatLng, to: LatLng): { dx: number; dy: number } {
         return {
-            dx: (to.lng - from.lng) * Math.PI / 180,
+            // 经度差取最短：过 180° 经线那一帧（179.9° → -179.9°）不能算成往西 359.8°，否则船头掉头
+            dx: shortestLongitudeDelta(from.lng, to.lng) * Math.PI / 180,
             dy: this.mercatorY(to.lat) - this.mercatorY(from.lat),
         };
     }
