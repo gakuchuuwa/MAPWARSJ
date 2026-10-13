@@ -363,7 +363,7 @@ export class PlayerHUD {
         const state = host
             ? `随军 ${host.name}`
             : chasing
-                ? `追击武将${chaseName ? `【${chaseName}】` : ''}（在外行军）`
+                ? `追击武将${chaseName ? `【${chaseName}】` : ''}`
                 : travelPoint
                     ? `前往【${travelPoint}】`
                     : travel ? `前往【${this.deps.getCityName(travel)}】` : '独行，点据点前往';

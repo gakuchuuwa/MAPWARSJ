@@ -23,9 +23,9 @@ type Pt = { lat: number; lng: number };
 
 interface AnimalAsset {
     dir: string;
+    action: string;      // 'idle'（陆）或 'fly'/'hover'（鸟）
     dirs16: boolean;
     nDir: number;
-    action: string;      // 'idle'（陆）或 'hover'（鸟）
     frames: number;
     dirs: Record<string, { fw: number; fh: number; hx: number; hy: number }>;
     sheets: (HTMLImageElement | null)[];
@@ -35,17 +35,33 @@ interface AnimalAsset {
 }
 
 interface AnimalEntry {
+    id: string;          // 网格标识（如 `${col},${row}`）
     dir: string;
     pos: Pt;
-    isBird: boolean;
-    facing: number;      // 方向索引（陆 0-7 / 鸟 0-15）
+    facing: number;      // 方向索引（陆 0-7）
     phase: number;       // 动画相位
+    alpha: number;       // 当前透明度 0.0 ~ 1.0（渐显/渐隐）
+    fadingOut?: boolean; // 渐隐中
+}
+
+/** DE 巡航飞鸟：跨屏巡游 + 振翅/滑翔交替 + 渐显/渐隐 */
+interface BirdAgent {
+    dir: string;
+    lat: number;
+    lng: number;
+    targetLat: number;
+    targetLng: number;
+    hovering: boolean;   // false = fly 振翅巡航, true = hover 展翅滑翔
+    timer: number;      // 动作交替计时器（秒）
+    phase: number;
+    alpha: number;       // 当前透明度 0.0 ~ 1.0（渐显/渐隐）
+    fadingOut?: boolean; // 渐隐中
 }
 
 // ── 可调参数 ──────────────────────────────────────────────────────────────
 const CELL_DEG = 0.5;               // 撒点网格尺寸（度）
 const LAND_DENSITY = 0.07;          // 陆地格出现动物的概率
-const BIRD_DENSITY = 0.015;         // 格出现飞鸟的概率（稀疏点缀，视野内偶见数只翱翔，不喧宾夺主）
+const BIRD_DENSITY = 0.08;          // 格出现飞鸟的概率（稀疏点缀，视野内偶见 1~2 只翱翔，不喧宾夺主）
 /** 🔴 [2026-09-01 主人定] 动物只在这两个缩放层显示：9 和 10 */
 const ANIMAL_MIN_ZOOM = 9;
 const ANIMAL_MAX_ZOOM = 10;
@@ -56,27 +72,29 @@ const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 //    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
 const PANE_ZINDEX = 560;            // 动物：最底（低于植被565/商队570/UNITS_LOW580）
 const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹入
-const BIRD_DRIFT_RADIUS_PX = 18;    // 飞鸟盘旋半径（屏幕像素）
+const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与翼展匹配的高空开阔盘旋）
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
 // ──────────────────────────────────────────────────────────────────────────
 
 // ── 生态分区（真实世界分布）───────────────────────────────────────────────
-const RG_AFRICA: RegionType[] = ['AFRICA', 'BERBER', 'ETHIOPIANS'];
-const RG_INDIA: RegionType[] = ['INDIA', 'PURU', 'BENGALIS', 'GURJARAS'];
-const RG_SEASIA: RegionType[] = ['MALAY', 'VIETNAMESE', 'KHMER'];
+const RG_AFRICA: RegionType[] = ['AFRICA', 'BERBER'];
+const RG_INDIA: RegionType[] = ['INDIA', 'PURU'];
+const RG_SEASIA: RegionType[] = ['MALAY'];
 const RG_EASTASIA: RegionType[] = [
     'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'KOREA',
 ];
 const RG_JAPAN: RegionType[] = ['JAPAN'];
-const RG_CENTRALASIA: RegionType[] = ['CENTRAL_ASIA', 'TIBET', 'WESTERN', 'PERSIAN'];
+const RG_TIBET_CENTRALASIA: RegionType[] = ['CENTRAL_ASIA', 'TIBET', 'WESTERN', 'PERSIAN'];
 const RG_STEPPE: RegionType[] = ['STEPPE', 'NORTHEAST', 'CUMAN'];
-const RG_MIDEAST: RegionType[] = ['ORIE', 'WEST_ASIA'];
+const RG_MIDEAST: RegionType[] = ['ORIE', 'WEST_ASIA', 'WEST_ASIA_ANTIQUITY', 'WEST_ASIA_CASTLE'];
 const RG_EUROPE: RegionType[] = [
-    'LATIN', 'GERMANIC', 'SLAVIC', 'BRITONS', 'GOTHS', 'HUNS', 'TEUTONS', 'VIKINGS',
-    'ITALIANS', 'SICILIANS', 'BULGARIANS', 'MAGYAR', 'LITHUANIANS', 'POLES',
-    'BOHEMIANS', 'BURGUNDIANS', 'SPANISH', 'PORTUGUESE', 'EAST', 'GREEK', 'THRACIAN',
+    'LATIN', 'LATIN_CASTLE', 'LATIN_IMPERIAL',
+    'GERMANIC', 'GERMANIC_FEUDAL', 'GERMANIC_CASTLE', 'GERMANIC_IMPERIAL',
+    'SLAVIC', 'SLAVIC_FEUDAL', 'SLAVIC_CASTLE', 'SLAVIC_IMPERIAL',
+    'BRITONS', 'EAST', 'GREEK', 'THRACIAN',
 ];
-const RG_AMERICA: RegionType[] = ['AMERICA', 'ANDE', 'MAYANS', 'MAPUCHE', 'MUISCA', 'TUPI'];
+const RG_AMERICA_ANDE: RegionType[] = ['ANDE'];
+const RG_AMERICA_TROPICAL: RegionType[] = ['AMERICA'];
 
 /** 陆上野生动物（8 向；只野生，不含家畜与极地物种） */
 const LAND_AFRICA = ['LION', 'ZEBRA', 'GAZELLE', 'OSTRICH', 'ELEPHANT', 'RHINO', 'CROCODILE', 'MONKEY', 'BLACK_PANTHER'];
@@ -90,27 +108,32 @@ const LAND_MIDEAST = ['GAZELLE', 'WOLF_ARABIAN', 'SNAKE_GROUND', 'IBEX'];
 const LAND_EUROPE = ['DEER', 'BOAR', 'WOLF', 'BEAR', 'FOX_RED', 'HARE_BROWN', 'MOUFLON', 'IBEX'];
 const LAND_AMERICA = ['JAGUAR', 'GUANACO', 'RHEA', 'CAPYBARA', 'JAVELINA', 'TAPIR', 'CAIMAN', 'HARE_GREY', 'BLACK_PANTHER'];
 
-/** 空中飞鸟（16 向）；基础 = 全球常见猛禽，加各生态区特有鸟 */
-const BIRD_BASE = ['HAWK', 'FALCON', 'OWL'];
-const BIRD_AFRICA = [...BIRD_BASE, 'VULTURE', 'FLAMINGO'];
-const BIRD_MIDEAST = [...BIRD_BASE, 'VULTURE'];
-const BIRD_EASTASIA = [...BIRD_BASE, 'CRANE', 'STORK'];
-const BIRD_EUROPE = [...BIRD_BASE, 'STORK'];
-const BIRD_AMERICA = [...BIRD_BASE, 'CONDOR', 'MACAW'];
-const BIRD_OTHER = [...BIRD_BASE, 'STORK'];
+/** 空中飞鸟（16 向；严格按世界自然动物地理学分布） */
+const BIRD_AFRICA = ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];               // 非洲：大裂谷盐湖红鹳、热带草原兀鹫、游隼
+const BIRD_MIDEAST = ['FLAMINGO', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];              // 中东/埃及/波斯：红海波斯湾火烈鸟、沙漠兀鹫、阿拉伯猎隼
+const BIRD_INDIA = ['FLAMINGO', 'CRANE', 'VULTURE', 'FALCON', 'HAWK', 'OWL'];      // 印度：卡奇大盐沼火烈鸟、印度圣鸟赤颈鹤、印度兀鹫
+const BIRD_SEASIA = ['CRANE', 'HAWK', 'FALCON', 'OWL'];                            // 东南亚：湄公河湿地赤颈鹤、林栖苍鹰、游隼
+const BIRD_EASTASIA = ['CRANE', 'STORK', 'HAWK', 'FALCON', 'OWL'];                 // 东亚汉地/朝鲜：松鹤延年丹顶鹤、江淮东方白鹳、游隼
+const BIRD_JAPAN = ['CRANE', 'HAWK', 'FALCON', 'OWL'];                             // 日本：北海道钏路丹顶鹤、苍鹰、游隼（岛屿无秃鹫白鹳）
+const BIRD_TIBET_CENTRALASIA = ['VULTURE', 'FALCON', 'HAWK', 'OWL'];               // 青藏高原/中亚/西域：高山天葬兀鹫、高原猎隼（无白鹳）
+const BIRD_STEPPE = ['FALCON', 'VULTURE', 'CRANE', 'HAWK', 'OWL'];                // 欧亚草原/东北：海东青猎隼、草原兀鹫、湿地迁徙鹤
+const BIRD_EUROPE = ['STORK', 'FALCON', 'HAWK', 'OWL'];                            // 欧洲全境：欧洲标志白鹳（送子鸟）、欧洲游隼、苍鹰
+const BIRD_AMERICA_ANDE = ['CONDOR', 'HAWK', 'FALCON', 'OWL'];                     // 南美安第斯高地：安第斯神鹰（CONDOR 独占）、高山猛禽
+const BIRD_AMERICA_TROPICAL = ['MACAW', 'HAWK', 'OWL', 'FALCON'];                  // 中美/热带雨林低地：金刚鹦鹉（MACAW 独占）、林区猛禽
 
 function animalsForRegion(region: RegionType): { land: string[]; birds: string[] } {
     if (RG_AFRICA.includes(region)) return { land: LAND_AFRICA, birds: BIRD_AFRICA };
-    if (RG_INDIA.includes(region)) return { land: LAND_INDIA, birds: BIRD_OTHER };
-    if (RG_SEASIA.includes(region)) return { land: LAND_SEASIA, birds: BIRD_OTHER };
-    if (RG_JAPAN.includes(region)) return { land: LAND_JAPAN, birds: BIRD_EASTASIA };
+    if (RG_INDIA.includes(region)) return { land: LAND_INDIA, birds: BIRD_INDIA };
+    if (RG_SEASIA.includes(region)) return { land: LAND_SEASIA, birds: BIRD_SEASIA };
+    if (RG_JAPAN.includes(region)) return { land: LAND_JAPAN, birds: BIRD_JAPAN };
     if (RG_EASTASIA.includes(region)) return { land: LAND_EASTASIA, birds: BIRD_EASTASIA };
-    if (RG_CENTRALASIA.includes(region)) return { land: LAND_CENTRALASIA, birds: BIRD_OTHER };
-    if (RG_STEPPE.includes(region)) return { land: LAND_STEPPE, birds: BIRD_OTHER };
+    if (RG_TIBET_CENTRALASIA.includes(region)) return { land: LAND_CENTRALASIA, birds: BIRD_TIBET_CENTRALASIA };
+    if (RG_STEPPE.includes(region)) return { land: LAND_STEPPE, birds: BIRD_STEPPE };
     if (RG_MIDEAST.includes(region)) return { land: LAND_MIDEAST, birds: BIRD_MIDEAST };
     if (RG_EUROPE.includes(region)) return { land: LAND_EUROPE, birds: BIRD_EUROPE };
-    if (RG_AMERICA.includes(region)) return { land: LAND_AMERICA, birds: BIRD_AMERICA };
-    return { land: LAND_EUROPE, birds: BIRD_OTHER };
+    if (RG_AMERICA_ANDE.includes(region)) return { land: LAND_AMERICA, birds: BIRD_AMERICA_ANDE };
+    if (RG_AMERICA_TROPICAL.includes(region)) return { land: LAND_AMERICA, birds: BIRD_AMERICA_TROPICAL };
+    return { land: LAND_EUROPE, birds: BIRD_EUROPE };
 }
 
 /** 确定性整数哈希 → [0,1)。同 (col,row,salt) 恒同值，保证动物位置不跳。 */
@@ -127,6 +150,7 @@ export class AnimalAmbientLayer {
     private ctx: CanvasRenderingContext2D;
     private assets: Map<string, AnimalAsset> = new Map();
     private entries: AnimalEntry[] = [];
+    private birds: BirdAgent[] = [];
     private lastCellRange: string | null = null;
     private running = false;
     private lastTime = 0;
@@ -189,32 +213,36 @@ export class AnimalAmbientLayer {
     public setLandVisible(visible: boolean): void {
         if (this.landVisible === visible) return;
         this.landVisible = visible;
-        this.lastCellRange = null; // 触发重新撒点
+        if (!visible) {
+            for (const e of this.entries) e.fadingOut = true;
+        }
     }
 
     public setBirdsVisible(visible: boolean): void {
         if (this.birdsVisible === visible) return;
         this.birdsVisible = visible;
-        this.lastCellRange = null; // 触发重新撒点
+        if (!visible) {
+            for (const b of this.birds) b.fadingOut = true;
+        }
     }
 
     // ── 素材加载 ────────────────────────────────────────────────────────
-    private loadAsset(dir: string, isBird: boolean): void {
-        if (this.assets.has(dir)) return;
+    private loadAsset(dir: string, action: string, isBird: boolean): void {
+        const key = `${dir}:${action}`;
+        if (this.assets.has(key)) return;
         const asset: AnimalAsset = {
-            dir, dirs16: isBird, nDir: isBird ? 16 : 8,
-            action: isBird ? 'hover' : 'idle', frames: 1, dirs: {}, sheets: [], ready: false,
+            dir, action, dirs16: isBird, nDir: isBird ? 16 : 8,
+            frames: 1, dirs: {}, sheets: [], ready: false,
             lastUsed: performance.now(),
         };
-        this.assets.set(dir, asset);
+        this.assets.set(key, asset);
         const base = `/SUCAI_ANIMAL/${dir}`;
         fetch(`${base}/_meta.json`)
             .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`meta ${r.status}`))))
             .then((meta) => {
                 asset.dirs16 = meta.dirs16 === true;
                 asset.nDir = meta.nDir ?? (asset.dirs16 ? 16 : 8);
-                const act = meta[asset.action] ? asset.action : (asset.dirs16 ? 'fly' : 'walk');
-                asset.action = act;
+                const act = meta[action] ? action : (asset.dirs16 ? 'fly' : 'walk');
                 asset.frames = meta[act]?.frames ?? 1;
                 asset.dirs = meta[act]?.dirs ?? {};
                 const nDir = asset.nDir;
@@ -228,11 +256,11 @@ export class AnimalAmbientLayer {
                     asset.sheets[d] = img;
                 }
             })
-            .catch((e) => console.warn(`[Animal] 加载 ${dir} 失败:`, e));
+            .catch((e) => console.warn(`[Animal] 加载 ${key} 失败:`, e));
     }
 
-    private assetFor(dir: string): AnimalAsset | undefined {
-        const a = this.assets.get(dir);
+    private assetFor(key: string): AnimalAsset | undefined {
+        const a = this.assets.get(key);
         if (a) a.lastUsed = performance.now();   // LRU 时间戳
         return a && a.ready ? a : undefined;
     }
@@ -263,14 +291,19 @@ export class AnimalAmbientLayer {
     private evictAssets(): void {
         let bytes = this.totalAssetBytes();
         if (bytes <= AnimalAmbientLayer.ASSET_BUDGET_BYTES) return;
-        const inUse = new Set(this.entries.map((e) => e.dir));
+        const inUse = new Set<string>();
+        for (const e of this.entries) inUse.add(`${e.dir}:idle`);
+        for (const b of this.birds) {
+            inUse.add(`${b.dir}:fly`);
+            inUse.add(`${b.dir}:hover`);
+        }
         const cands = [...this.assets.entries()]
-            .filter(([dir]) => !inUse.has(dir))               // 当前屏上在用的不淘汰
+            .filter(([k]) => !inUse.has(k))               // 当前屏上在用的不淘汰
             .sort((a, b) => (a[1].lastUsed ?? 0) - (b[1].lastUsed ?? 0));
-        for (const [dir, a] of cands) {
+        for (const [k, a] of cands) {
             if (bytes <= AnimalAmbientLayer.ASSET_BUDGET_BYTES) break;
             bytes -= this.assetBytes(a);
-            this.assets.delete(dir);
+            this.assets.delete(k);
         }
     }
 
@@ -299,9 +332,9 @@ export class AnimalAmbientLayer {
                 const clat = (row + 0.5) * CELL_DEG;
                 const clng = (col + 0.5) * CELL_DEG;
                 const region = getRegion(clat, clng);
-                const { land, birds } = animalsForRegion(region);
+                const { land } = animalsForRegion(region);
 
-                // 陆上动物
+                // 陆上动物（基于网格确定性撒点，固定位置张望/吃草）
                 const lh = hash01(col, row, 1);
                 if (this.landVisible && lh < LAND_DENSITY) {
                     const offLat = (hash01(col, row, 3) - 0.5) * CELL_DEG * 0.8;
@@ -311,23 +344,8 @@ export class AnimalAmbientLayer {
                         const dir = land[Math.floor(hash01(col, row, 5) * land.length) % land.length];
                         const facing = Math.floor(hash01(col, row, 6) * 8) % 8;
                         const phase = Math.floor(hash01(col, row, 7) * 1000);
-                        this.loadAsset(dir, false);
-                        next.push({ dir, pos, isBird: false, facing, phase });
-                    }
-                }
-
-                // 飞鸟
-                const bh = hash01(col, row, 2);
-                if (this.birdsVisible && bh < BIRD_DENSITY) {
-                    const offLat = (hash01(col, row, 8) - 0.5) * CELL_DEG * 0.8;
-                    const offLng = (hash01(col, row, 9) - 0.5) * CELL_DEG * 0.8;
-                    const pos = { lat: clat + offLat, lng: clng + offLng };
-                    if (!this.isSea(pos)) {
-                        const dir = birds[Math.floor(hash01(col, row, 10) * birds.length) % birds.length];
-                        const facing = Math.floor(hash01(col, row, 11) * 16) % 16;
-                        const phase = Math.floor(hash01(col, row, 12) * 1000);
-                        this.loadAsset(dir, true);
-                        next.push({ dir, pos, isBird: true, facing, phase });
+                        this.loadAsset(dir, 'idle', false);
+                        next.push({ dir, pos, facing, phase });
                     }
                 }
             }
@@ -343,14 +361,95 @@ export class AnimalAmbientLayer {
         }
     }
 
+    // ── DE 飞鸟系统（与战术模式 Scene13 及 DE 原作完全一致） ────────────────
+    /** AoE2 DE 16 方向索引转换（逆时针/顺时针与资产帧完全对齐） */
+    private birdDir(dx: number, dy: number): number {
+        let a = (Math.atan2(-dy, dx) * 180) / Math.PI;
+        a = ((a % 360) + 360) % 360;
+        return (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
+    }
+
+    /** 在视口内生成一只 DE 巡航飞鸟（跨屏直线长途巡游） */
+    private spawnBirdInBounds(sw: L.LatLng, ne: L.LatLng): void {
+        // 在视口内随机生成起始点，严格以此处真实经纬度确定地理生态区
+        const lat = sw.lat + Math.random() * (ne.lat - sw.lat);
+        const lng = sw.lng + Math.random() * (ne.lng - sw.lng);
+        const region = getRegion(lat, lng);
+        const { birds } = animalsForRegion(region);
+        const dir = birds[Math.floor(Math.random() * birds.length)];
+        this.loadAsset(dir, 'fly', true);
+        this.loadAsset(dir, 'hover', true);
+
+        const angle = Math.random() * Math.PI * 2;
+        const distFly = 1.5 + Math.random() * 2.5; // 目标跨越 1.5~4.0 度（大范围长途巡航）
+
+        this.birds.push({
+            dir,
+            lat,
+            lng,
+            targetLat: lat + Math.sin(angle) * distFly,
+            targetLng: lng + Math.cos(angle) * distFly,
+            hovering: Math.random() < 0.5,
+            timer: 3.0 + Math.random() * 4.0, // 3~7 秒交替
+            phase: Math.random() * 1000,
+        });
+    }
+
+    /** 飞鸟长途巡航更新：长距直线巡游 + fly 振翅 ⇄ hover 滑翔交替 */
+    private updateBirds(dt: number): void {
+        if (!this.birdsVisible) {
+            this.birds = [];
+            return;
+        }
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+        const margin = 0.5; // 视口外缓冲边界
+
+        // 维持视口内 2~3 只飞鸟，纯净点缀不喧宾夺主
+        const MAX_BIRDS = 3;
+        while (this.birds.length < MAX_BIRDS) {
+            this.spawnBirdInBounds(sw, ne);
+        }
+
+        const speedDeg = 0.09; // 战略巡航速度（度/秒，约 70~100 屏幕像素/秒）
+        for (let i = this.birds.length - 1; i >= 0; i--) {
+            const b = this.birds[i];
+            b.timer -= dt;
+            // 🔴 [DE 原生机制] fly 振翅巡航 ⇄ hover 展翅滑翔交替（每 3~7 秒切换一次）
+            if (b.timer <= 0) {
+                b.hovering = !b.hovering;
+                b.timer = 3.0 + Math.random() * 4.0;
+            }
+
+            const dLat = b.targetLat - b.lat;
+            const dLng = b.targetLng - b.lng;
+            const dist = Math.hypot(dLat, dLng);
+
+            // 飞出视口缓冲区外则移除，后续自动在视口边缘补新鸟
+            if (b.lat < sw.lat - margin || b.lat > ne.lat + margin || b.lng < sw.lng - margin || b.lng > ne.lng + margin) {
+                this.birds.splice(i, 1);
+                continue;
+            }
+
+            if (dist < 0.05) {
+                // 到达当前目标点，选一个新远方目标继续巡航
+                const angle = Math.random() * Math.PI * 2;
+                const distFly = 1.5 + Math.random() * 2.5;
+                b.targetLat = b.lat + Math.sin(angle) * distFly;
+                b.targetLng = b.lng + Math.cos(angle) * distFly;
+            } else {
+                b.lat += (dLat / dist) * speedDeg * dt;
+                b.lng += (dLng / dist) * speedDeg * dt;
+            }
+        }
+    }
+
     // ── 每帧 ────────────────────────────────────────────────────────────
     private tick(now: number): void {
         if (!this.running) return;
+        const dt = Math.min(0.1, this.lastTime > 0 ? (now - this.lastTime) / 1000 : 0.016);
         this.lastTime = now;
         this.nowMs = now;
-        // 🔴 [2026-08-31] 战术模式（scene13）下战略地图被整屏盖住，这一层每帧清屏重画纯属白烧。
-        //    原实现的 rAF 无条件永久运行，既不看缩放也不看可见性。
-        //    画布已经清空过一次就不必再清，直接跳过本帧。
         if (this.isHiddenNow()) {
             if (!this.clearedWhileHidden) {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -362,6 +461,7 @@ export class AnimalAmbientLayer {
         this.clearedWhileHidden = false;
         const _t0 = performance.now();
         this.recomputeEntries();
+        this.updateBirds(dt);
         this.evictAssets();
         this.draw();
         perfDoctor.note('AnimalAmbientLayer.tick(动物层)', performance.now() - _t0, 'src/map/AnimalAmbientLayer.ts:tick');
@@ -392,44 +492,57 @@ export class AnimalAmbientLayer {
     private draw(): void {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        if (this.entries.length === 0) return;
 
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
-        const b = this.map.getBounds();
         const m = 40; // 屏幕裁剪余量
 
-        for (const e of this.entries) {
-            const asset = this.assetFor(e.dir);
-            if (!asset) continue;
-            const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
+        // 1. 绘制陆地动物（idle 吃草/张望，位置固定）
+        if (this.landVisible) {
+            for (const e of this.entries) {
+                const asset = this.assetFor(`${e.dir}:idle`);
+                if (!asset) continue;
+                const pt = this.map.latLngToContainerPoint([e.pos.lat, e.pos.lng]);
+                if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
+                const box = asset.dirs[String(e.facing)];
+                if (!box) continue;
+                const sheet = asset.sheets[e.facing];
+                if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
 
-            // 飞鸟缓速盘旋：以锚点为中心做圆周漂移 + 朝向随切向转（不再"钉在空中"）
-            let drawX = pt.x;
-            let drawY = pt.y;
-            let facing = e.facing;
-            if (e.isBird) {
-                const theta = BIRD_DRIFT_SPEED * (this.nowMs / 1000) + e.phase * 0.01;
-                drawX = pt.x + BIRD_DRIFT_RADIUS_PX * Math.cos(theta);
-                drawY = pt.y + BIRD_DRIFT_RADIUS_PX * Math.sin(theta);
-                // 切向 (vx,vy)=(-sinθ,cosθ)；世界方向 dLng=vx、dLat=-vy（屏幕 y 朝下）
-                const rad = Math.atan2(-Math.sin(theta), -Math.cos(theta));
-                const deg = rad * 180 / Math.PI;
-                facing = ((Math.round((deg - 45) / 22.5) % 16) + 16) % 16;
+                const frame = Math.floor((this.nowMs / 1000) * 14 + e.phase) % asset.frames;
+                const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
+                const dx = pt.x - hx * scale;
+                const dy = pt.y - hy * scale;
+                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
             }
+        }
 
-            if (drawX < -m || drawX > this.canvas.width + m || drawY < -m || drawY > this.canvas.height + m) continue;
+        // 2. 绘制 DE 巡航飞鸟（跨屏直线长途巡游 + fly 振翅 ⇄ hover 滑翔交替）
+        if (this.birdsVisible) {
+            for (const b of this.birds) {
+                const act = b.hovering ? 'hover' : 'fly';
+                const asset = this.assetFor(`${b.dir}:${act}`);
+                if (!asset) continue;
 
-            const box = asset.dirs[String(facing)];
-            if (!box) continue;
-            const sheet = asset.sheets[facing];
-            if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
+                const pt = this.map.latLngToContainerPoint([b.lat, b.lng]);
+                if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
 
-            const frame = Math.floor(this.nowMs / 1000 * 14 + e.phase) % asset.frames;
-            const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
-            const dx = drawX - hx * scale;
-            const dy = drawY - hy * scale;
-            ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+                const targetPt = this.map.latLngToContainerPoint([b.targetLat, b.targetLng]);
+                const curDx = targetPt.x - pt.x;
+                const curDy = targetPt.y - pt.y;
+                const facing = this.birdDir(curDx, curDy);
+
+                const box = asset.dirs[String(facing)];
+                if (!box) continue;
+                const sheet = asset.sheets[facing];
+                if (!sheet || !sheet.complete || !sheet.naturalWidth) continue;
+
+                const frame = Math.floor((this.nowMs / 1000) * 14 + b.phase) % asset.frames;
+                const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
+                const dx = pt.x - hx * scale;
+                const dy = pt.y - hy * scale;
+                ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            }
         }
     }
 }

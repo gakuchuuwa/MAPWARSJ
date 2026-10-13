@@ -438,7 +438,13 @@ export class RoadRegistry {
         b: { minLat: number; maxLat: number; minLng: number; maxLng: number },
     ): number {
         const dLat = pos.lat < b.minLat ? b.minLat - pos.lat : (pos.lat > b.maxLat ? pos.lat - b.maxLat : 0);
-        const dLng = pos.lng < b.minLng ? b.minLng - pos.lng : (pos.lng > b.maxLng ? pos.lng - b.maxLng : 0);
+        // 🔴 [2026-10-13] 跨 180° 经线的海路坐标已展开（关岛⇄阿卡普尔科 144°~260°），军团坐标在 [-180,180)：
+        //    经度要连同 ±360° 的副本一起比，取最近 —— 否则太平洋东半边（-150°）的船被判成离这条航线 300 多度。
+        let dLng = Infinity;
+        for (const lng of [pos.lng - 360, pos.lng, pos.lng + 360]) {
+            const d = lng < b.minLng ? b.minLng - lng : (lng > b.maxLng ? lng - b.maxLng : 0);
+            if (d < dLng) dLng = d;
+        }
         return Math.sqrt(dLat * dLat + dLng * dLng);
     }
 
