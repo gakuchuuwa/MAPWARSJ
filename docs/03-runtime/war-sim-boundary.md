@@ -18,11 +18,16 @@
 
 ```powershell
 cd C:\MAPWARSJ
-rg -n "scratch/war_sim\.mjs|\.\./war_sim\.mjs|\./war_sim\.mjs" src tools scratch scripts package.json
+rg -n -uu "scratch/war_sim\.mjs" src tools scratch scripts package.json
 ```
 
-**判据**：命中的行里**不许出现可执行代码**（`import` / `from` / `await import(` / `readFileSync`）。纯注释提及不算。
-**实测（2026-10-13 迁移后）**：全仓仅 2 处命中，都是注释，**可执行引用 0 处**。
+🔴 **`-uu` 不能省**：`scratch/` 与 `tools/` 都在 `.gitignore` 下，`rg` 默认会**跳过它们**，不加 `-uu` 会得出"零残留"的**假结论**（本人已踩过这个坑）。
+**判据**：命中的行里**不许出现可执行代码**（`import` / `from '` / `readFileSync` / `open(`）。纯注释提及不算。
+**实测（2026-10-13 迁移后）**：可执行引用 **0 处**；另余纯注释若干（历史叙述、`.bak` 与旧快照，无功能影响）。
+
+⚠️ 迁移时**差点漏掉**的三处（因为 `rg` 默认忽略 `scratch/`）：
+- `tools/audit-kite-archers-only.mts`、`tools/audit-scene13-targeting.mts` 的 `readFileSync('scratch/war_sim.mjs')`；
+- `scratch/_sync_warsim.py` —— 它**读并写**同一路径，跑一次就会把旧的 153 行手抄表**写回**、复活旧量具。三处均已改指 `tools/`。
 - 文件 mtime 与规则口径：见文件头注（2026-08-11 起的多轮修订）。
 
 ## 二、🔴 兵种数值的唯一来源（2026-10-13 改）
