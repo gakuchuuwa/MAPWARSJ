@@ -3232,6 +3232,9 @@ interface TacticalAnimal {
     vy: number;
     /** 受惊 / 被追赶的剩余秒数 */
     fleeTimer: number;
+    /** 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 本次逃跑**锁定的朝向**（单位向量，首次受惊时定死，逃跑期间绝不重算） */
+    fleeDX: number;
+    fleeDY: number;
     /** 闲逛：下一次换方向的倒计时（飞鸟：盘旋/巡航的剩余秒数） */
     idleTimer: number;
     wanderX: number;
@@ -7445,6 +7448,8 @@ export class Scene13WarLayer {
                                     vx: 0,
                                     vy: 0,
                                     fleeTimer: 0,
+                                    fleeDX: 0,          // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 首次受惊时锁定
+                                    fleeDY: 0,
                                     idleTimer: Math.random() * 3,
                                     wanderX: sx,
                                     wanderY: sy,
@@ -10839,7 +10844,16 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     m.slashed = true;
                     const attackAngle = Math.atan2(foe.y - m.y, foe.x - m.x);
                     const contactX = m.x * 0.45 + foe.x * 0.55;
-                    const contactY = (m.y * 0.45 + foe.y * 0.55) - UNIT_PX * 0.35;
+                    // 🔴 [2026-10-13 主人令「修」·刀光错位] 接触点的垂直基准必须与士兵/箭矢同一口径：
+                    //    士兵画在 `m.y - elevationLiftAt(m.x,m.y)`（见 render 的 it.y），箭矢也是
+                    //    `y = groundY - elevationLiftAt(x, groundY) - arc`；而这里原来只减固定身高 UNIT_PX*0.35、
+                    //    **没有地形抬升** ⇒ 坡地/高台/城墙上士兵被抬起来、刀光与火花却留在原始 y 上，
+                    //    看着像砍进脚下的土里。取攻守双方中较高的那个抬升，保证斜坡上也贴着人。
+                    const contactLift = Math.max(
+                        this.elevationLiftAt(m.x, m.y),
+                        this.elevationLiftAt(foe.x, foe.y),
+                    );
+                    const contactY = (m.y * 0.45 + foe.y * 0.55) - contactLift - UNIT_PX * 0.35;
                     const isThrust = keyStr.includes('spear') || keyStr.includes('pike') ||
                         keyStr.includes('lancer') || keyStr.includes('kamayuk') ||
                         keyStr.includes('kuang') || keyStr.includes('hoplite');
@@ -11175,6 +11189,11 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
         const HOME_BACK = 120;      // 猎物活动半径（3 格，避免 30px 过小导致乒乓回头颤抖）
         const BITE_RANGE = 22;      // 猛兽贴身咬的距离
+        // 🔴 [2026-10-13 主人令「只冒着一个方向跑」＋「每次跑得距离多增加一些」]
+        //    单次逃跑时长：猎物/危险/家畜**统一 8 秒**（原 prey/danger 5 秒、家畜 2 秒）。
+        //    病灶：受惊闸每帧成立 ⇒ 原来每帧重算「背离当前最近士兵」的方向，士兵换人方向就跟着翻，
+        //    动物原地打转甚至朝军团来向折回（主人报「跑两步又回来了」）。
+        const FLEE_SEC = 8.0;       // 单次逃跑：一口气跑 8 秒（跑得更远，一次脱离人群）
 
         // 同类群重心：DE 的松散群聚（同伴在哪，闲逛就往那边偏一点）
         const centroids = new Map<string, { x: number; y: number; n: number }>();
@@ -11263,11 +11282,14 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
             } else if ((de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'livestock' ? de.los : Math.max(de.los, 220))) {
                 // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（均以 de.run 高速奔跑脱离）
-                an.fleeTimer = (de.kind === 'prey' || de.kind === 'danger') ? 5.0 : 2.0;   // 跑 2~5 秒高速脱离人群
+                an.fleeTimer = FLEE_SEC;   // 🔴 [2026-10-13 主人令「羊被卡在军团中间也要一口气跑远」] 家畜与猎物同档：8 秒
                 const fleeSpd = de.run;
                 const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
                 an.vx = (dx / d) * fleeSpd;
                 an.vy = (dy / d) * fleeSpd;
+                // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 把这一跑的方向**定死**：逃跑期间任何人靠近都只续时长，绝不改向
+                an.fleeDX = dx / d;
+                an.fleeDY = dy / d;
                 an.dir = this.dir8(an.vx, an.vy);
                 fleeing = true;
                 want = fleeSpd > de.walk * 1.2 ? 'run' : 'walk';
@@ -11275,17 +11297,17 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
             if (fleeing) {
                 an.fleeTimer -= dt;
-                an.x += an.vx * dt;
-                an.y += an.vy * dt;
+                // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 位置一律按**锁定的方向**推进：
+                //    不再用 `vx/vy`（顶边滑走那支会改它），也绝不被本帧新靠近的士兵改向。
+                const fd = Math.hypot(an.fleeDX, an.fleeDY) || 1;
+                const spd0 = Math.hypot(an.vx, an.vy) || de.run;
+                an.x += (an.fleeDX / fd) * spd0 * dt;
+                an.y += (an.fleeDY / fd) * spd0 * dt;
                 // 🔴 [2026-10-13 主人令「A 方案」] 猎物与危险野生动物不再回窝：窝跟着它走，逃到哪停在哪、就在那儿吃草（原先逃完又走回士兵堆里再逃，被拴在出生点）
-                if (de.kind === 'prey' || de.kind === 'danger') { an.homeX = an.x; an.homeY = an.y; }
-                // 家畜只让开一小段：超出活动半径就往回走
-                if (de.kind === 'livestock' && Math.hypot(an.x - an.homeX, an.y - an.homeY) > HOME_LEASH) {
-                    const bx = an.homeX - an.x, by = an.homeY - an.y, bd = Math.hypot(bx, by) || 1;
-                    an.x += (bx / bd) * de.walk * dt;
-                    an.y += (by / bd) * de.walk * dt;
-                }
-                an.dir = this.dir8(an.vx, an.vy);
+                // 🔴 [2026-10-13 主人令「羊被卡在军团中间也要一口气跑远」] **家畜一并纳入**：羊/牛/猪/鸡受惊同样一口气跑远，
+                //    逃到哪就在那儿吃草 —— 原先那条「离家 100px 就边逃边被拽回」是它跑不远、来回折返的根，已删（见下）。
+                if (de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') { an.homeX = an.x; an.homeY = an.y; }
+                an.dir = this.dir8(an.fleeDX, an.fleeDY);
                 if (an.fleeTimer <= 0) {
                     an.wanderX = an.x;
                     an.wanderY = an.y;
@@ -11350,9 +11372,11 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             }
 
             // 逃到图边被夹住时沿边滑走（原先顶在边上不动、等着被追上）
+            // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 滑走也必须落在**锁定的方向**上（位置推进只认 fleeDX/fleeDY），
+            //    所以这里改的是锁定向量而不是 vx/vy；转向后仍然是一路直跑，不做折返。
             if (fleeing && de.kind === 'prey') {
-                if (an.x <= X0 || an.x >= X1) { an.vy = (an.vy >= 0 ? 1 : -1) * Math.hypot(an.vx, an.vy); an.vx = 0; }
-                else if (an.y <= Y0 || an.y >= Y1) { an.vx = (an.vx >= 0 ? 1 : -1) * Math.hypot(an.vx, an.vy); an.vy = 0; }
+                if (an.x <= X0 || an.x >= X1) { an.fleeDX = 0; an.fleeDY = an.fleeDY >= 0 ? 1 : -1; }
+                else if (an.y <= Y0 || an.y >= Y1) { an.fleeDX = an.fleeDX >= 0 ? 1 : -1; an.fleeDY = 0; }
             }
             an.x = Math.max(X0, Math.min(X1, an.x));
             an.y = Math.max(Y0, Math.min(Y1, an.y));
