@@ -8,6 +8,8 @@
 import { LegionPhalanxDrawer } from '../legion/LegionPhalanxDrawer';
 import { SpriteTinter } from '../../systems/tinting/SpriteTinter';
 import { moveClassForHeroKey } from '../../player/PlayerConfig';
+import { WAR_TYPES } from '../../data/WarTypes';
+import { SPRITE_BASE_H } from '../../config/LegionSpacing';
 
 type AnimState = 'IDLE' | 'MOVE' | 'ATTACK';
 
@@ -71,11 +73,16 @@ export class HeroSpriteDrawer {
         const fh = dynDir ? dynDir.fh : raw.naturalHeight;
 
         // 2. 中层绘制人马精灵（踩在光环之上）
+        // 🔴 [2026-10-13 主人报「战略地图玩家和其他兵种大小比例不一致」] 精灵尺寸改走军团同一条公式
+        //    （LegionPhalanxDrawer：SPRITE_BASE_H(68) × 地图倍率 × WAR_TYPES.sz / 64）。
+        //    原先写死 66 且不乘 sz ⇒ 战象(sz 0.55~0.8)/骑兵(sz 1.15~1.2)等 sz≠1 的玩家兵模与同兵种军团大小不同。
+        //    名牌/光环仍用 BASE_H，不动。
+        const unitScale = scale * (WAR_TYPES[key]?.sz ?? 1);
         if (dynDir) {
-            const s = this.BASE_H * scale / 64;
+            const s = SPRITE_BASE_H * unitScale / 64;
             ctx.drawImage(img, fr * fw, 0, fw, fh, center.x - dynDir.hx * s, center.y - dynDir.hy * s, fw * s, fh * s);
         } else {
-            const h = this.BASE_H * scale;
+            const h = SPRITE_BASE_H * unitScale;
             const w = h * (fw / fh);
             ctx.drawImage(img, fr * fw, 0, fw, fh, center.x - w / 2, center.y - h * 0.9, w, h);
         }
