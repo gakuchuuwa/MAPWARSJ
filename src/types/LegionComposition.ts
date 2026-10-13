@@ -138,17 +138,18 @@ export function getEffectiveSlotScale(slot: { type: string; scale?: number }): n
  * 验收：`npx tsx scratch/_verify_unit_size_parity.mts`（逐兵种拿真 `_meta.json` 复核本表）。
  */
 const CHARIOT_FIT_SCALE: Record<string, number> = {
-    war_chariot: 0.97,
-    elite_war_chariot: 0.99,
-    war_chariot_ranged: 0.70,
-    war_wagon: 0.80,
-    elite_war_wagon: 0.70,
-    ratha_melee: 0.99,
-    ratha_ranged: 0.99,
-    elite_ratha_melee: 0.99,
-    elite_ratha_ranged: 0.99,
-    hussite_wagon: 0.83,
-    elite_hussite_wagon: 0.83,
+    // 🔴 [2026-10-13 主人令「战略、战术全部 1.0，完全按 DE 的方式」] 战车「阵型适配」压缩比例全部取消，一律 1.0。
+    war_chariot: 1.0,
+    elite_war_chariot: 1.0,
+    war_chariot_ranged: 1.0,
+    war_wagon: 1.0,
+    elite_war_wagon: 1.0,
+    ratha_melee: 1.0,
+    ratha_ranged: 1.0,
+    elite_ratha_melee: 1.0,
+    elite_ratha_ranged: 1.0,
+    hussite_wagon: 1.0,
+    elite_hussite_wagon: 1.0,
 };
 
 /** 兵种默认比例：战车类＝阵型适配值（上表），其余一律 1.0。 */

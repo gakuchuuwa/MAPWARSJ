@@ -154,12 +154,12 @@ void main() {
   float n2 = snoise(vGUV * 0.50);
   float wPerturb = field.r + n1 * 0.038 + n2 * 0.014;
   
-  // 水体圆滑宽幅渐变判定（从干沙 → 湿滩 → 半透明浅水 → 深水河心连续柔和过渡）
-  float isWater = smoothstep(0.35, 0.56, wPerturb);
-  float isDeepWater = smoothstep(0.50, 0.78, wPerturb);
+  // 水体判定：清晰而蜿蜒的自然水际线（DE 风格，消除软喷枪涂抹感）
+  float isWater = smoothstep(0.42, 0.48, wPerturb);
+  float isDeepWater = smoothstep(0.56, 0.82, wPerturb);
   
   // 沙滩判定（近岸浅滩与干沙）
-  float isSand = clamp(field.g * 1.45 + smoothstep(0.24, 0.48, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
+  float isSand = clamp(field.g * 1.45 + smoothstep(0.22, 0.46, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
   // 森林有机扰动：低频圆滑自然树林边缘与专属林下落叶底床（DE 原版：树下铺满落叶泥土）
   float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8));
   float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5));
@@ -198,16 +198,17 @@ void main() {
   // 6. 森林底土与落叶垫底（树林下铺满专属落叶腐殖土）
   landCol = mix(landCol, colForest, isForest);
   
-  // 7. 水际沙滩与湿滩过渡
+  // 7. 水际沙滩与退潮湿沙带过渡（DE 经典海滩湿沙）
   landCol = mix(landCol, colSand, smoothstep(0.10, 0.65, isSand));
-  // 近水湿润河滩：岸边沙土向水际自然加深润泽，衔接浅水河床无断层
-  float wetShore = smoothstep(0.28, 0.48, wPerturb);
-  vec3 riverbedCol = colSand * vec3(0.84, 0.80, 0.72);
-  landCol = mix(landCol, riverbedCol, wetShore * 0.65);
+  // 退潮湿沙带：近水际沙土受潮汐润泽，颜色加深呈润泽暗黄色
+  float wetShore = smoothstep(0.32, 0.46, wPerturb);
+  vec3 wetSandCol = colSand * vec3(0.72, 0.66, 0.56);
+  vec3 riverbedCol = colSand * vec3(0.85, 0.81, 0.72);
+  landCol = mix(landCol, wetSandCol, wetShore * 0.75);
   
   // ── 水体与冬季冰面渲染（保留气候水体贴图本色 + 深浅渐变 + 冰面静止质感） ──
   vec3 waterCol;
-  float waterDepthMix = smoothstep(0.36, 0.62, wPerturb);
+  float waterDepthMix = smoothstep(0.42, 0.72, wPerturb);
   if (uIsIce > 0.5) {
     // 冬季封冻冰面：静止无流动波浪，保留 ic2/ice 冰层纹理与岸边霜雪柔和过渡
     vec3 iceTex1 = texture2D(uWaterTex, texUV).rgb;
@@ -228,13 +229,28 @@ void main() {
     vec3 shallowBody = clamp(rawWater * (liftScale * 1.12) + vec3(0.04, 0.08, 0.08), 0.0, 1.0);
     vec3 deepBody = clamp(rawWater * (liftScale * 0.92), 0.0, 1.0);
     vec3 waterBody = mix(shallowBody, deepBody, isDeepWater);
-    waterCol = mix(riverbedCol, waterBody, 0.25 + waterDepthMix * 0.75);
 
-    // 岸边柔和微浪晕染（宽幅柔化，不描硬白线）
-    float shoreBand = smoothstep(0.40, 0.47, wPerturb) * (1.0 - smoothstep(0.47, 0.56, wPerturb));
-    float waveBreath = sin(uTime * 1.8 + (vGUV.x + vGUV.y) * 0.35) * 0.5 + 0.5;
-    float foam = shoreBand * (0.20 + 0.35 * waveBreath);
-    waterCol = mix(waterCol, vec3(0.94, 0.97, 1.0), foam * 0.42);
+    // 水体通透度层次（DE 风格：近岸浅滩清澈见底，透出水下沙床；向外海逐渐深沉）
+    vec3 shallowTintedBed = mix(riverbedCol, shallowBody, 0.35);
+    waterCol = mix(shallowTintedBed, waterBody, waterDepthMix);
+
+    // 水面微澜高光（阳光波光粼粼）
+    vec2 ripUV = vGUV * 0.6;
+    float rip1 = sin(ripUV.x * 2.5 + ripUV.y * 1.2 + uTime * 2.0);
+    float rip2 = cos(ripUV.x * 1.5 - ripUV.y * 2.8 - uTime * 1.6);
+    float shimmer = pow(clamp(rip1 * rip2 * 0.5 + 0.5, 0.0, 1.0), 5.0) * (1.0 - isDeepWater * 0.4);
+    waterCol += vec3(0.12, 0.16, 0.20) * shimmer;
+
+    // 岸边动态拍岸涌浪与碎浪泡沫（DE 标志性动态浪花，随潮汐向沙滩推涌）
+    float waveTide = sin(uTime * 1.6 + (vGUV.x * 0.4 + vGUV.y * 0.8) * 0.15) * 0.025;
+    float waveFront = 0.435 + waveTide;
+    float surgeDist = abs(wPerturb - waveFront);
+    float waveSurge = smoothstep(0.035, 0.005, surgeDist);
+    float foamNoise = snoise(vGUV * 2.2 + vec2(uTime * 0.3, -uTime * 0.15));
+    float shoreFoam = waveSurge * clamp(0.65 + 0.55 * foamNoise, 0.0, 1.2);
+    float shoreLine = smoothstep(0.42, 0.45, wPerturb) * (1.0 - smoothstep(0.45, 0.48, wPerturb)) * (0.35 + 0.25 * foamNoise);
+    float totalFoam = clamp(shoreFoam + shoreLine, 0.0, 1.0);
+    waterCol = mix(waterCol, vec3(0.96, 0.98, 1.0), totalFoam * 0.85);
   }
   
   // 最终合成与 DE 原生高程坡度光照

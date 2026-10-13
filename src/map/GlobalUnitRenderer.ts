@@ -2591,7 +2591,7 @@ export class GlobalUnitRenderer {
                 LegionFlagDrawer.drawPole(
                     ctx,
                     flagAt,
-                    useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
+                    scale * (unit.previewScale ?? 1),   // 🔴 [2026-10-13 主人令] 海上军团不再额外乘 0.85，船与陆军同一基准（1.0）
                     unit.factionId || 'panjun',
                     flagPoleRatio,
                 );
@@ -2759,7 +2759,7 @@ export class GlobalUnitRenderer {
                     ctx,
                     flagAt,
                     directionIndex,
-                    useNavalVisual ? scale * (unit.previewScale ?? 1) * 0.85 : scale * (unit.previewScale ?? 1),
+                    scale * (unit.previewScale ?? 1),   // 🔴 [2026-10-13 主人令] 海上军团不再额外乘 0.85，船与陆军同一基准（1.0）
                     Date.now(),
                     unit.factionId || 'panjun',
                     currentYear, // [NEW] Pass year
