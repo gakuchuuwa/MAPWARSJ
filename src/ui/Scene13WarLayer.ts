@@ -2991,6 +2991,9 @@ interface WarMan {
     /** 上一帧位置（算真实位移用，见 stuckT） */
     prevX: number;
     prevY: number;
+    /** 🔴 [2026-10-13] 本帧真实位移的 max(|Δx|,|Δy|)（step 末尾结算；渲染层判「本帧真的没动」用）。
+     *  不能在渲染层拿 prevX 比：step 末尾已把 prevX 写成当前位置，那样比出来恒为 0。 */
+    stepMax?: number;
     /**
      * 净位移锚点 + 计时（见 NET_STUCK_WINDOW）。
      * 单帧位移只能识别「被堵得完全不动」；被推挤来回震荡时**每帧位移并不小**（推开又被推回），
@@ -3271,90 +3274,81 @@ interface AnimalDe {
 }
 
 /**
- * DE 动物数据表（唯一口径：本机 aoE2DE `empires2_x2_p1.dat` 实测，抽取脚本 `scratch/extract_de_animals.py`）
- * 列 = 物种 / 类别 / DE 步行速度(格/秒) / DE 血量 / DE 近战攻击(0 = 不咬人) / DE 视野(格) / 素材动作
- *
- * 换算 = 本仓唯一那把尺：**1 格 = 40px**（与 `scratch/de_los_map.json` 的 `los_g 4.0 → los_px 160`、
- * `WarTypes` 长矛兵 `spd 40` = DE 1.0 格/秒 同一把尺）。
- * · 步行 = DE `speed` 实测；逃跑 DE 未单列字段 → 猎物按鹿实测 0.737→1.4（×1.9）、猛兽按狼 0.7→1.05（×1.5）。
- * · 视野 = DE `line_of_sight`（鹿 2 格 / 狼 12 格 / 家畜 3 格）。
- * 类别：
- *   prey     胆小猎物 —— 见任何单位就逃；不被追就回窝（DE：胆小猎物回出生点）。
- *   danger   危险猎物 —— 不逃；DE 里被攻击才反击（野猪/犀牛/貘/战象/麋），战术模式没有猎杀故只闲逛。
- *   predator 猛兽 —— 主动扑人（狼/熊/狮/虎/豹/鳄/蛇/科莫多）。
- *   livestock 家畜 —— 不惊、只是慢慢让开（DE：家畜是被人接管，出生在 TC 旁）。
- *   bird     飞鸟 —— fly 巡航 + hover 定点盘旋。
+ * 战术地图动物数据表（全面提速修复：符合野生动物真实生理机能与战场节奏）
+ * 列 = 物种 / 类别 / 走速(px/s) / 跑速(px/s) / 血量 / 近战攻击 / 视野(格) / 动作
  */
-const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, number, number, number, readonly AnimalAction[]]> = [
-    // ── 胆小猎物（DE class 9 / 65）──
-    ['DEER', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['OSTRICH', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['GAZELLE', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['IBEX', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['MOUFLON', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['RHEA', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.flee],
-    ['HORSE', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.graze],       // HORSW 野马（class 9）；素材只有 idle/walk
-    ['ALPACA', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.graze],      // WALPACA 野羊驼（class 9）
-    ['MONKEY', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.beastSlow],  // WMONKEY；素材无 run
-    ['ARGALI', 'prey', 0.737, 5, 0, 2, ANIMAL_ACTS.still],      // 素材只有 idle
-    ['TURKEY', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.graze],       // PHEASANT 野鸡：不弃窝（DE unpushable）
-    ['HARE_BROWN', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
-    ['HARE_GREY', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
-    ['HARE_ARCTIC', 'prey', 0.25, 3, 0, 2, ANIMAL_ACTS.flee],
-    ['FOX_RED', 'prey', 0.5, 3, 0, 2, ANIMAL_ACTS.beast],
-    ['FOX_ARCTIC', 'prey', 0.5, 3, 0, 2, ANIMAL_ACTS.beast],
-    // ── 危险猎物（DE class 10，被惹才反击）：不逃 ──
-    ['BOAR', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
-    ['RHINO', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
-    ['TAPIR', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
-    ['ELEPHANT', 'danger', 0.8, 75, 7, 4, ANIMAL_ACTS.beast],
-    // ⚠️ 地图里的 `ELK`（DE 危险猎物）没有独立素材，别名表把它当 `DEER` 画（见 Scene13GroundLayerGL 的 ELK 行）
-    //    ⇒ 运行时物种名就是 DEER，按胆小猎物走。要让它按 DE 的麋（hp75/atk5/不逃）走，得先有麋的素材。
-    // ── 猛兽（DE class 10，主动扑人）──
-    ['WOLF', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['WOLF_ARABIAN', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['WOLF_ARCTIC', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['LION', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['TIGER', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['BLACK_PANTHER', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['JAGUAR', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['SNOWLEOPARD', 'predator', 0.7, 25, 3, 12, ANIMAL_ACTS.beast],
-    ['BEAR', 'predator', 0.59, 30, 3, 10, ANIMAL_ACTS.beast],
-    ['BEAR_BLACK', 'predator', 0.59, 25, 3, 10, ANIMAL_ACTS.beast],
-    ['BEAR_POLAR', 'predator', 0.59, 30, 4, 10, ANIMAL_ACTS.beast],
-    ['CROCODILE', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
-    ['CAIMAN', 'predator', 0.59, 20, 2, 12, ANIMAL_ACTS.beastSlow],
-    ['KOMODO', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
-    ['SNAKE_GROUND', 'predator', 0.59, 25, 3, 12, ANIMAL_ACTS.beastSlow],
-    // ── 家畜（DE class 58 / 61 / 38）：不被惊，只是慢慢让开 ──
-    ['SHEEP', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['GOAT', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['PIG', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['GOOSE', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['LLAMA', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['CAPYBARA', 'livestock', 0.7, 7, 0, 3, ANIMAL_ACTS.graze],
-    ['COW_BROWN', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
-    ['COW_BLACK', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
-    ['COW_BW', 'livestock', 0.65, 14, 0, 3, ANIMAL_ACTS.graze],
-    ['CHICKEN', 'livestock', 0.75, 5, 0, 3, ANIMAL_ACTS.graze],
-    ['CAMEL', 'livestock', 1.2, 50, 0, 4, ANIMAL_ACTS.graze],
-    ['DROMEDARY', 'livestock', 1.2, 50, 0, 4, ANIMAL_ACTS.graze],
-    // ── 飞鸟（DE class 11）──
-    ['FALCON', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['HAWK', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['OWL', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['STORK', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['CRANE', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['VULTURE', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['FLAMINGO', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['CONDOR', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
-    ['MACAW', 'bird', 1.32, 1, 0, 7, ANIMAL_ACTS.bird],
+const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, number, number, number, number, readonly AnimalAction[]]> = [
+    // ── 胆小猎物（飞速狂奔逃窜，80~105 px/s，明显快于重骑兵 60 px/s）──
+    ['GAZELLE', 'prey', 35, 105, 5, 0, 3, ANIMAL_ACTS.flee],       // 瞪羚（时速80km草原飞毛腿）
+    ['HORSE', 'prey', 35, 95, 5, 0, 3, ANIMAL_ACTS.graze],         // 野马（无负重疾驰狂奔）
+    ['DEER', 'prey', 32, 90, 5, 0, 3, ANIMAL_ACTS.flee],          // 鹿（飞跃大步狂奔）
+    ['OSTRICH', 'prey', 35, 95, 5, 0, 3, ANIMAL_ACTS.flee],        // 鸵鸟（双足疾驰）
+    ['RHEA', 'prey', 32, 85, 5, 0, 3, ANIMAL_ACTS.flee],           // 美洲鸵
+    ['IBEX', 'prey', 30, 80, 5, 0, 3, ANIMAL_ACTS.flee],           // 北山羊（岩壁跳跃奔逃）
+    ['MOUFLON', 'prey', 30, 75, 5, 0, 3, ANIMAL_ACTS.flee],        // 欧洲盘羊
+    ['ARGALI', 'prey', 30, 75, 5, 0, 3, ANIMAL_ACTS.still],        // 盘羊
+    ['ALPACA', 'prey', 28, 70, 5, 0, 3, ANIMAL_ACTS.graze],        // 野羊驼
+    ['MONKEY', 'prey', 30, 65, 5, 0, 3, ANIMAL_ACTS.beastSlow],    // 猴子
+    ['HARE_BROWN', 'prey', 25, 85, 3, 0, 3, ANIMAL_ACTS.flee],    // 棕野兔（如离弦之箭般飞窜）
+    ['HARE_GREY', 'prey', 25, 85, 3, 0, 3, ANIMAL_ACTS.flee],     // 灰兔
+    ['HARE_ARCTIC', 'prey', 25, 85, 3, 0, 3, ANIMAL_ACTS.flee],   // 北极兔
+    ['FOX_RED', 'prey', 30, 80, 3, 0, 3, ANIMAL_ACTS.beast],       // 赤狐（机敏疾奔窜逃）
+    ['FOX_ARCTIC', 'prey', 30, 80, 3, 0, 3, ANIMAL_ACTS.beast],    // 北极狐
+    ['TURKEY', 'prey', 20, 50, 3, 0, 2, ANIMAL_ACTS.graze],        // 野鸡
+
+    // ── 危险猎物（受惊冲刺脱离，65~75 px/s）──
+    ['BOAR', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],       // 野猪（凶猛冲撞脱离）
+    ['RHINO', 'danger', 30, 70, 75, 7, 4, ANIMAL_ACTS.beast],      // 犀牛（厚重冲刺）
+    ['ELEPHANT', 'danger', 30, 65, 75, 7, 4, ANIMAL_ACTS.beast],   // 大象（践踏狂奔）
+    ['TAPIR', 'danger', 28, 65, 75, 7, 4, ANIMAL_ACTS.beast],      // 貘
+
+    // ── 猛兽（极速扑杀与追击，80~95 px/s，飞扑爆发力）──
+    ['BLACK_PANTHER', 'predator', 35, 95, 25, 3, 12, ANIMAL_ACTS.beast], // 黑豹（爆发力之王）
+    ['JAGUAR', 'predator', 35, 95, 25, 3, 12, ANIMAL_ACTS.beast],        // 美洲豹
+    ['SNOWLEOPARD', 'predator', 35, 95, 25, 3, 12, ANIMAL_ACTS.beast],   // 雪豹
+    ['LION', 'predator', 35, 90, 25, 3, 12, ANIMAL_ACTS.beast],          // 狮子（飞扑冲刺）
+    ['TIGER', 'predator', 35, 90, 25, 3, 12, ANIMAL_ACTS.beast],         // 老虎
+    ['WOLF', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],          // 狼（迅猛扑杀）
+    ['WOLF_ARABIAN', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],  // 阿拉伯狼
+    ['WOLF_ARCTIC', 'predator', 32, 85, 25, 3, 12, ANIMAL_ACTS.beast],   // 北极狼
+    ['BEAR', 'predator', 28, 68, 30, 3, 10, ANIMAL_ACTS.beast],          // 棕熊（重型突进）
+    ['BEAR_BLACK', 'predator', 28, 68, 25, 3, 10, ANIMAL_ACTS.beast],    // 黑熊
+    ['BEAR_POLAR', 'predator', 28, 68, 30, 4, 10, ANIMAL_ACTS.beast],    // 北极熊
+    ['CROCODILE', 'predator', 24, 55, 25, 3, 12, ANIMAL_ACTS.beastSlow], // 鳄鱼（短程扑咬）
+    ['CAIMAN', 'predator', 24, 55, 20, 2, 12, ANIMAL_ACTS.beastSlow],    // 凯门鳄
+    ['KOMODO', 'predator', 26, 58, 25, 3, 12, ANIMAL_ACTS.beastSlow],    // 科莫多巨蜥
+    ['SNAKE_GROUND', 'predator', 24, 50, 25, 3, 12, ANIMAL_ACTS.beastSlow], // 地蟒
+
+    // ── 家畜（受惊小跑脱离人群，45~65 px/s）──
+    ['CAMEL', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze],     // 骆驼
+    ['DROMEDARY', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze], // 单峰驼
+    ['COW_BROWN', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黄牛
+    ['COW_BLACK', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黑牛
+    ['COW_BW', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze],    // 花斑牛
+    ['SHEEP', 'livestock', 25, 48, 7, 0, 3, ANIMAL_ACTS.graze],      // 绵羊
+    ['GOAT', 'livestock', 25, 48, 7, 0, 3, ANIMAL_ACTS.graze],       // 山羊
+    ['PIG', 'livestock', 25, 48, 7, 0, 3, ANIMAL_ACTS.graze],        // 猪
+    ['LLAMA', 'livestock', 25, 50, 7, 0, 3, ANIMAL_ACTS.graze],      // 羊驼
+    ['CAPYBARA', 'livestock', 24, 45, 7, 0, 3, ANIMAL_ACTS.graze],   // 水豚
+    ['GOOSE', 'livestock', 20, 42, 7, 0, 3, ANIMAL_ACTS.graze],      // 鹅
+    ['CHICKEN', 'livestock', 20, 42, 5, 0, 3, ANIMAL_ACTS.graze],    // 鸡
+
+    // ── 飞鸟（空中巡航）──
+    ['FALCON', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['HAWK', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['OWL', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['STORK', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['CRANE', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['VULTURE', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['FLAMINGO', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['CONDOR', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
+    ['MACAW', 'bird', 53, 53, 1, 0, 7, ANIMAL_ACTS.bird],
 ];
 
-/** 表展开成查表（速度 px/s = DE 格/秒 × 40；逃跑倍率见上表说明） */
+/** 表展开成查表 */
 const ANIMAL_DE: Record<string, AnimalDe> = {};
-for (const [sp, kind, spd, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
-    ANIMAL_DE[sp] = { kind, walk: spd * 40, run: spd * (kind === 'predator' ? 1.5 : 1.9) * 40, los: los * 40, hp, atk, reload: 2.0, acts };
+for (const [sp, kind, walk, run, hp, atk, los, acts] of ANIMAL_DE_TABLE) {
+    ANIMAL_DE[sp] = { kind, walk, run, los: los * 40, hp, atk, reload: 2.0, acts };
 }
 
 /**
@@ -3396,7 +3390,7 @@ function animalNativeAt(species: string, lat: number | undefined, lng: number | 
 
 /** 表里没有的物种（以后地图新增）按 DE 最常见的胆小猎物走，不许崩 */
 function animalDeOf(species: string): AnimalDe {
-    return ANIMAL_DE[species] ?? { kind: 'prey', walk: 0.737 * 40, run: 1.4 * 40, los: 80, hp: 5, atk: 0, reload: 2.0, acts: ANIMAL_ACTS.flee };
+    return ANIMAL_DE[species] ?? { kind: 'prey', walk: 32, run: 90, los: 120, hp: 5, atk: 0, reload: 2.0, acts: ANIMAL_ACTS.flee };
 }
 
 /** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
@@ -4102,7 +4096,12 @@ export class Scene13WarLayer {
 
         const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
-        const heroDep = -10;
+        // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」] 原写死 -10 ⇒ 玩家格子嵌在本队第一排身体里
+        //    （两人最小间距＝半径之和：虎骑+战象 10+18=28、步兵+步兵 8+8=16，都大于 10）。
+        //    列阵推进一结束推挤生效：身后的兵把他往前推、归队又把他拉回格子 ⇒ 朝向前后来回翻、一顿一冲，
+        //    镜头跟着他 ⇒ 整队看着在晃（真机 scratch/_probe_tremble_v11.mjs：300 帧朝向 A→B→A 14 次）。
+        //    现取「两人半径之和 + 2px」：站在第一排正前方、不与任何人重叠。
+        const heroDep = -(this.radiusOf(setup.heroKey) + this.radiusOf(heroPort.key) + 2);
         const uFwd = this.advanceVec[f]; const hx = heroPort.x - uFwd.x * heroDep;
         const hy = heroPort.y - uFwd.y * heroDep;
         const fadeDur = DEPLOY_FADE;
@@ -8706,6 +8705,10 @@ export class Scene13WarLayer {
             // 两个兵的最小间距 = 各自占地半径之和（DE 同款）。象兵/攻城器械因此真的占地方，
             // 挤不进去的兵沿接触面铺开 —— 弧形阵面就是这么长出来的。
             const rm = this.radiusOf(m.key);
+            // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」] 玩家跟队时不吃**本队队友**的推挤（同上面「站定队员清零」那条先例）：
+            //    大体型队（战象格距 30 < 两象间距 36）方阵被自身推挤撑开，第一排顶到玩家身上 ⇒ 被推前、归队拉回、转身朝后。
+            //    只在「无敌 + 不在列阵推进 + 无点地面令 + 本队有锚点」时生效；别队与敌兵照常推他，交战照旧。
+            const heroFollow = m.hero === true && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane);
             let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
             for (let gx = cx - 1; gx <= cx + 1 && seen < 6; gx++) {
                 for (let gy = cy - 1; gy <= cy + 1 && seen < 6; gy++) {
@@ -8714,6 +8717,7 @@ export class Scene13WarLayer {
                     for (let i = 0; i < a.length && seen < 6; i++) {
                         const o = a[i];
                         if (o === m || o.hp <= 0) continue;
+                        if (heroFollow && o.lane === m.lane) continue;
                         const dx = m.x - o.x, dy = m.y - o.y;
                         const dd = dx * dx + dy * dy;
                         const gap = rm + this.radiusOf(o.key);      // 这一对的最小间距
@@ -10122,7 +10126,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    ⚠️ 绝不用实时坐标：实时坐标每帧都在动，那样算出来的"中心"会带着全队一起抖 ——
         //       2026-10-03 刚修完「锚点抖 → 全队跟着抖」那一整条链（见 LANE_TRACK_EPS 与 _probe_tremble_trace.mjs）。
         //    ⚠️ 玩家本人永不担任锚点：他是被锚定的一方（绑到本队），不能反过来当锚点把整队拖在身后；
-        //       他 dep=-10、slotY=0 离阵列中心也近，所以这条排除必须留着。
+        //       他 slotY=0、站在本队第一排正前方（dep = −(两人占地半径之和 + 2)，见 start 里 heroDep）离阵列中心也近，所以这条排除必须留着。
         const laneLeaders = new Map<number, WarMan>();
         const laneLeaderScore = new Map<number, number>();
         for (const m of this.men) {
@@ -10974,10 +10978,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (deploying || m.march) {
                 m.stuckT = 0;
                 m.netT = 0;
+                m.stepMax = 0;
                 m.prevX = m.x; m.prevY = m.y;
                 continue;
             }
             const dx = m.x - m.prevX, dy = m.y - m.prevY;
+            m.stepMax = Math.max(Math.abs(dx), Math.abs(dy));
             const spd = this.statsFor(m.key, m.f).spd || 0;
             const want = spd * dt;
             // ① 单帧判定：被前面的人堵死、位移≈0（响应快，原逻辑不动）
@@ -11261,10 +11267,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 // ① 正在逃跑中：保持锁定的既定速度与朝向闭眼跑完，绝不被周围其他士兵拉扯方向
                 fleeing = true;
                 want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
-            } else if ((de.kind === 'prey' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'prey' ? Math.max(de.los, 220) : de.los)) {
-                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长
-                an.fleeTimer = de.kind === 'prey' ? 5.0 : 1.5;   // 跑 5 秒（约 300px）远离人群
-                const fleeSpd = de.kind === 'prey' ? de.run : de.walk;
+            } else if ((de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'livestock' ? de.los : Math.max(de.los, 220))) {
+                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（均以 de.run 高速奔跑脱离）
+                an.fleeTimer = (de.kind === 'prey' || de.kind === 'danger') ? 5.0 : 2.0;   // 跑 2~5 秒高速脱离人群
+                const fleeSpd = de.run;
                 const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
                 an.vx = (dx / d) * fleeSpd;
                 an.vy = (dy / d) * fleeSpd;
@@ -11277,8 +11283,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 an.fleeTimer -= dt;
                 an.x += an.vx * dt;
                 an.y += an.vy * dt;
-                // 🔴 [2026-10-13 主人令「A 方案」] 猎物不再回窝：窝跟着它走，逃到哪停在哪、就在那儿吃草（原先逃完又走回士兵堆里再逃，被拴在出生点）
-                if (de.kind === 'prey') { an.homeX = an.x; an.homeY = an.y; }
+                // 🔴 [2026-10-13 主人令「A 方案」] 猎物与危险野生动物不再回窝：窝跟着它走，逃到哪停在哪、就在那儿吃草（原先逃完又走回士兵堆里再逃，被拴在出生点）
+                if (de.kind === 'prey' || de.kind === 'danger') { an.homeX = an.x; an.homeY = an.y; }
                 // 家畜只让开一小段：超出活动半径就往回走
                 if (de.kind === 'livestock' && Math.hypot(an.x - an.homeX, an.y - an.homeY) > HOME_LEASH) {
                     const bx = an.homeX - an.x, by = an.homeY - an.y, bd = Math.hypot(bx, by) || 1;
@@ -11767,9 +11773,11 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             // 🔴 [2026-10-11 主人报「移动时贴图滑步、没有移动动作」] 原来只看 m.stuckT > STUCK_IDLE_SEC 就播 idle，
             //    而 stuckT 是**部署期待命期间**累起来的 ⇒ 一开拔位移已发生、渲染却继续选 idle = 滑步
             //    （塌墙函数里那条注释正是描述这个现象）。现在**再加一条「本帧真的没动」**才许播 idle：
-            //    |Δx|<0.5 且 |Δy|<0.5（prevX/prevY 是上一帧位置）⇒ 移动中永远播走路帧。
+            //    |Δx|<0.5 且 |Δy|<0.5 ⇒ 移动中永远播走路帧。
+            //    🔴 [2026-10-13] 这条判据此前**恒成立**：step 末尾结算卡住时已把 prevX/prevY 写成当前位置，
+            //    渲染层再拿 m.x - m.prevX 比恒为 0（真机实测 1%~4% 的移动帧误播待命）。改读 step 结算好的 m.stepMax。
             else if (!m.march && m.stuckT > STUCK_IDLE_SEC
-                && Math.abs(m.x - (m.prevX ?? m.x)) < 0.5 && Math.abs(m.y - (m.prevY ?? m.y)) < 0.5
+                && (m.stepMax ?? 0) < 0.5
                 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
