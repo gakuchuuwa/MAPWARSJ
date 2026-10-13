@@ -440,6 +440,9 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
 
     }
 
+    // 🔴 [2026-10-14 诊断用] 出生表快照（只读，不影响仿真）
+    if (opts.__debug) opts.__debug.spawns = spawns.map((s) => ({ f: s.f, key: s.key, x: s.x, y: s.y, pool: s.pool, wing: s.wing }));
+
     let men = [];
 
     const deaths = [];
@@ -879,6 +882,11 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
         if (laneLeader) for (const m of men) {
             if (m.hp <= 0 || !m.sp) continue;
             if (!laneLeader.has(m.sp)) laneLeader.set(m.sp, m);
+        }
+
+        // 🔴 [2026-10-14 诊断用] 出兵后、开打前的 men 快照（只读，只记首帧，不影响仿真）
+        if (opts.__debug && opts.__debug.men.length === 0) {
+            opts.__debug.men = men.map((m) => ({ f: m.f, key: m.key, x: m.x, y: m.y, hp: m.hp, tx: m.tx, ty: m.ty, wing: m.wing }));
         }
 
         // 🔴 [2026-10-14 修·镜像偏袒 第 1/2 项]
@@ -1457,6 +1465,17 @@ function run(keyA, keyB, spritesPerSide, seed = 7, spritesPerSideB = 0, opts = {
 
 
 export { run };   // TYPES 已在文件头 `export const TYPES = WAR_TYPES` 导出（供 tech_ab.mjs 注入变体兵种）
+
+/** 🔴 [2026-10-14 诊断用·只读] 最近一次 run 的初始态快照（出生表 + 首批兵）。
+ *  用途：查「镜像对战左右偏袒」到底是不是初始条件不对称 —— 逐字段比对双方是否严格镜像。
+ *  不影响任何仿真逻辑，仅记录。 */
+export let LAST_DEBUG = null;
+
+export function debugInit(keyA, keyB, spritesPerSide, seed, spritesPerSideB = 0, opts = {}) {
+    LAST_DEBUG = { vw: VW, vh: VH, spawns: [], men: [] };
+    const r = run(keyA, keyB, spritesPerSide, seed, spritesPerSideB, { ...opts, __debug: LAST_DEBUG });
+    return { result: r, debug: LAST_DEBUG };
+}
 
 
 
