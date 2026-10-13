@@ -84,11 +84,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代孟加拉军团', civ: '孟加拉', age: 'antiquity', deStyle: 'INDI', region: 'BENGALIS' as RegionType,
         castleId: 'BENG_CASTLE_AGE3', castleName: '孟加拉 恒河三角洲砖石堡',
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         shipId: 'ANT_ELITE_GALLEY',
         slots: [
-            { type: 'indian_tribesman', count: 4 },
-            { type: 'imperial_skirmisher', count: 3 },
+            { type: 'indian_tribesman', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
             { type: 'elite_ratha_ranged', count: 2 },
         ],
     },
@@ -99,19 +99,19 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'centurion', count: 2 },
+            { type: 'elite_antiquity_skirmisher', count: 2 },
             { type: 'elite_centurion', count: 3 },
         ],
     },
     {
         name: '古典时代阿契美尼德军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         castleId: 'ACHA_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
-        formationMode: 'triangle',
+        formationMode: 'crane_wing',
         shipId: 'HERO_ARTEMISIA',
         slots: [
             { type: 'war_elephant', count: 2 },
-            { type: 'immortal', count: 3 },
             { type: 'elite_immortal', count: 4 },
+            { type: 'immortal_ranged', count: 3 },
         ],
     },
     {
@@ -147,7 +147,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_THEMISTOCLES',
         slots: [
             { type: 'elite_phalangite', count: 4 },
-            { type: 'companion_cavalry', count: 2 },
+            { type: 'phalangite', count: 2 },
             { type: 'elite_companion_cavalry', count: 3 },
         ],
     },
@@ -176,11 +176,11 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代法兰克军团', civ: '法兰克', age: 'feudal', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         shipId: 'MONOREME',
         slots: [
-            { type: 'paladin', count: 2 },
-            { type: 'throwing_axeman', count: 3 },
+            { type: 'paladin', count: 3 },
+            { type: 'paragon', count: 2 },
             { type: 'elite_throwing_axeman', count: 4 },
         ],
     },

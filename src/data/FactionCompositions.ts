@@ -194,8 +194,8 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "mozeer": {
-        legionName: "古典时代罗马禁卫军团",
-        legionType: "sub",
+        legionName: "地中海军团",
+        legionType: "region",
     },
     "didi": {
         legionName: "城堡时代佛兰德军团",
@@ -709,7 +709,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "jiatailuoniya": {
-        legionName: "封建时代拉丁军团",
+        legionName: "封建时代罗马军团",
         legionType: "region",
     },
     "fuguo": {

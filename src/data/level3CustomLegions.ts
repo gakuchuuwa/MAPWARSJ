@@ -108,7 +108,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'echelon',
         slots: [
             { type: 'ekdromos', count: 4 },
-            { type: 'phalangite', count: 3 },
+            { type: 'greek_noble_cavalry', count: 3 },
             { type: 'tarantine_cavalry', count: 2 },
         ],
         regions: ['MAGNA_GRAECIA'],
@@ -258,18 +258,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NABATAEANS'],
         parentLegion: '中东军团',
         shipId: 'BIREME',
-    },
-    {
-        name: '古典时代罗马禁卫军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'equites', count: 4 },
-            { type: 'centurion', count: 2 },
-            { type: 'imperial_centurion', count: 3 },
-        ],
-        regions: ['IMPERIAL_ROME'],
-        parentLegion: '古典时代罗马军团',
-        shipId: 'TRIREME',
     },
     {
         name: '古典时代羌族军团',
@@ -547,16 +535,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CANOE',
     },
     {
-        name: '城堡时代神圣罗马军团',
+        name: '城堡时代罗马军团',
         formationMode: 'echelon',
         slots: [
-            { type: 'cavalier', count: 4 },
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'crossbowman', count: 2 },
+            { type: 'legionary', count: 4 },
+            { type: 'imperial_centurion', count: 3 },
+            { type: 'centurion', count: 2 },
         ],
         regions: ['HRE'],
         parentLegion: '城堡时代条顿军团',
-        shipId: 'ELITE_CARAVEL',
+        shipId: 'HEAVY_LEMBOS',
     },
     {
         name: '城堡时代罗斯军团',
@@ -764,16 +752,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'DEMO_RAFT',
     },
     {
-        name: '封建时代拉丁军团',
+        name: '封建时代罗马军团',
         formationMode: 'echelon',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'greek_noble_cavalry', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'imperial_centurion', count: 3 },
+            { type: 'raider', count: 2 },
         ],
         regions: ['LATIN_FEUDAL'],
         parentLegion: '地中海军团',
-        shipId: 'GALLEY',
+        shipId: 'HEAVY_LEMBOS',
     },
     {
         name: '封建时代斯拉夫军团',
@@ -1506,6 +1494,30 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['VARANGIANS'],
         parentLegion: '城堡时代瓦良格军团',
         shipId: 'ELITE_LONGBOAT',
+    },
+    {
+        name: '古典时代波斯军团',
+        formationMode: 'balance_yoke',
+        slots: [
+            { type: 'immortal', count: 4 },
+            { type: 'immortal_ranged', count: 2 },
+            { type: 'savar', count: 3 },
+        ],
+        regions: [],
+        parentLegion: '波斯军团',
+        shipId: 'BIREME',
+    },
+    {
+        name: '城堡时代巴蜀军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'jian_swordman_unshielded', count: 4 },
+            { type: 'chukonu', count: 3 },
+            { type: 'elite_fire_lancer', count: 2 },
+        ],
+        regions: [],
+        parentLegion: '东亚军团',
+        shipId: 'LOU_CHUAN',
     },
 ];
 
