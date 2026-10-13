@@ -1631,7 +1631,7 @@ export class TerritorySystem {
                 } else if (isBorderOnly) {
                     layer.setStyle({ fillOpacity: 0 });
                 } else if (isStrategic) {
-                    layer.setStyle({ fillOpacity: 0.5 });
+                    layer.setStyle({ fillOpacity: 0.4 });
                 }
             }
 
