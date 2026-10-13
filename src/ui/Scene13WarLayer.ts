@@ -979,7 +979,7 @@ const UNIT_PX = 64;
  *   球心里的人身边全是自己人、65px 内找不到敌人 → 不寻敌、原地打转；两边强弱翼交错时
  *   还会磨成打不完的局（游戏 2026-08-16 已取消 120s 时间限制，打不完 = 引擎一直冻结、军团不动）。
  *
- * 实测（`scratch/war_sim.mjs`，量具已按本文件三处对齐：WING=0 / 敌口筛 pool>0 / 重心兜底）：
+ * 实测（`tools/war_sim.mjs`，量具已按本文件三处对齐：WING=0 / 敌口筛 pool>0 / 重心兜底）：
  *   | 局面（12 或 6 种子）           | 不散开        | 散开 120 |
  *   |--------------------------------|---------------|----------|
  *   | 强弱翼交错（攻上强/守下强）    | **1 局打不完** | 12/12 结束 |
@@ -8903,7 +8903,7 @@ export class Scene13WarLayer {
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
         const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key && !wm.hero
             && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, 0).rng <= 65
-            && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && this.blockedWall(wm) !== null;
+            && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && !this.ringOpen();
         if (span >= 6) {
             for (let i = 0; i < this.men.length; i++) {
                 const o = this.men[i];
@@ -8982,11 +8982,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             }
         }
         if (this.battleType === 'siege' && m.f === 0 && isHero) {
-            if (!manOut) return null;
-        } else if (this.battleType === 'siege' && m.f === 0) {
-            // 🔴 [2026-10-12 主人令「不要让士兵打城墙，只要有兵就去打兵」] 攻方士兵（非攻城武器）不再锁定城墙/建筑，只打兵。
-            // 🔴 [2026-08-23 定] 视野内没有出城迎战的守军 → 返回 null 原地待命——防攻城锤锁到墙内守兵后撞墙蹭。
-            // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 待命期（defenderHolding）已删，本闸只剩「有无出城守军」这一条。
             if (!manOut) return null;
         }
         for (const b of this.wallGates) {
@@ -10238,7 +10233,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             //    ⚠️ DE 本体**没有**「索敌间隔/目标重获延迟」这种字段（已查 empires2_x2_p1.dat：
             //      只有 bird.search_radius 索敌半径、type_50.frame_delay 出手帧延迟、line_of_sight），
             //      所以别拿「DE 也有反应延迟」当理由——那是编的。留着的理由只有一条：实测去掉没收益还有害。
-            //    复现：PROBE=1 [NOGAP=1|2] SEED=<n> node scratch/war_sim.mjs
+            //    复现：PROBE=1 [NOGAP=1|2] SEED=<n> node tools/war_sim.mjs
             m.next -= dt;
             // 🔴 [2026-08-23 修·攻方撞墙蹭] 攻城战攻方锁定的正面 linked 墙/门：打墙不封顶——
             //    DE 攻方人挤人攻墙，墙是长条，separate 软推挤会沿墙铺开不会挤一个点；

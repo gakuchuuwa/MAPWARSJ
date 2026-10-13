@@ -182,7 +182,7 @@ export class BattleField implements IOpeningPulseSink {
      *    测出来的差异比真实情况大三倍（2026-08-19 first pass 就是这么误报成 -26% 的）。
      *    要测就复制 war_sim.mjs 改里面的 kite 值。
      *
-     *    要退回站撸把 Scene13WarLayer + scratch/war_sim.mjs 的 kite 全改回 60（两处必须同步）。
+     *    要退回站撸把 Scene13WarLayer + tools/war_sim.mjs 的 kite 全改回 60（两处必须同步）。
      */
     public getScene13PowerBonus(): { attacker: number; defender: number } {
         const attT = Math.max(1, this.attackerGroup.initialTotalTroops);

@@ -87,9 +87,9 @@ for (const r of rows.filter((r) => r.key in ARCHER_CAVALRY)) {
 }
 
 // ⑤ 量具 war_sim 必须同口径（不同步就会假报，见 war-sim 四条缺腿）
-const SIM = readFileSync('scratch/war_sim.mjs', 'utf8');
+const SIM = readFileSync('tools/war_sim.mjs', 'utf8');
 const simBad = kiteRows(SIM).filter((r) => !(r.key in ARCHER_CAVALRY));
-console.log('\n量具 scratch/war_sim.mjs：');
+console.log('\n量具 tools/war_sim.mjs：');
 if (simBad.length) {
     console.log(`  🔴 这些非弓骑还带着 kite：${simBad.map((r) => r.key).join(', ')}`);
     fail++;
