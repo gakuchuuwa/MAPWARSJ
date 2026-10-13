@@ -815,7 +815,9 @@ export function generateEnvironment(input: Scene13EnvironmentInput): Scene13Envi
         // 地面层四张基底素材：与 baseTerrain 同一份气候主题表，算好一次，渲染层两处共用
         const themeWater = waterTerrainForTheme(theme!, season, input.lat ?? 35, elev, biome, input.lng);
         const gList = Array.isArray(theme?.groundTiles) ? theme.groundTiles : [];
-        const themeDirt = gList.find((t) => /ds|des|rd|mud/i.test(t)) ?? 'ds3';
+        // 🔴 [2026-10-13 修「底图错了」] 原正则含 `rd`：塞伦盖蒂（杰内等萨赫勒/非洲草原）的 groundTiles 第二项是 rd1（**石板路**），
+        //    被当成「泥土层」铺满整张图 ⇒ 满地铺石板。泥土只取 ds/des/mud 开头的素材，rd 是道路不是泥土。
+        const themeDirt = gList.find((t) => /^(ds|des|mud)/i.test(t)) ?? 'ds3';
         const themeDry = gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
             ?? (baseTerrain === 'gr7' ? 'gr3' : 'gr7');
         const groundTiles: Partial<Scene13GroundTiles> = {
