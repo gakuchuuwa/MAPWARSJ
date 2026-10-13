@@ -13,6 +13,7 @@ import { CityManager } from '../world/CityManager';
 import { CITIES_V2 as CITIES } from '../data/cities_v2';
 import { SEA_ROUTE_DATA, SeaRouteFeature } from '../data/VectorSeaRouteData';
 import { IEditor } from '../editors/UnifiedEditorManager';
+import { unwrapLongitudePath } from '../utils/GeoLongitude';
 
 interface SeaNode { id: number; lat: number; lng: number; }
 /** weight = 选路代价（含远洋惩罚）；dist = 真实公里数（显示用，绝不带惩罚） */
@@ -40,6 +41,85 @@ interface SeaEdge { from: number; to: number; weight: number; dist: number; coor
  *    否则面板上显示的航程会是个带系数的假数。
  */
 const OPEN_SEA_PENALTY = 1.5;
+
+/**
+ * 🔴 [2026-10-13 主人问「为什么道路编辑器中有的海路会横穿陆地」，授权全权修复]
+ * 穿陆的来源（实测）：① 航线网 marnet/stitch 的长直边切过岛屿半岛；② 城→航线节点那段接驳直线
+ * 从不查陆地（哈瓦那接到古巴南岸节点，横穿古巴 ~90km）。
+ * 判据：public/world/land-mask-ne10m.png（Natural Earth 1:10m 陆地+湖泊，0.03°/格；tools/build-land-mask.py）。
+ *       world-base.png（≈18.5km/格）会把濑户内海、马尔马拉海、里海当成陆地，不能用。
+ * 🔴 算法与 tools/sea_route_core.py **完全同一套**（批量重生成海路用它），改一边必须改另一边：
+ *   · 边代价 = 公里 ×（marnet 1.5）+ 穿陆公里 × LAND_KM_COST（只加代价不删边：窄海峡在掩膜上可能是陆）
+ *   · 港口接驳（离城最近 PORT_POOL 个节点；接驳线水上部分 ≤ max(LINK_SEA_MAX_KM, 最近接驳点的 1.5 倍)）：
+ *       港口城（出城连续陆地 ≤PORT_LAND_ALLOWANCE_KM、见水后不再上陆）→ 只许水路接驳；
+ *       内陆城/河港 → 陆路段每公里按 INLAND_LAND_FACTOR 计，取总行程最合理的出海口
+ *   · 起点接驳节点全作源点、终点接驳代价作终端代价，一次 Dijkstra 取总代价最小
+ *   · 视线拉直：航线网段两点直线全在水上且 ≤SHORTCUT_MAX_KM 就去掉中间的点（沿岸网绕圈/折返处）
+ */
+const LAND_MASK_PATH = 'world/land-mask-ne10m.png';
+const LAND_KM_COST = 50;
+const PORT_LAND_ALLOWANCE_KM = 25;
+const INLAND_LAND_FACTOR = 10;
+const PORT_POOL = 60;
+const PORT_MAX_KM = 600;
+const LINK_SEA_MAX_KM = 80;
+const SAMPLE_KM = 1.0;
+const SHORTCUT_MAX_KM = 150;
+
+/** 海陆掩膜：1 位/格，1 = 陆地 */
+let landMask: { w: number; h: number; res: number; bits: Uint8Array } | null = null;
+
+async function loadLandMask(url: string): Promise<boolean> {
+    if (landMask) return true;
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return false;
+        const bmp = await createImageBitmap(await res.blob());
+        const W = bmp.width, H = bmp.height;
+        const bits = new Uint8Array(Math.ceil(W * H / 8));
+        // 12000×6000 整张 getImageData 要 288MB，分条读
+        const STRIP = 500;
+        const canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = STRIP;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return false;
+        for (let y0 = 0; y0 < H; y0 += STRIP) {
+            const h = Math.min(STRIP, H - y0);
+            ctx.clearRect(0, 0, W, STRIP);
+            ctx.drawImage(bmp, 0, y0, W, h, 0, 0, W, h);
+            const data = ctx.getImageData(0, 0, W, h).data;
+            for (let k = 0, n = W * h; k < n; k++) {
+                if (data[k * 4] > 127) {
+                    const idx = y0 * W + k;
+                    bits[idx >> 3] |= 1 << (idx & 7);
+                }
+            }
+        }
+        bmp.close();
+        landMask = { w: W, h: H, res: 180 / H, bits };
+        return true;
+    } catch (e) {
+        console.warn('[SeaRouteEditor] 海陆掩膜加载失败', e);
+        return false;
+    }
+}
+
+/** 跨 180° 经线时把 b 的经度换到 a 的同一侧，线性插值才不会绕地球一圈 */
+function nearLng(bLng: number, aLng: number): number {
+    if (bLng - aLng > 180) return bLng - 360;
+    if (bLng - aLng < -180) return bLng + 360;
+    return bLng;
+}
+
+function isLand(lat: number, lng: number): boolean {
+    if (!landMask) return false;
+    const { w, h, res, bits } = landMask;
+    const y = Math.min(h - 1, Math.max(0, Math.floor((90 - lat) / res)));
+    const x = ((Math.floor((lng + 180) / res) % w) + w) % w;
+    const idx = y * w + x;
+    return (bits[idx >> 3] & (1 << (idx & 7))) !== 0;
+}
 
 // 海路参考层（海上航线网）颜色：白色虚线（海洋是蓝色，白线才跳得出）
 // 已保存海路颜色：琥珀橙实线（暖色，蓝海与纸色陆地都高对比）
@@ -322,6 +402,9 @@ export class SeaRouteEditor implements IEditor {
             const res = await fetch(`${basePath}assets/sea_routes_combined.geojson`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const geojson = await res.json();
+            if (!(await loadLandMask(`${basePath}${LAND_MASK_PATH}`))) {
+                console.warn('[SeaRouteEditor] 海陆掩膜加载失败，本次不做穿陆检查');
+            }
             this.cachedGeoJSON = geojson;
             this.buildGraphFromGeoJSON(geojson);
             this.graphBuilt = true;
@@ -338,8 +421,9 @@ export class SeaRouteEditor implements IEditor {
     private buildGraphFromGeoJSON(geojson: any): void {
         const SNAP = 0.05; // ~5km 容差
         const nodeMap = new Map<string, number>();
+        // 航线网在 180° 经线断成 +180 / -180 两头：合成同一个点，太平洋才连得通
         const snapKey = (lat: number, lng: number): string =>
-            `${Math.round(lat / SNAP)}_${Math.round(lng / SNAP)}`;
+            `${Math.round(lat / SNAP)}_${(Math.round(lng / SNAP) + 3600) % 7200 - 3600}`;
 
         const getNode = (lat: number, lng: number): number => {
             const k = snapKey(lat, lng);
@@ -356,8 +440,9 @@ export class SeaRouteEditor implements IEditor {
             if (a === b) return;
             const d = this.calculatePathLength(coords);
             if (!isFinite(d) || d < 0.01) return;
-            // 远洋主干加惩罚，沿岸/接驳按真实距离 —— 见 OPEN_SEA_PENALTY
-            const w = source === 'marnet' ? d * OPEN_SEA_PENALTY : d;
+            // 远洋主干加惩罚，沿岸/接驳按真实距离 —— 见 OPEN_SEA_PENALTY；穿陆加代价 —— 见 LAND_KM_COST
+            const w = (source === 'marnet' ? d * OPEN_SEA_PENALTY : d)
+                + this.landKm(coords[0], coords[coords.length - 1]) * LAND_KM_COST;
             this.seaAdj.get(a)!.push({ from: a, to: b, weight: w, dist: d, coords });
             this.seaAdj.get(b)!.push({ from: b, to: a, weight: w, dist: d, coords: [...coords].reverse() as [number, number][] });
         };
@@ -420,18 +505,70 @@ export class SeaRouteEditor implements IEditor {
 
     // ===== 寻路 =====
 
-    private findKNearestSeaNodes(lat: number, lng: number, k: number): { id: number; dist: number }[] {
-        const arr: { id: number; dist: number }[] = [];
-        for (const n of this.seaNodes) {
-            arr.push({ id: n.id, dist: this.haversine(lat, lng, n.lat, n.lng) });
+    /** a→b（[lng,lat]）直线压在陆地上的公里数，约每 SAMPLE_KM 采一点 */
+    private landKm(a: [number, number], b: [number, number]): number {
+        const d = this.haversine(a[1], a[0], b[1], b[0]);
+        b = [nearLng(b[0], a[0]), b[1]];
+        const n = Math.max(2, Math.ceil(d / SAMPLE_KM));
+        let k = 0;
+        for (let i = 1; i < n; i++) {
+            const t = i / n;
+            if (isLand(a[1] + (b[1] - a[1]) * t, a[0] + (b[0] - a[0]) * t)) k++;
         }
-        arr.sort((a, b) => a.dist - b.dist);
-        return arr.slice(0, k);
+        return k * d / n;
     }
 
-    private dijkstra(startId: number, endId: number): { coordinates: [number, number][]; totalDistance: number } | null {
+    /** 城→节点（[lng,lat]）接驳线：[出城那段连续陆地公里, 见水之后又压上陆地的公里] */
+    private linkLandKm(city: [number, number], node: [number, number]): [number, number] {
+        const d = this.haversine(city[1], city[0], node[1], node[0]);
+        node = [nearLng(node[0], city[0]), node[1]];
+        const n = Math.max(2, Math.ceil(d / SAMPLE_KM));
+        let first = 0, later = 0, leftLand = false;
+        for (let i = 1; i < n; i++) {
+            const t = i / n;
+            const onLand = isLand(city[1] + (node[1] - city[1]) * t, city[0] + (node[0] - city[0]) * t);
+            if (!leftLand && onLand) first++;
+            else if (onLand) later++;
+            else leftLand = true;
+        }
+        return [first * d / n, later * d / n];
+    }
+
+    /** 港口接驳：节点 id → [接驳代价, 真实公里]（规则见文件头 LAND_MASK_PATH 那段说明） */
+    private portLinks(lat: number, lng: number): Map<number, [number, number]> {
+        const all = this.seaNodes.map(n => ({ id: n.id, dist: this.haversine(lat, lng, n.lat, n.lng) }))
+            .sort((x, y) => x.dist - y.dist);
+        let pool = all.slice(0, PORT_POOL).filter(c => c.dist <= PORT_MAX_KM);
+        if (pool.length === 0) pool = all.slice(0, 1);
+        const land = new Map<number, [number, number]>();
+        const sea = new Map<number, number>();
+        for (const c of pool) {
+            const n = this.seaNodes[c.id];
+            const lk = this.linkLandKm([lng, lat], [n.lng, n.lat]);
+            land.set(c.id, lk);
+            sea.set(c.id, c.dist - lk[0] - lk[1]);
+        }
+        const clean = pool.filter(c => land.get(c.id)![0] <= PORT_LAND_ALLOWANCE_KM && land.get(c.id)![1] < 3);
+        let cands = clean.length > 0 ? clean : pool;
+        // 航线网稀疏的海湾（如巴拿马湾）最近的节点也远：上限放宽到最近那个的 1.5 倍
+        const cap = Math.max(LINK_SEA_MAX_KM, 1.5 * Math.min(...cands.map(c => sea.get(c.id)!)));
+        cands = cands.filter(c => sea.get(c.id)! <= cap);
+        const out = new Map<number, [number, number]>();
+        for (const c of cands) {
+            const [first, later] = land.get(c.id)!;
+            // 港口城只许水路接驳；内陆城/河港陆路段按 INLAND_LAND_FACTOR 计
+            const cost = clean.length > 0 ? c.dist : c.dist + (first + later) * (INLAND_LAND_FACTOR - 1);
+            out.set(c.id, [cost, c.dist]);
+        }
+        return out;
+    }
+
+    /** 城→城海路（含两端城坐标）与真实公里；航线网上不连通返回 null */
+    private route(lat1: number, lng1: number, lat2: number, lng2: number): { coordinates: [number, number][]; totalDistance: number } | null {
+        const starts = this.portLinks(lat1, lng1);
+        const ends = this.portLinks(lat2, lng2);
         const dist = new Map<number, number>();
-        const prev = new Map<number, { nodeId: number; edge: SeaEdge }>();
+        const prev = new Map<number, number>();
         const visited = new Set<number>();
         const heap: { nodeId: number; dist: number }[] = [];
         const push = (item: { nodeId: number; dist: number }) => {
@@ -464,46 +601,68 @@ export class SeaRouteEditor implements IEditor {
             return top;
         };
 
-        dist.set(startId, 0);
-        push({ nodeId: startId, dist: 0 });
-
+        for (const [id, [w]] of starts) {
+            dist.set(id, w);
+            push({ nodeId: id, dist: w });
+        }
+        let bestCost = Infinity;
+        let bestEnd: number | null = null;
         while (heap.length > 0) {
             const cur = pop()!;
             if (visited.has(cur.nodeId)) continue;
+            if (cur.dist >= bestCost) break;
             visited.add(cur.nodeId);
-            if (cur.nodeId === endId) break;
+            const end = ends.get(cur.nodeId);
+            if (end && cur.dist + end[0] < bestCost) {
+                bestCost = cur.dist + end[0];
+                bestEnd = cur.nodeId;
+            }
             for (const e of this.seaAdj.get(cur.nodeId) || []) {
-                if (visited.has(e.to)) continue;
-                const nd = (dist.get(cur.nodeId) ?? Infinity) + e.weight;
+                const nd = cur.dist + e.weight;
                 if (nd < (dist.get(e.to) ?? Infinity)) {
                     dist.set(e.to, nd);
-                    prev.set(e.to, { nodeId: cur.nodeId, edge: e });
+                    prev.set(e.to, cur.nodeId);
                     push({ nodeId: e.to, dist: nd });
                 }
             }
         }
+        if (bestEnd === null) return null;
 
-        if (!prev.has(endId)) return null;
-
-        const edges: SeaEdge[] = [];
-        let cur = endId;
-        while (prev.has(cur)) {
-            const { nodeId, edge } = prev.get(cur)!;
-            edges.unshift(edge);
-            cur = nodeId;
+        const ids = [bestEnd];
+        let c = bestEnd;
+        while (prev.has(c)) { c = prev.get(c)!; ids.push(c); }
+        ids.reverse();
+        const r5 = (v: number) => Math.round(v * 1e5) / 1e5;
+        const pts: [number, number][] = [[r5(lng1), r5(lat1)]];
+        for (const id of ids) pts.push([r5(this.seaNodes[id].lng), r5(this.seaNodes[id].lat)]);
+        pts.push([r5(lng2), r5(lat2)]);
+        const ded: [number, number][] = [pts[0]];
+        for (const p of pts.slice(1)) {
+            const q = ded[ded.length - 1];
+            if (p[0] !== q[0] || p[1] !== q[1]) ded.push(p);
         }
+        // 🔴 显示的航程必须是**真实公里**（选路代价带远洋/穿陆惩罚，不能拿来当航程）
+        const coordinates = this.straighten(ded);
+        return { coordinates, totalDistance: this.calculatePathLength(coordinates) };
+    }
 
-        const coordinates: [number, number][] = [];
-        for (let i = 0; i < edges.length; i++) {
-            const ec = edges[i].coords;
-            const startIdx = i === 0 ? 0 : 1;
-            for (let j = startIdx; j < ec.length; j++) coordinates.push(ec[j]);
+    /** 视线拉直（只动航线网那一段，两端接驳线不动）：从每个点跳到最远的「直线全在水上、≤SHORTCUT_MAX_KM」的点 */
+    private straighten(coords: [number, number][]): [number, number][] {
+        if (coords.length <= 4) return coords;
+        const mid = coords.slice(1, -1);
+        const out: [number, number][] = [mid[0]];
+        let i = 0;
+        while (i < mid.length - 1) {
+            let j = mid.length - 1;
+            while (j > i + 1) {
+                const a = mid[i], b = mid[j];
+                if (this.haversine(a[1], a[0], b[1], b[0]) <= SHORTCUT_MAX_KM && this.landKm(a, b) === 0) break;
+                j--;
+            }
+            out.push(mid[j]);
+            i = j;
         }
-        // 🔴 显示的航程必须是**真实公里**：dist map 里存的是带 OPEN_SEA_PENALTY 的选路代价，
-        //    直接拿它当航程会让远洋航线凭空多报 50%。沿路径累加 edge.dist 才是真数。
-        let realKm = 0;
-        for (const e of edges) realKm += e.dist;
-        return { coordinates, totalDistance: realKm };
+        return [coords[0], ...out, coords[coords.length - 1]];
     }
 
     private generateSeaPath(): void {
@@ -519,32 +678,15 @@ export class SeaRouteEditor implements IEditor {
         }
 
         const directDist = this.haversine(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
-        const startCands = this.findKNearestSeaNodes(startCity.lat, startCity.lng, 5);
-        const endCands = this.findKNearestSeaNodes(endCity.lat, endCity.lng, 5);
-
-        let best: { coordinates: [number, number][]; totalDistance: number } | null = null;
-        let bestDist = Infinity;
-        for (const sc of startCands) {
-            for (const ec of endCands) {
-                const p = this.dijkstra(sc.id, ec.id);
-                if (p && p.totalDistance < bestDist) {
-                    best = p;
-                    bestDist = p.totalDistance;
-                }
-            }
-        }
+        const best = this.route(startCity.lat, startCity.lng, endCity.lat, endCity.lng);
 
         let finalCoords: [number, number][];
         let distStr: string;
 
         if (best) {
-            // 拼接：城市坐标 + 航线路径 + 城市坐标
-            finalCoords = [
-                [startCity.lng, startCity.lat],
-                ...best.coordinates,
-                [endCity.lng, endCity.lat]
-            ];
-            distStr = `${bestDist.toFixed(0)}km 海上航线`;
+            // route() 已含两端城市坐标
+            finalCoords = best.coordinates;
+            distStr = `${best.totalDistance.toFixed(0)}km 海上航线`;
         } else {
             // 跨洋无既有航线 → 回退大圆航线（供手动微调）
             finalCoords = this.greatCirclePath(
@@ -628,7 +770,10 @@ export class SeaRouteEditor implements IEditor {
         const feature = SEA_ROUTE_DATA.features.find(f => f.properties.id === routeId);
         if (!feature) return;
         this.removeRouteLayer(routeId);
-        const latLngs = feature.geometry.coordinates.map(([lng, lat]) => [lat, lng] as [number, number]);
+        // 跨 180° 经线的海路先展开经度（与 RoadRegistry.loadSeaRoutes 同），否则会画成横贯全图的一条线
+        // 地图开了 worldCopyJump（环游世界）：再在左右两个世界副本各画一份，拖过日期线后航线不断档
+        const unwrapped = unwrapLongitudePath(feature.geometry.coordinates);
+        const latLngs = [-360, 0, 360].map(off => unwrapped.map(([lng, lat]) => [lat, lng + off] as [number, number]));
         const polyline = L.polyline(latLngs, {
             color: ROUTE_COLOR,
             weight: 2.5,

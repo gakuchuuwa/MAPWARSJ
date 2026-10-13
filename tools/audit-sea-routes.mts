@@ -108,11 +108,23 @@ if (!/source === 'marnet' \? d \* OPEN_SEA_PENALTY : d/.test(SRC)) {
 } else ok('惩罚只加在 marnet（远洋主干）边上');
 
 // 🔴 显示的航程必须是真实公里，不能是带惩罚的选路代价
-if (/totalDistance: dist\.get\(endId\)/.test(SRC)) {
-    bad('totalDistance 又取了带惩罚的 dist map —— 面板上的航程会凭空多报 50%');
-} else if (!/realKm \+= e\.dist/.test(SRC)) {
-    bad('totalDistance 没有沿路径累加 edge.dist（真实公里）');
-} else ok('totalDistance 累加 edge.dist（真实公里，不含惩罚）');
+if (/totalDistance: dist\.get\(endId\)/.test(SRC) || /totalDistance: bestCost/.test(SRC)) {
+    bad('totalDistance 又取了带惩罚的选路代价 —— 面板上的航程会凭空多报');
+} else if (!/totalDistance: this\.calculatePathLength\(coordinates\)/.test(SRC)) {
+    bad('totalDistance 没有按最终路线逐段量真实公里');
+} else ok('totalDistance 按最终路线逐段量真实公里（不含惩罚）');
+
+// 🔴 [2026-10-13] 海路不许横穿陆地：精细海陆掩膜 + 穿陆加代价 + 180° 经线接合（与 tools/sea_route_core.py 同一套）
+console.log('\n穿陆与日期线：');
+if (!/LAND_MASK_PATH = 'world\/land-mask-ne10m\.png'/.test(SRC) || !existsSync('public/world/land-mask-ne10m.png')) {
+    bad('编辑器没读精细海陆掩膜 land-mask-ne10m.png（world-base.png 太粗，会把濑户内海/马尔马拉海判成陆）');
+} else ok('编辑器读精细海陆掩膜 land-mask-ne10m.png');
+if (!/\+ this\.landKm\(coords\[0\], coords\[coords\.length - 1\]\) \* LAND_KM_COST/.test(SRC)) {
+    bad('航线网的边没有按穿陆公里加代价');
+} else ok('航线网的边按穿陆公里加代价');
+if (!/% 7200 - 3600/.test(SRC)) {
+    bad('建图没把 +180° / -180° 合成同一点 —— 太平洋会断开（关岛→阿卡普尔科绕地球 3 万公里）');
+} else ok('建图把 ±180° 合成同一点，太平洋连通');
 
 if (fail) { console.log(`\n🔴 ${fail} 项不符`); process.exit(1); }
 console.log('\n✅ 全部符合');
