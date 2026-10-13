@@ -235,7 +235,12 @@ const SEP_SMOOTH = +(process.env.SEP_SMOOTH ?? 0.15);
 
 //   SEP_FIGHT=x 交战中(st!==0)的兵推力乘 x（DE 里打架的单位站定，不该被推着平移）
 
-const SEP_ALL = !!+(process.env.SEP_ALL ?? 0);
+// 🔴 [2026-10-14 镜像偏袒根因] 默认改为 1（不截断）。`seen<6` 截断 + 扫描从左上往右下 ⇒ 左边的邻居先数满、
+//   右边的常被漏掉 ⇒ 推力系统性偏右。换边实验：偏袒跟位置走、不跟编号走（骑兵恒右胜、远程恒左胜）。
+//   实测 200 种子镜像（WING=0/SPREAD=4/AIM_JITTER=120，N=1350）：
+//     截断 6：远程 131:69 · 骑兵 60:140 · 近战 83:117 ｜ 不截断：103:97 · 100:100 · 92:108（p 均 > 0.28），用时不变。
+//   SEP_ALL=0 可切回旧口径做对照。
+const SEP_ALL = !!+(process.env.SEP_ALL ?? 1);
 
 const SEP_FIGHT = +(process.env.SEP_FIGHT ?? 0.5);
 
