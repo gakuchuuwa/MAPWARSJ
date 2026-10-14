@@ -1,0 +1,560 @@
+[
+ {
+  "key": "BRITONS",
+  "name": "Britons",
+  "name_zh": "不列颠",
+  "era": "base",
+  "file": "trees/BRITONS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "FRANKS",
+  "name": "Franks",
+  "name_zh": "法兰克",
+  "era": "base",
+  "file": "trees/FRANKS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "GOTHS",
+  "name": "Goths",
+  "name_zh": "哥特",
+  "era": "base",
+  "file": "trees/GOTHS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "TEUTONS",
+  "name": "Teutons",
+  "name_zh": "条顿",
+  "era": "base",
+  "file": "trees/TEUTONS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "JAPANESE",
+  "name": "Japanese",
+  "name_zh": "日本",
+  "era": "base",
+  "file": "trees/JAPANESE.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "CHINESE",
+  "name": "Chinese",
+  "name_zh": "中国",
+  "era": "base",
+  "file": "trees/CHINESE.json",
+  "buildings": 28,
+  "nodes": 147
+ },
+ {
+  "key": "BYZANTINES",
+  "name": "Byzantines",
+  "name_zh": "拜占庭",
+  "era": "base",
+  "file": "trees/BYZANTINES.json",
+  "buildings": 28,
+  "nodes": 147
+ },
+ {
+  "key": "PERSIANS",
+  "name": "Persians",
+  "name_zh": "波斯",
+  "era": "base",
+  "file": "trees/PERSIANS.json",
+  "buildings": 29,
+  "nodes": 144
+ },
+ {
+  "key": "SARACENS",
+  "name": "Saracens",
+  "name_zh": "萨拉森",
+  "era": "base",
+  "file": "trees/SARACENS.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "TURKS",
+  "name": "Turks",
+  "name_zh": "土耳其",
+  "era": "base",
+  "file": "trees/TURKS.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "VIKINGS",
+  "name": "Vikings",
+  "name_zh": "维京",
+  "era": "base",
+  "file": "trees/VIKINGS.json",
+  "buildings": 28,
+  "nodes": 150
+ },
+ {
+  "key": "MONGOLS",
+  "name": "Mongols",
+  "name_zh": "蒙古",
+  "era": "base",
+  "file": "trees/MONGOLS.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "CELTS",
+  "name": "Celts",
+  "name_zh": "凯尔特",
+  "era": "base",
+  "file": "trees/CELTS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "SPANISH",
+  "name": "Spanish",
+  "name_zh": "西班牙",
+  "era": "base",
+  "file": "trees/SPANISH.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "AZTECS",
+  "name": "Aztecs",
+  "name_zh": "阿兹特克",
+  "era": "base",
+  "file": "trees/AZTECS.json",
+  "buildings": 28,
+  "nodes": 138
+ },
+ {
+  "key": "MAYANS",
+  "name": "Mayans",
+  "name_zh": "玛雅",
+  "era": "base",
+  "file": "trees/MAYANS.json",
+  "buildings": 28,
+  "nodes": 138
+ },
+ {
+  "key": "HUNS",
+  "name": "Huns",
+  "name_zh": "匈奴",
+  "era": "base",
+  "file": "trees/HUNS.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "KOREANS",
+  "name": "Koreans",
+  "name_zh": "高丽",
+  "era": "base",
+  "file": "trees/KOREANS.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "ITALIANS",
+  "name": "Italians",
+  "name_zh": "意大利",
+  "era": "base",
+  "file": "trees/ITALIANS.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "INDIANS",
+  "name": "Indians",
+  "name_zh": "印度斯坦",
+  "era": "base",
+  "file": "trees/INDIANS.json",
+  "buildings": 29,
+  "nodes": 147
+ },
+ {
+  "key": "INCAS",
+  "name": "Incas",
+  "name_zh": "印加",
+  "era": "base",
+  "file": "trees/INCAS.json",
+  "buildings": 29,
+  "nodes": 140
+ },
+ {
+  "key": "MAGYAR",
+  "name": "Magyars",
+  "name_zh": "马扎尔",
+  "era": "base",
+  "file": "trees/MAGYAR.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "SLAVS",
+  "name": "Slavs",
+  "name_zh": "斯拉夫",
+  "era": "base",
+  "file": "trees/SLAVS.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "PORTUGUESE",
+  "name": "Portuguese",
+  "name_zh": "葡萄牙",
+  "era": "base",
+  "file": "trees/PORTUGUESE.json",
+  "buildings": 29,
+  "nodes": 147
+ },
+ {
+  "key": "ETHIOPIANS",
+  "name": "Ethiopians",
+  "name_zh": "埃塞俄比亚",
+  "era": "base",
+  "file": "trees/ETHIOPIANS.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "MALIANS",
+  "name": "Malians",
+  "name_zh": "马里",
+  "era": "base",
+  "file": "trees/MALIANS.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "BERBERS",
+  "name": "Berbers",
+  "name_zh": "柏柏尔",
+  "era": "base",
+  "file": "trees/BERBERS.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "KHMER",
+  "name": "Khmer",
+  "name_zh": "高棉",
+  "era": "base",
+  "file": "trees/KHMER.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "MALAY",
+  "name": "Malay",
+  "name_zh": "马来",
+  "era": "base",
+  "file": "trees/MALAY.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "BURMESE",
+  "name": "Burmese",
+  "name_zh": "缅甸",
+  "era": "base",
+  "file": "trees/BURMESE.json",
+  "buildings": 28,
+  "nodes": 144
+ },
+ {
+  "key": "VIETNAMESE",
+  "name": "Vietnamese",
+  "name_zh": "越南",
+  "era": "base",
+  "file": "trees/VIETNAMESE.json",
+  "buildings": 28,
+  "nodes": 147
+ },
+ {
+  "key": "BULGARIANS",
+  "name": "Bulgarians",
+  "name_zh": "保加利亚",
+  "era": "base",
+  "file": "trees/BULGARIANS.json",
+  "buildings": 29,
+  "nodes": 145
+ },
+ {
+  "key": "TATARS",
+  "name": "Tatars",
+  "name_zh": "鞑靼",
+  "era": "base",
+  "file": "trees/TATARS.json",
+  "buildings": 28,
+  "nodes": 147
+ },
+ {
+  "key": "CUMANS",
+  "name": "Cumans",
+  "name_zh": "库曼",
+  "era": "base",
+  "file": "trees/CUMANS.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "LITHUANIANS",
+  "name": "Lithuanians",
+  "name_zh": "立陶宛",
+  "era": "base",
+  "file": "trees/LITHUANIANS.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "BURGUNDIANS",
+  "name": "Burgundians",
+  "name_zh": "勃艮第",
+  "era": "base",
+  "file": "trees/BURGUNDIANS.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "SICILIANS",
+  "name": "Sicilians",
+  "name_zh": "西西里",
+  "era": "base",
+  "file": "trees/SICILIANS.json",
+  "buildings": 29,
+  "nodes": 150
+ },
+ {
+  "key": "POLES",
+  "name": "Poles",
+  "name_zh": "波兰",
+  "era": "base",
+  "file": "trees/POLES.json",
+  "buildings": 28,
+  "nodes": 145
+ },
+ {
+  "key": "BOHEMIANS",
+  "name": "Bohemians",
+  "name_zh": "波希米亚",
+  "era": "base",
+  "file": "trees/BOHEMIANS.json",
+  "buildings": 28,
+  "nodes": 146
+ },
+ {
+  "key": "DRAVIDIANS",
+  "name": "Dravidians",
+  "name_zh": "达罗毗荼",
+  "era": "base",
+  "file": "trees/DRAVIDIANS.json",
+  "buildings": 28,
+  "nodes": 149
+ },
+ {
+  "key": "BENGALIS",
+  "name": "Bengalis",
+  "name_zh": "孟加拉",
+  "era": "base",
+  "file": "trees/BENGALIS.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "GURJARAS",
+  "name": "Gurjaras",
+  "name_zh": "瞿折罗",
+  "era": "base",
+  "file": "trees/GURJARAS.json",
+  "buildings": 28,
+  "nodes": 151
+ },
+ {
+  "key": "ROMANS",
+  "name": "Romans",
+  "name_zh": "罗马",
+  "era": "base",
+  "file": "trees/ROMANS.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "ARMENIANS",
+  "name": "Armenians",
+  "name_zh": "亚美尼亚",
+  "era": "base",
+  "file": "trees/ARMENIANS.json",
+  "buildings": 29,
+  "nodes": 144
+ },
+ {
+  "key": "GEORGIANS",
+  "name": "Georgians",
+  "name_zh": "格鲁吉亚",
+  "era": "base",
+  "file": "trees/GEORGIANS.json",
+  "buildings": 29,
+  "nodes": 142
+ },
+ {
+  "key": "ACHAEMENIDS",
+  "name": "Achaemenids",
+  "name_zh": "阿契美尼德",
+  "era": "antiquity",
+  "file": "trees/ACHAEMENIDS.json",
+  "buildings": 28,
+  "nodes": 140
+ },
+ {
+  "key": "ATHENIANS",
+  "name": "Athenians",
+  "name_zh": "雅典",
+  "era": "antiquity",
+  "file": "trees/ATHENIANS.json",
+  "buildings": 28,
+  "nodes": 140
+ },
+ {
+  "key": "SPARTANS",
+  "name": "Spartans",
+  "name_zh": "斯巴达",
+  "era": "antiquity",
+  "file": "trees/SPARTANS.json",
+  "buildings": 28,
+  "nodes": 142
+ },
+ {
+  "key": "SHU",
+  "name": "Shu",
+  "name_zh": "蜀",
+  "era": "base",
+  "file": "trees/SHU.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "WU",
+  "name": "Wu",
+  "name_zh": "吴",
+  "era": "base",
+  "file": "trees/WU.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "WEI",
+  "name": "Wei",
+  "name_zh": "魏",
+  "era": "base",
+  "file": "trees/WEI.json",
+  "buildings": 28,
+  "nodes": 148
+ },
+ {
+  "key": "JURCHENS",
+  "name": "Jurchens",
+  "name_zh": "女真",
+  "era": "base",
+  "file": "trees/JURCHENS.json",
+  "buildings": 28,
+  "nodes": 150
+ },
+ {
+  "key": "KHITANS",
+  "name": "Khitans",
+  "name_zh": "契丹",
+  "era": "base",
+  "file": "trees/KHITANS.json",
+  "buildings": 29,
+  "nodes": 154
+ },
+ {
+  "key": "MACEDONIANS",
+  "name": "Macedonians",
+  "name_zh": "马其顿人",
+  "era": "antiquity",
+  "file": "trees/MACEDONIANS.json",
+  "buildings": 29,
+  "nodes": 137
+ },
+ {
+  "key": "THRACIANS",
+  "name": "Thracians",
+  "name_zh": "色雷斯人",
+  "era": "antiquity",
+  "file": "trees/THRACIANS.json",
+  "buildings": 28,
+  "nodes": 137
+ },
+ {
+  "key": "PURU",
+  "name": "Puru",
+  "name_zh": "普鲁人",
+  "era": "antiquity",
+  "file": "trees/PURU.json",
+  "buildings": 28,
+  "nodes": 139
+ },
+ {
+  "key": "MUISCA",
+  "name": "Muisca",
+  "name_zh": "穆伊斯卡",
+  "era": "base",
+  "file": "trees/MUISCA.json",
+  "buildings": 29,
+  "nodes": 144
+ },
+ {
+  "key": "MAPUCHE",
+  "name": "Mapuche",
+  "name_zh": "马普切",
+  "era": "base",
+  "file": "trees/MAPUCHE.json",
+  "buildings": 29,
+  "nodes": 147
+ },
+ {
+  "key": "TUPI",
+  "name": "Tupi",
+  "name_zh": "图皮",
+  "era": "base",
+  "file": "trees/TUPI.json",
+  "buildings": 29,
+  "nodes": 142
+ },
+ {
+  "key": "SAXONS",
+  "name": "Saxons",
+  "name_zh": "撒克逊人",
+  "era": "base",
+  "file": "trees/SAXONS.json",
+  "buildings": 28,
+  "nodes": 150
+ },
+ {
+  "key": "VARANGIANS",
+  "name": "Varangians",
+  "name_zh": "瓦兰吉人",
+  "era": "base",
+  "file": "trees/VARANGIANS.json",
+  "buildings": 28,
+  "nodes": 150
+ },
+ {
+  "key": "DANES",
+  "name": "Danes",
+  "name_zh": "丹麦人",
+  "era": "base",
+  "file": "trees/DANES.json",
+  "buildings": 28,
+  "nodes": 150
+ }
+]
