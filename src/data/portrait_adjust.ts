@@ -3947,11 +3947,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -3
         },
-        "/assets/WEST_ASIA/__闲置__WEST_ASIA_18.png": {
-            "scale": 1.14,
-            "offsetX": 0,
-            "offsetY": 5
-        },
         "/assets/STEPPE/__闲置__WEST_ASIA_20.png": {
             "scale": 1.18,
             "offsetX": 0,
@@ -7283,9 +7278,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 8
         },
         "/assets/WEST_ASIA/__多余__WEST_ASIA_02.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -18
+            "scale": 0.94,
+            "offsetX": 4,
+            "offsetY": 25
         },
         "/assets/WEST_ASIA/samtskhe_saerjisi.png": {
             "scale": 1,
@@ -8057,11 +8052,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 12
         },
-        "/assets/WEST_ASIA/emesene_xierkuhe.png": {
-            "scale": 0.94,
-            "offsetX": 4,
-            "offsetY": 25
-        },
         "/assets/GREEK/hesitiya_yiasong.png": {
             "scale": 1.16,
             "offsetX": 0,
@@ -8106,6 +8096,21 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": -9,
             "offsetY": -5
+        },
+        "/assets/SOUTHEAST_ASIA/31cd8127-ff28-451e-bb05-805bd9d68978.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/SOUTHEAST_ASIA/chamorro_hulao.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -19
+        },
+        "/assets/WEST_ASIA/emesene_xierkuhe.png": {
+            "scale": 1.14,
+            "offsetX": 0,
+            "offsetY": 5
         }
     },
     "folderGuides": {

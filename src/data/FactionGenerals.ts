@@ -1216,7 +1216,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     taino: { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '/assets/AMERICA/taino_hatuyi.png' },
     guanche: { generalId: 'gen_bentejui', generalName: '本特胡伊', portrait: '/assets/AMERICA/guanche_bentehuyi.png' },
     // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 阿加尼亚·查莫罗：1671 年反抗西班牙的查莫罗领袖（英文维基 Hurao 条目）
-    chamorro: { generalId: 'gen_hurao', generalName: 'Hurao', portrait: '/assets/AMERICA/chamorro_hurao.png' },
+    chamorro: { generalId: 'gen_hurao', generalName: '胡劳', portrait: '/assets/SOUTHEAST_ASIA/chamorro_hulao.png' },
     fodejiao: { generalId: 'gen_noli', generalName: '诺利', portrait: '/assets/AMERICA/fodejiao_nuoli.png' },
     baiyiya: { generalId: 'gen_tome_sousa', generalName: '托梅', portrait: '/assets/AMERICA/baiyiya_tuomei.png' },
     yasuer: { generalId: 'gen_cipriano_figueiredo', generalName: '西普里亚诺', portrait: '/assets/AMERICA/yasuer_xipuliyanuo.png' },

@@ -1058,6 +1058,7 @@ export class CityAssetManager {
         'muertan': '木尔',
         'muxikani': '穆西',
         'xindu': '信度',
+        'chamorro': '查',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

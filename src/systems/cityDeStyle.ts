@@ -10,14 +10,6 @@
  */
 import { getCityRegion, type RegionType } from './RegionSystem';
 
-export const DE_CITY_EXPERIMENT = new Set(['city_tenochtitlan']);
-/**
- * 🔴 [2026-10-07 主人令「按历史」] 逐城：史上是**游牧牧地**（不是城镇）的据点，画面一律用毡帐营地（YURT）。
- *   只改画面皮肤，不改建筑风格归类（仍按地域归漠南鲜卑等）。
- *   · 乌里雅斯太：东乌珠穆沁旗旗府牧地（锡林郭勒），原为毡帐营地；划入漠南鲜卑后被画成东亚屋舍，与史不符。
- */
-export const NOMAD_CAMP_CITIES: ReadonlySet<string> = new Set(['city_wuliyasitai']);
-
 
 export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, string> = {
     CENTRAL: 'ASIA', NORTH: 'ASIA', JIANGNAN: 'ASIA', BASHU: 'ASIA',
@@ -212,21 +204,13 @@ export const REGION_TO_DE_STYLE: Record<RegionType, string> & Record<string, str
  *  🔴 [2026-09-11 主人「和游戏同步」] 已 `export` —— 战术战场（Scene13WarLayer）必须调**同一个**函数，
  *     否则「编辑器里改建筑风格，战略地图变了、战场没变」（实测曾有 77 座地图↔战场不一致）。 */
 export function resolveCityDeBuildingStyle(cityId: string, cityType: string, cityRegion: string | undefined, lat: number, lng: number, buildingStyle?: string): string | null {
-    if (DE_CITY_EXPERIMENT.has(cityId)) return 'MESO'; // 实验保底（特诺奇提特兰 MESO 中城）
-    if (NOMAD_CAMP_CITIES.has(cityId)) return 'YURT';  // 逐城：游牧牧地画毡帐营地（风格归类不变，见 NOMAD_CAMP_CITIES）
-    // 小城/关隘/中城/大城都按建筑风格套用 DE 建筑（2026-08-27 扩充大城，帝国时代）
-    const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
-    // 🔴 [2026-09-16 主人定] 显式 buildingStyle 优先：二级蒙古(MONGOL)套东亚建筑+蒙古城堡，
-    //    三级漠北蒙古(MOBEI_MONGOL)毡帐营地（YURT），不再被 region 的 STEPPE/MONGOL 兜底强制覆盖。
+    // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……和其他一切无关」「是什么影响的就删除什么」]
+    //    据点**只看 buildingStyle**（66 选 1）：已删逐城特例（特诺奇提特兰 MESO／乌里雅斯太毡帐）
+    //    与 MOBEI_MONGOL/YURT 皮肤分支。全部据点都已写 66 种之一，下面 region 兜底只剩战场（bf_*，无 buildingStyle）走。
     if (buildingStyle) {
-        if (buildingStyle === 'YURT') return 'YURT';
-        // 🔴 [2026-10-05 主人怒斥「你搞两个漠北蒙古是什么意思呀，这世界上有两个漠北蒙古吗」]
-        //    三级 `MOBEI_MONGOL` 已删（与二级 `MONGOL` 重复）。原先 45 座据点仍写 `buildingStyle: 'MOBEI_MONGOL'`
-        //    （那是它们的营盘皮肤标记，数据不动）→ 这里统一归到**毡帐营地皮肤 `YURT`**，
-        //    否则原字返回会让一级风格落空（验收曾报「一级风格落空 45 座」）。
-        if (buildingStyle === 'MOBEI_MONGOL') return 'YURT';
         return REGION_TO_DE_STYLE[buildingStyle] ?? buildingStyle;
     }
+    const region = getCityRegion({ latitude: lat, longitude: lng, region: cityRegion });
     // 无显式 buildingStyle，按 region 兜底：草原(STEPPE*) → YURT 毡帐营地
     // 🔴 [2026-10-05 主人怒斥「这世界上有两个漠北蒙古吗」] 原注释写「只有 MOBEI_MONGOL（三级漠北蒙古）才是毡帐」——
     //    三级 `MOBEI_MONGOL` 已删（与二级 `MONGOL` 重复）。现口径：**草原区(STEPPE*／UIGHUR) → 毡帐营地**；

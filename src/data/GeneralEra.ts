@@ -363,6 +363,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_henry_navigator': 'castle',
     'gen_henry_v': 'castle',
     'gen_hiawatha': 'castle',
+    'gen_hurao': 'imperial',
     'gen_ibrahim_qutb': 'imperial',
     'gen_idris_i': 'feudal',
     'gen_ivan_sratsimir': 'castle',

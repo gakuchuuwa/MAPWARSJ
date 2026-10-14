@@ -80,7 +80,7 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
     //    小城原本恒无城心城堡（故一律不解析），现在日本风格的小城要摆 → 必须取到素材原生宽，
     //    否则 `native.castleW` 缺省、城堡按 baseSize×0.54 的兜底值画小（DE 原生 468 vs 兜底 361）。
     if (city.type !== 'small_city' || centerCastle) {
-        try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id); } catch { castleDir = null; }
+        try { castleDir = resolveCastleAsset(deStyle, city.factionId, city.region, city.id, city.buildingStyle); } catch { castleDir = null; }
     }
     const widths: Record<string, number> = {};
     for (const age of ages) for (const n of names) {

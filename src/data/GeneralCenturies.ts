@@ -1133,6 +1133,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_chicomacatl':                   16,    // 奇科马卡特 · tuotuonake · 托托纳克胖酋长联络科尔特斯（1519年）
     'gen_hatuey':                        16,    // 哈土依 · taino · 加勒比泰诺人反抗西班牙首领（1511年）
     'gen_bentejui':                      15,    // 本特胡伊 · guanche · 加那利柏柏尔关切人抵抗卡斯蒂利亚首领（1483年）
+    'gen_hurao':                         17,    // 胡劳 · chamorro · 关岛查莫罗反抗西班牙首领（1671年围攻阿加尼亚）
     'gen_noli':                          15,    // 诺利 · fodejiao · 佛得角航海探险总督（1462年成名）
     'gen_tome_sousa':                    16,    // 托梅·德·索萨 · baiyiya · 葡萄牙首任巴西总督建立萨尔瓦多（1549年）
     'gen_cipriano_figueiredo':           16,    // 西普里亚诺 · yasuer · 亚速尔群岛抵抗西班牙名督（1581年萨尔加战役）

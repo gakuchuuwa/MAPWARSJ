@@ -566,7 +566,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                         groundTile: 'sr2',
                         noGround: true,
                         slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
-                    });
+                    }, buildingStyle);
             }
             return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
                 ordered.map((o): [string, string] => [o.b, 'AGE2']), native, {
@@ -575,7 +575,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                     wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : DE_PALISADE_ANCHORS,
                     groundTile: 'sr2',
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
-                });
+                }, buildingStyle);
         }
     }
 
@@ -605,7 +605,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画（否则沿用战略压缩值）
     const centerW = nw(centerCastle ? 'CASTLE' : centerB) ?? (baseSize * (centerCastle ? 0.54 : cityBuildingScale(centerB, 0.4)));   // 🔴 [2026-10-12 主人令「全世界统一」] 城堡兜底 0.55 → 0.54（与评估页同口径）
     const centerFlip = (deHashString(cityId + '|center|' + centerB) & 1) === 1; // [2026-08-27] 建筑朝向随机镜像
-    const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId) : null;
+    const castleDir = centerCastle ? resolveCastleAsset(style, factionId, region, cityId, buildingStyle) : null;
     const centerImgSrc = castleDir ? `/SUCAI_BUILDING/${castleDir}/preview.png` : cityBuildingSrc(style, centerB, 'AGE2');
     parts.push(
         `<img src="${centerImgSrc}" style="position:absolute;left:50%;top:50%;width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:100;" />`
@@ -902,7 +902,7 @@ function buildDeStockadeStackHtml(
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes, buildingStyle?: string): string {
     // 2026-09-10 主人定：草原险要去掉围墙，中心耸立蒙古要塞城堡+营帐环卫 —— 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」]
     //    现只留给**战略地图**（没传原生尺寸表）；战术侧毡帐险要也走下面按格摆放的同一套（加固墙+外圈石墙+四门+城堡+箭塔）。
     if (style === 'YURT' && !native) return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native);
@@ -934,7 +934,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
             // 🔴 [2026-10-12 主人令「在外围再套一圈城墙，用普通石墙」＋「四门、错开对不齐、正南北东西朝向」]
             //    外圈每段 10（角到角 25，与内圈隔 3 格；该间距是我算的，主人未定），普通石墙，四门开在菱形四个顶点。
             outer: { seg: 10, wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'] },
-        }) : null;
+        }, buildingStyle) : null;
     if (passGridHtml) return passGridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
 
     // 险要矩形城容器（长8段+门 × 宽4段）
@@ -957,7 +957,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     }
 
     // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认，ANDE 自动对号入座 INCA_CASTLE_AGE3）
-    const castleDir = resolveCastleAsset(style, factionId, region, cityId);
+    const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
     // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
     // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
     // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
@@ -1056,7 +1056,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: 'rd2',
-            });
+            }, buildingStyle);
     }
 
     // 🔴 [2026-10-11 主人定] 中城城内只留一层：用与建筑独立地基完全相同显示比例的无缝原图 rd2.png 铺满城墙圈（S=6, AX=12），四周边缘柔和渐变
@@ -1090,7 +1090,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     let otherIdx = 0;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
             const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（中城中心城堡；战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
@@ -1186,7 +1186,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full.slice(0, 8), native, {
             seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'], groundTile: 'rd1',
-        });
+        }, buildingStyle);
     }
 
     // 容器尺寸（比中城更大，容纳更宽的布局与石城墙）
@@ -1227,7 +1227,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     let otherIdx = 0;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
             const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（大城中心城堡；战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
@@ -1323,7 +1323,7 @@ interface CityGridSpec {
 
 function buildDeCityGridHtml(
     baseSize: number, cityId: string, style: string, centerCastle: boolean, factionId: string | undefined, region: string | undefined,
-    pool: Array<[string, string]>, native: CityNativeSizes, g: CityGridSpec,
+    pool: Array<[string, string]>, native: CityNativeSizes, g: CityGridSpec, buildingStyle?: string,
 ): string {
     const TW = DE_ISO_TILE_W, TH = DE_ISO_TILE_H;
     // 墙圈按格逐件生成：每边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 2·seg + 5 步
@@ -1387,7 +1387,7 @@ function buildDeCityGridHtml(
     let otherIdx = 0;
     slots.forEach((slot, i) => {
         if (centerCastle && slot.isCenter) {
-            const castleDir = resolveCastleAsset(style, factionId, region, cityId);
+            const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
             const cW = native.castleW ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「全世界统一」] 兜底 0.48 → 0.54（战术按格摆放；通常走 native.castleW 素材原生宽）
             const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
             placeBuilding(castleDir, `/SUCAI_BUILDING/${castleDir}/preview.png`, cW, 4, slot.ci, slot.cj, cFlip);
@@ -1432,8 +1432,9 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     const displayLng = city.longitude;
     const cityRegion = getCityRegion({ latitude: displayLat, longitude: displayLng, region: city.region });
     let useStoneWall = false;   // 小城石墙／木栅：按建筑风格（封建时代口径），在 deStyle 算出后赋值
-    const isJapan = !!((cityRegion && cityRegion.includes('JAPAN')) || (city.region && city.region.includes('JAPAN')));
-    const isTibet = !!((cityRegion && cityRegion.includes('TIBET')) || (city.region && city.region.includes('TIBET')));
+    // 🔴 [2026-10-14 主人令「和其他一切无关」] 日本／青藏只看建筑风格，不再看 region
+    const isJapan = city.buildingStyle === 'JAPAN';
+    const isTibet = city.buildingStyle === 'TIBET';
     const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
     // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
     //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
@@ -1467,7 +1468,7 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
             //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
             //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
             //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
-            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native)
+            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native, city.buildingStyle)
             : city.type === 'stockade'
                 ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence, native)
                 : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));

@@ -1,7 +1,7 @@
 /**
  * 立绘内容去重映射：副本路径 → 代表路径（内容相同则共享同一调校记录）。
  * 由脚本自动生成，勿手动编辑。重新生成：npm run portrait:build-canonical
- * 生成时间：2026/10/14 10:24:33（共 52 条）
+ * 生成时间：2026/10/14 10:50:13（共 52 条）
  */
 export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/SPANISH/__暂留__SPANISH_01.png": "/assets/AMERICA/baiyiya_tuomei.png",
@@ -53,7 +53,5 @@ export const PORTRAIT_CANONICAL_MAP: Readonly<Record<string, string>> = {
     "/assets/LATIN/__暂留__LATIN_02.png": "/assets/GREEK/__暂留__GREEK_08.png",
     "/assets/LATIN/xilagu_ajiasuokeli.png": "/assets/GREEK/__暂留__GREEK_09.png",
     "/assets/LATIN/yilisi_yifeituosi.png": "/assets/GREEK/__暂留__GREEK_10.png",
-    "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",
-    "/assets/WEST_ASIA/emesene_xierkuhe.png": "/assets/WEST_ASIA/abasi_mansuer.png",
-    "/assets/WEST_ASIA/maidina_halide.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png"
+    "/assets/LATIN/yipilusi_piluoshi.png": "/assets/GREEK/__暂留__GREEK_11.png",    "/assets/WEST_ASIA/maidina_halide.png": "/assets/WEST_ASIA/__多余__WEST_ASIA_01.png"
 };

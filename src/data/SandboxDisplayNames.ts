@@ -26,6 +26,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   taino: '泰诺',  // [2026-08-26] 古巴/大安的列斯原住民泰诺人
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
+  chamorro: '查',  // 查莫罗（关岛·阿加尼亚）
 
   ayinu_ezo: '阿伊',   // 🔴 [2026-09-12] 原「虾夷」与 ayinu(虾夷)撞旗 → 按势力名「阿伊努」取前两字「阿伊」
 

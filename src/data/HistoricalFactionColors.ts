@@ -1216,6 +1216,7 @@ const _FIXED: Record<string, string> = {
     'muertan': '#24903C', // 木尔坦·纳西尔丁（绿、金、橙。伊斯兰绿金）
     'muxikani': '#CD5228', // 穆西卡尼·穆西卡诺斯（橙红、金、绿。朱砂橙红）
     'xindu': '#9C1438', // 信度·巴赫拉姆汗（绿、金、红。深绯红）
+    'chamorro': '#14AAB4', // 查莫罗·阿加尼亚（关岛·密克罗尼西亚热带海洋青蓝）
 };
 
 function assertUniqueFixedColors(map: Record<string, string>): void {
