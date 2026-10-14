@@ -1703,48 +1703,48 @@ export const DE_CORE_UNITS: DeUnit[] = [
 // ──────────────────────────────────────────────
 export const DE_TECHS: DeTech[] = [
     // 铁匠铺科技
-    { id: 't_forge', name: '锻造 (Forging)', englishName: 'Forging', building: '铁匠铺', age: '封建时代', cost: '150肉', effect: '所有步兵和骑兵近战攻击力 +1' },
-    { id: 't_iron_casting', name: '铸铁 (Iron Casting)', englishName: 'Iron Casting', building: '铁匠铺', age: '城堡时代', cost: '220肉 120金', effect: '所有步兵和骑兵近战攻击力额外 +1' },
-    { id: 't_blast_furnace', name: '高炉 (Blast Furnace)', englishName: 'Blast Furnace', building: '铁匠铺', age: '帝王时代', cost: '275肉 225金', effect: '所有步兵和骑兵近战攻击力强力 +2' },
-    { id: 't_fletching', name: '箭羽 (Fletching)', englishName: 'Fletching', building: '铁匠铺', age: '封建时代', cost: '100肉 50金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力 +1，射程 +1' },
-    { id: 't_bodkin_arrow', name: '锥头箭 (Bodkin Arrow)', englishName: 'Bodkin Arrow', building: '铁匠铺', age: '城堡时代', cost: '200肉 100金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力额外 +1，射程 +1' },
-    { id: 't_bracer', name: '博德金箭 (Bracer)', englishName: 'Bracer', building: '铁匠铺', age: '帝王时代', cost: '300肉 200金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力再次 +1，射程 +1' },
-    { id: 't_scale_mail', name: '步兵鳞甲 (Scale Mail Armor)', englishName: 'Scale Mail Armor', building: '铁匠铺', age: '封建时代', cost: '100肉', effect: '步兵近战护甲 +1，远程护甲 +1' },
-    { id: 't_chain_mail', name: '步兵锁甲 (Chain Mail Armor)', englishName: 'Chain Mail Armor', building: '铁匠铺', age: '城堡时代', cost: '200肉 100金', effect: '步兵近战护甲 +1，远程护甲 +1' },
-    { id: 't_plate_mail', name: '步兵板甲 (Plate Mail Armor)', englishName: 'Plate Mail Armor', building: '铁匠铺', age: '帝王时代', cost: '300肉 150金', effect: '步兵近战护甲 +1，远程护甲 +2' },
-    { id: 't_scale_barding', name: '骑兵鳞甲 (Scale Barding Armor)', englishName: 'Scale Barding Armor', building: '铁匠铺', age: '封建时代', cost: '150肉', effect: '骑兵近战护甲 +1，远程护甲 +1' },
-    { id: 't_chain_barding', name: '骑兵锁甲 (Chain Barding Armor)', englishName: 'Chain Barding Armor', building: '铁匠铺', age: '城堡时代', cost: '250肉 150金', effect: '骑兵近战护甲 +1，远程护甲 +1' },
-    { id: 't_plate_barding', name: '骑兵板甲 (Plate Barding Armor)', englishName: 'Plate Barding Armor', building: '铁匠铺', age: '帝王时代', cost: '350肉 200金', effect: '骑兵近战护甲 +1，远程护甲 +2' },
+    { id: 't_forge', name: '锻造', englishName: 'Forging', building: '铁匠铺', age: '封建时代', cost: '150肉', effect: '所有步兵和骑兵近战攻击力 +1' },
+    { id: 't_iron_casting', name: '铸铁', englishName: 'Iron Casting', building: '铁匠铺', age: '城堡时代', cost: '220肉 120金', effect: '所有步兵和骑兵近战攻击力额外 +1' },
+    { id: 't_blast_furnace', name: '高炉', englishName: 'Blast Furnace', building: '铁匠铺', age: '帝王时代', cost: '275肉 225金', effect: '所有步兵和骑兵近战攻击力强力 +2' },
+    { id: 't_fletching', name: '箭羽', englishName: 'Fletching', building: '铁匠铺', age: '封建时代', cost: '100肉 50金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力 +1，射程 +1' },
+    { id: 't_bodkin_arrow', name: '锥头箭', englishName: 'Bodkin Arrow', building: '铁匠铺', age: '城堡时代', cost: '200肉 100金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力额外 +1，射程 +1' },
+    { id: 't_bracer', name: '博德金箭', englishName: 'Bracer', building: '铁匠铺', age: '帝王时代', cost: '300肉 200金', effect: '步弓手、骑射手、战舰、箭塔与城堡攻击力再次 +1，射程 +1' },
+    { id: 't_scale_mail', name: '步兵鳞甲', englishName: 'Scale Mail Armor', building: '铁匠铺', age: '封建时代', cost: '100肉', effect: '步兵近战护甲 +1，远程护甲 +1' },
+    { id: 't_chain_mail', name: '步兵锁甲', englishName: 'Chain Mail Armor', building: '铁匠铺', age: '城堡时代', cost: '200肉 100金', effect: '步兵近战护甲 +1，远程护甲 +1' },
+    { id: 't_plate_mail', name: '步兵板甲', englishName: 'Plate Mail Armor', building: '铁匠铺', age: '帝王时代', cost: '300肉 150金', effect: '步兵近战护甲 +1，远程护甲 +2' },
+    { id: 't_scale_barding', name: '骑兵鳞甲', englishName: 'Scale Barding Armor', building: '铁匠铺', age: '封建时代', cost: '150肉', effect: '骑兵近战护甲 +1，远程护甲 +1' },
+    { id: 't_chain_barding', name: '骑兵锁甲', englishName: 'Chain Barding Armor', building: '铁匠铺', age: '城堡时代', cost: '250肉 150金', effect: '骑兵近战护甲 +1，远程护甲 +1' },
+    { id: 't_plate_barding', name: '骑兵板甲', englishName: 'Plate Barding Armor', building: '铁匠铺', age: '帝王时代', cost: '350肉 200金', effect: '骑兵近战护甲 +1，远程护甲 +2' },
 
     // 大学与攻城科技
-    { id: 't_ballistics', name: '弹道学 (Ballistics)', englishName: 'Ballistics', building: '大学', age: '城堡时代', cost: '300木 175金', effect: '所有射手、战舰、箭塔、城堡根据敌军移动预判开火，命中率达到极致' },
-    { id: 't_chemistry', name: '化学 (Chemistry)', englishName: 'Chemistry', building: '大学', age: '帝王时代', cost: '300肉 200金', effect: '所有非火药远程单位攻击力 +1 且箭矢附带燃烧特效；解锁火枪手与手推炮' },
-    { id: 't_siege_engineers', name: '攻城工程师 (Siege Engineers)', englishName: 'Siege Engineers', building: '大学', age: '帝王时代', cost: '500肉 600木', effect: '攻城武器射程 +1 (冲车除外)，对建筑攻击力提高 20% (投石机提高 40%)' },
+    { id: 't_ballistics', name: '弹道学', englishName: 'Ballistics', building: '大学', age: '城堡时代', cost: '300木 175金', effect: '所有射手、战舰、箭塔、城堡根据敌军移动预判开火，命中率达到极致' },
+    { id: 't_chemistry', name: '化学', englishName: 'Chemistry', building: '大学', age: '帝王时代', cost: '300肉 200金', effect: '所有非火药远程单位攻击力 +1 且箭矢附带燃烧特效；解锁火枪手与手推炮' },
+    { id: 't_siege_engineers', name: '攻城工程师', englishName: 'Siege Engineers', building: '大学', age: '帝王时代', cost: '500肉 600木', effect: '攻城武器射程 +1 (冲车除外)，对建筑攻击力提高 20% (投石机提高 40%)' },
 
     // 靶场与马厩核心科技
-    { id: 't_thumb_ring', name: '指环/拇指扳机 (Thumb Ring)', englishName: 'Thumb Ring', building: '靶场', age: '城堡时代', cost: '300肉 250木', effect: '步弓手开火静止命中率提升至 100%，攻击射速加快 18%' },
-    { id: 't_bloodlines', name: '血统 (Bloodlines)', englishName: 'Bloodlines', building: '马厩', age: '封建时代', cost: '150肉 100金', effect: '所有马厩骑兵、骑射手及象兵生命值无条件永久 +20' },
-    { id: 't_husbandry', name: '养马/畜牧 (Husbandry)', englishName: 'Husbandry', building: '马厩', age: '城堡时代', cost: '150肉', effect: '所有骑兵移动速度提升 10%' },
+    { id: 't_thumb_ring', name: '指环/拇指扳机', englishName: 'Thumb Ring', building: '靶场', age: '城堡时代', cost: '300肉 250木', effect: '步弓手开火静止命中率提升至 100%，攻击射速加快 18%' },
+    { id: 't_bloodlines', name: '血统', englishName: 'Bloodlines', building: '马厩', age: '封建时代', cost: '150肉 100金', effect: '所有马厩骑兵、骑射手及象兵生命值无条件永久 +20' },
+    { id: 't_husbandry', name: '养马/畜牧', englishName: 'Husbandry', building: '马厩', age: '城堡时代', cost: '150肉', effect: '所有骑兵移动速度提升 10%' },
 
     // 兵营特种科技
-    { id: 't_squires', name: '护卫 (Squires)', englishName: 'Squires', building: '兵营', age: '城堡时代', cost: '100肉', effect: '所有步兵移动速度加快 10%' },
-    { id: 't_arson', name: '纵火 (Arson)', englishName: 'Arson', building: '兵营', age: '城堡时代', cost: '150肉 50金', effect: '所有步兵对建筑额外造成 +2 伤害' },
+    { id: 't_squires', name: '护卫', englishName: 'Squires', building: '兵营', age: '城堡时代', cost: '100肉', effect: '所有步兵移动速度加快 10%' },
+    { id: 't_arson', name: '纵火', englishName: 'Arson', building: '兵营', age: '城堡时代', cost: '150肉 50金', effect: '所有步兵对建筑额外造成 +2 伤害' },
 
     // 城镇中心与内政经济
-    { id: 't_loom', name: '织布机 (Loom)', englishName: 'Loom', building: '城镇中心', age: '黑暗时代', cost: '50金', effect: '村民生命值 +15，近战护甲 +1，远程护甲 +2，大幅提升前期抗野兽与骚扰生存力' },
-    { id: 't_wheelbarrow', name: '独轮推车 (Wheelbarrow)', englishName: 'Wheelbarrow', building: '城镇中心', age: '封建时代', cost: '175肉 50木', effect: '村民移动速度加快 10%，资源携带量上限提升 25%' },
-    { id: 't_hand_cart', name: '手推车 (Hand Cart)', englishName: 'Hand Cart', building: '城镇中心', age: '城堡时代', cost: '300肉 200木', effect: '村民移动速度进一步加快 10%，资源携带量上限额外提升 50%' },
+    { id: 't_loom', name: '织布机', englishName: 'Loom', building: '城镇中心', age: '黑暗时代', cost: '50金', effect: '村民生命值 +15，近战护甲 +1，远程护甲 +2，大幅提升前期抗野兽与骚扰生存力' },
+    { id: 't_wheelbarrow', name: '独轮推车', englishName: 'Wheelbarrow', building: '城镇中心', age: '封建时代', cost: '175肉 50木', effect: '村民移动速度加快 10%，资源携带量上限提升 25%' },
+    { id: 't_hand_cart', name: '手推车', englishName: 'Hand Cart', building: '城镇中心', age: '城堡时代', cost: '300肉 200木', effect: '村民移动速度进一步加快 10%，资源携带量上限额外提升 50%' },
 
     // 修道院神圣科技
-    { id: 't_sanctity', name: '圣洁 (Sanctity)', englishName: 'Sanctity', building: '修道院', age: '城堡时代', cost: '120金', effect: '僧侣生命值 +15 (+50%)' },
-    { id: 't_fervor', name: '狂热 (Fervor)', englishName: 'Fervor', building: '修道院', age: '城堡时代', cost: '140金', effect: '僧侣移动速度提高 15%' },
-    { id: 't_redemption', name: '救赎 (Redemption)', englishName: 'Redemption', building: '修道院', age: '城堡时代', cost: '475金', effect: '允许僧侣招降敌方攻城武器以及大部分军事建筑物' },
-    { id: 't_heresy', name: '异端 (Heresy)', englishName: 'Heresy', building: '修道院', age: '城堡时代', cost: '1000金', effect: '被敌方僧侣招降的己方单位直接阵亡，而非倒戈变节成为敌军' },
-    { id: 't_faith', name: '信仰 (Faith)', englishName: 'Faith', building: '修道院', age: '帝王时代', cost: '750肉 1000金', effect: '所有己方单位抵抗敌方僧侣招降的能力大幅提高 50%' },
+    { id: 't_sanctity', name: '圣洁', englishName: 'Sanctity', building: '修道院', age: '城堡时代', cost: '120金', effect: '僧侣生命值 +15 (+50%)' },
+    { id: 't_fervor', name: '狂热', englishName: 'Fervor', building: '修道院', age: '城堡时代', cost: '140金', effect: '僧侣移动速度提高 15%' },
+    { id: 't_redemption', name: '救赎', englishName: 'Redemption', building: '修道院', age: '城堡时代', cost: '475金', effect: '允许僧侣招降敌方攻城武器以及大部分军事建筑物' },
+    { id: 't_heresy', name: '异端', englishName: 'Heresy', building: '修道院', age: '城堡时代', cost: '1000金', effect: '被敌方僧侣招降的己方单位直接阵亡，而非倒戈变节成为敌军' },
+    { id: 't_faith', name: '信仰', englishName: 'Faith', building: '修道院', age: '帝王时代', cost: '750肉 1000金', effect: '所有己方单位抵抗敌方僧侣招降的能力大幅提高 50%' },
 
     // 防御与军事动员
-    { id: 't_murder_holes', name: '杀人孔 (Murder Holes)', englishName: 'Murder Holes', building: '大学', age: '城堡时代', cost: '200肉 100石', effect: '箭塔和城堡消除近身盲区，可直接垂直射击贴脸的敌方单位' },
-    { id: 't_conscription', name: '征召 (Conscription)', englishName: 'Conscription', building: '城堡', age: '帝王时代', cost: '150肉 150金', effect: '兵营、靶场、马厩与城堡生产单位的速度加快 33%' },
+    { id: 't_murder_holes', name: '杀人孔', englishName: 'Murder Holes', building: '大学', age: '城堡时代', cost: '200肉 100石', effect: '箭塔和城堡消除近身盲区，可直接垂直射击贴脸的敌方单位' },
+    { id: 't_conscription', name: '征召', englishName: 'Conscription', building: '城堡', age: '帝王时代', cost: '150肉 150金', effect: '兵营、靶场、马厩与城堡生产单位的速度加快 33%' },
 ];
 
 // ──────────────────────────────────────────────

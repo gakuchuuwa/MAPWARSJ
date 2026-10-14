@@ -102,11 +102,24 @@ def main() -> int:
             return 2
 
     # ── 语言表 ──
-    strtab: dict[str, dict[int, str]] = {
-        lng: load_kv(prog / "resources" / lng / "strings" / "key-value" / "key-value-strings-utf8.txt")
-        for lng in LANGS
-    }
-    print(f"语言表：en {len(strtab['en'])} 条 / zh {len(strtab['zh'])} 条")
+    # 🔴 一个语种有**多个** key-value 文件：主表 `key-value-strings-utf8.txt` 只到 30 万段，
+    #    而科技树节点的 `Name String ID` 有一批落在 **40 万段**（如 405052=弓兵），
+    #    它只在 `key-value-paphos-strings-utf8.txt` 里（实测；漏读这个文件会让 313 个节点没有中文名、
+    #    渲染器回落显示英文名 —— 2026-10-14 主人指出「所有兵种必须中文名」的根因）。
+    #    故：**该语种目录下所有 key-value 文件全读并合并**，主表先读、其余文件只补空位（主表优先）。
+    def load_all_kv(lng: str) -> dict[int, str]:
+        d = prog / "resources" / lng / "strings" / "key-value"
+        if not d.exists():
+            return {}
+        out: dict[int, str] = {}
+        files = sorted(d.glob("*.txt"), key=lambda p: (p.name != "key-value-strings-utf8.txt", p.name))
+        for f in files:
+            for k, v in load_kv(f).items():
+                out.setdefault(k, v)
+        return out
+
+    strtab: dict[str, dict[int, str]] = {lng: load_all_kv(lng) for lng in LANGS}
+    print(f"语言表：en {len(strtab['en'])} 条 / zh {len(strtab['zh'])} 条（已合并该语种全部 key-value 文件）")
 
     # ── 文明清单（第 0 项 Gaia 排除）──
     civlist = json.loads(civfile.read_text(encoding="utf-8"))["civilization_list"]

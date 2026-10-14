@@ -230,10 +230,7 @@ class DeWikiApp {
 
                 <!-- 6. 全文明科技树（62）→ 数据 public/de-techtree/，版式照官方 -->
                 <section id="sec-de-techtree" class="de-section-view active">
-                    <div style="background: var(--de-bg-darker); border: 1px solid var(--de-border-gold); border-radius: 8px; padding: 14px;">
-                        <h2 style="font-family: var(--font-serif); color: var(--de-gold-light); font-size: 20px; margin-bottom: 10px;">🌳 全文明科技树（DE 官方 62 文明）</h2>
-                        <div id="de-techtree-host" style="min-height:420px"></div>
-                    </div>
+                    <div id="de-techtree-host" style="width:100%;height:100%;"></div>
                 </section>
 
                 <!-- 7. 史诗战役集 -->
@@ -260,6 +257,25 @@ class DeWikiApp {
         `;
     }
 
+    public switchTab(tab: any): void {
+        this.currentTab = tab;
+        document.querySelectorAll('.de-tab-btn').forEach(b => {
+            const isTarget = (b as HTMLElement).dataset.tab === tab;
+            b.classList.toggle('active', isTarget);
+        });
+
+        document.querySelectorAll('.de-section-view').forEach(sec => sec.classList.remove('active'));
+        const curSec = document.getElementById(`sec-${tab}`);
+        if (curSec) curSec.classList.add('active');
+
+        if (tab === 'de-techtree') {
+            document.body.classList.add('is-techtree-fullscreen');
+            void this.renderDeTechTreeTab();
+        } else {
+            document.body.classList.remove('is-techtree-fullscreen');
+        }
+    }
+
     private bindEvents(): void {
         // Tab 切换
         document.querySelectorAll('.de-tab-btn').forEach(btn => {
@@ -267,14 +283,7 @@ class DeWikiApp {
                 const target = e.currentTarget as HTMLElement;
                 const tab = target.dataset.tab as any;
                 if (!tab) return;
-                this.currentTab = tab;
-                document.querySelectorAll('.de-tab-btn').forEach(b => b.classList.remove('active'));
-                target.classList.add('active');
-
-                document.querySelectorAll('.de-section-view').forEach(sec => sec.classList.remove('active'));
-                const curSec = document.getElementById(`sec-${tab}`);
-                if (curSec) curSec.classList.add('active');
-                if (tab === 'de-techtree') this.renderDeTechTreeTab();
+                this.switchTab(tab);
             });
         });
 
@@ -366,14 +375,7 @@ class DeWikiApp {
         // 一打开 de-wiki.html 就停在科技树页签；?civ=<KEY> 可指定文明。
         const civ = new URLSearchParams(location.search).get('civ');
         if (civ) this.deTechTreeCiv = civ.toUpperCase();
-        this.currentTab = 'de-techtree';
-        document.querySelectorAll('.de-tab-btn').forEach((b) => {
-            const isTree = (b as HTMLElement).dataset.tab === 'de-techtree';
-            b.classList.toggle('active', isTree);
-        });
-        document.querySelectorAll('.de-section-view').forEach((s) => s.classList.remove('active'));
-        document.getElementById('sec-de-techtree')?.classList.add('active');
-        void this.renderDeTechTreeTab();
+        this.switchTab('de-techtree');
     }
 
     private renderCivs(): void {
@@ -522,6 +524,9 @@ class DeWikiApp {
                 try { localStorage.setItem('de-techtree-namesrc', s); } catch { /* 忽略 */ }
                 host.dataset.sig = '';
                 this.renderDeTechTreeTab();
+            },
+            onBack: () => {
+                this.switchTab('overview');
             },
         });
     }

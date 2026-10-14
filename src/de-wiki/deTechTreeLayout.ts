@@ -273,9 +273,9 @@ function hasItemsInGrid(b: TreeItem): boolean {
  * 注意：这一步会**再动一次 building.row**（官方在绘制阶段做，算法阶段不重跑），所以必须
  * 在 layoutTree() 之后、且只调一次。
  */
-export function computeTreeView(pkg: TreePackage, viewHeight: number): TreeView {
+export function computeTreeView(pkg: TreePackage, viewHeight: number, customStartX?: number): TreeView {
     const P = LAYOUT_CONST;
-    const treeHeight = Math.max(viewHeight - 80, 100);
+    const treeHeight = Math.max(viewHeight - 40, 100);
     const rowHeight = treeHeight / 4;
     const elementHeight = rowHeight / 3;
     const step = elementHeight + P.PADDING_BETWEEN_COLUMNS;
@@ -289,7 +289,7 @@ export function computeTreeView(pkg: TreePackage, viewHeight: number): TreeView 
     const pos = new Map<string, { x: number; y: number }>();
     const lanes: TreeView['lanes'] = [];
 
-    let startX = P.START_X;
+    let startX = customStartX ?? P.START_X;
     let width = 0;
     let previousRow = 0;
     let previousBuildingInOwnColumn = true;
