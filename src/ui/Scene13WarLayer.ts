@@ -9717,7 +9717,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
-    private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB): { x: number; y: number } | null {
+    private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB, look = 6 * FLOW_SUB, escape = 1): { x: number; y: number } | null {
         const f = field;   // 🔴 [2026-10-14] 守方出城流场（defGateFlow 每门一张）同用本函数
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
@@ -9738,11 +9738,23 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         };
         if (cur() >= 32767) {   // 站在被膨胀的障碍格里：先挪到相邻可走格
             const [bd, ba, bb] = best();
-            if (bd >= 32767) return null;
-            a = ba; b = bb;
+            if (bd < 32767) { a = ba; b = bb; }
+            else {
+                // 🔴 [2026-10-14] 贴墙站着的兵（离墙中心正好「墙厚＋半径」）脚下与紧邻一圈都在膨胀带里 ⇒ 往外 escape 圈找最近的可走格
+                //    （实测险要卡住的守军 6/8 就是这样：退回直线走门 → 又顶回墙上）。escape 只给到 1 地块，够不着墙另一侧
+                let e2 = Infinity, ea = -1, eb = -1;
+                for (let da = -escape; da <= escape; da++) for (let db = -escape; db <= escape; db++) {
+                    const a2 = a + da, b2 = b + db;
+                    if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N || f[a2 * N + b2] >= 32767) continue;
+                    const q = da * da + db * db;
+                    if (q < e2 || (q === e2 && f[a2 * N + b2] < f[ea * N + eb])) { e2 = q; ea = a2; eb = b2; }
+                }
+                if (ea < 0) return null;
+                a = ea; b = eb;
+            }
         }
         if (cur() <= stop) return null;   // 已到中心附近，交还正常索敌
-        for (let i = 0; i < 6 * FLOW_SUB; i++) {
+        for (let i = 0; i < look; i++) {
             const [bd, ba, bb] = best();
             if (bd >= cur()) break;
             a = ba; b = bb;
@@ -9823,15 +9835,28 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
         const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
         // 选门：aim 在城外就选「离敌人最近的那座门」（出门即到敌人一侧）；aim 为空就选「离自己最近的那座门」
-        let g: WarBuilding | null = null, gd = Infinity;
+        // 🔴 [2026-10-14 主人令「分门出城，3门也可以吧，正面和左右」] aim 在城外时，从离敌人最近的**三座**门（正面＋左右）里分流：
+        //    每个兵按出生编号固定走其中一座（zid % 3），不中途换门；aim 为空（离自己最近的门）照旧不分。
+        //    病灶（实测险要）：几百守军都挤向同一座门，门口排队、被后排挤着贴在门边墙上不动。
+        // 🔴 [2026-10-14] 只认**外圈**城门（在 ringBox 边上的）：险要是内外两圈墙，内圈门的门外点仍在外圈之内 ⇒
+        //    选到内圈门的守军出了内圈门还在城里、下一轮又选回它，在两圈之间打转（实测险要卡住 17 人、分两门时 57 人的病根）。
+        //    内圈门守方本就能穿，外圈门的流场会自己带着穿过去。普通城只有一圈，不受影响。
+        const onRing = (b: WarBuilding): boolean => {
+            const [a, bb] = this.tileAB(b.x, b.y);
+            return Math.min(Math.abs(a - r.a0), Math.abs(a - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) < 1;
+        };
+        const cand: { b: WarBuilding; d: number }[] = [];
         for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE') continue;
-            const d = aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d < gd) { gd = d; g = b; }
+            if (b.key !== 'STONE_GATE' || !onRing(b)) continue;
+            cand.push({ b, d: aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2 });
         }
-        if (!g) return aim;
+        if (!cand.length) return aim;
+        cand.sort((p, q) => p.d - q.d);
+        const g = aim ? cand[m.zid % Math.min(3, cand.length)].b : cand[0].b;
         // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
-        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, 3 * FLOW_SUB);
+        // 只往前看 2 小格（1 地块）：看远了路点在拐弯后面，直线奔过去会切过墙角顶在墙上；stop=-1 ＝ 一路沿流场走到出了城（终点在城外，城内步数恒 >0），
+        // 不在门前几格就改走直线 —— 那条直线是斜着穿过门旁的墙（实测险要卡住的守军多数顶在门边墙上）
+        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
         if (wp) return wp;
         // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
         const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
