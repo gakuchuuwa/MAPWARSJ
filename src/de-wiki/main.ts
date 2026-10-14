@@ -10,9 +10,10 @@ import {
     type DeCiv,
     type DeUnit
 } from './deData';
+import { mountDeTechTree, type TechTreeHandle } from './deTechTreeRender';
 
 class DeWikiApp {
-    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'campaigns' | 'dlcs' = 'overview';
+    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'campaigns' | 'dlcs' = 'overview';
     private civFilterRegion: string = 'all';
     private civSearchQuery: string = '';
     private unitFilterCategory: string = 'all';
@@ -61,6 +62,7 @@ class DeWikiApp {
                     <button class="de-tab-btn" data-tab="units">⚔️ 单位图鉴</button>
                     <button class="de-tab-btn" data-tab="mechanics">🛡️ 攻防与模拟器</button>
                     <button class="de-tab-btn" data-tab="techtree">🔬 科技树全览</button>
+                    <button class="de-tab-btn" data-tab="de-techtree">🌳 全文明科技树 (62)</button>
                     <button class="de-tab-btn" data-tab="campaigns">🏆 史诗战役集</button>
                     <button class="de-tab-btn" data-tab="dlcs">📜 DLC版本史</button>
                 </nav>
@@ -226,7 +228,15 @@ class DeWikiApp {
                     </div>
                 </section>
 
-                <!-- 6. 史诗战役集 -->
+                <!-- 6. 全文明科技树（62）→ 数据 public/de-techtree/，版式照官方 -->
+                <section id="sec-de-techtree" class="de-section-view">
+                    <div style="background: var(--de-bg-darker); border: 1px solid var(--de-border-gold); border-radius: 8px; padding: 14px;">
+                        <h2 style="font-family: var(--font-serif); color: var(--de-gold-light); font-size: 20px; margin-bottom: 10px;">🌳 全文明科技树（DE 官方 62 文明）</h2>
+                        <div id="de-techtree-host" style="min-height:420px"></div>
+                    </div>
+                </section>
+
+                <!-- 7. 史诗战役集 -->
                 <section id="sec-campaigns" class="de-section-view">
                     <div style="background: var(--de-bg-darker); border: 1px solid var(--de-border-gold); border-radius: 8px; padding: 24px;">
                         <h2 style="font-family: var(--font-serif); color: var(--de-gold-light); font-size: 20px; margin-bottom: 14px;">🏆 官方全语音历史剧情战役集</h2>
@@ -264,6 +274,7 @@ class DeWikiApp {
                 document.querySelectorAll('.de-section-view').forEach(sec => sec.classList.remove('active'));
                 const curSec = document.getElementById(`sec-${tab}`);
                 if (curSec) curSec.classList.add('active');
+                if (tab === 'de-techtree') this.renderDeTechTreeTab();
             });
         });
 
@@ -351,6 +362,19 @@ class DeWikiApp {
         this.renderDlcs();
         this.initCalculatorSelectors();
         this.updateCalculator();
+        // ?civ=<KEY> 直达全文明科技树（也便于截图/验收）
+        const civ = new URLSearchParams(location.search).get('civ');
+        if (civ) {
+            this.currentTab = 'de-techtree';
+            this.deTechTreeCiv = civ.toUpperCase();
+            document.querySelectorAll('.de-tab-btn').forEach((b) => {
+                const isTree = (b as HTMLElement).dataset.tab === 'de-techtree';
+                b.classList.toggle('active', isTree);
+            });
+            document.querySelectorAll('.de-section-view').forEach((s) => s.classList.remove('active'));
+            document.getElementById('sec-de-techtree')?.classList.add('active');
+            void this.renderDeTechTreeTab();
+        }
     }
 
     private renderCivs(): void {
@@ -458,6 +482,28 @@ class DeWikiApp {
                 <div style="font-size: 11px; color: #f687b3;"><strong>弱点克星：</strong>${a.vulnerableTo}</div>
             </div>
         `).join('');
+    }
+
+    /** 全文明科技树（62）——版式与数据照 DE 官方，见 deTechTreeRender.ts */
+    private deTechTreeHandle: TechTreeHandle | null = null;
+    private deTechTreeCiv: string | null = null;
+    private async renderDeTechTreeTab(): Promise<void> {
+        const host = document.getElementById('de-techtree-host');
+        if (!host) return;
+        // 已经在这个页签渲染过同一个文明，就不重复渲染（避免每次切页签都重画）
+        if (this.deTechTreeCiv && host.dataset.civ === this.deTechTreeCiv) return;
+        if (this.deTechTreeHandle) { this.deTechTreeHandle.destroy(); this.deTechTreeHandle = null; }
+        const fromUrl = new URLSearchParams(location.search).get('civ');
+        const civ = this.deTechTreeCiv ?? fromUrl ?? 'BRITONS';
+        host.dataset.civ = civ;
+        this.deTechTreeHandle = await mountDeTechTree('de-techtree-host', civ, {
+            lng: 'zh',
+            onCiv: (k) => {
+                this.deTechTreeCiv = k;
+                host.dataset.civ = k;
+                this.renderDeTechTreeTab();
+            },
+        });
     }
 
     private renderTechTree(): void {
