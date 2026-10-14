@@ -1104,6 +1104,9 @@ const FLOW_SUB = 2;
  *  攻城武器选目标时城门的距离先减去这么多：城门比最近的城墙远不超过 400px（约 4 格）就先打门，
  *  再远的门不排除，只是排到近处城墙之后，按距离轮到再打。 */
 const GATE_PREF_PX = 400;
+/** 🔴 [2026-10-14 主人令「城内守军加防御，选1，先试20%」] 险要（关隘）守军站在城墙圈里时受到的伤害倍率（＝减伤 20%）。
+ *  只管士兵刀箭与范围溅射两处（见 passWallTaken）；箭塔/民兵只打攻方、野兽与城墙无关，不在内。 */
+const PASS_INSIDE_DAMAGE_TAKEN = 0.8;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -3708,6 +3711,9 @@ export class Scene13WarLayer {
     private ringBox: { a0: number; a1: number; b0: number; b1: number } | null | undefined = undefined;
     private ringOpenSec = -1;
     private ringOpenVal = false;
+    /** 🔴 [2026-10-14] 险要：已进城的攻方（每仿真时刻算一次，见 intruders） */
+    private intrudersSec = -1;
+    private intrudersVal: WarMan[] = [];
     private flowBuiltAt = -99;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
@@ -5401,6 +5407,7 @@ export class Scene13WarLayer {
         this.ringBox = undefined;
         this.flowDist = null;
         this.defGateFlow = null;
+        this.intrudersSec = -1;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5737,6 +5744,7 @@ export class Scene13WarLayer {
         this.ringBox = undefined;
         this.flowDist = null;
         this.defGateFlow = null;
+        this.intrudersSec = -1;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -9396,7 +9404,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                         o.hurtAt = this.battleSec;
                     }
                     o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt
-                        * (o.hero ? HERO_DAMAGE_TAKEN : 1);   // 范围伤同样给玩家免伤
+                        * (o.hero ? HERO_DAMAGE_TAKEN : 1)   // 范围伤同样给玩家免伤
+                        * this.passWallTaken(o);
                     if (o.hp <= 0) this.onManKilled(o, m);
                 }
             }
@@ -9808,6 +9817,49 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.ringBox = this.wallGates.length ? { a0, a1, b0, b1 } : null;
     }
 
+    /** 🔴 [2026-10-14] 已进城的活着的攻方（险要守军围攻用）；同一仿真时刻只扫一遍 */
+    private intruders(): WarMan[] {
+        if (this.intrudersSec !== this.battleSec) {
+            this.intrudersSec = this.battleSec;
+            this.intrudersVal = this.men.filter(o => o.f === 0 && o.hp > 0 && this.insideRing(o.x, o.y));
+        }
+        return this.intrudersVal;
+    }
+
+    /** 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要守方远程（城墙圈里的），不含攻城器械/玩家/穿墙兵 */
+    private isPassArcher(m: WarMan): boolean {
+        return m.f === 1 && this.defenderCityType === 'pass' && this.battleType === 'siege' && this.siegeWithWalls
+            && !m.siegeW && !m.hero && !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, 1).rng > 65
+            && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
+    }
+
+    /** 🔴 [2026-10-14] 险要守军去**城墙内侧**站定：沿流场走向离 aim（无 aim 就离自己）最近的外圈门，进到离外墙 3 格以内就站住（返回 null）。
+     *  病灶（实测）：站在城中心附近的守军离墙太远，弓箭够不着城外，攻方远程却一圈圈削靠墙的守军。 */
+    private passWallPost(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
+        this.ensureGateInfo();
+        const rr = this.ringBox;
+        if (!rr) return null;
+        const [ma, mb] = this.tileAB(m.x, m.y);
+        if (Math.min(ma - rr.a0, rr.a1 - ma, mb - rr.b0, rr.b1 - mb) <= 3) return null;
+        const ref = aim ?? m;
+        let pg: WarBuilding | null = null, pd = Infinity;
+        for (const b of this.wallGates) {
+            if (b.key !== 'STONE_GATE') continue;
+            const [ba, bb] = this.tileAB(b.x, b.y);
+            if (Math.min(Math.abs(ba - rr.a0), Math.abs(ba - rr.a1), Math.abs(bb - rr.b0), Math.abs(bb - rr.b1)) >= 1) continue;   // 只认外圈门
+            const d = (b.x - ref.x) ** 2 + (b.y - ref.y) ** 2;
+            if (d < pd) { pd = d; pg = b; }
+        }
+        return pg ? this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(pg) ?? null, -1, 2, FLOW_SUB) : null;
+    }
+
+    /** 🔴 [2026-10-14] 险要守军据墙而守：守方士兵站在城墙圈里 ⇒ 受伤 × PASS_INSIDE_DAMAGE_TAKEN；其余一律 1 */
+    private passWallTaken(o: WarMan): number {
+        if (o.f !== 1 || this.defenderCityType !== 'pass' || this.battleType !== 'siege' || !this.siegeWithWalls) return 1;
+        this.ensureGateInfo();
+        return this.insideRing(o.x, o.y) ? PASS_INSIDE_DAMAGE_TAKEN : 1;
+    }
+
     private insideRing(x: number, y: number): boolean {
         const r = this.ringBox;
         if (!r) return false;
@@ -9829,10 +9881,26 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.ensureGateInfo();
         const insideSelf = this.insideRing(m.x, m.y);
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
+        // 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要远程：只去城墙内侧站定，不追城里城外的任何人（射程内照常放箭）
+        if (this.isPassArcher(m)) return this.passWallPost(m, aim);
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         // 🔴 [2026-10-14 主人令「险要守军改成守在城墙内侧，敌人进来再打」] 险要（关隘）守军不出城：目标在城外就原地守着（远程照旧隔墙射），
         //    敌人进了城（上一行）照常接战。病灶：几百守军挤 4 座 1 格宽的外圈门出城，门口排队卡死约 17 人（实测）。
-        if (this.defenderCityType === 'pass') return null;
+        // 🔴 [2026-10-14 主人令「选1，攻方进城后守军都去围攻」] 城里已有攻方 ⇒ 去打离自己最近的那个（不限距离）；城里没有才原地守着。
+        //    病灶（实测 4 场）：守军的目标常是城外的敌人 ⇒ 上一行让他原地不动，进城的敌人只有挨着的守军去打 ⇒ 被各个击破，守方 4 场全负。
+        if (this.defenderCityType === 'pass') {
+            let t: WarMan | null = null, td = Infinity;
+            for (const o of this.intruders()) {
+                const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                if (d < td) { td = d; t = o; }
+            }
+            if (t) {
+                const ra = Math.atan2(m.jy, m.jx);
+                return { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING };
+            }
+            // 城里没有敌人 ⇒ 守到**城墙内侧**（见 passWallPost）
+            return this.passWallPost(m, aim);
+        }
         if (!this.ringBox) return aim;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
@@ -10667,6 +10735,21 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     m.ph += dt * 8;
                     continue;
                 }
+                // 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要守方远程够不着目标时**不追**：还没到墙边就走去墙边，到了就站住等敌人进射程
+                if (!inReach && this.isPassArcher(m)) {
+                    m.st = 0;
+                    m.fightT = 0;
+                    const p = this.passWallPost(m, foe);
+                    if (p) {
+                        const dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy);
+                        const step = stats.spd * spdK * dt;
+                        if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); }
+                    }
+                    // continue 跳过循环尾部的渐显与动画推进，就地补上（同追击分支）
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * 8;
+                    continue;
+                }
                 if (!inReach) {
                     m.st = 0;
                     // 绕着目标散开：瞄目标**周围一圈**上属于自己的那个点，不是目标本人那一个点。
@@ -10966,7 +11049,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                             foe.hurtAt = this.battleSec;
                         }
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt
-                            * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
+                            * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
+                            * ('sprite' in foe ? 1 : this.passWallTaken(foe));
                         if (foe.hp <= 0 && !('sprite' in foe)) {
                             this.onManKilled(foe, m);   // [2026-09-05 玩家] 玩家落马重整 / 玩家记功，其余留尸
                         }
