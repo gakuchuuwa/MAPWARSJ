@@ -9826,33 +9826,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         return this.intrudersVal;
     }
 
-    /** 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要守方远程（城墙圈里的），不含攻城器械/玩家/穿墙兵 */
-    private isPassArcher(m: WarMan): boolean {
-        return m.f === 1 && this.defenderCityType === 'pass' && this.battleType === 'siege' && this.siegeWithWalls
-            && !m.siegeW && !m.hero && !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, 1).rng > 65
-            && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
-    }
-
-    /** 🔴 [2026-10-14] 险要守军去**城墙内侧**站定：沿流场走向离 aim（无 aim 就离自己）最近的外圈门，进到离外墙 3 格以内就站住（返回 null）。
-     *  病灶（实测）：站在城中心附近的守军离墙太远，弓箭够不着城外，攻方远程却一圈圈削靠墙的守军。 */
-    private passWallPost(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        this.ensureGateInfo();
-        const rr = this.ringBox;
-        if (!rr) return null;
-        const [ma, mb] = this.tileAB(m.x, m.y);
-        if (Math.min(ma - rr.a0, rr.a1 - ma, mb - rr.b0, rr.b1 - mb) <= 3) return null;
-        const ref = aim ?? m;
-        let pg: WarBuilding | null = null, pd = Infinity;
-        for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE') continue;
-            const [ba, bb] = this.tileAB(b.x, b.y);
-            if (Math.min(Math.abs(ba - rr.a0), Math.abs(ba - rr.a1), Math.abs(bb - rr.b0), Math.abs(bb - rr.b1)) >= 1) continue;   // 只认外圈门
-            const d = (b.x - ref.x) ** 2 + (b.y - ref.y) ** 2;
-            if (d < pd) { pd = d; pg = b; }
-        }
-        return pg ? this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(pg) ?? null, -1, 2, FLOW_SUB) : null;
-    }
-
     /** 🔴 [2026-10-14] 险要守军据墙而守：守方士兵站在城墙圈里 ⇒ 受伤 × PASS_INSIDE_DAMAGE_TAKEN；其余一律 1 */
     private passWallTaken(o: WarMan): number {
         if (o.f !== 1 || this.defenderCityType !== 'pass' || this.battleType !== 'siege' || !this.siegeWithWalls) return 1;
@@ -9881,8 +9854,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.ensureGateInfo();
         const insideSelf = this.insideRing(m.x, m.y);
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
-        // 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要远程：只去城墙内侧站定，不追城里城外的任何人（射程内照常放箭）
-        if (this.isPassArcher(m)) return this.passWallPost(m, aim);
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         // 🔴 [2026-10-14 主人令「险要守军改成守在城墙内侧，敌人进来再打」] 险要（关隘）守军不出城：目标在城外就原地守着（远程照旧隔墙射），
         //    敌人进了城（上一行）照常接战。病灶：几百守军挤 4 座 1 格宽的外圈门出城，门口排队卡死约 17 人（实测）。
@@ -9898,8 +9869,20 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 const ra = Math.atan2(m.jy, m.jx);
                 return { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING };
             }
-            // 城里没有敌人 ⇒ 守到**城墙内侧**（见 passWallPost）
-            return this.passWallPost(m, aim);
+            // 城里没有敌人 ⇒ 守到**城墙内侧**：沿流场走向离敌人最近的外圈门，进到离外墙 3 格以内就站住（远程在这儿够得着城外）。
+            //    病灶（实测）：原地站在城中心附近的守军离墙太远，弓箭够不着城外，攻方远程却一圈圈削靠墙的守军（135~180 秒攻方没进城，守方照样减员）。
+            const [ma, mb] = this.tileAB(m.x, m.y);
+            const rr = this.ringBox;
+            if (!aim || !rr || Math.min(ma - rr.a0, rr.a1 - ma, mb - rr.b0, rr.b1 - mb) <= 3) return null;
+            let pg: WarBuilding | null = null, pd = Infinity;
+            for (const b of this.wallGates) {
+                if (b.key !== 'STONE_GATE') continue;
+                const [ba, bb] = this.tileAB(b.x, b.y);
+                if (Math.min(Math.abs(ba - rr.a0), Math.abs(ba - rr.a1), Math.abs(bb - rr.b0), Math.abs(bb - rr.b1)) >= 1) continue;   // 只认外圈门
+                const d = (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2;
+                if (d < pd) { pd = d; pg = b; }
+            }
+            return pg ? this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(pg) ?? null, -1, 2, FLOW_SUB) : null;
         }
         if (!this.ringBox) return aim;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
@@ -10731,21 +10714,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 if (holdCmd && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
-                    if (m.fadeT > 0) m.fadeT -= dt;
-                    m.ph += dt * 8;
-                    continue;
-                }
-                // 🔴 [2026-10-14 主人令「远程站到墙边原地放箭」] 险要守方远程够不着目标时**不追**：还没到墙边就走去墙边，到了就站住等敌人进射程
-                if (!inReach && this.isPassArcher(m)) {
-                    m.st = 0;
-                    m.fightT = 0;
-                    const p = this.passWallPost(m, foe);
-                    if (p) {
-                        const dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy);
-                        const step = stats.spd * spdK * dt;
-                        if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); }
-                    }
-                    // continue 跳过循环尾部的渐显与动画推进，就地补上（同追击分支）
                     if (m.fadeT > 0) m.fadeT -= dt;
                     m.ph += dt * 8;
                     continue;

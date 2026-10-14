@@ -69,7 +69,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     aztec_raider: { name: '阿兹特克突袭者高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
     siege_elephant: { name: '南亚攻城战象重装', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 280, 20: 35 }, armorTags: [5, 8, 20, 17, 31] },
 
-    manatarms: { name: '装甲步兵', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
+    manatarms: { name: '铁甲剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     sunda_royal_fighter: { name: '爪哇巽他皇家战士高级', cls: 'melee', sz: 1, hp: 90, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 29: 2, 21: 1 }, armorTags: [1, 31] },
     envoy: { name: '英雄·柏朗嘉宾', cls: 'cav', sz: 1, hp: 250, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', armorTags: [8, 31] },
     scout_cavalry: { name: '斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
@@ -93,7 +93,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     samurai: { name: '日本武士', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 40, dmgType: 'melee', bonus: { 19: 10, 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     samurai_elite: { name: '日本武士精锐', cls: 'melee', sz: 1, hp: 80, atk: 12, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 1.9, spd: 40, dmgType: 'melee', bonus: { 19: 12, 21: 3, 29: 3 }, armorTags: [1, 19, 31] },
     elephant: { name: '南亚战象', cls: 'melee', sz: 1, aoe: true, hp: 450, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 32, dmgType: 'melee', bonus: { 11: 30, 13: 30 }, armorTags: [5, 8, 19, 31] },
-    eastern_swordsman: { name: '链甲步兵', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
+    eastern_swordsman: { name: '链甲剑士', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
     hei_kuang: { name: '南北朝黑光铠骑兵', cls: 'cav', sz: 1, hp: 60, atk: 11, meleeArmor: 4, pierceArmor: 3, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
     fire_archer: { name: '吴火焰弓箭手', cls: 'ranged', sz: 1, hp: 35, atk: 5, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 3.5, spd: 38, dmgType: 'pierce', bonus: { 16: 3, 20: 1, 21: 4, 27: 2 }, armorTags: [15, 19, 31] },
     iron_pagoda: { name: '女真铁浮屠', cls: 'cav', sz: 1, hp: 115, atk: 12, meleeArmor: 1, pierceArmor: 3, rng: 0, reload: 2.15, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
