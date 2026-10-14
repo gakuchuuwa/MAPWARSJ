@@ -9860,6 +9860,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         return this.intrudersVal;
     }
 
+    /** 🔴 [2026-10-14 主人令「险要守军不追城外的人」] 这个兵是「险要、守方、在城墙圈里、本队还没成残兵」的普通士兵 ⇒ 不出城追人 */
+    private passHoldsIn(m: WarMan): boolean {
+        return m.f === 1 && this.defenderCityType === 'pass' && this.battleType === 'siege' && this.siegeWithWalls
+            && !m.siegeW && !m.hero && !WALL_PASS_TYPES.has(m.key) && !this.remnantLanes.has(m.lane)
+            && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
+    }
+
     /** 🔴 [2026-10-14] 险要守军据墙而守：守方士兵站在城墙圈里 ⇒ 受伤 × PASS_INSIDE_DAMAGE_TAKEN；其余一律 1 */
     private passWallTaken(o: WarMan): number {
         if (o.f !== 1 || this.defenderCityType !== 'pass' || this.battleType !== 'siege' || !this.siegeWithWalls) return 1;
@@ -10748,6 +10755,19 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 if (holdCmd && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
+                    if (m.fadeT > 0) m.fadeT -= dt;
+                    m.ph += dt * 8;
+                    continue;
+                }
+                // 🔴 [2026-10-14 主人令「险要守军不追城外的人」，照 DE 单位姿态（Age of Empires 系列 Wiki「Unit stance」）]
+                //    远程 ＝ DE「原地坚守」（Stand Ground：不移动去攻击，只打射程内）：目标在城外、够不着就站着；
+                //    近战 ＝ DE「防御」（只追有限距离、回原位），这里的「原位」是城墙圈：目标在城外就放掉，回头打城里的敌人。
+                //    病灶（实测险要 3 场）：「守城墙内侧」只管没目标时往哪走；有目标够不着时走这条追击，直线从缺口追出城
+                //    （每场约 200 人次远程、约 70~80 人次近战是追城外敌人出去的）。本队成了残兵（见 aimAt）不受此限。
+                if (!inReach && this.passHoldsIn(m) && !this.insideRing(foe.x, foe.y)) {
+                    m.st = 0;
+                    m.fightT = 0;
+                    if (this.statsFor(m.key, 1).rng <= 65) { m.foe = null; m.next = 0; }   // 近战：放掉城外的目标，下一轮只会锁城里的（search 的 inOnly）
                     if (m.fadeT > 0) m.fadeT -= dt;
                     m.ph += dt * 8;
                     continue;
