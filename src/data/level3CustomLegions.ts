@@ -16,6 +16,7 @@
  */
 import type { FormationMode } from '../types/CultureFormations';
 import type { CompositionSlot } from '../types/LegionComposition';
+import type { BuildingStyle } from './cities_v2';
 
 export interface Level3LegionDef {
     /** 军团名（时代 + 民族 + 军团） */
@@ -28,6 +29,7 @@ export interface Level3LegionDef {
     parentLegion: string;
     /** 绑定的史实海军战船（对齐四大时代与历史，🔴 2026-09-16 主人定） */
     shipId: string;
+    buildingStyle: BuildingStyle;
 }
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
@@ -42,6 +44,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ASSYRIAN'],
         parentLegion: '古典时代阿契美尼德军团',
         shipId: 'BIREME',
+        buildingStyle: 'PERSIAN',
     },
     {
         name: '古典时代亚马逊军团',
@@ -54,6 +57,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['AMAZONS'],
         parentLegion: '古典时代色雷斯军团',
         shipId: 'ELITE_LEMBOS',
+        buildingStyle: 'THRACIAN',
     },
     {
         name: '古典时代先秦军团',
@@ -66,6 +70,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PRE_QIN'],
         parentLegion: '古典时代华夏中原军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         name: '古典时代努比亚军团',
@@ -78,6 +83,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['KUSH'],
         parentLegion: '非洲军团',
         shipId: 'MONOREME',
+        buildingStyle: 'AFRICA',
     },
     {
         name: '古典时代印度军团',
@@ -90,6 +96,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['INDIA'],
         parentLegion: '古典时代普鲁军团',
         shipId: 'ANT_ELITE_GALLEY',
+        buildingStyle: 'PURU',
     },
     {
         name: '古典时代埃及军团',
@@ -102,6 +109,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['EGYPT'],
         parentLegion: '非洲军团',
         shipId: 'MONOREME',
+        buildingStyle: 'ORIE',
     },
     {
         name: '古典时代大希腊军团',
@@ -117,6 +125,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    （皮洛士即应塔兰托之请渡海战罗马），故归马其顿。
         parentLegion: '古典时代马其顿军团',
         shipId: 'TRIREME',
+        buildingStyle: 'MACEDONIAN',
     },
     {
         name: '古典时代巴比伦军团',
@@ -129,6 +138,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['BABYLON'],
         parentLegion: '古典时代阿契美尼德军团',
         shipId: 'BIREME',
+        buildingStyle: 'PERSIAN',
     },
     {
         name: '古典时代布匿军团',
@@ -141,6 +151,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CARTHAGE'],
         parentLegion: '古典时代罗马军团',
         shipId: 'TRIREME',
+        buildingStyle: 'ROMA',
     },
     {
         name: '古典时代希伯来军团',
@@ -153,6 +164,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HEBREWS'],
         parentLegion: '中东军团',
         shipId: 'MONOREME',
+        buildingStyle: 'ORIE',
     },
     {
         name: '古典时代希腊军团',
@@ -166,6 +178,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定「这66的父级都是一级」] 三级基础军团的父级＝一级母体 → 古典希腊属希腊军团。
         parentLegion: '希腊军团',
         shipId: 'HERO_DIONYSUS',
+        buildingStyle: 'GREECE',
     },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
     //    原挂它的 2 个势力都不是雇佣兵，已按主人令改挂同族／同地军团：
@@ -182,6 +195,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
         shipId: 'MONOREME',
+        buildingStyle: 'THRACIAN',
     },
     {
         name: '封建时代大和军团',
@@ -196,6 +210,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    日本这条线的地区主干＝二级「城堡时代幕府军团」（DE 可玩文明·日本，region=JAPAN）。
         parentLegion: '城堡时代幕府军团',
         shipId: 'ANT_ELITE_GALLEY',
+        buildingStyle: 'JAPAN',
     },
     {
         name: '古典时代日耳曼军团',
@@ -208,6 +223,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['GERMANIC'],
         parentLegion: '西欧军团',
         shipId: 'MONOREME',
+        buildingStyle: 'GERMANIC',
     },
     {
         name: '古典时代贵霜军团',
@@ -220,6 +236,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['KUSHAN'],
         parentLegion: '中亚军团',
         shipId: 'MONOREME',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '古典时代朝鲜军团',
@@ -234,6 +251,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    朝鲜半岛地区主干＝二级「城堡时代高丽军团」。
         parentLegion: '城堡时代高丽军团',
         shipId: 'CANOE',
+        buildingStyle: 'KOREA',
     },
     {
         name: '古典时代秦汉军团',
@@ -246,6 +264,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NORTH', 'HEXI'],
         parentLegion: '古典时代华夏河朔军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'WEI',
     },
     {
         name: '古典时代纳巴泰军团',
@@ -258,6 +277,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NABATAEANS'],
         parentLegion: '中东军团',
         shipId: 'BIREME',
+        buildingStyle: 'ORIE',
     },
     {
         name: '古典时代羌族军团',
@@ -272,6 +292,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    河西这条线：主干＝二级「封建时代河西军团」。
         parentLegion: '封建时代河西军团',
         shipId: 'CANOE',
+        buildingStyle: 'KHITAN',
     },
     {
         name: '古典漠北军团',
@@ -286,6 +307,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    四代＝古典匈奴／封建回鹘／城堡蒙古／帝国蒙古。
         parentLegion: '城堡时代蒙古军团',
         shipId: 'CANOE',
+        buildingStyle: 'MONGOL',
     },
     {
         name: '古典时代赫梯军团',
@@ -298,6 +320,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HITTITES'],
         parentLegion: '色雷斯军团',
         shipId: 'MONOREME',
+        buildingStyle: 'THRACIAN',
     },
     {
         name: '古典时代阿拉伯军团',
@@ -310,6 +333,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ORIE_ANTIQUITY'],
         parentLegion: '中东军团',
         shipId: 'BIREME',
+        buildingStyle: 'ORIE',
     },
     {
         name: '古典时代雅隆军团',
@@ -323,6 +347,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定「归到古典时代羌族军团」] 雅隆（西藏雅鲁藏布江谷地）属羌藏古族。
         parentLegion: '古典时代羌族军团',
         shipId: 'CANOE',
+        buildingStyle: 'TIBET',
     },
     // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代鲜卑军团」。
     //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
@@ -338,6 +363,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SONG'],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         name: '封建时代萨珊军团',
@@ -350,6 +376,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CENTRAL_ASIA_CASTLE'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'SASANIAN',
     },
     {
         name: '城堡时代伊利汗军团',
@@ -362,6 +389,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ILKHANATE'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '城堡时代克丘亚军团',
@@ -374,6 +402,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ANDE'],
         parentLegion: '城堡时代印加军团',
         shipId: 'CANOE',
+        buildingStyle: 'INCA',
     },
     {
         name: '城堡时代党项军团',
@@ -387,6 +416,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
         parentLegion: '封建时代河西军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'KHITAN',
     },
     {
         name: '城堡时代十字军团',
@@ -401,6 +431,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    （阿拉伯／拜占庭均称十字军为「法兰克人」），故挂法兰克那条线（封建→城堡两代）。
         parentLegion: '封建时代法兰克军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'FRANKS',
     },
     {
         name: '城堡时代卡斯蒂利亚军团',
@@ -413,6 +444,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CASTILE'],
         parentLegion: '帝国时代西班牙军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'SPANISH',
     },
     {
         name: '城堡时代吐蕃军团',
@@ -425,6 +457,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TIBET_CASTLE'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'TIBET',
     },
     {
         name: '城堡时代塞尔柱军团',
@@ -437,6 +470,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SELJUQ'],
         parentLegion: '城堡时代萨拉森军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'ORIE',
     },
     {
         name: '城堡时代塞尔维亚军团',
@@ -449,6 +483,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SERBIA'],
         parentLegion: '东北欧军团',
         shipId: 'ELITE_LEMBOS',
+        buildingStyle: 'BULGARIANS',
     },
     {
         name: '城堡时代大理军团',
@@ -461,6 +496,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['DALI'],
         parentLegion: '东亚军团',
         shipId: 'HEAVY_INCENDIARY_SHIP',
+        buildingStyle: 'BASHU',
     },
     {
         name: '城堡时代摩洛哥军团',
@@ -473,6 +509,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ALMOHAD'],
         parentLegion: '封建时代柏柏尔军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'BERBER',
     },
     {
         name: '城堡时代易洛魁军团',
@@ -485,6 +522,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['IROQUOIS'],
         parentLegion: '中美军团',
         shipId: 'CANOE',
+        buildingStyle: 'AMERICA',
     },
     {
         name: '城堡时代法兰西军团',
@@ -497,6 +535,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['FRENCH'],
         parentLegion: '城堡时代不列颠军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'BRITONS',
     },
     {
         name: '城堡时代泰罗纳军团',
@@ -509,6 +548,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TAIRONA'],
         parentLegion: '安第斯军团',
         shipId: 'CANOE',
+        buildingStyle: 'TUPI',
     },
     {
         name: '城堡时代罗马军团',
@@ -521,6 +561,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HRE'],
         parentLegion: '城堡时代条顿军团',
         shipId: 'HEAVY_LEMBOS',
+        buildingStyle: 'GERMANIC',
     },
     {
         name: '城堡时代罗斯军团',
@@ -533,6 +574,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['RUS'],
         parentLegion: '城堡时代斯拉夫军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'SLAVIC',
     },
     {
         name: '城堡时代苏格兰军团',
@@ -545,6 +587,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SCOTLAND'],
         parentLegion: '西欧军团',
         shipId: 'ELITE_LONGBOAT',
+        buildingStyle: 'CELTS',
     },
     {
         name: '城堡时代西亚军团',
@@ -557,6 +600,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WEST_ASIA_CASTLE'],
         parentLegion: '中东军团',
         shipId: 'FIRE_SHIP',
+        buildingStyle: 'ORIE',
     },
     {
         name: '城堡时代察合台军团',
@@ -569,6 +613,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WESTERN_CASTLE'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'WESTERN',
     },
     {
         name: '城堡时代阿伊努军团',
@@ -581,6 +626,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['AINU'],
         parentLegion: '东亚军团',
         shipId: 'CANOE',
+        buildingStyle: 'JAPAN',
     },
     {
         name: '城堡时代阿拉贡军团',
@@ -593,6 +639,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ARAGON'],
         parentLegion: '城堡时代西西里军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'SICILIANS',
     },
     {
         name: '城堡时代非洲军团',
@@ -605,6 +652,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['AFRICA_CASTLE'],
         parentLegion: '城堡时代马里军团',
         shipId: 'CANOE',
+        buildingStyle: 'AFRICA',
     },
     {
         name: '城堡时代马穆鲁克军团',
@@ -617,6 +665,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MAMLUKS'],
         parentLegion: '城堡时代萨拉森军团',
         shipId: 'FIRE_SHIP',
+        buildingStyle: 'ORIE',
     },
     {
         name: '封建时代三佛齐军团',
@@ -629,6 +678,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SRIVIJAYA'],
         parentLegion: '东南亚军团',
         shipId: 'FIRE_GALLEY',
+        buildingStyle: 'MALAY',
     },
     {
         name: '古典时代高棉军团',
@@ -641,6 +691,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SEASIA_FEUDAL'],
         parentLegion: '东南亚军团',
         shipId: 'FIRE_GALLEY',
+        buildingStyle: 'KHMER',
     },
     {
         name: '封建时代伦巴第军团',
@@ -653,6 +704,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['LOMBARDS'],
         parentLegion: '地中海军团',
         shipId: 'GALLEY',
+        buildingStyle: 'LATIN',
     },
     {
         name: '封建时代凯尔特军团',
@@ -665,6 +717,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CELTS_FEUDAL'],
         parentLegion: '西欧军团',
         shipId: 'MONOREME',
+        buildingStyle: 'CELTS',
     },
     {
         name: '封建时代加纳军团',
@@ -677,6 +730,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['GHANA'],
         parentLegion: '非洲军团',
         shipId: 'CANOE',
+        buildingStyle: 'AFRICA',
     },
     {
         name: '封建时代印度军团',
@@ -689,6 +743,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['INDIA_FEUDAL'],
         parentLegion: '印度军团',
         shipId: 'THIRISADAI',
+        buildingStyle: 'INDIA',
     },
     {
         name: '封建时代可萨军团',
@@ -701,6 +756,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['KHAZARS'],
         parentLegion: '东北欧军团',
         shipId: 'MONOREME',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '封建时代嚈哒军团',
@@ -713,6 +769,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HEPHTHALITES'],
         parentLegion: '封建时代匈人军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'HUNS',
     },
     {
         name: '封建漠北军团',
@@ -726,6 +783,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」。
         parentLegion: '城堡时代蒙古军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'MONGOL',
     },
     {
         name: '封建时代罗马军团',
@@ -738,6 +796,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['LATIN_FEUDAL'],
         parentLegion: '地中海军团',
         shipId: 'HEAVY_LEMBOS',
+        buildingStyle: 'LATIN',
     },
     {
         name: '封建时代斯拉夫军团',
@@ -750,6 +809,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SLAVIC_FEUDAL'],
         parentLegion: '东北欧军团',
         shipId: 'MONOREME',
+        buildingStyle: 'SLAVIC',
     },
     {
         name: '封建时代日耳曼军团',
@@ -762,6 +822,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['GERMANIC_FEUDAL'],
         parentLegion: '西欧军团',
         shipId: 'ELITE_LONGBOAT',
+        buildingStyle: 'GERMANIC',
     },
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
     //    文化区 `ROURAN` 的默认军团与挂它的势力一并改指「封建漠北军团」。
@@ -776,6 +837,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['GEORGIANS'],
         parentLegion: '封建时代亚美尼亚军团',
         shipId: 'DROMON',
+        buildingStyle: 'ARMENIANS',
     },
     {
         name: '封建时代河中军团',
@@ -788,6 +850,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CENTRAL_ASIA'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '封建时代爪哇军团',
@@ -800,6 +863,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['JAVANESE'],
         parentLegion: '东南亚军团',
         shipId: 'GALLEY',
+        buildingStyle: 'MALAY',
     },
     {
         name: '封建时代玛雅军团',
@@ -812,6 +876,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MAYANS'],
         parentLegion: '中美军团',
         shipId: 'CANOE',
+        buildingStyle: 'MAYANS',
     },
     {
         name: '封建时代白蛮军团',
@@ -824,6 +889,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NANZHAO'],
         parentLegion: '东亚军团',
         shipId: 'FIRE_GALLEY',
+        buildingStyle: 'BASHU',
     },
     {
         name: '封建时代突厥军团',
@@ -836,6 +902,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TURKS'],
         parentLegion: '封建时代匈人军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'HUNS',
     },
     {
         name: '封建时代粟特军团',
@@ -848,6 +915,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SOGDIANS'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '封建时代罗斯军团',
@@ -860,6 +928,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SLAVIC'],
         parentLegion: '东北欧军团',
         shipId: 'MONOREME',
+        buildingStyle: 'SLAVIC',
     },
     {
         name: '封建时代草原军团',
@@ -872,6 +941,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['STEPPE_FEUDAL'],
         parentLegion: '封建时代匈人军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'HUNS',
     },
     {
         name: '封建时代西亚军团',
@@ -884,6 +954,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WEST_ASIA'],
         parentLegion: '中东军团',
         shipId: 'FIRE_GALLEY',
+        buildingStyle: 'ORIE',
     },
     {
         name: '封建时代安西军团',
@@ -896,6 +967,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WESTERN_FEUDAL'],
         parentLegion: '中亚军团',
         shipId: 'GALLEY',
+        buildingStyle: 'WESTERN',
     },
     {
         name: '封建时代阿拉伯军团',
@@ -908,6 +980,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['ORIE'],
         parentLegion: '中东军团',
         shipId: 'FIRE_GALLEY',
+        buildingStyle: 'ORIE',
     },
     {
         name: '封建时代隋唐军团',
@@ -920,6 +993,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['JIANGNAN'],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除，
@@ -934,6 +1008,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MOHE'],
         parentLegion: '城堡时代白山黑水军团',
         shipId: 'GALLEY',
+        buildingStyle: 'NORTHEAST',
     },
     // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除」] —— 已删「封建时代高句丽军团」。
     //    理由：`KOREA` 那 9 座（国内城／平壤／开城／金城／泗沘…）在**朝鲜半岛**，划归朝鲜半岛那条线；
@@ -949,6 +1024,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SEASIA_IMPERIAL'],
         parentLegion: '东南亚军团',
         shipId: 'FAST_FIRE_SHIP',
+        buildingStyle: 'BURMESE',
     },
     {
         name: '帝王时代乌兹别克军团',
@@ -961,6 +1037,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['CENTRAL_ASIA_IMPERIAL'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '帝国时代俄罗斯军团',
@@ -973,6 +1050,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['RUSSIAN'],
         parentLegion: '东北欧军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'SLAVIC',
     },
     {
         name: '帝国时代北美军团',
@@ -985,6 +1063,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['NORTHAM_IMPERIAL'],
         parentLegion: '中美军团',
         shipId: 'CANOE',
+        buildingStyle: 'AMERICA',
     },
     {
         name: '帝国时代华夏军团',
@@ -997,6 +1076,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HUAXIA_IMPERIAL'],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         name: '帝国时代南美军团',
@@ -1009,6 +1089,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SOUTHAM_IMPERIAL'],
         parentLegion: '安第斯军团',
         shipId: 'CANOE',
+        buildingStyle: 'INCA',
     },
     {
         name: '帝国时代印度军团',
@@ -1021,6 +1102,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['INDIA_IMPERIAL'],
         parentLegion: '印度军团',
         shipId: 'THIRISADAI',
+        buildingStyle: 'INDIA',
     },
     {
         name: '帝国时代图皮军团',
@@ -1033,6 +1115,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TUPI'],
         parentLegion: '城堡时代图皮军团',
         shipId: 'CANOE',
+        buildingStyle: 'TUPI',
     },
     {
         name: '帝国时代大明军团',
@@ -1045,6 +1128,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MING'],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         name: '帝国时代拉丁军团',
@@ -1057,6 +1141,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['LATIN_IMPERIAL'],
         parentLegion: '帝国时代西班牙军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'SPANISH',
     },
     {
         name: '帝国时代斯拉夫军团',
@@ -1069,6 +1154,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SLAVIC_IMPERIAL'],
         parentLegion: '东北欧军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'SLAVIC',
     },
     {
         name: '帝王时代幕藩军团',
@@ -1084,6 +1170,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    地区主干＝二级「城堡时代幕府军团」。
         parentLegion: '城堡时代幕府军团',
         shipId: 'ANT_ELITE_GALLEY',
+        buildingStyle: 'JAPAN',
     },
     {
         name: '帝国时代日耳曼军团',
@@ -1096,6 +1183,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['GERMANIC_IMPERIAL'],
         parentLegion: '西欧军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'GERMANIC',
     },
     {
         name: '帝国时代普什图军团',
@@ -1108,6 +1196,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PASHTUN'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     {
         name: '帝国时代朝鲜军团',
@@ -1120,6 +1209,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['JOSEON'],
         parentLegion: '城堡时代高丽军团',
         shipId: 'ELITE_TURTLE_SHIP',
+        buildingStyle: 'KOREA',
     },
     {
         name: '帝国时代波斯军团',
@@ -1132,6 +1222,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SAFAVID'],
         parentLegion: '波斯军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'SASANIAN',
     },
     {
         // 🔴 [2026-10-05 主人定「满清不就是八旗军吗」] 改名「帝国时代满清军团」→「帝国时代八旗军团」。
@@ -1145,6 +1236,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MANCHU'],
         parentLegion: '城堡时代白山黑水军团',
         shipId: 'WAR_GALLEY',
+        buildingStyle: 'NORTHEAST',
     },
     {
         name: '帝国时代特维尔切军团',
@@ -1157,6 +1249,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TEHUELCHE'],
         parentLegion: '安第斯军团',
         shipId: 'CANOE',
+        buildingStyle: 'MAPUCHE',
     },
     {
         name: '帝国时代瑞典军团',
@@ -1169,6 +1262,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SWEDISH'],
         parentLegion: '西欧军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'VIKINGS',
     },
     {
         name: '帝国时代蒙古军团',
@@ -1182,6 +1276,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」。
         parentLegion: '城堡时代蒙古军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'MONGOL',
     },
     {
         name: '帝国时代莫卧儿军团',
@@ -1194,6 +1289,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MUGHAL'],
         parentLegion: '城堡时代印度斯坦军团',
         shipId: 'HEAVY_INCENDIARY_SHIP',
+        buildingStyle: 'MUGHAL',
     },
     {
         name: '帝王时代维吾尔军团',
@@ -1206,6 +1302,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WESTERN_IMPERIAL'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'WESTERN',
     },
     {
         name: '帝国时代锡克军团',
@@ -1218,6 +1315,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SIKH'],
         parentLegion: '印度军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'INDIA',
     },
     {
         name: '帝国时代青藏军团',
@@ -1230,6 +1328,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TIBET_IMPERIAL'],
         parentLegion: '中亚军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'TIBET',
     },
     {
         name: '帝国时代非洲军团',
@@ -1242,6 +1341,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['AFRICA_IMPERIAL'],
         parentLegion: '非洲军团',
         shipId: 'CANNON_GALLEON',
+        buildingStyle: 'AFRICA',
     },
     {
         name: '古典时代魏晋军团',
@@ -1254,6 +1354,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '古典时代华夏河朔军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'WEI',
     },
     {
         name: '城堡时代岳家军团',
@@ -1266,6 +1367,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'CENTRAL',
     },
     {
         name: '城堡时代孟加拉军团',
@@ -1278,6 +1380,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '城堡时代达罗毗荼军团',
         shipId: 'THIRISADAI',
+        buildingStyle: 'INDIA',
     },
     {
         name: '古典时代摩揭陀军团',
@@ -1290,6 +1393,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '古典时代普鲁军团',
         shipId: 'ANT_ELITE_GALLEY',
+        buildingStyle: 'PURU',
     },
     {
         name: '古典时代加拉太军团',
@@ -1302,6 +1406,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '古典时代凯尔特军团',
         shipId: 'MONOREME',
+        buildingStyle: 'CELTS',
     },
     {
         name: '古典时代波斯联合军团',
@@ -1314,6 +1419,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '古典时代阿契美尼德军团',
         shipId: 'BIREME',
+        buildingStyle: 'PERSIAN',
     },
     {
         name: '古典时代迦南军团',
@@ -1326,6 +1432,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '古典时代阿契美尼德军团',
         shipId: 'BIREME',
+        buildingStyle: 'PERSIAN',
     },
     {
         name: '古典时代腓利斯丁军团',
@@ -1338,6 +1445,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '地中海军团',
         shipId: 'MONOREME',
+        buildingStyle: 'GREECE',
     },
     {
         name: '城堡时代佛兰德军团',
@@ -1350,6 +1458,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['HRE'],
         parentLegion: '城堡时代勃艮第军团',
         shipId: 'ELITE_CARAVEL',
+        buildingStyle: 'BURGUNDIANS',
     },
     {
         name: '帝国时代忍者军团',
@@ -1362,6 +1471,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '城堡时代日本军团',
         shipId: 'ANT_ELITE_GALLEY',
+        buildingStyle: 'JAPAN',
     },
     {
         name: '封建时代新罗军团',
@@ -1375,6 +1485,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定「挂高丽呀，封建新罗，城堡高丽，帝国朝鲜」]
         parentLegion: '城堡时代高丽军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'KOREA',
     },
     {
         name: '城堡时代帖木儿军团',
@@ -1387,6 +1498,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '中亚军团',
         shipId: 'TRANSPORT_SHIP',
+        buildingStyle: 'CENTRAL_ASIA',
     },
     // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
     //    由二级表（`level2Civ59Legions.ts`）移入：这三支是**三级专属建筑风格**（青藏 TIBET／西域 WESTERN／漠南鲜卑 MONGOL）
@@ -1404,6 +1516,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['TIBET'],
         parentLegion: '普鲁军团',
         shipId: 'DEMO_RAFT',
+        buildingStyle: 'TIBET',
     },
     {
         name: '古典时代西域军团',
@@ -1416,6 +1529,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['WESTERN'],
         parentLegion: '中亚军团',
         shipId: 'CANOE',
+        buildingStyle: 'WESTERN',
     },
     // 🔴 [2026-10-05 主人怒斥「谁他妈让你删了，瞎删。改回来」] —— 恢复「封建时代鲜卑军团」。
     //    对应三级建筑风格 `XIANBEI`（漠南鲜卑）。编制按主人令三兵种：鲜卑骑兵 ＋ 草原轻骑兵 ＋ 南北朝黑光铠甲骑兵。
@@ -1432,6 +1546,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    漠南鲜卑属东亚（一级落 ASIA）→ 父级＝东亚军团。
         parentLegion: '东亚军团',
         shipId: 'CANOE',
+        buildingStyle: 'XIANBEI',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
     //    给罗斯（雅罗斯拉夫，瓦良格卫队的发源地）用；时代按 988 年起的卫队与雅罗斯拉夫在位（1019–1054）定为封建。
@@ -1446,6 +1561,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['VARANGIANS'],
         parentLegion: '城堡时代瓦良格军团',
         shipId: 'ELITE_LONGBOAT',
+        buildingStyle: 'VARANGIANS',
     },
     {
         name: '古典时代波斯军团',
@@ -1458,6 +1574,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '波斯军团',
         shipId: 'BIREME',
+        buildingStyle: 'SASANIAN',
     },
     {
         name: '城堡时代巴蜀军团',
@@ -1470,6 +1587,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        buildingStyle: 'BASHU',
     },
 ];
 
