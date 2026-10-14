@@ -47,7 +47,6 @@ import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { DE_TERRAIN_MANIFEST } from '../data/battlefield/deTerrainData';
 import { nearestStrategicRiver } from '../map/StrategicRiverProximity';
 import { generateEnvironment, type Scene13EnvironmentPlan, type Scene13EnvironmentInput } from './scene13/Scene13EnvironmentGenerator';
-import { loadRealGeography, buildRealGeoPlan, bearingDeg, type RealGeoFrame } from './scene13/Scene13RealGeography';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
@@ -1112,9 +1111,9 @@ const PASS_INSIDE_DAMAGE_TAKEN = 0.8;
  *  病灶（实测险要 3 场）：守方剩 5% 时最后约 5 人站在墙边岗位上，离最近攻方 650~1100px 看不见，攻方也找不到 ⇒ 收尾拖 90~120 秒。 */
 const REMNANT_FRAC = 0.05;
 /** 🔴 [2026-10-14 主人令「背靠是有点小距离，不是紧挨着」] 城外列阵：守方最后一排最后一人离城墙外缘的空隙（px） */
-const DEF_WALL_GAP = 100;
+const DEF_WALL_GAP = 40;   // 🔴 [2026-10-14 主人「还可以再靠后」] 原 100（实测最后一人离墙外表面最近约 87px）
 /** 🔴 [2026-10-14] 守方城外列阵时，两军最前沿之间至少留的空地（px） */
-const SIEGE_FIELD_GAP = 600;
+const SIEGE_FIELD_GAP = 1000;   // 🔴 [2026-10-14 主人「离攻方营地太近了……或者把攻方营地拉远」] 原 600
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -2136,22 +2135,6 @@ const FIRE_LANCER_TYPES = new Set(['fire_lancer', 'elite_fire_lancer']);
 const FIRE_LANCER_VOLLEY = 3;
 const FIRE_LANCER_CHARGE = 30;
 
-/** 背刺（奇袭）白名单：第二波起从敌军背后出生（🔴 2026-09-11 主人定：只带精锐的兵种）。
- *  忍者（无精锐，原型）+ 马来爪刀 + 凯尔特靛蓝突袭者 + 图皮战棍（各含精锐）。
- *  🔴 [2026-09-12 主人令「把伙伴骑兵改为和忍者一样的…方式，第一波正常，以后从敌人那侧出兵」]
- *     加入 **马其顿伙伴骑兵**（`companion_cavalry`）：它是马其顿的 T0 精锐番号，符合「只给带精锐的兵种」。
- *     史实依据：伙伴骑兵就是亚历山大「锤砧战术」里的**锤** —— 伊苏斯强渡后冲击波斯左翼/中军、
- *     高加米拉右翼迂回后直插大流士中军缺口；骑兵的战术价值本就在**侧后冲击**，正面撞长枪阵是找死。
- *     与本层新做的「迎面拒马」（只判正面 ±60°）正好构成历史闭环：正面撞枪林被拒、绕后则不受拒马。 */
-const FLANK_TYPES = new Set([
-    'ninja',
-    'karambit_warrior', 'karambit_warrior_elite',
-    'woad_raider', 'elite_woad_raider',
-    'ibirapema_warrior', 'elite_ibirapema_warrior',
-    'companion_cavalry', 'elite_companion_cavalry',  // 🔴 [2026-09-12 主人令] 马其顿伙伴骑兵（T0 精锐番号）
-    'kona', 'elite_kona',            // 🔴 [2026-09-17 主人定] 马普切科纳勇士：劳塔罗伏击奇袭（图卡佩尔）
-]);
-
 /** 穿墙（攀爬城垣/潜行渗透）特种兵白名单：
  *  🔴 [2026-10-13 主人令] 忍者 + 马来爪刀勇士 + 凯尔特靛蓝突袭者 + 图皮战棍勇士（各含普通与精锐） */
 const WALL_PASS_TYPES = new Set([
@@ -2160,48 +2143,6 @@ const WALL_PASS_TYPES = new Set([
     'woad_raider', 'elite_woad_raider',
     'ibirapema_warrior', 'elite_ibirapema_warrior',
 ]);
-
-/** 冲击型奇袭：绕后次数**按兵力配额**（🔴 2026-09-17 主人定「一万兵力一次，两万兵力两次，三万兵力三次」）。
- *
- *  为什么要分这一类：补兵规则是「场上活人 < TRIGGER 就补 SIDE_CAP」，波次随出征兵力线性增长——
- *    10000 兵补 1 波、30000 兵补 3~4 波、50000 兵补 6~7 波，每波那一口约 36 骑。
- *    改之前是**每一波都绕后**，大仗里每隔几秒就有三十几骑凭空出现在敌人背后，那不是迂回，是持续空投。
- *
- *  身份不同，所以不能一个白名单管到底：
- *    · 渗透型（忍者/马来爪刀/靛蓝突袭者/图皮战棍）—— 轻步兵潜入，反复摸进去本来就是它们的打法，不限次；
- *    · 冲击型（伙伴骑兵）—— 重骑兵的价值在**成建制突击**：伊苏斯强渡后一击凿穿波斯左翼、
- *      高加米拉右翼迂回后直插大流士中军缺口。大军团能多组织几次迂回，小军团只够一次。
- *
- *  落法：本集合里的兵种只在**前 quota 个补兵波**绕后，quota = 本方出征兵力 / FLANK_QUOTA_PER；
- *    之后照常从己方出兵口出。仍然是剧本法——只改出生点，不新增自主决策，不碰判负。
- *
- *  ⚠️ 不足一万兵（出兵门槛 5000，所以存在 5000~9999 的军团）quota=0，整场不绕后。
- *    主人原话只说了「一万一次」，没说不足一万怎么算，这里取字面：**一万是门槛**。
- *    要改成「不足一万也给一次」就在 flankQuotaOf 外面套 Math.max(1, ...)。
- */
-const FLANK_LIMITED_TYPES = new Set([
-    'companion_cavalry', 'elite_companion_cavalry',
-    'kona', 'elite_kona',            // 科纳勇士成建制奇袭，等同伙伴骑兵（冲击型，受「一万一次」配额）
-]);
-/** 每多少兵力给一次绕后配额（主人 2026-09-17：一万兵力一次） */
-const FLANK_QUOTA_PER = 10000;
-
-/** 本方能绕后几次 = 出征兵力 / FLANK_QUOTA_PER（向下取整）。导出=供离线自检 */
-export function flankQuotaOf(troops: number): number {
-    return Math.floor((troops || 0) / FLANK_QUOTA_PER);
-}
-
-/** 这一个兵该不该绕到敌军背后出生。闸依次是：补兵波（开局那批照常）、白名单、野战/攻城战分流、
- *  冲击型受兵力配额限次。
- *  - 野战：双方都可绕后（冲击型受配额限次）。
- *  - 攻城战：**守城方（side=1）可绕后偷袭，攻城方（side=0）不绕后**（🔴 2026-09-17 主人定：攻城方
- *    从敌方出兵口背后出生等于凭空出现在城墙之内，不合理；守城方绕到攻城方侧后是出城偷袭，成立）。
- *  waveNo = 本方已发生的补兵波次，quota = flankQuotaOf(本方兵力)。side = 0 攻方 / 1 守方。导出=供离线自检 */
-export function shouldFlankSpawn(_key: string, _battleType: string, _isSupplyWave: boolean, _waveNo: number, _quota: number, _side: number): boolean {
-    // 🔴 [2026-10-13 主人令「现在地图太大了。请把战术模式中，从地方出兵口出兵的逻辑取消。例如忍者。」]
-    // 取消所有兵种从敌方出兵口出兵的逻辑，一律从己方出兵口正常出兵
-    return false;
-}
 
 // ── DE 攻击特效（2026-08-19 替换手绘火花粒子 explode/muzzleFlash/fireLanceVolley）──
 // 素材已瘦身到 public/SUCAI_FX/（抽帧 8~10 + 裁透明边 + 16 向降 8 向，7GB→71MB）。
@@ -2431,6 +2372,10 @@ function marchFilesOf(key: string): number {
 const MARCH_SP = 24;
 /** 列阵纵深方向的槽位间距上限：受出兵口前后行间距（depth，1920 屏 144px）约束，见使用处。 */
 const MARCH_SP_DEPTH_MAX = 48;
+/** 🔴 [2026-10-14 主人令「排距、队距改成固定值……不再跟着窗口变」] 三排之间的排距（px）。原为「窗口宽×0.14，夹在 240~280」，取主人窗口下的 280 */
+const ROW_DEPTH = 280;
+/** 🔴 [2026-10-14 同上] 同一排相邻两队的队距（px）。原为「窗口高×0.8÷4，夹在 300~320」，取 300 */
+const COL_SPACING = 300;
 /** 本兵种的列阵槽位间距：两倍半径 + 4px 余量，下限为 MARCH_SP（同一出兵口恒为同一兵种）。 */
 function marchSpacingOf(key: string): number {
     // 🔴 [2026-10-12 主人选方案 2「大体型兵种在 DE 里本来就是挤着走的，叠一点不难看」]
@@ -3076,14 +3021,6 @@ interface WarMan {
      * 段落式「站撸 → 被攻击 → 撤一段 → 再站撸」，不是「距离阈值上每帧翻面」。
      */
     kiting?: boolean;
-    /**
-     * 【忍者奇袭】本兵是否从敌军背后出生（见 spawnTick 的 flankPort）。
-     * 用途只有一个：`aimAt` 里不许它走**本方共享的巡逻航路** —— 那条航路的第一站是
-     * 「敌方底边」，而奇袭兵一出生就已经站在敌方底边之外，等于生在终点上；
-     * 航点推进又是全军统一判定的，大部队还在中线厮杀不会推进，于是奇袭兵杵着不动
-     * （主人 2026-08-19 报「忍者出现后不寻敌」）。改为直扑敌军重心。
-     */
-    flank?: boolean;
     /** 🔴 [2026-08-23 主人定] 攻城战专用攻城武器（spawnSiegeWeapons 生成）：开战即行动，
      *  不受「双方按兵不动」限制（见 holdSiege）；普通编制里的火箭车/投石车不算（无此标记）。 */
     siegeW?: boolean;
@@ -3660,8 +3597,6 @@ export class Scene13WarLayer {
     private defenderCityId: string | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
-    /** [2026-08-31 主人定] 攻守两侧左右对调：跟随军团在守方侧时置 true，把守方（城）放到屏幕左边、攻方到右边。 */
-    private flipSides = false;
     private men: WarMan[] = [];
     private corpses: WarCorpse[] = [];
     private fleers: WarFleer[] = [];
@@ -3726,6 +3661,10 @@ export class Scene13WarLayer {
     private laneStart: Map<number, number> | null = null;
     /** 🔴 [2026-10-14 主人令「最后一排背靠城墙……看到敌人再发起进攻，或者挨打发起进攻」] 城外列阵、还在原地待敌的守方队号；任何一人看到敌人或挨打，全军出击 */
     private holdLanes = new Set<number>();
+    /** 🔴 [2026-10-14 主人令「开战时把世界中心定死，之后不再读画布尺寸」] 世界坐标的中心（开战那一刻的画布中心）。
+     *  城池、出兵口、地面格子、寻路图、战场边界都以它为原点；之后窗口缩放只影响「画到屏幕哪里」，不动世界坐标。 */
+    private worldCX = 960;
+    private worldCY = 540;
     /** 三排之间的排距（布阵时记下，城外列阵算后排位置用） */
     private rowDepth = 260;
     private remnantLanes = new Set<number>();
@@ -3887,10 +3826,6 @@ export class Scene13WarLayer {
     private batchCd = 0;
     /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
     private deployT = 0;
-    /** 每方已发生的补兵波次（开局那批不算）。冲击型奇袭只认前 flankQuota 波，见 FLANK_LIMITED_TYPES */
-    private supplyWave = [0, 0];
-    /** 每方的绕后配额（= 出征兵力 / FLANK_QUOTA_PER），开场按双方兵力各算各的 */
-    private flankQuota = [0, 0];
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
     /**
@@ -3983,11 +3918,10 @@ export class Scene13WarLayer {
         if (!m || !this.active || m.hp <= 0) return;
         const W = this.canvas?.width ?? window.innerWidth;
         const H = this.canvas?.height ?? window.innerHeight;
-        // 渲染是「缩放（外）→ 左右对调（内）」，反算顺序相反：先去缩放，再去对调
-        const ux = W / 2 + (x - W / 2 - this.tacticalPanX) / this.tacticalZoom;
-        const uy = H / 2 + (y - H / 2 - this.tacticalPanY) / this.tacticalZoom;
-        const lx = this.flipSides ? W - ux : ux;
-        [m.tx, m.ty] = this.fieldBound(lx, uy);
+        // 渲染是「缩放」，反算即去缩放
+        const ux = this.worldCX + (x - W / 2 - this.tacticalPanX) / this.tacticalZoom;
+        const uy = this.worldCY + (y - H / 2 - this.tacticalPanY) / this.tacticalZoom;
+        [m.tx, m.ty] = this.fieldBound(ux, uy);
         this.heroInput = null;
         this.heroClickOrder = { x: m.tx, y: m.ty };   // 这道令归队与 aimAt 都不许改写，走到才清
     }
@@ -4043,15 +3977,14 @@ export class Scene13WarLayer {
         if (!m || m.hp <= 0) return null;
         const W = this.canvas?.width ?? window.innerWidth;
         const H = this.canvas?.height ?? window.innerHeight;
-        const sx = this.flipSides ? W - m.x : m.x;
-        return { x: W / 2 + this.tacticalPanX + (sx - W / 2) * this.tacticalZoom, y: H / 2 + this.tacticalPanY + (m.y - H / 2) * this.tacticalZoom };
+        return { x: W / 2 + this.tacticalPanX + (m.x - this.worldCX) * this.tacticalZoom, y: H / 2 + this.tacticalPanY + (m.y - this.worldCY) * this.tacticalZoom };
     }
 
     /**
      * start 里布置玩家：自带精锐编队（探马及以上且选了精锐）放在前排之前，玩家再往前一点。
      * 受控编队按官阶：one = 自带精锐（没有就前排第一口）/ front = 整个前排 + 自带精锐 / all = 本方全部口。
      */
-    private setupPlayerUnits(init: Scene13WarInit, depth: number, midY: number): void {
+    private setupPlayerUnits(init: Scene13WarInit): void {
         this.playerSetup = null;
         this.playerCtlLanes.clear();
         this.playerCmd = 'attack';
@@ -4150,7 +4083,6 @@ export class Scene13WarLayer {
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
             flag: false, fo: Math.random() * 600,
             march: inMarch, port: inMarch ? heroPort : null, dep: heroDep, slotY: 0, pop: 0,
-            flank: false,
             claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
         };
         this.heroMan = hero;
@@ -4163,7 +4095,7 @@ export class Scene13WarLayer {
         const inp = this.heroInput;
         if (!inp) return false;
         const spd = this.statsFor(m.key, m.f).spd;
-        const dx = this.flipSides ? -inp.dx : inp.dx;
+        const dx = inp.dx;
         const dy = inp.dy;
         const [bx, by] = this.fieldBound(m.x + dx * spd * dt, m.y + dy * spd * dt);
         m.x = bx; m.y = by; m.tx = bx; m.ty = by;
@@ -4214,13 +4146,10 @@ export class Scene13WarLayer {
     private respawnHero(): void {
         const m = this.heroMan;
         if (!m || !this.playerSetup) return;
-        const vw = this.canvas?.width ?? 1920;
-        const vh = this.canvas?.height ?? 1080;
-        const mx = Math.max(60, vw * 0.07);
         // 🔴 [2026-10-11 AA #9 后半 属实] 复活点原先写死「屏幕最左/最右」(mx*0.6 / vw − mx*0.6)，
         //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
         //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
-        const _base = this.spawnBases[m.f] ?? { x: vw / 2, y: vh / 2 };
+        const _base = this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
         const x = _base.x;
         const y = _base.y;
         m.hp = this.heroMaxHp(m.key, m.f);
@@ -4258,16 +4187,9 @@ export class Scene13WarLayer {
     private clampTacticalPan(): void {
         const cv = this.canvas;
         if (!cv) { this.tacticalPanX = 0; this.tacticalPanY = 0; return; }
-        if (this.useGroundGL || Scene13WarLayer.realGeographyEnabled()) {
-            const mapW = TAC_MAP_HALF_W * 2, mapH = TAC_MAP_HALF_H * 2;
-            const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
-            const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
-            this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
-            this.tacticalPanY = Math.max(-limY, Math.min(limY, this.tacticalPanY));
-            return;
-        }
-        const limX = (this.tacticalZoom - 1) * cv.width / 2;
-        const limY = (this.tacticalZoom - 1) * cv.height / 2;
+        const mapW = TAC_MAP_HALF_W * 2, mapH = TAC_MAP_HALF_H * 2;
+        const limX = Math.max(0, (mapW * this.tacticalZoom - cv.width) / 2);
+        const limY = Math.max(0, (mapH * this.tacticalZoom - cv.height) / 2);
         this.tacticalPanX = Math.max(-limX, Math.min(limX, this.tacticalPanX));
         this.tacticalPanY = Math.max(-limY, Math.min(limY, this.tacticalPanY));
     }
@@ -4586,8 +4508,6 @@ export class Scene13WarLayer {
             return resolveCityDeBuildingStyle(c.id, c.type, c.region, c.lat, c.lng, c.buildingStyle);
         })();
         // [2026-08-31 主人定] 跟随军团在守方侧（回援守城）→ 攻守两侧左右对调，跟随军团固定左边。
-        // 🔴 [CC 裁定] 开关打开时方向是真实方位（上北下南），一律不做 flipSides 翻转；开关关闭照旧。
-        this.flipSides = this.realGeographyEnabled() ? false : (init.followedOnDefenderSide === true);
         // 攻城战守方破墙前待命（近战不动、远程原地射击）；破墙联动倒塌 → 守方开始反击（2026-08-22 主人定）
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
@@ -4609,9 +4529,6 @@ export class Scene13WarLayer {
         this.techStats = [new Map(), new Map()];
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
-        this.supplyWave = [0, 0];   // 每场重置：冲击型奇袭的配额是按场算的
-        // 绕后配额：每方按自己的出征兵力算（一万一次），见 FLANK_LIMITED_TYPES
-        this.flankQuota = [flankQuotaOf(init.attackerTroops), flankQuotaOf(init.defenderTroops)];
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
         this.meleeContactCount = 0;      // 每场重置：下一场重新等近战接上才起循环音景
         this.meleeQuietSec = 0;
@@ -4633,20 +4550,18 @@ export class Scene13WarLayer {
             ];
             const VW = cv?.width ?? 1920;
             const VH = cv?.height ?? 1080;
-            const mx = Math.max(60, VW * 0.07);
+            this.worldCX = VW / 2;
+            this.worldCY = VH / 2;
             // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
             //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
             // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 三排排距收紧（原 200~240 让全军摊得太开，像一条线）
-    const depth = Math.min(280, Math.max(240, Math.round(VW * 0.14)));   // [2026-10-11 AA#8] 排距须 >= 单队方阵纵深 240px
+            const depth = ROW_DEPTH;
             this.rowDepth = depth;
-            const midY = VH / 2;
-            const spanY = VH * 0.80;
 
             // 🔴 [CC 裁定] 野战八方向出兵
             // 🔴 [2026-10-11 主人「攻击方出现在地图的攻击方向，防守方在地图的中间」「城池在中心，样式和战略地图一致」]
             //    攻城战同走八方向：城池＝战略地图同款建筑栈，摆在地图正中；攻方从真实来向出现。
-            //    该据点没有 DE 建筑栈（整图据点）时退回旧 13 左右布阵。
-            if (this.realGeographyEnabled() && this.battleType === 'siege') {
+            if (this.battleType === 'siege') {
                 const rec: any = this.defenderCityRecord();
                 const city: any = rec
                     ? { ...rec, latitude: rec.latitude ?? rec.lat, longitude: rec.longitude ?? rec.lng, type: this.defenderCityType ?? rec.type }
@@ -4658,20 +4573,16 @@ export class Scene13WarLayer {
                 //    必须是同步的：异步会让城池件表晚于「出兵口布阵」就绪 ⇒ 八方向出兵整支落到旧 13 回退阵型
                 //    （实测八个方向基座恒为 512,450）。战略地图那条路不传原生表，一个像素不动。
                 this.deCity = city ? strategicCityHtmlNative(city) : null;
-                this.deCityCenter = { x: VW / 2, y: VH / 2 };
+                this.deCityCenter = { x: this.worldCX, y: this.worldCY };
             }
-            let useFieldPlan = true;
-            if (useFieldPlan) {
+            {
                 const centerLat = init.centerLat || 30;
                 const centerLng = init.centerLng || 110;
                 const attFromLat = init.attackerFromLat || centerLat;
                 const attFromLng = init.attackerFromLng || (centerLng - 1);
                 const defFromLat = init.defenderFromLat;
                 const defFromLng = init.defenderFromLng;
-                if (!centerLat || !centerLng || !attFromLat || !attFromLng) {
-                    console.warn(`[Scene13War] 缺少真实来处经纬度数据，八方向出兵退回旧 13 左右布阵 (center=${centerLat},${centerLng}; att=${attFromLat},${attFromLng})`);
-                    useFieldPlan = false;
-                } else {
+                {
                     // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
                     //    八方向派生的**原点必须是城**，不是战场中心：本层把城摆在屏幕正中
                     //    （`deCityCenter = {x: VW/2, y: VH/2}`），而 `init.centerLat/Lng` 是**跟拍军团的渲染中心**
@@ -4697,8 +4608,8 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-11 AA 把底图改为「16:9 满铺矩形」(每格 64×32、中心 (60,60))] 出兵基座同步换矩形映射，
                     //    否则出兵口仍按旧等距菱形落位 ⇒ 位置错、uFwd/uSide 跟着歪（主人「重新整理出兵口位置」）。
                     //    🔴 [2026-10-12] 每格 64×32 → TAC_TILE_W×TAC_TILE_H（96×48，与 spawnPlan.cellFromOffset 同步）
-                    let attSX = VW / 2 + (plan.attacker.x - 60) * TAC_TILE_W;
-                    let attSY = VH / 2 + (plan.attacker.y - 60) * TAC_TILE_H;
+                    let attSX = this.worldCX + (plan.attacker.x - 60) * TAC_TILE_W;
+                    let attSY = this.worldCY + (plan.attacker.y - 60) * TAC_TILE_H;
                     if (this.deCity) {
                         // 攻城战：攻方沿来向退到城外，退到「地图还装得下」为止。
                         // 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」
@@ -4711,7 +4622,7 @@ export class Scene13WarLayer {
                         //      不可兼得（八向等距上限 1335px，而东西向要 1524px 才不压城）——
                         //      按 DE 场景的做法让**距离随来向变**（攻方贴着自己那侧的图边列阵），
                         //      所以这里改成**按方向取安全半径**，而不是八向取同一个最小值。
-                        const ux = attSX - VW / 2, uy = attSY - VH / 2, ul = Math.hypot(ux, uy) || 1;
+                        const ux = attSX - this.worldCX, uy = attSY - this.worldCY, ul = Math.hypot(ux, uy) || 1;
                         const nx = ux / ul, ny = uy / ul;
                         const rx = this.deCity.width / 2, ry = this.deCity.height / 2;
                         const cityR = Math.hypot(rx, ry);
@@ -4728,11 +4639,11 @@ export class Scene13WarLayer {
                         siegeBaseDist = Math.max(siegeBaseDist, boxEdge + DEF_WALL_GAP + depth + 180 + 2 * depth + SIEGE_FIELD_GAP + 2 * depth);
                         let dist = Math.min(siegeBaseDist, safe);                     // ③先取攻城距
                         if (dist < need) dist = Math.min(need, safe);               // ②不够就退到不压城（但仍不越图）
-                        attSX = VW / 2 + nx * dist;
-                        attSY = VH / 2 + ny * dist;
+                        attSX = this.worldCX + nx * dist;
+                        attSY = this.worldCY + ny * dist;
                     }
-                    const defSX = VW / 2 + (plan.defender.x - 60) * TAC_TILE_W;
-                    const defSY = VH / 2 + (plan.defender.y - 60) * TAC_TILE_H;
+                    const defSX = this.worldCX + (plan.defender.x - 60) * TAC_TILE_W;
+                    const defSY = this.worldCY + (plan.defender.y - 60) * TAC_TILE_H;
                     this.spawnBases = [{ x: attSX, y: attSY }, { x: defSX, y: defSY }];
                     const fwdDx = defSX - attSX, fwdDy = defSY - attSY;
                     const fwdLen = Math.hypot(fwdDx, fwdDy) || 1;
@@ -4750,16 +4661,11 @@ export class Scene13WarLayer {
                     } else {
                         const midSpawnX = (attSX + defSX) / 2;
                         const midSpawnY = (attSY + defSY) / 2;
-                        this.tacticalPanX = (VW / 2 - midSpawnX) * this.tacticalZoom;
-                        this.tacticalPanY = (VH / 2 - midSpawnY) * this.tacticalZoom;
+                        this.tacticalPanX = (this.worldCX - midSpawnX) * this.tacticalZoom;
+                        this.tacticalPanY = (this.worldCY - midSpawnY) * this.tacticalZoom;
                         this.clampTacticalPan();
                     }
                 }
-            }
-            if (!useFieldPlan) {
-                this.spawnBases = [{ x: mx + 2 * depth, y: midY }, { x: VW - mx - 2 * depth, y: midY }];
-                this.advanceVec = [{ x: 1, y: 0 }, { x: -1, y: 0 }];
-                this.sideVec = [{ x: 0, y: 1 }, { x: 0, y: -1 }];
             }
 
             for (const side of sides) {
@@ -4784,14 +4690,14 @@ export class Scene13WarLayer {
                         : DE_FORMATION_LAYOUT
                             ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
                             : LAYOUT[mode][idx];
-                    if (useFieldPlan) {
+                    {
                         const base = this.spawnBases[side.f];
                         const uFwd = this.advanceVec[side.f];
                         const uSide = this.sideVec[side.f];
                         const forwardOffset = (1 - cell.row) * depth;
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
-                        const colSpacing = Math.min(320, Math.max(300, spanY / 4));   // 🔴 [2026-10-12 主人令「拉开队与队的间距」] 9 列方阵宽 216px，原 240~260 只剩 ~24px 空隙 ⇒ 300~320
+                        const colSpacing = COL_SPACING;
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -4811,11 +4717,6 @@ export class Scene13WarLayer {
                             y = this.deCityCenter.y + sl.y;
                         }
                         // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 阵位不再避水（原「落水则向本阵锚点退」已删）
-                    } else {
-                        const back = mx + (2 - cell.row) * depth;
-                        x = side.f === 0 ? back : VW - back;
-                        const colSpacing = Math.min(320, Math.max(300, spanY / 4));   // 🔴 [2026-10-12 主人令「拉开队与队的间距」] 9 列方阵宽 216px，原 240~260 只剩 ~24px 空隙 ⇒ 300~320
-                        y = midY + (cell.col - (cell.cols - 1) / 2) * colSpacing;
                     }
                     this.spawns.push({
                         f: side.f, key, x, y,
@@ -4832,7 +4733,7 @@ export class Scene13WarLayer {
                 });
             }
             // [2026-09-05 玩家] 玩家在军中 → 布置玩家 + 自带精锐编队 + 受控编队（在 initPool 之前，精锐兵力计入本方总量）
-            this.setupPlayerUnits(init, depth, midY);
+            this.setupPlayerUnits(init);
 
             // 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」——运行期把关。
             //    这一刻两方的出兵口已经全部就位（编制 9 口 + 玩家精锐已顶替），
@@ -4861,7 +4762,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-11 主人令「**现在所有攻城战都要有攻城武器**」] 旧的「城寨不带 / 漠北蒙古不带」两条排除**已废**：
             //    只要 battleType === 'siege'（含城寨、含漠北蒙古）一律配攻城武器。
             if (this.battleType === 'siege') {
-                this.spawnSiegeWeapons(VW, VH, mx, depth);
+                this.spawnSiegeWeapons(depth);
             }
 
             // 主将队（第 10 口，前排再往前）不是建筑位，不参与城墙前沿计算
@@ -4871,7 +4772,7 @@ export class Scene13WarLayer {
                 : undefined;
 
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
-            this.scatterClouds(VW, VH);
+            this.scatterClouds();
             // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
             const __e0 = performance.now();
             const envInput: Scene13EnvironmentInput = {
@@ -4942,11 +4843,7 @@ export class Scene13WarLayer {
             // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
-            // [2026-10-07 主人令「打仗的那块地就是地图上那个地方」] 试验开关打开时，开战前换成真实地理
-            if (Scene13WarLayer.realGeographyEnabled()) {
-                if (!this.glCanvas) this.requestRealGeography(envInput, init, VW, VH, siegeWallFrontX);
-                this.requestGroundLayerGL(init, VW, VH);
-            }
+            this.requestGroundLayerGL(init, VW, VH);
 
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
@@ -5080,7 +4977,7 @@ export class Scene13WarLayer {
      * 🔴 [2026-09-09 主人定] 时代闸：古典军团只用古典器械，封建可用古典+封建，
      *    城堡再加城堡冷兵器与城堡时代热兵器，帝国全部冷热皆可。
      */
-    private spawnSiegeWeapons(VW: number, VH: number, mx: number, depth: number): void {
+    private spawnSiegeWeapons(depth: number): void {
         const culture = this.sideCulture[0] as RegionType;
         // 🔴 [2026-10-13 主人令「请按符合历史修复」] 原注释写「美洲原住民不发攻城器械」——
         //    那条**从未生效过**（`getSiegeWeaponsForCulture` 对美洲档一直返回 9 件，下面的 `!nine.length` 是死代码），
@@ -5096,28 +4993,19 @@ export class Scene13WarLayer {
             : getSiegeWeaponsForCulture(culture, this.sideLegionName(0), this.attackerGeneralId);
         if (!nine.length) return;
 
-        // 位置：攻方出兵口（row0）与城墙之间的中间。
-        // 攻方 row0 x = mx+2×depth；城墙 x = VW−mx−2×depth−380。中点 ≈ 战场中央。
-        const lineX = (VW - 380) / 2;
-        const midY = VH / 2, spanY = VH * 0.8;
-        const yMin = midY - spanY / 2, yMax = midY + spanY / 2;
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
         const siegeCount = nine.length;
         for (let idx = 0; idx < siegeCount; idx++) {
             const key = nine[idx];
             this.ensureType(key, 0);
-            let x = lineX;
-            let y = yMin + Math.random() * (yMax - yMin);
             const hp = this.statsFor(key, 0).hp;
-            let tgtX = VW - mx, tgtY = y;
             // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械规整展开在攻方军阵前沿（depth * 2.8），目标＝地图中心的城池
-            if (this.spawnBases[0]) {
-                const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
-                const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
-                x = base.x + fwd.x * (depth * 2.8) + sv.x * sideOffset;
-                y = base.y + fwd.y * (depth * 2.8) + sv.y * sideOffset;
-                const tgt = this.deCity ? this.deCityCenter : this.spawnBases[1]; tgtX = tgt.x; tgtY = tgt.y;
-            }
+            const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
+            const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
+            const x = base.x + fwd.x * (depth * 2.8) + sv.x * sideOffset;
+            const y = base.y + fwd.y * (depth * 2.8) + sv.y * sideOffset;
+            const tgt = this.deCity ? this.deCityCenter : this.spawnBases[1];
+            const tgtX = tgt.x, tgtY = tgt.y;
             this.men.push({
                 f: 0, key, jx: 0, jy: 0,
                 zid: this.manSeq++,
@@ -5130,7 +5018,7 @@ export class Scene13WarLayer {
                 prevX: x, prevY: y, anchorX: x, anchorY: y, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: y,
                 flag: false, fo: Math.random() * 600,
                 march: false, port: null, dep: 0, slotY: 0, pop: popCostOf(key),
-                flank: false, siegeW: true, lane: -1,
+                siegeW: true, lane: -1,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
             });
         }
@@ -5270,11 +5158,10 @@ export class Scene13WarLayer {
         this.fallenFlags = this.fallenFlags.filter(ff => ff.t < FLAG_FALL);
         // 云继续飘（旗帜的飘动用的是 performance.now()，本来就不受这里影响）
         if (this.clouds.length && this.canvas) {
-            const vw = this.canvas.width;
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > vw / 2 + 3808 + w) c.x = vw / 2 - 3808 - w;
+                if (c.x > this.worldCX + 3808 + w) c.x = this.worldCX - 3808 - w;
             }
         }
     }
@@ -5684,12 +5571,12 @@ export class Scene13WarLayer {
      * 随机布云：全屏散开，各自随机方向漂移。云没有季节，10 张随机取。
      * 🔴 云在**最上层**，所以位置不用避开出兵口 —— 它本来就该盖在什么上面都行。
      */
-    private scatterClouds(VW: number, VH: number): void {
+    private scatterClouds(): void {
         const count = CLOUD_COUNT_MIN + ((Math.random() * (CLOUD_COUNT_MAX - CLOUD_COUNT_MIN + 1)) | 0);
         for (let i = 0; i < count; i++) {
             const c: SceneCloud = {
-                x: VW / 2 + (Math.random() - 0.5) * 7616,
-                y: VH / 2 + (Math.random() - 0.5) * 3808,
+                x: this.worldCX + (Math.random() - 0.5) * 7616,
+                y: this.worldCY + (Math.random() - 0.5) * 3808,
                 // 🔴 一律**从左往右**（主人 2026-08-12）：全场风向必须一致 ——
                 //    攻方 f=0 永远在左（出兵口 x = f===0 ? back : VW-back），所以「左→右」
                 //    就是「攻方→守方」；旗帜固定 row 5 走 facingLeft 分支、旗面画在杆的右侧，
@@ -5741,7 +5628,7 @@ export class Scene13WarLayer {
     private elevationAt(x: number, y: number): number { return this.groundPainter.elevationAt(x, y); }
     private elevationLiftAt(x: number, y: number): number {
         if (this.useGroundGL && this.groundLayerGL && this.canvas) {
-            return this.groundLayerGL.elevationLiftAt(x, y, this.canvas.width, this.canvas.height);
+            return this.groundLayerGL.elevationLiftAt(x, y, this.worldCX * 2, this.worldCY * 2);
         }
         return this.groundPainter.elevationLiftAt(x, y);
     }
@@ -6026,7 +5913,7 @@ export class Scene13WarLayer {
         const c = this.deCity, gl = this.groundLayerGL, cv = this.canvas;
         if (!c || !gl || !cv) return;
         const { x: cx, y: cy } = this.deCityCenter;
-        const W = cv.width, H = cv.height;
+        const W = this.worldCX * 2, H = this.worldCY * 2;
         const rx = c.width / 2, ry = c.height / 2;
         // 城池外接椭圆换算成格半径（等轴格：横向约 45 px、纵向约 22 px 一格）
         const rCells = Math.min(7.5, Math.max(4.5, Math.max(rx / 160, ry / 80)));
@@ -6184,8 +6071,8 @@ export class Scene13WarLayer {
         }
         const z = this.tacticalZoom;
         const lift = this.elevationLiftAt(this.deCityCenter.x, this.deCityCenter.y);
-        const sx = cv.width / 2 + this.tacticalPanX + (this.deCityCenter.x - cv.width / 2) * z;
-        const sy = cv.height / 2 + this.tacticalPanY + (this.deCityCenter.y - lift - cv.height / 2) * z;
+        const sx = cv.width / 2 + this.tacticalPanX + (this.deCityCenter.x - this.worldCX) * z;
+        const sy = cv.height / 2 + this.tacticalPanY + (this.deCityCenter.y - lift - this.worldCY) * z;
         el.style.display = 'block';
         el.style.opacity = cv.style.opacity;
         el.style.transform = `translate(${sx - (c.width / 2) * z}px, ${sy - (c.height / 2) * z}px) scale(${z})`;
@@ -6800,13 +6687,6 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 真实地理开关（2026-10-07）：默认开，保持最新战术模式。
-     */
-    private static realGeographyEnabled(): boolean {
-        return true;
-    }
-
-    /**
      * 出兵环在**指定来向**上的地图安全半径（px）：基准点沿 (ux,uy) 能退到的最远处，
      * 且保证**九口阵面全部留在图内**（九口的横向/纵向外延一并算进去）。
      * 🔴 [2026-10-11 主人裁定「走甲：把基座夹进地图内」＋「请用专业游戏的方式执行」]
@@ -6838,16 +6718,12 @@ export class Scene13WarLayer {
         return d;
     }
 
-    private realGeographyEnabled(): boolean {
-        return Scene13WarLayer.realGeographyEnabled();
-    }
-
     private isWaterAt(screenX: number, screenY: number): boolean {
         if (this.groundLayerGL && this.canvas) {
-            return this.groundLayerGL.isWaterAt(screenX, screenY, this.canvas.width, this.canvas.height);
+            return this.groundLayerGL.isWaterAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
         }
         if (cachedViennaMapData) {
-            const VW = this.canvas?.width ?? 1920, VH = this.canvas?.height ?? 1080;
+            const VW = this.worldCX * 2, VH = this.worldCY * 2;
             const N = cachedViennaMapData.width || 120;
             // 🔴 [2026-10-12] 原为等距菱形逆式（dx=32, dy=16），与地面层的 16:9 矩形网格对不上；
             //    改为与 `Scene13GroundLayerGL.screenToCell` 同一式（每格 TAC_TILE_W×TAC_TILE_H）。
@@ -6863,101 +6739,6 @@ export class Scene13WarLayer {
     }
 
     /** 真实地理最多让开战多等多久（毫秒）；超时照旧开打，保留原生成的战场 */
-    private static readonly REAL_GEOGRAPHY_WAIT_MS = 3000;
-
-    /**
-     * [2026-10-07 主人令「打仗的那块地就是地图上那个地方」，帝国时代 2 画风]
-     * 城池在画面里的位置不变，以城为原点铺开真实地理，并把攻方来的方位转到画面左边。
-     * 只在开战前（素材闸未放行）生效：期间占 1 个 pending，最多等 REAL_GEOGRAPHY_WAIT_MS；
-     * 晚到、失败、换场都直接丢弃，战场保持原生成器的结果。
-     */
-    private requestRealGeography(
-        envInput: Scene13EnvironmentInput,
-        init: Scene13WarInit,
-        VW: number,
-        VH: number,
-        siegeWallFrontX: number | undefined,
-    ): void {
-        const plan = this.environmentPlan;
-        if (!plan || this.flipSides) return;   // 跟随守方左右对调的场次先不接（城会到左边）
-        const isSiege = init.battleType === 'siege';
-        const city = this.spawns.filter((s) => s.f === 1 && !s.commander);
-        let frame: RealGeoFrame;
-        if (isSiege && init.defenderCityLat !== undefined && init.defenderCityLng !== undefined && city.length > 0) {
-            // 城心 = 守方建筑位的中心；攻方方位 = 城 → 攻方军团（开战时镜头跟拍的位置）
-            const ax = city.reduce((n, s) => n + s.x, 0) / city.length;
-            const ay = city.reduce((n, s) => n + s.y, 0) / city.length;
-            const hasApproach = init.centerLat !== undefined && init.centerLng !== undefined
-                && Math.hypot(init.centerLat - init.defenderCityLat, init.centerLng - init.defenderCityLng) > 0.002;
-            frame = {
-                lat: init.defenderCityLat, lng: init.defenderCityLng, ax, ay,
-                bearingDeg: hasApproach
-                    ? bearingDeg(init.defenderCityLat, init.defenderCityLng, init.centerLat!, init.centerLng!)
-                    : 270,
-            };
-        } else if (init.centerLat !== undefined && init.centerLng !== undefined) {
-            frame = { lat: init.centerLat, lng: init.centerLng, ax: VW / 2, ay: VH / 2, bearingDeg: 270 };
-        } else {
-            return;
-        }
-        const gen = this.assetGen;
-        this.pending++;
-        let released = false;
-        const release = () => {
-            if (released) return;
-            released = true;
-            if (gen === this.assetGen) this.pending--;
-        };
-        window.setTimeout(release, Scene13WarLayer.REAL_GEOGRAPHY_WAIT_MS);
-        const t0 = performance.now();
-        // 城池与守方建筑位必须是陆地且平。攻方一侧放开：真实的海可以铺到攻方营地
-        // （原规矩就是「海在左、攻方破浪抢滩」，营地建筑落水时 place() 会自己推上岸）。
-        const keepClear = this.spawns.filter((s) => s.f === 1 && !s.commander).map((s) => ({ x: s.x, y: s.y, r: (isSiege ? 4 : 2) * TILE_W }));
-        const keepDryFlat = (x: number, y: number): boolean =>
-            (siegeWallFrontX !== undefined && x >= siegeWallFrontX - TILE_W)
-            || keepClear.some((k) => (x - k.x) ** 2 + (y - k.y) ** 2 <= k.r * k.r);
-        void loadRealGeography(frame, VW, VH).then((source) => {
-            const late = released;
-            release();
-            if (gen !== this.assetGen || this.environmentPlan !== plan) return;
-            if (!source || late || this.assetsReadyOnce) {
-                this.diagPush('realGeography', { applied: false, reason: !source ? 'noData' : 'late', ms: Math.round(performance.now() - t0) });
-                return;
-            }
-            // 挑方位：城在右、攻方在左是铁律，城背后的地理落在画面外 —— 死守攻方来向时，
-            // 海和河常常正好在城背后看不见。按 30° 一档试方位，取画面里真实水面与丘陵最多的：
-            //   陆军：只在攻方真实来向 ±90° 内挑，水落在攻方营地带（画面左 22%）扣分 —— 陆路来的兵不能从海里出发；
-            //   水军：12 个方位都试，水在攻方一侧加分（原规矩「海在左、攻方破浪抢滩」）。
-            // 分数相差不到一成时取攻方来向。
-            const approach = frame.bearingDeg;
-            const naval = init.isNaval === true;
-            const { ox: gox } = plan.grid;
-            const score = (g: ReturnType<typeof buildRealGeoPlan>) => {
-                let atkW = 0;
-                for (const [gx, gy] of [...g.deep, ...g.shallow]) if ((gx - gy) * (TILE_W / 2) + gox < VW * 0.22) atkW++;
-                const otherW = g.waterCells - atkW;
-                return naval
-                    ? atkW + otherW * 0.5 + g.raisedCells * 0.3
-                    : otherW + g.raisedCells * 0.3 - atkW * 2;
-            };
-            let best = buildRealGeoPlan({ source, frame, grid: plan.grid, width: VW, height: VH, keepDryFlat });
-            let bestScore = score(best);
-            const steps = naval ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : [-3, -2, -1, 1, 2, 3];
-            for (const k of steps) {
-                const f2 = { ...frame, bearingDeg: (approach + k * 30 + 360) % 360 };
-                const g = buildRealGeoPlan({ source, frame: f2, grid: plan.grid, width: VW, height: VH, keepDryFlat });
-                const s = score(g);
-                if (s > bestScore * 1.1 + 1) { best = g; bestScore = s; frame = f2; }
-            }
-            const geo = best;
-            this.environmentPlan = generateEnvironment({ ...envInput, realGeo: geo });
-            this.initDecor();
-            this.diagPush('realGeography', {
-                applied: true, ms: Math.round(performance.now() - t0), bearing: Math.round(frame.bearingDeg), approach: Math.round(approach),
-                waterCells: geo.waterCells, sea: geo.hasSea, reliefM: Math.round(geo.reliefM), raisedCells: geo.raisedCells,
-            });
-        }).catch(() => release());
-    }
 
     /**
      * 🔴 [2026-10-13 主人报「所有的河流都在战术地图的右上方，不在城边，根本看不到」→「按这个方案做」]
@@ -7597,7 +7378,7 @@ export class Scene13WarLayer {
             this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur, undefined, p.category);
         }
         const envVW = this.canvas?.width || 1920, envVH = this.canvas?.height || 1080;
-        const mapToDiamond = Scene13WarLayer.realGeographyEnabled() && !!this.glCanvas;
+        const mapToDiamond = !!this.glCanvas;
         for (const o of plan.objects) {
             const u = o.x / envVW, v = o.y / envVH;
             const ox = mapToDiamond ? envVW / 2 + (u - 0.5) * TAC_MAP_HALF_W * 2 : o.x;
@@ -8522,15 +8303,6 @@ export class Scene13WarLayer {
             let batch = SIDE_CAP;                  // 一次补 324（固定批量）
             for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
-            /* ── 【背刺奇袭】──────────────────────────────────────────────────────
-             * 开局那批照常从己方出兵口列阵；**第二波起**的补兵，白名单
-             * （FLANK_TYPES：忍者/马来爪刀/靛蓝突袭者/图皮战棍）都绕到敌军背后出生。
-             *   · 为什么只改出生点：13 的「编队自主寻敌」试过五次全败（见文件头），
-             *     出路是剧本法。奇袭在这里就是一条剧本 —— 换个地方出生，之后照常索敌，
-             *     不新增任何自主决策，也不碰判负。
-             */
-            const isSupplyWave = this.deployT <= 0;   // 开局列阵期 deployT>0，补兵波次才奇袭
-            if (isSupplyWave) this.supplyWave[f]++;   // 本方第几个补兵波（冲击型奇袭只认第 1 波）
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
@@ -8543,15 +8315,7 @@ export class Scene13WarLayer {
                 }
                 s.pool--;
                 batch--;
-                // 🔴 [2026-09-17 主人定]「守城忍者可绕后，攻城忍者不能绕后，其他偷袭兵种也一样」——
-                //    攻城方从敌方出兵口背后出生 = 凭空出现在城墙之内，不合理；守城方绕到攻城方侧后
-                //    是出城偷袭，成立。野战双方都可绕后（冲击型受配额限次）。
-                const isFlank = shouldFlankSpawn(s.key, this.battleType, isSupplyWave, this.supplyWave[f], this.flankQuota[f], s.f);
-                // 奇袭兵的初始目标取敌军重心：nearestEnemySpawn 找的是敌方**出兵口**（在敌军前面），
-                // 而奇袭兵已经生在敌军背后，照它走会掉头往回穿过整个敌阵。
-                const tgt = isFlank
-                    ? (this.enemyCen[1 - s.f] ?? this.nearestEnemySpawn(s))
-                    : (this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f]);
+                const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
                 if (!tgt) break;
                 // 本兵终身固定的落点偏移（见 AIM_JITTER）：出生时抽一次，之后 aimAt 的共用坐标都加它
                 const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
@@ -8587,42 +8351,13 @@ export class Scene13WarLayer {
                 const dep = ((slotIdx / files) | 0) * spDep;
                 const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
 
-                // 🔴 [2026-09-17 主人定] 背刺奇袭出生点改造：在敌方最后排（row===2）出兵口随机抽取出生
-                let flankX = 0, flankY = 0;
-                if (isFlank) {
-                    const enemyBackSpawns = this.spawns.filter(sp => sp.f === 1 - s.f && sp.row === 2);
-                    const candidates = enemyBackSpawns.length > 0
-                        ? enemyBackSpawns
-                        : this.spawns.filter(sp => sp.f === 1 - s.f);
-                    const rndPort = candidates.length > 0
-                        ? candidates[Math.floor(Math.random() * candidates.length)]
-                        : null;
-                    const VW = this.canvas?.width ?? 1920;
-                    if (rndPort) {
-                        // 攻方(s.f===0)从敌方(守方)后排出兵口杀向中线，方阵排在出兵口后方(+dep)；
-                        // 守方(s.f===1)从敌方(攻方)后排出兵口杀向中线，方阵排在出兵口后方(-dep)。
-                        // 🔴 [2026-10-11 AA #9 属实] 奇袭原走旧版左右 x 轴（rawX = rndPort.x ± dep、flankY = rndPort.y），
-                        //    八方向布局下方向全错、且没有横排 ⇒ 奇袭兵叠成一条横线。改为沿本方推进向量排方阵：
-                        //    沿 -uFwd 后退 dep、沿 uSide 横排 slotY（与出生/推进同一套向量）。
-                        const _uF = this.advanceVec[s.f], _uS = this.sideVec[s.f];
-                        const rawX = rndPort.x - _uF.x * dep + _uS.x * slotY;
-                        const rawY = rndPort.y - _uF.y * dep + _uS.y * slotY;
-                        [flankX, flankY] = this.fieldBound(rawX, rawY);
-                    } else {
-                        const edge = Math.max(60, VW * 0.07) * 0.5;
-                        const _eb = this.spawnBases[1 - s.f] ?? { x: VW / 2, y: s.y };   // 🔴 [2026-10-11 CC] 奇袭落点 x/y 统一到**敌方基座**一个来源（原先 x 取基座、y 取重心，南北向会偏轴）
-                        flankX = _eb.x;
-                        flankY = _eb.y;
-                    }
-                }
-                const useFieldPlan = this.realGeographyEnabled() && (this.battleType === 'field' || this.battleType === 'siege' || !!this.deCity);
                 const uFwd = this.advanceVec[s.f];
                 const uSide = this.sideVec[s.f];
-                let spawnX = isFlank ? flankX : (s.x - uFwd.x * dep + uSide.x * slotY);
-                let spawnY = isFlank ? flankY : (s.y - uFwd.y * dep + uSide.y * slotY);
+                let spawnX = s.x - uFwd.x * dep + uSide.x * slotY;
+                let spawnY = s.y - uFwd.y * dep + uSide.y * slotY;
                 // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」「最后一排背靠城墙」] 攻城战守方第一波：在城外面朝攻方列阵出生，
                 //    之后原地待敌（holdLanes）；后续补兵照旧在城内出生、走城门出城。
-                const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && !isFlank && s.outFwd !== undefined;
+                const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && s.outFwd !== undefined;
                 if (outsideFirst) {
                     const B = this.defOutsideBase();
                     spawnX = B.x + uFwd.x * s.outFwd! + uSide.x * s.outSide! - uFwd.x * dep + uSide.x * slotY;
@@ -8636,16 +8371,15 @@ export class Scene13WarLayer {
                     x: spawnX,
                     y: spawnY,
                     tx: spawnX, ty: spawnY, hp: this.statsFor(s.key, s.f).hp,
-                    // 出生朝向按**实际出生点**算：奇袭兵生在敌后，用本方出兵口算会背对敌人
-                    dir: this.dir8(tgt.x - (isFlank ? flankX : s.x), tgt.y - (isFlank ? flankY : s.y)),
+                    dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
                     ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.2,
                     fightT: 0, aimT: (s.spawned % 15) * 0.033, lock: 0, atkSt: 0, atkFlip: false,
                     prevX: spawnX, prevY: spawnY,
                     anchorX: spawnX, anchorY: spawnY, netT: 0,
-                    stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
+                    stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch && !outsideFirst, port: inMarch && !outsideFirst ? s : null, dep, slotY, pop: s.pop,
-                    flank: isFlank, lane: s.lane,
+                    lane: s.lane,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
             }
@@ -9607,7 +9341,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const S = FLOW_SUB;   // 每个地块切 S×S 小格：1 格宽的缺口才走得通
         const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
         const N = 2 * R + 1;
-        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const cx = this.worldCX, cy = this.worldCY;
         const ab = (x: number, y: number): [number, number] => {
             const dx = x - cx, dy = y - cy;
             return [(dx / TW + dy / TH) * S, (dy / TH - dx / TW) * S];
@@ -9679,7 +9413,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const S = FLOW_SUB;
         const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
         const N = 2 * R + 1;
-        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const cx = this.worldCX, cy = this.worldCY;
         const blocked = new Uint8Array(N * N);
         for (const sp of this.decorSprites) {
             const ob = sp.obstruction;
@@ -9742,7 +9476,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const f = this.flowDist;
         if (!f || !this.canvas) return Infinity;
         const R = this.flowR, N = 2 * R + 1;
-        const dx = x - this.canvas.width / 2, dy = y - this.canvas.height / 2;
+        const dx = x - this.worldCX, dy = y - this.worldCY;
         const a = Math.round((dx / TAC_TILE_W + dy / TAC_TILE_H) * FLOW_SUB) + R, b = Math.round((dy / TAC_TILE_H - dx / TAC_TILE_W) * FLOW_SUB) + R;
         if (a < 0 || a >= N || b < 0 || b >= N) return Infinity;
         const d = f[a * N + b];
@@ -9755,7 +9489,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
-        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const cx = this.worldCX, cy = this.worldCY;
         const dx = x - cx, dy = y - cy;
         let a = Math.round((dx / TW + dy / TH) * FLOW_SUB) + R, b = Math.round((dy / TH - dx / TW) * FLOW_SUB) + R;
         if (a < 1 || a >= N - 1 || b < 1 || b >= N - 1) return null;
@@ -9834,7 +9568,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
     /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
     private tileAB(x: number, y: number): [number, number] {
-        const dx = x - (this.canvas?.width ?? 0) / 2, dy = y - (this.canvas?.height ?? 0) / 2;
+        const dx = x - this.worldCX, dy = y - this.worldCY;
         return [dx / TAC_TILE_W + dy / TAC_TILE_H, dy / TAC_TILE_H - dx / TAC_TILE_W];
     }
 
@@ -9867,14 +9601,24 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      *  城墙外缘：墙件已建好就用墙件实测（件中心投影最大值＋件半厚 100px）；还没建好就用城池外框菱形（偏保守、稍远）。 */
     private defOutsideBase(): { x: number; y: number } {
         const C = this.deCityCenter, u = this.advanceVec[1];
+        // 墙件碰撞框（地块坐标 ±0.95）在 u 方向上的半厚：两条地块轴在屏幕上是 (TW/2, TH/2) 与 (-TW/2, TH/2)
+        const half = 0.95 * (Math.abs(u.x * TAC_TILE_W / 2 + u.y * TAC_TILE_H / 2) + Math.abs(-u.x * TAC_TILE_W / 2 + u.y * TAC_TILE_H / 2));
         let support = -Infinity;
-        for (const b of this.wallGates) support = Math.max(support, (b.x - C.x) * u.x + (b.y - C.y) * u.y + 100);
+        for (const b of this.wallGates) support = Math.max(support, (b.x - C.x) * u.x + (b.y - C.y) * u.y + half);
         if (!Number.isFinite(support)) {
             const W = (this.deCity?.width ?? 0) / 2, H = (this.deCity?.height ?? 0) / 2;
             support = Math.max(Math.abs(u.x) * W, Math.abs(u.y) * H);
         }
-        // 后排口在基点后 rowDepth；口后再排 5~6 排兵（列距 24~30，最多约 150px）＋大体型半径约 30px
-        const proj = support + DEF_WALL_GAP + this.rowDepth + 180;
+        // 按每队实际排数算最后一人：口在基点前 outFwd，兵在口后排开 (排数−1)×行距，再加本兵种半径
+        let rear = Infinity;
+        for (const s of this.spawns) {
+            if (s.f !== 1 || s.outFwd === undefined) continue;
+            const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(s.key)));
+            const depMax = (ranks - 1) * Math.min(marchSpacingOf(s.key), MARCH_SP_DEPTH_MAX);
+            rear = Math.min(rear, s.outFwd - depMax - this.radiusOf(s.key));
+        }
+        if (!Number.isFinite(rear)) rear = -this.rowDepth - 180;
+        const proj = support + DEF_WALL_GAP - rear;
         return { x: C.x + u.x * proj, y: C.y + u.y * proj };
     }
 
@@ -9902,8 +9646,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         if (!this.ringBox) return aim;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
-        const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
-        const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
+        const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
+        const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
         // 🔴 [2026-10-14 主人令「所有兵出两门，把所有城都改为这种方式」「想一个让守方不分兵的方法」]
         //    守军只从**离攻方大军重心最近的两座外圈城门**出城，每人走这两座里离自己近的那座 ⇒ 汇成两股正面迎敌，
         //    背面/侧面的门不用（原先「离各自目标最近的门」会把守军拆到四面八方的门，分兵被各个击破）。
@@ -10058,13 +9802,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         // 收尾更干净（三个种子败方余兵全归 0，旧兜底有两局残兵收不掉）。
         const jit = (p: { x: number; y: number }): { x: number; y: number } => ({ x: p.x + m.jx, y: p.y + m.jy });
 
-        // 【忍者奇袭】绕后兵直扑敌军重心，**不进下面的共享巡逻航路**（原因见 WarMan.flank）。
-        // 重心是每帧按敌方存活兵算的活目标，敌军往哪压它就往哪追，不会像航点那样停在原地等人。
-        if (m.flank) {
-            const cen = this.enemyCen[1 - m.f];
-            if (cen) return jit(cen);
-        }
-
         // 【寻敌驻足】航点刚切换的停留期间返回 null（不更新移动目标）→ 走航路的兵站住不动，
         // 停下来搜索残敌。① 视野内已有敌人时上面 search 已接管，这里只压住「没人可打时走航路」这一路。
         // 不停留的话，寻敌军团一路赶航点，敌方残兵追着打却追不上，双方永远打不起来。
@@ -10125,14 +9862,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      *    统一在此收口，margin = 半身 UNIT_PX/2。
      */
     private fieldBound(x: number, y: number): [number, number] {
-        const vw = this.canvas?.width ?? 0, vh = this.canvas?.height ?? 0;
-        if (vw <= 0 || vh <= 0) return [x, y];
         const mx = UNIT_PX * 0.5, my = UNIT_PX * 0.5;
         // 🔴 [2026-10-11 主人「你删除旧的13战术模式的战场界限了吗」] **旧 13 的界限就是这条兜底**：
         //    拿不到 WebGL 地面层时退回「夹在屏幕内」(vw ± mx)。已删除。
         //    现在无论用哪种地面渲染，战场界限一律 = 120×120 格地图的矩形（±TAC_MAP_HALF_W / ±TAC_MAP_HALF_H，屏幕居中）。
-        const minX = vw / 2 - TAC_MAP_HALF_W + mx, maxX = vw / 2 + TAC_MAP_HALF_W - mx;
-        const minY = vh / 2 - TAC_MAP_HALF_H + my, maxY = vh / 2 + TAC_MAP_HALF_H - my;
+        const minX = this.worldCX - TAC_MAP_HALF_W + mx, maxX = this.worldCX + TAC_MAP_HALF_W - mx;
+        const minY = this.worldCY - TAC_MAP_HALF_H + my, maxY = this.worldCY + TAC_MAP_HALF_H - my;
         return [Math.min(Math.max(x, minX), maxX), Math.min(Math.max(y, minY), maxY)];
     }
 
@@ -11281,11 +11016,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         // 云漂移：一律左→右（攻方→守方），飘出右边就从左边绕回来
         // （用原图宽当余量，保证是整朵飘出去、整朵飘进来，绝不在画面里半途闪现）
         if (this.clouds.length && this.canvas) {
-            const vw = this.canvas.width;
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > vw / 2 + 3808 + w) c.x = vw / 2 - 3808 - w;
+                if (c.x > this.worldCX + 3808 + w) c.x = this.worldCX - 3808 - w;
             }
         }
         // 留下的尸体：死亡动画播完 → 烙进地面图永久保留（不再逐帧重画、不再参与排序）
@@ -11314,14 +11048,14 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 let targetFocusX = 0, targetFocusY = 0, count = 0;
                 if (this.heroMan) {
                     // 跟随乱入者本人（阵亡复活倒计时的 10 秒里镜头留在他倒下的地方，复活后跟到本方后方重生点）
-                    targetFocusX = this.flipSides ? this.canvas.width - this.heroMan.x : this.heroMan.x;   // 左右对调场次：镜头要对准他的屏幕位置
+                    targetFocusX = this.heroMan.x;
                     targetFocusY = this.heroMan.y;
                     count = 1;
                 } else if (this.battleType === 'siege' || this.deCity) {
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
                     //    攻城战城池稳居正中心，镜头始终居中对齐正中央城郭，绝不可被交战部队拖跑甩到屏幕角落
-                    targetFocusX = this.canvas.width / 2;
-                    targetFocusY = this.canvas.height / 2;
+                    targetFocusX = this.worldCX;
+                    targetFocusY = this.worldCY;
                     count = 1;
                 } else {
                     // 本场没有乱入者（未随军/观战）⇒ 沿用原来的「跟随交战最激烈处」
@@ -11345,10 +11079,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     if (count > 0) { targetFocusX = sumX / count; targetFocusY = sumY / count; }
                 }
                 if (count > 0) {
-                    const cx = this.canvas.width / 2;
-                    const cy = this.canvas.height / 2;
-                    const desiredPanX = (cx - targetFocusX) * this.tacticalZoom;
-                    const desiredPanY = (cy - targetFocusY) * this.tacticalZoom;
+                    const desiredPanX = (this.worldCX - targetFocusX) * this.tacticalZoom;
+                    const desiredPanY = (this.worldCY - targetFocusY) * this.tacticalZoom;
                     const smooth = Math.min(1.0, 1.5 * dt);
                     this.tacticalPanX += (desiredPanX - this.tacticalPanX) * smooth;
                     this.tacticalPanY += (desiredPanY - this.tacticalPanY) * smooth;
@@ -11430,12 +11162,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const list = this.tacticalAnimals;
         if (!list.length) return;
         const cv = this.canvas;
-        const VW = cv?.width ?? 7616;
-        const VH = cv?.height ?? 3808;
         const MARGIN = 120;
         // 🔴 [2026-10-13 修] 活动边界按**地图世界**（中心 ± TAC_MAP_HALF），不是屏幕画布宽高 —— 原来按画布 0~VW 夹，动物全被关进城边一个小框、贴边排成一条线
-        const X0 = VW / 2 - TAC_MAP_HALF_W + MARGIN, X1 = VW / 2 + TAC_MAP_HALF_W - MARGIN;
-        const Y0 = VH / 2 - TAC_MAP_HALF_H + MARGIN, Y1 = VH / 2 + TAC_MAP_HALF_H - MARGIN;
+        const X0 = this.worldCX - TAC_MAP_HALF_W + MARGIN, X1 = this.worldCX + TAC_MAP_HALF_W - MARGIN;
+        const Y0 = this.worldCY - TAC_MAP_HALF_H + MARGIN, Y1 = this.worldCY + TAC_MAP_HALF_H - MARGIN;
         const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
         const HOME_BACK = 120;      // 猎物活动半径（3 格，避免 30px 过小导致乒乓回头颤抖）
         const BITE_RANGE = 22;      // 猛兽贴身咬的距离
@@ -11737,12 +11467,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数），已恢复：
             //   尸体尺寸必须与兵模同一把尺子（UNIT_PX * sz / 64），否则同一场里尸体会和活人不一样大。
             const s = UNIT_PX * (wt?.sz ?? 1) / 64;
-            const gx = c.x - ((this.canvas?.width ?? 1920) / 2 - 3808), gy = drawY - ((this.canvas?.height ?? 1080) / 2 - 1904); g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
+            const gx = c.x - (this.worldCX - 3808), gy = drawY - (this.worldCY - 1904); g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
         } else {
             // S10DB 正方形帧（原逻辑不变）
             const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
             const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
-            const gx = c.x - ((this.canvas?.width ?? 1920) / 2 - 3808), gy = drawY - ((this.canvas?.height ?? 1080) / 2 - 1904); g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+            const gx = c.x - (this.worldCX - 3808), gy = drawY - (this.worldCY - 1904); g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, gx - px / 2, gy - px * 0.9, px, px);
         }
         g.restore();
         this.groundHasContent = true;
@@ -11884,9 +11614,11 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const zoom = this.tacticalZoom;
         const hasZoom = Math.abs(zoom - 1) > 0.001;
         const hasPan = Math.abs(this.tacticalPanX) > 0.5 || Math.abs(this.tacticalPanY) > 0.5;
-        const hasTransform = hasZoom || hasPan;
         const cx = cv.width / 2;
         const cy = cv.height / 2;
+        // 世界中心开战时定死（worldCX/CY）；窗口缩放后它和画布中心不再重合，也要做变换
+        const hasShift = Math.abs(this.worldCX - cx) > 0.5 || Math.abs(this.worldCY - cy) > 0.5;
+        const hasTransform = hasZoom || hasPan || hasShift;
 
         if (hasTransform) {
             ctx.clearRect(0, 0, cv.width, cv.height);
@@ -11897,21 +11629,15 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             ctx.save();
             ctx.translate(cx + this.tacticalPanX, cy + this.tacticalPanY);
             ctx.scale(zoom, zoom);
-            ctx.translate(-cx, -cy);
+            ctx.translate(-this.worldCX, -this.worldCY);
         }
 
-        // [2026-08-31 主人定] 攻守两侧左右对调（跟随军团固定左边）：整个战场水平镜像渲染。
-        // 逻辑坐标（移动/索敌/碰撞/胜负/兵力）完全不变，只翻转「画出来的样子」——
-        // 城门 NE/SE 素材翻转后自动朝右、士兵/特效/建筑跟着镜像。
-        // 旗帜文字是预渲染图片（LegionFlagDrawer），会跟着镜像变反字，故下方旗帜三段循环内部反翻转回来。
-        const flip = this.flipSides;
-        if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
         if (this.useGroundGL && this.groundLayerGL) {
             const _tgl0 = performance.now();
             const camZoom = zoom;
             const camX = cv.width / 2 + this.tacticalPanX - TAC_MAP_HALF_W * camZoom;
             const camY = cv.height / 2 + this.tacticalPanY - TAC_MAP_HALF_H * camZoom;
-            this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom }, this.flipSides);
+            this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom });
             this.groundLayerGL.render();
             _tGL = performance.now() - _tgl0;
             if (!hasTransform) {
@@ -11965,15 +11691,14 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const _tcull0 = performance.now();
         const cullDecor = this.useGroundGL;
         const vMargin = 120;
-        const vMinX = (0 - cx - this.tacticalPanX) / zoom + cx - vMargin;
-        const vMaxX = (cv.width - cx - this.tacticalPanX) / zoom + cx + vMargin;
-        const vMinY = (0 - cy - this.tacticalPanY) / zoom + cy - vMargin;
-        const vMaxY = (cv.height - cy - this.tacticalPanY) / zoom + cy + vMargin;
+        const vMinX = (0 - cx - this.tacticalPanX) / zoom + this.worldCX - vMargin;
+        const vMaxX = (cv.width - cx - this.tacticalPanX) / zoom + this.worldCX + vMargin;
+        const vMinY = (0 - cy - this.tacticalPanY) / zoom + this.worldCY - vMargin;
+        const vMaxY = (cv.height - cy - this.tacticalPanY) / zoom + this.worldCY + vMargin;
         let decorDrawnCount = 0;
         for (const sprite of this.decorSprites) {
             if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
-            const testX = (this.flipSides && cv) ? (cv.width - sprite.x) : sprite.x;
-            if (cullDecor && ((testX < vMinX || testX > vMaxX) && (sprite.x < vMinX || sprite.x > vMaxX) || sprite.y < vMinY || sprite.y > vMaxY)) continue;
+            if (cullDecor && (sprite.x < vMinX || sprite.x > vMaxX || sprite.y < vMinY || sprite.y > vMaxY)) continue;
             if (sprite.layer === 'world' || (this.useGroundGL && sprite.layer === 'ground')) {
                 const it = take();
                 it.kind = 'environment';
@@ -11989,7 +11714,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.perfStats.decorDrawn = decorDrawnCount;
         this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
         // 已烙的尸体：一张图搞定（在所有活人之下）
-        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, cx - 3808, cy - 1904);
+        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - 3808, this.worldCY - 1904);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) {
             const it = take();
@@ -12122,10 +11847,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const flagTick = performance.now();
         for (const m of this.men) {
             if (!m.flag) continue;
-            // [2026-08-31] 旗帜反翻转：外层 ctx 已水平镜像，旗帜文字（预渲染图片）会变反字，这里反翻转回正向画。
-            if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-            LegionFlagDrawer.drawPole(ctx, { x: flip ? cv.width - m.x : m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
-            if (flip) ctx.restore();
+            LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
         }
 
         for (const v of vis) {
@@ -12178,20 +11900,15 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    绝不在 13 里 await 旗帜加载 —— 启动慢那次（89s→11s）就是全屏 24 面旗 await 阻塞。
         for (const m of this.men) {
             if (!m.flag) continue;
-            // [2026-08-31] 旗帜反翻转（文字正向），同旗杆段。
-            if (flip) { ctx.save(); ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-            this.drawOneFlag(ctx, flip ? cv.width - m.x : m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
-            if (flip) ctx.restore();
+            this.drawOneFlag(ctx, m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
         }
         // 倒下的军旗：前半程转倒 90°，全程淡出。
         // 这里**杆和旗面一起**画在旋转变换里 —— 倒下的是整面旗，杆不能留在原地竖着。
         for (const ff of this.fallenFlags) {
             const p = ff.t / FLAG_FALL;
             ctx.save();
-            // [2026-08-31] 旗帜反翻转（文字正向）；镜像后倒下方向也随之反向（rotate 取反）。
-            if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
-            ctx.translate(flip ? cv.width - ff.x : ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
-            ctx.rotate((flip ? -1 : 1) * Math.PI / 2 * Math.min(1, p * 2));
+            ctx.translate(ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
+            ctx.rotate(Math.PI / 2 * Math.min(1, p * 2));
             ctx.globalAlpha = 1 - p;
             LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
             this.drawOneFlag(ctx, 0, 0, ff.f, flagTick + ff.fo);
@@ -12202,10 +11919,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (this.heroMan && this.heroMan.hp > 0 && this.playerSetup) {
             const h = this.heroMan;
             const maxHp = this.statsFor(h.key, h.f).hp || 1;
-            const sx = flip ? cv.width - h.x : h.x;
+            const sx = h.x;
             const sy = h.y - this.elevationLiftAt(h.x, h.y) - UNIT_PX * 1.25;
             ctx.save();
-            if (flip) { ctx.translate(cv.width, 0); ctx.scale(-1, 1); }
             ctx.font = "bold 13px 'Noto Serif SC','SimSun',serif";
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
@@ -12463,7 +12179,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
             }
         }
-        if (flip) ctx.restore();
         if (hasTransform) ctx.restore();
         this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
