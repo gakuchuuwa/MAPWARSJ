@@ -128,7 +128,8 @@ export class LandSeaSystem {
             return isSeaElevation(elev);
         }
 
-        return this.rememberResult(key, isSeaElevation(elev));
+        // 掩膜确认是水时海拔 ≤0 也算海：部分海域（亚得里亚海南部、塞浦路斯—叙利亚、新斯科舍外海）高程瓦片把海面记成 0
+        return this.rememberResult(key, elev <= 0);
     }
 
     static isLandAt(latLng: LatLng): boolean {
@@ -177,7 +178,7 @@ export class LandSeaSystem {
         if (elev === null) return 'pending';
 
         // water === null（掩膜未到）时 isSeaAt 回退纯海拔判据，这里如实反映同一答案
-        return isSeaElevation(elev) ? 'sea' : 'land';
+        return (water === true ? elev <= 0 : isSeaElevation(elev)) ? 'sea' : 'land';
     }
 
     static getLandSeaKind(latLng: LatLng): LandSeaKind {
@@ -226,7 +227,7 @@ export class LandSeaSystem {
             if (!elevTile) return 'pending';
             const e = idx * 4;
             const elev = decodeTerrariumElevation(elevTile[e], elevTile[e + 1], elevTile[e + 2]);
-            return isSeaElevation(elev) ? 'sea' : 'land';
+            return (maskUsable ? elev <= 0 : isSeaElevation(elev)) ? 'sea' : 'land';
         };
     }
 

@@ -1111,6 +1111,10 @@ const PASS_INSIDE_DAMAGE_TAKEN = 0.8;
  *  按队不按全军：按全军算时，全军掉到 5% 那一刻城里所有人一起出去找敌（主人：「这样岂不是城市挨个去送死」）。
  *  病灶（实测险要 3 场）：守方剩 5% 时最后约 5 人站在墙边岗位上，离最近攻方 650~1100px 看不见，攻方也找不到 ⇒ 收尾拖 90~120 秒。 */
 const REMNANT_FRAC = 0.05;
+/** 🔴 [2026-10-14 主人令「背靠是有点小距离，不是紧挨着」] 城外列阵：守方最后一排最后一人离城墙外缘的空隙（px） */
+const DEF_WALL_GAP = 100;
+/** 🔴 [2026-10-14] 守方城外列阵时，两军最前沿之间至少留的空地（px） */
+const SIEGE_FIELD_GAP = 600;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -2943,6 +2947,9 @@ interface WarSpawn {
     lane: number;
     /** [2026-09-05 玩家] 所在排：0 前 / 1 中 / 2 后；-1 = 玩家自带精锐（前排之前） */
     row: number;
+    /** 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」] 攻城战守方：本口在城外阵里的前后/左右偏移（相对城外阵基点，见 defOutsideBase） */
+    outFwd?: number;
+    outSide?: number;
     /** [2026-09-05 玩家] 玩家自带精锐编队 */
     playerElite?: boolean;
     /** 🔴 [2026-09-23] 第 10 口主将队（row -1，前排正中再往前） */
@@ -3717,6 +3724,10 @@ export class Scene13WarLayer {
     private ringOpenVal = false;
     /** 🔴 [2026-10-14 主人令「残兵应该是按每队算」] 残兵主动找敌：每队（lane）开局兵力（后备＋场上，精灵×人口，第一帧记下）与「本队已剩不到 REMNANT_FRAC」的队号 */
     private laneStart: Map<number, number> | null = null;
+    /** 🔴 [2026-10-14 主人令「最后一排背靠城墙……看到敌人再发起进攻，或者挨打发起进攻」] 城外列阵、还在原地待敌的守方队号；任何一人看到敌人或挨打，全军出击 */
+    private holdLanes = new Set<number>();
+    /** 三排之间的排距（布阵时记下，城外列阵算后排位置用） */
+    private rowDepth = 260;
     private remnantLanes = new Set<number>();
     private flowBuiltAt = -99;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
@@ -4627,6 +4638,7 @@ export class Scene13WarLayer {
             //    纵深与横向间隔彻底拉开，相邻方阵预留通行间隔，杜绝拥挤踩踏
             // 🔴 [2026-10-11 主人令「我要方阵，不要一条线」] 三排排距收紧（原 200~240 让全军摊得太开，像一条线）
     const depth = Math.min(280, Math.max(240, Math.round(VW * 0.14)));   // [2026-10-11 AA#8] 排距须 >= 单队方阵纵深 240px
+            this.rowDepth = depth;
             const midY = VH / 2;
             const spanY = VH * 0.80;
 
@@ -4708,7 +4720,12 @@ export class Scene13WarLayer {
                         const need = cityEdge + 320;                                // ②营地纵深+余量
                         // 🔴 [2026-10-13 主人令「攻方营地离城寨太近了。请远一点」]
                         //    城寨尺寸紧凑，原 cityR+700 导致攻方营帐离栅栏过近；城寨攻城距提升至 cityR+1300（保底 2100px），大幅拉开扎营纵深
-                        const siegeBaseDist = Math.max(cityR + 1300, 2100);   // 🔴 [2026-10-13 主人令] 不再只限城寨：所有攻城战都拉远
+                        let siegeBaseDist = Math.max(cityR + 1300, 2100);   // 🔴 [2026-10-13 主人令] 不再只限城寨：所有攻城战都拉远
+                        // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」] 守方第一波在城外列阵（见 defOutsideBase），攻方得再退，
+                        //    让两军最前沿之间留出约 SIEGE_FIELD_GAP 的空地（实测不退时只剩 65~106px，一开场就贴脸）。
+                        //    守方前沿＝城外框外缘＋墙隙＋排距＋口后纵深＋前排与主将队（2 排距）；攻方前沿在基座前 2 排距（主将队）。
+                        const boxEdge = Math.max(Math.abs(nx) * rx, Math.abs(ny) * ry);
+                        siegeBaseDist = Math.max(siegeBaseDist, boxEdge + DEF_WALL_GAP + depth + 180 + 2 * depth + SIEGE_FIELD_GAP + 2 * depth);
                         let dist = Math.min(siegeBaseDist, safe);                     // ③先取攻城距
                         if (dist < need) dist = Math.min(need, safe);               // ②不够就退到不压城（但仍不越图）
                         attSX = VW / 2 + nx * dist;
@@ -4760,6 +4777,7 @@ export class Scene13WarLayer {
                     if (this.statsFor(key, side.f).rng > 65) this.ensureProj(PROJ_TYPE[key] ?? 'PROJ_ARROW');
                     if (FIRE_LANCER_TYPES.has(key)) this.ensureProj('PROJ_SHOT');   // 火矛手充能喷火用
                     let x: number, y: number;
+                    let outFwd: number | undefined, outSide: number | undefined;
                     // 阵位：DE 自动排布（开关见 DE_FORMATION_LAYOUT）｜关掉即回到七种经典阵型的 LAYOUT 表
                     const cell = idx >= 9
                         ? COMMANDER_CELL[mode]
@@ -4779,6 +4797,7 @@ export class Scene13WarLayer {
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
                         // 攻城战守方：九口落在战略地图同款城池的九栋建筑上（主将队在城心）
                         if (this.deCity && side.f === 1) {
+                            outFwd = forwardOffset; outSide = sideOffset;
                             const slots = this.deCity.slots;
                             // 🔴 [2026-10-11 AA #3/#5 属实] 守方出兵口原为 `slots[idx % slots.length]`：
                             //    险要只有 5~6 个槽（中心城堡+四角箭塔）、矩形/梯形城寨只有 8 个 ⇒
@@ -4808,6 +4827,7 @@ export class Scene13WarLayer {
                         lane: this.spawns.length,
                         row: cell.row,
                         commander: idx >= 9,
+                        outFwd, outSide,
                     });
                 });
             }
@@ -5413,6 +5433,7 @@ export class Scene13WarLayer {
         this.defGateFlow = null;
         this.laneStart = null;
         this.remnantLanes.clear();
+        this.holdLanes.clear();
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5751,6 +5772,7 @@ export class Scene13WarLayer {
         this.defGateFlow = null;
         this.laneStart = null;
         this.remnantLanes.clear();
+        this.holdLanes.clear();
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -8598,6 +8620,15 @@ export class Scene13WarLayer {
                 const uSide = this.sideVec[s.f];
                 let spawnX = isFlank ? flankX : (s.x - uFwd.x * dep + uSide.x * slotY);
                 let spawnY = isFlank ? flankY : (s.y - uFwd.y * dep + uSide.y * slotY);
+                // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」「最后一排背靠城墙」] 攻城战守方第一波：在城外面朝攻方列阵出生，
+                //    之后原地待敌（holdLanes）；后续补兵照旧在城内出生、走城门出城。
+                const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && !isFlank && s.outFwd !== undefined;
+                if (outsideFirst) {
+                    const B = this.defOutsideBase();
+                    spawnX = B.x + uFwd.x * s.outFwd! + uSide.x * s.outSide! - uFwd.x * dep + uSide.x * slotY;
+                    spawnY = B.y + uFwd.y * s.outFwd! + uSide.y * s.outSide! - uFwd.y * dep + uSide.y * slotY;
+                    this.holdLanes.add(s.lane);
+                }
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
                     f: s.f, key: s.key, jx, jy,
@@ -8613,7 +8644,7 @@ export class Scene13WarLayer {
                     anchorX: spawnX, anchorY: spawnY, netT: 0,
                     stuckT: 0, sepX: 0, sepY: 0, y0: isFlank ? flankY : s.y,
                     flag: bearer, fo: Math.random() * 600,
-                    march: inMarch, port: inMarch ? s : null, dep, slotY, pop: s.pop,
+                    march: inMarch && !outsideFirst, port: inMarch && !outsideFirst ? s : null, dep, slotY, pop: s.pop,
                     flank: isFlank, lane: s.lane,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
@@ -9104,7 +9135,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
     /**
      * 🔴 [2026-10-12 主人令「10秒坍塌只适用于城墙、城门、城垛」「没受到攻击/满血的不要坍塌」]
-     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有时，若双方已有兵交战则塌一段挡路的墙（满血也塌），否则不塌。
+     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有就不塌（2026-10-14 主人令：只有受到攻击的城墙才能坍塌）。
      * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
      */
     private collapseNextWallGap(): boolean {
@@ -9112,30 +9143,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (alive.length === 0) return false;
         let pick: WarBuilding | undefined;
         for (const b of alive) if (b.hitAt !== undefined && b.hp < b.maxHp && (!pick || b.hitAt < pick.hitAt!)) pick = b;
-        if (!pick) {
-            // 🔴 [2026-10-12 主人令「双方兵力交战，就算城墙满血也要开始坍塌，不然城墙一直不动过不去」]
-            //    没有挨过打的墙，但双方已有兵在互相交战 ⇒ 塌一段：优先最近挡过攻方士兵的墙，其次离攻方重心最近的墙。
-            let atkEngaged = false, defEngaged = false;
-            for (const m of this.men) {
-                if (m.hp <= 0 || !m.foe || 'sprite' in m.foe) continue;
-                if (m.f === 0) atkEngaged = true; else defEngaged = true;
-                if (atkEngaged && defEngaged) break;
-            }
-            if (!(atkEngaged && defEngaged)) return true;
-            let latest = this.battleSec - 3;
-            for (const m of this.men) {
-                const b = m.f === 0 && m.hp > 0 ? m.blockedBy : null;
-                if (b && this.wallStanding(b) && (m.blockedAt ?? -99) >= latest) { latest = m.blockedAt!; pick = b; }
-            }
-            if (!pick) {
-                const c = this.enemyCen[0];
-                if (c) {
-                    let bd = Infinity;
-                    for (const b of alive) { const d = (b.x - c.x) ** 2 + (b.y - c.y) ** 2; if (d < bd) { bd = d; pick = b; } }
-                }
-            }
-            if (!pick) return true;
-        }
+        // 🔴 [2026-10-14 主人令「要设计为受到攻击的城墙才能坍塌，不然就不现实了」] 没有挨过打、掉了血的墙段 ⇒ 这一轮不塌
+        if (!pick) return true;
         this.collapseOneWall(pick);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
@@ -9853,6 +9862,22 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         return this.insideRing(o.x, o.y) ? PASS_INSIDE_DAMAGE_TAKEN : 1;
     }
 
+    /** 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」] 城外阵基点：沿守方推进方向（朝攻方），
+     *  让最后一排最后一人落在城墙外缘再往外 DEF_WALL_GAP 处 ⇒ 全阵在墙外，不会有人站进墙里。
+     *  城墙外缘：墙件已建好就用墙件实测（件中心投影最大值＋件半厚 100px）；还没建好就用城池外框菱形（偏保守、稍远）。 */
+    private defOutsideBase(): { x: number; y: number } {
+        const C = this.deCityCenter, u = this.advanceVec[1];
+        let support = -Infinity;
+        for (const b of this.wallGates) support = Math.max(support, (b.x - C.x) * u.x + (b.y - C.y) * u.y + 100);
+        if (!Number.isFinite(support)) {
+            const W = (this.deCity?.width ?? 0) / 2, H = (this.deCity?.height ?? 0) / 2;
+            support = Math.max(Math.abs(u.x) * W, Math.abs(u.y) * H);
+        }
+        // 后排口在基点后 rowDepth；口后再排 5~6 排兵（列距 24~30，最多约 150px）＋大体型半径约 30px
+        const proj = support + DEF_WALL_GAP + this.rowDepth + 180;
+        return { x: C.x + u.x * proj, y: C.y + u.y * proj };
+    }
+
     private insideRing(x: number, y: number): boolean {
         const r = this.ringBox;
         if (!r) return false;
@@ -10392,6 +10417,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
             }
+            // 🔴 [2026-10-14 主人令「看到敌人再发起进攻，或者挨打发起进攻」「想一个让守方不分兵的方法」] 城外列阵待敌的守方：
+            //    任何一人锁定了敌人（看到）或刚挨打 ⇒ **全军**一起出击（按队出击实测前排 3~5 队开场就打、后排站到 60 秒，又成了分兵）
+            if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
+                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1))) this.holdLanes.clear();
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
@@ -10540,7 +10569,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                 [m.tx, m.ty] = this.fieldBound(sx, sy);
-            } else if (!m.foe && !holdCmd) {
+            } else if (!m.foe && !holdCmd && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌的队：原地不动（见 holdLanes）
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
