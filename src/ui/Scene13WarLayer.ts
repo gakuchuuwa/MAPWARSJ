@@ -3697,8 +3697,9 @@ export class Scene13WarLayer {
     private flowDist: Int16Array | null = null;
     private flowR = 0;
     private flowBlocked: Uint8Array | null = null;   // 调试探针用
-    /** 🔴 [2026-10-14 主人令「守军挤在城角」→「全改」] 守方出城流场：每格到「城外」的步数（城门对守方算通路，缺口自然也通），格子与 flowDist 同一套 */
-    private defFlowDist: Int16Array | null = null;
+    /** 🔴 [2026-10-14 主人令「守军挤在城角」→「全改」] 守方出城流场：每座城门一张，每格到「门外 120px」的步数（城门对守方算通路），格子与 flowDist 同一套 */
+    private defGateFlow: Map<WarBuilding, Int16Array> | null = null;
+    private defFlowSig = -1;
     /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 城门精灵（含附属碰撞件）：守方穿行不受阻；null = 未建 */
     private gateSpriteSet: Set<DecorSprite> | null = null;
     /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
@@ -5399,7 +5400,7 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
-        this.defFlowDist = null;
+        this.defGateFlow = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5735,7 +5736,7 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
-        this.defFlowDist = null;
+        this.defGateFlow = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -9564,7 +9565,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      */
     private buildFlowField(): void {
         this.flowBuiltAt = this.battleSec;
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; this.defFlowDist = null; return; }
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; this.defGateFlow = null; return; }
         this.buildDefFlowField();
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         const goal = this.centerBld;
@@ -9623,16 +9624,24 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     /**
-     * 🔴 [2026-10-14 主人报「守军有的会走城门，有的会拥挤在城角」→「全改」] 守方出城流场。
+     * 🔴 [2026-10-14 主人报「守军有的会走城门，有的会拥挤在城角」→「全改」] 守方出城流场（**每座城门一张**）。
      * 病灶（实测 scratchpad probe_gate_stuck，险要 pass）：守方出城原是**直线**走向「门外 120px」那一点，
      *   门不在直线上就顶墙，城内约 45~90 个近战守军贴着墙堆着不动。
-     * 修法：与攻方流场同一套格子，以「城墙外圈之外」的所有空地为出口反向 BFS；**城门对守方不算障碍**
-     *   （守方本就能穿自己的城门，见 resolveWorldObstructions），塌了的墙段也不算 ⇒ 守军沿步数递减走到最近的门或缺口。
+     * 修法：**去哪座门照旧**（gateExit 原有选门：离敌人最近 / 离自己最近），只把「直线走过去」换成沿流场绕过去 ——
+     *   每座城门一张流场，以「门外 120px」那一点为终点反向 BFS，格子与攻方流场同一套；城门对守方不算障碍
+     *   （守方本就能穿自己的城门，见 resolveWorldObstructions）。
+     *   ⚠️ 先试过「一张图、以城外所有空地为出口（＝走最近的门或缺口）」：与 aimAtRaw 给的目标方向打架，
+     *   守军在两个目标间每 0.2 秒来回换、原地打转（城内呆立 3→35 人），已弃用。
+     * 障碍没变（数一数还挡路的物件）就不重算：墙/门塌一处才重算一次。
      */
     private buildDefFlowField(): void {
         this.ensureGateInfo();
         const r = this.ringBox;
-        if (!r || !this.canvas) { this.defFlowDist = null; return; }
+        if (!r || !this.canvas) { this.defGateFlow = null; return; }
+        let sig = 0;
+        for (const sp of this.decorSprites) if (sp.obstruction && !sp.obstructionDisabled && !sp.destroyed) sig++;
+        if (this.defGateFlow && sig === this.defFlowSig) return;
+        this.defFlowSig = sig;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
         const S = FLOW_SUB;
         const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
@@ -9653,33 +9662,45 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 }
             }
         }
+        // 门外终点与 gateExit 同一算法：从城中心指向城门的方向，再往外 120px
+        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const ccx = cx + (am - bm) * (TW / 2), ccy = cy + (am + bm) * (TH / 2);
         const INF = 32767;
-        const dist = new Int16Array(N * N).fill(INF);
         const queue = new Int32Array(N * N);
-        let qh = 0, qt = 0;
-        // 出口 = 城墙外圈再往外 1 地块之外的空地（与 insideRing 的 1 地块余量同口径）
-        for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
-            const ta = (i - R) / S, tb = (j - R) / S;
-            if (ta > r.a0 - 1 && ta < r.a1 + 1 && tb > r.b0 - 1 && tb < r.b1 + 1) continue;
-            const n = i * N + j;
-            if (blocked[n]) continue;
-            dist[n] = 0; queue[qt++] = n;
-        }
-        while (qh < qt) {
-            const c = queue[qh++];
-            const ca = (c / N) | 0, cb = c % N;
-            const nd = dist[c] + 1;
-            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
-                if (!da && !db) continue;
-                const a2 = ca + da, b2 = cb + db;
-                if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
-                const n = a2 * N + b2;
-                if (blocked[n] || dist[n] <= nd) continue;
-                if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
-                dist[n] = nd; queue[qt++] = n;
+        const fields = new Map<WarBuilding, Int16Array>();
+        // 只在城墙外圈 ±6 地块内搜（守军只在城里用这张图）：实测险要 8 门全图搜一次 44ms，墙一塌就卡一帧
+        const wa0 = Math.floor((r.a0 - 6) * S) + R, wa1 = Math.ceil((r.a1 + 6) * S) + R;
+        const wb0 = Math.floor((r.b0 - 6) * S) + R, wb1 = Math.ceil((r.b1 + 6) * S) + R;
+        for (const g of this.wallGates) {
+            if (g.key !== 'STONE_GATE') continue;
+            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+            const ox = g.x + vx / vl * 120 - cx, oy = g.y + vy / vl * 120 - cy;
+            const ga = Math.round((ox / TW + oy / TH) * S) + R, gb = Math.round((oy / TH - ox / TW) * S) + R;
+            const dist = new Int16Array(N * N).fill(INF);
+            let qh = 0, qt = 0;
+            for (let a = ga - S; a <= ga + S; a++) for (let b = gb - S; b <= gb + S; b++) {
+                if (a < 0 || a >= N || b < 0 || b >= N) continue;
+                const n = a * N + b;
+                if (blocked[n]) continue;
+                dist[n] = 0; queue[qt++] = n;
             }
+            while (qh < qt) {
+                const c = queue[qh++];
+                const ca = (c / N) | 0, cb = c % N;
+                const nd = dist[c] + 1;
+                for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                    if (!da && !db) continue;
+                    const a2 = ca + da, b2 = cb + db;
+                    if (a2 < wa0 || a2 > wa1 || b2 < wb0 || b2 > wb1 || a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                    const n = a2 * N + b2;
+                    if (blocked[n] || dist[n] <= nd) continue;
+                    if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                    dist[n] = nd; queue[qt++] = n;
+                }
+            }
+            fields.set(g, dist);
         }
-        this.defFlowDist = dist;
+        this.defGateFlow = fields;
         this.flowR = R;
     }
 
@@ -9697,7 +9718,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
     private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB): { x: number; y: number } | null {
-        const f = field;   // 🔴 [2026-10-14] 守方出城流场（defFlowDist）同用本函数，stop=-1 ＝ 走到城外为止
+        const f = field;   // 🔴 [2026-10-14] 守方出城流场（defGateFlow 每门一张）同用本函数
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
@@ -9798,9 +9819,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         if (!this.ringBox) return aim;
-        // 🔴 [2026-10-14 主人令「全改」] 有出城流场就沿它走到最近的城门/缺口（不再直线顶墙堆在城角）；无流场/无路才退回下面的直线走门
-        const wp = this.flowWaypoint(m.x, m.y, this.defFlowDist, -1);
-        if (wp) return wp;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
         const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
@@ -9812,6 +9830,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (d < gd) { gd = d; g = b; }
         }
         if (!g) return aim;
+        // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
+        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, 3 * FLOW_SUB);
+        if (wp) return wp;
         // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
         const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
         return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
