@@ -358,7 +358,12 @@ export function moveLegionToCity(
     const dest = deps.cityManager.getCity(marchTargetId)?.name ?? marchTargetId;
     gameLog('legionMarch', `🛤️ ${army.name} →【${dest}】路径点 ${finalPath.length}`);
 
-    const pathPoints = isHostile ? finalPath.slice(1) : finalPath.slice(1, -1);
+    // 己方城去掉最后的城点；但海路倒数第二点可能远在海上（哥本哈根南 43 km 的拐点），那时保留城点，否则船停在海上永远到不了家
+    const pathPoints = isHostile
+        || finalPath.length < 2
+        || getEuclideanDistance(finalPath[finalPath.length - 2], finalPath[finalPath.length - 1]) > 0.2
+        ? finalPath.slice(1)
+        : finalPath.slice(1, -1);
 
     if (pathPoints.length > 0) {
         army.lastPath = [...finalPath];

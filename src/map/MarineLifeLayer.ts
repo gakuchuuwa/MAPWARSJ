@@ -274,6 +274,11 @@ export class MarineLifeLayer extends L.Layer {
             // 高纬寒带海域保持鲸鱼与海豚
             kind = Math.random() < 0.65 ? 'WHALE' : 'DOLPHIN';
         }
+        // 鲸鱼只在水深超过 200 米的深海（大陆架以外）；浅海（如厄勒海峡约 26 米）换成海豚
+        if (kind === 'WHALE') {
+            const elev = LandSeaSystem.getSampler().getElevationSync(spawnLat, spawnLng);
+            if (elev === null || elev > -200) kind = 'DOLPHIN';
+        }
 
         this.creatures.push({
             id: this.nextCreatureId++,
