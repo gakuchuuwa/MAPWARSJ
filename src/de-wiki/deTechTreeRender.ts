@@ -26,6 +26,41 @@ const treeCache = new Map<string, TreePackage>();
 const stringsCache: Record<string, Record<string, string>> = {};
 const metaCache: { data?: MetaBundle } = {};
 const iconManifest: { data?: any } = {};
+const xrefCache: { data?: Record<string, string[]> } = {};
+const legionCache: { data?: { byNorm: Record<string, string>; unmatched: any[] } } = {};
+const civInfoCache: { data?: Record<string, any> } = {};
+
+/** public/de-techtree/civ-info.json：文明介绍（总述/独特单位/独特科技的字符串 id，按语言查表） */
+async function loadCivInfo(): Promise<Record<string, any>> {
+    if (civInfoCache.data) return civInfoCache.data;
+    try {
+        const r = await fetch('/de-techtree/civ-info.json');
+        civInfoCache.data = await r.json();
+    } catch { civInfoCache.data = {}; }
+    return civInfoCache.data!;
+}
+
+/** public/de-techtree/legion-names.json：DE 英文名（规范化）→ 军团编辑器「兵种鉴赏」的番号 */
+async function loadLegionNames(): Promise<{ byNorm: Record<string, string>; unmatched: any[] }> {
+    if (legionCache.data) return legionCache.data;
+    try {
+        const r = await fetch('/de-techtree/legion-names.json');
+        legionCache.data = await r.json();
+    } catch { legionCache.data = { byNorm: {}, unmatched: [] }; }
+    return legionCache.data!;
+}
+
+const normName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+/** public/de-techtree/xref.json：节点键 → 可用该节点的文明（官方悬停面板里那排徽章） */
+async function loadXref(): Promise<Record<string, string[]>> {
+    if (xrefCache.data) return xrefCache.data;
+    try {
+        const r = await fetch('/de-techtree/xref.json');
+        xrefCache.data = await r.json();
+    } catch { xrefCache.data = {}; }
+    return xrefCache.data!;
+}
 
 /** public/de-techtree/icons/manifest.json：哪些图标已导出（缺图的走回退，不塞错图） */
 async function loadIconManifest(): Promise<any> {
@@ -92,24 +127,52 @@ async function loadTree(key: string): Promise<TreePackage> {
     return pkg;
 }
 
-async function loadStrings(lng: 'en' | 'zh'): Promise<Record<string, string>> {
+/** 本机 DE 实装的 17 个语言包（与官方网页 locale 数一致） */
+export type DeLng = 'en' | 'zh' | 'tw' | 'jp' | 'ko' | 'fr' | 'de' | 'es' | 'mx' | 'br' | 'it' | 'pl' | 'ru' | 'tr' | 'vi' | 'hi' | 'ms';
+export const DE_LANGS: Array<{ code: DeLng; label: string }> = [
+    { code: 'zh', label: '简体中文' }, { code: 'tw', label: '繁體中文' }, { code: 'en', label: 'English' },
+    { code: 'jp', label: '日本語' }, { code: 'ko', label: '한국어' }, { code: 'fr', label: 'Français' },
+    { code: 'de', label: 'Deutsch' }, { code: 'es', label: 'Español (ES)' }, { code: 'mx', label: 'Español (MX)' },
+    { code: 'br', label: 'Português (BR)' }, { code: 'it', label: 'Italiano' }, { code: 'pl', label: 'Polski' },
+    { code: 'ru', label: 'Русский' }, { code: 'tr', label: 'Türkçe' }, { code: 'vi', label: 'Tiếng Việt' },
+    { code: 'hi', label: 'हिन्दी' }, { code: 'ms', label: 'Bahasa Melayu' },
+];
+
+async function loadStrings(lng: DeLng): Promise<Record<string, string>> {
     if (stringsCache[lng]) return stringsCache[lng];
     const r = await fetch(`/de-techtree/strings-${lng}.json`);
     stringsCache[lng] = await r.json();
     return stringsCache[lng];
 }
 
-/** 折行：先按原始换行切；中文每行 ~7 字、英文 ~11 字符；最多 3 行，超出加省略号 */
-function splitLines(text: string, lng: 'en' | 'zh'): string[] {
+/** 折行：中日韩按字数硬切（每行 7 字）；拉丁字母**按单词折**，不把单词从中间切断 */
+function splitLines(text: string, lng: DeLng): string[] {
     const raw = formatName(text).split('\n').filter(Boolean);
-    const per = lng === 'zh' ? 7 : 11;
+    const cjk = lng === 'zh' || lng === 'tw' || lng === 'jp' || lng === 'ko';
+    const per = cjk ? 7 : 9;
     const out: string[] = [];
     for (const seg of raw) {
-        if (seg.length <= per) { out.push(seg); continue; }
-        for (let i = 0; i < seg.length; i += per) out.push(seg.slice(i, i + per));
+        if (cjk || seg.length <= per) {
+            for (let i = 0; i < seg.length; i += per) out.push(seg.slice(i, i + per));
+            continue;
+        }
+        // 拉丁：按空格折行；单个超长词才硬切。**行尾保留空格**，否则拼接时会粘成一个词
+        let line = '';
+        for (const word of seg.split(/\s+/)) {
+            if (!line) { line = word; continue; }
+            if ((line + ' ' + word).length <= per) line += ' ' + word;
+            else { out.push(line + ' '); line = word; }
+        }
+        if (line) out.push(line);
     }
-    if (out.length <= 3) return out;
-    const clipped = out.slice(0, 3);
+    // 单个仍超长的行（如 Man-at-Arms 折叠后）再按字数硬切
+    const wrapped: string[] = [];
+    for (const l of out) {
+        if (l.length <= per || cjk) { wrapped.push(l); continue; }
+        for (let i = 0; i < l.length; i += per) wrapped.push(l.slice(i, i + per));
+    }
+    if (wrapped.length <= 3) return wrapped;
+    const clipped = wrapped.slice(0, 3);
     clipped[2] = clipped[2].slice(0, Math.max(1, per - 1)) + '…';
     return clipped;
 }
@@ -123,17 +186,34 @@ export interface TechTreeHandle {
 export async function renderDeTechTree(
     host: HTMLElement,
     civKey: string,
-    opts: { lng?: 'en' | 'zh'; onCiv?: (key: string) => void } = {},
+    opts: { lng?: DeLng; nameSrc?: 'de' | 'legion'; onCiv?: (key: string) => void; onLng?: (l: DeLng) => void; onNameSrc?: (s: 'de' | 'legion') => void } = {},
 ): Promise<TechTreeHandle> {
     const lng = opts.lng ?? 'zh';
-    const [index, pkg, strings, meta, iconManifest] = await Promise.all([
-        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(),
+    const isZh = lng === 'zh' || lng === 'tw';
+    const [index, pkg, strings, meta, iconManifest, xref, legionNames, civInfo] = await Promise.all([
+        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(), loadXref(), loadLegionNames(), loadCivInfo(),
     ]);
+    // 命名来源：'de' = DE 官方中文串（默认）；'legion' = 与 legion-editor 兵种鉴赏一致
+    // （主人 2026-10-14 令；两边是两套命名体系，故做成可切换，不覆盖任一侧数据）
+    let nameSrc: 'de' | 'legion' = opts.nameSrc ?? 'de';
+    /** 取该节点显示用名 */
+    const labelOf = (it: TreeItem): string => {
+        if (nameSrc === 'legion' && isZh) {
+            const m = legionNames.byNorm[normName(it.name ?? '')];
+            if (m) return m;
+        }
+        return (isZh ? (it.name_zh || it.name) : it.name) ?? '';
+    };
     const haveIcon = exportedIcons(iconManifest);
     const iconDirOf = (item: TreeItem): 'Building' | 'Tech' | 'Unit' =>
         item.use_type === 'Building' || /Building/.test(item.node_type ?? '') ? 'Building'
             : item.use_type === 'Tech' ? 'Tech' : 'Unit';
     const T = (id: number | null | undefined): string => (id == null || id < 0 ? '' : (strings[String(id)] ?? ''));
+    /** 游戏富文本 → 纯文本（去掉 <b>/<i>/<GREY>/<cost> 之类标记；字面 \n 与真换行都折成真换行） */
+    const plain = (s: string): string => formatName(String(s)
+        .replace(/<\/?[a-zA-Z][^>]*>/g, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/\r/g, ''));
     const view = computeTreeView(pkg, window.innerHeight);
     const { rowHeight } = view;
     const TOP_PADDING = LAYOUT_CONST.TOP_PADDING;
@@ -142,15 +222,39 @@ export async function renderDeTechTree(
     host.innerHTML = '';
     host.style.cssText = 'display:flex;align-items:flex-start;gap:0;background:#e8dcc2;border:1px solid #4a3e2b;border-radius:4px;overflow:hidden;position:relative';
     const canvasWrap = document.createElement('div');
-    canvasWrap.style.cssText = 'flex:1 1 auto;overflow:auto;max-height:calc(100vh - 120px)';
+    canvasWrap.style.cssText = 'flex:1 1 auto;min-width:0;overflow:auto;max-height:calc(100vh - 110px)';
     host.appendChild(canvasWrap);
+    const canvas = document.createElement('div');
+    canvas.style.cssText = 'position:relative;width:100%';
+    canvasWrap.appendChild(canvas);
     const svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('width', String(view.width));
     svg.setAttribute('height', String(view.height));
     svg.setAttribute('viewBox', `0 0 ${view.width} ${view.height}`);
     svg.style.display = 'block';
     svg.style.background = '#e8dcc2';
-    canvasWrap.appendChild(svg);
+    canvas.appendChild(svg);
+
+    // ── 宽屏自适应：整棵树按比例缩放到铺满窗口宽度（不再只看到一小段）──
+    //    官方网页是 1:1 逐像素画、靠横向滚动；这里改成「先适配整宽」，另给缩放档位。
+    //    ⚠️ 隐藏面板（本页签未激活）时 clientWidth=0，此时不动，留到 ResizeObserver / 激活时再算。
+    let zoom: number | 'fit' = 1;   // 默认 1:1（与官方一致，字清楚）；「适配宽度」只作为可选档
+    let lastScale = 1;
+    const currentScale = () => lastScale;
+    const applyZoom = () => {
+        const avail = canvasWrap.clientWidth;
+        if (!avail || !view.width) return;
+        const s = zoom === 'fit' ? Math.min(1.6, avail / view.width) : zoom;
+        lastScale = s;
+        svg.style.transformOrigin = '0 0';
+        svg.style.transform = `scale(${s})`;
+        canvas.style.height = `${Math.ceil(view.height * s)}px`;
+        canvas.style.width = `${Math.ceil(view.width * s)}px`;
+        if (zoom !== 'fit') canvas.style.width = `${Math.ceil(Math.max(view.width * s, avail))}px`;
+    };
+    applyZoom();
+    const ro = new ResizeObserver(() => applyZoom());
+    ro.observe(canvasWrap);
 
     // ── 8 行格线 + 4 个时代名 ──
     for (let r = 0; r < 8; r++) {
@@ -169,7 +273,7 @@ export async function renderDeTechTree(
         t.setAttribute('font-size', '15');
         t.setAttribute('font-weight', 'bold');
         t.setAttribute('fill', '#4d3617');
-        t.textContent = (lng === 'zh' ? AGE_NAMES_ZH : AGE_NAMES_EN)[age];
+        t.textContent = (isZh ? AGE_NAMES_ZH : AGE_NAMES_EN)[age];
         svg.appendChild(t);
         // 时代分隔带
         const band = document.createElementNS(SVG_NS, 'rect');
@@ -218,9 +322,13 @@ export async function renderDeTechTree(
     // ⚠️ 必须挂在 host 上（host 是 position:relative 的定位上下文）；曾经挂进滚动容器里，
     //    结果 left/top 不生效、面板被挤在滚动内容中看不见（实测踩过）。
     const tip = document.createElement('div');
-    tip.style.cssText = 'position:absolute;display:none;z-index:50;max-width:340px;background:#f7f1e3;border:2px solid #8a7448;' +
-        'border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.55;color:#2b2013;box-shadow:0 4px 14px #0006;pointer-events:none';
+    tip.style.cssText = 'position:absolute;display:none;z-index:50;max-width:360px;background:#f7f1e3;border:2px solid #8a7448;' +
+        'border-radius:4px;padding:8px 10px;font-size:12px;line-height:1.55;color:#2b2013;box-shadow:0 4px 14px #0006';
     host.appendChild(tip);
+    // 鼠标进面板时取消「即将隐藏」，否则徽章点不到
+    tip.addEventListener('mouseenter', () => { if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; } });
+    tip.addEventListener('mouseleave', () => hideTip());
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
     const TYPE_ZH: Record<string, string> = {
         Unit: '单位', UnitUpgrade: '单位（升级）', UniqueUnit: '城堡特色兵',
         Research: '科技', UniqueTech: '特色科技', RegionalTech: '区域科技',
@@ -263,16 +371,46 @@ export async function renderDeTechTree(
             p.textContent = d.help.slice(0, 320) + (d.help.length > 320 ? '…' : '');
             tip.appendChild(p);
         }
+        // ── 跨文明交叉引用（官方面板里的徽章排）：哪些文明有这个节点 ──
+        const avail = xref[d.nodeKey] ?? [];
+        if (avail.length) {
+            const sep = document.createElement('div');
+            sep.style.cssText = 'margin-top:6px;padding-top:6px;border-top:1px solid #cbb98f;font-size:11px;opacity:.75';
+            sep.textContent = `${d.typeLabel} · ${avail.length} 个文明可用`;
+            tip.appendChild(sep);
+            const grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:4px';
+            for (const k of avail) {
+                const c = index.find((x) => x.key === k);
+                const b = document.createElement('img');
+                b.src = `/de-techtree/emblems/${k}.png`;
+                b.title = (c ? (isZh ? (c.name_zh || c.name) : c.name) : k) + (k === civKey ? '（本文明）' : '');
+                b.style.cssText = 'width:100%;aspect-ratio:16/10;object-fit:contain;cursor:pointer;background:#00000008;border-radius:2px';
+                b.addEventListener('error', () => b.remove());
+                b.addEventListener('click', () => { hideTip(); opts.onCiv?.(k); });
+                grid.appendChild(b);
+            }
+            tip.appendChild(grid);
+        }
         tip.style.display = 'block';
-        // 面板挂在 host（定位上下文）上，不是滚动容器里 → 要减去画布的滚动量
-        const vx = (g as any)._pos.x - canvasWrap.scrollLeft;
-        const vy = (g as any)._pos.y - canvasWrap.scrollTop;
+        // 面板挂在 host（定位上下文）上 → 节点坐标要**乘缩放**再减滚动量
+        const s = currentScale();
+        const vx = (g as any)._pos.x * s - canvasWrap.scrollLeft;
+        const vy = (g as any)._pos.y * s - canvasWrap.scrollTop;
         const left = Math.max(4, Math.min(vx + 12, host.clientWidth - tip.offsetWidth - 8));
         const top = Math.max(4, Math.min(vy, host.clientHeight - tip.offsetHeight - 8));
         tip.style.left = `${left}px`;
         tip.style.top = `${Math.max(4, top)}px`;
     };
-    const hideTip = () => { tip.style.display = 'none'; };
+    const hideTip = () => {
+        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+        tip.style.display = 'none';
+    };
+    /** 出节点区后延迟隐藏，给鼠标留出移到面板上点徽章的时间 */
+    const scheduleHide = () => {
+        if (hideTimer) clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => { tip.style.display = 'none'; hideTimer = null; }, 280);
+    };
     canvasWrap.addEventListener('mouseleave', hideTip);
 
     // ── 节点 ──
@@ -321,7 +459,7 @@ export async function renderDeTechTree(
         }
 
         // 名字（居中，y = EH/1.5，向下排）
-        const label = lng === 'zh' ? (item.name_zh || item.name) : item.name;
+        const label = labelOf(item);
         const lines = splitLines(label ?? '', lng);
         const text = document.createElementNS(SVG_NS, 'text');
         text.setAttribute('x', String(EHh / 2));
@@ -339,18 +477,37 @@ export async function renderDeTechTree(
         });
         g.appendChild(text);
 
-        // 不可用：叠灰罩（官方 rect_disabled_gray）
+        // 不可用：叠灰罩＋**叉号**（DE 游戏里「不可用」就是这个叉；图例里也有）
         if (item.node_status === 'NotAvailable') {
             const grey = document.createElementNS(SVG_NS, 'rect');
             grey.setAttribute('width', String(EHh));
             grey.setAttribute('height', String(EHh));
             grey.setAttribute('rx', '3');
-            grey.setAttribute('fill', '#777777');
-            grey.setAttribute('opacity', '0.62');
-            grey.setAttribute('stroke', colour);
-            grey.setAttribute('stroke-width', '2');
+            grey.setAttribute('fill', '#555555');
+            grey.setAttribute('opacity', '0.55');
             (grey as any).style.pointerEvents = 'none';
             g.appendChild(grey);
+            for (const [x1, y1, x2, y2] of [[0.18, 0.18, 0.82, 0.82], [0.82, 0.18, 0.18, 0.82]] as const) {
+                const ln = document.createElementNS(SVG_NS, 'line');
+                ln.setAttribute('x1', String(EHh * x1)); ln.setAttribute('y1', String(EHh * y1));
+                ln.setAttribute('x2', String(EHh * x2)); ln.setAttribute('y2', String(EHh * y2));
+                ln.setAttribute('stroke', '#2b2b2b');
+                ln.setAttribute('stroke-width', '3');
+                ln.setAttribute('stroke-linecap', 'round');
+                (ln as any).style.pointerEvents = 'none';
+                g.appendChild(ln);
+            }
+        } else if (item.node_status === 'ResearchRequired') {
+            // 需要升级/研发：蓝框（DE 图例里的「需要升级」）
+            const bd = document.createElementNS(SVG_NS, 'rect');
+            bd.setAttribute('width', String(EHh));
+            bd.setAttribute('height', String(EHh));
+            bd.setAttribute('rx', '3');
+            bd.setAttribute('fill', 'none');
+            bd.setAttribute('stroke', '#3a7bd5');
+            bd.setAttribute('stroke-width', '3');
+            (bd as any).style.pointerEvents = 'none';
+            g.appendChild(bd);
         }
 
         // 悬停详情：把节点信息汇总好，绑在 group 上（鼠标移入时显示面板）
@@ -375,14 +532,18 @@ export async function renderDeTechTree(
         (g as any)._tip = {
             name: formatName(label ?? ''),
             type: item.node_type ?? '',
+            typeLabel: TYPE_ZH[item.node_type ?? ''] ?? (item.node_type ?? ''),
+            nodeKey: `${item.use_type}_${item.node_id}`,
+            avail: (xref[`${item.use_type}_${item.node_id}`] ?? []).length,
             status: item.node_status ?? '',
-            age: (lng === 'zh' ? AGE_KEY_ZH : ['Dark', 'Feudal', 'Castle', 'Imperial'])[(item.age_id ?? 1) - 1],
+            age: (isZh ? AGE_KEY_ZH : ['Dark', 'Feudal', 'Castle', 'Imperial'])[(item.age_id ?? 1) - 1],
             cost: costTxt,
             stats: statsTxt,
             help: helptext.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
         };
         g.addEventListener('mouseenter', () => showTip(g));
         g.addEventListener('focus', () => showTip(g));
+        g.addEventListener('mouseleave', () => scheduleHide());
         (g as any)._pos = p;
 
         svg.appendChild(g);
@@ -396,17 +557,149 @@ export async function renderDeTechTree(
     for (const c of index) {
         const o = document.createElement('option');
         o.value = c.key;
-        o.textContent = `${lng === 'zh' ? (c.name_zh || c.name) : c.name}${c.era === 'antiquity' ? '（古典）' : ''}`;
+        o.textContent = `${isZh ? (c.name_zh || c.name) : c.name}${c.era === 'antiquity' ? '（古典）' : ''}`;
         if (c.key === civKey) o.selected = true;
         sel.appendChild(o);
     }
     const onSel = () => opts.onCiv?.(sel.value);
     sel.addEventListener('change', onSel);
     side.appendChild(sel);
+
+    // ── 文明介绍（对应 DE 游戏科技树左栏那块面板）──
+    //    文案直接取本机 civilizations.json 的 tech_tree_description_string_id 正文
+    //    （含加成／独特单位／独特科技／团队加成），按当前语言查 strings-<lng>.json。
+    const civData = civInfo[civKey];
+    if (civData) {
+        const box = document.createElement('div');
+        box.style.cssText = 'margin-top:8px;background:#efe3c8;color:#2b2013;border:2px solid #8a7448;border-radius:4px;padding:8px;line-height:1.5';
+        const head = document.createElement('div');
+        head.style.cssText = 'display:flex;align-items:center;gap:6px;border-bottom:1px solid #c9b48a;padding-bottom:6px;margin-bottom:6px';
+        const em = document.createElement('img');
+        em.src = `/de-techtree/emblems/${civKey}.png`;
+        em.style.cssText = 'width:26px;height:18px;object-fit:contain';
+        em.addEventListener('error', () => em.remove());
+        const nm = document.createElement('b');
+        nm.textContent = isZh ? (index.find((c) => c.key === civKey)?.name_zh || civKey) : civKey;
+        nm.style.fontSize = '14px';
+        head.appendChild(em);
+        head.appendChild(nm);
+        box.appendChild(head);
+
+        /** 把「独特单位: X」这类行拆出来单列，其余整段照贴 */
+        const desc = plain(T(civData.descId));
+        const lines = desc.split('\n');
+        const UNITS: Record<string, string> = { 'Unique Unit:': '独特单位', 'Unique Units:': '独特单位', 'Unique Tech:': '独特科技', 'Unique Techs:': '独特科技', 'Team Bonus:': '团队加成' };
+        let cur = '';
+        const unitNames = civData.uniqueUnitNameIds.map((i: number) => plain(T(i))).filter(Boolean);
+        const techNames = civData.uniqueTechIds.map((i: number) => plain(T(meta.techs[String(i)]?.nameId))).filter(Boolean);
+        for (const raw of lines) {
+            const ln = raw.trim();
+            const label = UNITS[ln.replace(/\s+/g, ' ')];
+            if (label) { cur = label; continue; }
+            if (!ln) { cur = ''; continue; }
+            const p = document.createElement('div');
+            p.style.cssText = 'margin:1px 0';
+            if (cur === '独特单位' && unitNames.length) p.innerHTML = `<b>独特单位：</b>${unitNames.join('、')}`;
+            else if (cur === '独特科技' && techNames.length) p.innerHTML = `<b>独特科技：</b>${techNames.join('、')}`;
+            else p.textContent = ln;
+            box.appendChild(p);
+            if (cur) cur = '';   // 标题行后只吃第一行内容，后续照常
+        }
+        box.style.maxHeight = '240px';
+        box.style.overflowY = 'auto';
+        side.appendChild(box);
+    }
+
+    // ── 图例（对应游戏左下角「图例」框）──
+    const legend = document.createElement('div');
+    legend.style.cssText = 'margin-top:8px;background:#efe3c8;color:#2b2013;border:2px solid #8a7448;border-radius:4px;padding:6px 8px;font-size:11px;line-height:1.7';
+    const chip = (c: string, label: string) => `<span style="display:inline-block;width:10px;height:10px;background:${c};border:1px solid #1c1c1c55;vertical-align:-1px"></span> ${label}`;
+    legend.innerHTML = `<b>图例</b><div style="margin-top:4px">
+      ${chip('#00739c', '单位')}　${chip('#b54e18', '建筑')}　${chip('#397139', '科技')}<br>
+      ${chip('#515ae3', '区域')}　${chip('#5965d8', '区域建筑')}　${chip('#059945', '区域科技')}<br>
+      ${chip('#703b7a', '独特单位')}　${chip('#d43652', '独特建筑')}　${chip('#009700', '独特科技')}<br>
+      <span style="font-weight:bold">✕</span> 不可用　<span style="display:inline-block;width:10px;height:10px;border:2px solid #3a7bd5;vertical-align:-1px"></span> 需要升级
+    </div>`;
+    side.appendChild(legend);
+
+    // ── 语言切换（本机 17 个语言包；选择存 localStorage）──
+    const lngRow = document.createElement('div');
+    lngRow.style.cssText = 'display:flex;gap:4px;align-items:center;margin-top:6px';
+    const lngLabel = document.createElement('span');
+    lngLabel.textContent = '语言';
+    lngLabel.style.cssText = 'opacity:.7;font-size:11px';
+    const lngSel = document.createElement('select');
+    lngSel.style.cssText = 'flex:1;padding:3px;font-size:12px;background:#2a2116;color:#e8dcc2;border:1px solid #5a4b32';
+    for (const l of DE_LANGS) {
+        const o = document.createElement('option');
+        o.value = l.code;
+        o.textContent = l.label;
+        if (l.code === lng) o.selected = true;
+        lngSel.appendChild(o);
+    }
+    const onLng = () => {
+        try { localStorage.setItem('de-techtree-lng', lngSel.value); } catch { /* 忽略隐私模式 */ }
+        opts.onLng?.(lngSel.value as DeLng);
+    };
+    lngSel.addEventListener('change', onLng);
+    lngRow.appendChild(lngLabel);
+    lngRow.appendChild(lngSel);
+    side.appendChild(lngRow);
+
+    // ── 缩放（默认「适配全宽」：整棵树铺满窗口宽度）──
+    const zoomRow = document.createElement('div');
+    zoomRow.style.cssText = 'display:flex;gap:4px;align-items:center;margin-top:6px';
+    const zLabel = document.createElement('span');
+    zLabel.textContent = '缩放';
+    zLabel.style.cssText = 'opacity:.7;font-size:11px';
+    const zSel = document.createElement('select');
+    zSel.style.cssText = 'flex:1;padding:3px;font-size:12px;background:#2a2116;color:#e8dcc2;border:1px solid #5a4b32';
+    for (const [val, label] of [['1', '100%（默认）'], ['fit', '适配宽度'], ['0.5', '50%'], ['0.75', '75%'], ['1.5', '150%'], ['2', '200%']] as const) {
+        const o = document.createElement('option');
+        o.value = val;
+        o.textContent = label;
+        zSel.appendChild(o);
+    }
+    const onZoom = () => {
+        zoom = zSel.value === 'fit' ? 'fit' : Number(zSel.value);
+        applyZoom();
+    };
+    zSel.addEventListener('change', onZoom);
+    zoomRow.appendChild(zLabel);
+    zoomRow.appendChild(zSel);
+    side.appendChild(zoomRow);
+
+    // ── 命名来源：与 legion-editor 兵种鉴赏一致 / DE 官方名（默认）──
+    const nameRow = document.createElement('div');
+    nameRow.style.cssText = 'display:flex;gap:4px;align-items:center;margin-top:6px';
+    const nLabel = document.createElement('span');
+    nLabel.textContent = '兵种名';
+    nLabel.style.cssText = 'opacity:.7;font-size:11px';
+    const nSel = document.createElement('select');
+    nSel.style.cssText = 'flex:1;padding:3px;font-size:12px;background:#2a2116;color:#e8dcc2;border:1px solid #5a4b32';
+    for (const [val, label] of [['de', 'DE 官方名'], ['legion', '兵种鉴赏名']] as const) {
+        const o = document.createElement('option');
+        o.value = val;
+        o.textContent = label;
+        if (val === nameSrc) o.selected = true;
+        nSel.appendChild(o);
+    }
+    const onNameSrc = () => {
+        nameSrc = nSel.value as 'de' | 'legion';
+        opts.onNameSrc?.(nameSrc);   // 交给页面整体重渲染（名字要重画所有节点）
+    };
+    nSel.addEventListener('change', onNameSrc);
+    nameRow.appendChild(nLabel);
+    nameRow.appendChild(nSel);
+    side.appendChild(nameRow);
+    const nameNote = document.createElement('div');
+    nameNote.style.cssText = 'margin-top:4px;font-size:10px;opacity:.55;line-height:1.4';
+    nameNote.textContent = '兵种鉴赏名对号 247/288；41 个未对号者仍显示 DE 名（见 legion-names.json）';
+    side.appendChild(nameNote);
     const info = document.createElement('div');
     info.style.marginTop = '8px';
     const cur = index.find((c) => c.key === civKey);
-    info.innerHTML = `<div style="color:#d4af37;font-weight:bold;font-size:14px">${lng === 'zh' ? (cur?.name_zh || cur?.name) : cur?.name}</div>
+    info.innerHTML = `<div style="color:#d4af37;font-weight:bold;font-size:14px">${isZh ? (cur?.name_zh || cur?.name) : cur?.name}</div>
         <div style="opacity:.75;margin-top:4px">建筑 ${cur?.buildings ?? 0} 类 · 节点 ${cur?.nodes ?? 0} 个</div>
         <div style="opacity:.75;margin-top:4px">共 ${index.length} 个文明</div>
         <div style="margin-top:10px;line-height:1.8">
@@ -419,13 +712,13 @@ export async function renderDeTechTree(
     // ── 建筑索引（官方 #buildingindex__table 的对应物）：点一下跳到那列 ──
     const idxTitle = document.createElement('div');
     idxTitle.style.cssText = 'margin:12px 0 6px;padding-top:8px;border-top:1px solid #4a3e2b;color:#d4af37;font-weight:bold';
-    idxTitle.textContent = lng === 'zh' ? '建筑索引' : 'Buildings';
+    idxTitle.textContent = isZh ? '建筑索引' : 'Buildings';
     side.appendChild(idxTitle);
     const idxList = document.createElement('div');
     idxList.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:4px';
     for (const b of pkg.buildings) {
         const cell = document.createElement('div');
-        cell.title = formatName(lng === 'zh' ? (b.name_zh || b.name) : b.name);
+        cell.title = formatName(isZh ? (b.name_zh || b.name) : b.name);
         cell.style.cssText = 'background:#241c12;border:1px solid #5a4b32;border-radius:3px;padding:2px;text-align:center;cursor:pointer';
         const ic = document.createElement('img');
         const bpi = b.picture_index ?? -1;
@@ -447,13 +740,20 @@ export async function renderDeTechTree(
     host.appendChild(side);
 
     const ret: TechTreeHandle = {
-        destroy() { sel.removeEventListener('change', onSel); host.innerHTML = ''; side.remove(); },
+        destroy() {
+            sel.removeEventListener('change', onSel);
+            zSel.removeEventListener('change', onZoom);
+            lngSel.removeEventListener('change', onLng);
+            nSel.removeEventListener('change', onNameSrc);
+            ro.disconnect();
+            host.innerHTML = '';
+        },
     };
     return ret;
 }
 
 /** 便捷入口：找到容器就渲染；供 de-wiki 页面调用 */
-export async function mountDeTechTree(containerId: string, civKey: string, opts?: { lng?: 'en' | 'zh'; onCiv?: (k: string) => void }) {
+export async function mountDeTechTree(containerId: string, civKey: string, opts?: { lng?: DeLng; nameSrc?: 'de' | 'legion'; onCiv?: (k: string) => void; onLng?: (l: DeLng) => void; onNameSrc?: (s: 'de' | 'legion') => void }) {
     const host = document.getElementById(containerId);
     if (!host) return null;
     return renderDeTechTree(host, civKey, opts);

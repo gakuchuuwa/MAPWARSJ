@@ -31,7 +31,8 @@ import sys
 from pathlib import Path
 
 DEFAULT_PROGRAMDIR = r"C:\Program Files (x86)\Steam\steamapps\common\AoE2DE"
-LANGS = ("en", "zh")
+# 本机 DE 实装的语言包（实测 17 个，与官方网页的 locale 数一致）；有哪个抽哪个，缺的自动跳过。
+LANGS = ("en", "zh", "tw", "jp", "ko", "fr", "de", "es", "mx", "br", "it", "pl", "ru", "tr", "vi", "hi", "ms")
 
 # 官方生成脚本（generateTechTreeJsons.py）用到的字段，全部原样透传，避免丢信息
 PASSTHROUGH = (

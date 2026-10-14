@@ -10,10 +10,10 @@ import {
     type DeCiv,
     type DeUnit
 } from './deData';
-import { mountDeTechTree, type TechTreeHandle } from './deTechTreeRender';
+import { mountDeTechTree, type TechTreeHandle, type DeLng } from './deTechTreeRender';
 
 class DeWikiApp {
-    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'campaigns' | 'dlcs' = 'overview';
+    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'campaigns' | 'dlcs' = 'de-techtree';
     private civFilterRegion: string = 'all';
     private civSearchQuery: string = '';
     private unitFilterCategory: string = 'all';
@@ -57,12 +57,12 @@ class DeWikiApp {
                     </div>
                 </div>
                 <nav class="de-nav-tabs">
-                    <button class="de-tab-btn active" data-tab="overview">🏛️ 概述</button>
+                    <button class="de-tab-btn" data-tab="overview">🏛️ 概述</button>
                     <button class="de-tab-btn" data-tab="civs">👑 文明全集 (48)</button>
                     <button class="de-tab-btn" data-tab="units">⚔️ 单位图鉴</button>
                     <button class="de-tab-btn" data-tab="mechanics">🛡️ 攻防与模拟器</button>
                     <button class="de-tab-btn" data-tab="techtree">🔬 科技树全览</button>
-                    <button class="de-tab-btn" data-tab="de-techtree">🌳 全文明科技树 (62)</button>
+                    <button class="de-tab-btn active" data-tab="de-techtree">🌳 全文明科技树 (62)</button>
                     <button class="de-tab-btn" data-tab="campaigns">🏆 史诗战役集</button>
                     <button class="de-tab-btn" data-tab="dlcs">📜 DLC版本史</button>
                 </nav>
@@ -70,7 +70,7 @@ class DeWikiApp {
 
             <main class="de-container">
                 <!-- 1. 概述与核心特性 -->
-                <section id="sec-overview" class="de-section-view active">
+                <section id="sec-overview" class="de-section-view">
                     <div class="de-hero-banner">
                         <h2>🏛️ 帝国时代II：决定版 全景百科全书</h2>
                         <p>
@@ -229,7 +229,7 @@ class DeWikiApp {
                 </section>
 
                 <!-- 6. 全文明科技树（62）→ 数据 public/de-techtree/，版式照官方 -->
-                <section id="sec-de-techtree" class="de-section-view">
+                <section id="sec-de-techtree" class="de-section-view active">
                     <div style="background: var(--de-bg-darker); border: 1px solid var(--de-border-gold); border-radius: 8px; padding: 14px;">
                         <h2 style="font-family: var(--font-serif); color: var(--de-gold-light); font-size: 20px; margin-bottom: 10px;">🌳 全文明科技树（DE 官方 62 文明）</h2>
                         <div id="de-techtree-host" style="min-height:420px"></div>
@@ -362,19 +362,18 @@ class DeWikiApp {
         this.renderDlcs();
         this.initCalculatorSelectors();
         this.updateCalculator();
-        // ?civ=<KEY> 直达全文明科技树（也便于截图/验收）
+        // 首页 = 全文明科技树（2026-10-14 主人令「科技树放到首页」）：
+        // 一打开 de-wiki.html 就停在科技树页签；?civ=<KEY> 可指定文明。
         const civ = new URLSearchParams(location.search).get('civ');
-        if (civ) {
-            this.currentTab = 'de-techtree';
-            this.deTechTreeCiv = civ.toUpperCase();
-            document.querySelectorAll('.de-tab-btn').forEach((b) => {
-                const isTree = (b as HTMLElement).dataset.tab === 'de-techtree';
-                b.classList.toggle('active', isTree);
-            });
-            document.querySelectorAll('.de-section-view').forEach((s) => s.classList.remove('active'));
-            document.getElementById('sec-de-techtree')?.classList.add('active');
-            void this.renderDeTechTreeTab();
-        }
+        if (civ) this.deTechTreeCiv = civ.toUpperCase();
+        this.currentTab = 'de-techtree';
+        document.querySelectorAll('.de-tab-btn').forEach((b) => {
+            const isTree = (b as HTMLElement).dataset.tab === 'de-techtree';
+            b.classList.toggle('active', isTree);
+        });
+        document.querySelectorAll('.de-section-view').forEach((s) => s.classList.remove('active'));
+        document.getElementById('sec-de-techtree')?.classList.add('active');
+        void this.renderDeTechTreeTab();
     }
 
     private renderCivs(): void {
@@ -487,20 +486,41 @@ class DeWikiApp {
     /** 全文明科技树（62）——版式与数据照 DE 官方，见 deTechTreeRender.ts */
     private deTechTreeHandle: TechTreeHandle | null = null;
     private deTechTreeCiv: string | null = null;
+    private deTechTreeLng: DeLng = (() => {
+        try { return (localStorage.getItem('de-techtree-lng') as DeLng) || 'zh'; } catch { return 'zh'; }
+    })();
+    /** 'de' = DE 官方中文串；'legion' = 与 legion-editor 兵种鉴赏一致（主人 2026-10-14 令） */
+    private deTechTreeNameSrc: 'de' | 'legion' = (() => {
+        try { return (localStorage.getItem('de-techtree-namesrc') as 'de' | 'legion') || 'de'; } catch { return 'de'; }
+    })();
     private async renderDeTechTreeTab(): Promise<void> {
         const host = document.getElementById('de-techtree-host');
         if (!host) return;
-        // 已经在这个页签渲染过同一个文明，就不重复渲染（避免每次切页签都重画）
-        if (this.deTechTreeCiv && host.dataset.civ === this.deTechTreeCiv) return;
+        // 已经在这个页签渲染过同一个文明+同一语言+同一命名来源，就不重复渲染
+        const sig = `${this.deTechTreeCiv ?? ''}|${this.deTechTreeLng}|${this.deTechTreeNameSrc}`;
+        if (host.dataset.sig === sig) return;
         if (this.deTechTreeHandle) { this.deTechTreeHandle.destroy(); this.deTechTreeHandle = null; }
         const fromUrl = new URLSearchParams(location.search).get('civ');
         const civ = this.deTechTreeCiv ?? fromUrl ?? 'BRITONS';
         host.dataset.civ = civ;
+        host.dataset.sig = sig;
         this.deTechTreeHandle = await mountDeTechTree('de-techtree-host', civ, {
-            lng: 'zh',
+            lng: this.deTechTreeLng,
+            nameSrc: this.deTechTreeNameSrc,
             onCiv: (k) => {
                 this.deTechTreeCiv = k;
-                host.dataset.civ = k;
+                host.dataset.sig = '';      // 强制重渲染
+                this.renderDeTechTreeTab();
+            },
+            onLng: (l) => {
+                this.deTechTreeLng = l;
+                host.dataset.sig = '';      // 换语言 → 重渲染
+                this.renderDeTechTreeTab();
+            },
+            onNameSrc: (s) => {
+                this.deTechTreeNameSrc = s;
+                try { localStorage.setItem('de-techtree-namesrc', s); } catch { /* 忽略 */ }
+                host.dataset.sig = '';
                 this.renderDeTechTreeTab();
             },
         });
