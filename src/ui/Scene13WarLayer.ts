@@ -18,12 +18,10 @@
 
 import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
 import {
-    Scene13GroundPainter,
     TILE_W,
     TILE_H,
     ELEV_STEP_PX,
     isWaterTile,
-    type GroundPatch,
 } from './scene13/Scene13GroundPainter';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
@@ -46,7 +44,7 @@ import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { LandSeaSystem } from '../world/land-sea/LandSeaSystem';
 import { DE_TERRAIN_MANIFEST } from '../data/battlefield/deTerrainData';
 import { nearestStrategicRiver } from '../map/StrategicRiverProximity';
-import { generateEnvironment, type Scene13EnvironmentPlan, type Scene13EnvironmentInput } from './scene13/Scene13EnvironmentGenerator';
+import { resolveEnvironmentClimate, type Scene13ClimatePlan, type Scene13ClimateInput } from './scene13/Scene13EnvironmentGenerator';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
 import type { MilitaryTech } from '../data/MilitaryTechs';
@@ -2370,7 +2368,7 @@ function marchFilesOf(key: string): number {
  *    现按兵种半径取 max，步骑维持 24 不变（不动已调平的队形），只有大体型单位撑开。
  */
 const MARCH_SP = 24;
-/** 列阵纵深方向的槽位间距上限：受出兵口前后行间距（depth，1920 屏 144px）约束，见使用处。 */
+/** 列阵纵深方向的槽位间距上限（px），见使用处。 */
 const MARCH_SP_DEPTH_MAX = 48;
 /** 🔴 [2026-10-14 主人令「排距、队距改成固定值……不再跟着窗口变」] 三排之间的排距（px）。原为「窗口宽×0.14，夹在 240~280」，取主人窗口下的 280 */
 const ROW_DEPTH = 280;
@@ -3352,10 +3350,6 @@ function animalDeOf(species: string): AnimalDe {
     return ANIMAL_DE[species] ?? { kind: 'prey', walk: 32, run: 90, los: 120, hp: 5, atk: 0, reload: 2.0, acts: ANIMAL_ACTS.flee };
 }
 
-/** 装饰层地面贴片（沙滩/水塘/道路/农田等，按 clump 生长的单元格铺 DE 地形贴图） */
-
-
-type DecorPatch = GroundPatch;
 
 /** 刀光剑影：近战攻击挥砍半月弧光 / 长枪突刺锐芒 */
 interface WarSlash {
@@ -3613,7 +3607,7 @@ export class Scene13WarLayer {
     /** 本场季节（0=绿夏 1=橙秋 2=白冬）：start 时定一次，树/湖全场统一，禁混季 */
     private sceneSeason: 0 | 1 | 2 = 0;
     /** 本场环境方案（生成器产出，纯数据；Scene13WarLayer 只负责画） */
-    private environmentPlan: Scene13EnvironmentPlan | null = null;
+    private environmentPlan: Scene13ClimatePlan | null = null;
     /** [2026-09-03] 时段色调：画布内每帧固定两次整画布合成（DOM 混合层版实测卡死已废） */
     private timeOfDay = new Scene13TimeOfDayGrader();
     private perfTint: number[] = [];
@@ -3629,13 +3623,9 @@ export class Scene13WarLayer {
     private ground: HTMLCanvasElement | null = null;
     private groundCtx: CanvasRenderingContext2D | null = null;
     private groundHasContent = false;
-    /** 地表装饰离屏画布（地形斑块 + ground 贴花；world 对象不烙入这里） */
-    private decor: HTMLCanvasElement | null = null;
-    private decorCtx: CanvasRenderingContext2D | null = null;
     private decorSprites: DecorSprite[] = [];
     private tacticalAnimals: TacticalAnimal[] = [];
     private animalMetaCache: Record<string, any> = {};
-    private decorPatches: DecorPatch[] = [];
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     private wallGates: WarBuilding[] = [];
     /** 🔴 [2026-10-12] 守方城内可攻击建筑/箭塔（攻城武器第二优先目标，城墙城门之后） */
@@ -3704,8 +3694,6 @@ export class Scene13WarLayer {
     private laneFoeCache = new Map<number, { x: number; y: number; d2: number }>();
     /** 攻守双方阵营出兵中心（屏幕逻辑坐标） */
     private spawnBases: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
-    /** [2026-08-21 性能] 素材加载风暴合并：onload 高频触发 repaintDecor，rAF 合并到一帧一次 */
-    private decorRepaintQueued = false;
     private over = false;
     private bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
@@ -3714,7 +3702,6 @@ export class Scene13WarLayer {
     private bankSides = new Map<string, Set<0 | 1>>();
     private deferredAssetLoads: Array<() => void> = [];
     private coveredMap: { element: HTMLElement; visibility: string; priority: string } | null = null;
-    private decorHasTerrain = false;
     /** 🔴 [2026-10-02 主人定] 等待行军播报完毕再播放战役战斗播报的轮询计时器 */
     private battleBriefingTimer: any = null;
     /** 🔴 [2026-10-02 主人定] 战役战斗播报是否正在播放（播放期间与战斗音效互斥，绝不重叠） */
@@ -3730,7 +3717,7 @@ export class Scene13WarLayer {
     private coverStrategyMap(): void {
         // 战场底图铺满后，底下的地图不再参与浏览器绘制/合成；保留尺寸和镜头状态。
         // 地形缺图时仍显示原地图，不能用空白战场盖住它。
-        if (this.coveredMap || !this.decorHasTerrain) return;
+        if (this.coveredMap || !this.useGroundGL) return;
         // 淡入期间底下的战略地图要留着（画布半透明，盖掉地图会透出空白底）；淡入走完后的下一帧再盖
         // 等素材期间画布还是全透明，淡入期间半透明：都得留着底下的战略地图，不然透出空白底
         if (this.entryFadePending || this.entryFadeActive) return;
@@ -4069,8 +4056,17 @@ export class Scene13WarLayer {
         //    镜头跟着他 ⇒ 整队看着在晃（真机 scratch/_probe_tremble_v11.mjs：300 帧朝向 A→B→A 14 次）。
         //    现取「两人半径之和 + 2px」：站在第一排正前方、不与任何人重叠。
         const heroDep = -(this.radiusOf(setup.heroKey) + this.radiusOf(heroPort.key) + 2);
-        const uFwd = this.advanceVec[f]; const hx = heroPort.x - uFwd.x * heroDep;
-        const hy = heroPort.y - uFwd.y * heroDep;
+        let uFwd = this.advanceVec[f]; let hx = heroPort.x - uFwd.x * heroDep;
+        let hy = heroPort.y - uFwd.y * heroDep;
+        // 🔴 [2026-10-14 主人令「玩家作为守方也要列阵出城」] 守城时站到本队在城外阵里的位置（本队第一排正前方），
+        //    与第一波守军一起出生、一起贴墙校正、一起原地待敌（见 spawnTick 的 outsideFirst 与 holdLanes）
+        const heroOutside = f === 1 && this.battleType === 'siege' && !!this.deCity && heroPort.outFwd !== undefined;
+        if (heroOutside) {
+            const B = this.defOutsideBase();
+            uFwd = B.fwd;
+            hx = B.x + B.fwd.x * (heroPort.outFwd! - heroDep) + B.side.x * heroPort.outSide!;
+            hy = B.y + B.fwd.y * (heroPort.outFwd! - heroDep) + B.side.y * heroPort.outSide!;
+        }
         const fadeDur = DEPLOY_FADE;
         const hero: WarMan = {
             f, key: setup.heroKey, jx: 0, jy: 0, lane: heroPort.lane, hero: true,
@@ -4082,7 +4078,7 @@ export class Scene13WarLayer {
             fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
             prevX: hx, prevY: hy, anchorX: hx, anchorY: hy, netT: 0, stuckT: 0, sepX: 0, sepY: 0, y0: hy,
             flag: false, fo: Math.random() * 600,
-            march: inMarch, port: inMarch ? heroPort : null, dep: heroDep, slotY: 0, pop: 0,
+            march: inMarch && !heroOutside, port: inMarch && !heroOutside ? heroPort : null, dep: heroDep, slotY: 0, pop: 0,
             claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
         };
         this.heroMan = hero;
@@ -4227,13 +4223,6 @@ export class Scene13WarLayer {
                 this.glCanvas.width = this.canvas.width;
                 this.glCanvas.height = this.canvas.height;
                 this.groundLayerGL?.resize(this.canvas.width, this.canvas.height);
-            }
-            // 🔴 [2026-10-11] 这里的 2D ground 画布路径已被 GL 地面层取代，早已是死代码；
-            this.initTerrain();        // 尺寸变了 → 按新尺寸重铺（贴图已缓存则立即铺满）
-            if (this.decor) {
-                this.decor.width = this.canvas.width;
-                this.decor.height = this.canvas.height;
-                this.repaintDecor();
             }
         };
         window.addEventListener('resize', onResize);
@@ -4585,7 +4574,7 @@ export class Scene13WarLayer {
                 {
                     // 🔴 [2026-10-11 主人报「军团从东北杀来，为什么战术模式中，攻方出现在西方？」]
                     //    八方向派生的**原点必须是城**，不是战场中心：本层把城摆在屏幕正中
-                    //    （`deCityCenter = {x: VW/2, y: VH/2}`），而 `init.centerLat/Lng` 是**跟拍军团的渲染中心**
+                    //    （`deCityCenter = 世界中心 worldCX/CY`），而 `init.centerLat/Lng` 是**跟拍军团的渲染中心**
                     //    （`battleSceneTarget` → `getRenderedCenter(跟随单位.id)`，攻城外推后离城十几到几十公里）。
                     //    实测一场真机攻城战：城 43.76,11.25 ｜ center 43.6798,11.4807（离城 20.6km）
                     //    ｜ 攻方 43.6793,11.4814（在城南 20.7km，与 center 同一格）。
@@ -4654,7 +4643,7 @@ export class Scene13WarLayer {
                     this.advanceVec = [uFwd0, uFwd1];
                     this.sideVec = [uSide0, uSide1];
                     // 🔴 [2026-10-10 主人「现在是中间放城池，明白了吗」]
-                    //    攻城战城池稳居正中心（VW/2, VH/2），镜头默认居中对齐城池；野战才居中于两军中点
+                    //    攻城战城池稳居正中心（世界中心 worldCX/CY），镜头默认居中对齐城池；野战才居中于两军中点
                     if (this.deCity || this.battleType === 'siege') {
                         this.tacticalPanX = 0;
                         this.tacticalPanY = 0;
@@ -4766,41 +4755,27 @@ export class Scene13WarLayer {
             }
 
             // 主将队（第 10 口，前排再往前）不是建筑位，不参与城墙前沿计算
-            const defenderSpawnXs = this.spawns.filter((s) => s.f === 1 && !s.commander).map((s) => s.x);
-            const siegeWallFrontX = this.battleType === 'siege' && !this.deCity && defenderSpawnXs.length > 0
-                ? Math.round(Math.min(...defenderSpawnXs) - 380)
-                : undefined;
 
             // 场景布景：撒云（云在最上层飘动装饰，位置不必避出兵口/地形）
             this.scatterClouds();
-            // 环境生成：确定性 PRNG（种子=真实数据）→ 五层管线出方案（纯数据，不碰 Canvas）
+            // 战场气候判定（种子=真实数据）：地图主题 / 地面四张贴图 / 季节 / 水域类型，与画布大小无关
             const __e0 = performance.now();
-            const envInput: Scene13EnvironmentInput = {
+            const envInput: Scene13ClimateInput = {
                 lat: init.defenderCityLat ?? init.centerLat,
                 lng: init.defenderCityLng ?? init.centerLng,
                 waterProbeLat: init.defenderCityLat,
                 waterProbeLng: init.defenderCityLng,
                 seed: init.environmentSeed,
-                width: VW,
-                height: VH,
                 attackerFactionId: init.attackerFactionId,
                 defenderFactionId: init.defenderFactionId,
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
                 isSiege: init.battleType === 'siege',
-                siegeWallFrontX,
                 // 🔴 [2026-08-24 主人定]「水军的攻城战，做用左边是海的图」。
                 //    强制出海，不靠 probeWater 探测碰运气——水军打的城本来就在海边，
                 //    探测失灵就变成内陆战场，那这仗就白是水军了。
                 //    （水军**野战**不进 13，留在战略地图，见 navalBattleAllowedInScene13。）
                 forceWaterKind: (init.isNaval && init.battleType === 'siege') ? 'sea' : undefined,
-                // 🔴 [2026-08-24] 守方城池石基 + 城门前石路上不许长树。
-                //    半径与 applyDefenderCityRoad 的辐射同口径（4 格），少一点都会露出树来。
-                //    不传的后果实测过：平均每场攻城战 3.8 棵树戳在城基和门前石路上。
-                keepClear: init.battleType === 'siege'
-                    ? this.spawns.filter((s) => s.f === 1 && !s.commander)
-                        .map((s) => ({ x: s.x, y: s.y, r: 4 * TILE_W }))
-                    : [],
                 getCalendarSeason: () => {
                     // TimeSystem.getSeason() 枚举：春0 夏1 秋2 冬3；环境只收 绿0/橙1/白2
                     const season = (window as any).game?.timeSystem?.getSeason?.() ?? 0;
@@ -4808,15 +4783,8 @@ export class Scene13WarLayer {
                     if (season === 2) return 1;   // 秋 → 橙
                     return 0;                      // 春/夏 → 绿
                 },
-                // 🔴 [2026-09-19 主人报「樱花树过季就消失／怎么不变绿」] **选树用真四季**：
-                //   上面那个 getCalendarSeason 是「战场地表季」（绿/橙/白三态，管地形与色调），
-                //   拿它去推树季会把春/夏都推成夏树 → 日本战场春天长不出樱花。
-                getTreeSeason: () => {
-                    const s = (window as any).game?.timeSystem?.getSeason?.();
-                    return (typeof s === 'number' && s >= 0 && s <= 3 ? s : 0) as 0 | 1 | 2 | 3;
-                },
             };
-            this.environmentPlan = generateEnvironment(envInput);
+            this.environmentPlan = resolveEnvironmentClimate(envInput);
             const __envMs = performance.now() - __e0;
             this.sceneSeason = this.environmentPlan.season;
             // [2026-09-03 主人定] 时段色调：按环境种子确定性抽时段，叠季节/群系/纬度偏色，每场看起来都不一样
@@ -4839,11 +4807,9 @@ export class Scene13WarLayer {
                 this.diagPush('timeOfDay', { phase: grade.phase, multiply: grade.multiply, drift: !!grade.driftTo });
             }
             const __d0 = performance.now();
-            this.initTerrain();
-            // 按方案绘制装饰层（画在尸体层之下）
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
-            this.requestGroundLayerGL(init, VW, VH);
+            this.requestGroundLayerGL();
 
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
@@ -5181,13 +5147,10 @@ export class Scene13WarLayer {
      */
     private perfStep: number[] = [];
     /** [2026-08-25] 水面渲染单独计时 + 水面 patch 数：验证「有水的局才卡」这条假设 */
-    private perfWater: number[] = [];
-    private perfWaterPatches = 0;
     private perfRender: number[] = [];
     private perfFrames = 0;
     /** [诊断 2026-08-29] 尖峰帧快照：step/render 超阈值的帧记下战场状态，定位「无水也卡」来源 */
     private spikeLog: Array<Record<string, number>> = [];
-    private lastRepaintDecorAt = 0;
     private lastCollapseAt = 0;
     private lastBakeCorpseAt = 0;
     /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
@@ -5234,10 +5197,7 @@ export class Scene13WarLayer {
                 frames: this.perfFrames,
                 onField: field[0] + field[1],
                 step: this.perfStat(this.perfStep),
-                water: this.perfStat(this.perfWater),
-                waterOps: { composeAvgMs: +(this.perfWaterOps.compose / Math.max(1, this.perfWaterOps.composeN)).toFixed(2), composeN: this.perfWaterOps.composeN, blitAvgMs: +(this.perfWaterOps.blit / Math.max(1, this.perfWaterOps.blitN)).toFixed(2), blitN: this.perfWaterOps.blitN, patternAvgMs: +(this.perfWaterOps.pattern / Math.max(1, this.perfWaterOps.patternN)).toFixed(2), patternN: this.perfWaterOps.patternN },
                 tint: this.perfStat(this.perfTint),
-                waterPatches: this.perfWaterPatches,
                 render: this.perfStat(this.perfRender),
             },
             // [诊断 2026-08-29] 尖峰帧快照（>20ms 帧的战场状态），定位「无水也卡」来源
@@ -5325,7 +5285,6 @@ export class Scene13WarLayer {
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
-        this.decorPatches = [];
         // [2026-09-05 玩家] 战术布置随场清空
         this.playerSetup = null;
         this.playerCtlLanes.clear();
@@ -5578,9 +5537,8 @@ export class Scene13WarLayer {
                 x: this.worldCX + (Math.random() - 0.5) * 7616,
                 y: this.worldCY + (Math.random() - 0.5) * 3808,
                 // 🔴 一律**从左往右**（主人 2026-08-12）：全场风向必须一致 ——
-                //    攻方 f=0 永远在左（出兵口 x = f===0 ? back : VW-back），所以「左→右」
-                //    就是「攻方→守方」；旗帜固定 row 5 走 facingLeft 分支、旗面画在杆的右侧，
-                //    也是向右飘。云和旗同向，风向才成立。**别改回随机方向。**
+                //    旗帜固定 row 5 走 facingLeft 分支、旗面画在杆的右侧，也是向右飘。
+                //    云和旗同向，风向才成立。**别改回随机方向。**
                 vx: CLOUD_SPD_MIN + Math.random() * (CLOUD_SPD_MAX - CLOUD_SPD_MIN),
                 alpha: CLOUD_ALPHA_MIN + Math.random() * (CLOUD_ALPHA_MAX - CLOUD_ALPHA_MIN),
                 scale: CLOUD_SCALE_MIN + Math.random() * (CLOUD_SCALE_MAX - CLOUD_SCALE_MIN),
@@ -5599,55 +5557,19 @@ export class Scene13WarLayer {
         im.src = CLOUD_BASE_URL + CLOUD_FILES[(Math.random() * CLOUD_FILES.length) | 0] + '.png';
     }
 
-    /**
-     * 加载 DE 地形贴图并铺地（2026-08-20 P0→P2）。start 时调一次，贴图 onload 时增量重铺。
-     * 🔴 与云同规矩：纯装饰，加载失败就露透明（真实地图兜底），绝不进 pending。
-     */
-    private initTerrain(): void {
-        if (!this.canvas) return;
-        // 每场只选一张主地形，全场统一铺（绝不混色块——主人 2026-08-20 否掉随机混铺）
-        // P2：biome 判定选图（雪线→地中海→卫星色→纬度带→文化区 + L2 地貌修正）——由生成器定
-        this.groundPainter.setTerrain(
-            this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE,
-            this.canvas.width,
-            this.canvas.height,
-        );
-    }
-
-
     // ── 装饰层（P3 植被 + L3 点缀）：画在尸体层之下，永不遮士兵 ──────────────
 
-    // ── 地面渲染委托给 Scene13GroundPainter（2026-08-24 抽出，与背景图预览工具共用同一份）──
-    private groundPainter = new Scene13GroundPainter(() => this.scheduleDecorRepaint());
-    private get isoOx(): number { return this.groundPainter.isoOx; }
-    private get isoOy(): number { return this.groundPainter.isoOy; }
-    private get isoGw(): number { return this.groundPainter.isoGw; }
-    private get isoGh(): number { return this.groundPainter.isoGh; }
-    private isoCellX(gx: number, gy: number): number { return this.groundPainter.isoCellX(gx, gy); }
-    private isoCellY(gx: number, gy: number): number { return this.groundPainter.isoCellY(gx, gy); }
-    private elevationAt(x: number, y: number): number { return this.groundPainter.elevationAt(x, y); }
+    /** 地面抬升（GL 地面层的高程）；GL 地面还没就绪时按平地 0 */
     private elevationLiftAt(x: number, y: number): number {
-        if (this.useGroundGL && this.groundLayerGL && this.canvas) {
+        if (this.useGroundGL && this.groundLayerGL) {
             return this.groundLayerGL.elevationLiftAt(x, y, this.worldCX * 2, this.worldCY * 2);
         }
-        return this.groundPainter.elevationLiftAt(x, y);
+        return 0;
     }
-    private cellLift(gx: number, gy: number): number { return this.groundPainter.cellLift(gx, gy); }
 
-
-
-
-
-
-    /** 建装饰层画布 + 按生成器方案铺贴片/物件（start 调一次，素材 onload 时增量重画） */
+    /** 每场重置世界物件（城池、出兵口营地等由 applySpawnBuildings 放；地面与自然物件由 GL 地面层的地图数据放） */
     private initDecor(): void {
         if (!this.canvas) return;
-        if (!this.decor) {
-            this.decor = document.createElement('canvas');
-            this.decorCtx = this.decor.getContext('2d')!;
-        }
-        this.decor.width = this.canvas.width;
-        this.decor.height = this.canvas.height;
         this.decorSprites = [];
         this.tacticalAnimals = [];
         this.wallGates = [];
@@ -5664,155 +5586,7 @@ export class Scene13WarLayer {
         this.arrowTowers = [];
         this.castleTowers = [];
         this.cityBuildings = [];
-        this.decorPatches = [];
-        this.applyEnvironmentPlan();
-        this.applyDefenderCityRoad();
         this.applySpawnBuildings();
-        this.repaintDecor();
-    }
-
-    /**
-     * 🔴 [2026-08-22 主人定] 攻城战守方城池基底铺设 DE 原版石板/碎石道路贴图 (rd1 / gravel_default / rd5)
-     * 围绕守方 9 栋城池建筑点辐射铺设城池地基，消除建筑光秃立在荒草地上的违和感。
-     */
-    private applyDefenderCityRoad(): void {
-        if (this.battleType !== 'siege') return;
-        const defenderSpawns = this.spawns.filter((s) => s.f === 1 && !s.commander);
-        if (defenderSpawns.length === 0 || this.isoGw === 0 || this.isoGh === 0) return;
-
-        // 根据守方文化与地貌自适应选择 DE 原版城池地基道路贴图（映射集中在 cityRoadFoundationTile）
-        const roadTile = this.cityRoadFoundationTile();
-
-        const roadCells: Array<[number, number]> = [];
-        const visited = new Set<string>();
-
-        // 🔴 [2026-10-11 主人报「建筑和地基没有对齐」] 城池走的是**战略地图地基层**那条路（`this.deCity`，
-        //    那一层 HTML 自带 `clip-path` 菱形裁切 + `rd2.png` 平铺，2026-09-08 主人定过「城内饱满无漏黑、城外零溢出」）。
-        //    而下面这段是按**出兵口**另算一套格坐标再铺圆＋外接矩形 —— 两套几何必然错位
-        //    （实测：地垫比建筑脚点宽 1.85 倍、中心偏 dx −17 / dy −13px，还盖在地基层上面、比城池大一圈）。
-        //    ⇒ 有战略同款城池时**一层就够**：地基层自己就是地基，这里不再铺。
-        if (this.deCity) return;
-
-        // 围绕守方各个建筑点向外辐射 2~3 格，形成连贯自然的城池石基与街道网
-        let minGx = Infinity, maxGx = -Infinity, minGy = Infinity, maxGy = -Infinity;
-        for (const s of defenderSpawns) {
-            const a = (s.x - this.isoOx) * 2 / TILE_W;
-            const b = (s.y - this.isoOy) * 2 / TILE_H;
-            const cgx = Math.round((a + b) / 2);
-            const cgy = Math.round((b - a) / 2);
-            minGx = Math.min(minGx, cgx);
-            maxGx = Math.max(maxGx, cgx);
-            minGy = Math.min(minGy, cgy);
-            maxGy = Math.max(maxGy, cgy);
-            const radius = 4; // 🔴 [2026-08-23 主人需求] 石头路面积稍微大一点：建筑周围覆盖半径 3→4 格（曼哈顿≤5 菱形，格数 41→61 ≈1.5倍），roadland 走高斯平滑不受 blend 咬合切碎
-
-            for (let dy = -radius; dy <= radius; dy++) {
-                for (let dx = -radius; dx <= radius; dx++) {
-                    const gx = cgx + dx;
-                    const gy = cgy + dy;
-                    if (gx < 0 || gy < 0 || gx >= this.isoGw || gy >= this.isoGh) continue;
-                    if (Math.abs(dx) + Math.abs(dy) <= radius + 1) {
-                        const key = `${gx},${gy}`;
-                        if (!visited.has(key)) {
-                            visited.add(key);
-                            roadCells.push([gx, gy]);
-                        }
-                    }
-                }
-            }
-        }
-
-        // 🔴 [2026-10-10 主人定「树林建筑等，为什么不是固定在地基上呢」]
-        // 城内建筑群内部必须是完整闭合地基，将建筑群外接包围盒内部全部铺满城池地基，杜绝建筑之间漏草或踩泥
-        if (isFinite(minGx) && isFinite(maxGx)) {
-            for (let gy = minGy - 1; gy <= maxGy + 1; gy++) {
-                for (let gx = minGx - 1; gx <= maxGx + 1; gx++) {
-                    if (gx < 0 || gy < 0 || gx >= this.isoGw || gy >= this.isoGh) continue;
-                    const key = `${gx},${gy}`;
-                    if (!visited.has(key)) {
-                        visited.add(key);
-                        roadCells.push([gx, gy]);
-                    }
-                }
-            }
-        }
-
-        if (roadCells.length > 0) {
-            this.addDecorCells(roadTile, roadCells, 0.90, undefined, undefined, true);
-        }
-    }
-
-    /**
-     * 城池硬化地面道路贴图（文化自适应）：东方 rd2 碎石子 / 罗马与拜占庭 rd1 石板 / 中东 rd5 砾石土路。
-     * 🔴 applyDefenderCityRoad（城内建筑地基）与 addGateFoundation（城门前地基）共用同一映射，改贴图只此一处。
-     */
-    private cityRoadFoundationTile(): string {
-        // 🔴 [2026-08-27 主人定] 草原文化：pm1 泥地/草原营地底图
-        // 🔴 [2026-09-18 主人定「一切必须都和战略地图据点一致」] 判据由文化区 STEPPE 改为建筑风格 YURT：
-        //    漠北蒙古（MOBEI_MONGOL）原先匹配不上，会按城型拿到 rd1 石板 / rd2 碎石 / rck 岩石路，
-        //    而战略地图的毡帐营地是**无地基无石路**的泥地 —— 给毡帐铺石板大道两边就对不上了。
-        //    buildingStyleFor(1) 把 STEPPE 与 MOBEI_MONGOL 都归到 YURT，一次覆盖。
-        if (this.buildingStyleFor(1) === 'YURT') return 'pm1';
-        // 🔴 [2026-09-03 主人定] 城寨(stockade)地基一律和草原一样——pm1 牧场地基（不分文化）
-        if (this.defenderCityType === 'stockade') return 'pm1';
-        // 🔴 [2026-08-27 主人定] 按城市等级选底图：大城 rd1 石板 / 中城 rd2 碎石 / 险要 rck 岩石（不再按文化）
-        if (this.defenderCityType === 'big_city') return 'rd1';   // 大城（帝国）：石板大道
-        if (this.defenderCityType === 'medium_city') return 'rd2'; // 中城（城堡）：碎石子路
-        if (this.defenderCityType === 'pass') return 'rck';        // 险要（关隘）：岩石/硬岩地基
-        // 小城 保持文化自适应：中东 rd5 砾石土路 / 罗马·拜占庭 rd1 石板 / 默认 rd2 碎石
-        const culture = this.sideCulture[1];
-        if (culture === 'ISLAMIC') return 'rd5'; // 中东：商队砾石土路
-        if (culture === 'BYZANTINE' || culture === 'ROMAN') return 'rd1'; // 罗马/拜占庭：石板大道
-        return 'rd2'; // 默认/东方：碎石子路（质朴土路）
-    }
-
-    /**
-     * [2026-08-23 主人需求] 城门前/城门下地基：两座城门也铺城池硬化道面（与 applyDefenderCityRoad 同一套贴图），
-     * 消除城门光秃立在泥地上的违和感。城门下 = 城门贴图格心放射石基；城门前 = 朝攻方（屏幕 -x）延伸的进场通道。
-     * @param gx 城门贴图屏幕 x（与 placeGate 的 s.x 同一坐标系）
-     * @param gy 城门贴图屏幕 y
-     */
-    private addGateFoundation(gx: number, gy: number): void {
-        if (this.battleType !== 'siege') return;
-        if (this.isoGw === 0 || this.isoGh === 0) return;
-        const roadTile = this.cityRoadFoundationTile();
-
-        const a = (gx - this.isoOx) * 2 / TILE_W;
-        const b = (gy - this.isoOy) * 2 / TILE_H;
-        const cgx = Math.round((a + b) / 2);
-        const cgy = Math.round((b - a) / 2);
-        if (cgx < 0 || cgy < 0 || cgx >= this.isoGw || cgy >= this.isoGh) return;
-
-        const cells: Array<[number, number]> = [];
-        const seen = new Set<string>();
-        const push = (cellx: number, celly: number): void => {
-            if (cellx < 0 || celly < 0 || cellx >= this.isoGw || celly >= this.isoGh) return;
-            const key = `${cellx},${celly}`;
-            if (!seen.has(key)) { seen.add(key); cells.push([cellx, celly]); }
-        };
-
-        // 城门下：城门格心放射半径 2 的菱形基座（覆盖门体 + 两侧），与城内建筑石基同密度
-        for (let dy = -2; dy <= 2; dy++) {
-            for (let dx = -2; dx <= 2; dx++) {
-                if (Math.abs(dx) + Math.abs(dy) <= 2) push(cgx + dx, cgy + dy);
-            }
-        }
-        // 城门前进场大道（朝攻方 = 屏幕 -x；网格 Δgx=-1/Δgy=+1 正好是屏幕正左，每步 -64px）。
-        //
-        // 🔴 [2026-08-24 修] 旧写法是 `for k=1..4: push(cgx-k, cgy+k)` —— 宽 1 格、长 4 格、
-        //    笔直水平，再被 blur(24) 一糊，屏幕上就是**一根惨白的横条**（两座城门各一根）。
-        //    这不是路。DE 的路有实在的宽度、一路通到战场边缘、边缘不是尺子画的。
-        //    现在：宽 2~3 格交替 + 正弦微摆 + 一直铺到西缘，羽化收到 10px 让路面清晰。
-        const halfWidths = [1, 1, 1, 0]; // 3 格 / 2 格交替 → 自然宽窄，不是等宽棍子
-        for (let k = 1; k <= MAX_ROAD_STEPS; k++) {
-            const rx = cgx - k, ry = cgy + k;
-            if (this.isoCellX(rx, ry) < -TILE_W) break; // 已铺出屏幕西缘
-            const wobble = Math.round(Math.sin(k * 0.45)); // -1/0/1，路心缓慢左右摆
-            const hw = halfWidths[k % halfWidths.length];
-            for (let w = -hw; w <= hw; w++) push(rx + w + wobble, ry + w + wobble);
-        }
-
-        if (cells.length > 0) this.addDecorCells(roadTile, cells, 0.92, undefined, ROAD_EDGE_BLUR, true);
     }
 
     /** [2026-08-21 主人需求] 出兵口布军事建筑：靶场/兵营/马厩 + 行军帐篷（共 9 个）。
@@ -6304,7 +6078,6 @@ export class Scene13WarLayer {
                 if (s.y < wMinY) wMinY = s.y;
                 if (s.y > wMaxY) wMaxY = s.y;
             }
-            const vw = this.canvas?.width ?? 1920;
             // 🔴 [主人明确指示 2026-08-22] 正统 C 型三面包卫宏伟城堡要塞防线：正面垂直主长城向前推进 120px，彻底包裹全部内城建筑
             const wallFrontX = Math.round(wMinX - 380);
             const midY = (wMinY + wMaxY) * 0.5;
@@ -6333,7 +6106,6 @@ export class Scene13WarLayer {
             // 1. 北翼防线 (NE 东北向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 北翼向上完整双塔大城门 (左角塔在 (wallFrontX, topWallY), 右角塔在 (wallFrontX + 144, topWallY - 72))
             placeGate({ x: wallFrontX + 72, y: topWallY - 36 }, gBase + '_NE', 'NE');
-            this.addGateFoundation(wallFrontX + 72, topWallY - 36);
             // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 NE 斜城墙 (连贯平滑，深远包裹整座要塞)
             for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: topWallY - 72 - k * pitchDy }, wBase + '_NE', 'STONE_WALL');
@@ -6362,7 +6134,6 @@ export class Scene13WarLayer {
             // 3. 南翼防线 (SE 东南向展开，对齐 DE 72/36 网格标准，全线多点密集阻挡锁死)
             // (1) 南翼向下完整双塔大城门 (左角塔在 (wallFrontX, botWallY), 右角塔在 (wallFrontX + 144, botWallY + 72))
             placeGate({ x: wallFrontX + 72, y: botWallY + 36 }, gBase + '_SE', 'SE');
-            this.addGateFoundation(wallFrontX + 72, botWallY + 36);
             // (2) 从城门右角塔外侧第一格(k=1)顺畅接出 14 段 SE 斜城墙 (连贯平滑，深远包裹整座要塞)
             for (let k = 1; k <= 14; k++) {
                 placeWall({ x: wallFrontX + 144 + k * pitchDx, y: botWallY + 72 + k * pitchDy }, wBase + '_SE', 'STONE_WALL');
@@ -6738,7 +6509,6 @@ export class Scene13WarLayer {
         return false;
     }
 
-    /** 真实地理最多让开战多等多久（毫秒）；超时照旧开打，保留原生成的战场 */
 
     /**
      * 🔴 [2026-10-13 主人报「所有的河流都在战术地图的右上方，不在城边，根本看不到」→「按这个方案做」]
@@ -7001,10 +6771,18 @@ export class Scene13WarLayer {
      * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
      * 并加载新地图物件，替换旧 13 随机树木与岩石。
      */
-    private requestGroundLayerGL(init: Scene13WarInit, VW: number, VH: number): void {
+    private requestGroundLayerGL(): void {
         if (!this.glCanvas) return;
+        // 世界大小（开战时定死的世界中心 ×2）：地面格子与屏幕像素的换算口径，与窗口大小无关
+        const VW = this.worldCX * 2, VH = this.worldCY * 2;
         const gen = this.assetGen;
         const cv = this.glCanvas;
+        // 🔴 [2026-10-14 删除旧 13 的 2D 地面后] 开战前等 GL 地面就绪（占 1 个 pending，与兵种贴图同一道素材闸），
+        //    最多等 GL_GROUND_WAIT_MS，超时照常开打，绝不卡住战斗。实测本机 GL 地面 0.86~1.17s 就绪，比其余素材还早约 50ms。
+        this.pending++;
+        let held = true;
+        const releaseGround = () => { if (!held) return; held = false; if (gen === this.assetGen) this.pending--; };
+        window.setTimeout(releaseGround, Scene13WarLayer.GL_GROUND_WAIT_MS);
 
         // 🔴 [2026-10-11「整合各场景素材」] 地图数据按**真实地理**取，三级退让：
         //    ① 探针注入 window.__M3_TEST_MAPDATA__（真机验收用，保留最高优先）；
@@ -7071,6 +6849,7 @@ export class Scene13WarLayer {
             if (gen !== this.assetGen || !rawMapData) {
                 this.useGroundGL = false;
                 cv.style.display = 'none';
+                releaseGround();
                 return;
             }
             // 🔴 [2026-10-13 主人令「做出一套干净、可靠的真实地理」] 据点真实图（header.skeleton）的水就是真实水体，不许抹掉重挖
@@ -7082,6 +6861,7 @@ export class Scene13WarLayer {
                 const glLayer = await Scene13GroundLayerGL.create(cv, mapData, this.environmentPlan?.groundTiles);
                 if (gen !== this.assetGen) {
                     glLayer.destroy();
+                    releaseGround();
                     return;
                 }
                 this.groundLayerGL = glLayer;
@@ -7322,8 +7102,6 @@ export class Scene13WarLayer {
                         }
                     }
 
-
-
                     // 自然水岸生态：沿多瑙河蜿蜒岸线点缀芦苇与睡莲（同旧 13 经典水岸生态）
                     for (let gy = 2; gy < 118; gy += 2) {
                         for (let gx = 2; gx < 118; gx += 2) {
@@ -7356,51 +7134,19 @@ export class Scene13WarLayer {
                     }
                 }
                 this.applyDeCityToGround();
-                this.repaintDecor();
+                releaseGround();
             } catch (err) {
-                console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败，退回旧 13 地面:', err);
+                console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败（已无旧 2D 地面兜底，本场没有地面）:', err);
                 this.useGroundGL = false;
                 cv.style.display = 'none';
+                releaseGround();
             }
         });
     }
 
-    /** 把生成器方案铺进绘制结构：设网格 + 高程 + 地形贴片 + 物件（只画，不再随机决策） */
-    private applyEnvironmentPlan(): void {
-        const plan = this.environmentPlan;
-        if (!plan) return;
-        // 设网格 + 高程（同时作废抬升几何与高地光照缓存，下一帧重算）。
-        // initTerrain 在本方法之前跑，那次铺地还不知道新高程；这里拿到网格后立刻重铺一次，
-        // 保证抬升几何一定对得上（不依赖贴图 onload 的时序）。
-        this.groundPainter.setGrid(plan.grid.ox, plan.grid.oy, plan.grid.gw, plan.grid.gh, plan.elevation);
-        this.groundPainter.paintTerrain();
-        for (const p of plan.terrainPatches) {
-            this.addDecorCells(p.tile, p.cells, p.alpha, p.polygon, p.blur, undefined, p.category);
-        }
-        const envVW = this.canvas?.width || 1920, envVH = this.canvas?.height || 1080;
-        const mapToDiamond = !!this.glCanvas;
-        for (const o of plan.objects) {
-            const u = o.x / envVW, v = o.y / envVH;
-            const ox = mapToDiamond ? envVW / 2 + (u - 0.5) * TAC_MAP_HALF_W * 2 : o.x;
-            const oy = mapToDiamond ? envVH / 2 + (v - 0.5) * TAC_MAP_HALF_H * 2 : o.y;
-            if (o.asset && o.asset.includes('CLIFF')) continue;
-            this.ensureNatureAsset(o.asset);
-            this.decorSprites.push({
-                asset: o.asset,
-                frame: o.frame,
-                x: ox,
-                y: oy,
-                layer: o.layer,
-                z: o.z,
-                obstruction: o.obstruction,
-                obstructionReleaseAfterSec: o.obstructionReleaseAfterSec,
-                obstructionContactSec: 0,
-                obstructionTouched: false,
-                obstructionDisabled: false,
-                flip: o.flip,
-            });
-        }
-    }
+    /** 开战前最多等 GL 地面多久（毫秒）；超时照常开打 */
+    private static readonly GL_GROUND_WAIT_MS = 5000;
+
 
     /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回。
      *  `BUILDING:` 前缀 = 出兵口军事建筑（SUCAI_BUILDING）：改加载 `preview.png` 单帧，
@@ -7460,324 +7206,27 @@ export class Scene13WarLayer {
                 };
                 na.meta = finalMeta;
                 const im = new Image();
-                im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
+                im.onload = () => { na.img = im; };
                 im.src = base + species + '/' + actName + '_' + dirNum + '.png';
             });
         } else {
             const im = new Image();
-            im.onload = () => { na.img = im; this.scheduleDecorRepaint(); };
+            im.onload = () => { na.img = im; };
             // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）
             const file = isBattlefield ? 'preview.png' : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
             im.src = base + name + '/' + file;
             fetch(base + name + '/_meta.json')
                 .then((r) => (r.ok ? r.json() : null))
-                .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; this.scheduleDecorRepaint(); } })
+                .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; } })
                 .catch(() => {});
-        }
-    }
-
-    /** 按 clump 生长的单元格铺一块不规则地形贴片（AoE2 RMS 斑块生长，等距菱形渲染） */
-    private addDecorCells(
-        tile: string,
-        cells: Array<[number, number]>,
-        alpha = 1,
-        polygon?: Array<{ x: number; y: number }>,
-        blur?: number,
-        isRoad?: boolean,
-        category?: string,
-    ): void {
-        if (cells.length === 0) return;
-        const isWater = isWaterTile(tile);
-        const p: DecorPatch = { tile, img: null, cells, polygon, alpha, isWater, blur, isRoad, category };
-        this.decorPatches.push(p);
-        const im = new Image();
-        im.onload = () => { p.img = im; this.scheduleDecorRepaint(); };
-        im.src = TERRAIN_BASE_URL + tile + '.png';
-    }
-
-    /** 素材加载完成 → 合并重绘（rAF 去抖：同一帧内多个素材 onload 只全量重绘一次）。
-     *  🔴 [2026-08-21 性能] 一场战斗几十个素材（贴片/树/石/草各自 onload），
-     *    若每个都立即全量 repaintDecor（全屏 blur × 每 patch），进战斗瞬间会连续卡几十帧。 */
-    private scheduleDecorRepaint(): void {
-        if (this.decorRepaintQueued) return;
-        this.decorRepaintQueued = true;
-        requestAnimationFrame(() => {
-            this.decorRepaintQueued = false;
-            this.repaintDecor();
-        });
-    }
-
-    /** 重画装饰层（素材加载后增量补全；贴片 → 低 z 精灵 → 树 → 山体，按 z 稳定排序） */
-    private repaintDecor(): void {
-        this.lastRepaintDecorAt = performance.now();
-        const cv = this.decor, g = this.decorCtx;
-        if (!cv || !g) return;
-        g.clearRect(0, 0, cv.width, cv.height);
-        const terrain = this.groundPainter.terrain;
-        if (terrain) g.drawImage(terrain, 0, 0);
-        this.decorHasTerrain = this.groundPainter.isTerrainReady();
-        for (const p of this.decorPatches) {
-            // 🔴 动态水体由 renderDynamicWater 逐帧动态渲染，不烙进静态底图 decor，根除底层静态水纹导致的重影与凝滞
-            if (p.isWater) continue;
-            if (!p.img || !p.img.complete || !p.img.naturalWidth) continue;
-            this.groundPainter.paintPatch(g, p, cv.width, cv.height);
-        }
-        const sorted = this.decorSprites.filter((s) => s.layer === 'ground').sort((a, b) => (a.z - b.z) || (a.y - b.y));
-        // 地面贴花（草花/落叶/地毯/道路石板）同样踩在抬升后的地面上
-        for (const s of sorted) this.drawDecorSprite(g, s, s.y - this.elevationLiftAt(s.x, s.y));
-        // 丘陵光影最后覆盖所有地面纹理与草花贴花；世界对象和士兵仍在其后绘制。
-        this.groundPainter.paintShading(g, cv.width, cv.height);
-    }
-
-
-    /**
-     * DE 纯正动态水体渲染：直接在主画布上对水域 polygon 进行裁切，以舒缓自然的 2:1 流速平铺流动水波与波光反射
-     */
-    private waterPatternCache = new WeakMap<HTMLImageElement, CanvasPattern>();
-    private waterTileCache = new WeakMap<HTMLImageElement, {
-        canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D; at: number; pattern: CanvasPattern | null;
-    }>();
-
-    /** 两层水纹和微光先在一个可平铺纹理单元内合成，避免每个大水域反复做三次混合。 */
-    private composedWaterPattern(img: HTMLImageElement, source: CanvasPattern, t: number): CanvasPattern | null {
-        let tile = this.waterTileCache.get(img);
-        if (!tile) {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            tile = { canvas, ctx: canvas.getContext('2d')!, at: -Infinity, pattern: null };
-            this.waterTileCache.set(img, tile);
-        }
-        if (tile.at === t) return tile.pattern;
-        const _p0 = import.meta.env.DEV ? performance.now() : 0;
-        const g = tile.ctx, w = tile.canvas.width, h = tile.canvas.height;
-        g.clearRect(0, 0, w, h);
-        // 🔴 [2026-09-16] 水纹平移改用 pattern.setTransform，别再 translate 后 fillRect(-w,-h,4w,4h)。
-        //    只有 (0,0,w,h) 会留在贴图单元里，画 16 倍面积的那 15/16 全被裁掉，纯属白烧。
-        g.save();
-        source.setTransform(new DOMMatrix([1, 0, 0, 1, (t * 8) % w, (t * 4) % h]));
-        g.fillStyle = source;
-        g.fillRect(0, 0, w, h);
-        g.restore();
-        g.save();
-        g.globalCompositeOperation = 'source-atop';
-        g.globalAlpha = 0.22;
-        source.setTransform(new DOMMatrix([1, 0, 0, 1, (-t * 3.5) % w, (t * 5) % h]));
-        g.fillStyle = source;
-        g.fillRect(0, 0, w, h);
-        g.restore();
-        g.save();
-        g.globalCompositeOperation = 'source-atop';
-        g.globalAlpha = 0.10;
-        g.fillStyle = '#60c8e8';
-        g.fillRect(0, 0, w, h);
-        g.restore();
-        tile.pattern = g.createPattern(tile.canvas, 'repeat');
-        tile.at = t;
-        if (import.meta.env.DEV) { this.perfWaterOps.pattern += performance.now() - _p0; this.perfWaterOps.patternN++; }
-        return tile.pattern;
-    }
-    private waterBBoxCache = new WeakMap<object, { x: number; y: number; w: number; h: number }>();
-    private waterSoftMaskCache = new WeakMap<object, HTMLCanvasElement>();
-    /** 🔴 [2026-09-03] 每个水块各自一张离屏画布。此前全部水块共用一张：两块尺寸不同就每帧
-     *  `offCv.width = bw` 重分配两次（画布重设尺寸 = 释放+重建+清空，还可能掉回软件渲染），
-     *  实测 2 个水块 water p50 = 26.7ms/帧（scratch/scene13_probe_latest.json 2026-09-03 21:01）。 */
-    private waterOffscreenByPatch = new WeakMap<object, { cv: HTMLCanvasElement; ctx: CanvasRenderingContext2D; composedAt: number }>();
-    /** [2026-09-03 二修] 每块各一张后实测反而 96.3ms/帧（21:26 场，2 块）：纯合成量太大。
-     *  改成：① 水纹只按 WATER_COMPOSE_HZ 重新合成，其余帧直接把上次结果 drawImage 上屏（水流 8px/s，15Hz 肉眼无差）；
-     *  ② 合成画布用 WATER_RES 半分辨率（合成像素量 /4，水本来就有 14~16px 羽化，看不出）。
-     *  DEV 下按操作分段计时进 perf.waterOps，下一场直接看是哪一步贵。 */
-    private static readonly WATER_COMPOSE_HZ = 15;
-    private static readonly WATER_RES = 0.5;
-    private perfWaterOps = { compose: 0, blit: 0, composeN: 0, blitN: 0, pattern: 0, patternN: 0 };
-    private waterMaskCv: HTMLCanvasElement | null = null;
-    private waterMaskCtx: CanvasRenderingContext2D | null = null;
-    private waterBlurCv: HTMLCanvasElement | null = null;
-    private waterBlurCtx: CanvasRenderingContext2D | null = null;
-
-    /**
-     * 水域 patch 的屏幕包围盒（算一次缓存住：polygon/cells 与地形抬升整局不变）。
-     */
-    private waterBBoxOf(p: DecorPatch): { x: number; y: number; w: number; h: number } | null {
-        const hit = this.waterBBoxCache.get(p);
-        if (hit) return hit;
-        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-        if (p.polygon && p.polygon.length >= 3) {
-            for (const pt of p.polygon) {
-                if (pt.x < x0) x0 = pt.x;
-                if (pt.x > x1) x1 = pt.x;
-                if (pt.y < y0) y0 = pt.y;
-                if (pt.y > y1) y1 = pt.y;
-            }
-        } else if (p.cells) {
-            for (const [gx, gy] of p.cells) {
-                const sx = this.isoCellX(gx, gy), sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy);
-                if (sx - TILE_W / 2 < x0) x0 = sx - TILE_W / 2;
-                if (sx + TILE_W / 2 > x1) x1 = sx + TILE_W / 2;
-                if (sy - TILE_H / 2 < y0) y0 = sy - TILE_H / 2;
-                if (sy + TILE_H / 2 > y1) y1 = sy + TILE_H / 2;
-            }
-        }
-        if (!Number.isFinite(x0) || !Number.isFinite(y0)) return null;
-        const bb = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
-        this.waterBBoxCache.set(p, bb);
-        return bb;
-    }
-
-    private renderDynamicWater(ctx: CanvasRenderingContext2D, t: number): void {
-        const waterPatches = this.decorPatches.filter((p) => p.isWater && p.img?.complete && p.img.naturalWidth);
-        if (waterPatches.length === 0) return;
-
-        const W = ctx.canvas.width, H = ctx.canvas.height;
-        if (!this.waterMaskCv) {
-            this.waterMaskCv = document.createElement('canvas');
-            this.waterMaskCtx = this.waterMaskCv.getContext('2d')!;
-        }
-        if (!this.waterBlurCv) {
-            this.waterBlurCv = document.createElement('canvas');
-            this.waterBlurCtx = this.waterBlurCv.getContext('2d')!;
-        }
-        const maskCv = this.waterMaskCv, maskCtx = this.waterMaskCtx!;
-        const blurCv = this.waterBlurCv, blurCtx = this.waterBlurCtx!;
-
-        for (const p of waterPatches) {
-            const img = p.img!;
-            const a = p.alpha ?? 1;
-            const bb = this.waterBBoxOf(p);
-            if (!bb) continue;
-            const blurRadius = p.blur ?? (p.polygon ? 14 : 16);
-            const pad = blurRadius * 3;
-            const bx = Math.max(0, Math.floor(bb.x - pad));
-            const by = Math.max(0, Math.floor(bb.y - pad));
-            const bw = Math.min(W - bx, Math.ceil(bb.w + pad * 2));
-            const bh = Math.min(H - by, Math.ceil(bb.h + pad * 2));
-            if (bw <= 0 || bh <= 0) continue;
-
-            let softMask = this.waterSoftMaskCache.get(p);
-            if (!softMask || softMask.width !== bw || softMask.height !== bh) {
-                softMask = document.createElement('canvas');
-                softMask.width = bw;
-                softMask.height = bh;
-                const softCtx = softMask.getContext('2d')!;
-
-                // 🔴 [2026-09-10 修复边缘漏地] 外海/侧翼水域延伸至屏幕外时，若在 [0, W] 硬裁切后再 blur，
-                //    会在屏幕外边缘处与空白背景虚化衰减，导致外海最外侧露出底层陆地。
-                //    使用 pad 外扩缓冲区生成遮罩并在带边框内做高斯模糊，再裁剪回 (bw, bh)，
-                //    确保延展至屏幕外的水域在屏幕边缘保持 100% 满不透明度，内陆岸线侧正常自然羽化。
-                const mw = bw + pad * 2;
-                const mh = bh + pad * 2;
-                if (maskCv.width !== mw || maskCv.height !== mh) {
-                    maskCv.width = mw;
-                    maskCv.height = mh;
-                }
-                if (blurCv.width !== mw || blurCv.height !== mh) {
-                    blurCv.width = mw;
-                    blurCv.height = mh;
-                }
-                maskCtx.clearRect(0, 0, mw, mh);
-                maskCtx.fillStyle = '#ffffff';
-                const ox = bx - pad;
-                const oy = by - pad;
-                if (p.polygon && p.polygon.length >= 3) {
-                    maskCtx.beginPath();
-                    maskCtx.moveTo(p.polygon[0].x - ox, p.polygon[0].y - oy);
-                    for (let i = 1; i < p.polygon.length; i++) maskCtx.lineTo(p.polygon[i].x - ox, p.polygon[i].y - oy);
-                    maskCtx.closePath();
-                    maskCtx.fill();
-                } else {
-                    maskCtx.beginPath();
-                    for (const [gx, gy] of p.cells) {
-                        const sx = this.isoCellX(gx, gy) - ox, sy = this.isoCellY(gx, gy) - this.cellLift(gx, gy) - oy;
-                        maskCtx.moveTo(sx, sy - TILE_H / 2);
-                        maskCtx.lineTo(sx + TILE_W / 2, sy);
-                        maskCtx.lineTo(sx, sy + TILE_H / 2);
-                        maskCtx.lineTo(sx - TILE_W / 2, sy);
-                        maskCtx.closePath();
-                    }
-                    maskCtx.fill();
-                }
-
-                blurCtx.clearRect(0, 0, mw, mh);
-                blurCtx.save();
-                blurCtx.filter = `blur(${blurRadius}px)`;
-                blurCtx.drawImage(maskCv, 0, 0);
-                blurCtx.restore();
-
-                softCtx.clearRect(0, 0, bw, bh);
-                softCtx.drawImage(blurCv, pad, pad, bw, bh, 0, 0, bw, bh);
-                this.waterSoftMaskCache.set(p, softMask);
-            }
-
-            let off = this.waterOffscreenByPatch.get(p);
-            if (!off) {
-                const cv = document.createElement('canvas');
-                off = { cv, ctx: cv.getContext('2d')!, composedAt: -Infinity };
-                this.waterOffscreenByPatch.set(p, off);
-            }
-            const offCv = off.cv, offCtx = off.ctx;
-            const R = Scene13WarLayer.WATER_RES;
-            const cw = Math.max(1, Math.ceil(bw * R)), ch = Math.max(1, Math.ceil(bh * R));
-            if (offCv.width !== cw || offCv.height !== ch) {
-                offCv.width = cw;
-                offCv.height = ch;
-                off.composedAt = -Infinity;
-            }
-            const nowMs = t * 1000;
-            const needCompose = nowMs - off.composedAt >= 1000 / Scene13WarLayer.WATER_COMPOSE_HZ;
-            if (!needCompose) {
-                const _b0 = import.meta.env.DEV ? performance.now() : 0;
-                ctx.save();
-                ctx.globalAlpha = a;
-                ctx.drawImage(offCv, bx, by, bw, bh);
-                ctx.restore();
-                if (import.meta.env.DEV) { this.perfWaterOps.blit += performance.now() - _b0; this.perfWaterOps.blitN++; }
-                continue;
-            }
-            off.composedAt = nowMs;
-            const _c0 = import.meta.env.DEV ? performance.now() : 0;
-            offCtx.setTransform(1, 0, 0, 1, 0, 0);
-            offCtx.clearRect(0, 0, cw, ch);
-            // 以下全部在半分辨率坐标系里画：把 (bw,bh) 空间缩到 (cw,ch)
-            offCtx.setTransform(R, 0, 0, R, 0, 0);
-
-            // 1. 贴上当前水体专属的局部羽化软边
-            offCtx.drawImage(softMask, 0, 0);
-
-            // 2. 填充流动水纹贴图（第1层 source-in 仅保留羽化遮罩范围，后续层 source-atop 叠加不降 alpha）
-            offCtx.save();
-            offCtx.globalCompositeOperation = 'source-in';
-
-            let pat = this.waterPatternCache.get(img) ?? null;
-            if (!pat) {
-                pat = offCtx.createPattern(img, 'repeat');
-                if (pat) this.waterPatternCache.set(img, pat);
-            }
-            const composed = pat ? this.composedWaterPattern(img, pat, t) : null;
-            if (composed) {
-                offCtx.translate(-bx, -by);
-                offCtx.fillStyle = composed;
-                offCtx.fillRect(bx, by, bw, bh);
-            }
-            offCtx.restore();
-            offCtx.setTransform(1, 0, 0, 1, 0, 0);
-            if (import.meta.env.DEV) { this.perfWaterOps.compose += performance.now() - _c0; this.perfWaterOps.composeN++; }
-
-            // 3. 将羽化流动水体合成到主画布（半分辨率 → 拉回原尺寸）
-            const _b1 = import.meta.env.DEV ? performance.now() : 0;
-            ctx.save();
-            ctx.globalAlpha = a;
-            ctx.drawImage(offCv, bx, by, bw, bh);
-            ctx.restore();
-            if (import.meta.env.DEV) { this.perfWaterOps.blit += performance.now() - _b1; this.perfWaterOps.blitN++; }
         }
     }
 
     /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪与水花 */
     private renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
-        const isWater = (this.useGroundGL && this.groundLayerGL && this.canvas)
-            ? ((x: number, y: number) => this.groundLayerGL!.isWaterAt(x, y, this.canvas!.width, this.canvas!.height))
-            : this.environmentPlan?.isWater;
-        if (!isWater) return;
+        if (!this.useGroundGL || !this.groundLayerGL) return;
+        const gl = this.groundLayerGL, W = this.worldCX * 2, H = this.worldCY * 2;
+        const isWater = (x: number, y: number) => gl.isWaterAt(x, y, W, H);
 
         ctx.save();
 
@@ -7837,10 +7286,6 @@ export class Scene13WarLayer {
 
         ctx.restore();
     }
-
-
-
-
 
     /** 画单个装饰精灵（按 anchor 对齐树基/岩心，支持水平翻转） */
     /** 战略地图同款「建筑脚下地基底图」贴图：按城型取（与 TerritorySystem 逐一对应）。毡帐营地（YURT）无地基。 */
@@ -8306,6 +7751,7 @@ export class Scene13WarLayer {
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
+            const outsideMen: WarMan[] = [];   // 本批在城外列阵出生的守军（批末按实际站位贴墙校正，见下）
             while (batch > 0) {
                 const s = ports[pi % ports.length];
                 pi++;
@@ -8334,10 +7780,7 @@ export class Scene13WarLayer {
                 const inMarch = this.deployT > 0;
                 const slotIdx = s.slotN++;
                 const files = marchFilesOf(s.key);
-                // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX：
-                // 出兵口的前后行间距 depth = min(150, VW×0.075)，1920 屏才 144px，
-                // 战车 4 排若也用 44 就是 132px，窄屏（1366→102px）会直接压到前后排的口上。
-                // 叠车主要是横向观感问题，纵深收紧后由软推挤自然拉开，够用。
+                // 横向按体型撑开（战车 44 / 步骑 24）；纵深另设上限 MARCH_SP_DEPTH_MAX，叠车由软推挤自然拉开。
                 const sp = marchSpacingOf(s.key);
                 // 🔴 [2026-10-12 主人「现在的方阵有问题，是前后长，应该是左右长」「先试A」]
                 //    原「行距取列距 2 倍」（2026-10-11）实测（scratch 探针，攻城战弋阳）：方阵纵深 82 / 横向 41，
@@ -8359,9 +7802,9 @@ export class Scene13WarLayer {
                 //    之后原地待敌（holdLanes）；后续补兵照旧在城内出生、走城门出城。
                 const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && s.outFwd !== undefined;
                 if (outsideFirst) {
-                    const B = this.defOutsideBase();
-                    spawnX = B.x + uFwd.x * s.outFwd! + uSide.x * s.outSide! - uFwd.x * dep + uSide.x * slotY;
-                    spawnY = B.y + uFwd.y * s.outFwd! + uSide.y * s.outSide! - uFwd.y * dep + uSide.y * slotY;
+                    const B = this.defOutsideBase(), F = B.fwd, S = B.side;   // 阵与最正对攻方的那面墙平行（见 defOutsideBase）
+                    spawnX = B.x + F.x * s.outFwd! + S.x * s.outSide! - F.x * dep + S.x * slotY;
+                    spawnY = B.y + F.y * s.outFwd! + S.y * s.outSide! - F.y * dep + S.y * slotY;
                     this.holdLanes.add(s.lane);
                 }
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
@@ -8382,6 +7825,24 @@ export class Scene13WarLayer {
                     lane: s.lane,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
+                if (outsideFirst) outsideMen.push(this.men[this.men.length - 1]);
+            }
+            // 🔴 [2026-10-14] 城外阵贴墙校正：defOutsideBase 按「每队 50 人」估最后一排，实际每队人数随队数、兵种人口而变
+            //    （实测 9 队时有的队排到 6~7 排，最后一排压到墙上）⇒ 整批出生后按实际站位，沿墙的法线整体挪到「最后一人离墙外表面 DEF_WALL_GAP」。
+            if (outsideMen.length) {
+                // 守城的玩家本人同在城外阵里（见 setupPlayerUnits），一起挪
+                const hm = this.heroMan;
+                if (hm && hm.f === f && hm.hp > 0 && !outsideMen.includes(hm) && !this.insideRing(hm.x, hm.y)) outsideMen.push(hm);
+                const B = this.defOutsideBase(), F = B.fwd, C = this.deCityCenter;
+                let minP = Infinity;
+                for (const m of outsideMen) minP = Math.min(minP, (m.x - C.x) * F.x + (m.y - C.y) * F.y - this.radiusOf(m.key));
+                const d = B.wallOuter + DEF_WALL_GAP - minP;
+                if (Number.isFinite(d) && Math.abs(d) > 0.5) {
+                    for (const m of outsideMen) {
+                        m.x += F.x * d; m.y += F.y * d; m.tx += F.x * d; m.ty += F.y * d;
+                        m.prevX = m.x; m.prevY = m.y; m.anchorX = m.x; m.anchorY = m.y; m.y0 = m.y;
+                    }
+                }
             }
         }
         this.batchCd = BATCH_COOLDOWN;
@@ -8873,13 +8334,23 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
      */
     private collapseNextWallGap(): boolean {
-        const alive = this.wallGates.filter(b => this.wallStanding(b));
+        // 🔴 [2026-10-14 主人令「坍塌系统优先坍塌不满血的城门，城墙，建筑。不要坍塌中心的那个建筑」]
+        //    候选＝还立着的城门/城墙/城垛 ＋ 城内建筑（含箭塔），**中心建筑永远不在候选里**（只能被攻方士兵或攻城武器打掉才算胜利）
+        if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+        const alive = [...this.wallGates, ...this.defBuildings].filter(b => b !== this.centerBld && this.wallStanding(b));
         if (alive.length === 0) return false;
         let pick: WarBuilding | undefined;
-        for (const b of alive) if (b.hitAt !== undefined && b.hp < b.maxHp && (!pick || b.hitAt < pick.hitAt!)) pick = b;
-        // 🔴 [2026-10-14 主人令「要设计为受到攻击的城墙才能坍塌，不然就不现实了」] 没有挨过打、掉了血的墙段 ⇒ 这一轮不塌
+        // 只挑没满血的，先塌最早挨打的（没记挨打时刻的按「刚挨打」排在后面）
+        for (const b of alive) {
+            if (b.hp >= b.maxHp) continue;
+            if (!pick || (b.hitAt ?? this.battleSec) < (pick.hitAt ?? this.battleSec)) pick = b;
+        }
+        // 🔴 [2026-10-14 主人令「要设计为受到攻击的城墙才能坍塌，不然就不现实了」] 没有挨过打、掉了血的 ⇒ 这一轮不塌
         if (!pick) return true;
-        this.collapseOneWall(pick);
+        if (pick.bld) {   // 城内建筑：血清零走建筑倒塌（停火、切残骸），与被打掉同一条路
+            pick.hp = 0;
+            this.onDefBuildingHit(pick);
+        } else this.collapseOneWall(pick);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
         this.releaseHold();
@@ -9076,8 +8547,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      *    （注：城堡已在 castleTowers 中以三连发重火力射击，这里跳过 CASTLE 避免重复）。
      */
     private stepCityBuildingShoot(b: CityBuildingEntry, dt: number): void {
-        // 城堡已在 castleTowers 独立射击，跳过
-        if (b.name.includes('CASTLE')) return;
+        // 城堡已在 castleTowers 独立射击（旧版城池才有），跳过；新版城池里城堡只登记为普通建筑，照常射
+        // 🔴 [2026-10-14 主人令「九建筑都会射箭」] 原来凡是城堡一律跳过 ⇒ 新版城池的中心城堡一箭不射
+        if (b.name.includes('CASTLE') && this.castleTowers.some((c) => c.sprite === b.sprite)) return;
         // 坍塌即停火：已销毁、正在倒塌、或已切成 RUBBLE 残骸，立即停止射击
         if (b.sprite.destroyed || b.sprite.collapse || b.sprite.asset.includes('_RUBBLE')) return;
         // 建筑贴图未就绪不射
@@ -9596,18 +9068,41 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         return this.insideRing(o.x, o.y) ? PASS_INSIDE_DAMAGE_TAKEN : 1;
     }
 
-    /** 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」] 城外阵基点：沿守方推进方向（朝攻方），
-     *  让最后一排最后一人落在城墙外缘再往外 DEF_WALL_GAP 处 ⇒ 全阵在墙外，不会有人站进墙里。
-     *  城墙外缘：墙件已建好就用墙件实测（件中心投影最大值＋件半厚 100px）；还没建好就用城池外框菱形（偏保守、稍远）。 */
-    private defOutsideBase(): { x: number; y: number } {
+    /** 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」→ 选方案 1「守方整个阵转过来，和最近那面城墙平行，背贴着墙」]
+     *  城外阵的基点与朝向：城墙在画面上是菱形，四面墙朝外的方向是地块两条轴的梯度 (±TH, ±TW)/|·|；
+     *  取最正对攻方的那一面，阵的前方 = 这面墙的朝外方向、横排 = 沿这面墙 ⇒ 最后一排到墙处处等距。
+     *  最后一排最后一人落在这面墙外表面再往外 DEF_WALL_GAP；阵的中心对准这面墙的中点。
+     *  墙件还没建好时，墙面位置退回城池外框估算（偏保守、稍远）。 */
+    private defOutsideBase(): { x: number; y: number; fwd: { x: number; y: number }; side: { x: number; y: number }; wallOuter: number } {
         const C = this.deCityCenter, u = this.advanceVec[1];
-        // 墙件碰撞框（地块坐标 ±0.95）在 u 方向上的半厚：两条地块轴在屏幕上是 (TW/2, TH/2) 与 (-TW/2, TH/2)
-        const half = 0.95 * (Math.abs(u.x * TAC_TILE_W / 2 + u.y * TAC_TILE_H / 2) + Math.abs(-u.x * TAC_TILE_W / 2 + u.y * TAC_TILE_H / 2));
-        let support = -Infinity;
-        for (const b of this.wallGates) support = Math.max(support, (b.x - C.x) * u.x + (b.y - C.y) * u.y + half);
-        if (!Number.isFinite(support)) {
+        const nl = Math.hypot(TAC_TILE_W, TAC_TILE_H);
+        const faces = [
+            { x: TAC_TILE_H / nl, y: TAC_TILE_W / nl }, { x: -TAC_TILE_H / nl, y: TAC_TILE_W / nl },
+            { x: TAC_TILE_H / nl, y: -TAC_TILE_W / nl }, { x: -TAC_TILE_H / nl, y: -TAC_TILE_W / nl },
+        ];
+        let fwd = faces[0];
+        for (const f of faces) if (f.x * u.x + f.y * u.y > fwd.x * u.x + fwd.y * u.y) fwd = f;
+        // 横排方向：与攻方那套出兵口同一个左右手（与 sideVec[1] 同号），队序不颠倒
+        let side = { x: -fwd.y, y: fwd.x };
+        const sv = this.sideVec[1];
+        if (side.x * sv.x + side.y * sv.y < 0) side = { x: -side.x, y: -side.y };
+        // 墙件碰撞框（地块坐标 ±0.95）在 fwd 方向上的半厚：两条地块轴在屏幕上是 (TW/2, TH/2) 与 (-TW/2, TH/2)
+        const half = 0.95 * (Math.abs(fwd.x * TAC_TILE_W / 2 + fwd.y * TAC_TILE_H / 2) + Math.abs(-fwd.x * TAC_TILE_W / 2 + fwd.y * TAC_TILE_H / 2));
+        let top = -Infinity;
+        for (const b of this.wallGates) top = Math.max(top, (b.x - C.x) * fwd.x + (b.y - C.y) * fwd.y);
+        let support: number, lat = 0;
+        if (Number.isFinite(top)) {
+            support = top + half;
+            // 这面墙的中点：投影离最外那一线 30px 以内的墙件，取平均位置在横排方向上的分量
+            let sum = 0, n = 0;
+            for (const b of this.wallGates) {
+                if ((b.x - C.x) * fwd.x + (b.y - C.y) * fwd.y < top - 30) continue;
+                sum += (b.x - C.x) * side.x + (b.y - C.y) * side.y; n++;
+            }
+            if (n) lat = sum / n;
+        } else {
             const W = (this.deCity?.width ?? 0) / 2, H = (this.deCity?.height ?? 0) / 2;
-            support = Math.max(Math.abs(u.x) * W, Math.abs(u.y) * H);
+            support = Math.max(Math.abs(fwd.x) * W, Math.abs(fwd.y) * H);
         }
         // 按每队实际排数算最后一人：口在基点前 outFwd，兵在口后排开 (排数−1)×行距，再加本兵种半径
         let rear = Infinity;
@@ -9619,7 +9114,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         }
         if (!Number.isFinite(rear)) rear = -this.rowDepth - 180;
         const proj = support + DEF_WALL_GAP - rear;
-        return { x: C.x + u.x * proj, y: C.y + u.y * proj };
+        return { x: C.x + fwd.x * proj + side.x * lat, y: C.y + fwd.y * proj + side.y * lat, fwd, side, wallOuter: support };
     }
 
     private insideRing(x: number, y: number): boolean {
@@ -11108,12 +10603,18 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
         // 🔴 [2026-10-12 主人令] 胜负条件：① 一方全灭；② 攻城战中心建筑被摧毁 → 守方输；
         //    ③ 5 分钟（BATTLE_LIMIT_SEC）到点仍未分出 → 攻方输（攻城、野战同口径）。
+        // 🔴 [2026-10-14 主人令「攻城战，攻方胜利条件改为，攻占九建筑的中心建筑为胜利」]
+        //    有中心建筑的攻城战：攻方**只有**摧毁中心建筑才算赢；守军打光了也不算，攻方得接着去拆中心建筑。
+        //    守方赢：攻方全灭，或 5 分钟到点。野战、没有中心建筑的攻城战照旧（一方全灭）。
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         const centerDown = !!this.centerBld && this.centerBld.hp <= 0;
+        const centerRule = this.battleType === 'siege' && !!this.centerBld;
         const timeUp = this.battleSec >= BATTLE_LIMIT_SEC;
-        if (alive[0] <= 0 || alive[1] <= 0 || centerDown || timeUp) {
+        if (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp) {
             this.over = true;
-            const attackerLost = alive[0] <= 0 || (!centerDown && alive[1] > 0 && timeUp);
+            const attackerLost = centerRule
+                ? !centerDown
+                : (alive[0] <= 0 || (!centerDown && alive[1] > 0 && timeUp));
             // [2026-08-11 诊断] 主人报「兵没死光就结束」。这条日志证明是不是演出自己判的：
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
@@ -11496,7 +10997,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (this.pending > 0 && !this.assetsReadyOnce) {
             // 先显示已经就绪的战场，素材等待不再迫使浏览器反复合成底下的战略地图。
             // 此处只绘制，部队部署与战斗计时仍等必需素材全部就绪才开始。
-            if (this.decorHasTerrain) this.render();
+            if (this.useGroundGL) this.render();
             // 🔴 [2026-08-11 实锤] 素材 pending 卡死 = 演出冻结 + 引擎冻结（scene13Frozen）
             //    → 跟随军团永远不动、战斗面板数字不动（主人截图实锤）。
             //    素材若 30 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
@@ -11550,9 +11051,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     stepMs: +stepMs.toFixed(1), renderMs: +renderMs.toFixed(1),
                     men: this.men.length, corpses: this.corpses.length,
                     arrows: this.arrows.length, slashes: this.slashes.length,
-                    wallGates: this.wallGates.length, decorPatches: this.decorPatches.length,
+                    wallGates: this.wallGates.length,
                     decorSprites: this.decorSprites.length,
-                    sinceRepaint: this.lastRepaintDecorAt ? Math.round(t2 - this.lastRepaintDecorAt) : -1,
                     sinceCollapse: this.lastCollapseAt ? Math.round(t2 - this.lastCollapseAt) : -1,
                     sinceBake: this.lastBakeCorpseAt ? Math.round(t2 - this.lastBakeCorpseAt) : -1,
                     heapMB: +(((performance as any).memory?.usedJSHeapSize ?? 0) / 1048576).toFixed(1),
@@ -11622,10 +11122,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
         if (hasTransform) {
             ctx.clearRect(0, 0, cv.width, cv.height);
-            // 缩小模式下垫底平铺地形，防止边缘漏黑底
-            if (zoom < 1 && this.decorHasTerrain && this.groundPainter.terrain) {
-                ctx.drawImage(this.groundPainter.terrain, 0, 0);
-            }
             ctx.save();
             ctx.translate(cx + this.tacticalPanX, cy + this.tacticalPanY);
             ctx.scale(zoom, zoom);
@@ -11650,32 +11146,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             this.drawCityPlazas(ctx);
             this.syncDeCityGround();
             this.renderWadingRipples(ctx, performance.now() * 0.001);
-        } else {
-            // copy 会在一次合成中同时替换旧帧与铺入静态底图；避免 4K 下先 clearRect、再 drawImage
-            // 对整张画布做两次像素级操作。decor 始终与主画布同尺寸。
-            if (this.decor) {
-                if (!hasTransform) {
-                    ctx.globalCompositeOperation = 'copy';
-                    ctx.drawImage(this.decor, 0, 0);
-                    ctx.globalCompositeOperation = 'source-over';
-                } else {
-                    ctx.drawImage(this.decor, 0, 0);
-                }
-            } else {
-                ctx.clearRect(0, 0, cv.width, cv.height);
-            }
-
-            // 🔴 DE 动态水体系统：多重波纹实时流动、潮汐浪花拍岸（Shoreline Waves）与水光反射
-            const _wt0 = import.meta.env.DEV ? performance.now() : 0;
-            this.renderDynamicWater(ctx, performance.now() * 0.001);
-
-            // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
-            this.renderWadingRipples(ctx, performance.now() * 0.001);
-            if (import.meta.env.DEV) {
-                this.perfWater.push(performance.now() - _wt0);
-                if (this.perfWater.length > 1800) this.perfWater.shift();
-                this.perfWaterPatches = this.decorPatches.reduce((n, q) => n + (q.isWater ? 1 : 0), 0);
-            }
+        } else if (!hasTransform) {
+            ctx.clearRect(0, 0, cv.width, cv.height);   // GL 地面还没就绪：只清屏，不画任何旧地面
         }
 
         // [PERF 2026-08-29] 对象池复用：原来每帧 new 700+ 个临时对象（vis 数组 + 每个元素），加剧 GC。
@@ -12182,7 +11654,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (hasTransform) ctx.restore();
         this.coverStrategyMap();
         // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
-        if (this.timeOfDay.active && this.decorHasTerrain) {   // 地形缺图时画布不是满铺，不能整屏压色
+        if (this.timeOfDay.active && this.useGroundGL) {   // 地形缺图时画布不是满铺，不能整屏压色
             const _tt0 = import.meta.env.DEV ? performance.now() : 0;
             this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
             if (import.meta.env.DEV) {
