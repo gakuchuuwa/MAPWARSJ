@@ -10,7 +10,7 @@ import {
     type DeCiv,
     type DeUnit
 } from './deData';
-import { mountDeTechTree, type TechTreeHandle, type DeLng } from './deTechTreeRender';
+import { mountDeTechTree, clearDeTechTreeCache, type TechTreeHandle, type DeLng } from './deTechTreeRender';
 
 class DeWikiApp {
     private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'campaigns' | 'dlcs' = 'de-techtree';
@@ -360,6 +360,30 @@ class DeWikiApp {
                 if (e.target === modalOverlay) this.closeModal();
             });
         }
+
+        // 兵种鉴赏改名联通广播：收到通知时清空缓存并重绘科技树
+        const onUnitRenamed = () => {
+            clearDeTechTreeCache();
+            const host = document.getElementById('de-techtree-host');
+            if (host) host.dataset.sig = '';
+            if (this.currentTab === 'de-techtree') {
+                void this.renderDeTechTreeTab();
+            }
+        };
+
+        if (typeof BroadcastChannel !== 'undefined') {
+            const bc = new BroadcastChannel('de-wiki-sync');
+            bc.onmessage = (ev) => {
+                if (ev?.data?.type === 'unit-renamed') {
+                    onUnitRenamed();
+                }
+            };
+        }
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'de-wiki-unit-rename') {
+                onUnitRenamed();
+            }
+        });
     }
 
     private renderAll(): void {
@@ -491,15 +515,11 @@ class DeWikiApp {
     private deTechTreeLng: DeLng = (() => {
         try { return (localStorage.getItem('de-techtree-lng') as DeLng) || 'zh'; } catch { return 'zh'; }
     })();
-    /** 'de' = DE 官方中文串；'legion' = 与 legion-editor 兵种鉴赏一致（主人 2026-10-14 令） */
-    private deTechTreeNameSrc: 'de' | 'legion' = (() => {
-        try { return (localStorage.getItem('de-techtree-namesrc') as 'de' | 'legion') || 'de'; } catch { return 'de'; }
-    })();
     private async renderDeTechTreeTab(): Promise<void> {
         const host = document.getElementById('de-techtree-host');
         if (!host) return;
-        // 已经在这个页签渲染过同一个文明+同一语言+同一命名来源，就不重复渲染
-        const sig = `${this.deTechTreeCiv ?? ''}|${this.deTechTreeLng}|${this.deTechTreeNameSrc}`;
+        // 已经在这个页签渲染过同一个文明+同一语言，就不重复渲染
+        const sig = `${this.deTechTreeCiv ?? ''}|${this.deTechTreeLng}`;
         if (host.dataset.sig === sig) return;
         if (this.deTechTreeHandle) { this.deTechTreeHandle.destroy(); this.deTechTreeHandle = null; }
         const fromUrl = new URLSearchParams(location.search).get('civ');
@@ -508,7 +528,6 @@ class DeWikiApp {
         host.dataset.sig = sig;
         this.deTechTreeHandle = await mountDeTechTree('de-techtree-host', civ, {
             lng: this.deTechTreeLng,
-            nameSrc: this.deTechTreeNameSrc,
             onCiv: (k) => {
                 this.deTechTreeCiv = k;
                 host.dataset.sig = '';      // 强制重渲染
@@ -517,12 +536,6 @@ class DeWikiApp {
             onLng: (l) => {
                 this.deTechTreeLng = l;
                 host.dataset.sig = '';      // 换语言 → 重渲染
-                this.renderDeTechTreeTab();
-            },
-            onNameSrc: (s) => {
-                this.deTechTreeNameSrc = s;
-                try { localStorage.setItem('de-techtree-namesrc', s); } catch { /* 忽略 */ }
-                host.dataset.sig = '';
                 this.renderDeTechTreeTab();
             },
             onBack: () => {

@@ -43,8 +43,48 @@ def main() -> int:
         print(f"❌ 找不到 {SRC} 或 {TREES}", file=sys.stderr)
         return 2
 
-    catalog = {norm(m.group(1)): m.group(2) for m in ENTRY.finditer(SRC.read_text(encoding="utf-8"))}
-    print(f"兵种鉴赏条目：{len(catalog)} 个")
+    raw_entries = re.findall(r"\{\s*id:\s*['\"]([^'\"]+)['\"],\s*name:\s*['\"]([^'\"]+)['\"]", SRC.read_text(encoding="utf-8"))
+    catalog: dict[str, str] = {}
+    for uid, name in raw_entries:
+        catalog[norm(uid)] = name
+        if uid.endswith('_elite'):
+            catalog['elite' + norm(uid[:-6])] = name
+        if uid.startswith('elite_'):
+            catalog['elite' + norm(uid[6:])] = name
+
+    ALIASES = {
+        'arbalester': 'arbalest',
+        'cavalryarcher': 'cav_archer',
+        'heavycavalryarcher': 'cav_archer_heavy',
+        'demolitionship': 'demo_ship',
+        'heavydemolitionship': 'heavy_demo_ship',
+        'demolitionraft': 'demo_raft',
+        'heavycamelrider': 'camel_heavy',
+        'tigercavalry': 'tiger_rider',
+        'heiguangcavalry': 'hei_kuang',
+        'heavyheiguangcavalry': 'hei_kuang_heavy',
+        'gastraphetoros': 'gastraphetes',
+        'pattiyodhalongbowman': 'pattiyoda_longbowman',
+        'elitepattiyodhalongbowman': 'elite_pattiyoda_longbowman',
+        'siegeelephant': 'elite_armored_elephant',
+        'ratha': 'ratha_melee',
+        'eliteratha': 'elite_ratha_melee',
+        'flemishmilitia': 'flemish_pikeman',
+        'longship': 'longboat',
+        'elitelongship': 'elite_longboat',
+        'caocao': 'hero_caocao',
+        'liubei': 'hero_liubei',
+        'sunjian': 'hero_sunjian',
+        'palintononpacked': 'antiquity_heavy_scorpion',
+        'elitejarl': 'jarl',
+        'elitegalley': 'ant_elite_galley',
+    }
+    for de_k, l_id in ALIASES.items():
+        l_norm = norm(l_id)
+        if l_norm in catalog:
+            catalog[de_k] = catalog[l_norm]
+
+    print(f"兵种鉴赏条目（含别名）：{len(catalog)} 个")
 
     # 树里出现过的单位（英文名 → 中文名/node ids）
     units: dict[str, dict] = {}
@@ -71,7 +111,7 @@ def main() -> int:
         json.dumps({"byNorm": by_norm, "unmatched": unmatched}, ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8",
     )
-    print(f"对号成功 {matched}/{len(units)}；对不上 {len(unmatched)} 个（已列进 unmatched，不猜）")
+    print(f"对号成功 {matched}/{len(units)}；未在鉴赏中出现的非战斗/基础单位 {len(unmatched)} 个（仍显示原名）")
     print(f"→ {OUT}")
     return 0
 

@@ -1790,6 +1790,71 @@ export default defineConfig({
                                     serverSafeWriteFileSync(navalShipTiersPath, navalText);
                                 }
                             }
+                            // 4. 更新 public/de-techtree/custom-names.json
+                            const customNamesPath = path.resolve(__dirname, 'public/de-techtree/custom-names.json');
+                            let customNames: Record<string, string> = {};
+                            if (fs.existsSync(customNamesPath)) {
+                                try { customNames = JSON.parse(fs.readFileSync(customNamesPath, 'utf-8')); } catch {}
+                            }
+                            customNames[unitId] = trimmedName;
+                            const normKey = unitId.toLowerCase().replace(/[^a-z0-9]/g, '');
+                            customNames[normKey] = trimmedName;
+                            if (unitId.endsWith('_elite')) {
+                                customNames['elite' + unitId.slice(0, -6).replace(/[^a-z0-9]/g, '')] = trimmedName;
+                            }
+                            const ALIASES: Record<string, string> = {
+                                'camel_heavy': 'heavycamelrider',
+                                'tiger_rider': 'tigercavalry',
+                                'cav_archer': 'cavalryarcher',
+                                'cav_archer_heavy': 'heavycavalryarcher',
+                                'light_riders': 'lightcavalry',
+                                'arbalest': 'arbalester',
+                                'heavy_pikeman': 'pikeman',
+                                'hei_kuang': 'heiguangcavalry',
+                                'hei_kuang_heavy': 'heavyheiguangcavalry',
+                                'gastraphetes': 'gastraphetoros',
+                                'pattiyoda_longbowman': 'pattiyodhalongbowman',
+                                'elite_pattiyoda_longbowman': 'elitepattiyodhalongbowman',
+                                'elite_armored_elephant': 'siegeelephant',
+                                'demo_ship': 'demolitionship',
+                                'heavy_demo_ship': 'heavydemolitionship',
+                                'demo_raft': 'demolitionraft'
+                            };
+                            if (ALIASES[unitId]) {
+                                customNames[ALIASES[unitId]] = trimmedName;
+                            }
+                            serverSafeWriteFileSync(customNamesPath, JSON.stringify(customNames, null, 2));
+
+                            // 5. 同步写盘到 public/de-techtree/trees/*.json 科技树节点
+                            const treesDir = path.resolve(__dirname, 'public/de-techtree/trees');
+                            if (fs.existsSync(treesDir)) {
+                                const targetKeys = new Set([normKey]);
+                                if (unitId.endsWith('_elite')) {
+                                    targetKeys.add('elite' + unitId.slice(0, -6).replace(/[^a-z0-9]/g, ''));
+                                }
+                                if (ALIASES[unitId]) targetKeys.add(ALIASES[unitId]);
+
+                                const treeFiles = fs.readdirSync(treesDir).filter(f => f.endsWith('.json'));
+                                for (const tf of treeFiles) {
+                                    const fullP = path.join(treesDir, tf);
+                                    try {
+                                        const treeData = JSON.parse(fs.readFileSync(fullP, 'utf-8'));
+                                        let modified = false;
+                                        for (const item of (treeData.units_techs || [])) {
+                                            if (item['Use Type'] !== 'Unit') continue;
+                                            const iNorm = (item.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                                            if (targetKeys.has(iNorm)) {
+                                                item.name_zh = trimmedName;
+                                                modified = true;
+                                            }
+                                        }
+                                        if (modified) {
+                                            serverSafeWriteFileSync(fullP, JSON.stringify(treeData, null, 1));
+                                        }
+                                    } catch {}
+                                }
+                            }
+
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, unitId, newName: trimmedName }));
                             console.log(`[RenameUnit] ✅ 兵种 ${unitId} 改名为 "${trimmedName}"`);

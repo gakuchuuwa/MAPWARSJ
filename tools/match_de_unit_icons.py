@@ -146,6 +146,37 @@ def main():
                         elif icon is None:
                             icon = du['icon']
 
+        # 手动映射/特殊别名
+        ALIASES = {
+            'tiger_rider': 432,
+            'camel_heavy': 79,
+            'light_riders': 95,
+            'dagnajan_elephant': 209,
+            'porus_elephant': 744,
+            'gastraphetes': 22,
+            'equites': 1,
+            'sarmatian': 78,
+            'elite_peltast': 694,
+            'vanguard': 10,
+            'antiquity_light_cavalry': 103,
+            'antiquity_battering_ram': 80,
+            'antiquity_capped_ram': 63,
+            'antiquity_scorpion': 89,
+            'antiquity_siege_ram': 73,
+            'ant_galley': 47,
+            'ant_war_galley': 46,
+            'ant_elite_galley': 44,
+            'demo_ship': 84,
+            'heavy_demo_ship': 83,
+            'demo_raft': 202,
+            'junk': 34,
+            'hero_artemisia': 646,
+            'hero_dionysus': 632,
+            'hero_aeginetan': 632,
+        }
+        if uid in ALIASES:
+            icon = ALIASES[uid]
+
         if icon is not None and (ROOT / f"public/de-techtree/icons/Unit/{icon}.png").exists():
             matched_icons[uid] = icon
         else:

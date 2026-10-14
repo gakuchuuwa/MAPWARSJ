@@ -51,6 +51,7 @@ import {
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
+import { getUnitIconUrl } from '../data/unitIcons';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -665,6 +666,13 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_dreki', name: '英雄·龙船', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/DREKI/' },
     { id: 'hero_stoertebeker', name: '英雄·斯托尔特贝克', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HEAVY_DEMO_SHIP/' },
     { id: 'hero_aeginetan', name: '英雄·波利克里托斯', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/HERO_AEGINETAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 希罗多德点名记载的萨拉米斯海战埃伊纳英雄；素材是 u_shp 舰船类，须海军将领
+    // ── 2026-10-14 补 6 个「科技树有、鉴赏无」的 DE 官方战斗兵种（属性照 DE dat，素材 u_* SLD 提取）──
+    { id: 'maceman', name: '链锤兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
+    { id: 'mounted_crossbowman', name: '骑马弩兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN/' },
+    { id: 'mounted_crossbowman_heavy', name: '重装骑马弩兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/' },
+    { id: 'priestess', name: '女祭司', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },
+    { id: 'polemarch', name: '军事执政官', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/POLEMARCH/' },
+    { id: 'siege_elephant', name: '攻城战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/SIEGEELEPHANT/' },
 ]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
@@ -720,7 +728,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
     levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
     serjeant: 'sword_shield', teutonic_knight: 'sword_shield',
-    vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield',
+    vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield', maceman: 'sword_shield', priestess: 'sword_shield',
     sakan_axeman: 'sword_shield', champi_warrior: 'sword_shield',
     elite_champi_warrior: 'sword_shield', champi_runner: 'sword_shield', champi_scout: 'sword_shield',
     norse_warrior: 'sword_shield', strategos: 'sword_shield', elite_strategos: 'sword_shield',
@@ -738,7 +746,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', elite_hippeus: 'spear', hoplite: 'spear', elite_hoplite: 'spear', immortal: 'spear', elite_immortal: 'spear', mercenary_hoplite: 'spear',
     phalangite: 'spear', elite_phalangite: 'spear', sosso_guard: 'foot_hero', sparabara: 'spear', spearman: 'spear',
-    sacred_band: 'spear', amazon_warrior: 'spear',
+    sacred_band: 'spear', amazon_warrior: 'spear', polemarch: 'spear',
     temple_guard: 'spear', elite_temple_guard: 'spear', hill_tribesman: 'spear', indian_tribesman: 'spear',
     guardsman: 'spear', elite_guardsman: 'spear', antiquity_spearman: 'spear',
     eagle_scout: 'spear', eagle_warrior: 'spear', elite_eagle_warrior: 'spear',
@@ -801,9 +809,9 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     elite_bolas_rider: 'horse_archer', elite_camel_archer: 'horse_archer', elite_conquistador: 'horse_archer',
     elite_genitour: 'horse_archer', elite_scythian_horse_archer: 'horse_archer', genitour: 'horse_archer',
     scythian_horse_archer: 'horse_archer', tarantine_cavalry: 'horse_archer', varangian_jarl: 'horse_archer', elite_varangian_jarl: 'horse_archer', antiquity_cavalry_archer: 'horse_archer',
-    antiquity_heavy_cavalry_archer: 'horse_archer',
+    antiquity_heavy_cavalry_archer: 'horse_archer', mounted_crossbowman: 'horse_archer', mounted_crossbowman_heavy: 'horse_archer',
     // 象兵
-    war_elephant: 'elephant', battle_elephant: 'elephant', armored_elephant: 'elephant', elite_armored_elephant: 'elephant',
+    war_elephant: 'elephant', battle_elephant: 'elephant', armored_elephant: 'elephant', elite_armored_elephant: 'elephant', siege_elephant: 'elephant',
     sannahya: 'elephant', elite_sannahya: 'elephant', elite_battle_elephant: 'elephant', elite_war_elephant: 'elephant',
     // 战车
     war_chariot: 'chariot', war_chariot_ranged: 'chariot', elite_war_chariot: 'chariot', war_wagon: 'chariot',
@@ -1259,7 +1267,7 @@ function injectStyles(): void {
       td.cell-thumb { padding:2px 8px; }
       .le-cat-thumb {
         width:44px; height:44px; display:block; background:#141210;
-        border-radius:3px; image-rendering:pixelated;
+        border-radius:4px; border:1px solid #3a3225; object-fit:contain;
       }
 
       .le-body { flex:1; display:flex; min-height:0; overflow:hidden; }
@@ -1491,8 +1499,8 @@ function injectStyles(): void {
         display:flex; flex-direction:row; align-items:center; gap:8px;
       }
       .le-unit-thumb {
-        width:64px; height:64px; flex:0 0 64px; border-radius:3px;
-        background:#141210; image-rendering:pixelated;
+        width:64px; height:64px; flex:0 0 64px; border-radius:4px;
+        background:#141210; border:1px solid #3a3225; object-fit:contain;
       }
       .le-unit-card-text { display:flex; flex-direction:column; gap:4px; min-width:0; }
       .le-unit-card:hover {
@@ -4080,7 +4088,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
           <div class="le-modal-body">
             ${units.map(u => `
               <div class="le-unit-card" data-uid="${u.id}">
-                <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
+                <img class="le-unit-thumb" src="${getUnitIconUrl(u.id)}" alt="${u.name}" width="64" height="64" loading="lazy" />
                 <div class="le-unit-card-text">
                   <div class="le-unit-card-name">${u.name}</div>
                   <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${getUnitTier(u) === 'elite' ? ' · ⭐精锐' : ''}</div>
@@ -4357,7 +4365,7 @@ function renderCatalogTable(): void {
     <table class="le-table">
       <thead>
         <tr>
-          <th style="width:56px;">预览</th>
+          <th style="width:56px;" title="DE 官方科技树兵种图标">图标</th>
           <th data-col="name" style="color:#f5e6c8;background:#24201a;">兵种名称${arrow('name')}</th>
           <th data-col="age" style="width:90px;">时代${arrow('age')}</th>
           <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
@@ -4382,7 +4390,7 @@ function renderCatalogTable(): void {
             const dash = `<span style="color:#5a5348;">—</span>`;
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
-            <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
+            <td class="cell-thumb"><img class="le-cat-thumb" src="${getUnitIconUrl(u.id)}" alt="${u.name}" width="44" height="44" loading="lazy" /></td>
             <td>
               <div style="display:flex;align-items:center;gap:6px;">
                 <b style="font-size:13px;">${u.name}</b>
@@ -4481,6 +4489,16 @@ async function doRenameUnit(unitId: string, newName: string): Promise<boolean> {
         if (WAR_TYPES[unitId]) {
             WAR_TYPES[unitId].name = trimmed;
         }
+
+        // 跨页面广播联通：通知 de-wiki.html 科技树同步重绘
+        try {
+            localStorage.setItem('de-wiki-unit-rename', JSON.stringify({ unitId, newName: trimmed, t: Date.now() }));
+            if (typeof BroadcastChannel !== 'undefined') {
+                const bc = new BroadcastChannel('de-wiki-sync');
+                bc.postMessage({ type: 'unit-renamed', unitId, newName: trimmed });
+                bc.close();
+            }
+        } catch {}
 
         showToast(`✅ 兵种改名已保存：【${trimmed}】`);
         applyCatalogFilter();
@@ -4692,12 +4710,15 @@ function renderUnitPanel(unitId: string): void {
     els.panelContent.innerHTML = `
     <div style="background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="font-size:17px;font-weight:bold;color:#f5e6c8;" id="le-unit-title-name">${u.name}</div>
-            <button type="button" id="le-unit-btn-toggle-rename" class="le-btn le-btn-xs" style="background:#2a2620;border:1px solid #4a4235;color:#e0c060;cursor:pointer;" title="修改兵种名称">✏️ 改名</button>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <img src="${getUnitIconUrl(u.id)}" alt="${u.name}" style="width:48px;height:48px;border-radius:4px;border:1px solid #4a4235;background:#100e0c;flex-shrink:0;object-fit:contain;" />
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-size:17px;font-weight:bold;color:#f5e6c8;" id="le-unit-title-name">${u.name}</div>
+              <button type="button" id="le-unit-btn-toggle-rename" class="le-btn le-btn-xs" style="background:#2a2620;border:1px solid #4a4235;color:#e0c060;cursor:pointer;" title="修改兵种名称">✏️ 改名</button>
+            </div>
+            <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
           </div>
-          <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           <span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}　<span style="opacity:.65;font-weight:normal;">${AGE_YEARS[u.age].span}</span></span>
@@ -5116,6 +5137,17 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
 
 /** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
 export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
+    const iconUrl = getUnitIconUrl(unitId);
+    try {
+        const img = await loadSprite(iconUrl);
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            const size = canvas.width;
+            ctx.clearRect(0, 0, size, size);
+            ctx.drawImage(img, 0, 0, img.naturalWidth || size, img.naturalHeight || size, 0, 0, size, size);
+            return;
+        }
+    } catch { /* 兜底继续尝试精灵图 */ }
     const prefix = getUnitPathPrefix(unitId);
     const imgUrl = `${prefix}idle_${unitThumbDir}.png`;
     try {

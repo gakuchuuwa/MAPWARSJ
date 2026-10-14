@@ -560,5 +560,12 @@ export const WAR_TYPES: Record<string, WarType> = {
     lou_chuan: { name: '中国楼船', cls: 'ranged', sz: 1, hp: 175, atk: 25, meleeArmor: 0, pierceArmor: 9, rng: 520, reload: 5.5, spd: 44, dmgType: 'pierce', bonus: { 11: 230, 20: 10 }, armorTags: [16, 31, 60] },
     hero_themistocles: { name: '英雄·地米斯托克利', cls: 'melee', sz: 1, hp: 425, atk: 18, meleeArmor: 6, pierceArmor: 8, rng: 0, reload: 4.0, spd: 53, dmgType: 'melee', bonus: { 11: 8, 16: 11, 17: 4 }, armorTags: [16, 31] },
     hero_aeginetan: { name: '英雄·波利克里托斯', cls: 'ranged', sz: 1, hp: 500, atk: 90, meleeArmor: 2, pierceArmor: 6, rng: 360, reload: 7.0, spd: 48, dmgType: 'pierce', bonus: { 11: 0, 16: 0, 17: 0 }, armorTags: [16, 31, 60] },
+    // ── 2026-10-14 补 6 个 DE 官方战斗兵种（属性照 DE dat：displayed_attack/armour/max_range/reload_time/speed）──
+    maceman: { name: '链锤兵', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 29: 3, 21: 2 }, armorTags: [1, 31] },
+    mounted_crossbowman: { name: '骑马弩兵', cls: 'cav', sz: 1, kite: 70, hp: 45, atk: 7, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.5, spd: 50, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 31] },
+    mounted_crossbowman_heavy: { name: '重装骑马弩兵', cls: 'cav', sz: 1, kite: 70, hp: 55, atk: 8, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.5, spd: 50, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 31] },
+    priestess: { name: '女祭司', cls: 'ranged', sz: 1, hp: 30, atk: 0, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 1.6, spd: 28, dmgType: 'pierce', bonus: {}, armorTags: [25, 31] },
+    polemarch: { name: '军事执政官', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 20, reload: 2.0, spd: 42, dmgType: 'melee', bonus: {}, armorTags: [19, 1, 31] },
+    siege_elephant: { name: '攻城战象', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 105 }, armorTags: [5, 8, 20, 17, 31] },
 
 };
