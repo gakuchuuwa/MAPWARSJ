@@ -2245,12 +2245,12 @@ const FIREARM_MUZZLE: Record<string, string> = {
  * 每方开局数 + 每次补兵批量 = 360（2026-08-18 主人改「9 口 × 36 = 每口 6×6 方正」；2026-09-23 主人改 10 口 → 10 × 36 = 360）。
  * 成批补：开局双方各出 360；之后一方场上 < 150 才再补 360（见 TRIGGER）。
  */
-const SIDE_CAP = 360;
+const SIDE_CAP = 500;
 /**
  * 补兵触发线 = 180（2026-08-13 主人定「150」；2026-09-23 主人改 SIDE_CAP 360 → 打掉一半 = 180）：一方场上掉到 180 以下才再补一波 360。
  * 成批补制造「兵力波次」：一方打掉一半（360→180）才补，战线来回摆动，尸体沿途铺开。
  */
-const TRIGGER = 180;
+const TRIGGER = 250;
 /**
  * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
  * 🔴 只改总量语义，**画面不变**：每方开局 300 精灵不动 → 同屏密度一模一样，
@@ -2404,7 +2404,7 @@ const LANE_TRACK_EPS = 1;
  * 🔴 files 只决定「每排几个」，**不决定出兵数**：出兵数 = poolPer / popCost（见 spawns 那处）。
  *   只改 files 不改 popCost = 排得更窄更长，总兵额不变 → 兵力仍守恒。
  */
-const MARCH_FILES_DEFAULT = 9;   // 🔴 [2026-10-12 主人令「按9列×4排做」「应该是左右长」] 原 6（6×6 正方）
+const MARCH_FILES_DEFAULT = 10;   // 🔴 [2026-10-12 主人令「按9列×4排做」「应该是左右长」] 原 6（6×6 正方）
 const MARCH_FILES_WAGON = 9;   // 🔴 [2026-10-12 主人令「大体型兵种也改成左右长」选方案 2] 原 4（4×9 前后长）
 function marchFilesOf(key: string): number {
     return popCostOf(key) >= 2 ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
@@ -3697,6 +3697,8 @@ export class Scene13WarLayer {
     private flowDist: Int16Array | null = null;
     private flowR = 0;
     private flowBlocked: Uint8Array | null = null;   // 调试探针用
+    /** 🔴 [2026-10-14 主人令「守军挤在城角」→「全改」] 守方出城流场：每格到「城外」的步数（城门对守方算通路，缺口自然也通），格子与 flowDist 同一套 */
+    private defFlowDist: Int16Array | null = null;
     /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 城门精灵（含附属碰撞件）：守方穿行不受阻；null = 未建 */
     private gateSpriteSet: Set<DecorSprite> | null = null;
     /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
@@ -5397,6 +5399,7 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
+        this.defFlowDist = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5732,6 +5735,7 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
+        this.defFlowDist = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -9560,7 +9564,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
      */
     private buildFlowField(): void {
         this.flowBuiltAt = this.battleSec;
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; return; }
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; this.defFlowDist = null; return; }
+        this.buildDefFlowField();
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         const goal = this.centerBld;
         if (!goal || goal.hp <= 0) { this.flowDist = null; return; }
@@ -9617,6 +9622,67 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.flowR = R;
     }
 
+    /**
+     * 🔴 [2026-10-14 主人报「守军有的会走城门，有的会拥挤在城角」→「全改」] 守方出城流场。
+     * 病灶（实测 scratchpad probe_gate_stuck，险要 pass）：守方出城原是**直线**走向「门外 120px」那一点，
+     *   门不在直线上就顶墙，城内约 45~90 个近战守军贴着墙堆着不动。
+     * 修法：与攻方流场同一套格子，以「城墙外圈之外」的所有空地为出口反向 BFS；**城门对守方不算障碍**
+     *   （守方本就能穿自己的城门，见 resolveWorldObstructions），塌了的墙段也不算 ⇒ 守军沿步数递减走到最近的门或缺口。
+     */
+    private buildDefFlowField(): void {
+        this.ensureGateInfo();
+        const r = this.ringBox;
+        if (!r || !this.canvas) { this.defFlowDist = null; return; }
+        const TW = TAC_TILE_W, TH = TAC_TILE_H;
+        const S = FLOW_SUB;
+        const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
+        const N = 2 * R + 1;
+        const cx = this.canvas.width / 2, cy = this.canvas.height / 2;
+        const blocked = new Uint8Array(N * N);
+        for (const sp of this.decorSprites) {
+            const ob = sp.obstruction;
+            if (!ob || sp.obstructionDisabled || sp.destroyed || this.gateSpriteSet?.has(sp)) continue;
+            const dx = sp.x - cx, dy = sp.y - cy;
+            const ca = (dx / TW + dy / TH) * S, cb = (dy / TH - dx / TW) * S;
+            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;
+            for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
+                for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
+                    if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
+                    if (a < -R || a > R || b < -R || b > R) continue;
+                    blocked[(a + R) * N + (b + R)] = 1;
+                }
+            }
+        }
+        const INF = 32767;
+        const dist = new Int16Array(N * N).fill(INF);
+        const queue = new Int32Array(N * N);
+        let qh = 0, qt = 0;
+        // 出口 = 城墙外圈再往外 1 地块之外的空地（与 insideRing 的 1 地块余量同口径）
+        for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+            const ta = (i - R) / S, tb = (j - R) / S;
+            if (ta > r.a0 - 1 && ta < r.a1 + 1 && tb > r.b0 - 1 && tb < r.b1 + 1) continue;
+            const n = i * N + j;
+            if (blocked[n]) continue;
+            dist[n] = 0; queue[qt++] = n;
+        }
+        while (qh < qt) {
+            const c = queue[qh++];
+            const ca = (c / N) | 0, cb = c % N;
+            const nd = dist[c] + 1;
+            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                if (!da && !db) continue;
+                const a2 = ca + da, b2 = cb + db;
+                if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                const n = a2 * N + b2;
+                if (blocked[n] || dist[n] <= nd) continue;
+                if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                dist[n] = nd; queue[qt++] = n;
+            }
+        }
+        this.defFlowDist = dist;
+        this.flowR = R;
+    }
+
     /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
     private flowDistAt(x: number, y: number): number {
         const f = this.flowDist;
@@ -9630,8 +9696,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
-    private flowWaypoint(x: number, y: number): { x: number; y: number } | null {
-        const f = this.flowDist;
+    private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB): { x: number; y: number } | null {
+        const f = field;   // 🔴 [2026-10-14] 守方出城流场（defFlowDist）同用本函数，stop=-1 ＝ 走到城外为止
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
@@ -9654,7 +9720,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (bd >= 32767) return null;
             a = ba; b = bb;
         }
-        if (cur() <= 6 * FLOW_SUB) return null;   // 已到中心附近，交还正常索敌
+        if (cur() <= stop) return null;   // 已到中心附近，交还正常索敌
         for (let i = 0; i < 6 * FLOW_SUB; i++) {
             const [bd, ba, bb] = best();
             if (bd >= cur()) break;
@@ -9732,6 +9798,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         if (!this.ringBox) return aim;
+        // 🔴 [2026-10-14 主人令「全改」] 有出城流场就沿它走到最近的城门/缺口（不再直线顶墙堆在城角）；无流场/无路才退回下面的直线走门
+        const wp = this.flowWaypoint(m.x, m.y, this.defFlowDist, -1);
+        if (wp) return wp;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
         const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
@@ -9789,7 +9858,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 //    而 flowRedirect 对城中心附近（du 很小）不接管 ⇒ 在中心建筑附近来回踱步（约 2Hz）。
                 //    已在城内 → 直接去中心建筑，不再往门外折返。
                 this.ensureGateInfo();
-                if (!this.insideRing(m.x, m.y) && !WALL_PASS_TYPES.has(m.key)) {
+                // 🔴 [2026-10-14 主人令「全改」] 只在城墙**一处都没破**时去门前；一有缺口（墙或门）就直奔城中心，由 flowRedirect 带着走最近的缺口进城（免得门还立着、人却卡在门前）
+                if (!this.ringOpen() && !this.insideRing(m.x, m.y) && !WALL_PASS_TYPES.has(m.key)) {
                     // 🔴 [2026-10-13 主人令「让士兵先到最近的城门，然后去往中心点去打中心建筑」] A 方案：
                     //    攻方目标点由「城中心」改为「**离自己最近的那座还立着的城门的外侧 150px**」；
                     //    门破后上面的 flowRedirect 会自动改走流场，把人从缺口带进城 → 再转向中心建筑。
