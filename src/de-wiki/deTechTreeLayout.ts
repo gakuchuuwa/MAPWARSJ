@@ -136,7 +136,13 @@ export function layoutTree(pkg: TreePackage): TreePackage {
         if (item.row == null) item.row = (ageIdOf(item) - 1) * 2;
 
         // 找产出者（官方：先 buildings，退到 units_techs 的非 Tech）
-        const building = homeFrom(item.building_id);
+        let building = homeFrom(item.building_id);
+        // 产出者若是「单位」（如 Fish Trap 由 Fishing Ship 造），它自己不在建筑格里 →
+        // 改挂该单位所属建筑的格（渔船的 Building ID = 船坞）。否则后面读 building.grid 会崩。
+        if (building && !building.grid) {
+            const owner = building.building_id != null ? buildings.find((x) => x.node_id === building!.building_id) : undefined;
+            if (owner) building = owner;
+        }
         if (!building) { item.row = item.row ?? 0; item.col = 0; continue; }
 
         // 官方：若节点与产出建筑行号相同，往下挪一行
@@ -181,6 +187,14 @@ export function layoutTree(pkg: TreePackage): TreePackage {
             clamped.push(`${item.id}: row ${row}→${Math.max(0, Math.min(ROWS - 1, row))}`);
             row = Math.max(0, Math.min(ROWS - 1, row));
         }
+        // 行/列护栏：夹回 0..ROWS-1（官方脚本在 6 个古典文明上会因越界直接崩，其官方树另走 chronicles 数据）
+        if (row < 0 || row >= ROWS) {
+            clamped.push(`${item.id}: row ${row}→${Math.max(0, Math.min(ROWS - 1, row))}`);
+            row = Math.max(0, Math.min(ROWS - 1, row));
+        }
+        while (col >= building.grid![row].length) addColumn(building);
+        if (col < 0) col = 0;
+
         if (building.grid![row][col] != null) {
             const offending = registry.find((x) => x.id === building.grid![row][col]);
             if (offending && (offending.building_in_new_column || offending.node_type === 'UniqueBuilding')) {
@@ -195,26 +209,9 @@ export function layoutTree(pkg: TreePackage): TreePackage {
         item.col = col;
     }
 
-    // ── 第二趟：建筑型节点（Harbor 升级自 Dock、Fish Trap 由渔船造）──
-    //    官方生成脚本没覆盖这条路；让它们落在自己产出者下一行的空列上。
-    for (const item of unitsTechs) {
-        if (item.use_type !== 'Building') continue;
-        const home = homeFrom(item.building_id, item.link_id);
-        if (!home) continue;
-        // home 可能是 Unit（无格，如 Fish Trap 由渔船造）→ 改挂它所属建筑（渔船→船坞）
-        let slot: TreeItem = home;
-        if (!slot.grid) slot = buildings.find((x) => x.node_id === home.building_id) ?? home;
-        const row = Math.max(0, Math.min(ROWS - 1, (ageIdOf(home) - 1) * 2 + 1));
-        if (!slot.grid) { item.row = row; item.col = 0; continue; }
-        let col = 0;
-        while (slot.grid[row][col] != null) {
-            if (col + 1 >= slot.grid[row].length) addColumn(slot);
-            col++;
-        }
-        slot.grid[row][col] = item.id;
-        item.row = row;
-        item.col = col;
-    }
+    // ⚠️ 曾经这里还有「建筑型节点第二趟」（旧实现跳过了 Use Type=Building）。对齐官方后，
+    //    所有 units_techs（含 Harbor / Fish Trap）都在上面同一趟落格；再跑第二趟会**重复落格**
+    //    （实测 Building_199_45 重复、62 文明全红）。故删除。
 
     // 各行列数统一，防止锯齿导致渲染时查不到格子
     for (const b of buildings) {
