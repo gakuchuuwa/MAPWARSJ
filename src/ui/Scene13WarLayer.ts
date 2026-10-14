@@ -5023,7 +5023,8 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 可选传守城 id：
         //    传了就与战略地图**同源**（`resolveCastleAsset` 里 59 代表名城名册优先）。
         //    既有险要调用不传 cityId，行为一字不变。
-        return resolveCastleAsset(style, this.sideFaction[1], this.sideCulture[1], cityId ?? null);
+        // 🔴 [2026-10-14 主人令「和其他一切无关」] 守城城堡＝守方据点建筑风格（66 选 1）那一种的城堡
+        return resolveCastleAsset(style, this.sideFaction[1], this.sideCulture[1], cityId ?? null, this.defenderCityRecord()?.buildingStyle ?? null);
     }
 
     /**
@@ -8718,11 +8719,14 @@ export class Scene13WarLayer {
             //    只在「无敌 + 不在列阵推进 + 无点地面令 + 本队有锚点」时生效；别队与敌兵照常推他，交战照旧。
             const heroFollow = m.hero === true && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane);
             let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
-            for (let gx = cx - 1; gx <= cx + 1 && seen < 6; gx++) {
-                for (let gy = cy - 1; gy <= cy + 1 && seen < 6; gy++) {
+            // 🔴 [2026-10-14 修·推挤偏右下] 原为 `seen < 6` 截断：扫描从左上往右下，左/上的邻居先数满、右/下的常被漏掉
+            //    ⇒ 推力系统性偏向右下，人群整体往画面右下飘。war_sim 实测（200 种子镜像局）：截断时偏袒跟位置走
+            //    （远程 131:69、骑兵 60:140），去掉截断后 103:97、100:100（p > 0.28），用时不变。现在数满 3×3 格内全部重叠邻居。
+            for (let gx = cx - 1; gx <= cx + 1; gx++) {
+                for (let gy = cy - 1; gy <= cy + 1; gy++) {
                     const a = this.gs.get(HKEY(gx, gy));
                     if (!a) continue;
-                    for (let i = 0; i < a.length && seen < 6; i++) {
+                    for (let i = 0; i < a.length; i++) {
                         const o = a[i];
                         if (o === m || o.hp <= 0) continue;
                         if (heroFollow && o.lane === m.lane) continue;

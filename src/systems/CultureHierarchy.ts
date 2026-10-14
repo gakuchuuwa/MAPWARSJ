@@ -10,9 +10,6 @@
  * - 三层 3：3 套自建专属定制（吐蕃 TIBET、西域 WESTERN、漠北蒙古 MOBEI_MONGOL）
  */
 
-// 🔴 [2026-09-18] 二级兜底要用**游戏侧权威表**（文化区 → 59 分支），与 resolveCastleAsset 解析城堡同一条链。
-//    不另抄一份字典 —— 抄了必漂移（今天刚在 _citytest.html 上踩过这个坑）。
-import { REGION_TO_BRANCH } from '../config/deCastleAssets';
 
 export type Base16StyleKey =
     | 'ASIA' | 'WEST' | 'EAST' | 'SLAV'
@@ -351,34 +348,17 @@ export interface CityBase16Resolution {
  */
 export function resolveCityHierarchy(city: { buildingStyle?: string; region?: string }): CityBase16Resolution {
     const bs = city.buildingStyle?.trim() || '';
-    const reg = city.region?.trim() || '';
 
-    // 确定细分分支（59 或 3）
+    // 确定细分分支（62 或 4）
     let branchKey: string | null = null;
     let branchName: string | null = null;
     let base: Base16StyleKey = 'ASIA';
 
-    // 1. 🔴 [2026-09-18 主人「必须一套数据」] **与游戏同序：buildingStyle 优先**。
-    //    游戏侧 resolveCityDeBuildingStyle 就是「显式 buildingStyle 优先，否则按 region 兜底」；
-    //    本函数原来反过来（region 优先）→ 实测 174 座据点里，编辑器显示的二级与战场实际用的不同，
-    //    其中 33 座连一级素材都不一样（例：卡法 数据 buildingStyle=LATIN 意大利，
-    //    但 region 里留着 STEPPE，编辑器就显示"草原"，而游戏画的是地中海素材）。
-    if (bs && ALL_BRANCHES_MAP[bs.toUpperCase()] && !BASE16_STYLES.some(s => s.key === bs.toUpperCase())) {
-        // buildingStyle 填了 59/3 分支名（如 JIANGNAN, WEI, MOBEI_MONGOL, KHITAN）→ 以它为准
+    // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……只能在这66种中选择，显示，和其他一切无关，
+    //    一级只是一种城墙样式的备注而已」「是什么影响的就删除什么，不要让其他的影响」]
+    //    建筑风格**只看 buildingStyle**（66 选 1），region 一律不参与；一级由所选风格带出，只作备注。
+    if (bs && ALL_BRANCHES_MAP[bs.toUpperCase()]) {
         branchKey = bs.toUpperCase();
-    } else if (reg && ALL_BRANCHES_MAP[reg.toUpperCase()]) {
-        // buildingStyle 是 16 母体（或没写）→ 再看 region 是否是 62 类键
-        branchKey = reg.toUpperCase();
-    }
-    // 1.5 🔴 [2026-09-18 主人报障「选了一个据点，怎么不显示二级或者三级？」
-    //     与**游戏同源**：region 不是 62 类键时，用游戏权威表 REGION_TO_BRANCH 推出二级。
-    //     实测（scratch/probe_hierarchy_branch.mts）：不改这一条，**258 座**据点在本页
-    //     显示不出二/三级（表格「—」、面板 ②③ 为空），而游戏里其实有——
-    //     如 底比斯 region=GREEK → ATHENIANS（雅典）、布鲁日/罗斯托克 region=HRE → GERMANIC（条顿）、
-    //     维罗纳/比萨 region=ITALIANS → LATIN（意大利）。这条链与 resolveCastleAsset 解析城堡完全同一条。
-    if (!branchKey && reg) {
-        const viaRegion = REGION_TO_BRANCH[reg.toUpperCase()];
-        if (viaRegion && ALL_BRANCHES_MAP[viaRegion]) branchKey = viaRegion;
     }
 
     if (branchKey) {
@@ -388,7 +368,7 @@ export function resolveCityHierarchy(city: { buildingStyle?: string; region?: st
             branchName = b.label.replace(/^[^\s]+\s+/, '').trim();
         }
     } else {
-        base = toBase16Style(bs) || toBase16Style(reg) || 'ASIA';
+        base = toBase16Style(bs) || 'ASIA';
     }
 
     const meta = BASE16_STYLES.find(s => s.key === base) || BASE16_STYLES[0];

@@ -1,4 +1,5 @@
 import type { RegionType } from '../systems/RegionSystem';
+import { ALL_BRANCHES_MAP } from '../systems/CultureHierarchy';
 
 /**
  * 🔴 [2026-09-08] 城堡素材名必须是 public/SUCAI_BUILDING 下**真实存在的目录名**。
@@ -740,7 +741,13 @@ export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
 };
 
 /** 城堡素材解析：**代表据点 → 势力专属 → 文化区 → 风格集默认**。 */
-export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null, cityId?: string | null): string {
+export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null, cityId?: string | null, buildingStyle?: string | null): string {
+    // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……不要让其他的影响」]
+    //    据点传了 buildingStyle（66 选 1）→ 城堡就是这一种风格的城堡，代表据点／势力／文化区一律不再参与。
+    if (buildingStyle) {
+        const b = ALL_BRANCHES_MAP[buildingStyle];
+        if (b) return b.castle;
+    }
     if (cityId && REP_59_CITY_CASTLES[cityId]) {
         return REP_59_CITY_CASTLES[cityId];
     }
