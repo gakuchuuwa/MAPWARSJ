@@ -9,7 +9,7 @@
  *   3. 丰富水体表现：清澈见底的近岸浅水（透出河床沙泥）到蔚蓝深水河心的自然渐变；
  *      双层反向流动水纹动态；动态潮汐拍岸的岸边浪花/白色泡沫带 (Shoreline Wave Foam)；
  *   4. 单一连续三角网格满铺渲染，无多余 overdraw，性能平稳流畅；
- *   5. 严格支持 flipSides 左右镜像同向翻转 (uFlip) 与镜头缩放 (uZoom/uCam)；
+ *   5. 支持镜头缩放 (uZoom/uCam)；
  *   6. 提供高精度双线性插值高程抬升与水体判定接口。
  */
 
@@ -90,7 +90,6 @@ attribute float aLight;
 uniform vec2 uRes;
 uniform vec2 uCam;
 uniform float uZoom;
-uniform float uFlip;
 varying vec2 vGUV;
 varying vec2 vWorldPos;
 varying float vLight;
@@ -100,7 +99,6 @@ void main() {
   vWorldPos = aPos;
   vLight = aLight;
   vec2 p = (aPos + uCam) * uZoom;
-  if (uFlip > 0.5) { p.x = uRes.x - p.x; }
   vec2 c = vec2(uRes.x * 0.5, uRes.y * 0.5);
   gl_Position = vec4((p.x - c.x) / c.x, -(p.y - c.y) / c.y, 0.0, 1.0);
 }`;
@@ -394,7 +392,6 @@ export class Scene13GroundLayerGL {
   private cornerLight: Float32Array;
 
   private cam = { x: 0, y: 0, zoom: 1 };
-  private flip = false;
   private buf: WebGLBuffer | null = null;
   private vertCount = 0;
 
@@ -528,7 +525,6 @@ export class Scene13GroundLayerGL {
       uRes: U('uRes'),
       uCam: U('uCam'),
       uZoom: U('uZoom'),
-      uFlip: U('uFlip'),
       uMapSize: U('uMapSize'),
       uTime: U('uTime'),
       uIsIce: U('uIsIce'),
@@ -722,9 +718,8 @@ export class Scene13GroundLayerGL {
     }
   }
 
-  public setCamera(c: { x: number; y: number; zoom: number }, flip = false): void {
+  public setCamera(c: { x: number; y: number; zoom: number }): void {
     this.cam = { ...this.cam, ...c };
-    this.flip = flip;
   }
 
   public resize(w: number, h: number): void {
@@ -743,7 +738,6 @@ export class Scene13GroundLayerGL {
     gl.uniform2f(this.loc.uRes as WebGLUniformLocation, w, h);
     gl.uniform2f(this.loc.uCam as WebGLUniformLocation, this.cam.x / this.cam.zoom, this.cam.y / this.cam.zoom);
     gl.uniform1f(this.loc.uZoom as WebGLUniformLocation, this.cam.zoom);
-    gl.uniform1f(this.loc.uFlip as WebGLUniformLocation, this.flip ? 1.0 : 0.0);
     gl.uniform1f(this.loc.uMapSize as WebGLUniformLocation, this.N);
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
     gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
