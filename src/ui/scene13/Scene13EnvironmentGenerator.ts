@@ -649,6 +649,89 @@ function growClump(
 
 // ── 主入口 ─────────────────────────────────────────────────────
 
+/** 🔴 [2026-10-14 主人令「删除旧 13 战术模式界面大小的残留」] 战场气候判定的输入：只要坐标与战场身份，**不要画布宽高**。 */
+export type Scene13ClimateInput = Omit<Scene13EnvironmentInput, 'width' | 'height' | 'keepClear' | 'siegeWallFrontX' | 'realGeo' | 'getTreeSeason' | 'forceHasRoad'>;
+
+/** 战场气候判定的结果：新战术模式（GL 地面层）只用这几项挑地图主题、地面四张贴图、季节与时段色调。 */
+export interface Scene13ClimatePlan {
+    seed: string;
+    climateRegion: KoppenClass | null;
+    elevationBand: ElevationBand;
+    elevationM: number | null;
+    slopeDeg: number | null;
+    biome: Biome;
+    deMapTheme: DeMapThemeId | null;
+    season: 0 | 1 | 2;
+    baseTerrain: string;
+    groundTiles: Partial<Scene13GroundTiles>;
+    waterKind: 'sea' | 'lake' | 'river' | 'none';
+}
+
+/**
+ * 🔴 [2026-10-14] 战场气候判定（原 generateEnvironment 的「第 1 层 LAND」原样拆出）：
+ * 环境地区 / 海拔档 / biome / 季节 / 主地形 / 水域类型 / DE 地图主题 / 地面四张基底素材。
+ * 与画布大小无关 —— 战术模式的地面、树木、水体都由 GL 地面层按地图数据铺，游戏只调用本函数。
+ * （generateEnvironment 的第 2~5 层按画布宽高铺旧 2D 地面，游戏已不再调用，只剩 tools/ 下的离线审计工具在用。）
+ */
+export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13ClimatePlan {
+    const seed = input.seed ?? deriveEnvironmentSeed(input);
+    const hasCoord = input.lat !== undefined && input.lng !== undefined;
+    let elev: number | null = null;
+    let slope: number | null = null;
+    if (hasCoord) {
+        const sample = LandSeaSystem.getSampler().getElevationAndSlopeSync(input.lat!, input.lng!);
+        elev = sample?.elevationM ?? null;
+        slope = sample?.slopeDeg ?? null;
+    }
+    if (input.forceElevationM !== undefined) elev = input.forceElevationM;
+    const climateRegion = hasCoord ? resolveClimateRegion(input.lat!, input.lng!) : null;
+    const elevationBand = input.forceElevationBand
+        ?? (hasCoord ? resolveElevationBand(input.lat!, climateRegion, elev, input.lng) : 'lowland');
+    const biome: Biome = input.forceBiome ?? (hasCoord ? detectBiomeAtElevation(input.lat!, input.lng!, elev) : 'temperate_forest');
+    const season = resolveSeason(input.lat, input.lng, input.getCalendarSeason);
+    const waterKind = input.forceWaterKind ?? probeWater(input.waterProbeLat ?? input.lat, input.waterProbeLng ?? input.lng);
+    const theme = input.forceTheme
+        ? DE_MAP_THEMES[input.forceTheme]
+        : (hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null);
+    // 底图由真实气候数据决定（public/world/world-base.png 查找表），查不到才回退到主题逻辑
+    const fromWorld = hasCoord
+        ? queryStrategicBaseTile({
+            lat: input.lat!,
+            lng: input.lng!,
+            isSiege: input.isSiege ?? false,
+            isWinter: season === 2,
+            elevM: elev,
+            slopeDeg: slope,
+            nearRiver: isNearStrategicRiver(input.lat!, input.lng!, 8),
+        })
+        : null;
+    const baseTerrain: string = fromWorld ?? (theme
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false, input.lng)
+        : DEFAULT_TERRAIN_TILE);
+    let groundTiles: Partial<Scene13GroundTiles> = {};
+    if (hasCoord && theme) {
+        const gList = Array.isArray(theme.groundTiles) ? theme.groundTiles : [];
+        // 泥土只取 ds/des/mud 开头的素材，rd 是道路不是泥土（2026-10-13 修「底图错了」）
+        const themeDirt = gList.find((t) => /^(ds|des|mud)/i.test(t)) ?? 'ds3';
+        const themeDry = gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
+            ?? (baseTerrain === 'gr7' ? 'gr3' : 'gr7');
+        groundTiles = {
+            grass: baseTerrain,
+            sand: beachTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng),
+            forest: baseTerrain === 'gravel_default'
+                ? 'gravel_default'
+                : forestFloorTilesForTheme(theme, biome, season, input.lat ?? 35, elev, input.lng)[0],
+            water: waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng),
+            dirt: themeDirt,
+            dry: themeDry,
+        };
+    }
+    return {
+        seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
+        biome, deMapTheme: hasCoord && theme ? theme.id : null, season, baseTerrain, groundTiles, waterKind,
+    };
+}
+
 export function generateEnvironment(input: Scene13EnvironmentInput): Scene13EnvironmentPlan {
     const seed =
         input.seed ?? deriveEnvironmentSeed(input);
