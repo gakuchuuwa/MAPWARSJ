@@ -40351,23 +40351,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         {
             type: "Feature",
             properties: {
-                name: "乌普萨拉-塔林",
-                type: "road",
-                id: "road_city_wupusala_city_talin_1785581723971",
-                startConnection: "city_wupusala",
-                endConnection: "city_talin"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [17.63, 59.85],
-                    [24.75, 59.43],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
                 name: "切尔卡瑟-佩列斯拉夫",
                 type: "road",
                 id: "road_city_cherkasy_city_peilieyasilafu_1785581892612",
@@ -43255,27 +43238,6 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
                 coordinates: [
                     [17.63, 59.85],
                     [18.06, 59.32],
-                ]
-            }
-        },
-        {
-            type: "Feature",
-            properties: {
-                name: "斯德哥尔摩-里加",
-                type: "road",
-                id: "road_city_sidedegelmo_city_liga_1785910406752",
-                startConnection: "city_sidedegelmo",
-                endConnection: "city_liga"
-            },
-            geometry: {
-                type: "LineString",
-                coordinates: [
-                    [18.06, 59.32],
-                    [19.846801757812504, 58.82511777083642],
-                    [21.08, 58.135000000000005],
-                    [21.956176757812504, 57.81111452690956],
-                    [22.873535156250004, 57.859365753765324],
-                    [24.1, 56.95],
                 ]
             }
         },

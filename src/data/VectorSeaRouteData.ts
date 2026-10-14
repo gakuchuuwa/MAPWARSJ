@@ -5996,5 +5996,48 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "里加-斯德哥尔摩",
+                type: "sea",
+                id: "sea_city_liga_city_sidedegelmo_1791964390898",
+                startConnection: "city_liga",
+                endConnection: "city_sidedegelmo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.1, 56.95],
+                    [23.99414, 57.11239],
+                    [22.6593, 57.8769],
+                    [21.60461, 57.70708],
+                    [20.6, 58.2],
+                    [19.61991, 58.97703],
+                    [18.06, 59.32],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "塔林-斯德哥尔摩",
+                type: "sea",
+                id: "sea_city_talin_city_sidedegelmo_1791964396680",
+                startConnection: "city_talin",
+                endConnection: "city_sidedegelmo"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [24.75, 59.43],
+                    [24.01142, 59.70163],
+                    [22.19298, 59.66959],
+                    [19.91128, 59.31207],
+                    [19.61991, 58.97703],
+                    [18.06, 59.32],
+                ]
+            }
+        },
     ]
 };

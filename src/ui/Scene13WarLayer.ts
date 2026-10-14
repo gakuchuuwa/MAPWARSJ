@@ -3715,9 +3715,6 @@ export class Scene13WarLayer {
     private ringBox: { a0: number; a1: number; b0: number; b1: number } | null | undefined = undefined;
     private ringOpenSec = -1;
     private ringOpenVal = false;
-    /** 🔴 [2026-10-14] 险要：已进城的攻方（每仿真时刻算一次，见 intruders） */
-    private intrudersSec = -1;
-    private intrudersVal: WarMan[] = [];
     /** 🔴 [2026-10-14 主人令「残兵应该是按每队算」] 残兵主动找敌：每队（lane）开局兵力（后备＋场上，精灵×人口，第一帧记下）与「本队已剩不到 REMNANT_FRAC」的队号 */
     private laneStart: Map<number, number> | null = null;
     private remnantLanes = new Set<number>();
@@ -5414,7 +5411,6 @@ export class Scene13WarLayer {
         this.ringBox = undefined;
         this.flowDist = null;
         this.defGateFlow = null;
-        this.intrudersSec = -1;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.flowBuiltAt = -99;
@@ -5753,7 +5749,6 @@ export class Scene13WarLayer {
         this.ringBox = undefined;
         this.flowDist = null;
         this.defGateFlow = null;
-        this.intrudersSec = -1;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.flowBuiltAt = -99;
@@ -9851,22 +9846,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.ringBox = this.wallGates.length ? { a0, a1, b0, b1 } : null;
     }
 
-    /** 🔴 [2026-10-14] 已进城的活着的攻方（险要守军围攻用）；同一仿真时刻只扫一遍 */
-    private intruders(): WarMan[] {
-        if (this.intrudersSec !== this.battleSec) {
-            this.intrudersSec = this.battleSec;
-            this.intrudersVal = this.men.filter(o => o.f === 0 && o.hp > 0 && this.insideRing(o.x, o.y));
-        }
-        return this.intrudersVal;
-    }
-
-    /** 🔴 [2026-10-14 主人令「险要守军不追城外的人」] 这个兵是「险要、守方、在城墙圈里、本队还没成残兵」的普通士兵 ⇒ 不出城追人 */
-    private passHoldsIn(m: WarMan): boolean {
-        return m.f === 1 && this.defenderCityType === 'pass' && this.battleType === 'siege' && this.siegeWithWalls
-            && !m.siegeW && !m.hero && !WALL_PASS_TYPES.has(m.key) && !this.remnantLanes.has(m.lane)
-            && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
-    }
-
     /** 🔴 [2026-10-14] 险要守军据墙而守：守方士兵站在城墙圈里 ⇒ 受伤 × PASS_INSIDE_DAMAGE_TAKEN；其余一律 1 */
     private passWallTaken(o: WarMan): number {
         if (o.f !== 1 || this.defenderCityType !== 'pass' || this.battleType !== 'siege' || !this.siegeWithWalls) return 1;
@@ -9896,42 +9875,33 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const insideSelf = this.insideRing(m.x, m.y);
         if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
-        // 🔴 [2026-10-14 主人令「险要守军改成守在城墙内侧，敌人进来再打」] 险要（关隘）守军不出城：目标在城外就原地守着（远程照旧隔墙射），
-        //    敌人进了城（上一行）照常接战。病灶：几百守军挤 4 座 1 格宽的外圈门出城，门口排队卡死约 17 人（实测）。
-        // 🔴 [2026-10-14 主人令「选1，攻方进城后守军都去围攻」] 城里已有攻方 ⇒ 去打离自己最近的那个（不限距离）；城里没有才原地守着。
-        //    病灶（实测 4 场）：守军的目标常是城外的敌人 ⇒ 上一行让他原地不动，进城的敌人只有挨着的守军去打 ⇒ 被各个击破，守方 4 场全负。
-        if (this.defenderCityType === 'pass' && !this.remnantLanes.has(m.lane)) {   // 本队成了残兵就不守墙，照常出城找敌（见 aimAt）
-            let t: WarMan | null = null, td = Infinity;
-            for (const o of this.intruders()) {
-                const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
-                if (d < td) { td = d; t = o; }
-            }
-            if (t) {
-                const ra = Math.atan2(m.jy, m.jx);
-                return { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING };
-            }
-            // 城里没有敌人 ⇒ 守到**城墙内侧**：沿流场走向离敌人最近的外圈门，进到离外墙 3 格以内就站住（远程在这儿够得着城外）。
-            //    病灶（实测）：原地站在城中心附近的守军离墙太远，弓箭够不着城外，攻方远程却一圈圈削靠墙的守军（135~180 秒攻方没进城，守方照样减员）。
-            const [ma, mb] = this.tileAB(m.x, m.y);
-            const rr = this.ringBox;
-            if (!aim || !rr || Math.min(ma - rr.a0, rr.a1 - ma, mb - rr.b0, rr.b1 - mb) <= 3) return null;
-            let pg: WarBuilding | null = null, pd = Infinity;
-            for (const b of this.wallGates) {
-                if (b.key !== 'STONE_GATE') continue;
-                const [ba, bb] = this.tileAB(b.x, b.y);
-                if (Math.min(Math.abs(ba - rr.a0), Math.abs(ba - rr.a1), Math.abs(bb - rr.b0), Math.abs(bb - rr.b1)) >= 1) continue;   // 只认外圈门
-                const d = (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2;
-                if (d < pd) { pd = d; pg = b; }
-            }
-            return pg ? this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(pg) ?? null, -1, 2, FLOW_SUB) : null;
-        }
         if (!this.ringBox) return aim;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
         const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
-        // 选门：aim 在城外就选「离敌人最近的那座门」（出门即到敌人一侧）；aim 为空就选「离自己最近的那座门」
+        // 🔴 [2026-10-14 主人令「所有兵出两门，把所有城都改为这种方式」「想一个让守方不分兵的方法」]
+        //    守军只从**离攻方大军重心最近的两座外圈城门**出城，每人走这两座里离自己近的那座 ⇒ 汇成两股正面迎敌，
+        //    背面/侧面的门不用（原先「离各自目标最近的门」会把守军拆到四面八方的门，分兵被各个击破）。
+        //    只认外圈门（在城墙外圈边上的）：险要有内外两圈，内圈门的门外点仍在城里。攻方重心没有时退回原规则。
         let g: WarBuilding | null = null, gd = Infinity;
-        for (const b of this.wallGates) {
+        const ec = this.enemyCen[0];
+        if (ec) {
+            let g1: WarBuilding | null = null, d1 = Infinity, g2: WarBuilding | null = null, d2 = Infinity;
+            for (const b of this.wallGates) {
+                if (b.key !== 'STONE_GATE') continue;
+                const [ba, bb] = this.tileAB(b.x, b.y);
+                if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
+                const d = (b.x - ec.x) ** 2 + (b.y - ec.y) ** 2;
+                if (d < d1) { g2 = g1; d2 = d1; g1 = b; d1 = d; } else if (d < d2) { g2 = b; d2 = d; }
+            }
+            for (const b of [g1, g2]) {
+                if (!b) continue;
+                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                if (d < gd) { gd = d; g = b; }
+            }
+        }
+        // 选门（原规则，攻方重心没有时用）：aim 在城外就选「离敌人最近的那座门」；aim 为空就选「离自己最近的那座门」
+        if (!g) for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
             const d = aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d < gd) { gd = d; g = b; }
@@ -10755,19 +10725,6 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 if (holdCmd && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
-                    if (m.fadeT > 0) m.fadeT -= dt;
-                    m.ph += dt * 8;
-                    continue;
-                }
-                // 🔴 [2026-10-14 主人令「险要守军不追城外的人」，照 DE 单位姿态（Age of Empires 系列 Wiki「Unit stance」）]
-                //    远程 ＝ DE「原地坚守」（Stand Ground：不移动去攻击，只打射程内）：目标在城外、够不着就站着；
-                //    近战 ＝ DE「防御」（只追有限距离、回原位），这里的「原位」是城墙圈：目标在城外就放掉，回头打城里的敌人。
-                //    病灶（实测险要 3 场）：「守城墙内侧」只管没目标时往哪走；有目标够不着时走这条追击，直线从缺口追出城
-                //    （每场约 200 人次远程、约 70~80 人次近战是追城外敌人出去的）。本队成了残兵（见 aimAt）不受此限。
-                if (!inReach && this.passHoldsIn(m) && !this.insideRing(foe.x, foe.y)) {
-                    m.st = 0;
-                    m.fightT = 0;
-                    if (this.statsFor(m.key, 1).rng <= 65) { m.foe = null; m.next = 0; }   // 近战：放掉城外的目标，下一轮只会锁城里的（search 的 inOnly）
                     if (m.fadeT > 0) m.fadeT -= dt;
                     m.ph += dt * 8;
                     continue;
