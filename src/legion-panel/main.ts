@@ -65,11 +65,33 @@ interface LegionRow {
     slots: { type: string; count: number }[];
     users: number;
     shipId: string;
+    /** 隶属的建筑风格文化（62+4之一） */
+    buildingStyle?: string;
     /** 四级剧本军团的主队（第 10 队）英雄兵模（前三层为空） */
     commanderUnit: string;
     /** 四级剧本军团的史料出处（前三层为空） */
     source: string;
 }
+
+const STYLE_LABELS: Record<string, string> = {
+    JAPAN: '日本', CENTRAL: '华夏', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
+    GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特', SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
+    BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
+    POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
+    LATIN: '意大利', ROMA: '罗马', SICILIANS: '西西里', SPANISH: '西班牙', PORTUGUESE: '葡萄牙',
+    ORIE: '萨拉森',
+    HUNS: '匈人', CUMAN: '库曼', TURKS: '奥斯曼', CENTRAL_ASIA: '鞑靼',
+    INDIA: '达罗毗荼', MUGHAL: '印度斯坦', BENGALIS: '孟加拉', GURJARAS: '瞿折罗',
+    PURU: '普鲁',
+    KHMER: '高棉', BURMESE: '缅甸', VIETNAMESE: '越南', MALAY: '马来',
+    MAYANS: '玛雅', AMERICA: '阿兹特克',
+    INCA: '印加', MUISCA: '穆伊斯卡', MAPUCHE: '马普切', TUPI: '图皮',
+    BERBER: '柏柏尔', AFRICA: '马里', ETHIOPIANS: '埃塞俄比亚',
+    SASANIAN: '波斯', PERSIAN: '阿契美尼德',
+    ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIAN: '马其顿',
+    THRACIAN: '色雷斯',
+    TIBET: '青藏', WESTERN: '西域', XIANBEI: '漠南鲜卑', GREECE: '古典希腊',
+};
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;
 const cityMap = new Map(CITIES_V2.map(c => [c.id, c]));
@@ -103,11 +125,15 @@ function buildRows(): LegionRow[] {
         const scriptDef = layer === '四级' ? SCRIPT_LEGION_MAP.get(name) : undefined;
         const c = scriptDef ?? getLegionCompositionByName(name);
         if (!c) return;
+        const l2 = layer === '二级' ? LEVEL_2_CIV_59_LEGIONS.find(l => l.name === name) : undefined;
+        const l3 = layer === '三级' ? LEVEL_3_LEGIONS.find(l => l.name === name) : undefined;
+        const buildingStyle = l2?.buildingStyle ?? l3?.buildingStyle ?? '';
         out.push({
             name, layer, mode: c.formationMode,
             slots: c.slots.map(s => ({ type: s.type, count: s.count })),
             users: users.get(name) ?? 0,
             shipId: c.shipId ?? '',
+            buildingStyle,
             commanderUnit: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.commanderUnit ?? '') : '',
             source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
         });
@@ -141,6 +167,7 @@ function currentRow(): LegionRow | undefined {
 /** 🔴 [2026-09-16 主人「加一个势力排序」] 按「用它的势力家数」排：none=表原顺序（一→二→三级）/ desc=多在前 / asc=少在前。
  *  点「势力」表头循环切换。无人套用的军团要找出来，点两下切到 asc 就全在最上面。 */
 let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
+let sortByStyle: 'none' | 'asc' | 'desc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
@@ -343,12 +370,25 @@ function visible(): LegionRow[] {
     const out = rows.filter(r => {
         if (layerFilter !== '全部' && r.layer !== layerFilter) return false;
         if (!kw) return true;
-        return r.name.includes(kw) || r.slots.some(s => cn(s.type).includes(kw));
+        return r.name.includes(kw)
+            || r.slots.some(s => cn(s.type).includes(kw))
+            || (r.buildingStyle && (r.buildingStyle.includes(kw) || (STYLE_LABELS[r.buildingStyle] ?? '').includes(kw)));
     });
     if (sortByUsers !== 'none') {
         const dir = sortByUsers === 'desc' ? -1 : 1;
         // 家数相同的保持原来的层级顺序，别让同数的军团每次重绘都换位置
         out.sort((a, b) => (a.users - b.users) * dir || rows.indexOf(a) - rows.indexOf(b));
+    } else if (sortByStyle !== 'none') {
+        const dir = sortByStyle === 'asc' ? 1 : -1;
+        out.sort((a, b) => {
+            const sA = a.buildingStyle ? (STYLE_LABELS[a.buildingStyle] ?? a.buildingStyle) : '';
+            const sB = b.buildingStyle ? (STYLE_LABELS[b.buildingStyle] ?? b.buildingStyle) : '';
+            if (!sA && !sB) return rows.indexOf(a) - rows.indexOf(b);
+            if (!sA) return 1;
+            if (!sB) return -1;
+            return (sA.localeCompare(sB, 'zh-Hans-CN') || (a.buildingStyle ?? '').localeCompare(b.buildingStyle ?? '')) * dir
+                || rows.indexOf(a) - rows.indexOf(b);
+        });
     }
     return out;
 }
@@ -374,7 +414,7 @@ function render(): void {
 
     host.innerHTML = `
     <div style="padding:10px 14px;border-bottom:1px solid #2a2520;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <input id="lp-search" placeholder="搜军团名 / 兵种" value="${esc(keyword)}"
+      <input id="lp-search" placeholder="搜军团名 / 兵种 / 建筑风格" value="${esc(keyword)}"
         style="width:230px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
       <select id="lp-layer" style="background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
         ${(['全部', '一级', '二级', '三级', '四级'] as const).map(l =>
@@ -392,6 +432,9 @@ function render(): void {
             <tr style="color:#b8ab8e;text-align:left;">
               <th style="padding:7px 10px;">层级</th>
               <th style="padding:7px 10px;">军团名</th>
+              <th id="lp-sort-style" title="点击按建筑风格排序（升序 / 降序 / 原顺序）"
+                  style="padding:7px 10px;cursor:pointer;user-select:none;${sortByStyle !== 'none' ? 'color:#f6e05e;' : ''}">
+                建筑风格${sortByStyle === 'asc' ? ' ▲' : sortByStyle === 'desc' ? ' ▼' : ' ⇅'}</th>
               <th style="padding:7px 10px;">阵型</th>
               <th style="padding:7px 10px;">英雄（主队 · 第 10 队）</th>
               <th style="padding:7px 10px;">前排</th>
@@ -422,6 +465,7 @@ function render(): void {
               <tr data-name="${esc(r.name)}" data-layer="${r.layer}" style="cursor:pointer;border-top:1px solid #221e19;${selected === r.name && selectedLayer === r.layer ? 'background:#2f2a20;' : ''}">
                 <td style="padding:6px 10px;color:${r.layer === '一级' ? '#8fc4f0' : r.layer === '二级' ? '#f0c86a' : r.layer === '三级' ? '#c0a0e0' : '#8fd0a0'};">${r.layer}</td>
                 <td style="padding:6px 10px;color:#e8e0d0;">${esc(r.name)}</td>
+                <td style="padding:6px 10px;color:#cbb98e;">${r.buildingStyle ? `<span style="background:#221e16;padding:2px 6px;border-radius:3px;border:1px solid #4a3e2c;">${esc(STYLE_LABELS[r.buildingStyle] ?? r.buildingStyle)} <span style="color:#8a8378;font-size:11px;">(${esc(r.buildingStyle)})</span></span>` : '<span style="color:#5a544c;">—</span>'}</td>
                 <td style="padding:6px 10px;color:#a89f8f;">${MODE_LABEL[rMode] ?? rMode}</td>
                 ${/* 🔴 [2026-10-02 主人报障「显示不全」] 五兵 = 英雄队＋前＋中＋后＋舰队 —— 英雄（主队·第 10 队）这一兵原先只在右侧详情里，
                      * 列表里根本没有这一列，四级剧本军团的五兵看起来只有四兵。现补上这一列（读 commanderUnit，与右侧同源）。 */''}
@@ -456,6 +500,7 @@ function render(): void {
           <div style="font-size:16px;color:#f6e05e;">${esc(sel.name)}</div>
           <div style="font-size:12px;color:#8a8378;margin:4px 0 14px;">
             ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
+            ${sel.buildingStyle ? ` · 建筑风格：<b style="color:#e8d8b0;">${esc(STYLE_LABELS[sel.buildingStyle] ?? sel.buildingStyle)}</b> <span style="color:#8a8378;">(${esc(sel.buildingStyle)})</span>` : ''}
           </div>
 
           ${sel.layer === '一级' || sel.layer === '四级' ? `
@@ -572,6 +617,12 @@ function render(): void {
     document.getElementById('lp-new')?.addEventListener('click', () => { openCreateDialog(); });
     document.getElementById('lp-sort-users')?.addEventListener('click', () => {
         sortByUsers = sortByUsers === 'none' ? 'desc' : sortByUsers === 'desc' ? 'asc' : 'none';
+        sortByStyle = 'none';
+        render();
+    });
+    document.getElementById('lp-sort-style')?.addEventListener('click', () => {
+        sortByStyle = sortByStyle === 'none' ? 'asc' : sortByStyle === 'asc' ? 'desc' : 'none';
+        sortByUsers = 'none';
         render();
     });
     host.querySelectorAll('tbody tr').forEach(tr => {

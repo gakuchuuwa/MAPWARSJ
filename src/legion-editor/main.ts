@@ -2041,6 +2041,7 @@ interface DistinctLegionEntry {
     slots: CompositionSlot[];
     fids: string[];
     region?: RegionType;
+    buildingStyle?: string;
 }
 function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     const map = new Map<string, DistinctLegionEntry>();
@@ -2079,6 +2080,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 slots: l2.slots.map(s => ({ ...s })),
                 fids: [],
                 region: l2.region as RegionType,
+                buildingStyle: l2.buildingStyle,
             });
         } else {
             // 若已有占位（例如来自文化默认），校准为 59 文明权威编制
@@ -2086,6 +2088,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             existing.formationMode = l2.formationMode;
             existing.slots = l2.slots.map(s => ({ ...s }));
             if (!existing.region) existing.region = l2.region as RegionType;
+            if (!existing.buildingStyle) existing.buildingStyle = l2.buildingStyle;
         }
     }
     /* 1.7 三级：自建 / 延伸军团 —— 🔴 [2026-09-18 主人报障「新建的军团不在第一页显示」「还是不显示呀」]
@@ -2109,6 +2112,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 slots: l3.slots.map(s => ({ ...s })),
                 fids: [],
                 region: l3.regions?.[0] as RegionType | undefined,
+                buildingStyle: l3.buildingStyle,
             });
         }
     }
