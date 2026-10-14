@@ -1104,6 +1104,9 @@ const FLOW_SUB = 2;
  *  攻城武器选目标时城门的距离先减去这么多：城门比最近的城墙远不超过 400px（约 4 格）就先打门，
  *  再远的门不排除，只是排到近处城墙之后，按距离轮到再打。 */
 const GATE_PREF_PX = 400;
+/** 🔴 [2026-10-14] 守军出城：走向城门的流场步数连续这么多秒没减少 ⇒ 算被堵住，改走别的外圈门（见 gateExit）。
+ *  2 秒＝本轮量具「2 秒内位移 <20px 算呆立」的同一个窗口；初值，按实测再调。 */
+const EXIT_BLOCK_SEC = 2;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -2999,6 +3002,12 @@ interface WarMan {
     /** 🔴 [2026-10-13] 本帧真实位移的 max(|Δx|,|Δy|)（step 末尾结算；渲染层判「本帧真的没动」用）。
      *  不能在渲染层拿 prevX 比：step 末尾已把 prevX 写成当前位置，那样比出来恒为 0。 */
     stepMax?: number;
+    /** 🔴 [2026-10-14 主人令「从第1条开始做」：照《中世纪2》设计日记 #9「完全被堵住就另找出路」] 守军出城：
+     *  exitGate＝正在走向的门；exitBest/exitBestT＝离它的最少流场步数及达到时刻；exitAlt＝被堵后改走的门（出城前一直用它） */
+    exitGate?: WarBuilding;
+    exitBest?: number;
+    exitBestT?: number;
+    exitAlt?: WarBuilding;
     /**
      * 净位移锚点 + 计时（见 NET_STUCK_WINDOW）。
      * 单帧位移只能识别「被堵得完全不动」；被推挤来回震荡时**每帧位移并不小**（推开又被推回），
@@ -9705,8 +9714,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
-    private flowDistAt(x: number, y: number): number {
-        const f = this.flowDist;
+    private flowDistAt(x: number, y: number, field: Int16Array | null = this.flowDist): number {
+        const f = field;
         if (!f || !this.canvas) return Infinity;
         const R = this.flowR, N = 2 * R + 1;
         const dx = x - this.canvas.width / 2, dy = y - this.canvas.height / 2;
@@ -9828,31 +9837,41 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
         this.ensureGateInfo();
         const insideSelf = this.insideRing(m.x, m.y);
-        if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
+        if (!insideSelf) { m.exitAlt = undefined; m.exitGate = undefined; return aim; }   // 已在城外（或没墙圈）→ 原样；出了城，改道记录清掉
         if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         if (!this.ringBox) return aim;
         const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = (this.canvas?.width ?? 0) / 2 + (am - bm) * (TAC_TILE_W / 2);
         const ccy = (this.canvas?.height ?? 0) / 2 + (am + bm) * (TAC_TILE_H / 2);
         // 选门：aim 在城外就选「离敌人最近的那座门」（出门即到敌人一侧）；aim 为空就选「离自己最近的那座门」
-        // 🔴 [2026-10-14 主人令「分门出城，3门也可以吧，正面和左右」] aim 在城外时，从离敌人最近的**三座**门（正面＋左右）里分流：
-        //    每个兵按出生编号固定走其中一座（zid % 3），不中途换门；aim 为空（离自己最近的门）照旧不分。
-        //    病灶（实测险要）：几百守军都挤向同一座门，门口排队、被后排挤着贴在门边墙上不动。
-        // 🔴 [2026-10-14] 只认**外圈**城门（在 ringBox 边上的）：险要是内外两圈墙，内圈门的门外点仍在外圈之内 ⇒
-        //    选到内圈门的守军出了内圈门还在城里、下一轮又选回它，在两圈之间打转（实测险要卡住 17 人、分两门时 57 人的病根）。
-        //    内圈门守方本就能穿，外圈门的流场会自己带着穿过去。普通城只有一圈，不受影响。
-        const onRing = (b: WarBuilding): boolean => {
-            const [a, bb] = this.tileAB(b.x, b.y);
-            return Math.min(Math.abs(a - r.a0), Math.abs(a - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) < 1;
-        };
-        const cand: { b: WarBuilding; d: number }[] = [];
+        let g: WarBuilding | null = null, gd = Infinity;
         for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE' || !onRing(b)) continue;
-            cand.push({ b, d: aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2 });
+            if (b.key !== 'STONE_GATE') continue;
+            const d = aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d < gd) { gd = d; g = b; }
         }
-        if (!cand.length) return aim;
-        cand.sort((p, q) => p.d - q.d);
-        const g = aim ? cand[m.zid % Math.min(3, cand.length)].b : cand[0].b;
+        if (!g) return aim;
+        // 🔴 [2026-10-14 主人令「从第1条开始做」] 照《中世纪2》设计日记 #9（Ken Turner，GameSpot 2006-11-09）：
+        //    士兵完全被堵住时，重新寻找新的目标与阵线上的空隙往前走。落到出城上：
+        //    走向这座门的流场步数连续 EXIT_BLOCK_SEC 秒没减少（被门口排队/挤墙堵住）⇒ 改走另一座**外圈**门里流场步数最少的那座，
+        //    出城前一直走它（exitAlt），不来回换。没被堵的守军照旧走「离敌人最近的门」。
+        //    只认外圈门（在城墙外圈边上的）：险要有内外两圈，内圈门的门外点仍在城里，改去那儿等于没出城。
+        if (m.exitAlt) g = m.exitAlt;
+        const cd = this.flowDistAt(m.x, m.y, this.defGateFlow?.get(g) ?? null);
+        if (m.exitGate !== g) { m.exitGate = g; m.exitBest = cd; m.exitBestT = this.battleSec; }
+        else if (cd < (m.exitBest ?? Infinity)) { m.exitBest = cd; m.exitBestT = this.battleSec; }
+        else if (this.battleSec - (m.exitBestT ?? this.battleSec) > EXIT_BLOCK_SEC && this.defGateFlow) {
+            let alt: WarBuilding | null = null, ad = Infinity;
+            for (const [b, f] of this.defGateFlow) {
+                if (b === g) continue;
+                const [ba, bb] = this.tileAB(b.x, b.y);
+                if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 内圈门不算出路
+                const d = this.flowDistAt(m.x, m.y, f);
+                if (d < ad) { ad = d; alt = b; }
+            }
+            if (alt) { g = alt; m.exitAlt = alt; m.exitGate = alt; m.exitBest = ad; m.exitBestT = this.battleSec; }
+            else m.exitBestT = this.battleSec;   // 没有别的门可去：重新计时，别每次都扫
+        }
         // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
         // 只往前看 2 小格（1 地块）：看远了路点在拐弯后面，直线奔过去会切过墙角顶在墙上；stop=-1 ＝ 一路沿流场走到出了城（终点在城外，城内步数恒 >0），
         // 不在门前几格就改走直线 —— 那条直线是斜着穿过门旁的墙（实测险要卡住的守军多数顶在门边墙上）
