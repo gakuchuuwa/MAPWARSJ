@@ -1107,6 +1107,10 @@ const GATE_PREF_PX = 400;
 /** 🔴 [2026-10-14 主人令「城内守军加防御，选1，先试20%」] 险要（关隘）守军站在城墙圈里时受到的伤害倍率（＝减伤 20%）。
  *  只管士兵刀箭与范围溅射两处（见 passWallTaken）；箭塔/民兵只打攻方、野兽与城墙无关，不在内。 */
 const PASS_INSIDE_DAMAGE_TAKEN = 0.8;
+/** 🔴 [2026-10-14 主人令「两条都做」→「残兵应该是按每队算」] 一队剩余兵力（本队后备＋场上）不到本队开局的这个比例 ⇒ 这一队的残兵全图找最近的敌人（见 aimAt）。
+ *  按队不按全军：按全军算时，全军掉到 5% 那一刻城里所有人一起出去找敌（主人：「这样岂不是城市挨个去送死」）。
+ *  病灶（实测险要 3 场）：守方剩 5% 时最后约 5 人站在墙边岗位上，离最近攻方 650~1100px 看不见，攻方也找不到 ⇒ 收尾拖 90~120 秒。 */
+const REMNANT_FRAC = 0.05;
 
 /** AoE2 DE（SLD）动态帧框素材目录：走 hotspot 对齐渲染，读 `_meta.json`。其余（S10DB/征服版 SLP）走正方形帧。 */
 const DE_DYN_DIRS = ["/SUCAI/GUANYU/","/SUCAI/AMAZONARCHER/","/SUCAI/AMAZONWARRIOR/","/SUCAI/ANTIQUITY_BATTERINGRAM/","/SUCAI/ANTIQUITY_CAPPED_RAM/","/SUCAI/ANTIQUITY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_CAVALRY_ARCHER/","/SUCAI/ANTIQUITY_HEAVY_SCORPION/","/SUCAI/ANTIQUITY_LIGHT_CAVALRY/","/SUCAI/ANTIQUITY_MANGONEL/","/SUCAI/ANTIQUITY_ONAGER/","/SUCAI/ANTIQUITY_SCORPION/","/SUCAI/ANTIQUITY_SCOUT_CAVALRY/","/SUCAI/ANTIQUITY_SIEGE_ONAGER/","/SUCAI/ANTIQUITY_SIEGE_RAM/","/SUCAI/ANTIQUITY_SIEGE_TOWER/","/SUCAI/ANTIQUITY_SKIRMISHER/","/SUCAI/ANTIQUITY_SPEARMAN/","/SUCAI/ARAMBAI/","/SUCAI/ARBALEST/","/SUCAI/ARCHER/","/SUCAI/ARMORED_ELEPHANT/","/SUCAI/BACTRIAN_ARCHER/","/SUCAI/BALLISTA_ELEPHANT/","/SUCAI/BATTERINGRAM/","/SUCAI/BATTLEELEPHANT/","/SUCAI/BAYINNAUNG_ELEPHANT/","/SUCAI/BERSERK/","/SUCAI/BLACKWOODARCHER/","/SUCAI/BOLASRIDER/","/SUCAI/BOMBARDCANNON/","/SUCAI/BOWMAN/","/SUCAI/BOYAR/","/SUCAI/CAMELARCHER/","/SUCAI/CAMELRIDER/","/SUCAI/CAMELSCOUT/","/SUCAI/CAMEL_HEAVY/","/SUCAI/CAMEL_RAIDER/","/SUCAI/CAPPEDRAM/","/SUCAI/CATAPHRACT/","/SUCAI/CAVALIER/","/SUCAI/CAV_ARCHER/","/SUCAI/CAV_ARCHER_HEAVY/","/SUCAI/CENTURION/","/SUCAI/CHAKRAMTHROWER/","/SUCAI/CHAMPION/","/SUCAI/CHAMPIRUNNER/","/SUCAI/CHAMPISCOUT/","/SUCAI/CHAMPIWARRIOR/","/SUCAI/CHUKONU/","/SUCAI/COMPANION_CAVALRY/","/SUCAI/COMPOSITE_BOWMAN/","/SUCAI/CONDOTTIERO/","/SUCAI/CONQUISTADOR/","/SUCAI/COUSTILLIER/","/SUCAI/CRETAN_ARCHER/","/SUCAI/CROSSBOWMAN/","/SUCAI/CRUSADERKNIGHT/","/SUCAI/DAGNAJAN_ELEPHANT/","/SUCAI/EAGLESCOUT/","/SUCAI/EAGLEWARRIOR/","/SUCAI/EASTERN_SWORDSMAN/","/SUCAI/EKDROMOS/","/SUCAI/ELEPHANT_ARCHER/","/SUCAI/ELITEARAMBAI/","/SUCAI/ELITEARMOREDELEPHANT/","/SUCAI/ELITEBALLISTAELEPHANT/","/SUCAI/ELITEBATTLEELEPHANT/","/SUCAI/ELITEBERSERK/","/SUCAI/ELITEBLACKWOODARCHER/","/SUCAI/ELITEBOLASRIDER/","/SUCAI/ELITEBOYAR/","/SUCAI/ELITECAMELARCHER/","/SUCAI/ELITECATAPHRACT/","/SUCAI/ELITECENTURION/","/SUCAI/ELITECHAKRAMTHROWER/","/SUCAI/ELITECHAMPIWARRIOR/","/SUCAI/ELITECONQUISTADOR/","/SUCAI/ELITECOUSTILLIER/","/SUCAI/ELITEEAGLEWARRIOR/","/SUCAI/ELITEELEPHANTARCHER/","/SUCAI/ELITEFOOTKONNIK/","/SUCAI/ELITEGBETO/","/SUCAI/ELITEGENITOUR/","/SUCAI/ELITEGENOESECROSSBOWMAN/","/SUCAI/ELITEGHULAM/","/SUCAI/ELITEGUECHAWARRIOR/","/SUCAI/ELITEHUSKARL/","/SUCAI/ELITEHUSSITEWAGON/","/SUCAI/ELITEIBIRAPEMAWARRIOR/","/SUCAI/ELITEIRONPAGODA/","/SUCAI/ELITEJAGUARWARRIOR/","/SUCAI/ELITEJANISSARY/","/SUCAI/ELITEKAMAYUK/","/SUCAI/ELITEKESHIK/","/SUCAI/ELITEKONA/","/SUCAI/ELITEKONNIK/","/SUCAI/ELITELEITIS/","/SUCAI/ELITEMAGYARHUSZAR/","/SUCAI/ELITEMAMELUKE/","/SUCAI/ELITEMONASPA/","/SUCAI/ELITEOBUCH/","/SUCAI/ELITEORGANGUN/","/SUCAI/ELITEPLUMEDARCHER/","/SUCAI/ELITERATHAMELEE/","/SUCAI/ELITERATHARANGED/","/SUCAI/ELITESERJEANT/","/SUCAI/ELITESHOTELWARRIOR/","/SUCAI/ELITESHRIVAMSHARIDER/","/SUCAI/ELITESKIRMISHER/","/SUCAI/ELITETEMPLEGUARD/","/SUCAI/ELITETEUTONICKNIGHT/","/SUCAI/ELITETHROWINGAXEMAN/","/SUCAI/ELITETIGERCAVALRY/","/SUCAI/ELITEURUMISWORDSMAN/","/SUCAI/ELITEWARDOG/","/SUCAI/ELITEWARELEPHANT/","/SUCAI/ELITEWARWAGON/","/SUCAI/ELITEWOADRAIDER/","/SUCAI/ELITE_ANTIQUITY_SKIRMISHER/","/SUCAI/ELITE_CHUKONU/","/SUCAI/ELITE_COMPOSITE_BOWMAN/","/SUCAI/ELITE_FIRE_ARCHER/","/SUCAI/ELITE_FIRE_LANCER/","/SUCAI/ELITE_GREEK_CAVALRY/","/SUCAI/ELITE_GUARDSMAN/","/SUCAI/ELITE_HOPLITE/","/SUCAI/ELITE_KIPCHAK/","/SUCAI/ELITE_LIAO_DAO/","/SUCAI/ELITE_PELTAST/","/SUCAI/ELITE_SCYTHIAN_HORSE_ARCHER/","/SUCAI/ELITE_STEPPE_LANCER/","/SUCAI/ELITE_TARKAN/","/SUCAI/ELITE_WAR_CHARIOT/","/SUCAI/ELITE_WHITE_FEATHER_GUARD/","/SUCAI/EQUITES/","/SUCAI/FIRE_ARCHER/","/SUCAI/FIRE_LANCER/","/SUCAI/FLAMETHROWER/","/SUCAI/FLAMINGCAMEL/","/SUCAI/FLEMISHPIKEMAN/","/SUCAI/FLEMISHPIKEMAN_F/","/SUCAI/FOOTKONNIK/","/SUCAI/GASTRAPHETES/","/SUCAI/GBETO/","/SUCAI/GENITOUR/","/SUCAI/GENOESECROSSBOWMAN/","/SUCAI/GHULAM/","/SUCAI/GREEK_NOBLE_CAVALRY/","/SUCAI/GRENADIER/","/SUCAI/GUARDSMAN/","/SUCAI/GUECHAWARRIOR/","/SUCAI/HALBERDIER/","/SUCAI/HANDCANNONEER/","/SUCAI/HEAVYROCKETCART/","/SUCAI/HEAVYSCORPION/","/SUCAI/HEAVY_PIKEMAN/","/SUCAI/HEI_KUANG/","/SUCAI/HEI_KUANG_HEAVY/","/SUCAI/HELEPOLIS/","/SUCAI/HILL_TRIBESMAN/","/SUCAI/HIPPEUS/","/SUCAI/HOPLITE/","/SUCAI/HOUFNICE/","/SUCAI/HUSKARL/","/SUCAI/HUSSAR/","/SUCAI/HUSSITEWAGON/","/SUCAI/IBIRAPEMAWARRIOR/","/SUCAI/IMMORTAL/","/SUCAI/IMPERIALCAMELRIDER/","/SUCAI/IMPERIALCENTURION/","/SUCAI/IMPERIAL_CAVALRY/","/SUCAI/IMPERIAL_SKIRMISHER/","/SUCAI/INDIAN_TRIBESMAN/","/SUCAI/IRON_PAGODA/","/SUCAI/IROQUOISWARRIOR/","/SUCAI/JAGUARWARRIOR/","/SUCAI/JANISSARY/","/SUCAI/JIANSWORDMANSHIELDED/","/SUCAI/JIAN_SWORDMAN_UNSHIELDED/","/SUCAI/JIAN_SWORDSMAN/","/SUCAI/KAMAYUK/","/SUCAI/KARAMBIT_WARRIOR/","/SUCAI/KARAMBIT_WARRIOR_ELITE/","/SUCAI/KESHIK/","/SUCAI/KIPCHAK/","/SUCAI/KNIGHT/","/SUCAI/KONA/","/SUCAI/KONNIK/","/SUCAI/LAMINATED_BOWMAN/","/SUCAI/LANCER/","/SUCAI/LEGIONARY/","/SUCAI/LEITIS/","/SUCAI/LEVY/","/SUCAI/LIAO_DAO/","/SUCAI/LIGHTCAVALRY/","/SUCAI/LIGHT_RIDERS/","/SUCAI/LONGBOWMAN/","/SUCAI/LONGBOWMAN_ELITE/","/SUCAI/LONGSWORDSMAN/","/SUCAI/MAGYARHUSZAR/","/SUCAI/MAMELUKE/","/SUCAI/MANATARMS/","/SUCAI/MANGONEL/","/SUCAI/MANGUDAI/","/SUCAI/MANGUDAI_ELITE/","/SUCAI/MILITIA/","/SUCAI/MONASPA/","/SUCAI/MOUNTED_ALEXANDER/","/SUCAI/ARTAPHERNES/","/SUCAI/MOUNTEDTREBUCHET/","/SUCAI/NINJA/","/SUCAI/NORSE_WARRIOR/","/SUCAI/OBUCH/","/SUCAI/ONAGER/","/SUCAI/ORGANGUN/","/SUCAI/PALADIN/","/SUCAI/PARAGON/","/SUCAI/PATTIYODA_LONGBOWMAN/","/SUCAI/PETARD/","/SUCAI/PHALANGITE/","/SUCAI/PIKEMAN/","/SUCAI/PLUMEDARCHER/","/SUCAI/PORUS_ELEPHANT/","/SUCAI/PROJ_ARROW/","/SUCAI/PROJ_ARROW_FIRE/","/SUCAI/PROJ_BALL/","/SUCAI/PROJ_MANGONEL/","/SUCAI/PROJ_ROCK/","/SUCAI/PROJ_BOLT/","/SUCAI/PROJ_DART/","/SUCAI/PROJ_GRENADE/","/SUCAI/PROJ_SHOT/","/SUCAI/PROJ_SLING/","/SUCAI/PROJ_SPEAR/","/SUCAI/PROJ_THROWING_AXE/","/SUCAI/QIZILBASHWARRIOR/","/SUCAI/RAIDER/","/SUCAI/RANGED_IMMORTAL/","/SUCAI/RATHAMELEE/","/SUCAI/RATHARANGED/","/SUCAI/RATTAN_ARCHER/","/SUCAI/RATTAN_ARCHER_ELITE/","/SUCAI/RECURVE_BOWMAN/","/SUCAI/RHODIAN_SLINGER/","/SUCAI/RHOMPHAIA_WARRIOR/","/SUCAI/ROCKETCART/","/SUCAI/ROYALJANISSARY/","/SUCAI/SACRED_BAND/","/SUCAI/SAKAN_AXEMAN/","/SUCAI/SAMURAI_DE/","/SUCAI/SAMURAI_ELITE/","/SUCAI/SANNAHYA/","/SUCAI/SARMATIAN/","/SUCAI/SAVAR/","/SUCAI/SCORPION/","/SUCAI/SCOUTCAVALRY/","/SUCAI/SCYTHIAN_AXE_CAVALRY/","/SUCAI/SCYTHIAN_HORSE_ARCHER/","/SUCAI/SERJEANT/","/SUCAI/SHOCK_CAVALRY/","/SUCAI/SHOTELWARRIOR/","/SUCAI/SHRIVAMSHARIDER/","/SUCAI/SICKLE_WARRIOR/","/SUCAI/SIEGEONAGER/","/SUCAI/SIEGERAM/","/SUCAI/SIEGETOWER/","/SUCAI/SIEGE_BALLISTA/","/SUCAI/SKIRMISHER/","/SUCAI/SLINGER/","/SUCAI/SOGDIANCATAPHRACT/","/SUCAI/SOSSO_GUARD/","/SUCAI/SPARABARA/","/SUCAI/SPEARMAN/","/SUCAI/STEPPE_LANCER/","/SUCAI/STRATEGOS/","/SUCAI/SWORDSMAN/","/SUCAI/TARANTINE_CAVALRY/","/SUCAI/TARKAN/","/SUCAI/TEMPLEGUARD/","/SUCAI/TEUTONICKNIGHT/","/SUCAI/THRACIAN_PELTAST/","/SUCAI/THROWING_AXEMAN/","/SUCAI/TIGER_RIDER/","/SUCAI/TRACTIONTREBUCHET/","/SUCAI/TWOHANDEDSWORDSMAN/","/SUCAI/URUMISWORDSMAN/","/SUCAI/VANGUARD/","/SUCAI/WARCHARIOT/","/SUCAI/WARDOG/","/SUCAI/WARRIORPRIEST/","/SUCAI/WARWAGON/","/SUCAI/WAR_CHARIOT/","/SUCAI/WAR_ELEPHANT/","/SUCAI/WHITE_FEATHER_GUARD/","/SUCAI/WINGEDHUSSAR/","/SUCAI/WOADRAIDER/","/SUCAI/XIANBEI_RAIDER/","/SUCAI/XOLOTLWARRIOR/"];
@@ -3714,6 +3718,9 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-14] 险要：已进城的攻方（每仿真时刻算一次，见 intruders） */
     private intrudersSec = -1;
     private intrudersVal: WarMan[] = [];
+    /** 🔴 [2026-10-14 主人令「残兵应该是按每队算」] 残兵主动找敌：每队（lane）开局兵力（后备＋场上，精灵×人口，第一帧记下）与「本队已剩不到 REMNANT_FRAC」的队号 */
+    private laneStart: Map<number, number> | null = null;
+    private remnantLanes = new Set<number>();
     private flowBuiltAt = -99;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
@@ -5408,6 +5415,8 @@ export class Scene13WarLayer {
         this.flowDist = null;
         this.defGateFlow = null;
         this.intrudersSec = -1;
+        this.laneStart = null;
+        this.remnantLanes.clear();
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5745,6 +5754,8 @@ export class Scene13WarLayer {
         this.flowDist = null;
         this.defGateFlow = null;
         this.intrudersSec = -1;
+        this.laneStart = null;
+        this.remnantLanes.clear();
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -9032,6 +9043,15 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
             this.ensureGateInfo();
             const gatesOnly = !this.ringOpen() && !this.insideRing(m.x, m.y);
+            if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
+            const cb0 = this.centerBld && this.wallStanding(this.centerBld) ? this.centerBld : null;
+            // 🔴 [2026-10-14 主人令「两条都做」：攻方没有敌兵可打时直奔中心建筑] 墙已破（或人已在城内）⇒ 只认中心建筑；
+            //    视野内够不着就返回 null，由 aimAtRaw 朝中心建筑走（流场绕缺口）。中心建筑没了才回到「最近的建筑」。
+            //    病灶（实测险要 3 场）：攻方先拆路上的房子箭塔，守方剩 5% 后约 50 秒才开始打中心建筑，再拆约 50 秒。
+            if (cb0 && !gatesOnly) {
+                if ((cb0.x - m.x) ** 2 + (cb0.y - m.y) ** 2 < r2) { if (reserve) cb0.claims++; return cb0; }
+                return null;
+            }
             const pool = gatesOnly ? this.wallGates.filter(b => b.key === 'STONE_GATE') : this.defBuildings;
             let t: WarBuilding | null = null, td = r2;
             for (const b of pool) {
@@ -9791,6 +9811,20 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     }
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
+        // 🔴 [2026-10-14 主人令「两条都做」→「按每队算」] 残兵主动找敌：本队剩不到 REMNANT_FRAC ⇒ 全图找离自己最近的敌人（不限视野），
+        //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
+        if (m.lane >= 0 && this.remnantLanes.has(m.lane) && !m.hero) {
+            let t: WarMan | null = null, td = Infinity;
+            for (const o of this.men) {
+                if (o.f === m.f || o.hp <= 0) continue;
+                const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                if (d < td) { td = d; t = o; }
+            }
+            if (t) {
+                const ra = Math.atan2(m.jy, m.jx);
+                return this.gateExit(m, this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }));
+            }
+        }
         return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
     }
 
@@ -9859,7 +9893,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    敌人进了城（上一行）照常接战。病灶：几百守军挤 4 座 1 格宽的外圈门出城，门口排队卡死约 17 人（实测）。
         // 🔴 [2026-10-14 主人令「选1，攻方进城后守军都去围攻」] 城里已有攻方 ⇒ 去打离自己最近的那个（不限距离）；城里没有才原地守着。
         //    病灶（实测 4 场）：守军的目标常是城外的敌人 ⇒ 上一行让他原地不动，进城的敌人只有挨着的守军去打 ⇒ 被各个击破，守方 4 场全负。
-        if (this.defenderCityType === 'pass') {
+        if (this.defenderCityType === 'pass' && !this.remnantLanes.has(m.lane)) {   // 本队成了残兵就不守墙，照常出城找敌（见 aimAt）
             let t: WarMan | null = null, td = Infinity;
             for (const o of this.intruders()) {
                 const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
@@ -11321,6 +11355,16 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const alive = [0, 0];
         for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
         for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
+        {
+            const laneAlive = new Map<number, number>();
+            for (const s of this.spawns) laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + Math.max(0, s.pool) * s.pop);
+            for (const m of this.men) if (m.hp > 0 && m.lane >= 0) laneAlive.set(m.lane, (laneAlive.get(m.lane) ?? 0) + m.pop);
+            if (!this.laneStart && alive[0] > 0 && alive[1] > 0) this.laneStart = new Map(laneAlive);
+            if (this.laneStart) {
+                this.remnantLanes.clear();
+                for (const [l, a] of laneAlive) { const st = this.laneStart.get(l) ?? 0; if (st > 0 && a <= st * REMNANT_FRAC) this.remnantLanes.add(l); }
+            }
+        }
         // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
         this.tickContactSfx(dt);
 
