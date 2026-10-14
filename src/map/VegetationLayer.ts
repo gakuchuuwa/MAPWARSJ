@@ -383,6 +383,39 @@ function getTreeLine(lat: number, lng?: number): number {
 
 const TREE_GRID_STEP = 42;
 
+/** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
+const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
+
+function getUnderbrushSprite(season: TreeSeason): HTMLCanvasElement | null {
+    if (typeof document === 'undefined') return null;
+    const s = season >= 0 && season <= 3 ? season : 0;
+    if (UNDERBRUSH_CANVAS[s]) return UNDERBRUSH_CANVAS[s];
+    const c = document.createElement('canvas');
+    c.width = 64;
+    c.height = 36;
+    const cx = c.getContext('2d');
+    if (cx) {
+        // DE 林下底色：春夏为暗湿腐殖土绿褐色，秋季为温润落叶褐，冬季为冷褐枯色
+        const colors = [
+            'rgba(34, 46, 26, 0.18)', // 春
+            'rgba(28, 44, 22, 0.20)', // 夏
+            'rgba(52, 42, 24, 0.19)', // 秋
+            'rgba(42, 42, 38, 0.15)', // 冬
+        ];
+        const color = colors[s];
+        const grad = cx.createRadialGradient(32, 18, 2, 32, 18, 30);
+        grad.addColorStop(0, color);
+        grad.addColorStop(0.55, color);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        cx.fillStyle = grad;
+        cx.beginPath();
+        cx.ellipse(32, 18, 30, 16, 0, 0, Math.PI * 2);
+        cx.fill();
+    }
+    UNDERBRUSH_CANVAS[s] = c;
+    return c;
+}
+
 export class VegetationLayer {
     private readonly map: L.Map;
     private readonly canvas: HTMLCanvasElement;
@@ -586,14 +619,35 @@ export class VegetationLayer {
 
         const drawContactShadow = (it: { x: number; y: number; h: number }) => {
             ctx.save();
+            ctx.fillStyle = '#10180c';
+            // 1. 树根近距接触小暗斑（紧贴树干底部接地处）
             ctx.globalAlpha = TREE_SHADOW_OPACITY;
-            ctx.fillStyle = '#141c12';
             ctx.beginPath();
-            // 椭圆中心严格落在 (it.x, it.y)，与树根锚点接地处完全重合
-            ctx.ellipse(it.x, it.y, it.h * 0.22, Math.max(1.0, it.h * 0.06), 0, 0, Math.PI * 2);
+            ctx.ellipse(it.x, it.y, it.h * 0.16, Math.max(1.0, it.h * 0.05), 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. DE 经典向右下（东南）斜射软投影（模拟树干与树冠投影）
+            ctx.globalAlpha = TREE_SHADOW_OPACITY * 0.85;
+            ctx.beginPath();
+            const angle = 0.52; // 顺应 45° 视角下的东南向日照
+            const cx = it.x + it.h * 0.16;
+            const cy = it.y + it.h * 0.09;
+            ctx.ellipse(cx, cy, it.h * 0.28, Math.max(1.0, it.h * 0.09), angle, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         };
+
+        // 🔴 DE 风格优化 1：绘制林下阴翳基底（Forest Floor Underbrush）
+        // 在连片密林底层铺垫一层柔和羽化的枯枝落叶/苔藓林地底色，
+        // 让连片树冠沉稳融入地形，消除“散落贴纸/图钉”的浮空感。
+        const underbrushSprite = getUnderbrushSprite(currentTreeSeason());
+        if (underbrushSprite) {
+            for (const it of items) {
+                const uw = it.h * 1.35;
+                const uh = it.h * 0.72;
+                ctx.drawImage(underbrushSprite, it.x - uw * 0.5, it.y - uh * 0.45, uw, uh);
+            }
+        }
 
         for (const it of items) {
             drawContactShadow(it);

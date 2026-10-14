@@ -105,3 +105,25 @@ public/cities/备用
 # 线上已关闭战术模式（GameAppCombatHooks.tacticalModeOn 在 PROD 下恒为 false），故整批不上传。
 public/SUCAI_BUILDING/**/frames.png
 public/SUCAI_BUILDING/**/frames.pc.png
+
+# ===== 2026-10-15 部署瘦身（主人令「请清理」）：只是不上传，本地文件一个不删 =====
+# 依据：线上只保留战略层（GameAppCombatHooks.tacticalModeOn 在 PROD 恒为 false），且线上只构建 index.html。
+# ① 战术地图数据：只有 Scene13WarLayer（战术）与战场编辑器读 /battlefields/。337MB / 1202 个。
+public/battlefields
+# ② DE 科技树：只有 de-wiki 页与军团编辑器读；游戏里只用到 icons/（unitIcons.ts，经军团面板）。约 97MB。
+public/de-techtree/*
+!public/de-techtree/icons
+# ③ 目录名与文件名在 src / index.html / vite.config.ts 里一次都没出现过（2026-10-15 逐个查过）。
+public/SUCAI_BACKGROUND
+public/de-maps
+public/daolu
+public/texiao
+public/ground_test
+public/SUCAI/EMPERORLITTER
+public/SUCAI/HERO_ASIAN
+public/SUCAI/HERO_AFRICAN
+public/SUCAI/HEAVYSWORDSMAN
+public/SUCAI/EXPLOSION_DEMO_SHIPS
+# ④ 根目录的二进制，与构建无关。
+ak_sof.bin
+tessdata
