@@ -1815,7 +1815,7 @@ export default defineConfig({
                                 'gastraphetes': 'gastraphetoros',
                                 'pattiyoda_longbowman': 'pattiyodhalongbowman',
                                 'elite_pattiyoda_longbowman': 'elitepattiyodhalongbowman',
-                                'elite_armored_elephant': 'siegeelephant',
+                                'mounted_crossbowman_heavy': 'heavymountedcrossbowman',
                                 'demo_ship': 'demolitionship',
                                 'heavy_demo_ship': 'heavydemolitionship',
                                 'demo_raft': 'demolitionraft'

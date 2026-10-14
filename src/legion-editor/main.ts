@@ -669,7 +669,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     // ── 2026-10-14 补 6 个「科技树有、鉴赏无」的 DE 官方战斗兵种（属性照 DE dat，素材 u_* SLD 提取）──
     { id: 'maceman', name: '链锤兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'mounted_crossbowman', name: '骑马弩兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN/' },
-    { id: 'mounted_crossbowman_heavy', name: '重装骑马弩兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/' },
+    { id: 'mounted_crossbowman_heavy', name: '骑马弩兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/' },
     { id: 'priestess', name: '女祭司', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },
     { id: 'polemarch', name: '军事执政官', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/POLEMARCH/' },
     { id: 'siege_elephant', name: '攻城战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/SIEGEELEPHANT/' },

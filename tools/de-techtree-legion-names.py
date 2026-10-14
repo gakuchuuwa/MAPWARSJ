@@ -66,7 +66,7 @@ def main() -> int:
         'gastraphetoros': 'gastraphetes',
         'pattiyodhalongbowman': 'pattiyoda_longbowman',
         'elitepattiyodhalongbowman': 'elite_pattiyoda_longbowman',
-        'siegeelephant': 'elite_armored_elephant',
+        'heavymountedcrossbowman': 'mounted_crossbowman_heavy',
         'ratha': 'ratha_melee',
         'eliteratha': 'elite_ratha_melee',
         'flemishmilitia': 'flemish_pikeman',
