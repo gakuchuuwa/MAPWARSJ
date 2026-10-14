@@ -28,7 +28,6 @@ const stringsCache: Record<string, Record<string, string>> = {};
 const metaCache: { data?: MetaBundle } = {};
 const iconManifest: { data?: any } = {};
 const xrefCache: { data?: Record<string, string[]> } = {};
-const legionCache: { data?: { byNorm: Record<string, string>; unmatched: any[] } } = {};
 const civInfoCache: { data?: Record<string, any> } = {};
 
 /** public/de-techtree/civ-info.json */
@@ -41,18 +40,6 @@ async function loadCivInfo(): Promise<Record<string, any>> {
     return civInfoCache.data!;
 }
 
-/** public/de-techtree/legion-names.json */
-async function loadLegionNames(): Promise<{ byNorm: Record<string, string>; unmatched: any[] }> {
-    if (legionCache.data) return legionCache.data;
-    try {
-        const r = await fetch('/de-techtree/legion-names.json');
-        legionCache.data = await r.json();
-    } catch { legionCache.data = { byNorm: {}, unmatched: [] }; }
-    return legionCache.data!;
-}
-
-const normName = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-
 /** public/de-techtree/xref.json */
 async function loadXref(): Promise<Record<string, string[]>> {
     if (xrefCache.data) return xrefCache.data;
@@ -61,6 +48,38 @@ async function loadXref(): Promise<Record<string, string[]>> {
         xrefCache.data = await r.json();
     } catch { xrefCache.data = {}; }
     return xrefCache.data!;
+}
+
+const customNamesCache: { data?: Record<string, string> } = {};
+
+/** public/de-techtree/custom-names.json */
+export async function loadCustomNames(): Promise<Record<string, string>> {
+    if (customNamesCache.data) return customNamesCache.data;
+    try {
+        const r = await fetch('/de-techtree/custom-names.json?t=' + Date.now());
+        customNamesCache.data = await r.json();
+    } catch { customNamesCache.data = {}; }
+    return customNamesCache.data!;
+}
+
+interface LegionNames {
+    byNorm: Record<string, string>;
+    unmatched?: any[];
+}
+const legionCache: { data?: LegionNames } = {};
+async function loadLegionNames(): Promise<LegionNames> {
+    if (legionCache.data) return legionCache.data;
+    try {
+        const r = await fetch('/de-techtree/legion-names.json');
+        legionCache.data = await r.json();
+    } catch { legionCache.data = { byNorm: {} }; }
+    return legionCache.data!;
+}
+
+export function clearDeTechTreeCache(): void {
+    treeCache.clear();
+    customNamesCache.data = undefined;
+    legionCache.data = undefined;
 }
 
 /** public/de-techtree/icons/manifest.json */
@@ -114,7 +133,7 @@ async function loadIndex(): Promise<any[]> {
 
 async function loadTree(key: string): Promise<TreePackage> {
     if (treeCache.has(key)) return treeCache.get(key)!;
-    const r = await fetch(`/de-techtree/trees/${key}.json`);
+    const r = await fetch(`/de-techtree/trees/${key}.json?t=${Date.now()}`);
     const pkg = (await r.json()) as TreePackage;
     layoutTree(pkg);
     treeCache.set(key, pkg);
@@ -256,26 +275,62 @@ export async function renderDeTechTree(
     civKey: string,
     opts: {
         lng?: DeLng;
-        nameSrc?: 'de' | 'legion';
         onCiv?: (key: string) => void;
         onLng?: (l: DeLng) => void;
-        onNameSrc?: (s: 'de' | 'legion') => void;
         onBack?: () => void;
     } = {},
 ): Promise<TechTreeHandle> {
     const lng = opts.lng ?? 'zh';
     const isZh = lng === 'zh' || lng === 'tw';
-    const [index, pkg, strings, meta, iconManifestData, xref, legionNames, civInfo] = await Promise.all([
-        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(), loadXref(), loadLegionNames(), loadCivInfo(),
+    const [index, pkg, strings, meta, iconManifestData, xref, civInfo, customNames, legionNames] = await Promise.all([
+        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(), loadXref(), loadCivInfo(), loadCustomNames(), loadLegionNames(),
     ]);
 
-    let nameSrc: 'de' | 'legion' = opts.nameSrc ?? 'de';
+    const curCivMeta = index.find((c) => c.key === civKey);
+    const isAntiquity = curCivMeta?.era === 'antiquity';
+
+    // 古典时代与中世纪重名节点（如长矛兵、战车、精锐战车、箭船、战船、运输船、重型弩炮等）
+    const ANTIQUITY_DUPE_NODES = new Set([
+        93,    // 长矛兵 (Antiquity Spearman)
+        2150,  // 战车 (War Chariot)
+        2151,  // 精锐战车 (Elite War Chariot)
+        2130,  // 箭船 (Antiquity Galley)
+        2131,  // 战船 (Antiquity War Galley)
+        2148,  // 运输船 (Antiquity Transport Ship)
+        331,   // 重型弩炮 (Palintonon Packed)
+        621,   // 城镇中心 (Town Center)
+        482,   // 堡垒 (Fort)
+        1167,  // 造船匠 (Shipwright)
+        140,   // 警戒箭塔 (Guard Tower)
+        194,   // 垛墙 (Fortified Wall)
+        63,    // 棱堡 (Bastion)
+    ]);
+    const DUPED_NAMES = ['长矛兵', '战车', '精锐战车', '箭船', '战船', '运输船', '重型弩炮', '城镇中心', '造船匠', '堡垒', '垛墙', '棱堡', '警戒箭塔'];
+
     const labelOf = (it: TreeItem): string => {
-        if (nameSrc === 'legion' && isZh) {
-            const m = legionNames.byNorm[normName(it.name ?? '')];
-            if (m) return m;
+        if (!isZh) return it.name ?? '';
+        const nid = it.node_id ?? -1;
+        const iNorm = (it.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        let base = ((iNorm && customNames[iNorm])
+            || (nid >= 0 && customNames[String(nid)])
+            || (iNorm && legionNames.byNorm[iNorm])
+            || it.name_zh
+            || it.name
+            || '');
+        base = base.replace(/[\r\n]+/g, '');
+
+        if (isAntiquity || ANTIQUITY_DUPE_NODES.has(nid)) {
+            if (ANTIQUITY_DUPE_NODES.has(nid) || DUPED_NAMES.some(n => base.includes(n))) {
+                if (!base.includes('古典')) {
+                    base = `${base}（古典）`;
+                }
+            }
+        } else {
+            if (nid === 1254) base = '保加利亚骑兵（步战）';
+            else if (nid === 1255) base = '精锐保加利亚骑兵（步战）';
+            else if (nid === 1750) base = '楼船（蒂里萨代）';
         }
-        return (isZh ? (it.name_zh || it.name) : it.name) ?? '';
+        return base;
     };
 
     const haveIcon = exportedIcons(iconManifestData);
@@ -283,9 +338,6 @@ export async function renderDeTechTree(
         item.use_type === 'Building' || /Building/.test(item.node_type ?? '') ? 'Building'
             : item.use_type === 'Tech' ? 'Tech' : 'Unit';
     const T = (id: number | null | undefined): string => (id == null || id < 0 ? '' : (strings[String(id)] ?? ''));
-
-    const curCivMeta = index.find((c) => c.key === civKey);
-    const isAntiquity = curCivMeta?.era === 'antiquity';
 
     // 时代信息
     const AGE_INFO = isAntiquity ? [
@@ -477,24 +529,6 @@ export async function renderDeTechTree(
         opts.onLng?.(lngSel.value as DeLng);
     });
     optsWrap.appendChild(lngSel);
-
-    // 兵种命名来源
-    const nameSel = document.createElement('select');
-    nameSel.className = 'de-tt-opt-select';
-    nameSel.title = '兵种名口径';
-    for (const [val, label] of [['de', isZh ? '官方名' : 'DE Names'], ['legion', isZh ? '军团鉴赏名' : 'Legion Names']] as const) {
-        const o = document.createElement('option');
-        o.value = val;
-        o.textContent = label;
-        if (val === nameSrc) o.selected = true;
-        nameSel.appendChild(o);
-    }
-    nameSel.addEventListener('change', () => {
-        nameSrc = nameSel.value as 'de' | 'legion';
-        try { localStorage.setItem('de-techtree-namesrc', nameSrc); } catch {}
-        opts.onNameSrc?.(nameSrc);
-    });
-    optsWrap.appendChild(nameSel);
 
     bottomBar.appendChild(optsWrap);
     panel.appendChild(bottomBar);
@@ -893,7 +927,6 @@ export async function renderDeTechTree(
             canvasWrap.removeEventListener('wheel', onCanvasWheel);
             civSelect.removeEventListener('change', () => {});
             lngSel.removeEventListener('change', () => {});
-            nameSel.removeEventListener('change', () => {});
             backBtn.removeEventListener('click', () => {});
             host.innerHTML = '';
             host.className = '';
@@ -907,10 +940,8 @@ export async function mountDeTechTree(
     civKey: string,
     opts?: {
         lng?: DeLng;
-        nameSrc?: 'de' | 'legion';
         onCiv?: (k: string) => void;
         onLng?: (l: DeLng) => void;
-        onNameSrc?: (s: 'de' | 'legion') => void;
         onBack?: () => void;
     },
 ) {

@@ -4317,6 +4317,51 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
         },
+        // ── 2026-10-14 补 6 个 DE 官方战斗兵种（素材 u_* SLD 提取；链锤兵复用 VANGUARD 同 u_inf_vanguard）──
+        'maceman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/death_${dir}.png`),
+        },
+        'mounted_crossbowman': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN/death_${dir}.png`),
+        },
+        'mounted_crossbowman_heavy': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/attack_${dir}.png`),
+            SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/death_${dir}.png`),
+        },
+        'priestess': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/death_${dir}.png`),
+        },
+        'polemarch': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/death_${dir}.png`),
+        },
+        'siege_elephant': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIEGEELEPHANT/death_${dir}.png`),
+        },
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
     // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。
