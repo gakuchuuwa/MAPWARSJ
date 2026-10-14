@@ -2523,7 +2523,7 @@ const UNIT_RADIUS: Record<string, number> = {
     armored: 8.0,
     armored_elephant: 18.0,
     maceman: 8.0, mounted_crossbowman: 10.0, mounted_crossbowman_heavy: 10.0,
-    priestess: 8.0, polemarch: 8.0, siege_elephant: 18.0,
+    priestess: 8.0, polemarch: 8.0,
     axe: 8.0,
     bactrian_archer: 8.0,
     ballista: 20.0,

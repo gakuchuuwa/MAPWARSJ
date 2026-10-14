@@ -67,7 +67,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     ji_infantry: { name: '华夏戟兵', cls: 'melee', sz: 1, hp: 55, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 5: 25, 8: 22, 16: 16, 21: 1, 29: 1, 30: 18, 35: 7 }, armorTags: [27, 1, 31] },
     ji_infantry_elite: { name: '华夏戟兵精锐', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     aztec_raider: { name: '阿兹特克突袭者高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
-    siege_elephant: { name: '南亚攻城战象重装', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 280, 20: 35 }, armorTags: [5, 8, 20, 17, 31] },
+    siege_elephant: { name: '攻城战象', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 105 }, armorTags: [5, 8, 20, 17, 31] },
 
     manatarms: { name: '铁甲剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     sunda_royal_fighter: { name: '爪哇巽他皇家战士高级', cls: 'melee', sz: 1, hp: 90, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 29: 2, 21: 1 }, armorTags: [1, 31] },
@@ -566,6 +566,5 @@ export const WAR_TYPES: Record<string, WarType> = {
     mounted_crossbowman_heavy: { name: '重装骑马弩兵', cls: 'cav', sz: 1, kite: 70, hp: 55, atk: 8, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.5, spd: 50, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 31] },
     priestess: { name: '女祭司', cls: 'ranged', sz: 1, hp: 30, atk: 0, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 1.6, spd: 28, dmgType: 'pierce', bonus: {}, armorTags: [25, 31] },
     polemarch: { name: '军事执政官', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 20, reload: 2.0, spd: 42, dmgType: 'melee', bonus: {}, armorTags: [19, 1, 31] },
-    siege_elephant: { name: '攻城战象', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 105 }, armorTags: [5, 8, 20, 17, 31] },
 
 };
