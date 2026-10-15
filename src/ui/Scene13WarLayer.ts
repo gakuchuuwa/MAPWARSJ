@@ -5639,8 +5639,8 @@ export class Scene13WarLayer {
                 if (p.kind === 'wall') {
                     // 木栅栏/篱笆走 WOOD_WALL 档、无破损档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
                     const wood = /PALISADE|FENCE/.test(p.dir);
-                    const wKey = wood ? 'WOOD_WALL' : 'STONE_WALL';
-                    const st = wood ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_WALL : WALL_GATE_STATS.STONE_WALL);
+                    const wKey = wood ? 'WOOD_WALL' : (p.dir.includes('FORTIFIED') ? 'FORTIFIED_WALL' : 'STONE_WALL');
+                    const st = WALL_GATE_STATS[wKey];
                     const destrAssets = wood ? undefined : ['D25', 'D50', 'D75'].map((t) => `${p.dir}_${t}`);
                     if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
                     this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets });
@@ -8719,10 +8719,7 @@ export class Scene13WarLayer {
      * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
      */
     private collapseNextWallGap(): boolean {
-        // 🔴 [2026-10-14 主人令「坍塌系统优先坍塌不满血的城门，城墙，建筑。不要坍塌中心的那个建筑」]
-        //    候选＝还立着的城门/城墙/城垛 ＋ 城内建筑（含箭塔），**中心建筑永远不在候选里**（只能被攻方士兵或攻城武器打掉才算胜利）
-        if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
-        const alive = [...this.wallGates, ...this.defBuildings].filter(b => b !== this.centerBld && this.wallStanding(b));
+        const alive = this.wallGates.filter(b => this.wallStanding(b));
         if (alive.length === 0) return false;
         let pick: WarBuilding | undefined;
         // 只挑没满血的，先塌最早挨打的（没记挨打时刻的按「刚挨打」排在后面）
@@ -8732,10 +8729,7 @@ export class Scene13WarLayer {
         }
         // 🔴 [2026-10-14 主人令「要设计为受到攻击的城墙才能坍塌，不然就不现实了」] 没有挨过打、掉了血的 ⇒ 这一轮不塌
         if (!pick) return true;
-        if (pick.bld) {   // 城内建筑：血清零走建筑倒塌（停火、切残骸），与被打掉同一条路
-            pick.hp = 0;
-            this.onDefBuildingHit(pick);
-        } else this.collapseOneWall(pick);
+        this.collapseOneWall(pick);
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
         this.releaseHold();
@@ -8759,7 +8753,7 @@ export class Scene13WarLayer {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
-        if (b.key === 'STONE_WALL' || b.key === 'WOOD_WALL') {
+        if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             const destr = b.destrAssets;
             if (destr) {
                 b.sprite.asset = 'BUILDINGANIM:' + (Math.random() < 0.6 ? destr[1] : destr[2]);
@@ -9067,7 +9061,7 @@ export class Scene13WarLayer {
                 const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * SUICIDE_BLD_MULT / shooter.reload;
                 b.atkNext++;
                 if (b.hitAt === undefined) b.hitAt = this.battleSec;
-                b.hp -= bdps * this.sideBonus[m.f] * gangMul(b) * this.attritionMul() * dt;
+                b.hp -= bdps * this.sideBonus[m.f] * dt;
                 if (b.destrAssets && b.maxHp > 0) {
                     const ratio = b.hp / b.maxHp;
                     let stage = -1;
@@ -9080,7 +9074,7 @@ export class Scene13WarLayer {
                     }
                 }
                 if (b.bld) this.onDefBuildingHit(b);
-                if (b.key === 'STONE_WALL' && b.hp <= 0 && !b.sprite.obstructionDisabled) {
+                if ((b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL') && b.hp <= 0 && !b.sprite.obstructionDisabled) {
                     b.sprite.obstruction = undefined;
                     b.sprite.obstructionDisabled = true;
                 }
@@ -10692,7 +10686,10 @@ export class Scene13WarLayer {
                     foe.atkNext++;
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt;
+                        // DE 建筑不吃小兵围殴加成（gangMul）与残局白热化（attritionMul）；
+                        // 非攻城兵种受建筑周长接触位上限约束（最多约 10 人同时贴墙挥砍，避免 50~150 人坐标重叠瞬秒建筑；攻城武器全额输出）
+                        const bldStackCap = (!m.siegeW && foe.atkers > 10) ? (10 / foe.atkers) : 1;
+                        foe.hp -= dps * this.sideBonus[m.f] * bldStackCap * dt;
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
@@ -10717,7 +10714,7 @@ export class Scene13WarLayer {
                         //    只能干等 30 秒保底坍塌 —— 画面上就是「一直砸，栅栏纹丝不动」。
                         //    与 applyRandomCollapseForms 里「栅栏无残垣 → 直接消失」同一口径。
                         // 🔴 [2026-10-12 主人令「打完就不要再打了」] 石墙打到 0 血 = 打穿：留残垣贴图，取消碰撞（之前 0 血仍挡路）
-                        if (foe.key === 'STONE_WALL' && foe.hp <= 0 && !foe.sprite.obstructionDisabled) {
+                        if ((foe.key === 'STONE_WALL' || foe.key === 'FORTIFIED_WALL') && foe.hp <= 0 && !foe.sprite.obstructionDisabled) {
                             foe.sprite.obstruction = undefined;
                             foe.sprite.obstructionDisabled = true;
                         }
