@@ -518,8 +518,8 @@ const SIGHT_MAP: Record<string, number> = {
     // ── [2026-08-18 补齐] 新补录兵种：同族继承其基准单位；无同族者远程取射程+80、骑兵200、象/攻城280、步兵160（对齐 DE 规律：视野必须 ≥ 射程） ──
     antiquity_battering_ram: 120,
     antiquity_capped_ram: 120,
-    antiquity_cavalry_archer: 240,
-    antiquity_heavy_cavalry_archer: 240,
+    antiquity_cavalry_archer: 300,
+    antiquity_heavy_cavalry_archer: 320,
     antiquity_heavy_scorpion: 360,
     antiquity_light_cavalry: 200,
     antiquity_mangonel: 360,
@@ -551,11 +551,12 @@ const SIGHT_MAP: Record<string, number> = {
     shock_cavalry: 200,
     sosso_guard: 160,
     vanguard: 160,
-    tarantine_cavalry: 240,
-    varangian_jarl: 240,
-    hero_harald: 240,
-    hero_arariboiaranged: 240,
-    elite_varangian_jarl: 280,
+    tarantine_cavalry: 320,
+    varangian_jarl: 280,
+    jarl: 280,
+    hero_harald: 300,
+    hero_arariboiaranged: 300,
+    elite_varangian_jarl: 300,
     amazon_archer: 240,
     amazon_warrior: 120,
     arambai: 280,
@@ -563,30 +564,30 @@ const SIGHT_MAP: Record<string, number> = {
     archer: 240,
     armored: 160,
     armored_elephant: 240,
-    maceman: 160, mounted_crossbowman: 240, mounted_crossbowman_heavy: 240,
+    maceman: 160, mounted_crossbowman: 300, mounted_crossbowman_heavy: 320,
     priestess: 440, polemarch: 200, siege_elephant: 240,
     axe: 120,
     bactrian_archer: 280,
     ballista: 360,
-    ballista_elephant: 280,
+    ballista_elephant: 300,
     battle_elephant: 280,
     bayinnaung_elephant: 200,
-    dagnajan_elephant: 280,
+    dagnajan_elephant: 300,
     battering_ram: 200,
     berserk: 120,
     blackwood_archer: 240,
     bolas_rider: 280,
     bombard_cannon: 560,
     boyar: 200,
-    camel_archer: 200,
+    camel_archer: 300,
     camel_heavy: 200,
     camel_raider: 160,
     camel_rider: 200,
     camel_scout: 160,
     capped_ram: 200,
     cataphract: 160,
-    cav_archer: 200,
-    cav_archer_heavy: 240,
+    cav_archer: 300,
+    cav_archer_heavy: 320,
     centurion: 160,
     chakram_thrower: 280,
     champion: 200,
@@ -604,16 +605,16 @@ const SIGHT_MAP: Record<string, number> = {
     eastern_swordsman: 160,
     ekdromos: 160,
     elephant: 280,
-    elephant_archer: 280,
-    elite_arambai: 280,
+    elephant_archer: 300,
+    elite_arambai: 300,
     elite_armored_elephant: 240,
-    elite_ballista_elephant: 280,
+    elite_ballista_elephant: 320,
     elite_battle_elephant: 320,
     elite_berserk: 200,
     elite_blackwood_archer: 240,
-    elite_bolas_rider: 280,
+    elite_bolas_rider: 300,
     elite_boyar: 200,
-    elite_camel_archer: 200,
+    elite_camel_archer: 320,
     elite_cataphract: 200,
     elite_centurion: 200,
     elite_chakram_thrower: 320,
@@ -624,11 +625,11 @@ const SIGHT_MAP: Record<string, number> = {
     elite_conquistador: 360,
     elite_coustillier: 200,
     elite_eagle_warrior: 240,
-    elite_elephant_archer: 280,
+    elite_elephant_archer: 320,
     elite_fire_archer: 440,
     elite_fire_lancer: 240,
     elite_gbeto: 280,
-    elite_genitour: 240,
+    elite_genitour: 300,
     elite_genoese_crossbowman: 320,
     elite_ghulam: 240,
     elite_guardsman: 160,
@@ -648,22 +649,22 @@ const SIGHT_MAP: Record<string, number> = {
     elite_janissary: 400,
     elite_kamayuk: 200,
     elite_keshik: 200,
-    elite_kipchak: 240,
+    elite_kipchak: 320,
     elite_kona: 240,
     elite_konnik: 200,
     elite_konnik_foot: 120,
     elite_leitis: 200,
     elite_liao_dao: 120,
     elite_magyar_huszar: 240,
-    elite_mameluke: 200,
+    elite_mameluke: 280,
     elite_monaspa: 200,
     elite_obuch: 120,
     elite_organ_gun: 360,
     elite_pattiyoda_longbowman: 200,
     elite_plumed_archer: 240,
     elite_ratha_melee: 240,
-    elite_ratha_ranged: 240,
-    elite_scythian_horse_archer: 240,
+    elite_ratha_ranged: 320,
+    elite_scythian_horse_archer: 320,
     elite_serjeant: 200,
     elite_shotel_warrior: 120,
     elite_shrivamsha_rider: 240,
@@ -689,7 +690,7 @@ const SIGHT_MAP: Record<string, number> = {
     flemish_pikeman_f: 200,
     gbeto: 240,
     general_cavalry: 200,
-    genitour: 200,
+    genitour: 280,
     genoese_crossbowman: 320,
     ghulam: 240,
     greek_noble_cavalry: 200,
@@ -707,7 +708,7 @@ const SIGHT_MAP: Record<string, number> = {
     hippeus: 160,
     hoplite: 160,
     elite_hoplite: 160,
-    horse_archer: 200,
+    horse_archer: 300,
     houfnice: 560,
     huskarl: 120,
     hussar: 160,
@@ -730,7 +731,7 @@ const SIGHT_MAP: Record<string, number> = {
     karambit_warrior: 120,
     karambit_warrior_elite: 120,
     keshik: 200,
-    kipchak: 240,
+    kipchak: 300,
     knight: 160,
     kona: 200,
     konnik: 200,
@@ -744,10 +745,10 @@ const SIGHT_MAP: Record<string, number> = {
     longbowman: 280,
     longbowman_elite: 320,
     magyar_huszar: 240,
-    mameluke: 200,
+    mameluke: 280,
     mangonel: 360,
-    mangudai: 240,
-    mangudai_elite: 240,
+    mangudai: 300,
+    mangudai_elite: 320,
     mercenary_hoplite: 200,
     militia: 160,
     monaspa: 160,
@@ -766,7 +767,7 @@ const SIGHT_MAP: Record<string, number> = {
     porus_elephant: 280,
     qizilbash_warrior: 160,
     ratha_melee: 240,
-    ratha_ranged: 240,
+    ratha_ranged: 300,
     rattan_archer: 240,
     rattan_archer_elite: 240,
     rhodian_slinger: 280,
@@ -783,7 +784,7 @@ const SIGHT_MAP: Record<string, number> = {
     scorpion: 360,
     siege_ballista: 360,
     scythian_axe_cavalry: 200,
-    scythian_horse_archer: 200,
+    scythian_horse_archer: 300,
     serjeant: 120,
     shield: 200,
     shotel_warrior: 120,
@@ -814,12 +815,12 @@ const SIGHT_MAP: Record<string, number> = {
     war_chariot_ranged: 320,
     war_dog: 200,
     war_elephant: 280,
-    war_wagon: 280,
+    war_wagon: 300,
     warrior_priest: 120,
     white_feather_guard: 160,
     winged_hussar: 160,
     woad_raider: 120,
-    xianbei_raider: 240,
+    xianbei_raider: 300,
     xolotl_warrior: 160,
     longswordsman: 160,
     champi_warrior: 160,
@@ -1107,16 +1108,18 @@ const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */
 const BATTLE_LIMIT_SEC = 300;
-/** 🔴 [2026-10-15 主人令「按占的格子多少来设计，不要太长，比现在稍微长一点」] 城内建筑被摧毁的保底秒数 = BASE + PER_SIDE × 占地边长（见 onDefBuildingHit） */
-const BLD_MIN_DESTROY_BASE = 4;
-const BLD_MIN_DESTROY_PER_SIDE = 3;
-/** 建筑占地边长（格）：与 TerritorySystem.deBuildingFootprint 同一口径（城内布局按它摆格），按素材名判 */
+/** 🔴 [2026-10-15 主人令「现在的建筑被击毁的又太快了，我觉得应该给每个建筑一个基础被摧毁保底时间」]
+ *  城内建筑被摧毁的保底秒数 = BASE(8s) + PER_SIDE(4s) × 占地档位：
+ *  1×1 箭塔/哨站 12s | 2×2 民居/磨坊/蒙古包/帐篷 16s | 3×3 兵营/靶场/马厩/铁匠铺/修道院 20s | 4×4 城镇中心/市场/大学/攻城武器厂 24s | 城堡/世界奇观 28s */
+const BLD_MIN_DESTROY_BASE = 8;
+const BLD_MIN_DESTROY_PER_SIDE = 4;
+/** 建筑占地边长档位（格）：与 TerritorySystem.deBuildingFootprint 对齐，城堡与世界奇观作为核心决胜建筑定为 5 档（28 秒保底） */
 function bldFootprintSide(b: string): number {
-    if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY') || b.includes('SIEGE_WORKSHOP')) return 4;
-    if (b.includes('WONDER')) return 5;
+    if (b.includes('CASTLE') || b.includes('WONDER')) return 5;
+    if (b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY') || b.includes('SIEGE_WORKSHOP')) return 4;
     if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY')) return 3;
-    if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_')) return 2;
-    if (b.includes('TOWER')) return 1;
+    if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_') || b.includes('TENT') || b.includes('HUT') || b.includes('PAVILION')) return 2;
+    if (b.includes('TOWER') || b.includes('OUTPOST')) return 1;
     return 3;
 }
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */
@@ -5326,24 +5329,24 @@ export class Scene13WarLayer {
         // [2026-08-19 主人需求] 演出停止 → 隐藏退出按钮（自然结束/退出结算都会走到这里）
         if (this.exitBtn) this.exitBtn.style.display = 'none';
         this.useGroundGL = false;
-        if (this.glCanvas) this.glCanvas.style.display = 'none';
         this.clearDeCity();
-        if (!keepFrame && this.canvas) this.fadeOutCanvas();
+        if (!keepFrame && this.canvas) {
+            this.fadeOutCanvas();
+        } else if (this.glCanvas) {
+            this.glCanvas.style.display = 'none';
+        }
     }
 
-    // ── 退场过渡（2026-10-03 主人「战术模式结束后，切换到战略模式是硬切」）──
-    //   原来是 `canvas.style.display = 'none'` 一帧切走，军团面板、军情面板同一帧弹出。
-    //   现在：画布 0.7 秒淡出并略微「拉远」（scale 1→1.08，纯 opacity/transform，走合成器，不重绘、不用混合模式——
-    //   混合模式叠在战术画布上会拖垮整页，见 perf-doctor）；底下的战略地图在 stop() 开头已先恢复，淡出时露出的就是真地图；
-    //   面板等淡出过半（450ms）再还原。**不碰地图缩放**（战术层期间地图 zoom 冻结是主人定的）。
+    // ── 退场过渡（2026-10-03 主人「战术模式结束后，切换到战略模式是硬切」；2026-10-15 同步 WebGL 底图画布）──
+    //   2D 战术画布与 WebGL 地形画布同步 0.7 秒丝滑淡出并略微拉远（scale 1→1.05，cubic-bezier 缓动）；
+    //   底下的战略地图在 stop() 开头已先恢复，淡出时露出的就是真地图；面板等淡出过半（450ms）再还原。
     private canvasFadeTimer: number | null = null;
     private panelRestoreTimer: number | null = null;
-    private static readonly EXIT_FADE_MS = 700;
+    private static readonly EXIT_FADE_MS = 720;
 
-    // ── 进场过渡（2026-10-03 主人「添加一个丝滑进场」）──
-    //   start() 把画布置成「全透明 + scale(0.96)」，等 render() 第一次真正画出来才淡入并归位（与退场对称，
-    //   同样只用 opacity/transform，不用混合模式）。淡入期间战略地图保持可见（见 coverStrategyMap 的守卫），
-    //   画面就是「战略地图 → 战场」的交叉溶解；淡入走完才把地图盖起来（原有的性能优化）。
+    // ── 进场过渡（2026-10-03 主人「添加一个丝滑进场」；2026-10-15 主人「战略地图转场到战术地图的转场效果请优化下」）──
+    //   start() 把 2D 画布与 WebGL 地形画布同步置成「全透明 + scale(1.045) 俯冲拉近 + 暗角微柔焦」，
+    //   等 render() 第一次真正画出来才同步淡入并归位（消除原本 WebGL 底图先硬切出现、2D 画布后淡入的割裂感）。
     private entryFadePending = false;
     private entryStartedAt = 0;
     /** 最多等素材这么久（真实毫秒），超时就让战场先淡入，不让玩家一直盯着静止的战略地图。
@@ -5352,47 +5355,63 @@ export class Scene13WarLayer {
     /** 淡入进行中（从 beginEntryFade 到浏览器报告 opacity 渐变结束，或兜底超时）；期间不许盖地图 */
     private entryFadeActive = false;
     private entryFadeCleanup: (() => void) | null = null;
-    private static readonly ENTRY_FADE_MS = 600;
+    private static readonly ENTRY_FADE_MS = 680;
+
+    private applyInitialEntryStyle(el: HTMLCanvasElement): void {
+        el.style.transition = 'none';
+        el.style.transformOrigin = '50% 50%';
+        el.style.opacity = '0';
+        el.style.transform = 'scale(1.045)';
+        el.style.filter = 'brightness(0.78) blur(3px)';
+    }
 
     private prepareEntryFade(cv: HTMLCanvasElement): void {
         this.cancelCanvasFade();   // 清掉上一场未走完的退场淡出 / 进场淡入
-        cv.style.transition = 'none';
-        cv.style.transformOrigin = '50% 50%';
-        cv.style.opacity = '0';
-        cv.style.transform = 'scale(0.96)';
+        this.applyInitialEntryStyle(cv);
+        if (this.glCanvas) this.applyInitialEntryStyle(this.glCanvas);
         this.entryFadePending = true;
         this.entryStartedAt = performance.now();
     }
 
     private beginEntryFade(cv: HTMLCanvasElement): void {
         this.entryFadePending = false;
-        void cv.offsetWidth;   // 强制样式落定：保证「透明 + 略缩」是过渡的起点
+        const gl = this.glCanvas;
+        void cv.offsetWidth;   // 强制样式落定：保证「透明 + 俯冲拉近」是过渡的起点
+        if (gl) void gl.offsetWidth;
         const ms = Scene13WarLayer.ENTRY_FADE_MS;
+        const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
+        const trans = `opacity ${ms}ms ${ease}, transform ${ms}ms ${ease}, filter ${ms}ms ease-out`;
         this.entryFadeActive = true;
-        // 🔴 淡入何时结束，以浏览器**真正的渐变结束事件**为准，不用「开始时刻 + 固定毫秒」：
-        //    进场这几百毫秒主线程在解码素材，渐变常常晚几百毫秒才真的开始走；
-        //    按固定毫秒算会在画布还半透明时就把地图盖掉（实测 12 帧里有 4 帧提前盖住，透出空白底）。
-        //    兜底超时 2 秒：渐变被取消 / 页面在后台时 transitionend 不会来，不能让地图永远盖不上。
+        // 🔴 淡入何时结束，以浏览器**真正的渐变结束事件**为准，不用「开始时刻 + 固定毫秒」
         const finish = (): void => {
             cv.removeEventListener('transitionend', onEnd);
             window.clearTimeout(fallback);
             this.entryFadeCleanup = null;
             this.entryFadeActive = false;
             this.resetCanvasFadeStyle(cv);
+            if (this.glCanvas) this.resetCanvasFadeStyle(this.glCanvas);
         };
         const onEnd = (e: TransitionEvent): void => { if (e.propertyName === 'opacity') finish(); };
         const fallback = window.setTimeout(finish, ms + 1400);
         cv.addEventListener('transitionend', onEnd);
         this.entryFadeCleanup = finish;
-        cv.style.transition = `opacity ${ms}ms ease-out, transform ${ms}ms ease-out`;
+        cv.style.transition = trans;
         cv.style.opacity = '1';
         cv.style.transform = 'scale(1)';
+        cv.style.filter = 'brightness(1) blur(0px)';
+        if (gl) {
+            gl.style.transition = trans;
+            gl.style.opacity = '1';
+            gl.style.transform = 'scale(1)';
+            gl.style.filter = 'brightness(1) blur(0px)';
+        }
     }
 
     private resetCanvasFadeStyle(cv: HTMLCanvasElement): void {
         cv.style.transition = '';
         cv.style.opacity = '';
         cv.style.transform = '';
+        cv.style.filter = '';
     }
 
     /** 取消还没走完的淡出（新一场开战时调用，保证新场画布是满不透明、正常大小） */
@@ -5404,23 +5423,44 @@ export class Scene13WarLayer {
         this.entryFadeCleanup?.();   // 进场淡入还没走完：摘监听、清兜底计时器、解除「不许盖地图」
         this.entryFadePending = false;
         if (this.canvas) this.resetCanvasFadeStyle(this.canvas);
+        if (this.glCanvas) this.resetCanvasFadeStyle(this.glCanvas);
     }
 
     private fadeOutCanvas(): void {
         const cv = this.canvas;
+        const gl = this.glCanvas;
         if (!cv) return;
         this.cancelCanvasFade();
-        if (cv.style.display === 'none') { this.timeOfDay.end(); return; }
+        if (cv.style.display === 'none') {
+            if (gl) gl.style.display = 'none';
+            this.timeOfDay.end();
+            return;
+        }
+        const ms = Scene13WarLayer.EXIT_FADE_MS;
+        const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
+        const trans = `opacity ${ms}ms ${ease}, transform ${ms}ms ${ease}, filter ${ms}ms ease-out`;
         cv.style.transformOrigin = '50% 50%';
-        cv.style.transition = `opacity ${Scene13WarLayer.EXIT_FADE_MS}ms ease-out, transform ${Scene13WarLayer.EXIT_FADE_MS}ms ease-out`;
+        cv.style.transition = trans;
         cv.style.opacity = '0';
-        cv.style.transform = 'scale(1.08)';
+        cv.style.transform = 'scale(1.05)';
+        cv.style.filter = 'brightness(0.88) blur(2px)';
+        if (gl && gl.style.display !== 'none') {
+            gl.style.transformOrigin = '50% 50%';
+            gl.style.transition = trans;
+            gl.style.opacity = '0';
+            gl.style.transform = 'scale(1.05)';
+            gl.style.filter = 'brightness(0.88) blur(2px)';
+        }
         this.canvasFadeTimer = window.setTimeout(() => {
             this.canvasFadeTimer = null;
             cv.style.display = 'none';
             this.resetCanvasFadeStyle(cv);
+            if (gl) {
+                gl.style.display = 'none';
+                this.resetCanvasFadeStyle(gl);
+            }
             this.timeOfDay.end();
-        }, Scene13WarLayer.EXIT_FADE_MS + 50);
+        }, ms + 50);
     }
 
     private restorePanels(): void {
@@ -7017,6 +7057,7 @@ export class Scene13WarLayer {
                 cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
                 cv.style.backgroundRepeat = 'repeat';
                 cv.style.backgroundPosition = 'center center';
+                if (this.entryFadePending) this.applyInitialEntryStyle(cv);
                 cv.style.display = 'block';
 
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
@@ -7525,12 +7566,12 @@ export class Scene13WarLayer {
         if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
             let bld: WarBuilding | undefined;
             for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
-            if (!bld) for (const b of this.wallGates) if (b.key === 'STONE_GATE' && b.sprite === s) { bld = b; break; }
+            if (!bld) for (const b of this.wallGates) if ((b.key === 'STONE_GATE' || b.key === 'WOOD_WALL') && b.sprite === s) { bld = b; break; }
             if (bld && bld.hp > 0 && bld.hp <= bld.maxHp * 0.75) {
                 const ratio = bld.hp / bld.maxHp;
                 const tierIdx = ratio <= 0.25 ? 2 : (ratio <= 0.50 ? 1 : 0);
                 const bName = bld.bld?.name ?? s.asset;
-                let kind = bld.key === 'STONE_GATE' ? 'GATE' : 'HOUSE';
+                let kind = bld.key === 'STONE_GATE' ? 'GATE' : (bld.key === 'WOOD_WALL' ? 'OUTPOST' : 'HOUSE');
                 if (bld.bld) {
                     for (const kName of ['CASTLE', 'WONDER', 'ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
                         if (bName.includes(kName)) { kind = kName; break; }
@@ -8715,25 +8756,44 @@ export class Scene13WarLayer {
         }
         const isHero = (m as { hero?: boolean }).hero === true;
         const manChosen = (pFree ?? pInRange ?? pBest) ?? (free ?? inRange ?? best);
-        // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」] 取「当前第一档还立着的目标」
-        //    （`siegeFirstTier` = 城门 → 城墙 → 箭塔 → 中心建筑 → 其余建筑）里**射程内离自己最近**的那个；
-        //    够不着就返回 null 继续靠近（见 aimAt）。距离比较用的是平方距离 `d`，等价于最近。
+        // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」]
+        // 🔴 [2026-10-15 主人令「在进攻的途中，攻城武器不打人，直接往敌军中冲，这样不现实」]
+        //    1) 若最近的目标城门/城墙/建筑已进入攻城武器自身射程（reach2）⇒ 优先锁定并摧毁该建筑；
+        //    2) 若目标建筑尚在射程外（正在进攻行军途中）：
+        //       · 远程攻城武器（投石车/弩炮/手推炮/火箭车，rng > 65）：视野内一旦出现阻拦敌军（manChosen），立即停步在安全射程外轰击敌军，绝不盲目冲入敌阵！
+        //       · 近战攻城武器（冲车/攻城象，rng <= 65）：若正前方近身（reach + 18px 内）有敌兵阻拦，先撞击开路；否则继续朝城门/建筑推进。
         if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
+            const mKey = (m as { key?: string }).key ?? '';
+            const st = this.statsFor(mKey, m.f as 0 | 1);
+            const rng = st.rng ?? 0;
+            const reach = Math.max(rng, 65) + this.radiusOf(mKey);
+            const reach2 = reach * reach;
             const tier = this.siegeFirstTier(m.f as 0 | 1);
             if (tier.length > 0) {
                 let pick: WarBuilding | null = null, pd = Infinity, far: WarBuilding | null = null, fard = Infinity;
-                // 🔴 [2026-10-13 主人报「攻城武器还是先打城墙，不先打城门」] 排序在**全图**做，不只在视野内：
-                //    原先 `d >= r2` 先筛掉视野外 ⇒ 城墙长、总有一段在视野里，城门在视野外 ⇒ 先锁墙、锁住后打到塌才换。
-                //    现在全图排出「该打的那一个」，在视野内就打，不在就返回 null，由 aimAtRaw 朝它走（路过的墙不锁）。
                 for (const b of tier) {
                     const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-                    const s = Math.sqrt(d);   // 🔴 [2026-10-15] 门墙楼房并列，纯按距离（撤掉城门的 GATE_PREF_PX 优先）
+                    const s = Math.sqrt(d);
                     if (s < fard) { fard = s; far = b; }
                     if (minR2 > 0 && d < minR2) continue;
                     if (s < pd) { pd = s; pick = b; }
                 }
                 const t = pick ?? far;
-                if (t && (t.x - m.x) ** 2 + (t.y - m.y) ** 2 < r2) { if (reserve) t.claims++; return t; }
+                const td2 = t ? (t.x - m.x) ** 2 + (t.y - m.y) ** 2 : Infinity;
+                // 城门/城墙/建筑已在射程内 ⇒ 直接锁定攻城目标
+                if (t && td2 <= reach2) {
+                    if (reserve) t.claims++;
+                    return t;
+                }
+                // 进攻途中（建筑尚在射程外）：远程攻城器遇敌兵即停步远射；近战冲车被敌兵贴脸阻拦时撞击开路
+                if (manChosen) {
+                    const md2 = (manChosen.x - m.x) ** 2 + (manChosen.y - m.y) ** 2;
+                    if (rng > 65 ? (minR2 === 0 || md2 >= minR2) : (md2 <= (reach + 18) ** 2)) {
+                        if (reserve) manChosen.claims++;
+                        return manChosen;
+                    }
+                }
+                if (t && td2 < r2) { if (reserve) t.claims++; return t; }
                 return null;
             }
         }
@@ -8843,7 +8903,10 @@ export class Scene13WarLayer {
         return true;
     }
 
-    /** 单个墙/门/垛段坍塌：取消阻挡 + 播放 DE 倒塌动画（石墙/木栅 FOUNDATION_1X1_DESTR → D75/FOUNDATION_1X1_RUBBLE，城门 DESTR → RUBBLE） */
+    /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
+     *  - 石墙(Unit 117) / 垛墙(Unit 155) / 木栅栏(Unit 72)：DE 无 100 帧倒塌 SLD（FOUNDATION_1X1_DESTR 实为未建好的木脚手架地基倒塌），
+     *    在受伤阶段渐进切 D25/D50/D75（木栅栏叠火焰），血归零时触发 dying_graphic=33（烟尘爆裂 + 直接切 Rubble1x1 `s_rubble_1x1_x1` = `FOUNDATION_1X1_RUBBLE`）；
+     *  - 城门(Unit 64)：DE 有独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`），照播 100 帧倒塌。 */
     private collapseOneWall(b: WarBuilding): void {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
@@ -8852,9 +8915,10 @@ export class Scene13WarLayer {
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
         if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
-            const destr = b.destrAssets;
-            const rubble = destr ? ('BUILDINGANIM:' + destr[2]) : 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
-            this.collapseToRubble(b.sprite, 'FOUNDATION_1X1', rubble);
+            b.sprite.collapse = undefined;
+            b.sprite.asset = 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+            b.sprite.frame = 0;
+            this.explode('FX_PETARD', b.x, b.y - this.elevationLiftAt(b.x, b.y));
         } else if (b.rubbleAsset) {
             this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
         } else {
@@ -10208,7 +10272,7 @@ export class Scene13WarLayer {
             const stats = wt;
             // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）
             const spdK = this.isWaterAt(m.x, m.y) ? 0.6 : 1;
-            const SIGHT = isGuard ? Math.max(stats.sight ?? 160, 320) : (stats.sight ?? 160);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；原位警戒守军警戒半径至少 320px）
+            const SIGHT = Math.max(isGuard ? 320 : 0, stats.sight ?? 160, stats.rng > 65 ? Math.round(stats.rng * 1.15) + 40 : 0);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；保证远程视野始终大于最大射程）
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
             //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
             //    （53.67 = √(TAC_TILE_W²/4 + TAC_TILE_H²/4) 的等轴换算，见 resolveWorldObstructions）。
@@ -10272,6 +10336,7 @@ export class Scene13WarLayer {
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0)
+                && !(m.siegeW && m.foe && !('sprite' in m.foe) && m.next <= 0)
                 && !wrongLaneFoe;
             const hb = m.siegeW && this.battleType === 'siege' ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
@@ -10311,17 +10376,19 @@ export class Scene13WarLayer {
             //    Attack Move 的脱队只对**真敌兵**生效（建筑目标用 'sprite' in foe 区分，见上方交战时计数那段）。
             if (m.march && m.foe && !('sprite' in m.foe)) {
                 // 🔴 [2026-10-11 主人「按专业游戏修复」] **DE 的 Attack-Move 是「接触才脱队」，不是「看见就脱队」**。
-                //    改前：非英雄兵 `keepInMarch` 恒 false ⇒ 视野内一看到敌人（SIGHT 160~440px，远大于交战距离）
-                //    当场 m.march=false / m.port=null ⇒ 全队各自追同一个目标，分离推挤把方阵摊成「宽而扁」。
-                //    现在：**只有进入交战距离（自身射程 + 一个槽位间距）才脱队**，之前一律保持方阵推进。
-                const _rng = this.statsFor(m.key, m.f).rng ?? 0;
+                // 🔴 [2026-10-15 主人令「在刚达最大射程时立即停步脱队射击，不再往敌人脸上多冲一段」]
+                //    远程单位（stats.rng > 65）一达到最大射程 REACH 立即脱队并原地停步（m.tx = m.x; m.ty = m.y）开火，不再多往前冲一段 MARCH_SP。
                 const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
-                const _contact = _d2 <= (Math.max(_rng, 65) + MARCH_SP) ** 2;
+                const _contact = _d2 <= (REACH + (stats.rng > 65 ? 0 : MARCH_SP)) ** 2;
                 if (_contact) {
                     m.march = false;
                     m.port = null;
                     m.stuckT = 0;
                     m.netT = 0;
+                    if (stats.rng > 65) {
+                        m.tx = m.x;
+                        m.ty = m.y;
+                    }
                 }
             }
 
@@ -10479,6 +10546,12 @@ export class Scene13WarLayer {
                 //    从视野边缘跑到跟前要 5.4s（精锐战象 320/6.4s），4 秒一到就丢目标重找，
                 //    再锁再跑再丢，一刀都砍不出去。实测这样的兵种共 6 个（全是象 + 桑纳亚）。
                 if (inReach) {
+                    // 🔴 [2026-10-15 主人令「在刚达最大射程时立即停步脱队射击，不再往敌人脸上多冲一段」]
+                    if (stats.rng > 65) {
+                        if (m.march) { m.march = false; m.port = null; }
+                        m.tx = m.x;
+                        m.ty = m.y;
+                    }
                     // 接触交战音景的**唯一数据源**：这一帧有多少近战兵正够得着活人。
                     // 三条排除，都是为了让这声音只代表「两军绞杀」：
                     //   · stats.rng > 65 的远程兵不算 —— 它是近战音效，后期只剩对射时就该静下来；
@@ -10537,7 +10610,7 @@ export class Scene13WarLayer {
                     // 迟滞带：被推挤挤出攻击距离一点点，站住别动，姿势保持不变（见上面的说明）。
                     // 不改 m.st，所以渲染继续用上一帧那套帧，不会在攻击帧/移动帧之间来回跳。
                     if (m.fadeT > 0) m.fadeT -= dt;
-                    m.ph += dt * (m.st ? 8 / 1.5 : 8);
+                    m.ph += dt * (m.st ? 8 / 1.5 : (8 / LOOP_WINDOW_IDLE_SEC));
                     continue;
                 }
                 // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
@@ -10545,7 +10618,7 @@ export class Scene13WarLayer {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
-                    m.ph += dt * 8;
+                    m.ph += dt * (8 / LOOP_WINDOW_IDLE_SEC);
                     continue;
                 }
                 if (!inReach) {
@@ -10669,7 +10742,7 @@ export class Scene13WarLayer {
                      *     不为 35 个慢射兵种破例。（2026-08-20 主人拍板 A：不改。）
                      */
                     const animDur = Math.min(reloadTime, 1.5);
-                    m.ph += dt * 8 / animDur;
+                    m.ph += m.ph >= 8 ? dt * (8 / LOOP_WINDOW_IDLE_SEC) : dt * 8 / animDur;
                     // 放箭/开火：动画播到该兵种专属发射相位（shootPhase）才射出，和动作对齐。
                     // 只有真正在放箭/开火的那一轮才有弹丸：被贴身改白刃（st=2）或处于攻城盲区（minRange）时不射。
                     // 🔴 2026-08-16 主人定：抛射物按兵种一一对应 DE 素材（箭/标枪/飞镖/飞斧/火箭/炮弹/弹丸），
@@ -10788,6 +10861,12 @@ export class Scene13WarLayer {
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
                         foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        // 城门/城墙同样设置基础被摧毁保底时间（城门 15s，石墙/垛墙/木栅 10s），防多台攻城槌重叠秒破
+                        if (!foe.bld && foe.hitAt !== undefined) {
+                            const wallFloorSec = foe.key === 'STONE_GATE' ? 15 : 10;
+                            const minWallHp = foe.maxHp * (1 - (this.battleSec - foe.hitAt) / wallFloorSec);
+                            if (foe.hp < minWallHp) foe.hp = minWallHp;
+                        }
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
@@ -10909,7 +10988,7 @@ export class Scene13WarLayer {
                     //    不再从头无限循环（这就是「像得了羊癫疯」的直接来源）。
                     //    停住这件事由渲染层的 clamp 负责，这里照常推进 ph（见上「职责划分」），
                     //    ph 继续涨，装填完那一刻若还没敌人就正好接上待命帧循环。
-                    m.ph += dt * 8 / 1.5;
+                    m.ph += m.ph >= 8 ? dt * (8 / LOOP_WINDOW_IDLE_SEC) : dt * 8 / 1.5;
                     continue;
                 }
                 // 没敌人在打 → 朝目标（最近的敌兵/敌军重心/原位警戒位）走。
@@ -10949,7 +11028,18 @@ export class Scene13WarLayer {
             // 🔴 [2026-08-17 修] 只有走路（st=0）在循环尾部推进 ph。攻击（st=1/2）的 ph 已在
             //    攻击分支（animDur 速度，见上「攻击动画推进」）或收势分支（foe 消失 lock>0）推进过——
             //    这里再推一次 = 双重推进，攻击动画快近一倍，箭射出的相位和拉弓动作脱节（「远程动作和箭不同步」根因）。
-            if (m.st === 0) m.ph += dt * 8;
+            // 🔴 [2026-10-15 主人问「是只有他这样，还是所有的待命动作都快」]
+            //    此前处于待命站姿（卡位待命、列阵待敌 holdLanes、受控待命 holdCmd、分队待命 laneStandby）的士兵仍按走路速度 dt*8（1.0 秒播满一轮）推进 ph，
+            //    而非定义的 LOOP_WINDOW_IDLE_SEC(1.6 秒)，导致全场待命动作偏快 60%！此处区分站立待命与行走，待命统一按 8 / LOOP_WINDOW_IDLE_SEC 推进。
+            if (m.st === 0) {
+                const isIdlePose = !m.march && (
+                    (m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
+                    || holdCmd
+                    || (m.lane >= 0 && this.holdLanes.has(m.lane))
+                    || laneStandby
+                );
+                m.ph += dt * (isIdlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);
+            }
         }
 
         // 围殴计数结转：本帧数到的攻击者数留给下一帧用（同帧边遍历边结算，只能数到一半）
