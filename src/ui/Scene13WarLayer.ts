@@ -8404,13 +8404,22 @@ export class Scene13WarLayer {
             const cur = laneInfo.get(m.lane);
             if (!cur) {
                 laneInfo.set(m.lane, { f: m.f, x: m.x, y: m.y, n: 1, inside: inR, meleeOnly: isMelee, guard: isGuard });
+            } else if (cur.guard && !isGuard) {
+                // 本队尚有第一波城外作战守军存活时，分队目标只按城外第一波守军算，不被城内补出的第二波 guardPost 守军污染
+                cur.x = m.x;
+                cur.y = m.y;
+                cur.n = 1;
+                cur.inside = inR;
+                cur.meleeOnly = isMelee;
+                cur.guard = false;
+            } else if (!cur.guard && isGuard) {
+                continue;
             } else {
                 cur.x += m.x;
                 cur.y += m.y;
                 cur.n++;
                 cur.inside += inR;
                 if (!isMelee) cur.meleeOnly = false;
-                if (isGuard) cur.guard = true;
             }
         }
         for (const info of laneInfo.values()) {
@@ -8424,7 +8433,7 @@ export class Scene13WarLayer {
         const canReachLane = (info: { f: number; x: number; y: number; inside: number; n: number; meleeOnly: boolean; guard: boolean }, eInfo: { x: number; y: number; inside: number; n: number }): boolean => {
             if (this.battleType === 'siege' && this.siegeWithWalls) {
                 if (info.f === 0 && !this.ringOpen() && info.meleeOnly && info.inside === 0 && eInfo.inside === eInfo.n) return false;
-                if (info.f === 1 && info.meleeOnly && info.inside > 0 && eInfo.inside === 0) return false;
+                if (info.f === 1 && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
             }
             if (info.guard && (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2 > 420 * 420) return false;
             return true;
@@ -8469,12 +8478,13 @@ export class Scene13WarLayer {
                 laneClaims.set(interceptLane, (laneClaims.get(interceptLane) ?? 0) + 1);
             } else if (prev.targetBld !== undefined) {
                 const gatesOnly = this.battleType === 'siege' && this.siegeWithWalls && !this.ringOpen() && info.inside === 0;
-                // 士兵优先打兵：若 340px 内出现可触及且未满 4 队的敌方分队，整队立即转火该敌队
-                let nearELane: number | undefined, nearED2 = 340 * 340;
+                // 士兵优先打兵：若场上仍有城外第一波守军或 340px 内出现可触及且未满 4 队的敌方分队，整队立即转火该敌队
+                let nearELane: number | undefined, nearED2 = Infinity;
                 for (const [eLane, eInfo] of laneInfo) {
                     if (eInfo.f === info.f || !canReachLane(info, eInfo) || (laneClaims.get(eLane) ?? 0) >= MAX_LANE_ATTACKERS) continue;
                     const d2 = (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2;
-                    if (d2 < nearED2) { nearED2 = d2; nearELane = eLane; }
+                    const isOutsideWave1 = !eInfo.guard && eInfo.inside < eInfo.n;
+                    if ((isOutsideWave1 || d2 < 340 * 340) && d2 < nearED2) { nearED2 = d2; nearELane = eLane; }
                 }
                 if (nearELane !== undefined) {
                     const eInfo = laneInfo.get(nearELane)!;
@@ -8515,9 +8525,9 @@ export class Scene13WarLayer {
             }
 
             if (this.battleType === 'siege' && info.f === 0) {
-                if (bestELane !== undefined && bestERawDist <= 520) {
-                    const eInfo = laneInfo.get(bestELane)!;
-                    this.laneTargets.set(lane, { targetLane: bestELane, x: eInfo.x, y: eInfo.y });
+                const bestEInfo = bestELane !== undefined ? laneInfo.get(bestELane) : undefined;
+                if (bestELane !== undefined && bestEInfo && (bestERawDist <= 520 || (!bestEInfo.guard && bestEInfo.inside < bestEInfo.n))) {
+                    this.laneTargets.set(lane, { targetLane: bestELane, x: bestEInfo.x, y: bestEInfo.y });
                     laneClaims.set(bestELane, (laneClaims.get(bestELane) ?? 0) + 1);
                     continue;
                 }
@@ -9237,8 +9247,9 @@ export class Scene13WarLayer {
                 else { if (p < minP1) minP1 = p; }
             }
             const liveGap = (maxP0 > -Infinity && minP1 < Infinity) ? (minP1 - maxP0) : Infinity;
-            if ((marchedDist >= 180 && (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || liveGap < MARCH_REL)) || this.battleSec >= 15.0) {
+            if ((marchedDist >= 180 && (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || liveGap < MARCH_REL)) || this.battleSec >= (this.battleType === 'siege' ? 25.0 : 15.0)) {
                 this.marching = false;
+                this.holdLanes.clear();
                 for (const m of this.men) {
                     m.march = false;   // 全军同时解除，双方一起炸开接战
                     m.noFoeSec = LANE_REGROUP_SEC;
@@ -10109,7 +10120,7 @@ export class Scene13WarLayer {
         const laneLeaders = new Map<number, WarMan>();
         const laneLeaderScore = new Map<number, number>();
         for (const m of this.men) {
-            if (m.hp <= 0 || m.lane < 0 || m.hero) continue;
+            if (m.hp <= 0 || m.lane < 0 || m.hero || m.guardPost) continue;
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
             // 每批每口 50 个精灵（SIDE_CAP ÷ SIDE_LANES = 500 ÷ 10）→ 排数 = 50 ÷ 列数
             const sp = marchSpacingOf(m.key);
@@ -10166,7 +10177,7 @@ export class Scene13WarLayer {
             //    注意此处在 `m.next -= dt`（10165 行）之前，故须用 `m.next <= dt` 判断本帧索敌到点（原写 `m.next <= 0` 因下方的重置恒为 false 导致远距索敌从未执行）；
             //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
-                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) this.holdLanes.clear();
+                && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) this.holdLanes.clear();
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
@@ -10264,12 +10275,9 @@ export class Scene13WarLayer {
             const wrongLaneFoe = lt !== undefined && m.next <= 0 && m.foe !== null && !('sprite' in m.foe)
                 && lt.targetLane !== undefined && m.foe.lane !== lt.targetLane
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
-            const standbyOutReach = laneStandby && m.foe !== null
-                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 25) ** 2;
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0)
-                && !wrongLaneFoe
-                && !standbyOutReach;
+                && !wrongLaneFoe;
             const hb = m.siegeW && this.battleType === 'siege' ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
                 && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
@@ -10283,11 +10291,11 @@ export class Scene13WarLayer {
             } else if (keep && m.foe) {
                 m.foe.claims++;
             } else if (m.next <= 0) {
-                if (hb && (!laneStandby || (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 <= (REACH + 25) ** 2)) {
+                if (hb) {
                     m.foe = hb;
                     hb.claims++;
                 } else {
-                    m.foe = this.search(m, laneStandby ? REACH : SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
+                    m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
                 }
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
@@ -10537,8 +10545,8 @@ export class Scene13WarLayer {
                     m.ph += dt * (m.st ? 8 / 1.5 : 8);
                     continue;
                 }
-                // 🔴 [2026-08-23] 双方待命期 / 无目标待命分队：够不着**不追**——原地站桩等目标进射程
-                if ((holdCmd || laneStandby) && !inReach) {
+                // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
+                if (holdCmd && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
