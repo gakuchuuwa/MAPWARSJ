@@ -50,7 +50,10 @@ function walkSrc(root: string): string[] {
     return out;
 }
 
-const SRC = readFileSync('src/ui/Scene13WarLayer.ts', 'utf8');
+const SRC = [
+    readFileSync('src/ui/Scene13WarLayer.ts', 'utf8'),
+    ...readdirSync('src/ui/scene13').filter((f) => f.endsWith('.ts')).map((f) => readFileSync(`src/ui/scene13/${f}`, 'utf8')),
+].join('\n');
 const WON = readFileSync('src/data/CityWonders.ts', 'utf8');
 /**
  * 🔴 [2026-10-05 修尺子] 引用面从「Scene13WarLayer + CityWonders 两个文件」放大到**整个 src/**。

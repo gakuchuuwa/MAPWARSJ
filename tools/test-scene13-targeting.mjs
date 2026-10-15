@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import ts from 'typescript';
 
 // 运行真实方法，隔离画布、音频和素材加载；不复制搜索算法。
-const source = readFileSync(new URL('../src/ui/Scene13WarLayer.ts', import.meta.url), 'utf8');
+const s13SubDir = new URL('../src/ui/scene13/', import.meta.url);
+const s13SubSrc = readdirSync(s13SubDir).filter(f => f.endsWith('.ts')).map(f => readFileSync(new URL(f, s13SubDir), 'utf8')).join('\n');
+const source = readFileSync(new URL('../src/ui/Scene13WarLayer.ts', import.meta.url), 'utf8') + '\n' + s13SubSrc;
 const ast = ts.createSourceFile('Scene13WarLayer.ts', source, ts.ScriptTarget.Latest, true);
 const constants = new Map();
 const methods = new Map();

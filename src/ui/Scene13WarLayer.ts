@@ -3190,14 +3190,14 @@ export class Scene13WarLayer {
     /** 河流 / 湖泊模板水体从东北角迁到城边（实现见 Scene13MapWaterAdapter.ts） */
     private relocateTemplateWater(mapData: any): any {
         const rec: any = this.defenderCityRecord();
-        return relocateTemplateWater(mapData, {
-            waterKind: this.environmentPlan?.waterKind,
-            deCityWidth: this.deCity?.width,
-            defenderCityId: this.defenderCityId,
-            seed: this.environmentPlan?.seed,
-            lat: rec?.lat ?? this.centerLat,
-            lng: rec?.lng ?? this.centerLng,
-        });
+        return relocateTemplateWater(
+            mapData,
+            this.environmentPlan?.waterKind,
+            this.deCity?.width,
+            String(this.defenderCityId ?? this.environmentPlan?.seed ?? '0'),
+            rec?.lat ?? this.centerLat,
+            rec?.lng ?? this.centerLng,
+        );
     }
 
     /** 自适应校正战术地图水体方位，使海岸线朝向与真实地理（＝战略地图）一致（实现见 Scene13MapWaterAdapter.ts） */
@@ -7447,184 +7447,16 @@ export class Scene13WarLayer {
      * 没人时所有地面动物都在窝边慢慢走动吃草（DE 的 idle/walk ＋ 同类松散牵引）。
      */
     private updateTacticalAnimals(dt: number): void {
-        const list = this.tacticalAnimals;
-        if (!list.length) return;
-        const cv = this.canvas;
-        const MARGIN = 120;
-        // 🔴 [2026-10-13 修] 活动边界按**地图世界**（中心 ± TAC_MAP_HALF），不是屏幕画布宽高 —— 原来按画布 0~VW 夹，动物全被关进城边一个小框、贴边排成一条线
-        const X0 = this.worldCX - TAC_MAP_HALF_W + MARGIN, X1 = this.worldCX + TAC_MAP_HALF_W - MARGIN;
-        const Y0 = this.worldCY - TAC_MAP_HALF_H + MARGIN, Y1 = this.worldCY + TAC_MAP_HALF_H - MARGIN;
-        const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
-        const HOME_BACK = 120;      // 猎物活动半径（3 格，避免 30px 过小导致乒乓回头颤抖）
-        // 🔴 [2026-10-13 主人令「只冒着一个方向跑」＋「每次跑得距离多增加一些」]
-        //    单次逃跑时长：猎物/危险/家畜**统一 8 秒**（原 prey/danger 5 秒、家畜 2 秒）。
-        //    病灶：受惊闸每帧成立 ⇒ 原来每帧重算「背离当前最近士兵」的方向，士兵换人方向就跟着翻，
-        //    动物原地打转甚至朝军团来向折回（主人报「跑两步又回来了」）。
-        const FLEE_SEC = 8.0;       // 单次逃跑：一口气跑 8 秒（跑得更远，一次脱离人群）
-        // 🔴 [2026-10-15 主人令「增加移动速度」] 逃跑速度倍率：DE 原速再 ×1.5，甩开追兵
-        const ANIMAL_FLEE_SPEED_MULT = 1.5;
-
-        // 同类群重心：DE 的松散群聚（同伴在哪，闲逛就往那边偏一点）
-        const centroids = new Map<string, { x: number; y: number; n: number }>();
-        for (const a of list) {
-            if (a.sprite.destroyed) continue;
-            const c = centroids.get(a.species) ?? { x: 0, y: 0, n: 0 };
-            c.x += a.x; c.y += a.y; c.n++;
-            centroids.set(a.species, c);
-        }
-
-        for (const an of list) {
-            if (an.sprite.destroyed) continue;
-            const de = animalDeOf(an.species);
-
-            // ── 飞鸟：fly 巡航 ⇄ hover 展翅滑翔（DE 两种动作交替，空间位置永不停顿）──
-            if (de.kind === 'bird') {
-                an.idleTimer -= dt;
-                const dx = an.flyX - an.x, dy = an.flyY - an.y, d = Math.hypot(dx, dy) || 1;
-                if (d < 20 || an.idleTimer <= 0) {
-                    an.hovering = !an.hovering;
-                    an.idleTimer = 3 + Math.random() * 4;
-                    const ang = Math.random() * Math.PI * 2, r = 600 + Math.random() * 1000;
-                    an.flyX = Math.min(X1, Math.max(X0, an.x + Math.cos(ang) * r));
-                    an.flyY = Math.min(Y1, Math.max(Y0, an.y + Math.sin(ang) * r));
-                }
-                const curDx = an.flyX - an.x, curDy = an.flyY - an.y, curD = Math.hypot(curDx, curDy) || 1;
-                an.x += (curDx / curD) * de.walk * dt;
-                an.y += (curDy / curD) * de.walk * dt;
-                an.dir = this.birdDir(curDx, curDy);
-                an.sprite.x = an.x;
-                an.sprite.y = an.y;
-                this.setAnimalAction(an, an.hovering ? 'hover' : 'fly');
-                continue;
-            }
-
-            // ── 地面生灵：找最近的活人士兵 ──
-            let near: WarMan | null = null;
-            let nearD = Infinity;
-            for (const m of this.men) {
-                if (m.hp <= 0) continue;
-                const d = Math.hypot(m.x - an.x, m.y - an.y);
-                if (d < nearD) { nearD = d; near = m; }
-            }
-
-            const canMove = de.acts.includes('walk');
-            let mx = 0, my = 0, spd = 0, fleeing = false;
-            let want: AnimalAction = 'idle';
-
-            // 🔴 [2026-10-15 主人令「所有陆地动物统一模式，见到人就跑」] 动物只是点缀、游戏不攻击动物，
-            //    猛兽也不再扑人：猎物/危险/猛兽/家畜一律见人就逃。
-            //    警戒距离统一放宽到至少 220px（约 5.5 格）；没有 run 动作的物种（马/羊驼/猴/鸡）也按 run 速度逃、播 walk 动画。
-            if (an.fleeTimer > 0 && canMove) {
-                // ① 正在逃跑中：保持锁定的既定速度与朝向闭眼跑完，绝不被周围其他士兵拉扯方向
-                fleeing = true;
-                want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
-            } else if (canMove && near && nearD < Math.max(de.los, 220)) {
-                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（按 de.run × 倍率高速奔跑脱离）
-                an.fleeTimer = FLEE_SEC;   // 统一 8 秒一口气跑远
-                const fleeSpd = de.run * ANIMAL_FLEE_SPEED_MULT;
-                const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
-                an.vx = (dx / d) * fleeSpd;
-                an.vy = (dy / d) * fleeSpd;
-                // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 把这一跑的方向**定死**：逃跑期间任何人靠近都只续时长，绝不改向
-                an.fleeDX = dx / d;
-                an.fleeDY = dy / d;
-                an.dir = this.dir8(an.vx, an.vy);
-                fleeing = true;
-                want = fleeSpd > de.walk * 1.2 ? 'run' : 'walk';
-            }
-
-            if (fleeing) {
-                an.fleeTimer -= dt;
-                // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 位置一律按**锁定的方向**推进：
-                //    不再用 `vx/vy`（顶边滑走那支会改它），也绝不被本帧新靠近的士兵改向。
-                const fd = Math.hypot(an.fleeDX, an.fleeDY) || 1;
-                const spd0 = Math.hypot(an.vx, an.vy) || de.run;
-                an.x += (an.fleeDX / fd) * spd0 * dt;
-                an.y += (an.fleeDY / fd) * spd0 * dt;
-                // 🔴 [2026-10-13 主人令「A 方案」] 猎物与危险野生动物不再回窝：窝跟着它走，逃到哪停在哪、就在那儿吃草（原先逃完又走回士兵堆里再逃，被拴在出生点）
-                // 🔴 [2026-10-13 主人令「羊被卡在军团中间也要一口气跑远」] **家畜一并纳入**：羊/牛/猪/鸡受惊同样一口气跑远，
-                //    逃到哪就在那儿吃草 —— 原先那条「离家 100px 就边逃边被拽回」是它跑不远、来回折返的根，已删（见下）。
-                if (de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') { an.homeX = an.x; an.homeY = an.y; }
-                an.dir = this.dir8(an.fleeDX, an.fleeDY);
-                if (an.fleeTimer <= 0) {
-                    an.wanderX = an.x;
-                    an.wanderY = an.y;
-                    an.idleTimer = 4 + Math.random() * 6; // 逃跑结束就地停下吃草
-                }
-            } else if (canMove) {
-                const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
-                if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
-                    // DE：不被追就回窝（走回去，不留在逃跑落点）
-                    mx = an.homeX - an.x;
-                    my = an.homeY - an.y;
-                    spd = de.walk;
-                    want = 'walk';
-                } else {
-                    // 🔴 [2026-10-13 主人令「野马为什么不停的动？请修复」]
-                    //    DE 原生食草动物节奏：70%~80% 的时间在原地吃草/甩尾（idle 4~10 秒），吃饱了才偶尔踱步换个地方（walk 2~3 秒）。
-                    an.idleTimer -= dt;
-                    const wx = an.wanderX - an.x, wy = an.wanderY - an.y;
-                    const wd = Math.hypot(wx, wy);
-                    if (wd < 6) {
-                        // ① 已经在目标点：原地吃草/甩尾
-                        if (an.idleTimer <= 0) {
-                            // 吃草时间结束，挑选新目标踱步过去
-                            const c = centroids.get(an.species);
-                            const cx = c && c.n > 1 ? c.x / c.n : an.homeX;
-                            const cy = c && c.n > 1 ? c.y / c.n : an.homeY;
-                            const ang = Math.random() * Math.PI * 2, r = 20 + Math.random() * 50;
-                            const leash = (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK) * 0.8;
-                            let ox = Math.cos(ang) * r * 0.6 + (cx - an.homeX) * 0.4, oy = Math.sin(ang) * r * 0.6 + (cy - an.homeY) * 0.4;
-                            const ol = Math.hypot(ox, oy);
-                            if (ol > leash) { ox *= leash / ol; oy *= leash / ol; }
-                            an.wanderX = Math.max(X0, Math.min(X1, an.homeX + ox));
-                            an.wanderY = Math.max(Y0, Math.min(Y1, an.homeY + oy));
-                            an.idleTimer = 2.0 + Math.random() * 2.0; // 踱步 2~4 秒
-                        }
-                        want = 'idle';
-                    } else {
-                        // ② 正在踱步走向目标点
-                        if (an.idleTimer <= 0) {
-                            // 踱步超时：就地停下吃草
-                            an.wanderX = an.x;
-                            an.wanderY = an.y;
-                            an.idleTimer = 4.0 + Math.random() * 6.0; // 原地吃草 4~10 秒
-                            want = 'idle';
-                        } else {
-                            mx = wx;
-                            my = wy;
-                            spd = de.walk;
-                            want = 'walk';
-                        }
-                    }
-                }
-            } else {
-                want = 'idle';
-            }
-
-            if (spd > 0 && canMove && (mx || my)) {
-                const d = Math.hypot(mx, my) || 1;
-                an.x += (mx / d) * spd * dt;
-                an.y += (my / d) * spd * dt;
-                an.dir = this.dir8(mx, my);
-            }
-
-            // 逃到图边被夹住时沿边滑走（原先顶在边上不动、等着被追上）
-            // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 滑走也必须落在**锁定的方向**上（位置推进只认 fleeDX/fleeDY），
-            //    所以这里改的是锁定向量而不是 vx/vy；转向后仍然是一路直跑，不做折返。
-            if (fleeing && de.kind === 'prey') {
-                if (an.x <= X0 || an.x >= X1) { an.fleeDX = 0; an.fleeDY = an.fleeDY >= 0 ? 1 : -1; }
-                else if (an.y <= Y0 || an.y >= Y1) { an.fleeDX = an.fleeDX >= 0 ? 1 : -1; an.fleeDY = 0; }
-            }
-            an.x = Math.max(X0, Math.min(X1, an.x));
-            an.y = Math.max(Y0, Math.min(Y1, an.y));
-            an.sprite.x = an.x;
-            an.sprite.y = an.y;
-            an.sprite.flip = false;
-            this.setAnimalAction(an, want);
-        }
-
-        if (list.some((a) => a.sprite.destroyed)) this.tacticalAnimals = list.filter((a) => !a.sprite.destroyed);
+        if (!this.tacticalAnimals.length) return;
+        this.tacticalAnimals = stepTacticalAnimals(
+            this.tacticalAnimals,
+            this.men,
+            this.worldCX,
+            this.worldCY,
+            dt,
+            (dx, dy) => this.dir8(dx, dy),
+            (an, want) => this.setAnimalAction(an, want),
+        );
     }
 
     /** 设动物动作：素材没有的动作自动回退（run→walk→idle），绝不请求不存在的帧（否则整只不画） */
@@ -7636,13 +7468,6 @@ export class Scene13WarLayer {
         const asset = `ANIMAL:${an.species}/${act}_${an.dir}`;
         if (an.sprite.asset !== asset) an.sprite.asset = asset;
         this.ensureNatureAsset(asset);
-    }
-
-    /** 飞鸟 16 向朝向（与 DE 素材 hover/fly 的 16 向同一约定） */
-    private birdDir(dx: number, dy: number): number {
-        let a = Math.atan2(-dy, dx) * 180 / Math.PI;
-        a = ((a % 360) + 360) % 360;
-        return (18 - Math.floor(((a + 11.25) % 360) / 22.5)) % 16;
     }
 
     private clearGround(): void {
