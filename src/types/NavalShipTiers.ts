@@ -430,8 +430,14 @@ const SHIP_EXTRA_WEAPONS: Record<string, { weapons: NavalWeapon[]; why: string }
     /** 马其顿军团旗舰：与 TRIREME 同型（同一套 16 向图）→ 同样靠撞角 */
     HERO_ARTEMISIA: { weapons: ['ram'], why: '与 HERO_THEMISTOCLES 同型（同一套 16 向旗舰图、同尺寸）：DE 原文近战战船，靠撞角' },
     HERO_THEMISTOCLES: { weapons: ['ram'], why: '与 TRIREME 同型：DE 原文 "Melee Warship powerful charged attack"——古典三列桨靠撞角' },
+    HERO_DIONYSUS: { weapons: ['ram'], why: '与 HERO_THEMISTOCLES 同型（16 向旗舰图）：古典三列桨，靠撞角' },
+    HERO_AEGINETAN: { weapons: ['ram'], why: '与 HERO_THEMISTOCLES 同型：古典三列桨，靠撞角' },
     BIREME: { weapons: ['ram'], why: '同上（双列桨）' },
     MONOREME: { weapons: ['ram'], why: '同上（单列桨）' },
+    // 古典（antiquity）桨帆船：古代桨帆战船靠撞角冲撞，与三列桨同类
+    ANT_GALLEY: { weapons: ['ram'], why: '古典桨帆船：古代桨帆战船靠撞角（与三列桨同类）' },
+    ANT_WAR_GALLEY: { weapons: ['ram'], why: '古典大战舰：大型古代桨帆战船，靠撞角' },
+    ANT_ELITE_GALLEY: { weapons: ['ram'], why: '古典桨帆船高级：同上，靠撞角' },
     LEMBOS: { weapons: ['ram'], why: 'DE 原文 "Light scouting Warship with weak melee attack"' },
     WAR_LEMBOS: { weapons: ['ram'], why: '同上' },
     HEAVY_LEMBOS: { weapons: ['ram'], why: '同上' },

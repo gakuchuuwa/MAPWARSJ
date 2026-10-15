@@ -1,9 +1,9 @@
 {
   "name": "DARK_TOWN_CENTER_AGE1_DESTR",
-  "frames": 1,
-  "box_w": 404,
-  "box_h": 236,
-  "anchor_x": 212,
+  "frames": 100,
+  "box_w": 436,
+  "box_h": 248,
+  "anchor_x": 232,
   "anchor_y": 180,
   "sld_source": "b_dark_town_center_age1_destruction"
 }
