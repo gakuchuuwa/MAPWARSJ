@@ -549,6 +549,14 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
         if (slotCenters) {
             // 取建筑顺序：占地由大到小（并列按池序）—— 与 packSmallCitySlots 的固定骨架一一对应
             const ordered = ring.map((b, i) => ({ b, i })).sort((x, y) => (deBuildingFootprint(y.b) - deBuildingFootprint(x.b)) || (x.i - y.i));
+            // 🔴 [2026-10-15 主人令「小城和城寨的中间建筑改为城镇中心」] 城心（ordered[0]）固定城镇中心：
+            //    原按占地排，城镇中心与市场同为 4×4 ⇒ 城心时而是市场；蒙古小城掺蒙古包截到 9 栋时城镇中心还可能被截掉。
+            //    日本风格小城（centerCastle）城心是城堡，不动。
+            if (!centerCastle) {
+                const k = ordered.findIndex((o) => o.b === 'TOWN_CENTER');
+                if (k > 0) ordered.unshift(ordered.splice(k, 1)[0]);
+                else if (k < 0) { ordered.pop(); ordered.unshift({ b: 'TOWN_CENTER', i: -1 }); }
+            }
             const stoneAnchors = DE_STONE_ANCHORS_BY_STYLE[style];
             if (style === 'YURT') {
                 // 毡帐小城：8 蒙古包 + 1 瞭望塔，栅栏仍用原来的两套随机（DARK / ARCHAIC），只改成小城同款 3×3 摆位
@@ -558,6 +566,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                     [yurtPool[i], yurtPool[j]] = [yurtPool[j], yurtPool[i]];
                 }
                 const yurtOrdered = yurtPool.sort((x, y) => deBuildingFootprint(y) - deBuildingFootprint(x));
+                // 🔴 [2026-10-15 主人令「小城和城寨的中间建筑改为城镇中心」] 毡帐系没有本风格城镇中心，城心用 DE 黑暗时代城镇中心（与城寨同一件），换掉最小的一栋，总数仍 9
+                yurtOrdered.pop(); yurtOrdered.unshift('DARK_TOWN_CENTER_AGE1');
                 return buildDeCityGridHtml(baseSize, cityId, style, false, factionId, region,
                     yurtOrdered.map((b): [string, string] => [b, 'AGE2']), native, {
                         seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false, rawDirNames: true,
@@ -737,8 +747,10 @@ function buildDeStockadeStackHtml(
     //    ⚠️ 只动战术这一份（`native` 分支，即 `strategicCityHtmlNative`）；**战略地图那条路（`buildStockadeShapeRing`）一个字节没动**。
     const STOCKADE_PITCH = 4 + 1;
     const stockadePos: ReadonlyArray<readonly [number, number]> = [[0, 0], [-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+    // 🔴 [2026-10-15 主人令「小城和城寨的中间建筑改为城镇中心」] 战术城寨城心（第 1 位）固定 DE 黑暗时代城镇中心，其余 8 栋照旧随机
+    const gridPool = ['DARK_TOWN_CENTER_AGE1', ...pool.filter((b) => b !== 'DARK_TOWN_CENTER_AGE1')].slice(0, 9);
     const gridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, false, undefined, undefined,
-        pool.slice(0, 9).map((b): [string, string] => [b, 'AGE1']), native, {
+        gridPool.map((b): [string, string] => [b, 'AGE1']), native, {
             seg: 6, near: 0, far: 0, corner: false, rawDirNames: true,
             gateEdges: [true, true, true, true],
             wallAnchors,

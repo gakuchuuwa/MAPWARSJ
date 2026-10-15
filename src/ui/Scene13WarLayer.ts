@@ -3663,6 +3663,8 @@ export class Scene13WarLayer {
     private rowDepth = 260;
     private remnantLanes = new Set<number>();
     private flowBuiltAt = -99;
+    /** 中心建筑血归零的战斗秒（未归零 = -1）：等倒塌动画播完才判定结束 */
+    private centerKilledAt = -1;
     /** 🔴 [2026-08-29 主人需求] 攻城战守方城墙内侧并列箭塔（射箭 + 30 秒随机三形态） */
     private arrowTowers: ArrowTower[] = [];
     /** 🔴 [主人需求] 攻城战守方城堡射手（险要专属；30 秒不坍塌，持续射击） */
@@ -4393,6 +4395,7 @@ export class Scene13WarLayer {
         }
         this.active = true;
         this.over = false;
+        this.centerKilledAt = -1;
         this.spawns = [];
         this.men = [];
         this.corpses = [];
@@ -8269,22 +8272,19 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         }
         // 🔴 [2026-10-14 主人定「士兵攻击顺序：士兵，城门，建筑包括箭塔」「所有都是只打近的」「士兵只认城门，不砍墙」]
         //    攻方士兵：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。城墙一律不砍。
-        if (this.battleType === 'siege' && m.f === 0 && !isHero && this.siegeWithWalls) {
+        // 🔴 [2026-10-15 主人报「士兵都拥挤在中心，也不打建筑」（金海·城寨）] 原条件含 `siegeWithWalls`：
+        //    城寨 / 漠北蒙古按野战打（siegeWithWalls=false）⇒ 整段跳过、士兵永远锁不上建筑，只按 aimAtRaw 朝中心建筑走、挤成一团。
+        //    现对一切攻城战生效；「墙没破只认城门」「被城门挡住打门」两条仍只给有城墙的城。
+        if (this.battleType === 'siege' && m.f === 0 && !isHero) {
             if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
             this.ensureGateInfo();
-            const gatesOnly = !this.ringOpen() && !this.insideRing(m.x, m.y);
+            const gatesOnly = this.siegeWithWalls && !this.ringOpen() && !this.insideRing(m.x, m.y);
             // 🔴 [2026-10-15 主人报「攻方打破城门后，不往里面走」] 被还立着的城门挡住（险要内圈门：流场按门可通行把人带到门前）⇒ 打这座门
-            const bg = this.blockedWall(m as Partial<WarMan>);
+            const bg = this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
             if (bg && bg.key === 'STONE_GATE' && bg.f !== m.f) { if (reserve) bg.claims++; return bg; }
-            if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
-            const cb0 = this.centerBld && this.wallStanding(this.centerBld) ? this.centerBld : null;
-            // 🔴 [2026-10-14 主人令「两条都做」：攻方没有敌兵可打时直奔中心建筑] 墙已破（或人已在城内）⇒ 只认中心建筑；
-            //    视野内够不着就返回 null，由 aimAtRaw 朝中心建筑走（流场绕缺口）。中心建筑没了才回到「最近的建筑」。
-            //    病灶（实测险要 3 场）：攻方先拆路上的房子箭塔，守方剩 5% 后约 50 秒才开始打中心建筑，再拆约 50 秒。
-            if (cb0 && !gatesOnly) {
-                if ((cb0.x - m.x) ** 2 + (cb0.y - m.y) ** 2 < r2) { if (reserve) cb0.claims++; return cb0; }
-                return null;
-            }
+            // 🔴 [2026-10-15 主人令「士兵在攻打建筑的时候，优先攻打最近的建筑，不至于都拥挤在一起」]
+            //    撤掉 10-14「墙破后只认中心建筑」：墙已破（或人已在城内）⇒ 打视野内最近的建筑（中心建筑也在其中）；
+            //    视野内没有建筑就返回 null，由 aimAtRaw 朝中心建筑走（流场绕缺口），路上见到建筑就近打。
             const pool = gatesOnly ? this.wallGates.filter(b => b.key === 'STONE_GATE') : this.defBuildings;
             let t: WarBuilding | null = null, td = r2;
             for (const b of pool) {
@@ -10667,10 +10667,18 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    有中心建筑的攻城战：攻方**只有**摧毁中心建筑才算赢；守军打光了也不算，攻方得接着去拆中心建筑。
         //    守方赢：攻方全灭，或 5 分钟到点。野战、没有中心建筑的攻城战照旧（一方全灭）。
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
-        const centerDown = !!this.centerBld && this.centerBld.hp <= 0;
+        // 🔴 [2026-10-15 主人令「请等中间建筑坍塌后，再退出战术模式」] 中心建筑血归零 = 攻方已胜（centerKilled），
+        //    但要等倒塌动画（COLLAPSE_ANIM_DUR）播完切成残骸才结束（centerDown）；等待期间不因攻方打光 / 到点改判。
+        //    残骸素材没加载时 sprite 不会切残骸 ⇒ 最多再等 COLLAPSE_ANIM_DUR + 1.5 秒兜底。
+        const centerKilled = !!this.centerBld && this.centerBld.hp <= 0;
+        if (centerKilled && this.centerKilledAt < 0) this.centerKilledAt = this.battleSec;
+        const cs = this.centerBld?.sprite;
+        const centerDown = centerKilled && ((!cs?.collapse && (!!cs?.destroyed || !!cs?.asset.includes('_RUBBLE')))
+            || this.battleSec - this.centerKilledAt >= COLLAPSE_ANIM_DUR + 1.5);
         const centerRule = this.battleType === 'siege' && !!this.centerBld;
         const timeUp = this.battleSec >= BATTLE_LIMIT_SEC;
-        if (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp) {
+        const waitCollapse = centerRule && centerKilled && !centerDown;
+        if (!waitCollapse && (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp)) {
             this.over = true;
             const attackerLost = centerRule
                 ? !centerDown
