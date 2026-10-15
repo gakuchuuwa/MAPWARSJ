@@ -4918,7 +4918,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": 16
         },
         "/assets/BERBER/zhayan_yalimoluo.png": {
-            "scale": 1.05,
+            "scale": 1.03,
             "offsetX": 0,
             "offsetY": -10
         },
@@ -8106,6 +8106,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": 0,
             "offsetY": 5
+        },
+        "/assets/GERMANIC/wangdaer_gaisalike.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -5
         }
     },
     "folderGuides": {

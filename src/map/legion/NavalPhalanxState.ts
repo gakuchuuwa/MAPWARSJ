@@ -123,7 +123,10 @@ export class NavalPhalanxStateManager {
         //   ② 补兵/合兵后船数要跟着涨。原实现 shipCount 只在首次创建时算一次，
         //      27000 兵出港的军团合兵到 9 万，海上仍然只有 3 艘船。
         //   战斗中绝不重建：那会把已沉的船凭空变回来。
-        if (!isFighting) {
+        // 🔴 [2026-10-15 主人「等舰船被击毁消失后再退出海战」] 军团已覆灭（troops=0）也不重建：
+        //   重建会把整支舰队压成 1 艘（shipCountForTroops(0)=1），其余船凭空消失、沉没动画被截断。
+        //   覆灭要保留原舰队，交给 drawNaval 的全局 DEATH 分支逐艘沉完。
+        if (!isFighting && troops > 0) {
             const want = shipCountForTroops(troops);
             const hasSunk = state.ships.some((sh) => sh.state !== 'ALIVE');
             if (state.ships.length === 0 || state.shipCount !== want || hasSunk) {

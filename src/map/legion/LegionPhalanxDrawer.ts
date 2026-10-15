@@ -2412,7 +2412,7 @@ export class LegionPhalanxDrawer {
         const smoothSpan = shipDepth * 0.45;   // 切线取前后各半档船距的弦向，抹掉 16px 采样锯齿
 
         // 收集舰队各舰位置（旗舰 + 后随），逐舰读取阵亡状态
-        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number }[] = [];
+        const ships: { ax: number; ay: number; ox: number; oy: number; r: number; img: CanvasImageSource; sx: number; sy: number; sw: number; sh: number; w: number; h: number; alpha?: number; rot: number; bobY?: number; roll?: number; sinkY?: number }[] = [];
         const shipPositions: { x: number; y: number; r: number; isAlive: boolean; dir: number; rot?: number; deg?: number; shipLen?: number }[] = [];
 
         // 逐军团相位种子（只依赖 unitId）：站位误差与浮沉横摇共用，避免同屏所有舰队同频共振
@@ -2527,6 +2527,8 @@ export class LegionPhalanxDrawer {
                 ?? (sprite ? this.getFrameCount(sprite) : td.totalFrames);
 
             let shipAlpha: number | undefined;
+            /** 无 death 帧战船的模拟下沉偏移（px，屏幕向下），随阵亡动画从 0 沉到船身尺寸 */
+            let sinkY = 0;
             if (shipDead) {
                 // 残骸：定格在死亡动画最后一帧，随军团尸体一同渐隐；无 death 帧（DE 桨帆船）→ 已沉没，不画
                 if (currentSet.DEATH.length === 0) continue;
@@ -2541,6 +2543,8 @@ export class LegionPhalanxDrawer {
                     spriteAnimState = 'IDLE';
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
+                    // 🔴 [2026-10-15] 无 death 帧 → 模拟下沉：随渐隐把船往下压，沉入水面而非原地淡出
+                    sinkY = (timeDead / 5000) * currentShipLen * 0.7;
                 } else {
                     rawSprite = currentSet.DEATH[shipSlot.deathDirection] || currentSet.DEATH[0];
                     spriteAnimState = 'DEATH';
@@ -2555,6 +2559,8 @@ export class LegionPhalanxDrawer {
                     spriteAnimState = 'IDLE';
                     currentFrameIndex = 0;
                     shipAlpha = Math.max(0, 1 - timeDead / 5000);
+                    // 🔴 [2026-10-15] 无 death 帧 → 模拟下沉：随渐隐把船往下压，沉入水面而非原地淡出
+                    sinkY = (timeDead / 5000) * currentShipLen * 0.7;
                 } else {
                     rawSprite = currentSet.DEATH[shipDir] || currentSet.DEATH[0];
                     spriteAnimState = 'DEATH';
@@ -2611,7 +2617,7 @@ export class LegionPhalanxDrawer {
                     img: tintedSprite,
                     sx: currentFrameIndex * dd.fw, sy: 0, sw: dd.fw, sh: dd.fh,
                     w: dd.fw * td.s!, h: dd.fh * td.s!,
-                    alpha: shipAlpha, rot: shipRot, bobY, roll,
+                    alpha: shipAlpha, rot: shipRot, bobY, roll, sinkY,
                 });
             } else {
                 const tfw = tintedSprite.width / activeTotalFrames;
@@ -2620,7 +2626,7 @@ export class LegionPhalanxDrawer {
                     img: tintedSprite,
                     sx: currentFrameIndex * tfw, sy: 0, sw: tfw, sh: tintedSprite.height,
                     w: td.w, h: td.h,
-                    alpha: shipAlpha, rot: shipRot, bobY, roll,
+                    alpha: shipAlpha, rot: shipRot, bobY, roll, sinkY,
                 });
             }
         }
@@ -2646,7 +2652,7 @@ export class LegionPhalanxDrawer {
             // 🔴 [2026-08-27 §B] rot = 16 向量化丢掉的残差角（|rot| ≤ 11.25°），绕逻辑点（ax/ay）旋转消除台阶。
             //    [2026-08-27 §D] 再叠 roll（横摇小角度）与 bobY（浮沉竖移）；浮沉只移绘制 y，不动逻辑位/尾迹。
             const tRot = s.rot + (s.roll ?? 0);
-            const tY = s.ay + (s.bobY ?? 0);
+            const tY = s.ay + (s.bobY ?? 0) + (s.sinkY ?? 0);
             if (Math.abs(tRot) > 0.001) {
                 ctx.save();
                 ctx.translate(s.ax, tY);
