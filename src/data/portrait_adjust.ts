@@ -7478,9 +7478,9 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetY": -48
         },
         "/assets/SOUTHEAST_ASIA/__多余__SOUTHEAST_ASIA_01.png": {
-            "scale": 0.95,
+            "scale": 1,
             "offsetX": 0,
-            "offsetY": -26
+            "offsetY": -19
         },
         "/assets/SOUTHEAST_ASIA/sanfoqi_dabentuo.png": {
             "scale": 0.95,
@@ -8096,11 +8096,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.14,
             "offsetX": -9,
             "offsetY": -5
-        },
-        "/assets/SOUTHEAST_ASIA/31cd8127-ff28-451e-bb05-805bd9d68978.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -19
         },
         "/assets/SOUTHEAST_ASIA/chamorro_hulao.png": {
             "scale": 1,
