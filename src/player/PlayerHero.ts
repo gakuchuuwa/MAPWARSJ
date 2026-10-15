@@ -570,6 +570,26 @@ export class PlayerHero {
                 this.deps.notify(`🛡️ 换上新兵模【${name}】`);
             }
         }
+
+        // 🔴 [2026-10-15 主人报障「乱入者加入封建时代河中军团却还是火枪手」]
+        //    病根：got() 按「已拥有的本军团池子兵种数」算，重叠兵种（如乌兹别克 elite_kipchak 与河中同名）
+        //    会让 got() ≥ want ⇒ 一个都不新学、不自动换装，旧势力的兵模（火枪手）残留。
+        //    补一条：即便没新学，只要当前穿的兵模不在本军团三排（也不在主将队），就换成已学的本军团三排之一。
+        //    （restoreSaveState 只 joinFaction 不 attachTo，onJoinLegion 那套换装跑不到，必须落在这里才兜得住。）
+        const currentKey = this.getSelectedUnit()?.unitKey;
+        if (currentKey && !landKeys.includes(currentKey) && currentKey !== cmdKey) {
+            const ownedIdx = this.learnedUnits
+                .map((u, i) => ({ u, i }))
+                .filter((x) => landKeys.includes(x.u.unitKey));
+            if (ownedIdx.length) {
+                const pick = ownedIdx[Math.floor(Math.random() * ownedIdx.length)];
+                if (pick.i !== this.selectedUnit) {
+                    this.selectedUnit = pick.i;
+                    this.syncMoveProfile();
+                    this.deps.notify(`🛡️ 换上本军团兵模【${pick.u.unitName}】`);
+                }
+            }
+        }
     }
 
     /** 面板选兵种素材（探马及以上才开放，见 PlayerHUD） */
