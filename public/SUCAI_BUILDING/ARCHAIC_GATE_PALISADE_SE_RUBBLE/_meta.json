@@ -1,0 +1,12 @@
+{
+  "name": "ARCHAIC_GATE_PALISADE_SE_RUBBLE",
+  "frames": 1,
+  "box_w": 307,
+  "box_h": 146,
+  "anchor_x": 159,
+  "anchor_y": 76,
+  "is_complete_twin_tower_gate": true,
+  "span_dx": 72,
+  "span_dy": 36,
+  "sld_source": "b_archaic_gate_palisade_se_rubble + b_archaic_gate_palisade_corner_rubble"
+}

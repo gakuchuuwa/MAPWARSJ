@@ -3686,6 +3686,14 @@ export class CombatUI {
     private showBattleOutcome(winnerFactionId: string | null): void {
         if (!winnerFactionId) return;
         this.outcomeLocked = true;
+        if (winnerFactionId === 'draw') {
+            this.battleTitle.style.background = 'none';
+            this.battleTitle.innerHTML = `<span class="combat-title-text" style="display:inline-block;color:transparent;background:linear-gradient(180deg,#fffbe0 0%,#ffdf73 35%,#d4951a 65%,#8f5a0a 100%);-webkit-background-clip:text;background-clip:text;letter-spacing:inherit;font-weight:900;">戰 平</span>`;
+            this.battleTitle.style.animation = 'none';
+            void this.battleTitle.offsetWidth;
+            this.battleTitle.style.animation = 'outcome-title-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both';
+            return;
+        }
         // ① 拉锯条撞底
         const attackerWon = winnerFactionId === this.attackerFactionId;
         const finalPct = this.scene13SidesFlipped
@@ -5189,7 +5197,7 @@ export class CombatUI {
         if (!bound || !this.isRegionalVisible()) return;
         if (!endedFields.includes(bound)) return;
         this.boundRegionalBattleField = null;
-        this.showBattleOutcome(bound.winnerFactionId);
+        this.showBattleOutcome(bound.isDraw ? 'draw' : bound.winnerFactionId);
         this.finishRegionalBattle();
     }
 
@@ -5227,7 +5235,7 @@ export class CombatUI {
                     const ended = this.boundRegionalBattleField;
                     this.boundRegionalBattleField = null;
                     if (this.isRegionalVisible()) {
-                        this.showBattleOutcome(ended.winnerFactionId);
+                        this.showBattleOutcome(ended.isDraw ? 'draw' : ended.winnerFactionId);
                         this.finishRegionalBattle();
                     }
                 }

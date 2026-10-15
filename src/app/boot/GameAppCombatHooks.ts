@@ -140,7 +140,7 @@ function startScene13War(
     app: GameApp,
     attacker: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any; getPosition?(): any },
     defender: { factionId: string | null; troops: number; generalId?: string | null; unitType?: string; getEntity?(): any; getPosition?(): any },
-    onDecision: (winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void,
+    onDecision: (winner: 'attacker' | 'defender' | 'draw', survivors: { attacker: number; defender: number }) => void,
     bonus?: { attacker: number; defender: number },
     center?: { lat: number; lng: number },
     environmentSeed?: string,
@@ -374,7 +374,7 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                 // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负的战斗，演出判负不得覆盖写死结果
                 //   （否则演出里守方打赢 → 主角攻方被销毁 → 下一场衔接直接断）。
                 const scripted = battle.getScriptedWinner();
-                const finalWinner = scripted ?? winner;
+                const finalWinner = scripted ?? (winner === 'draw' ? 'defender' : winner);
                 battle.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
             }, undefined, t.center,
                 `${battle.attacker.id}|${battle.defender.id}|${app.timeSystem.getElapsedGameSeconds()}|${app.timeSystem.getYear()}`,
@@ -463,7 +463,11 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
                         (winner, sv) => {
                             // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负，演出判负不得覆盖。
                             const scripted = battleField.getScriptedWinner();
-                            const finalWinner = scripted ?? winner;
+                            if (winner === 'draw' && !scripted) {
+                                battleField.forceScene13Draw();
+                                return;
+                            }
+                            const finalWinner = scripted ?? (winner === 'draw' ? 'defender' : winner);
                             battleField.forceScene13Result(finalWinner, finalWinner === 'attacker' ? sv.attacker : sv.defender);
                         },
                         battleField.getScene13PowerBonus(),

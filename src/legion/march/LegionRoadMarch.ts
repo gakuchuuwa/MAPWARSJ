@@ -87,13 +87,14 @@ function resolveMarchTarget(
     }
 
     // 远征军团：直取战略目标，不从路网起点重扫身后敌城
+    const lastDrawCityId = (army as any).lastDrawCityId as string | undefined;
     if (startCityId && !isCampaignLegion(army)) {
         marchTargetId = resolveMarchTargetOnPath(
             factionId,
             startCityId,
             targetCityId,
             marchPath,
-            (id) => deps.cityManager.getCity(id)?.factionId,
+            (id) => (lastDrawCityId && id === lastDrawCityId ? factionId : deps.cityManager.getCity(id)?.factionId),
             deps.cityManager,
             (fid, start, target, getFaction) =>
                 roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction)

@@ -15,6 +15,7 @@ export interface Scene13PlayerApi {
     setHeroMoveToScreen(x: number, y: number): void;
     setPlayerCommand(cmd: 'attack' | 'hold'): void;
     requestExitWithResult(): void;
+    getRemainingSec(): number;
     getPlayerBattleState(): {
         heroAlive: boolean;
         heroHp: number;
@@ -32,6 +33,7 @@ const FONT = "'Noto Serif SC', 'SimSun', 'Songti SC', serif";
 export class PlayerScene13Control {
     private bar: HTMLDivElement | null = null;
     private info: HTMLSpanElement | null = null;
+    private countdownEl: HTMLSpanElement | null = null;
     private btnAttack: HTMLButtonElement | null = null;
     private btnHold: HTMLButtonElement | null = null;
     private btnExit: HTMLButtonElement | null = null;
@@ -149,6 +151,14 @@ export class PlayerScene13Control {
             box-shadow:0 2px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,215,0,0.25); white-space:nowrap;`;
         const info = document.createElement('span');
         bar.appendChild(info);
+        const countdown = document.createElement('span');
+        countdown.title = '战术模式 300 秒倒计时（到时未攻下城池则算打平）';
+        countdown.style.cssText = `
+            padding:3px 9px; font-weight:900; font-size:13px; color:#ffd27a;
+            background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.55); border-radius:6px;`;
+        countdown.textContent = '⏳ 300秒';
+        bar.appendChild(countdown);
+        this.countdownEl = countdown;
         const mk = (label: string, cmd: 'attack' | 'hold') => {
             const b = document.createElement('button');
             b.textContent = label;
@@ -260,6 +270,12 @@ export class PlayerScene13Control {
         }
         this.bar.style.display = 'flex';
         this.syncZoomUI();
+        if (this.countdownEl) {
+            const rem = this.scene.getRemainingSec();
+            this.countdownEl.textContent = `⏳ ${rem}秒`;
+            this.countdownEl.style.color = rem <= 60 ? '#ff6b6b' : '#ffd27a';
+            this.countdownEl.style.borderColor = rem <= 60 ? 'rgba(255,107,107,0.75)' : 'rgba(212,175,55,0.55)';
+        }
         const st = this.isControlling() ? this.scene.getPlayerBattleState() : null;
         if (st) {
             const rank = this.hero.getRank();

@@ -616,6 +616,14 @@ export class LegionManager {
         //    目标城抵达(500) / 沿路行军(LegionRoadMarch 341·378) / 行为树动作(827) / 撞驻军转攻城(LegionFieldBattle 167)。
         if (army.scriptMarchExempt) return 'skipped';
 
+        // 战术模式 300s 倒计时打平后，攻击军团需换一个目标攻击，不再原地复攻刚打平的城
+        if ((army as any).lastDrawCityId) {
+            if (targetCity.id === (army as any).lastDrawCityId) {
+                return 'skipped';
+            }
+            (army as any).lastDrawCityId = null;
+        }
+
         // 【锁定目标不可跳，2026-08-07】收复老家 / 远征目标按军团选目标定稿①②「不重选」，
         // HasTarget 的收复、远征分支都在越城而走检查之前 return true，跳过后没有重抽出口：
         // 军团会停在城下，每帧 isSiegeSkipped 早退，空转满 60s 冷却再重掷，可无限续。

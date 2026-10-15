@@ -17,6 +17,7 @@ import {IBattleUnit, BattleType} from './CombatSystem';
 import type { CityType } from '../types/core';
 import { gameLog } from '../utils/GameLogger';
 import { audioManager } from '../audio/AudioManager';
+import { spawnMapFloatingSmallText } from '../utils/MapFloatingText';
 
 function getFollowedArmyId(): string | null {
     try {
@@ -94,6 +95,7 @@ export interface FactionGroup {
 export class BattleField implements IOpeningPulseSink {
     public id: string;
     public isOver: boolean = false;
+    public isDraw: boolean = false;
     /** 结算后的胜方势力（CombatUI 战报定格卡读取；未结算时为 null） */
     public winnerFactionId: string | null = null;
     public onBattleComplete?: (winnerFactionId: string) => void; // [NEW] Callback for event sequencing
@@ -138,6 +140,75 @@ export class BattleField implements IOpeningPulseSink {
         this.presetResult = winner === 'attacker' ? 'attacker_win' : 'defender_win';
         this.scene13WinnerTroops = winnerTroops ?? null;
         this.forceResolve();
+    }
+
+    /**
+     * 🔴 [2026-10-15 主人令] 战术模式 300 秒倒计时到点未攻下城池 → 算打平：
+     *   · 攻击军团不解散（不走 defeat / destroy）
+     *   · 扣除部分士兵，扣除数量与 15 秒减兵（ATTRITION_CHUNK_RATE = 15%）一致
+     *   · 退回战略地图后换一个目标攻击（记录 lastDrawCityId 并清空当前城目标）
+     */
+    public forceScene13Draw(): void {
+        this.scene13Frozen = false;
+        if (this.isOver) return;
+        this.isOver = true;
+        this.isDraw = true;
+        this.winnerFactionId = null;
+
+        if (this.siegeCityId && BattleField.siegeVisualStopHandler) {
+            BattleField.siegeVisualStopHandler(this.siegeCityId, false, 0);
+        }
+
+        const rate = GameConfig.MARCH_ATTRITION.ATTRITION_CHUNK_RATE;
+        const followedId = getFollowedArmyId();
+        for (const bu of this.attackerGroup.units) {
+            const u = bu.unit;
+            const troops = u.troops;
+            if (troops > 0) {
+                const loss = Math.min(troops - 1, Math.max(1, Math.floor(troops * rate)));
+                if (loss > 0) {
+                    u.setTroops(troops - loss);
+                    if (u.id === followedId) {
+                        const pos = u.getPosition();
+                        spawnMapFloatingSmallText(pos.lat, pos.lng, `-${loss} 攻城未克减员`, '#ff5555');
+                    }
+                }
+            }
+            const army = u.getEntity?.() as any;
+            if (army) {
+                army.isSiegeAttacker = false;
+                army.siegeTargetCityId = null;
+                if (this.siegeCityId) {
+                    army.lastDrawCityId = this.siegeCityId;
+                    if (army.expeditionTargetCityId === this.siegeCityId) {
+                        army.expeditionTargetCityId = null;
+                    }
+                }
+                army.clearExternalCombatState?.();
+                army.setVisible?.(true);
+                army.setSpeedMultiplier?.(1.0);
+                army.ignoreCityCollision = false;
+                army.ignoreUnitCollision = false;
+                army.setTargetCity?.(null);
+                army.setOnArriveCallback?.(() => { });
+                army.siegeMissionData = null;
+                army.clearBlocked?.();
+                army.clearSavedMarchState?.();
+                army.stopMovement?.(false);
+                army.weakCheckAfterBattle = false;
+            }
+        }
+
+        for (const bu of this.defenderGroup.units) {
+            const army = bu.unit.getEntity?.() as any;
+            if (army && (bu.unit.unitType === 'legion' || bu.unit.unitType === 'army')) {
+                army.clearExternalCombatState?.();
+                army.weakCheckAfterBattle = false;
+            }
+        }
+
+        gameLog('battle', `⚖️ [BattleField] 300秒攻城未克，战斗打平！攻方扣除 15% 兵力并换目标攻击`);
+        this.onBattleComplete?.(this.defenderGroup.factionId);
     }
 
     /** 演出胜方实际残兵（人）；null = 不写回（非 13 路径） */
