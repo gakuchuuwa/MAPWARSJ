@@ -5571,6 +5571,11 @@ export class Scene13WarLayer {
         return 0;
     }
 
+    /** 地面高程级（1 级 = 16 像素）；GL 地面还没就绪时按 0 级 */
+    private elevationLevelAt(x: number, y: number): number {
+        return this.elevationLiftAt(x, y) / 16;
+    }
+
     /** 每场重置世界物件（城池、出兵口营地等由 applySpawnBuildings 放；地面与自然物件由 GL 地面层的地图数据放） */
     private initDecor(): void {
         if (!this.canvas) return;
@@ -5712,9 +5717,9 @@ export class Scene13WarLayer {
         //    即内陆干旱区的城）不挖——历史上这类城要么是干壕、要么根本无壕，凭空挖一圈水不符合地理。
         const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
         if (this.defenderCityType === 'pass') {
-            gl.flattenPassTerraces(cx, cy, W, H, seedStr);
+            gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings);
         } else if (this.defenderCityType === 'stockade') {
-            gl.flattenStockadeTerraces(cx, cy, W, H, seedStr);
+            gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
         } else {
             // 普通城市保持原有的整体地基整平
             const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
@@ -8268,6 +8273,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
             this.ensureGateInfo();
             const gatesOnly = !this.ringOpen() && !this.insideRing(m.x, m.y);
+            // 🔴 [2026-10-15 主人报「攻方打破城门后，不往里面走」] 被还立着的城门挡住（险要内圈门：流场按门可通行把人带到门前）⇒ 打这座门
+            const bg = this.blockedWall(m as Partial<WarMan>);
+            if (bg && bg.key === 'STONE_GATE' && bg.f !== m.f) { if (reserve) bg.claims++; return bg; }
             if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
             const cb0 = this.centerBld && this.wallStanding(this.centerBld) ? this.centerBld : null;
             // 🔴 [2026-10-14 主人令「两条都做」：攻方没有敌兵可打时直奔中心建筑] 墙已破（或人已在城内）⇒ 只认中心建筑；
@@ -8503,21 +8511,29 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         // 塔顶开火点：贴图锚点在塔基，抬到塔身上部
         const fireX = t.x;
         const fireY = t.y - UNIT_PX * 0.8;
-        // 射程内最近的攻方士兵
+        const towerElev = this.elevationLevelAt(t.x, t.y);
+        // 射程内最近的攻方士兵（受高地平滑射程加成：每高 1 级射程 +5%，最高 +35%）
         let foe: WarMan | null = null, bd = Infinity;
         for (const m of this.men) {
             if (m.f === 0 && m.hp > 0) {
+                const foeElev = this.elevationLevelAt(m.x, m.y);
+                const dElev = towerElev - foeElev;
+                const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
+                const effRange = t.range * elevRangeMul;
                 const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
-                if (d < bd) { bd = d; foe = m; }
+                if (d <= effRange * effRange && d < bd) { bd = d; foe = m; }
             }
         }
-        if (!foe || bd > t.range * t.range) { t.cd = 0.25; return; }   // 无攻方/射程外，稍后再看
+        if (!foe) { t.cd = 0.25; return; }   // 无攻方/射程外，稍后再看
         // 🔴 [主人需求] 真实伤害：穿透，一发 = atk（DE 箭塔科技 5/6/7、城堡 11）；
-        //    吃守方八环 sideBonus[1] · 围殴 · 白热化，与士兵同公式（不再纯视觉）。
+        //    吃守方八环 sideBonus[1] · 围殴 · 白热化，以及 DE 高地伤害倍率（高打低 +25%、低打高 -25%）。
         const target = this.statsFor(foe.key, foe.f);
         const dmg = Math.max(1, t.atk - target.pierceArmor);
+        const foeElev = this.elevationLevelAt(foe.x, foe.y);
+        const dElev = towerElev - foeElev;
+        const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         foe.atkNext++;
-        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
         // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
         //    而不是走落马重整（heroDown）。攻城战守方满墙箭塔，这条路正是「玩家一直死」的大头。
@@ -8566,24 +8582,32 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         // 窗台/屋檐开火点：贴图锚点在底基，抬到建筑中上部
         const fireX = b.sprite.x;
         const fireY = b.sprite.y - UNIT_PX * 0.6;
-        const range = b.range ?? 240; // 巷战狙击中近程 (220 ~ 250 px)
+        const baseRange = b.range ?? 240; // 巷战狙击中近程 (220 ~ 250 px)
+        const bldElev = this.elevationLevelAt(fireX, b.sprite.y);
 
-        // 寻找射程内最近的攻方士兵
+        // 寻找射程内最近的攻方士兵（受高地平滑射程加成）
         let foe: WarMan | null = null, bd = Infinity;
         for (const m of this.men) {
             if (m.f === 0 && m.hp > 0) {
+                const foeElev = this.elevationLevelAt(m.x, m.y);
+                const dElev = bldElev - foeElev;
+                const elevRangeMul = dElev > 0.2 ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
+                const effRange = baseRange * elevRangeMul;
                 const d = (m.x - fireX) * (m.x - fireX) + (m.y - fireY) * (m.y - fireY);
-                if (d < bd) { bd = d; foe = m; }
+                if (d <= effRange * effRange && d < bd) { bd = d; foe = m; }
             }
         }
-        if (!foe || bd > range * range) { b.cd = 0.3; return; } // 无目标或超出射程，稍后再寻
+        if (!foe) { b.cd = 0.3; return; } // 无目标或超出射程，稍后再寻
 
-        // 真实伤害：窗台民兵冷箭（攻 2~3，默认 3）
+        // 真实伤害：窗台民兵冷箭（攻 2~3，默认 3，受 DE 高地伤害倍率影响）
         const atk = b.atk ?? 3;
         const target = this.statsFor(foe.key, foe.f);
         const dmg = Math.max(1, atk - target.pierceArmor);
+        const foeElev = this.elevationLevelAt(foe.x, foe.y);
+        const dElev = bldElev - foeElev;
+        const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
         foe.atkNext++;
-        foe.hp -= dmg * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
         if (foe.hp <= 0) {
             if (foe.hero) this.heroDown(foe);
@@ -8822,47 +8846,72 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             const dx = x - cx, dy = y - cy;
             return [(dx / TW + dy / TH) * S, (dy / TH - dx / TW) * S];
         };
-        const blocked = new Uint8Array(N * N);
-        for (const sp of this.decorSprites) {
-            const ob = sp.obstruction;
-            if (!ob || sp.obstructionDisabled || sp.destroyed || sp === goal.sprite) continue;
-            const [ca, cb] = ab(sp.x, sp.y);
-            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;   // 多留 0.25 地块 = 士兵身位
-            for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
-                for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
-                    if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
-                    if (a < -R || a > R || b < -R || b > R) continue;
-                    blocked[(a + R) * N + (b + R)] = 1;
-                }
-            }
-        }
+        // 🔴 [2026-10-15 主人报「攻方打破城门后，不往里面走。都拥挤在城墙这里」] 险要有内外两圈：外圈破了、内圈门墙还全立着
+        //    ⇒ 城外到中心建筑无路 ⇒ 流场全 INF、不接管 ⇒ 兵直线奔中心、顶在外圈墙上（实测独松关破门 14 秒后进城 0/608）。
+        //    这时把还立着的城门当「可通行」再算一遍：兵从缺口进外圈、走到内圈门前，被门挡住就打门（见 search 攻方士兵段）。
+        //    墙一处未破时不走这条（门前集结照旧）。
+        this.ensureGateInfo();
+        const INF = 32767;
+        const queue = new Int32Array(N * N);
         const [ga0, gb0] = ab(goal.x, goal.y);
         const ga = Math.round(ga0), gb = Math.round(gb0);
-        for (let a = ga - 4 * S; a <= ga + 4 * S; a++) for (let b = gb - 4 * S; b <= gb + 4 * S; b++) {
-            if (a >= -R && a <= R && b >= -R && b <= R) blocked[(a + R) * N + (b + R)] = 0;   // 目标周围留空，BFS 才出得来
-        }
-        const INF = 32767;
-        const dist = new Int16Array(N * N).fill(INF);
-        const queue = new Int32Array(N * N);
-        let qh = 0, qt = 0;
-        const g = (ga + R) * N + (gb + R);
-        dist[g] = 0; queue[qt++] = g;
-        while (qh < qt) {
-            const c = queue[qh++];
-            const ca = (c / N) | 0, cb = c % N;
-            const nd = dist[c] + 1;
-            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
-                if (!da && !db) continue;
-                const a2 = ca + da, b2 = cb + db;
-                if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
-                const n = a2 * N + b2;
-                if (blocked[n] || dist[n] <= nd) continue;
-                if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
-                dist[n] = nd; queue[qt++] = n;
+        const run = (viaGate: boolean): { dist: Int16Array; blocked: Uint8Array } => {
+            const blocked = new Uint8Array(N * N);
+            for (const sp of this.decorSprites) {
+                const ob = sp.obstruction;
+                if (!ob || sp.obstructionDisabled || sp.destroyed || sp === goal.sprite) continue;
+                if (viaGate && this.gateSpriteSet?.has(sp)) continue;
+                const [ca, cb] = ab(sp.x, sp.y);
+                const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;   // 多留 0.25 地块 = 士兵身位
+                for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
+                    for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
+                        if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
+                        if (a < -R || a > R || b < -R || b > R) continue;
+                        blocked[(a + R) * N + (b + R)] = 1;
+                    }
+                }
             }
+            for (let a = ga - 4 * S; a <= ga + 4 * S; a++) for (let b = gb - 4 * S; b <= gb + 4 * S; b++) {
+                if (a >= -R && a <= R && b >= -R && b <= R) blocked[(a + R) * N + (b + R)] = 0;   // 目标周围留空，BFS 才出得来
+            }
+            const dist = new Int16Array(N * N).fill(INF);
+            let qh = 0, qt = 0;
+            const g = (ga + R) * N + (gb + R);
+            dist[g] = 0; queue[qt++] = g;
+            while (qh < qt) {
+                const c = queue[qh++];
+                const ca = (c / N) | 0, cb = c % N;
+                const nd = dist[c] + 1;
+                for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                    if (!da && !db) continue;
+                    const a2 = ca + da, b2 = cb + db;
+                    if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                    const n = a2 * N + b2;
+                    if (blocked[n] || dist[n] <= nd) continue;
+                    if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                    dist[n] = nd; queue[qt++] = n;
+                }
+            }
+            return { dist, blocked };
+        };
+        let res = run(false);
+        if (this.ringOpen()) {
+            // 攻方士兵一个都到不了中心建筑 ⇒ 门当可通行重算（贴墙站的兵脚下是膨胀障碍格，看周围 2 小格）
+            let any = false, reach = false;
+            for (const m of this.men) {
+                if (m.f !== 0 || m.hp <= 0 || m.hero || m.siegeW || WALL_PASS_TYPES.has(m.key)) continue;
+                any = true;
+                const [fa, fb] = ab(m.x, m.y);
+                const a0 = Math.round(fa) + R, b0 = Math.round(fb) + R;
+                for (let a = a0 - 2; a <= a0 + 2 && !reach; a++) for (let b = b0 - 2; b <= b0 + 2; b++) {
+                    if (a >= 0 && a < N && b >= 0 && b < N && res.dist[a * N + b] < INF) { reach = true; break; }
+                }
+                if (reach) break;
+            }
+            if (any && !reach) res = run(true);
         }
-        this.flowDist = dist;
-        this.flowBlocked = blocked;
+        this.flowDist = res.dist;
+        this.flowBlocked = res.blocked;
         this.flowR = R;
     }
 
@@ -9693,7 +9742,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             //    但**攻城槌 r=18 → 75.1px、重型攻城 r=20 → 77.8px（恒 >65 ❌）** ⇒ 这两类对墙/门的攻击
             //    整条链（扣血、D25/D50/D75 破损档、`hitAt` 十秒坍塌排序）**从未生效过**，只剩定时坍塌在动。
             //    加回自身半径后攻城槌 65+18=83px > 75.1 ⇒ 够得着；步兵/骑兵仍然按 65 且远大于 61.7/64.4 ⇒ 行为不变。
-            const REACH = Math.max(stats.rng, 65) + this.radiusOf(m.key);   // 出手扣血（近战贴身 65 + 自身半径 / 远程 rng）
+            // 🔴 [2026-10-15 DE 高地机制] 射程随高地平滑提升：高打低每高 1 级射程 +5%（最高 +35%）；低打高不减
+            const myElev = this.elevationLevelAt(m.x, m.y);
+            const foeElev = m.foe ? this.elevationLevelAt(m.foe.x, m.foe.y) : 0;
+            const dElev = myElev - foeElev;
+            const elevRangeMul = (stats.rng > 65 && dElev > 0.2) ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
+            const REACH = Math.max(stats.rng * elevRangeMul, 65) + this.radiusOf(m.key);   // 出手扣血（近战贴身 65 + 自身半径 / 远程 rng）
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
@@ -10220,7 +10274,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     ? (m.hussiteSecondaryHits?.filter(Boolean).length ?? 0)
                     : 0;
                 const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
-                const dps = (primaryDamage + secondaryDamage) * heroRate / shooter.reload;
+                // 🔴 [2026-10-15 DE 高地机制] 高打低 +25%（×1.25），低打高 -25%（×0.75）
+                const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
+                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul / shooter.reload;
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
                     //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！

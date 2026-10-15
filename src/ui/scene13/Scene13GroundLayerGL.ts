@@ -1449,7 +1449,9 @@ export class Scene13GroundLayerGL {
     screenY: number,
     W: number,
     H: number,
-    seedStr: string
+    seedStr: string,
+    wallPts: ReadonlyArray<{ x: number; y: number }> = [],
+    bldPts: ReadonlyArray<{ x: number; y: number }> = []
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
@@ -1465,39 +1467,51 @@ export class Scene13GroundLayerGL {
       return (seed >>> 0) / 4294967296;
     };
 
-    // 2. 随机抽选山势体质（Mountain Archetype），确保多样化
-    const arche = rnd();
-    let castleLevel = 6;
-    let innerLevel = 4;
-    let outerLevel = 2;
+    // 2. 居高临下且保留微幅随机性：严格保证 城堡(6.5~7) > 内城(4.5~5) > 外墙(3~3.5) > 外围丘陵(<=2.8)
+    const castleLevel = 6.5 + (rnd() < 0.6 ? 0.5 : 0); // 6.5 或 7.0 级
+    const innerLevel = 4.5 + (rnd() < 0.6 ? 0.5 : 0);  // 4.5 或 5.0 级
+    const outerLevel = 3.0 + (rnd() < 0.5 ? 0.5 : 0);  // 3.0 或 3.5 级
 
-    if (arche < 0.35) {
-      // 【崇山险峻型】（高耸入云，高差大，如剑门关/喀布尔山隘）
-      castleLevel = 6 + (rnd() < 0.45 ? 1 : 0); // 6~7 级
-      innerLevel = castleLevel - (rnd() < 0.65 ? 2 : 1); // 4~5 级
-      outerLevel = innerLevel - (rnd() < 0.65 ? 2 : 1); // 2~3 级
-    } else if (arche < 0.70) {
-      // 【平缓丘陵台地型】（开阔舒展，如波斯法拉/居庸关开阔地）
-      castleLevel = 4 + (rnd() < 0.60 ? 1 : 0); // 4~5 级
-      innerLevel = castleLevel - 1; // 3~4 级
-      outerLevel = Math.max(1, innerLevel - 1); // 2 级
-    } else {
-      // 【奇峰断崖型】（核心顶峰突起，如雅典卫城/石堡）
-      castleLevel = 6;
-      innerLevel = 4;
-      outerLevel = 1 + (rnd() < 0.5 ? 1 : 0); // 1~2 级
+    // 3. 台地边缘按实际墙件 / 建筑位置定（曼哈顿距离 |dx|+|dy|：两圈城墙在地面格里都是菱形）
+    // 🔴 [2026-10-15 主人令「险要的内墙、箭塔不平你来修」] 原写死 R1=4.0（+1.8 坡）/ R2=8.6 / R3=14.2，实测独松关：
+    //    箭塔在 5~6 格、坡到 5.8 才完 ⇒ 箭塔 5.01~6.15 级；内墙在 8~9 格、R2=8.6 切在墙上 ⇒ 内墙 3.81~5.00 级。
+    //    改为：墙件按最大间隔分内/外两圈，箭塔取城堡以外的建筑；每道坡都放进两圈之间的空当，离墙件留 PAD 给地面双线性插值。
+    const cx = c.gx, cy = c.gy;
+    const manOf = (p: { x: number; y: number }): number => {
+      const q = this.screenToCell(p.x, p.y, W, H);
+      return q ? Math.abs(q.gx - cx) + Math.abs(q.gy - cy) : -1;
+    };
+    const PAD = 1.0;
+    let castleTop = 2.6, castleFoot = 4.1;     // 城堡平顶 / 降到内城的坡脚
+    let innerEdge = 9.8, innerFoot = 11.1;     // 内城平台外缘 / 降到外城的坡脚
+    let outerEdge = 14.0;                      // 外城平台外缘（往外是攻方仰攻坡）
+    const wm = wallPts.map(manOf).filter(v => v >= 0).sort((a, b) => a - b);
+    if (wm.length >= 8) {
+      let gi = 0, gap = 0;
+      for (let i = 1; i < wm.length; i++) if (wm[i] - wm[i - 1] > gap) { gap = wm[i] - wm[i - 1]; gi = i; }
+      if (gap >= 1.5) {
+        const innerMax = wm[gi - 1], outerMin = wm[gi], outerMax = wm[wm.length - 1];
+        innerEdge = innerMax + PAD;
+        innerFoot = Math.max(innerEdge + 0.8, outerMin - PAD);
+        outerEdge = outerMax + 1.0;
+      } else {
+        outerEdge = wm[wm.length - 1] + 1.0;   // 只有一圈墙：整圈放外城平台
+        innerEdge = Math.min(innerEdge, outerEdge - 3);
+        innerFoot = Math.min(innerFoot, outerEdge - 1.5);
+      }
     }
-
-    // 3. 4 层台地半径与随机有机扰动轮廓（避免生硬圆圈）
-    const R1 = 3.8;   // 城堡核心顶台半径
-    const R2 = 8.6;   // 内圈城墙与8座箭塔环带半径
-    const R3 = 14.2;  // 外围城墙与四门环带半径
+    const bm = bldPts.map(manOf).filter(v => v >= 1.5).sort((a, b) => a - b);   // 城堡在城心（< 1.5），其余是箭塔
+    if (bm.length) {
+      castleFoot = Math.max(2.0, bm[0] - PAD - 0.2);
+      castleTop = Math.max(1.6, Math.min(castleTop, castleFoot - 1.2));
+    }
+    const R3 = outerEdge;
 
     const phase1 = rnd() * 6.28;
     const phase2 = rnd() * 6.28;
-    const deformAmp = 0.08 + rnd() * 0.08; // 随机轮廓起伏幅度
+    const deformAmp = 0.06 + rnd() * 0.05; // 外坡坡脚的起伏幅度（只作用在外城平台以外）
 
-    const cx = c.gx, cy = c.gy;
+    const maxCheckDist = R3 * 1.25 + 4.5; // 防止 rJitter 放大后坡脚被提前 continue 截断
 
     // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保关隘台地与外围峡谷崇山由算法纯粹驱动
     this.cornerElev.fill(0);
@@ -1506,43 +1520,42 @@ export class Scene13GroundLayerGL {
       for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
         const dIso = Math.abs(dx) + Math.abs(dy); // 等轴菱形曼哈顿距离
-        if (dIso > R3 + 4.5) continue; // 超出外圈台地缓坡范围由外围地形接管
+        if (dIso > maxCheckDist) continue; // 超出外圈台地缓坡范围由外围地形接管
 
         const theta = Math.atan2(dy, dx);
         const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
 
-        const r1 = R1 * rJitter;
-        const r2 = R2 * rJitter;
-        const r3 = R3 * rJitter;
-
         let targetH = 0;
-        if (dIso <= r1) {
-          // 顶峰城堡台地
+        if (dIso <= castleTop) {
+          // 1) 顶峰城堡平顶台地 (6.5~7级)
           targetH = castleLevel;
-        } else if (dIso <= r2) {
-          // 城堡与内城墙之间的平缓坡面
-          const s = Math.min(1, Math.max(0, (dIso - r1) / 1.5));
+        } else if (dIso <= innerEdge) {
+          // 2) castleTop→castleFoot 从城堡降到内城；之后到 innerEdge 全平（箭塔、内墙都在这一层）
+          const s = Math.min(1, Math.max(0, (dIso - castleTop) / (castleFoot - castleTop)));
           const t = s * s * (3 - 2 * s);
           targetH = castleLevel + (innerLevel - castleLevel) * t;
-        } else if (dIso <= r3) {
-          // 内城墙与外城墙之间的平缓坡面
-          const s = Math.min(1, Math.max(0, (dIso - r2) / 1.5));
+        } else if (dIso <= R3) {
+          // 3) innerEdge→innerFoot 从内城降到外城；之后到 R3 全平（外墙与四门）
+          const s = Math.min(1, Math.max(0, (dIso - innerEdge) / (innerFoot - innerEdge)));
           const t = s * s * (3 - 2 * s);
           targetH = innerLevel + (outerLevel - innerLevel) * t;
         } else {
-          // 外城墙脚下顺着缓坡滑落回原野地基
-          const s = Math.min(1, Math.max(0, (dIso - r3) / 2.5));
+          // 4) 外城墙脚下在有机缓坡内顺畅滑落回 0 级谷底（攻方仰攻大斜坡，坡脚带有自然扰动）
+          const slopeW = 3.5 * rJitter;
+          const s = Math.min(1, Math.max(0, (dIso - R3) / slopeW));
           const t = s * s * (3 - 2 * s);
-          targetH = outerLevel + (0 - outerLevel) * t;
+          targetH = outerLevel * (1.0 - t);
         }
 
         const i = y * V + x;
-        this.cornerElev[i] = targetH;
+        if (targetH > this.cornerElev[i]) {
+          this.cornerElev[i] = targetH;
+        }
       }
     }
 
-    // 4. 外围城墙外围：DE 真实团块元胞生长（中心高四周低，全随机分布）
-    this.generateDeElevationGrid(cx, cy, R3 + 3.0, 6.0, rnd, 'pass');
+    // 4. 外围城墙外围：外围丘陵推远到 R3 + 5.5 之外生成，且最高不超过 outerLevel - 0.5（彻底杜绝堵门与高程倒挂）
+    this.generateDeElevationGrid(cx, cy, R3 + 5.5, outerLevel - 0.5, rnd, 'pass');
 
     // 6. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
@@ -1564,10 +1577,47 @@ export class Scene13GroundLayerGL {
     screenY: number,
     W: number,
     H: number,
-    seedStr: string
+    seedStr: string,
+    fencePts: ReadonlyArray<{ x: number; y: number }> = []
   ): { centerLevel: number; villageLevel: number; fenceLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { centerLevel: 5, villageLevel: 4, fenceLevel: 3 };
+    // 🔴 [2026-10-15 主人报「这个地形也是中间椭圆菱形」] 实测布尔根：木栅 56 件在 |dx|+|dy|=8~9 的菱形上，
+    //    台地却是写死半径（R3≈9）且山脊/多瓣两型纵向压扁 ⇒ 同一圈木栅脚下 0~5.19 级。
+    //    改为按木栅实际位置定台地：每个方位取木栅半径 rf(θ)，木栅平台铺到 rf+1 格；寨内两层高台整体缩进木栅以内。
+    const BINS = 32;
+    const fenceR = new Float32Array(BINS);      // 每方位最远的木栅件（外坡从这里起）
+    const fenceRIn = new Float32Array(BINS);    // 每方位最近的木栅件（寨内台地按这里收）
+    for (const p of fencePts) {
+      const q = this.screenToCell(p.x, p.y, W, H);
+      if (!q) continue;
+      const d = Math.hypot(q.gx - c.gx, q.gy - c.gy);
+      const k = ((Math.round(Math.atan2(q.gy - c.gy, q.gx - c.gx) / (2 * Math.PI) * BINS) % BINS) + BINS) % BINS;
+      fenceR[k] = Math.max(fenceR[k], d);
+      fenceRIn[k] = fenceRIn[k] > 0 ? Math.min(fenceRIn[k], d) : d;
+    }
+    const hasFence = fenceR.some(v => v > 0);
+    if (hasFence) for (const arr of [fenceR, fenceRIn]) {   // 空方位取两侧最近有值方位的线性插值
+      const src = Float32Array.from(arr);
+      for (let k = 0; k < BINS; k++) {
+        if (src[k] > 0) continue;
+        let l = 1, r = 1;
+        while (src[(k - l + BINS) % BINS] <= 0) l++;
+        while (src[(k + r) % BINS] <= 0) r++;
+        arr[k] = (src[(k - l + BINS) % BINS] * r + src[(k + r) % BINS] * l) / (l + r);
+      }
+    }
+    const binAt = (arr: Float32Array, theta: number): number => {
+      const f = ((theta / (2 * Math.PI)) * BINS % BINS + BINS) % BINS;
+      const k0 = Math.floor(f) % BINS, k1 = (k0 + 1) % BINS, t = f - Math.floor(f);
+      return arr[k0] * (1 - t) + arr[k1] * t;
+    };
+    const fenceAt = (theta: number): number => binAt(fenceR, theta);
+    const fenceInAt = (theta: number): number => binAt(fenceRIn, theta);
+    let fenceMin = Infinity, fenceMax = 0;
+    for (let k = 0; k < BINS; k++) { fenceMin = Math.min(fenceMin, fenceR[k]); fenceMax = Math.max(fenceMax, fenceR[k]); }
+    const FENCE_PAD = 1.0;    // 木栅件本身的厚度 + 余量（格）
+    const FENCE_SLOPE = 2.5;  // 木栅外坡宽（格）
 
     const N = this.N;
     const V = N + 1;
@@ -1624,6 +1674,23 @@ export class Scene13GroundLayerGL {
     for (let y = 0; y <= N; y++) {
       for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
+        if (hasFence) {
+          // 三层台地都跟木栅形状走：q = 到城心距离 ÷ 该方位木栅半径（实测院内：中心大屋 q≈0、一圈房屋 q 0.48~0.67、木栅 q=1）
+          //   q ≤ 0.18 中心 7 级 → 0.34 降到 5 级 → 聚落平台到 0.74 → 0.87 降到木栅 3 级 → 木栅外 FENCE_PAD 格起外坡
+          //   （q 以该方位最近的木栅件为 1；坡离木栅留 0.13，免得地面双线性插值把木栅中段带高）
+          const d = Math.hypot(dx, dy), th = Math.atan2(dy, dx);
+          const rf0 = fenceAt(th), q = d / fenceInAt(th);
+          const step = (a: number, b: number, h0: number, h1: number): number => { const s = (q - a) / (b - a); return h0 + (h1 - h0) * s * s * (3 - 2 * s); };
+          let h: number;
+          if (d > rf0 + FENCE_PAD) { const s = Math.min(1, (d - rf0 - FENCE_PAD) / FENCE_SLOPE); h = fenceLevel * (1 - s * s * (3 - 2 * s)); }
+          else if (q >= 0.87) h = fenceLevel;
+          else if (q > 0.74) h = step(0.74, 0.87, villageLevel, fenceLevel);
+          else if (q >= 0.34) h = villageLevel;
+          else if (q > 0.18) h = step(0.18, 0.34, centerLevel, villageLevel);
+          else h = centerLevel;
+          this.cornerElev[y * V + x] = h;
+          continue;
+        }
         let dShape = 0;
 
         if (shapeMode === 'circle') {
@@ -1686,7 +1753,7 @@ export class Scene13GroundLayerGL {
     }
 
     // 4. 外围原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
-    this.generateDeElevationGrid(cx, cy, R3 + 3.0, 4.0, rnd, 'stockade');
+    this.generateDeElevationGrid(cx, cy, hasFence ? fenceMax + FENCE_PAD + FENCE_SLOPE + 0.5 : R3 + 3.0, 4.0, rnd, 'stockade');
 
     // 5. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
