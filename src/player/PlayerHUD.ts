@@ -398,9 +398,10 @@ export class PlayerHUD {
 
         const renameBtn = document.createElement('button');
         renameBtn.type = 'button';
+        renameBtn.className = 'player-hud-pill-btn';
         renameBtn.textContent = '✎';
         renameBtn.title = '修改玩家名称';
-        renameBtn.style.cssText = 'cursor:pointer; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.4); color:#dfc28c; font-size:11px; padding:1px 4px; border-radius:3px; line-height:1; font-family:inherit;';
+        renameBtn.style.cssText = 'cursor:pointer; background:linear-gradient(180deg, rgba(48,38,26,0.9), rgba(26,20,14,0.95)); border:1px solid rgba(212,175,55,0.45); color:#e8c77e; font-size:11px; padding:1px 5px; border-radius:4px; line-height:1.2; font-family:inherit; box-shadow:inset 0 1px 0 rgba(255,235,180,0.12);';
         renameBtn.addEventListener('click', () => {
             const trimmed = prompt('请输入新的玩家名称：', hero.name)?.trim();
             if (!trimmed || trimmed === hero.name) return;
@@ -437,7 +438,7 @@ export class PlayerHUD {
         secLeft.appendChild(sep2);
 
         const facSpan = document.createElement('span');
-        facSpan.style.cssText = `color:${hero.factionId ? '#52c486' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
+        facSpan.style.cssText = `color:${hero.factionId ? '#7cd4a0' : '#ba9e7b'}; font-weight:700; white-space:nowrap;`;
         facSpan.textContent = factionName;
         secLeft.appendChild(facSpan);
 
@@ -448,7 +449,7 @@ export class PlayerHUD {
         secMid.className = 'player-hud-section-mid';
 
         const stateSpan = document.createElement('span');
-        const stateColor = host ? '#f5a623' : '#f5e6c8';
+        const stateColor = host ? '#f0b849' : '#f5e6c8';
         stateSpan.style.cssText = `color:${stateColor}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
         stateSpan.title = host ? '随军出征中，军团解散前不可离开' : state;
         stateSpan.textContent = `📍 ${state}`;
@@ -460,7 +461,7 @@ export class PlayerHUD {
         secMid.appendChild(sep3);
 
         const questSpan = document.createElement('span');
-        questSpan.style.cssText = `color:${quest ? '#ff8585' : '#ba9e7b'}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+        questSpan.style.cssText = `color:${quest ? '#f29b76' : '#ba9e7b'}; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
         questSpan.title = `任务：${questText}`;
         questSpan.textContent = `🎯 ${questText}`;
         secMid.appendChild(questSpan);
@@ -473,26 +474,42 @@ export class PlayerHUD {
 
         // 🤖 自动模式
         const autoLabel = document.createElement('label');
-        autoLabel.style.cssText = 'display:flex; align-items:center; gap:3px; cursor:pointer; font-size:11px; color:#52c486; font-weight:700; user-select:none;';
+        autoLabel.className = 'player-hud-chip';
+        autoLabel.style.cssText = `
+            display:inline-flex; align-items:center; gap:4px; cursor:pointer; font-size:11px; font-weight:700; user-select:none;
+            height:22px; padding:0 7px; border-radius:4px; box-sizing:border-box;
+            background:${hero.autoMode ? 'linear-gradient(180deg, rgba(46,58,42,0.88), rgba(24,32,22,0.94))' : 'linear-gradient(180deg, rgba(38,31,22,0.88), rgba(22,18,13,0.94))'};
+            color:${hero.autoMode ? '#8ce0aa' : '#b9ab95'};
+            border:1px solid ${hero.autoMode ? 'rgba(124,212,160,0.48)' : 'rgba(204,174,116,0.32)'};
+            box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
+            transition:all 0.2s ease;
+        `;
         autoLabel.title = '开：自动寻找武将、自动入伍随军、自动接战；关：纯手动操作';
         const autoCheck = document.createElement('input');
         autoCheck.type = 'checkbox';
         autoCheck.checked = hero.autoMode;
-        autoCheck.style.cssText = 'cursor:pointer; accent-color:#52c486; margin:0;';
+        autoCheck.style.cssText = 'cursor:pointer; accent-color:#c8a858; margin:0; width:12px; height:12px;';
         autoCheck.addEventListener('change', () => hero.setAutoMode(autoCheck.checked));
         autoLabel.appendChild(autoCheck);
-        autoLabel.appendChild(document.createTextNode('🤖 自动'));
+        autoLabel.appendChild(document.createTextNode('自动'));
         secControls.appendChild(autoLabel);
 
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');
+        planSel.className = 'player-hud-select';
         planSel.title = '剧本模式：按历史顺序奔赴战场，全图不随机生军团、军团不自行寻敌，剧本全部打完自动转入乱斗；乱斗模式：完全不去战场，一直找武将入伍';
         planSel.disabled = false;
-        planSel.style.cssText = 'cursor:pointer; font-size:11px; font-weight:700; color:#8ab4f8; background:#1b2333; border:1px solid #33415c; border-radius:4px; padding:1px 3px; height:22px;';
+        planSel.style.cssText = `
+            cursor:pointer; font-family:inherit; font-size:11px; font-weight:700;
+            color:#e8c77e; background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96));
+            border:1px solid rgba(212,175,55,0.45); border-radius:4px; padding:1px 5px; height:22px;
+            box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35); outline:none;
+        `;
         for (const [val, text] of [['script', '📜 剧本'], ['melee', '⚔️ 乱斗']] as const) {
             const opt = document.createElement('option');
             opt.value = val;
             opt.textContent = text;
+            opt.style.cssText = 'background:#1e1812; color:#f5e6c8;';
             if (hero.autoPlan === val) opt.selected = true;
             planSel.appendChild(opt);
         }
@@ -505,15 +522,17 @@ export class PlayerHUD {
             const speedBtn = document.createElement('button');
             speedBtn.type = 'button';
             speedBtn.id = 'player-speed-toggle';
+            speedBtn.className = 'player-hud-pill-btn';
             speedBtn.textContent = fast ? '⏩ 10× 加速中' : '⏩ 10× 加速';
             speedBtn.title = fast
                 ? '正在 10× 加速（点一下回到 1× 常规）——战略层整体快 10 倍：季节/年份、军团行军、AI、募兵、战败冷却一起加速'
                 : '点一下让对局整体快 10 倍（季节/年份、行军、AI、募兵一起加速）；战术层 13 战斗不受影响（它固定走真实秒），行军播报也仍按原速念';
             speedBtn.style.cssText = `
-                cursor:pointer; font-size:11px; font-weight:700; padding:1px 5px; border-radius:4px; font-family:inherit; line-height:18px;
-                background:${fast ? 'rgba(255,138,76,0.22)' : 'rgba(212,175,55,0.14)'};
-                color:${fast ? '#ff8a4c' : '#dfc28c'};
-                border:1px solid ${fast ? 'rgba(255,138,76,0.55)' : 'rgba(212,175,55,0.35)'};
+                cursor:pointer; font-size:11px; font-weight:700; padding:0 7px; height:22px; border-radius:4px; font-family:inherit; line-height:20px; box-sizing:border-box;
+                background:${fast ? 'linear-gradient(180deg, rgba(78,44,20,0.92), rgba(46,24,10,0.96))' : 'linear-gradient(180deg, rgba(42,34,24,0.9), rgba(24,19,14,0.95))'};
+                color:${fast ? '#ffb870' : '#dfc28c'};
+                border:1px solid ${fast ? 'rgba(240,160,75,0.65)' : 'rgba(212,175,55,0.38)'};
+                box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35);
                 transition:all 0.2s ease;
             `;
             speedBtn.addEventListener('click', () => {
@@ -527,15 +546,17 @@ export class PlayerHUD {
         if (this.deps.followCamera) {
             const followBtn = document.createElement('button');
             followBtn.type = 'button';
+            followBtn.className = 'player-hud-pill-btn';
             const isF = this.deps.isFollowing?.() ?? false;
             followBtn.textContent = isF ? '🎥 跟随中' : '🎥 跟随';
             followBtn.title = isF ? '正在跟随玩家视角（点击取消）' : '点击对准并跟随玩家';
             followBtn.style.cssText = `
-                cursor:pointer; font-size:11px; font-weight:700; padding:1px 5px; border-radius:4px; font-family:inherit;
-                background:${isF ? 'rgba(82,196,134,0.22)' : 'rgba(212,175,55,0.14)'};
-                color:${isF ? '#52c486' : '#dfc28c'};
-                border:1px solid ${isF ? 'rgba(82,196,134,0.5)' : 'rgba(212,175,55,0.35)'};
-                transition:all 0.2s ease; line-height:18px;
+                cursor:pointer; font-size:11px; font-weight:700; padding:0 7px; height:22px; border-radius:4px; font-family:inherit; line-height:20px; box-sizing:border-box;
+                background:${isF ? 'linear-gradient(180deg, rgba(42,58,40,0.92), rgba(22,32,20,0.96))' : 'linear-gradient(180deg, rgba(42,34,24,0.9), rgba(24,19,14,0.95))'};
+                color:${isF ? '#8ce0aa' : '#dfc28c'};
+                border:1px solid ${isF ? 'rgba(124,212,160,0.52)' : 'rgba(212,175,55,0.38)'};
+                box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35);
+                transition:all 0.2s ease;
             `;
             followBtn.addEventListener('click', () => {
                 if (this.deps.isFollowing?.()) {
@@ -556,10 +577,12 @@ export class PlayerHUD {
 
         // 陆战选择
         const uSel = document.createElement('select');
+        uSel.className = 'player-hud-select';
         uSel.style.cssText = `
-            max-width:105px; font-family:inherit; font-size:11px; padding:1px 3px;
-            background:rgba(35,28,20,0.92); color:#f5e6c8;
-            border:1px solid rgba(212,175,55,0.45); border-radius:4px;
+            max-width:105px; font-family:inherit; font-size:11px; font-weight:600; padding:1px 5px;
+            background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96)); color:#f5e6c8;
+            border:1px solid rgba(212,175,55,0.42); border-radius:4px;
+            box-shadow:inset 0 1px 0 rgba(255,235,180,0.1), 0 1px 3px rgba(0,0,0,0.35);
             outline:none; cursor:pointer; box-sizing:border-box; height:22px; margin:0 !important;
         `;
         if (!hero.learnedUnits.length) {
@@ -567,12 +590,14 @@ export class PlayerHUD {
             const o = document.createElement('option');
             o.value = '-1';
             o.textContent = WAR_TYPES[fallbackKey]?.name ?? fallbackKey;
+            o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
             uSel.appendChild(o);
         }
         hero.learnedUnits.forEach((u, i) => {
             const o = document.createElement('option');
             o.value = String(i);
             o.textContent = u.unitName;
+            o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
             uSel.appendChild(o);
         });
         uSel.value = String(hero.selectedUnit);
@@ -588,8 +613,10 @@ export class PlayerHUD {
         if (!hero.canPickShip()) {
             const shipDisplay = document.createElement('div');
             shipDisplay.style.cssText = `
-                max-width:110px; font-size:11px; color:#9ec5e8; font-weight:700; height:22px; line-height:20px;
-                padding:0 3px; background:rgba(25,22,18,0.7); border:1px solid rgba(212,175,55,0.25); border-radius:4px;
+                max-width:110px; font-size:11px; color:#a8cbe6; font-weight:700; height:22px; line-height:20px;
+                padding:0 6px; background:linear-gradient(180deg, rgba(32,38,44,0.88), rgba(18,22,26,0.94));
+                border:1px solid rgba(168,203,230,0.35); border-radius:4px;
+                box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.35);
                 overflow:hidden; text-overflow:ellipsis; white-space:nowrap; box-sizing:border-box; margin:0 !important;
             `;
             shipDisplay.title = `随势力舰队出战：${getNavalShipChineseName(hero.shipKey)}`;
@@ -597,15 +624,18 @@ export class PlayerHUD {
             secRight.appendChild(shipDisplay);
         } else {
             const sSel = document.createElement('select');
+            sSel.className = 'player-hud-select';
             sSel.style.cssText = uSel.style.cssText;
             const opt0 = document.createElement('option');
             opt0.value = '-1';
             opt0.textContent = getNavalShipChineseName('CANOE');
+            opt0.style.cssText = 'background:#1e1812; color:#f5e6c8;';
             sSel.appendChild(opt0);
             hero.learnedShips.forEach((sh, i) => {
                 const o = document.createElement('option');
                 o.value = String(i);
                 o.textContent = getNavalShipChineseName(sh);
+                o.style.cssText = 'background:#1e1812; color:#f5e6c8;';
                 sSel.appendChild(o);
             });
             sSel.value = String(hero.selectedShip);
@@ -620,7 +650,7 @@ export class PlayerHUD {
         minBtn.type = 'button';
         minBtn.textContent = this.minimized ? '▼' : '▲';
         minBtn.title = this.minimized ? '展开' : '收起';
-        minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:13px; font-weight:900; line-height:1; padding:0 2px; margin-left:2px; transition:color 0.2s;';
+        minBtn.style.cssText = 'cursor:pointer; background:transparent; border:none; color:#dfc28c; font-size:12px; font-weight:900; line-height:1; padding:2px 4px; margin-left:1px; transition:color 0.2s;';
         minBtn.addEventListener('mouseenter', () => { minBtn.style.color = '#fffcee'; });
         minBtn.addEventListener('mouseleave', () => { minBtn.style.color = '#dfc28c'; });
         minBtn.addEventListener('click', () => this.toggleMinimize());

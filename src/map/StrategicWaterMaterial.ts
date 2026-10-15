@@ -100,6 +100,15 @@ export function renderStrategicWater(
         water[i] = m;
         distance[i] = m ? pad + 1 : 0;
     }
+    // 剔除水面内部因底图 JPEG 压缩产生的单像素孤立噪点（周围 8 邻域 ≥7 个是水），避免在海中产生虚假浅滩光圈或斑点
+    for (let y = 1; y < ph - 1; y++) for (let x = 1; x < pw - 1; x++) {
+        const i = y * pw + x;
+        if (water[i]) continue;
+        const n = water[i - pw - 1] + water[i - pw] + water[i - pw + 1]
+                + water[i - 1] + water[i + 1]
+                + water[i + pw - 1] + water[i + pw] + water[i + pw + 1];
+        if (n >= 7) distance[i] = pad + 1;
+    }
     // 有限范围八邻域距离变换；边缘取相邻瓦片，陆地不会被误当海岸画框。
     for (let y = 1; y < ph; y++) for (let x = 1; x < pw - 1; x++) {
         const i = y * pw + x;
@@ -147,13 +156,13 @@ export function renderStrategicWater(
             const d = depthT ? depthT[y * w + x] : 0;
             const dist = distance[i];
             // 连续离岸加深（无 d<0.03 硬阈值跳变，彻底消除海面暗沙/小岛周边的深蓝雀斑）：
-            // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~32px 平滑推向浅海中蓝
-            const offshoreT = water[i] && dist > 8 ? Math.min(0.46, ((dist - 8) / 24) * 0.46) : 0;
+            // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~28px 平滑推向浅海中蓝
+            const offshoreT = water[i] && dist > 8 ? Math.min(0.48, ((dist - 8) / 20) * 0.48) : 0;
             let effD = Math.max(d, offshoreT);
 
-            // 近岸浅滩过渡带：收窄至离岸 reach (7~11px)，在海岸边缘平滑压浅，避免浅水区过大
+            // 近岸浅滩过渡带：收窄至离岸 reach (6~10px)，在海岸边缘平滑压浅，避免浅水区过大
             const depthFactor = Math.max(0.55, 1 - d * 0.45);
-            const reach = (9.5 + Math.sin(wx / 37 + wy / 51) * 1.5 + Math.sin((wx - wy) / 23) * 1.0) * depthFactor;
+            const reach = (8.5 + Math.sin(wx / 37 + wy / 51) * 1.2 + Math.sin((wx - wy) / 23) * 0.8) * depthFactor;
             if (water[i] && dist < reach) {
                 const u = Math.max(0, Math.min(1, dist / reach));
                 const coastFade = u * u * (3 - 2 * u); // smoothstep 0..1

@@ -3815,13 +3815,16 @@ export class Scene13WarLayer {
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
     /**
-     * 攻城战守方「待命」：近战原地不动、远程原地射击；
-     * 开战 30 秒城墙随机塌一半（collapseHalfWalls）→ false → 守方开始反击（2026-08-22 主人定）。
+     * 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 每场只做一次：
+     *    开战 30 秒后**全场非墙装饰去碰撞**（树/石/摆设一律可通行）。不塌墙、不碰建筑 ——
+     *    墙另有「受伤自动坍塌」（见下）与「血归零即塌」两条，都只塌**已经掉血**的墙。
      */
-    private defenderHolding = false;
-    /** 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙/城门/城垛」] 每场只塌一次 */
     private wallAutoCollapsed = false;
-    /** 🔴 [2026-10-12] 下一处墙缺口坍塌的时刻（battleSec）；1e9 = 墙已塌完 */
+    /**
+     * 🔴 [2026-10-15 主人令「把受伤的城墙自动坍塌逻辑加回来。只有不是满血的城墙才能自动坍塌」]
+     * 下一处墙缺口自动坍塌的时刻（battleSec）；1e9 = 已无墙可塌，停止轮询。
+     * 规则：每 10 秒塌一处，只挑**掉过血**（hp < maxHp）的墙/门/垛/栅栏，先塌最早挨打的那一处。
+     */
     private nextWallGapSec = 10;
     /**
      * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
@@ -3839,8 +3842,6 @@ export class Scene13WarLayer {
     private corpseAcc = 0;
     /** 本场已打了多少秒（真实秒，开场列阵也算）。见 HARD_STOP_SEC / NO_KILL_SEC */
     private battleSec = 0;
-    /** 🔴 [2026-08-23] 城墙是否已坍塌过（塌一半 + 全解除阻挡只做一次，防止士兵反复打墙导致全塌） */
-    private wallsCollapsed = false;
     /** 最近一次有人阵亡的时刻（秒，battleSec 计）。长时间没人死 = 卡住了 */
     private lastKillSec = 0;
     /** 本场是否已报过「打不完」（只报一次，别刷屏也别重复落盘） */
@@ -4525,12 +4526,8 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-03 主人定] 城寨(stockade)与野战一致：守方不待命，直接开战。
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
-        this.defenderHolding = false;
-        this.nextWallGapSec = 10;
-        this.wallAutoCollapsed = false;   // 每场重新计（30 秒保底塌墙，见 step）
-        // 🔴 [2026-08-23 主人定] 城墙「只塌一次」守卫也要每场归位——否则第二场攻城战 wallsCollapsed
-        //    残留 true，30 秒 collapseFrontWalls 被守卫直接 return，城墙永不塌、士兵永久卡墙外。
-        this.wallsCollapsed = false;
+        this.wallAutoCollapsed = false;   // 每场重新计（30 秒「全场非墙装饰去碰撞」那一下，见 step）
+        this.nextWallGapSec = 10;         // 🔴 [2026-10-15 主人令] 受伤城墙自动坍塌：每 10 秒塌一处，每场重新起算
         // [2026-08-31] 本地名将加成已删（名将/精锐都走八环唯一通道，见 dmgVs 上方说明）。
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
@@ -4982,18 +4979,17 @@ export class Scene13WarLayer {
         if (!nine.length) return;
 
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
+        // 🔴 [2026-10-15 主人令「攻方的攻城武器出现的位置分别为9个出兵口，正好一个出兵口一个」]
+        const atkPorts = this.spawns.filter((s) => s.f === 0 && !s.commander);
         const siegeCount = nine.length;
         for (let idx = 0; idx < siegeCount; idx++) {
             const key = nine[idx];
             this.ensureType(key, 0);
             const hp = this.statsFor(key, 0).hp;
-            // 🔴 [2026-10-15 主人令「把攻城武器放到进攻方军团的后面」] 攻城器械规整展开在攻方军阵后方（-depth * 2.0，后排方阵之后）
-            const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
-            const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
-            const [x, y] = this.fieldBound(
-                base.x - fwd.x * (depth * 2.0) + sv.x * sideOffset,
-                base.y - fwd.y * (depth * 2.0) + sv.y * sideOffset,
-            );
+            const port = atkPorts[idx % Math.max(1, atkPorts.length)];
+            const [x, y] = port
+                ? this.fieldBound(port.x, port.y)
+                : this.fieldBound(this.spawnBases[0].x, this.spawnBases[0].y);
             const tgt = this.deCity ? this.deCityCenter : this.spawnBases[1];
             const tgtX = tgt.x, tgtY = tgt.y;
             this.men.push({
@@ -6066,14 +6062,13 @@ export class Scene13WarLayer {
             availableSpawns = side,
             towerScale = SIEGE_CITY_BUILDING_SCALE,
             /**
-             * 🔴 [2026-10-15 主人令「只做战场结束的焚营演出（不动平衡）」＋「所有建筑和 DE 一致」]
-             *  register=true  = **守方的毡帐聚落**（＝该城的 9 建筑：8 蒙古包 + 1 瞭望塔）：
-             *                   逐件登记为可攻击建筑（DE 血量、先燃后塌、未塌照常射箭）。
-             *  register=false = **攻方营地 / 野战营地**：纯装饰，不登记（不参与索敌、胜负、射箭），
-             *                   只在战场结束时随败方焚营（见 outroBurn）。
+             * 🔴 [2026-10-15 主人令「我们算建筑，有坍塌动画的都是建筑」]
+             *  defenderSettlement=true  = **守方的毡帐聚落**（＝该城的 9 建筑：8 蒙古包 + 1 瞭望塔）：
+             *                            走 `trackCityBuilding`（可被打 + 照常射箭）。
+             *  defenderSettlement=false = **攻方营寨 / 野战营寨**：同样**登记为建筑**（有 DE 血量、
+             *                            受伤掉血、血归零走 DE 倒塌链），但**不射箭**（不挂 cityBuildings）。
              */
-            register = false,
-            campSide: 0 | 1 = f as 0 | 1,
+            defenderSettlement = false,
         ): void => {
             if (availableSpawns.length === 0) return;
             const shuffledSpawns = [...availableSpawns].sort(() => Math.random() - 0.5);
@@ -6081,24 +6076,29 @@ export class Scene13WarLayer {
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
             for (let i = 0; i < shuffledSpawns.length - 1; i++) {
                 const sp = place(shuffledSpawns[i], shuffledYurts[i], { scale });
-                sp.camp = campSide;
                 this.decorSprites.push(sp);
-                this.campSprites.push(sp);
-                if (register) this.trackCityBuilding(sp);
-                // 攻方/野战营寨：只打阵营标记给焚营演出取件 —— 不登记为建筑、不预载倒塌素材（**攻方营寨不坍塌**）
+                if (defenderSettlement) {
+                    this.trackCityBuilding(sp);     // 守方毡帐聚落 = 9 建筑（可被打 + 射箭）
+                } else {
+                    this.registerDefBuilding(sp, shuffledYurts[i], undefined, undefined, f as 0 | 1);   // 营寨 = 建筑（可被打，不射箭）
+                    this.ensureDestrAssetsFor(shuffledYurts[i]);
+                }
             }
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
             // 🔴 [2026-10-03 主人令] 塔（箭塔族）**不跟营帐用同一缩放**：一律与守方箭塔的 `SIEGE_CITY_BUILDING_SCALE` 对齐，
             //    否则攻方营地的塔比守方城墙内侧的箭塔大一圈（营帐仍按调用方给的 scale，不动）。
-            // 🔴 [2026-10-15 主人令] 这座塔也是 9 建筑之一：守方要**登记**（否则毡帐城只有 8 栋可打、9 建筑口径不成立）；
-            //    攻方营寨则纯装饰 —— 不登记、不预载倒塌素材（**攻方营寨不坍塌**，只在战场结束时随败方焚营）。
+            // 🔴 [2026-10-15 主人令] 这座塔同样算建筑：守方毡帐城要登记成第 9 栋（可打 + 射箭）；
+            //    攻方营寨的塔也登记（可打、会塌），只是不射箭。
             const towerAsset = 'ASIA_TOWER_AGE2';
             const towerSp = place(shuffledSpawns[shuffledSpawns.length - 1], towerAsset, { scale: towerScale });
-            towerSp.camp = campSide;
             this.decorSprites.push(towerSp);
-            this.campSprites.push(towerSp);
-            if (register) this.trackCityBuilding(towerSp);
+            if (defenderSettlement) {
+                this.trackCityBuilding(towerSp);
+            } else {
+                this.registerDefBuilding(towerSp, towerAsset, undefined, undefined, f as 0 | 1);
+                this.ensureDestrAssetsFor(towerAsset);
+            }
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -6239,7 +6239,7 @@ export class Scene13WarLayer {
             //    正面墙段 linked=true（参与「一处破 → 前排全倒」联动）
             //    主人 2026-09-03：城寨(stockade)只换**前排**——正面不铺篱笆墙（改拒马线，见 applyBuildingsForSide），两侧篱笆保留
             // 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 城内建筑一律**去掉碰撞**（纯贴图）：
-            //    只有墙/门/城垛/围栏保留阻挡（它们由 30 秒坍塌或被打穿解除，见 collapseFrontWalls）。
+            //    只有墙/门/城垛/围栏保留阻挡（墙有两条坍塌路径：受伤每 10 秒自动塌一处 + 血归零即塌）。
             for (const sp of this.decorSprites) {
                 const _a = String(sp.asset || '');
                 if (/WALL|GATE|POST|PALISADE|FENCE|TOWER/i.test(_a)) continue;
@@ -6348,8 +6348,9 @@ export class Scene13WarLayer {
             //    **此处原有两条例外已删**（2026-09-03「城寨围墙城门全部纯贴图去碰撞」＋ 2026-09-19「漠北蒙古同样去碰撞」）：
             //    按新令「规则冲突时删除更早的规则」，城寨/漠北蒙古的栅栏、篱笆、城门、木垛**一律和别的城池同一条链** ——
             //      ① 保留碰撞（placeWall/placeGate 设的 obstruction 不再被清掉）⇒ 拦得住兵；
-            //      ② 挨打掉血 → `collapseNextWallGap` 每 10 秒塌一处缺口 → `collapseOneWall` 播 FOUNDATION_1X1_DESTR 切残骸；
-            //      ③ 血归零（被打穿）同样走同一条倒塌链。
+            //      ② 挨打掉血后走两条：**每 10 秒自动塌一处受伤的墙**（2026-10-15 令）＋ 血归零立刻
+            //         `collapseOneWall` 播 FOUNDATION_1X1_DESTR 切残骸；
+            //      ③ 城内建筑、箭塔、营寨不自动坍塌：只在自己被打到 0 血时倒塌。
             //    城寨正面本来就是拒马线（无墙）⇒ 攻方从正面直进，不会被 V 形两翼困住；两翼挨打即按上面②③塌掉放行。
             //    「直接开战、守方不待命」那条（siegeWithWalls=false）**未动**：它管的是守军行为，不是墙。
 
@@ -6422,10 +6423,10 @@ export class Scene13WarLayer {
                     const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
                     this.decorSprites.push(castleSp);
                     this.trackCityBuilding(castleSp, 'CASTLE');
-                    placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn), SIEGE_CITY_BUILDING_SCALE, true, 1);
+                    placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn), SIEGE_CITY_BUILDING_SCALE, true);
                     return;
                 }
-                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide, SIEGE_CITY_BUILDING_SCALE, true, 1);
+                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide, SIEGE_CITY_BUILDING_SCALE, true);
                 return;
             }
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
@@ -6556,24 +6557,23 @@ export class Scene13WarLayer {
 
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔
         // 🔴 [2026-09-18] 同上：判据改用建筑风格 YURT，覆盖 STEPPE 与 MOBEI_MONGOL 两种文化区
-        // 🔴 [2026-10-15 主人令「只做战场结束的焚营演出（不动平衡）」＋「攻方的营寨不坍塌」]
-        //    攻方营寨 / 野战营寨**一律纯装饰**：不登记为可攻击建筑（不参与索敌、胜负、射箭），
-        //    **也不进倒塌/残骸链（永不坍塌）**，只打上阵营标记 `camp`，战场结束时随败方**焚营**（只烧不塌）。
-        //    ⚠️ 同源 bug 已随本条修掉：蒙古营寨原走 `placeYurtCamp` 默认登记 ⇒ 攻方自家 8 个蒙古包
-        //    被 `registerDefBuilding` 记成**守方建筑**（f 写死 1）⇒ 会朝自家士兵射箭、会被挑成「中心建筑」
-        //    （中心建筑血归零＝攻方胜），胜负判定可被污染。
+        // 🔴 [2026-10-15 主人令「我们算建筑，有坍塌动画的都是建筑」] 营寨**算建筑**：
+        //    逐件登记（DE 血量、受伤掉血、血归零播 DE 倒塌 → 留残骸），但它们**不射箭**（不挂 cityBuildings）。
+        //    ⚠️ 阵营必须传自己的 `f`：索敌一律跳过同阵营 —— 否则攻城武器会砸自家营寨、
+        //       守方还会把攻方帐篷挑成「中心建筑」（中心建筑血归零＝攻方胜）污染胜负判定。
+        //    ⚠️ 旧注释里「f 写死 1」的那个 bug 已随本条第 5 个参数修掉。
         if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
             // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 蒙古包也按 80%（塔本来就是这个缩放）
-            placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, side, SIEGE_CITY_BUILDING_SCALE, false, f as 0 | 1);
+            placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, side, SIEGE_CITY_BUILDING_SCALE, false);
             return;
         }
         const style = this.buildingStyleFor(f as 0 | 1);
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
         const placeCamp = (spawnIndex: number, asset: string): void => {
             const sp = place(shuffledSpawns[spawnIndex], asset, { scale: SIEGE_CITY_BUILDING_SCALE });
-            sp.camp = f as 0 | 1;
             this.decorSprites.push(sp);
-            this.campSprites.push(sp);   // 只给焚营演出取件用；不预载倒塌素材（营寨不坍塌）
+            this.registerDefBuilding(sp, asset, undefined, undefined, f as 0 | 1);   // 营寨 = 建筑（不射箭）
+            this.ensureDestrAssetsFor(asset);                                        // 倒塌素材开战前备齐
         };
         // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 3 营地 + 4 帐篷也改 80%
         //    （改前是原尺寸 1.0；下方两座塔状工事本就 0.8，现在整座营地同一个缩放）。
@@ -8166,7 +8166,7 @@ export class Scene13WarLayer {
      *   病灶（主人 2026-10-03 报「军团还是会微颤」）：站定的队员被邻居推走 → 锚点又把他拉回 →
      *   一推一拉就是那点微颤。**关键在"站定的人还吃不吃推挤"，不在"锚点选谁"** ——
      *   攻城战之所以完全不颤，正因为那里两条都关了：① 不归队（`siegeWithWalls` → laneSlotTarget 返回 null）
-     *   ② 待命期推挤清零（`defenderHolding` 那一支）。
+     *   ② 攻城战不走路队归队的槽位逻辑。
      *
      *   范围卡得很紧，绝不动交战中的人：只有「无目标（`!m.foe`）+ 归队满 LANE_REGROUP_SEC 秒 +
      *   已有本队锚点且不是自己 + 已站到槽位上（≤ LANE_TRACK_EPS）」四条同时成立才清零。
@@ -8413,17 +8413,23 @@ export class Scene13WarLayer {
         return null;
     }
 
-    /** 攻城武器的目标：尚未打下任何城门时只取还立着的城门（优先打离自己近的城门）；打下一座城门后，周围的城墙、建筑和其他城门一档并列，由调用方取离自己最近的那个。 */
-    private siegeFirstTier(): WarBuilding[] {
+    /** 攻城武器的目标：尚未打下任何城门时只取还立着的城门（优先打离自己近的城门）；打下一座城门后，周围的城墙、建筑和其他城门一档并列，由调用方取离自己最近的那个。
+     *  🔴 [2026-10-15 主人令「有坍塌动画的都是建筑」] 营寨也进了 `defBuildings` ⇒ 这里**必须按阵营过滤**，
+     *    否则攻方的攻城武器会把自己营寨当成第一档目标去砸。 */
+    private siegeFirstTier(attackerF: 0 | 1 = 0): WarBuilding[] {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
+        const enemy = (b: WarBuilding): boolean => b.f !== attackerF;
         // 🔴 [2026-10-15 主人令「攻城武器优先攻击离自己近的城门，当打下一个城门后，就攻击周围的城墙和建筑和其他城门，这些并列。」]
-        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE');
+        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE' && enemy(b));
         const anyGateDown = gates.some(b => !bldOk(b) || b.sprite.obstructionDisabled);
         if (!anyGateDown) {
             const standingGates = gates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
             if (standingGates.length > 0) return standingGates;
         }
-        return [...this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled), ...this.defBuildings.filter(b => bldOk(b))];
+        return [
+            ...this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled && enemy(b)),
+            ...this.defBuildings.filter(b => bldOk(b) && enemy(b)),
+        ];
     }
 
     /**
@@ -8700,7 +8706,7 @@ export class Scene13WarLayer {
         //    （`siegeFirstTier` = 城门 → 城墙 → 箭塔 → 中心建筑 → 其余建筑）里**射程内离自己最近**的那个；
         //    够不着就返回 null 继续靠近（见 aimAt）。距离比较用的是平方距离 `d`，等价于最近。
         if (this.battleType === 'siege' && m.f === 0 && (m as { siegeW?: boolean }).siegeW) {
-            const tier = this.siegeFirstTier();
+            const tier = this.siegeFirstTier(m.f as 0 | 1);
             if (tier.length > 0) {
                 let pick: WarBuilding | null = null, pd = Infinity, far: WarBuilding | null = null, fard = Infinity;
                 // 🔴 [2026-10-13 主人报「攻城武器还是先打城墙，不先打城门」] 排序在**全图**做，不只在视野内：
@@ -8778,15 +8784,12 @@ export class Scene13WarLayer {
     }
 
     /**
-     * 🔴 [2026-08-22 主人定] 联动倒塌：任意一处城墙被打破 → **所有城墙**（前排+上下排斜墙）
-     *    统一按随机间隔倒塌（不整排全倒），并触发守方解除待命开始反击。随机间隔挑段倒，
-     *    任何一排都留缺口，士兵穿行不卡。
+     * 🔴 [2026-10-11 主人令「所有建筑改为贴图。确保士兵通行」] 开战 30 秒这一下：
+     *    把**非墙装饰**（树/石/摆设/建筑贴图）全部去碰撞 —— 全场可通行，士兵不再被景物卡住。
+     *    ⚠️ 不碰墙/门/垛/栅栏（墙另有「受伤自动坍塌」与「血归零即塌」两条，见下）。
      */
-    private collapseFrontWalls(): void {
+    private clearNonWallObstructions(): void {
         this.lastCollapseAt = performance.now();
-        // 🔴 [2026-10-12 主人令「10秒坍塌一个」] 城墙/城门/城垛改由 collapseNextWallGap 每 10 秒塌一处缺口；
-        //    本函数只剩 30 秒这一下：城内箭塔/建筑随机三形态 + 非墙装饰改纯贴图（墙段不在此处理）。
-        this.defenderHolding = false;
         const wallSprites = new Set<DecorSprite>();
         for (const b of this.wallGates) { wallSprites.add(b.sprite); if (b.extraSprites) for (const sp of b.extraSprites) wallSprites.add(sp); }
         for (const sp of this.decorSprites) {
@@ -8797,45 +8800,34 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 🔴 [2026-10-12 主人令「10秒坍塌一个，靠近敌方或受到攻击的先塌」] 墙段是否还立着 */
+    /** 墙/门/垛段是否还立着（`_DAMAGED` 也算立着；_RUBBLE/已销毁/正在倒塌 = 不立） */
     private wallStanding(b: WarBuilding): boolean {
         if (b.bld) return b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
         return !b.sprite.destroyed && !b.sprite.obstructionDisabled && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
     }
 
     /**
-     * 🔴 [2026-10-12 主人令「10秒坍塌只适用于城墙、城门、城垛」「没受到攻击/满血的不要坍塌」]
-     * 每 10 秒塌一个：只在城墙/城门/城垛里，挑「挨过打且掉了血」中最早挨打的；没有就不塌（2026-10-14 主人令：只有受到攻击的城墙才能坍塌）。
-     * 城内建筑、箭塔不参与（只能被打掉血后倒塌，见 onDefBuildingHit）。
+     * 🔴 [2026-10-15 主人令「把受伤的城墙自动坍塌逻辑加回来。只有不是满血的城墙才能自动坍塌」]
+     * （前身：2026-10-12「10秒坍塌一个，靠近敌方或受到攻击的先塌」＋2026-10-14「只有受到攻击的城墙才能坍塌」）
+     *
+     * 每 10 秒自动塌一处**伤口**（`collapseNextWallGap` 由 step 每 10 秒调一次）：
+     *   · 只在城墙/城门/城垛/栅栏（= `wallGates`）里挑，**满血的一律跳过**（`hp >= maxHp` 不塌）；
+     *   · 候选中挑**最早挨打**的那一处（`hitAt` 最小），所以"靠近敌方 / 正在被打"的那段先塌；
+     *   · 一处都挑不到（全场墙都满血）⇒ 返回 true，10 秒后再看一次；
+     *   · 墙已全部塌完 / 没有墙 ⇒ 返回 false，停止轮询（`nextWallGapSec = 1e9`）；
+     *   · 城内建筑、箭塔、营寨**不参与**自动坍塌（它们只能被打到 0 血后倒塌，见 `onDefBuildingHit`）。
      */
     private collapseNextWallGap(): boolean {
         const alive = this.wallGates.filter(b => this.wallStanding(b));
-        if (alive.length === 0) return false;
+        if (alive.length === 0) return false;            // 没墙可塌了 → 停轮询
         let pick: WarBuilding | undefined;
-        // 只挑没满血的，先塌最早挨打的（没记挨打时刻的按「刚挨打」排在后面）
         for (const b of alive) {
-            if (b.hp >= b.maxHp) continue;
+            if (b.hp >= b.maxHp) continue;               // 🔴 只有不是满血的城墙才能自动坍塌
             if (!pick || (b.hitAt ?? this.battleSec) < (pick.hitAt ?? this.battleSec)) pick = b;
         }
-        // 🔴 [2026-10-14 主人令「要设计为受到攻击的城墙才能坍塌，不然就不现实了」] 没有挨过打、掉了血的 ⇒ 这一轮不塌
-        if (!pick) return true;
-        this.collapseOneWall(pick);
-        audioManager.play('wall_collapse');
-        this.lastCollapseAt = performance.now();
-        this.releaseHold();
+        if (!pick) return true;                          // 全都满血：这一轮不塌，10 秒后再看
+        this.collapseOneWall(pick);                      // 复用同一条倒塌链（含 DE 倒塌动画 + 残骸 + 音效）
         return true;
-    }
-
-    /** 缺口出现 → 守方开始反击；待命期累计的静止计时清零（避免滑步） */
-    private releaseHold(): void {
-        if (this.defenderHolding) {
-            this.defenderHolding = false;
-            for (const m of this.men) {
-                if (m.siegeW) continue;
-                m.stuckT = 0; m.netT = 0;
-                m.anchorX = m.x; m.anchorY = m.y; m.prevX = m.x; m.prevY = m.y;
-            }
-        }
     }
 
     /** 单个墙/门/垛段坍塌：取消阻挡 + 播放 DE 倒塌动画（石墙/木栅 FOUNDATION_1X1_DESTR → D75/FOUNDATION_1X1_RUBBLE，城门 DESTR → RUBBLE） */
@@ -8843,6 +8835,9 @@ export class Scene13WarLayer {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+        // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打到 0 血）都走这里 → 只在这一处播倒塌音，避免重复播放
+        audioManager.play('wall_collapse');
+        this.lastCollapseAt = performance.now();
         if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             const destr = b.destrAssets;
             const rubble = destr ? ('BUILDINGANIM:' + destr[2]) : 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
@@ -8855,12 +8850,22 @@ export class Scene13WarLayer {
         b.hp = 0;
     }
 
-    /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/建筑）。 */
+    /** 所有可能播放倒塌动画的装饰精灵（城墙/城门/箭塔/城内建筑/营寨）。 */
     private collapsibleSprites(): DecorSprite[] {
+        // 同一精灵可能同时挂在两张表上（如箭塔 = arrowTowers + defBuildings）⇒ 用 Set 去重，
+        // 否则倒塌帧会被推进两次（播放速度变两倍）。
+        const seen = new Set<DecorSprite>();
         const out: DecorSprite[] = [];
-        for (const b of this.wallGates) if (!b.sprite.indestructible) out.push(b.sprite);
-        for (const t of this.arrowTowers) if (!t.sprite.indestructible) out.push(t.sprite);
-        for (const b of this.cityBuildings) if (!b.sprite.indestructible) out.push(b.sprite);
+        const add = (sp: DecorSprite): void => {
+            if (sp.indestructible || seen.has(sp)) return;
+            seen.add(sp);
+            out.push(sp);
+        };
+        for (const b of this.wallGates) add(b.sprite);
+        for (const t of this.arrowTowers) add(t.sprite);
+        for (const b of this.cityBuildings) add(b.sprite);
+        // 🔴 [2026-10-15 主人令「有坍塌动画的都是建筑」] 营寨也登记为建筑（只在 defBuildings 里）⇒ 倒塌帧同样要推进
+        for (const b of this.defBuildings) add(b.sprite);
         return out;
     }
 
@@ -8887,41 +8892,47 @@ export class Scene13WarLayer {
     /**
      * 让装饰精灵播倒塌动画 → 切残骸：按「自身 → DE 同族 → 通用 1×1」逐级取素材，
      * 有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 就直接切 rubble。
-     * 🔴 [2026-10-15 主人令] 兜底链保证**任何建筑都不会血一归零就凭空消失**（棚屋/蒙古包/哨站一样先燃后塌）。
-     * @param dur 倒塌动画时长（秒）。战斗中的建筑走 DE 的 `COLLAPSE_ANIM_DUR`(8.33s)；
-     *            战场结束的焚营演出用快放（见 `CAMP_OUTRO_COLLAPSE_SEC`），不动战斗数值。
+     * 🔴 [2026-10-15 主人令「所有建筑受伤掉血、血没了就坍塌，和 DE 一样」]
+     *    兜底链保证**任何建筑都不会血一归零就凭空消失**（棚屋/蒙古包/哨站一样播 DE 倒塌 → 留残骸）。
+     *    时长一律 DE 的 `COLLAPSE_ANIM_DUR`(8.33s)。营寨装饰不是建筑，永不走这里。
      */
-    private collapseToRubble(sprite: DecorSprite, name: string, customRubble?: string, dur: number = COLLAPSE_ANIM_DUR): void {
+    private collapseToRubble(sprite: DecorSprite, name: string, customRubble?: string): void {
         if (sprite.indestructible) return;
         const destr = destrCandidatesOf(name).find((a) => this.natureCache[a]?.img?.complete);
         const rubble = rubbleCandidatesOf(name, customRubble).find((a) => this.natureCache[a]?.img?.complete) ?? null;
         if (destr) {
             sprite.asset = destr;
             sprite.frame = 0;
-            sprite.collapse = { t: 0, dur, rubbleAsset: rubble };
+            sprite.collapse = { t: 0, dur: COLLAPSE_ANIM_DUR, rubbleAsset: rubble };
         } else if (rubble) {
             sprite.asset = rubble;
             sprite.frame = 0;
         }
     }
 
-    /** 登记一座可攻击的守城建筑/箭塔（城堡 indestructible 不登记）。
-     *  ⚠️ `f: 1` = **只允许守方建筑**（攻方/野战营地是纯装饰，一律不登记 ——
-     *  否则会被算成守方建筑：朝自家士兵射箭、被挑成「中心建筑」、污染胜负判定）。 */
-    private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower, kind?: string): void {
+    /**
+     * 登记一座可攻击建筑（有血量、会掉血、血归零走 DE 倒塌链）。
+     * 🔴 [2026-10-15 主人令「我们算建筑，有坍塌动画的都是建筑」] 营寨（帐篷/营帐/装饰蒙古包/哨站/营寨塔）
+     *    也走这里登记 → 它们和城内建筑同一条链（受伤掉血 → 血没就塌）。
+     * ⚠️ `f` 必须传对阵营：索敌一律跳过同阵营（`b.f === m.f`），
+     *    否则会出现「攻城武器砸自己营」「守方把自己的帐篷挑成中心建筑」这类污染。
+     * @param f 0 = 攻方营寨 / 1 = 守方建筑（默认 1）
+     */
+    private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower, kind?: string, f: 0 | 1 = 1): void {
         if (sp.indestructible) return;
         const key = 'BLD:' + (kind ? kind + ':' : '') + name;
         const st = WALL_GATE_STATS[key] ?? (WALL_GATE_STATS[key] = deBuildingStats(name, kind));
-        this.defBuildings.push({ f: 1, key, x: sp.x, y: sp.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite: sp, bld: { name, tower } });
+        this.defBuildings.push({ f, key, x: sp.x, y: sp.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite: sp, bld: { name, tower } });
         for (const fk of ['FX_FIRE_SMALL', 'FX_FIRE_SMALL_R', 'FX_FIRE_WIN_S', 'FX_FIRE_MEDIUM', 'FX_FIRE_MEDIUM_R', 'FX_FIRE_ROOF', 'FX_FIRE_LARGE', 'FX_FIRE_LARGE_R']) {
             this.ensureFx(fk);
         }
     }
 
-    /** 中心建筑：只在攻城战选。城堡优先，其次城镇中心，都没有取离城内建筑群中心最近的一栋（箭塔除外）。 */
+    /** 中心建筑：只在攻城战选，**只在守方建筑里选**（营寨是攻方建筑，永远不参与）。
+     *  城堡优先，其次城镇中心，都没有取离城内建筑群中心最近的一栋（箭塔除外）。 */
     private pickCenterBuilding(): WarBuilding | null {
         if (this.battleType !== 'siege') return null;
-        const list = this.defBuildings.filter(b => !b.bld!.tower);
+        const list = this.defBuildings.filter(b => b.f === 1 && !b.bld!.tower);
         if (list.length === 0) return null;
         const castle = list.find(b => b.key.startsWith('BLD:CASTLE:') || b.bld!.name.includes('CASTLE'));
         if (castle) return castle;
@@ -8970,6 +8981,7 @@ export class Scene13WarLayer {
             atk: towerProfile.atk,
         });
         this.registerDefBuilding(sp, name, undefined, kind);
+        this.ensureProj('PROJ_ARROW');
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则切形态时 pending>0 整场冻结）
         // 🔴 [2026-10-15 主人令「所有建筑和 DE 一致、蒙古包也先燃后塌」] 改走同族链+通用兜底预载：
         //    棚屋/蒙古包/哨站这些 DE 没有 destruction 素材的，也要在开战前把兜底素材备齐
@@ -9109,18 +9121,21 @@ export class Scene13WarLayer {
 
         const ax = foe.x - fireX, ay = foe.y - fireY;
         const ad = Math.hypot(ax, ay) || 1;
-        // 🔴 [2026-10-15 主人令「换成 DE 的喷火火柱」] 希腊火（FLAMETHROWER_FLAME，30 帧火舌）
-        //    与猛火油柜/法师同款：单股火焰舔向目标，30 帧循环播放
-        this.arrows.push({
-            x: fireX, y: fireY,
-            dx: ax / ad, dy: ay / ad, len: ad,
-            t: 0, dur: ARROW_DUR, f: 1, proj: 'FLAMETHROWER_FLAME',
-            towerFlight: {
-                startLift: this.elevationLiftAt(fireX, b.sprite.y),
-                endLift: this.elevationLiftAt(foe.x, foe.y),
-            },
-        });
-        b.cd = b.reload ?? 3.2;
+        // 🔴 [2026-10-15 主人令「把城中九建筑的攻击特效一律改为和DE的箭塔一样」]：
+        //    与 stepTowerShoot 完全一致，发射 PROJ_ARROW 三连发，不再使用喷火特效
+        for (let v = 0; v < 3; v++) {
+            this.arrows.push({
+                x: fireX, y: fireY,
+                dx: ax / ad, dy: ay / ad, len: ad,
+                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
+                delay: v * PROJ_VOLLEY_DELAY,
+                towerFlight: {
+                    startLift: this.elevationLiftAt(fireX, b.sprite.y),
+                    endLift: this.elevationLiftAt(foe.x, foe.y),
+                },
+            });
+        }
+        b.cd = b.reload ?? 2.2;
     }
 
     /**
@@ -9676,8 +9691,9 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去。
      *
      *  🔴 [2026-10-13 主人报「我设计了守方可以通过城门，为什么不管用」] **病灶：`aim` 为 null 时被第一步短路。**
-     *    城墙未破的待命期，守方在城内拿不到任何城外目标（`search()` 的两条闸：
-     *    ① 城内守方近战不锁城外敌兵；② `defenderHolding && !manOut → return null`）⇒ `aimAtRaw` 返回 **null**
+     *    城墙未破、兵还在城外时，守方在城内拿不到任何城外目标（`search()` 的近战闸：
+     *    城内守方近战不锁城外敌兵；当时的待命闸 `defenderHolding && !manOut → return null` 现已删除）
+     *    ⇒ `aimAtRaw` 返回 **null**
      *    ⇒ 下面第一行的 `!aim` 直接 return ⇒ **本机制从未真正生效过**，守方原地等墙塌。
      *    修法：`aim` 为空但「守方 + 在城内 + 攻城战有墙」时，仍按「离城心最近的那座城门」算出城目标 ——
      *    这样守方才**真的会走出城门**去迎战/到门前对峙。攻城方（f=0）、无墙攻城（城寨/漠北）、军团以外一律不受影响。
@@ -9745,7 +9761,7 @@ export class Scene13WarLayer {
         // ② 攻城武器：走向第一档目标里离自己最近的那个
         if (m.siegeW && this.battleType === 'siege') {
             let g: WarBuilding | null = null, gd = Infinity;
-            for (const b of this.siegeFirstTier()) {
+            for (const b of this.siegeFirstTier(m.f as 0 | 1)) {
                 const d = Math.hypot(b.x - m.x, b.y - m.y);
                 if (d < gd) { gd = d; g = b; }
             }
@@ -10029,16 +10045,17 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-08-29 主人需求] 城墙内侧箭塔开火（射程内最近攻方士兵 → 射箭 + 开火火花；纯视觉）
-        // 🔴 [2026-10-11 主人令「恢复30秒坍塌设定，只坍塌城墙，城门，城垛」] —— 本会话早前按旧令删过，现按新令恢复：
-        //    collapseFrontWalls 只遍历 wallGates（墙/门/城垛），塌后 obstruction=undefined ⇒ 士兵 100% 通行；
-        //    **不碰任何城内建筑**（建筑另有登录，不在 wallGates 内）。每场只塌一次。
-        // 🔴 [2026-10-12 主人令「10秒坍塌一个」] 墙/门/垛每 10 秒塌一处缺口（collapseNextWallGap）；30 秒仍做建筑/箭塔那一下。
+        // 🔴 [2026-10-15 主人令] 城墙的**两条**坍塌路径（都只对"已经掉血"的墙生效）：
+        //    ① **受伤自动坍塌**：每 10 秒塌一处掉过血的墙/门/垛/栅栏，先塌最早挨打的那一处（`collapseNextWallGap`）；
+        //    ② 被打穿：血归零立刻塌（`collapseOneWall`，见 onDefBuildingHit / 投射物伤害那两处）。
+        //    城内建筑、箭塔、营寨**不自动坍塌** —— 它们只能被打到 0 血后倒（见 `onDefBuildingHit`）。
+        // 🔴 [2026-10-11 主人令「确保士兵通行」] 下面 30 秒这一下只做「非墙装饰去碰撞」，不塌任何东西。
         if (this.battleType === 'siege' && this.battleSec >= this.nextWallGapSec && this.nextWallGapSec < 1e9) {
             this.nextWallGapSec = this.collapseNextWallGap() ? this.nextWallGapSec + 10 : 1e9;
         }
         if (this.battleType === 'siege' && !this.wallAutoCollapsed && this.battleSec >= 30) {
             this.wallAutoCollapsed = true;
-            this.collapseFrontWalls();
+            this.clearNonWallObstructions();
         }
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
@@ -10143,21 +10160,12 @@ export class Scene13WarLayer {
             //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
                 && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) this.holdLanes.clear();
-            // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
-            //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
-            //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
-            //    不再列阵行军（inMarch 攻城战已全 false），直接各自索敌接战。
-            // 🔴 [2026-09-09 主人定「玩家要和其他军团一样，有攻城的话等 30 秒再动」]
-            //    去掉 2026-09-05 加的 `!m.hero`（原为「玩家自己操控故不受约束」）——
-            //    现在玩家与普通军团同规矩：攻城战开局一起按兵不动，等攻城器把墙砸塌
-            //    （defenderHolding=false）再一起开打。期间键盘输入同样不生效，因为本分支先 continue。
-            // 🔴 [2026-10-11 主人令「先去掉 30 秒的攻城模式，然后对应出兵点……双方就能碰面并战斗」]
-        //    步兵/骑兵/远程**不再被 30 秒待命冻住**（原 `this.defenderHolding && !m.siegeW` 会把全军按住，
-        //    等攻城器砸墙；主人现在要的是十队各自沿「本口 → 对面那一口」推进、中途迎面开打）。
-        //    攻城武器保留「先砸最近的 linked 墙」的目标逻辑（aimAt 里那一支照旧），所以 != 取消攻城。
-        // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 上一条「30 秒双方按兵不动」的语义**已整体作废**：
-        //    那个闸（`this.defenderHolding && !m.siegeW`）已在 2026-10-11 被去掉，残存的 `defenderHolding`
-        //    也在本轮随「守方开局就动」全部删除 ⇒ 现在只有上面的 `deploying`（列阵渐显 2.5 秒）会让人站住。
+            // 🔴 [2026-08-23 → 2026-10-15 规则沿革]
+            //    · 曾规定「攻城战开局双方按兵不动（30 秒待命），等攻城器把墙砸塌」（2026-08-23/09-09）；
+            //    · 2026-10-11 去掉待命闸、2026-10-13「所有都改为开局就动」⇒ **开局待命已作废**
+            //      （现在只有上面的 `deploying` 列阵渐显 2.5 秒会让人站住）。
+            //    · 墙的坍塌规则现行：**受伤的墙每 10 秒自动塌一处**（2026-10-15 令）＋ 被打到 0 血立刻塌
+            //      （见 step 里 `collapseNextWallGap` 与 `collapseOneWall`）；攻城武器照旧优先砸最近的门/墙。
             // [2026-09-05 玩家] 玩家有键盘输入 → 本帧只走不打；受控编队「待命」= 不动、够得着照打
             if (m.hero && this.stepHeroInput(m, dt)) continue;
             // 玩家的点地面令：走到就作废（之后归队/索敌照旧接管）
