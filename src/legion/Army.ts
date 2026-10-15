@@ -305,7 +305,13 @@ export class Army implements IBattleUnit {
      */
     public isScriptArmy: boolean = false;
     /** 🔴 [2026-09-23] 战场事件史实军团的番号（按势力取）：军团名只写军团名，番号走这里 */
-    public eliteOverride: { name: string; tier: 0 | 1 | 2 | 3 | 4 } | null = null;
+    private _eliteOverride: { name: string; tier: 0 | 1 | 2 | 3 | 4 } | null = null;
+    public get eliteOverride(): { name: string; tier: 0 | 1 | 2 | 3 | 4 } | null { return this._eliteOverride; }
+    public set eliteOverride(v: { name: string; tier: 0 | 1 | 2 | 3 | 4 } | null) {
+        if (this._eliteOverride === v) return;
+        this._eliteOverride = v;
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+    }
     /** 🔴 [2026-09-23 主人定「一条线的行军模式」] 剧本模式行军纵队中（接近战场时关掉 → 展开成阵） */
     public columnMarch: boolean = false;
     /**
@@ -332,7 +338,9 @@ export class Army implements IBattleUnit {
     }
 
     public setSourceCityId(cityId: string): void {
+        if (this.sourceCityId === cityId) return;
         this.sourceCityId = cityId;
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
     }
 
     public getSourceCityId(): string | null {
@@ -600,7 +608,13 @@ export class Army implements IBattleUnit {
     }
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
     /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
-    public isElite: boolean = false;
+    private _isElite: boolean = false;
+    public get isElite(): boolean { return this._isElite; }
+    public set isElite(v: boolean) {
+        if (this._isElite === v) return;
+        this._isElite = v;
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+    }
     /** 解散标记（区别于战死 destroy）：disband() 设 true，removeArmy 据此判定是否触发战败冷却 */
     public wasDisbanded: boolean = false;
     /** 撤退意图锁：兵力 < DISBAND_TROOP_THRESHOLD 后锁定，途中补兵不掉头，抵家解散或老家沦陷才解除 */
@@ -1433,6 +1447,7 @@ export class Army implements IBattleUnit {
         if (this.renderer) {
             this.renderer.factionId = factionId;
         }
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
     }
 
     public getTargetCity(): any {

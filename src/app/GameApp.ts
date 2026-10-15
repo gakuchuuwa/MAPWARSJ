@@ -401,6 +401,7 @@ export class GameApp {
                 this.cityManager.refreshCityVisibility();
                 // 🔴 [2026-10-03 修] 换属也要跟着年份重跑（原缺这一行 → 前331 场次露出的亚历山大城仍是乱斗旗号「托勒」）
                 this.syncScriptOwners();
+                this.historicalEventManager?.getLegionManager()?.refreshCultureFormations();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
                 // 打完一场 → 当前事件年份前进 → 奇观建成年代闸门按新年份重画
                 this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);

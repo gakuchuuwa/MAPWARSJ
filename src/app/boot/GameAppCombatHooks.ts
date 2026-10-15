@@ -441,18 +441,25 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
             if (battleField) {
                 battleField.scene13Frozen = true;
                 app.battleScene?.setFrozenBattle(battleField);   // 同上
-                // 🔴 攻守各取第一个单位（attHasGen/defHasGen 已保证两侧非空）
-                const att = attackers[0];
-                const def = defenders[0];
+                // 🔴 攻守优先取跟拍军团或带将领的军团，确保进入战术模式的主将与战略地图跟拍军团一致
+                const att = attackers.find((u) => u.id === followedId && !!u.generalId)
+                    ?? attackers.find((u) => !!u.generalId)
+                    ?? attackers.find((u) => u.id === followedId)
+                    ?? attackers[0];
+                const def = defenders.find((u) => u.id === followedId && !!u.generalId)
+                    ?? defenders.find((u) => !!u.generalId)
+                    ?? defenders.find((u) => u.id === followedId)
+                    ?? defenders[0];
                 // 攻城战守方城等级：从 defenders 里找 city 单位读 type（读的是守城城的等级，不是守军军团的）
                 const defEntity = (battleField.type === 'siege' || isNavalVsFortress)
                     ? (defenders.find((u) => u.unitType === 'city') ?? def)
                     : def;
+                const defGeneralId = def?.generalId ?? defEntity?.generalId ?? defenders.find((u) => !!u.generalId)?.generalId;
                 if (att && def) {
                     startScene13War(
                         app,
                         { factionId: att.factionId, troops: attTroops, generalId: att.generalId, unitType: att.unitType, getEntity: () => att.getEntity?.(), getPosition: () => att.getPosition() },
-                        { factionId: def.factionId, troops: defTroops, generalId: def.generalId, unitType: defEntity?.unitType, getEntity: () => defEntity?.getEntity?.(), getPosition: () => defEntity?.getPosition?.() ?? def.getPosition() },
+                        { factionId: def.factionId, troops: defTroops, generalId: defGeneralId, unitType: defEntity?.unitType, getEntity: () => defEntity?.getEntity?.(), getPosition: () => defEntity?.getPosition?.() ?? def.getPosition() },
                         (winner, sv) => {
                             // 🔴 [2026-09-12 主人报障「第一仗打完不动」] 剧本写死胜负，演出判负不得覆盖。
                             const scripted = battleField.getScriptedWinner();

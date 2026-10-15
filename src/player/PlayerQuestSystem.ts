@@ -20,6 +20,7 @@ import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
 import { ALL_BRANCHES_MAP, CULTURE_59_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
+import { applyLegionCultureComposition } from '../types/CultureFormations';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -994,11 +995,15 @@ export class PlayerQuestSystem {
         //    （如亚历山大 35000、古典时代马其顿军团·伙伴骑兵），与战场上生成的史实军团同源。
         //    只在剧本模式；乱斗模式保持原样（起兵 = 本城兵力九成）。
         const scriptMode = this.deps.hero.autoPlan === 'script';
+        if (army && scriptSideFaction && host.getFactionId() !== scriptSideFaction) {
+            host.setFactionId(scriptSideFaction);
+        }
         const side = scriptMode ? this.deps.battlefields?.sideOfGeneral?.(ev.battlefieldId, g.generalId) : null;
         if (side) {
             host.setTroops(side.troops);
             host.name = side.legionName;
         }
+        applyLegionCultureComposition(host, host.cultureRegion ?? undefined);
         const factionId = host.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
         this.quest = {
