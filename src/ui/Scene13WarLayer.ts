@@ -384,7 +384,9 @@ const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'batte
  */
 const WALL_GATE_STATS: Record<string, WarType> = {
     STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
-    STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 1650, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    FORTIFIED_WALL: { name: '加固城墙', cls: 'melee', sz: 1, hp: 3000, atk: 0, meleeArmor: 12, pierceArmor: 12, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 2750, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    FORTIFIED_GATE: { name: '加固城门', cls: 'melee', sz: 1, hp: 4000, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
     // 🔴 [2026-10-13 全面体检抓出·已修] **木栅栏门 / 篱笆门**原来套的是 `STONE_GATE`（1650 血 + 6/6 甲），
     //    与相邻木墙（`WOOD_WALL` 540/2/5）差 3 倍 —— 一排木栅栏上却嵌着一扇比石墙还硬的门。
     //    木门与木墙同一材质，照 `WOOD_WALL` 档（键名仍写 `STONE_GATE`，见下方建门处的说明）。
@@ -411,7 +413,7 @@ const DE_BLD_TABLE: Record<string, Array<[number, number, number]>> = {
     BLACKSMITH: [[1800, 0, 7], [1800, 1, 8], [2100, 2, 9], [2100, 3, 10]],
     TOWN_CENTER: [[2400, 3, 5], [2400, 4, 6], [2400, 5, 7], [2400, 6, 8]],
     MARKET: [[1800, 1, 8], [1800, 1, 8], [2100, 2, 9], [2100, 3, 10]],
-    SIEGE_WORKSHOP: [[1500, 1, 8], [1500, 1, 8], [1500, 1, 8], [1800, 2, 9]],
+    SIEGE_WORKSHOP: [[1500, 1, 8], [1500, 1, 8], [1800, 2, 9], [2100, 3, 10]],
     UNIVERSITY: [[2100, 2, 9], [2100, 2, 9], [2100, 2, 9], [2100, 3, 10]],
     MONASTERY: [[2100, 0, 7], [2100, 1, 8], [2100, 2, 9], [2100, 3, 10]],
     TOWER: [[850, 1, 7], [850, 1, 7], [1500, 2, 8], [2250, 3, 9]],
@@ -873,8 +875,13 @@ function dmgVs(shooter: WarType, target: WarType): number {
     const armor = shooter.dmgType === 'melee' ? target.meleeArmor : target.pierceArmor;
     let bonus = 0;
     if (shooter.bonus && target.armorTags) {
+        // DE empires2_x2_p1.dat 护甲类 11(建筑)专属护甲：加固墙 24、城门 20、石墙 16、城堡 8
+        const arm11 = target.name === '加固城墙' ? 24
+            : (target.name === '城门' || target.name === '加固城门') ? 20
+                : target.name === '石墙' ? 16
+                    : target.name.includes('CASTLE') ? 8 : 0;
         for (const tag of target.armorTags) {
-            if (shooter.bonus[tag]) bonus += shooter.bonus[tag];
+            if (shooter.bonus[tag]) bonus += Math.max(0, shooter.bonus[tag] - (tag === 11 ? arm11 : 0));
         }
     }
     return Math.max(1, shooter.atk + bonus - armor);
@@ -5630,10 +5637,10 @@ export class Scene13WarLayer {
                 if (p.kind === 'building') { this.trackCityBuilding(sprite); return; }
                 sprite.obstruction = { x: 0.95, y: 0.95 };
                 if (p.kind === 'wall') {
-                    // 木栅栏/篱笆走 WOOD_WALL 档、无破损档；石墙/垛墙 STONE_WALL、破墙前按 HP 切 D25/D50/D75
+                    // 木栅栏/篱笆走 WOOD_WALL 档、无破损档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
                     const wood = /PALISADE|FENCE/.test(p.dir);
                     const wKey = wood ? 'WOOD_WALL' : 'STONE_WALL';
-                    const st = WALL_GATE_STATS[wKey];
+                    const st = wood ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_WALL : WALL_GATE_STATS.STONE_WALL);
                     const destrAssets = wood ? undefined : ['D25', 'D50', 'D75'].map((t) => `${p.dir}_${t}`);
                     if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
                     this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets });
@@ -5652,14 +5659,14 @@ export class Scene13WarLayer {
                     this.decorSprites.push(extra);
                     extraSprites.push(extra);
                 }
-                const isFenceGate = p.dir.includes('FENCE');
+                const isFenceGate = p.dir.includes('FENCE') || p.dir.includes('PALISADE');
                 const baseDestrName = p.dir.includes('ARCHAIC_GATE') ? `DARK_GATE_PALISADE_${/_SE$/.test(p.dir) ? 'SE' : 'NE'}` : p.dir;
-                const rubbleAsset = isFenceGate ? undefined : `${baseDestrName}_RUBBLE`;
+                const rubbleAsset = p.dir.includes('FENCE') ? undefined : `${baseDestrName}_RUBBLE`;
                 if (rubbleAsset) {
                     this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
                     this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
                 }
-                const st = isFenceGate ? WALL_GATE_STATS.WOOD_WALL : WALL_GATE_STATS.STONE_GATE;
+                const st = isFenceGate ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_GATE : WALL_GATE_STATS.STONE_GATE);
                 // 🔴 [2026-10-13] key 仍写 'STONE_GATE'（**不新增键**）：城门倒塌/残骸那几条链
                 //    只认 'STONE_GATE'（见两处 `foe.key === 'STONE_GATE' && hp<=0`），
                 //    若另立 'WOOD_GATE' 键，木门 0 血时不会倒塌 —— 会变成打不烂的墙。
@@ -7440,45 +7447,126 @@ export class Scene13WarLayer {
         } else {
             g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
         }
-        // 🔴 [2026-10-15 对齐 DE damage_graphics] 建筑受攻击掉血时按 75% / 50% / 25% 三档在建筑表面叠加动态循环火焰，坍塌归零时熄灭
+        // 🔴 [2026-10-15 严格复刻 DE empires2_x2_p1.dat damage_graphics + particles/fire_*.json]
+        //    1) 尺寸：DE fire_*.json 统一规定 "Scale": 0.5（图集为 2× 分辨率），故按 fk = 0.5 * k 绘制；
+        //    2) 速度：DE fire_*.json 统一规定 "ImageCount": 60, "Duration1": 2.9, "Duration2": 3.1（60 帧播 3.0 秒 ≈ 20fps）；
+        //    3) 档位与坐标：按 DE empires2_x2_p1.dat 各建筑 damage_graphics (apply_mode=0) 实测 deltas 偏移 (ox, oy) 挂在建筑锚点 (s.x, drawY) 上：
+        //       Damage1(掉血≥25%) 全为小火 Fire Small；Damage2(掉血≥50%) 升级为中火 Fire Medium；Damage3(掉血≥75%) 加入大火 Fire Large。
         if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
             let bld: WarBuilding | undefined;
             for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
             if (!bld) for (const b of this.wallGates) if (b.key === 'STONE_GATE' && b.sprite === s) { bld = b; break; }
             if (bld && bld.hp > 0 && bld.hp <= bld.maxHp * 0.75) {
                 const ratio = bld.hp / bld.maxHp;
-                const tier = ratio <= 0.25 ? 3 : (ratio <= 0.50 ? 2 : 1);
-                // 照 DE damage_graphics (apply_mode=0)：1档(≤75%)小火 5 处 → 2档(≤50%)中火+屋檐火 8 处 → 3档(≤25%)猛烈大火 12 处
-                const slots: Array<[string, number, number]> = [
-                    ['FX_FIRE_SMALL', -0.22, -0.18],
-                    ['FX_FIRE_SMALL_R', 0.20, -0.14],
-                    ['FX_FIRE_WIN_S', -0.06, 0.06],
-                    ['FX_FIRE_SMALL', 0.14, 0.10],
-                    ['FX_FIRE_SMALL_R', -0.18, 0.02],
-                    ['FX_FIRE_MEDIUM', -0.12, -0.08],
-                    ['FX_FIRE_ROOF', 0.04, -0.20],
-                    ['FX_FIRE_MEDIUM_R', 0.18, -0.02],
-                    ['FX_FIRE_LARGE', 0.0, -0.04],
-                    ['FX_FIRE_LARGE_R', -0.16, 0.04],
-                    ['FX_FIRE_MEDIUM', 0.15, -0.12],
-                    ['FX_FIRE_ROOF', -0.08, -0.24],
-                ];
-                const count = tier === 1 ? 5 : (tier === 2 ? 8 : 12);
-                const cx = s.x + (sw * 0.5 - m.anchor_x) * k;
-                const cy = drawY + (sh * 0.48 - m.anchor_y) * k;
-                const rx = sw * k * 0.65, ry = sh * k * 0.55;
+                const tierIdx = ratio <= 0.25 ? 2 : (ratio <= 0.50 ? 1 : 0);
+                const bName = bld.bld?.name ?? s.asset;
+                let kind = bld.key === 'STONE_GATE' ? 'GATE' : 'HOUSE';
+                if (bld.bld) {
+                    for (const kName of ['CASTLE', 'WONDER', 'ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
+                        if (bName.includes(kName)) { kind = kName; break; }
+                    }
+                }
+                // 坐标取自本机 DE empires2_x2_p1.dat 各建筑 damage_graphics.deltas (相对于建筑锚点 s.x, drawY 的 x1 像素偏移)
+                const DE_FIRE_DELTAS: Record<string, ReadonlyArray<ReadonlyArray< readonly [string, number, number]>>> = {
+                    HOUSE: [
+                        [['FX_FIRE_SMALL', -50, -7], ['FX_FIRE_SMALL', -35, -64], ['FX_FIRE_SMALL', -12, -80], ['FX_FIRE_SMALL', 63, -18], ['FX_FIRE_SMALL', -5, 29]],
+                        [['FX_FIRE_MEDIUM', -52, -3], ['FX_FIRE_MEDIUM', -4, 15], ['FX_FIRE_MEDIUM', -34, -64], ['FX_FIRE_MEDIUM', -12, -76], ['FX_FIRE_MEDIUM', 66, -20], ['FX_FIRE_MEDIUM', 23, -45]],
+                        [['FX_FIRE_LARGE', -2, 14], ['FX_FIRE_LARGE', 65, -33], ['FX_FIRE_LARGE', -49, -5], ['FX_FIRE_LARGE', -9, -85], ['FX_FIRE_MEDIUM', -36, -62], ['FX_FIRE_MEDIUM', 17, -73]],
+                    ],
+                    MILL: [
+                        [['FX_FIRE_SMALL', -91, -20], ['FX_FIRE_SMALL', 2, 24], ['FX_FIRE_SMALL', 86, -65], ['FX_FIRE_SMALL', 53, -137], ['FX_FIRE_SMALL', 8, -152], ['FX_FIRE_SMALL', 35, -39]],
+                        [['FX_FIRE_MEDIUM', -88, -17], ['FX_FIRE_MEDIUM', 2, 23], ['FX_FIRE_MEDIUM', 87, -65], ['FX_FIRE_MEDIUM', 49, -137], ['FX_FIRE_MEDIUM', 1, -150], ['FX_FIRE_MEDIUM', 26, -31], ['FX_FIRE_LARGE', 34, -7]],
+                        [['FX_FIRE_LARGE', 33, -3], ['FX_FIRE_LARGE', -93, -17], ['FX_FIRE_LARGE', 8, -153], ['FX_FIRE_MEDIUM', 36, -140], ['FX_FIRE_MEDIUM', 69, -73], ['FX_FIRE_MEDIUM', 91, -61], ['FX_FIRE_MEDIUM', -25, 18], ['FX_FIRE_MEDIUM', -64, 0], ['FX_FIRE_MEDIUM', -92, -66]],
+                    ],
+                    BARRACKS: [
+                        [['FX_FIRE_SMALL', -36, -111], ['FX_FIRE_SMALL', 113, -59], ['FX_FIRE_SMALL', 34, -80], ['FX_FIRE_SMALL', 17, 0], ['FX_FIRE_SMALL', 47, -15], ['FX_FIRE_SMALL', -117, -59], ['FX_FIRE_SMALL', -23, -173]],
+                        [['FX_FIRE_MEDIUM', -36, -104], ['FX_FIRE_MEDIUM', 37, -75], ['FX_FIRE_MEDIUM', 94, -55], ['FX_FIRE_MEDIUM', -15, -172], ['FX_FIRE_MEDIUM', 16, 3], ['FX_FIRE_MEDIUM', -118, -52], ['FX_FIRE_MEDIUM_R', -16, -30], ['FX_FIRE_MEDIUM_R', 124, -75], ['FX_FIRE_MEDIUM_R', 1, 52]],
+                        [['FX_FIRE_LARGE_R', 0, 53], ['FX_FIRE_LARGE_R', 18, -35], ['FX_FIRE_LARGE_R', -35, -104], ['FX_FIRE_LARGE_R', 72, -53], ['FX_FIRE_LARGE_R', 118, -62], ['FX_FIRE_LARGE_R', -116, -58], ['FX_FIRE_MEDIUM_R', 37, -77], ['FX_FIRE_MEDIUM_R', -22, -173], ['FX_FIRE_MEDIUM_R', 31, -6], ['FX_FIRE_MEDIUM_R', 48, 35], ['FX_FIRE_MEDIUM_R', -37, 46]],
+                    ],
+                    ARCHERY_RANGE: [
+                        [['FX_FIRE_SMALL_R', -130, -8], ['FX_FIRE_SMALL_R', -72, -87], ['FX_FIRE_SMALL_R', -32, 38], ['FX_FIRE_SMALL_R', -4, 53], ['FX_FIRE_SMALL_R', 117, 0], ['FX_FIRE_SMALL_R', 9, -36], ['FX_FIRE_SMALL_R', 20, -106], ['FX_FIRE_SMALL_R', 31, -143]],
+                        [['FX_FIRE_MEDIUM', -130, -13], ['FX_FIRE_MEDIUM', -35, 34], ['FX_FIRE_MEDIUM', 118, -3], ['FX_FIRE_MEDIUM', 11, -32], ['FX_FIRE_MEDIUM', -69, -89], ['FX_FIRE_MEDIUM', 24, -105], ['FX_FIRE_MEDIUM', 32, -155], ['FX_FIRE_MEDIUM', -26, -118], ['FX_FIRE_MEDIUM', 121, -54], ['FX_FIRE_LARGE_R', 44, -33]],
+                        [['FX_FIRE_LARGE_R', -1, 63], ['FX_FIRE_LARGE_R', -40, 38], ['FX_FIRE_LARGE_R', -129, -8], ['FX_FIRE_LARGE_R', -76, -94], ['FX_FIRE_LARGE_R', 126, -8], ['FX_FIRE_LARGE_R', 25, -105], ['FX_FIRE_MEDIUM_R', 46, -96], ['FX_FIRE_MEDIUM_R', -28, -25], ['FX_FIRE_MEDIUM_R', 18, -34], ['FX_FIRE_MEDIUM_R', -16, -121], ['FX_FIRE_MEDIUM_R', 75, -16]],
+                    ],
+                    STABLE: [
+                        [['FX_FIRE_SMALL', -117, -22], ['FX_FIRE_SMALL', -66, 31], ['FX_FIRE_SMALL', 60, 28], ['FX_FIRE_SMALL', 128, -23], ['FX_FIRE_SMALL', 18, -23], ['FX_FIRE_SMALL', 58, -73]],
+                        [['FX_FIRE_MEDIUM', -118, -21], ['FX_FIRE_MEDIUM', -56, 30], ['FX_FIRE_MEDIUM', -7, -39], ['FX_FIRE_MEDIUM', 70, 9], ['FX_FIRE_MEDIUM', 44, -57], ['FX_FIRE_MEDIUM', 124, -18], ['FX_FIRE_MEDIUM', -72, -90], ['FX_FIRE_LARGE', -64, -10], ['FX_FIRE_LARGE', 9, 41]],
+                        [['FX_FIRE_LARGE', -113, -44], ['FX_FIRE_LARGE', -81, -84], ['FX_FIRE_LARGE', -10, 20], ['FX_FIRE_LARGE', 61, 26], ['FX_FIRE_LARGE', 60, -74], ['FX_FIRE_LARGE', 132, -24], ['FX_FIRE_MEDIUM', -56, -7], ['FX_FIRE_MEDIUM', -63, -92], ['FX_FIRE_MEDIUM', -71, 20], ['FX_FIRE_MEDIUM', 79, -22], ['FX_FIRE_MEDIUM', 115, -36]],
+                    ],
+                    BLACKSMITH: [
+                        [['FX_FIRE_SMALL_R', -61, -82], ['FX_FIRE_SMALL_R', 75, -14], ['FX_FIRE_SMALL_R', 91, -89], ['FX_FIRE_SMALL_R', 119, -12], ['FX_FIRE_SMALL_R', -28, -24], ['FX_FIRE_SMALL_R', 34, -32]],
+                        [['FX_FIRE_MEDIUM_R', -101, -19], ['FX_FIRE_MEDIUM_R', -80, 11], ['FX_FIRE_MEDIUM_R', -55, -88], ['FX_FIRE_MEDIUM_R', 2, -47], ['FX_FIRE_MEDIUM_R', -29, -28], ['FX_FIRE_MEDIUM_R', 34, -29], ['FX_FIRE_MEDIUM_R', 93, -88], ['FX_FIRE_MEDIUM_R', 118, -29], ['FX_FIRE_LARGE', 72, -14]],
+                        [['FX_FIRE_LARGE', -92, -10], ['FX_FIRE_LARGE', -61, -77], ['FX_FIRE_LARGE', -30, -30], ['FX_FIRE_LARGE', 34, -29], ['FX_FIRE_LARGE', 78, 0], ['FX_FIRE_LARGE', 85, -88], ['FX_FIRE_MEDIUM', 56, -108], ['FX_FIRE_MEDIUM', 90, -64], ['FX_FIRE_MEDIUM', 112, -83], ['FX_FIRE_MEDIUM', -54, -39], ['FX_FIRE_MEDIUM', 119, -18]],
+                    ],
+                    MONASTERY: [
+                        [['FX_FIRE_SMALL', -92, -119], ['FX_FIRE_SMALL', -14, 37], ['FX_FIRE_SMALL', -20, -24], ['FX_FIRE_SMALL', 90, 1], ['FX_FIRE_SMALL', -52, -99]],
+                        [['FX_FIRE_MEDIUM', 42, 33], ['FX_FIRE_MEDIUM', -11, 35], ['FX_FIRE_MEDIUM', -88, -120], ['FX_FIRE_MEDIUM', -95, -191], ['FX_FIRE_MEDIUM', 78, 0], ['FX_FIRE_MEDIUM', -9, -21], ['FX_FIRE_MEDIUM', -70, -30], ['FX_FIRE_MEDIUM_R', 118, -11], ['FX_FIRE_MEDIUM', -52, -99]],
+                        [['FX_FIRE_LARGE', 100, -4], ['FX_FIRE_LARGE_R', -88, -121], ['FX_FIRE_LARGE', 30, -66], ['FX_FIRE_LARGE', 4, -150], ['FX_FIRE_MEDIUM_R', -9, 35], ['FX_FIRE_MEDIUM_R', -32, -87], ['FX_FIRE_MEDIUM_R', -21, -13], ['FX_FIRE_MEDIUM_R', 52, 23], ['FX_FIRE_MEDIUM_R', -57, -132], ['FX_FIRE_MEDIUM', -60, -195], ['FX_FIRE_MEDIUM', -76, 20]],
+                    ],
+                    TOWN_CENTER: [
+                        [['FX_FIRE_SMALL', -140, 15], ['FX_FIRE_SMALL', 35, -161], ['FX_FIRE_SMALL', 39, -69], ['FX_FIRE_SMALL', 99, 37], ['FX_FIRE_SMALL', 151, -60], ['FX_FIRE_SMALL', -48, -29], ['FX_FIRE_SMALL', 184, -4]],
+                        [['FX_FIRE_MEDIUM', -141, 16], ['FX_FIRE_MEDIUM', -176, 1], ['FX_FIRE_MEDIUM', -59, -21], ['FX_FIRE_MEDIUM', 33, -67], ['FX_FIRE_MEDIUM', 40, -151], ['FX_FIRE_MEDIUM', 95, 35], ['FX_FIRE_MEDIUM', 185, 4], ['FX_FIRE_MEDIUM', 152, -62], ['FX_FIRE_LARGE', -4, -53]],
+                        [['FX_FIRE_LARGE', -172, -2], ['FX_FIRE_LARGE', 2, -46], ['FX_FIRE_LARGE', 3, -172], ['FX_FIRE_LARGE', 99, -10], ['FX_FIRE_LARGE', 154, -55], ['FX_FIRE_LARGE_R', 78, -89], ['FX_FIRE_LARGE_R', -44, -140], ['FX_FIRE_MEDIUM_R', -150, -58], ['FX_FIRE_MEDIUM_R', -19, -173], ['FX_FIRE_MEDIUM_R', 29, -61], ['FX_FIRE_MEDIUM_R', 61, -27], ['FX_FIRE_MEDIUM_R', -93, -9], ['FX_FIRE_MEDIUM_R', -71, -108]],
+                    ],
+                    MARKET: [
+                        [['FX_FIRE_SMALL', -140, -70], ['FX_FIRE_SMALL', -79, -67], ['FX_FIRE_SMALL', -41, -159], ['FX_FIRE_SMALL', 12, -140], ['FX_FIRE_SMALL', 33, -64], ['FX_FIRE_SMALL', 102, -40], ['FX_FIRE_SMALL', 135, 12], ['FX_FIRE_SMALL', 30, 66], ['FX_FIRE_SMALL', -67, 36]],
+                        [['FX_FIRE_MEDIUM', -84, -62], ['FX_FIRE_MEDIUM', -140, -67], ['FX_FIRE_MEDIUM', -70, 43], ['FX_FIRE_MEDIUM', 4, 22], ['FX_FIRE_MEDIUM', -35, -88], ['FX_FIRE_MEDIUM', -25, -167], ['FX_FIRE_MEDIUM', 67, -60], ['FX_FIRE_MEDIUM', 134, 9], ['FX_FIRE_LARGE_R', 39, -35], ['FX_FIRE_LARGE_R', -48, -38]],
+                        [['FX_FIRE_LARGE_R', -5, 67], ['FX_FIRE_LARGE_R', 41, -18], ['FX_FIRE_LARGE_R', -20, -18], ['FX_FIRE_LARGE_R', -76, 39], ['FX_FIRE_LARGE', -143, -59], ['FX_FIRE_LARGE', -101, -43], ['FX_FIRE_LARGE', 6, -168], ['FX_FIRE_LARGE', 28, -103], ['FX_FIRE_MEDIUM_R', 68, -70], ['FX_FIRE_MEDIUM_R', 141, -35], ['FX_FIRE_MEDIUM_R', -25, -172], ['FX_FIRE_MEDIUM_R', -129, -115]],
+                    ],
+                    SIEGE_WORKSHOP: [
+                        [['FX_FIRE_SMALL_R', -158, -22], ['FX_FIRE_SMALL_R', -118, -52], ['FX_FIRE_SMALL_R', -90, -94], ['FX_FIRE_SMALL_R', -90, 14], ['FX_FIRE_SMALL_R', 43, -63], ['FX_FIRE_SMALL_R', 23, -133], ['FX_FIRE_SMALL_R', 67, 39], ['FX_FIRE_SMALL_R', -37, 59], ['FX_FIRE_SMALL_R', 137, -14]],
+                        [['FX_FIRE_MEDIUM_R', -157, -22], ['FX_FIRE_MEDIUM_R', -118, -101], ['FX_FIRE_MEDIUM_R', -37, -119], ['FX_FIRE_MEDIUM_R', -36, 56], ['FX_FIRE_MEDIUM_R', -96, 11], ['FX_FIRE_MEDIUM_R', 145, -31], ['FX_FIRE_LARGE_R', 42, -60], ['FX_FIRE_LARGE_R', -53, -65], ['FX_FIRE_LARGE_R', 61, 36]],
+                        [['FX_FIRE_LARGE_R', -30, 60], ['FX_FIRE_LARGE_R', 67, 29], ['FX_FIRE_LARGE_R', -50, -63], ['FX_FIRE_LARGE', 135, -28], ['FX_FIRE_LARGE', -154, -19], ['FX_FIRE_MEDIUM', -135, -8], ['FX_FIRE_MEDIUM', -98, -101], ['FX_FIRE_MEDIUM', -141, -41], ['FX_FIRE_MEDIUM', 61, -15], ['FX_FIRE_MEDIUM', 120, -22], ['FX_FIRE_MEDIUM', 24, -130]],
+                    ],
+                    UNIVERSITY: [
+                        [['FX_FIRE_SMALL_R', -171, -10], ['FX_FIRE_SMALL_R', -97, -8], ['FX_FIRE_SMALL_R', -43, 26], ['FX_FIRE_SMALL_R', -100, -71], ['FX_FIRE_SMALL_R', 61, -159], ['FX_FIRE_SMALL_R', 171, -63], ['FX_FIRE_SMALL_R', 114, -65], ['FX_FIRE_SMALL_R', 35, -9], ['FX_FIRE_SMALL_R', 103, 29]],
+                        [['FX_FIRE_MEDIUM_R', -161, -14], ['FX_FIRE_MEDIUM_R', -96, -8], ['FX_FIRE_MEDIUM_R', -102, -73], ['FX_FIRE_MEDIUM_R', 35, -10], ['FX_FIRE_MEDIUM_R', 89, -90], ['FX_FIRE_MEDIUM_R', 59, -160], ['FX_FIRE_MEDIUM_R', 107, 25], ['FX_FIRE_MEDIUM_R', 170, -14], ['FX_FIRE_LARGE', -38, 56], ['FX_FIRE_LARGE', 16, -72]],
+                        [['FX_FIRE_LARGE', -45, 52], ['FX_FIRE_LARGE', 19, -66], ['FX_FIRE_LARGE', 176, -68], ['FX_FIRE_LARGE', -66, -14], ['FX_FIRE_LARGE', -152, 1], ['FX_FIRE_LARGE', -91, -84], ['FX_FIRE_LARGE', 64, -157], ['FX_FIRE_MEDIUM_R', -6, -103], ['FX_FIRE_MEDIUM_R', 115, -68], ['FX_FIRE_MEDIUM_R', -73, 40], ['FX_FIRE_MEDIUM_R', 34, -15], ['FX_FIRE_MEDIUM_R', 85, -99], ['FX_FIRE_MEDIUM_R', 139, 9]],
+                    ],
+                    TOWER: [
+                        [['FX_FIRE_SMALL', -16, 6], ['FX_FIRE_SMALL', -42, -128], ['FX_FIRE_SMALL', -16, -115], ['FX_FIRE_SMALL', 5, -185], ['FX_FIRE_SMALL', 50, -125]],
+                        [['FX_FIRE_MEDIUM', -14, 7], ['FX_FIRE_MEDIUM', -43, -128], ['FX_FIRE_MEDIUM', 9, -192], ['FX_FIRE_MEDIUM', 48, -127], ['FX_FIRE_MEDIUM', 37, -2], ['FX_FIRE_LARGE_R', 3, -122]],
+                        [['FX_FIRE_LARGE', -7, 4], ['FX_FIRE_LARGE_R', -28, -124], ['FX_FIRE_LARGE_R', 37, -131], ['FX_FIRE_MEDIUM_R', 14, -118], ['FX_FIRE_MEDIUM_R', 5, -187], ['FX_FIRE_MEDIUM_R', -28, -42]],
+                    ],
+                    OUTPOST: [
+                        [['FX_FIRE_SMALL_R', -27, -66], ['FX_FIRE_SMALL_R', 4, -1], ['FX_FIRE_SMALL_R', 27, -38], ['FX_FIRE_SMALL_R', 19, -73]],
+                        [['FX_FIRE_MEDIUM', 6, 0], ['FX_FIRE_MEDIUM', -28, -79], ['FX_FIRE_MEDIUM', 22, -70], ['FX_FIRE_MEDIUM', 25, -38], ['FX_FIRE_LARGE', -7, -80]],
+                        [['FX_FIRE_LARGE', 22, -75], ['FX_FIRE_LARGE', 11, -1], ['FX_FIRE_LARGE', -7, -74], ['FX_FIRE_MEDIUM', -23, -90], ['FX_FIRE_MEDIUM', 27, -33], ['FX_FIRE_MEDIUM', -27, -4]],
+                    ],
+                    CASTLE: [
+                        [['FX_FIRE_SMALL', 124, -92], ['FX_FIRE_SMALL', -43, -191], ['FX_FIRE_SMALL', 143, -230], ['FX_FIRE_SMALL', -135, -68], ['FX_FIRE_SMALL', 42, -82]],
+                        [['FX_FIRE_MEDIUM', -135, -65], ['FX_FIRE_MEDIUM', -43, -192], ['FX_FIRE_MEDIUM', 42, -80], ['FX_FIRE_MEDIUM', 144, -231], ['FX_FIRE_MEDIUM', 126, -95], ['FX_FIRE_SMALL', -53, -192], ['FX_FIRE_SMALL', -26, -9], ['FX_FIRE_SMALL_R', -8, -173], ['FX_FIRE_MEDIUM_R', -27, -183]],
+                        [['FX_FIRE_LARGE', -38, -191], ['FX_FIRE_LARGE_R', -16, -182], ['FX_FIRE_LARGE', 142, -235], ['FX_FIRE_LARGE_R', 132, -94], ['FX_FIRE_LARGE', -126, -64], ['FX_FIRE_LARGE', 53, -84], ['FX_FIRE_MEDIUM_R', 85, -98], ['FX_FIRE_MEDIUM_R', -148, -113], ['FX_FIRE_MEDIUM_R', -4, -172], ['FX_FIRE_MEDIUM', -60, -189], ['FX_FIRE_SMALL', 15, -160], ['FX_FIRE_SMALL_R', -54, -67], ['FX_FIRE_MEDIUM_R', -25, -10]],
+                    ],
+                    WONDER: [
+                        [['FX_FIRE_SMALL_R', -158, -235], ['FX_FIRE_SMALL_R', -99, -332], ['FX_FIRE_SMALL_R', 120, -164], ['FX_FIRE_SMALL_R', 42, -105], ['FX_FIRE_SMALL_R', 158, -68], ['FX_FIRE_SMALL_R', 170, 8], ['FX_FIRE_SMALL_R', -4, -41], ['FX_FIRE_SMALL_R', -151, -92], ['FX_FIRE_SMALL_R', -13, -302], ['FX_FIRE_SMALL_R', -106, -121]],
+                        [['FX_FIRE_MEDIUM_R', 44, -34], ['FX_FIRE_MEDIUM_R', -94, -61], ['FX_FIRE_MEDIUM_R', 40, -106], ['FX_FIRE_MEDIUM_R', 104, -139], ['FX_FIRE_MEDIUM_R', 167, -99], ['FX_FIRE_MEDIUM_R', 178, 3], ['FX_FIRE_MEDIUM_R', 166, -164], ['FX_FIRE_MEDIUM_R', -15, -310], ['FX_FIRE_MEDIUM_R', -155, -236], ['FX_FIRE_MEDIUM_R', -122, -259], ['FX_FIRE_LARGE', -3, -105], ['FX_FIRE_LARGE', 45, -200], ['FX_FIRE_LARGE', -193, -14]],
+                        [['FX_FIRE_LARGE', -40, 55], ['FX_FIRE_LARGE', -117, 24], ['FX_FIRE_LARGE', -195, -16], ['FX_FIRE_LARGE', -40, -105], ['FX_FIRE_LARGE', -102, -122], ['FX_FIRE_LARGE', 176, 6], ['FX_FIRE_LARGE', 50, -169], ['FX_FIRE_LARGE', 103, -75], ['FX_FIRE_LARGE', 163, -169], ['FX_FIRE_LARGE', 144, -264], ['FX_FIRE_LARGE_R', -23, -335], ['FX_FIRE_LARGE_R', -16, -214], ['FX_FIRE_LARGE_R', 39, -40], ['FX_FIRE_LARGE', -103, -210]],
+                    ],
+                    GATE: [
+                        [['FX_FIRE_SMALL', -72, 54], ['FX_FIRE_SMALL', 68, -55], ['FX_FIRE_SMALL', -72, -21], ['FX_FIRE_SMALL', 50, -81], ['FX_FIRE_SMALL', 4, 8]],
+                        [['FX_FIRE_MEDIUM', -72, 56], ['FX_FIRE_MEDIUM', 68, -57], ['FX_FIRE_MEDIUM_R', -72, -15], ['FX_FIRE_MEDIUM_R', 50, -81], ['FX_FIRE_MEDIUM_R', 6, 0]],
+                        [['FX_FIRE_LARGE', 6, -1], ['FX_FIRE_LARGE_R', -70, 54], ['FX_FIRE_LARGE_R', 72, -53], ['FX_FIRE_MEDIUM', -70, -13]],
+                    ],
+                };
+                const deltas = (DE_FIRE_DELTAS[kind] ?? DE_FIRE_DELTAS.HOUSE)[tierIdx];
+                // DE fire_*.json: Scale = 0.5；StartMode = "Fade", StartDuration = 0.75
+                const fk = 0.5 * k;
                 const seed = Math.abs(Math.round(s.x * 7 + s.y * 13));
-                for (let i = 0; i < count; i++) {
-                    const [fxKey, ox, oy] = slots[i];
+                const fadeIn = bld.hitAt !== undefined ? Math.min(1, (this.battleSec - bld.hitAt) / 0.75) : 1;
+                if (fadeIn < 0.99) { g.save(); g.globalAlpha *= Math.max(0.05, fadeIn); }
+                for (let i = 0; i < deltas.length; i++) {
+                    const [fxKey, ox, oy] = deltas[i];
                     const fx = this.fxBank[fxKey]?.dirs[0];
                     if (!fx?.img || !fx.fw || !fx.n) continue;
-                    const jx = (((seed + i * 37) % 19) - 9) * 0.008;
-                    const jy = (((seed + i * 53) % 19) - 9) * 0.008;
-                    const fxX = cx + (ox + jx) * rx;
-                    const fxY = cy + (oy + jy) * ry;
-                    const fr = Math.floor(this.battleSec * 15 + i * 2.3 + (seed % 10)) % fx.n;
-                    g.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, fxX - fx.hx * k, fxY - fx.hy * k, fx.fw * k, fx.fh * k);
+                    const fxX = s.x + (s.flip ? -ox : ox) * k;
+                    const fxY = drawY + oy * k;
+                    // DE Duration1=2.9 ~ Duration2=3.1s 播 60 帧 ⇒ 约 19.3 ~ 20.7 fps，完整一轮循环 3.0 秒
+                    const rate = 19.3 + (i % 3) * 0.7;
+                    const fr = Math.floor(this.battleSec * rate + i * 11 + (seed % 60)) % fx.n;
+                    g.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, fxX - fx.hx * fk, fxY - fx.hy * fk, fx.fw * fk, fx.fh * fk);
                 }
+                if (fadeIn < 0.99) g.restore();
             }
         }
     }
