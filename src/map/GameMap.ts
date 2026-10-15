@@ -9,7 +9,6 @@ import { VectorRiverLayer } from './VectorRiverLayer';
 import { setStrategicRiverProximityData } from './StrategicRiverProximity';
 import { buildRiverSegments } from './RiverStripData';
 import { StrategicGridLayer } from './StrategicGridLayer';
-import { RegionBoundaryLayer } from './RegionBoundaryLayer';
 import { CityCaptureRenderer } from './CityCaptureRenderer';
 import { MonumentLayer } from './MonumentLayer';
 import { BattlefieldLayer } from './BattlefieldLayer';
@@ -81,8 +80,6 @@ export class GameMap {
     private map: L.Map;
     private containerId: string;
     private currentTileLayer: L.TileLayer | null = null;
-    /** 全球总览底图只在 zoom 2–7 生效；8/9/10 继续使用原有本地模式。 */
-    private globalOverviewLayer: L.TileLayer | null = null;
     private zoom11TileLayer: L.TileLayer | null = null; // [NEW] Track 2nd layer
     private currentSourceKey: string = 'LOCAL';
     private hillshadeLayer: HillshadeLayer | null = null;
@@ -134,8 +131,8 @@ export class GameMap {
         this.map = L.map(containerId, {
             center: [lat, lng],
             zoom: 9, // 🔴 [2026-09-24 主人定] 开局一律 ZOOM9（原 8）
-            minZoom: TILE_CONFIG.MIN_ZOOM,
-            maxZoom: 13, // [UPDATE] Detailed view enabled
+            minZoom: 9,
+            maxZoom: 10,
             zoomSnap: 1,
             zoomDelta: 1,
             zoomControl: false,
@@ -255,8 +252,6 @@ export class GameMap {
         this.monumentLayer = new MonumentLayer(this.map);
         // 🔴 [2026-09-12 主人定] 战场图层：战场独立于据点体系（一个地名而已，类似奇观）
         this.battlefieldLayer = new BattlefieldLayer(this.map);
-        // 文化区界城环线（仅 zoom=6 显示）
-        new RegionBoundaryLayer(this.map);
 
         // [USER REQUEST] WSAD 移动地图
         this.initKeyboardNavigation();
@@ -386,10 +381,6 @@ export class GameMap {
 
 
     public setMapSource(sourceKey: string) {
-        if (this.globalOverviewLayer) {
-            this.map.removeLayer(this.globalOverviewLayer);
-            this.globalOverviewLayer = null;
-        }
         if (this.currentTileLayer) {
             this.map.removeLayer(this.currentTileLayer);
             this.currentTileLayer = null;
@@ -412,21 +403,7 @@ export class GameMap {
         if (sourceKey === 'LOCAL') {
             this.currentSourceKey = sourceKey;
 
-            // 全球总览层：只填补新开放的 zoom 2–7；maxZoom=7 保证 8/9/10 原有模式逐像素不受影响。
-            this.globalOverviewLayer = L.tileLayer(
-                (TILE_CONFIG as any).SOURCES.ESRI_SHADED.url,
-                {
-                    tileSize: 256,
-                    minZoom: TILE_CONFIG.MIN_ZOOM,
-                    maxZoom: 7,
-                    // 🔴 [2026-10-11 主人令「要可以环游世界的」] 去掉 `noWrap` 与 `bounds` 夹取：
-                    //    留着这两个，瓦片只画 ±180° 那一份、且被夹住 ⇒ 过了接缝就是空白。
-                    zIndex: 0,
-                }
-            );
-            this.globalOverviewLayer.addTo(this.map);
-
-            // 加载本地 Google Terrain 512px 瓦片（zoom 8–11，四级全覆盖）
+            // 加载本地 Google Terrain 512px 瓦片（仅 ZOOM 9 和 10 海战运行）
             // 瓦片缺失时透明兜底，不显示裂图，由 HillshadeLayer 补位
             const terrainPath = 'Google Terrain Maps without labels  roads and POI  512px';
             this.currentTileLayer = L.tileLayer(
@@ -435,10 +412,10 @@ export class GameMap {
                     // 文件为 512px 高清图，但 x/y 按标准 256px 网格编号。
                     // 显示尺寸若设为 512，会使请求坐标减半，命中不存在的文件。
                     tileSize: 256,
-                    minZoom: 8,
-                    maxZoom: 11,
-                    minNativeZoom: 8,
-                    maxNativeZoom: 11,
+                    minZoom: 9,
+                    maxZoom: 10,
+                    minNativeZoom: 9,
+                    maxNativeZoom: 10,
                     keepBuffer: 4,            // [OPTIMIZATION] 缓存上下左右 4 级瓦片，消除频繁切换与飞行的白块
                     updateWhenZooming: false, // [OPTIMIZATION] 缩放动画中保留上一层级瓦片不立刻释放，维持连续性
                     // 🔴 [2026-09-18 主人报障「移动时屏幕边部出现没刷新的边缘」]

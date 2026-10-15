@@ -31,7 +31,7 @@ import {
 } from '../combat/GeneralSkillCombat';
 import { captureMarchSaveSnapshot, emptyMarchSaveSnapshot } from './march/marchStopPolicy';
 import { getFollowedArmyId } from '../utils/MapFloatingText';
-import { getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
+import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
@@ -585,7 +585,19 @@ export class Army implements IBattleUnit {
     /** 军团文化区：用于三角纯骑行军加成（STEPPE/TIBET/CENTRAL_ASIA） */
     public cultureRegion: RegionType | null = null;
     public name: string; // [IBattleUnit]
-    public generalId?: string; // [NEW] UI Avatar ID
+    /**
+     * 🔴 [2026-10-15 主人报「战略地图上的英雄，和战术地图中的英雄不一样」] 武将一换就按新武将重算编制（含第 10 队主将队）。
+     *    战略地图的 cultureSlots 原只在建军 / 升精锐 / 读档 / 换文化区时算一次，之后换将（多处直接赋值 generalId）不跟着变；
+     *    战术层每场按**当前**武将现算（Scene13WarLayer.slotsOf → withCommander）⇒ 两边主将队兵模对不上。
+     *    改成访问器：凡赋值处一律走这里；还没烘焙过编制（cultureSlots 为 null，如构造期）不算。
+     */
+    private _generalId?: string;
+    public get generalId(): string | undefined { return this._generalId; }
+    public set generalId(v: string | undefined) {
+        if (v === this._generalId) return;
+        this._generalId = v;
+        if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+    }
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
     /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
     public isElite: boolean = false;
@@ -1299,6 +1311,8 @@ export class Army implements IBattleUnit {
         newArmy.cultureScales = this.cultureScales ? [...this.cultureScales] : null; // [NEW] Inherit culture scales
         newArmy.formationMode = this.formationMode; // [NEW] Inherit formation mode
         newArmy.cultureRegion = this.cultureRegion; // [NEW] Inherit culture region (三角纯骑加成)
+        // 🔴 [2026-10-15] 分出来的军团按**自己的**武将 / 精锐重算编制：照抄会连母军团的主将队（第 10 队）一起带走，与战术层对不上
+        if (newArmy.cultureSlots) applyLegionCultureComposition(newArmy, newArmy.cultureRegion ?? undefined);
         // 行军减兵：子军团继承父军团断粮计时（防拆分刷补给漏洞；小数累加器不复制，<1 兵无刷取空间）
         newArmy.timeSinceSupply = this.timeSinceSupply;
         newArmy.attritionChunkSec = this.attritionChunkSec;
