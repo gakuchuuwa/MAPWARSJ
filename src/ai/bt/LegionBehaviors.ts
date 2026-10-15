@@ -228,6 +228,10 @@ function refreshHuntArmyTarget(ctx: BTContext): Army | null {
 function buildExcludeTargetIds(ctx: BTContext): Set<string> {
     const now = performance.now();
     const excludeTargetIds = new Set<string>();
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
+    if (lastDrawCityId) {
+        excludeTargetIds.add(lastDrawCityId);
+    }
     for (const [targetId, failedAt] of ctx.recentFailedTargets.entries()) {
         if (now - failedAt <= FAILED_TARGET_COOLDOWN_MS) {
             excludeTargetIds.add(targetId);
@@ -427,6 +431,16 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     const strategicId = getStrategicTargetId(ctx);
     if (!strategicId) return false;
+
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
+    if (lastDrawCityId && strategicId === lastDrawCityId) {
+        markTargetCooldown(ctx, strategicId, 'siege_draw_retarget');
+        ctx.army.lastLostTargetCityId = strategicId;
+        clearStrategicTarget(ctx);
+        ctx.army.setTargetCity(null);
+        ctx.army.stopMovement?.();
+        return false;
+    }
 
     const city = ctx.cityManager.getCity(strategicId);
     if (!city || city.factionId === ctx.army.getFactionId()) {

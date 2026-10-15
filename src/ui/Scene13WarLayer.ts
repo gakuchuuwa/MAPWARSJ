@@ -3863,8 +3863,8 @@ export class Scene13WarLayer {
     /** 攻方主帅武将 id（攻城武器时代判定用） */
     private attackerGeneralId: string | null = null;
 
-    /** 演出判负回调（winner: 'attacker' | 'defender'）——由 GameAppCombatHooks 接 */
-    public onDecision: ((winner: 'attacker' | 'defender', survivors: { attacker: number; defender: number }) => void) | null = null;
+    /** 演出判负回调（winner: 'attacker' | 'defender' | 'draw'）——由 GameAppCombatHooks 接 */
+    public onDecision: ((winner: 'attacker' | 'defender' | 'draw', survivors: { attacker: number; defender: number }) => void) | null = null;
 
     // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──
     /** 本场玩家布置（start 时从 window.game.playerHero 取；玩家不在军中 = null） */
@@ -3954,6 +3954,11 @@ export class Scene13WarLayer {
             command: this.playerCmd,
             kills: this.playerKills,
         };
+    }
+
+    /** 战术模式 300 秒倒计时剩余秒数（供玩家面板实时展示） */
+    public getRemainingSec(): number {
+        return Math.max(0, Math.ceil(BATTLE_LIMIT_SEC - this.battleSec));
     }
 
     /** 玩家落点（屏幕坐标，含对调）；HUD/镜头用 */
@@ -5664,13 +5669,15 @@ export class Scene13WarLayer {
                 if (p.kind === 'building') { this.trackCityBuilding(sprite); return; }
                 sprite.obstruction = { x: 0.95, y: 0.95 };
                 if (p.kind === 'wall') {
-                    // 木栅栏/篱笆走 WOOD_WALL 档、无破损档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
+                    // 木栅栏/篱笆走 WOOD_WALL 档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
                     const wood = /PALISADE|FENCE/.test(p.dir);
                     const wKey = wood ? 'WOOD_WALL' : (p.dir.includes('FORTIFIED') ? 'FORTIFIED_WALL' : 'STONE_WALL');
                     const st = WALL_GATE_STATS[wKey];
                     const destrAssets = wood ? undefined : ['D25', 'D50', 'D75'].map((t) => `${p.dir}_${t}`);
                     if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
-                    this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets });
+                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
+                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
+                    this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets, rubbleAsset: 'FOUNDATION_1X1_RUBBLE' });
                     return;
                 }
                 // 城门：沿门线铺 6 点碰撞体堵两侧缝隙（同旧 13 placeGate）；破门播倒塌动画 → 残骸
@@ -5687,12 +5694,10 @@ export class Scene13WarLayer {
                     extraSprites.push(extra);
                 }
                 const isFenceGate = p.dir.includes('FENCE') || p.dir.includes('PALISADE');
-                const baseDestrName = p.dir.includes('ARCHAIC_GATE') ? `DARK_GATE_PALISADE_${/_SE$/.test(p.dir) ? 'SE' : 'NE'}` : p.dir;
-                const rubbleAsset = p.dir.includes('FENCE') ? undefined : `${baseDestrName}_RUBBLE`;
-                if (rubbleAsset) {
-                    this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
-                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
-                }
+                const baseDestrName = p.dir.includes('FENCE') ? `DARK_GATE_PALISADE_${/_SE$/.test(p.dir) ? 'SE' : 'NE'}` : p.dir;
+                const rubbleAsset = `${baseDestrName}_RUBBLE`;
+                this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
+                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
                 const st = isFenceGate ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_GATE : WALL_GATE_STATS.STONE_GATE);
                 // 🔴 [2026-10-13] key 仍写 'STONE_GATE'（**不新增键**）：城门倒塌/残骸那几条链
                 //    只认 'STONE_GATE'（见两处 `foe.key === 'STONE_GATE' && hp<=0`），
@@ -6126,12 +6131,14 @@ export class Scene13WarLayer {
                 // 木栅栏/篱笆走 WOOD_WALL 档（hp 250、防 2/5）；石墙/垛墙才是 STONE_WALL
                 const wKey = (asset.includes('PALISADE') || asset.includes('FENCE')) ? 'WOOD_WALL' : key;
                 const st = WALL_GATE_STATS[wKey];
-                // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；木栅栏/篱笆无破损档 → 破墙直接消失
+                // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；坍塌时统一播放 DE 1x1 坍塌动画 FOUNDATION_1X1_DESTR
                 const destrAssets = (asset.includes('PALISADE') || asset.includes('FENCE')) ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
                 if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
-                this.wallGates.push({ f: 1, key: wKey, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets });
+                this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
+                this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
+                this.wallGates.push({ f: 1, key: wKey, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets, rubbleAsset: 'FOUNDATION_1X1_RUBBLE' });
             };
-            // 城门：可攻击建筑（照 DE，城门 HP 更高），沿线铺 6 点密实碰撞体堵跨度两侧缝隙；破门播 50 帧倒塌动画 → rubble 残骸
+            // 城门：可攻击建筑（照 DE，城门 HP 更高），沿线铺 6 点密实碰撞体堵跨度两侧缝隙；破门播 100 帧倒塌动画 → rubble 残骸
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
                 // 🔴 [2026-09-18] 同 placeWall：毡帐险要无围墙，也就没有城门
                 if (wallMat === 'NONE') return;
@@ -6154,21 +6161,12 @@ export class Scene13WarLayer {
                     extraSprites.push(extra);
                 }
                 // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
-                // 🔴 [2026-10-01 战术模式同步战略据点围墙] FENCE 与 ARCHAIC_GATE 安全兜底：
-                //    FENCE 篱笆无残骸（破门直接消失）；ARCHAIC_GATE 借用同门 DARK_GATE_PALISADE 的倒塌/残骸动画
                 const isFenceGate = asset.includes('FENCE');
-                const isArchaicGate = asset.includes('ARCHAIC_GATE');
-                const baseDestrName = isArchaicGate
-                    ? `DARK_GATE_PALISADE_${dir}`
-                    : asset;
-                const rubbleAsset = isFenceGate
-                    ? null
-                    : `${baseDestrName}_RUBBLE`;
-                if (!isFenceGate && rubbleAsset) {
-                    this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
-                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
-                }
-                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset: rubbleAsset || undefined });
+                const baseDestrName = isFenceGate ? `DARK_GATE_PALISADE_${dir}` : asset;
+                const rubbleAsset = `${baseDestrName}_RUBBLE`;
+                this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
+                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
             let wMinX = Infinity, wMaxX = -Infinity, wMinY = Infinity, wMaxY = -Infinity;
@@ -8819,19 +8817,15 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 单个墙/门/垛段坍塌：取消阻挡 + 改贴图（石墙 D50/D75，木栅消失，城门 DESTR→RUBBLE） */
+    /** 单个墙/门/垛段坍塌：取消阻挡 + 播放 DE 倒塌动画（石墙/木栅 FOUNDATION_1X1_DESTR → D75/FOUNDATION_1X1_RUBBLE，城门 DESTR → RUBBLE） */
     private collapseOneWall(b: WarBuilding): void {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
         if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             const destr = b.destrAssets;
-            if (destr) {
-                b.sprite.asset = 'BUILDINGANIM:' + (Math.random() < 0.6 ? destr[1] : destr[2]);
-                b.sprite.frame = 0;
-            } else {
-                b.sprite.destroyed = true;
-            }
+            const rubble = destr ? ('BUILDINGANIM:' + destr[2]) : 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+            this.collapseToRubble(b.sprite, 'FOUNDATION_1X1', rubble);
         } else if (b.rubbleAsset) {
             this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
         } else {
@@ -8850,10 +8844,10 @@ export class Scene13WarLayer {
     }
 
     /** 让装饰精灵播倒塌动画 → 切残骸：有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 直接切 rubble。 */
-    private collapseToRubble(sprite: DecorSprite, name: string): void {
+    private collapseToRubble(sprite: DecorSprite, name: string, customRubble?: string): void {
         if (sprite.indestructible) return;
         const destr = 'BUILDINGANIM:' + name + '_DESTR';
-        const rubble = 'BUILDINGANIM:' + name + '_RUBBLE';
+        const rubble = customRubble ?? ('BUILDINGANIM:' + name + '_RUBBLE');
         if (this.natureCache[destr]?.img?.complete) {
             sprite.asset = destr;
             sprite.frame = 0;
@@ -9133,7 +9127,7 @@ export class Scene13WarLayer {
                 b.atkNext++;
                 if (b.hitAt === undefined) b.hitAt = this.battleSec;
                 b.hp -= bdps * this.sideBonus[m.f] * dt;
-                if (b.destrAssets && b.maxHp > 0) {
+                if (b.destrAssets && b.maxHp > 0 && b.hp > 0 && !b.sprite.collapse) {
                     const ratio = b.hp / b.maxHp;
                     let stage = -1;
                     if (ratio <= 0.25) stage = 2;
@@ -9145,21 +9139,8 @@ export class Scene13WarLayer {
                     }
                 }
                 if (b.bld) this.onDefBuildingHit(b);
-                if ((b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL') && b.hp <= 0 && !b.sprite.obstructionDisabled) {
-                    b.sprite.obstruction = undefined;
-                    b.sprite.obstructionDisabled = true;
-                }
-                if (b.key === 'WOOD_WALL' && b.hp <= 0 && !b.sprite.destroyed) {
-                    b.sprite.destroyed = true;
-                    b.sprite.obstruction = undefined;
-                    b.sprite.obstructionDisabled = true;
-                }
-                if (b.key === 'STONE_GATE' && b.hp <= 0 && !b.sprite.collapse && !b.sprite.destroyed) {
-                    if (b.rubbleAsset) this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
-                    else b.sprite.destroyed = true;
-                    b.sprite.obstruction = undefined;
-                    b.sprite.obstructionDisabled = true;
-                    if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
+                if ((b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL' || b.key === 'STONE_GATE') && b.hp <= 0 && !b.sprite.obstructionDisabled && !b.sprite.collapse && !b.sprite.destroyed) {
+                    this.collapseOneWall(b);
                 }
             }
         }
@@ -10803,7 +10784,7 @@ export class Scene13WarLayer {
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
                         // 🔴 [2026-08-23 主人定] 墙 hp 归零也算损 100% → 切 D75（破损到顶），与 40 秒坍塌残垣视觉一致。
-                        if (foe.destrAssets) {
+                        if (foe.destrAssets && foe.hp > 0 && !foe.sprite.collapse) {
                             const ratio = Math.max(0, foe.hp) / foe.maxHp;
                             let stage = -1;
                             if (ratio <= 0.25) stage = 2;       // D75：损 75%
@@ -10818,35 +10799,9 @@ export class Scene13WarLayer {
                             }
                         }
                         if (foe.bld) this.onDefBuildingHit(foe);
-                        // 🔴 [2026-09-18] 木栅栏/篱笆打爆（hp <= 0）→ 直接消失并解除阻挡。
-                        //    栅栏没有破损档（destrAssets 为空），改前 hp 归零后既不换贴图也不破墙，
-                        //    只能干等 30 秒保底坍塌 —— 画面上就是「一直砸，栅栏纹丝不动」。
-                        //    与 applyRandomCollapseForms 里「栅栏无残垣 → 直接消失」同一口径。
-                        // 🔴 [2026-10-12 主人令「打完就不要再打了」] 石墙打到 0 血 = 打穿：留残垣贴图，取消碰撞（之前 0 血仍挡路）
-                        if ((foe.key === 'STONE_WALL' || foe.key === 'FORTIFIED_WALL') && foe.hp <= 0 && !foe.sprite.obstructionDisabled) {
-                            foe.sprite.obstruction = undefined;
-                            foe.sprite.obstructionDisabled = true;
-                        }
-                        if (foe.key === 'WOOD_WALL' && foe.hp <= 0 && !foe.sprite.destroyed) {
-                            foe.sprite.destroyed = true;
-                            foe.sprite.obstruction = undefined;
-                            foe.sprite.obstructionDisabled = true;
-                        }
-                        // 城门提前被打爆（hp <= 0）→ 倒塌播动画切残骸并解除阻挡
-                        if (foe.key === 'STONE_GATE' && foe.hp <= 0 && !foe.sprite.collapse && !foe.sprite.destroyed) {
-                            if (foe.rubbleAsset) {
-                                this.collapseToRubble(foe.sprite, foe.rubbleAsset.slice(0, -'_RUBBLE'.length));
-                            } else {
-                                foe.sprite.destroyed = true;
-                            }
-                            foe.sprite.obstruction = undefined;
-                            foe.sprite.obstructionDisabled = true;
-                            if (foe.extraSprites) {
-                                for (const sp of foe.extraSprites) {
-                                    sp.obstruction = undefined;
-                                    sp.obstructionDisabled = true;
-                                }
-                            }
+                        // 墙/木栅栏/城门被打爆（hp <= 0）→ 播放 DE 倒塌动画（FOUNDATION_1X1_DESTR / 城门 DESTR）并切残垣/残骸解除阻挡
+                        if ((foe.key === 'STONE_WALL' || foe.key === 'FORTIFIED_WALL' || foe.key === 'WOOD_WALL' || foe.key === 'STONE_GATE') && foe.hp <= 0 && !foe.sprite.obstructionDisabled && !foe.sprite.collapse && !foe.sprite.destroyed) {
+                            this.collapseOneWall(foe);
                         }
                     }
                     // 若同时为 aoe 单位且未在盲区内，对周围士兵照常执行溅射
@@ -11199,17 +11154,22 @@ export class Scene13WarLayer {
         const waitCollapse = centerRule && centerKilled && !centerDown;
         if (!waitCollapse && (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp)) {
             this.over = true;
+            // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）
+            const isDraw = timeUp && alive[0] > 0 && !centerDown && (centerRule || alive[1] > 0);
             const attackerLost = centerRule
                 ? !centerDown
                 : (alive[0] <= 0 || (!centerDown && alive[1] > 0 && timeUp));
+            const resultWinner: 'attacker' | 'defender' | 'draw' = isDraw
+                ? 'draw'
+                : (attackerLost ? 'defender' : 'attacker');
             // [2026-08-11 诊断] 主人报「兵没死光就结束」。这条日志证明是不是演出自己判的：
             // 若这条没打、场景却退了，说明是外部路径（自愈 exit / 引擎结算）提前收的场。
             // 🔴 用 console.warn 不用 gameLog：gameLog 要频道开启才打印，上一版诊断因此一条没出来
-            console.warn(`🏁 [Scene13War] 演出判负：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=${SPRITE_TROOPS}兵）`);
-            this.diagPush('decision', { winner: attackerLost ? 'defender' : 'attacker', alive });
+            console.warn(`🏁 [Scene13War] 演出判负(${resultWinner})：攻方余 ${alive[0]} 守方余 ${alive[1]} 精灵（1精灵=${SPRITE_TROOPS}兵）`);
+            this.diagPush('decision', { winner: resultWinner, alive });
             this.diagFlush('decision');
             this.onDecision?.(
-                attackerLost ? 'defender' : 'attacker',
+                resultWinner,
                 { attacker: Math.round(alive[0] * SPRITE_TROOPS), defender: Math.round(alive[1] * SPRITE_TROOPS) },
             );
         }
