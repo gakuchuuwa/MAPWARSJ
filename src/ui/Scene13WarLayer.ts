@@ -8285,7 +8285,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             // 🔴 [2026-10-15 主人令「士兵在攻打建筑的时候，优先攻打最近的建筑，不至于都拥挤在一起」]
             //    撤掉 10-14「墙破后只认中心建筑」：墙已破（或人已在城内）⇒ 打视野内最近的建筑（中心建筑也在其中）；
             //    视野内没有建筑就返回 null，由 aimAtRaw 朝中心建筑走（流场绕缺口），路上见到建筑就近打。
-            const pool = gatesOnly ? this.wallGates.filter(b => b.key === 'STONE_GATE') : this.defBuildings;
+            // 🔴 [2026-10-15 主人令「城门可以和建筑一个级别。就近打」] 墙已破（或人在城内）时城门与建筑同档、谁近打谁
+            //    （原只认建筑：破口在别处时，贴着另一座城门的兵视野里没有建筑 ⇒ 锁不上目标、贴门干站）。城墙仍不砍。
+            const gates = this.wallGates.filter(b => b.key === 'STONE_GATE');
+            const pool = gatesOnly ? gates : [...this.defBuildings, ...gates];
             let t: WarBuilding | null = null, td = r2;
             for (const b of pool) {
                 if (b.f === m.f || !this.wallStanding(b)) continue;
@@ -9065,7 +9068,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     private flowRedirect(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
         if (!this.flowDist || m.f !== 0 || m.hero || WALL_PASS_TYPES.has(m.key)) return aim;
         const du = this.flowDistAt(m.x, m.y);
-        if (!Number.isFinite(du) || du <= 6 * FLOW_SUB) return aim;
+        // 🔴 [2026-10-15 主人报「士兵有的时候会贴着城门城墙，也不打」] 贴墙站的兵脚下是膨胀障碍格（du=∞）：
+        //    原来直接放弃流场、直线顶墙；现先让 flowWaypoint 往外挪到最近的可走格再沿流场走（实测独松关 95 个 ∞ 兵救回 56）。
+        if (!Number.isFinite(du)) return this.flowWaypoint(m.x, m.y, this.flowDist, 6 * FLOW_SUB, 6 * FLOW_SUB, 4) ?? aim;
+        if (du <= 6 * FLOW_SUB) return aim;
         const target = aim ?? (this.centerBld ? { x: this.centerBld.x, y: this.centerBld.y } : null);
         if (!target) return aim;
         const dt2 = this.flowDistAt(target.x, target.y);
@@ -9290,6 +9296,18 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                         const vx = gate.x - c.x, vy = gate.y - c.y, vl = Math.hypot(vx, vy) || 1;
                         return { x: gate.x + (vx / vl) * 150 + m.jx, y: gate.y + (vy / vl) * 150 + m.jy };
                     }
+                }
+                // 🔴 [2026-10-15 主人令「城门可以和建筑一个级别。就近打」] 流场带不了路（无流场 / 脚下不通且挪不出去，
+                //    如险要两圈墙之间的窄夹道）⇒ 不再直线奔中心顶墙，改去全图最近的还立着的城门或建筑（走到跟前 search 就锁上）。
+                if (this.siegeWithWalls && !(this.flowDist && (Number.isFinite(this.flowDistAt(m.x, m.y))
+                    || this.flowWaypoint(m.x, m.y, this.flowDist, 6 * FLOW_SUB, 6 * FLOW_SUB, 4)))) {
+                    let t: WarBuilding | null = null, td = Infinity;
+                    for (const b of [...this.defBuildings, ...this.wallGates.filter(g => g.key === 'STONE_GATE')]) {
+                        if (b.f === m.f || !this.wallStanding(b)) continue;
+                        const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                        if (d < td) { td = d; t = b; }
+                    }
+                    if (t) { const ra = Math.atan2(m.jy, m.jx); return { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }; }
                 }
                 // 🔴 [2026-10-13 修拥挤] 朝城中心走时也把终身偏移加进落点，否则十队齐步走全叠在城中心那一点。
                 return { x: c.x + m.jx, y: c.y + m.jy };

@@ -6,8 +6,7 @@
 > 屏幕尺寸 = DE 帧框 × sz × 模式基准 ÷ 64 ×（地图侧另乘：战车阵型适配比例）
 >
 >   战术 13（Scene13WarLayer）    ：基准 64（= DE 原生 1:1）
->   战略地图 8/9/10（LegionPhalanxDrawer 非 dense）：基准 68 × 地图倍率（zoom9 = 0.7）
->   地图 zoom13 密集方阵（dense）  ：基准 60 × 地图倍率
+>   战略地图 ZOOM 9 / 海战 10（LegionPhalanxDrawer）：基准 68 × 地图倍率（zoom9 = 0.7）
 > ```
 >
 > **唯一出处（改这三处就够，别在别处再算一遍）：**

@@ -257,7 +257,7 @@ export class HillshadeLayer extends L.GridLayer {
      * 已算好（在位图缓存里）或已预取过的一律跳过，且读完响应体及时释放连接。
      */
     public prefetchAdjacentZoom(currentZoom: number, map: L.Map): void {
-        const targetZooms = [currentZoom - 1, currentZoom + 1].filter(z => z >= 7 && z <= 12);
+        const targetZooms = [currentZoom - 1, currentZoom + 1].filter(z => z >= 9 && z <= 10);
         if (targetZooms.length === 0) return;
 
         const bounds = map.getBounds();

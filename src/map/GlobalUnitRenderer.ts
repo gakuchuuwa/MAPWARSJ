@@ -923,25 +923,14 @@ export class GlobalUnitRenderer {
      * 避免地图上旧编队与新演出画布叠加。8/9/10 永不进此分支（演出只在 13 激活）。
      */
     private isBattleScene13(): boolean {
-        const game = (window as any).game;
-        if (game?.battleScene?.isActive?.() !== true) return false;
-        if (game?.scene13War?.isActive?.() === true) return false;
-        // [2026-08-12 修复] 防止 5 秒战败停留期间（新演出已停、但大地图仍锁在 zoom13 时），
-        // 引擎误判定并把旧 13 模式的幽灵方阵给放出来乱跑。
-        if (game?.battleScene?.isLingering?.() === true) return false;
-        return this.map.getZoom() >= 13;
+        return false;
     }
 
     /**
-     * [2026-08-09 13锁死] 静态版判定（static 方法无 this.map，走 window.gameMap）。
+     * [2026-08-09 13锁死] 静态版判定（战略地图仅运行于 ZOOM 9 / 海战 10，恒为 false）。
      */
     private static isBattleScene13(): boolean {
-        const game = (window as any).game;
-        if (game?.battleScene?.isActive?.() !== true) return false;
-        if (game?.scene13War?.isActive?.() === true) return false;
-        if (game?.battleScene?.isLingering?.() === true) return false;
-        const zoom = (window as any).gameMap?.getLeafletMap?.().getZoom?.() ?? 0;
-        return zoom >= 13;
+        return false;
     }
 
     private animate(time: number): void {
