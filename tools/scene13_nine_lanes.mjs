@@ -13,13 +13,17 @@
  */
 import fs from 'fs';
 const P = 'src/ui/Scene13WarLayer.ts';
-const src = fs.readFileSync(P, 'utf-8');
+const s13Dir = 'src/ui/scene13';
+const s13Sub = fs.existsSync(s13Dir)
+  ? fs.readdirSync(s13Dir).filter((f) => f.endsWith('.ts')).map((f) => fs.readFileSync(`${s13Dir}/${f}`, 'utf-8')).join('\n')
+  : '';
+const src = fs.readFileSync(P, 'utf-8') + '\n' + s13Sub;
 let fail = 0;
 const ok = (m) => console.log('  \u2705 ' + m);
 const bad = (m) => { fail++; console.log('  \u2717 ' + m); };
 
 // ① LAYOUT 每种阵型 9 口
-const li = src.indexOf('const LAYOUT');
+const li = src.indexOf('LAYOUT: Record');
 const lj = src.indexOf(String.fromCharCode(10) + '};', li);
 const layout = src.slice(li, lj);
 console.log('① 阵型 LAYOUT 表每种 9 口');
