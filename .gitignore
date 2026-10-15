@@ -67,6 +67,7 @@ close_cities_report.json
 史料/
 
 # Root garbage files
+_scratch_trash*
 scratch/*
 # 例外：factionTierClassify.ts 运行时依赖这 4 个 audit json，必须随仓库部署
 !scratch/ethnic_homeland_audit.json

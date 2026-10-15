@@ -1382,7 +1382,7 @@ export class Scene13GroundLayerGL {
       const baseElev = isMedium ? 2.5 : 2.0;
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, (y - cy) * 1.4);
+          const dist = Math.hypot(x - cx, y - cy);
           if (dist <= rFlat) {
             this.cornerElev[y * V + x] = baseElev;
           } else if (dist <= rFlat + 3.0) {
@@ -1397,7 +1397,7 @@ export class Scene13GroundLayerGL {
       // 城址整平在 1 级山脚平缓地基
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, (y - cy) * 1.4);
+          const dist = Math.hypot(x - cx, y - cy);
           if (dist <= rFlat) {
             this.cornerElev[y * V + x] = 1.0;
           } else if (dist <= rFlat + 2.0) {
@@ -1413,7 +1413,7 @@ export class Scene13GroundLayerGL {
       const hillBase = isMedium ? 1.8 : 1.2;
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, (y - cy) * 1.4);
+          const dist = Math.hypot(x - cx, y - cy);
           if (dist <= rFlat) {
             this.cornerElev[y * V + x] = hillBase;
           } else if (dist <= rFlat + 2.5) {
