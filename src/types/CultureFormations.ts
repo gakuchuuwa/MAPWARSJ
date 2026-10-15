@@ -1660,7 +1660,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     CARTHAGE: '古典时代布匿军团',
     BABYLON: '古典时代巴比伦军团',
     HITTITES: '古典时代赫梯军团',
-    ASSYRIAN: "古典时代亚述军团",
+    ASSYRIAN: "古典时代中东军团",
     SCYTHIANS: '古典时代斯基泰军团',
     BYZANTINE: "封建时代拜占庭军团",
     FRANKS: '封建时代法兰克军团',

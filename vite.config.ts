@@ -1720,6 +1720,23 @@ export default defineConfig({
                 const warTypesPath = path.resolve(__dirname, 'src/data/WarTypes.ts');
                 const navalShipTiersPath = path.resolve(__dirname, 'src/types/NavalShipTiers.ts');
 
+                // 🔴 [2026-10-15] 兵种改名后重生成 public/de-techtree/legion-names.json，
+                // 保证 de-wiki.html 科技树与 legion-editor.html 兵种鉴赏永远同步。
+                // 单一事实来源 = src/legion-editor/main.ts 的 DE_UNITS_CATALOG；
+                // 映射生成逻辑只有一份在 tools/de-techtree-legion-names.py，这里只负责调用（不改逻辑）。
+                const regenerateLegionNames = (): void => {
+                    const scriptRel = 'tools/de-techtree-legion-names.py';
+                    if (!fs.existsSync(path.resolve(__dirname, scriptRel))) return;
+                    for (const py of ['python', 'python3']) {
+                        try {
+                            execSync(`${py} ${scriptRel}`, { cwd: __dirname, encoding: 'utf8', stdio: 'pipe' });
+                            console.log('[RenameUnit] ♻️ legion-names.json 已重新生成');
+                            return;
+                        } catch { /* 换下一个解释器 */ }
+                    }
+                    console.warn('[RenameUnit] ⚠️ legion-names.json 重新生成失败（科技树可能仍显示旧名）');
+                };
+
                 server.middlewares.use('/api/save-unit-stats', (req, res) => {
                     res.setHeader('Content-Type', 'application/json; charset=utf-8');
                     if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ ok: false, error: '仅支持POST' })); return; }
@@ -1854,6 +1871,9 @@ export default defineConfig({
                                     } catch {}
                                 }
                             }
+
+                            // 6. 重新生成 legion-names.json（科技树快照），保证改名永久同步
+                            regenerateLegionNames();
 
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, unitId, newName: trimmedName }));

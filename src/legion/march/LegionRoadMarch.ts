@@ -97,14 +97,18 @@ function resolveMarchTarget(
             (id) => (lastDrawCityId && id === lastDrawCityId ? factionId : deps.cityManager.getCity(id)?.factionId),
             deps.cityManager,
             (fid, start, target, getFaction) =>
-                roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction)
+                roadRegistry.resolveFirstHostileCityOnPath(fid, start, target, getFaction),
+            lastDrawCityId,
         );
         checkedPolyline = marchPath.length >= 2;
     }
     if (!checkedPolyline && marchPath.length >= 2) {
         const polylineOpts = isCampaignLegion(army)
-            ? { minAlong: Math.max(0, distanceAlongPolyline(currentPos, marchPath) - 0.02) }
-            : undefined;
+            ? {
+                minAlong: Math.max(0, distanceAlongPolyline(currentPos, marchPath) - 0.02),
+                excludeCityId: lastDrawCityId,
+            }
+            : { excludeCityId: lastDrawCityId };
         marchTargetId = findFirstHostileAlongPolyline(
             factionId,
             marchPath,
@@ -218,11 +222,12 @@ export function moveLegionToCity(
     // 直接沿 lastPath 倒序返回——不先绕回城锚点接入路网（旧逻辑：路网路径从城锚点出发，
     // 军团在城周非目标方向时投影 = 城锚点 → 先回城再折返，白走 2×圈半径回头路）。
     const retreatTarget = deps.cityManager.getCity(targetCityId);
-    if (army.lastPath.length >= 3 && retreatTarget) {
+    if (army.lastPath.length >= 2 && retreatTarget) {
         const startPos = army.lastPath[0];
         const tailPos = army.lastPath[army.lastPath.length - 2] ?? army.lastPath[army.lastPath.length - 1];
         const atTail =
-            getEuclideanDistance(currentPos, tailPos) < GameConfig.SIEGE.COMBAT_RADIUS * 2;
+            getEuclideanDistance(currentPos, tailPos) < GameConfig.SIEGE.COMBAT_RADIUS * 2 ||
+            getEuclideanDistance(currentPos, army.lastPath[army.lastPath.length - 1]) < GameConfig.SIEGE.COMBAT_RADIUS * 2;
         const targetTowardStart =
             getEuclideanDistance(
                 { lat: retreatTarget.latitude, lng: retreatTarget.longitude },
@@ -237,7 +242,7 @@ export function moveLegionToCity(
             // 收位后军团停在来路延长线上，来路末两段（城锚点前一/城锚点）在回城方向，必须跳过）
             const proj = nearestPointOnPolyline(currentPos, army.lastPath);
             const back = [currentPos];
-            const startIdx = proj ? Math.max(0, proj.segmentIndex - 1) : army.lastPath.length - 2;
+            const startIdx = proj ? Math.max(0, proj.segmentIndex - 1) : Math.max(0, army.lastPath.length - 2);
             for (let idx = startIdx; idx >= 0; idx--) {
                 back.push(army.lastPath[idx]);
             }
@@ -327,11 +332,12 @@ export function moveLegionToCity(
     }
 
     const targetCity = deps.cityManager.getCity(marchTargetId);
-    if (targetCity) {
+    const lastDrawCityId = (army as any).lastDrawCityId as string | undefined;
+    if (targetCity && targetCity.id !== lastDrawCityId) {
         army.setTargetCity(targetCity);
     }
 
-    const isHostile = targetCity && targetCity.factionId !== factionId;
+    const isHostile = targetCity && targetCity.factionId !== factionId && targetCity.id !== lastDrawCityId;
     const siegeReach = GameConfig.SIEGE.COMBAT_RADIUS + 0.1;
     if (targetCity && isHostile) {
         const distToCity = getEuclideanDistance(currentPos, {

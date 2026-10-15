@@ -51,7 +51,6 @@ import {
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
-import { getUnitIconUrl } from '../data/unitIcons';
 
 // ============================================================
 // 1. 全量 AoE2 DE 兵种字典 (分类定义)
@@ -1267,7 +1266,7 @@ function injectStyles(): void {
       td.cell-thumb { padding:2px 8px; }
       .le-cat-thumb {
         width:44px; height:44px; display:block; background:#141210;
-        border-radius:4px; border:1px solid #3a3225; object-fit:contain;
+        border-radius:3px; image-rendering:pixelated;
       }
 
       .le-body { flex:1; display:flex; min-height:0; overflow:hidden; }
@@ -1499,8 +1498,8 @@ function injectStyles(): void {
         display:flex; flex-direction:row; align-items:center; gap:8px;
       }
       .le-unit-thumb {
-        width:64px; height:64px; flex:0 0 64px; border-radius:4px;
-        background:#141210; border:1px solid #3a3225; object-fit:contain;
+        width:64px; height:64px; flex:0 0 64px; border-radius:3px;
+        background:#141210; image-rendering:pixelated;
       }
       .le-unit-card-text { display:flex; flex-direction:column; gap:4px; min-width:0; }
       .le-unit-card:hover {
@@ -4095,7 +4094,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
           <div class="le-modal-body">
             ${units.map(u => `
               <div class="le-unit-card" data-uid="${u.id}">
-                <img class="le-unit-thumb" src="${getUnitIconUrl(u.id)}" alt="${u.name}" width="64" height="64" loading="lazy" />
+                <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
                 <div class="le-unit-card-text">
                   <div class="le-unit-card-name">${u.name}</div>
                   <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${getUnitTier(u) === 'elite' ? ' · ⭐精锐' : ''}</div>
@@ -4372,7 +4371,7 @@ function renderCatalogTable(): void {
     <table class="le-table">
       <thead>
         <tr>
-          <th style="width:56px;" title="DE 官方科技树兵种图标">图标</th>
+          <th style="width:56px;">预览</th>
           <th data-col="name" style="color:#f5e6c8;background:#24201a;">兵种名称${arrow('name')}</th>
           <th data-col="age" style="width:90px;">时代${arrow('age')}</th>
           <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
@@ -4397,7 +4396,7 @@ function renderCatalogTable(): void {
             const dash = `<span style="color:#5a5348;">—</span>`;
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
-            <td class="cell-thumb"><img class="le-cat-thumb" src="${getUnitIconUrl(u.id)}" alt="${u.name}" width="44" height="44" loading="lazy" /></td>
+            <td class="cell-thumb"><canvas class="le-cat-thumb" data-uid="${u.id}" width="44" height="44"></canvas></td>
             <td>
               <div style="display:flex;align-items:center;gap:6px;">
                 <b style="font-size:13px;">${u.name}</b>
@@ -4717,15 +4716,12 @@ function renderUnitPanel(unitId: string): void {
     els.panelContent.innerHTML = `
     <div style="background:#181614;border:1px solid #2a2620;border-radius:6px;padding:12px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <img src="${getUnitIconUrl(u.id)}" alt="${u.name}" style="width:48px;height:48px;border-radius:4px;border:1px solid #4a4235;background:#100e0c;flex-shrink:0;object-fit:contain;" />
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="font-size:17px;font-weight:bold;color:#f5e6c8;" id="le-unit-title-name">${u.name}</div>
-              <button type="button" id="le-unit-btn-toggle-rename" class="le-btn le-btn-xs" style="background:#2a2620;border:1px solid #4a4235;color:#e0c060;cursor:pointer;" title="修改兵种名称">✏️ 改名</button>
-            </div>
-            <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="font-size:17px;font-weight:bold;color:#f5e6c8;" id="le-unit-title-name">${u.name}</div>
+            <button type="button" id="le-unit-btn-toggle-rename" class="le-btn le-btn-xs" style="background:#2a2620;border:1px solid #4a4235;color:#e0c060;cursor:pointer;" title="修改兵种名称">✏️ 改名</button>
           </div>
+          <div style="font-size:11px;color:#a89f8f;margin-top:3px;font-family:monospace;">${u.id}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           <span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}　<span style="opacity:.65;font-weight:normal;">${AGE_YEARS[u.age].span}</span></span>
@@ -5177,17 +5173,6 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
 
 /** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
 export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
-    const iconUrl = getUnitIconUrl(unitId);
-    try {
-        const img = await loadSprite(iconUrl);
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-            const size = canvas.width;
-            ctx.clearRect(0, 0, size, size);
-            ctx.drawImage(img, 0, 0, img.naturalWidth || size, img.naturalHeight || size, 0, 0, size, size);
-            return;
-        }
-    } catch { /* 兜底继续尝试精灵图 */ }
     const prefix = getUnitPathPrefix(unitId);
     const imgUrl = `${prefix}idle_${unitThumbDir}.png`;
     try {

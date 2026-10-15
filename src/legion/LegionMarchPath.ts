@@ -26,14 +26,17 @@ export function resolveMarchTargetOnPath(
         startCityId: string,
         targetCityId: string,
         getFaction: (id: string) => string | undefined
-    ) => string
+    ) => string,
+    excludeCityId?: string,
 ): string {
     let marchTargetId = targetCityId;
     if (startCityId) {
         marchTargetId = resolveFirstHostileOnRoad(factionId, startCityId, targetCityId, getCityFaction);
     }
     if (marchPath.length >= 2) {
-        marchTargetId = findFirstHostileAlongPolyline(factionId, marchPath, marchTargetId, cities);
+        marchTargetId = findFirstHostileAlongPolyline(factionId, marchPath, marchTargetId, cities, {
+            excludeCityId,
+        });
     }
     return marchTargetId;
 }
@@ -43,10 +46,11 @@ export function findFirstHostileAlongPolyline(
     path: LatLng[],
     fallbackTargetId: string,
     cities: MarchCityAccess,
-    options?: { minAlong?: number },
+    options?: { minAlong?: number; excludeCityId?: string },
 ): string {
     const zoc = GameConfig.SIEGE.COMBAT_RADIUS;
     const minAlong = options?.minAlong ?? 0;
+    const excludeCityId = options?.excludeCityId;
     let bestId = fallbackTargetId;
     const fallbackCity = cities.getCity(fallbackTargetId);
     const fallbackProjection = fallbackCity
@@ -74,6 +78,7 @@ export function findFirstHostileAlongPolyline(
 
     for (const city of cities.getCities()) {
         if (!city.factionId || city.factionId === factionId) continue;
+        if (excludeCityId && city.id === excludeCityId) continue;
         if (useBox) {
             if (city.latitude < minLat - zoc || city.latitude > maxLat + zoc) continue;
             const dLng = shortestLongitudeDelta(lng0, city.longitude);

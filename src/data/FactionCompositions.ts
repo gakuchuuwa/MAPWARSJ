@@ -1326,15 +1326,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yashu": {
-        legionName: "古典时代亚述军团",
+        legionName: "古典时代中东军团",
         legionType: "region",
     },
     "guyashu": {
-        legionName: "古典时代亚述军团",
+        legionName: "古典时代中东军团",
         legionType: "region",
     },
     "adiyabeina": {
-        legionName: "古典时代亚述军团",
+        legionName: "古典时代中东军团",
         legionType: "region",
     },
     "tuoba": {
