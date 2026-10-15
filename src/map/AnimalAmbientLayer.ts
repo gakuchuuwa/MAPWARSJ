@@ -69,8 +69,11 @@ const SCALE_BASE = 0.6;             // 渲染缩放（× 2^(zoom-9)）
 // 🔴 [2026-08-31 修「攻城战只显示攻城武器」] 必须低于 UNITS_LOW(580)。
 //    580 是攻城战里**画在城池背后**的那批士兵所在的层；本层原值压在它之上，
 //    等于把攻城方的士兵整个涂掉，只剩画在主层(UNITS=620)的攻城器械还看得见。
-//    地面氛围层（植被/动物/商队）一律排在 CONNECTIONS(450) 与 UNITS_LOW(580) 之间。
-const PANE_ZINDEX = 560;            // 动物：最底（低于植被565/商队570/UNITS_LOW580）
+const PANE_ZINDEX = 560;            // 陆地动物：最底（低于植被565/商队570/UNITS_LOW580）
+// 🔴 [2026-10-15 主人报「飞行动物好像在建筑下层，这是不对的」]
+//    据点建筑 cityPane 为 610、奇观 monumentPane 为 615、军团 unitsPane 为 620。
+//    飞行动物（飞鸟）在空中翱翔，必须显示在建筑与地面部队之上！
+const BIRD_PANE_ZINDEX = 635;       // 飞鸟高空层：高于据点(610)/奇观(615)/军团(620)
 const CULL_MARGIN_DEG = 0.6;        // 视口外多算一圈，避免边缘弹入
 const BIRD_DRIFT_RADIUS_PX = 70;    // 飞鸟盘旋半径（屏幕像素，与翼展匹配的高空开阔盘旋）
 const BIRD_DRIFT_SPEED = 0.4;       // 飞鸟盘旋角速度（rad/s，约 15.7s 一圈）
@@ -148,6 +151,8 @@ export class AnimalAmbientLayer {
     private map: L.Map;
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
+    private birdCanvas: HTMLCanvasElement;
+    private birdCtx: CanvasRenderingContext2D;
     private assets: Map<string, AnimalAsset> = new Map();
     private entries: AnimalEntry[] = [];
     private birds: BirdAgent[] = [];
@@ -162,6 +167,12 @@ export class AnimalAmbientLayer {
         this.canvas.style.pointerEvents = 'none';
         this.canvas.className = 'leaflet-zoom-animated';
         this.ctx = this.canvas.getContext('2d')!;
+
+        this.birdCanvas = document.createElement('canvas');
+        this.birdCanvas.style.pointerEvents = 'none';
+        this.birdCanvas.className = 'leaflet-zoom-animated';
+        this.birdCtx = this.birdCanvas.getContext('2d')!;
+
         this.setupPane();
         this.map.on('move', this.syncCanvas.bind(this));
         this.map.on('zoom', this.syncCanvas.bind(this));
@@ -179,17 +190,29 @@ export class AnimalAmbientLayer {
             pane.style.pointerEvents = 'none';
         }
         this.map.getPane(name)!.appendChild(this.canvas);
+
+        const birdPaneName = 'birdPane';
+        if (!this.map.getPane(birdPaneName)) {
+            this.map.createPane(birdPaneName);
+            const bPane = this.map.getPane(birdPaneName)!;
+            bPane.style.zIndex = String(BIRD_PANE_ZINDEX);
+            bPane.style.pointerEvents = 'none';
+        }
+        this.map.getPane(birdPaneName)!.appendChild(this.birdCanvas);
     }
 
     private resize(): void {
         const size = this.map.getSize();
         this.canvas.width = size.x;
         this.canvas.height = size.y;
+        this.birdCanvas.width = size.x;
+        this.birdCanvas.height = size.y;
     }
 
     private syncCanvas(): void {
         const topLeft = this.map.containerPointToLayerPoint([0, 0]);
         L.DomUtil.setPosition(this.canvas, topLeft);
+        L.DomUtil.setPosition(this.birdCanvas, topLeft);
     }
 
     public start(): void {
@@ -207,7 +230,9 @@ export class AnimalAmbientLayer {
     private birdsVisible = true;
 
     public setVisible(visible: boolean): void {
-        this.canvas.style.display = visible ? 'block' : 'none';
+        const display = visible ? 'block' : 'none';
+        this.canvas.style.display = display;
+        this.birdCanvas.style.display = display;
     }
 
     public setLandVisible(visible: boolean): void {
@@ -485,6 +510,7 @@ export class AnimalAmbientLayer {
         if (this.isHiddenNow()) {
             if (!this.clearedWhileHidden) {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.birdCtx.clearRect(0, 0, this.birdCanvas.width, this.birdCanvas.height);
                 this.clearedWhileHidden = true;
             }
             requestAnimationFrame(this.tick.bind(this));
@@ -524,6 +550,8 @@ export class AnimalAmbientLayer {
     private draw(): void {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const birdCtx = this.birdCtx;
+        birdCtx.clearRect(0, 0, this.birdCanvas.width, this.birdCanvas.height);
 
         const zoom = this.map.getZoom();
         const scale = Math.pow(2, zoom - 9) * SCALE_BASE;
@@ -551,7 +579,7 @@ export class AnimalAmbientLayer {
             ctx.restore();
         }
 
-        // 2. 绘制 DE 巡航飞鸟（跨屏直线长途巡游 + fly 振翅 ⇄ hover 滑翔交替 + 渐显/渐隐）
+        // 2. 绘制 DE 巡航飞鸟（跨屏直线长途巡游 + fly 振翅 ⇄ hover 滑翔交替 + 渐显/渐隐，高空 birdCtx 绘制在建筑上层）
         for (const b of this.birds) {
             if (b.alpha <= 0) continue;
             const act = b.hovering ? 'hover' : 'fly';
@@ -559,7 +587,7 @@ export class AnimalAmbientLayer {
             if (!asset) continue;
 
             const pt = this.map.latLngToContainerPoint([b.lat, b.lng]);
-            if (pt.x < -m || pt.x > this.canvas.width + m || pt.y < -m || pt.y > this.canvas.height + m) continue;
+            if (pt.x < -m || pt.x > this.birdCanvas.width + m || pt.y < -m || pt.y > this.birdCanvas.height + m) continue;
 
             const targetPt = this.map.latLngToContainerPoint([b.targetLat, b.targetLng]);
             const curDx = targetPt.x - pt.x;
@@ -575,10 +603,10 @@ export class AnimalAmbientLayer {
             const fw = box.fw, fh = box.fh, hx = box.hx, hy = box.hy;
             const dx = pt.x - hx * scale;
             const dy = pt.y - hy * scale;
-            ctx.save();
-            ctx.globalAlpha = Math.max(0, Math.min(1, b.alpha));
-            ctx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
-            ctx.restore();
+            birdCtx.save();
+            birdCtx.globalAlpha = Math.max(0, Math.min(1, b.alpha));
+            birdCtx.drawImage(sheet, frame * fw, 0, fw, fh, dx, dy, fw * scale, fh * scale);
+            birdCtx.restore();
         }
     }
 }
