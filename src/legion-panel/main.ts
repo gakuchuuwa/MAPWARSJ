@@ -6,7 +6,7 @@
  * 挂在「军团方阵」页里的全屏面板（不另开页）。**只干一件事**：改军团自己的编制。
  *   · 直接列出全部三层军团，点一支就改它的三排兵种 + 阵型，不用先去找势力
  *   · 保存走 `/api/save-legion-composition`：**只写这一支军团那一条记录**
- *   · 删除走 `/api/delete-legion`：一级 16 母体与二级 59 文明禁止删，只能删三级
+ *   · 删除走 `/api/delete-legion`：一级 16 母体与二级 62 文明禁止删，只能删三级
  *   · **绝不碰势力归属**（`FactionCompositions.ts` 一个字都不动）
  */
 import { FACTIONS } from '../data/factions';
@@ -95,6 +95,34 @@ const STYLE_LABELS: Record<string, string> = {
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;
 const cityMap = new Map(CITIES_V2.map(c => [c.id, c]));
+
+/**
+ * 建筑文化（buildingStyle）下拉项 —— 只有两级，标签口径与左表「建筑风格」列一致（STYLE_LABELS）。
+ *   ① 文明建筑文化：level2Civ59Legions 里那 62 个文明的建筑文化（实测 2026-10-16：62 条 / 去重 62）
+ *   ② 其它建筑文化：不属于上面 62 个的（古典希腊 / 青藏 / 西域 / 漠南鲜卑 等，实测 4 个）
+ *   —— 合计 62 + 4 = 66。**没有「一级 16 母体」这一组**：母体只是素材底座，不是建筑文化。
+ * 两个组的数量都是**现算的**，不写死，数据增删后标签自动跟着变。
+ */
+function styleSelectHtml(current: string): string {
+    const civStyles: string[] = [...new Set<string>(LEVEL_2_CIV_59_LEGIONS.map(l => l.buildingStyle as string))];
+    const civSet = new Set(civStyles);
+    const otherStyles = Object.keys(STYLE_LABELS).filter(id => !civSet.has(id));
+    const labelOf = (id: string): string => STYLE_LABELS[id] ?? id;
+    const group = (label: string, ids: string[]): string => {
+        const items = ids
+            .filter((id, i) => id && ids.indexOf(id) === i)
+            .map(id => `<option value="${esc(id)}" ${id === current ? 'selected' : ''}>${esc(`${labelOf(id)}（${id}）`)}</option>`);
+        return items.length ? `<optgroup label="${esc(label)}">${items.join('')}</optgroup>` : '';
+    };
+    const known = new Set([...civStyles, ...otherStyles]);
+    // 兜底：库里出现了没登记进 STYLE_LABELS 的风格时，也要能选中当前值
+    const orphan = current && !known.has(current)
+        ? `<option value="${esc(current)}" selected>${esc(current)}（未登记）</option>`
+        : '';
+    return orphan
+        + group(`文明建筑文化（${civStyles.length}）`, civStyles)
+        + group(`其它建筑文化（${otherStyles.length}）`, otherStyles);
+}
 
 function countUsers(): Map<string, number> {
     const m = new Map<string, number>();
@@ -500,8 +528,21 @@ function render(): void {
           <div style="font-size:16px;color:#f6e05e;">${esc(sel.name)}</div>
           <div style="font-size:12px;color:#8a8378;margin:4px 0 14px;">
             ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
-            ${sel.buildingStyle ? ` · 建筑风格：<b style="color:#e8d8b0;">${esc(STYLE_LABELS[sel.buildingStyle] ?? sel.buildingStyle)}</b> <span style="color:#8a8378;">(${esc(sel.buildingStyle)})</span>` : ''}
           </div>
+
+          ${sel.layer === '二级' || sel.layer === '三级' ? `
+            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">建筑文化 <span style="color:#6a6358;font-size:11px;">（决定该军团跟哪套建筑 / 皮肤风格绑定）</span></div>
+            <div style="display:flex;gap:6px;margin-bottom:14px;">
+              <select id="lp-style" style="flex:1;min-width:0;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:7px 9px;">
+                ${styleSelectHtml(sel.buildingStyle ?? '')}
+              </select>
+              <button id="lp-style-go" title="写入 ${sel.layer}军团表"
+                style="flex:0 0 auto;padding:7px 12px;background:#22303f;border:1px solid #48607a;color:#cfe0f0;border-radius:4px;font-size:13px;cursor:pointer;white-space:nowrap;">💾 保存文化</button>
+            </div>` : `
+            <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
+              建筑文化：${sel.buildingStyle ? `<b style="color:#e8d8b0;">${esc(STYLE_LABELS[sel.buildingStyle] ?? sel.buildingStyle)}</b>（${esc(sel.buildingStyle)}）` : '—'}
+              ${sel.layer === '一级' ? '　·　一级 16 母体的建筑文化由母体本身决定，不可改。' : '　·　四级剧本军团没有建筑文化字段。'}
+            </div>`}
 
           ${sel.layer === '一级' || sel.layer === '四级' ? `
             <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
@@ -581,7 +622,7 @@ function render(): void {
               🗑 删除这支军团${sel.users ? `（${sel.users} 家势力会回落到文化区军团）` : ''}
             </button>` : `
             <div style="font-size:11px;color:#6a6358;margin-top:18px;line-height:1.7;">
-              ${sel.layer === '四级' ? '四级剧本军团不可删除（被战场事件引用）。' : `${sel.layer}军团不可删除（一级 16 母体是底座，二级 59 文明是定数）。`}
+              ${sel.layer === '四级' ? '四级剧本军团不可删除（被战场事件引用）。' : `${sel.layer}军团不可删除（一级 16 母体是底座，二级 62 文明是定数）。`}
             </div>`}
           <div style="font-size:11px;color:#6a6358;margin-top:14px;line-height:1.7;">
             保存只写这一支军团那一条记录，<b>不碰势力归属</b>。<br>
@@ -678,6 +719,37 @@ function render(): void {
     document.getElementById('lp-reset')?.addEventListener('click', () => { draft = null; render(); });
     document.getElementById('lp-save')?.addEventListener('click', () => { void save(); });
     document.getElementById('lp-delete')?.addEventListener('click', () => { void remove(); });
+    document.getElementById('lp-style-go')?.addEventListener('click', () => { void saveBuildingStyle(); });
+}
+
+/**
+ * 保存「建筑文化」——写进这支军团自己那条记录（二级 → level2Civ59Legions.ts，三级 → level3CustomLegions.ts）。
+ * 建筑文化是军团的属性，不是编制的属性：改完所有使用它的势力自动跟着变，不需要再同步别处。
+ */
+async function saveBuildingStyle(): Promise<void> {
+    const sel = currentRow();
+    const box = document.getElementById('lp-style') as HTMLSelectElement | null;
+    if (!sel || !box) return;
+    const next = box.value;
+    if (!next || next === (sel.buildingStyle ?? '')) {
+        toast('建筑文化没有变化');
+        return;
+    }
+    try {
+        const res = await fetch('/api/save-legion-building-style', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ legionName: sel.name, layer: sel.layer, buildingStyle: next }),
+        });
+        const json = await res.json();
+        if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        const row = rows.find(r => r.name === sel.name && r.layer === sel.layer);
+        if (row) row.buildingStyle = next;
+        render();
+        toast(`✅ 【${sel.name}】建筑文化 → ${STYLE_LABELS[next] ?? next}（${next}）`);
+    } catch (e) {
+        toast('❌ 建筑文化保存失败：' + ((e as Error)?.message ?? String(e)), true);
+    }
 }
 
 /**
@@ -723,10 +795,10 @@ async function rename(raw: string): Promise<void> {
 /**
  * 新建军团 —— 🔴 [2026-09-16 主人定「添加一个功能，新建军团。一律属于三级」]
  *
- * 一级 16 母体与二级 59 文明是定数，只能改不能增，所以新建的**一律落三级表**。
+ * 一级 16 母体与二级 62 文明是定数，只能改不能增，所以新建的**一律落三级表**。
  * 弹窗要填三样：
  *   · 军团名：命名法「时代 + 民族 + 军团」（如「城堡时代宋禁军团」），三层里不许重名
- *   · 归属军团 parentLegion：一级 16 或二级 59 里的一支（三级表这个字段是必填）
+ *   · 归属军团 parentLegion：一级 16 或二级 62 里的一支（三级表这个字段是必填）
  *   · 阵型：七阵型之一，三排人数总和恒为 9
  * 三排兵种先照抄归属军团的，战船 shipId 也跟归属军团走 —— 新建出来就是一支能用的军团，
  * 主人再点进去逐排改。绝不留空位：空兵种在渲染层会掉回默认集。
@@ -776,13 +848,13 @@ function openCreateDialog(): void {
         box.innerHTML = `
           <div style="font-size:16px;color:#f6e05e;margin-bottom:4px;">新建军团</div>
           <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
-            新建的军团一律是<b>三级</b>（一级 16 母体与二级 59 文明是定数，只能改不能增）。<br>
+            新建的军团一律是<b>三级</b>（一级 16 母体与二级 62 文明是定数，只能改不能增）。<br>
             命名法：时代 + 民族 + 军团，例「城堡时代宋禁军团」。
           </div>
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
           <input id="lp-c-name" maxlength="24" placeholder="如：城堡时代宋禁军团" value="${esc(name)}"
             style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
-          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">归属军团（一级 16 / 二级 59）</div>
+          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">归属军团（一级 16 / 二级 62）</div>
           <select id="lp-c-parent" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
             ${parents.map(p => `<option value="${esc(p.name)}" ${p.name === parentName ? 'selected' : ''}>${p.layer}　${esc(p.name)}</option>`).join('')}
           </select>
@@ -924,7 +996,7 @@ async function createLegion(
         rows = buildRows();
         render();
         /* 🔴 [2026-09-18 主人报障「新建的军团不在第一页显示」]
-         * buildRows 的顺序是 一级(16) → 二级(59) → 三级 → runtimeCreated（本次新建的追加在**最末尾**），
+         * buildRows 的顺序是 一级(16) → 二级(62) → 三级 → runtimeCreated（本次新建的追加在**最末尾**），
          * 所以刚建好的军团排在 198 支的最后一个，第一屏根本看不到 —— 它确实被 selected 高亮了，
          * 但列表不会自己滚过去，看上去就像「没建出来」。
          * 这里把它滚进视口，不动排序（排序由数据结构决定，刷新后它会归到三级那一组里）。 */

@@ -44,8 +44,14 @@ for (const [id, v] of Object.entries(en)) {
 const zhOf = (nameEn) => zhByName.get(norm(nameEn)) || null;
 
 /** 兵种表收录情况（按英文名 token 或 wiki 名匹配） */
+// wiki 名 → 项目兵种表 id 的别名（同一个 DE 单位在两个体系里叫法不同）
+const CATALOG_ALIAS = {
+    'mercenarypeltast': 'thracian_peltast',   // wiki「Mercenary Peltast」= DE dat 内部名 "Thracian Peltast"（兵种表：色雷斯标枪手）
+    'lysandersraider': 'lysander_raider',     // 撇号导致规范化后多一个 s
+};
 const catalogOf = (nameEn) => {
     const k = norm(nameEn);
+    if (CATALOG_ALIAS[k] && catByKey.has(norm(CATALOG_ALIAS[k]))) return catByKey.get(norm(CATALOG_ALIAS[k]));
     if (catByKey.has(k)) return catByKey.get(k);
     // "Heavy Pikeman (Age of Empires II)" → heavy_pikeman
     for (const [key, c] of catByKey) if (key === k.replace(/ageofempiresii$/, '')) return c;

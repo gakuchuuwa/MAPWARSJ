@@ -14,10 +14,14 @@
 export interface NameTables {
     /** custom-names.json：改名覆盖表（键 = 图鉴 id / 规范化英文名 / 节点 id） */
     custom: Record<string, string>;
-    /** legion-names.json byNorm：规范化 DE 英文名 → 图鉴 id（最可靠，优先） */
+    /** legion-names.json byNorm：规范化 DE 英文名 → 图鉴 id */
     byNorm: Record<string, string>;
-    /** legion-names.json byId：科技树节点 id → 图鉴 id（兜底；古典/中世纪会复用节点 id） */
+    /** legion-names.json byId：科技树节点 id → 图鉴 id（兜底） */
     byId: Record<string, string>;
+    /** legion-names.json byAntId：古典文明科技树节点 id → 图鉴 id */
+    byAntId: Record<string, string>;
+    /** legion-names.json byMedId：中世纪特殊节点 id → 图鉴 id */
+    byMedId: Record<string, string>;
     /** legion-names.json names：图鉴 id → 图鉴中文名（番号快照） */
     names: Record<string, string>;
     /** legion-names.json 里没能对号入座的（这些节点仍显示 DE 官方中文名） */
@@ -28,7 +32,7 @@ export interface NameTables {
 
 export const normEn = (s: string | null | undefined): string => String(s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
-const EMPTY: NameTables = { custom: {}, byNorm: {}, byId: {}, names: {}, unmatched: [], stamp: '' };
+const EMPTY: NameTables = { custom: {}, byNorm: {}, byId: {}, byAntId: {}, byMedId: {}, names: {}, unmatched: [], stamp: '' };
 
 let current: NameTables = EMPTY;
 let loading: Promise<NameTables> | null = null;
@@ -40,7 +44,7 @@ async function fetchJson(url: string, noStore: boolean): Promise<any> {
     return await r.json();
 }
 
-/** 读取名称表；force=true 时强制绕过浏览器缓存（改名后必须用）。 */
+/** 读取名称表；总是使用 no-store 避免浏览器缓存旧的改名表。 */
 export async function loadNameTables(force = false): Promise<NameTables> {
     if (!force && current.stamp) return current;
     if (loading && !force) return loading;
@@ -48,15 +52,17 @@ export async function loadNameTables(force = false): Promise<NameTables> {
         try {
             const [custom, legion] = await Promise.all([
                 fetchJson('/de-techtree/custom-names.json', true).catch(() => ({})),
-                fetchJson('/de-techtree/legion-names.json', force).catch(() => ({})),
+                fetchJson('/de-techtree/legion-names.json', true).catch(() => ({})),
             ]);
             const next: NameTables = {
                 custom: custom || {},
                 byNorm: legion?.byNorm || {},
                 byId: legion?.byId || {},
+                byAntId: legion?.byAntId || {},
+                byMedId: legion?.byMedId || {},
                 names: legion?.names || {},
                 unmatched: legion?.unmatched || [],
-                stamp: `${Object.keys(custom || {}).length}:${Object.keys(legion?.byNorm || {}).length}:${Object.keys(legion?.byId || {}).length}:${JSON.stringify(custom || {}).length}`,
+                stamp: `${JSON.stringify(custom || {})}|${JSON.stringify(legion?.names || {})}`,
             };
             current = next;
             return next;
@@ -81,38 +87,86 @@ export function resetNameTables(): void {
 }
 
 /**
- * 解析一个兵种该显示的名字，优先级：
- *   ① 图鉴 id 改名覆盖（custom-names）
- *   ② DE 英文名对号 → 图鉴 id → 改名覆盖 / 番号快照（最可靠）
- *   ③ 节点 id 对号 → 图鉴 id → 改名覆盖 / 番号快照（兜底，节点 id 会被古典/中世纪复用）
- *   ④ 原始名（custom 按节点 id / 英文名的老式覆盖也兼容）
+ * 解析一个科技树/非科技树单位对应的兵种鉴赏 ID（DE_UNITS_CATALOG id）。
+ * 返回空串表示不在兵种鉴赏中（例如村民、渔船、贸易车、僧侣、巨型投石机等）。
  */
-export function resolveUnitName(
-    opts: { catalogId?: string | null; nodeId?: number | string | null; enName?: string | null; fallback?: string | null },
+export function resolveUnitCatalogId(
+    opts: { catalogId?: string | null; nodeId?: number | string | null; enName?: string | null; isAntiquity?: boolean },
     tables: NameTables = current,
 ): string {
-    const { custom, byNorm, byId, names } = tables;
-    const iNorm = normEn(opts.enName);
-    const explicitCat = opts.catalogId ? String(opts.catalogId) : '';
+    if (opts.catalogId) return String(opts.catalogId);
+    const { byNorm, byId, byAntId, byMedId } = tables;
     const nid = opts.nodeId == null || opts.nodeId === '' ? '' : String(opts.nodeId);
+    const iNorm = normEn(opts.enName);
+    if (opts.isAntiquity && nid && byAntId[nid]) {
+        return byAntId[nid];
+    }
+    if (!opts.isAntiquity && nid && byMedId[nid]) {
+        return byMedId[nid];
+    }
+    return (iNorm && byNorm[iNorm]) || (nid && byId[nid]) || '';
+}
 
-    // ① 调用方直接给了图鉴 id（非科技树兵种视图）
-    const direct = explicitCat && (custom[explicitCat] || custom[normEn(explicitCat)] || names[explicitCat]);
-    // ② / ③ 科技树节点：先按英文名对号，再按节点 id 对号
-    const cid = (iNorm && byNorm[iNorm]) || (nid && byId[nid]) || '';
-    const viaCid = cid && (custom[cid] || custom[normEn(cid)] || names[cid]);
-    // ④ 老式覆盖（键 = 节点 id 或规范化英文名）
-    const legacy = (nid && custom[nid]) || (iNorm && custom[iNorm]) || '';
+/**
+ * 解析一个兵种该显示的名字，优先级：
+ *   ① 解析出精确图鉴 id（catalogId）→ names[cid] 或 custom[cid]（与兵种鉴赏 100% 同一事实来源）
+ *   ② 老式覆盖（custom 按节点 id / 英文名）
+ *   ③ 原始名 fallback（未收录进兵种鉴赏的非战斗单位）
+ */
+export function resolveUnitName(
+    opts: { catalogId?: string | null; nodeId?: number | string | null; enName?: string | null; fallback?: string | null; isAntiquity?: boolean },
+    tables: NameTables = current,
+): string {
+    const { custom, names } = tables;
+    const iNorm = normEn(opts.enName);
+    const nid = opts.nodeId == null || opts.nodeId === '' ? '' : String(opts.nodeId);
+    const cid = resolveUnitCatalogId(opts, tables);
 
-    const base = direct || viaCid || legacy || opts.fallback || opts.enName || '';
+    // 优先取 custom[cid]（实时改名覆盖）或 names[cid]（main.ts 快照）
+    const viaCid = cid && (custom[cid] || names[cid] || custom[normEn(cid)]);
+    const legacy = (!cid && ((nid && custom[nid]) || (iNorm && custom[iNorm]))) || '';
+
+    const base = viaCid || legacy || opts.fallback || opts.enName || '';
     return String(base).replace(/[\r\n]+/g, '').trim();
 }
 
-/** 重新拉取名称表；有变化时通知订阅者。 */
+/**
+ * 从 de-wiki 端发起兵种改名：调用 /api/rename-unit 落盘（同步写 main.ts + WarTypes.ts + custom-names.json + legion-names.json），
+ * 广播给 legion-editor.html 等同源标签页，并刷新本页名称表。
+ */
+export async function postUnitRename(unitId: string, newName: string): Promise<{ ok: boolean; error?: string }> {
+    const trimmed = newName.trim();
+    if (!unitId || !trimmed) return { ok: false, error: '兵种 ID 或名称不能为空' };
+    try {
+        const res = await fetch('/api/rename-unit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ unitId, newName: trimmed }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+            return { ok: false, error: data.error || res.statusText };
+        }
+        try {
+            localStorage.setItem('de-wiki-unit-rename', JSON.stringify({ unitId, newName: trimmed, t: Date.now() }));
+            if (typeof BroadcastChannel !== 'undefined') {
+                const bc = new BroadcastChannel('de-wiki-sync');
+                bc.postMessage({ type: 'unit-renamed', unitId, newName: trimmed });
+                bc.close();
+            }
+        } catch { /* ignore */ }
+        await refreshUnitNames(true);
+        return { ok: true };
+    } catch (err: any) {
+        return { ok: false, error: err?.message || String(err) };
+    }
+}
+
+/** 重新拉取名称表；仅当名称表内容真正发生变化（stamp 改变）时才通知订阅者，避免 focus/定时器无故重绘。 */
 export async function refreshUnitNames(force = true): Promise<NameTables> {
     const before = current.stamp;
     const next = await loadNameTables(force);
-    if (force || next.stamp !== before) {
+    if (before && next.stamp !== before) {
         listeners.forEach((fn) => { try { fn(next); } catch { /* 单个订阅者出错不影响其它 */ } });
     }
     return next;

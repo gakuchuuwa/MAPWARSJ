@@ -672,6 +672,17 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'priestess', name: '女祭司', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },
     { id: 'polemarch', name: '军事执政官', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/POLEMARCH/' },
     { id: 'siege_elephant', name: '攻城战象', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/SIEGEELEPHANT/' },
+    // ── 2026-10-16 补 9 个「科技树没有、兵种鉴赏漏收」的 DE 官方单位（暗桩/战役/废弃内容）──
+    //    数据：DE dat（geniusutils 实测）+ 官方 zh 串；素材复用 DE 本体同模型目录（DE 自己也是复用）
+    { id: 'bandit', name: '强盗', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/MILITIA/' },
+    { id: 'heavy_crossbowman', name: '重装弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
+    { id: 'heavy_swordsman', name: '重装剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
+    { id: 'imperial_legionary', name: '帝国罗马军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
+    { id: 'khan', name: '汗', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },
+    { id: 'mounted_samurai', name: '骑马武士', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
+    { id: 'lysander_raider', name: '吕山德的掠夺者', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MERCENARY_HOPLITE/' },
+    { id: 'boarding_galley', name: '接舷战船', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/GALLEY/' },
+    { id: 'outlaw', name: '亡命之徒', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
 ]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
@@ -4518,6 +4529,80 @@ async function doRenameUnit(unitId: string, newName: string): Promise<boolean> {
         showToast(`❌ 改名网络错误: ${err.message}`, true);
         return false;
     }
+}
+
+/** 接收来自 de-wiki.html 等页面的兵种改名事件，实时刷新兵种鉴赏与军团表 */
+function applyRemoteUnitRename(unitId: string, newName: string): void {
+    const trimmed = (newName || '').trim();
+    if (!unitId || !trimmed) return;
+    const u = DE_UNITS_MAP.get(unitId);
+    if (!u || u.name === trimmed) return;
+    u.name = trimmed;
+    const catalogItem = DE_UNITS_CATALOG.find(x => x.id === unitId);
+    if (catalogItem) catalogItem.name = trimmed;
+    if (WAR_TYPES[unitId]) WAR_TYPES[unitId].name = trimmed;
+    applyCatalogFilter();
+    renderCatalogTable();
+    if (selectedUnitId === unitId && mainView === 'units') {
+        renderUnitPanel(unitId);
+    }
+    buildRows();
+    applyFilter();
+    renderTable();
+}
+
+async function syncUnitNamesFromServer(): Promise<void> {
+    try {
+        const res = await fetch(`/de-techtree/legion-names.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const names: Record<string, string> = data?.names || {};
+        let changed = false;
+        let changedSelected = false;
+        for (const [uid, name] of Object.entries(names)) {
+            const u = DE_UNITS_MAP.get(uid);
+            if (u && name && u.name !== name) {
+                u.name = name;
+                const cat = DE_UNITS_CATALOG.find(x => x.id === uid);
+                if (cat) cat.name = name;
+                if (WAR_TYPES[uid]) WAR_TYPES[uid].name = name;
+                changed = true;
+                if (selectedUnitId === uid) changedSelected = true;
+            }
+        }
+        if (changed) {
+            applyCatalogFilter();
+            renderCatalogTable();
+            if (changedSelected && selectedUnitId && mainView === 'units') {
+                renderUnitPanel(selectedUnitId);
+            }
+            buildRows();
+            applyFilter();
+            renderTable();
+        }
+    } catch { /* ignore */ }
+}
+
+if (typeof window !== 'undefined') {
+    try {
+        if (typeof BroadcastChannel !== 'undefined') {
+            const bc = new BroadcastChannel('de-wiki-sync');
+            bc.onmessage = (ev) => {
+                if (ev?.data?.type === 'unit-renamed' && ev.data.unitId && ev.data.newName) {
+                    applyRemoteUnitRename(String(ev.data.unitId), String(ev.data.newName));
+                }
+            };
+        }
+    } catch { /* ignore */ }
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'de-wiki-unit-rename' && e.newValue) {
+            try {
+                const d = JSON.parse(e.newValue);
+                if (d?.unitId && d?.newName) applyRemoteUnitRename(String(d.unitId), String(d.newName));
+            } catch { /* ignore */ }
+        }
+    });
+    window.addEventListener('focus', () => { void syncUnitNamesFromServer(); });
 }
 
 /**

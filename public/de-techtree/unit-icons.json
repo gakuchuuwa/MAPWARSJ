@@ -450,5 +450,14 @@
   "hero_dionysus": "/de-techtree/icons/Unit/632.png",
   "hero_dreki": "/de-techtree/icons/Unit/595.png",
   "hero_stoertebeker": "/de-techtree/icons/Unit/88.png",
-  "hero_aeginetan": "/de-techtree/icons/Unit/632.png"
+  "hero_aeginetan": "/de-techtree/icons/Unit/632.png",
+  "bandit": "/de-techtree/icons/Unit/8.png",
+  "heavy_crossbowman": "/de-techtree/icons/Unit/133.png",
+  "heavy_swordsman": "/de-techtree/icons/Unit/184.png",
+  "imperial_legionary": "/de-techtree/icons/Unit/139.png",
+  "khan": "/de-techtree/icons/Unit/258.png",
+  "mounted_samurai": "/de-techtree/icons/Unit/103.png",
+  "lysander_raider": "/de-techtree/icons/Unit/691.png",
+  "boarding_galley": "/de-techtree/icons/Unit/82.png",
+  "outlaw": "/de-techtree/icons/Unit/17.png"
 }

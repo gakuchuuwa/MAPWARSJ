@@ -1,6 +1,7 @@
 /**
- * 🔴 [2026-09-14 主人定] 二级：59 个文明专属军团（严格按四时代划分与 59 文明专属城堡对应）
- * 古典时代 13 支 + 封建时代 13 支 + 城堡时代 29 支 + 帝国时代 4 支 = 59 支
+ * 🔴 [2026-09-14 主人定 / 2026-10-16 校正计数] 二级：**62** 个文明专属军团（与 62 文明专属城堡对应）
+ * 实测（本表逐条统计，2026-10-16）：古典时代 13 支 + 封建时代 15 支 + 城堡时代 30 支 + 帝国时代 4 支 = **62** 支
+ * ⚠️ 文件/常量名里的 "59" 是旧计数，**以本表实际条目为准（62）**；库里但凡写「二级 59」都是过期数字。
  * 军团兵种编制铁律：严格对齐史实特色兵种与精锐/高级档，总数=9
  */
 import type { RegionType } from '../systems/RegionSystem';
@@ -120,7 +121,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_ARTEMISIA',
         slots: [
             { type: 'war_chariot', count: 2 },
-            { type: 'sparabara', count: 4 },
+            { type: 'immortal', count: 4 },
             { type: 'elite_immortal_ranged', count: 3 },
         ],
     },

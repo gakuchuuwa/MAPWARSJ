@@ -1714,6 +1714,94 @@ export default defineConfig({
                 });
 
                 // ========================================================
+                // 军团「建筑文化」保存 /api/save-legion-building-style
+                //   body: { legionName, layer: '二级' | '三级', buildingStyle }
+                //   建筑文化是军团自己的属性（不是编制）：写进它那条记录即可，
+                //   所有使用该军团的势力/文化区自动跟着变，不需要三处同步。
+                //   二级 → src/data/level2Civ59Legions.ts；三级 → src/data/level3CustomLegions.ts
+                //   一级 16 母体的风格由母体决定、四级剧本军团无此字段 —— 一律拒绝并说明原因。
+                //   自检：军团名必须**恰好出现一次**，其后能取到 buildingStyle，且花括号平衡，否则整个不写。
+                // ========================================================
+                server.middlewares.use('/api/save-legion-building-style', (req, res) => {
+                    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                    if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ ok: false, error: '仅支持 POST' })); return; }
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
+                    req.on('end', () => {
+                        try {
+                            const { legionName, layer, buildingStyle } = JSON.parse(Buffer.concat(chunks).toString('utf-8') || '{}');
+                            const name = String(legionName ?? '').trim();
+                            const style = String(buildingStyle ?? '').trim();
+                            if (!name || !style) {
+                                res.statusCode = 400;
+                                res.end(JSON.stringify({ ok: false, error: '缺少 legionName 或 buildingStyle' }));
+                                return;
+                            }
+                            if (!/^[A-Z0-9_]{2,32}$/.test(style)) {
+                                res.statusCode = 400;
+                                res.end(JSON.stringify({ ok: false, error: `建筑文化 id 非法：${style}` }));
+                                return;
+                            }
+                            const file = layer === '三级'
+                                ? path.resolve(__dirname, 'src/data/level3CustomLegions.ts')
+                                : layer === '二级'
+                                    ? path.resolve(__dirname, 'src/data/level2Civ59Legions.ts')
+                                    : '';
+                            if (!file) {
+                                res.statusCode = 400;
+                                res.end(JSON.stringify({ ok: false, error: `${layer} 军团没有建筑文化字段（一级 16 母体由母体决定、四级剧本军团无此字段）` }));
+                                return;
+                            }
+                            if (!fs.existsSync(file)) {
+                                res.statusCode = 500;
+                                res.end(JSON.stringify({ ok: false, error: '找不到军团表文件' }));
+                                return;
+                            }
+                            const text = fs.readFileSync(file, 'utf-8');
+                            const escName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const nameRe = new RegExp(`name:\\s*['"]${escName}['"]`, 'g');
+                            const hits = text.match(nameRe) ?? [];
+                            if (hits.length === 0) {
+                                res.statusCode = 404;
+                                res.end(JSON.stringify({ ok: false, error: `${layer}军团表里找不到【${name}】` }));
+                                return;
+                            }
+                            if (hits.length > 1) {
+                                res.statusCode = 409;
+                                res.end(JSON.stringify({ ok: false, error: `${layer}军团表里【${name}】有 ${hits.length} 条同名记录，拒绝改（先消重）` }));
+                                return;
+                            }
+                            const at = text.search(nameRe);
+                            const rest = text.slice(at);
+                            const styleRe = /buildingStyle:\s*'([A-Z0-9_]+)'/;
+                            const sm = styleRe.exec(rest);
+                            if (!sm) {
+                                res.statusCode = 404;
+                                res.end(JSON.stringify({ ok: false, error: `【${name}】这条记录没有 buildingStyle 字段` }));
+                                return;
+                            }
+                            const oldStyle = sm[1];
+                            if (oldStyle === style) {
+                                res.end(JSON.stringify({ ok: true, unchanged: true, oldStyle, buildingStyle: style }));
+                                return;
+                            }
+                            const cut = at + sm.index;
+                            const next = text.slice(0, cut) + `buildingStyle: '${style}'` + text.slice(cut + sm[0].length);
+                            const bal = (s: string): number => (s.match(/\{/g)?.length ?? 0) - (s.match(/\}/g)?.length ?? 0);
+                            if (bal(next) !== bal(text)) throw new Error('替换后花括号不平衡，已放弃写入');
+                            markLegionSaveWrite();
+                            serverSafeWriteFileSync(file, next);
+                            console.log(`[SaveLegionStyle] ✅ ${layer}【${name}】建筑文化 ${oldStyle} → ${style}`);
+                            res.end(JSON.stringify({ ok: true, file: path.basename(file), oldStyle, buildingStyle: style }));
+                        } catch (err: any) {
+                            console.error('❌ [SaveLegionStyle] Failed:', err);
+                            res.statusCode = 500;
+                            res.end(JSON.stringify({ ok: false, error: err?.message ?? String(err) }));
+                        }
+                    });
+                });
+
+                // ========================================================
                 // 兵种改名 /api/rename-unit
                 // ========================================================
                 const mainTsPath = path.resolve(__dirname, 'src/legion-editor/main.ts');
@@ -1808,7 +1896,6 @@ export default defineConfig({
                                 'cav_archer_heavy': 'heavycavalryarcher',
                                 'light_riders': 'lightcavalry',
                                 'arbalest': 'arbalester',
-                                'heavy_pikeman': 'pikeman',
                                 'hei_kuang': 'heiguangcavalry',
                                 'hei_kuang_heavy': 'heavyheiguangcavalry',
                                 'gastraphetes': 'gastraphetoros',
