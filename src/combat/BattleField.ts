@@ -180,9 +180,8 @@ export class BattleField implements IOpeningPulseSink {
                 army.siegeTargetCityId = null;
                 if (this.siegeCityId) {
                     army.lastDrawCityId = this.siegeCityId;
-                    if (army.expeditionTargetCityId === this.siegeCityId) {
-                        army.expeditionTargetCityId = null;
-                    }
+                    army.needsRetargetAfterDraw = true;
+                    army.expeditionTargetCityId = null;
                 }
                 army.clearExternalCombatState?.();
                 army.setVisible?.(true);

@@ -12,6 +12,7 @@ import {
 } from './deData';
 import { mountDeTechTree, clearDeTechTreeCache, type TechTreeHandle, type DeLng } from './deTechTreeRender';
 import { mountOffTreeView } from './offTreeView';
+import { watchUnitNames } from './unitNameSync';
 
 class DeWikiApp {
     private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'offtree' | 'campaigns' | 'dlcs' = 'de-techtree';
@@ -374,27 +375,13 @@ class DeWikiApp {
             });
         }
 
-        // 兵种鉴赏改名联通广播：收到通知时清空缓存并重绘科技树
-        const onUnitRenamed = () => {
+        // 兵种鉴赏改名联通：统一走 unitNameSync 的订阅（广播 + localStorage + 聚焦 + 轮询兜底）
+        watchUnitNames(() => {
             clearDeTechTreeCache();
             const host = document.getElementById('de-techtree-host');
             if (host) host.dataset.sig = '';
             if (this.currentTab === 'de-techtree') {
                 void this.renderDeTechTreeTab();
-            }
-        };
-
-        if (typeof BroadcastChannel !== 'undefined') {
-            const bc = new BroadcastChannel('de-wiki-sync');
-            bc.onmessage = (ev) => {
-                if (ev?.data?.type === 'unit-renamed') {
-                    onUnitRenamed();
-                }
-            };
-        }
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'de-wiki-unit-rename') {
-                onUnitRenamed();
             }
         });
     }

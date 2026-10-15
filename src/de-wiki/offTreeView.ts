@@ -8,6 +8,8 @@
  * 默认只显示「兵种」（步兵/骑兵/远程/攻城/海军）—— 动物、平民、物件、秘籍玩笑单位默认收起。
  */
 
+import { loadNameTables, getNameTables, resolveUnitName, watchUnitNames, type NameTables } from './unitNameSync';
+
 export type OffTreeBucket = 'combat' | 'hero' | 'animal' | 'civilian' | 'object' | 'joke' | 'other';
 
 export interface OffTreeUnit {
@@ -23,6 +25,7 @@ export interface OffTreeUnit {
     inCatalog: boolean;
     catalogId: string | null;
     catalogName: string | null;
+    localIcon?: string | null;
     iconUrl: string | null;
     spriteUrl: string | null;
     spriteDir?: string;
@@ -50,7 +53,8 @@ const BUCKET_LABEL: Record<string, string> = {
 let cache: OffTreeData | null = null;
 async function loadData(): Promise<OffTreeData> {
     if (cache) return cache;
-    const res = await fetch('/de-techtree/offtree-units.json');
+    // no-store：数据集由 tools/gen-de-offtree-units.mjs 重新生成，避免浏览器拿旧的缓存
+    const res = await fetch('/de-techtree/offtree-units.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('offtree-units.json 读取失败: ' + res.status);
     cache = (await res.json()) as OffTreeData;
     return cache;
@@ -128,6 +132,16 @@ export function mountOffTreeView(host: HTMLElement): void {
 
     const state: ViewState = { scopes: { ...DEFAULT_SCOPES }, cls: 'all', game: 'all', catalog: 'all', q: '' };
     let data: OffTreeData | null = null;
+    let names: NameTables | null = null;
+    let lastModalUnit: OffTreeUnit | null = null;
+
+    /** 显示名：与 legion-editor 兵种鉴赏同一事实来源（改名即时同步） */
+    const display = (u: OffTreeUnit): string => {
+        // 已收录的兵种，默认名直接用兵种鉴赏里的番号（catalogName），改名再由名称表覆盖
+        const fallback = (u.inCatalog && u.catalogName) ? u.catalogName : (u.name_zh || u.name_en);
+        if (!names) return fallback;
+        return resolveUnitName({ catalogId: u.catalogId, enName: u.name_en, fallback }, names) || fallback;
+    };
 
     host.innerHTML = `<div class="de-offtree-wrap">
         <div class="de-offtree-head">
@@ -218,9 +232,31 @@ export function mountOffTreeView(host: HTMLElement): void {
         }));
     };
 
+    /** 缩略图：DE 官方图标 → 本作 SUCAI 贴图 → 兵种类别占位符（error 事件会逐级降级） */
+    const imgChain = (u: OffTreeUnit): string[] =>
+        [u.localIcon, u.spriteUrl, u.iconUrl].filter((x): x is string => !!x);
+
     const thumbHtml = (u: OffTreeUnit) => {
-        if (u.spriteUrl) return `<img src="${esc(u.spriteUrl)}" alt="${esc(u.name_en)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'ph',textContent:'${CLS_ICON[u.cls] ?? '📦'}'}))" />`;
-        return `<span class="ph">${CLS_ICON[u.cls] ?? '📦'}</span>`;
+        const chain = imgChain(u);
+        if (!chain.length) return `<span class="ph">${CLS_ICON[u.cls] ?? '📦'}</span>`;
+        const fallback = chain.length > 1 ? ` data-fallback="${esc(chain.slice(1).join('|'))}"` : '';
+        return `<img src="${esc(chain[0])}" alt="${esc(u.name_en)}" loading="lazy" data-ph="${CLS_ICON[u.cls] ?? '📦'}"${fallback} />`;
+    };
+
+    /** 图片加载失败：先尝试链上的下一个源，全部失败则换成兵种占位符 */
+    const onImgError = (e: Event) => {
+        const img = e.target as HTMLImageElement;
+        if (!(img instanceof HTMLImageElement)) return;
+        const rest = (img.dataset.fallback || '').split('|').filter(Boolean);
+        if (rest.length) {
+            img.dataset.fallback = rest.slice(1).join('|');
+            img.src = rest[0];
+            return;
+        }
+        const span = document.createElement('span');
+        span.className = 'ph';
+        span.textContent = img.dataset.ph || '📦';
+        img.replaceWith(span);
     };
 
     const filtered = (): OffTreeUnit[] => {
@@ -233,7 +269,7 @@ export function mountOffTreeView(host: HTMLElement): void {
             if (state.catalog === 'in' && !u.inCatalog) return false;
             if (state.catalog === 'out' && u.inCatalog) return false;
             if (q) {
-                const hay = `${u.name_zh} ${u.name_en} ${u.catalogId ?? ''} ${u.note}`.toLowerCase();
+                const hay = `${u.name_zh} ${display(u)} ${u.name_en} ${u.catalogId ?? ''} ${u.note}`.toLowerCase();
                 if (!hay.includes(q)) return false;
             }
             return true;
@@ -251,7 +287,7 @@ export function mountOffTreeView(host: HTMLElement): void {
           <div class="de-offtree-card" data-idx="${i}">
             <div class="de-offtree-thumb">${thumbHtml(u)}</div>
             <div style="min-width:0;">
-              <div class="de-offtree-name">${esc(u.name_zh || u.name_en)}</div>
+              <div class="de-offtree-name">${esc(display(u))}</div>
               <div class="de-offtree-en">${esc(u.name_en)}</div>
               <div class="de-offtree-tags">
                 <span class="de-offtree-tag">${CLS_ICON[u.cls] ?? ''} ${CLS_LABEL[u.cls] ?? u.cls}</span>
@@ -270,32 +306,48 @@ export function mountOffTreeView(host: HTMLElement): void {
     };
 
     const openModal = (u: OffTreeUnit) => {
+        lastModalUnit = u;
         $('de-offtree-modal-body').innerHTML = `
-          <h3>${esc(u.name_zh || u.name_en)}</h3>
-          <div style="font-size:12px;color:#8ab4c4;font-family:monospace;">${esc(u.name_en)}</div>
+          <div style="display:flex;gap:14px;align-items:flex-start;">
+            <div class="de-offtree-thumb" style="width:84px;height:84px;flex:0 0 84px;">${thumbHtml(u)}</div>
+            <div style="min-width:0;">
+              <h3>${esc(display(u))}</h3>
+              <div style="font-size:12px;color:#8ab4c4;font-family:monospace;">${esc(u.name_en)}</div>
+            </div>
+          </div>
           <div class="de-offtree-kv">
             <div class="k">分类</div><div class="v">${BUCKET_LABEL[u.bucket] ?? u.bucket} · ${CLS_LABEL[u.cls] ?? u.cls}</div>
             <div class="k">出处</div><div class="v">${u.game === 'chronicles' ? 'Chronicles（Battle for Greece / Alexander the Great）' : 'AoE2 本体及 DLC'} · ${esc(u.kind)}</div>
             <div class="k">科技树</div><div class="v">❌ 不在任何文明科技树中${u.gaia ? '（Gaia 专属）' : ''}</div>
             <div class="k">本作兵种表</div><div class="v">${u.inCatalog ? `✅ 已收录：<b>${esc(u.catalogName ?? '')}</b>（id: ${esc(u.catalogId ?? '')}）` : '❌ 未收录'}</div>
-            <div class="k">贴图素材</div><div class="v">${u.spriteUrl ? `✅ ${esc(u.spriteDir ?? u.spriteUrl)}` : '—（未提取）'}</div>
+            <div class="k">本作贴图</div><div class="v">${u.spriteDir ? `✅ ${esc(u.spriteDir)}` : '—（未提取）'}</div>
+            <div class="k">图标来源</div><div class="v">${esc(u.localIcon || u.iconUrl || '—')}</div>
             <div class="k">备注</div><div class="v">${esc(u.note || '—')}</div>
             <div class="k">Wiki</div><div class="v">${u.wikiUrl ? `<a href="${esc(u.wikiUrl)}" target="_blank" rel="noopener">${esc(u.wikiUrl)}</a>` : '—'}</div>
           </div>`;
         $('de-offtree-modal').classList.add('open');
     };
 
-    $('de-offtree-modal-close').addEventListener('click', () => $('de-offtree-modal').classList.remove('open'));
-    $('de-offtree-modal').addEventListener('click', (e) => { if (e.target === $('de-offtree-modal')) $('de-offtree-modal').classList.remove('open'); });
+    $('de-offtree-modal-close').addEventListener('click', () => { $('de-offtree-modal').classList.remove('open'); lastModalUnit = null; });
+    $('de-offtree-modal').addEventListener('click', (e) => { if (e.target === $('de-offtree-modal')) { $('de-offtree-modal').classList.remove('open'); lastModalUnit = null; } });
     $('de-offtree-search').addEventListener('input', (e) => { state.q = (e.target as HTMLInputElement).value; renderGrid(); });
+    // 图片降级：捕获阶段监听 error（error 不冒泡）
+    $('de-offtree-grid').addEventListener('error', onImgError, true);
+    $('de-offtree-modal-body').addEventListener('error', onImgError, true);
 
     void (async () => {
         try {
-            data = await loadData();
+            [data, names] = await Promise.all([loadData(), loadNameTables()]);
         } catch (err) {
             $('de-offtree-grid').innerHTML = `<div class="de-offtree-empty">数据加载失败：${esc(String(err))}</div>`;
             return;
         }
+        // 改名即时同步：科技树/图鉴任意一处改名，这里立刻换名
+        watchUnitNames(() => {
+            names = getNameTables();
+            renderGrid();
+            if (lastModalUnit) openModal(lastModalUnit);
+        });
         renderPills();
         renderScopes();
         renderStaticChips();

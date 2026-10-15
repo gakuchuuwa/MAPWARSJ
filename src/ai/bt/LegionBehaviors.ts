@@ -396,11 +396,28 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     if (expedition === 'done') return false;
 
     const myFaction = ctx.army.getFactionId();
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
+    if ((ctx.army as any).needsRetargetAfterDraw) {
+        (ctx.army as any).needsRetargetAfterDraw = false;
+        if (lastDrawCityId) {
+            markTargetCooldown(ctx, lastDrawCityId, 'siege_draw_retarget');
+        }
+        const prevStrategicId = getStrategicTargetId(ctx);
+        if (prevStrategicId && prevStrategicId !== lastDrawCityId) {
+            markTargetCooldown(ctx, prevStrategicId, 'siege_draw_retarget');
+        }
+        ctx.army.lastLostTargetCityId = undefined;
+        clearStrategicTarget(ctx);
+        ctx.army.setTargetCity(null);
+        ctx.army.stopMovement?.();
+        return false;
+    }
+
     if (!shouldSkipHomeRecapture(ctx.army)) {
         const originCityId = getArmyOriginCityId(ctx.army) ?? '';
         const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
 
-        if (recaptureId) {
+        if (recaptureId && recaptureId !== lastDrawCityId) {
             const strategicId = getStrategicTargetId(ctx);
             const huntId = getStrategicTargetArmyId(ctx);
             if (strategicId !== recaptureId || huntId) {
@@ -432,10 +449,9 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
     const strategicId = getStrategicTargetId(ctx);
     if (!strategicId) return false;
 
-    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
     if (lastDrawCityId && strategicId === lastDrawCityId) {
         markTargetCooldown(ctx, strategicId, 'siege_draw_retarget');
-        ctx.army.lastLostTargetCityId = strategicId;
+        ctx.army.lastLostTargetCityId = undefined;
         clearStrategicTarget(ctx);
         ctx.army.setTargetCity(null);
         ctx.army.stopMovement?.();
@@ -535,6 +551,8 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
     }
     const target = resolveSiegeCity(ctx);
     if (!target || target.factionId === ctx.army.getFactionId()) return false;
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
+    if (lastDrawCityId && target.id === lastDrawCityId) return false;
     const armyPos = ctx.army.getPosition();
     const dist = getEuclideanDistance(armyPos, { lat: target.latitude, lng: target.longitude });
     return dist <= SIEGE_REACH_RADIUS;
@@ -557,6 +575,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
 
     const myFaction = ctx.army.getFactionId();
     const excludeTargetIds = buildExcludeTargetIds(ctx);
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
 
     const originCityId = getArmyOriginCityId(ctx.army);
     if (!originCityId) {
@@ -566,7 +585,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
 
     if (!shouldSkipHomeRecapture(ctx.army)) {
         const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
-        if (recaptureId) {
+        if (recaptureId && recaptureId !== lastDrawCityId && !excludeTargetIds.has(recaptureId)) {
             const recaptureCity = ctx.cityManager.getCity(recaptureId);
             if (!recaptureCity) {
                 return BTStatus.FAILURE;
@@ -646,7 +665,8 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
         ctx.cityManager.getCities(),
         {
             excludeTargetIds,
-            armyStandCityId: standCityId ?? undefined,
+            armyStandCityId: standCityId && standCityId !== lastDrawCityId ? standCityId : undefined,
+            avoidThroughCityId: lastDrawCityId,
             myTroops: ctx.army.getTroops(),   // 启用「打不打得过」闸门
             preferNearCityId: ctx.army.lastLostTargetCityId,   // 规则 3.6：继承原方向
         }
@@ -732,8 +752,14 @@ export const MoveToTarget = new Action('MoveToTarget', (ctx) => {
     const strategicId = getStrategicTargetId(ctx);
     if (!strategicId) return BTStatus.FAILURE;
 
+    const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
     const strategicCity = ctx.cityManager.getCity(strategicId);
-    if (strategicCity && strategicCity.factionId !== ctx.army.getFactionId() && ctx.army.isIdle()) {
+    if (
+        strategicCity &&
+        strategicCity.id !== lastDrawCityId &&
+        strategicCity.factionId !== ctx.army.getFactionId() &&
+        ctx.army.isIdle()
+    ) {
         const dist = getEuclideanDistance(ctx.army.getPosition(), {
             lat: strategicCity.latitude,
             lng: strategicCity.longitude,
@@ -846,6 +872,14 @@ export const TriggerSiege = new Action('TriggerSiege', (ctx) => {
 
     const result = ctx.legionManager.triggerSiege(ctx.army, targetCity);
     ctx.army.setTargetCity(null);
+
+    if (result === 'skipped') {
+        markTargetCooldown(ctx, targetCity.id, 'siege_skipped');
+        if (!isMarchHop) {
+            clearStrategicTarget(ctx);
+        }
+        return BTStatus.FAILURE;
+    }
 
     if (isMarchHop) {
         return BTStatus.SUCCESS;

@@ -223,11 +223,12 @@ const ICON_DIR = 'public/de-techtree/offtree-icons';
 fs.mkdirSync(ICON_DIR, { recursive: true });
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const titleToRow = new Map();
+const ICON_ALIAS = { 'Themistocles (Warship)': 'Themistocles', 'Alexander (Dismounted)': 'Alexander' };
 for (const r of rows) {
     let t = (r.wikiUrl ? decodeURIComponent(r.wikiUrl.split('/wiki/')[1] || '') : r.name_en).replace(/_/g, ' ').split('#')[0].trim();
     if (!t) t = r.name_en;
-    const variants = [t, r.name_en, `${r.name_en} (Age of Empires II)`, `${r.name_en} (Chronicles)`]
-        .map((x) => String(x).split('#')[0].trim())
+    const variants = [t, r.name_en, ICON_ALIAS[r.name_en], `${r.name_en} (Age of Empires II)`, `${r.name_en} (Chronicles)`]
+        .map((x) => String(x || '').split('#')[0].trim())
         .filter(Boolean);
     r._titles = [...new Set(variants)];
     for (const v of r._titles) if (!titleToRow.has(v)) titleToRow.set(v, r);
@@ -245,20 +246,42 @@ for (let i = 0; i < titles.length; i += 40) {
 }
 let iconOk = 0, iconFail = 0, iconCached = 0;
 const noIcon = [];
+// 下载必须带浏览器头部：否则 fandom 的 Cloudflare 会返回「Just a moment…」挑战页（HTML）
+const DL_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
+    'Accept': 'image/avif,image/webp,image/png,image/svg+xml,image/*,*/*;q=0.8',
+    'Referer': 'https://ageofempires.fandom.com/',
+};
+/** 已存在的文件是不是真图片（旧的挑战页 HTML 会被判为无效并重下） */
+const isRealImage = (file) => {
+    if (!fs.existsSync(file)) return false;
+    const b = fs.readFileSync(file).subarray(0, 12);
+    const hex = b.toString('hex');
+    return hex.startsWith('89504e47') || hex.startsWith('ffd8ff') || hex.startsWith('52494646') || hex.startsWith('47494638');
+};
+const EXT_BY_TYPE = (ct) => (ct.includes('png') ? 'png' : ct.includes('webp') ? 'webp' : ct.includes('gif') ? 'gif' : 'jpg');
 for (const row of rows) {
     const title = (row._titles || []).find((t) => imgUrlByTitle[t]);
     const src = title ? imgUrlByTitle[title] : null;
     if (!src) { iconFail++; noIcon.push(row.name_en); continue; }
-    const isPng = /\.png(\?|$)/i.test(src);
-    const file = `${ICON_DIR}/${slug(row.name_en)}.${isPng ? 'png' : 'jpg'}`;
-    if (!fs.existsSync(file)) {
+    const base = `${ICON_DIR}/${slug(row.name_en)}`;
+    let file = ['png', 'jpg', 'webp', 'gif'].map((e) => `${base}.${e}`).find(isRealImage) || null;
+    if (file) iconCached++;
+    else {
         try {
-            const buf = Buffer.from(await (await fetch(src)).arrayBuffer());
-            if (buf.length < 200) throw new Error('too small');
+            const res = await fetch(src, { headers: DL_HEADERS });
+            const ct = res.headers.get('content-type') || '';
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            if (!ct.startsWith('image/')) throw new Error('非图片 content-type: ' + ct);
+            const buf = Buffer.from(await res.arrayBuffer());
+            if (buf.length < 200) throw new Error('文件过小');
+            file = `${base}.${EXT_BY_TYPE(ct)}`;
             fs.writeFileSync(file, buf);
-        } catch { iconFail++; continue; }
-    } else iconCached++;
-    row.localIcon = `/de-techtree/offtree-icons/${slug(row.name_en)}.${isPng ? 'png' : 'jpg'}`;
+        } catch (e) {
+            iconFail++; noIcon.push(`${row.name_en}(${String(e).slice(0, 40)})`); continue;
+        }
+    }
+    row.localIcon = `/de-techtree/offtree-icons/${path.basename(file)}`;
     delete row._titles;
     iconOk++;
 }

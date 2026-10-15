@@ -489,7 +489,7 @@ export class LegionManager {
                 if (targetCity) {
                     // [FIX] targetCity 可能是旧引用（城市易手后 factionId 过期），每帧用 CityManager 最新数据校正
                     const latestTargetCity = this.cityManager.getCity(targetCity.id) || targetCity;
-                    const isHostile = latestTargetCity.factionId !== army.getFactionId();
+                    const isHostile = latestTargetCity.factionId !== army.getFactionId() && latestTargetCity.id !== (army as any).lastDrawCityId;
                     if (isHostile) {
                         const dist = getEuclideanDistance(newPos, { lat: latestTargetCity.latitude, lng: latestTargetCity.longitude });
                         // Arrival threshold
@@ -497,7 +497,7 @@ export class LegionManager {
                             // 已有攻城战时仍走 triggerSiege → onArmyArrive（同旗加入 / 第三方排队 / 新开战）
                             gameLog('legionSiege', `🏯 [LegionManager] ${army.name} arrived at hostile city ${latestTargetCity.name} (${dist.toFixed(4)}). Triggering Siege!`);
                             this.clampArmyToSiegeRing(army, latestTargetCity, oldPos);
-                            this.triggerSiege(army, latestTargetCity);
+                            if (this.triggerSiege(army, latestTargetCity) === 'skipped') army.setTargetCity(null);
                             return; // Stop processing this army
                         }
                     } else {
