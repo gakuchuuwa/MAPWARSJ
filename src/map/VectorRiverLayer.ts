@@ -285,8 +285,8 @@ export class VectorRiverLayer extends L.FeatureGroup {
         const waterWeight = VectorRiverLayer.getWaterWeight(feature, zoom);
         return {
             color: RIVER_BED_SHADOW_COLOR,
-            weight: waterWeight + 1.4,
-            opacity: 0.25,
+            weight: waterWeight + 1.8,
+            opacity: 0.34,
             lineCap: 'round',
             lineJoin: 'round',
             smoothFactor: VectorRiverLayer.smoothFactorFor(zoom),
