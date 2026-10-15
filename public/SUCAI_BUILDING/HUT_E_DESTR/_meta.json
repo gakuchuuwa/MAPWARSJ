@@ -1,0 +1,9 @@
+{
+  "name": "HUT_E_DESTR",
+  "frames": 101,
+  "box_w": 196,
+  "box_h": 144,
+  "anchor_x": 102,
+  "anchor_y": 86,
+  "sld_source": "b_scen_hut_e_destruction"
+}

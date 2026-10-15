@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WAR_TENT_DESTR",
+  "frames": 100,
+  "box_w": 172,
+  "box_h": 148,
+  "anchor_x": 86,
+  "anchor_y": 94,
+  "sld_source": "b_scen_tent_army_a_destruction"
+}

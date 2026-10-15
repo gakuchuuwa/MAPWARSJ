@@ -1,0 +1,9 @@
+{
+  "name": "SETTLEMENT_RUBBLE",
+  "frames": 1,
+  "box_w": 256,
+  "box_h": 140,
+  "anchor_x": 156,
+  "anchor_y": 92,
+  "sld_source": "b_ande_settlement_age2_rubble"
+}

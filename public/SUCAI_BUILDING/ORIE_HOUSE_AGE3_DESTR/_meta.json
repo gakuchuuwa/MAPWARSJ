@@ -1,8 +1,8 @@
 {
   "name": "ORIE_HOUSE_AGE3_DESTR",
-  "frames": 300,
-  "box_w": 296,
-  "box_h": 216,
+  "frames": 100,
+  "box_w": 248,
+  "box_h": 152,
   "anchor_x": 126,
   "anchor_y": 110,
   "sld_source": "b_orie_house_age3_destruction"

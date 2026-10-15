@@ -1,0 +1,9 @@
+{
+  "name": "GREEK_WAR_TENT_RUBBLE",
+  "frames": 1,
+  "box_w": 148,
+  "box_h": 80,
+  "anchor_x": 78,
+  "anchor_y": 38,
+  "sld_source": "b_scen_tent_army_a_rubble"
+}

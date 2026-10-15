@@ -1,0 +1,9 @@
+{
+  "name": "OUTPOST_RUBBLE",
+  "frames": 1,
+  "box_w": 112,
+  "box_h": 76,
+  "anchor_x": 58,
+  "anchor_y": 42,
+  "sld_source": "b_dark_outpost_age1_rubble"
+}

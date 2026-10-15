@@ -1,0 +1,9 @@
+{
+  "name": "CAMP_BARRACKS_DESTR",
+  "frames": 100,
+  "box_w": 352,
+  "box_h": 208,
+  "anchor_x": 176,
+  "anchor_y": 120,
+  "sld_source": "b_scen_camp_barracks_age2_destruction"
+}

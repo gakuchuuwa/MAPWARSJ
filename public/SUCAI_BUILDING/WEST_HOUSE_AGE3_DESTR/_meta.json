@@ -1,8 +1,8 @@
 {
   "name": "WEST_HOUSE_AGE3_DESTR",
-  "frames": 300,
-  "box_w": 292,
-  "box_h": 232,
+  "frames": 100,
+  "box_w": 244,
+  "box_h": 176,
   "anchor_x": 122,
   "anchor_y": 130,
   "sld_source": "b_west_house_age3_destruction"

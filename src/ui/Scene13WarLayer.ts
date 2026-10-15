@@ -1107,6 +1107,18 @@ const NO_KILL_SEC = 60;
 const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */
 const BATTLE_LIMIT_SEC = 300;
+/** 🔴 [2026-10-15 主人令「按占的格子多少来设计，不要太长，比现在稍微长一点」] 城内建筑被摧毁的保底秒数 = BASE + PER_SIDE × 占地边长（见 onDefBuildingHit） */
+const BLD_MIN_DESTROY_BASE = 4;
+const BLD_MIN_DESTROY_PER_SIDE = 3;
+/** 建筑占地边长（格）：与 TerritorySystem.deBuildingFootprint 同一口径（城内布局按它摆格），按素材名判 */
+function bldFootprintSide(b: string): number {
+    if (b.includes('CASTLE') || b.includes('TOWN_CENTER') || b.includes('MARKET') || b.includes('UNIVERSITY') || b.includes('SIEGE_WORKSHOP')) return 4;
+    if (b.includes('WONDER')) return 5;
+    if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY')) return 3;
+    if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_')) return 2;
+    if (b.includes('TOWER')) return 1;
+    return 3;
+}
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */
 const FLOW_SUB = 2;
 /** 🔴 [2026-10-14 主人令「城内守军加防御，选1，先试20%」] 险要（关隘）守军站在城墙圈里时受到的伤害倍率（＝减伤 20%）。
@@ -6385,6 +6397,7 @@ export class Scene13WarLayer {
             const towerYFrac = [0.125, 0.375, 0.625, 0.875]; // 沿正面墙高均匀 4 座并列
             // 主人 2026-09-03：城寨(stockade) 4 箭塔 → 2 强化哨塔(FORTIFIED_OUTPOST) + 2 瞭望箭塔；其余城等级 4 座全瞭望箭塔
             const isStockadeTower = this.defenderCityType === 'stockade';
+            if (isStockadeTower) this.ensureDestrAssetsFor('FORTIFIED_OUTPOST');
             towerYFrac.forEach((frac, i) => {
                 const ty = topWallY + (botWallY - topWallY) * frac;
                 const towerAsset = (isStockadeTower && (i === 0 || i === 3)) ? 'FORTIFIED_OUTPOST' : arrowTowerAsset;
@@ -6394,7 +6407,7 @@ export class Scene13WarLayer {
                     sprite, x: towerX, y: ty,
                     cd: Math.random() * 1.5,
                     range: towerProfile.range, reload: towerProfile.reload, atk: towerProfile.atk,
-                    rubbleAsset: towerRubble,
+                    rubbleAsset: 'BUILDINGANIM:' + towerAsset + '_RUBBLE',
                     down: false,
                 });
                 this.registerDefBuilding(sprite, towerAsset, this.arrowTowers[this.arrowTowers.length - 1]);
@@ -8947,7 +8960,16 @@ export class Scene13WarLayer {
     /** 建筑挨打后的表现：血≤50% 换破损贴图；血≤0 倒塌成残骸并停火。 */
     private onDefBuildingHit(b: WarBuilding): void {
         const sp = b.sprite, name = b.bld!.name;
+        // 🔴 [2026-10-15 主人令「建筑被击毁的又太快了……按占的格子多少来设计，不要太长，比现在稍微长一点就行」]
+        //    保底时间 = BLD_MIN_DESTROY_BASE + BLD_MIN_DESTROY_PER_SIDE × 占地边长（1×1 箭塔 7 秒 / 2×2 民居 10 / 3×3 兵营 13 / 4×4 城镇中心·城堡 16）。
+        //    从首次挨打（hitAt）算起，血量不低于按保底时间线性掉到 0 的那条线 ⇒ 人再多也快不过保底；人少打得慢照常按实际伤害。
+        //    实测改前（小城安定）：民居 7.4 秒、磨坊 10.1、铁匠铺 7.5、城镇中心 12 —— 大小建筑倒得一样快。
         if (sp.destroyed || sp.collapse || sp.asset.includes('_RUBBLE')) return;
+        if (b.hitAt !== undefined) {
+            const floorSec = BLD_MIN_DESTROY_BASE + BLD_MIN_DESTROY_PER_SIDE * bldFootprintSide(name);
+            const minHp = b.maxHp * (1 - (this.battleSec - b.hitAt) / floorSec);
+            if (b.hp < minHp) b.hp = minHp;
+        }
         if (b.hp <= 0) {
             if (b.bld!.tower) b.bld!.tower.down = true;
             for (const t of this.castleTowers) if (t.sprite === sp) t.down = true;
