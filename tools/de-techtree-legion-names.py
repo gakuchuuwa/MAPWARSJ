@@ -90,7 +90,8 @@ def main() -> int:
         'liubei': 'hero_liubei',
         'sunjian': 'hero_sunjian',
         'palintononpacked': 'antiquity_heavy_scorpion',
-        'elitejarl': 'jarl',
+        'jarl': 'varangian_jarl',
+        'elitejarl': 'elite_varangian_jarl',
         'elitegalley': 'ant_elite_galley',
     }
     for de_k, l_id in ALIASES.items():
@@ -115,46 +116,89 @@ def main() -> int:
             rec["ids"].add(e["Node ID"])
             node_names[str(e["Node ID"])] = e["name"]
 
-    by_norm: dict[str, str] = {}      # 规范化 DE 英文名 → 图鉴 id（按名字对号，最可靠）
-    by_id: dict[str, str] = {}        # 节点 id → 图鉴 id（兜底；注意古典/中世纪会复用节点 id，故优先级低于 byNorm）
+    # 仅在古典文明出现的单位节点，不应写入中世纪兜底的 by_id（中世纪 125=僧侣 Monk、331=巨型投石机 Trebuchet 未收录进兵种鉴赏）
+    ANT_ONLY_REUSE_NODES = {125, 331}
+
+    by_norm: dict[str, str] = {}      # 规范化 DE 英文名 → 图鉴 id（按名字对号）
+    by_id: dict[str, str] = {}        # 节点 id → 图鉴 id（兜底）
     matched, unmatched = 0, []
     for name, rec in sorted(units.items()):
         k = norm(name)
         if k in catalog:
             by_norm[k] = catalog_id[k]
             for nid in rec["ids"]:
-                by_id.setdefault(str(nid), catalog_id[k])
+                if nid not in ANT_ONLY_REUSE_NODES:
+                    by_id.setdefault(str(nid), catalog_id[k])
             matched += 1
         else:
             unmatched.append({"name": name, "zh": (rec["zh"] or "").replace("\n", ""), "nodeIds": sorted(rec["ids"])})
 
-    # 英文名对不上的节点，再用「图标号」精确 join（meta.units[id].iconId ↔ unit-icons.json）
-    filled_by_icon = 0
-    if META.exists() and ICONS.exists():
-        meta = json.loads(META.read_text(encoding="utf-8"))
-        icons = json.loads(ICONS.read_text(encoding="utf-8"))
-        icon_to_cat: dict[str, str] = {}
-        for cid, url in icons.items():
-            m = re.search(r"/Unit/(\d+)\.png", url or "")
-            if m:
-                icon_to_cat.setdefault(m.group(1), cid)
-        for nid_s, de_name in node_names.items():
-            if nid_s in by_id:
-                continue
-            u = (meta.get("units") or {}).get(nid_s)
-            if not u or u.get("iconId") is None:
-                continue
-            cid = icon_to_cat.get(str(u["iconId"]))
-            if cid:
-                by_id[nid_s] = cid
-                filled_by_icon += 1
+    # 古典文明（Chronicles）复用中世纪节点 ID 时的精确映射（节点 ID → 图鉴 ID）
+    by_ant_id: dict[str, str] = {
+        "4": "bowman",
+        "5": "gastraphetes",
+        "6": "elite_antiquity_skirmisher",
+        "7": "antiquity_skirmisher",
+        "24": "laminated_bowman",
+        "36": "siege_ballista",
+        "38": "lancer",
+        "39": "antiquity_cavalry_archer",
+        "74": "levy",
+        "75": "maceman",
+        "77": "swordsman",
+        "93": "antiquity_spearman",
+        "125": "priestess",
+        "279": "antiquity_scorpion",
+        "280": "antiquity_mangonel",
+        "283": "shock_cavalry",
+        "331": "antiquity_heavy_scorpion",
+        "358": "guardsman",
+        "359": "elite_guardsman",
+        "422": "antiquity_capped_ram",
+        "441": "raider",
+        "448": "antiquity_scout_cavalry",
+        "474": "antiquity_heavy_cavalry_archer",
+        "492": "recurve_bowman",
+        "542": "antiquity_heavy_scorpion",
+        "546": "antiquity_light_cavalry",
+        "548": "antiquity_siege_ram",
+        "550": "antiquity_onager",
+        "567": "paragon",
+        "569": "imperial_cavalry",
+        "588": "antiquity_siege_onager",
+        "1105": "antiquity_siege_tower",
+        "1258": "antiquity_battering_ram",
+        "2130": "ant_galley",
+        "2131": "ant_war_galley",
+        "2132": "ant_elite_galley",
+    }
+
+    # 中世纪文明同英文名但节点 ID 区分的特殊单位（如步战保加利亚骑兵 1254/1255、蜀国先秦远程战车 1962、瓦良格首领 2708/2709）
+    by_med_id: dict[str, str] = {
+        "1254": "konnik_foot",
+        "1255": "elite_konnik_foot",
+        "1962": "war_chariot_ranged",
+        "2708": "varangian_jarl",
+        "2709": "elite_varangian_jarl",
+    }
+    for nid_s, cid in by_med_id.items():
+        if norm(cid) in catalog:
+            by_id[nid_s] = cid
+
     names_snapshot = {cid: catalog[norm(cid)] for cid in catalog_id.values() if norm(cid) in catalog}
-    print(f"精确对号：byId {len(by_id)}/{len(node_names)} 个节点（其中图标号补 {filled_by_icon}）；图鉴番号快照 {len(names_snapshot)} 条")
+    print(f"精确对号：byId {len(by_id)}/{len(node_names)} 个节点；古典覆盖 {len(by_ant_id)} 条；中世纪特殊覆盖 {len(by_med_id)} 条；图鉴番号快照 {len(names_snapshot)} 条")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
         json.dumps(
-            {"byNorm": by_norm, "byId": by_id, "names": names_snapshot, "unmatched": unmatched},
+            {
+                "byNorm": by_norm,
+                "byId": by_id,
+                "byAntId": by_ant_id,
+                "byMedId": by_med_id,
+                "names": names_snapshot,
+                "unmatched": unmatched,
+            },
             ensure_ascii=False,
             separators=(",", ":"),
         ),

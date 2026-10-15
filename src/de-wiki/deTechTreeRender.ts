@@ -21,7 +21,7 @@ import {
     type TreePackage,
     type TreeItem,
 } from './deTechTreeLayout';
-import { loadNameTables, resolveUnitName, resetNameTables, type NameTables } from './unitNameSync';
+import { loadNameTables, resolveUnitName, resolveUnitCatalogId, postUnitRename, resetNameTables, type NameTables } from './unitNameSync';
 
 const indexCache: { data?: any[] } = {};
 const treeCache = new Map<string, TreePackage>();
@@ -66,7 +66,6 @@ export async function loadCustomNames(): Promise<Record<string, string>> {
 export function clearDeTechTreeCache(): void {
     treeCache.clear();
     customNamesCache.data = undefined;
-    resetNameTables();
 }
 
 /** public/de-techtree/icons/manifest.json */
@@ -278,13 +277,6 @@ export async function renderDeTechTree(
 
     // 古典时代与中世纪重名节点（如长矛兵、战车、精锐战车、箭船、战船、运输船、重型弩炮等）
     const ANTIQUITY_DUPE_NODES = new Set([
-        93,    // 长矛兵 (Antiquity Spearman)
-        2150,  // 战车 (War Chariot)
-        2151,  // 精锐战车 (Elite War Chariot)
-        2130,  // 箭船 (Antiquity Galley)
-        2131,  // 战船 (Antiquity War Galley)
-        2148,  // 运输船 (Antiquity Transport Ship)
-        331,   // 重型弩炮 (Palintonon Packed)
         621,   // 城镇中心 (Town Center)
         482,   // 堡垒 (Fort)
         1167,  // 造船匠 (Shipwright)
@@ -292,25 +284,28 @@ export async function renderDeTechTree(
         194,   // 垛墙 (Fortified Wall)
         63,    // 棱堡 (Bastion)
     ]);
-    const DUPED_NAMES = ['长矛兵', '战车', '精锐战车', '箭船', '战船', '运输船', '重型弩炮', '城镇中心', '造船匠', '堡垒', '垛墙', '棱堡', '警戒箭塔'];
+    const DUPED_NAMES = ['城镇中心', '造船匠', '堡垒', '垛墙', '棱堡', '警戒箭塔'];
 
     const labelOf = (it: TreeItem): string => {
         if (!isZh) return it.name ?? '';
         const nid = it.node_id ?? -1;
-        // 名称解析统一交给 unitNameSync：与「兵种鉴赏」保持同一事实来源
-        let base = resolveUnitName({ nodeId: nid, enName: it.name, fallback: it.name_zh || it.name || '' }, nameTables);
-        base = base.replace(/[\r\n]+/g, '');
-
+        // 兵种节点：名称 100% 走 unitNameSync（与「兵种鉴赏」DE_UNITS_CATALOG 保持同一事实来源）
+        if (it.use_type === 'Unit') {
+            return resolveUnitName({
+                nodeId: nid,
+                enName: it.name,
+                fallback: it.name_zh || it.name || '',
+                isAntiquity,
+            }, nameTables);
+        }
+        // 建筑 / 科技节点：使用 DE 官方中文名
+        let base = String(it.name_zh || it.name || '').replace(/[\r\n]+/g, '');
         if (isAntiquity || ANTIQUITY_DUPE_NODES.has(nid)) {
             if (ANTIQUITY_DUPE_NODES.has(nid) || DUPED_NAMES.some(n => base.includes(n))) {
                 if (!base.includes('古典')) {
                     base = `${base}（古典）`;
                 }
             }
-        } else {
-            if (nid === 1254) base = '保加利亚骑兵（步战）';
-            else if (nid === 1255) base = '精锐保加利亚骑兵（步战）';
-            else if (nid === 1750) base = '楼船（蒂里萨代）';
         }
         return base;
     };
@@ -685,9 +680,13 @@ export async function renderDeTechTree(
             `;
         }
 
+        const renameBtnHtml = (isZh && d.catalogId)
+            ? `<button type="button" class="de-tt-rename-btn" data-cid="${d.catalogId}" data-cur="${d.name.replace(/"/g, '&quot;')}" title="点击修改兵种名称（与兵种鉴赏同步）" style="margin-left:8px;padding:2px 8px;font-size:11px;background:rgba(212,175,55,0.18);border:1px solid #8a6d2b;color:#f5d97e;border-radius:4px;cursor:pointer;">✏️ 改名</button>`
+            : '';
+
         tip.innerHTML = `
             <div class="de-tt-tip-header">
-                <div class="de-tt-tip-title">${d.name}</div>
+                <div class="de-tt-tip-title" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span>${d.name}</span>${renameBtnHtml}</div>
                 <div class="de-tt-tip-badge ${d.status === 'NotAvailable' ? 'na' : ''}">
                     ${d.typeLabel} · ${d.age}
                 </div>
@@ -699,6 +698,26 @@ export async function renderDeTechTree(
             ${d.upgrades ? `<div class="de-tt-tip-upgrades"><b>${isZh ? '升级加成：' : 'Upgrades: '}</b>${d.upgrades}</div>` : ''}
             ${xrefHtml}
         `;
+
+        const renameBtn = tip.querySelector<HTMLButtonElement>('.de-tt-rename-btn');
+        if (renameBtn) {
+            renameBtn.addEventListener('click', async (ev) => {
+                ev.stopPropagation();
+                const cid = renameBtn.dataset.cid || '';
+                const cur = renameBtn.dataset.cur || '';
+                if (!cid) return;
+                const nextName = window.prompt(`修改兵种名称（与 legion-editor 兵种鉴赏同步，ID: ${cid}）：`, cur);
+                if (nextName === null || !nextName.trim() || nextName.trim() === cur) return;
+                renameBtn.disabled = true;
+                renameBtn.textContent = '保存中…';
+                const r = await postUnitRename(cid, nextName.trim());
+                if (!r.ok) {
+                    window.alert(`改名失败：${r.error || '未知错误'}`);
+                    renameBtn.disabled = false;
+                    renameBtn.textContent = '✏️ 改名';
+                }
+            });
+        }
 
         // 徽章点击快速切换文明
         tip.querySelectorAll('.de-tt-xref-emblem').forEach((img) => {
@@ -882,8 +901,13 @@ export async function renderDeTechTree(
         if (metaRec?.trainTime != null) stats.push({ label: isZh ? '训练' : 'Time', val: `${metaRec.trainTime}s`, icon: '⏱️' });
         if (metaRec?.researchTime != null) stats.push({ label: isZh ? '研发' : 'Time', val: `${metaRec.researchTime}s`, icon: '⏳' });
 
+        const catalogId = item.use_type === 'Unit'
+            ? resolveUnitCatalogId({ nodeId: item.node_id, enName: item.name, isAntiquity }, nameTables)
+            : '';
+
         (g as any)._tip = {
             name: formatName(label ?? ''),
+            catalogId,
             type: item.node_type ?? '',
             typeLabel: TYPE_ZH[item.node_type ?? ''] ?? (item.node_type ?? ''),
             nodeKey: `${item.use_type}_${item.node_id}`,

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-15T15:04:45.276Z",
+ "generatedAt": "2026-10-15T17:27:13.398Z",
  "sources": {
   "untrainableList": "https://ageofempires.fandom.com/wiki/Scenario_Editor_(Age_of_Empires_II)#Scenario_Editor_units",
   "heroesAoe2": "https://ageofempires.fandom.com/wiki/Hero_(Age_of_Empires_II)",
@@ -17,11 +17,11 @@
   "civilian": 14,
   "joke": 11,
   "other": 0,
-  "inCatalog": 38,
-  "missing": 283,
-  "combatInCatalog": 31,
-  "combatMissing": 10,
-  "withZhName": 319
+  "inCatalog": 48,
+  "missing": 273,
+  "combatInCatalog": 41,
+  "combatMissing": 0,
+  "withZhName": 320
  },
  "units": [
   {
@@ -131,14 +131,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "bandit",
+   "catalogName": "强盗",
+   "iconUrl": "/de-techtree/icons/Unit/8.png",
+   "spriteUrl": "/SUCAI/MILITIA/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Bandit",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/bandit.webp"
+   "localIcon": "/de-techtree/offtree-icons/bandit.webp",
+   "spriteDir": "/SUCAI/MILITIA/"
   },
   {
    "name_en": "Butterflies",
@@ -386,14 +387,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "heavy_crossbowman",
+   "catalogName": "重装弩手",
+   "iconUrl": "/de-techtree/icons/Unit/133.png",
+   "spriteUrl": "/SUCAI/GENOESECROSSBOWMAN/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Heavy_Crossbowman",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/heavy-crossbowman.webp"
+   "localIcon": "/de-techtree/offtree-icons/heavy-crossbowman.webp",
+   "spriteDir": "/SUCAI/GENOESECROSSBOWMAN/"
   },
   {
    "name_en": "Heavy Pikeman",
@@ -425,14 +427,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "heavy_swordsman",
+   "catalogName": "重装剑士",
+   "iconUrl": "/de-techtree/icons/Unit/184.png",
+   "spriteUrl": "/SUCAI/HEAVYSWORDSMAN/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Heavy_Swordsman",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/heavy-swordsman.webp"
+   "localIcon": "/de-techtree/offtree-icons/heavy-swordsman.webp",
+   "spriteDir": "/SUCAI/HEAVYSWORDSMAN/"
   },
   {
    "name_en": "Horse",
@@ -483,14 +486,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "imperial_legionary",
+   "catalogName": "帝国罗马军",
+   "iconUrl": "/de-techtree/icons/Unit/139.png",
+   "spriteUrl": "/SUCAI/LEGIONARY/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Imperial_Legionary",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/imperial-legionary.webp"
+   "localIcon": "/de-techtree/offtree-icons/imperial-legionary.webp",
+   "spriteDir": "/SUCAI/LEGIONARY/"
   },
   {
    "name_en": "Iron Boar",
@@ -561,14 +565,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "khan",
+   "catalogName": "汗",
+   "iconUrl": "/de-techtree/icons/Unit/258.png",
+   "spriteUrl": "/SUCAI/HERO_KHAN/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Khan_(Age_of_Empires_II)",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/khan.webp"
+   "localIcon": "/de-techtree/offtree-icons/khan.webp",
+   "spriteDir": "/SUCAI/HERO_KHAN/"
   },
   {
    "name_en": "King",
@@ -618,14 +623,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "mounted_samurai",
+   "catalogName": "骑马武士",
+   "iconUrl": "/de-techtree/icons/Unit/103.png",
+   "spriteUrl": "/SUCAI/HUSSAR/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Mounted_Samurai_(Age_of_Empires_II)",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/mounted-samurai.webp"
+   "localIcon": "/de-techtree/offtree-icons/mounted-samurai.webp",
+   "spriteDir": "/SUCAI/HUSSAR/"
   },
   {
    "name_en": "Monkey",
@@ -1335,14 +1341,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
+   "inCatalog": true,
+   "catalogId": "lysander_raider",
+   "catalogName": "吕山德的掠夺者",
+   "iconUrl": "/de-techtree/icons/Unit/691.png",
    "spriteUrl": null,
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Lysander's_Raider",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/lysander-s-raider.webp"
+   "localIcon": "/de-techtree/offtree-icons/lysander-s-raider.webp",
+   "spriteDir": "/SUCAI/MERCENARY_HOPELITE/"
   },
   {
    "name_en": "Mercenary Hoplite",
@@ -1374,14 +1381,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "thracian_peltast",
+   "catalogName": "色雷斯标枪手",
+   "iconUrl": "/de-techtree/icons/Unit/694.png",
+   "spriteUrl": "/SUCAI/THRACIAN_PELTAST/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Mercenary_Peltast",
    "note": "",
-   "localIcon": "/de-techtree/offtree-icons/mercenary-peltast.webp"
+   "localIcon": "/de-techtree/offtree-icons/mercenary-peltast.webp",
+   "spriteDir": "/SUCAI/THRACIAN_PELTAST/"
   },
   {
    "name_en": "Rhodian Slinger",
@@ -6110,7 +6118,7 @@
   },
   {
    "name_en": "Boarding Galley",
-   "name_zh": "",
+   "name_zh": "接舷战船",
    "cls": "naval",
    "bucket": "combat",
    "game": "aoe2",
@@ -6118,14 +6126,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "boarding_galley",
+   "catalogName": "接舷战船",
+   "iconUrl": "/de-techtree/icons/Unit/82.png",
+   "spriteUrl": "/SUCAI/GALLEY/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Boarding_Galley",
    "note": "分类里有、清单未列（接舷战船）",
-   "localIcon": "/de-techtree/offtree-icons/boarding-galley.webp"
+   "localIcon": "/de-techtree/offtree-icons/boarding-galley.webp",
+   "spriteDir": "/SUCAI/GALLEY/"
   },
   {
    "name_en": "Outlaw",
@@ -6137,14 +6146,15 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": false,
-   "catalogId": null,
-   "catalogName": null,
-   "iconUrl": null,
-   "spriteUrl": null,
+   "inCatalog": true,
+   "catalogId": "outlaw",
+   "catalogName": "亡命之徒",
+   "iconUrl": "/de-techtree/icons/Unit/17.png",
+   "spriteUrl": "/SUCAI/ARCHER/idle_2.png",
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Outlaw",
    "note": "分类里有、清单未列（Genie 隐藏步兵）",
-   "localIcon": "/de-techtree/offtree-icons/outlaw.webp"
+   "localIcon": "/de-techtree/offtree-icons/outlaw.webp",
+   "spriteDir": "/SUCAI/ARCHER/"
   },
   {
    "name_en": "Spy",

@@ -8,7 +8,7 @@
  * 默认只显示「兵种」（步兵/骑兵/远程/攻城/海军）—— 动物、平民、物件、秘籍玩笑单位默认收起。
  */
 
-import { loadNameTables, getNameTables, resolveUnitName, watchUnitNames, type NameTables } from './unitNameSync';
+import { loadNameTables, getNameTables, resolveUnitName, postUnitRename, watchUnitNames, type NameTables } from './unitNameSync';
 
 export type OffTreeBucket = 'combat' | 'hero' | 'animal' | 'civilian' | 'object' | 'joke' | 'other';
 
@@ -307,11 +307,15 @@ export function mountOffTreeView(host: HTMLElement): void {
 
     const openModal = (u: OffTreeUnit) => {
         lastModalUnit = u;
+        const curName = display(u);
+        const renameBtnHtml = (u.inCatalog && u.catalogId)
+            ? `<button type="button" id="de-offtree-rename-btn" data-cid="${esc(u.catalogId)}" data-cur="${esc(curName)}" style="margin-left:8px;padding:2px 8px;font-size:12px;background:rgba(212,175,55,0.18);border:1px solid #8a6d2b;color:#f5d97e;border-radius:4px;cursor:pointer;">✏️ 改名</button>`
+            : '';
         $('de-offtree-modal-body').innerHTML = `
           <div style="display:flex;gap:14px;align-items:flex-start;">
             <div class="de-offtree-thumb" style="width:84px;height:84px;flex:0 0 84px;">${thumbHtml(u)}</div>
             <div style="min-width:0;">
-              <h3>${esc(display(u))}</h3>
+              <h3 style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;"><span>${esc(curName)}</span>${renameBtnHtml}</h3>
               <div style="font-size:12px;color:#8ab4c4;font-family:monospace;">${esc(u.name_en)}</div>
             </div>
           </div>
@@ -319,12 +323,30 @@ export function mountOffTreeView(host: HTMLElement): void {
             <div class="k">分类</div><div class="v">${BUCKET_LABEL[u.bucket] ?? u.bucket} · ${CLS_LABEL[u.cls] ?? u.cls}</div>
             <div class="k">出处</div><div class="v">${u.game === 'chronicles' ? 'Chronicles（Battle for Greece / Alexander the Great）' : 'AoE2 本体及 DLC'} · ${esc(u.kind)}</div>
             <div class="k">科技树</div><div class="v">❌ 不在任何文明科技树中${u.gaia ? '（Gaia 专属）' : ''}</div>
-            <div class="k">本作兵种表</div><div class="v">${u.inCatalog ? `✅ 已收录：<b>${esc(u.catalogName ?? '')}</b>（id: ${esc(u.catalogId ?? '')}）` : '❌ 未收录'}</div>
+            <div class="k">本作兵种表</div><div class="v">${u.inCatalog ? `✅ 已收录：<b>${esc(curName)}</b>（id: ${esc(u.catalogId ?? '')}）` : '❌ 未收录'}</div>
             <div class="k">本作贴图</div><div class="v">${u.spriteDir ? `✅ ${esc(u.spriteDir)}` : '—（未提取）'}</div>
             <div class="k">图标来源</div><div class="v">${esc(u.localIcon || u.iconUrl || '—')}</div>
             <div class="k">备注</div><div class="v">${esc(u.note || '—')}</div>
             <div class="k">Wiki</div><div class="v">${u.wikiUrl ? `<a href="${esc(u.wikiUrl)}" target="_blank" rel="noopener">${esc(u.wikiUrl)}</a>` : '—'}</div>
           </div>`;
+        const renameBtn = host.querySelector<HTMLButtonElement>('#de-offtree-rename-btn');
+        if (renameBtn) {
+            renameBtn.addEventListener('click', async () => {
+                const cid = renameBtn.dataset.cid || '';
+                const cur = renameBtn.dataset.cur || '';
+                if (!cid) return;
+                const nextName = window.prompt(`修改兵种名称（与 legion-editor 兵种鉴赏同步，ID: ${cid}）：`, cur);
+                if (nextName === null || !nextName.trim() || nextName.trim() === cur) return;
+                renameBtn.disabled = true;
+                renameBtn.textContent = '保存中…';
+                const r = await postUnitRename(cid, nextName.trim());
+                if (!r.ok) {
+                    window.alert(`改名失败：${r.error || '未知错误'}`);
+                    renameBtn.disabled = false;
+                    renameBtn.textContent = '✏️ 改名';
+                }
+            });
+        }
         $('de-offtree-modal').classList.add('open');
     };
 
