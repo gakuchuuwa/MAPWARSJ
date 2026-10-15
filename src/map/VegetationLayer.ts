@@ -40,15 +40,16 @@ export interface TreeAssetMeta {
  *    保证四季切换时无论树冠高矮胖瘦，树木在地面上的根部绝对钉死不动！
  */
 export const TREE_METAS: Record<string, TreeAssetMeta> = {
-    OAK: { boxW: 332, boxH: 228, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
+    OAK: { boxW: 332, boxH: 228, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 27, 30, 33, 36, 39] },
     GREEN_OAK: { boxW: 184, boxH: 200, anchorX: 112, anchorY: 172, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
     AUTUMN_OAK: { boxW: 332, boxH: 232, anchorX: 132, anchorY: 200, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
     SNOW_AUTUMN_OAK: { boxW: 204, boxH: 224, anchorX: 128, anchorY: 192, frames: [0, 3, 6, 12, 18, 21, 27, 30, 33, 36, 39] },
     ASIAN_MAPLE_GREEN: { boxW: 336, boxH: 352, anchorX: 136, anchorY: 192, frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] },
     ASIAN_MAPLE_AUTUMN: { boxW: 340, boxH: 348, anchorX: 140, anchorY: 188, frames: [0, 2, 4, 6, 8, 10, 12, 14, 16] },
     ASIAN_PINE: { boxW: 232, boxH: 196, anchorX: 130, anchorY: 146, frames: [0, 1, 2, 3] },
-    PINE: { boxW: 156, boxH: 192, anchorX: 92, anchorY: 164, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
-    SNOW_PINE: { boxW: 152, boxH: 188, anchorX: 92, anchorY: 160, frames: [3, 6, 9, 12, 15, 21, 24] },
+    // 🔴 PINE / SNOW_PINE 的第 0/15/18 帧在 DE 原生精灵表中是全秃枯木桩，仅保留 3/6/9/12/21/24 翠绿/覆雪饱满松树帧
+    PINE: { boxW: 156, boxH: 192, anchorX: 92, anchorY: 164, frames: [3, 6, 9, 12, 21, 24] },
+    SNOW_PINE: { boxW: 152, boxH: 188, anchorX: 92, anchorY: 160, frames: [3, 6, 9, 12, 21, 24] },
     BIRCH_GREEN: { boxW: 204, boxH: 244, anchorX: 136, anchorY: 216, frames: [0, 1, 2, 3, 4, 5, 6, 7] },
     BIRCH_AUTUMN: { boxW: 212, boxH: 240, anchorX: 140, anchorY: 216, frames: [0, 3, 6, 9, 12, 15, 18, 21, 24] },
     BIRCH_WINTER: { boxW: 200, boxH: 196, anchorX: 128, anchorY: 176, frames: [3, 4, 5] },
@@ -106,7 +107,7 @@ interface TreeDrawCommand {
     assetNext: string;
     /** 稳定分配的健康形态变体索引 */
     variant: number;
-    /** 是否属于成团密林的主树节点（仅密林中心铺设柔和林下阴翳基底，散树不画黑底斑） */
+    /** 是否属于成团密林的主树节点 */
     inGrove?: boolean;
 }
 
@@ -157,6 +158,8 @@ function isTreeAssetReady(asset: string): boolean {
     if (meta) {
         const frames = TREE_FRAMES_IMG.get(asset);
         if (frames && frames.complete && frames.naturalWidth > 0) return true;
+        // 🔴 若该树种第 0 帧被剔除（如 PINE / SNOW_PINE 的 preview.png 是第 0 帧枯木棍），必须等待 frames.png 就绪
+        if (!meta.frames.includes(0)) return false;
         const prev = TREE_IMG.get(asset);
         if (prev && prev.complete && prev.naturalWidth > 0) return true;
         return false;
@@ -591,7 +594,8 @@ export class VegetationLayer {
 
             if (meta) {
                 const framesImg = treeFramesImage(asset, this.onTreeImageReady);
-                const prevImg = treeImage(asset, this.onTreeImageReady);
+                // 🔴 若该树种第 0 帧被剔除（如 PINE / SNOW_PINE 的 preview.png 是第 0 帧枯木棍），绝不回退画 preview.png
+                const prevImg = meta.frames.includes(0) ? treeImage(asset, this.onTreeImageReady) : null;
 
                 const w = it.h * (meta.boxW / meta.boxH);
                 const dx = it.x - w * (meta.anchorX / meta.boxW);
@@ -619,31 +623,9 @@ export class VegetationLayer {
             return null;
         };
 
-        const drawContactShadow = (it: { x: number; y: number; h: number }) => {
-            ctx.save();
-            ctx.fillStyle = '#141e10';
-            // 树根接地轻柔微影（紧贴树干底座，消除悬浮感的同时不留脏黑斑）
-            ctx.globalAlpha = TREE_SHADOW_OPACITY;
-            ctx.beginPath();
-            ctx.ellipse(it.x + it.h * 0.06, it.y + 1, it.h * 0.22, Math.max(1.2, it.h * 0.075), 0.35, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        };
-
-        // 🔴 DE 风格优化：仅在成团密林中心（inGrove）铺垫一层柔和羽化的林地底韵，
-        // 单棵散树不画底斑，彻底消除浅色地表上“一棵树底下一团暗泥印”的脏感。
-        const underbrushSprite = getUnderbrushSprite(currentTreeSeason());
-        if (underbrushSprite) {
-            for (const it of items) {
-                if (!it.c.inGrove) continue;
-                const uw = it.h * 1.45;
-                const uh = it.h * 0.78;
-                ctx.drawImage(underbrushSprite, it.x - uw * 0.5, it.y - uh * 0.45, uw, uh);
-            }
-        }
-
+        // 🔴 DE 原生树木精灵（frames.png）自身已内置柔化好的左下角等轴测地面阴影；
+        //    不再叠加反向右下角椭圆阴影或暗黑泥印，保持树干根部与翠绿/黄褐地表干净通透融合。
         for (const it of items) {
-            drawContactShadow(it);
             /** 树位键（经纬度 5 位小数）：给「上一帧画成的贴图」备忘用，四季之间坐标绝对不变 */
             const posKey = `${Math.round(it.c.lat * 1e5)},${Math.round(it.c.lng * 1e5)}`;
 
@@ -812,29 +794,30 @@ export class VegetationLayer {
                 if (clusterWeight <= 0 || hash(gx, gy, 46) > clusterWeight) continue;
 
                 // 🔴 自然树丛聚簇（Grove Clustering）：告别“一格一棵孤树撒豆子”，
-                //    按郁闭度与聚簇度生成 1~3 棵主次分明、树冠微叠的自然小树林（主树高大居中 + 伴生树错落环绕）
-                const count = (canopyDensity >= 55 && noiseVal > 0.64 && hash(gx, gy, 53) > 0.42)
-                    ? 3
-                    : ((canopyDensity >= 34 && noiseVal > 0.50 && hash(gx, gy, 53) > 0.35) ? 2 : 1);
+                //    按郁闭度与聚簇度生成 2~4 棵主次分明、树冠紧簇相依的自然树丛（主树高大居中 + 伴生树错落环绕）
+                const count = (canopyDensity >= 55 && noiseVal > 0.62)
+                    ? (hash(gx, gy, 53) > 0.45 ? 4 : 3)
+                    : ((canopyDensity >= 30 || noiseVal > 0.48) ? (hash(gx, gy, 53) > 0.30 ? 2 : 1) : 1);
 
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
                     let curPy = py;
                     if (i > 0) {
-                        const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * (Math.PI * 0.85);
-                        const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.55;
-                        const dist = 8 + hash(gx, gy, i * 19 + 32) * 9;
+                        const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * (Math.PI * 0.72);
+                        const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.48;
+                        const dist = 6 + hash(gx, gy, i * 19 + 32) * 7;
                         curPx += Math.cos(ang) * dist;
-                        curPy += Math.sin(ang) * dist * 0.72;
+                        curPy += Math.sin(ang) * dist * 0.68;
                     }
                     const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
                     // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转；
-                    //    同时在战略地图尺度（25px）下，将全秃枯刺（BIRCH_WINTER / DEAD_TREE）柔化为常青松柏或金秋疏林，
-                    //    消除黄褐草原/绿洲边缘上像插着一排枯黑铁丝的突兀感。
+                    //    同时在战略地图尺度（25px）下，将全秃枯树枝（BIRCH_WINTER / SCENARIO_TREE_I / DEAD_TREE）
+                    //    映射为覆雪/金秋/灌丛饱满树冠，消除绿草/黄褐地表上像插着一排枯黑铁丝的违和感。
                     const softenStrategicTree = (a: string): string => {
-                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 48 ? 'SNOW_PINE' : 'PINE';
-                        if (a === 'DEAD_TREE') return 'OLIVE';
+                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 46 ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK';
+                        if (a === 'SCENARIO_TREE_I') return 'SNOW_AUTUMN_OAK';
+                        if (a === 'DEAD_TREE') return 'BUSH_TREE_A';
                         return a;
                     };
                     const asset = softenStrategicTree(pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season, isSiege: false }));
@@ -843,16 +826,21 @@ export class VegetationLayer {
                         season: nextSeason, isSiege: false,
                     }));
 
-                    // 预热多变体精灵图与单棵成品预览图
-                    if (!treeFramesImage(asset, this.onTreeImageReady) && !treeImage(asset, this.onTreeImageReady)) pendingImages++;
-                    if (assetNext !== asset) {
-                        if (!treeFramesImage(assetNext, this.onTreeImageReady) && !treeImage(assetNext, this.onTreeImageReady)) pendingImages++;
-                    }
+                    // 预热多变体精灵图（对于第 0 帧可用者兼顾 preview.png）
+                    const preloadAsset = (targetAsset: string): boolean => {
+                        const m = TREE_METAS[targetAsset];
+                        if (m && !m.frames.includes(0)) {
+                            return !!treeFramesImage(targetAsset, this.onTreeImageReady);
+                        }
+                        return !!(treeFramesImage(targetAsset, this.onTreeImageReady) || treeImage(targetAsset, this.onTreeImageReady));
+                    };
+                    if (!preloadAsset(asset)) pendingImages++;
+                    if (assetNext !== asset && !preloadAsset(assetNext)) pendingImages++;
 
                     // 主树（i===0）挺拔饱满，伴生树（i>0）高低错落拱卫，形成自然树丛轮廓
                     const jitter = count > 1
-                        ? (i === 0 ? 1.02 + hash(gx, gy, 71) * 0.22 : 0.74 + hash(gx, gy, i * 23 + 71) * 0.24)
-                        : (0.88 + hash(gx, gy, 71) * 0.28);
+                        ? (i === 0 ? 1.06 + hash(gx, gy, 71) * 0.22 : 0.76 + hash(gx, gy, i * 23 + 71) * 0.24)
+                        : (0.92 + hash(gx, gy, 71) * 0.26);
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
                     drawCommands.push({
                         lat: curLatLng.lat,

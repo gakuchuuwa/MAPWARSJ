@@ -119,9 +119,9 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'HERO_ARTEMISIA',
         slots: [
-            { type: 'war_elephant', count: 2 },
-            { type: 'elite_immortal', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
+            { type: 'war_chariot', count: 2 },
+            { type: 'sparabara', count: 4 },
+            { type: 'elite_immortal_ranged', count: 3 },
         ],
     },
     {

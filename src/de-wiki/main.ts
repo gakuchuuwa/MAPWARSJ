@@ -11,9 +11,10 @@ import {
     type DeUnit
 } from './deData';
 import { mountDeTechTree, clearDeTechTreeCache, type TechTreeHandle, type DeLng } from './deTechTreeRender';
+import { mountOffTreeView } from './offTreeView';
 
 class DeWikiApp {
-    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'campaigns' | 'dlcs' = 'de-techtree';
+    private currentTab: 'overview' | 'civs' | 'units' | 'mechanics' | 'techtree' | 'de-techtree' | 'offtree' | 'campaigns' | 'dlcs' = 'de-techtree';
     private civFilterRegion: string = 'all';
     private civSearchQuery: string = '';
     private unitFilterCategory: string = 'all';
@@ -63,6 +64,7 @@ class DeWikiApp {
                     <button class="de-tab-btn" data-tab="mechanics">🛡️ 攻防与模拟器</button>
                     <button class="de-tab-btn" data-tab="techtree">🔬 科技树全览</button>
                     <button class="de-tab-btn active" data-tab="de-techtree">🌳 全文明科技树 (62)</button>
+                    <button class="de-tab-btn" data-tab="offtree">🧩 非科技树兵种</button>
                     <button class="de-tab-btn" data-tab="campaigns">🏆 史诗战役集</button>
                     <button class="de-tab-btn" data-tab="dlcs">📜 DLC版本史</button>
                 </nav>
@@ -233,6 +235,11 @@ class DeWikiApp {
                     <div id="de-techtree-host" style="width:100%;height:100%;"></div>
                 </section>
 
+                <!-- 6.5 非科技树兵种（场景编辑器/战役/秘籍专属，含英雄与其它分类） -->
+                <section id="sec-offtree" class="de-section-view">
+                    <div id="de-offtree-host"></div>
+                </section>
+
                 <!-- 7. 史诗战役集 -->
                 <section id="sec-campaigns" class="de-section-view">
                     <div style="background: var(--de-bg-darker); border: 1px solid var(--de-border-gold); border-radius: 8px; padding: 24px;">
@@ -273,6 +280,12 @@ class DeWikiApp {
             void this.renderDeTechTreeTab();
         } else {
             document.body.classList.remove('is-techtree-fullscreen');
+        }
+
+        // 非科技树兵种：首次进入时挂载（数据异步加载，之后常驻内存）
+        if (tab === 'offtree') {
+            const host = document.getElementById('de-offtree-host');
+            if (host) mountOffTreeView(host);
         }
     }
 

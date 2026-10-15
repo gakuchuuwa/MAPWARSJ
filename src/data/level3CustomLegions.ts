@@ -34,7 +34,7 @@ export interface Level3LegionDef {
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
-        name: '古典时代亚述军团',
+        name: '古典时代中东军团',
         formationMode: 'crane_wing',
         slots: [
             { type: 'thracian_peltast', count: 2 },
