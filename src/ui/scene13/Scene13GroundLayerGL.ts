@@ -955,10 +955,11 @@ export class Scene13GroundLayerGL {
    *   场纹理是双线性采样，相邻格水量连起来就是一条连续的细水道（只看格心会挖成一颗颗断开的水塘）。
    *   覆盖率 ≥ 0.35 的格同时记成水地形（terrain=1）。返回写了水量的格数。
    */
-  public addWaterCoverage(pred: (screenX: number, screenY: number) => boolean, W: number, H: number, samples = 4): number {
+  public addWaterCoverage(pred: (screenX: number, screenY: number) => boolean, W: number, H: number, samples = 6): number {
     const N = this.N, px = this.fieldPixels, sw = this.smoothWater;
     if (!px || !this.fieldTex) return 0;
     let touched = 0;
+    const hitWater: number[] = [];
     for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
       const p = this.cellToScreen(gx + 0.5, gy + 0.5, W, H);
       let hit = 0;
@@ -979,6 +980,22 @@ export class Scene13GroundLayerGL {
       if (cov >= 0.35) this.data.terrain[i] = 1;
       if (lvl > sw[i]) sw[i] = lvl;                                            // smoothWater 是只读引用：原地改内容
       px[i * 4 + 0] = Math.max(px[i * 4 + 0], Math.round(lvl * 255));
+      px[i * 4 + 1] = Math.max(px[i * 4 + 1], Math.round((1 - lvl * 0.55) * 140));
+      px[i * 4 + 2] = 0;
+      if (lvl >= 0.45) hitWater.push(i);
+    }
+    // 为护城河紧邻一圈岸线格补写湿沙过渡带（G 通道），消除生硬蓝边直切草地
+    for (const idx of hitWater) {
+      const gx = idx % N, gy = (idx - gx) / N;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = gx + dx, ny = gy + dy;
+        if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+        const ni = ny * N + nx;
+        const sand = (dx === 0 || dy === 0) ? 115 : 75;
+        if (sand > px[ni * 4 + 1]) px[ni * 4 + 1] = sand;
+        px[ni * 4 + 2] = Math.min(px[ni * 4 + 2], 40);
+      }
     }
     this.fieldDirty = true;
     return touched;

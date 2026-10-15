@@ -4056,15 +4056,13 @@ export class Scene13WarLayer {
 
         const inMarch = this.deployT > 0;
         const heroPort = anchorPort;
-        // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」] 原写死 -10 ⇒ 玩家格子嵌在本队第一排身体里
-        //    （两人最小间距＝半径之和：虎骑+战象 10+18=28、步兵+步兵 8+8=16，都大于 10）。
-        //    列阵推进一结束推挤生效：身后的兵把他往前推、归队又把他拉回格子 ⇒ 朝向前后来回翻、一顿一冲，
-        //    镜头跟着他 ⇒ 整队看着在晃（真机 scratch/_probe_tremble_v11.mjs：300 帧朝向 A→B→A 14 次）。
-        //    现取「两人半径之和 + 2px」：站在第一排正前方、不与任何人重叠。
-        const heroDep = -(this.radiusOf(setup.heroKey) + this.radiusOf(heroPort.key) + 2);
+        // 🔴 [2026-10-15 主人令「乱入者要和相同兵种出兵口的位置保持相同」] 取消 10-13 的「站在第一排正前方」
+        //    （原 heroDep = -(半径之和 + 2)，为修「行军晃」把玩家前移）：玩家直接站在**相同兵种出兵口**的位置（dep=0）。
+        //    跟队不颤靠 10-13 的 heroFollow 豁免（无敌不吃本队推挤）＋站定清零，与是否前移无关。
+        const heroDep = 0;
         let uFwd = this.advanceVec[f]; let hx = heroPort.x - uFwd.x * heroDep;
         let hy = heroPort.y - uFwd.y * heroDep;
-        // 🔴 [2026-10-14 主人令「玩家作为守方也要列阵出城」] 守城时站到本队在城外阵里的位置（本队第一排正前方），
+        // 🔴 [2026-10-14 主人令「玩家作为守方也要列阵出城」] 守城时站到本队在城外阵里的位置（本队第一排），
         //    与第一波守军一起出生、一起贴墙校正、一起原地待敌（见 spawnTick 的 outsideFirst 与 holdLanes）
         const heroOutside = f === 1 && this.battleType === 'siege' && !!this.deCity && heroPort.outFwd !== undefined;
         if (heroOutside) {
@@ -5729,7 +5727,7 @@ export class Scene13WarLayer {
             let flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
             // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 河在墙外 1.5~4.5 格，整平范围要盖住它，河面才和城池地基同高
             if (this.defenderCityType === 'big_city' && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 5);
-            else if (moatOn && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + (1.5 + moatW) / Math.SQRT2 + 1.5);   // 中城、小城：盖住河（圆角处最远）
+            else if (moatOn && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 1.85 + moatW + 2.0);   // 中城、小城：盖住河（圆角处最远）
             if (this.defenderCityType === 'big_city') {
                 gl.flattenBigCityTerrain(cx, cy, W, H, seedStr, flatCells);
             } else if (this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city') {
@@ -5745,13 +5743,17 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」＋ 答复：3 格宽、四个门前各留一座桥、只加战术地图]
-        //    河按墙圈的格坐标（i,j：x=(i−j)·48、y=(i+j)·24，圈心 (0.5,0.5)）挖：墙心在 ringL/2，墙外空 1 格后开河，河宽 3 格；
-        //    四个门正前方（|i−0.5| 或 |j−0.5| ≤ 2，即门洞同宽 4 格）不挖，留作土堤桥。
+        //    河按墙圈的格坐标（i,j：x=(i−j)·48、y=(i+j)·24，圈心 (0.5,0.5)）挖：墙心在 ringL/2，墙外空 1.85 格后开河；
+        //    四个门正前方不挖，留作土堤桥。
         const ringLm = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
         let inMoat: ((x: number, y: number) => boolean) | null = null;
         if (moatOn && ringLm > 0) {
-            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河（原先按方形距离，城角处是直角）：城角处是圆弧；离墙 1.5 格，河宽按城型
+            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河：城角采用 L4 超椭圆圆角（避免 L2 在地面格对角方向收缩 0.707 缩进角楼底下）；
+            //    离墙 d0 = 1.85 格避免贴死墙根，窄河采样跨度补偿双线性插值收缩，门前桥豁口按河宽收窄以对齐 4 格城门。
             const half = ringLm / 2;
+            const d0 = 1.85;
+            const moatSpan = moatW === 1 ? 1.45 : moatW === 2 ? 2.15 : moatW;
+            const bridgeHalf = moatW === 1 ? 1.35 : moatW === 2 ? 1.65 : 2.0;
             // 土堤：城门正前方（门洞同宽 4 格）不挖。门的位置取实际摆出来的城门（两门款只有两扇，没门的边河不断开）
             const lanes: Array<{ axis: 'i' | 'j'; sign: number; along: number }> = [];
             for (const gt of this.wallGates) {
@@ -5766,11 +5768,11 @@ export class Scene13WarLayer {
                 const ci = (u + v) / 2 - 0.5, cj = (v - u) / 2 - 0.5;
                 const mi = Math.abs(ci), mj = Math.abs(cj);
                 const ex = mi - half, ey = mj - half;
-                const d = (ex > 0 && ey > 0) ? Math.hypot(ex, ey) : Math.max(ex, ey);
-                if (d < 1.5 || d >= 1.5 + moatW) return false;
+                const d = (ex > 0 && ey > 0) ? Math.pow(ex * ex * ex * ex + ey * ey * ey * ey, 0.25) : Math.max(ex, ey);
+                if (d < d0 || d >= d0 + moatSpan) return false;
                 for (const ln of lanes) {
-                    if (ln.axis === 'i' ? (Math.sign(ci) === ln.sign && Math.abs(cj - ln.along) <= 2)
-                        : (Math.sign(cj) === ln.sign && Math.abs(ci - ln.along) <= 2)) return false;
+                    if (ln.axis === 'i' ? (Math.sign(ci) === ln.sign && Math.abs(cj - ln.along) <= bridgeHalf)
+                        : (Math.sign(cj) === ln.sign && Math.abs(ci - ln.along) <= bridgeHalf)) return false;
                 }
                 return true;
             };
@@ -5778,12 +5780,12 @@ export class Scene13WarLayer {
             //    只在**河流**地图（waterKind === 'river'）做；海、湖、城寨（无护城河）不连。
             //    挖河之前先记下天然河水格，再找「护城河格 ↔ 河水格」最近的一对，≤ 15 格才挖一条直渠（宽 = 护城河宽）。
             //    地面格在地平面上是正方形（96×48 屏幕 px ＝ 地平面 96×96），所以距离按 (x, 2y) 量。
-            // 「城内」按墙圈算（离墙方框 < 1.5 格 ＝ 护城河内沿以内），不用城池素材椭圆：
+            // 「城内」按墙圈算（离墙方框 < d0 格 ＝ 护城河内沿以内），不用城池素材椭圆：
             //    椭圆的高含建筑立面（洛阳 ry 876px ≈ 18 格），会把护城河整圈、连同河与壕之间的空地都算进城里 ⇒ 渠永远挖不出来。
             const inCityE = (x: number, y: number): boolean => {
                 const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
                 const ex = Math.abs((u + v) / 2 - 0.5) - half, ey = Math.abs((v - u) / 2 - 0.5) - half;
-                return ((ex > 0 && ey > 0) ? Math.hypot(ex, ey) : Math.max(ex, ey)) < 1.5;
+                return ((ex > 0 && ey > 0) ? Math.pow(ex * ex * ex * ex + ey * ey * ey * ey, 0.25) : Math.max(ex, ey)) < d0;
             };
             const N: number = gl.data?.width ?? 0;
             const riverCells: Array<[number, number]> = [];
@@ -9662,7 +9664,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         //    ⚠️ 绝不用实时坐标：实时坐标每帧都在动，那样算出来的"中心"会带着全队一起抖 ——
         //       2026-10-03 刚修完「锚点抖 → 全队跟着抖」那一整条链（见 LANE_TRACK_EPS 与 _probe_tremble_trace.mjs）。
         //    ⚠️ 玩家本人永不担任锚点：他是被锚定的一方（绑到本队），不能反过来当锚点把整队拖在身后；
-        //       他 slotY=0、站在本队第一排正前方（dep = −(两人占地半径之和 + 2)，见 start 里 heroDep）离阵列中心也近，所以这条排除必须留着。
+        //       他 slotY=0、站在相同兵种出兵口位置（dep=0，见 start 里 heroDep）正是阵列中心，所以这条排除必须留着。
         const laneLeaders = new Map<number, WarMan>();
         const laneLeaderScore = new Map<number, number>();
         for (const m of this.men) {
