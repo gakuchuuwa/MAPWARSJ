@@ -12,7 +12,7 @@ import type { Army } from '../legion/Army';
 import type { FieldBattleData, SiegeData } from '../types/core';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { getCultureLegionName } from '../types/CultureFormations';
+import { applyLegionCultureComposition, getCultureLegionName } from '../types/CultureFormations';
 import { getCityRegion } from '../systems/RegionSystem';
 import { getGeneralRecordByGeneralId, getFactionIdOfGeneral } from '../data/FactionGenerals';
 import { markSpawnTierConsumed } from '../legion/LegionSpawnTier';
@@ -517,6 +517,7 @@ export class HistoricalEventManager {
             reuse.isElite = true;
             reuse.name = this.sideBaseLegionName(fb, side);
             reuse.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
+            applyLegionCultureComposition(reuse, reuse.cultureRegion ?? undefined);
             reuse.scriptMarchExempt = true;
             reuse.isScriptArmy = true;
             reuse.stopMovement();
@@ -577,6 +578,7 @@ export class HistoricalEventManager {
         army.name = legionName;
         army.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
+        applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
         const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
         // 只为这一仗而生：不自行行军、不另寻目标、不掉兵

@@ -2,18 +2,19 @@
 const SIZE = 128;
 /** 海、湖与矢量河流共用的水色；近岸增量只表达视觉过渡。 */
 export const STRATEGIC_WATER_PALETTE = {
-    base: [42, 98, 134] as const,
+    /** 浅海中段渐变蓝 (Mid-Shelf Blue) */
+    base: [38, 98, 140] as const,
     shoreLift: [12, 38, 28] as const,
-    /** 深海色：水深越大越接近它（见 RiverWorker 的 depthT；湖、河、高处的水深度为 0，保持 base） */
-    deep: [18, 48, 76] as const,
-    /** 近海浅水与河流入海统一水色 (Coastal Azure & River Estuary) */
-    coastalAzure: [54, 136, 162] as const,
-    /** 贴岸浅滩/极浅清透水色 (Shore Shallows) */
-    shallowReef: [64, 156, 174] as const,
+    /** 深海深邃蓝 (Abyssal Deep Blue) */
+    deep: [16, 46, 78] as const,
+    /** 浅滩、内陆宽河与矢量河流共用统一浅蓝绿水色 (Shallows & River Unified Cyan-Blue) */
+    coastalAzure: [62, 148, 174] as const,
+    /** 贴岸极浅清透水色 (Shore Shallows Highlight) */
+    shallowReef: [76, 166, 186] as const,
 };
-export const STRATEGIC_WATER_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.join(',')})`;
-export const STRATEGIC_RIVER_BANK_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.base.map(
-    (value, channel) => Math.round(value + STRATEGIC_WATER_PALETTE.shoreLift[channel] * 0.35),
+export const STRATEGIC_WATER_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.coastalAzure.join(',')})`;
+export const STRATEGIC_RIVER_BANK_COLOR = `rgb(${STRATEGIC_WATER_PALETTE.coastalAzure.map(
+    (value, channel) => Math.round(value + STRATEGIC_WATER_PALETTE.shoreLift[channel] * 0.25),
 ).join(',')})`;
 let texture: Promise<Float32Array | null> | undefined;
 
@@ -84,7 +85,7 @@ export function renderStrategicWater(
     tile: WaterTileMask, tiles: ReadonlyMap<string, WaterTileMask>, detail: Float32Array | null,
 ): StrategicWaterResult {
     const { width: w, height: h, mask } = tile;
-    const pad = 24, pw = w + pad * 2, ph = h + pad * 2;
+    const pad = 32, pw = w + pad * 2, ph = h + pad * 2;
     const distance = new Float32Array(pw * ph);
     const water = new Uint8Array(pw * ph);
     const worldWidth = 2 ** tile.z;
@@ -111,28 +112,26 @@ export function renderStrategicWater(
             distance[i+pw-1]+Math.SQRT2, distance[i+pw+1]+Math.SQRT2);
     }
     const out = new Uint8ClampedArray(w * h * 4);
-    const { base, deep } = STRATEGIC_WATER_PALETTE;
+    const { base, deep, coastalAzure, shallowReef } = STRATEGIC_WATER_PALETTE;
     const depthT = tile.depthT ?? null;
     const wavePoints: number[] = [];
     const worldPx = 2 ** tile.z * w;
 
     for (let y = 0; y < h; y++) {
         const wy = tile.y * h + y;
-        // 计算当前行的全局纬度，实现全球水色气候自适应
+        // 计算当前行的全局纬度，仅在热带与高纬极地做轻微水色微调，温带保持与矢量河流完全一致的 coastalAzure
         const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (wy + 0.5) / worldPx))) * 180 / Math.PI;
         const absLat = Math.abs(lat);
-        // 热带/暖海程度 (0~1) 与 极地/高纬寒海程度 (0~1)
-        const tropicalT = Math.max(0, Math.min(1, (28 - absLat) / 10)); // <18° 满热带，>28° 为 0
-        const arcticT = Math.max(0, Math.min(1, (absLat - 48) / 14));   // >62° 满寒带，<48° 为 0
+        const tropicalT = Math.max(0, Math.min(1, (26 - absLat) / 10));
+        const arcticT = Math.max(0, Math.min(1, (absLat - 56) / 14));
 
-        // 全球自适应近海青蓝与浅滩水色（基准 coastalAzure [54, 136, 162] 与河流入海色完全同源）
-        const azureR = Math.round(54 + tropicalT * 4 - arcticT * 6);
-        const azureG = Math.round(136 + tropicalT * 12 - arcticT * 14);
-        const azureB = Math.round(162 + tropicalT * 6 - arcticT * 12);
+        const azureR = Math.round(coastalAzure[0] + tropicalT * 3 - arcticT * 5);
+        const azureG = Math.round(coastalAzure[1] + tropicalT * 8 - arcticT * 10);
+        const azureB = Math.round(coastalAzure[2] + tropicalT * 4 - arcticT * 8);
 
-        const reefR = Math.round(64 + tropicalT * 6 - arcticT * 8);
-        const reefG = Math.round(156 + tropicalT * 12 - arcticT * 20);
-        const reefB = Math.round(174 + tropicalT * 4 - arcticT * 16);
+        const reefR = Math.round(shallowReef[0] + tropicalT * 4 - arcticT * 6);
+        const reefG = Math.round(shallowReef[1] + tropicalT * 8 - arcticT * 14);
+        const reefB = Math.round(shallowReef[2] + tropicalT * 3 - arcticT * 12);
 
         for (let x = 0; x < w; x++) {
             const i = (y + pad) * pw + x + pad, o = (y * w + x) * 4;
@@ -144,37 +143,47 @@ export function renderStrategicWater(
             const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
             const tone = waterToneAt(wx, wy);
 
-            // 水深上色：大洋深海接近 deep，近海基调 base；内陆湖泊（d≈0）按离岸距离产生湖岸浅、湖心深的自然水深层次
+            // 三段连续渐变：浅滩/河流浅蓝 (effD=0, 与矢量河流同色) → 浅海渐变蓝 (effD=0.52) → 深海深蓝 (effD=1.0)
             const d = depthT ? depthT[y * w + x] : 0;
             const dist = distance[i];
-            const lakeDeepT = d < 0.05 && water[i] ? Math.min(0.32, Math.max(0, (dist - 4.5) / 18) * 0.32) : 0;
-            const effD = Math.max(d, lakeDeepT);
-            let r = base[0] + (deep[0] - base[0]) * effD;
-            let g = base[1] + (deep[1] - base[1]) * effD;
-            let b = base[2] + (deep[2] - base[2]) * effD;
+            // 仅宽阔内陆大湖（dist > 14px）湖心轻微加深；河道与入海河口（dist <= 14px）保持 effD=0，与矢量河流颜色无缝一致
+            const lakeDeepT = d < 0.03 && water[i] && dist > 14 ? Math.min(0.28, (dist - 14) / 22 * 0.28) : 0;
+            let effD = Math.max(d, lakeDeepT);
 
-            // 沿岸浅水与海湾过渡：与真实海底水深（DEM depthT）有机联动
-            // 平缓海湾、大陆架与入海口呈现 10~14px 宽的开阔浅滩（与矢量河流完全同色 coastalAzure），海沟处自然收窄
-            const depthFactor = Math.max(0.35, 1 - d * 0.70);
-            const reach = (11 + Math.sin(wx / 37 + wy / 51) * 2.5 + Math.sin((wx - wy) / 23) * 1.5) * depthFactor;
-
+            // 近岸浅滩过渡带：离岸 reach (18~26px) 范围内将水深平滑压浅，使海岸向浅海、深海呈现柔顺渐变
+            const depthFactor = Math.max(0.45, 1 - d * 0.55);
+            const reach = (22 + Math.sin(wx / 37 + wy / 51) * 3.0 + Math.sin((wx - wy) / 23) * 1.8) * depthFactor;
             if (water[i] && dist < reach) {
-                // 近海、海湾与河口浅水层（与矢量河流同色 coastalAzure，实现「百川入海、水色相融」）
-                const shelfT = Math.pow(1 - dist / reach, 1.25) * 0.75;
-                r = r * (1 - shelfT) + azureR * shelfT;
-                g = g * (1 - shelfT) + azureG * shelfT;
-                b = b * (1 - shelfT) + azureB * shelfT;
+                const u = Math.max(0, Math.min(1, dist / reach));
+                const coastFade = u * u * (3 - 2 * u); // smoothstep 0..1
+                effD *= (0.12 + 0.88 * coastFade);
+            }
 
-                // 贴岸 2.5px 内微透极浅清浅层
-                if (dist < 2.5) {
-                    const seamT = Math.pow(1 - dist / 2.5, 1.2) * 0.35;
-                    r = r * (1 - seamT) + reefR * seamT;
-                    g = g * (1 - seamT) + reefG * seamT;
-                    b = b * (1 - seamT) + reefB * seamT;
-                }
-                // 贴岸 1.6px 河床/湖岸湿润微暗浸润边，让水体自然嵌入大地而非浮在表面
-                if (dist < 1.6) {
-                    const bankShade = 1 - (1 - dist / 1.6) * 0.14;
+            let r: number, g: number, b: number;
+            const MID_STOP = 0.52;
+            if (effD <= MID_STOP) {
+                // 第一段：浅滩/河道浅蓝 (azure) → 浅海渐变蓝 (base)
+                const t1 = effD / MID_STOP;
+                r = azureR + (base[0] - azureR) * t1;
+                g = azureG + (base[1] - azureG) * t1;
+                b = azureB + (base[2] - azureB) * t1;
+            } else {
+                // 第二段：浅海渐变蓝 (base) → 深海深邃蓝 (deep)
+                const t2 = Math.min(1, (effD - MID_STOP) / (1 - MID_STOP));
+                r = base[0] + (deep[0] - base[0]) * t2;
+                g = base[1] + (deep[1] - base[1]) * t2;
+                b = base[2] + (deep[2] - base[2]) * t2;
+            }
+
+            if (water[i] && dist < 4.5) {
+                // 贴岸 4.5px 内微透清浅浅滩色 (shallowReef)
+                const seamT = Math.pow(1 - dist / 4.5, 1.2) * 0.42;
+                r = r * (1 - seamT) + reefR * seamT;
+                g = g * (1 - seamT) + reefG * seamT;
+                b = b * (1 - seamT) + reefB * seamT;
+                // 贴岸 1.5px 水岸湿润微暗浸润边，让水体自然嵌入大地
+                if (dist < 1.5) {
+                    const bankShade = 1 - (1 - dist / 1.5) * 0.12;
                     r *= bankShade;
                     g *= bankShade;
                     b *= bankShade;

@@ -383,10 +383,10 @@ const SIEGE_RAM_LINE: ReadonlyArray<string> = ['siege_ram', 'capped_ram', 'batte
  *   攻城武器（冲车对 11 +150、投石机 +230、火炮 +200）才打得动；普通兵近防 8/远防 10 → 每下 1。
  */
 const WALL_GATE_STATS: Record<string, WarType> = {
-    STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
-    FORTIFIED_WALL: { name: '加固城墙', cls: 'melee', sz: 1, hp: 3000, atk: 0, meleeArmor: 12, pierceArmor: 12, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
-    STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 2750, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
-    FORTIFIED_GATE: { name: '加固城门', cls: 'melee', sz: 1, hp: 4000, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    STONE_WALL: { name: '石墙', cls: 'melee', sz: 1, hp: 1080, atk: 0, meleeArmor: 8, pierceArmor: 10, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 13, 21, 22] },
+    FORTIFIED_WALL: { name: '加固城墙', cls: 'melee', sz: 1, hp: 3000, atk: 0, meleeArmor: 12, pierceArmor: 12, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 13, 21, 22] },
+    STONE_GATE: { name: '城门', cls: 'melee', sz: 1, hp: 2750, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 13, 21, 22] },
+    FORTIFIED_GATE: { name: '加固城门', cls: 'melee', sz: 1, hp: 4000, atk: 0, meleeArmor: 6, pierceArmor: 6, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 13, 21, 22] },
     // 🔴 [2026-10-13 全面体检抓出·已修] **木栅栏门 / 篱笆门**原来套的是 `STONE_GATE`（1650 血 + 6/6 甲），
     //    与相邻木墙（`WOOD_WALL` 540/2/5）差 3 倍 —— 一排木栅栏上却嵌着一扇比石墙还硬的门。
     //    木门与木墙同一材质，照 `WOOD_WALL` 档（键名仍写 `STONE_GATE`，见下方建门处的说明）。
@@ -395,7 +395,7 @@ const WALL_GATE_STATS: Record<string, WarType> = {
     //    「攻城武器打很久栅栏都不坏」。
     //    ⚠️ 血量不取 DE 本体的 250：那是玩家临时圈地的栅栏值，当城防太薄、一发就散。
     //    540 → 砸开要三四发、比石墙快一档，材质差别看得出来又不至于一碰就没。
-    WOOD_WALL: { name: '木栅栏', cls: 'melee', sz: 1, hp: 540, atk: 0, meleeArmor: 2, pierceArmor: 5, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] },
+    WOOD_WALL: { name: '木栅栏', cls: 'melee', sz: 1, hp: 540, atk: 0, meleeArmor: 2, pierceArmor: 5, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21, 22] },
 };
 
 /**
@@ -422,7 +422,7 @@ const DE_BLD_TABLE: Record<string, Array<[number, number, number]>> = {
     WONDER: [[4800, 3, 10], [4800, 3, 10], [4800, 3, 10], [4800, 3, 10]],
 };
 
-/** 素材名 → DE 建筑属性；护甲类 11(石质防御)+21(建筑) 与城墙同，攻城武器加成照 dmgVs 自然结算。 */
+/** 素材名 → DE 建筑属性；护甲类按 DE empires2_x2_p1.dat 实测（11=建筑、13=石质防御、21=标准建筑、26=城堡），士兵与攻城武器对建筑加成照 dmgVs 自然结算。 */
 function deBuildingStats(name: string, forceKind?: string): WarType {
     const m = name.match(/_AGE([1-4])/);
     const age = m ? Number(m[1]) - 1 : 1;
@@ -432,7 +432,11 @@ function deBuildingStats(name: string, forceKind?: string): WarType {
     }
     const dark = name.startsWith('DARK_') || name.startsWith('HUT_') || name === 'SETTLEMENT';
     const [hp, melee, pierce] = DE_BLD_TABLE[kind][dark && !forceKind ? 0 : age];
-    return { name, cls: 'melee', sz: 1, hp, atk: 0, meleeArmor: melee, pierceArmor: pierce, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags: [11, 21] };
+    const armorTags = kind === 'CASTLE' ? [11, 21, 26]
+        : kind === 'TOWER' ? [11, 13, 21]
+            : kind === 'WONDER' ? [11]
+                : [11, 21];
+    return { name, cls: 'melee', sz: 1, hp, atk: 0, meleeArmor: melee, pierceArmor: pierce, rng: 0, reload: 1, spd: 0, dmgType: 'melee', armorTags };
 }
 
 /** 攻城战守方城墙/城门：可攻击建筑目标（士兵能打、HP 归零即破，照 DE）。不进 WarMan 网格，独立维护。 */
@@ -4221,8 +4225,8 @@ export class Scene13WarLayer {
         this.glCanvas = glCv;
 
         this.ground = document.createElement('canvas');
-        this.ground.width = 7616;
-        this.ground.height = 3808;
+        this.ground.width = TAC_MAP_HALF_W * 2;
+        this.ground.height = TAC_MAP_HALF_H * 2;
         this.groundCtx = this.ground.getContext('2d', { alpha: true });
         // [2026-09-10 主人需求] 战术模式右上角退出战斗按钮已删除/移入战术模式玩家面板（PlayerScene13Control）
         const onResize = () => {
@@ -4977,11 +4981,13 @@ export class Scene13WarLayer {
             const key = nine[idx];
             this.ensureType(key, 0);
             const hp = this.statsFor(key, 0).hp;
-            // 🔴 [2026-10-11] 新战术模式攻城战：攻城器械规整展开在攻方军阵前沿（depth * 2.8），目标＝地图中心的城池
+            // 🔴 [2026-10-15 主人令「把攻城武器放到进攻方军团的后面」] 攻城器械规整展开在攻方军阵后方（-depth * 2.0，后排方阵之后）
             const base = this.spawnBases[0], fwd = this.advanceVec[0], sv = this.sideVec[0];
             const sideOffset = (idx - (siegeCount - 1) / 2) * 85;
-            const x = base.x + fwd.x * (depth * 2.8) + sv.x * sideOffset;
-            const y = base.y + fwd.y * (depth * 2.8) + sv.y * sideOffset;
+            const [x, y] = this.fieldBound(
+                base.x - fwd.x * (depth * 2.0) + sv.x * sideOffset,
+                base.y - fwd.y * (depth * 2.0) + sv.y * sideOffset,
+            );
             const tgt = this.deCity ? this.deCityCenter : this.spawnBases[1];
             const tgtX = tgt.x, tgtY = tgt.y;
             this.men.push({
@@ -5139,7 +5145,7 @@ export class Scene13WarLayer {
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > this.worldCX + 3808 + w) c.x = this.worldCX - 3808 - w;
+                if (c.x > this.worldCX + TAC_MAP_HALF_W + w) c.x = this.worldCX - TAC_MAP_HALF_W - w;
             }
         }
     }
@@ -5546,8 +5552,8 @@ export class Scene13WarLayer {
         const count = CLOUD_COUNT_MIN + ((Math.random() * (CLOUD_COUNT_MAX - CLOUD_COUNT_MIN + 1)) | 0);
         for (let i = 0; i < count; i++) {
             const c: SceneCloud = {
-                x: this.worldCX + (Math.random() - 0.5) * 7616,
-                y: this.worldCY + (Math.random() - 0.5) * 3808,
+                x: this.worldCX + (Math.random() - 0.5) * (TAC_MAP_HALF_W * 2),
+                y: this.worldCY + (Math.random() - 0.5) * (TAC_MAP_HALF_H * 2),
                 // 🔴 一律**从左往右**（主人 2026-08-12）：全场风向必须一致 ——
                 //    旗帜固定 row 5 走 facingLeft 分支、旗面画在杆的右侧，也是向右飘。
                 //    云和旗同向，风向才成立。**别改回随机方向。**
@@ -9120,7 +9126,7 @@ export class Scene13WarLayer {
         //    破损档与 0 血破坏链（`onDefBuildingHit` + D25/D50/D75 + 解碰撞），不另写一份。
         //    倍率 `SUICIDE_BLD_MULT` 说明见常量定义处。
         if (SUICIDE_TYPES.has(m.key)) {
-            for (const b of this.wallGates) {
+            for (const b of [...this.wallGates, ...this.defBuildings]) {
                 if (b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
                 if ((b.x - m.x) ** 2 + (b.y - m.y) ** 2 > radius * radius) continue;
                 const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * SUICIDE_BLD_MULT / shooter.reload;
@@ -10792,10 +10798,7 @@ export class Scene13WarLayer {
                     foe.atkNext++;
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
-                        // DE 建筑不吃小兵围殴加成（gangMul）与残局白热化（attritionMul）；
-                        // 非攻城兵种受建筑周长接触位上限约束（最多约 10 人同时贴墙挥砍，避免 50~150 人坐标重叠瞬秒建筑；攻城武器全额输出）
-                        const bldStackCap = (!m.siegeW && foe.atkers > 10) ? (10 / foe.atkers) : 1;
-                        foe.hp -= dps * this.sideBonus[m.f] * bldStackCap * dt;
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
                         // 🔴 [2026-08-23 修·城墙崩塌照 DE] damage stage：城墙被持续打时按 hp/maxHp
                         //   渐进切换破损档（完整 → D25 → D50 → D75，越损越矮），不是破墙瞬间才变残垣。
                         //   城门无 destrAssets（走 destruction 动画）、木栅栏无 destrAssets（直接消失）→ 跳过。
@@ -11090,7 +11093,7 @@ export class Scene13WarLayer {
             for (const c of this.clouds) {
                 c.x += c.vx * dt;
                 const w = (c.img?.naturalWidth ?? 600) * c.scale;
-                if (c.x > this.worldCX + 3808 + w) c.x = this.worldCX - 3808 - w;
+                if (c.x > this.worldCX + TAC_MAP_HALF_W + w) c.x = this.worldCX - TAC_MAP_HALF_W - w;
             }
         }
         // 留下的尸体：死亡动画播完 → 烙进地面图永久保留（不再逐帧重画、不再参与排序）
@@ -11510,24 +11513,41 @@ export class Scene13WarLayer {
         // 🔴 DE 素材 meta 未就绪：延迟烙尸，等 dyn 到位再画，绝不走 S10DB 正方形 fallback 切出错位碎片
         if (!dm && b.isDE) return false;
 
+        const inWater = this.isWaterAt(c.x, c.y);
         g.save();
-        // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
-        g.filter = 'brightness(80%) contrast(95%)';
-        g.globalAlpha = 1.0;
-        if (dm) {
-            // 🔴 AoE2 DE 动态帧框（2026-08-15 修复「尸体一个都留不下」）：
-            //   之前走 S10DB 正方形假设（dieFw = b.fh = 84）切 DE 动态 sheet（fw 40~120 不等），
-            //   末帧切片错位/越界 → 烙进地面是空白或碎片 → 保留的 1/3 尸体视觉上全丢。
-            //   这里与渲染循环同一套 hotspot 对齐 + 动态帧框。
-            // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数），已恢复：
-            //   尸体尺寸必须与兵模同一把尺子（UNIT_PX * sz / 64），否则同一场里尸体会和活人不一样大。
-            const s = UNIT_PX * (wt?.sz ?? 1) / 64;
-            const gx = c.x - (this.worldCX - 3808), gy = drawY - (this.worldCY - 1904); g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
+        const drawFrame = () => {
+            if (dm) {
+                // 🔴 AoE2 DE 动态帧框（2026-08-15 修复「尸体一个都留不下」）：
+                //   之前走 S10DB 正方形假设（dieFw = b.fh = 84）切 DE 动态 sheet（fw 40~120 不等），
+                //   末帧切片错位/越界 → 烙进地面是空白或碎片 → 保留的 1/3 尸体视觉上全丢。
+                //   这里与渲染循环同一套 hotspot 对齐 + 动态帧框。
+                // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数），已恢复：
+                //   尸体尺寸必须与兵模同一把尺子（UNIT_PX * sz / 64），否则同一场里尸体会和活人不一样大。
+                const s = UNIT_PX * (wt?.sz ?? 1) / 64;
+                const gx = c.x - (this.worldCX - TAC_MAP_HALF_W), gy = drawY - (this.worldCY - TAC_MAP_HALF_H); g.drawImage(img, (dieN - 1) * dm.fw, 0, dm.fw, dm.fh, gx - dm.hx * s, gy - dm.hy * s, dm.fw * s, dm.fh * s);
+            } else {
+                // S10DB 正方形帧（原逻辑不变）
+                const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
+                const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
+                const gx = c.x - (this.worldCX - TAC_MAP_HALF_W), gy = drawY - (this.worldCY - TAC_MAP_HALF_H); g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+            }
+        };
+        if (inWater) {
+            // 🔴 [2026-10-15 主人令「尸体能做成在水下吗」] 水域尸体沉入水下：
+            //   ① 先用 destination-out 擦除同位置旧尸体的重叠不透明度，防止密集叠死把水面叠成 100% 不透明；
+            //   ② 再以水下蓝青滤镜 + 0.38 半透明烙入，让蓝色水体透出，视觉上呈沉入水底效果。
+            g.globalCompositeOperation = 'destination-out';
+            g.globalAlpha = 1.0;
+            drawFrame();
+            g.globalCompositeOperation = 'source-over';
+            g.filter = 'sepia(35%) hue-rotate(165deg) saturate(160%) brightness(62%) contrast(90%)';
+            g.globalAlpha = 0.38;
+            drawFrame();
         } else {
-            // S10DB 正方形帧（原逻辑不变）
-            const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
-            const dieFw = b.fh;   // 帧宽 = 帧高（每帧正方形）
-            const gx = c.x - (this.worldCX - 3808), gy = drawY - (this.worldCY - 1904); g.drawImage(img, (dieN - 1) * dieFw, 0, dieFw, b.fh, gx - px / 2, gy - px * 0.9, px, px);
+            // [环境融入] 仅做轻微压暗。去除 sepia（战场底色因地貌多变），保持 100% 不透明
+            g.filter = 'brightness(80%) contrast(95%)';
+            g.globalAlpha = 1.0;
+            drawFrame();
         }
         g.restore();
         this.groundHasContent = true;
@@ -11740,14 +11760,14 @@ export class Scene13WarLayer {
         this.perfStats.decorDrawn = decorDrawnCount;
         this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
         // 已烙的尸体：一张图搞定（在所有活人之下）
-        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - 3808, this.worldCY - 1904);
+        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - TAC_MAP_HALF_W, this.worldCY - TAC_MAP_HALF_H);
         // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
         for (const c of this.corpses) {
             const it = take();
             it.kind = 'unit';
             it.y = c.y - this.elevationLiftAt(c.x, c.y); it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
             it.fr = c.t;
-            it.a = 1;
+            it.a = this.isWaterAt(c.x, c.y) ? (1 - 0.62 * Math.min(1, c.t / DEATH_ANIM)) : 1;
             it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
         }
         // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
