@@ -1,9 +1,9 @@
 {
   "name": "PERSIAN_HOUSE_AGE3_DESTR",
-  "frames": 300,
+  "frames": 100,
   "box_w": 264,
-  "box_h": 192,
+  "box_h": 184,
   "anchor_x": 134,
-  "anchor_y": 126,
+  "anchor_y": 118,
   "sld_source": "b_persian_house_age3_destruction"
 }

@@ -1,0 +1,9 @@
+{
+  "name": "YURT_J_RUBBLE",
+  "frames": 1,
+  "box_w": 132,
+  "box_h": 56,
+  "anchor_x": 64,
+  "anchor_y": 24,
+  "sld_source": "b_scen_yurt_j_rubble"
+}

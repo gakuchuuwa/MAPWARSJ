@@ -1,0 +1,9 @@
+{
+  "name": "HUT_D_RUBBLE",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 100,
+  "anchor_x": 82,
+  "anchor_y": 46,
+  "sld_source": "b_scen_hut_d_rubble"
+}

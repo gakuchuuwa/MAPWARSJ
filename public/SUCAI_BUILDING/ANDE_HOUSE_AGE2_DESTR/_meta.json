@@ -1,9 +1,9 @@
 {
   "name": "ANDE_HOUSE_AGE2_DESTR",
-  "frames": 450,
-  "box_w": 256,
-  "box_h": 176,
-  "anchor_x": 122,
+  "frames": 100,
+  "box_w": 248,
+  "box_h": 168,
+  "anchor_x": 114,
   "anchor_y": 118,
   "sld_source": "b_ande_house_age2_destruction"
 }

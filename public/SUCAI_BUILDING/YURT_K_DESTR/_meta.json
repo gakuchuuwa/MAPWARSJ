@@ -1,0 +1,9 @@
+{
+  "name": "YURT_K_DESTR",
+  "frames": 100,
+  "box_w": 132,
+  "box_h": 92,
+  "anchor_x": 68,
+  "anchor_y": 64,
+  "sld_source": "b_scen_yurt_k_destruction"
+}

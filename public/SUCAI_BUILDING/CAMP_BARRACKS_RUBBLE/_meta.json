@@ -1,0 +1,9 @@
+{
+  "name": "CAMP_BARRACKS_RUBBLE",
+  "frames": 1,
+  "box_w": 312,
+  "box_h": 176,
+  "anchor_x": 152,
+  "anchor_y": 92,
+  "sld_source": "b_scen_camp_barracks_age2_rubble"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "CAMP_ARCHERY_RANGE_RUBBLE",
+  "frames": 1,
+  "box_w": 272,
+  "box_h": 152,
+  "anchor_x": 128,
+  "anchor_y": 84,
+  "sld_source": "b_scen_camp_archery_range_age2_rubble"
+}

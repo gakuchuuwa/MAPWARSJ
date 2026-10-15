@@ -1,0 +1,9 @@
+{
+  "name": "YURT_C_RUBBLE",
+  "frames": 1,
+  "box_w": 144,
+  "box_h": 88,
+  "anchor_x": 74,
+  "anchor_y": 46,
+  "sld_source": "b_scen_yurt_c_rubble"
+}
