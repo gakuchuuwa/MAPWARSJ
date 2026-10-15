@@ -2201,21 +2201,18 @@ const FIREARM_MUZZLE: Record<string, string> = {
     hussite_wagon: 'FX_MUZZLE_HAND', elite_hussite_wagon: 'FX_MUZZLE_HAND',
 };
 /**
- * 每方开局数 + 每次补兵批量 = 360（2026-08-18 主人改「9 口 × 36 = 每口 6×6 方正」；2026-09-23 主人改 10 口 → 10 × 36 = 360）。
- * 成批补：开局双方各出 360；之后一方场上 < 150 才再补 360（见 TRIGGER）。
+ * 每方开局数 + 每次补兵批量 = 500（10 队 × 每队 50 人 = 500）。
+ * 成批补：开局双方各出 500；之后一方场上 < 250 才再补 500（见 TRIGGER）。
  */
 const SIDE_CAP = 500;
 /**
- * 补兵触发线 = 180（2026-08-13 主人定「150」；2026-09-23 主人改 SIDE_CAP 360 → 打掉一半 = 180）：一方场上掉到 180 以下才再补一波 360。
- * 成批补制造「兵力波次」：一方打掉一半（360→180）才补，战线来回摆动，尸体沿途铺开。
+ * 补兵触发线 = 250（SIDE_CAP 500 打掉一半 = 250）：一方场上掉到 250 以下才再补一波 500。
+ * 成批补制造「兵力波次」：一方打掉一半（500→250）才补，战线来回摆动，尸体沿途铺开。
  */
 const TRIGGER = 250;
 /**
  * 1 精灵 = 多少兵（2026-08-13：10 → 20，修「三万兵演出 168s 超 120s 看门狗」）。
- * 🔴 只改总量语义，**画面不变**：每方开局 300 精灵不动 → 同屏密度一模一样，
- *    只是总池子 3000→1500 精灵、增援批次减半 → 战斗时长 168s→90s（1:20 实测，留 25% 余量）。
- *    不碰出兵速率、不碰打口系数、不碰引擎。回写兵力的乘数（getLiveTroops 等）用本常数。
- *    别调 1:30（池子 1000 太小，对称性难打破，实测有死锁种子）。
+ * 回写兵力的乘数（getLiveTroops 等）用本常数。
  */
 const SPRITE_TROOPS = 20;
 
@@ -2228,13 +2225,6 @@ const SPRITE_TROOPS = 20;
  * 🔴 不能只按 unit class 发：**战象和战车在 DE 里的 class 都是 12（骑兵）**，与普通骑兵同类，
  *    所以象/车必须按名字单独点名，其余 class 12 才算 1。
  *    （class 47 不是战象、是斥候 SCOUT —— 别再拿 47 认象，证据见 scratch/build_unit_class_by_stats.mjs。）
- */
-/**
- * 成批补（2026-08-11 主人定「取代一个一个补」，2026-08-13 定稿「弱方 < 300 一次补 300」）。
- * 🔴 一个一个补的毛病：双方速率一样、损失立刻被填平，谁也推不动谁 ——
- *    战线永远钉在中线，尸体全堆在那一条，没有尸横遍野的感觉。
- *    成批补制造「兵力波次」：弱方被压到 300 以下，一整批 300 人涌上来反推战线，
- *    战线来回摆动，尸体沿途铺开。
  */
 /**
  * 烙进地面的尸体保留比例（主人 2026-08-22 定为 40% 尸体 / 60% 逃跑）。
@@ -2297,30 +2287,15 @@ const ARRIVE_EPS = 8;
 
 /* ── 【列阵推进】2026-08-18 主人定，对齐帝国时代 DE 的阵型行军 ──────────────────────────
  *
- * 原来：待命一结束，600 个兵各自 search(SIGHT) 找自己最近的敌人扑上去，
- *       出生时按 LAYOUT（鱼鳞/三角/雁行）摆好的阵型**一开动就散**，看着不像军队像人潮。
- * 现在：开局那批（每方 324）在各自出兵口列成 6×6 方阵，整体平移压向敌方，
- *       期间**不脱离队形去追人**；索敌与出手照旧 —— 远程在队形里够得着就放箭，不出列。
- *       两军「前锋线」逼近到 MARCH_REL 时全军**同时**解除，无缝切回原有的索敌散开逻辑。
+ * 开局那批（每方 500 人，10 队 × 每队 50 人）在各自出兵口列成 10×5 方阵，整体平移压向敌方，
+ * 期间**不脱离队形去追人**；索敌与出手照旧 —— 远程在队形里够得着就放箭，不出列。
+ * 两军「前锋线」逼近到 MARCH_REL 时全军**同时**解除，无缝切回原有的索敌散开逻辑。
  *
  * 🔴 补兵也排方阵出生（主人 2026-08-18：比一盘散沙好），但 march=false **不迁就速度**、
  *    各自按兵种速度走；只有开局那批整体平移迁就最慢（阵型刚体）。
  *
  * 🔴 不禁火：行军段禁止远程开火会让它们白白损失一整段射击窗口（火焰弓射程 400，
  *    前锋线还差 250px 就已经够得着），实测口径下「弩克步」这条边会被动过 —— 所以只压移动，不压开火。
- *
- * 平衡实测（war_sim，SIDE_CAP=324，N=1350，WING=0 SPREAD=4 AIM_JITTER=120）：
- *   三臂对照（基线全散 / 只开局列阵 / 开局列阵+补兵方阵，各 6 种子 × 9 组，量具 scratch/march_ab.mjs）：
- *   克制三边（骑克弩/骑克步/弩克步）方向与换位结论**三臂完全一致**；打不完 0/0；时长持平。
- *
- * 🔴 【别再引用「镜像骑兵 0:6 守方通杀」这个结论——它是 6 种子的噪声，不是偏袒】
- *   我（CC）先报过 0:6，DS 复现后写成「既有方向偏袒」，两次都是 6 种子。
- *   加到 20 种子（scratch/mirror_bias.mjs）后全部回归五五开、无一显著：
- *     现行配置  步 12:8 (p=.50) / 骑 8:12 (p=.50) / 远程 7:13 (p=.26)
- *     基线配置  步 11:9 (p=.82) / 骑 7:13 (p=.26) / 远程 11:9 (p=.82)
- *     合计 56:64，双尾 p≈0.5 —— 没有可检出的左右偏袒。
- *   教训：**镜像局方差极大，6 种子只够看克制三边（6:0 这种压倒性结果），看不了镜像。**
- *   要对镜像下任何结论，先跑 mirror_bias.mjs 的 20 种子。
  */
 /** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
 const MARCH_REL = 160;
@@ -2329,7 +2304,7 @@ const MARCH_REL = 160;
  *    一个兵连续这么久视野里没有敌人（`m.foe` 为空），才准回本队队形；否则照旧各自索敌。
  *
  * 量具：`scratch/_measure_lane_regroup.mjs`（真机 puppeteer，2026-10-03；一场野战 732 帧 / 43.6 仿真秒、
- *   场上 721 精灵、双方 20 队）。实测「一个兵无目标」的空窗 1666 次 / 43.6s = **38.2 次/秒**，
+ *   双方 20 队）。实测「一个兵无目标」的空窗 1666 次 / 43.6s = **38.2 次/秒**，
  *   长度**天然分两簇**：
  *     · ≤0.5s：856~916 次（约 55%）＝ 索敌 0.2s 节流 + 换目标那一下的**假空窗**，21 次/秒；
  *     · ≥1.0s：只剩约 43.6% ＝ 真的没人可打（后排没轮上、被推离战线、收尾找残敌）。
@@ -2354,17 +2329,13 @@ const LANE_REGROUP_SEC = 1.0;
 const LANE_TRACK_EPS = 1;
 /**
  * 每个出兵口方阵的**横向列数**（files）。
- *
- * 主人 2026-08-18 定：**人 6 列、大体型 4 列**（战车体型大，36 辆横排就是一堵墙）。
- * 2026-08-30 主人：象/炮踩的是同一个坑（象 sz1.6、炮 radius20，横排 6 个太宽），一并降为 4 列。
- *   口径从「手写车类名单」改为「按人口 ≥2」：象 2、炮 3、车 3.75/5、拉塔战车 2 全部自动命中，
- *   与人口表（数据生成，不漏）天然联动。
+ * 口径按人口 ≥2 区分：普通兵种 10 列（每队 50 人 = 10 列 × 5 排），大体型（象 2、炮 3、车）9 列，横宽纵浅（左右长）。
  *
  * 🔴 files 只决定「每排几个」，**不决定出兵数**：出兵数 = poolPer / popCost（见 spawns 那处）。
  *   只改 files 不改 popCost = 排得更窄更长，总兵额不变 → 兵力仍守恒。
  */
-const MARCH_FILES_DEFAULT = 10;   // 🔴 [2026-10-12 主人令「按9列×4排做」「应该是左右长」] 原 6（6×6 正方）
-const MARCH_FILES_WAGON = 9;   // 🔴 [2026-10-12 主人令「大体型兵种也改成左右长」选方案 2] 原 4（4×9 前后长）
+const MARCH_FILES_DEFAULT = 10;   // 普通兵种 10 列（每队 50 人 = 10 列 × 5 排，左右长）
+const MARCH_FILES_WAGON = 9;   // 大体型兵种 9 列（左右长）
 function marchFilesOf(key: string): number {
     return popCostOf(key) >= 2 ? MARCH_FILES_WAGON : MARCH_FILES_DEFAULT;
 }
@@ -4736,9 +4707,7 @@ export class Scene13WarLayer {
             // [2026-09-05 玩家] 玩家在军中 → 布置玩家 + 自带精锐编队 + 受控编队（在 initPool 之前，精锐兵力计入本方总量）
             this.setupPlayerUnits(init);
 
-            // 🔴 [2026-09-15 主人定]「任何时候双方都必须是 9 支军队，永远是 9」——运行期把关。
-            //    这一刻两方的出兵口已经全部就位（编制 9 口 + 玩家精锐已顶替），
-            //    不是 9 就是有人又往 spawns 里塞东西了，落诊断 + 控制台点名，别让它悄悄漂。
+            // 🔴 [2026-09-23 主人定] 双方都必须是 10 支分队（编制 9 口 + 主将队 1 口）——运行期把关。
             //    ⚠️ 攻城武器在下面才追加，它不是「军队」不计入这条（见该段注释），所以校验放在这里。
             const laneCount: [number, number] = [
                 this.spawns.filter((s) => s.f === 0).length,
@@ -5732,9 +5701,9 @@ export class Scene13WarLayer {
             // 普通城市保持原有的整体地基整平
             const ringL = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
             let flatCells = ringL > 0 ? ringL / 2 + 0.5 : rCells;
-            // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 河在墙外 1.5~4.5 格，整平范围要盖住它，河面才和城池地基同高
-            if (this.defenderCityType === 'big_city' && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 5);
-            else if (moatOn && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 1.85 + moatW + 2.0);   // 中城、小城：盖住河（圆角处最远）
+            // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 河在墙外 1.5~4.5 格，整平范围要盖住它（含不规则水湾外扩），河面才和城池地基同高
+            if (this.defenderCityType === 'big_city' && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 6.5);
+            else if (moatOn && ringL > 0) flatCells = Math.max(flatCells, ringL / 2 + 1.85 + moatW + 2.8);   // 中城、小城：盖住不规则河岸与水湾外沿
             if (this.defenderCityType === 'big_city') {
                 gl.flattenBigCityTerrain(cx, cy, W, H, seedStr, flatCells);
             } else if (this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city') {
@@ -5750,36 +5719,101 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」＋ 答复：3 格宽、四个门前各留一座桥、只加战术地图]
-        //    河按墙圈的格坐标（i,j：x=(i−j)·48、y=(i+j)·24，圈心 (0.5,0.5)）挖：墙心在 ringL/2，墙外空 1.85 格后开河；
-        //    四个门正前方不挖，留作土堤桥。
+        // 🔴 [2026-10-15 主人令「护城河的左右两边各有一个尖，请消除，护城河应该是不规则的，不要所有都一样，应该多样化」]
+        //    1) 消除左右尖角：等轴投影 2:1（96×48）下，墙圈左右两角夹角仅 53.13°，旧版在 (ci,cj) 格空间算 L4 会沿水平角平分线外突成 `<`、`>` 尖刺；
+        //       现改为在屏幕像素空间直接向墙圈菱形线段 A=(0, half·TH)→B=(half·TW, 0) 投影求欧氏距离，左右角天然呈屏幕正圆弧包绕角楼，彻底消除尖刺。
+        //    2) 多样化不规则河道：按每座城 seedStr 确定性生成不同频率/相位的内外岸独立起伏波、四段河面宽窄偏置、1~3 处天然宽阔水湾，以及门桥两侧圆弧收头。
         const ringLm = Math.max(0, (rx - 200) / (TAC_TILE_W / 2));
         let inMoat: ((x: number, y: number) => boolean) | null = null;
         if (moatOn && ringLm > 0) {
-            // 🔴 [2026-10-12 主人令「改成圆角」] 按「离墙方框的距离」取河：城角采用 L4 超椭圆圆角（避免 L2 在地面格对角方向收缩 0.707 缩进角楼底下）；
-            //    离墙 d0 = 1.85 格避免贴死墙根，窄河采样跨度补偿双线性插值收缩，门前桥豁口按河宽收窄以对齐 4 格城门。
+            let mh = (hash >>> 0) ^ 0x9e3779b9;
+            const mrnd = (): number => {
+                mh = Math.imul(mh ^ (mh >>> 15), 0x85ebca6b) >>> 0;
+                mh = Math.imul(mh ^ (mh >>> 13), 0xc2b2ae35) >>> 0;
+                return ((mh ^ (mh >>> 16)) >>> 0) / 4294967296;
+            };
             const half = ringLm / 2;
-            const d0 = 1.85;
-            const moatSpan = moatW === 1 ? 1.45 : moatW === 2 ? 2.15 : moatW;
-            const bridgeHalf = moatW === 1 ? 1.35 : moatW === 2 ? 1.65 : 2.0;
-            // 土堤：城门正前方（门洞同宽 4 格）不挖。门的位置取实际摆出来的城门（两门款只有两扇，没门的边河不断开）
-            const lanes: Array<{ axis: 'i' | 'j'; sign: number; along: number }> = [];
+            const d0 = 1.80;
+            const baseSpan = moatW === 1 ? 1.50 : moatW === 2 ? 2.20 : 3.05;
+            const bridgeHalfBase = moatW === 1 ? 1.35 : moatW === 2 ? 1.65 : 2.0;
+            // 每座城专属的多频谐波参数与四段宽窄偏置
+            const f1 = 3 + Math.floor(mrnd() * 3), f2 = 6 + Math.floor(mrnd() * 4), f3 = 11 + Math.floor(mrnd() * 5);
+            const p1 = mrnd() * Math.PI * 2, p2 = mrnd() * Math.PI * 2, p3 = mrnd() * Math.PI * 2;
+            const p4 = mrnd() * Math.PI * 2, p5 = mrnd() * Math.PI * 2, p6 = mrnd() * Math.PI * 2;
+            const sideBias = [
+                (mrnd() - 0.5) * 0.45 * Math.sqrt(moatW),
+                (mrnd() - 0.5) * 0.45 * Math.sqrt(moatW),
+                (mrnd() - 0.5) * 0.45 * Math.sqrt(moatW),
+                (mrnd() - 0.5) * 0.45 * Math.sqrt(moatW),
+            ];
+            // 1~3 处天然水湾/深潭外扩（避开左右尖端 θ≈0 / ±π，分布在四段河身中段）
+            const bulgeCount = 1 + Math.floor(mrnd() * 3);
+            const qAngles = [0.28 * Math.PI, 0.72 * Math.PI, -0.72 * Math.PI, -0.28 * Math.PI];
+            const bulges: Array<{ th0: number; amp: number; wid: number }> = [];
+            for (let b = 0; b < bulgeCount; b++) {
+                const q = (b + Math.floor(mrnd() * 4)) % 4;
+                bulges.push({
+                    th0: qAngles[q] + (mrnd() - 0.5) * 0.26 * Math.PI,
+                    amp: (0.38 + mrnd() * 0.48) * (0.75 + 0.25 * moatW),
+                    wid: 0.16 + mrnd() * 0.14,
+                });
+            }
+            // 土堤：城门正前方不挖，每座门桥宽度带微幅差异，并在两侧做水滴圆头收口
+            const lanes: Array<{ axis: 'i' | 'j'; sign: number; along: number; bh: number }> = [];
             for (const gt of this.wallGates) {
                 if (gt.f !== 1 || !/GATE/.test(gt.key)) continue;
                 const gu = (gt.x - cx) / (TAC_TILE_W / 2), gv = (gt.y - cy) / (TAC_TILE_H / 2);
                 const gi = (gu + gv) / 2 - 0.5, gj = (gv - gu) / 2 - 0.5;
-                if (Math.abs(gi) >= Math.abs(gj)) lanes.push({ axis: 'i', sign: Math.sign(gi), along: gj });
-                else lanes.push({ axis: 'j', sign: Math.sign(gj), along: gi });
+                const bh = bridgeHalfBase + (mrnd() - 0.5) * 0.26;
+                if (Math.abs(gi) >= Math.abs(gj)) lanes.push({ axis: 'i', sign: Math.sign(gi), along: gj, bh });
+                else lanes.push({ axis: 'j', sign: Math.sign(gj), along: gi, bh });
             }
+            // 屏幕空间墙圈中心 (cx, rcy) 与第一象限墙段 A=(0, half·TH) → B=(half·TW, 0)
+            const rcy = cy + 0.5 * TAC_TILE_H;
+            const segAx = 0, segAy = half * TAC_TILE_H, segBx = half * TAC_TILE_W, segBy = 0;
+            const segVx = segBx - segAx, segVy = segBy - segAy, segLen2 = segVx * segVx + segVy * segVy || 1;
+            const unitPx = (TAC_TILE_W * TAC_TILE_H) / (2 * Math.hypot(TAC_TILE_W / 2, TAC_TILE_H / 2));
+            const wallScreenDist = (x: number, y: number, ex: number, ey: number): number => {
+                if (ex <= 0 && ey <= 0) return Math.max(ex, ey);
+                const dx = Math.abs(x - cx), dy = Math.abs(y - rcy);
+                const t = Math.max(0, Math.min(1, ((dx - segAx) * segVx + (dy - segAy) * segVy) / segLen2));
+                return Math.hypot(dx - (segAx + t * segVx), dy - (segAy + t * segVy)) / unitPx;
+            };
             inMoat = (x, y) => {
                 const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
                 const ci = (u + v) / 2 - 0.5, cj = (v - u) / 2 - 0.5;
-                const mi = Math.abs(ci), mj = Math.abs(cj);
-                const ex = mi - half, ey = mj - half;
-                const d = (ex > 0 && ey > 0) ? Math.pow(ex * ex * ex * ex + ey * ey * ey * ey, 0.25) : Math.max(ex, ey);
-                if (d < d0 || d >= d0 + moatSpan) return false;
+                const ex = Math.abs(ci) - half, ey = Math.abs(cj) - half;
+                const d = wallScreenDist(x, y, ex, ey);
+                const th = Math.atan2((y - rcy) * 2, x - cx);
+                // 左右角转弯处收束波幅以保持圆润包角，四段直墙河道充分展开不规则起伏
+                const tipFade = 0.25 + 0.75 * Math.sin(th) * Math.sin(th);
+                const wIn = (0.18 * Math.sin(f1 * th + p1) + 0.12 * Math.cos(f2 * th + p2) + 0.07 * Math.sin(f3 * th + p3)) * tipFade;
+                const dIn = Math.max(1.52, d0 + wIn);
+                const qIdx = (x >= cx ? 0 : 1) + (y >= rcy ? 0 : 2);
+                const wOut = (0.32 * Math.sin(f1 * th + p4) + 0.24 * Math.cos(f2 * th + p5) + 0.15 * Math.sin(f3 * th + p6)) * tipFade * (0.8 + 0.2 * moatW);
+                let bulge = 0;
+                for (const b of bulges) {
+                    let dth = th - b.th0;
+                    if (dth > Math.PI) dth -= Math.PI * 2;
+                    else if (dth < -Math.PI) dth += Math.PI * 2;
+                    bulge += b.amp * Math.exp(-(dth * dth) / (b.wid * b.wid));
+                }
+                const lrComp = 0.22 * Math.pow(Math.cos(th), 4);
+                const span = Math.max(moatW === 1 ? 1.25 : moatW * 0.88, baseSpan + sideBias[qIdx] + wOut + bulge * tipFade + lrComp);
+                const dOut = dIn + span;
+                if (d < dIn || d >= dOut) return false;
+                const capZone = 0.90;
                 for (const ln of lanes) {
-                    if (ln.axis === 'i' ? (Math.sign(ci) === ln.sign && Math.abs(cj - ln.along) <= bridgeHalf)
-                        : (Math.sign(cj) === ln.sign && Math.abs(ci - ln.along) <= bridgeHalf)) return false;
+                    const sameSide = ln.axis === 'i' ? (Math.sign(ci) === ln.sign) : (Math.sign(cj) === ln.sign);
+                    if (!sameSide) continue;
+                    const distAlong = Math.abs((ln.axis === 'i' ? cj : ci) - ln.along);
+                    if (distAlong <= ln.bh) return false;
+                    if (distAlong < ln.bh + capZone) {
+                        const profile = Math.sqrt((distAlong - ln.bh) / capZone);
+                        const mid = dIn * 0.45 + dOut * 0.55;
+                        const halfW = (dOut - dIn) * 0.5 * profile;
+                        if (d < mid - halfW || d >= mid + halfW) return false;
+                    }
                 }
                 return true;
             };
@@ -5792,7 +5826,7 @@ export class Scene13WarLayer {
             const inCityE = (x: number, y: number): boolean => {
                 const u = (x - cx) / (TAC_TILE_W / 2), v = (y - cy) / (TAC_TILE_H / 2);
                 const ex = Math.abs((u + v) / 2 - 0.5) - half, ey = Math.abs((v - u) / 2 - 0.5) - half;
-                return ((ex > 0 && ey > 0) ? Math.pow(ex * ex * ex * ex + ey * ey * ey * ey, 0.25) : Math.max(ex, ey)) < d0;
+                return wallScreenDist(x, y, ex, ey) < 1.52;
             };
             const N: number = gl.data?.width ?? 0;
             const riverCells: Array<[number, number]> = [];
@@ -5803,8 +5837,7 @@ export class Scene13WarLayer {
                     if (!inCityE(p.x, p.y) && !inMoat(p.x, p.y)) riverCells.push([p.x, p.y]);
                 }
             }
-            if (moatW < 3) gl.addWaterCoverage(inMoat, W, H);   // 中城、小城：窄河按覆盖率写水，保证连续
-            else gl.addWaterWhere(inMoat, W, H);
+            gl.addWaterCoverage(inMoat, W, H);   // 全城型按 5×5 子格覆盖率写水，使不规则岸线与圆角平滑自然
             if (riverCells.length > 0) {
                 const moatPts: Array<[number, number]> = [];
                 for (let gy = 0; gy < N; gy++) for (let gx = 0; gx < N; gx++) {
@@ -7798,20 +7831,20 @@ export class Scene13WarLayer {
         const onField = [0, 0];
         for (const m of this.men) if (m.hp > 0) onField[m.f]++;
 
-        // 【2026-08-13 主人定·成批补】开局双方各出 300；之后一方场上 < 150 才再补 300。
+        // 成批补：开局双方各出 500（10 队 × 50 人）；之后一方场上 < 250 才再补 500。
         //   成批补（不是死一个补一个），一方打掉一半才补一波，靠成批的兵反推战线。
         this.batchCd -= dt;
         if (this.batchCd > 0) return;
         // 渐显时长：开场列阵待命阶段的兵拉长淡入（整军缓缓显现），中途补兵保持短淡入
         const fadeDur = this.deployT > 0 ? DEPLOY_FADE : FADE_IN;
 
-        // 每一方独立判断：场上 < 150 才补 300（开局双方 0 → 各补 300，一帧同时出）
+        // 每一方独立判断：场上 < 250 才补 500（开局双方 0 → 各补 500，一帧同时出）
         for (let f = 0; f < 2; f++) {
-            if (onField[f] >= TRIGGER) continue;   // 场上 >= 150 不补
+            if (onField[f] >= TRIGGER) continue;   // 场上 >= 250 不补
 
             const ports = this.spawns.filter(s => s.f === f && s.pool > 0);
             if (!ports.length) continue;
-            let batch = SIDE_CAP;                  // 一次补 324（固定批量）
+            let batch = SIDE_CAP;                  // 一次补 500（固定批量）
             for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
 
 
@@ -8690,19 +8723,17 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
         const ax = foe.x - fireX, ay = foe.y - fireY;
         const ad = Math.hypot(ax, ay) || 1;
-        // 🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击特效」] 连弩三连发（与箭塔同款）
-        for (let v = 0; v < 3; v++) {
-            this.arrows.push({
-                x: fireX, y: fireY,
-                dx: ax / ad, dy: ay / ad, len: ad,
-                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
-                delay: v * PROJ_VOLLEY_DELAY,
-                towerFlight: {
-                    startLift: this.elevationLiftAt(fireX, b.sprite.y),
-                    endLift: this.elevationLiftAt(foe.x, foe.y),
-                },
-            });
-        }
+        // 🔴 [2026-10-15 主人令「换成 DE 的喷火火柱」] 希腊火（FLAMETHROWER_FLAME，30 帧火舌）
+        //    与猛火油柜/法师同款：单股火焰舔向目标，30 帧循环播放
+        this.arrows.push({
+            x: fireX, y: fireY,
+            dx: ax / ad, dy: ay / ad, len: ad,
+            t: 0, dur: ARROW_DUR, f: 1, proj: 'FLAMETHROWER_FLAME',
+            towerFlight: {
+                startLift: this.elevationLiftAt(fireX, b.sprite.y),
+                endLift: this.elevationLiftAt(foe.x, foe.y),
+            },
+        });
         b.cd = b.reload ?? 3.2;
     }
 
@@ -9308,7 +9339,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         this.releaseReservedTarget(m);
         // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
         // 🔴 [2026-10-11 AA #3 前半 属实] 原为 `search(m, MARCH_R, …, false)`（reserve=false）⇒ 不占围殴名额，
-        //    同一分队 36 人在**移动目标**上全部选出同一个最近敌兵 ⇒ 集体涌向一个点。
+        //    同一分队 50 人在**移动目标**上全部选出同一个最近敌兵 ⇒ 集体涌向一个点。
         //    改成 reserve=true：按 claims 上限分流到不同敌兵（与出手索敌同一套分流口径）。
         const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, true);
         // 🔴 [2026-10-11 主人令「整个战术模式的寻敌都还是以前旧的战术模式左右对战的寻敌方式，这个应该修改下」]
@@ -9732,7 +9763,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         for (const m of this.men) {
             if (m.hp <= 0 || m.lane < 0 || m.hero) continue;
             // 阵列几何：出生槽位 = 第 rank 排（间距 spDep）× 第 file 列（间距 sp），
-            // 每批每口 36 个精灵（SIDE_CAP ÷ SIDE_LANES）→ 排数 = 36 ÷ 列数
+            // 每批每口 50 个精灵（SIDE_CAP ÷ SIDE_LANES = 500 ÷ 10）→ 排数 = 50 ÷ 列数
             const sp = marchSpacingOf(m.key);
             const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);   // 与出兵排阵同一式（行距＝列距）
             const ranks = Math.max(1, Math.ceil((SIDE_CAP / SIDE_LANES) / marchFilesOf(m.key)));
@@ -9783,9 +9814,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 continue;
             }
             // 🔴 [2026-10-14 主人令「看到敌人再发起进攻，或者挨打发起进攻」「想一个让守方不分兵的方法」]
-            // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」] 城外列阵待敌的守方：进入阵前 380px 目视距离看到敌军、已锁敌或刚挨打 ⇒ **全军**立即出击
+            // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」「380 改 480」] 城外列阵待敌的守方：进入阵前 480px 目视距离看到敌军、已锁敌或刚挨打 ⇒ **全军**立即出击
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
-                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= 0 && this.search(m, 380, 0, false)))) this.holdLanes.clear();
+                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= 0 && this.search(m, 480, 0, false)))) this.holdLanes.clear();
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
@@ -9908,13 +9939,12 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
             //    野战大部队第一波推进（this.marching）期间，玩家严格跟随大部队行军队列前进；
             //    除非大部队整体接战（!this.marching），或敌人近身贴脸（<65px）受到攻击，玩家不擅自脱队冲锋。
             // 🔴 [2026-10-11 主人报「开战全挤成一排」] **城墙不算锁敌**：攻城战 search 会把 wallGates 当目标，
-            //    若按「锁敌即脱队」，全队 36 人第一轮索敌就锁定同一段墙、集体脱队压成一排。
+            //    若按「锁敌即脱队」，全队 50 人第一轮索敌就锁定同一段墙、集体脱队压成一排。
             //    Attack Move 的脱队只对**真敌兵**生效（建筑目标用 'sprite' in foe 区分，见上方交战时计数那段）。
             if (m.march && m.foe && !('sprite' in m.foe)) {
                 // 🔴 [2026-10-11 主人「按专业游戏修复」] **DE 的 Attack-Move 是「接触才脱队」，不是「看见就脱队」**。
                 //    改前：非英雄兵 `keepInMarch` 恒 false ⇒ 视野内一看到敌人（SIGHT 160~440px，远大于交战距离）
-                //    当场 m.march=false / m.port=null ⇒ 全队各自追同一个目标，分离推挤把方阵摊成「宽而扁」
-                //    （实测：横向 127~217px × 纵深 27~53px = 10~13 列 × 3~5 行，而要求是 6×6）。
+                //    当场 m.march=false / m.port=null ⇒ 全队各自追同一个目标，分离推挤把方阵摊成「宽而扁」。
                 //    现在：**只有进入交战距离（自身射程 + 一个槽位间距）才脱队**，之前一律保持方阵推进。
                 const _rng = this.statsFor(m.key, m.f).rng ?? 0;
                 const _d2 = (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2;
@@ -9969,7 +9999,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                             const aim = (m.hero && this.playerCmd === 'hold') ? null : this.aimAt(m);
                             // 🔴 [2026-10-11 主人报「战斗刚开始士兵全挤成一排」] 列阵推进期间（m.march）
                             //    **不拿寻敌结果覆盖阵位** —— 这正是本文件 2928 行写的口径「够不着不追」。
-                            //    改前无条件覆盖 ⇒ 同一口 36 人奔向同一个点 ⇒ 一排。
+                            //    改前无条件覆盖 ⇒ 同一口 50 人奔向同一个点 ⇒ 一排。
                             if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                             m.aimT = 0.5;
                         }
@@ -10092,7 +10122,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                             const aim = this.aimAt(m);
                             // 🔴 [2026-10-11 主人报「战斗刚开始士兵全挤成一排」] 列阵推进期间（m.march）
                             //    **不拿寻敌结果覆盖阵位** —— 这正是本文件 2928 行写的口径「够不着不追」。
-                            //    改前无条件覆盖 ⇒ 同一口 36 人奔向同一个点 ⇒ 一排。
+                            //    改前无条件覆盖 ⇒ 同一口 50 人奔向同一个点 ⇒ 一排。
                             if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
                         }
                         continue;
