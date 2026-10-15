@@ -2303,8 +2303,8 @@ const ARRIVE_EPS = 8;
  * 🔴 不禁火：行军段禁止远程开火会让它们白白损失一整段射击窗口（火焰弓射程 400，
  *    前锋线还差 250px 就已经够得着），实测口径下「弩克步」这条边会被动过 —— 所以只压移动，不压开火。
  */
-/** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战。步兵视野量级，双方相隔约三个身位 */
-const MARCH_REL = 160;
+/** 解除距离（px）：两军前锋线逼近到这个距离就全军散开接战 */
+const MARCH_REL = 360;
 /**
  * 🔴 [2026-10-03 主人令「每一队战斗的时候就分散，移动的时候就回归队形」] 单兵「无敌人」门槛（秒）：
  *    一个兵连续这么久视野里没有敌人（`m.foe` 为空），才准回本队队形；否则照旧各自索敌。
@@ -4001,34 +4001,53 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-07 主人定]「探马控同兵种的一队、先锋控同兵种的一排」。
         //    setup.unitKey = 玩家面板选中的本势力兵种；本方阵中 key 相同的口才归他指挥。
         //    还没学到兵种（unitKey 为 null）→ 退回旧口径：one=自带精锐/前排第一口，front=整个前排。
+        const normUnitKey = (k: string) => k.replace(/^elite_/, '').replace(/_elite$/, '');
+        const matchKey = (a: string, b: string | null | undefined) =>
+            !!b && (a === b || normUnitKey(a) === normUnitKey(b));
         const sameKey = (s: { f: number; key: string }) =>
-            setup.unitKey !== null && s.f === f && s.key === setup.unitKey;
+            setup.unitKey !== null && s.f === f && matchKey(s.key, setup.unitKey);
         for (const s of this.spawns) {
             if (s.f !== f) continue;
             if (setup.control === 'all') this.playerCtlLanes.add(s.lane);
             else if (setup.control === 'front') {
                 // 先锋：同兵种的整整一排（该兵种所在的那一排全给他）
-                if (setup.unitKey !== null) { if (sameKey(s)) this.playerCtlLanes.add(s.lane); }
+                if (setup.unitKey !== null) { if (sameKey(s) && !s.commander) this.playerCtlLanes.add(s.lane); }
                 else if (s.row <= 0 && !s.commander) this.playerCtlLanes.add(s.lane);
             }
         }
         if (setup.control === 'one') {
-            // 探马：同兵种里挑一队
-            const pick = this.spawns.find((s) => sameKey(s))
+            // 探马：同兵种里挑一队（优先常规 9 队，不抢主将队）
+            const pick = this.spawns.find((s) => sameKey(s) && !s.commander)
+                ?? this.spawns.find((s) => sameKey(s))
                 ?? this.spawns.find((s) => s.f === f && s.row === -1 && !s.commander)
+                ?? row0.find((s) => !s.commander)
                 ?? row0[0];
             if (pick) this.playerCtlLanes.add(pick.lane);
         }
 
         this.ensureType(setup.heroKey, f);
         // 🔴 [2026-10-03 主人令]「把玩家也绑上锚点，不然要他乱跑。玩家的兵模是什么就和那一队锚定。」
+        // 🔴 [2026-10-15 主人令「乱入者的出兵口，请和他的本队兵一致」]
+        //    优先锚定非主将队（!s.commander）的本队兵出兵口（含精锐/普通同名变体，且若探马已选定单队则直接与该队一致），
+        //    避免被 row=0 的主将队或同兵种大类（heroCls && row===0）抢到别的排。
         const mySpawns = this.spawns.filter((s) => s.f === f);
-        let anchorPort = mySpawns.find((s) => s.key === setup.heroKey)
-            ?? (setup.unitKey ? mySpawns.find((s) => s.key === setup.unitKey) : null);
+        const squadSpawns = mySpawns.filter((s) => !s.commander);
+        const ctlPort = this.playerCtlLanes.size === 1
+            ? mySpawns.find((s) => this.playerCtlLanes.has(s.lane))
+            : undefined;
+        let anchorPort = (ctlPort && (matchKey(ctlPort.key, setup.heroKey) || matchKey(ctlPort.key, setup.unitKey)))
+            ? ctlPort
+            : squadSpawns.find((s) => s.key === setup.heroKey)
+                ?? (setup.unitKey ? squadSpawns.find((s) => s.key === setup.unitKey) : undefined)
+                ?? squadSpawns.find((s) => matchKey(s.key, setup.heroKey))
+                ?? (setup.unitKey ? squadSpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined)
+                ?? ctlPort
+                ?? mySpawns.find((s) => matchKey(s.key, setup.heroKey))
+                ?? (setup.unitKey ? mySpawns.find((s) => matchKey(s.key, setup.unitKey)) : undefined);
         if (!anchorPort) {
             const heroCls = WAR_TYPES[setup.heroKey]?.cls ?? (setup.unitKey ? WAR_TYPES[setup.unitKey]?.cls : undefined);
             if (heroCls) {
-                anchorPort = mySpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls && s.row === 0)
+                anchorPort = squadSpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls)
                     ?? mySpawns.find((s) => WAR_TYPES[s.key]?.cls === heroCls);
             }
         }
@@ -4135,9 +4154,9 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-11 AA #9 后半 属实] 复活点原先写死「屏幕最左/最右」(mx*0.6 / vw − mx*0.6)，
         //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
         //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
-        const _base = this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
-        const x = _base.x;
-        const y = _base.y;
+        const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
+        const x = _port.x;
+        const y = _port.y;
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
@@ -9172,7 +9191,17 @@ export class Scene13WarLayer {
             }
             if (this.deCity) front1 = Math.min(front1, 320);
             const marchedDist = this.adv[0] + this.adv[1];
-            if ((marchedDist >= 180 && baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL) || this.battleSec >= 15.0) {
+            // 攻城战守方第一波在城外列阵（defOutsideBase）时，spawnBases[1] 仍在城心，按基座算的剩余距离比真实两军前锋间距大数百像素；
+            // 同时实测场上两军最前排存活单位沿推进轴的真实间距 liveGap，任一达到 MARCH_REL 即刻解除行军展开接战。
+            let maxP0 = -Infinity, minP1 = Infinity;
+            for (const m of this.men) {
+                if (m.hp <= 0 || m.siegeW) continue;
+                const p = (m.x - this.spawnBases[0].x) * u0.x + (m.y - this.spawnBases[0].y) * u0.y;
+                if (m.f === 0) { if (p > maxP0) maxP0 = p; }
+                else { if (p < minP1) minP1 = p; }
+            }
+            const liveGap = (maxP0 > -Infinity && minP1 < Infinity) ? (minP1 - maxP0) : Infinity;
+            if ((marchedDist >= 180 && (baseDist - (front0 + this.adv[0] + front1 + this.adv[1]) < MARCH_REL || liveGap < MARCH_REL)) || this.battleSec >= 15.0) {
                 this.marching = false;
                 for (const m of this.men) {
                     m.march = false;   // 全军同时解除，双方一起炸开接战
@@ -10097,9 +10126,11 @@ export class Scene13WarLayer {
                 continue;
             }
             // 🔴 [2026-10-14 主人令「看到敌人再发起进攻，或者挨打发起进攻」「想一个让守方不分兵的方法」]
-            // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」「380 改 480」] 城外列阵待敌的守方：进入阵前 480px 目视距离看到敌军、已锁敌或刚挨打 ⇒ **全军**立即出击
+            // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」「攻守双方开战的距离太近了，敌人都冲到眼前了，才开战，请拉开点距离」]
+            //    注意此处在 `m.next -= dt`（10165 行）之前，故须用 `m.next <= dt` 判断本帧索敌到点（原写 `m.next <= 0` 因下方的重置恒为 false 导致远距索敌从未执行）；
+            //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
-                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= 0 && this.search(m, 480, 0, false)))) this.holdLanes.clear();
+                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) this.holdLanes.clear();
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
@@ -10250,15 +10281,18 @@ export class Scene13WarLayer {
             // 列阵推进期间：移动目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走，不走 aimAt。
             // 没有发现敌人的士兵继续跟队；已经锁敌的士兵已按 Attack Move 脱队。
             if (m.march && m.port && !holdCmd) {
-                // 🔴 [2026-08-23 主人定·重设计] 攻城战不再列阵行军（inMarch 全 false），此分支只剩野战 marching：
-                //    推进目标恒为「本口锚点 + 自己的槽位」，每帧跟着阵型走。
-                const uFwd = this.advanceVec[m.f];
-                const uSide = this.sideVec[m.f];
-                const fwdDist = this.adv[m.f] - m.dep;
-                const sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
-                const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
-                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
-                [m.tx, m.ty] = this.fieldBound(sx, sy);
+                const heroSlot = m.hero ? this.laneSlotTarget(m, laneLeaders) : null;
+                if (heroSlot) {
+                    [m.tx, m.ty] = heroSlot;
+                } else {
+                    const uFwd = this.advanceVec[m.f];
+                    const uSide = this.sideVec[m.f];
+                    const fwdDist = this.adv[m.f] - m.dep;
+                    const sx = m.port.x + uFwd.x * fwdDist + uSide.x * m.slotY;
+                    const sy = m.port.y + uFwd.y * fwdDist + uSide.y * m.slotY;
+                    // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
+                    [m.tx, m.ty] = this.fieldBound(sx, sy);
+                }
             } else if (!m.foe && !holdCmd && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌的队：原地不动（见 holdLanes）
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
