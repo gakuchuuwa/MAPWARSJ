@@ -8111,6 +8111,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -5
+        },
+        "/assets/PERSIAN/eerbulushi_beisusi.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 0
         }
     },
     "folderGuides": {

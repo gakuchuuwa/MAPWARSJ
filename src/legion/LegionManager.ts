@@ -737,6 +737,7 @@ export class LegionManager {
         //    阵营/城型一律回 cityManager 取实时对象。城的坐标是静态的，位置永远不会过期。
         const nearbyIds = this.spatialRegistry.getCitiesInRadius(pos.lat, pos.lng, zoc);
         for (const entry of nearbyIds) {
+            if (army && (army as any).lastDrawCityId && entry.id === (army as any).lastDrawCityId) continue;
             const city = this.cityManager.getCity(entry.id);
             if (!city) continue;
             if (!city.factionId || city.factionId === factionId) continue;

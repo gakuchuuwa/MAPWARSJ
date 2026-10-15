@@ -143,24 +143,25 @@ export function renderStrategicWater(
             const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
             const tone = waterToneAt(wx, wy);
 
-            // 三段连续渐变：浅滩/河流浅蓝 (effD=0, 与矢量河流同色) → 浅海渐变蓝 (effD=0.52) → 深海深蓝 (effD=1.0)
+            // 三段连续渐变：浅滩/河流浅蓝 (effD=0, 与矢量河流同色) → 浅海渐变蓝 (effD=0.50) → 深海深蓝 (effD=1.0)
             const d = depthT ? depthT[y * w + x] : 0;
             const dist = distance[i];
-            // 仅宽阔内陆大湖（dist > 14px）湖心轻微加深；河道与入海河口（dist <= 14px）保持 effD=0，与矢量河流颜色无缝一致
-            const lakeDeepT = d < 0.03 && water[i] && dist > 14 ? Math.min(0.28, (dist - 14) / 22 * 0.28) : 0;
-            let effD = Math.max(d, lakeDeepT);
+            // 连续离岸加深（无 d<0.03 硬阈值跳变，彻底消除海面暗沙/小岛周边的深蓝雀斑）：
+            // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~32px 平滑推向浅海中蓝
+            const offshoreT = water[i] && dist > 8 ? Math.min(0.46, ((dist - 8) / 24) * 0.46) : 0;
+            let effD = Math.max(d, offshoreT);
 
-            // 近岸浅滩过渡带：离岸 reach (18~26px) 范围内将水深平滑压浅，使海岸向浅海、深海呈现柔顺渐变
-            const depthFactor = Math.max(0.45, 1 - d * 0.55);
-            const reach = (22 + Math.sin(wx / 37 + wy / 51) * 3.0 + Math.sin((wx - wy) / 23) * 1.8) * depthFactor;
+            // 近岸浅滩过渡带：收窄至离岸 reach (7~11px)，在海岸边缘平滑压浅，避免浅水区过大
+            const depthFactor = Math.max(0.55, 1 - d * 0.45);
+            const reach = (9.5 + Math.sin(wx / 37 + wy / 51) * 1.5 + Math.sin((wx - wy) / 23) * 1.0) * depthFactor;
             if (water[i] && dist < reach) {
                 const u = Math.max(0, Math.min(1, dist / reach));
                 const coastFade = u * u * (3 - 2 * u); // smoothstep 0..1
-                effD *= (0.12 + 0.88 * coastFade);
+                effD *= coastFade;
             }
 
             let r: number, g: number, b: number;
-            const MID_STOP = 0.52;
+            const MID_STOP = 0.50;
             if (effD <= MID_STOP) {
                 // 第一段：浅滩/河道浅蓝 (azure) → 浅海渐变蓝 (base)
                 const t1 = effD / MID_STOP;

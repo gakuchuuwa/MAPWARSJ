@@ -53,6 +53,7 @@ import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
 import { resolveStockadeFenceKey } from '../data/stockadeWallStyleLookup';
+import { destrFamilyOf, destrCandidatesOf, rubbleCandidatesOf, DE_DESTR_FALLBACK, DE_RUBBLE_FALLBACK } from '../data/buildingDestructionAssets';
 import { isMountainPass } from '../systems/passMountainDecision';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { audioManager } from '../audio/AudioManager';
@@ -6060,21 +6061,44 @@ export class Scene13WarLayer {
 
         // 蒙古（草原游牧）营地：8 蒙古包 + 1 瞭望塔（不用通用营地/帐篷/城内建筑）
         // 🔴 [2026-08-22 主人定] 只用真蒙古包 E~L（A~D 是茅草屋,弃用）——DE b_scen_yurt_e..l, 共 8 个正好用满
-        const placeYurtCamp = (scale?: number, availableSpawns = side, towerScale = SIEGE_CITY_BUILDING_SCALE): void => {
+        const placeYurtCamp = (
+            scale?: number,
+            availableSpawns = side,
+            towerScale = SIEGE_CITY_BUILDING_SCALE,
+            /**
+             * 🔴 [2026-10-15 主人令「只做战场结束的焚营演出（不动平衡）」＋「所有建筑和 DE 一致」]
+             *  register=true  = **守方的毡帐聚落**（＝该城的 9 建筑：8 蒙古包 + 1 瞭望塔）：
+             *                   逐件登记为可攻击建筑（DE 血量、先燃后塌、未塌照常射箭）。
+             *  register=false = **攻方营地 / 野战营地**：纯装饰，不登记（不参与索敌、胜负、射箭），
+             *                   只在战场结束时随败方焚营（见 outroBurn）。
+             */
+            register = false,
+            campSide: 0 | 1 = f as 0 | 1,
+        ): void => {
             if (availableSpawns.length === 0) return;
             const shuffledSpawns = [...availableSpawns].sort(() => Math.random() - 0.5);
             const yurts = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
             const shuffledYurts = [...yurts].sort(() => Math.random() - 0.5);
             for (let i = 0; i < shuffledSpawns.length - 1; i++) {
                 const sp = place(shuffledSpawns[i], shuffledYurts[i], { scale });
+                sp.camp = campSide;
                 this.decorSprites.push(sp);
-                this.trackCityBuilding(sp);
+                this.campSprites.push(sp);
+                if (register) this.trackCityBuilding(sp);
+                // 攻方/野战营寨：只打阵营标记给焚营演出取件 —— 不登记为建筑、不预载倒塌素材（**攻方营寨不坍塌**）
             }
             // 🔴 [2026-08-26 主人定「战略和战术的建筑保持一致」] 蒙古营地塔 = 亚洲瞭望塔（ASIA_TOWER_AGE2），
             //    与战略地图草原营地同款（弃 AFRI 茅草顶木架哨塔）。
             // 🔴 [2026-10-03 主人令] 塔（箭塔族）**不跟营帐用同一缩放**：一律与守方箭塔的 `SIEGE_CITY_BUILDING_SCALE` 对齐，
             //    否则攻方营地的塔比守方城墙内侧的箭塔大一圈（营帐仍按调用方给的 scale，不动）。
-            this.decorSprites.push(place(shuffledSpawns[shuffledSpawns.length - 1], 'ASIA_TOWER_AGE2', { scale: towerScale }));
+            // 🔴 [2026-10-15 主人令] 这座塔也是 9 建筑之一：守方要**登记**（否则毡帐城只有 8 栋可打、9 建筑口径不成立）；
+            //    攻方营寨则纯装饰 —— 不登记、不预载倒塌素材（**攻方营寨不坍塌**，只在战场结束时随败方焚营）。
+            const towerAsset = 'ASIA_TOWER_AGE2';
+            const towerSp = place(shuffledSpawns[shuffledSpawns.length - 1], towerAsset, { scale: towerScale });
+            towerSp.camp = campSide;
+            this.decorSprites.push(towerSp);
+            this.campSprites.push(towerSp);
+            if (register) this.trackCityBuilding(towerSp);
         };
 
         // 攻城战守方：城墙 + 按城等级选建筑池（大城=帝国时代 age4；中城=城堡时代 age3；小城/险要=封建时代 age2）
@@ -6320,19 +6344,14 @@ export class Scene13WarLayer {
                 });
             }
 
-            // 🔴 [2026-09-03 主人定] 城寨(stockade)直接开战、和野战一样：围墙/城门全部纯贴图（去碰撞），
-            //    不卡兵。别的城市靠 30 秒 collapseFrontWalls 去碰撞，城寨没有 30 秒坍塌，这里一上来就清掉。
-            // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)同样去碰撞纯贴图不卡兵
-            if (this.defenderCityType === 'stockade' || this.isMobeiMongolDefender()) {
-                for (const b of this.wallGates) {
-                    b.sprite.obstruction = undefined;
-                    b.sprite.obstructionDisabled = true;
-                    if (b.extraSprites) for (const sp of b.extraSprites) {
-                        sp.obstruction = undefined;
-                        sp.obstructionDisabled = true;
-                    }
-                }
-            }
+            // 🔴 [2026-10-15 主人令「所有的栅栏，城墙都是一样的，不要搞那么复杂，都是可以被打坍塌的」]
+            //    **此处原有两条例外已删**（2026-09-03「城寨围墙城门全部纯贴图去碰撞」＋ 2026-09-19「漠北蒙古同样去碰撞」）：
+            //    按新令「规则冲突时删除更早的规则」，城寨/漠北蒙古的栅栏、篱笆、城门、木垛**一律和别的城池同一条链** ——
+            //      ① 保留碰撞（placeWall/placeGate 设的 obstruction 不再被清掉）⇒ 拦得住兵；
+            //      ② 挨打掉血 → `collapseNextWallGap` 每 10 秒塌一处缺口 → `collapseOneWall` 播 FOUNDATION_1X1_DESTR 切残骸；
+            //      ③ 血归零（被打穿）同样走同一条倒塌链。
+            //    城寨正面本来就是拒马线（无墙）⇒ 攻方从正面直进，不会被 V 形两翼困住；两翼挨打即按上面②③塌掉放行。
+            //    「直接开战、守方不待命」那条（siegeWithWalls=false）**未动**：它管的是守军行为，不是墙。
 
             // 🔴 [2026-08-29 主人需求] 城墙内侧 4 座并列箭塔：小城瞭望(AGE2) / 险要·中城警戒(AGE3) / 大城高级(AGE4)。
             //    与正面主城墙同侧（守方在右 → 内侧 = x 略大于 wallFrontX），沿正面墙高垂直并列排开。
@@ -6351,8 +6370,9 @@ export class Scene13WarLayer {
                 : `${style}_TOWER_AGE4`;
             const towerRubble = 'BUILDINGANIM:' + arrowTowerAsset + '_RUBBLE';
             this.ensureNatureAsset(towerRubble);
-            this.ensureNatureAsset('BUILDING:' + arrowTowerAsset + '_DAMAGED');   // 30 秒「破损」形态
-            this.ensureNatureAsset('BUILDINGANIM:' + arrowTowerAsset + '_DESTR'); // 30 秒「残骸」倒塌动画
+            // 🔴 [2026-10-15 主人令「所有建筑和 DE 一致」] 破损/倒塌/残骸整条链预载（含 DE 同族与通用兜底）——
+            //    城寨 4 座箭塔里有 2 座是 FORTIFIED_OUTPOST，DE 没有它的倒塌素材，靠兜底链才不会凭空消失
+            this.ensureDestrAssetsFor(arrowTowerAsset);
             // 🔴 箭矢素材必须开战前预载（否则第一步射箭时 pending>0 整场冻结，见 ensureProj 懒加载血训）
             this.ensureProj('PROJ_ARROW');
             // 🔴 塔塌尘土特效预载（塌墙时才播；开战前并入首批，遇不到"30 秒尘土才加载"的冻结）
@@ -6402,10 +6422,10 @@ export class Scene13WarLayer {
                     const castleSp = place(centerSpawn, castleAsset, { scale: SIEGE_CASTLE_SCALE });
                     this.decorSprites.push(castleSp);
                     this.trackCityBuilding(castleSp, 'CASTLE');
-                    placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn));
+                    placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide.filter((s) => s !== centerSpawn), SIEGE_CITY_BUILDING_SCALE, true, 1);
                     return;
                 }
-                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide);
+                placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, buildingSide, SIEGE_CITY_BUILDING_SCALE, true, 1);
                 return;
             }
             // 小城：封建时代（age2），无城堡，9 口 = 9 种建筑全上（2026-08-26 主人定「战略战术统一 9 建筑」）
@@ -6536,23 +6556,35 @@ export class Scene13WarLayer {
 
         // 野战双方 + 攻城攻方：蒙古 8 蒙古包 + 瞭望塔；其余 3 营地 + 4 帐篷 + 1 强化哨站 + 1 瞭望塔
         // 🔴 [2026-09-18] 同上：判据改用建筑风格 YURT，覆盖 STEPPE 与 MOBEI_MONGOL 两种文化区
+        // 🔴 [2026-10-15 主人令「只做战场结束的焚营演出（不动平衡）」＋「攻方的营寨不坍塌」]
+        //    攻方营寨 / 野战营寨**一律纯装饰**：不登记为可攻击建筑（不参与索敌、胜负、射箭），
+        //    **也不进倒塌/残骸链（永不坍塌）**，只打上阵营标记 `camp`，战场结束时随败方**焚营**（只烧不塌）。
+        //    ⚠️ 同源 bug 已随本条修掉：蒙古营寨原走 `placeYurtCamp` 默认登记 ⇒ 攻方自家 8 个蒙古包
+        //    被 `registerDefBuilding` 记成**守方建筑**（f 写死 1）⇒ 会朝自家士兵射箭、会被挑成「中心建筑」
+        //    （中心建筑血归零＝攻方胜），胜负判定可被污染。
         if (this.buildingStyleFor(f as 0 | 1) === 'YURT') {
             // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 蒙古包也按 80%（塔本来就是这个缩放）
-            placeYurtCamp(SIEGE_CITY_BUILDING_SCALE);
+            placeYurtCamp(SIEGE_CITY_BUILDING_SCALE, side, SIEGE_CITY_BUILDING_SCALE, false, f as 0 | 1);
             return;
         }
         const style = this.buildingStyleFor(f as 0 | 1);
         const shuffledSpawns = [...side].sort(() => Math.random() - 0.5);
+        const placeCamp = (spawnIndex: number, asset: string): void => {
+            const sp = place(shuffledSpawns[spawnIndex], asset, { scale: SIEGE_CITY_BUILDING_SCALE });
+            sp.camp = f as 0 | 1;
+            this.decorSprites.push(sp);
+            this.campSprites.push(sp);   // 只给焚营演出取件用；不预载倒塌素材（营寨不坍塌）
+        };
         // 🔴 [2026-10-03 主人令「战术模式中，攻击方的建筑请改为80%」] 3 营地 + 4 帐篷也改 80%
         //    （改前是原尺寸 1.0；下方两座塔状工事本就 0.8，现在整座营地同一个缩放）。
-        for (let i = 0; i < 3; i++) this.decorSprites.push(place(shuffledSpawns[i], shuffledCamps[i], { scale: SIEGE_CITY_BUILDING_SCALE }));
-        for (let i = 3; i < 7; i++) this.decorSprites.push(place(shuffledSpawns[i], 'GREEK_WAR_TENT', { scale: SIEGE_CITY_BUILDING_SCALE }));
+        for (let i = 0; i < 3; i++) placeCamp(i, shuffledCamps[i]);
+        for (let i = 3; i < 7; i++) placeCamp(i, 'GREEK_WAR_TENT');
         // 🔴 [2026-09-03 主人改] 哨站(OUTPOST)换成强化哨站（FORTIFIED_OUTPOST = DE b_archaic_fortified_outpost_age1）。
         //    强化哨站是哨站的加固升级版（能攻击），不是警戒塔/防卫塔（TOWER_AGE3）。
         // 🔴 [2026-10-03 主人令] 这两座塔状工事（强化哨站 + 瞭望塔）与**守方城墙内侧那 4 座箭塔同类**
         //    （守方城寨的 4 座箭塔里就有 2 座是 FORTIFIED_OUTPOST）—— 一律用同一缩放，两边一样大。
-        this.decorSprites.push(place(shuffledSpawns[7], 'FORTIFIED_OUTPOST', { scale: SIEGE_CITY_BUILDING_SCALE }));
-        this.decorSprites.push(place(shuffledSpawns[8], `${style}_TOWER_AGE2`, { scale: SIEGE_CITY_BUILDING_SCALE }));
+        placeCamp(7, 'FORTIFIED_OUTPOST');
+        placeCamp(8, `${style}_TOWER_AGE2`);
     }
 
     /**
@@ -8381,11 +8413,16 @@ export class Scene13WarLayer {
         return null;
     }
 
-    /** 攻城武器的目标：还立着的城门、城墙、箭塔、房屋（含中心建筑）**一档并列**，由调用方取离自己最近的那个。 */
+    /** 攻城武器的目标：尚未打下任何城门时只取还立着的城门（优先打离自己近的城门）；打下一座城门后，周围的城墙、建筑和其他城门一档并列，由调用方取离自己最近的那个。 */
     private siegeFirstTier(): WarBuilding[] {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
-        // 🔴 [2026-10-15 主人令「攻城武器是攻击就近的城门，城墙，建筑，所有建筑都是并列的，就近攻击有门打门，有墙打墙，打楼打楼，有房子打房子」]
-        //    取代 10-13「门墙优先（近门再让 400px）」与 10-14「门墙之后才轮到建筑」：门、墙、箭塔、房屋（含中心建筑）并为一档，谁近打谁。
+        // 🔴 [2026-10-15 主人令「攻城武器优先攻击离自己近的城门，当打下一个城门后，就攻击周围的城墙和建筑和其他城门，这些并列。」]
+        const gates = this.wallGates.filter(b => b.key === 'STONE_GATE');
+        const anyGateDown = gates.some(b => !bldOk(b) || b.sprite.obstructionDisabled);
+        if (!anyGateDown) {
+            const standingGates = gates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
+            if (standingGates.length > 0) return standingGates;
+        }
         return [...this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled), ...this.defBuildings.filter(b => bldOk(b))];
     }
 
@@ -8576,7 +8613,7 @@ export class Scene13WarLayer {
         let free: WarMan | WarBuilding | null = null, fd = r2;      // 最近的未满且满足最小射程目标
         // 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」] 优先在本队锁定的目标敌队（prefLane）或贴脸自卫（<65px）范围内分配对手
         const wm = m as Partial<WarMan>;
-        const lt = (typeof wm.lane === 'number' && wm.lane >= 0 && !wm.hero && !(m as { siegeW?: boolean }).siegeW)
+        const lt = (typeof wm.lane === 'number' && wm.lane >= 0 && !(m as { siegeW?: boolean }).siegeW)
             ? this.laneTargets.get(wm.lane) : undefined;
         const prefLane = lt?.targetLane;
         const guardPost = (wm.guardPost && !(typeof wm.lane === 'number' && wm.lane >= 0 && this.remnantLanes.has(wm.lane)))
@@ -8596,7 +8633,7 @@ export class Scene13WarLayer {
             && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
-        const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key && !wm.hero
+        const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key
             && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, 0).rng <= 65
             && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && !this.ringOpen();
         if (span >= 6) {
@@ -8657,18 +8694,8 @@ export class Scene13WarLayer {
                 }
             }
         }
-        // 城墙/城门建筑（攻城战守方）：也参与索敌——士兵够得着就打墙/门（照 DE）。
-        // 🔴 [2026-08-22 主人定] 攻方优先攻击城墙：正面体系（linked）墙/门优先于任何敌兵——
-        //    远程原地站桩射墙、近战贴墙砍。斜墙不参与优先（兜底循环照打，破墙同样触发全墙联动）。
-        // [2026-09-05 玩家] 玩家不砍墙：破墙前无目标（等），破墙后只打人（下面的城墙兜底循环也跳过）
         const isHero = (m as { hero?: boolean }).hero === true;
         const manChosen = (pFree ?? pInRange ?? pBest) ?? (free ?? inRange ?? best);
-        // 🔴 [2026-10-11 主人令「该修复的修复」] 攻城待命期只能被「**已出城**」的守军解除：
-        //    `search` 是穿墙的，城内待命的守军也会被搜到 ⇒ 原来会把待命一并解除、攻方顶墙蹭。
-        //    这里只认「落在城郭占地之外」的敌人（`deCity` 的宽高 + 中心，全在既有字段里，未新增任何东西）。
-        const _hc = this.deCity ? this.deCityCenter : null;
-        const _hw = this.deCity ? this.deCity.width / 2 : 0, _hh = this.deCity ? this.deCity.height / 2 : 0;
-        const manOut = (manChosen && _hc && (Math.abs(manChosen.x - _hc.x) <= _hw && Math.abs(manChosen.y - _hc.y) <= _hh)) ? null : manChosen;
         // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」] 取「当前第一档还立着的目标」
         //    （`siegeFirstTier` = 城门 → 城墙 → 箭塔 → 中心建筑 → 其余建筑）里**射程内离自己最近**的那个；
         //    够不着就返回 null 继续靠近（见 aimAt）。距离比较用的是平方距离 `d`，等价于最近。
@@ -8691,15 +8718,9 @@ export class Scene13WarLayer {
                 return null;
             }
         }
-        if (this.battleType === 'siege' && m.f === 0 && isHero) {
-            if (!manOut) return null;
-        }
         // 🔴 [2026-10-14 主人定「士兵攻击顺序：士兵，城门，建筑包括箭塔」「所有都是只打近的」「士兵只认城门，不砍墙」]
-        //    攻方士兵：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。城墙一律不砍。
-        // 🔴 [2026-10-15 主人报「士兵都拥挤在中心，也不打建筑」（金海·城寨）] 原条件含 `siegeWithWalls`：
-        //    城寨 / 漠北蒙古按野战打（siegeWithWalls=false）⇒ 整段跳过、士兵永远锁不上建筑，只按 aimAtRaw 朝中心建筑走、挤成一团。
-        //    现对一切攻城战生效；「墙没破只认城门」「被城门挡住打门」两条仍只给有城墙的城。
-        if (this.battleType === 'siege' && m.f === 0 && !isHero) {
+        //    攻方士兵（含乱入者）：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。城墙一律不砍。
+        if (this.battleType === 'siege' && m.f === 0) {
             if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
             this.ensureGateInfo();
             const gatesOnly = this.siegeWithWalls && !this.ringOpen() && !this.insideRing(m.x, m.y);
@@ -8843,22 +8864,50 @@ export class Scene13WarLayer {
         return out;
     }
 
-    /** 让装饰精灵播倒塌动画 → 切残骸：有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 直接切 rubble。 */
-    private collapseToRubble(sprite: DecorSprite, name: string, customRubble?: string): void {
+    /**
+     * 预载一件素材的「破损 / 倒塌 / 残骸」整条链（含 DE 同族与通用兜底）。
+     * 🔴 [2026-10-15 主人令「所有建筑请和 DE 保持一致……蒙古包和其他建筑一样，都是先燃后塌」]
+     *    城寨/蒙古包这类**场景装饰建筑 DE 没有 destruction 素材**（只有一帧静态图），
+     *    这里按 `buildingDestructionAssets` 的同族表（棚屋/蒙古包 → DE 黑暗时代民居）与
+     *    通用 1×1 兜底一起预载 —— 开战前全部就绪，战斗中切形态才不会因未加载而卡帧。
+     */
+    private ensureDestrAssetsFor(name: string): void {
+        this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');   // DE 部分建筑无破损档：有就切，没有跳过
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_DESTR');
+        this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
+        const fam = destrFamilyOf(name);
+        if (fam !== name) {
+            this.ensureNatureAsset('BUILDINGANIM:' + fam + '_DESTR');
+            this.ensureNatureAsset('BUILDINGANIM:' + fam + '_RUBBLE');
+        }
+        this.ensureNatureAsset('BUILDINGANIM:' + DE_DESTR_FALLBACK);
+        this.ensureNatureAsset('BUILDINGANIM:' + DE_RUBBLE_FALLBACK);
+    }
+
+    /**
+     * 让装饰精灵播倒塌动画 → 切残骸：按「自身 → DE 同族 → 通用 1×1」逐级取素材，
+     * 有 DESTR 就播（step 里 collapse.t 推进完切 rubble）；无 DESTR 就直接切 rubble。
+     * 🔴 [2026-10-15 主人令] 兜底链保证**任何建筑都不会血一归零就凭空消失**（棚屋/蒙古包/哨站一样先燃后塌）。
+     * @param dur 倒塌动画时长（秒）。战斗中的建筑走 DE 的 `COLLAPSE_ANIM_DUR`(8.33s)；
+     *            战场结束的焚营演出用快放（见 `CAMP_OUTRO_COLLAPSE_SEC`），不动战斗数值。
+     */
+    private collapseToRubble(sprite: DecorSprite, name: string, customRubble?: string, dur: number = COLLAPSE_ANIM_DUR): void {
         if (sprite.indestructible) return;
-        const destr = 'BUILDINGANIM:' + name + '_DESTR';
-        const rubble = customRubble ?? ('BUILDINGANIM:' + name + '_RUBBLE');
-        if (this.natureCache[destr]?.img?.complete) {
+        const destr = destrCandidatesOf(name).find((a) => this.natureCache[a]?.img?.complete);
+        const rubble = rubbleCandidatesOf(name, customRubble).find((a) => this.natureCache[a]?.img?.complete) ?? null;
+        if (destr) {
             sprite.asset = destr;
             sprite.frame = 0;
-            sprite.collapse = { t: 0, dur: COLLAPSE_ANIM_DUR, rubbleAsset: rubble };
-        } else if (this.natureCache[rubble]?.img?.complete) {
+            sprite.collapse = { t: 0, dur, rubbleAsset: rubble };
+        } else if (rubble) {
             sprite.asset = rubble;
             sprite.frame = 0;
         }
     }
 
-    /** 登记一座可攻击的守城建筑/箭塔（城堡 indestructible 不登记）。 */
+    /** 登记一座可攻击的守城建筑/箭塔（城堡 indestructible 不登记）。
+     *  ⚠️ `f: 1` = **只允许守方建筑**（攻方/野战营地是纯装饰，一律不登记 ——
+     *  否则会被算成守方建筑：朝自家士兵射箭、被挑成「中心建筑」、污染胜负判定）。 */
     private registerDefBuilding(sp: DecorSprite, name: string, tower?: ArrowTower, kind?: string): void {
         if (sp.indestructible) return;
         const key = 'BLD:' + (kind ? kind + ':' : '') + name;
@@ -8921,10 +8970,10 @@ export class Scene13WarLayer {
             atk: towerProfile.atk,
         });
         this.registerDefBuilding(sp, name, undefined, kind);
-        // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
-        this.ensureNatureAsset('BUILDING:' + name + '_DAMAGED');
-        this.ensureNatureAsset('BUILDINGANIM:' + name + '_RUBBLE');
-        this.ensureNatureAsset('BUILDINGANIM:' + name + '_DESTR');
+        // 🔴 开战前预载破损/残骸/倒塌动画素材（否则切形态时 pending>0 整场冻结）
+        // 🔴 [2026-10-15 主人令「所有建筑和 DE 一致、蒙古包也先燃后塌」] 改走同族链+通用兜底预载：
+        //    棚屋/蒙古包/哨站这些 DE 没有 destruction 素材的，也要在开战前把兜底素材备齐
+        this.ensureDestrAssetsFor(name);
     }
 
     /**
@@ -9506,7 +9555,7 @@ export class Scene13WarLayer {
 
     /** 寻敌结果过一道流场：攻方在城外、目的地更靠近中心时，改走流场路径（绕缺口进城） */
     private flowRedirect(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (!this.flowDist || m.f !== 0 || m.hero || WALL_PASS_TYPES.has(m.key)) return aim;
+        if (!this.flowDist || m.f !== 0 || this.heroOrderPending(m) || WALL_PASS_TYPES.has(m.key)) return aim;
         const du = this.flowDistAt(m.x, m.y);
         // 🔴 [2026-10-15 主人报「士兵有的时候会贴着城门城墙，也不打」] 贴墙站的兵脚下是膨胀障碍格（du=∞）：
         //    原来直接放弃流场、直线顶墙；现先让 flowWaypoint 往外挪到最近的可走格再沿流场走（实测独松关 95 个 ∞ 兵救回 56）。
@@ -9522,7 +9571,7 @@ export class Scene13WarLayer {
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // 🔴 [2026-10-14 主人令「两条都做」→「按每队算」] 残兵主动找敌：本队剩不到 REMNANT_FRAC ⇒ 全图找离自己最近的敌人（不限视野），
         //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
-        if (m.lane >= 0 && this.remnantLanes.has(m.lane) && !m.hero) {
+        if (m.lane >= 0 && this.remnantLanes.has(m.lane)) {
             let t: WarMan | null = null, td = Infinity;
             for (const o of this.men) {
                 if (o.f === m.f || o.hp <= 0) continue;
@@ -9670,51 +9719,51 @@ export class Scene13WarLayer {
         return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
     }
 
+    /**
+     * 🔴 [2026-10-15 主人令「乱入者在这里反复移动，请检查并修复。这是寻敌逻辑的问题吗，如果是，我建议应该简化，而不是越弄越负责」]
+     * 简化后的四级寻敌移动管道（乱入者与本队普通士兵完全共用同一套逻辑）：
+     *   ① 视野内（MARCH_R）最近的敌人 ⇒ 环绕包抄（CHASE_RING）；
+     *   ② 攻城武器 ⇒ 最近的第一档建筑目标；
+     *   ③ 本队统一锁定的目标（`laneTargets`，敌方分队或城门/建筑）；
+     *   ④ 兜底 ⇒ 攻城方奔中心建筑，其余奔全图最近敌人或敌军重心。
+     * （移除了旧版重叠冲突的 1200px midFoe、laneFoeCache、420px 阈值 foePort 出兵口、以及 4 航点循环巡逻，
+     *   彻底消除在城门外 420px 阈值处「朝城门走 ↔ 掉头回出生点」的 0.5 秒周期反复横跳。）
+     */
     private aimAtRaw(m: WarMan): { x: number; y: number } | null {
         this.releaseReservedTarget(m);
-        // ① 视野内最近的敌兵（找最近，不是逮到就算）。这一级是**每人各自的目标**，不加散开偏移。
-        // 🔴 [2026-10-11 AA #3 前半 属实] 原为 `search(m, MARCH_R, …, false)`（reserve=false）⇒ 不占围殴名额，
-        //    同一分队 50 人在**移动目标**上全部选出同一个最近敌兵 ⇒ 集体涌向一个点。
-        //    改成 reserve=true：按 claims 上限分流到不同敌兵（与出手索敌同一套分流口径）。
+        const ra = Math.atan2(m.jy, m.jx);
+        const ringX = Math.cos(ra) * CHASE_RING;
+        const ringY = Math.sin(ra) * CHASE_RING;
+
+        // ① 视野内最近的敌兵/建筑（reserve=true 按 claims 上限分流）
         const near = this.search(m, MARCH_R, MIN_RANGE_TYPES[m.key] ?? 0, true);
-        // 🔴 [2026-10-11 主人令「整个战术模式的寻敌都还是以前旧的战术模式左右对战的寻敌方式，这个应该修改下」]
-        //    旧内核：**全队追同一个「最近敌兵」的一个点**（注释原本写明「不加散开偏移」）⇒ 相邻几十人叠成一团。
-        //    改成 DE 式：**每个兵带着自己固定的阵位偏移去接敌** —— 用每人出生时就定死的 `m.jx/m.jy`
-        //    （±AIM_JITTER=120px，不每帧抖，符合「坐标不许抖」那条血训）⇒ 走到目标时自然铺开成一圈/方块。
         if (near) {
             m.reservedFoe = near;
-            // 🔴 [2026-10-13 回退·违红线] 先前把 `m.jx/m.jy`(±120) 直接加到**具体敌兵**的落点上，
-            //    违反本文件 984 / 1010 两条红线：「加在最近的那个敌兵上会让兵停在敌人身旁 120px 处够不着，
-            //    接战距离只有 65px，等于把所有近战废掉」「偏移绝不能套到具体敌兵身上」。
-            //    改回 CHASE_RING(45) 环内 —— 45 < 65，够得着；且环上位置按终身偏移定，仍不是同一个点。
-            const ra = Math.atan2(m.jy, m.jx);
-            return { x: near.x + Math.cos(ra) * CHASE_RING, y: near.y + Math.sin(ra) * CHASE_RING };
+            return { x: near.x + ringX, y: near.y + ringY };
         }
-        // 🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」] 攻城武器走向「第一档目标里离自己最近」的那个
-        //    （现在第一档 = **城门 → 城墙** → 箭塔 → 中心建筑 → 其余建筑），不深入城内乱走。
+
+        // ② 攻城武器：走向第一档目标里离自己最近的那个
         if (m.siegeW && this.battleType === 'siege') {
             let g: WarBuilding | null = null, gd = Infinity;
             for (const b of this.siegeFirstTier()) {
-                const d = Math.hypot(b.x - m.x, b.y - m.y);   // 🔴 [2026-10-15] 门墙楼房并列，纯按距离
+                const d = Math.hypot(b.x - m.x, b.y - m.y);
                 if (d < gd) { gd = d; g = b; }
             }
-            if (g) return { x: g.x + m.jx, y: g.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 攻城武器同样吃终身偏移，别都朝门/墙的同一格
+            if (g) return { x: g.x + m.jx, y: g.y + m.jy };
         }
-        const lt = (m.lane >= 0 && !m.hero && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
-        // 🔴 [2026-10-12 主人报「攻方开局不向城中走，有的分队往其他地方走」] 攻城战攻方士兵：视野内没敌兵就朝本队统一的城门/建筑目标走
-        //    （有缺口时 flowRedirect 再改走流场绕进城），不再走出兵口/航路那几级。
-        if (this.battleType === 'siege' && m.f === 0 && !m.hero && !m.siegeW && lt?.targetLane === undefined) {
+
+        // ③ 本队统一目标（含乱入者）：敌方分队或城门/建筑
+        const lt = (m.lane >= 0 && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
+        if (lt?.targetLane !== undefined) {
+            return { x: lt.x + ringX + m.jx, y: lt.y + ringY + m.jy };
+        }
+        if (this.battleType === 'siege' && m.f === 0 && !m.siegeW) {
             if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
             const c = this.centerBld ?? (this.deCity ? this.deCityCenter : null);
             if (c) {
-                // 🔴 [2026-10-13 审计抓出的回归·已修] 城门分支必须带「我是否已在城内」判据：
-                //    缺了它，**已进城的兵**（流场带进来的）在城内无活敌时又被指到**城外**的门前点，
-                //    而 flowRedirect 对城中心附近（du 很小）不接管 ⇒ 在中心建筑附近来回踱步（约 2Hz）。
-                //    已在城内 → 直接去中心建筑，不再往门外折返。
                 this.ensureGateInfo();
-                // 🔴 [2026-10-14 主人令「全改」] 只在城墙**一处都没破**时去门前；一有缺口（墙或门）就直奔本队统一建筑目标，由 flowRedirect 带着走最近的缺口进城
+                // 城墙一处都没破、且自己在城外时，先集结到本队锁定的城门外侧
                 if (!this.ringOpen() && !this.insideRing(m.x, m.y) && !WALL_PASS_TYPES.has(m.key)) {
-                    // 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」] 优先取本队统一锁定的城门 targetBld，避免一队 50 人左右分叉去两座门
                     let gate: WarBuilding | null = (lt?.targetBld && lt.targetBld.key === 'STONE_GATE' && this.wallStanding(lt.targetBld)) ? lt.targetBld : null;
                     if (!gate) {
                         let gd = Infinity;
@@ -9729,8 +9778,7 @@ export class Scene13WarLayer {
                         return { x: gate.x + (vx / vl) * 150 + m.jx, y: gate.y + (vy / vl) * 150 + m.jy };
                     }
                 }
-                // 🔴 [2026-10-15 主人令「城门可以和建筑一个级别。就近打」] 流场带不了路（无流场 / 脚下不通且挪不出去，
-                //    如险要两圈墙之间的窄夹道）⇒ 不再直线奔中心顶墙，改去本队统一目标或最近的还立着的城门/建筑。
+                // 流场不可达（如险要内外墙夹道）时，就近打本队目标或最近立着的建筑/城门
                 if (this.siegeWithWalls && !(this.flowDist && (Number.isFinite(this.flowDistAt(m.x, m.y))
                     || this.flowWaypoint(m.x, m.y, this.flowDist, 6 * FLOW_SUB, 6 * FLOW_SUB, 4)))) {
                     let t: WarBuilding | null = (lt?.targetBld && this.wallStanding(lt.targetBld)) ? lt.targetBld : null;
@@ -9742,93 +9790,23 @@ export class Scene13WarLayer {
                             if (d < td) { td = d; t = b; }
                         }
                     }
-                    if (t) { const ra = Math.atan2(m.jy, m.jx); return { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }; }
+                    if (t) return { x: t.x + ringX, y: t.y + ringY };
                 }
                 const targetGoal = (lt?.targetBld && this.wallStanding(lt.targetBld)) ? lt.targetBld : c;
-                // 🔴 [2026-10-13 修拥挤] 朝目标建筑走时也把终身偏移加进落点，否则全队叠在一点。
                 return { x: targetGoal.x + m.jx, y: targetGoal.y + m.jy };
             }
         }
-
-        const ra = Math.atan2(m.jy, m.jx);
-        const ringX = Math.cos(ra) * CHASE_RING;
-        const ringY = Math.sin(ra) * CHASE_RING;
-        const midFoe = !m.march ? this.search(m, 1200, MIN_RANGE_TYPES[m.key] ?? 0, true) : null;   // 🔴 [2026-10-11 CC 复核] 列阵推进期间不让中距层接管（否则方阵被 1200px 内的敌人拉散）
-        if (midFoe) {
-            m.reservedFoe = midFoe;
-            return { x: midFoe.x + ringX + m.jx, y: midFoe.y + ringY + m.jy };   // 🔴 [2026-10-13 修拥挤] 同上
-        }
-        // 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」] 远距推进时全队统一奔向本队锁定的队级目标（targetLane / targetBld）
         if (lt) {
             return { x: lt.x + ringX + m.jx, y: lt.y + ringY + m.jy };
         }
-        // 🔴 [2026-10-11 CC 复核] 读每帧预计算的「本队战团目标」（原来这里每个兵手扫全场 = O(N²)）。
-        if (m.lane >= 0) {
-            const c = this.laneFoeCache.get(m.lane);
-            if (c && c.d2 <= 1200 * 1200) {
-                return { x: c.x + ringX + m.jx, y: c.y + ringY + m.jy };   // 🔴 [2026-10-13 修拥挤] 环形站位 + 终身偏移叠加
-            }
-        }
 
-        const foePort = this.foePortOf(m.lane);
-        if (foePort) {
-            const uF = this.advanceVec[m.f], uS = this.sideVec[m.f];
-            const remainFwd = (foePort.x - m.x) * uF.x + (foePort.y - m.y) * uF.y;
-            const distToPort2 = (foePort.x - m.x) ** 2 + (foePort.y - m.y) ** 2;
-            if (remainFwd > 360 && distToPort2 > 420 * 420) {
-                return { x: foePort.x - uF.x * m.dep + uS.x * m.slotY, y: foePort.y - uF.y * m.dep + uS.y * m.slotY };
-            }
-        }
-
-        // 🔴 [2026-10-11 CC 复核] 原来这里每个兵手扫全场 = O(N²)（720 人局约 500 万次/秒）。
-        //    改用已有的空间哈希 search（HKEY），等价语义、复杂度降到 O(1)-ish。
-        const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);   // 🔴 [2026-10-11 CC 修卡死] 半径必须是**有界**的：search 按 radius/cell 算环数，1e9 ⇒ 200 万环 ⇒ 10¹² 次迭代 ⇒ 卡死。13000 ≥ 地图对角线（2026-10-12 每格 96×48 ⇒ 11424×5712，对角 ≈12772；原 9000 对应旧 7616×3808）。
+        // ④ 全局兜底：全图最近敌人或敌军重心
+        const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
         if (globalNearest) {
-            return { x: globalNearest.x + m.jx, y: globalNearest.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 由 *0.5 改全额偏移
+            return { x: globalNearest.x + m.jx, y: globalNearest.y + m.jy };
         }
-
-        // ── ③ 配对也拿不到（理论上到不了）时才走「巡逻航路」（主人 2026-08-17 定）────────────
-        //
-        // 为什么不再用「走敌方出兵口 → 扑敌军重心」那套：
-        //   出兵口是**静止的路标**，兵冲到敌方底边发现没人，下一个候选还是另一个出兵口
-        //   （彼此相距远超 NEAR_PORT 判定圈），于是**沿着敌方底边从一个口挪到另一个口来回转悠**，
-        //   永远轮不到「扑重心」那一级，也就永远不会掉头回中间找人。
-        //   实测死局有据：scratch/scene13_probe_log.jsonl 2026-08-17T11:57Z 那条 ——
-        //   60 秒零阵亡、双方场上 170/219 都卡在补兵线 150 以上，补兵闸门两边同时焊死，打到天荒地老。
-        //
-        // 主人的方案（已实测）：给每个兵一条**循环航路**，两军航路必然交叉，不可能一直碰不上。
-        //   ⓵ 敌方底边·本路 y（各走各的路，不汇中间，保留原来的分路作战）
-        //   ⓶ 战场中心
-        //   ⓷ 己方底边·**对角** y（上路兵去己方下边）
-        //   ⓸ 回中心，循环
-        // 任何时候视野内出现敌人，上面的 ① 立刻接管，航路只管「没人可打时往哪走」。
-        //
-        // war_sim 实测（12 局，与旧兜底对照）：时长持平（步 184/178 vs 202/174s、
-        // 骑 141/158 vs 147/144s、远程 171/121 vs 129/130s）；克制三边方向不变；
-        // 收尾更干净（三个种子败方余兵全归 0，旧兜底有两局残兵收不掉）。
-        const jit = (p: { x: number; y: number }): { x: number; y: number } => ({ x: p.x + m.jx, y: p.y + m.jy });
-
-        // 【寻敌驻足】航点刚切换的停留期间返回 null（不更新移动目标）→ 走航路的兵站住不动，
-        // 停下来搜索残敌。① 视野内已有敌人时上面 search 已接管，这里只压住「没人可打时走航路」这一路。
-        // 不停留的话，寻敌军团一路赶航点，敌方残兵追着打却追不上，双方永远打不起来。
-        if (this.routeHoldT[m.f] > 0) return null;
-
-        // 用**本方共享**的航点进度（推进逻辑在 step 里按全军统一判定，见 advanceRoute）
-        const wp = this.routeWaypoint(m);
-        /* 🔴 [2026-09-12 修·「抵达屏幕右边后不动了」] 到点之后**不许再返回同一个航点**。
-         *   原来到点仍返回 wp：tx≈x，移动分支的 `d > ARRIVE_EPS` 不成立 → 人就停在航点上站死，
-         *   一直等到全军过半也到齐才转向；而交战的兵永远到不了，等于**永远站着**（实测见 advanceRoute 头注）。
-         *   改为退回**敌军重心**：重心每帧按存活敌兵重算，永远指向还有人的方向，
-         *   兵一路压过去，路上进 MARCH_R 就被上面 ① 接管锁敌 —— 这才是「不断寻敌」。
-         *   仍然只用共享航点，不是每人一套航点进度（那条 2026-08-18 已被主人否决：会朝四面八方乱走）；
-         *   到点后全军去的也是**同一个**重心，方向一致，不散。
-         */
-        this.markRouteArrival(m);
-        if (m.routeDone) {
-            const cen = this.enemyCen[1 - m.f];
-            if (cen) return jit(cen);
-        }
-        return jit(wp);
+        const cen = this.enemyCen[1 - m.f];
+        return cen ? { x: cen.x + m.jx, y: cen.y + m.jy } : null;
     }
 
     /**
@@ -10190,7 +10168,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-15 主人定] 攻城战第二波起守军：在城内出兵口原位警戒防守（残兵兜底时放开）
             const isGuard = !!m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane));
             // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
-            const laneStandby = !this.marching && !m.march && m.lane >= 0 && !m.hero && !m.siegeW && !isGuard
+            const laneStandby = !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
@@ -10258,7 +10236,7 @@ export class Scene13WarLayer {
             //    视野里出现敌兵就改打兵（search 已是兵优先；没兵会重新选回墙）。
             // 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」] 若本兵锁定的敌兵不属于本队统一的 targetLane（且不在 <75px 贴身肉搏），
             //    在索敌周期到点（m.next <= 0）时允许重搜，归拢回本队目标。
-            const lt = (m.lane >= 0 && !m.hero && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
+            const lt = (m.lane >= 0 && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
             const wrongLaneFoe = lt !== undefined && m.next <= 0 && m.foe !== null && !('sprite' in m.foe)
                 && lt.targetLane !== undefined && m.foe.lane !== lt.targetLane
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
@@ -10547,7 +10525,7 @@ export class Scene13WarLayer {
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
                     const rawChase = { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
-                    const chasePt = isGuard ? rawChase : this.gateExit(m, rawChase)!;
+                    const chasePt = isGuard ? rawChase : this.gateExit(m, this.flowRedirect(m, rawChase))!;
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;

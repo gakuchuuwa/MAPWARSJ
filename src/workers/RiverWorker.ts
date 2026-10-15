@@ -142,13 +142,13 @@ async function computeDepthT(x: number, y: number, z: number, w: number, h: numb
             const depth = -e;
             let t = 0;
             if (depth > 0) {
-                if (depth <= 220) {
-                    // 0~220m（浅滩至大陆架浅海）：占据 0.00~0.58 的主渐变区间，让近海与大陆架呈现丰富连续的浅蓝→中蓝层次
-                    t = Math.pow(depth / 220, 0.72) * 0.58;
+                if (depth <= 35) {
+                    // 0~35m（近岸浅滩至浅海）：平滑过渡到 0.55（浅海中蓝），收紧浅水区范围
+                    t = Math.pow(depth / 35, 0.78) * 0.55;
                 } else {
-                    // 220~3800m（大陆坡至深海盆地）：平滑过渡完剩余 0.58~1.00，消除大陆架边缘的黑线断崖
-                    const s = Math.min(1, (depth - 220) / 3580);
-                    t = 0.58 + 0.42 * Math.pow(s, 0.65);
+                    // 35~350m（外海至深海）：平滑过渡完 0.55~1.00（渐变深蓝）
+                    const s = Math.min(1, (depth - 35) / 315);
+                    t = 0.55 + 0.45 * Math.pow(s, 0.70);
                 }
             }
             out[py * w + px] = t;
