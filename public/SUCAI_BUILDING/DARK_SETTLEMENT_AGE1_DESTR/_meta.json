@@ -1,8 +1,8 @@
 {
   "name": "DARK_SETTLEMENT_AGE1_DESTR",
-  "frames": 1,
+  "frames": 150,
   "box_w": 340,
-  "box_h": 212,
+  "box_h": 216,
   "anchor_x": 172,
   "anchor_y": 136,
   "sld_source": "b_dark_settlement_age1_destruction"

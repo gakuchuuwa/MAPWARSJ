@@ -67,7 +67,9 @@ export class HeroSpriteDrawer {
         //    调整至适中自然节奏：原 1000ms 慢滑步，400ms 过快，收拢至 680ms（每秒约 1.47 轮自然奔驰步频）；
         //    步兵 800ms，象兵 950ms，既不滑步也不鬼畜。
         const moveCycleMs = moveClass === 'CAVALRY' ? 680 : moveClass === 'INFANTRY' ? 800 : 950;
-        const cycleMs = setName === 'ATTACK' ? 1500 : setName === 'MOVE' ? moveCycleMs : 2000;
+        // 🔴 [2026-10-15 主人报「英雄兵模原地待命帧率太快」] IDLE 原 2000ms（45~60 帧在 2s 内走完 ≈22~30fps，快进感）。
+        //    DE 英雄 idle 约 45 帧 × 0.0833s ≈ 3.75s；收到 3500ms（≈15~17fps），接近 DE 原速、不再抽动。
+        const cycleMs = setName === 'ATTACK' ? 1500 : setName === 'MOVE' ? moveCycleMs : 3500;
         const fr = frames > 1 ? Math.floor(tick / (cycleMs / frames)) % frames : 0;
         const fw = dynDir ? dynDir.fw : raw.naturalWidth / frames;
         const fh = dynDir ? dynDir.fh : raw.naturalHeight;

@@ -1240,7 +1240,7 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/CANOE/death_${d}.png`),
         },
         'MERCHANT_SHIP': {
-            // 帆布商船（民用贸易商船）
+            // 帆布商船（民用贸易商船）（只有 16 向 idle，move/attack 复用 idle；_meta.json 无 move/attack）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/MERCHANT_SHIP/idle_${d}.png`),

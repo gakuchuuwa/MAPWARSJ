@@ -493,7 +493,7 @@ interface ArrowTower {
     down: boolean;
 }
 
-/** 🔴 [2026-09-16 主人定「防守方所有没有坍塌的建筑都可以射箭」] 守城普通建筑射手配置（单发冷箭，巷战狙击） */
+/** 🔴 [2026-09-16 主人定「防守方所有没有坍塌的建筑都可以射箭」] 守城普通建筑射手配置（🔴 2026-10-15 起与箭塔同款连弩三连发，攻/射程/装填与城墙箭塔同档） */
 interface CityBuildingEntry {
     sprite: DecorSprite;
     name: string;
@@ -1098,11 +1098,6 @@ const HARD_STOP_SEC = 600;
 const BATTLE_LIMIT_SEC = 300;
 /** 流场细分：每个等轴地块切成 FLOW_SUB×FLOW_SUB 小格 */
 const FLOW_SUB = 2;
-/** 🔴 [2026-10-13 主人令「攻城武器优先攻击城门，然后攻击城墙，但是有的城门离得远，就不要攻击了」]
- *  主人补充「先攻击离得近的城门，然后是城墙，然后再其他城门、城墙」。
- *  攻城武器选目标时城门的距离先减去这么多：城门比最近的城墙远不超过 400px（约 4 格）就先打门，
- *  再远的门不排除，只是排到近处城墙之后，按距离轮到再打。 */
-const GATE_PREF_PX = 400;
 /** 🔴 [2026-10-14 主人令「城内守军加防御，选1，先试20%」] 险要（关隘）守军站在城墙圈里时受到的伤害倍率（＝减伤 20%）。
  *  只管士兵刀箭与范围溅射两处（见 passWallTaken）；箭塔/民兵只打攻方、野兽与城墙无关，不在内。 */
 const PASS_INSIDE_DAMAGE_TAKEN = 0.8;
@@ -2159,6 +2154,15 @@ const FX_CFG: Record<string, { path: string; dirs: number }> = {
     FX_WALL_DUST: { path: 'IMPACT_DUST', dirs: 8 },
     // 投石/巨石落地碎石烟尘（DE IMPACT_TREBUCHET_SMOKE，1 向）
     FX_TREBUCHET_SMOKE: { path: 'IMPACT_TREBUCHET_SMOKE', dirs: 1 },
+    // DE 建筑受损三档动态火焰（damage_graphics：75%/50%/25% 血量阈值）
+    FX_FIRE_SMALL: { path: 'FIRE/FIRE_SMALL', dirs: 1 },
+    FX_FIRE_SMALL_R: { path: 'FIRE/FIRE_SMALL_RIGHT', dirs: 1 },
+    FX_FIRE_WIN_S: { path: 'FIRE/FIRE_WINDOW_SMALL', dirs: 1 },
+    FX_FIRE_MEDIUM: { path: 'FIRE/FIRE_MEDIUM', dirs: 1 },
+    FX_FIRE_MEDIUM_R: { path: 'FIRE/FIRE_MEDIUM_RIGHT', dirs: 1 },
+    FX_FIRE_ROOF: { path: 'FIRE/FIRE_ROOFEDGE', dirs: 1 },
+    FX_FIRE_LARGE: { path: 'FIRE/FIRE_LARGE', dirs: 1 },
+    FX_FIRE_LARGE_R: { path: 'FIRE/FIRE_LARGE_RIGHT', dirs: 1 },
 };
 /**
  * 特效缩放（DE 原生像素 → 13 的 UNIT_PX=50 尺度）。
@@ -2175,6 +2179,9 @@ const FX_SCALE: Record<string, number> = {
     FX_EXPLOSION: 1.0, FX_PETARD: 1.0, FX_MUZZLE_BOMBARD: 1.0, FX_MUZZLE_ORGAN: 1.0,
     FX_MUZZLE_HAND: 1.0, FX_MUZZLE_CONQ: 1.0, FX_MUZZLE_FIRELANCE: 1.0,
     FX_WALL_DUST: 1.0, FX_TREBUCHET_SMOKE: 1.0,
+    FX_FIRE_SMALL: 1.0, FX_FIRE_SMALL_R: 1.0, FX_FIRE_WIN_S: 1.0,
+    FX_FIRE_MEDIUM: 1.0, FX_FIRE_MEDIUM_R: 1.0, FX_FIRE_ROOF: 1.0,
+    FX_FIRE_LARGE: 1.0, FX_FIRE_LARGE_R: 1.0,
 };
 /** 特效播放总时长（秒）：炮口焰一闪而过，爆炸稍久。 */
 const FX_DUR: Record<string, number> = {
@@ -7365,7 +7372,11 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-13 主人令「动物要会动」]
             //    动物（鹿/狼/野猪/猛兽/牛羊/飞鸟等）按 DE 原生 15fps 节奏推进动作帧，
             //    叠加 s.frame 随机相位避免群体动物机械同步；其他植物/岩石/建筑保持静态。
-            fr = Math.floor(this.battleSec * 15 + s.frame) % m.frames;
+            // 🔴 [2026-10-15 主人令「加快移动频率」] 移动（walk/run）帧率提到 24fps 匹配提速后的奔跑，
+            //    idle 仍按 15fps（吃草/甩尾慢节奏）。
+            const act = s.asset.split('/')[1]?.split('_')[0];
+            const fps = (act === 'walk' || act === 'run') ? 24 : 15;
+            fr = Math.floor(this.battleSec * fps + s.frame) % m.frames;
         } else {
             fr = m.frames > 0 ? (s.frame % m.frames) : 0;
         }
@@ -7383,6 +7394,47 @@ export class Scene13WarLayer {
             g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x * k, drawY - m.anchor_y * k, sw * k, sh * k);
         } else {
             g.drawImage(na.img, sx, 0, sw, sh, s.x - m.anchor_x, drawY - m.anchor_y, sw, sh);
+        }
+        // 🔴 [2026-10-15 对齐 DE damage_graphics] 建筑受攻击掉血时按 75% / 50% / 25% 三档在建筑表面叠加动态循环火焰，坍塌归零时熄灭
+        if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
+            let bld: WarBuilding | undefined;
+            for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
+            if (!bld) for (const b of this.wallGates) if (b.key === 'STONE_GATE' && b.sprite === s) { bld = b; break; }
+            if (bld && bld.hp > 0 && bld.hp <= bld.maxHp * 0.75) {
+                const ratio = bld.hp / bld.maxHp;
+                const tier = ratio <= 0.25 ? 3 : (ratio <= 0.50 ? 2 : 1);
+                // 照 DE damage_graphics (apply_mode=0)：1档(≤75%)小火 5 处 → 2档(≤50%)中火+屋檐火 8 处 → 3档(≤25%)猛烈大火 12 处
+                const slots: Array<[string, number, number]> = [
+                    ['FX_FIRE_SMALL', -0.22, -0.18],
+                    ['FX_FIRE_SMALL_R', 0.20, -0.14],
+                    ['FX_FIRE_WIN_S', -0.06, 0.06],
+                    ['FX_FIRE_SMALL', 0.14, 0.10],
+                    ['FX_FIRE_SMALL_R', -0.18, 0.02],
+                    ['FX_FIRE_MEDIUM', -0.12, -0.08],
+                    ['FX_FIRE_ROOF', 0.04, -0.20],
+                    ['FX_FIRE_MEDIUM_R', 0.18, -0.02],
+                    ['FX_FIRE_LARGE', 0.0, -0.04],
+                    ['FX_FIRE_LARGE_R', -0.16, 0.04],
+                    ['FX_FIRE_MEDIUM', 0.15, -0.12],
+                    ['FX_FIRE_ROOF', -0.08, -0.24],
+                ];
+                const count = tier === 1 ? 5 : (tier === 2 ? 8 : 12);
+                const cx = s.x + (sw * 0.5 - m.anchor_x) * k;
+                const cy = drawY + (sh * 0.48 - m.anchor_y) * k;
+                const rx = sw * k * 0.65, ry = sh * k * 0.55;
+                const seed = Math.abs(Math.round(s.x * 7 + s.y * 13));
+                for (let i = 0; i < count; i++) {
+                    const [fxKey, ox, oy] = slots[i];
+                    const fx = this.fxBank[fxKey]?.dirs[0];
+                    if (!fx?.img || !fx.fw || !fx.n) continue;
+                    const jx = (((seed + i * 37) % 19) - 9) * 0.008;
+                    const jy = (((seed + i * 53) % 19) - 9) * 0.008;
+                    const fxX = cx + (ox + jx) * rx;
+                    const fxY = cy + (oy + jy) * ry;
+                    const fr = Math.floor(this.battleSec * 15 + i * 2.3 + (seed % 10)) % fx.n;
+                    g.drawImage(fx.img, fr * fx.fw, 0, fx.fw, fx.fh, fxX - fx.hx * k, fxY - fx.hy * k, fx.fw * k, fx.fh * k);
+                }
+            }
         }
     }
 
@@ -8109,11 +8161,13 @@ export class Scene13WarLayer {
         return this.ringOpenVal;
     }
 
-    /** 攻方近战兵与目标隔着完整城墙（一个城内一个城外）⇒ 走不过去，不该锁定 */
+    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城内而敌在城外）⇒ 走不过去，不直接锁死追击 */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
-        if (m.f !== 0 || this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
-            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, 0).rng > 65 || this.ringOpen()) return false;
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
+            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
         this.ensureGateInfo();
+        if (m.f === 1) return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
+        if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
 
@@ -8153,16 +8207,12 @@ export class Scene13WarLayer {
         return null;
     }
 
-    /** 攻城武器当前的目标档：**城门 + 城墙**（合并为第一档，谁离自己近就打谁） → 箭塔 → 中心建筑 → 其余建筑；取第一个非空档。
-     *  🔴 [2026-10-13 主人令「攻城武器优先攻击离自己近的城门，城墙」]
-     *    城门与城墙合并为并列最高档：攻城武器在所有还立着的城门和城墙中，优先选择离自己最近的那个（不再绕远跨全图去找远处的门）。 */
+    /** 攻城武器的目标：还立着的城门、城墙、箭塔、房屋（含中心建筑）**一档并列**，由调用方取离自己最近的那个。 */
     private siegeFirstTier(): WarBuilding[] {
         const bldOk = (b: WarBuilding): boolean => b.hp > 0 && !b.sprite.destroyed && !b.sprite.collapse && !b.sprite.asset.includes('_RUBBLE');
-        const gatesAndWalls = this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled);
-        if (gatesAndWalls.length) return gatesAndWalls;
-        // 🔴 [2026-10-14 主人定「攻城武器攻击顺序：城门，城墙，建筑包括箭塔」「所有都是只打近的」]
-        //    门墙之后：箭塔与其余建筑（含中心建筑）并为一档，谁近打谁（原为 箭塔 → 中心建筑 → 其余建筑 三档）。
-        return this.defBuildings.filter(b => bldOk(b));
+        // 🔴 [2026-10-15 主人令「攻城武器是攻击就近的城门，城墙，建筑，所有建筑都是并列的，就近攻击有门打门，有墙打墙，打楼打楼，有房子打房子」]
+        //    取代 10-13「门墙优先（近门再让 400px）」与 10-14「门墙之后才轮到建筑」：门、墙、箭塔、房屋（含中心建筑）并为一档，谁近打谁。
+        return [...this.wallGates.filter(b => bldOk(b) && !b.sprite.obstructionDisabled), ...this.defBuildings.filter(b => bldOk(b))];
     }
 
     private search(m: { x: number; y: number; f: number }, radius: number, minRange = 0, reserve = true): WarMan | WarBuilding | null {
@@ -8182,7 +8232,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
         //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
         const wm = m as Partial<WarMan>;
-        const inOnly = m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
+        const inOnly = radius <= 1000 && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
             && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
@@ -8259,7 +8309,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 //    现在全图排出「该打的那一个」，在视野内就打，不在就返回 null，由 aimAtRaw 朝它走（路过的墙不锁）。
                 for (const b of tier) {
                     const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-                    const s = Math.sqrt(d) - (b.key === 'STONE_GATE' ? GATE_PREF_PX : 0);   // 近门优先，远门排到近墙之后（GATE_PREF_PX）
+                    const s = Math.sqrt(d);   // 🔴 [2026-10-15] 门墙楼房并列，纯按距离（撤掉城门的 GATE_PREF_PX 优先）
                     if (s < fard) { fard = s; far = b; }
                     if (minR2 > 0 && d < minR2) continue;
                     if (s < pd) { pd = s; pick = b; }
@@ -8296,6 +8346,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 if (b.f === m.f || !this.wallStanding(b)) continue;
                 const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
                 if (d < td) { td = d; t = b; }
+            }
+            // 🔴 [2026-10-15 主人令「优先士兵打兵，其次城门建筑，但是现在兵到了墙根后，也不打墙，也过不去」]
+            //    最后一档：视野内兵、城门、建筑都没有，又正被一段墙挡着（blockedWall：1.5 秒内被它推开过、它还立着）⇒ 砍这一段墙。
+            //    只砍挡着自己的那段；打穿（hp≤0）即解除碰撞，blockedWall 不再返回它，不会接着砍。
+            if (!t) {
+                const bw = this.blockedWall(m as Partial<WarMan>);
+                if (bw && bw.f !== m.f) t = bw;
             }
             if (t && reserve) t.claims++;
             return t;
@@ -8437,6 +8494,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const key = 'BLD:' + (kind ? kind + ':' : '') + name;
         const st = WALL_GATE_STATS[key] ?? (WALL_GATE_STATS[key] = deBuildingStats(name, kind));
         this.defBuildings.push({ f: 1, key, x: sp.x, y: sp.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite: sp, bld: { name, tower } });
+        for (const fk of ['FX_FIRE_SMALL', 'FX_FIRE_SMALL_R', 'FX_FIRE_WIN_S', 'FX_FIRE_MEDIUM', 'FX_FIRE_MEDIUM_R', 'FX_FIRE_ROOF', 'FX_FIRE_LARGE', 'FX_FIRE_LARGE_R']) {
+            this.ensureFx(fk);
+        }
     }
 
     /** 中心建筑：只在攻城战选。城堡优先，其次城镇中心，都没有取离城内建筑群中心最近的一栋（箭塔除外）。 */
@@ -8472,16 +8532,23 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         }
     }
 
-    /** 记录一座守城建筑（供 30 秒随机三形态 + 未坍塌射冷箭用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
+    /** 记录一座守城建筑（供 30 秒随机三形态 + 未坍塌射箭用）。name = 素材名（如 ASIA_HOUSE_AGE3 / CHIN_CASTLE_AGE3）。 */
     private trackCityBuilding(sp: DecorSprite, kind?: string): void {
         const name = sp.asset.slice('BUILDING:'.length);
+        // 🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击效果和特效」] 射程/装填/攻击力与城墙内侧箭塔同档
+        //    （瞭望 320/2.2/5、警戒 360/2.0/6、高级 400/1.8/7），不再用窗台冷箭（240/3.2/3）。
+        const towerProfile = (this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')
+            ? { range: 320, reload: 2.2, atk: 5 }
+            : (this.defenderCityType === 'medium_city' || this.defenderCityType === 'pass')
+                ? { range: 360, reload: 2.0, atk: 6 }
+                : { range: 400, reload: 1.8, atk: 7 };
         this.cityBuildings.push({
             sprite: sp,
             name,
             cd: 1.0 + Math.random() * 2.5, // 错开初始开火时刻
-            range: 240,                   // 巷战狙击中近程 (220 ~ 250 px)
-            reload: 3.2,                  // 装填时间 3.0 ~ 3.5 秒
-            atk: 3,                       // 窗台民兵冷箭 (攻击力 2 ~ 3)
+            range: towerProfile.range,
+            reload: towerProfile.reload,
+            atk: towerProfile.atk,
         });
         this.registerDefBuilding(sp, name, undefined, kind);
         // 🔴 开战前预载破损/残骸/倒塌动画素材（否则 30 秒切形态时 pending>0 整场冻结）
@@ -8567,7 +8634,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
     /**
      * 🔴 [2026-09-16 主人定「战术模式中防守方所有没有坍塌的建筑都可以射箭」]：
-     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）：窗台民兵冷箭（单发普通箭，攻 2~3，射程 240，装填 3.2s）。
+     *    普通未坍塌建筑（兵营/磨坊/民居/马厩/TC等）连弩三连发，攻击/射程/装填与城墙内侧箭塔同档。
+     *    🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击效果和特效」]：从窗台冷箭（单发攻 2~3、射程 240、装填 3.2s）
+     *    改为与箭塔同款（瞭望 5/320/2.2、警戒 6/360/2.0、高级 7/400/1.8）+ 三连发。
      *    关键规则：坍塌即停火。未坍塌时正常射击；一旦切为残骸或被投石车砸毁，立即熄火！
      *    （注：城堡已在 castleTowers 中以三连发重火力射击，这里跳过 CASTLE 避免重复）。
      */
@@ -8587,7 +8656,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         // 窗台/屋檐开火点：贴图锚点在底基，抬到建筑中上部
         const fireX = b.sprite.x;
         const fireY = b.sprite.y - UNIT_PX * 0.6;
-        const baseRange = b.range ?? 240; // 巷战狙击中近程 (220 ~ 250 px)
+        const baseRange = b.range ?? 320; // 与箭塔同档（瞭望 320 / 警戒 360 / 高级 400）
         const bldElev = this.elevationLevelAt(fireX, b.sprite.y);
 
         // 寻找射程内最近的攻方士兵（受高地平滑射程加成）
@@ -8604,8 +8673,8 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         }
         if (!foe) { b.cd = 0.3; return; } // 无目标或超出射程，稍后再寻
 
-        // 真实伤害：窗台民兵冷箭（攻 2~3，默认 3，受 DE 高地伤害倍率影响）
-        const atk = b.atk ?? 3;
+        // 真实伤害：与箭塔同档（瞭望 5 / 警戒 6 / 高级 7，受 DE 高地伤害倍率影响）
+        const atk = b.atk ?? 5;
         const target = this.statsFor(foe.key, foe.f);
         const dmg = Math.max(1, atk - target.pierceArmor);
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
@@ -8621,17 +8690,20 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
 
         const ax = foe.x - fireX, ay = foe.y - fireY;
         const ad = Math.hypot(ax, ay) || 1;
-        // 单发普通箭（PROJ_ARROW）
-        this.arrows.push({
-            x: fireX, y: fireY,
-            dx: ax / ad, dy: ay / ad, len: ad,
-            t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
-            towerFlight: {
-                startLift: this.elevationLiftAt(fireX, b.sprite.y),
-                endLift: this.elevationLiftAt(foe.x, foe.y),
-            },
-        });
-        b.cd = b.reload ?? 3.2; // 装填时间 3.0 ~ 3.5 秒
+        // 🔴 [2026-10-15 主人令「九建筑和箭塔一样的攻击特效」] 连弩三连发（与箭塔同款）
+        for (let v = 0; v < 3; v++) {
+            this.arrows.push({
+                x: fireX, y: fireY,
+                dx: ax / ad, dy: ay / ad, len: ad,
+                t: 0, dur: ad / (PROJ_SPEED_PX.PROJ_ARROW ?? 440), f: 1, proj: 'PROJ_ARROW',
+                delay: v * PROJ_VOLLEY_DELAY,
+                towerFlight: {
+                    startLift: this.elevationLiftAt(fireX, b.sprite.y),
+                    endLift: this.elevationLiftAt(foe.x, foe.y),
+                },
+            });
+        }
+        b.cd = b.reload ?? 3.2;
     }
 
     /**
@@ -9140,6 +9212,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const faces = [
             { x: TAC_TILE_H / nl, y: TAC_TILE_W / nl }, { x: -TAC_TILE_H / nl, y: TAC_TILE_W / nl },
             { x: TAC_TILE_H / nl, y: -TAC_TILE_W / nl }, { x: -TAC_TILE_H / nl, y: -TAC_TILE_W / nl },
+            { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 },
         ];
         let fwd = faces[0];
         for (const f of faces) if (f.x * u.x + f.y * u.y > fwd.x * u.x + fwd.y * u.y) fwd = f;
@@ -9197,38 +9270,27 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
     private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
         if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
         this.ensureGateInfo();
-        const insideSelf = this.insideRing(m.x, m.y);
-        if (!insideSelf) return aim;                            // 已在城外（或没墙圈）→ 原样
-        if (aim && this.insideRing(aim.x, aim.y)) return aim;   // 目标就在城内 → 不必出城
         if (!this.ringBox) return aim;
-        const r = this.ringBox, am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const r = this.ringBox, [ma, mb] = this.tileAB(m.x, m.y);
+        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
+        if (!(ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1)) return aim;
+        if (aim && this.insideRing(aim.x, aim.y) && this.men.some(o => o.f === 0 && o.hp > 0 && this.insideRing(o.x, o.y))) return aim;
+        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
         const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
-        // 🔴 [2026-10-14 主人令「所有兵出两门，把所有城都改为这种方式」「想一个让守方不分兵的方法」]
-        //    守军只从**离攻方大军重心最近的两座外圈城门**出城，每人走这两座里离自己近的那座 ⇒ 汇成两股正面迎敌，
-        //    背面/侧面的门不用（原先「离各自目标最近的门」会把守军拆到四面八方的门，分兵被各个击破）。
-        //    只认外圈门（在城墙外圈边上的）：险要有内外两圈，内圈门的门外点仍在城里。攻方重心没有时退回原规则。
+        // 🔴 [2026-10-15 主人令「防守方的第二波守军寻敌模式有问题，出不了城，不停的在城门附近打转，我觉得应该选择从最近的城门出，请修复」]
+        //    守军一律选择离自己最近的外圈城门出城（越走离该门越近，不会随敌军重心或目标切换在两门之间反复摇摆打转）。
         let g: WarBuilding | null = null, gd = Infinity;
-        const ec = this.enemyCen[0];
-        if (ec) {
-            let g1: WarBuilding | null = null, d1 = Infinity, g2: WarBuilding | null = null, d2 = Infinity;
-            for (const b of this.wallGates) {
-                if (b.key !== 'STONE_GATE') continue;
-                const [ba, bb] = this.tileAB(b.x, b.y);
-                if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
-                const d = (b.x - ec.x) ** 2 + (b.y - ec.y) ** 2;
-                if (d < d1) { g2 = g1; d2 = d1; g1 = b; d1 = d; } else if (d < d2) { g2 = b; d2 = d; }
-            }
-            for (const b of [g1, g2]) {
-                if (!b) continue;
-                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-                if (d < gd) { gd = d; g = b; }
-            }
+        for (const b of this.wallGates) {
+            if (b.key !== 'STONE_GATE') continue;
+            const [ba, bb] = this.tileAB(b.x, b.y);
+            if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d < gd) { gd = d; g = b; }
         }
-        // 选门（原规则，攻方重心没有时用）：aim 在城外就选「离敌人最近的那座门」；aim 为空就选「离自己最近的那座门」
         if (!g) for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
-            const d = aim ? (b.x - aim.x) ** 2 + (b.y - aim.y) ** 2 : (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
             if (d < gd) { gd = d; g = b; }
         }
         if (!g) return aim;
@@ -9267,7 +9329,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         if (m.siegeW && this.battleType === 'siege') {
             let g: WarBuilding | null = null, gd = Infinity;
             for (const b of this.siegeFirstTier()) {
-                const d = Math.hypot(b.x - m.x, b.y - m.y) - (b.key === 'STONE_GATE' ? GATE_PREF_PX : 0);
+                const d = Math.hypot(b.x - m.x, b.y - m.y);   // 🔴 [2026-10-15] 门墙楼房并列，纯按距离
                 if (d < gd) { gd = d; g = b; }
             }
             if (g) return { x: g.x + m.jx, y: g.y + m.jy };   // 🔴 [2026-10-13 修拥挤] 攻城武器同样吃终身偏移，别都朝门/墙的同一格
@@ -9720,10 +9782,10 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 m.ph += dt * 8 / 1.5;   // 待命动画（与残局待命同速）
                 continue;
             }
-            // 🔴 [2026-10-14 主人令「看到敌人再发起进攻，或者挨打发起进攻」「想一个让守方不分兵的方法」] 城外列阵待敌的守方：
-            //    任何一人锁定了敌人（看到）或刚挨打 ⇒ **全军**一起出击（按队出击实测前排 3~5 队开场就打、后排站到 60 秒，又成了分兵）
+            // 🔴 [2026-10-14 主人令「看到敌人再发起进攻，或者挨打发起进攻」「想一个让守方不分兵的方法」]
+            // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」] 城外列阵待敌的守方：进入阵前 380px 目视距离看到敌军、已锁敌或刚挨打 ⇒ **全军**立即出击
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
-                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1))) this.holdLanes.clear();
+                && (m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= 0 && this.search(m, 380, 0, false)))) this.holdLanes.clear();
             // 🔴 [2026-08-23 主人定·重设计攻防战] 攻城战开局**双方**按兵不动：近战+远程+骑兵全部待命
             //    （不动/不打/不索敌），只有攻城武器（siegeW = spawnSiegeWeapons 生成）开战即行动、打墙；
             //    30 秒城墙坍塌（collapseFrontWalls → defenderHolding=false）后攻守双方一起开打，
@@ -10072,8 +10134,9 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
-                    const fdx = foe.x + Math.cos(ra) * CHASE_RING - m.x;
-                    const fdy = foe.y + Math.sin(ra) * CHASE_RING - m.y;
+                    const chasePt = this.gateExit(m, { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING })!;
+                    const fdx = chasePt.x - m.x;
+                    const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
                     // ── 前方被己方兵挡住 → **绕过去**，不是站着等 ──────────────────────
                     // 🔴 [2026-08-17 主人拍板] 「战场上被挡着就站 2 秒」不成立，人会绕。
@@ -10757,12 +10820,13 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
         const Y0 = this.worldCY - TAC_MAP_HALF_H + MARGIN, Y1 = this.worldCY + TAC_MAP_HALF_H - MARGIN;
         const HOME_LEASH = 100;     // 家畜活动半径（2.5 格）
         const HOME_BACK = 120;      // 猎物活动半径（3 格，避免 30px 过小导致乒乓回头颤抖）
-        const BITE_RANGE = 22;      // 猛兽贴身咬的距离
         // 🔴 [2026-10-13 主人令「只冒着一个方向跑」＋「每次跑得距离多增加一些」]
         //    单次逃跑时长：猎物/危险/家畜**统一 8 秒**（原 prey/danger 5 秒、家畜 2 秒）。
         //    病灶：受惊闸每帧成立 ⇒ 原来每帧重算「背离当前最近士兵」的方向，士兵换人方向就跟着翻，
         //    动物原地打转甚至朝军团来向折回（主人报「跑两步又回来了」）。
         const FLEE_SEC = 8.0;       // 单次逃跑：一口气跑 8 秒（跑得更远，一次脱离人群）
+        // 🔴 [2026-10-15 主人令「增加移动速度」] 逃跑速度倍率：DE 原速再 ×1.5，甩开追兵
+        const ANIMAL_FLEE_SPEED_MULT = 1.5;
 
         // 同类群重心：DE 的松散群聚（同伴在哪，闲逛就往那边偏一点）
         const centroids = new Map<string, { x: number; y: number; n: number }>();
@@ -10798,61 +10862,30 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                 continue;
             }
 
-            // ── 地面生灵：找最近的活人士兵（顺带累计 60px 内的反击火力）──
+            // ── 地面生灵：找最近的活人士兵 ──
             let near: WarMan | null = null;
             let nearD = Infinity;
-            let fightBack = 0;
             for (const m of this.men) {
                 if (m.hp <= 0) continue;
                 const d = Math.hypot(m.x - an.x, m.y - an.y);
                 if (d < nearD) { nearD = d; near = m; }
-                if (d < 60) fightBack += this.statsFor(m.key, m.f).atk;
             }
 
             const canMove = de.acts.includes('walk');
             let mx = 0, my = 0, spd = 0, fleeing = false;
-            // 🔴 [2026-10-13 修「动物频繁颤抖」] 本帧「追击」任务是否已接管移动（见下方 `!hunting` 闸）：
-            //    猛兽扑人期间不许再被「回窝 / 吃草 / 踱步」那条低优先级分支碰 `want`（原来同一帧被改写成 idle/attack，
-            //    却沿用扑人的 mx/my/spd 滑行 = 播着吃草的动作以 42px/s 挪过去，且朝向再不更新）
-            let hunting = false;
             let want: AnimalAction = 'idle';
 
-            if (de.kind === 'predator' && near && nearD < de.los) {
-                // 猛兽扑人
-                hunting = true;
-                if (nearD > BITE_RANGE) {
-                    mx = near.x - an.x;
-                    my = near.y - an.y;
-                    spd = de.run;
-                    want = de.acts.includes('run') ? 'run' : 'walk';
-                } else {
-                    want = 'attack';
-                    an.dir = this.dir8(near.x - an.x, near.y - an.y);
-                    if (this.battleSec >= an.atkNext) {
-                        an.atkNext = this.battleSec + (de.reload || 2);
-                        const victim = near;
-                        const vStats = this.statsFor(victim.key, victim.f);
-                        victim.hp -= Math.max(1, de.atk - vStats.meleeArmor);
-                        if (victim.hp <= 0) {
-                            if (victim.hero) this.heroDown(victim);
-                            else this.pushCorpse(victim);
-                        }
-                        // 嘴里的猛兽同时挨身边士兵的刀：一口下去往往就完了（DE 里扑进阵里的狼也活不久）
-                        an.hp -= Math.max(1, fightBack);
-                        if (an.hp <= 0) { an.sprite.destroyed = true; continue; }
-                    }
-                }
-            // 🔴 [2026-10-13 主人报「动物见到人不会逃跑」] DE 猎物视野仅 2 格(80px)，士兵走到 80px 内时已贴脸、且 5 万像素的大图里几乎遇不上 ⇒ 看上去不逃。
-            //    猎物的警戒距离放宽到至少 220px（约 5.5 格）；没有 run 动作的物种（马/羊驼/猴/鸡）也按 run 速度逃，只是播 walk 动画。
-            // 🔴 [2026-10-13 修颤抖] DE 状态锁机制：逃跑单次触发锁定，一口气跑完，中途绝不每帧重算改向
-            } else if (an.fleeTimer > 0 && canMove) {
+            // 🔴 [2026-10-15 主人令「所有陆地动物统一模式，见到人就跑」] 动物只是点缀、游戏不攻击动物，
+            //    猛兽也不再扑人：猎物/危险/猛兽/家畜一律见人就逃。
+            //    警戒距离统一放宽到至少 220px（约 5.5 格）；没有 run 动作的物种（马/羊驼/猴/鸡）也按 run 速度逃、播 walk 动画。
+            if (an.fleeTimer > 0 && canMove) {
                 // ① 正在逃跑中：保持锁定的既定速度与朝向闭眼跑完，绝不被周围其他士兵拉扯方向
                 fleeing = true;
                 want = Math.hypot(an.vx, an.vy) > de.walk * 1.2 ? 'run' : 'walk';
-            } else if ((de.kind === 'prey' || de.kind === 'danger' || de.kind === 'livestock') && canMove && near && nearD < (de.kind === 'livestock' ? de.los : Math.max(de.los, 220))) {
-                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（均以 de.run 高速奔跑脱离）
-                an.fleeTimer = FLEE_SEC;   // 🔴 [2026-10-13 主人令「羊被卡在军团中间也要一口气跑远」] 家畜与猎物同档：8 秒
-                const fleeSpd = de.run;
+            } else if (canMove && near && nearD < Math.max(de.los, 220)) {
+                // ② 未在逃跑时受惊：单次触发逃跑，锁定朝向与时长（按 de.run × 倍率高速奔跑脱离）
+                an.fleeTimer = FLEE_SEC;   // 统一 8 秒一口气跑远
+                const fleeSpd = de.run * ANIMAL_FLEE_SPEED_MULT;
                 const dx = an.x - near.x, dy = an.y - near.y, d = Math.hypot(dx, dy) || 1;
                 an.vx = (dx / d) * fleeSpd;
                 an.vy = (dy / d) * fleeSpd;
@@ -10882,7 +10915,7 @@ if (outOnly && this.insideRing(o.x, o.y)) continue;
                     an.wanderY = an.y;
                     an.idleTimer = 4 + Math.random() * 6; // 逃跑结束就地停下吃草
                 }
-            } else if (canMove && !hunting) {
+            } else if (canMove) {
                 const distHome = Math.hypot(an.x - an.homeX, an.y - an.homeY);
                 if (distHome > (de.kind === 'livestock' ? HOME_LEASH : HOME_BACK)) {
                     // DE：不被追就回窝（走回去，不留在逃跑落点）
