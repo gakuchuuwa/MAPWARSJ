@@ -37,9 +37,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '古典时代中东军团',
         formationMode: 'crane_wing',
         slots: [
-            { type: 'thracian_peltast', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
-            { type: 'war_chariot', count: 3 },
+            { type: 'elite_war_chariot', count: 2 },
+            { type: 'levy', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
         ],
         regions: ['ASSYRIAN'],
         parentLegion: '古典时代阿契美尼德军团',
