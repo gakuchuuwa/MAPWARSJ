@@ -21,6 +21,7 @@ import {
     type TreePackage,
     type TreeItem,
 } from './deTechTreeLayout';
+import { loadNameTables, resolveUnitName, resetNameTables, type NameTables } from './unitNameSync';
 
 const indexCache: { data?: any[] } = {};
 const treeCache = new Map<string, TreePackage>();
@@ -52,34 +53,20 @@ async function loadXref(): Promise<Record<string, string[]>> {
 
 const customNamesCache: { data?: Record<string, string> } = {};
 
-/** public/de-techtree/custom-names.json */
+/**
+ * 兵种名称一律走 unitNameSync（单一事实来源 = legion-editor 兵种鉴赏）。
+ * 保留本函数作为兼容包装：返回 custom-names.json（改名覆盖表）。
+ */
 export async function loadCustomNames(): Promise<Record<string, string>> {
-    if (customNamesCache.data) return customNamesCache.data;
-    try {
-        const r = await fetch('/de-techtree/custom-names.json?t=' + Date.now());
-        customNamesCache.data = await r.json();
-    } catch { customNamesCache.data = {}; }
-    return customNamesCache.data!;
-}
-
-interface LegionNames {
-    byNorm: Record<string, string>;
-    unmatched?: any[];
-}
-const legionCache: { data?: LegionNames } = {};
-async function loadLegionNames(): Promise<LegionNames> {
-    if (legionCache.data) return legionCache.data;
-    try {
-        const r = await fetch('/de-techtree/legion-names.json');
-        legionCache.data = await r.json();
-    } catch { legionCache.data = { byNorm: {} }; }
-    return legionCache.data!;
+    const t = await loadNameTables();
+    customNamesCache.data = t.custom;
+    return t.custom;
 }
 
 export function clearDeTechTreeCache(): void {
     treeCache.clear();
     customNamesCache.data = undefined;
-    legionCache.data = undefined;
+    resetNameTables();
 }
 
 /** public/de-techtree/icons/manifest.json */
@@ -282,8 +269,8 @@ export async function renderDeTechTree(
 ): Promise<TechTreeHandle> {
     const lng = opts.lng ?? 'zh';
     const isZh = lng === 'zh' || lng === 'tw';
-    const [index, pkg, strings, meta, iconManifestData, xref, civInfo, customNames, legionNames] = await Promise.all([
-        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(), loadXref(), loadCivInfo(), loadCustomNames(), loadLegionNames(),
+    const [index, pkg, strings, meta, iconManifestData, xref, civInfo, nameTables] = await Promise.all([
+        loadIndex(), loadTree(civKey), loadStrings(lng), loadMeta(), loadIconManifest(), loadXref(), loadCivInfo(), loadNameTables(),
     ]);
 
     const curCivMeta = index.find((c) => c.key === civKey);
@@ -310,13 +297,8 @@ export async function renderDeTechTree(
     const labelOf = (it: TreeItem): string => {
         if (!isZh) return it.name ?? '';
         const nid = it.node_id ?? -1;
-        const iNorm = (it.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        let base = ((iNorm && customNames[iNorm])
-            || (nid >= 0 && customNames[String(nid)])
-            || (iNorm && legionNames.byNorm[iNorm])
-            || it.name_zh
-            || it.name
-            || '');
+        // 名称解析统一交给 unitNameSync：与「兵种鉴赏」保持同一事实来源
+        let base = resolveUnitName({ nodeId: nid, enName: it.name, fallback: it.name_zh || it.name || '' }, nameTables);
         base = base.replace(/[\r\n]+/g, '');
 
         if (isAntiquity || ANTIQUITY_DUPE_NODES.has(nid)) {

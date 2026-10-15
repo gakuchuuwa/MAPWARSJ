@@ -52,6 +52,10 @@ export interface TargetEvaluateOptions {
      * 🔴 **筛空自动回落全池**——四周全是硬骨头时照样得挑一个打，绝不让军团卡死不动。
      */
     myTroops?: number;
+    /**
+     * 刚打平的敌城 id：方向池优先避开「从锚点出发最短路径经过此城」的目标（筛空自动回落全池）。
+     */
+    avoidThroughCityId?: string;
 }
 
 export class TargetEvaluator {
@@ -91,6 +95,17 @@ export class TargetEvaluator {
             pool = reachable.slice(0, Math.min(poolSize, reachable.length));
         }
 
+        // 刚打平某城：优先避开最短路径仍需穿过该城的方向（换一条路进攻）
+        const avoidCityId = options?.avoidThroughCityId;
+        if (avoidCityId && pool.length > 1) {
+            const notThroughDraw: TargetScore[] = [];
+            for (const s of pool) {
+                const path = roadRegistry.findCityPath(anchorCityId, s.targetId);
+                if (!path || !path.includes(avoidCityId)) notThroughDraw.push(s);
+            }
+            if (notThroughDraw.length > 0) pool = notThroughDraw;
+        }
+
         // [2026-08-09 方案 L 定稿] 两段逻辑（只影响方向池抽签，均不剔除、子集空自然回落全池）：
         // ① 沿推进方向优先（锚点 = 老家 <2 万，军团已在前哨）：优先「从锚点出发的最短路径
         //    经过军团所在城」的目标——打完城沿推进方向继续蚕食，不绕回老家换方向。
@@ -100,7 +115,7 @@ export class TargetEvaluator {
         //    ——否则打完城可能抽中「先回老家再出去」的方向（实测：雅典为锚点时萨洛尼卡路径
         //    = 雅典→底比斯→萨洛尼卡，~20% 概率绕回老家，排除后 0%）。
         const standCityId = options?.armyStandCityId;
-        if (standCityId && standCityId !== anchorCityId && pool.length > 1) {
+        if (standCityId && standCityId !== anchorCityId && standCityId !== avoidCityId && pool.length > 1) {
             const forward: TargetScore[] = [];
             for (const s of pool) {
                 const path = roadRegistry.findCityPath(anchorCityId, s.targetId);

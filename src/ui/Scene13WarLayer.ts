@@ -8261,7 +8261,8 @@ export class Scene13WarLayer {
                     continue;
                 }
                 const L = laneLeaders.get(m.lane);
-                if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)) {
+                if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)
+                    && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
                     m.sepX = 0;
                     m.sepY = 0;
                     continue;
@@ -8493,12 +8494,36 @@ export class Scene13WarLayer {
      *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配目标（整队原地待命警戒）；
      *   3. 攻城战第二波起守军（guardPost）只在敌队进入警戒圈（≤420px）时锁定迎击，不远追城外敌军。
      */
+    private isInsideAttackerCamp(x: number, y: number): boolean {
+        if (this.battleType !== 'siege') return false;
+        const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
+        const attBase = this.spawnBases[0];
+        const campDist = Math.hypot(attBase.x - cityCen.x, attBase.y - cityCen.y);
+        if (campDist < 900) return false;
+        return Math.hypot(x - attBase.x, y - attBase.y) < 580
+            && Math.hypot(x - cityCen.x, y - cityCen.y) > campDist * 0.55;
+    }
+
+    private defenderCityReturnGoal(m: WarMan): { x: number; y: number } {
+        if (m.guardPost) return m.guardPost;
+        const sp = m.lane >= 0 ? this.spawns[m.lane] : undefined;
+        if (this.deCity && sp && sp.outFwd !== undefined) {
+            const B = this.defOutsideBase(), F = B.fwd, S = B.side;
+            return {
+                x: B.x + F.x * (sp.outFwd - m.dep) + S.x * ((sp.outSide ?? 0) + m.slotY),
+                y: B.y + F.y * (sp.outFwd - m.dep) + S.y * ((sp.outSide ?? 0) + m.slotY),
+            };
+        }
+        return this.deCity ? this.deCityCenter : this.spawnBases[1];
+    }
+
     private updateLaneTargets(): void {
         const MAX_LANE_ATTACKERS = 4;
         const laneInfo = new Map<number, { f: number; x: number; y: number; n: number; inside: number; meleeOnly: boolean; guard: boolean }>();
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         for (const m of this.men) {
-            if (m.hp <= 0 || m.lane < 0 || m.siegeW) continue;
+            // 排除乱入者本人（m.hero）计入 50 人分队重心，防全队阵亡后仅剩乱入者在攻方营地复活时把守方大军引去蹲守营地
+            if (m.hp <= 0 || m.lane < 0 || m.siegeW || m.hero) continue;
             const inR = (this.battleType === 'siege' && this.siegeWithWalls && this.insideRing(m.x, m.y)) ? 1 : 0;
             const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f).rng <= 65;
             const isGuard = !!m.guardPost && !this.remnantLanes.has(m.lane);
@@ -8531,10 +8556,15 @@ export class Scene13WarLayer {
             if (!laneInfo.has(lane)) this.laneTargets.delete(lane);
         }
 
+        const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
         const canReachLane = (info: { f: number; x: number; y: number; inside: number; n: number; meleeOnly: boolean; guard: boolean }, eInfo: { x: number; y: number; inside: number; n: number }): boolean => {
-            if (this.battleType === 'siege' && this.siegeWithWalls) {
-                if (info.f === 0 && !this.ringOpen() && info.meleeOnly && info.inside === 0 && eInfo.inside === eInfo.n) return false;
-                if (info.f === 1 && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
+            if (this.battleType === 'siege') {
+                // 攻城战守方绝不远征打进攻方营地，只迎击已离开营地逼近城池之敌
+                if (info.f === 1 && this.isInsideAttackerCamp(eInfo.x, eInfo.y)) return false;
+                if (this.siegeWithWalls) {
+                    if (info.f === 0 && !this.ringOpen() && info.meleeOnly && info.inside === 0 && eInfo.inside === eInfo.n) return false;
+                    if (info.f === 1 && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
+                }
             }
             if (info.guard && (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2 > 420 * 420) return false;
             return true;
@@ -8560,14 +8590,20 @@ export class Scene13WarLayer {
                     continue;
                 }
                 const prevD2 = (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2;
-                let interceptLane = prev.targetLane, interceptInfo = eInfo, bestD2 = prevD2;
-                // 若原目标还在远处（>360px），而另一支未满 4 队的敌队已杀到本队阵前（<240px），整队就地迎击拦截之敌
-                if (prevD2 > 360 * 360) {
+                const prevCityD = (this.battleType === 'siege' && info.f === 1) ? Math.hypot(eInfo.x - cityCen.x, eInfo.y - cityCen.y) : 0;
+                let interceptLane = prev.targetLane, interceptInfo = eInfo, bestD2 = prevD2, bestCityD = prevCityD;
+                // 1) 若原目标在远处（>300px），而另一支未满 4 队的敌队已逼近本队（<300px），整队就地迎击防错开；
+                // 2) 攻城战守方：若已有其他敌队杀到离城池明显更近处（比当前目标近 320px 以上），立即回师救城，绝不舍近求远追往城外。
+                if (prevD2 > 300 * 300 || (this.battleType === 'siege' && info.f === 1 && prevCityD > 420)) {
                     for (const [oLane, oInfo] of laneInfo) {
                         if (oInfo.f === info.f || !canReachLane(info, oInfo) || (laneClaims.get(oLane) ?? 0) >= MAX_LANE_ATTACKERS) continue;
                         const d2 = (oInfo.x - info.x) ** 2 + (oInfo.y - info.y) ** 2;
-                        if (d2 < 240 * 240 && d2 + 140 * 140 < bestD2) {
+                        const oCityD = (this.battleType === 'siege' && info.f === 1) ? Math.hypot(oInfo.x - cityCen.x, oInfo.y - cityCen.y) : 0;
+                        const nearIntercept = prevD2 > 300 * 300 && d2 < 300 * 300 && d2 + 100 * 100 < bestD2;
+                        const cityThreat = this.battleType === 'siege' && info.f === 1 && oCityD + 320 < bestCityD;
+                        if (nearIntercept || cityThreat) {
                             bestD2 = d2;
+                            bestCityD = oCityD;
                             interceptLane = oLane;
                             interceptInfo = oInfo;
                         }
@@ -8601,23 +8637,34 @@ export class Scene13WarLayer {
             }
         }
 
-        // 第二遍：为尚无目标的分队分配未满 4 队的新目标；若所有可打目标均已满 4 队，则不设目标（原地待命）
+        // 第二遍：为尚无目标的分队分配未满 4 队的新目标；若所有可打目标均已满 4 队，则不设目标（原地待命，守方远在城外时回城寻敌）
         if (this.battleType === 'siege' && this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         for (const [lane, info] of laneInfo) {
             if (this.laneTargets.has(lane)) continue;
             const uF = this.advanceVec[info.f], uS = this.sideVec[info.f];
             let bestELane: number | undefined, bestEScore = Infinity, bestERawDist = Infinity;
+            let fallbackCityELane: number | undefined, fallbackCityDist = Infinity, fallbackRawDist = Infinity;
             for (const [eLane, eInfo] of laneInfo) {
                 if (eInfo.f === info.f || !canReachLane(info, eInfo)) continue;
+                const dx = eInfo.x - info.x, dy = eInfo.y - info.y;
+                const rawDist = Math.hypot(dx, dy);
+                if (this.battleType === 'siege' && info.f === 0 && eInfo.guard && rawDist > 520) continue;
+                const cityDist = (this.battleType === 'siege' && info.f === 1) ? Math.hypot(eInfo.x - cityCen.x, eInfo.y - cityCen.y) : 0;
+                if (this.battleType === 'siege' && info.f === 1 && cityDist < fallbackCityDist) {
+                    fallbackCityDist = cityDist;
+                    fallbackCityELane = eLane;
+                    fallbackRawDist = rawDist;
+                }
                 const claims = laneClaims.get(eLane) ?? 0;
                 if (claims >= MAX_LANE_ATTACKERS) continue;
-                const dx = eInfo.x - info.x, dy = eInfo.y - info.y;
                 const fwd = dx * uF.x + dy * uF.y, side = dx * uS.x + dy * uS.y;
-                const rawDist = Math.hypot(dx, dy);
                 // 横向偏移加权 1.35 + 已分配队数分流惩罚，使左中右各队自然对位敌方左中右各队，不扎堆抢同一队
                 const weightedDist = Math.hypot(fwd, side * 1.35);
-                const loadPenalty = rawDist < 260 ? claims * 120 : claims * 340;
-                const score = weightedDist + loadPenalty;
+                const loadPenalty = rawDist < 260 ? claims * 110 : claims * 150;
+                const outsideBonus = (this.battleType === 'siege' && info.f === 0 && !eInfo.guard && eInfo.inside < eInfo.n) ? -350 : 0;
+                const score = (this.battleType === 'siege' && info.f === 1)
+                    ? weightedDist * 0.65 + cityDist * 0.75 + loadPenalty
+                    : weightedDist + loadPenalty + outsideBonus;
                 if (score < bestEScore) {
                     bestEScore = score;
                     bestELane = eLane;
@@ -8658,6 +8705,10 @@ export class Scene13WarLayer {
                 const eInfo = laneInfo.get(bestELane)!;
                 this.laneTargets.set(lane, { targetLane: bestELane, x: eInfo.x, y: eInfo.y });
                 laneClaims.set(bestELane, (laneClaims.get(bestELane) ?? 0) + 1);
+            } else if (this.battleType === 'siege' && info.f === 1 && fallbackCityELane !== undefined && fallbackRawDist > 280) {
+                // 攻城战守方：若场上敌队均已满 4 队围攻而本队错开落在远处（>280px），仍向离城最近的敌队靠拢回城寻敌，不在外场发呆
+                const eInfo = laneInfo.get(fallbackCityELane)!;
+                this.laneTargets.set(lane, { targetLane: fallbackCityELane, x: eInfo.x, y: eInfo.y });
             }
         }
     }
@@ -9673,15 +9724,23 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-14 主人令「两条都做」→「按每队算」] 残兵主动找敌：本队剩不到 REMNANT_FRAC ⇒ 全图找离自己最近的敌人（不限视野），
         //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
         if (m.lane >= 0 && this.remnantLanes.has(m.lane)) {
+            const siegeDef = this.battleType === 'siege' && m.f === 1;
+            const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
             let t: WarMan | null = null, td = Infinity;
             for (const o of this.men) {
                 if (o.f === m.f || o.hp <= 0) continue;
-                const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
+                if (siegeDef && (o.hero || this.isInsideAttackerCamp(o.x, o.y))) continue;
+                const d = siegeDef
+                    ? (o.x - cityCen.x) ** 2 + (o.y - cityCen.y) ** 2
+                    : (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                 if (d < td) { td = d; t = o; }
             }
             if (t) {
                 const ra = Math.atan2(m.jy, m.jx);
                 return this.gateExit(m, this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }));
+            }
+            if (siegeDef) {
+                return this.gateExit(m, this.defenderCityReturnGoal(m));
             }
         }
         return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
@@ -9774,29 +9833,18 @@ export class Scene13WarLayer {
         return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
     }
 
-    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去。
-     *
-     *  🔴 [2026-10-13 主人报「我设计了守方可以通过城门，为什么不管用」] **病灶：`aim` 为 null 时被第一步短路。**
-     *    城墙未破、兵还在城外时，守方在城内拿不到任何城外目标（`search()` 的近战闸：
-     *    城内守方近战不锁城外敌兵；当时的待命闸 `defenderHolding && !manOut → return null` 现已删除）
-     *    ⇒ `aimAtRaw` 返回 **null**
-     *    ⇒ 下面第一行的 `!aim` 直接 return ⇒ **本机制从未真正生效过**，守方原地等墙塌。
-     *    修法：`aim` 为空但「守方 + 在城内 + 攻城战有墙」时，仍按「离城心最近的那座城门」算出城目标 ——
-     *    这样守方才**真的会走出城门**去迎战/到门前对峙。攻城方（f=0）、无墙攻城（城寨/漠北）、军团以外一律不受影响。
+    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去；
+     *  守方在城外、目标在城内（回城迎击入城之敌）⇒ 先走到最近的外圈城门，从门里回城。
      */
     private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
         if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
         this.ensureGateInfo();
         if (!this.ringBox) return aim;
         const r = this.ringBox, [ma, mb] = this.tileAB(m.x, m.y);
-        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
-        if (!(ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1)) return aim;
-        if (aim && this.insideRing(aim.x, aim.y) && this.men.some(o => o.f === 0 && o.hp > 0 && this.insideRing(o.x, o.y))) return aim;
         const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
         const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
-        // 🔴 [2026-10-15 主人令「防守方的第二波守军寻敌模式有问题，出不了城，不停的在城门附近打转，我觉得应该选择从最近的城门出，请修复」]
-        //    守军一律选择离自己最近的外圈城门出城（越走离该门越近，不会随敌军重心或目标切换在两门之间反复摇摆打转）。
+        // 守军一律选择离自己最近的外圈城门进出城
         let g: WarBuilding | null = null, gd = Infinity;
         for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
@@ -9811,9 +9859,19 @@ export class Scene13WarLayer {
             if (d < gd) { gd = d; g = b; }
         }
         if (!g) return aim;
+
+        const inGateRing = ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1;
+        const aimInside = !!aim && this.insideRing(aim.x, aim.y);
+        if (aimInside) {
+            // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经最近城门往城内走 120px 入城
+            if (this.insideRing(m.x, m.y)) return aim;
+            if (!inGateRing && gd > 110 * 110) return { x: g.x, y: g.y };
+            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+            return { x: g.x - vx / vl * 120, y: g.y - vy / vl * 120 };
+        }
+        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
+        if (!inGateRing) return aim;
         // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
-        // 只往前看 2 小格（1 地块）：看远了路点在拐弯后面，直线奔过去会切过墙角顶在墙上；stop=-1 ＝ 一路沿流场走到出了城（终点在城外，城内步数恒 >0），
-        // 不在门前几格就改走直线 —— 那条直线是斜着穿过门旁的墙（实测险要卡住的守军多数顶在门边墙上）
         const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
         if (wp) return wp;
         // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
@@ -9827,9 +9885,7 @@ export class Scene13WarLayer {
      *   ① 视野内（MARCH_R）最近的敌人 ⇒ 环绕包抄（CHASE_RING）；
      *   ② 攻城武器 ⇒ 最近的第一档建筑目标；
      *   ③ 本队统一锁定的目标（`laneTargets`，敌方分队或城门/建筑）；
-     *   ④ 兜底 ⇒ 攻城方奔中心建筑，其余奔全图最近敌人或敌军重心。
-     * （移除了旧版重叠冲突的 1200px midFoe、laneFoeCache、420px 阈值 foePort 出兵口、以及 4 航点循环巡逻，
-     *   彻底消除在城门外 420px 阈值处「朝城门走 ↔ 掉头回出生点」的 0.5 秒周期反复横跳。）
+     *   ④ 兜底 ⇒ 攻城方奔中心建筑，守城方回城寻敌，野战奔全图最近敌人或敌军重心。
      */
     private aimAtRaw(m: WarMan): { x: number; y: number } | null {
         this.releaseReservedTarget(m);
@@ -9902,7 +9958,20 @@ export class Scene13WarLayer {
             return { x: lt.x + ringX + m.jx, y: lt.y + ringY + m.jy };
         }
 
-        // ④ 全局兜底：全图最近敌人或敌军重心
+        // ④ 全局兜底：攻城战守方优先找城池附近之敌或回城防区驻守，绝不扑向攻方营地蹲守乱入者
+        if (this.battleType === 'siege' && m.f === 1) {
+            const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
+            let bestCityFoe: WarMan | null = null, bestCityD2 = Infinity;
+            for (const o of this.men) {
+                if (o.f === m.f || o.hp <= 0 || o.hero || this.isInsideAttackerCamp(o.x, o.y)) continue;
+                const d2 = (o.x - cityCen.x) ** 2 + (o.y - cityCen.y) ** 2;
+                if (d2 < bestCityD2) { bestCityD2 = d2; bestCityFoe = o; }
+            }
+            if (bestCityFoe) {
+                return { x: bestCityFoe.x + m.jx, y: bestCityFoe.y + m.jy };
+            }
+            return this.defenderCityReturnGoal(m);
+        }
         const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
         if (globalNearest) {
             return { x: globalNearest.x + m.jx, y: globalNearest.y + m.jy };
@@ -10245,7 +10314,18 @@ export class Scene13WarLayer {
             //    注意此处在 `m.next -= dt`（10165 行）之前，故须用 `m.next <= dt` 判断本帧索敌到点（原写 `m.next <= 0` 因下方的重置恒为 false 导致远距索敌从未执行）；
             //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
             if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
-                && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) this.holdLanes.clear();
+                && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) {
+                this.holdLanes.clear();
+                if (this.marching) {
+                    this.marching = false;
+                    for (const u of this.men) {
+                        u.march = false;
+                        u.noFoeSec = LANE_REGROUP_SEC;
+                        u.stuckT = 0;
+                        u.netT = 0;
+                    }
+                }
+            }
             // 🔴 [2026-08-23 → 2026-10-15 规则沿革]
             //    · 曾规定「攻城战开局双方按兵不动（30 秒待命），等攻城器把墙砸塌」（2026-08-23/09-09）；
             //    · 2026-10-11 去掉待命闸、2026-10-13「所有都改为开局就动」⇒ **开局待命已作废**
@@ -10419,10 +10499,21 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-15 主人定] 第二波起城内警戒守军：消灭附近敌人后直接回本兵出兵口原位列阵驻守
                     [m.tx, m.ty] = this.fieldBound(m.guardPost.x, m.guardPost.y);
                 } else if (laneStandby) {
-                    // 🔴 [2026-10-15 主人定] 场上所有目标均已满 4 队攻击，本队无目标可打时原地列阵待命
+                    // 🔴 [2026-10-15 主人定] 场上所有目标均已满 4 队攻击，本队无目标可打时原地列阵待命；
+                    // 🔴 [2026-10-16 主人令「守方却打到攻方营地，应该是回城需要敌人呀，不要再营地等着打乱入者」]
+                    //    攻城战守方在无目标待命时，若已远离本队城防位置，领队带全队回城寻敌驻守，绝不在外场或攻方营地原地干等
                     const slot = this.laneSlotTarget(m, laneLeaders);
                     if (slot) {
                         [m.tx, m.ty] = slot;
+                    } else if (this.battleType === 'siege' && m.f === 1) {
+                        const ret = this.defenderCityReturnGoal(m);
+                        if ((m.x - ret.x) ** 2 + (m.y - ret.y) ** 2 > 180 * 180) {
+                            const aim = this.gateExit(m, ret) ?? ret;
+                            [m.tx, m.ty] = this.fieldBound(aim.x, aim.y);
+                        } else {
+                            m.tx = m.x;
+                            m.ty = m.y;
+                        }
                     } else {
                         m.tx = m.x;
                         m.ty = m.y;
@@ -11036,7 +11127,7 @@ export class Scene13WarLayer {
                     (m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
                     || holdCmd
                     || (m.lane >= 0 && this.holdLanes.has(m.lane))
-                    || laneStandby
+                    || (laneStandby && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS)
                 );
                 m.ph += dt * (isIdlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);
             }

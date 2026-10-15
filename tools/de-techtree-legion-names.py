@@ -14,7 +14,13 @@
 **不猜**：对不上的写进 unmatched，绝不硬塞一个近似的。
 
 产出：
-  public/de-techtree/legion-names.json  { "byNorm": { "<规范化英文名>": "<图鉴中文名>" }, "unmatched": [...] }
+  public/de-techtree/legion-names.json
+    {
+      "byNorm": { "<规范化 DE 英文名>": "<兵种鉴赏中文名>" },   # 渲染器按英文名兜底
+      "byId":   { "<科技树节点 id>": "<兵种鉴赏 id>" },         # 精确对号（图标号 join + 英文名对号）
+      "names":  { "<兵种鉴赏 id>": "<兵种鉴赏中文名>" },         # 图鉴番号快照
+      "unmatched": [ ... ]
+    }
 
 用法：python tools/de-techtree-legion-names.py
 """
@@ -27,6 +33,8 @@ from pathlib import Path
 
 SRC = Path("src/legion-editor/main.ts")
 TREES = Path("public/de-techtree/trees")
+META = Path("public/de-techtree/meta.json")
+ICONS = Path("public/de-techtree/unit-icons.json")
 OUT = Path("public/de-techtree/legion-names.json")
 
 ENTRY = re.compile(
@@ -44,13 +52,19 @@ def main() -> int:
         return 2
 
     raw_entries = re.findall(r"\{\s*id:\s*['\"]([^'\"]+)['\"],\s*name:\s*['\"]([^'\"]+)['\"]", SRC.read_text(encoding="utf-8"))
-    catalog: dict[str, str] = {}
+    catalog: dict[str, str] = {}          # 规范化 id → 中文名
+    catalog_id: dict[str, str] = {}       # 规范化 id → 原始 id
     for uid, name in raw_entries:
         catalog[norm(uid)] = name
+        catalog_id[norm(uid)] = uid
         if uid.endswith('_elite'):
-            catalog['elite' + norm(uid[:-6])] = name
+            k = 'elite' + norm(uid[:-6])
+            catalog[k] = name
+            catalog_id[k] = uid
         if uid.startswith('elite_'):
-            catalog['elite' + norm(uid[6:])] = name
+            k = 'elite' + norm(uid[6:])
+            catalog[k] = name
+            catalog_id[k] = uid
 
     ALIASES = {
         'arbalester': 'arbalest',
@@ -83,32 +97,67 @@ def main() -> int:
         l_norm = norm(l_id)
         if l_norm in catalog:
             catalog[de_k] = catalog[l_norm]
+            catalog_id[de_k] = catalog_id[l_norm]
 
     print(f"兵种鉴赏条目（含别名）：{len(catalog)} 个")
 
     # 树里出现过的单位（英文名 → 中文名/node ids）
     units: dict[str, dict] = {}
+    node_names: dict[str, str] = {}   # node id → DE 英文名
     for f in sorted(TREES.glob("*.json")):
         o = json.loads(f.read_text(encoding="utf-8"))
         for e in o["units_techs"]:
             if e.get("Use Type") != "Unit":
                 continue
             rec = units.setdefault(e["name"], {"ids": set(), "zh": e.get("name_zh")})
+            if e.get("name_zh"):
+                rec["zh"] = e["name_zh"]
             rec["ids"].add(e["Node ID"])
+            node_names[str(e["Node ID"])] = e["name"]
 
-    by_norm: dict[str, str] = {}
+    by_norm: dict[str, str] = {}      # 规范化 DE 英文名 → 图鉴 id（按名字对号，最可靠）
+    by_id: dict[str, str] = {}        # 节点 id → 图鉴 id（兜底；注意古典/中世纪会复用节点 id，故优先级低于 byNorm）
     matched, unmatched = 0, []
     for name, rec in sorted(units.items()):
         k = norm(name)
         if k in catalog:
-            by_norm[k] = catalog[k]
+            by_norm[k] = catalog_id[k]
+            for nid in rec["ids"]:
+                by_id.setdefault(str(nid), catalog_id[k])
             matched += 1
         else:
             unmatched.append({"name": name, "zh": (rec["zh"] or "").replace("\n", ""), "nodeIds": sorted(rec["ids"])})
 
+    # 英文名对不上的节点，再用「图标号」精确 join（meta.units[id].iconId ↔ unit-icons.json）
+    filled_by_icon = 0
+    if META.exists() and ICONS.exists():
+        meta = json.loads(META.read_text(encoding="utf-8"))
+        icons = json.loads(ICONS.read_text(encoding="utf-8"))
+        icon_to_cat: dict[str, str] = {}
+        for cid, url in icons.items():
+            m = re.search(r"/Unit/(\d+)\.png", url or "")
+            if m:
+                icon_to_cat.setdefault(m.group(1), cid)
+        for nid_s, de_name in node_names.items():
+            if nid_s in by_id:
+                continue
+            u = (meta.get("units") or {}).get(nid_s)
+            if not u or u.get("iconId") is None:
+                continue
+            cid = icon_to_cat.get(str(u["iconId"]))
+            if cid:
+                by_id[nid_s] = cid
+                filled_by_icon += 1
+    names_snapshot = {cid: catalog[norm(cid)] for cid in catalog_id.values() if norm(cid) in catalog}
+    print(f"精确对号：byId {len(by_id)}/{len(node_names)} 个节点（其中图标号补 {filled_by_icon}）；图鉴番号快照 {len(names_snapshot)} 条")
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
-        json.dumps({"byNorm": by_norm, "unmatched": unmatched}, ensure_ascii=False, separators=(",", ":")),
+        json.dumps(
+            {"byNorm": by_norm, "byId": by_id, "names": names_snapshot, "unmatched": unmatched},
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ),
         encoding="utf-8",
     )
     print(f"对号成功 {matched}/{len(units)}；未在鉴赏中出现的非战斗/基础单位 {len(unmatched)} 个（仍显示原名）")

@@ -1777,37 +1777,19 @@ export default defineConfig({
                                 return;
                             }
                             const trimmedName = newName.trim();
-                            // 1. 更新 main.ts
-                            if (fs.existsSync(mainTsPath)) {
-                                let mainText = fs.readFileSync(mainTsPath, 'utf-8');
-                                const reMain = new RegExp(`({\\s*id:\\s*['"]${unitId}['"],\\s*name:\\s*['"])([^'"]+)(['"])`);
-                                if (reMain.test(mainText)) {
-                                    mainText = mainText.replace(reMain, `$1${trimmedName}$3`);
-                                    markLegionSaveWrite();
-                                    serverSafeWriteFileSync(mainTsPath, mainText);
-                                }
-                            }
-                            // 2. 更新 WarTypes.ts
-                            if (fs.existsSync(warTypesPath)) {
-                                let warText = fs.readFileSync(warTypesPath, 'utf-8');
-                                const reWar = new RegExp(`(['"]?${unitId}['"]?\\s*:\\s*{\\s*name:\\s*['"])([^'"]+)(['"])`);
-                                if (reWar.test(warText)) {
-                                    warText = warText.replace(reWar, `$1${trimmedName}$3`);
-                                    markLegionSaveWrite();
-                                    serverSafeWriteFileSync(warTypesPath, warText);
-                                }
-                            }
-                            // 3. 更新 NavalShipTiers.ts (若有对应战船)
-                            if (fs.existsSync(navalShipTiersPath)) {
-                                let navalText = fs.readFileSync(navalShipTiersPath, 'utf-8');
-                                const reNaval = new RegExp(`(['"]?${unitId.toUpperCase()}['"]?\\s*:\\s*['"])([^'"]+)(['"])`);
-                                if (reNaval.test(navalText)) {
-                                    navalText = navalText.replace(reNaval, `$1${trimmedName}$3`);
-                                    markLegionSaveWrite();
-                                    serverSafeWriteFileSync(navalShipTiersPath, navalText);
-                                }
-                            }
-                            // 4. 更新 public/de-techtree/custom-names.json
+
+                            // ── 事务式改名 [2026-10-16] ──────────────────────────────
+                            // 以前是「边算边写」：WarTypes.ts 被占用（EPERM）时 main.ts 已经改完，
+                            // 结果图鉴改名了、覆盖表没写 → 两边不一致。现在先把所有目标文件算好，
+                            // 再统一写盘；任一文件失败就把已写的全部还原，绝不留下改一半的状态。
+                            const queue: Array<{ file: string; next: string; orig: string }> = [];
+                            const plan = (file: string, next: string): void => {
+                                if (!fs.existsSync(file)) return;
+                                const orig = fs.readFileSync(file, 'utf-8');
+                                if (orig !== next) queue.push({ file, next, orig });
+                            };
+
+                            // 1. custom-names.json（显示层最关键，放最前）
                             const customNamesPath = path.resolve(__dirname, 'public/de-techtree/custom-names.json');
                             let customNames: Record<string, string> = {};
                             if (fs.existsSync(customNamesPath)) {
@@ -1840,37 +1822,46 @@ export default defineConfig({
                             if (ALIASES[unitId]) {
                                 customNames[ALIASES[unitId]] = trimmedName;
                             }
-                            serverSafeWriteFileSync(customNamesPath, JSON.stringify(customNames, null, 2));
+                            plan(customNamesPath, JSON.stringify(customNames, null, 2));
 
-                            // 5. 同步写盘到 public/de-techtree/trees/*.json 科技树节点
-                            const treesDir = path.resolve(__dirname, 'public/de-techtree/trees');
-                            if (fs.existsSync(treesDir)) {
-                                const targetKeys = new Set([normKey]);
-                                if (unitId.endsWith('_elite')) {
-                                    targetKeys.add('elite' + unitId.slice(0, -6).replace(/[^a-z0-9]/g, ''));
-                                }
-                                if (ALIASES[unitId]) targetKeys.add(ALIASES[unitId]);
-
-                                const treeFiles = fs.readdirSync(treesDir).filter(f => f.endsWith('.json'));
-                                for (const tf of treeFiles) {
-                                    const fullP = path.join(treesDir, tf);
-                                    try {
-                                        const treeData = JSON.parse(fs.readFileSync(fullP, 'utf-8'));
-                                        let modified = false;
-                                        for (const item of (treeData.units_techs || [])) {
-                                            if (item['Use Type'] !== 'Unit') continue;
-                                            const iNorm = (item.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                                            if (targetKeys.has(iNorm)) {
-                                                item.name_zh = trimmedName;
-                                                modified = true;
-                                            }
-                                        }
-                                        if (modified) {
-                                            serverSafeWriteFileSync(fullP, JSON.stringify(treeData, null, 1));
-                                        }
-                                    } catch {}
-                                }
+                            // 2. main.ts（兵种鉴赏的唯一事实来源）
+                            if (fs.existsSync(mainTsPath)) {
+                                const mainText = fs.readFileSync(mainTsPath, 'utf-8');
+                                const reMain = new RegExp(`({\\s*id:\\s*['"]${unitId}['"],\\s*name:\\s*['"])([^'"]+)(['"])`);
+                                if (reMain.test(mainText)) plan(mainTsPath, mainText.replace(reMain, `$1${trimmedName}$3`));
                             }
+                            // 3. WarTypes.ts
+                            //    ⚠️ 键必须整体匹配：早期写法 archer 会连带命中 fire_archer（2026-10-16 实测踩坑）
+                            if (fs.existsSync(warTypesPath)) {
+                                const warText = fs.readFileSync(warTypesPath, 'utf-8');
+                                const reWar = new RegExp(`(^|[\\s{,])('?"?${unitId}'?"?\\s*:\\s*{\\s*name:\\s*['"])([^'"]+)(['"])`, 'm');
+                                if (reWar.test(warText)) plan(warTypesPath, warText.replace(reWar, `$1$2${trimmedName}$4`));
+                            }
+                            // 4. NavalShipTiers.ts (若有对应战船)
+                            if (fs.existsSync(navalShipTiersPath)) {
+                                const navalText = fs.readFileSync(navalShipTiersPath, 'utf-8');
+                                const reNaval = new RegExp(`(^|[\\s{,])('?"?${unitId.toUpperCase()}'?"?\\s*:\\s*['"])([^'"]+)(['"])`, 'm');
+                                if (reNaval.test(navalText)) plan(navalShipTiersPath, navalText.replace(reNaval, `$1$2${trimmedName}$4`));
+                            }
+
+                            const written: Array<{ file: string; orig: string }> = [];
+                            try {
+                                for (const w of queue) {
+                                    markLegionSaveWrite();
+                                    serverSafeWriteFileSync(w.file, w.next);
+                                    written.push({ file: w.file, orig: w.orig });
+                                }
+                            } catch (writeErr: any) {
+                                for (const d of written.reverse()) {
+                                    try { serverSafeWriteFileSync(d.file, d.orig); } catch { /* 回滚尽力而为 */ }
+                                }
+                                throw new Error(`写入失败，已回滚 ${written.length} 个文件：${writeErr?.message ?? writeErr}`);
+                            }
+
+                            // 5. ⛔ 不再改写 public/de-techtree/trees/*.json
+                            //    [2026-10-16] 改名只需要 legion-names.json（de-wiki 渲染器按 byNorm/byId 取名）。
+                            //    旧实现会把 62 个科技树 JSON 全部重新序列化 → 单次改名 21 万行 diff，且 name_zh 已不再参与取名。
+                            //    科技树现在保持"DE 原始数据"不变，名称同步全部由 legion-names.json + custom-names.json 承担。
 
                             // 6. 重新生成 legion-names.json（科技树快照），保证改名永久同步
                             regenerateLegionNames();
