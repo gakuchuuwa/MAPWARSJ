@@ -4955,7 +4955,11 @@ async function fillUnitMeta(u: DeUnitDef): Promise<void> {
         if (!a) return `${act}：<span style="color:#7a7266;">无</span>`;
         const d = a.dirs?.['3'] || Object.values(a.dirs || {})[0];
         const size = d ? `${Math.round(d.fw)}×${Math.round(d.fh)}` : '?';
-        return `${act}：<b style="color:#e0c888;">${a.frames}</b> 帧 · ${Object.keys(a.dirs || {}).length} 方向 · 帧尺寸 ${size}`;
+        // 🔴 [2026-10-15] 把 dur（DE 真实时长）一并显示：图鉴预览按它播，一眼能对出循环秒数
+        const durTxt = typeof a.dur === 'number' && a.dur > 0
+            ? ` · 循环 <b style="color:#9fd08a;">${a.dur.toFixed(2)}s</b>（DE 原速）`
+            : ' · <span style="color:#7a7266;">无 dur（图鉴兜底速）</span>';
+        return `${act}：<b style="color:#e0c888;">${a.frames}</b> 帧 · ${Object.keys(a.dirs || {}).length} 方向 · 帧尺寸 ${size}${durTxt}`;
     });
     box.innerHTML = lines.join('<br/>');
 }
@@ -4984,7 +4988,10 @@ function startUnitCanvasPreview(unitId: string): void {
     if (!canvas || !ctx) return;
 
     const prefix = getUnitPathPrefix(unitId);
-    let frame = 0;
+    // 🔴 [2026-10-15] 改为**时间基准（秒）**而不是 rAF 拍数：拍数无法表达"这一轮该播几秒"，
+    //    于是 dur（DE 原版时长）再准也看不出来。现在与 13 战场同一条规则（loopRate）。
+    let phase = 0;      // 已播秒数
+    let lastT = 0;      // 上一帧时间戳(ms)
 
     // 像素素材放大必须关掉平滑插值，否则 2.8 倍下边缘全糊
     ctx.imageSmoothingEnabled = false;
@@ -4993,6 +5000,10 @@ function startUnitCanvasPreview(unitId: string): void {
     const groundY = canvas.height * 0.82;
 
     const loop = () => {
+        const nowMs = performance.now();
+        if (!lastT) lastT = nowMs;
+        phase += Math.min(0.1, (nowMs - lastT) / 1000);   // 卡顿/切后台时最多按 100ms 计
+        lastT = nowMs;
         ctx.fillStyle = '#141812';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = '#1e241c';
@@ -5020,7 +5031,8 @@ function startUnitCanvasPreview(unitId: string): void {
                 fw = img.naturalWidth / totalFrames; fh = img.naturalHeight; hx = fw / 2; hy = fh / 2;
             }
             const speedDivisor = animState === 'idle' ? 3 : 2;
-            const cur = Math.floor(frame / speedDivisor) % totalFrames;
+            const cycle = previewCycleSec(actMeta, totalFrames, speedDivisor);
+            const cur = Math.floor(phase / cycle.sec * totalFrames) % totalFrames;
 
             const s = UNIT_PREVIEW_SCALE;
             const dw = fw * s, dh = fh * s;
@@ -5039,7 +5051,8 @@ function startUnitCanvasPreview(unitId: string): void {
             ctx.font = '11px "Microsoft YaHei", sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText(
-                `${action}_${animDirection}.png · 第 ${cur + 1}/${totalFrames} 帧 · 帧 ${Math.round(fw)}×${Math.round(fh)} · 统一 ${s}×`,
+                `${action}_${animDirection}.png · 第 ${cur + 1}/${totalFrames} 帧 · 帧 ${Math.round(fw)}×${Math.round(fh)} · 统一 ${s}×`
+                + ` · 循环 ${cycle.sec.toFixed(2)}s${cycle.fromDe ? '（DE 原速）' : '（无 dur 兜底）'}`,
                 8, canvas.height - 8,
             );
         } else {
@@ -5050,7 +5063,6 @@ function startUnitCanvasPreview(unitId: string): void {
             ctx.fillText(`载入 ${action}_${animDirection}.png …`, canvas.width / 2, canvas.height / 2);
         }
 
-        frame++;
         animTimer = requestAnimationFrame(loop);
     };
     loop();
@@ -5069,12 +5081,33 @@ interface DynMetaDir {
 interface DynMetaAction {
     frames: number;
     dirs: Record<string, DynMetaDir>;
+    /**
+     * 🔴 [2026-10-15] 该动作在 AoE2 DE 里的真实时长（秒）= dat 的 frame_count × frame_duration。
+     * 13 战场渲染层（Scene13WarLayer 的 loopRate）读到它就按 DE 原节奏播，读不到才整段压进
+     * 1.5s（待命）/1.0s（移动）。图鉴预览此前写死 speedDivisor、看不到这条差异，现同样读它。
+     */
+    dur?: number;
 }
 interface DynMeta {
     idle?: DynMetaAction;
     move?: DynMetaAction;
     attack?: DynMetaAction;
     death?: DynMetaAction;
+}
+
+/**
+ * 图鉴预览一轮动画要播多少秒。
+ * @param divisor 该动作的旧手感除数（待机 3 / 移动·攻击 2，60fps 下 = 20 / 30 fps），
+ *                仅在素材没写 `dur` 时兜底，保证没数据的老素材观感与改动前一致。
+ */
+function previewCycleSec(
+    actMeta: DynMetaAction | undefined,
+    totalFrames: number,
+    divisor: number,
+): { sec: number; fromDe: boolean } {
+    const dur = actMeta?.dur;
+    if (typeof dur === 'number' && dur > 0) return { sec: dur, fromDe: true };
+    return { sec: (Math.max(1, totalFrames) * divisor) / 60, fromDe: false };
 }
 
 const spriteCache = new Map<string, HTMLImageElement>();
@@ -5426,8 +5459,14 @@ function startCanvasPreview(): void {
         }
     }
 
-    let frame = 0;
+    // 🔴 [2026-10-15] 与图鉴单兵预览同一把尺：时间基准（秒）+ `_meta.json` 的 dur（DE 原速）
+    let phase = 0;
+    let lastT = 0;
     const renderLoop = () => {
+        const nowMs = performance.now();
+        if (!lastT) lastT = nowMs;
+        phase += Math.min(0.1, (nowMs - lastT) / 1000);
+        lastT = nowMs;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // 绘制沙盘网格背景
@@ -5435,8 +5474,7 @@ function startCanvasPreview(): void {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.strokeStyle = '#1e241c';
         ctx.lineWidth = 1;
-        for (let x = 0; x < canvas.width; x += 30) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        for (let x = 0; x < canvas.width; x += 30) {            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
         }
         for (let y = 0; y < canvas.height; y += 30) {
             ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
@@ -5480,9 +5518,11 @@ function startCanvasPreview(): void {
                     hy = fh / 2;
                 }
 
-                // 动画帧索引（大幅加快动作播放速度：移动/攻击 30fps 敏捷干脆，待机 20fps 自然舒展）
+                // 动画帧索引：有 dur 按 DE 原速（待机 3.0s、重装剑士 4.0s…），没有则维持老手感
+                // （移动/攻击 30fps 敏捷干脆，待机 20fps 自然舒展）
                 const speedDivisor = animState === 'idle' ? 3 : 2;
-                const curFrame = Math.floor(frame / speedDivisor) % totalFrames;
+                const cycle = previewCycleSec(actMeta, totalFrames, speedDivisor);
+                const curFrame = Math.floor(phase / cycle.sec * totalFrames) % totalFrames;
                 const sx = curFrame * fw;
                 const sy = 0;
                 const sw = fw;
@@ -5517,7 +5557,6 @@ function startCanvasPreview(): void {
             }
         });
 
-        frame++;
         animTimer = requestAnimationFrame(renderLoop);
     };
 
