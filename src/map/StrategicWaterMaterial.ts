@@ -144,16 +144,18 @@ export function renderStrategicWater(
             const grain = waterDetailAt(detail, wx, wy) * 0.20 + swell * 0.62;
             const tone = waterToneAt(wx, wy);
 
-            // 水深上色：大洋深海接近 deep，近海基调 base（由真实海底高程平滑呈现）
+            // 水深上色：大洋深海接近 deep，近海基调 base；内陆湖泊（d≈0）按离岸距离产生湖岸浅、湖心深的自然水深层次
             const d = depthT ? depthT[y * w + x] : 0;
-            let r = base[0] + (deep[0] - base[0]) * d;
-            let g = base[1] + (deep[1] - base[1]) * d;
-            let b = base[2] + (deep[2] - base[2]) * d;
+            const dist = distance[i];
+            const lakeDeepT = d < 0.05 && water[i] ? Math.min(0.32, Math.max(0, (dist - 4.5) / 18) * 0.32) : 0;
+            const effD = Math.max(d, lakeDeepT);
+            let r = base[0] + (deep[0] - base[0]) * effD;
+            let g = base[1] + (deep[1] - base[1]) * effD;
+            let b = base[2] + (deep[2] - base[2]) * effD;
 
             // 沿岸浅水与海湾过渡：与真实海底水深（DEM depthT）有机联动
             // 平缓海湾、大陆架与入海口呈现 10~14px 宽的开阔浅滩（与矢量河流完全同色 coastalAzure），海沟处自然收窄
             const depthFactor = Math.max(0.35, 1 - d * 0.70);
-            const dist = distance[i];
             const reach = (11 + Math.sin(wx / 37 + wy / 51) * 2.5 + Math.sin((wx - wy) / 23) * 1.5) * depthFactor;
 
             if (water[i] && dist < reach) {
@@ -169,6 +171,13 @@ export function renderStrategicWater(
                     r = r * (1 - seamT) + reefR * seamT;
                     g = g * (1 - seamT) + reefG * seamT;
                     b = b * (1 - seamT) + reefB * seamT;
+                }
+                // 贴岸 1.6px 河床/湖岸湿润微暗浸润边，让水体自然嵌入大地而非浮在表面
+                if (dist < 1.6) {
+                    const bankShade = 1 - (1 - dist / 1.6) * 0.14;
+                    r *= bankShade;
+                    g *= bankShade;
+                    b *= bankShade;
                 }
             }
 
@@ -200,10 +209,10 @@ export function renderStrategicWater(
             else {
                 const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
                 if (coverage > 0) {
-                    out[o] = Math.round(azureR * 0.75);
-                    out[o+1] = Math.round(azureG * 0.75);
-                    out[o+2] = Math.round(azureB * 0.75);
-                    out[o+3] = Math.round(coverage * 0.20 * 255);
+                    out[o] = Math.round(azureR * 0.62);
+                    out[o+1] = Math.round(azureG * 0.64);
+                    out[o+2] = Math.round(azureB * 0.66);
+                    out[o+3] = Math.round(coverage * 0.32 * 255);
                 }
             }
         }

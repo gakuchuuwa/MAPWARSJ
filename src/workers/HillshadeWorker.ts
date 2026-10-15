@@ -405,17 +405,22 @@ async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: numb
     const n = 2 ** coords.z;
     cacheDem(`${coords.z}/${((coords.x % n) + n) % n}/${coords.y}`, center);
     const tiles = new Map<string, Float32Array>([['0/0', center]]);
-    const neighbors = await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
+    await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
         const dem = await fetchDemFloat32(coords.z, coords.x + dx, coords.y + dy);
         if (dem) { await fillSurfaceSea(dem, coords.z, coords.x + dx, coords.y + dy); tiles.set(`${dx}/${dy}`, dem); }
-        return dem !== null;
     })));
-    // 邻块不可用时整块使用原版光照，不能用假高度冒充连续地形。
-    if (neighbors.some(ok => !ok)) return null;
+    // 即使个别邻块网络超时，内部 250×250 像素仍用本瓦片真实高程走 3D 浮雕光照（缺失邻块仅在外扩 3px 处钳制本瓦片边缘），彻底消除 256×256 方块断层。
     const padded = new Float32Array(PAD_W * PAD_W);
     for (let y = -PAD; y < 256 + PAD; y++) for (let x = -PAD; x < 256 + PAD; x++) {
         const dx = Math.floor(x / 256), dy = Math.floor(y / 256);
-        padded[(y + PAD) * PAD_W + x + PAD] = tiles.get(`${dx}/${dy}`)![((y + 256) % 256) * 256 + (x + 256) % 256];
+        const tile = tiles.get(`${dx}/${dy}`);
+        if (tile) {
+            padded[(y + PAD) * PAD_W + x + PAD] = tile[((y + 256) % 256) * 256 + (x + 256) % 256];
+        } else {
+            const cx = Math.max(0, Math.min(255, x));
+            const cy = Math.max(0, Math.min(255, y));
+            padded[(y + PAD) * PAD_W + x + PAD] = center[cy * 256 + cx];
+        }
     }
     return padded;
 }
@@ -973,15 +978,15 @@ function renderHillshade(
                     const illum = illumP * 0.75 + illumS * 0.25;
 
                     const ridge = Math.min(0.32, Math.max(0, lap * 0.018)) * fineWeight;
-                    const cavity = Math.min(0.42, Math.max(0, -lap * 0.022)) * fineWeight;
+                    const cavity = Math.min(0.36, Math.max(0, -lap * 0.019)) * fineWeight;
 
                     const ambient = 0.36;
                     const contrastIllum = Math.pow(illum, 1.18);
                     const flatIllum = lzP * 0.75 + lzS * 0.25;
                     const flatShade = ambient + 0.84 * Math.pow(flatIllum, 1.18);
-                    let expShade = ((ambient + 0.84 * contrastIllum) / flatShade) * (1.0 - cavity * 0.55) * (1.0 + ridge * 0.55);
-                    // 高海拔天空散射光通透度（消除4000m+高山深谷死黑阴影，呈现通透岩壁立体质感）
-                    const minShade = zC > 3500 ? Math.min(0.40, 0.28 + (zC - 3500) * 0.00006) : 0.28;
+                    let expShade = ((ambient + 0.84 * contrastIllum) / flatShade) * (1.0 - cavity * 0.48) * (1.0 + ridge * 0.55);
+                    // 中高海拔天空散射光通透度（1200m 起渐入，消除中亚/帕米尔及高山深谷焦黑阴影，呈现清透岩壁立体质感）
+                    const minShade = zC > 1200 ? Math.min(0.42, 0.30 + (zC - 1200) * 0.000045) : 0.30;
                     expShade = Math.max(minShade, Math.min(1.42, expShade));
 
                     shadeFactor = 1 + (expShade - 1) * params.opacity;
@@ -1077,10 +1082,13 @@ function renderHillshade(
                             r += (TX[0] - r) * montWeight; g += (TX[1] - g) * montWeight; b += (TX[2] - b) * montWeight;
                         }
                     }
-                    // ② 沙漠成片：干旱低中海拔，按低频噪声成片铺橙色沙（热带 des，温带 pm2）
+                    // ② 沙漠沙海与风成沙垅过渡：拉宽低频过渡带并叠入跨瓦片连续的盛行风沙丘长波，消除圆团豹纹斑块感
                     const patch = matPatch![p];
-                    const desert = sandiness > 0.3 && colorZ < 2600
-                        ? rampWorker(sandiness, 0.3, 0.9) * rampWorker(patch, 0.40, 0.70) * 0.55 * snowFade * rampWorker(colorZ, 60, 140) : 0;
+                    const pixLng = tileBounds ? tileBounds.west + (tileBounds.east - tileBounds.west) * (x + 0.5) / width : tileCenterLng;
+                    const duneWave = 0.5 + 0.5 * Math.sin((pixLng * 1.35 + rowLat * 0.85) * 9.0 + Math.sin((pixLng * 0.6 - rowLat * 1.1) * 4.5) * 1.4);
+                    const ergMask = 0.22 + 0.78 * rampWorker(patch * 0.68 + duneWave * 0.32, 0.24, 0.78);
+                    const desert = sandiness > 0.25 && colorZ < 2600
+                        ? rampWorker(sandiness, 0.25, 0.88) * ergMask * 0.52 * snowFade * rampWorker(colorZ, 35, 130) : 0;
                     if (desert > 0 && sampleTex(absLat < 34 ? texDes : texPm2, p)) {
                         r += (TX[0] - r) * desert; g += (TX[1] - g) * desert; b += (TX[2] - b) * desert;
                     }
@@ -1113,12 +1121,12 @@ function renderHillshade(
                     const alpineRock = alpineT * rampWorker(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
                     const rockT = Math.max(slopeT, alpineRock);
                     if (rockT > 0 && sampleTex(texRck, p)) {
-                        const rockMax = 0.60 + 0.30 * Math.max(0, Math.min(1, (zC - 1200) / 1600));
+                        const rockMax = 0.56 + 0.28 * Math.max(0, Math.min(1, (zC - 1200) / 1600));
                         const w = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
                         const grey = TX[0] * 0.299 + TX[1] * 0.587 + TX[2] * 0.114;
-                        let tr = (TX[0] + (grey - TX[0]) * 0.40) * 0.94;
-                        let tg = (TX[1] + (grey - TX[1]) * 0.40) * 0.94;
-                        let tb = (TX[2] + (grey - TX[2]) * 0.40) * 0.94 + 4;
+                        let tr = (TX[0] + (grey - TX[0]) * 0.28) * 0.98;
+                        let tg = (TX[1] + (grey - TX[1]) * 0.28) * 0.98;
+                        let tb = (TX[2] + (grey - TX[2]) * 0.28) * 0.98 + 5;
                         const wet = humidity * 0.35;
                         if (wet > 0 && sampleTex(texRockWet, p)) {
                             tr += (TX[0] - tr) * wet; tg += (TX[1] - tg) * wet; tb += (TX[2] - tb) * wet;
@@ -1302,13 +1310,13 @@ function renderHillshade(
 
                 // 瑞士制图学天光散射（Imhof relief fill）：背阴山坡不陷入死黑，由清透冷调天光（瑞利散射）填充，
                 // 既保持阴阳立体反差，又让谷地与山脊背阴面纹理清晰可辨、质感通透巍峨。
-                if (!isWater && zC > 0 && shadeFactor < 0.95) {
-                    const shadowDepth = (0.95 - shadeFactor) / 0.95;
-                    const elevSky = Math.min(1.0, 0.60 + Math.max(0, zC) * 0.00015);
-                    const skyW = shadowDepth * shadowDepth * 0.22 * elevSky;
-                    outR += (130 - outR) * skyW * 0.35;
-                    outG += (160 - outG) * skyW * 0.45;
-                    outB += (195 - outB) * skyW * 0.70;
+                if (!isWater && zC > 0 && shadeFactor < 0.96) {
+                    const shadowDepth = (0.96 - shadeFactor) / 0.96;
+                    const elevSky = Math.min(1.0, 0.66 + Math.max(0, zC) * 0.00016);
+                    const skyW = shadowDepth * shadowDepth * 0.30 * elevSky;
+                    outR += (138 - outR) * skyW * 0.38;
+                    outG += (166 - outG) * skyW * 0.48;
+                    outB += (202 - outB) * skyW * 0.72;
                 }
 
                 output[idx] = Math.min(255, Math.max(0, outR));

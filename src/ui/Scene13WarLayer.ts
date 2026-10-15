@@ -8171,6 +8171,11 @@ export class Scene13WarLayer {
                     continue;
                 }
                 const L = laneLeaders.get(m.lane);
+                if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)) {
+                    m.sepX = 0;
+                    m.sepY = 0;
+                    continue;
+                }
                 if (L && L !== m && (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC) {
                     const uFwd = this.advanceVec[m.f], uSide = this.sideVec[m.f], dDep = m.dep - L.dep, dSide = m.slotY - L.slotY;
                     const sx = L.x - uFwd.x * dDep + uSide.x * dSide;
@@ -10184,6 +10189,11 @@ export class Scene13WarLayer {
                 && (m.x - this.heroClickOrder.x) ** 2 + (m.y - this.heroClickOrder.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
                 this.heroClickOrder = null;
             }
+            // 🔴 [2026-10-15 主人定] 攻城战第二波起守军：在城内出兵口原位警戒防守（残兵兜底时放开）
+            const isGuard = !!m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane));
+            // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
+            const laneStandby = !this.marching && !m.march && m.lane >= 0 && !m.hero && !m.siegeW && !isGuard
+                && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
             const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
@@ -10192,7 +10202,7 @@ export class Scene13WarLayer {
             const stats = wt;
             // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）
             const spdK = this.isWaterAt(m.x, m.y) ? 0.6 : 1;
-            const SIGHT = stats.sight ?? 160;   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技）
+            const SIGHT = isGuard ? Math.max(stats.sight ?? 160, 320) : (stats.sight ?? 160);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；原位警戒守军警戒半径至少 320px）
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
             //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
             //    （53.67 = √(TAC_TILE_W²/4 + TAC_TILE_H²/4) 的等轴换算，见 resolveWorldObstructions）。
@@ -10254,9 +10264,12 @@ export class Scene13WarLayer {
             const wrongLaneFoe = lt !== undefined && m.next <= 0 && m.foe !== null && !('sprite' in m.foe)
                 && lt.targetLane !== undefined && m.foe.lane !== lt.targetLane
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
+            const standbyOutReach = laneStandby && m.foe !== null
+                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 25) ** 2;
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0)
-                && !wrongLaneFoe;
+                && !wrongLaneFoe
+                && !standbyOutReach;
             const hb = m.siegeW && this.battleType === 'siege' ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
                 && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
@@ -10270,11 +10283,11 @@ export class Scene13WarLayer {
             } else if (keep && m.foe) {
                 m.foe.claims++;
             } else if (m.next <= 0) {
-                if (hb) {
+                if (hb && (!laneStandby || (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 <= (REACH + 25) ** 2)) {
                     m.foe = hb;
                     hb.claims++;
                 } else {
-                    m.foe = this.search(m, SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
+                    m.foe = this.search(m, laneStandby ? REACH : SIGHT, MIN_RANGE_TYPES[m.key] ?? 0);
                 }
                 m.next = 0.2;
             } else if (!keep) m.foe = null;
@@ -10332,6 +10345,18 @@ export class Scene13WarLayer {
                     // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
                     //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
                     //    什么都不做 = 目标点保持玩家点下的那一个。
+                } else if (isGuard && m.guardPost) {
+                    // 🔴 [2026-10-15 主人定] 第二波起城内警戒守军：消灭附近敌人后直接回本兵出兵口原位列阵驻守
+                    [m.tx, m.ty] = this.fieldBound(m.guardPost.x, m.guardPost.y);
+                } else if (laneStandby) {
+                    // 🔴 [2026-10-15 主人定] 场上所有目标均已满 4 队攻击，本队无目标可打时原地列阵待命
+                    const slot = this.laneSlotTarget(m, laneLeaders);
+                    if (slot) {
+                        [m.tx, m.ty] = slot;
+                    } else {
+                        m.tx = m.x;
+                        m.ty = m.y;
+                    }
                 } else {
                     const slot = this.laneSlotTarget(m, laneLeaders);
                     if (slot) {
@@ -10375,7 +10400,7 @@ export class Scene13WarLayer {
                  *   · 与 DE 一致：骑射手移动中不能射击，风筝本来就是「跑一段—停下—射」的交替
                  */
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不风筝（原地站桩射击，不后撤）
-                if (wt.kite && !m.kiteGaveUp) {
+                if (wt.kite && !m.kiteGaveUp && !isGuard) {
                     const kd = Math.sqrt(fd2);
                     // 🔴 [2026-08-23 主人定] 只被「近战」贴脸才放风筝：远程对射（dmgType=pierce）不跑、原地站撸；
                     //    敌人真挥刀砍过来（dmgType=melee）才拨马后撤。
@@ -10470,15 +10495,22 @@ export class Scene13WarLayer {
                     const nearlyDead = foe.hp < foeMax * KEEP_TARGET_HP;
                     if (m.fightT > 4 && !nearlyDead) {
                         m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
-                        const slot = this.laneSlotTarget(m, laneLeaders);
-                        if (slot) {
-                            [m.tx, m.ty] = slot;
+                        if (isGuard && m.guardPost) {
+                            [m.tx, m.ty] = this.fieldBound(m.guardPost.x, m.guardPost.y);
+                        } else if (laneStandby) {
+                            const slot = this.laneSlotTarget(m, laneLeaders);
+                            if (slot) { [m.tx, m.ty] = slot; } else { m.tx = m.x; m.ty = m.y; }
                         } else {
-                            const aim = this.aimAt(m);
-                            // 🔴 [2026-10-11 主人报「战斗刚开始士兵全挤成一排」] 列阵推进期间（m.march）
-                            //    **不拿寻敌结果覆盖阵位** —— 这正是本文件 2928 行写的口径「够不着不追」。
-                            //    改前无条件覆盖 ⇒ 同一口 50 人奔向同一个点 ⇒ 一排。
-                            if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                            const slot = this.laneSlotTarget(m, laneLeaders);
+                            if (slot) {
+                                [m.tx, m.ty] = slot;
+                            } else {
+                                const aim = this.aimAt(m);
+                                // 🔴 [2026-10-11 主人报「战斗刚开始士兵全挤成一排」] 列阵推进期间（m.march）
+                                //    **不拿寻敌结果覆盖阵位** —— 这正是本文件 2928 行写的口径「够不着不追」。
+                                //    改前无条件覆盖 ⇒ 同一口 50 人奔向同一个点 ⇒ 一排。
+                                if (aim && !m.march) { [m.tx, m.ty] = this.fieldBound(aim.x, aim.y); }
+                            }
                         }
                         continue;
                     }
@@ -10505,8 +10537,8 @@ export class Scene13WarLayer {
                     m.ph += dt * (m.st ? 8 / 1.5 : 8);
                     continue;
                 }
-                // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
-                if (holdCmd && !inReach) {
+                // 🔴 [2026-08-23] 双方待命期 / 无目标待命分队：够不着**不追**——原地站桩等目标进射程
+                if ((holdCmd || laneStandby) && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -10519,7 +10551,8 @@ export class Scene13WarLayer {
                     // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
-                    const chasePt = this.gateExit(m, { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING })!;
+                    const rawChase = { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
+                    const chasePt = isGuard ? rawChase : this.gateExit(m, rawChase)!;
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
@@ -10905,7 +10938,7 @@ export class Scene13WarLayer {
                     m.ph += dt * 8 / 1.5;
                     continue;
                 }
-                // 没敌人在打 → 朝目标（最近的敌兵/敌军重心）走。所有兵一个规矩，没有例外。
+                // 没敌人在打 → 朝目标（最近的敌兵/敌军重心/原位警戒位）走。
                 m.st = 0;
                 m.fightT = 0;
                 const dx = m.tx - m.x, dy = m.ty - m.y;
@@ -10917,17 +10950,21 @@ export class Scene13WarLayer {
                 //    跟着**活动锚点**走的归队队员不能套它 —— 锚点在动，8px 死区会把跟随切成
                 //    两帧一循环的碎步（+4px/-0.25px…），就是主人 2026-10-03 报的「士兵不停颤抖」，
                 //    见 LANE_TRACK_EPS 头注与 scratch/_probe_tremble_trace.mjs 的逐帧轨迹。
-                const slot = this.laneSlotTarget(m, laneLeaders);
+                const slot = isGuard ? null : this.laneSlotTarget(m, laneLeaders);
+                const trackSlot = !!slot || m.march || isGuard;
                 const step = (m.hero && (slot || m.march) && this.spawns[m.lane] ? Math.max(stats.spd, this.statsFor(this.spawns[m.lane].key, m.f).spd) : stats.spd) * spdK * dt;
-                const arriveAt = (slot || m.march) ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
+                const arriveAt = trackSlot ? LANE_TRACK_EPS : Math.max(ARRIVE_EPS, step);
                 if (stats.spd > 0 && d > arriveAt) {
-                    const mv = (slot || m.march) ? Math.min(step, d) : step;   // 跟随锚点/列阵推进：连续跟随，不迈整步
+                    const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步
                     m.x += dx / d * mv;
                     m.y += dy / d * mv;
                     // 连续跟随的步子很小（1~2px），朝向不能照小向量每帧重算 ——
                     // 「朝向每帧按移动方向重算 → 8 个方向之间乱跳 = 闪动、颤抖」（见本段上一条血训）。
                     // 跟随锚点时走**带迟滞的 8 向**（与玩家键盘移动同一个 dir8Hyst），固定目标照旧 dir8。
-                    m.dir = slot ? this.dir8Hyst(m.dir, dx, dy) : this.dir8(dx, dy);
+                    m.dir = (slot || isGuard) ? this.dir8Hyst(m.dir, dx, dy) : this.dir8(dx, dy);
+                } else if (isGuard) {
+                    const uFwd = this.advanceVec[m.f];
+                    m.dir = this.dir8(uFwd.x, uFwd.y);
                 } else if (slot) {
                     // 归队入列后朝向与领队保持一致
                     const leader = laneLeaders.get(m.lane);
