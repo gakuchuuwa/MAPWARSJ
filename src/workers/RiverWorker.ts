@@ -105,9 +105,9 @@ function fetchDem(z: number, x: number, y: number): Promise<Float32Array | null>
 async function computeDepthT(x: number, y: number, z: number, w: number, h: number): Promise<Float32Array | null> {
     const dz = Math.min(DEPTH_Z, z);
     const scale = 2 ** (z - dz);            // 本级 1 像素 = 1/scale 个粗级像素
-    // 本块在粗级世界像素里的范围（留 1 像素给双线性）
-    const gx0 = Math.floor((x * w) / scale) - 1, gx1 = Math.floor(((x + 1) * w) / scale) + 1;
-    const gy0 = Math.floor((y * h) / scale) - 1, gy1 = Math.floor(((y + 1) * h) / scale) + 1;
+    // 本块在粗级世界像素里的范围（外扩 2 像素供 3×3 高斯平滑 + 双线性插值，跨瓦片无缝连续）
+    const gx0 = Math.floor((x * w) / scale) - 2, gx1 = Math.floor(((x + 1) * w) / scale) + 2;
+    const gy0 = Math.floor((y * h) / scale) - 2, gy1 = Math.floor(((y + 1) * h) / scale) + 2;
     const tiles = new Map<string, Float32Array | null>();
     const need: Promise<void>[] = [];
     for (let ty = Math.floor(gy0 / 256); ty <= Math.floor(gy1 / 256); ty++) {
@@ -118,12 +118,18 @@ async function computeDepthT(x: number, y: number, z: number, w: number, h: numb
     await Promise.all(need);
     for (const d of tiles.values()) if (!d) return null;   // 缺一块就整块平色，绝不半深半浅
     const n = 2 ** dz;
-    const elevAt = (gx: number, gy: number): number => {
+    const rawElevAt = (gx: number, gy: number): number => {
         gy = Math.max(0, Math.min(n * 256 - 1, gy));
         const tx = Math.floor(gx / 256), ty = Math.floor(gy / 256);
         const dem = tiles.get(`${tx}/${ty}`)!;
         return dem[(gy - ty * 256) * 256 + (gx - tx * 256)];
     };
+    // 3×3 高斯平滑粗级水深：柔化单像素海底深坑或暗礁突变，让深水区边缘自然渐变
+    const elevAt = (gx: number, gy: number): number => (
+        rawElevAt(gx - 1, gy - 1) + rawElevAt(gx, gy - 1) * 2 + rawElevAt(gx + 1, gy - 1) +
+        rawElevAt(gx - 1, gy) * 2 + rawElevAt(gx, gy) * 4 + rawElevAt(gx + 1, gy) * 2 +
+        rawElevAt(gx - 1, gy + 1) + rawElevAt(gx, gy + 1) * 2 + rawElevAt(gx + 1, gy + 1)
+    ) * 0.0625;
     const worldPx = 2 ** z * w;
     const out = new Float32Array(w * h);
     for (let py = 0; py < h; py++) {
@@ -142,12 +148,12 @@ async function computeDepthT(x: number, y: number, z: number, w: number, h: numb
             const depth = -e;
             let t = 0;
             if (depth > 0) {
-                if (depth <= 35) {
-                    // 0~35m（近岸浅滩至浅海）：平滑过渡到 0.55（浅海中蓝），收紧浅水区范围
-                    t = Math.pow(depth / 35, 0.78) * 0.55;
+                if (depth <= 28) {
+                    // 0~28m（近岸浅滩至浅海）：平滑过渡到 0.55（浅海中蓝），收紧浅水区范围
+                    t = Math.pow(depth / 28, 0.75) * 0.55;
                 } else {
-                    // 35~350m（外海至深海）：平滑过渡完 0.55~1.00（渐变深蓝）
-                    const s = Math.min(1, (depth - 35) / 315);
+                    // 28~320m（外海至深海）：平滑过渡完 0.55~1.00（渐变深蓝）
+                    const s = Math.min(1, (depth - 28) / 292);
                     t = 0.55 + 0.45 * Math.pow(s, 0.70);
                 }
             }
