@@ -2830,7 +2830,13 @@ function startStrategicCanvas(row: FactionLegionRow): void {
     });
 
     let frame = 0;
+    let phase = 0;
+    let lastT = 0;
     const renderLoop = () => {
+        const nowMs = performance.now();
+        if (!lastT) lastT = nowMs;
+        phase += Math.min(0.1, (nowMs - lastT) / 1000);
+        lastT = nowMs;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // 1. 战略地图写实地形底色
@@ -2947,7 +2953,8 @@ function startStrategicCanvas(row: FactionLegionRow): void {
                 }
 
                 const speedDivisor = stratAction === 'idle' ? 3 : 2;
-                const curFrame = Math.floor(frame / speedDivisor) % totalFrames;
+                const cycle = previewCycleSec(actMeta, totalFrames, speedDivisor);
+                const curFrame = Math.floor(phase / cycle.sec * totalFrames) % totalFrames;
                 const sx = curFrame * fw;
                 const sy = 0;
                 const sw = fw;

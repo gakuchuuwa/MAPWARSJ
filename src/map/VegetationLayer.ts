@@ -19,12 +19,12 @@ const CITY_CLEAR_PX = 46;
 /** 两次重建之间的最小间隔（ms）。跟拍军团时 GameAppLoop 每帧 setView → 每帧 moveend，
  *  不节流的话整层色块每帧重画。 */
 const MIN_RENDER_INTERVAL_MS = 200;
-/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。Z9 为 22px，Z10 随缩放自然展开至约 28px。 */
-const TREE_BASE_PX = 22;
-/** 战略树木保持为环境层，透光度自然，不压过城池、军团、道路和势力边界。 */
-const TREE_OPACITY = 0.82;
-/** 树根处的轻微接地阴影，只用于消除贴图悬浮感。 */
-const TREE_SHADOW_OPACITY = 0.16;
+/** 树贴图在 SAMPLE_ZOOM(9) 时的基准高度（px）。Z9 为 25px，Z10 随缩放自然展开至约 32px。 */
+const TREE_BASE_PX = 25;
+/** 战略树木保持饱满通透的色彩质感，同时留出微透余量与地形自然融合。 */
+const TREE_OPACITY = 0.94;
+/** 树根处的轻微接地阴影，只用于消除贴图悬浮感，避免在浅色地表留下脏黑斑。 */
+const TREE_SHADOW_OPACITY = 0.11;
 
 export interface TreeAssetMeta {
     boxW: number;
@@ -106,6 +106,8 @@ interface TreeDrawCommand {
     assetNext: string;
     /** 稳定分配的健康形态变体索引 */
     variant: number;
+    /** 是否属于成团密林的主树节点（仅密林中心铺设柔和林下阴翳基底，散树不画黑底斑） */
+    inGrove?: boolean;
 }
 
 /** 战略地图树贴图缓存：树名 → preview.png（DE 单棵成品图，第 0 帧） */
@@ -381,7 +383,7 @@ function getTreeLine(lat: number, lng?: number): number {
     return 600;
 }
 
-const TREE_GRID_STEP = 42;
+const TREE_GRID_STEP = 46;
 
 /** 四季 DE 风格林下阴翳基底离屏缓存（春0 夏1 秋2 冬3） */
 const UNDERBRUSH_CANVAS: (HTMLCanvasElement | null)[] = [null, null, null, null];
@@ -395,17 +397,17 @@ function getUnderbrushSprite(season: TreeSeason): HTMLCanvasElement | null {
     c.height = 36;
     const cx = c.getContext('2d');
     if (cx) {
-        // DE 林下底色：春夏为暗湿腐殖土绿褐色，秋季为温润落叶褐，冬季为冷褐枯色
+        // DE 林下柔光底色：仅在成团密林中心轻铺一层温润苔草/落叶底韵，绝不压脏浅色荒原地表
         const colors = [
-            'rgba(34, 46, 26, 0.18)', // 春
-            'rgba(28, 44, 22, 0.20)', // 夏
-            'rgba(52, 42, 24, 0.19)', // 秋
-            'rgba(42, 42, 38, 0.15)', // 冬
+            'rgba(40, 58, 28, 0.13)', // 春：温润草绿
+            'rgba(32, 52, 24, 0.14)', // 夏：深翠林荫
+            'rgba(62, 50, 26, 0.13)', // 秋：暖金落叶
+            'rgba(46, 52, 42, 0.10)', // 冬：清透微影
         ];
         const color = colors[s];
         const grad = cx.createRadialGradient(32, 18, 2, 32, 18, 30);
         grad.addColorStop(0, color);
-        grad.addColorStop(0.55, color);
+        grad.addColorStop(0.50, color);
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         cx.fillStyle = grad;
         cx.beginPath();
@@ -619,32 +621,23 @@ export class VegetationLayer {
 
         const drawContactShadow = (it: { x: number; y: number; h: number }) => {
             ctx.save();
-            ctx.fillStyle = '#10180c';
-            // 1. 树根近距接触小暗斑（紧贴树干底部接地处）
+            ctx.fillStyle = '#141e10';
+            // 树根接地轻柔微影（紧贴树干底座，消除悬浮感的同时不留脏黑斑）
             ctx.globalAlpha = TREE_SHADOW_OPACITY;
             ctx.beginPath();
-            ctx.ellipse(it.x, it.y, it.h * 0.16, Math.max(1.0, it.h * 0.05), 0, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 2. DE 经典向右下（东南）斜射软投影（模拟树干与树冠投影）
-            ctx.globalAlpha = TREE_SHADOW_OPACITY * 0.85;
-            ctx.beginPath();
-            const angle = 0.52; // 顺应 45° 视角下的东南向日照
-            const cx = it.x + it.h * 0.16;
-            const cy = it.y + it.h * 0.09;
-            ctx.ellipse(cx, cy, it.h * 0.28, Math.max(1.0, it.h * 0.09), angle, 0, Math.PI * 2);
+            ctx.ellipse(it.x + it.h * 0.06, it.y + 1, it.h * 0.22, Math.max(1.2, it.h * 0.075), 0.35, 0, Math.PI * 2);
             ctx.fill();
             ctx.restore();
         };
 
-        // 🔴 DE 风格优化 1：绘制林下阴翳基底（Forest Floor Underbrush）
-        // 在连片密林底层铺垫一层柔和羽化的枯枝落叶/苔藓林地底色，
-        // 让连片树冠沉稳融入地形，消除“散落贴纸/图钉”的浮空感。
+        // 🔴 DE 风格优化：仅在成团密林中心（inGrove）铺垫一层柔和羽化的林地底韵，
+        // 单棵散树不画底斑，彻底消除浅色地表上“一棵树底下一团暗泥印”的脏感。
         const underbrushSprite = getUnderbrushSprite(currentTreeSeason());
         if (underbrushSprite) {
             for (const it of items) {
-                const uw = it.h * 1.35;
-                const uh = it.h * 0.72;
+                if (!it.c.inGrove) continue;
+                const uw = it.h * 1.45;
+                const uh = it.h * 0.78;
                 ctx.drawImage(underbrushSprite, it.x - uw * 0.5, it.y - uh * 0.45, uw, uh);
             }
         }
@@ -818,26 +811,37 @@ export class VegetationLayer {
                 const clusterWeight = forestClusterWeight(forestBiome, tile, canopyDensity, noiseVal);
                 if (clusterWeight <= 0 || hash(gx, gy, 46) > clusterWeight) continue;
 
-                // 绝大多数单棵点缀自然透气，只有核心密林且聚簇中心偶有 2 棵成小丛
-                const count = canopyDensity >= 65 && noiseVal > 0.72 && hash(gx, gy, 53) > 0.65 ? 2 : 1;
+                // 🔴 自然树丛聚簇（Grove Clustering）：告别“一格一棵孤树撒豆子”，
+                //    按郁闭度与聚簇度生成 1~3 棵主次分明、树冠微叠的自然小树林（主树高大居中 + 伴生树错落环绕）
+                const count = (canopyDensity >= 55 && noiseVal > 0.64 && hash(gx, gy, 53) > 0.42)
+                    ? 3
+                    : ((canopyDensity >= 34 && noiseVal > 0.50 && hash(gx, gy, 53) > 0.35) ? 2 : 1);
 
                 for (let i = 0; i < count; i++) {
                     let curPx = px;
                     let curPy = py;
                     if (i > 0) {
-                        const ang = hash(gx, gy, i * 17 + 31) * Math.PI * 2;
-                        const dist = 10 + hash(gx, gy, i * 19 + 32) * 12;
+                        const baseAng = hash(gx, gy, 31) * Math.PI * 2 + (i - 1) * (Math.PI * 0.85);
+                        const ang = baseAng + (hash(gx, gy, i * 17 + 31) - 0.5) * 0.55;
+                        const dist = 8 + hash(gx, gy, i * 19 + 32) * 9;
                         curPx += Math.cos(ang) * dist;
-                        curPy += Math.sin(ang) * dist * 0.75;
+                        curPy += Math.sin(ang) * dist * 0.72;
                     }
                     const curLatLng = i === 0 ? ptLatLng : this.map.unproject([curPx, curPy], SAMPLE_ZOOM);
 
-                    // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转
-                    const asset = pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season, isSiege: false });
-                    const assetNext = pickTree({
+                    // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转；
+                    //    同时在战略地图尺度（25px）下，将全秃枯刺（BIRCH_WINTER / DEAD_TREE）柔化为常青松柏或金秋疏林，
+                    //    消除黄褐草原/绿洲边缘上像插着一排枯黑铁丝的突兀感。
+                    const softenStrategicTree = (a: string): string => {
+                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 48 ? 'SNOW_PINE' : 'PINE';
+                        if (a === 'DEAD_TREE') return 'OLIVE';
+                        return a;
+                    };
+                    const asset = softenStrategicTree(pickTree({ baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng, season, isSiege: false }));
+                    const assetNext = softenStrategicTree(pickTree({
                         baseTile: tile, lat: curLatLng.lat, lng: curLatLng.lng,
                         season: nextSeason, isSiege: false,
-                    });
+                    }));
 
                     // 预热多变体精灵图与单棵成品预览图
                     if (!treeFramesImage(asset, this.onTreeImageReady) && !treeImage(asset, this.onTreeImageReady)) pendingImages++;
@@ -845,9 +849,20 @@ export class VegetationLayer {
                         if (!treeFramesImage(assetNext, this.onTreeImageReady) && !treeImage(assetNext, this.onTreeImageReady)) pendingImages++;
                     }
 
-                    const jitter = 0.85 + hash(gx, gy, i * 23 + 71) * 0.35;
+                    // 主树（i===0）挺拔饱满，伴生树（i>0）高低错落拱卫，形成自然树丛轮廓
+                    const jitter = count > 1
+                        ? (i === 0 ? 1.02 + hash(gx, gy, 71) * 0.22 : 0.74 + hash(gx, gy, i * 23 + 71) * 0.24)
+                        : (0.88 + hash(gx, gy, 71) * 0.28);
                     const variant = Math.floor(hash(gx, gy, i * 37 + 89) * 100);
-                    drawCommands.push({ lat: curLatLng.lat, lng: curLatLng.lng, jitter, asset, assetNext, variant });
+                    drawCommands.push({
+                        lat: curLatLng.lat,
+                        lng: curLatLng.lng,
+                        jitter,
+                        asset,
+                        assetNext,
+                        variant,
+                        inGrove: count >= 2 && i === 0,
+                    });
                 }
             }
         }
