@@ -122,7 +122,7 @@ const REGION_ERA: Partial<Record<RegionType, TechEra>> = {
     ACHAEMENIDS: 'antiquity', PRE_QIN: 'antiquity', GOJOSEON: 'antiquity',
     HUNS: 'antiquity', KUSH: 'antiquity', KUSHAN: 'antiquity', HEBREWS: 'antiquity',
     NABATAEANS: 'antiquity', AMAZONS: 'antiquity', PURU: 'antiquity', WUSUN: 'antiquity', QIANG: 'antiquity',
-    // 封建（400–1050）
+    // 封建（476–1050）
     FRANKS: 'feudal', GOTHS: 'feudal', VIKINGS: 'feudal', BULGARIANS: 'feudal',
     CUMAN: 'feudal', TURKS: 'feudal', ANGLO_SAXON: 'feudal', GHANA: 'feudal',
     KHAZARS: 'feudal', VANDALS: 'feudal', LOMBARDS: 'feudal', ROURAN: 'feudal',
@@ -140,7 +140,7 @@ const REGION_ERA: Partial<Record<RegionType, TechEra>> = {
     HRE: 'castle', ALMOHAD: 'castle', SERBIA: 'castle', ILKHANATE: 'castle',
     ARAGON: 'castle', TANGUT: 'castle', JURCHEN: 'castle', SELJUQ: 'castle',
     JAVANESE: 'castle', CHIMU: 'castle', TARASCAN: 'castle', TAIRONA: 'castle', PASHTUN: 'castle',
-    // 帝国（1500–1900）
+    // 帝国（1500–1914）
     SPANISH: 'imperial', PORTUGUESE: 'imperial', MAPUCHE: 'imperial', MUISCA: 'imperial',
     TUPI: 'imperial', OTTOMAN: 'imperial', FRENCH: 'imperial', SWEDISH: 'imperial',
     MANCHU: 'imperial', MUGHAL: 'imperial', SAFAVID: 'imperial', RUSSIAN: 'imperial',

@@ -430,7 +430,8 @@ export class Scene13GroundLayerGL {
     imgForest: any,
     imgWater: any,
     imgDirt?: any,
-    imgDry?: any
+    imgDry?: any,
+    grassTileName?: string
   ) {
     this.canvas = canvas;
     this.data = data;
@@ -642,10 +643,16 @@ export class Scene13GroundLayerGL {
           rawDirt[y * N + x] = 1.0;
         }
         // 🔴 [2026-10-12 主人令「按顺序执行，只负责地图设计」「森林地下是铺满整块 forestFloorTile 的」]
-        // 彻底按 DE dat 的所有森林/林地地形类型判定林地：
-        // 包含 g_for / g_fo2 / g_snf（雪林）/ 71 / 13 (Palm Desert) / 48 (Dragon Forest) / 以及所有 name 含 Forest, Jungle, Leaves, Palm 的地形
-        const isForestTerrain = fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
-          tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm');
+        // 彻底按 DE dat 的所有森林/林地地形类型判定林地；
+        // 但当战场主底图为荒漠/戈壁/黄土/干草原/高寒砾石时，树木已被稀疏化为散生灌木/孤树，不铺大块深色森林底斑
+        const baseGrass = grassTileName ?? 'gr2';
+        const isSparseTreelessBiome = baseGrass === 'pal' || baseGrass === 'des' || baseGrass === 'ds5'
+          || baseGrass === 'qs' || baseGrass === 'pal1' || baseGrass === 'ds2'
+          || baseGrass === 'gr7' || baseGrass === 'gr5' || baseGrass === 'gravel_default';
+        const isForestTerrain = !isSparseTreelessBiome && (
+          fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
+          tname.includes('Forest') || tname.includes('Jungle') || tname.includes('Leaves') || tname.includes('Palm')
+        );
         if (isForestTerrain) rawForest[y * N + x] = 1.0;
       }
     }
@@ -1960,7 +1967,7 @@ export class Scene13GroundLayerGL {
       loadTile(tiles?.dry, 'gr7'),
     ]);
 
-    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img, dirt.img, dry.img);
+    const layer = new Scene13GroundLayerGL(canvas, data, grass.img, sand.img, forest.img, water.img, dirt.img, dry.img, grass.tile);
     layer.isIce = water.tile === 'ic2' || water.tile === 'ice';
     if (layer.grassTex) attachTexImage(layer.grassTex, grass.img, grass.tile);
     if (layer.sandTex) attachTexImage(layer.sandTex, sand.img, sand.tile);

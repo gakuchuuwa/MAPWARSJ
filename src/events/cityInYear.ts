@@ -21,7 +21,7 @@ export const ERA_NAME: Record<GeneralEra, string> = {
 };
 
 export function eraOfYear(year: number): GeneralEra {
-    if (year < 400) return 'antiquity';
+    if (year < 476) return 'antiquity';
     if (year < 1050) return 'feudal';
     if (year < 1500) return 'castle';
     return 'imperial';

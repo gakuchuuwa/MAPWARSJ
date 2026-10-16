@@ -2274,7 +2274,7 @@ export const REGION_CENTERS: Record<RegionType, string[]> = {
     INDIA_FEUDAL: ['city_qunvcheng'],                 // 曲女城（封建印度·戒日都）
     INDIA_CASTLE: ['city_puli'],                      // 普里（城堡印度·东恒伽）
     INDIA_IMPERIAL: ['city_bijiabuer'],               // 比贾布尔（帝国印度·德干苏丹）
-    BERBER:       ['city_feisi'],                     // 非斯 [2026-09-07] 伊德里斯王朝 789 年建都，正合封建代 400–1050；原挂马拉喀什(1070建城)已划归 ALMOHAD 区
+    BERBER:       ['city_feisi'],                     // 非斯 [2026-09-07] 伊德里斯王朝 789 年建都，正合封建代 476–1050；原挂马拉喀什(1070建城)已划归 ALMOHAD 区
     AMERICA:      ['city_tenochtitlan'],              // 特诺奇提特兰 (阿兹特克都; 2026-08-24 新增美洲区)
     NORTHAM_IMPERIAL: ['city_tenochtitlan'],          // 特诺奇提特兰（帝国北美）
     AFRICA:       ['city_timbuktu'],                  // 廷巴克图 [2026-09-07] 本区是城堡马里，廷巴克图为马里帝国核心；原挂阿克苏姆已划归 ETHIOPIANS 区

@@ -42,7 +42,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_skirmisher', count: 3 },
         ],
         regions: ['ASSYRIAN'],
-        parentLegion: '古典时代阿契美尼德军团',
+        parentLegion: '古典时代不死军团',
         shipId: 'BIREME',
         buildingStyle: 'PERSIAN',
     },
@@ -136,7 +136,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_guardsman', count: 3 },
         ],
         regions: ['BABYLON'],
-        parentLegion: '古典时代阿契美尼德军团',
+        parentLegion: '古典时代不死军团',
         shipId: 'BIREME',
         buildingStyle: 'PERSIAN',
     },
@@ -408,19 +408,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'SPANISH',
     },
     {
-        name: '城堡时代吐蕃军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'hei_kuang', count: 2 },
-            { type: 'hei_kuang_heavy', count: 4 },
-            { type: 'cav_archer', count: 3 },
-        ],
-        regions: ['TIBET_CASTLE'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'TIBET',
-    },
-    {
         name: '城堡时代塞尔柱军团',
         formationMode: 'crane_wing',
         slots: [
@@ -468,7 +455,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'bowman', count: 3 },
         ],
         regions: ['ALMOHAD'],
-        parentLegion: '封建时代柏柏尔军团',
+        parentLegion: '封建时代柏柏尔骑兵团',
         shipId: 'WAR_GALLEY',
         buildingStyle: 'BERBER',
     },
@@ -564,19 +551,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'ORIE',
     },
     {
-        name: '城堡时代察合台军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'sakan_axeman', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 3 },
-            { type: 'elite_keshik', count: 4 },
-        ],
-        regions: ['WESTERN_CASTLE'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'WESTERN',
-    },
-    {
         name: '城堡时代阿伊努军团',
         formationMode: 'fish_scale',
         slots: [
@@ -653,19 +627,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '西欧军团',
         shipId: 'MONOREME',
         buildingStyle: 'CELTS',
-    },
-    {
-        name: '封建时代加纳军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'manatarms', count: 4 },
-            { type: 'pikeman', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
-        ],
-        regions: ['GHANA'],
-        parentLegion: '非洲军团',
-        shipId: 'CANOE',
-        buildingStyle: 'AFRICA',
     },
     {
         name: '封建时代印度军团',
@@ -864,19 +825,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '中东军团',
         shipId: 'FIRE_GALLEY',
         buildingStyle: 'ORIE',
-    },
-    {
-        name: '封建时代安西军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'sakan_axeman', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 3 },
-            { type: 'hei_kuang_heavy', count: 4 },
-        ],
-        regions: ['WESTERN_FEUDAL'],
-        parentLegion: '中亚军团',
-        shipId: 'GALLEY',
-        buildingStyle: 'WESTERN',
     },
     {
         name: '封建时代阿拉伯军团',
@@ -1107,19 +1055,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'MONGOL',
     },
     {
-        name: '帝王时代维吾尔军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'sakan_axeman', count: 2 },
-            { type: 'royal_janissary', count: 3 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
-        ],
-        regions: ['WESTERN_IMPERIAL'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'WESTERN',
-    },
-    {
         name: '帝国时代锡克军团',
         formationMode: 'fish_scale',
         slots: [
@@ -1131,19 +1066,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '印度军团',
         shipId: 'DEMO_RAFT',
         buildingStyle: 'INDIA',
-    },
-    {
-        name: '帝国时代青藏军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'keshik', count: 3 },
-            { type: 'mangudai_elite', count: 4 },
-        ],
-        regions: ['TIBET_IMPERIAL'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'TIBET',
     },
     {
         name: '帝国时代非洲军团',
@@ -1206,7 +1128,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'elite_immortal_ranged', count: 2 },
         ],
         regions: [],
-        parentLegion: '古典时代阿契美尼德军团',
+        parentLegion: '古典时代不死军团',
         shipId: 'BIREME',
         buildingStyle: 'PERSIAN',
     },
@@ -1219,7 +1141,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'antiquity_skirmisher', count: 4 },
         ],
         regions: [],
-        parentLegion: '古典时代阿契美尼德军团',
+        parentLegion: '古典时代不死军团',
         shipId: 'BIREME',
         buildingStyle: 'PERSIAN',
     },
@@ -1261,54 +1183,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '城堡时代幕府军团',   // 🔴 [2026-10-16] 原指不存在的「城堡时代日本军团」（幽灵指针）→ 日本文明城堡节点＝幕府军团
         shipId: 'ANT_ELITE_GALLEY',
         buildingStyle: 'JAPAN',
-    },
-    // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
-    //    由二级表（`level2Civ62Legions.ts`）移入：这三支是**三级专属建筑风格**（青藏 TIBET／西域 WESTERN／漠南鲜卑 MONGOL）
-    //    的**保底军团**，与 `LegionFallbackOnDelete.ts` 的 `TIER3_FALLBACK_LEGION` 主人口述一致；
-    //    二级 62 里本就没有同 region 的条目，故《一级16／二级62／三级自建》三层口径下它们属三级。
-    //    ⚠️ 编制、阵型、战船一字未改，仅换表并补三级必填的 `parentLegion`（一级母体名）。
-    {
-        name: '封建时代吐蕃军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'hei_kuang_heavy', count: 4 },
-            { type: 'cav_archer', count: 3 },
-        ],
-        regions: ['TIBET'],
-        parentLegion: '普鲁军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'TIBET',
-    },
-    {
-        name: '古典时代西域军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'sakan_axeman', count: 3 },
-            { type: 'scythian_axe_cavalry', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
-        ],
-        regions: ['WESTERN'],
-        parentLegion: '中亚军团',
-        shipId: 'CANOE',
-        buildingStyle: 'WESTERN',
-    },
-    // 🔴 [2026-10-05 主人怒斥「谁他妈让你删了，瞎删。改回来」] —— 恢复「封建时代鲜卑军团」。
-    //    对应三级建筑风格 `XIANBEI`（漠南鲜卑）。编制按主人令三兵种：鲜卑骑兵 ＋ 草原轻骑兵 ＋ 南北朝黑光铠甲骑兵。
-    {
-        name: '封建时代鲜卑军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'xianbei_raider', count: 3 },        // 鲜卑骑兵（鲜卑掠骑兵）
-            { type: 'antiquity_light_cavalry', count: 2 }, // 草原轻骑兵（古典轻骑兵）
-            { type: 'hei_kuang_heavy', count: 4 },       // 南北朝黑光铠骑兵高级
-        ],
-        regions: ['XIANBEI'],
-        // 🔴 [2026-10-05 主人定「这66的父级都是一级」] 三级基础军团的父级＝一级母体，
-        //    漠南鲜卑属东亚（一级落 ASIA）→ 父级＝东亚军团。
-        parentLegion: '东亚军团',
-        shipId: 'CANOE',
-        buildingStyle: 'XIANBEI',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
     //    给罗斯（雅罗斯拉夫，瓦良格卫队的发源地）用；时代按 988 年起的卫队与雅罗斯拉夫在位（1019–1054）定为封建。

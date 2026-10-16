@@ -38,7 +38,7 @@ import { CITY_DISPLAY_NAMES } from '../data/cityDisplayNames';
 
 /** 年份 → 时代（四时代：古典 起始~400 / 封建 400~1050 / 城堡 1050~1500 / 帝国 1500~1900） */
 function eraOfYear(year: number): GeneralEra {
-    if (year < 400) return 'antiquity';
+    if (year < 476) return 'antiquity';
     if (year < 1050) return 'feudal';
     if (year < 1500) return 'castle';
     return 'imperial';

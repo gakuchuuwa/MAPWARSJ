@@ -6,7 +6,7 @@
  *    古典时代：起始 – 公元 400 年
  *    封建时代：公元 400 年 – 公元 1050 年
  *    城堡时代：公元 1050 年 – 公元 1500 年
- *    帝王时代：公元 1500 年 – 公元 1900 年
+ *    帝王时代：公元 1500 年 – 公元 1914 年
  * 2. 武将判定时代，以该武将最辉煌的年代判定，无法判断，以30岁为主。
  * 3. 古典军团的必须套用古典时代攻城武器。
  * 4. 封建军团的必须套用古典时代和封建时代攻城武器。
@@ -158,6 +158,9 @@ export function generalSiegeAge(generalId: string): SiegeAge | null {
     if (era) return era;
     const century = (GENERAL_CENTURIES as Record<string, number>)[generalId];
     if (century != null) {
+        // 🔴 [2026-10-16 主人定真边界] 古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1914。
+        //    世纪 5、11、20 都骑跨边界，**正经判据看得是 GENERAL_ERA（已逐将精化）**；
+        //    这里只是缺档案时的兜底，按世纪粗档走（世纪5 兜底给封建，仅当该将确实不在 GENERAL_ERA 里）。
         if (century <= 4) return 'antiquity';
         if (century <= 10) return 'feudal';
         if (century <= 15) return 'castle';
@@ -204,7 +207,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '古典时代阿契美尼德军团': {
+    '古典时代不死军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'siege_ballista', 'siege_ballista', 'siege_ballista', 'siege_ballista'],
     },
@@ -336,7 +339,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'capped_ram', 'capped_ram', 'capped_ram', 'siege_ram', 'siege_ram', 'siege_ram'],
     },
-    '城堡时代玛雅军团': {
+    '城堡时代玛雅潘军团': {
         age: 'castle',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'capped_ram', 'capped_ram', 'capped_ram', 'siege_ram', 'siege_ram', 'siege_ram'],
     },

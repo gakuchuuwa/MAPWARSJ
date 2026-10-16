@@ -1,4 +1,4 @@
-import { queryBaseTile, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
+import { queryBaseTile, refineBaseTileWithBuildingStyle, setWorldBaseData } from '../ui/scene13/WorldBaseMap';
 
 type Bounds = { north: number; south: number; west: number; east: number };
 export type MaterialNode = ReadonlyArray<{ pixels: Uint8ClampedArray; weight: number }>;
@@ -423,8 +423,16 @@ export function queryStrategicBaseTile(q: {
     elevM?: number | null;
     slopeDeg?: number | null;
     nearRiver?: boolean;
+    buildingStyle?: string;
 }): string | null {
-    const rawBase = queryBaseTile({ lat: q.lat, lng: q.lng, isSiege: q.isSiege ?? false, isWinter: q.isWinter });
+    const isSiege = q.isSiege ?? false;
+    const rawBase = queryBaseTile({
+        lat: q.lat,
+        lng: q.lng,
+        isSiege,
+        isWinter: q.isWinter,
+        buildingStyle: q.buildingStyle,
+    });
     if (!rawBase) return null;
     // 冬季已进入积雪贴图（sno/sn2/snf/snd）时直接返回
     if (q.isWinter && (rawBase === 'sno' || rawBase === 'sn2' || rawBase === 'snf' || rawBase === 'snd')) {
@@ -441,7 +449,11 @@ export function queryStrategicBaseTile(q: {
     }
 
     const colorZ = q.elevM ?? null;
-    if (colorZ === null) return dominant;
+    if (colorZ === null) {
+        return q.buildingStyle
+            ? refineBaseTileWithBuildingStyle(dominant, q.buildingStyle, q.lat, q.lng, isSiege, q.isWinter)
+            : dominant;
+    }
 
     const aridity = classOf(varied, 'arid', 0.5);
     const sandiness = classOf(varied, 'sand', 0);
@@ -459,7 +471,6 @@ export function queryStrategicBaseTile(q: {
     const snowFade = Math.max(0, Math.min(1, (rowSnowline - colorZ) / 500));
     const treeLine = Math.max(900, rowSnowline - 1200);
     const alpineT = rampUpStrategic(colorZ, treeLine, rowSnowline - 200);
-    const slopeGrad = q.slopeDeg != null ? Math.tan(q.slopeDeg * Math.PI / 180) : 0;
 
     // zoom 9 全局像素坐标 → patchNoise（与 HillshadeWorker 规则②③⑦完全一致）
     const Z9_PIXELS = 256 * 512;
@@ -468,30 +479,20 @@ export function queryStrategicBaseTile(q: {
     const y9 = (1 - Math.asinh(Math.tan(latRad)) / Math.PI) * 0.5 * Z9_PIXELS;
     const patch = patchNoise(x9, y9);
 
-    // 3. 规则④ 陡崖与高山裸岩带（HillshadeWorker 1111-1130）
-    const slopeT = Math.max(0, Math.min(1, (slopeGrad - 0.10) / 0.32));
-    const alpineRock = alpineT * rampUpStrategic(colorZ, rowSnowline - 750, rowSnowline - 150) * Math.max(0.30, Math.min(1.0, slopeGrad / 0.08));
-    const rockT = Math.max(slopeT, alpineRock);
-    const rockMax = 0.60 + 0.30 * Math.max(0, Math.min(1, (colorZ - 1200) / 1600));
-    const rockW = rockT * rockT * (3 - 2 * rockT) * rockMax * snowFade;
-    if (rockW >= 0.48) {
-        return 'rck';
-    }
-
-    // 4. 规则② 沙漠成片橙沙（HillshadeWorker 1081-1086；pm2 为牧场斑块不做主底图，温带沙丘归 des）
+    // 3. 规则② 沙漠成片橙沙（HillshadeWorker 1081-1086；pm2 为牧场斑块不做主底图，温带沙丘归 des）
     const desertW = sandiness > 0.3 && colorZ < 2600
         ? rampUpStrategic(sandiness, 0.3, 0.9) * rampUpStrategic(patch, 0.40, 0.70) * 0.55 * snowFade * rampUpStrategic(colorZ, 60, 140)
         : 0;
     if (desertW >= 0.35 && absLat < 34) {
-        return 'des';
+        dominant = 'des';
+    } else if (alpineT >= 0.65 && (dominant === 'grs' || dominant === 'gr2' || dominant === 'gr3' || dominant === 'for')) {
+        // 4. 规则① 山地与高山自然带（HillshadeWorker 1072-1079）：只在低地草林底图爬升到林线以上时生效
+        dominant = humidity * 0.7 >= aridity + 0.3 * (1 - humidity) ? 'gr4' : 'ds5';
     }
 
-    // 6. 规则① 山地与高山自然带（HillshadeWorker 1072-1079）：只在低地草林底图爬升到林线以上时生效，不覆盖世界查找表已专门细分的 gravel_default 等高山砾石
-    if (alpineT >= 0.65 && (dominant === 'grs' || dominant === 'gr2' || dominant === 'gr3' || dominant === 'for')) {
-        return humidity * 0.7 >= aridity + 0.3 * (1 - humidity) ? 'gr4' : 'ds5';
-    }
-
-    return dominant;
+    return q.buildingStyle
+        ? refineBaseTileWithBuildingStyle(dominant, q.buildingStyle, q.lat, q.lng, isSiege, q.isWinter)
+        : dominant;
 }
 
 export type TerrainMaterial = {

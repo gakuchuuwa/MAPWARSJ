@@ -16,6 +16,8 @@ import { LandSeaSystem } from '../../world/land-sea/LandSeaSystem';
 import { latLngToTilePixel } from '../../world/land-sea/ElevationSampler';
 import { isNearStrategicRiver } from '../../map/StrategicRiverProximity';
 import { queryStrategicBaseTile } from '../../map/StrategicTerrainMaterial';
+import { refineBaseTileWithBuildingStyle } from './WorldBaseMap';
+import { CITIES_V2 } from '../../data/cities_v2';
 import {
     DE_MAP_THEMES,
     forestFloorTilesForTheme,
@@ -26,6 +28,24 @@ import {
     type DeMapThemeId,
 } from './Scene13DeMapThemes';
 import { groundVariationFor } from './DecorFit';
+
+/** 按经纬度查找最近据点的 buildingStyle（供野战或未显式传入 buildingStyle 的战场同源继承当地建筑风格底座） */
+export function resolveNearestCityBuildingStyle(lat: number | undefined, lng: number | undefined): string | undefined {
+    if (lat === undefined || lng === undefined) return undefined;
+    let bestStyle: string | undefined;
+    let bestD2 = 16.0; // 最大匹配半径约 4°（~400km）
+    for (const c of CITIES_V2) {
+        if (!c.buildingStyle) continue;
+        const dLat = c.lat - lat;
+        const dLng = (c.lng - lng) * Math.cos((lat * Math.PI) / 180);
+        const d2 = dLat * dLat + dLng * dLng;
+        if (d2 < bestD2) {
+            bestD2 = d2;
+            bestStyle = c.buildingStyle;
+        }
+    }
+    return bestStyle;
+}
 
 /**
  * 战场地面四张基底素材（气候主题取到的值，由环境生成器算好写给地面层）。
@@ -65,6 +85,8 @@ export interface Scene13ClimateInput {
     forceElevationBand?: ElevationBand;
     forceElevationM?: number;
     isSiege?: boolean;
+    /** 据点建筑风格（66 种二/三级风格或 16 种一级风格）：作为底图设计的第一层基调 */
+    buildingStyle?: string;
 }
 
 /** 战场气候判定的结果：新战术模式（GL 地面层）只用这几项挑地图主题、地面四张贴图、季节与时段色调。 */
@@ -80,6 +102,7 @@ export interface Scene13ClimatePlan {
     baseTerrain: string;
     groundTiles: Partial<Scene13GroundTiles>;
     waterKind: 'sea' | 'lake' | 'river' | 'none';
+    buildingStyle?: string;
 }
 
 // ── 种子派生（只用真实数据，禁止凭空假设 battleId） ──────────────
@@ -201,21 +224,28 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
     const theme = input.forceTheme
         ? DE_MAP_THEMES[input.forceTheme]
         : (hasCoord ? resolveDeMapTheme(input.lat!, input.lng!, biome, elev, waterKind) : null);
-    // 底图由真实气候数据决定（public/world/world-base.png 查找表），查不到才回退到主题逻辑
+    const isSiege = input.isSiege ?? false;
+    const isWinter = season === 2;
+    const buildingStyle = input.buildingStyle ?? (hasCoord ? resolveNearestCityBuildingStyle(input.lat, input.lng) : undefined);
+    // 底图由真实气候数据 + 16 种一级建筑风格（含 66 种二/三级子风格）共同决定，查不到才回退到主题逻辑
     const fromWorld = hasCoord
         ? queryStrategicBaseTile({
             lat: input.lat!,
             lng: input.lng!,
-            isSiege: input.isSiege ?? false,
-            isWinter: season === 2,
+            isSiege,
+            isWinter,
             elevM: elev,
             slopeDeg: slope,
             nearRiver: isNearStrategicRiver(input.lat!, input.lng!, 8),
+            buildingStyle,
         })
         : null;
-    const baseTerrain: string = fromWorld ?? (theme
-        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, input.isSiege ?? false, input.lng)
-        : DEFAULT_TERRAIN_TILE);
+    const rawFallbackTerrain: string = theme
+        ? terrainForTheme(theme, biome, season, elevationBand, input.lat, elev, isSiege, input.lng)
+        : DEFAULT_TERRAIN_TILE;
+    const baseTerrain: string = fromWorld ?? (hasCoord && buildingStyle
+        ? refineBaseTileWithBuildingStyle(rawFallbackTerrain, buildingStyle, input.lat!, input.lng!, isSiege, isWinter)
+        : rawFallbackTerrain);
     let groundTiles: Partial<Scene13GroundTiles> = {};
     if (hasCoord && theme) {
         // 副地表 dry / dirt 按真实地理 baseTerrain 从 DecorFit 同色系变体表取（色差 ≤30），
@@ -248,5 +278,6 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
     return {
         seed, climateRegion, elevationBand, elevationM: elev, slopeDeg: slope,
         biome, deMapTheme: hasCoord && theme ? theme.id : null, season, baseTerrain, groundTiles, waterKind,
+        buildingStyle,
     };
 }
