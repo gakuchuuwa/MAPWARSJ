@@ -436,7 +436,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'serjeant', name: '西西里军士长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SERJEANT/' },
     { id: 'shotel_warrior', name: '埃塞俄比亚弯刀勇士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SHOTELWARRIOR/' },
     { id: 'shrivamsha_rider', name: '什里瓦姆沙骑手', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SHRIVAMSHARIDER/' },
-    { id: 'sickle_warrior', name: '达罗毗荼镰刀战士特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SICKLE_WARRIOR/' },
+    { id: 'sickle_warrior', name: '赫梯镰刀战士特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SICKLE_WARRIOR/' },
     { id: 'siege_onager', name: '重型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGEONAGER/' },
     { id: 'siege_ram', name: '重型攻城槌高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGERAM/' },
     { id: 'skirmisher', name: '掷矛手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SKIRMISHER/' },

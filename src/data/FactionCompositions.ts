@@ -1566,7 +1566,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kongque": {
-        legionName: "古典时代印度军团",
+        legionName: "古典时代贵霜军团",
         legionType: "sub",
     },
     "tiemuer": {
@@ -1578,7 +1578,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "mojietuo": {
-        legionName: "古典时代摩揭陀军团",
+        legionName: "古典时代贵霜军团",
         legionType: "sub",
     },
     "jialatai": {
@@ -1698,12 +1698,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "sumo": {
-        legionName: "古典时代印度军团",
-        legionType: "region",
+        legionName: "古典时代高陀军团",
+        legionType: "sub",
     },
     "jiashi_d": {
-        legionName: "古典时代印度军团",
-        legionType: "region",
+        legionName: "古典时代泰米尔军团",
+        legionType: "sub",
     },
     "funan": {
         legionName: "古典时代高棉军团",
