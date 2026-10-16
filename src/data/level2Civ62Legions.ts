@@ -3896,12 +3896,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代萨珊军团', civ: '波斯', age: 'antiquity', deStyle: 'PERSIAN', region: 'SASANIAN' as RegionType,
         buildingStyle: 'SASANIAN',
         castleId: 'PERS_CASTLE_AGE3', castleName: '波斯 萨珊泰西封砖石穹顶堡',
-        formationMode: 'crescent',
+        formationMode: 'echelon',
         shipId: 'BIREME',
         slots: [
-            { type: 'savar', count: 3 },
-            { type: 'elite_war_elephant', count: 2 },
             { type: 'savar', count: 4 },
+            { type: 'sparabara', count: 3 },
+            { type: 'archer', count: 2 },
         ],
     },
     // ── 波斯 · 封建时代 · 封建时代霍拉桑军团　（本次新建）────────────────
@@ -3916,8 +3916,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 波斯战象：精锐在霍拉桑军团 2 档；普通在伊儿军团 2 档。
         slots: [
-            { type: 'savar', count: 4 },
-            { type: 'camel_heavy', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
             { type: 'elite_war_elephant', count: 2 },
         ],
     },
@@ -3929,12 +3929,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代伊儿军团', civ: '波斯', age: 'castle', deStyle: 'PERSIAN', region: 'SASANIAN' as RegionType,
         buildingStyle: 'SASANIAN',
         castleId: 'PERS_CASTLE_AGE3', castleName: '波斯 萨珊泰西封砖石穹顶堡',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 波斯战象：普通档进伊儿军团 2 档（精锐在霍拉桑军团 2 档）。
         slots: [
-            { type: 'imperial_cavalry', count: 3 },
-            { type: 'camel_rider', count: 4 },
+            { type: 'elite_keshik', count: 4 },
+            { type: 'cav_archer', count: 3 },
             { type: 'war_elephant', count: 2 },
         ],
     },
@@ -3950,8 +3950,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         slots: [
             { type: 'qizilbash_warrior', count: 2 },
-            { type: 'imperial_cavalry', count: 3 },
-            { type: 'hussar', count: 4 },
+            { type: 'elite_guardsman', count: 3 },
+            { type: 'cav_archer', count: 4 },
         ],
     },
 
