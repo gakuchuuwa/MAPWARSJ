@@ -2462,12 +2462,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代黎凡特军团', civ: '萨拉森', age: 'antiquity', deStyle: 'ORIE', region: 'ORIE' as RegionType,
         buildingStyle: 'ORIE',
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
-        formationMode: 'crescent',
+        formationMode: 'crane_wing',
         shipId: 'BIREME',
         slots: [
-            { type: 'camel_scout', count: 3 },
-            { type: 'bactrian_archer', count: 2 },
-            { type: 'lancer', count: 4 },
+            { type: 'elite_war_chariot', count: 2 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
         ],
     },
     // ── 阿拉伯 · 封建时代 · 封建时代萨拉森军团　（本次新建）────────────────
@@ -3915,17 +3915,17 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（波斯波利斯、帕萨尔加德；波斯波利斯万国之门双翼牛身石雕、百柱大殿双头公牛柱头与巨石台基；双手青铜双刃短剑（Akinakes）、柳条编织蒙皮轻长盾、万人方阵战车冲阵与密集弓箭遮蔽大阵）
     //    英雄队（第 10 队·主将队）：hero_artaphernes / hero_datis　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代不死军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
+        name: '古典时代长生军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
-        formationMode: 'crescent',
+        formationMode: 'echelon',
         // 旗舰沿用被替换掉的「古典时代阿契美尼德军团」原值：主人 2026-10-05 令登记的
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
         slots: [
-            { type: 'elite_immortal', count: 3 },
-            { type: 'elite_immortal_ranged', count: 2 },
-            { type: 'elite_war_chariot', count: 4 },
+            { type: 'elite_immortal', count: 4 },
+            { type: 'immortal_ranged', count: 3 },
+            { type: 'war_chariot', count: 2 },
         ],
     },
     // ── 法尔斯 · 封建时代 · 封建时代德莱木军团　（本次新建）────────────────
@@ -3936,12 +3936,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代德莱木军团', civ: '阿契美尼德', age: 'feudal', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         shipId: 'GALLEY',
         slots: [
-            { type: 'savar', count: 3 },
-            { type: 'spearman', count: 4 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'immortal', count: 4 },
+            { type: 'elite_immortal_ranged', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 法尔斯 · 城堡时代 · 城堡时代法尔斯军团　（本次新建）────────────────

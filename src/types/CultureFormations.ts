@@ -1587,7 +1587,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     // 🔴 [2026-10-05 主人令「删除吧」] `古典时代希腊雇佣军团` 已删（同族同时代不另立）→
     //    本表指向它的悬空条目 `GREEK_MERCENARY` 一并删除（该文化区 0 座据点、0 势力挂，无影响）。
     MAGNA_GRAECIA: '古典时代大希腊军团',
-    ACHAEMENIDS: '古典时代不死军团',
+    ACHAEMENIDS: '古典时代长生军团',
     AMAZONS: '古典时代亚马逊军团',
     INDIA: '古典时代印度军团',
     BERBER: '封建时代柏柏尔骑兵团',
@@ -1622,7 +1622,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    （它的 parentLegion 就写着那时的二级名，自己承认是派生），与二级那位重复 →
     //    三级那条已删；此后二级那一支按 2026-10-16 名册改名【古典时代不死军团】，指针随之改指它。
     //    ⚠️ 指针必须显式改指：若只删三级会悬空，这 15 座波斯城会掉到「建筑风格保底」。
-    PERSIAN: '古典时代不死军团',
+    PERSIAN: '古典时代长生军团',
     ARMENIANS: '封建时代阿尼城卫军',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 62 表这一支自己声明 region=ARMENIANS
     CUMAN: '城堡时代库曼军团',
     BRITONS: '城堡时代长弓军团',

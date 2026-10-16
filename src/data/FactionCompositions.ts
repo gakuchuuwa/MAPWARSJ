@@ -1622,7 +1622,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "aqimeinide": {
-        legionName: "古典时代不死军团",
+        legionName: "古典时代长生军团",
         legionType: "sub",
     },
     "xiaofulijiya": {
