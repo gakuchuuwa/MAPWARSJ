@@ -209,7 +209,7 @@ export interface DeUnitDef {
 
 export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'swordsman', name: '链甲剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SWORDSMAN/' },
-    { id: 'champion', name: '欧洲双手剑士高级', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
+    { id: 'champion', name: '冠军剑士', category: 'infantry', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },
     { id: 'liao_dao', name: '契丹辽刀手', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/LIAO_DAO/' },
     { id: 'elite_liao_dao', name: '契丹辽刀手精锐', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/ELITE_LIAO_DAO/' },
     { id: 'kamayuk', name: '印加枪兵长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/KAMAYUK/' },
@@ -257,15 +257,15 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'rattan_archer', name: '越南藤弓兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RATTAN_ARCHER/' },
     { id: 'rattan_archer_elite', name: '越南藤弓兵精锐', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/RATTAN_ARCHER_ELITE/' },
     { id: 'imperial_skirmisher', name: '越南掷矛手高级', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_SKIRMISHER/' },
-    { id: 'archer', name: '南方步弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
+    { id: 'archer', name: '步弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
     { id: 'cav_archer', name: '骑射手', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER/' },
     { id: 'cav_archer_heavy', name: '骑射手高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAV_ARCHER_HEAVY/' },
     { id: 'pattiyoda_longbowman', name: '帕提尤达长弓兵', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
     { id: 'elite_pattiyoda_longbowman', name: '帕提尤达长弓兵精锐', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/PATTIYODA_LONGBOWMAN/' },
     { id: 'composite_bowman', name: '亚美尼亚复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/COMPOSITE_BOWMAN/' },
     { id: 'elite_composite_bowman', name: '亚美尼亚复合弓手精锐', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ELITE_COMPOSITE_BOWMAN/' },
-    { id: 'crossbowman', name: '弩兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CROSSBOWMAN/' },
-    { id: 'arbalest', name: '欧洲劲弩手高级', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ARBALEST/' },
+    { id: 'crossbowman', name: '劲弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/CROSSBOWMAN/' },
+    { id: 'arbalest', name: '劲弩手高级', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/ARBALEST/' },
     { id: 'arambai', name: '缅甸飞镖骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/ARAMBAI/' },
     { id: 'war_elephant', name: '波斯战象', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/WAR_ELEPHANT/' },
     { id: 'battle_elephant', name: '战斗象', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/BATTLEELEPHANT/' },
@@ -285,7 +285,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'camel_raider', name: '沙漠骆驼突袭者高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CAMEL_RAIDER/' },
     { id: 'camel_rider', name: '骆驼骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAMELRIDER/' },
     { id: 'camel_scout', name: '古吉拉特骆驼斥候', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/CAMELSCOUT/' },
-    { id: 'capped_ram', name: '欧洲装甲攻城槌高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/CAPPEDRAM/' },
+    { id: 'capped_ram', name: '装甲攻城槌高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/CAPPEDRAM/' },
     { id: 'cataphract', name: '拜占庭圣骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/CATAPHRACT/' },
     { id: 'centurion', name: '罗马百夫长', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/CENTURION/' },
     { id: 'chakram_thrower', name: '古吉拉特飞轮掷手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/CHAKRAMTHROWER/' },
@@ -376,7 +376,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'guecha_warrior', name: '穆伊斯卡格查勇士', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GUECHAWARRIOR/' },
     { id: 'hand_cannoneer', name: '火枪手', category: 'ranged', age: 'imperial', pathPrefix: '/SUCAI/HANDCANNONEER/' },
     { id: 'heavy_rocket_cart', name: '重型火箭车精锐', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HEAVYROCKETCART/' },
-    { id: 'heavy_scorpion', name: '欧洲重型弩炮高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HEAVYSCORPION/' },
+    { id: 'heavy_scorpion', name: '重型弩炮高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HEAVYSCORPION/' },
     { id: 'hill_tribesman', name: '山地部落民', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/HILL_TRIBESMAN/' },
     { id: 'hippeus', name: '斯巴达三百', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HIPPEUS/' },
     { id: 'elite_hippeus', name: '斯巴达三百精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HIPPEUS/' },
@@ -386,7 +386,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'elite_strategos', name: '雅典将军卫队精锐', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/STRATEGOS/' },
     { id: 'houfnice', name: '手推榴弹炮', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/HOUFNICE/' },
     { id: 'huskarl', name: '哥特近卫军', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/HUSKARL/' },
-    { id: 'hussar', name: '欧洲骠骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
+    { id: 'hussar', name: '骠骑骑兵', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/HUSSAR/' },
     { id: 'hussite_wagon', name: '波希米亚胡斯战车', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSITEWAGON/' },
     { id: 'ibirapema_warrior', name: '图皮战棍勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/IBIRAPEMAWARRIOR/' },
     { id: 'immortal', name: '波斯长生军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/IMMORTAL/' },
@@ -407,13 +407,13 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'longbowman', name: '不列颠长弓兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/LONGBOWMAN/' },
     { id: 'magyar_huszar', name: '马扎尔骠骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAGYARHUSZAR/' },
     { id: 'mameluke', name: '萨拉森马穆鲁克', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAMELUKE/' },
-    { id: 'mangonel', name: '欧洲轻型投石车', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MANGONEL/' },
+    { id: 'mangonel', name: '轻型投石车', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MANGONEL/' },
     { id: 'mercenary_hoplite', name: '希腊雇佣重步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_HOPLITE/' },
     { id: 'militia', name: '中亚民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'monaspa', name: '格鲁吉亚莫纳斯帕', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MONASPA/' },
     { id: 'mounted_trebuchet', name: '沙漠骆驼投石机高级', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
     { id: 'obuch', name: '波兰奥布奇战锤兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/OBUCH/' },
-    { id: 'onager', name: '欧洲中型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ONAGER/' },
+    { id: 'onager', name: '中型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/ONAGER/' },
     { id: 'organ_gun', name: '葡萄牙风琴炮', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/ORGANGUN/' },
     { id: 'petard', name: '爆破工兵', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/PETARD/' },
     { id: 'phalangite', name: '马其顿方阵步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PHALANGITE/' },
@@ -430,15 +430,15 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'sacred_band', name: '希腊底比斯圣队高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SACRED_BAND/' },
     { id: 'sannahya', name: '桑纳亚战象', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
     { id: 'elite_sannahya', name: '桑纳亚战象高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SANNAHYA/' },
-    { id: 'scorpion', name: '欧洲弩炮', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SCORPION/' },
+    { id: 'scorpion', name: '弩炮机', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SCORPION/' },
     { id: 'scythian_axe_cavalry', name: '斯基泰斧骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_AXE_CAVALRY/' },
     { id: 'scythian_horse_archer', name: '斯基泰骑射手', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SCYTHIAN_HORSE_ARCHER/' },
     { id: 'serjeant', name: '西西里军士长', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/SERJEANT/' },
     { id: 'shotel_warrior', name: '埃塞俄比亚弯刀勇士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/SHOTELWARRIOR/' },
     { id: 'shrivamsha_rider', name: '什里瓦姆沙骑手', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SHRIVAMSHARIDER/' },
     { id: 'sickle_warrior', name: '达罗毗荼镰刀战士', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/SICKLE_WARRIOR/' },
-    { id: 'siege_onager', name: '欧洲重型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGEONAGER/' },
-    { id: 'siege_ram', name: '欧洲重型攻城槌高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGERAM/' },
+    { id: 'siege_onager', name: '重型投石车高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGEONAGER/' },
+    { id: 'siege_ram', name: '重型攻城槌高级', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/SIEGERAM/' },
     { id: 'skirmisher', name: '掷矛手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/SKIRMISHER/' },
     { id: 'slinger', name: '投石兵', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/SLINGER/' },
     { id: 'sogdian_cataphract', name: '粟特甲胄骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SOGDIANCATAPHRACT/' },
@@ -450,7 +450,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'tarantine_cavalry', name: '塔兰丁骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/TARANTINE_CAVALRY/' },
     { id: 'thracian_peltast', name: '色雷斯标枪手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/THRACIAN_PELTAST/' },
     { id: 'traction_trebuchet', name: '华夏牵引投石机重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/TRACTIONTREBUCHET/' },
-    { id: 'two_handed_swordsman', name: '欧洲双手剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
+    { id: 'two_handed_swordsman', name: '双手剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/TWOHANDEDSWORDSMAN/' },
     { id: 'urumi_swordsman', name: '达罗毗荼软剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/URUMISWORDSMAN/' },
     { id: 'war_chariot', name: '双轮战车', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/WAR_CHARIOT/' },
     { id: 'war_chariot_ranged', name: '先秦远程战车', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/WARCHARIOT/' },
@@ -460,7 +460,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'winged_hussar', name: '波兰翼骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
     { id: 'woad_raider', name: '凯尔特靛蓝突袭者', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/WOADRAIDER/' },
     { id: 'xolotl_warrior', name: '阿兹特克索洛特尔骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
-    { id: 'longswordsman', name: '长剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },
+    { id: 'longswordsman', name: '重装剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },
     { id: 'champi_warrior', name: '印加尚皮勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIWARRIOR/' },
     { id: 'champi_runner', name: '印加尚皮飞毛腿高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
     { id: 'champi_scout', name: '印加尚皮斥候', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
@@ -468,15 +468,15 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'cavalier', name: '骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CAVALIER/' },
     { id: 'flamethrower', name: '华夏猛火油柜重装', category: 'siege', age: 'castle', pathPrefix: '/SUCAI/FLAMETHROWER/' },
     { id: 'helepolis', name: '希腊赫勒波利斯攻城塔重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/HELEPOLIS/' },
-    { id: 'siege_tower', name: '欧洲攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
-    { id: 'halberdier', name: '欧洲戟兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
+    { id: 'siege_tower', name: '攻城塔', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/SIEGETOWER/' },
+    { id: 'halberdier', name: '长戟兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HALBERDIER/' },
     { id: 'norse_warrior', name: '诺斯狂暴战士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/NORSE_WARRIOR/' },
     { id: 'sosso_guard', name: '西非索索禁卫高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SOSSO_GUARD/' },
     { id: 'elite_greek_cavalry', name: '希腊贵族骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_GREEK_CAVALRY/' },
     { id: 'jian_swordman_shielded', name: '华夏步兵高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/JIANSWORDMANSHIELDED/' },
     { id: 'levy', name: '中东民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEVY/' },
-    { id: 'gastraphetes', name: '希腊腹弩手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/GASTRAPHETES/' },
-    { id: 'laminated_bowman', name: '层压复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
+    { id: 'gastraphetes', name: '古典弩手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/GASTRAPHETES/' },
+    { id: 'laminated_bowman', name: '复合弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/LAMINATED_BOWMAN/' },
     { id: 'recurve_bowman', name: '反曲长弓手', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/RECURVE_BOWMAN/' },
     { id: 'paragon', name: '楷模步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/PARAGON/' },
     { id: 'shock_cavalry', name: '枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
@@ -485,8 +485,8 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'sarmatian', name: '东欧萨尔马提亚骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
     { id: 'elite_peltast', name: '色雷斯标枪手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
     { id: 'vanguard', name: '先锋步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
-    { id: 'bowman', name: '弓兵', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/BOWMAN/' },
-    { id: 'crusader_knight', name: '欧洲十字军骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CRUSADERKNIGHT/' },
+    { id: 'bowman', name: '古典弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/BOWMAN/' },
+    { id: 'crusader_knight', name: '十字军骑士高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CRUSADERKNIGHT/' },
     { id: 'raider', name: '掠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/RAIDER/' },
     { id: 'guardsman', name: '古典长枪兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/GUARDSMAN/' },
     { id: 'antiquity_skirmisher', name: '古典掷矛手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ANTIQUITY_SKIRMISHER/' },
@@ -626,12 +626,12 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_williamwallace', name: '英雄·威廉·华莱士', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
     { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
-    { id: 'manatarms', name: '重装剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
+    { id: 'manatarms', name: '武装剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
-    { id: 'light_cavalry', name: '轻型骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
+    { id: 'light_cavalry', name: '探马骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
     { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '阿契美尼德攻城弩炮重装', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
@@ -676,7 +676,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     //    数据：DE dat（geniusutils 实测）+ 官方 zh 串；素材复用 DE 本体同模型目录（DE 自己也是复用）
     { id: 'bandit', name: '强盗', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'heavy_crossbowman', name: '重装弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
-    { id: 'heavy_swordsman', name: '古典重装步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
+    { id: 'heavy_swordsman', name: '古典重装步兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
     { id: 'imperial_legionary', name: '帝国罗马军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
     { id: 'khan', name: '汗', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },
     { id: 'mounted_samurai', name: '骑马武士', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
@@ -694,6 +694,7 @@ export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u =>
  * 判据 = 中文名（描述性）+ DE unit class 交叉核对，逐条手填，不用关键词启发式一把梭。
  */
 export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
+    heavy_swordsman: 'sword_shield',
     manatarms: 'sword_shield',
     
     
@@ -1410,9 +1411,14 @@ function injectStyles(): void {
         background:#1a3020; color:#9fd4a8; border:1px solid #3a6a48;
         box-shadow:0 6px 20px rgba(0,0,0,0.6);
         transition: opacity 0.3s;
+        /* 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+           长报错（如 EPERM 整段）要能换行、能选中复制；错误条还可以点一下关闭。 */
+        max-width:min(760px, 62vw); line-height:1.5; white-space:pre-wrap;
+        user-select:text;
       }
       .le-toast:empty { display:none; }
-      .le-toast.is-error { background:#301a1a; color:#ffb4a8; border-color:#6a3a3a; }
+      .le-toast.is-error { background:#301a1a; color:#ffb4a8; border-color:#6a3a3a; cursor:pointer; }
+      .le-toast.is-error::after { content:'  ✕ 点一下关闭'; opacity:0.55; font-size:11px; }
 
       /* ── 三步向导：选武将 → 选层 → 选军团 → 保存 ── */
       .le-wizard-step {
@@ -1526,10 +1532,30 @@ function injectStyles(): void {
     document.head.appendChild(s);
 }
 
+/**
+ * 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+ *  · 错误（isError）：**不自动消失，点一下才关** —— 长报错（EPERM 那种整段）能慢慢看完、能选中复制；
+ *  · 普通提示：按字数给时间（3.5 秒起、每字 120ms、封顶 12 秒），长成功文案也看得完。
+ */
+let toastTimer: number | undefined;
+let toastClickBound = false;
 function showToast(msg: string, isError: boolean = false): void {
+    window.clearTimeout(toastTimer);
     els.toast.textContent = msg;
     els.toast.className = 'le-toast' + (isError ? ' is-error' : '');
-    setTimeout(() => { els.toast.textContent = ''; }, 3500);
+    els.toast.title = isError ? '点一下关闭' : '';
+    if (!toastClickBound) {
+        toastClickBound = true;
+        els.toast.addEventListener('click', () => {
+            window.clearTimeout(toastTimer);
+            els.toast.textContent = '';
+            els.toast.className = 'le-toast';
+            els.toast.title = '';
+        });
+    }
+    if (isError) { toastTimer = undefined; return; }   // 错误常驻，等主人点
+    toastTimer = window.setTimeout(() => { els.toast.textContent = ''; },
+        Math.min(12000, Math.max(3500, msg.length * 120)));
 }
 
 // ============================================================
@@ -4518,12 +4544,15 @@ async function doRenameUnit(unitId: string, newName: string): Promise<boolean> {
         } catch {}
 
         showToast(`✅ 兵种改名已保存：【${trimmed}】`);
-        applyCatalogFilter();
-        renderCatalogTable();
+        // [2026-10-16 主人报「改一次名字就刷新一次，很慢」] 不再整表重建（全部缩略图重画 + 全势力 buildRows），
+        // 兵种鉴赏只就地改这一行；势力表行数据只存兵种 id、名字是渲染时取的，故不必 buildRows，延后重绘即可。
+        const catRow = els.catTableWrap.querySelector(`tr[data-uid="${CSS.escape(unitId)}"]`);
+        const catName = catRow?.querySelector('td b');
+        if (catName) catName.textContent = trimmed;
+        const catBtn = catRow?.querySelector('.le-quick-rename-btn') as HTMLElement | null;
+        if (catBtn) catBtn.dataset.uname = trimmed;
         renderUnitPanel(unitId);
-        buildRows();
-        applyFilter();
-        renderTable();
+        setTimeout(() => { applyFilter(); renderTable(); }, 0);
         return true;
     } catch (err: any) {
         showToast(`❌ 改名网络错误: ${err.message}`, true);

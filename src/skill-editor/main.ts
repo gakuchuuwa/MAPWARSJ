@@ -82,8 +82,9 @@ app.innerHTML = `
     .se-inline { background: #2c4a2c; color: #a8d8a8; }
     .se-table { background: #4a3c1e; color: #d8c88e; }
     .se-derived { background: #3a3226; color: #a89878; }
-    .se-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c4a2c; color: #d8f0d8; padding: 10px 24px; border-radius: 6px; z-index: 99; display: none; max-width: 80%; }
-    .se-toast.err { background: #5a2424; color: #f0d8d8; }
+    .se-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c4a2c; color: #d8f0d8; padding: 10px 24px; border-radius: 6px; z-index: 99; display: none; max-width: 80%; line-height: 1.5; white-space: pre-wrap; user-select: text; }
+    /* 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」] 错误条常驻，点一下关闭 */
+    .se-toast.err { background: #5a2424; color: #f0d8d8; cursor: pointer; }
     .se-new { border: 1px solid #3a3226; border-radius: 6px; padding: 10px; margin-top: 14px; background: #17140f; display: none; }
     .se-mono { font-family: Consolas, monospace; font-size: 12px; color: #8a97a8; }
     .se-count { color: #8a8271; font-size: 13px; margin-left: auto; }
@@ -163,12 +164,26 @@ app.innerHTML = `
 `;
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+/**
+ * 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+ *  · 错误（err）：**不自动消失，点一下才关**；普通提示按字数给时间（3.5 秒起、封顶 12 秒）。
+ */
+let seToastTimer: number | undefined;
+let seToastClickBound = false;
 function toast(msg: string, err = false): void {
     const t = $('toast');
+    window.clearTimeout(seToastTimer);
     t.textContent = msg;
     t.className = 'se-toast' + (err ? ' err' : '');
     t.style.display = 'block';
-    window.setTimeout(() => { t.style.display = 'none'; }, err ? 8000 : 3000);
+    t.title = err ? '点一下关闭' : '';
+    if (!seToastClickBound) {
+        seToastClickBound = true;
+        t.addEventListener('click', () => { window.clearTimeout(seToastTimer); t.style.display = 'none'; });
+    }
+    if (err) { seToastTimer = undefined; return; }   // 错误常驻，等主人点
+    seToastTimer = window.setTimeout(() => { t.style.display = 'none'; },
+        Math.min(12000, Math.max(3500, msg.length * 120)));
 }
 
 function valueLabel(s: SkillRow): string {

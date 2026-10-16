@@ -211,14 +211,28 @@ function esc(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+/**
+ * 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+ *  · 错误（bad）：**不自动消失，点一下才关**；普通提示按字数给时间（3.5 秒起、封顶 12 秒）；
+ *  · 同屏只留最新一条（旧的先摘掉），免得错误条叠在一起看不清。
+ */
+let currentToast: HTMLElement | null = null;
 function toast(msg: string, bad = false): void {
+    currentToast?.remove();
     const el = document.createElement('div');
     el.textContent = msg;
     el.style.cssText = `position:fixed;left:50%;top:56px;transform:translateX(-50%);z-index:20000;
         background:${bad ? '#5a2020' : '#20502a'};border:1px solid ${bad ? '#a05050' : '#4a9a5a'};
-        color:#fff;padding:9px 18px;border-radius:5px;font-size:13px;max-width:70vw;`;
+        color:#fff;padding:9px 18px;border-radius:5px;font-size:13px;max-width:70vw;line-height:1.5;
+        white-space:pre-wrap;user-select:text;${bad ? 'cursor:pointer;' : ''}`;
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 4200);
+    currentToast = el;
+    if (bad) {
+        el.title = '点一下关闭';
+        el.addEventListener('click', () => el.remove());
+        return;                                    // 错误常驻，等主人点
+    }
+    setTimeout(() => el.remove(), Math.min(12000, Math.max(3500, msg.length * 120)));
 }
 
 /** 兵种的子分类中文名（剑盾兵 / 长枪兵 / 弓骑兵…），选择器和摘要都用它 */
