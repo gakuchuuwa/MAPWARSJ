@@ -22,7 +22,6 @@
  *   其余默认 1（步/弓/骑/弓骑/轻型火器）
  */
 export const POP_COST_BY_KEY: Record<string, number> = {
-    siege_elephant: 2,   // 象（Armored Elephant）
     antiquity_battering_ram: 3,     // class 13（攻城器械）
     antiquity_capped_ram: 3,        // class 13（攻城器械）
     antiquity_heavy_scorpion: 3,    // class 55（类55）
