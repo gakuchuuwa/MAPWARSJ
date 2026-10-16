@@ -3943,7 +3943,45 @@ export class Scene13WarLayer {
         const sx = fr * sw;
         // scale 未设置 = 原尺寸原路径（其余装饰逐像素不变）；设置时尺寸与锚点等比缩放，脚点仍落在 (s.x, drawY)
         const k = s.scale ?? 1;
-        if (s.flip) {
+        let bld: WarBuilding | undefined;
+        if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
+            for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
+            if (!bld) for (const b of this.wallGates) if ((b.key === 'STONE_GATE' || b.key === 'WOOD_WALL') && b.sprite === s) { bld = b; break; }
+        }
+        // 🔴 [2026-10-16 主人令「攻城武器，打栅栏？和打城墙说75%，50%，25%就可以通行，一致吗？有残垣断壁的感觉吗？」「请执行」]
+        //    木栅栏 / 强木栅栏 / 篱笆在受损或 75%/50%/25% 破口时，垫碎木/碎石底座并按 4 竖条参差截断上部桩尖，呈现高低犬牙交错的断桩残垣。
+        let woodKeepH = 1;
+        let woodEffRatio = bld && bld.maxHp > 0 ? (bld.hp / bld.maxHp) : 1;
+        if (bld && bld.key === 'WOOD_WALL') {
+            if (s.obstructionDisabled) woodEffRatio = this.wallBreachRatio(bld);
+            if (woodEffRatio <= 0.25) woodKeepH = 0.34;
+            else if (woodEffRatio <= 0.50) woodKeepH = 0.54;
+            else if (woodEffRatio <= 0.75) woodKeepH = 0.76;
+        }
+        if (woodKeepH < 1) {
+            const isFence = s.asset.includes('FENCE');
+            const rubKey = isFence ? 'BATTLEFIELD:FENCE_RUBBLE' : 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+            const rubNa = this.natureCache[rubKey];
+            if (rubNa?.img?.complete && rubNa.meta) {
+                const rm = rubNa.meta;
+                const rFr = isFence ? (s.asset.includes('CORNER') ? 2 : (s.asset.includes('POST') || s.asset.endsWith('_N')) ? 4 : s.asset.endsWith('_SE') ? 1 : 0) : 0;
+                g.drawImage(rubNa.img, (rFr % Math.max(1, rm.frames)) * rm.box_w, 0, rm.box_w, rm.box_h, s.x - rm.anchor_x * k, drawY - rm.anchor_y * k, rm.box_w * k, rm.box_h * k);
+            }
+            const jag = [-0.09, 0.07, -0.06, 0.08] as const;
+            g.save();
+            g.translate(s.x, drawY);
+            g.scale(s.flip ? -k : k, k);
+            for (let i = 0; i < 4; i++) {
+                const x0 = Math.round((sw * i) / 4);
+                const x1 = Math.round((sw * (i + 1)) / 4);
+                const sliceW = x1 - x0;
+                if (sliceW <= 0) continue;
+                const kH = Math.max(0.20, Math.min(0.92, woodKeepH + jag[i]));
+                const cropY = Math.max(0, Math.min(m.anchor_y - 4, Math.round(m.anchor_y * (1 - kH))));
+                g.drawImage(na.img, sx + x0, cropY, sliceW, sh - cropY, -m.anchor_x + x0, -m.anchor_y + cropY, sliceW, sh - cropY);
+            }
+            g.restore();
+        } else if (s.flip) {
             g.save();
             g.translate(s.x, drawY);
             g.scale(-k, k);
@@ -3959,15 +3997,15 @@ export class Scene13WarLayer {
         //    2) 速度：DE fire_*.json 统一规定 "ImageCount": 60, "Duration1": 2.9, "Duration2": 3.1（60 帧播 3.0 秒 ≈ 20fps）；
         //    3) 档位与坐标：按 DE empires2_x2_p1.dat 各建筑 damage_graphics (apply_mode=0) 实测 deltas 偏移 (ox, oy) 挂在建筑锚点 (s.x, drawY) 上：
         //       Damage1(掉血≥25%) 全为小火 Fire Small；Damage2(掉血≥50%) 升级为中火 Fire Medium；Damage3(掉血≥75%) 加入大火 Fire Large。
-        if (this.battleType === 'siege' && !s.collapse && !s.destroyed && !s.asset.includes('_RUBBLE')) {
-            let bld: WarBuilding | undefined;
-            for (const b of this.defBuildings) if (b.sprite === s) { bld = b; break; }
-            if (!bld) for (const b of this.wallGates) if ((b.key === 'STONE_GATE' || b.key === 'WOOD_WALL') && b.sprite === s) { bld = b; break; }
-            if (bld && bld.hp > 0 && bld.hp <= bld.maxHp * 0.75) {
-                const ratio = bld.hp / bld.maxHp;
-                const tierIdx = ratio <= 0.25 ? 2 : (ratio <= 0.50 ? 1 : 0);
+        if (bld) {
+            const isFence = s.asset.includes('FENCE');
+            const fireRatio = (bld.key === 'WOOD_WALL' && s.obstructionDisabled)
+                ? (isFence ? 1 : (woodEffRatio >= 0.50 ? woodEffRatio : 1))
+                : (bld.hp > 0 ? bld.hp / bld.maxHp : 1);
+            if (fireRatio > 0 && fireRatio <= 0.75) {
+                const tierIdx = fireRatio <= 0.25 ? 2 : (fireRatio <= 0.50 ? 1 : 0);
                 const bName = bld.bld?.name ?? s.asset;
-                let kind = (bld.key === 'STONE_GATE' && !s.asset.includes('FENCE')) ? 'GATE' : ((bld.key === 'WOOD_WALL' || s.asset.includes('FENCE')) ? 'OUTPOST' : 'HOUSE');
+                let kind = (bld.key === 'STONE_GATE' && !isFence) ? 'GATE' : ((bld.key === 'WOOD_WALL' || isFence) ? 'OUTPOST' : 'HOUSE');
                 if (bld.bld) {
                     for (const kName of ['CASTLE', 'WONDER', 'ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
                         if (bName.includes(kName)) { kind = kName; break; }
@@ -3976,6 +4014,7 @@ export class Scene13WarLayer {
                 const deltas = (DE_FIRE_DELTAS[kind] ?? DE_FIRE_DELTAS.HOUSE)[tierIdx];
                 // DE fire_*.json: Scale = 0.5；StartMode = "Fade", StartDuration = 0.75
                 const fk = 0.5 * k;
+                const dropY = woodKeepH < 1 ? Math.round((1 - woodKeepH) * 18) : 0;
                 const seed = Math.abs(Math.round(s.x * 7 + s.y * 13));
                 const fadeIn = bld.hitAt !== undefined ? Math.min(1, (this.battleSec - bld.hitAt) / 0.75) : 1;
                 if (fadeIn < 0.99) { g.save(); g.globalAlpha *= Math.max(0.05, fadeIn); }
@@ -3984,7 +4023,7 @@ export class Scene13WarLayer {
                     const fx = this.fxBank[fxKey]?.dirs[0];
                     if (!fx?.img || !fx.fw || !fx.n) continue;
                     const fxX = s.x + (s.flip ? -ox : ox) * k;
-                    const fxY = drawY + oy * k;
+                    const fxY = drawY + (oy + dropY) * k;
                     // DE Duration1=2.9 ~ Duration2=3.1s 播 60 帧 ⇒ 约 19.3 ~ 20.7 fps，完整一轮循环 3.0 秒
                     const rate = 19.3 + (i % 3) * 0.7;
                     const fr = Math.floor(this.battleSec * rate + i * 11 + (seed % 60)) % fx.n;
@@ -5289,25 +5328,28 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打穿阈值）都走这里 → 只在这一处播倒塌音，避免重复播放
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
+        const br = this.wallBreachRatio(b);
         if (b.sprite.asset.includes('FENCE') || b.rubbleAsset === 'BATTLEFIELD:FENCE_RUBBLE') {
             // 🔴 [2026-10-16 主人令「篱笆的门，在坍塌的时候，错用了栅栏门，请修复，和DE保持一致，依然用篱笆门」
             //    ＋「栅栏和强木栅栏的坍塌怎么 爆炸效果？请检查，和DE保持一致」]
-            //    DE empires2_x2_p1.dat Unit 1062 (b_scen_fence) 坍塌触发 dying_graphic=36（smoke_tiny 尘土 FX_WALL_DUST + b_scen_fence_rubble 5向帧：0=NE, 1=SE, 2=CORNER, 3=GATE, 4=POST/N），绝无火药爆炸 FX_PETARD。
+            //    篱笆门或 0% 破口档切 FENCE_RUBBLE；75%/50%/25% 破口档保留原贴图由 drawDecorSprite 绘制参差断木残桩。
             const a = b.sprite.asset;
             b.sprite.collapse = undefined;
-            b.sprite.asset = 'BATTLEFIELD:FENCE_RUBBLE';
-            b.sprite.frame = a.includes('GATE') ? 3 : a.includes('CORNER') ? 2 : (a.includes('POST') || a.endsWith('_N')) ? 4 : a.endsWith('_SE') ? 1 : 0;
+            if (b.key === 'STONE_GATE' || br <= 0) {
+                b.sprite.asset = 'BATTLEFIELD:FENCE_RUBBLE';
+                b.sprite.frame = a.includes('GATE') ? 3 : a.includes('CORNER') ? 2 : (a.includes('POST') || a.endsWith('_N')) ? 4 : a.endsWith('_SE') ? 1 : 0;
+            }
             this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
         } else if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             b.sprite.collapse = undefined;
-            const br = this.wallBreachRatio(b);
             if (b.destrAssets && br > 0) {
                 const stageIdx = br >= 0.75 ? 0 : (br >= 0.50 ? 1 : 2);
                 b.sprite.asset = 'BUILDINGANIM:' + b.destrAssets[stageIdx];
-            } else {
+                b.sprite.frame = 0;
+            } else if (b.key !== 'WOOD_WALL' || br <= 0) {
                 b.sprite.asset = 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+                b.sprite.frame = 0;
             }
-            b.sprite.frame = 0;
             this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
         } else if (b.rubbleAsset) {
             this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
