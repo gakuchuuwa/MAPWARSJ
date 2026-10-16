@@ -143,6 +143,17 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
+// ── REA 逆向：DE blendomatic_x2 格边草叶/砂砾颗粒咬合算子 ──
+// 将宏观团块势场 (macroVal) 与格边高频草叶微噪 (microVal) 及两张贴图局部明暗纹理差 (texDetail) 耦合，
+// 消除单纯 smoothstep 的「软喷枪雾化感」，还原 DE 草叶、砂砾、泥土在边界处错落咬合的颗粒感。
+float deEdgeBlend(float macroVal, float edgeLow, float edgeHigh, float microNoise, float texDetail) {
+  float baseT = smoothstep(edgeLow, edgeHigh, macroVal);
+  // 仅在交界过渡带 (0 < baseT < 1) 激活高频草叶/砂砾颗粒咬合，内部保持纯净原图
+  float borderMask = 4.0 * baseT * (1.0 - baseT);
+  float grain = (microNoise * 0.65 + texDetail * 0.35) * borderMask * 0.42;
+  return smoothstep(0.18, 0.82, baseT + grain);
+}
+
 void main() {
   vec2 fieldUV = clamp(vGUV / uMapSize, 0.001, 0.999);
   vec4 field = texture2D(uFieldTex, fieldUV);
@@ -150,6 +161,11 @@ void main() {
   // 有机扰动：低频大尺度舒缓曲线打破方格阶梯，彻底消除高频毛刺锯齿，呈现圆润蜿蜒河岸
   float n1 = snoise(vGUV * 0.22);
   float n2 = snoise(vGUV * 0.50);
+  // 格边高频颗粒微噪（对应 DE blendomatic 单格 96×48 边缘草叶/碎石咬合掩码频率）
+  float nMicro1 = snoise(vGUV * 2.4 + vec2(19.7, 43.1));
+  float nMicro2 = snoise(vGUV * 5.2 + vec2(67.3, 11.9));
+  float microGrain = nMicro1 * 0.65 + nMicro2 * 0.35;
+
   float wPerturb = field.r + n1 * 0.038 + n2 * 0.014;
   
   // 水体判定：清晰而蜿蜒的自然水际线（DE 风格，消除软喷枪涂抹感）
@@ -157,52 +173,62 @@ void main() {
   float isDeepWater = smoothstep(0.56, 0.82, wPerturb);
   
   // 沙滩判定（近岸浅滩与干沙）
-  float isSand = clamp(field.g * 1.45 + smoothstep(0.22, 0.46, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
+  float isSandRaw = clamp(field.g * 1.45 + smoothstep(0.22, 0.46, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
   // 森林有机扰动：低频圆滑自然树林边缘与专属林下落叶底床（DE 原版：树下铺满落叶泥土）
   float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8));
   float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5));
   float fPerturb = field.b + fn1 * 0.035 + fn2 * 0.015;
-  // 🔴 [2026-10-12 主人令「森林地下是铺满整块 forestFloorTile 的，树木扎根在林地下」]
-  // 门槛从 0.34 拓宽至 0.16~0.42，使整片林块边缘完全被专属落叶泥土垫底包围，绝不露光秃草地
-  float isForest = smoothstep(0.16, 0.42, fPerturb) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   
-  // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，随高程抬升产生真实山坡拉伸与压缩）
+  // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，无人工偏色，保持雪原/沙漠/黑土/绿草本色）
   vec2 texUV = fract((vGUV * vec2(96.0, 48.0)) / 512.0);
-  vec3 colGrass = texture2D(uGrassTex, texUV).rgb * vec3(0.97, 0.99, 0.92);
+  vec3 colGrass = texture2D(uGrassTex, texUV).rgb;
   vec3 colSand = texture2D(uSandTex, texUV).rgb;
   vec3 colForest = texture2D(uForestTex, texUV).rgb;
   vec3 colDirt = texture2D(uDirtTex, texUV).rgb;
   vec3 colDry = texture2D(uDryTex, texUV).rgb;
+
+  // 提取各层贴图自身的像素级微纹理起伏（用于边界处草叶/石粒凹凸咬合）
+  float lumaGrass = dot(colGrass, vec3(0.299, 0.587, 0.114));
+  float lumaDry   = dot(colDry,   vec3(0.299, 0.587, 0.114));
+  float lumaDirt  = dot(colDirt,  vec3(0.299, 0.587, 0.114));
+  float lumaFor   = dot(colForest,vec3(0.299, 0.587, 0.114));
+  float lumaSand  = dot(colSand,  vec3(0.299, 0.587, 0.114));
   
-  // ── DE 原版多底图混搭机制（主草地 + 旱草/枯草 + 泥土/黄褐土 + 森林底土 + 水际沙滩） ──
-  // 1. 低频地貌斑块（AESTHETIC_FLAT 原野起伏微噪）
-  float tn1 = snoise(vGUV * 0.08 + vec2(11.3, 47.9));
-  float tn2 = snoise(vGUV * 0.18 + vec2(83.1, 29.5));
-  float terrainPatch = tn1 * 0.65 + tn2 * 0.35;
+  // ── DE 原版多底图碎块交织与 blendomatic 边缘咬合机制（参照 F_seasons.inc LAYER_A/B/C） ──
+  // 1. 多尺度地貌碎块（低频原野起伏 + 中频 DE 1000-clumps 碎块交织）
+  float tn1 = snoise(vGUV * 0.09 + vec2(11.3, 47.9));
+  float tn2 = snoise(vGUV * 0.24 + vec2(83.1, 29.5));
+  float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3));
+  float terrainPatch = tn1 * 0.50 + tn2 * 0.32 + tn3 * 0.18;
   
-  // 2. 泥土斑块判定：地图数据层 DIRT 势场 (field.a) + 原野低频泥斑微露（打破单一草皮塑料感）
-  float dirtNoise = clamp(tn1 * 0.6 + tn2 * 0.4, -1.0, 1.0);
-  float dirtMix = clamp(field.a * 1.5 + smoothstep(0.18, 0.52, dirtNoise) * 0.38, 0.0, 1.0);
+  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a + 原野碎块咬合）
+  float dirtNoise = clamp(tn1 * 0.45 + tn2 * 0.35 + tn3 * 0.20, -1.0, 1.0);
+  float fieldDirt = deEdgeBlend(field.a, 0.12, 0.55, microGrain, (lumaDirt - lumaGrass) * 2.5);
+  float wildDirt  = deEdgeBlend(dirtNoise, 0.16, 0.50, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.34;
+  float dirtMix   = clamp(fieldDirt + wildDirt, 0.0, 1.0);
   
-  // 3. 旱草/副草皮微斑驳判定：原野向阳干燥地貌双色草交织
-  float dryMix = clamp(smoothstep(-0.25, 0.35, terrainPatch) * 0.55, 0.0, 1.0) * (1.0 - dirtMix * 0.65);
+  // 3. 副地表一层微斑驳（DE LAYER_A/B 双色同系地貌碎块咬合）
+  float dryEdge = deEdgeBlend(terrainPatch, -0.22, 0.32, microGrain, (lumaDry - lumaGrass) * 2.5);
+  float dryMix  = clamp(dryEdge * 0.52, 0.0, 1.0) * (1.0 - dirtMix * 0.65);
   
-  // 4. 基底草皮与旱草/副草皮混搭（DE 经典原野双色草交织）
+  // 4. 基底主地形与副地表一层咬合
   vec3 baseLand = mix(colGrass, colDry, dryMix);
   
-  // 5. 混入大块黄褐色泥土斑块（还原 DE 经典原野泥斑）
+  // 5. 混入副地表二层与道路/城基裸土斑块
   vec3 landCol = mix(baseLand, colDirt, dirtMix);
   
-  // 6. 森林底土与落叶垫底（树林下铺满专属落叶腐殖土）
+  // 6. 森林底土与落叶垫底（🔴 [2026-10-12 主人令] 树林下铺满专属落叶腐殖土，边缘带落叶颗粒咬合）
+  float isForest = deEdgeBlend(fPerturb, 0.16, 0.40, microGrain, (lumaFor - lumaGrass) * 2.0) * (1.0 - smoothstep(0.28, 0.45, wPerturb));
   landCol = mix(landCol, colForest, isForest);
   
-  // 7. 水际沙滩与退潮湿沙带过渡（DE 经典海滩湿沙）
-  landCol = mix(landCol, colSand, smoothstep(0.10, 0.65, isSand));
+  // 7. 水际沙滩与退潮湿沙带过渡（DE 经典海滩湿沙 + 沙岸颗粒咬合）
+  float sandBlend = deEdgeBlend(isSandRaw, 0.12, 0.62, microGrain, (lumaSand - lumaGrass) * 2.0);
+  landCol = mix(landCol, colSand, sandBlend);
   // 退潮湿沙带：近水际沙土受潮汐润泽，颜色加深呈润泽暗黄色
   float wetShore = smoothstep(0.32, 0.46, wPerturb);
-  vec3 wetSandCol = colSand * vec3(0.72, 0.66, 0.56);
+  vec3 wetSandCol = colSand * vec3(0.76, 0.70, 0.60);
   vec3 riverbedCol = colSand * vec3(0.85, 0.81, 0.72);
-  landCol = mix(landCol, wetSandCol, wetShore * 0.75);
+  landCol = mix(landCol, wetSandCol, wetShore * 0.72);
   
   // ── 水体与冬季冰面渲染（保留气候水体贴图本色 + 深浅渐变 + 冰面静止质感） ──
   vec3 waterCol;
@@ -678,21 +704,21 @@ export class Scene13GroundLayerGL {
         const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
 
-        // 🔴 [2026-10-12 REA逆向：DE 真实等轴浮雕坡面光照 Hill Shading 强对比版]
-        // 等轴视线下：西北方（屏幕左上）为光源方向。
-        // 当地面朝向西北倾斜时受光（dhx > 0 且 dhy > 0 时地面斜向左上迎光）。
-        const slopeTowardSun = (dhx * 0.70 + dhy * 0.70) + (dhx - dhy) * 0.25;
+        // 🔴 [REA逆向 + climate-regions.md §5.6.14 校准：DE 真实等轴坡面光照]
+        // 等轴投影下 (dhx - dhy) 为屏幕横向坡度，(dhx + dhy) 为屏幕纵向坡度；
+        // 以横向斜光为主、纵向分量为辅（纵横比 ≤0.28），消除贯穿屏幕的纵向明暗条带，同时保留山脊清晰立体感。
+        const slopeTowardSun = (dhx - dhy) * 0.68 + (dhx + dhy) * 0.22;
         let light = 1.0;
         if (slopeTowardSun > 0.01) {
-          // 向阳受光坡面：泛光清晰、层次鲜明
-          light = 1.0 + Math.min(0.42, slopeTowardSun * 0.65);
+          // 向阳受光坡面：DE 原生 ~+18% 提亮
+          light = 1.0 + Math.min(0.20, slopeTowardSun * 0.45);
         } else if (slopeTowardSun < -0.01) {
-          // 背阳阴影坡面：深邃山影，形成鲜明等高线立体浮雕
-          light = 1.0 + Math.max(-0.48, slopeTowardSun * 0.75);
+          // 背阳阴影坡面：DE 原生 ~-24% 压暗
+          light = 1.0 + Math.max(-0.24, slopeTowardSun * 0.52);
         }
-        // 高地微弱大气透光增益（海拔越高，越受天光照耀）
-        const elevBoost = Math.min(0.12, hC * 0.025);
-        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.50, Math.min(1.48, light + elevBoost));
+        // 高地微弱天光增益
+        const elevBoost = Math.min(0.06, hC * 0.015);
+        this.cornerLight[gy * V_SIZE + gx] = Math.max(0.76, Math.min(1.22, light + elevBoost));
       }
     }
 

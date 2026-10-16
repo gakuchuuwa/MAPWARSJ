@@ -28,7 +28,7 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     sunwu_d_sunquan: 'hero_sunquan',
 
     // 草原游牧
-    menggu_d_chengjisihan: 'hero_khan',
+    menggu_d_chengjisihan: 'hero_subotai',
     wuliangha_subutai: 'hero_subotai',
     xiongren_atila: 'hero_attila',
     gen_kotyan: 'hero_kotyankhan',

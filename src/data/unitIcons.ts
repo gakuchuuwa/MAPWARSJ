@@ -324,7 +324,6 @@ export const UNIT_ICONS: Record<string, string> = {
     'thirisadai': '/de-techtree/icons/Unit/387.png',
     'catapult_ship': '/de-techtree/icons/Unit/671.png',
     'onager_ship': '/de-techtree/icons/Unit/672.png',
-    'hero_khan': '/de-techtree/icons/Unit/54.png',
     'hero_jadwiga': '/de-techtree/icons/Unit/374.png',
     'hero_tamar': '/de-techtree/icons/Unit/414.png',
     'hero_zhugeliang': '/de-techtree/icons/Unit/445.png',

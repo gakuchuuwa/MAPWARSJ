@@ -351,6 +351,58 @@ export function isSnowArea(
     return true;
 }
 
+// ── 真实地理土壤与地貌点名带（与 tools/build-world-base-map.py 100% 同源） ──
+type GeoBox = readonly [latMin: number, latMax: number, lngMin: number, lngMax: number];
+
+function inGeoBoxes(lat: number | undefined, lng: number | undefined, boxes: readonly GeoBox[]): boolean {
+    if (lat === undefined || lng === undefined) return false;
+    for (const [la0, la1, lo0, lo1] of boxes) {
+        if (lat >= la0 && lat <= la1 && lng >= lo0 && lng <= lo1) return true;
+    }
+    return false;
+}
+
+/** 内流盆地干涸盐湖（地表龟裂盐壳 pal1） */
+const SALT_FLAT_BOXES: readonly GeoBox[] = [
+    [38.5, 41.5, 88.0, 92.5],     // 罗布泊
+    [43.5, 47.0, 58.0, 62.0],     // 咸海
+    [33.0, 36.5, 52.0, 58.0],     // 卡维尔盐漠（伊朗）
+    [29.0, 32.0, 57.0, 60.0],     // 卢特盐漠（伊朗）
+    [33.0, 34.0, 8.0, 10.0],      // 突尼斯杰里德盐沼 Chott el Djerid
+    [-24.0, -19.0, -69.0, -66.5], // 乌尤尼盐沼
+    [39.0, 42.5, -114.0, -112.0], // 大盐湖沙漠
+];
+
+/** 世界八大历史低洼大沼泽（qs2 / gr4） */
+const MARSH_BOXES: readonly GeoBox[] = [
+    [28.0, 31.5, 111.0, 115.0],   // 云梦泽 / 洞庭湖平原
+    [45.0, 48.5, 130.0, 135.0],   // 三江平原
+    [21.5, 25.0, 88.0, 92.5],     // 恒河—布拉马普特拉三角洲
+    [51.0, 53.5, 26.0, 31.0],     // 普里皮亚季沼泽
+    [-20.0, -16.0, -58.5, -55.0], // 潘塔纳尔湿地
+    [5.0, 10.0, 28.0, 33.0],      // 苏德沼泽
+    [25.0, 29.0, -82.5, -80.0],   // 佛罗里达大沼泽
+    [58.0, 63.0, 68.0, 82.0],     // 西西伯利亚瓦休甘沼泽
+];
+
+/** 世界深色土带（黑土 + 长期淹水水稻土 → gr4） */
+const DARK_SOIL_BOXES: readonly GeoBox[] = [
+    [42.0, 50.5, 122.0, 135.0],   // 中国东北：松嫩平原 + 三江平原（黑土）
+    [46.0, 55.0, 26.0, 50.0],     // 乌克兰 — 俄罗斯南部黑土带
+    [36.0, 50.0, -104.0, -88.0],  // 北美大平原（黑土）
+    [-38.0, -30.0, -64.0, -57.0], // 南美潘帕斯（黑土）
+    [28.0, 33.5, 111.0, 122.5],   // 江南：长江中下游水稻土
+    [30.0, 34.0, 118.0, 121.0],   // 江淮水田
+];
+
+/** 世界黄土带（风成粉砂堆积 → ds2） */
+const LOESS_BOXES: readonly GeoBox[] = [
+    [34.5, 41.0, 102.0, 112.0],   // 中国黄土高原本体（陇东—陕北—晋西）
+    [47.0, 51.0, 30.0, 40.0],     // 东欧黄土带
+    [37.0, 42.0, -98.0, -88.0],   // 北美密西西比黄土
+    [-34.0, -30.0, -64.0, -60.0], // 南美潘帕斯黄土
+];
+
 export function resolveDeMapTheme(
     lat: number,
     lng: number,
@@ -360,6 +412,15 @@ export function resolveDeMapTheme(
 ): DeMapThemePalette {
     // 🔴 [2026-08-21 完善·气候纯按坐标] 分流完全由「经纬度坐标带 + 柯本 biome + 海拔」决定，
     //    **不接收 region 文化区参数**——气候是自然边界，文化区是政治边界，二者解耦（主人定）。
+
+    // 0a. 干涸盐湖（罗布泊/咸海/卡维尔/卢特/杰里德/乌尤尼/大盐湖）：先于普通荒漠分流
+    if ((biome === 'desert' || biome === 'cold_steppe') && inGeoBoxes(lat, lng, SALT_FLAT_BOXES)) {
+        return DE_MAP_THEMES.palaearctic_salt_desert;
+    }
+    // 0b. 世界八大历史低洼沼泽（云梦泽/三江平原/普里皮亚季等，非海滨且海拔 <200m）
+    if (waterKind !== 'sea' && (elev === null || elev < 200) && inGeoBoxes(lat, lng, MARSH_BOXES)) {
+        return DE_MAP_THEMES.palustrine_swamp;
+    }
 
     // 0. 澳洲大陆（lat < -10 才落澳洲；印尼爪哇/新几内亚是热带雨林，不能被澳洲主题劫持）
     if (lat < -10 && lng >= 100) return DE_MAP_THEMES.australasian_temperate;
@@ -385,11 +446,6 @@ export function resolveDeMapTheme(
     // 4. 西亚带（安纳托利亚内陆/黎凡特/两河/伊朗高原：lng 30~62、lat 25~43；
     //    巴尔干/君士坦丁堡/爱琴海西岸 lng<30 属欧洲温带/地中海，不进入西亚带）
     if (lng >= 30 && lng < 62 && lat > 25 && lat < 43) {
-        // 🔴 [2026-08-23 新增·真实地理] 伊朗龟裂盐漠：大盐漠 Dasht-e Kavir（卡维尔 lng52~58 lat33~36）
-        //    + 卢特沙漠 Dasht-e Lut（lng57~60 lat29~32）→ pal1 干裂沙（playa 干涸盐渍地）
-        const inKavir = lng >= 52 && lng < 58 && lat >= 33 && lat < 36;
-        const inLut = lng >= 57 && lng < 60 && lat >= 29 && lat < 32;
-        if (biome === 'desert' && (inKavir || inLut)) return DE_MAP_THEMES.palaearctic_salt_desert;
         if (biome === 'desert' || lat < 31) return DE_MAP_THEMES.palaearctic_middle_east_desert; // 两河/波斯湾低地
         // 🔴 [2026-08-21 完善] 地中海东岸（黎凡特海岸 lat 33-36、安纳托利亚西岸）都是地中海气候：
         //    原 lat>36 漏掉贝鲁特（33.9）→ 改成 lng<40（东地中海沿岸带）即可
@@ -433,8 +489,6 @@ export function resolveDeMapTheme(
         return DE_MAP_THEMES.serengeti;
     }
     // 10. 沙漠 / 地中海（先排除——绿洲/地中海不沼泽）/ 温带半干旱草原 / 低洼湿地（DE Swamp biome） / 寒带
-    // 🔴 [2026-08-23 新增·真实地理] 突尼斯杰里德盐沼 Chott el Djerid（lng8~10 lat33~34）→ pal1 干裂沙
-    if (biome === 'desert' && lng >= 8 && lng < 10 && lat >= 33 && lat < 34) return DE_MAP_THEMES.palaearctic_salt_desert;
     if (biome === 'desert') return DE_MAP_THEMES.palaearctic_middle_east_desert;
     if (biome === 'mediterranean') return DE_MAP_THEMES.palaearctic_europe_mediterranean;
     // 🔴 [2026-08-21 全面检查·补 gap] cold_steppe（温带半干旱草原：BSk/Dsa/Dsb——中亚草原/北美大平原/
@@ -471,7 +525,19 @@ export function resolveDeMapTheme(
  *   主题(坐标带)优先于 biome(Köppen)：越南等「主题热带但 Köppen 温带」的据点按主题→红土。
  *   每档 variations 用「本档 + 相邻档」做地面变体，6 张泥地全用上、分布尽量平均。
  */
-function siegeSoil(theme: DeMapThemePalette, biome: Biome): { base: string; variations: readonly string[] } {
+function siegeSoil(
+    theme: DeMapThemePalette,
+    biome: Biome,
+    lat?: number,
+    lng?: number,
+): { base: string; variations: readonly string[] } {
+    // ── 真实地理土壤带优先（与 tools/build-world-base-map.py 同源：黑土/水稻土 → gr4，黄土高原 → ds2） ──
+    if (inGeoBoxes(lat, lng, DARK_SOIL_BOXES)) {
+        return { base: 'gr4', variations: ['gr4', 'ds3'] };
+    }
+    if (inGeoBoxes(lat, lng, LOESS_BOXES)) {
+        return { base: 'ds2', variations: ['ds2', 'des'] };
+    }
     const t = theme.id;
     // ── 主题（坐标带）优先 ──
     if (t === 'indomalayan_tropical' || t === 'afrotropical_tropical' || t === 'neotropical_tropical') {
@@ -514,11 +580,11 @@ function siegeSoil(theme: DeMapThemePalette, biome: Biome): { base: string; vari
 }
 
 /** 攻城战单张底色：湿地(沼泽泥 qs2)→污泥，其余走 siegeSoil 的 biome/主题分档。 */
-function siegeGround(tile: string, biome: Biome, theme: DeMapThemePalette, isSiege: boolean): string {
+function siegeGround(tile: string, biome: Biome, theme: DeMapThemePalette, isSiege: boolean, lat?: number, lng?: number): string {
     if (!isSiege) return tile;
     // 湿地/沼泽泥（qs2 Swamp Bogland）→ 污泥
     if (tile === 'qs2') return 'gr4';
-    return siegeSoil(theme, biome).base;
+    return siegeSoil(theme, biome, lat, lng).base;
 }
 
 /**
@@ -575,7 +641,7 @@ export function terrainForTheme(
             biome === 'savanna' ||
             biome === 'temperate_grass' ||
             biome === 'temperate_forest';
-        return siegeGround(wetAlpine ? 'gr2' : 'gr7', biome, theme, isSiege);
+        return siegeGround(wetAlpine ? 'gr2' : 'gr7', biome, theme, isSiege, lat, lng);
     }
 
     // 4. 中山地带（1000m - 2500m）
@@ -587,16 +653,17 @@ export function terrainForTheme(
         if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
             return isSiege ? 'snd' : 'sno';
         }
+        if (!isSiege && inGeoBoxes(lat, lng, LOESS_BOXES)) return 'ds2';
         switch (biome) {
             case 'tropical_rainforest': return 'gr6';      // 丛林草（Jungle Grass）
             case 'temperate_forest':    return 'gr3';      // 温带草地
             case 'boreal':              return 'gr7';      // 寒温带干草
-            case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege);      // 绿草
+            case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege, lat, lng);      // 绿草
             case 'savanna':             return 'gr5';      // 萨凡纳土
-            case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草（蒙古黄土）→牧场
-            case 'desert':              return siegeGround('ds5', biome, theme, isSiege);      // 沙漠砾石→攻城泥土1
-            case 'mediterranean':       return siegeGround('gr7', biome, theme, isSiege);      // 枯草（夏旱）
-            case 'tundra_snow':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草（高寒）
+            case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草（蒙古黄土）→牧场
+            case 'desert':              return siegeGround('ds5', biome, theme, isSiege, lat, lng);      // 沙漠砾石→攻城泥土1
+            case 'mediterranean':       return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草（夏旱）
+            case 'tundra_snow':         return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草（高寒）
             default:                    return theme.baseTerrain;
         }
     }
@@ -608,16 +675,17 @@ export function terrainForTheme(
         if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
             return isSiege ? 'snd' : 'sno';
         }
+        if (!isSiege && inGeoBoxes(lat, lng, LOESS_BOXES)) return 'ds2';
         switch (biome) {
             case 'tropical_rainforest': return 'gr6';      // 低山丛林草
             case 'temperate_forest':    return 'gr3';      // 丘陵温带草地
             case 'boreal':              return 'gr7';      // 丘陵寒温带干草
             case 'savanna':             return 'gr5';      // 稀树草原土
-            case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege);      // 绿草
-            case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草→牧场
-            case 'desert':              return siegeGround('pal', biome, theme, isSiege);      // 干沙（低海拔沙丘）→攻城泥土1
-            case 'mediterranean':       return siegeGround('gr7', biome, theme, isSiege);      // 枯草（夏旱）
-            case 'tundra_snow':         return siegeGround('gr7', biome, theme, isSiege);      // 枯草（高寒）
+            case 'temperate_grass':     return siegeGround('gr2', biome, theme, isSiege, lat, lng);      // 绿草
+            case 'cold_steppe':         return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草→牧场
+            case 'desert':              return siegeGround('pal', biome, theme, isSiege, lat, lng);      // 干沙（低海拔沙丘）→攻城泥土1
+            case 'mediterranean':       return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草（夏旱）
+            case 'tundra_snow':         return siegeGround('gr7', biome, theme, isSiege, lat, lng);      // 枯草（高寒）
             default:                    return theme.baseTerrain;
         }
     }
@@ -636,7 +704,8 @@ export function terrainForTheme(
     }
 
     // 6. 基础地表
-    return siegeGround(theme.baseTerrain, biome, theme, isSiege);
+    if (!isSiege && inGeoBoxes(lat, lng, LOESS_BOXES)) return 'ds2';
+    return siegeGround(theme.baseTerrain, biome, theme, isSiege, lat, lng);
 }
 
 export function treesForTheme(
@@ -675,7 +744,7 @@ export function groundTilesForTheme(
     }
     // 🔴 [2026-08-23 主人定] 攻城战地面变体按「地区/气候」分档（与 siegeSoil 同一份映射）：每档本档 + 相邻档做变体
     if (isSiege) {
-        return siegeSoil(theme, biome).variations;
+        return siegeSoil(theme, biome, lat, lng).variations;
     }
     return theme.groundTiles;
 }

@@ -409,7 +409,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'mameluke', name: '萨拉森马穆鲁克', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MAMELUKE/' },
     { id: 'mangonel', name: '轻型投石车', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MANGONEL/' },
     { id: 'mercenary_hoplite', name: '希腊雇佣重装步兵特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_HOPLITE/' },
-    { id: 'militia', name: '中亚民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MILITIA/' },
+    { id: 'militia', name: '武装民兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'monaspa', name: '格鲁吉亚莫纳斯帕', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MONASPA/' },
     { id: 'mounted_trebuchet', name: '沙漠骆驼投石机高级', category: 'siege', age: 'feudal', pathPrefix: '/SUCAI/MOUNTEDTREBUCHET/' },
     { id: 'obuch', name: '波兰奥布奇战锤兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/OBUCH/' },
@@ -532,7 +532,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     //    「中型投石船」（Onager＝中型投石车，本项目陆地兵种 onager 亦自叫「欧洲中型投石车高级」），
     //    重型是 Siege Onager。改为「中型投石舰」，与 NavalShipTiers 的 NAVAL_SHIP_CHINESE_NAMES 同名。
     { id: 'onager_ship', name: '中型投石舰', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/ONAGER_SHIP/' },
-    { id: 'hero_khan', name: '英雄·成吉思汗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 全球知名度第一的可汗；本人在武将册 menggu_d_chengjisihan 且无专属素材
     { id: 'hero_jadwiga', name: '英雄·雅德维加', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JADWIGA/' },   // [2026-09-07 补提] 波兰女王 1373–1399
     { id: 'hero_tamar', name: '英雄·塔玛尔', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TAMAR/' },   // [2026-09-07 补提] 格鲁吉亚女王 1160–1213
     { id: 'hero_zhugeliang', name: '英雄·诸葛亮', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHUGELIANG/' },   // [2026-09-07 补提] 蜀汉丞相 181–234
@@ -871,7 +870,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_sunjian: 'mounted_hero', hero_sunquan: 'mounted_hero', hero_tariqibnziyad: 'mounted_hero',
     hero_thoros: 'mounted_hero', hero_thracian_chieftain: 'mounted_hero', hero_tsarkonstantin: 'mounted_hero',
     hero_ulrichvonjungingen: 'mounted_hero', hero_vladdracula: 'mounted_hero', hero_vytautasthegreat: 'mounted_hero',
-    envoy: 'mounted_hero', hero_khan: 'mounted_hero', hero_jadwiga: 'noncombat_hero',
+    envoy: 'mounted_hero', hero_jadwiga: 'noncombat_hero',
     hero_tamar: 'noncombat_hero', hero_bucephalus: 'noncombat_hero',
 
     // ── 英雄：步战（27 位）──

@@ -3345,13 +3345,6 @@ export const SPRITE_PATHS = {
         // 🔴 [2026-09-07] 补提的 DE 英雄素材接线。
         //    ⚠️ 诸葛亮与布塞法洛斯 **DE 本体就没有 attack 动作**（只有 idle/walk/death），
         //       ATTACK 指向 idle —— 这正是 DE 自己对船与载具的做法（全库 44 个素材夹 attack==idle）。
-        'hero_khan': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/death_${dir}.png`),
-        },
         'hero_jadwiga': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JADWIGA/move_${dir}.png`),
             ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JADWIGA/attack_${dir}.png`),
