@@ -3397,11 +3397,13 @@ export class Scene13WarLayer {
                         isSiege: this.battleType === 'siege',
                     });
                     const decorSet = groundDecorFor(baseTerrain);
+                    const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
+                        || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
                     const decorCtx = {
                         lat: mapLat,
                         lng: mapLng,
                         season: this.sceneSeason,
-                        winterSnow: baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3',
+                        winterSnow: isSnowBase,
                         isSiege: this.battleType === 'siege',
                     };
                     const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
@@ -3479,13 +3481,13 @@ export class Scene13WarLayer {
                             if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
                         }
                         const isGenericBakedTree = bestAsset === 'OAK' || bestAsset === 'PALM' || bestAsset === 'PINE' || bestAsset === 'GREEN_OAK';
-                        const snowTreeInNonWinter = this.sceneSeason !== 2 && /^SNOW_/.test(bestAsset);
-                        const greenTreeInSnow = this.sceneSeason === 2 && (baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr') && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
+                        const snowTreeOnNonSnowGround = !isSnowBase && /^SNOW_/.test(bestAsset);
+                        const greenTreeInSnow = isSnowBase && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
                         const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
                         const finalClumpTree = (
                             !bestAsset ||
                             isGenericBakedTree ||
-                            snowTreeInNonWinter ||
+                            snowTreeOnNonSnowGround ||
                             greenTreeInSnow ||
                             autumnMismatch ||
                             (cId % 6 !== 0)
@@ -3595,7 +3597,12 @@ export class Scene13WarLayer {
                             const isTree = TREE_RE.test(asset);
                             if (isTree) {
                                 if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
-                                if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
+                                if (!isSnowBase) {
+                                    if (asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
+                                    else if (asset === 'SNOW_AUTUMN_OAK') asset = 'AUTUMN_OAK';
+                                    else if (asset === 'SNOW_BIRCH') asset = 'BIRCH_AUTUMN';
+                                    else if (asset === 'SNOW_DEAD_TREE') asset = 'DEAD_TREE';
+                                }
                             } else if (asset !== 'MINE_GOLD' && asset !== 'MINE_STONE' && !asset.startsWith('FORAGE_')) {
                                 // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
                                 if (/^ROCK/.test(asset)) {
