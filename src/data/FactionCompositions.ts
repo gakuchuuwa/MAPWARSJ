@@ -58,7 +58,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "jianzhou_nvzhen": {
-        legionName: "城堡时代白山黑水军团",
+        legionName: "城堡时代大金军团",
         legionType: "sub",
     },
     "shizhou": {
@@ -102,7 +102,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "qu_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
         legionType: "sub",
     },
     "shanrong": {
@@ -214,7 +214,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "wu": {
-        legionName: "古典时代华夏江南军团",
+        legionName: "古典时代吴越军团",
         legionType: "sub",
     },
     "shanzhou": {
@@ -308,7 +308,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "shu": {
-        legionName: "古典时代华夏巴蜀军团",
+        legionName: "古典时代巴蜀军团",
         legionType: "sub",
     },
     "chu": {
@@ -332,7 +332,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "cao_d": {
-        legionName: "古典时代华夏河朔军团",
+        legionName: "古典时代魏晋军团",
         legionType: "sub",
     },
     "sima_d": {
@@ -388,7 +388,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xiqin": {
-        legionName: "城堡时代白山黑水军团",
+        legionName: "城堡时代大金军团",
         legionType: "sub",
     },
     "li_s": {
@@ -1129,16 +1129,16 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "jiujiang": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
     },
     "wuwu_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
     },
     "shanyue": {
         legionName: "古典时代秦汉军团",
     },
     "chu_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
     },
     "minyue": {
         legionName: "古典时代先秦军团",
@@ -1147,7 +1147,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代先秦军团",
     },
     "yue_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
     },
     "juandu": {
         legionName: "封建时代隋唐军团",
@@ -1510,7 +1510,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "houliao": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "xianhai": {
@@ -1562,7 +1562,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "sunwu_d": {
-        legionName: "古典时代华夏中原军团",
+        legionName: "古典时代秦汉军团",
         legionType: "sub",
     },
     "kongque": {
@@ -1678,23 +1678,23 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "qidan": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "liao_d": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "dongdan": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "yel": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "kumoxi": {
-        legionName: "封建时代河西军团",
+        legionName: "封建时代归义军团",
         legionType: "sub",
     },
     "sumo": {
@@ -1968,11 +1968,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "dajin": {
-        legionName: "城堡时代白山黑水军团",
+        legionName: "城堡时代大金军团",
         legionType: "sub",
     },
     "jurchen": {
-        legionName: "城堡时代白山黑水军团",
+        legionName: "城堡时代大金军团",
         legionType: "sub",
     },
     "muisca": {

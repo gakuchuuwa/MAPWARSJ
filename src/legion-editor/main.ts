@@ -2055,7 +2055,7 @@ function isRegionLegionName(name: string): boolean {
  *    丢掉时代前缀，违反命名铁律（时代 + 民族 + 军团）；更要命的是这个名字匹配不上任何
  *    文化区，于是被当成**新建的三级自建军团**存了下去，原来的二级军团再也改不回来。
  *    实测已污染 6 个契丹系势力（后辽/契丹/辽/东丹/耶律/库莫奚），已一并改回。
- *    正确兜底 = 该势力所在文化区的军团名（「封建时代河西军团」）。
+ *    正确兜底 = 该势力所在文化区的军团名（「封建时代归义军团」）。
  */
 function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: string }): string {
     return getCultureLegionName(r.region as RegionType) || `${r.factionName}军团`;

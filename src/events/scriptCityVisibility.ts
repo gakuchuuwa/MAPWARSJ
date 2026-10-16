@@ -88,10 +88,29 @@ export class ScriptCityVisibility {
         return this.cachedBattlefields!.has(bfId);
     }
 
+    private computing = false;
+
     private compute(): void {
+        if (this.computing) return;
+        this.computing = true;
+        try {
         const cities = this.getCities();
         const pos = new Map(cities.map((c) => [c.id, { lat: c.latitude, lng: c.longitude }]));
         const cityPos = (id: string) => pos.get(id);
+        const events = [...HISTORICAL_EVENT_SCRIPT]
+            .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
+        // 🔴 先定出当前事件并置 currentComputed = true，再查 getCityAnchoredGeneral / cityExistsInYear：
+        //    否则 getCityAnchoredGeneral → getFactionGeneral → stageGeneralName → isGeneralOnStage
+        //    → scriptYearProvider → getCurrentEvent() 会重入 compute() 导致 Maximum call stack size exceeded。
+        let current: HistoricalEvent | null = null;
+        for (const ev of events) {
+            const bfId = resolveEventBattlefieldId(ev, cityPos);
+            if (!bfId) continue;
+            if (!isBattlefieldFought(bfId)) { current = ev; break; }
+        }
+        this.currentEv = current;
+        this.currentComputed = true;
+
         // 武将 → 所在城（据点守将）
         const cityOfGeneral = new Map<string, string>();
         for (const c of cities) {
@@ -105,13 +124,10 @@ export class ScriptCityVisibility {
         /** 只是**路线顺带经过**的据点 —— 照旧过年代闸门 */
         const routeOnly = new Set<string>();
         const bfs = new Set<string>();
-        let current: HistoricalEvent | null = null;
         const routeReady = roadRegistry.isInitialized();
         // 坐标 → 城（道路网的路径点在城的位置上正好就是城坐标）
         const cityAt = new Map<string, string>();
         for (const c of cities) cityAt.set(`${c.latitude.toFixed(4)},${c.longitude.toFixed(4)}`, c.id);
-        const events = [...HISTORICAL_EVENT_SCRIPT]
-            .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
         for (const ev of events) {
             const bfId = resolveEventBattlefieldId(ev, cityPos);
             if (!bfId) continue;
@@ -119,7 +135,7 @@ export class ScriptCityVisibility {
             if (routeReady) this.addRouteCities(ev, bfId, cityOfGeneral, pos, cityAt, routeOnly);
             bfs.add(bfId);
             // 已打过的累积保留；遇到第一场没打过的（当前这一场）加完就停
-            if (!isBattlefieldFought(bfId)) { current = ev; break; }
+            if (!isBattlefieldFought(bfId)) break;
         }
         // 段表的途经点 / 起止名，能对上库里据点的，算「点名用到」
         { 
@@ -182,6 +198,9 @@ export class ScriptCityVisibility {
         this.routeless = !routeReady;
         this.currentEv = current;
         this.currentComputed = true;
+        } finally {
+            this.computing = false;
+        }
     }
 
     /** 军团沿路实际经过的城：归属武将所在城 → 各行军路标 → 终点（攻城打的城 / 战场坐标） */

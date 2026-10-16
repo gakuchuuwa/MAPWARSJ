@@ -21,10 +21,18 @@ export function setScriptYearProvider(fn: () => number | null): void {
     scriptYearProvider = fn;
 }
 
+let inYearLookup = false;
+
 /** 武将此刻是否在场（false = 剧本期这一年他还没登场或已去世 → 按普通武将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
-    if (!generalId) return true;
-    const year = scriptYearProvider();
+    if (!generalId || inYearLookup) return true;
+    inYearLookup = true;
+    let year: number | null = null;
+    try {
+        year = scriptYearProvider();
+    } finally {
+        inYearLookup = false;
+    }
     if (year == null) return true;
     if (!isScriptPeriod()) return true;
     const life = GENERAL_LIFE_YEARS[generalId];

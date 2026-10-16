@@ -8116,6 +8116,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 0
+        },
+        "/assets/CENTRAL_ASIA/sute_sipitaminisi.png": {
+            "scale": 1.05,
+            "offsetX": 0,
+            "offsetY": -6
         }
     },
     "folderGuides": {
