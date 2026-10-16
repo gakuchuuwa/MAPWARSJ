@@ -36,7 +36,7 @@ for (const extras of Object.values(CITY_WONDER_EXTRA)) {
 
 // 真实显示入口二：关隘在战略地图及 ZOOM13 会调用 resolveCastleAsset（**必须带 cityId**）。
 // 🔴 [2026-10-05 修尺子] 原来这里只喂 `('', factionId, region)`——漏了第 4 个参数 `cityId`，
-//    而 `resolveCastleAsset` 第一句就是 `REP_59_CITY_CASTLES[cityId]` 优先；
+//    而 `resolveCastleAsset` 第一句就是 `REP_CITY_CASTLES[cityId]` 优先；
 //    更要命的是**只挑了 type==='pass' 的城**，中城/小城/大城一律不算，
 //    于是雅典(ATHENIANS_)/布拉格(BOHE_)/布达佩斯(MAGY_)/巴卡塔(MUIS_)/朱罗(PURU_) 等
 //    **明明已按势力挂好**的城堡全被判「不可达」。改：所有城、按游戏同一签名算。

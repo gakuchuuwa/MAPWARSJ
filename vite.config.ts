@@ -1291,7 +1291,7 @@ export default defineConfig({
                 // 🔴 [2026-09-15 主人定「添加一个军团改名」]
                 //   /api/rename-legion   body: { oldName, newName }
                 //   一个军团名在三个地方各存一份，改名必须**三处同改**，漏一处就裂成两支：
-                //     ① src/data/level3CustomLegions.ts / level2Civ59Legions.ts  `name: 'X'`  军团自己那条记录
+                //     ① src/data/level3CustomLegions.ts / level2Civ62Legions.ts  `name: 'X'`  军团自己那条记录
                 //     ② src/data/FactionCompositions.ts                          `legionName: "X"`  势力专属归属
                 //     ③ src/types/CultureFormations.ts                           `REGION: 'X'`  文化区默认指针
                 //   一级 16 母体是底座（与 delete-legion 同口径），不许改名；
@@ -1319,7 +1319,7 @@ export default defineConfig({
                             if (BASE_16_LEGION_TO_REGION[oldName]) throw new Error('一级 16 母体军团是底座，不可改名');
                             if (BASE_16_LEGION_TO_REGION[newName]) throw new Error('【' + newName + '】是一级 16 母体军团名，不能占用');
 
-                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ62Legions.ts');
                             const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
                             const pf = path.resolve(__dirname, 'src/data/FactionCompositions.ts');
                             const pc = path.resolve(__dirname, 'src/types/CultureFormations.ts');
@@ -1383,7 +1383,7 @@ export default defineConfig({
                 // 🔴 [2026-09-16 主人定「添加一个功能，新建军团。一律属于三级」]
                 //   /api/create-legion
                 //   body: { legionName, formationMode, slots, parentLegion, shipId, regions? }
-                //   新建的军团**一律进三级表**（一级 16 母体与二级 59 文明是定数，只能改不能增）。
+                //   新建的军团**一律进三级表**（一级 16 母体与二级 62 文明是定数，只能改不能增）。
                 //   ⚠️ 必须把 parentLegion / shipId 一起写进去：`Level3LegionDef` 里这两个是必填，
                 //      少写一个 tsc 就红（原来 serverSaveOrCreateLegion 的兜底新建正是漏了它们）。
                 // ========================================================
@@ -1409,19 +1409,19 @@ export default defineConfig({
                             if (!shipId) throw new Error('缺少战船 shipId');
                             // 撞名：三层都不许重（一个军团名只能有一种编制）
                             if (BASE_16_LEGION_TO_REGION[legionName]) throw new Error('【' + legionName + '】是一级 16 母体军团名，不能占用');
-                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ62Legions.ts');
                             if (safeReadFileSync(p2).includes("name: '" + legionName + "'")) {
-                                throw new Error('【' + legionName + '】已被二级 59 文明军团占用');
+                                throw new Error('【' + legionName + '】已被二级 62 文明军团占用');
                             }
                             const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
                             const text = safeReadFileSync(p3);
                             if (text.includes("name: '" + legionName + "'")) {
                                 throw new Error('三级表里已经有【' + legionName + '】了');
                             }
-                            // 归属军团必须真实存在（一级 16 或二级 59），否则回落安置会指向空气
+                            // 归属军团必须真实存在（一级 16 或二级 62），否则回落安置会指向空气
                             const parentOk = !!BASE_16_LEGION_TO_REGION[parentLegion]
                                 || safeReadFileSync(p2).includes("name: '" + parentLegion + "'");
-                            if (!parentOk) throw new Error('归属军团【' + parentLegion + '】不在一级 16 / 二级 59 里');
+                            if (!parentOk) throw new Error('归属军团【' + parentLegion + '】不在一级 16 / 二级 62 里');
                             markLegionSaveWrite();
                             const at = text.lastIndexOf('];', text.indexOf('export const LEVEL_3_LEGION_MAP'));
                             if (at < 0) throw new Error('level3CustomLegions.ts 结构异常，无法新建军团');
@@ -1455,7 +1455,7 @@ export default defineConfig({
                 //   /api/delete-legion   body: { legionName }
                 //   删除**军团本身那条记录**。原来的删除只解开了势力和文化区的挂靠，
                 //   军团记录还留在表里，于是「删了还在、还报无人套用」。
-                //   一级 16 母体（底座）和二级 59（定数）不许删，只删三级。
+                //   一级 16 母体（底座）和二级 62（定数）不许删，只删三级。
                 // ========================================================
                 server.middlewares.use('/api/delete-legion', (req, res) => {
                     if (req.method !== 'POST') {
@@ -1472,9 +1472,9 @@ export default defineConfig({
                             if (!legionName) throw new Error('缺少军团名');
                             if (BASE_16_LEGION_TO_REGION[legionName]) throw new Error('一级 16 母体军团是底座，不可删除');
                             markLegionSaveWrite();
-                            const p2 = path.resolve(__dirname, 'src/data/level2Civ59Legions.ts');
+                            const p2 = path.resolve(__dirname, 'src/data/level2Civ62Legions.ts');
                             if (safeReadFileSync(p2).includes("name: '" + legionName + "'")) {
-                                throw new Error('二级 59 文明军团是定数，不可删除');
+                                throw new Error('二级 62 文明军团是定数，不可删除');
                             }
                             const p3 = path.resolve(__dirname, 'src/data/level3CustomLegions.ts');
                             const text = safeReadFileSync(p3);
@@ -1509,7 +1509,7 @@ export default defineConfig({
                 //   /api/save-legion-composition
                 //   body: { legionName, formationMode, slots }
                 //   干且只干一件事：把这支军团的编制写进**它自己那条记录**
-                //   （一级 16 母体 / 二级 59 文明 / 三级自建，按名自动判层；
+                //   （一级 16 母体 / 二级 62 文明 / 三级自建，按名自动判层；
                 //    名字是新的就在三级表里新建一条）。
                 //   不碰文化区指针、不碰势力表、没有「全体同步」——
                 //   编制只有一份，用它的势力自然跟着变，没有第二份要同步。
@@ -1543,7 +1543,7 @@ export default defineConfig({
                 });
                 // ========================================================
                 //   /api/save-legion-ship   body: { legionName, shipId }
-                //   只改这一支军团的战船 shipId（二级 59 / 三级表；一级母体另走 BASE_16_TIERS_MAP）。
+                //   只改这一支军团的战船 shipId（二级 62 / 三级表；一级母体另走 BASE_16_TIERS_MAP）。
                 // ========================================================
                 server.middlewares.use('/api/save-legion-ship', (req, res) => {
                     if (req.method !== 'POST') {
@@ -1570,13 +1570,13 @@ export default defineConfig({
                                 if (out) { safeWriteFileSync(p, out); written = true; }
                             }
                             if (!written) {
-                                for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
+                                for (const rel of ['src/data/level2Civ62Legions.ts', 'src/data/level3CustomLegions.ts']) {
                                     const p = path.resolve(__dirname, rel);
                                     const out = serverReplaceLegionShip(safeReadFileSync(p), legionName, shipId);
                                     if (out) { safeWriteFileSync(p, out); written = true; break; }
                                 }
                             }
-                            if (!written) throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存战船');
+                            if (!written) throw new Error('军团【' + legionName + '】不在一级16 / 二级62 / 三级表里，无法保存战船');
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true }));
                             console.log('[SaveLegionShip] ✅ 【' + legionName + '】shipId → ' + shipId);
@@ -1643,7 +1643,7 @@ export default defineConfig({
                         try {
                             const data = JSON.parse(body);
                             markLegionSaveWrite();
-                            // 🔴 [2026-09-14] 文化表已删：编制写进该军团自己的表（一级16 / 二级59 / 三级），
+                            // 🔴 [2026-09-14] 文化表已删：编制写进该军团自己的表（一级16 / 二级62 / 三级），
                             //    文化区这边只更新「默认挂哪支军团」这个指针。
                             //    同名军团天然只有一份编制，不必再逐个 alsoCultures 覆盖编制。
                             const legionName: string = data.legionName;
@@ -1718,7 +1718,7 @@ export default defineConfig({
                 //   body: { legionName, layer: '二级' | '三级', buildingStyle }
                 //   建筑文化是军团自己的属性（不是编制）：写进它那条记录即可，
                 //   所有使用该军团的势力/文化区自动跟着变，不需要三处同步。
-                //   二级 → src/data/level2Civ59Legions.ts；三级 → src/data/level3CustomLegions.ts
+                //   二级 → src/data/level2Civ62Legions.ts；三级 → src/data/level3CustomLegions.ts
                 //   一级 16 母体的风格由母体决定、四级剧本军团无此字段 —— 一律拒绝并说明原因。
                 //   自检：军团名必须**恰好出现一次**，其后能取到 buildingStyle，且花括号平衡，否则整个不写。
                 // ========================================================
@@ -1745,7 +1745,7 @@ export default defineConfig({
                             const file = layer === '三级'
                                 ? path.resolve(__dirname, 'src/data/level3CustomLegions.ts')
                                 : layer === '二级'
-                                    ? path.resolve(__dirname, 'src/data/level2Civ59Legions.ts')
+                                    ? path.resolve(__dirname, 'src/data/level2Civ62Legions.ts')
                                     : '';
                             if (!file) {
                                 res.statusCode = 400;
@@ -3221,7 +3221,7 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
     lines.push(` * 🔴 [2026-09-14 主人定] 本表**只存指针，不存编制**：一条只回答「这个势力挂哪支军团」。`);
     lines.push(` *   编制在三层军团表里，一支军团一份：`);
     lines.push(` *     一级 16 母体 → CultureFormations.ts 的 BASE_16_TIERS_MAP`);
-    lines.push(` *     二级 59 文明 → level2Civ59Legions.ts`);
+    lines.push(` *     二级 62 文明 → level2Civ62Legions.ts`);
     lines.push(` *     三级 145 自建 → level3CustomLegions.ts`);
     lines.push(` *   不许再往这里写 slots / formationMode。`);
     lines.push(` */`);
@@ -3256,7 +3256,7 @@ function serverFormatFactionCompositions(compositions: Record<string, any>): str
 /**
  * 🔴 [2026-09-14 主人定「文化表全部清除」] 按**军团名**把编制写进它自己的表：
  *   一级 16 母体 → `src/types/CultureFormations.ts` 的 `XXX_BASE_TIERS` + `BASE_16_TIERS_MAP`
- *   二级 59 文明 → `src/data/level2Civ59Legions.ts`
+ *   二级 62 文明 → `src/data/level2Civ62Legions.ts`
  *   三级 自建   → `src/data/level3CustomLegions.ts`
  * 原来是往 `CULTURE_TIERS_MAP` / `CULTURE_FORMATION_MODE` 里按文化区写，
  * 那两张表（连同 183 个 `XXX_TIERS`）已整体删除，再往那儿写就是写进空气。
@@ -3350,7 +3350,7 @@ function serverReplaceLegionEntry(text: string, legionName: string, slots: any[]
     return out;
 }
 
-/** 只替换一支军团的战船 shipId（二级 59 / 三级表；一级 16 母体的 shipId 在 BASE_16_TIERS_MAP，另走） */
+/** 只替换一支军团的战船 shipId（二级 62 / 三级表；一级 16 母体的 shipId 在 BASE_16_TIERS_MAP，另走） */
 function serverReplaceLegionShip(text: string, legionName: string, shipId: string): string | null {
     const at = text.indexOf("name: '" + legionName + "'");
     if (at < 0) return null;
@@ -3596,12 +3596,12 @@ function serverSaveLegionComposition(
         }
         return { file: p, cultureFormationsText: text };
     }
-    for (const rel of ['src/data/level2Civ59Legions.ts', 'src/data/level3CustomLegions.ts']) {
+    for (const rel of ['src/data/level2Civ62Legions.ts', 'src/data/level3CustomLegions.ts']) {
         const p = path.resolve(__dirname, rel);
         const out = serverReplaceLegionEntry(safeReadFileSync(p), legionName, slots, mode);
         if (out) { safeWriteFileSync(p, out); return { file: p }; }
     }
-    throw new Error('军团【' + legionName + '】不在一级16 / 二级59 / 三级表里，无法保存编制');
+    throw new Error('军团【' + legionName + '】不在一级16 / 二级62 / 三级表里，无法保存编制');
 }
 
 /** 

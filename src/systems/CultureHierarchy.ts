@@ -1,13 +1,14 @@
 /**
- * CultureHierarchy.ts — 建筑风格「16 母体 + 59 文明 + 3 专属定制」三级架构权威真理源
+ * CultureHierarchy.ts — 建筑风格「16 母体 + 62 文明 + 4 专属定制」三级架构权威真理源
  *
- * 🔴 [2026-09-18 主人定死]「59+3都是从16种分化出来的，所有据点都要有16的分类。
+ * 🔴 [2026-09-18 主人定死]「62+3都是从16种分化出来的，所有据点都要有16的分类。
  *    http://localhost:5173/_citytest.html，和这个程序要对上，要同步，要符合历史。」
+ *    （2026-10-16 注：定死这句时二级是 59；现为 62。专属定制原写 3 套，现为 4 套 —— 见第三层。）
  *
  * 与 public/_citytest.html 保持 100% 相同数据源与层级：
  * - 一层 16：16 套基础建筑母体（城墙与城镇基础素材）
- * - 二层 59：59 座文明专属城堡（用于险要 pass 与代表据点）
- * - 三层 3：3 套自建专属定制（吐蕃 TIBET、西域 WESTERN、漠北蒙古 MOBEI_MONGOL）
+ * - 二层 62：62 座文明专属城堡（用于险要 pass 与代表据点）
+ * - 三层 4：4 套自建专属定制（吐蕃 TIBET、西域 WESTERN、漠南鲜卑 XIANBEI、古典希腊 GREECE）
  */
 
 
@@ -60,8 +61,8 @@ export interface CultureGroup {
     branches: CultureBranch[];
 }
 
-/** 59 套文明与建筑风格分支（按 16 大建筑母体归类，严格 59 套，与 _citytest.html 100% 对齐） */
-export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
+/** 62 套文明与建筑风格分支（按 16 大建筑母体归类，严格 62 套，与 _citytest.html 100% 对齐） */
+export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
     {
         group: '🏯 ASIA 东亚 (9套)',
         deStyle: 'ASIA',
@@ -97,7 +98,7 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
             { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3', label: '🛡️ 哥特（蛮族厚重石堡）' },
             // 🔴 [2026-10-05 主人令「二级一共62个，就是DE中可以玩的62个文明，请整合」] DE 三个新文明补入本表：
             //   此前只在二级军团表与城堡表登记，本表漏登记。DE hud_style：Saxons=CivWest、Danes/Varangians=CivNord
-            //   （项目把 VIKINGS 归 WEST 同口径）—— 补后本表 59+3=62，与 DE 可玩文明数严格相等。
+            //   （项目把 VIKINGS 归 WEST 同口径）—— 补后本表共 62 套，与 DE 可玩文明数（实测 62）严格相等。
             { key: 'SAXONS',      deStyle: 'WEST', castle: 'SAXO_CASTLE_AGE3', label: '🛡️ 撒克逊（石木混筑塔堡）' },
             { key: 'DANES',       deStyle: 'WEST', castle: 'DANE_CASTLE_AGE3', label: '🛡️ 丹麦（圆塔木石堡）' },
             { key: 'VARANGIANS',  deStyle: 'WEST', castle: 'VARA_CASTLE_AGE3', label: '🛡️ 瓦良格（诺斯山形屋顶要塞）' },
@@ -235,7 +236,7 @@ export const CULTURE_59_GROUPS: readonly CultureGroup[] = [
     },
 ];
 
-/** 第三层专属定制风格（3 套自建，与 _citytest.html 完全对齐） */
+/** 第三层专属定制风格（4 套自建，与 _citytest.html 完全对齐） */
 export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
     {
         group: '🏔️ 青藏高原与高原专属宗堡',
@@ -276,10 +277,10 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
     },
 ];
 
-/** 全量分支字典 key → CultureBranch（含 59 文明 + 3 专属） */
+/** 全量分支字典 key → CultureBranch（含 62 文明 + 4 专属） */
 export const ALL_BRANCHES_MAP: Record<string, CultureBranch> = {};
 
-for (const g of CULTURE_59_GROUPS) {
+for (const g of CULTURE_62_GROUPS) {
     for (const b of g.branches) ALL_BRANCHES_MAP[b.key] = b;
 }
 for (const g of LAYER3_CUSTOM_GROUPS) {
@@ -317,7 +318,7 @@ export function toBase16Style(code?: string | null): Base16StyleKey | null {
     const upper = code.trim().toUpperCase();
     // 1. 直通 16 母体
     if (BASE16_STYLES.some(s => s.key === upper)) return upper as Base16StyleKey;
-    // 2. 查 59+3 分支字典
+    // 2. 查 62+3 分支字典
     const b = ALL_BRANCHES_MAP[upper];
     if (b) return b.deStyle;
     // 3. 处理带时代后缀的区域（如 TIBET_IMPERIAL / CENTRAL_ASIA_CASTLE / STEPPE_FEUDAL）
@@ -335,9 +336,9 @@ export interface CityBase16Resolution {
     base16Name: string;
     /** 16 母体 Emoji */
     base16Emoji: string;
-    /** 二层59文明或三层3自建分支 key（若有） */
+    /** 二层62文明或三层3自建分支 key（若有） */
     branchKey: string | null;
-    /** 二层59文明或三层3自建分支标签中文名（若有） */
+    /** 二层62文明或三层3自建分支标签中文名（若有） */
     branchName: string | null;
     /** 完整展示标签（如：东亚 ASIA · 江南 JIANGNAN） */
     displayLabel: string;

@@ -226,7 +226,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
 
     NORTH: 'WEI_CASTLE_AGE3',               // 北方：河朔高台（主人 2026-09-11 定：中原北方套河朔）
     JIANGNAN: 'WU_CASTLE_AGE3',              // 江南：水榭坞堡
-                   // 巴蜀：BASHU 不在 RegionType 枚举，走 59 支兜底 → SHU_CASTLE_AGE3 巴蜀高台阙楼
+                   // 巴蜀：BASHU 不在 RegionType 枚举，走 62 支兜底 → SHU_CASTLE_AGE3 巴蜀高台阙楼
     HEXI: 'KHIT_CASTLE_AGE3',               // 河西：主人定，沿用黑水城形制
 
     NORTHEAST: 'JURC_CASTLE_AGE3',           // 东北：金代居庸关
@@ -668,10 +668,12 @@ export const BRANCH_CASTLE: Record<string, string> = {
 };
 
 /**
- * 59 个代表据点与 59 文明专属城堡对应表（2026-09-14 主人定）
- * 大地图 59 个文明专属城堡与代表据点中心城堡一一对应。
+ * 代表据点 ↔ 文明专属城堡对应表（2026-09-14 主人定；2026-10-16 校正计数）
+ * 当前本表 **59 条**（古典 13 + 封建 13 + 城堡 29 + 帝国 4）。
+ * ⚠️ 二级文明现为 **62 支**，尚有 3 支（封建 2、城堡 1）未配代表据点 —— 这是待补的数据缺口，
+ *    不是「文明只有 59 个」（DE 可玩文明实测 62）。
  */
-export const REP_59_CITY_CASTLES: Readonly<Record<string, string>> = {
+export const REP_CITY_CASTLES: Readonly<Record<string, string>> = {
     // ── 古典时代 (13 座) ──
     city_luoyang: 'CHIN_CASTLE_AGE3',                 // 中国（洛阳）：北方华北·汉唐城楼
     city_chengdu: 'SHU_CASTLE_AGE3',                  // 巴蜀（成都）：高台斗拱望楼
@@ -748,8 +750,8 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
         const b = ALL_BRANCHES_MAP[buildingStyle];
         if (b) return b.castle;
     }
-    if (cityId && REP_59_CITY_CASTLES[cityId]) {
-        return REP_59_CITY_CASTLES[cityId];
+    if (cityId && REP_CITY_CASTLES[cityId]) {
+        return REP_CITY_CASTLES[cityId];
     }
     if (factionId) {
         const byFaction = FACTION_CASTLE[factionId];
@@ -758,7 +760,7 @@ export function resolveCastleAsset(style: string, factionId?: string | null, reg
     if (region) {
         const byRegion = REGION_CASTLE[region as RegionType];
         if (byRegion) return byRegion;
-        // 59 支兜底：region → 建筑分支 → 专属城堡
+        // 62 支兜底：region → 建筑分支 → 专属城堡
         const branch = REGION_TO_BRANCH[region];
         if (branch && BRANCH_CASTLE[branch]) return BRANCH_CASTLE[branch];
     }

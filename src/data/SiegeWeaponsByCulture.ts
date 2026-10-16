@@ -26,7 +26,7 @@
  */
 import type { RegionType } from '../systems/RegionSystem';
 import { CULTURE_LEGION_NAMES } from '../types/CultureFormations';
-import { LEVEL_2_CIV_59_LEGIONS } from './level2Civ59Legions';
+import { LEVEL_2_CIV_62_LEGIONS } from './level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from './level3CustomLegions';
 import { GENERAL_ERA } from './GeneralEra';
 import { GENERAL_CENTURIES } from './GeneralCenturies';
@@ -133,7 +133,7 @@ function getBaseLegionName(region: string): string {
 
 const REGION_LEGION_FALLBACK: Readonly<Record<string, string>> = (() => {
     const m: Record<string, string> = {};
-    for (const L of LEVEL_2_CIV_59_LEGIONS) if (!m[String(L.region)]) m[String(L.region)] = L.name;
+    for (const L of LEVEL_2_CIV_62_LEGIONS) if (!m[String(L.region)]) m[String(L.region)] = L.name;
     for (const L of LEVEL_3_LEGIONS) for (const r of L.regions) if (!m[r]) m[r] = L.name;
     return m;
 })();
@@ -167,12 +167,12 @@ export function generalSiegeAge(generalId: string): SiegeAge | null {
 }
 
 /**
- * 78 种势力军团攻城武器配置表（16母体各时代 + 59二级 + 3三级专属）。
+ * 78 种势力军团攻城武器配置表（16母体各时代 + 62二级 + 3三级专属）。
  * 每支军团严格 9 辆攻城武器，严格包含破门冲车，每种选配武器数量严格 >= 2，全局 34 种武器无遗漏且每样使用 >= 2 次。
  */
 export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: string[] }> = {
     // ══════════════════════════════════════════════════════════════════════
-    // 一、二级 59 文明专属军团
+    // 一、二级 62 文明专属军团
     // ══════════════════════════════════════════════════════════════════════
 
     // ── 1. 古典时代 (13 支) ──
@@ -784,7 +784,7 @@ const TIBET_CULTURE_KEYS = new Set(['TIBET', 'TIBET_CASTLE', 'TIBET_IMPERIAL']);
  * 攻城战攻方攻城武器发放函数（全游戏 78 种军团攻城武器真源）。
  *
  * 判定链：
- * 1. 优先命中 59 二级文明军团或 3 三级专属自建军团；
+ * 1. 优先命中 62 二级文明军团或 3 三级专属自建军团；
  * 2. 属于 16 母体军团：时代按【主帅成名年代 > 军团名前缀 > 文化区指针】裁决，取对应时代分支；
  * 3. 兜底返回东亚军团古典配置。
  */
@@ -796,7 +796,7 @@ export function getSiegeWeaponsForCulture(
     const key = String(culture);
     const effLegion = legionName || (CULTURE_LEGION_NAMES as Record<string, string>)[key] || REGION_LEGION_FALLBACK[key] || '';
 
-    // 1. 直接命中 59 二级或 3 三级专属军团
+    // 1. 直接命中 62 二级或 3 三级专属军团
     if (effLegion && LEGION_78_SIEGE_MAP[effLegion]) {
         return [...LEGION_78_SIEGE_MAP[effLegion].weapons];
     }

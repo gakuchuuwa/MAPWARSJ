@@ -78,6 +78,7 @@ import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
+import { setScriptYearProvider } from '../data/generalOnStage';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
@@ -338,6 +339,8 @@ export class GameApp {
                 () => this.cityManager.getCities(),
                 () => (this.playerHero?.autoPlan ?? 'melee') === 'script',
             );
+            // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
+            setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
             // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
             //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
             //    唯一一份定义 = `syncScriptOwners()`（年份每场在前进，故开局、切模式、打完一场都要重跑）。

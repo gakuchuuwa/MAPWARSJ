@@ -9,6 +9,7 @@
  */
 
 import type { GeneralProfile } from './types';
+import { isGeneralOnStage } from '../generalOnStage';
 
 
 
@@ -3366,6 +3367,9 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 export function getGeneralProfile(generalId: string | undefined): GeneralProfile | null {
 
     if (!generalId) return null;
+
+    // 🔴 [2026-10-16 主人定] 剧本期不在「登场年～卒年」内 → 按普通武将：无武将技、不算名将（乱斗不受影响）
+    if (!isGeneralOnStage(generalId)) return null;
 
     return GENERAL_PROFILES[generalId] ?? null;
 

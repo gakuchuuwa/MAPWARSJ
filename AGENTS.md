@@ -227,7 +227,7 @@
    已落地先例：`hero_themistocles`（英雄·地米斯托克利）**本身就是完整 16 向战船**，
    已按五处登记升为**「古典时代马其顿军团」的舰队模型**（原 `TRIREME`）：
    ① 兵种表归类 `hero` → **`naval`**（`src/legion-editor/main.ts`；`getShipInfo()` 只认 naval）
-   ② 军团 `shipId: 'HERO_THEMISTOCLES'`（`src/data/level2Civ59Legions.ts`）
+   ② 军团 `shipId: 'HERO_THEMISTOCLES'`（`src/data/level2Civ62Legions.ts`）
    ③ `UNIT_ASSETS['HERO_THEMISTOCLES']` **大写船型键 · 16 向**（小写那份是陆上 8 向，两份并存不冲突）
    ④ `SHIP_SIDE_WIDTH` / `NAVAL_SHIP_CHINESE_NAMES` / `SHIP_EXTRA_WEAPONS`（同型船同值 176 / 中文名 / 撞角）
    ⑤ `NAVAL_OARED_ANIMATED_SHIPS` 里那条大写键（划桨动效）

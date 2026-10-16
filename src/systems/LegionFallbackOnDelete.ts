@@ -2,7 +2,7 @@
  * 三级军团被删除后的**回落安置**（🔴 2026-09-16 主人定）。
  *
  * ── 规则（主人原话）────────────────────────────────────────────
- * 「一级和二级军团的 16+59 是不能被删除的，只有三级军团可以增加和减少。
+ * 「一级和二级军团的 16+62 是不能被删除的，只有三级军团可以增加和减少。
  *   如果三级军团被删除，要给该武将重新安排军团，在重安排军团的时候，
  *   要看每个武将的时代和据点的建筑风格。
  *   如果二级正好有相同时代的军团，就安置；如果没有，就按一级的军团安置。」
@@ -14,8 +14,8 @@
  * ① 谁要重排：`FACTION_COMPOSITIONS` 里 `legionName` 正是被删那支的势力（一家一条）。
  * ② 武将时代：该势力的开局名将（`getFactionGeneral`）→ `GENERAL_ERA`。
  * ③ 据点：该势力名下据点里**城级最高**的一座（`tier` 最小，缺省当 9；并列取表中先出现的），
- *    取它的 `buildingStyle`。建筑风格现在是 75 类（16 母体 + 59 文明），本来就带文明身份。
- * ④ 二级命中：`LEVEL_2_CIV_59_LEGIONS` 里 `region === buildingStyle` 且 `age === 武将时代`。
+ *    取它的 `buildingStyle`。建筑风格现在是 66 种（62 文明 + 4 其它；16 母体是另一套据点分类），本来就带文明身份。
+ * ④ 二级命中：`LEVEL_2_CIV_62_LEGIONS` 里 `region === buildingStyle` 且 `age === 武将时代`。
  *    二级一个 region 只有一支，所以命中即唯一，不存在「同风格同时代多支」的挑选问题。
  * ⑤ 不命中 → 把建筑风格归到 16 母体，安置该母体的一级军团（`BASE16_LEGION_NAMES`）。
  *
@@ -25,7 +25,7 @@
 import { CITIES_V2, type CityDataV2 } from '../data/cities_v2';
 import { resolveCityDeBuildingStyle } from './cityDeStyle';
 import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
-import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
+import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import { BASE16_NAMES, BASE16_OF_REGION, STYLE_TO_BASE16, type Base16Culture } from './CultureBase16';
@@ -67,7 +67,7 @@ export interface FallbackPlan {
  *     漠北蒙古毡帐 46 座 → 【城堡时代蒙古军团】
  *
  * 为什么优先于「二级同时代 → 一级母体」那两级：这三种是三级**专属**风格，
- * 二级 59 里根本没有同 region 的条目，不拦一道就会一路退到一级母体
+ * 二级 62 里根本没有同 region 的条目，不拦一道就会一路退到一级母体
  * （青藏退普鲁军团 / 西域退中亚军团 / 毡帐退东亚军团），与主人口述不符。
  *
  * ⚠️ 保底军团与时代无关 —— 主人指名的就是这三支，别按武将时代另挑一支同族的。
@@ -79,11 +79,11 @@ export const TIER3_FALLBACK_LEGION: Record<'TIBET' | 'WESTERN' | 'YURT', string>
 };
 
 /**
- * 🔴 [2026-09-18 主人定]「16+59+3 的 78 个基础军团不能被删除。这 78 个是武将的保底军团。」
- * 一级 16 与二级 59 服务端本来就拦着（/api/delete-legion）；三级那 3 支保底军团里
+ * 🔴 [2026-09-18 主人定]「16+62+3 的 78 个基础军团不能被删除。这 78 个是武将的保底军团。」
+ * 一级 16 与二级 62 服务端本来就拦着（/api/delete-legion）；三级那 3 支保底军团里
  * 【封建时代吐蕃军团】【古典时代西域军团】登记在三级表，原本是可删的 —— 删了青藏/西域
  * 两种风格的武将就没有军团可接，保底链路当场断掉。此函数给删除入口做闸门。
- * （【城堡时代蒙古军团】本身在二级 59 里，已被服务端拦住。）
+ * （【城堡时代蒙古军团】本身在二级 62 里，已被服务端拦住。）
  */
 export function isBaseFallbackLegion(name: string): boolean {
     return Object.values(TIER3_FALLBACK_LEGION).includes(name);
@@ -113,7 +113,7 @@ export function tier3StyleOfCity(city: CityDataV2): 'TIBET' | 'WESTERN' | 'YURT'
 }
 
 /**
- * 🔴 [2026-09-18] 二级 59：**建筑风格的 key** 与 **二级军团表的 region** 有 6 处不同名，
+ * 🔴 [2026-09-18] 二级 62：**建筑风格的 key** 与 **二级军团表的 region** 有 6 处不同名，
  * 指的是同一个文明（对照 _citytest.html 里那 6 条 label 即可确认）：
  *     KOREA(🏯 高丽)      ↔ GORYEO      【城堡时代高丽军团】
  *     GERMANIC(🛡️ 条顿)   ↔ TEUTONS     【城堡时代条顿军团】
@@ -149,10 +149,10 @@ function pickFactionCity(factionId: string): CityDataV2 | null {
 export function base16OfBuildingStyle(style: string): Base16Culture | null {
     // ① 风格本身就是 16 个 DE 风格之一（ASIA / WEST / MEDI …）
     if (Object.prototype.hasOwnProperty.call(STYLE_TO_BASE16, style)) return STYLE_TO_BASE16[style];
-    // ② 风格是 59 文明之一，且同名文化区在母体表里（JAPAN / WEI / BASHU …）
+    // ② 风格是 62 文明之一，且同名文化区在母体表里（JAPAN / WEI / BASHU …）
     if (Object.prototype.hasOwnProperty.call(BASE16_OF_REGION, style)) return BASE16_OF_REGION[style];
     // ③ 兜到二级表：该文明军团的 deStyle 就是它的 DE 风格
-    const l2 = LEVEL_2_CIV_59_LEGIONS.find((l) => String(l.region) === style);
+    const l2 = LEVEL_2_CIV_62_LEGIONS.find((l) => String(l.region) === style);
     if (l2 && Object.prototype.hasOwnProperty.call(STYLE_TO_BASE16, l2.deStyle)) return STYLE_TO_BASE16[l2.deStyle];
     return null;
 }
@@ -194,7 +194,7 @@ export function resolveFallbackForFaction(factionId: string): FallbackPlanItem |
 
     // 二级：同建筑风格（region）且同时代
     const l2Key = L2_STYLE_ALIAS[style] ?? style;
-    const hit = LEVEL_2_CIV_59_LEGIONS.find((l) => String(l.region) === l2Key && l.age === era);
+    const hit = LEVEL_2_CIV_62_LEGIONS.find((l) => String(l.region) === l2Key && l.age === era);
     if (hit) {
         return {
             ...base,
@@ -241,7 +241,7 @@ export async function applyFallbackPlan(plan: FallbackPlan): Promise<{ ok: numbe
             const res = await fetch('/api/save-faction-legion', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // legionType 跟层级走：一级 16 母体 = 文化军团 'region'；二级 59 = 制定军团 'sub'
+                // legionType 跟层级走：一级 16 母体 = 文化军团 'region'；二级 62 = 制定军团 'sub'
                 body: JSON.stringify({
                     factionId: it.factionId,
                     legionName: it.newLegionName,

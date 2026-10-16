@@ -43,11 +43,11 @@ import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultu
 import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
 import {
     Level2CivLegionDef,
-    LEVEL_2_CIV_59_LEGIONS,
-    LEVEL_2_CIV_59_NAMES,
-    LEVEL_2_CIV_59_MAP,
+    LEVEL_2_CIV_62_LEGIONS,
+    LEVEL_2_CIV_62_NAMES,
+    LEVEL_2_CIV_62_MAP,
     isCivEraLegion,
-} from '../data/level2Civ59Legions';
+} from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
@@ -460,7 +460,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'winged_hussar', name: '波兰翼骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/WINGEDHUSSAR/' },
     { id: 'woad_raider', name: '凯尔特靛蓝突袭者', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/WOADRAIDER/' },
     { id: 'xolotl_warrior', name: '阿兹特克索洛特尔骑兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/XOLOTLWARRIOR/' },
-    { id: 'longswordsman', name: '中东剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },
+    { id: 'longswordsman', name: '长剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/LONGSWORDSMAN/' },
     { id: 'champi_warrior', name: '印加尚皮勇士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIWARRIOR/' },
     { id: 'champi_runner', name: '印加尚皮飞毛腿高级', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPIRUNNER/' },
     { id: 'champi_scout', name: '印加尚皮斥候', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/CHAMPISCOUT/' },
@@ -626,7 +626,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_williamwallace', name: '英雄·威廉·华莱士', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/WILLIAMWALLACE/' },
     { id: 'hero_yodit', name: '英雄·尤迪特', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/YODIT/' },
     { id: 'hero_zhangfei', name: '英雄·张飞', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ZHANGFEI/' },
-    { id: 'manatarms', name: '铁甲剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
+    { id: 'manatarms', name: '重装剑士', category: 'infantry', age: 'feudal', pathPrefix: '/SUCAI/MANATARMS/' },
     { id: 'sunda_royal_fighter', name: '爪哇巽他皇家战士高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SUNDA_ROYAL_FIGHTER/' },
     { id: 'envoy', name: '英雄·柏朗嘉宾', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ENVOY/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 1245–47 教皇派往蒙古汗庭的正式使节，字面意义的「欧洲使者」
     { id: 'lancer', name: '枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
@@ -676,7 +676,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     //    数据：DE dat（geniusutils 实测）+ 官方 zh 串；素材复用 DE 本体同模型目录（DE 自己也是复用）
     { id: 'bandit', name: '强盗', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'heavy_crossbowman', name: '重装弩手', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
-    { id: 'heavy_swordsman', name: '重装剑士', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
+    { id: 'heavy_swordsman', name: '古典重装步兵', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
     { id: 'imperial_legionary', name: '帝国罗马军', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
     { id: 'khan', name: '汗', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },
     { id: 'mounted_samurai', name: '骑马武士', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
@@ -1962,7 +1962,7 @@ const LEGION_ERA_PREFIX: Record<string, UnitAge> = {
 /** 一支军团的时代：**以军团名的时代前缀为准**（作者写死的意图）；
  *  没有前缀的（部分特定军团）才退回按编成里最晚那个兵种推定。 */
 function getLegionEra(legionName: string, slots: Array<{ type: string }>): UnitAge {
-    const l2Def = LEVEL_2_CIV_59_MAP.get(legionName);
+    const l2Def = LEVEL_2_CIV_62_MAP.get(legionName);
     if (l2Def) return l2Def.age;
     const m = legionName.match(/^(古典|封建|城堡|帝国)/);
     if (m) return LEGION_ERA_PREFIX[m[1]];
@@ -2040,12 +2040,12 @@ function fallbackLegionNameOf(r: { region?: RegionType | null; factionName: stri
 /** 🔴 [2026-09-11 主人定] **三级军团分类**（2026-10-02 加四级剧本军团） */
 export type LegionLayer = 'culture' | 'sub' | 'custom';
 
-export { isCivEraLegion, LEVEL_2_CIV_59_LEGIONS, LEVEL_2_CIV_59_NAMES, LEVEL_2_CIV_59_MAP };
+export { isCivEraLegion, LEVEL_2_CIV_62_LEGIONS, LEVEL_2_CIV_62_NAMES, LEVEL_2_CIV_62_MAP };
 export type { Level2CivLegionDef };
 
 /** 🔴 [2026-09-14 主人定] 三级军团分类：
  *  一级 culture：**16 母体文化军团**（`BASE_16_LEGION_NAMES`，与建筑风格一层 16 母体对齐）
- *  二级 sub    ：**文明 × 时代（59 文明专属军团）**（与建筑风格二层 59 文明专属城堡对齐）
+ *  二级 sub    ：**文明 × 时代（62 文明专属军团）**（与建筑风格二层 62 文明专属城堡对齐）
  *  三级 custom ：**其余全部** —— 主人自建 / 延伸出来的军团（已彻底去重） */
 function classifyLegionTab(name: string, _sharedCount: number): LegionLayer {
     if (isBase16CultureLegion(name)) return 'culture';
@@ -2089,8 +2089,8 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
         }
     }
-    // 1.6 二级：59 个文明专属军团（权威定义：59 文明 × 时代专属城堡）
-    for (const l2 of LEVEL_2_CIV_59_LEGIONS) {
+    // 1.6 二级：62 个文明专属军团（权威定义：62 文明 × 时代专属城堡）
+    for (const l2 of LEVEL_2_CIV_62_LEGIONS) {
         if (!map.has(l2.name)) {
             map.set(l2.name, {
                 name: l2.name,
@@ -2101,7 +2101,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 buildingStyle: l2.buildingStyle,
             });
         } else {
-            // 若已有占位（例如来自文化默认），校准为 59 文明权威编制
+            // 若已有占位（例如来自文化默认），校准为 62 文明权威编制
             const existing = map.get(l2.name)!;
             existing.formationMode = l2.formationMode;
             existing.slots = l2.slots.map(s => ({ ...s }));
@@ -2111,7 +2111,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
     }
     /* 1.7 三级：自建 / 延伸军团 —— 🔴 [2026-09-18 主人报障「新建的军团不在第一页显示」「还是不显示呀」]
      *
-     * 病根：本函数原先只登记 ① 16 母体 ② 文化区默认 ③ 59 文明 ④ **被势力用到的军团名**，
+     * 病根：本函数原先只登记 ① 16 母体 ② 文化区默认 ③ 62 文明 ④ **被势力用到的军团名**，
      *   三级表从来没有被整表登记过 —— 一支三级军团只有在「已经有势力在用」时才会从第 2 步溜进来。
      *   于是新建一支还没指派给任何势力的三级军团（如「城堡时代帖木儿军团」），
      *   数据明明已经写进 level3CustomLegions.ts、模块里也读得到，
@@ -2158,9 +2158,9 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         }
         entry.fids.push(row.factionId);
         // 🔴 [2026-09-15 治本] 这里原有一条「势力表副本优先于二级硬表」的分支，已整条删除。
-        //    它 2026-09-14 加进来的前提是「二级 59 表没有任何保存接口能写它」——
+        //    它 2026-09-14 加进来的前提是「二级 62 表没有任何保存接口能写它」——
         //    这个前提**现在是假的**：vite.config 的 serverSaveLegionComposition 会依次尝试
-        //    level2Civ59Legions.ts / level3CustomLegions.ts 并直接写盘（已核对源码）。
+        //    level2Civ62Legions.ts / level3CustomLegions.ts 并直接写盘（已核对源码）。
         //    前提没了，这条分支就只剩害处：它让「势力表里的编制副本」压过军团自己那条记录，
         //    等于给同一个军团名立了第二份权威 —— 正是 [势力表不许存文化军团副本] 那条铁律
         //    禁的东西，副本必漂移。女真裂成两种编制就是它放行的。
@@ -2188,7 +2188,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
 
 /** 取三层军团的全部可选军团
  *  一级 culture：16 母体文化军团
- *  二级 sub    ：文明 × 时代（59 DE 文明 × 4 时代）
+ *  二级 sub    ：文明 × 时代（62 DE 文明 × 4 时代）
  *  三级 custom ：其余全部（主人自建 / 延伸军团） */
 function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): LayerLegionOption[] {
     const all = getAllDistinctLegions();
@@ -2226,7 +2226,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
         const row = fid ? allRows.find(r => r.factionId === fid) : undefined;
         const regLabel = row?.regionLabel || (entry.region ? (REGION_LABELS[entry.region] || entry.region) : '');
         const countText = entry.fids.length ? `${entry.fids.length} 势力` : (layer === 'sub' ? '文明默认' : '文化默认');
-        const l2Def = LEVEL_2_CIV_59_MAP.get(entry.name);
+        const l2Def = LEVEL_2_CIV_62_MAP.get(entry.name);
         const icon = layer === 'sub' ? '🏰' : '⭐';
         const label = `${icon} ${entry.name} (${regLabel ? `${regLabel} · ` : ''}${countText})`;
         const castlePrefix = l2Def ? `🏰 ${l2Def.castleName} · ` : '';
@@ -2253,7 +2253,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
 /** 层全名（信息卡 / 步骤标题用） */
 const LAYER_FULL_LABEL: Record<LegionLayer, string> = {
     culture: '一级：文化军团（16 母体）',
-    sub: '二级：文明 × 时代（59 文明）',
+    sub: '二级：文明 × 时代（62 文明）',
     custom: '三级：自定义军团',
 };
 
@@ -3153,7 +3153,7 @@ function renderEditPanel(row: FactionLegionRow): void {
           <div class="le-layer-title">🏛️ 一级：文化军团（16 母体） <span style="color:#e0c888;">${legionCounts.culture}</span></div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'sub' ? 'active' : ''}" data-legiontab="sub">
-          <div class="le-layer-title">⭐ 二级：文明 × 时代（59 文明） <span style="color:#e0c888;">${legionCounts.sub}</span></div>
+          <div class="le-layer-title">⭐ 二级：文明 × 时代（62 文明） <span style="color:#e0c888;">${legionCounts.sub}</span></div>
         </button>
         <button type="button" class="le-layer-btn ${selectedLayerTab === 'custom' ? 'active' : ''}" data-legiontab="custom">
           <div class="le-layer-title">✍️ 三级：自建军团 <span style="color:#e0c888;">${legionCounts.custom}</span></div>
@@ -3673,7 +3673,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
           })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
-        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此三级军团；用它的势力按「武将时代 + 据点建筑风格」重新安置：二级有同时代的就进二级，没有就退该风格的母体一级军团（一级 16 与二级 59 不可删）">🗑</button>` : ''}
+        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此三级军团；用它的势力按「武将时代 + 据点建筑风格」重新安置：二级有同时代的就进二级，没有就退该风格的母体一级军团（一级 16 与二级 62 不可删）">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
@@ -3765,13 +3765,13 @@ function computeLegionNameViolations(): string[] {
         nameFactions.get(e.name)!.push(e.factionName);
     }
 
-    // 🔴 [2026-09-14 主人定] 基准预设对照：一级母体文化军团与二级59文明军团基准编制检查。
+    // 🔴 [2026-09-14 主人定] 基准预设对照：一级母体文化军团与二级62文明军团基准编制检查。
     //    凡势力使用了系统预设的军团名，其实际编制必须与该军团的系统基准编制一致；
     //    若有势力使用了该军团名但编制与基准不符，必须即刻报错。
     const distinctMap = getAllDistinctLegions();
     for (const [distName, distDef] of distinctMap.entries()) {
         const isBase16 = BASE_16_REGIONS.some(rg => getBase16LegionName(rg as RegionType) === distName);
-        const isLevel2 = LEVEL_2_CIV_59_NAMES.has(distName);
+        const isLevel2 = LEVEL_2_CIV_62_NAMES.has(distName);
         if (!isBase16 && !isLevel2) continue;
 
         // 🔴 [2026-09-14 修] 这里原本自己拼 `mode:typexN+…`，而势力那边的 `e.sig` 是
@@ -3826,10 +3826,10 @@ function computeLegionNameViolations(): string[] {
     for (const entry of getAllDistinctLegions().values()) {
         for (const s of entry.slots) usedUnitTypes.add(s.type);
     }
-    // 二级 59 文明军团的**权威硬表**也要算：势力存过自己的副本时，
+    // 二级 62 文明军团的**权威硬表**也要算：势力存过自己的副本时，
     // getAllDistinctLegions 会优先显示副本（见上面「二级军团编制存不住」那处修复），
     // 硬表里的兵种就被遮住了 —— 但它确确实实写在一支军团的编制里，不算「没套用」。
-    for (const l2 of LEVEL_2_CIV_59_LEGIONS) {
+    for (const l2 of LEVEL_2_CIV_62_LEGIONS) {
         for (const s of l2.slots) usedUnitTypes.add(s.type);
     }
     for (const r of allRows) {
@@ -3852,7 +3852,7 @@ function computeLegionNameViolations(): string[] {
         if (n) legionUsers.set(n, (legionUsers.get(n) ?? 0) + 1);
     }
     for (const [label, names] of [
-        ['二级', LEVEL_2_CIV_59_NAMES as ReadonlySet<string>],
+        ['二级', LEVEL_2_CIV_62_NAMES as ReadonlySet<string>],
         ['三级', LEVEL_3_LEGION_NAMES as ReadonlySet<string>],
     ] as const) {
         const unused = [...names].filter(n => !legionUsers.has(n));

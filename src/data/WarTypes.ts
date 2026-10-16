@@ -69,7 +69,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     aztec_raider: { name: '阿兹特克突袭者高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
     siege_elephant: { name: '攻城战象', cls: 'melee', sz: 1, aoe: true, hp: 220, atk: 4, meleeArmor: -2, pierceArmor: 150, rng: 0, reload: 3.0, spd: 24, dmgType: 'melee', bonus: { 11: 105 }, armorTags: [5, 8, 20, 17, 31] },
 
-    manatarms: { name: '铁甲剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
+    manatarms: { name: '重装剑士', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     sunda_royal_fighter: { name: '爪哇巽他皇家战士高级', cls: 'melee', sz: 1, hp: 90, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 29: 2, 21: 1 }, armorTags: [1, 31] },
     envoy: { name: '英雄·柏朗嘉宾', cls: 'cav', sz: 1, hp: 250, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', armorTags: [8, 31] },
     scout_cavalry: { name: '斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
@@ -357,7 +357,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     winged_hussar: { name: '波兰翼骑兵高级', cls: 'cav', sz: 1, hp: 80, atk: 9, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 1.9, spd: 60, dmgType: 'melee', bonus: { 23: 4, 25: 14 }, armorTags: [8, 31] },
     woad_raider: { name: '凯尔特靛蓝突袭者', cls: 'melee', sz: 1, hp: 70, atk: 11, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 47, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     xolotl_warrior: { name: '阿兹特克索洛特尔骑兵高级', cls: 'cav', sz: 1, hp: 100, atk: 10, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
-    longswordsman: {name:"中东剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},
+    longswordsman: {name:"长剑士",cls:"melee",sz:1,hp:60,atk:9,meleeArmor:1,pierceArmor:1,rng:0,reload:2,spd:45,dmgType:"melee",bonus:{29:6,21:3},armorTags:[1,31]},
     champi_warrior: { name: '印加尚皮勇士',cls:"melee",sz:1,hp:55,atk:9,meleeArmor:0,pierceArmor:3,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,21:2,20:3},armorTags:[1,31]},
     champi_runner: { name: '印加尚皮飞毛腿高级',cls:"melee",sz:1,hp:40,atk:5,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 44,dmgType:"melee",bonus:{29:1,20:2},armorTags:[1,31]},
     champi_scout: { name: '印加尚皮斥候',cls:"melee",sz:1,hp:35,atk:3,meleeArmor:0,pierceArmor:2,rng:0,reload:2,spd: 40,dmgType:"melee",bonus:{29:3,8:1,30:1,20:2},armorTags:[1,31]},
@@ -570,7 +570,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     // ── 2026-10-16 补 9 个未收录兵种的战术属性（同样取自 DE dat）──
     bandit: { name: '强盗', cls: 'melee', sz: 1, hp: 75, atk: 10, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 1, spd: 38, dmgType: 'melee', armorTags: [31, 36] },
     heavy_crossbowman: { name: '重装弩手', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 36, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
-    heavy_swordsman: { name: '重装剑士', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2, spd: 38, dmgType: 'melee', armorTags: [1, 31] },
+    heavy_swordsman: { name: '古典重装步兵', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2, spd: 38, dmgType: 'melee', armorTags: [1, 31] },
     imperial_legionary: { name: '帝国罗马军', cls: 'melee', sz: 1, hp: 75, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 36, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
     khan: { name: '汗', cls: 'cav', sz: 1, hp: 160, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 160, reload: 2.1, spd: 58, dmgType: 'pierce', bonus: { 20: 5, 27: 1, 39: -3 }, armorTags: [8, 15, 19, 28, 31] },
     mounted_samurai: { name: '骑马武士', cls: 'cav', sz: 1, hp: 130, atk: 14, meleeArmor: 3, pierceArmor: 5, rng: 0, reload: 1.75, spd: 54, dmgType: 'melee', bonus: { 19: 12, 39: -3 }, armorTags: [8, 19, 31] },

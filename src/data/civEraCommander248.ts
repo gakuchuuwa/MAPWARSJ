@@ -84,7 +84,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '丹麦': { antiquity: ['hero_ulf', 'hero_harald'], feudal: ['hero_ulf', 'hero_harald'], castle: ['hero_ulf', 'hero_harald'], imperial: ['hero_ulf', 'hero_harald'] },
 };
 
-/** 据点建筑风格键 → 二级文明名（二级 59 + 三级 3 = 62）。一级母体键（ASIA / SLAV / WEST …）不在这里。 */
+/** 据点建筑风格键 → 二级文明名（二级 62 + 三级 3 = 62）。一级母体键（ASIA / SLAV / WEST …）不在这里。 */
 const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
     JAPAN: '日本', CENTRAL: '华夏', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '鲜卑漠南', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特',

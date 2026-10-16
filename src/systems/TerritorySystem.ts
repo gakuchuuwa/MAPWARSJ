@@ -23,7 +23,7 @@ import { GridSystem } from '../systems/GridSystem';
 import { OrientationSystem } from '../core/OrientationSystem';
 // import { GameConfig } from '../config/GameConfig';
 import { getCityRegion, type RegionType } from './RegionSystem';
-import { resolveCastleAsset, REP_59_CITY_CASTLES } from '../config/deCastleAssets';
+import { resolveCastleAsset, REP_CITY_CASTLES } from '../config/deCastleAssets';
 import { DE_SPRITE_ANCHOR, DE_SPRITE_BOX_W } from './battlefield/deSpriteSizes';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { roadRegistry } from '../roads/RoadRegistry';
@@ -1447,9 +1447,9 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-14 主人令「和其他一切无关」] 日本／青藏只看建筑风格，不再看 region
     const isJapan = city.buildingStyle === 'JAPAN';
     const isTibet = city.buildingStyle === 'TIBET';
-    const isRep52City = !!REP_59_CITY_CASTLES[city.id] && city.type !== 'pass';
+    const isRep52City = !!REP_CITY_CASTLES[city.id] && city.type !== 'pass';
     // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
-    //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
+    //    （原来只有日本/青藏文化区与代表名城名册里的城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
     // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
     //    ⇒ 小城（small_city）一律不画居中城堡（原口径下 64 座小城有：名册 9 + 日本 14 + 青藏 41）；
     //      小城若确有著名城堡，走「**特殊建筑（城内奇观）**」那条路（`src/data/CityWonders.ts`）。
@@ -2484,7 +2484,7 @@ export class TerritorySystem {
      *
      * 本方法把**据点自己那套组装**原样借出去给 `BattlefieldLayer` 用 ——
      * 样式判据（`resolveCityDeBuildingStyle`）、城墙石/木（`shouldUseStoneWall`）、
-     * 中心城堡（日本/青藏/59 文明）与四种组装（大城/中城/险要/小城/城寨）
+     * 中心城堡（日本/青藏/62 文明）与四种组装（大城/中城/险要/小城/城寨）
      * **一个字都没复制**，全走 `renderSingleCity` 正在用的同一批函数，
      * 因此战场上的砦与真正的据点在图上长得一模一样、且以后改据点样式两边一起变。
      *
@@ -2513,9 +2513,9 @@ export class TerritorySystem {
         const isJapan = !!region?.includes('JAPAN');
         const isTibet = !!region?.includes('TIBET');
         // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
-        //    （原来只有日本/青藏文化区与 59 代表名城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
+        //    （原来只有日本/青藏文化区与代表名城名册里的城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
         // 🔴 [2026-10-03 主人令「**所有小城不能有城堡**，但是如果有著名的城堡建筑，可以视为特殊建筑」]
-        //    ⇒ 小城（small_city）一律不画居中城堡 —— 日本/青藏文化区与 59 名册名下的**小城**也不再例外
+        //    ⇒ 小城（small_city）一律不画居中城堡 —— 日本/青藏文化区与代表名城名册里的**小城**也不再例外
         //      （原口径下 64 座小城中间有城堡：名册 9 + 日本 14 + 青藏 41）。
         //      小城若确有著名城堡（斯巴达堡垒、维尔纽斯城堡、波斯波利斯宫堡、因瓦王城、苏萨王城…），
         //      走「**特殊建筑（城内奇观）**」那条路 —— 见 `src/data/CityWonders.ts`。
@@ -2523,7 +2523,7 @@ export class TerritorySystem {
         const centerCastle = cityType === 'small_city'
             ? isJapan
             : (isJapan || isTibet || cityType === 'big_city' || cityType === 'medium_city'
-                || (!!REP_59_CITY_CASTLES[bf.id] && cityType !== 'pass'));
+                || (!!REP_CITY_CASTLES[bf.id] && cityType !== 'pass'));
         const deStyle = resolveCityDeBuildingStyle(bf.id, cityType, region, bf.lat, bf.lng, undefined);
         // 🔴 [2026-10-05] 传 bf.id：逐城石墙例外（维也纳）
         useStoneWall = smallCityUsesStoneWall(deStyle, undefined, region, bf.id);

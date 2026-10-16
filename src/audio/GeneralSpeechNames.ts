@@ -9,6 +9,7 @@
  *   4. 名内易错字替换（勣→绩 等）
  */
 import { FACTION_GENERALS } from "../data/FactionGenerals";
+import { isGeneralOnStage } from "../data/generalOnStage";
 
 /** generalId → TTS 专用读法（优先级最高） */
 const EXPLICIT_SPEECH_NAMES: Readonly<Record<string, string>> = {
@@ -132,7 +133,7 @@ export function getGeneralNameForSpeech(
   displayName: string,
 ): string {
   if (!displayName) return displayName;
-  if (generalId && EXPLICIT_SPEECH_NAMES[generalId]) {
+  if (generalId && EXPLICIT_SPEECH_NAMES[generalId] && isGeneralOnStage(generalId)) {
     return EXPLICIT_SPEECH_NAMES[generalId]!;
   }
 

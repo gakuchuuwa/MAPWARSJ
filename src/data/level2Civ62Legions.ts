@@ -1,7 +1,7 @@
 /**
  * 🔴 [2026-09-14 主人定 / 2026-10-16 校正计数] 二级：**62** 个文明专属军团（与 62 文明专属城堡对应）
  * 实测（本表逐条统计，2026-10-16）：古典时代 13 支 + 封建时代 15 支 + 城堡时代 30 支 + 帝国时代 4 支 = **62** 支
- * ⚠️ 文件/常量名里的 "59" 是旧计数，**以本表实际条目为准（62）**；库里但凡写「二级 59」都是过期数字。
+ * ⚠️ 历史：文件名与常量曾用「59」（旧计数），2026-10-16 起统一为 **62**；以本表实际条目为准。
  * 军团兵种编制铁律：严格对齐史实特色兵种与精锐/高级档，总数=9
  */
 import type { RegionType } from '../systems/RegionSystem';
@@ -23,7 +23,7 @@ export interface Level2CivLegionDef {
     shipId: string; // 🔴 [2026-09-16 主人定] 二级军团与四时代海军模型强绑定
 }
 
-export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
+export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代华夏中原军团', civ: '华夏', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
@@ -751,7 +751,7 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     //    原在本表（二级）的三条**时代外兜底条目**已移入三级表 `level3CustomLegions.ts`：
     //      `封建时代吐蕃军团`（region TIBET）｜`古典时代西域军团`（region WESTERN）｜~~`封建时代鲜卑军团`~~（region MONGOL，2026-10-05 已删）
     //    理由（与 `LegionFallbackOnDelete.ts` 里主人原话一致）：青藏／西域／漠北蒙古毡帐是**三级专属建筑风格**，
-    //    二级 59 里本来就没有同 region 的条目，《一级16／二级59／三级自建》三层口径里它们属**三级自建**。
+    //    二级 62 里本来就没有同 region 的条目，《一级16／二级62／三级自建》三层口径里它们属**三级自建**。
     //    它们的时代细分军团（城堡时代吐蕃／帝国时代青藏／封建时代安西／帝王时代维吾尔／帝国时代蒙古…）本就在三级表。
     // 🔴 [2026-10-05 主人令「62 个可玩文明对应 62 支军团」] DE 新增三文明：撒克逊 / 丹麦 / 瓦良格。
     //    时代按其专属兵种的史实定（撒克逊 5 世纪至 1066 年 = 封建；丹麦约姆斯维京 10 世纪 = 封建；瓦良格卫队 1050–1204 年 = 城堡）。
@@ -794,38 +794,38 @@ export const LEVEL_2_CIV_59_LEGIONS: Level2CivLegionDef[] = [
     },
 ];
 
-export const LEVEL_2_CIV_59_NAMES: Set<string> = new Set(LEVEL_2_CIV_59_LEGIONS.map(l => l.name));
-export const LEVEL_2_CIV_59_MAP: Map<string, Level2CivLegionDef> = new Map(
-    LEVEL_2_CIV_59_LEGIONS.map(l => [l.name, l])
+export const LEVEL_2_CIV_62_NAMES: Set<string> = new Set(LEVEL_2_CIV_62_LEGIONS.map(l => l.name));
+export const LEVEL_2_CIV_62_MAP: Map<string, Level2CivLegionDef> = new Map(
+    LEVEL_2_CIV_62_LEGIONS.map(l => [l.name, l])
 );
 
 export const LEVEL_2_CIV_CIV_MAP: Map<string, Level2CivLegionDef> = new Map(
-    LEVEL_2_CIV_59_LEGIONS.map(l => [l.civ, l])
+    LEVEL_2_CIV_62_LEGIONS.map(l => [l.civ, l])
 );
 // 兼容突厥/土耳其别名
-const ottomanLegion = LEVEL_2_CIV_59_LEGIONS.find(l => l.civ === '奥斯曼');
+const ottomanLegion = LEVEL_2_CIV_62_LEGIONS.find(l => l.civ === '奥斯曼');
 if (ottomanLegion) {
     LEVEL_2_CIV_CIV_MAP.set('突厥', ottomanLegion);
     LEVEL_2_CIV_CIV_MAP.set('土耳其', ottomanLegion);
-    LEVEL_2_CIV_59_MAP.set('帝国时代突厥军团', ottomanLegion);
-    LEVEL_2_CIV_59_MAP.set('帝国时代土耳其军团', ottomanLegion);
+    LEVEL_2_CIV_62_MAP.set('帝国时代突厥军团', ottomanLegion);
+    LEVEL_2_CIV_62_MAP.set('帝国时代土耳其军团', ottomanLegion);
 }
 // 兼容高丽/朝鲜别名
-const goryeoLegion = LEVEL_2_CIV_59_LEGIONS.find(l => l.civ === '高丽');
+const goryeoLegion = LEVEL_2_CIV_62_LEGIONS.find(l => l.civ === '高丽');
 if (goryeoLegion) {
     LEVEL_2_CIV_CIV_MAP.set('朝鲜', goryeoLegion);
-    LEVEL_2_CIV_59_MAP.set('城堡时代朝鲜军团', goryeoLegion);
+    LEVEL_2_CIV_62_MAP.set('城堡时代朝鲜军团', goryeoLegion);
 }
 // 兼容简写别名（如不含“时代”二字的旧名）
-LEVEL_2_CIV_59_MAP.set('古典华夏中原军团', LEVEL_2_CIV_59_LEGIONS[0]);
-LEVEL_2_CIV_59_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_59_LEGIONS[1]);
-LEVEL_2_CIV_59_MAP.set('古典华夏江南军团', LEVEL_2_CIV_59_LEGIONS[2]);
-LEVEL_2_CIV_59_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_59_LEGIONS[3]);
+LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_LEGIONS[0]);
+LEVEL_2_CIV_62_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_62_LEGIONS[1]);
+LEVEL_2_CIV_62_MAP.set('古典华夏江南军团', LEVEL_2_CIV_62_LEGIONS[2]);
+LEVEL_2_CIV_62_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_62_LEGIONS[3]);
 
 /**
- * 军团名是否属于「**二级：文明 × 时代（59 文明专属军团）**」——
- * 严格只收录主人定稿的 59 个二级军团名（其余全部归入三级自建军团）。
+ * 军团名是否属于「**二级：文明 × 时代（62 文明专属军团）**」——
+ * 严格只收录主人定稿的 62 个二级军团名（其余全部归入三级自建军团）。
  */
 export function isCivEraLegion(name: string): boolean {
-    return LEVEL_2_CIV_59_NAMES.has(name);
+    return LEVEL_2_CIV_62_NAMES.has(name);
 }
