@@ -121,11 +121,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代法兰克军团', civ: '法兰克', age: 'feudal', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
-        formationMode: 'crescent',
+        formationMode: 'triangle',
         shipId: 'MONOREME',
         slots: [
-            { type: 'knight', count: 3 },
-            { type: 'laminated_bowman', count: 2 },
+            { type: 'scout_cavalry', count: 2 },
+            { type: 'spearman', count: 3 },
             { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
@@ -878,9 +878,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'maceman', count: 4 },
+            { type: 'militia', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 日耳曼 · 封建时代 · 封建时代萨克森军团　（本次新建）────────────────
@@ -894,9 +894,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'GALLEY',
         slots: [
-            { type: 'teutonic_knight', count: 4 },
-            { type: 'elite_hearth_troop', count: 3 },
-            { type: 'knight', count: 2 },
+            { type: 'spearman', count: 4 },
+            { type: 'skirmisher', count: 3 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     // ── 日耳曼 · 城堡时代 · 城堡时代德意志骑士团　（本次新建）────────────────
@@ -923,11 +923,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
-        formationMode: 'balance_yoke',
+        formationMode: 'crane_wing',
         shipId: 'GALLEON',
         slots: [
-            { type: 'two_handed_swordsman', count: 4 },
             { type: 'mounted_crossbowman_heavy', count: 2 },
+            { type: 'hand_cannoneer', count: 4 },
             { type: 'teutonic_knight', count: 3 },
         ],
     },
@@ -947,8 +947,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'MONOREME',
         slots: [
             { type: 'woad_raider', count: 4 },
-            { type: 'throwing_axeman', count: 3 },
-            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：封建时代法兰克军团
@@ -961,12 +961,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代法兰西骑士团', civ: '法兰克', age: 'castle', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
-        formationMode: 'crescent',
+        formationMode: 'echelon',
         shipId: 'CARRACK',
         slots: [
+            { type: 'pikeman', count: 4 },
             { type: 'throwing_axeman', count: 3 },
-            { type: 'crusader_knight', count: 2 },
-            { type: 'paladin', count: 4 },
+            { type: 'knight', count: 2 },
         ],
     },
     // ── 高卢 · 帝国时代 · 帝国时代重装骑兵军团　（本次新建）────────────────
@@ -977,12 +977,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代重装骑兵军团', civ: '法兰克', age: 'imperial', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         shipId: 'GALLEON',
         slots: [
-            { type: 'cavalier', count: 4 },
-            { type: 'champion', count: 2 },
+            { type: 'halberdier', count: 4 },
             { type: 'hand_cannoneer', count: 3 },
+            { type: 'paladin', count: 2 },
         ],
     },
 
@@ -1070,7 +1070,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'militia', count: 4 },
             { type: 'archer', count: 3 },
-            { type: 'scout_cavalry', count: 2 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 不列颠 · 封建时代 · 封建时代撒克森军团　（本次新建）────────────────
@@ -1086,7 +1086,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'manatarms', count: 4 },
             { type: 'longbowman', count: 3 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     // ── 不列颠 · 城堡时代 · 城堡时代长弓军团　（本次新建）────────────────
@@ -1273,9 +1273,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'huskarl', count: 4 },
-            { type: 'elite_skirmisher', count: 3 },
-            { type: 'cav_archer', count: 2 },
+            { type: 'levy', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 哥特 · 封建时代 · 封建时代阿斯图里亚斯军团　（本次新建）────────────────
@@ -1290,8 +1290,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'elite_huskarl', count: 4 },
-            { type: 'crossbowman', count: 3 },
-            { type: 'cav_archer', count: 2 },
+            { type: 'skirmisher', count: 3 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     // ── 哥特 · 城堡时代 · 城堡时代崖城卫队军团　（本次新建）────────────────
@@ -1305,9 +1305,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'DROMON',
         slots: [
-            { type: 'two_handed_swordsman', count: 4 },
-            { type: 'huskarl', count: 3 },
-            { type: 'heavy_crossbowman', count: 2 },
+            { type: 'huskarl', count: 4 },
+            { type: 'elite_skirmisher', count: 3 },
+            { type: 'cav_archer', count: 2 },
         ],
     },
     // ── 哥特 · 帝国时代 · 帝国时代黑海铁卫军团　（本次新建）────────────────
@@ -1318,12 +1318,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代黑海铁卫军团', civ: '哥特', age: 'imperial', deStyle: 'WEST', region: 'GOTHS' as RegionType,
         buildingStyle: 'GOTHS',
         castleId: 'GOTH_CASTLE_AGE3', castleName: '哥特 早期蛮族石砌据点',
-        formationMode: 'crescent',
+        formationMode: 'echelon',
         shipId: 'DROMON',
         slots: [
-            { type: 'halberdier', count: 3 },
-            { type: 'arbalest', count: 2 },
             { type: 'champion', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
 
@@ -1563,8 +1563,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'elite_cataphract', count: 4 },
-            { type: 'varangian_guard', count: 3 },
-            { type: 'elite_varangian_guard', count: 2 },
+            { type: 'crossbowman', count: 3 },
+            { type: 'varangian_guard', count: 2 },
         ],
     },
     // ── 拜占庭 · 城堡时代 · 城堡时代拜占庭近卫军　（本次新建）────────────────
@@ -1578,9 +1578,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'DROMON',
         slots: [
-            { type: 'elite_varangian_guard', count: 4 },
+            { type: 'cav_archer', count: 4 },
             { type: 'cataphract', count: 3 },
-            { type: 'varangian_guard', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
         ],
     },
     // ── 拜占庭 · 帝国时代 · 帝国时代耶尼切里军团　（本次新建）────────────────
@@ -1595,8 +1595,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'champion', count: 4 },
-            { type: 'elite_janissary', count: 2 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'royal_janissary', count: 2 },
+            { type: 'cav_archer_heavy', count: 3 },
         ],
     },
 
