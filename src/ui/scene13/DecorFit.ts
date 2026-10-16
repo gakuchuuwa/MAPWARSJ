@@ -227,6 +227,10 @@ const GROUND_VARIATION_BY_BASE: Readonly<Record<string, readonly string[]>> = {
     sno:               ['sn2'],
     sn2:               ['sno'],
     snf:               ['sn2', 'sno'],
+    ic3:               ['sno', 'sn2'],
+    ice:               ['sn2', 'sno'],
+    pm1:               ['pc2', 'pc3'],
+    pm2:               ['gravel_default', 'ds5'],
 };
 
 /** 这张底图的地表变体（同色系）。查不到返回空数组 = 不铺变体。 */

@@ -25,6 +25,7 @@ import {
     terrainForTheme,
     type DeMapThemeId,
 } from './Scene13DeMapThemes';
+import { groundVariationFor } from './DecorFit';
 
 /**
  * 战场地面四张基底素材（气候主题取到的值，由环境生成器算好写给地面层）。
@@ -217,17 +218,28 @@ export function resolveEnvironmentClimate(input: Scene13ClimateInput): Scene13Cl
         : DEFAULT_TERRAIN_TILE);
     let groundTiles: Partial<Scene13GroundTiles> = {};
     if (hasCoord && theme) {
+        // 副地表 dry / dirt 按真实地理 baseTerrain 从 DecorFit 同色系变体表取（色差 ≤30），
+        // 消除沙漠混草（pal/des 落回 gr7）、雪原混褐泥（sno/sn2 落回 ds3+gr7）及黑土/红壤与主题表脱节问题
+        const variations = groundVariationFor(baseTerrain);
         const gList = Array.isArray(theme.groundTiles) ? theme.groundTiles : [];
-        // 泥土只取 ds/des/mud 开头的素材，rd 是道路不是泥土（2026-10-13 修「底图错了」）
-        const themeDirt = gList.find((t) => /^(ds|des|mud)/i.test(t)) ?? 'ds3';
-        const themeDry = gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
+        const themeDry = variations[0]
+            ?? gList.find((t) => /gr3|gr7|gr8|gr9|gravel|pc/i.test(t) && t !== baseTerrain)
             ?? (baseTerrain === 'gr7' ? 'gr3' : 'gr7');
+        const themeDirt = variations[1]
+            ?? variations[0]
+            ?? gList.find((t) => /^(ds|des|mud)/i.test(t))
+            ?? 'ds3';
+        const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snd'
+            || baseTerrain === 'snf' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+        const isAlpineGravelBase = baseTerrain === 'gravel_default' || baseTerrain === 'rck';
         groundTiles = {
             grass: baseTerrain,
             sand: beachTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng),
-            forest: baseTerrain === 'gravel_default'
+            forest: isAlpineGravelBase
                 ? 'gravel_default'
-                : forestFloorTilesForTheme(theme, biome, season, input.lat ?? 35, elev, input.lng)[0],
+                : isSnowBase
+                    ? 'snf'
+                    : forestFloorTilesForTheme(theme, biome, season, input.lat ?? 35, elev, input.lng)[0],
             water: waterTerrainForTheme(theme, season, input.lat ?? 35, elev, biome, input.lng),
             dirt: themeDirt,
             dry: themeDry,

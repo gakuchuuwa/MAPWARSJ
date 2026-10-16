@@ -199,7 +199,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     hero_girgenkhan: 36,
     hero_harald: 36,
     hero_jadwiga: 36,
-    hero_khan: 36,
     hero_kotyankhan: 36,
     hero_lubu: 36,
     hero_osman: 36,

@@ -295,7 +295,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     mameluke: { name: '萨拉森马穆鲁克', cls: 'cav', sz: 1, hp: 80, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 120, reload: 2.0, spd: 56, dmgType: 'melee', bonus: { 8: 9 }, armorTags: [35, 30, 19, 31, 39] },
     mangonel: { name: '轻型投石车', cls: 'ranged', aoe: true, sz: 1, hp: 50, atk: 40, meleeArmor: 0, pierceArmor: 6, rng: 280, reload: 6.0, spd: 24, dmgType: 'melee', bonus: { 11: 35, 20: 12, 37: 40 }, armorTags: [20, 31] },
     mercenary_hoplite: { name: '希腊雇佣重装步兵特殊', cls: 'melee', sz: 1, hp: 55, atk: 10, meleeArmor: 2, pierceArmor: 1, rng: 12, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 21: 2 }, armorTags: [1, 19, 31] },
-    militia: { name: '中亚民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', armorTags: [1, 31] },
+    militia: { name: '武装民兵', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', armorTags: [1, 31] },
     monaspa: { name: '格鲁吉亚莫纳斯帕', cls: 'cav', sz: 1, hp: 70, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
     mounted_trebuchet: { name: '沙漠骆驼投石机高级', cls: 'cav', sz: 1, hp: 75, atk: 30, meleeArmor: 2, pierceArmor: 4, rng: 400, reload: 6.5, spd: 32, dmgType: 'melee', bonus: { 11: 10, 20: 30, 37: 30 }, armorTags: [20, 31, 19, 37, 30, 39] },
     obuch: { name: '波兰奥布奇战锤兵', cls: 'melee', sz: 1, hp: 80, atk: 8, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 21: 4, 29: 2 }, armorTags: [1, 19, 31] },
@@ -408,7 +408,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     // 🔴 [2026-09-07] 补提的 DE 英雄。数值一律取自 DE dat（scratch/de_ref.json），
     //    换算与既有英雄同口径：hp/atk/护甲 1:1，射程 ×40（DE 6.0 格 = 240），移速 DE 1.40 → 56。
     //    ⚠️ 其中 4 位 DE 原值 atk=0（非战斗英雄），照抄不改，别看着别扭就补一个。
-    hero_khan: { name: '英雄·成吉思汗', cls: 'cav', sz: 1, hp: 300, atk: 25, meleeArmor: 2, pierceArmor: 2, rng: 200, reload: 2.0, spd: 58, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE HKHAN id=1771（本图 u_cav_hero_khan 有 3 个同名 DAT 条目 731/1275/1771，取标准档）；草原可汗通用形象；2026-10-05 主人令按 DE 核对：原 hp220 atk12 间隔2.1 与 DE 标准档（id=731 hp300 atk25 间隔2.0）不一致，改为 DE 标准档
     hero_jadwiga: { name: '英雄·雅德维加', cls: 'cav', sz: 1, hp: 200, atk: 26, meleeArmor: 1, pierceArmor: 2, rng: 280, reload: 3.2, spd: 38, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE JADWIGA id=1715；波兰女王 1373–1399。🔴 [2026-10-11 主人令「把 DE 中没有攻击的英雄兵模做成法师类」＋「套用希腊火」] **圣旗法师**：血 270→200、攻 10→26、射程 240→280、射速 1.6→3.2、移速 56→38（远·慢·高单发·皮薄，见 Scene13WarLayer 的 CASTER_TYPES）
     hero_tamar: { name: '英雄·塔玛尔', cls: 'cav', sz: 1, hp: 220, atk: 28, meleeArmor: 2, pierceArmor: 2, rng: 300, reload: 3.4, spd: 38, dmgType: 'pierce', armorTags: [8, 31, 36] },   // DE TAMAR id=1822；格鲁吉亚女王 1160–1213。🔴 [2026-10-11 主人令] **圣旗法师**：血 320→220、攻 10→28、射程 360→300、射速 1.6→3.4、移速 56→38
     hero_zhugeliang: { name: '英雄·诸葛亮', cls: 'melee', sz: 1, hp: 160, atk: 22, meleeArmor: 0, pierceArmor: 0, rng: 320, reload: 3.0, spd: 34, dmgType: 'pierce', armorTags: [15, 31, 36] },   // DE HZHUGELIANG id=2036；蜀汉丞相 181–234（DE 素材无攻击动作、atk=0）。🔴 [2026-10-11 主人令] **法师（谋士）**：由近战改为施法——射程 0→320、攻 8→22、射速 1.0→3.0、移速 46→34、护甲 4/3→0/0；投射物＝希腊火（Scene13WarLayer 的 CASTER_TYPES + PROJ_TYPE）
