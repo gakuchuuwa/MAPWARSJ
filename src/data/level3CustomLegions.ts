@@ -73,19 +73,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'AFRICA',
     },
     {
-        name: '古典时代印度军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'sannahya', count: 2 },
-            { type: 'sickle_warrior', count: 4 },
-            { type: 'elite_pattiyoda_longbowman', count: 3 },
-        ],
-        regions: ['INDIA'],
-        parentLegion: '古典时代贵霜军团',
-        shipId: 'ANT_ELITE_GALLEY',
-        buildingStyle: 'PURU',
-    },
-    {
         name: '古典时代埃及军团',
         formationMode: 'echelon',
         slots: [
@@ -930,19 +917,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
         buildingStyle: 'CENTRAL',
-    },
-    {
-        name: '古典时代摩揭陀军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'ratha_ranged', count: 2 },
-            { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'sickle_warrior', count: 4 },
-        ],
-        regions: [],
-        parentLegion: '古典时代贵霜军团',
-        shipId: 'ANT_ELITE_GALLEY',
-        buildingStyle: 'PURU',
     },
     {
         name: '古典时代加拉太军团',

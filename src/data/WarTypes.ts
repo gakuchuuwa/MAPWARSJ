@@ -330,7 +330,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     serjeant: { name: '西西里军士长', cls: 'melee', sz: 1, hp: 50, atk: 5, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 19, 31] },
     shotel_warrior: { name: '埃塞俄比亚弯刀勇士', cls: 'melee', sz: 1, hp: 45, atk: 16, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31, 39] },
     shrivamsha_rider: { name: '什里瓦姆沙骑手', cls: 'cav', sz: 1, hp: 55, atk: 8, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 64, dmgType: 'melee', armorTags: [8, 19, 31] },
-    sickle_warrior: { name: '达罗毗荼镰刀战士特殊', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.33, spd: 44, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31, 39] },
+    sickle_warrior: { name: '赫梯镰刀战士特殊', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 1.33, spd: 44, dmgType: 'melee', bonus: { 29: 2 }, armorTags: [1, 19, 31, 39] },
     siege_onager: { name: '重型投石车高级', cls: 'ranged', aoe: true, sz: 1, hp: 70, atk: 75, meleeArmor: 0, pierceArmor: 8, rng: 320, reload: 6.0, spd: 24, dmgType: 'melee', bonus: { 11: 60, 20: 12, 37: 50 }, armorTags: [20, 31] },
     siege_ram: { name: '重型攻城槌高级', cls: 'melee', sz: 1, hp: 270, atk: 4, meleeArmor: -1, pierceArmor: 195, rng: 0, reload: 5.0, spd: 24, dmgType: 'melee', bonus: { 11: 200, 20: 65 }, armorTags: [17, 20, 31] },
     skirmisher: { name: '掷矛手', cls: 'ranged', sz: 1, hp: 30, atk: 2, meleeArmor: 0, pierceArmor: 3, rng: 160, reload: 3.0, spd: 38, dmgType: 'pierce', bonus: { 15: 3, 27: 3, 35: 2 }, armorTags: [15, 31, 38] },
