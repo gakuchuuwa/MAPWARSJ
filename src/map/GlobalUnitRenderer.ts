@@ -28,7 +28,7 @@ import {
     getSiegeCityScreenWidthPx,
 } from '../config/city-marker-tokens';
 import { gameLog } from '../utils/GameLogger';
-import {GENERAL_PROFILES, STRATEGIC_SKILL_CATALOG} from '../data/GeneralSkills';
+import {getGeneralProfile, STRATEGIC_SKILL_CATALOG} from '../data/GeneralSkills';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { generalIdHasStrategicEffect } from '../combat/GeneralSkillCombat';
 import {
@@ -53,7 +53,7 @@ interface SquadHit {
 /** 虚张声势倍率：从武将的战略技 catalog 读取 magnitude，fallback 2 */
 function getBluffMagnitude(generalId: string | undefined): number {
     if (!generalId) return 2;
-    const profile = GENERAL_PROFILES[generalId];
+    const profile = getGeneralProfile(generalId);
     if (!profile?.strategicSkillId) return 2;
     const skill = STRATEGIC_SKILL_CATALOG[profile.strategicSkillId];
     if (skill?.effect !== 'bluff_troop_count') return 2;

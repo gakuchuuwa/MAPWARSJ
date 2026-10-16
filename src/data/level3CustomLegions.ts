@@ -1,18 +1,18 @@
 /**
  * 三级军团表（自建 / 延伸军团）—— 🔴 [2026-09-14 主人定]
  *
- * > 主人原话：「所有军团只有一级 16 个，二级 59 个，其他都是三级」「怎么还有什么文化表，全部清除」
+ * > 主人原话：「所有军团只有一级 16 个，二级 62 个，其他都是三级」「怎么还有什么文化表，全部清除」
  *
  * ── 为什么有这个文件 ─────────────────────────────────────────────
  * 一级 16 母体的编制在 `CultureFormations.ts` 的 `BASE_16_TIERS_MAP`，
- * 二级 59 文明的编制在 `level2Civ59Legions.ts`，
+ * 二级 62 文明的编制在 `level2Civ62Legions.ts`，
  * 唯独三级军团的编制原先**没有自己的表**，散着寄存在 173 个文化区的格子里
  * （`CULTURE_TIERS_MAP` / `CULTURE_FORMATION_MODE`，也就是主人说的「文化表」）。
  * 那套东西不属于三层里的任何一层，是第四份权威，于是同一支军团的编制能在两处打架。
  * 本文件把三级军团的编制搬回军团自己身上；文化区从此只剩一个指针
  * （`CULTURE_LEGION_NAMES`：这个区默认挂哪支军团），不再持有任何编制。
  *
- * ⚠️ 军团数量一支未增未减：搬家前后都是 一级 16 + 二级 59 + 三级 N。
+ * ⚠️ 军团数量一支未增未减：搬家前后都是 一级 16 + 二级 62 + 三级 N。
  */
 import type { FormationMode } from '../types/CultureFormations';
 import type { CompositionSlot } from '../types/LegionComposition';
@@ -25,7 +25,7 @@ export interface Level3LegionDef {
     slots: CompositionSlot[];
     /** 默认挂这支军团的文化区（只作溯源用，编制不再按区存） */
     regions: string[];
-    /** 归属的 75 种正统军团名（一级 16 母体 或 二级 59 文明，🔴 2026-09-16 主人定） */
+    /** 归属的 78 种正统军团名（一级 16 母体 16 支 + 二级 62 文明 62 支，🔴 2026-09-16 主人定） */
     parentLegion: string;
     /** 绑定的史实海军战船（对齐四大时代与历史，🔴 2026-09-16 主人定） */
     shipId: string;
@@ -1501,9 +1501,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'CENTRAL_ASIA',
     },
     // 🔴 [2026-10-05 主人令「把青藏军团，西域军团，漠南鲜卑军团移动到三级军团。三个建筑风格，也是三级建筑风格」]
-    //    由二级表（`level2Civ59Legions.ts`）移入：这三支是**三级专属建筑风格**（青藏 TIBET／西域 WESTERN／漠南鲜卑 MONGOL）
+    //    由二级表（`level2Civ62Legions.ts`）移入：这三支是**三级专属建筑风格**（青藏 TIBET／西域 WESTERN／漠南鲜卑 MONGOL）
     //    的**保底军团**，与 `LegionFallbackOnDelete.ts` 的 `TIER3_FALLBACK_LEGION` 主人口述一致；
-    //    二级 59 里本就没有同 region 的条目，故《一级16／二级59／三级自建》三层口径下它们属三级。
+    //    二级 62 里本就没有同 region 的条目，故《一级16／二级62／三级自建》三层口径下它们属三级。
     //    ⚠️ 编制、阵型、战船一字未改，仅换表并补三级必填的 `parentLegion`（一级母体名）。
     {
         name: '封建时代吐蕃军团',

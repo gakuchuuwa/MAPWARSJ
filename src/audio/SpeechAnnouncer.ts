@@ -5,6 +5,7 @@
 import { getFactionGeneral, getGeneralRecordByGeneralId } from "../data/FactionGenerals";
 import {
   GENERAL_PROFILES,
+  getGeneralProfile,
   getTacticalSkillDef,
   type GeneralProfile,
 } from "../data/GeneralSkills";
@@ -42,7 +43,7 @@ interface SpeakOptions {
 function getTacticalSkillName(factionId: string, generalId?: string): string {
   const general = generalId ? getGeneralRecordByGeneralId(generalId) : getFactionGeneral(factionId);
   if (!general) return "";
-  const profile: GeneralProfile | undefined = GENERAL_PROFILES[general.generalId];
+  const profile: GeneralProfile | null = getGeneralProfile(general.generalId);
   if (!profile) return "";
   const skill = getTacticalSkillDef(profile.tacticalSkillId);
   return skill?.displayName ?? "";
@@ -61,7 +62,7 @@ function hasEliteName(name: string): boolean {
 /** 名将 = tier famous（2026-08-03 起战略技全随机，不再以 strategicSkillId 判名将）。用于攻城播报是否冠「名将」二字。 */
 function isFamousGeneral(generalId?: string | null): boolean {
   if (!generalId) return false;
-  return GENERAL_PROFILES[generalId]?.tier === 'famous';
+  return getGeneralProfile(generalId)?.tier === 'famous';
 }
 
 // ───────────────────────────────────────────────────────────────

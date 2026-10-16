@@ -310,7 +310,7 @@ export class ArmyEditor {
         }
 
         this.currentFormationMode = getCultureFormationMode(culture);
-        // 🔴 [2026-09-14] 文化表已删：编制从该区默认军团取（一级16 / 二级59 / 三级）
+        // 🔴 [2026-09-14] 文化表已删：编制从该区默认军团取（一级16 / 二级62 / 三级）
         const comp = getRegionLegionComposition(culture);
         if (comp && comp.slots.length > 0) {
             this.currentSlots = comp.slots.map(s => ({ ...s }));

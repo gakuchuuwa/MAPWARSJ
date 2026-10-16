@@ -4711,7 +4711,7 @@ mountain 13/4271/2914 · 13/4272/2914
 | **石墙/加固墙锚点表** | `cityWallShared.ts:970` `DE_FORTIFIED_ANCHORS_BY_STYLE`（`[style][type]`） | 逐风格逐件锚点；`TerritorySystem.ts:899,1030-1032` 消费 |
 | 木栅三套锚点 | `TerritorySystem.ts:3` import `DE_PALISADE_ANCHORS` / `DE_DARK_PALISADE_ANCHORS` / `DE_ARCHAIC_PALISADE_ANCHORS`（:240-241 选套） | 硬木/原木/横木 |
 | **按分类自定义围栏** | `:12` `pickStockadeWallStyleByCategory`（`data/stockadeWallStyleLookup`） | 玩家自定义样式优先 |
-| **险要城堡** | `:22` `resolveCastleAsset` + `REP_59_CITY_CASTLES`（`config/deCastleAssets`） | 险要核心地标 |
+| **险要城堡** | `:22` `resolveCastleAsset` + `REP_CITY_CASTLES`（`config/deCastleAssets`） | 险要核心地标 |
 | 形制生成 | `:279 computeRectWall`／`:325 computeCorralRoundWall`／`:329 Octagon`／`:333 Oval`／`:339 computeFortifiedWallAndGate(baseSize,S=7)` | 逐形制件表 |
 
 🔴 **未找到唯一的"画一座据点"总入口函数名**（本轮没定位到：城型分发 = 城寨/小城/中城/大城/险要 五分支的那个函数）。

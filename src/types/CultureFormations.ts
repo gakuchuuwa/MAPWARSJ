@@ -28,7 +28,7 @@
 
 import { RegionType } from '../systems/RegionSystem';
 import { STYLE_TO_BASE16, toBase16 } from '../systems/CultureBase16';
-import { LEVEL_2_CIV_59_MAP } from '../data/level2Civ59Legions';
+import { LEVEL_2_CIV_62_MAP } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
@@ -1620,10 +1620,10 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     // 🔴 [2026-10-05 主人令「这两个军团在历史上是不是重复了？如果是，请删除三级的，保留二级的」]
     //    原指向三级自建「古典时代波斯军团」—— 那是**同一个阿契美尼德政权立的第二支波斯系军团**
     //    （它的 parentLegion 就写着「古典时代阿契美尼德军团」，自己承认是派生），
-    //    与二级 59 的「古典时代阿契美尼德军团」重复 → 三级那条已删，指针改指**保留的二级那支**。
+    //    与二级 62 的「古典时代阿契美尼德军团」重复 → 三级那条已删，指针改指**保留的二级那支**。
     //    ⚠️ 指针必须显式改指：若只删三级会悬空，这 15 座波斯城会掉到「建筑风格保底」。
     PERSIAN: '古典时代阿契美尼德军团',
-    ARMENIANS: '封建时代亚美尼亚军团',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 59 表这一支自己声明 region=ARMENIANS
+    ARMENIANS: '封建时代亚美尼亚军团',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 62 表这一支自己声明 region=ARMENIANS
     CUMAN: '城堡时代库曼军团',
     BRITONS: '城堡时代不列颠军团',
     GOTHS: '封建时代哥特军团',
@@ -1646,7 +1646,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     BENGALIS_ANTIQUITY: '古典时代孟加拉军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代瞿折罗军团',
     VIETNAMESE: "城堡时代越南军团",
-    KHMER: '封建时代吴哥军团',   // 🔴 [2026-09-18] 原挂【城堡时代高棉军团】全仓查无此军=幽灵；二级 59 表的【封建时代吴哥军团】自己声明 region=KHMER
+    KHMER: '封建时代吴哥军团',   // 🔴 [2026-09-18] 原挂【城堡时代高棉军团】全仓查无此军=幽灵；二级 62 表的【封建时代吴哥军团】自己声明 region=KHMER
     MAYANS: '封建时代玛雅军团',
     MAPUCHE: '帝国时代马普切军团',
     MUISCA: '城堡时代穆伊斯卡军团',
@@ -1991,11 +1991,11 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
 };
 
 /* ═══════════════════════════════════════════════════════════════
- * 🔴 [2026-09-14 主人定「所有军团只有一级 16、二级 59，其他都是三级；文化表全部清除」]
+ * 🔴 [2026-09-14 主人定「所有军团只有一级 16、二级 62，其他都是三级；文化表全部清除」]
  *
  * 编制的唯一来源 = **三层军团表**，文化区只剩「默认挂哪支军团」这一个指针：
  *   一级 16 母体 → `BASE_16_TIERS_MAP`（本文件）
- *   二级 59 文明 → `src/data/level2Civ59Legions.ts`
+ *   二级 62 文明 → `src/data/level2Civ62Legions.ts`
  *   三级 自建   → `src/data/level3CustomLegions.ts`
  *
  * 原先的「文化表」（`CULTURE_TIERS_MAP` / `CULTURE_FORMATION_MODE` + 183 个 `XXX_TIERS`）
@@ -2061,7 +2061,7 @@ export function getLegionCompositionByName(
         const b = BASE_16_TIERS_MAP[rg];
         if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })), shipId: b.shipId };
     }
-    const l2 = LEVEL_2_CIV_59_MAP.get(name);
+    const l2 = LEVEL_2_CIV_62_MAP.get(name);
     if (l2) {
         const l2Ship = l2.shipId ?? (l2.region ? BASE_16_TIERS_MAP[l2.region]?.shipId : undefined);
         return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })), shipId: l2Ship };
@@ -2331,34 +2331,34 @@ export const REGION_TO_BUILDING_STYLE: Record<string, string> = {
 };
 
 /** 取第一层文化军团名：优先 region 指针（指向的军团还在才作数）；否则按据点的建筑风格决定军团
- *  🔴 2026-09-16 主人定：军团挂靠保底统一走建筑风格（16+59+3 对应军团）。三级军团被删时，
+ *  🔴 2026-09-16 主人定：军团挂靠保底统一走建筑风格（16+62+3 对应军团）。三级军团被删时，
  *     该武将按据点的 buildingStyle 套军团。 */
 export function getCultureLegionName(region: RegionType | null | undefined): string {
     // ① region 指针（显式配置的三级/二级军团）；指向的军团被删（悬空）则不作数，落建筑风格保底
     const ptr = region ? CULTURE_LEGION_NAMES[region] : undefined;
     if (ptr && legionNameExists(ptr)) return ptr;
-    // ② 建筑风格保底：据点的 buildingStyle → 军团（16 母体→一级 / 59 文明→二级 / 3 三级→三级）
+    // ② 建筑风格保底：据点的 buildingStyle → 军团（16 母体→一级 / 62 文明→二级 / 3 三级→三级）
     const style = region ? REGION_TO_BUILDING_STYLE[region] : undefined;
     if (style) return getLegionNameByStyle(style);
     return '东亚军团';
 }
 
-/** 军团名是否存在（一级母体 / 二级 59 文明 / 三级自定义 之一） */
+/** 军团名是否存在（一级母体 / 二级 62 文明 / 三级自定义 之一） */
 function legionNameExists(name: string): boolean {
     if (Object.values(BASE_16_LEGION_NAME_BY_REGION).includes(name)) return true;
-    if (LEVEL_2_CIV_59_MAP.has(name)) return true;
+    if (LEVEL_2_CIV_62_MAP.has(name)) return true;
     if (LEVEL_3_LEGION_MAP.has(name)) return true;
     return false;
 }
 
-/** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 59 文明→二级军团 / 3 三级→三级军团） */
+/** 建筑风格 buildingStyle → 军团名（16 母体→一级军团 / 62 文明→二级军团 / 3 三级→三级军团） */
 export function getLegionNameByStyle(buildingStyle: string): string {
     // 16 母体 → 一级母体军团（优先，处理重名 ORIE/PURU/PERSIAN/THRACIAN/EAST）
     const base16 = STYLE_TO_BASE16[buildingStyle];
     if (base16) return BASE_16_LEGION_NAME_BY_REGION[base16] || '东亚军团';
-    // 59 文明 → 二级军团（region 字段匹配；高丽例外：buildingStyle KOREA ↔ region GORYEO）
+    // 62 文明 → 二级军团（region 字段匹配；高丽例外：buildingStyle KOREA ↔ region GORYEO）
     if (buildingStyle === 'KOREA') return '城堡时代高丽军团';
-    for (const l2 of LEVEL_2_CIV_59_MAP.values()) {
+    for (const l2 of LEVEL_2_CIV_62_MAP.values()) {
         if (l2.region === buildingStyle) return l2.name;
     }
     // 3 三级 → 三级军团

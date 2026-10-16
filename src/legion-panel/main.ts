@@ -21,7 +21,7 @@ import {
     resolveRenamedLegion,
     type FormationMode,
 } from '../types/CultureFormations';
-import { LEVEL_2_CIV_59_LEGIONS } from '../data/level2Civ59Legions';
+import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
 import { SCRIPT_LEGIONS, SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { STARTING_CAPITALS } from '../data/StartingCapitals';
@@ -98,13 +98,13 @@ const cityMap = new Map(CITIES_V2.map(c => [c.id, c]));
 
 /**
  * 建筑文化（buildingStyle）下拉项 —— 只有两级，标签口径与左表「建筑风格」列一致（STYLE_LABELS）。
- *   ① 文明建筑文化：level2Civ59Legions 里那 62 个文明的建筑文化（实测 2026-10-16：62 条 / 去重 62）
+ *   ① 文明建筑文化：level2Civ62Legions 里那 62 个文明的建筑文化（实测 2026-10-16：62 条 / 去重 62）
  *   ② 其它建筑文化：不属于上面 62 个的（古典希腊 / 青藏 / 西域 / 漠南鲜卑 等，实测 4 个）
  *   —— 合计 62 + 4 = 66。**没有「一级 16 母体」这一组**：母体只是素材底座，不是建筑文化。
  * 两个组的数量都是**现算的**，不写死，数据增删后标签自动跟着变。
  */
 function styleSelectHtml(current: string): string {
-    const civStyles: string[] = [...new Set<string>(LEVEL_2_CIV_59_LEGIONS.map(l => l.buildingStyle as string))];
+    const civStyles: string[] = [...new Set<string>(LEVEL_2_CIV_62_LEGIONS.map(l => l.buildingStyle as string))];
     const civSet = new Set(civStyles);
     const otherStyles = Object.keys(STYLE_LABELS).filter(id => !civSet.has(id));
     const labelOf = (id: string): string => STYLE_LABELS[id] ?? id;
@@ -153,7 +153,7 @@ function buildRows(): LegionRow[] {
         const scriptDef = layer === '四级' ? SCRIPT_LEGION_MAP.get(name) : undefined;
         const c = scriptDef ?? getLegionCompositionByName(name);
         if (!c) return;
-        const l2 = layer === '二级' ? LEVEL_2_CIV_59_LEGIONS.find(l => l.name === name) : undefined;
+        const l2 = layer === '二级' ? LEVEL_2_CIV_62_LEGIONS.find(l => l.name === name) : undefined;
         const l3 = layer === '三级' ? LEVEL_3_LEGIONS.find(l => l.name === name) : undefined;
         const buildingStyle = l2?.buildingStyle ?? l3?.buildingStyle ?? '';
         out.push({
@@ -167,7 +167,7 @@ function buildRows(): LegionRow[] {
         });
     };
     for (const n of Object.values(BASE_16_LEGION_NAMES)) push(n, '一级');
-    for (const l of LEVEL_2_CIV_59_LEGIONS) push(l.name, '二级');
+    for (const l of LEVEL_2_CIV_62_LEGIONS) push(l.name, '二级');
     for (const l of LEVEL_3_LEGIONS) push(l.name, '三级');
     // 🔴 [2026-10-02 主人令「军团编辑里加四级」] 四级：剧本军团（scriptLegions.ts，只给历史剧本事件用）
     for (const l of SCRIPT_LEGIONS) push(l.name, '四级');
@@ -541,7 +541,7 @@ function render(): void {
             </div>` : `
             <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
               建筑文化：${sel.buildingStyle ? `<b style="color:#e8d8b0;">${esc(STYLE_LABELS[sel.buildingStyle] ?? sel.buildingStyle)}</b>（${esc(sel.buildingStyle)}）` : '—'}
-              ${sel.layer === '一级' ? '　·　一级 16 母体的建筑文化由母体本身决定，不可改。' : '　·　四级剧本军团没有建筑文化字段。'}
+              ${sel.layer === '一级' ? '　·　一级母体军团不设建筑文化（风格由母体素材决定），不可改。' : '　·　四级剧本军团没有建筑文化字段。'}
             </div>`}
 
           ${sel.layer === '一级' || sel.layer === '四级' ? `
@@ -723,7 +723,7 @@ function render(): void {
 }
 
 /**
- * 保存「建筑文化」——写进这支军团自己那条记录（二级 → level2Civ59Legions.ts，三级 → level3CustomLegions.ts）。
+ * 保存「建筑文化」——写进这支军团自己那条记录（二级 → level2Civ62Legions.ts，三级 → level3CustomLegions.ts）。
  * 建筑文化是军团的属性，不是编制的属性：改完所有使用它的势力自动跟着变，不需要再同步别处。
  */
 async function saveBuildingStyle(): Promise<void> {

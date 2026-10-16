@@ -25,6 +25,8 @@
  */
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
+import { isGeneralOnStage } from './generalOnStage';
+import { FACTIONS } from './factions';
 
 export interface FactionGeneral {
     /** 将领 id（须在 GENERAL_PROFILES 有档案，否则武将技不触发） */
@@ -1359,8 +1361,18 @@ export function getFactionGeneral(factionId: string): FactionGeneral | null {
     const portrait = _generalPortraitOverrides[general.generalId] ?? general.portrait;
     return {
         ...general,
+        generalName: stageGeneralName(general.generalId, general.generalName, factionId),
         portrait: resolveGeneralPortraitPath(portrait, { factionId }),
     };
+}
+
+/** 🔴 [2026-10-16 主人定] 剧本期武将不在「登场年～卒年」内 → 名字一律「势力+将军」（势力 = 武将本来所属势力；立绘不变）。
+ *  乱斗 / 编辑器 / 在场 → 原名。 */
+const _factionNameById = new Map(FACTIONS.map((f) => [f.id, f.name]));
+function stageGeneralName(generalId: string, name: string, factionId: string | null | undefined): string {
+    if (isGeneralOnStage(generalId)) return name;
+    const fname = factionId ? _factionNameById.get(factionId) : undefined;
+    return fname ? `${fname}将军` : name;
 }
 
 /** 按 generalId 查势力表条目（F2 绑立绘 / 名牌显示） */
@@ -1422,7 +1434,7 @@ export function getGeneralRecordByGeneralId(
         if (!bfChar) return null;
         return {
             generalId: bfChar.generalId,
-            generalName: bfChar.generalName,
+            generalName: stageGeneralName(bfChar.generalId, bfChar.generalName, bfChar.factionId),
             portrait: resolveGeneralPortraitPath(bfChar.portrait, {
                 factionId: bfChar.factionId,
                 region: options?.region,
@@ -1433,6 +1445,7 @@ export function getGeneralRecordByGeneralId(
     const dedicated = _generalPortraitOverrides[generalId] ?? hit.general.portrait;
     return {
         ...hit.general,
+        generalName: stageGeneralName(generalId, hit.general.generalName, hit.factionId),
         portrait: resolveGeneralPortraitPath(dedicated, {
             factionId: hit.factionId,
             region: options?.region,

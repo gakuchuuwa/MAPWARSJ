@@ -17,7 +17,7 @@ import { getCultureLegionName } from '../types/CultureFormations';
 import {
     BASE16_STYLES,
     BASE16_NAMES,
-    CULTURE_59_GROUPS,
+    CULTURE_62_GROUPS,
     LAYER3_CUSTOM_GROUPS,
     ALL_BRANCHES_MAP,
     resolveCityHierarchy,
@@ -962,7 +962,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>据点名 *</span>${qInput('bm-quick-cname')}</label>
             <!-- 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
                  原来这里是「文化区 *」下拉 —— 已换成建筑风格三级（与 _citytest.html 同一套表）：
-                 ① 一级 16 母体（写 buildingStyle）　② 二级 59 文明 / ③ 三级 3 自建（写 region，二/三层键）。
+                 ① 一级 16 母体（写 buildingStyle）　② 二级 62 文明 / ③ 三级 3 自建（写 region，二/三层键）。
                  地区不再手选（由坐标自动判定）。 -->
             <label><span>① 建筑风格 · 母体 (16) *</span>
               <select id="bm-quick-wall" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
@@ -972,10 +972,10 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
           </div>
           <div class="form-row">
-            <label><span>② 建筑风格 · 二级文明 (59)</span>
+            <label><span>② 建筑风格 · 二级文明 (62)</span>
               <select id="bm-quick-branch" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
                 <option value="">── 不选二级 ──</option>
-                ${CULTURE_59_GROUPS.map(g => `<optgroup label="${g.group}">${g.branches.map(b => `<option value="${b.key}">${b.label}</option>`).join('')}</optgroup>`).join('')}
+                ${CULTURE_62_GROUPS.map(g => `<optgroup label="${g.group}">${g.branches.map(b => `<option value="${b.key}">${b.label}</option>`).join('')}</optgroup>`).join('')}
               </select>
             </label>
             <label><span>③ 建筑风格 · 三级自建 (3)</span>
@@ -1134,10 +1134,10 @@ async function openEditPanel(factionId: string | null): Promise<void> {
               ${BASE16_STYLES.map(s => `<option value="${s.key}" ${curWall === s.key ? 'selected' : ''}>${s.emoji} ${s.name} (${s.key})</option>`).join('')}
             </select>
           </label>
-          <label><span>② 建筑风格 · 二级文明 (59)</span>
+          <label><span>② 建筑风格 · 二级文明 (62)</span>
             <select name="castleBranch">
               <option value="">── 不选二级 ──</option>
-              ${CULTURE_59_GROUPS.map(g => `
+              ${CULTURE_62_GROUPS.map(g => `
                 <optgroup label="${g.group}">
                   ${g.branches.map(b => `<option value="${b.key}" ${!isCustom && curBranchKey === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
                 </optgroup>
@@ -1479,7 +1479,7 @@ function readQuickFields() {
         lat: parseFloat(val('bm-quick-lat')),
         lng: parseFloat(val('bm-quick-lng')),
         region: val('bm-quick-eliteregion'),
-        /** 🔴 [2026-09-18 主人定] 建筑风格三级：① 母体（写 buildingStyle）/ ② 59 / ③ 3（写 region，二/三层键） */
+        /** 🔴 [2026-09-18 主人定] 建筑风格三级：① 母体（写 buildingStyle）/ ② 62 / ③ 3（写 region，二/三层键） */
         wallStyle: val('bm-quick-wall'),
         branchStyle: val('bm-quick-branch'),
         customStyle: val('bm-quick-custom'),
@@ -1607,13 +1607,13 @@ async function handleQuickSubmit(): Promise<void> {
         showToast('坐标必填，如 lat: 31.11, lng: 105.06', true);
         return;
     }
-    // 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 一级 16 必选 + 二级 59 / 三级 3 至少选一个
+    // 🔴 [2026-09-18 主人定「据点只认建筑风格三级」] 一级 16 必选 + 二级 62 / 三级 3 至少选一个
     if (!f.wallStyle) {
         showToast('请选择建筑风格① 母体（16 套之一）', true);
         return;
     }
     if (!f.cityBranchKey) {
-        showToast('请选择建筑风格② 二级文明（59）或 ③ 三级自建（3）中的一种', true);
+        showToast('请选择建筑风格② 二级文明（62）或 ③ 三级自建（3）中的一种', true);
         return;
     }
     if (f.eliteName && !f.region) {
@@ -1835,7 +1835,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
     const lng = parseFloat(get('lng'));
 
     // 🔴 [2026-09-18 主人定「据点只认建筑风格三级，文化区不做可选风格」]
-    //    一级 16 → buildingStyle；二级 59 / 三级 3 → region（二/三层键，与 _citytest.html、据点编辑面板同口径）
+    //    一级 16 → buildingStyle；二级 62 / 三级 3 → region（二/三层键，与 _citytest.html、据点编辑面板同口径）
     const wallStyle = get('wallStyle');
     const castleBranch = get('castleBranch');
     const customStyle = get('customStyle');
@@ -1852,7 +1852,7 @@ async function handleFormSubmit(e: Event): Promise<void> {
         return;
     }
     if (!region) {
-        showToast('请选择建筑风格② 二级文明（59）或 ③ 三级自建（3）中的一种', true);
+        showToast('请选择建筑风格② 二级文明（62）或 ③ 三级自建（3）中的一种', true);
         return;
     }
 
@@ -2513,7 +2513,7 @@ function renderCityTable(): void {
     }).join('');
 
     els.cityTableWrap.innerHTML = `<table class="bm-table"><thead><tr>
-        <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (59+3)</th><th>游戏实际采用建筑风格</th>
+        <th>据点</th><th>ID</th><th>等级</th><th>16母体风格</th><th>细分文明/定制 (62+3)</th><th>游戏实际采用建筑风格</th>
         <th>势力</th><th>兵力</th><th>坐标</th><th>备注</th>
     </tr></thead><tbody>${tbody}</tbody></table>`;
 
@@ -2565,7 +2565,7 @@ function openCityPanel(cityId: string): void {
           <label><span>🏛️ 建筑风格（66 选 1：二级 62 ＋ 三级 4）</span>
             <select name="buildingStyle" id="bm-ce-style">
               <option value="" ${curStyle ? '' : 'selected'}>── 请选择 ──</option>
-              ${[...CULTURE_59_GROUPS, ...LAYER3_CUSTOM_GROUPS].map(g => `
+              ${[...CULTURE_62_GROUPS, ...LAYER3_CUSTOM_GROUPS].map(g => `
                 <optgroup label="${g.group}">
                   ${g.branches.map(b => `<option value="${b.key}" ${curStyle === b.key ? 'selected' : ''}>${b.label}</option>`).join('')}
                 </optgroup>

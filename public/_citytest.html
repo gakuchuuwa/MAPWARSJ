@@ -575,9 +575,9 @@
     </div>
 
     <div class="ctrl">
-      <label>二层文明分支 (59)：</label>
+      <label>二层文明分支 (62)：</label>
       <select id="selCulture" style="min-width:160px;">
-        <option value="" selected>── 全部 59 套文明分支 ──</option>
+        <option value="" selected>── 全部 62 套文明分支 ──</option>
       </select>
     </div>
 
@@ -926,8 +926,8 @@
         <div class="de-board-subtitle">
           全图鉴经 DE 本体底层图形数据（drs/graphics）严格检验，彻底厘清 16 套成套风格集、2 套单时代共用外观、1 套自建民居；
           <!-- 🔴 [2026-09-16 主人「为什么看不到专属城堡」后定：两个数字含义不同，必须分别注明]
-               59 = DE 可玩文明数（每个文明一座）；64 / 61 = 图鉴里**物理目录**的实际座数。 -->
-          59 个可玩文明的专属城堡（<b>图鉴物理目录 64 座</b>）与专属奇观（<b>图鉴物理目录 61 座</b>）
+               62 = DE 可玩文明数（每个文明一座）；64 / 61 = 图鉴里**物理目录**的实际座数。 -->
+          62 个可玩文明的专属城堡（<b>图鉴物理目录 64 座</b>）与专属奇观（<b>图鉴物理目录 61 座</b>）
         </div>
       </div>
       <div style="display:flex;gap:8px;">
@@ -943,16 +943,16 @@
         <div class="desc">拥有完整 Age2/Age3 城镇中心、民居与军事全套体系（每套 165~199 个文件）</div>
       </div>
 
-      <div class="de-metric-card" id="cardCastles64" title="点击一键筛选文明专属独立城堡（59 个可玩文明各一座；图鉴物理目录 64 座）">
-        <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
-        <div class="label">🏰 文明专属独立城堡<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（59 = DE 可玩文明数）</span></div>
-        <div class="desc">图鉴按<b>物理目录</b>另计 <b>64 座</b>：61 座对应当页 59 文明 + 2 套三层自建分支，
-          另有滇黔 / 岭南 / 希腊母体通用 3 座；普鲁强化态与色雷斯单复数等 5 个变体目录不重复计入</div>
+      <div class="de-metric-card" id="cardCastles64" title="点击一键筛选文明专属独立城堡（62 个可玩文明各一座；图鉴物理目录 64 座）">
+        <div class="num">62 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
+        <div class="label">🏰 文明专属独立城堡<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（62 = DE 可玩文明数）</span></div>
+        <div class="desc">图鉴按<b>物理目录</b>另计 <b>64 座</b>：62 个文明各 1 座 + 滇黔 / 岭南 2 座自建；
+          普鲁强化态与色雷斯单复数等 5 个变体目录不重复计入</div>
       </div>
 
-      <div class="de-metric-card" id="cardWonders61" title="点击一键筛选文明专属奇观（59 个可玩文明；图鉴物理目录 61 座）">
-        <div class="num">59 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
-        <div class="label">🏛️ 文明专属奇观<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（59 = DE 可玩文明数）</span></div>
+      <div class="de-metric-card" id="cardWonders61" title="点击一键筛选文明专属奇观（62 个可玩文明；图鉴物理目录 61 座）">
+        <div class="num">62 <span style="font-size:14px;font-weight:normal;color:#a0aec0;">座</span></div>
+        <div class="label">🏛️ 文明专属奇观<span style="font-weight:normal;color:#a0aec0;font-size:12px;">（62 = DE 可玩文明数）</span></div>
         <div class="desc">图鉴按<b>物理目录</b>另计 <b>61 座</b>：60 座 <code>X_WONDER_*</code> 目录（覆盖 58 个文明名，
           其中不列颠、斯拉夫各多一座）+ 罗马斗兽场 <code>SCEN_COLOSSEUM</code></div>
       </div>
@@ -1112,11 +1112,11 @@ function fillStyleSelect() {
  * 对应 TerritorySystem.ts 的 REGION_TO_DE_STYLE + deCastleAssets.ts 的城堡归属
  */
 /**
- * 59 套文明与建筑风格分支（按 7 大历史文化圈归类，严格 59 套）
- * 59 套文明与建筑风格分支（按 16 大建筑母体归类，严格 59 套）
+ * 62 套文明与建筑风格分支（按 7 大历史文化圈归类，严格 62 套）
+ * 62 套文明与建筑风格分支（按 16 大建筑母体归类，严格 62 套）
  * 每一套分支联动：
  * 1. deStyle: 所属第一层 16 种 DE 基础建筑风格母体之一
- * 2. castle: 所属 59 座文明专属独立城堡之一
+ * 2. castle: 所属 62 座文明专属独立城堡之一
  * 3. label: 分支专属名称与 Emoji 标识
  */
 const CULTURE_GROUPS = [
@@ -1141,13 +1141,13 @@ const CULTURE_GROUPS = [
       { key: 'FRANKS',      deStyle: 'WEST', castle: 'FRAN_CASTLE_AGE3',       label: '🛡️ 法兰克（加洛林石堡）' },
       { key: 'BURGUNDIANS', deStyle: 'WEST', castle: 'BURG_CASTLE_AGE3',       label: '🛡️ 勃艮第（重装城堡）' },
       { key: 'BRITONS',     deStyle: 'WEST', castle: 'WEST_CASTLE_AGE3',       label: '🛡️ 不列颠（西欧通用石堡）' },
-      /* 🔴 [2026-09-16 主人「二级只有 59 个，名字我给过三次了」]
+      /* 🔴 [2026-09-16 主人「二级只有 62 个，名字我给过三次了」]
          凯尔特补齐：原来页面把「不列颠/凯尔特」挤在一条、又凭空多一条「东南欧」（DE 没这文明），
          与权威文档 §三之二「WEST 7 座（不列颠、法兰克、哥特、条顿、凯尔特、勃艮第、维京）+
          EAST 3 座（拜占庭、亚美尼亚、格鲁吉亚）」正好差两条。现把「东南欧」换成「凯尔特」，
-         二级仍是 59 条，且与文档的每文化座数完全对齐。
+         二级仍是 62 条，且与文档的每文化座数完全对齐。
          注：DE 本体只做了**一座**凯尔特城堡（b_celt_castle_age3），不列颠没有自己的城堡
-         （b_britons_castle* = 0 个），故这两条共用 CELT_CASTLE_AGE3（59 文明表里也是这样）。 */
+         （b_britons_castle* = 0 个），故这两条共用 CELT_CASTLE_AGE3（62 文明表里也是这样）。 */
       { key: 'CELTS',       deStyle: 'WEST', castle: 'CELT_CASTLE_AGE3',       label: '🛡️ 凯尔特（苏格兰高地圆塔）' },
       { key: 'VIKINGS',     deStyle: 'WEST', castle: 'VIKI_CASTLE_AGE3',       label: '🛡️ 维京（诺斯长屋环形要塞）' },
       { key: 'GOTHS',       deStyle: 'WEST', castle: 'GOTH_CASTLE_AGE3',       label: '🛡️ 哥特（蛮族厚重石堡）' },
@@ -1280,11 +1280,11 @@ window.CULTURE_GROUPS = CULTURE_GROUPS;
 
 /**
  * 第三层：专属定制文明建筑风格列表
- * 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 59+3 中的一种」]
+ * 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 62+3 中的一种」]
  *    三级 3 类同样是「一级 16 的细分」，所以 deStyleOfCultureKey 必须**两层都查** ——
- *    改前只查二级 59，导致 buildingStyle 写 TIBET / WESTERN / MOBEI_MONGOL 的 146 座据点
+ *    改前只查二级 62，导致 buildingStyle 写 TIBET / WESTERN / MOBEI_MONGOL 的 146 座据点
  *    在编辑器里一级那一格**留白**（实测 146 座），等于"没有一级风格"。下面同样挂到 window。
- * 在一层 16 母体 + 二层 59 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
+ * 在一层 16 母体 + 二层 62 文明分支之上，为拥有独立建筑视觉、专属宗堡与特殊据点形态的文明单独设立
  */
 const LAYER3_CUSTOM_GROUPS = [
   {
@@ -1326,7 +1326,7 @@ const LAYER3_CUSTOM_GROUPS = [
 /* 同上：三级 3 类也要给据点编辑器可见（一级解析要查它） */
 window.LAYER3_CUSTOM_GROUPS = LAYER3_CUSTOM_GROUPS;
 
-/** 全量 59 套二层分支映射字典 */
+/** 全量 62 套二层分支映射字典 */
 const CULTURE_MAP = {};
 CULTURE_GROUPS.forEach(g => {
   g.branches.forEach(b => {
@@ -1357,11 +1357,11 @@ CULTURE_MAP['TIBET_IMPERIAL'] = CULTURE_MAP['TIBET'];
 let curCulture = ''; // 当前选中的二层建筑风格分支 key，空=不指定
 let curCustom = '';  // 当前选中的三层专属定制风格 key，空=不指定
 
-/** 填充 59 种二层建筑风格分支下拉框 */
+/** 填充 62 种二层建筑风格分支下拉框 */
 function fillCultureSelect() {
   const sel = document.getElementById('selCulture');
   if (!sel) return;
-  let html = '<option value=""' + (curCulture === '' ? ' selected' : '') + '>── 全部 59 套二层文明分支 ──</option>';
+  let html = '<option value=""' + (curCulture === '' ? ' selected' : '') + '>── 全部 62 套二层文明分支 ──</option>';
   CULTURE_GROUPS.forEach(function(g) {
     html += '<optgroup label="' + g.group + '">';
     g.branches.forEach(function(b) {
@@ -1389,7 +1389,7 @@ function fillCustomSelect() {
   sel.innerHTML = html;
 }
 
-/** 专属独立城堡素材按文化圈对号入座分组（实测 62 座 = 59 文明 + 2 三层自建 + 1 希腊母体通用） */
+/** 专属独立城堡素材按文化圈对号入座分组（实测 65 座 = 62 文明 + 2 三层自建 + 1 希腊母体通用（2026-10-16 真机核对：下拉 65 项）） */
 const CASTLE_GROUPS = [
   {
     group: '🏔️ 第三层专属定制宗堡与要塞 (2 座)',
@@ -1531,7 +1531,7 @@ const CASTLE_GROUPS = [
        补上 GREEK 母体通用城堡：本体素材 `b_greek_castle_age3`（DE 编年史 DLC 希腊建筑集），
        图鉴里有、`src/config/deCastleAssets.ts` 引用 7 次（游戏真会用），但本页原来选不到它。
        实测 DE 侧该素材只有 `_x1`/`_x2` 两个 sld（**无毁损/废墟态**），故图鉴里只有「完好」1 行。
-       注意：这不是新增第 17 套母体、也不动 59 二级铁律，只是把已解析的本体素材接进下拉。 */
+       注意：这不是新增第 17 套母体、也不动 62 二级铁律，只是把已解析的本体素材接进下拉。 */
     group: '🏛️ GREEK 希腊 (4 座)',
     castles: [
       { id: 'GREEK_CASTLE_AGE3', name: '希腊古典通用要塞（GREEK 母体 · 本体 b_greek_castle_age3，无毁损态）' },
@@ -1550,7 +1550,7 @@ const CASTLE_GROUPS = [
 
 let curCastle = 'auto';
 
-/** 填充专属城堡下拉框（实测 62 座 = 59 文明 + 2 三层自建 + 1 希腊母体通用 GREEK） */
+/** 填充专属城堡下拉框（实测 65 座 = 62 文明 + 2 三层自建 + 1 希腊母体通用（2026-10-16 真机核对：下拉 65 项） GREEK） */
 function fillCastleSelect() {
   const sel = document.getElementById('selCastle');
   if (!sel) return;
@@ -3090,7 +3090,7 @@ document.getElementById('selCustom').addEventListener('change', e => {
     curCastle = cm.castle;
     const selCa = document.getElementById('selCastle');
     if (selCa) selCa.value = curCastle;
-    // 三层已选，二层分支下拉归位到「全部」（二层 59 套里不含第三层文明）
+    // 三层已选，二层分支下拉归位到「全部」（二层 62 套里不含第三层文明）
     const selCul = document.getElementById('selCulture');
     if (selCul) selCul.value = '';
   }
@@ -3609,9 +3609,9 @@ if (btnStockadeFence) {
   });
 }
 
-fillCultureSelect(); // 填充建筑风格分支下拉（严格 59 套文明分支→DE 16 种建筑风格+专属城堡联动）
+fillCultureSelect(); // 填充建筑风格分支下拉（严格 62 套文明分支→DE 16 种建筑风格+专属城堡联动）
 fillCustomSelect();  // 填充第三层专属定制下拉（青藏→底座 PURU + TIBET_CASTLE_AGE3 藏式宗堡）
-fillCastleSelect(); // 填充 59 种专属城堡（7 大历史文化圈对号入座）
+fillCastleSelect(); // 填充 62 种专属城堡（7 大历史文化圈对号入座）
 fillStyleSelect();  // 16 套风格全部列进下拉（原 HTML 只写死了 10 个）
 syncMirrorBtn();   // 无 ?mirror 参数时也要让按钮外观与默认态一致
 syncCenterCastleBtn(); // 初始化城心城堡按钮状态
@@ -3691,11 +3691,11 @@ refresh();
     });
   }
 
-  /** 分组下拉：给「文明专属城堡 / 奇观」两组补上含义说明（数字是**物理目录数**，与卡片的 59 文明数不同） */
+  /** 分组下拉：给「文明专属城堡 / 奇观」两组补上含义说明（数字是**物理目录数**，与卡片的 62 文明数不同） */
   function fillGroupSelect(groups) {
-    /* 🔴 [2026-09-16 主人定] 卡片写 59（DE 可玩文明数）、下拉写 64 / 61（图鉴物理目录数），两处都注明含义 */
+    /* 🔴 [2026-09-16 主人定] 卡片写 62（DE 可玩文明数）、下拉写 64 / 61（图鉴物理目录数），两处都注明含义 */
     var hint = {
-      '文明专属城堡 (64座)': '图鉴物理目录数：59 可玩文明 + 滇黔 / 岭南 / 希腊母体通用 等',
+      '文明专属城堡 (64座)': '图鉴物理目录数：62 可玩文明 + 滇黔 / 岭南 / 希腊母体通用 等',
       '文明专属奇观 (61座)': '图鉴物理目录数：含罗马斗兽场 SCEN_COLOSSEUM'
     };
     el.group.innerHTML = '';
@@ -3777,7 +3777,7 @@ refresh();
         set(k, parts[0].trim(), (parts[1] || '').replace(/[）)]\s*$/, '').trim());
       });
     });
-    // ④ 文明专属城堡码 ← 本页自有 CULTURE_MAP（59 二层 + 2 三层自建，已合并进同一字典，别名键不影响）
+    // ④ 文明专属城堡码 ← 本页自有 CULTURE_MAP（62 二层 + 2 三层自建，已合并进同一字典，别名键不影响）
     Object.keys(CULTURE_MAP).forEach(function (key) {
       var b = CULTURE_MAP[key] || {};
       var code = String(b.castle || '').replace(/_CASTLE_AGE3.*$/, '');
@@ -3854,11 +3854,11 @@ refresh();
     var groups = deGroups.concat(otherGroups);
 
     /* 用途是最主要的维度，按「常规 → 专属城堡 → 专属奇观 → 城防 → 地标 → 装饰」固定顺序
-       🔴 [2026-09-16 主人定] 59 = DE 可玩文明数；括号里另注图鉴物理目录数（城堡 64 / 奇观 61），两个数字含义不同 */
+       🔴 [2026-09-16 主人定] 62 = DE 可玩文明数；括号里另注图鉴物理目录数（城堡 64 / 奇观 61），两个数字含义不同 */
     var USAGE_ORDER = [
       ['regular', '常规建筑'],
-      ['castle', '专属城堡（59 文明 / 图鉴目录 64 座）'],
-      ['wonder', '专属奇观（59 文明 / 图鉴目录 61 座）'],
+      ['castle', '专属城堡（62 文明 / 图鉴目录 64 座）'],
+      ['wonder', '专属奇观（62 文明 / 图鉴目录 61 座）'],
       ['defense', '城防构件'],
       ['landmark', '战役地标·遗迹'],
       ['decor', '装饰·临时素材'],
@@ -4212,9 +4212,9 @@ refresh();
 </script>
 
 <!-- 🔴 [2026-09-12 主人定] 据点建筑风格三级选择（复用本页原生三张表，不自造）：
-     一级=城墙(16母体) 二级=城堡(59文明,用于险要) 三级=自建(专属定制) → 保存写 buildingStyle + region -->
+     一级=城墙(16母体) 二级=城堡(62文明,用于险要) 三级=自建(专属定制) → 保存写 buildingStyle + region -->
 <!-- 🔴 [2026-09-12 主人定] 据点建筑风格三级选择（固定底部大面板·两行·记选择·保存后不乱切）
-     一级=城墙(16) 二级=城堡(59,险要) 三级=自建(专属定制) → 保存写 buildingStyle + region
+     一级=城墙(16) 二级=城堡(62,险要) 三级=自建(专属定制) → 保存写 buildingStyle + region
      复用本页原生三张下拉（selStyle/selCulture/selCustom）的选项，不重抄数据 -->
 <div id="cityEditPanel" style="position:fixed;left:0;right:0;bottom:0;z-index:10001;background:#0e1621;border-top:2px solid #2c3a4d;box-shadow:0 -6px 20px rgba(0,0,0,.55);padding:10px 16px 12px;font:13px/1.5 system-ui;color:#cbd5e1">
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
@@ -4249,7 +4249,7 @@ refresh();
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
     <span style="color:#8fa3bb;min-width:86px">① 城墙 (16)</span>
     <select id="ceWall" style="flex:1 1 260px;min-width:200px;background:#0b1320;border:1px solid #2c3a4d;color:#e2e8f0;border-radius:4px;padding:5px 8px"></select>
-    <span style="color:#8fa3bb;min-width:120px">② 城堡 (59·险要)</span>
+    <span style="color:#8fa3bb;min-width:120px">② 城堡 (62·险要)</span>
     <select id="ceCastle" style="flex:2 1 380px;min-width:260px;background:#0b1320;border:1px solid #2c3a4d;color:#e2e8f0;border-radius:4px;padding:5px 8px"></select>
     <span style="color:#8fa3bb;min-width:70px">③ 自建</span>
     <select id="ceCustom" style="flex:1 1 300px;min-width:220px;background:#0b1320;border:1px solid #2c3a4d;color:#e2e8f0;border-radius:4px;padding:5px 8px"></select>
@@ -4290,7 +4290,7 @@ refresh();
   }
   /* 文化区名 / 62 类键 → 16 母体 DE 风格。表用本页已有的 CULTURE_GROUPS + LAYER3_CUSTOM_GROUPS，
      不另造一份字典（造了必漂移）。
-     🔴 [2026-09-18 主人定「据点必须一级 16 选 1、二级 59+3 选 1」] 改前只查二级 59 表，
+     🔴 [2026-09-18 主人定「据点必须一级 16 选 1、二级 62+3 选 1」] 改前只查二级 62 表，
         漏查三级 3 表（TIBET/WESTERN/MOBEI_MONGOL）→ 那 146 座的一级直接留白。现在两层都查。 */
   function deStyleOfCultureKey(k) {
     if (!k) return "";
@@ -4340,7 +4340,7 @@ refresh();
     var wv = x.buildingStyle || '';
     if (wv && !wall.querySelector('option[value="' + wv + '"]')) wv = deStyleOfCultureKey(wv);
     wall.value = wv;
-    /* 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 59+3 中的一种；
+    /* 🔴 [2026-09-18 主人定「每个据点都必须是一级 16 中的一种，其次必须是二级 62+3 中的一种；
        前者套建筑素材（墙/房/塔），后者套城堡素材」] —— 二级/三级必须回填出该据点所属的那一类。
        取值顺序（都是**现成的权威数据**，本页不另抄字典）：
          ① 据点自己的 buildingStyle 本身就是 62 类之一（如 MONGOL / TIBET / WESTERN / KHITAN）
@@ -4418,7 +4418,7 @@ refresh();
     wall.addEventListener('change', remember); castle.addEventListener('change', remember); custom.addEventListener('change', remember);
     ctype.addEventListener('change', syncTypeHint);
     document.getElementById('ceReload').addEventListener('click', function () { location.reload(); });
-    /* 🔴 [2026-09-18 主人定「据点必须一级 16 选 1 + 二级 59+3 选 1」]
+    /* 🔴 [2026-09-18 主人定「据点必须一级 16 选 1 + 二级 62+3 选 1」]
        二级/三级兜底表直接用**游戏侧权威表** REGION_TO_BRANCH（src/config/deCastleAssets.ts，
        resolveCastleAsset 解析城堡走的就是它），免得本页另抄一份后漂移。
        本页是 public/ 下的静态页、不能 import TS，故走 Vite 的模块服务动态 import；

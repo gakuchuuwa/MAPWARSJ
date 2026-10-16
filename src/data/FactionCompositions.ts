@@ -6,7 +6,7 @@
  *   本表**只存指针，不存编制**：一条记录只回答「这个势力挂哪支军团」。
  *   编制在三层军团表里，一支军团一份：
  *     一级 16 母体 → `CultureFormations.ts` 的 `BASE_16_TIERS_MAP`
- *     二级 59 文明 → `level2Civ59Legions.ts`
+ *     二级 62 文明 → `level2Civ62Legions.ts`
  *     三级 145 自建 → `level3CustomLegions.ts`
  *   原先每家势力还各存一份 `formationMode` + `slots` 的**副本**（460 份，其中 419 份
  *   与军团记录一模一样纯属冗余、19 份已漂移成另一套）——「同一个军团名两种编制」

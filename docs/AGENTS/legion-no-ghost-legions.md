@@ -12,7 +12,7 @@
 | 层 | 文件 | 当前支数 |
 |---|---|---|
 | 一级 · 母体 | `src/types/CultureFormations.ts` → `BASE_16_LEGION_NAME_BY_REGION` | 16 |
-| 二级 · 文明 | `src/data/level2Civ59Legions.ts` → `LEVEL_2_CIV_59_LEGIONS` | 59 |
+| 二级 · 文明 | `src/data/level2Civ62Legions.ts` → `LEVEL_2_CIV_62_LEGIONS` | 62 |
 | 三级 · 自定义 | `src/data/level3CustomLegions.ts` → `LEVEL_3_LEGIONS` | 122 |
 
 三层都查不到 → 返回 `null`。后果两边不一致：
@@ -35,7 +35,7 @@
 ```
 
 🔴 [2026-09-18 主人连说三遍]「**文化区早就取消了**」。据点的身份只有
-**建筑风格三层（一级 16 + 二级 59 + 三级 3）**。代码里那条
+**建筑风格三层（一级 16 + 二级 62 + 三级 3）**。代码里那条
 `CULTURE_LEGION_NAMES[region]` 的回落是**没清干净的旧账**，不是现行设计，
 别拿它当判据、更别照着它写新逻辑。
 

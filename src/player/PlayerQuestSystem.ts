@@ -12,12 +12,13 @@
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { isGeneralOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
-import { ALL_BRANCHES_MAP, CULTURE_59_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
+import { ALL_BRANCHES_MAP, CULTURE_62_GROUPS, LAYER3_CUSTOM_GROUPS, resolveCityHierarchy } from '../systems/CultureHierarchy';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
 import { applyLegionCultureComposition } from '../types/CultureFormations';
@@ -41,12 +42,12 @@ import { SCRIPT_ROAD_SEGMENTS } from '../battlefield-editor/scriptSegments';
 export type PlayerQuestKind = 'restore' | 'campaign' | 'general_event';
 
 /**
- * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
+ * 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
  *   66 类正名 = 二级 62 文明 + 三级 4 自建（与据点编辑器同一份数据）；
  *   别名键（NORTH / STEPPE / WEST_ASIA / OTTOMAN / RUSSIAN / YURT）按**对象同一性**折回正名，不另抄字典。
  */
 const STYLE62_KEYS: readonly string[] = [
-    ...CULTURE_59_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
+    ...CULTURE_62_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
     ...LAYER3_CUSTOM_GROUPS.flatMap((g) => g.branches.map((b) => b.key)),
 ];
 const STYLE62_SET: ReadonlySet<string> = new Set(STYLE62_KEYS);
@@ -328,6 +329,8 @@ export class PlayerQuestSystem {
             }
         }
         if (!g) return null;
+        // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」] 不在「登场年～卒年」内 → 城中无将可谈（乱斗恒在场）
+        if (!isGeneralOnStage(g.generalId)) return null;
         // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
         //    打完一场后战场军团 8 秒才 disband，这 8 秒里它会被误判成「这位武将带兵在外」，
         //    玩家到了下一场的出发城却扑空（generalInCity 返回 null）。与 armyOfGeneral /
@@ -352,7 +355,9 @@ export class PlayerQuestSystem {
         if (hero.isAttached()) return;
         const g = this.generalInCity(city.id);
         if (!g) {
-            const anchored = getCityAnchoredGeneral(city.id);
+            const anchored0 = getCityAnchoredGeneral(city.id);
+            // 🔴 [2026-10-16 主人定] 剧本期未登场 / 已去世的武将不追（只能找登场武将）
+            const anchored = anchored0 && isGeneralOnStage(anchored0.generalId) ? anchored0 : null;
             // 🔴 [2026-09-09 主人定] 扑空不再换人：他既然带兵出去了，就追出去找他。
             //    （赶路途中武将出征是常态，原来在这里直接放弃，玩家就一直在空跑。）
             const army = anchored ? this.armyOfGeneral(anchored.generalId) : null;
@@ -682,7 +687,7 @@ export class PlayerQuestSystem {
         //    3 秒后自动确认（见 `PlayerHUD.showDialogue` 的 accent 自动点）→ 走
         //    `onArrive` → 这条链 → 又接了亚历山大的「海姆斯山战役」，77 路 21 场照跑。
         //    口径（主人 2026-10-05）：「剧本的自动是去找亚历山大，走剧本 21 场；
-        //      乱斗的自动是去找武将、找名将，按 59+3 个地区去找」——**两套玩法分开**。
+        //      乱斗的自动是去找武将、找名将，按 62+3 个地区去找」——**两套玩法分开**。
         //    本函数是剧本链的唯一入口（`onArrive` 城中会面、`onMeetArmy` 野外会面两处都只经它），
         //    乱斗期返回 null → 两处都落回原有乱斗路（出征 / 复国 / 随军），剧本一场都不触发。
         if (this.deps.hero.autoPlan !== 'script') return null;
@@ -2515,6 +2520,8 @@ export class PlayerQuestSystem {
             if (!c.factionId) continue;
             const g = getCityAnchoredGeneral(c.id);
             if (!g) continue;
+            // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」]（乱斗恒在场，不受影响）
+            if (!isGeneralOnStage(g.generalId)) continue;
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
             // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除）
@@ -2523,7 +2530,7 @@ export class PlayerQuestSystem {
         }
         if (!candidates.length) return null;
 
-        // 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
+        // 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
         //    先按 66 类建筑风格分组，按 pickStyle62Pool 的轮换规则（每轮先最近一类，之后由东向西）取一类，只在这一类的城里挑。
         const me = this.deps.hero.getPosition();
         const pool = this.pickStyle62Pool(candidates, me);
@@ -2626,7 +2633,7 @@ export class PlayerQuestSystem {
     private lastStyleLng: number | null = null;
 
     /**
-     * 🔴 [2026-10-05 主人令]「加上 59+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
+     * 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」
      * 🔴 [2026-10-07 主人令]「由东向西」：让玩家挨个投奔势力、挨个体验不同文化区，直至全球兜一圈。
      *
      *   把候选按建筑风格分组，只把选中的那一类的城交给下面原有的链条（兵多 → 名将 → 同档就近）去挑。
