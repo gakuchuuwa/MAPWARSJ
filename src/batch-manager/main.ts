@@ -24,6 +24,8 @@ import {
     type Base16StyleKey,
     type CityBase16Resolution,
 } from '../systems/CultureHierarchy';
+// 🔴 [2026-10-16 主人令] 武将细分属性标签（四时代之下的细分）：「他们属于古典里的先秦」
+import { getGeneralEraSubtagLabel } from '../data/GeneralEraSubtags';
 
 export const ERA_LABELS: Record<GeneralEra, string> = {
     antiquity: '古典时代',
@@ -562,7 +564,8 @@ function buildRows(): void {
         const era = gen
             ? ((entityData!.eras?.[gen.generalId] || GENERAL_ERA[gen.generalId]) as GeneralEra | undefined)
             : undefined;
-        const eraLabel = era ? ERA_LABELS[era] : undefined;
+        // 🔴 [2026-10-16 主人令] 打了细分标签的（如「古典 · 先秦」）优先显示细分，没打标签的只显示四时代
+        const eraLabel = (gen ? getGeneralEraSubtagLabel(gen.generalId) : null) ?? (era ? ERA_LABELS[era] : undefined);
 
         return {
             id: f.id,

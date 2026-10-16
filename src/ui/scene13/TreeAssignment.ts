@@ -417,12 +417,15 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
     const sub = q.buildingStyle.toUpperCase();
     const s = Math.max(0, Math.min(3, q.season));
 
-    // ── 东亚及塞北特殊子区 ──
+    const isGobiTile = q.baseTile === 'ds5' || q.baseTile === 'qs' || q.baseTile === 'pal1';
+    // ── 东亚及塞北特殊子区（对齐 DE theme_palaearctic_asia_steppe 白桦/松林与绿洲棕榈，仅在戈壁荒滩用梭梭灌木 BUSH_TREE_A） ──
     if (sub === 'JAPAN') return (['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'] as const)[s];
     if (sub === 'KOREA') return 'SCENARIO_TREE_B';
     if (sub === 'NORTHEAST') return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
-    if (sub === 'MONGOL' || sub === 'YURT' || sub === 'XIANBEI') return 'BUSH_TREE_A';
-    if (sub === 'KHITAN') return q.lng < 106.5 ? 'BUSH_TREE_A' : 'OAK';
+    if (sub === 'MONGOL' || sub === 'YURT' || sub === 'XIANBEI') {
+        return isGobiTile ? 'BUSH_TREE_A' : (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
+    }
+    if (sub === 'KHITAN') return isGobiTile ? 'BUSH_TREE_A' : (q.lng < 112.0 ? 'BIRCH_GREEN' : 'OAK');
     if (sub === 'JIANGNAN') {
         return (q.lat >= 28.0 && (q.baseTile === 'gr4' || q.baseTile === 'qs2' || q.baseTile === 'sh4'))
             ? 'WILLOW'
@@ -430,13 +433,18 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
     }
     if (sub === 'BASHU') return q.lat < 26.5 ? 'LUSH_BAMBOO' : 'BAMBOO';
     if (sub === 'CENTRAL' || sub === 'WEI' || sub === 'ASIA') {
-        return (q.lng < 104.5 && q.lat >= 35.0) ? 'BUSH_TREE_A' : 'SCENARIO_TREE_L';
+        if (isGobiTile) return 'BUSH_TREE_A';
+        return (q.lng < 104.5 && q.lat >= 35.0) ? 'BIRCH_GREEN' : 'SCENARIO_TREE_L';
     }
 
     // ── 青藏 / 西域 / 中亚 / 普鲁 / 东南亚 / 印度 ──
     if (sub === 'TIBET') return 'CYPRESS';
-    if (sub === 'WESTERN' || sub === 'CENTRAL_ASIA' || sub === 'CEAS' || sub === 'TURKS') return 'BUSH_TREE_A';
-    if (sub === 'CUMAN' || sub === 'HUNS') return q.lng < 55 ? 'OAK' : 'BUSH_TREE_A';
+    if (sub === 'WESTERN' || sub === 'CENTRAL_ASIA' || sub === 'CEAS' || sub === 'TURKS') {
+        if (isGobiTile) return 'BUSH_TREE_A';
+        if (q.baseTile === 'des' || q.baseTile === 'pal') return 'PALM';
+        return 'BIRCH_GREEN';
+    }
+    if (sub === 'CUMAN' || sub === 'HUNS') return isGobiTile ? 'BUSH_TREE_A' : (q.lng < 55 ? 'OAK' : 'BIRCH_GREEN');
     if (sub === 'PURU') return 'PINE';
     if (sub === 'VIETNAMESE' || sub === 'BURMESE' || sub === 'KHMER' || sub === 'SEAS') return 'LUSH_BAMBOO';
     if (sub === 'MALAY') return 'WAX_PALM';

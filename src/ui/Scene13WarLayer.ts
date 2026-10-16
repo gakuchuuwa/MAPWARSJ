@@ -2482,7 +2482,6 @@ export class Scene13WarLayer {
                 }
             }
         }
-        gl.flushFoundation();
         const inCity = (x: number, y: number) => ((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1;
         const hasGateRoads = (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city') && ringLm > 0;
         const roadMaxU = ringLm / 2 + (this.defenderCityType === 'big_city' ? 14.5 : 12.0);
@@ -2493,7 +2492,13 @@ export class Scene13WarLayer {
             const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
             return (di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV);
         };
-        this.decorSprites = this.decorSprites.filter((sp) => sp.asset.startsWith('BUILDING') || sp.asset === '' || (!inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y))));
+        this.decorSprites = this.decorSprites.filter((sp) => {
+            if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
+            const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y));
+            if (!keep) gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
+            return keep;
+        });
+        gl.flushFoundation();
         for (const sp of this.decorSprites) {
             sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
         }
@@ -3410,18 +3415,19 @@ export class Scene13WarLayer {
                         isSiege: this.battleType === 'siege',
                     };
                     const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
-                    // 按 TreeAssignment.treeDensityFor 的真实气候梯度控制林团保留率与单团上限（林地茂密、农耕适中、黄土高原疏林、草原散株、沙漠/戈壁仅数丛灌木）
+                    // 🔴 [2026-10-16 主人指出「怎么都没有树呢，看看DE是怎么安排的树」]
+                    //    DE 原版（empires2_x2_p1.dat + RMS 烘焙图 site_*.json / theme_*.json）的树木安排规则：
+                    //    1) 「林地底图（lv2/for/fo2/snf）与树木 1:1 严格绑定」：凡是地面画了森林底图斑块的格子，上面 100% 必立一棵树，绝不允许把林团砍剩几棵而留下一大片光秃秃的 lv2 落叶底图；
+                    //    2) 「成片林团（Forest Clumps）+ 原野散株（Straggler Trees）」双层布局：非荒漠/非干草原地图 100% 原样保留 DE 烘焙图的全部林团与散株（clumpKeepMod = 1，不截断单团棵数）；
+                    //    3) 仅在地面层已隐藏森林底斑的极旱荒漠/戈壁/干草原（isSparseTreelessBiome）上，才对复用的大林团做稀疏化。
+                    const isSparseTreelessBiome = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
+                        || baseTerrain === 'qs' || baseTerrain === 'pal1'
+                        || baseTerrain === 'gr7' || baseTerrain === 'gr5' || baseTerrain === 'gravel_default';
                     const treeDensity = treeDensityFor(baseTerrain, this.battleType === 'siege');
-                    const clumpKeepMod = treeDensity.forestCover >= 0.030 ? 1
-                        : treeDensity.forestCover >= 0.015 ? 2
-                        : treeDensity.forestCover >= 0.008 ? 3
-                        : treeDensity.forestCover >= 0.003 ? 4
-                        : 5;
-                    const maxTreesPerClump = treeDensity.forestCover >= 0.030 ? 120
-                        : treeDensity.forestCover >= 0.015 ? 36
-                        : treeDensity.forestCover >= 0.008 ? 12
-                        : treeDensity.forestCover >= 0.003 ? 6
-                        : 3;
+                    const clumpKeepMod = !isSparseTreelessBiome ? 1
+                        : (treeDensity.forestCover >= 0.004 ? 2 : 3);
+                    const maxTreesPerClump = !isSparseTreelessBiome ? 9999
+                        : (treeDensity.forestCover >= 0.004 ? 18 : 8);
 
                     // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
                     // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
@@ -3477,8 +3483,8 @@ export class Scene13WarLayer {
                             }
                         }
 
-                        // 按当前底图气候密度裁剪多余林团，并对单团棵数封顶（沙漠/戈壁/草原/黄土不再出现百棵密林）
-                        if (clumpKeepMod > 1 && (cId % clumpKeepMod !== 0)) {
+                        // 仅在隐藏了森林底斑的荒漠/戈壁/干草原（isSparseTreelessBiome）裁剪大林团；其余地图 100% 保留 DE 林团与散株
+                        if (clumpKeepMod > 1 && clumpMembers.length > 3 && (cId % clumpKeepMod !== 0)) {
                             for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
                             continue;
                         }
@@ -5248,12 +5254,22 @@ export class Scene13WarLayer {
      *   · 墙已全部塌完 / 没有墙 ⇒ 返回 false，停止轮询（`nextWallGapSec = 1e9`）；
      *   · 城内建筑、箭塔、营寨**不参与**自动坍塌（它们只能被打到 0 血后倒塌，见 `onDefBuildingHit`）。
      */
+    /**
+     * 🔴 [2026-10-16 主人令「城墙，栅栏这些不需要完全摧毁，可以75%就可以通行，有的50%就剋，有点25%就可以，有点0%，这样城墙被摧毁的样子就多样化。更加真实……但是城门要摧毁」]
+     * 单格城墙/垛墙/栅栏/篱笆达到该剩余血量比例（0.75 / 0.50 / 0.25 / 0 四档交错）即视为破口通行并定格对应破损形态；城门与建筑恒为 0（必须打到 0% 完全摧毁）。
+     */
+    private wallBreachRatio(b: WarBuilding): number {
+        if (b.bld || b.key === 'STONE_GATE') return 0;
+        const idx = Math.max(0, this.wallGates.indexOf(b));
+        return ([0.75, 0.50, 0.25, 0] as const)[idx & 3];
+    }
+
     private collapseNextWallGap(): boolean {
         const alive = this.wallGates.filter(b => this.wallStanding(b));
         if (alive.length === 0) return false;            // 没墙可塌了 → 停轮询
         let pick: WarBuilding | undefined;
         for (const b of alive) {
-            if (b.hp >= b.maxHp) continue;               // 🔴 只有不是满血的城墙才能自动坍塌
+            if (b.key === 'STONE_GATE' || b.hp >= b.maxHp) continue; // 🔴 城门必须打到 0 血摧毁；只有不是满血的城墙才能自动坍塌
             if (!pick || (b.hitAt ?? this.battleSec) < (pick.hitAt ?? this.battleSec)) pick = b;
         }
         if (!pick) return true;                          // 全都满血：这一轮不塌，10 秒后再看
@@ -5262,15 +5278,15 @@ export class Scene13WarLayer {
     }
 
     /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
-     *  - 石墙(Unit 117) / 垛墙(Unit 155) / 木栅栏(Unit 72) / 强木栅栏(Unit 119)：DE 无 100 帧倒塌 SLD，
-     *    在受伤阶段渐进切 D25/D50/D75（木栅栏叠火焰），血归零时触发 dying_graphic=37（smoke_tiny 尘土 `FX_WALL_DUST` + 直接切 Rubble1x1 `s_rubble_1x1_x1` = `FOUNDATION_1X1_RUBBLE`，无火药爆炸）；
-     *  - 篱笆(Unit 1062)：血归零时触发 dying_graphic=36（smoke_tiny 尘土 `FX_WALL_DUST` + 切 `b_scen_fence_rubble` = `BATTLEFIELD:FENCE_RUBBLE`，无火药爆炸）；
-     *  - 城门(Unit 64)：DE 有独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`），照播 100 帧倒塌。 */
+     *  - 石墙(Unit 117) / 垛墙(Unit 155)：按 `wallBreachRatio`（75%/50%/25%/0% 四档交错）定格在 D25 / D50 / D75 / FOUNDATION_1X1_RUBBLE，扬起 `FX_WALL_DUST` 尘土并解除阻挡；
+     *  - 木栅栏(Unit 72) / 强木栅栏(Unit 119)：按 `wallBreachRatio` 阈值触发 `FX_WALL_DUST` + 切 `FOUNDATION_1X1_RUBBLE`；
+     *  - 篱笆(Unit 1062)：按 `wallBreachRatio` 阈值触发 `FX_WALL_DUST` + 切 `BATTLEFIELD:FENCE_RUBBLE`；
+     *  - 城门(Unit 64)：必须 0 血完全摧毁，照播 DE 独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`）。 */
     private collapseOneWall(b: WarBuilding): void {
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
-        // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打到 0 血）都走这里 → 只在这一处播倒塌音，避免重复播放
+        // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打穿阈值）都走这里 → 只在这一处播倒塌音，避免重复播放
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
         if (b.sprite.asset.includes('FENCE') || b.rubbleAsset === 'BATTLEFIELD:FENCE_RUBBLE') {
@@ -5284,7 +5300,13 @@ export class Scene13WarLayer {
             this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
         } else if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             b.sprite.collapse = undefined;
-            b.sprite.asset = 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+            const br = this.wallBreachRatio(b);
+            if (b.destrAssets && br > 0) {
+                const stageIdx = br >= 0.75 ? 0 : (br >= 0.50 ? 1 : 2);
+                b.sprite.asset = 'BUILDINGANIM:' + b.destrAssets[stageIdx];
+            } else {
+                b.sprite.asset = 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
+            }
             b.sprite.frame = 0;
             this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
         } else if (b.rubbleAsset) {
@@ -5657,7 +5679,7 @@ export class Scene13WarLayer {
                     }
                 }
                 if (b.bld) this.onDefBuildingHit(b);
-                if ((b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL' || b.key === 'STONE_GATE') && b.hp <= 0 && !b.sprite.obstructionDisabled && !b.sprite.collapse && !b.sprite.destroyed) {
+                if ((b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL' || b.key === 'STONE_GATE') && b.hp <= b.maxHp * this.wallBreachRatio(b) && !b.sprite.obstructionDisabled && !b.sprite.collapse && !b.sprite.destroyed) {
                     this.collapseOneWall(b);
                 }
             }
@@ -7169,8 +7191,8 @@ export class Scene13WarLayer {
                             }
                         }
                         if (foe.bld) this.onDefBuildingHit(foe);
-                        // 墙/木栅栏/城门被打爆（hp <= 0）→ 播放 DE 倒塌动画（FOUNDATION_1X1_DESTR / 城门 DESTR）并切残垣/残骸解除阻挡
-                        if ((foe.key === 'STONE_WALL' || foe.key === 'FORTIFIED_WALL' || foe.key === 'WOOD_WALL' || foe.key === 'STONE_GATE') && foe.hp <= 0 && !foe.sprite.obstructionDisabled && !foe.sprite.collapse && !foe.sprite.destroyed) {
+                        // 墙/木栅栏/篱笆达到破口血量阈值（75%/50%/25%/0% 四档交错；城门恒为 0%）→ 触发 collapseOneWall 定格破损形态并解除阻挡
+                        if ((foe.key === 'STONE_WALL' || foe.key === 'FORTIFIED_WALL' || foe.key === 'WOOD_WALL' || foe.key === 'STONE_GATE') && foe.hp <= foe.maxHp * this.wallBreachRatio(foe) && !foe.sprite.obstructionDisabled && !foe.sprite.collapse && !foe.sprite.destroyed) {
                             this.collapseOneWall(foe);
                         }
                     }

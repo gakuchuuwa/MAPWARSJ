@@ -1172,7 +1172,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kongque: { generalId: 'kongque_zhantuoluo', generalName: '旃陀罗笈多', portrait: '/assets/INDIA/kongque_zhantuoluojiduo.png' },
     mojietuo: { generalId: 'mojietuo_pinbisuoluo', generalName: '频毗娑罗', portrait: '/assets/INDIA/mojietuo_pinpisuoluo.png' },
     // 2026-09-12 主人三条规矩：军团要有武将・武将要有所属据点势力。
-    // 古典时代孟加拉军团需要一位古典孟加拉武将 = 毗阇耶（大史记其自孟加拉僧伽补罗出海、
+    // 古典时代孟加拉（2026-10-16 名册名【古典时代高陀军团】）需要一位古典孟加拉武将 = 毗阇耶（大史记其自孟加拉僧伽补罗出海、
     // 征服楞伽建僧伽罗王朝，约公元前543年，古典）。**数组第一位＝守将，仍是达磨波罗**（绝不挤掉）。
     // 立绘留空＝走文化池回落，由主人放图。
     boluo: [

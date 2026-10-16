@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 三级军团被删除后的**回落安置**（🔴 2026-09-16 主人定）。
  *
  * ── 规则（主人原话）────────────────────────────────────────────
@@ -28,6 +28,7 @@ import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getFactionGeneral } from '../data/FactionGenerals';
+import { getGeneralEraSubtagLegion, getGeneralEraSubtagLabel } from '../data/GeneralEraSubtags';
 import { BASE16_NAMES, BASE16_OF_REGION, STYLE_TO_BASE16, type Base16Culture } from './CultureBase16';
 // 🔴 一级 16 母体的军团名只有一份权威（CultureFormations 的这张表，getLegionCompositionByName 也走它），
 //    别在别处再抄一份 —— 抄出来的副本必然漂移。
@@ -61,68 +62,33 @@ export interface FallbackPlan {
 }
 
 /**
- * 🔴 [2026-09-18 主人定] 三级专属建筑风格的**保底军团**（三种，主人逐条口述）：
- *     青藏 60 座        → 【封建时代吐蕃军团】
- *     西域 41 座        → 【古典时代西域军团】
- *     漠北蒙古毡帐 46 座 → 【城堡时代蒙古军团】
+ * 🔴 [2026-10-16 主人定]「16+62 的 78 个基础军团不能被删除」—— 一级 16 与**二级全部**
+ * （文明 × 时代名册，现存 257 支）都是保底军团：删了它们，该风格/该时代的武将就没有军团可接，
+ * 回落链路当场断掉。服务端 `/api/delete-legion` 已拦一级与二级，此函数给编辑器 UI 同一道闸门。
  *
- * 为什么优先于「二级同时代 → 一级母体」那两级：这三种是三级**专属**风格，
- * 二级 62 里根本没有同 region 的条目，不拦一道就会一路退到一级母体
- * （青藏退普鲁军团 / 西域退中亚军团 / 毡帐退东亚军团），与主人口述不符。
- *
- * ⚠️ 保底军团与时代无关 —— 主人指名的就是这三支，别按武将时代另挑一支同族的。
- */
-export const TIER3_FALLBACK_LEGION: Record<'TIBET' | 'WESTERN' | 'YURT', string> = {
-    TIBET: '封建时代吐蕃军团',
-    WESTERN: '古典时代西域军团',
-    YURT: '城堡时代蒙古军团',
-};
-
-/**
- * 🔴 [2026-09-18 主人定]「16+62+3 的 78 个基础军团不能被删除。这 78 个是武将的保底军团。」
- * 一级 16 与二级 62 服务端本来就拦着（/api/delete-legion）；三级那 3 支保底军团里
- * 【封建时代吐蕃军团】【古典时代西域军团】登记在三级表，原本是可删的 —— 删了青藏/西域
- * 两种风格的武将就没有军团可接，保底链路当场断掉。此函数给删除入口做闸门。
- * （【城堡时代蒙古军团】本身在二级 62 里，已被服务端拦住。）
+ * ⚠️ 2026-10-16 **删掉旧「三级专属风格保底三支」**（青藏→封建时代吐蕃军团／西域→古典时代西域军团／
+ *    漠北毡帐→城堡时代蒙古军团）：那是**与时代无关的固定指派**，与主人最新口径
+ *    「武将定时代 ＋ 建筑风格定建筑文化 → 挂该文明 × 该时代的二级军团」直接冲突；
+ *    且「古典时代西域军团」已按主人名册删除（该分支新名为古典时代塞种军团）。
+ *    现在一律走 ④「同风格 ＋ 同时代」命中，不再有绕过时代的保底。
  */
 export function isBaseFallbackLegion(name: string): boolean {
-    return Object.values(TIER3_FALLBACK_LEGION).includes(name);
+    return LEVEL_2_CIV_62_LEGIONS.some((l) => l.name === name);
 }
 
-/** 三级风格的中文名（给 note 用） */
-const TIER3_LABEL: Record<'TIBET' | 'WESTERN' | 'YURT', string> = {
-    TIBET: '青藏', WESTERN: '西域', YURT: '漠北蒙古',
-};
-
-/** 据点属于哪一种三级专属风格；都不是则 null。
- *  判据与 _citytest.html 的 LAYER3_CUSTOM_GROUPS 同源：青藏(含雅隆) / 西域 / 毡帐营地。 */
-export function tier3StyleOfCity(city: CityDataV2): 'TIBET' | 'WESTERN' | 'YURT' | null {
-    // 🔴 [2026-09-18 主人定]「region 早就取消了，region 都是错的」——
-    //    这里**只读 city.buildingStyle**，一个字都不许碰 region。
-    //    青藏 60 座 / 西域 40 座原先 buildingStyle 写的是一级底座（PURU / CEAS），
-    //    三级身份只躺在 region 里；已在同日把这 100 座的 buildingStyle 改成 TIBET / WESTERN，
-    //    身份从此落在建筑风格上。渲染不变（TIBET→PURU 底座、WESTERN→CEAS 底座）。
-    const bs = String(city.buildingStyle ?? '');
-    if (bs === 'YURT' || bs === 'MOBEI_MONGOL') return 'YURT';
-    if (bs === 'TIBET') return 'TIBET';
-    if (bs === 'WESTERN') return 'WESTERN';
-    // 没写 buildingStyle 的（实测 2 座）按同一条解析链算出的皮肤兜一道
-    const skin = resolveCityDeBuildingStyle(city.id, city.type, city.region, city.lat, city.lng, city.buildingStyle);
-    if (skin === 'YURT') return 'YURT';
-    return null;
-}
 
 /**
- * 🔴 [2026-09-18] 二级 62：**建筑风格的 key** 与 **二级军团表的 region** 有 6 处不同名，
- * 指的是同一个文明（对照 _citytest.html 里那 6 条 label 即可确认）：
- *     KOREA(🏯 高丽)      ↔ GORYEO      【城堡时代高丽军团】
- *     GERMANIC(🛡️ 条顿)   ↔ TEUTONS     【城堡时代条顿军团】
- *     LATIN(🏛️ 意大利)    ↔ ITALIANS    【城堡时代意大利军团】
- *     TURKS(🕌 奥斯曼)    ↔ OTTOMAN     【帝国时代奥斯曼军团】
- *     AFRICA(🌍 马里)     ↔ MALI        【城堡时代马里军团】
- *     PERSIAN(🏛️ 阿契美尼德) ↔ ACHAEMENIDS 【古典时代阿契美尼德军团】
+ * 🔴 [2026-09-18] 二级 62：**建筑风格的 key** 与 **二级军团表的 region** 有几处不同名，
+ * 指的是同一个文明（对照 _citytest.html 里那几条 label 即可确认；军团名已按 2026-10-16 名册更新）：
+ *     KOREA(🏯 高丽)        ↔ GORYEO      【城堡时代高丽军团】
+ *     GERMANIC(🛡️ 条顿)     ↔ TEUTONS     【城堡时代德意志骑士团】
+ *     LATIN(🏛️ 意大利)      ↔ ITALIANS    【城堡时代卡罗乔民兵团】
+ *     TURKS(🕌 奥斯曼)      ↔ OTTOMAN     【帝国时代土耳其军团】
+ *     AFRICA(🌍 马里)       ↔ MALI        【城堡时代马里军团】
+ *     PERSIAN(🏛️ 阿契美尼德) ↔ ACHAEMENIDS 【古典时代不死军团】
+ *     YURT / MOBEI_MONGOL(⛺ 漠北毡帐) ↔ MONGOL 【漠北蒙古四档：匈奴/突厥/蒙古/喀尔喀】
  *
- * 不做这层别名，二级查找 `l.region === buildingStyle` 对这 6 种风格必然落空 →
+ * 不做这层别名，二级查找 `l.region === buildingStyle` 对这几种风格必然落空 →
  * 明明有同文明的二级军团，却会一路退到一级母体（高丽退东亚军团、条顿退西欧军团…），
  * 保底安置就安错了。
  */
@@ -133,6 +99,8 @@ const L2_STYLE_ALIAS: Record<string, string> = {
     TURKS: 'OTTOMAN',
     AFRICA: 'MALI',
     PERSIAN: 'ACHAEMENIDS',
+    YURT: 'MONGOL',
+    MOBEI_MONGOL: 'MONGOL',
 };
 
 /** 势力的代表据点：城级最高（tier 小）的一座 */
@@ -181,14 +149,17 @@ export function resolveFallbackForFaction(factionId: string): FallbackPlanItem |
         buildingStyle: style,
     };
 
-    // ⓪ 三级专属风格（青藏 / 西域 / 漠北蒙古毡帐）：主人指名的保底军团，优先于二级/一级
-    const t3 = tier3StyleOfCity(city);
-    if (t3) {
+    // ⓪（2026-10-16 删除）旧「三级专属风格固定保底」不再存在 —— 一律按主人口径走
+    //    「同建筑风格 ＋ 同武将时代」的二级命中，见下。
+    // 🔴 [2026-10-16 主人令] 例外：**武将细分标签**（如「古典 · 先秦」）优先于二级命中 ——
+    //    这批武将属于古典里的细分文化，势力就挂该细分专属军团（先秦 → 古典时代先秦军团）。
+    const subtagLegion = getGeneralEraSubtagLegion(general.generalId);
+    if (subtagLegion) {
         return {
             ...base,
-            newLegionName: TIER3_FALLBACK_LEGION[t3],
+            newLegionName: subtagLegion,
             via: 'level2',
-            note: `${base.generalName}（${era}）据点 ${city.name} 是三级${TIER3_LABEL[t3]}风格 → 保底【${TIER3_FALLBACK_LEGION[t3]}】`,
+            note: `${base.generalName}（${era}）带细分标签【${getGeneralEraSubtagLabel(general.generalId)}】→ 保底【${subtagLegion}】`,
         };
     }
 
@@ -257,3 +228,4 @@ export async function applyFallbackPlan(plan: FallbackPlan): Promise<{ ok: numbe
     }
     return { ok, failed };
 }
+

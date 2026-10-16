@@ -1604,7 +1604,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    ｜ TARASCAN→城堡时代塔拉斯科军团 ｜ KARA_KHITAN→城堡时代西辽军团
     //    它们**已删**：查无此军的指针本来就不作数（`getCultureLegionName` 里 `legionNameExists` 挡掉），
     //    实得走「建筑风格保底」，删前删后**逐区实得完全相同**（实测 PERSIAN_CASTLE 6 城→波斯军团｜
-    //    CHIMU 昌昌→安第斯军团｜TARASCAN 钦聪灿→中美军团｜SEASIA_CASTLE 特罗武兰→城堡时代马来军团｜
+    //    CHIMU 昌昌→安第斯军团｜TARASCAN 钦聪灿→中美军团｜SEASIA_CASTLE 特罗武兰→城堡时代爪哇军团｜
     //    KARA_KHITAN 碎叶→中亚军团）。尺子：`scratch/audit_ghost_legions.mts`（清完不再有「查无此军」）。
     SEASIA_FEUDAL: '古典时代高棉军团',
     ANDE: '城堡时代克丘亚军团',
@@ -1619,8 +1619,8 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     THRACIAN: '古典时代色雷斯军团',
     // 🔴 [2026-10-05 主人令「这两个军团在历史上是不是重复了？如果是，请删除三级的，保留二级的」]
     //    原指向三级自建「古典时代波斯军团」—— 那是**同一个阿契美尼德政权立的第二支波斯系军团**
-    //    （它的 parentLegion 就写着「古典时代阿契美尼德军团」，自己承认是派生），
-    //    与二级 62 的「古典时代阿契美尼德军团」重复 → 三级那条已删，指针改指**保留的二级那支**。
+    //    （它的 parentLegion 就写着那时的二级名，自己承认是派生），与二级那位重复 →
+    //    三级那条已删；此后二级那一支按 2026-10-16 名册改名【古典时代不死军团】，指针随之改指它。
     //    ⚠️ 指针必须显式改指：若只删三级会悬空，这 15 座波斯城会掉到「建筑风格保底」。
     PERSIAN: '古典时代不死军团',
     ARMENIANS: '封建时代阿尼城卫军',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 62 表这一支自己声明 region=ARMENIANS
@@ -1646,7 +1646,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     BENGALIS_ANTIQUITY: '古典时代高陀军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核
     GURJARAS: '封建时代古贾拉铁骑军团',
     VIETNAMESE: "城堡时代大越军团",
-    KHMER: '封建时代高棉军团',   // 🔴 [2026-09-18] 原挂【城堡时代高棉军团】全仓查无此军=幽灵；二级 62 表的【封建时代吴哥军团】自己声明 region=KHMER
+    KHMER: '封建时代高棉军团',   // 🔴 [2026-09-18] 原挂【城堡时代高棉军团】全仓查无此军=幽灵；本支自己声明 region=KHMER（2026-10-16 名册后即「封建时代高棉军团」）
     MAYANS: '封建时代玛雅军团',
     MAPUCHE: '帝国时代阿劳卡尼亚军团',
     MUISCA: '城堡时代穆伊斯卡军团',

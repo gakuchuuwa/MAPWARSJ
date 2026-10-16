@@ -647,7 +647,7 @@ export class Scene13GroundLayerGL {
         // 但当战场主底图为荒漠/戈壁/黄土/干草原/高寒砾石时，树木已被稀疏化为散生灌木/孤树，不铺大块深色森林底斑
         const baseGrass = grassTileName ?? 'gr2';
         const isSparseTreelessBiome = baseGrass === 'pal' || baseGrass === 'des' || baseGrass === 'ds5'
-          || baseGrass === 'qs' || baseGrass === 'pal1' || baseGrass === 'ds2'
+          || baseGrass === 'qs' || baseGrass === 'pal1'
           || baseGrass === 'gr7' || baseGrass === 'gr5' || baseGrass === 'gravel_default';
         const isForestTerrain = !isSparseTreelessBiome && (
           fname === 'g_for' || fname === 'g_fo2' || fname === 'g_snf' || id === 71 || id === 13 || id === 48 ||
