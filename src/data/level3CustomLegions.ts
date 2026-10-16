@@ -102,8 +102,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代十字军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'knight', count: 2 },
-            { type: 'cavalier', count: 3 },
+            { type: 'crossbowman', count: 2 },
+            { type: 'elite_teutonic_knight', count: 3 },
             { type: 'crusader_knight', count: 4 },
         ],
         regions: ['CRUSADERS'],
