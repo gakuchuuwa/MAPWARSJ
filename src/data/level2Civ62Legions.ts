@@ -121,7 +121,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'MONOREME',
         slots: [
             { type: 'knight', count: 3 },
-            { type: 'swordsman', count: 2 },
+            { type: 'laminated_bowman', count: 2 },
             { type: 'elite_throwing_axeman', count: 4 },
         ],
     },
@@ -181,12 +181,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代高丽军团', civ: '高丽', age: 'castle', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
         buildingStyle: 'KOREA',
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'TURTLE_SHIP',
         slots: [
-            { type: 'jian_swordsman', count: 2 },
-            { type: 'fire_archer', count: 3 },
-            { type: 'elite_war_wagon', count: 4 },
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'fire_archer', count: 4 },
+            { type: 'elite_war_wagon', count: 2 },
         ],
     },
     {
@@ -760,9 +760,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 2 },
+            { type: 'archer', count: 3 },
+            { type: 'hei_kuang_heavy', count: 4 },
         ],
     },
     // ── 朝鲜 · 封建时代 · 封建时代新罗军团　（三级升二级）────────────────
@@ -776,9 +776,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'war_wagon', count: 3 },
-            { type: 'hei_kuang_heavy', count: 2 },
+            { type: 'jian_swordman_shielded', count: 4 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'hei_kuang', count: 2 },
         ],
     },
     // ── 朝鲜 · 帝国时代 · 帝国时代朝鲜军团　（三级升二级）────────────────
@@ -789,12 +789,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代朝鲜军团', civ: '高丽', age: 'imperial', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
         buildingStyle: 'KOREA',
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         shipId: 'ELITE_TURTLE_SHIP',
         slots: [
-            { type: 'jian_swordman_shielded', count: 2 },
-            { type: 'war_wagon', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'war_wagon', count: 2 },
         ],
     },
 
@@ -867,9 +867,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'vanguard', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
     // ── 日耳曼 · 封建时代 · 封建时代萨克森军团　（本次新建）────────────────
@@ -880,12 +880,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代萨克森军团', civ: '条顿', age: 'feudal', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         shipId: 'GALLEY',
         slots: [
+            { type: 'teutonic_knight', count: 4 },
             { type: 'elite_hearth_troop', count: 3 },
-            { type: 'knight', count: 4 },
-            { type: 'light_riders', count: 2 },
+            { type: 'knight', count: 2 },
         ],
     },
     // ── 日耳曼 · 城堡时代 · 城堡时代德意志骑士团　（本次新建）────────────────
@@ -900,8 +900,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HULK',
         slots: [
             { type: 'elite_teutonic_knight', count: 4 },
-            { type: 'paladin', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'crossbowman', count: 3 },
+            { type: 'knight', count: 2 },
         ],
     },
     // ── 日耳曼 · 帝国时代 · 帝国时代帝国佣兵军团　（本次新建）────────────────
@@ -909,15 +909,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（奥格斯堡、纽伦堡；奥格斯堡早期文艺复兴市政厅、纽伦堡石砌重叠城郭；双手破阵巨剑士（Doppelsöldner）、18英尺密集长矛刺猬阵、马克西米利安精钢板甲与早期火绳枪协同步兵）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代帝国佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '帝国时代佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEON',
         slots: [
-            { type: 'heavy_pikeman', count: 4 },
-            { type: 'two_handed_swordsman', count: 2 },
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'two_handed_swordsman', count: 4 },
+            { type: 'hand_cannoneer', count: 2 },
+            { type: 'paladin', count: 3 },
         ],
     },
 
@@ -935,9 +935,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'woad_raider', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'woad_raider', count: 4 },
+            { type: 'throwing_axeman', count: 3 },
+            { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
     // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：封建时代法兰克军团
@@ -966,12 +966,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代重装骑兵军团', civ: '法兰克', age: 'imperial', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         shipId: 'GALLEON',
         slots: [
-            { type: 'winged_hussar', count: 3 },
-            { type: 'paladin', count: 4 },
-            { type: 'hussar', count: 2 },
+            { type: 'cavalier', count: 4 },
+            { type: 'champion', count: 2 },
+            { type: 'hand_cannoneer', count: 3 },
         ],
     },
 
@@ -986,12 +986,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代勃艮第战团', civ: '勃艮第', age: 'antiquity', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'levy', count: 4 },
-            { type: 'heavy_swordsman', count: 2 },
+            { type: 'flemish_pikeman', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 勃艮第 · 封建时代 · 封建时代阿尔勒军团　（本次新建）────────────────

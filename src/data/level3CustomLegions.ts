@@ -34,19 +34,6 @@ export interface Level3LegionDef {
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
-        name: '古典时代中东军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'elite_war_chariot', count: 2 },
-            { type: 'levy', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
-        ],
-        regions: ['ASSYRIAN'],
-        parentLegion: '古典时代不死军团',
-        shipId: 'BIREME',
-        buildingStyle: 'PERSIAN',
-    },
-    {
         name: '古典时代亚马逊军团',
         formationMode: 'crane_wing',
         slots: [
@@ -128,19 +115,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'MACEDONIAN',
     },
     {
-        name: '古典时代巴比伦军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'elite_war_chariot', count: 4 },
-            { type: 'guardsman', count: 2 },
-            { type: 'elite_guardsman', count: 3 },
-        ],
-        regions: ['BABYLON'],
-        parentLegion: '古典时代不死军团',
-        shipId: 'BIREME',
-        buildingStyle: 'PERSIAN',
-    },
-    {
         name: '古典时代布匿军团',
         formationMode: 'crane_wing',
         slots: [
@@ -198,21 +172,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'THRACIAN',
     },
     {
-        name: '封建时代大和军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'samurai_elite', count: 4 },
-            { type: 'rattan_archer', count: 2 },
-        ],
-        regions: ['JAPAN_ANTIQUITY'],
-        // 🔴 [2026-10-05 主人定「这肯定是挂日本呀，封建大和，城堡镰仓，帝国幕府」]
-        //    日本这条线的地区主干＝二级「城堡时代幕府军团」（DE 可玩文明·日本，region=JAPAN）。
-        parentLegion: '城堡时代幕府军团',
-        shipId: 'ANT_ELITE_GALLEY',
-        buildingStyle: 'JAPAN',
-    },
-    {
         name: '古典时代日耳曼军团',
         formationMode: 'crane_wing',
         slots: [
@@ -226,21 +185,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'GERMANIC',
     },
     {
-        name: '古典时代朝鲜军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 2 },
-        ],
-        regions: ['GOJOSEON'],
-        // 🔴 [2026-10-05 主人定「挂高丽呀，封建新罗，城堡高丽，帝国朝鲜」]
-        //    朝鲜半岛地区主干＝二级「城堡时代高丽军团」。
-        parentLegion: '城堡时代高丽军团',
-        shipId: 'CANOE',
-        buildingStyle: 'KOREA',
-    },
-    {
         name: '古典时代纳巴泰军团',
         formationMode: 'crane_wing',
         slots: [
@@ -252,21 +196,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '中东军团',
         shipId: 'BIREME',
         buildingStyle: 'ORIE',
-    },
-    {
-        name: '古典时代羌族军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'antiquity_cavalry_archer', count: 4 },
-            { type: 'hill_tribesman', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 3 },
-        ],
-        regions: ['QIANG'],
-        // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
-        //    河西这条线：主干＝二级「封建时代归义军团」（原「封建时代河西军团」已删，归并到新名）。
-        parentLegion: '封建时代归义军团',
-        shipId: 'CANOE',
-        buildingStyle: 'KHITAN',
     },
     {
         name: '古典漠北军团',
@@ -366,24 +295,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'INCA',
     },
     {
-        name: '城堡时代党项军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'hill_tribesman', count: 2 },
-            { type: 'chukonu', count: 4 },
-            { type: 'elite_keshik', count: 3 },
-        ],
-        regions: ['TANGUT'],
-        // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
-        parentLegion: '封建时代归义军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'KHITAN',
-    },
-    {
         name: '城堡时代十字军团',
         formationMode: 'triangle',
         slots: [
-            { type: 'teutonic_knight', count: 2 },
+            { type: 'knight', count: 2 },
             { type: 'cavalier', count: 3 },
             { type: 'crusader_knight', count: 4 },
         ],
@@ -549,19 +464,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '中东军团',
         shipId: 'FIRE_SHIP',
         buildingStyle: 'ORIE',
-    },
-    {
-        name: '城堡时代阿伊努军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'hill_tribesman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
-            { type: 'war_dog', count: 2 },
-        ],
-        regions: ['AINU'],
-        parentLegion: '东亚军团',
-        shipId: 'CANOE',
-        buildingStyle: 'JAPAN',
     },
     {
         name: '城堡时代阿拉贡军团',
@@ -762,19 +664,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'MAYANS',
     },
     {
-        name: '封建时代白蛮军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'battle_elephant', count: 2 },
-            { type: 'elite_chukonu', count: 4 },
-            { type: 'archer', count: 3 },
-        ],
-        regions: ['NANZHAO'],
-        parentLegion: '东亚军团',
-        shipId: 'FIRE_GALLEY',
-        buildingStyle: 'BASHU',
-    },
-    {
         name: '封建时代粟特军团',
         formationMode: 'fish_scale',
         slots: [
@@ -960,22 +849,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'SLAVIC',
     },
     {
-        name: '帝王时代幕藩军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'hand_cannoneer', count: 3 },
-            { type: 'samurai_elite', count: 4 },
-            { type: 'ninja', count: 2 },
-        ],
-        regions: ['JAPAN_IMPERIAL'],
-        // 🔴 [2026-10-05 主人定「这肯定是挂日本呀，封建大和，城堡镰仓，帝国幕府」]
-        //    原写 parentLegion: '城堡时代日本军团' —— **该军团不存在**（悬空），
-        //    地区主干＝二级「城堡时代幕府军团」。
-        parentLegion: '城堡时代幕府军团',
-        shipId: 'ANT_ELITE_GALLEY',
-        buildingStyle: 'JAPAN',
-    },
-    {
         name: '帝国时代日耳曼军团',
         formationMode: 'crane_wing',
         slots: [
@@ -1120,32 +993,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'CELTS',
     },
     {
-        name: '古典时代波斯联合军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'mercenary_hoplite', count: 3 },
-            { type: 'lancer', count: 4 },
-            { type: 'elite_immortal_ranged', count: 2 },
-        ],
-        regions: [],
-        parentLegion: '古典时代不死军团',
-        shipId: 'BIREME',
-        buildingStyle: 'PERSIAN',
-    },
-    {
-        name: '古典时代迦南军团',
-        formationMode: 'crescent',
-        slots: [
-            { type: 'mercenary_hoplite', count: 3 },
-            { type: 'sparabara', count: 2 },
-            { type: 'antiquity_skirmisher', count: 4 },
-        ],
-        regions: [],
-        parentLegion: '古典时代不死军团',
-        shipId: 'BIREME',
-        buildingStyle: 'PERSIAN',
-    },
-    {
         name: '古典时代腓利斯丁军团',
         formationMode: 'crescent',
         slots: [
@@ -1170,19 +1017,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '城堡时代勃艮第骑士团',
         shipId: 'ELITE_CARAVEL',
         buildingStyle: 'BURGUNDIANS',
-    },
-    {
-        name: '帝国时代忍者军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'rattan_archer', count: 2 },
-            { type: 'ninja', count: 3 },
-            { type: 'ninja', count: 4 },
-        ],
-        regions: [],
-        parentLegion: '城堡时代幕府军团',   // 🔴 [2026-10-16] 原指不存在的「城堡时代日本军团」（幽灵指针）→ 日本文明城堡节点＝幕府军团
-        shipId: 'ANT_ELITE_GALLEY',
-        buildingStyle: 'JAPAN',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
     //    给罗斯（雅罗斯拉夫，瓦良格卫队的发源地）用；时代按 988 年起的卫队与雅罗斯拉夫在位（1019–1054）定为封建。
@@ -1211,19 +1045,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '波斯军团',
         shipId: 'BIREME',
         buildingStyle: 'SASANIAN',
-    },
-    {
-        name: '城堡时代巴蜀军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'jian_swordman_unshielded', count: 4 },
-            { type: 'chukonu', count: 3 },
-            { type: 'elite_fire_lancer', count: 2 },
-        ],
-        regions: [],
-        parentLegion: '东亚军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'BASHU',
     },
 ];
 
