@@ -1535,8 +1535,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         slots: [
             { type: 'legionary', count: 4 },
-            { type: 'elite_guardsman', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'elite_antiquity_skirmisher', count: 3 },
+            { type: 'centurion', count: 2 },
         ],
     },
     // ── 拜占庭 · 封建时代 · 封建时代具装骑兵团　（本次新建）────────────────
@@ -1551,7 +1551,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'elite_cataphract', count: 4 },
-            { type: 'huskarl', count: 3 },
+            { type: 'varangian_guard', count: 3 },
             { type: 'cretan_archer', count: 2 },
         ],
     },
@@ -1567,8 +1567,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FIRE_SHIP',
         slots: [
             { type: 'elite_varangian_guard', count: 4 },
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'halberdier', count: 2 },
+            { type: 'crossbowman', count: 3 },
+            { type: 'cataphract', count: 2 },
         ],
     },
     // ── 拜占庭 · 帝国时代 · 帝国时代耶尼切里军团　（本次新建）────────────────
@@ -1599,12 +1599,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代大亚美尼亚铁骑', civ: '亚美尼亚', age: 'antiquity', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'triangle',
+        formationMode: 'balance_yoke',
         shipId: 'BIREME',
         slots: [
-            { type: 'sarmatian', count: 2 },
-            { type: 'cataphract', count: 3 },
             { type: 'shock_cavalry', count: 4 },
+            { type: 'lancer', count: 2 },
+            { type: 'antiquity_cavalry_archer', count: 3 },
         ],
     },
     // ── 亚美尼亚 · 封建时代 · 封建时代阿尼城卫军　（本次新建）────────────────
@@ -1619,8 +1619,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'warrior_priest', count: 4 },
-            { type: 'maceman', count: 3 },
-            { type: 'spearman', count: 2 },
+            { type: 'composite_bowman', count: 3 },
+            { type: 'lancer', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 城堡时代 · 城堡时代奇里乞亚骑士团　（本次新建）────────────────
@@ -1631,12 +1631,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代奇里乞亚骑士团', civ: '亚美尼亚', age: 'castle', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
-        formationMode: 'crescent',
+        formationMode: 'fish_scale',
         shipId: 'GALLEY',
         slots: [
             { type: 'serjeant', count: 3 },
-            { type: 'heavy_crossbowman', count: 2 },
-            { type: 'paladin', count: 4 },
+            { type: 'elite_composite_bowman', count: 4 },
+            { type: 'knight', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 帝国时代 · 帝国时代亚美尼亚军团　（本次新建）────────────────
@@ -1702,9 +1702,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'elite_monaspa', count: 2 },
-            { type: 'cataphract', count: 3 },
-            { type: 'cavalier', count: 4 },
+            { type: 'guardsman', count: 2 },
+            { type: 'laminated_bowman', count: 3 },
+            { type: 'elite_monaspa', count: 4 },
         ],
     },
     // ── 高加索 · 帝国时代 · 帝国时代高加索军团　（本次新建）────────────────
@@ -1715,12 +1715,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代高加索军团', civ: '格鲁吉亚', age: 'imperial', deStyle: 'EAST', region: 'GEORGIANS' as RegionType,
         buildingStyle: 'GEORGIANS',
         castleId: 'GEOR_CASTLE_AGE3', castleName: '格鲁吉亚 高加索斯万石塔古堡',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         shipId: 'GALLEON',
         slots: [
-            { type: 'champion', count: 4 },
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'pikeman', count: 2 },
+            { type: 'elite_guardsman', count: 2 },
+            { type: 'recurve_bowman', count: 3 },
+            { type: 'monaspa', count: 4 },
         ],
     },
 

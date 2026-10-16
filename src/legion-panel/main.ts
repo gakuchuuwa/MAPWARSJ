@@ -196,6 +196,9 @@ function currentRow(): LegionRow | undefined {
  *  点「势力」表头循环切换。无人套用的军团要找出来，点两下切到 asc 就全在最上面。 */
 let sortByUsers: 'none' | 'desc' | 'asc' = 'none';
 let sortByStyle: 'none' | 'asc' | 'desc' = 'none';
+/** 🔴 [2026-10-16 主人「给军团名添加一个排序」] 按军团名排：none=表原顺序（一→二→三→四级）/ asc=拼音升序 / desc=拼音降序。
+ *  点「军团名」表头循环切换；三个排序（军团名 / 建筑风格 / 势力）互斥，切一个就把另外两个复位。 */
+let sortByName: 'none' | 'asc' | 'desc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
@@ -416,7 +419,14 @@ function visible(): LegionRow[] {
             || r.slots.some(s => cn(s.type).includes(kw))
             || (r.buildingStyle && (r.buildingStyle.includes(kw) || (STYLE_LABELS[r.buildingStyle] ?? '').includes(kw)));
     });
-    if (sortByUsers !== 'none') {
+    if (sortByName !== 'none') {
+        // 军团名排序：拼音（zh-Hans-CN）升/降序。跨层级一起排——「城堡时代…」「帝国时代…」这些时代前缀
+        // 拼音相邻，同一时代的军团自然排在一起；同名不同层（如一级「色雷斯军团」与四级同名那支）
+        // 保持表原顺序（一→二→三→四级），不来回跳。
+        const dir = sortByName === 'asc' ? 1 : -1;
+        out.sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') * dir
+            || rows.indexOf(a) - rows.indexOf(b));
+    } else if (sortByUsers !== 'none') {
         const dir = sortByUsers === 'desc' ? -1 : 1;
         // 家数相同的保持原来的层级顺序，别让同数的军团每次重绘都换位置
         out.sort((a, b) => (a.users - b.users) * dir || rows.indexOf(a) - rows.indexOf(b));
@@ -473,7 +483,9 @@ function render(): void {
           <thead style="position:sticky;top:0;background:#1a1714;">
             <tr style="color:#b8ab8e;text-align:left;">
               <th style="padding:7px 10px;">层级</th>
-              <th style="padding:7px 10px;">军团名</th>
+              <th id="lp-sort-name" title="点击按军团名排序（拼音升序 / 降序 / 原顺序）"
+                  style="padding:7px 10px;cursor:pointer;user-select:none;${sortByName !== 'none' ? 'color:#f6e05e;' : ''}">
+                军团名${sortByName === 'asc' ? ' ▲' : sortByName === 'desc' ? ' ▼' : ' ⇅'}</th>
               <th id="lp-sort-style" title="点击按建筑风格排序（升序 / 降序 / 原顺序）"
                   style="padding:7px 10px;cursor:pointer;user-select:none;${sortByStyle !== 'none' ? 'color:#f6e05e;' : ''}">
                 建筑风格${sortByStyle === 'asc' ? ' ▲' : sortByStyle === 'desc' ? ' ▼' : ' ⇅'}</th>
@@ -670,14 +682,22 @@ function render(): void {
         render();
     });
     document.getElementById('lp-new')?.addEventListener('click', () => { openCreateDialog(); });
+    document.getElementById('lp-sort-name')?.addEventListener('click', () => {
+        sortByName = sortByName === 'none' ? 'asc' : sortByName === 'asc' ? 'desc' : 'none';
+        sortByUsers = 'none';
+        sortByStyle = 'none';
+        render();
+    });
     document.getElementById('lp-sort-users')?.addEventListener('click', () => {
         sortByUsers = sortByUsers === 'none' ? 'desc' : sortByUsers === 'desc' ? 'asc' : 'none';
         sortByStyle = 'none';
+        sortByName = 'none';
         render();
     });
     document.getElementById('lp-sort-style')?.addEventListener('click', () => {
         sortByStyle = sortByStyle === 'none' ? 'asc' : sortByStyle === 'asc' ? 'desc' : 'none';
         sortByUsers = 'none';
+        sortByName = 'none';
         render();
     });
     host.querySelectorAll('tbody tr').forEach(tr => {
