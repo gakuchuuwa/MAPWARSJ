@@ -1901,7 +1901,7 @@ export class CombatUI {
             pointer-events: auto;
             gap: 0px;
         `;
-        const fallback = isAtt ? '古典时代华夏中原军团' : '古典时代秦汉军团';
+        const fallback = isAtt ? '古典时代秦汉军团' : '古典时代秦汉军团';
         const name = (rawLegionName || fallback).trim();
         chip.title = `军团编制：${name}`;
 
@@ -6185,7 +6185,7 @@ export class CombatUI {
         if (cultureLegionName) {
             return cultureLegionName;
         }
-        return side === 'attacker' ? '古典时代华夏中原军团' : '古典时代秦汉军团';
+        return side === 'attacker' ? '古典时代秦汉军团' : '古典时代秦汉军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {

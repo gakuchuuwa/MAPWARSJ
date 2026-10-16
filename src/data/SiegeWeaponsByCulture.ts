@@ -176,19 +176,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     // ══════════════════════════════════════════════════════════════════════
 
     // ── 1. 古典时代 (13 支) ──
-    '古典时代华夏中原军团': {
+    '古典时代秦汉军团': {
         age: 'antiquity',
         weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion'],
     },
-    '古典时代华夏巴蜀军团': {
+    '古典时代巴蜀军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_scorpion', 'antiquity_scorpion'],
     },
-    '古典时代华夏江南军团': {
+    '古典时代吴越军团': {
         age: 'antiquity',
         weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '古典时代华夏河朔军团': {
+    '古典时代魏晋军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion'],
     },
@@ -344,7 +344,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },
-    '城堡时代白山黑水军团': {
+    '城堡时代大金军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },

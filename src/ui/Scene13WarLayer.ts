@@ -2216,13 +2216,19 @@ export class Scene13WarLayer {
                 if (p.kind === 'wall') {
                     // 木栅栏/篱笆走 WOOD_WALL 档；石墙/垛墙 STONE_WALL（加固墙取 FORTIFIED_WALL 3000 血）、破墙前按 HP 切 D25/D50/D75
                     const wood = /PALISADE|FENCE/.test(p.dir);
+                    const isFence = p.dir.includes('FENCE');
                     const wKey = wood ? 'WOOD_WALL' : (p.dir.includes('FORTIFIED') ? 'FORTIFIED_WALL' : 'STONE_WALL');
                     const st = WALL_GATE_STATS[wKey];
                     const destrAssets = wood ? undefined : ['D25', 'D50', 'D75'].map((t) => `${p.dir}_${t}`);
                     if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
-                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
-                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
-                    this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets, rubbleAsset: 'FOUNDATION_1X1_RUBBLE' });
+                    const wallRubble = isFence ? 'BATTLEFIELD:FENCE_RUBBLE' : 'FOUNDATION_1X1_RUBBLE';
+                    if (isFence) {
+                        this.ensureNatureAsset('BATTLEFIELD:FENCE_RUBBLE');
+                    } else {
+                        this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
+                        this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
+                    }
+                    this.wallGates.push({ f: 1, key: wKey, x, y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked: true, destrAssets, rubbleAsset: wallRubble });
                     return;
                 }
                 // 城门：沿门线铺 6 点碰撞体堵两侧缝隙（同旧 13 placeGate）；破门播倒塌动画 → 残骸
@@ -2238,12 +2244,20 @@ export class Scene13WarLayer {
                     this.decorSprites.push(extra);
                     extraSprites.push(extra);
                 }
-                const isFenceGate = p.dir.includes('FENCE') || p.dir.includes('PALISADE');
-                const baseDestrName = p.dir.includes('FENCE') ? `DARK_GATE_PALISADE_${/_SE$/.test(p.dir) ? 'SE' : 'NE'}` : p.dir;
-                const rubbleAsset = `${baseDestrName}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
-                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
-                const st = isFenceGate ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_GATE : WALL_GATE_STATS.STONE_GATE);
+                const isOnlyFenceGate = p.dir.includes('FENCE');
+                const isWoodGate = isOnlyFenceGate || p.dir.includes('PALISADE');
+                let rubbleAsset: string;
+                if (isOnlyFenceGate) {
+                    // 🔴 [2026-10-16 主人令「篱笆的门，在坍塌的时候，错用了栅栏门，请修复，和DE保持一致，依然用篱笆门」]
+                    //    对齐 DE empires2_x2_p1.dat Unit 1062 (b_scen_fence) → dying_graphic=36 → dead_unit_id=1065 (b_scen_fence_rubble)
+                    rubbleAsset = 'BATTLEFIELD:FENCE_RUBBLE';
+                    this.ensureNatureAsset(rubbleAsset);
+                } else {
+                    rubbleAsset = `${p.dir}_RUBBLE`;
+                    this.ensureNatureAsset('BUILDINGANIM:' + `${p.dir}_DESTR`);
+                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                }
+                const st = isWoodGate ? WALL_GATE_STATS.WOOD_WALL : (p.dir.includes('FORTIFIED') ? WALL_GATE_STATS.FORTIFIED_GATE : WALL_GATE_STATS.STONE_GATE);
                 // 🔴 [2026-10-13] key 仍写 'STONE_GATE'（**不新增键**）：城门倒塌/残骸那几条链
                 //    只认 'STONE_GATE'（见两处 `foe.key === 'STONE_GATE' && hp<=0`），
                 //    若另立 'WOOD_GATE' 键，木门 0 血时不会倒塌 —— 会变成打不烂的墙。
@@ -2704,11 +2718,17 @@ export class Scene13WarLayer {
                 const wKey = (asset.includes('PALISADE') || asset.includes('FENCE')) ? 'WOOD_WALL' : key;
                 const st = WALL_GATE_STATS[wKey];
                 // 石墙/垛墙有破损档 destr_*（破墙前按 HP 渐进切换）；坍塌时统一播放 DE 1x1 坍塌动画 FOUNDATION_1X1_DESTR
-                const destrAssets = (asset.includes('PALISADE') || asset.includes('FENCE')) ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
+                const isFence = asset.includes('FENCE');
+                const destrAssets = (asset.includes('PALISADE') || isFence) ? undefined : ['D25', 'D50', 'D75'].map((t) => `${asset}_${t}`);
                 if (destrAssets) for (const d of destrAssets) this.ensureNatureAsset('BUILDINGANIM:' + d);
-                this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
-                this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
-                this.wallGates.push({ f: 1, key: wKey, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets, rubbleAsset: 'FOUNDATION_1X1_RUBBLE' });
+                const wallRubble = isFence ? 'BATTLEFIELD:FENCE_RUBBLE' : 'FOUNDATION_1X1_RUBBLE';
+                if (isFence) {
+                    this.ensureNatureAsset('BATTLEFIELD:FENCE_RUBBLE');
+                } else {
+                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_DESTR');
+                    this.ensureNatureAsset('BUILDINGANIM:FOUNDATION_1X1_RUBBLE');
+                }
+                this.wallGates.push({ f: 1, key: wKey, x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, linked, destrAssets, rubbleAsset: wallRubble });
             };
             // 城门：可攻击建筑（照 DE，城门 HP 更高），沿线铺 6 点密实碰撞体堵跨度两侧缝隙；破门播 100 帧倒塌动画 → rubble 残骸
             const placeGate = (s: { x: number; y: number }, asset: string, dir: 'NE' | 'SE'): void => {
@@ -2732,12 +2752,17 @@ export class Scene13WarLayer {
                     this.decorSprites.push(extra);
                     extraSprites.push(extra);
                 }
-                // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble）
+                // 城门倒塌动画 + 残骸素材（DE gate_*_destruction / _rubble；篱笆门用 DE b_scen_fence_rubble）
                 const isFenceGate = asset.includes('FENCE');
-                const baseDestrName = isFenceGate ? `DARK_GATE_PALISADE_${dir}` : asset;
-                const rubbleAsset = `${baseDestrName}_RUBBLE`;
-                this.ensureNatureAsset('BUILDINGANIM:' + `${baseDestrName}_DESTR`);
-                this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                let rubbleAsset: string;
+                if (isFenceGate) {
+                    rubbleAsset = 'BATTLEFIELD:FENCE_RUBBLE';
+                    this.ensureNatureAsset(rubbleAsset);
+                } else {
+                    rubbleAsset = `${asset}_RUBBLE`;
+                    this.ensureNatureAsset('BUILDINGANIM:' + `${asset}_DESTR`);
+                    this.ensureNatureAsset('BUILDINGANIM:' + rubbleAsset);
+                }
                 this.wallGates.push({ f: 1, key: 'STONE_GATE', x: s.x, y: s.y, hp: st.hp, maxHp: st.hp, claims: 0, claimsNext: 0, atkNext: 0, atkers: 0, sprite, extraSprites, linked: true, rubbleAsset });
             };
             // 🔴 [2026-08-22 主人定] 梯子型平档城防：扩大城郭范围，100%完整包含全部内城建筑群
@@ -3332,7 +3357,6 @@ export class Scene13WarLayer {
                     for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
                     for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
                     glLayer.flushFoundation();
-                    this.applyDeCityToGround();
                     const onFoundation = (x: number, y: number): boolean => {
                         const c = glLayer.screenToCell(x, y, VW, VH);
                         if (!c) return false;
@@ -3374,11 +3398,11 @@ export class Scene13WarLayer {
                     });
                     const decorSet = groundDecorFor(baseTerrain);
                     const decorCtx = {
+                        lat: mapLat,
+                        lng: mapLng,
                         season: this.sceneSeason,
-                        baseTile: baseTerrain,
-                        culture: String(this.sideCulture[1] || this.sideCulture[0] || 'CENTRAL'),
-                        isCity: this.battleType === 'siege',
-                        waterKind: this.environmentPlan?.waterKind,
+                        winterSnow: baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3',
+                        isSiege: this.battleType === 'siege',
                     };
                     const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
 
@@ -3731,12 +3755,14 @@ export class Scene13WarLayer {
         } else {
             const im = new Image();
             im.onload = () => { na.img = im; };
-            // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）
-            const file = isBattlefield ? 'preview.png' : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
+            // BATTLEFIELD 素材用 preview.png 单帧（DECAY_* 攻城器械残骸 frames.png 达 480~960 帧超宽 strip，整图 drawImage 会失败）；
+            // FENCE_RUBBLE（DE b_scen_fence_rubble）仅 5 帧（500×60px，对应 NE/SE/CORNER/GATE/POST 五向），加载 frames.png 按朝向切片。
+            const useFenceStrip = isBattlefield && name === 'FENCE_RUBBLE';
+            const file = isBattlefield ? (useFenceStrip ? 'frames.png' : 'preview.png') : (isAnim ? 'frames.png' : (isBuilding ? 'preview.png' : 'frames.png'));
             im.src = base + name + '/' + file;
             fetch(base + name + '/_meta.json')
                 .then((r) => (r.ok ? r.json() : null))
-                .then((m) => { if (m) { if (isBattlefield) m.frames = 1; na.meta = m as NatureMeta; } })
+                .then((m) => { if (m) { if (isBattlefield && !useFenceStrip) m.frames = 1; na.meta = m as NatureMeta; } })
                 .catch(() => {});
         }
     }
@@ -3906,7 +3932,7 @@ export class Scene13WarLayer {
                 const ratio = bld.hp / bld.maxHp;
                 const tierIdx = ratio <= 0.25 ? 2 : (ratio <= 0.50 ? 1 : 0);
                 const bName = bld.bld?.name ?? s.asset;
-                let kind = bld.key === 'STONE_GATE' ? 'GATE' : (bld.key === 'WOOD_WALL' ? 'OUTPOST' : 'HOUSE');
+                let kind = (bld.key === 'STONE_GATE' && !s.asset.includes('FENCE')) ? 'GATE' : ((bld.key === 'WOOD_WALL' || s.asset.includes('FENCE')) ? 'OUTPOST' : 'HOUSE');
                 if (bld.bld) {
                     for (const kName of ['CASTLE', 'WONDER', 'ARCHERY_RANGE', 'SIEGE_WORKSHOP', 'TOWN_CENTER', 'BARRACKS', 'BLACKSMITH', 'UNIVERSITY', 'MONASTERY', 'MARKET', 'STABLE', 'MILL', 'TOWER', 'OUTPOST']) {
                         if (bName.includes(kName)) { kind = kName; break; }
@@ -5207,8 +5233,9 @@ export class Scene13WarLayer {
     }
 
     /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
-     *  - 石墙(Unit 117) / 垛墙(Unit 155) / 木栅栏(Unit 72)：DE 无 100 帧倒塌 SLD（FOUNDATION_1X1_DESTR 实为未建好的木脚手架地基倒塌），
-     *    在受伤阶段渐进切 D25/D50/D75（木栅栏叠火焰），血归零时触发 dying_graphic=33（烟尘爆裂 + 直接切 Rubble1x1 `s_rubble_1x1_x1` = `FOUNDATION_1X1_RUBBLE`）；
+     *  - 石墙(Unit 117) / 垛墙(Unit 155) / 木栅栏(Unit 72) / 强木栅栏(Unit 119)：DE 无 100 帧倒塌 SLD，
+     *    在受伤阶段渐进切 D25/D50/D75（木栅栏叠火焰），血归零时触发 dying_graphic=37（smoke_tiny 尘土 `FX_WALL_DUST` + 直接切 Rubble1x1 `s_rubble_1x1_x1` = `FOUNDATION_1X1_RUBBLE`，无火药爆炸）；
+     *  - 篱笆(Unit 1062)：血归零时触发 dying_graphic=36（smoke_tiny 尘土 `FX_WALL_DUST` + 切 `b_scen_fence_rubble` = `BATTLEFIELD:FENCE_RUBBLE`，无火药爆炸）；
      *  - 城门(Unit 64)：DE 有独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`），照播 100 帧倒塌。 */
     private collapseOneWall(b: WarBuilding): void {
         b.sprite.obstruction = undefined;
@@ -5217,11 +5244,20 @@ export class Scene13WarLayer {
         // 🔴 [2026-10-15] 墙/门/垛塌（自动坍塌或被打到 0 血）都走这里 → 只在这一处播倒塌音，避免重复播放
         audioManager.play('wall_collapse');
         this.lastCollapseAt = performance.now();
-        if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
+        if (b.sprite.asset.includes('FENCE') || b.rubbleAsset === 'BATTLEFIELD:FENCE_RUBBLE') {
+            // 🔴 [2026-10-16 主人令「篱笆的门，在坍塌的时候，错用了栅栏门，请修复，和DE保持一致，依然用篱笆门」
+            //    ＋「栅栏和强木栅栏的坍塌怎么 爆炸效果？请检查，和DE保持一致」]
+            //    DE empires2_x2_p1.dat Unit 1062 (b_scen_fence) 坍塌触发 dying_graphic=36（smoke_tiny 尘土 FX_WALL_DUST + b_scen_fence_rubble 5向帧：0=NE, 1=SE, 2=CORNER, 3=GATE, 4=POST/N），绝无火药爆炸 FX_PETARD。
+            const a = b.sprite.asset;
+            b.sprite.collapse = undefined;
+            b.sprite.asset = 'BATTLEFIELD:FENCE_RUBBLE';
+            b.sprite.frame = a.includes('GATE') ? 3 : a.includes('CORNER') ? 2 : (a.includes('POST') || a.endsWith('_N')) ? 4 : a.endsWith('_SE') ? 1 : 0;
+            this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
+        } else if (b.key === 'STONE_WALL' || b.key === 'FORTIFIED_WALL' || b.key === 'WOOD_WALL') {
             b.sprite.collapse = undefined;
             b.sprite.asset = 'BUILDINGANIM:FOUNDATION_1X1_RUBBLE';
             b.sprite.frame = 0;
-            this.explode('FX_PETARD', b.x, b.y - this.elevationLiftAt(b.x, b.y));
+            this.spawnFx('FX_WALL_DUST', b.x, b.y - this.elevationLiftAt(b.x, b.y), 0);
         } else if (b.rubbleAsset) {
             this.collapseToRubble(b.sprite, b.rubbleAsset.slice(0, -'_RUBBLE'.length));
         } else {
@@ -6716,17 +6752,17 @@ export class Scene13WarLayer {
                             m.fightT = 0;
                             m.kiteLeg = (m.kiteLeg ?? 0) + step;
                             m.kiteDist = (m.kiteDist ?? 0) + step;
-                            // 累计甩不掉 → 优先放弃：同速骑兵每段都拉不开（kd < KITE_SAFE），
-                            // kiteDist 跨段累计到 CAP = 风筝不成立，转身硬拼。
+                            // 累计满上限 → 停止风筝，转身硬拼。
                             if (m.kiteDist >= KITE_RETREAT_CAP) {
                                 m.kiteGaveUp = true; m.kiting = false;
                             }
-                            // 跑够一段：拉开到安全距离（kd ≥ KITE_SAFE）才算停，否则本段白跑、继续跑
+                            // 跑够一段：拉开到安全距离（kd ≥ KITE_SAFE）就停下回身站撸；
+                            // 若跑完一整段仍未拉开到安全距离（追兵是高速/重装骑兵，咬得很死），当场放弃风筝回身硬拼，不再闷头连跑 300px。
                             else if (m.kiteLeg >= KITE_RETREAT_DIST) {
                                 if (kd >= KITE_SAFE) {
                                     m.kiting = false; m.kiteLeg = 0;                   // 甩开了，停下回身站撸（kiteDist 不清零，累计满 3 段即止）
                                 } else {
-                                    m.kiteLeg = 0;                                      // 没甩开，重置本段继续跑
+                                    m.kiteGaveUp = true; m.kiting = false; m.kiteLeg = 0; // 跑完一段仍甩不开（对手是骑兵），立即停止风筝回身迎战
                                 }
                             }
                             if (m.fadeT > 0) m.fadeT -= dt;

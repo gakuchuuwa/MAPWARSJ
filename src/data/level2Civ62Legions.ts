@@ -1,7 +1,8 @@
 /**
- * 🔴 [2026-09-14 主人定 / 2026-10-16 校正计数] 二级：**62** 个文明专属军团（与 62 文明专属城堡对应）
- * 实测（本表逐条统计，2026-10-16）：古典时代 13 支 + 封建时代 15 支 + 城堡时代 30 支 + 帝国时代 4 支 = **62** 支
- * ⚠️ 历史：文件名与常量曾用「59」（旧计数），2026-10-16 起统一为 **62**；以本表实际条目为准。
+ * 🔴 [2026-09-14 主人定 / 2026-10-16 校正计数] 二级＝「文明 × 时代」层。
+ * 实测（本表逐条统计，2026-10-16 删旧名后）：古典时代 18 支 + 封建时代 23 支 + 城堡时代 35 支 + 帝国时代 13 支 = **89** 支。
+ * 目标形态：66 个文明 × 4 时代 = 264 支（本批先落中原/河朔/江南/巴蜀/河西/白山黑水/漠北/朝鲜/日本 9 个文明的 36 支）。
+ * ⚠️ 历史：文件名与常量曾用「59」「62」（旧计数），2026-10-16 起以本表实际条目为准。
  * 军团兵种编制铁律：严格对齐史实特色兵种与精锐/高级档，总数=9
  */
 import type { RegionType } from '../systems/RegionSystem';
@@ -24,59 +25,6 @@ export interface Level2CivLegionDef {
 }
 
 export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
-    {
-        name: '古典时代华夏中原军团', civ: '华夏', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
-        buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
-        formationMode: 'crescent',
-        shipId: 'LOU_CHUAN',
-        // 🔴 [2026-09-14 主人定] 二级军团一律「城堡兵 + 精锐兵 + 缺补兵」。
-        //    原先三排全是精锐（白毦精锐/诸葛弩精锐/火焰弓精锐），凑不出「城堡兵 + 该兵精锐」这一对。
-        //    城堡兵取诸葛弩（中国专属城堡兵），精锐取诸葛弩精锐；
-        //    缺补兵取蜀白毦兵 —— 《三国志》裴注引《零陵先贤传》「先主帐下白毦，西方上兵也」，
-        //    陈到所领近卫精兵，古典中原本土，合史实。
-        slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'war_chariot_ranged', count: 2 },
-            { type: 'elite_chukonu', count: 4 },
-        ],
-    },
-    {
-        name: '古典时代华夏巴蜀军团', civ: '巴蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
-        buildingStyle: 'BASHU',
-        castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'balance_yoke',
-        shipId: 'LOU_CHUAN',
-        slots: [
-            { type: 'elite_white_feather_guard', count: 4 },
-            { type: 'fire_archer', count: 2 },
-            { type: 'elite_chukonu', count: 3 },
-        ],
-    },
-    {
-        name: '古典时代华夏江南军团', civ: '江南', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
-        buildingStyle: 'JIANGNAN',
-        castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'crescent',
-        shipId: 'LOU_CHUAN',
-        slots: [
-            { type: 'jian_swordman_shielded', count: 3 },
-            { type: 'chukonu', count: 2 },
-            { type: 'elite_fire_archer', count: 4 },
-        ],
-    },
-    {
-        name: '古典时代华夏河朔军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
-        buildingStyle: 'WEI',
-        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'fish_scale',
-        shipId: 'LOU_CHUAN',
-        slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'elite_chukonu', count: 4 },
-            { type: 'tiger_rider', count: 2 },
-        ],
-    },
     {
         name: '古典时代凯尔特军团', civ: '凯尔特', age: 'antiquity', deStyle: 'WEST', region: 'CELTS' as RegionType,
         buildingStyle: 'CELTS',
@@ -340,18 +288,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '封建时代河西军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
-        buildingStyle: 'KHITAN',
-        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
-        formationMode: 'echelon',
-        shipId: 'GALLEY',
-        slots: [
-            { type: 'elite_liao_dao', count: 4 },
-            { type: 'liao_dao', count: 3 },
-            { type: 'hei_kuang_heavy', count: 2 },
-        ],
-    },
-    {
         name: '城堡时代不列颠军团', civ: '不列颠', age: 'castle', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
@@ -376,6 +312,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
+        // ★ 2026-10-16 主人令：日本 · 城堡时代 —— 本名已在二级表，重复 → 直接替换保留
+        //    评级：【高级】｜核心兵种：重步兵为主
+        //    描述正文（主人原文，一字未改）：（镰仓、京都；镰仓鹤冈八幡宫石阶、京都金阁寺石基木殿、博多湾元寇防垒石墙；镰仓武士下马步战太刀、博多湾石墙长矛阻击、室町禅宗长柄雉刀战阵）
+        //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian　— 按 248 主将表取，不进三排兵种编制
         name: '城堡时代幕府军团', civ: '日本', age: 'castle', deStyle: 'ASIA', region: 'JAPAN' as RegionType,
         buildingStyle: 'JAPAN',
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
@@ -400,6 +340,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
+        // ★ 2026-10-16 主人令：漠北 · 城堡时代 —— 本名已在二级表，重复 → 直接替换保留
+        //    评级：【精锐】｜核心兵种：骑射、轻骑兵为主
+        //    描述正文（主人原文，一字未改）：（哈拉和林、斡难河；哈拉和林古城遗址石龟、成吉思汗九斿白纛大帐；千户百户编制骑兵、蒙古复合反曲弓、远征欧亚曼古歹诱敌围猎战阵）
+        //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
         name: '城堡时代蒙古军团', civ: '漠北蒙古', age: 'castle', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
         buildingStyle: 'MONGOL',
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
@@ -436,6 +380,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
+        // ★ 2026-10-16 主人令：朝鲜 · 城堡时代 —— 本名已在二级表，重复 → 直接替换保留
+        //    评级：（未标评级）｜核心兵种：重步兵、水军为主
+        //    描述正文（主人原文，一字未改）：（开城、江华岛；开城满月台宫阙石台、江华岛高丽避乱石城要塞；三别抄精锐步卒突击、坚木双刃战斧、江华岛海防抗蒙水军城堡要塞）
+        //    英雄队（第 10 队·主将队）：elite_war_wagon / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
         name: '城堡时代高丽军团', civ: '高丽', age: 'castle', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
         buildingStyle: 'KOREA',
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
@@ -664,18 +612,6 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         ],
     },
     {
-        name: '城堡时代白山黑水军团', civ: '白山黑水', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
-        buildingStyle: 'NORTHEAST',
-        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
-        formationMode: 'balance_yoke',
-        shipId: 'LOU_CHUAN',
-        slots: [
-            { type: 'elite_iron_pagoda', count: 4 },
-            { type: 'iron_pagoda', count: 2 },
-            { type: 'kipchak', count: 3 },
-        ],
-    },
-    {
         name: '城堡时代穆伊斯卡军团', civ: '穆伊斯卡', age: 'castle', deStyle: 'ANDE', region: 'MUISCA' as RegionType,
         buildingStyle: 'MUISCA',
         castleId: 'MUIS_CASTLE_AGE3', castleName: '穆伊斯卡 瓜塔维塔黄金湖石堡',
@@ -792,6 +728,578 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cretan_archer', count: 2 },
         ],
     },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════════════════
+    // 中原　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 中原 · 古典时代 · 古典时代秦汉军团　（三级升二级）────────────────
+    //    评级：【高级】｜核心兵种：远程、骑兵为主
+    //    描述正文（主人原文，一字未改）：（咸阳、洛阳；秦阿房宫夯土台基、汉未央宫遗址、白马寺；青铜长剑、秦弩连射方阵、汉代铁戟环首刀与轻装具装汉骑）
+    //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代秦汉军团', civ: '华夏', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        buildingStyle: 'CENTRAL',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'elite_chukonu', count: 4 },
+            { type: 'tiger_rider', count: 2 },
+        ],
+    },
+    // ── 中原 · 封建时代 · 封建时代隋唐军团　（三级升二级）────────────────
+    //    评级：【精锐】｜核心兵种：重步兵、重骑兵为主
+    //    描述正文（主人原文，一字未改）：（长安、洛阳；大雁塔、洛阳龙门奉先寺卢舍那大佛、含元殿；府兵制重步兵、唐陌刀劈砍大阵、明光铠与破阵马槊铁骑）
+    //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代隋唐军团', civ: '华夏', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        buildingStyle: 'CENTRAL',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        formationMode: 'balance_yoke',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'liao_dao', count: 4 },
+            { type: 'elite_chukonu', count: 2 },
+            { type: 'hei_kuang_heavy', count: 3 },
+        ],
+    },
+    // ── 中原 · 城堡时代 · 城堡时代宋禁军团　（三级升二级）────────────────
+    //    评级：（未标评级）｜核心兵种：重步兵、远程为主
+    //    描述正文（主人原文，一字未改）：（开封、归德；繁塔、宋开封铁塔、清明上河图虹桥瓮城；神臂弓克敌连珠弩、步人甲重步兵刺猬阵、斩马刀扎垒守备）
+    //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代宋禁军团', civ: '华夏', age: 'castle', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        buildingStyle: 'CENTRAL',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        formationMode: 'balance_yoke',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'liao_dao', count: 4 },
+            { type: 'elite_fire_lancer', count: 2 },
+            { type: 'elite_chukonu', count: 3 },
+        ],
+    },
+    // ── 中原 · 帝国时代 · 帝国时代华夏军团　（三级升二级）────────────────
+    //    评级：（未标评级）｜核心兵种：远程（火器）、步兵为主
+    //    描述正文（主人原文，一字未改）：（北京、南京；明南京紫禁城、明十三陵、早期居庸关长城；京营三大营三眼铳与神机火器、重型长枪圆牌阵、大航海早期内线精甲卫所军）
+    //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代华夏军团', civ: '华夏', age: 'imperial', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        buildingStyle: 'CENTRAL',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordsman', count: 4 },
+            { type: 'chukonu', count: 3 },
+            { type: 'fire_archer', count: 2 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 河朔　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 河朔 · 古典时代 · 古典时代魏晋军团　（三级升二级）────────────────
+    //    评级：（未标评级）｜核心兵种：重骑兵为主
+    //    描述正文（主人原文，一字未改）：（邺城、洛阳；邺城铜雀台三台遗址、洛阳太极殿基址；魏晋铁骑长标枪、高桥马鞍重甲冲击、筑垒深壕守御战阵）
+    //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代魏晋军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        buildingStyle: 'WEI',
+        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'elite_tiger_cavalry', count: 2 },
+        ],
+    },
+    // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重骑兵为主
+    //    描述正文（主人原文，一字未改）：（平城/大同、太原；大同云冈石窟、悬空寺石木栈道；人马俱装甲骑具装、拓跋鲜卑重型骑枪、黄河与阴山石垒要塞防区）
+    //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代北朝军团', civ: '河朔', age: 'feudal', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        buildingStyle: 'WEI',
+        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'tarkan', count: 3 },
+            { type: 'hei_kuang_heavy', count: 4 },
+            { type: 'xianbei_raider', count: 2 },
+        ],
+    },
+    // ── 河朔 · 城堡时代 · 城堡时代燕云军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵、骑射为主
+    //    描述正文（主人原文，一字未改）：（幽州/北京、大同；大同华严寺辽代木构薄伽教藏殿、应县木塔；契丹幽蓟汉儿重装长矛步军、重装弓弩骑兵、燕云十六州锁钥关隘防御）
+    //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代燕云军团', civ: '河朔', age: 'castle', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        buildingStyle: 'WEI',
+        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
+        formationMode: 'crane_wing',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'pikeman', count: 2 },
+            { type: 'liao_dao', count: 4 },
+            { type: 'elite_kipchak', count: 3 },
+        ],
+    },
+    // ── 河朔 · 帝国时代 · 帝国时代大明军团　（三级升二级）────────────────
+    //    评级：【高级】｜核心兵种：战车、骑兵为主
+    //    描述正文（主人原文，一字未改）：（蓟州、宣府；宣化古城清远楼、宣大长城砖石要塞、紫荆关；九边重镇精锐骑兵、明式腰刀重圆盾、大航海早期塞北防线车营火器联防大阵）
+    //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代大明军团', civ: '河朔', age: 'imperial', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        buildingStyle: 'WEI',
+        castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'fire_lancer', count: 4 },
+            { type: 'elite_fire_archer', count: 3 },
+            { type: 'mangudai_elite', count: 2 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 江南　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 江南 · 古典时代 · 古典时代吴越军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵、水军为主
+    //    描述正文（主人原文，一字未改）：（阖闾城/苏州、绍兴；阖闾城水陆城门遗址、印山越王巨石陵木椁；精炼青铜折铁干将莫邪双刃剑、水网舟楫步兵、断发文身林沼突击）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代吴越军团', civ: '江南', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        buildingStyle: 'JIANGNAN',
+        castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
+        formationMode: 'balance_yoke',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'elite_white_feather_guard', count: 2 },
+            { type: 'elite_fire_archer', count: 3 },
+        ],
+    },
+    // ── 江南 · 封建时代 · 封建时代南朝军团　（本次新建）────────────────
+    //    评级：【高级】｜核心兵种：重步兵、水军为主
+    //    描述正文（主人原文，一字未改）：（建康/南京、扬州；栖霞山南朝石刻辟邪、鸡鸣寺台城遗址；长江水师连环战舰、北府兵重装长标枪、步射交织守江破胡阵）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代南朝军团', civ: '江南', age: 'feudal', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        buildingStyle: 'JIANGNAN',
+        castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordman_unshielded', count: 4 },
+            { type: 'spearman', count: 3 },
+            { type: 'recurve_bowman', count: 2 },
+        ],
+    },
+    // ── 江南 · 城堡时代 · 城堡时代临安军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重步兵、重骑兵为主
+    //    描述正文（主人原文，一字未改）：（临安/杭州、镇江；杭州雷峰塔砖心、六和塔石木外檐；岳家军麻扎刀破拐子马、神劲背嵬骑兵、长江铁壁江防蒙冲战船方阵）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代临安军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        buildingStyle: 'JIANGNAN',
+        castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
+        formationMode: 'triangle',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'fire_lancer', count: 2 },
+            { type: 'liao_dao', count: 3 },
+            { type: 'elite_keshik', count: 4 },
+        ],
+    },
+    // ── 江南 · 帝国时代 · 帝国时代两江军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵、水军为主
+    //    描述正文（主人原文，一字未改）：（南京、苏州；南京巨型明城墙中华门瓮城、苏州拙政园早期水阁石舫；江南倭寇平定营、戚家军鸳鸯阵藤牌长枪、大航海早期宝船外海远洋水师）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代两江军团', civ: '江南', age: 'imperial', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        buildingStyle: 'JIANGNAN',
+        castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
+        formationMode: 'balance_yoke',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordman_shielded', count: 4 },
+            { type: 'pikeman', count: 2 },
+            { type: 'hand_cannoneer', count: 3 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 巴蜀　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 巴蜀 · 古典时代 · 古典时代巴蜀军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：轻步兵为主
+    //    描述正文（主人原文，一字未改）：（成都、广汉；三星堆青铜立人青铜神树神坛、金沙遗址；巴蜀柳叶形双刃青铜剑、虎纹铜戈、西南山林步战散兵阵）
+    //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代巴蜀军团', civ: '巴蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        buildingStyle: 'BASHU',
+        castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'elite_chukonu', count: 2 },
+        ],
+    },
+    // ── 巴蜀 · 封建时代 · 封建时代剑南军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：远程、步兵为主
+    //    描述正文（主人原文，一字未改）：（成都、剑阁；剑门关悬崖栈道石垒、大邑安仁石窟；剑阁关隘重关扼守、白羽强弩山地步卒、抵御吐蕃高山连环石寨）
+    //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代剑南军团', civ: '巴蜀', age: 'feudal', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        buildingStyle: 'BASHU',
+        castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
+        formationMode: 'crescent',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordman_unshielded', count: 3 },
+            { type: 'crossbowman', count: 2 },
+            { type: 'recurve_bowman', count: 4 },
+        ],
+    },
+    // ── 巴蜀 · 城堡时代 · 城堡时代山城军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：远程（弩炮）、重步兵为主
+    //    描述正文（主人原文，一字未改）：（合川钓鱼城、重庆；合川钓鱼城绝壁石城、白帝城石垣要塞；嘉陵江断崖重弩炮要塞防御、山城天险死守飞石滚木、击毙蒙哥汗山城铁血死士）
+    //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代山城军团', civ: '巴蜀', age: 'castle', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        buildingStyle: 'BASHU',
+        castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordman_shielded', count: 4 },
+            { type: 'pikeman', count: 3 },
+            { type: 'arbalest', count: 2 },
+        ],
+    },
+    // ── 巴蜀 · 帝国时代 · 帝国时代四川军团　（本次新建）────────────────
+    //    评级：【高级】｜核心兵种：长矛步兵为主
+    //    描述正文（主人原文，一字未改）：（成都、保宁；成都明蜀王府遗址、昭化古城砖石城垣；西南白杆兵长矛阵原型、土司狼兵高山利刃短刀、大航海早期川陕咽喉山隘卫所步骑大阵）
+    //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代四川军团', civ: '巴蜀', age: 'imperial', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        buildingStyle: 'BASHU',
+        castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
+        formationMode: 'balance_yoke',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'pikeman', count: 4 },
+            { type: 'champion', count: 2 },
+            { type: 'hussar', count: 3 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 河西　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 河西 · 古典时代 · 古典时代西凉军团　（本次新建）────────────────
+    //    评级：【高级】｜核心兵种：重骑兵、骑射为主
+    //    描述正文（主人原文，一字未改）：（武威、敦煌；嘉峪关汉代烽燧、悬泉置泥土驿置遗址；汉匈西域争霸、西凉铁骑重铠标枪、敦煌长城内线控弦骑射）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代西凉军团', civ: '河西', age: 'antiquity', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        buildingStyle: 'KHITAN',
+        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
+        formationMode: 'fish_scale',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'lancer', count: 3 },
+            { type: 'sogdian_cataphract', count: 4 },
+            { type: 'elite_scythian_horse_archer', count: 2 },
+        ],
+    },
+    // ── 河西 · 封建时代 · 封建时代归义军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵、骑兵混编为主
+    //    描述正文（主人原文，一字未改）：（敦煌、酒泉；莫高窟张议潮统军出行图、锁阳城夯土古城墙；起义光复河西、唐蕃交锋孤胆守丝路、驼铃商道轻重装步骑大阵）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代归义军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        buildingStyle: 'KHITAN',
+        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
+        formationMode: 'crane_wing',
+        shipId: 'GALLEY',
+        slots: [
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'spearman', count: 4 },
+            { type: 'tarkan', count: 3 },
+        ],
+    },
+    // ── 河西 · 城堡时代 · 城堡时代大夏军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重骑兵为主
+    //    描述正文（主人原文，一字未改）：（张掖、黑水城；张掖大佛寺西夏木石大殿、黑水城覆钵式佛塔土要塞；党项西夏经略、铁鹞子冷锻重甲铁骑、沙漠城堡堡垒防务）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代大夏军团', civ: '河西', age: 'castle', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        buildingStyle: 'KHITAN',
+        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
+        formationMode: 'triangle',
+        shipId: 'DEMO_RAFT',
+        slots: [
+            { type: 'iron_pagoda', count: 2 },
+            { type: 'camel_rider', count: 3 },
+            { type: 'elite_keshik', count: 4 },
+        ],
+    },
+    // ── 河西 · 帝国时代 · 帝国时代陕甘军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵、轻骑兵为主
+    //    描述正文（主人原文，一字未改）：（肃州/酒泉、嘉峪关；嘉峪关明代砖石雄关城楼、悬壁长城石垒；明九边肃州卫防线长枪手、塞外巡边骑兵、大航海早期丝路边陲烽燧冷兵器卫垒大阵）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代陕甘军团', civ: '河西', age: 'imperial', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        buildingStyle: 'KHITAN',
+        castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
+        formationMode: 'crescent',
+        shipId: 'DEMO_RAFT',
+        slots: [
+            { type: 'pikeman', count: 3 },
+            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'hussar', count: 4 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 白山黑水　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 白山黑水 · 古典时代 · 古典时代肃慎军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：远程（步弓）为主
+    //    描述正文（主人原文，一字未改）：（吉林、长白山；石棺墓群、原始木构聚落；楛矢石砮穿甲硬射、原始森林雪原狩猎、白桦木具与骨角石器兵装）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代肃慎军团', civ: '白山黑水', age: 'antiquity', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        buildingStyle: 'NORTHEAST',
+        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
+        formationMode: 'crescent',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'militia', count: 3 },
+            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'chukonu', count: 4 },
+        ],
+    },
+    // ── 白山黑水 · 封建时代 · 封建时代渤海军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：骑兵、步兵为主
+    //    描述正文（主人原文，一字未改）：（宁安、延边；渤海国上京龙泉府仿唐宫殿台基、贞惠公主墓石构玄室；仿唐五京里坊制、靺鞨重装马刀骑兵、“海东盛国”雄镇关东步骑方阵）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代渤海军团', civ: '白山黑水', age: 'feudal', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        buildingStyle: 'NORTHEAST',
+        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'spearman', count: 4 },
+            { type: 'xianbei_raider', count: 3 },
+            { type: 'hei_kuang_heavy', count: 2 },
+        ],
+    },
+    // ── 白山黑水 · 城堡时代 · 城堡时代大金军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重骑兵为主
+    //    描述正文（主人原文，一字未改）：（阿城、金界壕；金上京会宁府夯土皇城遗址、界壕土石要塞；完颜女真铁浮屠重装具装甲骑、猛安谋克拐子马轻骑、界壕防御战阵）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '城堡时代大金军团', civ: '白山黑水', age: 'castle', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        buildingStyle: 'NORTHEAST',
+        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'xianbei_raider', count: 3 },
+            { type: 'elite_iron_pagoda', count: 4 },
+            { type: 'elite_kipchak', count: 2 },
+        ],
+    },
+    // ── 白山黑水 · 帝国时代 · 帝国时代八旗军团　（三级升二级）────────────────
+    //    评级：【高级】｜核心兵种：重骑兵、远程为主
+    //    描述正文（主人原文，一字未改）：（沈阳、兴京；沈阳故宫大政殿十王亭、赫图阿拉老城木石双层城郭；早期满洲八旗重铠铁骑、大拉力角弓重箭破甲射击、白山黑水大航海早期兴京铁骑大阵）
+    //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_kotyankhan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代八旗军团', civ: '白山黑水', age: 'imperial', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
+        buildingStyle: 'NORTHEAST',
+        castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
+        formationMode: 'balance_yoke',
+        shipId: 'WAR_GALLEY',
+        slots: [
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'elite_iron_pagoda', count: 2 },
+            { type: 'kipchak', count: 3 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 漠北　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 漠北 · 古典时代 · 古典时代匈奴军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：骑射为主
+    //    描述正文（主人原文，一字未改）：（龙城/单于庭、色楞格河；诺音乌拉巨冢古墓、草原石圈祭坛；引弓之民鸣镝重箭、白登围困合围骑阵、草原快马奔袭散兵阵）
+    //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代匈奴军团', civ: '漠北蒙古', age: 'antiquity', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
+        buildingStyle: 'MONGOL',
+        castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
+        formationMode: 'crescent',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'antiquity_light_cavalry', count: 3 },
+            { type: 'antiquity_cavalry_archer', count: 2 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
+        ],
+    },
+    // ── 漠北 · 封建时代 · 封建时代突厥军团　（三级升二级）────────────────
+    //    评级：【高级】｜核心兵种：重骑兵为主
+    //    描述正文（主人原文，一字未改）：（鄂尔浑河谷、于都斤山；阙特勤碑花岗岩碑座、突厥石人墓群、狼头纛大营；阿史那氏重甲铁骑、侍卫之士“附离”重弯刀、草原冷锻冶铁战甲）
+    //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代突厥军团', civ: '漠北蒙古', age: 'feudal', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
+        buildingStyle: 'MONGOL',
+        castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
+        formationMode: 'triangle',
+        shipId: 'DEMO_RAFT',
+        slots: [
+            { type: 'tarkan', count: 2 },
+            { type: 'elite_steppe_lancer', count: 3 },
+            { type: 'mangudai', count: 4 },
+        ],
+    },
+    // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：城堡时代蒙古军团
+    //    ✔ 见本表里【城堡时代蒙古军团】那一条前的 ★ 批注（评级：【精锐】｜核心兵种：骑射、轻骑兵为主）
+    // ── 漠北 · 帝国时代 · 帝国时代喀尔喀军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：骑兵、骑射为主
+    //    描述正文（主人原文，一字未改）：（哈拉和林/库伦、额尔德尼召；额尔德尼召早期藏传佛教石墙白塔、土谢图汗早期石木行宫；漠北喀尔喀游牧骑兵、长矛复合弓破阵冲锋、大航海早期达延汗北疆铁骑大阵）
+    //    英雄队（第 10 队·主将队）：hero_subotai / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代喀尔喀军团', civ: '漠北蒙古', age: 'imperial', deStyle: 'ASIA', region: 'STEPPE' as RegionType,
+        buildingStyle: 'MONGOL',
+        castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
+        formationMode: 'balance_yoke',
+        shipId: 'DEMO_RAFT',
+        slots: [
+            { type: 'hussar', count: 4 },
+            { type: 'steppe_lancer', count: 2 },
+            { type: 'mangudai_elite', count: 3 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 朝鲜　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 朝鲜 · 古典时代 · 古典时代高句丽军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重骑兵、远程为主
+    //    描述正文（主人原文，一字未改）：（平壤、集安；好太王碑、将军坟方坛石室古墓、丸都山城石垒；高句丽具装重甲铁骑、险峻山城防御滚石要塞、坚木角弓高台破甲射术）
+    //    英雄队（第 10 队·主将队）：elite_war_wagon / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代高句丽军团', civ: '高丽', age: 'antiquity', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
+        buildingStyle: 'KOREA',
+        castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
+        formationMode: 'triangle',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'lancer', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+        ],
+    },
+    // ── 朝鲜 · 封建时代 · 封建时代新罗军团　（三级升二级）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵为主
+    //    描述正文（主人原文，一字未改）：（庆州；佛国寺石阶石桥、石窟庵花岗岩圆拱佛窟、瞻星台；花郎道青年剑术武士、骨品制常备长矛步军、半岛初次统合守卫防线）
+    //    英雄队（第 10 队·主将队）：elite_war_wagon / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代新罗军团', civ: '高丽', age: 'feudal', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
+        buildingStyle: 'KOREA',
+        castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
+        formationMode: 'echelon',
+        shipId: 'LOU_CHUAN',
+        slots: [
+            { type: 'jian_swordsman', count: 4 },
+            { type: 'war_wagon', count: 3 },
+            { type: 'hei_kuang_heavy', count: 2 },
+        ],
+    },
+    // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：城堡时代高丽军团
+    //    ✔ 见本表里【城堡时代高丽军团】那一条前的 ★ 批注（评级：（未标评级）｜核心兵种：重步兵、水军为主）
+    // ── 朝鲜 · 帝国时代 · 帝国时代朝鲜军团　（三级升二级）────────────────
+    //    评级：【高级】｜核心兵种：战车（火箭车）、水军为主
+    //    描述正文（主人原文，一字未改）：（汉阳/首尔；景福宫光化门石台木楼、汉城石砌环山城郭；三手技长矛射手协同、神机箭火箭车、大航海早期李舜臣防倭板屋船要塞水军）
+    //    英雄队（第 10 队·主将队）：elite_war_wagon / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代朝鲜军团', civ: '高丽', age: 'imperial', deStyle: 'ASIA', region: 'GORYEO' as RegionType,
+        buildingStyle: 'KOREA',
+        castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
+        formationMode: 'crane_wing',
+        shipId: 'ELITE_TURTLE_SHIP',
+        slots: [
+            { type: 'jian_swordman_shielded', count: 2 },
+            { type: 'war_wagon', count: 4 },
+            { type: 'hand_cannoneer', count: 3 },
+        ],
+    },
+
+    // ═══════════════════════════════════════════════════════════════════
+    // 日本　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
+    // ═══════════════════════════════════════════════════════════════════
+    // ── 日本 · 古典时代 · 古典时代大和军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：步兵为主
+    //    描述正文（主人原文，一字未改）：（奈良吉野、仁德陵；仁德天皇陵巨型前方后圆土冢、吉野里环壕木栅部落要塞；古坟氏姓铁制直刀、挂甲短甲、氏族武士方木盾步战阵）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '古典时代大和军团', civ: '日本', age: 'antiquity', deStyle: 'ASIA', region: 'JAPAN' as RegionType,
+        buildingStyle: 'JAPAN',
+        castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
+        formationMode: 'echelon',
+        shipId: 'CANOE',
+        slots: [
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'militia', count: 3 },
+            { type: 'antiquity_skirmisher', count: 2 },
+        ],
+    },
+    // ── 日本 · 封建时代 · 封建时代平安军团　（本次新建）────────────────
+    //    评级：（未标评级）｜核心兵种：骑射为主
+    //    描述正文（主人原文，一字未改）：（京都平安京；平安京大内里朱雀门、宇治平等院凤凰堂；源平合战骑马大铠武士、和弓远距离对射“骑射三度”、早期太刀单骑决斗）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '封建时代平安军团', civ: '日本', age: 'feudal', deStyle: 'ASIA', region: 'JAPAN' as RegionType,
+        buildingStyle: 'JAPAN',
+        castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
+        formationMode: 'crescent',
+        shipId: 'ANT_ELITE_GALLEY',
+        slots: [
+            { type: 'light_cavalry', count: 3 },
+            { type: 'light_riders', count: 2 },
+            { type: 'cav_archer_heavy', count: 4 },
+        ],
+    },
+    // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：城堡时代幕府军团
+    //    ✔ 见本表里【城堡时代幕府军团】那一条前的 ★ 批注（评级：【高级】｜核心兵种：重步兵为主）
+    // ── 日本 · 帝国时代 · 帝国时代武家军团　（本次新建）────────────────
+    //    评级：【精锐】｜核心兵种：重步兵、远程（火器）为主
+    //    描述正文（主人原文，一字未改）：（小田原、大阪/堺港；小田原城深壕大土垒要塞、织田安土城早期高石垣天守阁；足轻密集长柄枪方阵、战国武士精钢胴丸野太刀、大航海早期堺港早期铁炮协同防线）
+    //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian　— 按 248 主将表取，不进三排兵种编制
+    {
+        name: '帝国时代武家军团', civ: '日本', age: 'imperial', deStyle: 'ASIA', region: 'JAPAN' as RegionType,
+        buildingStyle: 'JAPAN',
+        castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
+        formationMode: 'balance_yoke',
+        shipId: 'ANT_ELITE_GALLEY',
+        slots: [
+            { type: 'pikeman', count: 4 },
+            { type: 'two_handed_swordsman', count: 2 },
+            { type: 'hand_cannoneer', count: 3 },
+        ],
+    },
+
 ];
 
 export const LEVEL_2_CIV_62_NAMES: Set<string> = new Set(LEVEL_2_CIV_62_LEGIONS.map(l => l.name));
@@ -817,10 +1325,10 @@ if (goryeoLegion) {
     LEVEL_2_CIV_62_MAP.set('城堡时代朝鲜军团', goryeoLegion);
 }
 // 兼容简写别名（如不含“时代”二字的旧名）
-LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_LEGIONS[0]);
-LEVEL_2_CIV_62_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_62_LEGIONS[1]);
-LEVEL_2_CIV_62_MAP.set('古典华夏江南军团', LEVEL_2_CIV_62_LEGIONS[2]);
-LEVEL_2_CIV_62_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_62_LEGIONS[3]);
+LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_MAP.get('古典时代秦汉军团')!);
+LEVEL_2_CIV_62_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_62_MAP.get('古典时代巴蜀军团')!);
+LEVEL_2_CIV_62_MAP.set('古典华夏江南军团', LEVEL_2_CIV_62_MAP.get('古典时代吴越军团')!);
+LEVEL_2_CIV_62_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_62_MAP.get('古典时代魏晋军团')!);
 
 /**
  * 军团名是否属于「**二级：文明 × 时代（62 文明专属军团）**」——

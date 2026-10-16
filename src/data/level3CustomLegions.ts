@@ -68,7 +68,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
             { type: 'war_chariot_ranged', count: 2 },
         ],
         regions: ['PRE_QIN'],
-        parentLegion: '古典时代华夏中原军团',
+        parentLegion: '古典时代秦汉军团',
         shipId: 'LOU_CHUAN',
         buildingStyle: 'CENTRAL',
     },
@@ -254,19 +254,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'KOREA',
     },
     {
-        name: '古典时代秦汉军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'elite_chukonu', count: 4 },
-            { type: 'tiger_rider', count: 2 },
-        ],
-        regions: ['NORTH', 'HEXI'],
-        parentLegion: '古典时代华夏河朔军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'WEI',
-    },
-    {
         name: '古典时代纳巴泰军团',
         formationMode: 'crane_wing',
         slots: [
@@ -289,8 +276,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['QIANG'],
         // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
-        //    河西这条线：主干＝二级「封建时代河西军团」。
-        parentLegion: '封建时代河西军团',
+        //    河西这条线：主干＝二级「封建时代归义军团」（原「封建时代河西军团」已删，归并到新名）。
+        parentLegion: '封建时代归义军团',
         shipId: 'CANOE',
         buildingStyle: 'KHITAN',
     },
@@ -353,19 +340,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
     {
-        name: '城堡时代宋禁军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'liao_dao', count: 4 },
-            { type: 'elite_fire_lancer', count: 2 },
-            { type: 'elite_chukonu', count: 3 },
-        ],
-        regions: ['SONG'],
-        parentLegion: '东亚军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'CENTRAL',
-    },
-    {
         name: '封建时代萨珊军团',
         formationMode: 'balance_yoke',
         slots: [
@@ -414,7 +388,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['TANGUT'],
         // 🔴 [2026-10-05 主人定「挂河西」→「古典羌族，封建河西，城堡党项」]
-        parentLegion: '封建时代河西军团',
+        parentLegion: '封建时代归义军团',
         shipId: 'DEMO_RAFT',
         buildingStyle: 'KHITAN',
     },
@@ -892,19 +866,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'BASHU',
     },
     {
-        name: '封建时代突厥军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'tarkan', count: 2 },
-            { type: 'elite_steppe_lancer', count: 3 },
-            { type: 'mangudai', count: 4 },
-        ],
-        regions: ['TURKS'],
-        parentLegion: '封建时代匈人军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'HUNS',
-    },
-    {
         name: '封建时代粟特军团',
         formationMode: 'fish_scale',
         slots: [
@@ -982,37 +943,9 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'FIRE_GALLEY',
         buildingStyle: 'ORIE',
     },
-    {
-        name: '封建时代隋唐军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'liao_dao', count: 4 },
-            { type: 'elite_chukonu', count: 2 },
-            { type: 'hei_kuang_heavy', count: 3 },
-        ],
-        regions: ['JIANGNAN'],
-        parentLegion: '东亚军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'CENTRAL',
-    },
-    {
-        // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除，
-        //    另一个改名为封建白山黑水军团。挂白山黑水」] —— 原「封建时代渤海军团」改名而来。
-        name: '封建时代白山黑水军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'pikeman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
-            { type: 'elite_iron_pagoda', count: 2 },
-        ],
-        regions: ['MOHE'],
-        parentLegion: '城堡时代白山黑水军团',
-        shipId: 'GALLEY',
-        buildingStyle: 'NORTHEAST',
-    },
     // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除」] —— 已删「封建时代高句丽军团」。
     //    理由：`KOREA` 那 9 座（国内城／平壤／开城／金城／泗沘…）在**朝鲜半岛**，划归朝鲜半岛那条线；
-    //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线保留改名后的「封建时代白山黑水军团」。
+    //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线：原改名来的「封建时代白山黑水军团」已按主人令删除，封建节点归新名单的「封建时代渤海军团」（`MOHE` 指针已改指它）。
     {
         name: '帝王时代缅甸军团',
         formationMode: 'crane_wing',
@@ -1066,19 +999,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'AMERICA',
     },
     {
-        name: '帝国时代华夏军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'chukonu', count: 3 },
-            { type: 'fire_archer', count: 2 },
-        ],
-        regions: ['HUAXIA_IMPERIAL'],
-        parentLegion: '东亚军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'CENTRAL',
-    },
-    {
         name: '帝国时代南美军团',
         formationMode: 'fish_scale',
         slots: [
@@ -1116,19 +1036,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '城堡时代图皮军团',
         shipId: 'CANOE',
         buildingStyle: 'TUPI',
-    },
-    {
-        name: '帝国时代大明军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'fire_lancer', count: 4 },
-            { type: 'elite_fire_archer', count: 3 },
-            { type: 'mangudai_elite', count: 2 },
-        ],
-        regions: ['MING'],
-        parentLegion: '东亚军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'CENTRAL',
     },
     {
         name: '帝国时代拉丁军团',
@@ -1199,19 +1106,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'CENTRAL_ASIA',
     },
     {
-        name: '帝国时代朝鲜军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'jian_swordman_shielded', count: 2 },
-            { type: 'war_wagon', count: 4 },
-            { type: 'hand_cannoneer', count: 3 },
-        ],
-        regions: ['JOSEON'],
-        parentLegion: '城堡时代高丽军团',
-        shipId: 'ELITE_TURTLE_SHIP',
-        buildingStyle: 'KOREA',
-    },
-    {
         name: '帝国时代波斯军团',
         formationMode: 'triangle',
         slots: [
@@ -1223,20 +1117,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '波斯军团',
         shipId: 'WAR_GALLEY',
         buildingStyle: 'SASANIAN',
-    },
-    {
-        // 🔴 [2026-10-05 主人定「满清不就是八旗军吗」] 改名「帝国时代满清军团」→「帝国时代八旗军团」。
-        name: '帝国时代八旗军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'elite_fire_archer', count: 4 },
-            { type: 'elite_iron_pagoda', count: 2 },
-            { type: 'kipchak', count: 3 },
-        ],
-        regions: ['MANCHU'],
-        parentLegion: '城堡时代白山黑水军团',
-        shipId: 'WAR_GALLEY',
-        buildingStyle: 'NORTHEAST',
     },
     {
         name: '帝国时代特维尔切军团',
@@ -1342,19 +1222,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '非洲军团',
         shipId: 'CANNON_GALLEON',
         buildingStyle: 'AFRICA',
-    },
-    {
-        name: '古典时代魏晋军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'chukonu', count: 4 },
-            { type: 'elite_tiger_cavalry', count: 2 },
-        ],
-        regions: [],
-        parentLegion: '古典时代华夏河朔军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'WEI',
     },
     {
         name: '城堡时代岳家军团',
@@ -1472,20 +1339,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '城堡时代日本军团',
         shipId: 'ANT_ELITE_GALLEY',
         buildingStyle: 'JAPAN',
-    },
-    {
-        name: '封建时代新罗军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'jian_swordsman', count: 4 },
-            { type: 'war_wagon', count: 3 },
-            { type: 'hei_kuang_heavy', count: 2 },
-        ],
-        regions: [],
-        // 🔴 [2026-10-05 主人定「挂高丽呀，封建新罗，城堡高丽，帝国朝鲜」]
-        parentLegion: '城堡时代高丽军团',
-        shipId: 'LOU_CHUAN',
-        buildingStyle: 'KOREA',
     },
     {
         name: '城堡时代帖木儿军团',

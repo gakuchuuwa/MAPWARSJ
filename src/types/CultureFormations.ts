@@ -1546,7 +1546,7 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
  *  以文化正式名 CULTURE_NAMES 为底；特例 STEPPE 用「草原」（REGION_LABELS）而非「蒙古」，
  *  因「蒙古」留给第二层蒙古系支军团，避免重名。 */
 export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
-    CENTRAL: '古典时代华夏中原军团',
+    CENTRAL: '古典时代秦汉军团',
     NORTH: '古典时代秦汉军团',
     NORTHEAST: '古典时代羌族军团',
     KOREA: "封建时代新罗军团",
@@ -1670,9 +1670,9 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     SRIVIJAYA: '封建时代三佛齐军团',
     KUSHAN: '古典时代贵霜军团',
     KUSH: '古典时代努比亚军团',
-    KHITAN: "封建时代河西军团",
+    KHITAN: "封建时代归义军团",
     UIGHUR: '封建漠北军团',
-    MOHE: '封建时代白山黑水军团',
+    MOHE: '封建时代渤海军团',
     ANGLO_SAXON: '封建时代盎格鲁-撒克逊军团',
     GHANA: '封建时代加纳军团',
     KHAZARS: '封建时代可萨军团',
@@ -1682,7 +1682,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     SOGDIANS: '封建时代粟特军团',
     TANGUT: "城堡时代党项军团",
     JAVANESE: '封建时代爪哇军团',
-    JURCHEN: "城堡时代白山黑水军团",
+    JURCHEN: "城堡时代大金军团",
     SELJUQ: '城堡时代塞尔柱军团',
     OTTOMAN: "帝国时代奥斯曼军团",
     OTTOMAN_IMPERIAL: '帝国时代奥斯曼军团',  // 🔴 [2026-09-14 事故恢复] 本条随 CultureFormations.ts 被整档覆盖而丢失，按父文化延用补回，待主人复核

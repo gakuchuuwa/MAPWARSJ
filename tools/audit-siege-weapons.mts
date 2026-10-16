@@ -159,7 +159,7 @@ function main(): void {
   //    `SIEGE_MANGONEL_LINE` —— 实测那两张表**全库只有本脚本读它们，游戏一行都不读**（死表），
   //    而且里面写的是 `battering_ram / mangonel` 这种旧 key，与真表 key 体系不同；
   //    于是「中国系没落地」这个红，指的是两张死表，而**真正在跑的** `src/data/SiegeWeaponsByCulture.ts`
-  //    里中国系早就用上牵引抛石机了（如「古典时代华夏巴蜀军团」＝牵引投石机×4）。
+  //    里中国系早就用上牵引抛石机了（如「古典时代巴蜀军团」＝牵引投石机×4）。
   //    现改为**直接查真表**：真源 = `getSiegeWeaponsForCulture` 用的 `LEGION_78_SIEGE_MAP`（main 顶部已解析）。
   console.log('\n中国系攻城投石槽（查真表 SiegeWeaponsByCulture.ts）：');
   const weaponsOf = new Map<string, string[]>([...LEGIONS].map(([k, v]) => [k, v.weapons]));
@@ -196,7 +196,7 @@ function main(): void {
   //     · `西北`/`东北` 之类的地区名天然带方位词。
   //   下面这组正反例每次运行都跑一遍 —— 判据一旦被改坏，这里立刻报红，不会静默误判数据。
   console.log('\n尺子自校（中国系判据）：');
-  const CN_SHOULD_HIT = ['东亚军团_castle', '古典时代华夏巴蜀军团', '城堡时代宋禁军团', '大理军团', '南诏军团', '大明神机箭军团', '东北军团'];
+  const CN_SHOULD_HIT = ['东亚军团_castle', '古典时代巴蜀军团', '城堡时代宋禁军团', '大理军团', '南诏军团', '大明神机箭军团', '东北军团'];
   const CN_SHOULD_NOT = ['东北欧军团_castle', '东南欧军团_castle', '西欧军团_castle', '高丽禁卫军团', '帝国时代朝鲜军团'];
   let selfBad = 0;
   for (const k of CN_SHOULD_HIT) if (!CN_NAME_RE.test(k) || /欧/.test(k)) { console.log(`  🔴 正例「${k}」没被判为中国系`); selfBad++; }
