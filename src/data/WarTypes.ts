@@ -378,7 +378,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     shock_cavalry: { name: '古典枪骑兵高级', cls: 'cav', sz: 1, hp: 120, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
     imperial_cavalry: { name: '具装枪骑兵高级', cls: 'cav', sz: 1, hp: 130, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', bonus: { 1: 10 }, armorTags: [8, 19, 31] },
     equites: { name: '罗马伴随骑士高级', cls: 'cav', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', armorTags: [8, 31] },
-    sarmatian: { name: '东欧萨尔马提亚骑兵高级', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
+    sarmatian: { name: '萨尔马提亚骑兵', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_peltast: { name: '色雷斯标枪手高级', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 38, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
     vanguard: { name: '先锋步兵高级', cls: 'melee', sz: 1, hp: 70, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 4, 29: 6 }, armorTags: [1, 19, 31] },
     bowman: { name: '古典弓手', cls: 'ranged', sz: 1, hp: 30, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 39, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },

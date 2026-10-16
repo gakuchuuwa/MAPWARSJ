@@ -466,19 +466,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'ORIE',
     },
     {
-        name: '城堡时代阿拉贡军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'cavalier', count: 3 },
-            { type: 'two_handed_swordsman', count: 4 },
-            { type: 'elite_genitour', count: 2 },
-        ],
-        regions: ['ARAGON'],
-        parentLegion: '城堡时代诺曼骑士团',
-        shipId: 'ELITE_CARAVEL',
-        buildingStyle: 'SICILIANS',
-    },
-    {
         name: '城堡时代非洲军团',
         formationMode: 'fish_scale',
         slots: [
@@ -912,20 +899,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '西欧军团',
         shipId: 'ELITE_CARAVEL',
         buildingStyle: 'VIKINGS',
-    },
-    {
-        name: '帝国时代蒙古军团',
-        formationMode: 'balance_yoke',
-        slots: [
-            { type: 'elite_keshik', count: 4 },
-            { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'mangudai_elite', count: 3 },
-        ],
-        regions: ['STEPPE_IMPERIAL'],
-        // 🔴 [2026-10-05 主人定] 蒙古高原·漠北这条线：主干＝二级「城堡时代蒙古军团」。
-        parentLegion: '城堡时代蒙古军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'MONGOL',
     },
     {
         name: '帝国时代锡克军团',

@@ -482,7 +482,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'shock_cavalry', name: '古典枪骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SHOCK_CAVALRY/' },
     { id: 'imperial_cavalry', name: '具装枪骑兵高级', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/IMPERIAL_CAVALRY/' },
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
-    { id: 'sarmatian', name: '东欧萨尔马提亚骑兵高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
+    { id: 'sarmatian', name: '萨尔马提亚骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
     { id: 'elite_peltast', name: '色雷斯标枪手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
     { id: 'vanguard', name: '先锋步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'bowman', name: '古典弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/BOWMAN/' },
@@ -1936,18 +1936,18 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     buildRows();
     applyFilter();
     renderTable();
-    // 🔴 [2026-09-16 主人定] 势力级不再「清空条目让它跟随文化区」，而是**按规则重新安置**：
-    //    看武将时代 + 据点建筑风格 → 二级有同时代的就进二级，没有就退该风格的母体一级军团。
-    //    详见 src/systems/LegionFallbackOnDelete.ts 的文件头（含主人原话与杨业样例）。
-    let toL2 = 0, toL1 = 0;
+    // 🔴 [2026-09-16 主人定 / 2026-10-16 主人「只套二级，跟一级没关系」] 势力级按规则重新套军团：
+    //    看武将时代 + 据点建筑风格 → 套「该风格 × 该时代」那支二级军团；套不上就跟随文化区。
+    //    详见 src/systems/LegionFallbackOnDelete.ts 的文件头。
+    let toL2 = 0;
     const unplaced: string[] = [];
     for (const factionId of affectedIds) {
         const r = resolveFallbackForFaction(factionId);
         if ('newLegionName' in r) {
-            await saveOneFactionLegion(factionId, r.newLegionName, r.via === 'level1' ? 'region' : 'sub');
-            if (r.via === 'level2') toL2++; else toL1++;
+            await saveOneFactionLegion(factionId, r.newLegionName, 'sub');
+            toL2++;
         } else {
-            // 判不了（没武将 / 没据点 / 风格归不到母体）→ 保持旧行为：清空条目，跟随文化区
+            // 套不上（没武将 / 没据点 / 这一格二级还没有军团）→ 清空条目，跟随文化区
             await saveOneFactionLegion(factionId, null);
             unplaced.push(`${factionId}（${r.reason}）`);
         }
@@ -1955,11 +1955,11 @@ async function deleteSpecificLegion(legionName: string): Promise<void> {
     showToast(
         `🗑 已删除军团【${legionName}】`
         + (affectedIds.length
-            ? `：${affectedIds.length} 个势力重排（二级 ${toL2} / 一级 ${toL1}${unplaced.length ? ` / 判不了 ${unplaced.length}` : ''}）`
+            ? `：${affectedIds.length} 个势力重新套军团（二级 ${toL2}${unplaced.length ? ` / 套不上 ${unplaced.length}` : ''}）`
             : '（此前无势力使用）')
         + (cultures.length ? `，${cultures.length} 个文化区回落母体军团` : ''),
     );
-    if (unplaced.length) console.warn('[DeleteLegion] 这些势力判不了时代/风格，已按旧行为跟随文化区：', unplaced);
+    if (unplaced.length) console.warn('[DeleteLegion] 这些势力套不上二级军团，已跟随文化区：', unplaced);
 }
 
 /** 编成摘要：「前排/中坚/后排（阵型）」——写进下拉选项，主人不用逐个试就能挑 */
@@ -3697,7 +3697,7 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
           })()}
         </div>
         <div class="lc-meta">${opt.description}</div>
-        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此三级军团；用它的势力按「武将时代 + 据点建筑风格」重新安置：二级有同时代的就进二级，没有就退该风格的母体一级军团（一级 16 与二级 62 不可删）">🗑</button>` : ''}
+        ${isSubLayer && !isBase16CultureLegion(opt.legionName) ? `<button type="button" class="le-legion-delete" data-delete-name="${opt.legionName}" title="删除此三级军团；用它的势力按「武将的时代 + 据点的建筑风格」重新套二级军团（66 种建筑风格 × 4 时代），套不上就跟随文化区（一级 16 与二级 257 不可删）">🗑</button>` : ''}
       </div>
     `).join('') || (options.length
         ? '<div class="le-empty-hint" style="padding:14px;">无匹配军团</div>'
@@ -3722,21 +3722,19 @@ function renderLegionCardGrid(row: FactionLegionRow): void {
                 showToast('❌ 一级：16 母体文化军团不可删除', true);
                 return;
             }
-            // 🔴 [2026-09-18 主人定] 78 支基础军团不可删除：三级那 3 支保底军团同样拦住
+            // 🔴 [2026-10-16 主人定] 二级全部 257 支是武将保底军团，不可删除
             if (isBaseFallbackLegion(name)) {
-                showToast('❌ 三级保底军团不可删除，青藏/西域/漠北蒙古的武将靠它兜底', true);
+                showToast('❌ 二级军团不可删除：66 种建筑风格 × 4 时代的武将靠它套军团', true);
                 return;
             }
-            // 🔴 [2026-09-16] 先把重排结果算出来给主人看，再问删不删
+            // 🔴 [2026-09-16] 先把重新套军团的结果算出来给主人看，再问删不删
             const _plan = planFallbackForDeletedLegion(name);
-            const _l2 = _plan.items.filter(i => i.via === 'level2').length;
-            const _l1 = _plan.items.length - _l2;
             const _lines = _plan.items.slice(0, 8).map(i => '  · ' + i.note).join(String.fromCharCode(10));
             const _more = _plan.items.length > 8 ? String.fromCharCode(10) + `  …另有 ${_plan.items.length - 8} 家` : '';
-            const _skip = _plan.skipped.length ? String.fromCharCode(10) + `判不了时代/风格的 ${_plan.skipped.length} 家将跟随文化区` : '';
+            const _skip = _plan.skipped.length ? String.fromCharCode(10) + `套不上的 ${_plan.skipped.length} 家将跟随文化区` : '';
             if (!window.confirm(
                 `删除军团【${name}】？` + String.fromCharCode(10, 10)
-                + `用它的 ${_plan.items.length + _plan.skipped.length} 家势力将重新安置（二级 ${_l2} / 一级 ${_l1}）：`
+                + `用它的 ${_plan.items.length + _plan.skipped.length} 家势力将重新套二级军团（武将时代 × 据点建筑风格）：`
                 + String.fromCharCode(10) + _lines + _more + _skip,
             )) return;
             await deleteSpecificLegion(name);
