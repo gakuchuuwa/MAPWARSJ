@@ -1011,6 +1011,62 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'BIREME',
         buildingStyle: 'SASANIAN',
     },
+    // ───────────────────────────────────────────────────────────────────
+    // 帝国时代·基础城堡兵专属 4 支　【2026-10-16 主人令新建】
+    // 四个帝国文明的城堡兵「普通档」落在各自 3 档。
+    // ───────────────────────────────────────────────────────────────────
+    {
+        name: '帝国时代西班牙征服军团',
+        formationMode: 'triangle',
+        slots: [
+            { type: 'pikeman', count: 2 },
+            { type: 'conquistador', count: 3 },
+            { type: 'elite_conquistador', count: 4 },
+        ],
+        regions: ['SPANISH'],
+        parentLegion: '帝国时代西班牙方阵军团',
+        shipId: 'GALLEON',
+        buildingStyle: 'SPANISH',
+    },
+    {
+        name: '帝国时代葡萄牙风琴军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'hand_cannoneer', count: 4 },
+            { type: 'organ_gun', count: 3 },
+            { type: 'pikeman', count: 2 },
+        ],
+        regions: ['PORTUGUESE'],
+        parentLegion: '帝国时代葡萄牙军团',
+        shipId: 'CARAVEL',
+        buildingStyle: 'PORTUGUESE',
+    },
+    {
+        name: '帝国时代安第斯游击军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'elite_kona', count: 4 },
+            { type: 'kona', count: 3 },
+            { type: 'bolas_rider', count: 2 },
+        ],
+        regions: ['MAPUCHE'],
+        parentLegion: '帝国时代阿劳卡尼亚军团',
+        shipId: 'CANOE',
+        buildingStyle: 'MAPUCHE',
+    },
+    {
+        name: '帝国时代苏丹亲兵军团',
+        formationMode: 'echelon',
+        slots: [
+            { type: 'elite_janissary', count: 4 },
+            { type: 'janissary', count: 3 },
+            { type: 'hussar', count: 2 },
+        ],
+        regions: ['OTTOMAN'],
+        parentLegion: '帝国时代土耳其军团',
+        shipId: 'CANNON_GALLEON',
+        buildingStyle: 'TURKS',
+    },
 ];
 
 export const LEVEL_3_LEGION_MAP: ReadonlyMap<string, Level3LegionDef> =
