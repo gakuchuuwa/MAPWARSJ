@@ -212,19 +212,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'CANOE',
         buildingStyle: 'MONGOL',
     },
-    {
-        name: '古典时代赫梯军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'antiquity_skirmisher', count: 2 },
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'elite_war_chariot', count: 4 },
-        ],
-        regions: ['HITTITES'],
-        parentLegion: '色雷斯军团',
-        shipId: 'MONOREME',
-        buildingStyle: 'THRACIAN',
-    },
+    // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]
+    //   原三级【古典时代赫梯军团】（HITTITES 哈图沙，锥形：古典掷矛手2 / 古典长枪兵3 / 双轮战车高级4）
+    //   ＝ 与二级【古典时代赫梯军团】（奥斯曼·古典·安纳托利亚）同名同史，重复，已删。
+    //   HITTITES 文化区指针与弗里吉亚／吕底亚／卡帕多西亚三家势力指针仍写「古典时代赫梯军团」，
+    //   取数顺序 一级→二级→三级，现在自然落到留下来的那支二级军团。
     {
         name: '古典时代阿拉伯军团',
         formationMode: 'triangle',

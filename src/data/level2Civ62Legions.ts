@@ -35,10 +35,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'balance_yoke',
         shipId: 'TRIREME',
+        // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝罗马城堡兵【百夫长精锐】。
         slots: [
-            { type: 'legionary', count: 4 },
+            { type: 'elite_centurion', count: 4 },
             { type: 'paragon', count: 2 },
-            { type: 'elite_centurion', count: 3 },
+            { type: 'legionary', count: 3 },
         ],
     },
     {
@@ -87,10 +88,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    （同船体、同舷侧白圆盾列、同单桅桨列与船首冲角），只差帆色与帆上纹章，
         //    故升为马其顿军团旗舰。素材是完整 16 向战船，登记见 UnitAssets 'HERO_THEMISTOCLES'。
         shipId: 'HERO_THEMISTOCLES',
+        // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝马其顿城堡兵【伙伴骑兵精锐】。
         slots: [
-            { type: 'elite_phalangite', count: 4 },
+            { type: 'elite_companion_cavalry', count: 4 },
             { type: 'phalangite', count: 2 },
-            { type: 'elite_companion_cavalry', count: 3 },
+            { type: 'elite_phalangite', count: 3 },
         ],
     },
     {
@@ -368,10 +370,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
+        // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
             { type: 'white_feather_guard', count: 3 },
-            { type: 'chukonu', count: 4 },
-            { type: 'elite_tiger_cavalry', count: 2 },
+            { type: 'elite_tiger_cavalry', count: 4 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────
@@ -449,10 +452,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'crescent',
         shipId: 'LOU_CHUAN',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：火焰弓箭手普通档（精锐留古典军团）。
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'chukonu', count: 2 },
-            { type: 'elite_fire_archer', count: 4 },
+            { type: 'fire_archer', count: 4 },
         ],
     },
     // ── 江南 · 城堡时代 · 城堡时代临安军团　（本次新建）────────────────
@@ -517,10 +521,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：蜀白毦兵（普通档）替下借来的中国诸葛弩。
         slots: [
             { type: 'liao_dao', count: 4 },
             { type: 'elite_antiquity_skirmisher', count: 2 },
-            { type: 'chukonu', count: 3 },
+            { type: 'white_feather_guard', count: 3 },
         ],
     },
     // ── 巴蜀 · 城堡时代 · 城堡时代山城军团　（本次新建）────────────────
@@ -1140,9 +1145,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'echelon',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：凯尔特靛蓝突袭者（普通档）替链甲剑士。
         slots: [
             { type: 'elite_skirmisher', count: 4 },
-            { type: 'swordsman', count: 3 },
+            { type: 'woad_raider', count: 3 },
             { type: 'norse_warrior', count: 2 },
         ],
     },
@@ -2219,10 +2225,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'echelon',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：罗马百夫长（普通档）替步弓手。
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'manatarms', count: 3 },
-            { type: 'archer', count: 2 },
+            { type: 'centurion', count: 2 },
         ],
     },
     // ── 罗马 · 城堡时代 · 城堡时代十字军骑士　（本次新建）────────────────
@@ -2599,20 +2606,25 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 安纳托利亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 安纳托利亚 · 古典时代 · 古典时代赫梯战车军团　（本次新建）────────────────
+    // ── 安纳托利亚 · 古典时代 · 古典时代赫梯军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：战车为主
     //    描述正文（主人原文，一字未改）：（哈图沙；哈图沙双层巨石城墙狮子门、斯芬克斯门要塞、亚兹勒卡亚岩壁浮雕神庙；三人青铜双轮重战车冲击、早期冷锻铁刃剑短矛、巨石卫城干砌地下暗道突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代赫梯战车军团', civ: '奥斯曼', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '古典时代赫梯军团', civ: '奥斯曼', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crescent',
         shipId: 'BIREME',
+        // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战车不再上阵（不排 2 档，直接删）；
+        //    空出的前排 3 档用非城堡精锐的古典长矛兵补位。
+        //    🔴 [2026-10-16 主人令「换掉无素材的那个」] 后排 4 档「欧洲古典剑士特殊」在 SPRITE_PATHS 里没有素材
+        //    （全库 3 个古典步兵缺素材之一，上阵渲染兜底）→ 换同属近东古典、有素材的【波斯持盾兵特殊】。
+        //    军团改名：赫梯战车军团 → 古典时代赫梯军团。
         slots: [
-            { type: 'elite_war_chariot', count: 3 },
+            { type: 'antiquity_spearman', count: 3 },
             { type: 'guardsman', count: 2 },
-            { type: 'heavy_swordsman', count: 4 },
+            { type: 'sparabara', count: 4 },
         ],
     },
     // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
@@ -2803,18 +2815,20 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 印度斯坦　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 印度斯坦 · 古典时代 · 古典时代恒河战象军团　（本次新建）────────────────
+    // ── 印度斯坦 · 古典时代 · 古典时代孔雀军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：战象、远程（步弓）为主
     //    描述正文（主人原文，一字未改）：（华氏城、王舍城；阿育王石柱猛狮柱头、桑吉大塔浮雕石栏楯、那烂陀红砖佛寺巨壁；竹制六尺超长重步兵大弓、双刃阔铁剑、披挂重铠的双人象轿长枪战象冲阵大阵）
     //    英雄队（第 10 队·主将队）：elite_battle_elephant / hero_prithviraj / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代恒河战象军团', civ: '印度斯坦', age: 'antiquity', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
+        name: '古典时代孔雀军团', civ: '印度斯坦', age: 'antiquity', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'crescent',
         shipId: 'CANOE',
+        // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战象不再上阵（不排 2 档，直接删）；
+        //    空出的前排 3 档用非城堡精锐的印度部落民补位。军团改名：恒河战象军团 → 孔雀军团。
         slots: [
-            { type: 'elite_sannahya', count: 3 },
+            { type: 'indian_tribesman', count: 3 },
             { type: 'pattiyoda_longbowman', count: 2 },
             { type: 'sickle_warrior', count: 4 },
         ],
@@ -2882,10 +2896,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BENG_CASTLE_AGE3', castleName: '孟加拉 恒河三角洲砖石堡',
         formationMode: 'crescent',
         shipId: 'ANT_ELITE_GALLEY',
+        // 🔴 [2026-10-16 主人令] ①「象兵、战车只能安排在 2 档」②「象兵和战车不能同时在一个军团，替换不是城堡的精锐兵种」
+        //    ⇒ 拉塔弓战车精锐（孟加拉自家城堡兵）压到 2 档；桑纳亚战象高级（普鲁马厩专属，借调而来）离队；
+        //      空出的 3 档用非城堡精锐补位——印度部落民（3 档·前排）＋帕提尤达长弓兵基础档（4 档·后排）。
         slots: [
-            { type: 'elite_sannahya', count: 3 },
-            { type: 'pattiyoda_longbowman', count: 2 },
-            { type: 'indian_tribesman', count: 4 },
+            { type: 'indian_tribesman', count: 3 },
+            { type: 'elite_ratha_ranged', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 4 },
         ],
     },
     // ── 孟加拉 · 封建时代 · 封建时代波罗军团　（本次新建）────────────────
@@ -2898,10 +2915,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'BENG_CASTLE_AGE3', castleName: '孟加拉 恒河三角洲砖石堡',
         formationMode: 'triangle',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：拉塔战车（普通档）在编；
+        //    ②按「象兵、战车只能安排在 2 档」＋「象车不能同队」：拉塔战车压到 2 档，战斗象高级离队。
         slots: [
-            { type: 'elite_battle_elephant', count: 2 },
-            { type: 'ratha_melee', count: 3 },
-            { type: 'indian_tribesman', count: 4 },
+            { type: 'ratha_ranged', count: 2 },
+            { type: 'indian_tribesman', count: 3 },
+            { type: 'pattiyoda_longbowman', count: 4 },
         ],
     },
     // ── 孟加拉 · 城堡时代 · 城堡时代孟加拉军团　（三级升二级）────────────────
@@ -3018,9 +3037,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
         formationMode: 'crane_wing',
         shipId: 'MONOREME',
+        // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝普鲁（PURU）城堡兵【帕提尤达长弓兵精锐】。
         slots: [
             { type: 'imperial_cavalry', count: 2 },
-            { type: 'laminated_bowman', count: 4 },
+            { type: 'elite_pattiyoda_longbowman', count: 4 },
             { type: 'elite_kipchak', count: 3 },
         ],
     },
@@ -3034,10 +3054,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PURU_CASTLE_AGE3', castleName: '普鲁·南亚 旁遮普红砂岩堡',
         formationMode: 'echelon',
         shipId: 'CANOE',
+        // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：帕提尤达长弓兵在编；
+        //    ②按「象兵只能安排在 2 档」：战斗象压到 2 档，古拉姆离队。
         slots: [
             { type: 'indian_tribesman', count: 4 },
-            { type: 'battle_elephant', count: 3 },
-            { type: 'ghulam', count: 2 },
+            { type: 'pattiyoda_longbowman', count: 3 },
+            { type: 'battle_elephant', count: 2 },
         ],
     },
     // ── 旁遮普 · 城堡时代 · 城堡时代五河军团　（本次新建）────────────────
@@ -3996,9 +4018,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'echelon',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：雅典将军卫队（普通档）替武装剑士（古典军团那份照旧保留）。
         slots: [
             { type: 'spearman', count: 4 },
-            { type: 'manatarms', count: 3 },
+            { type: 'strategos', count: 3 },
             { type: 'elite_skirmisher', count: 2 },
         ],
     },
@@ -4053,8 +4076,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'echelon',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：斯巴达三百卫士（普通档）当 4 档前排主力（古典军团那份照旧保留）。
         slots: [
-            { type: 'spearman', count: 4 },
+            { type: 'hippeus', count: 4 },
             { type: 'manatarms', count: 3 },
             { type: 'swordsman', count: 2 },
         ],
@@ -4110,8 +4134,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：马其顿伙伴骑兵（普通档）替城堡档的骑士。
         slots: [
-            { type: 'knight', count: 4 },
+            { type: 'companion_cavalry', count: 4 },
             { type: 'spearman', count: 2 },
             { type: 'swordsman', count: 3 },
         ],
@@ -4167,8 +4192,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'THRACIAN_CASTLE_AGE3', castleName: '色雷斯 罗多彼山蛮族巨石堡',
         formationMode: 'balance_yoke',
         shipId: 'GALLEY',
+        // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：色雷斯长刃斩手（普通档）替城堡档的双手剑士。
         slots: [
-            { type: 'two_handed_swordsman', count: 4 },
+            { type: 'rhomphaia_warrior', count: 4 },
             { type: 'knight', count: 2 },
             { type: 'spearman', count: 3 },
         ],
