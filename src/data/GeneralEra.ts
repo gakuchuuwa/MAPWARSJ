@@ -500,10 +500,16 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'heisha_d_houlihu': 'antiquity',
     'heishui_nishuli': 'feudal',
     'hejian_gongsunzan': 'antiquity',
+    // 🔴 [2026-10-16 主人令「能添加属性就自己添加」] 以下 8 位原来不在本表 → 武将套不上二级军团，现按成名/登场年代补入。
+    //    定档口径同本表头：古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1914。
+    //    赫卡尼亚·阿尔塔巴佐斯（Artabazos II，赫勒斯滂弗里吉亚总督，抗阿尔塔薛西斯三世、后随亚历山大，卒约前325）→ 古典。把握：高
+    'hekaniya_artabazos': 'antiquity',
     'helian_helianbobo': 'antiquity',
     'heng1_yangye': 'feudal',
     'heng_hetengjiao': 'imperial',
     'hepan_gaoxianzhi': 'feudal',
+    // 赫斯提亚·伊阿宋（前4世纪希腊）→ 古典。⚠️ 身份待核：库内卒年 -324 与费莱的伊阿宋（卒前370）不符，但两读都在古典
+    'hesitiya_yiasong': 'antiquity',
     'heti_muwatali': 'antiquity',
     'heyuan_d_heichichangzhi': 'feudal',
     'hezhe_shaerhuda': 'imperial',
@@ -618,6 +624,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'suogediyana_arimazes': 'antiquity',
     'sute_spitamenes': 'antiquity',
     'xinde_patalawang': 'antiquity',
+    // 信度·巴赫拉姆汗（16世纪信德，库内 1501–1561，成名必 ≥1500）→ 帝国。⚠️ 身份待核
+    'xindu_bahelamuhan': 'imperial',
     'jiduoluoxiya_xibiertiwusi': 'antiquity',
     'aolitai_shouling': 'antiquity',
     'kamanniya_zongdu': 'antiquity',
@@ -702,6 +710,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'maer_d_bahelamuchubin': 'feudal',
     'maerta_qishi_walaite': 'imperial',
     'maidina_halide': 'feudal',
+    // 麦克兰·普农（10–11世纪马克兰地方首领，库内 950–1015，成名 <1050）→ 封建。⚠️ 身份待核
+    'maikelan_punong': 'feudal',
     'emesene_xierkuhe': 'castle',
     'mamon_mameng': 'feudal',
     'mamuluke_baibaisi': 'castle',
@@ -739,10 +749,14 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'mowoer_akeba': 'imperial',
     'mu_lijiang_muzeng': 'imperial',
     'muer_mujier': 'castle',
+    // 木尔坦·纳西尔丁（Nasir al-Din Qabacha，乌奇＋木尔坦统治者 1206–1228，1228 败亡）→ 城堡。把握：高
+    'muertan_naxierding': 'castle',
     'muong_shencongyue': 'castle',
     'murong_murongke': 'antiquity',
     'mushi_muchong': 'antiquity',
     'muwaxide_yakubu': 'castle',
+    // 穆西卡尼·穆西卡诺斯（Musikanos，印度河下游阿罗尔王，前325降亚历山大后反叛被杀）→ 古典。把握：高
+    'muxikani_muxikanuosi': 'antiquity',
     'nabatai_aleitasi': 'antiquity',
     'naiman_taiyanghan': 'castle',
     'najie_minande': 'antiquity',
@@ -853,6 +867,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'seljuq_sangjiaer': 'castle',
     'sengjialuo_dutugamo': 'antiquity',
     'shache_xian_suoche_shachexian': 'antiquity',
+    // 沙赫鲁德·维斯塔姆（Vistahm，萨珊帕提亚世家 Ispahbudhan，霍斯劳二世之舅，据点比斯塔姆，卒 596）→ 封建。把握：高
+    'shahelude_weisitamu': 'feudal',
     'shaiyue_aerpade': 'feudal',
     'shang_fuhao': 'antiquity',
     'shangzhou_shangyang': 'antiquity',
@@ -876,6 +892,8 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'shimotsuke_yudougongguanggang': 'imperial',
     'shiwei_saihou': 'feudal',
     'shixing_houandou': 'feudal',
+    // 食鱼族·阿波罗多洛斯（库内生前180–前120；「食鱼族」= 亚历山大史料 Ichthyophagoi 前4世纪）→ 古典。⚠️ 身份待核，且世纪表写 -4 与生卒年矛盾
+    'shiyuzu_aolaqiuzhang': 'antiquity',
     'shizhao_d_shihu': 'antiquity',
     'shizhou_liucong': 'antiquity',
     'shu_liubei': 'antiquity',

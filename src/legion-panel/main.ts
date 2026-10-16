@@ -1110,27 +1110,26 @@ async function save(): Promise<void> {
 async function remove(): Promise<void> {
     if (!selected) return;
     const name = selected;
-    // 🔴 [2026-09-16 主人定] 删除前先把「谁要重排、各自去哪」算出来给主人看：
-    //    看武将时代 + 据点建筑风格 → 二级有同时代的就进二级，没有就退该风格的母体一级军团。
-    //    规则与样例见 src/systems/LegionFallbackOnDelete.ts 文件头。
+    // 🔴 [2026-09-16 主人定 / 2026-10-16 主人收紧口径「只套二级，跟一级没关系」]
+    //    删除前先把「谁要重套、各自套哪支」算出来给主人看：
+    //    看武将时代 + 据点建筑风格 → 套「该风格 × 该时代」那支二级军团；套不上就跳过。
+    //    规则见 src/systems/LegionFallbackOnDelete.ts 文件头。
     const plan = planFallbackForDeletedLegion(name);
-    const toL2 = plan.items.filter((i) => i.via === 'level2').length;
-    const toL1 = plan.items.length - toL2;
     const affected = plan.items.length + plan.skipped.length;
     const lines = plan.items.slice(0, 8).map((i) => '  · ' + i.note).join('\n');
     const more = plan.items.length > 8 ? '\n  …另有 ' + (plan.items.length - 8) + ' 家' : '';
     const skipTip = plan.skipped.length
-        ? '\n判不了时代/风格的 ' + plan.skipped.length + ' 家将跟随文化区：\n  · '
+        ? '\n套不上的 ' + plan.skipped.length + ' 家将跟随文化区：\n  · '
             + plan.skipped.slice(0, 5).map((s) => s.factionId + '（' + s.reason + '）').join('\n  · ')
         : '';
-    // 🔴 [2026-09-18 主人定] 78 支基础军团不可删除：三级那 3 支保底军团也在内
+    // 🔴 [2026-10-16 主人定] 二级全部 257 支是武将保底军团，不可删除
     if (isBaseFallbackLegion(name)) {
-        window.alert('【' + name + '】是三级保底军团，不可删除 —— 青藏/西域/漠北蒙古风格的武将靠它兜底。');
+        window.alert('【' + name + '】是二级军团，不可删除 —— 66 种建筑风格 × 4 时代的武将靠它套军团。');
         return;
     }
     if (!window.confirm(
-        '确定删除军团【' + name + '】？\n\n用它的 ' + affected + ' 家势力将重新安置'
-        + '（二级 ' + toL2 + ' / 一级 ' + toL1 + '）：\n' + lines + more + skipTip,
+        '确定删除军团【' + name + '】？\n\n用它的 ' + affected + ' 家势力将重新套二级军团'
+        + '（武将时代 × 据点建筑风格）：\n' + lines + more + skipTip,
     )) return;
     try {
         const res = await fetch('/api/delete-legion', {
@@ -1141,7 +1140,7 @@ async function remove(): Promise<void> {
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
         const applied = await applyFallbackPlan(plan);
-        // 判不了时代/风格的：保持旧行为，清空条目让它跟随文化区
+        // 套不上的：清空条目让它跟随文化区
         for (const sk of plan.skipped) {
             await fetch('/api/save-faction-legion', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -1155,9 +1154,9 @@ async function remove(): Promise<void> {
         rows = buildRows();
         render();
         toast(
-            `🗑 已删除军团【${name}】：重排 ${applied.ok} 家（二级 ${toL2} / 一级 ${toL1}）`
+            `🗑 已删除军团【${name}】：${applied.ok} 家已套二级`
             + (applied.failed.length ? `，${applied.failed.length} 家写入失败` : '')
-            + (plan.skipped.length ? `，${plan.skipped.length} 家判不了已跟随文化区` : ''),
+            + (plan.skipped.length ? `，${plan.skipped.length} 家套不上已跟随文化区` : ''),
             applied.failed.length > 0,
         );
         if (applied.failed.length) console.error('[DeleteLegion] 写入失败：', applied.failed);
