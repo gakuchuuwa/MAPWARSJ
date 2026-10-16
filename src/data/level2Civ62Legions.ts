@@ -1069,7 +1069,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'MONOREME',
         slots: [
             { type: 'militia', count: 4 },
-            { type: 'bowman', count: 3 },
+            { type: 'archer', count: 3 },
             { type: 'scout_cavalry', count: 2 },
         ],
     },
@@ -1084,7 +1084,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'ELITE_LONGBOAT',
         slots: [
-            { type: 'hearth_troop', count: 4 },
+            { type: 'manatarms', count: 4 },
             { type: 'longbowman', count: 3 },
             { type: 'light_cavalry', count: 2 },
         ],
