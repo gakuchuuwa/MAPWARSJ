@@ -375,7 +375,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     laminated_bowman: { name: '复合弓手', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 38, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     recurve_bowman: { name: '反曲长弓手', cls: 'ranged', sz: 1, hp: 35, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.0, spd: 38, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
     paragon: { name: '荣誉剑士', cls: 'melee', sz: 1, hp: 80, atk: 15, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 4, 29: 8 }, armorTags: [1, 19, 31] },
-    shock_cavalry: { name: '枪骑兵高级', cls: 'cav', sz: 1, hp: 120, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
+    shock_cavalry: { name: '古典枪骑兵高级', cls: 'cav', sz: 1, hp: 120, atk: 15, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', bonus: { 1: 8 }, armorTags: [8, 19, 31] },
     imperial_cavalry: { name: '具装枪骑兵高级', cls: 'cav', sz: 1, hp: 130, atk: 12, meleeArmor: 3, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', bonus: { 1: 10 }, armorTags: [8, 19, 31] },
     equites: { name: '罗马伴随骑士高级', cls: 'cav', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', armorTags: [8, 31] },
     sarmatian: { name: '东欧萨尔马提亚骑兵高级', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
