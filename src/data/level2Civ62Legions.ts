@@ -54,7 +54,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         slots: [
             { type: 'elite_strategos', count: 4 },
-            { type: 'strategos', count: 3 },
+            { type: 'elite_hoplite', count: 3 },
             { type: 'elite_greek_cavalry', count: 2 },
         ],
     },
@@ -70,7 +70,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_AEGINETAN',
         slots: [
             { type: 'elite_hippeus', count: 4 },
-            { type: 'hippeus', count: 3 },
+            { type: 'polemarch', count: 3 },
             { type: 'mercenary_hoplite', count: 2 },
         ],
     },
@@ -94,7 +94,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_companion_cavalry', count: 4 },
             { type: 'elite_phalangite', count: 2 },
-            { type: 'phalangite', count: 3 },
+            { type: 'elite_phalangite', count: 3 },
         ],
     },
     {
@@ -378,7 +378,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'white_feather_guard', count: 3 },
+            { type: 'xianbei_raider', count: 3 },
             { type: 'elite_tiger_cavalry', count: 4 },
             { type: 'chukonu', count: 2 },
         ],
@@ -1647,7 +1647,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         slots: [
             { type: 'composite_bowman', count: 3 },
-            { type: 'elite_composite_bowman', count: 4 },
+            { type: 'warrior_priest', count: 4 },
             { type: 'knight', count: 2 },
         ],
     },
@@ -2234,7 +2234,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：罗马百夫长（普通档）替步弓手。
         slots: [
-            { type: 'spearman', count: 4 },
+            { type: 'legionary', count: 4 },
             { type: 'centurion', count: 3 },
             { type: 'manatarms', count: 2 },
         ],
@@ -3002,9 +3002,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'THIRISADAI',
         slots: [
-            { type: 'savar', count: 3 },
+            { type: 'elite_shrivamsha_rider', count: 3 },
             { type: 'elite_chakram_thrower', count: 4 },
-            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'camel_scout', count: 2 },
         ],
     },
     // ── 古吉拉特 · 城堡时代 · 城堡时代古吉拉特军团　（本次新建）────────────────
@@ -3018,9 +3018,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'THIRISADAI',
         slots: [
-            { type: 'ghulam', count: 4 },
+            { type: 'shrivamsha_rider', count: 4 },
             { type: 'chakram_thrower', count: 3 },
-            { type: 'armored_elephant', count: 2 },
+            { type: 'camel_scout', count: 2 },
         ],
     },
     // ── 古吉拉特 · 帝国时代 · 帝国时代第乌军团　（本次新建）────────────────
@@ -3057,7 +3057,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令·回退] 我曾擅自把 3 档改成「帕提尤达长弓兵」（那是它的城堡兵、普通档按规则在
         //    封建沙希军团 3 档，不该塞回本军团）→ 恢复原状（库曼钦察弓骑精锐）。
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'elite_sannahya', count: 2 },
             { type: 'elite_pattiyoda_longbowman', count: 4 },
             { type: 'elite_kipchak', count: 3 },
         ],
@@ -3077,7 +3077,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'indian_tribesman', count: 4 },
             { type: 'pattiyoda_longbowman', count: 3 },
-            { type: 'battle_elephant', count: 2 },
+            { type: 'sannahya', count: 2 },
         ],
     },
     // ── 旁遮普 · 城堡时代 · 城堡时代五河军团　（本次新建）────────────────
@@ -3899,7 +3899,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'BIREME',
         slots: [
-            { type: 'cataphract', count: 3 },
+            { type: 'savar', count: 3 },
             { type: 'elite_war_elephant', count: 2 },
             { type: 'savar', count: 4 },
         ],
@@ -3973,7 +3973,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_immortal', count: 4 },
             { type: 'immortal_ranged', count: 3 },
-            { type: 'war_chariot', count: 2 },
+            { type: 'elite_war_chariot', count: 2 },
         ],
     },
     // ── 法尔斯 · 封建时代 · 封建时代德莱木军团　（本次新建）────────────────
@@ -3989,7 +3989,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_immortal_ranged', count: 4 },
             { type: 'immortal', count: 3 },
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'war_chariot', count: 2 },
         ],
     },
     // ── 法尔斯 · 城堡时代 · 城堡时代法尔斯军团　（本次新建）────────────────
@@ -4046,7 +4046,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：雅典将军卫队（普通档）替武装剑士（古典军团那份照旧保留）。
         slots: [
-            { type: 'spearman', count: 4 },
+            { type: 'hoplite', count: 4 },
             { type: 'strategos', count: 3 },
             { type: 'elite_skirmisher', count: 2 },
         ],
@@ -4104,7 +4104,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：斯巴达三百卫士（普通档）当 4 档前排主力（古典军团那份照旧保留）。
         slots: [
-            { type: 'manatarms', count: 4 },
+            { type: 'polemarch', count: 4 },
             { type: 'hippeus', count: 3 },
             { type: 'swordsman', count: 2 },
         ],
@@ -4162,7 +4162,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：马其顿伙伴骑兵（普通档）替城堡档的骑士。
         slots: [
-            { type: 'swordsman', count: 4 },
+            { type: 'phalangite', count: 4 },
             { type: 'spearman', count: 2 },
             { type: 'companion_cavalry', count: 3 },
         ],
