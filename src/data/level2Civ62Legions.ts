@@ -89,10 +89,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    故升为马其顿军团旗舰。素材是完整 16 向战船，登记见 UnitAssets 'HERO_THEMISTOCLES'。
         shipId: 'HERO_THEMISTOCLES',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝马其顿城堡兵【伙伴骑兵精锐】。
+        // 🔴 [2026-10-16 主人令「给这6个军团补3档，用独特的普通兵补3档」] 3 档＝紫框独特兵【马其顿方阵步兵】的普通档
+        //    （原 3 档是它的「高级」档 → 与 2 档对调，高级档移到 2 档）。
         slots: [
             { type: 'elite_companion_cavalry', count: 4 },
-            { type: 'phalangite', count: 2 },
-            { type: 'elite_phalangite', count: 3 },
+            { type: 'elite_phalangite', count: 2 },
+            { type: 'phalangite', count: 3 },
         ],
     },
     {
@@ -2399,11 +2401,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'triangle',
         shipId: 'GALLEON',
-        // 🔴 [2026-10-16 主人令「帝国时代这些文化的4档放城堡精锐」] 4 档＝西班牙征服者精锐；
-        //    基础档【征服者】原本全库 0 引用（违「骑兵都要被套用」），一并落到 3 档。
+        // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
+        //    4 档＝西班牙征服者精锐（主人令「4 档放城堡精锐」）；3 档恢复冠军剑士。
+        //    征服者基础档改放新建三级军团「帝国时代西班牙征服军团」3 档。
         slots: [
             { type: 'pikeman', count: 2 },
-            { type: 'conquistador', count: 3 },
+            { type: 'champion', count: 3 },
             { type: 'elite_conquistador', count: 4 },
         ],
     },
@@ -2453,12 +2456,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'echelon',
         shipId: 'CARAVEL',
-        // 🔴 [2026-10-16 主人令] 葡萄牙＝帝国文明（无下一时代）：精锐在帝国军团 2 档，
-        //    风琴炮普通档按「相邻时代军团 2 档」放城堡基督骑士团 2 档（风琴炮是 15 世纪火器，城堡时代正合）。
+        // 🔴 [2026-10-16 主人令·撤回] 「相邻时代军团 2 档」是我自造规则，无效 → 2 档恢复欧洲游侠高级。
+        //    风琴炮基础档改放新建三级军团「帝国时代葡萄牙风琴军团」3 档。
         slots: [
             { type: 'crusader_knight', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'organ_gun', count: 2 },
+            { type: 'paladin', count: 2 },
         ],
     },
     // ── 卢西塔尼亚 · 帝国时代 · 帝国时代葡萄牙军团　（同名已在二级（重复→替换保留））────────────────
@@ -2679,10 +2682,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'fish_scale',
         shipId: 'CANNON_GALLEON',
-        // 🔴 [2026-10-16 修·覆盖] 帝国时代莫卧儿军团 3 档改用印度斯坦自家古拉姆后，
-        //    土耳其苏丹亲兵（janissary 基础档）在全库落空 → 补回本家：3 档基础、4 档精锐。
+        // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
+        //    4 档＝苏丹亲兵精锐（主人令「4 档放城堡精锐」）；3 档恢复具装枪骑兵高级。
+        //    苏丹亲兵基础档改放新建三级军团「帝国时代苏丹亲兵军团」3 档。
         slots: [
-            { type: 'janissary', count: 3 },
+            { type: 'imperial_cavalry', count: 3 },
             { type: 'elite_janissary', count: 4 },
             { type: 'hussar', count: 2 },
         ],
@@ -3050,6 +3054,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'MONOREME',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝普鲁（PURU）城堡兵【帕提尤达长弓兵精锐】。
+        // 🔴 [2026-10-16 主人令·回退] 我曾擅自把 3 档改成「帕提尤达长弓兵」（那是它的城堡兵、普通档按规则在
+        //    封建沙希军团 3 档，不该塞回本军团）→ 恢复原状（库曼钦察弓骑精锐）。
         slots: [
             { type: 'imperial_cavalry', count: 2 },
             { type: 'elite_pattiyoda_longbowman', count: 4 },
@@ -3652,9 +3658,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MAPU_CASTLE_AGE3', castleName: '马普切 安第斯南麓木石据点',
         formationMode: 'fish_scale',
         shipId: 'CANOE',
-        // 🔴 [2026-10-16 主人令] 马普切＝帝国文明（无下一时代）：4 档＝科纳勇士精锐、3 档＝科纳勇士（普通）。
+        // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」是我自造规则，无效。
+        //    3 档恢复原状（套索骑兵高级）；科纳勇士基础档改放新建三级军团「帝国时代安第斯游击军团」3 档。
         slots: [
-            { type: 'kona', count: 3 },
+            { type: 'elite_bolas_rider', count: 3 },
             { type: 'elite_kona', count: 4 },
             { type: 'pikeman', count: 2 },
         ],
