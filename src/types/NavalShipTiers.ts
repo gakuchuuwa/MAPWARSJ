@@ -341,7 +341,7 @@ export const NAVAL_SHIP_CHINESE_NAMES: Record<string, string> = {
     CARAVEL: '卡拉维尔帆船',
     FIRE_GALLEY: '喷火桨帆船',
     FIRE_SHIP: '喷火船',
-    CANOE: '独木舟',
+    CANOE: '美洲独木舟特殊',
     DEMO_RAFT: '爆破木筏',
     ANT_GALLEY: '古典桨帆船',
     ANT_ELITE_GALLEY: '古典桨帆船高级',
