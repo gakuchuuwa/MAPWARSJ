@@ -157,7 +157,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         slots: [
             { type: 'elite_keshik', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'mangudai_elite', count: 4 },
         ],
     },
@@ -221,7 +221,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'camel_raider', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'gbeto', count: 3 },
             { type: 'elite_gbeto', count: 4 },
         ],
@@ -237,7 +237,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'elite_steppe_lancer', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'kipchak', count: 3 },
             { type: 'elite_kipchak', count: 4 },
         ],
@@ -597,7 +597,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'chukonu', count: 3 },
             { type: 'elite_liao_dao', count: 4 },
         ],
@@ -615,7 +615,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'hei_kuang_heavy', count: 4 },
             { type: 'liao_dao', count: 3 },
-            { type: 'xianbei_raider', count: 2 },
+            { type: 'camel_rider', count: 2 },
         ],
     },
     // ── 河西 · 帝国时代 · 帝国时代陕甘军团　（本次新建）────────────────
@@ -735,7 +735,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'tarkan', count: 4 },
             { type: 'mangudai', count: 3 },
-            { type: 'cav_archer', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：城堡时代蒙古军团
@@ -1223,7 +1223,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_berserk', count: 4 },
             { type: 'varangian_guard', count: 3 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
         ],
     },
     // ── 斯堪的纳维亚 · 城堡时代 · 城堡时代瓦兰吉近卫军团　（本次新建）────────────────
@@ -1239,7 +1239,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'berserk', count: 3 },
             { type: 'elite_varangian_guard', count: 4 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'varangian_guard', count: 2 },
         ],
     },
     // ── 斯堪的纳维亚 · 帝国时代 · 帝国时代达拉纳长矛军团　（本次新建）────────────────
@@ -1359,7 +1359,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_hearth_troop', count: 4 },
             { type: 'varangian_guard', count: 3 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
         ],
     },
     // ── 萨克森 · 城堡时代 · 城堡时代选侯重骑军团　（本次新建）────────────────
@@ -1375,7 +1375,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_varangian_guard', count: 4 },
             { type: 'hearth_troop', count: 3 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'varangian_guard', count: 2 },
         ],
     },
     // ── 萨克森 · 帝国时代 · 帝国时代黑卫士方阵团　（本次新建）────────────────
@@ -1427,7 +1427,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_varangian_guard', count: 4 },
             { type: 'varangian_jarl', count: 3 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
         ],
     },
     // ── 诺夫哥罗德 · 城堡时代 · 城堡时代冰湖铁卫军团　（本次新建）────────────────
@@ -1443,7 +1443,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_varangian_jarl', count: 4 },
             { type: 'varangian_guard', count: 3 },
-            { type: 'mounted_crossbowman', count: 2 },
+            { type: 'varangian_guard', count: 2 },
         ],
     },
     // ── 诺夫哥罗德 · 帝国时代 · 帝国时代北境长斧军团　（本次新建）────────────────
@@ -1493,7 +1493,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'ELITE_LONGBOAT',
         slots: [
-            { type: 'jarl', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
             { type: 'mounted_crossbowman', count: 3 },
             { type: 'elite_jomsviking', count: 4 },
         ],
@@ -1509,7 +1509,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'WAR_GALLEY',
         slots: [
-            { type: 'crusader_knight', count: 2 },
+            { type: 'varangian_guard', count: 2 },
             { type: 'jomsviking', count: 3 },
             { type: 'elite_teutonic_knight', count: 4 },
         ],
@@ -1564,7 +1564,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_cataphract', count: 4 },
             { type: 'varangian_guard', count: 3 },
-            { type: 'cretan_archer', count: 2 },
+            { type: 'elite_varangian_guard', count: 2 },
         ],
     },
     // ── 拜占庭 · 城堡时代 · 城堡时代拜占庭近卫军　（本次新建）────────────────
@@ -1580,7 +1580,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_varangian_guard', count: 4 },
             { type: 'cataphract', count: 3 },
-            { type: 'crossbowman', count: 2 },
+            { type: 'varangian_guard', count: 2 },
         ],
     },
     // ── 拜占庭 · 帝国时代 · 帝国时代耶尼切里军团　（本次新建）────────────────
@@ -2501,7 +2501,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         slots: [
             { type: 'light_cavalry', count: 3 },
-            { type: 'camel_raider', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'elite_camel_archer', count: 4 },
         ],
     },
@@ -2516,7 +2516,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'FIRE_SHIP',
         slots: [
-            { type: 'elite_camel_archer', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'elite_mameluke', count: 4 },
             { type: 'camel_rider', count: 3 },
         ],
@@ -2589,7 +2589,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'MONOREME',
         slots: [
-            { type: 'spearman', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'elite_konnik', count: 4 },
             { type: 'cav_archer', count: 3 },
         ],
@@ -2653,7 +2653,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'cav_archer', count: 3 },
             { type: 'mangudai', count: 4 },
-            { type: 'light_cavalry', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 安纳托利亚 · 城堡时代 · 城堡时代加齐突骑军团　（本次新建）────────────────
@@ -2667,7 +2667,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'light_cavalry', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'genitour', count: 3 },
             { type: 'swordsman', count: 4 },
         ],
@@ -2724,7 +2724,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'ghulam', count: 4 },
             { type: 'savar', count: 3 },
-            { type: 'cav_archer', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 河中 · 城堡时代 · 城堡时代帖木儿军团　（三级升二级）────────────────
@@ -2740,7 +2740,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_keshik', count: 4 },
             { type: 'elite_liao_dao', count: 3 },
-            { type: 'elite_kipchak', count: 2 },
+            { type: 'camel_rider', count: 2 },
         ],
     },
     // ── 河中 · 帝国时代 · 帝国时代乌兹别克军团　（本次新建）────────────────
@@ -2792,7 +2792,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'ghulam', count: 3 },
             { type: 'urumi_swordsman', count: 4 },
-            { type: 'elite_battle_elephant', count: 2 },
+            { type: 'elite_elephant_archer', count: 2 },
         ],
     },
     // ── 达罗毗荼 · 城堡时代 · 城堡时代维查耶那加尔军团　（本次新建）────────────────
@@ -2808,7 +2808,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_urumi_swordsman', count: 4 },
             { type: 'ghulam', count: 3 },
-            { type: 'elite_armored_elephant', count: 2 },
+            { type: 'elephant_archer', count: 2 },
         ],
     },
     // ── 达罗毗荼 · 帝国时代 · 帝国时代科罗曼德尔军团　（本次新建）────────────────
@@ -2860,7 +2860,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'battle_elephant', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'shrivamsha_rider', count: 3 },
             { type: 'savar', count: 4 },
         ],
@@ -2878,7 +2878,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_ghulam', count: 4 },
             { type: 'cav_archer_heavy', count: 3 },
-            { type: 'imperial_camel_rider', count: 2 },
+            { type: 'camel_rider', count: 2 },
         ],
     },
     // ── 印度斯坦 · 帝国时代 · 帝国时代莫卧儿军团　（三级升二级）────────────────
@@ -3004,7 +3004,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_shrivamsha_rider', count: 3 },
             { type: 'elite_chakram_thrower', count: 4 },
-            { type: 'camel_scout', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 古吉拉特 · 城堡时代 · 城堡时代古吉拉特军团　（本次新建）────────────────
@@ -3020,7 +3020,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'shrivamsha_rider', count: 4 },
             { type: 'chakram_thrower', count: 3 },
-            { type: 'camel_scout', count: 2 },
+            { type: 'camel_rider', count: 2 },
         ],
     },
     // ── 古吉拉特 · 帝国时代 · 帝国时代第乌军团　（本次新建）────────────────
@@ -3144,7 +3144,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FIRE_GALLEY',
         slots: [
             { type: 'indian_tribesman', count: 3 },
-            { type: 'elite_ballista_elephant', count: 2 },
+            { type: 'elite_battle_elephant', count: 2 },
             { type: 'ghulam', count: 4 },
         ],
     },
@@ -3163,7 +3163,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'karambit_warrior_elite', count: 4 },
             { type: 'ghulam', count: 3 },
-            { type: 'elite_ballista_elephant', count: 2 },
+            { type: 'battle_elephant', count: 2 },
         ],
     },
     // ── 吴哥 · 帝国时代 · 帝国时代洛韦克军团　（本次新建）────────────────
@@ -3231,7 +3231,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HEAVY_INCENDIARY_SHIP',
         slots: [
             { type: 'arambai', count: 3 },
-            { type: 'armored_elephant', count: 2 },
+            { type: 'battle_elephant', count: 2 },
             { type: 'elite_arambai', count: 4 },
         ],
     },
@@ -3284,7 +3284,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'swordsman', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'elite_battle_elephant', count: 2 },
         ],
     },
     // ── 安南 · 城堡时代 · 城堡时代大越军团　（本次新建）────────────────
@@ -3300,7 +3300,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'rattan_archer_elite', count: 4 },
-            { type: 'karambit_warrior_elite', count: 2 },
+            { type: 'battle_elephant', count: 2 },
         ],
     },
     // ── 安南 · 帝国时代 · 帝国时代安南军团　（本次新建）────────────────
@@ -3350,7 +3350,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'FIRE_GALLEY',
         slots: [
-            { type: 'karambit_warrior', count: 2 },
+            { type: 'elite_battle_elephant', count: 2 },
             { type: 'karambit_warrior_elite', count: 4 },
             { type: 'rattan_archer_elite', count: 3 },
         ],
@@ -3367,7 +3367,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'FAST_FIRE_SHIP',
         slots: [
             { type: 'rattan_archer', count: 3 },
-            { type: 'armored_elephant', count: 2 },
+            { type: 'battle_elephant', count: 2 },
             { type: 'karambit_warrior_elite', count: 4 },
         ],
     },
@@ -3723,7 +3723,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         slots: [
             { type: 'light_cavalry', count: 3 },
-            { type: 'genitour', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'elite_camel_archer', count: 4 },
         ],
     },
@@ -3738,7 +3738,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'elite_genitour', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'camel_archer', count: 3 },
             { type: 'two_handed_swordsman', count: 4 },
         ],
@@ -3792,7 +3792,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'manatarms', count: 4 },
             { type: 'pikeman', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 萨赫勒 · 城堡时代 · 城堡时代马里军团　（同名已在二级（重复→替换保留））────────────────
@@ -3849,7 +3849,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'shotel_warrior', count: 3 },
-            { type: 'skirmisher', count: 2 },
+            { type: 'camel_heavy', count: 2 },
         ],
     },
     // ── 埃塞俄比亚 · 城堡时代 · 城堡时代埃塞俄比亚军团　（本次新建）────────────────
@@ -3865,7 +3865,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_shotel_warrior', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'champion', count: 2 },
+            { type: 'camel_rider', count: 2 },
         ],
     },
     // ── 埃塞俄比亚 · 帝国时代 · 帝国时代阿姆哈拉军团　（本次新建）────────────────
@@ -3917,7 +3917,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 波斯战象：精锐在霍拉桑军团 2 档；普通在伊儿军团 2 档。
         slots: [
             { type: 'savar', count: 4 },
-            { type: 'cav_archer_heavy', count: 3 },
+            { type: 'camel_heavy', count: 3 },
             { type: 'elite_war_elephant', count: 2 },
         ],
     },
@@ -3934,7 +3934,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 波斯战象：普通档进伊儿军团 2 档（精锐在霍拉桑军团 2 档）。
         slots: [
             { type: 'imperial_cavalry', count: 3 },
-            { type: 'elite_kipchak', count: 4 },
+            { type: 'camel_rider', count: 4 },
             { type: 'war_elephant', count: 2 },
         ],
     },
