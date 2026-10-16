@@ -67,7 +67,7 @@ export interface TechEffect {
     bonusClass?: number;
 }
 
-/** 四时代（与四时代文化体系同一把尺）：古典 –400 / 封建 400–1050 / 城堡 1050–1500 / 帝国 1500–1900 */
+/** 四时代（与四时代文化体系同一把尺）：古典 ≤476 / 封建 476–1050 / 城堡 1050–1500 / 帝国 1500–1914 */
 export type TechEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export interface MilitaryTech {
@@ -380,7 +380,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', ],
     },
 
-    // ── 火器（帝国 1500–1900）：DE 本体无此段科技，按史实补 ────────────
+    // ── 火器（帝国 1500–1914）：DE 本体无此段科技，按史实补 ────────────
     {
         id: 'firearm_improvement', name: '火器改良', de: 'Firearm Improvement', year: 1600,
         era: 'imperial',

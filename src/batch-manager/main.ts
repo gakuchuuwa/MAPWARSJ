@@ -1004,10 +1004,10 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
             <label><span>时代</span>
               <select id="bm-quick-era" style="width:100%;background:#1c1916;border:1px solid #3a342c;color:#eee;border-radius:4px;padding:6px 8px;font-size:13px">
-                <option value="antiquity">古典时代 (≤400)</option>
-                <option value="feudal" selected>封建时代 (400-1050)</option>
+                <option value="antiquity">古典时代 (≤476)</option>
+                <option value="feudal" selected>封建时代 (476-1050)</option>
                 <option value="castle">城堡时代 (1050-1500)</option>
-                <option value="imperial">帝王时代 (1500-1900)</option>
+                <option value="imperial">帝王时代 (1500-1914)</option>
               </select>
             </label>
           </div>
@@ -1201,10 +1201,10 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>时代（按辉煌年代/30岁判定）</span>
               <select name="era">
                 ${row!.era ? '' : '<option value="" selected>请选择时代</option>'}
-                <option value="antiquity" ${row!.era === 'antiquity' ? 'selected' : ''}>古典时代 (≤400)</option>
-                <option value="feudal" ${row!.era === 'feudal' ? 'selected' : ''}>封建时代 (400-1050)</option>
+                <option value="antiquity" ${row!.era === 'antiquity' ? 'selected' : ''}>古典时代 (≤476)</option>
+                <option value="feudal" ${row!.era === 'feudal' ? 'selected' : ''}>封建时代 (476-1050)</option>
                 <option value="castle" ${row!.era === 'castle' ? 'selected' : ''}>城堡时代 (1050-1500)</option>
-                <option value="imperial" ${row!.era === 'imperial' ? 'selected' : ''}>帝王时代 (1500-1900)</option>
+                <option value="imperial" ${row!.era === 'imperial' ? 'selected' : ''}>帝王时代 (1500-1914)</option>
               </select>
             </label>
           </div>

@@ -187,15 +187,16 @@ const REGION_TREES: readonly RegionTree[] = [
     //    走 gravel_default 默认的 ASIAN_PINE 就成了沙漠种松（列城 3500m、萨毗城昆仑北麓）。
     //    那条默认在阿尔卑斯/天山这类湿润高山对，干旱高原不对。
     //    西藏有古柏（雅鲁藏布巨柏、藏东南柏木），柏比松耐旱得多。
-    // 中亚/西亚戈壁：梭梭/红柳灌木（有 BUSH_TREE 素材了，别再枯树）
-    // 🔴 [2026-08-31] 东界 100→120：蒙古高原/鄂尔多斯戈壁（头曼城、净州塞、赛汉塔拉、
-    //    温都尔汗、阔亦田等 18 座）原先在框外，掉回 ds5 默认的**枯树**。
-    //    梭梭(Haloxylon ammodendron)正是内蒙古—蒙古国戈壁的建群种，与中亚同一套植被，
-    //    没道理西边给灌木、东边给枯木。
+    // 中亚/西域/河西走廊/蒙古温带荒漠与戈壁：梭梭/红柳灌木（包含北纬 35.5° 以北温带冷沙漠的 pal/des，杜绝敦煌/于阗/阿母城长热带棕榈）
+    { box: [35.5, 50.0, 45.0, 120.0], bases: ['ds5', 'qs', 'pal1', 'pal', 'des'],
+      tree: 'BUSH_TREE_A', why: '中亚/西域/河西/蒙古温带荒漠与戈壁 —— 梭梭/红柳灌木' },
+    { box: [36.5, 42.5, 92.0, 106.5], bases: ['ds2', 'ds5', 'des', 'pal', 'gr7'],
+      tree: 'BUSH_TREE_A', why: '河西走廊 —— 红柳/梭梭灌木' },
     { box: [25.0, 50.0, 45.0, 120.0], bases: ['ds5', 'qs', 'pal1'],
       tree: 'BUSH_TREE_A', why: '中亚/西亚/蒙古戈壁 —— 梭梭/红柳灌木' },
-    { box: [27.5, 40.0, 72.0, 104.0], bases: ['gravel_default', 'des', 'snd', 'rck', 'ds5', 'pal'],
-      tree: 'CYPRESS', why: '藏西/昆仑/帕米尔 + 青藏东部 —— 藏柏（东界104E盖川西，南界27.5N盖香格里拉/独克宗）' },
+    // 青藏高原藏柏：北界严格限制在 36.2°N（昆仑—祁连山南麓），绝不越界吞并北纬 36.5~40°N 的塔里木盆地（西域）与河西走廊
+    { box: [27.5, 36.2, 75.0, 103.5], bases: ['gravel_default', 'snd', 'rck'],
+      tree: 'CYPRESS', why: '青藏高原 —— 藏柏（严格限青藏高原腹地，不越昆仑/祁连入西域或河西）' },
 
     // ── 南亚 / 东南亚 ──
     // 🔴 [2026-08-31] 北界 8→19：马尼拉在 14.6°N，原先漏在框外 → 掉回 fo2 默认的
@@ -395,6 +396,8 @@ export interface TreeQuery {
     season: TreeSeason;
     /** 攻城战：城郊不出枯树 */
     isSiege?: boolean;
+    /** 据点建筑风格（16 种一级建筑风格 + 66 种二/三级子风格）：作为树木地域基调 */
+    buildingStyle?: string;
 }
 
 /** 兜底树：查不到时用，四季通用、地域中性 */
@@ -407,27 +410,95 @@ export function isSnowBaseTile(tile: string): boolean {
 }
 
 /**
+ * 按 16 种一级建筑风格 + 66 种二/三级子风格优先选定地域树种，使青藏、西域、蒙古、东南亚、河西等特殊地带与东亚严格区分。
+ */
+function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
+    if (!q.buildingStyle) return undefined;
+    const sub = q.buildingStyle.toUpperCase();
+    const s = Math.max(0, Math.min(3, q.season));
+
+    // ── 东亚及塞北特殊子区 ──
+    if (sub === 'JAPAN') return (['PEACH_BLOSSOM', 'ASIAN_MAPLE_GREEN', 'ASIAN_MAPLE_AUTUMN', 'SNOW_PINE'] as const)[s];
+    if (sub === 'KOREA') return 'SCENARIO_TREE_B';
+    if (sub === 'NORTHEAST') return (['BIRCH_GREEN', 'BIRCH_GREEN', 'BIRCH_AUTUMN', 'BIRCH_WINTER'] as const)[s];
+    if (sub === 'MONGOL' || sub === 'YURT' || sub === 'XIANBEI') return 'BUSH_TREE_A';
+    if (sub === 'KHITAN') return q.lng < 106.5 ? 'BUSH_TREE_A' : 'OAK';
+    if (sub === 'JIANGNAN') {
+        return (q.lat >= 28.0 && (q.baseTile === 'gr4' || q.baseTile === 'qs2' || q.baseTile === 'sh4'))
+            ? 'WILLOW'
+            : 'BAMBOO';
+    }
+    if (sub === 'BASHU') return q.lat < 26.5 ? 'LUSH_BAMBOO' : 'BAMBOO';
+    if (sub === 'CENTRAL' || sub === 'WEI' || sub === 'ASIA') {
+        return (q.lng < 104.5 && q.lat >= 35.0) ? 'BUSH_TREE_A' : 'SCENARIO_TREE_L';
+    }
+
+    // ── 青藏 / 西域 / 中亚 / 普鲁 / 东南亚 / 印度 ──
+    if (sub === 'TIBET') return 'CYPRESS';
+    if (sub === 'WESTERN' || sub === 'CENTRAL_ASIA' || sub === 'CEAS' || sub === 'TURKS') return 'BUSH_TREE_A';
+    if (sub === 'CUMAN' || sub === 'HUNS') return q.lng < 55 ? 'OAK' : 'BUSH_TREE_A';
+    if (sub === 'PURU') return 'PINE';
+    if (sub === 'VIETNAMESE' || sub === 'BURMESE' || sub === 'KHMER' || sub === 'SEAS') return 'LUSH_BAMBOO';
+    if (sub === 'MALAY') return 'WAX_PALM';
+    if (sub === 'BENGALIS') return (q.baseTile === 'sh4' || q.baseTile === 'qs2') ? 'MANGROVE' : 'WAX_PALM';
+    if (sub === 'GURJARAS') return 'ACACIA';
+    if (sub === 'INDIA' || sub === 'MUGHAL' || sub === 'INDI') return 'WAX_PALM';
+
+    // ── 波斯 / 中东 / 非洲 / 美洲 / 欧洲 ──
+    if (sub === 'PERSIAN' || sub === 'SASANIAN' || sub === 'ACHAEMENIDS') {
+        return (q.baseTile === 'pal' || q.baseTile === 'des') && q.lat < 33 ? 'PALM' : 'PINE';
+    }
+    if (sub === 'ORIE') {
+        if (q.lat >= 12 && q.lat <= 20 && q.lng >= 42 && q.lng <= 56) return 'DRAGON_TREE';
+        return (q.baseTile === 'pal' || q.baseTile === 'des' || q.lat < 33) ? 'PALM' : 'OLIVE';
+    }
+    if (sub === 'BERBER') return (q.baseTile === 'pal' || q.baseTile === 'des' || q.lat < 26) ? 'PALM' : 'OLIVE';
+    if (sub === 'ETHIOPIANS') return 'ACACIA';
+    if (sub === 'AFRICA' || sub === 'AFRI') return 'BAOBAB';
+    if (sub === 'MAYANS') return 'SCENARIO_TREE_J';
+    if (sub === 'AMERICA' || sub === 'MESO') return (q.lat >= 17 && q.lng < -95) ? 'CACTUS' : 'SCENARIO_TREE_J';
+    if (sub === 'TUPI') return 'BRAZILWOOD';
+    if (sub === 'INCA' || sub === 'MUISCA' || sub === 'MAPUCHE' || sub === 'ANDE') return 'MONKEY_PUZZLE';
+    if (sub === 'GREEK' || sub === 'GREECE' || sub === 'ATHENIANS' || sub === 'SPARTANS' || sub === 'MACEDONIAN') return 'OLIVE';
+    if (sub === 'MEDI' || sub === 'LATIN' || sub === 'ROMA' || sub === 'ITALIANS' || sub === 'SICILIANS' || sub === 'SPANISH' || sub === 'PORTUGUESE') {
+        return q.lat < 38.0 ? 'OLIVE' : 'ITALIAN_PINE';
+    }
+    if (sub === 'THRACIAN' || sub === 'BULGARIANS') return 'SCENARIO_TREE_D';
+    if (sub === 'EAST' || sub === 'BYZANTINE' || sub === 'ARMENIANS' || sub === 'GEORGIANS') return 'SCENARIO_TREE_H';
+    if (sub === 'SLAV' || sub === 'SLAVIC' || sub === 'POLES' || sub === 'LITHUANIANS' || sub === 'BOHEMIANS' || sub === 'MAGYAR') return 'SCENARIO_TREE_E';
+    if (sub === 'VIKINGS' || sub === 'DANES' || sub === 'VARANGIANS') return 'BIRCH_GREEN';
+    if (sub === 'BRITONS' || sub === 'CELTS' || sub === 'SAXONS') return 'SCENARIO_TREE_A';
+    if (sub === 'WEST' || sub === 'FRANKS' || sub === 'GERMANIC' || sub === 'BURGUNDIANS' || sub === 'GOTHS') return 'SCENARIO_TREE_C';
+
+    return undefined;
+}
+
+/**
  * 查这一战该长什么树。
- * 顺序：地区覆盖 → 底图默认 → 兜底；拿到之后套季节变体。
+ * 顺序：建筑风格（16 一级 + 66 子风格） → 地区覆盖 → 底图默认 → 兜底；拿到之后套季节变体。
  *
  * 🔴 [2026-09-11 主人定「4 季节，每个季节一张图」] 地区覆盖现在**可以逐季给树**（`trees[四季]`）：
  *    填了就用当季那张，没填就 `tree` 一树到底（竹/梭梭/藏柏/棕榈这类本来不换装的）。
  */
 export function pickTree(q: TreeQuery): string {
-    let tree: string | undefined;
+    let tree: string | undefined = pickTreeByBuildingStyle(q);
 
-    for (const r of REGION_TREES) {
-        const [s, n, w, e] = r.box;
-        if (q.lat < s || q.lat > n || q.lng < w || q.lng > e) continue;
-        if (r.bases && !r.bases.includes(q.baseTile)) continue;
-        tree = r.trees?.[q.season] ?? r.tree;
-        break;
+    if (!tree) {
+        for (const r of REGION_TREES) {
+            const [s, n, w, e] = r.box;
+            if (q.lat < s || q.lat > n || q.lng < w || q.lng > e) continue;
+            if (r.bases && !r.bases.includes(q.baseTile)) continue;
+            tree = r.trees?.[q.season] ?? r.tree;
+            break;
+        }
     }
     if (!tree) tree = TREE_BY_BASE[q.baseTile];
     if (!tree) tree = FALLBACK_TREE;
 
     // 攻城战不出枯树：城郊的枯木早被拾去烧了。换成耐旱的活树。
-    if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) tree = 'PALM';
+    if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) {
+        tree = q.lat >= 35.0 ? 'BUSH_TREE_A' : 'PALM';
+    }
 
     // 🔴 [2026-09-18 主人令] 严格落实四季 1:1：春 0、夏 1、秋 2、冬 3
     // 若地区覆盖已显式指定了 trees[四季]，上面已直接取出对应季节；

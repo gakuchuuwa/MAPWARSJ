@@ -105,7 +105,7 @@ export { isPikeBraceType, isCavalryType, faceAngleDeg, attackArcDeg, inFrontArc,
 
 import { animalNativeAt, animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
 import { relocateTemplateWater, adaptMapDataSeaOrientation } from './scene13/Scene13MapWaterAdapter';
-import { pickTree, type TreeSeason } from './scene13/TreeAssignment';
+import { pickTree, treeDensityFor, type TreeSeason } from './scene13/TreeAssignment';
 import { groundDecorFor, decorFits } from './scene13/DecorFit';
 
 export class Scene13WarLayer {
@@ -1301,6 +1301,7 @@ export class Scene13WarLayer {
                 attackerGeneralId: init.attackerGeneralId,
                 defenderGeneralId: init.defenderGeneralId,
                 isSiege: init.battleType === 'siege',
+                buildingStyle: this.defenderCityRecord()?.buildingStyle,
                 // 🔴 [2026-08-24 主人定]「水军的攻城战，做用左边是海的图」。
                 //    强制出海，不靠 probeWater 探测碰运气——水军打的城本来就在海边，
                 //    探测失灵就变成内陆战场，那这仗就白是水军了。
@@ -3385,6 +3386,7 @@ export class Scene13WarLayer {
                     const defCityRec = this.defenderCityRecord();
                     const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
                     const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
+                    const mapBuildingStyle = defCityRec?.buildingStyle ?? this.environmentPlan?.buildingStyle;
                     const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
                     const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
                         ? rawCalSeason
@@ -3395,6 +3397,7 @@ export class Scene13WarLayer {
                         lng: mapLng,
                         season: calSeason,
                         isSiege: this.battleType === 'siege',
+                        buildingStyle: mapBuildingStyle,
                     });
                     const decorSet = groundDecorFor(baseTerrain);
                     const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
@@ -3407,6 +3410,18 @@ export class Scene13WarLayer {
                         isSiege: this.battleType === 'siege',
                     };
                     const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
+                    // 按 TreeAssignment.treeDensityFor 的真实气候梯度控制林团保留率与单团上限（林地茂密、农耕适中、黄土高原疏林、草原散株、沙漠/戈壁仅数丛灌木）
+                    const treeDensity = treeDensityFor(baseTerrain, this.battleType === 'siege');
+                    const clumpKeepMod = treeDensity.forestCover >= 0.030 ? 1
+                        : treeDensity.forestCover >= 0.015 ? 2
+                        : treeDensity.forestCover >= 0.008 ? 3
+                        : treeDensity.forestCover >= 0.003 ? 4
+                        : 5;
+                    const maxTreesPerClump = treeDensity.forestCover >= 0.030 ? 120
+                        : treeDensity.forestCover >= 0.015 ? 36
+                        : treeDensity.forestCover >= 0.008 ? 12
+                        : treeDensity.forestCover >= 0.003 ? 6
+                        : 3;
 
                     // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
                     // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
@@ -3462,10 +3477,15 @@ export class Scene13WarLayer {
                             }
                         }
 
-                        // 荒漠盐滩/戈壁高寒碎石：稀疏化多余林团，保持荒野空旷苍凉感
-                        if (isBarrenBase && (cId % 3 !== 0)) {
+                        // 按当前底图气候密度裁剪多余林团，并对单团棵数封顶（沙漠/戈壁/草原/黄土不再出现百棵密林）
+                        if (clumpKeepMod > 1 && (cId % clumpKeepMod !== 0)) {
                             for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
                             continue;
+                        }
+                        if (clumpMembers.length > maxTreesPerClump) {
+                            for (let k = maxTreesPerClump; k < clumpMembers.length; k++) {
+                                skippedTreeIndices.add(clumpMembers[k]);
+                            }
                         }
 
                         // 统计该林块内的原生主导树种，并与当地真实地理/四季主导树种 regionalTree 融合：
@@ -3494,7 +3514,9 @@ export class Scene13WarLayer {
                         ) ? regionalTree : bestAsset;
 
                         for (const mIdx of clumpMembers) {
-                            treeClumpDominant.set(mIdx, finalClumpTree);
+                            if (!skippedTreeIndices.has(mIdx)) {
+                                treeClumpDominant.set(mIdx, finalClumpTree);
+                            }
                         }
                     }
 
@@ -3537,7 +3559,7 @@ export class Scene13WarLayer {
                             if (isAnimal) {
                                 const species = r[1];
                                 const de = animalDeOf(species);
-                                if (!animalNativeAt(species, mapLat, mapLng)) continue;   // 非当地物种不放
+                                if (!animalNativeAt(species, mapLat, mapLng, baseTerrain)) continue;   // 非当地或非当前地表气候物种不放
 
                                 // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
                                 //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
@@ -7480,7 +7502,9 @@ export class Scene13WarLayer {
         // 胜负：一方兵力枯竭（池 + 场上全灭）才算输（2026-08-11 主人修复后口径）
         const alive = [0, 0];
         for (const s of this.spawns) alive[s.f] += Math.max(0, s.pool) * s.pop;
-        for (const m of this.men) if (m.hp > 0) alive[m.f] += m.pop;
+        // 🔴 [2026-10-16 主人令「攻方没兵力了，攻方应该算输呀，攻城武器和乱入者不算兵力」]
+        //    攻城武器（siegeW）不计兵力；乱入者本人 pop=0 本就不计（见 setupPlayerUnits）。
+        for (const m of this.men) if (m.hp > 0 && !m.siegeW && !m.hero) alive[m.f] += m.pop;
         {
             const laneAlive = new Map<number, number>();
             for (const s of this.spawns) laneAlive.set(s.lane, (laneAlive.get(s.lane) ?? 0) + Math.max(0, s.pool) * s.pop);

@@ -122,11 +122,18 @@ export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number
     };
 })();
 
-export function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined): boolean {
+export function animalNativeAt(species: string, lat: number | undefined, lng: number | undefined, baseTerrain?: string): boolean {
     if (lat !== undefined && lng !== undefined) {
         // 日本四至矩形（冲绳至北海道）：自然界绝无野生老虎、狮子
         const isJapan = lat >= 24 && lat <= 46 && lng >= 122.5 && lng <= 146;
         if (isJapan && (species === 'TIGER' || species === 'LION')) return false;
+    }
+    if (baseTerrain) {
+        // 极旱沙漠/戈壁/盐漠/高寒砾石与雪原：不出林栖野猪（BOAR）与火鸡（TURKEY）
+        const isAridOrAlpine = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
+            || baseTerrain === 'qs' || baseTerrain === 'pal1' || baseTerrain === 'gravel_default'
+            || baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snd';
+        if (isAridOrAlpine && (species === 'BOAR' || species === 'TURKEY')) return false;
     }
     const r = ANIMAL_RANGE[species];
     if (!r || lat === undefined || lng === undefined) return true;

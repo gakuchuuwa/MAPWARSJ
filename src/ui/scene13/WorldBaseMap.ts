@@ -147,6 +147,264 @@ export interface WorldBaseQuery {
     isSiege: boolean;
     /** 冬季走另一套通道（长期积雪地区换雪地） */
     isWinter: boolean;
+    /** 据点建筑风格（66 种二/三级风格或 16 种一级风格）：作为底图设计的第一层基调 */
+    buildingStyle?: string;
+}
+
+/** 66 种二/三级建筑风格 → 16 种一级建筑风格母体映射（无 DOM 依赖，供 Worker 与战术层同源调用） */
+const STYLE_TO_BASE16: Readonly<Record<string, string>> = {
+    ASIA: 'ASIA', CENTRAL: 'ASIA', WEI: 'ASIA', BASHU: 'ASIA', JIANGNAN: 'ASIA',
+    NORTHEAST: 'ASIA', KOREA: 'ASIA', JAPAN: 'ASIA', KHITAN: 'ASIA', XIANBEI: 'ASIA', MONGOL: 'ASIA', YURT: 'ASIA',
+    WEST: 'WEST', FRANKS: 'WEST', GERMANIC: 'WEST', BRITONS: 'WEST', CELTS: 'WEST',
+    BURGUNDIANS: 'WEST', GOTHS: 'WEST', VIKINGS: 'WEST', SAXONS: 'WEST', DANES: 'WEST', VARANGIANS: 'WEST',
+    EAST: 'EAST', BYZANTINE: 'EAST', ARMENIANS: 'EAST', GEORGIANS: 'EAST',
+    SLAV: 'SLAV', SLAVIC: 'SLAV', POLES: 'SLAV', LITHUANIANS: 'SLAV', BOHEMIANS: 'SLAV', BULGARIANS: 'SLAV', MAGYAR: 'SLAV',
+    MEDI: 'MEDI', LATIN: 'MEDI', SPANISH: 'MEDI', PORTUGUESE: 'MEDI', SICILIANS: 'MEDI', ROMA: 'MEDI', ITALIANS: 'MEDI',
+    GREEK: 'GREEK', GREECE: 'GREEK', ATHENIANS: 'GREEK', SPARTANS: 'GREEK', MACEDONIAN: 'GREEK',
+    THRACIAN: 'THRACIAN',
+    ORIE: 'ORIE',
+    PERSIAN: 'PERSIAN', SASANIAN: 'PERSIAN', ACHAEMENIDS: 'PERSIAN',
+    CEAS: 'CEAS', WESTERN: 'CEAS', CENTRAL_ASIA: 'CEAS', CUMAN: 'CEAS', TURKS: 'CEAS', HUNS: 'CEAS',
+    PURU: 'PURU', TIBET: 'PURU',
+    INDI: 'INDI', INDIA: 'INDI', MUGHAL: 'INDI', BENGALIS: 'INDI', GURJARAS: 'INDI',
+    SEAS: 'SEAS', VIETNAMESE: 'SEAS', BURMESE: 'SEAS', KHMER: 'SEAS', MALAY: 'SEAS',
+    AFRI: 'AFRI', BERBER: 'AFRI', ETHIOPIANS: 'AFRI', AFRICA: 'AFRI',
+    MESO: 'MESO', AMERICA: 'MESO', MAYANS: 'MESO',
+    ANDE: 'ANDE', INCA: 'ANDE', MUISCA: 'ANDE', MAPUCHE: 'ANDE', TUPI: 'ANDE',
+};
+
+/**
+ * 将 world-base.png 中因 18km 网格山麓落差产生的 `rck`（编号 20，岩石配属图不当底色）
+ * 与低海拔河谷误判的 `gravel_default`（编号 13）还原为真实气候底图（由同像素 R 通道 siegeCode 推导）。
+ */
+function resolveRawFieldTile(siegeCode: number, fieldCode: number, lat: number, lng: number): string | null {
+    const inLoessOrHexi = lat >= 33.5 && lat <= 41.5 && lng >= 99.5 && lng <= 112.0;
+    const inCoreTibet = lat >= 27.5 && lat <= 36.6 && lng >= 76.0 && lng <= 101.0;
+
+    // 1. rck（编号 20）只做陡坡配属斑块，绝不当整场主底图（2026-08-23 主人定）
+    if (fieldCode === 20) {
+        switch (siegeCode) {
+            case 1: return inLoessOrHexi ? 'ds2' : 'ds5'; // 极旱山麓（姑臧/高阙塞→黄土 ds2；石头城/巴里坤/佩特拉→戈壁沙砾 ds5）
+            case 2: return 'ds2';                         // 半干旱黄土山麓（赤乌堡/伏俟城/大散关/汶山城/索格狄亚那岩→黄土荒原 ds2）
+            case 3: return 'gr3';                         // 温带山林关隘（兴势山/库尔泰亚→半干草地 gr3）
+            case 4: return (lat >= 20 && lat <= 30 && lng >= 95 && lng <= 106) ? 'gr2' : 'gr6'; // 亚热带山地（永昌/马丘比丘）
+            case 5: return 'gr4';                         // 黑土/湿润河谷
+            case 6: return 'gr7';                         // 草原山麓（碎叶/赤谷城/居鲁士城/尼沙布尔/大马士革→干草原 gr7）
+            case 7: return 'sno';                         // 终年积雪高山
+            default: return 'ds2';
+        }
+    }
+
+    // 2. gravel_default（编号 13，高山砾石）若落在河西/陇右/黄土河谷（非青藏高原核心区），还原为黄土河谷 ds2
+    if (fieldCode === 13 && siegeCode === 2 && inLoessOrHexi && !inCoreTibet) {
+        return 'ds2';
+    }
+
+    return FIELD_TILES[fieldCode] ?? null;
+}
+
+/**
+ * 以 16 种一级建筑风格为基础底座 + 66 种二/三级子风格与局部地理气候微调底图。
+ */
+export function refineBaseTileWithBuildingStyle(
+    rawTile: string,
+    buildingStyle: string | undefined,
+    lat: number,
+    lng: number,
+    isSiege: boolean,
+    isWinter: boolean,
+): string {
+    // 冬季已进入积雪贴图（sno/sn2/snf/snd）时，保持积雪状态（攻城踩实雪地基 snd，野战保留原雪地）
+    if (isWinter && (rawTile === 'sno' || rawTile === 'sn2' || rawTile === 'snf' || rawTile === 'snd')) {
+        return isSiege ? 'snd' : rawTile;
+    }
+    if (!buildingStyle) return rawTile;
+
+    const sub = buildingStyle.toUpperCase();
+    const base16 = STYLE_TO_BASE16[sub] ?? sub;
+    const isAridRaw = rawTile === 'pal' || rawTile === 'des' || rawTile === 'ds5' || rawTile === 'qs' || rawTile === 'pal1';
+
+    switch (base16) {
+        case 'ASIA': {
+            if (sub === 'KHITAN') {
+                // 河西走廊 / 西夏塞上（lng < 106.5）：西段极旱绿洲（敦煌/玉门关/阳关/赤金堡）用戈壁沙砾 ds5/des，中东段（姑臧/赤乌堡/张掖/皋兰/枹罕/伏俟城）用西北黄土荒原 ds2（与东亚温带 gr2/ds3 严格区分）
+                if (lng < 106.5) {
+                    if (isSiege) return (lng < 99.5 || isAridRaw) ? 'des' : 'ds2';
+                    return (lng < 99.5 || isAridRaw) ? 'ds5' : 'ds2';
+                }
+                // 辽西 / 燕北契丹（临潢/大定）：塞外干草原 gr7 / 草原泥地 gr5
+                return isSiege ? 'gr5' : (isAridRaw ? 'ds5' : 'gr7');
+            }
+            if (sub === 'XIANBEI') {
+                // 漠南鲜卑 / 阴山河套：塞外干草原 gr7（毛乌素/高阙塞干旱缘用戈壁沙砾 ds5），攻城用草原地 gr5（与东亚 gr2/ds3 严格区分）
+                if (isSiege) return isAridRaw ? 'ds2' : 'gr5';
+                return isAridRaw ? 'ds5' : 'gr7';
+            }
+            if (sub === 'MONGOL' || sub === 'YURT') {
+                // 漠北蒙古：蒙古干枯大草原 gr7 与大戈壁 ds5，攻城用草原牧场 gr5（绝不用东亚农耕 gr2/ds3）
+                if (isSiege) return isAridRaw ? 'ds5' : 'gr5';
+                return isAridRaw ? 'ds5' : 'gr7';
+            }
+            if (sub === 'NORTHEAST') {
+                // 东北黑土与寒温带针阔林海（gr4 黑土 / underbrush_leaves 针叶林地，与关内温带绿草 gr2 区分）
+                if (isSiege) return 'gr4';
+                return (rawTile === 'gr4' || rawTile === 'underbrush_leaves') ? rawTile : 'gr4';
+            }
+            if (sub === 'JAPAN' || sub === 'KOREA') {
+                // 日本 / 朝鲜：温带湿润绿草 gr2 / grs
+                if (isSiege) return 'ds3';
+                return (rawTile === 'grs' || rawTile === 'gr2' || rawTile === 'for') ? rawTile : 'gr2';
+            }
+            if (sub === 'JIANGNAN') {
+                // 江南水乡（lat >= 27.5）黑泥水田 gr4/grs；岭南闽浙台（lat < 27.5）亚热带丛林草 gr6/gr2
+                if (lat >= 27.5) {
+                    if (isSiege) return 'gr4';
+                    return (rawTile === 'gr4' || rawTile === 'grs' || rawTile === 'qs2' || rawTile === 'sh4') ? rawTile : 'gr4';
+                }
+                if (isSiege) return 'ds4';
+                return (rawTile === 'gr6' || rawTile === 'fo2' || rawTile === 'grs') ? rawTile : 'gr6';
+            }
+            if (sub === 'BASHU') {
+                // 秦岭/陇南关隘（lat >= 32.5）用温带半干草/黄土 gr3/ds2；巴蜀盆地与云贵用盆地红壤/绿草 ds4/gr2
+                if (lat >= 32.5) {
+                    if (isSiege) return 'ds2';
+                    return (rawTile === 'ds2' || rawTile === 'gr3' || rawTile === 'for') ? rawTile : 'gr3';
+                }
+                if (isSiege) return 'ds4';
+                return (rawTile === 'gr2' || rawTile === 'grs' || rawTile === 'gr6' || rawTile === 'fo2' || rawTile === 'ds4') ? rawTile : 'gr2';
+            }
+            // CENTRAL / WEI（中原、关中、陇右、华北）：黄土高原段用 ds2，中原华北与关中平原用温带草地 gr2/gr3 + 攻城 ds3
+            const inLoessPlateau = lng < 111.5 && lat >= 34.2 && (rawTile === 'ds2' || rawTile === 'gr7' || isAridRaw || lng < 107.2);
+            if (inLoessPlateau) return 'ds2';
+            if (isSiege) return 'ds3';
+            return (rawTile === 'gr2' || rawTile === 'gr3' || rawTile === 'grs' || rawTile === 'gr4') ? rawTile : 'gr2';
+        }
+
+        case 'CEAS': {
+            if (sub === 'WESTERN') {
+                // 西域（塔里木/吐鲁番/天山/帕米尔）：与东亚彻底区分 —— 盆地沙海用 des，罗布泊盐壳用 pal1，天山/昆仑戈壁绿洲一律用戈壁沙砾 ds5，攻城用极旱沙土 des
+                if (rawTile === 'pal1') return isSiege ? 'des' : 'pal1';
+                if (isSiege) return 'des';
+                if (rawTile === 'pal' || rawTile === 'des' || rawTile === 'qs') return 'des';
+                return 'ds5';
+            }
+            if (sub === 'CUMAN' || sub === 'TURKS' || sub === 'HUNS') {
+                // 钦察-哈萨克大草原：干草原 gr7 / 草原泥地 gr5
+                if (isSiege) return 'gr5';
+                return isAridRaw ? 'ds5' : 'gr7';
+            }
+            // CENTRAL_ASIA（河中/呼罗珊/七河/阿富汗）：沙漠用 des/ds5，绿洲与河谷草原用 ds2/gr7
+            if (isAridRaw) return isSiege ? 'des' : 'ds5';
+            if (isSiege) return 'ds2';
+            return (rawTile === 'ds2' || rawTile === 'gr7') ? rawTile : 'gr7';
+        }
+
+        case 'PURU': {
+            if (sub === 'TIBET') {
+                // 青藏高原吐蕃：与东亚彻底区分 —— 野战与攻城一律用青藏高山砾石冻土 gravel_default（仅柴达木盐泽保留 pal1）
+                if (rawTile === 'pal1') return 'pal1';
+                return 'gravel_default';
+            }
+            // PURU（五河流域旁遮普 / 健驮逻）：半干旱冲积平原 ds2 / gr3
+            if (isSiege) return 'ds2';
+            return (rawTile === 'ds2' || rawTile === 'gr3' || rawTile === 'gr5' || rawTile === 'ds4') ? rawTile : 'ds2';
+        }
+
+        case 'ORIE': {
+            // 中东（阿拉伯/两河/埃及/黎凡特）：沙漠用 pal/des，黎凡特/叙利亚半干旱区用 ds2/gr7
+            if (isSiege) return isAridRaw ? 'des' : 'ds2';
+            if (isAridRaw) return rawTile === 'pal1' ? 'pal1' : (rawTile === 'ds5' ? 'ds5' : 'pal');
+            return (rawTile === 'ds2' || rawTile === 'gr7' || rawTile === 'gr3') ? rawTile : 'ds2';
+        }
+
+        case 'PERSIAN': {
+            // 波斯（伊朗高原/帕提亚/两河东麓）：高原黄土 ds2 与干草原 gr7，卡维尔/卢特盐漠保留 pal1
+            if (rawTile === 'pal1') return isSiege ? 'des' : 'pal1';
+            if (isSiege) return isAridRaw ? 'des' : 'ds2';
+            if (isAridRaw) return 'ds5';
+            return (rawTile === 'ds2' || rawTile === 'gr7') ? rawTile : 'ds2';
+        }
+
+        case 'INDI': {
+            if (sub === 'BENGALIS') {
+                return isSiege ? 'gr4' : ((rawTile === 'sh4' || rawTile === 'qs2' || rawTile === 'gr4') ? rawTile : 'gr4');
+            }
+            if (sub === 'GURJARAS') {
+                return isSiege ? 'ds2' : (isAridRaw ? 'ds5' : 'ds2');
+            }
+            if (isSiege) return 'ds4';
+            return (rawTile === 'ds4' || rawTile === 'gr5' || rawTile === 'gr6') ? rawTile : 'ds4';
+        }
+
+        case 'SEAS': {
+            // 东南亚（越南/缅甸/高棉/马来）：与东亚温带草 gr2/ds3 彻底区分 —— 野战一律用热带深绿丛林草地 gr6，攻城一律用热带红壤 ds4
+            if (isSiege) return 'ds4';
+            return 'gr6';
+        }
+
+        case 'WEST': {
+            // 西欧（含不列颠/法兰克/日耳曼/北欧）：温带海洋性深绿草地 gr2 / grs / gr3
+            if (isSiege) return 'ds3';
+            return (rawTile === 'grs' || rawTile === 'gr2' || rawTile === 'gr3' || rawTile === 'for') ? rawTile : 'gr2';
+        }
+
+        case 'EAST': {
+            // 东南欧（拜占庭/亚美尼亚/格鲁吉亚）：温带半干草地 gr3 / gr2
+            if (isSiege) return 'ds3';
+            return (rawTile === 'gr3' || rawTile === 'gr2' || rawTile === 'gr7' || rawTile === 'for') ? rawTile : 'gr3';
+        }
+
+        case 'SLAV': {
+            // 东北欧（斯拉夫/波兰/立陶宛/波西米亚/保加利亚/马扎尔）：黑土 gr4 与半干草林 gr3
+            if (isSiege) return rawTile === 'gr4' ? 'gr4' : 'ds3';
+            return (rawTile === 'gr4' || rawTile === 'gr3' || rawTile === 'gr2' || rawTile === 'for' || rawTile === 'underbrush_leaves') ? rawTile : 'gr3';
+        }
+
+        case 'MEDI':
+        case 'GREEK': {
+            // 地中海 & 希腊：地中海夏旱草地 gr7 / gr3 / ds2
+            if (isSiege) return 'ds2';
+            return (rawTile === 'gr7' || rawTile === 'gr3' || rawTile === 'ds2' || rawTile === 'gr2') ? rawTile : 'gr7';
+        }
+
+        case 'THRACIAN': {
+            // 色雷斯：巴尔干半干草地 gr3
+            if (isSiege) return 'ds3';
+            return (rawTile === 'gr3' || rawTile === 'gr2' || rawTile === 'gr7') ? rawTile : 'gr3';
+        }
+
+        case 'AFRI': {
+            if (sub === 'BERBER') {
+                // 北非马格里布与撒哈拉绿洲：撒哈拉腹地用 pal/des，马格里布海岸高原用 ds2/gr7
+                if (lat < 26.0 || isAridRaw) return isSiege ? 'des' : 'pal';
+                return isSiege ? 'ds2' : ((rawTile === 'ds2' || rawTile === 'gr7' || rawTile === 'gr3') ? rawTile : 'ds2');
+            }
+            // 撒哈拉以南非洲（埃塞俄比亚/西非/东非）：萨凡纳稀树草原 gr5 或丛林草 gr6
+            if (isSiege) return rawTile === 'gr6' ? 'ds4' : 'gr5';
+            return (rawTile === 'gr5' || rawTile === 'gr6' || rawTile === 'fo2' || rawTile === 'gr7') ? rawTile : 'gr5';
+        }
+
+        case 'MESO': {
+            // 中美：墨西哥高原用 ds3/gr7，玛雅/加勒比热带用 gr6
+            if (sub === 'MAYANS' || lat < 18.5) {
+                return isSiege ? 'ds4' : 'gr6';
+            }
+            if (isSiege) return 'ds3';
+            return (rawTile === 'ds3' || rawTile === 'gr7' || rawTile === 'gr3' || rawTile === 'gr6') ? rawTile : 'ds3';
+        }
+
+        case 'ANDE': {
+            if (sub === 'TUPI') {
+                return isSiege ? 'ds4' : 'gr6';
+            }
+            // 安第斯山脉（印加/穆伊斯卡/马普切）：山地黄土 ds2 与高山草地 gr3
+            if (isSiege) return 'ds2';
+            return (rawTile === 'ds2' || rawTile === 'gr3' || rawTile === 'gr7' || rawTile === 'gr2') ? rawTile : 'ds2';
+        }
+
+        default:
+            return rawTile;
+    }
 }
 
 /**
@@ -183,9 +441,16 @@ export function queryBaseTile(q: WorldBaseQuery): string | null {
                 if (q.isWinter && winterFlag > 0 && winterFlag !== 4) {
                     // 3=雪林地（林区）  2=深雪（极寒/终年冰冻）  1=雪地
                     const code = winterFlag === 3 ? 23 : winterFlag === 2 ? 22 : 21;
-                    return FIELD_TILES[code] ?? null;
+                    const snowTile = FIELD_TILES[code] ?? null;
+                    return snowTile && q.buildingStyle
+                        ? refineBaseTileWithBuildingStyle(snowTile, q.buildingStyle, q.lat, q.lng, q.isSiege, true)
+                        : snowTile;
                 }
-                return FIELD_TILES[fieldCode] ?? null;
+                const rawTile = resolveRawFieldTile(siegeCode, fieldCode, q.lat, q.lng);
+                if (!rawTile) return null;
+                return q.buildingStyle
+                    ? refineBaseTileWithBuildingStyle(rawTile, q.buildingStyle, q.lat, q.lng, q.isSiege, false)
+                    : rawTile;
             }
         }
     }
