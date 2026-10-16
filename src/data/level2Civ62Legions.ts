@@ -174,7 +174,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_jaguar_warrior', count: 4 },
             { type: 'jaguar_warrior', count: 3 },
-            { type: 'xolotl_warrior', count: 2 },
+            { type: 'eagle_warrior', count: 2 },
         ],
     },
     {
@@ -207,7 +207,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_kamayuk', count: 4 },
             { type: 'elite_champi_warrior', count: 3 },
-            { type: 'champi_runner', count: 2 },
+            { type: 'champi_warrior', count: 2 },
         ],
     },
     {
@@ -253,8 +253,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'elite_temple_guard', count: 2 },
-            { type: 'guecha_warrior', count: 3 },
+            { type: 'champi_warrior', count: 2 },
+            { type: 'elite_temple_guard', count: 3 },
             { type: 'elite_guecha_warrior', count: 4 },
         ],
     },
@@ -269,8 +269,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'elite_ibirapema_warrior', count: 2 },
-            { type: 'blackwood_archer', count: 3 },
+            { type: 'champi_warrior', count: 2 },
+            { type: 'elite_ibirapema_warrior', count: 3 },
             { type: 'elite_blackwood_archer', count: 4 },
         ],
     },
@@ -2192,7 +2192,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'ELITE_CARAVEL',
         slots: [
-            { type: 'pikeman', count: 3 },
+            { type: 'condottiero', count: 3 },
             { type: 'elite_hussite_wagon', count: 2 },
             { type: 'elite_genoese_crossbowman', count: 4 },
         ],
@@ -2210,7 +2210,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'paladin', count: 2 },
             { type: 'genoese_crossbowman', count: 3 },
-            { type: 'halberdier', count: 4 },
+            { type: 'condottiero', count: 4 },
         ],
     },
 
@@ -3298,7 +3298,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'HEAVY_INCENDIARY_SHIP',
         slots: [
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'imperial_skirmisher', count: 3 },
             { type: 'rattan_archer_elite', count: 4 },
             { type: 'battle_elephant', count: 2 },
         ],
@@ -3315,8 +3315,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         slots: [
             { type: 'rattan_archer', count: 3 },
-            { type: 'rattan_archer_elite', count: 2 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_fire_lancer', count: 2 },
+            { type: 'imperial_skirmisher', count: 4 },
         ],
     },
 
@@ -3421,7 +3421,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_eagle_warrior', count: 4 },
             { type: 'swordsman', count: 3 },
-            { type: 'elite_skirmisher', count: 2 },
+            { type: 'eagle_scout', count: 2 },
         ],
     },
     // ── 玛雅 · 城堡时代 · 城堡时代玛雅潘军团　（本次新建）────────────────
@@ -3489,7 +3489,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'swordsman', count: 4 },
             { type: 'spearman', count: 3 },
-            { type: 'eagle_warrior', count: 2 },
+            { type: 'eagle_scout', count: 2 },
         ],
     },
     // ── 阿兹特克 · 城堡时代 · 城堡时代阿兹特克军团　（同名已在二级（重复→替换保留））────────────────
@@ -3510,7 +3510,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'jaguar_warrior', count: 3 },
             { type: 'champion', count: 4 },
-            { type: 'xolotl_warrior', count: 2 },
+            { type: 'elite_eagle_warrior', count: 2 },
         ],
     },
 
@@ -3546,7 +3546,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'slinger', count: 4 },
             { type: 'spearman', count: 3 },
-            { type: 'champi_warrior', count: 2 },
+            { type: 'slinger', count: 2 },
         ],
     },
     // ── 印加 · 城堡时代 · 城堡时代印加军团　（同名已在二级（重复→替换保留））────────────────
@@ -3588,7 +3588,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'skirmisher', count: 3 },
-            { type: 'manatarms', count: 2 },
+            { type: 'slinger', count: 2 },
         ],
     },
     // ── 穆伊斯卡 · 城堡时代 · 城堡时代穆伊斯卡军团　（同名已在二级（重复→替换保留））────────────────
@@ -3608,8 +3608,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         slots: [
             { type: 'guecha_warrior', count: 3 },
-            { type: 'temple_guard', count: 2 },
-            { type: 'champion', count: 4 },
+            { type: 'elite_champi_warrior', count: 2 },
+            { type: 'temple_guard', count: 4 },
         ],
     },
 
@@ -3629,7 +3629,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'spearman', count: 4 },
             { type: 'swordsman', count: 3 },
-            { type: 'manatarms', count: 2 },
+            { type: 'slinger', count: 2 },
         ],
     },
     // ── 马普切 · 城堡时代 · 城堡时代马普切军团　（本次新建）────────────────
@@ -3645,7 +3645,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'longswordsman', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'champion', count: 2 },
+            { type: 'champi_warrior', count: 2 },
         ],
     },
     // ── 马普切 · 帝国时代 · 帝国时代阿劳卡尼亚军团　（本次新建）────────────────
@@ -3663,7 +3663,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_bolas_rider', count: 3 },
             { type: 'elite_kona', count: 4 },
-            { type: 'pikeman', count: 2 },
+            { type: 'elite_champi_warrior', count: 2 },
         ],
     },
 
@@ -3687,8 +3687,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         slots: [
             { type: 'blackwood_archer', count: 3 },
-            { type: 'elite_blackwood_archer', count: 2 },
-            { type: 'champion', count: 4 },
+            { type: 'elite_champi_warrior', count: 2 },
+            { type: 'ibirapema_warrior', count: 4 },
         ],
     },
 
@@ -3740,7 +3740,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'camel_rider', count: 2 },
             { type: 'camel_archer', count: 3 },
-            { type: 'two_handed_swordsman', count: 4 },
+            { type: 'elite_genitour', count: 4 },
         ],
     },
     // ── 马格里布 · 帝国时代 · 帝国时代巴巴里军团　（本次新建）────────────────
@@ -3754,7 +3754,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'GALLEON',
         slots: [
-            { type: 'hand_cannoneer', count: 3 },
+            { type: 'genitour', count: 3 },
             { type: 'camel_heavy', count: 2 },
             { type: 'hussar', count: 4 },
         ],
