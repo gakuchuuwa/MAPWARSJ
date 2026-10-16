@@ -5,7 +5,9 @@
  * 世纪→时代（🔴 2026-10-16 主人定真边界）：**古典 ≤476 ｜ 封建 476–1050 ｜ 城堡 1050–1500 ｜ 帝国 1500–1914**；公元前=古典。
  *    世纪只是粗档，凡世纪横跨边界的（世纪5 被 476 劈开、世纪11 被 1050 劈开、世纪20 被 1914 截断）一律按**该将成名年**逐位精化，不许拿世纪整数切。
  *
- * ⚠️ 世纪-5(401-500) 骑跨 476 —— 已逐将精化：卒 ≤476（或生涯中值 ≤476）的 18 位 = 古典（阿提拉 434–453、刘裕 422、沮渠蒙逊 433、柔然社仑 410、盖萨里克 455…），其余 5 位（克洛维一世、狄奥多里克大帝、高车阿伏至罗、嚈哒阿尔洪、康沃尔） = 封建。
+ * ⚠️ 世纪-5(401-500) 骑跨 476 —— 已按主人 2026-10-16 令「**以登场年（生年+20，debut 字段优先，且不晚于卒年）为准**」逐将精化：
+ *    登场 < 476 的 23 位 = 古典（阿提拉 426、刘裕 383、沮渠蒙逊 388、柔然社仑 380、赫连勃勃 401、盖萨里克 409、
+ *    高车阿伏至罗 470、嚈哒头罗曼 475、狄奥多里克大帝 474、康沃尔格拉德隆 470 …）；只剩**克洛维一世**（登场 486）＝封建。
  * ⚠️ 世纪-11(1001-1100) 骑跨 1050 边界，整数世纪不可切 —— 已按各将成名年份逐位精化：
  *    成名<1050 的 16 位(李元昊/波列/布列斯拉夫/哈马德/姆斯蒂/雅罗斯拉夫/姜邯赞/古格扎西查巴/马哈茂德/恰格里/高琼/神圣罗马亨利二世/大延琳/种世衡/野利旺荣/拉金德拉) = 封建；其余世纪-11 = 城堡。
  *    无纪年核查(2026-09-08)：磨古斯1092-1100辽阻卜=城堡、籍辣思义1224西夏沙州=城堡、格萨尔11世纪岭国史诗=城堡、阿尔斯兰=疏勒喀喇汗阿里·阿尔斯兰汗殁998→封建、沙马利克=蒙古部落译音查无实据暂归城堡。
@@ -227,7 +229,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gandenpozhang_dibasangjiejiacuo': 'imperial',
     'ganzhou_dourong': 'antiquity',
     'gaochang_quwentai': 'feudal',
-    'gaoche_afuzhiluo': 'feudal',
+    'gaoche_afuzhiluo': 'antiquity',
     'gaogouli_yizhiwende': 'feudal',
     'gaoliang_geshuhan': 'feudal',
     'gaoqi_d_gaohuan': 'feudal',
@@ -427,7 +429,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_tashfin': 'castle',
     'gen_tassilo_iii': 'feudal',
     'gen_themistocles': 'antiquity',
-    'gen_theodoric_great': 'feudal',
+    'gen_theodoric_great': 'antiquity',
     'gen_tibirica': 'imperial',
     'gen_tome_sousa': 'imperial',
     'gen_topa_inca': 'castle',
@@ -595,7 +597,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'kazakh_hasimu': 'imperial',
     'keerjisi_bagelate': 'feudal',
     'keerkezi_manasi': 'feudal',
-    'keernuwaye_geladelong': 'feudal',
+    'keernuwaye_geladelong': 'antiquity',
     'keerqin_aoba': 'imperial',
     'kejia_wentianxiang': 'castle',
     'kejila_shulunbao': 'imperial',
@@ -1066,7 +1068,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'yamaxun_xibolvte': 'antiquity',
     'yan_leyi': 'antiquity',
     'yanchuan_d_yuefei': 'castle',
-    'yanda_touluoman': 'feudal',
+    'yanda_touluoman': 'antiquity',
     'yang_aner_yangan': 'antiquity',
     'yang_bozhou_yangyinglong': 'imperial',
     'yang_zhou_yangxingmi': 'feudal',
