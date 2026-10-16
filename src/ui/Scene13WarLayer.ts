@@ -105,6 +105,8 @@ export { isPikeBraceType, isCavalryType, faceAngleDeg, attackArcDeg, inFrontArc,
 
 import { animalNativeAt, animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
 import { relocateTemplateWater, adaptMapDataSeaOrientation } from './scene13/Scene13MapWaterAdapter';
+import { pickTree, type TreeSeason } from './scene13/TreeAssignment';
+import { groundDecorFor, decorFits } from './scene13/DecorFit';
 
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
@@ -3343,23 +3345,52 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
                     //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
                     // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
+                    const TREE_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
                     this.decorSprites = this.decorSprites.filter((s) => {
                         const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
                         const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
-                        const isOldTree = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD/i.test(s.asset);
+                        const isOldTree = TREE_RE.test(s.asset);
                         const c = glLayer.screenToCell(s.x, s.y, VW, VH);
                         const inWater = !!c && glLayer.getWaterDensityAt(Math.round(c.gx), Math.round(c.gy)) > 0.42;
                         return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
                     });
 
+                    // 🔴 [2026-10-16 阶段四：真实地理与四季植被/地表装饰多样性]
+                    // 接回 TreeAssignment (pickTree: 40 种 DE 树木 × 全球专属地域框 × 26 底图 × 春夏秋冬四季)
+                    // 与 DecorFit (groundDecorFor / decorFits: 26 底图同色系岩石、花草、灌木)，彻底告别单一 Arabia 模板表现。
+                    const defCityRec = this.defenderCityRecord();
+                    const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
+                    const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
+                    const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
+                    const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+                        ? rawCalSeason
+                        : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+                    const regionalTree = pickTree({
+                        baseTile: baseTerrain,
+                        lat: mapLat,
+                        lng: mapLng,
+                        season: calSeason,
+                        isSiege: this.battleType === 'siege',
+                    });
+                    const decorSet = groundDecorFor(baseTerrain);
+                    const decorCtx = {
+                        season: this.sceneSeason,
+                        baseTile: baseTerrain,
+                        culture: String(this.sideCulture[1] || this.sideCulture[0] || 'CENTRAL'),
+                        isCity: this.battleType === 'siege',
+                        waterKind: this.environmentPlan?.waterKind,
+                    };
+                    const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
+
                     // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
-                    // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），杜绝秋枫、绿橡、竹子在一片林里杂混
+                    // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
                     const treeClumpDominant = new Map<number, string>();
+                    const skippedTreeIndices = new Set<number>();
                     const rawTreeIndices: number[] = [];
                     data.objects.forEach((ob: any, idx: number) => {
                         if (ob.name && !ob.name.includes('CLIFF')) {
                             const r = resolveNatureSprite(ob.name);
-                            if (r && r[0] === 'NATURE' && /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB/i.test(r[1])) {
+                            if (r && r[0] === 'NATURE' && TREE_RE.test(r[1])) {
                                 rawTreeIndices.push(idx);
                             }
                         }
@@ -3405,7 +3436,15 @@ export class Scene13WarLayer {
                             }
                         }
 
-                        // 统计该林块内的主导树种
+                        // 荒漠盐滩/戈壁高寒碎石：稀疏化多余林团，保持荒野空旷苍凉感
+                        if (isBarrenBase && (cId % 3 !== 0)) {
+                            for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
+                            continue;
+                        }
+
+                        // 统计该林块内的原生主导树种，并与当地真实地理/四季主导树种 regionalTree 融合：
+                        // 85% 林团直接使用当地与当季的 regionalTree（如日本春樱/秋银杏、岭南翠竹、地中海油橄榄、北非金合欢等），
+                        // 15% 林团若原图自带非通用橡树/棕榈的特色伴生树且符合当前季节，则保留整团伴生树，做到既纯正又富有层次
                         const counts: Record<string, number> = {};
                         for (const mIdx of clumpMembers) {
                             const r = resolveNatureSprite(data.objects[mIdx].name);
@@ -3415,8 +3454,21 @@ export class Scene13WarLayer {
                         for (const [ast, cnt] of Object.entries(counts)) {
                             if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
                         }
+                        const isGenericBakedTree = bestAsset === 'OAK' || bestAsset === 'PALM' || bestAsset === 'PINE' || bestAsset === 'GREEN_OAK';
+                        const snowTreeInNonWinter = this.sceneSeason !== 2 && /^SNOW_/.test(bestAsset);
+                        const greenTreeInSnow = this.sceneSeason === 2 && (baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr') && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
+                        const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
+                        const finalClumpTree = (
+                            !bestAsset ||
+                            isGenericBakedTree ||
+                            snowTreeInNonWinter ||
+                            greenTreeInSnow ||
+                            autumnMismatch ||
+                            (cId % 6 !== 0)
+                        ) ? regionalTree : bestAsset;
+
                         for (const mIdx of clumpMembers) {
-                            treeClumpDominant.set(mIdx, bestAsset);
+                            treeClumpDominant.set(mIdx, finalClumpTree);
                         }
                     }
 
@@ -3445,6 +3497,7 @@ export class Scene13WarLayer {
                     };
 
                     for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
+                        if (skippedTreeIndices.has(obIdx)) continue;
                         const ob = data.objects[obIdx];
                         if (ob.name && ob.name.includes('CLIFF')) continue;
                         const r = resolveNatureSprite(ob.name);
@@ -3458,10 +3511,7 @@ export class Scene13WarLayer {
                             if (isAnimal) {
                                 const species = r[1];
                                 const de = animalDeOf(species);
-                                const defCity = this.defenderCityRecord();
-                                const lat = defCity?.lat ?? this.centerLat;
-                                const lng = defCity?.lng ?? this.centerLng;
-                                if (!animalNativeAt(species, lat, lng)) continue;   // 非当地物种不放
+                                if (!animalNativeAt(species, mapLat, mapLng)) continue;   // 非当地物种不放
 
                                 // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
                                 //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
@@ -3518,9 +3568,30 @@ export class Scene13WarLayer {
 
                             // 静态自然植被与矿石资源
                             let asset = treeClumpDominant.get(obIdx) ?? r[1];
-                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
-                            if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
-                            const isTree = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB/i.test(asset);
+                            const isTree = TREE_RE.test(asset);
+                            if (isTree) {
+                                if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
+                                if (this.sceneSeason !== 2 && asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
+                            } else if (asset !== 'MINE_GOLD' && asset !== 'MINE_STONE' && !asset.startsWith('FORAGE_')) {
+                                // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
+                                if (/^ROCK/.test(asset)) {
+                                    if (decorSet.solid.length === 0) continue;
+                                    if (!decorSet.solid.includes(asset)) {
+                                        asset = decorSet.solid[hash % decorSet.solid.length];
+                                    }
+                                } else if (/^(FLOWER|PLANT|WEED|SHRUB|BUSH_GREEN|UNDERBRUSH|FERNPATCH)/.test(asset)) {
+                                    if (decorSet.scatter.length === 0) continue;
+                                    if (!decorSet.scatter.includes(asset)) {
+                                        asset = decorSet.scatter[hash % decorSet.scatter.length];
+                                    }
+                                } else if (/^GRASS_/.test(asset)) {
+                                    if (decorSet.flat.length === 0) continue;
+                                    if (!decorSet.flat.includes(asset)) {
+                                        asset = decorSet.flat[hash % decorSet.flat.length];
+                                    }
+                                }
+                                if (!decorFits(asset, decorCtx)) continue;
+                            }
                             const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
                             const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
                             sx += jx;
@@ -3545,33 +3616,38 @@ export class Scene13WarLayer {
                         }
                     }
 
-                    // 自然水岸生态：沿多瑙河蜿蜒岸线点缀芦苇与睡莲（同旧 13 经典水岸生态）
-                    for (let gy = 2; gy < 118; gy += 2) {
-                        for (let gx = 2; gx < 118; gx += 2) {
-                            const dens = glLayer.getWaterDensityAt(gx, gy);
-                            if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
-                                const ox = gx - 0.5, oy = gy - 0.5;
-                                const sx = (ox - 60) * TAC_TILE_W + VW / 2;
-                                const sy = (oy - 60) * TAC_TILE_H + VH / 2;
-                                const isLily = dens > 0.44 && ((gx + gy) % 3 === 0);
-                                const asset = isLily ? 'WATER_LILY' : 'REEDS';
-                                const hash = (gx * 11 + gy * 7) % 100;
-                                const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-                                this.ensureNatureAsset(asset);
-                                this.decorSprites.push({
-                                    asset,
-                                    frame: hash,
-                                    x: sx,
-                                    y: sy,
-                                    flip: (gx % 2 === 0),
-                                    layer: 'world',
-                                    z: 0,
-                                    lift,
-                                    densityHash: hash,
-                                    obstructionContactSec: 0,
-                                    obstructionTouched: false,
-                                    obstructionDisabled: false,
-                                });
+                    // 自然水岸生态：沿水岸线点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
+                    const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+                    const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);
+                    if (!isFrozenWater) {
+                        for (let gy = 2; gy < 118; gy += 2) {
+                            for (let gx = 2; gx < 118; gx += 2) {
+                                const dens = glLayer.getWaterDensityAt(gx, gy);
+                                if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
+                                    const ox = gx - 0.5, oy = gy - 0.5;
+                                    const sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                                    const sy = (oy - 60) * TAC_TILE_H + VH / 2;
+                                    const isLily = allowWaterLily && dens > 0.44 && ((gx + gy) % 3 === 0);
+                                    const asset = isLily ? 'WATER_LILY' : 'REEDS';
+                                    if (!decorFits(asset, decorCtx)) continue;
+                                    const hash = (gx * 11 + gy * 7) % 100;
+                                    const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+                                    this.ensureNatureAsset(asset);
+                                    this.decorSprites.push({
+                                        asset,
+                                        frame: hash,
+                                        x: sx,
+                                        y: sy,
+                                        flip: (gx % 2 === 0),
+                                        layer: 'world',
+                                        z: 0,
+                                        lift,
+                                        densityHash: hash,
+                                        obstructionContactSec: 0,
+                                        obstructionTouched: false,
+                                        obstructionDisabled: false,
+                                    });
+                                }
                             }
                         }
                     }
