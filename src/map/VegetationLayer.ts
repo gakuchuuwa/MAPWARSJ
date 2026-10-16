@@ -814,9 +814,10 @@ export class VegetationLayer {
                     // 🔴 严格保护四季系统：春/夏/秋/冬 4 季树种 1:1 动态轮转；
                     //    同时在战略地图尺度（25px）下，将全秃枯树枝（BIRCH_WINTER / SCENARIO_TREE_I / DEAD_TREE）
                     //    映射为覆雪/金秋/灌丛饱满树冠，消除绿草/黄褐地表上像插着一排枯黑铁丝的违和感。
+                    const isSnowTile = tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd' || tile === 'ic3' || tile === 'ice';
                     const softenStrategicTree = (a: string): string => {
-                        if (a === 'BIRCH_WINTER') return Math.abs(curLatLng.lat) > 46 ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK';
-                        if (a === 'SCENARIO_TREE_I') return 'SNOW_AUTUMN_OAK';
+                        if (a === 'BIRCH_WINTER') return isSnowTile ? (Math.abs(curLatLng.lat) > 46 ? 'SNOW_PINE' : 'SNOW_AUTUMN_OAK') : (Math.abs(curLatLng.lat) > 46 ? 'ASIAN_PINE' : 'AUTUMN_OAK');
+                        if (a === 'SCENARIO_TREE_I') return isSnowTile ? 'SNOW_AUTUMN_OAK' : 'AUTUMN_OAK';
                         if (a === 'DEAD_TREE') return 'BUSH_TREE_A';
                         return a;
                     };

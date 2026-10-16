@@ -400,6 +400,12 @@ export interface TreeQuery {
 /** 兜底树：查不到时用，四季通用、地域中性 */
 const FALLBACK_TREE = 'OAK';
 
+/** 底图是否为积雪/冰面贴图（只有地面有雪时，树冠才允许挂白雪） */
+export function isSnowBaseTile(tile: string): boolean {
+    return tile === 'sno' || tile === 'sn2' || tile === 'snf' || tile === 'snd'
+        || tile === 'snr' || tile === 'ic3' || tile === 'ice';
+}
+
 /**
  * 查这一战该长什么树。
  * 顺序：地区覆盖 → 底图默认 → 兜底；拿到之后套季节变体。
@@ -427,12 +433,24 @@ export function pickTree(q: TreeQuery): string {
     // 若地区覆盖已显式指定了 trees[四季]，上面已直接取出对应季节；
     // 否则根据四季变体表映射当前季节形态：
     const variant = SEASON_4_VARIANTS[tree];
+    let picked = tree;
     if (variant) {
         const s = Math.max(0, Math.min(3, q.season));
-        return variant[s];
+        picked = variant[s];
     }
 
-    return tree; // 针叶/棕榈/热带树四季同形
+    // 🔴 [2026-10-16 主人指出「怎么植被带雪，草坪是绿的呢」]
+    //    只有当地面底图本身是积雪/冰原（sno/sn2/snf/snd/snr/ic3/ice）时，树木才允许使用挂满白雪的 SNOW_* 素材；
+    //    若地面无积雪（如 winterFlag=0 不降雪区或 winterFlag=4 零星残雪存不住的绿草/泥土/沙地），
+    //    冬季一律使用无白雪的冬枯/深秋/常青树冠，绝不在绿草坪或黄土地上放白雪树。
+    if (!isSnowBaseTile(q.baseTile)) {
+        if (picked === 'SNOW_AUTUMN_OAK') return 'AUTUMN_OAK';
+        if (picked === 'SNOW_PINE') return (tree === 'PINE' || tree === 'MONKEY_PUZZLE') ? tree : 'ASIAN_PINE';
+        if (picked === 'SNOW_BIRCH') return 'BIRCH_WINTER';
+        if (picked === 'SNOW_DEAD_TREE') return 'DEAD_TREE';
+    }
+
+    return picked; // 针叶/棕榈/热带树四季同形
 }
 
 /** 调试/验收用：把三张表暴露出去 */

@@ -478,15 +478,7 @@ export function queryStrategicBaseTile(q: {
         return 'rck';
     }
 
-    // 4. 规则⑦ 干旱区大河两侧绿洲草带（HillshadeWorker 1096-1106）
-    if (q.nearRiver && aridity >= 0.6 && slopeGrad < 0.08) {
-        const riverGreenW = rampUpStrategic(aridity, 0.6, 0.85) * (1 - rampUpStrategic(slopeGrad, 0.03, 0.08)) * 0.62 * snowFade;
-        if (riverGreenW >= 0.35) {
-            return (1 - patch) >= patch ? 'gr2' : 'grs';
-        }
-    }
-
-    // 5. 规则② 沙漠成片橙沙（HillshadeWorker 1081-1086；pm2 为牧场斑块不做主底图，温带沙丘归 des）
+    // 4. 规则② 沙漠成片橙沙（HillshadeWorker 1081-1086；pm2 为牧场斑块不做主底图，温带沙丘归 des）
     const desertW = sandiness > 0.3 && colorZ < 2600
         ? rampUpStrategic(sandiness, 0.3, 0.9) * rampUpStrategic(patch, 0.40, 0.70) * 0.55 * snowFade * rampUpStrategic(colorZ, 60, 140)
         : 0;
