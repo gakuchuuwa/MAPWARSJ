@@ -8,9 +8,14 @@ import { pinyin } from 'pinyin-pro';
 import sharp from 'sharp';
 import { replaceCultureSlots, replaceCultureValue } from './tools/culture-formation-save';
 import { replaceUnitStats } from './tools/unit-stats-save';
-import { saveBattlefieldEvent, deleteBattlefieldEvent, type BattlefieldEventDraft } from './tools/battlefield-event-save';
+// 🔴 [2026-10-16] 只许类型导入：静态 import 会把 src/data/WarTypes.ts 拉进「配置依赖」，
+//   兵种改名/改属性一写 WarTypes.ts，Vite 就判定配置变了 → 整个 dev server 重启 → 所有页面慢刷新。
+//   实际函数在请求时用 server.ssrLoadModule 加载（见 /api/battlefield-editor/save 与 /delete）。
+import type { BattlefieldEventDraft } from './tools/battlefield-event-save';
 // 🔴 [2026-10-02] 围栏编辑器存盘兜底校验要用「弧形三种」的原版几何（认形状用），与游戏/评估页同一份
-import { buildStockadeShapeRing as buildStockadeShapeRingForSave } from './src/systems/cityWallShared';
+// 🔴 [2026-10-16] 不许静态 import：cityWallShared → cityDeStyle → RegionSystem → cities_v2.ts，
+//   会把 cities_v2.ts 拉进「配置依赖」，保存据点一写它 Vite 就重启整个 dev server（所有页面慢刷新）。
+//   改为请求时 server.ssrLoadModule 加载（见 /api/stockade-wall-editor/save）。
 
 /** 中文名 → 立绘ID用拼音（与 batch-manager 的 toPinyinId 完全一致） */
 function serverToPinyinId(chinese: string): string {
@@ -93,6 +98,16 @@ function serverSafeWriteFileSync(file: string, content: string): void {
             if (!TRANSIENT.has(e?.code)) {
                 try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
                 throw e;
+            }
+            // [2026-10-16] 实测 custom-names.json / legion-names.json 有句柄不给 FILE_SHARE_DELETE：
+            //   rename 永远 EPERM，但直接覆写可以。rename 连败 3 次就回落直接覆写目标，免得改名卡 6 秒后失败。
+            if (i >= 2) {
+                try {
+                    fs.writeFileSync(file, content, 'utf-8');
+                    try { fs.unlinkSync(tmp); } catch { /* 忽略 */ }
+                    console.log(`  ↻ [SafeWrite] ${path.basename(file)} rename 被占，已回落直接覆写`);
+                    return;
+                } catch { /* 继续退避重试 rename */ }
             }
             const delay = Math.min(50 * Math.pow(2, i), 800);
             const until = Date.now() + delay;
@@ -575,9 +590,10 @@ export default defineConfig({
                     }
                     const chunks: Buffer[] = [];
                     req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
-                    req.on('end', () => {
+                    req.on('end', async () => {
                         try {
                             const draft = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as BattlefieldEventDraft;
+                            const { saveBattlefieldEvent } = await server.ssrLoadModule('/tools/battlefield-event-save.ts');
                             const out = saveBattlefieldEvent(__dirname, draft);
                             // 两个文件都算好、体检通过之后才落盘（原子替换）
                             for (const f of out.files) serverSafeWriteFileSync(f.file, f.content);
@@ -609,8 +625,9 @@ export default defineConfig({
                     }
                     const chunks: Buffer[] = [];
                     req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
-                    req.on('end', () => {
+                    req.on('end', async () => {
                         try {
+                            const { buildStockadeShapeRing: buildStockadeShapeRingForSave } = await server.ssrLoadModule('/src/systems/cityWallShared.ts');
                             const body = JSON.parse(Buffer.concat(chunks).toString('utf-8')) as { styles?: any[] };
                             const styles = Array.isArray(body.styles) ? body.styles : [];
                             // ── 兜底校验（与 cityWallShared.validateStockadeRing 同规则）──
@@ -746,9 +763,10 @@ export default defineConfig({
                     }
                     const chunks: Buffer[] = [];
                     req.on('data', (chunk) => collectBodyChunk(chunks, chunk));
-                    req.on('end', () => {
+                    req.on('end', async () => {
                         try {
                             const d = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
+                            const { deleteBattlefieldEvent } = await server.ssrLoadModule('/tools/battlefield-event-save.ts');
                             const out = deleteBattlefieldEvent(__dirname, d);
                             for (const f of out.files) serverSafeWriteFileSync(f.file, f.content);
                             console.log(`[BattlefieldEditor] 删除【${d.title || d.bfId}】 战场 ${out.battlefields} 条 / 剧本 ${out.script} 条`);

@@ -226,9 +226,12 @@ function injectStyles(): void {
         margin-top: 12px; padding: 10px; border-radius: 4px; font-size: 12px;
         background: #1a3020; color: #9fd4a8; border: 1px solid #3a6a48;
         min-height: 1.2em;
+        /* 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」] */
+        line-height: 1.5; white-space: pre-wrap; user-select: text;
       }
       .pt-save-toast:empty { display: none; }
-      .pt-save-toast.is-error { background: #301a1a; color: #ffb4a8; border-color: #6a3a3a; }
+      .pt-save-toast.is-error { background: #301a1a; color: #ffb4a8; border-color: #6a3a3a; cursor: pointer; }
+      .pt-save-toast.is-error::after { content: '  ✕ 点一下关闭'; opacity: 0.55; font-size: 11px; }
       .pt-gen-portrait {
         width: 100%; aspect-ratio: 3/4; background: #1c1916; border: 1px solid #3a342c;
         border-radius: 4px; overflow: hidden; position: relative; display: none;
@@ -376,19 +379,35 @@ function loadDraftForSelected(): void {
 
 /** toast 自动清除定时器：每次调用先清旧的，避免批量进度被旧定时器提前清掉 */
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
+let toastClickBound = false;
 
+/**
+ * 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+ *  · 错误（isError）＝**不自动消失**，点一下才关（长报错能看完、能复制）；
+ *  · 普通提示按字数给时间（3 秒起、每字 120ms、封顶 12 秒）。
+ */
 function showSaveToast(message: string, isError = false, persist = false): void {
     if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
     els.saveToast.textContent = message;
     els.saveToast.className = isError ? 'pt-save-toast is-error' : 'pt-save-toast';
-    if (persist) return; // 持久显示：批量进度/完成信息不自动清空，等下次操作覆盖
+    els.saveToast.title = isError ? '点一下关闭' : '';
+    if (!toastClickBound) {
+        toastClickBound = true;
+        els.saveToast.addEventListener('click', () => {
+            if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+            els.saveToast.textContent = '';
+            els.saveToast.className = 'pt-save-toast';
+            els.saveToast.title = '';
+        });
+    }
+    if (persist || isError) return; // 持久显示：批量进度/完成信息、错误，等点击或下次操作覆盖
     toastTimer = setTimeout(() => {
         if (els.saveToast.textContent === message) {
             els.saveToast.textContent = '';
             els.saveToast.className = 'pt-save-toast';
         }
         toastTimer = null;
-    }, 3000);
+    }, Math.min(12000, Math.max(3000, message.length * 120)));
 }
 
 function commitDraftToAdjustData(): void {

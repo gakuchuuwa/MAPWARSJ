@@ -433,9 +433,13 @@ function injectStyles(): void {
         border-radius:6px; font-size:13px; z-index:20;
         background:#1a3020; color:#9fd4a8; border:1px solid #3a6a48;
         transition: opacity 0.3s;
+        /* 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」] */
+        max-width:min(760px, 62vw); line-height:1.5; white-space:pre-wrap;
+        user-select:text;
       }
       .bm-toast:empty { display:none; }
-      .bm-toast.is-error { background:#301a1a; color:#ffb4a8; border-color:#6a3a3a; }
+      .bm-toast.is-error { background:#301a1a; color:#ffb4a8; border-color:#6a3a3a; cursor:pointer; }
+      .bm-toast.is-error::after { content:'  ✕ 点一下关闭'; opacity:0.55; font-size:11px; }
     `;
     document.head.appendChild(s);
 }
@@ -2318,10 +2322,30 @@ function renderValidation(): void {
 
 // ── Toast ──
 
+/**
+ * 🔴 [2026-10-16 主人令「错误提示显示太短，还没看完就不显示了，请长一点」]
+ *  · 错误（isError）：**不自动消失，点一下才关**（长报错能看完、能选中复制）；
+ *  · 普通提示：按字数给时间（3.5 秒起、每字 120ms、封顶 12 秒）。
+ */
+let bmToastTimer: number | undefined;
+let bmToastClickBound = false;
 function showToast(msg: string, isError = false): void {
+    window.clearTimeout(bmToastTimer);
     els.toast.textContent = msg;
     els.toast.className = isError ? 'bm-toast is-error' : 'bm-toast';
-    setTimeout(() => { if (els.toast.textContent === msg) els.toast.textContent = ''; }, 4000);
+    els.toast.title = isError ? '点一下关闭' : '';
+    if (!bmToastClickBound) {
+        bmToastClickBound = true;
+        els.toast.addEventListener('click', () => {
+            window.clearTimeout(bmToastTimer);
+            els.toast.textContent = '';
+            els.toast.className = 'bm-toast';
+            els.toast.title = '';
+        });
+    }
+    if (isError) { bmToastTimer = undefined; return; }   // 错误常驻，等主人点
+    bmToastTimer = window.setTimeout(() => { els.toast.textContent = ''; },
+        Math.min(12000, Math.max(3500, msg.length * 120)));
 }
 
 // ── Export 名册 (Markdown) ──
