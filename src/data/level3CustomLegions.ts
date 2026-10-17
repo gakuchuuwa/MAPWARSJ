@@ -74,11 +74,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
     {
         name: '城堡时代十字军团',
-        formationMode: 'triangle',
+        formationMode: 'echelon',
         slots: [
-            { type: 'crossbowman', count: 2 },
-            { type: 'elite_teutonic_knight', count: 3 },
-            { type: 'crusader_knight', count: 4 },
+            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'crusader_knight', count: 2 },
         ],
         regions: ['CRUSADERS'],
         // 🔴 [2026-10-05 主人定「城堡时代十字军团挂法兰克吧」] 十字军主力＝法兰克人
