@@ -45,6 +45,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PRE_QIN'],
         parentLegion: '古典时代秦汉军团',
         shipId: 'LOU_CHUAN',
+        commanderUnit: 'hero_guanyu',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
@@ -62,6 +63,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
         shipId: 'DEMO_RAFT',
+        commanderUnit: 'hero_kushluk',
         buildingStyle: 'CUMAN',
     },
     // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]
@@ -85,6 +87,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    （阿拉伯／拜占庭均称十字军为「法兰克人」），故挂法兰克那条线（封建→城堡两代）。
         parentLegion: '封建时代法兰克军团',
         shipId: 'CARRACK',
+        commanderUnit: 'hero_bernardarmagnac',
         buildingStyle: 'FRANKS',
     },
     {
@@ -98,6 +101,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['DALI'],
         parentLegion: '东亚军团',
         shipId: 'INCENDIARY_SHIP',
+        commanderUnit: 'hero_zhugeliang',
         buildingStyle: 'BASHU',
     },
     {
@@ -111,6 +115,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['IROQUOIS'],
         parentLegion: '中美军团',
         shipId: 'CANOE',
+        commanderUnit: 'hero_cunhambebe',
         buildingStyle: 'AMERICA',
     },
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
@@ -129,6 +134,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
+        commanderUnit: 'hero_guanyu',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
@@ -148,6 +154,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SPANISH'],
         parentLegion: '帝国时代西班牙方阵军团',
         shipId: 'ELITE_CANNON_GALLEON',
+        commanderUnit: 'hero_sforza',
         buildingStyle: 'SPANISH',
     },
     {
@@ -161,6 +168,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PORTUGUESE'],
         parentLegion: '帝国时代葡萄牙军团',
         shipId: 'CARAVEL',
+        commanderUnit: 'hero_edwardlongshanks',
         buildingStyle: 'PORTUGUESE',
     },
     {
@@ -174,6 +182,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MAPUCHE'],
         parentLegion: '帝国时代阿劳卡尼亚军团',
         shipId: 'CANOE',
+        commanderUnit: 'hero_lautaro',
         buildingStyle: 'MAPUCHE',
     },
     {
@@ -187,6 +196,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['OTTOMAN'],
         parentLegion: '帝国时代土耳其军团',
         shipId: 'CANNON_GALLEON',
+        commanderUnit: 'hero_osman',
         buildingStyle: 'TURKS',
     },
     {
@@ -200,6 +210,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '西欧军团',
         shipId: 'TRANSPORT_SHIP',
+        commanderUnit: 'hero_joanofarc',
         // 🔴 [2026-10-18 主人令] 起义军团＝**西方**造反军团（强盗/亡命之徒），建筑文化 WEST；东方农民起义军改用【帝国时代华夏军团】
         buildingStyle: 'WEST',
     },

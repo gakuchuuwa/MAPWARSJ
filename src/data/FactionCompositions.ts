@@ -1534,7 +1534,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xianhai": {
-        legionName: "城堡时代库曼军团",
+        legionName: "封建时代可萨军团",
         legionType: "sub",
     },
     "mengwu": {
@@ -2443,7 +2443,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "meitai": {
-        legionName: "城堡时代阿瓦军团",
+        legionName: "帝国时代东吁军团",
         legionType: "sub",
     },
     "yi": {
@@ -2781,7 +2781,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "ruishi": {
-        legionName: "帝国时代佣兵军团",
+        legionName: "城堡时代德意志骑士团",
         legionType: "sub",
     },
     "mosike_gongguo": {
@@ -3545,7 +3545,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xierwan": {
-        legionName: "城堡时代马穆鲁克军团",
+        legionName: "帝国时代阿拉伯军团",
         legionType: "sub",
     },
     "medang": {
@@ -3689,7 +3689,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "trastamara": {
-        legionName: "城堡时代圣地亚哥骑士团",
+        legionName: "帝国时代西班牙方阵军团",
         legionType: "sub",
     },
     "naxos_ancient": {
