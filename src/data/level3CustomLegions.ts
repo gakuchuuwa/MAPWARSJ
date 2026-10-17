@@ -46,20 +46,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'LOU_CHUAN',
         buildingStyle: 'CENTRAL',
     },
-    {
-        name: '古典时代希腊军团',
-        formationMode: 'echelon',
-        slots: [
-            { type: 'sacred_band', count: 4 },
-            { type: 'hoplite', count: 3 },
-            { type: 'gastraphetes', count: 2 },
-        ],
-        regions: ['GREEK'],
-        // 🔴 [2026-10-05 主人定「这66的父级都是一级」] 三级基础军团的父级＝一级母体 → 古典希腊属希腊军团。
-        parentLegion: '希腊军团',
-        shipId: 'HERO_DIONYSUS',
-        buildingStyle: 'GREECE',
-    },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
     //    原挂它的 2 个势力都不是雇佣兵，已按主人令改挂同族／同地军团：
     //      特洛伊·赫克托耳 → 古典时代色雷斯军团（小亚细亚西北，隔赫勒斯滂与色雷斯相望）

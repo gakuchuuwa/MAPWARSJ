@@ -70,8 +70,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'HERO_AEGINETAN',
         slots: [
             { type: 'polemarch', count: 2 },
-            { type: 'elite_hoplite', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'lysander_raider', count: 3 },
+            { type: 'elite_hippeus', count: 4 },
         ],
     },
     {
@@ -106,11 +106,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'THRACIAN',
         castleId: 'THRACIAN_CASTLE_AGE3', castleName: '色雷斯 罗多彼山蛮族巨石堡',
         formationMode: 'triangle',
-        shipId: 'ELITE_LEMBOS',
+        shipId: 'WAR_LEMBOS',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'elite_hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'thracian_peltast', count: 2 },
+            { type: 'elite_rhomphaia_warrior', count: 3 },
+            { type: 'elite_peltast', count: 4 },
         ],
     },
     {
@@ -2236,7 +2236,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'pikeman', count: 2 },
             { type: 'legionary', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'arbalest', count: 4 },
         ],
     },
     // ── 罗马 · 城堡时代 · 城堡时代十字军骑士　（本次新建）────────────────
@@ -2484,8 +2484,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'BIREME',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_war_chariot', count: 2 },
+            { type: 'mercenary_hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -4048,7 +4048,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'lancer', count: 2 },
             { type: 'hoplite', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
     // ── 雅典 · 城堡时代 · 城堡时代法兰克卫城军团　（本次新建）────────────────
@@ -4101,12 +4101,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'triangle',
-        shipId: 'GALLEY',
+        shipId: 'WAR_LEMBOS',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：斯巴达三百卫士（普通档）当 4 档前排主力（古典军团那份照旧保留）。
         slots: [
             { type: 'polemarch', count: 2 },
-            { type: 'hoplite', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'hippeus', count: 3 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
     // ── 斯巴达 · 城堡时代 · 城堡时代摩里亚军团　（本次新建）────────────────
@@ -4118,7 +4118,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'triangle',
-        shipId: 'GALLEY',
+        shipId: 'HEAVY_LEMBOS',
         slots: [
             { type: 'shock_cavalry', count: 2 },
             { type: 'elite_guardsman', count: 3 },
@@ -4134,7 +4134,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'triangle',
-        shipId: 'GALLEON',
+        shipId: 'ELITE_LEMBOS',
         slots: [
             { type: 'paladin', count: 2 },
             { type: 'champion', count: 3 },
@@ -4164,7 +4164,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'lancer', count: 2 },
             { type: 'phalangite', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
     // ── 马其顿 · 城堡时代 · 城堡时代伦巴第骑兵团　（本次新建）────────────────
@@ -4220,9 +4220,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：色雷斯长刃斩手（普通档）替城堡档的双手剑士。
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'thracian_peltast', count: 2 },
+            { type: 'rhomphaia_warrior', count: 3 },
+            { type: 'elite_peltast', count: 4 },
         ],
     },
     // ── 色雷斯 · 城堡时代 · 城堡时代罗多彼军团　（本次新建）────────────────
@@ -4474,10 +4474,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'triangle',
-        shipId: 'TRIREME',
+        shipId: 'LEMBOS',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_hoplite', count: 2 },
+            { type: 'ekdromos', count: 3 },
             { type: 'cretan_archer', count: 4 },
         ],
     },
@@ -4490,11 +4490,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'triangle',
-        shipId: 'FIRE_SHIP',
+        shipId: 'WAR_LEMBOS',
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'guardsman', count: 3 },
-            { type: 'cretan_archer', count: 4 },
+            { type: 'elite_greek_cavalry', count: 2 },
+            { type: 'hoplite', count: 3 },
+            { type: 'gastraphetes', count: 4 },
         ],
     },
     // ── 爱奥尼亚 · 城堡时代 · 城堡时代士麦那军团　（本次新建）────────────────
@@ -4506,11 +4506,11 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'triangle',
-        shipId: 'GALLEY',
+        shipId: 'HEAVY_LEMBOS',
         slots: [
-            { type: 'shock_cavalry', count: 2 },
-            { type: 'elite_guardsman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'greek_noble_cavalry', count: 2 },
+            { type: 'hoplite', count: 3 },
+            { type: 'gastraphetes', count: 4 },
         ],
     },
     // ── 爱奥尼亚 · 帝国时代 · 帝国时代爱琴要塞军团　（本次新建）────────────────
@@ -4522,7 +4522,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'GREECE',
         castleId: 'GREEK_CASTLE_AGE3', castleName: '爱奥尼亚 希腊古典通用要塞',
         formationMode: 'triangle',
-        shipId: 'GALLEON',
+        shipId: 'ELITE_LEMBOS',
         slots: [
             { type: 'paladin', count: 2 },
             { type: 'champion', count: 3 },
