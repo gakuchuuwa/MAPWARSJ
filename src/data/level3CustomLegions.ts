@@ -45,7 +45,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['PRE_QIN'],
         parentLegion: '古典时代秦汉军团',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_guanyu',
+        commanderUnit: 'hero_lubu',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
@@ -87,7 +87,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         //    （阿拉伯／拜占庭均称十字军为「法兰克人」），故挂法兰克那条线（封建→城堡两代）。
         parentLegion: '封建时代法兰克军团',
         shipId: 'CARRACK',
-        commanderUnit: 'hero_bernardarmagnac',
+        commanderUnit: 'hero_bohemond',
         buildingStyle: 'FRANKS',
     },
     {
@@ -182,16 +182,16 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['MAPUCHE'],
         parentLegion: '帝国时代阿劳卡尼亚军团',
         shipId: 'CANOE',
-        commanderUnit: 'hero_lautaro',
+        commanderUnit: 'hero_galvarino',
         buildingStyle: 'MAPUCHE',
     },
     {
         name: '帝国时代苏丹亲兵军团',
-        formationMode: 'balance_yoke',
+        formationMode: 'echelon',
         slots: [
             { type: 'janissary', count: 4 },
-            { type: 'cav_archer_heavy', count: 2 },
             { type: 'elite_guardsman', count: 3 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
         regions: ['OTTOMAN'],
         parentLegion: '帝国时代土耳其军团',
@@ -210,7 +210,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '西欧军团',
         shipId: 'TRANSPORT_SHIP',
-        commanderUnit: 'hero_joanofarc',
+        commanderUnit: 'hero_ivaylo',
         // 🔴 [2026-10-18 主人令] 起义军团＝**西方**造反军团（强盗/亡命之徒），建筑文化 WEST；东方农民起义军改用【帝国时代华夏军团】
         buildingStyle: 'WEST',
     },

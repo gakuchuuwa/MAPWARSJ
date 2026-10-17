@@ -167,7 +167,7 @@ function eraGlobalPool(era: GeneralEra): string[] {
 /**
  * 248 主将兵模：武将 → 所属文明（按势力据点推）→ 按武将年代取该格兵模。
  * 🔴 [2026-10-05 主人令「每个军团都有主将队」] 武将没有势力、势力查不到文明时，不再返回空，
- *    改从该时代全部文明的兵模池里按本局种子随机取一个（宁可放错，不能不套；绝不兜底成华夏）。
+ *    改从该时代全部文明的兵模池里按本局种子随机取一个（宁可放错，不能不套；绝不兜底成中原）。
  */
 export function resolveCivEraCommander(generalId: string | null | undefined): string | null {
     if (!generalId) return null;
