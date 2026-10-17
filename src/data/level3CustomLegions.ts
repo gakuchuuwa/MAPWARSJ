@@ -101,11 +101,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '城堡时代易洛魁军团',
-        formationMode: 'fish_scale',
+        formationMode: 'echelon',
         slots: [
-            { type: 'eagle_scout', count: 3 },
             { type: 'iroquois_warrior', count: 4 },
-            { type: 'elite_plumed_archer', count: 2 },
+            { type: 'elite_plumed_archer', count: 3 },
+            { type: 'elite_eagle_warrior', count: 2 },
         ],
         regions: ['IROQUOIS'],
         parentLegion: '中美军团',

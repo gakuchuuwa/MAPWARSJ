@@ -964,9 +964,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CARRACK',
         slots: [
-            { type: 'cavalier', count: 2 },
+            { type: 'crusader_knight', count: 2 },
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'arbalest', count: 4 },
+            { type: 'heavy_crossbowman', count: 4 },
         ],
     },
     // ── 高卢 · 帝国时代 · 帝国时代重装骑兵军团　（本次新建）────────────────
@@ -1034,7 +1034,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'cavalier', count: 2 },
             { type: 'flemish_pikeman', count: 3 },
-            { type: 'arbalest', count: 4 },
+            { type: 'heavy_crossbowman', count: 4 },
         ],
     },
     // ── 勃艮第 · 帝国时代 · 帝国时代弗兰德斯军团　（本次新建）────────────────
@@ -1221,7 +1221,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LONGBOAT',
         slots: [
-            { type: 'light_cavalry', count: 2 },
+            { type: 'norse_warrior', count: 2 },
             { type: 'elite_varangian_guard', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],
@@ -2161,7 +2161,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'MONOREME',
         slots: [
             { type: 'scout_cavalry', count: 2 },
-            { type: 'manatarms', count: 3 },
+            { type: 'heavy_swordsman', count: 3 },
             { type: 'archer', count: 4 },
         ],
     },
@@ -2267,7 +2267,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'heavy_pikeman', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -2501,8 +2501,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         slots: [
             { type: 'camel_heavy', count: 2 },
-            { type: 'light_cavalry', count: 3 },
-            { type: 'cav_archer', count: 4 },
+            { type: 'camel_raider', count: 3 },
+            { type: 'eastern_swordsman', count: 4 },
         ],
     },
     // ── 阿拉伯 · 城堡时代 · 城堡时代马穆鲁克军团　（三级升二级）────────────────
@@ -2723,7 +2723,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         slots: [
             { type: 'shock_cavalry', count: 2 },
-            { type: 'raider', count: 3 },
+            { type: 'hill_tribesman', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -2861,7 +2861,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         slots: [
             { type: 'camel_rider', count: 2 },
-            { type: 'guardsman', count: 3 },
+            { type: 'indian_tribesman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -3706,7 +3706,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'TRIREME',
         slots: [
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'tarantine_cavalry', count: 2 },
             { type: 'maceman', count: 3 },
             { type: 'bowman', count: 4 },
         ],
@@ -3900,7 +3900,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'BIREME',
         slots: [
             { type: 'savar', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'sparabara', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -3949,7 +3949,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEON',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'qizilbash_warrior', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -4019,7 +4019,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEON',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'qizilbash_warrior', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
