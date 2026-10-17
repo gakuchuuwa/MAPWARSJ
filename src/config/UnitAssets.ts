@@ -539,15 +539,6 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAV_ARCHER_HEAVY/death_${dir}.png`),
         },
-        // 【西域轻骑兵】Light Cavalry 轻骑兵（8方向，AoE2 DE SLD 素材）
-        'light_riders': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/idle_${dir}.png`),
-            // AoE2 轻骑兵无受击动画，DAMAGE 复用攻击帧
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHT_RIDERS/death_${dir}.png`),
-        },
         // 【江南诸葛弩】Chu Ko Nu 连弩兵（8方向，AoE2 DE SLD 素材；弩手有射击，SHOOT 复用攻击帧）
         'chukonu': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHUKONU/move_${dir}.png`),

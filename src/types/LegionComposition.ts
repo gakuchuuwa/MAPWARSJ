@@ -27,9 +27,9 @@ export const HUAXIA_MIXED_TIERS: CompositionTier[] = [
         gridSize: 3,
         slots: [
             { type: 'pikeman', count: 3 },               // Row 0: 枪步兵
-            { type: 'light_riders', count: 1 },          // Row 1 Left: 枪骑兵
+            { type: 'light_cavalry', count: 1 },         // Row 1 Left: 轻骑兵
             { type: 'tiger_rider', count: 1 },           // Row 1 Center: 将骑兵
-            { type: 'light_riders', count: 1 },          // Row 1 Right: 枪骑兵
+            { type: 'light_cavalry', count: 1 },         // Row 1 Right: 轻骑兵
             { type: 'crossbowman', count: 3 }            // Row 2: 弩步兵
         ]
     }

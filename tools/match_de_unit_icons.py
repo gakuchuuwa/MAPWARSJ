@@ -150,7 +150,6 @@ def main():
         ALIASES = {
             'tiger_rider': 432,
             'camel_heavy': 79,
-            'light_riders': 95,
             'dagnajan_elephant': 209,
             'porus_elephant': 744,
             'gastraphetes': 22,

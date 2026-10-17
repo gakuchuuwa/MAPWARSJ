@@ -36,11 +36,11 @@ export interface Level3LegionDef {
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
         name: '古典时代先秦军团',
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         slots: [
-            { type: 'elite_white_feather_guard', count: 4 },
-            { type: 'fire_archer', count: 3 },
             { type: 'war_chariot_ranged', count: 2 },
+            { type: 'fire_archer', count: 3 },
+            { type: 'elite_white_feather_guard', count: 4 },
         ],
         regions: ['PRE_QIN'],
         parentLegion: '古典时代秦汉军团',
@@ -53,11 +53,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //      伊皮鲁斯·皮洛士 → 古典时代马其顿军团（马其顿式方阵＋战象）
     {
         name: '古典时代斯基泰军团',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'sarmatian', count: 2 },
             { type: 'scythian_axe_cavalry', count: 3 },
             { type: 'scythian_horse_archer', count: 4 },
+            { type: 'sarmatian', count: 2 },
         ],
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
@@ -74,10 +74,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
     {
         name: '城堡时代十字军团',
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'heavy_crossbowman', count: 4 },
             { type: 'heavy_pikeman', count: 3 },
+            { type: 'heavy_crossbowman', count: 4 },
             { type: 'crusader_knight', count: 2 },
         ],
         regions: ['CRUSADERS'],
@@ -102,10 +102,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '城堡时代易洛魁军团',
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'iroquois_warrior', count: 4 },
             { type: 'elite_plumed_archer', count: 3 },
+            { type: 'iroquois_warrior', count: 4 },
             { type: 'elite_eagle_warrior', count: 2 },
         ],
         regions: ['IROQUOIS'],
@@ -120,10 +120,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线：原改名来的「封建时代白山黑水军团」已按主人令删除，封建节点归新名单的「封建时代渤海军团」（`MOHE` 指针已改指它）。
     {
         name: '城堡时代岳家军团',
-        formationMode: 'echelon',
+        formationMode: 'fish_scale',
         slots: [
-            { type: 'liao_dao', count: 4 },
             { type: 'elite_chukonu', count: 3 },
+            { type: 'liao_dao', count: 4 },
             { type: 'elite_keshik', count: 2 },
         ],
         regions: [],
@@ -139,10 +139,10 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     // ───────────────────────────────────────────────────────────────────
     {
         name: '帝国时代西班牙征服军团',
-        formationMode: 'triangle',
+        formationMode: 'crescent',
         slots: [
-            { type: 'conquistador', count: 2 },
             { type: 'heavy_pikeman', count: 3 },
+            { type: 'conquistador', count: 2 },
             { type: 'heavy_crossbowman', count: 4 },
         ],
         regions: ['SPANISH'],
@@ -165,11 +165,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代安第斯游击军团',
-        formationMode: 'triangle',
+        formationMode: 'balance_yoke',
         slots: [
+            { type: 'slinger', count: 4 },
             { type: 'bolas_rider', count: 2 },
             { type: 'kona', count: 3 },
-            { type: 'slinger', count: 4 },
         ],
         regions: ['MAPUCHE'],
         parentLegion: '帝国时代阿劳卡尼亚军团',
@@ -178,11 +178,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '帝国时代苏丹亲兵军团',
-        formationMode: 'fish_scale',
+        formationMode: 'balance_yoke',
         slots: [
-            { type: 'elite_guardsman', count: 3 },
             { type: 'janissary', count: 4 },
             { type: 'cav_archer_heavy', count: 2 },
+            { type: 'elite_guardsman', count: 3 },
         ],
         regions: ['OTTOMAN'],
         parentLegion: '帝国时代土耳其军团',
