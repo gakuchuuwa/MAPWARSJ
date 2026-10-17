@@ -51,10 +51,10 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'triangle',
-        shipId: 'TRIREME',
+        shipId: 'HEAVY_LEMBOS',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'elite_hoplite', count: 3 },
+            { type: 'sacred_band', count: 2 },
+            { type: 'elite_strategos', count: 3 },
             { type: 'cretan_archer', count: 4 },
         ],
     },
@@ -69,9 +69,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'HERO_AEGINETAN',
         slots: [
-            { type: 'polemarch', count: 2 },
-            { type: 'lysander_raider', count: 3 },
-            { type: 'elite_hippeus', count: 4 },
+            { type: 'lysander_raider', count: 2 },
+            { type: 'elite_hippeus', count: 3 },
+            { type: 'rhodian_slinger', count: 4 },
         ],
     },
     {
@@ -4043,12 +4043,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'triangle',
-        shipId: 'GALLEY',
+        shipId: 'HEAVY_LEMBOS',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：雅典将军卫队（普通档）替武装剑士（古典军团那份照旧保留）。
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'sacred_band', count: 2 },
+            { type: 'strategos', count: 3 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 雅典 · 城堡时代 · 城堡时代法兰克卫城军团　（本次新建）────────────────
@@ -4060,7 +4060,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'triangle',
-        shipId: 'GALLEY',
+        shipId: 'HEAVY_LEMBOS',
         slots: [
             { type: 'shock_cavalry', count: 2 },
             { type: 'elite_guardsman', count: 3 },
@@ -4076,7 +4076,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'triangle',
-        shipId: 'GALLEON',
+        shipId: 'HEAVY_LEMBOS',
         slots: [
             { type: 'paladin', count: 2 },
             { type: 'champion', count: 3 },
@@ -4106,7 +4106,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'polemarch', count: 2 },
             { type: 'hippeus', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 斯巴达 · 城堡时代 · 城堡时代摩里亚军团　（本次新建）────────────────
@@ -4340,9 +4340,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'antiquity_light_cavalry', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 4 },
+            { type: 'scythian_axe_cavalry', count: 2 },
+            { type: 'sakan_axeman', count: 3 },
+            { type: 'elite_scythian_horse_archer', count: 4 },
         ],
     },
     // ── 西域 · 封建时代 · 封建时代回鹘军团　（本次新建）────────────────
