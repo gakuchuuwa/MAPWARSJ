@@ -6388,14 +6388,15 @@ export class Scene13WarLayer {
                 const penX = limitX - Math.abs(mapX);
                 const penY = limitY - Math.abs(mapY);
                 if (penX < penY) {
-                    const prevDx = m.prevX - object.x, prevDy = m.prevY - object.y;
-                    const prevMapX = prevDx / TILE_W + prevDy / TILE_H;
-                    const sign = Math.sign(mapX) || Math.sign(prevMapX) || (m.jy >= 0 ? 1 : -1);
+                    // 🔴 [2026-10-18 主人报「这个兵在城门这里呆着总是闪」] 兵正好压在城门中线上时，
+                    //    Math.sign(mapX) 会在 ±0 间逐帧翻转；旧代码再跟 prevMapX 翻 ⇒ 人被左右推来推去闪。
+                    //    中线附近直接用终身不变的 zid 奇偶定侧，位置稳定后不再来回换边。
+                    const stableSign = (m.zid & 1) ? 1 : -1;
+                    const sign = Math.abs(mapX) > 0.01 ? Math.sign(mapX) : stableSign;
                     mapX = sign * limitX;
                 } else {
-                    const prevDx = m.prevX - object.x, prevDy = m.prevY - object.y;
-                    const prevMapY = prevDy / TILE_H - prevDx / TILE_W;
-                    const sign = Math.sign(mapY) || Math.sign(prevMapY) || (m.jy >= 0 ? 1 : -1);
+                    const stableSign = (m.zid & 1) ? 1 : -1;
+                    const sign = Math.abs(mapY) > 0.01 ? Math.sign(mapY) : stableSign;
                     mapY = sign * limitY;
                 }
                 if (m.f === 0) { const wb = this.wallBySprite.get(object); if (wb) { m.blockedBy = wb; m.blockedAt = this.battleSec; } }
@@ -8076,8 +8077,15 @@ export class Scene13WarLayer {
         }
         vis.length = vi;
         const _tsort0 = performance.now();
+        // 🔴 [2026-10-18 主人报「这个兵在城门这里呆着，总是闪」]
+        //    y 只差几像素时，士兵与城墙/城门（environment）会逐帧互换前后：兵贴着墙基站，
+        //    y 被推挤/落脚修正抖 1~2px，跨过 ZORDER_EPS 就翻一次层 ⇒ 看起来人一直闪。
+        //    近墙 12px 内固定「人压在环境之上」（城门洞里本来也是人在墙前），超出 12px 仍按 y 排。
+        const ENV_ZORDER_EPS = 12;
         vis.sort((a, b) => {
             const dy = a.y - b.y;
+            const aEnv = a.kind === 'environment', bEnv = b.kind === 'environment';
+            if (aEnv !== bEnv && Math.abs(dy) < ENV_ZORDER_EPS) return aEnv ? -1 : 1;
             // 拥挤时 y 每帧抖 1~2px，严格按 y 排会让重叠兵「谁上谁下」狂闪 → 接近时用出生序号 zid 定序（终身不变）
             if (Math.abs(dy) < ZORDER_EPS) return a.zid - b.zid;
             return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
