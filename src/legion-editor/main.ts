@@ -1006,12 +1006,18 @@ interface FactionLegionRow {
     row1Type: string;
     row2Type: string;
     row3Type: string;
+    commanderUnit?: string;
 }
 
 /** 编辑器内存态：势力表本身**只存指针**（2026-09-14 副本已删），
  *  编辑界面要显示/改三排兵种，所以在内存里把它挂的那支军团的编制取出来带上。
  *  这份编制**不会**再被写回势力表——保存只写军团自己那条记录。 */
-type EditableLegion = CustomFactionLegion & { formationMode: FormationMode; slots: CompositionSlot[] };
+type EditableLegion = CustomFactionLegion & {
+    formationMode: FormationMode;
+    slots: CompositionSlot[];
+    commanderUnit?: string;
+    tierSlots?: Record<number, { type: string; scale?: number }>;
+};
 
 function toEditableLegion(c: CustomFactionLegion): EditableLegion {
     const comp = getLegionCompositionByName(c.legionName);
@@ -1019,6 +1025,7 @@ function toEditableLegion(c: CustomFactionLegion): EditableLegion {
         ...c,
         formationMode: comp?.formationMode ?? 'square',
         slots: (comp?.slots ?? []).map(s => ({ ...s })),
+        commanderUnit: comp?.commanderUnit,
     };
 }
 
@@ -1633,6 +1640,7 @@ function buildRows(): void {
             row1Type: r1,
             row2Type: r2,
             row3Type: r3,
+            commanderUnit: liveComp?.commanderUnit,
         };
     });
 }
@@ -1830,6 +1838,7 @@ function selectFaction(factionId: string): void {
             formationMode: row.formationMode,
             navalFormation: custom.navalFormation ?? 'auto',
             slots: row.slots.map(s => ({ ...s })),
+            commanderUnit: row.commanderUnit,
         };
     } else {
         // 🔴 [2026-09-09 修复] 势力没有自定义编成时，它跟随**所属文化军团**，必须补齐
@@ -1842,6 +1851,7 @@ function selectFaction(factionId: string): void {
             formationMode: row.formationMode,
             navalFormation: 'auto',
             slots: row.slots.map(s => ({ ...s })),
+            commanderUnit: row.commanderUnit,
         };
     }
 
@@ -1859,14 +1869,14 @@ function getRegionDefaultLegion(region: RegionType): EditableLegion {
     const comp = getRegionLegionComposition(region);
     const formationMode: FormationMode = comp?.formationMode ?? 'square';
     const slots: CompositionSlot[] = comp?.slots ?? getDefaultSlotsForMode(formationMode);
-    return { formationMode, slots: slots.map(s => ({ ...s })) };
+    return { formationMode, slots: slots.map(s => ({ ...s })), commanderUnit: comp?.commanderUnit };
 }
 
 /** 取一级16母体文化军团专属默认编成（与二层时代军团彻底物理隔离） */
 function getBase16RegionDefaultLegion(region: RegionType): EditableLegion {
     const base16 = getBase16FormationConfig(region);
     if (base16) {
-        return { formationMode: base16.formationMode, slots: base16.slots.map(s => ({ ...s })) };
+        return { formationMode: base16.formationMode, slots: base16.slots.map(s => ({ ...s })), commanderUnit: base16.commanderUnit };
     }
     return getRegionDefaultLegion(region);
 }
@@ -2006,6 +2016,7 @@ interface LayerLegionOption {
     legionName: string;
     formationMode: FormationMode;
     slots: CompositionSlot[];
+    commanderUnit?: string;
     description: string;
     shipId?: string;
     shipName?: string;
@@ -2081,6 +2092,7 @@ interface DistinctLegionEntry {
     name: string;
     formationMode: FormationMode;
     slots: CompositionSlot[];
+    commanderUnit?: string;
     fids: string[];
     region?: RegionType;
     buildingStyle?: string;
@@ -2102,7 +2114,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         const name = getBase16LegionName(rg as RegionType);
         if (!map.has(name)) {
             const def = getBase16RegionDefaultLegion(rg as RegionType);
-            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg as RegionType });
+            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), commanderUnit: def.commanderUnit, fids: [], region: rg as RegionType });
         }
     }
     // 1.5 文化区默认军团（二层时代文明军团）：只补母体没占的名字
@@ -2110,7 +2122,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         const def = getRegionDefaultLegion(rg);
         const name = getCultureLegionName(rg);
         if (!map.has(name)) {
-            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), fids: [], region: rg });
+            map.set(name, { name, formationMode: def.formationMode, slots: def.slots.map(s => ({ ...s })), commanderUnit: def.commanderUnit, fids: [], region: rg });
         }
     }
     // 1.6 二级：62 个文明专属军团（权威定义：62 文明 × 时代专属城堡）
@@ -2120,6 +2132,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 name: l2.name,
                 formationMode: l2.formationMode,
                 slots: l2.slots.map(s => ({ ...s })),
+                commanderUnit: l2.commanderUnit,
                 fids: [],
                 region: l2.region as RegionType,
                 buildingStyle: l2.buildingStyle,
@@ -2129,6 +2142,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
             const existing = map.get(l2.name)!;
             existing.formationMode = l2.formationMode;
             existing.slots = l2.slots.map(s => ({ ...s }));
+            if (l2.commanderUnit) existing.commanderUnit = l2.commanderUnit;
             if (!existing.region) existing.region = l2.region as RegionType;
             if (!existing.buildingStyle) existing.buildingStyle = l2.buildingStyle;
         }
@@ -2152,6 +2166,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 name: l3.name,
                 formationMode: l3.formationMode,
                 slots: l3.slots.map(s => ({ ...s })),
+                commanderUnit: l3.commanderUnit,
                 fids: [],
                 region: l3.regions?.[0] as RegionType | undefined,
                 buildingStyle: l3.buildingStyle,
@@ -2176,6 +2191,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
                 name,
                 formationMode: live?.formationMode ?? 'square',
                 slots: (live?.slots ?? []).map(s => ({ ...s })),
+                commanderUnit: live?.commanderUnit,
                 fids: [],
             };
             map.set(name, entry);
@@ -2206,6 +2222,7 @@ function getAllDistinctLegions(): Map<string, DistinctLegionEntry> {
         if (!live) continue;
         entry.formationMode = live.formationMode;
         entry.slots = live.slots.map(s => ({ ...s }));
+        entry.commanderUnit = live.commanderUnit;
     }
     return map;
 }
@@ -2233,6 +2250,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
                 legionName: name,
                 formationMode: def.formationMode,
                 slots: def.slots.map(s => ({ ...s })),
+                commanderUnit: def.commanderUnit,
                 description: `${cultName} · ${fidsCount ? `${fidsCount} 势力使用` : '文化默认'} · ${legionSummary(def.formationMode, def.slots)}`,
                 shipId,
                 shipName,
@@ -2264,6 +2282,7 @@ function getLayerLegionOptions(layer: LegionLayer, currentFactionId: string): La
             legionName: entry.name,
             formationMode: entry.formationMode,
             slots: entry.slots.map(s => ({ ...s })),
+            commanderUnit: entry.commanderUnit,
             description,
             shipId,
             shipName,
@@ -2291,9 +2310,9 @@ function resolveCurrentLayer(row: FactionLegionRow): LegionLayer {
     if (lt === 'sub') return 'sub';
     return classifyLegionTab(getBase16LegionName(row.region), 0);
 }
-/** 编制铁律：前/中/后三排兵种 + 阵型；缩放不产生新编制，人数由阵型确定。 */
-function legionSig(v: { formationMode: string; slots: { type: string; count: number }[] }): string {
-    return v.formationMode + '|' + v.slots.map(s => s.type).join(',');
+/** 编制铁律：前/中/后三排兵种 + 阵型 + 英雄主队；缩放不产生新编制，人数由阵型确定。 */
+function legionSig(v: { formationMode: string; slots: { type: string; count: number }[]; commanderUnit?: string }): string {
+    return v.formationMode + '|' + v.slots.map(s => s.type).join(',') + '|' + (v.commanderUnit || '');
 }
 
 /** 军团卡是否处于「当前生效」态：显式选中 > 与当前编辑配置同编成同名 */
@@ -3191,10 +3210,28 @@ function renderEditPanel(row: FactionLegionRow): void {
       <div class="le-legion-grid"></div>
     </div>
 
-    <!-- 第一步 · 三排兵 -->
+    <!-- 第一步 · 英雄主队 + 三排兵 -->
     <div class="le-wizard-step">
       <div class="le-step-no">第一步</div>
-      <div class="le-step-title">三排兵种搭配（点击选择兵种）</div>
+      <div class="le-step-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <span>英雄主队 ＋ 三排兵种搭配（切阵型 2/3/4 档自动跟随）</span>
+        <span style="display:inline-flex;gap:4px;">
+          <button type="button" class="le-btn le-btn-sm le-row-swap" data-a="0" data-b="1" title="一键对调前排与中坚兵种" style="padding:2px 7px;font-size:11px;">⇅ 前↔中</button>
+          <button type="button" class="le-btn le-btn-sm le-row-swap" data-a="1" data-b="2" title="一键对调中坚与后排兵种" style="padding:2px 7px;font-size:11px;">⇅ 中↔后</button>
+          <button type="button" class="le-btn le-btn-sm le-row-swap" data-a="0" data-b="2" title="一键对调前排与后排兵种" style="padding:2px 7px;font-size:11px;">⇅ 前↔后</button>
+        </span>
+      </div>
+
+      <div class="le-row-picker" style="border-color:#5a4622;background:#1f1a12;">
+        <div class="le-row-header">
+          <span class="le-row-title" style="color:#f5d78e;">👑 英雄主力队（第 10 队 · 全阵矛头）</span>
+          ${currentEditingLegion.commanderUnit ? `<button type="button" id="le-commander-clear" class="le-btn le-btn-sm" style="padding:1px 6px;font-size:10px;" title="清空军团专属英雄兵模，回退默认英雄">✕ 清空</button>` : `<span style="font-size:10px;color:#8a8070;">未指定则按武将/文明默认</span>`}
+        </div>
+        <button type="button" class="le-unit-select-btn" data-row="-1">
+          <span>${currentEditingLegion.commanderUnit ? getUnitDisplayName(currentEditingLegion.commanderUnit) : '（默认 · 点击指定本军团英雄主力兵模）'}</span>
+          <span style="font-size:11px;color:#f5d78e;">${currentEditingLegion.commanderUnit ? getUnitDisplayName(currentEditingLegion.commanderUnit) : '选择英雄'} ▾</span>
+        </button>
+      </div>
 
       <div class="le-row-picker">
         <div class="le-row-header">
@@ -3376,6 +3413,7 @@ function renderEditPanel(row: FactionLegionRow): void {
                 + (row.eliteName ? ` ｜ 精锐番号：${row.eliteName} T${row.eliteTier}` : ''),
             `军团：${legionName}（${LAYER_FULL_LABEL[curLayer]}）`,
             `阵型：${getFormationModeLabel(mode)}`,
+            ...(currentEditingLegion?.commanderUnit ? [`英雄主队：${getUnitDisplayName(currentEditingLegion.commanderUnit)}`] : []),
             ...slots.map((sl, i) => `${rowLabels[i] ?? '第' + (i + 1) + '排'}：${getUnitDisplayName(sl.type)} ×${sl.count}`),
             `战舰：${ship}`,
             `战力：${power}`,
@@ -3409,16 +3447,73 @@ function renderEditPanel(row: FactionLegionRow): void {
 }
 
 function bindPanelEvents(row: FactionLegionRow): void {
-    // 阵型切换
+    // 阵型切换（2 / 3 / 4 档位兵种自动跟随）
     els.panelContent.querySelectorAll('.le-mode-btn[data-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
             const mode = (btn as HTMLElement).dataset.mode as FormationMode;
             if (currentEditingLegion && currentEditingLegion.formationMode !== mode) {
+                const oldCounts = getDefaultSlotsForMode(currentEditingLegion.formationMode).map(s => s.count);
+                const newCounts = getDefaultSlotsForMode(mode).map(s => s.count);
+                const oldDistinct = new Set(oldCounts).size === 3;
+                const newDistinct = new Set(newCounts).size === 3;
+                if (!currentEditingLegion.tierSlots) currentEditingLegion.tierSlots = {};
+                if (oldDistinct) {
+                    oldCounts.forEach((cnt, idx) => {
+                        const sl = currentEditingLegion!.slots[idx];
+                        if (sl) currentEditingLegion!.tierSlots![cnt] = { type: sl.type, scale: sl.scale };
+                    });
+                }
+                if (newDistinct && currentEditingLegion.tierSlots[2] && currentEditingLegion.tierSlots[3] && currentEditingLegion.tierSlots[4]) {
+                    currentEditingLegion.slots = newCounts.map((cnt, idx) => {
+                        const saved = currentEditingLegion!.tierSlots![cnt];
+                        const fallback = currentEditingLegion!.slots[idx];
+                        return {
+                            type: saved?.type || fallback?.type || 'swordsman',
+                            count: cnt,
+                            ...(saved?.scale !== undefined ? { scale: saved.scale } : (fallback?.scale !== undefined ? { scale: fallback.scale } : {})),
+                        };
+                    });
+                } else {
+                    currentEditingLegion.slots = convertSlotsToMode(currentEditingLegion.slots, mode);
+                }
                 currentEditingLegion.formationMode = mode;
-                currentEditingLegion.slots = convertSlotsToMode(currentEditingLegion.slots, mode);
                 renderEditPanel(row);
             }
         });
+    });
+
+    // 三排之间一键对调
+    els.panelContent.querySelectorAll('.le-row-swap').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!currentEditingLegion) return;
+            const a = parseInt((btn as HTMLElement).dataset.a!, 10);
+            const b = parseInt((btn as HTMLElement).dataset.b!, 10);
+            const slA = currentEditingLegion.slots[a];
+            const slB = currentEditingLegion.slots[b];
+            if (!slA || !slB) return;
+            const tmpType = slA.type;
+            const tmpScale = slA.scale;
+            slA.type = slB.type;
+            slA.scale = slB.scale;
+            slB.type = tmpType;
+            slB.scale = tmpScale;
+            const counts = getDefaultSlotsForMode(currentEditingLegion.formationMode).map(s => s.count);
+            if (new Set(counts).size === 3) {
+                currentEditingLegion.tierSlots = {};
+                counts.forEach((cnt, idx) => {
+                    const sl = currentEditingLegion!.slots[idx];
+                    if (sl) currentEditingLegion!.tierSlots![cnt] = { type: sl.type, scale: sl.scale };
+                });
+            }
+            renderEditPanel(row);
+        });
+    });
+
+    // 清空军团专属英雄兵模
+    document.getElementById('le-commander-clear')?.addEventListener('click', () => {
+        if (!currentEditingLegion) return;
+        currentEditingLegion.commanderUnit = undefined;
+        renderEditPanel(row);
     });
 
     // 兵种选择弹窗打开
@@ -3500,6 +3595,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
             formationMode: savedLegion.formationMode,
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             slots: savedLegion.slots.map(s => ({ ...s })),
+            commanderUnit: savedLegion.commanderUnit,
         };
         buildRows();
         applyFilter();
@@ -3523,16 +3619,17 @@ function bindPanelEvents(row: FactionLegionRow): void {
         }
         const slots = currentEditingLegion.slots.map(s => ({ ...s }));
         const formationMode = currentEditingLegion.formationMode;
+        const commanderUnit = currentEditingLegion.commanderUnit?.trim() || null;
         try {
             const res = await fetch('/api/save-legion-composition', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ legionName, formationMode, slots }),
+                body: JSON.stringify({ legionName, formationMode, slots, commanderUnit }),
             });
             const json = await res.json();
             if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
             // 内存同步：静态表是页面加载时导入的，不同步的话下面重绘会把界面刷回旧编制
-            patchLegionComposition(legionName, slots, formationMode);
+            patchLegionComposition(legionName, slots, formationMode, undefined, commanderUnit);
             // 🔴 [2026-09-14 主人报障「保存后为什么不刷新」] 只打补丁不够：
             //    localCustomCompositions 是**页面加载时按军团记录解出来的快照**，
             //    保存后它还留着旧编制，buildRows 优先读它 → 表格纹丝不动。
@@ -3568,11 +3665,12 @@ function bindPanelEvents(row: FactionLegionRow): void {
         //    「势力指向不存在的军团」，三排兵种全丢。
         const slots = currentEditingLegion.slots.map(s => ({ ...s }));
         const formationMode = currentEditingLegion.formationMode;
+        const commanderUnit = currentEditingLegion.commanderUnit?.trim() || null;
         try {
             const res = await fetch('/api/save-legion-composition', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ legionName: newName, formationMode, slots }),
+                body: JSON.stringify({ legionName: newName, formationMode, slots, commanderUnit }),
             });
             const json = await res.json();
             if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
@@ -3580,7 +3678,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
             showToast('❌ 新军团创建失败：' + (e?.message || e), true);
             return;
         }
-        patchLegionComposition(newName, slots, formationMode);
+        patchLegionComposition(newName, slots, formationMode, undefined, commanderUnit);
         currentEditingLegion.legionName = newName;
         localCustomCompositions[row.factionId] = {
             ...localCustomCompositions[row.factionId],
@@ -3589,6 +3687,7 @@ function bindPanelEvents(row: FactionLegionRow): void {
             navalFormation: currentEditingLegion.navalFormation ?? 'auto',
             formationMode,
             slots,
+            commanderUnit: commanderUnit || undefined,
         };
         buildRows();
         applyFilter();
@@ -3656,11 +3755,21 @@ function bindLegionCard(card: HTMLElement, row: FactionLegionRow): void {
         const target = options.find(o => o.key === key);
         if (!target) { showToast('找不到该军团配置', true); return; }
 
+        const tierSlots: Record<number, { type: string; scale?: number }> = {};
+        if (target.formationMode !== 'square') {
+            target.slots.forEach(s => {
+                if (s.count === 2 || s.count === 3 || s.count === 4) {
+                    tierSlots[s.count] = { type: s.type, scale: s.scale };
+                }
+            });
+        }
         currentEditingLegion = {
             legionName: target.legionName,
             formationMode: target.formationMode,
             navalFormation: currentEditingLegion?.navalFormation ?? 'auto',
             slots: target.slots.map(s => ({ ...s })),
+            commanderUnit: target.commanderUnit,
+            tierSlots,
             legionType: isBase16CultureLegion(target.legionName) ? 'region' : 'sub',
         };
         selectedLayerKey = key;
@@ -4047,11 +4156,23 @@ function updateRowUnit(legion: EditableLegion, rowIdx: number, unitId: string): 
     else if (mode === 'balance_yoke') counts = [4, 2, 3];
     else if (mode === 'square') counts = [3, 3, 3];
 
-    legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: legion.slots[rowIdx]?.scale ?? defScale };
+    const sc = legion.slots[rowIdx]?.scale ?? defScale;
+    legion.slots[rowIdx] = { type: unitId, count: counts[rowIdx], scale: sc };
+    if (mode !== 'square') {
+        if (!legion.tierSlots) legion.tierSlots = {};
+        legion.tierSlots[counts[rowIdx]] = { type: unitId, scale: sc };
+    }
 }
 
 function updateRowScale(legion: EditableLegion, rowIdx: number, scale: number): void {
-    if (legion.slots[rowIdx]) legion.slots[rowIdx].scale = scale;
+    if (legion.slots[rowIdx]) {
+        legion.slots[rowIdx].scale = scale;
+        const cnt = legion.slots[rowIdx].count;
+        if (legion.formationMode !== 'square' && (cnt === 2 || cnt === 3 || cnt === 4)) {
+            if (!legion.tierSlots) legion.tierSlots = {};
+            legion.tierSlots[cnt] = { type: legion.slots[rowIdx].type, scale };
+        }
+    }
 }
 
 // ============================================================
@@ -4062,12 +4183,15 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     const overlay = document.createElement('div');
     overlay.className = 'le-modal-overlay';
 
-    let currentTab: UnitCategory = 'infantry';
+    const isCommander = rowIdx === -1;
+    let currentTab: UnitCategory = isCommander ? 'hero' : 'infantry';
     let unitSearch = '';
     let isSearchComposing = false;
     /** 兵种鉴赏同款「子分类」筛选（刀盾/长矛/弓手/弩手/战骑/弓骑…） */
     let currentSub: 'all' | SubCategory = 'all';
-    const rowTitle = ['前排', '中坚', '后排'][rowIdx];
+    const rowTitle = isCommander ? '英雄（主队 · 第 10 队）' : ['前排', '中坚', '后排'][rowIdx];
+    const isAllowed = (u: { id: string; category: UnitCategory }) =>
+        !isCommander || (u.category !== 'naval' && getUnitSubcategory(u.id) !== 'naval_hero');
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
@@ -4081,14 +4205,14 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 
     const renderModalContent = () => {
         const q = unitSearch.trim().toLowerCase();
-        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤
+        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤（主将队过滤战船）
         const units = (q
-            ? DE_UNITS_CATALOG.filter(u => u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q))
-            : DE_UNITS_CATALOG.filter(u => u.category === currentTab))
+            ? DE_UNITS_CATALOG.filter(u => isAllowed(u) && (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)))
+            : DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === currentTab))
             .filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub)
             .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
-        const subOptions = SUBCATEGORY_BY_CATEGORY[currentTab] || [];
-        const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => getUnitSubcategory(u.id) === s).length;
+        const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab] || []).filter(s => !isCommander || s !== 'naval_hero');
+        const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => isAllowed(u) && getUnitSubcategory(u.id) === s).length;
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -4100,13 +4224,13 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <div class="le-modal-tab ${currentTab === 'cavalry' ? 'active' : ''}" data-cat="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='cavalry').length})</div>
             <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
             <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
-            <div class="le-modal-tab ${currentTab === 'naval' ? 'active' : ''}" data-cat="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u=>u.category==='naval').length})</div>
-            <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>u.category==='hero').length})</div>
+            ${isCommander ? '' : `<div class="le-modal-tab ${currentTab === 'naval' ? 'active' : ''}" data-cat="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u=>u.category==='naval').length})</div>`}
+            <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>isAllowed(u) && u.category==='hero').length})</div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;padding:8px 12px 0;">
             <span style="font-size:11px;color:#a89f8f;white-space:nowrap;">子分类:</span>
             <select id="le-unit-subfilter" class="le-select" style="flex:1;padding:2px 6px;font-size:12px;">
-              <option value="all">全部子类 (${DE_UNITS_CATALOG.filter(u => u.category === currentTab).length})</option>
+              <option value="all">全部子类 (${DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === currentTab).length})</option>
               ${subOptions.map(s => `<option value="${s}" ${currentSub === s ? 'selected' : ''}>${SUBCATEGORY_LABEL[s]} (${subCount(s)})</option>`).join('')}
             </select>
           </div>
@@ -4194,7 +4318,11 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 e.stopPropagation();
                 const uid = (card as HTMLElement).dataset.uid!;
                 if (currentEditingLegion) {
-                    updateRowUnit(currentEditingLegion, rowIdx, uid);
+                    if (isCommander) {
+                        currentEditingLegion.commanderUnit = uid;
+                    } else {
+                        updateRowUnit(currentEditingLegion, rowIdx, uid);
+                    }
                     renderEditPanel(row);
                 }
                 closeModal();

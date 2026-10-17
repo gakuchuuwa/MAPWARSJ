@@ -377,11 +377,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
+        commanderUnit: 'hero_caocao',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'elite_tiger_cavalry', count: 3 },
-            { type: 'white_feather_guard', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'white_feather_guard', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'elite_tiger_cavalry', count: 2 },
         ],
     },
     // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────
@@ -408,12 +409,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代燕云军团', civ: '河朔', age: 'castle', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'hei_kuang', count: 2 },
             { type: 'elite_fire_lancer', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
+            { type: 'hei_kuang', count: 2 },
         ],
     },
     // ── 河朔 · 帝国时代 · 帝国时代大明军团　（三级升二级）────────────────
@@ -424,12 +425,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代大明军团', civ: '河朔', age: 'imperial', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'triangle',
-        shipId: 'DRAGON_SHIP',
+        formationMode: 'fish_scale',
+        shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'paladin', count: 2 },
             { type: 'fire_lancer', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'mangudai', count: 2 },
         ],
     },
 
@@ -441,12 +442,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代吴越军团', civ: '江南', age: 'antiquity', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // ── 江南 · 封建时代 · 封建时代南朝军团　（本次新建）────────────────
@@ -457,13 +458,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代南朝军团', civ: '江南', age: 'feudal', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：火焰弓箭手普通档（精锐留古典军团）。
         slots: [
-            { type: 'guardsman', count: 2 },
             { type: 'jian_swordman_shielded', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'fire_archer', count: 4 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // ── 江南 · 城堡时代 · 城堡时代临安军团　（本次新建）────────────────
@@ -474,12 +475,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代临安军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'raider', count: 2 },
             { type: 'elite_fire_lancer', count: 3 },
-            { type: 'gastraphetes', count: 4 },
+            { type: 'chukonu', count: 4 },
+            { type: 'elite_fire_archer', count: 2 },
         ],
     },
     // ── 江南 · 帝国时代 · 帝国时代两江军团　（本次新建）────────────────
@@ -490,12 +491,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代两江军团', civ: '江南', age: 'imperial', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'paladin', count: 2 },
             { type: 'fire_lancer', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'hei_kuang', count: 2 },
         ],
     },
 
@@ -510,12 +511,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代巴蜀军团', civ: '巴蜀', age: 'antiquity', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
+        commanderUnit: 'hero_liubei',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'elite_white_feather_guard', count: 3 },
+            { type: 'chukonu', count: 4 },
+            { type: 'fire_archer', count: 2 },
         ],
     },
     // ── 巴蜀 · 封建时代 · 封建时代剑南军团　（本次新建）────────────────
@@ -526,13 +528,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代剑南军团', civ: '巴蜀', age: 'feudal', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：蜀白毦兵（普通档）替下借来的中国诸葛弩。
         slots: [
-            { type: 'guardsman', count: 2 },
-            { type: 'swordsman', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'liao_dao', count: 3 },
+            { type: 'elite_chukonu', count: 4 },
+            { type: 'elite_fire_archer', count: 2 },
         ],
     },
     // ── 巴蜀 · 城堡时代 · 城堡时代山城军团　（本次新建）────────────────
@@ -543,12 +545,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代山城军团', civ: '巴蜀', age: 'castle', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'raider', count: 2 },
-            { type: 'paragon', count: 3 },
-            { type: 'gastraphetes', count: 4 },
+            { type: 'jian_swordman_unshielded', count: 3 },
+            { type: 'elite_fire_lancer', count: 4 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // ── 巴蜀 · 帝国时代 · 帝国时代四川军团　（本次新建）────────────────
@@ -559,12 +561,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代四川军团', civ: '巴蜀', age: 'imperial', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'jian_swordsman', count: 3 },
+            { type: 'fire_lancer', count: 4 },
+            { type: 'elite_chukonu', count: 2 },
         ],
     },
 
@@ -2917,8 +2919,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    ⇒ 拉塔弓战车精锐（孟加拉自家城堡兵）压到 2 档；桑纳亚战象高级（普鲁马厩专属，借调而来）离队；
         //      空出的 3 档用非城堡精锐补位——印度部落民（3 档·前排）＋帕提尤达长弓兵基础档（4 档·后排）。
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'ratha_ranged', count: 2 },
+            { type: 'indian_tribesman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -2935,8 +2937,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：拉塔战车（普通档）在编；
         //    ②按「象兵、战车只能安排在 2 档」＋「象车不能同队」：拉塔战车压到 2 档，战斗象高级离队。
         slots: [
-            { type: 'elite_elephant_archer', count: 2 },
-            { type: 'swordsman', count: 3 },
+            { type: 'elite_ratha_ranged', count: 2 },
+            { type: 'indian_tribesman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
     },
@@ -2951,7 +2953,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'THIRISADAI',
         slots: [
-            { type: 'elephant_archer', count: 2 },
+            { type: 'ratha_melee', count: 2 },
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -2967,7 +2969,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEON',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_ratha_melee', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
