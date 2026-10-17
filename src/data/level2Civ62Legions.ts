@@ -22,6 +22,7 @@ export interface Level2CivLegionDef {
     formationMode: FormationMode;
     slots: CompositionSlot[];
     shipId: string; // 🔴 [2026-09-16 主人定] 二级军团与四时代海军模型强绑定
+    commanderUnit?: string; // 英雄（主队 · 第 10 队）兵模
 }
 
 export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
@@ -188,7 +189,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'TURTLE_SHIP',
         slots: [
-            { type: 'raider', count: 2 },
+            { type: 'hei_kuang', count: 2 },
             { type: 'paragon', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
@@ -374,13 +375,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代魏晋军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'elite_tiger_cavalry', count: 3 },
+            { type: 'white_feather_guard', count: 4 },
+            { type: 'chukonu', count: 2 },
         ],
     },
     // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────
@@ -394,7 +395,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'hei_kuang', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'xianbei_raider', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -410,9 +411,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'raider', count: 2 },
+            { type: 'hei_kuang', count: 2 },
             { type: 'elite_fire_lancer', count: 3 },
-            { type: 'gastraphetes', count: 4 },
+            { type: 'elite_fire_archer', count: 4 },
         ],
     },
     // ── 河朔 · 帝国时代 · 帝国时代大明军团　（三级升二级）────────────────
@@ -581,8 +582,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
         ],
     },
@@ -597,7 +598,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'hei_kuang', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'xianbei_raider', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -649,8 +650,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
         ],
     },
@@ -665,7 +666,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'hei_kuang', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'xianbei_raider', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],
@@ -771,7 +772,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
+            { type: 'antiquity_spearman', count: 2 },
             { type: 'maceman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -787,7 +788,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'hei_kuang', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'swordsman', count: 3 },
             { type: 'laminated_bowman', count: 4 },
         ],
@@ -1136,8 +1137,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'MONOREME',
         slots: [
-            { type: 'antiquity_scout_cavalry', count: 2 },
-            { type: 'elite_woad_raider', count: 3 },
+            { type: 'elite_woad_raider', count: 2 },
+            { type: 'maceman', count: 3 },
             { type: 'bowman', count: 4 },
         ],
     },
@@ -1153,8 +1154,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：凯尔特靛蓝突袭者（普通档）替链甲剑士。
         slots: [
-            { type: 'light_cavalry', count: 2 },
-            { type: 'woad_raider', count: 3 },
+            { type: 'woad_raider', count: 2 },
+            { type: 'spearman', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],
     },
@@ -4408,8 +4409,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
-            { type: 'xianbei_raider', count: 3 },
+            { type: 'xianbei_raider', count: 2 },
+            { type: 'antiquity_light_cavalry', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],
     },
@@ -4424,7 +4425,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'hei_kuang', count: 2 },
+            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'xianbei_raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
@@ -4440,7 +4441,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'hei_kuang', count: 2 },
             { type: 'elite_fire_lancer', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],

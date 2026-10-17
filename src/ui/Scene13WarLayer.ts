@@ -11,7 +11,7 @@
  *   - Scene13MapWaterAdapter.ts  ：战术水体搬迁与真实海向自适应校正
  */
 
-import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
