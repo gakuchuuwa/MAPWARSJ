@@ -34,19 +34,6 @@ export interface Level3LegionDef {
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
-        name: '古典时代亚马逊军团',
-        formationMode: 'crane_wing',
-        slots: [
-            { type: 'amazon_archer', count: 2 },
-            { type: 'amazon_warrior', count: 4 },
-            { type: 'elite_scythian_horse_archer', count: 3 },
-        ],
-        regions: ['AMAZONS'],
-        parentLegion: '古典时代色雷斯军团',
-        shipId: 'ELITE_LEMBOS',
-        buildingStyle: 'THRACIAN',
-    },
-    {
         name: '古典时代先秦军团',
         formationMode: 'echelon',
         slots: [
@@ -141,19 +128,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
     //    文化区 `ROURAN` 的默认军团与挂它的势力一并改指「封建漠北军团」。
-    {
-        name: '封建时代粟特军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'elite_skirmisher', count: 3 },
-            { type: 'sogdian_cataphract', count: 4 },
-            { type: 'elite_kipchak', count: 2 },
-        ],
-        regions: ['SOGDIANS'],
-        parentLegion: '中亚军团',
-        shipId: 'DEMO_RAFT',
-        buildingStyle: 'CENTRAL_ASIA',
-    },
     // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除」] —— 已删「封建时代高句丽军团」。
     //    理由：`KOREA` 那 9 座（国内城／平壤／开城／金城／泗沘…）在**朝鲜半岛**，划归朝鲜半岛那条线；
     //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线：原改名来的「封建时代白山黑水军团」已按主人令删除，封建节点归新名单的「封建时代渤海军团」（`MOHE` 指针已改指它）。

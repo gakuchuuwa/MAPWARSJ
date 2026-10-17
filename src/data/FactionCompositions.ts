@@ -1362,7 +1362,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "yamaxun": {
-        legionName: "古典时代亚马逊军团",
+        legionName: "古典时代爱奥尼亚军团",
         legionType: "sub",
     },
     "talanduo": {

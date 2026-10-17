@@ -39,7 +39,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'antiquity_spearman', count: 2 },
             { type: 'legionary', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     {
@@ -55,7 +55,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'antiquity_spearman', count: 2 },
             { type: 'elite_hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     {
@@ -71,7 +71,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'polemarch', count: 2 },
             { type: 'elite_hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     {
@@ -94,7 +94,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'antiquity_spearman', count: 2 },
             { type: 'elite_phalangite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     {
@@ -156,7 +156,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
@@ -237,7 +237,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
@@ -342,7 +342,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'raider', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'elite_fire_lancer', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
     },
@@ -358,7 +358,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'fire_lancer', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -411,7 +411,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'raider', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'elite_fire_lancer', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
     },
@@ -427,7 +427,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'fire_lancer', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -477,7 +477,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'raider', count: 2 },
-            { type: 'jian_swordsman', count: 3 },
+            { type: 'elite_fire_lancer', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
     },
@@ -493,7 +493,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'fire_lancer', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -613,7 +613,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'raider', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'paragon', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
@@ -629,7 +629,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -681,7 +681,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'halberdier', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
@@ -697,7 +697,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'WAR_GALLEY',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -751,7 +751,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -1033,7 +1033,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CARAVEL',
         slots: [
             { type: 'cavalier', count: 2 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'flemish_pikeman', count: 3 },
             { type: 'arbalest', count: 4 },
         ],
     },
@@ -1049,7 +1049,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_CARAVEL',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'flemish_pikeman_f', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -1783,7 +1783,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_CARAVEL',
         slots: [
             { type: 'halberdier', count: 2 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'hussar', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
     },
@@ -1799,7 +1799,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'winged_hussar', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -2056,7 +2056,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_CARAVEL',
         slots: [
             { type: 'halberdier', count: 2 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'hussar', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
     },
@@ -2072,7 +2072,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEON',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'winged_hussar', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -2236,7 +2236,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'pikeman', count: 2 },
             { type: 'legionary', count: 3 },
-            { type: 'arbalest', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 罗马 · 城堡时代 · 城堡时代十字军骑士　（本次新建）────────────────
@@ -2573,9 +2573,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'antiquity_light_cavalry', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 4 },
+            { type: 'sarmatian', count: 2 },
+            { type: 'amazon_warrior', count: 3 },
+            { type: 'amazon_archer', count: 4 },
         ],
     },
     // ── 库曼 · 封建时代 · 封建时代可萨军团　（三级升二级）────────────────
@@ -2589,7 +2589,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'MONOREME',
         slots: [
-            { type: 'shock_cavalry', count: 2 },
+            { type: 'sogdian_cataphract', count: 2 },
             { type: 'raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
@@ -2610,7 +2610,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -2635,8 +2635,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    （全库 3 个古典步兵缺素材之一，上阵渲染兜底）→ 换同属近东古典、有素材的【波斯持盾兵特殊】。
         //    军团改名：赫梯战车军团 → 古典时代赫梯军团。
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_war_chariot', count: 2 },
+            { type: 'sickle_warrior', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -2706,9 +2706,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'antiquity_light_cavalry', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 4 },
+            { type: 'sogdian_cataphract', count: 2 },
+            { type: 'guardsman', count: 3 },
+            { type: 'bactrian_archer', count: 4 },
         ],
     },
     // ── 河中 · 封建时代 · 封建时代河中重骑军团　（本次新建）────────────────
@@ -2738,7 +2738,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'imperial_cavalry', count: 2 },
+            { type: 'steppe_lancer', count: 2 },
             { type: 'raider', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
@@ -2754,7 +2754,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DEMO_RAFT',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_steppe_lancer', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -2860,7 +2860,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'lancer', count: 2 },
+            { type: 'camel_rider', count: 2 },
             { type: 'guardsman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -2876,7 +2876,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'HEAVY_INCENDIARY_SHIP',
         slots: [
-            { type: 'shock_cavalry', count: 2 },
+            { type: 'camel_heavy', count: 2 },
             { type: 'elite_guardsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -2892,7 +2892,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'HEAVY_INCENDIARY_SHIP',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'imperial_camel_rider', count: 2 },
             { type: 'champion', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -3314,7 +3314,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEON',
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_fire_lancer', count: 2 },
             { type: 'imperial_skirmisher', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
@@ -3643,8 +3643,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'champi_warrior', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'bolas_rider', count: 2 },
+            { type: 'champi_warrior', count: 3 },
             { type: 'slinger', count: 4 },
         ],
     },
@@ -3661,8 +3661,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」是我自造规则，无效。
         //    3 档恢复原状（套索骑兵高级）；科纳勇士基础档改放新建三级军团「帝国时代安第斯游击军团」3 档。
         slots: [
-            { type: 'elite_champi_warrior', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'elite_bolas_rider', count: 2 },
+            { type: 'elite_champi_warrior', count: 3 },
             { type: 'slinger', count: 4 },
         ],
     },
@@ -4048,7 +4048,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'lancer', count: 2 },
             { type: 'hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 雅典 · 城堡时代 · 城堡时代法兰克卫城军团　（本次新建）────────────────
@@ -4106,7 +4106,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'polemarch', count: 2 },
             { type: 'hoplite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 斯巴达 · 城堡时代 · 城堡时代摩里亚军团　（本次新建）────────────────
@@ -4164,7 +4164,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'lancer', count: 2 },
             { type: 'phalangite', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 马其顿 · 城堡时代 · 城堡时代伦巴第骑兵团　（本次新建）────────────────
@@ -4441,7 +4441,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         slots: [
             { type: 'imperial_cavalry', count: 2 },
-            { type: 'raider', count: 3 },
+            { type: 'elite_fire_lancer', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -4457,7 +4457,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         slots: [
             { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
+            { type: 'fire_lancer', count: 3 },
             { type: 'hand_cannoneer', count: 4 },
         ],
     },
@@ -4478,7 +4478,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'antiquity_spearman', count: 2 },
             { type: 'maceman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 爱奥尼亚 · 封建时代 · 封建时代爱琴军区军团　（本次新建）────────────────
@@ -4494,7 +4494,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'lancer', count: 2 },
             { type: 'guardsman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'cretan_archer', count: 4 },
         ],
     },
     // ── 爱奥尼亚 · 城堡时代 · 城堡时代士麦那军团　（本次新建）────────────────
