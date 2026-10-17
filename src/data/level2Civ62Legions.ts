@@ -38,7 +38,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝罗马城堡兵【百夫长精锐】。
         slots: [
             { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'legionary', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -54,7 +54,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         slots: [
             { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -69,8 +69,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'HERO_AEGINETAN',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'polemarch', count: 2 },
+            { type: 'elite_hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -93,7 +93,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    （原 3 档是它的「高级」档 → 与 2 档对调，高级档移到 2 档）。
         slots: [
             { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_phalangite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -109,7 +109,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'ELITE_LEMBOS',
         slots: [
             { type: 'antiquity_spearman', count: 2 },
-            { type: 'maceman', count: 3 },
+            { type: 'elite_hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -378,7 +378,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'maceman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -394,7 +394,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'DRAGON_SHIP',
         slots: [
-            { type: 'guardsman', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'swordsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -461,7 +461,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：火焰弓箭手普通档（精锐留古典军团）。
         slots: [
             { type: 'guardsman', count: 2 },
-            { type: 'swordsman', count: 3 },
+            { type: 'jian_swordman_shielded', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
     },
@@ -477,7 +477,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DRAGON_SHIP',
         slots: [
             { type: 'raider', count: 2 },
-            { type: 'paragon', count: 3 },
+            { type: 'jian_swordsman', count: 3 },
             { type: 'gastraphetes', count: 4 },
         ],
     },
@@ -581,7 +581,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
         ],
@@ -597,7 +597,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'JUNK',
         slots: [
-            { type: 'guardsman', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'swordsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -649,7 +649,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'antiquity_scout_cavalry', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
         ],
@@ -665,7 +665,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'light_cavalry', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'pikeman', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],
@@ -1290,7 +1290,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'light_cavalry', count: 2 },
-            { type: 'pikeman', count: 3 },
+            { type: 'elite_huskarl', count: 3 },
             { type: 'elite_skirmisher', count: 4 },
         ],
     },
@@ -1306,7 +1306,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DROMON',
         slots: [
             { type: 'halberdier', count: 2 },
-            { type: 'two_handed_swordsman', count: 3 },
+            { type: 'huskarl', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
         ],
     },
@@ -2107,8 +2107,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'ELITE_LEMBOS',
         slots: [
-            { type: 'raider', count: 2 },
-            { type: 'shock_cavalry', count: 3 },
+            { type: 'elite_konnik', count: 2 },
+            { type: 'elite_konnik_foot', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -2123,8 +2123,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'raider', count: 2 },
-            { type: 'imperial_cavalry', count: 3 },
+            { type: 'konnik', count: 2 },
+            { type: 'konnik_foot', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
     },
@@ -2235,7 +2235,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：罗马百夫长（普通档）替步弓手。
         slots: [
             { type: 'pikeman', count: 2 },
-            { type: 'longswordsman', count: 3 },
+            { type: 'legionary', count: 3 },
             { type: 'arbalest', count: 4 },
         ],
     },
@@ -3002,8 +3002,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'THIRISADAI',
         slots: [
-            { type: 'light_cavalry', count: 2 },
-            { type: 'knight', count: 3 },
+            { type: 'elite_shrivamsha_rider', count: 2 },
+            { type: 'camel_scout', count: 3 },
             { type: 'cav_archer', count: 4 },
         ],
     },
@@ -3018,8 +3018,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'THIRISADAI',
         slots: [
-            { type: 'shock_cavalry', count: 2 },
-            { type: 'elite_guardsman', count: 3 },
+            { type: 'shrivamsha_rider', count: 2 },
+            { type: 'camel_scout', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
     },
@@ -3057,7 +3057,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令·回退] 我曾擅自把 3 档改成「帕提尤达长弓兵」（那是它的城堡兵、普通档按规则在
         //    封建沙希军团 3 档，不该塞回本军团）→ 恢复原状（库曼钦察弓骑精锐）。
         slots: [
-            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'elite_sannahya', count: 2 },
             { type: 'lancer', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],
@@ -3075,7 +3075,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] ①城堡兵普通档进同文化封建军团：帕提尤达长弓兵在编；
         //    ②按「象兵只能安排在 2 档」：战斗象压到 2 档，古拉姆离队。
         slots: [
-            { type: 'guardsman', count: 2 },
+            { type: 'sannahya', count: 2 },
             { type: 'swordsman', count: 3 },
             { type: 'recurve_bowman', count: 4 },
         ],
@@ -3899,7 +3899,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'BIREME',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
+            { type: 'savar', count: 2 },
             { type: 'maceman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -3916,7 +3916,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 波斯战象：精锐在霍拉桑军团 2 档；普通在伊儿军团 2 档。
         slots: [
-            { type: 'lancer', count: 2 },
+            { type: 'savar', count: 2 },
             { type: 'guardsman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -3971,7 +3971,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
+            { type: 'elite_war_chariot', count: 2 },
             { type: 'maceman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -3987,7 +3987,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'lancer', count: 2 },
+            { type: 'war_chariot', count: 2 },
             { type: 'guardsman', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
@@ -4047,7 +4047,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：雅典将军卫队（普通档）替武装剑士（古典军团那份照旧保留）。
         slots: [
             { type: 'lancer', count: 2 },
-            { type: 'guardsman', count: 3 },
+            { type: 'hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -4104,8 +4104,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：斯巴达三百卫士（普通档）当 4 档前排主力（古典军团那份照旧保留）。
         slots: [
-            { type: 'lancer', count: 2 },
-            { type: 'guardsman', count: 3 },
+            { type: 'polemarch', count: 2 },
+            { type: 'hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -4163,7 +4163,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：马其顿伙伴骑兵（普通档）替城堡档的骑士。
         slots: [
             { type: 'lancer', count: 2 },
-            { type: 'guardsman', count: 3 },
+            { type: 'phalangite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -4221,7 +4221,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：色雷斯长刃斩手（普通档）替城堡档的双手剑士。
         slots: [
             { type: 'lancer', count: 2 },
-            { type: 'guardsman', count: 3 },
+            { type: 'hoplite', count: 3 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
@@ -4408,7 +4408,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_light_cavalry', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'lancer', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
         ],
@@ -4424,7 +4424,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'raider', count: 2 },
+            { type: 'xianbei_raider', count: 2 },
             { type: 'shock_cavalry', count: 3 },
             { type: 'antiquity_heavy_cavalry_archer', count: 4 },
         ],
