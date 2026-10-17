@@ -256,7 +256,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'champi_warrior', count: 2 },
             { type: 'elite_temple_guard', count: 3 },
-            { type: 'slinger', count: 4 },
+            { type: 'elite_guecha_warrior', count: 4 },
         ],
     },
     {
@@ -272,7 +272,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'champi_warrior', count: 2 },
             { type: 'elite_ibirapema_warrior', count: 3 },
-            { type: 'slinger', count: 4 },
+            { type: 'elite_blackwood_archer', count: 4 },
         ],
     },
     {
@@ -289,9 +289,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    基础档风琴炮离队（火器/攻城类，不在「步兵/骑兵/远程都要被套用」那条令的范围内）；
         //    3 档＝欧洲重装长枪兵（原 2 档挪来）；4 档补一件本时代火器【火枪手】。
         slots: [
-            { type: 'paladin', count: 2 },
+            { type: 'elite_organ_gun', count: 2 },
             { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'heavy_crossbowman', count: 4 },
         ],
     },
 
@@ -649,12 +649,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代肃慎军团', civ: '白山黑水', age: 'antiquity', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
         buildingStyle: 'NORTHEAST',
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'xianbei_raider', count: 2 },
             { type: 'antiquity_spearman', count: 3 },
             { type: 'antiquity_skirmisher', count: 4 },
+            { type: 'xianbei_raider', count: 2 },
         ],
     },
     // ── 白山黑水 · 封建时代 · 封建时代渤海军团　（本次新建）────────────────
@@ -665,12 +665,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代渤海军团', civ: '白山黑水', age: 'feudal', deStyle: 'ASIA', region: 'NORTHEAST' as RegionType,
         buildingStyle: 'NORTHEAST',
         castleId: 'JURC_CASTLE_AGE3', castleName: '东北 会宁府上京双檐角楼',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'hei_kuang_heavy', count: 2 },
             { type: 'xianbei_raider', count: 3 },
-            { type: 'elite_skirmisher', count: 4 },
+            { type: 'recurve_bowman', count: 4 },
+            { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
     // ── 白山黑水 · 城堡时代 · 城堡时代大金军团　（本次新建）────────────────
@@ -685,8 +685,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         slots: [
             { type: 'steppe_lancer', count: 2 },
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
+            { type: 'elite_iron_pagoda', count: 3 },
+            { type: 'kipchak', count: 4 },
         ],
     },
     // ── 白山黑水 · 帝国时代 · 帝国时代八旗军团　（三级升二级）────────────────
@@ -701,8 +701,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         slots: [
             { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'iron_pagoda', count: 3 },
+            { type: 'cav_archer_heavy', count: 4 },
         ],
     },
 
@@ -1698,12 +1698,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代巴格拉特铁骑军团', civ: '格鲁吉亚', age: 'feudal', deStyle: 'EAST', region: 'GEORGIANS' as RegionType,
         buildingStyle: 'GEORGIANS',
         castleId: 'GEOR_CASTLE_AGE3', castleName: '格鲁吉亚 高加索斯万石塔古堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'DROMON',
         slots: [
-            { type: 'knight', count: 2 },
-            { type: 'longswordsman', count: 3 },
-            { type: 'crossbowman', count: 4 },
+            { type: 'swordsman', count: 3 },
+            { type: 'laminated_bowman', count: 4 },
+            { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
     // ── 高加索 · 城堡时代 · 城堡时代格鲁吉亚骑士团　（本次新建）────────────────
@@ -1717,8 +1717,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'GALLEY',
         slots: [
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'arbalest', count: 4 },
+            { type: 'elite_guardsman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
             { type: 'elite_monaspa', count: 2 },
         ],
     },
@@ -1733,8 +1733,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
         slots: [
-            { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_guardsman', count: 3 },
+            { type: 'recurve_bowman', count: 4 },
             { type: 'monaspa', count: 2 },
         ],
     },
@@ -2354,12 +2354,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代凯尔特伊比利亚军团', civ: '西班牙', age: 'antiquity', deStyle: 'MEDI', region: 'SPANISH' as RegionType,
         buildingStyle: 'SPANISH',
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'BIREME',
         slots: [
-            { type: 'scout_cavalry', count: 2 },
             { type: 'manatarms', count: 3 },
             { type: 'archer', count: 4 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     // ── 安达卢斯 · 封建时代 · 封建时代摩尔游骑军团　（本次新建）────────────────
@@ -2373,7 +2373,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'knight', count: 2 },
+            { type: 'genitour', count: 2 },
             { type: 'light_cavalry', count: 3 },
             { type: 'cav_archer', count: 4 },
         ],
@@ -2389,9 +2389,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'ELITE_CARAVEL',
         slots: [
-            { type: 'cavalier', count: 2 },
-            { type: 'hussar', count: 3 },
-            { type: 'cav_archer_heavy', count: 4 },
+            { type: 'elite_genitour', count: 2 },
+            { type: 'crusader_knight', count: 3 },
+            { type: 'arbalest', count: 4 },
         ],
     },
     // ── 安达卢斯 · 帝国时代 · 帝国时代西班牙方阵军团　（本次新建）────────────────
@@ -2403,14 +2403,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'SPANISH',
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'triangle',
-        shipId: 'GALLEON',
+        shipId: 'ELITE_CARAVEL',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝西班牙征服者精锐（主人令「4 档放城堡精锐」）；3 档恢复冠军剑士。
         //    征服者基础档改放新建三级军团「帝国时代西班牙征服军团」3 档。
         slots: [
-            { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_conquistador', count: 2 },
+            { type: 'heavy_pikeman', count: 3 },
+            { type: 'heavy_crossbowman', count: 4 },
         ],
     },
 
@@ -2425,12 +2425,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代卢西塔尼亚战团', civ: '葡萄牙', age: 'antiquity', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'BIREME',
         slots: [
-            { type: 'scout_cavalry', count: 2 },
             { type: 'manatarms', count: 3 },
             { type: 'archer', count: 4 },
+            { type: 'scout_cavalry', count: 2 },
         ],
     },
     // ── 卢西塔尼亚 · 封建时代 · 封建时代苏维汇铁骑军团　（本次新建）────────────────
@@ -2441,12 +2441,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '封建时代苏维汇铁骑军团', civ: '葡萄牙', age: 'feudal', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'GALLEY',
         slots: [
-            { type: 'knight', count: 2 },
             { type: 'longswordsman', count: 3 },
             { type: 'crossbowman', count: 4 },
+            { type: 'knight', count: 2 },
         ],
     },
     // ── 卢西塔尼亚 · 城堡时代 · 城堡时代基督骑士团　（本次新建）────────────────
@@ -2457,14 +2457,14 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '城堡时代基督骑士团', civ: '葡萄牙', age: 'castle', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'CARAVEL',
         // 🔴 [2026-10-16 主人令·撤回] 「相邻时代军团 2 档」是我自造规则，无效 → 2 档恢复欧洲游侠高级。
         //    风琴炮基础档改放新建三级军团「帝国时代葡萄牙风琴军团」3 档。
         slots: [
-            { type: 'cavalier', count: 2 },
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'arbalest', count: 4 },
+            { type: 'cavalier', count: 2 },
         ],
     },
     // ── 卢西塔尼亚 · 帝国时代 · 帝国时代葡萄牙军团　（同名已在二级（重复→替换保留））────────────────
@@ -2613,8 +2613,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'GALLEY',
         slots: [
-            { type: 'elite_steppe_lancer', count: 2 },
-            { type: 'elite_conquistador', count: 3 },
+            { type: 'conquistador', count: 2 },
+            { type: 'elite_steppe_lancer', count: 3 },
             { type: 'kipchak', count: 4 },
         ],
     },
@@ -2683,15 +2683,15 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '帝国时代土耳其军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         shipId: 'CANNON_GALLEON',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝苏丹亲兵精锐（主人令「4 档放城堡精锐」）；3 档恢复具装枪骑兵高级。
         //    苏丹亲兵基础档改放新建三级军团「帝国时代苏丹亲兵军团」3 档。
         slots: [
-            { type: 'paladin', count: 2 },
-            { type: 'champion', count: 3 },
-            { type: 'hand_cannoneer', count: 4 },
+            { type: 'elite_guardsman', count: 3 },
+            { type: 'elite_janissary', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
 
@@ -3612,7 +3612,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_champi_warrior', count: 2 },
             { type: 'temple_guard', count: 3 },
-            { type: 'slinger', count: 4 },
+            { type: 'guecha_warrior', count: 4 },
         ],
     },
 
@@ -3631,7 +3631,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         slots: [
             { type: 'champi_runner', count: 2 },
-            { type: 'swordsman', count: 3 },
+            { type: 'champi_warrior', count: 3 },
             { type: 'slinger', count: 4 },
         ],
     },
@@ -3665,7 +3665,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    3 档恢复原状（套索骑兵高级）；科纳勇士基础档改放新建三级军团「帝国时代安第斯游击军团」3 档。
         slots: [
             { type: 'elite_bolas_rider', count: 2 },
-            { type: 'elite_champi_warrior', count: 3 },
+            { type: 'elite_kona', count: 3 },
             { type: 'slinger', count: 4 },
         ],
     },
@@ -3691,7 +3691,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_champi_warrior', count: 2 },
             { type: 'ibirapema_warrior', count: 3 },
-            { type: 'slinger', count: 4 },
+            { type: 'blackwood_archer', count: 4 },
         ],
     },
 

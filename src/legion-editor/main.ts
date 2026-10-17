@@ -672,7 +672,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'polemarch', name: '军事执政官', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/POLEMARCH/' },
     // ── 2026-10-16 补 9 个「科技树没有、兵种鉴赏漏收」的 DE 官方单位（暗桩/战役/废弃内容）──
     //    数据：DE dat（geniusutils 实测）+ 官方 zh 串；素材复用 DE 本体同模型目录（DE 自己也是复用）
-    { id: 'bandit', name: '欧洲强盗特殊', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/MILITIA/' },
+    { id: 'bandit', name: '强盗特殊', category: 'infantry', age: 'castle', pathPrefix: '/SUCAI/MILITIA/' },
     { id: 'heavy_crossbowman', name: '欧洲重装弩手特殊', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/GENOESECROSSBOWMAN/' },
     { id: 'heavy_swordsman', name: '欧洲古典剑士特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
     { id: 'imperial_legionary', name: '罗马帝国军团兵特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
@@ -680,7 +680,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'mounted_samurai', name: '日本骑马武士特殊', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
     { id: 'lysander_raider', name: '斯巴达吕山德掠夺者特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MERCENARY_HOPLITE/' },
     { id: 'boarding_galley', name: '欧洲接舷战船特殊', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/GALLEY/' },
-    { id: 'outlaw', name: '欧洲亡命之徒特殊', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
+    { id: 'outlaw', name: '亡命之徒特殊', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
 ]
 
 export const DE_UNITS_MAP = new Map<string, DeUnitDef>(DE_UNITS_CATALOG.map(u => [u.id, u]));
