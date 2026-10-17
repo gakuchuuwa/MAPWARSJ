@@ -8,7 +8,7 @@
  * 与 public/_citytest.html 保持 100% 相同数据源与层级：
  * - 一层 16：16 套基础建筑母体（城墙与城镇基础素材）
  * - 二层 62：62 座文明专属城堡（用于险要 pass 与代表据点）
- * - 三层 4：4 套自建专属定制（吐蕃 TIBET、西域 WESTERN、漠南鲜卑 XIANBEI、古典希腊 GREECE）
+ * - 三层 4：4 套自建专属定制（青藏 TIBET、西域 WESTERN、漠南鲜卑 XIANBEI、希腊 GREECE）
  */
 
 
@@ -68,7 +68,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
         deStyle: 'ASIA',
         branches: [
             { key: 'JAPAN',     deStyle: 'ASIA', castle: 'ASIA_CASTLE_AGE3', label: '🏯 日本（重檐天守阁）' },
-            { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3', label: '🏯 华夏（北方华北·汉唐城楼）' },
+            { key: 'CENTRAL',   deStyle: 'ASIA', castle: 'CHIN_CASTLE_AGE3', label: '🏯 中原（北方华北·汉唐城楼）' },
             { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',  label: '🏯 河朔（中原高台阙楼）' },
             { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',   label: '🏯 江南（江南水榭坞堡）' },
             { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',  label: '🏯 巴蜀（巴蜀剑阁木关）' },
@@ -242,14 +242,14 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
         group: '🏔️ 青藏高原与高原专属宗堡',
         deStyle: 'PURU',
         branches: [
-            { key: 'TIBET', deStyle: 'PURU', castle: 'TIBET_CASTLE_AGE3', label: '🏔️ 吐蕃·青藏（藏式金顶宗堡）' },
+            { key: 'TIBET', deStyle: 'PURU', castle: 'TIBET_CASTLE_AGE3', label: '🏔️ 青藏（藏式金顶宗堡）' },
         ],
     },
     {
         group: '🏜️ 西域绿洲与专属高台要塞',
         deStyle: 'CEAS',
         branches: [
-            { key: 'WESTERN', deStyle: 'CEAS', castle: 'WESTERN_CASTLE_AGE3', label: '🏜️ 西域·绿洲（汉伊高台绿洲要塞）' },
+            { key: 'WESTERN', deStyle: 'CEAS', castle: 'WESTERN_CASTLE_AGE3', label: '🏜️ 西域（汉伊高台绿洲要塞）' },
         ],
     },
     // 🔴 [2026-10-05 主人怒斥「你搞两个漠北蒙古是什么意思呀，这世界上有两个漠北蒙古吗」]
@@ -265,14 +265,14 @@ export const LAYER3_CUSTOM_GROUPS: readonly CultureGroup[] = [
         ],
     },
     // 🔴 [2026-10-05 主人令「建立一个三级建筑风格，希腊」]
-    //    三级专属定制风格：古典希腊（DE 本体 62 个可玩文明里没有名为 Greek 的文明，
+    //    三级专属定制风格：希腊（DE 本体 62 个可玩文明里没有名为 Greek 的文明，
     //    只有雅典／斯巴达共用 CivGreek 建筑组），故希腊属三级自建。
     //    键用 `GREECE`（不能再用 `GREEK` —— 那个键已是二级建筑风格）。
     {
-        group: '🏛️ 古典希腊与城邦专属卫堡',
+        group: '🏛️ 希腊与城邦专属卫堡',
         deStyle: 'GREEK',
         branches: [
-            { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 古典希腊（希腊古典通用要塞）' },
+            { key: 'GREECE', deStyle: 'GREEK', castle: 'GREEK_CASTLE_AGE3', label: '🏛️ 希腊（希腊通用要塞）' },
         ],
     },
 ];
@@ -299,7 +299,7 @@ ALL_BRANCHES_MAP['NORTH'] = ALL_BRANCHES_MAP['CENTRAL'];
  *   而游戏里画的是东亚素材 + 契丹城堡 —— 「看着和游戏不一致」就是这么来的。
  *   清掉后：region='HEXI' 不再当分支，分支由 buildingStyle 决定（河西据点写的是 KHITAN 契丹）→
  *   一级 由 toBase16Style(HEXI→CENTRAL→ASIA) 得【东亚】，与游戏完全一致。
- *   ⚠️ 未写 buildingStyle 的 HEXI 据点则由 REGION_TO_BRANCH['HEXI']='CENTRAL' 推出二级【华夏】。 */
+ *   ⚠️ 未写 buildingStyle 的 HEXI 据点则由 REGION_TO_BRANCH['HEXI']='CENTRAL' 推出二级【中原】。 */
 ALL_BRANCHES_MAP['STEPPE'] = ALL_BRANCHES_MAP['MONGOL'];
 ALL_BRANCHES_MAP['WEST_ASIA'] = ALL_BRANCHES_MAP['TURKS'];
 ALL_BRANCHES_MAP['OTTOMAN'] = ALL_BRANCHES_MAP['TURKS'];

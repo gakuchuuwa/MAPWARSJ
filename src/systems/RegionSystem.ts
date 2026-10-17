@@ -489,7 +489,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典罗马禁卫',
-    GREEK_MERCENARY: '古典希腊雇佣',
+    GREEK_MERCENARY: '希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
@@ -499,7 +499,7 @@ export const REGION_LABELS: Record<RegionType, string> = {
     GOJOSEON: '古典朝鲜',
     PRE_QIN: '古典先秦',
     MING: '帝国大明',
-    HUAXIA_IMPERIAL: '帝国华夏',
+    HUAXIA_IMPERIAL: '帝国中原',
     DALI: '城堡大理',
     MAMLUKS: '城堡马穆鲁克',
     CRUSADERS: '城堡十字军',
@@ -673,7 +673,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     MACEDONIAN: '古典马其顿',
     HELLENIC: '古典希伦',
     IMPERIAL_ROME: '古典罗马禁卫',
-    GREEK_MERCENARY: '古典希腊雇佣',
+    GREEK_MERCENARY: '希腊雇佣',
     MAGNA_GRAECIA: '古典大希腊',
     ACHAEMENIDS: '古典阿契美尼德',
     AMAZONS: '古典亚马逊',
@@ -683,7 +683,7 @@ export const CULTURE_NAMES: Record<RegionType, string> = {
     GOJOSEON: '古典朝鲜',
     PRE_QIN: '古典先秦',
     MING: '帝国大明',
-    HUAXIA_IMPERIAL: '帝国华夏',
+    HUAXIA_IMPERIAL: '帝国中原',
     DALI: '城堡大理',
     MAMLUKS: '城堡马穆鲁克',
     CRUSADERS: '城堡十字军',
@@ -721,9 +721,9 @@ const LEGACY_REGION_MAP: Record<string, RegionType> = {
     'NOMADIC': 'STEPPE',            // 纯改名
     'CENTRAL_WORLD': 'CENTRAL_ASIA',// 纯改名
     'WEST_WORLD': 'CENTRAL_ASIA',   // 合并 (老 WEST_WORLD 范围已被 getRegion 自动归中亚)
-    'TROPICS': 'CENTRAL',       // 合并 (老 TROPICS 范围归古典华夏)
+    'TROPICS': 'CENTRAL',       // 合并 (老 TROPICS 范围归中原)
     'SIBERIA': 'STEPPE',            // 合并 (老 SIBERIA 已被 getRegion 自动归塞外)
-    'MIN': 'CENTRAL',           // [2026-05-28] 合并: 福建归古典华夏
+    'MIN': 'CENTRAL',           // [2026-05-28] 合并: 福建归中原
     'NUERGAN': 'NORTHEAST',         // [2026-08-19] 合并: 18 大文化收敛, 奴儿干归东北
     'SOUTH_HEMISPHERE': 'CENTRAL',  // fallback (不该出现)
     'NEW_WORLD': 'CENTRAL',         // fallback (不该出现)
