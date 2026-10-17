@@ -1,0 +1,81 @@
+# 军团编制规则（单一口径）
+
+> 2026-10-17 主人定。二级军团（`src/data/level2Civ62Legions.ts`，257 支）的普通兵打底、档位、特色兵种落位规则。
+> 本文是唯一口径，改军团编制先读这里；与旧规则冲突的，以本文为准。
+
+## 一、档位铁律
+
+- 阵型统一 **`triangle`（三角 `[2,3,4]`：前 2 · 中 3 · 后 4）**。
+- `slots[0]`=前排、`slots[1]`=中排、`slots[2]`=后排；count 由 `FORMATION_ROW_COUNTS` 决定。
+- 档位按兵种类型排：
+  | 类型 | 档位 | 说明 |
+  |---|---|---|
+  | 远程（弓手/弩手/掷矛，含弓骑/骑射手） | **4档** 后排 | 远程就是主力 |
+  | 步兵（剑士/长矛/长戟） | **3档** 中排 | |
+  | 骑兵（近战骑：战象/战车/战马/轻骑） | **2档** 前排 | 都默认 2 档 |
+- 🔴 **两个骑兵时按重量：重的 2 档、轻的 3 档**（重量序：战象 > 战车 > 战马 > 轻骑）。**不是「轻骑固定 3 档」**——轻骑单个时也 2 档，只有两个骑兵时轻的那个才 3 档。
+- 🔴 **全骑兵组合（三个都是骑）排法：重骑（战马/战象/战车）2档 · 轻骑 3档 · 弓骑 4档**。
+- 若 2 档已被特色兵种（象兵/鲜卑掠骑）占位，则 3 档的近战骑换成轻骑（近战骑无处落 2 档）。
+
+## 二、四时代普通兵组合（普通兵打底）
+
+军团数：古典 63 · 封建 64 · 城堡 65 · 帝国 65 = **257 支**。
+（66 个 civ 中，匈人只有古典 1 支军团，缺封建/城堡/帝国，故总数 257 而非 264。）
+
+### 古典时代（7 组合）
+
+| 组合 | 前排(2) | 中排(3) | 后排(4) | 定位 |
+|---|---|---|---|---|
+| 1 | `antiquity_scout_cavalry` 古典斥候 | `maceman` 古典钉锤兵 | `bowman` 古典弓手 | 蛮族均衡（有骑兵） |
+| 2 | `antiquity_scout_cavalry` | `antiquity_spearman` 古典长矛兵 | `antiquity_skirmisher` 古典掷矛手 | 半游牧轻装 |
+| 3 | `lancer` 古典枪骑兵 | `antiquity_light_cavalry` 古典轻骑兵 | `antiquity_cavalry_archer` 古典骑射手 | 纯游牧全骑兵 |
+| 4 | `antiquity_spearman` | `maceman` | `elite_antiquity_skirmisher` 古典掷矛手高级 | 农耕重步兵（无骑兵） |
+| 5 | `scout_cavalry` 斥候骑兵 | `manatarms` 武装剑士 | `archer` 步弓手 | 南欧封建均衡 |
+| 6 | `scout_cavalry` | `spearman` 长矛兵 | `skirmisher` 掷矛手 | 北欧封建轻装 |
+| 7 | `spearman` | `manatarms` | `elite_skirmisher` 掷矛手高级 | 欧洲封建重步兵 |
+
+### 封建时代（8 组合）
+
+| 组合 | 前排(2) | 中排(3) | 后排(4) | 定位 |
+|---|---|---|---|---|
+| 1 | `antiquity_light_cavalry` 古典轻骑兵 | `swordsman` 链甲剑士 | `laminated_bowman` 复合弓手 | 东亚农耕 |
+| 2 | `lancer` 古典枪骑兵 | `guardsman` 古典长枪兵 | `elite_antiquity_skirmisher` 古典掷矛手高级 | 希腊/波斯/印度 |
+| 3 | `guardsman` | `swordsman` | `recurve_bowman` 反曲长弓手 | 东亚重步/印度东南亚/美洲 |
+| 4 | `shock_cavalry` 古典枪骑兵高级 | `raider` 掠骑兵 | `antiquity_heavy_cavalry_archer` 古典骑射手高级 | 草原游牧 |
+| 5 | `knight` 骑士 | `longswordsman` 重装剑士 | `crossbowman` 劲弩手 | 欧洲骑士+弩手 |
+| 6 | `light_cavalry` 轻骑兵 | `pikeman` 长枪兵 | `elite_skirmisher` 掷矛手高级 | 东欧/北欧轻装 |
+| 7 | `pikeman` | `longswordsman` | `arbalest` 劲弩手高级 | 欧洲/非洲重步 |
+| 8 | `knight` | `light_cavalry` | `cav_archer` 骑射手 | 阿拉伯/摩尔骑兵 |
+
+### 城堡时代（6 组合）
+
+| 组合 | 前排(2) | 中排(3) | 后排(4) | 定位 |
+|---|---|---|---|---|
+| 1 | `raider` 掠骑兵 | `paragon` 荣誉剑士 | `gastraphetes` 腹弩兵 | 均衡 |
+| 2 | `shock_cavalry` 古典枪骑兵高级 | `elite_guardsman` 古典长戟兵 | `recurve_bowman` 反曲长弓手 | 古典重步兵 |
+| 3 | `imperial_cavalry` 具装枪骑兵高级 | `raider` | `antiquity_heavy_cavalry_archer` 古典骑射手高级 | 游牧全骑兵 |
+| 4 | `cavalier` 骑士高级 | `two_handed_swordsman` 双手剑士 | `arbalest` 劲弩手高级 | 欧洲骑士 |
+| 5 | `halberdier` 长戟兵 | `two_handed_swordsman` | `cav_archer_heavy` 骑射手高级 | 重步兵+弓骑 |
+| 6 | `cavalier` | `hussar` 骠骑兵 | `cav_archer_heavy` | 游牧轻骑 |
+
+### 帝国时代（1 组合，65 支统一）
+
+| 前排(2) | 中排(3) | 后排(4) |
+|---|---|---|
+| `paladin` 骑士游侠高级 | `champion` 冠军剑士 | `hand_cannoneer` 火枪手 |
+
+## 三、特色兵种落位规则
+
+1. **一个兵种替换 2 个时代**：古典兵种→「古典+封建」、封建兵种→「封建+城堡」、城堡兵种→「城堡+帝国」。
+2. **有升级版**（`elite_` 变体）：前一个时代用升级版、后一个时代用基础版。
+3. **无升级版**（单档）：两个时代都用普通档。
+4. **象兵/战车一律 2 档**（升级→本时代 2 档，基础→下一时代 2 档）。
+5. **步兵 → 3 档，骑兵 → 2 档**（骑兵=近战骑/轻骑/弓骑都算骑兵，落 2 档；但全骑兵组合按第一节近战骑 2 档、轻骑 3 档）。
+6. 🔴 **所有替换必须替换普通兵，不能替换已落位的特色兵种**：同军团先后落多个特色兵种时，后落位的只许替换普通兵档；冲突时把先落位的换到其它仍空着的普通兵档位（如 2 档），不是删掉它。
+7. **同文明同批多个兵种**：先落位的占一个档、后落位的占相邻档（如骑兵占 2 档、另一骑兵占 3 档，因 2 档已被占）。
+
+## 四、兵种名字权威源
+
+- 一律用 **de-wiki** 名字（`DE_UNITS_CATALOG`，`src/legion-editor/main.ts`），核对/报告兵种名别凭记忆或昵称。
+- 常见易混：`elite_antiquity_skirmisher` 古典掷矛手高级（antiquity）≠ `elite_skirmisher` 掷矛手高级（feudal）；`guardsman` WarTypes 叫「近卫步兵」但 de-wiki 叫「古典长枪兵」；`swordsman` WarTypes 叫「剑士」但 de-wiki 叫「链甲剑士」。
+- 报告/沟通军团用军团名（`name` 字段「古典时代XX军团」），不用文明名（`civ` 字段）。
