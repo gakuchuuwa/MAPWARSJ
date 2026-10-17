@@ -462,7 +462,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'sogdian_aokexiate': -4,                             // 奥克夏特斯 · sogdian · 索格底亚那岩山（公元前328年岩山之战守帅）
     'tiemuer_tiemuer': 14,                               // 帖木儿 · tiemuer · 撒马尔罕
     'wulaertu_ajishenti': 5,                             // 瓦尔丹 · wulaertu · 埃里温
-    'xierwan_farukusha': 15,                             // 法鲁克沙 · xierwan · 巴库
+    'xierwan_farukusha': 18,                             // 法鲁克沙 · xierwan · 巴库（1685-1719）
     'xisi_yakubusafaer': 9,                             // 雅库布 · xisi · 博斯特
     'yada_ahexiong': 5,                                 // 阿赫雄 · yada · 悉万斤
     'yanda_touluoman': 5,                               // 头罗曼 · yanda · 阿缓城
@@ -964,7 +964,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_willem_juliette': 13,                           // 威廉一世 · didi · 布鲁日
     'gen_william_silent': 16,                            // 威廉奥兰治 · nidelan · 海牙
     'gen_william_wallace': 13,                           // 华莱士 · kanbuliya · 卡莱尔
-    'gen_winkelried': 16,                                   // 温克尔里德 · ruishi · 巴塞尔
+    'gen_winkelried': 14,                                   // 温克尔里德 · ruishi · 巴塞尔（1386年森帕赫战役）
     'xiongyati_yannuoshi': 15,                          // 匈雅提亚诺什 · xiongyati · 胡内多阿拉
     'mazhaer_majiashi': 15,                             // 马加什一世 · mazhaer · 布达佩斯
     'mangsite_bulaienbolu': 10,                         // 布赖恩博鲁 · mangsite · 卡舍尔
@@ -1047,7 +1047,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_chan_chak': 10,
     'gen_yaqub_saffar': 9,
     'gen_joao_i': 14,
-    'gen_ferdinand_ii': 15,
+    'gen_ferdinand_ii': 16,                              // 斐迪南二世 · trastamara · 拉莫塔堡（1452-1516，收复那不勒斯与创立西班牙方阵）
     'gen_seuthes_iii': -4,
     'gen_chabrias': -4,
     'wangdaer_gaisalike': 5,                             // 盖萨里克 · wangdaer · 希波
@@ -1141,7 +1141,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kanata_lamalaya':                   16,    // 阿里亚·拉玛·拉亚 · kanata · 维奢耶那伽罗王朝塔利科塔战役（1565年）
     'adile_adilesha':                    16,    // 尤素福·阿迪勒·沙阿 · adile · 比贾布尔苏丹国开国君主（1489-1510成名）
     'foluolida_meinendeshi':             16,    // 佩德罗·梅嫩德斯 · foluolida · 建立圣奥古斯丁（1565年成名）
-    'meitai_hagenba':                    15,    // 彼得·冯·哈根巴赫 · meitai · 勃艮第占领阿尔萨斯总督（1474年公审）
+    'meitai_hagenba':                    17,    // 哈根巴（Khagemba） · meitai · 曼尼普尔梅泰王国雄主（1597-1652在位）
     'aimala_katali':                     18,    // 图帕克·卡塔里 · aimala · 艾马拉原住民起义围攻拉巴斯（1781年）
     'gen_maha_thiha_thura':              18,    // 摩诃·悉都 · miandian · 缅甸贡榜王朝清缅战争名将（1765-1769年成名）
     'panfeiliya_apollonios':             -3,    // 阿波罗尼奥斯 · panfeiliya · 佩尔格（圆锥曲线论作者）

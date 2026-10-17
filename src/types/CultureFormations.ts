@@ -1902,31 +1902,37 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         //    孟加拉楼船是**封建**档（✗越界）。南亚古典在现有 46 艘里没有既古典又像南亚的船，
         //    故取古典时代**最高档**战船（古典桨帆船高级＝Elite Galley，古典✓）。
         shipId: 'ANT_ELITE_GALLEY', // 普鲁军团：古典桨帆船高级（南亚古典暂用古典时代最高档战船）
+        commanderUnit: 'porus_elephant',
     },
     AFRICA: {
         formationMode: 'triangle',
         tiers: AFRICA_BASE_TIERS,
         shipId: 'CANOE', // 非洲军团：独木舟（尼日尔河与大湖区传统战舟）
+        commanderUnit: 'hero_sundjata',
     },
     CENTRAL: {
         formationMode: 'fish_scale',
         tiers: CENTRAL_BASE_TIERS,
         shipId: 'LOU_CHUAN', // 东亚军团：中国楼船（汉唐宋华夏水师旗舰主力）
+        commanderUnit: 'hero_guanyu',
     },
     ANDE: {
         formationMode: 'triangle',
         tiers: ANDE_BASE_TIERS,
         shipId: 'CANOE', // 安第斯军团：独木舟（安第斯与高山湖泊传统轻舟）
+        commanderUnit: 'hero_pachacuti',
     },
     PERSIAN: {
         formationMode: 'fish_scale',
         tiers: PERSIAN_BASE_TIERS,
         shipId: 'BIREME', // 波斯军团：双列桨座战船（阿契美尼德/萨珊波斯双列战船）
+        commanderUnit: 'hero_artaphernes',
     },
     LATIN: {
         formationMode: 'fish_scale',
         tiers: LATIN_BASE_TIERS,
         shipId: 'TRIREME', // 地中海军团：三列桨座战船（罗马称霸地中海核心主力舰）
+        commanderUnit: 'hero_aristides',
     },
     MALAY: {
         formationMode: 'triangle',
@@ -1935,21 +1941,25 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         //    而本军团在役势力是美山（城堡高棉）＝城堡时代，越界。火攻艨艟线里城堡窗内可用的是
         //    「重型燃烧战船」（燃烧战船 → 重型燃烧战船，同一职能的最高档），高棉/真腊内河重船史实相合。
         shipId: 'HEAVY_INCENDIARY_SHIP', // 东南亚军团：重型燃烧战船（内河火攻重船，城堡档）
+        commanderUnit: 'hero_gajahmada',
     },
     EAST: {
         formationMode: 'fish_scale',
         tiers: EAST_BASE_TIERS,
         shipId: 'DROMON', // 东南欧军团：德罗蒙战舰（拜占庭希腊火王牌战舰）
+        commanderUnit: 'hero_basileus',
     },
     INDIA: {
         formationMode: 'triangle',
         tiers: INDIA_BASE_TIERS,
         shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
+        commanderUnit: 'hero_prithviraj',
     },
     SLAVIC: {
         formationMode: 'fish_scale',
         tiers: SLAVIC_BASE_TIERS,
         shipId: 'MONOREME', // 东北欧军团：单列桨座战船（早期东斯拉夫/罗斯独木长船）
+        commanderUnit: 'hero_vytautasthegreat',
     },
     GERMANIC: {
         formationMode: 'fish_scale',
@@ -1960,11 +1970,13 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         //    ② 同族升档：长船线两档（维京长船 → 维京长船高级），同属封建档，取高级档。
         //    ③ 时代闸：本军团在役势力是封建日耳曼（美因茨），落在「封建军团可用古典+封建」窗内 ✓。
         shipId: 'ELITE_LONGBOAT', // 西欧军团：维京长船高级（长船线最高档，封建档）
+        commanderUnit: 'hero_edwardlongshanks',
     },
     STEPPE: {
         formationMode: 'fish_scale',
         tiers: STEPPE_BASE_TIERS,
         shipId: 'DEMO_RAFT', // 中亚军团：渡河木筏（内陆游牧渡河皮筏/木排，史实无远洋水师）
+        commanderUnit: 'hero_kotyankhan',
     },
     ORIE: {
         formationMode: 'fish_scale',
@@ -1973,16 +1985,19 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         //    巴格达（封建西亚）＝封建时代，越界。火船线里封建窗内可用的只有基础档「喷火桨帆船」
         //    （喷火桨帆船=封建 → 喷火船=城堡 → 快速喷火船=帝国），此档已是封建窗内的最高档。
         shipId: 'FIRE_GALLEY', // 中东军团：喷火桨帆船（阿拉伯-黎凡特火攻快船，封建档）
+        commanderUnit: 'hero_tariqibnziyad',
     },
     AMERICA: {
         formationMode: 'triangle',
         tiers: AMERICA_BASE_TIERS,
         shipId: 'CANOE', // 中美军团：独木舟（特斯科科湖与玛雅雨林武装战舟）
+        commanderUnit: 'hero_cunhambebe',
     },
     GREEK: {
         formationMode: 'crane_wing',
         tiers: GREEK_BASE_TIERS,
         shipId: 'TRIREME', // 希腊军团：三列桨座战船（萨拉米斯海战希腊经典战舰）
+        commanderUnit: 'hero_mounted_alexander',
     },
     THRACIAN: {
         formationMode: 'triangle',
@@ -1991,6 +2006,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         //    （轻型伦博斯 → 战型伦博斯高级 → 重型伦博斯重装 → 旗舰伦博斯重装），同为古典档，
         //    取最高的旗舰档；色雷斯-黑海沿岸本即以伦博斯快船著称。
         shipId: 'ELITE_LEMBOS', // 色雷斯军团：希腊旗舰伦博斯重装（伦博斯线最高档，古典档）
+        commanderUnit: 'hero_thracian_chieftain',
     },
 };
 

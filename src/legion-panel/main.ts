@@ -74,7 +74,7 @@ interface LegionRow {
 }
 
 const STYLE_LABELS: Record<string, string> = {
-    JAPAN: '日本', CENTRAL: '华夏', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
+    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特', SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚',
     POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
@@ -90,7 +90,7 @@ const STYLE_LABELS: Record<string, string> = {
     SASANIAN: '波斯', PERSIAN: '阿契美尼德',
     ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIAN: '马其顿',
     THRACIAN: '色雷斯',
-    TIBET: '青藏', WESTERN: '西域', XIANBEI: '漠南鲜卑', GREECE: '古典希腊',
+    TIBET: '青藏', WESTERN: '西域', XIANBEI: '漠南鲜卑', GREECE: '希腊',
 };
 
 const cn = (id: string) => (WAR_TYPES as Record<string, { name?: string }>)[id]?.name ?? id;

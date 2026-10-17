@@ -5,7 +5,7 @@
  * 🔴 [2026-10-05 主人定稿] 来源 = docs/02-design/248分类-英雄兵模归类-草稿.md（主人过目定稿，一格一格归的）。
  *    · 年代界线：古典 ≤476｜封建 476–1050｜城堡 1050–1500｜帝国 1500–1914。
  *    · 武将的年代 = GENERAL_ERA（按成名盛年算，不按出生）。
- *    · 查表入口 resolveCivEraCommander：按武将**所属文明**查，查不到文明就返回 null，绝不兜底成华夏。
+ *    · 查表入口 resolveCivEraCommander：按武将**所属文明**查，查不到文明就返回 null，绝不兜底成中原。
  *    · 游戏里有同名英雄的武将，直接用同名英雄（见 generalHeroUnits.ts 的 GENERAL_HERO_UNITS，例：曹操用曹操）；没有的才查本表。
  *    · 同一格有多个兵模时，每局从随机池里随机挑：本局开始时抽一个随机种子，同一局内同一武将始终是同一个，下一局重新抽。
  */
@@ -17,7 +17,7 @@ export type CivEraCell = readonly string[];
 export type CivEraRow = Readonly<Record<GeneralEra, CivEraCell>>;
 
 export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
-    '华夏': { antiquity: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], feudal: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], castle: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], imperial: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'] },
+    '中原': { antiquity: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], feudal: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], castle: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'], imperial: ['hero_lubu', 'hero_guanyu', 'hero_zhangfei', 'hero_liubei'] },
     '巴蜀': { antiquity: ['hero_zhugeliang', 'hero_liubei', 'hero_guanyu', 'hero_zhangfei'], feudal: ['hero_zhugeliang', 'hero_liubei', 'hero_guanyu', 'hero_zhangfei'], castle: ['hero_zhugeliang', 'hero_liubei', 'hero_guanyu', 'hero_zhangfei'], imperial: ['hero_zhugeliang', 'hero_liubei', 'hero_guanyu', 'hero_zhangfei'] },
     '江南': { antiquity: ['hero_sunce', 'hero_sunjian', 'hero_sunquan'], feudal: ['hero_sunce', 'hero_sunjian', 'hero_sunquan'], castle: ['hero_sunce', 'hero_sunjian', 'hero_sunquan'], imperial: ['hero_sunce', 'hero_sunjian', 'hero_sunquan'] },
     '河朔': { antiquity: ['hero_caocao', 'hero_lubu'], feudal: ['hero_caocao', 'hero_lubu'], castle: ['hero_caocao', 'hero_lubu'], imperial: ['hero_caocao', 'hero_lubu'] },
@@ -25,7 +25,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '白山黑水': { antiquity: ['hero_girgenkhan', 'hero_kotyankhan'], feudal: ['hero_girgenkhan', 'hero_kotyankhan'], castle: ['hero_girgenkhan', 'hero_kotyankhan'], imperial: ['hero_girgenkhan', 'hero_kotyankhan'] },
     '高丽': { antiquity: ['elite_war_wagon', 'hero_sunquan'], feudal: ['elite_war_wagon', 'hero_sunquan'], castle: ['elite_war_wagon', 'hero_sunquan'], imperial: ['elite_war_wagon', 'hero_sunquan'] },
     '日本': { antiquity: ['hero_sunce', 'hero_sunjian'], feudal: ['hero_sunce', 'hero_sunjian'], castle: ['hero_sunce', 'hero_sunjian'], imperial: ['hero_sunce', 'hero_sunjian'] },
-    '鲜卑漠南': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
+    '漠南鲜卑': { antiquity: ['hero_kotyankhan', 'hero_kushluk'], feudal: ['hero_kotyankhan', 'hero_kushluk'], castle: ['hero_kotyankhan', 'hero_kushluk'], imperial: ['hero_kotyankhan', 'hero_kushluk'] },
     '漠北蒙古': { antiquity: ['hero_subotai', 'hero_kushluk'], feudal: ['hero_subotai', 'hero_kushluk'], castle: ['hero_subotai', 'hero_kushluk'], imperial: ['hero_subotai', 'hero_kushluk'] },
     '条顿': { antiquity: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], feudal: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], castle: ['hero_ulrichvonjungingen', 'hero_johnthefearless'], imperial: ['hero_ulrichvonjungingen', 'hero_johnthefearless'] },
     '法兰克': { antiquity: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], feudal: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], castle: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'], imperial: ['hero_bernardarmagnac', 'hero_joanofarc', 'hero_joanthemaid'] },
@@ -76,6 +76,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
     '波斯': { antiquity: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], feudal: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], castle: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'], imperial: ['hero_shahismail', 'hero_artaphernes', 'elite_war_elephant'] },
     '阿契美尼德': { antiquity: ['hero_artaphernes', 'hero_datis'], feudal: ['hero_artaphernes', 'hero_datis'], castle: ['hero_artaphernes', 'hero_datis'], imperial: ['hero_artaphernes', 'hero_datis'] },
     '雅典': { antiquity: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], feudal: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], castle: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], imperial: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'] },
+    '希腊': { antiquity: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], feudal: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], castle: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'], imperial: ['hero_aristagoras', 'hero_aristides', 'hero_themistocles_hoplite'] },
     '斯巴达': { antiquity: ['hero_brasidas', 'hero_lysander'], feudal: ['hero_brasidas', 'hero_lysander'], castle: ['hero_brasidas', 'hero_lysander'], imperial: ['hero_brasidas', 'hero_lysander'] },
     '马其顿': { antiquity: ['hero_cleitus', 'hero_dismounted_alexander', 'hero_mounted_alexander', 'hero_macedonian_commander', 'hero_parmenion', 'hero_perdiccas'], feudal: ['hero_cleitus', 'hero_dismounted_alexander', 'hero_mounted_alexander', 'hero_macedonian_commander', 'hero_parmenion', 'hero_perdiccas'], castle: ['hero_cleitus', 'hero_dismounted_alexander', 'hero_mounted_alexander', 'hero_macedonian_commander', 'hero_parmenion', 'hero_perdiccas'], imperial: ['hero_cleitus', 'hero_dismounted_alexander', 'hero_mounted_alexander', 'hero_macedonian_commander', 'hero_parmenion', 'hero_perdiccas'] },
     '色雷斯': { antiquity: ['hero_thracian_chieftain', 'hero_cleitus'], feudal: ['hero_thracian_chieftain', 'hero_cleitus'], castle: ['hero_thracian_chieftain', 'hero_cleitus'], imperial: ['hero_thracian_chieftain', 'hero_cleitus'] },
@@ -86,7 +87,7 @@ export const CIV_ERA_COMMANDER_248: Readonly<Record<string, CivEraRow>> = {
 
 /** 据点建筑风格键 → 二级文明名（二级 62 + 三级 3 = 62）。一级母体键（ASIA / SLAV / WEST …）不在这里。 */
 const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
-    JAPAN: '日本', CENTRAL: '华夏', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '鲜卑漠南', KOREA: '高丽',
+    JAPAN: '日本', CENTRAL: '中原', WEI: '河朔', JIANGNAN: '江南', BASHU: '巴蜀', KHITAN: '河西', NORTHEAST: '白山黑水', MONGOL: '漠北蒙古', KOREA: '高丽',
     GERMANIC: '条顿', FRANKS: '法兰克', BURGUNDIANS: '勃艮第', BRITONS: '不列颠', CELTS: '凯尔特', VIKINGS: '维京', GOTHS: '哥特',
     BYZANTINE: '拜占庭', ARMENIANS: '亚美尼亚', GEORGIANS: '格鲁吉亚', POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
     LATIN: '意大利', ROMA: '罗马', SICILIANS: '西西里', SPANISH: '西班牙', PORTUGUESE: '葡萄牙', ORIE: '萨拉森',
@@ -95,7 +96,7 @@ const STYLE_KEY_TO_CIV: Readonly<Record<string, string>> = {
     BERBER: '柏柏尔', AFRICA: '马里', ETHIOPIANS: '埃塞俄比亚', SASANIAN: '波斯',
     SAXONS: '撒克逊', VARANGIANS: '瓦良格', DANES: '丹麦',
     ATHENIANS: '雅典', SPARTANS: '斯巴达', MACEDONIAN: '马其顿', THRACIAN: '色雷斯',
-    TIBET: '青藏', WESTERN: '西域', MOBEI_MONGOL: '漠北蒙古', YURT: '漠北蒙古',
+    TIBET: '青藏', WESTERN: '西域', MOBEI_MONGOL: '漠北蒙古', YURT: '漠北蒙古', XIANBEI: '漠南鲜卑', GREECE: '希腊',
 };
 
 /** 据点风格键 → 文明；PERSIAN 一键两用：古典 = 阿契美尼德，其后 = 波斯。 */

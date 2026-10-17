@@ -36,6 +36,7 @@ import {
 import { CompositionSlot, getDefaultScaleForUnitType } from '../types/LegionComposition';
 import { FACTION_COMPOSITIONS, CustomFactionLegion } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
+import { GENERAL_ERA } from '../data/GeneralEra';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
 import { getCombatPower, getPowerRefs, getLegionPower, invalidateCombatPowerCache } from '../data/CombatPower';
@@ -4005,23 +4006,34 @@ function computeLegionNameViolations(): string[] {
         }
     }
 
-    // 🔴 [2026-09-14 主人定] 军团套用检查：二级 / 三级军团没有任何势力套用 → 报错。
-    //    （一级 16 母体是底座，允许 0 势力，不在此列。）
+    // 🔴 [2026-09-14 主人定 / 2026-10-18 修正] 军团套用检查：
+    //    二级军团按「武将时代＋据点建筑文化」对应（符合历史，不用硬套）：
+    //    仅当全图存在对应 (buildingStyle + age) 且未挂三级军团的势力、该二级军团却无人套用时报错；
+    //    全图物理上无该时代对应建筑风格据点的跨时代延伸二级军团允许空置。
+    //    三级军团仍要求必须有势力套用。
     const legionUsers = new Map<string, number>();
+    const activeStyleAges = new Set<string>();
     for (const r of allRows) {
         const n = effectiveLegionName(r);
         if (n) legionUsers.set(n, (legionUsers.get(n) ?? 0) + 1);
-    }
-    for (const [label, names] of [
-        ['二级', LEVEL_2_CIV_62_NAMES as ReadonlySet<string>],
-        ['三级', LEVEL_3_LEGION_NAMES as ReadonlySet<string>],
-    ] as const) {
-        const unused = [...names].filter(n => !legionUsers.has(n));
-        if (unused.length > 0) {
-            violations.push(
-                `【${label}军团】${unused.length} 支没有任何势力套用：${unused.join('、')}`,
-            );
+        if (n && !LEVEL_3_LEGION_NAMES.has(n) && r.buildingStyle && r.generalId) {
+            const gEra = GENERAL_ERA[r.generalId];
+            if (gEra) activeStyleAges.add(`${r.buildingStyle}|${gEra}`);
         }
+    }
+    const unusedL2 = LEVEL_2_CIV_62_LEGIONS
+        .filter(l => !legionUsers.has(l.name) && activeStyleAges.has(`${l.buildingStyle}|${l.age}`))
+        .map(l => l.name);
+    if (unusedL2.length > 0) {
+        violations.push(
+            `【二级军团】${unusedL2.length} 支有对应（时代+建筑文化）势力却未套用：${unusedL2.join('、')}`,
+        );
+    }
+    const unusedL3 = [...LEVEL_3_LEGION_NAMES].filter(n => !legionUsers.has(n));
+    if (unusedL3.length > 0) {
+        violations.push(
+            `【三级军团】${unusedL3.length} 支没有任何势力套用：${unusedL3.join('、')}`,
+        );
     }
 
     // 🔴 [2026-09-11 主人定] 武将套用检查：军团没被武将套用 → 报错（所有军团必须都被武将套用）。

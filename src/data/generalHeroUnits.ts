@@ -109,7 +109,13 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     nuowei_halaer: 'hero_harald',   // 挪威哈拉尔（DE 新提取的英雄·哈拉尔）
 };
 
-/** 主将队用哪个兵种：剧本事件里选定的 > 军团显式配置的英雄主队 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
+/**
+ * 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 >
+ * 军团显式配置的英雄主队（兜底） > 无武将时按势力 > 本军团前排兵种。
+ * 🔴 [2026-10-18 主人令「把英雄的军团套上他本人的兵模」]
+ *    军团常被多个武将共用（如古典秦汉 43 位、帝国华夏 25 位），军团级 commanderUnit 只能写一个，
+ *    写死会把同军团其他武将本人的形象盖掉。故武将本人形象优先；军团英雄只给「没有武将 / 解析不出」时兜底。
+ */
 export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string; legionCommanderUnit?: string | null }): string | null {
     const picked = generalId ? getScriptCommanderUnit(generalId) : null;
     const legionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
@@ -117,7 +123,7 @@ export function commanderUnitOf(generalId: string | null | undefined, expandedSl
     const civEra = generalId ? resolveCivEraCommander(generalId) : null;
     // 没有武将的军团：按所属势力取英雄（每个军团都必须有主将队，见 resolveFactionCommander）
     const byFaction = !generalId && ctx ? resolveFactionCommander(ctx.factionId, ctx.seedKey ?? '') : null;
-    return picked ?? legionCmd ?? hero ?? civEra ?? byFaction ?? expandedSlots[0] ?? null;
+    return picked ?? hero ?? civEra ?? legionCmd ?? byFaction ?? expandedSlots[0] ?? null;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */
