@@ -667,7 +667,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'maceman', name: '古典钉锤兵', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'mounted_crossbowman', name: '骑马弩兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN/' },
     { id: 'mounted_crossbowman_heavy', name: '骑马弩兵高级', category: 'cavalry', age: 'imperial', pathPrefix: '/SUCAI/MOUNTEDCROSSBOWMAN_HEAVY/' },
-    { id: 'priestess', name: '女祭司', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },
     { id: 'polemarch', name: '军事执政官', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/POLEMARCH/' },
     // ── 2026-10-16 补 9 个「科技树没有、兵种鉴赏漏收」的 DE 官方单位（暗桩/战役/废弃内容）──
     //    数据：DE dat（geniusutils 实测）+ 官方 zh 串；素材复用 DE 本体同模型目录（DE 自己也是复用）
@@ -736,7 +735,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     jian_swordman_shielded: 'sword_shield', konnik_foot: 'sword_shield',
     levy: 'sword_shield', longswordsman: 'sword_shield', militia: 'sword_shield', paragon: 'sword_shield',
     serjeant: 'sword_shield', teutonic_knight: 'sword_shield',
-    vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield', maceman: 'sword_shield', priestess: 'sword_shield',
+    vanguard: 'sword_shield', woad_raider: 'sword_shield', condottiero: 'sword_shield', maceman: 'sword_shield',
     sakan_axeman: 'sword_shield', champi_warrior: 'sword_shield',
     elite_champi_warrior: 'sword_shield', champi_runner: 'sword_shield', champi_scout: 'sword_shield',
     norse_warrior: 'sword_shield', strategos: 'sword_shield', elite_strategos: 'sword_shield',

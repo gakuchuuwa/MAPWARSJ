@@ -61,7 +61,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
-        shipId: 'MONOREME',
+        shipId: 'DEMO_RAFT',
         buildingStyle: 'CUMAN',
     },
     // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]
@@ -84,7 +84,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-05 主人定「城堡时代十字军团挂法兰克吧」] 十字军主力＝法兰克人
         //    （阿拉伯／拜占庭均称十字军为「法兰克人」），故挂法兰克那条线（封建→城堡两代）。
         parentLegion: '封建时代法兰克军团',
-        shipId: 'ELITE_CARAVEL',
+        shipId: 'CARRACK',
         buildingStyle: 'FRANKS',
     },
     {
@@ -97,7 +97,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['DALI'],
         parentLegion: '东亚军团',
-        shipId: 'HEAVY_INCENDIARY_SHIP',
+        shipId: 'INCENDIARY_SHIP',
         buildingStyle: 'BASHU',
     },
     {
@@ -147,7 +147,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         ],
         regions: ['SPANISH'],
         parentLegion: '帝国时代西班牙方阵军团',
-        shipId: 'ELITE_CARAVEL',
+        shipId: 'ELITE_CANNON_GALLEON',
         buildingStyle: 'SPANISH',
     },
     {

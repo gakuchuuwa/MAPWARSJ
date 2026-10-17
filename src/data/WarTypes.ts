@@ -561,7 +561,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     maceman: { name: '古典钉锤兵', cls: 'melee', sz: 1, hp: 45, atk: 6, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 29: 3, 21: 2 }, armorTags: [1, 31] },
     mounted_crossbowman: { name: '骑马弩兵', cls: 'cav', sz: 1, kite: 70, hp: 45, atk: 7, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.5, spd: 50, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 31] },
     mounted_crossbowman_heavy: { name: '骑马弩兵高级', cls: 'cav', sz: 1, kite: 70, hp: 55, atk: 8, meleeArmor: 2, pierceArmor: 0, rng: 160, reload: 2.5, spd: 50, dmgType: 'pierce', bonus: { 27: 1 }, armorTags: [28, 15, 8, 31] },
-    priestess: { name: '女祭司', cls: 'ranged', sz: 1, hp: 30, atk: 0, meleeArmor: 0, pierceArmor: 0, rng: 360, reload: 1.6, spd: 28, dmgType: 'pierce', bonus: {}, armorTags: [25, 31] },
     polemarch: { name: '军事执政官', cls: 'melee', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 1, rng: 20, reload: 2.0, spd: 42, dmgType: 'melee', bonus: {}, armorTags: [19, 1, 31] },
 
     // ── 2026-10-16 补 9 个未收录兵种的战术属性（同样取自 DE dat）──
