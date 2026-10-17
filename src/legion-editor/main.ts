@@ -483,7 +483,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'equites', name: '罗马伴随骑士高级', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/EQUITES/' },
     { id: 'sarmatian', name: '萨尔马提亚骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/SARMATIAN/' },
     { id: 'elite_peltast', name: '色雷斯标枪手高级', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_PELTAST/' },
-    { id: 'vanguard', name: '先锋步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
+    { id: 'vanguard', name: '诺曼先锋步兵高级', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/VANGUARD/' },
     { id: 'bowman', name: '古典弓手', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/BOWMAN/' },
     { id: 'crusader_knight', name: '欧洲十字军骑士特殊', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/CRUSADERKNIGHT/' },
     { id: 'raider', name: '掠骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/RAIDER/' },
@@ -676,7 +676,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'heavy_swordsman', name: '欧洲古典剑士特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/HEAVYSWORDSMAN/' },
     { id: 'imperial_legionary', name: '罗马帝国军团兵特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/LEGIONARY/' },
     { id: 'khan', name: '蒙古可汗特殊', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HERO_KHAN/' },
-    { id: 'mounted_samurai', name: '日本骑马武士特殊', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
+    { id: 'mounted_samurai', name: '倭寇骑士特殊', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/HUSSAR/' },
     { id: 'lysander_raider', name: '斯巴达吕山德掠夺者特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MERCENARY_HOPLITE/' },
     { id: 'boarding_galley', name: '欧洲接舷战船特殊', category: 'naval', age: 'castle', pathPrefix: '/SUCAI/GALLEY/' },
     { id: 'outlaw', name: '亡命之徒特殊', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
@@ -843,7 +843,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     antiquity_siege_tower: 'mechanical',
 
     // ── 船只 ──
-    galley: 'galley', war_galley: 'galley', ant_galley: 'galley', ant_war_galley: 'galley', ant_elite_galley: 'galley',
+    galley: 'galley', war_galley: 'galley', boarding_galley: 'galley', ant_galley: 'galley', ant_war_galley: 'galley', ant_elite_galley: 'galley',
     fire_galley: 'fire_ship', fire_ship: 'fire_ship', fast_fire_ship: 'fire_ship', incendiary_ship: 'fire_ship',
     heavy_incendiary_ship: 'fire_ship',
     cannon_galleon: 'cannon_ship', elite_cannon_galleon: 'cannon_ship', catapult_ship: 'cannon_ship', onager_ship: 'cannon_ship',
@@ -1532,6 +1532,38 @@ function injectStyles(): void {
       .le-unit-card-name { font-weight:bold; font-size:13px; color:#fff8e8; }
       .le-unit-card-id { font-size:11px; font-family:monospace; color:#8ab4c4; }
       .le-unit-card-cat { font-size:10px; color:#c8a84b; }
+
+      /* 🔴 [2026-10-18 主人令「在军团编辑中添加一个功能，我在选兵种的时候，鼠标移动到兵种的图标，就放大，现在看不清」]
+         兵种图标悬停放大镜：body 下的单例浮层，position:fixed + pointer-events:none
+         —— 不占布局、不挡点击，也不会因为浮层盖住图标而触发 mouseout 造成闪烁。
+         canvas 里的素材是 nearest-neighbor 放大（见 drawUnitThumb 的 crisp 参数），
+         再用 image-rendering:pixelated 兜一层，保证像素兵种放大后边缘不糊。 */
+      .le-unit-thumb { cursor:zoom-in; }
+      .le-thumb-zoom {
+        position:fixed; left:0; top:0; z-index:30000; pointer-events:none;
+        display:flex; flex-direction:column; gap:6px; padding:8px;
+        border-radius:8px; background:rgba(16,14,12,0.97); border:1px solid #6a5a32;
+        box-shadow:0 12px 40px rgba(0,0,0,0.85), 0 0 0 1px rgba(200,168,75,0.15) inset;
+        visibility:hidden; opacity:0; transition:opacity 0.08s ease-out;
+      }
+      .le-thumb-zoom.is-on { visibility:visible; opacity:1; }
+      .le-thumb-zoom canvas {
+        width:256px; height:256px; display:block; border-radius:4px;
+        background:#0a0908; image-rendering:pixelated;
+      }
+      .le-thumb-zoom .le-thumb-zoom-name {
+        width:256px; font-size:13px; font-weight:bold; color:#fff8e8;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      }
+      .le-thumb-zoom .le-thumb-zoom-meta {
+        display:flex; justify-content:space-between; gap:8px;
+        width:256px; font-size:10px; color:#a89f8f;
+      }
+      .le-thumb-zoom .le-thumb-zoom-cat { color:#c8a84b; }
+      .le-thumb-zoom .le-thumb-zoom-id {
+        font-family:monospace; color:#8ab4c4;
+        overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+      }
     `;
     document.head.appendChild(s);
 }
@@ -4194,6 +4226,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
+        hideThumbZoom();   // 关弹窗先收放大镜，别把浮层留在页面上
         overlay.remove();
     };
 
@@ -4203,6 +4236,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     window.addEventListener('keydown', handleKey);
 
     const renderModalContent = () => {
+        // 切 tab / 搜索会整块换掉图标节点，mouseout 不一定补发 —— 先主动收起放大镜
+        hideThumbZoom();
         const q = unitSearch.trim().toLowerCase();
         // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤（主将队过滤战船）
         const units = (q
@@ -4246,6 +4281,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               <option value="5" ${unitThumbDir === 5 ? 'selected' : ''}>西 (5)</option>
               <option value="4" ${unitThumbDir === 4 ? 'selected' : ''}>西南 (4)</option>
             </select>
+            <span style="margin-left:auto;font-size:11px;color:#8a8070;white-space:nowrap;">🔍 鼠标悬停图标放大</span>
           </div>
           <div class="le-modal-body">
             ${units.map(u => `
@@ -4334,6 +4370,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     };
 
     document.body.appendChild(overlay);
+    // 悬停放大只挂一次（事件委托）：renderModalContent 换 tab / 搜索重建图标节点后依然生效
+    attachUnitThumbZoom(overlay);
     renderModalContent();
 
     overlay.addEventListener('click', (e) => {
@@ -5408,8 +5446,15 @@ async function loadMeta(pathPrefix: string): Promise<DynMeta | null> {
     }
 }
 
-/** 兵种卡片缩略图：画 idle 朝南方向（dir=3，正对玩家）的第一帧，等比缩进 64×64 居中。 */
-export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): Promise<void> {
+/**
+ * 兵种卡片缩略图：画 idle 当前朝向的第一帧，等比缩进 canvas.width 见方并居中。
+ * 卡片的 64×64、图鉴的 44×44、悬停放大镜的 256×256 共用这一条链（同朝向、同缓存）。
+ *
+ * @param crisp 放大镜用 true：关掉 drawImage 的平滑插值，像素素材放大后边缘才不糊
+ *              （与图鉴单兵预览 `ctx.imageSmoothingEnabled = false` 同一口径）；
+ *              缩略图默认 false，缩小采样时有平滑反而更干净。
+ */
+export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string, crisp: boolean = false): Promise<void> {
     const prefix = getUnitPathPrefix(unitId);
     const imgUrl = `${prefix}idle_${unitThumbDir}.png`;
     try {
@@ -5418,6 +5463,7 @@ export async function drawUnitThumb(canvas: HTMLCanvasElement, unitId: string): 
         if (meta === undefined) meta = await loadMeta(prefix);
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
+        ctx.imageSmoothingEnabled = !crisp;
         const actMeta = meta?.idle;
         const dirMeta = actMeta?.dirs?.[String(unitThumbDir)];
         let fw: number, fh: number;
@@ -5459,6 +5505,122 @@ function redrawUnitThumbsIn(root: ParentNode): void {
         c.dataset.drawn = '';
         drawUnitThumb(c, c.dataset.uid!);
     });
+}
+
+// ============================================================
+// 6.9 兵种图标悬停放大镜（选兵种时 64px 图标看不清）
+// ============================================================
+/**
+ * 🔴 [2026-10-18 主人令「在军团编辑中添加一个功能，我在选兵种的时候，鼠标移动到兵种的图标，就放大，现在看不清」]
+ *
+ * 选兵弹窗里的缩略图只有 64px，兵种长相分不清。鼠标移到图标上 → 在光标旁浮出 256px 放大镜，
+ * 画的是同一帧（同朝向、同 loadSprite/meta 缓存），像素素材走 nearest-neighbor 保持锐利。
+ *
+ * 几个必须守住的细节：
+ *  · 浮层是 body 下单例 + position:fixed + pointer-events:none —— 不占布局、不挡点击，
+ *    也不会因为浮层盖住图标触发 mouseout → 抖动闪烁；
+ *  · 事件委托挂在弹窗根节点，只认 `canvas.le-unit-thumb`（卡片文字/空白处不弹）；
+ *  · 滚动时立刻收起（fixed 浮层不跟滚，会和图标脱节）；
+ *  · 弹窗重绘 / 关闭都主动 hide，innerHTML 换掉后不残留旧图。
+ */
+const THUMB_ZOOM_SIZE = 256;
+/** 浮层外框尺寸（含 padding/border）：256 画布 + 左右 8px padding×2 + 1px border×2 ≈ 274；这里留 18 余量。 */
+const THUMB_ZOOM_W = THUMB_ZOOM_SIZE + 18;
+/** 画布 + 名称行 + 分类/ID 行 + 间距 + padding ≈ 308；留到 312。 */
+const THUMB_ZOOM_H = THUMB_ZOOM_SIZE + 56;
+
+let thumbZoomEl: HTMLDivElement | null = null;
+let thumbZoomCanvas: HTMLCanvasElement | null = null;
+let thumbZoomUid: string | null = null;
+let thumbZoomGlobalBound = false;
+
+function ensureThumbZoom(): HTMLDivElement {
+    if (thumbZoomEl) return thumbZoomEl;
+    const el = document.createElement('div');
+    el.className = 'le-thumb-zoom';
+    el.innerHTML = `
+      <canvas width="${THUMB_ZOOM_SIZE}" height="${THUMB_ZOOM_SIZE}"></canvas>
+      <div class="le-thumb-zoom-name"></div>
+      <div class="le-thumb-zoom-meta"><span class="le-thumb-zoom-cat"></span><span class="le-thumb-zoom-id"></span></div>`;
+    document.body.appendChild(el);
+    thumbZoomEl = el;
+    thumbZoomCanvas = el.querySelector('canvas');
+    return el;
+}
+
+/** 收起放大镜（滚动 / 重绘 / 关弹窗 / 点选后都要调）。 */
+function hideThumbZoom(): void {
+    thumbZoomUid = null;
+    thumbZoomEl?.classList.remove('is-on');
+}
+
+/** 跟手定位：默认在光标右下 18px；右/下越界翻到左侧/上方，最后再钳进视口（四周留 8px）。 */
+function positionThumbZoom(ev: MouseEvent): void {
+    const el = thumbZoomEl;
+    if (!el) return;
+    // 用实测尺寸（visibility:hidden 时布局仍可量）；偶发 0 才退回常量兜底
+    const w = el.offsetWidth || THUMB_ZOOM_W;
+    const h = el.offsetHeight || THUMB_ZOOM_H;
+    const gap = 18, margin = 8;
+    let x = ev.clientX + gap;
+    let y = ev.clientY + gap;
+    if (x + w > window.innerWidth - margin) x = ev.clientX - gap - w;
+    if (y + h > window.innerHeight - margin) y = ev.clientY - gap - h;
+    x = Math.max(margin, Math.min(x, window.innerWidth - w - margin));
+    y = Math.max(margin, Math.min(y, window.innerHeight - h - margin));
+    el.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+}
+
+function showThumbZoom(uid: string, ev: MouseEvent): void {
+    const el = ensureThumbZoom();
+    const canvas = thumbZoomCanvas!;
+    if (thumbZoomUid !== uid) {
+        thumbZoomUid = uid;
+        const def = DE_UNITS_MAP.get(uid);
+        el.querySelector('.le-thumb-zoom-name')!.textContent = def?.name || uid;
+        el.querySelector('.le-thumb-zoom-cat')!.textContent = def
+            ? `${CATEGORY_LABEL[def.category]}${getUnitTier(def) === 'elite' ? ' · ⭐精锐' : ''}`
+            : '';
+        el.querySelector('.le-thumb-zoom-id')!.textContent = uid;
+        // 换兵种才重画；同一张图连续 hover 只挪位置。先擦掉旧图：
+        // 素材加载失败时 drawUnitThumb 会保留原内容，别让上一张图顶着新名字。
+        canvas.getContext('2d')?.clearRect(0, 0, canvas.width, canvas.height);
+        drawUnitThumb(canvas, uid, true);
+    }
+    el.classList.add('is-on');
+    positionThumbZoom(ev);
+}
+
+/**
+ * 给弹窗里的兵种图标挂「悬停放大」。事件委托：一次挂载，之后 renderModalContent
+ * 怎么重建 DOM 都生效，也不会随着切 tab / 搜索累积监听。
+ */
+function attachUnitThumbZoom(root: HTMLElement): void {
+    const thumbOf = (t: EventTarget | null): HTMLCanvasElement | null => {
+        const el = t instanceof Element ? t.closest('canvas.le-unit-thumb') : null;
+        return el instanceof HTMLCanvasElement ? el : null;
+    };
+    root.addEventListener('mouseover', (e) => {
+        const thumb = thumbOf(e.target);
+        const uid = thumb?.dataset.uid;
+        if (uid) showThumbZoom(uid, e);
+    });
+    root.addEventListener('mousemove', (e) => {
+        if (!thumbZoomUid) return;
+        if (thumbOf(e.target)) positionThumbZoom(e);
+        else hideThumbZoom();   // 移到卡片文字/列间空白就收起
+    });
+    root.addEventListener('mouseout', (e) => {
+        if (!thumbOf(e.target)) return;
+        if (thumbOf(e.relatedTarget)) return;   // 直接挪到相邻图标：交给那一张的 mouseover 接手
+        hideThumbZoom();
+    });
+    // 滚动后 fixed 浮层会和图标脱节 → 立刻收起；scroll 不冒泡，必须 capture
+    root.addEventListener('scroll', hideThumbZoom, true);
+    if (!thumbZoomGlobalBound) {
+        thumbZoomGlobalBound = true;
+        window.addEventListener('resize', hideThumbZoom);
+    }
 }
 
 function startCanvasPreview(): void {

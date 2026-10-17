@@ -1071,7 +1071,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'MONOREME',
         slots: [
-            { type: 'manatarms', count: 3 },
+            { type: 'vanguard', count: 3 },
             { type: 'archer', count: 4 },
             { type: 'scout_cavalry', count: 2 },
         ],
@@ -1087,7 +1087,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'ELITE_LONGBOAT',
         slots: [
-            { type: 'swordsman', count: 3 },
+            { type: 'vanguard', count: 3 },
             { type: 'laminated_bowman', count: 4 },
             { type: 'antiquity_light_cavalry', count: 2 },
         ],
@@ -2289,7 +2289,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'TRIREME',
         slots: [
-            { type: 'manatarms', count: 3 },
+            { type: 'vanguard', count: 3 },
             { type: 'archer', count: 4 },
             { type: 'scout_cavalry', count: 2 },
         ],

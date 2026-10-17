@@ -122,8 +122,8 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         name: '城堡时代岳家军团',
         formationMode: 'fish_scale',
         slots: [
-            { type: 'elite_chukonu', count: 3 },
-            { type: 'liao_dao', count: 4 },
+            { type: 'liao_dao', count: 3 },
+            { type: 'elite_chukonu', count: 4 },
             { type: 'elite_keshik', count: 2 },
         ],
         regions: [],
@@ -188,6 +188,20 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         parentLegion: '帝国时代土耳其军团',
         shipId: 'CANNON_GALLEON',
         buildingStyle: 'TURKS',
+    },
+    {
+        name: '帝国时代起义军团',
+        formationMode: 'fish_scale',
+        slots: [
+            { type: 'bandit', count: 3 },
+            { type: 'outlaw', count: 4 },
+            { type: 'mounted_samurai', count: 2 },
+        ],
+        regions: [],
+        parentLegion: '西欧军团',
+        shipId: 'TRANSPORT_SHIP',
+        // 🔴 [2026-10-18 主人令] 起义军团＝**西方**造反军团（强盗/亡命之徒），建筑文化 WEST；东方农民起义军改用【帝国时代华夏军团】
+        buildingStyle: 'WEST',
     },
 ];
 
