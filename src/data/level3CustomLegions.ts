@@ -61,7 +61,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
         shipId: 'MONOREME',
-        buildingStyle: 'THRACIAN',
+        buildingStyle: 'CUMAN',
     },
     // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]
     //   原三级【古典时代赫梯军团】（HITTITES 哈图沙，锥形：古典掷矛手2 / 古典长枪兵3 / 双轮战车高级4）
