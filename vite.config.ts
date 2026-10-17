@@ -1914,7 +1914,6 @@ export default defineConfig({
                                 'tiger_rider': 'tigercavalry',
                                 'cav_archer': 'cavalryarcher',
                                 'cav_archer_heavy': 'heavycavalryarcher',
-                                'light_riders': 'lightcavalry',
                                 'arbalest': 'arbalester',
                                 'hei_kuang': 'heiguangcavalry',
                                 'hei_kuang_heavy': 'heavyheiguangcavalry',

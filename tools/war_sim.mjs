@@ -73,7 +73,7 @@ const SIGHT_MAP = {
 
     kipchak: 240, lancer: 160, legionary: 200, liao_dao: 120, light_infantry: 160,
 
-    light_riders: 160, longbowman_elite: 320, mangudai: 240, mangudai_elite: 240, ninja: 160,
+    light_cavalry: 160, longbowman_elite: 320, mangudai: 240, mangudai_elite: 240, ninja: 160,
 
     paladin: 200, pattiyoda_longbowman: 200, pikeman: 160, rattan_archer: 240, rattan_archer_elite: 240,
 
