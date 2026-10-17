@@ -1150,9 +1150,9 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'jian_swordman_shielded', count: 2 },
-        { type: 'elite_fire_lancer', count: 3 },
-        { type: 'hei_kuang_heavy', count: 4 },
+        { type: 'jian_swordsman', count: 3 },
+        { type: 'chukonu', count: 4 },
+        { type: 'hei_kuang', count: 2 },
     ]
     }
 ];
@@ -1181,9 +1181,9 @@ export const STEPPE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'sakan_axeman', count: 2 },
-        { type: 'sogdian_cataphract', count: 3 },
-        { type: 'elite_steppe_lancer', count: 4 },
+        { type: 'antiquity_spearman', count: 3 },
+        { type: 'bowman', count: 4 },
+        { type: 'antiquity_scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1235,9 +1235,9 @@ export const SLAVIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'winged_hussar', count: 2 },
-        { type: 'sarmatian', count: 4 },
-        { type: 'elite_scythian_horse_archer', count: 3 },
+        { type: 'spearman', count: 3 },
+        { type: 'skirmisher', count: 4 },
+        { type: 'scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1255,9 +1255,9 @@ export const GERMANIC_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'champion', count: 4 },
-        { type: 'arbalest', count: 2 },
-        { type: 'frankish_paladin', count: 3 },
+        { type: 'militia', count: 3 },
+        { type: 'archer', count: 4 },
+        { type: 'scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1280,9 +1280,9 @@ export const LATIN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'condottiero', count: 4 },
-        { type: 'arbalest', count: 2 },
-        { type: 'equites', count: 3 },
+        { type: 'spearman', count: 3 },
+        { type: 'skirmisher', count: 4 },
+        { type: 'scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1307,9 +1307,9 @@ export const INDIA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'imperial_camel_rider', count: 4 },
-        { type: 'elite_elephant_archer', count: 2 },
-        { type: 'elite_skirmisher', count: 3 },
+        { type: 'antiquity_skirmisher', count: 2 },
+        { type: 'indian_tribesman', count: 3 },
+        { type: 'archer', count: 4 },
     ]
     }
 ];
@@ -1336,9 +1336,9 @@ export const GREEK_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_hoplite', count: 4 },
         { type: 'ekdromos', count: 2 },
-        { type: 'elite_greek_cavalry', count: 3 },
+        { type: 'bowman', count: 4 },
+        { type: 'antiquity_scout_cavalry', count: 3 },
     ]
     }
 ];
@@ -1364,9 +1364,9 @@ export const PERSIAN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'savar', count: 2 },
-        { type: 'qizilbash_warrior', count: 4 },
-        { type: 'imperial_cavalry', count: 3 },
+        { type: 'sparabara', count: 3 },
+        { type: 'bowman', count: 4 },
+        { type: 'antiquity_scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1402,9 +1402,9 @@ export const MALAY_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_battle_elephant', count: 2 },
-        { type: 'sunda_royal_fighter', count: 3 },
-        { type: 'imperial_skirmisher', count: 4 },
+        { type: 'antiquity_skirmisher', count: 2 },
+        { type: 'maceman', count: 3 },
+        { type: 'bowman', count: 4 },
     ]
     }
 ];
@@ -1433,9 +1433,9 @@ export const AFRICA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'sosso_guard', count: 3 },
-        { type: 'elite_genitour', count: 4 },
-        { type: 'camel_raider', count: 2 },
+        { type: 'antiquity_skirmisher', count: 2 },
+        { type: 'antiquity_spearman', count: 3 },
+        { type: 'bowman', count: 4 },
     ]
     }
 ];
@@ -1460,9 +1460,9 @@ export const EAST_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'sarmatian', count: 3 },
-        { type: 'imperial_centurion', count: 4 },
-        { type: 'cav_archer_heavy', count: 2 },
+        { type: 'maceman', count: 3 },
+        { type: 'bowman', count: 4 },
+        { type: 'antiquity_scout_cavalry', count: 2 },
     ]
     }
 ];
@@ -1481,9 +1481,9 @@ export const PURU_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_sannahya', count: 2 },
-        { type: 'elite_skirmisher', count: 3 },
-        { type: 'elite_shrivamsha_rider', count: 4 },
+        { type: 'antiquity_skirmisher', count: 2 },
+        { type: 'indian_tribesman', count: 3 },
+        { type: 'bowman', count: 4 },
     ]
     }
 ];
@@ -1504,9 +1504,9 @@ export const AMERICA_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_eagle_warrior', count: 2 },
-        { type: 'elite_ibirapema_warrior', count: 4 },
-        { type: 'xolotl_warrior', count: 3 },
+        { type: 'eagle_scout', count: 2 },
+        { type: 'eagle_warrior', count: 3 },
+        { type: 'elite_eagle_warrior', count: 4 },
     ]
     }
 ];
@@ -1527,9 +1527,9 @@ export const ANDE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'elite_temple_guard', count: 4 },
-        { type: 'elite_champi_warrior', count: 3 },
-        { type: 'elite_bolas_rider', count: 2 },
+        { type: 'champi_scout', count: 2 },
+        { type: 'champi_runner', count: 3 },
+        { type: 'slinger', count: 4 },
     ]
     }
 ];
@@ -1752,9 +1752,9 @@ export const ORIE_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'camel_heavy', count: 4 },
-        { type: 'shock_cavalry', count: 2 },
-        { type: 'cav_archer_heavy', count: 3 },
+        { type: 'eastern_swordsman', count: 3 },
+        { type: 'archer', count: 4 },
+        { type: 'camel_raider', count: 2 },
     ]
     }
 ];
@@ -1775,9 +1775,9 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
         maxTroops: Infinity,
         gridSize: 3,
         slots: [
-        { type: 'mercenary_hoplite', count: 4 },
-        { type: 'elite_peltast', count: 2 },
-        { type: 'tarantine_cavalry', count: 3 },
+        { type: 'thracian_peltast', count: 2 },
+        { type: 'maceman', count: 3 },
+        { type: 'elite_peltast', count: 4 },
     ]
     }
 ];
@@ -1904,27 +1904,27 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         shipId: 'ANT_ELITE_GALLEY', // 普鲁军团：古典桨帆船高级（南亚古典暂用古典时代最高档战船）
     },
     AFRICA: {
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         tiers: AFRICA_BASE_TIERS,
         shipId: 'CANOE', // 非洲军团：独木舟（尼日尔河与大湖区传统战舟）
     },
     CENTRAL: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         tiers: CENTRAL_BASE_TIERS,
         shipId: 'LOU_CHUAN', // 东亚军团：中国楼船（汉唐宋华夏水师旗舰主力）
     },
     ANDE: {
-        formationMode: 'echelon',
+        formationMode: 'triangle',
         tiers: ANDE_BASE_TIERS,
         shipId: 'CANOE', // 安第斯军团：独木舟（安第斯与高山湖泊传统轻舟）
     },
     PERSIAN: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         tiers: PERSIAN_BASE_TIERS,
         shipId: 'BIREME', // 波斯军团：双列桨座战船（阿契美尼德/萨珊波斯双列战船）
     },
     LATIN: {
-        formationMode: 'balance_yoke',
+        formationMode: 'fish_scale',
         tiers: LATIN_BASE_TIERS,
         shipId: 'TRIREME', // 地中海军团：三列桨座战船（罗马称霸地中海核心主力舰）
     },
@@ -1942,17 +1942,17 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         shipId: 'DROMON', // 东南欧军团：德罗蒙战舰（拜占庭希腊火王牌战舰）
     },
     INDIA: {
-        formationMode: 'balance_yoke',
+        formationMode: 'triangle',
         tiers: INDIA_BASE_TIERS,
         shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
     },
     SLAVIC: {
-        formationMode: 'crane_wing',
+        formationMode: 'fish_scale',
         tiers: SLAVIC_BASE_TIERS,
         shipId: 'MONOREME', // 东北欧军团：单列桨座战船（早期东斯拉夫/罗斯独木长船）
     },
     GERMANIC: {
-        formationMode: 'balance_yoke',
+        formationMode: 'fish_scale',
         tiers: GERMANIC_BASE_TIERS,
         // 🔴 [2026-09-19 主人定] ① 素材样貌：MONOREME 是**地中海桨帆船**，配日耳曼/北海不像；
         //    改挂长船（北海-波罗的海型屈首搭板长船，涅达姆船一脉）。项目已按「维京归日耳曼」
@@ -1962,12 +1962,12 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         shipId: 'ELITE_LONGBOAT', // 西欧军团：维京长船高级（长船线最高档，封建档）
     },
     STEPPE: {
-        formationMode: 'triangle',
+        formationMode: 'fish_scale',
         tiers: STEPPE_BASE_TIERS,
         shipId: 'DEMO_RAFT', // 中亚军团：渡河木筏（内陆游牧渡河皮筏/木排，史实无远洋水师）
     },
     ORIE: {
-        formationMode: 'balance_yoke',
+        formationMode: 'fish_scale',
         tiers: ORIE_BASE_TIERS,
         // 🔴 [2026-09-19 四时代硬闸] 原为 FIRE_SHIP（喷火船）＝**城堡**档，而本军团在役势力是
         //    巴格达（封建西亚）＝封建时代，越界。火船线里封建窗内可用的只有基础档「喷火桨帆船」
@@ -1975,17 +1975,17 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         shipId: 'FIRE_GALLEY', // 中东军团：喷火桨帆船（阿拉伯-黎凡特火攻快船，封建档）
     },
     AMERICA: {
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         tiers: AMERICA_BASE_TIERS,
         shipId: 'CANOE', // 中美军团：独木舟（特斯科科湖与玛雅雨林武装战舟）
     },
     GREEK: {
-        formationMode: 'balance_yoke',
+        formationMode: 'crane_wing',
         tiers: GREEK_BASE_TIERS,
         shipId: 'TRIREME', // 希腊军团：三列桨座战船（萨拉米斯海战希腊经典战舰）
     },
     THRACIAN: {
-        formationMode: 'balance_yoke',
+        formationMode: 'triangle',
         tiers: THRACIAN_BASE_TIERS,
         // 🔴 [2026-09-19 主人定「同族有高级档就优先套高级」] 伦博斯线共四档
         //    （轻型伦博斯 → 战型伦博斯高级 → 重型伦博斯重装 → 旗舰伦博斯重装），同为古典档，
