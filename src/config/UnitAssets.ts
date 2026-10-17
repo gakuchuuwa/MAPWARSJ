@@ -1002,6 +1002,30 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/idle_${d}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/death_${d}.png`),
         },
+        'HERO_DREKI': {
+            // 【英雄·龙船 Dreki】与 DREKI 同一套 16 向素材（/SUCAI/DREKI/）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/DREKI/death_${d}.png`),
+        },
+        'HERO_STOERTEBEKER': {
+            // 【英雄·斯托尔特贝克】DE 沿用重型爆破舰 16 向素材（/SUCAI/HEAVY_DEMO_SHIP/）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_DEMO_SHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_DEMO_SHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_DEMO_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HEAVY_DEMO_SHIP/idle_${d}.png`),
+            DEATH: [],
+        },
+        'BOARDING_GALLEY': {
+            // 【欧洲接舷战船】DE 沿用 GALLEY 16 向素材（/SUCAI/GALLEY/）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/GALLEY/idle_${d}.png`),
+            DEATH: [],
+        },
         'ELITE_LONGBOAT': {
             // 盖尔长船（凯尔特）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/move_${d}.png`),
@@ -4300,6 +4324,14 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
+        },
+        // 【欧洲接舷战船】8方向，复用 /SUCAI/GALLEY/ 素材
+        'boarding_galley': {
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/idle_${dir}.png`),
         },
         // ── 2026-10-14 补 6 个 DE 官方战斗兵种（素材 u_* SLD 提取；链锤兵复用 VANGUARD 同 u_inf_vanguard）──
         'maceman': {

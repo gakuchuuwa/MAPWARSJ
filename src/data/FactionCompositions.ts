@@ -29,6 +29,26 @@ export interface CustomFactionLegion {
 }
 
 export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
+    // 🔴 [2026-10-18 主人令] 东方农民起义军 7 家套【帝国时代华夏军团】（李自成/张献忠/石达开/黄巢/方腊/裘甫/邓茂七）；西方造反军团【帝国时代起义军团】＝伊瓦伊洛/西维利斯
+    "dashun": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    "taiping": {
+        legionName: "帝国时代华夏军团",
+        legionType: "sub",
+    },
+    // 🔴 [2026-10-18 主人令「先两个」] 三级军团首次套用（口径：军团建筑文化 = 武将据点的建筑风格，且武将为帝国时代）：
+    //   亚速尔·西普里亚诺（帝国时代，据点安格拉 city_angra｜PORTUGUESE）→ 帝国时代葡萄牙风琴军团
+    //   纳韦尔布塔·加尔瓦里诺（帝国时代，据点科利普利 city_kelipuli｜MAPUCHE）→ 帝国时代安第斯游击军团
+    "yasuer": {
+        legionName: "帝国时代葡萄牙风琴军团",
+        legionType: "sub",
+    },
+    "naweierbuta": {
+        legionName: "帝国时代安第斯游击军团",
+        legionType: "sub",
+    },
     "xishudongyin": {
         legionName: "帝国时代马六甲军团",
         legionType: "sub",
@@ -442,7 +462,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "duobuluojia": {
-        legionName: "城堡时代博亚尔重骑军团",
+        legionName: "帝国时代起义军团",
         legionType: "sub",
     },
     "kuertaiya": {
@@ -486,14 +506,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "fangla": {
-        legionName: "城堡时代临安军团",
+        legionName: "帝国时代华夏军团",
     },
     "xiadunhe": {
         legionName: "封建时代德鲁日纳亲卫团",
         legionType: "sub",
     },
     "batawei": {
-        legionName: "古典时代条顿军团",
+        legionName: "帝国时代起义军团",
         legionType: "sub",
     },
     "aersasi": {
@@ -1585,8 +1605,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代黎凡特军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-18 主人令「放宽」] 换挂帝国时代苏丹亲兵军团（穆罕默德二世·布尔萨 TURKS；武将为城堡时代，已放宽）
     "osman": {
-        legionName: "城堡时代加齐突骑军团",
+        legionName: "帝国时代苏丹亲兵军团",
         legionType: "sub",
     },
     "aosimanbeiyiguo": {
@@ -1987,8 +2008,9 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代圣地亚哥骑士团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-18 主人令「放宽」] 换挂帝国时代西班牙征服军团（皮萨罗·利马 INCA；军团建筑文化仍 SPANISH，已放宽）
     "xibanya": {
-        legionName: "帝国时代塔万廷军团",
+        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
     "alagong": {
@@ -2172,7 +2194,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "daxi_ming": {
-        legionName: "帝国时代四川军团",
+        legionName: "帝国时代华夏军团",
         legionType: "sub",
     },
     "miaomin": {
@@ -2256,7 +2278,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "dengmaoqi": {
-        legionName: "城堡时代临安军团",
+        legionName: "帝国时代华夏军团",
         legionType: "sub",
     },
     "yezongliu": {
@@ -3291,11 +3313,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "qiufu": {
-        legionName: "封建时代南朝军团",
+        legionName: "帝国时代华夏军团",
         legionType: "sub",
     },
     "huangwang": {
-        legionName: "封建时代南朝军团",
+        legionName: "帝国时代华夏军团",
         legionType: "sub",
     },
     "linshihong": {
