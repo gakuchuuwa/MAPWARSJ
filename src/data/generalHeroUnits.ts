@@ -109,18 +109,19 @@ export const GENERAL_HERO_UNITS: Readonly<Record<string, string>> = {
     nuowei_halaer: 'hero_harald',   // 挪威哈拉尔（DE 新提取的英雄·哈拉尔）
 };
 
-/** 主将队用哪个兵种：剧本事件里选定的 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
-export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string }): string | null {
+/** 主将队用哪个兵种：剧本事件里选定的 > 军团显式配置的英雄主队 > 专属英雄 > 248 类（所属文明 × 时代）兵模 > 本军团前排兵种 */
+export function commanderUnitOf(generalId: string | null | undefined, expandedSlots: readonly string[], ctx?: { factionId?: string | null; seedKey?: string; legionCommanderUnit?: string | null }): string | null {
     const picked = generalId ? getScriptCommanderUnit(generalId) : null;
+    const legionCmd = ctx?.legionCommanderUnit ? ctx.legionCommanderUnit : null;
     const hero = generalId ? GENERAL_HERO_UNITS[generalId] : undefined;
     const civEra = generalId ? resolveCivEraCommander(generalId) : null;
     // 没有武将的军团：按所属势力取英雄（每个军团都必须有主将队，见 resolveFactionCommander）
     const byFaction = !generalId && ctx ? resolveFactionCommander(ctx.factionId, ctx.seedKey ?? '') : null;
-    return picked ?? hero ?? civEra ?? byFaction ?? expandedSlots[0] ?? null;
+    return picked ?? legionCmd ?? hero ?? civEra ?? byFaction ?? expandedSlots[0] ?? null;
 }
 
 /** 编制 9 队展开后追加主将队 → 10 队；不是 9 队的（异常/旧数据）原样返回 */
-export function withCommander(generalId: string | null | undefined, expandedSlots: string[], ctx?: { factionId?: string | null; seedKey?: string; hasElite?: boolean }): string[] {
+export function withCommander(generalId: string | null | undefined, expandedSlots: string[], ctx?: { factionId?: string | null; seedKey?: string; hasElite?: boolean; legionCommanderUnit?: string | null }): string[] {
     if (expandedSlots.length !== 9) return expandedSlots;
     // 🔴 [2026-10-08 主人令「没有武将，或者没有精锐的军团，不要出现第十队」] 无将、或明确无精锐 → 不追加主将队（取代 2026-10-05「每个军团都必须有主将队」）
     if (!generalId || ctx?.hasElite === false) return expandedSlots;

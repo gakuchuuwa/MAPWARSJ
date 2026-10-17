@@ -30,6 +30,7 @@ export interface Level3LegionDef {
     /** 绑定的史实海军战船（对齐四大时代与历史，🔴 2026-09-16 主人定） */
     shipId: string;
     buildingStyle: BuildingStyle;
+    commanderUnit?: string;
 }
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
