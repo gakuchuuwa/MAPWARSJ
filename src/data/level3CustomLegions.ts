@@ -89,11 +89,11 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     },
     {
         name: '城堡时代大理军团',
-        formationMode: 'crane_wing',
+        formationMode: 'triangle',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'jian_swordman_shielded', count: 4 },
-            { type: 'elite_chukonu', count: 3 },
+            { type: 'jian_swordman_shielded', count: 3 },
+            { type: 'elite_chukonu', count: 4 },
         ],
         regions: ['DALI'],
         parentLegion: '东亚军团',

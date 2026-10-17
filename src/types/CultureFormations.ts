@@ -1027,7 +1027,7 @@ export function getFactionCompositionSlots(factionId: string, generalId?: string
 /** 势力挂的那支军团的编制（三层表里查）；势力没挂军团名则 null */
 export function getFactionLegionComposition(
     factionId: string,
-): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+): { formationMode: FormationMode; slots: CompositionSlot[]; commanderUnit?: string } | null {
     // 🔴 [2026-09-23] 剧本期：当前这一仗的攻 / 守方改用事件指名的剧本军团（第四层）；乱斗恒走下面原路
     const scriptLegion = getScriptFactionLegionName(factionId);
     if (scriptLegion) {
@@ -1038,7 +1038,7 @@ export function getFactionLegionComposition(
         //    而剧本军团自己的是 雁行 4-3-2／色雷斯标枪手/色雷斯长刃斩手/古典轻骑兵、无船。
         //    → 不修的话，第 1、2 场（守方＝色雷斯军团）真机上阵的是文化区那套编制，等于剧本白配。
         const scr = SCRIPT_LEGION_MAP.get(scriptLegion);
-        if (scr) return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })) };
+        if (scr) return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })), commanderUnit: scr.commanderUnit };
         const c = getLegionCompositionByName(scriptLegion);
         if (c) return c;
     }
@@ -1091,7 +1091,8 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     if (!slots) return;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
-    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army) });
+    const legionCommanderUnit = getFactionLegionComposition(army.factionId)?.commanderUnit ?? getRegionLegionComposition(culture)?.commanderUnit;
+    army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army), legionCommanderUnit });
     const scales9 = expandCompositionScales(slots);
     army.cultureScales = army.cultureSlots.length > scales9.length ? [...scales9, 1] : scales9;
     army.legionType =
@@ -1127,7 +1128,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     //    绝不反过来把阵型回落成编成推出来的那个（那会丢掉朝代/势力的阵型设计）。
     if (army.formationMode && !slotsMatchFormation(slots, army.formationMode)) {
         const fixed = convertSlotsToMode(slots, army.formationMode);
-        army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(fixed), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army) });
+        army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(fixed), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army), legionCommanderUnit });
         const fixedScales9 = expandCompositionScales(fixed);
         army.cultureScales = army.cultureSlots.length > fixedScales9.length ? [...fixedScales9, 1] : fixedScales9;
     }
@@ -1892,7 +1893,7 @@ export const THRACIAN_BASE_TIERS: CompositionTier[] = [
 
 /** 🔴 [2026-09-11 主人定：第一层16母体文化军团与第二层时代文明军团彻底分开]
  *  第一层 16 母体文化军团专属编制映射表。与第二层时代军团完全物理隔离，互不影响。 */
-export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[]; shipId: string }>> = {
+export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: FormationMode; tiers: CompositionTier[]; shipId: string; commanderUnit?: string }>> = {
     PURU: {
         formationMode: 'triangle',
         tiers: PURU_BASE_TIERS,
@@ -2027,7 +2028,7 @@ const LEGION_RENAMED = new Map<string, string>();
 export function renameLegionInMemory(oldName: string, newName: string): void {
     if (!oldName || !newName || oldName === newName) return;
     const comp = getLegionCompositionByName(oldName);
-    if (comp) LEGION_RUNTIME_PATCH.set(newName, { formationMode: comp.formationMode, slots: comp.slots.map(s => ({ ...s })) });
+    if (comp) LEGION_RUNTIME_PATCH.set(newName, { formationMode: comp.formationMode, slots: comp.slots.map(s => ({ ...s })), shipId: comp.shipId, commanderUnit: comp.commanderUnit });
     LEGION_RENAMED.set(oldName, newName);
     LEGION_DELETED.add(oldName);
     LEGION_RUNTIME_PATCH.delete(oldName);
@@ -2044,47 +2045,50 @@ export function patchLegionComposition(
     slots: CompositionSlot[],
     formationMode: FormationMode,
     shipId?: string,
+    commanderUnit?: string | null,
 ): void {
-    LEGION_RUNTIME_PATCH.set(name, { formationMode, slots: slots.map(s => ({ ...s })), shipId });
+    const prev = getLegionCompositionByName(name);
+    const nextCmd = commanderUnit === undefined ? prev?.commanderUnit : (commanderUnit || undefined);
+    LEGION_RUNTIME_PATCH.set(name, { formationMode, slots: slots.map(s => ({ ...s })), shipId: shipId ?? prev?.shipId, commanderUnit: nextCmd });
 }
 
 /** 运行时覆盖（编辑器保存后立刻生效，不依赖 HMR）：军团名 → 编制 */
-const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string }>();
+const LEGION_RUNTIME_PATCH = new Map<string, { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string }>();
 
 /** 按**军团名**取编制：一级 → 二级 → 三级，找不到返回 null */
 export function getLegionCompositionByName(
     name: string | null | undefined,
-): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string } | null {
+): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
     if (!name || LEGION_DELETED.has(name)) return null;
     const patched = LEGION_RUNTIME_PATCH.get(name);
-    if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })), shipId: patched.shipId };
+    if (patched) return { formationMode: patched.formationMode, slots: patched.slots.map(s => ({ ...s })), shipId: patched.shipId, commanderUnit: patched.commanderUnit };
 
     for (const rg of Object.keys(BASE_16_TIERS_MAP) as RegionType[]) {
         if (BASE_16_LEGION_NAME_BY_REGION[rg] !== name) continue;
         const b = BASE_16_TIERS_MAP[rg];
-        if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })), shipId: b.shipId };
+        if (b?.tiers[0]?.slots) return { formationMode: b.formationMode, slots: b.tiers[0].slots.map(s => ({ ...s })), shipId: b.shipId, commanderUnit: b.commanderUnit };
     }
     const l2 = LEVEL_2_CIV_62_MAP.get(name);
     if (l2) {
         const l2Ship = l2.shipId ?? (l2.region ? BASE_16_TIERS_MAP[l2.region]?.shipId : undefined);
-        return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })), shipId: l2Ship };
+        return { formationMode: l2.formationMode, slots: l2.slots.map(s => ({ ...s })), shipId: l2Ship, commanderUnit: l2.commanderUnit };
     }
     const l3 = LEVEL_3_LEGION_MAP.get(name);
     if (l3) {
         const l3Region = l3.regions?.[0] as RegionType | undefined;
         const l3Ship = l3.shipId ?? (l3Region ? BASE_16_TIERS_MAP[l3Region]?.shipId : undefined);
-        return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship };
+        return { formationMode: l3.formationMode, slots: l3.slots.map(s => ({ ...s })), shipId: l3Ship, commanderUnit: l3.commanderUnit };
     }
     // 第四层：剧本军团（只有剧本事件指名时才会被查到；名字与前三层不重）
     const l4 = SCRIPT_LEGION_MAP.get(name);
-    if (l4) return { formationMode: l4.formationMode, slots: l4.slots.map(s => ({ ...s })), shipId: l4.shipId };
+    if (l4) return { formationMode: l4.formationMode, slots: l4.slots.map(s => ({ ...s })), shipId: l4.shipId, commanderUnit: l4.commanderUnit };
     return null;
 }
 
 /** 按**文化区**取编制 = 该区默认军团的编制（区本身不再持有编制） */
 export function getRegionLegionComposition(
     culture: RegionType | null | undefined,
-): { formationMode: FormationMode; slots: CompositionSlot[] } | null {
+): { formationMode: FormationMode; slots: CompositionSlot[]; commanderUnit?: string } | null {
     return getLegionCompositionByName(culture ? CULTURE_LEGION_NAMES[culture] : null);
 }
 
@@ -2127,13 +2131,14 @@ export const CULTURE_FORMATION_MODE: Readonly<Record<RegionType, FormationMode>>
     });
 
 /** 获取第一层母体文化军团的默认配置（与第二层时代军团彻底物理隔离） */
-export function getBase16FormationConfig(region: RegionType): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string } | null {
+export function getBase16FormationConfig(region: RegionType): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
     const custom = BASE_16_TIERS_MAP[region];
     if (custom && custom.tiers[0]?.slots) {
         return {
             formationMode: custom.formationMode,
             slots: custom.tiers[0].slots.map(s => ({ ...s })),
             shipId: custom.shipId,
+            commanderUnit: custom.commanderUnit,
         };
     }
     return null;

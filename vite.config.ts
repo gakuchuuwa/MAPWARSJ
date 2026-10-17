@@ -1444,6 +1444,7 @@ export default defineConfig({
                             const at = text.lastIndexOf('];', text.indexOf('export const LEVEL_3_LEGION_MAP'));
                             if (at < 0) throw new Error('level3CustomLegions.ts 结构异常，无法新建军团');
                             const regions: string[] = Array.isArray(data?.regions) ? data.regions.map((r: any) => String(r)) : [];
+                            const commanderUnit: string = String(data?.commanderUnit ?? '').trim();
                             const entry = [
                                 '    {',
                                 "        name: '" + legionName + "',",
@@ -1454,6 +1455,7 @@ export default defineConfig({
                                 '        regions: [' + regions.map((r) => "'" + r + "'").join(', ') + '],',
                                 "        parentLegion: '" + parentLegion + "',",
                                 "        shipId: '" + shipId + "',",
+                                ...(commanderUnit ? ["        commanderUnit: '" + commanderUnit + "',"] : []),
                                 '    },',
                             ].join('\n') + '\n';
                             safeWriteFileSync(p3, text.slice(0, at) + entry + text.slice(at));
@@ -1547,7 +1549,7 @@ export default defineConfig({
                             if (!legionName) throw new Error('缺少军团名');
                             if (!Array.isArray(data?.slots) || data.slots.length === 0) throw new Error('缺少三排兵种');
                             markLegionSaveWrite();
-                            const file = serverSaveOrCreateLegion(legionName, data.slots, data.formationMode);
+                            const file = serverSaveOrCreateLegion(legionName, data.slots, data.formationMode, data.commanderUnit);
                             res.setHeader('Content-Type', 'application/json');
                             res.end(JSON.stringify({ ok: true, file: path.basename(file) }));
                             console.log('[SaveLegion] ✅ 【' + legionName + '】→ ' + path.basename(file));
@@ -3354,7 +3356,13 @@ function serverFindSlotsArray(text: string, fromIdx: number): { open: number; cl
 }
 
 /** 在 name/slots 型条目表（level2 / level3）里替换某支军团的编制；未命中返回 null */
-function serverReplaceLegionEntry(text: string, legionName: string, slots: any[], mode?: string): string | null {
+function serverReplaceLegionEntry(
+    text: string,
+    legionName: string,
+    slots: any[],
+    mode?: string,
+    commanderUnit?: string | null,
+): string | null {
     const at = text.indexOf("name: '" + legionName + "'");
     if (at < 0) return null;
     const range = serverFindSlotsArray(text, at);
@@ -3364,6 +3372,36 @@ function serverReplaceLegionEntry(text: string, legionName: string, slots: any[]
         const headEnd = out.indexOf('slots: [', at);
         const head = out.slice(at, headEnd);
         out = out.slice(0, at) + head.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + out.slice(headEnd);
+    }
+    if (commanderUnit !== undefined) {
+        const nextName = out.indexOf("name: '", at + 1);
+        const cmdAt = out.indexOf("commanderUnit: '", at);
+        const hasCmd = cmdAt >= 0 && (nextName < 0 || cmdAt < nextName);
+        const trimmed = typeof commanderUnit === 'string' ? commanderUnit.trim() : '';
+        if (trimmed) {
+            if (hasCmd) {
+                const valueStart = cmdAt + "commanderUnit: '".length;
+                const valueEnd = out.indexOf("'", valueStart);
+                if (valueEnd > 0) {
+                    out = out.slice(0, valueStart) + trimmed + out.slice(valueEnd);
+                }
+            } else {
+                const shipAt = out.indexOf("shipId: '", at);
+                if (shipAt >= 0 && (nextName < 0 || shipAt < nextName)) {
+                    const lineEnd = out.indexOf('\n', shipAt);
+                    if (lineEnd > 0) {
+                        const nl = out[lineEnd - 1] === '\r' ? '\r\n' : '\n';
+                        out = out.slice(0, lineEnd + 1) + "        commanderUnit: '" + trimmed + "'," + nl + out.slice(lineEnd + 1);
+                    }
+                }
+            }
+        } else if (hasCmd) {
+            const lineStart = out.lastIndexOf('\n', cmdAt) + 1;
+            const lineEnd = out.indexOf('\n', cmdAt);
+            if (lineEnd > 0) {
+                out = out.slice(0, lineStart) + out.slice(lineEnd + 1);
+            }
+        }
     }
     return out;
 }
@@ -3553,9 +3591,9 @@ function serverWriteOneFactionLegion(
 }
 
 /** 保存一支军团的编制；军团名不在三层表里就在**三级表**新建一条。返回被改动的文件路径 */
-function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: string): string {
+function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: string, commanderUnit?: string | null): string {
     try {
-        const r = serverSaveLegionComposition(legionName, slots, mode);
+        const r = serverSaveLegionComposition(legionName, slots, mode, undefined, commanderUnit);
         // 🔴 [2026-09-15 修] 一级 16 母体那条分支**不自己写盘**（为了避免两次写同一个文件），
         //    它把改好的文本回给调用方。这里原来只取 .file 就返回了，文本被丢掉 ——
         //    于是保存一级文化军团时接口返回 ok，实际上一个字也没写进去。
@@ -3571,6 +3609,7 @@ function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: strin
     const tail = '];';
     const at = text.lastIndexOf(tail, text.indexOf('export const LEVEL_3_LEGION_MAP'));
     if (at < 0) throw new Error('level3CustomLegions.ts 结构异常，无法新建军团');
+    const cmdTrimmed = typeof commanderUnit === 'string' ? commanderUnit.trim() : '';
     const entry = [
         '    {',
         "        name: '" + legionName + "',",
@@ -3579,6 +3618,7 @@ function serverSaveOrCreateLegion(legionName: string, slots: any[], mode?: strin
         serverSlotLines(slots, '            '),
         '        ],',
         '        regions: [],',
+        ...(cmdTrimmed ? ["        commanderUnit: '" + cmdTrimmed + "',"] : []),
         '    },',
     ].join('\n') + '\n';
     safeWriteFileSync(p, text.slice(0, at) + entry + text.slice(at));
@@ -3593,6 +3633,7 @@ function serverSaveLegionComposition(
     slots: any[],
     mode?: string,
     cultureFormationsText?: string,
+    commanderUnit?: string | null,
 ): { file: string; cultureFormationsText?: string } {
     const region = BASE_16_LEGION_TO_REGION[legionName];
     if (region) {
@@ -3603,20 +3644,37 @@ function serverSaveLegionComposition(
         const range = serverFindSlotsArray(text, at);
         if (!range) throw new Error(region + '_BASE_TIERS 的 slots 解析失败');
         text = text.slice(0, range.open + 1) + '\n' + serverSlotLines(slots, '        ') + '\n    ' + text.slice(range.close);
-        if (mode) {
+        if (mode || commanderUnit !== undefined) {
             const mapAt = text.indexOf('BASE_16_TIERS_MAP');
             const entryAt = text.indexOf('    ' + region + ': {', mapAt);
             if (entryAt > 0) {
                 const endAt = text.indexOf('},', entryAt);
-                const seg = text.slice(entryAt, endAt);
-                text = text.slice(0, entryAt) + seg.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'") + text.slice(endAt);
+                let seg = text.slice(entryAt, endAt);
+                if (mode) {
+                    seg = seg.replace(/formationMode:\s*'[a-z_]+'/, "formationMode: '" + mode + "'");
+                }
+                if (commanderUnit !== undefined) {
+                    const trimmed = typeof commanderUnit === 'string' ? commanderUnit.trim() : '';
+                    const hasCmd = /commanderUnit:\s*'[^']*'/.test(seg);
+                    if (trimmed) {
+                        if (hasCmd) {
+                            seg = seg.replace(/commanderUnit:\s*'[^']*'/, "commanderUnit: '" + trimmed + "'");
+                        } else {
+                            const nl = text.includes('\r\n') ? '\r\n' : '\n';
+                            seg = seg.replace(/(\s*)$/, nl + "        commanderUnit: '" + trimmed + "',$1");
+                        }
+                    } else if (hasCmd) {
+                        seg = seg.replace(/\r?\n\s*commanderUnit:\s*'[^']*',?/, '');
+                    }
+                }
+                text = text.slice(0, entryAt) + seg + text.slice(endAt);
             }
         }
         return { file: p, cultureFormationsText: text };
     }
     for (const rel of ['src/data/level2Civ62Legions.ts', 'src/data/level3CustomLegions.ts']) {
         const p = path.resolve(__dirname, rel);
-        const out = serverReplaceLegionEntry(safeReadFileSync(p), legionName, slots, mode);
+        const out = serverReplaceLegionEntry(safeReadFileSync(p), legionName, slots, mode, commanderUnit);
         if (out) { safeWriteFileSync(p, out); return { file: p }; }
     }
     throw new Error('军团【' + legionName + '】不在一级16 / 二级62 / 三级表里，无法保存编制');

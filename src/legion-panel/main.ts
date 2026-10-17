@@ -162,7 +162,7 @@ function buildRows(): LegionRow[] {
             users: users.get(name) ?? 0,
             shipId: c.shipId ?? '',
             buildingStyle,
-            commanderUnit: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.commanderUnit ?? '') : '',
+            commanderUnit: c.commanderUnit ?? '',
             source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
         });
     };
@@ -202,7 +202,36 @@ let sortByName: 'none' | 'asc' | 'desc' = 'none';
 let layerFilter: Layer | '全部' = '全部';
 let selected: string | null = null;
 /** 当前正在编辑的草稿（未保存） */
-let draft: { mode: FormationMode; types: [string, string, string]; shipId: string; commanderUnit: string; source: string } | null = null;
+let draft: { mode: FormationMode; types: [string, string, string]; tierTypes?: Record<number, string>; shipId: string; commanderUnit: string; source: string } | null = null;
+
+/**
+ * 换阵型时兵种跟着 2 / 3 / 4 人档位自动走：
+ *   除方阵（3+3+3）外，其余 6 种阵型都是 {2, 3, 4} 的排列。
+ *   切换阵型时，原 4 人排的兵种自动移到新阵型的 4 人排、3 人排移到 3 人排、2 人排移到 2 人排。
+ *   同时用 tierTypes 记住 2/3/4 档对应的兵种，即便中途切过一次 3+3+3 方阵再切回别的阵型也不丢。
+ */
+function remapTypesOnModeChange(
+    prevMode: FormationMode,
+    nextMode: FormationMode,
+    types: [string, string, string],
+    tierTypes?: Record<number, string>,
+): { types: [string, string, string]; tierTypes: Record<number, string> } {
+    const map: Record<number, string> = { ...(tierTypes ?? {}) };
+    if (prevMode !== 'square') {
+        const prevCnt = MODE_ROWS[prevMode];
+        map[prevCnt[0]] = types[0];
+        map[prevCnt[1]] = types[1];
+        map[prevCnt[2]] = types[2];
+    }
+    if (nextMode !== 'square' && map[2] && map[3] && map[4]) {
+        const nextCnt = MODE_ROWS[nextMode];
+        return {
+            types: [map[nextCnt[0]], map[nextCnt[1]], map[nextCnt[2]]],
+            tierTypes: map,
+        };
+    }
+    return { types: [types[0], types[1], types[2]], tierTypes: map };
+}
 let host: HTMLElement;
 /** 🔴 [2026-09-15 主人报障「搜索框打不出汉字」]
  *  这两个搜索框每敲一下就 innerHTML 重建整块，输入框节点被换掉，
@@ -322,6 +351,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         const kw = pickerKeyword.trim();
         // 🔴 保持分类顺序：不要在最外层全局按名字排序，否则会把冷兵器等搞到最前面
         const list = DE_UNITS_CATALOG.filter(u => {
+            if (kind === 'hero' && (u.category === 'naval' || getUnitSubcategory(u.id) === 'naval_hero')) return false;
             if (pickerCat !== 'all' && u.category !== pickerCat) return false;
             if (!kw) return true;
             return u.name.includes(kw) || u.id.includes(kw) || subLabelOf(u.id).includes(kw);
@@ -403,7 +433,12 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
             const uid = (c as HTMLElement).dataset.uid!;
             overlay.remove();
             if (onPick) { onPick(uid); return; }
-            if (draft) draft.types[rowIdx] = uid;
+            if (draft) {
+                draft.types[rowIdx] = uid;
+                if (draft.mode !== 'square') {
+                    draft.tierTypes = { ...(draft.tierTypes ?? {}), [MODE_ROWS[draft.mode][rowIdx]]: uid };
+                }
+            }
             render();
         }));
     };
@@ -587,8 +622,10 @@ function render(): void {
                 `<option value="${m}" ${draft!.mode === m ? 'selected' : ''}>${MODE_LABEL[m]}</option>`).join('')}
           </select>
 
-          ${sel.layer === '四级' ? `
-          <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">英雄（主队 · 第 10 队）</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#a89f8f;margin-bottom:5px;">
+            <span>英雄（主队 · 第 10 队）</span>
+            ${draft!.commanderUnit ? `<button id="lp-commander-clear" type="button" style="background:none;border:none;color:#c87a7a;font-size:11px;cursor:pointer;padding:0;">✕ 清空</button>` : ''}
+          </div>
           <div id="lp-commander-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
             <canvas id="lp-thumb-commander" width="64" height="64"
@@ -601,10 +638,24 @@ function render(): void {
             </div>
             <span style="color:#8a8378;font-size:16px;">▾</span>
           </div>
-          ` : ''}
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;color:#6a6358;">💡 换阵型自动跟随 2/3/4 人档位；也可点按钮直接对调：</span>
+            <div style="display:flex;gap:4px;">
+              <button type="button" class="lp-swap" data-a="0" data-b="1" title="前排 ↔ 中坚 兵种对调"
+                style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 前↔中</button>
+              <button type="button" class="lp-swap" data-a="1" data-b="2" title="中坚 ↔ 后排 兵种对调"
+                style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 中↔后</button>
+              <button type="button" class="lp-swap" data-a="0" data-b="2" title="前排 ↔ 后排 兵种对调"
+                style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 前↔后</button>
+            </div>
+          </div>
 
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
-            <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${rowCnt[i]} 人</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#a89f8f;margin-bottom:5px;">
+              <span>${label} · <b style="color:#f6e05e;">${rowCnt[i]} 人</b></span>
+              ${i < 2 ? `<button type="button" class="lp-swap" data-a="${i}" data-b="${i + 1}" style="padding:1px 6px;background:#1e2631;border:1px solid #3a4a5e;color:#9cb4cc;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 与${i === 0 ? '中坚' : '后排'}对调</button>` : ''}
+            </div>
             <div class="lp-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                  background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
               <canvas id="lp-thumb-${i}" width="64" height="64"
@@ -716,13 +767,38 @@ function render(): void {
     });
 
     document.getElementById('lp-mode')?.addEventListener('change', e => {
-        if (draft) draft.mode = (e.target as HTMLSelectElement).value as FormationMode;
+        if (draft) {
+            const nextMode = (e.target as HTMLSelectElement).value as FormationMode;
+            const remapped = remapTypesOnModeChange(draft.mode, nextMode, draft.types, draft.tierTypes);
+            draft.mode = nextMode;
+            draft.types = remapped.types;
+            draft.tierTypes = remapped.tierTypes;
+        }
         render();
+    });
+    document.getElementById('lp-commander-clear')?.addEventListener('click', e => {
+        e.stopPropagation();
+        if (draft) { draft.commanderUnit = ''; render(); }
     });
     document.getElementById('lp-commander-card')?.addEventListener('click', () => {
         if (!draft) return;
         // 主队（第 10 队）选英雄兵模：分类默认停在「英雄」
         openUnitPicker(-1, uid => { draft!.commanderUnit = uid; render(); }, draft!.commanderUnit, 'hero');
+    });
+    host.querySelectorAll('.lp-swap').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!draft) return;
+            const a = Number((btn as HTMLElement).dataset.a);
+            const b = Number((btn as HTMLElement).dataset.b);
+            const tmp = draft.types[a];
+            draft.types[a] = draft.types[b];
+            draft.types[b] = tmp;
+            if (draft.mode !== 'square') {
+                const cnt = MODE_ROWS[draft.mode];
+                draft.tierTypes = { [cnt[0]]: draft.types[0], [cnt[1]]: draft.types[1], [cnt[2]]: draft.types[2] };
+            }
+            render();
+        });
     });
     document.getElementById('lp-ship-card')?.addEventListener('click', () => {
         if (!draft) return;
@@ -854,15 +930,22 @@ function openCreateDialog(): void {
      *    接口 /api/save-faction-legion（单条写入，不整表覆盖）。留空 = 先不指派。 */
     let shipId = '';
     let shipTouched = false;
+    let commanderUnit = '';
+    let commanderTouched = false;
+    let tierTypes: Record<number, string> | undefined;
     let assignFactionId = '';
 
     const syncFromParent = (): void => {
         const p = rows.find(r => r.name === parentName);
+        if (p && !touched.some(Boolean)) {
+            mode = p.mode;
+        }
         for (let i = 0; i < 3; i++) {
             if (touched[i] && types[i]) continue;
             types[i] = p?.slots[i]?.type ?? p?.slots[0]?.type ?? '';
         }
         if (!shipTouched) shipId = p?.shipId ?? '';
+        if (!commanderTouched) commanderUnit = p?.commanderUnit ?? '';
     };
     syncFromParent();
 
@@ -896,6 +979,28 @@ function openCreateDialog(): void {
           <select id="lp-c-mode" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
             ${(Object.keys(MODE_ROWS) as FormationMode[]).map(m => `<option value="${m}" ${m === mode ? 'selected' : ''}>${MODE_LABEL[m]}</option>`).join('')}
           </select>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#a89f8f;margin-bottom:5px;">
+            <span>英雄（主队 · 第 10 队）${commanderTouched ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</span>
+            ${commanderUnit ? `<button id="lp-c-commander-clear" type="button" style="background:none;border:none;color:#c87a7a;font-size:11px;cursor:pointer;padding:0;">✕ 清空</button>` : ''}
+          </div>
+          <div id="lp-c-commander" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
+               background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
+            <canvas id="lp-c-thumb-commander" width="64" height="64"
+              style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
+            <div style="flex:1;min-width:0;">
+              <div style="color:#e8e0d0;font-size:13px;">${commanderUnit ? esc(cn(commanderUnit)) : '未选主队兵模'}</div>
+              <div style="color:#6a6358;font-size:11px;">${commanderUnit ? esc(subLabelOf(commanderUnit)) + ' · 点击更换' : '点击选择英雄兵模'}</div>
+            </div>
+            <span style="color:#8a8378;font-size:16px;">▾</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:11px;color:#6a6358;">💡 换阵型自动跟随 2/3/4 人档位；也可点按钮直接对调：</span>
+            <div style="display:flex;gap:4px;">
+              <button type="button" class="lp-c-swap" data-a="0" data-b="1" style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 前↔中</button>
+              <button type="button" class="lp-c-swap" data-a="1" data-b="2" style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 中↔后</button>
+              <button type="button" class="lp-c-swap" data-a="0" data-b="2" style="padding:2px 7px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:11px;cursor:pointer;">⇅ 前↔后</button>
+            </div>
+          </div>
           ${['前排尖刀', '中坚突击', '后排底边'].map((label, i) => `
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${cnt[i]} 人${touched[i] ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</div>
             <div class="lp-c-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
@@ -936,6 +1041,8 @@ function openCreateDialog(): void {
         }
         const shipCv = document.getElementById('lp-c-thumb-ship') as HTMLCanvasElement | null;
         if (shipCv && shipId) drawUnitThumb(shipCv, shipUnitId(shipId));
+        const cmdrCv = document.getElementById('lp-c-thumb-commander') as HTMLCanvasElement | null;
+        if (cmdrCv && commanderUnit) drawUnitThumb(cmdrCv, commanderUnit);
         const nameIn = document.getElementById('lp-c-name') as HTMLInputElement;
         nameIn.addEventListener('input', e => { name = (e.target as HTMLInputElement).value; });
         document.getElementById('lp-c-parent')?.addEventListener('change', e => {
@@ -944,12 +1051,44 @@ function openCreateDialog(): void {
             paint();
         });
         document.getElementById('lp-c-mode')?.addEventListener('change', e => {
-            mode = (e.target as HTMLSelectElement).value as FormationMode;
+            const nextMode = (e.target as HTMLSelectElement).value as FormationMode;
+            const remapped = remapTypesOnModeChange(mode, nextMode, types, tierTypes);
+            mode = nextMode;
+            types = remapped.types;
+            tierTypes = remapped.tierTypes;
             paint();
         });
+        document.getElementById('lp-c-commander-clear')?.addEventListener('click', e => {
+            e.stopPropagation();
+            commanderUnit = '';
+            commanderTouched = true;
+            paint();
+        });
+        document.getElementById('lp-c-commander')?.addEventListener('click', () => {
+            openUnitPicker(-1, uid => { commanderUnit = uid; commanderTouched = true; paint(); }, commanderUnit, 'hero');
+        });
+        box.querySelectorAll('.lp-c-swap').forEach(btn => btn.addEventListener('click', () => {
+            const a = Number((btn as HTMLElement).dataset.a);
+            const b = Number((btn as HTMLElement).dataset.b);
+            const tmp = types[a];
+            types[a] = types[b];
+            types[b] = tmp;
+            touched[a] = true;
+            touched[b] = true;
+            if (mode !== 'square') {
+                const c = MODE_ROWS[mode];
+                tierTypes = { [c[0]]: types[0], [c[1]]: types[1], [c[2]]: types[2] };
+            }
+            paint();
+        }));
         box.querySelectorAll('.lp-c-unit').forEach(el => el.addEventListener('click', () => {
             const i = Number((el as HTMLElement).dataset.row);
-            openUnitPicker(i, uid => { types[i] = uid; touched[i] = true; paint(); }, types[i]);
+            openUnitPicker(i, uid => {
+                types[i] = uid;
+                touched[i] = true;
+                if (mode !== 'square') tierTypes = { ...(tierTypes ?? {}), [MODE_ROWS[mode][i]]: uid };
+                paint();
+            }, types[i]);
         }));
         // 🔴 [2026-09-18] 选战船：与右侧面板换船同一个弹窗（kind='ship'），选中即记为手动、不再跟归属军团
         document.getElementById('lp-c-ship')?.addEventListener('click', () => {
@@ -960,7 +1099,7 @@ function openCreateDialog(): void {
         });
         document.getElementById('lp-c-cancel')?.addEventListener('click', () => overlay.remove());
         document.getElementById('lp-c-go')?.addEventListener('click', () => {
-            void createLegion(name, parentName, mode, types, shipId, assignFactionId, overlay);
+            void createLegion(name, parentName, mode, types, shipId, commanderUnit, assignFactionId, overlay);
         });
     };
     paint();
@@ -974,6 +1113,7 @@ async function createLegion(
     types: [string, string, string],
     /** 🔴 [2026-09-18 主人定] 舰队：弹窗里挑的战船；空字符串 = 跟归属军团 */
     pickedShipId: string,
+    pickedCommanderUnit: string,
     /** 🔴 [2026-09-18 主人定] 套用的武将：建好后把本军团指派给该势力；空 = 先不指派 */
     assignFactionId: string,
     overlay: HTMLElement,
@@ -998,11 +1138,12 @@ async function createLegion(
                 parentLegion: parentName,
                 // 🔴 [2026-09-18] 舰队改由弹窗决定；没挑就沿用归属军团的（与改前同义）
                 shipId: pickedShipId || (parent.shipId ?? ''),
+                commanderUnit: pickedCommanderUnit || null,
             }),
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        patchLegionComposition(name, slots, mode, pickedShipId || parent.shipId || undefined);   // 不等 HMR，立刻可见可编
+        patchLegionComposition(name, slots, mode, pickedShipId || parent.shipId || undefined, pickedCommanderUnit || null);   // 不等 HMR，立刻可见可编
         // 🔴 [2026-09-18 主人定] 套用的武将：单条写入归属，与「保存武将换军团」同一个接口，绝不整表覆盖
         let assignedName = '';
         if (assignFactionId) {
@@ -1060,6 +1201,15 @@ async function saveScriptLegion(): Promise<void> {
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+        const scrDef = SCRIPT_LEGION_MAP.get(selected);
+        if (scrDef) {
+            scrDef.formationMode = draft.mode;
+            scrDef.slots = slots.map(s => ({ ...s }));
+            scrDef.shipId = draft.shipId || undefined;
+            scrDef.commanderUnit = draft.commanderUnit || undefined;
+            scrDef.source = draft.source;
+        }
+        patchLegionComposition(selected, slots, draft.mode, draft.shipId || undefined, draft.commanderUnit || null);
         rows = buildRows();
         draft = null;
         render();
@@ -1084,11 +1234,11 @@ async function save(): Promise<void> {
         const res = await fetch('/api/save-legion-composition', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ legionName: selected, formationMode: draft.mode, slots }),
+            body: JSON.stringify({ legionName: selected, formationMode: draft.mode, slots, commanderUnit: draft.commanderUnit || null }),
         });
         const json = await res.json();
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-        patchLegionComposition(selected, slots, draft.mode, draft.shipId || undefined);
+        patchLegionComposition(selected, slots, draft.mode, draft.shipId || undefined, draft.commanderUnit || null);
         if (shipChanged && draft.shipId) {
             const shipRes = await fetch('/api/save-legion-ship', {
                 method: 'POST',
