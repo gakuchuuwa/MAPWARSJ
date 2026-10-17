@@ -37,9 +37,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'TRIREME',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝罗马城堡兵【百夫长精锐】。
         slots: [
-            { type: 'elite_centurion', count: 4 },
-            { type: 'paragon', count: 2 },
-            { type: 'legionary', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     {
@@ -53,9 +53,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'TRIREME',
         slots: [
-            { type: 'elite_strategos', count: 4 },
-            { type: 'elite_hoplite', count: 3 },
-            { type: 'elite_greek_cavalry', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     {
@@ -69,9 +69,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'HERO_AEGINETAN',
         slots: [
-            { type: 'elite_hippeus', count: 4 },
-            { type: 'polemarch', count: 3 },
-            { type: 'mercenary_hoplite', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     {
@@ -92,9 +92,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令「给这6个军团补3档，用独特的普通兵补3档」] 3 档＝紫框独特兵【马其顿方阵步兵】的普通档
         //    （原 3 档是它的「高级」档 → 与 2 档对调，高级档移到 2 档）。
         slots: [
-            { type: 'elite_companion_cavalry', count: 4 },
-            { type: 'elite_phalangite', count: 2 },
-            { type: 'elite_phalangite', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     {
@@ -108,9 +108,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'ELITE_LEMBOS',
         slots: [
-            { type: 'elite_rhomphaia_warrior', count: 4 },
-            { type: 'rhomphaia_warrior', count: 3 },
-            { type: 'elite_peltast', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     {
@@ -309,9 +309,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'elite_chukonu', count: 4 },
-            { type: 'tiger_rider', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 中原 · 封建时代 · 封建时代隋唐军团　（三级升二级）────────────────
@@ -378,9 +378,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'LOU_CHUAN',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝河朔（魏）城堡兵【虎豹骑·魏虎骑兵精锐】。
         slots: [
-            { type: 'xianbei_raider', count: 3 },
-            { type: 'elite_tiger_cavalry', count: 4 },
-            { type: 'chukonu', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 河朔 · 封建时代 · 封建时代北朝军团　（本次新建）────────────────
@@ -443,9 +443,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'white_feather_guard', count: 3 },
-            { type: 'chukonu', count: 2 },
-            { type: 'elite_fire_archer', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 江南 · 封建时代 · 封建时代南朝军团　（本次新建）────────────────
@@ -512,9 +512,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'elite_white_feather_guard', count: 4 },
-            { type: 'antiquity_skirmisher', count: 2 },
-            { type: 'chukonu', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 巴蜀 · 封建时代 · 封建时代剑南军团　（本次新建）────────────────
@@ -581,9 +581,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'JUNK',
         slots: [
-            { type: 'chukonu', count: 4 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 2 },
-            { type: 'tiger_rider', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 河西 · 封建时代 · 封建时代归义军团　（本次新建）────────────────
@@ -649,9 +649,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'LOU_CHUAN',
         slots: [
-            { type: 'fire_archer', count: 3 },
-            { type: 'steppe_lancer', count: 2 },
-            { type: 'antiquity_heavy_cavalry_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 白山黑水 · 封建时代 · 封建时代渤海军团　（本次新建）────────────────
@@ -717,9 +717,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'elite_tarkan', count: 4 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
-            { type: 'scythian_horse_archer', count: 2 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 漠北 · 封建时代 · 封建时代突厥军团　（三级升二级）────────────────
@@ -771,9 +771,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_spearman', count: 2 },
-            { type: 'archer', count: 3 },
-            { type: 'hei_kuang_heavy', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 朝鲜 · 封建时代 · 封建时代新罗军团　（三级升二级）────────────────
@@ -823,9 +823,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'maceman', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 日本 · 封建时代 · 封建时代平安军团　（本次新建）────────────────
@@ -878,8 +878,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -946,8 +946,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'woad_raider', count: 4 },
-            { type: 'skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -1000,8 +1000,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'flemish_pikeman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -1068,8 +1068,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'archer', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -1136,9 +1136,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'elite_woad_raider', count: 4 },
-            { type: 'war_dog', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 凯尔特 · 封建时代 · 封建时代高王近卫军团　（本次新建）────────────────
@@ -1205,9 +1205,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'LONGBOAT',
         slots: [
-            { type: 'berserk', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 3 },
-            { type: 'varangian_jarl', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 斯堪的纳维亚 · 封建时代 · 封建时代维京盾墙军团　（本次新建）────────────────
@@ -1273,8 +1273,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'levy', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -1341,8 +1341,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'CANOE',
         slots: [
-            { type: 'maceman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
@@ -1409,9 +1409,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 3 },
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格战团　（本次新建）────────────────
@@ -1477,9 +1477,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'vanguard', count: 2 },
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 日德兰 · 封建时代 · 封建时代环堡皇家战团　（本次新建）────────────────
@@ -1546,9 +1546,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'TRIREME',
         slots: [
-            { type: 'legionary', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 3 },
-            { type: 'centurion', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 拜占庭 · 封建时代 · 封建时代具装骑兵团　（本次新建）────────────────
@@ -1614,9 +1614,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'BIREME',
         slots: [
-            { type: 'shock_cavalry', count: 4 },
-            { type: 'lancer', count: 2 },
-            { type: 'antiquity_cavalry_archer', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 封建时代 · 封建时代阿尼城卫军　（本次新建）────────────────
@@ -1682,9 +1682,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'BIREME',
         slots: [
-            { type: 'heavy_swordsman', count: 4 },
+            { type: 'maceman', count: 4 },
             { type: 'antiquity_spearman', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 高加索 · 封建时代 · 封建时代巴格拉特铁骑军团　（本次新建）────────────────
@@ -1750,9 +1750,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'CANOE',
         slots: [
-            { type: 'levy', count: 3 },
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 波兰 · 封建时代 · 封建时代波兰尼铁卫团　（本次新建）────────────────
@@ -1818,9 +1818,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'CANOE',
         slots: [
-            { type: 'woad_raider', count: 3 },
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 波希米亚 · 封建时代 · 封建时代波希米亚军团　（本次新建）────────────────
@@ -1887,9 +1887,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'imperial_legionary', count: 4 },
-            { type: 'guardsman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 马扎尔 · 封建时代 · 封建时代马扎尔骑射战团　（本次新建）────────────────
@@ -1955,9 +1955,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 3 },
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 罗斯 · 封建时代 · 封建时代德鲁日纳亲卫团　（本次新建）────────────────
@@ -2023,9 +2023,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'maceman', count: 2 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 立陶宛 · 封建时代 · 封建时代克尔纳韦山堡卫队　（本次新建）────────────────
@@ -2091,9 +2091,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'BIREME',
         slots: [
-            { type: 'elite_rhomphaia_warrior', count: 4 },
-            { type: 'thracian_peltast', count: 3 },
-            { type: 'mercenary_hoplite', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 保加利亚 · 封建时代 · 封建时代波亚尔铁骑兵团　（本次新建）────────────────
@@ -2160,9 +2160,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'MONOREME',
         slots: [
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'elite_woad_raider', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 伦巴第 · 封建时代 · 封建时代伦巴第重骑兵团　（本次新建）────────────────
@@ -2286,9 +2286,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'TRIREME',
         slots: [
-            { type: 'gastraphetes', count: 2 },
-            { type: 'hoplite', count: 3 },
-            { type: 'elite_phalangite', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 西西里 · 封建时代 · 封建时代撒拉逊圣战军　（本次新建）────────────────
@@ -2354,9 +2354,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'BIREME',
         slots: [
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'militia', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 安达卢斯 · 封建时代 · 封建时代摩尔游骑军团　（本次新建）────────────────
@@ -2425,9 +2425,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'BIREME',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'heavy_swordsman', count: 2 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 卢西塔尼亚 · 封建时代 · 封建时代苏维汇铁骑军团　（本次新建）────────────────
@@ -2484,9 +2484,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crane_wing',
         shipId: 'BIREME',
         slots: [
-            { type: 'elite_war_chariot', count: 2 },
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 阿拉伯 · 封建时代 · 封建时代萨拉森军团　（本次新建）────────────────
@@ -2553,9 +2553,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         // 🔴 [2026-10-16 主人令] 匈人只有古典一档：4 档＝城堡精锐【匈奴答剌罕骑兵精锐】；无封建军团，普通档不另放。
         slots: [
-            { type: 'elite_scythian_horse_archer', count: 3 },
-            { type: 'elite_war_chariot', count: 2 },
-            { type: 'elite_tarkan', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
 
@@ -2573,9 +2573,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'sarmatian', count: 2 },
-            { type: 'shock_cavalry', count: 3 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 库曼 · 封建时代 · 封建时代可萨军团　（三级升二级）────────────────
@@ -2635,9 +2635,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    （全库 3 个古典步兵缺素材之一，上阵渲染兜底）→ 换同属近东古典、有素材的【波斯持盾兵特殊】。
         //    军团改名：赫梯战车军团 → 古典时代赫梯军团。
         slots: [
-            { type: 'sickle_warrior', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
             { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'elite_war_chariot', count: 2 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 安纳托利亚 · 封建时代 · 封建时代突厥骑射军团　（本次新建）────────────────
@@ -2706,9 +2706,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'CANOE',
         slots: [
-            { type: 'elite_war_chariot', count: 2 },
-            { type: 'phalangite', count: 3 },
-            { type: 'scythian_horse_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 河中 · 封建时代 · 封建时代河中重骑军团　（本次新建）────────────────
@@ -2774,9 +2774,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'militia', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 达罗毗荼 · 封建时代 · 封建时代朱罗军团　（本次新建）────────────────
@@ -2844,9 +2844,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战象不再上阵（不排 2 档，直接删）；
         //    空出的前排 3 档用非城堡精锐的印度部落民补位。军团改名：恒河战象军团 → 孔雀军团。
         slots: [
-            { type: 'indian_tribesman', count: 3 },
-            { type: 'pattiyoda_longbowman', count: 2 },
-            { type: 'sickle_warrior', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 印度斯坦 · 封建时代 · 封建时代戒日军团　（本次新建）────────────────
@@ -2916,9 +2916,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    ⇒ 拉塔弓战车精锐（孟加拉自家城堡兵）压到 2 档；桑纳亚战象高级（普鲁马厩专属，借调而来）离队；
         //      空出的 3 档用非城堡精锐补位——印度部落民（3 档·前排）＋帕提尤达长弓兵基础档（4 档·后排）。
         slots: [
-            { type: 'indian_tribesman', count: 3 },
-            { type: 'elite_ratha_ranged', count: 2 },
-            { type: 'pattiyoda_longbowman', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 孟加拉 · 封建时代 · 封建时代波罗军团　（本次新建）────────────────
@@ -2986,9 +2986,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'BIREME',
         slots: [
-            { type: 'sogdian_cataphract', count: 2 },
-            { type: 'scythian_horse_archer', count: 3 },
-            { type: 'shock_cavalry', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 古吉拉特 · 封建时代 · 封建时代古贾拉铁骑军团　（本次新建）────────────────
@@ -3057,9 +3057,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 🔴 [2026-10-16 主人令·回退] 我曾擅自把 3 档改成「帕提尤达长弓兵」（那是它的城堡兵、普通档按规则在
         //    封建沙希军团 3 档，不该塞回本军团）→ 恢复原状（库曼钦察弓骑精锐）。
         slots: [
-            { type: 'elite_sannahya', count: 2 },
-            { type: 'elite_pattiyoda_longbowman', count: 4 },
-            { type: 'elite_kipchak', count: 3 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 旁遮普 · 封建时代 · 封建时代沙希军团　（本次新建）────────────────
@@ -3127,9 +3127,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
-            { type: 'sannahya', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 吴哥 · 封建时代 · 封建时代高棉军团　（本次新建）────────────────
@@ -3198,9 +3198,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'CANOE',
         slots: [
-            { type: 'pattiyoda_longbowman', count: 3 },
-            { type: 'militia', count: 2 },
-            { type: 'sickle_warrior', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 缅甸 · 封建时代 · 封建时代蒲甘军团　（本次新建）────────────────
@@ -3266,9 +3266,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'chukonu', count: 4 },
-            { type: 'militia', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 安南 · 封建时代 · 封建时代华闾军团　（本次新建）────────────────
@@ -3334,8 +3334,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
             { type: 'bowman', count: 2 },
         ],
     },
@@ -3403,9 +3403,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'CANOE',
         slots: [
-            { type: 'antiquity_spearman', count: 4 },
-            { type: 'militia', count: 2 },
-            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 玛雅 · 封建时代 · 封建时代尤卡坦军团　（本次新建）────────────────
@@ -3471,9 +3471,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
+            { type: 'maceman', count: 4 },
             { type: 'antiquity_spearman', count: 3 },
-            { type: 'antiquity_skirmisher', count: 2 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 阿兹特克 · 封建时代 · 封建时代托尔特克军团　（本次新建）────────────────
@@ -3528,9 +3528,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'balance_yoke',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'maceman', count: 2 },
+            { type: 'maceman', count: 4 },
             { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 印加 · 封建时代 · 封建时代安第斯军团　（本次新建）────────────────
@@ -3706,9 +3706,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'TRIREME',
         slots: [
-            { type: 'antiquity_light_cavalry', count: 3 },
-            { type: 'elite_sannahya', count: 2 },
-            { type: 'rhodian_slinger', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 马格里布 · 封建时代 · 封建时代柏柏尔骑兵团　（本次新建）────────────────
@@ -3774,9 +3774,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'CANOE',
         slots: [
-            { type: 'militia', count: 4 },
-            { type: 'antiquity_spearman', count: 3 },
-            { type: 'elite_antiquity_skirmisher', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 萨赫勒 · 封建时代 · 封建时代加纳军团　（三级升二级）────────────────
@@ -3831,9 +3831,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'fish_scale',
         shipId: 'BIREME',
         slots: [
-            { type: 'elite_antiquity_skirmisher', count: 3 },
-            { type: 'heavy_swordsman', count: 4 },
-            { type: 'elite_sannahya', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'bowman', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 埃塞俄比亚 · 封建时代 · 封建时代拉利贝拉军团　（本次新建）────────────────
@@ -3899,9 +3899,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'echelon',
         shipId: 'BIREME',
         slots: [
-            { type: 'savar', count: 4 },
-            { type: 'sparabara', count: 3 },
-            { type: 'archer', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 波斯 · 封建时代 · 封建时代霍拉桑军团　（本次新建）────────────────
@@ -3971,9 +3971,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
         slots: [
-            { type: 'elite_immortal', count: 4 },
-            { type: 'immortal_ranged', count: 3 },
-            { type: 'elite_war_chariot', count: 2 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 法尔斯 · 封建时代 · 封建时代德莱木军团　（本次新建）────────────────
@@ -4273,8 +4273,8 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'DEMO_RAFT',
         slots: [
             { type: 'antiquity_spearman', count: 4 },
-            { type: 'militia', count: 3 },
-            { type: 'bowman', count: 2 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 吐蕃 · 封建时代 · 封建时代吐蕃军团　（三级升二级）────────────────
@@ -4340,9 +4340,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'CANOE',
         slots: [
-            { type: 'scythian_horse_archer', count: 3 },
-            { type: 'antiquity_light_cavalry', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 西域 · 封建时代 · 封建时代回鹘军团　（本次新建）────────────────
@@ -4408,9 +4408,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'crescent',
         shipId: 'CANOE',
         slots: [
-            { type: 'xianbei_raider', count: 3 },
-            { type: 'antiquity_cavalry_archer', count: 2 },
-            { type: 'elite_scythian_horse_archer', count: 4 },
+            { type: 'antiquity_spearman', count: 4 },
+            { type: 'antiquity_skirmisher', count: 3 },
+            { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
     // ── 漠南 · 封建时代 · 封建时代契丹军团　（本次新建）────────────────
@@ -4476,9 +4476,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         formationMode: 'triangle',
         shipId: 'TRIREME',
         slots: [
-            { type: 'elite_greek_cavalry', count: 2 },
-            { type: 'hoplite', count: 3 },
-            { type: 'elite_hoplite', count: 4 },
+            { type: 'maceman', count: 4 },
+            { type: 'antiquity_spearman', count: 3 },
+            { type: 'bowman', count: 2 },
         ],
     },
     // ── 爱奥尼亚 · 封建时代 · 封建时代爱琴军区军团　（本次新建）────────────────
