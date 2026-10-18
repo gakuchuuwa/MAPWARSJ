@@ -745,10 +745,10 @@ function buildDeStockadeStackHtml(
         ? STOCKADE_SHAPE_KEYS.indexOf(explicitShape)
         : hashShape;
 
-    // 材质：显式指定 或 由 getStockadeFenceSetByStyle(style) 决定（硬木/原木/平切/篱笆 四大套系）
+    // 材质：显式指定 或 由 **66 种建筑风格** 决定（硬木/原木/平切/篱笆 四大套系；见 cityWallShared.STOCKADE_FENCE_BY_STYLE66）
     const builtinFence = (explicitFence && STOCKADE_FENCE_SETS[explicitFence])
         ? STOCKADE_FENCE_SETS[explicitFence]
-        : getStockadeFenceSetByStyle(style);
+        : getStockadeFenceSetByStyle(buildingStyle || style);
 
     // 🔴 [2026-10-02 主人令「圆城 / 八角 / 椭圆，除了篱笆的。其他三种栅栏外围先停用」]
     //   弧形三形**只许配密编荆篱**（只有它有 L 形转角件）；本城若掷到弧形三形而材质不是荆篱 → 换成直边形制

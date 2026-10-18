@@ -3321,9 +3321,9 @@ export class Scene13WarLayer {
                 this.sideCulture[1],
                 this.defenderCityId,
                 this.defenderCityRecord()?.buildingStyle ?? null,
-                // 城寨栅栏材质：与战略地图同一顺序（单独指定 → 建筑风格 → 编辑器分类样式）
+                // 城寨栅栏材质：与战略地图同一顺序（单独指定 → 66 建筑风格 → 编辑器分类样式）
                 this.defenderCityType === 'stockade' && this.defenderCityId
-                    ? resolveStockadeFenceKey(this.defenderCityId, style, this.defenderCityRecord()?.stockadeShape, this.defenderCityRecord()?.stockadeFence)
+                    ? resolveStockadeFenceKey(this.defenderCityId, style, this.defenderCityRecord()?.stockadeShape, this.defenderCityRecord()?.stockadeFence, this.defenderCityRecord()?.buildingStyle)
                     : null,
             );
 

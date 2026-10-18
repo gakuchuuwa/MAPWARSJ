@@ -793,7 +793,7 @@
         <ul>
           <li><strong>围栏</strong>：S = 5 —— <strong>七大外围形制</strong>（可在图片上方直接点击切换，或点击【🔄 其他样式】）</li>
           <li><strong>形制六种</strong>：① 正方 ② 圆形 ③ 八角 ④ 矩形 ⑤ 椭圆山脊堡 ⑥ 梯形隘口寨</li>
-          <li><strong>材质四套</strong>（按一层建筑风格定）：硬木粗桩 东亚/印度/普鲁/波斯/中东 · 原木尖桩 东北欧/西欧/色雷斯 · 横木平切 地中海/希腊/东南欧/中亚/草原营地 · 密编荆篱 中美/安第斯/非洲/东南亚</li>
+          <li><strong>材质四套</strong>（按 <strong>66 种建筑风格逐个定</strong>，二级 62 ＋ 三级 4；评估页选了二/三级分支就按该分支显示）：硬木粗桩（中原/巴蜀/江南/河朔/普鲁/瞿折罗/印度斯坦/阿契美尼德/波斯/奥斯曼/罗马/拜占庭/法兰克/条顿/勃艮第/日本/高丽）· 原木尖桩（古典希腊/雅典/斯巴达/马其顿/维京/丹麦/撒克逊/瓦良格/斯拉夫/波兰/波希米亚/保加利亚/立陶宛/白山黑水/漠南鲜卑/哥特/亚美尼亚/格鲁吉亚/色雷斯/马普切）· 横木平切（蒙古/匈人/鞑靼/库曼/马扎尔/河西/玛雅/阿兹特克/印加/穆伊斯卡/西班牙/葡萄牙/西西里/意大利）· 密编荆篱（凯尔特/不列颠/西域/青藏/中东/埃塞俄比亚/柏柏尔/马里/孟加拉/达罗毗荼/越南/高棉/缅甸/马来/图皮）</li>
           <li><strong>建筑</strong>：定居点、棚屋 A~G、简易帐篷 A~D、哨站、DE 黑暗时代房屋与磨坊（16 候选抽 9 栋 / 矩形 6 栋）</li>
           <li><strong>地基</strong>：sr2_plaza 压实泥石地基（与小城一致）</li>
         </ul>
@@ -1357,6 +1357,16 @@ CULTURE_MAP['TIBET_IMPERIAL'] = CULTURE_MAP['TIBET'];
 let curCulture = ''; // 当前选中的二层建筑风格分支 key，空=不指定
 let curCustom = '';  // 当前选中的三层专属定制风格 key，空=不指定
 
+/** 🔴 [2026-10-18 主人令「这四种安排给 66 个建筑风格，不要分给 16 个」] 城寨栅栏材质按 66 风格取：
+ *  二/三级分支优先（旧别名草原/漠北毡帐归 MONGOL），拿不到 66 键才退回 16 母体 style 兜底。 */
+function stockadeFenceStyle(fallback16) {
+  let c = (curCulture === 'STEPPE' || curCulture === 'MOBEI_MONGOL') ? 'MONGOL'
+    : (curCustom === 'MOBEI_MONGOL' ? 'MONGOL' : curCulture);
+  if (c && CULTURE_MAP[c] && CULTURE_MAP[c].key) c = CULTURE_MAP[c].key;
+  if (c && STOCKADE_FENCE_BY_STYLE66[c]) return c;
+  return fallback16;
+}
+
 /** 填充 62 种二层建筑风格分支下拉框 */
 function fillCultureSelect() {
   const sel = document.getElementById('selCulture');
@@ -1622,6 +1632,7 @@ import {
   deHashString,
   STYLE_TO_STOCKADE_FENCE,
   STOCKADE_FENCE_SETS,
+  STOCKADE_FENCE_BY_STYLE66,
   getStockadeFenceSetByStyle,
   normalizeStockadeCorner,
   // 🔴 [2026-10-02 主人令「重设计下城寨的圆城，八角，椭圆」] 曲线围栏的**轮廓参数与拼法只此一份**：
@@ -2263,7 +2274,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
         : (hashString(style + '_' + type + '_' + 'w' + '_' + randomSeedOffset + '_stkshape' + seedKey) % 6)));
     let clip = '';
     // 篱笆（密编荆篱）套的圆城／八角 = 主人原版，地面裁切也用原版椭圆（其余材质走新裁切）
-    const stkFenceKey = ((curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style)).key;
+    const stkFenceKey = ((curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(stockadeFenceStyle(style))).key;
     // 🔴 主人令：弧形三形只许配密编荆篱；材质不是荆篱 → 换成直边形制（圆城→正方 / 八角→矩形 / 椭圆→梯形）
     //    （九种直角多边形不在弧形之列，任何材质都能用）
     if (!isPolyShapeIdx(stkShape)) stkShape = stkShapeByFence(stkShape, stkFenceKey);
@@ -2456,7 +2467,7 @@ function renderCityTypeHtml(baseSize, style, type, mirror, forceShape = null, fo
     }
   } else if (type === 'stockade') {
     /* 城寨围栏六选一：0 正方 / 1 圆城 / 2 八角 / 3 矩形围栏 / 4 椭圆山脊堡 / 5 梯形隘口寨 */
-    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
+    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(stockadeFenceStyle(style));
     let stkShape = (forceShape !== null)
       ? forceShape
       : (stkShapeIndexOf(curStockadeShape) >= 0
@@ -2809,7 +2820,7 @@ function renderGateCloseup(style, type, forceShape = null) {
     const gW = baseW * a.widthFactor * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
   } else if (type === 'stockade') {
-    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(style);
+    const fenceSet = (curStockadeFence !== 'auto') ? STOCKADE_FENCE_SETS[curStockadeFence] : getStockadeFenceSetByStyle(stockadeFenceStyle(style));
     const a = fenceSet.anchors.GATE;
     const gW = baseW * a.widthFactor * 1.2 * curGateScale;
     parts.push('<img src="' + a.path + '" style="position:absolute;left:50%;top:50%;width:' + gW.toFixed(1) + 'px;transform:translate(-' + a.pctX.toFixed(1) + '%,-' + a.pctY.toFixed(1) + '%);z-index:100;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.55));" />');
@@ -2938,8 +2949,8 @@ function refresh() {
         + '曲线三形（圆城/八角/椭圆）统一走共享拼法 <code>cityWallShared.buildStockadeCurveRing()</code>，与游戏**逐件一致**；<br>'
         + '　· <b>内部建筑（平权随机）</b>：定居点/棚屋A~G/简易帐篷A~D/哨站/<b>DE 黑暗时代房屋与磨坊</b> 共 16 款候选抽取 9 栋（矩形 6 栋 / 椭圆与梯形 7 栋）；'
         + '草原/漠北蒙古特化为 8 蒙古包 + 1 亚洲瞭望塔；<br>'
-        + '　· <b>栅栏材质（四套 · 按建筑风格分配）</b>：硬木粗尖桩 HARDWOOD（东亚/印度/普鲁/波斯/中东）、原木尖桩 DARK（东北欧/西欧/色雷斯）、'
-        + '横木平切 ARCHAIC（地中海/希腊/东南欧/中亚/草原营地）、密编荆篱 FENCE（中美/安第斯/非洲/东南亚）。</div>';
+        + '　· <b>栅栏材质（四套 · 按 66 种建筑风格逐个分配，二级 62 ＋ 三级 4）</b>：硬木粗桩 HARDWOOD（中原/巴蜀/江南/河朔/普鲁/瞿折罗/印度斯坦/阿契美尼德/波斯/奥斯曼/罗马/拜占庭/法兰克/条顿/勃艮第/日本/高丽）、原木尖桩 DARK（古典希腊/雅典/斯巴达/马其顿/维京/丹麦/撒克逊/瓦良格/斯拉夫/波兰/波希米亚/保加利亚/立陶宛/白山黑水/漠南鲜卑/哥特/亚美尼亚/格鲁吉亚/色雷斯/马普切）、'
+        + '横木平切 ARCHAIC（蒙古/匈人/鞑靼/库曼/马扎尔/河西/玛雅/阿兹特克/印加/穆伊斯卡/西班牙/葡萄牙/西西里/意大利）、密编荆篱 FENCE（凯尔特/不列颠/西域/青藏/中东/埃塞俄比亚/柏柏尔/马里/孟加拉/达罗毗荼/越南/高棉/缅甸/马来/图皮）。</div>';
 
       stkGrid += stkHead('一、六大外围形制逐款对照（同尺寸脚印 · 6 种形制全览）');
       stkGrid += stkTile('样式一 · 正方标准', '菱形四角 · 9建筑', 0, false, 'stk_v0');
@@ -2959,10 +2970,10 @@ function refresh() {
 
       stkGrid += stkHead('三、四大文明栅栏城门特写对照');
       const gateList = [
-        { label: '① 硬木粗尖桩大门 (HARDWOOD)', desc: '东亚 (ASIA) / 印度 (INDI) / 普鲁 (PURU) / 波斯 (PERSIAN) / 中东 (ORIE)', anchor: PALISADE_ANCHORS.GATE },
-        { label: '② 原木尖桩大门 (DARK)', desc: '东北欧 (SLAV) / 西欧 (WEST) / 色雷斯 (THRACIAN)', anchor: DARK_PALISADE_ANCHORS.GATE },
-        { label: '③ 横木平切大门 (ARCHAIC)', desc: '地中海 (MEDI) / 希腊 (GREEK) / 东南欧 (EAST) / 中亚 (CEAS) / 草原营地 (YURT)', anchor: ARCHAIC_PALISADE_ANCHORS.GATE },
-        { label: '④ 密编荆篱木门 (FENCE)', desc: '中美 (MESO) / 安第斯 (ANDE) / 非洲 (AFRI) / 东南亚 (SEAS)', anchor: FENCE_ANCHORS.GATE },
+        { label: '① 硬木粗尖桩大门 (HARDWOOD)', desc: '中原/巴蜀/江南/河朔/普鲁/瞿折罗/印度斯坦/阿契美尼德/波斯/奥斯曼/罗马/拜占庭/法兰克/条顿/勃艮第/日本/高丽', anchor: PALISADE_ANCHORS.GATE },
+        { label: '② 原木尖桩大门 (DARK)', desc: '古典希腊/雅典/斯巴达/马其顿/维京/丹麦/撒克逊/瓦良格/斯拉夫/波兰/波希米亚/保加利亚/立陶宛/白山黑水/漠南鲜卑/哥特/亚美尼亚/格鲁吉亚/色雷斯/马普切', anchor: DARK_PALISADE_ANCHORS.GATE },
+        { label: '③ 横木平切大门 (ARCHAIC)', desc: '蒙古/匈人/鞑靼/库曼/马扎尔/河西/玛雅/阿兹特克/印加/穆伊斯卡/西班牙/葡萄牙/西西里/意大利', anchor: ARCHAIC_PALISADE_ANCHORS.GATE },
+        { label: '④ 密编荆篱木门 (FENCE)', desc: '凯尔特/不列颠/西域/青藏/中东/埃塞俄比亚/柏柏尔/马里/孟加拉/达罗毗荼/越南/高棉/缅甸/马来/图皮', anchor: FENCE_ANCHORS.GATE },
       ];
       gateList.forEach(g => {
         const gW = Math.round(140 * curZoom * g.anchor.widthFactor * 1.2 * curGateScale);
@@ -3424,7 +3435,7 @@ function syncStockadeShapeUI() {
   const gTitle = document.getElementById('tagGateStockadeTitle');
   const gSub = document.getElementById('tagGateStockadeSub');
   if (gTitle && gSub) {
-    const fSet = getStockadeFenceSetByStyle(curStyle);
+    const fSet = getStockadeFenceSetByStyle(stockadeFenceStyle(curStyle));
     gTitle.innerText = '城寨：' + fSet.label + '大门';
     gSub.innerText = curStyle + ' 风格标配材质';
   }
@@ -4474,3 +4485,5 @@ refresh();
 </script>
 </body>
 </html>
+
+
