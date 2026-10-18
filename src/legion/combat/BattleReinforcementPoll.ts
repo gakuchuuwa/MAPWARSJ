@@ -54,6 +54,16 @@ export function isEligibleReinforcement(
     if (legion.getTroops() < GameConfig.COMBAT.MIN_SURVIVAL_TROOPS) return false;
     if (battleField.hasUnit(legion.id)) return false;
     if (deps.isArmyWaitingSiege?.(legion.id)) return false;
+    const lAny = legion as any;
+    if (
+        legion.scriptMarchExempt ||
+        lAny.isFirstBattleMarch ||
+        lAny.isFirstBattleHero ||
+        lAny.isFirstBattleFieldEnemy ||
+        legion.isScriptArmy
+    ) {
+        return false;
+    }
 
     const dist = getEuclideanDistance(legion.getPosition(), center);
     if (dist > GameConfig.COMBAT.BATTLE_JOIN_RADIUS) return false;

@@ -846,6 +846,15 @@ export class SiegeManager {
                 siegeLog(`🔍 [SiegeManager] ${legion.name} 排除: 已经在战斗中`);
                 return false;
             }
+            const lAny = legion as any;
+            if (
+                legion.scriptMarchExempt ||
+                lAny.isFirstBattleHero ||
+                lAny.isFirstBattleFieldEnemy ||
+                legion.isScriptArmy
+            ) {
+                return false;
+            }
 
             const dist = getEuclideanDistance(legion.getPosition(), center);
             if (dist > SiegeManager.JOIN_RADIUS) {
@@ -936,43 +945,61 @@ export class SiegeManager {
             return;
         }
 
+        const isFirstBattleSiege =
+            !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch ||
+            !!(army as { isFirstBattleHero?: boolean }).isFirstBattleHero ||
+            !!army.isScriptArmy;
+
         // [FIX] 检查该城市是否已经在战斗中
         const activeBattle = this.activeSieges.get(targetCity.id);
         if (activeBattle && !activeBattle.isOver) {
-            const myFaction = army.getFactionId();
-            const attackerFaction = activeBattle.getAttackerFactionId();
-            const defenderFaction = activeBattle.getDefenderFactionId();
+            if (isFirstBattleSiege && !activeBattle.scene13Frozen) {
+                // 玩家跟随触发剧情首战攻城：优先接管战场，清退已有普通 AI 围城，直接开启剧情攻城进入战术模式
+                activeBattle.isOver = true;
+                for (const u of [...activeBattle.getAttackerUnits(), ...activeBattle.getDefenderUnits()]) {
+                    const src = (u as any).sourceObject;
+                    if (u.unitType === 'legion' && src && u.id !== army.id) {
+                        src.clearExternalCombatState?.();
+                        src.setCombatState?.(false);
+                    }
+                }
+                this.activeSieges.delete(targetCity.id);
+            } else {
+                const myFaction = army.getFactionId();
+                const attackerFaction = activeBattle.getAttackerFactionId();
+                const defenderFaction = activeBattle.getDefenderFactionId();
 
-            if (myFaction === attackerFaction || myFaction === defenderFaction) {
-                const cityPos = cityToLatLng(targetCity);
-                const isAttacker = myFaction === attackerFaction;
-                // triggerSiege 在进本函数前已把本军标成在战（siege 占位），而援军资格检查
-                // 拒收「已在战」单位——不先撤掉占位标志，抵达路径的同旗加入永远失败，
-                // 军团被清目标后掉头走人（观感即「到了城下不打就走」）。先撤占位再试加入；
-                // 成功时 tryJoinLegionToBattle 会重设真实在战状态（含战场类型与中心）。
-                army.setCombatState(false);
-                if (tryJoinLegionToBattle(activeBattle, army, isAttacker, cityPos, this.getReinforcementJoinDeps())) {
-                    siegeLog(`📯 [SiegeManager] ${army.name} 中途加入【${targetCity.name}】攻城战`);
+                if (myFaction === attackerFaction || myFaction === defenderFaction) {
+                    const cityPos = cityToLatLng(targetCity);
+                    const isAttacker = myFaction === attackerFaction;
+                    // triggerSiege 在进本函数前已把本军标成在战（siege 占位），而援军资格检查
+                    // 拒收「已在战」单位——不先撤掉占位标志，抵达路径的同旗加入永远失败，
+                    // 军团被清目标后掉头走人（观感即「到了城下不打就走」）。先撤占位再试加入；
+                    // 成功时 tryJoinLegionToBattle 会重设真实在战状态（含战场类型与中心）。
+                    army.setCombatState(false);
+                    if (tryJoinLegionToBattle(activeBattle, army, isAttacker, cityPos, this.getReinforcementJoinDeps())) {
+                        siegeLog(`📯 [SiegeManager] ${army.name} 中途加入【${targetCity.name}】攻城战`);
+                        onSiegeComplete?.();
+                        return;
+                    }
+                    siegeLog(
+                        `⏭️ [SiegeManager] ${army.name} 无法加入本场（圈外或已在战）: ${targetCity.name}`
+                    );
+                    army.setCombatState(false);
+                    army.setTargetCity(null);
                     onSiegeComplete?.();
                     return;
                 }
-                siegeLog(
-                    `⏭️ [SiegeManager] ${army.name} 无法加入本场（圈外或已在战）: ${targetCity.name}`
-                );
-                army.setCombatState(false);
+
+                // 第三方：不混入当前战场，排队等上一场打完
+                siegeLog(`⏳ [SiegeManager] ${army.name} (${myFaction}) 等候 ${targetCity.name} 战场决出胜负 (当前 ${attackerFaction} vs ${defenderFaction})`);
+                army.stopMovement(true);
                 army.setTargetCity(null);
-                onSiegeComplete?.();
+                army.setCombatState(false);
+                this.enqueueSiegeThirdPartyWaiter(targetCity.id, army, siegeData, onSiegeComplete);
+                this.repositionThirdPartyWaiters(targetCity.id, cityToLatLng(targetCity));
                 return;
             }
-
-            // 第三方：不混入当前战场，排队等上一场打完
-            siegeLog(`⏳ [SiegeManager] ${army.name} (${myFaction}) 等候 ${targetCity.name} 战场决出胜负 (当前 ${attackerFaction} vs ${defenderFaction})`);
-            army.stopMovement(true);
-            army.setTargetCity(null);
-            army.setCombatState(false);
-            this.enqueueSiegeThirdPartyWaiter(targetCity.id, army, siegeData, onSiegeComplete);
-            this.repositionThirdPartyWaiters(targetCity.id, cityToLatLng(targetCity));
-            return;
         }
 
         siegeLog(`[SiegeManager] Army arrived at ${targetCity.name}, starting battle...`);
@@ -1007,38 +1034,40 @@ export class SiegeManager {
         );
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
-
-        // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
-        if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
-            const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
-            if (Math.random() < chance) {
-                targetCity.spawnGeneralUsed = true;
-                targetCity.spawnEliteUsed = true;
-                army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
-                emitFollowedGeneralStrategicMapFx(army, 'sabotage_garrison', cityPos.lat, cityPos.lng, 'pulse');
-                siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
+        // 剧情/首战攻城不触发纵横削将/削精锐，保证历史对手完整出场并进入战术模式
+        if (!isFirstBattleSiege) {
+            // 纵横捭阖：攻城前按 magnitude 概率消耗守城将/精出场配额
+            if (generalHasStrategicEffect(army, 'sabotage_garrison')) {
+                const chance = getGeneralStrategicMagnitude(army, 'sabotage_garrison', 0.10);
+                if (Math.random() < chance) {
+                    targetCity.spawnGeneralUsed = true;
+                    targetCity.spawnEliteUsed = true;
+                    army.markPendingPostBattleDiplomacyFx('sabotage_garrison');
+                    emitFollowedGeneralStrategicMapFx(army, 'sabotage_garrison', cityPos.lat, cityPos.lng, 'pulse');
+                    siegeLog(`[纵横] 纵横捭阖触发：【${targetCity.name}】将/精出场配额已消耗`);
+                }
             }
-        }
 
-        // 飞箝擒王：攻城前按 magnitude 概率消耗守城将出场配额
-        if (generalHasStrategicEffect(army, 'sabotage_general')) {
-            const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
-            if (Math.random() < chance) {
-                targetCity.spawnGeneralUsed = true;
-                army.markPendingPostBattleDiplomacyFx('sabotage_general');
-                emitFollowedGeneralStrategicMapFx(army, 'sabotage_general', cityPos.lat, cityPos.lng, 'pulse');
-                siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
+            // 飞箝擒王：攻城前按 magnitude 概率消耗守城将出场配额
+            if (generalHasStrategicEffect(army, 'sabotage_general')) {
+                const chance = getGeneralStrategicMagnitude(army, 'sabotage_general', 0.15);
+                if (Math.random() < chance) {
+                    targetCity.spawnGeneralUsed = true;
+                    army.markPendingPostBattleDiplomacyFx('sabotage_general');
+                    emitFollowedGeneralStrategicMapFx(army, 'sabotage_general', cityPos.lat, cityPos.lng, 'pulse');
+                    siegeLog(`[纵横] 飞箝擒王触发：【${targetCity.name}】守将出场配额已消耗`);
+                }
             }
-        }
 
-        // 转丸破军：攻城前按 magnitude 概率消耗守城精锐出场配额
-        if (generalHasStrategicEffect(army, 'sabotage_elite')) {
-            const chance = getGeneralStrategicMagnitude(army, 'sabotage_elite', 0.15);
-            if (Math.random() < chance) {
-                targetCity.spawnEliteUsed = true;
-                army.markPendingPostBattleDiplomacyFx('sabotage_elite');
-                emitFollowedGeneralStrategicMapFx(army, 'sabotage_elite', cityPos.lat, cityPos.lng, 'pulse');
-                siegeLog(`[纵横] 转丸破军触发：【${targetCity.name}】精锐出场配额已消耗`);
+            // 转丸破军：攻城前按 magnitude 概率消耗守城精锐出场配额
+            if (generalHasStrategicEffect(army, 'sabotage_elite')) {
+                const chance = getGeneralStrategicMagnitude(army, 'sabotage_elite', 0.15);
+                if (Math.random() < chance) {
+                    targetCity.spawnEliteUsed = true;
+                    army.markPendingPostBattleDiplomacyFx('sabotage_elite');
+                    emitFollowedGeneralStrategicMapFx(army, 'sabotage_elite', cityPos.lat, cityPos.lng, 'pulse');
+                    siegeLog(`[纵横] 转丸破军触发：【${targetCity.name}】精锐出场配额已消耗`);
+                }
             }
         }
 
@@ -1071,7 +1100,6 @@ export class SiegeManager {
             landNavalLegionForSiege(legion, cityPos);
         }
 
-        const isFirstBattleSiege = !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
         const siegePreset = siegeData.result ?? (isFirstBattleSiege ? 'attacker_win' : undefined);
 
         // Adapters
@@ -1270,7 +1298,7 @@ export class SiegeManager {
         const finalTitle = siegeData.title || firstBattleTitle || `${targetCity.name} 攻防战`;
 
         // ── 威慑·望风披靡：战前削守方城防（仅据点，不动附近援军）──
-        if (generalHasStrategicEffect(army, 'pre_battle_intimidate')) {
+        if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'pre_battle_intimidate')) {
             const pct = getGeneralStrategicMagnitude(army, 'pre_battle_intimidate', 0.10);
             const before = finalDefender.troops;
             const after = Math.max(1, Math.floor(before * (1 - pct)));
@@ -1280,8 +1308,8 @@ export class SiegeManager {
             emitFollowedGeneralStrategicMapFx(army, 'pre_battle_intimidate', pos.lat, pos.lng, 'pulse');
         }
 
-        // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城 ──
-        if (generalHasStrategicEffect(army, 'intimidate_instant_win')) {
+        // ── 威慑·不战而屈：兵力优势时概率跳过战斗直接占城（剧情首战攻城禁止跳过战斗！）──
+        if (!isFirstBattleSiege && generalHasStrategicEffect(army, 'intimidate_instant_win')) {
             const myTroops = army.getTroops();
             const enemyTroops = targetCity.troops;
             if (myTroops > enemyTroops) {

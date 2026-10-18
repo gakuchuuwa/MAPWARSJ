@@ -89,7 +89,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     telakaigongguo: { generalId: 'gen_kestutis', generalName: '科斯图提斯', portrait: '/assets/SLAVIC/telakaigongguo_kesitutisi.png' },
     duobuluojia: { generalId: 'gen_ivaylo', generalName: '伊瓦伊洛', portrait: '/assets/SLAVIC/duobuluojia_yiwaiyiluo.png' },
     aertai: { generalId: 'gen_kuchlug', generalName: '屈出律', portrait: '/assets/STEPPE/aertai_quchulv.png' },
-    kumanni: { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
+    kumanni: [
+        { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
+        { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
+    ],
     xikuman: { generalId: 'gen_girgen', generalName: '吉尔根汗', portrait: '/assets/STEPPE/xikuman_jiergenhan.png' },
     feierganna: { generalId: 'gen_qutlugh', generalName: '忽都鲁', portrait: '/assets/CENTRAL_ASIA/feierganna_hudulu.png' },
     qibucha: { generalId: 'gen_pacanchiq', generalName: '帕坎奇克', portrait: '/assets/SOUTH_AMERICA/qibucha_pakanqike.png' },
@@ -264,8 +267,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     pusikefu_gongheguo: { generalId: 'gen_daumantas', generalName: '道曼塔斯', portrait: '/assets/SLAVIC/pusikefu_gongheguo_daomantasi.png' },
     ouka: { generalId: 'gen_yuri_ryazan', generalName: '尤里', portrait: '/assets/SLAVIC/ouka_youli.png' },
     xideweina: { generalId: 'gen_breslav', generalName: '布列斯拉夫', portrait: '/assets/SLAVIC/xideweina_buliesilafu.png' },
-    jinzhang: { generalId: 'gen_batu', generalName: '拔都', portrait: '/assets/SLAVIC/jinzhang_badou.png' },
-    baojiaer: { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
+    jinzhang: [
+        { generalId: 'gen_batu', generalName: '拔都', portrait: '/assets/SLAVIC/jinzhang_badou.png' },
+        { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
+    ],
+    baojiaer: [
+        { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
+        { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
+    ],
     baizanting: { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
@@ -291,19 +300,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kaleiliya: { generalId: 'kaleiliya_kelimu', generalName: '克利姆索博列夫', portrait: '/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png' },
     deniesite: { generalId: 'gen_mehmed_giray', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/SLAVIC/nieman_weituofute.png' },
-    fuerjia: [
-        { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
-        { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
-    ],
-    nuogai: { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png' },
-    bashekeer: { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
+    fuerjia: { generalId: 'don_vorontsov', generalName: '沃隆佐夫', portrait: '' },   // 察里津防区督军；立绘待主人补
+    nuogai: { generalId: 'nogai_votkhovsky', generalName: '沃特霍夫斯基', portrait: '' },   // 萨马拉防线守将；立绘待主人补
+    bashekeer: { generalId: 'bashkir_nagoy', generalName: '纳吉', portrait: '' },   // 乌法首任督军；立绘待主人补
     xierhe: { generalId: 'xierhe_saerjue', generalName: '塞尔柱', portrait: '/assets/STEPPE/xierhe_saierzhu.png' },
     beisilafu: { generalId: 'gen_sergey_belgorod', generalName: '谢尔盖', portrait: '/assets/SLAVIC/beisilafu_xieergai.png' },
     // ── 2026-08-04 新增：多涅茨（哈尔科夫团上校，抗鞑靼、扩建团境）──
     siluoboda: { generalId: 'gen_grigory_donets', generalName: '多涅茨', portrait: '/assets/SLAVIC/siluoboda_duonieci.png' },
     // ── 2026-08-04 新增：萨布罗夫（沃罗涅日首任督军，主持建堡）──
     yedi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
-    eguo_biandi: { generalId: 'eguo_zasekin', generalName: '扎谢金', portrait: '/assets/STEPPE/eguo_biandi_zhaxiejin.png' },   // 立绘待主人补；AI 不配图
+    eguo_biandi: { generalId: 'eguo_zasekin', generalName: '扎谢金', portrait: '/assets/STEPPE/eguo_biandi_zhaxiejin.png' },   // 萨拉托夫建城者
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/SLAVIC/peilieya_gongguo_monuomahe.png' },
     weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/SLAVIC/weijiebusike_gongguo_aoergeerde.png' },
 
@@ -1243,7 +1249,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xierwan: { generalId: 'xierwan_farukusha', generalName: '法鲁克沙', portrait: '/assets/WEST_ASIA/xierwan_falukesha.png' },
     xiemian: { generalId: 'xiemian_xiemianwang', generalName: '齐贝尔', portrait: '/assets/WEST_ASIA/xiemian_xiemianwang.png' },
     yidier: { generalId: 'yidier_yidiewang', generalName: '约瑟夫', portrait: '/assets/STEPPE/yidier_yuesefu.png' },
-    salai: { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_aidigu.png' },
+    salai: [
+        { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_aidigu.png' },
+        { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png' },
+    ],
     mangshi: { generalId: 'mangshi_mangshiwang', generalName: '恰格里', portrait: '/assets/CENTRAL_ASIA/mangshi_mangewang.png' },
     aztec: { generalId: 'gen_cuauhtemoc', generalName: '库奥特莫克', portrait: '/assets/AMERICA/aztec_kuaotemoke.png' },
     inca: { generalId: 'gen_topa_inca', generalName: '图帕克', portrait: '/assets/AMERICA/inca_tupake.png' },

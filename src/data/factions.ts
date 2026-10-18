@@ -209,8 +209,8 @@ export const FACTIONS: Faction[] = [
   { id: 'kaleiliya', name: '卡累利阿' },
   { id: 'deniesite', name: '德涅斯特' },
   { id: 'nieman', name: '涅曼' },
-  { id: 'fuerjia', name: '伏尔加' },
-  { id: 'nuogai', name: '萨马拉河' },
+  { id: 'fuerjia', name: '顿河哥萨克' },
+  { id: 'nuogai', name: '诺盖' },
   { id: 'bashekeer', name: '巴什基尔' },
   { id: 'beisilafu', name: '塞维里亚' },
   { id: 'peilieya_gongguo', name: '佩列公国' },
@@ -1941,7 +1941,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xierwan', name: '希尔万王国' },
     { id: 'xiemian', name: '萨维尔' }, // 达吉斯坦萨维尔人（谢缅杰尔一带突厥语族，后并入可萨）（原名与据点名相同，违 §266）
     { id: 'yidier', name: '伊蒂尔汗国' },
-    { id: 'salai', name: '诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
+    { id: 'salai', name: '萨莱诺盖' }, // 埃迪古所建诺盖汗国以萨莱楚克为都（原名与据点名相同，违 §266）
     { id: 'mangshi', name: '土库曼' }, // 曼格什拉克为乌古斯／土库曼牧地，恰格里贝格出自其中（原名与据点名相同，违 §266）,
     { id: 'kejila', name: '科基拉' },
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国

@@ -493,11 +493,17 @@ export class LegionManager {
                 this.followResupplySystem.update(army);
             }
 
-            // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
-            this.tickApproachAttrition(army, deltaTime);
+            const isExemptStoryMarch =
+                !!army.scriptMarchExempt ||
+                !!(army as any).isFirstBattleMarch ||
+                !!army.isScriptArmy;
+            if (!isExemptStoryMarch) {
+                // 坚壁清野：本城被攻击（含沿途/排队/已开战）时来犯军每秒减兵，技挂录入锚将
+                this.tickApproachAttrition(army, deltaTime);
 
-            // 行军减兵（远输困境）：断粮计时 → 途经己方据点复位 → 超时扣减
-            this.tickMarchAttritionPipeline(army, deltaTime);
+                // 行军减兵（远输困境）：断粮计时 → 途经己方据点复位 → 超时扣减
+                this.tickMarchAttritionPipeline(army, deltaTime);
+            }
             if (army.isDestroyed) return;
 
             // 行军 ZOC：进入非己方据点（含叛军 panjun）控制范围必须先停攻，不可绕路穿过
@@ -662,11 +668,20 @@ export class LegionManager {
         // 🔴 [2026-09-11 主人定] 剧本行军豁免：赶赴战场途中不攻城。
         //    这是**攻城总咽喉**，放这一句即覆盖全部攻城路径：
         //    目标城抵达(500) / 沿路行军(LegionRoadMarch 341·378) / 行为树动作(827) / 撞驻军转攻城(LegionFieldBattle 167)。
+        const armyAny = army as any;
         if (
             army.scriptMarchExempt ||
-            (army as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
-            (army as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy
+            armyAny.forceFirstBattleField ||
+            armyAny.isFirstBattleFieldEnemy
         ) return 'skipped';
+
+        // 首战攻城专属锁定：首战攻城军团只攻指定首战目标城，且首战锁定中的目标城不允许非首战军团抢攻
+        if (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && targetCity.id !== armyAny.firstBattleTargetCityId) {
+            return 'skipped';
+        }
+        if ((targetCity as any)._firstBattleLockedForHero && !armyAny.isFirstBattleHero && !army.isScriptArmy) {
+            return 'skipped';
+        }
 
         // 战术模式 300s 倒计时打平后，攻击军团需换一个目标攻击，不再原地复攻刚打平的城
         if ((army as any).lastDrawCityId) {
@@ -797,6 +812,12 @@ export class LegionManager {
             const city = this.cityManager.getCity(entry.id);
             if (!city) continue;
             if (!city.factionId || city.factionId === factionId) continue;
+            if (army && (army as any).isFirstBattleHero && (army as any).firstBattleTargetCityId && city.id !== (army as any).firstBattleTargetCityId) {
+                continue;
+            }
+            if ((city as any)._firstBattleLockedForHero && (!army || (!(army as any).isFirstBattleHero && !army.isScriptArmy))) {
+                continue;
+            }
             const dist = getEuclideanDistance(pos, {
                 lat: city.latitude,
                 lng: city.longitude,

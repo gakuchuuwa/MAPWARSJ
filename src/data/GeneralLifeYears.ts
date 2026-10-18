@@ -483,6 +483,9 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_sergey_belgorod: { birth: 1535, death: 1590, kaoju: '推定' },  // 谢尔盖
     gen_grigory_donets: { birth: 1630, death: 1691, kaoju: '推定' },  // 多涅茨
     gen_semyon_saburov: { birth: 1545, death: 1601, kaoju: '推定' },  // 萨布罗夫
+    don_vorontsov: { birth: 1550, death: 1605, kaoju: '推定' },       // 沃隆佐夫
+    nogai_votkhovsky: { birth: 1555, death: 1610, kaoju: '推定' },    // 沃特霍夫斯基
+    bashkir_nagoy: { birth: 1540, death: 1600, kaoju: '推定' },       // 纳吉
     eguo_zasekin: { birth: 1540, death: 1600, kaoju: '推定' },       // 扎谢金（萨拉托夫建城者）
     gen_vladimir_monomakh: { birth: 1053, death: 1125 },  // 莫诺马赫
     gen_algirdas: { birth: 1296, death: 1377 },  // 奥尔格尔德

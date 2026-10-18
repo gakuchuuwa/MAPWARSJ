@@ -25,6 +25,8 @@ export const ANIMAL_ACTS = {
 export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number, number, number, number, number, readonly AnimalAction[]]> = [
     // ── 胆小猎物（飞速狂奔逃窜，80~105 px/s，明显快于重骑兵 60 px/s）──
     ['GAZELLE', 'prey', 35, 105, 5, 0, 3, ANIMAL_ACTS.flee],       // 瞪羚（时速80km草原飞毛腿）
+    ['ZEBRA', 'prey', 35, 95, 5, 0, 3, ANIMAL_ACTS.flee],          // 斑马
+    ['GUANACO', 'prey', 32, 85, 5, 0, 3, ANIMAL_ACTS.flee],        // 原驼
     ['HORSE', 'prey', 35, 95, 5, 0, 3, ANIMAL_ACTS.graze],         // 野马（无负重疾驰狂奔）
     ['DEER', 'prey', 32, 90, 5, 0, 3, ANIMAL_ACTS.flee],          // 鹿（飞跃大步狂奔）
     ['OSTRICH', 'prey', 35, 95, 5, 0, 3, ANIMAL_ACTS.flee],        // 鸵鸟（双足疾驰）
@@ -43,6 +45,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
 
     // ── 危险猎物（受惊冲刺脱离，65~75 px/s）──
     ['BOAR', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],       // 野猪（凶猛冲撞脱离）
+    ['JAVELINA', 'danger', 32, 75, 75, 7, 4, ANIMAL_ACTS.beast],   // 美洲西貒
     ['BEAR', 'danger', 30, 75, 75, 7, 5, ANIMAL_ACTS.beast],       // 棕熊（凶猛厚重冲刺脱离）
     ['BEAR_BLACK', 'danger', 30, 75, 75, 7, 5, ANIMAL_ACTS.beast], // 黑熊
     ['BEAR_POLAR', 'danger', 30, 75, 80, 8, 5, ANIMAL_ACTS.beast], // 北极熊
@@ -67,6 +70,7 @@ export const ANIMAL_DE_TABLE: ReadonlyArray<readonly [string, AnimalKind, number
     // ── 家畜（受惊小跑脱离人群，45~65 px/s）──
     ['CAMEL', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze],     // 骆驼
     ['DROMEDARY', 'livestock', 35, 65, 50, 0, 4, ANIMAL_ACTS.graze], // 单峰驼
+    ['BUFFALO', 'livestock', 26, 50, 30, 0, 3, ANIMAL_ACTS.graze],   // 水牛
     ['COW_BROWN', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黄牛
     ['COW_BLACK', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze], // 黑牛
     ['COW_BW', 'livestock', 26, 50, 14, 0, 3, ANIMAL_ACTS.graze],    // 花斑牛
@@ -111,12 +115,12 @@ export const ANIMAL_RANGE: Record<string, ReadonlyArray<readonly [number, number
     return {
         LION, TIGER,
         WOLF_ARABIAN: [[12, 40, 30, 60]], BLACK_PANTHER: [AFR, [-8, 30, 60, 125]], SNOWLEOPARD: [[25, 50, 65, 110]],
-        ELEPHANT: [AFR, [5, 30, 70, 110]], RHINO: [AFR, [5, 30, 70, 110]], OSTRICH: [AFR, [12, 40, 30, 60]],
+        ELEPHANT: [AFR, [5, 30, 70, 110]], RHINO: [AFR, [5, 30, 70, 110]], OSTRICH: [AFR, [12, 40, 30, 60]], ZEBRA: [AFR],
         GAZELLE: OLD_DRY, MOUFLON: [[30, 45, -10, 50]], ARGALI: [[35, 55, 60, 120]], IBEX: [[28, 48, -10, 100]],
         CAMEL: OLD_DRY, DROMEDARY: OLD_DRY, MONKEY: [AFR, [-10, 35, 60, 128]],
         CROCODILE: [[-40, 28, -20, 150], [-35, 32, -20, 52]], CAIMAN: [AMER], KOMODO: [[-12, -7, 115, 125]],
         BEAR_POLAR: [[60, 90, -180, 180]], FOX_ARCTIC: [[52, 90, -180, 180]], HARE_ARCTIC: [[52, 90, -180, 180]],
-        JAGUAR: [AMER], TAPIR: [AMER, [-8, 20, 95, 120]], CAPYBARA: [AMER], MACAW: [AMER], LLAMA: [AMER], ALPACA: [AMER],
+        JAGUAR: [AMER], JAVELINA: [AMER], GUANACO: [AMER], TAPIR: [AMER, [-8, 20, 95, 120]], CAPYBARA: [AMER], MACAW: [AMER], LLAMA: [AMER], ALPACA: [AMER],
         CONDOR: [AMER], RHEA: [AMER],
         SNAKE_GROUND: [[-40, 60, -180, 180]],
     };
