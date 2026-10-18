@@ -42,11 +42,9 @@ export { type CultureCombatRole, resolveUnitCultureRegion, resolveUnitCulture66 
 
 const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
 
-/** 文化攻防系数（非随机，不含关隘类型加成，按 66 文化键查表，未单列者为 1.0）。 */
-export function getCultureCombatMultiplier(region: RegionType | string, role: CultureCombatRole): number {
-    const tier = TIER_TABLE[toCulture66(region)];
-    if (!tier) return 1;
-    return role === 'field' ? tier[0] : tier[1];
+/** 文化攻防系数（2026-10-18 主人定：战斗恢复纯正八环，去除文化环，恒为 1.0）。 */
+export function getCultureCombatMultiplier(_region: RegionType | string, _role: CultureCombatRole): number {
+    return 1;
 }
 
 function getPassGarrisonMultiplier(unit: IBattleUnit): number {
@@ -58,11 +56,9 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 文化固定系数（不含关隘拒险而守，按单位所属 66 文化键查表） */
-export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
-    const culture66 = resolveUnitCulture66(unit);
-    const role: CultureCombatRole = isGarrisonUnit(unit) ? 'garrison' : 'field';
-    return getCultureCombatMultiplier(culture66, role);
+/** 文化固定系数（已去除文化环，恒为 1.0） */
+export function getCultureOnlyCombatMultiplier(_unit: IBattleUnit): number {
+    return 1;
 }
 
 /** 关隘守军「据险而守」系数（非 pass 或非城防恒为 1） */
@@ -86,18 +82,15 @@ export function getWonderCityCombatMultiplier(unit: IBattleUnit): number {
 }
 
 /**
- * 单单位固定战力系数 = 文化环 × 据点环
- *   文化环：文化区攻防表
+ * 单单位固定战力系数 = 据点地利环（2026-10-18 去除文化环后只看据点环）
  *   据点环：关隘「据险而守」与名城「有特殊建筑」**取最大值**，不相乘 —— 焊死据点环上限 1.2。
  *     🔴 [2026-09-17 主人定] 名城 = 有特殊建筑（CITY_WONDER / CITY_WONDER_EXTRA）的据点，其他一律不是。
  */
 export function getUnitCultureCombatMultiplier(unit: IBattleUnit): number {
-    const cultureRing = getCultureOnlyCombatMultiplier(unit);
-    const siteRing = Math.max(
+    return Math.max(
         getPassGarrisonMultiplier(unit),
         getWonderCityGarrisonMultiplier(unit),
     );
-    return cultureRing * siteRing;
 }
 
 /**

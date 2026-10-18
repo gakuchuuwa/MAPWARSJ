@@ -274,15 +274,15 @@ export class GameConfig {
         ] as readonly string[],
     };
     /**
-     * 66 文化专属战略特性（2026-10-18 主人定：废除旧 16 文化圈六维与草原额外加速，改为 66 文化一文化一特性）：
+     * 66 文化专属战略特性（2026-10-18 主人定：文化 100% 归属大战略层，不进战斗八环；66 文化一文化一特性）：
      *   ① 陆行不减兵（9）：MONGOL, XIANBEI, HUNS, CUMAN, CENTRAL_ASIA, KHITAN, TURKS, MAGYAR, BERBER（见 MARCH_ATTRITION.LAND_IMMUNE_CULTURES）
      *   ② 海行不减兵（7）：VIKINGS, DANES, VARANGIANS, MALAY, PORTUGUESE, SPANISH, ATHENIANS（见 MARCH_ATTRITION.NAVAL_IMMUNE_CULTURES）
      *   ③ 山地行军专精（10）：TIBET, BASHU, INCA, MUISCA, MAPUCHE, ARMENIANS, GEORGIANS, THRACIAN, ETHIOPIANS, CELTS（山地行军不减速，见 MOUNTAIN_MARCH_IMMUNE_CULTURES）
      *   ④ 渡海/水网机动（6）：JIANGNAN, JAPAN, SAXONS, SICILIANS, LATIN, VIETNAMESE（海上移速 ×1.25，见 SEA_SPEED_BONUS_CULTURES）
-     *   ⑤ 坚城固守（10）：BYZANTINE, GERMANIC, BRITONS, BOHEMIANS, KOREA, WESTERN, MAYANS, KHMER, BURMESE, GREECE（据点守军战力 ×1.20，见 TIER_TABLE）
+     *   ⑤ 深沟高垒（10）：BYZANTINE, GERMANIC, BRITONS, BOHEMIANS, KOREA, WESTERN, MAYANS, KHMER, BURMESE, GREECE（据点驻军容量上限 ×1.25，见 CITY_TROOP_CAP_TABLE）
      *   ⑥ 沃野兵源（8）：CENTRAL, WEI, SLAVIC, MUGHAL, BENGALIS, INDIA, AFRICA, TUPI（据点每季募兵 ×1.25，见 RECRUIT_TABLE）
-     *   ⑦ 大军团编制（7）：ROMA, PERSIAN, SASANIAN, MACEDONIAN, ORIE, PURU, AMERICA（军团与据点兵力上限 ×1.20，见 LEGION_TROOP_CAP_TABLE / CITY_TROOP_CAP_TABLE）
-     *   ⑧ 野战精锐（9）：SPARTANS, FRANKS, BURGUNDIANS, GOTHS, POLES, LITHUANIANS, BULGARIANS, NORTHEAST, GURJARAS（军团野战战力 ×1.15，见 TIER_TABLE）
+     *   ⑦ 大军团编制（7）：ROMA, PERSIAN, SASANIAN, MACEDONIAN, ORIE, PURU, AMERICA（军团兵力上限 ×1.20，见 LEGION_TROOP_CAP_TABLE）
+     *   ⑧ 平原疾行（9）：SPARTANS, FRANKS, BURGUNDIANS, GOTHS, POLES, LITHUANIANS, BULGARIANS, NORTHEAST, GURJARAS（平原行军移速 ×1.15，见 PLAIN_SPEED_BONUS_CULTURES）
      */
     static CULTURE_COMBAT = {
         /** ③ 山地行军专精（10 个文化）：山地行军如履平地，按平原速度行进 */
@@ -308,30 +308,21 @@ export class GameConfig {
             'VIETNAMESE',
         ] as readonly string[],
         SEA_SPEED_BONUS_MULT: 1.25,
-        /** 66 文化 → [军团野战攻, 据点守军防]（未单列者均为 [1.00, 1.00]） */
-        TIER_TABLE: {
-            // ⑤ 坚城固守（守军战力 ×1.20）
-            BYZANTINE: [1.00, 1.20],
-            GERMANIC: [1.00, 1.20],
-            BRITONS: [1.00, 1.20],
-            BOHEMIANS: [1.00, 1.20],
-            KOREA: [1.00, 1.20],
-            WESTERN: [1.00, 1.20],
-            MAYANS: [1.00, 1.20],
-            KHMER: [1.00, 1.20],
-            BURMESE: [1.00, 1.20],
-            GREECE: [1.00, 1.20],
-            // ⑧ 野战精锐（野战战力 ×1.15）
-            SPARTANS: [1.15, 1.00],
-            FRANKS: [1.15, 1.00],
-            BURGUNDIANS: [1.15, 1.00],
-            GOTHS: [1.15, 1.00],
-            POLES: [1.15, 1.00],
-            LITHUANIANS: [1.15, 1.00],
-            BULGARIANS: [1.15, 1.00],
-            NORTHEAST: [1.15, 1.00],
-            GURJARAS: [1.15, 1.00],
-        } as Record<string, readonly [number, number]>,
+        /** ⑧ 平原疾行（9 个文化）：平原行军移速 ×1.15 */
+        PLAIN_SPEED_BONUS_CULTURES: [
+            'SPARTANS',
+            'FRANKS',
+            'BURGUNDIANS',
+            'GOTHS',
+            'POLES',
+            'LITHUANIANS',
+            'BULGARIANS',
+            'NORTHEAST',
+            'GURJARAS',
+        ] as readonly string[],
+        PLAIN_SPEED_BONUS_MULT: 1.15,
+        /** 文化战斗攻防表（已废除：战斗恢复纯正八环，文化不参与战斗环乘算） */
+        TIER_TABLE: {} as Record<string, readonly [number, number]>,
         /** 军团全图速度乘数（已废除旧 16 文化圈加速/减速，行军速度由兵种编成与地形特性决定，恒为 1.0） */
         SPEED_TABLE: {} as Record<string, number>,
         /** ⑥ 沃野兵源（8 个文化）：据点每季募兵产速 ×1.25（其余均为 1.00） */
@@ -355,15 +346,18 @@ export class GameConfig {
             PURU: 1.20,
             AMERICA: 1.20,
         } as Record<string, number>,
-        /** ⑦ 大军团编制（7 个文化）：据点兵力上限 ×1.20（其余均为 1.00） */
+        /** ⑤ 深沟高垒（10 个文化）：据点驻军容量上限 ×1.25（其余均为 1.00） */
         CITY_TROOP_CAP_TABLE: {
-            ROMA: 1.20,
-            PERSIAN: 1.20,
-            SASANIAN: 1.20,
-            MACEDONIAN: 1.20,
-            ORIE: 1.20,
-            PURU: 1.20,
-            AMERICA: 1.20,
+            BYZANTINE: 1.25,
+            GERMANIC: 1.25,
+            BRITONS: 1.25,
+            BOHEMIANS: 1.25,
+            KOREA: 1.25,
+            WESTERN: 1.25,
+            MAYANS: 1.25,
+            KHMER: 1.25,
+            BURMESE: 1.25,
+            GREECE: 1.25,
         } as Record<string, number>,
         PASS_GARRISON_MULT: 1.2,
         /** 有特殊建筑（城内奇观 CITY_WONDER / 附加奇观 CITY_WONDER_EXTRA）的名城守军额外系数（2026-09-17 主人定：有特殊建筑才算名城） */

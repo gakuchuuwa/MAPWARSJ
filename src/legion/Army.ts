@@ -35,7 +35,7 @@ import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalr
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
-import { getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
+import { getArmyCulturePlainSpeedMultiplier, getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
 
 /**
  * 行军路点。`sea` 是路网给的**这一段属于海路还是陆路**（RoadRegistry.GraphEdge.isSea），
@@ -1199,8 +1199,9 @@ export class Army implements IBattleUnit {
 
             const moveClass = this.preferredMoveClass ?? this.resolveMoveClassFromSlots();
             const base = MOVEMENT_MATRIX[moveClass][this.confirmedLandKind];
+            const plainCultureMult = this.confirmedLandKind === 'plain' ? getArmyCulturePlainSpeedMultiplier(this) : 1;
             // 玩家专属缩放（AI 军团 terrainSpeedScale 恒为 null，走原路）
-            this.terrainSpeedTarget = base * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
+            this.terrainSpeedTarget = base * plainCultureMult * (this.terrainSpeedScale?.[this.confirmedLandKind] ?? 1);
         }
 
         // 平滑：约 TERRAIN_SPEED_LERP_TAU_SEC 内贴近目标；构造/瞬移 deltaTime≤0 则贴齐

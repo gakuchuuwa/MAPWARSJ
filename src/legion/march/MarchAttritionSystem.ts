@@ -85,6 +85,15 @@ export function getArmyCultureSeaSpeedMultiplier(army: Army): number {
         : 1.0;
 }
 
+/** ⑧ 平原疾行：命中 PLAIN_SPEED_BONUS_CULTURES 的文化在平原行军移速 ×1.15 */
+export function getArmyCulturePlainSpeedMultiplier(army: Army): number {
+    const culture66 = resolveArmyCulture66Key(army);
+    if (!culture66) return 1.0;
+    return GameConfig.CULTURE_COMBAT.PLAIN_SPEED_BONUS_CULTURES.includes(culture66)
+        ? GameConfig.CULTURE_COMBAT.PLAIN_SPEED_BONUS_MULT
+        : 1.0;
+}
+
 /**
  * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字），0 = 本帧无扣减。
  *

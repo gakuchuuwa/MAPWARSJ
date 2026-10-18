@@ -40,7 +40,7 @@ import { PortraitConfigManager } from '../core/PortraitConfigManager';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { EVENT_SITES } from '../data/eventSites';
-import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getCultureOnlyCombatMultiplier, getPassGarrisonCombatMultiplier, getWonderCityCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
+import { getUnitCultureCombatMultiplier, getEliteCombatMultiplier, getPassGarrisonCombatMultiplier, getWonderCityCombatMultiplier, getUnitEliteTier } from '../systems/CultureCombat';
 import type { LandTerrainKind } from '../world/land-sea';
 import { resolveGeneralTacticalEntry } from '../combat/TacticalSkillResolver';
 import { EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
@@ -1900,23 +1900,23 @@ export class CombatUI {
         const chip = document.createElement('div');
         chip.className = 'combat-legion-chip';
         chip.style.cssText = `
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
             background: linear-gradient(135deg, rgba(28, 16, 8, 0.94) 0%, rgba(14, 8, 3, 0.96) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.45);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 0 3px rgba(212, 175, 55, 0.12);
-            min-width: 48px;
-            min-height: 27px;
+            border: 1px solid rgba(212, 175, 55, 0.48);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55), inset 0 0 4px rgba(212, 175, 55, 0.14);
+            min-width: 56px;
+            min-height: 38px;
+            width: 100%;
             box-sizing: border-box;
             white-space: nowrap;
-            align-self: flex-end;
             cursor: help;
             pointer-events: auto;
-            gap: 0px;
+            gap: 1px;
         `;
         const fallback = isAtt ? '古典时代秦汉军团' : '古典时代秦汉军团';
         const name = (rawLegionName || fallback).trim();
@@ -1957,27 +1957,27 @@ export class CombatUI {
      * [2026-09-19 主人定] 精锐独立卡片：
      * 1. 独立单框，与军团框分开；
      * 2. 不要前面的「精」字；
-     * 3. 展现精锐番号名，金质黑金视觉，高度与军团/科技卡片完全对齐。
+     * 3. 展现精锐番号名，金质黑金视觉，与上方军团卡片上下叠成一列。
      */
     private createEliteChip(eliteName: string): HTMLDivElement | null {
         if (!eliteName) return null;
         const chip = document.createElement('div');
         chip.className = 'combat-elite-chip';
         chip.style.cssText = `
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
             background: linear-gradient(135deg, rgba(36, 20, 6, 0.94) 0%, rgba(18, 10, 2, 0.96) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.6);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 0 4px rgba(255, 215, 0, 0.15);
-            min-width: 44px;
-            min-height: 27px;
+            border: 1px solid rgba(255, 215, 0, 0.62);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.55), inset 0 0 4px rgba(255, 215, 0, 0.16);
+            min-width: 56px;
+            min-height: 34px;
+            width: 100%;
             box-sizing: border-box;
             white-space: nowrap;
-            align-self: flex-end;
             cursor: help;
             pointer-events: auto;
             gap: 0px;
@@ -2143,17 +2143,30 @@ export class CombatUI {
             chipsWrap.appendChild(chip);
         }
 
-        // 🔴 [2026-10-18 主人定] 从中间向外依次排布：六技能面板 -> 军团 -> 精锐 -> 科技（单行不换行）
-        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [⚔️ 攻方科技] -> [科技卡片组] -> [精锐卡片] -> [军团卡片]
-        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [军团卡片] -> [精锐卡片] -> [科技卡片组] -> [守方科技 🛡️]
+        // 🔴 [2026-10-18 主人定] 军团（上）与精锐（下）上下叠成一列，与旁侧六技能面板高度对齐，节省横向空间
+        const unitStackWrap = document.createElement('div');
+        unitStackWrap.className = 'combat-unit-stack-wrap';
+        unitStackWrap.style.cssText = `
+            display: inline-flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+            align-self: flex-end;
+        `;
+        unitStackWrap.appendChild(legionChip);
+        if (eliteChip) unitStackWrap.appendChild(eliteChip);
+
+        // 🔴 [2026-10-18 主人定] 从中间向外依次排布：六技能面板 -> [上军团/下精锐] -> 科技（单行不换行）
+        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [⚔️ 攻方科技] -> [科技卡片组] -> [上军团/下精锐]
+        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [上军团/下精锐] -> [科技卡片组] -> [守方科技 🛡️]
         if (box === this.leftTechBox) {
             box.appendChild(tag);
             if (own.length) box.appendChild(chipsWrap);
-            if (eliteChip) box.appendChild(eliteChip);
-            box.appendChild(legionChip);
+            box.appendChild(unitStackWrap);
         } else {
-            box.appendChild(legionChip);
-            if (eliteChip) box.appendChild(eliteChip);
+            box.appendChild(unitStackWrap);
             if (own.length) box.appendChild(chipsWrap);
             box.appendChild(tag);
         }
@@ -3610,14 +3623,6 @@ export class CombatUI {
                 }
             };
 
-            const addCulture = () => {
-                const cultureMult = getCultureOnlyCombatMultiplier(unit);
-                const round = Math.round(cultureMult * 100) / 100;
-                const isGarrison = unit.unitType === 'city';
-                const label = resolveCultureTagLabel(round, isGarrison);
-                if (label) add(label, `战力×${fmtMult(cultureMult)}`, false, 'culture');
-            };
-
             const addAptitude = () => {
                 if (!unit.generalId) return;
                 const profile = getGeneralProfile(unit.generalId);
@@ -3643,14 +3648,13 @@ export class CombatUI {
                 if (label) add(label, `战力×${fmtMult(styleMult)}`, false, 'style');
             };
 
-            // 词语标签严格对应九环战力中的 7 个乘区：
+            // 词语标签严格对应八环战力中的 6 个乘区（2026-10-18 已去除文化环）：
             // 1. 玩家官阶 (addPlayerRank)
             // 2. 精锐部队 (addElite)
-            // 3. 文化加成 (addCulture)
-            // 4. 三势适性 (addAptitude)
-            // 5. 攻防风格 (addStyle)
-            // 6. 战局运气 (addLuck)
-            // 7. 战术技能 (addSkills)
+            // 3. 三势适性 (addAptitude)
+            // 4. 攻防风格 (addStyle)
+            // 5. 战局运气 (addLuck)
+            // 6. 战术技能 (addSkills)
             // （名将光环为底层特权乘区不占词、据点地利属于场地属性走下方乘区链、兵力走血槽）
 
             const addLuck = () => {
@@ -3683,21 +3687,19 @@ export class CombatUI {
             };
 
             if (isAttacker) {
-                // 攻击方（7个词语标签）：玩家官阶 -> 精锐 -> 文化 -> 适性 -> 风格 -> 运气 -> 技能
+                // 攻击方（6个词语标签）：玩家官阶 -> 精锐 -> 适性 -> 风格 -> 运气 -> 技能
                 addPlayerRank();
                 addElite();
-                addCulture();
                 addAptitude();
                 addStyle();
                 addLuck();
                 addSkills();
             } else {
-                // 防守方（7个词语标签）：技能 -> 运气 -> 风格 -> 适性 -> 文化 -> 精锐 -> 玩家官阶
+                // 防守方（6个词语标签）：技能 -> 运气 -> 风格 -> 适性 -> 精锐 -> 玩家官阶
                 addSkills();
                 addLuck();
                 addStyle();
                 addAptitude();
-                addCulture();
                 addElite();
                 addPlayerRank();
             }
@@ -3787,10 +3789,8 @@ export class CombatUI {
         const passMult = getPassGarrisonCombatMultiplier(unit);
         const regionMult = getWonderCityCombatMultiplier(unit);
 
-        // [2026-08-06 修] cultureMult 用**纯文化环**（getCultureOnlyCombatMultiplier），据点环由 passMult/regionMult 独立乘
-        // ——此前用 getUnitCultureCombatMultiplier（文化×据点）导致据点环乘两遍。
         // 🔴 [2026-09-17 主人定] 名城 = 有特殊建筑（CITY_WONDER/EXTRA）的据点；据点环 = max(关隘, 名城)。
-        const cultureMult = getCultureOnlyCombatMultiplier(unit);
+        // 🔴 [2026-10-18] 66文化特性全面转为战略地图特性，文化环移出战术战力系统，恢复纯正「战斗八环」。
 
         let tacChar = '技';
         if (unit.generalId) {
@@ -3840,7 +3840,6 @@ export class CombatUI {
         const allDetail = [
             { label: '名将光环', shortName: '名', val: famousMult },
             { label: '据点城池', shortName: '城', val: Math.max(passMult, regionMult) },
-            { label: '文化加成', shortName: '文', val: cultureMult },
             { label: '战术技能', shortName: tacChar, val: tacMult },
             { label: '精锐部队', shortName: '军', val: legionMult },
             { label: '三势适性', shortName: aptChar, val: aptMult },
@@ -3851,10 +3850,10 @@ export class CombatUI {
 
         // 🔴 [2026-09-17 主人定] 据点环 = max(关隘, 名城)；名城 = 有特殊建筑（CITY_WONDER/EXTRA）的据点。
         const siteMult = Math.max(passMult, regionMult);
-        const totalMult = famousMult * siteMult * cultureMult * tacMult * legionMult * aptMult * styleMult * fateLuck * playerMult;
+        const totalMult = famousMult * siteMult * tacMult * legionMult * aptMult * styleMult * fateLuck * playerMult;
         const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
 
-        const totalTitle = `综合战力加成（九环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
+        const totalTitle = `综合战力加成（八环连乘）：×${fmtTotalStr}\n` + (allDetail.length > 0
             ? allDetail.map((f) => `• ${f.label}(${f.shortName})：×${parseFloat(f.val.toFixed(2))}`).join('\n')
             : '• 无额外增减益（均势 1.00）');
 

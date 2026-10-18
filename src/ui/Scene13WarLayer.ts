@@ -614,12 +614,10 @@ export class Scene13WarLayer {
             const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
             const dep = ((slotIdx / files) | 0) * spDep;
             const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
-            const [spawnX, spawnY] = (s.f === 1 && this.battleType === 'siege' && !!this.deCity)
-                ? this.defenderGateSpawnPos(s, dep, slotY)
-                : this.fieldBound(
-                    s.x - uFwd.x * dep + uSide.x * slotY,
-                    s.y - uFwd.y * dep + uSide.y * slotY,
-                );
+            const [spawnX, spawnY] = this.fieldBound(
+                s.x - uFwd.x * dep + uSide.x * slotY,
+                s.y - uFwd.y * dep + uSide.y * slotY,
+            );
             const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
             const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
@@ -1051,9 +1049,7 @@ export class Scene13WarLayer {
         //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
         //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
         const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
-        const [x, y] = (m.f === 1 && this.battleType === 'siege' && !!this.deCity && m.lane >= 0 && this.spawns[m.lane])
-            ? this.defenderGateSpawnPos(this.spawns[m.lane], 0, 0)
-            : [_port.x, _port.y];
+        const [x, y] = [_port.x, _port.y];
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
@@ -4828,15 +4824,13 @@ export class Scene13WarLayer {
                 let spawnX = s.x - uFwd.x * dep + uSide.x * slotY;
                 let spawnY = s.y - uFwd.y * dep + uSide.y * slotY;
                 // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」「最后一排背靠城墙」]
-                // 🔴 [2026-10-18 主人令「守方第一波出现在城外，这个很好不要动，往后都是在城门刷新。当城门被摧毁后，守方可以集体发动反攻」]
+                // 🔴 [2026-10-18 主人令「城门还没破的第二波以后的守军不要动，只原地攻击，不然又出不来，为什么要动？都拥挤再城墙哪里，等城门破了，第二波往后的守军再发起反击」]
                 const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && s.outFwd !== undefined;
                 if (outsideFirst) {
                     const B = this.defOutsideBase(), F = B.fwd, S = B.side;   // 阵与最正对攻方的那面墙平行（见 defOutsideBase）
                     spawnX = B.x + F.x * s.outFwd! + S.x * s.outSide! - F.x * dep + S.x * slotY;
                     spawnY = B.y + F.y * s.outFwd! + S.y * s.outSide! - F.y * dep + S.y * slotY;
                     this.holdLanes.add(s.lane);
-                } else if (s.f === 1 && this.battleType === 'siege' && !!this.deCity) {
-                    [spawnX, spawnY] = this.defenderGateSpawnPos(s, dep, slotY);
                 }
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
@@ -4975,14 +4969,14 @@ export class Scene13WarLayer {
             //    推挤会把 6 列挤成 12 列、把纵深压掉（探针实测 hei_kuang_heavy 216×53 = 一排）。
             //    推进期他们本就按固定槽位走（够不着不追），推挤只会破坏方阵；接敌后（m.march=false）照常。
             if (m.march) { m.sepX = 0; m.sepY = 0; continue; }
-            // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员 / 城内出兵口原位驻守已站定的守军：同样清零推挤（理由见本函数头注）
+            // 🔴 [2026-10-18 主人定] 城门未破时，城内出兵口刷出的第二波及后续守军原地不动（只原地攻击），不吃软推挤
+            if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
+                m.sepX = 0;
+                m.sepY = 0;
+                continue;
+            }
+            // 🔴 [2026-10-03 主人选定 A] 归队后已站定在槽位上的队员：同样清零推挤（理由见本函数头注）
             if (m.lane >= 0 && !m.hero && !m.foe) {
-                if (m.guardPost && !this.remnantLanes.has(m.lane)
-                    && (m.x - m.guardPost.x) ** 2 + (m.y - m.guardPost.y) ** 2 <= LANE_TRACK_EPS * LANE_TRACK_EPS) {
-                    m.sepX = 0;
-                    m.sepY = 0;
-                    continue;
-                }
                 const L = laneLeaders.get(m.lane);
                 if (L === m && !this.marching && !m.siegeW && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane)
                     && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
@@ -5112,8 +5106,9 @@ export class Scene13WarLayer {
         if ('sprite' in target && (target.sprite.destroyed || (!target.bld && target.sprite.obstructionDisabled))) return false;
         if ('sprite' in target && target.bld && (target.sprite.collapse || target.sprite.asset.includes('_RUBBLE'))) return false;
         if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
-            const leash = Math.max(sight * 1.3, 420);
-            if ((target.x - m.guardPost.x) ** 2 + (target.y - m.guardPost.y) ** 2 > leash * leash) return false;
+            return target.hp > 0
+                && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight
+                && ('sprite' in target || !this.wallSeparates(m, target));
         }
         const wallKeep = 'sprite' in target && target.linked === true && !target.sprite.obstructionDisabled
             && this.battleType === 'siege' && m.f === 0;
@@ -5133,6 +5128,9 @@ export class Scene13WarLayer {
         }
         // 贴脸的攻击者照样要回头反击（最小射程只管分配新目标，见 canKeepTarget 头注）。
         const distance2 = (attacker.x - m.x) ** 2 + (attacker.y - m.y) ** 2;
+        if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
+            return distance2 < sight * sight && !this.wallSeparates(m, attacker) ? attacker : null;
+        }
         return distance2 < sight * sight * 1.44 && !this.wallSeparates(m, attacker) ? attacker : null;
     }
 
@@ -5145,56 +5143,13 @@ export class Scene13WarLayer {
         return this.ringOpenVal;
     }
 
-    /** 🔴 [2026-10-18 主人令「往后都是在城门刷新。当城门被摧毁后，守方可以集体发动反攻」]
+    /** 🔴 [2026-10-18 主人令「城门还没破的第二波以后的守军不要动，只原地攻击…等城门破了，第二波往后的守军再发起反击」]
      *  守方城门是否已被摧毁（任一城门被毁即算破门；无城门时按城墙缺口或无墙判） */
     private isDefenderGateDestroyed(): boolean {
         if (this.wallGates.length === 0) return true;
         const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
         if (gates.length > 0) return gates.some(b => !this.wallStanding(b));
         return this.ringOpen();
-    }
-
-    /** 守方正对攻方的主城门（优先取已毁或受损且离攻方最近的城门，否则取离攻方大本营最近的城门） */
-    private primaryDefenderGate(): WarBuilding | null {
-        const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
-        if (gates.length === 0) return null;
-        const attBase = this.spawnBases[0] ?? { x: this.worldCX, y: this.worldCY };
-        const dist2 = (b: WarBuilding) => (b.x - attBase.x) ** 2 + (b.y - attBase.y) ** 2;
-        const destroyed = gates.filter(b => !this.wallStanding(b));
-        if (destroyed.length > 0) {
-            return destroyed.reduce((best, b) => dist2(b) < dist2(best) ? b : best, destroyed[0]);
-        }
-        const damaged = gates.filter(b => b.hp < b.maxHp);
-        if (damaged.length > 0) {
-            return damaged.reduce((best, b) => dist2(b) < dist2(best) ? b : best, damaged[0]);
-        }
-        return gates.reduce((best, b) => dist2(b) < dist2(best) ? b : best, gates[0]);
-    }
-
-    /** 攻城战守方后续波次（第二波起）在城门处的刷新坐标 */
-    private defenderGateSpawnPos(s: WarSpawn, dep: number, slotY: number): [number, number] {
-        const g = this.primaryDefenderGate();
-        if (!g) {
-            const uFwd = this.advanceVec[1], uSide = this.sideVec[1];
-            return this.fieldBound(
-                s.x - uFwd.x * dep + uSide.x * slotY,
-                s.y - uFwd.y * dep + uSide.y * slotY,
-            );
-        }
-        const C = this.deCity ? this.deCityCenter : this.spawnBases[1];
-        const vx = g.x - C.x, vy = g.y - C.y, vl = Math.hypot(vx, vy) || 1;
-        const uOut = { x: vx / vl, y: vy / vl };
-        let uLat = { x: -uOut.y, y: uOut.x };
-        const sv = this.sideVec[1];
-        if (uLat.x * sv.x + uLat.y * sv.y < 0) uLat = { x: -uLat.x, y: -uLat.y };
-        const defIdx = Math.max(0, s.lane - SIDE_LANES);
-        const latOffset = ((defIdx % 5) - 2) * 26 + slotY * 0.75;
-        const baseInward = this.wallStanding(g) ? 62 : 18;
-        const inwardDist = baseInward + Math.floor((defIdx % 10) / 5) * 42 + dep;
-        return this.fieldBound(
-            g.x - uOut.x * inwardDist + uLat.x * latOffset,
-            g.y - uOut.y * inwardDist + uLat.y * latOffset,
-        );
     }
 
     /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城门未毁时在城内而敌在城外）⇒ 走不过去，不直接锁死追击 */
@@ -5498,9 +5453,8 @@ export class Scene13WarLayer {
         const lt = (typeof wm.lane === 'number' && wm.lane >= 0 && !(m as { siegeW?: boolean }).siegeW)
             ? this.laneTargets.get(wm.lane) : undefined;
         const prefLane = lt?.targetLane;
-        const guardPost = (wm.guardPost && !(typeof wm.lane === 'number' && wm.lane >= 0 && this.remnantLanes.has(wm.lane)))
-            ? wm.guardPost : undefined;
-        const guardLeash2 = guardPost ? Math.max(radius * 1.3, 420) ** 2 : Infinity;
+        const guardPost = wm.guardPost;
+        const guardLeash2 = guardPost ? radius * radius : Infinity;
         let pBest: WarMan | null = null, pBd = r2;
         let pInRange: WarMan | null = null, pRd = r2;
         let pFree: WarMan | null = null, pFd = r2;
@@ -6795,11 +6749,15 @@ export class Scene13WarLayer {
         }
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
-        // 🔴 [2026-10-18 主人定] 当城门被摧毁后，守方集体发动反攻：立即解除城门驻守限制（guardPost 与 holdLanes），全军主动出击
+        // 🔴 [2026-10-18 主人定] 当城门被摧毁后，守方集体发动反攻：立即解除城内原位驻守限制（guardPost 与 holdLanes），全军主动出击
         if (this.battleType === 'siege' && this.isDefenderGateDestroyed()) {
             this.holdLanes.clear();
             for (const u of this.men) {
-                if (u.f === 1 && u.guardPost) u.guardPost = undefined;
+                if (u.f === 1 && u.guardPost) {
+                    u.guardPost = undefined;
+                    u.stuckT = 0;
+                    u.aimT = 0;
+                }
             }
         }
         this.stepArrowTowers(dt);
@@ -6911,15 +6869,15 @@ export class Scene13WarLayer {
                 && (m.x - this.heroClickOrder.x) ** 2 + (m.y - this.heroClickOrder.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS) {
                 this.heroClickOrder = null;
             }
-            // 🔴 [2026-10-15 主人定] 攻城战第二波起守军：在城内出兵口原位警戒防守（残兵兜底时放开）
-            const isGuard = !!m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane));
+            // 🔴 [2026-10-18 主人定] 攻城战第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话原地待命，被击毁城门发起反攻
+            const isGuard = !!m.guardPost;
             // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
             const laneStandby = !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
             const holdCmd = this.playerCmd === 'hold' && (m.hero || this.playerCtlLanes.has(m.lane));
-            if (holdCmd) { m.tx = m.x; m.ty = m.y; }
+            if (holdCmd || isGuard) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
             // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）；【攻】振己威狂暴移速 ×1.20
@@ -6948,7 +6906,6 @@ export class Scene13WarLayer {
                 m.ph += dt * 8 * walkAnimSpd;
                 continue;
             }
-            const SIGHT = Math.max(isGuard ? 320 : 0, stats.sight ?? 160, stats.rng > 65 ? Math.round(stats.rng * 1.15) + 40 : 0);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；保证远程视野始终大于最大射程）
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
             //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
             //    （53.67 = √(TAC_TILE_W²/4 + TAC_TILE_H²/4) 的等轴换算，见 resolveWorldObstructions）。
@@ -6962,6 +6919,8 @@ export class Scene13WarLayer {
             const dElev = myElev - foeElev;
             const elevRangeMul = (stats.rng > 65 && dElev > 0.2) ? (1.0 + Math.min(7, dElev) * 0.05) : 1.0;
             const REACH = Math.max(stats.rng * elevRangeMul, 65) + this.radiusOf(m.key);   // 出手扣血（近战贴身 65 + 自身半径 / 远程 rng）
+            // 🔴 [2026-10-18 主人定] 城门还没破的第二波以后守军（isGuard）不要动、只原地攻击 ⇒ 索敌半径严格等于自身攻击距离 REACH
+            const SIGHT = isGuard ? REACH : Math.max(stats.sight ?? 160, stats.rng > 65 ? Math.round(stats.rng * 1.15) + 40 : 0);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；保证远程视野始终大于最大射程）
             // 火矛手充能冷却递减（DE 30 秒充能，出生即满 → 首次进战就喷）
             if (FIRE_LANCER_TYPES.has(m.key)) m.chargeCd = Math.max(0, (m.chargeCd ?? 0) - dt);
 
@@ -7083,7 +7042,7 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                     [m.tx, m.ty] = this.fieldBound(sx, sy);
                 }
-            } else if (!m.foe && !holdCmd && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌的队：原地不动（见 holdLanes）
+            } else if (!m.foe && !holdCmd && !isGuard && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌与城内未破门守军：原地不动
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
@@ -7091,9 +7050,6 @@ export class Scene13WarLayer {
                     // 🔴 玩家本人点了地面还没走到：这道令优先 —— 既不归队、也不许 aimAt 改写他的目标点。
                     //    改前这里会掉进 aimAt，每 0.5 秒把玩家点的点改掉一次（见 heroOrderPending）。
                     //    什么都不做 = 目标点保持玩家点下的那一个。
-                } else if (isGuard && m.guardPost) {
-                    // 🔴 [2026-10-15 主人定] 第二波起城内警戒守军：消灭附近敌人后直接回本兵出兵口原位列阵驻守
-                    [m.tx, m.ty] = this.fieldBound(m.guardPost.x, m.guardPost.y);
                 } else if (laneStandby) {
                     // 🔴 [2026-10-15 主人定] 场上所有目标均已满 4 队攻击，本队无目标可打时原地列阵待命；
                     // 🔴 [2026-10-16 主人令「守方却打到攻方营地，应该是回城需要敌人呀，不要再营地等着打乱入者」]
@@ -7249,8 +7205,8 @@ export class Scene13WarLayer {
                     const nearlyDead = foe.hp < foeMax * KEEP_TARGET_HP;
                     if (m.fightT > 4 && !nearlyDead) {
                         m.foe = null; m.fightT = 0; m.next = 0.4; m.lock = 0;
-                        if (isGuard && m.guardPost) {
-                            [m.tx, m.ty] = this.fieldBound(m.guardPost.x, m.guardPost.y);
+                        if (isGuard) {
+                            m.tx = m.x; m.ty = m.y;
                         } else if (laneStandby) {
                             const slot = this.laneSlotTarget(m, laneLeaders);
                             if (slot) { [m.tx, m.ty] = slot; } else { m.tx = m.x; m.ty = m.y; }
@@ -7291,8 +7247,8 @@ export class Scene13WarLayer {
                     m.ph += dt * (m.st ? 8 / 1.5 : (8 / LOOP_WINDOW_IDLE_SEC));
                     continue;
                 }
-                // 🔴 [2026-08-23] 双方待命期：够不着**不追**——原地站桩等目标进射程
-                if (holdCmd && !inReach) {
+                // 🔴 [2026-08-23] 双方待命期 / 城门未破的第二波以后守军（isGuard）：够不着**不追**——原地站桩等目标进射程
+                if ((holdCmd || isGuard) && !inReach) {
                     m.st = 0;
                     m.fightT = 0;
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -7719,6 +7675,7 @@ export class Scene13WarLayer {
                 const isIdlePose = !m.march && (
                     (m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
                     || holdCmd
+                    || isGuard
                     || (m.lane >= 0 && this.holdLanes.has(m.lane))
                     || (laneStandby && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS)
                 );
@@ -8377,8 +8334,8 @@ export class Scene13WarLayer {
             //    |Δx|<0.5 且 |Δy|<0.5 ⇒ 移动中永远播走路帧。
             //    🔴 [2026-10-13] 这条判据此前**恒成立**：step 末尾结算卡住时已把 prevX/prevY 写成当前位置，
             //    渲染层再拿 m.x - m.prevX 比恒为 0（真机实测 1%~4% 的移动帧误播待命）。改读 step 结算好的 m.stepMax。
-            else if (!m.march && m.stuckT > STUCK_IDLE_SEC
-                && (m.stepMax ?? 0) < 0.5
+            else if (!m.march && ((m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
+                || (m.st === 0 && !!m.guardPost))
                 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
