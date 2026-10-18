@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-14T01:49:16.473Z",
+ "generatedAt": "2026-10-18T19:25:57.182Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15236,6 +15236,34 @@
    "reliefM": 37,
    "cliffs": 0,
    "top": "Desert 91.5% · Palm Desert 5.8% · Forest, Birch 2.2% · Dragon Forest 0.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_oleshky",
+   "file": "site_city_oleshky.json",
+   "bytes": 261508,
+   "koppen": "BSk",
+   "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 23,
+   "cliffs": 0,
+   "top": "Desert 89.9% · Palm Desert 7.7% · Forest, Birch 2.2% · Dragon Forest 0.2%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_saksin",
+   "file": "site_city_saksin.json",
+   "bytes": 227765,
+   "koppen": "BWk",
+   "theme": "PALAEARCTIC_MIDDLE_EAST_DESERT",
+   "water": "WorldCover",
+   "waterCells": 4134,
+   "waterPct": 28.7,
+   "reliefM": 20,
+   "cliffs": 0,
+   "top": "Desert 59.6% · Water, Shallow 28.7% · Palm Desert 5.8% · Beach 3.4%",
    "verify": "ok"
   }
  ],

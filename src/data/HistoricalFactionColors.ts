@@ -1156,7 +1156,9 @@ const _FIXED: Record<string, string> = {
     'telakaigongguo': '#3E7A5E', // 特拉凯公国·卡乌纳斯（立陶宛森林绿）
     'duobuluojia': '#6E8A4A', // 多布罗加·德鲁斯塔尔（多瑙河绿）
     'aertai': '#5A6E7A', // 阿尔泰·也儿的石（阿尔泰山灰蓝）
-    'kumanni': '#4A7A8C', // 库曼尼亚·卡尔卡河（钦察草原钢蓝）
+    'kumanni': '#4A7A8C', // 库曼尼亚·密尔科夫（钦察草原钢蓝）
+    'kuman_oleshky': '#4F6E8A', // 库曼·奥列什基（第聂伯河口）
+    'qincha_saksin': '#7A5E3A', // 钦察·萨克辛（伏尔加三角洲）
     'feierganna': '#8C6E3A', // 费尔干纳·阿赫西克特（费尔干纳谷黄褐）
     'qibucha': '#8A6E3A', // 奇布查·洪萨（穆伊斯卡黄金褐）
     'tamoyue': '#6E4A3A', // 塔莫约·卡布弗里乌（乌鲁库胭脂木褐）

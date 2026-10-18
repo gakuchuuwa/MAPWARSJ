@@ -2129,6 +2129,8 @@ export const FACTIONS: Faction[] = [
     { id: 'xindu', name: '信度' },
     { id: 'eguo_biandi', name: '俄国边地' },        // 2026-10-19：萨拉托夫（1590 俄国边堡）
     { id: 'porbazhyn_huihu', name: '博尔巴任回鹘' }, // 2026-10-19：博尔巴任（8 世纪回鹘城址）
+    { id: 'kuman_oleshky', name: '库曼' },           // 2026-10-19：奥列什基（第聂伯河口库曼商埠）
+    { id: 'qincha_saksin', name: '钦察' },           // 2026-10-19：萨克辛（伏尔加三角洲钦察要塞）
 ];
 
 // @ts-ignore

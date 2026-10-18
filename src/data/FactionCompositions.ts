@@ -1566,6 +1566,14 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代库曼军团",
         legionType: "sub",
     },
+    "kuman_oleshky": {
+        legionName: "城堡时代库曼军团",
+        legionType: "sub",
+    },
+    "qincha_saksin": {
+        legionName: "城堡时代库曼军团",
+        legionType: "sub",
+    },
     "aertai": {
         legionName: "城堡时代帖木儿军团",
         legionType: "sub",

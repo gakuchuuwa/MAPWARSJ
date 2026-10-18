@@ -1167,6 +1167,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'duobuluojia': '多布',
     'aertai': '阿勒',
     'kumanni': '库曼',
+    'kuman_oleshky': '库曼',
+    'qincha_saksin': '钦察',
     'feierganna': '费尔',
     'qibucha': '奇布',
     'tamoyue': '塔莫',
