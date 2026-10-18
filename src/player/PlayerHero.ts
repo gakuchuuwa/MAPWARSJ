@@ -20,6 +20,9 @@ import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
+import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { isGeneralOnStage } from '../data/generalOnStage';
+import { getScriptEventStart } from '../events/scriptPeriod';
 import {
     PLAYER_CITY_ARRIVE_DIST,
     PLAYER_DEFEAT_HOLD_MS,
@@ -698,6 +701,17 @@ export class PlayerHero {
         }
         const city = this.deps.cityManager.getCity(cityId);
         if (!city) return false;
+        // 🔴 [2026-10-18 主人定「玩家只能找在场的武将接任务」] 直接找据点武将时（非追击续航锚点城），目标武将必须在场
+        if (!keepChase) {
+            const start = getScriptEventStart();
+            const genId = (start && start.cityId === cityId)
+                ? start.generalId
+                : getCityAnchoredGeneral(cityId)?.generalId;
+            if (!genId || !isGeneralOnStage(genId)) {
+                this.deps.notify(`【${city.name}】武将不在场`);
+                return false;
+            }
+        }
         const pos = this.army.getPosition();
         const target = { lat: city.latitude, lng: city.longitude };
         if (getEuclideanDistance(pos, target) <= PLAYER_CITY_ARRIVE_DIST) {
@@ -800,6 +814,7 @@ export class PlayerHero {
         }
         const army = this.deps.getLegionById(armyId);
         if (!army || army.isDestroyed || army.getTroops() <= 0) return false;
+        if (!army.generalId || !isGeneralOnStage(army.generalId)) return false;
         this.chaseArmyId = armyId;
         this.chaseGeneralName = generalName ?? null;
         this.stepChase(true);
@@ -818,7 +833,7 @@ export class PlayerHero {
         const id = this.chaseArmyId;
         if (!id) return;
         const army = this.deps.getLegionById(id);
-        if (!army || army.isDestroyed || army.getTroops() <= 0) {
+        if (!army || army.isDestroyed || army.getTroops() <= 0 || !army.generalId || !isGeneralOnStage(army.generalId)) {
             this.chaseArmyId = null;
             this.chaseGeneralName = null;
             this.cancelTravel();

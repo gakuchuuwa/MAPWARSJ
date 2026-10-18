@@ -2207,8 +2207,8 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_thebes', name: '底比斯', factionId: 'boootiya', lat: 38.32, lng: 23.31, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
     { id: 'city_rhodes', name: '罗得城', factionId: 'luodesi', lat: 36.44, lng: 28.22, type: 'small_city', troops: 10000, region: 'ATHENIANS', buildingStyle: 'GREECE', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 罗得岛自古为希腊人岛屿（多利安六城之一，后属拜占庭），医院骑士团 1309–1522 为外来政权 → 风格挂希腊（ATHENIANS / 一级 GREEK），不取法兰克。' },
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「EAST」只是一级母体、取不到 62 类 → 归 BYZANTINE：克里特岛干地亚要塞：961 年拜占庭名将福卡斯收复克里特，此后长期属东罗马
-    { id: 'city_knossos', name: '干地亚要塞', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', note: '克里特岛诺索斯·干地亚海防要塞，961年拜占庭名将福卡斯（后称帝为尼基弗鲁斯二世）大破萨拉森人收复克里特，地中海第一海防险要' },
+    // 🔴 [2026-10-18 按史] 干地亚（伊拉克利翁）为威尼斯克里特首府，实建为威尼斯环城棱堡与库勒斯古堡 → LATIN；不取拜占庭。
+    { id: 'city_knossos', name: '干地亚要塞', factionId: 'kelite', lat: 35.33, lng: 25.13, type: 'pass', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', note: '克里特岛诺索斯·干地亚海防要塞；🔴 [2026-10-18 按史] 威尼斯统治期建成环城棱堡、库勒斯古堡（Rocca a Mare）与拉丁街区，实建为 LATIN。' },
 
     { id: 'city_salamanca', name: '萨拉曼卡', factionId: 'leangongguo', lat: 40.96, lng: -5.66, type: 'small_city', troops: 10000, region: 'CASTILE', buildingStyle: 'SPANISH' },
 
@@ -2248,7 +2248,7 @@ export const CITIES_V2: CityDataV2[] = [
 
     { id: 'city_malajiashen', name: '马拉喀什', factionId: 'mulabite', lat: 31.63, lng: -7.98, type: 'medium_city', troops: 10000, region: 'ALMOHAD', buildingStyle: 'BERBER' },
 
-    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 休达在**摩洛哥北岸**（柏柏尔／马格里布故地；腓尼基、迦太基、毛里塔尼亚、马林王朝相继，葡萄牙 1415 为外来占领），风格改挂柏柏尔（BERBER / 一级 AFRI），不取意大利 LATIN。' },
+    { id: 'city_xiuta', name: '休达', factionId: 'zhibuluotuo', lat: 35.89, lng: -5.31, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'PORTUGUESE', note: '定级依据§6.2：休达非关隘/要塞/堡垒，按城市判级；1415年城区约3.5万（未区分墙内外，宜降1.5–3.5万），4世纪末约1万 → 小城。🔴 [2026-10-18 按史] 休达 1415 年起为葡萄牙王属地，皇家城墙（Murallas Reales）与通海护城河为葡/西伊比利亚火炮棱堡；实建为 PORTUGUESE，不取柏柏尔。' },
 
 
 
@@ -2388,7 +2388,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_heersongniesi', name: '赫尔松涅斯', factionId: 'taolika', lat: 44.61, lng: 33.49, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'BYZANTINE' },
     { id: 'city_pantika', name: '潘提卡彭', factionId: 'bosi_puluosi', lat: 45.36, lng: 36.47, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '希腊化博斯普鲁斯王国千年古都·刻赤海峡锁钥·琉孔一世都城' },
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
-{ id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'BYZANTINE', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-05 主人裁定「归拜占庭，二选一绝不能归库曼」] 卡法建在古希腊—拜占庭城市**塞奥多西亚**废墟上，城内是希腊人／亚美尼亚人／热那亚人的东地中海海洋城邦，草原库曼是城外的围攻者（1346 年金帐汗扎尼别围城投尸）→ 风格归**拜占庭**（BYZANTINE／一级 EAST）；相邻 156km 的赫尔松涅斯即拜占庭城，符合「相邻据点同风格」。' },
+{ id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-18 按史] 卡法为热那亚黑海殖民地（Gazaria），实建为热那亚石砌方塔、机械射击孔与齿状胸墙；故 LATIN。' },
 
     { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' },
@@ -3452,8 +3452,8 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kumubi', name: '库姆比萨利赫', factionId: 'suosuo', lat: 15.77, lng: -7.97, type: 'small_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA', note: '加纳古都，苏曼古鲁攻占后为索索都城' },
     { id: 'city_latajiya', name: '拉塔基亚', factionId: 'antiaokegongguo', lat: 35.52, lng: 35.79, type: 'small_city', troops: 10000, region: 'ORIE', buildingStyle: 'ORIE', note: '安条克公国港口（今叙利亚拉塔基亚），博希蒙德1098年建公国。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 拉塔基亚为**叙利亚沿海**阿拉伯港市（塞琉古建城，后罗马、拜占庭、阿拉伯相继；十字军为外来政权）→ 风格挂中东（ORIE），不取法兰克。' },
     { id: 'city_lansi', name: '兰斯', factionId: 'aoerlianggongguo', lat: 49.26, lng: 4.03, type: 'medium_city', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', note: '法兰西加冕城，1429年贞德护查理七世于此加冕' },
-    // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「WEST」→ 归 CELTS：卡那封：威尔士，凯尔特（爱德华一世威尔士城堡）
-    { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'CELTS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地' },
+    // 🔴 [2026-10-18 按史] 卡那封城堡为爱德华一世铁环城堡群之首，实建为英格兰/萨伏伊规制石堡 → BRITONS；不取凯尔特。
+    { id: 'city_kanafeng', name: '卡那封', factionId: 'jinquehua', lat: 53.14, lng: -4.27, type: 'pass', troops: 10000, region: 'BRITONS', buildingStyle: 'BRITONS', note: '爱德华一世铁环城堡群之首，首个英格兰威尔士亲王出生地；实建为英格兰/萨伏伊规制石堡，故 BRITONS。' },
     { id: 'city_meierfei', name: '梅尔菲', factionId: 'apuliya', lat: 40.99, lng: 15.65, type: 'pass', troops: 10000, region: 'SICILIANS', buildingStyle: 'SICILIANS', note: '诺曼阿普利亚公爵首府，吉斯卡尔南意大利征服起点' },
     { id: 'city_saimien', name: '塞米恩', factionId: 'saimien', lat: 13.3, lng: 38.2, type: 'small_city', troops: 10000, region: 'ETHIOPIANS', buildingStyle: 'ETHIOPIANS', note: '塞米恩山脉贝塔以色列王国故地，传说尤迪特由此摧毁阿克苏姆' },
     { id: 'city_seyute', name: '瑟于特', factionId: 'aosimanbeiyiguo', lat: 40.03, lng: 30.18, type: 'small_city', troops: 10000, region: 'OTTOMAN', buildingStyle: 'ORIE', note: '奥斯曼贝伊国第一都城，奥斯曼一世加齐圣战起源地' },
@@ -3606,33 +3606,34 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_onondaga', name: '奥农多加', factionId: 'yiluokui', lat: 43.05, lng: -76.15, type: 'medium_city', troops: 10000, region: 'IROQUOIS', buildingStyle: 'AMERICA', note: '易洛魁联盟「中央火塘」所在，五族大议事会驻地' },
     { id: 'city_chanchan', name: '昌昌', factionId: 'qimu', lat: -8.11, lng: -79.07, type: 'medium_city', troops: 10000, region: 'CHIMU', buildingStyle: 'INCA', note: '奇穆王国都城，前哥伦布时期美洲最大土坯城' },
     { id: 'city_tzintzuntzan', name: '钦聪灿', factionId: 'talasike', lat: 19.63, lng: -101.58, type: 'medium_city', troops: 10000, region: 'TARASCAN', buildingStyle: 'AMERICA', note: '塔拉斯科(普雷佩查)王国都城，「蜂鸟之地」' },
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 BRITONS：新阿姆斯特丹（后纽约）：英属，一级西欧素材不变
-    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约' },
+    // 🔴 [2026-10-18 主人令] 新阿姆斯特丹按建城者（荷兰西印度公司）定 SAXONS（低地日耳曼/北海砖木要塞）；旧注释「归 BRITONS」作废。
+    { id: 'city_newamsterdam', name: '新阿姆斯特丹', factionId: 'xinnidelan', lat: 40.71, lng: -74.01, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SAXONS', note: '荷兰西印度公司1626年建城，新尼德兰首府；1664年英夺改称纽约' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「WEST」推出的二级与史实不符 → 归 FRANKS：魁北克：法兰西殖民地（新法兰西）
-    { id: 'city_quebec', name: '魁北克', factionId: 'xinfalanxi', lat: 46.81, lng: -71.21, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽' },
+    { id: 'city_quebec', name: '魁北克', factionId: 'xinfalanxi', lat: 46.81, lng: -71.21, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'FRANKS', note: '尚普兰1608年建城，新法兰西首府，法属北美毛皮贸易枢纽' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：阿卡普尔科：西班牙殖民地（马尼拉大帆船港）
-    { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xinxibanya', lat: 16.85, lng: -99.92, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗' },
+    { id: 'city_acapulco', name: '阿卡普尔科', factionId: 'xinxibanya', lat: 16.85, lng: -99.92, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '新西班牙太平洋大港，1565年起马尼拉大帆船美洲终点；1617年建圣迭戈堡防海盗' },
     { id: 'city_teyuna', name: '特尤纳', factionId: 'tailuona', lat: 11.04, lng: -73.93, type: 'stockade', troops: 10000, region: 'TAIRONA', buildingStyle: 'INCA', note: '泰罗纳石阶山城（失落之城），圣玛尔塔内华达山；定级依据§6.2：特尤纳为聚落/山城（Buritaca-200，35ha、169级石台地、约1000座房屋），按城市判级；人口推测2,000–8,000未达1万 → 城寨' },
-    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'small_city', troops: 10000, region: 'TEHUELCHE', buildingStyle: 'INCA', note: '1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来' },
+    // 🔴 [2026-10-18 按史] 圣胡利安港历史上从未建过欧洲永久石造城郭/要塞，仅麦哲伦等临时泥木锚地；真实长期实体建筑为特维尔切木骨皮蒙营帐，故取南安第斯 MAPUCHE（无 TEHUELCHE 分支）。
+    { id: 'city_sanjulian', name: '圣胡利安港', factionId: 'teweierqie', lat: -49.31, lng: -67.72, type: 'small_city', troops: 10000, region: 'TEHUELCHE', buildingStyle: 'MAPUCHE', note: '1520 麦哲伦在此首遇特维尔切人，巴塔哥尼亚之名由此而来' },
     // ── [2026-08-26] 葡萄牙「大西洋西南大迂回—南美沿岸南下」航线据点 ──
     //  1501 韦斯普奇船队：里斯本 → 佛得角 → 借东北信风横渡 → 圣罗克角 → 沿岸南下
     //  → 1502-01-01 发现瓜纳巴拉湾（误认作河，命名 Rio de Janeiro）。
     //  1565-67 葡军自圣维森特北上逐走法国「南极法兰西」，正式建里约城。
     { id: 'city_ribeira', name: '里贝拉', factionId: 'fodejiao', lat: 14.92, lng: -23.60, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '佛得角首府里贝拉格兰德（今 Cidade Velha），1462 建，横渡大西洋的西非大迂回起点。🔴 [2026-10-05 主人裁定「保持葡式／伊比利亚」] 佛得角群岛在葡人抵达前是**无人荒岛**，无土著文化可迁就，城址、街区与石堡全由葡萄牙王室与定居者一手建立 → 风格挂葡萄牙（PORTUGUESE／一级 MEDI），与里斯本、安格拉同一族。' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 PORTUGUESE：萨尔瓦多（巴西巴伊亚）：葡萄牙殖民地
-    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'baiyiya', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 PORTUGUESE：圣维森特（巴西）：葡萄牙殖民地
-    { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'TUPI', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
+    { id: 'city_salvador', name: '萨尔瓦多', factionId: 'baiyiya', lat: -12.97, lng: -38.51, type: 'medium_city', troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '巴伊亚都督府治所，1549-1763 葡属巴西首府，蔗糖与黄金出口枢纽' },
+    // 🔴 [2026-10-18 按史] 圣维森特 1532 年葡萄牙首座永久拓殖城镇：石木防御要塞屋、总督府、小教堂、葡式石砌磨坊 → PORTUGUESE；不因驻将本地而降为 TUPI。
+    { id: 'city_saovicente', name: '圣维森特', factionId: 'tupinijin', lat: -23.96, lng: -46.39, type: 'stockade', troops: 10000, region: 'TUPI', buildingStyle: 'PORTUGUESE', note: '1532 葡萄牙在巴西的第一个殖民村镇；1565 葡军自此北上反击南极法兰西' },
     // ── [2026-08-26] 跨大西洋航线据点：让美洲接入旧大陆，并给特诺奇提特兰补出海口 ──
     //  依据：西班牙「珍宝船队」(Flota de Indias) 与葡萄牙大西洋航线的历史必经节点。
     //  去程借东北信风走加那利，东返借西风带走亚速尔 —— 两条不同航线，各设一个中继。
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：韦拉克鲁斯：西班牙殖民地
-    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
-    // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：哈瓦那：西班牙殖民地
-    { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
+    // 🔴 [2026-10-18 按史] 韦拉克鲁斯真实建成的实体是西班牙圣胡安德乌卢阿珊瑚石星形棱堡、防御石墙与西属美洲殖民巴洛克建筑群 → SPANISH；不因驻将奇科马卡特为托托纳克人而降为 AMERICA。
+    { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
+    // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
+    { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
-    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'INCA', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-05 主人令「建筑风格必须是当地的」] 利马所在为**印加帝国**故地（1535 建城前属印加，库斯科以北的帕查卡马克神域），风格改挂印加（INCA / 一级 ANDE），不取西班牙。' },
+    { id: 'city_lima', name: '利马', factionId: 'xibanya', lat: -12.05, lng: -77.04, type: 'small_city', troops: 10000, region: 'INCA', buildingStyle: 'SPANISH', note: '西班牙征服者皮萨罗1535建城，秘鲁总督区首府。🔴 [2026-10-18 主人令] 建筑风格按建城者定为 SPANISH；旧「风格必须当地」令作废。' },
     { id: 'city_timbuktu', name: '廷巴克图', factionId: 'manding', lat: 16.77, lng: -3.01, type: 'medium_city', troops: 10000, region: 'AFRICA', buildingStyle: 'AFRICA' },
 
     { id: 'city_aksum', name: '阿克苏姆', factionId: 'ethiopia', lat: 14.13, lng: 38.72, type: 'medium_city', troops: 10000, region: 'AFRICA_ANTIQUITY', buildingStyle: 'ETHIOPIANS' },
@@ -3659,7 +3660,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_hengbi', name: '亨比', factionId: 'kanata', lat: 15.335, lng: 76.460, type: 'big_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '毗奢耶那伽罗帝国都城，14-16世纪世界最大城市之一' },
     { id: 'city_bijiabuer', name: '比贾布尔', factionId: 'adile', lat: 16.830, lng: 75.736, type: 'medium_city', troops: 10000, region: 'INDIA_IMPERIAL', buildingStyle: 'INDIA', note: '比贾布尔苏丹国都，戈尔贡巴兹' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣奥古斯丁（佛罗里达）：西班牙殖民地
-    { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '西班牙1565年建的美洲最古欧洲殖民城；定级依据§6.2：17世纪中叶城内500–600人、世纪末>1400人，有特殊建筑不得为城寨 → 小城' },
+    { id: 'city_shengaogusiding', name: '圣奥古斯丁', factionId: 'foluolida', lat: 29.897, lng: -81.313, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西班牙1565年建的美洲最古欧洲殖民城；定级依据§6.2：17世纪中叶城内500–600人、世纪末>1400人，有特殊建筑不得为城寨 → 小城' },
     { id: 'city_deerfei', name: '德尔斐', factionId: 'fujisi', lat: 38.482, lng: 22.501, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '阿波罗神谕圣地；定级依据§6.2：城居人口无可靠数字（学界定性小城邦），有特殊建筑不得为城寨 → 小城' },
     { id: 'city_aolinpiya', name: '奥林匹亚', factionId: 'yilisi', lat: 37.639, lng: 21.631, type: 'small_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE', note: '古代奥运圣地；定级依据§6.2：圣地无常住城市（仅祭司官吏工匠），有特殊建筑不得为城寨 → 小城' },
     { id: 'city_boergong', name: '博尔贡', factionId: 'nuowei', lat: 61.047, lng: 7.812, type: 'small_city', troops: 10000, region: 'VIKINGS', buildingStyle: 'VIKINGS', note: '挪威松恩峡湾木板教堂；定级依据§6.2：中世纪人口无数字（木板教堂所在村落仅教堂+数座农庄），有特殊建筑不得为城寨 → 小城' },
@@ -3683,11 +3684,11 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_suojiamosuo', name: '索加莫索', factionId: 'yilaka', lat: 5.715, lng: -72.933, type: 'small_city', troops: 10000, region: 'SOUTHAM_IMPERIAL', buildingStyle: 'MUISCA', note: '古称苏阿莫斯/苏加穆西，穆伊斯卡伊拉卡最高祭司驻地与太阳崇拜中心；太阳神庙于1537年被西班牙士兵焚毁；定级依据§6.2：圣地非常住城（超地方政治体400–700人，朝圣者定期聚集不常住；Fajardo 2016），有特殊建筑不得为城寨 → 小城' },
     { id: 'city_yiguasu', name: '伊瓜苏', factionId: 'gualani', lat: -25.695, lng: -54.437, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'TUPI', note: '伊瓜苏河大瀑布，名称源自图皮—瓜拉尼语“大水”；瓜拉尼人传统地域，卡韦萨·德·巴卡1542年到达并记载；1626年附近建立圣玛利亚伊瓜苏聚落，原址尚未可靠定位；定级依据§6.2：该点无城市人口（长屋村类比600–1000人，低置信），有特殊建筑不得为城寨 → 小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：巴拿马城：西班牙殖民地
-    { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
+    { id: 'city_banama', name: '巴拿马', factionId: 'xingelana', lat: 9.0056, lng: -79.4858, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '老巴拿马城Panamá Viejo，佩德罗·阿里亚斯·达维拉1519年8月15日建立，美洲太平洋沿岸第一座永久欧洲城市，卡斯蒂利亚德奥罗(后新格拉纳达总督区)治所；秘鲁白银北运陆桥终点，1671年被亨利·摩根焚毁，迁现址' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：圣多明各：西班牙美洲第一城
-    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xiyindu', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'AMERICA', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },
+    { id: 'city_shengduomingge', name: '圣多明各', factionId: 'xiyindu', lat: 18.4715, lng: -69.8868, type: 'small_city', troops: 10000, region: 'AMERICA', buildingStyle: 'SPANISH', note: '美洲第一座永久欧洲殖民城(1496/1498巴托洛梅·哥伦布建)，西印度总督府与首座教堂/医院/大学/海关所在，美洲殖民城规划典范(棋盘格);去程进加勒比第一门户，1586遭弗朗西斯·德雷克洗劫' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：卡塔赫纳（哥伦比亚）：西班牙殖民地
-    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'jialebi', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'AMERICA', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
+    { id: 'city_katachena', name: '卡塔赫纳', factionId: 'jialebi', lat: 10.4266, lng: -75.5442, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '卡塔赫纳·德·印迪亚斯(Cartagena de Indias)，1533建，西属南美白银(Potosi)北运集散、珍宝船队南美枢纽，南美最坚固防御工事的要塞城;1741布拉斯·德·莱索以寡击众击退英国弗农舰队' },
     { id: 'city_lalibeila', name: '拉利贝拉', factionId: 'zhagewei', lat: 12.033689, lng: 39.043350, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'ETHIOPIANS', note: '古称罗哈，扎格维王朝国王拉利贝拉营建“新耶路撒冷”的中世纪宗教中心；贝特·阿曼努埃尔等十一座岩石教堂所在地；定级依据§6.2：中世纪城居人口无可靠数字（现代镇区8484/17367），有特殊建筑不得为城寨 → 小城' },
     { id: 'city_zeila', name: '塞拉', factionId: 'adal', lat: 11.3533, lng: 43.4731, type: 'small_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'AFRICA', note: '泽拉/塞拉(Zeila)，阿达尔苏丹国早期首都与亚丁湾第一出口海港，红海-索马里贸易枢纽；格拉尼(艾哈迈德·格拉尼)1520年代由此起兵圣战，席卷埃塞俄比亚高原大部' },
     { id: 'city_dasijiliweng', name: '达斯基利翁', factionId: 'xiaofulijiya', lat: 40.1322, lng: 28.0504, type: 'pass', troops: 10000, region: 'ACHAEMENIDS', buildingStyle: 'PERSIAN', note: '阿契美尼德波斯赫勒斯滂-弗里吉亚总督要塞，阿尔西提斯总督治所' },

@@ -1468,6 +1468,7 @@ export class PlayerQuestSystem {
 
     private startRestoration(city: City, g: { generalId: string; generalName: string; portrait: string }, original: string): void {
         this.deps.closeDialogue();
+        if (!isGeneralOnStage(g.generalId)) return;
         const army = this.raiseLegion(city, original, g, city.id);
         if (!army) {
             this.deps.notify('起兵失败（军团未能建立）');
@@ -1501,6 +1502,7 @@ export class PlayerQuestSystem {
         target: City,
     ): void {
         this.deps.closeDialogue();
+        if (!isGeneralOnStage(g.generalId)) return;
         const army = this.raiseLegion(city, city.factionId, g, target.id);
         if (!army) {
             this.deps.notify('起兵失败（军团未能建立）');
@@ -2145,6 +2147,19 @@ export class PlayerQuestSystem {
         if (canAdvance) {
             const headingToBattlefield = this.deps.hero.autoPlan === 'script'
                 && this.checkAndTriggerNextBattlefield();
+            if (!headingToBattlefield && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
+                const targetCityId = this.deps.hero.getTravelCityId();
+                const chaseArmyId = this.deps.hero.getChaseArmyId();
+                const targetGenId = chaseArmyId
+                    ? this.deps.legionManager.getLegionById(chaseArmyId)?.generalId
+                    : targetCityId
+                        ? getCityAnchoredGeneral(targetCityId)?.generalId
+                        : null;
+                if (targetGenId && !isGeneralOnStage(targetGenId)) {
+                    this.deps.hero.cancelChase();
+                    this.deps.hero.cancelTravel();
+                }
+            }
             // 🔴 [2026-09-23] 剧本期不去找武将乱斗：军团此时不寻敌，起兵入伍只会原地停着；
             //    战场一时去不了（寻路冷却）就等冷却后再试。
             if (!headingToBattlefield && !this.deps.hero.isTraveling()
@@ -2365,7 +2380,7 @@ export class PlayerQuestSystem {
         this.chaseCityId = null;
         const city = cityId ? this.deps.cityManager.getCity(cityId) : null;
         const gid = army.generalId;
-        if (!city || !gid) return;
+        if (!city || !gid || !isGeneralOnStage(gid)) return;
         const rec = getGeneralRecordByGeneralId(gid);
         const generalName = rec?.generalName ?? '将军';
         const factionId = army.getFactionId() || city.factionId;
@@ -2415,6 +2430,7 @@ export class PlayerQuestSystem {
     /** 野外会面后入伍：军团现成的，不起兵，其余与 startCampaign 同口径 */
     private joinMarchingArmy(city: City, army: Army, generalName: string): void {
         this.deps.closeDialogue();
+        if (!army.generalId || !isGeneralOnStage(army.generalId)) return;
         const factionId = army.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
@@ -2517,24 +2533,28 @@ export class PlayerQuestSystem {
 
     private pickAutoCity(): City | null {
         const candidates: City[] = [];
+        const onStageFallback: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
             const g = getCityAnchoredGeneral(c.id);
             if (!g) continue;
-            // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」]（乱斗恒在场，不受影响）
+            // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」/ 2026-10-18 百岁模式同口径]（乱斗恒在场，不受影响）
             if (!isGeneralOnStage(g.generalId)) continue;
+            onStageFallback.push(c);
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
-            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除）
-            if ((c.troops || 0) < 10000) continue;
+            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除；若武将已率军在外，看军团+城防）
+            const army = this.armyOfGeneral(g.generalId);
+            if ((c.troops || 0) < 10000 && (!army || army.getTroops() + (c.troops || 0) < 10000)) continue;
             candidates.push(c);
         }
-        if (!candidates.length) return null;
+        const activeCandidates = candidates.length > 0 ? candidates : onStageFallback;
+        if (!activeCandidates.length) return null;
 
         // 🔴 [2026-10-05 主人令]「加上 62+3 建筑风格轮流」「玩家出来离哪个近就先选哪个建筑风格的城」：
         //    先按 66 类建筑风格分组，按 pickStyle62Pool 的轮换规则（每轮先最近一类，之后由东向西）取一类，只在这一类的城里挑。
         const me = this.deps.hero.getPosition();
-        const pool = this.pickStyle62Pool(candidates, me);
+        const pool = this.pickStyle62Pool(activeCandidates, me);
         if (!pool.length) return null;
 
         // ① [2026-09-15 主人定]「兵多、名将，去掉其他的条件」→ 玩家专用两条判据比较器。

@@ -519,7 +519,8 @@ korea_a: 0.646,  // -17.2 LUFS
     magyar_a: 0.617,  // -16.8 LUFS
     magyar_b: 0.661,  // -17.4 LUFS
     lithuanians_a: 0.708,  // -18.0 LUFS
-    lithuanians_b: 0.668,  // -17.5 LUFS
+    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（立陶宛排箫 Skudučiai）已删除：
+    //    文件 public/assets/bgm/lithuanians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.LITHUANIANS 同步移除。
     bulgarians_a: 0.661,  // -17.4 LUFS
     bulgarians_b: 0.653,  // -17.3 LUFS
     byzantine_a: 0.750,  // -18.5 LUFS
@@ -673,7 +674,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
     KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
     LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],
-    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a', 'lithuanians_b'],
+    // 🔴 [2026-10-18 主人令「把这个曲子删除」] lithuanians_b（Skudučiai）已连同 .aud 文件删除，
+    //    本文化池由 3 首降为 2 首（de_LITHUANIANS 主题曲 + lithuanians_a）。
+    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a'],
     MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
     MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
     MALAY: ['de_MALAY', 'malay_a', 'malay_b'],

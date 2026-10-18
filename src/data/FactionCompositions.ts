@@ -2561,16 +2561,24 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代塔万廷军团",
         legionType: "sub",
     },
+    // 🔴 [2026-10-18 按史] 美洲欧洲殖民城按其建城者/驻将挂欧洲军团，不再挂特诺奇/塔莫约等土著军团。
+    //    新阿姆斯特丹（荷兰）无 DUTCH 三级军团，按建城者低地日耳曼落 SAXONS 帝国时代黑卫士方阵团。
     "xinnidelan": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代黑卫士方阵团",
         legionType: "sub",
     },
+    //    魁北克（新法兰西）无帝国时代法国殖民军团，按 FRANKS 帝国时代落重装骑兵军团。
     "xinfalanxi": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代重装骑兵军团",
         legionType: "sub",
     },
     "xinxibanya": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙征服军团",
+        legionType: "sub",
+    },
+    //    圣多明各 1496 属城堡时代；西班牙城堡时代落圣地亚哥骑士团。
+    "xiyindu": {
+        legionName: "城堡时代圣地亚哥骑士团",
         legionType: "sub",
     },
     "manzheboyi": {
@@ -3586,7 +3594,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "baiyiya": {
-        legionName: "帝国时代塔莫约军团",
+        legionName: "帝国时代葡萄牙军团",
         legionType: "sub",
     },
     "liaozu": {
@@ -3606,7 +3614,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "foluolida": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
     "fujisi": {
@@ -3646,11 +3654,12 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "xingelana": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
+    //    卡塔赫纳 1741 是西班牙近代方阵守城，不取征服者军团。
     "jialebi": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙方阵军团",
         legionType: "sub",
     },
     "gualani": {

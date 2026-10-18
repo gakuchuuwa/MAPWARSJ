@@ -652,7 +652,7 @@ export class GameApp {
             // 🔴 [2026-09-23 主人定] 剧本模式 = 整个世界的历史剧本期（`PlayerHero.autoPlan === 'script'`，默认）：
             //    「其他军团不能随机产生」「军团在历史剧本期间不能随意寻敌，剧本都结束后自动切换到乱斗模式」。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
-            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'melee') === 'script';
+            const isScriptPeriod = () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script';
             this.aiController = new AIController(
                 legionManager,
                 this.cityManager,
@@ -859,7 +859,7 @@ export class GameApp {
     private syncScriptOwners(): void {
         syncScriptHistoricalOwners(
             this.cityManager,
-            (this.playerHero?.autoPlan ?? 'melee') === 'script',
+            (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
             this.scriptCityVisibility?.getCurrentEvent()?.year ?? null,
         );
     }

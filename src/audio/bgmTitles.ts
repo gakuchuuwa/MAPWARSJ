@@ -150,7 +150,6 @@ export const BGM_TITLES: Record<string, string> = {
     latin_a: '中世纪意大利鲁特琴 Istampitta',
     litang: '李唐·秦王破阵乐',
     lithuanians_a: '立陶宛 Sutartinės',
-    lithuanians_b: '立陶宛排箫 Skudučiai',
     liuhan: '刘汉·十面埋伏',
     macedonian_a: '亚历山大·征服世界',
     macedonian_b: '远方号角',

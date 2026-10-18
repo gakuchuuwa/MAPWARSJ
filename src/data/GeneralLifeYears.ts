@@ -1220,10 +1220,10 @@ export function debutYearOf(birth: number, death: number): number {
 }
 
 /**
- * 由生年推百岁消失年（🔴 [2026-10-18 主人定] 百岁模式：生年 + 100 消失，跳过不存在的公元 0 年）。
+ * 由生年推百年模式消失年（🔴 [2026-10-18 主人定] 百年模式：登场百年 / 生年 + 120 消失，跳过不存在的公元 0 年）。
  */
 export function centenarianYearOf(birth: number): number {
-    let y = birth + 100;
+    let y = birth + 120;
     if (birth < 0 && y >= 0) y += 1;   // 无 0 年：0 → 公元 1 年
     return y;
 }

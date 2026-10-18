@@ -497,7 +497,7 @@ export class PlayerHUD {
         // 📜/⚔️ 自动模式玩法
         const planSel = document.createElement('select');
         planSel.className = 'player-hud-select';
-        planSel.title = '百岁模式（默认）：武将到登场年出现、满百岁消失，自由混战；乱斗模式：全部武将恒在场；剧本模式：按历史顺序奔赴战场';
+        planSel.title = '百年模式（默认）：武将到登场年出现、满120岁（登场百年）消失，自由混战；乱斗模式：全部武将恒在场；剧本模式：按历史顺序奔赴战场';
         planSel.disabled = false;
         planSel.style.cssText = `
             cursor:pointer; font-family:inherit; font-size:11px; font-weight:700;
@@ -505,7 +505,7 @@ export class PlayerHUD {
             border:1px solid rgba(212,175,55,0.45); border-radius:4px; padding:1px 5px; height:22px;
             box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35); outline:none;
         `;
-        for (const [val, text] of [['centenarian', '⏳ 百岁'], ['melee', '⚔️ 乱斗'], ['script', '📜 剧本']] as const) {
+        for (const [val, text] of [['centenarian', '⏳ 百年'], ['melee', '⚔️ 乱斗'], ['script', '📜 剧本']] as const) {
             const opt = document.createElement('option');
             opt.value = val;
             opt.textContent = text;
