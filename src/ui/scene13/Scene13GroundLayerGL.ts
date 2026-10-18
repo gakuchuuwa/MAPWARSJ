@@ -87,17 +87,20 @@ export function resolveNatureSprite(name: string): [string, string] | null {
 const VS = `attribute vec2 aPos;
 attribute vec2 aGUV;
 attribute float aLight;
+attribute float aElev;
 uniform vec2 uRes;
 uniform vec2 uCam;
 uniform float uZoom;
 varying vec2 vGUV;
 varying vec2 vWorldPos;
 varying float vLight;
+varying float vElev;
 
 void main() {
   vGUV = aGUV;
   vWorldPos = aPos;
   vLight = aLight;
+  vElev = aElev;
   vec2 p = (aPos + uCam) * uZoom;
   vec2 c = vec2(uRes.x * 0.5, uRes.y * 0.5);
   gl_Position = vec4((p.x - c.x) / c.x, -(p.y - c.y) / c.y, 0.0, 1.0);
@@ -107,6 +110,7 @@ const FS = `precision mediump float;
 varying vec2 vGUV;
 varying vec2 vWorldPos;
 varying float vLight;
+varying float vElev;
 
 uniform sampler2D uFieldTex;
 uniform sampler2D uGrassTex;
@@ -118,6 +122,7 @@ uniform sampler2D uDryTex;
 uniform float uMapSize;
 uniform float uTime;
 uniform float uIsIce;
+uniform vec2 uNoiseOff;
 
 // 2D Simplex Noise (Ashima Arts)
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
@@ -159,11 +164,11 @@ void main() {
   vec4 field = texture2D(uFieldTex, fieldUV);
   
   // 有机扰动：低频大尺度舒缓曲线打破方格阶梯，彻底消除高频毛刺锯齿，呈现圆润蜿蜒河岸
-  float n1 = snoise(vGUV * 0.22);
-  float n2 = snoise(vGUV * 0.50);
+  float n1 = snoise(vGUV * 0.22 + uNoiseOff * 0.35);
+  float n2 = snoise(vGUV * 0.50 - uNoiseOff * 0.25);
   // 格边高频颗粒微噪（对应 DE blendomatic 单格 96×48 边缘草叶/碎石咬合掩码频率）
-  float nMicro1 = snoise(vGUV * 2.4 + vec2(19.7, 43.1));
-  float nMicro2 = snoise(vGUV * 5.2 + vec2(67.3, 11.9));
+  float nMicro1 = snoise(vGUV * 2.4 + vec2(19.7, 43.1) + uNoiseOff);
+  float nMicro2 = snoise(vGUV * 5.2 + vec2(67.3, 11.9) - uNoiseOff);
   float microGrain = nMicro1 * 0.65 + nMicro2 * 0.35;
 
   float wPerturb = field.r + n1 * 0.038 + n2 * 0.014;
@@ -175,8 +180,8 @@ void main() {
   // 沙滩判定（近岸浅滩与干沙）
   float isSandRaw = clamp(field.g * 1.45 + smoothstep(0.22, 0.46, wPerturb) * 0.95, 0.0, 1.0) * (1.0 - isWater * 0.85);
   // 森林有机扰动：低频圆滑自然树林边缘与专属林下落叶底床（DE 原版：树下铺满落叶泥土）
-  float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8));
-  float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5));
+  float fn1 = snoise(vGUV * 0.35 + vec2(27.4, 61.8) + uNoiseOff);
+  float fn2 = snoise(vGUV * 0.75 + vec2(73.1, 14.5) - uNoiseOff);
   float fPerturb = field.b + fn1 * 0.035 + fn2 * 0.015;
   
   // 纹理采样（DE 原版：按地面网格真实像素坐标 1:1 无缝平铺 512px 原图，无人工偏色，保持雪原/沙漠/黑土/绿草本色）
@@ -195,15 +200,17 @@ void main() {
   float lumaSand  = dot(colSand,  vec3(0.299, 0.587, 0.114));
   
   // ── DE 原版多底图碎块交织与 blendomatic 边缘咬合机制（参照 F_seasons.inc LAYER_A/B/C） ──
-  // 1. 多尺度地貌碎块（低频原野起伏 + 中频 DE 1000-clumps 碎块交织）
-  float tn1 = snoise(vGUV * 0.09 + vec2(11.3, 47.9));
-  float tn2 = snoise(vGUV * 0.24 + vec2(83.1, 29.5));
-  float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3));
+  // 1. 多尺度地貌碎块（低频原野起伏 + 中频 DE 1000-clumps 碎块交织，随据点种子 uNoiseOff 变化）
+  float tn1 = snoise(vGUV * 0.09 + vec2(11.3, 47.9) + uNoiseOff);
+  float tn2 = snoise(vGUV * 0.24 + vec2(83.1, 29.5) - uNoiseOff * 1.37);
+  float tn3 = snoise(vGUV * 0.58 + vec2(41.7, 92.3) + uNoiseOff * 0.73);
   float terrainPatch = tn1 * 0.50 + tn2 * 0.32 + tn3 * 0.18;
   
-  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a + 原野碎块咬合）
+  // 2. 副地表二层斑块（地图数据层 DIRT 势场 field.a 随 uNoiseOff 镜像偏移 + 原野碎块咬合）
+  vec2 dirtUV = clamp(abs(mod(fieldUV + uNoiseOff * 0.043, 2.0) - 1.0), 0.01, 0.99);
+  float dirtFieldVal = texture2D(uFieldTex, dirtUV).a;
   float dirtNoise = clamp(tn1 * 0.45 + tn2 * 0.35 + tn3 * 0.20, -1.0, 1.0);
-  float fieldDirt = deEdgeBlend(field.a, 0.12, 0.55, microGrain, (lumaDirt - lumaGrass) * 2.5);
+  float fieldDirt = deEdgeBlend(dirtFieldVal, 0.12, 0.55, microGrain, (lumaDirt - lumaGrass) * 2.5);
   float wildDirt  = deEdgeBlend(dirtNoise, 0.16, 0.50, microGrain, (lumaDirt - lumaGrass) * 2.5) * 0.34;
   float dirtMix   = clamp(fieldDirt + wildDirt, 0.0, 1.0);
   
@@ -277,6 +284,25 @@ void main() {
     waterCol = mix(waterCol, vec3(0.96, 0.98, 1.0), totalFoam * 0.85);
   }
   
+  // ── DE 高地立体坡面肌理、山脚暗部折线与平顶台地亮棱 ──
+  if (vElev > 0.02 && isWater < 0.25) {
+    float flatBaseLight = 1.0 + min(0.09, vElev * 0.03);
+    float slopeDiff = abs(vLight - flatBaseLight);
+    float isSlopeFace = smoothstep(0.025, 0.14, slopeDiff);
+    // 斜坡表面自然露出土石边坡肌理（区别于平地草毯）
+    vec3 slopeEarth = mix(colDry, colDirt, 0.58);
+    landCol = mix(landCol, slopeEarth, isSlopeFace * 0.36);
+
+    // 山脚接地暗部折线（Foot Ambient Occlusion，勾勒山体拔地而起的底边）
+    float footAO = smoothstep(0.02, 0.18, vElev) * (1.0 - smoothstep(0.18, 0.48, vElev));
+    landCol *= (1.0 - footAO * 0.15);
+
+    // 阶梯台地上沿受光亮棱（Plateau Rim Bevel，勾勒 DE 标志性的平顶台地边缘折线）
+    float fracE = fract(vElev);
+    float stepRim = smoothstep(0.68, 0.85, fracE) * (1.0 - smoothstep(0.85, 0.98, fracE)) * step(0.65, vElev);
+    landCol *= (1.0 + stepRim * 0.14);
+  }
+
   // 最终合成与 DE 原生高程坡度光照
   vec3 finalCol = mix(landCol, waterCol, isWater);
   finalCol *= vLight;
@@ -388,7 +414,7 @@ function blurGrid2D(src: Float32Array, N: number): Float32Array {
   return dst;
 }
 
-const FLOATS_PER_VERT = 5;
+const FLOATS_PER_VERT = 6;
 const STRIDE = FLOATS_PER_VERT * 4;
 
 export class Scene13GroundLayerGL {
@@ -417,10 +443,7 @@ export class Scene13GroundLayerGL {
   private readonly origElev: Uint8Array;
   private cornerElev: Float32Array;
   private cornerLight: Float32Array;
-  /** DE 等轴菱形格网 (I = gx + gy, J = gy - gx + N)，尺寸 M × M (M = 2N + 1) */
-  private readonly isoM: number;
-  private isoElev: Float32Array;
-  private isoLight: Float32Array;
+  private noiseOff: [number, number] = [0, 0];
 
   private cam = { x: 0, y: 0, zoom: 1 };
   private buf: WebGLBuffer | null = null;
@@ -442,20 +465,139 @@ export class Scene13GroundLayerGL {
     this.N = data.width;
     this.offX = (this.N - 1) * dx;
     this.origElev = new Uint8Array(this.N * this.N);
-    this.isoM = 2 * this.N + 1;
-    this.isoElev = new Float32Array(this.isoM * this.isoM);
-    this.isoLight = new Float32Array(this.isoM * this.isoM);
 
-    let initSeed = 2166136261;
+    // 🔴 [2026-10-12 REA逆向 + 真实地理 DEM 耦合：DE 原版有机山丘扩散算法 (_base_elevation_generate_14135e990)]
+    // 保留战略地图 z13 真实 DEM 山脉/河谷方位骨架，将 DE 多团波前并发扩散山丘锚定在真实高地走势上，
+    // 实现「平原开阔、山地循脉、背山面水」的真实历史地理放大效果，同时兼具 DE 原版平顶斜坡美感。
     if (data.elev && data.elev.length === this.N * this.N) {
       const N = this.N;
       const elev = data.elev;
       const origElev = this.origElev;
+      let seed = 2166136261;
       for (let i = 0; i < N * N; i++) {
         const v = Math.max(0, Math.min(7, elev[i] ?? 0));
         origElev[i] = v;
         if (i < 256) {
-          initSeed = Math.imul(initSeed ^ (v + i), 16777619) >>> 0;
+          seed = Math.imul(seed ^ (v + i), 16777619) >>> 0;
+        }
+      }
+      const rnd = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+      this.noiseOff = [(rnd() - 0.5) * 60, (rnd() - 0.5) * 60];
+
+      const isWetCell = (x: number, y: number): boolean => {
+        if (!data.terrain) return false;
+        const tid = data.terrain[y * N + x];
+        if (tid === 1 || tid === 2 || tid === 23) return true;
+        const m = DE_TERRAIN_MANIFEST[tid];
+        return !!(m && ((m.is_water && (m.is_water & 7)) || m.overlay_mask_name === 'water.png'));
+      };
+
+      const cx = Math.floor(N / 2), cy = Math.floor(N / 2);
+
+      // 统计战略地图 z13 真实 DEM 的山脊种子点与起伏度（区分大平原 vs 丘陵/关隘）
+      const ridgeSeeds: Array<[number, number]> = [];
+      let elevatedCells = 0;
+      for (let y = 8; y < N - 8; y += 2) {
+        for (let x = 8; x < N - 8; x += 2) {
+          if (isWetCell(x, y)) continue;
+          const oe = origElev[y * N + x];
+          if (oe >= 1) elevatedCells++;
+          if (oe >= 2 && Math.hypot(x - cx, y - cy) >= 22) {
+            ridgeSeeds.push([x, y]);
+          }
+        }
+      }
+      const sampledTotal = Math.max(1, Math.floor((N - 16) / 2) * Math.floor((N - 16) / 2));
+      const reliefRatio = elevatedCells / sampledTotal;
+
+      // 1. 中央区域保持 0 级平地，高地丘陵只在外围（距离中心 >= 22 格）生成
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          if (Math.hypot(x - cx, y - cy) < 22) {
+            elev[y * N + x] = 0;
+          }
+        }
+      }
+
+      // 2. 真实地理导向的 DE 原野有机山丘（平原少丘缓坡，山地沿真实 DEM 山脊波前扩散）
+      const clumps = ridgeSeeds.length > 24
+        ? 12
+        : ridgeSeeds.length > 6
+          ? 8
+          : reliefRatio < 0.08
+            ? 5
+            : 7;
+      const qClumps: Array<Array<[number, number]>> = [];
+      const clumpTargetH: number[] = [];
+      const clumpMaxTiles: number[] = [];
+      for (let c = 0; c < clumps; c++) {
+        let sx: number, sy: number;
+        if (ridgeSeeds.length > 0 && rnd() < 0.82) {
+          // 优先锚定在战略地图真实 DEM 山脊/高地坐标上
+          const pick = ridgeSeeds[Math.floor(rnd() * ridgeSeeds.length)];
+          sx = pick[0];
+          sy = pick[1];
+        } else {
+          sx = 8 + Math.floor(rnd() * (N - 16));
+          sy = 8 + Math.floor(rnd() * (N - 16));
+        }
+        if (Math.hypot(sx - cx, sy - cy) < 24 || isWetCell(sx, sy)) continue;
+        const baseOe = origElev[sy * N + sx];
+        // 平原低地仅起 1 级微丘；真实山地/丘陵按原 DEM 高度延伸 1~3 级 DE 平顶山脊
+        const maxAdd = baseOe >= 3 ? 3 : baseOe >= 1 ? 2 : 1;
+        const targetH = 1 + Math.floor(rnd() * maxAdd);
+        const maxT = (baseOe >= 2 ? 75 : 40) + Math.floor(rnd() * 85);
+        qClumps.push([[sx, sy]]);
+        clumpTargetH.push(targetH);
+        clumpMaxTiles.push(maxT);
+      }
+
+      for (let c = 0; c < qClumps.length; c++) {
+        const q = qClumps[c];
+        const hAdd = clumpTargetH[c];
+        const maxT = clumpMaxTiles[c];
+        let placed = 0;
+        const visitedClump = new Uint8Array(N * N);
+        if (q.length > 0) visitedClump[q[0][1] * N + q[0][0]] = 1;
+
+        while (q.length > 0 && placed < maxT) {
+          const idx = Math.floor(rnd() * q.length);
+          const [x, y] = q.splice(idx, 1)[0];
+          if (isWetCell(x, y) || Math.hypot(x - cx, y - cy) < 22) continue;
+          placed++;
+          const capH = origElev[y * N + x] >= 3 ? 4 : origElev[y * N + x] >= 1 ? 3 : 2;
+          elev[y * N + x] = Math.min(capH, Math.max(elev[y * N + x] ?? 0, origElev[y * N + x] + hAdd));
+
+          const neighbors: Array<[number, number]> = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]];
+          for (const [nx, ny] of neighbors) {
+            if (nx >= 2 && nx < N - 2 && ny >= 2 && ny < N - 2 && !visitedClump[ny * N + nx] && !isWetCell(nx, ny) && Math.hypot(nx - cx, ny - cy) >= 22) {
+              // 顺应真实 DEM 走势扩散：真实高地方向满概率延伸，低平方向适度收敛
+              if (origElev[ny * N + nx] >= origElev[y * N + x] || rnd() < 0.68) {
+                visitedClump[ny * N + nx] = 1;
+                q.push([nx, ny]);
+              }
+            }
+          }
+        }
+      }
+
+      // 3. DE 原版平滑梯级约束：强制保证全图相邻格落差 ≤ 1（消除任何悬空或垂直阶梯破面）
+      for (let pass = 0; pass < 4; pass++) {
+        for (let y = 1; y < N - 1; y++) {
+          for (let x = 1; x < N - 1; x++) {
+            if (Math.hypot(x - cx, y - cy) < 20) {
+              elev[y * N + x] = 0;
+              continue;
+            }
+            const cur = elev[y * N + x];
+            const minNbr = Math.min(elev[y * N + (x - 1)], elev[y * N + (x + 1)], elev[(y - 1) * N + x], elev[(y + 1) * N + x]);
+            if (cur > minNbr + 1) {
+              elev[y * N + x] = minNbr + 1;
+            }
+          }
         }
       }
     }
@@ -473,12 +615,14 @@ export class Scene13GroundLayerGL {
       aPos: A('aPos'),
       aGUV: A('aGUV'),
       aLight: A('aLight'),
+      aElev: A('aElev'),
       uRes: U('uRes'),
       uCam: U('uCam'),
       uZoom: U('uZoom'),
       uMapSize: U('uMapSize'),
       uTime: U('uTime'),
       uIsIce: U('uIsIce'),
+      uNoiseOff: U('uNoiseOff'),
       uFieldTex: U('uFieldTex'),
       uGrassTex: U('uGrassTex'),
       uSandTex: U('uSandTex'),
@@ -580,143 +724,111 @@ export class Scene13GroundLayerGL {
     if (imgDirt) this.dirtTex = makeRepeatTex(imgDirt);
     if (imgDry) this.dryTex = makeRepeatTex(imgDry);
 
-    // 3. 高程与 DE 离散斜坡折面打光
+    // 3. 高程与法线打光
     const V_SIZE = this.N + 1;
     this.cornerElev = new Float32Array(V_SIZE * V_SIZE);
     this.cornerLight = new Float32Array(V_SIZE * V_SIZE);
+    this.computeCornerElev();
+  }
 
-    // 默认（野战或城池整平前）：中央战场保持平地，外围按 DE AoE2DE_s.exe (0x14135E990 + 0x14103CC60) 生成平顶阶梯丘陵
-    let s = initSeed >>> 0;
-    const rnd = () => {
-      s = (s * 1664525 + 1013904223) >>> 0;
-      return (s >>> 0) / 4294967296;
+  private computeCornerElev(): void {
+    const N = this.N;
+    const V_SIZE = N + 1;
+    const elev = this.data.elev;
+    const elevAt = (x: number, y: number) => (x < 0 || y < 0 || x >= N || y >= N || !elev ? 0 : (elev[y * N + x] ?? 0));
+    const waterAt = (x: number, y: number) => {
+      const cx = Math.min(N - 1, Math.max(0, Math.floor(x)));
+      const cy = Math.min(N - 1, Math.max(0, Math.floor(y)));
+      return this.smoothWater ? (this.smoothWater[cy * N + cx] ?? 0) : 0;
     };
-    this.generateDeElevationGrid(N * 0.5, N * 0.5, 18.0, 3.0, rnd, 'medium_city');
+
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        let sum = 0, count = 0;
+        if (gx > 0 && gy > 0) { sum += elevAt(gx - 1, gy - 1); count++; }
+        if (gx < N && gy > 0) { sum += elevAt(gx, gy - 1); count++; }
+        if (gx > 0 && gy < N) { sum += elevAt(gx - 1, gy); count++; }
+        if (gx < N && gy < N) { sum += elevAt(gx, gy); count++; }
+        const baseE = count > 0 ? sum / count : 0;
+
+        // 水体及近岸湿滩自动压平高程，杜绝河面/湖面悬空
+        const w = Math.max(
+          waterAt(gx, gy),
+          waterAt(gx - 1, gy),
+          waterAt(gx + 1, gy),
+          waterAt(gx, gy - 1),
+          waterAt(gx, gy + 1)
+        );
+        const dryMask = 1.0 - Math.min(1.0, Math.max(0.0, (w - 0.12) / 0.26));
+        this.cornerElev[gy * V_SIZE + gx] = baseE * dryMask;
+      }
+    }
     this.updateCornerLight();
-  }
-
-  /** 将 isoElev 同步回 cornerElev 与 data.elev，保证所有外部查询接口 100% 同步 */
-  private syncCornerElevFromIso(): void {
-    const N = this.N;
-    const V_SIZE = N + 1;
-    const M = this.isoM;
-    for (let gy = 0; gy <= N; gy++) {
-      for (let gx = 0; gx <= N; gx++) {
-        const I = gx + gy;
-        const J = gy - gx + N;
-        this.cornerElev[gy * V_SIZE + gx] = this.isoElev[I * M + J];
-      }
-    }
-    if (this.data?.elev && this.data.elev.length === N * N) {
-      for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-          const I = x + y + 1;
-          const J = y - x + N;
-          this.data.elev[y * N + x] = Math.max(0, Math.min(7, Math.round(this.isoElev[I * M + J])));
-        }
-      }
-    }
-  }
-
-  /** 将 cornerElev 的局部修改同步到 isoElev（整数角点直接复制，半格中心点取四邻均值） */
-  private syncIsoElevFromCorners(): void {
-    const N = this.N;
-    const V_SIZE = N + 1;
-    const M = this.isoM;
-    for (let gy = 0; gy <= N; gy++) {
-      for (let gx = 0; gx <= N; gx++) {
-        const I = gx + gy;
-        const J = gy - gx + N;
-        this.isoElev[I * M + J] = this.cornerElev[gy * V_SIZE + gx];
-      }
-    }
-    for (let cy = 0; cy < N; cy++) {
-      for (let cx = 0; cx < N; cx++) {
-        const I = cx + cy + 1;
-        const J = cy - cx + N;
-        const e00 = this.cornerElev[cy * V_SIZE + cx];
-        const e10 = this.cornerElev[cy * V_SIZE + (cx + 1)];
-        const e01 = this.cornerElev[(cy + 1) * V_SIZE + cx];
-        const e11 = this.cornerElev[(cy + 1) * V_SIZE + (cx + 1)];
-        this.isoElev[I * M + J] = 0.25 * (e00 + e10 + e01 + e11);
-      }
-    }
-  }
-
-  /**
-   * 🔴 [REA 逆向 AoE2DE_s.exe `RGE_Map::get_tile_type` (0x1410416E0) + 等轴斜坡折面光照]
-   * 计算单个三角形折面 (A, B, C) 的 DE 坡面光照：
-   * - 平地或山顶平顶台地 (|dh| < 0.01)：恒为 1.0 (+ 微弱高地天光)，绝不把斜坡阴影/高光洇染到山顶平地或山脚平地上；
-   * - 16 种离散斜坡折面 (tile_type 1..16)：按折面精确法线 (dhx, dhy) 计算向阳坡提亮与背阴坡压暗，呈现 DE 硬朗分明的等轴菱形阶梯折面。
-   */
-  private computeFacetLight(
-    gx0: number, gy0: number, e0: number,
-    gx1: number, gy1: number, e1: number,
-    gx2: number, gy2: number, e2: number
-  ): number {
-    const maxE = Math.max(e0, e1, e2);
-    const minE = Math.min(e0, e1, e2);
-    const avgE = (e0 + e1 + e2) / 3;
-    const elevBoost = Math.min(0.04, avgE * 0.01);
-    if (maxE - minE < 0.015) {
-      // DE tile_type == 0（平地 / 山顶平台）：光照完全平整，棱角边界一刀切
-      return 1.0 + elevBoost;
-    }
-    // 求解三角形平面在 (gx, gy) 上的精确高程梯度 (dhx = ∂e/∂gx, dhy = ∂e/∂gy)
-    const ux = gx1 - gx0, uy = gy1 - gy0, ue = e1 - e0;
-    const vx = gx2 - gx0, vy = gy2 - gy0, ve = e2 - e0;
-    const det = ux * vy - uy * vx;
-    if (Math.abs(det) < 1e-5) return 1.0 + elevBoost;
-    const invDet = 1.0 / det;
-    const dhx = (ue * vy - uy * ve) * invDet;
-    const dhy = (ux * ve - ue * vx) * invDet;
-
-    // 转换到 DE 等轴菱形轴梯度 (dI = ∂e/∂I 朝屏幕右下, dJ = ∂e/∂J 朝屏幕左下)
-    const dI = 0.5 * (dhx + dhy);
-    const dJ = 0.5 * (dhy - dhx);
-
-    // DE 经典左下偏西斜射平行光：8 个等轴坡向（4 主坡 + 4 折角坡）各自拥有独立鲜明的明暗阶梯
-    const slopeTowardSun = dI * 0.38 - dJ * 0.72;
-    let light = 1.0;
-    if (slopeTowardSun > 0.005) {
-      light = 1.0 + Math.min(0.24, slopeTowardSun * 0.28);
-    } else if (slopeTowardSun < -0.005) {
-      light = 1.0 + Math.max(-0.26, slopeTowardSun * 0.30);
-    }
-    return Math.max(0.72, Math.min(1.26, light + elevBoost));
   }
 
   private updateCornerLight(): void {
     const N = this.N;
     const V_SIZE = N + 1;
-    const M = this.isoM;
-
-    for (let I = 0; I < M; I++) {
-      for (let J = 0; J < M; J++) {
-        const hC = this.isoElev[I * M + J];
-        const hI0 = I > 0 ? this.isoElev[(I - 1) * M + J] : hC;
-        const hI1 = I < M - 1 ? this.isoElev[(I + 1) * M + J] : hC;
-        const hJ0 = J > 0 ? this.isoElev[I * M + (J - 1)] : hC;
-        const hJ1 = J < M - 1 ? this.isoElev[I * M + (J + 1)] : hC;
-        const dI = (hI1 - hI0) * 0.5;
-        const dJ = (hJ1 - hJ0) * 0.5;
-        const slopeTowardSun = dI * 0.38 - dJ * 0.72;
-        let light = 1.0;
-        if (slopeTowardSun > 0.005) {
-          light = 1.0 + Math.min(0.24, slopeTowardSun * 0.28);
-        } else if (slopeTowardSun < -0.005) {
-          light = 1.0 + Math.max(-0.26, slopeTowardSun * 0.30);
-        }
-        const elevBoost = Math.min(0.04, hC * 0.01);
-        this.isoLight[I * M + J] = Math.max(0.72, Math.min(1.26, light + elevBoost));
-      }
-    }
+    const rawLight = new Float32Array(V_SIZE * V_SIZE);
+    const rawIsSlope = new Uint8Array(V_SIZE * V_SIZE);
 
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
-        const I = gx + gy;
-        const J = gy - gx + N;
-        this.cornerLight[gy * V_SIZE + gx] = this.isoLight[I * M + J];
+        const idx = gy * V_SIZE + gx;
+        const hC = this.cornerElev[idx];
+        const hL = gx > 0 ? this.cornerElev[gy * V_SIZE + (gx - 1)] : hC;
+        const hR = gx < N ? this.cornerElev[gy * V_SIZE + (gx + 1)] : hC;
+        const hU = gy > 0 ? this.cornerElev[(gy - 1) * V_SIZE + gx] : hC;
+        const hD = gy < N ? this.cornerElev[(gy + 1) * V_SIZE + gx] : hC;
+        const dhx = (hR - hL) / (gx > 0 && gx < N ? 2 : 1);
+        const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
+        const slopeMag = Math.hypot(dhx, dhy);
+
+        // 🔴 [REA逆向 AoE2DE_s.exe 0x1410416E0 + 0x14185CC10：DE 台地斜坡折面强明暗对比]
+        // 左上向阳斜坡（dhx > 0, dhy < 0）显著提亮，右下背阳斜坡（dhx < 0, dhy > 0）深沉压暗，
+        // 平顶台地内部与平地（slopeMag ≈ 0）保持平整明度，只在斜坡角点内部做轻量过渡，不跨台地棱线模糊。
+        const slopeTowardSun = (dhx - dhy) * 0.72 + (dhx + dhy) * 0.24;
+        const crossSlope = Math.abs(dhx + dhy);
+        let light = 1.0;
+        if (slopeMag > 0.025) {
+          rawIsSlope[idx] = 1;
+          if (slopeTowardSun > 0.01) {
+            light = 1.0 + Math.min(0.32, slopeTowardSun * 0.72);
+          } else if (slopeTowardSun < -0.01) {
+            light = 1.0 + Math.max(-0.35, slopeTowardSun * 0.80);
+          } else {
+            light = 1.0 - Math.min(0.12, crossSlope * 0.25);
+          }
+        }
+        // 高地平顶台地微弱天光提亮，使台地顶面与 0 级平地层次分明
+        const elevBoost = Math.min(0.08, hC * 0.022);
+        rawLight[idx] = Math.max(0.65, Math.min(1.34, light + elevBoost));
+      }
+    }
+
+    // 仅在斜坡角点之间做柔和过渡，绝不把平顶台地边缘和坡脚棱线糊平
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        const idx = gy * V_SIZE + gx;
+        if (!rawIsSlope[idx]) {
+          this.cornerLight[idx] = rawLight[idx];
+          continue;
+        }
+        let sum = rawLight[idx] * 5, totalW = 5;
+        for (let dy = -1; dy <= 1; dy++) {
+          const ny = gy + dy;
+          if (ny < 0 || ny > N) continue;
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue;
+            const nx = gx + dx;
+            if (nx < 0 || nx > N) continue;
+            const nIdx = ny * V_SIZE + nx;
+            const w = rawIsSlope[nIdx] ? ((dx === 0 || dy === 0) ? 1.5 : 0.75) : 0.35;
+            sum += rawLight[nIdx] * w;
+            totalW += w;
+          }
+        }
+        this.cornerLight[idx] = sum / totalW;
       }
     }
   }
@@ -728,6 +840,20 @@ export class Scene13GroundLayerGL {
   public resize(w: number, h: number): void {
     this.canvas.width = w;
     this.canvas.height = h;
+  }
+
+  private applySeedNoiseOffset(seedStr: string): void {
+    let h1 = 2166136261;
+    let h2 = 16777619;
+    for (let i = 0; i < seedStr.length; i++) {
+      const ch = seedStr.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 16777619) >>> 0;
+      h2 = Math.imul(h2 ^ (ch + i * 31), 2166136261) >>> 0;
+    }
+    this.noiseOff = [
+      ((h1 >>> 0) / 4294967296 - 0.5) * 80.0,
+      ((h2 >>> 0) / 4294967296 - 0.5) * 80.0,
+    ];
   }
 
   public render(): void {
@@ -744,6 +870,7 @@ export class Scene13GroundLayerGL {
     gl.uniform1f(this.loc.uMapSize as WebGLUniformLocation, this.N);
     gl.uniform1f(this.loc.uTime as WebGLUniformLocation, performance.now() * 0.001);
     gl.uniform1f(this.loc.uIsIce as WebGLUniformLocation, this.isIce ? 1.0 : 0.0);
+    gl.uniform2f(this.loc.uNoiseOff as WebGLUniformLocation, this.noiseOff[0], this.noiseOff[1]);
 
     if (this.fieldTex) {
       gl.activeTexture(gl.TEXTURE0);
@@ -784,6 +911,7 @@ export class Scene13GroundLayerGL {
     gl.enableVertexAttribArray(this.loc.aPos as number);
     gl.enableVertexAttribArray(this.loc.aGUV as number);
     gl.enableVertexAttribArray(this.loc.aLight as number);
+    gl.enableVertexAttribArray(this.loc.aElev as number);
 
     if (!this.buf) {
       this.rebuildBuffers();
@@ -794,79 +922,48 @@ export class Scene13GroundLayerGL {
       gl.vertexAttribPointer(this.loc.aPos as number, 2, gl.FLOAT, false, STRIDE, 0);
       gl.vertexAttribPointer(this.loc.aGUV as number, 2, gl.FLOAT, false, STRIDE, 8);
       gl.vertexAttribPointer(this.loc.aLight as number, 1, gl.FLOAT, false, STRIDE, 16);
+      gl.vertexAttribPointer(this.loc.aElev as number, 1, gl.FLOAT, false, STRIDE, 20);
       gl.drawArrays(gl.TRIANGLES, 0, this.vertCount);
     }
   }
 
-  /**
-   * 🔴 [REA 逆向 AoE2DE_s.exe `RGE_Map::set_map_screen_pos` (0x14104DE80) + `get_tile_type` (0x1410416E0)]
-   * 按 DE 原生 45° 等轴菱形瓦片 `[I, I+1] × [J, J+1]` 构建网格：
-   * 1. 每个菱形瓦片对应屏幕 96×48 菱形，四条边严格沿 ±26.565° (2:1) 等轴方向展开；
-   * 2. 对角线自适应切分 (`|e0 - e2| <= |e1 - e3|`) 完美复刻 DE 17 种斜坡瓦片 (tile_type 0..16) 的内外折角；
-   * 3. 100% 采用 DE 纯平面折角光照 (`vL = fLight`)，彻底去除顶点法线柔化，平顶、斜坡、折角棱线分明。
-   */
   private rebuildBuffers(): void {
     const gl = this.gl;
     const N = this.N;
-    const M = this.isoM;
+    const V_SIZE = N + 1;
+    const TRI_A = [0, 1, 2, 0, 2, 3];
+    const TRI_B = [0, 1, 3, 1, 2, 3];
     const centerY = (N - 1) * dy;
 
     const verts: number[] = [];
-    const pushTri = (
-      I0: number, J0: number,
-      I1: number, J1: number,
-      I2: number, J2: number
-    ) => {
-      const gx0 = (I0 - (J0 - N)) * 0.5, gy0 = (I0 + (J0 - N)) * 0.5;
-      const gx1 = (I1 - (J1 - N)) * 0.5, gy1 = (I1 + (J1 - N)) * 0.5;
-      const gx2 = (I2 - (J2 - N)) * 0.5, gy2 = (I2 + (J2 - N)) * 0.5;
 
-      // 跳过完全在 [0, N] × [0, N] 地图矩形之外的边角半菱形
-      const cx = (gx0 + gx1 + gx2) / 3;
-      const cy = (gy0 + gy1 + gy2) / 3;
-      if (cx < -0.01 || cx > N + 0.01 || cy < -0.01 || cy > N + 0.01) return;
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const i0 = y * V_SIZE + x;
+        const i1 = y * V_SIZE + (x + 1);
+        const i2 = (y + 1) * V_SIZE + (x + 1);
+        const i3 = (y + 1) * V_SIZE + x;
 
-      const e0 = this.isoElev[I0 * M + J0];
-      const e1 = this.isoElev[I1 * M + J1];
-      const e2 = this.isoElev[I2 * M + J2];
+        const cElev = [this.cornerElev[i0], this.cornerElev[i1], this.cornerElev[i2], this.cornerElev[i3]];
+        const cLight = [this.cornerLight[i0], this.cornerLight[i1], this.cornerLight[i2], this.cornerLight[i3]];
+        const guv = [
+          [x, y],
+          [x + 1, y],
+          [x + 1, y + 1],
+          [x, y + 1]
+        ];
 
-      const fLight = this.computeFacetLight(gx0, gy0, e0, gx1, gy1, e1, gx2, gy2, e2);
-
-      const emit = (gx: number, gy: number, e: number) => {
-        verts.push(
-          this.offX + (gx - N * 0.5) * TW,
-          centerY + (gy - N * 0.5) * TH - e * DE_ELEV_H,
-          gx,
-          gy,
-          fLight
-        );
-      };
-
-      emit(gx0, gy0, e0);
-      emit(gx1, gy1, e1);
-      emit(gx2, gy2, e2);
-    };
-
-    for (let I = 0; I < M - 1; I++) {
-      for (let J = 0; J < M - 1; J++) {
-        // 菱形中心在 (gx, gy) 空间的坐标
-        const cI = I + 0.5, cJ = J + 0.5;
-        const cgx = (cI - (cJ - N)) * 0.5;
-        const cgy = (cI + (cJ - N)) * 0.5;
-        if (cgx < -0.5 || cgx > N + 0.5 || cgy < -0.5 || cgy > N + 0.5) continue;
-
-        const e0 = this.isoElev[I * M + J];                 // Top
-        const e1 = this.isoElev[(I + 1) * M + J];           // Right
-        const e2 = this.isoElev[(I + 1) * M + (J + 1)];     // Bottom
-        const e3 = this.isoElev[I * M + (J + 1)];           // Left
-
-        // DE RGE_Map::get_tile_type (0x1410416E0) 自适应对角线：连接等高角点以形成平整三角折面
-        if (Math.abs(e0 - e2) <= Math.abs(e1 - e3)) {
-          pushTri(I, J, I + 1, J, I + 1, J + 1);
-          pushTri(I, J, I + 1, J + 1, I, J + 1);
-        } else {
-          pushTri(I, J, I + 1, J, I, J + 1);
-          pushTri(I + 1, J, I + 1, J + 1, I, J + 1);
+        const tri = Math.abs(cElev[0] - cElev[2]) <= Math.abs(cElev[1] - cElev[3]) ? TRI_A : TRI_B;
+        for (const t of tri) {
+          const gx = guv[t][0], gy = guv[t][1];
+          verts.push(
+            this.offX + (gx - N * 0.5) * TW,
+            centerY + (gy - N * 0.5) * TH - (cElev[t] * DE_ELEV_H),
+            gx,
+            gy,
+            cLight[t],
+            cElev[t]
+          );
         }
       }
     }
@@ -881,43 +978,22 @@ export class Scene13GroundLayerGL {
 
   /**
    * 从屏幕逻辑坐标 (screenX, screenY) 查询新地图高程抬升量（像素）
-   * 与 rebuildBuffers 的 DE 等轴菱形对角线切分严格逐像素一致。
+   * 采用四角双线性插值，每级高程对应 16 像素抬升。
    */
   public elevationLiftAt(screenX: number, screenY: number, W: number, H: number): number {
     const N = this.N;
     const gx = (screenX - W / 2) / TW + N * 0.5;
     const gy = (screenY - H / 2) / TH + N * 0.5;
+    const V_SIZE = N + 1;
     if (gx < 0 || gy < 0 || gx >= N || gy >= N) return 0;
-
-    const M = this.isoM;
-    const uI = gx + gy;
-    const uJ = gy - gx + N;
-    const I = Math.max(0, Math.min(M - 2, Math.floor(uI)));
-    const J = Math.max(0, Math.min(M - 2, Math.floor(uJ)));
-    const s = Math.max(0, Math.min(1, uI - I));
-    const t = Math.max(0, Math.min(1, uJ - J));
-
-    const e0 = this.isoElev[I * M + J];
-    const e1 = this.isoElev[(I + 1) * M + J];
-    const e2 = this.isoElev[(I + 1) * M + (J + 1)];
-    const e3 = this.isoElev[I * M + (J + 1)];
-
-    let elev: number;
-    if (Math.abs(e0 - e2) <= Math.abs(e1 - e3)) {
-      // 沿 v0(0,0) — v2(1,1) 切分
-      if (s >= t) {
-        elev = e0 * (1 - s) + e1 * (s - t) + e2 * t;
-      } else {
-        elev = e0 * (1 - t) + e3 * (t - s) + e2 * s;
-      }
-    } else {
-      // 沿 v1(1,0) — v3(0,1) 切分
-      if (s + t <= 1) {
-        elev = e0 * (1 - s - t) + e1 * s + e3 * t;
-      } else {
-        elev = e2 * (s + t - 1) + e1 * (1 - t) + e3 * (1 - s);
-      }
-    }
+    const x0 = Math.floor(gx), y0 = Math.floor(gy);
+    const x1 = Math.min(N, x0 + 1), y1 = Math.min(N, y0 + 1);
+    const tx = gx - x0, ty = gy - y0;
+    const e00 = this.cornerElev[y0 * V_SIZE + x0];
+    const e10 = this.cornerElev[y0 * V_SIZE + x1];
+    const e01 = this.cornerElev[y1 * V_SIZE + x0];
+    const e11 = this.cornerElev[y1 * V_SIZE + x1];
+    const elev = (e00 * (1 - tx) + e10 * tx) * (1 - ty) + (e01 * (1 - tx) + e11 * tx) * ty;
     return elev * DE_ELEV_H;
   }
 
@@ -1151,167 +1227,36 @@ export class Scene13GroundLayerGL {
   }
 
   /**
-   * 城池地基整平：以屏幕逻辑坐标为中心、radiusCells 格内的高程整平到整数级 level，
-   * 外缘按 DE `clean_elevation` (0x14103CC60) 每格降 1 级切出等轴阶梯斜坡。改完调 flushFoundation 生效。
+   * 城池地基整平：以屏幕逻辑坐标为中心、radiusCells 格内的高程拉平到 level（外缘 4.5 格 S 曲线缓坡过渡），
+   * 让整座城（建筑 / 城墙 / 地基层）站在同一高度的高台/平地上。改完调 flushFoundation 生效。
    */
   public flattenFoundation(screenX: number, screenY: number, W: number, H: number, radiusCells: number, level: number): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return;
-    const N = this.N;
-    const M = this.isoM;
-    const intLevel = Math.max(0, Math.min(7, Math.round(level)));
+    const V = this.N + 1;
     const r = radiusCells;
-
-    const isoTileElev = new Int8Array(M * M);
-    for (let i = 0; i < M * M; i++) {
-      isoTileElev[i] = Math.max(0, Math.min(7, Math.round(this.isoElev[i])));
-    }
-
-    for (let I = 0; I < M; I++) {
-      for (let J = 0; J < M; J++) {
-        const gx = (I - (J - N)) * 0.5;
-        const gy = (I + (J - N)) * 0.5;
-        const d = Math.abs(gx - c.gx) + Math.abs(gy - c.gy);
-        if (d <= r) {
-          isoTileElev[I * M + J] = intLevel;
-        }
+    const slopeW = 1.5;
+    const x0 = Math.max(0, Math.floor(c.gx - r - slopeW - 1)), x1 = Math.min(this.N, Math.ceil(c.gx + r + slopeW + 1));
+    const y0 = Math.max(0, Math.floor(c.gy - r - slopeW - 1)), y1 = Math.min(this.N, Math.ceil(c.gy + r + slopeW + 1));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const d = Math.abs(x - c.gx) + Math.abs(y - c.gy);
+        const s = Math.min(1, Math.max(0, (d - r) / slopeW));
+        if (s >= 1) continue;
+        const t = s * s * (3 - 2 * s); // Smoothstep 缓坡过渡：圈内 0（整平）→ 外缘 1（原样）
+        const i = y * V + x;
+        this.cornerElev[i] = level + (this.cornerElev[i] - level) * t;
       }
     }
-
-    this.cleanDeIsoElevation(isoTileElev, Math.max(intLevel, 4));
-    for (let i = 0; i < M * M; i++) {
-      this.isoElev[i] = isoTileElev[i];
-    }
-    this.syncCornerElevFromIso();
     this.elevDirty = true;
-  }
-
-  /**
-   * 🔴 [REA 逆向 `AoE2DE_s.exe` `RGE_Map::clean_elevation` (`VA 0x14103CC60` -> `0x141046720` + `0x141046AE0`)]
-   * 对等轴菱形网格 `isoTileElev` 执行 DE 原生 8 邻域斜坡切面规整与单格尖脊/窄沟消除：
-   * 1. `0x141046720` (`inc dl`)：扫描 8 邻域 4 组对向邻居（N-S、W-E、NW-SE、NE-SW），若对向邻居均高于当前格，直接抬高 1 级填平窄沟与凹坑；
-   * 2. `0x141046720` 向外/向内 8 邻域高差约束：强制任意 8 邻域相邻格高差 `<= 1`，沿着平顶高台外圈自动切出每格降 1 级的等轴阶梯斜坡；
-   * 3. `0x141046AE0`：若对向邻居均低于当前格，削平 1 格宽的刀刃山脊与孤立金字塔尖顶，保证所有高地山顶必为有宽度的平坦台地（Plateau）。
-   */
-  private cleanDeIsoElevation(
-    isoTileElev: Int8Array,
-    maxIntLevel: number,
-    isBlockedIJ?: (I: number, J: number) => boolean
-  ): void {
-    const M = this.isoM;
-    const D8_ISO: ReadonlyArray<[number, number]> = [
-      [-1, 0], [1, 0], [0, -1], [0, 1],
-      [-1, -1], [1, -1], [-1, 1], [1, 1],
-    ];
-
-    // 1. 0x141046720 (inc dl)：检查 4 组对向邻居（含对角线），填平高台内部单格凹坑与 1 格宽窄沟
-    for (let pass = 0; pass < 2; pass++) {
-      for (let I = 2; I < M - 2; I++) {
-        for (let J = 2; J < M - 2; J++) {
-          if (isBlockedIJ && isBlockedIJ(I, J)) continue;
-          const idx = I * M + J;
-          const h = isoTileElev[idx];
-          const hN = isoTileElev[(I - 1) * M + J], hS = isoTileElev[(I + 1) * M + J];
-          const hW = isoTileElev[I * M + (J - 1)], hE = isoTileElev[I * M + (J + 1)];
-          const hNW = isoTileElev[(I - 1) * M + (J - 1)], hSE = isoTileElev[(I + 1) * M + (J + 1)];
-          const hNE = isoTileElev[(I - 1) * M + (J + 1)], hSW = isoTileElev[(I + 1) * M + (J - 1)];
-          if ((hN > h && hS > h) || (hW > h && hE > h) || (hNW > h && hSE > h) || (hNE > h && hSW > h)) {
-            isoTileElev[idx] = Math.min(maxIntLevel, h + 1);
-          }
-        }
-      }
-    }
-
-    // 2. 0x141046720 向外 8 邻域阶梯切坡：从平顶高台向外每格降 1 级（h -> h-1 -> ... -> 1 -> 0）
-    for (let h = maxIntLevel; h >= 2; h--) {
-      for (let I = 2; I < M - 2; I++) {
-        for (let J = 2; J < M - 2; J++) {
-          if (isoTileElev[I * M + J] < h) continue;
-          for (const [dI, dJ] of D8_ISO) {
-            const nI = I + dI, nJ = J + dJ;
-            if (isBlockedIJ && isBlockedIJ(nI, nJ)) continue;
-            const nIdx = nI * M + nJ;
-            if (isoTileElev[nIdx] < h - 1) {
-              isoTileElev[nIdx] = h - 1;
-            }
-          }
-        }
-      }
-    }
-
-    // 3. 0x141046720 向内 8 邻域合法性约束：保护区/水岸强制为 0，且全图任意 8 邻域高差 <= 1
-    if (isBlockedIJ) {
-      for (let I = 0; I < M; I++) {
-        for (let J = 0; J < M; J++) {
-          if (isBlockedIJ(I, J)) {
-            isoTileElev[I * M + J] = 0;
-          }
-        }
-      }
-    }
-    const clampSlopeDelta1 = () => {
-      for (let pass = 0; pass < maxIntLevel + 2; pass++) {
-        let changed = false;
-        for (let I = 1; I < M - 1; I++) {
-          for (let J = 1; J < M - 1; J++) {
-            const idx = I * M + J;
-            const cur = isoTileElev[idx];
-            if (cur <= 0) continue;
-            let minAllowed = cur;
-            for (const [dI, dJ] of D8_ISO) {
-              const nbrH = isoTileElev[(I + dI) * M + (J + dJ)];
-              if (nbrH + 1 < minAllowed) {
-                minAllowed = nbrH + 1;
-              }
-            }
-            if (minAllowed < cur) {
-              isoTileElev[idx] = minAllowed;
-              changed = true;
-            }
-          }
-        }
-        if (!changed) break;
-      }
-    };
-    clampSlopeDelta1();
-
-    // 4. 0x141046AE0 + 0x141046720 拓扑清理：消除任何 1 格宽刀刃山脊与孤立尖顶（含对角线方向），并再次校验高差 <= 1
-    for (let pass = 0; pass < 2; pass++) {
-      for (let I = 2; I < M - 2; I++) {
-        for (let J = 2; J < M - 2; J++) {
-          const idx = I * M + J;
-          const h = isoTileElev[idx];
-          if (h <= 0) continue;
-          const hN = isoTileElev[(I - 1) * M + J], hS = isoTileElev[(I + 1) * M + J];
-          const hW = isoTileElev[I * M + (J - 1)], hE = isoTileElev[I * M + (J + 1)];
-          const hNW = isoTileElev[(I - 1) * M + (J - 1)], hSE = isoTileElev[(I + 1) * M + (J + 1)];
-          const hNE = isoTileElev[(I - 1) * M + (J + 1)], hSW = isoTileElev[(I + 1) * M + (J - 1)];
-          if ((hN < h && hS < h) || (hW < h && hE < h) || (hNW < h && hSE < h) || (hNE < h && hSW < h)) {
-            isoTileElev[idx] = h - 1;
-          }
-        }
-      }
-      for (let I = 2; I < M - 2; I++) {
-        for (let J = 2; J < M - 2; J++) {
-          if (isBlockedIJ && isBlockedIJ(I, J)) continue;
-          const idx = I * M + J;
-          const h = isoTileElev[idx];
-          const hN = isoTileElev[(I - 1) * M + J], hS = isoTileElev[(I + 1) * M + J];
-          const hW = isoTileElev[I * M + (J - 1)], hE = isoTileElev[I * M + (J + 1)];
-          if ((hN > h && hS > h) || (hW > h && hE > h)) {
-            isoTileElev[idx] = Math.min(maxIntLevel, h + 1);
-          }
-        }
-      }
-    }
-    clampSlopeDelta1();
   }
 
   /**
    * 🔴 [2026-10-12 主人令「大城（Big City）：主城坐落开阔平原，周边远景散落 1~3 级开阔缓坡与远山」]
    * 大城都城宏伟开阔地势生成：
    * 1. 广袤平原主城基底：城池与宽幅护城河整平在 0 级开阔平坦地基上，保障大军排兵布阵与城防完整；
-   * 2. 远景散落 1~3 级 DE 平顶阶梯丘陵与远山（AoE2DE_s.exe 0x14135E990 + 0x14103CC60）。
+   * 2. 远景散落 1~3 级开阔缓坡与远山：在城防外围（28~48格）舒缓展开 4 组大范围平缓远山丘陵（半径 14~20 格宽），
+   *    采用 C1 连续四次多项式平滑衰减，无锯齿、波澜壮阔，呈现帝国都城“一望无际、远山如黛”的壮美地理气象。
    */
   public flattenBigCityTerrain(
     screenX: number,
@@ -1323,6 +1268,7 @@ export class Scene13GroundLayerGL {
   ): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return;
+    this.applySeedNoiseOffset(seedStr);
 
     let seed = 2166136261;
     for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
@@ -1334,10 +1280,10 @@ export class Scene13GroundLayerGL {
     const cx = c.gx, cy = c.gy;
     const rFlat = flatCells;
 
+    // 🔴 [彻底根除固定底图残留] 大城坐落开阔平原，全图基底高程统一重置为 0 级！
     this.cornerElev.fill(0);
-    this.isoElev.fill(0);
 
-    // 远景原野：城周围保持开阔平地（rFlat + 7.5 格内全平 0 级），外围按 DE 0x14135E990 + 0x14103CC60 生成平顶阶梯丘陵
+    // 2. 远景原野：城周围保持开阔平地（rFlat + 7.5 格内全平 0 级），外围生成 DE 平顶丘陵
     this.generateDeElevationGrid(cx, cy, rFlat + 7.5, 3.0, rnd, 'big_city');
 
     this.updateCornerLight();
@@ -1345,15 +1291,12 @@ export class Scene13GroundLayerGL {
   }
 
   /**
-   * 🔴 [REA 逆向 `AoE2DE_s.exe` 完整高程管线]
-   * 严格按照 DE 二进制逆向的 3 个核心函数在 45° 等轴菱形网格 `(I, J)` 上生成并规整高地丘陵：
-   * 1. `RGE_RMM_Elevation_Generator::base_elevation_generate` (`VA 0x14135E990`) + `check_elevation` (`VA 0x14135F1F0`)：
-   *    - 团块直接赋予目标高度 `target_elev`（生成宽阔平坦的平顶高台，而非 BFS 距离剥洋葱圆锥）；
-   *    - 扩张时扫描周围 `5×5` 等轴窗口 `[I-2..I+2, J-2..J+2]` 内已达 `target_elev` 的格数 `bVar4`，
-   *      按 DE 原生权重公式 `cost = 250 - 15 * bVar4 + rand(0..99)` 优先填充凹陷，生成饱满有机的台地轮廓；
-   *    - 支持在大型 2 级台地内部二次生长 3~4 级二级主峰平台（复刻 DE 多级 `elevation_info` 叠层台地）。
-   * 2. `RGE_Map::clean_elevation` (`VA 0x14103CC60` -> `0x141046720` + `0x141046AE0`)：
-   *    - 调用 `cleanDeIsoElevation` 执行 8 邻域等轴阶梯切坡与单格尖脊/窄沟消除。
+   * 🔴 [REA 逆向 `AoE2DE_s.exe` 0x14135E990 (`base_elevation_generate`) + 0x14135F1F0 (`check_elevation`) + 0x14103CC60 (`clean_elevation`)]
+   * 在 120×120 地形格网 (gx, gy) 上生成 DE 风格圆润平顶高地丘陵：
+   * 1. `5×5` 邻域内聚生长 (`cost = 250 - 15 * bVar4 + rand(0..99)`)，配合 5×5 多数滤波消除锯齿毛刺，轮廓圆润饱满；
+   * 2. 城周围保护区留出有机缓坡余量，且各山丘中心保持间距，彻底杜绝山丘连成环形战壕围城；
+   * 3. 外圈 2~3 格平滑斜坡裙边 + 内部宽阔平坦台地顶面（Plateau Top），树木与大山稳立于平顶丘陵与山坡之上；
+   * 4. `0x141046720` / `0x141046AE0` 填平 1 格窄沟、削去 1 格刀刃尖脊，并对斜坡角点做保平顶柔化，彻底消除三角折面破损。
    */
   private generateDeElevationGrid(
     cx: number,
@@ -1364,58 +1307,150 @@ export class Scene13GroundLayerGL {
     category: 'big_city' | 'medium_city' | 'small_city' | 'stockade' | 'pass'
   ): void {
     const N = this.N;
-    const M = this.isoM;
-    const isoTileElev = new Int8Array(M * M);
-    for (let i = 0; i < M * M; i++) {
-      isoTileElev[i] = Math.max(0, Math.min(7, Math.round(this.isoElev[i])));
-    }
+    const V = N + 1;
+    const tileElev = new Int8Array(N * N);
 
-    const inProtectG = (gx: number, gy: number) => Math.hypot(gx - cx, gy - cy) < rProtect;
-    const isWetG = (gx: number, gy: number): boolean => {
-      const x0 = Math.round(gx), y0 = Math.round(gy);
-      if (x0 < 0 || x0 >= N || y0 < 0 || y0 >= N) return true;
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let dx = -1; dx <= 1; dx++) {
-          const nx = Math.min(N - 1, Math.max(0, x0 + dx));
-          const ny = Math.min(N - 1, Math.max(0, y0 + dy));
-          if ((this.smoothWater[ny * N + nx] ?? 0) >= 0.16) return true;
-        }
-      }
-      return false;
-    };
+    const inProtect = (gx: number, gy: number) => Math.hypot(gx - cx, gy - cy) < rProtect;
+    const isWet = (gx: number, gy: number) =>
+      gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
-    const inMapIJ = (I: number, J: number): boolean => {
-      if (I < 2 || I >= M - 2 || J < 2 || J >= M - 2) return false;
-      const gx = (I - (J - N)) * 0.5;
-      const gy = (I + (J - N)) * 0.5;
-      return gx >= 2.5 && gx <= N - 2.5 && gy >= 2.5 && gy <= N - 2.5;
-    };
-
-    const isBlockedIJ = (I: number, J: number): boolean => {
-      if (!inMapIJ(I, J)) return true;
-      const gx = (I - (J - N)) * 0.5;
-      const gy = (I + (J - N)) * 0.5;
-      return inProtectG(gx, gy) || isWetG(gx, gy);
+    // 生长边界：比 rProtect 多留 3 格缓冲 + 随方位角自然起伏，杜绝多个团块贴着保护圈长成一圈环形墙
+    const wobPhase1 = rnd() * Math.PI * 2;
+    const wobPhase2 = rnd() * Math.PI * 2;
+    const inGrowthGuard = (gx: number, gy: number): boolean => {
+      const dx = gx - cx, dy = gy - cy;
+      const dist = Math.hypot(dx, dy);
+      const ang = Math.atan2(dy, dx);
+      const guardR = rProtect + 3.0 + 2.2 * Math.sin(3 * ang + wobPhase1) + 1.5 * Math.cos(2 * ang + wobPhase2);
+      return dist < guardR;
     };
 
     const isBig = category === 'big_city';
     const isPass = category === 'pass';
     const isStockade = category === 'stockade';
-    const maxIntLevel = Math.max(2, Math.min(7, Math.floor(maxLevel)));
+    const maxIntLevel = Math.max(2, Math.min(4, Math.floor(maxLevel)));
 
-    // 1. 识别外围森林/树木团块与真实 DEM 山脊，作为优先高地种子（保证树长在丘陵/山上）
-    const prioritySeedsG: Array<{ x: number; y: number }> = [];
+    let clumpCount = 4 + Math.floor(rnd() * 3); // 4 ~ 6 处独立外围平顶丘陵
+    if (isBig) clumpCount = 4 + Math.floor(rnd() * 2);
+    else if (isPass) clumpCount = 4 + Math.floor(rnd() * 3);
+    else if (isStockade) clumpCount = 3 + Math.floor(rnd() * 3);
+
+    const D4: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    const D8: ReadonlyArray<[number, number]> = [
+      [-1, 0], [1, 0], [0, -1], [0, 1],
+      [-1, -1], [1, -1], [-1, 1], [1, 1],
+    ];
+
+    // DE 0x14135E990 + 0x14135F1F0：5×5 邻域内聚生长圆润团块
+    const growCohesiveClump = (
+      seedX: number,
+      seedY: number,
+      targetTiles: number,
+      axisAngle: number,
+      aniso: number
+    ): Set<number> => {
+      const clump = new Set<number>();
+      if (seedX < 3 || seedX >= N - 3 || seedY < 3 || seedY >= N - 3) return clump;
+      if (inGrowthGuard(seedX, seedY) || isWet(seedX, seedY)) return clump;
+
+      const visited = new Uint8Array(N * N);
+      const startIdx = seedY * N + seedX;
+      clump.add(startIdx);
+      visited[startIdx] = 1;
+
+      const cosA = Math.cos(axisAngle), sinA = Math.sin(axisAngle);
+      const count5x5 = (x: number, y: number): number => {
+        let cnt = 0;
+        for (let dy = -2; dy <= 2; dy++) {
+          const ny = y + dy;
+          if (ny < 0 || ny >= N) continue;
+          const row = ny * N;
+          for (let dx = -2; dx <= 2; dx++) {
+            const nx = x + dx;
+            if (nx < 0 || nx >= N) continue;
+            if (clump.has(row + nx)) cnt++;
+          }
+        }
+        return cnt;
+      };
+
+      const frontier: Array<{ x: number; y: number; cost: number }> = [];
+      const pushNbrs = (cx0: number, cy0: number) => {
+        for (const [dx, dy] of D4) {
+          const nx = cx0 + dx, ny = cy0 + dy;
+          if (nx < 3 || nx >= N - 3 || ny < 3 || ny >= N - 3) continue;
+          if (inGrowthGuard(nx, ny) || isWet(nx, ny)) continue;
+          const nIdx = ny * N + nx;
+          if (visited[nIdx]) continue;
+          visited[nIdx] = 1;
+          const bVar4 = count5x5(nx, ny);
+          const rx = nx - seedX, ry = ny - seedY;
+          const crossAxis = Math.abs(-rx * sinA + ry * cosA);
+          // DE 0x14135E990 原生优先队列权重公式: 250 - 15 * bVar4 + rand(0..99)
+          const cost = (250 - 15 * bVar4) + Math.floor(rnd() * 95) + Math.floor(crossAxis * aniso * 8);
+          frontier.push({ x: nx, y: ny, cost });
+        }
+      };
+
+      pushNbrs(seedX, seedY);
+
+      while (frontier.length > 0 && clump.size < targetTiles) {
+        let bestIdx = 0;
+        let bestCost = frontier[0].cost;
+        for (let i = 1; i < frontier.length; i++) {
+          if (frontier[i].cost < bestCost) {
+            bestCost = frontier[i].cost;
+            bestIdx = i;
+          }
+        }
+        const pick = frontier[bestIdx];
+        frontier[bestIdx] = frontier[frontier.length - 1];
+        frontier.pop();
+
+        if (count5x5(pick.x, pick.y) > 0) {
+          clump.add(pick.y * N + pick.x);
+          pushNbrs(pick.x, pick.y);
+        }
+      }
+
+      // 5×5 多数平滑：填平内部空洞并抹除单格毛刺，使高台轮廓圆润饱满
+      const toAdd: number[] = [];
+      for (let y = 3; y < N - 3; y++) {
+        for (let x = 3; x < N - 3; x++) {
+          const idx = y * N + x;
+          if (clump.has(idx) || inGrowthGuard(x, y) || isWet(x, y)) continue;
+          if (count5x5(x, y) >= 13) toAdd.push(idx);
+        }
+      }
+      for (const idx of toAdd) clump.add(idx);
+
+      const toRem: number[] = [];
+      for (const idx of clump) {
+        const x = idx % N, y = (idx - x) / N;
+        let n4 = 0;
+        for (const [dx, dy] of D4) {
+          if (clump.has((y + dy) * N + (x + dx))) n4++;
+        }
+        if (n4 <= 1) toRem.push(idx);
+      }
+      for (const idx of toRem) clump.delete(idx);
+
+      return clump;
+    };
+
+    // 识别外围森林/树木团块与真实 DEM 山脊，作为优先高地种子（保证树长在丘陵/山上）
+    const prioritySeeds: Array<{ x: number; y: number }> = [];
     const treeTileMask = new Uint8Array(N * N);
     const sf = this.smoothForest;
     if (sf) {
-      for (let y = 3; y < N - 3; y++) {
-        for (let x = 3; x < N - 3; x++) {
-          if (inProtectG(x, y) || isWetG(x, y)) continue;
+      for (let y = 4; y < N - 4; y++) {
+        for (let x = 4; x < N - 4; x++) {
+          if (inProtect(x, y) || isWet(x, y)) continue;
           if (sf[y * N + x] >= 0.16) {
             treeTileMask[y * N + x] = 1;
-            if (x % 4 === 0 && y % 4 === 0) {
-              const close = prioritySeedsG.some(s => Math.hypot(s.x - x, s.y - y) < 7);
-              if (!close) prioritySeedsG.push({ x, y });
+            if (!inGrowthGuard(x, y) && x % 4 === 0 && y % 4 === 0) {
+              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+              if (!close) prioritySeeds.push({ x, y });
             }
           }
         }
@@ -1429,11 +1464,11 @@ export class Scene13GroundLayerGL {
         const gx = Math.round((ob.x ?? 0) - 0.5);
         const gy = Math.round((ob.y ?? 0) - 0.5);
         if (gx < 3 || gx >= N - 3 || gy < 3 || gy >= N - 3) continue;
-        if (inProtectG(gx, gy) || isWetG(gx, gy)) continue;
+        if (inProtect(gx, gy) || isWet(gx, gy)) continue;
         treeCellCounts[gy * N + gx]++;
       }
-      for (let y = 3; y < N - 3; y++) {
-        for (let x = 3; x < N - 3; x++) {
+      for (let y = 4; y < N - 4; y++) {
+        for (let x = 4; x < N - 4; x++) {
           if (treeCellCounts[y * N + x] <= 0) continue;
           let nearTrees = 0;
           for (let dy = -1; dy <= 1; dy++) {
@@ -1445,149 +1480,96 @@ export class Scene13GroundLayerGL {
             for (let dy = -1; dy <= 1; dy++) {
               for (let dx = -1; dx <= 1; dx++) {
                 const nx = x + dx, ny = y + dy;
-                if (!inProtectG(nx, ny) && !isWetG(nx, ny)) treeTileMask[ny * N + nx] = 1;
+                if (!inProtect(nx, ny) && !isWet(nx, ny)) treeTileMask[ny * N + nx] = 1;
               }
             }
-            const close = prioritySeedsG.some(s => Math.hypot(s.x - x, s.y - y) < 7);
-            if (!close) prioritySeedsG.push({ x, y });
+            if (!inGrowthGuard(x, y)) {
+              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+              if (!close) prioritySeeds.push({ x, y });
+            }
           }
         }
       }
     }
     if (this.origElev && this.origElev.length === N * N) {
-      for (let y = 4; y < N - 4; y += 4) {
-        for (let x = 4; x < N - 4; x += 4) {
-          if (inProtectG(x, y) || isWetG(x, y)) continue;
+      for (let y = 6; y < N - 6; y += 4) {
+        for (let x = 6; x < N - 6; x += 4) {
+          if (inGrowthGuard(x, y) || isWet(x, y)) continue;
           if (this.origElev[y * N + x] >= 2) {
-            const close = prioritySeedsG.some(s => Math.hypot(s.x - x, s.y - y) < 8);
-            if (!close) prioritySeedsG.push({ x, y });
+            const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+            if (!close) prioritySeeds.push({ x, y });
           }
         }
       }
     }
 
-    const D4_ISO: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
-
-    /**
-     * DE `check_elevation` (`VA 0x14135F1F0`)：
-     * 扫描等轴网格 `(I, J)` 周围 `5×5` 窗口 (`[I-2..I+2, J-2..J+2]`)，返回已达到 `targetElev` 的格数 `bVar4` (0..25)
-     */
-    const count5x5AtTarget = (I: number, J: number, targetElev: number): number => {
-      let cnt = 0;
-      for (let dI = -2; dI <= 2; dI++) {
-        const nI = I + dI;
-        if (nI < 0 || nI >= M) continue;
-        const row = nI * M;
-        for (let dJ = -2; dJ <= 2; dJ++) {
-          const nJ = J + dJ;
-          if (nJ < 0 || nJ >= M) continue;
-          if (isoTileElev[row + nJ] >= targetElev) cnt++;
-        }
-      }
-      return cnt;
-    };
-
-    /**
-     * DE `base_elevation_generate` (`VA 0x14135E990`)：
-     * 从种子 `(seedI, seedJ)` 直接以平顶高度 `targetElev` 向外内聚生长一个高台团块，
-     * 优先队列权重严格采用 DE 逆向公式：`cost = 250 - 15 * bVar4 + rand(0..99)`
-     */
-    const growDePlateauClump = (
-      seedI: number,
-      seedJ: number,
-      baseElev: number,
-      targetElev: number,
-      maxDiamondTiles: number,
-      axisAngle: number,
-      aniso: number
-    ): number => {
-      if (isBlockedIJ(seedI, seedJ)) return 0;
-      const startIdx = seedI * M + seedJ;
-      if (isoTileElev[startIdx] < baseElev) return 0;
-
-      const visited = new Uint8Array(M * M);
-      visited[startIdx] = 1;
-      isoTileElev[startIdx] = Math.max(isoTileElev[startIdx], targetElev);
-      let placed = 1;
-
-      const cosA = Math.cos(axisAngle), sinA = Math.sin(axisAngle);
-      const frontier: Array<{ I: number; J: number; cost: number }> = [];
-
-      const pushNeighbors = (cI: number, cJ: number) => {
-        for (const [dI, dJ] of D4_ISO) {
-          const nI = cI + dI, nJ = cJ + dJ;
-          if (isBlockedIJ(nI, nJ)) continue;
-          const nIdx = nI * M + nJ;
-          if (visited[nIdx] || isoTileElev[nIdx] < baseElev) continue;
-          visited[nIdx] = 1;
-          const bVar4 = count5x5AtTarget(nI, nJ, targetElev);
-          // DE 0x14135E990 核心公式: (250 - 15 * bVar4) + rand(0..99)，叠加轻微主轴走向偏置使山脉走势自然多样
-          const relI = nI - seedI, relJ = nJ - seedJ;
-          const crossAxis = Math.abs(-relI * sinA + relJ * cosA);
-          const cost = (250 - 15 * bVar4) + Math.floor(rnd() * 100) + Math.floor(crossAxis * aniso * 6);
-          frontier.push({ I: nI, J: nJ, cost });
-        }
-      };
-
-      pushNeighbors(seedI, seedJ);
-
-      while (frontier.length > 0 && placed < maxDiamondTiles) {
-        let bestIdx = 0;
-        let bestCost = frontier[0].cost;
-        for (let i = 1; i < frontier.length; i++) {
-          if (frontier[i].cost < bestCost) {
-            bestCost = frontier[i].cost;
-            bestIdx = i;
+    // 将团块转为「外缘阶梯缓坡 + 内部宽阔平顶」高程
+    const applyPlateauElevation = (region: Set<number>, peakH: number) => {
+      const dist = new Map<number, number>();
+      let q: number[] = [];
+      for (const idx of region) {
+        const x = idx % N, y = (idx - x) / N;
+        let isEdge = false;
+        for (const [dx, dy] of D8) {
+          const nx = x + dx, ny = y + dy;
+          if (nx < 0 || nx >= N || ny < 0 || ny >= N || !region.has(ny * N + nx)) {
+            isEdge = true;
+            break;
           }
         }
-        const pick = frontier[bestIdx];
-        frontier[bestIdx] = frontier[frontier.length - 1];
-        frontier.pop();
-
-        const bVar4 = count5x5AtTarget(pick.I, pick.J, targetElev);
-        if (bVar4 > 0) {
-          const pIdx = pick.I * M + pick.J;
-          isoTileElev[pIdx] = Math.max(isoTileElev[pIdx], targetElev);
-          placed++;
-          pushNeighbors(pick.I, pick.J);
+        if (isEdge) {
+          dist.set(idx, 1);
+          q.push(idx);
         }
       }
-
-      return placed;
+      while (q.length > 0) {
+        const nextQ: number[] = [];
+        for (const idx of q) {
+          const curD = dist.get(idx)!;
+          const x = idx % N, y = (idx - x) / N;
+          for (const [dx, dy] of D4) {
+            const nx = x + dx, ny = y + dy;
+            if (nx < 0 || nx >= N || ny < 0 || ny >= N) continue;
+            const nbr = ny * N + nx;
+            if (region.has(nbr) && !dist.has(nbr)) {
+              dist.set(nbr, curD + 1);
+              nextQ.push(nbr);
+            }
+          }
+        }
+        q = nextQ;
+      }
+      for (const idx of region) {
+        const d = dist.get(idx) ?? 1;
+        const h = Math.min(peakH, d);
+        if (h > tileElev[idx]) tileElev[idx] = h;
+      }
     };
 
-    // 2. 第一遍 DE `base_elevation_generate`：在外围生成主平顶高台团块（高度 2~3 级）
-    let baseClumpCount = 4 + Math.floor(rnd() * 4);
-    if (isBig) baseClumpCount = 4 + Math.floor(rnd() * 3);
-    else if (isPass) baseClumpCount = 5 + Math.floor(rnd() * 3);
-    else if (isStockade) baseClumpCount = 3 + Math.floor(rnd() * 3);
-
-    const totalClumps = Math.max(baseClumpCount, Math.min(14, prioritySeedsG.length + 3));
-    const placedCenters: Array<{ I: number; J: number; elev: number }> = [];
+    const placedSeeds: Array<{ x: number; y: number }> = [];
+    const totalClumps = Math.min(7, Math.max(clumpCount, prioritySeeds.length));
 
     for (let c = 0; c < totalClumps; c++) {
-      let seedI = 0, seedJ = 0, found = false;
+      let seedX = 0, seedY = 0, found = false;
 
-      if (c < prioritySeedsG.length) {
-        const ps = prioritySeedsG[c];
-        const sI = Math.round(ps.x + ps.y);
-        const sJ = Math.round(ps.y - ps.x + N);
-        if (!isBlockedIJ(sI, sJ) && isoTileElev[sI * M + sJ] === 0) {
-          seedI = sI;
-          seedJ = sJ;
+      if (c < prioritySeeds.length) {
+        const ps = prioritySeeds[c];
+        const tooClose = placedSeeds.some(s => Math.hypot(s.x - ps.x, s.y - ps.y) < 16);
+        if (!tooClose && !inGrowthGuard(ps.x, ps.y) && !isWet(ps.x, ps.y) && tileElev[ps.y * N + ps.x] === 0) {
+          seedX = ps.x;
+          seedY = ps.y;
           found = true;
         }
       }
 
       if (!found) {
-        for (let attempt = 0; attempt < 60; attempt++) {
-          const sx = 5 + Math.floor(rnd() * (N - 10));
-          const sy = 5 + Math.floor(rnd() * (N - 10));
-          const sI = sx + sy;
-          const sJ = sy - sx + N;
-          if (!isBlockedIJ(sI, sJ) && isoTileElev[sI * M + sJ] === 0) {
-            seedI = sI;
-            seedJ = sJ;
+        for (let attempt = 0; attempt < 80; attempt++) {
+          const sx = 8 + Math.floor(rnd() * (N - 16));
+          const sy = 8 + Math.floor(rnd() * (N - 16));
+          const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < 18);
+          if (!tooClose && !inGrowthGuard(sx, sy) && !isWet(sx, sy) && tileElev[sy * N + sx] === 0) {
+            seedX = sx;
+            seedY = sy;
             found = true;
             break;
           }
@@ -1595,74 +1577,172 @@ export class Scene13GroundLayerGL {
       }
       if (!found) continue;
 
-      const gx0 = Math.round((seedI - (seedJ - N)) * 0.5);
-      const gy0 = Math.round((seedI + (seedJ - N)) * 0.5);
-      const demH = (this.origElev && gx0 >= 0 && gx0 < N && gy0 >= 0 && gy0 < N)
-        ? (this.origElev[gy0 * N + gx0] ?? 0)
-        : 0;
-
-      // 主平顶高度（2 级或 3 级），保证每个团块切坡后仍有宽阔平顶
+      const demH = this.origElev ? (this.origElev[seedY * N + seedX] ?? 0) : 0;
       const hRoll = rnd();
-      let targetElev = 2;
-      if (maxIntLevel >= 3 && (hRoll < 0.58 || demH >= 2)) {
-        targetElev = 3;
+      let peakH = 2;
+      if (maxIntLevel >= 3 && (hRoll < 0.55 || demH >= 2)) {
+        peakH = 3;
       }
-      targetElev = Math.min(maxIntLevel, targetElev);
+      peakH = Math.max(2, Math.min(maxIntLevel, peakH));
 
       const styleRoll = rnd();
       const axisAngle = rnd() * Math.PI;
-      const aniso = styleRoll < 0.45 ? 0.25 : styleRoll < 0.80 ? (1.0 + rnd() * 1.1) : (1.8 + rnd() * 1.0);
-      const diamondTiles = isBig
-        ? (110 + Math.floor(rnd() * 130))
-        : (85 + Math.floor(rnd() * 115));
+      const aniso = styleRoll < 0.45 ? 0.20 : styleRoll < 0.80 ? (0.8 + rnd() * 0.9) : (1.5 + rnd() * 0.9);
+      const clumpTiles = isBig
+        ? (115 + Math.floor(rnd() * 110))
+        : (90 + Math.floor(rnd() * 95));
 
-      const count = growDePlateauClump(seedI, seedJ, 0, targetElev, diamondTiles, axisAngle, aniso);
-      if (count >= 24) {
-        placedCenters.push({ I: seedI, J: seedJ, elev: targetElev });
+      const region = growCohesiveClump(seedX, seedY, clumpTiles, axisAngle, aniso);
+      if (region.size < 28) continue;
+
+      placedSeeds.push({ x: seedX, y: seedY });
+      applyPlateauElevation(region, peakH);
+    }
+
+    // 保底：外围树木所在格若尚未在丘陵上，按 DE 5×5 内聚生长平缓丘陵托底，保证树长在丘陵上
+    for (let y = 4; y < N - 4; y += 3) {
+      for (let x = 4; x < N - 4; x += 3) {
+        const idx = y * N + x;
+        if (!treeTileMask[idx] || tileElev[idx] > 0 || inProtect(x, y) || isWet(x, y)) continue;
+        const region = growCohesiveClump(x, y, 48 + Math.floor(rnd() * 40), rnd() * Math.PI, 0.35 + rnd() * 0.5);
+        if (region.size >= 14) {
+          applyPlateauElevation(region, 2);
+        }
       }
     }
 
-    // 3. 保底：凡外围树木所在格（treeTileMask === 1）若尚未被高台覆盖，直接调用 DE `growDePlateauClump` (0x14135E990) 生长有机平顶台地（拒绝生硬 3x3 方块）
-    const treeElev = Math.min(maxIntLevel, 2);
-    for (let y = 3; y < N - 3; y += 2) {
-      for (let x = 3; x < N - 3; x += 2) {
-        if (!treeTileMask[y * N + x]) continue;
-        const sI = x + y;
-        const sJ = y - x + N;
-        if (isBlockedIJ(sI, sJ) || isoTileElev[sI * M + sJ] >= treeElev) continue;
-        const subTiles = 42 + Math.floor(rnd() * 45);
-        growDePlateauClump(sI, sJ, 0, treeElev, subTiles, rnd() * Math.PI, 0.35 + rnd() * 0.65);
+    // DE RGE_Map::clean_elevation (0x14103CC60 -> 0x141046720 + 0x141046AE0)：
+    // 1) 填平 1 格窄沟与凹坑；2) 削去 1 格宽刀刃尖脊；3) 强制 8 邻域落差 <= 1
+    for (let pass = 0; pass < 2; pass++) {
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          if (inProtect(x, y) || isWet(x, y)) continue;
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN > h && hS > h) || (hW > h && hE > h)) {
+            tileElev[idx] = Math.min(maxIntLevel, h + 1);
+          }
+        }
+      }
+      for (let y = 2; y < N - 2; y++) {
+        for (let x = 2; x < N - 2; x++) {
+          const idx = y * N + x;
+          const h = tileElev[idx];
+          if (h <= 0) continue;
+          const hN = tileElev[(y - 1) * N + x], hS = tileElev[(y + 1) * N + x];
+          const hW = tileElev[y * N + (x - 1)], hE = tileElev[y * N + (x + 1)];
+          if ((hN < h && hS < h) || (hW < h && hE < h)) {
+            tileElev[idx] = h - 1;
+          }
+        }
       }
     }
 
-    // 4. 第二遍 DE `base_elevation_generate`（复刻 DE 多级叠层台地）：在部分宽阔高台内部叠生更高一级（3~4 级）二级平顶主峰
-    if (maxIntLevel >= 3 && placedCenters.length > 0) {
-      for (const pc of placedCenters) {
-        if (rnd() < 0.45) continue;
-        const nextElev = Math.min(maxIntLevel, pc.elev + 1);
-        if (nextElev <= pc.elev) continue;
-        const subTiles = 32 + Math.floor(rnd() * 48);
-        growDePlateauClump(pc.I, pc.J, pc.elev, nextElev, subTiles, rnd() * Math.PI, 0.4 + rnd() * 0.8);
+    for (let pass = 0; pass < 4; pass++) {
+      let changed = false;
+      for (let y = 1; y < N - 1; y++) {
+        for (let x = 1; x < N - 1; x++) {
+          if (inProtect(x, y) || isWet(x, y)) {
+            if (tileElev[y * N + x] !== 0) {
+              tileElev[y * N + x] = 0;
+              changed = true;
+            }
+            continue;
+          }
+          const cur = tileElev[y * N + x];
+          if (cur <= 0) continue;
+          for (const [dx, dy] of D8) {
+            const nbrH = tileElev[(y + dy) * N + (x + dx)];
+            if (cur - nbrH > 1) {
+              tileElev[y * N + x] = nbrH + 1;
+              changed = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!changed) break;
+    }
+
+    // 将整数瓦片高程转换至 cornerElev 角点网格，并对斜坡过渡带做 2 遍保平顶圆滑滤波（山顶平台与平地保持绝对平坦）
+    const hillCorners = new Float32Array(V * V);
+    const isFlatCorner = new Uint8Array(V * V);
+    for (let gy = 0; gy <= N; gy++) {
+      for (let gx = 0; gx <= N; gx++) {
+        if (inProtect(gx, gy)) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+        if (
+          (gx > 0 && gy > 0 && isWet(gx - 1, gy - 1)) ||
+          (gx < N && gy > 0 && isWet(gx, gy - 1)) ||
+          (gx > 0 && gy < N && isWet(gx - 1, gy)) ||
+          (gx < N && gy < N && isWet(gx, gy))
+        ) {
+          isFlatCorner[gy * V + gx] = 1;
+          continue;
+        }
+
+        let sum = 0, count = 0, minT = 99, maxT = -99;
+        const sampleT = (tx: number, ty: number) => {
+          const v = tileElev[ty * N + tx];
+          sum += v;
+          count++;
+          if (v < minT) minT = v;
+          if (v > maxT) maxT = v;
+        };
+        if (gx > 0 && gy > 0) sampleT(gx - 1, gy - 1);
+        if (gx < N && gy > 0) sampleT(gx, gy - 1);
+        if (gx > 0 && gy < N) sampleT(gx - 1, gy);
+        if (gx < N && gy < N) sampleT(gx, gy);
+
+        const h = count > 0 ? sum / count : 0;
+        hillCorners[gy * V + gx] = h;
+        // 若四角相邻瓦片全为同一高度（0 级平地或山顶平顶台地内部），锁定为平坦角点
+        if (minT === maxT) {
+          isFlatCorner[gy * V + gx] = 1;
+        }
       }
     }
 
-    // 5. 调用 DE `RGE_Map::clean_elevation` (0x14103CC60 -> 0x141046720 + 0x141046AE0) 切出 8 邻域阶梯斜坡并消除单格尖脊
-    this.cleanDeIsoElevation(isoTileElev, maxIntLevel, isBlockedIJ);
-
-    // 6. 写入 isoElev 并同步 cornerElev 与 data.elev
-    for (let i = 0; i < M * M; i++) {
-      if (isoTileElev[i] > this.isoElev[i]) {
-        this.isoElev[i] = isoTileElev[i];
+    // 仅对斜坡过渡角点做 2 遍圆润平滑，消除正交网格 90° 折角锯齿，同时保留山顶平顶台地边界
+    for (let pass = 0; pass < 2; pass++) {
+      const prev = new Float32Array(hillCorners);
+      for (let gy = 1; gy < N; gy++) {
+        for (let gx = 1; gx < N; gx++) {
+          const idx = gy * V + gx;
+          if (isFlatCorner[idx]) continue;
+          const self = prev[idx];
+          const avg4 = 0.25 * (
+            prev[(gy - 1) * V + gx] +
+            prev[(gy + 1) * V + gx] +
+            prev[gy * V + (gx - 1)] +
+            prev[gy * V + (gx + 1)]
+          );
+          hillCorners[idx] = self * 0.52 + avg4 * 0.48;
+        }
       }
     }
-    this.syncCornerElevFromIso();
+
+    for (let i = 0; i < V * V; i++) {
+      if (hillCorners[i] > this.cornerElev[i]) {
+        this.cornerElev[i] = hillCorners[i];
+      }
+    }
+    if (this.data?.elev && this.data.elev.length === N * N) {
+      for (let i = 0; i < N * N; i++) {
+        this.data.elev[i] = tileElev[i];
+      }
+    }
   }
 
   /**
    * 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
    * 中城/小城地形生成：
    * 1. 城池与城周围（护城河及城外宽幅平地缓冲带 rFlat + 7.5 格）统一整平为 0 级开阔平地；
-   * 2. 外围高地丘陵推到城外围（rFlat + 7.5 格之外），按 DE `0x14135E990` + `0x14103CC60` 生成平顶阶梯丘陵。
+   * 2. 外围高地丘陵推到城外围（rFlat + 7.5 格之外），按真实水陆、树林与 DEM 随机生长多样化丘陵。
    */
   public flattenMediumSmallCityTerrain(
     screenX: number,
@@ -1675,6 +1755,7 @@ export class Scene13GroundLayerGL {
   ): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return;
+    this.applySeedNoiseOffset(seedStr);
 
     let seed = 2166136261;
     for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
@@ -1689,11 +1770,10 @@ export class Scene13GroundLayerGL {
 
     // 1. 城池及城周围统一整平为 0 级平地
     this.cornerElev.fill(0);
-    this.isoElev.fill(0);
 
-    // 2. 城外围（rFlat + 7.5 格以外）采用 DE 0x14135E990 + 0x14103CC60 生成平顶阶梯丘陵
+    // 2. 城外围（rFlat + 7.5 格以外）采用 DE 团块元胞生长出多样化平顶丘陵
     const rProt = rFlat + (isMedium ? 7.5 : 7.0);
-    const maxH = isMedium ? 4.0 : 3.5;
+    const maxH = isMedium ? 3.5 : 3.0;
     this.generateDeElevationGrid(cx, cy, rProt, maxH, rnd, cityType);
 
     this.updateCornerLight();
@@ -1702,7 +1782,12 @@ export class Scene13GroundLayerGL {
 
   /**
    * 🔴 [2026-10-12 主人令「PASS的布局：最中间是城堡，下一级城墙，外围城墙，城墙外围；4层随机平缓起伏 1~7 级小山包，随机多样化」]
-   * 关隘（PASS）专属 4 层阶梯高台与外围多样化 DE 平顶阶梯山丘生成（全整数台地 + DE 0x14103CC60 切坡）
+   * 关隘（PASS）专属 4 层阶梯高台与外围多样化小山包生成：
+   * 1. 第 1 层（核心顶台）：城堡（H_castle 4~7 级）；
+   * 2. 第 2 层（内城平台）：内圈石墙与 8 座箭塔（H_inner = H_castle - 1~2 级）；
+   * 3. 第 3 层（外城平台）：外圈石墙与四门（H_outer = H_inner - 1~2 级）；
+   * 4. 第 4 层（城墙外围）：外围原野基底（0~1 级）＋ 4 组完全随机形态与高度（1~7 级）的平缓起伏小山丘。
+   * 全程基于关隘 ID 和种子 PRNG 驱动，确保每座关隘形态、高程落差与山包分布千姿百态、绝不重样。
    */
   public flattenPassTerraces(
     screenX: number,
@@ -1714,11 +1799,13 @@ export class Scene13GroundLayerGL {
     bldPts: ReadonlyArray<{ x: number; y: number }> = []
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
-    if (!c) return { castleLevel: 6, innerLevel: 4, outerLevel: 2 };
+    if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
+    this.applySeedNoiseOffset(seedStr);
 
     const N = this.N;
-    const M = this.isoM;
+    const V = N + 1;
 
+    // 1. 种子 PRNG 伪随机数流
     let seed = 2166136261;
     for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
     const rnd = () => {
@@ -1726,68 +1813,97 @@ export class Scene13GroundLayerGL {
       return (seed >>> 0) / 4294967296;
     };
 
-    const castleLevel = rnd() < 0.6 ? 7 : 6;
-    const innerLevel = castleLevel - 2;
-    const outerLevel = innerLevel - 2;
+    // 2. 居高临下且保留微幅随机性：严格保证 城堡(6.5~7) > 内城(4.5~5) > 外墙(3~3.5) > 外围丘陵(<=2.8)
+    const castleLevel = 6.5 + (rnd() < 0.6 ? 0.5 : 0); // 6.5 或 7.0 级
+    const innerLevel = 4.5 + (rnd() < 0.6 ? 0.5 : 0);  // 4.5 或 5.0 级
+    const outerLevel = 3.0 + (rnd() < 0.5 ? 0.5 : 0);  // 3.0 或 3.5 级
 
+    // 3. 台地边缘按实际墙件 / 建筑位置定（曼哈顿距离 |dx|+|dy|：两圈城墙在地面格里都是菱形）
+    // 🔴 [2026-10-15 主人令「险要的内墙、箭塔不平你来修」] 原写死 R1=4.0（+1.8 坡）/ R2=8.6 / R3=14.2，实测独松关：
+    //    箭塔在 5~6 格、坡到 5.8 才完 ⇒ 箭塔 5.01~6.15 级；内墙在 8~9 格、R2=8.6 切在墙上 ⇒ 内墙 3.81~5.00 级。
+    //    改为：墙件按最大间隔分内/外两圈，箭塔取城堡以外的建筑；每道坡都放进两圈之间的空当，离墙件留 PAD 给地面双线性插值。
     const cx = c.gx, cy = c.gy;
     const manOf = (p: { x: number; y: number }): number => {
       const q = this.screenToCell(p.x, p.y, W, H);
       return q ? Math.abs(q.gx - cx) + Math.abs(q.gy - cy) : -1;
     };
     const PAD = 1.0;
-    let castleTop = 3.0;
-    let innerEdge = 10.0;
-    let outerEdge = 14.0;
+    let castleTop = 2.6, castleFoot = 4.1;     // 城堡平顶 / 降到内城的坡脚
+    let innerEdge = 9.8, innerFoot = 11.1;     // 内城平台外缘 / 降到外城的坡脚
+    let outerEdge = 14.0;                      // 外城平台外缘（往外是攻方仰攻坡）
     const wm = wallPts.map(manOf).filter(v => v >= 0).sort((a, b) => a - b);
     if (wm.length >= 8) {
       let gi = 0, gap = 0;
       for (let i = 1; i < wm.length; i++) if (wm[i] - wm[i - 1] > gap) { gap = wm[i] - wm[i - 1]; gi = i; }
       if (gap >= 1.5) {
-        const innerMax = wm[gi - 1], outerMax = wm[wm.length - 1];
+        const innerMax = wm[gi - 1], outerMin = wm[gi], outerMax = wm[wm.length - 1];
         innerEdge = innerMax + PAD;
+        innerFoot = Math.max(innerEdge + 0.8, outerMin - PAD);
         outerEdge = outerMax + 1.0;
       } else {
-        outerEdge = wm[wm.length - 1] + 1.0;
+        outerEdge = wm[wm.length - 1] + 1.0;   // 只有一圈墙：整圈放外城平台
         innerEdge = Math.min(innerEdge, outerEdge - 3);
+        innerFoot = Math.min(innerFoot, outerEdge - 1.5);
       }
     }
-    const bm = bldPts.map(manOf).filter(v => v >= 1.5).sort((a, b) => a - b);
+    const bm = bldPts.map(manOf).filter(v => v >= 1.5).sort((a, b) => a - b);   // 城堡在城心（< 1.5），其余是箭塔
     if (bm.length) {
-      const castleFoot = Math.max(2.0, bm[0] - PAD - 0.2);
-      castleTop = Math.max(1.8, Math.min(castleTop, castleFoot - 1.0));
+      castleFoot = Math.max(2.0, bm[0] - PAD - 0.2);
+      castleTop = Math.max(1.6, Math.min(castleTop, castleFoot - 1.2));
     }
     const R3 = outerEdge;
 
-    this.cornerElev.fill(0);
-    this.isoElev.fill(0);
+    const phase1 = rnd() * 6.28;
+    const phase2 = rnd() * 6.28;
+    const deformAmp = 0.06 + rnd() * 0.05; // 外坡坡脚的起伏幅度（只作用在外城平台以外）
 
-    const isoTileElev = new Int8Array(M * M);
-    for (let I = 0; I < M; I++) {
-      for (let J = 0; J < M; J++) {
-        const x = (I - (J - N)) * 0.5;
-        const y = (I + (J - N)) * 0.5;
-        if (x < 0 || x > N || y < 0 || y > N) continue;
-        const dIso = Math.abs(x - cx) + Math.abs(y - cy);
+    const maxCheckDist = R3 * 1.25 + 4.5; // 防止 rJitter 放大后坡脚被提前 continue 截断
+
+    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保关隘台地与外围峡谷崇山由算法纯粹驱动
+    this.cornerElev.fill(0);
+
+    for (let y = 0; y <= N; y++) {
+      for (let x = 0; x <= N; x++) {
+        const dx = x - cx, dy = y - cy;
+        const dIso = Math.abs(dx) + Math.abs(dy); // 等轴菱形曼哈顿距离
+        if (dIso > maxCheckDist) continue; // 超出外圈台地缓坡范围由外围地形接管
+
+        const theta = Math.atan2(dy, dx);
+        const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
+
+        let targetH = 0;
         if (dIso <= castleTop) {
-          isoTileElev[I * M + J] = castleLevel;
+          // 1) 顶峰城堡平顶台地 (6.5~7级)
+          targetH = castleLevel;
         } else if (dIso <= innerEdge) {
-          isoTileElev[I * M + J] = innerLevel;
+          // 2) castleTop→castleFoot 从城堡降到内城；之后到 innerEdge 全平（箭塔、内墙都在这一层）
+          const s = Math.min(1, Math.max(0, (dIso - castleTop) / (castleFoot - castleTop)));
+          const t = s * s * (3 - 2 * s);
+          targetH = castleLevel + (innerLevel - castleLevel) * t;
         } else if (dIso <= R3) {
-          isoTileElev[I * M + J] = outerLevel;
+          // 3) innerEdge→innerFoot 从内城降到外城；之后到 R3 全平（外墙与四门）
+          const s = Math.min(1, Math.max(0, (dIso - innerEdge) / (innerFoot - innerEdge)));
+          const t = s * s * (3 - 2 * s);
+          targetH = innerLevel + (outerLevel - innerLevel) * t;
+        } else {
+          // 4) 外城墙脚下在有机缓坡内顺畅滑落回 0 级谷底（攻方仰攻大斜坡，坡脚带有自然扰动）
+          const slopeW = 3.5 * rJitter;
+          const s = Math.min(1, Math.max(0, (dIso - R3) / slopeW));
+          const t = s * s * (3 - 2 * s);
+          targetH = outerLevel * (1.0 - t);
+        }
+
+        const i = y * V + x;
+        if (targetH > this.cornerElev[i]) {
+          this.cornerElev[i] = targetH;
         }
       }
     }
 
-    // 用 DE `clean_elevation` (0x14103CC60) 在四层平顶台地之间切出每格降 1 级的硬朗等轴阶梯斜坡
-    this.cleanDeIsoElevation(isoTileElev, castleLevel);
-    for (let i = 0; i < M * M; i++) {
-      this.isoElev[i] = isoTileElev[i];
-    }
-    this.syncCornerElevFromIso();
+    // 4. 外围城墙外围：外围丘陵推远到 R3 + 5.5 之外生成，且最高不超过 outerLevel - 0.5（彻底杜绝堵门与高程倒挂）
+    this.generateDeElevationGrid(cx, cy, R3 + 5.5, outerLevel - 0.5, rnd, 'pass');
 
-    this.generateDeElevationGrid(cx, cy, R3 + outerLevel + 2.5, outerLevel, rnd, 'pass');
-
+    // 6. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
     this.elevDirty = true;
 
@@ -1796,7 +1912,11 @@ export class Scene13GroundLayerGL {
 
   /**
    * 🔴 [2026-10-12 主人令「这种感觉在山坳坳中不对吧，应该在山上」]
-   * 城寨（Stockade）真实山巅山寨与外围 DE 平顶阶梯丘陵生成（全整数台地 + DE 0x14103CC60 切坡）
+   * 城寨（Stockade）真实山巅山寨生成：
+   * 1. 彻底根除凹陷山坳/盆地：城寨自身就是整座大山的主峰制高点（Mountain Summit）；
+   * 2. 寨内自顶向外层层高耸：中心大屋/首领营（5~6 级主峰顶台）-> 聚落平台（4~5 级）-> 木栅围栏（3~4 级山巅台地）；
+   * 3. 整座大山从木栅栏边缘向四周 360 度以 14~20 格宽幅缓坡向山脚平原顺畅倾斜滑落（跌落至 0 级）；
+   * 4. 外围原野仅散落 1~2 级低矮草坡小丘，绝不允许超越主峰，呈现出真正的「居高临下、雄峙山巅」古代山寨质感。
    */
   public flattenStockadeTerraces(
     screenX: number,
@@ -1807,10 +1927,14 @@ export class Scene13GroundLayerGL {
     fencePts: ReadonlyArray<{ x: number; y: number }> = []
   ): { centerLevel: number; villageLevel: number; fenceLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
-    if (!c) return { centerLevel: 6, villageLevel: 4, fenceLevel: 2 };
+    if (!c) return { centerLevel: 5, villageLevel: 4, fenceLevel: 3 };
+    this.applySeedNoiseOffset(seedStr);
+    // 🔴 [2026-10-15 主人报「这个地形也是中间椭圆菱形」] 实测布尔根：木栅 56 件在 |dx|+|dy|=8~9 的菱形上，
+    //    台地却是写死半径（R3≈9）且山脊/多瓣两型纵向压扁 ⇒ 同一圈木栅脚下 0~5.19 级。
+    //    改为按木栅实际位置定台地：每个方位取木栅半径 rf(θ)，木栅平台铺到 rf+1 格；寨内两层高台整体缩进木栅以内。
     const BINS = 32;
-    const fenceR = new Float32Array(BINS);
-    const fenceRIn = new Float32Array(BINS);
+    const fenceR = new Float32Array(BINS);      // 每方位最远的木栅件（外坡从这里起）
+    const fenceRIn = new Float32Array(BINS);    // 每方位最近的木栅件（寨内台地按这里收）
     for (const p of fencePts) {
       const q = this.screenToCell(p.x, p.y, W, H);
       if (!q) continue;
@@ -1820,7 +1944,7 @@ export class Scene13GroundLayerGL {
       fenceRIn[k] = fenceRIn[k] > 0 ? Math.min(fenceRIn[k], d) : d;
     }
     const hasFence = fenceR.some(v => v > 0);
-    if (hasFence) for (const arr of [fenceR, fenceRIn]) {
+    if (hasFence) for (const arr of [fenceR, fenceRIn]) {   // 空方位取两侧最近有值方位的线性插值
       const src = Float32Array.from(arr);
       for (let k = 0; k < BINS; k++) {
         if (src[k] > 0) continue;
@@ -1837,13 +1961,15 @@ export class Scene13GroundLayerGL {
     };
     const fenceAt = (theta: number): number => binAt(fenceR, theta);
     const fenceInAt = (theta: number): number => binAt(fenceRIn, theta);
-    let fenceMax = 0;
-    for (let k = 0; k < BINS; k++) { fenceMax = Math.max(fenceMax, fenceR[k]); }
-    const FENCE_PAD = 1.0;
+    let fenceMin = Infinity, fenceMax = 0;
+    for (let k = 0; k < BINS; k++) { fenceMin = Math.min(fenceMin, fenceR[k]); fenceMax = Math.max(fenceMax, fenceR[k]); }
+    const FENCE_PAD = 1.0;    // 木栅件本身的厚度 + 余量（格）
+    const FENCE_SLOPE = 2.5;  // 木栅外坡宽（格）
 
     const N = this.N;
-    const M = this.isoM;
+    const V = N + 1;
 
+    // 1. PRNG 伪随机数流
     let seed = 2166136261;
     for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
     const rnd = () => {
@@ -1851,28 +1977,35 @@ export class Scene13GroundLayerGL {
       return (seed >>> 0) / 4294967296;
     };
 
-    const centerLevel = 6;
-    const villageLevel = 4;
-    const fenceLevel = 2;
+    // 2. 居高临下：城寨主峰绝对制高点（7级主峰傲视全图，3层立体高台：7级 -> 5级 -> 3级）
+    const centerLevel = 7;
+    const villageLevel = 5;
+    const fenceLevel = 3;
 
+    // 🔴 [2026-10-12 主人令「可以设计圆形的高地呀，所有的据点都是一样的不合适吧」]
+    // 随机抽选 4 大高台形态原型（Terrace Shape Archetypes），保证据点千姿百态、绝不千篇一律：
+    // 1. circle: 浑圆大气的正圆形穹顶圆岗高地（主人指定）
+    // 2. diamond: 贴合木栅走向的规整等轴菱台
+    // 3. ridge: 顺应地势绵延伸展的山脊长台
+    // 4. organic: 鬼斧神工的多瓣天然岩石峰台
     const shapeRoll = rnd();
     let shapeMode: 'circle' | 'diamond' | 'ridge' | 'organic' = 'circle';
     let ridgeAngle = 0;
-    let R1 = 3.6, R2 = 7.0, R3 = 9.8;
+    let R1 = 3.6, R2 = 7.0, R3 = 9.8, stepW = 1.4;
 
     if (shapeRoll < 0.35) {
-      shapeMode = 'circle';
-      R1 = 3.8; R2 = 7.2; R3 = 10.0;
+      shapeMode = 'circle'; // 🔴 圆形高地：浑圆壮美的正圆形山岗平台
+      R1 = 3.8; R2 = 7.2; R3 = 10.0; stepW = 1.5;
     } else if (shapeRoll < 0.65) {
-      shapeMode = 'diamond';
-      R1 = 2.8; R2 = 6.2; R3 = 8.8;
+      shapeMode = 'diamond'; // 等轴菱台：与四方木栅寨门和谐呼应
+      R1 = 2.8; R2 = 6.2; R3 = 8.8; stepW = 1.3;
     } else if (shapeRoll < 0.85) {
-      shapeMode = 'ridge';
+      shapeMode = 'ridge'; // 山脊长台：沿山梁主轴舒展
       ridgeAngle = rnd() * Math.PI;
-      R1 = 3.2; R2 = 6.6; R3 = 9.4;
+      R1 = 3.2; R2 = 6.6; R3 = 9.4; stepW = 1.4;
     } else {
-      shapeMode = 'organic';
-      R1 = 3.0; R2 = 6.5; R3 = 9.2;
+      shapeMode = 'organic'; // 有机多瓣山台
+      R1 = 3.0; R2 = 6.5; R3 = 9.2; stepW = 1.4;
     }
 
     const cosR = Math.cos(ridgeAngle), sinR = Math.sin(ridgeAngle);
@@ -1882,67 +2015,104 @@ export class Scene13GroundLayerGL {
 
     const cx = c.gx, cy = c.gy;
 
+    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保山寨高台与外围丘陵由算法纯粹驱动
     this.cornerElev.fill(0);
-    this.isoElev.fill(0);
 
-    const isoTileElev = new Int8Array(M * M);
-    for (let I = 0; I < M; I++) {
-      for (let J = 0; J < M; J++) {
-        const x = (I - (J - N)) * 0.5;
-        const y = (I + (J - N)) * 0.5;
-        if (x < 0 || x > N || y < 0 || y > N) continue;
+    for (let y = 0; y <= N; y++) {
+      for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
         if (hasFence) {
+          // 三层台地都跟木栅形状走：q = 到城心距离 ÷ 该方位木栅半径（实测院内：中心大屋 q≈0、一圈房屋 q 0.48~0.67、木栅 q=1）
+          //   q ≤ 0.18 中心 7 级 → 0.34 降到 5 级 → 聚落平台到 0.74 → 0.87 降到木栅 3 级 → 木栅外 FENCE_PAD 格起外坡
+          //   （q 以该方位最近的木栅件为 1；坡离木栅留 0.13，免得地面双线性插值把木栅中段带高）
           const d = Math.hypot(dx, dy), th = Math.atan2(dy, dx);
           const rf0 = fenceAt(th), q = d / fenceInAt(th);
-          if (d <= rf0 + FENCE_PAD) {
-            if (q <= 0.28) isoTileElev[I * M + J] = centerLevel;
-            else if (q <= 0.80) isoTileElev[I * M + J] = villageLevel;
-            else isoTileElev[I * M + J] = fenceLevel;
+          const step = (a: number, b: number, h0: number, h1: number): number => { const s = (q - a) / (b - a); return h0 + (h1 - h0) * s * s * (3 - 2 * s); };
+          let slopeMul = 1.0;
+          if (shapeMode === 'ridge') {
+            const align = Math.cos(th - ridgeAngle);
+            slopeMul = 0.85 + 1.15 * align * align;
+          } else if (shapeMode === 'organic') {
+            slopeMul = 1.0 + 0.45 * Math.sin(3 * th + phase1) + 0.25 * Math.cos(2 * th + phase2);
+          } else if (shapeMode === 'circle') {
+            slopeMul = 1.15 + 0.15 * Math.sin(2 * th + phase1);
           }
+          const outerSlopeW = Math.max(2.0, FENCE_SLOPE * slopeMul);
+          let h: number;
+          if (d > rf0 + FENCE_PAD) { const s = Math.min(1, (d - rf0 - FENCE_PAD) / outerSlopeW); h = fenceLevel * (1 - s * s * (3 - 2 * s)); }
+          else if (q >= 0.87) h = fenceLevel;
+          else if (q > 0.74) h = step(0.74, 0.87, villageLevel, fenceLevel);
+          else if (q >= 0.34) h = villageLevel;
+          else if (q > 0.18) h = step(0.18, 0.34, centerLevel, villageLevel);
+          else h = centerLevel;
+          this.cornerElev[y * V + x] = h;
           continue;
         }
-
         let dShape = 0;
+
         if (shapeMode === 'circle') {
+          // 正圆形高台：平滑等径欧式圆
           dShape = Math.hypot(dx, dy);
         } else if (shapeMode === 'diamond') {
+          // 微圆角等轴菱形台地
           dShape = Math.hypot(dx, dy) * 0.30 + (Math.abs(dx) + Math.abs(dy)) * 0.70;
         } else if (shapeMode === 'ridge') {
+          // 沿山脊主轴旋转的长圆形
           const rx = dx * cosR + dy * sinR;
           const ry = -dx * sinR + dy * cosR;
           dShape = Math.hypot(rx * 0.75, ry * 1.40);
         } else {
+          // 有机多瓣形态
           const dist = Math.hypot(dx, dy * 1.25);
           const theta = Math.atan2(dy, dx);
           dShape = dist / (1.0 + 0.15 * Math.sin(3 * theta + phase1) + 0.08 * Math.cos(4 * theta + phase2));
         }
 
+        if (dShape > R3 + 4.5) continue;
+
         const theta = Math.atan2(dy, dx);
         const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.5) * Math.cos(3 * theta + phase2);
+
         const r1 = R1 * rJitter;
         const r2 = R2 * rJitter;
         const r3 = R3 * rJitter;
 
+        let targetH = 0;
         if (dShape <= r1) {
-          isoTileElev[I * M + J] = centerLevel;
+          // 顶峰平台：核心首领大屋稳坐 7 级平顶
+          targetH = centerLevel;
+        } else if (dShape <= r1 + stepW) {
+          // 第 1 阶梯坡面：7 级陡峭滑落到 5 级
+          const s = (dShape - r1) / stepW;
+          const t = s * s * (3 - 2 * s);
+          targetH = centerLevel + (villageLevel - centerLevel) * t;
         } else if (dShape <= r2) {
-          isoTileElev[I * M + J] = villageLevel;
+          // 聚落平台：棚屋稳坐 5 级平顶
+          targetH = villageLevel;
+        } else if (dShape <= r2 + stepW) {
+          // 第 2 阶梯坡面：5 级陡峭滑落到 3 级
+          const s = (dShape - r2) / stepW;
+          const t = s * s * (3 - 2 * s);
+          targetH = villageLevel + (fenceLevel - villageLevel) * t;
         } else if (dShape <= r3) {
-          isoTileElev[I * M + J] = fenceLevel;
+          // 木栅围栏台地：木栅坐落在 3 级平顶
+          targetH = fenceLevel;
+        } else {
+          // 木栅外沿险峻山坡：3 级在 2.5 格内顺畅跌落山脚 0 级平原！
+          const s = Math.min(1, Math.max(0, (dShape - r3) / 2.5));
+          const t = s * s * (3 - 2 * s);
+          targetH = fenceLevel * (1.0 - t);
         }
+
+        const i = y * V + x;
+        this.cornerElev[i] = targetH;
       }
     }
 
-    // 用 DE `clean_elevation` (0x14103CC60) 在三层平顶山寨台地之间切出每格降 1 级的等轴阶梯斜坡
-    this.cleanDeIsoElevation(isoTileElev, centerLevel);
-    for (let i = 0; i < M * M; i++) {
-      this.isoElev[i] = isoTileElev[i];
-    }
-    this.syncCornerElevFromIso();
+    // 4. 外围原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
+    this.generateDeElevationGrid(cx, cy, hasFence ? fenceMax + FENCE_PAD + FENCE_SLOPE + 0.5 : R3 + 3.0, 3.0, rnd, 'stockade');
 
-    this.generateDeElevationGrid(cx, cy, (hasFence ? fenceMax + FENCE_PAD : R3) + fenceLevel + 2.5, 3.0, rnd, 'stockade');
-
+    // 5. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
     this.elevDirty = true;
 

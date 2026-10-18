@@ -265,11 +265,18 @@ export class BattleField implements IOpeningPulseSink {
         //    只有「一方有名将、一方没有」时才放大，而那本来就该是名将的高光时刻。
         const famRatio = getFamousGeneralMult(this.attackerCommander) / getFamousGeneralMult(this.defenderCommander);
         const ratio = Math.max(0.01, nonTroop) * Math.pow(famRatio, BattleField.SCENE13_FAMOUS_EXTRA);
-        const k = Math.min(
+        let k = Math.min(
             BattleField.SCENE13_QUALITY_CAP,
             Math.max(1 / BattleField.SCENE13_QUALITY_CAP,
                 Math.pow(ratio, 0.5 * BattleField.SCENE13_QUALITY_EXP)),
         );
+        if (this.presetResult === 'attacker_win') {
+            const minK = Math.sqrt((defT / attT) * 1.45);
+            if (k < minK) k = minK;
+        } else if (this.presetResult === 'defender_win') {
+            const maxK = 1 / Math.sqrt((attT / defT) * 1.45);
+            if (k > maxK) k = maxK;
+        }
         return { attacker: k, defender: 1 / k };
     }
 

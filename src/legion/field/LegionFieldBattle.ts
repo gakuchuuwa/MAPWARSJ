@@ -208,26 +208,44 @@ function startFieldBattleBetween(
     const posB = otherArmy.getPosition();
     const center = { lat: (posA.lat + posB.lat) / 2, lng: (posA.lng + posB.lng) / 2 };
 
-    let attFaction = army.getFactionId();
-    let defFaction = otherArmy.getFactionId();
+    const firstBattleHero = (army as { isFirstBattleHero?: boolean }).isFirstBattleHero
+        ? army
+        : (otherArmy as { isFirstBattleHero?: boolean }).isFirstBattleHero
+            ? otherArmy
+            : null;
+    const firstBattleFoe = firstBattleHero ? (firstBattleHero === army ? otherArmy : army) : null;
+    const firstBattleRole: 'attacker' | 'defender' =
+        (firstBattleHero as { firstBattleRole?: 'attacker' | 'defender' } | null)?.firstBattleRole ?? 'attacker';
+
+    let attackerPrimary = firstBattleHero && firstBattleFoe
+        ? (firstBattleRole === 'defender' ? firstBattleFoe : firstBattleHero)
+        : army;
+    let defenderPrimary = firstBattleHero && firstBattleFoe
+        ? (firstBattleRole === 'defender' ? firstBattleHero : firstBattleFoe)
+        : otherArmy;
+
+    let attFaction = attackerPrimary.getFactionId();
+    let defFaction = defenderPrimary.getFactionId();
     if (!attFaction || !defFaction || attFaction === defFaction) return;
 
     const exclude = new Set<string>([army.id, otherArmy.id]);
-    let attLegions = [
-        army,
-        ...collectLegionsNearBattleCenter(deps, center, attFaction, exclude),
-    ];
+    let attLegions = firstBattleHero
+        ? [attackerPrimary]
+        : [
+            attackerPrimary,
+            ...collectLegionsNearBattleCenter(deps, center, attFaction, exclude),
+        ];
     attLegions.forEach((l) => exclude.add(l.id));
-    let defLegions = [
-        otherArmy,
-        ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude),
-    ];
-    let attackerPrimary = army;
-    let defenderPrimary = otherArmy;
+    let defLegions = firstBattleHero
+        ? [defenderPrimary]
+        : [
+            defenderPrimary,
+            ...collectLegionsNearBattleCenter(deps, center, defFaction, exclude),
+        ];
 
     const followedFieldId = window.game?.cameraFollowUI?.getFollowedArmyId?.();
     const hasNoReinforcements = attLegions.length === 1 && defLegions.length === 1;
-    if (hasNoReinforcements && followedFieldId === defenderPrimary.id) {
+    if (!firstBattleHero && hasNoReinforcements && followedFieldId === defenderPrimary.id) {
         [attFaction, defFaction] = [defFaction, attFaction];
         [attLegions, defLegions] = [defLegions, attLegions];
         [attackerPrimary, defenderPrimary] = [defenderPrimary, attackerPrimary];
@@ -263,22 +281,26 @@ function startFieldBattleBetween(
             `⚔️ 野战 @相遇点：${attFaction} ${attLegions.length}支 vs ${defFaction} ${defLegions.length}支（开战圈≈30km）`
         );
     } else {
-        gameLog('legionMarch', `⚔️ ${army.name} 野战遭遇 ${otherArmy.name}`);
+        gameLog('legionMarch', `⚔️ ${attackerPrimary.name} 野战遭遇 ${defenderPrimary.name}`);
     }
 
     const attName = deps.getCityManager().getFactionName(attFaction);
     const defName = deps.getCityManager().getFactionName(defFaction);
+    const firstBattlePreset: 'attacker_win' | 'defender_win' | undefined = firstBattleHero
+        ? (firstBattleRole === 'defender' ? 'defender_win' : 'attacker_win')
+        : undefined;
+    const firstBattleTitle = (firstBattleHero as { firstBattleTitle?: string } | null)?.firstBattleTitle;
 
     const fieldBattleField = combatSystem.startRegionalBattle(
         attFaction,
         attUnits,
         defFaction,
         defUnits,
+        firstBattlePreset,
         undefined,
         undefined,
         undefined,
-        undefined,
-        `${attName} 大战 ${defName}`
+        firstBattleTitle || `${attName} 大战 ${defName}`
     );
 
     // [语音播报] 野战开战（仅跟随军团那场）。势=攻守初始兵力比（与攻城/攻占同源）。
