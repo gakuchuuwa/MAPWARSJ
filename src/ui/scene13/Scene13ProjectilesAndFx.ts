@@ -177,13 +177,16 @@ export const PROJ_ASSET_KEY: Record<string, string> = {
  * 弩箭：元戎弩/重弩战象/**高丽战车**（平直穿透）。
  */
 export const PROJ_TYPE: Record<string, string> = {
-    // ── [2026-10-11 主人令] 法师类英雄：施法，弹丸**套用希腊火** ──
-    //    🔴 主人 2026-10-11 指正：「**不是猛火油柜，是希腊火**」——
-    //    所以用 `FLAMETHROWER_FLAME`（本仓 `docs/03-runtime/de-assets-2026-08-19.md` §四 明确标注「火焰：FLAMETHROWER_FLAME（希腊火）」），
-    //    不是猛火油柜那套 `PROJ_FIRE`。（两套图内容相同，但口径按主人：叫希腊火、用希腊火这一套。）
-    hero_zhugeliang: 'FLAMETHROWER_FLAME',
-    hero_jadwiga: 'FLAMETHROWER_FLAME',
-    hero_tamar: 'FLAMETHROWER_FLAME',
+    // ── [2026-10-18 主人定] 9 位非攻击性英雄：统一设为简单魔法系效果（PROJ_MAGIC 简洁法球，不再使用杂乱的喷火特效）──
+    hero_zhugeliang: 'PROJ_MAGIC',
+    hero_jadwiga: 'PROJ_MAGIC',
+    hero_tamar: 'PROJ_MAGIC',
+    hero_friartuck: 'PROJ_MAGIC',
+    hero_imam: 'PROJ_MAGIC',
+    hero_chandbardai: 'PROJ_MAGIC',
+    hero_belaiv: 'PROJ_MAGIC',
+    hero_shahking: 'PROJ_MAGIC',
+    hero_jayanegara: 'PROJ_MAGIC',
     // ── [2026-08-18 补] 这些范围伤远程原本没映射，会退回默认的 PROJ_ARROW（投石车射箭矢）──
     antiquity_mangonel: 'PROJ_MANGONEL',
     antiquity_onager: 'PROJ_MANGONEL',
@@ -355,6 +358,7 @@ export const ACCURACY_BY_TYPE: Record<string, number> = {
  * 只有 dmgType 'pierce' 的投射物才可能 miss；'melee'（近战/飞斧/投石）DE 无准确率概念。
  */
 export function accuracyOf(key: string, wt: WarType): number {
+    if (CASTER_TYPES.has(key)) return 95;
     const exact = ACCURACY_BY_TYPE[key];
     if (exact !== undefined) return exact;
     if (wt.dmgType === 'melee') return 100;
@@ -380,8 +384,8 @@ export function accuracyOf(key: string, wt: WarType): number {
     // 普通步弓（含火箭/火弓/象弓）
     return 80;
 }
-/** 平直弹道抛射物（弩炮箭/攻城塔弩/火枪弹/飞轮）：不抛弧、直线飞行。 */
-export const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_HELEPOLIS', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE', 'FLAMETHROWER_FLAME']);
+/** 平直弹道抛射物（弩炮箭/攻城塔弩/火枪弹/飞轮/魔法弹）：不抛弧、直线飞行。 */
+export const PROJ_FLAT = new Set(['PROJ_BOLT', 'PROJ_HELEPOLIS', 'PROJ_SHOT', 'PROJ_FIRE', 'PROJ_CHAKRAM', 'PROJ_CHAKRAM_ELITE', 'FLAMETHROWER_FLAME', 'PROJ_MAGIC']);
 /** 高抛弧线抛射物（炮弹/手榴弹/投石）：弧高翻倍（投石式高抛）。 */
 export const PROJ_HIGH_ARC = new Set(['PROJ_BALL', 'PROJ_BOMBARD_BALL', 'PROJ_MANGONEL', 'PROJ_ROCK', 'PROJ_GRENADE']);
 /** DE projectile_arc 实值；高丽战车弹丸 373 = 0.05。 */
@@ -457,25 +461,29 @@ export const NO_ATTACK_ANIM = new Set([
     'petard',                    // PETARD（同上）
     'war_chariot_ranged',        // WARCHARIOT
     'war_wagon',                 // WARWAGON
+    'hero_zhugeliang',
+    'hero_belaiv',
+    'hero_shahking',
+    'hero_jayanegara',
+    'hero_bucephalus',
 ]);
 
 /** 无攻击动画的车辆开火时的尘烟配色（素色木屑/尘土，区别于火器的橙黄炮口焰） */
 export const SHOT_DUST_COLORS = ['#D8CDB8', '#B9A98C', '#8C7F66', '#EDE6D6'] as const;
 
 /**
- * 🔴 [2026-10-11 主人令]「把 DE 中没有攻击的英雄兵模做成**法师类**」＋「**我觉得可以套用希腊火**」。
- *
- * 这些英雄在 DE 的 dat 里本来就 **atk=0（没有攻击）**、素材里也没有攻击动作帧，
- * 所以不能按"兵"来演；改成**施法者**，攻击演出**整套套用现成的希腊火**（不新造美术）：
- *   · 投射物 = `PROJ_FIRE`（猛火油柜的火舌，30 帧循环）—— 与喷火兵同一套；
- *   · 施法口焰 = `FX_MUZZLE_FIRELANCE`（`MUZZLE_FIRE_LANCER` 火焰口焰，8 向）—— 与火矛手同一套；
- *   · 本人没有攻击帧 → 渲染兜底退回待命帧（见渲染循环里那三行，绝不让兵模消失）。
- * 现值：诸葛亮（谋士）、雅德维加／塔玛尔（圣旗法师）。
- * ⚠️ 布塞法洛斯（亚历山大的战马）**不在法师类**：马无法施法，它按"无攻击动作"的替代演出走（NO_ATTACK_ANIM 那条分支）。
+ * 🔴 [2026-10-18 主人定] 全部 9 位非攻击性英雄统一归入简单魔法系形态（CASTER_TYPES）：
+ *   · 诸葛亮（谋士）、雅德维加／塔玛尔（女王）、塔克修士／伊玛目／昌德·菩达一（僧侣／诗人）、贝拉四世／沙阿王／贾亚纳加拉（无武器国王）
+ *   · 投射物 = `PROJ_MAGIC`（简洁干净的微光法球 + 短流光尾迹，不再使用粗大杂乱的喷火特效）
+ *   · 施法微光 = `GREEK_FIRE_COLORS`（已改为清爽的青白/淡金奥术微光）
  */
-export const CASTER_TYPES = new Set(['hero_zhugeliang', 'hero_jadwiga', 'hero_tamar']);
-/** 希腊火（`FLAMETHROWER_FLAME`）施法光的配色 —— 只用现成火焰素材的色系，不新造美术 */
-export const GREEK_FIRE_COLORS = ['#FFF3C4', '#FFC24A', '#FF7A18', '#FFFFFF'] as const;
+export const CASTER_TYPES = new Set([
+    'hero_zhugeliang', 'hero_jadwiga', 'hero_tamar',
+    'hero_friartuck', 'hero_imam', 'hero_chandbardai',
+    'hero_belaiv', 'hero_shahking', 'hero_jayanegara',
+]);
+/** 魔法英雄施法微光配色（清爽青白与淡金星光，替代原杂乱火焰色） */
+export const GREEK_FIRE_COLORS = ['#E8F8FF', '#7CE8FF', '#FFE699', '#FFFFFF'] as const;
 export const FIREARM_TYPES = new Set([
     'hussite_wagon', 'elite_hussite_wagon',   // 胡斯火铳车（2026-08-18）
     'bombard_cannon', 'houfnice', 'hand_cannoneer',
@@ -535,6 +543,7 @@ export const PROJ_SPEED_PX: Record<string, number> = {
     PROJ_HELEPOLIS: 16 * 40,
     PROJ_WAR_WAGON: 14 * 40,
     PROJ_SHOT: 7.5 * 40,
+    PROJ_MAGIC: 12 * 40,
     // 火枪弹必须近乎瞬达：旧值 300px/s，满射程 280px 要飞约 0.93s，视觉像弹丸飘行。
     // 提至 1200px/s 后满射程约 0.23s，与上方 PROJ_DUR 的 0.22s 演出尺度一致。
     PROJ_GUNPOWDER: 30 * 40,

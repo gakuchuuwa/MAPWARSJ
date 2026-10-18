@@ -2626,7 +2626,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'crane_wing',
         shipId: 'BIREME',
-        commanderUnit: 'hero_perdiccas',
+        commanderUnit: 'hero_tsarkonstantin',
         slots: [
             { type: 'elite_war_chariot', count: 2 },
             { type: 'elite_antiquity_skirmisher', count: 4 },
@@ -2780,7 +2780,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crane_wing',
         shipId: 'BIREME',
-        commanderUnit: 'hero_osman',
+        commanderUnit: 'hero_tsarkonstantin',
         // 🔴 [2026-10-16 主人令「象兵、战车只能安排在 2 档」＋「删除，别惹麻烦」] 战车不再上阵（不排 2 档，直接删）；
         //    空出的前排 3 档用非城堡精锐的古典长矛兵补位。
         //    🔴 [2026-10-16 主人令「换掉无素材的那个」] 后排 4 档「欧洲古典剑士特殊」在 SPRITE_PATHS 里没有素材
@@ -4196,7 +4196,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         // 旗舰沿用被替换掉的「古典时代阿契美尼德军团」原值：主人 2026-10-05 令登记的
         // 英雄·阿耳忒弥斯旗舰（萨拉米斯海战波斯一方），UnitAssets 'HERO_ARTEMISIA' 完整 16 向战船。
         shipId: 'HERO_ARTEMISIA',
-        commanderUnit: 'hero_datis',
+        commanderUnit: 'hero_tsarkonstantin',
         slots: [
             { type: 'war_chariot', count: 2 },
             { type: 'elite_immortal', count: 3 },

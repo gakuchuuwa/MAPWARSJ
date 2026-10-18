@@ -196,10 +196,6 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-12 主人令「开始」流场寻敌] 攻城战流场：每格到中心建筑的步数（INF=不通），格 = 1 个等轴地块，a/b 为地块坐标 */
     private flowDist: Int16Array | null = null;
     private flowR = 0;
-    /** 🔴 [2026-10-14 主人令「守军挤在城角」→「全改」] 守方出城流场：每座城门一张，每格到「门外 120px」的步数（城门对守方算通路），格子与 flowDist 同一套 */
-    private defGateFlow: Map<WarBuilding, Int16Array> | null = null;
-    private defFlowSig = -1;
-    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 城门精灵（含附属碰撞件）：守方穿行不受阻；null = 未建 */
     private gateSpriteSet: Set<DecorSprite> | null = null;
     /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
     private wallBySprite = new Map<DecorSprite, WarBuilding>();
@@ -618,10 +614,12 @@ export class Scene13WarLayer {
             const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
             const dep = ((slotIdx / files) | 0) * spDep;
             const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
-            const [spawnX, spawnY] = this.fieldBound(
-                s.x - uFwd.x * dep + uSide.x * slotY,
-                s.y - uFwd.y * dep + uSide.y * slotY,
-            );
+            const [spawnX, spawnY] = (s.f === 1 && this.battleType === 'siege' && !!this.deCity)
+                ? this.defenderGateSpawnPos(s, dep, slotY)
+                : this.fieldBound(
+                    s.x - uFwd.x * dep + uSide.x * slotY,
+                    s.y - uFwd.y * dep + uSide.y * slotY,
+                );
             const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
             const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
             const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
@@ -638,7 +636,7 @@ export class Scene13WarLayer {
                 flag: bearer, fo: Math.random() * 600,
                 march: false, port: null, dep, slotY, pop: s.pop,
                 lane: s.lane,
-                guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity) ? { x: spawnX, y: spawnY } : undefined,
+                guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
             });
         }
@@ -1053,8 +1051,9 @@ export class Scene13WarLayer {
         //    八方向/南北向战场里方向全错（主人早先报「乱入者复活不出现在出兵口」就是它）。
         //    现在跟随**本方八方向基座** spawnBases[m.f]（与出兵口同一处），不再用屏幕边。
         const _port = (m.lane >= 0 ? this.spawns[m.lane] : undefined) ?? this.spawnBases[m.f] ?? { x: this.worldCX, y: this.worldCY };
-        const x = _port.x;
-        const y = _port.y;
+        const [x, y] = (m.f === 1 && this.battleType === 'siege' && !!this.deCity && m.lane >= 0 && this.spawns[m.lane])
+            ? this.defenderGateSpawnPos(this.spawns[m.lane], 0, 0)
+            : [_port.x, _port.y];
         m.hp = this.heroMaxHp(m.key, m.f);
         m.x = x; m.y = y; m.tx = x; m.ty = y; m.prevX = x; m.prevY = y; m.anchorX = x; m.anchorY = y;
         m.dir = this.dir8(this.advanceVec[m.f].x, this.advanceVec[m.f].y);   // 🔴 [2026-10-11 主人「复活点还保留旧13？全删」] 朝向随本方八方向推进向量，不再写死左右(2/6)
@@ -2177,7 +2176,6 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
-        this.defGateFlow = null;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
@@ -2522,7 +2520,6 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
-        this.defGateFlow = null;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
@@ -4596,7 +4593,7 @@ export class Scene13WarLayer {
 
     /** 按需加载 DE 抛射物素材（透明底 fly_0.png，不抠绿不染色——箭/标枪/飞斧 DE 里无玩家色）。 */
     private ensureProj(key: string): void {
-        if (this.projBank[key]) return;
+        if (key === 'PROJ_MAGIC' || this.projBank[key]) return;
         // 抛射物素材目录：投石索 PROJ_SLING 已提取真实小石弹素材（2026-08-18，此前误复用大炮弹 PROJ_BALL）
         const dir = `/SUCAI/${PROJ_ASSET_KEY[key] ?? key}/`;
         // 占位先立（img=null），防同一 key 重复加载；渲染时 img 未就绪就跳过不画。
@@ -4830,14 +4827,16 @@ export class Scene13WarLayer {
                 const uSide = this.sideVec[s.f];
                 let spawnX = s.x - uFwd.x * dep + uSide.x * slotY;
                 let spawnY = s.y - uFwd.y * dep + uSide.y * slotY;
-                // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」「最后一排背靠城墙」] 攻城战守方第一波：在城外面朝攻方列阵出生，
-                //    之后原地待敌（holdLanes）；后续补兵照旧在城内出生、走城门出城。
+                // 🔴 [2026-10-14 主人令「第一波直接在城外列阵出生」「最后一排背靠城墙」]
+                // 🔴 [2026-10-18 主人令「守方第一波出现在城外，这个很好不要动，往后都是在城门刷新。当城门被摧毁后，守方可以集体发动反攻」]
                 const outsideFirst = s.f === 1 && this.battleType === 'siege' && !!this.deCity && inMarch && s.outFwd !== undefined;
                 if (outsideFirst) {
                     const B = this.defOutsideBase(), F = B.fwd, S = B.side;   // 阵与最正对攻方的那面墙平行（见 defOutsideBase）
                     spawnX = B.x + F.x * s.outFwd! + S.x * s.outSide! - F.x * dep + S.x * slotY;
                     spawnY = B.y + F.y * s.outFwd! + S.y * s.outSide! - F.y * dep + S.y * slotY;
                     this.holdLanes.add(s.lane);
+                } else if (s.f === 1 && this.battleType === 'siege' && !!this.deCity) {
+                    [spawnX, spawnY] = this.defenderGateSpawnPos(s, dep, slotY);
                 }
                 // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 士兵落位不再避水（原三步避水已删）
                 this.men.push({
@@ -4855,7 +4854,9 @@ export class Scene13WarLayer {
                     flag: bearer, fo: Math.random() * 600,
                     march: inMarch && !outsideFirst, port: inMarch && !outsideFirst ? s : null, dep, slotY, pop: s.pop,
                     lane: s.lane,
-                    guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !outsideFirst) ? { x: spawnX, y: spawnY } : undefined,
+                    guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !outsideFirst && !this.isDefenderGateDestroyed())
+                        ? { x: spawnX, y: spawnY }
+                        : undefined,
                     claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: fadeDur, fadeMax: fadeDur,
                 });
                 if (outsideFirst) outsideMen.push(this.men[this.men.length - 1]);
@@ -5144,12 +5145,64 @@ export class Scene13WarLayer {
         return this.ringOpenVal;
     }
 
-    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城内而敌在城外）⇒ 走不过去，不直接锁死追击 */
+    /** 🔴 [2026-10-18 主人令「往后都是在城门刷新。当城门被摧毁后，守方可以集体发动反攻」]
+     *  守方城门是否已被摧毁（任一城门被毁即算破门；无城门时按城墙缺口或无墙判） */
+    private isDefenderGateDestroyed(): boolean {
+        if (this.wallGates.length === 0) return true;
+        const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
+        if (gates.length > 0) return gates.some(b => !this.wallStanding(b));
+        return this.ringOpen();
+    }
+
+    /** 守方正对攻方的主城门（优先取已毁或受损且离攻方最近的城门，否则取离攻方大本营最近的城门） */
+    private primaryDefenderGate(): WarBuilding | null {
+        const gates = this.wallGates.filter(b => b.f === 1 && b.key === 'STONE_GATE');
+        if (gates.length === 0) return null;
+        const attBase = this.spawnBases[0] ?? { x: this.worldCX, y: this.worldCY };
+        const dist2 = (b: WarBuilding) => (b.x - attBase.x) ** 2 + (b.y - attBase.y) ** 2;
+        const destroyed = gates.filter(b => !this.wallStanding(b));
+        if (destroyed.length > 0) {
+            return destroyed.reduce((best, b) => dist2(b) < dist2(best) ? b : best, destroyed[0]);
+        }
+        const damaged = gates.filter(b => b.hp < b.maxHp);
+        if (damaged.length > 0) {
+            return damaged.reduce((best, b) => dist2(b) < dist2(best) ? b : best, damaged[0]);
+        }
+        return gates.reduce((best, b) => dist2(b) < dist2(best) ? b : best, gates[0]);
+    }
+
+    /** 攻城战守方后续波次（第二波起）在城门处的刷新坐标 */
+    private defenderGateSpawnPos(s: WarSpawn, dep: number, slotY: number): [number, number] {
+        const g = this.primaryDefenderGate();
+        if (!g) {
+            const uFwd = this.advanceVec[1], uSide = this.sideVec[1];
+            return this.fieldBound(
+                s.x - uFwd.x * dep + uSide.x * slotY,
+                s.y - uFwd.y * dep + uSide.y * slotY,
+            );
+        }
+        const C = this.deCity ? this.deCityCenter : this.spawnBases[1];
+        const vx = g.x - C.x, vy = g.y - C.y, vl = Math.hypot(vx, vy) || 1;
+        const uOut = { x: vx / vl, y: vy / vl };
+        let uLat = { x: -uOut.y, y: uOut.x };
+        const sv = this.sideVec[1];
+        if (uLat.x * sv.x + uLat.y * sv.y < 0) uLat = { x: -uLat.x, y: -uLat.y };
+        const defIdx = Math.max(0, s.lane - SIDE_LANES);
+        const latOffset = ((defIdx % 5) - 2) * 26 + slotY * 0.75;
+        const baseInward = this.wallStanding(g) ? 62 : 18;
+        const inwardDist = baseInward + Math.floor((defIdx % 10) / 5) * 42 + dep;
+        return this.fieldBound(
+            g.x - uOut.x * inwardDist + uLat.x * latOffset,
+            g.y - uOut.y * inwardDist + uLat.y * latOffset,
+        );
+    }
+
+    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城门未毁时在城内而敌在城外）⇒ 走不过去，不直接锁死追击 */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
         if (this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
         this.ensureGateInfo();
-        if (m.f === 1) return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
+        if (m.f === 1) return !this.isDefenderGateDestroyed() && this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
         if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
@@ -5214,7 +5267,7 @@ export class Scene13WarLayer {
      * 每帧维护每支分队（50 人）唯一的「队级攻击目标（Lane Target）」：
      *   1. 每个目标（敌方分队 targetLane 或守城建筑/城门 targetBld）最多只允许 MAX_LANE_ATTACKERS = 4 支分队同时锁定攻击；
      *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配目标（整队原地待命警戒）；
-     *   3. 攻城战第二波起守军（guardPost）只在敌队进入警戒圈（≤420px）时锁定迎击，不远追城外敌军。
+     *   3. 攻城战第二波起守军在城门刷新，城门被摧毁前在城门驻守，城门被摧毁后集体发动反攻。
      */
     private isInsideAttackerCamp(x: number, y: number): boolean {
         if (this.battleType !== 'siege') return false;
@@ -5228,14 +5281,8 @@ export class Scene13WarLayer {
 
     private defenderCityReturnGoal(m: WarMan): { x: number; y: number } {
         if (m.guardPost) return m.guardPost;
-        const sp = m.lane >= 0 ? this.spawns[m.lane] : undefined;
-        if (this.deCity && sp && sp.outFwd !== undefined) {
-            const B = this.defOutsideBase(), F = B.fwd, S = B.side;
-            return {
-                x: B.x + F.x * (sp.outFwd - m.dep) + S.x * ((sp.outSide ?? 0) + m.slotY),
-                y: B.y + F.y * (sp.outFwd - m.dep) + S.y * ((sp.outSide ?? 0) + m.slotY),
-            };
-        }
+        const g = this.primaryDefenderGate();
+        if (g) return { x: g.x, y: g.y };
         return this.deCity ? this.deCityCenter : this.spawnBases[1];
     }
 
@@ -5283,9 +5330,11 @@ export class Scene13WarLayer {
             if (this.battleType === 'siege') {
                 // 攻城战守方绝不远征打进攻方营地，只迎击已离开营地逼近城池之敌
                 if (info.f === 1 && this.isInsideAttackerCamp(eInfo.x, eInfo.y)) return false;
+                // 城门被摧毁前，城门刷新的守军原地守门；城门被摧毁后 guard 已清除，集体发动反攻
+                if (info.f === 1 && info.guard) return false;
                 if (this.siegeWithWalls) {
                     if (info.f === 0 && !this.ringOpen() && info.meleeOnly && info.inside === 0 && eInfo.inside === eInfo.n) return false;
-                    if (info.f === 1 && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
+                    if (info.f === 1 && !this.isDefenderGateDestroyed() && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
                 }
             }
             if (info.guard && (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2 > 420 * 420) return false;
@@ -5460,9 +5509,8 @@ export class Scene13WarLayer {
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
-        // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
-        //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
-        const inOnly = (radius <= 1000 || !!guardPost) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
+        // 🔴 [2026-10-18 主人定] 城门未被摧毁时，城门内待命的守方近战兵不锁定城外够不着的敌人；一旦城门被摧毁则守方集体发动反攻，放开锁定。
+        const inOnly = !this.isDefenderGateDestroyed() && (radius <= 1000 || !!guardPost) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
             && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
@@ -6174,8 +6222,7 @@ export class Scene13WarLayer {
      */
     private buildFlowField(): void {
         this.flowBuiltAt = this.battleSec;
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; this.defGateFlow = null; return; }
-        this.buildDefFlowField();
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; return; }
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         const goal = this.centerBld;
         if (!goal || goal.hp <= 0) { this.flowDist = null; return; }
@@ -6256,87 +6303,6 @@ export class Scene13WarLayer {
         this.flowR = R;
     }
 
-    /**
-     * 🔴 [2026-10-14 主人报「守军有的会走城门，有的会拥挤在城角」→「全改」] 守方出城流场（**每座城门一张**）。
-     * 病灶（实测 scratchpad probe_gate_stuck，险要 pass）：守方出城原是**直线**走向「门外 120px」那一点，
-     *   门不在直线上就顶墙，城内约 45~90 个近战守军贴着墙堆着不动。
-     * 修法：**去哪座门照旧**（gateExit 原有选门：离敌人最近 / 离自己最近），只把「直线走过去」换成沿流场绕过去 ——
-     *   每座城门一张流场，以「门外 120px」那一点为终点反向 BFS，格子与攻方流场同一套；城门对守方不算障碍
-     *   （守方本就能穿自己的城门，见 resolveWorldObstructions）。
-     *   ⚠️ 先试过「一张图、以城外所有空地为出口（＝走最近的门或缺口）」：与 aimAtRaw 给的目标方向打架，
-     *   守军在两个目标间每 0.2 秒来回换、原地打转（城内呆立 3→35 人），已弃用。
-     * 障碍没变（数一数还挡路的物件）就不重算：墙/门塌一处才重算一次。
-     */
-    private buildDefFlowField(): void {
-        this.ensureGateInfo();
-        const r = this.ringBox;
-        if (!r || !this.canvas) { this.defGateFlow = null; return; }
-        let sig = 0;
-        for (const sp of this.decorSprites) if (sp.obstruction && !sp.obstructionDisabled && !sp.destroyed) sig++;
-        if (this.defGateFlow && sig === this.defFlowSig) return;
-        this.defFlowSig = sig;
-        const TW = TAC_TILE_W, TH = TAC_TILE_H;
-        const S = FLOW_SUB;
-        const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
-        const N = 2 * R + 1;
-        const cx = this.worldCX, cy = this.worldCY;
-        const blocked = new Uint8Array(N * N);
-        for (const sp of this.decorSprites) {
-            const ob = sp.obstruction;
-            if (!ob || sp.obstructionDisabled || sp.destroyed || this.gateSpriteSet?.has(sp)) continue;
-            const dx = sp.x - cx, dy = sp.y - cy;
-            const ca = (dx / TW + dy / TH) * S, cb = (dy / TH - dx / TW) * S;
-            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;
-            for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
-                for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
-                    if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
-                    if (a < -R || a > R || b < -R || b > R) continue;
-                    blocked[(a + R) * N + (b + R)] = 1;
-                }
-            }
-        }
-        // 门外终点与 gateExit 同一算法：从城中心指向城门的方向，再往外 120px
-        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
-        const ccx = cx + (am - bm) * (TW / 2), ccy = cy + (am + bm) * (TH / 2);
-        const INF = 32767;
-        const queue = new Int32Array(N * N);
-        const fields = new Map<WarBuilding, Int16Array>();
-        // 只在城墙外圈 ±6 地块内搜（守军只在城里用这张图）：实测险要 8 门全图搜一次 44ms，墙一塌就卡一帧
-        const wa0 = Math.floor((r.a0 - 6) * S) + R, wa1 = Math.ceil((r.a1 + 6) * S) + R;
-        const wb0 = Math.floor((r.b0 - 6) * S) + R, wb1 = Math.ceil((r.b1 + 6) * S) + R;
-        for (const g of this.wallGates) {
-            if (g.key !== 'STONE_GATE') continue;
-            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-            const ox = g.x + vx / vl * 120 - cx, oy = g.y + vy / vl * 120 - cy;
-            const ga = Math.round((ox / TW + oy / TH) * S) + R, gb = Math.round((oy / TH - ox / TW) * S) + R;
-            const dist = new Int16Array(N * N).fill(INF);
-            let qh = 0, qt = 0;
-            for (let a = ga - S; a <= ga + S; a++) for (let b = gb - S; b <= gb + S; b++) {
-                if (a < 0 || a >= N || b < 0 || b >= N) continue;
-                const n = a * N + b;
-                if (blocked[n]) continue;
-                dist[n] = 0; queue[qt++] = n;
-            }
-            while (qh < qt) {
-                const c = queue[qh++];
-                const ca = (c / N) | 0, cb = c % N;
-                const nd = dist[c] + 1;
-                for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
-                    if (!da && !db) continue;
-                    const a2 = ca + da, b2 = cb + db;
-                    if (a2 < wa0 || a2 > wa1 || b2 < wb0 || b2 > wb1 || a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
-                    const n = a2 * N + b2;
-                    if (blocked[n] || dist[n] <= nd) continue;
-                    if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
-                    dist[n] = nd; queue[qt++] = n;
-                }
-            }
-            fields.set(g, dist);
-        }
-        this.defGateFlow = fields;
-        this.flowR = R;
-    }
-
     /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
     private flowDistAt(x: number, y: number): number {
         const f = this.flowDist;
@@ -6351,7 +6317,7 @@ export class Scene13WarLayer {
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
     private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB, look = 6 * FLOW_SUB, escape = 1): { x: number; y: number } | null {
-        const f = field;   // 🔴 [2026-10-14] 守方出城流场（defGateFlow 每门一张）同用本函数
+        const f = field;
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
@@ -6414,7 +6380,7 @@ export class Scene13WarLayer {
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // 🔴 [2026-10-14 主人令「两条都做」→「按每队算」] 残兵主动找敌：本队剩不到 REMNANT_FRAC ⇒ 全图找离自己最近的敌人（不限视野），
-        //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
+        //    照常过流场（攻方绕缺口进城）。
         if (m.lane >= 0 && this.remnantLanes.has(m.lane)) {
             const siegeDef = this.battleType === 'siege' && m.f === 1;
             const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
@@ -6429,13 +6395,13 @@ export class Scene13WarLayer {
             }
             if (t) {
                 const ra = Math.atan2(m.jy, m.jx);
-                return this.gateExit(m, this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }));
+                return this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING });
             }
             if (siegeDef) {
-                return this.gateExit(m, this.defenderCityReturnGoal(m));
+                return this.defenderCityReturnGoal(m);
             }
         }
-        return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
+        return this.flowRedirect(m, this.aimAtRaw(m));
     }
 
     /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
@@ -6523,52 +6489,6 @@ export class Scene13WarLayer {
         if (!r) return false;
         const [a, b] = this.tileAB(x, y);
         return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
-    }
-
-    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去；
-     *  守方在城外、目标在城内（回城迎击入城之敌）⇒ 先走到最近的外圈城门，从门里回城。
-     */
-    private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
-        this.ensureGateInfo();
-        if (!this.ringBox) return aim;
-        const r = this.ringBox, [ma, mb] = this.tileAB(m.x, m.y);
-        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
-        const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
-        const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
-        // 守军一律选择离自己最近的外圈城门进出城
-        let g: WarBuilding | null = null, gd = Infinity;
-        for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE') continue;
-            const [ba, bb] = this.tileAB(b.x, b.y);
-            if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
-            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d < gd) { gd = d; g = b; }
-        }
-        if (!g) for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE') continue;
-            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d < gd) { gd = d; g = b; }
-        }
-        if (!g) return aim;
-
-        const inGateRing = ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1;
-        const aimInside = !!aim && this.insideRing(aim.x, aim.y);
-        if (aimInside) {
-            // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经最近城门往城内走 120px 入城
-            if (this.insideRing(m.x, m.y)) return aim;
-            if (!inGateRing && gd > 110 * 110) return { x: g.x, y: g.y };
-            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-            return { x: g.x - vx / vl * 120, y: g.y - vy / vl * 120 };
-        }
-        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
-        if (!inGateRing) return aim;
-        // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
-        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
-        if (wp) return wp;
-        // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
-        const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-        return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
     }
 
     /**
@@ -6750,7 +6670,6 @@ export class Scene13WarLayer {
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
             for (const object of activeObstructions) {
-                if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
                 if (WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
@@ -6876,6 +6795,13 @@ export class Scene13WarLayer {
         }
         if (this.battleType === 'siege' && this.siegeWithWalls) this.ensureGateInfo();
         if (this.battleType === 'siege' && this.siegeWithWalls && this.deployT <= 0 && this.battleSec - this.flowBuiltAt >= 1) this.buildFlowField();
+        // 🔴 [2026-10-18 主人定] 当城门被摧毁后，守方集体发动反攻：立即解除城门驻守限制（guardPost 与 holdLanes），全军主动出击
+        if (this.battleType === 'siege' && this.isDefenderGateDestroyed()) {
+            this.holdLanes.clear();
+            for (const u of this.men) {
+                if (u.f === 1 && u.guardPost) u.guardPost = undefined;
+            }
+        }
         this.stepArrowTowers(dt);
         // 开场列阵待命倒计时：阶段内全军静止渐显，结束才开打（主人 2026-08-16）
         if (this.deployT > 0) {
@@ -7178,8 +7104,7 @@ export class Scene13WarLayer {
                     } else if (this.battleType === 'siege' && m.f === 1) {
                         const ret = this.defenderCityReturnGoal(m);
                         if ((m.x - ret.x) ** 2 + (m.y - ret.y) ** 2 > 180 * 180) {
-                            const aim = this.gateExit(m, ret) ?? ret;
-                            [m.tx, m.ty] = this.fieldBound(aim.x, aim.y);
+                            [m.tx, m.ty] = this.fieldBound(ret.x, ret.y);
                         } else {
                             m.tx = m.x;
                             m.ty = m.y;
@@ -7381,7 +7306,7 @@ export class Scene13WarLayer {
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
                     const rawChase = { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
-                    const chasePt = isGuard ? rawChase : this.gateExit(m, this.flowRedirect(m, rawChase))!;
+                    const chasePt = isGuard ? rawChase : (this.flowRedirect(m, rawChase) ?? rawChase);
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
@@ -8696,6 +8621,38 @@ export class Scene13WarLayer {
                         }
                         ctx.restore();
                     }
+                }
+
+                if (a.proj === 'PROJ_MAGIC') {
+                    // 🔴 [2026-10-18 主人定] 简单魔法系弹道：短流光尾迹 + 青白/淡金双层微光法球，干净克制不遮挡战场
+                    const tailLen = Math.min(d, 22);
+                    const tailX = x - a.dx * tailLen;
+                    const tailY = y - a.dy * tailLen;
+                    ctx.save();
+                    ctx.strokeStyle = a.f === 0 ? 'rgba(130, 225, 255, 0.55)' : 'rgba(255, 215, 130, 0.55)';
+                    ctx.lineWidth = 2.6;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(tailX, tailY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+
+                    ctx.fillStyle = a.f === 0 ? 'rgba(100, 215, 255, 0.38)' : 'rgba(255, 200, 100, 0.38)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6.2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = a.f === 0 ? 'rgba(195, 245, 255, 0.92)' : 'rgba(255, 238, 175, 0.92)';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3.6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    continue;
                 }
 
                 const pa = this.projBank[a.proj];

@@ -2,7 +2,9 @@ export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
-import { toBase16, type Base16Culture } from '../systems/CultureBase16';
+import { toBase16, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
+import { ALL_BRANCHES_MAP } from '../systems/CultureHierarchy';
+import { REGION_TO_BRANCH } from '../config/deCastleAssets';
 import { isScriptPeriod } from '../events/scriptPeriod';
 
 export type SoundKey =
@@ -373,6 +375,73 @@ const BGM_REGION_GAIN: Record<string, number> = {
     aztec_war_drums: 0.582,   // -16.3 LUFS · Aztec Drums of War（阿兹特克战鼓）
     mexica_ritual: 0.661,     // -17.4 LUFS · Aztec Warrior Ritual（墨西加战祭）
     eagle_warrior: 0.684,     // -17.7 LUFS · Aztec Eagle Warrior War Drums（鹰武士战鼓）
+    // 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」] 62 DE 文明主题曲（帝国时代2 DE，纯器乐短曲）+ 2 定制
+    //    DE 主题曲统一 `de_{分支}`；4 定制分支 TIBET/WESTERN 复用已有曲、GREECE/XIANBEI 新下载。
+    de_AFRICA: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_AMERICA: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_ARMENIANS: 0.977,  // -20.8 LUFS · DE 主题曲
+    de_ATHENIANS: 0.676,  // -17.6 LUFS · DE 主题曲
+    de_BASHU: 1.012,  // -21.1 LUFS · DE 主题曲
+    de_BENGALIS: 0.447,  // -14.0 LUFS · DE 主题曲
+    de_BERBER: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_BOHEMIANS: 0.582,  // -16.3 LUFS · DE 主题曲
+    de_BRITONS: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_BULGARIANS: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_BURGUNDIANS: 0.556,  // -15.9 LUFS · DE 主题曲
+    de_BURMESE: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_BYZANTINE: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_CELTS: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_CENTRAL: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_CENTRAL_ASIA: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_CUMAN: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_DANES: 0.398,  // -13.0 LUFS · DE 主题曲
+    de_ETHIOPIANS: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_FRANKS: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_GEORGIANS: 0.624,  // -16.9 LUFS · DE 主题曲
+    de_GERMANIC: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_GOTHS: 1.175,  // -22.4 LUFS · DE 主题曲
+    de_GURJARAS: 0.716,  // -18.1 LUFS · DE 主题曲
+    de_HUNS: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_INCA: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_INDIA: 0.550,  // -15.8 LUFS · DE 主题曲
+    de_JAPAN: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_JIANGNAN: 0.624,  // -16.9 LUFS · DE 主题曲
+    de_KHITAN: 0.422,  // -13.5 LUFS · DE 主题曲
+    de_KHMER: 1.148,  // -22.2 LUFS · DE 主题曲
+    de_KOREA: 1.148,  // -22.2 LUFS · DE 主题曲
+    de_LATIN: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_LITHUANIANS: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_MACEDONIAN: 0.442,  // -13.9 LUFS · DE 主题曲
+    de_MAGYAR: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_MALAY: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_MAPUCHE: 0.343,  // -11.7 LUFS · DE 主题曲
+    de_MAYANS: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_MONGOL: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_MUGHAL: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_MUISCA: 0.501,  // -15.0 LUFS · DE 主题曲
+    de_NORTHEAST: 0.457,  // -14.2 LUFS · DE 主题曲
+    de_ORIE: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_PERSIAN: 0.668,  // -17.5 LUFS · DE 主题曲
+    de_POLES: 1.349,  // -23.6 LUFS · DE 主题曲
+    de_PORTUGUESE: 1.148,  // -22.2 LUFS · DE 主题曲
+    de_PURU: 0.447,  // -14.0 LUFS · DE 主题曲
+    de_ROMA: 0.363,  // -12.2 LUFS · DE 主题曲
+    de_SASANIAN: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_SAXONS: 0.363,  // -12.2 LUFS · DE 主题曲
+    de_SICILIANS: 0.479,  // -14.6 LUFS · DE 主题曲
+    de_SLAVIC: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_SPANISH: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_SPARTANS: 0.589,  // -16.4 LUFS · DE 主题曲
+    de_THRACIAN: 0.543,  // -15.7 LUFS · DE 主题曲
+    de_TUPI: 0.457,  // -14.2 LUFS · DE 主题曲
+    de_TURKS: 1.135,  // -22.1 LUFS · DE 主题曲
+    de_VARANGIANS: 0.407,  // -13.2 LUFS · DE 主题曲
+    de_VIETNAMESE: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_VIKINGS: 1.122,  // -22.0 LUFS · DE 主题曲
+    de_WEI: 0.479,  // -14.6 LUFS · DE 主题曲
+    GREECE: 0.596,  // -16.5 LUFS · GREECE 定制曲
+    XIANBEI: 0.575,  // -16.2 LUFS · XIANBEI 定制曲
+    nobunaga: 0.708,  // -18.0 LUFS · 信长之野望 OVERTURE（2026-10-18 还原，与 Ona Hei 同池轮播）
 };
 
 /**
@@ -384,7 +453,7 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
     CENTRAL: [
         // DIANQIAN 已于 2026-09-17 删除（与 pugan 同曲，曲子留给 MALAY），见 BGM_REGION_GAIN 处注释
         'CENTRAL', 'JIANGNAN', 'BASHU', 'LINGNAN', 'HEXI', 'NORTH', 'NORTHEAST',
-        'JAPAN', 'KOREA', 'xianqin', 'yingqin', 'liuhan', 'wuzhou',
+        'JAPAN', 'KOREA', 'nobunaga', 'xianqin', 'yingqin', 'liuhan', 'wuzhou',
         'zhaosong', 'daming', 'manqing'
     ],
     STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
@@ -439,6 +508,45 @@ function resolveAvailableBgmFolder(folder: string): string {
     return AVAILABLE_BGM_FOLDERS.has(folder) ? folder : GENERIC_BGM_FALLBACK;
 }
 
+/**
+ * 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」]
+ * BGM 选曲走 62 文明 + 4 定制 = 66 分支曲池：每分支曲池 = [本分支专属主题曲] + [母体 16 共享曲]。
+ * 专属主题曲：62 DE 文明统一 `de_{分支}`（帝国时代2 DE 文明主题曲）；
+ * 4 定制分支（DE 无对应文明）：TIBET=千年的祈祷 / WESTERN=伽罗 / GREECE=希腊战鼓 / XIANBEI=草原战曲。
+ */
+const CUSTOM_BRANCH_THEME: Record<string, string> = {
+    TIBET: 'TIBET', WESTERN: 'WESTERN', GREECE: 'GREECE', XIANBEI: 'XIANBEI',
+};
+
+/** 66 分支 key → 专属主题曲 folder */
+function branchTheme(branch: string): string {
+    return CUSTOM_BRANCH_THEME[branch] ?? `de_${branch}`;
+}
+
+/** 任意文化码（172 区 / 66 分支 / 16 母体）→ 66 分支 key，未知回落 CENTRAL */
+function resolveBranch(region: string | null | undefined): string {
+    if (!region) return 'CENTRAL';
+    const u = region.trim().toUpperCase();
+    const b = ALL_BRANCHES_MAP[u];
+    if (b) return b.key; // 别名（NORTH/STEPPE/WEST_ASIA 等）归一化到正牌分支 key
+    return REGION_TO_BRANCH[u] ?? 'CENTRAL';
+}
+
+/** 分支 → 母体共享曲池（16 母体 → 曲目列表）*/
+function branchMotherPool(branch: string): readonly string[] {
+    const b = ALL_BRANCHES_MAP[branch];
+    if (!b) return [];
+    const mother = STYLE_TO_BASE16[b.deStyle];
+    return BASE16_BGM_MAP[mother] ?? [];
+}
+
+/** 分支 → 完整曲池 = [专属主题曲] + 母体共享曲（滤暂停曲 + 去重）*/
+function branchPool(branch: string): string[] {
+    const theme = branchTheme(branch);
+    const shared = branchMotherPool(branch);
+    return [...new Set([theme, ...shared])].filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
+}
+
 function mergeSettings(raw: unknown): AudioSettings {
     const settings: AudioSettings = {
         enabled: DEFAULT_SETTINGS.enabled,
@@ -491,6 +599,8 @@ export class AudioManager {
     private cameraRegionFolder: string = '';
     /** 全部 BGM 随机轮播队列（洗牌袋，空了重洗）*/
     private bgmShuffleQueue: string[] = [];
+    /** 当前跟随军团文化分支的曲池（62+4 分支 → 曲目列表；池内轮播）*/
+    private currentBgmPool: string[] = [];
     /** BGM 异步加载令牌：切歌 / 停歌时自增，作废旧的 fetch 回调 */
     private bgmLoadToken = 0;
     /** 源路径 → blob 对象 URL（用 fetch 取 blob 绕开 IDM 等下载器按扩展名抓取）*/
@@ -1043,6 +1153,11 @@ export class AudioManager {
         this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
         if (!this.settings.enabled || !this.unlocked) return;
 
+        // 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」] 解析跟随军团文化分支 → 曲池；
+        //   切换军团即换池，池内洗牌轮播；当前曲放完才接力下一首（不打断）。
+        const branch = resolveBranch(cultureRegion);
+        this.currentBgmPool = branchPool(branch);
+        this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
         this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
     }
 
@@ -1175,7 +1290,15 @@ export class AudioManager {
      *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
      *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
     private shuffledBgmFolders(): string[] {
-        const pool = isScriptPeriod() ? SCRIPT_WESTERN_BGM_FOLDERS : BGM_ROTATION_FOLDERS;
+        // 🔴 [2026-10-18] 池内轮播：有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
+        let pool: readonly string[];
+        if (isScriptPeriod()) {
+            pool = SCRIPT_WESTERN_BGM_FOLDERS;
+        } else if (this.currentBgmPool.length > 0) {
+            pool = this.currentBgmPool;
+        } else {
+            pool = BGM_ROTATION_FOLDERS;
+        }
         const arr = pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
