@@ -411,8 +411,8 @@ export class Scene13WarLayer {
     /** 演出判负回调（winner: 'attacker' | 'defender' | 'draw'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender' | 'draw', survivors: { attacker: number; defender: number }) => void) | null = null;
 
-    // ── [2026-10-18 主人定] 战术模式专属：武将技集气槽与六计相克见招拆招系统 ──
-    /** 攻/守双方主将 ID（无将侧为 null，不攒气不放技能） */
+    // ── 战术模式：武将技集气槽与六计见招拆招/玩家钦定系统 ──
+    /** 攻/守双方主将 ID（若为无名统帅则为 null，按普将 ×1.00 档位计算） */
     private sideGeneralId: [string | null, string | null] = [null, null];
     /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */
     private sideIsFamous: [boolean, boolean] = [false, false];
@@ -422,6 +422,8 @@ export class Scene13WarLayer {
     private skillGauge: [number, number] = [0, 0];
     /** 攻/守双方每秒集气速率（基础 24 秒满槽 = 100/24 × 武将档位 × 精锐档位） */
     private skillRatePerSec: [number, number] = [0, 0];
+    /** 攻/守双方集气总倍率（用于 UI 展示） */
+    private skillRateMult: [number, number] = [1, 1];
     /** 攻/守双方上一次释放的六计类型（供对方自动释放相克技能） */
     private lastCastSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
     /** 攻/守双方上一次释放的技能四字名称 */
@@ -436,13 +438,20 @@ export class Scene13WarLayer {
     private skillPanicTimer: [number, number] = [0, 0];
     /** 【并】挫敌锐（攻城战破防）持续倒计时（秒）：该侧（受害方）守军与城墙/建筑受伤害 ×1.35 */
     private skillVulnTimer: [number, number] = [0, 0];
+    /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 2.6s 再放 */
+    private skillCastCooldown: number = 0;
 
     /** 初始化本场战术模式双方武将技集气槽与速率 */
     private initScene13SkillSystem(init: Scene13WarInit): void {
-        const attGid = init.attackerGeneralId?.trim() || null;
-        const rawDefGid = init.defenderGeneralId?.trim() || null;
-        const defGid = (rawDefGid && rawDefGid !== attGid) ? rawDefGid : null;
-        this.sideGeneralId = [attGid, defGid];
+        const rawAttGid = init.attackerGeneralId?.trim()
+            || (init.attackerFactionId ? getFactionGeneral(init.attackerFactionId)?.generalId : null)
+            || null;
+        const rawDefGid = init.defenderGeneralId?.trim()
+            || (init.defenderFactionId ? getFactionGeneral(init.defenderFactionId)?.generalId : null)
+            || null;
+        const defGid = (rawDefGid && rawDefGid !== rawAttGid) ? rawDefGid : null;
+        this.sideGeneralId = [rawAttGid, defGid];
+        this.skillCastCooldown = 0;
 
         const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
             const cleanName = eliteName?.trim();
@@ -463,7 +472,7 @@ export class Scene13WarLayer {
         };
 
         const ELITE_RATE_MULTS: Record<number, number> = { 0: 1.5, 1: 1.4, 2: 1.3, 3: 1.2, 4: 1.1 };
-        const BASE_RATE = 100 / 24; // 普将+无精锐 24 秒满槽
+        const BASE_RATE = 100 / 45; // 普将+无精锐基准 45 秒满槽（整体放缓武将技释放频率）
 
         for (const f of [0, 1] as const) {
             const gid = this.sideGeneralId[f];
@@ -475,17 +484,13 @@ export class Scene13WarLayer {
                 isDef,
             );
             this.sideEliteTier[f] = tier;
-            if (!gid) {
-                this.sideIsFamous[f] = false;
-                this.skillRatePerSec[f] = 0;
-            } else {
-                const profile = getGeneralProfile(gid);
-                const famous = profile?.tier === 'famous';
-                this.sideIsFamous[f] = famous;
-                const genMult = famous ? 1.25 : 1.0;
-                const eliteMult = (tier !== null && ELITE_RATE_MULTS[tier] !== undefined) ? ELITE_RATE_MULTS[tier] : 1.0;
-                this.skillRatePerSec[f] = BASE_RATE * genMult * eliteMult;
-            }
+            const profile = gid ? getGeneralProfile(gid) : null;
+            const famous = profile?.tier === 'famous';
+            this.sideIsFamous[f] = famous;
+            const genMult = famous ? 1.25 : 1.0;
+            const eliteMult = (tier !== null && ELITE_RATE_MULTS[tier] !== undefined) ? ELITE_RATE_MULTS[tier] : 1.0;
+            this.skillRateMult[f] = +(genMult * eliteMult).toFixed(2);
+            this.skillRatePerSec[f] = BASE_RATE * genMult * eliteMult;
             this.skillGauge[f] = 0;
             this.lastCastSkill[f] = null;
             this.lastCastSkillName[f] = '';
@@ -524,7 +529,6 @@ export class Scene13WarLayer {
     /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动相克 */
     public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
         const f: 0 | 1 = (sideOrF === 0 || sideOrF === 'attacker') ? 0 : 1;
-        if (!this.sideGeneralId[f]) return;
         this.queuedSkill[f] = this.queuedSkill[f] === six ? null : six;
     }
 
@@ -532,10 +536,11 @@ export class Scene13WarLayer {
     public getScene13SkillState() {
         if (!this.active && !this.lingering) return null;
         const buildSide = (f: 0 | 1) => ({
-            hasGeneral: !!this.sideGeneralId[f],
+            hasGeneral: true,
             generalId: this.sideGeneralId[f],
             isFamous: this.sideIsFamous[f],
             eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
+            rateMult: this.skillRateMult[f],
             gauge: this.skillGauge[f],
             ratePerSec: this.skillRatePerSec[f],
             lastCastSkill: this.lastCastSkill[f],
@@ -563,15 +568,85 @@ export class Scene13WarLayer {
             if (this.skillPanicTimer[f] > 0) this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
             if (this.skillVulnTimer[f] > 0) this.skillVulnTimer[f] = Math.max(0, this.skillVulnTimer[f] - dt);
         }
+        if (this.skillCastCooldown > 0) {
+            this.skillCastCooldown = Math.max(0, this.skillCastCooldown - dt);
+        }
         if (deploying || this.over) return;
         for (const f of [0, 1] as const) {
-            if (!this.sideGeneralId[f] || this.skillRatePerSec[f] <= 0) continue;
+            if (this.skillRatePerSec[f] <= 0) continue;
             this.skillGauge[f] = Math.min(100, this.skillGauge[f] + this.skillRatePerSec[f] * dt);
-            if (this.skillGauge[f] >= 100) {
-                this.skillGauge[f] = 0;
-                const chosen = this.queuedSkill[f] ?? this.resolveAutoNextSkill(f);
-                this.queuedSkill[f] = null; // 释放后清空手动钦定，回归自动见招拆招
-                this.triggerScene13Skill(f, chosen);
+        }
+        // 严禁同帧同时释放：按 [0(攻方), 1(守方)] 顺序检视，同时满槽时攻方优先释放，并进入 2.6s 错开窗口
+        if (this.skillCastCooldown <= 0) {
+            for (const f of [0, 1] as const) {
+                if (this.skillGauge[f] >= 100) {
+                    this.skillGauge[f] = 0;
+                    const chosen = this.queuedSkill[f] ?? this.resolveAutoNextSkill(f);
+                    this.queuedSkill[f] = null; // 释放后清空手动钦定，回归自动见招拆招
+                    this.skillCastCooldown = 2.6;
+                    this.triggerScene13Skill(f, chosen);
+                    break;
+                }
+            }
+        }
+    }
+
+    /** 【胜】增己兵专用：立即从该侧出兵口涌出一波可见增援士兵，剩余计入后备池 */
+    private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number): void {
+        const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
+        if (mySpawns.length === 0) return;
+
+        // 立即在战场出兵口刷出最多 45 名生力军精灵，其余补入后备池
+        let immediateCap = 45;
+        let remainingPop = addTotalPop;
+        const uFwd = this.advanceVec[f];
+        const uSide = this.sideVec[f];
+
+        for (const s of mySpawns) s.slotN = 0;
+        let idx = 0;
+        while (remainingPop > 0 && immediateCap > 0) {
+            const s = mySpawns[idx % mySpawns.length];
+            idx++;
+            const unitPop = Math.max(1, s.pop);
+            remainingPop -= unitPop;
+            immediateCap--;
+            s.spawned++;
+            const bearer = (s.spawned % FLAG_EVERY === 0);
+            const slotIdx = s.slotN++;
+            const files = marchFilesOf(s.key);
+            const sp = marchSpacingOf(s.key);
+            const spDep = Math.min(sp, MARCH_SP_DEPTH_MAX);
+            const dep = ((slotIdx / files) | 0) * spDep;
+            const slotY = ((slotIdx % files) - (files - 1) / 2) * sp;
+            const [spawnX, spawnY] = this.fieldBound(
+                s.x - uFwd.x * dep + uSide.x * slotY,
+                s.y - uFwd.y * dep + uSide.y * slotY,
+            );
+            const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f] ?? { x: this.worldCX, y: this.worldCY };
+            const jx = (Math.random() - 0.5) * 2 * AIM_JITTER;
+            const jy = (Math.random() - 0.5) * 2 * AIM_JITTER;
+            this.men.push({
+                f: s.f, key: s.key, jx, jy,
+                zid: this.manSeq++,
+                x: spawnX, y: spawnY, tx: spawnX, ty: spawnY,
+                hp: this.statsFor(s.key, s.f).hp,
+                dir: this.dir8(tgt.x - s.x, tgt.y - s.y),
+                ph: Math.random() * 8, st: 0, foe: null, next: Math.random() * 0.15,
+                fightT: 0, aimT: 0, lock: 0, atkSt: 0, atkFlip: false,
+                prevX: spawnX, prevY: spawnY, anchorX: spawnX, anchorY: spawnY, netT: 0,
+                stuckT: 0, sepX: 0, sepY: 0, y0: s.y,
+                flag: bearer, fo: Math.random() * 600,
+                march: false, port: null, dep, slotY, pop: s.pop,
+                lane: s.lane,
+                guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity) ? { x: spawnX, y: spawnY } : undefined,
+                claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
+            });
+        }
+
+        if (remainingPop > 0) {
+            const perLanePop = remainingPop / mySpawns.length;
+            for (const sp of mySpawns) {
+                sp.pool += Math.max(1, Math.round(perLanePop / Math.max(1, sp.pop)));
             }
         }
     }
@@ -626,29 +701,28 @@ export class Scene13WarLayer {
 
         // ── 执行六计正交战场效果 ──
         if (six === 'shengzhan') {
-            // 1. 【胜】增己兵：己方立即补充 +8% 初始总兵力，从出兵口增援涌出
-            const addTotalPop = Math.max(10, Math.round(this.initPool[f] * 0.08));
-            const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
-            if (mySpawns.length > 0) {
-                const perLanePop = addTotalPop / mySpawns.length;
-                for (const sp of mySpawns) {
-                    sp.pool += Math.max(1, Math.round(perLanePop / Math.max(1, sp.pop)));
-                }
-                this.batchCd = 0;
-            }
+            // 1. 【胜】增己兵：己方立即补充 +8% 初始总兵力，生力军当场从出兵口涌入战场
+            const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.08));
+            this.spawnImmediateSkillReinforcements(f, addTotalPop);
         } else if (six === 'baizhan') {
-            // 2. 【败】减敌兵：敌方当前兵力立即削减 -8%（后备池与场上非英雄士兵同步折损）
+            // 2. 【败】减敌兵：敌方当前兵力立即削减 -8%（后备池削减 + 场上各阵线均匀折损倒地）
             for (const sp of this.spawns) {
                 if (sp.f === ef && sp.pool > 0) {
                     sp.pool = Math.max(0, Math.floor(sp.pool * 0.92));
                 }
             }
             const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
-            const killCount = Math.max(1, Math.round(enemyLiving.length * 0.08));
-            for (let i = 0; i < killCount && i < enemyLiving.length; i++) {
-                const victim = enemyLiving[i];
-                victim.hp = 0;
-                this.onManKilled(victim, victim);
+            if (enemyLiving.length > 0) {
+                const killCount = Math.max(1, Math.round(enemyLiving.length * 0.08));
+                const step = enemyLiving.length / killCount;
+                for (let i = 0; i < killCount; i++) {
+                    const idx = Math.min(enemyLiving.length - 1, Math.floor((i + 0.5) * step));
+                    const victim = enemyLiving[idx];
+                    if (victim && victim.hp > 0) {
+                        victim.hp = 0;
+                        this.onManKilled(victim, victim);
+                    }
+                }
             }
         } else if (six === 'gongzhan') {
             // 3. 【攻】振己威：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
@@ -670,15 +744,11 @@ export class Scene13WarLayer {
             if (this.battleType === 'siege') {
                 this.skillVulnTimer[ef] = 8.0;
             } else {
-                if (this.sideGeneralId[ef]) {
-                    this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 50);
-                } else {
-                    this.skillVulnTimer[ef] = 6.0;
-                }
+                this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 50);
             }
         }
 
-        // 通知 CombatUI 播放与战略模式完全一致的立绘脉冲缩放与技能名 Cut-in 动画
+        // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
         (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, displayName, gid ?? undefined, skillId);
     }
@@ -6928,8 +6998,7 @@ export class Scene13WarLayer {
             const stats = wt;
             // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）；【攻】振己威狂暴移速 ×1.20
             const spdK = (this.isWaterAt(m.x, m.y) ? 0.6 : 1) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
-            // 🔴 [2026-10-18 【混】乱敌阵] 处于恐慌溃乱期的敌方接战/前排士兵（非行军、非主将、非攻城车、非守备哨位）：
-            //    停止攻击，背对推进方向逃窜（暴露后背，触发近战 1.4x 背刺加成）
+            // 【混】乱敌阵：处于恐慌溃乱期的敌方接战士兵停止攻击，背对推进方向逃窜（暴露后背受近战 1.4x 背刺加成）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
                 const adv = this.advanceVec[m.f];
                 const rvx = -adv.x;
@@ -6937,6 +7006,8 @@ export class Scene13WarLayer {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
+                m.lock = 0;
+                m.stuckT = 0;
                 m.dir = this.dir8Hyst(m.dir, rvx, rvy);
                 const pSpd = stats.spd * spdK * 0.85;
                 const nx = m.x + rvx * pSpd * dt;
@@ -6944,6 +7015,9 @@ export class Scene13WarLayer {
                 const [bx, by] = this.fieldBound(nx, ny);
                 m.x = bx;
                 m.y = by;
+                m.tx = bx;
+                m.ty = by;
+                if (m.fadeT > 0) m.fadeT -= dt;
                 const walkAnimSpd = Math.min(2.2, Math.max(0.6, pSpd / 60));
                 m.ph += dt * 8 * walkAnimSpd;
                 continue;

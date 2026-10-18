@@ -1596,8 +1596,10 @@ export class CombatUI {
                 this.leftTechBox.style.position = 'fixed';
                 this.leftTechBox.style.bottom = '38px';
                 this.leftTechBox.style.top = 'auto';
-                this.leftTechBox.style.right = '50.5vw';
+                this.leftTechBox.style.right = 'calc(50vw + 238px)';
                 this.leftTechBox.style.left = 'auto';
+                this.leftTechBox.style.maxWidth = 'none';
+                this.leftTechBox.style.flexWrap = 'nowrap';
                 this.leftTechBox.style.zIndex = String(T.zIndex.panel + 1);
                 this.leftTechBox.style.color = '#e8dcc0';
                 this.leftTechBox.style.alignItems = 'flex-end';
@@ -1606,13 +1608,15 @@ export class CombatUI {
                 this.rightTechBox.style.position = 'fixed';
                 this.rightTechBox.style.bottom = '38px';
                 this.rightTechBox.style.top = 'auto';
-                this.rightTechBox.style.left = '50.5vw';
+                this.rightTechBox.style.left = 'calc(50vw + 238px)';
                 this.rightTechBox.style.right = 'auto';
+                this.rightTechBox.style.maxWidth = 'none';
+                this.rightTechBox.style.flexWrap = 'nowrap';
                 this.rightTechBox.style.zIndex = String(T.zIndex.panel + 1);
                 this.rightTechBox.style.color = '#e8dcc0';
                 this.rightTechBox.style.alignItems = 'flex-end';
             }
-            // 攻守分界徽记：钉在两侧科技胶囊的中缝上（血槽正上方中央）
+            // 攻守分界徽记：钉在两侧六技能面板的中缝上（血槽正上方中央）
             if (this.techDivider) {
                 const size = uiPx(T.sideBar.centerVsIconSize);
                 this.techDivider.style.width = size;
@@ -2068,13 +2072,12 @@ export class CombatUI {
         const totalSummary = summarizeTechEffects(own).join(' · ');
         tag.title = `${isAtt ? '⚔️ 攻方' : '🛡️ 守方'}科技累计效果 (${own.length}项):\n${totalSummary || '暂无已研发科技'}`;
 
-        // 科技列表（每个科技一个垂直对齐的独立卡片/小列，按着底向上折行）
+        // 科技列表（一律单行横向排布，绝不换行）
         const chipsWrap = document.createElement('div');
         chipsWrap.style.cssText = `
             display: flex;
-            flex-wrap: wrap-reverse;
+            flex-wrap: nowrap;
             gap: 3px;
-            max-width: 100%;
             align-items: flex-end;
             justify-content: ${box === this.leftTechBox ? 'flex-end' : 'flex-start'};
         `;
@@ -2100,6 +2103,7 @@ export class CombatUI {
                 min-width: 32px;
                 min-height: 27px;
                 box-sizing: border-box;
+                flex-shrink: 0;
             `;
 
             // 科技名（行 1）
@@ -2130,27 +2134,28 @@ export class CombatUI {
             chipsWrap.appendChild(chip);
         }
 
-        // 🔴 [2026-09-19 主人定] 把军团和精锐分开显示在科技旁边，独立两框，不要军字和精字，时代与军团换行
-        // 左侧攻方（leftTechBox）：[军团卡片] -> [精锐卡片] -> [科技卡片组] -> [⚔️ 攻方科技]
-        // 右侧守方（rightTechBox）：[守方科技 🛡️] -> [科技卡片组] -> [精锐卡片] -> [军团卡片]
+        // 🔴 [2026-10-18 主人定] 从中间向外依次排布：六技能面板 -> 军团 -> 精锐 -> 科技（单行不换行）
+        // 左侧（leftTechBox，右缘紧挨左六技能面板）：从左到右 DOM 顺序为 [⚔️ 攻方科技] -> [科技卡片组] -> [精锐卡片] -> [军团卡片]
+        // 右侧（rightTechBox，左缘紧挨右六技能面板）：从左到右 DOM 顺序为 [军团卡片] -> [精锐卡片] -> [科技卡片组] -> [守方科技 🛡️]
         if (box === this.leftTechBox) {
-            box.appendChild(legionChip);
-            if (eliteChip) box.appendChild(eliteChip);
-            if (own.length) box.appendChild(chipsWrap);
             box.appendChild(tag);
+            if (own.length) box.appendChild(chipsWrap);
+            if (eliteChip) box.appendChild(eliteChip);
+            box.appendChild(legionChip);
         } else {
-            box.appendChild(tag);
-            if (own.length) box.appendChild(chipsWrap);
-            if (eliteChip) box.appendChild(eliteChip);
             box.appendChild(legionChip);
+            if (eliteChip) box.appendChild(eliteChip);
+            if (own.length) box.appendChild(chipsWrap);
+            box.appendChild(tag);
         }
 
         void foe;
     }
 
     /**
-     * [2026-10-18 战术模式专属] 构建单侧（左下或右下）武将技集气槽与六计相克/钦定操作栏。
-     * 位置固定在「武将立绘/名牌」与「中央技能/科技区」之间（bottom: 70px，贴近立绘内缘），不遮挡战场精灵与血槽。
+     * [2026-10-18 全新设计] 构建战术模式单侧武将技集气槽与六计见招拆招/钦定操作栏。
+     * 布局位置：从底部中央双剑分界徽记（50vw）向两侧展开的第一顺位：
+     *   [中央⚔️] ➔ [六技能面板] ➔ [军团] ➔ [精锐] ➔ [科技（单行不换行）]
      */
     private ensureScene13SkillBar(visualSide: 'left' | 'right'): HTMLDivElement {
         const existing = visualSide === 'left' ? this.leftScene13SkillBar : this.rightScene13SkillBar;
@@ -2162,73 +2167,113 @@ export class CombatUI {
         bar.dataset.combatUiDetached = 'true';
         bar.style.cssText = `
             position: fixed;
-            bottom: 70px;
-            ${isLeft ? 'left' : 'right'}: ${uiPx(T.portraitHorizontalReserve - 12)};
+            bottom: 40px;
+            ${isLeft ? 'right' : 'left'}: calc(50vw + 22px);
+            ${isLeft ? 'left' : 'right'}: auto;
             z-index: ${T.zIndex.panel + 3};
             display: none;
             flex-direction: column;
-            align-items: ${isLeft ? 'flex-start' : 'flex-end'};
+            align-items: stretch;
             gap: 4px;
             padding: 5px 7px;
-            border-radius: 5px;
-            background: linear-gradient(135deg, rgba(22, 16, 10, 0.90) 0%, rgba(12, 8, 4, 0.94) 100%);
-            border: 1px solid rgba(212, 175, 55, 0.48);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.75), inset 0 0 6px rgba(212, 175, 55, 0.12);
+            width: 214px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            background: linear-gradient(180deg, rgba(24, 18, 12, 0.92) 0%, rgba(12, 9, 6, 0.96) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.52);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.82), inset 0 0 8px rgba(212, 175, 55, 0.14);
             pointer-events: auto;
             user-select: none;
             font-family: 'Noto Serif SC', serif;
         `;
 
-        // 第一行：六计字牌 [攻][胜][敌][混][并][败] + 状态微标
-        const topRow = document.createElement('div');
-        topRow.className = 's13-skill-top-row';
-        topRow.style.cssText = `
+        // 顶部状态栏：武将档位/精锐集气倍率徽标 + 相克/钦定状态指示
+        const headerRow = document.createElement('div');
+        headerRow.className = 's13-skill-header-row';
+        headerRow.style.cssText = `
             display: flex;
             flex-direction: ${isLeft ? 'row' : 'row-reverse'};
             align-items: center;
+            justify-content: space-between;
             gap: 6px;
+            line-height: 1.1;
         `;
 
+        const tierBadge = document.createElement('span');
+        tierBadge.className = 's13-skill-tier-badge';
+        tierBadge.style.cssText = `
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 1px 4px;
+            border-radius: 3px;
+            color: #f5deb3;
+            background: rgba(212, 175, 55, 0.18);
+            border: 1px solid rgba(212, 175, 55, 0.42);
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        `;
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 's13-skill-status';
+        statusSpan.style.cssText = `
+            font-size: 10.5px;
+            font-weight: 900;
+            color: #e8d3a3;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+        `;
+
+        headerRow.appendChild(tierBadge);
+        headerRow.appendChild(statusSpan);
+
+        // 中部：六计双行印章字牌 [攻·振威][胜·增兵][敌·固防][混·乱阵][并·挫锐][败·减兵]
         const btnsWrap = document.createElement('div');
         btnsWrap.className = 's13-skill-btns';
         btnsWrap.style.cssText = `
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
             gap: 3px;
+            width: 100%;
         `;
 
-        const SIX_LIST: { key: TacticalSixSet; char: string; tip: string }[] = [
-            { key: 'gongzhan', char: '攻', tip: '【攻】振己威（克【并】）：8秒内全军伤害+30%、攻速+30%、移速+20%\n点击钦定/取消下次释放' },
-            { key: 'shengzhan', char: '胜', tip: '【胜】增己兵（克【混】）：立即征召8%初始兵力投入战场\n点击钦定/取消下次释放' },
-            { key: 'dizhan', char: '敌', tip: '【敌】固己防（克【攻】）：场上全军满血恢复，且8秒内减伤40%\n点击钦定/取消下次释放' },
-            { key: 'hunzhan', char: '混', tip: '【混】乱敌阵（克【胜】）：令敌军前线恐慌倒退4秒，暴露后背受背刺重创\n点击钦定/取消下次释放' },
-            { key: 'bingzhan', char: '并', tip: '【并】挫敌锐（克【败】）：野战打断敌将50%集气槽 / 攻城战破防增伤35%持续8秒\n点击钦定/取消下次释放' },
-            { key: 'baizhan', char: '败', tip: '【败】减敌兵（克【敌】）：直接折损敌方当前8%兵力\n点击钦定/取消下次释放' },
+        const SIX_LIST: { key: TacticalSixSet; char: string; sub: string; tip: string }[] = [
+            { key: 'gongzhan', char: '攻', sub: '振威', tip: '【攻】振己威（破【并】）：8秒内全军伤害+30%、攻速+30%、移速+20%\n点击钦定/取消下次释放' },
+            { key: 'shengzhan', char: '胜', sub: '增兵', tip: '【胜】增己兵（破【混】）：立即征召8%初始兵力从出兵口涌入战场\n点击钦定/取消下次释放' },
+            { key: 'dizhan', char: '敌', sub: '固防', tip: '【敌】固己防（破【攻】）：场上全军满血恢复，且8秒内减伤40%\n点击钦定/取消下次释放' },
+            { key: 'hunzhan', char: '混', sub: '乱阵', tip: '【混】乱敌阵（破【胜】）：令敌军前线恐慌倒退4秒，暴露后背受1.4倍背刺重创\n点击钦定/取消下次释放' },
+            { key: 'bingzhan', char: '并', sub: '挫锐', tip: '【并】挫敌锐（破【败】）：野战打断敌将50%集气槽 / 攻城战破防增伤35%持续8秒\n点击钦定/取消下次释放' },
+            { key: 'baizhan', char: '败', sub: '减兵', tip: '【败】减敌兵（破【敌】）：直接折损敌方当前8%兵力\n点击钦定/取消下次释放' },
         ];
 
         for (const item of SIX_LIST) {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.dataset.six = item.key;
-            btn.textContent = item.char;
             btn.title = item.tip;
             btn.style.cssText = `
-                width: 21px;
-                height: 21px;
-                padding: 0;
-                display: inline-flex;
+                height: 31px;
+                padding: 2px 1px;
+                display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                gap: 1px;
                 font-family: 'Noto Serif SC', serif;
-                font-size: 12px;
-                font-weight: 900;
-                line-height: 1;
                 border-radius: 3px;
                 cursor: pointer;
-                transition: all 0.15s ease;
+                transition: all 0.14s ease;
                 outline: none;
             `;
+            const mainChar = document.createElement('span');
+            mainChar.textContent = item.char;
+            mainChar.style.cssText = 'font-size: 12.5px; font-weight: 900; line-height: 1; pointer-events: none;';
+            const subTag = document.createElement('span');
+            subTag.textContent = item.sub;
+            subTag.style.cssText = 'font-size: 8.5px; font-weight: 700; line-height: 1; opacity: 0.9; pointer-events: none; letter-spacing: -0.2px;';
+            btn.appendChild(mainChar);
+            btn.appendChild(subTag);
+
             btn.addEventListener('mousedown', (e) => e.stopPropagation());
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2241,21 +2286,7 @@ export class CombatUI {
             btnsWrap.appendChild(btn);
         }
 
-        const statusSpan = document.createElement('span');
-        statusSpan.className = 's13-skill-status';
-        statusSpan.style.cssText = `
-            font-size: 10.5px;
-            font-weight: 800;
-            color: #e8d3a3;
-            white-space: nowrap;
-            letter-spacing: 0.3px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
-        `;
-
-        topRow.appendChild(btnsWrap);
-        topRow.appendChild(statusSpan);
-
-        // 第二行：集气进度槽 + 百分比/状态读数
+        // 底部：武将技集气槽 + 实时百分比 / 状态持续读数
         const bottomRow = document.createElement('div');
         bottomRow.className = 's13-skill-bottom-row';
         bottomRow.style.cssText = `
@@ -2270,14 +2301,14 @@ export class CombatUI {
         track.className = 's13-skill-track';
         track.style.cssText = `
             flex: 1;
-            min-width: 138px;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(8, 6, 4, 0.88);
-            border: 1px solid rgba(180, 145, 70, 0.45);
+            min-width: 146px;
+            height: 7px;
+            border-radius: 3.5px;
+            background: rgba(6, 5, 4, 0.92);
+            border: 1px solid rgba(195, 158, 78, 0.52);
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.85);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.9);
         `;
 
         const fill = document.createElement('div');
@@ -2285,7 +2316,7 @@ export class CombatUI {
         fill.style.cssText = `
             height: 100%;
             width: 0%;
-            border-radius: 2px;
+            border-radius: 2.5px;
             transition: width 0.1s linear;
         `;
         track.appendChild(fill);
@@ -2294,10 +2325,10 @@ export class CombatUI {
         pctSpan.className = 's13-skill-pct';
         pctSpan.style.cssText = `
             font-size: 10px;
-            font-weight: 800;
+            font-weight: 900;
             font-variant-numeric: tabular-nums;
             color: #ffd97d;
-            min-width: 34px;
+            min-width: 42px;
             text-align: ${isLeft ? 'right' : 'left'};
             white-space: nowrap;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
@@ -2306,7 +2337,8 @@ export class CombatUI {
         bottomRow.appendChild(track);
         bottomRow.appendChild(pctSpan);
 
-        bar.appendChild(topRow);
+        bar.appendChild(headerRow);
+        bar.appendChild(btnsWrap);
         bar.appendChild(bottomRow);
         document.body.appendChild(bar);
 
@@ -2333,13 +2365,21 @@ export class CombatUI {
             bingzhan: '并',
             baizhan: '败',
         };
+        const SUB_OF: Record<TacticalSixSet, string> = {
+            gongzhan: '振己威',
+            shengzhan: '增己兵',
+            dizhan: '固己防',
+            hunzhan: '乱敌阵',
+            bingzhan: '挫敌锐',
+            baizhan: '减敌兵',
+        };
         const THEME_OF: Record<TacticalSixSet, { color: string; bg: string; border: string; glow: string }> = {
-            gongzhan: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(150, 58, 12, 0.96), rgba(58, 18, 6, 0.96))', border: '#f97316', glow: 'rgba(249, 115, 22, 0.65)' },
-            shengzhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 110, 50, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.65)' },
-            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 98, 120, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.65)' },
-            hunzhan: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(98, 34, 130, 0.96), rgba(34, 8, 50, 0.96))', border: '#a855f7', glow: 'rgba(168, 85, 247, 0.65)' },
-            bingzhan: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(24, 66, 132, 0.96), rgba(6, 22, 50, 0.96))', border: '#3b82f6', glow: 'rgba(59, 130, 246, 0.65)' },
-            baizhan: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(132, 24, 24, 0.96), rgba(50, 6, 6, 0.96))', border: '#ef4444', glow: 'rgba(239, 68, 68, 0.65)' },
+            gongzhan: { color: '#FFEADB', bg: 'linear-gradient(135deg, rgba(155, 58, 12, 0.96), rgba(58, 18, 6, 0.96))', border: '#f97316', glow: 'rgba(249, 115, 22, 0.7)' },
+            shengzhan: { color: '#E2FFED', bg: 'linear-gradient(135deg, rgba(22, 115, 52, 0.96), rgba(6, 44, 18, 0.96))', border: '#22c55e', glow: 'rgba(34, 197, 94, 0.7)' },
+            dizhan: { color: '#D6F9FF', bg: 'linear-gradient(135deg, rgba(12, 102, 125, 0.96), rgba(6, 34, 50, 0.96))', border: '#06b6d4', glow: 'rgba(6, 182, 212, 0.7)' },
+            hunzhan: { color: '#F3E8FF', bg: 'linear-gradient(135deg, rgba(102, 34, 136, 0.96), rgba(34, 8, 50, 0.96))', border: '#a855f7', glow: 'rgba(168, 85, 247, 0.7)' },
+            bingzhan: { color: '#DBEAFE', bg: 'linear-gradient(135deg, rgba(24, 68, 138, 0.96), rgba(6, 22, 50, 0.96))', border: '#3b82f6', glow: 'rgba(59, 130, 246, 0.7)' },
+            baizhan: { color: '#FEE2E2', bg: 'linear-gradient(135deg, rgba(138, 24, 24, 0.96), rgba(50, 6, 6, 0.96))', border: '#ef4444', glow: 'rgba(239, 68, 68, 0.7)' },
         };
 
         const updateVisualSide = (visualSide: 'left' | 'right') => {
@@ -2362,16 +2402,25 @@ export class CombatUI {
             const isManual = s.queuedSkill !== null;
             const oppLast: TacticalSixSet | null = opp?.lastCastSkill ?? null;
 
+            const tierEl = bar.querySelector('.s13-skill-tier-badge') as HTMLSpanElement | null;
+            if (tierEl) {
+                const genLabel = s.isFamous ? '名将' : '普将';
+                const eliteLabel = s.eliteTier ? `·${s.eliteTier}` : '';
+                const multVal = typeof s.rateMult === 'number' ? s.rateMult : (s.ratePerSec / (100 / 45));
+                tierEl.textContent = `${genLabel}${eliteLabel} ×${multVal.toFixed(2).replace(/\.?0+$/, '')}`;
+                tierEl.title = `集气倍率：${genLabel}(×${s.isFamous ? '1.25' : '1.0'})${s.eliteTier ? ` × 精锐${s.eliteTier}` : ''} = ×${multVal.toFixed(2)}（每秒 +${s.ratePerSec.toFixed(1)}%）`;
+            }
+
             const statusEl = bar.querySelector('.s13-skill-status') as HTMLSpanElement | null;
             if (statusEl) {
                 if (isManual && s.queuedSkill) {
-                    statusEl.textContent = `钦定·【${CHAR_OF[nextSix]}】`;
+                    statusEl.textContent = `钦定：【${CHAR_OF[nextSix]}】${SUB_OF[nextSix]}`;
                     statusEl.style.color = '#ffd700';
                 } else if (oppLast) {
-                    statusEl.textContent = `破【${CHAR_OF[oppLast]}】→【${CHAR_OF[nextSix]}】`;
-                    statusEl.style.color = '#a8f0c6';
+                    statusEl.textContent = `拆招：破【${CHAR_OF[oppLast]}】➔【${CHAR_OF[nextSix]}】`;
+                    statusEl.style.color = '#86efac';
                 } else {
-                    statusEl.textContent = `待发·【${CHAR_OF[nextSix]}】`;
+                    statusEl.textContent = `首策：【${CHAR_OF[nextSix]}】${SUB_OF[nextSix]}`;
                     statusEl.style.color = '#e8d3a3';
                 }
             }
@@ -2383,29 +2432,27 @@ export class CombatUI {
                 fillEl.style.background = isAtt
                     ? 'linear-gradient(90deg, #9a3412 0%, #ea580c 55%, #fbbf24 100%)'
                     : 'linear-gradient(90deg, #1e3a8a 0%, #0284c7 55%, #38bdf8 100%)';
-                fillEl.style.boxShadow = pct >= 85
-                    ? (isAtt ? '0 0 8px rgba(251, 191, 36, 0.85)' : '0 0 8px rgba(56, 189, 248, 0.85)')
+                fillEl.style.boxShadow = pct >= 80
+                    ? (isAtt ? '0 0 9px rgba(251, 191, 36, 0.9)' : '0 0 9px rgba(56, 189, 248, 0.9)')
                     : 'none';
             }
 
             const pctEl = bar.querySelector('.s13-skill-pct') as HTMLSpanElement | null;
             if (pctEl) {
                 if (s.frenzySec > 0) {
-                    pctEl.textContent = `振威 ${s.frenzySec.toFixed(0)}s`;
+                    pctEl.textContent = `🔥振威 ${ Math.ceil(s.frenzySec)}s`;
                     pctEl.style.color = '#fb923c';
                 } else if (s.shieldSec > 0) {
-                    pctEl.textContent = `固防 ${s.shieldSec.toFixed(0)}s`;
+                    pctEl.textContent = `🛡️固防 ${Math.ceil(s.shieldSec)}s`;
                     pctEl.style.color = '#38bdf8';
                 } else if (s.panicSec > 0) {
-                    pctEl.textContent = `溃乱 ${s.panicSec.toFixed(0)}s`;
+                    pctEl.textContent = `🌀乱阵 ${Math.ceil(s.panicSec)}s`;
                     pctEl.style.color = '#c084fc';
                 } else if (s.vulnSec > 0) {
-                    pctEl.textContent = `破防 ${s.vulnSec.toFixed(0)}s`;
+                    pctEl.textContent = `⚡破防 ${Math.ceil(s.vulnSec)}s`;
                     pctEl.style.color = '#f87171';
                 } else {
-                    const tierText = s.eliteTier ? `${s.isFamous ? '名' : '将'}·${s.eliteTier}` : (s.isFamous ? '名将' : '普将');
                     pctEl.textContent = `${Math.floor(s.gauge)}%`;
-                    pctEl.title = `集气速率：${tierText}（每秒 +${s.ratePerSec.toFixed(1)}%）`;
                     pctEl.style.color = isAtt ? '#ffd97d' : '#93e2ff';
                 }
             }
@@ -2424,20 +2471,20 @@ export class CombatUI {
                         btn.style.color = '#fffef0';
                         btn.style.background = theme.bg;
                         btn.style.border = '1.5px solid #ffd700';
-                        btn.style.boxShadow = `0 0 8px #ffd700, inset 0 0 4px ${theme.glow}`;
-                        btn.style.transform = 'scale(1.08)';
+                        btn.style.boxShadow = `0 0 9px #ffd700, inset 0 0 5px ${theme.glow}`;
+                        btn.style.transform = ' translateY(-1px) scale(1.05)';
                     } else if (isAutoTarget) {
                         btn.style.color = theme.color;
                         btn.style.background = theme.bg;
                         btn.style.border = `1px solid ${theme.border}`;
-                        btn.style.boxShadow = `0 0 6px ${theme.glow}`;
-                        btn.style.transform = 'scale(1.02)';
+                        btn.style.boxShadow = `0 0 7px ${theme.glow}`;
+                        btn.style.transform = 'translateY(-0.5px)';
                     } else {
-                        btn.style.color = 'rgba(220, 210, 195, 0.55)';
-                        btn.style.background = 'rgba(25, 22, 18, 0.78)';
-                        btn.style.border = '1px solid rgba(110, 95, 75, 0.45)';
+                        btn.style.color = 'rgba(220, 210, 195, 0.52)';
+                        btn.style.background = 'rgba(22, 18, 14, 0.82)';
+                        btn.style.border = '1px solid rgba(110, 95, 75, 0.42)';
                         btn.style.boxShadow = 'none';
-                        btn.style.transform = 'scale(1)';
+                        btn.style.transform = 'none';
                     }
                 }
             }
@@ -4100,7 +4147,9 @@ export class CombatUI {
 
         if (this.boundRegionalBattleField) {
             this.refreshRegionalSafetyDeadline();
-            this.boundRegionalBattleField.tryReleaseStalemateSkillUi();
+            if (!this.scene13LayoutOn) {
+                this.boundRegionalBattleField.tryReleaseStalemateSkillUi();
+            }
         } else {
             const wallMs = Math.max(3500, (battleDurationGameSec / this.lastTimeScale) * 1000);
             this.regionalSafetyDeadline = performance.now() + wallMs + CombatUI.REGIONAL_TAIL_MS;
@@ -4177,7 +4226,7 @@ export class CombatUI {
         this.updateStats();
         this.isCollapsed = false;
         this.updateCollapseState(true);
-        if (this.centerBackdrop) this.centerBackdrop.style.display = 'block';
+        if (this.centerBackdrop) this.centerBackdrop.style.display = this.scene13LayoutOn ? 'none' : 'block';
         if (this.centerPanel) this.centerPanel.style.display = 'flex';
         if (this.leftPortraitFrame) {
             this.leftPortraitFrame.style.display = 'block';
@@ -4188,7 +4237,12 @@ export class CombatUI {
             this.container.classList.add('has-right-portrait');
         }
         if (this.toggleCollapseBtn) this.toggleCollapseBtn.style.display = this.scene13LayoutOn ? 'none' : 'flex';
-        this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        if (!this.scene13LayoutOn) {
+            this.centerPanel.style.animation = 'panel-entrance 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        } else {
+            this.centerPanel.style.animation = 'none';
+            this.renderScene13SkillBars();
+        }
         this.playPortraitEntrance();
     }
 
@@ -4254,9 +4308,10 @@ export class CombatUI {
         return true;
     }
 
-    /** 战术武将技触发效果（侧边徽章闪烁，不再弹大字） */
+    /** 战略模式武将技触发效果（战术模式 Scene13 走独立集气系统 onScene13SkillCast，不走此入口） */
     public flashTacticalSkill(displayName: string, generalId?: string, skillId?: string): void {
         if (!displayName) return;
+        if (this.scene13LayoutOn) return;
         // 战略技（str_*）只在大地图展示，禁止战斗 Cut-in
         if (skillId?.startsWith('str_')) return;
         // 如果战斗已经结束（胜负已分），不再响应任何新的脉冲（例如致死一击触发的逆局技）
@@ -4440,17 +4495,15 @@ export class CombatUI {
         });
     }
 
-    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.08 → 缓缓落回），只动外框 transform。
-     *  起点接蓄力收缩值（--pre-scale）：缩到 0.94 后弹到 1.08，一收一放；无蓄力时同旧版从 1 弹起。 */
+    /** 武将技释放的立绘脉冲：快起慢落（0.15s 放大到 1.08 → 缓缓落回），只动外框 transform。 */
     private pulsePortraitForSkill(side: 'attacker' | 'defender'): void {
         const bf = this.boundRegionalBattleField;
-        // 【2026-08-16 用户指令】单方有将立绘不缩放（战略模式受此约束；战术模式 Scene13 有将集气满即触发同款脉冲）
         if (!this.scene13LayoutOn && bf && !bf.bothSidesHaveGeneral()) return;
         const frame = this.sideElement(side, this.leftPortraitFrame, this.rightPortraitFrame);
         const st = this.portraitWind[side];
         frame.style.setProperty('--pre-scale', st.scale.toFixed(4));
-        frame.style.transform = ''; // 交还给 surge 动画（both 填充结束时停在 scale(1)）
-        st.pulsed = true; // 放完不再二次收缩；同侧后续脉冲 --pre-scale 已是 1 附近，行为同旧版
+        frame.style.transform = '';
+        st.pulsed = true;
         st.scale = 1;
         frame.style.animation = 'none';
         void frame.offsetWidth;
@@ -4460,7 +4513,7 @@ export class CombatUI {
     }
 
     /**
-     * [2026-10-18 战术模式专属] 武将集气槽满 100% 释放六计时，触发与战略模式完全一致的武将立绘脉冲与技能大字 Cut-in。
+     * [2026-10-18 全新设计] 战术模式武将集气槽满 100% 释放六计时，触发与战略模式完全一致的武将立绘脉冲与技能大字 Cut-in。
      */
     public onScene13SkillCast(
         side: 'attacker' | 'defender',

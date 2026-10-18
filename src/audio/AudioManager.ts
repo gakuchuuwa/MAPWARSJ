@@ -309,7 +309,7 @@ const BGM_REGION_GAIN: Record<string, number> = {
     helmet_to_helmet: 0.676,  // -17.6 LUFS · （2026-08-04 通用随机曲）
     hes_a_pirate: 0.7,  // -17.9 LUFS · （2026-08-04 通用随机曲）
     INDIA: 0.708,  // -18.0 LUFS · = daming Nijamena（2026-08-04 印度首选）
-    JAPAN: 0.708,  // -18.0 LUFS
+    JAPAN: 0.543,  // -15.7 LUFS · 幕府将军2 Ona Hei（2026-10-18 替换原信长之野望 OVERTURE，原文件备份 音乐素材/bgm_原始备份_20261018/）
     JIANGNAN: 0.708,  // -18.0 LUFS
     KOREA: 0.708,  // -18.0 LUFS
     LATIN: 0.631,  // -17.0 LUFS · （2026-08-04 新增 Star Sky）
@@ -349,6 +349,30 @@ const BGM_REGION_GAIN: Record<string, number> = {
     //    无版权问题、可复现可调）：生成器 `tools/africa_bgm_synth.mjs`，D 小调五声 · 104 BPM · 64 小节 ≈ 2:29。
     //    前 5 秒实测 -17.7 LUFS、前 15 秒 -16.7 LUFS（**无安静前奏**，不会像 DIANQIAN/TIBET 那样开头听不见）。
     AFRICA: 0.668,    // 实测 -17.5 LUFS · 非洲（自制纯器乐）
+    // 🔴 [2026-10-18 主人「幕府将军的曲子很好听，下载几个知名的作为日本背景音乐」]
+    //    幕府将军2（Total War: Shogun 2，Jeff van Dyck）4 首纯器乐战斗曲：
+    //    JAPAN 用最出名的 Ona Hei，另 3 首只进轮播池（无文化首选，与 victory 等通用随机曲同性质）。
+    //    ⚠️ SEGA 商业版权，与同日被版权主张暂停的 PAUSED_BGM_FOLDERS 7 首同风险，收到主张时照旧加进暂停集。
+    shogun_tsunami: 0.668,    // -17.5 LUFS · Tsunami
+    shogun_shinobue: 0.610,   // -16.7 LUFS · Battle of Shinobue
+    shogun_daimyo: 0.624,     // -16.9 LUFS · For The Daimyo!
+    // 🔴 [2026-10-18 主人「给每个文化设计曲子池」先补战斗风格纯器乐，4 空池各 3 首]
+    //    GERMANIC（西欧·维京）：
+    drakkar_drums: 0.638,     // -17.1 LUFS · Drums of Drakkar（维京战鼓）
+    viking_war_drums: 0.653,  // -17.3 LUFS · Viking War Drums（北欧战鼓）
+    furious_march: 0.569,     // -16.1 LUFS · Furious March to War（北欧行军战曲）
+    //    ORIE（中东·阿拉伯/奥斯曼）：
+    holy_land_battle: 0.603,  // -16.6 LUFS · Epic Middle-Eastern Battle Music - Holy Land
+    desert_war: 0.550,        // -15.8 LUFS · Desert War（阿拉伯战曲）
+    ottoman_drums: 0.582,     // -16.3 LUFS · Royal Drum Procession（奥斯曼战鼓）
+    //    THRACIAN（色雷斯·巴尔干）：
+    gaida_echoes: 0.676,      // -17.6 LUFS · Echoes Of The Gaida（保加利亚风笛）
+    thraco_dacian: 0.638,     // -17.1 LUFS · Thraco-Dacian Tribal Drums（色雷斯部落鼓）
+    bulgarian_war: 0.741,     // -18.4 LUFS · Bulgarian War Drums（保加利亚战鼓）
+    //    AMERICA（中美·阿兹特克/玛雅）：
+    aztec_war_drums: 0.582,   // -16.3 LUFS · Aztec Drums of War（阿兹特克战鼓）
+    mexica_ritual: 0.661,     // -17.4 LUFS · Aztec Warrior Ritual（墨西加战祭）
+    eagle_warrior: 0.684,     // -17.7 LUFS · Aztec Eagle Warrior War Drums（鹰武士战鼓）
 };
 
 /**
@@ -365,18 +389,18 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
     ],
     STEPPE: ['STEPPE', 'CENTRAL_ASIA', 'WESTERN'],
     INDIA: ['INDIA'],
-    GERMANIC: ['GERMANIC', 'helmet_to_helmet'],
+    GERMANIC: ['GERMANIC', 'helmet_to_helmet', 'drakkar_drums', 'viking_war_drums', 'furious_march'],
     PURU: ['TIBET', 'litang'],
-    ORIE: ['WEST_ASIA', 'BERBER'],
+    ORIE: ['WEST_ASIA', 'BERBER', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
     LATIN: ['LATIN', 'victory', 'ezios_family'],
     SLAVIC: ['SLAVIC'],
     EAST: ['age_of_kings'],
     PERSIAN: ['shadow_assassin'],
     MALAY: ['pugan'],
     GREEK: ['fallen_army'],
-    THRACIAN: ['rock_house_jail'],
+    THRACIAN: ['rock_house_jail', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
     ANDE: ['ANDE', 'mohicans'],
-    AMERICA: ['hes_a_pirate'],
+    AMERICA: ['hes_a_pirate', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior'],
     AFRICA: ['AFRICA'],
 };
 
