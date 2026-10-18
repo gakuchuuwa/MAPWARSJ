@@ -568,7 +568,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     heavy_crossbowman: { name: '欧洲重装弩手特殊', cls: 'ranged', sz: 1, hp: 50, atk: 10, meleeArmor: 1, pierceArmor: 4, rng: 240, reload: 4.2, spd: 36, dmgType: 'pierce', bonus: { 27: 6 }, armorTags: [15, 31] },
     heavy_swordsman: { name: '欧洲古典剑士特殊', cls: 'melee', sz: 1, hp: 75, atk: 7, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2, spd: 38, dmgType: 'melee', armorTags: [1, 31] },
     imperial_legionary: { name: '罗马帝国军团兵特殊', cls: 'melee', sz: 1, hp: 75, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 2, spd: 36, dmgType: 'melee', bonus: { 21: 2, 29: 2 }, armorTags: [1, 31] },
-    khan: { name: '蒙古可汗特殊', cls: 'cav', sz: 1, hp: 160, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 160, reload: 2.1, spd: 58, dmgType: 'pierce', bonus: { 20: 5, 27: 1, 39: -3 }, armorTags: [8, 15, 19, 28, 31] },
+    khan: { name: '蒙古可汗特殊', cls: 'cav', sz: 1, kite: 70, hp: 160, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 160, reload: 2.1, spd: 58, dmgType: 'pierce', bonus: { 20: 5, 27: 1, 39: -3 }, armorTags: [8, 15, 19, 28, 31] },
     mounted_samurai: { name: '倭寇骑士特殊', cls: 'cav', sz: 1, hp: 130, atk: 14, meleeArmor: 3, pierceArmor: 5, rng: 0, reload: 1.75, spd: 54, dmgType: 'melee', bonus: { 19: 12, 39: -3 }, armorTags: [8, 19, 31] },
     lysander_raider: { name: '斯巴达吕山德掠夺者特殊', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2, spd: 36, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
     boarding_galley: { name: '欧洲接舷战船特殊', cls: 'melee', sz: 1, hp: 200, atk: 0, meleeArmor: 3, pierceArmor: 2, rng: 40, reload: 2, spd: 76, dmgType: 'melee', armorTags: [16, 31] },

@@ -99,6 +99,11 @@ export const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     slinger: 3.73,
     arambai: 4.0,
     crossbowman: 4.0,
+    heavy_crossbowman: 4.0,
+    mounted_crossbowman: 4.0,
+    mounted_crossbowman_heavy: 4.0,
+    outlaw: 4.0,
+    khan: 6.22,
     archer: 4.0,
     crossbow: 4.0,
     blackwood_archer: 4.0,
@@ -237,6 +242,9 @@ export const PROJ_TYPE: Record<string, string> = {
     //    故新建逻辑弹丸 PROJ_CROSSBOW：**素材仍用 PROJ_ARROW 小箭**（11 帧带方向），
     //    只借独立 key 拿自己的飞行参数（0.09 平直）—— 正是 PROJ_ASSET_KEY 那层间接的用途。
     crossbowman: 'PROJ_CROSSBOW',
+    heavy_crossbowman: 'PROJ_CROSSBOW',
+    mounted_crossbowman: 'PROJ_CROSSBOW',
+    mounted_crossbowman_heavy: 'PROJ_CROSSBOW',
     arbalest: 'PROJ_CROSSBOW',
     chukonu: 'PROJ_CROSSBOW',
     elite_chukonu: 'PROJ_CROSSBOW',

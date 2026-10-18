@@ -2299,7 +2299,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "shuntian": {
-        legionName: "帝国时代两江军团",
+        legionName: "帝国时代起义军团",
         legionType: "sub",
     },
     "dacheng": {

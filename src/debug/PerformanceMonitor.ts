@@ -2,6 +2,16 @@ import { GameConfig } from '../config/GameConfig';
 import { perfDoctor } from './PerfDoctor';
 import { audioManager } from '../audio/AudioManager';
 
+/** F3 面板点击「♪ BGM」行 → 复制当前曲名（可读曲名 + 文件夹键），方便反馈调音量/删除 */
+(window as unknown as { __copyBgm: () => void }).__copyBgm = () => {
+    const b = audioManager.getBgmStatus();
+    if (!b) return;
+    const text = `${b.title} [${b.folder}]`;
+    if (navigator.clipboard?.writeText) {
+        void navigator.clipboard.writeText(text).catch(() => {});
+    }
+};
+
 /**
  * PerformanceMonitor — 运行时性能监控面板
  *
@@ -728,10 +738,11 @@ ${content.innerText}`;
         const bgm = audioManager.getBgmStatus();
         const duck = audioManager.getBgmDuckInfo();
         const bgmHtml = bgm
-            ? `<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;">
+            ? `<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;cursor:pointer;" title="点击复制曲名" onclick="__copyBgm()">
                 <span style="color:#888;">♪ BGM</span>
-                <span style="color:${bgm.paused ? '#f44336' : '#8fd18f'};margin-left:4px;">${bgm.track}</span>
-                <span style="color:#666;margin-left:6px;">${bgm.folder}</span>
+                <span style="color:${bgm.paused ? '#f44336' : '#8fd18f'};margin-left:4px;">${bgm.title}</span>
+                <span style="color:#666;margin-left:4px;">[${bgm.folder}]</span>
+                <span style="color:#4a9;margin-left:6px;font-size:10px;">📋复制</span>
                 <div style="color:#9aa;margin-top:2px;">
                     补偿 <span style="color:${bgm.inGainTable ? '#ddd' : '#FF9800'};">${bgm.gain.toFixed(2)}${bgm.inGainTable ? '' : ' 未入表'}</span> ·
                     音量 <span style="color:#ddd;">${bgm.volume.toFixed(3)}</span> ·
