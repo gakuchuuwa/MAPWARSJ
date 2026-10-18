@@ -1,10 +1,11 @@
-﻿import L from 'leaflet';
+import L from 'leaflet';
 import { GameTime } from './GameTime';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { perfDoctor } from '../debug/PerfDoctor';
 import { marchStutterProbe } from '../debug/MarchStutterProbe';
 import { CityAssetManager } from '../assets/CityAssetManager';
 import { GameConfig } from '../config/GameConfig';
+import { resolveFactionCulture66 } from '../systems/CultureRegion';
 import type { GameApp } from './GameApp';
 
 
@@ -244,7 +245,7 @@ function resolveFollowTarget(app: GameApp, id: string) {
 /** 跟随中重复插队旗号优先（毫秒），避免每帧 setView 刷屏 */
 const FOLLOW_FLAG_PRIORITY_INTERVAL_MS = 600;
 let lastFollowFlagPriorityKick = 0;
-let lastBgmFollowedId: string | null = null;
+let lastBgmFactionId: string | null | undefined = undefined;
 
 /**
  * 🔴 [2026-09-27 主人定]「军团只有移动的时候才播放移动音效」。
@@ -721,16 +722,12 @@ export function tickGameAppFrame(app: GameApp, timestamp: number): void {
                 syncFollowedLegionAudioFor(app);
             }
             app.cameraFollowUI.update();
-            // BGM 仅跟随军团切换时播放（不随镜头移动）
-            if (followedId && legionManager) {
-                const legion = resolveFollowTarget(app, followedId);
-                const pos = legion?.getPosition();
-                if (pos && followedId !== lastBgmFollowedId) {
-                    lastBgmFollowedId = followedId;
-                    app.audioManager.syncPortraitBgm(legion?.portraitPath, pos.lat, pos.lng, legion?.cultureRegion);
-                }
-            } else {
-                lastBgmFollowedId = null;
+            // 🔴 [2026-10-18 主人定] 玩家加入哪个势力就播放哪个势力的曲子（66文化池），没有加入势力就全库随机
+            const playerFactionId = app.playerHero?.factionId ?? null;
+            if (playerFactionId !== lastBgmFactionId) {
+                lastBgmFactionId = playerFactionId;
+                const pos = app.playerHero?.getPosition() ?? { lat: 0, lng: 0 };
+                app.audioManager.syncPortraitBgm(undefined, pos.lat, pos.lng, resolveFactionCulture66(playerFactionId));
             }
             perfMonitor.endTimer('camera');
         }
