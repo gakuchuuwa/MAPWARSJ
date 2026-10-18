@@ -374,7 +374,9 @@ export class PlayerHUD {
                 //    显示战役全称（如【格拉尼库斯河战役】），不显示战场地名给玩家当任务名。
                 : quest.kind === 'general_event' && quest.event
                     ? `随${quest.generalName}赴【${quest.event.title}】`
-                    : `随${quest.generalName}攻【${quest.targetCityName}】`)
+                    : quest.kind === 'first_battle' && quest.firstBattle
+                        ? `随${quest.generalName}赴【${quest.firstBattle.battleName}】`
+                        : `随${quest.generalName}攻【${quest.targetCityName}】`)
             : travelPoint
                 ? `奔赴【${travelPoint}】`
                 : '到据点找武将';
