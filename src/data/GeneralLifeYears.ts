@@ -1123,7 +1123,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     kanata_lamalaya: { birth: 1510, death: 1575, kaoju: '异说' },  // 拉玛拉亚
     adile_adilesha: { birth: 1490, death: 1534, kaoju: '异说' },  // 阿迪勒沙
     foluolida_meinendeshi: { birth: 1519, death: 1574 },  // 梅嫩德斯
-    fujisi_fujiweng: { birth: -439, death: -322, kaoju: '异说' },  // 福基翁
+    fujisi_fujiweng: { birth: -402, death: -318, kaoju: '异说' },  // 福基翁（雅典名将 Phocion，约前402—前318）
     yilisi_yifeituosi: { birth: -800, death: -750, kaoju: '推定' },  // 伊菲托斯
     nuowei_halaer: { birth: 850, death: 933, kaoju: '推定' },  // 哈拉尔
     keernuwaye_geladelong: { birth: 450, death: 510, kaoju: '推定' },  // 格拉德隆
@@ -1217,6 +1217,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     yin_yuejin: { birth: 159, death: 218, kaoju: '推定' },  // 乐进（朝歌·建安十年攻克朝歌斩严敬）
     xibolai_majiabi: { birth: -190, death: -160, kaoju: '推定' },  // 犹大马加比（耶路撒冷·马加比起义领袖收复耶路撒冷）
     gen_caffa_consul: { birth: 1425, death: 1475, kaoju: '推定' },  // 奥贝托·斯夸尔（卡法·热那亚末任卡法执政官，1475年卡法围城战殉城）
+    baolusi: { birth: -254, death: -216, kaoju: '推定' },  // 保卢斯（坎尼战役罗马执政官卢基乌斯·埃米利乌斯·保卢斯，前216年阵亡）
+    waluo: { birth: -256, death: -195, kaoju: '推定' },  // 瓦罗（坎尼战役罗马执政官盖乌斯·特伦提乌斯·瓦罗）
+    seleisi_shouling: { birth: -365, death: -300, kaoju: '推定' },  // 塞乌特斯（海姆斯山战役色雷斯奥德里西亚国王塞乌特斯三世）
+    aitiliusi: { birth: 391, death: 454, kaoju: '异说' },  // 埃提乌斯（沙隆战役西罗马名将弗拉维乌斯·埃提乌斯）
 };
 
 /** 生年（未收录返回 null） */

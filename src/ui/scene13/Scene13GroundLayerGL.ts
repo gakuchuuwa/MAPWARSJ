@@ -1300,8 +1300,8 @@ export class Scene13GroundLayerGL {
     // 这正是 DE Genie 引擎（及 tools/rms/rmsEngine.mjs:642）纯正的原生算法！
     const D4 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
-    // 随机生长一个自然多边形团块
-    const growClumpRegion = (seedX: number, seedY: number, targetTiles: number): Set<number> => {
+    // 随机生长一个自然多边形团块（支持各向同性圆丘与沿主轴延伸的长条山脊/弧形山梁）
+    const growClumpRegion = (seedX: number, seedY: number, targetTiles: number, axisAngle: number, aniso: number): Set<number> => {
       const clump = new Set<number>();
       const frontier: number[] = [];
       const startIdx = seedY * N + seedX;
@@ -1311,6 +1311,7 @@ export class Scene13GroundLayerGL {
 
       clump.add(startIdx);
       frontier.push(startIdx);
+      const ax = Math.cos(axisAngle), ay = Math.sin(axisAngle);
 
       while (frontier.length > 0 && clump.size < targetTiles) {
         const pickIdx = Math.floor(rnd() * frontier.length);
@@ -1318,7 +1319,11 @@ export class Scene13GroundLayerGL {
         const cx0 = cur % N, cy0 = Math.floor(cur / N);
 
         let expanded = false;
-        const shuffled = [...D4].sort(() => rnd() - 0.5);
+        const shuffled = [...D4].sort((a, b) => {
+          const wa = 1 + aniso * Math.abs(a[0] * ax + a[1] * ay) + (rnd() - 0.5) * 1.4;
+          const wb = 1 + aniso * Math.abs(b[0] * ax + b[1] * ay) + (rnd() - 0.5) * 1.4;
+          return wb - wa;
+        });
         for (const [dx, dy] of shuffled) {
           const nx = cx0 + dx, ny = cy0 + dy;
           if (nx < 2 || nx >= N - 2 || ny < 2 || ny >= N - 2) continue;
@@ -1373,7 +1378,7 @@ export class Scene13GroundLayerGL {
     // 4. 逐个团块生成并计算 DE 原版「边缘距离场」
     // DE 原版规则：离团边缘越近，高度越低（1级）；越向内部深入，高度递增（直到 peakH）。
     // 总团数 = 森林/真实山脊所在山丘数 + 原野自然开阔山丘数
-    const totalClumps = Math.max(clumpCount, prioritySeeds.length + (isBig ? 3 : 2));
+    const totalClumps = Math.max(clumpCount, prioritySeeds.length + (isBig ? 3 : 3));
     for (let c = 0; c < totalClumps; c++) {
       let seedX = 0, seedY = 0, found = false;
 
@@ -1401,18 +1406,25 @@ export class Scene13GroundLayerGL {
       }
       if (!found) continue;
 
-      // 主峰高度：大城 2~3 级；中城 3~4 级；关隘/山寨 4~6 级（结合真实 DEM 抬升）
+      // 主峰高度与团块规模多样化：既有 1~2 级平缓漫坡，也有 3~4 级高耸主峰
       const demH = this.origElev ? (this.origElev[seedY * N + seedX] ?? 0) : 0;
+      const hRoll = rnd();
       let peakH = 2;
-      if (isBig) peakH = 2 + ((rnd() < 0.4 || demH >= 3) ? 1 : 0);
-      else if (isPass) peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
-      else if (isStockade) peakH = 3 + Math.floor(rnd() * (maxLevel - 2));
-      else peakH = Math.max(demH >= 3 ? 3 : 2, 2 + Math.floor(rnd() * (maxLevel - 1)));
+      if (isBig) peakH = hRoll < 0.35 ? 1 : hRoll < 0.80 ? 2 : 3;
+      else if (isPass || isStockade) peakH = 2 + Math.floor(rnd() * Math.max(1, maxLevel - 1));
+      else peakH = hRoll < 0.25 ? 1 : Math.max(demH >= 3 ? 3 : 2, 1 + Math.floor(rnd() * maxLevel));
       peakH = Math.max(1, Math.min(maxLevel, peakH));
 
-      // 团块瓦片数：DE 规模，足够形成宽阔起伏山体（大城 120~260 格，中小城 90~180 格）
-      const clumpTiles = isBig ? (120 + Math.floor(rnd() * 140)) : (90 + Math.floor(rnd() * 100));
-      const region = growClumpRegion(seedX, seedY, clumpTiles);
+      // 团块瓦片数与走向各异：小圆丘 (50~95 格)、中宽台地 (100~175 格)、长条山梁 (150~260 格)
+      const styleRoll = rnd();
+      const axisAngle = rnd() * Math.PI;
+      const aniso = styleRoll < 0.40 ? 0.15 : styleRoll < 0.78 ? (1.2 + rnd() * 1.4) : (2.2 + rnd() * 1.2);
+      const clumpTiles = isBig
+        ? (90 + Math.floor(rnd() * 170))
+        : styleRoll < 0.35
+          ? (50 + Math.floor(rnd() * 55))
+          : (95 + Math.floor(rnd() * 145));
+      const region = growClumpRegion(seedX, seedY, clumpTiles, axisAngle, aniso);
       if (region.size < 16) continue;
 
       // ── DE 原生距离场算法（BFS 边缘向心剥洋葱）──
@@ -1516,9 +1528,10 @@ export class Scene13GroundLayerGL {
   /**
    * 🔴 [2026-10-12 主人令「中城/小城（Medium/Small City）：城址依据地理环境（如临河高坡、背山面水）生成半岛或台地，多样化起伏」]
    * 中城/小城地理环境与半岛/台地多样化生成：
-   * 原型 1 (bluff): 临河高坡/半岛台地（城址在 2~3 级高坡台地，一侧临水临谷缓降，城门居高临下）；
-   * 原型 2 (mountain_spur): 背山面水/依山面野（城后方升起 3~5 级连绵高耸靠山，城前为 0 级开阔平地/水际）；
-   * 原型 3 (rolling_hills): 丘陵台地（城址在 1~2 级圆缓台地，外围环抱 3~4 组 1~4 级高低错落小丘）。
+   * 原型 1 (bluff): 临河高坡/半岛台地（城址在 2~2.5 级高坡台地，一侧临水临谷缓降，城门居高临下）；
+   * 原型 2 (mountain_spur): 背山面水/依山面野（城后方背水侧升起 3~4 级连绵靠山山脊，面水侧开阔平地）；
+   * 原型 3 (valley_corridor): 两翼山梁/谷地走廊（城址坐落谷底平地，外围相对两翼隆起长条高坡山脊）；
+   * 原型 4 (rolling_hills): 丘陵台地（城址在 1~2 级圆缓台地，外围环抱多组 1~4 级高低错落小丘）。
    */
   public flattenMediumSmallCityTerrain(
     screenX: number,
@@ -1543,30 +1556,53 @@ export class Scene13GroundLayerGL {
     const cx = c.gx, cy = c.gy;
     const rFlat = flatCells;
     const isMedium = cityType === 'medium_city';
+    const isWet = (gx: number, gy: number) => {
+      const ix = Math.min(N - 1, Math.max(0, Math.floor(gx)));
+      const iy = Math.min(N - 1, Math.max(0, Math.floor(gy)));
+      return (this.smoothWater[iy * N + ix] ?? 0) >= 0.16;
+    };
+
+    // 检测真实水体重心方向（若有水，靠山优先放在背水一侧，顺应「背山面水」真实地理）
+    let wx = 0, wy = 0, wCnt = 0;
+    for (let gy = 4; gy < N - 4; gy += 3) {
+      for (let gx = 4; gx < N - 4; gx += 3) {
+        if ((this.smoothWater[gy * N + gx] ?? 0) >= 0.40) {
+          wx += gx - cx;
+          wy += gy - cy;
+          wCnt++;
+        }
+      }
+    }
+    const backAngle = wCnt >= 8 ? Math.atan2(-wy, -wx) : rnd() * Math.PI * 2;
 
     // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保城池与丘陵纯粹由本地原型驱动
     this.cornerElev.fill(0);
     const archeRoll = rnd();
-    let archeMode: 'bluff' | 'mountain_spur' | 'rolling_hills' = 'bluff';
-    if (archeRoll < 0.35) {
+    let archeMode: 'bluff' | 'mountain_spur' | 'valley_corridor' | 'rolling_hills' = 'bluff';
+    if (archeRoll < 0.28) {
       archeMode = 'bluff';            // 临河高坡/半岛台地
-    } else if (archeRoll < 0.70) {
+    } else if (archeRoll < 0.56) {
       archeMode = 'mountain_spur';    // 背山面水/依山面野
+    } else if (archeRoll < 0.78) {
+      archeMode = 'valley_corridor';  // 两翼山梁/谷地走廊
     } else {
       archeMode = 'rolling_hills';    // 丘陵台地
     }
 
     if (archeMode === 'bluff') {
       // ── 原型 1：【临河高坡 / 半岛台地】 ──
-      // 城址整平在 2~3 级高台（中城 2.5 级，小城 2.0 级），外缘以平滑斜坡向原野跌落
+      // 城址整平在 2~2.5 级高台，外缘随方位带有微幅缓急变化向原野跌落
       const baseElev = isMedium ? 2.5 : 2.0;
+      const p0 = rnd() * Math.PI * 2;
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
           const dist = Math.hypot(x - cx, y - cy);
+          const th = Math.atan2(y - cy, x - cx);
+          const slopeW = 2.6 + 1.2 * Math.sin(th * 2 + p0);
           if (dist <= rFlat) {
             this.cornerElev[y * V + x] = baseElev;
-          } else if (dist <= rFlat + 3.0) {
-            const s = (dist - rFlat) / 3.0;
+          } else if (dist <= rFlat + slopeW && !isWet(x, y)) {
+            const s = (dist - rFlat) / slopeW;
             const t = s * s * (3 - 2 * s);
             this.cornerElev[y * V + x] = baseElev * (1.0 - t);
           }
@@ -1574,22 +1610,67 @@ export class Scene13GroundLayerGL {
       }
     } else if (archeMode === 'mountain_spur') {
       // ── 原型 2：【背山面水 / 依山面野】 ──
-      // 城址整平在 1 级山脚平缓地基
+      // 城址整平在 1 级平缓地基；背水后方外围隆起连绵弧形靠山（2.5~3.8 级），前方开阔
+      const spurH = isMedium ? 3.6 : 2.8;
+      const rSpur = rFlat + 7.5;
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, y - cy);
+          const dx = x - cx, dy = y - cy;
+          const dist = Math.hypot(dx, dy);
           if (dist <= rFlat) {
             this.cornerElev[y * V + x] = 1.0;
           } else if (dist <= rFlat + 2.0) {
             const s = (dist - rFlat) / 2.0;
             const t = s * s * (3 - 2 * s);
             this.cornerElev[y * V + x] = 1.0 * (1.0 - t);
+          } else if (!isWet(x, y) && dist > rFlat + 3.0 && dist < rSpur + 14.0) {
+            let dAng = Math.atan2(dy, dx) - backAngle;
+            while (dAng > Math.PI) dAng -= Math.PI * 2;
+            while (dAng < -Math.PI) dAng += Math.PI * 2;
+            if (Math.abs(dAng) < 1.05) {
+              const angFactor = Math.cos((dAng / 1.05) * (Math.PI * 0.5));
+              const radDist = Math.abs(dist - (rSpur + 4.5)) / 5.5;
+              if (radDist < 1.0) {
+                const radFactor = 1.0 - radDist * radDist * (3 - 2 * radDist);
+                this.cornerElev[y * V + x] = Math.max(this.cornerElev[y * V + x], Math.round(spurH * angFactor * radFactor));
+              }
+            }
+          }
+        }
+      }
+    } else if (archeMode === 'valley_corridor') {
+      // ── 原型 3：【两翼山梁 / 谷地走廊】 ──
+      // 城址在 0.5~1 级谷底平地，外围相对两翼隆起长条高坡山脊
+      const baseH = isMedium ? 1.0 : 0.5;
+      const axis = backAngle + 0.4;
+      const nx = -Math.sin(axis), ny = Math.cos(axis);
+      const tx = Math.cos(axis), ty = Math.sin(axis);
+      const ridgeH = isMedium ? 3.2 : 2.5;
+      for (let y = 0; y <= N; y++) {
+        for (let x = 0; x <= N; x++) {
+          const dx = x - cx, dy = y - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist <= rFlat) {
+            this.cornerElev[y * V + x] = baseH;
+          } else if (dist <= rFlat + 2.0) {
+            const s = (dist - rFlat) / 2.0;
+            const t = s * s * (3 - 2 * s);
+            this.cornerElev[y * V + x] = baseH * (1.0 - t);
+          } else if (!isWet(x, y) && dist > rFlat + 3.5) {
+            const across = Math.abs(dx * nx + dy * ny);
+            const along = Math.abs(dx * tx + dy * ty);
+            const dRidge = Math.abs(across - (rFlat + 8.5)) / 4.8;
+            if (dRidge < 1.0 && along < 24.0) {
+              const fAlong = Math.max(0, 1.0 - (along / 24.0) ** 2);
+              const fAcross = 1.0 - dRidge * dRidge * (3 - 2 * dRidge);
+              this.cornerElev[y * V + x] = Math.max(this.cornerElev[y * V + x], Math.round(ridgeH * fAcross * fAlong));
+            }
           }
         }
       }
     } else {
-      // ── 原型 3：【起伏丘陵台地】 ──
-      // 城址在 1.5 级圆缓台地上
+      // ── 原型 4：【起伏丘陵台地】 ──
+      // 城址在 1.2~1.8 级圆缓台地上
       const hillBase = isMedium ? 1.8 : 1.2;
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
@@ -1861,8 +1942,18 @@ export class Scene13GroundLayerGL {
           const d = Math.hypot(dx, dy), th = Math.atan2(dy, dx);
           const rf0 = fenceAt(th), q = d / fenceInAt(th);
           const step = (a: number, b: number, h0: number, h1: number): number => { const s = (q - a) / (b - a); return h0 + (h1 - h0) * s * s * (3 - 2 * s); };
+          let slopeMul = 1.0;
+          if (shapeMode === 'ridge') {
+            const align = Math.cos(th - ridgeAngle);
+            slopeMul = 0.85 + 1.15 * align * align;
+          } else if (shapeMode === 'organic') {
+            slopeMul = 1.0 + 0.45 * Math.sin(3 * th + phase1) + 0.25 * Math.cos(2 * th + phase2);
+          } else if (shapeMode === 'circle') {
+            slopeMul = 1.15 + 0.15 * Math.sin(2 * th + phase1);
+          }
+          const outerSlopeW = Math.max(2.0, FENCE_SLOPE * slopeMul);
           let h: number;
-          if (d > rf0 + FENCE_PAD) { const s = Math.min(1, (d - rf0 - FENCE_PAD) / FENCE_SLOPE); h = fenceLevel * (1 - s * s * (3 - 2 * s)); }
+          if (d > rf0 + FENCE_PAD) { const s = Math.min(1, (d - rf0 - FENCE_PAD) / outerSlopeW); h = fenceLevel * (1 - s * s * (3 - 2 * s)); }
           else if (q >= 0.87) h = fenceLevel;
           else if (q > 0.74) h = step(0.74, 0.87, villageLevel, fenceLevel);
           else if (q >= 0.34) h = villageLevel;

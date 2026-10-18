@@ -118,6 +118,7 @@ export class RecruitmentSystem {
         }
 
         this.legionManager.trimLegionsToCap();
+        this.legionManager.syncCitySpawnTierConsumption();
 
         const cities = this.cityManager.getCities();
         gameLog('recruitment', '💂 [募兵] 播放开始 — 首次出兵（分帧异步）');
@@ -321,8 +322,8 @@ export class RecruitmentSystem {
             if (!spawnTypes.includes(city.type)) continue;
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
-            // 锚定将战败冷却中：该城暂不出兵。
-            if (isGeneralOnCooldown(city.id)) continue;
+            // 锚定将战败冷却中或已被占用：该城暂不出兵。
+            if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id)) continue;
             // 🔴 [2026-10-18 主人定「没有武将的据点，不能去打别的据点」「没有武将不能出兵」]
             //    据点无武将或武将当前不在登场期（此时只有普通守军「XX将军」），不能出兵攻打别的据点。
             const anchoredGeneral = getCityAnchoredGeneral(city.id);
@@ -388,6 +389,7 @@ export class RecruitmentSystem {
 
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
+        if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id)) return null;
         const anchoredGeneral = getCityAnchoredGeneral(city.id);
         if (!anchoredGeneral || !isGeneralOnStage(anchoredGeneral.generalId)) return null;
         const region = this.getCityRegion(city);
@@ -405,11 +407,19 @@ export class RecruitmentSystem {
 
         if (!newLegion) return null;
 
+        // 🔴 [2026-10-18 主人定「没有武将不能出兵」] 若因档位占用等原因未能挂上在场武将，立即销毁移除，绝不放出「XX将军」无将出征
+        if (!newLegion.generalId || !isGeneralOnStage(newLegion.generalId)) {
+            newLegion.destroy();
+            this.legionManager.removeArmy(newLegion);
+            return null;
+        }
+
         // 🔴 [2026-09-17 主人定] 据点保留 10% 兵力：征 90%，据点永留 10% 驻军。
         //    （删「屯兵经略留兵」str_27 已封印 + 「招兵买马」「屯兵经略」死脉冲，防务技系已整体退役）
         const minTroops = this.getCityMinSpawnTroops(city);
         if (newLegion.getTroops() < minTroops) {
             newLegion.destroy();
+            this.legionManager.removeArmy(newLegion);
             return null;
         }
         city.troops = (city.troops || 0) - newLegion.getTroops();
@@ -420,8 +430,10 @@ export class RecruitmentSystem {
     }
 
     private cityHasActiveLegion(cityId: string): boolean {
+        const anchoredGenId = getCityAnchoredGeneral(cityId)?.generalId;
         const activeFromCity = this.legionManager.getArmies().filter((a) => {
             if (a.isDestroyed || a.type !== 'legion') return false;
+            if (anchoredGenId && a.generalId === anchoredGenId) return true;
             return a.homeCityId === cityId || a.getSourceCityId() === cityId;
         });
         if (activeFromCity.length === 0) return false;

@@ -39,7 +39,7 @@ import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
 import { shouldUseStoneWall, STYLE_TO_STOCKADE_FENCE, deHashString, resolveTacticalWallSetup } from '../systems/cityWallShared';
 import { resolveStockadeFenceKey } from '../data/stockadeWallStyleLookup';
 import { destrFamilyOf, destrCandidatesOf, rubbleCandidatesOf, DE_DESTR_FALLBACK, DE_RUBBLE_FALLBACK } from '../data/buildingDestructionAssets';
-import { isMountainPass } from '../systems/passMountainDecision';
+import { isMountainPass, EXCLUDED_PASS_IDS } from '../systems/passMountainDecision';
 import { isScriptPeriod } from '../events/scriptPeriod';
 import { audioManager } from '../audio/AudioManager';
 import { speechAnnouncer } from '../audio/SpeechAnnouncer';
@@ -2897,12 +2897,101 @@ export class Scene13WarLayer {
             return (di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV);
         };
         this.decorSprites = this.decorSprites.filter((sp) => {
+            if (sp.asset.startsWith('MOUNTAIN_')) return false;
             if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
             const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y));
             if (!keep) gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
             return keep;
         });
         gl.flushFoundation();
+
+        // ── 按真实山地地理与据点种子摆放 DE 大山模型（MOUNTAIN_01~11，纯视觉点缀，绝不挡路） ──
+        const defCity: any = this.defenderCityRecord();
+        const cLat = defCity?.lat ?? this.centerLat;
+        const cLng = defCity?.lng ?? this.centerLng;
+        const cId = this.defenderCityId ?? '';
+        const elevM = this.environmentPlan?.elevationM ?? 0;
+        const slopeDeg = this.environmentPlan?.slopeDeg ?? 0;
+        const elevBand = this.environmentPlan?.elevationBand;
+        const isHighlandSite = !EXCLUDED_PASS_IDS.has(cId) && (
+            elevBand === 'highland' || elevBand === 'alpine' || elevM >= 550 || slopeDeg >= 2.5
+        );
+        const shouldSpawnDeMountains = this.passMountainConfig?.enabled !== undefined
+            ? this.passMountainConfig.enabled
+            : (this.defenderCityType === 'pass'
+                ? isMountainPass(cId, cLat, cLng, defCity?.name)
+                : isHighlandSite);
+        if (shouldSpawnDeMountains) {
+            const isSnowScene = this.sceneSeason === 2
+                || this.environmentPlan?.biome === 'tundra_snow'
+                || gl.isIce
+                || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(this.environmentPlan.baseTerrain));
+            const GREEN_MOUNTAIN_POOL = ['MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06'];
+            const SNOW_MOUNTAIN_POOL = ['MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11'];
+            const pool = isSnowScene ? SNOW_MOUNTAIN_POOL : GREEN_MOUNTAIN_POOL;
+            let mSeed = (hash >>> 0) ^ 0x6c8e9cf5;
+            const mRnd = (): number => {
+                mSeed = Math.imul(mSeed ^ (mSeed >>> 15), 0x85ebca6b) >>> 0;
+                mSeed = Math.imul(mSeed ^ (mSeed >>> 13), 0xc2b2ae35) >>> 0;
+                return ((mSeed ^ (mSeed >>> 16)) >>> 0) / 4294967296;
+            };
+            const anchors: Array<[number, number]> = [
+                [cx + rx * 0.85 + 260, cy + ry * 0.70 + 170],
+                [cx + rx * 0.85 + 260, cy - ry * 0.70 - 150],
+                [cx - rx * 0.85 - 260, cy - ry * 0.70 - 150],
+                [cx - rx * 0.85 - 260, cy + ry * 0.70 + 170],
+                [cx + rx + 420, cy + (mRnd() - 0.5) * 160],
+                [cx + (mRnd() - 0.5) * 240, cy - ry - 240],
+            ];
+            // 按种子打乱候选外围山位，挑不落水、不压门道的 2~3 处
+            const order = anchors.map((pt, idx) => ({ pt, idx, k: mRnd() })).sort((a, b) => a.k - b.k);
+            const targetCount = this.defenderCityType === 'pass' ? (2 + (mRnd() < 0.45 ? 1 : 0)) : (1 + Math.floor(mRnd() * 2));
+            let placed = 0;
+            for (const item of order) {
+                if (placed >= targetCount) break;
+                const jx = (mRnd() - 0.5) * 90, jy = (mRnd() - 0.5) * 50;
+                let mx = item.pt[0] + jx, my = item.pt[1] + jy;
+                if (placed === 0 && this.passMountainConfig?.x !== undefined) mx = this.passMountainConfig.x;
+                if (placed === 0 && this.passMountainConfig?.y !== undefined) my = this.passMountainConfig.y;
+                if (placed === 1 && this.passMountainConfig?.northX !== undefined) mx = this.passMountainConfig.northX;
+                if (placed === 1 && this.passMountainConfig?.northY !== undefined) my = this.passMountainConfig.northY;
+                if (placed > 0 && (gl.isWaterAt(mx, my, W, H) || inGateRoad(mx, my) || inCity(mx, my))) continue;
+                const pick = pool[Math.floor(mRnd() * pool.length)];
+                const mAsset = (placed === 0 && this.passMountainConfig?.asset)
+                    ? this.passMountainConfig.asset
+                    : (placed === 1 && this.passMountainConfig?.northAsset)
+                        ? this.passMountainConfig.northAsset
+                        : pick;
+                const mScale = (placed === 0 && this.passMountainConfig?.scale !== undefined)
+                    ? this.passMountainConfig.scale
+                    : (placed === 1 && this.passMountainConfig?.northScale !== undefined)
+                        ? this.passMountainConfig.northScale
+                        : +(0.92 + mRnd() * 0.20).toFixed(2);
+                const mFlip = (placed === 0 && this.passMountainConfig?.flip !== undefined)
+                    ? this.passMountainConfig.flip
+                    : (placed === 1 && this.passMountainConfig?.northFlip !== undefined)
+                        ? this.passMountainConfig.northFlip
+                        : (mRnd() < 0.5);
+                this.ensureNatureAsset(mAsset);
+                this.decorSprites.push({
+                    asset: mAsset,
+                    frame: 0,
+                    x: mx,
+                    y: my,
+                    flip: mFlip,
+                    layer: 'world',
+                    z: 0,
+                    scale: mScale,
+                    indestructible: true,
+                    obstruction: undefined,
+                    obstructionContactSec: 0,
+                    obstructionTouched: false,
+                    obstructionDisabled: true,
+                });
+                placed++;
+            }
+        }
+
         for (const sp of this.decorSprites) {
             sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
         }
@@ -2978,7 +3067,8 @@ export class Scene13WarLayer {
                     flip: faceEnemy(dx, dy),
                     scale: 1.0,
                     layer: 'world', z: 0,
-                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: false,
+                    obstruction: undefined,
+                    obstructionContactSec: 0, obstructionTouched: false, obstructionDisabled: true,
                 });
             }
         }
@@ -4080,9 +4170,10 @@ export class Scene13WarLayer {
                                 z: 0,
                                 lift,
                                 densityHash: hash,
+                                obstruction: undefined,
                                 obstructionContactSec: 0,
                                 obstructionTouched: false,
-                                obstructionDisabled: false,
+                                obstructionDisabled: true,
                             });
                         }
                     }
@@ -4114,9 +4205,10 @@ export class Scene13WarLayer {
                                         z: 0,
                                         lift,
                                         densityHash: hash,
+                                        obstruction: undefined,
                                         obstructionContactSec: 0,
                                         obstructionTouched: false,
-                                        obstructionDisabled: false,
+                                        obstructionDisabled: true,
                                     });
                                 }
                             }
