@@ -1516,8 +1516,11 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     //    鹿儿岛城／宇都宫城／熊本／府内／浜松城。**日本以外的小城照旧无城堡**（2026-10-03 令不变）。
     // 🔴 [2026-10-18 主人定「把漠北城内地基换成草地，中间的城堡换成蒙古包」] 漠北（MONGOL）**一律不放城心城堡**：
     //    大/中/小城/城寨/关隘的 9 栋全是蒙古包（城心也是包），城心王帐（MONG_CASTLE_AGE3）不再出现。
+    // 🔴 [2026-10-18 主人定「吐蕃的城寨中心不能有城堡。所有的城寨中心都不能有城堡吧」] **城寨一律不放城心城堡**：
+    //    城寨城心按 2026-10-15 令摆 DE 黑暗时代城镇中心（漠北城寨摆蒙古包）；此前 `isTibet` / `isJapan` / 代表名城
+    //    那几条判据会顺带让吐蕃／日本／名册城寨也长出城心城堡，现按「城寨」这一级统一排除。
     const isMobei = isMobeiStyle(city.buildingStyle);
-    const centerCastle = isMobei
+    const centerCastle = (isMobei || city.type === 'stockade')
         ? false
         : city.type === 'small_city'
             ? isJapan

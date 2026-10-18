@@ -82,6 +82,23 @@ export function assignSiegeGarrisonTier(
     // 清理旧缓存（防连战残留）
     clearSiegeGarrisonBoost(city);
 
+    // 武将首次会面·历史首战攻城：若指定了首战敌将，则强制由该首战敌将守城
+    const fbDefenderId = (city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
+    if (fbDefenderId) {
+        delete (city as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
+        const fbDefender = getGeneralRecordByGeneralId(fbDefenderId);
+        if (fbDefender) {
+            city._siegeGarrisonGeneralId = fbDefender.generalId;
+            city._siegeGarrisonPortrait = fbDefender.portrait;
+        }
+        const eliteName = getCityEliteLegionName(city.id);
+        if (eliteName && !city.spawnEliteUsed && !isEliteOnCooldown(city.id)) {
+            city._siegeGarrisonElite = true;
+            city._siegeGarrisonEliteName = eliteName;
+        }
+        return;
+    }
+
     // 谁占城谁得将：将/精锐锚定 cityId，占领换旗后仍随城发给当前守方（与出兵路径一致）
     const anchorFaction = getCityAnchorFactionId(city.id);
 

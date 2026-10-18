@@ -1235,8 +1235,8 @@ export class Scene13GroundLayerGL {
     // 杜绝构造函数中默认写死种子生成的中央高台边缘残留，确保平原纯净开阔
     this.cornerElev.fill(0);
 
-    // 2. 远景原野：DE 真实团块元胞生长（中心高四周低，全随机分布）
-    this.generateDeElevationGrid(cx, cy, rFlat + 4.5, 3.0, rnd, 'big_city');
+    // 2. 远景原野：城周围保持开阔平地（rFlat + 7.5 格内全平 0 级），外围生成丘陵
+    this.generateDeElevationGrid(cx, cy, rFlat + 7.5, 3.0, rnd, 'big_city');
 
     this.updateCornerLight();
     this.elevDirty = true;
@@ -1256,13 +1256,11 @@ export class Scene13GroundLayerGL {
    */
   /**
    * 🔴 [2026-10-12 主人令「所有地图的丘陵分布要中心高，周围低，分布随机」]
+   * 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
    * 彻底废除数学公式圆包，采用纯正 DE（帝国时代2 Genie 引擎 RMS）分层内聚元胞团块蔓延算法：
    * 1. 纯整数瓦片高程（0~7 级）；
-   * 2. 城池保护区避让（`rProtect` 内强制保持基础平坦或专属台地高度）；
-   * 3. 团块元胞邻域随机蔓延（Cellular Growth）：
-   *    - 第 1 级基础山基：在地图空闲区域随机撒种子，向四周邻域随机生长出大面积平缓 1 级台地；
-   *    - 第 2 级山腰台地：严格在 1 级核心区域内部撒种子，缩小面积向外蔓延出 2 级；
-   *    - 第 3~N 级主峰：逐级向核心收敛生长，天然呈现「中心最高，向四周层层台阶跌落，山脊走向有机随机」的真实山貌！
+   * 2. 城周围保护区避让（`rProtect` 内强制保持平地，绝不在城墙/护城河紧邻处起山）；
+   * 3. 外围森林与树木聚落所在处全部垫起丘陵（树长在山上/丘陵上）；
    * 4. 坡度落差约束（Slope Clamping）：相邻两格整数落差绝对不能大于 1 级（形成标准 45° 阶梯斜坡）；
    * 5. 角点网格双线性转换并赋予西北光照。
    */
@@ -1278,26 +1276,21 @@ export class Scene13GroundLayerGL {
     const V = N + 1;
     const tileElev = new Int8Array(N * N);
 
-    // 1. 识别保护区（城池或据点地基）与水体禁区（山丘不长进河湖海面）
-    const inProtect = (gx: number, gy: number) => Math.hypot(gx - cx, (gy - cy) * 1.35) < rProtect;
+    // 1. 识别城周围平地保护区（各向同性格半径 rProtect 内严禁起山）与水体禁区（山丘不长进河湖海面）
+    const inProtect = (gx: number, gy: number) => Math.hypot(gx - cx, gy - cy) < rProtect;
     const isWet = (gx: number, gy: number) =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.18;
 
-    // 2. 根据场景类型，决定野外山体群（Hill Clusters）的数量与规格
-    // 大城周围远山平缓开阔；关隘与山寨崇山峻岭巍峨；中城小城参差起伏
+    // 2. 根据场景类型，决定城外围山体群（Hill Clusters）的数量与规格
     const isBig = category === 'big_city';
     const isPass = category === 'pass';
     const isStockade = category === 'stockade';
 
-    let clumpCount = 3 + Math.floor(rnd() * 4); // 3 ~ 6 组独立山丘群
+    let clumpCount = 3 + Math.floor(rnd() * 4); // 3 ~ 6 组独立外围山丘群
     if (isBig) clumpCount = 3 + Math.floor(rnd() * 3);
     else if (isPass) clumpCount = 4 + Math.floor(rnd() * 3);
     else if (isStockade) clumpCount = 2 + Math.floor(rnd() * 3);
 
-    // 3. 仿 DE 原版 <ELEVATION_GENERATION>：
-    // 每个山头团块（Clump）先生长出一片连续多边形区域，然后通过 BFS 边界距离场计算高度：
-    // 到团块外边缘的距离 = 抬升高度（最大封顶到 peakH）
-    // 这正是 DE Genie 引擎（及 tools/rms/rmsEngine.mjs:642）纯正的原生算法！
     const D4 = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
     // 随机生长一个自然多边形团块（支持各向同性圆丘与沿主轴延伸的长条山脊/弧形山梁）
@@ -1346,17 +1339,54 @@ export class Scene13GroundLayerGL {
       return clump;
     };
 
-    // 🔴 [2026-10-12 主人令「我觉得有树的地方该有丘陵」「森林地下是铺满整块 forestFloorTile 的」]
-    // 找出地图中所有森林/树木聚集的密集区核心，以及战略地图 z13 真实 DEM 高地山脊（origElev >= 2），
-    // 共同作为优先山头种子：有树林的地方脚下必然升起丘陵，外围山体走势也与战略地图真实地形一脉相承！
+    // 🔴 [2026-10-12 主人令「我觉得有树的地方该有丘陵」+ 2026-10-18 主人令「树也都是长在山上，丘陵上」]
+    // 找出外围所有森林/树木聚集区（含 smoothForest 与 data.objects 中的树木团块）以及真实 DEM 高地山脊（origElev >= 2），
+    // 共同作为优先外围山头种子，并把外围树木所在格全部纳入丘陵范围！
     const prioritySeeds: Array<{ x: number; y: number }> = [];
+    const treeTileMask = new Uint8Array(N * N);
     const sf = this.smoothForest;
     if (sf) {
-      for (let y = 3; y < N - 3; y += 3) {
-        for (let x = 3; x < N - 3; x += 3) {
+      for (let y = 3; y < N - 3; y++) {
+        for (let x = 3; x < N - 3; x++) {
           if (inProtect(x, y) || isWet(x, y)) continue;
-          if (sf[y * N + x] >= 0.18) {
-            // 间距 5 格：足够密集覆盖全图大大小小所有林块与林缘
+          if (sf[y * N + x] >= 0.16) {
+            treeTileMask[y * N + x] = 1;
+            if (x % 3 === 0 && y % 3 === 0) {
+              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 5);
+              if (!close) prioritySeeds.push({ x, y });
+            }
+          }
+        }
+      }
+    }
+    if (Array.isArray(this.data?.objects)) {
+      const treeCellCounts = new Int16Array(N * N);
+      for (const ob of this.data.objects) {
+        if (!ob?.name || /CLIFF|GOLD|STONE|FORAGE|BUSH|ROCK|FLOWER|PLANT|GRASS|HAWK|FALCON|MACAW|VULTURE|STORK|BOAR|DEER|SHEEP|COW|GOAT|LLAMA|TURKEY|WOLF|LION|BEAR|JAGUAR|TIGER|CROCODILE|KOMODO|ZEBRA|OSTRICH|ELEPHANT|RHINO|IBEX|GAZELLE|CAMEL|HORSE/i.test(ob.name)) continue;
+        if (!/TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE|FOREST/i.test(ob.name)) continue;
+        const gx = Math.round((ob.x ?? 0) - 0.5);
+        const gy = Math.round((ob.y ?? 0) - 0.5);
+        if (gx < 3 || gx >= N - 3 || gy < 3 || gy >= N - 3) continue;
+        if (inProtect(gx, gy) || isWet(gx, gy)) continue;
+        treeCellCounts[gy * N + gx]++;
+      }
+      for (let y = 3; y < N - 3; y++) {
+        for (let x = 3; x < N - 3; x++) {
+          if (treeCellCounts[y * N + x] <= 0) continue;
+          // 统计 3×3 邻域树木数，凡成林团（>= 3 棵）必起丘陵
+          let nearTrees = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              nearTrees += treeCellCounts[(y + dy) * N + (x + dx)];
+            }
+          }
+          if (nearTrees >= 3) {
+            for (let dy = -1; dy <= 1; dy++) {
+              for (let dx = -1; dx <= 1; dx++) {
+                const nx = x + dx, ny = y + dy;
+                if (!inProtect(nx, ny) && !isWet(nx, ny)) treeTileMask[ny * N + nx] = 1;
+              }
+            }
             const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 5);
             if (!close) prioritySeeds.push({ x, y });
           }
@@ -1376,13 +1406,10 @@ export class Scene13GroundLayerGL {
     }
 
     // 4. 逐个团块生成并计算 DE 原版「边缘距离场」
-    // DE 原版规则：离团边缘越近，高度越低（1级）；越向内部深入，高度递增（直到 peakH）。
-    // 总团数 = 森林/真实山脊所在山丘数 + 原野自然开阔山丘数
     const totalClumps = Math.max(clumpCount, prioritySeeds.length + (isBig ? 3 : 3));
     for (let c = 0; c < totalClumps; c++) {
       let seedX = 0, seedY = 0, found = false;
 
-      // 优先从森林核心点与真实 DEM 山脊点取种子
       if (c < prioritySeeds.length) {
         const ps = prioritySeeds[c];
         if (!inProtect(ps.x, ps.y) && !isWet(ps.x, ps.y) && tileElev[ps.y * N + ps.x] === 0) {
@@ -1406,29 +1433,25 @@ export class Scene13GroundLayerGL {
       }
       if (!found) continue;
 
-      // 主峰高度与团块规模多样化：既有 1~2 级平缓漫坡，也有 3~4 级高耸主峰
       const demH = this.origElev ? (this.origElev[seedY * N + seedX] ?? 0) : 0;
       const hRoll = rnd();
       let peakH = 2;
-      if (isBig) peakH = hRoll < 0.35 ? 1 : hRoll < 0.80 ? 2 : 3;
+      if (isBig) peakH = hRoll < 0.30 ? 2 : 3;
       else if (isPass || isStockade) peakH = 2 + Math.floor(rnd() * Math.max(1, maxLevel - 1));
-      else peakH = hRoll < 0.25 ? 1 : Math.max(demH >= 3 ? 3 : 2, 1 + Math.floor(rnd() * maxLevel));
+      else peakH = hRoll < 0.25 ? 2 : Math.max(demH >= 3 ? 3 : 2, 2 + Math.floor(rnd() * Math.max(1, maxLevel - 1)));
       peakH = Math.max(1, Math.min(maxLevel, peakH));
 
-      // 团块瓦片数与走向各异：小圆丘 (50~95 格)、中宽台地 (100~175 格)、长条山梁 (150~260 格)
       const styleRoll = rnd();
       const axisAngle = rnd() * Math.PI;
       const aniso = styleRoll < 0.40 ? 0.15 : styleRoll < 0.78 ? (1.2 + rnd() * 1.4) : (2.2 + rnd() * 1.2);
       const clumpTiles = isBig
-        ? (90 + Math.floor(rnd() * 170))
+        ? (95 + Math.floor(rnd() * 170))
         : styleRoll < 0.35
-          ? (50 + Math.floor(rnd() * 55))
-          : (95 + Math.floor(rnd() * 145));
+          ? (55 + Math.floor(rnd() * 60))
+          : (100 + Math.floor(rnd() * 145));
       const region = growClumpRegion(seedX, seedY, clumpTiles, axisAngle, aniso);
       if (region.size < 16) continue;
 
-      // ── DE 原生距离场算法（BFS 边缘向心剥洋葱）──
-      // 找出所有紧邻外部边界的格子，标记为 1 级（边缘坡脚），入队列
       const dist = new Map<number, number>();
       let q: number[] = [];
 
@@ -1448,7 +1471,6 @@ export class Scene13GroundLayerGL {
         }
       }
 
-      // 逐层向内扩散，每向里走一步，高度 +1
       while (q.length > 0) {
         const nextQ: number[] = [];
         for (const idx of q) {
@@ -1467,7 +1489,6 @@ export class Scene13GroundLayerGL {
         q = nextQ;
       }
 
-      // 将计算出的高度写入 tileElev，最高封顶至 peakH
       for (const idx of region) {
         const d = dist.get(idx) ?? 1;
         const h = Math.min(peakH, d);
@@ -1475,8 +1496,45 @@ export class Scene13GroundLayerGL {
       }
     }
 
+    // 保底：凡是外围树林覆盖格（treeTileMask === 1）若尚未抬升，整体按距离场垫起 1~3 级丘陵，确保树林 100% 在丘陵上
+    const forestQ: number[] = [];
+    const forestDist = new Int8Array(N * N);
+    for (let y = 2; y < N - 2; y++) {
+      for (let x = 2; x < N - 2; x++) {
+        const idx = y * N + x;
+        if (!treeTileMask[idx] || inProtect(x, y) || isWet(x, y)) continue;
+        let isEdge = false;
+        for (const [dx, dy] of D4) {
+          if (!treeTileMask[(y + dy) * N + (x + dx)]) { isEdge = true; break; }
+        }
+        if (isEdge) {
+          forestDist[idx] = 1;
+          forestQ.push(idx);
+        }
+      }
+    }
+    let fqHead = 0;
+    while (fqHead < forestQ.length) {
+      const idx = forestQ[fqHead++];
+      const curD = forestDist[idx];
+      const x = idx % N, y = Math.floor(idx / N);
+      for (const [dx, dy] of D4) {
+        const nx = x + dx, ny = y + dy;
+        if (nx < 2 || nx >= N - 2 || ny < 2 || ny >= N - 2) continue;
+        const nbr = ny * N + nx;
+        if (treeTileMask[nbr] && forestDist[nbr] === 0 && !inProtect(nx, ny) && !isWet(nx, ny)) {
+          forestDist[nbr] = Math.min(3, curD + 1);
+          forestQ.push(nbr);
+        }
+      }
+    }
+    for (let i = 0; i < N * N; i++) {
+      if (forestDist[i] > 0) {
+        tileElev[i] = Math.max(tileElev[i], Math.min(maxLevel, forestDist[i]));
+      }
+    }
+
     // 5. 坡度阶梯扫描限制（Slope Clamping）
-    // 保证相邻两格落差绝对不能大于 1 级，形成标准 45° 台阶斜坡
     for (let pass = 0; pass < 3; pass++) {
       let changed = false;
       for (let y = 1; y < N - 1; y++) {
@@ -1497,10 +1555,9 @@ export class Scene13GroundLayerGL {
     }
 
     // 6. 将整数瓦片高程叠加/融合至 cornerElev 角点网格中
-    // 角点 (gx, gy) 的高度由相邻 4 个整数格子的均值决定，形成标准等轴斜坡与台地；水域角点保持 0 平面
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
-        if (inProtect(gx, gy)) continue; // 保护区保留原有城址整平值
+        if (inProtect(gx, gy)) continue; // 城周围保护区保留平地
         if (
           (gx > 0 && gy > 0 && isWet(gx - 1, gy - 1)) ||
           (gx < N && gy > 0 && isWet(gx, gy - 1)) ||
@@ -1526,12 +1583,10 @@ export class Scene13GroundLayerGL {
   }
 
   /**
-   * 🔴 [2026-10-12 主人令「中城/小城（Medium/Small City）：城址依据地理环境（如临河高坡、背山面水）生成半岛或台地，多样化起伏」]
-   * 中城/小城地理环境与半岛/台地多样化生成：
-   * 原型 1 (bluff): 临河高坡/半岛台地（城址在 2~2.5 级高坡台地，一侧临水临谷缓降，城门居高临下）；
-   * 原型 2 (mountain_spur): 背山面水/依山面野（城后方背水侧升起 3~4 级连绵靠山山脊，面水侧开阔平地）；
-   * 原型 3 (valley_corridor): 两翼山梁/谷地走廊（城址坐落谷底平地，外围相对两翼隆起长条高坡山脊）；
-   * 原型 4 (rolling_hills): 丘陵台地（城址在 1~2 级圆缓台地，外围环抱多组 1~4 级高低错落小丘）。
+   * 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
+   * 中城/小城地形生成：
+   * 1. 城池与城周围（护城河及城外宽幅平地缓冲带 rFlat + 7.5 格）统一整平为 0 级开阔平地；
+   * 2. 外围高地丘陵推到城外围（rFlat + 7.5 格之外），按真实水陆、树林与 DEM 随机生长多样化丘陵。
    */
   public flattenMediumSmallCityTerrain(
     screenX: number,
@@ -1544,7 +1599,6 @@ export class Scene13GroundLayerGL {
   ): void {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return;
-    const N = this.N, V = N + 1;
 
     let seed = 2166136261;
     for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
@@ -1556,140 +1610,13 @@ export class Scene13GroundLayerGL {
     const cx = c.gx, cy = c.gy;
     const rFlat = flatCells;
     const isMedium = cityType === 'medium_city';
-    const isWet = (gx: number, gy: number) => {
-      const ix = Math.min(N - 1, Math.max(0, Math.floor(gx)));
-      const iy = Math.min(N - 1, Math.max(0, Math.floor(gy)));
-      return (this.smoothWater[iy * N + ix] ?? 0) >= 0.16;
-    };
 
-    // 检测真实水体重心方向（若有水，靠山优先放在背水一侧，顺应「背山面水」真实地理）
-    let wx = 0, wy = 0, wCnt = 0;
-    for (let gy = 4; gy < N - 4; gy += 3) {
-      for (let gx = 4; gx < N - 4; gx += 3) {
-        if ((this.smoothWater[gy * N + gx] ?? 0) >= 0.40) {
-          wx += gx - cx;
-          wy += gy - cy;
-          wCnt++;
-        }
-      }
-    }
-    const backAngle = wCnt >= 8 ? Math.atan2(-wy, -wx) : rnd() * Math.PI * 2;
-
-    // 🔴 [彻底根除固定底图残留] 全图基底高程重置为 0 级，确保城池与丘陵纯粹由本地原型驱动
+    // 1. 城池及城周围统一整平为 0 级平地
     this.cornerElev.fill(0);
-    const archeRoll = rnd();
-    let archeMode: 'bluff' | 'mountain_spur' | 'valley_corridor' | 'rolling_hills' = 'bluff';
-    if (archeRoll < 0.28) {
-      archeMode = 'bluff';            // 临河高坡/半岛台地
-    } else if (archeRoll < 0.56) {
-      archeMode = 'mountain_spur';    // 背山面水/依山面野
-    } else if (archeRoll < 0.78) {
-      archeMode = 'valley_corridor';  // 两翼山梁/谷地走廊
-    } else {
-      archeMode = 'rolling_hills';    // 丘陵台地
-    }
 
-    if (archeMode === 'bluff') {
-      // ── 原型 1：【临河高坡 / 半岛台地】 ──
-      // 城址整平在 2~2.5 级高台，外缘随方位带有微幅缓急变化向原野跌落
-      const baseElev = isMedium ? 2.5 : 2.0;
-      const p0 = rnd() * Math.PI * 2;
-      for (let y = 0; y <= N; y++) {
-        for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, y - cy);
-          const th = Math.atan2(y - cy, x - cx);
-          const slopeW = 2.6 + 1.2 * Math.sin(th * 2 + p0);
-          if (dist <= rFlat) {
-            this.cornerElev[y * V + x] = baseElev;
-          } else if (dist <= rFlat + slopeW && !isWet(x, y)) {
-            const s = (dist - rFlat) / slopeW;
-            const t = s * s * (3 - 2 * s);
-            this.cornerElev[y * V + x] = baseElev * (1.0 - t);
-          }
-        }
-      }
-    } else if (archeMode === 'mountain_spur') {
-      // ── 原型 2：【背山面水 / 依山面野】 ──
-      // 城址整平在 1 级平缓地基；背水后方外围隆起连绵弧形靠山（2.5~3.8 级），前方开阔
-      const spurH = isMedium ? 3.6 : 2.8;
-      const rSpur = rFlat + 7.5;
-      for (let y = 0; y <= N; y++) {
-        for (let x = 0; x <= N; x++) {
-          const dx = x - cx, dy = y - cy;
-          const dist = Math.hypot(dx, dy);
-          if (dist <= rFlat) {
-            this.cornerElev[y * V + x] = 1.0;
-          } else if (dist <= rFlat + 2.0) {
-            const s = (dist - rFlat) / 2.0;
-            const t = s * s * (3 - 2 * s);
-            this.cornerElev[y * V + x] = 1.0 * (1.0 - t);
-          } else if (!isWet(x, y) && dist > rFlat + 3.0 && dist < rSpur + 14.0) {
-            let dAng = Math.atan2(dy, dx) - backAngle;
-            while (dAng > Math.PI) dAng -= Math.PI * 2;
-            while (dAng < -Math.PI) dAng += Math.PI * 2;
-            if (Math.abs(dAng) < 1.05) {
-              const angFactor = Math.cos((dAng / 1.05) * (Math.PI * 0.5));
-              const radDist = Math.abs(dist - (rSpur + 4.5)) / 5.5;
-              if (radDist < 1.0) {
-                const radFactor = 1.0 - radDist * radDist * (3 - 2 * radDist);
-                this.cornerElev[y * V + x] = Math.max(this.cornerElev[y * V + x], Math.round(spurH * angFactor * radFactor));
-              }
-            }
-          }
-        }
-      }
-    } else if (archeMode === 'valley_corridor') {
-      // ── 原型 3：【两翼山梁 / 谷地走廊】 ──
-      // 城址在 0.5~1 级谷底平地，外围相对两翼隆起长条高坡山脊
-      const baseH = isMedium ? 1.0 : 0.5;
-      const axis = backAngle + 0.4;
-      const nx = -Math.sin(axis), ny = Math.cos(axis);
-      const tx = Math.cos(axis), ty = Math.sin(axis);
-      const ridgeH = isMedium ? 3.2 : 2.5;
-      for (let y = 0; y <= N; y++) {
-        for (let x = 0; x <= N; x++) {
-          const dx = x - cx, dy = y - cy;
-          const dist = Math.hypot(dx, dy);
-          if (dist <= rFlat) {
-            this.cornerElev[y * V + x] = baseH;
-          } else if (dist <= rFlat + 2.0) {
-            const s = (dist - rFlat) / 2.0;
-            const t = s * s * (3 - 2 * s);
-            this.cornerElev[y * V + x] = baseH * (1.0 - t);
-          } else if (!isWet(x, y) && dist > rFlat + 3.5) {
-            const across = Math.abs(dx * nx + dy * ny);
-            const along = Math.abs(dx * tx + dy * ty);
-            const dRidge = Math.abs(across - (rFlat + 8.5)) / 4.8;
-            if (dRidge < 1.0 && along < 24.0) {
-              const fAlong = Math.max(0, 1.0 - (along / 24.0) ** 2);
-              const fAcross = 1.0 - dRidge * dRidge * (3 - 2 * dRidge);
-              this.cornerElev[y * V + x] = Math.max(this.cornerElev[y * V + x], Math.round(ridgeH * fAcross * fAlong));
-            }
-          }
-        }
-      }
-    } else {
-      // ── 原型 4：【起伏丘陵台地】 ──
-      // 城址在 1.2~1.8 级圆缓台地上
-      const hillBase = isMedium ? 1.8 : 1.2;
-      for (let y = 0; y <= N; y++) {
-        for (let x = 0; x <= N; x++) {
-          const dist = Math.hypot(x - cx, y - cy);
-          if (dist <= rFlat) {
-            this.cornerElev[y * V + x] = hillBase;
-          } else if (dist <= rFlat + 2.5) {
-            const s = (dist - rFlat) / 2.5;
-            const t = s * s * (3 - 2 * s);
-            this.cornerElev[y * V + x] = hillBase * (1.0 - t);
-          }
-        }
-      }
-    }
-
-    // 🔴 [2026-10-12 主人令「所有地图的丘陵分布要中心高，周围低，分布随机」]
-    // 外围高地丘陵采用 DE 真实团块元胞生长（中心高四周低，全随机分布）
-    const rProt = rFlat + (isMedium ? 3.0 : 2.5);
-    const maxH = isMedium ? 4.0 : 3.0;
+    // 2. 城外围（rFlat + 7.5 格以外）采用 DE 团块元胞生长出多样化丘陵
+    const rProt = rFlat + (isMedium ? 7.5 : 7.0);
+    const maxH = isMedium ? 4.0 : 3.5;
     this.generateDeElevationGrid(cx, cy, rProt, maxH, rnd, cityType);
 
     this.updateCornerLight();

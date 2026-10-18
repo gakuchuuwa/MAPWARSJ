@@ -2896,16 +2896,31 @@ export class Scene13WarLayer {
             const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
             return (di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV);
         };
+        const cityCell = gl.screenToCell(cx, cy, W, H);
+        const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 6.5 : 4.5) : rCells + 2.5;
+        const minHillDistCells = this.defenderCityType === 'pass'
+            ? baseFlatCells + 5.5
+            : this.defenderCityType === 'stockade'
+                ? baseFlatCells + 3.5
+                : baseFlatCells + 7.0;
+        const TREE_FILTER_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
         this.decorSprites = this.decorSprites.filter((sp) => {
             if (sp.asset.startsWith('MOUNTAIN_')) return false;
             if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
-            const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y));
+            const isTree = TREE_FILTER_RE.test(sp.asset);
+            const spElev = gl.elevationLevelAt(sp.x, sp.y, W, H);
+            const spCell = cityCell ? gl.screenToCell(sp.x, sp.y, W, H) : null;
+            const distCells = (cityCell && spCell) ? Math.hypot(spCell.gx - cityCell.gx, spCell.gy - cityCell.gy) : 999;
+            // 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
+            //    城周围平地不留树，树木一律只保留在丘陵/山上（spElev >= 0.45 且在城周围平地圈外）
+            const treeOnHill = !isTree || (distCells >= minHillDistCells - 1.5 && spElev >= 0.45);
+            const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y)) && treeOnHill;
             if (!keep) gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
             return keep;
         });
         gl.flushFoundation();
 
-        // ── 按真实山地地理与据点种子摆放 DE 大山模型（MOUNTAIN_01~11，纯视觉点缀，绝不挡路） ──
+        // ── 按真实山地地理与据点种子，在城外围的丘陵上摆放 DE 大山模型（MOUNTAIN_01~11，缩放 2.0，纯视觉点缀绝不挡路） ──
         const defCity: any = this.defenderCityRecord();
         const cLat = defCity?.lat ?? this.centerLat;
         const cLng = defCity?.lng ?? this.centerLng;
@@ -2914,7 +2929,7 @@ export class Scene13WarLayer {
         const slopeDeg = this.environmentPlan?.slopeDeg ?? 0;
         const elevBand = this.environmentPlan?.elevationBand;
         const isHighlandSite = !EXCLUDED_PASS_IDS.has(cId) && (
-            elevBand === 'highland' || elevBand === 'alpine' || elevM >= 550 || slopeDeg >= 2.5
+            elevBand === 'mountain' || elevBand === 'alpine' || elevBand === 'high_alpine' || elevBand === 'snow' || elevM >= 550 || slopeDeg >= 2.5
         );
         const shouldSpawnDeMountains = this.passMountainConfig?.enabled !== undefined
             ? this.passMountainConfig.enabled
@@ -2935,38 +2950,52 @@ export class Scene13WarLayer {
                 mSeed = Math.imul(mSeed ^ (mSeed >>> 13), 0xc2b2ae35) >>> 0;
                 return ((mSeed ^ (mSeed >>> 16)) >>> 0) / 4294967296;
             };
-            const anchors: Array<[number, number]> = [
-                [cx + rx * 0.85 + 260, cy + ry * 0.70 + 170],
-                [cx + rx * 0.85 + 260, cy - ry * 0.70 - 150],
-                [cx - rx * 0.85 - 260, cy - ry * 0.70 - 150],
-                [cx - rx * 0.85 - 260, cy + ry * 0.70 + 170],
-                [cx + rx + 420, cy + (mRnd() - 0.5) * 160],
-                [cx + (mRnd() - 0.5) * 240, cy - ry - 240],
-            ];
-            // 按种子打乱候选外围山位，挑不落水、不压门道的 2~3 处
-            const order = anchors.map((pt, idx) => ({ pt, idx, k: mRnd() })).sort((a, b) => a.k - b.k);
+            // 扫描城外围丘陵高点（必须在城周围平地保护圈以外，且地面高程级 >= 1.2 的真实外围丘陵顶台）
+            const N = gl.data?.width ?? 120;
+            const cGx = cityCell ? cityCell.gx : N * 0.5;
+            const cGy = cityCell ? cityCell.gy : N * 0.5;
+            const hillCandidates: Array<{ x: number; y: number; elev: number; score: number }> = [];
+            for (let gy = 8; gy <= N - 8; gy += 2) {
+                for (let gx = 8; gx <= N - 8; gx += 2) {
+                    const dCells = Math.hypot(gx - cGx, gy - cGy);
+                    if (dCells < minHillDistCells + 2.5 || dCells > 44) continue;
+                    const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                    if (gl.isWaterAt(pt.x, pt.y, W, H) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
+                    const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                    if (elev < 1.2) continue;
+                    hillCandidates.push({
+                        x: pt.x + (mRnd() - 0.5) * 40,
+                        y: pt.y + (mRnd() - 0.5) * 24,
+                        elev,
+                        score: elev + mRnd() * 0.85,
+                    });
+                }
+            }
+            hillCandidates.sort((a, b) => b.score - a.score);
             const targetCount = this.defenderCityType === 'pass' ? (2 + (mRnd() < 0.45 ? 1 : 0)) : (1 + Math.floor(mRnd() * 2));
+            const chosenPts: Array<{ x: number; y: number }> = [];
             let placed = 0;
-            for (const item of order) {
+            for (const cand of hillCandidates) {
                 if (placed >= targetCount) break;
-                const jx = (mRnd() - 0.5) * 90, jy = (mRnd() - 0.5) * 50;
-                let mx = item.pt[0] + jx, my = item.pt[1] + jy;
+                let mx = cand.x, my = cand.y;
                 if (placed === 0 && this.passMountainConfig?.x !== undefined) mx = this.passMountainConfig.x;
                 if (placed === 0 && this.passMountainConfig?.y !== undefined) my = this.passMountainConfig.y;
                 if (placed === 1 && this.passMountainConfig?.northX !== undefined) mx = this.passMountainConfig.northX;
                 if (placed === 1 && this.passMountainConfig?.northY !== undefined) my = this.passMountainConfig.northY;
-                if (placed > 0 && (gl.isWaterAt(mx, my, W, H) || inGateRoad(mx, my) || inCity(mx, my))) continue;
+                if (chosenPts.some((p) => Math.hypot(p.x - mx, (p.y - my) * 1.6) < 1350)) continue;
+                chosenPts.push({ x: mx, y: my });
                 const pick = pool[Math.floor(mRnd() * pool.length)];
                 const mAsset = (placed === 0 && this.passMountainConfig?.asset)
                     ? this.passMountainConfig.asset
                     : (placed === 1 && this.passMountainConfig?.northAsset)
                         ? this.passMountainConfig.northAsset
                         : pick;
+                // 🔴 [2026-10-18 主人令「调大2.0」] 大山模型默认缩放调为 2.0
                 const mScale = (placed === 0 && this.passMountainConfig?.scale !== undefined)
                     ? this.passMountainConfig.scale
                     : (placed === 1 && this.passMountainConfig?.northScale !== undefined)
                         ? this.passMountainConfig.northScale
-                        : +(0.92 + mRnd() * 0.20).toFixed(2);
+                        : 2.0;
                 const mFlip = (placed === 0 && this.passMountainConfig?.flip !== undefined)
                     ? this.passMountainConfig.flip
                     : (placed === 1 && this.passMountainConfig?.northFlip !== undefined)
