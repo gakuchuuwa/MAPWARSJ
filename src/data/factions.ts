@@ -1992,7 +1992,6 @@ export const FACTIONS: Faction[] = [
     { id: 'duobuluojia', name: '多布罗加' },        // 德鲁斯塔尔·多布罗加地区（伊瓦伊洛）
     { id: 'aertai', name: '阿尔泰' },        // 也儿的石·阿尔泰乃蛮故地（屈出律）
     { id: 'kumanni', name: '库曼尼亚' },        // 卡尔卡河·库曼尼亚（忽炭汗）
-    { id: 'xikuman', name: '西库曼' },        // 密尔科夫·西库曼（吉尔根汗）
     { id: 'feierganna', name: '费尔干纳' },        // 阿赫西克特·费尔干纳（忽都鲁）
     { id: 'qibucha', name: '奇布查' },        // 洪萨·穆伊斯卡奇布查人（帕坎奇克）
     { id: 'tamoyue', name: '塔莫约' },        // 卡布弗里乌·塔莫约联盟（昆汉贝贝）

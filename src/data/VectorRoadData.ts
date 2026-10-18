@@ -1,4 +1,4 @@
-export interface VectorRoadFeature {
+﻿export interface VectorRoadFeature {
     type: 'Feature';
     properties: {
         name: string;
@@ -55581,9 +55581,9 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "塞契-卡尔卡河",
                 type: "road",
-                id: "road_city_zhapoluore_city_kaerkahe_1788855722638",
+                id: "road_city_zhapoluore_bf_kalka_1788855722638",
                 startConnection: "city_zhapoluore",
-                endConnection: "city_kaerkahe"
+                endConnection: "bf_kalka"
             },
             geometry: {
                 type: "LineString",
@@ -55632,8 +55632,8 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
             properties: {
                 name: "卡尔卡河-塔纳伊斯",
                 type: "road",
-                id: "road_city_kaerkahe_city_asu_1788855734259",
-                startConnection: "city_kaerkahe",
+                id: "road_bf_kalka_city_asu_1788855734259",
+                startConnection: "bf_kalka",
                 endConnection: "city_asu"
             },
             geometry: {
@@ -66711,3 +66711,4 @@ export const VECTOR_ROAD_DATA: { type: 'FeatureCollection', features: VectorRoad
         },
     ]
 };
+

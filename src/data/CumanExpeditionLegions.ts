@@ -23,8 +23,7 @@ export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     salai: { name: '诺盖骑', tier: 3 },             // 萨莱楚克·诺盖：诺盖汗国骑
     bashekeer: { name: '边地步营', tier: 4 },         // 乌法·俄国边地步营
     mangshi: { name: '土库曼骑', tier: 3 },         // 曼格什拉克·土库曼
-    kumanni: { name: '库曼弓骑', tier: 3 },         // 卡尔卡河·忽炭汗：库曼骑射弓手，1223卡尔卡河会战联军
-    xikuman: { name: '库曼骑', tier: 3 },           // 密尔科夫·吉尔根汗：喀尔巴阡西库曼骑兵
+    kumanni: { name: '库曼弓骑', tier: 3 },         // 密尔科夫·库曼尼亚：库曼骑射弓手，1223卡尔卡河会战联军
 
     // ── T4 存在之兵 ──
     fuerjia: { name: '俄国边骑', tier: 4 },         // 察里津·俄国边地巡骑

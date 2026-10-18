@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 武将首次会面·历史首战设定（GeneralFirstBattles）
  *
  * 规则：
@@ -5595,7 +5595,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '萨尔尼察河畔',
-        targetCityId: 'city_kaerkahe',
+        targetCityId: 'bf_kalka',
         targetLat: 47.27,
         targetLng: 37.55,
         myTroops: 30000,
@@ -6331,7 +6331,7 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '顿涅茨迦勒迦河畔',
-        targetCityId: 'city_kaerkahe',
+        targetCityId: 'bf_kalka',
         targetLat: 47.27,
         targetLng: 37.55,
         myTroops: 25000,
@@ -12461,3 +12461,4 @@ export function resolveFirstBattleEnemyDisplayName(fb: GeneralFirstBattle): stri
     if (trimmed) return trimmed;
     return `${fb.enemyFactionName}武将`;
 }
+

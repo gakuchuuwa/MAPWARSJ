@@ -22,7 +22,6 @@ export const EXCLUDED_PASS_IDS = new Set<string>([
     'city_longwan',      // 龙湾（采石矶江防）
     'city_mingliang',    // 鸣梁（海峡水战）
     'city_duluohe',      // 推河堡（平原河流要塞）
-    'city_kaerkahe',     // 卡尔卡河（河滨要津）
     'city_shilekahe',    // 石勒喀堡（河流要塞）
     'city_ditu',         // 临津江渡口
     // 海防 / 海岛 / 海港
