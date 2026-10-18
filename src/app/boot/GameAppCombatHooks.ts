@@ -428,7 +428,10 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    改前战场事件连调试面板的「进入战术模式」开关也绕过去了。现在开关关掉，战场事件也留在战略地图打；
         //    胜负照旧是史实（开战时已按剧本 result 写进 presetResult，战略层结算照它走）。
         const isBattlefieldEvent = [...attackers, ...defenders]
-            .some((u) => u.getEntity?.()?.isScriptArmy === true);
+            .some((u) => {
+                const ent = u.getEntity?.();
+                return ent?.isScriptArmy === true || ent?.isFirstBattleMarch === true;
+            });
         const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
             && attHasGen && defHasGen && attHasElite && defHasElite));
         if (eligible && !battleField?.scene13Frozen) {

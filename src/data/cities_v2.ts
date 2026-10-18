@@ -2390,7 +2390,7 @@ export const CITIES_V2: CityDataV2[] = [
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-18 按史] 卡法为热那亚黑海殖民地（Gazaria），实建为热那亚石砌方塔、机械射击孔与齿状胸墙；故 LATIN。' },
 
-    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'CUMAN' },
+    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'qincha', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'CUMAN', buildingStyle: 'SLAVIC', note: '1590 年俄国建城，建筑风格按当地俄罗斯（SLAVIC），非库曼营地' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' },
 
     { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' },

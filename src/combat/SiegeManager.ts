@@ -1071,7 +1071,8 @@ export class SiegeManager {
             landNavalLegionForSiege(legion, cityPos);
         }
 
-        const siegePreset = siegeData.result;
+        const isFirstBattleSiege = !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+        const siegePreset = siegeData.result ?? (isFirstBattleSiege ? 'attacker_win' : undefined);
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(
@@ -1265,7 +1266,8 @@ export class SiegeManager {
             attackerUnits.push(legionAdapter);
         });
 
-        const finalTitle = siegeData.title || `${targetCity.name} 攻防战`;
+        const firstBattleTitle = (army as { firstBattleTitle?: string }).firstBattleTitle;
+        const finalTitle = siegeData.title || firstBattleTitle || `${targetCity.name} 攻防战`;
 
         // ── 威慑·望风披靡：战前削守方城防（仅据点，不动附近援军）──
         if (generalHasStrategicEffect(army, 'pre_battle_intimidate')) {

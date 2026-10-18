@@ -121,11 +121,11 @@ const DE_BUILDING_SCALES: Record<string, number> = {
 // 9 种建筑类型全部扇区随机散布（主人 2026-08-26 定「战略战术统一 9 建筑」：磨坊/民居/兵营/铁匠铺/靶场/瞭望箭塔/城镇中心/马厩/市场）
 const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 'ARCHERY_RANGE', 'TOWER', 'TOWN_CENTER', 'STABLE', 'MARKET'];
 
-// 城寨建筑池（19 种：定居点 / 棚屋 A~G / 蒙古包 A~D / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
+// 城寨建筑池（15 种：定居点 / 棚屋 A~G / 哨站 / 强化哨站 / 黑暗时代房屋 / 黑暗时代磨坊 / 黑暗时代兵营 / 黑暗时代定居点 / 黑暗时代部落中心，随机取 9 种，2026-10-01 主人定）
+// 🔴 [2026-10-19 主人令] 通用池移除蒙古包 A~D：非草原文明城寨不得随机出帐篷；蒙古包只给草原文明（蒙古/鲜卑/匈人/库曼等）。
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
-    'YURT_A', 'YURT_B', 'YURT_C', 'YURT_D',
     'OUTPOST', 'FORTIFIED_OUTPOST',
     'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
     'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_TOWN_CENTER_AGE1',
@@ -175,6 +175,18 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 漠北 9 栋全是蒙古包：8 种各一 ＋ 1 个重复（资产只有 YURT_E~L 八种，凑满 9 位） */
 const MOBEI_YURT_RING_NINE: readonly string[] = [...MONGOL_CITY_YURTS, MONGOL_CITY_YURTS[0]];
+/** 🔴 [2026-10-19 主人令] 漠北这三座是半游牧半定居都城/堡垒（固定建筑 + 毡帐营地），不能全蒙古包：
+ *  哈拉和林（Karakorum）、卜古罕城（Ordu-Baliq）、博尔巴任（Por-Bazhyn）→ 9 栋各一半（4 DE 建筑 + 5 蒙古包）。 */
+const MOBEI_HALF_YURT_CITIES = new Set(['city_karakorum', 'city_woluduobali', 'city_porbazhyn']);
+const isMobeiHalfYurtCity = (cityId?: string): boolean => !!cityId && MOBEI_HALF_YURT_CITIES.has(cityId);
+/** 半蒙古包池：4 栋 DE 建筑 + 5 栋蒙古包（随机洗牌） */
+function mixHalfYurtPool(dePool: readonly string[], rnd: () => number): string[] {
+    const de = [...dePool];
+    const y = [...MONGOL_CITY_YURTS];
+    for (let i = de.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [de[i], de[j]] = [de[j], de[i]]; }
+    for (let i = y.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [y[i], y[j]] = [y[j], y[i]]; }
+    return [...de.slice(0, 4), ...y.slice(0, 5)];
+}
 /** 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
  *  与毡帐营地（buildYurtCampHtml）同一套 9 件：8 蒙古包 + 1 亚洲瞭望塔。
  *  ⚠️ 现在只留给旧的 `style === 'YURT'` 分支；漠北（MONGOL）已改走「9 栋全蒙古包」，见 MOBEI_YURT_RING_NINE。 */
@@ -185,6 +197,12 @@ const isYurtItem = (b: string): boolean => b.startsWith('YURT_');
 const isMobeiStyle = (buildingStyle?: string): boolean => buildingStyle === 'MONGOL';
 /** 漠南（XIANBEI）：文明建筑池里随机掺蒙古包（2026-09-16 原口径写在漠北名下，2026-10-18 主人纠正后归漠南） */
 const isMunanStyle = (buildingStyle?: string): boolean => buildingStyle === 'XIANBEI';
+/** 🔴 [2026-10-19 主人令] 漠南鲜卑、匈人、库曼：1500 年前仍用蒙古包 ⇒ 小城 9 栋也各一半（4 DE + 5 蒙古包）。
+ *  马扎尔定居后（10 世纪后）不再用蒙古包；鞑靼（CENTRAL_ASIA）是中亚定居绿洲城市，不用蒙古包（2026-10-19 修复）。 */
+const STEPPE_SMALL_CITY_MIX = new Set(['XIANBEI', 'HUNS', 'CUMAN']);
+/** 🔴 [2026-10-19 主人令] 漠南鲜卑、匈人、库曼的**城寨**：9 栋建筑与蒙古包各一半（4 DE 建筑 + 5 蒙古包）。
+ *  鞑靼（CENTRAL_ASIA）是中亚定居绿洲城市，城寨也不配蒙古包。 */
+const STEPPE_STOCKADE_MIX = new Set(['XIANBEI', 'HUNS', 'CUMAN']);
 /** 🔴 [2026-10-18 主人定「把漠北城内地基换成草地」] 漠北城内地面改用草原草地 `gr7`（DE 蒙古草原纯枯草，与塞外草原主题 `palaearctic_asia_steppe` 的 baseTerrain 同源），
  *  不再铺 sr2（草地+碎石）/ rd1·rd2（石板/砖石）那套城内地基。 */
 const MOBEI_GROUND_TILE = 'gr7';
@@ -537,9 +555,13 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     // 🔴 [2026-10-18 主人定] 漠北（MONGOL）9 栋**全是蒙古包**（8 种各一 + 1 个重复）；城心那栋也是包（不再放王帐城堡）。
     //    漠南（XIANBEI）接手原先漠北那套「9 建筑池里随机掺蒙古包」，总数仍恒为 9。
     const isMobei = isMobeiStyle(buildingStyle);
+    // 🔴 [2026-10-19 主人令] 漠南鲜卑/匈人/库曼的小城：9 栋 = 4 栋 DE 建筑 + 5 蒙古包（各一半）；
+    //    漠北三座半游牧半定居都城（哈拉和林/卜古罕城/博尔巴任）同样各一半。
     const ring = isMobei
-        ? [...MOBEI_YURT_RING_NINE]
-        : [...DE_SMALL_CITY_POOL, ...(isMunanStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
+        ? (isMobeiHalfYurtCity(cityId) ? mixHalfYurtPool(DE_SMALL_CITY_POOL, rnd) : [...MOBEI_YURT_RING_NINE])
+        : (buildingStyle && STEPPE_SMALL_CITY_MIX.has(buildingStyle))
+            ? mixHalfYurtPool(DE_SMALL_CITY_POOL, rnd)
+            : [...DE_SMALL_CITY_POOL];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
@@ -733,7 +755,23 @@ function buildDeStockadeStackHtml(
     // 🔴 [2026-10-18 主人定] 漠北（MONGOL）城寨 = **9 栋全是蒙古包**（8 种各一 + 1 个重复），不放城心王帐；城墙/篱笆照旧不动。
     const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
     const isMobei = isMobeiStyle(buildingStyle);
-    const pool = [...(isMobei ? MOBEI_YURT_RING_NINE : (style === 'YURT' ? YURT_STOCKADE_NINE : DE_STOCKADE_BUILDING_POOL))];
+    // 🔴 [2026-10-19 主人令] 漠南鲜卑/匈人/库曼/鞑靼/马扎尔的城寨：9 栋 = 4 栋 DE 建筑 + 5 蒙古包（各一半）
+    const isMixedSteppeStockade = !isMobei && !!buildingStyle && STEPPE_STOCKADE_MIX.has(buildingStyle);
+    const pool: string[] = isMobei
+        ? [...MOBEI_YURT_RING_NINE]
+        : (style === 'YURT')
+            ? [...YURT_STOCKADE_NINE]
+            : isMixedSteppeStockade
+                ? (() => {
+                    const dePool = DE_STOCKADE_BUILDING_POOL.filter((b) => !isYurtItem(b));
+                    const yurtPool = [...MONGOL_CITY_YURTS];
+                    for (let i = dePool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [dePool[i], dePool[j]] = [dePool[j], dePool[i]]; }
+                    for (let i = yurtPool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [yurtPool[i], yurtPool[j]] = [yurtPool[j], yurtPool[i]]; }
+                    return [...dePool.slice(0, 4), ...yurtPool.slice(0, 5)];
+                })()
+                : (buildingStyle === 'MAGYAR' || buildingStyle === 'CENTRAL_ASIA'
+                    ? DE_STOCKADE_BUILDING_POOL.filter((b) => !isYurtItem(b))   // 马扎尔定居后、鞑靼中亚绿洲城：不用蒙古包
+                    : [...DE_STOCKADE_BUILDING_POOL]);
     for (let i = pool.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [pool[i], pool[j]] = [pool[j], pool[i]];
@@ -952,8 +990,11 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    箭塔占 1×1，位心取 −5 / 0.5 / 6（离城堡 3 格空隙，关于城心对称，吸附整格后落在 −5 / 1 / 6）。
     //    🔴 [2026-10-18 主人定「真实的漠北 9 建筑都是蒙古包」「中间的城堡换成蒙古包」] 漠北（MONGOL）的险要：
     //       9 栋全是蒙古包（8 种各一 + 1 个重复，城心也是包），城墙/角楼等防御件不动。
-    const passInnerBuildings: Array<[string, string]> = isMobeiStyle(buildingStyle)
-        ? MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3'])
+    const isMobeiPass = isMobeiStyle(buildingStyle);
+    const passInnerBuildings: Array<[string, string]> = isMobeiPass
+        ? (isMobeiHalfYurtCity(cityId)
+            ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, deMulberry32(deHashString(cityId + '|pass_inner_mix'))).map((b): [string, string] => [b, 'AGE3'])
+            : MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3']))
         : [['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4']];
     {
         const r = deMulberry32(deHashString(cityId + '|pass_inner_towers'));
@@ -1066,9 +1107,13 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
 
     // 🔴 [2026-10-18 主人定] 漠北（MONGOL）9 栋全是蒙古包（8 种各一 + 1 个重复，城心也是包）；
     //    漠南（XIANBEI）接手原先漠北那套「文明建筑池里随机掺 8 个蒙古包」。
+    // 🔴 [2026-10-19 主人令] 漠南鲜卑是半游牧半定居（统万城/临潢府/朝阳/上都/归化城），中城也按 4 DE + 5 蒙古包各一半，
+    //    不再用旧的随机掺 8 个。
     const ring = isMobeiStyle(buildingStyle)
-        ? [...MOBEI_YURT_RING_NINE]
-        : [...DE_MEDIUM_CITY_POOL, ...(isMunanStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
+        ? (isMobeiHalfYurtCity(cityId) ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, rnd) : [...MOBEI_YURT_RING_NINE])
+        : (buildingStyle === 'XIANBEI'
+            ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, rnd)
+            : [...DE_MEDIUM_CITY_POOL]);
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
         [ring[i], ring[j]] = [ring[j], ring[i]];
@@ -1505,6 +1550,9 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-14 主人令「和其他一切无关」] 日本／青藏只看建筑风格，不再看 region
     const isJapan = city.buildingStyle === 'JAPAN';
     const isTibet = city.buildingStyle === 'TIBET';
+    // 🔴 [2026-10-19 主人令「小城中心改为城堡」] 日本、斯拉夫、波兰、立陶宛、白山黑水的小城城心放城堡
+    const SMALL_CITY_CASTLE_STYLES = ['JAPAN', 'SLAVIC', 'POLES', 'LITHUANIANS', 'NORTHEAST'];
+    const hasSmallCityCastle = !!city.buildingStyle && SMALL_CITY_CASTLE_STYLES.includes(city.buildingStyle);
     const isRep52City = !!REP_CITY_CASTLES[city.id] && city.type !== 'pass';
     // 🔴 [2026-10-03 主人令「请把所有的中城和大城的都设计为城堡居中」] 中城/大城一律城堡居中
     //    （原来只有日本/青藏文化区与代表名城名册里的城才居中放城堡，其余中城/大城九建筑全是普通建筑）。
@@ -1514,6 +1562,7 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-13 主人令] **日本建筑风格的小城放一个城堡**（城心、城堡占城心、城内仍 9 格）：
     //    判据是日本建筑风格（`isJapan`：建筑风格或文化区含 JAPAN）—— 全库 5 座
     //    鹿儿岛城／宇都宫城／熊本／府内／浜松城。**日本以外的小城照旧无城堡**（2026-10-03 令不变）。
+    // 🔴 [2026-10-19 主人令「小城中心改为城堡」] 范围扩到：日本、斯拉夫、波兰、立陶宛、白山黑水（NORTHEAST）。
     // 🔴 [2026-10-18 主人定「把漠北城内地基换成草地，中间的城堡换成蒙古包」] 漠北（MONGOL）**一律不放城心城堡**：
     //    大/中/小城/城寨/关隘的 9 栋全是蒙古包（城心也是包），城心王帐（MONG_CASTLE_AGE3）不再出现。
     // 🔴 [2026-10-18 主人定「吐蕃的城寨中心不能有城堡。所有的城寨中心都不能有城堡吧」] **城寨一律不放城心城堡**：
@@ -1523,7 +1572,7 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     const centerCastle = (isMobei || city.type === 'stockade')
         ? false
         : city.type === 'small_city'
-            ? isJapan
+            ? hasSmallCityCastle
             : (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');
 
     // [2026-08-26 第三步] 小城/关隘/中城/大城按建筑风格套用 DE 建筑组合（非支持类型返回 null → 用整图）

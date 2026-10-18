@@ -1220,11 +1220,11 @@ export const SMALL_CITY_STONE_BY_STYLE: Record<string, boolean> = {
     // 🔴 [2026-10-05 主人令] WEST：false → true（西欧大陆诸城史实是石／砖墙）
     WEST: true, SLAV: false, CEAS: false, ANDE: false, YURT: false,
 };
-// 🔴 [2026-10-05 主人令] 补入 VIKINGS（维京环形堡＝土垒木栅）与 CELTS（凯尔特环堡＝土垒木栅）：
-//    它们本来只靠"母体判木栅"间接得到木栅，WEST 改石墙后必须显式列出，否则会被顺手改成石墙。
-const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'NORTHEAST', 'MONGOL', 'MOBEI_MONGOL', 'CUMAN', 'MALAY', 'VIKINGS', 'CELTS']);
-/** 母体判木栅、但这个二三级风格史载是石／土坯墙 → 石墙：西域绿洲 WESTERN（高昌、交河、于阗屯堡，夯土土坯，母体落在中亚）、印加 INCA（安第斯干砌石，母体落在安第斯）。 */
-const SMALL_CITY_STONE_OVERRIDE = new Set(['WESTERN', 'INCA']);
+// 🔴 [2026-10-19 主人令「日本、斯拉夫、波兰、立陶宛、白山黑水、马来 他们的小城依然保持栅栏。其他都是石墙。」]
+//     小城木栅只保留这 6 个风格；其余一律石墙，不再按母体/其他例外判。
+// 🔴 [2026-10-19 主人令「不要动漠北。这是独立系统。」] 漠北蒙古（MONGOL / MOBEI_MONGOL）不参与这条，
+//     保持其独立系统的木栅口径，不能被顺手改成石墙。
+const SMALL_CITY_WOOD_OVERRIDE = new Set(['JAPAN', 'SLAVIC', 'POLES', 'LITHUANIANS', 'NORTHEAST', 'MALAY', 'MONGOL', 'MOBEI_MONGOL']);
 
 export function smallCityUsesStoneWall(
     deStyle: string | undefined | null,
@@ -1233,9 +1233,9 @@ export function smallCityUsesStoneWall(
     /** 据点 id（逐城例外用；不传则退化为按风格/区域判，行为与加此参数前一致） */
     cityId?: string | null,
 ): boolean {
-    // 🔴 [2026-10-14 主人令「和其他一切无关」] 只看建筑风格：已删逐城例外（维也纳／约克）与按 region 判木栅两条。
-    if (rawStyle && SMALL_CITY_WOOD_OVERRIDE.has(rawStyle)) return false;
-    if (rawStyle && SMALL_CITY_STONE_OVERRIDE.has(rawStyle)) return true;
+    // 🔴 [2026-10-19 主人令] 只看建筑风格：只有 JAPAN/SLAVIC/POLES/LITHUANIANS/NORTHEAST/MALAY 用木栅，其余全石墙。
+    if (rawStyle) return !SMALL_CITY_WOOD_OVERRIDE.has(rawStyle);
+    // 无 rawStyle 的旧调用（战场等）沿用母体规则
     return !!deStyle && SMALL_CITY_STONE_BY_STYLE[deStyle] === true;
 }
 

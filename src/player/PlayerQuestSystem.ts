@@ -114,6 +114,8 @@ export interface PlayerQuest {
     firstBattle?: {
         battleName: string;
         battleType: 'field' | 'siege';
+        role: 'attacker' | 'defender';
+        myTroops: number;
         targetLat: number;
         targetLng: number;
         targetCityId?: string;
@@ -1647,9 +1649,13 @@ export class PlayerQuestSystem {
             return;
         }
 
+        const role: 'attacker' | 'defender' = fb.role ?? 'attacker';
         applyLegionCultureComposition(host, host.cultureRegion ?? undefined);
         (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
         (host as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
+        (host as Army & { isFirstBattleHero?: boolean }).isFirstBattleHero = true;
+        (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
+        (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
         host.scriptMarchExempt = true;
         host.expeditionTargetCityId = null;
 
@@ -1668,7 +1674,7 @@ export class PlayerQuestSystem {
         if (fb.battleType === 'field') {
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
             const enemySpawnPos = isOnTheSpot
-                ? { lat: targetPos.lat, lng: targetPos.lng + 0.02 }
+                ? { lat: targetPos.lat, lng: targetPos.lng + 0.03 }
                 : { lat: targetPos.lat, lng: targetPos.lng };
             const enemyArmy = this.deps.legionManager.createLegion(
                 enemySpawnPos,
@@ -1720,6 +1726,8 @@ export class PlayerQuestSystem {
             firstBattle: {
                 battleName: fb.battleName,
                 battleType: fb.battleType,
+                role,
+                myTroops,
                 targetLat: targetPos.lat,
                 targetLng: targetPos.lng,
                 targetCityId: fb.targetCityId,
@@ -1737,12 +1745,13 @@ export class PlayerQuestSystem {
         this.deps.hero.setTravelPointLabel(fb.battleName);
         this.marchHostToFirstBattle(host, targetPos);
         this.deps.feed?.pushExpedition?.({ legionName: host.name, cityName: fb.targetName, kind: 'depart' });
+        const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
         this.deps.notify(
             isOnTheSpot
-                ? `⚔️ 随【${g.generalName}】率军 ${myTroops} 于【${fb.targetName}】就地开战（迎战 ${enemyDisplayName} ${enemyTroops} 军）`
-                : `⚔️ 随【${g.generalName}】率军 ${fb.myTroops} 直奔【${fb.battleName}】（迎战 ${enemyDisplayName} ${enemyTroops} 军）`,
+                ? `⚔️ 随【${g.generalName}】率军 ${myTroops} 于【${fb.targetName}】${roleLabel}（迎战 ${enemyDisplayName} ${enemyTroops} 军）`
+                : `⚔️ 随【${g.generalName}】率军 ${myTroops} 直奔【${fb.battleName}】（迎战 ${enemyDisplayName} ${enemyTroops} 军）`,
         );
-        gameLog('expedition', `[玩家] 武将历史首战：${g.generalName}(${myTroops}) 直奔【${fb.battleName}】迎战 ${enemyDisplayName}(${enemyTroops})`);
+        gameLog('expedition', `[玩家] 武将历史首战：${g.generalName}(${myTroops}, ${role}) ${roleLabel}【${fb.battleName}】vs ${enemyDisplayName}(${enemyTroops})`);
         this.emitChange();
     }
 
@@ -1788,9 +1797,22 @@ export class PlayerQuestSystem {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (enemyArmy && !enemyArmy.isDestroyed) {
                 enemyArmy.scriptMarchExempt = false;
+                const hPos = host.getPosition();
                 const ePos = enemyArmy.getPosition();
-                if (getEuclideanDistance(host.getPosition(), ePos) > 0.05) {
-                    host.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+                if (fbState.role === 'defender') {
+                    // 本地防守战：我方据守原地，敌军作为进攻方主动扑向我军
+                    if (getEuclideanDistance(hPos, ePos) > 0.04) {
+                        enemyArmy.moveAlongPath([{ lat: hPos.lat, lng: hPos.lng }]);
+                    } else {
+                        host.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+                    }
+                } else {
+                    // 进攻战：我军主动扑向敌军
+                    if (getEuclideanDistance(hPos, ePos) > 0.04) {
+                        host.moveAlongPath([{ lat: ePos.lat, lng: ePos.lng }]);
+                    } else {
+                        enemyArmy.moveAlongPath([{ lat: hPos.lat, lng: hPos.lng }]);
+                    }
                 }
             } else {
                 fbState.engaged = true;
@@ -1822,6 +1844,9 @@ export class PlayerQuestSystem {
         if (host && !host.isDestroyed) {
             delete (host as { __scriptPinned?: boolean }).__scriptPinned;
             delete (host as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+            delete (host as { isFirstBattleHero?: boolean }).isFirstBattleHero;
+            delete (host as { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole;
+            delete (host as { firstBattleTitle?: string }).firstBattleTitle;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
             host.expeditionUnlocked = true;
@@ -1833,8 +1858,83 @@ export class PlayerQuestSystem {
             delete (enemyArmy as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
             delete (enemyArmy as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy;
             enemyArmy.scriptMarchExempt = false;
+            enemyArmy.disband();
+        }
+        if (q.firstBattle.targetCityId) {
+            const tc = this.deps.cityManager.getCity(q.firstBattle.targetCityId);
+            if (tc) {
+                delete (tc as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
+            }
         }
         this.deps.hero.setTravelPointLabel(null);
+    }
+
+    /**
+     * 首战结束后衔接：无论首战是野战/攻城、本地防守/进攻，打完后确保武将保有至少 10,000 兵力的出征军团，
+     * 自动锁定下一座敌方据点继续出征，直至战败。
+     */
+    private completeFirstBattleAndContinueExpedition(q: PlayerQuest, host: Army): void {
+        const fbState = q.firstBattle;
+        this.cleanupFirstBattleState(q);
+
+        const homeCity = this.deps.cityManager.getCity(q.cityId);
+        if (homeCity) {
+            homeCity.factionId = q.factionId;
+            if ((homeCity.troops || 0) < 5000) {
+                homeCity.troops = 5000;
+            }
+        }
+        if (fbState?.battleType === 'siege' && fbState.targetCityId) {
+            const targetCity = this.deps.cityManager.getCity(fbState.targetCityId);
+            if (targetCity) {
+                targetCity.factionId = q.factionId;
+                if ((targetCity.troops || 0) < 3000) {
+                    targetCity.troops = 3000;
+                }
+            }
+        }
+
+        // 确保首战后出征军团兵力充足（至少 10,000 人），绝不因战损低于 5,000 而在本城解散
+        const minContinueTroops = Math.max(10000, Math.min(fbState?.myTroops ?? 20000, 20000));
+        if (host.getTroops() < minContinueTroops) {
+            host.setTroops(minContinueTroops);
+        }
+        host.clearExternalCombatState();
+        host.clearPostBattleRest();
+        host.stopMovement(false);
+        host.isRetreatingHome = false;
+        host.weakCheckAfterBattle = false;
+        host.expeditionUnlocked = true;
+
+        this.deps.hero.addMerit(500);
+        const anchorCity =
+            (fbState?.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined)
+            ?? homeCity;
+        const nextTarget = anchorCity ? this.pickCampaignTarget(anchorCity) : null;
+        if (nextTarget) {
+            host.expeditionTargetCityId = nextTarget.id;
+            this.quest = {
+                kind: 'campaign',
+                cityId: q.cityId,
+                cityName: q.cityName,
+                factionId: q.factionId,
+                factionName: q.factionName,
+                generalId: q.generalId,
+                generalName: q.generalName,
+                legionId: host.id,
+                targetCityId: nextTarget.id,
+                targetCityName: nextTarget.name,
+            };
+            this.deps.hero.joinFaction(q.factionId);
+            this.deps.hero.attachTo(host);
+            this.deps.kickLegionAi(host.id);
+            this.deps.notify(`🏆 【${fbState?.battleName ?? '首战'}】大捷！随${q.generalName}建立出征军团，继续征讨【${nextTarget.name}】`);
+            gameLog('expedition', `[玩家] 首战大捷转出征：${q.generalName}(${host.getTroops()}) → 继续攻打【${nextTarget.name}】`);
+            this.emitChange();
+        } else {
+            this.finishQuest(true);
+            this.deps.kickLegionAi(host.id);
+        }
     }
 
     private tickFirstBattle(q: PlayerQuest): void {
@@ -1858,15 +1958,11 @@ export class PlayerQuestSystem {
         if (fbState.battleType === 'field') {
             const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
             if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0) {
-                this.cleanupFirstBattleState(q);
-                this.finishQuest(true);
-                this.deps.kickLegionAi(host.id);
+                this.completeFirstBattleAndContinueExpedition(q, host);
                 return;
             }
             if (fbState.engaged && !host.getIsInCombat()) {
-                this.cleanupFirstBattleState(q);
-                this.finishQuest(true);
-                this.deps.kickLegionAi(host.id);
+                this.completeFirstBattleAndContinueExpedition(q, host);
                 return;
             }
             if (distToTarget <= 0.2) {
@@ -1877,9 +1973,7 @@ export class PlayerQuestSystem {
         } else {
             const targetCity = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
             if (!targetCity || (fbState.engaged && !host.getIsInCombat()) || (distToTarget <= 0.25 && targetCity.factionId === q.factionId && fbState.engaged)) {
-                this.cleanupFirstBattleState(q);
-                this.finishQuest(true);
-                this.deps.kickLegionAi(host.id);
+                this.completeFirstBattleAndContinueExpedition(q, host);
                 return;
             }
             if (distToTarget <= 0.22) {
