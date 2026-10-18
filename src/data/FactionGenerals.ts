@@ -27,6 +27,7 @@ import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
 import { isGeneralOnStage } from './generalOnStage';
 import { FACTIONS } from './factions';
+import { getFirstBattleByEnemySyntheticId, resolveFirstBattleEnemyDisplayName } from './GeneralFirstBattles';
 
 export interface FactionGeneral {
     /** 将领 id（须在 GENERAL_PROFILES 有档案，否则武将技不触发） */
@@ -1458,6 +1459,8 @@ export function getFactionIdOfGeneral(generalId: string | null | undefined): str
     if (!generalId) return null;
     const hit = getGeneralIdIndex().get(generalId);
     if (hit) return hit.factionId;
+    const fb = getFirstBattleByEnemySyntheticId(generalId);
+    if (fb) return fb.enemyFactionId;
     // 战场人物（窦建德 / 平知盛式的"只在场战上出现"的人）也有势力归属，同样答得出来
     return getBattlefieldCharacter(generalId)?.factionId ?? null;
 }
@@ -1466,6 +1469,19 @@ export function getGeneralRecordByGeneralId(
     generalId: string,
     options?: { region?: import('../systems/RegionSystem').RegionType },
 ): FactionGeneral | null {
+    const fb = getFirstBattleByEnemySyntheticId(generalId);
+    if (fb) {
+        const refHit = fb.enemyGeneralId ? getGeneralIdIndex().get(fb.enemyGeneralId) : undefined;
+        const dedicated = refHit?.general.portrait ?? '';
+        return {
+            generalId,
+            generalName: resolveFirstBattleEnemyDisplayName(fb),
+            portrait: resolveGeneralPortraitPath(dedicated, {
+                factionId: fb.enemyFactionId,
+                region: options?.region,
+            }),
+        };
+    }
     const hit = getGeneralIdIndex().get(generalId);
     if (!hit) {
         // 🔴 [2026-09-19 主人定] 兜底：**战场人物**（窦建德 / 王世充 / 保卢斯 / 瓦罗 / 埃提乌斯…）。

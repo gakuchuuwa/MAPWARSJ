@@ -526,7 +526,11 @@ export class LegionManager {
                 // [NEW] Avoid preempting sieges: if I am a garrison, I don't initiate field battles.
                 // Let the enemy trigger the siege against my city instead.
                 let iAmGarrison = false;
-                if (army.isIdle()) {
+                if (
+                    army.isIdle() &&
+                    !(army as { forceFirstBattleField?: boolean }).forceFirstBattleField &&
+                    !(army as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy
+                ) {
                     const nearestCity = this.cityManager.getNearestCity(null, { latitude: newPos.lat, longitude: newPos.lng });
                     if (nearestCity && nearestCity.factionId === army.getFactionId()) {
                         if (getEuclideanDistance(newPos, { lat: nearestCity.latitude, lng: nearestCity.longitude }) <= 0.2) {
@@ -628,7 +632,11 @@ export class LegionManager {
         // 🔴 [2026-09-11 主人定] 剧本行军豁免：赶赴战场途中不攻城。
         //    这是**攻城总咽喉**，放这一句即覆盖全部攻城路径：
         //    目标城抵达(500) / 沿路行军(LegionRoadMarch 341·378) / 行为树动作(827) / 撞驻军转攻城(LegionFieldBattle 167)。
-        if (army.scriptMarchExempt) return 'skipped';
+        if (
+            army.scriptMarchExempt ||
+            (army as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
+            (army as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy
+        ) return 'skipped';
 
         // 战术模式 300s 倒计时打平后，攻击军团需换一个目标攻击，不再原地复攻刚打平的城
         if ((army as any).lastDrawCityId) {
@@ -732,7 +740,11 @@ export class LegionManager {
     public findHostileCityNear(pos: LatLng, factionId: string, army?: Army | null): City | null {
         // 🔴 [2026-09-11 主人定] 剧本行军豁免：赶赴战场途中，沿途敌城一律不算「必须先处理」。
         //    不返回 null 的后果：行为树 HasTarget 会因 ZOC 强制攻城，把剧本军钉在城下（见本函数上方 466 行）。
-        if (army?.scriptMarchExempt) return null;
+        if (
+            army?.scriptMarchExempt ||
+            (army as { forceFirstBattleField?: boolean } | null)?.forceFirstBattleField ||
+            (army as { isFirstBattleFieldEnemy?: boolean } | null)?.isFirstBattleFieldEnemy
+        ) return null;
 
         // 长驱深入(str_11)：远征军团默认 50% 绕 small_city / stockade；非远征时仅挂 str_11 的将。概率 = 目录 magnitude。
         const smallCityBypassChance = army ? getLongDriveDeepBypassChance(army) : 0;

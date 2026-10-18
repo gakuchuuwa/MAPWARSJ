@@ -153,11 +153,16 @@ export function tryEngageFieldBattle(
         if (isArmyInActiveSandboxFieldBattle(deps, otherArmy.id)) continue;
 
         let otherIsGarrison = false;
+        const isForcedField =
+            (army as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
+            (army as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy ||
+            (otherArmy as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
+            (otherArmy as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy;
         const nearestCity = cityManager.getNearestCity(null, {
             latitude: opPos.lat,
             longitude: opPos.lng,
         });
-        if (nearestCity && nearestCity.factionId === otherArmy.getFactionId()) {
+        if (!isForcedField && nearestCity && nearestCity.factionId === otherArmy.getFactionId()) {
             if (
                 getEuclideanDistance(opPos, {
                     lat: nearestCity.latitude,
