@@ -27,8 +27,10 @@ export function pickStockadeWallStyleByCategory(deStyle: string | null | undefin
 
 /**
  * 城寨最终用哪套栅栏材质 —— 与战略地图 TerritorySystem.buildDeStockadeStackHtml 同一顺序：
- *   ① 据点单独指定的材质（stockadeFence），否则按建筑风格；② 形制（单独指定或按据点哈希）照材质落定；
+ *   ① 据点单独指定的材质（stockadeFence），否则按 **66 种建筑风格**（buildingStyle）取；② 形制（单独指定或按据点哈希）照材质落定；
  *   ③ 这一类（建筑风格 × 形制）在围栏编辑器里存过自定义样式 → 用样式里的材质。
+ * 🔴 [2026-10-18 主人令「这四种安排给 66 个建筑风格，不要分给 16 个」] builtin 默认值改按 buildingStyle（66）查，
+ *    deStyle（16 母体）只用于自定义样式分类键与兜底。
  * 战术模式攻城战据此选城墙，保证与战略地图画的是同一套（2026-10-05 主人令「请修复」）。
  */
 export function resolveStockadeFenceKey(
@@ -36,8 +38,11 @@ export function resolveStockadeFenceKey(
     deStyle: string,
     explicitShape?: string | null,
     explicitFence?: StockadeFenceKey | null,
+    buildingStyle?: string | null,
 ): StockadeFenceKey {
-    const builtin = (explicitFence && STOCKADE_FENCE_SETS[explicitFence]) ? STOCKADE_FENCE_SETS[explicitFence] : getStockadeFenceSetByStyle(deStyle);
+    const builtin = (explicitFence && STOCKADE_FENCE_SETS[explicitFence])
+        ? STOCKADE_FENCE_SETS[explicitFence]
+        : getStockadeFenceSetByStyle(buildingStyle || deStyle);
     const keys = STOCKADE_SHAPE_KEYS as readonly string[];
     const baseIdx = explicitShape && keys.includes(explicitShape) ? keys.indexOf(explicitShape) : deHashString(cityId + '|stockade_wall_shape') % 6;
     const shapeIdx = keys.indexOf(resolveStockadeShapeByFence(keys[baseIdx] as any, builtin.key));

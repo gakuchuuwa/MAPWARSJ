@@ -771,6 +771,10 @@ export function autoInsertStockadePosts(pieces: StockadeRingPiece[]): StockadeRi
  *  🔴 [2026-10-01 主人定「普鲁改成硬木粗桩，草原营地并入横木平切」]：PURU = 普鲁·南亚古典（旁遮普、阿托克一带，波鲁斯一脉），
  *     不是东北欧的普鲁士；南亚早期城栅史载用硬木立栅（华氏城木栅），与印度同类。YURT 属草原，随中亚用横木平切。
  *  - FENCE（密编荆篱）：中美 (MESO) / 安第斯 (ANDE) / 非洲 (AFRI) / 东南亚 (SEAS)
+ *
+ * 🔴 [2026-10-18 主人令「这四种安排给 66 个建筑风格，不要分给 16 个。要符合真实的地理和历史。」]
+ *     **真正生效的是下面 `STOCKADE_FENCE_BY_STYLE66`（66 种建筑风格逐个指定）**；
+ *     本 16 母体表只留作**兜底**（调用方拿不到二/三级风格时，如战场 `bf_*`、评估页未选分支）。
  */
 export const STYLE_TO_STOCKADE_FENCE: Record<string, StockadeFenceKey> = {
     // ① 硬木粗桩（HARDWOOD）
@@ -795,6 +799,104 @@ export const STYLE_TO_STOCKADE_FENCE: Record<string, StockadeFenceKey> = {
     AFRI: 'FENCE',
     SEAS: 'FENCE',
 };
+
+/**
+ * 🔴 [2026-10-18 主人令「这四种安排给 66 个建筑风格，不要分给 16 个。要符合真实的地理和历史。」]
+ * 66 种建筑风格（二级 62 ＋ 三级 4）逐个指定城寨栅栏材质。按**筑城防御形制／林木资源禀赋／工程传统**归四系：
+ *   · HARDWOOD 硬木粗桩：解锯方木、深埋重桩、榫卯紧固、防腐硬木（橡木/柚木/娑罗双）——东亚中原圈（中原/巴蜀/江南/河朔）、
+ *     南亚古典圈（普鲁/瞿折罗/印度斯坦）、近东与小亚（阿契美尼德/波斯/奥斯曼）、地中海帝国（罗马/拜占庭）、
+ *     西欧重装封建（法兰克/条顿/勃艮第）、东亚山海营造（日本/高丽）。
+ *   · DARK 原木尖桩：整木剥皮/带皮、顶端削尖、密排成刺，倚林海资源抗骑/山林据点——古典希腊世界（古典希腊/雅典/斯巴达/马其顿）、
+ *     诺斯与北海（维京/丹麦/撒克逊/瓦良格）、东欧斯拉夫（斯拉夫/波兰/波希米亚/保加利亚/立陶宛）、
+ *     北方林海与山地（白山黑水/漠南鲜卑/哥特）、高加索与巴尔干（亚美尼亚/格鲁吉亚/色雷斯）、美洲林地部落（马普切）。
+ *   · ARCHAIC 横木平切：横木垒叠（井干式/车营）、平截顶桩、石木夹筑、荒漠干打垒附木——欧亚草原游牧（蒙古/匈人/鞑靼/库曼/马扎尔）、
+ *     干燥戈壁要道（河西）、前哥伦布石木过渡（玛雅/阿兹特克/印加/穆伊斯卡）、西地中海干燥地带（西班牙/葡萄牙/西西里/意大利）。
+ *   · FENCE 密编荆篱：枝条编织（wattle）、竹木藤篾、红柳芦苇、椰枣荆棘——西北欧（凯尔特/不列颠）、内亚绿洲与高原（西域/青藏）、
+ *     西亚北非干旱/绿洲（中东/埃塞俄比亚/柏柏尔/马里）、南亚三角洲（孟加拉/达罗毗荼）、东南亚热带竹水（越南/高棉/缅甸/马来）、
+ *     南美热带密林（图皮）。
+ * ⚠️ 底下 16 母体表不参与城寨取材质，只在拿不到 66 风格键时兜底。
+ * ⚠️ 主人原表把「普鲁」归 DARK「北方林海」是望文生义误认成古普鲁士；本项目 PURU＝南亚普鲁（波鲁斯/旁遮普，
+ *    吠陀十六雄国—孔雀帝国谱系）。华氏城木栅经麦加斯梯尼《印度史》记载、布尔兰迪巴格遗址出土精细方木榫卯排桩，
+ *    材质为娑罗双/柚木等重硬木 → HARDWOOD（已更正）。
+ */
+export const STOCKADE_FENCE_BY_STYLE66: Record<string, StockadeFenceKey> = {
+    // ── ① 硬木粗桩 HARDWOOD（解锯方木/深埋重桩/榫卯紧固）────────────────────────
+    CENTRAL: 'HARDWOOD',      // 中原：木栅/木寨，榫卯版筑附木，粗方硬木立柱
+    BASHU: 'HARDWOOD',        // 巴蜀：中华定居核心圈，官制木作，粗方硬木立柱
+    JIANGNAN: 'HARDWOOD',     // 江南：中华定居核心圈，榫卯版筑附木，正规城池/军寨粗方硬木立柱与拒马
+    WEI: 'HARDWOOD',          // 河朔：边防亭障/军寨粗方木栅
+    PURU: 'HARDWOOD',         // 南亚普鲁（旁遮普/印度河，非普鲁士）：华氏城木栅·方木榫卯排桩（娑罗双/柚木）
+    GURJARAS: 'HARDWOOD',     // 瞿折罗：娑罗双/柚木等耐腐硬木重桩，木石混筑
+    MUGHAL: 'HARDWOOD',       // 印度斯坦：莫卧儿木石混合工事，耐腐硬木重桩
+    PERSIAN: 'HARDWOOD',      // 阿契美尼德波斯：近东中央集权，帝国工匠体系，边境要塞/后勤据点精修硬木桩柱
+    SASANIAN: 'HARDWOOD',     // 萨珊波斯：近东中央集权，精修硬木桩柱工事
+    TURKS: 'HARDWOOD',        // 奥斯曼：palanka 木栅堡（橡木桩+土），边境后勤据点
+    ROMA: 'HARDWOOD',         // 罗马：边墙木栅（Limes 橡木劈分桩排）、军团工事标准木桩
+    BYZANTINE: 'HARDWOOD',    // 拜占庭：罗马工程传统，野战木栅/木桩工事
+    FRANKS: 'HARDWOOD',       // 法兰克：motte-and-bailey 巨型橡木粗桩外郭
+    GERMANIC: 'HARDWOOD',     // 条顿：中欧阔叶林橡木粗桩（Bailey 外郭）
+    BURGUNDIANS: 'HARDWOOD',  // 勃艮第：重装封建城堡木栅外郭
+    JAPAN: 'HARDWOOD',        // 日本：城柵材木塀/外城重木垣（规整木板与方木）
+    KOREA: 'HARDWOOD',        // 高丽：山城木柵/板塀，整方松木
+    // ── ② 原木尖桩 DARK（整木削尖、密排成刺）─────────────────────────────────
+    GREECE: 'DARK',           // 古典希腊（三级）：石构之外以尖桩木栅野战筑城
+    ATHENIANS: 'DARK',        // 雅典：石城之外的野战木栅（charax 尖桩）
+    SPARTANS: 'DARK',         // 斯巴达：同希腊军营尖桩木栅
+    MACEDONIAN: 'DARK',       // 马其顿：同希腊军营尖桩木栅
+    VIKINGS: 'DARK',          // 维京：环形木堡（Trelleborg）原木尖桩
+    DANES: 'DARK',            // 丹麦：海岸护垒原木尖桩
+    SAXONS: 'DARK',           // 撒克逊：盎格鲁-撒克逊 burh 土垒+原木尖桩
+    VARANGIANS: 'DARK',       // 瓦良格：诺斯原木尖桩
+    SLAVIC: 'DARK',           // 斯拉夫：木城（город/острог）原木尖桩
+    POLES: 'DARK',            // 波兰：斯拉夫木城尖桩
+    BOHEMIANS: 'DARK',        // 波希米亚：斯拉夫木城尖桩
+    BULGARIANS: 'DARK',       // 保加利亚：巴尔干木栅土垒
+    LITHUANIANS: 'DARK',      // 立陶宛：波罗的木质堡寨尖桩
+    NORTHEAST: 'DARK',        // 白山黑水（女真/通古斯）：原生密林削尖原木
+    XIANBEI: 'DARK',          // 漠南鲜卑：大兴安岭—阴山森林草原，落叶松/桦木削尖立栅
+    GOTHS: 'DARK',            // 哥特：东日耳曼林区原木尖桩
+    ARMENIANS: 'DARK',        // 亚美尼亚：高加索山地针叶林，木石要冲尖桩
+    GEORGIANS: 'DARK',        // 格鲁吉亚：高加索山地针叶林尖桩
+    THRACIAN: 'DARK',         // 色雷斯：木石结构要冲，木栅土垒
+    MAPUCHE: 'DARK',          // 马普切：智利南部原生林木削尖立栅
+    // ── ③ 横木平切 ARCHAIC（横木垒叠/车营/石木夹筑/干打垒附木）─────────────────
+    MONGOL: 'ARCHAIC',        // 漠北草原：毡帐营地，车营 Kürien/横木围栏
+    HUNS: 'ARCHAIC',          // 匈人：草原车营/横木营垒
+    CENTRAL_ASIA: 'ARCHAIC',  // 鞑靼/中亚：草原车营与土坯木栅混合
+    CUMAN: 'ARCHAIC',         // 库曼：草原车营/横木营垒
+    MAGYAR: 'ARCHAIC',        // 马扎尔：szekérvár 车营/横木营垒
+    KHITAN: 'ARCHAIC',        // 河西：荒漠戈壁缺大木，横木框架夹夯土、胡杨平切
+    MAYANS: 'ARCHAIC',        // 玛雅：前哥伦布石木过渡，石构/灰浆核心+横木架搭、平截挡栏
+    AMERICA: 'ARCHAIC',       // 阿兹特克/中美：石木过渡，横木架搭防护
+    INCA: 'ARCHAIC',          // 印加：前哥伦布石木过渡，石构核心+横木挡栏
+    MUISCA: 'ARCHAIC',        // 穆伊斯卡：石木过渡，横木架搭防护
+    SPANISH: 'ARCHAIC',       // 西班牙：旱区石基+横木工事
+    PORTUGUESE: 'ARCHAIC',    // 葡萄牙：旱区石基+横木工事
+    SICILIANS: 'ARCHAIC',     // 西西里：干旱少林，石基横木
+    LATIN: 'ARCHAIC',         // 意大利：旱区石基+横向木梁/平切粗桩（Palizada）
+    // ── ④ 密编荆篱 FENCE（枝条编织/竹木藤篾/红柳芦苇/椰枣荆棘）──────────────────
+    CELTS: 'FENCE',           // 凯尔特：枝条编织工事（wattle hurdles），环状土垒编枝篱
+    BRITONS: 'FENCE',         // 不列颠：凯尔特-罗曼-不列颠村落/围场编篱（wattle）
+    WESTERN: 'FENCE',         // 西域：塔里木绿洲柽柳（红柳）/胡杨细枝编篱，柴泥墙草篱
+    TIBET: 'FENCE',           // 青藏：红柳/沙棘/荆棘密编，防风防兽（与石墙并存）
+    ORIE: 'FENCE',            // 中东：两河下游/绿洲湿地椰枣棕榈叶肋、芦苇编篱
+    ETHIOPIANS: 'FENCE',      // 埃塞俄比亚：稀树草原灌木/荆棘编篱
+    BERBER: 'FENCE',          // 柏柏尔：骆驼刺/灌木密编刺篱
+    AFRICA: 'FENCE',          // 马里/西非：稀树草原灌木密编刺篱
+    BENGALIS: 'FENCE',        // 孟加拉：三角洲竹篾/苇编篱
+    INDIA: 'FENCE',           // 达罗毗荼/南印：三角洲水网竹编、密刺灌木篱
+    VIETNAMESE: 'FENCE',      // 越南：竹篱（lũy tre）/刺竹水栅
+    KHMER: 'FENCE',           // 高棉：竹编水栅
+    BURMESE: 'FENCE',         // 缅甸：竹编篱
+    MALAY: 'FENCE',           // 马来：热带沼泽竹编水栅（Bamboo palisade）
+    TUPI: 'FENCE',            // 图皮：亚马逊藤蔓/灌木编篱围合环形村落
+};
+
+/** 取某建筑风格的城寨栅栏材质：先查 66 风格表，再退回 16 母体表（兜底）。 */
+export function getStockadeFenceKeyByStyle(style: string | undefined | null): StockadeFenceKey {
+    if (!style) return 'HARDWOOD';
+    return STOCKADE_FENCE_BY_STYLE66[style] ?? STYLE_TO_STOCKADE_FENCE[style] ?? 'HARDWOOD';
+}
 
 export interface StockadeFenceSet {
     key: StockadeFenceKey;
@@ -826,8 +928,7 @@ export const STOCKADE_FENCE_SETS: Record<StockadeFenceKey, StockadeFenceSet> = {
 };
 
 export function getStockadeFenceSetByStyle(style: string | undefined | null): StockadeFenceSet {
-    const key: StockadeFenceKey = (style && STYLE_TO_STOCKADE_FENCE[style]) ? STYLE_TO_STOCKADE_FENCE[style] : 'HARDWOOD';
-    return STOCKADE_FENCE_SETS[key];
+    return STOCKADE_FENCE_SETS[getStockadeFenceKeyByStyle(style)];
 }
 
 export function normalizeStockadeCorner(pieces: Array<{ type: string }>, fenceKey: StockadeFenceKey): void {
@@ -1211,7 +1312,9 @@ export function resolveTacticalWallSetup(
     }
 
     if (isStockade) {
-        const fenceKey = stockadeFenceKey || STYLE_TO_STOCKADE_FENCE[buildingStyle] || 'HARDWOOD';
+        // 🔴 [2026-10-18 主人令「四种材质按 66 个建筑风格分配」] 优先用 66 风格的原始 buildingStyle；
+        //    没有就按 rawBuildingStyle / 16 母体兜底。
+        const fenceKey = stockadeFenceKey || getStockadeFenceKeyByStyle(rawBuildingStyle || buildingStyle);
         switch (fenceKey) {
             case 'FENCE':
                 return {
@@ -1480,4 +1583,5 @@ export function buildCornerGateRingOnGrid(seg: number, tileW: number, tileH: num
     }
     return { pieces, L, a };
 }
+
 
