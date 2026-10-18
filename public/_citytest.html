@@ -2044,8 +2044,16 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
   //    蒙古包目录**没有风格前缀**（YURT_E，不是 ASIA_YURT_E_AGE2）→ 取图走 bldgPath 的特例。
   const MONGOL_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
   const isMongol = (curCulture === 'MONGOL');
+  // 🔴 [2026-10-19] 与游戏同步：漠南鲜卑/匈人/库曼 = 半蒙古包；漠北固定城也半蒙古包（评估页按风格代表显示）
+  const STEPPE_HALF_CULTURES = ['XIANBEI', 'HUNS', 'CUMAN'];
+  const isSteppeHalf = STEPPE_HALF_CULTURES.includes(curCulture);
   const isYurtBuilding = (b) => /^YURT_/.test(b);
   const yurtItems = (age) => MONGOL_YURTS.map((b) => ({ b: b, age: age, s: 0.30 }));
+  const yurtNine = (age) => [...MONGOL_YURTS, MONGOL_YURTS[0]].map((b) => ({ b: b, age: age, s: 0.25 }));
+  const halfWithYurts = (baseList, age) => shuffle([
+    ...shuffle(baseList, rnd).slice(0, 4),
+    ...shuffle(yurtItems(age), rnd).slice(0, 5),
+  ], rnd).slice(0, 9);
   const bldgPath = (styleName, b, age) => isYurtBuilding(b)
     ? ('/SUCAI_BUILDING/' + b + '/preview.png')
     : ('/SUCAI_BUILDING/' + styleName + '_' + b + '_' + age + '/preview.png');
@@ -2089,7 +2097,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       { b: 'HOUSE', age: 'AGE3', s: 0.32 },
       { b: 'TOWER', age: 'AGE3', s: 0.32 }
     ];
-    pool = shuffle(isMongol ? [...medList, ...yurtItems('AGE3')] : medList, rnd).slice(0, 9);
+    pool = isMongol || isSteppeHalf ? halfWithYurts(medList, 'AGE3') : shuffle(medList, rnd).slice(0, 9);
   } else if (type === 'small') {
     const smlList = [
       { b: 'TOWN_CENTER', age: 'AGE2', s: 0.42 },
@@ -2102,7 +2110,7 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       { b: 'STABLE', age: 'AGE2', s: 0.32 },
       { b: 'MARKET', age: 'AGE2', s: 0.32 }
     ];
-    pool = shuffle(isMongol ? [...smlList, ...yurtItems('AGE2')] : smlList, rnd).slice(0, 9);
+    pool = isMongol || isSteppeHalf ? halfWithYurts(smlList, 'AGE2') : shuffle(smlList, rnd).slice(0, 9);
   } else if (type === 'stockade') {
     const stkList = [
       { b: 'SETTLEMENT', s: 0.34 },
@@ -2132,7 +2140,13 @@ function renderBuildings(baseSize, style, type, seedKey = '', forceShape = null,
       // 城寨一律走无风格前缀取图（见 cPath 的 `type === 'stockade'` 分支），故塔写完整目录名
       { b: 'ASIA_TOWER_AGE2', s: 0.26 },
     ];
-    pool = shuffle(isYurtStockade ? yurtStkList : stkList, rnd).slice(0, 9);
+    pool = isYurtStockade
+      ? shuffle(yurtStkList, rnd).slice(0, 9)
+      : isMongol
+        ? yurtNine('AGE1')
+        : isSteppeHalf
+          ? halfWithYurts(stkList, 'AGE1')
+          : shuffle(stkList, rnd).slice(0, 9);
   }
 
   // 大城：底层菱形 clip-path 裁切广场地基（修复城北地基覆盖），9建筑按 3*3 排列、位置随机、随机镜像

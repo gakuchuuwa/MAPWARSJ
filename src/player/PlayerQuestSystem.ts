@@ -1650,6 +1650,7 @@ export class PlayerQuestSystem {
         }
 
         const role: 'attacker' | 'defender' = fb.role ?? 'attacker';
+        const effectiveBattleType: 'field' | 'siege' = role === 'defender' ? 'field' : fb.battleType;
         applyLegionCultureComposition(host, host.cultureRegion ?? undefined);
         (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
         (host as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
@@ -1671,7 +1672,7 @@ export class PlayerQuestSystem {
         const enemyDisplayName = resolveFirstBattleEnemyDisplayName(fb);
 
         let enemyArmyId: string | undefined;
-        if (fb.battleType === 'field') {
+        if (effectiveBattleType === 'field') {
             (host as Army & { forceFirstBattleField?: boolean }).forceFirstBattleField = true;
             const enemySpawnPos = isOnTheSpot
                 ? { lat: targetPos.lat, lng: targetPos.lng + 0.03 }
@@ -1725,7 +1726,7 @@ export class PlayerQuestSystem {
             targetCityName: fb.battleName,
             firstBattle: {
                 battleName: fb.battleName,
-                battleType: fb.battleType,
+                battleType: effectiveBattleType,
                 role,
                 myTroops,
                 targetLat: targetPos.lat,
