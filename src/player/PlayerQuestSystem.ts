@@ -410,6 +410,19 @@ export class PlayerQuestSystem {
             }
         }
 
+        // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」]
+        const availableTroops = Math.floor((city.troops || 0) * 0.9);
+        if (availableTroops < GameConfig.LEGION.MIN_ARMY_SIZE) {
+            this.deps.showDialogue({
+                speaker: g.generalName,
+                portrait,
+                factionName,
+                text: `壮士远来。城中兵马不足五千，尚无力出征，请自便。`,
+                options: [{ label: '告辞', onPick: () => this.deps.closeDialogue() }],
+            });
+            return;
+        }
+
         if (city.factionId !== original) {
             const originalName = this.deps.cityManager.getFactionName(original);
             this.deps.showDialogue({
@@ -1437,7 +1450,8 @@ export class PlayerQuestSystem {
         //    现在与 AI 募兵同口径：征 90%，留 10%（RecruitmentSystem 那两处也是 Math.floor(troops * 0.9)）。
         //    ⚠️ 全项目只有这一处会把据点兵力清零——CityManager 的抽兵扣到 MIN_GARRISON 为止、
         //       FollowResupplySystem 的补给留 minCity，两条都有下限保护，不必动。
-        const troops = Math.max(1, Math.floor((city.troops || 0) * 0.9));
+        const troops = Math.floor((city.troops || 0) * 0.9);
+        if (troops < GameConfig.LEGION.MIN_ARMY_SIZE) return null;
         const army = this.deps.legionManager.createLegion(
             { lat: city.latitude, lng: city.longitude },
             troops,
@@ -2431,6 +2445,10 @@ export class PlayerQuestSystem {
     private joinMarchingArmy(city: City, army: Army, generalName: string): void {
         this.deps.closeDialogue();
         if (!army.generalId || !isGeneralOnStage(army.generalId)) return;
+        if (!army.isScriptArmy && army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) {
+            this.deps.notify(`${generalName}所部兵马不足五千，无力出征`);
+            return;
+        }
         const factionId = army.getFactionId() || city.factionId;
         const factionName = this.deps.cityManager.getFactionName(factionId);
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
@@ -2540,11 +2558,15 @@ export class PlayerQuestSystem {
             if (!g) continue;
             // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」/ 2026-10-18 百岁模式同口径]（乱斗恒在场，不受影响）
             if (!isGeneralOnStage(g.generalId)) continue;
-            onStageFallback.push(c);
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
-            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除；若武将已率军在外，看军团+城防）
+            // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兜底池也必须满足可出征兵力 ≥ 5000
             const army = this.armyOfGeneral(g.generalId);
+            const canSortie = Math.floor((c.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE
+                || (!!army && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE);
+            if (!canSortie) continue;
+            onStageFallback.push(c);
+            // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除；若武将已率军在外，看军团+城防）
             if ((c.troops || 0) < 10000 && (!army || army.getTroops() + (c.troops || 0) < 10000)) continue;
             candidates.push(c);
         }

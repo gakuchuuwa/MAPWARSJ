@@ -563,6 +563,16 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
+    // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兵力不足 5000 的非剧本军团不许再选新目标出征，转入残兵撤退解散
+    if (!ctx.army.isScriptArmy && !ctx.army.scriptMarchExempt && ctx.army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) {
+        if (ctx.army.expeditionTargetCityId) {
+            restoreExpeditionLegionName(ctx.army);
+            ctx.army.expeditionTargetCityId = null;
+        }
+        ctx.army.weakCheckAfterBattle = true;
+        return BTStatus.FAILURE;
+    }
+
     // 远征模式：目标只有一个，不进方向池抽签、不回师
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return BTStatus.SUCCESS;
@@ -904,28 +914,78 @@ export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
  */
 export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     const army = ctx.army;
-    if (isCampaignLegion(army)) return false; // 远征军团不解散
+    if (army.isScriptArmy || army.scriptMarchExempt) return false;
 
-    const homeId = getArmyOriginCityId(army);
-    if (!homeId) return false;
-    const home = ctx.cityManager.getCity(homeId);
-    const homeAlive = !!home && home.factionId === army.getFactionId();
+    const myFaction = army.getFactionId();
+    const findFallbackFriendlyCity = () => {
+        const pos = army.getPosition();
+        let bestCity: ReturnType<typeof ctx.cityManager.getCity> = undefined;
+        let bestDist = Infinity;
+        for (const c of ctx.cityManager.getCities()) {
+            if (c.factionId !== myFaction) continue;
+            const d = getEuclideanDistance(pos, { lat: c.latitude, lng: c.longitude });
+            if (d < bestDist) {
+                bestDist = d;
+                bestCity = c;
+            }
+        }
+        return { city: bestCity, dist: bestDist };
+    };
 
-    // 意图锁定：已决意撤退的军团，只要老家还在就继续撤退，不看兵力
+    let homeId = getArmyOriginCityId(army);
+    let home = homeId ? ctx.cityManager.getCity(homeId) : undefined;
+    let homeAlive = !!home && home.factionId === myFaction;
+
+    // 意图锁定：已决意撤退的军团，只要有己方据点就继续撤退，不看兵力
     if (army.isRetreatingHome) {
         if (!homeAlive) {
-            army.isRetreatingHome = false; // 老家沦陷，解除撤退锁
-            return false;
+            const fb = findFallbackFriendlyCity();
+            if (fb.city) {
+                army.homeCityId = fb.city.id;
+                army.setSourceCityId(fb.city.id);
+                return true;
+            }
+            clearStrategicTarget(ctx);
+            army.isRetreatingHome = false;
+            army.disband();
+            ctx.legionManager.removeArmy(army);
+            return true;
         }
         return true;
     }
 
-    // 首次触发：只在刚打完一仗时判，且判过即消耗掉这次机会（行军减兵不触发）
-    if (!army.weakCheckAfterBattle) return false;
+    // 触发条件：刚打完一仗（weakCheckAfterBattle）或当前无目标准备重新出征时，兵力 < 5000
+    const noActiveTarget = !getStrategicTargetId(ctx) && !getStrategicTargetArmyId(ctx) && !army.getTargetCity();
+    if (!army.weakCheckAfterBattle && !noActiveTarget) return false;
     army.weakCheckAfterBattle = false;
 
     if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
-    if (!homeAlive) return false;
+
+    // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兵力不足 5000 时，即使原为远征军也解除远征锁并撤回/就地并入驻军
+    if (army.expeditionTargetCityId) {
+        restoreExpeditionLegionName(army);
+        army.expeditionTargetCityId = null;
+    }
+
+    const fb = findFallbackFriendlyCity();
+    // 若此刻已在某座己方据点旁（如刚攻下该城后兵力不足 5000），直接就地并入该城驻军，不再跨图乱跑
+    if (fb.city && fb.dist <= SIEGE_REACH_RADIUS) {
+        army.homeCityId = fb.city.id;
+        army.setSourceCityId(fb.city.id);
+        homeAlive = true;
+    } else if (!homeAlive && fb.city) {
+        army.homeCityId = fb.city.id;
+        army.setSourceCityId(fb.city.id);
+        homeAlive = true;
+    }
+
+    if (!homeAlive) {
+        clearStrategicTarget(ctx);
+        army.isRetreatingHome = false;
+        army.disband();
+        ctx.legionManager.removeArmy(army);
+        return true;
+    }
 
     army.isRetreatingHome = true; // 打上撤退意图锁
     return true;
