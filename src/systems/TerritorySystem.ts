@@ -165,27 +165,31 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
     ['TOWER', 'AGE4'], // [2026-09-08 主人定] 大型箭塔辅选项
 ];
 
-/** 🔴 [2026-10-18 主人定「漠北的应该是漠南的。真实的漠北 9 建筑都是蒙古包。」]
- *  · 漠北（buildingStyle === 'MONGOL'）9 栋城内建筑 = **城心 1 座蒙古王帐（MONG_CASTLE_AGE3）＋ 环周 8 个真蒙古包（YURT_E~L）**；
+/** 🔴 [2026-10-18 主人定「漠北的应该是漠南的。真实的漠北 9 建筑都是蒙古包。」＋「中间的城堡换成蒙古包」]
+ *  · 漠北（buildingStyle === 'MONGOL'）：大/中/小城/城寨/关隘的 9 栋城内建筑**全是蒙古包**
+ *    （`YURT_E~L` 八种各一 ＋ 1 个重复包；城心也是包，不再放王帐城堡）。
  *  · 原先「文明建筑池里随机掺 8 个蒙古包」那套（2026-09-16 二级蒙古口径）**改归漠南（XIANBEI）** ——
  *    漠南鲜卑与漠北蒙古同为草原文化，但漠南有定居/汉式建筑混居；漠北是纯毡帐营地。
  *  · 蒙古包目录名**没有风格前缀**（是 `YURT_E`，不是 `ASIA_YURT_E_AGE2`）→ 取图必须走特例，
  *    与城寨池里的 `YURT_A~D` 同一套写法。 */
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
-/** 漠北环周 8 包（城心另有蒙古王帐） */
-const MOBEI_YURT_RING: readonly string[] = MONGOL_CITY_YURTS;
-/** 漠北**城寨** 9 栋全是蒙古包：8 个包各一 + 1 个重复（资产只有 YURT_E~L 八种，凑满 9 位） */
+/** 漠北 9 栋全是蒙古包：8 种各一 ＋ 1 个重复（资产只有 YURT_E~L 八种，凑满 9 位） */
 const MOBEI_YURT_RING_NINE: readonly string[] = [...MONGOL_CITY_YURTS, MONGOL_CITY_YURTS[0]];
 /** 🔴 [2026-09-18 主人定]「漠北蒙古的城寨的 9 建筑要和小城的 9 建筑一致，都是蒙古包」。
  *  与毡帐营地（buildYurtCampHtml）同一套 9 件：8 蒙古包 + 1 亚洲瞭望塔。
- *  ⚠️ 现在只留给旧的 `style === 'YURT'` 分支；漠北（MONGOL）已改走「王帐 + 8 包」，见 MOBEI_YURT_RING。 */
+ *  ⚠️ 现在只留给旧的 `style === 'YURT'` 分支；漠北（MONGOL）已改走「9 栋全蒙古包」，见 MOBEI_YURT_RING_NINE。 */
 const YURT_STOCKADE_NINE = [...MONGOL_CITY_YURTS, 'ASIA_TOWER_AGE2'];
 const MONGOL_YURT_SCALE = 0.30;
 const isYurtItem = (b: string): boolean => b.startsWith('YURT_');
-/** 漠北（MONGOL）：王帐居中 + 环周 8 蒙古包 */
+/** 漠北（MONGOL）：9 栋全是蒙古包（城心也是包），城内地基是草地 */
 const isMobeiStyle = (buildingStyle?: string): boolean => buildingStyle === 'MONGOL';
 /** 漠南（XIANBEI）：文明建筑池里随机掺蒙古包（2026-09-16 原口径写在漠北名下，2026-10-18 主人纠正后归漠南） */
 const isMunanStyle = (buildingStyle?: string): boolean => buildingStyle === 'XIANBEI';
+/** 🔴 [2026-10-18 主人定「把漠北城内地基换成草地」] 漠北城内地面改用草原草地 `gr7`（DE 蒙古草原纯枯草，与塞外草原主题 `palaearctic_asia_steppe` 的 baseTerrain 同源），
+ *  不再铺 sr2（草地+碎石）/ rd1·rd2（石板/砖石）那套城内地基。 */
+const MOBEI_GROUND_TILE = 'gr7';
+const cityGroundTile = (buildingStyle: string | undefined, normal: string): string =>
+    isMobeiStyle(buildingStyle) ? MOBEI_GROUND_TILE : normal;
 /** 城池内单栋建筑的取图路径（蒙古包/棚屋类无风格前缀） */
 function cityBuildingSrc(style: string, b: string, age: string): string {
     return isYurtItem(b) ? `/SUCAI_BUILDING/${b}/preview.png` : `/SUCAI_BUILDING/${style}_${b}_${age}/preview.png`;
@@ -530,11 +534,11 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     /** 本栋的原生宽（没有就回落战略压缩值） */
     const nw = (name: string): number | null => (name === 'CASTLE' ? (native?.castleW ?? null) : nativeW(native, name, 'AGE2'));
     const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
-    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）小城＝城心蒙古王帐 + 环周 8 蒙古包（城心由 cityStackParams 置 centerCastle）；
+    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）9 栋**全是蒙古包**（8 种各一 + 1 个重复）；城心那栋也是包（不再放王帐城堡）。
     //    漠南（XIANBEI）接手原先漠北那套「9 建筑池里随机掺蒙古包」，总数仍恒为 9。
     const isMobei = isMobeiStyle(buildingStyle);
     const ring = isMobei
-        ? [...MOBEI_YURT_RING]   // 8 个蒙古包全用满（城心另有王帐，不占环周位）
+        ? [...MOBEI_YURT_RING_NINE]
         : [...DE_SMALL_CITY_POOL, ...(isMunanStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
@@ -563,7 +567,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
             // 🔴 [2026-10-15 主人令「小城和城寨的中间建筑改为城镇中心」] 城心（ordered[0]）固定城镇中心：
             //    原按占地排，城镇中心与市场同为 4×4 ⇒ 城心时而是市场；蒙古小城掺蒙古包截到 9 栋时城镇中心还可能被截掉。
             //    日本风格小城（centerCastle）城心是城堡，不动。
-            if (!centerCastle) {
+            // 🔴 [2026-10-18 主人定] 漠北小城 9 栋全是蒙古包（城心也是包），不塞城镇中心。
+            if (!centerCastle && !isMobei) {
                 const k = ordered.findIndex((o) => o.b === 'TOWN_CENTER');
                 if (k > 0) ordered.unshift(ordered.splice(k, 1)[0]);
                 else if (k < 0) { ordered.pop(); ordered.unshift({ b: 'TOWN_CENTER', i: -1 }); }
@@ -594,7 +599,7 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                     seg: SMALL_CITY_SEG, near: 0, far: 0, corner: false,
                     gateEdges: [true, true, true, true],   // 🔴 [2026-10-12 主人令「大中小城寨，一律改为四门吧」] 小城四门
                     wallAnchors: (useStoneWall && stoneAnchors) ? stoneAnchors : DE_PALISADE_ANCHORS,
-                    groundTile: 'sr2',
+                    groundTile: cityGroundTile(buildingStyle, 'sr2'),
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
                 }, buildingStyle);
         }
@@ -609,13 +614,14 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
 
     // 🔴 [2026-10-11 主人定] 城内只留一层：用与建筑独立地基完全相同显示比例（tileW × tileH）的无缝原图 sr2.png
     //    铺满整个城墙圈（战略 5 段/边 AX=10，战术 9 段/边 AX=18），四周边缘柔和渐变，去掉重复叠加的第二层。
+    // 🔴 [2026-10-18 主人定] 漠北城内地基＝草地 gr7（不铺碎石/石板）。
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = native ? 18 : 10;
     const rX = AX * stepX, rY = AX * stepY;
     const smallTileW = baseSize * 0.32 * 2.3;
     parts.push(
         featheredPolygonGroundDiv(
-            W, H, '/SUCAI_TERRAIN/sr2.png', smallTileW,
+            W, H, `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'sr2')}.png`, smallTileW,
             [[0, -rY], [rX, 0], [0, rY], [-rX, 0]],
             stepX * (native ? 1.15 : 0.85),
         )
@@ -633,11 +639,8 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
     );
 
     // 周围建筑散布：一律取 8 栋（45° 扇区，9 建筑满配）
-    // 🔴 [2026-10-18] 漠北小城：城心是王帐（不占 ring），8 个蒙古包全取；其余风格仍从 ring[1] 起取 8 栋（城心用 ring[0]）。
     const surroundCount = 8;
-    const surround = (centerCastle && isMobei)
-        ? ring.slice(0, surroundCount)
-        : ring.slice(1, 1 + surroundCount);
+    const surround = ring.slice(1, 1 + surroundCount);
     surround.forEach((b, i) => {
         const baseAngle = rotation + i * (360 / surround.length); // 4 建筑 = 90° 扇区，8 建筑 = 45° 扇区
         const angleJitter = centerCastle ? (rnd() * 20 - 10) : (rnd() * 30 - 15);                    // 扇区内部安全扰动
@@ -775,7 +778,7 @@ function buildDeStockadeStackHtml(
             seg: 6, near: 0, far: 0, corner: false, rawDirNames: true,
             gateEdges: [true, true, true, true],
             wallAnchors,
-            groundTile: 'sr2',
+            groundTile: cityGroundTile(buildingStyle, 'sr2'),
             slotCenters: stockadePos.map(([bi, bj], k) => ({ ci: 0.5 + bi * STOCKADE_PITCH, cj: 0.5 + bj * STOCKADE_PITCH, isCenter: k === 0 })),
         }, buildingStyle) : null;
     if (gridHtml) return gridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
@@ -798,41 +801,43 @@ function buildDeStockadeStackHtml(
     const parts: string[] = [];
 
     // 🔴 [2026-10-11 主人定] 城寨城内只留一层：sr2.png 按建筑独立地基同比例平铺 + 四周边缘柔和渐变
+    // 🔴 [2026-10-18 主人定] 漠北城内地基＝草地 gr7（不铺碎石/石板）。
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const stkTileW = baseSize * 0.32 * 2.3;
     const stkBlur = stepX * 0.85;
+    const stkGroundUrl = `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'sr2')}.png`;
 
     if (customStyle) {
         const k = baseSize / (customStyle.baseSizeRef || 100);
-        parts.push(featheredEllipseGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, customStyle.clipRx * k, customStyle.clipRy * k, stkBlur));
+        parts.push(featheredEllipseGroundDiv(W, H, stkGroundUrl, stkTileW, customStyle.clipRx * k, customStyle.clipRy * k, stkBlur));
     } else if (stockadeShape === 1) {
         const c = legacyFenceClip('round', baseSize, fenceSet.key) ?? stockadeCurveShape('round', baseSize);
-        parts.push(featheredEllipseGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, c.clipRx, c.clipRy, stkBlur));
+        parts.push(featheredEllipseGroundDiv(W, H, stkGroundUrl, stkTileW, c.clipRx, c.clipRy, stkBlur));
     } else if (stockadeShape === 2 && legacyFenceClip('octagon', baseSize, fenceSet.key)) {
         const c = legacyFenceClip('octagon', baseSize, fenceSet.key)!;
-        parts.push(featheredEllipseGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, c.clipRx, c.clipRy, stkBlur));
+        parts.push(featheredEllipseGroundDiv(W, H, stkGroundUrl, stkTileW, c.clipRx, c.clipRy, stkBlur));
     } else if (stockadeShape === 2) {
         const H8 = 5.2, c8 = 1.7, k8 = 0.94;
         const oct: Array<[number, number]> = [[-c8, c8 - 2 * H8], [c8, c8 - 2 * H8], [2 * H8 - c8, -c8], [2 * H8 - c8, c8], [c8, 2 * H8 - c8], [-c8, 2 * H8 - c8], [-2 * H8 + c8, c8], [-2 * H8 + c8, -c8]];
-        parts.push(featheredPolygonGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, oct.map(([u, v]) => [u * stepX * k8, v * stepY * k8]), stkBlur));
+        parts.push(featheredPolygonGroundDiv(W, H, stkGroundUrl, stkTileW, oct.map(([u, v]) => [u * stepX * k8, v * stepY * k8]), stkBlur));
     } else if (stockadeShape === 3) {
         const u1 = 9.4 * stepX, v1 = 1.9 * stepY;
         const u2 = 1.9 * stepX, v2 = 9.4 * stepY;
-        parts.push(featheredPolygonGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, [[-u2, -v2], [u1, v1], [u2, v2], [-u1, -v1]], stkBlur));
+        parts.push(featheredPolygonGroundDiv(W, H, stkGroundUrl, stkTileW, [[-u2, -v2], [u1, v1], [u2, v2], [-u1, -v1]], stkBlur));
     } else if (stockadeShape === 4) {
         const c = stockadeCurveShape('oval', baseSize);
-        parts.push(featheredEllipseGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, c.clipRx, c.clipRy, stkBlur));
+        parts.push(featheredEllipseGroundDiv(W, H, stkGroundUrl, stkTileW, c.clipRx, c.clipRy, stkBlur));
     } else if (stockadeShape === 5) {
         const scale = 0.90;
         parts.push(featheredPolygonGroundDiv(
-            W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW,
+            W, H, stkGroundUrl, stkTileW,
             [[1 * stepX * scale, -7 * stepY * scale], [7 * stepX * scale, -1 * stepY * scale], [2 * stepX * scale, 10 * stepY * scale], [-10 * stepX * scale, -2 * stepY * scale]],
             stkBlur,
         ));
     } else {
         const AX = 10;
         const rX = AX * stepX, rY = AX * stepY;
-        parts.push(featheredPolygonGroundDiv(W, H, '/SUCAI_TERRAIN/sr2.png', stkTileW, [[0, -rY], [rX, 0], [0, rY], [-rX, 0]], stkBlur));
+        parts.push(featheredPolygonGroundDiv(W, H, stkGroundUrl, stkTileW, [[0, -rY], [rX, 0], [0, rY], [-rX, 0]], stkBlur));
     }
 
     // 中心建筑
@@ -945,10 +950,10 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    正中城堡；墙圈四角保持原样的城垛（角楼）。战略地图不变。
     //    🔴 [2026-10-12 主人令「城中 9 建筑，一律为箭塔」] 城堡居中 + 外圈 8 个位全是箭塔（AGE3×4 + AGE4×4 随机洗牌，同样按据点 id 定）；
     //    箭塔占 1×1，位心取 −5 / 0.5 / 6（离城堡 3 格空隙，关于城心对称，吸附整格后落在 −5 / 1 / 6）。
-    //    🔴 [2026-10-18 主人定「真实的漠北 9 建筑都是蒙古包」] 漠北（MONGOL）的险要例外：城心仍是蒙古王帐，
-    //       环周 8 位改放 8 个蒙古包（YURT_E~L），箭塔不再占这 8 位；城墙/箭塔防御件不动。
+    //    🔴 [2026-10-18 主人定「真实的漠北 9 建筑都是蒙古包」「中间的城堡换成蒙古包」] 漠北（MONGOL）的险要：
+    //       9 栋全是蒙古包（8 种各一 + 1 个重复，城心也是包），城墙/角楼等防御件不动。
     const passInnerBuildings: Array<[string, string]> = isMobeiStyle(buildingStyle)
-        ? MOBEI_YURT_RING.map((y): [string, string] => [y, 'AGE3'])
+        ? MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3'])
         : [['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4']];
     {
         const r = deMulberry32(deHashString(cityId + '|pass_inner_towers'));
@@ -959,12 +964,12 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     }
     const passTowerAt = (b: number): number => (b === 0 ? 0.5 : (b < 0 ? -5 : 6));
     const passRing: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
-    const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, true, factionId, region,
+    const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {
             seg: 6, near: 0, far: 0, corner: false,
             gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],   // 🔴 [2026-10-12 主人令「城墙改为加强的城墙，就是大城那种」]
-            groundTile: 'rd2',
+            groundTile: cityGroundTile(buildingStyle, 'rd2'),
             buildingStyle: style === 'YURT' ? 'ASIA' : style,   // 毡帐系箭塔借亚洲木塔
             slotCenters: [{ ci: 0.5, cj: 0.5, isCenter: true },
                 ...passRing.map(([bi, bj]) => ({ ci: passTowerAt(bi), cj: passTowerAt(bj), isCenter: false }))],
@@ -981,12 +986,13 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     const parts: string[] = [];
 
     // 🔴 [2026-10-11 主人定] 城内只留一层：用无缝原图 rd2.png 按建筑独立地基同比例平铺满 8×4 矩形城墙圈 + 四周边缘柔和渐变
+    // 🔴 [2026-10-18 主人定] 漠北城内地基＝草地 gr7。
     {
         const stepX = baseSize * 0.075, stepY = stepX * 0.58;
         const tileW = baseSize * 0.32 * 1.1 * 2.3;   // = 中城建筑脚下地基宽（不拉伸，无缝原图 rd2.png 平铺）
         parts.push(
             featheredPolygonGroundDiv(
-                W, H, '/SUCAI_TERRAIN/rd2.png', tileW,
+                W, H, `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'rd2')}.png`, tileW,
                 [[-6 * stepX, -2 * stepY], [-2 * stepX, -6 * stepY], [6 * stepX, 2 * stepY], [2 * stepX, 6 * stepY]],
                 stepX * 0.85,
             )
@@ -994,18 +1000,28 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     }
 
     // 中间城堡（三层选择：势力专属 → 文化区 → 风格集默认，ANDE 自动对号入座 INCA_CASTLE_AGE3）
-    const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
-    // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
-    // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
-    // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
-    //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
-    const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
-    const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
-    const cOffsetY = -8;
-    const castleZ = Math.round(500 + cOffsetY);
-    parts.push(
-        `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:calc(50% + ${cOffsetY}px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${castleZ};" />`
-    );
+    // 🔴 [2026-10-18 主人定] 漠北险要战略版：城心也换成蒙古包（战术侧走上面按格摆放，城心同样是包）。
+    if (isMobeiStyle(buildingStyle)) {
+        const yurtDir = 'YURT_H';
+        const centerW = baseSize * 0.46;
+        const centerFlip = (deHashString(cityId + '|center|' + yurtDir) & 1) === 1;
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${yurtDir}/preview.png" style="position:absolute;left:50%;top:calc(50% - 8px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:150;" />`
+        );
+    } else {
+        const castleDir = resolveCastleAsset(style, factionId, region, cityId, buildingStyle);
+        // 中间城堡（统一采用 500 + y 地面深度系统；8x4城墙保持不变；比例微调至0.56并Y轴后移8px，恢复随机镜像翻转，无论如何翻转均不出圈）
+        // 🔴 [2026-10-11 战术侧 1.0] 中心城堡按素材原生宽（险要的 CHIN_CASTLE_AGE3 盒宽 492 等）
+        // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
+        //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
+        const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
+        const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
+        const cOffsetY = -8;
+        const castleZ = Math.round(500 + cOffsetY);
+        parts.push(
+            `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:calc(50% + ${cOffsetY}px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:${castleZ};" />`
+        );
+    }
 
     // 矩形城墙：长8 SE段+门 × 宽4 NE段，两门朝外一致、四角箭塔随机洗牌分布
     // 🔴 [2026-09-11 主人定] 日本 / 青藏 的险要是「城堡 + 5」共 6 个建筑（通用险要是「城堡 + 4」）：
@@ -1048,10 +1064,10 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原中城围栅栏
     const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
 
-    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）＝ 城心蒙古王帐 + 环周 8 蒙古包；
+    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）9 栋全是蒙古包（8 种各一 + 1 个重复，城心也是包）；
     //    漠南（XIANBEI）接手原先漠北那套「文明建筑池里随机掺 8 个蒙古包」。
     const ring = isMobeiStyle(buildingStyle)
-        ? [...MOBEI_YURT_RING]
+        ? [...MOBEI_YURT_RING_NINE]
         : [...DE_MEDIUM_CITY_POOL, ...(isMunanStyle(buildingStyle) ? MONGOL_CITY_YURTS : [])];
     for (let i = ring.length - 1; i > 0; i--) {
         const j = Math.floor(rnd() * (i + 1));
@@ -1081,6 +1097,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     //    → 一律四门**（普通四门 或 加固四门，仍按 cityId 掷签区分加固与否）；战略侧（本函数不传 native 那条路）那套三款照旧不动。
     //    中城：每段 10 ⇒ 角到角 25（< 大城 27）；
     //    9 栋＝城堡 + 8（每象限 2）；近 3 远 8（逐格核对：不重叠、不压大道、栋间 ≥ 1、离墙 2）。
+    //    🔴 [2026-10-18 主人定] 漠北中城 9 栋全是蒙古包（城心也是包），走同一套 3×3 个位。
     if (native) {
         // 🔴 [2026-10-12 主人令「假设所有建筑都是 4*4，建筑间距改为 2 格」] 城堡居中；其余 8 栋排成 3×3 方阵的外圈，
         //    每个位一律按 4×4 算、位与位之间隔 2 格 ⇒ 位距 6 格（个位表序＝取建筑顺序）。
@@ -1095,11 +1112,12 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                 wallAnchors: isFortified
                     ? (DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'])
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
-                groundTile: 'rd2',
+                groundTile: cityGroundTile(buildingStyle, 'rd2'),
             }, buildingStyle);
     }
 
     // 🔴 [2026-10-11 主人定] 中城城内只留一层：用与建筑独立地基完全相同显示比例的无缝原图 rd2.png 铺满城墙圈（S=6, AX=12），四周边缘柔和渐变
+    // 🔴 [2026-10-18 主人定] 漠北城内地基＝草地 gr7。
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 12; // 中城 S=6, AX=12
     const rX = AX * stepX;
@@ -1107,7 +1125,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
     const medTileW = baseSize * 0.32 * AUTO * 2.3;
     parts.push(
         featheredPolygonGroundDiv(
-            W, H, '/SUCAI_TERRAIN/rd2.png', medTileW,
+            W, H, `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'rd2')}.png`, medTileW,
             [[0, -rY], [rX, 0], [0, rY], [-rX, 0]],
             stepX * 0.90,
             0.93,
@@ -1180,11 +1198,11 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     if (style === 'YURT') return buildYurtCampHtml(baseSize, cityId, true, centerCastle, factionId, region, native); // 2026-09-03 主人定：草原大城围栅栏
     const rnd = cityRnd(cityId);   // 🔴 [2026-10-13] 每局一次 + 局内固定（见 cityRnd 注释）
 
-    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）大城＝城心蒙古王帐 + 环周 8 蒙古包；
+    // 🔴 [2026-10-18 主人定] 漠北（MONGOL）大城＝9 栋全是蒙古包（城心也是包）；
     //    漠南（XIANBEI）接手原先漠北那套「辅助池再掺入 8 个蒙古包」。
     let pool: Array<[string, string]>;
     if (isMobeiStyle(buildingStyle)) {
-        pool = MOBEI_YURT_RING.map((y): [string, string] => [y, 'AGE3']);
+        pool = MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3']);
     } else {
         // [2026-09-08 主人定「大城必有帝国 AGE4」] 城镇中心/市场/大学必有 + 9 选 6 辅助建筑（含大型箭塔），共 9 栋建筑
         const noble: Array<[string, string]> = [
@@ -1231,9 +1249,11 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
         const bigRingPos: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
         const bigSlotCenters = [{ ci: 0.5, cj: 0.5, isCenter: true },
             ...bigRingPos.map(([bi, bj]) => ({ ci: 0.5 + bi * BIG_PITCH, cj: 0.5 + bj * BIG_PITCH, isCenter: false }))];
-        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region, full.slice(0, 8), native, {
+        return buildDeCityGridHtml(baseSize, cityId, style, centerCastle, factionId, region,
+            full.slice(0, isMobeiStyle(buildingStyle) ? 9 : 8), native, {
             seg: 9, near: 3.5, far: 9, corner: true, slotCenters: bigSlotCenters, gateEdges: [true, true, true, true],
-            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'], groundTile: 'rd1',
+            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
+            groundTile: cityGroundTile(buildingStyle, 'rd1'),
         }, buildingStyle);
     }
 
@@ -1245,6 +1265,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     const parts: string[] = [];
 
     // 🔴 [2026-10-11 主人定] 大城城内只留一层：用与建筑独立地基完全相同显示比例的无缝原图 rd1.png 铺满城墙圈（S=7, AX=14），四周边缘柔和渐变
+    // 🔴 [2026-10-18 主人定] 漠北城内地基＝草地 gr7。
     const stepX = baseSize * 0.075, stepY = stepX * 0.58;
     const AX = 14;
     const rX = AX * stepX;
@@ -1252,7 +1273,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
     const bigTileW = baseSize * 0.32 * AUTO * 2.3;
     parts.push(
         featheredPolygonGroundDiv(
-            W, H, '/SUCAI_TERRAIN/rd1.png', bigTileW,
+            W, H, `/SUCAI_TERRAIN/${cityGroundTile(buildingStyle, 'rd1')}.png`, bigTileW,
             [[0, -rY], [rX, 0], [0, rY], [-rX, 0]],
             stepX * 0.95,
             0.93,
@@ -1493,12 +1514,11 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     // 🔴 [2026-10-13 主人令] **日本建筑风格的小城放一个城堡**（城心、城堡占城心、城内仍 9 格）：
     //    判据是日本建筑风格（`isJapan`：建筑风格或文化区含 JAPAN）—— 全库 5 座
     //    鹿儿岛城／宇都宫城／熊本／府内／浜松城。**日本以外的小城照旧无城堡**（2026-10-03 令不变）。
-    // 🔴 [2026-10-18 主人定「周围 8 蒙古包 + 城心 1 蒙古王帐（MONG_CASTLE_AGE3 居中）」] 漠北（MONGOL）
-    //    小城/中城/大城放城心王帐：9 建筑 = 王帐 + 环周 8 蒙古包。
-    // 🔴 [2026-10-18 主人二次定「漠北的城寨，九建筑……应该都是蒙古包」] 漠北**城寨**例外：不放王帐，9 栋全是蒙古包。
+    // 🔴 [2026-10-18 主人定「把漠北城内地基换成草地，中间的城堡换成蒙古包」] 漠北（MONGOL）**一律不放城心城堡**：
+    //    大/中/小城/城寨/关隘的 9 栋全是蒙古包（城心也是包），城心王帐（MONG_CASTLE_AGE3）不再出现。
     const isMobei = isMobeiStyle(city.buildingStyle);
     const centerCastle = isMobei
-        ? (city.type === 'small_city' || city.type === 'big_city' || city.type === 'medium_city')
+        ? false
         : city.type === 'small_city'
             ? isJapan
             : (isJapan || isTibet || isRep52City || city.type === 'big_city' || city.type === 'medium_city');

@@ -1216,6 +1216,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     zhou_jifu: { birth: -852, death: -775, kaoju: '推定' },  // 吉甫（岐山·西周太师尹吉甫，前823年自岐周统六师北伐猃狁）
     yin_yuejin: { birth: 159, death: 218, kaoju: '推定' },  // 乐进（朝歌·建安十年攻克朝歌斩严敬）
     xibolai_majiabi: { birth: -190, death: -160, kaoju: '推定' },  // 犹大马加比（耶路撒冷·马加比起义领袖收复耶路撒冷）
+    gen_caffa_consul: { birth: 1425, death: 1475, kaoju: '推定' },  // 奥贝托·斯夸尔（卡法·热那亚末任卡法执政官，1475年卡法围城战殉城）
 };
 
 /** 生年（未收录返回 null） */

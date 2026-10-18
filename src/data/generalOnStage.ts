@@ -42,9 +42,9 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
     }
     if (year == null) return true;
     const life = GENERAL_LIFE_YEARS[generalId];
-    if (!life) return true;
+    if (!life) return false;
     const debut = getGeneralDebutYear(generalId);
-    if (debut == null) return true;
+    if (debut == null) return false;
     const endYear = scriptMode ? life.death : Math.max(debut, centenarianYearOf(life.birth));
     return year >= debut && year <= endYear;
 }
