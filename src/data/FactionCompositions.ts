@@ -3959,9 +3959,5 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代大明军团",
         legionType: "region",
     },
-    "xikuman": {
-        legionName: "城堡时代博亚尔重骑军团",
-        legionType: "region",
-    },
 };
 
