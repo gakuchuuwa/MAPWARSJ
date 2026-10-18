@@ -18,13 +18,12 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   tujue: { name: '附离亲卫', tier: 1 },       // 于都斤山·突厥附离（《隋书·突厥传》；原突厥狼卫）
 
     huige: { name: '回纥精骑', tier: 1 },             // 安史之乱挽救大唐，雄踞漠北百年的回纥汗国绝对主力，升入T1战略
-    porbazhyn_huihu: { name: '回纥精骑', tier: 1 },   // 博尔巴任·骨力裴罗：8 世纪回鹘城寨守军
+    porbazhyn_huihu: { name: '回鹘城寨骑', tier: 1 },   // 博尔巴任·牟羽可汗：8 世纪回鹘城寨守军
   // xianbei → 东北 NortheastExpeditionLegions:弹汗山卫（嘎仙洞属东北区）
   gaoche: { name: '高车战车', tier: 3 },       // 偏安一隅或区域性小国武装，缺乏宏大战略影响力，剥夺T1/T2资格，降回T3知名风土符号
   rouran: { name: '柔然铁骑', tier: 1 },       // 花木兰抗击的庞大游牧汗国，突厥崛起前漠北霸主，升入T1战略
   naiman: { name: '乃蛮重骑', tier: 4 },       // 福海·乃蛮重装骑兵（§6 #19）（缺乏极其著名的战术高光，降T3）
   ongut: { name: '汪古骑', tier: 4 },        // 净州塞·汪古部阿剌兀思
-  wala: { name: '瓦剌铁骑', tier: 1 },         // 土木堡之变生擒明英宗的元凶，与鞑靼并列的大明两百年草原死敌，升入T1战略
   geluolu: { name: '葛逻禄背弓', tier: 3 },    // 怛罗斯之战导致大唐惨败的关键背叛者，极其著名的历史刺客，升入T3知名
   // 那可儿除名（与那可儿军重复）
   kumoxi: { name: '奚人游骑', tier: 4 },  // 饶乐水·库莫奚本部
@@ -53,7 +52,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   kiyad: { name: '乞颜宿卫', tier: 3 },         // 不儿罕山·也速该乞颜部
     mengwu: { name: '忙古勒骑', tier: 4 },
     zhadalan: { name: '十三翼', tier: 3 },
-    oirat_ming: { name: '准噶尔驼城', tier: 3 },
+    oirat_ming: { name: '瓦剌铁骑', tier: 3 },   // 科布多：也先/噶尔丹（卫拉特·瓦剌系共用）
   tumed: { name: '土默特精骑', tier: 1 },         // 俺答汗建立土默特汗国、逼迫明朝封贡的绝对战略主力，符合T1战略主力
   tushetu: { name: '库伦铁骑', tier: 4 },       // 库伦·土谢图汗
     yaoluoge: { name: '娑陵鹰骑', tier: 4 },

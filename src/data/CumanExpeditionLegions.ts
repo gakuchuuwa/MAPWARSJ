@@ -14,7 +14,6 @@ import type { EliteLegionConfig } from './ExpeditionLegions';
 export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
 
     // ── T2 特色之兵 ──
-    qincha: { name: '钦察骑射', tier: 2 },          // 萨拉托夫·钦察：库曼弓骑（DE 钦察特色）
     jinzhang: { name: '金帐怯薛', tier: 2 },        // 萨莱·金帐：金帐汗国怯薛
     kesa: { name: '可萨汗卫', tier: 2 },            // 打耳班·可萨：可萨汗国卫队
 

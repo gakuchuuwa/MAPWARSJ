@@ -256,7 +256,6 @@ export const FACTIONS: Faction[] = [
     { id: 'shuizhen', name: '水真' },
 { id: 'yueyi', name: '嶲州' },
        // 越嶲·焦璜邛都戍
-    { id: 'wala', name: '瓦剌' },
     { id: 'wuliangha', name: '兀良哈' },
 
 
@@ -1572,7 +1571,6 @@ export const FACTIONS: Faction[] = [
     { id: 'suwa_d', name: '诹访' }, // 高岛·诹访氏本据
     { id: 'yanda', name: '阿尔洪' },
 
-    { id: 'qincha', name: '钦察' },
     { id: 'anxi', name: '安西' },
 
 

@@ -109,37 +109,35 @@ export interface GroundDecorSet {
 }
 
 const GROUND_DECOR_BY_BASE: Readonly<Record<string, GroundDecorSet>> = {
-    // ── 极旱：枯草 + 风蚀橙岩 ──
+    // ── 极旱荒漠：DE dat 6/14/46 Plant Dead + Arabia.rms Dead Plant / Cactus / Boulder A/B ──
     des:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'CACTUS'], solid: ['ROCK3', 'ROCK_FORMATION2', 'ROCK_FORMATION3'] },
     pal:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'CACTUS'], solid: ['ROCK3', 'ROCK_FORMATION1', 'ROCK_FORMATION2'] },
     qs:   { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK3', 'ROCK_FORMATION2'] },
     pal1: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK_LIMESTONE', 'ROCK3'] },   // 盐壳：灰白石灰岩
     ds5:  { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'WEED'], solid: ['ROCK3', 'ROCK_FORMATION1', 'ROCK_FORMATION3'] },
 
-    // ── 草原：干草片 + 灰岩 ──
-    gr5: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'GRASS_DRY'], solid: ['ROCK1', 'ROCK2'] },
-    gr7: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'GRASS_DRY'], solid: ['ROCK1', 'ROCK2'] },
-    gr3: { scatter: ['GRASS_DRY_PATCH'], flat: ['WEED', 'FLOWER'], solid: ['ROCK1', 'ROCK2'] },
+    // ── 草原 / 半干草地：DE dat 9/41/100 Grass Dry(d=60~80) + Shrub / Flower / Bush ──
+    gr5: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'SHRUB_GREEN', 'WEED'], solid: ['ROCK1', 'ROCK2', 'ROCK_FORMATION1'] },
+    gr7: { scatter: ['GRASS_DRY'], flat: ['SHRUB_GREEN', 'FLOWER', 'BUSH_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    gr3: { scatter: ['GRASS_DRY'], flat: ['SHRUB_GREEN', 'FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
 
-    // ── 温带农耕 / 草地：绿草 + 花 + 灰岩 ──
-    ds3: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
-    ds4: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'FLOWERBED'], solid: ['ROCK1', 'ROCK2'] },
-    ds2: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT'], solid: ['ROCK1', 'ROCK3'] },          // 黄土：偏干
-    gr2: { scatter: ['GRASS_GREEN'], flat: ['FLOWER_1', 'FLOWER_2'], solid: ['ROCK1', 'ROCK2'] },
-    grs: { scatter: ['GRASS_GREEN_PATCH'], flat: ['FLOWER', 'FLOWERBED'], solid: ['ROCK1', 'ROCK2'] },
-    gr4: { scatter: ['GRASS_GREEN_PATCH'], flat: ['FLOWER_3', 'WEED'], solid: ['ROCK1', 'ROCK2'] }, // 黑土/水稻土
+    // ── 温带泥地 / 草地 / 红土：DE dat 0/3/12/42 Grass Green / Grass Dry + Bush / Shrub / Weed / Flower ──
+    ds3: { scatter: ['GRASS_GREEN', 'GRASS_DRY'], flat: ['BUSH_GREEN', 'FLOWER', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    ds4: { scatter: ['GRASS_DRY'], flat: ['SHRUB_GREEN', 'FLOWER', 'PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
+    ds2: { scatter: ['GRASS_DRY'], flat: ['WEED', 'PLANT', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK3'] },
+    gr2: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'BUSH_GREEN', 'SHRUB_GREEN', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
+    grs: { scatter: ['GRASS_GREEN'], flat: ['FLOWER', 'SHRUB_GREEN', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
+    gr4: { scatter: ['GRASS_GREEN'], flat: ['SHRUB_GREEN', 'FLOWER', 'WEED'], solid: ['ROCK1', 'ROCK2'] },
 
-    // ── 林地：林下灌丛 ──
-    for:               { scatter: ['UNDERBRUSH'], flat: ['FERNPATCH', 'BUSH_GREEN'], solid: ['ROCK1', 'ROCK2'] },
-    underbrush_leaves: { scatter: ['UNDERBRUSH'], flat: ['FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
-    fo2:               { scatter: ['UNDERBRUSH_RAINFOREST'], flat: ['PLANT_RAINFOREST', 'FERNPATCH'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
-    gr6:               { scatter: ['UNDERBRUSH_JUNGLE'], flat: ['PLANT_JUNGLE', 'JUNGLE'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
+    // ── 林地与热带丛林：DE dat 60/83 Grass Green(d=60) + PLANT_JUNGLE / PLANT_RAINFOREST / UNDERBRUSH ──
+    for:               { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'BUSH_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    underbrush_leaves: { scatter: ['GRASS_GREEN'], flat: ['UNDERBRUSH', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    fo2:               { scatter: ['GRASS_GREEN'], flat: ['PLANT_RAINFOREST', 'UNDERBRUSH_RAINFOREST', 'FERNPATCH'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
+    gr6:               { scatter: ['GRASS_GREEN'], flat: ['PLANT_JUNGLE', 'UNDERBRUSH_JUNGLE', 'SHRUB_GREEN'], solid: ['ROCK_JUNGLE', 'ROCK1'] },
 
-    // ── 湿地：满地湿草 + 成簇芦苇睡莲 ──
-    // 🔴 REEDS(芦苇)/WATER_LILY(睡莲) 是 world 层有高度的精灵，**不是地面贴花**，
-    //    放 scatter 会被 GROUND_COVER_ASSETS 滤空、地面变光秃（实测过）。它们走 flat。
-    qs2: { scatter: ['GRASS_GREEN_PATCH'], flat: ['REEDS', 'WATER_LILY'], solid: ['ROCK1', 'ROCK_JUNGLE'] },
-    sh4: { scatter: ['GRASS_GREEN_PATCH'], flat: ['REEDS', 'WATER_LILY'], solid: ['ROCK1', 'ROCK2'] },
+    // ── 湿地陆岸（WATER_LILY / REEDS 仅限水体内部，陆岸用湿草与蕨丛灌木，杜绝睡莲长在旱地上） ──
+    qs2: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'FERNPATCH', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK_JUNGLE'] },
+    sh4: { scatter: ['GRASS_GREEN'], flat: ['WEED', 'SHRUB_GREEN', 'FERNPATCH'], solid: ['ROCK1', 'ROCK2'] },
 
     // ── 高地裸岩 / 砾石 ──
     rck:            { scatter: ['GRASS_DRY'], flat: ['WEED', 'SHRUB_GREEN'], solid: ['ROCK_LIMESTONE', 'ROCK_PILLAR', 'ROCK1'] },
@@ -149,7 +147,7 @@ const GROUND_DECOR_BY_BASE: Readonly<Record<string, GroundDecorSet>> = {
     snd: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
     sno: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1', 'ROCK2'] },
     sn2: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD'], solid: ['ROCK1'] },
-    snf: { scatter: ['UNDERBRUSH'], flat: ['PLANT_DEAD', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
+    snf: { scatter: ['GRASS_DRY'], flat: ['PLANT_DEAD', 'SHRUB_GREEN'], solid: ['ROCK1', 'ROCK2'] },
 };
 
 /** 兜底：查不到底图时按温带草地算 */
@@ -186,46 +184,33 @@ export function groundDecorTable(): Readonly<Record<string, GroundDecorSet>> {
 //    那个高对比是**有意的**，由 buildGroundVariation 的 isWinterSnow 分支单独管。
 
 const GROUND_VARIATION_BY_BASE: Readonly<Record<string, readonly string[]>> = {
-    des:               ['pal1', 'gr5', 'ds2'],          // 13 / 16 / 25
-    ds2:               ['pal1', 'gr5', 'des'],          // 13 / 21 / 25
-    ds3:               ['gr7', 'pc1', 'pc2'],           // 14 / 18 / 21
-    ds4:               ['gr5', 'pc1', 'ds3'],           // 21 / 26 / 28
-    ds5:               ['gravel_default', 'rck'],       // 24 / 27
-    gr2:               ['grs', 'gr3'],                  // 10 / 21
-    gr3:               ['grs', 'pc3', 'gr7'],           // 12 / 18 / 20
-    gr4:               ['pc3', 'pc2'],                  // 20 / 25（for/underbrush 色差更小但那是林地贴图，铺上去像长了林子）
-    gr5:               ['des', 'pal1', 'ds4'],          // 16 / 17 / 21
-    gr6:               ['grs', 'gr2'],                  // 28 / 29
-    gr7:               ['pc2', 'pc1', 'pc3'],           // 7 / 8 / 12
-    grs:               ['gr2', 'gr3'],                  // 10 / 12
-    for:               ['underbrush_leaves', 'pc3', 'pc2'],  // 2 / 12 / 16
-    fo2:               ['gr6'],                         // 31（sh4 色差 15 但那是浅滩湿地，语义不对）
-    underbrush_leaves: ['for', 'pc3', 'pc2'],           // 2 / 13 / 18
-    pal:               ['qs', 'pal1'],                  // 19 / 36
-    pal1:              ['ds2', 'des', 'gr5'],           // 13 / 13 / 17
-    qs:                ['pal', 'pal1', 'ds2'],          // 19 / 23 / 27
-    qs2:               ['gr3', 'grs', 'gr2'],           // 22 / 23 / 24
-    sh4:               ['gr4', 'qs2'],                  // 湿润深色系，语义相符
-    rck:               ['gravel_default', 'ds5'],       // 13 / 27
-    gravel_default:    ['rck', 'ds5'],                  // 13 / 24
+    des:               ['pal1', 'gr5', 'ds2'],          // DE PH_AFRICAN / AFROTROPICAL: Dirt(6) + Cracked(45) + Savannah(41) + Dirt2(11)
+    ds2:               ['pal1', 'gr5', 'des'],          // DE PALAEARCTIC_MIDDLE_EAST_DESERT: Dirt2(11) + Cracked(45) + Savannah(41) + Dirt(6)
+    ds3:               ['gr7', 'gr3', 'ds4', 'pc1'],    // DE NEARCTIC / PH_MEDISOUTH: Dirt3(3) + DryGrass(100) + Grass3(9) + Dirt4(42)
+    ds4:               ['gr5', 'ds3', 'des', 'pc1'],    // DE PH_AFRICAN / PH_DESERT: Dirt4(42) + Savannah(41) + Dirt3(3) + Dirt(6)
+    ds5:               ['gravel_default', 'rck'],       // DE Gravel(102) + GravelDefault(70) + Rock(40)
+    gr2:               ['grs', 'gr3'],                  // DE PALAEARCTIC_EUROPE_TEMPERATE: Grass2(12) + Grass(0) + Grass3(9)
+    gr3:               ['grs', 'gr7', 'ds3', 'pc3'],    // DE PALAEARCTIC_EUROPE_MEDITERRANEAN / PH_ALPINE: Grass3(9) + Grass(0) + DryGrass(100) + Dirt3(3)
+    gr4:               ['gr3', 'pc3', 'pc2'],           // DE PH_SPRING / ASIA_TEMPERATE: DirtMud(76) + Grass3(9) + Pasture
+    gr5:               ['des', 'pal1', 'ds4'],          // DE PH_AFRICAN: Savannah(41) + Dirt(6) + Cracked(45) + Dirt4(42)
+    gr6:               ['fo2', 'gr3', 'gr2', 'grs'],    // DE NEOTROPICAL_TROPICAL / PH_TROPHICAL: JungleGrass(60) + LeavesJungle(77) + Grass3(9) + Grass2(12)
+    gr7:               ['gr3', 'ds3', 'pc2', 'pc1'],    // DE ASIA_TEMPERATE / PH_AUTUMN / PH_MEDISOUTH: DryGrass(100) + Grass3(9) + Dirt3(3)
+    grs:               ['gr2', 'gr3'],                  // DE PH_SPRING: Grass(0) + Grass2(12) + Grass3(9)
+    for:               ['underbrush_leaves', 'gr3', 'pc3'], // DE Underbrush(5) + UnderbrushLeaves(71) + Grass3(9)
+    fo2:               ['gr6', 'for', 'gr4'],           // DE PH_TROPHICALSOUTH/EAST: LeavesJungle(77) + JungleGrass(60) + Underbrush(5) + DirtMud(76)
+    underbrush_leaves: ['for', 'gr3', 'pc3'],           // DE UnderbrushLeaves(71) + Underbrush(5) + Grass3(9)
+    pal:               ['qs', 'pal1', 'ds2'],           // DE MIDDLE_EAST_DESERT: Desert(14) + Quicksand(46) + Cracked(45) + Dirt2(11)
+    pal1:              ['ds2', 'des', 'gr5'],           // DE PH_AFRICAN_B: Cracked(45) + Dirt2(11) + Dirt(6) + Savannah(41)
+    qs:                ['pal', 'pal1', 'ds2'],          // DE Quicksand(46) + Desert(14) + Cracked(45) + Dirt2(11)
+    qs2:               ['sh4', 'gr3', 'grs'],           // DE Bogland/Swamp: DirtMudQuicksand(79) + ShallowsSwamp(59) + Grass3(9)
+    sh4:               ['qs2', 'gr4'],                  // DE ShallowsSwamp(59) + DirtMudQuicksand(79) + DirtMud(76)
+    rck:               ['gravel_default', 'ds5'],       // DE Rock(40) + GravelDefault(70) + DesertGravel(102)
+    gravel_default:    ['rck', 'ds5'],                  // DE GravelDefault(70) + Rock(40) + DesertGravel(102)
 
-    // ── 雪地 ──
-    // 🔴 [2026-08-24 主人：「这个地图上的圆不行吧？？？」]
-    //    雪地此前不在这张表里，于是 secondary 走 SECONDARY_TERRAINS[biome]
-    //    = gr4(黑土) / ds3(泥地)——**鲜橙色**，铺在白雪上就是一大片橙。
-    //    真实雪原（莫斯科冬季）几乎全白，只有风口和坡顶露出一点**灰黄枯草**。
-    //    主体给雪系彼此的深浅变化，枯草只占很少。
-    // 🔴 [2026-08-24 主人第二次退回：「还是和雀斑一样」]
-    //    原先掺了 gr7 枯草，即使只占 8% 也是满地橙点——雪白 vs 枯黄色差太大，
-    //    再碎也是「雀斑」。**雪原的地面变化只该是雪的深浅**。
-    //    （DE 的 Baltic.rms 里深雪 BASE_TERRAIN 126 确实配了 ds3/gr3/gr7，
-    //      但那是 `BASE_BLEND` —— 地形之间的**过渡色**，不是往地面撒斑块，两回事。）
-    //    🔴 `snf`（矮树丛积雪）也不能当变体：实测 **46% 偏橙像素**，
-    //       alpha 0.82 铺上去就是那些橙色菱形块。雪系里只有 sno/sn2 是 0% 偏橙。
-    //       （snd 49%、snf 46% —— 它们当**底图**时的橙是素材决定的，另说。）
-    snd:               ['sn2'],
-    sno:               ['sn2'],
-    sn2:               ['sno'],
+    // ── 雪地（保持纯雪/冰系双变体，确保 dry 与 dirt 不重复且不产生橙色泥点） ──
+    snd:               ['sn2', 'sno'],
+    sno:               ['sn2', 'ic3'],
+    sn2:               ['sno', 'ic3'],
     snf:               ['sn2', 'sno'],
     ic3:               ['sno', 'sn2'],
     ice:               ['sn2', 'sno'],

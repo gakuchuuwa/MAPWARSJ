@@ -11,7 +11,7 @@
  */
 import type { Army } from '../legion/Army';
 import type { City, HistoricalEvent } from '../types/core';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
@@ -336,36 +336,64 @@ export class PlayerQuestSystem {
         return this.initialFaction.get(cityId) ?? null;
     }
 
-    /** 城中武将：据点锚定武将，且此刻没有活着的军团带着他 */
-    public generalInCity(cityId: string): { generalId: string; generalName: string; portrait: string } | null {
-        // 🔴 [2026-09-23] 剧本期：当前这一场的归属武将身在「军团出发据点」，不在他本城
+    /**
+     * 一据点多武将选人（2026-10-19 主人定「一个据点，一个势力，可以多个武将，一个武将一支精锐」）：
+     * 从据点的全部在场武将中挑出最合适与玩家会面的一位（优先尚未拜访、尚未打首战、名将）。
+     */
+    private pickCityGeneralForPlayer(
+        cityId: string,
+        opts?: { requireInCity?: boolean; preferUnvisited?: boolean },
+    ): { generalId: string; generalName: string; portrait: string } | null {
+        const requireInCity = opts?.requireInCity ?? false;
+        const preferUnvisited = opts?.preferUnvisited ?? true;
         const start = getScriptEventStart();
-        let g = getCityAnchoredGeneral(cityId);
-        if (start) {
-            if (start.cityId === cityId) {
-                const rec0 = getGeneralRecordByGeneralId(start.generalId);
-                g = rec0 ? { generalId: start.generalId, generalName: rec0.generalName, portrait: rec0.portrait } as typeof g : g;
-            } else if (g?.generalId === start.generalId) {
-                return null;
+        if (start && start.cityId === cityId) {
+            if (!isGeneralOnStage(start.generalId)) return null;
+            if (requireInCity && this.armyOfGeneral(start.generalId)) return null;
+            const rec0 = getGeneralRecordByGeneralId(start.generalId);
+            if (rec0) {
+                return {
+                    generalId: start.generalId,
+                    generalName: rec0.generalName,
+                    portrait: rec0.portrait,
+                };
             }
         }
-        if (!g) return null;
-        // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」] 不在「登场年～卒年」内 → 城中无将可谈（乱斗恒在场）
-        if (!isGeneralOnStage(g.generalId)) return null;
-        // 🔴 [2026-09-23 修「第一场打完不续第二场」] 排除战场一次性军团（isScriptArmy）：
-        //    打完一场后战场军团 8 秒才 disband，这 8 秒里它会被误判成「这位武将带兵在外」，
-        //    玩家到了下一场的出发城却扑空（generalInCity 返回 null）。与 armyOfGeneral /
-        //    isGeneralAvailable 同一处口径：战场军团是为上一仗而生的，不算「带兵在外」。
-        const away = this.deps.legionManager.getArmies().some(
-            (a) => !a.isDestroyed && a.getTroops() > 0 && a.generalId === g.generalId && !a.isScriptArmy,
-        );
-        if (away) return null;
-        const rec = getGeneralRecordByGeneralId(g.generalId);
+        const candidates = getCityAnchoredGenerals(cityId).filter((g) => {
+            if (start && start.generalId === g.generalId && start.cityId !== cityId) return false;
+            if (!isGeneralOnStage(g.generalId)) return false;
+            if (requireInCity && this.armyOfGeneral(g.generalId)) return false;
+            return true;
+        });
+        if (!candidates.length) return null;
+        if (candidates.length > 1) {
+            candidates.sort((a, b) => {
+                if (preferUnvisited) {
+                    const ua = !this.visitedGenerals.has(a.generalId);
+                    const ub = !this.visitedGenerals.has(b.generalId);
+                    if (ua !== ub) return ua ? -1 : 1;
+                }
+                const fba = !!this.hasPendingFirstBattle(a.generalId);
+                const fbb = !!this.hasPendingFirstBattle(b.generalId);
+                if (fba !== fbb) return fba ? -1 : 1;
+                const fa = getGeneralProfile(a.generalId)?.tier === 'famous';
+                const fb = getGeneralProfile(b.generalId)?.tier === 'famous';
+                if (fa !== fb) return fa ? -1 : 1;
+                return 0;
+            });
+        }
+        const chosen = candidates[0];
+        const rec = getGeneralRecordByGeneralId(chosen.generalId);
         return {
-            generalId: g.generalId,
-            generalName: rec?.generalName ?? g.generalName,
-            portrait: rec?.portrait ?? g.portrait,
+            generalId: chosen.generalId,
+            generalName: rec?.generalName ?? chosen.generalName,
+            portrait: rec?.portrait ?? chosen.portrait,
         };
+    }
+
+    /** 城中武将：据点锚定武将（支持一据点多武将），且此刻没有活着的军团带着他 */
+    public generalInCity(cityId: string): { generalId: string; generalName: string; portrait: string } | null {
+        return this.pickCityGeneralForPlayer(cityId, { requireInCity: true, preferUnvisited: true });
     }
 
     // ── 抵达对话 ──────────────────────────────────────────
@@ -376,9 +404,7 @@ export class PlayerQuestSystem {
         if (hero.isAttached()) return;
         const g = this.generalInCity(city.id);
         if (!g) {
-            const anchored0 = getCityAnchoredGeneral(city.id);
-            // 🔴 [2026-10-16 主人定] 剧本期未登场 / 已去世的武将不追（只能找登场武将）
-            const anchored = anchored0 && isGeneralOnStage(anchored0.generalId) ? anchored0 : null;
+            const anchored = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
             // 🔴 [2026-09-09 主人定] 扑空不再换人：他既然带兵出去了，就追出去找他。
             //    （赶路途中武将出征是常态，原来在这里直接放弃，玩家就一直在空跑。）
             const army = anchored ? this.armyOfGeneral(anchored.generalId) : null;
@@ -394,6 +420,7 @@ export class PlayerQuestSystem {
                 : `抵达【${city.name}】：城中无将可谈`);
             return;
         }
+        this.rememberVisit(city, g.generalId);
         if (this.quest) {
             this.deps.notify(`抵达【${city.name}】：手上还有任务未了（${this.quest.targetCityName}），先完成再谈`);
             return;
@@ -1363,7 +1390,7 @@ export class PlayerQuestSystem {
             const id = this.pendingEventOptions.shift()!;
             if (!isGeneralOnStage(id)) continue;
             const cityId = [...this.deps.cityManager.getCities()]
-                .find((c) => getCityAnchoredGeneral(c.id)?.generalId === id)?.id;
+                .find((c) => isGeneralAnchoredAtCity(c.id, id))?.id;
             if (!cityId) continue;
             const army = this.armyOfGeneral(id);
             if (army) {
@@ -1470,7 +1497,7 @@ export class PlayerQuestSystem {
         general: { generalId: string; generalName: string; portrait: string },
         targetCityId: string,
     ): Army | null {
-        const eliteName = getCityEliteLegionName(city.id) ?? `${general.generalName}部`;
+        const eliteName = getCityEliteLegionName(city.id, general.generalId) ?? `${general.generalName}部`;
         // 🔴 [2026-09-10 主人定] 玩家起兵 = 势力本身的兵力（本城城防），不凭空造固定值；
         //    起兵即本城兵力转入军团（兵力守恒，和其他无关）。
         // 🔴 [2026-09-17 主人报障「有的军团出征后，据点留守兵力是0」] 原来这里是**带走全部、city.troops = 0**，
@@ -2604,12 +2631,15 @@ export class PlayerQuestSystem {
             if (!headingToBattlefield && this.deps.hero.autoPlan !== 'script' && this.deps.hero.isTraveling()) {
                 const targetCityId = this.deps.hero.getTravelCityId();
                 const chaseArmyId = this.deps.hero.getChaseArmyId();
-                const targetGenId = chaseArmyId
-                    ? this.deps.legionManager.getLegionById(chaseArmyId)?.generalId
+                const targetHasOnStage = chaseArmyId
+                    ? (() => {
+                        const gid = this.deps.legionManager.getLegionById(chaseArmyId)?.generalId;
+                        return !!gid && isGeneralOnStage(gid);
+                    })()
                     : targetCityId
-                        ? getCityAnchoredGeneral(targetCityId)?.generalId
-                        : null;
-                if (targetGenId && !isGeneralOnStage(targetGenId)) {
+                        ? getCityAnchoredGenerals(targetCityId).some((g) => isGeneralOnStage(g.generalId))
+                        : true;
+                if (!targetHasOnStage) {
                     this.deps.hero.cancelChase();
                     this.deps.hero.cancelTravel();
                 }
@@ -2669,9 +2699,10 @@ export class PlayerQuestSystem {
     private autoTravelToBestCity(): void {
         const city = this.pickAutoCity();
         if (!city) return;
-        this.rememberVisit(city);
-        const g = getCityAnchoredGeneral(city.id);
-        const army = g ? this.armyOfGeneral(g.generalId) : null;
+        const g = this.pickCityGeneralForPlayer(city.id, { requireInCity: false, preferUnvisited: true });
+        this.rememberVisit(city, g?.generalId);
+        const inCityGen = this.generalInCity(city.id);
+        const army = (!inCityGen && g) ? this.armyOfGeneral(g.generalId) : null;
         if (army) {
             // 人不在城中 → 直接去野外找他（PlayerHero.stepChase 每帧续航）
             this.chaseCityId = city.id;
@@ -2840,6 +2871,7 @@ export class PlayerQuestSystem {
         const city = cityId ? this.deps.cityManager.getCity(cityId) : null;
         const gid = army.generalId;
         if (!city || !gid || !isGeneralOnStage(gid)) return;
+        this.rememberVisit(city, gid);
         const rec = getGeneralRecordByGeneralId(gid);
         const generalName = rec?.generalName ?? '将军';
         const factionId = army.getFactionId() || city.factionId;
@@ -2994,7 +3026,7 @@ export class PlayerQuestSystem {
         const start = getScriptEventStart();
         if (start && start.generalId === generalId) return start.cityId;
         for (const c of this.deps.cityManager.getCities()) {
-            if (getCityAnchoredGeneral(c.id)?.generalId === generalId) return c.id;
+            if (isGeneralAnchoredAtCity(c.id, generalId)) return c.id;
         }
         return null;
     }
@@ -3017,7 +3049,7 @@ export class PlayerQuestSystem {
     private headingToEventGeneralId: string | null = null;
 
     private effectiveCityTroopsForPick(c: City): number {
-        const g = getCityAnchoredGeneral(c.id);
+        const g = this.pickCityGeneralForPlayer(c.id, { requireInCity: false, preferUnvisited: true });
         const pendingFb = g ? this.hasPendingFirstBattle(g.generalId) : null;
         return pendingFb ? Math.max(c.troops || 0, pendingFb.myTroops) : (c.troops || 0);
     }
@@ -3027,7 +3059,7 @@ export class PlayerQuestSystem {
         const onStageFallback: City[] = [];
         for (const c of this.deps.cityManager.getCities()) {
             if (!c.factionId) continue;
-            const g = getCityAnchoredGeneral(c.id);
+            const g = this.pickCityGeneralForPlayer(c.id, { requireInCity: false, preferUnvisited: true });
             if (!g) continue;
             // 🔴 [2026-10-16 主人定「剧本模式中玩家只能找登场武将」/ 2026-10-18 百岁模式同口径]（乱斗恒在场，不受影响）
             if (!isGeneralOnStage(g.generalId)) continue;
@@ -3061,8 +3093,8 @@ export class PlayerQuestSystem {
         // ① [2026-09-15 主人定]「兵多、名将，去掉其他的条件」→ 玩家专用两条判据比较器。
         //    ⚠️ 不再用 compareGeneralsByPriority（那套含双行/擅攻，仍归军团出征用）。
         const sorted = [...pool].sort((a, b) => comparePlayerGeneralsByPriority(
-            { troops: this.effectiveCityTroopsForPick(a), cityId: a.id },
-            { troops: this.effectiveCityTroopsForPick(b), cityId: b.id },
+            { troops: this.effectiveCityTroopsForPick(a), cityId: a.id, generalId: this.pickCityGeneralForPlayer(a.id)?.generalId },
+            { troops: this.effectiveCityTroopsForPick(b), cityId: b.id, generalId: this.pickCityGeneralForPlayer(b.id)?.generalId },
         ));
         const best = sorted[0];
         if (!best) return null;
@@ -3071,10 +3103,11 @@ export class PlayerQuestSystem {
         //    不要用 troops 绝对数值判定同档，改为梯队容差：
         //    驻军差在 500 人以内、或同属 10000+ 满编档（差值在 1000 内）即视为同档；
         //    欧洲 10,180 兵与华夏 10,220 兵同属第一梯队名将城，欧洲名将城不会被淘汰。
-        const bestIsFamous = (getGeneralProfile(getCityAnchoredGeneral(best.id)?.generalId || '')?.tier === 'famous');
+        const bestGen = this.pickCityGeneralForPlayer(best.id);
+        const bestIsFamous = (getGeneralProfile(bestGen?.generalId || '')?.tier === 'famous');
         const bestTroops = this.effectiveCityTroopsForPick(best);
         const tied = sorted.filter((c) => {
-            const g = getCityAnchoredGeneral(c.id);
+            const g = this.pickCityGeneralForPlayer(c.id);
             const p = g ? getGeneralProfile(g.generalId) : null;
             const isFamous = p?.tier === 'famous';
             if (isFamous !== bestIsFamous) return false;
@@ -3116,6 +3149,7 @@ export class PlayerQuestSystem {
             if (inStyle.length) fresh = inStyle;
             else {
                 this.visited.clear();
+                this.visitedGenerals.clear();
                 fresh = tied;
             }
         }
@@ -3150,6 +3184,8 @@ export class PlayerQuestSystem {
     private postDefeatHunt = false;
     /** 已拜访过的城（**永久**排除，去遍全图才清空）。这是「别困在一个圈里」的唯一机制。 */
     private readonly visited = new Set<string>();
+    /** 一据点多武将：记录已拜访过的武将，只有据点内全部在场武将都已拜访过，才将该据点计入 visited。 */
+    private readonly visitedGenerals = new Set<string>();
     /** 🔴 [2026-10-05 主人令] 这一轮已经轮到过的建筑风格（66 类走完清空、重开一轮）。 */
     private readonly visitedStyles = new Set<string>();
     /** 🔴 [2026-10-07 主人令「由东向西」] 上一次轮到的那一类的经度（该类候选城经度中位数）；每轮开头置空。 */
@@ -3215,9 +3251,15 @@ export class PlayerQuestSystem {
         return byStyle.get(picked) ?? [];
     }
 
-    /** 选定一座城后记一笔，下次就不再选它了（直到全图走遍后清空）。 */
-    private rememberVisit(city: City): void {
-        this.visited.add(city.id);
+    /** 选定一座城后记一笔：一据点多武将时，只有该城全部在场武将都已拜访过，才将该城加入 visited。 */
+    private rememberVisit(city: City, generalId?: string | null): void {
+        if (generalId) {
+            this.visitedGenerals.add(generalId);
+        }
+        const onStageGens = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
+        if (onStageGens.length <= 1 || onStageGens.every((g) => this.visitedGenerals.has(g.generalId))) {
+            this.visited.add(city.id);
+        }
     }
 
     private onHostLost(_lastId: string): void {

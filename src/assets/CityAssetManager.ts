@@ -163,6 +163,8 @@ export class CityAssetManager {
         'tujue': '突厥',
 'tiele': '铁勒',
 'huige': '回纥',
+'porbazhyn_huihu': '博鹘',
+'eguo_biandi': '俄边',
 'dayue': '大越',
         'yamato': '大和',
 'edo': '武藏',

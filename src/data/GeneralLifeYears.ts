@@ -483,6 +483,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_sergey_belgorod: { birth: 1535, death: 1590, kaoju: '推定' },  // 谢尔盖
     gen_grigory_donets: { birth: 1630, death: 1691, kaoju: '推定' },  // 多涅茨
     gen_semyon_saburov: { birth: 1545, death: 1601, kaoju: '推定' },  // 萨布罗夫
+    eguo_zasekin: { birth: 1540, death: 1600, kaoju: '推定' },       // 扎谢金（萨拉托夫建城者）
     gen_vladimir_monomakh: { birth: 1053, death: 1125 },  // 莫诺马赫
     gen_algirdas: { birth: 1296, death: 1377 },  // 奥尔格尔德
     qin_simacuo: { birth: -350, death: -280, kaoju: '推定' },  // 司马错
@@ -584,6 +585,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     shaodang_mitang: { birth: 50, death: 105, kaoju: '推定' },  // 迷唐
     xueyantuo_yinan: { birth: 590, death: 645, kaoju: '推定' },  // 夷男
     huige_gulipeiluo: { birth: 705, death: 747, kaoju: '推定' },  // 骨力裴罗
+    porbazhyn_mouyu: { birth: 730, death: 779, kaoju: '推定' },    // 牟羽可汗
     kereyid_wanghan: { birth: 1130, death: 1203, kaoju: '推定' },  // 脱斡霖
     naiman_taiyanghan: { birth: 1160, death: 1204, kaoju: '推定' },  // 塔阳
     tatar_mieguzhen: { birth: 1145, death: 1196, kaoju: '推定' },  // 蔑古真
