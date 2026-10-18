@@ -89,6 +89,7 @@ export function renderStrategicWater(
     const distance = new Float32Array(pw * ph);
     const water = new Uint8Array(pw * ph);
     const worldWidth = 2 ** tile.z;
+    let hasLand = false;
     for (let y = -pad; y < h + pad; y++) for (let x = -pad; x < w + pad; x++) {
         const tx = Math.floor(x / w), ty = Math.floor(y / h);
         const nx = ((tile.x + tx) % worldWidth + worldWidth) % worldWidth;
@@ -98,27 +99,34 @@ export function renderStrategicWater(
             : mask[Math.max(0, Math.min(h - 1, y)) * w + Math.max(0, Math.min(w - 1, x))];
         const i = (y + pad) * pw + x + pad;
         water[i] = m;
-        distance[i] = m ? pad + 1 : 0;
+        if (m) {
+            distance[i] = pad + 1;
+        } else {
+            distance[i] = 0;
+            hasLand = true;
+        }
     }
-    // 剔除水面内部因底图 JPEG 压缩产生的单像素孤立噪点（周围 8 邻域 ≥7 个是水），避免在海中产生虚假浅滩光圈或斑点
-    for (let y = 1; y < ph - 1; y++) for (let x = 1; x < pw - 1; x++) {
-        const i = y * pw + x;
-        if (water[i]) continue;
-        const n = water[i - pw - 1] + water[i - pw] + water[i - pw + 1]
-                + water[i - 1] + water[i + 1]
-                + water[i + pw - 1] + water[i + pw] + water[i + pw + 1];
-        if (n >= 7) distance[i] = pad + 1;
-    }
-    // 有限范围八邻域距离变换；边缘取相邻瓦片，陆地不会被误当海岸画框。
-    for (let y = 1; y < ph; y++) for (let x = 1; x < pw - 1; x++) {
-        const i = y * pw + x;
-        distance[i] = Math.min(distance[i], distance[i-1]+1, distance[i-pw]+1,
-            distance[i-pw-1]+Math.SQRT2, distance[i-pw+1]+Math.SQRT2);
-    }
-    for (let y = ph - 2; y >= 0; y--) for (let x = pw - 2; x > 0; x--) {
-        const i = y * pw + x;
-        distance[i] = Math.min(distance[i], distance[i+1]+1, distance[i+pw]+1,
-            distance[i+pw-1]+Math.SQRT2, distance[i+pw+1]+Math.SQRT2);
+    if (hasLand) {
+        // 剔除水面内部因底图 JPEG 压缩产生的单像素孤立噪点（周围 8 邻域 ≥7 个是水），避免在海中产生虚假浅滩光圈或斑点
+        for (let y = 1; y < ph - 1; y++) for (let x = 1; x < pw - 1; x++) {
+            const i = y * pw + x;
+            if (water[i]) continue;
+            const n = water[i - pw - 1] + water[i - pw] + water[i - pw + 1]
+                    + water[i - 1] + water[i + 1]
+                    + water[i + pw - 1] + water[i + pw] + water[i + pw + 1];
+            if (n >= 7) distance[i] = pad + 1;
+        }
+        // 有限范围八邻域距离变换；边缘取相邻瓦片，陆地不会被误当海岸画框。
+        for (let y = 1; y < ph; y++) for (let x = 1; x < pw - 1; x++) {
+            const i = y * pw + x;
+            distance[i] = Math.min(distance[i], distance[i-1]+1, distance[i-pw]+1,
+                distance[i-pw-1]+Math.SQRT2, distance[i-pw+1]+Math.SQRT2);
+        }
+        for (let y = ph - 2; y >= 0; y--) for (let x = pw - 2; x > 0; x--) {
+            const i = y * pw + x;
+            distance[i] = Math.min(distance[i], distance[i+1]+1, distance[i+pw]+1,
+                distance[i+pw-1]+Math.SQRT2, distance[i+pw+1]+Math.SQRT2);
+        }
     }
     const out = new Uint8ClampedArray(w * h * 4);
     const { base, deep, coastalAzure, shallowReef } = STRATEGIC_WATER_PALETTE;
@@ -144,6 +152,16 @@ export function renderStrategicWater(
 
         for (let x = 0; x < w; x++) {
             const i = (y + pad) * pw + x + pad, o = (y * w + x) * 4;
+            if (!water[i]) {
+                const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) * 0.25;
+                if (coverage > 0) {
+                    out[o] = Math.round(azureR * 0.62);
+                    out[o+1] = Math.round(azureG * 0.64);
+                    out[o+2] = Math.round(azureB * 0.66);
+                    out[o+3] = Math.round(coverage * 0.32 * 255);
+                }
+                continue;
+            }
             const wx = tile.x * w + x;
 
             // 拉长 DE 水纹形成有方向的细浪，双线性采样避免斜向像素台阶。
@@ -157,16 +175,18 @@ export function renderStrategicWater(
             const dist = distance[i];
             // 连续离岸加深（无 d<0.03 硬阈值跳变，彻底消除海面暗沙/小岛周边的深蓝雀斑）：
             // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~28px 平滑推向浅海中蓝
-            const offshoreT = water[i] && dist > 8 ? Math.min(0.48, ((dist - 8) / 20) * 0.48) : 0;
+            const offshoreT = dist > 8 ? (dist >= 28 ? 0.48 : ((dist - 8) / 20) * 0.48) : 0;
             let effD = Math.max(d, offshoreT);
 
-            // 近岸浅滩过渡带：收窄至离岸 reach (6~10px)，在海岸边缘平滑压浅，避免浅水区过大
-            const depthFactor = Math.max(0.55, 1 - d * 0.45);
-            const reach = (8.5 + Math.sin(wx / 37 + wy / 51) * 1.2 + Math.sin((wx - wy) / 23) * 0.8) * depthFactor;
-            if (water[i] && dist < reach) {
-                const u = Math.max(0, Math.min(1, dist / reach));
-                const coastFade = u * u * (3 - 2 * u); // smoothstep 0..1
-                effD *= coastFade;
+            // 近岸浅滩过渡带：收窄至离岸 reach (6~10px)，在海岸边缘平滑压浅，避免浅水区过大（dist >= 11 时必在 reach 外，省去三角函数）
+            if (dist < 11) {
+                const depthFactor = Math.max(0.55, 1 - d * 0.45);
+                const reach = (8.5 + Math.sin(wx / 37 + wy / 51) * 1.2 + Math.sin((wx - wy) / 23) * 0.8) * depthFactor;
+                if (dist < reach) {
+                    const u = Math.max(0, Math.min(1, dist / reach));
+                    const coastFade = u * u * (3 - 2 * u); // smoothstep 0..1
+                    effD *= coastFade;
+                }
             }
 
             let r: number, g: number, b: number;
@@ -185,7 +205,7 @@ export function renderStrategicWater(
                 b = base[2] + (deep[2] - base[2]) * t2;
             }
 
-            if (water[i] && dist < 4.5) {
+            if (dist < 4.5) {
                 // 贴岸 4.5px 内微透清浅浅滩色 (shallowReef)
                 const seamT = Math.pow(1 - dist / 4.5, 1.2) * 0.42;
                 r = r * (1 - seamT) + reefR * seamT;
@@ -201,15 +221,16 @@ export function renderStrategicWater(
             }
 
             // 岸边极细断续碎沫微光 (距岸 1.4 像素内的点缀微浪，绝不连成白线)
-            const glint = water[i] && dist < 1.4
+            const glint = dist < 1.4
                 ? Math.max(0, Math.sin(wx / 5 + Math.sin(wy / 8)) - 0.52) * 30 : 0;
 
             out[o] = Math.min(255, Math.max(0, r + tone * 0.7 + grain * 0.65 + glint));
             out[o+1] = Math.min(255, Math.max(0, g + tone * 1.1 + grain * 0.90 + glint * 1.05));
             out[o+2] = Math.min(255, Math.max(0, b + tone * 1.2 + grain * 0.95 + glint * 1.05));
+            out[o+3] = 255;
 
             // 采样浪花微动点（仅在贴岸 1.0 ~ 2.2px 极稀疏采样偶发微沫核）
-            if (water[i] && dist >= 1.0 && dist <= 2.2) {
+            if (dist >= 1.0 && dist <= 2.2) {
                 if (((x * 17 + y * 23) % 47 === 0) && ((wx + wy) % 11 === 0)) {
                     let nx = (distance[i + 1] - distance[i - 1]) * 0.5;
                     let ny = (distance[i + pw] - distance[i - pw]) * 0.5;
@@ -220,18 +241,6 @@ export function renderStrategicWater(
                         const noise = Math.sin(wx * 0.08 + wy * 0.06);
                         wavePoints.push(x, y, dist, nx, ny, noise);
                     }
-                }
-            }
-
-            // 🔴 [2026-09-30 血训] 曾把离岸 16 像素外的水面改透明想透出下层海深 —— 结果内陆湖整片变空。水面一律不透明。
-            if (water[i]) out[o+3] = 255;
-            else {
-                const coverage = (water[i-1] + water[i+1] + water[i-pw] + water[i+pw]) / 4;
-                if (coverage > 0) {
-                    out[o] = Math.round(azureR * 0.62);
-                    out[o+1] = Math.round(azureG * 0.64);
-                    out[o+2] = Math.round(azureB * 0.66);
-                    out[o+3] = Math.round(coverage * 0.32 * 255);
                 }
             }
         }

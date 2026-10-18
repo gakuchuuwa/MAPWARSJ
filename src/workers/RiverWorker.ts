@@ -10,6 +10,24 @@ export interface RiverWorkerResponse { id: number; data: Uint8ClampedArray; wave
 const tiles = new Map<string, WaterTileMask>();
 const keyOf = (t: {x: number; y: number; z: number}) => `${t.z}/${t.x}/${t.y}`;
 
+const PAD = 32;
+
+/** 检查 tile 朝向 (dx, dy) 方向的外侧 32px 边缘带内是否存在陆地像素（mask === 0） */
+function borderHasLand(tile: WaterTileMask, dx: number, dy: number): boolean {
+    const { width: w, height: h, mask } = tile;
+    const x0 = dx < 0 ? 0 : (dx > 0 ? w - PAD : 0);
+    const x1 = dx < 0 ? PAD : (dx > 0 ? w : w);
+    const y0 = dy < 0 ? 0 : (dy > 0 ? h - PAD : 0);
+    const y1 = dy < 0 ? PAD : (dy > 0 ? h : h);
+    for (let y = y0; y < y1; y++) {
+        const row = y * w;
+        for (let x = x0; x < x1; x++) {
+            if (mask[row + x] === 0) return true;
+        }
+    }
+    return false;
+}
+
 self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number }>) => {
     if ('removeId' in e.data) {
         for (const [key, tile] of tiles) if (tile.id === e.data.removeId) tiles.delete(key);
@@ -27,12 +45,14 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
     const pixels = ctx.getImageData(0, 0, width, height).data;
     bitmap.close();
     const mask = new Uint8Array(width * height);
+    let hasWater = false;
     for (let i = 0; i < mask.length; i++) {
-        mask[i] = isWaterPixel(pixels[i*4], pixels[i*4+1], pixels[i*4+2]) ? 1 : 0;
+        const w = isWaterPixel(pixels[i*4], pixels[i*4+1], pixels[i*4+2]) ? 1 : 0;
+        mask[i] = w;
+        if (w) hasWater = true;
     }
     const tile: WaterTileMask = { id, width, height, x, y, z, mask };
     tiles.set(keyOf(tile), tile);
-    const hasWater = mask.some(v => v !== 0);
     // 先等水深算好再画第一次：避免「先平色、后变深」的闪烁与新旧块混排
     const [texture, depthT] = await Promise.all([
         loadStrategicWaterTexture(),
@@ -40,14 +60,19 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
     ]);
     tile.depthT = depthT;
     if (tiles.get(keyOf(tile)) !== tile) return;
-    // 新邻居到达时重绘相邻边缘；不额外请求底图、不把瓦片边界当岸线。
+    // 新邻居到达时：仅重绘自身，以及交界 32px 内存在陆地（海岸线跨界）的相邻瓦片；
+    // 纯海面交界不改变邻居的岸线距离，跳过无意义的 8 邻域重复重绘。
     const worldWidth = 2 ** z;
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        const isSelf = dx === 0 && dy === 0;
         const nx = ((x + dx) % worldWidth + worldWidth) % worldWidth;
-        const neighbor = tiles.get(`${z}/${nx}/${y+dy}`);
+        const neighbor = isSelf ? tile : tiles.get(`${z}/${nx}/${y+dy}`);
         if (!neighbor) continue;
         // 邻块水深还没算好（undefined）就先别画它，等它自己算完再画 —— 否则会先出一块平色，再变深，拼成方块
         if (neighbor.depthT === undefined) continue;
+        if (!isSelf && !borderHasLand(tile, -dx, -dy) && !borderHasLand(neighbor, dx, dy)) {
+            continue;
+        }
         let data: Uint8ClampedArray;
         let waves: Float32Array | null = null;
         if (neighbor.mask.some(v => v !== 0)) {

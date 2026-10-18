@@ -8,6 +8,7 @@
  */
 import type { Army } from './Army';
 import { getArmyMaxTroops } from '../types/CultureFormations';
+import { resolveArmyCulture66Key } from './march/MarchAttritionSystem';
 
 /** 远征军团（行军锁目标：expeditionTargetCityId 非空） */
 export function isCampaignLegion(
@@ -23,7 +24,8 @@ export function shouldSkipHomeRecapture(
     return isCampaignLegion(army);
 }
 
-/** 军团兵力上限：按文化区上限 */
+/** 军团兵力上限：按 66 文化键上限 */
 export function getLegionTroopCap(army: Pick<Army, 'cultureRegion'>): number {
-    return getArmyMaxTroops(army.cultureRegion);
+    return getArmyMaxTroops(resolveArmyCulture66Key(army as Army) ?? army.cultureRegion);
 }
+

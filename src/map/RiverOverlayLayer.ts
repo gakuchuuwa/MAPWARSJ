@@ -15,12 +15,16 @@ interface RiverWorkerResponse {
     waves?: Float32Array | null;
 }
 
+const WATER_TILE_CACHE_MAX = 240;
+
 export class RiverOverlayLayer extends L.GridLayer {
     private esriUrl: string;
 
     private worker: Worker;
     private msgIdCounter: number = 0;
-    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean }> = new Map();
+    private pendingTiles: Map<number, { ctx: CanvasRenderingContext2D, tile: HTMLElement, done: L.DoneCallback, completed: boolean, cacheKey: string }> = new Map();
+    /** LRU 缓存已算好的水面瓦片像素与浪花点，平移/缩放回看瞬时上屏 */
+    private tileCache: Map<string, { imgData: ImageData; waves: Float32Array | null }> = new Map();
 
     constructor(options?: L.GridLayerOptions) {
         super({
@@ -51,12 +55,22 @@ export class RiverOverlayLayer extends L.GridLayer {
         this.esriUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}';
     }
 
+    private cachePut(key: string, entry: { imgData: ImageData; waves: Float32Array | null }): void {
+        this.tileCache.delete(key);
+        this.tileCache.set(key, entry);
+        while (this.tileCache.size > WATER_TILE_CACHE_MAX) {
+            const oldest = this.tileCache.keys().next().value as string | undefined;
+            if (oldest === undefined) break;
+            this.tileCache.delete(oldest);
+        }
+    }
+
     private handleWorkerMessage(e: MessageEvent<RiverWorkerResponse>) {
         const { id, data, waves } = e.data;
         const task = this.pendingTiles.get(id);
 
         if (task) {
-            const { ctx, tile, done } = task;
+            const { ctx, tile, done, cacheKey } = task;
             if (waves && waves.length > 0) {
                 (tile as any)._coastalWaves = waves;
             }
@@ -65,6 +79,7 @@ export class RiverOverlayLayer extends L.GridLayer {
             // [FIX] Cast to any to avoid strict "ArrayBufferLike vs ArrayBuffer" TS error
             const imgData = new ImageData(data as any, 256, 256);
             ctx.putImageData(imgData, 0, 0);
+            this.cachePut(cacheKey, { imgData, waves: waves && waves.length > 0 ? waves : null });
 
             // Mark done
             if (!task.completed) {
@@ -126,10 +141,13 @@ export class RiverOverlayLayer extends L.GridLayer {
      * 正常晕渲图必有纹理，不可能整块同一个精确灰值，故误判概率极低。
      */
     private isDefectGrayTile(img: CanvasImageSource, w: number, h: number): boolean {
-        const c = document.createElement('canvas');
-        c.width = w;
-        c.height = h;
-        const g = c.getContext('2d', { willReadFrequently: true });
+        if (!RiverOverlayLayer.sharedCanvas) {
+            RiverOverlayLayer.sharedCanvas = document.createElement('canvas');
+            RiverOverlayLayer.sharedCanvas.width = w;
+            RiverOverlayLayer.sharedCanvas.height = h;
+            RiverOverlayLayer.sharedCtx = RiverOverlayLayer.sharedCanvas.getContext('2d', { willReadFrequently: true });
+        }
+        const g = RiverOverlayLayer.sharedCtx;
         if (!g) return false;
         g.drawImage(img as CanvasImageSource, 0, 0);
         let d: Uint8ClampedArray;
@@ -198,6 +216,19 @@ export class RiverOverlayLayer extends L.GridLayer {
             return tile;
         }
 
+        const cacheKey = `${coords.z}/${coords.x}/${coords.y}`;
+        const cached = this.tileCache.get(cacheKey);
+        if (cached) {
+            this.tileCache.delete(cacheKey);
+            this.tileCache.set(cacheKey, cached);
+            ctx.putImageData(cached.imgData, 0, 0);
+            if (cached.waves) {
+                (tile as any)._coastalWaves = cached.waves;
+            }
+            // If the tile is already fully settled in cache, mark done immediately via microtask
+            queueMicrotask(() => done(undefined, tile));
+        }
+
         // 构造 ESRI 瓦片 URL
         const esriTileUrl = this.esriUrl
             .replace('{z}', coords.z.toString())
@@ -217,8 +248,9 @@ export class RiverOverlayLayer extends L.GridLayer {
             try {
                 let source: CanvasImageSource = esriImg;
 
-                // ESRI 该级瓦片缓存烤坏（整块纯灰）→ 换父瓦片对应象限，取真实内容
-                if (this.isDefectGrayTile(esriImg, size.x, size.y)) {
+                // 仅在已知 ESRI z10 缺陷区块（北海道及东侧海面 x=912~927, y=368~383）才回读像素检测，避免主线程每块瓦片同步 getImageData
+                const mayBeDefect = coords.z === 10 && coords.x >= 912 && coords.x <= 927 && coords.y >= 368 && coords.y <= 383;
+                if (mayBeDefect && this.isDefectGrayTile(esriImg, size.x, size.y)) {
                     const substitute = await this.buildParentSubstitute(coords, size.x, size.y)
                         .catch(() => null);
                     if (substitute) source = substitute;
@@ -231,7 +263,7 @@ export class RiverOverlayLayer extends L.GridLayer {
                 const reqId = this.msgIdCounter++;
 
                 // Store callback info
-                this.pendingTiles.set(reqId, { ctx, tile, done, completed: false });
+                this.pendingTiles.set(reqId, { ctx, tile, done, completed: !!cached, cacheKey });
 
                 // Send to worker with bitmap transfer
                 this.worker.postMessage({
@@ -245,13 +277,13 @@ export class RiverOverlayLayer extends L.GridLayer {
             } catch (err) {
                 this.off('tileunload', onUnload);
                 console.error('River bitmap creation failed:', err);
-                done(undefined, tile);
+                if (!cached) done(undefined, tile);
             }
         };
 
         esriImg.onerror = () => {
             this.off('tileunload', onUnload);
-            done(undefined, tile);
+            if (!cached) done(undefined, tile);
         };
 
         esriImg.src = esriTileUrl;
