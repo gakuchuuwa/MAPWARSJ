@@ -58,7 +58,7 @@ export const CHASE_RING = 45;
  */
 export const STALL_GUARD_ENFORCE = false;
 
-export const MELEE_QUIET_SEC = 1.5;
+export const MELEE_QUIET_SEC = 2.5;
 export const NO_KILL_SEC = 60;
 export const HARD_STOP_SEC = 600;
 /** 🔴 [2026-10-12 主人令] 一场战斗最长 5 分钟，到点未分胜负攻方输 */

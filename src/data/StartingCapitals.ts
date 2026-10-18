@@ -267,7 +267,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'ming_d': 'city_beijing',
     'jinling': 'city_nanjing',
 'liao_d': 'city_linhuang',
-    'gongsun_d': 'city_liaoyang',
+'gongsun_d': 'city_liaoyang',
 'dangzhou': 'city_dangchang',
     'dai_d': 'city_daixian',
     'dingxiang_d': 'city_eyangling',
@@ -532,7 +532,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
 'kala': 'city_aoshen',
 'sogdian': 'city_varaksha',
     // 🔴 [2026-09-24] 阿斯瓦卡原无首府（为前327 马萨加战役建的势力）→ 把马萨加给它当首府，
-    //    这样该城才有锚定武将（克莱奥菲斯）与精锐（阿斯瓦卡山兵），同盟军年代闸门也才上得了图
+    //    这样该城才有锚定武将（克莱奥菲斯）与精锐（阿斯瓦卡兵），同盟军年代闸门也才上得了图
     'aswaka': 'city_masaga',
     // 🔴 [2026-09-24 主人批准] 新据点「索格狄亚那岩」要有锚定势力才上得了图（闸门读首府武将的时代）
     'suogediyana': 'city_suogediyanayan',
@@ -810,7 +810,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'xuantu': 'city_guoneicheng',
 'sambyeol': 'city_jindo',
     'sheng_d': 'city_suncheon_k',
-    'jinzhou': 'city_tuhe',
+'jinzhou': 'city_tuhe',
     'wure': 'city_niman',
 'dongping': 'city_xierka',
 'houliao': 'city_xianping',

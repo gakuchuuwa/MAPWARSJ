@@ -17,7 +17,7 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     luomu: { name: '古拉姆军', tier: 1 },
     kapaduoxiya: { name: '提亚纳骑兵', tier: 3 },   // 提亚纳·萨比克塔斯：卡帕多细亚高原骑手（波斯军中的卡帕多细亚骑兵是史载兵种）常备军。基利杰·阿尔斯兰二世
     osman: { name: '苏丹亲兵', tier: 1 },          // 布尔萨·穆罕默德二世：奥斯曼禁卫军火枪手；1453 攻陷君士坦丁堡、1526 莫哈奇，T1 功勋
-    adiyabeina: { name: '马其顿禁卫骑兵', tier: 1 },
+    adiyabeina: { name: '马其顿禁骑', tier: 1 },
     aosimanbeiyiguo: { name: '加齐骑兵', tier: 2 },   // 瑟于特·奥斯曼一世：加齐圣战骑兵
 
     // ── T2 特色之兵：特定战役有明确战术高光 ──
@@ -48,10 +48,10 @@ export const WEST_ASIA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLe
     // ── T4 存在之兵：史籍可考的常规建制／地方戍兵 ──
     bitiniya: { name: '比提尼卫', tier: 4 },       // 尼凯亚·狄奥多尔：尼凯亚位于比提尼亚故地，常规卫队
     fulijiya: { name: '弗里吉卫', tier: 4 },       // 戈尔迪乌姆·迈达斯：弗里吉亚常规卫队
-    ribale: { name: '代尔木重步', tier: 2 },
+    // 2026-10-18 清理：ribale 归 PERSIAN 区，唯一权威见 PersianExpeditionLegions.ts（原条目重复，靠展开顺序静默覆盖，故清出）
     wuer: { name: '乌尔重步', tier: 3 },
     shengdian_qishi: { name: '圣殿骑士', tier: 2 },
     samtskhe: { name: '梅斯赫骑', tier: 4 },
-    xibolai: { name: '基利提圣卫', tier: 2 },  // 耶路撒冷·大卫：大卫王王牌精锐卫队
+    // 2026-10-18 清理：xibolai 归 ORIE 区，唯一权威见 OrieExpeditionLegions.ts（原条目重复，靠展开顺序静默覆盖，故清出）
     luben: { name: '鲁本重步', tier: 3 },  // 瓦卡·托罗斯二世：奇里乞亚鲁本王朝山民重步兵
 };

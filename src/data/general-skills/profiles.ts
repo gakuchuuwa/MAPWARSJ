@@ -2090,7 +2090,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-        jinzhou_lichengliang: { generalId: 'jinzhou_lichengliang', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_001', disadvantageSkillId: 'ts_428', atkAdvantageSkillId: 'ts_750', atkBalanceSkillId: 'ts_072', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_660', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_048', aptitude: 'create' , attackStyle: 'balanced'}, // 辽东攻抚兼守 → 双行
+    jinzhou_lichengliang: { generalId: 'jinzhou_lichengliang', tier: 'famous', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_001', disadvantageSkillId: 'ts_428', atkAdvantageSkillId: 'ts_750', atkBalanceSkillId: 'ts_072', atkDisadvantageSkillId: 'ts_414', defAdvantageSkillId: 'ts_660', defBalanceSkillId: 'ts_475', defDisadvantageSkillId: 'ts_048', aptitude: 'create', attackStyle: 'balanced' }, // 辽东攻抚兼守 → 双行
 
 
 
@@ -2102,7 +2102,7 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
 
 
 
-    gongsun_d_gongsundu: { generalId: 'gongsun_d_gongsundu', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_118', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage' , attackStyle: 'attack'},
+    gongsun_d_gongsundu: { generalId: 'gongsun_d_gongsundu', tier: 'ordinary', tacticalSkillId: 'ts_001', advantageSkillId: 'ts_005', balanceSkillId: 'ts_015', disadvantageSkillId: 'ts_032', atkAdvantageSkillId: 'ts_001', atkBalanceSkillId: 'ts_118', atkDisadvantageSkillId: 'ts_580', defAdvantageSkillId: 'ts_655', defBalanceSkillId: 'ts_634', defDisadvantageSkillId: 'ts_415', aptitude: 'leverage', attackStyle: 'attack' },
 
 
 

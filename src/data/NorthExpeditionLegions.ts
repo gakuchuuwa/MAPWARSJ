@@ -2,7 +2,7 @@
  * 北方文化区远征精锐军团名（NORTH）
  *
  * 收录红线：
- * - 番号 3–6 字，全局不重复；史料具名
+ * - 番号 3–5 字，全局不重复；史料具名
  * - 八字军属王彦太行义军，不得挂南方衡州
  * - §2 北方 12 支全收录；§1 地理偏北者（曳落河/鸦儿军/朔方/静塞/殿前诸班）同列
  * - 朔方军：旗=灵@回乐（灵州/灵武治所），番=朔方军（≠旗号朔方@临戎）
@@ -17,7 +17,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
 
   // ── §2 北方 12 支 ──
   yan: { name: '渔阳突骑', tier: 1 },       // 古北口·§2 #2 光武幽州精骑（升T1）
-  gongsun_d: { name: '襄平狟骑', tier: 4 }, // 襄平·公孙度襄平狟骑（缺乏极其著名的战术高光，降T3）
+    gongsun_d: { name: '襄平狟骑', tier: 4 },
     shizhao_d: { name: '黑槊龙骧', tier: 2 },
     yunzhong: { name: '苍头军', tier: 3 },           // 中国古代（秦汉等）特指奴仆组成的军队，极具军制与阶级特色的文化名词，升入T3知名
     tuoba: { name: '拓跋虎骑', tier: 3 },
@@ -51,7 +51,7 @@ export const NORTH_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: str
   pingyuan: { name: '平原义军', tier: 3 },      // 颜真卿首倡义兵，无战术突击高光，属于常规义军，降回T3
   
   // ── 2026-06-18 自东北文件迁回
-  jinzhou: { name: '辽东铁骑', tier: 1 },     // 徒河·李成梁辽东骑兵（打出极强战绩，升T1）
+    jinzhou: { name: '辽东铁骑', tier: 1 },
     zu_d: { name: '关宁铁骑', tier: 1 },
   mao_wenlong: { name: '东江劲旅', tier: 3 }, // 毛文龙在皮岛建立的敌后抗金武装，牵制后金大量兵力，悲剧色彩和知名度极高，升入T3知名
     liwang: { name: '河间突骑', tier: 3 },

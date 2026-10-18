@@ -461,7 +461,7 @@ buildingStyle: 'JIANGNAN', troops: 10000,
 
     { id: 'city_shanxian', name: '剡城', factionId: 'qiufu', lat: 29.556746, lng: 120.822144, type: 'small_city', region: 'JIANGNAN',
 buildingStyle: 'JIANGNAN', troops: 10000, mirror: true,
-        note: '剡城；裘甫小城',
+        note: '剡城；剡中小城',
     },
 
     // ── 陇右与河西走廊中城 ──
@@ -568,7 +568,8 @@ buildingStyle: 'WESTERN', tier: 1,
 buildingStyle: 'BASHU', troops: 10000,
         note: '广南；句町小城',
     },    
-    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.270000, lng: 123.170000, type: 'medium_city', region: 'NORTH', buildingStyle: 'NORTHEAST', troops: 10000, note: '公孙度辽东治所；辽东铁骑' },
+    { id: 'city_liaoyang', name: '襄平', factionId: 'gongsun_d', lat: 41.27, lng: 123.17, type: 'medium_city', troops: 20000, region: 'WEI', buildingStyle: 'WEI' },
+
 
     { id: 'city_chaoyang', name: '朝阳', factionId: 'yingzhou_ying_d', lat: 41.57, lng: 120.45, type: 'medium_city', troops: 10000, region: 'NORTHEAST', buildingStyle: 'XIANBEI' },
 
@@ -2666,7 +2667,8 @@ buildingStyle: 'MONGOL', troops: 10000,
     { id: 'city_longtanshancheng', name: '龙潭山', factionId: 'dongxia', lat: 43.834536, lng: 126.589966, type: 'pass', region: 'JURCHEN', buildingStyle: 'NORTHEAST', troops: 10000, note: '东夏国蒲鲜万奴翼境要地' },
     { id: 'city_bamiancheng', name: '八面关', factionId: 'yehe', lat: 43.189189, lng: 124.354248, type: 'pass', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 
-    { id: 'city_tuhe', name: '徒河', factionId: 'jinzhou', lat: 41.12, lng: 121.14, type: 'small_city', region: 'XIANBEI', buildingStyle: 'XIANBEI', troops: 10000, note: '徒河水/明锦州卫；旗号锦@锦州（2026-06-11）' },
+    { id: 'city_tuhe', name: '徒河', factionId: 'jinzhou', lat: 41.12, lng: 121.14, type: 'small_city', troops: 20000, region: 'WEI', buildingStyle: 'WEI' },
+
     { id: 'city_feiru', name: '肥如', factionId: 'guzhu', lat: 39.89, lng: 118.89, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
     { id: 'city_wuzhong', name: '无终', factionId: 'shanrong', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI', note: '🔴 [2026-10-05 主人令「判不出就跟最近的确据点走」] 无终（今天津蓟州，春秋无终国／右北平）在**河北**，400km 内确据点以河朔为多（古北口 85km、漂渝津 105km、居庸关 120km、肥如 127km、范阳 132km）→ 挂 WEI／河朔（一级 ASIA）；旧值 CENTRAL（华夏）。' },
