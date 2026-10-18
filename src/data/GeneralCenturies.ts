@@ -1160,6 +1160,20 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'zhalange_barsaentes':               -4,    // 巴尔塞恩特斯 · zhalange · 扎兰格（德兰吉亚总督）
     'shiyuzu_aolaqiuzhang':              -4,    // 阿波罗多洛斯 · shiyuzu · 奥拉（公元前325年食鱼族阻截尼阿库斯舰队）
     'maikelan_punong':                   10,    // 普农 · maikelan · 特尔巴特（俾路支霍特氏族传说英雄，约10世纪）
+    'sumeier_nabopalasa':                -7,    // 那波帕拉萨 · sumeier · 乌鲁克（前626年于乌鲁克击败亚述驻军创立新巴比伦帝国）
+    'wuer_boshasha':                     -6,    // 伯沙撒 · wuer · 乌尔城（新巴比伦摄政王坐镇乌尔与下游防区）
+    'guyashu_tigelate':                  -8,    // 提格拉特 · guyashu · 亚述城（提格拉特帕拉沙尔三世，前746年于亚述城即位创立常备军）
+    'xikesuosi_samutike':                -7,    // 萨姆提克 · xikesuosi · 阿瓦里斯（萨姆提克一世，驱逐亚述驻军统一埃及）
+    'dibisi_tahaerka':                   -7,    // 塔哈尔卡 · dibisi · 瓦塞特（埃及第二十五王朝法老，驻瓦塞特北抗亚述）
+    'heti_alialate':                     -4,    // 阿里阿拉特 · heti · 哈图沙（卡帕多细亚国王阿里阿拉特一世）
+    'aiji_neiketaneibu':                 -4,    // 内克塔内布 · aiji · 孟菲斯（埃及第三十王朝开国法老，前373年于孟菲斯防线大破波斯大军）
+    'shang_weiwuji':                     -3,    // 魏无忌 · shang · 安阳（战国信陵君，前257年于安阳夺晋鄙军救赵破秦）
+    'yamaxun_faernake':                  -2,    // 法尔纳克 · yamaxun · 忒弥斯基拉（本都国王法尔纳克一世，统辖忒弥斯基拉并克锡诺普）
+    'teluoyi_maniya':                    -5,    // 马尼亚 · teluoyi · 特洛伊（达达诺斯女副总督，镇守伊利昂与特洛阿斯）
+    'ailan_julushi':                     -6,    // 居鲁士二世 · ailan · 苏萨（波斯帝国创立者，定都苏萨）
+    'zhou_jifu':                         -9,    // 吉甫 · zhou · 岐山（西周太师尹吉甫，前823年自岐周统周六师北伐猃狁）
+    'yin_yuejin':                         3,    // 乐进 · yin · 朝歌（建安十年攻拔朝歌斩严敬）
+    'xibolai_majiabi':                   -2,    // 犹大马加比 · xibolai · 耶路撒冷（前164年率义军收复耶路撒冷）
 };
 
 /** 取武将成名世纪；未标注 / 未收录返回 null（0 视为未标） */

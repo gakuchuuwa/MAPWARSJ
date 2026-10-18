@@ -315,8 +315,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     tiemuer: { generalId: 'tiemuer_tiemuer', generalName: '帖木儿', portrait: '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png' },
     siam: { generalId: 'siam_nalixuan', generalName: '纳黎萱', portrait: '/assets/DIANQIAN/siam_nalixuan_pugan.png' },
     shang: [
-        { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
         { generalId: 'shang_weiwuji', generalName: '魏无忌', portrait: '' },
+        { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
     ],
     bing: { generalId: 'bing_liji', generalName: '李勣', portrait: '/assets/litang/bing_liji.png' },
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/JIANGNAN/min_wangshenzhi.png' },
@@ -555,8 +555,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
     duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiaoyishi.png' },
     teluoyi: [
+        { generalId: 'teluoyi_maniya', generalName: '马尼亚', portrait: '' },
         { generalId: 'teluoyi_heketuoer', generalName: '赫克托耳', portrait: '/assets/LATIN/teluoyi_heketuoer.png' },
-        { generalId: 'teluoyi_sula', generalName: '苏拉', portrait: '' },
     ],
     alabo: { generalId: 'alabo_qiyade', generalName: '齐亚德', portrait: '/assets/CENTRAL_ASIA/alabo_qiyade.png' },
     xijue: { generalId: 'xijue_ganyanshou', generalName: '郅支', portrait: '/assets/STEPPE/xijue_zhizhichanyu.png' },
@@ -847,8 +847,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yangshao: { generalId: 'yangshao_zhoubo', generalName: '周勃', portrait: '/assets/liuhan/yangshao_zhoubo.png' },
     dixiang: { generalId: 'dixiang_wangmang', generalName: '王莽', portrait: '/assets/liuhan/dixiang_wangmang.png' },
     zhou: [
+        { generalId: 'zhou_jifu', generalName: '吉甫', portrait: '' },
         { generalId: 'zhou_jifa', generalName: '姬发', portrait: '/assets/xianqin/zhou_jifa.png' },
-        { generalId: 'zhou_zhanghe', generalName: '张郃', portrait: '' },
     ],
     quanrong: { generalId: 'quanrong_yiquhai', generalName: '义渠骇', portrait: '/assets/xianqin/quanrong_yiquhai.png' },
     cai: { generalId: 'cai_lishuo', generalName: '石勒', portrait: '/assets/NORTH/cai_shile.png' },
@@ -856,8 +856,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/daming/suzhou_d_shikefa.png' },
     pizhou: { generalId: 'pizhou_lvbu', generalName: '吕布', portrait: '/assets/CENTRAL/pizhou_lvbu.png' },
     yin: [
-        { generalId: 'yin_dixin', generalName: '子受', portrait: '/assets/xianqin/yin_dixin.png' },
         { generalId: 'yin_yuejin', generalName: '乐进', portrait: '' },
+        { generalId: 'yin_dixin', generalName: '子受', portrait: '/assets/xianqin/yin_dixin.png' },
     ],
     liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/litang/liwang_liguangbi.png' },
     qing: { generalId: 'qing_quduan', generalName: '曲端', portrait: '/assets/zhaosong/qing_quduan.png' },
@@ -1117,7 +1117,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     keerjisi: { generalId: 'keerjisi_bagelate', generalName: '巴格拉特', portrait: '/assets/CENTRAL_ASIA/keerjisi_bagelate.png' },
     saipulusi: { generalId: 'saipulusi_juyi', generalName: '居伊', portrait: '/assets/LATIN/saipulusi_juyi.png' },
     bendou_d: { generalId: 'bendou_d_mitelidati', generalName: '密特里达梯', portrait: '/assets/WEST_ASIA/bendou_d_mitelidati.png' },
-    heti: { generalId: 'heti_muwatali', generalName: '穆瓦塔利', portrait: '/assets/WEST_ASIA/heti_muwatali.png' },
+    heti: [
+        { generalId: 'heti_alialate', generalName: '阿里阿拉特', portrait: '' },
+        { generalId: 'heti_muwatali', generalName: '穆瓦塔利', portrait: '/assets/WEST_ASIA/heti_muwatali.png' },
+    ],
     fulijiya: { generalId: 'fulijiya_maidasi', generalName: '迈达斯', portrait: '/assets/WEST_ASIA/fulijiya_maidasi.png' },
     ldiya: { generalId: 'ldiya_keluoyisi', generalName: '克罗伊斯', portrait: '/assets/WEST_ASIA/ldiya_keluoyisi.png' },
     pajiama: { generalId: 'pajiama_oumainisi', generalName: '欧迈尼斯', portrait: '/assets/WEST_ASIA/pajiama_oumainisi.png' },
@@ -1126,18 +1129,30 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     osman: { generalId: 'osman_mehmed_ii', generalName: '穆罕默德二世', portrait: '/assets/WEST_ASIA/osman_muhanmodeershi.png' },
     sailiugu: { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
     womaya: { generalId: 'womaya_muaweiye', generalName: '穆阿维叶', portrait: '/assets/WEST_ASIA/womaya_muaweiye.png' },
-    xibolai: { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
+    xibolai: [
+        { generalId: 'xibolai_majiabi', generalName: '犹大马加比', portrait: '' },
+        { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
+    ],
     yelusalengwg: { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
     shengdian_qishi: { generalId: 'shengdian_qishi_demolai', generalName: '莫莱', portrait: '/assets/GERMANIC/shengdian_qishi_demolai.png' },
     maerta_qishi: { generalId: 'maerta_qishi_walaite', generalName: '瓦莱特', portrait: '/assets/GERMANIC/maerta_qishi_lawalaite.png' },
-    dibisi: { generalId: 'dibisi_tutemosi', generalName: '图特摩斯', portrait: '/assets/WEST_ASIA/dibisi_tutemosi.png' },
-    aiji: { generalId: 'aiji_lameisisi', generalName: '拉美西斯', portrait: '/assets/WEST_ASIA/aiji_lameixisi.png' },
+    dibisi: [
+        { generalId: 'dibisi_tahaerka', generalName: '塔哈尔卡', portrait: '' },
+        { generalId: 'dibisi_tutemosi', generalName: '图特摩斯', portrait: '/assets/WEST_ASIA/dibisi_tutemosi.png' },
+    ],
+    aiji: [
+        { generalId: 'aiji_neiketaneibu', generalName: '内克塔内布', portrait: '' },
+        { generalId: 'aiji_lameisisi', generalName: '拉美西斯', portrait: '/assets/WEST_ASIA/aiji_lameixisi.png' },
+    ],
     tuolemi: { generalId: 'tuolemi_tuolemi', generalName: '托勒密一世', portrait: '/assets/WEST_ASIA/tuolemi_tuolemi.png' },
     jialedi: { generalId: 'jialedi_nibujianisa', generalName: '尼布甲尼撒', portrait: '/assets/WEST_ASIA/jialedi_nibujianisa.png' },
     paermila: { generalId: 'paermila_zhinuobiya', generalName: '芝诺比娅', portrait: '/assets/WEST_ASIA/paermila_zhinuobiya.png' },
     abasi: { generalId: 'abasi_mansuer', generalName: '曼苏尔', portrait: '/assets/WEST_ASIA/abasi_mansuer.png' },
     samaila: { generalId: 'samaila_muataisuimu', generalName: '穆阿台绥姆', portrait: '/assets/CENTRAL_ASIA/samaila_muataisuimu.png' },
-    xikesuosi: { generalId: 'xikesuosi_salidi', generalName: '萨利蒂', portrait: '/assets/WEST_ASIA/xikesuosi_salidi.png' },
+    xikesuosi: [
+        { generalId: 'xikesuosi_samutike', generalName: '萨姆提克', portrait: '' },
+        { generalId: 'xikesuosi_salidi', generalName: '萨利蒂', portrait: '/assets/WEST_ASIA/xikesuosi_salidi.png' },
+    ],
     yashu: { generalId: 'yashu_saergong', generalName: '萨尔贡', portrait: '/assets/WEST_ASIA/yashu_saergong.png' },
     youfaladi: { generalId: 'youfaladi_yehaiya', generalName: '叶海亚', portrait: '/assets/WEST_ASIA/youfaladi_yehaiya.png' },
     mamuluke: { generalId: 'mamuluke_baibaisi', generalName: '拜巴尔斯', portrait: '/assets/WEST_ASIA/mamuluke_baibaersi.png' },
@@ -1163,18 +1178,27 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
-    sumeier: { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
+    sumeier: [
+        { generalId: 'sumeier_nabopalasa', generalName: '那波帕拉萨', portrait: '' },
+        { generalId: 'sumeier_zhajixi', generalName: '扎吉西', portrait: '/assets/WEST_ASIA/sumeier_zhajixi.png' },
+    ],
     ayoubu: { generalId: 'ayoubu_salaheding', generalName: '萨拉赫丁', portrait: '/assets/WEST_ASIA/ayoubu_salaheding.png' },
     // ── 2026-08-04 新增：鲍德温（埃德萨伯国首任伯爵，后为耶路撒冷国王）──
     aosiruowen: { generalId: 'gen_abgar', generalName: '阿布加尔', portrait: '' },
     // 2026-07-27 补：打耳班/以弗所/安卡拉/亚述城 + 苏萨补将
-    ailan: { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png' },
+    ailan: [
+        { generalId: 'ailan_julushi', generalName: '居鲁士二世', portrait: '' },
+        { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png' },
+    ],
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
     // 公元前334年米利都围城战守将（波斯驻米利都守军统领，中文维基百科「米利都圍城戰」作赫格西斯特拉塔斯），立绘按铁律留空、待主人亲自放图分配
     yiaoniya: { generalId: 'yiaoniya_hegesistratus', generalName: '赫格西斯特', portrait: '/assets/GREEK/yiaoniya_hegexisite.png' },
     jialatai: { generalId: 'jialatai_deaota', generalName: '德奥塔鲁斯', portrait: '/assets/WEST_ASIA/jialatai_deaotalusi.png' },
-    guyashu: { generalId: 'guyashu_shamushi', generalName: '沙姆希阿达', portrait: '/assets/WEST_ASIA/guyashu_shamuxiada.png' },
+    guyashu: [
+        { generalId: 'guyashu_tigelate', generalName: '提格拉特', portrait: '' },
+        { generalId: 'guyashu_shamushi', generalName: '沙姆希阿达', portrait: '/assets/WEST_ASIA/guyashu_shamuxiada.png' },
+    ],
     ansxi: { generalId: 'ansxi_aershake', generalName: '阿尔沙克', portrait: '/assets/CENTRAL_ASIA/ansxi_aershake.png' },
     nabatai: { generalId: 'nabatai_aleitasi', generalName: '阿雷塔斯', portrait: '/assets/WEST_ASIA/nabatai_aleitasi.png' },
     xike: { generalId: 'xike_lanjite', generalName: '兰季特辛格', portrait: '/assets/INDIA/xike_lanjite.png' },
@@ -1249,7 +1273,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     aodesuosi: { generalId: 'aodesuosi_aodesuosi', generalName: '奥德索斯首领', portrait: '/assets/LATIN/aodesuosi_aodesuosi.png' },
     disidelusi: { generalId: 'disidelusi_disidelusi', generalName: '蒂斯德鲁斯督造', portrait: '/assets/LATIN/disidelusi_disidelusi.png' },
     yisatisi: { generalId: 'yisatisi_falukezhade', generalName: '法鲁克扎德', portrait: '/assets/CENTRAL_ASIA/yisatisi_yisatisi.png' },
-    wuer: { generalId: 'wuer_wuernamu', generalName: '乌尔纳姆', portrait: '/assets/CENTRAL_ASIA/wuer_wuernamu.png' },
+    wuer: [
+        { generalId: 'wuer_boshasha', generalName: '伯沙撒', portrait: '' },
+        { generalId: 'wuer_wuernamu', generalName: '乌尔纳姆', portrait: '/assets/CENTRAL_ASIA/wuer_wuernamu.png' },
+    ],
     pidisha: { generalId: 'pidisha_pidisha', generalName: '毗底沙邑长', portrait: '/assets/INDIA/pidisha_pidisha.png' },
     jiaye: { generalId: 'jiaye_punafamo', generalName: '普那伐摩', portrait: '/assets/INDIA/jiaye_jiaye.png' },
     jienei: { generalId: 'jienei_jienei', generalName: '杰内领主', portrait: '/assets/AFRICA/jienei_jienei.png' },
@@ -1296,7 +1323,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 公元前329年锡尔河战役斯基泰骑兵领袖，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'sijitai_satraces', generalName: '萨特拉克斯', portrait: '/assets/STEPPE/sijitai_satraces.png' },
     ],
-    yamaxun: { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
+    yamaxun: [
+        { generalId: 'yamaxun_faernake', generalName: '法尔纳克', portrait: '' },
+        { generalId: 'yamaxun_xibolvte', generalName: '希波吕忒', portrait: '/assets/GREEK/yamaxun_xibolvte.png' },
+    ],
     wangdaer: { generalId: 'gen_bonifatius', generalName: '博尼法提乌斯', portrait: '' },
     // 公元前327年马萨加战役守帅（阿萨卡诺伊/阿斯瓦卡女王克莱奥菲斯），立绘按铁律留空走回落、待主人亲自放图分配
     aswaka: { generalId: 'aswaka_cleophis', generalName: '克莱奥菲斯', portrait: '/assets/INDIA/aswaka_kelaiaofeisi.png' },
@@ -1354,7 +1384,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]
  *  势力可以挂**多个将**：本表现在允许值是「单个将」或「将的数组」两种写法（老数据一字不用改）。
- *  · 取「该势力的守将」= 数组**第一个**（`getFactionGeneral`）；
+ *  · 取「该势力的守将」= 优先取当前在场（登场～退场）的将，无在场或乱斗则取数组**第一个**（`getFactionGeneral`）；
  *  · 取全部 = `getFactionGenerals`；
  *  · `generalId → 档案` 的反查（F2 立绘 / 名牌）照样一份索引里全找得到。
  */
@@ -1367,9 +1397,10 @@ export function getFactionGenerals(factionId: string): FactionGeneral[] {
     return Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
 }
 
-/** 取某势力的开局名将（多个将时取**第一个**）；未配置返回 null（该势力不带将） */
+/** 取某势力的开局名将（多个将时优先取当前在场的将，否则取**第一个**）；未配置返回 null（该势力不带将） */
 export function getFactionGeneral(factionId: string): FactionGeneral | null {
-    const general = getFactionGenerals(factionId)[0];
+    const list = getFactionGenerals(factionId);
+    const general = list.find((g) => isGeneralOnStage(g.generalId)) ?? list[0];
     if (!general) return null;
     const portrait = _generalPortraitOverrides[general.generalId] ?? general.portrait;
     return {

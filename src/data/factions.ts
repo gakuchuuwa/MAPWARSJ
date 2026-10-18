@@ -12,7 +12,7 @@ export const FACTIONS: Faction[] = [
 
   { id: 'boootiya', name: '波奥蒂亚' },
   { id: 'luodesi', name: '多德卡尼斯' },
-  { id: 'kelite', name: '克里特' },
+  { id: 'kelite', name: '威尼斯共和国' },  // 干地亚要塞·威尼斯海外领地
   { id: 'leangongguo', name: '莱昂' },
   { id: 'bohepingyuan', name: '威尼托' },
   { id: 'xixiliwangguo', name: '西西里' },
@@ -170,7 +170,7 @@ export const FACTIONS: Faction[] = [
   { id: 'baizanting', name: '拜占庭' },
   { id: 'taolika', name: '陶里卡' },
   { id: 'bosi_puluosi', name: '博斯普鲁斯' },
-  { id: 'kelimiya', name: '克里米亚' },
+  { id: 'kelimiya', name: '热那亚共和国' },  // 卡法·热那亚黑海殖民地（Gazaria）
 
   { id: 'keluodiya', name: '克罗地亚' },
   { id: 'mengtainiya', name: '蒙泰尼亚' },
@@ -1949,9 +1949,9 @@ export const FACTIONS: Faction[] = [
     { id: 'aztec', name: '阿兹特克' },        // 特诺奇提特兰·阿兹特克帝国
     { id: 'fodejiao', name: '佛得角' },  // 别名：Cabo Verde，葡属西非外海群岛，首府里贝拉格兰德
   { id: 'baiyiya', name: '巴伊亚' },  // 别名：Bahia，葡属巴西都督府，治所萨尔瓦多
-  { id: 'tupinijin', name: '图皮尼金' },  // 别名：Tupiniquim，圣维森特一带原住民，与瓜纳巴拉的图皮(塔莫约)相区分
-  { id: 'tuotuonake', name: '托托纳克' },  // 别名：韦拉克鲁斯中部原住民（Totonac），都城森波阿拉
-  { id: 'taino', name: '泰诺人' },  // 别名：古巴/大安的列斯原住民（Taíno）
+  { id: 'tupinijin', name: '葡属巴西' },  // 圣维森特·1532 葡属巴西首座永久拓殖镇
+  { id: 'tuotuonake', name: '西属墨西哥' },  // 韦拉克鲁斯·1519 科尔特斯西属墨西哥桥头堡
+  { id: 'taino', name: '西属古巴' },  // 哈瓦那·1519 贝拉斯克斯西属古巴殖民首府
   { id: 'guanche', name: '关切人' },  // 别名：加那利群岛原住民（Guanches），柏柏尔系
   { id: 'chamorro', name: '查莫罗' },  // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 马里亚纳群岛原住民（Chamorro），主邑阿加尼亚；此处民族发源核心，故以民族命名（旗号「查」）
   { id: 'yasuer', name: '亚速尔' },  // 别名：Azores，葡属大西洋群岛，首府安格拉
@@ -1972,7 +1972,7 @@ export const FACTIONS: Faction[] = [
     { id: 'manzheboyi', name: '满者伯夷' },        // 特罗武兰·满者伯夷王朝（加查马达）
     { id: 'zhelouqi', name: '遮娄其' },        // 阿杰梅尔·乔汉(遮娄其)王朝（普里特维）
     { id: 'suosuo', name: '索索' },        // 库姆比萨利赫·索索帝国（苏曼古鲁）
-    { id: 'antiaokegongguo', name: '安条克公国' },        // 拉塔基亚·安条克公国（博希蒙德）
+    { id: 'antiaokegongguo', name: '赞吉王朝' },        // 拉塔基亚·努尔丁赞吉王朝叙利亚海岸
     { id: 'aoerlianggongguo', name: '奥尔良公国' },        // 兰斯·奥尔良公国（贞德）
     { id: 'jinquehua', name: '金雀花' },        // 卡那封·金雀花王朝（长腿爱德华）
     { id: 'apuliya', name: '阿普利亚' },        // 梅尔菲·阿普利亚公爵国（吉斯卡尔）
@@ -2089,7 +2089,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jialiboli', name: '加里波利' },  // 鲁西翁·加里波利（奥斯曼加里波利桑贾克辖境含 Keşan 一带，鲁西翁在其中）
     { id: 'naxos_ancient', name: '纳克索斯' },
     { id: 'sijitai', name: '斯基泰' },
-    { id: 'wangdaer', name: '汪达尔' },
+    { id: 'wangdaer', name: '西罗马' },  // 希波·博尼法提乌斯西罗马阿非利加守军
     { id: 'yamaxun', name: '亚马逊' },
     { id: 'aswaka', name: '阿斯瓦卡' },  // 斯瓦特·马萨加（阿萨卡诺伊王族）· 公元前327年「马萨加战役」守方
     { id: 'malli', name: '马利' },  // 摩罗婆·马里斯（木尔坦卫城）· 公元前325年「马里斯战役」守方

@@ -8126,6 +8126,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.02,
             "offsetX": 0,
             "offsetY": -3
+        },
+        "/assets/AFRICA/__闲置__AFRICA_03.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -2
         }
     },
     "folderGuides": {

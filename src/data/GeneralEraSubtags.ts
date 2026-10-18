@@ -47,6 +47,7 @@ export const GENERAL_ERA_SUBTAG: Readonly<Record<string, GeneralEraSubtag>> = { 
     'mi_chu_xionglv': 'pre_qin',       // 熊旅 · 安陆 · 登场 -606
     'kong_d_caogui': 'pre_qin',        // 曹刿 · 鲁国 · 登场 -695
     'yong_lujili': 'pre_qin',          // 庐戢黎 · 庸国 · 登场 -635
+    'zhou_jifu': 'pre_qin',            // 吉甫 · 周国 · 登场 -832
 };
 
 /** 取某武将的细分标签（无则 null） */
