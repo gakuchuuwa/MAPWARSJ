@@ -1123,7 +1123,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             <label><span>势力 ID</span><input value="${row!.id}" readonly /></label>
             <label><span>势力名称</span><input name="factionName" value="${row!.name}" required /></label>
           </div>
-          <label><span>旗号 (1-2字)</span><input name="flagText" value="${row!.flagText ?? ''}" maxlength="4" required /></label>
+          <label><span>旗号 (1-2字)</span><input name="flagText" value="${row!.flagText ?? ''}" maxlength="2" required /></label>
           <div class="form-row">
             <label><span>据点 ID</span><input value="${row!.cityId ?? ''}" readonly /></label>
             <label><span>据点名称</span><input name="cityName" value="${row!.cityName ?? ''}" required /></label>
@@ -2152,7 +2152,7 @@ async function runSkillCoverageCheck(): Promise<void> {
     }
 }
 
-/** 名称审计（2026-08-03 主人定，2026-09-11 主人修订）：精锐 ≤5 字、武将/势力/据点 ≤9 字，均全局不重名。
+/** 名称审计（2026-08-03 主人定，2026-09-11 主人修订）：精锐 ≤5 字、旗号 1–2 字、武将/势力/据点 ≤9 字，均全局不重名。
  *  武将名分层标准：①本名/本名+序数（阿方索六世、腓特烈二世）——本身就是大众熟知叫法，用之；
  *  ②通用历史符号型称呼（成吉思汗、熙德、黑太子、巴巴罗萨）——大众比本名更熟且称呼已成通用名，用之；
  *  ③纯描述性绰号/封号（勇敢者、沉默者、救主、左贤王）——不像名字看不出是谁，必须用本名。 */
@@ -2192,6 +2192,13 @@ function runNameAudit(): void {
         else facByName.set(f.name, f.id);
     }
 
+    // 旗号（1–2 字；2026-10-18 收紧）
+    for (const [fid, flag] of Object.entries(ed.flags ?? {})) {
+        const n = String(flag ?? '');
+        if (!n) continue;
+        if ([...n].length > 2) problems.push({ level: 'error', msg: `旗号超2字: "${n}"(${[...n].length}字) @ ${fid}（${facNameOf(fid)}）` });
+    }
+
     // 据点名
     const cityByName = new Map<string, string>();
     for (const c of ed.cities) {
@@ -2203,18 +2210,18 @@ function runNameAudit(): void {
     const errs = problems.filter(p => p.level === 'error').length;
     problems.push({
         level: errs === 0 ? 'info' : 'warn',
-        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；精锐 ≤5 字、武将/势力/据点 ≤9 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
+        msg: `名称审计：武将 ${Object.keys(ed.generals).length} · 精锐 ${Object.keys(ed.elites).length} · 势力 ${ed.factions.length} · 据点 ${ed.cities.length}；精锐 ≤5 字、旗号 1–2 字、武将/势力/据点 ≤9 字、全局不重名${errs === 0 ? '，全部合规 ✓' : `，${errs} 处违规`}`,
     });
 
     issues = problems;
-    els.validationTitle.textContent = '名称审计（精锐≤5 · 武将/势力/据点≤9 · 不重名）';
+    els.validationTitle.textContent = '名称审计（精锐≤5 · 旗号1–2 · 武将/势力/据点≤9 · 不重名）';
     renderValidation();
     els.validation.style.display = 'block';
     applyFilter();
     renderTable();
     updateStats();
     showToast(
-        errs === 0 ? '✓ 全部名称合规（精锐≤5字、武将/势力/据点≤9字、无重名）' : `名称违规：${errs} 处（超字数/重名）`,
+        errs === 0 ? '✓ 全部名称合规（精锐≤5字、旗号1–2字、武将/势力/据点≤9字、无重名）' : `名称违规：${errs} 处（超字数/重名）`,
         errs > 0,
     );
 }
@@ -2493,6 +2500,7 @@ function setView(mode: 'entities' | 'cities'): void {
 
 function filterCities(): Array<EntityData['cities'][number] & { hierarchy: CityBase16Resolution }> {
     const q = citySearch.toLowerCase();
+    const factionNameMap = new Map((entityData?.factions ?? []).map(f => [f.id, f.name]));
     const all = cityList().map(c => ({
         ...c,
         hierarchy: resolveCityHierarchy(c),
@@ -2506,7 +2514,11 @@ function filterCities(): Array<EntityData['cities'][number] & { hierarchy: CityB
             if (c.hierarchy.base16 !== cityStyleFilter) return false;
         }
         if (!q) return true;
-        return `${c.name} ${c.id} ${c.factionId} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.hierarchy.base16} ${c.hierarchy.base16Name} ${c.hierarchy.branchKey ?? ''} ${c.hierarchy.branchName ?? ''} ${c.note ?? ''}`
+        const fName = factionNameMap.get(c.factionId) ?? '';
+        const flag = entityData?.flags?.[c.factionId] ?? '';
+        const genName = entityData?.generals?.[c.factionId]?.generalName ?? '';
+        const eliteName = entityData?.elites?.[c.factionId]?.name ?? '';
+        return `${c.name} ${c.id} ${c.factionId} ${fName} ${flag} ${genName} ${eliteName} ${c.region ?? ''} ${c.buildingStyle ?? ''} ${c.hierarchy.base16} ${c.hierarchy.base16Name} ${c.hierarchy.branchKey ?? ''} ${c.hierarchy.branchName ?? ''} ${c.note ?? ''}`
             .toLowerCase().includes(q);
     });
 }
@@ -2514,10 +2526,12 @@ function filterCities(): Array<EntityData['cities'][number] & { hierarchy: CityB
 function renderCityTable(): void {
     const list = filterCities();
     const typeCn = new Map(CITY_TYPES);
+    const factionNameMap = new Map((entityData?.factions ?? []).map(f => [f.id, f.name]));
     const tbody = list.map(c => {
         const sel = c.id === selectedCityId ? ' class="selected"' : '';
         const note = (c.note ?? '').slice(0, 24);
         const h = c.hierarchy;
+        const fName = factionNameMap.get(c.factionId);
         // 🔴 [2026-09-18 主人定] 这一列改显示「**游戏实际采用的建筑风格**」（走游戏唯一解析源），
         //    不再显示 region 原值 —— region 被两种语义混用过（二/三层键 与 文化区名），
         //    直接展示会让人误以为据点该选"文化区"。据点只认建筑风格三级，文化区不做可选风格。
@@ -2532,7 +2546,7 @@ function renderCityTable(): void {
             <td class="cell-region" style="font-weight:700;color:#f5d78e">${h.base16Emoji} ${h.base16Name} (${h.base16})</td>
             <td>${branchHtml}</td>
             <td class="cell-region">${gameStyle ? `<span style="color:#8fd6a0;font-weight:600">${gameStyle}</span>` : '<span class="cell-miss">✗</span>'}</td>
-            <td>${c.factionId}</td>
+            <td>${fName ? `${fName} <span class="cell-region">(${c.factionId})</span>` : c.factionId}</td>
             <td>${c.troops ?? ''}</td>
             <td class="cell-region">${c.lat?.toFixed(2)}, ${c.lng?.toFixed(2)}</td>
             <td class="cell-region" title="${(c.note ?? '').replace(/"/g, '&quot;')}">${note}</td>

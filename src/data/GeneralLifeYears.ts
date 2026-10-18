@@ -615,7 +615,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     bayegu_qulishi: { birth: 650, death: 705, kaoju: '推定' },  // 屈利失
     zubu_mogusi: { birth: 1055, death: 1100, kaoju: '推定' },  // 磨古斯
     wuzhumuqin_duoerji: { birth: 1610, death: 1668, kaoju: '推定' },  // 多尔济
-    baidi_baidizi: { birth: -580, death: -525, kaoju: '推定' },  // 白狄
+    baidi_baidizi: { birth: -580, death: -525, kaoju: '推定' },  // 白狄子
     shiwei_saihou: { birth: 660, death: 720, kaoju: '推定' },  // 塞呴
     sunite_sousai: { birth: 1605, death: 1663, kaoju: '推定' },  // 叟塞
     bulat_beiduanchaer: { birth: 900, death: 960, kaoju: '推定' },  // 孛端察儿
@@ -1120,12 +1120,12 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     yilisi_yifeituosi: { birth: -800, death: -750, kaoju: '推定' },  // 伊菲托斯
     nuowei_halaer: { birth: 850, death: 933, kaoju: '推定' },  // 哈拉尔
     keernuwaye_geladelong: { birth: 450, death: 510, kaoju: '推定' },  // 格拉德隆
-    aodesuosi_aodesuosi: { birth: -400, death: -335, kaoju: '推定' },  // 奥德索斯
-    disidelusi_disidelusi: { birth: 150, death: 215, kaoju: '推定' },  // 蒂斯德鲁斯
+    aodesuosi_aodesuosi: { birth: -400, death: -335, kaoju: '推定' },  // 奥德索斯首领
+    disidelusi_disidelusi: { birth: 150, death: 215, kaoju: '推定' },  // 蒂斯德鲁斯督造
     yisatisi_falukezhade: { birth: 625, death: 685, kaoju: '推定' },  // 法鲁克扎德
-    pidisha_pidisha: { birth: -200, death: -140, kaoju: '推定' },  // 毗底沙
+    pidisha_pidisha: { birth: -200, death: -140, kaoju: '推定' },  // 毗底沙邑长
     jiaye_punafamo: { birth: 415, death: 475, kaoju: '推定' },  // 普那伐摩
-    jienei_jienei: { birth: 950, death: 1020, kaoju: '推定' },  // 杰内
+    jienei_jienei: { birth: 950, death: 1020, kaoju: '推定' },  // 杰内领主
     gen_basarab_i: { birth: 1270, death: 1352 },  // 巴萨拉布
     muwaxide_yakubu: { birth: 1160, death: 1199, kaoju: '推定' },  // 雅库布
     varendra_devapala: { birth: 788, death: 850, kaoju: '推定' },  // 提婆波罗
@@ -1217,6 +1217,15 @@ export function debutYearOf(birth: number, death: number): number {
     let y = birth + 20;
     if (birth < 0 && y >= 0) y += 1;   // 无 0 年：0 → 公元 1 年
     return Math.min(y, death);
+}
+
+/**
+ * 由生年推百岁消失年（🔴 [2026-10-18 主人定] 百岁模式：生年 + 100 消失，跳过不存在的公元 0 年）。
+ */
+export function centenarianYearOf(birth: number): number {
+    let y = birth + 100;
+    if (birth < 0 && y >= 0) y += 1;   // 无 0 年：0 → 公元 1 年
+    return y;
 }
 
 /** 登场年（未收录返回 null）；条目里写了 `debut` 的例外以 `debut` 为准 */

@@ -18,7 +18,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     // ══════ STEPPE（103 人，已标 0）══════
     'ashide_ashidejieli': 7,                            // 阿史德颉利 · ashide · 黑沙城
     'ashina_ashinayandou': 6,                           // 阿史那燕都 · ashina · 金微山
-    'baidi_baidizi': -6,                                 // 白狄 · baidi · 集宁
+    'baidi_baidizi': -6,                                 // 白狄子 · baidi · 集宁
     'bayegu_qulishi': 7,                                // 屈利失 · bayegu · 稽落山
     'borjigin_tuolei': 13,                               // 拖雷 · borjigin · 曲雕阿兰
     'bulat_beiduanchaer': 10,                            // 孛端察儿 · bulat · 石勒喀城
@@ -1059,7 +1059,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_panangkaran':                   8,     // 帕南卡兰 · medang · 夏连特拉王朝国王（746-784在位）
     'gen_mihirabhoja':                   9,     // 迷企罗波阇 · gurjara · 普腊蒂哈腊帝国皇帝（836-885在位）
     'zhuluo_lajindela':                  11,    // 拉金德拉一世 · zhuluo · 朱罗帝国大帝远征南洋（1014-1044在位）
-    'jienei_jienei':                     10,    // 杰内 · jienei · 西非杰内古城中世纪早期领主
+    'jienei_jienei':                     10,    // 杰内领主 · jienei · 西非杰内古城中世纪早期领主
     'nuowei_halaer':                     9,     // 哈拉尔一世 · nuowei · 金发哈拉尔统一挪威（872-930在位）
     'sashan_aerdaxier':                  3,     // 阿尔达希尔一世 · sashan · 萨珊波斯开国君主（224-242在位）
     'gen_ezana':                         4,     // 埃扎纳 · ethiopia · 阿克苏姆帝国定教大帝（320-360在位）
@@ -1103,9 +1103,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约公元前24年）
     'jiaye_jiaye':                       1,     // 金首露/伽耶 · jiaye · 伽耶开国君主（公元1世纪）
     'jiaye_punafamo':                    7,     // 普那伐摩 · jiaye · 摩揭陀国王护持菩提伽耶（7世纪初）
-    'pidisha_pidisha':                   -2,    // 毗底沙 · pidisha · 巽伽王朝陪都名邑（前2世纪）
-    'aodesuosi_aodesuosi':               -4,    // 奥德索斯 · aodesuosi · 黑海希腊殖民城邦首领（前4世纪）
-    'disidelusi_disidelusi':             2,     // 蒂斯德鲁斯 · disidelusi · 罗马阿非利加行省竞技场督造官（2世纪）
+    'pidisha_pidisha':                   -2,    // 毗底沙邑长 · pidisha · 巽伽王朝陪都名邑（前2世纪）
+    'aodesuosi_aodesuosi':               -4,    // 奥德索斯首领 · aodesuosi · 黑海希腊殖民城邦首领（前4世纪）
+    'disidelusi_disidelusi':             2,     // 蒂斯德鲁斯督造 · disidelusi · 罗马阿非利加行省竞技场督造官（2世纪）
     'yisatisi_yisatisi':                 -6,    // 伊萨提斯 · yisatisi · 古波斯行省总督（前6世纪）
     'yisatisi_falukezhade':              7,     // 法鲁克扎德 · yisatisi · 萨珊波斯末期将领（7世纪中叶）
     'keernuwaye_geladelong':             5,     // 格拉德隆 · keernuwaye · 凯尔特布列塔尼科努瓦耶国王（5世纪）
