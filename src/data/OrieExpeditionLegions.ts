@@ -20,7 +20,7 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     xikesuosi: { name: '喜克索战车', tier: 2 },    // 阿瓦里斯·萨利蒂：复合弓＋战车征服并统治下埃及百余年
     paermila: { name: '帕尔米拉骑', tier: 2 },     // 塔德莫尔·芝诺比娅：亲统重装弓骑（clibanarii）夺取埃及与小亚
     dibisi: { name: '阿蒙神卫队', tier: 2 },         // 瓦塞特（上埃及·底比斯）·图特摩斯：以阿蒙神命名的新王国常备军团
-    aosiruowen: { name: '伯国骑士', tier: 3 },       // 埃德萨·鲍德温：十字军埃德萨伯国骑军（风土/建制符号；无独立战略大捷故 T3）
+    aosiruowen: { name: '埃德萨骑射', tier: 2 },     // 埃德萨·阿布加尔：奥斯若恩本地骑射
 
     // ── T3 风土之兵 ──
     nabatai: { name: '香路驼骑', tier: 3 },        // 佩特拉·阿雷塔斯：商道驼骑，沙漠机动兵种特色鲜明
@@ -30,7 +30,7 @@ export const ORIE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionC
     maidina: { name: '麦地那骑兵', tier: 3 },      // 麦地那·哈立德：其出征所本的早期穆斯林骑兵，文化符号显著
     emesene: { name: '阿尤布重骑', tier: 1 },      // 🔴 [2026-10-04 建埃梅萨] 埃梅萨（今霍姆斯）·希尔库赫：阿尤布重装骑兵（霍姆斯公国即其家族所开）
     sailiugu: { name: '塞琉古方阵', tier: 3 },     // 安提俄基亚·安条克：塞琉古银盾方阵，希腊化重步代表
-    antiaokegongguo: { name: '安条克骑', tier: 2 },  // 拉塔基亚·博希蒙德：诺曼十字军骑（1098首占安条克）
+    antiaokegongguo: { name: '努尔丁铁卫', tier: 1 }, // 拉塔基亚·努尔丁：赞吉王朝古拉姆重骑与叙利亚守军
     womaya: { name: '倭马亚卫', tier: 3 },         // 大马士革·穆阿维叶：其建都之地的哈里发近卫，文化辨识度高
 
     // ── T4 存在之兵 ──

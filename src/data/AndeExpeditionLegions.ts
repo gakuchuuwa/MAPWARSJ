@@ -11,7 +11,7 @@ export const ANDE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: stri
     muisca: { name: '格查战士', tier: 3 },       // 巴卡塔·萨瓜曼奇卡：穆伊斯卡精锐战士（木乃伊传统）
     tupi: { name: '图皮战士', tier: 4 },         // 瓜纳巴拉·阿拉里博亚：图皮弓手
     baiyiya: { name: '索萨远征队', tier: 3 },    // 萨尔瓦多·托梅：托梅·德·索萨 1549 率王室远征队建萨尔瓦多
-    tupinijin: { name: '图皮尼金弓', tier: 2 },  // 圣维森特·蒂巴里萨：1562 皮拉蒂宁加之战击退塔莫约联军
+    tupinijin: { name: '巴西拓殖卫', tier: 4 },  // 圣维森特·马丁·阿方索：1532 葡属巴西首座拓殖镇守军
     xibanya: { name: '征服者', tier: 1 },        // 利马·皮萨罗：西班牙火枪骑兵（征服印加）
     aimala: { name: '艾马拉战士', tier: 4 },
     yilaka: { name: '圭查武士', tier: 3 },

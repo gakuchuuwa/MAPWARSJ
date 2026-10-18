@@ -23,7 +23,7 @@ export const GREEK_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     // ── T3 风土之兵 ──
     kejila: { name: '西波塔舰', tier: 3 },          // 科孚·舒伦堡：前 433 西波塔海战；避势力「科基拉」叠字
     talanduo: { name: '塔兰丁骑', tier: 3 },            // 塔兰托·阿契塔
-    kelite: { name: '克里特弓手', tier: 3 },          // 诺索斯·福卡斯：961 收复克里特；希腊世界最著名雇佣兵
+    kelite: { name: '干地亚血卫', tier: 1 },          // 干地亚·莫罗西尼：1669 威尼斯干地亚血战守军
 
     // ── T4 存在之兵 ──
     xilagu: { name: '希腊重步兵', tier: 4 },          // 锡拉库萨·阿加索克利

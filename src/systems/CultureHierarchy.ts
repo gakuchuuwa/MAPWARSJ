@@ -72,7 +72,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
             { key: 'WEI',       deStyle: 'ASIA', castle: 'WEI_CASTLE_AGE3',  label: '🏯 河朔（中原高台阙楼）' },
             { key: 'JIANGNAN',  deStyle: 'ASIA', castle: 'WU_CASTLE_AGE3',   label: '🏯 江南（江南水榭坞堡）' },
             { key: 'BASHU',     deStyle: 'ASIA', castle: 'SHU_CASTLE_AGE3',  label: '🏯 巴蜀（巴蜀剑阁木关）' },
-            { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3', label: '🏯 河西（辽式边墙要塞）' },
+            { key: 'KHITAN',    deStyle: 'ASIA', castle: 'KHIT_CASTLE_AGE3', label: '🏯 河西（边墙要塞）' },
             { key: 'NORTHEAST', deStyle: 'ASIA', castle: 'JURC_CASTLE_AGE3', label: '🏯 白山黑水（居庸金代山城）' },
             // 🔴 [2026-10-05 主人定「二级里代表 DE 可玩文明 Mongols 蒙古的是 MONGOL，对应的文明就是漠北蒙古，
             //    蒙古起源就是漠北；然后三级新建一个漠南鲜卑」]
@@ -293,7 +293,7 @@ ALL_BRANCHES_MAP['NORTH'] = ALL_BRANCHES_MAP['CENTRAL'];
  *   原为 `ALL_BRANCHES_MAP['HEXI'] = ALL_BRANCHES_MAP['WESTERN']`（把河西当西域）。
  *   它与游戏自己那两张表**直接打架**（实测）：
  *     · cityDeStyle.REGION_TO_DE_STYLE['HEXI'] = 'ASIA'      → 游戏按【东亚】素材渲染
- *     · deCastleAssets.REGION_CASTLE['HEXI'] = 'KHIT_CASTLE_AGE3' → 河西的险要城堡是【契丹】辽式边墙要塞
+ *     · deCastleAssets.REGION_CASTLE['HEXI'] = 'KHIT_CASTLE_AGE3' → 河西的险要城堡是【河西】边墙要塞
  *     · CultureBase16.HEXI = 'CENTRAL' → 经 REGION_TO_DE_STYLE['CENTRAL']='ASIA' 同样落到东亚
  *   留着它 → 玉门关/姑臧/青海 8 座在编辑器里显示成「中亚 CEAS · 西域」，
  *   而游戏里画的是东亚素材 + 契丹城堡 —— 「看着和游戏不一致」就是这么来的。

@@ -1108,6 +1108,13 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_hurao: { birth: 1610, death: 1684, kaoju: '推定' },  // 胡劳
     gen_noli: { birth: 1410, death: 1475, kaoju: '推定' },  // 诺利
     gen_tome_sousa: { birth: 1503, death: 1549, kaoju: '异说' },  // 托梅
+    gen_cortes: { birth: 1485, death: 1547, kaoju: '异说' },  // 科尔特斯
+    gen_velazquez: { birth: 1465, death: 1524, kaoju: '异说' },  // 贝拉斯克斯
+    gen_martim_afonso: { birth: 1500, death: 1564, kaoju: '异说' },  // 马丁·阿方索
+    gen_morosini: { birth: 1619, death: 1694, kaoju: '异说' },  // 莫罗西尼
+    gen_nur_ad_din: { birth: 1118, death: 1174, kaoju: '异说' },  // 努尔丁
+    gen_abgar: { birth: -25, death: 50, kaoju: '推定' },  // 阿布加尔五世
+    gen_bonifatius: { birth: 360, death: 432, kaoju: '异说' },  // 博尼法提乌斯
     gen_cipriano_figueiredo: { birth: 1540, death: 1605, kaoju: '推定' },  // 西普里亚诺
     liaozu_saitatila: { birth: 1534, death: 1571 },  // 赛塔提腊
     kushi_amanilunnasi: { birth: -60, death: -20, kaoju: '异说' },  // 阿玛尼伦纳斯
