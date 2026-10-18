@@ -2,16 +2,6 @@ import { GameConfig } from '../config/GameConfig';
 import { perfDoctor } from './PerfDoctor';
 import { audioManager } from '../audio/AudioManager';
 
-/** F3 面板点击「♪ BGM」行 → 复制当前曲名（可读曲名 + 文件夹键），方便反馈调音量/删除 */
-(window as unknown as { __copyBgm: () => void }).__copyBgm = () => {
-    const b = audioManager.getBgmStatus();
-    if (!b) return;
-    const text = `${b.title} [${b.folder}]`;
-    if (navigator.clipboard?.writeText) {
-        void navigator.clipboard.writeText(text).catch(() => {});
-    }
-};
-
 /**
  * PerformanceMonitor — 运行时性能监控面板
  *
@@ -90,6 +80,12 @@ export class PerformanceMonitor {
     private overlayEl: HTMLDivElement | null = null;
     private contentEl: HTMLDivElement | null = null;
 
+    // 🔴 [2026-10-18] 「点 ♪ BGM 行复制曲名」的反馈状态。
+    //   contentEl.innerHTML 每帧整块重建（endFrame → renderOverlay），行的 DOM 元素活不过一帧，
+    //   所以点击只能走 contentEl 上的 pointerdown 事件委托（contentEl 本身不重建）。
+    private bgmCopyFlashUntil = 0;
+    private bgmCopyFlashOk = false;
+
     // FPS / 帧时间滚动统计
     private readonly SAMPLE_SIZE = 60;          // 滚动 60 帧
     private frameTimes: number[] = [];
@@ -163,6 +159,7 @@ export class PerformanceMonitor {
 
     private constructor() {
         this.createOverlay();
+        this.setupContentInteractions();
         this.setupKeybind();
     }
 
@@ -596,6 +593,65 @@ ${content.innerText}`;
         this.contentEl = content;
     }
 
+    /**
+     * 面板内容区的事件委托。
+     *
+     * 🔴 [2026-10-18 修「F3 里复制曲子不生效」] 病灶：
+     *   `renderOverlay()` 在 `endFrame()` 里**每帧**执行一次，每次都 `contentEl.innerHTML = html`，
+     *   于是「♪ BGM」这一行每 16ms 就被销毁重建一次。真人点击按下→松开约 80~150ms，横跨七八帧：
+     *   mousedown 落在旧元素、mouseup 落在新元素，浏览器找不到共同祖先 → **click 事件根本不触发**，
+     *   行内 `onclick` 永远等不到。（实测：120ms 的点击 0 次触发；同帧内快点击 1 次触发。）
+     *   改法：监听挂在**不重建的 contentEl** 上，用 pointerdown 委托 —— 按下那一刻元素还在，
+     *   `closest()` 一定找得到，跟每帧重建无关。
+     */
+    private setupContentInteractions(): void {
+        const el = this.contentEl;
+        if (!el) return;
+        el.addEventListener('pointerdown', (ev: PointerEvent) => {
+            const target = ev.target as HTMLElement | null;
+            if (!target || typeof target.closest !== 'function') return;
+            if (target.closest('[data-perf-copy-bgm]')) {
+                this.copyBgmName();
+            }
+        });
+    }
+
+    /** 复制当前 BGM 曲名 + 文件夹键（供 F3 面板点击；控制台 `perMonitor.copyBgmName()` 也能直接调） */
+    public copyBgmName(): void {
+        const b = audioManager.getBgmStatus();
+        if (!b) return;
+        this.writeClipboardText(`${b.title} [${b.folder}]`);
+    }
+
+    /** 写剪贴板：优先 Clipboard API；非安全上下文/无权限时回落 textarea + execCommand，并回写面板反馈 */
+    private writeClipboardText(text: string): void {
+        const flash = (ok: boolean) => {
+            this.bgmCopyFlashOk = ok;
+            this.bgmCopyFlashUntil = performance.now() + 1500;
+            this.renderOverlay();
+        };
+        const fallback = () => {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                const ok = document.execCommand('copy');
+                ta.remove();
+                flash(ok);
+            } catch {
+                flash(false);
+            }
+        };
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(text).then(() => flash(true), fallback);
+        } else {
+            fallback();
+        }
+    }
+
     private setupKeybind(): void {
         document.addEventListener('keydown', (e: KeyboardEvent) => {
             // [2026-08-31] Shift+F3 = 卡顿诊断落盘（面向 AI 的结构化报告，见 src/debug/PerfDoctor.ts）。
@@ -737,12 +793,19 @@ ${content.innerText}`;
         //    正是最可能偏响/偏轻的那批（没做过响度拉平），标黄提醒。
         const bgm = audioManager.getBgmStatus();
         const duck = audioManager.getBgmDuckInfo();
+        // 🔴 [2026-10-18] 复制反馈：点完 1.5s 内显示「✓ 已复制 / ✗ 复制失败」。
+        //   不能用行内 onclick（那一行每帧重建，click 事件到不了），点击由 contentEl 的
+        //   pointerdown 委托接住，见 setupContentInteractions()。
+        const copyFlashed = performance.now() < this.bgmCopyFlashUntil;
+        const copyHint = copyFlashed
+            ? `<span style="color:${this.bgmCopyFlashOk ? '#6c6' : '#f44336'};margin-left:6px;font-size:10px;">${this.bgmCopyFlashOk ? '✓ 已复制' : '✗ 复制失败'}</span>`
+            : '<span style="color:#4a9;margin-left:6px;font-size:10px;">📋复制</span>';
         const bgmHtml = bgm
-            ? `<div style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;cursor:pointer;" title="点击复制曲名" onclick="__copyBgm()">
+            ? `<div data-perf-copy-bgm="1" style="margin-bottom:4px;padding:3px 0;border-top:1px solid #333;font-size:11px;cursor:pointer;" title="点击复制曲名（曲名 + 文件夹键）">
                 <span style="color:#888;">♪ BGM</span>
                 <span style="color:${bgm.paused ? '#f44336' : '#8fd18f'};margin-left:4px;">${bgm.title}</span>
                 <span style="color:#666;margin-left:4px;">[${bgm.folder}]</span>
-                <span style="color:#4a9;margin-left:6px;font-size:10px;">📋复制</span>
+                ${copyHint}
                 <div style="color:#9aa;margin-top:2px;">
                     补偿 <span style="color:${bgm.inGainTable ? '#ddd' : '#FF9800'};">${bgm.gain.toFixed(2)}${bgm.inGainTable ? '' : ' 未入表'}</span> ·
                     音量 <span style="color:#ddd;">${bgm.volume.toFixed(3)}</span> ·
