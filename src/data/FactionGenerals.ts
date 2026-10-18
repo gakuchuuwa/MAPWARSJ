@@ -1533,7 +1533,12 @@ export function getGeneralRecordByGeneralId(
     const fb = getFirstBattleByEnemySyntheticId(generalId);
     if (fb) {
         const refHit = fb.enemyGeneralId ? getGeneralIdIndex().get(fb.enemyGeneralId) : undefined;
-        const dedicated = refHit?.general.portrait ?? '';
+        const dedicated =
+            _generalPortraitOverrides[generalId]
+            ?? fb.enemyPortrait
+            ?? (fb.enemyGeneralId ? _generalPortraitOverrides[fb.enemyGeneralId] : undefined)
+            ?? refHit?.general.portrait
+            ?? '';
         return {
             generalId,
             generalName: resolveFirstBattleEnemyDisplayName(fb),
@@ -1553,10 +1558,11 @@ export function getGeneralRecordByGeneralId(
         //    立绘照旧走 resolveGeneralPortraitPath（战场人物的 portrait 通常留空 → 势力池/文化池回落）。
         const bfChar = getBattlefieldCharacter(generalId);
         if (!bfChar) return null;
+        const dedicated = _generalPortraitOverrides[generalId] ?? bfChar.portrait ?? '';
         return {
             generalId: bfChar.generalId,
             generalName: stageGeneralName(bfChar.generalId, bfChar.generalName, bfChar.factionId),
-            portrait: resolveGeneralPortraitPath(bfChar.portrait, {
+            portrait: resolveGeneralPortraitPath(dedicated, {
                 factionId: bfChar.factionId,
                 region: options?.region,
             }),

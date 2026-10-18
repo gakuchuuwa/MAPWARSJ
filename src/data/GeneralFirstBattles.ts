@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 武将首次会面·历史首战设定（GeneralFirstBattles）
  *
  * 规则：
@@ -55,6 +55,8 @@ export interface GeneralFirstBattle {
     enemyGeneralId?: string;
     /** 对手历史武将姓名（若为空则自动采用 `${enemyFactionName}武将`） */
     enemyGeneralName?: string;
+    /** 对手专属立绘路径（F2 绑定写入） */
+    enemyPortrait?: string;
     /** 对手历史配备兵力（10,000 ~ 100,000） */
     enemyTroops: number;
     /** 玩家首次会面时的历史场景对话 */
@@ -12460,5 +12462,16 @@ export function resolveFirstBattleEnemyDisplayName(fb: GeneralFirstBattle): stri
     const trimmed = fb.enemyGeneralName?.trim();
     if (trimmed) return trimmed;
     return `${fb.enemyFactionName}武将`;
+}
+
+// @ts-ignore
+if (import.meta.hot) {
+    // @ts-ignore
+    import.meta.hot.accept((newModule: any) => {
+        if (!newModule?.GENERAL_FIRST_BATTLES) return;
+        const target = GENERAL_FIRST_BATTLES as Record<string, GeneralFirstBattle>;
+        for (const key of Object.keys(target)) delete target[key];
+        Object.assign(target, newModule.GENERAL_FIRST_BATTLES);
+    });
 }
 

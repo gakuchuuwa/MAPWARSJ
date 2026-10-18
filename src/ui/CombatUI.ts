@@ -5384,7 +5384,20 @@ export class CombatUI {
                     throw new Error(result.error || `HTTP ${res.status}`);
                 }
                 // 绑定成功：用服务端返回的最终路径（而非源图路径）更新内存
+                const oldDestPath = bind.destPath;
                 const finalPath = result.portraitPath ?? bind.destPath;
+                if (finalPath !== oldDestPath) {
+                    const draftAdj = this.correctorData.images?.[oldDestPath];
+                    if (draftAdj) {
+                        this.correctorData.images = this.correctorData.images ?? {};
+                        this.correctorData.images[finalPath] = { ...draftAdj };
+                        delete this.correctorData.images[oldDestPath];
+                    }
+                    if (this.correctorDirtyPaths.has(oldDestPath)) {
+                        this.correctorDirtyPaths.delete(oldDestPath);
+                        this.correctorDirtyPaths.add(finalPath);
+                    }
+                }
                 registerPortraitPathRuntime(finalPath);           // 注入 KNOWN_PORTRAIT_PATHS
                 setGeneralPortraitOverride(bind.generalId, finalPath); // 更新将领立绘缓存
                 bind.destPath = finalPath;                        // 同步 staging 的 destPath
@@ -5398,6 +5411,9 @@ export class CombatUI {
             return true;
         } catch (err) {
             const msg = err instanceof Error ? err.message : String(err);
+            if (failedBind?.destPath) {
+                this.correctorDirtyPaths.delete(failedBind.destPath);
+            }
             // 丢弃已成功的 + 当前失败的这一张：失败张若留在 staging，每次关闭 F2 都会重试并失败，
             // 导致只能 Shift+Esc 才能退出的死循环。未尝试的其余张保留，下次关闭再试。
             const drop = failedBind ? [...committed, failedBind] : committed;
