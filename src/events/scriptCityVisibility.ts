@@ -25,7 +25,7 @@ import type { City, HistoricalEvent } from '../types/core';
 import { HISTORICAL_EVENT_SCRIPT, resolveEventBattlefieldId } from '../data/HistoricalEventScript';
 import { BATTLEFIELDS } from '../data/Battlefields';
 import { findEventSite } from '../data/eventSites';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
 import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
 import { isBattlefieldFought } from './battlefieldState';
@@ -99,8 +99,8 @@ export class ScriptCityVisibility {
         const cityPos = (id: string) => pos.get(id);
         const events = [...HISTORICAL_EVENT_SCRIPT]
             .sort((a, b) => a.year - b.year || (a.season ?? 0) - (b.season ?? 0));
-        // 🔴 先定出当前事件并置 currentComputed = true，再查 getCityAnchoredGeneral / cityExistsInYear：
-        //    否则 getCityAnchoredGeneral → getFactionGeneral → stageGeneralName → isGeneralOnStage
+        // 🔴 先定出当前事件并置 currentComputed = true，再查 getCityAnchoredGenerals / cityExistsInYear：
+        //    否则 getCityAnchoredGenerals → getFactionGeneralsResolved → stageGeneralName → isGeneralOnStage
         //    → scriptYearProvider → getCurrentEvent() 会重入 compute() 导致 Maximum call stack size exceeded。
         let current: HistoricalEvent | null = null;
         for (const ev of events) {
@@ -111,11 +111,12 @@ export class ScriptCityVisibility {
         this.currentEv = current;
         this.currentComputed = true;
 
-        // 武将 → 所在城（据点守将）
+        // 武将 → 所在城（据点守将，支持一据点多武将）
         const cityOfGeneral = new Map<string, string>();
         for (const c of cities) {
-            const g = getCityAnchoredGeneral(c.id);
-            if (g && !cityOfGeneral.has(g.generalId)) cityOfGeneral.set(g.generalId, c.id);
+            for (const g of getCityAnchoredGenerals(c.id)) {
+                if (!cityOfGeneral.has(g.generalId)) cityOfGeneral.set(g.generalId, c.id);
+            }
         }
 
         const out = new Set<string>();
@@ -273,7 +274,7 @@ export function findCurrentScriptEventCity(cities: City[]): City | null {
         // 有「军团出发据点」（写明的，或上一场打完的地方）就生在那里，否则在归属武将本城
         const startId = scriptEventStartCityId(ev, cities);
         if (startId) return cities.find((c) => c.id === startId) ?? null;
-        return cities.find((c) => getCityAnchoredGeneral(c.id)?.generalId === ev.generalId) ?? null;
+        return cities.find((c) => isGeneralAnchoredAtCity(c.id, ev.generalId)) ?? null;
     }
     return null;
 }

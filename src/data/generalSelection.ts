@@ -6,21 +6,37 @@
  * 🔴 [2026-09-15 主人定]「玩家找武将，改为兵多、名将，去掉其他的条件」——
  *    玩家选将已**另走** `comparePlayerGeneralsByPriority`（只看名将 + 兵多），不再共用本函数。
  */
-import { getCityAnchoredGeneral } from './CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals } from './CityGeneralBridge';
 import { getGeneralProfile } from './general-skills/profiles';
+import { isGeneralOnStage } from './generalOnStage';
 
 export interface GeneralCandidateLike {
     /** 兵力（军团出征传 armySize，玩家选将传 city.troops） */
     troops: number;
     /** 据点 id */
     cityId: string;
+    /** 指定武将 id（一据点多武将时传入当前挑选的那位武将） */
+    generalId?: string | null;
+}
+
+function bestAnchoredProfileForCity(cityId: string, preferredGeneralId?: string | null) {
+    if (preferredGeneralId) {
+        return getGeneralProfile(preferredGeneralId);
+    }
+    const gens = getCityAnchoredGenerals(cityId);
+    const onStage = gens.filter((g) => isGeneralOnStage(g.generalId));
+    const list = onStage.length > 0 ? onStage : gens;
+    for (const g of list) {
+        const p = getGeneralProfile(g.generalId);
+        if (p?.tier === 'famous') return p;
+    }
+    const first = list[0] ?? getCityAnchoredGeneral(cityId);
+    return first ? getGeneralProfile(first.generalId) : null;
 }
 
 export function compareGeneralsByPriority(a: GeneralCandidateLike, b: GeneralCandidateLike): number {
-    const ga = getCityAnchoredGeneral(a.cityId);
-    const gb = getCityAnchoredGeneral(b.cityId);
-    const pa = ga ? getGeneralProfile(ga.generalId) : null;
-    const pb = gb ? getGeneralProfile(gb.generalId) : null;
+    const pa = bestAnchoredProfileForCity(a.cityId, a.generalId);
+    const pb = bestAnchoredProfileForCity(b.cityId, b.generalId);
     // 无将（未录入档案）一律殿后
     if (!pa && !pb) return Math.random() - 0.5;
     if (!pa) return 1;
@@ -55,10 +71,8 @@ export function compareGeneralsByPriority(a: GeneralCandidateLike, b: GeneralCan
  *    那一套仍是军团出征（RecruitmentSystem）的判据，主人这次只改玩家这一侧。
  */
 export function comparePlayerGeneralsByPriority(a: GeneralCandidateLike, b: GeneralCandidateLike): number {
-    const ga = getCityAnchoredGeneral(a.cityId);
-    const gb = getCityAnchoredGeneral(b.cityId);
-    const pa = ga ? getGeneralProfile(ga.generalId) : null;
-    const pb = gb ? getGeneralProfile(gb.generalId) : null;
+    const pa = bestAnchoredProfileForCity(a.cityId, a.generalId);
+    const pb = bestAnchoredProfileForCity(b.cityId, b.generalId);
     // 无将（未录入档案）一律殿后
     if (!pa && !pb) return Math.random() - 0.5;
     if (!pa) return 1;

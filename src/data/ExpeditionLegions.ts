@@ -62,6 +62,7 @@ import { CUMAN_EXPEDITION_ELITE_LEGIONS } from './CumanExpeditionLegions';
 import { SCYTHIANS_EXPEDITION_ELITE_LEGIONS } from './ScythiansExpeditionLegions';
 import { SRIVIJAYA_EXPEDITION_ELITE_LEGIONS } from './SriVijayaExpeditionLegions';
 import { STARTING_CAPITALS } from './StartingCapitals';
+import { getRawGeneralByGeneralId } from './FactionGenerals';
 import { applyLegionCultureComposition, type LegionCompositionTarget } from '../types/CultureFormations';
 
 export type EliteTier = 0 | 1 | 2 | 3 | 4;
@@ -107,6 +108,69 @@ const ALL_FACTION_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
   ...SRIVIJAYA_EXPEDITION_ELITE_LEGIONS,
 };
 
+/**
+ * 🔴 [2026-10-19 主人定：「一个据点，一个势力，可以多个武将，一个武将一支精锐」]
+ * 同一据点（同一势力）下挂有多位武将时，每位武将各有专属精锐部队（≤5字、全局不重名）。
+ * 也可直接在 `FactionGenerals.ts` 的武将条目上写 `eliteName` / `eliteTier`。
+ */
+export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> = {
+  halikanasu_memnon: { name: '罗得雇佣军', tier: 2 },
+  dibisi_phoinix: { name: '卡德米亚军', tier: 3 },
+  maqidun_antipater: { name: '佩拉近卫军', tier: 2 },
+  maqidun_craterus: { name: '持盾卫队', tier: 1 },
+  jite_shouling: { name: '盖塔矛骑兵', tier: 3 },
+  xila_leosthenes: { name: '雅典同盟军', tier: 2 },
+  xila_antiphilus: { name: '阿提卡重步', tier: 3 },
+  shang_weiwuji: { name: '信陵死士', tier: 1 },
+  teluoyi_maniya: { name: '达尔丹卫军', tier: 3 },
+  sogdian_aokexiate: { name: '索格底翼兵', tier: 3 },
+  zhou_jifu: { name: '西六师', tier: 2 },
+  yin_yuejin: { name: '先登骁果', tier: 2 },
+  heti_alialate: { name: '哈吕斯重骑', tier: 3 },
+  xibolai_majiabi: { name: '哈斯蒙尼军', tier: 2 },
+  dibisi_tahaerka: { name: '库施神弓手', tier: 2 },
+  aiji_lameisisi: { name: '阿蒙皇家车', tier: 1 },
+  xikesuosi_samutike: { name: '塞易斯卫队', tier: 3 },
+  daliushi_iii: { name: '苹果兵卫队', tier: 2 },
+  aqimeinide_aertabazanuosi: { name: '波斯门守军', tier: 3 },
+  sumeier_nabopalasa: { name: '迦勒底重步', tier: 2 },
+  ailan_julushi: { name: '帕萨尔加德', tier: 1 },
+  guyashu_tigelate: { name: '亚述近卫车', tier: 1 },
+  boluo_vijaya: { name: '僧伽罗卫军', tier: 3 },
+  wuer_boshasha: { name: '巴比伦禁卫', tier: 3 },
+  sijitai_satraces: { name: '药杀水游骑', tier: 3 },
+  yamaxun_faernake: { name: '本都重装骑', tier: 3 },
+};
+
+/**
+ * 按 generalId 查询该武将的专属精锐配置（「一个武将一支精锐」）：
+ * 1. 优先读 `FactionGeneral.eliteName` / `eliteTier`；
+ * 2. 次读 `GENERAL_ELITE_LEGIONS[generalId]`；
+ * 3. 回落到该武将所属势力的 `ALL_FACTION_ELITE_LEGIONS[factionId]`。
+ */
+export function getGeneralEliteConfig(generalId: string | null | undefined): EliteLegionConfig | null {
+  if (!generalId) return null;
+  const hit = getRawGeneralByGeneralId(generalId);
+  if (hit?.general.eliteName) {
+    const fallbackTier = ALL_FACTION_ELITE_LEGIONS[hit.factionId]?.tier ?? 2;
+    return {
+      name: hit.general.eliteName,
+      tier: hit.general.eliteTier ?? fallbackTier,
+    };
+  }
+  const direct = GENERAL_ELITE_LEGIONS[generalId];
+  if (direct) return direct;
+  if (hit?.factionId) {
+    return ALL_FACTION_ELITE_LEGIONS[hit.factionId] ?? null;
+  }
+  return null;
+}
+
+/** 按 generalId 查询该武将的专属精锐番号（「一个武将一支精锐」） */
+export function getGeneralEliteLegionName(generalId: string | null | undefined): string | null {
+  return getGeneralEliteConfig(generalId)?.name ?? null;
+}
+
 function buildCityEliteLegionMap(): Readonly<Record<string, EliteLegionConfig>> {
   const map: Record<string, EliteLegionConfig> = {};
   for (const [factionId, cityId] of Object.entries(STARTING_CAPITALS)) {
@@ -147,6 +211,7 @@ export type LegionEliteLookup = {
   getFactionId(): string;
   homeCityId?: string | null;
   getSourceCityId(): string | null;
+  generalId?: string | null;
   /** 🔴 [2026-09-23] 战场事件的史实军团：番号直接挂在军团上（军团名只写「马其顿军团」，不再拼番号） */
   eliteOverride?: EliteLegionConfig | null;
 };
@@ -188,15 +253,25 @@ export function isFactionGeneralEliteAnchor(
   return STARTING_CAPITALS[factionId] === cityId;
 }
 
-/** 番号随城：据 cityId 查精锐配置 */
-export function getCityEliteConfig(cityId: string | null | undefined): EliteLegionConfig | null {
+/** 番号随将/随城：若有 generalId 优先查该武将专属精锐，否则据 cityId 查精锐配置 */
+export function getCityEliteConfig(
+  cityId: string | null | undefined,
+  generalId?: string | null,
+): EliteLegionConfig | null {
+  if (generalId) {
+    const genElite = getGeneralEliteConfig(generalId);
+    if (genElite) return genElite;
+  }
   if (!cityId) return null;
   return CITY_ELITE_LEGIONS[cityId] ?? null;
 }
 
-/** 番号随城：据 cityId 查精锐番号 */
-export function getCityEliteLegionName(cityId: string | null | undefined): string | null {
-  return getCityEliteConfig(cityId)?.name ?? null;
+/** 番号随将/随城：若有 generalId 优先查该武将专属精锐番号，否则据 cityId 查精锐番号 */
+export function getCityEliteLegionName(
+  cityId: string | null | undefined,
+  generalId?: string | null,
+): string | null {
+  return getCityEliteConfig(cityId, generalId)?.name ?? null;
 }
 
 /** @deprecated 运行时改用 getCityEliteConfig(cityId) */
@@ -216,14 +291,18 @@ export function getFactionCityEliteLegionName(
   return getFactionCityEliteConfig(factionId, cityId)?.name ?? null;
 }
 
-/** 按军团出兵据点查精锐（番号随城，不看军团旗号） */
+/** 按军团将领/出兵据点查精锐（一个武将一支精锐：有 generalId 优先取该将精锐，否则按据点） */
 export function getLegionEliteConfig(army: LegionEliteLookup): EliteLegionConfig | null {
   if (army.eliteOverride) return army.eliteOverride;
+  if (army.generalId) {
+    const genElite = getGeneralEliteConfig(army.generalId);
+    if (genElite) return genElite;
+  }
   const cityId = army.homeCityId ?? army.getSourceCityId();
   return getCityEliteConfig(cityId);
 }
 
-/** 番号随城：按军团 homeCityId / sourceCityId 查精锐番号 */
+/** 番号随将/随城：按军团 generalId 或 homeCityId / sourceCityId 查精锐番号 */
 export function getLegionEliteLegionName(army: LegionEliteLookup): string | null {
   return getLegionEliteConfig(army)?.name ?? null;
 }

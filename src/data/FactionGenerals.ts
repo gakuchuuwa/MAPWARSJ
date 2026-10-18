@@ -28,6 +28,7 @@ import { getBattlefieldCharacter } from './BattlefieldCharacters';
 import { isGeneralOnStage } from './generalOnStage';
 import { FACTIONS } from './factions';
 import { getFirstBattleByEnemySyntheticId, resolveFirstBattleEnemyDisplayName } from './GeneralFirstBattles';
+import { getGeneralProfile } from './general-skills/profiles';
 
 export interface FactionGeneral {
     /** 将领 id（须在 GENERAL_PROFILES 有档案，否则武将技不触发） */
@@ -36,6 +37,13 @@ export interface FactionGeneral {
     generalName: string;
     /** 将领立绘路径 */
     portrait: string;
+    /**
+     * 武将专属精锐番号（2026-10-19 主人定：「一个据点，一个势力，可以多个武将，一个武将一支精锐」）。
+     * 同一据点/势力下有多位武将时，每位武将各有专属精锐番号；未填则自动继承该势力精锐表的番号。
+     */
+    eliteName?: string;
+    /** 武将专属精锐档位（0..4 对应 T0..T4；未填则回落到精锐表档位） */
+    eliteTier?: 0 | 1 | 2 | 3 | 4;
 }
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
@@ -283,7 +291,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kaleiliya: { generalId: 'kaleiliya_kelimu', generalName: '克利姆索博列夫', portrait: '/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png' },
     deniesite: { generalId: 'gen_mehmed_giray', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/SLAVIC/nieman_weituofute.png' },
-    fuerjia: { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
+    fuerjia: [
+        { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
+        { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
+    ],
     nuogai: { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png' },
     bashekeer: { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
     xierhe: { generalId: 'xierhe_saerjue', generalName: '塞尔柱', portrait: '/assets/STEPPE/xierhe_saierzhu.png' },
@@ -292,6 +303,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     siluoboda: { generalId: 'gen_grigory_donets', generalName: '多涅茨', portrait: '/assets/SLAVIC/siluoboda_duonieci.png' },
     // ── 2026-08-04 新增：萨布罗夫（沃罗涅日首任督军，主持建堡）──
     yedi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
+    eguo_biandi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/SLAVIC/peilieya_gongguo_monuomahe.png' },
     weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/SLAVIC/weijiebusike_gongguo_aoergeerde.png' },
 
@@ -475,6 +487,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
+    porbazhyn_huihu: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
     huizhou_d: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
     kereyid: { generalId: 'kereyid_wanghan', generalName: '脱斡霖', portrait: '/assets/STEPPE/kereyid_tuowolin.png' },
     naiman: { generalId: 'naiman_taiyanghan', generalName: '塔阳', portrait: '/assets/STEPPE/naiman_taiyanghan.png' },
@@ -1010,7 +1023,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     dingling: { generalId: 'dingling_weilu', generalName: '卫律', portrait: '/assets/STEPPE/dingling_weilu.png' },
     yingzhou_ying_d: { generalId: 'yingzhou_ying_d_muronghuang', generalName: '慕容皝', portrait: '/assets/STEPPE/yingzhou_ying_d_muronghuang.png' },
     buriat: { generalId: 'buriat_tumenjiergale', generalName: '吉尔嘎勒', portrait: '/assets/STEPPE/buriat_tumenjiergale.png' },
-    oirat_ming: { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png' },
+    oirat_ming: [
+        { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png' },
+        { generalId: 'wala_yexian', generalName: '也先', portrait: '/assets/STEPPE/wala_yexian.png' },
+    ],
     donghui: { generalId: 'donghui_nanlv', generalName: '南闾', portrait: '/assets/KOREA/donghui_nanlv.png' },
     gonggu: { generalId: 'gonggu_gonggudaozhu', generalName: '麻利芝', portrait: '/assets/JAPAN/gonggu_gonggudaozhu.png' },
     yizhi: { generalId: 'yizhi_beigou', generalName: '难升米', portrait: '/assets/JAPAN/yizhi_beigou.png' },
@@ -1398,17 +1414,47 @@ export function getFactionGenerals(factionId: string): FactionGeneral[] {
     return Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
 }
 
-/** 取某势力的开局名将（多个将时优先取当前在场的将，否则取**第一个**）；未配置返回 null（该势力不带将） */
-export function getFactionGeneral(factionId: string): FactionGeneral | null {
+/**
+ * 取某势力的全部武将（已解析阶段姓名与立绘路径，且名将排在普将之前，保持各自内部先后次序）。
+ * 🔴 [2026-10-19 主人定：「一个据点，一个势力，可以多个武将，一个武将一支精锐」]
+ */
+export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] {
     const list = getFactionGenerals(factionId);
-    const general = list.find((g) => isGeneralOnStage(g.generalId)) ?? list[0];
-    if (!general) return null;
-    const portrait = _generalPortraitOverrides[general.generalId] ?? general.portrait;
-    return {
-        ...general,
-        generalName: stageGeneralName(general.generalId, general.generalName, factionId),
-        portrait: resolveGeneralPortraitPath(portrait, { factionId }),
-    };
+    if (!list.length) return [];
+    const resolved = list.map((g, idx) => {
+        const portrait = _generalPortraitOverrides[g.generalId] ?? g.portrait;
+        const isFamous = getGeneralProfile(g.generalId)?.tier === 'famous';
+        return {
+            item: {
+                ...g,
+                generalName: stageGeneralName(g.generalId, g.generalName, factionId),
+                portrait: resolveGeneralPortraitPath(portrait, { factionId }),
+            },
+            isFamous,
+            idx,
+        };
+    });
+    resolved.sort((a, b) => {
+        if (a.isFamous !== b.isFamous) return a.isFamous ? -1 : 1;
+        return a.idx - b.idx;
+    });
+    return resolved.map((r) => r.item);
+}
+
+/** 取某势力的开局名将（多个将时优先取当前在场且未被 excludeGeneralIds 占用的名将，否则取在场首将或数组第一个）；未配置返回 null */
+export function getFactionGeneral(
+    factionId: string,
+    excludeGeneralIds?: ReadonlySet<string>,
+): FactionGeneral | null {
+    const resolved = getFactionGeneralsResolved(factionId);
+    if (!resolved.length) return null;
+    if (excludeGeneralIds && excludeGeneralIds.size > 0) {
+        const availableOnStage = resolved.find(
+            (g) => isGeneralOnStage(g.generalId) && !excludeGeneralIds.has(g.generalId),
+        );
+        if (availableOnStage) return availableOnStage;
+    }
+    return resolved.find((g) => isGeneralOnStage(g.generalId)) ?? resolved[0] ?? null;
 }
 
 /** 🔴 [2026-10-16 主人定] 剧本期武将不在「登场年～卒年」内 → 名字一律「势力+将军」（势力 = 武将本来所属势力；立绘不变）。
@@ -1453,6 +1499,14 @@ function getGeneralIdIndex(): Map<string, { factionId: string; general: FactionG
     }
     _generalIdIndex = index;
     return index;
+}
+
+/** 按 generalId 查武将原始条目与所属势力（供「一个武将一支精锐」查询武将专属精锐配置） */
+export function getRawGeneralByGeneralId(
+    generalId: string | null | undefined,
+): { factionId: string; general: FactionGeneral } | null {
+    if (!generalId) return null;
+    return getGeneralIdIndex().get(generalId) ?? null;
 }
 
 export function getFactionIdOfGeneral(generalId: string | null | undefined): string | null {

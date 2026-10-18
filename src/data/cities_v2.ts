@@ -2390,7 +2390,7 @@ export const CITIES_V2: CityDataV2[] = [
 // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」只是一级母体、取不到 62 类 → 归 LATIN：卡法（费奥多西亚）：热那亚黑海殖民地，用意大利（LATIN）城堡
 { id: 'city_kafa', name: '卡法', factionId: 'kelimiya', lat: 45.03, lng: 35.38, type: 'small_city', troops: 10000, region: 'EAST', buildingStyle: 'LATIN', mirror: true, note: '定级依据§6.2：卡法非关隘/要塞/堡垒，按城市判级；热那亚时期约7000–1万（Balard 约1万），奥斯曼1542年3043户约1.5万 → 小城。🔴 [2026-10-18 按史] 卡法为热那亚黑海殖民地（Gazaria），实建为热那亚石砌方塔、机械射击孔与齿状胸墙；故 LATIN。' },
 
-    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'yedi', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1590 年俄国边堡；建筑风格按当地俄罗斯（SLAVIC）；势力=野地（萨布罗夫，1545–1601）' },
+    { id: 'city_salatuofu', name: '萨拉托夫', factionId: 'eguo_biandi', lat: 51.53, lng: 46.03, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1590 年俄国边堡；建筑风格按当地俄罗斯（SLAVIC）；势力=俄国边地，武将萨布罗夫，精锐穆拉夫骑' },
     { id: 'city_weierniwusi', name: '维尔纽斯', factionId: 'litaowan', lat: 54.68, lng: 25.27, type: 'small_city', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS' },
 
     { id: 'city_huasha', name: '华沙', factionId: 'bolan', lat: 52.22, lng: 21.01, type: 'medium_city', troops: 10000, region: 'SLAVIC_IMPERIAL', buildingStyle: 'POLES' },
@@ -2516,9 +2516,9 @@ buildingStyle: 'KHITAN', troops: 10000, mirror: true,
 
     // ── 2026-05-28 新增：药罗葛(博尔巴任)、爱新觉罗(墨尔根城)、广南国(洞海城) ──
     // 瓦剌（卫拉特）药罗葛部牧地，与明代卫拉（科布多）分立
-    { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'huige', lat: 49.664324, lng: 95.767822, type: 'pass', region: 'STEPPE',
+    { id: 'city_porbazhyn', name: '博尔巴任', factionId: 'porbazhyn_huihu', lat: 49.664324, lng: 95.767822, type: 'pass', region: 'STEPPE',
 buildingStyle: 'CENTRAL', troops: 10000,
-        note: '博尔巴任；回鹘湖中城寨/宫殿建筑群，夯土城墙 + 唐式固定建筑，基本无毡帐营地 → 建筑风格按中原汉唐式（CENTRAL，66 分支）',
+        note: '博尔巴任；回鹘湖中城寨/宫殿建筑群，夯土城墙 + 唐式固定建筑，基本无毡帐营地 → 建筑风格 CENTRAL；势力=博尔巴任回鹘，武将骨力裴罗，精锐回纥精骑',
     },
     { id: 'city_moergen', name: '莫尔根', factionId: 'dawoer', lat: 49.176, lng: 125.228, type: 'stockade', troops: 10000, region: 'MANCHU', buildingStyle: 'NORTHEAST' },
 

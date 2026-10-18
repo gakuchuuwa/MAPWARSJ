@@ -33,7 +33,7 @@ import {
     resolveUnitCultureRegion,
 } from './CultureRegion';
 import { type EliteTier, getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
-import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
+import { readSiegeGarrisonElite, readSiegeGarrisonGeneralId } from '../combat/SiegeGarrisonTier';
 import { hasCityWonder } from '../data/CityWonders';
 import { toCulture66 } from './CultureHierarchy';
 
@@ -114,7 +114,7 @@ export function getUnitEliteTier(unit: IBattleUnit): EliteTier | null {
         // 面板第二行仍显番号、此处返回 null → 军×1.0，这是防叠加的预期结果，不是 bug。
         // 名字判级请用 readSiegeGarrisonEliteName（displayClassOf / resolveBattleUnitListName）。
         if (city?.id && readSiegeGarrisonElite(city)) {
-            return getCityEliteConfig(city.id)?.tier ?? null;
+            return getCityEliteConfig(city.id, readSiegeGarrisonGeneralId(city))?.tier ?? null;
         }
         return null;
     }

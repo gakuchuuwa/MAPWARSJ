@@ -1,10 +1,12 @@
 import {
     getCityAnchorFactionId,
     getCityEliteLegionName,
+    getGeneralEliteLegionName,
     isCityGeneralEliteAnchor,
 } from '../data/ExpeditionLegions';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { isGeneralOnStage } from '../data/generalOnStage';
 import { getScriptSiegeDefenderGeneral } from '../events/scriptPeriod';
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getCityRegion } from '../systems/RegionSystem';
@@ -91,7 +93,7 @@ export function assignSiegeGarrisonTier(
             city._siegeGarrisonGeneralId = fbDefender.generalId;
             city._siegeGarrisonPortrait = fbDefender.portrait;
         }
-        const eliteName = getCityEliteLegionName(city.id);
+        const eliteName = getGeneralEliteLegionName(fbDefenderId) ?? getCityEliteLegionName(city.id);
         if (eliteName && !city.spawnEliteUsed && !isEliteOnCooldown(city.id)) {
             city._siegeGarrisonElite = true;
             city._siegeGarrisonEliteName = eliteName;
@@ -102,11 +104,21 @@ export function assignSiegeGarrisonTier(
     // 谁占城谁得将：将/精锐锚定 cityId，占领换旗后仍随城发给当前守方（与出兵路径一致）
     const anchorFaction = getCityAnchorFactionId(city.id);
 
-    const eliteName = getCityEliteLegionName(city.id);
     // 🔴 [2026-09-25] 剧本期攻城：事件写了这座城的守将就用他（底比斯＝菲尼克斯，不是伊巴密浓达）
     const scriptDefenderId = getScriptSiegeDefenderGeneral(city.id);
     const scriptDefender = scriptDefenderId ? getGeneralRecordByGeneralId(scriptDefenderId) : null;
-    const anchoredGeneral = scriptDefender ?? getCityAnchoredGeneral(city.id);
+    // 🔴 [2026-10-19 主人定：「一个据点，一个势力，可以多个武将，一个武将一支精锐」]
+    //    若该城有多位武将，优先选尚未在攻守军团中参战的在场武将守城，并使用该武将专属精锐番号
+    const busyGenIds = new Set<string>();
+    for (const l of defendingLegions) if (l.generalId) busyGenIds.add(l.generalId);
+    for (const l of attackingLegions) if (l.generalId) busyGenIds.add(l.generalId);
+    const allCityGenerals = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
+    const availableCityGeneral =
+        allCityGenerals.find((g) => !busyGenIds.has(g.generalId)) ?? getCityAnchoredGeneral(city.id);
+    const anchoredGeneral = scriptDefender ?? availableCityGeneral;
+    const eliteName =
+        (anchoredGeneral ? getGeneralEliteLegionName(anchoredGeneral.generalId) : null) ??
+        getCityEliteLegionName(city.id);
 
     // ② 城内已有自家军团带了（守城军团或在场援军），城防就不发了
     const hasLegionElite = defendingLegions.some((l) => l.isElite && l.name === eliteName);

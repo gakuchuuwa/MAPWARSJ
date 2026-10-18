@@ -20,7 +20,7 @@ import type { City } from '../types/core';
 import { roadRegistry } from '../roads/RoadRegistry';
 import { getEuclideanDistance, joinStartToRoadPolyline } from '../core/DistanceUtils';
 import { gameLog } from '../utils/GameLogger';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getScriptEventStart } from '../events/scriptPeriod';
 import {
@@ -701,13 +701,13 @@ export class PlayerHero {
         }
         const city = this.deps.cityManager.getCity(cityId);
         if (!city) return false;
-        // 🔴 [2026-10-18 主人定「玩家只能找在场的武将接任务」] 直接找据点武将时（非追击续航锚点城），目标武将必须在场
+        // 🔴 [2026-10-18 主人定「玩家只能找在场的武将接任务」] 直接找据点武将时（非追击续航锚点城），目标据点必须有在场武将
         if (!keepChase) {
             const start = getScriptEventStart();
-            const genId = (start && start.cityId === cityId)
-                ? start.generalId
-                : getCityAnchoredGeneral(cityId)?.generalId;
-            if (!genId || !isGeneralOnStage(genId)) {
+            const hasOnStage = (start && start.cityId === cityId)
+                ? isGeneralOnStage(start.generalId)
+                : getCityAnchoredGenerals(cityId).some((g) => isGeneralOnStage(g.generalId));
+            if (!hasOnStage) {
                 this.deps.notify(`【${city.name}】武将不在场`);
                 return false;
             }
