@@ -2130,6 +2130,8 @@ export const FACTIONS: Faction[] = [
     { id: 'muertan', name: '木尔坦' },
     { id: 'muxikani', name: '穆西卡尼' },
     { id: 'xindu', name: '信度' },
+    { id: 'eguo_biandi', name: '俄国边地' },        // 2026-10-19：萨拉托夫（1590 俄国边堡）
+    { id: 'porbazhyn_huihu', name: '博尔巴任回鹘' }, // 2026-10-19：博尔巴任（8 世纪回鹘城址）
 ];
 
 // @ts-ignore

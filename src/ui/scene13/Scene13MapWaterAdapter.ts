@@ -47,7 +47,7 @@ export function relocateTemplateWater(
         const k = terrain.findIndex(pred);
         return k >= 0 ? { p: mapData.passable?.[k], s: mapData.speed?.[k] } : null;
     };
-    const landS = sampleOf((t) => t === landId), waterS = sampleOf(isWaterId), shoreS = sampleOf(isShoreId) ?? landS;
+    const landS = sampleOf((t) => t === landId), waterS = sampleOf(isWaterId) ?? { p: 0, s: 60 }, shoreS = sampleOf(isShoreId) ?? landS;
     const passable = mapData.passable ? Array.from(mapData.passable as ArrayLike<number>) : null;
     const speed = mapData.speed ? Array.from(mapData.speed as ArrayLike<number>) : null;
     const setCell = (k: number, t: number, smp: { p: any; s: any } | null) => {

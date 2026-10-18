@@ -1126,6 +1126,57 @@ export class Scene13GroundLayerGL {
   }
 
   /**
+   * 仅清除指定屏幕坐标周围的林地地表势场（smoothForest 与 B 通道），不触碰水体（smoothWater / R / G 通道），
+   * 防止过滤平地或护城河上的树木时把护城河/天然河流擦断。
+   */
+  public clearForestAt(screenX: number, screenY: number, W: number, H: number, radiusCells: number): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    const px = this.fieldPixels;
+    if (!c || !px || !this.fieldTex) return;
+    const N = this.N;
+    const r = radiusCells;
+    const x0 = Math.max(0, Math.floor(c.gx - r - 1)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + 1));
+    const y0 = Math.max(0, Math.floor(c.gy - r - 1)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + 1));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const d = Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy);
+        const t = Math.min(1, Math.max(0, (d - (r - 1)) / 1.5));
+        if (t >= 1) continue;
+        const i = y * N + x;
+        this.smoothForest[i] *= t;
+        px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
+      }
+    }
+    this.fieldDirty = true;
+  }
+
+  /**
+   * 在迁移到高地台地的树木脚下补充轻柔林地地表势场（smoothForest 与 B 通道），使高地树林与脚下地表自然融合。
+   */
+  public addForestAt(screenX: number, screenY: number, W: number, H: number, radiusCells = 1.4): void {
+    const c = this.screenToCell(screenX, screenY, W, H);
+    const px = this.fieldPixels;
+    if (!c || !px || !this.fieldTex) return;
+    const N = this.N;
+    const r = radiusCells;
+    const x0 = Math.max(0, Math.floor(c.gx - r - 1)), x1 = Math.min(N - 1, Math.ceil(c.gx + r + 1));
+    const y0 = Math.max(0, Math.floor(c.gy - r - 1)), y1 = Math.min(N - 1, Math.ceil(c.gy + r + 1));
+    for (let y = y0; y <= y1; y++) {
+      for (let x = x0; x <= x1; x++) {
+        const i = y * N + x;
+        if (this.smoothWater[i] >= 0.25) continue;
+        const d = Math.hypot(x + 0.5 - c.gx, y + 0.5 - c.gy);
+        const w = Math.max(0, 1 - d / r) * 0.72;
+        if (w <= 0) continue;
+        this.smoothForest[i] = Math.max(this.smoothForest[i], w);
+        px[i * 4 + 2] = Math.max(px[i * 4 + 2], Math.round(w * 255));
+      }
+    }
+    this.fieldDirty = true;
+  }
+
+
+  /**
    * 🔴 [2026-10-12 主人令「给大城的外围加一圈护城河」] 把指定地形格改成水（护城河）：
    *   · 只重算**水场**（smoothWater + 场纹理 R 通道 + 岸边沙带 G 通道）并标脏，**不动高程**（水面随城池地基同高）；
    *   · 水场的算法与构造里一致（原始水格 → 两遍 blurGrid2D），所以河岸的圆滑过渡与天然水体同一口径。

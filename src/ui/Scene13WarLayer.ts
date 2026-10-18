@@ -2904,6 +2904,7 @@ export class Scene13WarLayer {
                 ? baseFlatCells + 3.0
                 : baseFlatCells;
         const TREE_FILTER_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
+        const removedFlatTrees: DecorSprite[] = [];
         this.decorSprites = this.decorSprites.filter((sp) => {
             if (sp.asset.startsWith('MOUNTAIN_')) return false;
             if (sp.asset.startsWith('BUILDING') || sp.asset === '') return true;
@@ -2911,16 +2912,74 @@ export class Scene13WarLayer {
             const spElev = gl.elevationLevelAt(sp.x, sp.y, W, H);
             const spCell = cityCell ? gl.screenToCell(sp.x, sp.y, W, H) : null;
             const distCells = (cityCell && spCell) ? Math.hypot(spCell.gx - cityCell.gx, spCell.gy - cityCell.gy) : 999;
-            // 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
-            //    城周围平地不留树，树木一律只保留在丘陵/山上（spElev >= 0.35 且在城周围平地圈外）
-            const treeOnHill = !isTree || (distCells >= minHillDistCells - 0.8 && spElev >= 0.35);
-            const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y)) && treeOnHill;
-            if (!keep) gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
+            const inCityOrRoad = inCity(sp.x, sp.y) || inGateRoad(sp.x, sp.y);
+            const inWaterOrMoat = !!(inMoat && inMoat(sp.x, sp.y)) || gl.isWaterAt(sp.x, sp.y, W, H);
+            // 🔴 [2026-10-18/19 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
+            //    提高树木高地门槛（spElev >= 1.0），杜绝树木长在平地或坡脚边缘
+            const treeOnHill = !isTree || (distCells >= minHillDistCells - 0.5 && spElev >= 1.0);
+            const keep = !inCityOrRoad && !inWaterOrMoat && treeOnHill;
+            if (!keep) {
+                if (inCityOrRoad) {
+                    gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
+                } else if (isTree) {
+                    gl.clearForestAt(sp.x, sp.y, W, H, 2.0);
+                    if (!inWaterOrMoat) removedFlatTrees.push(sp);
+                }
+            }
             return keep;
         });
+
+        let mSeed = (hash >>> 0) ^ 0x6c8e9cf5;
+        const mRnd = (): number => {
+            mSeed = Math.imul(mSeed ^ (mSeed >>> 15), 0x85ebca6b) >>> 0;
+            mSeed = Math.imul(mSeed ^ (mSeed >>> 13), 0xc2b2ae35) >>> 0;
+            return ((mSeed ^ (mSeed >>> 16)) >>> 0) / 4294967296;
+        };
+
+        // ── 将平地上移除的树木择优迁栽到缺少植被的外围高地台顶（>= 1.5 级）上，确保每块高地都有林木相伴 ──
+        const N = gl.data?.width ?? 120;
+        const cGx = cityCell ? cityCell.gx : N * 0.5;
+        const cGy = cityCell ? cityCell.gy : N * 0.5;
+        if (removedFlatTrees.length > 0) {
+            const existingTrees = this.decorSprites.filter((sp) => TREE_FILTER_RE.test(sp.asset));
+            const bareHillSpots: Array<{ x: number; y: number; elev: number }> = [];
+            for (let gy = 8; gy <= N - 8; gy += 3) {
+                for (let gx = 8; gx <= N - 8; gx += 3) {
+                    const dCells = Math.hypot(gx - cGx, gy - cGy);
+                    if (dCells < minHillDistCells + 1.2 || dCells > 50) continue;
+                    const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                    if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y)) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
+                    const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                    if (elev < 1.5) continue;
+                    const hasNearTree = existingTrees.some((t) => Math.hypot(t.x - pt.x, (t.y - pt.y) * 1.5) < 280);
+                    if (!hasNearTree) {
+                        bareHillSpots.push({ x: pt.x, y: pt.y, elev });
+                    }
+                }
+            }
+            bareHillSpots.sort((a, b) => b.elev - a.elev);
+            const maxRelocate = Math.min(removedFlatTrees.length, Math.min(bareHillSpots.length * 2, 28));
+            let rIdx = 0;
+            for (let sIdx = 0; sIdx < bareHillSpots.length && rIdx < maxRelocate; sIdx++) {
+                const spot = bareHillSpots[sIdx];
+                const clusterCnt = 1 + (mRnd() < 0.55 ? 1 : 0);
+                for (let k = 0; k < clusterCnt && rIdx < maxRelocate; k++) {
+                    const tx = spot.x + (mRnd() - 0.5) * 86;
+                    const ty = spot.y + (mRnd() - 0.5) * 44;
+                    if (gl.isWaterAt(tx, ty, W, H) || (inMoat && inMoat(tx, ty)) || inGateRoad(tx, ty) || inCity(tx, ty)) continue;
+                    if (gl.elevationLevelAt(tx, ty, W, H) < 1.2) continue;
+                    const treeSp = removedFlatTrees[rIdx++];
+                    treeSp.x = tx;
+                    treeSp.y = ty;
+                    this.decorSprites.push(treeSp);
+                    gl.addForestAt(tx, ty, W, H, 1.25);
+                }
+            }
+        }
+
         gl.flushFoundation();
 
-        // ── 按真实山地地理与据点种子，在城外围的丘陵上摆放 DE 大山模型（MOUNTAIN_01~11，缩放 2.0，纯视觉点缀绝不挡路） ──
+        // ── 按真实山地地理与据点种子，在城外围的高地平顶台面（>= 1.8 级）中心摆放 DE 大山模型（MOUNTAIN_01~11，缩放 2.0，纯视觉点缀绝不挡路） ──
         const defCity: any = this.defenderCityRecord();
         const cLat = defCity?.lat ?? this.centerLat;
         const cLng = defCity?.lng ?? this.centerLng;
@@ -2935,44 +2994,52 @@ export class Scene13WarLayer {
             ? this.passMountainConfig.enabled
             : (this.defenderCityType === 'pass'
                 ? isMountainPass(cId, cLat, cLng, defCity?.name)
-                : isHighlandSite);
+                : !EXCLUDED_PASS_IDS.has(cId));
         if (shouldSpawnDeMountains) {
             const isSnowScene = this.sceneSeason === 2
                 || this.environmentPlan?.biome === 'tundra_snow'
                 || gl.isIce
                 || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(this.environmentPlan.baseTerrain));
-            const GREEN_MOUNTAIN_POOL = ['MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06'];
-            const SNOW_MOUNTAIN_POOL = ['MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11'];
-            const pool = isSnowScene ? SNOW_MOUNTAIN_POOL : GREEN_MOUNTAIN_POOL;
-            let mSeed = (hash >>> 0) ^ 0x6c8e9cf5;
-            const mRnd = (): number => {
-                mSeed = Math.imul(mSeed ^ (mSeed >>> 15), 0x85ebca6b) >>> 0;
-                mSeed = Math.imul(mSeed ^ (mSeed >>> 13), 0xc2b2ae35) >>> 0;
-                return ((mSeed ^ (mSeed >>> 16)) >>> 0) / 4294967296;
-            };
-            // 扫描城外围丘陵高点（必须在城周围平地保护圈以外，且地面高程级 >= 1.2 的真实外围丘陵顶台）
-            const N = gl.data?.width ?? 120;
-            const cGx = cityCell ? cityCell.gx : N * 0.5;
-            const cGy = cityCell ? cityCell.gy : N * 0.5;
+            const pool = this.getClimateMountainPool(isSnowScene);
+            // 扫描城外围高地平顶台面中心（锁定 elev >= 1.8 且四邻域同高的 2~3 级高地平顶台面，确保大山稳立于高地正中央）
             const hillCandidates: Array<{ x: number; y: number; elev: number; score: number }> = [];
-            for (let gy = 8; gy <= N - 8; gy += 2) {
-                for (let gx = 8; gx <= N - 8; gx += 2) {
-                    const dCells = Math.hypot(gx - cGx, gy - cGy);
-                    if (dCells < minHillDistCells + 1.5 || dCells > 44) continue;
-                    const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                    if (gl.isWaterAt(pt.x, pt.y, W, H) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
-                    const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
-                    if (elev < 1.2) continue;
-                    hillCandidates.push({
-                        x: pt.x + (mRnd() - 0.5) * 40,
-                        y: pt.y + (mRnd() - 0.5) * 24,
-                        elev,
-                        score: elev + mRnd() * 0.85,
-                    });
+            for (const minElev of [1.8, 1.35]) {
+                for (let gy = 8; gy <= N - 8; gy += 2) {
+                    for (let gx = 8; gx <= N - 8; gx += 2) {
+                        const dCells = Math.hypot(gx - cGx, gy - cGy);
+                        if (dCells < minHillDistCells + 2.0 || dCells > 44) continue;
+                        const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
+                        if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y)) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
+                        const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
+                        if (elev < minElev) continue;
+                        const pL = gl.cellToScreen(gx - 0.5, gy + 0.5, W, H);
+                        const pR = gl.cellToScreen(gx + 1.5, gy + 0.5, W, H);
+                        const pU = gl.cellToScreen(gx + 0.5, gy - 0.5, W, H);
+                        const pD = gl.cellToScreen(gx + 0.5, gy + 1.5, W, H);
+                        const nbrElev = (
+                            gl.elevationLevelAt(pL.x, pL.y, W, H) +
+                            gl.elevationLevelAt(pR.x, pR.y, W, H) +
+                            gl.elevationLevelAt(pU.x, pU.y, W, H) +
+                            gl.elevationLevelAt(pD.x, pD.y, W, H)
+                        ) * 0.25;
+                        if (nbrElev < minElev - 0.2) continue;
+                        const plateauScore = elev * 0.65 + nbrElev * 0.35;
+                        hillCandidates.push({
+                            x: pt.x + (mRnd() - 0.5) * 20,
+                            y: pt.y + (mRnd() - 0.5) * 12,
+                            elev,
+                            score: plateauScore + mRnd() * 0.4,
+                        });
+                    }
                 }
+                if (hillCandidates.length >= 3) break;
             }
             hillCandidates.sort((a, b) => b.score - a.score);
-            const targetCount = this.defenderCityType === 'pass' ? (2 + (mRnd() < 0.45 ? 1 : 0)) : (1 + Math.floor(mRnd() * 2));
+            const targetCount = this.defenderCityType === 'pass'
+                ? (2 + (mRnd() < 0.45 ? 1 : 0))
+                : isHighlandSite
+                    ? (1 + Math.floor(mRnd() * 2))
+                    : 1;
             const chosenPts: Array<{ x: number; y: number }> = [];
             let placed = 0;
             for (const cand of hillCandidates) {
@@ -3024,6 +3091,34 @@ export class Scene13WarLayer {
         for (const sp of this.decorSprites) {
             sp.lift = (sp.asset.startsWith('BUILDING') || sp.asset === '') ? undefined : gl.elevationLiftAt(sp.x, sp.y, W, H);
         }
+    }
+
+    /**
+     * 按当前战场地表、气候带与海拔严格选取匹配的 DE 大山素材池（MOUNTAIN_01~11）：
+     *   · 冰雪底图 / 寒冬雪景（isSnowScene）：['MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11']（全雪山脚至山顶）
+     *   · 干旱沙漠 / 戈壁 / 黄土 / 干草原 / 砂砾地表：['MOUNTAIN_03', 'MOUNTAIN_04']（黄褐干岩荒山，无雪无绿草，修复麦加等沙漠出现雪山或青山 BUG）
+     *   · 非干旱极高山（海拔 >= 2600m 或 high_alpine）：['MOUNTAIN_06', 'MOUNTAIN_07', 'MOUNTAIN_08']（雪顶绿坡高山）
+     *   · 温带 / 热带绿地与森林地表：['MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_05']（纯翠绿山麓青山，无积雪、无黄沙底座）
+     */
+    private getClimateMountainPool(isSnowScene: boolean): string[] {
+        if (isSnowScene) {
+            return ['MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11'];
+        }
+        const bt = String(this.environmentPlan?.baseTerrain ?? '');
+        const biome = String(this.environmentPlan?.biome ?? '');
+        const isAridOrDryGround = /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(bt)
+            || biome === 'desert'
+            || biome === 'savanna'
+            || biome === 'cold_steppe';
+        if (isAridOrDryGround) {
+            return ['MOUNTAIN_03', 'MOUNTAIN_04'];
+        }
+        const elevM = this.environmentPlan?.elevationM ?? 0;
+        const elevBand = this.environmentPlan?.elevationBand;
+        if (elevM >= 2600 || elevBand === 'high_alpine' || elevBand === 'snow') {
+            return ['MOUNTAIN_06', 'MOUNTAIN_07', 'MOUNTAIN_08'];
+        }
+        return ['MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_05'];
     }
 
     /** 地基层 DOM 跟着镜头走：城心屏幕位置 ＝ 画布中心 ＋ 平移 ＋ (城心 − 中心) × 缩放 */
@@ -3383,15 +3478,9 @@ export class Scene13WarLayer {
                 //    两座大山处于同一气候池，彻底根除「同一道关卡一座有雪、一座没雪」的视觉割裂。
                 const isSnowScene = this.sceneSeason === 2
                     || this.environmentPlan?.biome === 'tundra_snow'
-                    || !!(this.environmentPlan?.baseTerrain && /snow|snd|ice/i.test(this.environmentPlan.baseTerrain));
+                    || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice|snow)/i.test(this.environmentPlan.baseTerrain));
 
-                const GREEN_MOUNTAIN_POOL = [
-                    'MOUNTAIN_01', 'MOUNTAIN_02', 'MOUNTAIN_03', 'MOUNTAIN_04', 'MOUNTAIN_05', 'MOUNTAIN_06',
-                ];
-                const SNOW_MOUNTAIN_POOL = [
-                    'MOUNTAIN_07', 'MOUNTAIN_08', 'MOUNTAIN_09', 'MOUNTAIN_10', 'MOUNTAIN_11',
-                ];
-                const pool = isSnowScene ? SNOW_MOUNTAIN_POOL : GREEN_MOUNTAIN_POOL;
+                const pool = this.getClimateMountainPool(isSnowScene);
                 const pickMountain = () => pool[Math.floor(Math.random() * pool.length)];
 
                 // 1. 南翼大山（根据战场地貌气候从对应池中抽取样式，支持翻转；纯贴图不卡兵）
@@ -3798,6 +3887,15 @@ export class Scene13WarLayer {
         //       做成骨架喂给引擎（脚本的造水/造陆段跳过）⇒ 战场就是那个地方的地形（维也纳＝多瑙河）；
         //    ③ 没有该据点 → theme_<环境计划的 deMapTheme>.json（B 批：按气候主题烘焙的通用地貌）；
         //    ④ 都没有 → 维也纳测试图兜底，保证战斗照样能开。
+        const calcWaterRatio = (md: any): number => {
+            if (!md?.terrain?.length) return 0;
+            let w = 0;
+            for (let i = 0; i < md.terrain.length; i++) {
+                const t = md.terrain[i];
+                if (t === 1 || t === 15 || t === 22 || t === 23 || t === 4 || t === 58 || t === 95 || t === 96) w++;
+            }
+            return w / md.terrain.length;
+        };
         const getMapData = async () => {
             if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
             const load = async (file: string) => {
@@ -3810,7 +3908,21 @@ export class Scene13WarLayer {
             const siteId = this.defenderCityId;
             if (siteId) {
                 const site = await load('site_' + siteId + '.json');
-                if (site) return site;
+                if (site) {
+                    const wRatio = calcWaterRatio(site);
+                    const skelHmin = site?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
+                    // 若烘焙图存在明显水体但环境计划尚未检出水体（如瓦片尚未异步加载完），按海拔补齐 river / sea
+                    if (wRatio > 0.02 && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
+                        this.environmentPlan.waterKind = skelHmin > 10 ? 'river' : 'sea';
+                    }
+                    // 🔴 修复大非川（龙羊峡水库 100% 水）、萨尔克尔（齐姆良斯克水库 100% 水）、郧阳（丹江口水库 65% 水）等
+                    //    因现代水库蓄水或海湾裁剪导致全图 >55% 变成汪洋大海、丧失陆地与林木的问题：
+                    //    此类淹没图退回当前气候带的 _river / _sea 主题模板，并按真实河道/海岸方向生成城侧水体
+                    if (wRatio <= 0.55) {
+                        return site;
+                    }
+                    console.info(`[Scene13WarLayer] 🏞 据点图 site_${siteId}.json 水面占比过高 (${(wRatio * 100).toFixed(1)}%，现代水库/海湾淹没)，切换为当地气候水体模板`);
+                }
             }
             const theme = this.environmentPlan?.deMapTheme;
             if (theme) {
@@ -3860,9 +3972,20 @@ export class Scene13WarLayer {
                 releaseGround();
                 return;
             }
-            // 🔴 [2026-10-13 主人令「做出一套干净、可靠的真实地理」] 据点真实图（header.skeleton）的水就是真实水体，不许抹掉重挖
+            // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
+            //    但若内陆据点（海拔 > 10m 或 waterKind === 'river'）因现代水库蓄水导致水面占比 > 20%（如三峡/科普林卡/哈迪塞水库），
+            //    则将其像海一样的宽阔库区水面重塑为城侧自然蜿蜒河道（relocateTemplateWater）。
             const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
-            const mapData = rawMapData?.header?.skeleton ? oriented : this.relocateTemplateWater(oriented);
+            const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
+            const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
+                && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
+                && calcWaterRatio(oriented) > 0.20;
+            if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
+                this.environmentPlan.waterKind = 'river';
+            }
+            const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
+                ? oriented
+                : this.relocateTemplateWater(oriented);
             try {
                 if (this.groundLayerGL) this.groundLayerGL.destroy();
                 // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
@@ -4042,12 +4165,17 @@ export class Scene13WarLayer {
                         const snowTreeOnNonSnowGround = !isSnowBase && /^SNOW_/.test(bestAsset);
                         const greenTreeInSnow = isSnowBase && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
                         const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
+                        const isAridOrSteppeGround = isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
+                        const aridTreeMismatch = isAridOrSteppeGround && !/^(PALM|ACACIA|BAOBAB|OLIVE|CYPRESS|DEAD_TREE|BUSH_TREE|DRAGON_TREE)$/i.test(bestAsset);
+                        const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
                         const finalClumpTree = (
                             !bestAsset ||
                             isGenericBakedTree ||
                             snowTreeOnNonSnowGround ||
                             greenTreeInSnow ||
                             autumnMismatch ||
+                            aridTreeMismatch ||
+                            tropicalTreeOnNonTropical ||
                             (cId % 6 !== 0)
                         ) ? regionalTree : bestAsset;
 
@@ -4158,12 +4286,21 @@ export class Scene13WarLayer {
                             if (isTree) {
                                 if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
                                 if (!isSnowBase) {
-                                    if (asset === 'SNOW_PINE') asset = 'ASIAN_PINE';
-                                    else if (asset === 'SNOW_AUTUMN_OAK') asset = 'AUTUMN_OAK';
-                                    else if (asset === 'SNOW_BIRCH') asset = 'BIRCH_AUTUMN';
+                                    if (asset === 'SNOW_PINE') asset = regionalTree;
+                                    else if (asset === 'SNOW_AUTUMN_OAK') asset = this.sceneSeason === 1 ? 'AUTUMN_OAK' : regionalTree;
+                                    else if (asset === 'SNOW_BIRCH') asset = this.sceneSeason === 1 ? 'BIRCH_AUTUMN' : regionalTree;
                                     else if (asset === 'SNOW_DEAD_TREE') asset = 'DEAD_TREE';
                                 }
-                            } else if (asset !== 'MINE_GOLD' && asset !== 'MINE_STONE' && !asset.startsWith('FORAGE_')) {
+                            } else if (asset.startsWith('FORAGE_')) {
+                                // 非湿润热带区域（如雪地、荒漠、温带/寒带），将烘培模板中的热带菠萝/木瓜浆果丛统一转为通用浆果丛
+                                if (asset !== 'FORAGE_BUSH') {
+                                    const isHumidTropical = !isSnowBase
+                                        && !isSparseTreelessBiome
+                                        && Math.abs(mapLat) <= 23.5
+                                        && !/^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
+                                    if (!isHumidTropical) asset = 'FORAGE_BUSH';
+                                }
+                            } else if (asset !== 'MINE_GOLD' && asset !== 'MINE_STONE') {
                                 // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
                                 if (/^ROCK/.test(asset)) {
                                     if (decorSet.solid.length === 0) continue;

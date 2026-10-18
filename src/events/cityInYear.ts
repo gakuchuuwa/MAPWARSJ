@@ -12,7 +12,7 @@
  * 不存在的城**路照走**（仍是路网节点），只是不显示、不能当任何落脚点。
  */
 import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { getGeneralEra, type GeneralEra } from '../data/GeneralEra';
 
 export const ERA_ORDER: GeneralEra[] = ['antiquity', 'feudal', 'castle', 'imperial'];
@@ -37,12 +37,14 @@ export function cityAbsentReason(cityId: string, year: number): string | null {
     //    建立年代是「哪年有这座城」的正解，归属武将时代只是**没填建立年代时的替代判据**（现 937 座靠它把关）。
     const founded = CITY_FOUNDED_YEAR[cityId];
     if (founded !== undefined) return founded > year ? `建立于 ${founded} 年，这一年（${year}）还没有` : null;
-    const g = getCityAnchoredGeneral(cityId);
-    const era = g ? getGeneralEra(g.generalId) : undefined;
-    if (!era) return '归属武将没有时代，按规矩不上图';
+    const gens = getCityAnchoredGenerals(cityId);
+    const eras = gens.map((g) => getGeneralEra(g.generalId)).filter((e): e is GeneralEra => !!e);
+    if (!eras.length) return '归属武将没有时代，按规矩不上图';
     const cur = eraOfYear(year);
-    if (ERA_ORDER.indexOf(era) > ERA_ORDER.indexOf(cur)) {
-        return `${ERA_NAME[era]}时代的据点，这时还是${ERA_NAME[cur]}时代`;
+    const earliestIdx = Math.min(...eras.map((e) => ERA_ORDER.indexOf(e)));
+    const earliestEra = ERA_ORDER[earliestIdx] ?? eras[0];
+    if (earliestIdx > ERA_ORDER.indexOf(cur)) {
+        return `${ERA_NAME[earliestEra]}时代的据点，这时还是${ERA_NAME[cur]}时代`;
     }
     return null;
 }

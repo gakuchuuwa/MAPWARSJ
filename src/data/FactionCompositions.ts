@@ -1430,6 +1430,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代库曼军团",
         legionType: "sub",
     },
+    "eguo_biandi": {
+        legionName: "帝国时代月牙长斧军团",
+        legionType: "sub",
+    },
     "kelimiya": {
         legionName: "城堡时代卡罗乔民兵团",
         legionType: "sub",
@@ -3030,6 +3034,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "huige": {
+        legionName: "封建时代突厥军团",
+        legionType: "sub",
+    },
+    "porbazhyn_huihu": {
         legionName: "封建时代突厥军团",
         legionType: "sub",
     },

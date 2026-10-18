@@ -50,6 +50,7 @@ export const SLAVIC_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegio
     beisilafu: { name: '谢尔盖兵团', tier: 4 },          // 别尔哥罗德·谢尔盖；避势力「塞维里亚」叠字
     siluoboda: { name: '洛潘河巡骑', tier: 3 },          // 哈尔科夫·多涅茨：洛潘河畔斯洛博达驻军（非史载「洛潘骑」专名）
     yedi: { name: '穆拉夫骑', tier: 3 },          // 沃罗涅日·萨布罗夫：守穆拉夫小道南疆骑戍
+    eguo_biandi: { name: '穆拉夫骑', tier: 3 },   // 萨拉托夫·萨布罗夫：16 世纪俄国边地骑戍
     weijiebusike_gongguo: { name: '奥尔格尔团', tier: 3 },          // 维捷布斯克·奥尔格尔德；避「维捷」叠字
     peilieya_gongguo: { name: '莫诺马赫团', tier: 2 },          // 佩列亚斯拉夫·莫诺马赫；避「佩列」叠字
     suzidaer: { name: '伏尔加营', tier: 4 },          // 下诺城·德米特里；避据点「下诺」叠字

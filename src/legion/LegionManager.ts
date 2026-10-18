@@ -1,14 +1,20 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import {
+    getCityAnchoredGeneral,
+    getCityAnchoredGenerals,
+    isGeneralAnchoredAtCity,
+} from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import {getCityAnchoredStrategicMagnitude, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedCityAnchoredDefensePulse} from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
     attachFactionGeneralToArmy,
+    hasAvailableCityGeneral,
     makeArmyElite,
     markSpawnTierConsumed,
     noteCitySpawnTierFromLegion,
+    setActiveLegionGeneralIdsProvider,
     type CitySpawnTierState,
 } from './LegionSpawnTier';
 import {
@@ -77,6 +83,7 @@ export class LegionManager {
         this.cityManager = cityManager;
         this.map = map;
         this.spatialRegistry = SpatialRegistry.getInstance();
+        setActiveLegionGeneralIdsProvider(() => this.getActiveGeneralIds());
 
         this.roadMarchDeps = {
             cityManager: this.cityManager,
@@ -333,9 +340,21 @@ export class LegionManager {
         applyLegionSpawnTierToArmy(army, city);
     }
 
-    /** 扫描现有军团，反推各据点将/精消耗（开局与热更后） */
+    /** 当前地图上所有活跃军团携带的 generalId 集合 */
+    public getActiveGeneralIds(): ReadonlySet<string> {
+        const set = new Set<string>();
+        for (const army of this.armies) {
+            if (!army.isDestroyed && army.type === 'legion' && army.generalId && !army.isScriptArmy) {
+                set.add(army.generalId);
+            }
+        }
+        return set;
+    }
+
+    /** 扫描现有军团，反推各据点将/精消耗（开局与热更后；一个据点多武将时仅当全部在场武将均已出征才标 used） */
     public syncCitySpawnTierConsumption(): void {
         const cities = this.cityManager.getCities();
+        const activeGenIds = this.getActiveGeneralIds();
         for (const city of cities) {
             city.spawnGeneralUsed = false;
             city.spawnEliteUsed = false;
@@ -346,16 +365,27 @@ export class LegionManager {
             if (cityId) {
                 const city = this.cityManager.getCity(cityId);
                 if (city && city.factionId === army.getFactionId()) {
-                    if (army.isElite) city.spawnEliteUsed = true;
-                    if (army.generalId && getCityAnchoredGeneral(city.id)?.generalId === army.generalId) {
-                        city.spawnGeneralUsed = true;
+                    const onStageGenerals = getCityAnchoredGenerals(city.id).filter((g) => isGeneralOnStage(g.generalId));
+                    const allGeneralsUsed =
+                        onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
+                    if (army.isElite) {
+                        city.spawnEliteUsed = onStageGenerals.length > 1 ? allGeneralsUsed : true;
+                    }
+                    if (army.generalId && isGeneralAnchoredAtCity(city.id, army.generalId)) {
+                        city.spawnGeneralUsed = allGeneralsUsed;
                     }
                 }
             }
             if (army.generalId) {
                 for (const c of cities) {
-                    if (getCityAnchoredGeneral(c.id)?.generalId === army.generalId) {
-                        c.spawnGeneralUsed = true;
+                    if (isGeneralAnchoredAtCity(c.id, army.generalId)) {
+                        const onStageGenerals = getCityAnchoredGenerals(c.id).filter((g) => isGeneralOnStage(g.generalId));
+                        const allGeneralsUsed =
+                            onStageGenerals.length > 0 && onStageGenerals.every((g) => activeGenIds.has(g.generalId));
+                        c.spawnGeneralUsed = allGeneralsUsed;
+                        if (onStageGenerals.length > 1) {
+                            c.spawnEliteUsed = allGeneralsUsed;
+                        }
                     }
                 }
             }
@@ -383,7 +413,7 @@ export class LegionManager {
             const state: CitySpawnTierState = city ?? {};
             const atAnchor = isCityGeneralEliteAnchor(cityId);
             const canGeneral =
-                atAnchor && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId) && !!getCityAnchoredGeneral(cityId) && isGeneralOnStage(getCityAnchoredGeneral(cityId)?.generalId);
+                atAnchor && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId) && hasAvailableCityGeneral(cityId);
             const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
             if (army.isElite && !army.generalId) {

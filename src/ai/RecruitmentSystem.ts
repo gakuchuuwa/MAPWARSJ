@@ -24,11 +24,12 @@ import { PerformanceMonitor } from '../debug/PerformanceMonitor';
 import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
-import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
+import { hasAvailableCityGeneral } from '../legion/LegionSpawnTier';
 import { armDeploy } from '../legion/DeployGate';
 import { toBase16, BASE16_CULTURES, BASE_16_LEGION_NAMES, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
 import { toCulture66 } from '../systems/CultureHierarchy';
@@ -323,11 +324,11 @@ export class RecruitmentSystem {
             if (this.cityHasActiveLegion(city.id)) continue;
             if (this.isCityGarrisonCommitted(city.id)) continue;
             // 锚定将战败冷却中或已被占用：该城暂不出兵。
-            if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id)) continue;
+            if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id) || !hasAvailableCityGeneral(city.id)) continue;
             // 🔴 [2026-10-18 主人定「没有武将的据点，不能去打别的据点」「没有武将不能出兵」]
             //    据点无武将或武将当前不在登场期（此时只有普通守军「XX将军」），不能出兵攻打别的据点。
-            const anchoredGeneral = getCityAnchoredGeneral(city.id);
-            if (!anchoredGeneral || !isGeneralOnStage(anchoredGeneral.generalId)) continue;
+            const anchoredGenerals = getCityAnchoredGenerals(city.id);
+            if (!anchoredGenerals.some((g) => isGeneralOnStage(g.generalId))) continue;
             // 计算征兵兵力（城市兵力的90%，据点保留 10% 驻军）
             const baseArmySize = Math.floor((city.troops || 0) * 0.9);
             let armySize = baseArmySize;
@@ -389,9 +390,9 @@ export class RecruitmentSystem {
 
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
-        if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id)) return null;
-        const anchoredGeneral = getCityAnchoredGeneral(city.id);
-        if (!anchoredGeneral || !isGeneralOnStage(anchoredGeneral.generalId)) return null;
+        if (city.spawnGeneralUsed || isGeneralOnCooldown(city.id) || !hasAvailableCityGeneral(city.id)) return null;
+        const anchoredGenerals = getCityAnchoredGenerals(city.id);
+        if (!anchoredGenerals.some((g) => isGeneralOnStage(g.generalId))) return null;
         const region = this.getCityRegion(city);
         const base16 = this.getCityBase16(city);
         const factionLegion = FACTION_COMPOSITIONS[city.factionId]?.legionName?.trim();
@@ -430,13 +431,22 @@ export class RecruitmentSystem {
     }
 
     private cityHasActiveLegion(cityId: string): boolean {
-        const anchoredGenId = getCityAnchoredGeneral(cityId)?.generalId;
+        const anchoredGenIds = new Set(
+            getCityAnchoredGenerals(cityId)
+                .filter((g) => isGeneralOnStage(g.generalId))
+                .map((g) => g.generalId),
+        );
         const activeFromCity = this.legionManager.getArmies().filter((a) => {
             if (a.isDestroyed || a.type !== 'legion') return false;
-            if (anchoredGenId && a.generalId === anchoredGenId) return true;
+            if (a.generalId && anchoredGenIds.has(a.generalId)) return true;
             return a.homeCityId === cityId || a.getSourceCityId() === cityId;
         });
         if (activeFromCity.length === 0) return false;
+        // 一据点多武将：若城中还有其他尚未带兵出征的在场武将，则不因已有1支军团而封死余将出兵通道
+        if (anchoredGenIds.size > 1) {
+            const busyCount = activeFromCity.filter((a) => a.generalId && anchoredGenIds.has(a.generalId)).length;
+            return busyCount >= anchoredGenIds.size;
+        }
 
         // 2026-08-03 档案战略技删除：str_26 招兵买马（recruit_cooldown_mult）已退役封印，
         // 无任何持有者，「军团离城可再募」豁免不复存在，有活跃军团即视为不可再募
