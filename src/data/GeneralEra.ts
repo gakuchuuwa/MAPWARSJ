@@ -1190,6 +1190,20 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'baihaliye_djedkhonsu': 'antiquity',
     'kuida_chakar': 'castle',
     'zhalange_barsaentes': 'antiquity',
+    'sumeier_nabopalasa': 'antiquity',
+    'wuer_boshasha': 'antiquity',
+    'guyashu_tigelate': 'antiquity',
+    'xikesuosi_samutike': 'antiquity',
+    'dibisi_tahaerka': 'antiquity',
+    'heti_alialate': 'antiquity',
+    'aiji_neiketaneibu': 'antiquity',
+    'shang_weiwuji': 'antiquity',
+    'yamaxun_faernake': 'antiquity',
+    'teluoyi_maniya': 'antiquity',
+    'ailan_julushi': 'antiquity',
+    'zhou_jifu': 'antiquity',
+    'yin_yuejin': 'antiquity',
+    'xibolai_majiabi': 'antiquity',
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

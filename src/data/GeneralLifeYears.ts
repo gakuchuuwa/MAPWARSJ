@@ -1174,7 +1174,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     aornos_aphrikes: { birth: -370, death: -326, kaoju: '推定' },  // 阿夫里凯斯
     julushi_catanes: { birth: -375, death: -323, kaoju: '推定' },  // 卡塔涅斯
     malli_malavapala: { birth: -350, death: -290, kaoju: '推定' },  // 摩罗波罗
-    kesaiya_kashtiliash: { birth: -1350, death: -1225, kaoju: '推定' },  // 卡什提利亚什
+    kesaiya_kashtiliash: { birth: -360, death: -320, kaoju: '推定' },  // 卡什提利亚什（前324年亚历山大征科塞亚之战守帅）
     wukexiya_madates: { birth: -370, death: -324, kaoju: '推定' },  // 马达泰斯
     dasaleiti_kleitos: { birth: -365, death: -325, kaoju: '推定' },  // 克莱图斯
     hesitiya_yiasong: { birth: -380, death: -324, kaoju: '推定' },  // 伊阿宋
@@ -1202,6 +1202,20 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     kuida_chakar: { birth: 1480, death: 1533, kaoju: '推定' },  // 恰卡尔
     zhalange_barsaentes: { birth: -370, death: -330, kaoju: '推定' },  // 巴尔塞恩特斯
     maikelan_punong: { birth: 950, death: 1015, kaoju: '推定' },  // 普农
+    sumeier_nabopalasa: { birth: -658, death: -605, kaoju: '异说' },  // 那波帕拉萨（乌鲁克·新巴比伦开国君主）
+    wuer_boshasha: { birth: -580, death: -539, kaoju: '推定' },  // 伯沙撒（乌尔城·新巴比伦摄政王）
+    guyashu_tigelate: { birth: -795, death: -727, kaoju: '推定' },  // 提格拉特（亚述城·提格拉特帕拉沙尔三世）
+    xikesuosi_samutike: { birth: -685, death: -610, kaoju: '推定' },  // 萨姆提克（阿瓦里斯·萨姆提克一世）
+    dibisi_tahaerka: { birth: -710, death: -664, kaoju: '推定' },  // 塔哈尔卡（瓦塞特·埃及第二十五王朝法老）
+    heti_alialate: { birth: -405, death: -322, kaoju: '异说' },  // 阿里阿拉特（哈图沙·卡帕多细亚国王阿里阿拉特一世）
+    aiji_neiketaneibu: { birth: -420, death: -360, kaoju: '推定' },  // 内克塔内布（孟菲斯·埃及第三十王朝开国法老内克塔内布一世）
+    shang_weiwuji: { birth: -300, death: -243, kaoju: '推定' },  // 魏无忌（安阳·战国信陵君，安阳夺晋鄙军救赵破秦）
+    yamaxun_faernake: { birth: -215, death: -155, kaoju: '推定' },  // 法尔纳克（忒弥斯基拉·本都国王法尔纳克一世）
+    teluoyi_maniya: { birth: -440, death: -399, kaoju: '推定' },  // 马尼亚（特洛伊·达达诺斯女副总督，镇守伊利昂）
+    ailan_julushi: { birth: -600, death: -530, kaoju: '异说' },  // 居鲁士二世（苏萨·波斯帝国创立者，定都苏萨）
+    zhou_jifu: { birth: -852, death: -775, kaoju: '推定' },  // 吉甫（岐山·西周太师尹吉甫，前823年自岐周统六师北伐猃狁）
+    yin_yuejin: { birth: 159, death: 218, kaoju: '推定' },  // 乐进（朝歌·建安十年攻克朝歌斩严敬）
+    xibolai_majiabi: { birth: -190, death: -160, kaoju: '推定' },  // 犹大马加比（耶路撒冷·马加比起义领袖收复耶路撒冷）
 };
 
 /** 生年（未收录返回 null） */

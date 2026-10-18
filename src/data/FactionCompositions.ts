@@ -3517,6 +3517,10 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "古典时代黎凡特军团",
         legionType: "sub",
     },
+    "ailan": {
+        legionName: "古典时代长生军团",
+        legionType: "sub",
+    },
     "aiaoniya": {
         legionName: "古典时代爱奥尼亚军团",
         legionType: "sub",

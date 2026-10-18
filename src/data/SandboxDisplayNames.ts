@@ -21,9 +21,9 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   //    未登记 4 个（本轮新增的大西洋航线势力）+ 撞车 3 组，一并收口，现全部唯一。
   fodejiao: '佛得',  // [2026-08-26] 佛得角
   baiyiya: '巴伊',  // [2026-08-26] 巴伊亚
-  tupinijin: '尼金',  // [2026-08-26] 图皮尼金：「图皮」已被 tupi(塔莫约图皮) 占用，取后两字
-  tuotuonake: '托托',  // [2026-08-26] 韦拉克鲁斯本地原住民托托纳克
-  taino: '泰诺',  // [2026-08-26] 古巴/大安的列斯原住民泰诺人
+  tupinijin: '葡属',  // 葡属巴西（圣维森特）
+  tuotuonake: '新墨',  // 西属墨西哥（韦拉克鲁斯）
+  taino: '古巴',  // 西属古巴（哈瓦那）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
   chamorro: '查',  // 查莫罗（关岛·阿加尼亚）
@@ -32,7 +32,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
 
   boootiya: '波奥',
   luodesi: '多德',
-  kelite: '米诺',
+  kelite: '威共',  // 威尼斯共和国（干地亚要塞）
   leangongguo: '莱昂',
   bohepingyuan: '威尼',
   xixiliwangguo: '西西',
@@ -96,7 +96,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aquidan: '阿奎',
   puluowangsi: '普罗',
   lunbadi: '伦巴',
-  wangdaer: '汪达',
+  wangdaer: '西罗',  // 西罗马（希波）
 'donggete': '东哥',
   xigete: '西哥',
   andaluoxiya: '安达',
@@ -139,7 +139,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'baizanting': '拜占',
 'taolika': '陶里',
   bosi_puluosi: '博普',
-'kelimiya': '克里',
+'kelimiya': '热亚',  // 热那亚共和国（卡法）
 'keluodiya': '克罗',
   qincha: '钦察',
 'litaowan': '立陶',
@@ -1100,7 +1100,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'sumeier': '苏美',
     'ayoubu': '阿尤',
     'mamuluke': '马穆',
-    aosiruowen: '埃德',  // [2026-08-26 旗号去重] 奥斯若恩：「奥斯」与奥斯曼撞；该国即以埃德萨(Edessa)为都
+    aosiruowen: '若恩',  // 奥斯若恩（埃德萨）；「奥斯」撞奥斯曼，改取后两字
     'kesa': '可萨',
 'aiaoniya': '爱奥',
     'yiaoniya': '伊奥',
@@ -1144,7 +1144,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'manzheboyi': '满者',
     'zhelouqi': '遮娄',
     'suosuo': '索索',
-    'antiaokegongguo': '安条',
+    'antiaokegongguo': '赞吉',  // 赞吉王朝（拉塔基亚）
     'aoerlianggongguo': '奥尔',
     'jinquehua': '金雀',
     'apuliya': '阿普',

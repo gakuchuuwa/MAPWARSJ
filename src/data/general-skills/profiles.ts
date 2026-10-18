@@ -3368,6 +3368,20 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     lulisitan_shoujiang: { generalId: 'lulisitan_shoujiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     golpayegan_yicheng: { generalId: 'golpayegan_yicheng', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
     meisuobudamiya_shoujiang: { generalId: 'meisuobudamiya_shoujiang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    sumeier_nabopalasa: { generalId: 'sumeier_nabopalasa', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    wuer_boshasha: { generalId: 'wuer_boshasha', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    guyashu_tigelate: { generalId: 'guyashu_tigelate', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    xikesuosi_samutike: { generalId: 'xikesuosi_samutike', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'balanced' },
+    dibisi_tahaerka: { generalId: 'dibisi_tahaerka', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    heti_alialate: { generalId: 'heti_alialate', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },
+    aiji_neiketaneibu: { generalId: 'aiji_neiketaneibu', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'defense' },
+    shang_weiwuji: { generalId: 'shang_weiwuji', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    yamaxun_faernake: { generalId: 'yamaxun_faernake', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
+    teluoyi_maniya: { generalId: 'teluoyi_maniya', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'balanced' },
+    ailan_julushi: { generalId: 'ailan_julushi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    zhou_jifu: { generalId: 'zhou_jifu', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },
+    yin_yuejin: { generalId: 'yin_yuejin', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'leverage', attackStyle: 'attack' },
+    xibolai_majiabi: { generalId: 'xibolai_majiabi', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'attack' },
 };
 
 
