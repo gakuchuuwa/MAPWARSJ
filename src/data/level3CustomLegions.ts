@@ -39,13 +39,13 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'war_chariot_ranged', count: 2 },
-            { type: 'fire_archer', count: 3 },
-            { type: 'elite_white_feather_guard', count: 4 },
+            { type: 'elite_white_feather_guard', count: 3 },
+            { type: 'fire_archer', count: 4 },
         ],
         regions: ['PRE_QIN'],
         parentLegion: '古典时代秦汉军团',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_lubu',
+        commanderUnit: 'hero_tsarkonstantin',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人定「同族同时代不另立」＋「删除吧」] —— 已删「古典时代希腊雇佣军团」。
