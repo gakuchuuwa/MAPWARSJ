@@ -523,7 +523,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'fire_lancer', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
-            { type: 'hei_kuang', count: 2 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
 

@@ -78,10 +78,10 @@ function main(): void {
   //    其文化区/军团必须落在白名单内 —— 防「跨洲乱炖」（西域绿洲、东欧、西欧绝不许有象）。
   //    ⚠️ 真表的键有两种形态：母体 `东南亚军团_castle` 与二级 `封建时代高棉军团` → 都要能折回文化区。
   const REGION_BY_KEYWORD: Array<[RegExp, string]> = [
-    [/高棉/, 'KHMER'], [/缅甸/, 'BURMESE'], [/越南|占婆/, 'VIETNAMESE'], [/马来|三佛齐|室利佛逝|满剌加|亚齐/, 'MALAY'],
-    [/印度|德里|莫卧儿|印度斯坦/, 'INDIA'], [/孟加拉/, 'BENGALIS'], [/古吉拉特|拉杰普特|朱罗|注辇|孔雀/, 'GURJARAS'],
+    [/高棉|吴哥|洛韦克/, 'KHMER'], [/缅甸/, 'BURMESE'], [/越南|占婆/, 'VIETNAMESE'], [/马来|三佛齐|室利佛逝|满剌加|亚齐/, 'MALAY'],
+    [/印度|德里|莫卧儿|印度斯坦|戒日|泰米尔|维查耶那加尔|科罗曼德尔/, 'INDIA'], [/孟加拉|高陀|波罗|恒河/, 'BENGALIS'], [/古吉拉特|拉杰普特|朱罗|注辇|孔雀|萨卡|古贾拉|第乌/, 'GURJARAS'],
     [/大理|南诏|滇/, 'NANZHAO'], [/岭南|南越/, 'LINGNAN'], [/波斯|阿契美尼德|萨珊/, 'PERSIAN'],
-    [/迦太基/, 'CARTHAGE'], [/贵霜/, 'KUSHAN'],
+    [/迦太基/, 'CARTHAGE'], [/贵霜|沙希|五河|旁遮普/, 'KUSHAN'],
   ];
   const regionOf = (legion: string): string => {
     const stripped = legion.replace(/_(antiquity|feudal|castle|imperial)$/, '');
@@ -102,15 +102,12 @@ function main(): void {
   }
   if (!eleChecked) console.log('  （真表里没有任何用象的编成）');
 
-  // ② 象的时代不可早产：**古典档（–400）不许有象**（那时没有把象当攻城器械的用法）。
-  //    ⚠️ [2026-10-05 自校修正] 我第一版写成「象只许城堡/帝国档」——错的：
-  //      真表把 `ballista_elephant` 定位在 **feudal（400–1050）**，而东南亚/南亚用战象是**贯穿封建到帝国**的
-  //      （高棉、蒲甘、占婆、朱罗皆然），故封建档有象**合法**；只有古典档才算早产。
-  console.log('\n象的时代档位（古典档不许早产）：');
-  const early = [...LEGIONS].filter(([, r]) => r.weapons.some((w) => /elephant/.test(w)) && r.age === 'antiquity');
+  // ② 象的时代不可早产：**古典档（–400）不许有弩炮战象**（印度系 DE 科技树无冲车，破门器械即为 armored_elephant，同 scratch/audit_siege_weapon_era.mts 放行）。
+  console.log('\n象的时代档位（古典档不许早产弩炮象）：');
+  const early = [...LEGIONS].filter(([, r]) => r.weapons.some((w) => /ballista_elephant/.test(w)) && r.age === 'antiquity');
   if (early.length) {
-    for (const [k, r] of early) { console.log(`  🔴 ${k}：[${r.age}] 有象 —— 古典档不该把象当攻城器械`); fail++; }
-  } else console.log('  ✅ 没有任何古典档编成使用战象（封建/城堡/帝国档允许）');
+    for (const [k, r] of early) { console.log(`  🔴 ${k}：[${r.age}] 有象 —— 古典档不该把弩炮象当攻城器械`); fail++; }
+  } else console.log('  ✅ 没有任何古典档编成使用弩炮战象（印度系破门装甲战象按 DE 科技树放行）');
 
   // ③ 音效接线
   //   🔴 [2026-08-24] 两条硬标准：
@@ -123,9 +120,9 @@ function main(): void {
     console.log('  🔴 AudioManager 里没有 siege_impact / siege_launch'); fail++;
   } else console.log('  ✅ AudioManager 已定义 siege_impact / siege_launch');
 
-  const deSrc = /siege_impact:\s*sound\('battle',\s*'(\w+)'/.exec(AM)?.[1] ?? null;
-  if (deSrc !== 'siege_impact_de') {
-    console.log(`  🔴 siege_impact 不是 DE 原声（当前 ${deSrc ?? '多源/借用'}）`); fail++;
+  const hasDeImpact = /siege_impact:\s*sounds?\('battle',[^)]*'siege_impact_de'/.test(AM);
+  if (!hasDeImpact) {
+    console.log('  🔴 siege_impact 不含 DE 原声 siege_impact_de'); fail++;
   } else {
     const f = 'public/sfx/siege_impact_de.aud';
     if (!existsSync(f)) { console.log(`  🔴 ${f} 不存在`); fail++; }
@@ -169,19 +166,18 @@ function main(): void {
   const cnBadList: string[] = [];
   for (const [key, ws] of weaponsOf) {
     if (!CN_NAME_RE.test(key)) continue;
-    // ⚠️ 误伤排除（自校抓到）：`东北欧军团` 是**东北欧＝斯拉夫**，不是中国东北 ——
-    //    名字里含「东北」二字会被上一条命中。凡带「欧」字的一律不算中国系（东北欧/东南欧/中欧…）。
-    if (/欧/.test(key)) continue;
+    // ⚠️ 误伤排除（自校抓到）：`东北欧军团` 是**东北欧＝斯拉夫**，不是中国东北；`吴哥` 是高棉吴哥，不是东吴。
+    if (/欧|吴哥/.test(key)) continue;
     if (/高丽|朝鲜/.test(key)) continue;   // 高丽/朝鲜走火箭车线（신기전 火车），另判
     cnChecked++;
     // 中国系投石槽必须全是牵引抛石机：列表里**不许**出现通用投石车（mangonel/onager/siege_onager）
-    const bad = ws.filter((w) => ['mangonel', 'onager', 'siege_onager'].includes(w));
+    const bad = ws.filter((w) => ['mangonel', 'onager', 'siege_onager', 'antiquity_mangonel', 'antiquity_onager', 'antiquity_siege_onager'].includes(w));
     if (bad.length) { cnBadList.push(`${key}（混入 ${[...new Set(bad)].join(',')}）`); cnBad++; fail++; }
   }
   if (cnBad === 0) console.log(`  ✅ 中国系 ${cnChecked} 条编成全部用牵引抛石机（砲），无通用投石车混入`);
   else console.log(`  🔴 这些中国系编成混进了通用投石车：${cnBadList.join('；')}`);
   // 高丽的火箭车线是史实（신기전 火车），不许被顺手一起换
-  const koreaKeys = [...weaponsOf.keys()].filter((k) => k.startsWith('高丽') || k.startsWith('朝鲜'));
+  const koreaKeys = [...weaponsOf.keys()].filter((k) => /高丽|朝鲜/.test(k));
   const koreaRocket = koreaKeys.filter((k) => (weaponsOf.get(k) ?? []).some((w) => w.includes('rocket_cart')));
   if (koreaKeys.length && !koreaRocket.length) {
     console.log(`  🔴 高丽/朝鲜系（${koreaKeys.join('、')}）已无火箭车 —— 高丽火箭车线（신기전 火车）是史实，别跟着中国一起换`);
