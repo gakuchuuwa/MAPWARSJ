@@ -1219,7 +1219,7 @@ export class CombatUI {
         this.leftBarTroopsBadge.className = 'combat-number-badge';
         this.leftBarTroopsBadge.style.cssText = `
             position: absolute;
-            right: ${uiPx(24)};
+            right: calc(50% + ${uiPx(24)});
             top: 50%;
             transform: translateY(-50%);
             z-index: 5;
@@ -1267,14 +1267,13 @@ export class CombatUI {
             cursor: help;
         `;
 
-        this.attackerBar.appendChild(this.leftBarTroopsBadge);
-
         this.clashEffect.appendChild(clashFlare);
         this.clashEffect.appendChild(clashCore);
 
         this.healthBarContainer.appendChild(this.defenderBar);
         this.healthBarContainer.appendChild(this.attackerBar);
         this.healthBarContainer.appendChild(this.clashEffect);
+        this.healthBarContainer.appendChild(this.leftBarTroopsBadge);
         this.healthBarContainer.appendChild(this.rightBarTroopsBadge);
 
 
@@ -4101,16 +4100,19 @@ export class CombatUI {
             // 不归位的话新场会从上一场的收尾位置（可能是 100%）起步。
             this.attackerBar.style.transition = 'none';
             this.clashEffect.style.transition = 'none';
+            this.leftBarTroopsBadge.style.transition = 'none';
             this.rightBarTroopsBadge.style.transition = 'none';
             this.attackerBar.style.width = '50%';
             this.clashEffect.style.left = 'calc(50% - 8px)';
-            this.rightBarTroopsBadge.style.left = `min(calc(50% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+            this.leftBarTroopsBadge.style.right = `clamp(${uiPx(84)}, calc(50% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+            this.rightBarTroopsBadge.style.left = `clamp(${uiPx(84)}, calc(50% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
             void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
         // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
         this.outcomeLocked = false;
         this.attackerBar.style.transition = 'width 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.clashEffect.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
+        this.leftBarTroopsBadge.style.transition = 'right 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.rightBarTroopsBadge.style.transition = 'left 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
         this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         this.battleTitle.style.animation = '';
@@ -4143,10 +4145,12 @@ export class CombatUI {
         const slam = '0.2s cubic-bezier(0.55, 0, 0.9, 0.4)';
         this.attackerBar.style.transition = `width ${slam}`;
         this.clashEffect.style.transition = `left ${slam}`;
+        this.leftBarTroopsBadge.style.transition = `right ${slam}`;
         this.rightBarTroopsBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
-        this.rightBarTroopsBadge.style.left = `min(calc(${finalPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+        this.leftBarTroopsBadge.style.right = `clamp(${uiPx(84)}, calc(${100 - finalPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+        this.rightBarTroopsBadge.style.left = `clamp(${uiPx(84)}, calc(${finalPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -5970,10 +5974,14 @@ export class CombatUI {
         //       差距完全靠打出来，和引擎战斗的三幕节奏语义一致。
         if (liveWar) {
             const live0 = (window as any).game?.scene13War?.getInitialTroops?.();
-            const spent = live0 && live0.total > 0
-                ? 1 - (liveWar.attacker + liveWar.defender) / live0.total
-                : 0;
-            progress = Math.min(1, Math.max(0, spent));
+            if (live0 && live0.total > 0) {
+                const attSpent = live0.attacker > 0 ? 1 - liveWar.attacker / live0.attacker : 1;
+                const defSpent = live0.defender > 0 ? 1 - liveWar.defender / live0.defender : 1;
+                const spent = Math.max(attSpent, defSpent, 1 - (liveWar.attacker + liveWar.defender) / live0.total);
+                progress = Math.min(1, Math.max(0, spent));
+            } else {
+                progress = 0;
+            }
         }
 
         // 占优方（=标尺最后崩塌要倒向的一面）：区域性战斗读引擎判定的强方
@@ -6000,7 +6008,21 @@ export class CombatUI {
         const swingUnit = Math.sin(swingT) * 0.8 + Math.sin(swingT * 1.4) * 0.2;
 
         let attPct: number;
-        if (progress < PHASE_STALEMATE_START) {
+        if (total > 0 && (attCurrent <= 0 || defCurrent <= 0)) {
+            // 一方已无兵（0 人）：血槽直接一边倒（100% / 0%），不回撤到 77% 保底线
+            this.collapseStartAttPct = null;
+            attPct = realAttPct;
+        } else if (liveWar) {
+            // 战术模式（liveWar）：开局从 50% 缓入真实兵力比后，全程按实时兵力比推进，不走 77% 回撤
+            this.collapseStartAttPct = null;
+            if (progress < PHASE_STALEMATE_START) {
+                const enterK = Math.min(1, progress / Math.max(0.0001, PHASE_STALEMATE_START * BAR_ENTER_RATIO_OF_ACT1));
+                const eased = Math.pow(enterK, BAR_ACT1_EASE_POWER);
+                attPct = 50 + (realAttPct - 50) * eased + swingUnit * BAR_SWING_ACT1;
+            } else {
+                attPct = realAttPct + swingUnit * BAR_SWING_ACT2_TO;
+            }
+        } else if (progress < PHASE_STALEMATE_START) {
             // 第一阶段（12 秒）：开局标尺在**正中**（铁律，勿改），整段 12 秒逐步爬向真实兵力比，
             // 到本阶段末刚好到位；**不封顶**。与第二阶段的 12 秒接起来 = 24 秒连续逐步移动。
             this.collapseStartAttPct = null;
@@ -6042,7 +6064,8 @@ export class CombatUI {
             const visualLeftPct = this.scene13SidesFlipped ? 100 - attPct : attPct;
             this.attackerBar.style.width = `${visualLeftPct}%`;
             this.clashEffect.style.left = `calc(${visualLeftPct}% - 8px)`;
-            this.rightBarTroopsBadge.style.left = `min(calc(${visualLeftPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+            this.leftBarTroopsBadge.style.right = `clamp(${uiPx(84)}, calc(${100 - visualLeftPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
+            this.rightBarTroopsBadge.style.left = `clamp(${uiPx(84)}, calc(${visualLeftPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；

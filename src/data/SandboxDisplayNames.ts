@@ -67,7 +67,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   aguelabu: '阿格',
   telibolisi: '的黎',
 'jileinaijia': '基雷',
-  talike: '塔里',
+  talike: '马格',
 
   maixiya: '麦西',
   nidelan: '尼德',
@@ -529,7 +529,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     // ── 2026-05-26 新增：濊貊、毛文龙（毛文龙旗号用"毛"）──
 'huimo': '濊貊',
-    'mao_wenlong': '毛',
+    'mao_wenlong': '东江',
 
     // ── 2026-05-26 新增：漠北草原势力旗号 ──
 'gaoche': '高车',
@@ -678,7 +678,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'humi': '瓦罕',
 
     // ── 2026-05-28 新增：马蒙、古兹根、傣、泰沅、帕銮、罗斛 ──
-'mamon': '马蒙',
+'mamon': '马朝',
     'guzgan': '古兹',
     'dai': '傣',
 'taiyuan': '泰沅',
@@ -695,7 +695,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     
 'dawoer': '嫩江',
 
-    'tumengken': '图蒙',
+    'tumengken': '赛音',
     'liren': '俚',
 
     // ── 2026-05-28 新增：岭、琼波、索伦、图瓦 ──
@@ -996,7 +996,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'wenzhou': '温',
     'fu_zhou': '涪',
     // ── 2026-06-19 新增：马尔吉亚纳·乌古斯 ──
-'maer_d': '马尔',
+'maer_d': '马吉',
 'wugu_d': '乌古',
     xierhe: '锡尔',
     'adao_d': '阿克',     // 昆岗·阿克苏道军台
@@ -1115,7 +1115,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'kongque': '孔雀',
     'mojietuo': '摩揭',
     'boluo': '波罗',
-    'sumo': '苏摩',
+    'sumo': '苏国',
     'beileinisi': '红港',
     'dedan': '德丹',
     'maidina': '拉希',
@@ -1189,7 +1189,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xibanya': '西班',
 'manding': '曼丁',
 'ethiopia': '埃塞',
-'zhagewei': '扎格',
+'zhagewei': '扎维',
     'adal': '阿达',
     'malacca': '满剌',
     'medang': '马打',
@@ -1207,7 +1207,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'liaozu': '寮',
     'kushi': '库施',
     'aimala': '艾马',
-    'aolisha': '奥里',
+    'aolisha': '奥萨',
     'kanata': '卡纳',
     'adile': '阿迪',
     'foluolida': '佛罗',
@@ -1251,7 +1251,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'lesser_poland': '小波',
     'braganza_house': '布干', // 🔴 [2026-09-12] 原「布拉」与 bulat(布拉特)撞旗 → 取「布拉干萨」首末两字「布干」
     'trastamara': '特拉',
-    'odrysian_late': '奥德里',
+    'odrysian_late': '奥',
     'jialiboli': '加里',
     'naxos_ancient': '纳克',
     'yamaxun': '亚马',
@@ -1286,7 +1286,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'keerman': '锡詹',
     'zhageluosi': '扎格',
     'lulisitan': '卢里',
-    'golpayegan_diqu': '古尔帕',
+    'golpayegan_diqu': '古尔',
     'meisuobudamiya': '美索',
     'panfeiliya': '潘菲',
 'hesitiya': '赫斯',

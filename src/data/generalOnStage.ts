@@ -11,33 +11,40 @@
  *   · 乱斗模式 / 剧本年份未知（编辑器、离线脚本、剧本已打完）→ 一律在场（旧行为不变）；
  *   · 生卒年表里没有的武将 → 在场（不拦）。
  */
-import { GENERAL_LIFE_YEARS, getGeneralDebutYear } from './GeneralLifeYears';
+import { GENERAL_LIFE_YEARS, getGeneralDebutYear, centenarianYearOf } from './GeneralLifeYears';
 import { isScriptPeriod } from '../events/scriptPeriod';
 
 /** 当前剧本年份（由 GameApp 注入 = 当前这一场历史事件的年份）；未注入 → null */
 let scriptYearProvider: () => number | null = () => null;
+/** 百岁模式当前年份（由 GameApp 注入：百岁模式时返回当前游戏年份，其余模式返回 null） */
+let centenarianYearProvider: () => number | null = () => null;
 
 export function setScriptYearProvider(fn: () => number | null): void {
     scriptYearProvider = fn;
 }
 
+export function setCentenarianYearProvider(fn: () => number | null): void {
+    centenarianYearProvider = fn;
+}
+
 let inYearLookup = false;
 
-/** 武将此刻是否在场（false = 剧本期这一年他还没登场或已去世 → 按普通武将处理） */
+/** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年] → 按普通武将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
+    const scriptMode = isScriptPeriod();
     inYearLookup = true;
     let year: number | null = null;
     try {
-        year = scriptYearProvider();
+        year = scriptMode ? scriptYearProvider() : centenarianYearProvider();
     } finally {
         inYearLookup = false;
     }
     if (year == null) return true;
-    if (!isScriptPeriod()) return true;
     const life = GENERAL_LIFE_YEARS[generalId];
     if (!life) return true;
     const debut = getGeneralDebutYear(generalId);
     if (debut == null) return true;
-    return year >= debut && year <= life.death;
+    const endYear = scriptMode ? life.death : Math.max(debut, centenarianYearOf(life.birth));
+    return year >= debut && year <= endYear;
 }

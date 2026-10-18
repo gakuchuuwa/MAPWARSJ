@@ -280,7 +280,7 @@ export class PlayerQuestSystem {
         deps.hero.onChange(() => {
             const auto = deps.hero.autoMode, plan = deps.hero.autoPlan;
             const turnedOffAuto = lastAuto && !auto;
-            const toMelee = lastPlan === 'script' && plan === 'melee';
+            const toMelee = lastPlan === 'script' && plan !== 'script';
             lastAuto = auto; lastPlan = plan;
             if (turnedOffAuto || toMelee) this.abortScriptJourney();
         });
@@ -1315,11 +1315,12 @@ export class PlayerQuestSystem {
     private resumePendingGeneralEvent(): boolean {
         const gid = this.pendingEventGeneralId;
         if (!gid || this.pendingEventOptions.length === 0) return false;
-        if (this.deps.hero.autoPlan !== 'melee') return false;   // 剧本模式那条链由 checkAndTriggerNextBattlefield 负责
+        if (this.deps.hero.autoPlan === 'script') return false;   // 剧本模式那条链由 checkAndTriggerNextBattlefield 负责
         if (this.deps.hero.isTraveling()) return true;           // 正在赶路，别打断
         // 从「最后谈过的那位武将」往回找，找到第一个还在场的就重新去谈
         while (this.pendingEventOptions.length) {
             const id = this.pendingEventOptions.shift()!;
+            if (!isGeneralOnStage(id)) continue;
             const cityId = [...this.deps.cityManager.getCities()]
                 .find((c) => getCityAnchoredGeneral(c.id)?.generalId === id)?.id;
             if (!cityId) continue;

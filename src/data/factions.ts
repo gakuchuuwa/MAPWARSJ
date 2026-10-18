@@ -42,7 +42,7 @@ export const FACTIONS: Faction[] = [
   { id: 'balunxiya', name: '瓦伦西亚' },
   { id: 'moxina', name: '墨西公国' },
   { id: 'sading', name: '萨丁' },
-  { id: 'yidelisi', name: '伊德里斯' },
+  { id: 'yidelisi', name: '伊德里斯王朝' },
   { id: 'qiekase', name: '第聂伯' },
   { id: 'baojialiya', name: '保加利亚' },
   { id: 'saierdika', name: '塞尔迪卡' },
@@ -58,13 +58,13 @@ export const FACTIONS: Faction[] = [
 
   { id: 'zhayan', name: '扎扬' },
   { id: 'babali', name: '巴巴里' },
-  { id: 'hamade', name: '哈马德' },
+  { id: 'hamade', name: '哈马德王朝' },
   { id: 'buni', name: '布匿' },
   { id: 'aguelabu', name: '阿格拉布' },
   { id: 'telibolisi', name: '的黎波里塔' },
   { id: 'jileinaijia', name: '基雷奈加' },
 
-  { id: 'talike', name: '塔里克' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）
+  { id: 'talike', name: '马格里布' },  // 丹吉尔·塔里克（DE柏柏尔领袖，711征服伊比利亚）；势力名不取人名，按地区名
 
   { id: 'maixiya', name: '麦西亚' },
   { id: 'nidelan', name: '尼德兰' },
@@ -928,7 +928,7 @@ export const FACTIONS: Faction[] = [
 
     // ── 2026-05-26 新增：濊貊、毛文龙、满洲贵族世家 ──
     { id: 'huimo', name: '濊貊' },
-    { id: 'mao_wenlong', name: '毛文龙' },       // 明黄 - 毛文龙(明末/东江镇/皮岛)
+    { id: 'mao_wenlong', name: '东江镇' },       // 明黄 - 毛文龙(明末/东江镇/皮岛)；势力名取军镇专名，不取人名
     // 紫檀 - 赫舍里氏
     // 赤红 - 瓜尔佳氏(苏完部/鳌拜/双阳)
 
@@ -1207,7 +1207,7 @@ export const FACTIONS: Faction[] = [
     // 特勤(西域/活国城), Tegin
 
     // ── 2026-05-28 新增：马蒙(达尔甘城/中亚)、古兹根(法里亚布城/中亚)、傣(勐泐城/云南)、泰沅(清坎城/泰国)、帕銮(素可泰/泰国)、罗斛(呵叻城/泰国) ──
-    { id: 'mamon', name: '马蒙' },
+    { id: 'mamon', name: '马蒙王朝' },
 
                          // 马蒙(中亚/达尔甘城), Ma'munid
     { id: 'guzgan', name: '古兹根' },                      // 古兹根(中亚/法里亚布城), Guzgan
@@ -1234,7 +1234,7 @@ export const FACTIONS: Faction[] = [
                     // 广南国(洞海城), Guangnan
 
     // ── 2026-05-28 新增：图蒙肯(拜达里克牙帐)、俚(珠崖/海南) ──
-    { id: 'tumengken', name: '图蒙肯' },                     // 图蒙肯(拜达里克牙帐), Tumengken
+    { id: 'tumengken', name: '赛音诺颜部' },                 // 图蒙肯(拜达里克牙帐), Tumengken；势力名取赛音诺颜部，不取人名
     { id: 'liren', name: '俚族' },                          // 俚(珠崖/海南岛),
 
     // ── 2026-05-28 新增：岭(结古宗)、琼波(丁青宗)、索伦(卜奎)、图瓦(唐努) ──
@@ -2053,7 +2053,7 @@ export const FACTIONS: Faction[] = [
     { id: 'jiaye', name: '伽耶' },
 
     { id: 'jienei', name: '杰内' },
-    { id: 'kuertaiya', name: '巴萨拉布' },
+    { id: 'kuertaiya', name: '巴萨拉布王朝' },
 
     { id: 'muwaxide', name: '穆瓦希德' },
   { id: 'varendra', name: '伐连陀' },

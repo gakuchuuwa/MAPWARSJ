@@ -6,7 +6,7 @@ export const STRATEGIC_WATER_PALETTE = {
     base: [38, 98, 140] as const,
     shoreLift: [12, 38, 28] as const,
     /** 深海深邃蓝 (Abyssal Deep Blue) */
-    deep: [16, 46, 78] as const,
+    deep: [22, 62, 100] as const,
     /** 浅滩、内陆宽河与矢量河流共用统一浅蓝绿水色 (Shallows & River Unified Cyan-Blue) */
     coastalAzure: [62, 148, 174] as const,
     /** 贴岸极浅清透水色 (Shore Shallows Highlight) */
@@ -174,8 +174,8 @@ export function renderStrategicWater(
             const d = depthT ? depthT[y * w + x] : 0;
             const dist = distance[i];
             // 连续离岸加深（无 d<0.03 硬阈值跳变，彻底消除海面暗沙/小岛周边的深蓝雀斑）：
-            // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~28px 平滑推向浅海中蓝
-            const offshoreT = dist > 8 ? (dist >= 28 ? 0.48 : ((dist - 8) / 20) * 0.48) : 0;
+            // 河道与近岸（dist <= 8px）保持 0（与矢量河流完全同色）；离岸 8~28px 平滑推向浅海中蓝 (0.50)
+            const offshoreT = dist > 8 ? (dist >= 28 ? 0.50 : ((dist - 8) / 20) * 0.50) : 0;
             let effD = Math.max(d, offshoreT);
 
             // 近岸浅滩过渡带：收窄至离岸 reach (6~10px)，在海岸边缘平滑压浅，避免浅水区过大（dist >= 11 时必在 reach 外，省去三角函数）

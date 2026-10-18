@@ -322,7 +322,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '古典时代秦汉军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_caocao',
@@ -339,7 +339,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '封建时代隋唐军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
         commanderUnit: 'hero_lubu',
@@ -356,7 +356,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '城堡时代宋禁军团', civ: '中原', age: 'castle', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
         commanderUnit: 'hero_guanyu',
@@ -373,7 +373,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     {
         name: '帝国时代华夏军团', civ: '中原', age: 'imperial', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
-        castleId: 'CHIN_CASTLE_AGE3', castleName: '华夏 北方华北·汉唐城楼',
+        castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
         commanderUnit: 'hero_zhangfei',

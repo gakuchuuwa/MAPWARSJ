@@ -22,6 +22,8 @@ export const PERSIAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegi
     yilihanguo_d: { name: '伊利汗卫', tier: 2 },    // 大不里士·伊利汗国：蒙古怯薛
 
     // ── T3 风土之兵 ──
+    // 🔴 [2026-10-18] 科塞亚/乌克西亚是**战场专用势力**（没有首府）：战场军团走
+    //    `getExpeditionEliteConfig(factionId)` 按势力取精锐，不依赖 STARTING_CAPITALS —— 无首府≠孤儿，勿删。
     // 🔴 [2026-09-19 主人令「有战场吗？一个战场一个防守方的武将一个势力一个精锐。你不会新建吗」]
     //    科塞亚（前324 科塞亚战役守方）此前没有城也没有番号，守方只能去借哈马丹的「米底骑射」
     //    （米底的兵）—— 番号归属错的。这里补上它**自己的**番号。

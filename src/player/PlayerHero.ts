@@ -40,8 +40,8 @@ import {
     type PlayerRank,
 } from './PlayerConfig';
 
-/** 自动模式的两套玩法：剧本模式到年份优先去战场，乱斗模式完全不去战场（主人 2026-09-17 定）。 */
-export type PlayerAutoPlan = 'script' | 'melee';
+/** 自动模式的三套玩法：百岁模式（默认，按登场年～百岁出现）、剧本模式（按历史顺序去战场）、乱斗模式（恒在场）（主人 2026-10-18 定）。 */
+export type PlayerAutoPlan = 'centenarian' | 'script' | 'melee';
 
 /** 从本势力文化军团三排里学到的兵种。 */
 export interface LearnedUnit {
@@ -167,7 +167,7 @@ export class PlayerHero {
      *   原面板「🚫 不出军团」勾选已并入本项（主人：把不出军团功能放到剧本模式中）。
      *   （9-17 曾定默认乱斗，已被本条取代。）
      */
-    public autoPlan: PlayerAutoPlan = 'melee';
+    public autoPlan: PlayerAutoPlan = 'centenarian';
     /** 玩家自定义名（改名功能写入；默认「乱入者」） */
     private playerName: string = PLAYER_HERO_NAME;
     private changeListeners = new Set<() => void>();
@@ -266,15 +266,15 @@ export class PlayerHero {
         this.emitChange();
     }
     /**
-     * 切换自动模式的玩法（剧本 / 乱斗）。
-     * 🔴 切到乱斗时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则「乱斗模式玩家不去战场」
+     * 切换自动模式的玩法（百岁 / 剧本 / 乱斗）。
+     * 🔴 切到非剧本时，若人正走在奔赴战场的路上，**必须把这趟行程掐掉** —— 否则「非剧本模式玩家不去战场」
      *    这条会被一趟已经出发的行程架空，玩家照样一路走到战场再触发。`travelPointLabel` 只在
      *    `travelToPoint` 里设，而全项目只有战场引导会调它，所以它非空就等于「正在奔赴战场」。
      */
     public setAutoPlan(plan: PlayerAutoPlan): void {
         if (this.autoPlan === plan) return;
         this.autoPlan = plan;
-        if (plan === 'melee' && this.travelPointLabel !== null) this.cancelTravel();
+        if (plan !== 'script' && this.travelPointLabel !== null) this.cancelTravel();
         this.emitChange();
     }
     public getHostLegion(): Army | undefined {

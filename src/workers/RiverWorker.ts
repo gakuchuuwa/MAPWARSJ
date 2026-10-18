@@ -149,9 +149,9 @@ function fetchDem(z: number, x: number, y: number): Promise<Float32Array | null>
 async function computeDepthT(x: number, y: number, z: number, w: number, h: number): Promise<Float32Array | null> {
     const dz = Math.min(DEPTH_Z, z);
     const scale = 2 ** (z - dz);            // 本级 1 像素 = 1/scale 个粗级像素
-    // 本块在粗级世界像素里的范围（外扩 2 像素供 3×3 高斯平滑 + 双线性插值，跨瓦片无缝连续）
-    const gx0 = Math.floor((x * w) / scale) - 2, gx1 = Math.floor(((x + 1) * w) / scale) + 2;
-    const gy0 = Math.floor((y * h) / scale) - 2, gy1 = Math.floor(((y + 1) * h) / scale) + 2;
+    // 本块在粗级世界像素里的范围（外扩 4 像素供三遍 3×3 高斯平滑 + 插值，基于世界坐标跨瓦片天然无缝）
+    const gx0 = Math.floor((x * w) / scale) - 4, gx1 = Math.floor(((x + 1) * w) / scale) + 4;
+    const gy0 = Math.floor((y * h) / scale) - 4, gy1 = Math.floor(((y + 1) * h) / scale) + 4;
     const tiles = new Map<string, Float32Array | null>();
     const need: Promise<void>[] = [];
     for (let ty = Math.floor(gy0 / 256); ty <= Math.floor(gy1 / 256); ty++) {
@@ -162,58 +162,94 @@ async function computeDepthT(x: number, y: number, z: number, w: number, h: numb
     await Promise.all(need);
     for (const d of tiles.values()) if (!d) return null;   // 缺一块就整块平色，绝不半深半浅
     const n = 2 ** dz;
+    const coarseWorldPx = n * 256;
     const rawElevAt = (gx: number, gy: number): number => {
-        gy = Math.max(0, Math.min(n * 256 - 1, gy));
+        gy = Math.max(0, Math.min(coarseWorldPx - 1, gy));
         const tx = Math.floor(gx / 256), ty = Math.floor(gy / 256);
         const dem = tiles.get(`${tx}/${ty}`)!;
         return dem[(gy - ty * 256) * 256 + (gx - tx * 256)];
     };
-    // 3×3 高斯平滑粗级水深：只在粗网格节点 (gx0+1..gx1-1, gy0+1..gy1-1) 上预计算一次，避免在 65536 像素循环里重复算 235 万次
+
+    // 🔴 关键全球化设计：先在每个粗网格点上把米制高程转为有界水深权重 t0 ∈ [0, 1]，再对 t0 做多遍高斯平滑。
+    //    原因：全球大陆架边缘或海沟处（如加勒比海、日本海沟、地中海），相邻两个 z=6 粗像素水深可从 20m 骤降到 2000m+；
+    //    若直接对「米」做平滑与插值，-2000m 会以 100 倍权重吞噬 -20m，导致 20m→300m 过渡带被挤压在 1~2 个屏幕像素内，
+    //    在全图大陆架边缘暴露出 z=6 粗网格的锯齿折线。先映射到有界 [0, 1] 再平滑，任何海沟深度都不会拉偏过渡带宽。
     const gw = gx1 - gx0 + 1, gh = gy1 - gy0 + 1;
-    const elevGrid = new Float32Array(gw * gh);
-    for (let gy = gy0 + 1; gy < gy1; gy++) {
-        const rowOff = (gy - gy0) * gw;
-        for (let gx = gx0 + 1; gx < gx1; gx++) {
-            elevGrid[rowOff + (gx - gx0)] = (
-                rawElevAt(gx - 1, gy - 1) + rawElevAt(gx, gy - 1) * 2 + rawElevAt(gx + 1, gy - 1) +
-                rawElevAt(gx - 1, gy) * 2 + rawElevAt(gx, gy) * 4 + rawElevAt(gx + 1, gy) * 2 +
-                rawElevAt(gx - 1, gy + 1) + rawElevAt(gx, gy + 1) * 2 + rawElevAt(gx + 1, gy + 1)
-            ) * 0.0625;
-        }
-    }
-    const worldPx = 2 ** z * w;
-    const out = new Float32Array(w * h);
-    for (let py = 0; py < h; py++) {
-        const wy = y * h + py + 0.5;
-        const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * wy / worldPx))) * 180 / Math.PI;
+    let bufA = new Float32Array(gw * gh);
+    let bufB = new Float32Array(gw * gh);
+    for (let gy = gy0; gy <= gy1; gy++) {
+        const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * (gy + 0.5) / coarseWorldPx))) * 180 / Math.PI;
         const inCaspianLat = lat > 36.5 && lat < 47.3;
-        const fy = wy / scale - 0.5;
-        const iy = Math.floor(fy), ty = fy - iy;
-        const rowOff = (iy - gy0) * gw;
-        for (let px = 0; px < w; px++) {
-            const wx = x * w + px + 0.5;
-            const fx = wx / scale - 0.5;
-            const ix = Math.floor(fx), tx = fx - ix;
-            const idx = rowOff + (ix - gx0);
-            let e = (elevGrid[idx] * (1 - tx) + elevGrid[idx + 1] * tx) * (1 - ty)
-                  + (elevGrid[idx + gw] * (1 - tx) + elevGrid[idx + gw + 1] * tx) * ty;
+        const rowOff = (gy - gy0) * gw;
+        for (let gx = gx0; gx <= gx1; gx++) {
+            let e = rawElevAt(gx, gy);
             if (inCaspianLat) {
-                const lng = wx / worldPx * 360 - 180;
+                const lng = (gx + 0.5) / coarseWorldPx * 360 - 180;
                 if (lng > 46.4 && lng < 55.6) e -= CASPIAN_SURFACE_M;
             }
             const depth = -e;
             let t = 0;
             if (depth > 0) {
-                if (depth <= 28) {
-                    // 0~28m（近岸浅滩至浅海）：平滑过渡到 0.55（浅海中蓝），收紧浅水区范围
-                    t = Math.pow(depth / 28, 0.75) * 0.55;
+                if (depth <= 35) {
+                    t = Math.pow(depth / 35, 0.80) * 0.50;
                 } else {
-                    // 28~320m（外海至深海）：平滑过渡完 0.55~1.00（渐变深蓝）
-                    const s = Math.min(1, (depth - 28) / 292);
-                    t = 0.55 + 0.45 * Math.pow(s, 0.70);
+                    const s = Math.min(1, (depth - 35) / 1400);
+                    t = 0.50 + 0.50 * Math.pow(s, 0.60);
                 }
             }
-            out[py * w + px] = t;
+            bufA[rowOff + (gx - gx0)] = t;
+        }
+    }
+
+    // 抑制深海中孤立 1~2 粗像素的水下暗沙尖峰（周围 8 邻域平均明显更深时，向邻域拉拢，避免无岛屿处浮现亮蓝斑块）
+    for (let y0 = 1; y0 < gh - 1; y0++) {
+        const rowOff = y0 * gw;
+        for (let x0 = 1; x0 < gw - 1; x0++) {
+            const c = rowOff + x0;
+            const v = bufA[c];
+            const ringMean = (
+                bufA[c - gw - 1] + bufA[c - gw] + bufA[c - gw + 1] +
+                bufA[c - 1] + bufA[c + 1] +
+                bufA[c + gw - 1] + bufA[c + gw] + bufA[c + gw + 1]
+            ) * 0.125;
+            bufB[c] = ringMean - v > 0.12 ? v + (ringMean - v) * 0.65 : v;
+        }
+    }
+    bufA.set(bufB);
+
+    // 三遍 3×3 高斯核平滑（等效 7×7 高斯核）：将 z=6 粗网格阶跃完全抹成宽广柔和的海底渐变带
+    for (let pass = 0; pass < 3; pass++) {
+        const margin = pass + 1;
+        for (let y0 = margin; y0 < gh - margin; y0++) {
+            const rowOff = y0 * gw;
+            for (let x0 = margin; x0 < gw - margin; x0++) {
+                const c = rowOff + x0;
+                bufB[c] = (
+                    bufA[c - gw - 1] + bufA[c - gw] * 2 + bufA[c - gw + 1] +
+                    bufA[c - 1] * 2 + bufA[c] * 4 + bufA[c + 1] * 2 +
+                    bufA[c + gw - 1] + bufA[c + gw] * 2 + bufA[c + gw + 1]
+                ) * 0.0625;
+            }
+        }
+        const tmp = bufA; bufA = bufB; bufB = tmp;
+    }
+
+    const out = new Float32Array(w * h);
+    for (let py = 0; py < h; py++) {
+        const wy = y * h + py + 0.5;
+        const fy = wy / scale - 0.5;
+        const iy = Math.floor(fy), rawTy = fy - iy;
+        const ty = rawTy * rawTy * (3 - 2 * rawTy);
+        const rowOff = (iy - gy0) * gw;
+        for (let px = 0; px < w; px++) {
+            const wx = x * w + px + 0.5;
+            const fx = wx / scale - 0.5;
+            const ix = Math.floor(fx), rawTx = fx - ix;
+            const tx = rawTx * rawTx * (3 - 2 * rawTx);
+            const idx = rowOff + (ix - gx0);
+            out[py * w + px] =
+                (bufA[idx] * (1 - tx) + bufA[idx + 1] * tx) * (1 - ty) +
+                (bufA[idx + gw] * (1 - tx) + bufA[idx + gw + 1] * tx) * ty;
         }
     }
     return out;

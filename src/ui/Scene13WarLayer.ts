@@ -54,27 +54,6 @@ import { getFactionGeneral } from '../data/FactionGenerals';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 
-/**
- * 战术模式（Scene13）六计相克闭环：
- * 敌放【攻】（振己威）➔ 我放【敌】（固己防）
- * 敌放【敌】（固己防）➔ 我放【败】（减敌兵）
- * 敌放【败】（减敌兵）➔ 我放【胜】（增己兵）
- * 敌放【胜】（增己兵）➔ 我放【混】（乱敌阵）
- * 敌放【混】（乱敌阵）➔ 我放【并】（挫敌锐）
- * 敌放【并】（挫敌锐）➔ 我放【攻】（振己威）
- */
-const SCENE13_SIX_COUNTER: Record<TacticalSixSet, TacticalSixSet> = {
-    gongzhan: 'dizhan',
-    dizhan: 'baizhan',
-    baizhan: 'shengzhan',
-    shengzhan: 'hunzhan',
-    hunzhan: 'bingzhan',
-    bingzhan: 'gongzhan',
-};
-const SCENE13_SIX_ORDER: readonly TacticalSixSet[] = [
-    'gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan',
-];
-
 import type {
     WarBuilding, ArrowTower, CityBuildingEntry, TechBrief, WarSpawn, WarMan, WarArrow,
     ProjAsset, WarFallenFlag, SceneCloud, NatureMeta, NatureAsset, DecorSprite,
@@ -501,31 +480,52 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 计算某方当前若不手动干预，下一次自动释放的六计类型 */
+    /** 计算某方当前若不手动干预，按战局态势（顺风/焦灼/逆风）自动释放的六计类型 */
     private resolveAutoNextSkill(f: 0 | 1): TacticalSixSet {
-        const oppLast = this.lastCastSkill[1 - f];
-        if (oppLast) {
-            return SCENE13_SIX_COUNTER[oppLast];
+        const ef: 0 | 1 = f === 0 ? 1 : 0;
+        // 若敌方正在生效增益 Buff（振威/固防/破防），优先用【混战】看破驱散并控场
+        if (this.skillFrenzyTimer[ef] > 0.5 || this.skillShieldTimer[ef] > 0.5 || this.skillVulnTimer[f] > 0.5) {
+            return 'hunzhan';
         }
-        // 首轮尚未见招：优先取该武将自身招牌技所属六计，否则按本场确定性种子选一计
+        // 计算双方当前战力比（场上存活人口 + 后备池人口）
+        let myPop = 0, foePop = 0;
+        for (const m of this.men) {
+            if (m.hp <= 0) continue;
+            if (m.f === f) myPop += m.pop || 1;
+            else foePop += m.pop || 1;
+        }
+        for (const sp of this.spawns) {
+            if (sp.pool <= 0) continue;
+            if (sp.f === f) myPop += sp.pool * Math.max(1, sp.pop);
+            else foePop += sp.pool * Math.max(1, sp.pop);
+        }
+        const ratio = myPop / Math.max(1, foePop);
+        const stance: 'adv' | 'bal' | 'dis' = ratio >= 1.15 ? 'adv' : (ratio <= 0.85 ? 'dis' : 'bal');
+
+        // 优先取该武将在当前态势下的专属计策
         const gid = this.sideGeneralId[f];
         if (gid) {
             const profile = getGeneralProfile(gid);
-            const sigId = f === 0
-                ? (profile?.atkBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId)
-                : (profile?.defBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId);
+            const sigId = stance === 'adv'
+                ? (f === 0 ? (profile?.atkAdvantageSkillId ?? profile?.advantageSkillId) : (profile?.defAdvantageSkillId ?? profile?.advantageSkillId))
+                : stance === 'dis'
+                    ? (f === 0 ? (profile?.atkDisadvantageSkillId ?? profile?.disadvantageSkillId) : (profile?.defDisadvantageSkillId ?? profile?.disadvantageSkillId))
+                    : (f === 0 ? (profile?.atkBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId) : (profile?.defBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId));
             if (sigId) {
                 const entry = TACTICAL_SKILL_ENTRIES_V1.find((e) => e.id === sigId);
                 if (entry) return EFFECT_TO_SIX_SET[entry.baseEffect];
             }
         }
-        const rawSeed = this.environmentPlan?.seed;
-        const numSeed = typeof rawSeed === 'number' ? rawSeed : 7;
-        const idx = Math.abs(numSeed + f * 3) % SCENE13_SIX_ORDER.length;
-        return SCENE13_SIX_ORDER[idx];
+        // 默认按三势轮换：顺风（胜/敌）、焦灼（攻/混）、逆风（并/败）
+        const pair: [TacticalSixSet, TacticalSixSet] = stance === 'adv'
+            ? ['shengzhan', 'dizhan']
+            : stance === 'dis'
+                ? ['bingzhan', 'baizhan']
+                : ['gongzhan', 'hunzhan'];
+        return this.lastCastSkill[f] === pair[0] ? pair[1] : pair[0];
     }
 
-    /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动相克 */
+    /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动选计 */
     public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
         const f: 0 | 1 = (sideOrF === 0 || sideOrF === 'attacker') ? 0 : 1;
         this.queuedSkill[f] = this.queuedSkill[f] === six ? null : six;
@@ -590,25 +590,22 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 【胜】增己兵专用：立即从该侧出兵口涌出一波可见增援士兵，剩余计入后备池 */
+    /** 【胜】增己兵专用：立即从该侧 9 个出兵口一次性刷出全部 8% 增援士兵参战 */
     private spawnImmediateSkillReinforcements(f: 0 | 1, addTotalPop: number): void {
         const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
         if (mySpawns.length === 0) return;
 
-        // 立即在战场出兵口刷出最多 45 名生力军精灵，其余补入后备池
-        let immediateCap = 45;
         let remainingPop = addTotalPop;
         const uFwd = this.advanceVec[f];
         const uSide = this.sideVec[f];
 
         for (const s of mySpawns) s.slotN = 0;
         let idx = 0;
-        while (remainingPop > 0 && immediateCap > 0) {
+        while (remainingPop > 0) {
             const s = mySpawns[idx % mySpawns.length];
             idx++;
             const unitPop = Math.max(1, s.pop);
             remainingPop -= unitPop;
-            immediateCap--;
             s.spawned++;
             const bearer = (s.spawned % FLAG_EVERY === 0);
             const slotIdx = s.slotN++;
@@ -640,13 +637,6 @@ export class Scene13WarLayer {
                 guardPost: (s.f === 1 && this.battleType === 'siege' && !!this.deCity && !this.isDefenderGateDestroyed()) ? { x: spawnX, y: spawnY } : undefined,
                 claims: 0, claimsNext: 0, atkers: 0, atkNext: 0, fadeT: FADE_IN, fadeMax: FADE_IN,
             });
-        }
-
-        if (remainingPop > 0) {
-            const perLanePop = remainingPop / mySpawns.length;
-            for (const sp of mySpawns) {
-                sp.pool += Math.max(1, Math.round(perLanePop / Math.max(1, sp.pop)));
-            }
         }
     }
 
@@ -700,11 +690,11 @@ export class Scene13WarLayer {
 
         // ── 执行六计正交战场效果 ──
         if (six === 'shengzhan') {
-            // 1. 【胜】增己兵：己方立即补充 +8% 初始总兵力，生力军当场从出兵口涌入战场
+            // 1. 【胜】增己兵：立即从己方 9 个出兵口一次性涌出 +8% 初始总兵力的生力军参战
             const addTotalPop = Math.max(12, Math.round(this.initPool[f] * 0.08));
             this.spawnImmediateSkillReinforcements(f, addTotalPop);
         } else if (six === 'baizhan') {
-            // 2. 【败】减敌兵：敌方当前兵力立即削减 -8%（后备池削减 + 场上各阵线均匀折损倒地）
+            // 2. 【败】死战：当场直接折损敌方 8% 当前总兵力（后备池削减 + 前线敌军直接阵亡一批）
             for (const sp of this.spawns) {
                 if (sp.f === ef && sp.pool > 0) {
                     sp.pool = Math.max(0, Math.floor(sp.pool * 0.92));
@@ -724,27 +714,28 @@ export class Scene13WarLayer {
                 }
             }
         } else if (six === 'gongzhan') {
-            // 3. 【攻】振己威：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
+            // 3. 【攻】猛攻：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
             this.skillFrenzyTimer[f] = 8.0;
         } else if (six === 'dizhan') {
-            // 4. 【敌】固己防：己方场上存活士兵瞬间恢复 100% 满血，且 8 秒内受到伤害降低 40%（×0.60）
+            // 4. 【敌】固守：己方全场存活士兵立即回复 20% 生命，且 8 秒内受到伤害降低 40%（×0.60）
             for (const m of this.men) {
                 if (m.f === f && m.hp > 0) {
                     const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
-                    if (m.hp < maxHp) m.hp = maxHp;
+                    if (m.hp < maxHp) m.hp = Math.min(maxHp, m.hp + maxHp * 0.20);
                 }
             }
             this.skillShieldTimer[f] = 8.0;
         } else if (six === 'hunzhan') {
-            // 5. 【混】乱敌阵：4 秒内敌方前排接战部队恐慌转身向后溃逃（停手、背对己方触发背击加成）
-            this.skillPanicTimer[ef] = 4.0;
+            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌方前线士兵原地混乱定身 3.5 秒（不攻不动，受近战伤害 ×1.4）
+            this.skillFrenzyTimer[ef] = 0;
+            this.skillShieldTimer[ef] = 0;
+            this.skillVulnTimer[f] = 0;
+            this.skillPanicTimer[ef] = 3.5;
         } else if (six === 'bingzhan') {
-            // 6. 【并】挫敌锐：野战扣减敌方武将 50% 集气槽（打断蓄力）；攻城战 8 秒内敌方守军与城墙/建筑受伤害 +35%（破防）
-            if (this.battleType === 'siege') {
-                this.skillVulnTimer[ef] = 8.0;
-            } else {
-                this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 50);
-            }
+            // 6. 【并】奇袭：8 秒内己方全军打出破甲奇袭（无视敌方护盾减伤，且令敌方全体承伤 +35%），同时压制敌方集气
+            this.skillShieldTimer[ef] = 0;
+            this.skillVulnTimer[ef] = 8.0;
+            this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 35);
         }
 
         // 通知 CombatUI 播放立绘脉冲缩放与技能名 Cut-in 动画
@@ -7035,28 +7026,18 @@ export class Scene13WarLayer {
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
-            // 【混】乱敌阵：处于恐慌溃乱期的敌方接战士兵停止攻击，背对推进方向逃窜（暴露后背受近战 1.4x 背刺加成）
+            // 【混】乱阵：处于混乱定身期的敌方前线士兵原地混乱定身 3.5 秒（停止攻击与移动，受近战 1.4x 伤害）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
-                const adv = this.advanceVec[m.f];
-                const rvx = -adv.x;
-                const rvy = -adv.y;
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
                 m.lock = 0;
                 m.stuckT = 0;
-                m.dir = this.dir8(rvx, rvy);
-                const pSpd = stats.spd * spdK * 0.85;
-                const nx = m.x + rvx * pSpd * dt;
-                const ny = m.y + rvy * pSpd * dt;
-                const [bx, by] = this.fieldBound(nx, ny);
-                m.x = bx;
-                m.y = by;
-                m.tx = bx;
-                m.ty = by;
+                m.stepMax = 0;
+                m.tx = m.x;
+                m.ty = m.y;
                 if (m.fadeT > 0) m.fadeT -= dt;
-                const walkAnimSpd = Math.min(2.2, Math.max(0.6, pSpd / 60));
-                m.ph += dt * 8 * walkAnimSpd;
+                m.ph += dt * (8 / LOOP_WINDOW_IDLE_SEC);
                 continue;
             }
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
@@ -7641,7 +7622,9 @@ export class Scene13WarLayer {
                 //    不走本路径，也不该吃朝向加成——溅射没有「从哪个方向砍进去」可言。
                 let flankMul = 1;
                 if (FLANK_ENABLED && !('sprite' in foe) && shooter.dmgType === 'melee') {
-                    flankMul = flankMulOf(foe.dir, m.x - foe.x, m.y - foe.y);
+                    flankMul = this.skillPanicTimer[foe.f] > 0
+                        ? Math.max(1.4, flankMulOf(foe.dir, m.x - foe.x, m.y - foe.y))
+                        : flankMulOf(foe.dir, m.x - foe.x, m.y - foe.y);
                 }
                 // DE 当前风琴炮的5/6枚弹丸均使用主弹伤害；逐弹受护甲，因此等价于单弹伤害乘弹数。
                 const projectileDamageCount = ORGAN_GUN_TYPES.has(m.key) ? (PROJ_VOLLEY[m.key] ?? 1) : 1;
@@ -8517,7 +8500,7 @@ export class Scene13WarLayer {
             //    🔴 [2026-10-13] 这条判据此前**恒成立**：step 末尾结算卡住时已把 prevX/prevY 写成当前位置，
             //    渲染层再拿 m.x - m.prevX 比恒为 0（真机实测 1%~4% 的移动帧误播待命）。改读 step 结算好的 m.stepMax。
             else if (!m.march && ((m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
-                || (m.st === 0 && !!m.guardPost))
+                || (m.st === 0 && (!!m.guardPost || (this.skillPanicTimer[m.f] > 0 && !m.hero && !m.siegeW))))
                 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }

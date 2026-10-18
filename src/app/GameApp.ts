@@ -78,7 +78,7 @@ import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
-import { setScriptYearProvider } from '../data/generalOnStage';
+import { setScriptYearProvider, setCentenarianYearProvider } from '../data/generalOnStage';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
@@ -332,15 +332,21 @@ export class GameApp {
             this.cityManager.bindViewportCitySync();
             // 🔴 [2026-10-02 主人定「不要确定随机，要每局随机」] 开局生成每局随机种子，注入据点样式哈希
             setCityStyleSessionSeed(String(Math.floor(Math.random() * 0x7fffffff)));
-            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'melee') === 'script');
+            setScriptPeriodProvider(() => (this.playerHero?.autoPlan ?? 'centenarian') === 'script');
             // 🔴 [2026-09-23 主人定] 剧本期只显示剧本事件用到的据点（累积显示），剧本结束全部恢复。
             //    玩家对象晚于此处创建 → 取不到时按默认的剧本模式算。
             this.scriptCityVisibility = new ScriptCityVisibility(
                 () => this.cityManager.getCities(),
-                () => (this.playerHero?.autoPlan ?? 'melee') === 'script',
+                () => (this.playerHero?.autoPlan ?? 'centenarian') === 'script',
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
+            // 🔴 [2026-10-18 主人定] 百岁模式（默认）：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
+            setCentenarianYearProvider(() =>
+                (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian'
+                    ? (this.timeSystem?.getYear() ?? null)
+                    : null,
+            );
             // 🔴 [2026-09-25 主人定「写剧本的时候，战略地图上据点的旗帜上的字，应该符合历史」]
             //    剧本期据点旗号换成那一年的史实归属（scriptHistoricalOwners.ts），切回乱斗原样换回。
             //    唯一一份定义 = `syncScriptOwners()`（年份每场在前进，故开局、切模式、打完一场都要重跑）。
