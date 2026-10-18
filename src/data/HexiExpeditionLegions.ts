@@ -2,10 +2,10 @@
  * 河西文化区远征精锐军团名（HEXI / RegionSystem「河西」）
  *
  * 收录红线：
- * - 番号 3–6 字，全局不重复；史料具名
+ * - 番号 3–5 字，全局不重复；史料具名
  * - 依据 史料/古代精锐部队.md §7 河西 12 支
  * - §7 #5 泼喜军（骆驼抛石）→ 不收；#12 嘉峪关戍卒（火器）→ 不收
- * - 三者防重：见 ExpeditionLegions.ts、ExpeditionTripleNameAllow.ts
+ * - 三者防重：只查旗号/据点名/番号逐字相同，见 ExpeditionLegions.ts
  */
 export const HEXI_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {
     lanzhou: { name: '湟中胡骑', tier: 3 },

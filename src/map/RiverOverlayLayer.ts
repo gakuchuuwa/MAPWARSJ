@@ -225,8 +225,11 @@ export class RiverOverlayLayer extends L.GridLayer {
             if (cached.waves) {
                 (tile as any)._coastalWaves = cached.waves;
             }
-            // If the tile is already fully settled in cache, mark done immediately via microtask
+            const reqId = this.msgIdCounter++;
+            this.pendingTiles.set(reqId, { ctx, tile, done, completed: true, cacheKey });
+            this.worker.postMessage({ rebindId: reqId, x: coords.x, y: coords.y, z: coords.z });
             queueMicrotask(() => done(undefined, tile));
+            return tile;
         }
 
         // 构造 ESRI 瓦片 URL
@@ -239,7 +242,11 @@ export class RiverOverlayLayer extends L.GridLayer {
         const esriImg = new Image();
         let unloaded = false;
         const onUnload = (event: L.TileEvent) => {
-            if ((event.tile as HTMLElement) === tile) { unloaded = true; this.off('tileunload', onUnload); }
+            if ((event.tile as HTMLElement) === tile) {
+                unloaded = true;
+                esriImg.src = '';
+                this.off('tileunload', onUnload);
+            }
         };
         this.on('tileunload', onUnload);
         esriImg.crossOrigin = 'Anonymous';
@@ -263,7 +270,7 @@ export class RiverOverlayLayer extends L.GridLayer {
                 const reqId = this.msgIdCounter++;
 
                 // Store callback info
-                this.pendingTiles.set(reqId, { ctx, tile, done, completed: !!cached, cacheKey });
+                this.pendingTiles.set(reqId, { ctx, tile, done, completed: false, cacheKey });
 
                 // Send to worker with bitmap transfer
                 this.worker.postMessage({

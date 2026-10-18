@@ -2,7 +2,7 @@
  * 美洲（中美洲 MESO）文化区远征精锐军团名（2026-08-24 新增；2026-08-27 拆出安第斯后仅存中美洲 4 势力）
  *
  * 收录红线：
- * - 番号 3–6 字，全局不重复
+ * - 番号 3–5 字，全局不重复
  * - 番号取正史具名，禁止泛称堆砌
  */
 export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: string; tier: 0 | 1 | 2 | 3 | 4 }>> = {

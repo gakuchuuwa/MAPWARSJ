@@ -480,9 +480,9 @@ export class HillshadeLayer extends L.GridLayer {
         this.statTilesComputed++;
         this.pendingTiles.set(reqId, { ctx, tile, done, cacheKey, modeVersion: this.modeVersion });
 
-        // 轮询派发：Worker 内部 fetch 是异步的，多块并行在途才不会被串行拖慢
-        this.workers[this.rrIndex].postMessage(request);
-        this.rrIndex = (this.rrIndex + 1) % this.workers.length;
+        // 按 2×2 瓦片块空间分配 Worker：相邻瓦片共享同一 Worker 内的 rawDemCache 与 demPending，避免 3 个 Worker 重复拉取同一批邻块高程
+        const workerIdx = ((Math.floor(coords.x / 2) + Math.floor(coords.y / 2)) % this.workers.length + this.workers.length) % this.workers.length;
+        this.workers[workerIdx].postMessage(request);
     }
 
     // [FIX] 避免过渡动画完成时图层已被 remove 导致的 TypeError: Cannot read properties of null (reading 'getCenter')

@@ -67,7 +67,7 @@ function distToPolygonBoundary(lat: number, lng: number, points: [number, number
 const WATER_MASK_TIMEOUT_MS = 4000;
 
 const rawDemCache = new Map<string, Float32Array>();
-const DEM_CACHE_MAX = 80;
+const DEM_CACHE_MAX = 256;
 const demPending = new Map<string, Promise<Float32Array | null>>();
 
 function cacheDem(key: string, dem: Float32Array): void {
@@ -120,6 +120,9 @@ async function loadDemFloat32(z: number, x: number, y: number): Promise<Float32A
         const dem = new Float32Array(256 * 256);
         for (let i = 0, p = 0; p < 256 * 256; i += 4, p++) {
             dem[p] = (data[i] * 256 + data[i + 1] + data[i + 2] * 0.00390625) - 32768;
+        }
+        if (z > COARSE_Z) {
+            await fillSurfaceSea(dem, z, x, y);
         }
         cacheDem(key, dem);
         return dem;
@@ -361,10 +364,20 @@ async function fillSurfaceSea(dem: Float32Array, z: number, x: number, y: number
     if (!any) return false;
     const s = 2 ** (z - COARSE_Z);
     const cx0 = Math.floor(x / s), cy0 = Math.floor(y / s);
+    const ixMin = Math.floor(((x * 256 + 0.5) / s) - 0.5);
+    const ixMax = Math.floor(((x * 256 + 255.5) / s) - 0.5) + 1;
+    const iyMin = Math.floor(((y * 256 + 0.5) / s) - 0.5);
+    const iyMax = Math.floor(((y * 256 + 255.5) / s) - 0.5) + 1;
+    const txMin = Math.floor(ixMin / 256) - cx0, txMax = Math.floor(ixMax / 256) - cx0;
+    const tyMin = Math.floor(iyMin / 256) - cy0, tyMax = Math.floor(iyMax / 256) - cy0;
     const coarse = new Map<string, Float32Array | null>();
-    await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].map(async dx => {
-        coarse.set(`${dx}/${dy}`, await fetchDemFloat32(COARSE_Z, cx0 + dx, cy0 + dy));
-    })));
+    const tasks: Promise<void>[] = [];
+    for (let dy = tyMin; dy <= tyMax; dy++) {
+        for (let dx = txMin; dx <= txMax; dx++) {
+            tasks.push(fetchDemFloat32(COARSE_Z, cx0 + dx, cy0 + dy).then(d => { coarse.set(`${dx}/${dy}`, d); }));
+        }
+    }
+    await Promise.all(tasks);
     if (!coarse.get('0/0')) return false;
     const at = (gx: number, gy: number): number | null => {
         const tx = Math.floor(gx / 256) - cx0, ty = Math.floor(gy / 256) - cy0;
@@ -399,15 +412,18 @@ function writeTerrarium(src: Uint8ClampedArray, dem: Float32Array): void {
 const PAD = 3;
 const PAD_W = 256 + 2 * PAD;
 
-async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: number; y: number }): Promise<Float32Array | null> {
-    const center = new Float32Array(256 * 256);
-    for (let i = 0; i < center.length; i++) center[i] = src[i * 4] * 256 + src[i * 4 + 1] + src[i * 4 + 2] / 256 - 32768;
-    const n = 2 ** coords.z;
-    cacheDem(`${coords.z}/${((coords.x % n) + n) % n}/${coords.y}`, center);
+async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: number; y: number }, centerDem?: Float32Array): Promise<Float32Array | null> {
+    let center = centerDem;
+    if (!center) {
+        center = new Float32Array(256 * 256);
+        for (let i = 0; i < center.length; i++) center[i] = src[i * 4] * 256 + src[i * 4 + 1] + src[i * 4 + 2] / 256 - 32768;
+        const n = 2 ** coords.z;
+        cacheDem(`${coords.z}/${((coords.x % n) + n) % n}/${coords.y}`, center);
+    }
     const tiles = new Map<string, Float32Array>([['0/0', center]]);
     await Promise.all([-1, 0, 1].flatMap(dy => [-1, 0, 1].filter(dx => dx !== 0 || dy !== 0).map(async dx => {
         const dem = await fetchDemFloat32(coords.z, coords.x + dx, coords.y + dy);
-        if (dem) { await fillSurfaceSea(dem, coords.z, coords.x + dx, coords.y + dy); tiles.set(`${dx}/${dy}`, dem); }
+        if (dem) tiles.set(`${dx}/${dy}`, dem);
     })));
     // 即使个别邻块网络超时，内部 250×250 像素仍用本瓦片真实高程走 3D 浮雕光照（缺失邻块仅在外扩 3px 处钳制本瓦片边缘），彻底消除 256×256 方块断层。
     const padded = new Float32Array(PAD_W * PAD_W);
@@ -1467,22 +1483,25 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         const materialPending = req.params.useElevationColor && req.tileBounds
             ? createTerrainMaterial(req.tileBounds, req.width, req.height, req.coords, rulesNeeded).catch(() => null)
             : Promise.resolve(null);
-        const resp = await fetch(req.url, { mode: 'cors', signal: AbortSignal.timeout(8000) });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-
-        const srcBitmap = await createImageBitmap(await resp.blob());
-        const canvas = new OffscreenCanvas(req.width, req.height);
-        const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D | null;
-        if (!ctx) throw new Error('OffscreenCanvas 2d context unavailable');
-        ctx.drawImage(srcBitmap, 0, 0, req.width, req.height);
-        srcBitmap.close();
-
-        const src = ctx.getImageData(0, 0, req.width, req.height).data;
-        // 先把「水面高度」的海像素填成真实水深，后面的颜色、光影、掩膜判断都用填好的高程（见 fillSurfaceSea）
+        let src: Uint8ClampedArray;
+        let centerDem: Float32Array | null = null;
         if (req.coords && req.width === 256 && req.height === 256) {
-            const dem0 = new Float32Array(256 * 256);
-            for (let i = 0; i < dem0.length; i++) dem0[i] = src[i * 4] * 256 + src[i * 4 + 1] + src[i * 4 + 2] / 256 - 32768;
-            if (await fillSurfaceSea(dem0, req.coords.z, req.coords.x, req.coords.y)) writeTerrarium(src, dem0);
+            centerDem = await fetchDemFloat32(req.coords.z, req.coords.x, req.coords.y);
+            if (!centerDem) throw new Error('DEM load failed');
+            src = new Uint8ClampedArray(256 * 256 * 4);
+            writeTerrarium(src, centerDem);
+        } else {
+            const resp = await fetch(req.url, { mode: 'cors', signal: AbortSignal.timeout(8000) });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+            const srcBitmap = await createImageBitmap(await resp.blob());
+            const canvas = new OffscreenCanvas(req.width, req.height);
+            const ctx = canvas.getContext('2d', { willReadFrequently: true }) as OffscreenCanvasRenderingContext2D | null;
+            if (!ctx) throw new Error('OffscreenCanvas 2d context unavailable');
+            ctx.drawImage(srcBitmap, 0, 0, req.width, req.height);
+            srcBitmap.close();
+
+            src = ctx.getImageData(0, 0, req.width, req.height).data;
         }
 
         // 只有本瓦片含海平面以下像素或启用河谷冲积试验时取掩膜。内陆瓦片直接跳过，
@@ -1490,11 +1509,16 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         const hasBelowSea = hasBelowSeaPixel(src, req.width * req.height);
         const mayHaveLake = !hasBelowSea && countFlatLandPixels(src, req.width, req.height, LAKE_FLAT_PIXELS) >= LAKE_FLAT_PIXELS;
         const needMask = hasBelowSea || mayHaveLake || !!req.valleyReliefExp;
-        // 规则贴图在高程解码后立即开拉，与水体掩膜下载并行（「会去取掩膜」是「有水」的必要条件，按它判宁多勿漏）
+        // 规则贴图在高程解码后立即开拉，与水体掩膜及邻块下载并行
         resolveRules(pickRuleTextures(src, hasBelowSea || mayHaveLake, req));
-        const mask = needMask
-            ? await fetchWaterMask(req.waterMaskUrl, req.width, req.height)
-            : null;
+        const maskPending = needMask
+            ? fetchWaterMask(req.waterMaskUrl, req.width, req.height)
+            : Promise.resolve(null);
+        const paddedDemPending = req.experimentalRelief && req.coords && req.coords.z >= 7 && req.coords.z <= 12
+            ? getPaddedDem(src, req.coords, centerDem ?? undefined)
+            : Promise.resolve(null);
+
+        const [mask, paddedDem] = await Promise.all([maskPending, paddedDemPending]);
 
         let hasClampedSea = false;
         let hasCaspianFlat = false;
@@ -1518,9 +1542,6 @@ self.onmessage = async (e: MessageEvent<HillshadeRequest | RiverSegmentsMessage>
         const caspianDemPending = hasCaspianFlat
             ? fetchDemFloat32(6, 41, 24)
             : Promise.resolve(null);
-
-        const paddedDem = req.experimentalRelief && req.coords && req.coords.z >= 7 && req.coords.z <= 12
-            ? await getPaddedDem(src, req.coords) : null;
 
         const [material, parentDem, caspianDem] = await Promise.all([materialPending, parentDemPending, caspianDemPending]);
         // 干旱瓦片才要河流绿带（河流线段由主线程发来，见 setRiverSegments）

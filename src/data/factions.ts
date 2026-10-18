@@ -554,6 +554,7 @@ export const FACTIONS: Faction[] = [
     { id: 'xingliao', name: '兴辽' },
 
     { id: 'gongsun_d', name: '辽东' },
+
     { id: 'donghu', name: '东胡' },
     { id: 'luoyue', name: '骆越' },
     { id: 'ba', name: '巴国' },
@@ -695,7 +696,7 @@ export const FACTIONS: Faction[] = [
      // 暗板岩灰 - 小勃律(孽多城)
     // 火砖红 - 李希烈淮西叛镇(蔡州)
     // 深红 - 魏博节度使田氏(魏州)
-    { id: 'qiufu', name: '裘甫' },
+    { id: 'qiufu', name: '剡中' },
     // ── 2026-05-26 五代十国势力 ──
     { id: 'dongdan', name: '东丹' },
     { id: 'dali', name: '大理' },
@@ -1471,6 +1472,7 @@ export const FACTIONS: Faction[] = [
     { id: 'sheng_d', name: '升州' },
     // ── 2026-06-11 徒河·锦州卫·辽东铁骑（旗号锦≠据点名徒河）──
     { id: 'jinzhou', name: '锦州' },
+
     { id: 'wure', name: '兀惹' },
     { id: 'houliao', name: '东辽' },
 

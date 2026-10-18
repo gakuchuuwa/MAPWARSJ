@@ -637,7 +637,7 @@ export class CityAssetManager {
 'sambyeol': '沃',
 'ssangseong': '和',
         'sheng_d': '升',
-        'jinzhou': '锦',
+'jinzhou': '锦',
         'wure': '兀惹',
 'houliao': '东辽',
 'dazhen': '大真',

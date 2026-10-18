@@ -33,8 +33,14 @@ export type SoundKey =
     | 'land_contact'
     // 🔴 [2026-09-11 主人定]「战术模式 30 秒的时候用城墙倒塌.WAV 音效」
     | 'wall_collapse'
+    | 'building_collapse'
     | 'siege_impact'
     | 'siege_launch'
+    | 'siege_destroyed'
+    | 'elephant_attack'
+    | 'elephant_die'
+    | 'flamethrower_fire'
+    | 'battle_horn'
     | 'bgm_main';
 
 interface SoundDefinition {
@@ -107,8 +113,12 @@ const SPEECH_GAIN = 1.0;
 const FADE = {
     /** 播报/音效闪避（duck）的音量渐变——更缓，消除硬切感 */
     duck: 600,
-    /** 行军/战斗循环音的淡入淡出 */
-    loop: 300,
+    /** 行军循环音的淡入淡出 */
+    loop: 600,
+    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐显 */
+    battleLoopIn: 1200,
+    /** 自制战斗音景（land_contact / battle_loop / naval_battle_loop）平滑渐隐 */
+    battleLoopOut: 1800,
     /** 一次性音效淡入（武将技等） */
     oneShot: 200,
     /** BGM 换曲（切文化区/随机轮播）交叉淡入淡出 */
@@ -197,6 +207,18 @@ const SOUND_DEFINITIONS: Record<SoundKey, SoundDefinition> = {
     siege_impact: sounds('battle', ['siege_impact_1', 'siege_impact_2', 'siege_impact_3', 'siege_impact_4', 'siege_impact_de'], 0.62, 260),
     //    siege_launch = 投石车/中投发射 (wem 37765250, 630102252) + 巨投配重抛石 (wem 425532147, 479664391)
     siege_launch: sounds('battle', ['siege_launch_1', 'siege_launch_2', 'siege_launch_3', 'siege_launch_4'], 0.55, 350),
+    // DE 建筑坍塌轰鸣 Building_Large_Rumble (wem 997585020, 162929423, 357570649, 158448836，均值 -33.9 LUFS)
+    building_collapse: sounds('battle', ['building_collapse_1', 'building_collapse_2', 'building_collapse_3', 'building_collapse_4'], 0.78, 500),
+    // DE 攻城武器/战车被毁散架 Siege_Weapon_Destroyed (wem 576386269, 585964358, 127361390, 120049907, 451599220，均值 -23.8 LUFS)
+    siege_destroyed: sounds('battle', ['siege_destroyed_1', 'siege_destroyed_2', 'siege_destroyed_3', 'siege_destroyed_4', 'siege_destroyed_5'], 0.52, 600),
+    // DE 战象挥牙嘶鸣 War_Elephant_Attack (wem 1056783078, 577420749, 470969236, 738262577, 342379629，均值 -27.7 LUFS)
+    elephant_attack: sounds('battle', ['elephant_attack_1', 'elephant_attack_2', 'elephant_attack_3', 'elephant_attack_4', 'elephant_attack_5'], 0.65, 1200),
+    // DE 战象倒毙哀鸣 War_Elephant_Death (wem 72901919, 826665418, 489483560, 847663669, 531215225，均值 -31.8 LUFS)
+    elephant_die: sounds('battle', ['elephant_die_1', 'elephant_die_2', 'elephant_die_3', 'elephant_die_4', 'elephant_die_5'], 0.75, 800),
+    // DE 希腊火喷射 Flamethrower_Short (wem 10353045, 936975001, 62497673, 1069459394, 274178430，均值 -30.5 LUFS)
+    flamethrower_fire: sounds('battle', ['flamethrower_fire_1', 'flamethrower_fire_2', 'flamethrower_fire_3', 'flamethrower_fire_4', 'flamethrower_fire_5'], 0.65, 500),
+    // DE 战术开战冲锋号角 Charge Horn (wem 450474346，-26.8 LUFS)
+    battle_horn: sound('battle', 'battle_horn', 0.60, 3000),
     bgm_main: { category: 'bgm', sources: ['/assets/bgm/CENTRAL_bgm.aud'], volume: 0.9, cooldownMs: 0 },
 };
 
@@ -1071,8 +1093,8 @@ export class AudioManager {
     public setSpeechDucking(active: boolean): void {
         if (this.speechDucking === active) return;
         this.speechDucking = active;
-        // 🔴 [2026-10-02 主人定] 播报时平滑避让战斗音效：开启时 250ms 迅速淡出，结束时 500ms 平滑淡入
-        const fadeDuration = active ? 250 : 500;
+        // 🔴 [2026-10-02 → 2026-10-18 主人定] 播报时平滑避让战斗音效：开启时 600ms 渐隐，结束时 1000ms 渐显
+        const fadeDuration = active ? 600 : 1000;
         this.refreshLoopVolumes(fadeDuration);
     }
 
@@ -1197,18 +1219,20 @@ export class AudioManager {
         // 暂停时只记意图、不实际播放（bgm 不受暂停影响）
         if (this.gamePaused && definition.category !== 'bgm') return;
 
+        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
+        const fadeInMs = isBattleAmbience ? FADE.battleLoopIn : FADE.loop;
+
         void this.ensureLoopElement(key, definition).then((audio) => {
             // 异步加载期间状态可能已变（停止跟拍/转入战斗/暂停），仅当仍被期望且未暂停时才播
             if (!audio || !this.settings.enabled || !this.wantedLoops.has(key)) return;
             if (this.gamePaused && definition.category !== 'bgm') return;
             if (audio.paused) {
-                audio.currentTime = 0;
                 audio.volume = 0;
                 void audio.play().catch((error) => {
                     this.warnMissingOnce(key, error);
                 });
             }
-            this.setVolume(audio, this.resolveVolume(definition, key), FADE.loop);
+            this.setVolume(audio, this.resolveVolume(definition, key), fadeInMs);
         });
     }
 
@@ -1218,11 +1242,12 @@ export class AudioManager {
         if (SOUND_DEFINITIONS[key]?.category !== 'bgm') this.updateBgmDuckVolume(FADE.duck);
         const audio = this.loopCache.get(key);
         if (!audio) return;
+        const isBattleAmbience = key === 'land_contact' || key === 'battle_loop' || key === 'naval_battle_loop';
+        const fadeOutMs = isBattleAmbience ? FADE.battleLoopOut : FADE.loop;
         // 平滑淡出后再暂停；淡出途中若被 startLoop 重新期望，其 setVolume 会撤销本渐变、onDone 不触发
-        this.setVolume(audio, 0, FADE.loop, () => {
+        this.setVolume(audio, 0, fadeOutMs, () => {
             if (this.wantedLoops.has(key)) return; // 淡出未完又被重新启动 → 不停
             audio.pause();
-            audio.currentTime = 0;
         });
     }
 

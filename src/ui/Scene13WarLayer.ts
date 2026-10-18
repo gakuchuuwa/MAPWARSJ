@@ -196,6 +196,9 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-12 主人令「开始」流场寻敌] 攻城战流场：每格到中心建筑的步数（INF=不通），格 = 1 个等轴地块，a/b 为地块坐标 */
     private flowDist: Int16Array | null = null;
     private flowR = 0;
+    /** 🔴 [2026-10-14] 守方出城流场：每座城门一张，从「门外 120px」反向 BFS（城门对守方不算障碍） */
+    private defGateFlow: Map<WarBuilding, Int16Array> | null = null;
+    private defFlowSig = -1;
     private gateSpriteSet: Set<DecorSprite> | null = null;
     /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
     private wallBySprite = new Map<DecorSprite, WarBuilding>();
@@ -1947,6 +1950,10 @@ export class Scene13WarLayer {
         if (!this.active) return;
         this.active = false;
         this.lingering = true;
+        if (this.contactSfxOn) {
+            this.contactSfxOn = false;
+            audioManager.stopSceneLoop('land_contact');
+        }
         // [2026-08-19 主人需求] 战斗已结束（残局待命）→ 退出按钮无意义，隐藏
         if (this.exitBtn) this.exitBtn.style.display = 'none';
     }
@@ -2517,6 +2524,8 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
+        this.defGateFlow = null;
+        this.defFlowSig = -1;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
@@ -4740,13 +4749,15 @@ export class Scene13WarLayer {
      * 这里留 10° 缓冲：越过边界 10° 以上才真的换朝向。
      */
     private dir8Hyst(cur: number, dx: number, dy: number): number {
-        if (dx * dx + dy * dy < 9) return cur;
+        if (dx * dx + dy * dy < 1e-6) return cur;
         const next = this.dir8(dx, dy);
         if (next === cur) return cur;
+        const diff = Math.abs(next - cur);
+        if (diff !== 1 && diff !== 7) return next;
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
         const off = (a + 22.5) % 45;      // 在本扇区内的位置：0 或 45 都表示正贴边界
-        if (off < 13 || off > 32) return cur;
+        if (off < 10 || off > 35) return cur;
         return next;
     }
 
@@ -5009,10 +5020,11 @@ export class Scene13WarLayer {
             // 两个兵的最小间距 = 各自占地半径之和（DE 同款）。象兵/攻城器械因此真的占地方，
             // 挤不进去的兵沿接触面铺开 —— 弧形阵面就是这么长出来的。
             const rm = this.radiusOf(m.key);
-            // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」] 玩家跟队时不吃**本队队友**的推挤（同上面「站定队员清零」那条先例）：
-            //    大体型队（战象格距 30 < 两象间距 36）方阵被自身推挤撑开，第一排顶到玩家身上 ⇒ 被推前、归队拉回、转身朝后。
-            //    只在「无敌 + 不在列阵推进 + 无点地面令 + 本队有锚点」时生效；别队与敌兵照常推他，交战照旧。
-            const heroFollow = m.hero === true && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane);
+            // 🔴 [2026-10-13 主人报「大军自动行进时左右或上下晃」/ 2026-10-18 修「行进过程中频繁改变朝向、颤抖」]
+            //    已处于本队归队编队中的领队、队员与玩家不吃**本队队友**的推挤（同上面「站定队员清零」）：
+            //    防止本队内部边走边推领队或槽位间距小于两倍半径时「推开→拉回槽位→朝向反转」每帧往复颤抖；别队与敌兵照常推，交战照旧。
+            const laneFollow = m.lane >= 0 && !m.foe && !m.march && !this.heroOrderPending(m) && laneLeaders.has(m.lane)
+                && (m.hero === true || m === laneLeaders.get(m.lane) || (m.noFoeSec ?? 0) >= LANE_REGROUP_SEC);
             let ox = 0, oy = 0, seen = 0, nearest2 = Infinity, minGap = SEP_DIST;
             // 🔴 [2026-10-14 修·推挤偏右下] 原为 `seen < 6` 截断：扫描从左上往右下，左/上的邻居先数满、右/下的常被漏掉
             //    ⇒ 推力系统性偏向右下，人群整体往画面右下飘。war_sim 实测（200 种子镜像局）：截断时偏袒跟位置走
@@ -5024,7 +5036,7 @@ export class Scene13WarLayer {
                     for (let i = 0; i < a.length; i++) {
                         const o = a[i];
                         if (o === m || o.hp <= 0) continue;
-                        if (heroFollow && o.lane === m.lane) continue;
+                        if (laneFollow && o.lane === m.lane) continue;
                         const dx = m.x - o.x, dy = m.y - o.y;
                         const dd = dx * dx + dy * dy;
                         const gap = rm + this.radiusOf(o.key);      // 这一对的最小间距
@@ -5162,12 +5174,12 @@ export class Scene13WarLayer {
         return this.ringOpen();
     }
 
-    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城门未毁时在城内而敌在城外）⇒ 走不过去，不直接锁死追击 */
+    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城内而敌在城外）⇒ 走不过去，先由 gateExit 出城门再锁敌追击 */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
         if (this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
         this.ensureGateInfo();
-        if (m.f === 1) return !this.isDefenderGateDestroyed() && this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
+        if (m.f === 1) return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
         if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
@@ -5299,7 +5311,6 @@ export class Scene13WarLayer {
                 if (info.f === 1 && info.guard) return false;
                 if (this.siegeWithWalls) {
                     if (info.f === 0 && !this.ringOpen() && info.meleeOnly && info.inside === 0 && eInfo.inside === eInfo.n) return false;
-                    if (info.f === 1 && !this.isDefenderGateDestroyed() && info.meleeOnly && info.inside === info.n && eInfo.inside === 0) return false;
                 }
             }
             if (info.guard && (eInfo.x - info.x) ** 2 + (eInfo.y - info.y) ** 2 > 420 * 420) return false;
@@ -5473,8 +5484,9 @@ export class Scene13WarLayer {
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
-        // 🔴 [2026-10-18 主人定] 城门未被摧毁时，城门内待命的守方近战兵不锁定城外够不着的敌人；一旦城门被摧毁则守方集体发动反攻，放开锁定。
-        const inOnly = !this.isDefenderGateDestroyed() && (radius <= 1000 || !!guardPost) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
+        // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
+        //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
+        const inOnly = (radius <= 1000 || !!guardPost) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
             && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
@@ -5854,6 +5866,7 @@ export class Scene13WarLayer {
             for (const t of this.arrowTowers) if (t.sprite === sp) t.down = true;
             sp.obstruction = undefined;
             sp.obstructionDisabled = true;
+            audioManager.play('building_collapse');
             this.collapseToRubble(sp, name);
             if (!sp.collapse && !sp.asset.includes('_RUBBLE')) sp.destroyed = true;
         } else if (b.hp <= b.maxHp * 0.5) {
@@ -6186,7 +6199,8 @@ export class Scene13WarLayer {
      */
     private buildFlowField(): void {
         this.flowBuiltAt = this.battleSec;
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; return; }
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || !this.canvas) { this.flowDist = null; this.defGateFlow = null; return; }
+        this.buildDefFlowField();
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         const goal = this.centerBld;
         if (!goal || goal.hp <= 0) { this.flowDist = null; return; }
@@ -6267,6 +6281,85 @@ export class Scene13WarLayer {
         this.flowR = R;
     }
 
+    /**
+     * 🔴 [2026-10-14 主人报「守军有的会走城门，有的会拥挤在城角」→「全改」] 守方出城流场（**每座城门一张**）。
+     * 病灶（实测 scratchpad probe_gate_stuck，险要 pass）：守方出城原是**直线**走向「门外 120px」那一点，
+     *   门不在直线上就顶墙，城内约 45~90 个近战守军贴着墙堆着不动。
+     * 修法：**去哪座门照旧**（gateExit 原有选门：离敌人最近 / 离自己最近），只把「直线走过去」换成沿流场绕过去 ——
+     *   每座城门一张流场，以「门外 120px」那一点为终点反向 BFS，格子与攻方流场同一套；城门对守方不算障碍
+     *   （守方本就能穿自己的城门，见 resolveWorldObstructions）。
+     * 障碍没变（数一数还挡路的物件）就不重算：墙/门塌一处才重算一次。
+     */
+    private buildDefFlowField(): void {
+        this.ensureGateInfo();
+        const r = this.ringBox;
+        if (!r || !this.canvas) { this.defGateFlow = null; return; }
+        let sig = 0;
+        for (const sp of this.decorSprites) if (sp.obstruction && !sp.obstructionDisabled && !sp.destroyed) sig++;
+        if (this.defGateFlow && sig === this.defFlowSig) return;
+        this.defFlowSig = sig;
+        const TW = TAC_TILE_W, TH = TAC_TILE_H;
+        const S = FLOW_SUB;
+        const R = (Math.ceil(TAC_MAP_HALF_W / TW + TAC_MAP_HALF_H / TH) + 2) * S;
+        const N = 2 * R + 1;
+        const cx = this.worldCX, cy = this.worldCY;
+        const blocked = new Uint8Array(N * N);
+        for (const sp of this.decorSprites) {
+            const ob = sp.obstruction;
+            if (!ob || sp.obstructionDisabled || sp.destroyed || this.gateSpriteSet?.has(sp)) continue;
+            const dx = sp.x - cx, dy = sp.y - cy;
+            const ca = (dx / TW + dy / TH) * S, cb = (dy / TH - dx / TW) * S;
+            const ox = (ob.x + 0.25) * S, oy = (ob.y + 0.25) * S;
+            for (let a = Math.floor(ca - ox); a <= Math.ceil(ca + ox); a++) {
+                for (let b = Math.floor(cb - oy); b <= Math.ceil(cb + oy); b++) {
+                    if (Math.abs(a - ca) >= ox || Math.abs(b - cb) >= oy) continue;
+                    if (a < -R || a > R || b < -R || b > R) continue;
+                    blocked[(a + R) * N + (b + R)] = 1;
+                }
+            }
+        }
+        // 门外终点与 gateExit 同一算法：从城中心指向城门的方向，再往外 120px
+        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const ccx = cx + (am - bm) * (TW / 2), ccy = cy + (am + bm) * (TH / 2);
+        const INF = 32767;
+        const queue = new Int32Array(N * N);
+        const fields = new Map<WarBuilding, Int16Array>();
+        // 只在城墙外圈 ±6 地块内搜（守军只在城里用这张图）：实测险要 8 门全图搜一次 44ms，墙一塌就卡一帧
+        const wa0 = Math.floor((r.a0 - 6) * S) + R, wa1 = Math.ceil((r.a1 + 6) * S) + R;
+        const wb0 = Math.floor((r.b0 - 6) * S) + R, wb1 = Math.ceil((r.b1 + 6) * S) + R;
+        for (const g of this.wallGates) {
+            if (g.key !== 'STONE_GATE') continue;
+            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+            const ox = g.x + vx / vl * 120 - cx, oy = g.y + vy / vl * 120 - cy;
+            const ga = Math.round((ox / TW + oy / TH) * S) + R, gb = Math.round((oy / TH - ox / TW) * S) + R;
+            const dist = new Int16Array(N * N).fill(INF);
+            let qh = 0, qt = 0;
+            for (let a = ga - S; a <= ga + S; a++) for (let b = gb - S; b <= gb + S; b++) {
+                if (a < 0 || a >= N || b < 0 || b >= N) continue;
+                const n = a * N + b;
+                if (blocked[n]) continue;
+                dist[n] = 0; queue[qt++] = n;
+            }
+            while (qh < qt) {
+                const c = queue[qh++];
+                const ca = (c / N) | 0, cb = c % N;
+                const nd = dist[c] + 1;
+                for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                    if (!da && !db) continue;
+                    const a2 = ca + da, b2 = cb + db;
+                    if (a2 < wa0 || a2 > wa1 || b2 < wb0 || b2 > wb1 || a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                    const n = a2 * N + b2;
+                    if (blocked[n] || dist[n] <= nd) continue;
+                    if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                    dist[n] = nd; queue[qt++] = n;
+                }
+            }
+            fields.set(g, dist);
+        }
+        this.defGateFlow = fields;
+        this.flowR = R;
+    }
+
     /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
     private flowDistAt(x: number, y: number): number {
         const f = this.flowDist;
@@ -6281,7 +6374,7 @@ export class Scene13WarLayer {
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
     private flowWaypoint(x: number, y: number, field: Int16Array | null = this.flowDist, stop = 6 * FLOW_SUB, look = 6 * FLOW_SUB, escape = 1): { x: number; y: number } | null {
-        const f = field;
+        const f = field;   // 🔴 [2026-10-14] 守方出城流场（defGateFlow 每门一张）同用本函数
         if (!f || !this.canvas) return null;
         const R = this.flowR, N = 2 * R + 1;
         const TW = TAC_TILE_W, TH = TAC_TILE_H;
@@ -6344,7 +6437,7 @@ export class Scene13WarLayer {
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
         // 🔴 [2026-10-14 主人令「两条都做」→「按每队算」] 残兵主动找敌：本队剩不到 REMNANT_FRAC ⇒ 全图找离自己最近的敌人（不限视野），
-        //    照常过流场（攻方绕缺口进城）。
+        //    照常过流场（攻方绕缺口进城）与出城路线（守方走城门；险要的「守墙」此时不再生效，见 gateExit）。
         if (m.lane >= 0 && this.remnantLanes.has(m.lane)) {
             const siegeDef = this.battleType === 'siege' && m.f === 1;
             const cityCen = this.deCity ? this.deCityCenter : this.spawnBases[1];
@@ -6359,13 +6452,13 @@ export class Scene13WarLayer {
             }
             if (t) {
                 const ra = Math.atan2(m.jy, m.jx);
-                return this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING });
+                return this.gateExit(m, this.flowRedirect(m, { x: t.x + Math.cos(ra) * CHASE_RING, y: t.y + Math.sin(ra) * CHASE_RING }));
             }
             if (siegeDef) {
-                return this.defenderCityReturnGoal(m);
+                return this.gateExit(m, this.defenderCityReturnGoal(m));
             }
         }
-        return this.flowRedirect(m, this.aimAtRaw(m));
+        return this.gateExit(m, this.flowRedirect(m, this.aimAtRaw(m)));
     }
 
     /** 地块坐标（以画布中心为原点，与 resolveWorldObstructions 同一套） */
@@ -6453,6 +6546,52 @@ export class Scene13WarLayer {
         if (!r) return false;
         const [a, b] = this.tileAB(x, y);
         return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
+    }
+
+    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去；
+     *  守方在城外、目标在城内（回城迎击入城之敌）⇒ 先走到最近的外圈城门，从门里回城。
+     */
+    private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
+        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
+        this.ensureGateInfo();
+        if (!this.ringBox) return aim;
+        const r = this.ringBox, [ma, mb] = this.tileAB(m.x, m.y);
+        const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
+        const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
+        const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
+        // 守军一律选择离自己最近的外圈城门进出城
+        let g: WarBuilding | null = null, gd = Infinity;
+        for (const b of this.wallGates) {
+            if (b.key !== 'STONE_GATE') continue;
+            const [ba, bb] = this.tileAB(b.x, b.y);
+            if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d < gd) { gd = d; g = b; }
+        }
+        if (!g) for (const b of this.wallGates) {
+            if (b.key !== 'STONE_GATE') continue;
+            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+            if (d < gd) { gd = d; g = b; }
+        }
+        if (!g) return aim;
+
+        const inGateRing = ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1;
+        const aimInside = !!aim && this.insideRing(aim.x, aim.y);
+        if (aimInside) {
+            // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经最近城门往城内走 120px 入城
+            if (this.insideRing(m.x, m.y)) return aim;
+            if (!inGateRing && gd > 110 * 110) return { x: g.x, y: g.y };
+            const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+            return { x: g.x - vx / vl * 120, y: g.y - vy / vl * 120 };
+        }
+        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
+        if (!inGateRing) return aim;
+        // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
+        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
+        if (wp) return wp;
+        // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
+        const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
+        return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
     }
 
     /**
@@ -6630,10 +6769,11 @@ export class Scene13WarLayer {
         const unitTileRadius = this.radiusOf(m.key) / 40;
         // 🔴 [2026-10-12] 占地按 DE 原生一格（96×48）换算：物件素材按原生像素画，原用旧网格 64×32 ⇒ 碰撞框只有画面的 2/3
         const TILE_W = TAC_TILE_W, TILE_H = TAC_TILE_H;
-        if (WALL_PASS_TYPES.has(m.key)) this.ensureGateInfo();
+        if (m.f === 1 || WALL_PASS_TYPES.has(m.key)) this.ensureGateInfo();
         for (let pass = 0; pass < 3; pass++) {
             let changed = false;
             for (const object of activeObstructions) {
+                if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
                 if (WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
@@ -6779,6 +6919,9 @@ export class Scene13WarLayer {
                 //    部署结束开始移动时 stuckT 仍 > STUCK_IDLE_SEC，渲染层误播待命帧 = 人平移脚不迈（滑步）。
                 //    部署结束这一帧清空 stuckT，移动立刻切回走路帧。
                 for (const m of this.men) m.stuckT = 0;
+                if (!this.battleBriefingSpeaking && !audioManager.isSpeechDucking() && !speechAnnouncer.isSpeaking()) {
+                    audioManager.play('battle_horn', { fadeInMs: 150 });
+                }
             }
         }
         const deploying = this.deployT > 0;
@@ -6902,7 +7045,7 @@ export class Scene13WarLayer {
                 m.fightT = 0;
                 m.lock = 0;
                 m.stuckT = 0;
-                m.dir = this.dir8Hyst(m.dir, rvx, rvy);
+                m.dir = this.dir8(rvx, rvy);
                 const pSpd = stats.spd * spdK * 0.85;
                 const nx = m.x + rvx * pSpd * dt;
                 const ny = m.y + rvy * pSpd * dt;
@@ -7070,7 +7213,8 @@ export class Scene13WarLayer {
                     } else if (this.battleType === 'siege' && m.f === 1) {
                         const ret = this.defenderCityReturnGoal(m);
                         if ((m.x - ret.x) ** 2 + (m.y - ret.y) ** 2 > 180 * 180) {
-                            [m.tx, m.ty] = this.fieldBound(ret.x, ret.y);
+                            const aim = this.gateExit(m, ret) ?? ret;
+                            [m.tx, m.ty] = this.fieldBound(aim.x, aim.y);
                         } else {
                             m.tx = m.x;
                             m.ty = m.y;
@@ -7137,7 +7281,7 @@ export class Scene13WarLayer {
                         // 越过地图边界或本方大本营底线即停止风筝
                         } else {
                             m.x = bx; m.y = by;
-                            m.dir = this.dir8(dx, dy);   // 朝向 = 逃跑方向 → 转身跑，不是倒着滑
+                            m.dir = this.dir8Hyst(m.dir, dx, dy);   // 朝向 = 逃跑方向（带迟滞防抖）→ 转身跑，不是倒着滑
                             m.st = 0;                    // 走路状态：尾部才会推走路动画
                             m.fightT = 0;
                             m.kiteLeg = (m.kiteLeg ?? 0) + step;
@@ -7202,8 +7346,8 @@ export class Scene13WarLayer {
                     //   · 攻城武器不算 —— 砸墙有 siege_impact 管；
                     //   · 目标是建筑（'sprite' in foe）不算 —— 打墙不是绞杀。
                     // 不在列阵期计数（deploying 分支已 continue）。
-                    // 🔴 [2026-10-08 主人定] 远程攻击时也播放自制战斗音效，攻城武器除外；两军交战即播，无战斗再停
-                    if (!m.siegeW && !('sprite' in foe)) this.meleeContactCount++;
+                    // 🔴 [2026-10-08 → 2026-10-18 主人定] 远程攻击与攻打城门/城内建筑时同样保持自制战斗音效不断，攻城武器除外；两军交战即渐显，无战斗再渐隐
+                    if (!m.siegeW && (!('sprite' in foe) || foe.hp > 0)) this.meleeContactCount++;
                     m.fightT = (m.fightT || 0) + dt;
                     // 🔴 [2026-08-17 主人拍板] 目标只剩半血以下就**不换人**，把他打死再走。
                     //    原来不看血量：跟一个人打满 4 秒，哪怕对方只剩一口气也照样掉头去找别人 ——
@@ -7242,7 +7386,13 @@ export class Scene13WarLayer {
                     m.st = 0;
                     const dx = m.tx - m.x, dy = m.ty - m.y, d = Math.hypot(dx, dy);
                     const step = stats.spd * spdK * dt;
-                    if (stats.spd > 0 && d > LANE_TRACK_EPS) { const mv = Math.min(step, d); m.x += (dx / d) * mv; m.y += (dy / d) * mv; m.dir = this.dir8Hyst(m.dir, dx, dy); }
+                    if (stats.spd > 0 && d > LANE_TRACK_EPS) {
+                        const mv = Math.min(step, d);
+                        m.x += (dx / d) * mv;
+                        m.y += (dy / d) * mv;
+                        const uFwd = this.advanceVec[m.f];
+                        m.dir = d < 24 ? this.dir8Hyst(m.dir, uFwd.x, uFwd.y) : this.dir8Hyst(m.dir, dx, dy);
+                    }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
                     if (m.fadeT > 0) m.fadeT -= dt;
@@ -7272,7 +7422,7 @@ export class Scene13WarLayer {
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
                     const rawChase = { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
-                    const chasePt = isGuard ? rawChase : (this.flowRedirect(m, rawChase) ?? rawChase);
+                    const chasePt = isGuard ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase);
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy) || 1;
@@ -7415,7 +7565,9 @@ export class Scene13WarLayer {
                         //    火器下面 spawnFirearmMuzzle 里播 gun_fire，这里只补剩下那一类 —— 正是
                         //    近战死绝、land_contact 淡出之后唯一还在动的那批兵，原先完全静音。
                         //    限流靠 AudioManager 的 cooldown（arrow_fire 700ms），这里不必自己数人。
-                        if (!m.siegeW && !isFirearm) audioManager.play('arrow_fire');
+                        if (!m.siegeW && !isFirearm) {
+                            audioManager.play(CASTER_TYPES.has(m.key) || proj === 'PROJ_GREEK_FIRE' ? 'flamethrower_fire' : 'arrow_fire');
+                        }
                         // 开火点高度：步兵 = 胸口（UNIT_PX*0.45）；塔类攻城器械 = 塔顶弩机（见表头 MUZZLE_LIFT_BY_TYPE）。
                         const muzzleOver = MUZZLE_LIFT_BY_TYPE[m.key];
                         const muzzleLift = muzzleOver !== undefined
@@ -7580,6 +7732,9 @@ export class Scene13WarLayer {
                 if (m.siegeW && isHeavyNonBlade && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
                     audioManager.play('siege_impact');
+                } else if (!m.siegeW && keyStr.includes('elephant') && (stats.rng <= 65 || m.st === 2 || close) && !m.slashed && m.ph >= 3) {
+                    m.slashed = true;
+                    audioManager.play('elephant_attack');
                 }
                 if (isMeleeAttacking && !m.slashed && m.ph >= 3) {
                     m.slashed = true;
@@ -7665,10 +7820,14 @@ export class Scene13WarLayer {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步
                     m.x += dx / d * mv;
                     m.y += dy / d * mv;
-                    // 连续跟随的步子很小（1~2px），朝向不能照小向量每帧重算 ——
-                    // 「朝向每帧按移动方向重算 → 8 个方向之间乱跳 = 闪动、颤抖」（见本段上一条血训）。
-                    // 跟随锚点时走**带迟滞的 8 向**（与玩家键盘移动同一个 dir8Hyst），固定目标照旧 dir8。
-                    m.dir = (slot || isGuard) ? this.dir8Hyst(m.dir, dx, dy) : this.dir8(dx, dy);
+                    // 连续跟随与领队行进统一走带迟滞的 8 向（dir8Hyst）；
+                    // 归队队员已靠近自身槽位（d < 24px）仅作微调时，朝向直接对齐领队朝向，绝不因几像素偏差侧转或回头。
+                    const leader = slot ? laneLeaders.get(m.lane) : undefined;
+                    if (slot && leader && d < 24) {
+                        m.dir = leader.dir;
+                    } else {
+                        m.dir = this.dir8Hyst(m.dir, dx, dy);
+                    }
                 } else if (isGuard) {
                     const uFwd = this.advanceVec[m.f];
                     m.dir = this.dir8(uFwd.x, uFwd.y);
@@ -7888,14 +8047,6 @@ export class Scene13WarLayer {
                 for (const [l, a] of laneAlive) { const st = this.laneStart.get(l) ?? 0; if (st > 0 && a <= st * REMNANT_FRAC) this.remnantLanes.add(l); }
             }
         }
-        // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
-        this.tickContactSfx(dt);
-
-        // 🔴 [2026-10-12 主人令] 胜负条件：① 一方全灭；② 攻城战中心建筑被摧毁 → 守方输；
-        //    ③ 5 分钟（BATTLE_LIMIT_SEC）到点仍未分出 → 攻方输（攻城、野战同口径）。
-        // 🔴 [2026-10-14 主人令「攻城战，攻方胜利条件改为，攻占九建筑的中心建筑为胜利」]
-        //    有中心建筑的攻城战：攻方**只有**摧毁中心建筑才算赢；守军打光了也不算，攻方得接着去拆中心建筑。
-        //    守方赢：攻方全灭，或 5 分钟到点。野战、没有中心建筑的攻城战照旧（一方全灭）。
         if (this.centerBld === undefined) this.centerBld = this.pickCenterBuilding();
         // 🔴 [2026-10-15 主人令「请等中间建筑坍塌后，再退出战术模式」] 中心建筑血归零 = 攻方已胜（centerKilled），
         //    但要等倒塌动画（COLLAPSE_ANIM_DUR）播完切成残骸才结束（centerDown）；等待期间不因攻方打光 / 到点改判。
@@ -7908,8 +8059,18 @@ export class Scene13WarLayer {
         const centerRule = this.battleType === 'siege' && !!this.centerBld;
         const timeUp = this.battleSec >= BATTLE_LIMIT_SEC;
         const waitCollapse = centerRule && centerKilled && !centerDown;
+        if (waitCollapse) {
+            this.meleeContactCount = 0;
+            this.meleeQuietSec = MELEE_QUIET_SEC;
+        }
+        // 近战接触音景结账：本帧兵种循环已把 meleeContactCount 数完，这里决定淡入还是淡出。
+        this.tickContactSfx(dt);
         if (!waitCollapse && (alive[0] <= 0 || (!centerRule && alive[1] <= 0) || centerDown || timeUp)) {
             this.over = true;
+            if (this.contactSfxOn) {
+                this.contactSfxOn = false;
+                audioManager.stopSceneLoop('land_contact');
+            }
             // 🔴 [2026-10-15 主人令] 300 秒倒计时到点仍未攻下城池（攻方未全灭且未拆掉中心建筑）⇒ 此次战斗算打平（'draw'）
             const isDraw = timeUp && alive[0] > 0 && !centerDown && (centerRule || alive[1] > 0);
             const attackerLost = centerRule
@@ -8001,6 +8162,12 @@ export class Scene13WarLayer {
         if (SUICIDE_TYPES.has(m.key)) {
             this.explode('FX_PETARD', m.x, m.y);
             return;
+        }
+        const mk = m.key.toLowerCase();
+        if (mk.includes('elephant')) {
+            audioManager.play('elephant_die');
+        } else if (m.siegeW || mk.includes('wagon') || mk.includes('chariot')) {
+            audioManager.play('siege_destroyed');
         }
         // 🔴 [2026-09-15 主人定] 攻城武器阵亡不能逃跑，只能留下尸体（残骸），永不进 fleers 通道。
         if (m.siegeW) {

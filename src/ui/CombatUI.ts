@@ -1808,8 +1808,6 @@ export class CombatUI {
                 font-size: 12px;
                 color: #1a1612;
                 background: transparent;
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
                 border: none;
                 border-radius: 12px;
                 box-shadow: none;

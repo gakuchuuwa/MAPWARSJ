@@ -2,7 +2,7 @@
  * 草原文化区远征精锐军团名（GAME_DIRECTION 远征细则 2026-06-11）
  *
  * 收录红线与日朝东北一致：
- * - 番号至少 3 个汉字
+ * - 番号 3–5 字
  * - 同势力只挂一个番号（比知名度分流）
  * - 不收热兵器/近代/汉军混编专名（§6 #4 大汉军、#13 准噶尔驼城火枪军等）
  * - 依据 史料/古代精锐部队.md §6 #1–3、#5–12、#14–19
@@ -28,7 +28,7 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
   // 那可儿除名（与那可儿军重复）
   kumoxi: { name: '奚人游骑', tier: 4 },  // 饶乐水·库莫奚本部
   kumo: { name: '楮特奥隗部', tier: 4 },     // 马盂山·奚族楮特奥隗部
-  // ── 2026-06-16 新增：草原大区平衡补全（20支） ──
+  // ── 2026-06-16 新增：草原大区平衡补全（20 支；其中重复项已归 CUMAN，见 2026-10-18 清理注） ──
     kelie: { name: '札合骁骑', tier: 4 },
     kereyid: { name: '克烈护卫军', tier: 4 },
   dingling: { name: '丁零游骑', tier: 4 }, // 贝加尔·丁零王（缺乏极其著名的战术高光，降T3）
@@ -85,16 +85,10 @@ export const STEPPE_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: st
     manghuti: { name: '忙忽惕勇士', tier: 4 },
     dzungar: { name: '绰罗斯精骑', tier: 1 },
     dada_ming: { name: '鞑靼铁骑', tier: 1 },
-    jinzhang: { name: '金帐铁骑', tier: 1 },        // 萨莱·拔都：长子西征横扫东欧，金帐汗国两百年主力，升T1战略
-    xiemian: { name: '谢缅骑卫', tier: 4 },
-    baojiaer: { name: '保加尔铁骑', tier: 2 },      // 喀山·兀鲁黑：1223卡玛河伏击全歼蒙古西征军残部，一战成名，T2战术
-    yidier: { name: '伊蒂尔弓骑', tier: 4 },
-    fuerjia: { name: '塔尔汗骑', tier: 4 },        // 察里津·阿斯特拉：阿斯特拉罕古称塔尔汗（Hajji Tarkhan）骑兵，T4存在
-    nuogai: { name: '诺盖突骑', tier: 3 },           // 萨马拉·欧拿斯汗：诺盖汗国骑射，民族辨识度，T3知名
-    bashekeer: { name: '巴什弓骑', tier: 3 },        // 乌法·卡拉萨卡尔：巴什基尔骑射手，乌拉尔骑射特色，T3知名
-    salai: { name: '萨莱骑卫', tier: 4 },
+    // ── 2026-10-18 清理：以下 9 支已归入 CUMAN 区，唯一权威见 CumanExpeditionLegions.ts
+    //    （原条目重复，靠展开顺序静默覆盖，故清出）──
+    //    jinzhang xiemian baojiaer yidier fuerjia nuogai bashekeer salai mangshi
     xierhe: { name: '毡的弓骑', tier: 3 },            // 哲德·乌古斯后钦察要城：毡的(Jand)乌古斯骑射，T3知名
-    mangshi: { name: '曼格骑卫', tier: 4 },
     tuerhute: { name: '鹰娑川铁骑', tier: 3 },
     ashide: { name: '阿史德骑', tier: 4 },
     xiliao: { name: '斡耳朵亲卫', tier: 1 },

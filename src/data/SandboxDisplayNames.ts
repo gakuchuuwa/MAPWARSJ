@@ -421,7 +421,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 'tujishi': '突骑',
     'nanzhao': '南诏',
 'xiaobolu': '勃律',
-    'qiufu': '裘甫',
+    'qiufu': '剡中',
 
     // ── 2026-05-25 五代十国势力 ──
     'dongdan': '东丹',
@@ -842,7 +842,7 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xuantu': '玄菟',
 'sambyeol': '沃',
     'sheng_d': '升',
-    'jinzhou': '锦',
+'jinzhou': '锦',
     'wure': '兀惹',
 'houliao': '东辽',
 'dazhen': '大真',

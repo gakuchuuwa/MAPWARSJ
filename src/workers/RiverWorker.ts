@@ -8,7 +8,18 @@ export interface RiverWorkerRequest {
 }
 export interface RiverWorkerResponse { id: number; data: Uint8ClampedArray; waves?: Float32Array | null; }
 const tiles = new Map<string, WaterTileMask>();
+const MAX_TILES_CACHE = 320;
 const keyOf = (t: {x: number; y: number; z: number}) => `${t.z}/${t.x}/${t.y}`;
+
+function putTile(key: string, tile: WaterTileMask): void {
+    tiles.delete(key);
+    tiles.set(key, tile);
+    while (tiles.size > MAX_TILES_CACHE) {
+        const oldest = tiles.keys().next().value;
+        if (oldest === undefined) break;
+        tiles.delete(oldest);
+    }
+}
 
 const PAD = 32;
 
@@ -28,9 +39,17 @@ function borderHasLand(tile: WaterTileMask, dx: number, dy: number): boolean {
     return false;
 }
 
-self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number }>) => {
+self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number } | { rebindId: number; x: number; y: number; z: number }>) => {
     if ('removeId' in e.data) {
-        for (const [key, tile] of tiles) if (tile.id === e.data.removeId) tiles.delete(key);
+        return;
+    }
+    if ('rebindId' in e.data) {
+        const key = keyOf(e.data);
+        const existing = tiles.get(key);
+        if (existing) {
+            existing.id = e.data.rebindId;
+            putTile(key, existing);
+        }
         return;
     }
     const { id, width, height, bitmap, x, y, z } = e.data;
@@ -52,7 +71,7 @@ self.onmessage = async (e: MessageEvent<RiverWorkerRequest | { removeId: number 
         if (w) hasWater = true;
     }
     const tile: WaterTileMask = { id, width, height, x, y, z, mask };
-    tiles.set(keyOf(tile), tile);
+    putTile(keyOf(tile), tile);
     // 先等水深算好再画第一次：避免「先平色、后变深」的闪烁与新旧块混排
     const [texture, depthT] = await Promise.all([
         loadStrategicWaterTexture(),
@@ -149,27 +168,39 @@ async function computeDepthT(x: number, y: number, z: number, w: number, h: numb
         const dem = tiles.get(`${tx}/${ty}`)!;
         return dem[(gy - ty * 256) * 256 + (gx - tx * 256)];
     };
-    // 3×3 高斯平滑粗级水深：柔化单像素海底深坑或暗礁突变，让深水区边缘自然渐变
-    const elevAt = (gx: number, gy: number): number => (
-        rawElevAt(gx - 1, gy - 1) + rawElevAt(gx, gy - 1) * 2 + rawElevAt(gx + 1, gy - 1) +
-        rawElevAt(gx - 1, gy) * 2 + rawElevAt(gx, gy) * 4 + rawElevAt(gx + 1, gy) * 2 +
-        rawElevAt(gx - 1, gy + 1) + rawElevAt(gx, gy + 1) * 2 + rawElevAt(gx + 1, gy + 1)
-    ) * 0.0625;
+    // 3×3 高斯平滑粗级水深：只在粗网格节点 (gx0+1..gx1-1, gy0+1..gy1-1) 上预计算一次，避免在 65536 像素循环里重复算 235 万次
+    const gw = gx1 - gx0 + 1, gh = gy1 - gy0 + 1;
+    const elevGrid = new Float32Array(gw * gh);
+    for (let gy = gy0 + 1; gy < gy1; gy++) {
+        const rowOff = (gy - gy0) * gw;
+        for (let gx = gx0 + 1; gx < gx1; gx++) {
+            elevGrid[rowOff + (gx - gx0)] = (
+                rawElevAt(gx - 1, gy - 1) + rawElevAt(gx, gy - 1) * 2 + rawElevAt(gx + 1, gy - 1) +
+                rawElevAt(gx - 1, gy) * 2 + rawElevAt(gx, gy) * 4 + rawElevAt(gx + 1, gy) * 2 +
+                rawElevAt(gx - 1, gy + 1) + rawElevAt(gx, gy + 1) * 2 + rawElevAt(gx + 1, gy + 1)
+            ) * 0.0625;
+        }
+    }
     const worldPx = 2 ** z * w;
     const out = new Float32Array(w * h);
     for (let py = 0; py < h; py++) {
         const wy = y * h + py + 0.5;
         const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * wy / worldPx))) * 180 / Math.PI;
+        const inCaspianLat = lat > 36.5 && lat < 47.3;
         const fy = wy / scale - 0.5;
         const iy = Math.floor(fy), ty = fy - iy;
+        const rowOff = (iy - gy0) * gw;
         for (let px = 0; px < w; px++) {
             const wx = x * w + px + 0.5;
             const fx = wx / scale - 0.5;
             const ix = Math.floor(fx), tx = fx - ix;
-            let e = (elevAt(ix, iy) * (1 - tx) + elevAt(ix + 1, iy) * tx) * (1 - ty)
-                  + (elevAt(ix, iy + 1) * (1 - tx) + elevAt(ix + 1, iy + 1) * tx) * ty;
-            const lng = wx / worldPx * 360 - 180;
-            if (lat > 36.5 && lat < 47.3 && lng > 46.4 && lng < 55.6) e -= CASPIAN_SURFACE_M;
+            const idx = rowOff + (ix - gx0);
+            let e = (elevGrid[idx] * (1 - tx) + elevGrid[idx + 1] * tx) * (1 - ty)
+                  + (elevGrid[idx + gw] * (1 - tx) + elevGrid[idx + gw + 1] * tx) * ty;
+            if (inCaspianLat) {
+                const lng = wx / worldPx * 360 - 180;
+                if (lng > 46.4 && lng < 55.6) e -= CASPIAN_SURFACE_M;
+            }
             const depth = -e;
             let t = 0;
             if (depth > 0) {

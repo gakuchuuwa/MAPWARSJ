@@ -8121,6 +8121,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.05,
             "offsetX": 0,
             "offsetY": -6
+        },
+        "/assets/GERMANIC/bogendigongguo_wuweideyuehan.png": {
+            "scale": 1.02,
+            "offsetX": 0,
+            "offsetY": -3
         }
     },
     "folderGuides": {
