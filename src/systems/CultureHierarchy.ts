@@ -387,3 +387,56 @@ export function resolveCityHierarchy(city: { buildingStyle?: string; region?: st
         displayLabel,
     };
 }
+
+/**
+ * 旧文化区 / 一级母体建筑风格 → 66 文化标准键兜底映射
+ * （当传入的不是 66 文化键本身，而是旧 region 或 16 母体名时由此表归一化）
+ */
+const LEGACY_TO_CULTURE66: Record<string, string> = {
+    // 16 母体名兜底
+    ASIA: 'CENTRAL', CEAS: 'CENTRAL_ASIA', INDI: 'INDIA', WEST: 'GERMANIC',
+    MEDI: 'LATIN', SLAV: 'SLAVIC', EAST: 'BYZANTINE', SEAS: 'KHMER',
+    GREEK: 'GREECE', ANDE: 'INCA', MESO: 'AMERICA', AFRI: 'AFRICA',
+    // 旧文化区（RegionType）兜底
+    ACHAEMENIDS: 'PERSIAN', AINU: 'JAPAN', ALMOHAD: 'BERBER', AMAZONS: 'THRACIAN',
+    ANGLO_SAXON: 'SAXONS', ARAGON: 'SPANISH', ASSYRIAN: 'ORIE', BABYLON: 'ORIE',
+    CARTHAGE: 'LATIN', CASTILE: 'SPANISH', CELTS_FEUDAL: 'CELTS', CHIMU: 'INCA',
+    CRUSADERS: 'FRANKS', DALI: 'BASHU', DELHI: 'MUGHAL', EGYPT: 'ORIE',
+    FRENCH: 'FRANKS', GHANA: 'AFRICA', GOJOSEON: 'KOREA', GORYEO: 'KOREA',
+    GREEK_MERCENARY: 'GREECE', HEBREWS: 'ORIE', HELLENIC: 'GREECE', HEPHTHALITES: 'CENTRAL_ASIA',
+    HEXI: 'KHITAN', HITTITES: 'ORIE', HRE: 'GERMANIC', HUAXIA_IMPERIAL: 'CENTRAL',
+    ILKHANATE: 'PERSIAN', IMPERIAL_ROME: 'ROMA', IROQUOIS: 'AMERICA', ITALIANS: 'LATIN',
+    JAVANESE: 'MALAY', JOSEON: 'KOREA', JURCHEN: 'NORTHEAST', KARA_KHITAN: 'KHITAN',
+    KHAZARS: 'CUMAN', KUSH: 'ETHIOPIANS', KUSHAN: 'CENTRAL_ASIA', LOMBARDS: 'LATIN',
+    MAGNA_GRAECIA: 'GREECE', MAMLUKS: 'ORIE', MANCHU: 'NORTHEAST', MING: 'CENTRAL',
+    MOHE: 'NORTHEAST', NABATAEANS: 'ORIE', NANZHAO: 'BASHU', NORTH: 'WEI',
+    NORTHAM_IMPERIAL: 'AMERICA', OTTOMAN: 'TURKS', PASHTUN: 'PERSIAN', PRE_QIN: 'CENTRAL',
+    QIANG: 'TIBET', ROURAN: 'MONGOL', RUS: 'SLAVIC', RUSSIAN: 'SLAVIC',
+    SAFAVID: 'PERSIAN', SCOTLAND: 'CELTS', SCYTHIANS: 'CUMAN', SELJUQ: 'TURKS',
+    SERBIA: 'SLAVIC', SIKH: 'INDIA', SOGDIANS: 'CENTRAL_ASIA', SONG: 'CENTRAL',
+    SOUTHAM_IMPERIAL: 'INCA', SRIVIJAYA: 'MALAY', STEPPE: 'MONGOL', SWEDISH: 'VIKINGS',
+    TAIRONA: 'MUISCA', TANGUT: 'KHITAN', TARASCAN: 'AMERICA', TEHUELCHE: 'MAPUCHE',
+    TEUTONS: 'GERMANIC', TIMURID: 'CENTRAL_ASIA', UIGHUR: 'MONGOL', VANDALS: 'GOTHS',
+    WEST_ASIA: 'TURKS', WUSUN: 'CENTRAL_ASIA', YARLUNG: 'TIBET',
+};
+
+/**
+ * 将任意 66 建筑风格键、带时代后缀的区域或旧文化区统一解析为 66 文化标准键（62 二级 + 4 三级）。
+ */
+export function toCulture66(code?: string | null): string {
+    if (!code) return 'CENTRAL';
+    const upper = code.trim().toUpperCase();
+    const direct = ALL_BRANCHES_MAP[upper];
+    if (direct) return direct.key;
+    const legacy = LEGACY_TO_CULTURE66[upper];
+    if (legacy) return legacy;
+    const prefix = upper.replace(/_(ANTIQUITY|FEUDAL|CASTLE|IMPERIAL)$/, '');
+    if (prefix !== upper) {
+        const b2 = ALL_BRANCHES_MAP[prefix];
+        if (b2) return b2.key;
+        const l2 = LEGACY_TO_CULTURE66[prefix];
+        if (l2) return l2;
+    }
+    return 'CENTRAL';
+}
+

@@ -1409,9 +1409,10 @@ function buildDeCityGridHtml(
             const [b, age] = entry as [string, 'AGE2' | 'AGE3'];
             const bStyle = g.buildingStyle ?? style;
             const src = g.rawDirNames ? `/SUCAI_BUILDING/${b}/preview.png` : cityBuildingSrc(bStyle, b, age);
-            const bW = (g.rawDirNames ? native.spriteW?.[b] : (nativeW(native, b, age) ?? DE_SPRITE_BOX_W[`${bStyle}_${b}_${age}`])) ?? (baseSize * 0.32 * AUTO);
+            const dir = dirOf(src);
+            const bW = (g.rawDirNames ? native.spriteW?.[b] : (nativeW(native, b, age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);
             const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
-            placeBuilding(dirOf(src), src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
+            placeBuilding(dir, src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
         }
     });
 

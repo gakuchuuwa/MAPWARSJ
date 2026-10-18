@@ -248,6 +248,7 @@ export class LegionPhalanxDrawer {
         'tiger_rider', 'arambai', 'mangudai', 'keshik', 'boyar', 'savar',
         'elite_kipchak', 'camel_heavy', 'elite_steppe_lancer', 'paladin', 'coustillier',
         'hei_kuang_heavy', 'mangudai_elite', 'steppe_horse_archer',
+        'mounted_crossbowman', 'mounted_crossbowman_heavy', 'khan', 'mounted_samurai',
     ]);
 
     /**

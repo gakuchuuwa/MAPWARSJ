@@ -35,7 +35,7 @@ import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalr
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
 import { isDeployHeld } from './DeployGate';
-import { toBase16 } from '../systems/CultureBase16';
+import { getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
 
 /**
  * 行军路点。`sea` 是路网给的**这一段属于海路还是陆路**（RoadRegistry.GraphEdge.isSea），
@@ -1161,9 +1161,12 @@ export class Army implements IBattleUnit {
             this.navalShipAssetLock = null;
         }
 
-        // 水域：登船后全军统一速度（兵种加成失效，玩家应用专属海速缩放）
+        // 水域：登船后全军统一速度（兵种加成失效，玩家应用专属海速缩放；④ 渡海/水网机动文化 ×1.25）
         if (this.isOnSea) {
-            this.terrainSpeedTarget = SEA_SPEED_MULTIPLIER * (this.terrainSpeedScale?.sea ?? 1);
+            this.terrainSpeedTarget =
+                SEA_SPEED_MULTIPLIER
+                * (this.terrainSpeedScale?.sea ?? 1)
+                * getArmyCultureSeaSpeedMultiplier(this);
             this.confirmedLandKind = null;
             this.landFlipFrames = 0;
         } else {
@@ -1173,11 +1176,11 @@ export class Army implements IBattleUnit {
             this.navalPrevDistToNext = null;
             this.navalOrbitAngle = 0;
             this.navalPrevBearingToDest = null;
-            // 陆地：四系 × 平原/山地；如履平地 → 山地按平原格查表
+            // 陆地：四系 × 平原/山地；如履平地或 ③ 山地行军专精文化 → 山地按平原格查表
             const rawLand = LandTerrainSystem.classifyAt(pos) ?? 'mountain';
             const desiredKind: 'plain' | 'mountain' =
                 rawLand === 'mountain'
-                && generalHasStrategicEffect(this, 'mountain_march_immunity')
+                && (generalHasStrategicEffect(this, 'mountain_march_immunity') || isArmyCultureMountainMarchImmune(this))
                     ? 'plain'
                     : rawLand === 'plain'
                         ? 'plain'
@@ -1259,15 +1262,10 @@ export class Army implements IBattleUnit {
     private static readonly ELEPHANT_SPD_MAX = 45;
 
     private getSpeed(): number {
-        // 🔴 [2026-09-15] SPEED_TABLE 只在 16 母体上开键，先归母体再取值
-        const regionSpeedMult = this.cultureRegion
-            ? (GameConfig.CULTURE_COMBAT.SPEED_TABLE[toBase16(this.cultureRegion)] ?? 1.0)
-            : 1.0;
         return (
             PLAYER_SPEED_TIERS.UNIFIED_MARCH_SPEED
             * this.speedMultiplier
             * getGeneralMarchSpeedMultiplier(this)
-            * regionSpeedMult
         );
     }
 

@@ -240,160 +240,130 @@ export class GameConfig {
         MIN_TROOPS_FLOOR: 0,
         /** 经纬换算：1 度 ≈ 111 km（全图约定 0.1°≈10–11km；编辑器内联 *111 同源） */
         KM_PER_DEGREE: 111,
+        /**
+         * 海上行军不减兵文化（66 文化键）：
+         *   · 北欧诺斯航海系：VIKINGS（维京）、DANES（丹麦）、VARANGIANS（瓦良格）
+         *   · 南洋群岛海洋系：MALAY（马来/三佛齐/满剌加）
+         *   · 大航海与海洋霸权系：PORTUGUESE（葡萄牙）、SPANISH（西班牙）、ATHENIANS（雅典）
+         */
+        NAVAL_IMMUNE_CULTURES: [
+            'VIKINGS',
+            'DANES',
+            'VARANGIANS',
+            'MALAY',
+            'PORTUGUESE',
+            'SPANISH',
+            'ATHENIANS',
+        ] as readonly string[],
+        /**
+         * 陆地行军不减兵文化（66 文化键）：
+         *   · 欧亚草原游牧核心系：MONGOL（漠北蒙古）、XIANBEI（漠南鲜卑）、HUNS（匈人）、
+         *     CUMAN（库曼）、CENTRAL_ASIA（鞑靼/中亚）、KHITAN（契丹/河西）、TURKS（突厥/奥斯曼）
+         *   · 东欧草原与北非大漠游牧系：MAGYAR（马扎尔）、BERBER（柏柏尔）
+         */
+        LAND_IMMUNE_CULTURES: [
+            'MONGOL',
+            'XIANBEI',
+            'HUNS',
+            'CUMAN',
+            'CENTRAL_ASIA',
+            'KHITAN',
+            'TURKS',
+            'MAGYAR',
+            'BERBER',
+        ] as readonly string[],
     };
     /**
-     * 18 文化六维属性（2026-07-31 按战绩排名重排 + 2026-08-02 新增欧洲三区：斯拉夫/日耳曼/拉丁）
-     *   TIER_TABLE:             [军团攻, 据点防]
-     *   SPEED_TABLE:            军团速
-     *   RECRUIT_TABLE:          据点兵（季产驻军乘数）
-     *   LEGION_TROOP_CAP_TABLE: 军团兵上限
-     *   CITY_TROOP_CAP_TABLE:   据点兵上限
-     *   "军团"属性绑军团（legion），"据点"属性绑城池（city），不随攻守方切换。
-     *
-     * ── 改表前必读的两条约束（2026-07-29 立，2026-07-31 废除规则③）──
-     *
-     * ① **邻区不得出现严格支配**：排名相邻的两个文化不存在「A 六维逐项 ≥ B 且至少一项 >」。
-     *    跨区支配是高位综合强的自然结果，不违规。
-     *
-     * ② **每个文化必须有真实短板**：至少一项 ≤0.95 且不能只落在「据点兵上限」上——
-     *    这一维是六维里影响最小的，拿它当短板等于没有短板。
-     *
-     *    六维各是一环，速度在 MOVEMENT_MATRIX 的行军大类，与六维无关。
-     *    一环是一环，文化特征的攻/防/速/产/军上限/城上限各自独立，不互相补偿。
+     * 66 文化专属战略特性（2026-10-18 主人定：废除旧 16 文化圈六维与草原额外加速，改为 66 文化一文化一特性）：
+     *   ① 陆行不减兵（9）：MONGOL, XIANBEI, HUNS, CUMAN, CENTRAL_ASIA, KHITAN, TURKS, MAGYAR, BERBER（见 MARCH_ATTRITION.LAND_IMMUNE_CULTURES）
+     *   ② 海行不减兵（7）：VIKINGS, DANES, VARANGIANS, MALAY, PORTUGUESE, SPANISH, ATHENIANS（见 MARCH_ATTRITION.NAVAL_IMMUNE_CULTURES）
+     *   ③ 山地行军专精（10）：TIBET, BASHU, INCA, MUISCA, MAPUCHE, ARMENIANS, GEORGIANS, THRACIAN, ETHIOPIANS, CELTS（山地行军不减速，见 MOUNTAIN_MARCH_IMMUNE_CULTURES）
+     *   ④ 渡海/水网机动（6）：JIANGNAN, JAPAN, SAXONS, SICILIANS, LATIN, VIETNAMESE（海上移速 ×1.25，见 SEA_SPEED_BONUS_CULTURES）
+     *   ⑤ 坚城固守（10）：BYZANTINE, GERMANIC, BRITONS, BOHEMIANS, KOREA, WESTERN, MAYANS, KHMER, BURMESE, GREECE（据点守军战力 ×1.20，见 TIER_TABLE）
+     *   ⑥ 沃野兵源（8）：CENTRAL, WEI, SLAVIC, MUGHAL, BENGALIS, INDIA, AFRICA, TUPI（据点每季募兵 ×1.25，见 RECRUIT_TABLE）
+     *   ⑦ 大军团编制（7）：ROMA, PERSIAN, SASANIAN, MACEDONIAN, ORIE, PURU, AMERICA（军团与据点兵力上限 ×1.20，见 LEGION_TROOP_CAP_TABLE / CITY_TROOP_CAP_TABLE）
+     *   ⑧ 野战精锐（9）：SPARTANS, FRANKS, BURGUNDIANS, GOTHS, POLES, LITHUANIANS, BULGARIANS, NORTHEAST, GURJARAS（军团野战战力 ×1.15，见 TIER_TABLE）
      */
     static CULTURE_COMBAT = {
-        /* ═══ 16 母体文化 × 六维 ═══════════════════════════════════════════
-         * 🔴 [2026-09-15 主人定]「文化只有 16 种，就是 16 个建筑风格，不要搞这么乱，
-         *    请重新分配 16 文化之间的属性。」
-         *
-         * 改前这五张表按**文化区**开键，172 个区只填了 29 个（其中 NORTH / EAST 还不是
-         * 合法区名）—— 实测 1088 座据点里 **603 座（55.4%）静默回落 1.0**，
-         * 一半以上的地图根本没有文化属性。现在只在 16 母体上开键，
-         * 172 个文化区一律经 `toBase16()`（src/systems/CultureBase16.ts）归入母体，
-         * 覆盖率 100%，没有回落这回事。**别再往这五张表里加文化区名的键。**
-         *
-         * 一览（攻 / 防 / 速 / 产 / 军上限 / 城上限，合计 = 攻×军上限 + 防×城上限 + 速 + 产）：
-         *   东亚  1.00 1.05 0.88 1.10 1.00 1.00  合计 4.030  东亚：人口城池冠绝天下，产兵与城防最厚；行动最迟缓
-         *   中亚  1.20 0.85 1.05 0.80 1.15 0.85  合计 3.952  中亚：野战之王、军团最大最快；牧地无城可守，产兵垫底
-         *   印度  1.05 1.10 0.90 1.05 0.90 0.95  合计 3.940  印度：象阵坚城、物产丰饶；行军慢，军团拉不大
-         *   西欧  1.10 1.00 0.95 0.90 1.05 0.95  合计 3.955  西欧：重骑破阵攻势凌厉；封建领地零散，征兵最难
-         *   普鲁  1.00 1.10 0.92 1.00 0.85 0.95  合计 3.818  普鲁：高台垒石、依山据险；军团规模全表最小（2026-10-08：原产兵 1.10 偏高，青藏高原地广人稀）
-         *   中东  1.05 0.95 1.05 1.00 0.95 0.90  合计 3.902  中东：轻骑迅捷、商路富庶；城郭低矮不耐围
-         *   地中海 1.05 1.10 0.90 0.95 1.00 1.00  合计 4.000  地中海：军团步阵攻守兼备；重装行军迟滞，兵源有限
-         *   东北欧 0.95 1.10 0.95 1.00 1.00 0.95  合计 3.945  东北欧：林原纵深、守土极韧；野战锋芒不足
-         *   东南欧 0.95 1.20 0.95 0.90 0.90 0.95  合计 3.845  东南欧：君堡城塞天下第一；国小兵寡，攻势乏力
-         *   波斯  1.10 0.95 1.05 0.90 1.10 0.90  合计 4.015  波斯：大军团长驱直入；帝国征调有限，城防平平
-         *   东南亚 0.90 1.00 0.95 1.10 0.95 1.05  合计 3.955  东南亚：稻作人稠、水网通达；正面野战最弱
-         *   希腊  1.00 1.05 0.95 0.95 0.90 0.95  合计 3.798  希腊：重装方阵攻守均衡；城邦体量小，兵员军团皆受限
-         *   色雷斯 0.95 0.90 1.10 0.95 0.90 0.90  合计 3.715  色雷斯：轻步机动全表最快；山民无城无粮，六维垫底
-         *   安第斯 0.90 1.15 0.80 1.05 0.90 1.05  合计 3.867  安第斯：山城最坚、梯田养兵；无马无轮，行军最慢
-         *   中美  0.95 1.15 0.85 1.05 0.85 1.00  合计 3.857  中美：湖心城邑易守难攻；军团规模最小，行军慢
-         *   非洲  1.00 1.05 1.00 0.90 1.00 0.90  合计 3.845  非洲：攻守速三项俱全无短处；人口分散，产兵与城池最薄
-         *
-         * 三条改表约束（`npm run culture:audit` 自动校验，退出码非 0 即有硬伤）：
-         *   ① 排名相邻不得严格支配——不存在「A 六维逐项 ≥ B 且至少一项 >」，否则 B 没有存在理由。
-         *   ② 每个文化必须有真实短板——至少一项 ≤0.95，且不能只落在「城上限」（该维影响最小）。
-         *   ③ 纯骑两家（中亚·中东）六维合计不得进前三——真正的机动差距在 MOVEMENT_MATRIX
-         *      （平原 象1.2/步1.4/步骑1.5/纯骑2.4，差 100%），六维的速只是 ±10% 微调。
-         *
-         * ⚠️ 隐藏耦合：攻/防档位与 CombatUI 的 CULTURE_TAG_ATK_LABELS / CULTURE_TAG_DEF_LABELS
-         *    精确键匹配，新增档位没文案会让标签整枚消失且零报错（审计第 ④ 项盯这个）。
-         * ═══════════════════════════════════════════════════════════════ */
-
-        /** 母体 → [军团攻, 据点防] */
+        /** ③ 山地行军专精（10 个文化）：山地行军如履平地，按平原速度行进 */
+        MOUNTAIN_MARCH_IMMUNE_CULTURES: [
+            'TIBET',
+            'BASHU',
+            'INCA',
+            'MUISCA',
+            'MAPUCHE',
+            'ARMENIANS',
+            'GEORGIANS',
+            'THRACIAN',
+            'ETHIOPIANS',
+            'CELTS',
+        ] as readonly string[],
+        /** ④ 渡海/水网机动（6 个文化）：海上航行移速 ×1.25 */
+        SEA_SPEED_BONUS_CULTURES: [
+            'JIANGNAN',
+            'JAPAN',
+            'SAXONS',
+            'SICILIANS',
+            'LATIN',
+            'VIETNAMESE',
+        ] as readonly string[],
+        SEA_SPEED_BONUS_MULT: 1.25,
+        /** 66 文化 → [军团野战攻, 据点守军防]（未单列者均为 [1.00, 1.00]） */
         TIER_TABLE: {
-            CENTRAL: [1.00, 1.05],    // 东亚
-            STEPPE: [1.20, 0.85],     // 中亚
-            INDIA: [1.05, 1.10],      // 印度
-            GERMANIC: [1.10, 1.00],   // 西欧
-            PURU: [1.00, 1.10],       // 普鲁（2026-10-08 防 1.05→1.10：高台垒石、依山据险）
-            ORIE: [1.05, 0.95],       // 中东
-            LATIN: [1.05, 1.10],      // 地中海
-            SLAVIC: [0.95, 1.10],     // 东北欧
-            EAST: [0.95, 1.20],       // 东南欧
-            PERSIAN: [1.10, 0.95],    // 波斯
-            MALAY: [0.90, 1.00],      // 东南亚
-            GREEK: [1.00, 1.05],      // 希腊
-            THRACIAN: [0.95, 0.90],   // 色雷斯
-            ANDE: [0.90, 1.15],       // 安第斯
-            AMERICA: [0.95, 1.15],    // 中美
-            AFRICA: [1.00, 1.05],     // 非洲
+            // ⑤ 坚城固守（守军战力 ×1.20）
+            BYZANTINE: [1.00, 1.20],
+            GERMANIC: [1.00, 1.20],
+            BRITONS: [1.00, 1.20],
+            BOHEMIANS: [1.00, 1.20],
+            KOREA: [1.00, 1.20],
+            WESTERN: [1.00, 1.20],
+            MAYANS: [1.00, 1.20],
+            KHMER: [1.00, 1.20],
+            BURMESE: [1.00, 1.20],
+            GREECE: [1.00, 1.20],
+            // ⑧ 野战精锐（野战战力 ×1.15）
+            SPARTANS: [1.15, 1.00],
+            FRANKS: [1.15, 1.00],
+            BURGUNDIANS: [1.15, 1.00],
+            GOTHS: [1.15, 1.00],
+            POLES: [1.15, 1.00],
+            LITHUANIANS: [1.15, 1.00],
+            BULGARIANS: [1.15, 1.00],
+            NORTHEAST: [1.15, 1.00],
+            GURJARAS: [1.15, 1.00],
         } as Record<string, readonly [number, number]>,
-        /** 母体 → 军团速 */
-        SPEED_TABLE: {
-            CENTRAL: 0.88,            // 东亚
-            STEPPE: 1.05,             // 中亚
-            INDIA: 0.90,              // 印度
-            GERMANIC: 0.95,           // 西欧
-            PURU: 0.92,               // 普鲁
-            ORIE: 1.05,               // 中东
-            LATIN: 0.90,              // 地中海
-            SLAVIC: 0.95,             // 东北欧
-            EAST: 0.95,               // 东南欧
-            PERSIAN: 1.05,            // 波斯
-            MALAY: 0.95,              // 东南亚
-            GREEK: 0.95,              // 希腊
-            THRACIAN: 1.10,           // 色雷斯
-            ANDE: 0.80,               // 安第斯
-            AMERICA: 0.85,            // 中美
-            AFRICA: 1.00,             // 非洲
-        } as Record<string, number>,
-        /** 母体 → 据点产兵 */
+        /** 军团全图速度乘数（已废除旧 16 文化圈加速/减速，行军速度由兵种编成与地形特性决定，恒为 1.0） */
+        SPEED_TABLE: {} as Record<string, number>,
+        /** ⑥ 沃野兵源（8 个文化）：据点每季募兵产速 ×1.25（其余均为 1.00） */
         RECRUIT_TABLE: {
-            CENTRAL: 1.10,            // 东亚
-            STEPPE: 0.80,             // 中亚
-            INDIA: 1.05,              // 印度
-            GERMANIC: 0.90,           // 西欧
-            PURU: 1.00,               // 普鲁（2026-10-08 产兵 1.10→1.00：本体兼含青藏高原，地广人稀，取中性）
-            ORIE: 1.00,               // 中东
-            LATIN: 0.95,              // 地中海
-            SLAVIC: 1.00,             // 东北欧
-            EAST: 0.90,               // 东南欧
-            PERSIAN: 0.90,            // 波斯
-            MALAY: 1.10,              // 东南亚
-            GREEK: 0.95,              // 希腊
-            THRACIAN: 0.95,           // 色雷斯
-            ANDE: 1.05,               // 安第斯
-            AMERICA: 1.05,            // 中美
-            AFRICA: 0.90,             // 非洲
+            CENTRAL: 1.25,
+            WEI: 1.25,
+            SLAVIC: 1.25,
+            MUGHAL: 1.25,
+            BENGALIS: 1.25,
+            INDIA: 1.25,
+            AFRICA: 1.25,
+            TUPI: 1.25,
         } as Record<string, number>,
-        /** 母体 → 军团兵上限 */
+        /** ⑦ 大军团编制（7 个文化）：军团兵力上限 ×1.20（其余均为 1.00） */
         LEGION_TROOP_CAP_TABLE: {
-            CENTRAL: 1.00,            // 东亚
-            STEPPE: 1.15,             // 中亚
-            INDIA: 0.90,              // 印度
-            GERMANIC: 1.05,           // 西欧
-            PURU: 0.85,               // 普鲁
-            ORIE: 0.95,               // 中东
-            LATIN: 1.00,              // 地中海
-            SLAVIC: 1.00,             // 东北欧
-            EAST: 0.90,               // 东南欧
-            PERSIAN: 1.10,            // 波斯
-            MALAY: 0.95,              // 东南亚
-            GREEK: 0.90,              // 希腊
-            THRACIAN: 0.90,           // 色雷斯
-            ANDE: 0.90,               // 安第斯
-            AMERICA: 0.85,            // 中美
-            AFRICA: 1.00,             // 非洲
+            ROMA: 1.20,
+            PERSIAN: 1.20,
+            SASANIAN: 1.20,
+            MACEDONIAN: 1.20,
+            ORIE: 1.20,
+            PURU: 1.20,
+            AMERICA: 1.20,
         } as Record<string, number>,
-        /** 母体 → 据点兵上限 */
+        /** ⑦ 大军团编制（7 个文化）：据点兵力上限 ×1.20（其余均为 1.00） */
         CITY_TROOP_CAP_TABLE: {
-            CENTRAL: 1.00,            // 东亚
-            STEPPE: 0.85,             // 中亚
-            INDIA: 0.95,              // 印度
-            GERMANIC: 0.95,           // 西欧
-            PURU: 0.95,               // 普鲁
-            ORIE: 0.90,               // 中东
-            LATIN: 1.00,              // 地中海
-            SLAVIC: 0.95,             // 东北欧
-            EAST: 0.95,               // 东南欧
-            PERSIAN: 0.90,            // 波斯
-            MALAY: 1.05,              // 东南亚
-            GREEK: 0.95,              // 希腊
-            THRACIAN: 0.90,           // 色雷斯
-            ANDE: 1.05,               // 安第斯
-            AMERICA: 1.00,            // 中美
-            AFRICA: 0.90,             // 非洲
+            ROMA: 1.20,
+            PERSIAN: 1.20,
+            SASANIAN: 1.20,
+            MACEDONIAN: 1.20,
+            ORIE: 1.20,
+            PURU: 1.20,
+            AMERICA: 1.20,
         } as Record<string, number>,
         PASS_GARRISON_MULT: 1.2,
         /** 有特殊建筑（城内奇观 CITY_WONDER / 附加奇观 CITY_WONDER_EXTRA）的名城守军额外系数（2026-09-17 主人定：有特殊建筑才算名城） */

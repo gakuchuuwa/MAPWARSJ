@@ -463,6 +463,10 @@ export const UNIT_ICONS: Record<string, string> = {
     'lysander_raider': '/de-techtree/icons/Unit/691.png',
     'boarding_galley': '/de-techtree/icons/Unit/82.png',
     'outlaw': '/de-techtree/icons/Unit/17.png',
+    'maceman': '/de-techtree/icons/Unit/601.png',
+    'mounted_crossbowman': '/de-techtree/icons/Unit/900.png',
+    'mounted_crossbowman_heavy': '/de-techtree/icons/Unit/901.png',
+    'polemarch': '/de-techtree/icons/Unit/622.png',
 };
 
 export function getUnitIconUrl(unitId: string): string {
