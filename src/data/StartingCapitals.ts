@@ -1140,6 +1140,8 @@ export const STARTING_CAPITALS: Record<string, string> = {
     'duobuluojia': 'city_delusitaer',
     'aertai': 'city_yeerdishi',
     'kumanni': 'city_mierkefu',
+    'kuman_oleshky': 'city_oleshky',
+    'qincha_saksin': 'city_saksin',
     'feierganna': 'city_ahexikesi',
     'qibucha': 'city_hongsa',
     'tamoyue': 'city_kabufoliwu',

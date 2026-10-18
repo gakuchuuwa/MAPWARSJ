@@ -6270,5 +6270,43 @@ export const SEA_ROUTE_DATA: { type: 'FeatureCollection', features: SeaRouteFeat
                 ]
             }
         },
+        {
+            type: "Feature",
+            properties: {
+                name: "阿克曼-奥列什基",
+                type: "sea",
+                id: "sea_city_akeman_city_oleshky_1792351849601",
+                startConnection: "city_akeman",
+                endConnection: "city_oleshky"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [30.34, 46.19],
+                    [31, 45.91667],
+                    [31.91667, 45.66667],
+                    [32.72, 46.61],
+                ]
+            }
+        },
+        {
+            type: "Feature",
+            properties: {
+                name: "奥列什基-赫尔松涅斯",
+                type: "sea",
+                id: "sea_city_oleshky_city_heersongniesi_1792351881034",
+                startConnection: "city_oleshky",
+                endConnection: "city_heersongniesi"
+            },
+            geometry: {
+                type: "LineString",
+                coordinates: [
+                    [32.72, 46.61],
+                    [31.91667, 45.66667],
+                    [32.66667, 44.91667],
+                    [33.49, 44.61],
+                ]
+            }
+        },
     ]
 };

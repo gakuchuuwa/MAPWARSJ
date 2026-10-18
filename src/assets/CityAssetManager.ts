@@ -715,6 +715,8 @@ export class CityAssetManager {
 'nandou': '难兜',
 'yanda': '阿洪',
         'qincha': '钦察',
+'kuman_oleshky': '库曼',
+'qincha_saksin': '钦察',
 'anxi': '安西',
 'konbaung': '贡榜',
 'qi_d': '横水',
