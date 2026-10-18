@@ -4047,7 +4047,51 @@ function serverResolveCanonicalPath(canonicalPath: string, webPath: string): str
     }
 }
 
-/** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts */
+/** 在 GeneralFirstBattles.ts 中按 ownerGeneralId 读取当前绑定的 enemyPortrait 路径与显示名 */
+function serverGetFirstBattleEnemyMeta(
+    filePath: string,
+    ownerGeneralId: string,
+): { exists: boolean; portraitPath: string | null; generalName: string } {
+    if (!fs.existsSync(filePath)) return { exists: false, portraitPath: null, generalName: ownerGeneralId };
+    const text = fs.readFileSync(filePath, 'utf-8');
+    const gid = serverEscapeRegExp(ownerGeneralId);
+    const blockRe = new RegExp(`generalId\\s*:\\s*'${gid}'[\\s\\S]*?introLines\\s*:`, 'm');
+    const m = text.match(blockRe);
+    if (!m) return { exists: false, portraitPath: null, generalName: ownerGeneralId };
+    const block = m[0];
+    const portraitPath = block.match(/enemyPortrait\s*:\s*'([^']*)'/)?.[1] ?? null;
+    const enemyGeneralName = block.match(/enemyGeneralName\s*:\s*'([^']*)'/)?.[1]?.trim();
+    const enemyFactionName = block.match(/enemyFactionName\s*:\s*'([^']*)'/)?.[1]?.trim();
+    const generalName = enemyGeneralName || (enemyFactionName ? `${enemyFactionName}武将` : ownerGeneralId);
+    return { exists: true, portraitPath, generalName };
+}
+
+/** 在 GeneralFirstBattles.ts 中按 ownerGeneralId 写入/更新 enemyPortrait 字段 */
+function serverUpdateFirstBattleEnemyPortraitFile(
+    filePath: string,
+    ownerGeneralId: string,
+    portraitPath: string,
+): void {
+    let text = fs.readFileSync(filePath, 'utf-8');
+    const gid = serverEscapeRegExp(ownerGeneralId);
+    const blockRe = new RegExp(`(generalId\\s*:\\s*'${gid}'[\\s\\S]*?)(introLines\\s*:)`, 'm');
+    const m = text.match(blockRe);
+    if (!m) {
+        throw new Error(`GeneralFirstBattles.ts 中未找到 generalId: ${ownerGeneralId}`);
+    }
+    let body = m[1];
+    if (/enemyPortrait\s*:\s*'[^']*'/.test(body)) {
+        body = body.replace(/(enemyPortrait\s*:\s*)'[^']*'/, `$1'${portraitPath}'`);
+    } else if (/(\r?\n)([ \t]*enemyTroops\s*:)/.test(body)) {
+        body = body.replace(/(\r?\n)([ \t]*)(enemyTroops\s*:)/, `$1$2enemyPortrait: '${portraitPath}',$1$2$3`);
+    } else {
+        body = `${body}enemyPortrait: '${portraitPath}',\n        `;
+    }
+    text = text.replace(blockRe, `${body}$2`);
+    serverSafeWriteFileSync(filePath, text);
+}
+
+/** 绑定：在目标文件夹内写入 {generalId}.png，并写 FactionGenerals.ts / GeneralFirstBattles.ts / BattlefieldCharacters.ts */
 function serverBindGeneralPortrait(
     publicAssetsRoot: string,
     factionGeneralsPath: string,
@@ -4061,18 +4105,41 @@ function serverBindGeneralPortrait(
     if (!/^[a-z0-9_]+$/i.test(generalId)) {
         throw new Error(`非法 generalId：${generalId}`);
     }
-    // 写文件前先验证 generalId 存在于 FactionGenerals.ts，防止 generalId 截断时写出错误文件名
+
+    const generalFirstBattlesPath = path.resolve(path.dirname(factionGeneralsPath), 'GeneralFirstBattles.ts');
+    const battlefieldCharactersPath = path.resolve(path.dirname(factionGeneralsPath), 'BattlefieldCharacters.ts');
+
     const generalsTextPre = fs.readFileSync(factionGeneralsPath, 'utf-8');
-    if (!new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'`).test(generalsTextPre)) {
-        throw new Error(`FactionGenerals.ts 中未找到 generalId: "${generalId}"，拒绝写盘`);
+    const inFactionGenerals = new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'`).test(generalsTextPre);
+    const isFbEnemy = !inFactionGenerals && generalId.startsWith('fb_enemy_');
+    const fbOwnerGeneralId = isFbEnemy ? generalId.slice('fb_enemy_'.length) : '';
+    const fbMeta = isFbEnemy
+        ? serverGetFirstBattleEnemyMeta(generalFirstBattlesPath, fbOwnerGeneralId)
+        : { exists: false, portraitPath: null, generalName: generalId };
+    const bfCharsTextPre = !inFactionGenerals && !fbMeta.exists && fs.existsSync(battlefieldCharactersPath)
+        ? fs.readFileSync(battlefieldCharactersPath, 'utf-8')
+        : '';
+    const inBattlefieldChars = !inFactionGenerals && !fbMeta.exists && Boolean(
+        bfCharsTextPre && new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'`).test(bfCharsTextPre),
+    );
+
+    if (!inFactionGenerals && !fbMeta.exists && !inBattlefieldChars) {
+        throw new Error(`FactionGenerals.ts / GeneralFirstBattles.ts 中未找到 generalId: "${generalId}"，拒绝写盘`);
     }
+
     const srcAbs = serverWebPathToAbs(publicAssetsRoot, sourceWebPath);
     if (!fs.existsSync(srcAbs)) {
         throw new Error(`源文件不存在：${sourceWebPath}`);
     }
+
+    const targetCodePath = inFactionGenerals
+        ? factionGeneralsPath
+        : fbMeta.exists
+            ? generalFirstBattlesPath
+            : battlefieldCharactersPath;
     // 写盘预检必须在任何改名之前：下面第 ①②③ 步会把旧立绘改名、把源图认领走，
-    // 若等到最后写 FactionGenerals.ts 时才失败，武将就还指着已被改名的旧路径 = 立绘丢失。
-    serverAssertWritable(factionGeneralsPath);
+    // 若等到最后写代码表时才失败，武将就还指着已被改名的旧路径 = 立绘丢失。
+    serverAssertWritable(targetCodePath);
 
     const folderWeb = serverNormalizeAssetFolderWeb(
         targetFolderWeb || sourceWebPath.replace(/\/[^/]+$/i, '/'),
@@ -4080,15 +4147,37 @@ function serverBindGeneralPortrait(
     const folderAbs = serverWebFolderToAbs(publicAssetsRoot, folderWeb);
     fs.mkdirSync(folderAbs, { recursive: true });
 
-    // 文件名 = 「势力key_名字拼音」：正常武将等同 generalId；耿况这类 ID 错位者自动得到正确名。
-    const keyNameMatch = generalsTextPre.match(
-        new RegExp(`(\\w+)\\s*:\\s*\\{\\s*generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'\\s*,\\s*generalName\\s*:\\s*'([^']*)'`),
-    );
-    const factionKey = keyNameMatch?.[1] ?? generalId.split('_')[0];
-    const generalNameForFile = keyNameMatch?.[2] ?? '';
-    const baseName = generalNameForFile
-        ? `${factionKey}_${serverToPinyinId(generalNameForFile)}`
-        : generalId;
+    let baseName = generalId;
+    let generalName = generalId;
+    if (inFactionGenerals) {
+        // 文件名 = 「势力key_名字拼音」：兼容单对象与多武将数组两种写法
+        const entryMatch = new RegExp(
+            `generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'\\s*,\\s*generalName\\s*:\\s*'([^']*)'`,
+        ).exec(generalsTextPre);
+        let factionKey = generalId.split('_')[0];
+        const generalNameForFile = entryMatch?.[1] ?? '';
+        if (entryMatch) {
+            const before = generalsTextPre.slice(0, entryMatch.index);
+            const fkMatches = [...before.matchAll(/^\s{4}(\w+)\s*:\s*(?:\{|\[)/gm)];
+            if (fkMatches.length > 0) {
+                factionKey = fkMatches[fkMatches.length - 1][1];
+            }
+        }
+        baseName = generalNameForFile
+            ? `${factionKey}_${serverToPinyinId(generalNameForFile)}`
+            : generalId;
+        generalName = generalNameForFile || generalId;
+    } else if (fbMeta.exists) {
+        baseName = generalId;
+        generalName = fbMeta.generalName;
+    } else if (inBattlefieldChars) {
+        baseName = generalId;
+        const nameMatch = bfCharsTextPre.match(
+            new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'[\\s\\S]*?generalName\\s*:\\s*'([^']*)'`),
+        );
+        generalName = nameMatch?.[1] ?? generalId;
+    }
+
     const destAbs = path.join(folderAbs, `${baseName}.png`);
     const destWeb = `${folderWeb}${baseName}.png`;
 
@@ -4096,7 +4185,11 @@ function serverBindGeneralPortrait(
     const adjustMoves: Array<{ from: string; to: string }> = [];
     if (path.resolve(srcAbs) !== path.resolve(destAbs)) {
         // ① 旧绑定文件（可能在其他文件夹）→ 按同夹/跨夹/独有三档分类改名，不删不丢
-        const oldPortraitWeb = serverGetCurrentPortraitPath(factionGeneralsPath, generalId);
+        const oldPortraitWeb = inFactionGenerals
+            ? serverGetCurrentPortraitPath(factionGeneralsPath, generalId)
+            : fbMeta.exists
+                ? fbMeta.portraitPath
+                : serverGetCurrentPortraitPath(battlefieldCharactersPath, generalId);
         if (oldPortraitWeb && oldPortraitWeb.startsWith('/assets/')) {
             const oldAbs = serverWebPathToAbs(publicAssetsRoot, oldPortraitWeb);
             if (
@@ -4168,16 +4261,16 @@ function serverBindGeneralPortrait(
         console.warn(`  ⚠ [BindPortrait] 无法同步调校数据:`, e);
     }
 
-    serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
+    if (inFactionGenerals) {
+        serverUpdateFactionGeneralPortraitFile(factionGeneralsPath, generalId, destWeb);
+    } else if (fbMeta.exists) {
+        serverUpdateFirstBattleEnemyPortraitFile(generalFirstBattlesPath, fbOwnerGeneralId, destWeb);
+    } else {
+        serverUpdateFactionGeneralPortraitFile(battlefieldCharactersPath, generalId, destWeb);
+    }
 
     // 绑定后清理 canonical 中指向目标文件的旧映射（防旧映射覆盖新绑定）
     serverCleanCanonicalForPortrait(portraitCanonicalPath, destWeb);
-
-    const generalsText = fs.readFileSync(factionGeneralsPath, 'utf-8');
-    const nameMatch = generalsText.match(
-        new RegExp(`generalId\\s*:\\s*'${serverEscapeRegExp(generalId)}'[\\s\\S]*?generalName\\s*:\\s*'([^']*)'`),
-    );
-    const generalName = nameMatch?.[1] ?? generalId;
 
     return { portraitPath: destWeb, generalName, targetFolder: folderWeb };
 }

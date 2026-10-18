@@ -8136,6 +8136,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -40
+        },
+        "/assets/WEST_ASIA/fb_enemy_wulaertu_guo_saerdu.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": 24
         }
     },
     "folderGuides": {
