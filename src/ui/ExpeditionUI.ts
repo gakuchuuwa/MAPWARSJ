@@ -196,6 +196,10 @@ export class ExpeditionUI {
 
         // 滞回资格锁：兵力达到过 5 万即置锁，掉破仍保留，低于半数才重锁（防 5 万线抖动反复触发）
         const troops = army.getTroops();
+        if (troops < GameConfig.LEGION.MIN_ARMY_SIZE) {
+            army.expeditionUnlocked = false;
+            return null;
+        }
         const unlock = GameConfig.EXPEDITION.UNLOCK_TROOPS;
         if (troops >= unlock) {
             army.expeditionUnlocked = true;

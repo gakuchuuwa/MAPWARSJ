@@ -6704,7 +6704,7 @@ export class CombatUI {
         if (scriptLegion) return scriptLegion;
         // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
         if (unit.unitType === 'city') {
-            const cityId = ent?.id ?? unit.id ?? this.boundRegionalBattleField?.getCity?.()?.id ?? null;
+            const cityId = ent?.id ?? unit.id ?? (this.boundRegionalBattleField as any)?.getCity?.()?.id ?? null;
             const defCityLegion = resolveCityDefenseLegionName(cityId, undefined, ent?.buildingStyle, factionId);
             if (defCityLegion) return defCityLegion;
         }
