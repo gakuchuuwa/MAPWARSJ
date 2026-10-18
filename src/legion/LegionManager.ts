@@ -343,10 +343,22 @@ export class LegionManager {
         for (const army of this.armies) {
             if (army.isDestroyed || army.type !== 'legion') continue;
             const cityId = army.homeCityId ?? army.getSourceCityId();
-            if (!cityId) continue;
-            const city = this.cityManager.getCity(cityId);
-            if (!city || city.factionId !== army.getFactionId()) continue;
-            noteCitySpawnTierFromLegion(city, army);
+            if (cityId) {
+                const city = this.cityManager.getCity(cityId);
+                if (city && city.factionId === army.getFactionId()) {
+                    if (army.isElite) city.spawnEliteUsed = true;
+                    if (army.generalId && getCityAnchoredGeneral(city.id)?.generalId === army.generalId) {
+                        city.spawnGeneralUsed = true;
+                    }
+                }
+            }
+            if (army.generalId) {
+                for (const c of cities) {
+                    if (getCityAnchoredGeneral(c.id)?.generalId === army.generalId) {
+                        c.spawnGeneralUsed = true;
+                    }
+                }
+            }
         }
         tickAndApplyDefeatCooldowns(cities);
     }

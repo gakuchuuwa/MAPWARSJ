@@ -2211,7 +2211,7 @@ export class PlayerQuestSystem {
             return;
         }
         const army = this.deps.legionManager.getLegionById(q.legionId);
-        if (!army || army.isDestroyed || army.getTroops() <= 0) {
+        if (!army || army.isDestroyed || army.getTroops() <= 0 || !isGeneralOnStage(q.generalId)) {
             this.finishQuest(false);
         }
     }
@@ -2425,6 +2425,16 @@ export class PlayerQuestSystem {
                 return;
             }
         }
+        if (!army.isScriptArmy && (army.isRetreatingHome || army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE)) {
+            this.deps.showDialogue({
+                speaker: generalName,
+                portrait,
+                factionName,
+                text: `壮士竟寻到军中来了。某所部兵马不足五千，尚无力远征，请自便。`,
+                options: [{ label: '告辞', onPick: () => this.deps.closeDialogue() }],
+            });
+            return;
+        }
         const targetId = army.expeditionTargetCityId ?? army.siegeTargetCityId ?? army.getTargetCity()?.id ?? null;
         const target = targetId ? this.deps.cityManager.getCity(targetId) : null;
         const targetName = target?.name ?? '前方敌城';
@@ -2560,10 +2570,11 @@ export class PlayerQuestSystem {
             if (!isGeneralOnStage(g.generalId)) continue;
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
-            // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兜底池也必须满足可出征兵力 ≥ 5000
+            // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 武将已率军在外看该军团可否继续出征（≥5000且非撤退），在城中看城防 90% ≥ 5000
             const army = this.armyOfGeneral(g.generalId);
-            const canSortie = Math.floor((c.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE
-                || (!!army && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE);
+            const canSortie = army
+                ? (!army.isRetreatingHome && army.getTroops() >= GameConfig.LEGION.MIN_ARMY_SIZE)
+                : (Math.floor((c.troops || 0) * 0.9) >= GameConfig.LEGION.MIN_ARMY_SIZE);
             if (!canSortie) continue;
             onStageFallback.push(c);
             // 🔴 [2026-09-11 主人定] 不要选 1 万人以下的（兵力不足 1 万的据点直接排除；若武将已率军在外，看军团+城防）

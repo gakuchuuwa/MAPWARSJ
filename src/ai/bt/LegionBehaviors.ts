@@ -50,6 +50,7 @@ import { isCampaignLegion, shouldSkipHomeRecapture } from '../../legion/LegionSp
 import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
+import { isGeneralOnStage } from '../../data/generalOnStage';
 import type { Army } from '../../legion/Army';
 
 // =====================
@@ -390,6 +391,18 @@ function directionAngleDeg(
 }
 
 export const HasTarget = new Condition('HasTarget', (ctx) => {
+    if (!ctx.army.isScriptArmy && !ctx.army.scriptMarchExempt && (!ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))) {
+        if (ctx.army.expeditionTargetCityId) {
+            restoreExpeditionLegionName(ctx.army);
+            ctx.army.expeditionTargetCityId = null;
+        }
+        clearStrategicTarget(ctx);
+        ctx.army.setTargetCity(null);
+        ctx.army.stopMovement?.();
+        ctx.army.weakCheckAfterBattle = true;
+        return false;
+    }
+
     // 远征模式：跳过回师检查（断粮不回），目标锁死
     const expedition = resolveExpeditionState(ctx);
     if (expedition === 'locked') return true;
@@ -563,8 +576,12 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
-    // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兵力不足 5000 的非剧本军团不许再选新目标出征，转入残兵撤退解散
-    if (!ctx.army.isScriptArmy && !ctx.army.scriptMarchExempt && ctx.army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE) {
+    // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」「没有武将不能出兵」] 兵力不足 5000 或无在场武将的非剧本军团不许再选新目标出征，转入撤退解散
+    if (
+        !ctx.army.isScriptArmy &&
+        !ctx.army.scriptMarchExempt &&
+        (ctx.army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
+    ) {
         if (ctx.army.expeditionTargetCityId) {
             restoreExpeditionLegionName(ctx.army);
             ctx.army.expeditionTargetCityId = null;
@@ -954,12 +971,13 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
         return true;
     }
 
-    // 触发条件：刚打完一仗（weakCheckAfterBattle）或当前无目标准备重新出征时，兵力 < 5000
+    // 触发条件：无在场武将（跨年退场/无将），或刚打完一仗（weakCheckAfterBattle）/当前无目标准备重新出征时兵力 < 5000
+    const noOnStageGeneral = !army.generalId || !isGeneralOnStage(army.generalId);
     const noActiveTarget = !getStrategicTargetId(ctx) && !getStrategicTargetArmyId(ctx) && !army.getTargetCity();
-    if (!army.weakCheckAfterBattle && !noActiveTarget) return false;
+    if (!noOnStageGeneral && !army.weakCheckAfterBattle && !noActiveTarget) return false;
     army.weakCheckAfterBattle = false;
 
-    if (army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
+    if (!noOnStageGeneral && army.getTroops() >= GameConfig.LEGION.DISBAND_TROOP_THRESHOLD) return false;
 
     // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 兵力不足 5000 时，即使原为远征军也解除远征锁并撤回/就地并入驻军
     if (army.expeditionTargetCityId) {
