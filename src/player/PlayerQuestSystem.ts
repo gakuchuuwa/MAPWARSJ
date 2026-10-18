@@ -1669,7 +1669,7 @@ export class PlayerQuestSystem {
 
         let host: Army | null = existingArmy && !existingArmy.isDestroyed ? existingArmy : null;
         if (host) {
-            this.deps.legionManager.dequeueArmyFromThirdPartyWaiters(host.id);
+            this.deps.legionManager.dequeueArmyFromThirdPartyWaiters?.(host.id);
             if (host.getIsInCombat()) host.clearExternalCombatState();
             host.clearPostBattleRest();
             host.isRetreatingHome = false;
@@ -1880,7 +1880,7 @@ export class PlayerQuestSystem {
                 const cPos = { lat: targetCity.latitude, lng: targetCity.longitude };
                 const d = getEuclideanDistance(host.getPosition(), cPos);
                 if (d <= 0.2 && !host.getIsInCombat()) {
-                    this.deps.legionManager.triggerSiege(host, targetCity);
+                    this.deps.legionManager.triggerSiege?.(host, targetCity);
                 } else if (d > 0.12) {
                     host.moveAlongPath([{ lat: cPos.lat, lng: cPos.lng }]);
                 }

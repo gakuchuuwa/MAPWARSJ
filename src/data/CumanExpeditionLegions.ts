@@ -21,13 +21,13 @@ export const CUMAN_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, EliteLegion
     baojiaer: { name: '保加尔重骑', tier: 3 },      // 喀山·保加尔：伏尔加保加尔
     yidier: { name: '伊蒂尔卫', tier: 3 },          // 伊蒂尔·伊蒂尔汗国（可萨都城）
     salai: { name: '诺盖骑', tier: 3 },             // 萨莱楚克·诺盖：诺盖汗国骑
-    bashekeer: { name: '巴什基尔弓骑', tier: 3 },     // 乌法·巴什基尔
+    bashekeer: { name: '边地步营', tier: 4 },         // 乌法·俄国边地步营
     mangshi: { name: '土库曼骑', tier: 3 },         // 曼格什拉克·土库曼
     kumanni: { name: '库曼弓骑', tier: 3 },         // 卡尔卡河·忽炭汗：库曼骑射弓手，1223卡尔卡河会战联军
     xikuman: { name: '库曼骑', tier: 3 },           // 密尔科夫·吉尔根汗：喀尔巴阡西库曼骑兵
 
     // ── T4 存在之兵 ──
-    fuerjia: { name: '顿河骑兵', tier: 1 },         // 察里津·顿河哥萨克
-    nuogai: { name: '萨马拉射手', tier: 3 },        // 萨马拉·诺盖/沙俄射击军
+    fuerjia: { name: '俄国边骑', tier: 4 },         // 察里津·俄国边地巡骑
+    nuogai: { name: '俄国射手', tier: 3 },          // 萨马拉·俄国射击军
     xiemian: { name: '萨维尔军', tier: 4 },         // 谢缅杰尔·萨维尔
 };
