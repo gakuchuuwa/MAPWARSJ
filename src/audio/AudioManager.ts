@@ -2,9 +2,10 @@ export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
-import { toBase16, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
+import { toBase16, type Base16Culture } from '../systems/CultureBase16';
 import { ALL_BRANCHES_MAP } from '../systems/CultureHierarchy';
 import { REGION_TO_BRANCH } from '../config/deCastleAssets';
+import { BGM_TITLES } from './bgmTitles';
 import { isScriptPeriod } from '../events/scriptPeriod';
 
 export type SoundKey =
@@ -442,6 +443,109 @@ const BGM_REGION_GAIN: Record<string, number> = {
     GREECE: 0.596,  // -16.5 LUFS · GREECE 定制曲
     XIANBEI: 0.575,  // -16.2 LUFS · XIANBEI 定制曲
     nobunaga: 0.708,  // -18.0 LUFS · 信长之野望 OVERTURE（2026-10-18 还原，与 Ona Hei 同池轮播）
+    western_b: 0.575,  // -16.2 LUFS
+    persian_b: 0.646,  // -17.2 LUFS
+    tibet_b: 0.750,  // -18.5 LUFS
+    puru_b: 0.668,  // -17.5 LUFS
+    // 🔴 [2026-10-18 主人定「按66文化分曲子，每文化≥3首、符合文化、各自独立」] 98 首新曲
+korea_a: 0.646,  // -17.2 LUFS
+    bashu_a: 0.569,  // -16.1 LUFS
+    khitan_a: 0.631,  // -17.0 LUFS
+    mongol_a: 0.700,  // -17.9 LUFS
+    xianbei_a: 0.676,  // -17.6 LUFS
+    xianbei_b: 0.676,  // -17.6 LUFS
+    central_asia_a: 0.668,  // -17.5 LUFS
+    western_a: 0.603,  // -16.6 LUFS
+    cuman_a: 0.589,  // -16.4 LUFS
+    cuman_b: 0.646,  // -17.2 LUFS
+    huns_a: 0.610,  // -16.7 LUFS
+    huns_b: 0.603,  // -16.6 LUFS
+    turks_a: 0.708,  // -18.0 LUFS
+    turks_b: 0.724,  // -18.2 LUFS
+    india_a: 0.724,  // -18.2 LUFS
+    puru_a: 0.638,  // -17.1 LUFS
+    tibet_a: 0.733,  // -18.3 LUFS
+    mughal_a: 0.684,  // -17.7 LUFS
+    mughal_b: 0.700,  // -17.9 LUFS
+    bengalis_a: 0.684,  // -17.7 LUFS
+    bengalis_b: 0.646,  // -17.2 LUFS
+    gurjaras_a: 0.631,  // -17.0 LUFS
+    gurjaras_b: 0.794,  // -19.0 LUFS
+    germanic_a: 0.661,  // -17.4 LUFS
+    vikings_a: 0.638,  // -17.1 LUFS
+    franks_a: 0.610,  // -16.7 LUFS
+    franks_b: 0.716,  // -18.1 LUFS
+    burgundians_a: 0.631,  // -17.0 LUFS
+    burgundians_b: 0.692,  // -17.8 LUFS
+    britons_a: 0.804,  // -19.1 LUFS
+    britons_b: 0.676,  // -17.6 LUFS
+    celts_a: 0.708,  // -18.0 LUFS
+    celts_b: 0.603,  // -16.6 LUFS
+    goths_a: 0.684,  // -17.7 LUFS
+    goths_b: 0.603,  // -16.6 LUFS
+    saxons_a: 0.638,  // -17.1 LUFS
+    saxons_b: 0.700,  // -17.9 LUFS
+    danes_a: 0.624,  // -16.9 LUFS
+    danes_b: 0.610,  // -16.7 LUFS
+    varangians_a: 0.617,  // -16.8 LUFS
+    varangians_b: 0.661,  // -17.4 LUFS
+    slavic_a: 0.589,  // -16.4 LUFS
+    poles_a: 0.692,  // -17.8 LUFS
+    poles_b: 0.638,  // -17.1 LUFS
+    bohemians_a: 0.575,  // -16.2 LUFS
+    bohemians_b: 0.676,  // -17.6 LUFS
+    magyar_a: 0.617,  // -16.8 LUFS
+    magyar_b: 0.661,  // -17.4 LUFS
+    lithuanians_a: 0.708,  // -18.0 LUFS
+    lithuanians_b: 0.668,  // -17.5 LUFS
+    bulgarians_a: 0.661,  // -17.4 LUFS
+    bulgarians_b: 0.653,  // -17.3 LUFS
+    byzantine_a: 0.750,  // -18.5 LUFS
+    byzantine_b: 0.676,  // -17.6 LUFS
+    armenians_a: 0.767,  // -18.7 LUFS
+    armenians_b: 0.589,  // -16.4 LUFS
+    georgians_a: 0.716,  // -18.1 LUFS
+    georgians_b: 0.716,  // -18.1 LUFS
+    latin_a: 0.610,  // -16.7 LUFS
+    persian_a: 0.684,  // -17.7 LUFS
+    roma_a: 0.684,  // -17.7 LUFS
+    roma_b: 0.646,  // -17.2 LUFS
+    sicilians_a: 0.638,  // -17.1 LUFS
+    sicilians_b: 0.708,  // -18.0 LUFS
+    spanish_a: 0.692,  // -17.8 LUFS
+    spanish_b: 0.653,  // -17.3 LUFS
+    portuguese_a: 0.692,  // -17.8 LUFS
+    portuguese_b: 0.692,  // -17.8 LUFS
+    sasanian_a: 0.562,  // -16.0 LUFS
+    sasanian_b: 0.692,  // -17.8 LUFS
+    burmese_a: 0.741,  // -18.4 LUFS
+    africa_a: 0.684,  // -17.7 LUFS
+    khmer_a: 0.716,  // -18.1 LUFS
+    khmer_b: 0.700,  // -17.9 LUFS
+    vietnamese_a: 0.700,  // -17.9 LUFS
+    vietnamese_b: 0.668,  // -17.5 LUFS
+    malay_a: 0.716,  // -18.1 LUFS
+    malay_b: 0.708,  // -18.0 LUFS
+    berber_a: 0.603,  // -16.6 LUFS
+    berber_b: 0.700,  // -17.9 LUFS
+    ethiopians_a: 0.596,  // -16.5 LUFS
+    ethiopians_b: 0.653,  // -17.3 LUFS
+    greece_a: 0.684,  // -17.7 LUFS
+    inca_a: 0.676,  // -17.6 LUFS
+    athenians_a: 0.794,  // -19.0 LUFS
+    athenians_b: 0.708,  // -18.0 LUFS
+    spartans_a: 0.631,  // -17.0 LUFS
+    spartans_b: 0.668,  // -17.5 LUFS
+    macedonian_a: 0.631,  // -17.0 LUFS
+    macedonian_b: 0.668,  // -17.5 LUFS
+    mayans_a: 0.646,  // -17.2 LUFS
+    mayans_b: 0.638,  // -17.1 LUFS
+    muisca_a: 0.700,  // -17.9 LUFS
+    muisca_b: 0.661,  // -17.4 LUFS
+    mapuche_a: 0.653,  // -17.3 LUFS
+    mapuche_b: 0.661,  // -17.4 LUFS
+    tupi_a: 0.692,  // -17.8 LUFS
+    tupi_b: 0.668,  // -17.5 LUFS
 };
 
 /**
@@ -509,42 +613,90 @@ function resolveAvailableBgmFolder(folder: string): string {
 }
 
 /**
- * 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」]
- * BGM 选曲走 62 文明 + 4 定制 = 66 分支曲池：每分支曲池 = [本分支专属主题曲] + [母体 16 共享曲]。
- * 专属主题曲：62 DE 文明统一 `de_{分支}`（帝国时代2 DE 文明主题曲）；
- * 4 定制分支（DE 无对应文明）：TIBET=千年的祈祷 / WESTERN=伽罗 / GREECE=希腊战鼓 / XIANBEI=草原战曲。
+ * 🔴 [2026-10-18 主人定「按 66 文化分曲子，每个文化至少 3 首、各自独立、符合文化」]
+ * 每分支一个独立曲池（不再共享母体）：[专属主题曲] + [本文化自有曲]。
  */
-const CUSTOM_BRANCH_THEME: Record<string, string> = {
-    TIBET: 'TIBET', WESTERN: 'WESTERN', GREECE: 'GREECE', XIANBEI: 'XIANBEI',
+const BGM_POOL_MAP: Record<string, string[]> = {
+    AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a'],
+    AMERICA: ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans'],
+    ARMENIANS: ['de_ARMENIANS', 'armenians_a', 'armenians_b'],
+    ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b'],
+    BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
+    BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
+    BERBER: ['de_BERBER', 'berber_a', 'berber_b'],
+    BOHEMIANS: ['de_BOHEMIANS', 'bohemians_a', 'bohemians_b'],
+    BRITONS: ['de_BRITONS', 'britons_a', 'britons_b'],
+    BULGARIANS: ['de_BULGARIANS', 'bulgarians_a', 'bulgarians_b'],
+    BURGUNDIANS: ['de_BURGUNDIANS', 'burgundians_a', 'burgundians_b'],
+    BURMESE: ['de_BURMESE', 'pugan', 'burmese_a'],
+    BYZANTINE: ['de_BYZANTINE', 'age_of_kings', 'byzantine_a', 'byzantine_b'],
+    CELTS: ['de_CELTS', 'celts_a', 'celts_b'],
+    CENTRAL: ['de_CENTRAL', 'CENTRAL', 'NORTH', 'daming', 'litang', 'liuhan', 'manqing', 'shadow_assassin'],
+    CENTRAL_ASIA: ['de_CENTRAL_ASIA', 'CENTRAL_ASIA', 'central_asia_a'],
+    CUMAN: ['de_CUMAN', 'cuman_a', 'cuman_b'],
+    DANES: ['de_DANES', 'furious_march', 'danes_a', 'danes_b'],
+    ETHIOPIANS: ['de_ETHIOPIANS', 'ethiopians_a', 'ethiopians_b'],
+    FRANKS: ['de_FRANKS', 'franks_a', 'franks_b'],
+    GEORGIANS: ['de_GEORGIANS', 'georgians_a', 'georgians_b'],
+    GERMANIC: ['de_GERMANIC', 'drakkar_drums', 'germanic_a'],
+    GOTHS: ['de_GOTHS', 'goths_a', 'goths_b'],
+    GREECE: ['GREECE', 'fallen_army', 'greece_a'],
+    GURJARAS: ['de_GURJARAS', 'gurjaras_a', 'gurjaras_b'],
+    HUNS: ['de_HUNS', 'huns_a', 'huns_b'],
+    INCA: ['de_INCA', 'ANDE', 'inca_a'],
+    INDIA: ['de_INDIA', 'INDIA', 'india_a'],
+    JAPAN: ['de_JAPAN', 'JAPAN', 'nobunaga', 'shogun_tsunami', 'shogun_shinobue', 'shogun_daimyo'],
+    JIANGNAN: ['de_JIANGNAN', 'JIANGNAN', 'LINGNAN'],
+    KHITAN: ['de_KHITAN', 'HEXI', 'khitan_a'],
+    KHMER: ['de_KHMER', 'khmer_a', 'khmer_b'],
+    KOREA: ['de_KOREA', 'KOREA', 'korea_a'],
+    LATIN: ['de_LATIN', 'LATIN', 'ezios_family', 'latin_a'],
+    LITHUANIANS: ['de_LITHUANIANS', 'lithuanians_a', 'lithuanians_b'],
+    MACEDONIAN: ['de_MACEDONIAN', 'macedonian_a', 'macedonian_b'],
+    MAGYAR: ['de_MAGYAR', 'magyar_a', 'magyar_b'],
+    MALAY: ['de_MALAY', 'malay_a', 'malay_b'],
+    MAPUCHE: ['de_MAPUCHE', 'mapuche_a', 'mapuche_b'],
+    MAYANS: ['de_MAYANS', 'mayans_a', 'mayans_b'],
+    MONGOL: ['de_MONGOL', 'STEPPE', 'mongol_a'],
+    MUGHAL: ['de_MUGHAL', 'mughal_a', 'mughal_b'],
+    MUISCA: ['de_MUISCA', 'muisca_a', 'muisca_b'],
+    NORTHEAST: ['de_NORTHEAST', 'NORTHEAST', 'xianqin', 'yingqin'],
+    ORIE: ['de_ORIE', 'holy_land_battle', 'desert_war', 'ottoman_drums'],
+    PERSIAN: ['de_PERSIAN', 'persian_a', 'persian_b'],
+    POLES: ['de_POLES', 'poles_a', 'poles_b'],
+    PORTUGUESE: ['de_PORTUGUESE', 'portuguese_a', 'portuguese_b'],
+    PURU: ['de_PURU', 'puru_a', 'puru_b'],
+    ROMA: ['de_ROMA', 'roma_a', 'roma_b'],
+    SASANIAN: ['de_SASANIAN', 'sasanian_a', 'sasanian_b'],
+    SAXONS: ['de_SAXONS', 'saxons_a', 'saxons_b'],
+    SICILIANS: ['de_SICILIANS', 'sicilians_a', 'sicilians_b'],
+    SLAVIC: ['de_SLAVIC', 'SLAVIC', 'slavic_a'],
+    SPANISH: ['de_SPANISH', 'spanish_a', 'spanish_b'],
+    SPARTANS: ['de_SPARTANS', 'spartans_a', 'spartans_b'],
+    THRACIAN: ['de_THRACIAN', 'gaida_echoes', 'thraco_dacian', 'bulgarian_war'],
+    TIBET: ['TIBET', 'tibet_a', 'tibet_b'],
+    TUPI: ['de_TUPI', 'tupi_a', 'tupi_b'],
+    TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
+    VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
+    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_a', 'vietnamese_b'],
+    VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a'],
+    WEI: ['de_WEI', 'wuzhou', 'zhaosong'],
+    WESTERN: ['WESTERN', 'western_a', 'western_b'],
+    XIANBEI: ['XIANBEI', 'xianbei_a', 'xianbei_b'],
 };
-
-/** 66 分支 key → 专属主题曲 folder */
-function branchTheme(branch: string): string {
-    return CUSTOM_BRANCH_THEME[branch] ?? `de_${branch}`;
-}
 
 /** 任意文化码（172 区 / 66 分支 / 16 母体）→ 66 分支 key，未知回落 CENTRAL */
 function resolveBranch(region: string | null | undefined): string {
     if (!region) return 'CENTRAL';
     const u = region.trim().toUpperCase();
     const b = ALL_BRANCHES_MAP[u];
-    if (b) return b.key; // 别名（NORTH/STEPPE/WEST_ASIA 等）归一化到正牌分支 key
+    if (b) return b.key;
     return REGION_TO_BRANCH[u] ?? 'CENTRAL';
 }
 
-/** 分支 → 母体共享曲池（16 母体 → 曲目列表）*/
-function branchMotherPool(branch: string): readonly string[] {
-    const b = ALL_BRANCHES_MAP[branch];
-    if (!b) return [];
-    const mother = STYLE_TO_BASE16[b.deStyle];
-    return BASE16_BGM_MAP[mother] ?? [];
-}
-
-/** 分支 → 完整曲池 = [专属主题曲] + 母体共享曲（滤暂停曲 + 去重）*/
+/** 分支 → 独立曲池（滤掉暂停曲）*/
 function branchPool(branch: string): string[] {
-    const theme = branchTheme(branch);
-    const shared = branchMotherPool(branch);
-    return [...new Set([theme, ...shared])].filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
+    return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
 }
 
 function mergeSettings(raw: unknown): AudioSettings {
@@ -945,7 +1097,7 @@ export class AudioManager {
      *  · `volume` 是 audio 元素此刻的真实音量（已含闪避：播报/音效/行军都会临时压低）。
      */
     public getBgmStatus(): {
-        track: string; folder: string; gain: number; inGainTable: boolean;
+        track: string; folder: string; title: string; gain: number; inGainTable: boolean;
         volume: number; paused: boolean; currentSec: number; durationSec: number;
     } | null {
         if (!this.currentBgmSrc) return null;
@@ -954,6 +1106,7 @@ export class AudioManager {
         return {
             track: decodeURIComponent(file),
             folder,
+            title: BGM_TITLES[folder] ?? folder,
             gain: BGM_REGION_GAIN[folder] ?? 1.0,
             inGainTable: Object.prototype.hasOwnProperty.call(BGM_REGION_GAIN, folder),
             volume: this.bgmAudio ? +this.bgmAudio.volume.toFixed(3) : 0,
