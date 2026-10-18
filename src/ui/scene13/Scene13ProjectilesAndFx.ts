@@ -231,6 +231,7 @@ export const PROJ_TYPE: Record<string, string> = {
     rocket_cart: 'PROJ_ARROW_FIRE',
     heavy_rocket_cart: 'PROJ_ARROW_FIRE',
     tarantine_cavalry: 'PROJ_SPEAR',
+    jarl: 'PROJ_SPEAR',
     varangian_jarl: 'PROJ_SPEAR',
     hero_harald: 'PROJ_SPEAR',
     elite_varangian_jarl: 'PROJ_SPEAR',

@@ -30,6 +30,7 @@ import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
 import { armDeploy } from '../legion/DeployGate';
 import { toBase16, BASE16_CULTURES, BASE_16_LEGION_NAMES, STYLE_TO_BASE16, type Base16Culture } from '../systems/CultureBase16';
+import { toCulture66 } from '../systems/CultureHierarchy';
 import { resolveCityBase16Style } from '../systems/cityDeStyle';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { getCultureLegionName } from '../types/CultureFormations';
@@ -218,10 +219,10 @@ export class RecruitmentSystem {
             // 攻城战中驻军兵力由 BattleUnitFactory 适配器缓存驱动，勿直接改 city.troops
             if (!this.isCityGarrisonCommitted(city.id)) {
                 const region = this.getCityRegion(city as RecruitmentCity);
-                // 🔴 [2026-09-15] RECRUIT_TABLE 只在 16 母体上开键，先归母体再取值
-                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[toBase16(region)] ?? 1.0;
+                const culture66 = toCulture66((city as { buildingStyle?: string }).buildingStyle || region);
+                const recruitMult = GameConfig.CULTURE_COMBAT.RECRUIT_TABLE[culture66] ?? 1.0;
                 const added = Math.floor(cfg.recruitPerSeason * recruitMult);
-                city.troops = clampCityTroops(city.type, (city.troops || 0) + added, region);
+                city.troops = clampCityTroops(city.type, (city.troops || 0) + added, culture66);
             }
             this.pendingLabelCityIds.add(city.id);
         }

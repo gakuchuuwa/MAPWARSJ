@@ -19,6 +19,71 @@ import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { generalHasStrategicEffect, emitFollowedGeneralStrategicMapFx } from '../../combat/GeneralSkillCombat';
 import type { Army } from '../Army';
 import { isScriptPeriod } from '../../events/scriptPeriod';
+import { CITIES_V2 } from '../../data/cities_v2';
+import { toCulture66 } from '../../systems/CultureHierarchy';
+
+const CITY_STYLE_BY_ID = new Map<string, string>();
+const CAPITAL_STYLE_BY_FACTION = new Map<string, string>();
+for (const c of CITIES_V2) {
+    if (c.buildingStyle) {
+        CITY_STYLE_BY_ID.set(c.id, c.buildingStyle);
+        if (c.factionId && !CAPITAL_STYLE_BY_FACTION.has(c.factionId)) {
+            CAPITAL_STYLE_BY_FACTION.set(c.factionId, c.buildingStyle);
+        }
+    }
+}
+
+/**
+ * 解析军团所属的 66 文化键（62 二级 + 4 三级）：
+ *   1. 优先取军团出兵据点（homeCityId / sourceCityId）的 buildingStyle；
+ *   2. 其次取所属势力首都在 CITIES_V2 的 buildingStyle；
+ *   3. 兜底由 army.cultureRegion 映射至 66 文化分支键。
+ */
+export function resolveArmyCulture66Key(army: Army): string | null {
+    const cityId = army.homeCityId ?? army.getSourceCityId?.() ?? null;
+    if (cityId) {
+        const bs = CITY_STYLE_BY_ID.get(cityId);
+        if (bs) return toCulture66(bs);
+    }
+    const factionId = army.getFactionId?.();
+    if (factionId) {
+        const bs = CAPITAL_STYLE_BY_FACTION.get(factionId);
+        if (bs) return toCulture66(bs);
+    }
+    if (army.cultureRegion) return toCulture66(army.cultureRegion);
+    return null;
+}
+
+/**
+ * 判定军团当前所处水陆地形是否命中文化行军减兵豁免：
+ *   · 海上行军（army.isOnSea === true）：命中 NAVAL_IMMUNE_CULTURES（北欧系、马来、葡、西、雅典）不减兵；
+ *   · 陆地行军（!army.isOnSea）：命中 LAND_IMMUNE_CULTURES（草原游牧系、马扎尔、柏柏尔）不减兵。
+ */
+export function isArmyCultureExemptFromMarchAttrition(army: Army): boolean {
+    const culture66 = resolveArmyCulture66Key(army);
+    if (!culture66) return false;
+    const cfg = GameConfig.MARCH_ATTRITION;
+    if (army.isOnSea) {
+        return cfg.NAVAL_IMMUNE_CULTURES.includes(culture66);
+    }
+    return cfg.LAND_IMMUNE_CULTURES.includes(culture66);
+}
+
+/** ③ 山地行军专精：命中 MOUNTAIN_MARCH_IMMUNE_CULTURES 的文化在山地行军如履平地（不减速） */
+export function isArmyCultureMountainMarchImmune(army: Army): boolean {
+    const culture66 = resolveArmyCulture66Key(army);
+    if (!culture66) return false;
+    return GameConfig.CULTURE_COMBAT.MOUNTAIN_MARCH_IMMUNE_CULTURES.includes(culture66);
+}
+
+/** ④ 渡海/水网机动：命中 SEA_SPEED_BONUS_CULTURES 的文化在海上航行移速 ×1.25 */
+export function getArmyCultureSeaSpeedMultiplier(army: Army): number {
+    const culture66 = resolveArmyCulture66Key(army);
+    if (!culture66) return 1.0;
+    return GameConfig.CULTURE_COMBAT.SEA_SPEED_BONUS_CULTURES.includes(culture66)
+        ? GameConfig.CULTURE_COMBAT.SEA_SPEED_BONUS_MULT
+        : 1.0;
+}
 
 /**
  * 每帧减员 tick。返回本帧实际扣减的整数兵力（供 LegionManager 飘字），0 = 本帧无扣减。
@@ -51,6 +116,14 @@ export function tickMarchAttrition(army: Army, deltaTime: number): number {
 
     const troops = army.getTroops();
     if (troops <= 0) return 0;
+
+    // 文化特性豁免：海上不减兵文化在海上、陆地不减兵文化在陆地行军时自给自足，清零断粮计时并免扣兵
+    if (isArmyCultureExemptFromMarchAttrition(army)) {
+        army.timeSinceSupply = 0;
+        army.attritionChunkSec = 0;
+        army.attritionChunkCount = 0;
+        return 0;
+    }
 
     // str_13 以战养战：行军减兵全免（写法照抄 Army.updateTerrainSpeed 查 mountain_march_immunity）
     if (generalHasStrategicEffect(army, 'march_attrition_immunity')) {

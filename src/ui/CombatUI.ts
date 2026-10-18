@@ -849,18 +849,37 @@ export class CombatUI {
         return div;
     }
 
-    /** 顶饰金线：仅铺在左右立绘之间的中栏顶部（不画在立绘区） */
+    /** 顶饰金线：铺在左右立绘之间的中栏顶部，带双层流光与中央菱印暗辉 */
     private createCenterGoldAccent(): HTMLDivElement {
         const accent = document.createElement('div');
         accent.style.cssText = `
             position: absolute;
             top: 0;
-            left: 5%;
-            right: 5%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.6) 20%, rgba(253, 185, 49, 0.85) 50%, rgba(255, 215, 0, 0.6) 80%, transparent 100%);
+            left: 3%;
+            right: 3%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(212, 165, 55, 0.25) 12%,
+                rgba(255, 215, 90, 0.82) 35%,
+                rgba(255, 245, 190, 1) 50%,
+                rgba(255, 215, 90, 0.82) 65%,
+                rgba(212, 165, 55, 0.25) 88%,
+                transparent 100%);
+            box-shadow: 0 0 12px rgba(255, 200, 60, 0.55), 0 2px 18px rgba(255, 160, 30, 0.35);
             pointer-events: none;
         `;
+        const subLine = document.createElement('div');
+        subLine.style.cssText = `
+            position: absolute;
+            top: 4px;
+            left: 14%;
+            right: 14%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.32) 30%, rgba(255, 230, 130, 0.55) 50%, rgba(255, 215, 0, 0.32) 70%, transparent 100%);
+            pointer-events: none;
+        `;
+        accent.appendChild(subLine);
         return accent;
     }
 
@@ -917,9 +936,9 @@ export class CombatUI {
         this.rightMinBtn = this.createPortraitMinimizeBtn('right');
         rightFrame.appendChild(this.rightMinBtn);
 
-        // --- 优劣均 兵力状态指示器（2026-07-18 应主人要求按 Git 旧实现恢复，仅此 UI）---
+        // --- 优劣均 兵力状态指示器（垂直对齐于武将竖排铭牌与势力牌正下方，仅激活项显示）---
         const leftIndGroup = document.createElement('div');
-        leftIndGroup.style.cssText = `position: absolute; bottom: 41.5%; right: -${uiPx(7)}; transform: translateX(50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
+        leftIndGroup.style.cssText = `position: absolute; bottom: calc(52% - ${uiPx(66)}); right: calc(-${uiPx(25)} + ${uiPx(18)}); transform: translateX(50%); display: flex; gap: ${uiPx(6)}; z-index: ${T.zIndex.portrait + 6}; pointer-events: none;`;
         this.indicatorLeftYou = this.createIndicatorNode('优');
         this.indicatorLeftLie = this.createIndicatorNode('劣');
         leftIndGroup.appendChild(this.indicatorLeftYou);
@@ -927,7 +946,7 @@ export class CombatUI {
         leftFrame.appendChild(leftIndGroup);
 
         const rightIndGroup = document.createElement('div');
-        rightIndGroup.style.cssText = `position: absolute; bottom: 41.5%; left: -${uiPx(7)}; transform: translateX(-50%); display: flex; gap: ${uiPx(8)}; z-index: 20; pointer-events: none;`;
+        rightIndGroup.style.cssText = `position: absolute; bottom: calc(52% - ${uiPx(66)}); left: calc(-${uiPx(25)} + ${uiPx(18)}); transform: translateX(-50%); display: flex; gap: ${uiPx(6)}; z-index: ${T.zIndex.portrait + 6}; pointer-events: none;`;
         this.indicatorRightYou = this.createIndicatorNode('优');
         this.indicatorRightLie = this.createIndicatorNode('劣');
         rightIndGroup.appendChild(this.indicatorRightYou);
@@ -940,9 +959,10 @@ export class CombatUI {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: ${uiPx(8)};
-            margin-top: ${uiPx(-6)};
+            gap: ${uiPx(10)};
+            margin-top: ${uiPx(-4)};
             margin-bottom: ${uiPx(6)};
+            min-height: ${uiPx(26)};
             pointer-events: none;
             z-index: 25;
         `;
@@ -960,7 +980,7 @@ export class CombatUI {
         this.wireGeneralNameTagClicks();
         this.refreshGeneralNameTagInteract();
 
-        // --- 中栏黑底：椭圆径向 alpha 渐隐（勿 multiply + transparent），HUD 叠在上 ---
+        // --- 中栏黑底：黑曜石暗金渐隐底板，顶部柔和过渡，HUD 叠在上 ---
         this.centerBackdrop = document.createElement('div');
         this.centerBackdrop.className = 'combat-backdrop';
         this.centerBackdrop.style.cssText = `
@@ -975,10 +995,11 @@ export class CombatUI {
             background: ${this.buildCenterBackdropBackground()};
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
-            -webkit-mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 80%, transparent 100%);
-            mask-image: radial-gradient(ellipse 90% 100% at 50% 50%, black 80%, transparent 100%);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,1) 12%, rgba(0,0,0,1) 100%);
+            box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.65);
         `;
         this.centerBackdrop.style.transition = 'opacity 0.3s ease';
         this.centerPanel = document.createElement('div');
@@ -997,7 +1018,7 @@ export class CombatUI {
             justify-content: center;
             align-items: center;
             z-index: ${T.zIndex.centerCard};
-            padding: ${uiPx(16)} 0 ${uiPx(14)};
+            padding: ${uiPx(14)} 0 ${uiPx(12)};
             box-sizing: border-box;
             pointer-events: auto;
             overflow: visible;
@@ -1013,8 +1034,8 @@ export class CombatUI {
             font-weight: 700;
             color: ${T.typography.yearColor};
             letter-spacing: ${uiPx(4)};
-            margin-top: ${uiPx(8)};
-            margin-bottom: ${uiPx(6)};
+            margin-top: ${uiPx(6)};
+            margin-bottom: ${uiPx(4)};
             text-align: center;
             width: 100%;
             text-shadow:
@@ -1022,7 +1043,7 @@ export class CombatUI {
                 0 2px 10px rgba(0,0,0,0.92),
                 0 0 14px rgba(255,200,90,0.28);
             border-bottom: 1px solid rgba(255, 215, 0, 0.22);
-            padding-bottom: ${uiPx(6)};
+            padding-bottom: ${uiPx(5)};
         `;
 
 
@@ -1036,11 +1057,11 @@ export class CombatUI {
             background: none !important;
             border: none !important;
             box-shadow: none !important;
-            letter-spacing: ${uiPx(10)};
-            margin-bottom: ${uiPx(12)};
+            letter-spacing: ${uiPx(9)};
+            margin-bottom: ${uiPx(8)};
             white-space: nowrap;
             text-align: center;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95)) drop-shadow(0 0 12px rgba(255,200,80,0.35));
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.95)) drop-shadow(0 0 14px rgba(255,200,80,0.42));
         `;
 
         // 中央对峙条（攻橙 / 守蓝，参考稿主进度条）
@@ -1054,33 +1075,22 @@ export class CombatUI {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-top: ${uiPx(6)};
-            margin-bottom: ${uiPx(6)};
+            margin-top: ${uiPx(4)};
+            margin-bottom: ${uiPx(7)};
             padding: 0 ${uiPx(T.portraitHorizontalReserve)};
             box-sizing: border-box;
             pointer-events: none;
             z-index: ${T.zIndex.portrait + 2};
         `;
         this.leftSkillsBox = document.createElement('div');
-        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; align-items: center;`;
+        this.leftSkillsBox.style.cssText = `display: flex; gap: ${uiPx(5)}; flex-wrap: nowrap; align-items: stretch;`;
         this.rightSkillsBox = document.createElement('div');
-        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(4)}; flex-wrap: nowrap; align-items: center;`;
+        this.rightSkillsBox.style.cssText = `display: flex; gap: ${uiPx(5)}; flex-wrap: nowrap; align-items: stretch;`;
 
         this.leftTotalMultBadge = document.createElement('span');
         this.leftTotalMultBadge.className = 'combat-number-badge';
         this.leftTotalMultBadge.style.cssText = `
             display: none;
-            padding: 2px 8px;
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(13)};
-            font-weight: 900;
-            line-height: 1.15;
-            border: 1px solid rgba(253, 185, 49, 0.9);
-            color: #FFD700;
-            background: rgba(35, 12, 4, 0.9);
-            border-radius: 3px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 215, 0, 0.4);
-            white-space: nowrap;
             pointer-events: auto;
             cursor: help;
         `;
@@ -1089,52 +1099,45 @@ export class CombatUI {
         this.rightTotalMultBadge.className = 'combat-number-badge';
         this.rightTotalMultBadge.style.cssText = `
             display: none;
-            padding: 2px 8px;
-            font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(13)};
-            font-weight: 900;
-            line-height: 1.15;
-            border: 1px solid rgba(90, 170, 190, 0.9);
-            color: #70E0FF;
-            background: rgba(5, 20, 30, 0.9);
-            border-radius: 3px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(90, 170, 190, 0.4);
-            white-space: nowrap;
             pointer-events: auto;
             cursor: help;
         `;
 
         const leftWrap = document.createElement('div');
-        leftWrap.style.cssText = `display: flex; align-items: center; gap: ${uiPx(6)}; pointer-events: auto;`;
+        leftWrap.style.cssText = `display: flex; align-items: stretch; gap: ${uiPx(6)}; pointer-events: auto;`;
         leftWrap.appendChild(this.leftTotalMultBadge);
         leftWrap.appendChild(this.leftSkillsBox);
 
         const rightWrap = document.createElement('div');
-        rightWrap.style.cssText = `display: flex; align-items: center; gap: ${uiPx(6)}; pointer-events: auto;`;
+        rightWrap.style.cssText = `display: flex; align-items: stretch; gap: ${uiPx(6)}; pointer-events: auto;`;
         rightWrap.appendChild(this.rightSkillsBox);
         rightWrap.appendChild(this.rightTotalMultBadge);
 
         this.skillsRow.appendChild(leftWrap);
         this.skillsRow.appendChild(rightWrap);
 
+        const portraitPad = uiPx(T.portraitHorizontalReserve);
         this.healthBarContainer = document.createElement('div');
         this.healthBarContainer.className = 'combat-bar-track';
         this.healthBarContainer.style.cssText = `
-            width: 100vw;
-            max-width: 100vw;
-            height: ${uiPx(T.clashBar.height + 4)};
-            background: rgba(0, 0, 0, 0.45);
+            width: calc(100vw - ${uiPx(T.portraitHorizontalReserve * 2)});
+            max-width: calc(100vw - ${uiPx(T.portraitHorizontalReserve * 2)});
+            height: ${uiPx(T.clashBar.height + 6)};
+            background: rgba(8, 6, 5, 0.72);
             backdrop-filter: blur(6px);
+            border: 1px solid rgba(235, 195, 95, 0.55);
             box-shadow:
-                inset 0 0 0 1px rgba(255, 215, 0, 0.18),
-                inset 0 2px 10px rgba(0,0,0,0.75),
-                0 0 24px rgba(255, 140, 40, 0.15),
-                0 0 18px rgba(70, 150, 180, 0.12);
+                inset 0 0 0 1px rgba(255, 235, 160, 0.16),
+                inset 0 2px 10px rgba(0, 0, 0, 0.85),
+                0 3px 14px rgba(0, 0, 0, 0.8),
+                0 0 22px rgba(255, 150, 45, 0.18),
+                0 0 18px rgba(70, 160, 200, 0.15);
             position: relative;
             margin-bottom: ${uiPx(8)};
             overflow: hidden;
-            border-radius: 0;
+            border-radius: 5px;
             clip-path: none;
+            box-sizing: border-box;
         `;
 
         this.defenderBar = document.createElement('div');
@@ -1142,8 +1145,9 @@ export class CombatUI {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.12) 4px, rgba(0,0,0,0.12) 8px),
-                linear-gradient(90deg, #162530 0%, #2a5565 35%, #3d7a8f 65%, #5aacbe 100%);
+                linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 42%, rgba(0,0,0,0.28) 100%),
+                repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0,0,0,0.12) 5px, rgba(0,0,0,0.12) 10px),
+                linear-gradient(90deg, #132838 0%, #235068 35%, #347894 68%, #52b2cc 100%);
             z-index: 1;
         `;
 
@@ -1153,12 +1157,13 @@ export class CombatUI {
             top: 0; left: 0; bottom: 0;
             width: 50%;
             background: 
-                repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px),
-                linear-gradient(90deg, #7a1528 0%, #b04818 30%, #d47020 60%, #f0a830 100%);
+                linear-gradient(180deg, rgba(255,255,255,0.22) 0%, transparent 42%, rgba(0,0,0,0.25) 100%),
+                repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(0,0,0,0.14) 5px, rgba(0,0,0,0.14) 10px),
+                linear-gradient(90deg, #7c1424 0%, #b84214 32%, #de741c 65%, #f7b432 100%);
             z-index: 2;
             transition: width 0.45s cubic-bezier(0.16, 1, 0.3, 1);
             clip-path: polygon(0 0, 100% 0, calc(100% - ${uiPx(T.clashBar.clipPx)}) 100%, 0% 100%);
-            box-shadow: inset 0 -3px 10px rgba(255, 200, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 -3px 10px rgba(255, 200, 80, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
         `;
 
         this.clashEffect = document.createElement('div');
@@ -1214,21 +1219,23 @@ export class CombatUI {
         this.leftBarTroopsBadge.className = 'combat-number-badge';
         this.leftBarTroopsBadge.style.cssText = `
             position: absolute;
-            right: ${uiPx(36)};
+            right: ${uiPx(24)};
             top: 50%;
             transform: translateY(-50%);
             z-index: 5;
             display: none;
-            padding: 2px 8px;
+            padding: 1.5px 8px;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(14)};
+            font-size: ${uiPx(14.5)};
             font-weight: 900;
+            font-variant-numeric: tabular-nums;
             line-height: 1.15;
-            border: 1px solid rgba(253, 185, 49, 0.9);
-            color: #FFD700;
-            background: rgba(35, 12, 4, 0.85);
-            border-radius: 3px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(255, 215, 0, 0.4);
+            border: 1px solid rgba(255, 215, 90, 0.92);
+            color: #FFF3B0;
+            background: linear-gradient(180deg, rgba(58, 22, 6, 0.92) 0%, rgba(28, 9, 2, 0.95) 100%);
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 8px rgba(255, 200, 40, 0.38), inset 0 1px 0 rgba(255,255,255,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.95);
             white-space: nowrap;
             pointer-events: auto;
             cursor: help;
@@ -1238,21 +1245,23 @@ export class CombatUI {
         this.rightBarTroopsBadge.className = 'combat-number-badge';
         this.rightBarTroopsBadge.style.cssText = `
             position: absolute;
-            left: calc(50% + ${uiPx(36)});
+            left: calc(50% + ${uiPx(24)});
             top: 50%;
             transform: translateY(-50%);
             z-index: 5;
             display: none;
-            padding: 2px 8px;
+            padding: 1.5px 8px;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(14)};
+            font-size: ${uiPx(14.5)};
             font-weight: 900;
+            font-variant-numeric: tabular-nums;
             line-height: 1.15;
-            border: 1px solid rgba(90, 170, 190, 0.9);
-            color: #70E0FF;
-            background: rgba(5, 20, 30, 0.85);
-            border-radius: 3px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8), 0 0 6px rgba(90, 170, 190, 0.4);
+            border: 1px solid rgba(110, 205, 235, 0.92);
+            color: #B8F2FF;
+            background: linear-gradient(180deg, rgba(10, 34, 52, 0.92) 0%, rgba(4, 16, 26, 0.95) 100%);
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85), 0 0 8px rgba(90, 190, 230, 0.38), inset 0 1px 0 rgba(255,255,255,0.2);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.95);
             white-space: nowrap;
             pointer-events: auto;
             cursor: help;
@@ -1270,7 +1279,6 @@ export class CombatUI {
 
 
         // 军团信息：以「区域冲突」中线为界，左右各占一半；外缘避开立绘。
-        const portraitPad = uiPx(T.portraitHorizontalReserve);
         this.sideStatsRow = document.createElement('div');
         this.sideStatsRow.className = 'combat-side-stats';
         this.sideStatsRow.style.cssText = `
@@ -1278,9 +1286,9 @@ export class CombatUI {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             grid-template-rows: auto auto auto;
-            column-gap: ${uiPx(8)};
-            align-items: end;
-            margin-top: ${uiPx(10)};
+            column-gap: ${uiPx(14)};
+            align-items: center;
+            margin-top: ${uiPx(4)};
             padding: 0 ${portraitPad};
             box-sizing: border-box;
             pointer-events: none;
@@ -1546,6 +1554,7 @@ export class CombatUI {
             this.healthBarContainer.style.height = '38px';
             this.healthBarContainer.style.margin = '0';
             this.healthBarContainer.style.borderRadius = '0';
+            this.healthBarContainer.style.border = 'none';
             this.healthBarContainer.style.clipPath = 'none';
             this.healthBarContainer.style.position = 'relative';
         }
@@ -2495,7 +2504,7 @@ export class CombatUI {
     }
 
 
-    /** 中央面板底部：左半攻 / 右半守，「军团名: 兵力」+ 小血条 */
+    /** 中央面板底部：左半攻 / 右半守，流线型鎏金/寒铁战旗底衬框 */
     private createSideHud(side: 'attacker' | 'defender'): HTMLDivElement {
         const isAtt = side === 'attacker';
         const strip = document.createElement('div');
@@ -2507,15 +2516,24 @@ export class CombatUI {
             grid-template-rows: subgrid;
             grid-row: 1 / -1;
             justify-items: ${isAtt ? 'start' : 'end'};
-            padding: 0;
+            padding: ${uiPx(6)} ${uiPx(14)};
+            box-sizing: border-box;
             text-align: ${isAtt ? 'left' : 'right'};
+            background: ${isAtt
+                ? 'linear-gradient(90deg, rgba(48, 20, 8, 0.78) 0%, rgba(26, 11, 4, 0.42) 62%, rgba(12, 6, 2, 0) 100%)'
+                : 'linear-gradient(270deg, rgba(10, 32, 48, 0.78) 0%, rgba(6, 18, 30, 0.42) 62%, rgba(3, 8, 15, 0) 100%)'};
+            ${isAtt
+                ? 'border-left: 3px solid rgba(245, 180, 55, 0.92); border-radius: 4px 0 0 4px;'
+                : 'border-right: 3px solid rgba(90, 185, 220, 0.92); border-radius: 0 4px 4px 0;'}
+            border-top: 1px solid ${isAtt ? 'rgba(255, 215, 90, 0.22)' : 'rgba(110, 205, 240, 0.22)'};
+            border-bottom: 1px solid ${isAtt ? 'rgba(255, 215, 90, 0.14)' : 'rgba(110, 205, 240, 0.14)'};
             pointer-events: none;
             overflow: visible;
         `;
         return strip;
     }
 
-    /** 两势力之间的交叉剑装饰（居中列） */
+    /** 两势力之间的交叉剑装饰（居中列，配暗金罗盘底座与两侧渐隐金线） */
     private createSideVsIcon(): HTMLDivElement {
         const size = uiPx(T.sideBar.centerVsIconSize);
         const wrap = document.createElement('div');
@@ -2523,15 +2541,36 @@ export class CombatUI {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: ${size};
-            height: ${size};
+            gap: ${uiPx(8)};
             pointer-events: none;
             flex-shrink: 0;
             grid-row: 1 / -1;
             align-self: center;
             position: relative;
             z-index: 10;
-            margin: 0 ${uiPx(4)};
+            margin: 0 ${uiPx(2)};
+        `;
+
+        const leftWing = document.createElement('div');
+        leftWing.style.cssText = `
+            width: ${uiPx(36)};
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 210, 90, 0.65) 100%);
+        `;
+
+        const medallion = document.createElement('div');
+        medallion.style.cssText = `
+            width: ${size};
+            height: ${size};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(50, 34, 14, 0.85) 0%, rgba(16, 11, 6, 0.92) 72%, rgba(0, 0, 0, 0) 100%);
+            border: 1px solid rgba(235, 190, 80, 0.48);
+            box-shadow: 0 0 14px rgba(255, 185, 50, 0.25), inset 0 0 8px rgba(255, 215, 0, 0.18);
+            padding: ${uiPx(3)};
+            box-sizing: border-box;
         `;
 
         const img = document.createElement('img');
@@ -2542,9 +2581,20 @@ export class CombatUI {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.85));
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.9)) drop-shadow(0 0 6px rgba(255, 200, 70, 0.35));
         `;
-        wrap.appendChild(img);
+        medallion.appendChild(img);
+
+        const rightWing = document.createElement('div');
+        rightWing.style.cssText = `
+            width: ${uiPx(36)};
+            height: 1px;
+            background: linear-gradient(270deg, transparent 0%, rgba(110, 205, 240, 0.65) 100%);
+        `;
+
+        wrap.appendChild(leftWing);
+        wrap.appendChild(medallion);
+        wrap.appendChild(rightWing);
         return wrap;
     }
 
@@ -2554,7 +2604,7 @@ export class CombatUI {
         const row = document.createElement('div');
         row.style.cssText = `
             width: 100%;
-            margin-bottom: ${uiPx(4)};
+            margin-bottom: ${uiPx(3)};
             display: flex;
             flex-direction: ${isAtt ? 'row' : 'row-reverse'};
             align-items: center;
@@ -2565,12 +2615,12 @@ export class CombatUI {
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(T.sideBar.factionNameSize + 4)};
+            font-size: ${uiPx(T.sideBar.factionNameSize + 3)};
             font-weight: 900;
-            letter-spacing: ${uiPx(2)};
-            text-shadow: 0 2px 8px rgba(0,0,0,0.95), 0 0 12px rgba(255, 215, 0, 0.35);
+            letter-spacing: ${uiPx(2.5)};
+            text-shadow: 0 2px 6px rgba(0,0,0,0.98), 0 0 12px ${isAtt ? 'rgba(255, 195, 60, 0.38)' : 'rgba(90, 200, 245, 0.38)'};
             white-space: nowrap;
-            color: #FFF;
+            color: #FFF8EA;
         `;
         row.appendChild(nameSpan);
 
@@ -2651,13 +2701,15 @@ export class CombatUI {
 
         const nameSpan = document.createElement('span');
         nameSpan.style.cssText = `
+            display: inline-flex;
+            align-items: center;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(15)};
+            font-size: ${uiPx(15.5)};
             font-weight: 800;
             white-space: nowrap;
-            line-height: 1.2;
+            line-height: 1.25;
             letter-spacing: 1px;
-            color: ${isAtt ? '#f5d6a8' : '#c8e5f5'};
+            color: ${isAtt ? '#f8dfb6' : '#d2ecfa'};
             text-shadow: 0 1px 4px rgba(0,0,0,0.95);
             text-align: ${isAtt ? 'left' : 'right'};
         `;
@@ -2727,7 +2779,7 @@ export class CombatUI {
         return row;
     }
 
-    /** 战力八环：总×徽章（factionRow 第一行），明细走 title 悬停；其余各环各有独立 badge 元素 */
+    /** 战力八环：总×徽章（与右侧九环词条卡等高同构的双行统帅战力牌），明细走 title 悬停 */
     private updateMultiplierBadges(attacker: IBattleUnit | null, defender: IBattleUnit | null): void {
         const applySideBadges = (
             multBadge: HTMLSpanElement | null,
@@ -2745,14 +2797,51 @@ export class CombatUI {
 
             if (totalBadge) {
                 const fmtTotalStr = String(parseFloat(totalMult.toFixed(2)));
-                totalBadge.innerHTML = `总×${fmtTotalStr}`;
                 totalBadge.title = totalTitle;
                 const isBuff = totalMult > 1.001;
                 const isAtt = side === 'attacker';
-                const borderColor = isBuff ? (isAtt ? 'rgba(253, 185, 49, 0.95)' : 'rgba(90, 170, 190, 0.95)') : 'rgba(235, 85, 75, 0.95)';
-                const color = isBuff ? (isAtt ? '#FFD700' : '#70E0FF') : '#FFAA99';
-                const bg = isBuff ? (isAtt ? 'rgba(40, 15, 5, 0.92)' : 'rgba(10, 25, 38, 0.92)') : 'rgba(45, 10, 10, 0.92)';
-                totalBadge.style.cssText = `display:inline-block;padding:2px 8px;font-family:'Noto Serif SC',serif;font-size:13px;font-weight:900;line-height:1.2;border:1px solid ${borderColor};color:${color};background:${bg};border-radius:4px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,0.6), 0 0 8px ${borderColor};cursor:help;pointer-events:auto;`;
+                const borderColor = isBuff
+                    ? (isAtt ? 'rgba(255, 205, 70, 0.92)' : 'rgba(100, 200, 235, 0.92)')
+                    : 'rgba(235, 95, 85, 0.92)';
+                const bottomAccent = isBuff
+                    ? (isAtt ? '#ffb82e' : '#48c6f0')
+                    : '#ef5350';
+                const valColor = isBuff
+                    ? (isAtt ? '#FFE57F' : '#8CE8FF')
+                    : '#FFB4A8';
+                const labelColor = isBuff
+                    ? (isAtt ? '#f5d698' : '#b8e4f5')
+                    : '#f5b8b0';
+                const bg = isBuff
+                    ? (isAtt
+                        ? 'linear-gradient(180deg, rgba(85, 42, 10, 0.94) 0%, rgba(32, 12, 3, 0.96) 100%)'
+                        : 'linear-gradient(180deg, rgba(14, 52, 78, 0.94) 0%, rgba(5, 20, 34, 0.96) 100%)')
+                    : 'linear-gradient(180deg, rgba(72, 18, 18, 0.94) 0%, rgba(32, 6, 6, 0.96) 100%)';
+                const glow = isBuff
+                    ? (isAtt ? 'rgba(255, 185, 40, 0.35)' : 'rgba(72, 198, 240, 0.35)')
+                    : 'rgba(235, 85, 75, 0.35)';
+
+                totalBadge.innerHTML =
+                    `<span style="font-family:'Noto Serif SC',serif;font-size:${uiPx(11)};font-weight:700;color:${labelColor};letter-spacing:1px;line-height:1.15;">综合战力</span>` +
+                    `<span style="font-family:'Noto Serif SC',serif;font-size:${uiPx(15)};font-weight:900;color:${valColor};font-variant-numeric:tabular-nums;letter-spacing:0.5px;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,0.95),0 0 8px ${glow};">⚔×${fmtTotalStr}</span>`;
+                totalBadge.style.cssText = `
+                    display: inline-flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: ${uiPx(82)};
+                    min-height: ${uiPx(44)};
+                    padding: ${uiPx(4)} ${uiPx(9)};
+                    box-sizing: border-box;
+                    border: 1px solid ${borderColor};
+                    border-bottom: 2px solid ${bottomAccent};
+                    background: ${bg};
+                    border-radius: 5px;
+                    white-space: nowrap;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.85), 0 0 10px ${glow}, inset 0 1px 1px rgba(255,255,255,0.22);
+                    cursor: help;
+                    pointer-events: auto;
+                `;
             }
         };
 
@@ -3092,20 +3181,21 @@ export class CombatUI {
                 el.textContent = char;
                 el.title = `${isAtt ? '攻方' : '守方'}战术六计：【${char}】`;
                 el.style.cssText = `
-                    display: inline-block !important;
-                    width: ${uiPx(22)} !important;
-                    height: ${uiPx(22)} !important;
-                    line-height: ${uiPx(20)} !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    width: ${uiPx(25)} !important;
+                    height: ${uiPx(25)} !important;
                     text-align: center !important;
                     font-family: 'Noto Serif SC', serif !important;
-                    font-size: ${uiPx(15)} !important;
+                    font-size: ${uiPx(15.5)} !important;
                     font-weight: 900 !important;
                     color: ${st.color} !important;
                     background: ${st.bg} !important;
                     border: 1px solid ${st.border} !important;
-                    border-radius: 2px !important;
-                    box-shadow: 0 0 10px ${st.glow}, inset 0 0 6px ${st.glow} !important;
-                    text-shadow: 0 0 5px ${st.glow} !important;
+                    border-radius: 4px !important;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.85), 0 0 10px ${st.glow}, inset 0 1px 1px rgba(255,255,255,0.22), inset 0 0 6px ${st.glow} !important;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.95), 0 0 5px ${st.glow} !important;
                     box-sizing: border-box !important;
                 `;
             };
@@ -3292,7 +3382,7 @@ export class CombatUI {
             sixSetChar?: string,
         ) => {
             const tag = document.createElement('div');
-            const borderColor = isFamous ? 'rgba(255, 215, 0, 0.7)' : 'rgba(200, 200, 200, 0.6)';
+            const borderColor = isFamous ? 'rgba(255, 215, 90, 0.68)' : 'rgba(180, 175, 165, 0.42)';
             
             // 战术 / 地形 / 精锐 / 文化颜色区分
             let bgColor = '';
@@ -3312,101 +3402,101 @@ export class CombatUI {
                 }
             } else if (skillType === 'pass') {
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(70, 50, 20, 0.85)' : 'rgba(50, 40, 20, 0.8)';
-                    bgHighlight = 'rgba(196, 164, 90, 0.15)';
+                    bgColor = isFamous ? 'rgba(70, 50, 20, 0.88)' : 'rgba(50, 40, 20, 0.85)';
+                    bgHighlight = 'rgba(196, 164, 90, 0.22)';
                     sideColor = '#c4a45a';
                 } else {
-                    bgColor = isFamous ? 'rgba(40, 50, 30, 0.85)' : 'rgba(30, 40, 25, 0.8)';
-                    bgHighlight = 'rgba(148, 173, 110, 0.15)';
+                    bgColor = isFamous ? 'rgba(40, 50, 30, 0.88)' : 'rgba(30, 40, 25, 0.85)';
+                    bgHighlight = 'rgba(148, 173, 110, 0.22)';
                     sideColor = '#94ad6e';
                 }
             } else if (skillType === 'elite') {
                 // 精锐部队：极具质感的黑金 / 暗夜冰银
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(45, 25, 0, 0.9)' : 'rgba(30, 15, 0, 0.85)';
-                    bgHighlight = 'rgba(255, 200, 50, 0.15)';
+                    bgColor = isFamous ? 'rgba(48, 28, 4, 0.92)' : 'rgba(34, 18, 2, 0.88)';
+                    bgHighlight = 'rgba(255, 200, 50, 0.22)';
                     sideColor = '#ffc800'; // 纯粹的正金
                 } else {
-                    bgColor = isFamous ? 'rgba(5, 20, 35, 0.9)' : 'rgba(0, 15, 25, 0.85)';
-                    bgHighlight = 'rgba(160, 210, 255, 0.15)';
+                    bgColor = isFamous ? 'rgba(8, 24, 42, 0.92)' : 'rgba(4, 18, 32, 0.88)';
+                    bgHighlight = 'rgba(160, 210, 255, 0.22)';
                     sideColor = '#aaddff'; // 冰霜银蓝
                 }
             } else if (skillType === 'culture') {
                 // 文化区标签：沉稳的大地暖色 / 青岩色
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(55, 30, 15, 0.85)' : 'rgba(40, 20, 10, 0.8)';
-                    bgHighlight = 'rgba(212, 136, 60, 0.15)';
-                    sideColor = '#c86b28'; // 偏暗的赤铜
+                    bgColor = isFamous ? 'rgba(55, 30, 15, 0.88)' : 'rgba(40, 20, 10, 0.85)';
+                    bgHighlight = 'rgba(212, 136, 60, 0.22)';
+                    sideColor = '#d47632'; // 偏暗的赤铜
                 } else {
-                    bgColor = isFamous ? 'rgba(10, 35, 25, 0.85)' : 'rgba(5, 25, 15, 0.8)';
-                    bgHighlight = 'rgba(90, 158, 143, 0.15)';
-                    sideColor = '#4a8f7c'; // 沉稳的青石
+                    bgColor = isFamous ? 'rgba(10, 35, 25, 0.88)' : 'rgba(5, 25, 15, 0.85)';
+                    bgHighlight = 'rgba(90, 158, 143, 0.22)';
+                    sideColor = '#56a38e'; // 沉稳的青石
                 }
             } else if (skillType === 'luck') {
                 // 命运运气标签：高贵神秘的星辉紫晶 / 幽夜星蓝
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(55, 15, 60, 0.85)' : 'rgba(40, 10, 45, 0.8)';
-                    bgHighlight = 'rgba(230, 130, 255, 0.15)';
-                    sideColor = '#b85ee6'; // 紫晶华彩
+                    bgColor = isFamous ? 'rgba(55, 15, 60, 0.88)' : 'rgba(40, 10, 45, 0.85)';
+                    bgHighlight = 'rgba(230, 130, 255, 0.22)';
+                    sideColor = '#c46ef0'; // 紫晶华彩
                 } else {
-                    bgColor = isFamous ? 'rgba(20, 20, 55, 0.85)' : 'rgba(15, 15, 40, 0.8)';
-                    bgHighlight = 'rgba(140, 160, 255, 0.15)';
-                    sideColor = '#7a70e6'; // 星穹幽紫蓝
+                    bgColor = isFamous ? 'rgba(20, 20, 55, 0.88)' : 'rgba(15, 15, 40, 0.85)';
+                    bgHighlight = 'rgba(140, 160, 255, 0.22)';
+                    sideColor = '#887ef0'; // 星穹幽紫蓝
                 }
             } else if (skillType === 'aptitude') {
                 // 三势适性标签：沉静深邃的苍青墨绿 / 玄靛
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(15, 45, 45, 0.85)' : 'rgba(10, 30, 30, 0.8)';
-                    bgHighlight = 'rgba(60, 200, 180, 0.15)';
-                    sideColor = '#2eb8ac'; // 苍碧
+                    bgColor = isFamous ? 'rgba(15, 45, 45, 0.88)' : 'rgba(10, 30, 30, 0.85)';
+                    bgHighlight = 'rgba(60, 200, 180, 0.22)';
+                    sideColor = '#34c8bc'; // 苍碧
                 } else {
-                    bgColor = isFamous ? 'rgba(25, 25, 55, 0.85)' : 'rgba(15, 15, 40, 0.8)';
-                    bgHighlight = 'rgba(130, 140, 240, 0.15)';
-                    sideColor = '#5c6bc0'; // 玄靛
+                    bgColor = isFamous ? 'rgba(25, 25, 55, 0.88)' : 'rgba(15, 15, 40, 0.85)';
+                    bgHighlight = 'rgba(130, 140, 240, 0.22)';
+                    sideColor = '#6c7bd0'; // 玄靛
                 }
             } else if (skillType === 'style') {
                 // 攻防风格标签：攻方锐烈炽金 / 守方坚壁重岩
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(60, 25, 10, 0.85)' : 'rgba(45, 15, 5, 0.8)';
-                    bgHighlight = 'rgba(255, 140, 50, 0.15)';
-                    sideColor = '#ff7b25'; // 烈阳赤橙
+                    bgColor = isFamous ? 'rgba(60, 25, 10, 0.88)' : 'rgba(45, 15, 5, 0.85)';
+                    bgHighlight = 'rgba(255, 140, 50, 0.22)';
+                    sideColor = '#ff8533'; // 烈阳赤橙
                 } else {
-                    bgColor = isFamous ? 'rgba(25, 35, 45, 0.85)' : 'rgba(15, 25, 35, 0.8)';
-                    bgHighlight = 'rgba(100, 180, 240, 0.15)';
-                    sideColor = '#3a9fd8'; // 坚岩冰蓝
+                    bgColor = isFamous ? 'rgba(25, 35, 45, 0.88)' : 'rgba(15, 25, 35, 0.85)';
+                    bgHighlight = 'rgba(100, 180, 240, 0.22)';
+                    sideColor = '#48aee6'; // 坚岩冰蓝
                 }
             } else if (skillType === 'famous') {
                 // 名将光环标签：霸气华贵的尊贵黑金 / 曜金
                 if (isAttacker) {
-                    bgColor = 'rgba(40, 30, 0, 0.9)';
-                    bgHighlight = 'rgba(255, 215, 0, 0.2)';
+                    bgColor = 'rgba(40, 30, 0, 0.92)';
+                    bgHighlight = 'rgba(255, 215, 0, 0.25)';
                     sideColor = '#ffd700'; // 纯金
                 } else {
-                    bgColor = 'rgba(30, 25, 10, 0.9)';
-                    bgHighlight = 'rgba(255, 230, 100, 0.2)';
+                    bgColor = 'rgba(30, 25, 10, 0.92)';
+                    bgHighlight = 'rgba(255, 230, 100, 0.25)';
                     sideColor = '#e0c050'; // 曜金
                 }
             } else if (skillType === 'reinforcement') {
                 // 援军协力标签：多路合兵的战鼓赤铜 / 旌旗蔚蓝
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(55, 30, 0, 0.85)' : 'rgba(40, 20, 0, 0.8)';
-                    bgHighlight = 'rgba(255, 160, 40, 0.15)';
-                    sideColor = '#e67300'; // 战鼓橙金
+                    bgColor = isFamous ? 'rgba(55, 30, 0, 0.88)' : 'rgba(40, 20, 0, 0.85)';
+                    bgHighlight = 'rgba(255, 160, 40, 0.22)';
+                    sideColor = '#f07d0a'; // 战鼓橙金
                 } else {
-                    bgColor = isFamous ? 'rgba(10, 30, 50, 0.85)' : 'rgba(5, 20, 40, 0.8)';
-                    bgHighlight = 'rgba(70, 150, 255, 0.15)';
-                    sideColor = '#4a90e2'; // 旌旗苍蓝
+                    bgColor = isFamous ? 'rgba(10, 30, 50, 0.88)' : 'rgba(5, 20, 40, 0.85)';
+                    bgHighlight = 'rgba(70, 150, 255, 0.22)';
+                    sideColor = '#569ce8'; // 旌旗苍蓝
                 }
             } else {
                 // 战术或其他：具有攻击性的红橙 / 深邃的海洋蓝
                 if (isAttacker) {
-                    bgColor = isFamous ? 'rgba(70, 10, 0, 0.85)' : 'rgba(45, 5, 0, 0.8)';
-                    bgHighlight = 'rgba(255, 60, 20, 0.12)';
-                    sideColor = '#e63900'; // 血红偏橙
+                    bgColor = isFamous ? 'rgba(72, 14, 4, 0.9)' : 'rgba(48, 8, 2, 0.86)';
+                    bgHighlight = 'rgba(255, 75, 30, 0.2)';
+                    sideColor = '#f2440d'; // 血红偏橙
                 } else {
-                    bgColor = isFamous ? 'rgba(0, 25, 60, 0.85)' : 'rgba(0, 15, 40, 0.8)';
-                    bgHighlight = 'rgba(40, 120, 255, 0.12)';
-                    sideColor = '#0066cc'; // 纯粹的深湛蓝
+                    bgColor = isFamous ? 'rgba(4, 30, 68, 0.9)' : 'rgba(2, 18, 46, 0.86)';
+                    bgHighlight = 'rgba(50, 135, 255, 0.2)';
+                    sideColor = '#1a80e6'; // 纯粹的深湛蓝
                 }
             }
 
@@ -3417,20 +3507,19 @@ export class CombatUI {
                 justify-content: center;
                 flex: 0 0 auto;
                 min-width: ${uiPx(88)};
-                max-width: ${uiPx(115)};
-                min-height: ${uiPx(42)};
+                max-width: ${uiPx(118)};
+                min-height: ${uiPx(44)};
                 box-sizing: border-box;
-                background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(0,0,0,0.5) 40%, ${bgColor} 100%);
+                background: linear-gradient(180deg, ${bgHighlight} 0%, rgba(12, 10, 8, 0.72) 45%, ${bgColor} 100%);
                 backdrop-filter: blur(4px);
-                border: 1px solid rgba(0, 0, 0, 0.6);
-                border-top: 1px solid rgba(255, 255, 255, 0.15);
+                border: 1px solid ${borderColor};
                 border-bottom: 2px solid ${sideColor};
-                border-radius: 4px;
-                padding: ${uiPx(4)} ${uiPx(6)};
+                border-radius: 5px;
+                padding: ${uiPx(4)} ${uiPx(7)};
                 box-shadow: 
-                    inset 0 1px 1px rgba(255,255,255,0.25), 
-                    inset 0 -10px 20px ${sideColor}35, 
-                    0 3px 8px rgba(0,0,0,0.9);
+                    inset 0 1px 1px rgba(255,255,255,0.24), 
+                    inset 0 -10px 18px ${sideColor}38, 
+                    0 3px 9px rgba(0,0,0,0.88);
                 overflow: visible;
                 position: relative;
             `;
@@ -3440,7 +3529,7 @@ export class CombatUI {
                 font-family: 'Noto Serif SC', serif;
                 font-size: ${uiPx(15)};
                 font-weight: 900;
-                color: #fff8e0;
+                color: #fff9e6;
                 letter-spacing: 1px;
                 line-height: 1.2;
                 margin-bottom: ${uiPx(2)};
@@ -3449,22 +3538,24 @@ export class CombatUI {
                 text-overflow: ellipsis;
                 width: 100%;
                 text-align: center;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
             `;
             nameEl.textContent = name;
 
             const effectEl = document.createElement('div');
             effectEl.style.cssText = `
                 font-family: 'Noto Sans SC', sans-serif;
-                font-size: ${uiPx(10)};
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.78);
-                letter-spacing: 0.5px;
+                font-size: ${uiPx(11.5)};
+                font-weight: 700;
+                color: ${isAttacker ? 'rgba(255, 232, 185, 0.92)' : 'rgba(205, 238, 255, 0.92)'};
+                letter-spacing: 0.4px;
                 line-height: 1.2;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 width: 100%;
                 text-align: center;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
             `;
             effectEl.textContent = effect || '\u00A0';
 
@@ -3818,8 +3909,8 @@ export class CombatUI {
         const isLeft = this.isSideOnLeft(side);
         const t = Math.max(0, Math.floor(regularTroops));
         const troopStr = t >= 10000 ? `${(t / 10000).toFixed(2)}万` : `${t}`;
-        const nameHtml = `<span style="white-space: nowrap;">${name}</span>`;
-        const troopHtml = `<span style="font-weight: 700; color: #ffd700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; white-space: nowrap;">${troopStr}</span>`;
+        const nameHtml = `<span style="white-space: nowrap; color: #f6eedc; text-shadow: 0 1px 4px rgba(0,0,0,0.95);">${name}</span>`;
+        const troopHtml = `<span style="display: inline-block; padding: 1px ${uiPx(7)}; border-radius: 3px; background: linear-gradient(180deg, rgba(255, 215, 0, 0.2) 0%, rgba(180, 125, 20, 0.14) 100%); border: 1px solid rgba(255, 215, 0, 0.45); font-weight: 800; font-size: 0.92em; color: #ffe47a; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; white-space: nowrap; box-shadow: 0 1px 4px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);">${troopStr}</span>`;
         nameEl.innerHTML = isLeft
             ? `${nameHtml}<span style="margin-left: 8px;">${troopHtml}</span>`
             : `<span style="margin-right: 8px;">${troopHtml}</span>${nameHtml}`;
@@ -3847,8 +3938,8 @@ export class CombatUI {
     /** 战斗 HUD 叠在深色地图上：势力名一律浅色字，不用旗面色（浅旗会变黑字看不见） */
     private applyFactionName(factionId: string | null, nameSpan: HTMLSpanElement): void {
         nameSpan.textContent = this.resolveFactionLabel(factionId);
-        nameSpan.style.color = '#f0f0e8';
-        nameSpan.style.textShadow = '0 0 3px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.9)';
+        nameSpan.style.color = '#fff6dc';
+        nameSpan.style.textShadow = '0 0 4px rgba(0,0,0,0.98), 0 2px 8px rgba(0,0,0,0.9), 0 0 10px rgba(255, 215, 110, 0.22)';
     }
 
     // --- INTERACTION ---
@@ -3956,13 +4047,16 @@ export class CombatUI {
         const s0 = T.centerFadeStopInner;
         const sm = T.centerFadeStopMid;
         const so = T.centerFadeStopOuter;
-        return `radial-gradient(
-            ellipse ${ex}% ${ey}% at 50% 50%,
-            rgba(12, 11, 10, 0.97) ${s0}%,
-            rgba(10, 10, 14, 0.9) ${sm * 0.55}%,
-            rgba(10, 10, 14, 0.72) ${sm}%,
-            rgba(10, 10, 14, 0.32) ${so}%,
-            rgba(8, 8, 12, 0) 100%)`;
+        return `
+            linear-gradient(180deg, rgba(212, 168, 72, 0.08) 0%, rgba(16, 13, 10, 0.45) 14%, rgba(8, 7, 10, 0.82) 100%),
+            radial-gradient(
+                ellipse ${ex}% ${ey}% at 50% 54%,
+                rgba(16, 13, 10, 0.98) ${s0}%,
+                rgba(12, 11, 14, 0.93) ${sm * 0.55}%,
+                rgba(10, 10, 14, 0.78) ${sm}%,
+                rgba(10, 10, 14, 0.36) ${so}%,
+                rgba(8, 8, 12, 0) 100%)
+        `;
     }
 
     private playPortraitEntrance(): void {
@@ -4013,7 +4107,7 @@ export class CombatUI {
             this.rightBarTroopsBadge.style.transition = 'none';
             this.attackerBar.style.width = '50%';
             this.clashEffect.style.left = 'calc(50% - 8px)';
-            this.rightBarTroopsBadge.style.left = `calc(50% + ${uiPx(36)})`;
+            this.rightBarTroopsBadge.style.left = `min(calc(50% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
             void this.attackerBar.offsetWidth; // 强制回流，让归位与随后的缓动分成两帧
         }
         // P0 终态复位：恢复拉锯条/交界/兵力牌同频 0.45s 缓动与呼吸、标题动画
@@ -4055,7 +4149,7 @@ export class CombatUI {
         this.rightBarTroopsBadge.style.transition = `left ${slam}`;
         this.attackerBar.style.width = `${finalPct}%`;
         this.clashEffect.style.left = `calc(${finalPct}% - 8px)`;
-        this.rightBarTroopsBadge.style.left = `calc(${finalPct}% + ${uiPx(36)})`;
+        this.rightBarTroopsBadge.style.left = `min(calc(${finalPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
         // ② 交界爆闪：撞底同刻起闪，0.6s 后交还呼吸循环
         this.clashEffect.style.animation = 'clash-burst-flash 0.6s ease-out';
         window.setTimeout(() => {
@@ -5951,7 +6045,7 @@ export class CombatUI {
             const visualLeftPct = this.scene13SidesFlipped ? 100 - attPct : attPct;
             this.attackerBar.style.width = `${visualLeftPct}%`;
             this.clashEffect.style.left = `calc(${visualLeftPct}% - 8px)`;
-            this.rightBarTroopsBadge.style.left = `calc(${visualLeftPct}% + ${uiPx(36)})`;
+            this.rightBarTroopsBadge.style.left = `min(calc(${visualLeftPct}% + ${uiPx(20)}), calc(100% - ${uiPx(68)}))`;
         }
 
         // 溃败预兆（2026-07-18 主人定 P2）：第三幕起，落后方立绘渐染血红+变暗、名牌闪烁——高潮前的情绪铺垫；
@@ -5984,35 +6078,35 @@ export class CombatUI {
         const attDisadvantage = bfRatio < 0.67;
 
         const setActive = (el: HTMLDivElement, theme: 'you' | 'lie' | 'jun') => {
+            if (this.scene13LayoutOn && el === this.indicatorJun) {
+                el.style.display = 'none';
+                return;
+            }
+            el.style.display = 'inline-flex';
             el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
             if (theme === 'you') {
                 el.style.color = '#FFF2D4'; // 柔和的鎏金色
-                el.style.background = 'linear-gradient(135deg, rgba(120, 80, 10, 0.95), rgba(40, 20, 5, 0.95))';
-                el.style.borderColor = 'rgba(255, 184, 0, 0.8)';
-                el.style.boxShadow = '0 0 12px rgba(255, 184, 0, 0.5), inset 0 0 8px rgba(255, 184, 0, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(255, 184, 0, 0.8)';
+                el.style.background = 'linear-gradient(135deg, rgba(135, 90, 12, 0.96), rgba(45, 22, 6, 0.98))';
+                el.style.borderColor = 'rgba(255, 200, 50, 0.9)';
+                el.style.boxShadow = '0 0 12px rgba(255, 184, 0, 0.55), inset 0 0 8px rgba(255, 184, 0, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 184, 0, 0.85)';
             } else if (theme === 'lie') {
                 el.style.color = '#FFD4D4'; // 柔和的血月色
-                el.style.background = 'linear-gradient(135deg, rgba(90, 20, 20, 0.95), rgba(30, 5, 5, 0.95))';
-                el.style.borderColor = 'rgba(255, 59, 48, 0.8)';
-                el.style.boxShadow = '0 0 12px rgba(255, 59, 48, 0.5), inset 0 0 8px rgba(255, 59, 48, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(255, 59, 48, 0.8)';
+                el.style.background = 'linear-gradient(135deg, rgba(105, 22, 22, 0.96), rgba(35, 6, 6, 0.98))';
+                el.style.borderColor = 'rgba(255, 75, 60, 0.88)';
+                el.style.boxShadow = '0 0 12px rgba(255, 59, 48, 0.55), inset 0 0 8px rgba(255, 59, 48, 0.3)';
+                el.style.textShadow = '0 0 6px rgba(255, 59, 48, 0.85)';
             } else if (theme === 'jun') {
                 el.style.color = '#D4F4FF'; // 柔和的冰蓝色
-                el.style.background = 'linear-gradient(135deg, rgba(15, 60, 90, 0.95), rgba(5, 20, 40, 0.95))';
-                el.style.borderColor = 'rgba(0, 229, 255, 0.8)';
+                el.style.background = 'linear-gradient(135deg, rgba(18, 70, 105, 0.96), rgba(6, 22, 42, 0.98))';
+                el.style.borderColor = 'rgba(60, 220, 255, 0.88)';
                 el.style.boxShadow = '0 0 12px rgba(0, 229, 255, 0.5), inset 0 0 8px rgba(0, 229, 255, 0.3)';
-                el.style.textShadow = '0 0 6px rgba(0, 229, 255, 0.8)';
+                el.style.textShadow = '0 0 6px rgba(0, 229, 255, 0.85)';
             }
         };
 
         const setInactive = (el: HTMLDivElement) => {
-            el.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-            el.style.color = 'rgba(255, 255, 255, 0.15)'; // 极暗的灰字
-            el.style.background = 'linear-gradient(135deg, rgba(30, 30, 32, 0.8), rgba(10, 10, 12, 0.8))';
-            el.style.borderColor = 'rgba(80, 80, 85, 0.4)'; // 黯淡的边框
-            el.style.boxShadow = '0 2px 4px rgba(0,0,0,0.6)';
-            el.style.textShadow = 'none';
+            el.style.display = 'none';
         };
 
         setInactive(this.indicatorLeftYou);
@@ -6408,18 +6502,20 @@ export class CombatUI {
         const el = document.createElement('div');
         el.textContent = text;
         el.style.cssText = `
-            width: ${uiPx(24)};
-            height: ${uiPx(24)};
-            line-height: ${uiPx(22)};
+            width: ${uiPx(25)};
+            height: ${uiPx(25)};
+            display: none;
+            align-items: center;
+            justify-content: center;
             text-align: center;
             font-family: 'Noto Serif SC', serif;
-            font-size: ${uiPx(16)};
+            font-size: ${uiPx(15)};
             font-weight: 900;
             color: rgba(255, 255, 255, 0.3);
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(20, 20, 20, 0.85);
             border: 1px solid rgba(100, 100, 100, 0.5);
-            border-radius: 2px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.8);
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.85);
             transition: all 0.3s ease;
         `;
         return el;
@@ -6477,18 +6573,19 @@ export class CombatUI {
             font-size: ${uiPx(18)};
             font-weight: 900;
             color: #fff8e0;
-            background: linear-gradient(135deg, rgba(55, 30, 15, 0.95) 0%, rgba(20, 5, 0, 0.95) 100%);
-            border-top: 1px solid rgba(255, 215, 0, 0.6);
-            border-left: 1px solid rgba(255, 215, 0, 0.4);
-            border-right: 1px solid rgba(150, 100, 20, 0.6);
-            border-bottom: 1px solid rgba(100, 50, 10, 0.8);
-            border-radius: 3px;
+            background: linear-gradient(160deg, rgba(64, 34, 16, 0.97) 0%, rgba(22, 10, 4, 0.98) 100%);
+            border-top: 1px solid rgba(255, 220, 110, 0.82);
+            border-left: 1px solid rgba(255, 215, 90, 0.62);
+            border-right: 1px solid rgba(185, 130, 35, 0.72);
+            border-bottom: 1px solid rgba(130, 75, 18, 0.88);
+            border-radius: 4px;
             padding: ${uiPx(14)} ${uiPx(8)};
             box-shadow: 
-                inset 0 1px 2px rgba(255,255,255,0.15), 
-                inset 0 -4px 8px rgba(0,0,0,0.6), 
-                0 6px 16px rgba(0,0,0,0.9);
-            text-shadow: 0 1px 2px rgba(0,0,0,1), 0 0 8px rgba(255, 200, 50, 0.3);
+                inset 0 1px 2px rgba(255,235,170,0.28), 
+                inset 0 -4px 8px rgba(0,0,0,0.65), 
+                0 6px 18px rgba(0,0,0,0.92),
+                0 0 10px rgba(212, 168, 72, 0.18);
+            text-shadow: 0 1px 3px rgba(0,0,0,1), 0 0 8px rgba(255, 200, 50, 0.35);
             z-index: ${T.zIndex.portrait + 5};
             display: none;
             pointer-events: none;
@@ -6515,11 +6612,11 @@ export class CombatUI {
             font-weight: 800;
             line-height: 1.15;
             color: #fff2b8;
-            background: linear-gradient(135deg, rgba(42, 22, 9, 0.96) 0%, rgba(20, 10, 3, 0.98) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.7);
-            border-radius: 3px;
-            padding: ${uiPx(5)} ${uiPx(10)};
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.9), inset 0 0 5px rgba(255, 215, 0, 0.22);
+            background: linear-gradient(135deg, rgba(48, 25, 10, 0.97) 0%, rgba(20, 10, 3, 0.99) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.78);
+            border-radius: 4px;
+            padding: ${uiPx(5)} ${uiPx(11)};
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.92), inset 0 0 6px rgba(255, 215, 0, 0.25);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 1), 0 0 6px rgba(255, 215, 0, 0.45);
             white-space: nowrap;
             letter-spacing: 1.5px;
@@ -6596,23 +6693,29 @@ export class CombatUI {
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {
         const tag = document.createElement('div');
+        tag.className = 'combat-famous-badge';
         const isAtt = side === 'left';
         tag.style.cssText = `
             position: absolute;
-            bottom: 52%;
-            ${isAtt ? 'right' : 'left'}: -${uiPx(80)};
+            bottom: calc(52% + ${uiPx(14)});
+            ${isAtt ? 'right' : 'left'}: -${uiPx(54)};
             display: none;
-            padding: 1px 5px;
-            border: 1px solid ${isAtt ? 'rgba(253,185,49,0.3)' : 'rgba(90,170,190,0.3)'};
+            padding: ${uiPx(5)} ${uiPx(4)};
+            border: 1px solid rgba(255, 215, 90, 0.85);
             border-radius: 3px;
-            background: ${isAtt ? 'rgba(60,25,5,0.35)' : 'rgba(10,35,55,0.35)'};
-            color: ${isAtt ? 'rgba(255,180,40,1)' : 'rgba(80,200,240,1)'};
-            font-size: ${uiPx(16)};
+            background: linear-gradient(180deg, rgba(165, 32, 16, 0.96) 0%, rgba(82, 12, 6, 0.98) 100%);
+            color: #ffe8a0;
+            font-size: ${uiPx(12.5)};
             font-family: 'Noto Serif SC', serif;
-            font-weight: 700;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1.15;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.88), inset 0 1px 2px rgba(255, 220, 130, 0.35);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
             z-index: ${T.zIndex.portrait + 5};
             pointer-events: none;
-            writing-mode: horizontal-tb;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
         `;
         tag.textContent = '名将';
         return tag;

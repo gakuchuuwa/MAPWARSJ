@@ -1,22 +1,21 @@
 /**
- * 16 母体文化六维 · 兵力上限（军团 / 据点）
+ * 66 文化专属特性 · 兵力上限（军团 / 据点）
  * 单一真理：GameConfig.CULTURE_COMBAT.LEGION_TROOP_CAP_TABLE / CITY_TROOP_CAP_TABLE
- * 🔴 [2026-09-15] 两张表现在只在 16 母体上开键，文化区一律先经 toBase16() 归入母体
- *    —— 直接拿 region 去索引会 100% 落空回落 1.0。
+ * 2026-10-18 主人定：按 66 文化键查表（⑦ 大军团编制 ×1.20，其余均为 1.0）。
  */
 import { GameConfig } from '../config/GameConfig';
 import type { CityType } from '../types/core';
 import { getCityRegion, type RegionType } from './RegionSystem';
-import { toBase16 } from './CultureBase16';
+import { toCulture66 } from './CultureHierarchy';
 
 export function getLegionTroopCapMult(region?: RegionType | string | null): number {
     if (!region) return 1;
-    return GameConfig.CULTURE_COMBAT.LEGION_TROOP_CAP_TABLE[toBase16(region)] ?? 1;
+    return GameConfig.CULTURE_COMBAT.LEGION_TROOP_CAP_TABLE[toCulture66(region)] ?? 1;
 }
 
 export function getCityTroopCapMult(region?: RegionType | string | null): number {
     if (!region) return 1;
-    return GameConfig.CULTURE_COMBAT.CITY_TROOP_CAP_TABLE[toBase16(region)] ?? 1;
+    return GameConfig.CULTURE_COMBAT.CITY_TROOP_CAP_TABLE[toCulture66(region)] ?? 1;
 }
 
 /** 军团兵力上限 = 全兵种基准 × 文化倍率 */
@@ -53,13 +52,14 @@ export function clampCityTroopsWithBaseMax(
 }
 
 export function clampCityTroopsForCityWithBaseMax(
-    city: { type: CityType; region?: string; latitude: number; longitude: number },
+    city: { type: CityType; buildingStyle?: string; region?: string; latitude: number; longitude: number },
     baseMaxForType: number,
     troops: number,
 ): number {
     return clampCityTroopsWithBaseMax(
         baseMaxForType,
         troops,
-        resolveCityCultureRegion(city),
+        city.buildingStyle || resolveCityCultureRegion(city),
     );
 }
+

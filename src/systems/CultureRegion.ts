@@ -11,6 +11,16 @@ import type { Army } from '../core/Army';
 import type { City } from '../types/core';
 import { getCityRegion, getRegion, RegionType } from './RegionSystem';
 import { CITIES_V2 } from '../data/cities_v2';
+import { toCulture66 } from './CultureHierarchy';
+
+const CITY_V2_BY_ID = new Map<string, (typeof CITIES_V2)[number]>();
+const CAPITAL_V2_BY_FACTION = new Map<string, (typeof CITIES_V2)[number]>();
+for (const c of CITIES_V2) {
+    CITY_V2_BY_ID.set(c.id, c);
+    if (c.factionId && !CAPITAL_V2_BY_FACTION.has(c.factionId)) {
+        CAPITAL_V2_BY_FACTION.set(c.factionId, c);
+    }
+}
 
 export type CultureCombatRole = 'field' | 'garrison';
 
@@ -54,7 +64,7 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
     // 导致斯拉夫/日耳曼/拉丁等新区无武将立绘抽到中原池（实测：斯拉夫据点出现中原武将）。
     // 守军 entity 缺失时同样落到这里：factionId 首都解析比坐标判定可靠。
     if (unit.factionId) {
-        const capital = CITIES_V2.find((c) => c.factionId === unit.factionId);
+        const capital = CAPITAL_V2_BY_FACTION.get(unit.factionId);
         if (capital) {
             return getCityRegion({
                 latitude: capital.lat,
@@ -67,3 +77,39 @@ export function resolveUnitCultureRegion(unit: IBattleUnit): RegionType {
     const pos = unit.getPosition();
     return getRegion(pos.lat, pos.lng);
 }
+
+/** 解析单位（军团或据点守军）所属的 66 文化键（62 二级 + 4 三级） */
+export function resolveUnitCulture66(unit: IBattleUnit): string {
+    const entity = unit.getEntity?.();
+
+    if (isGarrisonUnit(unit) && entity) {
+        const city = entity as City & { buildingStyle?: string };
+        if (city.buildingStyle) return toCulture66(city.buildingStyle);
+        if (city.id) {
+            const c2 = CITY_V2_BY_ID.get(city.id);
+            if (c2?.buildingStyle) return toCulture66(c2.buildingStyle);
+        }
+        return toCulture66(city.region ?? resolveUnitCultureRegion(unit));
+    }
+
+    const army = entity as Army | undefined;
+    const cityId = army?.homeCityId ?? army?.getSourceCityId?.() ?? null;
+    if (cityId) {
+        const c2 = CITY_V2_BY_ID.get(cityId);
+        if (c2?.buildingStyle) return toCulture66(c2.buildingStyle);
+        const home = getCityFromManager(cityId) as (City & { buildingStyle?: string }) | null;
+        if (home?.buildingStyle) return toCulture66(home.buildingStyle);
+    }
+
+    if (unit.factionId) {
+        const capital = CAPITAL_V2_BY_FACTION.get(unit.factionId);
+        if (capital?.buildingStyle) return toCulture66(capital.buildingStyle);
+    }
+
+    if (army && (army as unknown as { cultureRegion?: string }).cultureRegion) {
+        return toCulture66((army as unknown as { cultureRegion?: string }).cultureRegion);
+    }
+
+    return toCulture66(resolveUnitCultureRegion(unit));
+}
+

@@ -29,22 +29,22 @@ import { RegionType } from './RegionSystem';
 import {
     type CultureCombatRole,
     isGarrisonUnit,
+    resolveUnitCulture66,
     resolveUnitCultureRegion,
 } from './CultureRegion';
 import { type EliteTier, getCityEliteConfig, getLegionEliteConfig } from '../data/ExpeditionLegions';
 import { readSiegeGarrisonElite } from '../combat/SiegeGarrisonTier';
 import { hasCityWonder } from '../data/CityWonders';
+import { toCulture66 } from './CultureHierarchy';
 
 /** 文化区判定已抽至 CultureRegion（叶子模块，破循环依赖）；此处重新导出兼容旧引用 */
-export { type CultureCombatRole, resolveUnitCultureRegion } from './CultureRegion';
+export { type CultureCombatRole, resolveUnitCultureRegion, resolveUnitCulture66 } from './CultureRegion';
 
 const TIER_TABLE = GameConfig.CULTURE_COMBAT.TIER_TABLE;
-import { toBase16 } from './CultureBase16';
 
-/** 文化攻防系数（非随机，不含关隘类型加成）。
- *  🔴 [2026-09-15] 表只在 16 母体上开键，文化区先经 toBase16() 归入母体，不存在「未列出区」。 */
-export function getCultureCombatMultiplier(region: RegionType, role: CultureCombatRole): number {
-    const tier = TIER_TABLE[toBase16(region)];
+/** 文化攻防系数（非随机，不含关隘类型加成，按 66 文化键查表，未单列者为 1.0）。 */
+export function getCultureCombatMultiplier(region: RegionType | string, role: CultureCombatRole): number {
+    const tier = TIER_TABLE[toCulture66(region)];
     if (!tier) return 1;
     return role === 'field' ? tier[0] : tier[1];
 }
@@ -58,11 +58,11 @@ function getPassGarrisonMultiplier(unit: IBattleUnit): number {
     return 1;
 }
 
-/** 文化区固定系数（不含关隘拒险而守） */
+/** 文化固定系数（不含关隘拒险而守，按单位所属 66 文化键查表） */
 export function getCultureOnlyCombatMultiplier(unit: IBattleUnit): number {
-    const region = resolveUnitCultureRegion(unit);
+    const culture66 = resolveUnitCulture66(unit);
     const role: CultureCombatRole = isGarrisonUnit(unit) ? 'garrison' : 'field';
-    return getCultureCombatMultiplier(region, role);
+    return getCultureCombatMultiplier(culture66, role);
 }
 
 /** 关隘守军「据险而守」系数（非 pass 或非城防恒为 1） */
