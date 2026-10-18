@@ -169,7 +169,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kelite": {
-        legionName: "封建时代具装骑兵团",
+        legionName: "帝国时代米兰板甲雇佣军",
         legionType: "sub",
     },
     "liguliya": {
@@ -1295,11 +1295,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "region",
     },
     "aosiruowen": {
-        legionName: "城堡时代十字军团",
+        legionName: "古典时代黎凡特军团",
         legionType: "sub",
     },
     "antiaokegongguo": {
-        legionName: "城堡时代十字军团",
+        legionName: "城堡时代马穆鲁克军团",
         legionType: "sub",
     },
     "baojian_qishi": {
@@ -1431,7 +1431,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "kelimiya": {
-        legionName: "城堡时代拜占庭近卫军",
+        legionName: "城堡时代卡罗乔民兵团",
         legionType: "sub",
     },
     "fuerjia": {
@@ -3574,15 +3574,15 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "tupinijin": {
-        legionName: "帝国时代塔莫约军团",
+        legionName: "帝国时代葡萄牙军团",
         legionType: "sub",
     },
     "tuotuonake": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
     "taino": {
-        legionName: "帝国时代特诺奇军团",
+        legionName: "帝国时代西班牙征服军团",
         legionType: "sub",
     },
     "chamorro": {
@@ -3707,7 +3707,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "wangdaer": {
-        legionName: "古典时代迦太基军团",
+        legionName: "古典时代罗马军团",
         legionType: "sub",
     },
     "julushi": {

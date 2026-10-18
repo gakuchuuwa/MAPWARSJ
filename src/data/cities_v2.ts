@@ -938,7 +938,7 @@ buildingStyle: 'CENTRAL', troops: 10000,
     // 沙图阿满 — 叛军 (清军哨卡)
 
     // 星星峡 — 叛军 (丝路关隘)
-    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'stockade', troops: 20000, region: 'HEXI', buildingStyle: 'CENTRAL', note: '🔴 [2026-10-18 按史] 五峰燧为汉唐—明代河西走廊夯土板筑夹芦苇红柳的烽燧军台，不是契丹辽式边墙；项目无 HEXI 独立分支，归 CENTRAL（中原/汉唐城楼）作最接近的华夏夯土军台代理。' },
+    { id: 'city_xingxingxia', name: '五峰燧', factionId: 'xingxingxia', lat: 41.611382, lng: 95.267944, type: 'stockade', troops: 20000, region: 'HEXI', buildingStyle: 'KHITAN', note: '🔴 [2026-10-18 按史] 五峰燧为汉唐—明代河西走廊夯土板筑夹芦苇红柳的烽燧军台；与嘉峪关同属河西，项目无 HEXI 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
     // 赤亭 — 叛军 (吐鲁番绿洲)
     { id: 'city_chiting', name: '赤亭关', factionId: 'gaochang', lat: 42.85, lng: 91.5, type: 'pass', troops: 10000, region: 'WESTERN_FEUDAL', buildingStyle: 'WESTERN' },
@@ -1516,7 +1516,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
 
 
-    { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'CENTRAL', mirror: true, note: '🔴 [2026-10-18 按史] 赤金堡为明代西北卫所夯土外包砖实心关堡，不是契丹辽式；项目无 HEXI/MING 独立分支，归 CENTRAL（中原/汉唐城楼）作最接近的华夏边防堡代理。' },
+    { id: 'city_chijin', name: '赤金堡', factionId: 'chijin', lat: 40.000221, lng: 97.437744, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN', mirror: true, note: '🔴 [2026-10-18 按史] 赤金堡为明代西北卫所夯土外包砖实心关堡；与嘉峪关同属河西，项目无 HEXI/MING 独立分支，用 KHITAN（标签「河西（边墙要塞）」）作河西边墙代理，键名旧、非辽式。' },
 
     { id: 'city_dafeichuan', name: '大非川', factionId: 'dafeichuan', lat: 36.1379, lng: 100.7611, type: 'stockade', troops: 10000, region: 'HEXI', buildingStyle: 'KHITAN' },
 
@@ -2671,7 +2671,7 @@ buildingStyle: 'MONGOL', troops: 10000,
 
     { id: 'city_feiru', name: '肥如', factionId: 'guzhu', lat: 39.89, lng: 118.89, type: 'small_city', troops: 10000, region: 'NORTH', buildingStyle: 'WEI' },
 
-    { id: 'city_wuzhong', name: '无终', factionId: 'shanrong', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'CENTRAL', note: '🔴 [2026-10-18 按史] 无终（今天津蓟州，春秋无终国／右北平）为战国早期燕赵北境夯土台基、木骨泥墙与板瓦聚落；项目无 YAN 独立分支，归 CENTRAL（中原/北方华北·汉唐城楼）作最接近的华夏北方边防关塞代理，不再硬标三国曹魏 WEI。' },
+    { id: 'city_wuzhong', name: '无终', factionId: 'shanrong', lat: 39.95, lng: 117.4, type: 'small_city', troops: 10000, region: 'WEI', buildingStyle: 'WEI', note: '🔴 [2026-10-18 按史] 无终（今天津蓟州，春秋无终国／右北平）在河北，属河朔；项目 WEI 分支即「河朔」。建筑为战国早期燕赵北境夯土台基、木骨泥墙与板瓦聚落，故挂 WEI／河朔。' },
 
 
 

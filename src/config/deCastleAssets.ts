@@ -356,7 +356,7 @@ export const REGION_CASTLE: Record<RegionType, string> = {
     SRIVIJAYA: 'SEAS_CASTLE_AGE3',            // 三佛齐在苏门答腊，用东南亚风格集本套
     KUSHAN: 'INDI_CASTLE_AGE3',               // 贵霜（大月氏）据犍陀罗，建筑为希腊—印度混合的犍陀罗式
     KUSH: 'AFRI_CASTLE_AGE3',                 // 库施：努比亚黑金字塔石堡
-    KHITAN: 'KHIT_CASTLE_AGE3',              // 河西：辽式边墙要塞
+    KHITAN: 'KHIT_CASTLE_AGE3',              // 河西：边墙要塞
     UIGHUR: 'CEAS_CASTLE_AGE3',              // 回鹘：漠北窝鲁朵八里高台
     MOHE: 'JURC_CASTLE_AGE3',                // 靺鞨：海东盛国山城木石要塞
     ANGLO_SAXON: 'CELT_CASTLE_AGE3',          // 盎格鲁—撒克逊在不列颠岛，用海岛系而非大陆西欧
