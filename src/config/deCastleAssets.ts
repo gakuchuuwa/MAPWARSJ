@@ -742,8 +742,17 @@ export const REP_CITY_CASTLES: Readonly<Record<string, string>> = {
     city_tucapel: 'MAPU_CASTLE_AGE3',                 // 马普切（图卡佩尔）：安第斯南麓木石据点 (关隘)
 };
 
+/** 城级城堡外观覆盖：只改城市标记的城堡图，不改 buildingStyle/文化/军团。
+ *  🔴 [2026-10-18] 奥农多加（易洛魁）66 无 IROQUOIS 分支；用 VIKI_CASTLE_AGE3（诺斯长屋环形要塞）
+ *     代理长屋+木栅外观，避免继续用 MESO 阿兹特克金字塔。 */
+const CITY_CASTLE_VISUAL_OVERRIDE: Readonly<Record<string, string>> = {
+    city_onondaga: 'VIKI_CASTLE_AGE3',
+};
+
 /** 城堡素材解析：**代表据点 → 势力专属 → 文化区 → 风格集默认**。 */
 export function resolveCastleAsset(style: string, factionId?: string | null, region?: string | null, cityId?: string | null, buildingStyle?: string | null): string {
+    // 🔴 [2026-10-18] 城级外观覆盖优先：只给明确批准的单城例外，不动全局 buildingStyle 规则。
+    if (cityId && CITY_CASTLE_VISUAL_OVERRIDE[cityId]) return CITY_CASTLE_VISUAL_OVERRIDE[cityId];
     // 🔴 [2026-10-14 主人令「据点编辑中设计哪种建筑风格，就是哪种……不要让其他的影响」]
     //    据点传了 buildingStyle（66 选 1）→ 城堡就是这一种风格的城堡，代表据点／势力／文化区一律不再参与。
     if (buildingStyle) {
