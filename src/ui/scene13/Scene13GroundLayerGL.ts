@@ -284,23 +284,18 @@ void main() {
     waterCol = mix(waterCol, vec3(0.96, 0.98, 1.0), totalFoam * 0.85);
   }
   
-  // ── DE 高地立体坡面肌理、山脚暗部折线与平顶台地亮棱 ──
+  // ── DE 高地斜坡立体边坡肌理与坡脚体积暗部（不画 fract 等高线圈，仅对斜坡面赋予自然边坡立体感） ──
   if (vElev > 0.02 && isWater < 0.25) {
-    float flatBaseLight = 1.0 + min(0.09, vElev * 0.03);
+    float flatBaseLight = 1.0 + min(0.07, vElev * 0.022);
     float slopeDiff = abs(vLight - flatBaseLight);
-    float isSlopeFace = smoothstep(0.025, 0.14, slopeDiff);
-    // 斜坡表面自然露出土石边坡肌理（区别于平地草毯）
-    vec3 slopeEarth = mix(colDry, colDirt, 0.58);
-    landCol = mix(landCol, slopeEarth, isSlopeFace * 0.36);
+    float isSlopeFace = smoothstep(0.02, 0.12, slopeDiff);
+    // 斜坡面自然透出边坡土石肌理，使高地四周坡面拥有坚实体积感（不再只是地面亮暗斑）
+    vec3 slopeEarth = mix(colDry, colDirt, 0.52);
+    landCol = mix(landCol, slopeEarth, isSlopeFace * 0.26);
 
-    // 山脚接地暗部折线（Foot Ambient Occlusion，勾勒山体拔地而起的底边）
-    float footAO = smoothstep(0.02, 0.18, vElev) * (1.0 - smoothstep(0.18, 0.48, vElev));
-    landCol *= (1.0 - footAO * 0.15);
-
-    // 阶梯台地上沿受光亮棱（Plateau Rim Bevel，勾勒 DE 标志性的平顶台地边缘折线）
-    float fracE = fract(vElev);
-    float stepRim = smoothstep(0.68, 0.85, fracE) * (1.0 - smoothstep(0.85, 0.98, fracE)) * step(0.65, vElev);
-    landCol *= (1.0 + stepRim * 0.14);
+    // 坡脚柔和体积暗部（衬托高地从平原拔地而起，无等高线细圈）
+    float footAO = smoothstep(0.02, 0.20, vElev) * (1.0 - smoothstep(0.20, 0.58, vElev));
+    landCol *= (1.0 - footAO * 0.11);
   }
 
   // 最终合成与 DE 原生高程坡度光照
@@ -784,29 +779,28 @@ export class Scene13GroundLayerGL {
         const dhy = (hD - hU) / (gy > 0 && gy < N ? 2 : 1);
         const slopeMag = Math.hypot(dhx, dhy);
 
-        // 🔴 [REA逆向 AoE2DE_s.exe 0x1410416E0 + 0x14185CC10：DE 台地斜坡折面强明暗对比]
-        // 左上向阳斜坡（dhx > 0, dhy < 0）显著提亮，右下背阳斜坡（dhx < 0, dhy > 0）深沉压暗，
-        // 平顶台地内部与平地（slopeMag ≈ 0）保持平整明度，只在斜坡角点内部做轻量过渡，不跨台地棱线模糊。
+        // 🔴 [REA逆向 AoE2DE_s.exe 0x1410416E0 + 0x14185CC10：DE 360° 完整坡面折面光照]
+        // 向阳坡提亮（+28%）、背阳坡压暗（-31%）、侧向坡微暗（-10%），保证高地四周一圈都有清晰边坡体积感；
+        // 同时锁定平顶与平地不跨界模糊，防止高地被糊成地面明暗斑。
         const slopeTowardSun = (dhx - dhy) * 0.72 + (dhx + dhy) * 0.24;
         const crossSlope = Math.abs(dhx + dhy);
         let light = 1.0;
-        if (slopeMag > 0.025) {
+        if (slopeMag > 0.022) {
           rawIsSlope[idx] = 1;
           if (slopeTowardSun > 0.01) {
-            light = 1.0 + Math.min(0.32, slopeTowardSun * 0.72);
+            light = 1.0 + Math.min(0.28, slopeTowardSun * 0.65);
           } else if (slopeTowardSun < -0.01) {
-            light = 1.0 + Math.max(-0.35, slopeTowardSun * 0.80);
+            light = 1.0 + Math.max(-0.31, slopeTowardSun * 0.72);
           } else {
-            light = 1.0 - Math.min(0.12, crossSlope * 0.25);
+            light = 1.0 - Math.min(0.10, crossSlope * 0.22);
           }
         }
-        // 高地平顶台地微弱天光提亮，使台地顶面与 0 级平地层次分明
-        const elevBoost = Math.min(0.08, hC * 0.022);
-        rawLight[idx] = Math.max(0.65, Math.min(1.34, light + elevBoost));
+        const elevBoost = Math.min(0.07, hC * 0.022);
+        rawLight[idx] = Math.max(0.67, Math.min(1.30, light + elevBoost));
       }
     }
 
-    // 仅在斜坡角点之间做柔和过渡，绝不把平顶台地边缘和坡脚棱线糊平
+    // 仅在斜坡角点内部做柔和过渡，严格保留平顶台地边缘与坡脚边界
     for (let gy = 0; gy <= N; gy++) {
       for (let gx = 0; gx <= N; gx++) {
         const idx = gy * V_SIZE + gx;
@@ -823,7 +817,7 @@ export class Scene13GroundLayerGL {
             const nx = gx + dx;
             if (nx < 0 || nx > N) continue;
             const nIdx = ny * V_SIZE + nx;
-            const w = rawIsSlope[nIdx] ? ((dx === 0 || dy === 0) ? 1.5 : 0.75) : 0.35;
+            const w = rawIsSlope[nIdx] ? ((dx === 0 || dy === 0) ? 1.5 : 0.75) : 0.30;
             sum += rawLight[nIdx] * w;
             totalW += w;
           }
@@ -1283,8 +1277,8 @@ export class Scene13GroundLayerGL {
     // 🔴 [彻底根除固定底图残留] 大城坐落开阔平原，全图基底高程统一重置为 0 级！
     this.cornerElev.fill(0);
 
-    // 2. 远景原野：城周围保持开阔平地（rFlat + 7.5 格内全平 0 级），外围生成 DE 平顶丘陵
-    this.generateDeElevationGrid(cx, cy, rFlat + 7.5, 3.0, rnd, 'big_city');
+    // 2. 城防与护城河外缓冲带（rFlat 已含护城河 + 2.8 格平地缓冲）保持 0 级平地，外围生成 DE 平顶丘陵
+    this.generateDeElevationGrid(cx, cy, rFlat, 3.0, rnd, 'big_city');
 
     this.updateCornerLight();
     this.elevDirty = true;
@@ -1292,11 +1286,11 @@ export class Scene13GroundLayerGL {
 
   /**
    * 🔴 [REA 逆向 `AoE2DE_s.exe` 0x14135E990 (`base_elevation_generate`) + 0x14135F1F0 (`check_elevation`) + 0x14103CC60 (`clean_elevation`)]
-   * 在 120×120 地形格网 (gx, gy) 上生成 DE 风格圆润平顶高地丘陵：
-   * 1. `5×5` 邻域内聚生长 (`cost = 250 - 15 * bVar4 + rand(0..99)`)，配合 5×5 多数滤波消除锯齿毛刺，轮廓圆润饱满；
-   * 2. 城周围保护区留出有机缓坡余量，且各山丘中心保持间距，彻底杜绝山丘连成环形战壕围城；
-   * 3. 外圈 2~3 格平滑斜坡裙边 + 内部宽阔平坦台地顶面（Plateau Top），树木与大山稳立于平顶丘陵与山坡之上；
-   * 4. `0x141046720` / `0x141046AE0` 填平 1 格窄沟、削去 1 格刀刃尖脊，并对斜坡角点做保平顶柔化，彻底消除三角折面破损。
+   * 在 120×120 地形格网 (gx, gy) 上生成 DE 风格平顶高地丘陵：
+   * 1. `5×5` 邻域内聚生长 (`cost = 250 - 15 * bVar4 + rand(0..99)`)，配合 5×5 多数滤波消除细碎毛刺，轮廓圆润饱满；
+   * 2. 分「近郊圈（紧贴护城河平地缓冲带外侧，100% 默认视野四角与外缘即可见）」与「远郊原野圈」两级分布，各山丘保持间距绝不连成环形围墙；
+   * 3. 外圈 1~2 格阶梯斜坡 + 内部宽阔平坦台地顶面（Plateau Top），树木与大山稳立于平顶丘陵与山坡之上；
+   * 4. `0x141046720` / `0x141046AE0` 填平 1 格窄沟、削去 1 格刀刃尖脊，保留清晰硬朗的平顶台地棱线。
    */
   private generateDeElevationGrid(
     cx: number,
@@ -1310,18 +1304,23 @@ export class Scene13GroundLayerGL {
     const V = N + 1;
     const tileElev = new Int8Array(N * N);
 
-    const inProtect = (gx: number, gy: number) => Math.hypot(gx - cx, gy - cy) < rProtect;
+    // 城池与护城河采用八角等轴距离保护，既严密保护城墙与护城河平地，又让屏幕四角斜向近郊自然露出丘陵
+    const cityDist = (gx: number, gy: number): number => {
+      const dx = Math.abs(gx - cx), dy = Math.abs(gy - cy);
+      return Math.hypot(dx, dy) * 0.62 + (dx + dy) * 0.7071 * 0.38;
+    };
+    const inProtect = (gx: number, gy: number) => cityDist(gx, gy) < rProtect;
     const isWet = (gx: number, gy: number) =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
-    // 生长边界：比 rProtect 多留 3 格缓冲 + 随方位角自然起伏，杜绝多个团块贴着保护圈长成一圈环形墙
+    // 生长边界：在 rProtect 外留 1.0~2.4 格随方位角自然起伏的缓冲，既让 100% 视野外圈能看到高地，又杜绝连成环形墙
     const wobPhase1 = rnd() * Math.PI * 2;
     const wobPhase2 = rnd() * Math.PI * 2;
     const inGrowthGuard = (gx: number, gy: number): boolean => {
       const dx = gx - cx, dy = gy - cy;
-      const dist = Math.hypot(dx, dy);
+      const dist = cityDist(gx, gy);
       const ang = Math.atan2(dy, dx);
-      const guardR = rProtect + 3.0 + 2.2 * Math.sin(3 * ang + wobPhase1) + 1.5 * Math.cos(2 * ang + wobPhase2);
+      const guardR = rProtect + 1.1 + 1.1 * Math.sin(3 * ang + wobPhase1) + 0.8 * Math.cos(2 * ang + wobPhase2);
       return dist < guardR;
     };
 
@@ -1329,11 +1328,6 @@ export class Scene13GroundLayerGL {
     const isPass = category === 'pass';
     const isStockade = category === 'stockade';
     const maxIntLevel = Math.max(2, Math.min(4, Math.floor(maxLevel)));
-
-    let clumpCount = 4 + Math.floor(rnd() * 3); // 4 ~ 6 处独立外围平顶丘陵
-    if (isBig) clumpCount = 4 + Math.floor(rnd() * 2);
-    else if (isPass) clumpCount = 4 + Math.floor(rnd() * 3);
-    else if (isStockade) clumpCount = 3 + Math.floor(rnd() * 3);
 
     const D4: ReadonlyArray<[number, number]> = [[-1, 0], [1, 0], [0, -1], [0, 1]];
     const D8: ReadonlyArray<[number, number]> = [
@@ -1449,7 +1443,7 @@ export class Scene13GroundLayerGL {
           if (sf[y * N + x] >= 0.16) {
             treeTileMask[y * N + x] = 1;
             if (!inGrowthGuard(x, y) && x % 4 === 0 && y % 4 === 0) {
-              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 13);
               if (!close) prioritySeeds.push({ x, y });
             }
           }
@@ -1476,7 +1470,7 @@ export class Scene13GroundLayerGL {
               nearTrees += treeCellCounts[(y + dy) * N + (x + dx)];
             }
           }
-          if (nearTrees >= 3) {
+          if (nearTrees >= 2) {
             for (let dy = -1; dy <= 1; dy++) {
               for (let dx = -1; dx <= 1; dx++) {
                 const nx = x + dx, ny = y + dy;
@@ -1484,7 +1478,7 @@ export class Scene13GroundLayerGL {
               }
             }
             if (!inGrowthGuard(x, y)) {
-              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+              const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 13);
               if (!close) prioritySeeds.push({ x, y });
             }
           }
@@ -1496,14 +1490,14 @@ export class Scene13GroundLayerGL {
         for (let x = 6; x < N - 6; x += 4) {
           if (inGrowthGuard(x, y) || isWet(x, y)) continue;
           if (this.origElev[y * N + x] >= 2) {
-            const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 16);
+            const close = prioritySeeds.some(s => Math.hypot(s.x - x, s.y - y) < 13);
             if (!close) prioritySeeds.push({ x, y });
           }
         }
       }
     }
 
-    // 将团块转为「外缘阶梯缓坡 + 内部宽阔平顶」高程
+    // 将团块转为「外缘阶梯斜坡 + 内部宽阔平顶台地」高程
     const applyPlateauElevation = (region: Set<number>, peakH: number) => {
       const dist = new Map<number, number>();
       let q: number[] = [];
@@ -1547,14 +1541,68 @@ export class Scene13GroundLayerGL {
     };
 
     const placedSeeds: Array<{ x: number; y: number }> = [];
-    const totalClumps = Math.min(7, Math.max(clumpCount, prioritySeeds.length));
 
-    for (let c = 0; c < totalClumps; c++) {
+    // 第一圈：城防护城河缓冲外侧的「近郊高地圈」（距离 rProtect + 2.0 ~ rProtect + 8.5 格），
+    // 分布在四角与侧翼方位，确保 100% 默认缩放视野下护城河外缘即可清晰看到立体平顶高地与林木丘陵，且各山丘间隔 >= 12 格绝不围城
+    const nearCount = isPass ? 3 : isStockade ? 3 : 5;
+    const baseAng0 = rnd() * Math.PI * 2;
+    for (let k = 0; k < nearCount; k++) {
+      const targetAng = baseAng0 + (k * Math.PI * 2) / nearCount + (rnd() - 0.5) * 0.45;
+      let seedX = 0, seedY = 0, found = false;
+
+      // 优先在该方位扇区内寻找有树木或森林的近郊点
+      for (const ps of prioritySeeds) {
+        const d = cityDist(ps.x, ps.y);
+        if (d < rProtect + 1.8 || d > rProtect + 9.5) continue;
+        const angDiff = Math.abs(Math.atan2(Math.sin(Math.atan2(ps.y - cy, ps.x - cx) - targetAng), Math.cos(Math.atan2(ps.y - cy, ps.x - cx) - targetAng)));
+        if (angDiff > 0.75) continue;
+        const tooClose = placedSeeds.some(s => Math.hypot(s.x - ps.x, s.y - ps.y) < 12);
+        if (!tooClose && !inGrowthGuard(ps.x, ps.y) && !isWet(ps.x, ps.y)) {
+          seedX = ps.x;
+          seedY = ps.y;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        for (let attempt = 0; attempt < 36; attempt++) {
+          const ang = targetAng + (rnd() - 0.5) * 0.55;
+          const rad = rProtect + 2.5 + rnd() * 5.0;
+          const sx = Math.round(cx + Math.cos(ang) * rad);
+          const sy = Math.round(cy + Math.sin(ang) * rad);
+          if (sx < 5 || sx >= N - 5 || sy < 5 || sy >= N - 5) continue;
+          const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < 12);
+          if (!tooClose && !inGrowthGuard(sx, sy) && !isWet(sx, sy) && tileElev[sy * N + sx] === 0) {
+            seedX = sx;
+            seedY = sy;
+            found = true;
+            break;
+          }
+        }
+      }
+      if (!found) continue;
+
+      const peakH = Math.min(maxIntLevel, rnd() < 0.65 ? 3 : 2);
+      const tangentAng = Math.atan2(seedY - cy, seedX - cx) + Math.PI * 0.5 + (rnd() - 0.5) * 0.6;
+      const clumpTiles = 52 + Math.floor(rnd() * 44);
+      const region = growCohesiveClump(seedX, seedY, clumpTiles, tangentAng, 0.45 + rnd() * 0.65);
+      if (region.size < 18) continue;
+
+      placedSeeds.push({ x: seedX, y: seedY });
+      applyPlateauElevation(region, peakH);
+    }
+
+    // 第二圈：中远景战场原野高地（6 ~ 9 处宽阔平顶高地）
+    const outerClumpCount = isBig ? (6 + Math.floor(rnd() * 3)) : (6 + Math.floor(rnd() * 3));
+    const totalOuter = Math.min(9, Math.max(outerClumpCount, Math.min(8, prioritySeeds.length)));
+
+    for (let c = 0; c < totalOuter; c++) {
       let seedX = 0, seedY = 0, found = false;
 
       if (c < prioritySeeds.length) {
         const ps = prioritySeeds[c];
-        const tooClose = placedSeeds.some(s => Math.hypot(s.x - ps.x, s.y - ps.y) < 16);
+        const tooClose = placedSeeds.some(s => Math.hypot(s.x - ps.x, s.y - ps.y) < 14);
         if (!tooClose && !inGrowthGuard(ps.x, ps.y) && !isWet(ps.x, ps.y) && tileElev[ps.y * N + ps.x] === 0) {
           seedX = ps.x;
           seedY = ps.y;
@@ -1564,9 +1612,9 @@ export class Scene13GroundLayerGL {
 
       if (!found) {
         for (let attempt = 0; attempt < 80; attempt++) {
-          const sx = 8 + Math.floor(rnd() * (N - 16));
-          const sy = 8 + Math.floor(rnd() * (N - 16));
-          const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < 18);
+          const sx = 7 + Math.floor(rnd() * (N - 14));
+          const sy = 7 + Math.floor(rnd() * (N - 14));
+          const tooClose = placedSeeds.some(s => Math.hypot(s.x - sx, s.y - sy) < 15);
           if (!tooClose && !inGrowthGuard(sx, sy) && !isWet(sx, sy) && tileElev[sy * N + sx] === 0) {
             seedX = sx;
             seedY = sy;
@@ -1580,31 +1628,31 @@ export class Scene13GroundLayerGL {
       const demH = this.origElev ? (this.origElev[seedY * N + seedX] ?? 0) : 0;
       const hRoll = rnd();
       let peakH = 2;
-      if (maxIntLevel >= 3 && (hRoll < 0.55 || demH >= 2)) {
+      if (maxIntLevel >= 3 && (hRoll < 0.65 || demH >= 2)) {
         peakH = 3;
       }
       peakH = Math.max(2, Math.min(maxIntLevel, peakH));
 
       const styleRoll = rnd();
       const axisAngle = rnd() * Math.PI;
-      const aniso = styleRoll < 0.45 ? 0.20 : styleRoll < 0.80 ? (0.8 + rnd() * 0.9) : (1.5 + rnd() * 0.9);
+      const aniso = styleRoll < 0.45 ? 0.25 : styleRoll < 0.80 ? (0.75 + rnd() * 0.8) : (1.35 + rnd() * 0.8);
       const clumpTiles = isBig
-        ? (115 + Math.floor(rnd() * 110))
-        : (90 + Math.floor(rnd() * 95));
+        ? (105 + Math.floor(rnd() * 95))
+        : (80 + Math.floor(rnd() * 85));
 
       const region = growCohesiveClump(seedX, seedY, clumpTiles, axisAngle, aniso);
-      if (region.size < 28) continue;
+      if (region.size < 24) continue;
 
       placedSeeds.push({ x: seedX, y: seedY });
       applyPlateauElevation(region, peakH);
     }
 
-    // 保底：外围树木所在格若尚未在丘陵上，按 DE 5×5 内聚生长平缓丘陵托底，保证树长在丘陵上
+    // 保底：外围树木所在格若尚未在丘陵上，按 DE 5×5 内聚生长平顶丘陵托底，保证树长在丘陵上
     for (let y = 4; y < N - 4; y += 3) {
       for (let x = 4; x < N - 4; x += 3) {
         const idx = y * N + x;
         if (!treeTileMask[idx] || tileElev[idx] > 0 || inProtect(x, y) || isWet(x, y)) continue;
-        const region = growCohesiveClump(x, y, 48 + Math.floor(rnd() * 40), rnd() * Math.PI, 0.35 + rnd() * 0.5);
+        const region = growCohesiveClump(x, y, 42 + Math.floor(rnd() * 38), rnd() * Math.PI, 0.35 + rnd() * 0.5);
         if (region.size >= 14) {
           applyPlateauElevation(region, 2);
         }
@@ -1666,7 +1714,7 @@ export class Scene13GroundLayerGL {
       if (!changed) break;
     }
 
-    // 将整数瓦片高程转换至 cornerElev 角点网格，并对斜坡过渡带做 2 遍保平顶圆滑滤波（山顶平台与平地保持绝对平坦）
+    // 将整数瓦片高程转换至 cornerElev 角点网格：平顶台地与平地角点锁定不模糊，仅对斜坡角点做 1 遍轻量圆角过渡
     const hillCorners = new Float32Array(V * V);
     const isFlatCorner = new Uint8Array(V * V);
     for (let gy = 0; gy <= N; gy++) {
@@ -1700,29 +1748,27 @@ export class Scene13GroundLayerGL {
 
         const h = count > 0 ? sum / count : 0;
         hillCorners[gy * V + gx] = h;
-        // 若四角相邻瓦片全为同一高度（0 级平地或山顶平顶台地内部），锁定为平坦角点
+        // 若四角相邻瓦片全为同一高度（0 级平地或山顶平顶台地内部），锁定为平坦角点，严禁平滑抹圆
         if (minT === maxT) {
           isFlatCorner[gy * V + gx] = 1;
         }
       }
     }
 
-    // 仅对斜坡过渡角点做 2 遍圆润平滑，消除正交网格 90° 折角锯齿，同时保留山顶平顶台地边界
-    for (let pass = 0; pass < 2; pass++) {
-      const prev = new Float32Array(hillCorners);
-      for (let gy = 1; gy < N; gy++) {
-        for (let gx = 1; gx < N; gx++) {
-          const idx = gy * V + gx;
-          if (isFlatCorner[idx]) continue;
-          const self = prev[idx];
-          const avg4 = 0.25 * (
-            prev[(gy - 1) * V + gx] +
-            prev[(gy + 1) * V + gx] +
-            prev[gy * V + (gx - 1)] +
-            prev[gy * V + (gx + 1)]
-          );
-          hillCorners[idx] = self * 0.52 + avg4 * 0.48;
-        }
+    // 仅对斜坡折角做 1 遍轻量圆角柔化（0.68 / 0.32），既消除 90° 硬锯齿，又保留 DE 鲜明的平顶台地边界
+    const prev = new Float32Array(hillCorners);
+    for (let gy = 1; gy < N; gy++) {
+      for (let gx = 1; gx < N; gx++) {
+        const idx = gy * V + gx;
+        if (isFlatCorner[idx]) continue;
+        const self = prev[idx];
+        const avg4 = 0.25 * (
+          prev[(gy - 1) * V + gx] +
+          prev[(gy + 1) * V + gx] +
+          prev[gy * V + (gx - 1)] +
+          prev[gy * V + (gx + 1)]
+        );
+        hillCorners[idx] = self * 0.68 + avg4 * 0.32;
       }
     }
 
@@ -1741,8 +1787,8 @@ export class Scene13GroundLayerGL {
   /**
    * 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
    * 中城/小城地形生成：
-   * 1. 城池与城周围（护城河及城外宽幅平地缓冲带 rFlat + 7.5 格）统一整平为 0 级开阔平地；
-   * 2. 外围高地丘陵推到城外围（rFlat + 7.5 格之外），按真实水陆、树林与 DEM 随机生长多样化丘陵。
+   * 1. 城池与护城河外缓冲带（rFlat 已包含护城河及河外 2.8 格平地）统一整平为 0 级开阔平地；
+   * 2. 护城河缓冲带外侧紧接着生长 DE 平顶高地丘陵，使 100% 默认视野外缘与四角即可清晰见到立体高地。
    */
   public flattenMediumSmallCityTerrain(
     screenX: number,
@@ -1768,11 +1814,11 @@ export class Scene13GroundLayerGL {
     const rFlat = flatCells;
     const isMedium = cityType === 'medium_city';
 
-    // 1. 城池及城周围统一整平为 0 级平地
+    // 1. 城池及护城河周围统一整平为 0 级平地
     this.cornerElev.fill(0);
 
-    // 2. 城外围（rFlat + 7.5 格以外）采用 DE 团块元胞生长出多样化平顶丘陵
-    const rProt = rFlat + (isMedium ? 7.5 : 7.0);
+    // 2. rFlat 已含护城河及河外 2.8 格平地缓冲；在 rFlat - 0.4 以外生成 DE 平顶丘陵，100% 视野外围即可看见明显高地
+    const rProt = Math.max(8.5, rFlat - 0.4);
     const maxH = isMedium ? 3.5 : 3.0;
     this.generateDeElevationGrid(cx, cy, rProt, maxH, rnd, cityType);
 
@@ -1915,7 +1961,7 @@ export class Scene13GroundLayerGL {
    * 城寨（Stockade）真实山巅山寨生成：
    * 1. 彻底根除凹陷山坳/盆地：城寨自身就是整座大山的主峰制高点（Mountain Summit）；
    * 2. 寨内自顶向外层层高耸：中心大屋/首领营（5~6 级主峰顶台）-> 聚落平台（4~5 级）-> 木栅围栏（3~4 级山巅台地）；
-   * 3. 整座大山从木栅栏边缘向四周 360 度以 14~20 格宽幅缓坡向山脚平原顺畅倾斜滑落（跌落至 0 级）；
+   * 3. 整座大山从木栅栏边缘向四周 360 度以宽幅有机山岗缓坡向山脚平原顺畅倾斜滑落（跌落至 0 级）；
    * 4. 外围原野仅散落 1~2 级低矮草坡小丘，绝不允许超越主峰，呈现出真正的「居高临下、雄峙山巅」古代山寨质感。
    */
   public flattenStockadeTerraces(
@@ -1963,8 +2009,8 @@ export class Scene13GroundLayerGL {
     const fenceInAt = (theta: number): number => binAt(fenceRIn, theta);
     let fenceMin = Infinity, fenceMax = 0;
     for (let k = 0; k < BINS; k++) { fenceMin = Math.min(fenceMin, fenceR[k]); fenceMax = Math.max(fenceMax, fenceR[k]); }
-    const FENCE_PAD = 1.0;    // 木栅件本身的厚度 + 余量（格）
-    const FENCE_SLOPE = 2.5;  // 木栅外坡宽（格）
+    const FENCE_PAD = 0.95;   // 木栅件本身的厚度 + 余量（格）
+    const FENCE_SLOPE = 4.6;  // 木栅外自然宽幅山岗缓坡（格），消除刀切方形底座感
 
     const N = this.N;
     const V = N + 1;
@@ -2022,25 +2068,26 @@ export class Scene13GroundLayerGL {
       for (let x = 0; x <= N; x++) {
         const dx = x - cx, dy = y - cy;
         if (hasFence) {
-          // 三层台地都跟木栅形状走：q = 到城心距离 ÷ 该方位木栅半径（实测院内：中心大屋 q≈0、一圈房屋 q 0.48~0.67、木栅 q=1）
-          //   q ≤ 0.18 中心 7 级 → 0.34 降到 5 级 → 聚落平台到 0.74 → 0.87 降到木栅 3 级 → 木栅外 FENCE_PAD 格起外坡
-          //   （q 以该方位最近的木栅件为 1；坡离木栅留 0.13，免得地面双线性插值把木栅中段带高）
+          // 三层台地保证所有房屋与木栅稳立平地，同时木栅外坡向圆润山岗自然舒展（消除方盒子底座感）：
+          //   q ≤ 0.18 中心 7 级 → 0.34 降到 5 级 → 聚落平台到 0.74 → 0.87 降到木栅 3 级 → 木栅外 FENCE_PAD 格起自然宽缓山坡
           const d = Math.hypot(dx, dy), th = Math.atan2(dy, dx);
           const rf0 = fenceAt(th), q = d / fenceInAt(th);
           const step = (a: number, b: number, h0: number, h1: number): number => { const s = (q - a) / (b - a); return h0 + (h1 - h0) * s * s * (3 - 2 * s); };
-          let slopeMul = 1.0;
+          let slopeMul = 1.0 + 0.28 * Math.sin(2 * th + phase1) + 0.22 * Math.cos(3 * th + phase2);
           if (shapeMode === 'ridge') {
             const align = Math.cos(th - ridgeAngle);
-            slopeMul = 0.85 + 1.15 * align * align;
+            slopeMul *= 0.85 + 0.95 * align * align;
           } else if (shapeMode === 'organic') {
-            slopeMul = 1.0 + 0.45 * Math.sin(3 * th + phase1) + 0.25 * Math.cos(2 * th + phase2);
-          } else if (shapeMode === 'circle') {
-            slopeMul = 1.15 + 0.15 * Math.sin(2 * th + phase1);
+            slopeMul *= 1.0 + 0.32 * Math.sin(3 * th + phase1) + 0.20 * Math.cos(2 * th + phase2);
           }
-          const outerSlopeW = Math.max(2.0, FENCE_SLOPE * slopeMul);
+          // 补偿木栅四边凹陷处的外坡宽度，使山脚外轮廓趋向浑圆有机的自然山体，而非生硬方形边框
+          const roundComp = Math.max(0, fenceMax - rf0) * 0.75;
+          const outerSlopeW = Math.max(3.0, FENCE_SLOPE * slopeMul + roundComp);
           let h: number;
-          if (d > rf0 + FENCE_PAD) { const s = Math.min(1, (d - rf0 - FENCE_PAD) / outerSlopeW); h = fenceLevel * (1 - s * s * (3 - 2 * s)); }
-          else if (q >= 0.87) h = fenceLevel;
+          if (d > rf0 + FENCE_PAD) {
+            const s = Math.min(1, (d - rf0 - FENCE_PAD) / outerSlopeW);
+            h = fenceLevel * (1 - s * s * (3 - 2 * s));
+          } else if (q >= 0.87) h = fenceLevel;
           else if (q > 0.74) h = step(0.74, 0.87, villageLevel, fenceLevel);
           else if (q >= 0.34) h = villageLevel;
           else if (q > 0.18) h = step(0.18, 0.34, centerLevel, villageLevel);

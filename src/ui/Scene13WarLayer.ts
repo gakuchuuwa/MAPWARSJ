@@ -2899,10 +2899,10 @@ export class Scene13WarLayer {
         const cityCell = gl.screenToCell(cx, cy, W, H);
         const baseFlatCells = ringLm > 0 ? ringLm / 2 + (this.defenderCityType === 'big_city' ? 6.5 : 4.5) : rCells + 2.5;
         const minHillDistCells = this.defenderCityType === 'pass'
-            ? baseFlatCells + 5.5
+            ? baseFlatCells + 4.5
             : this.defenderCityType === 'stockade'
-                ? baseFlatCells + 3.5
-                : baseFlatCells + 7.0;
+                ? baseFlatCells + 3.0
+                : baseFlatCells;
         const TREE_FILTER_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
         this.decorSprites = this.decorSprites.filter((sp) => {
             if (sp.asset.startsWith('MOUNTAIN_')) return false;
@@ -2912,8 +2912,8 @@ export class Scene13WarLayer {
             const spCell = cityCell ? gl.screenToCell(sp.x, sp.y, W, H) : null;
             const distCells = (cityCell && spCell) ? Math.hypot(spCell.gx - cityCell.gx, spCell.gy - cityCell.gy) : 999;
             // 🔴 [2026-10-18 主人令「城周围应该是平地才对。山可以放到城外围的丘陵上。和树一样，树也都是长在山上，丘陵上。」]
-            //    城周围平地不留树，树木一律只保留在丘陵/山上（spElev >= 0.45 且在城周围平地圈外）
-            const treeOnHill = !isTree || (distCells >= minHillDistCells - 1.5 && spElev >= 0.45);
+            //    城周围平地不留树，树木一律只保留在丘陵/山上（spElev >= 0.35 且在城周围平地圈外）
+            const treeOnHill = !isTree || (distCells >= minHillDistCells - 0.8 && spElev >= 0.35);
             const keep = !inCity(sp.x, sp.y) && !inGateRoad(sp.x, sp.y) && !(inMoat && inMoat(sp.x, sp.y)) && treeOnHill;
             if (!keep) gl.carveFoundation(sp.x, sp.y, W, H, 2.2);
             return keep;
@@ -2958,7 +2958,7 @@ export class Scene13WarLayer {
             for (let gy = 8; gy <= N - 8; gy += 2) {
                 for (let gx = 8; gx <= N - 8; gx += 2) {
                     const dCells = Math.hypot(gx - cGx, gy - cGy);
-                    if (dCells < minHillDistCells + 2.5 || dCells > 44) continue;
+                    if (dCells < minHillDistCells + 1.5 || dCells > 44) continue;
                     const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
                     if (gl.isWaterAt(pt.x, pt.y, W, H) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
                     const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);

@@ -175,9 +175,13 @@ const DE_IMPERIAL_CITY_POOL: Array<[string, string]> = [
 const MONGOL_CITY_YURTS = ['YURT_E', 'YURT_F', 'YURT_G', 'YURT_H', 'YURT_I', 'YURT_J', 'YURT_K', 'YURT_L'];
 /** 漠北 9 栋全是蒙古包：8 种各一 ＋ 1 个重复（资产只有 YURT_E~L 八种，凑满 9 位） */
 const MOBEI_YURT_RING_NINE: readonly string[] = [...MONGOL_CITY_YURTS, MONGOL_CITY_YURTS[0]];
-/** 🔴 [2026-10-19 主人令] 漠北这三座是半游牧半定居都城/堡垒（固定建筑 + 毡帐营地），不能全蒙古包：
- *  哈拉和林（Karakorum）、卜古罕城（Ordu-Baliq）、博尔巴任（Por-Bazhyn）→ 9 栋各一半（4 DE 建筑 + 5 蒙古包）。 */
-const MOBEI_HALF_YURT_CITIES = new Set(['city_karakorum', 'city_woluduobali', 'city_porbazhyn']);
+/** 🔴 [2026-10-19 主人令] 漠北固定城镇是半游牧半定居（固定建筑 + 毡帐营地），不能全蒙古包：
+ *  哈拉和林、卜古罕城、库伦、科布多、买卖城、乌城、巴拉斯城 → 9 栋各一半（4 DE 建筑 + 5 蒙古包）。
+ *  曲雕阿兰（克鲁伦河牙帐营地）等纯营寨仍全蒙古包；博尔巴任无毡帐营地（回鹘固定城寨）→ 建筑风格 ASIA。 */
+const MOBEI_HALF_YURT_CITIES = new Set([
+    'city_karakorum', 'city_woluduobali',
+    'city_kulun', 'city_kobdo', 'city_merkit', 'city_wuliyasutai', 'city_kerulen',
+]);
 const isMobeiHalfYurtCity = (cityId?: string): boolean => !!cityId && MOBEI_HALF_YURT_CITIES.has(cityId);
 /** 半蒙古包池：4 栋 DE 建筑 + 5 栋蒙古包（随机洗牌） */
 function mixHalfYurtPool(dePool: readonly string[], rnd: () => number): string[] {
