@@ -64,9 +64,11 @@ export const SIEGE_UNITS: Record<string, { name: string; age: SiegeAge; isRam?: 
     siege_tower: { name: '欧洲攻城塔', age: 'feudal' },
     ballista_elephant: { name: '高棉弩炮战象', age: 'feudal' },
 
-    // ── 城堡时代 13 种 ──
+    // ── 城堡时代 15 种（含印度/普鲁攻城武器厂破门装甲战象 2 种） ──
     capped_ram: { name: '欧洲装甲攻城槌高级', age: 'castle', isRam: true },
     siege_ram: { name: '欧洲重型攻城槌高级', age: 'castle', isRam: true },
+    armored_elephant: { name: '装甲攻城战象', age: 'castle', isRam: true },
+    elite_armored_elephant: { name: '装甲攻城战象高级', age: 'castle', isRam: true },
     onager: { name: '欧洲中型投石车高级', age: 'castle' },
     siege_onager: { name: '欧洲重型投石车高级', age: 'castle' },
     heavy_scorpion: { name: '欧洲重型弩炮高级', age: 'castle' },
@@ -148,7 +150,12 @@ export function legionSiegeAge(culture: RegionType | string): SiegeAge {
     const fromPointer = ERA_PREFIX_TO_AGE[pointerName.slice(0, 2)];
     if (fromPointer) return fromPointer;
     const fallbackName = REGION_LEGION_FALLBACK[key] ?? '';
-    return ERA_PREFIX_TO_AGE[fallbackName.slice(0, 2)] ?? 'antiquity';
+    const fromFallback = ERA_PREFIX_TO_AGE[fallbackName.slice(0, 2)];
+    if (fromFallback) return fromFallback;
+    if (/_IMPERIAL$/i.test(key)) return 'imperial';
+    if (/_CASTLE$/i.test(key)) return 'castle';
+    if (/_FEUDAL$/i.test(key)) return 'feudal';
+    return 'antiquity';
 }
 
 /**
@@ -193,7 +200,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '古典时代马其顿军团': {
         age: 'antiquity',
-        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'helepolis', 'helepolis', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion'],
+        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'helepolis', 'helepolis', 'antiquity_siege_onager', 'antiquity_siege_onager', 'siege_ballista', 'siege_ballista'],
     },
     '古典时代色雷斯军团': {
         age: 'antiquity',
@@ -261,51 +268,51 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '古典时代魏晋军团': {
         age: 'antiquity',
-        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion'],
+        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
     '封建时代北朝军团': {
         age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'mangonel', 'mangonel', 'scorpion', 'scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '城堡时代燕云军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代大明军团': {
         age: 'imperial',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'petard', 'petard', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '古典时代吴越军团': {
         age: 'antiquity',
-        weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion'],
+        weapons: ['antiquity_battering_ram', 'antiquity_battering_ram', 'antiquity_battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
     '封建时代南朝军团': {
         age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'mangonel', 'mangonel', 'scorpion', 'scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '城堡时代临安军团': {
         age: 'castle',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代两江军团': {
         age: 'imperial',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'petard', 'petard', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '古典时代巴蜀军团': {
         age: 'antiquity',
-        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_onager', 'antiquity_onager', 'antiquity_siege_tower', 'antiquity_siege_tower'],
+        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
     '封建时代剑南军团': {
         age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'mangonel', 'mangonel', 'siege_tower', 'siege_tower'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'siege_tower', 'siege_tower'],
     },
     '城堡时代山城军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'siege_tower', 'siege_tower'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'siege_tower', 'siege_tower'],
     },
     '帝国时代四川军团': {
         age: 'imperial',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'siege_tower', 'siege_tower'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'petard', 'petard', 'siege_tower', 'siege_tower'],
     },
     '古典时代西凉军团': {
         age: 'antiquity',
@@ -1081,19 +1088,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '古典时代长生军团': {
         age: 'antiquity',
-        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'siege_ballista', 'siege_ballista', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion'],
+        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
     '封建时代德莱木军团': {
         age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'siege_ballista', 'siege_ballista', 'mangonel', 'mangonel', 'scorpion', 'scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '城堡时代法尔斯军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_ballista', 'siege_ballista', 'onager', 'onager', 'scorpion', 'scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代设拉子军团': {
         age: 'imperial',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_ballista', 'siege_ballista', 'onager', 'onager', 'scorpion', 'scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '封建时代阿提卡军团': {
         age: 'feudal',
@@ -1129,7 +1136,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '帝国时代马其顿军团': {
         age: 'imperial',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_tower', 'siege_tower', 'siege_onager', 'siege_onager', 'bombard_cannon', 'bombard_cannon'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_tower', 'siege_tower', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '封建时代阿德里安堡军团': {
         age: 'feudal',
@@ -1221,7 +1228,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '城堡时代大理军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'onager', 'onager', 'siege_tower', 'siege_tower'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'siege_tower', 'siege_tower'],
     },
     '城堡时代易洛魁军团': {
         age: 'castle',
@@ -1401,19 +1408,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '波斯军团_antiquity': {
         age: 'antiquity',
-        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'siege_ballista', 'siege_ballista', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion'],
+        weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
     '波斯军团_feudal': {
         age: 'feudal',
-        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'siege_ballista', 'siege_ballista', 'mangonel', 'mangonel', 'scorpion', 'scorpion'],
+        weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '波斯军团_castle': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_ballista', 'siege_ballista', 'onager', 'onager', 'scorpion', 'scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '波斯军团_imperial': {
         age: 'imperial',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_ballista', 'siege_ballista', 'onager', 'onager', 'scorpion', 'scorpion'],
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
     '东南亚军团_antiquity': {
         age: 'antiquity',
@@ -1534,10 +1541,10 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
  * 每档恒 9 件；古典只用古典器械（主人 2026-09-10 攻城武器铁律第 2 条）。
  */
 const TIBET_SIEGE_BY_AGE: Record<SiegeAge, string[]> = {
-    antiquity: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_scorpion', 'antiquity_scorpion'],
-    feudal: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion'],
-    castle: ['capped_ram', 'capped_ram', 'capped_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'grenadier', 'grenadier'],
-    imperial: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'grenadier', 'grenadier'],
+    antiquity: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
+    feudal: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
+    castle: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
+    imperial: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
 };
 /** 三种「青藏」文化区写法（三级 TIBET 及其历史变体） */
 const TIBET_CULTURE_KEYS = new Set(['TIBET', 'TIBET_CASTLE', 'TIBET_IMPERIAL']);
@@ -1558,9 +1565,12 @@ export function getSiegeWeaponsForCulture(
     const key = String(culture);
     const effLegion = legionName || (CULTURE_LEGION_NAMES as Record<string, string>)[key] || REGION_LEGION_FALLBACK[key] || '';
 
-    // 1. 直接命中 62 二级或 3 三级专属军团
+    // 1. 直接命中 62 二级或 3 三级专属军团（或剧本军团如「马其顿军团」→「古典时代马其顿军团」）
     if (effLegion && LEGION_78_SIEGE_MAP[effLegion]) {
         return [...LEGION_78_SIEGE_MAP[effLegion].weapons];
+    }
+    if (effLegion && !isBase16CultureLegion(effLegion) && LEGION_78_SIEGE_MAP[`古典时代${effLegion}`]) {
+        return [...LEGION_78_SIEGE_MAP[`古典时代${effLegion}`].weapons];
     }
 
     // 2. 16 套母体军团
