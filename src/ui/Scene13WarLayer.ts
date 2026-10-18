@@ -50,17 +50,18 @@ import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/format
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withCommander } from '../data/generalHeroUnits';
 import { getGeneralProfile } from '../data/GeneralSkills';
+import { getFactionGeneral } from '../data/FactionGenerals';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 
 /**
  * 战术模式（Scene13）六计相克闭环：
- * 敌放【攻】（狂攻）➔ 我放【敌】（满血铁壁）
- * 敌放【敌】（死守）➔ 我放【败】（斩杀破阵）
- * 敌放【败】（减员）➔ 我放【胜】（紧急增兵）
- * 敌放【胜】（爆兵）➔ 我放【混】（恐慌乱阵）
- * 敌放【混】（扰乱）➔ 我放【并】（釜底抽薪/破防）
- * 敌放【并】（压制）➔ 我放【攻】（强行爆发）
+ * 敌放【攻】（振己威）➔ 我放【敌】（固己防）
+ * 敌放【敌】（固己防）➔ 我放【败】（减敌兵）
+ * 敌放【败】（减敌兵）➔ 我放【胜】（增己兵）
+ * 敌放【胜】（增己兵）➔ 我放【混】（乱敌阵）
+ * 敌放【混】（乱敌阵）➔ 我放【并】（挫敌锐）
+ * 敌放【并】（挫敌锐）➔ 我放【攻】（振己威）
  */
 const SCENE13_SIX_COUNTER: Record<TacticalSixSet, TacticalSixSet> = {
     gongzhan: 'dizhan',
@@ -443,11 +444,11 @@ export class Scene13WarLayer {
         const defGid = (rawDefGid && rawDefGid !== attGid) ? rawDefGid : null;
         this.sideGeneralId = [attGid, defGid];
 
-        const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
+        const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
             const cleanName = eliteName?.trim();
             if (cleanName) {
                 for (const cfg of Object.values(CITY_ELITE_LEGIONS)) {
-                    if (cfg.eliteLegionName === cleanName) return cfg.tier;
+                    if (cfg.name === cleanName) return cfg.tier;
                 }
             }
             if (isDef && cityId) {
@@ -479,7 +480,7 @@ export class Scene13WarLayer {
                 this.skillRatePerSec[f] = 0;
             } else {
                 const profile = getGeneralProfile(gid);
-                const famous = profile?.isFamous === true;
+                const famous = profile?.tier === 'famous';
                 this.sideIsFamous[f] = famous;
                 const genMult = famous ? 1.25 : 1.0;
                 const eliteMult = (tier !== null && ELITE_RATE_MULTS[tier] !== undefined) ? ELITE_RATE_MULTS[tier] : 1.0;
@@ -506,19 +507,23 @@ export class Scene13WarLayer {
         const gid = this.sideGeneralId[f];
         if (gid) {
             const profile = getGeneralProfile(gid);
-            const sigId = f === 0 ? profile?.signatureAttackSkillId : profile?.signatureDefenseSkillId;
+            const sigId = f === 0
+                ? (profile?.atkBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId)
+                : (profile?.defBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId);
             if (sigId) {
                 const entry = TACTICAL_SKILL_ENTRIES_V1.find((e) => e.id === sigId);
                 if (entry) return EFFECT_TO_SIX_SET[entry.baseEffect];
             }
         }
-        const idx = Math.abs((this.environmentPlan?.seed ?? 7) + f * 3) % SCENE13_SIX_ORDER.length;
+        const rawSeed = this.environmentPlan?.seed;
+        const numSeed = typeof rawSeed === 'number' ? rawSeed : 7;
+        const idx = Math.abs(numSeed + f * 3) % SCENE13_SIX_ORDER.length;
         return SCENE13_SIX_ORDER[idx];
     }
 
     /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动相克 */
-    public setScene13QueuedSkill(side: 'attacker' | 'defender', six: TacticalSixSet | null): void {
-        const f: 0 | 1 = side === 'attacker' ? 0 : 1;
+    public setScene13QueuedSkill(sideOrF: 0 | 1 | 'attacker' | 'defender', six: TacticalSixSet | null): void {
+        const f: 0 | 1 = (sideOrF === 0 || sideOrF === 'attacker') ? 0 : 1;
         if (!this.sideGeneralId[f]) return;
         this.queuedSkill[f] = this.queuedSkill[f] === six ? null : six;
     }
@@ -527,20 +532,21 @@ export class Scene13WarLayer {
     public getScene13SkillState() {
         if (!this.active && !this.lingering) return null;
         const buildSide = (f: 0 | 1) => ({
+            hasGeneral: !!this.sideGeneralId[f],
             generalId: this.sideGeneralId[f],
             isFamous: this.sideIsFamous[f],
-            eliteTier: this.sideEliteTier[f],
+            eliteTier: this.sideEliteTier[f] !== null ? (`T${this.sideEliteTier[f]}`) : null,
             gauge: this.skillGauge[f],
             ratePerSec: this.skillRatePerSec[f],
-            lastCast: this.lastCastSkill[f],
-            lastCastName: this.lastCastSkillName[f],
-            queued: this.queuedSkill[f],
-            autoNext: this.resolveAutoNextSkill(f),
+            lastCastSkill: this.lastCastSkill[f],
+            lastCastSkillName: this.lastCastSkillName[f],
+            queuedSkill: this.queuedSkill[f],
+            autoNextSkill: this.resolveAutoNextSkill(f),
             oppLastCast: this.lastCastSkill[1 - f],
-            frenzyLeft: Math.max(0, this.skillFrenzyTimer[f]),
-            shieldLeft: Math.max(0, this.skillShieldTimer[f]),
-            panicLeft: Math.max(0, this.skillPanicTimer[f]),
-            vulnLeft: Math.max(0, this.skillVulnTimer[f]),
+            frenzySec: Math.max(0, this.skillFrenzyTimer[f]),
+            shieldSec: Math.max(0, this.skillShieldTimer[f]),
+            panicSec: Math.max(0, this.skillPanicTimer[f]),
+            vulnSec: Math.max(0, this.skillVulnTimer[f]),
             isSiege: this.battleType === 'siege',
         });
         return {
@@ -573,25 +579,33 @@ export class Scene13WarLayer {
     /** 满槽释放指定六计：执行 6 大正交战场效果 + 通知 CombatUI 触发立绘脉冲与大字 Cut-in */
     private triggerScene13Skill(f: 0 | 1, six: TacticalSixSet): void {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
-        const role = f === 0 ? 'attack' : 'defense';
+        const roleTag = f === 0 ? '攻击' : '防御';
         const gid = this.sideGeneralId[f];
         const isFamous = this.sideIsFamous[f];
 
         // 挑选贴合该武将身份与攻守角色的四字技能名
         let pickedEntry = gid ? (() => {
             const p = getGeneralProfile(gid);
-            const sigId = f === 0 ? p?.signatureAttackSkillId : p?.signatureDefenseSkillId;
-            const e = sigId ? TACTICAL_SKILL_ENTRIES_V1.find((x) => x.id === sigId) : undefined;
-            return (e && EFFECT_TO_SIX_SET[e.baseEffect] === six) ? e : undefined;
+            const sigIds = f === 0
+                ? [p?.atkAdvantageSkillId, p?.atkBalanceSkillId, p?.atkDisadvantageSkillId, p?.advantageSkillId, p?.balanceSkillId, p?.disadvantageSkillId, p?.tacticalSkillId]
+                : [p?.defAdvantageSkillId, p?.defBalanceSkillId, p?.defDisadvantageSkillId, p?.advantageSkillId, p?.balanceSkillId, p?.disadvantageSkillId, p?.tacticalSkillId];
+            for (const sid of sigIds) {
+                if (!sid) continue;
+                const e = TACTICAL_SKILL_ENTRIES_V1.find((x) => x.id === sid);
+                if (e && EFFECT_TO_SIX_SET[e.baseEffect] === six) return e;
+            }
+            return undefined;
         })() : undefined;
 
         if (!pickedEntry) {
             const candidates = TACTICAL_SKILL_ENTRIES_V1.filter(
-                (e) => e.role === role && EFFECT_TO_SIX_SET[e.baseEffect] === six && (isFamous ? e.famousPool : e.normalPool),
+                (e) => (e.usageTag === roleTag || e.usageTag === '双行' || !e.usageTag)
+                    && EFFECT_TO_SIX_SET[e.baseEffect] === six
+                    && (isFamous ? !!e.ownerGeneralId : !e.ownerGeneralId),
             );
             const pool = candidates.length > 0
                 ? candidates
-                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => e.role === role && EFFECT_TO_SIX_SET[e.baseEffect] === six);
+                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => EFFECT_TO_SIX_SET[e.baseEffect] === six);
             if (pool.length > 0) {
                 pickedEntry = pool[Math.floor(Math.random() * pool.length)];
             }
@@ -604,7 +618,7 @@ export class Scene13WarLayer {
             bingzhan: f === 0 ? '势如破竹' : '坚壁清野',
             baizhan: f === 0 ? '雷霆万钧' : '背水一战',
         };
-        const displayName = pickedEntry?.name ?? fallbackNames[six];
+        const displayName = pickedEntry?.displayName ?? fallbackNames[six];
         const skillId = pickedEntry?.id ?? `tac13_${six}`;
 
         this.lastCastSkill[f] = six;
@@ -634,7 +648,7 @@ export class Scene13WarLayer {
             for (let i = 0; i < killCount && i < enemyLiving.length; i++) {
                 const victim = enemyLiving[i];
                 victim.hp = 0;
-                this.onManKilled(victim);
+                this.onManKilled(victim, victim);
             }
         } else if (six === 'gongzhan') {
             // 3. 【攻】振己威：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
@@ -666,7 +680,7 @@ export class Scene13WarLayer {
 
         // 通知 CombatUI 播放与战略模式完全一致的立绘脉冲缩放与技能名 Cut-in 动画
         const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
-        (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, displayName, gid, skillId);
+        (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, displayName, gid ?? undefined, skillId);
     }
 
     // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──
@@ -6917,7 +6931,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-18 【混】乱敌阵] 处于恐慌溃乱期的敌方接战/前排士兵（非行军、非主将、非攻城车、非守备哨位）：
             //    停止攻击，背对推进方向逃窜（暴露后背，触发近战 1.4x 背刺加成）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
-                const adv = this.advanceVec(m.f);
+                const adv = this.advanceVec[m.f];
                 const rvx = -adv.x;
                 const rvy = -adv.y;
                 m.st = 0;
@@ -6927,10 +6941,9 @@ export class Scene13WarLayer {
                 const pSpd = stats.spd * spdK * 0.85;
                 const nx = m.x + rvx * pSpd * dt;
                 const ny = m.y + rvy * pSpd * dt;
-                if (this.passableAt(nx, ny, m.f, m.siegeW)) {
-                    m.x = nx;
-                    m.y = ny;
-                }
+                const [bx, by] = this.fieldBound(nx, ny);
+                m.x = bx;
+                m.y = by;
                 const walkAnimSpd = Math.min(2.2, Math.max(0.6, pSpd / 60));
                 m.ph += dt * 8 * walkAnimSpd;
                 continue;
