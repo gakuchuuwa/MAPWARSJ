@@ -49,6 +49,30 @@ import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withCommander } from '../data/generalHeroUnits';
+import { getGeneralProfile } from '../data/GeneralSkills';
+import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
+import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
+
+/**
+ * 战术模式（Scene13）六计相克闭环：
+ * 敌放【攻】（狂攻）➔ 我放【敌】（满血铁壁）
+ * 敌放【敌】（死守）➔ 我放【败】（斩杀破阵）
+ * 敌放【败】（减员）➔ 我放【胜】（紧急增兵）
+ * 敌放【胜】（爆兵）➔ 我放【混】（恐慌乱阵）
+ * 敌放【混】（扰乱）➔ 我放【并】（釜底抽薪/破防）
+ * 敌放【并】（压制）➔ 我放【攻】（强行爆发）
+ */
+const SCENE13_SIX_COUNTER: Record<TacticalSixSet, TacticalSixSet> = {
+    gongzhan: 'dizhan',
+    dizhan: 'baizhan',
+    baizhan: 'shengzhan',
+    shengzhan: 'hunzhan',
+    hunzhan: 'bingzhan',
+    bingzhan: 'gongzhan',
+};
+const SCENE13_SIX_ORDER: readonly TacticalSixSet[] = [
+    'gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan',
+];
 
 import type {
     WarBuilding, ArrowTower, CityBuildingEntry, TechBrief, WarSpawn, WarMan, WarArrow,
@@ -385,6 +409,265 @@ export class Scene13WarLayer {
 
     /** 演出判负回调（winner: 'attacker' | 'defender' | 'draw'）——由 GameAppCombatHooks 接 */
     public onDecision: ((winner: 'attacker' | 'defender' | 'draw', survivors: { attacker: number; defender: number }) => void) | null = null;
+
+    // ── [2026-10-18 主人定] 战术模式专属：武将技集气槽与六计相克见招拆招系统 ──
+    /** 攻/守双方主将 ID（无将侧为 null，不攒气不放技能） */
+    private sideGeneralId: [string | null, string | null] = [null, null];
+    /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */
+    private sideIsFamous: [boolean, boolean] = [false, false];
+    /** 攻/守双方精锐层级（T0=0 .. T4=4，无精锐=null；倍率 1.5 / 1.4 / 1.3 / 1.2 / 1.1 / 1.0） */
+    private sideEliteTier: [number | null, number | null] = [null, null];
+    /** 攻/守双方当前集气进度（0 ~ 100） */
+    private skillGauge: [number, number] = [0, 0];
+    /** 攻/守双方每秒集气速率（基础 24 秒满槽 = 100/24 × 武将档位 × 精锐档位） */
+    private skillRatePerSec: [number, number] = [0, 0];
+    /** 攻/守双方上一次释放的六计类型（供对方自动释放相克技能） */
+    private lastCastSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
+    /** 攻/守双方上一次释放的技能四字名称 */
+    private lastCastSkillName: [string, string] = ['', ''];
+    /** 玩家手动预点亮（钦定）的下一计；null 表示自动见招拆招 */
+    private queuedSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
+    /** 【攻】振己威持续倒计时（秒）：己方全场士兵攻速 ×1.30、移速 ×1.20、伤害 ×1.30 */
+    private skillFrenzyTimer: [number, number] = [0, 0];
+    /** 【敌】固己防持续倒计时（秒）：释放瞬间满血 + 持续期间己方士兵受伤害 ×0.60 */
+    private skillShieldTimer: [number, number] = [0, 0];
+    /** 【混】乱敌阵持续倒计时（秒）：该侧（受害方）接战前排士兵恐慌转身向后溃逃 */
+    private skillPanicTimer: [number, number] = [0, 0];
+    /** 【并】挫敌锐（攻城战破防）持续倒计时（秒）：该侧（受害方）守军与城墙/建筑受伤害 ×1.35 */
+    private skillVulnTimer: [number, number] = [0, 0];
+
+    /** 初始化本场战术模式双方武将技集气槽与速率 */
+    private initScene13SkillSystem(init: Scene13WarInit): void {
+        const attGid = init.attackerGeneralId?.trim() || null;
+        const rawDefGid = init.defenderGeneralId?.trim() || null;
+        const defGid = (rawDefGid && rawDefGid !== attGid) ? rawDefGid : null;
+        this.sideGeneralId = [attGid, defGid];
+
+        const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
+            const cleanName = eliteName?.trim();
+            if (cleanName) {
+                for (const cfg of Object.values(CITY_ELITE_LEGIONS)) {
+                    if (cfg.eliteLegionName === cleanName) return cfg.tier;
+                }
+            }
+            if (isDef && cityId) {
+                const cCfg = getCityEliteConfig(cityId);
+                if (cCfg) return cCfg.tier;
+            }
+            if (factionId) {
+                const fCfg = getExpeditionEliteConfig(factionId);
+                if (fCfg) return fCfg.tier;
+            }
+            return null;
+        };
+
+        const ELITE_RATE_MULTS: Record<number, number> = { 0: 1.5, 1: 1.4, 2: 1.3, 3: 1.2, 4: 1.1 };
+        const BASE_RATE = 100 / 24; // 普将+无精锐 24 秒满槽
+
+        for (const f of [0, 1] as const) {
+            const gid = this.sideGeneralId[f];
+            const isDef = f === 1;
+            const tier = resolveEliteTier(
+                isDef ? init.defenderEliteName : init.attackerEliteName,
+                isDef ? init.defenderFactionId : init.attackerFactionId,
+                isDef ? init.defenderCityId : null,
+                isDef,
+            );
+            this.sideEliteTier[f] = tier;
+            if (!gid) {
+                this.sideIsFamous[f] = false;
+                this.skillRatePerSec[f] = 0;
+            } else {
+                const profile = getGeneralProfile(gid);
+                const famous = profile?.isFamous === true;
+                this.sideIsFamous[f] = famous;
+                const genMult = famous ? 1.25 : 1.0;
+                const eliteMult = (tier !== null && ELITE_RATE_MULTS[tier] !== undefined) ? ELITE_RATE_MULTS[tier] : 1.0;
+                this.skillRatePerSec[f] = BASE_RATE * genMult * eliteMult;
+            }
+            this.skillGauge[f] = 0;
+            this.lastCastSkill[f] = null;
+            this.lastCastSkillName[f] = '';
+            this.queuedSkill[f] = null;
+            this.skillFrenzyTimer[f] = 0;
+            this.skillShieldTimer[f] = 0;
+            this.skillPanicTimer[f] = 0;
+            this.skillVulnTimer[f] = 0;
+        }
+    }
+
+    /** 计算某方当前若不手动干预，下一次自动释放的六计类型 */
+    private resolveAutoNextSkill(f: 0 | 1): TacticalSixSet {
+        const oppLast = this.lastCastSkill[1 - f];
+        if (oppLast) {
+            return SCENE13_SIX_COUNTER[oppLast];
+        }
+        // 首轮尚未见招：优先取该武将自身招牌技所属六计，否则按本场确定性种子选一计
+        const gid = this.sideGeneralId[f];
+        if (gid) {
+            const profile = getGeneralProfile(gid);
+            const sigId = f === 0 ? profile?.signatureAttackSkillId : profile?.signatureDefenseSkillId;
+            if (sigId) {
+                const entry = TACTICAL_SKILL_ENTRIES_V1.find((e) => e.id === sigId);
+                if (entry) return EFFECT_TO_SIX_SET[entry.baseEffect];
+            }
+        }
+        const idx = Math.abs((this.environmentPlan?.seed ?? 7) + f * 3) % SCENE13_SIX_ORDER.length;
+        return SCENE13_SIX_ORDER[idx];
+    }
+
+    /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动相克 */
+    public setScene13QueuedSkill(side: 'attacker' | 'defender', six: TacticalSixSet | null): void {
+        const f: 0 | 1 = side === 'attacker' ? 0 : 1;
+        if (!this.sideGeneralId[f]) return;
+        this.queuedSkill[f] = this.queuedSkill[f] === six ? null : six;
+    }
+
+    /** 供 CombatUI 实时读取战术模式双方的集气槽与六计状态 */
+    public getScene13SkillState() {
+        if (!this.active && !this.lingering) return null;
+        const buildSide = (f: 0 | 1) => ({
+            generalId: this.sideGeneralId[f],
+            isFamous: this.sideIsFamous[f],
+            eliteTier: this.sideEliteTier[f],
+            gauge: this.skillGauge[f],
+            ratePerSec: this.skillRatePerSec[f],
+            lastCast: this.lastCastSkill[f],
+            lastCastName: this.lastCastSkillName[f],
+            queued: this.queuedSkill[f],
+            autoNext: this.resolveAutoNextSkill(f),
+            oppLastCast: this.lastCastSkill[1 - f],
+            frenzyLeft: Math.max(0, this.skillFrenzyTimer[f]),
+            shieldLeft: Math.max(0, this.skillShieldTimer[f]),
+            panicLeft: Math.max(0, this.skillPanicTimer[f]),
+            vulnLeft: Math.max(0, this.skillVulnTimer[f]),
+            isSiege: this.battleType === 'siege',
+        });
+        return {
+            attacker: buildSide(0),
+            defender: buildSide(1),
+        };
+    }
+
+    /** 推进双方集气槽与六计持续状态计时（在 step 中调用） */
+    private tickScene13Skills(dt: number, deploying: boolean): void {
+        for (const f of [0, 1] as const) {
+            if (this.skillFrenzyTimer[f] > 0) this.skillFrenzyTimer[f] = Math.max(0, this.skillFrenzyTimer[f] - dt);
+            if (this.skillShieldTimer[f] > 0) this.skillShieldTimer[f] = Math.max(0, this.skillShieldTimer[f] - dt);
+            if (this.skillPanicTimer[f] > 0) this.skillPanicTimer[f] = Math.max(0, this.skillPanicTimer[f] - dt);
+            if (this.skillVulnTimer[f] > 0) this.skillVulnTimer[f] = Math.max(0, this.skillVulnTimer[f] - dt);
+        }
+        if (deploying || this.over) return;
+        for (const f of [0, 1] as const) {
+            if (!this.sideGeneralId[f] || this.skillRatePerSec[f] <= 0) continue;
+            this.skillGauge[f] = Math.min(100, this.skillGauge[f] + this.skillRatePerSec[f] * dt);
+            if (this.skillGauge[f] >= 100) {
+                this.skillGauge[f] = 0;
+                const chosen = this.queuedSkill[f] ?? this.resolveAutoNextSkill(f);
+                this.queuedSkill[f] = null; // 释放后清空手动钦定，回归自动见招拆招
+                this.triggerScene13Skill(f, chosen);
+            }
+        }
+    }
+
+    /** 满槽释放指定六计：执行 6 大正交战场效果 + 通知 CombatUI 触发立绘脉冲与大字 Cut-in */
+    private triggerScene13Skill(f: 0 | 1, six: TacticalSixSet): void {
+        const ef: 0 | 1 = f === 0 ? 1 : 0;
+        const role = f === 0 ? 'attack' : 'defense';
+        const gid = this.sideGeneralId[f];
+        const isFamous = this.sideIsFamous[f];
+
+        // 挑选贴合该武将身份与攻守角色的四字技能名
+        let pickedEntry = gid ? (() => {
+            const p = getGeneralProfile(gid);
+            const sigId = f === 0 ? p?.signatureAttackSkillId : p?.signatureDefenseSkillId;
+            const e = sigId ? TACTICAL_SKILL_ENTRIES_V1.find((x) => x.id === sigId) : undefined;
+            return (e && EFFECT_TO_SIX_SET[e.baseEffect] === six) ? e : undefined;
+        })() : undefined;
+
+        if (!pickedEntry) {
+            const candidates = TACTICAL_SKILL_ENTRIES_V1.filter(
+                (e) => e.role === role && EFFECT_TO_SIX_SET[e.baseEffect] === six && (isFamous ? e.famousPool : e.normalPool),
+            );
+            const pool = candidates.length > 0
+                ? candidates
+                : TACTICAL_SKILL_ENTRIES_V1.filter((e) => e.role === role && EFFECT_TO_SIX_SET[e.baseEffect] === six);
+            if (pool.length > 0) {
+                pickedEntry = pool[Math.floor(Math.random() * pool.length)];
+            }
+        }
+        const fallbackNames: Record<TacticalSixSet, string> = {
+            gongzhan: f === 0 ? '破釜沉舟' : '绝地反击',
+            shengzhan: f === 0 ? '全军突击' : '众志成城',
+            dizhan: f === 0 ? '步步为营' : '固若金汤',
+            hunzhan: f === 0 ? '声东击西' : '疑兵之计',
+            bingzhan: f === 0 ? '势如破竹' : '坚壁清野',
+            baizhan: f === 0 ? '雷霆万钧' : '背水一战',
+        };
+        const displayName = pickedEntry?.name ?? fallbackNames[six];
+        const skillId = pickedEntry?.id ?? `tac13_${six}`;
+
+        this.lastCastSkill[f] = six;
+        this.lastCastSkillName[f] = displayName;
+
+        // ── 执行六计正交战场效果 ──
+        if (six === 'shengzhan') {
+            // 1. 【胜】增己兵：己方立即补充 +8% 初始总兵力，从出兵口增援涌出
+            const addTotalPop = Math.max(10, Math.round(this.initPool[f] * 0.08));
+            const mySpawns = this.spawns.filter((sp) => sp.f === f && !sp.playerElite);
+            if (mySpawns.length > 0) {
+                const perLanePop = addTotalPop / mySpawns.length;
+                for (const sp of mySpawns) {
+                    sp.pool += Math.max(1, Math.round(perLanePop / Math.max(1, sp.pop)));
+                }
+                this.batchCd = 0;
+            }
+        } else if (six === 'baizhan') {
+            // 2. 【败】减敌兵：敌方当前兵力立即削减 -8%（后备池与场上非英雄士兵同步折损）
+            for (const sp of this.spawns) {
+                if (sp.f === ef && sp.pool > 0) {
+                    sp.pool = Math.max(0, Math.floor(sp.pool * 0.92));
+                }
+            }
+            const enemyLiving = this.men.filter((m) => m.f === ef && m.hp > 0 && !m.hero && !m.siegeW);
+            const killCount = Math.max(1, Math.round(enemyLiving.length * 0.08));
+            for (let i = 0; i < killCount && i < enemyLiving.length; i++) {
+                const victim = enemyLiving[i];
+                victim.hp = 0;
+                this.onManKilled(victim);
+            }
+        } else if (six === 'gongzhan') {
+            // 3. 【攻】振己威：8 秒内己方全军攻速 ×1.30、移速 ×1.20、伤害 ×1.30
+            this.skillFrenzyTimer[f] = 8.0;
+        } else if (six === 'dizhan') {
+            // 4. 【敌】固己防：己方场上存活士兵瞬间恢复 100% 满血，且 8 秒内受到伤害降低 40%（×0.60）
+            for (const m of this.men) {
+                if (m.f === f && m.hp > 0) {
+                    const maxHp = m.hero ? this.heroMaxHp(m.key, f) : this.statsFor(m.key, f).hp;
+                    if (m.hp < maxHp) m.hp = maxHp;
+                }
+            }
+            this.skillShieldTimer[f] = 8.0;
+        } else if (six === 'hunzhan') {
+            // 5. 【混】乱敌阵：4 秒内敌方前排接战部队恐慌转身向后溃逃（停手、背对己方触发背击加成）
+            this.skillPanicTimer[ef] = 4.0;
+        } else if (six === 'bingzhan') {
+            // 6. 【并】挫敌锐：野战扣减敌方武将 50% 集气槽（打断蓄力）；攻城战 8 秒内敌方守军与城墙/建筑受伤害 +35%（破防）
+            if (this.battleType === 'siege') {
+                this.skillVulnTimer[ef] = 8.0;
+            } else {
+                if (this.sideGeneralId[ef]) {
+                    this.skillGauge[ef] = Math.max(0, this.skillGauge[ef] - 50);
+                } else {
+                    this.skillVulnTimer[ef] = 6.0;
+                }
+            }
+        }
+
+        // 通知 CombatUI 播放与战略模式完全一致的立绘脉冲缩放与技能名 Cut-in 动画
+        const sideKey: 'attacker' | 'defender' = f === 0 ? 'attacker' : 'defender';
+        (window as any).game?.combatUI?.onScene13SkillCast?.(sideKey, six, displayName, gid, skillId);
+    }
 
     // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──
     /** 本场玩家布置（start 时从 window.game.playerHero 取；玩家不在军中 = null） */
@@ -983,6 +1266,7 @@ export class Scene13WarLayer {
         const game = (window as any).game;
         game?.cameraFollowUI?.onEnterBattleScene13?.();
         game?.brawlFeedPanel?.onEnterBattleScene13?.();
+        this.initScene13SkillSystem(init);
         // 🔴 [2026-08-26 主人定] 战术模式专用 UI 布局：立绘分置左下/右下，血槽在上，科技在下
         game?.combatUI?.syncScene13WarStart?.(init);
 
@@ -5555,8 +5839,11 @@ export class Scene13WarLayer {
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = towerElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
+        const towerSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0)
+            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0)
+            * (this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0);
         foe.atkNext++;
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * towerSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);   // 玩家免伤，与士兵刀箭同口径
         // 🔴 [2026-09-09 修] 原来这里直接 pushCorpse：玩家被箭塔射死会**变成尸体永久离场**，
         //    而不是走落马重整（heroDown）。攻城战守方满墙箭塔，这条路正是「玩家一直死」的大头。
@@ -5631,8 +5918,11 @@ export class Scene13WarLayer {
         const foeElev = this.elevationLevelAt(foe.x, foe.y);
         const dElev = bldElev - foeElev;
         const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
+        const bldSkillMul = (this.skillFrenzyTimer[1] > 0 ? 1.30 : 1.0)
+            * (this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0)
+            * (this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0);
         foe.atkNext++;
-        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul()
+        foe.hp -= dmg * elevDmgMul * this.sideBonus[1] * gangMul(foe) * this.attritionMul() * bldSkillMul
             * (foe.hero ? HERO_DAMAGE_TAKEN : 1);
         if (foe.hp <= 0) {
             if (foe.hero) this.heroDown(foe);
@@ -5675,6 +5965,7 @@ export class Scene13WarLayer {
     private splash(m: WarMan, radius: number, shooter: WarType, dt: number, mult = 1): void {
         const span = Math.max(1, Math.ceil(radius / CELL_M));
         const cx = (m.x / CELL_M) | 0, cy = (m.y / CELL_M) | 0;
+        const frenzyMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 : 1.0;
         for (let gx = cx - span; gx <= cx + span; gx++) {
             for (let gy = cy - span; gy <= cy + span; gy++) {
                 const a = this.gm.get(HKEY(gx, gy));
@@ -5684,13 +5975,15 @@ export class Scene13WarLayer {
                     if ((o.x - m.x) ** 2 + (o.y - m.y) ** 2 > radius * radius) continue;
                     // 范围伤不挖「盲区空洞」：贴脸的敌人照样吃溅射（最小射程只管分配新目标，见 canKeepTarget 头注）。
                     // 范围伤同样吃围殴加成：加成挂在挨打的人身上，被围住的人谁打都更疼
-                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult / shooter.reload;
+                    const dps = dmgVs(shooter, this.statsFor(o.key, o.f)) * mult * frenzyMul / shooter.reload;
+                    const takenSkillMul = (this.skillShieldTimer[o.f] > 0 ? 0.60 : 1.0)
+                        * (this.skillVulnTimer[o.f] > 0 ? 1.35 : 1.0);
                     o.atkNext++;
                     if (dps > 0) {
                         o.hurtBy = m;
                         o.hurtAt = this.battleSec;
                     }
-                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * dt
+                    o.hp -= dps * this.sideBonus[m.f] * gangMul(o) * this.attritionMul() * takenSkillMul * dt
                         * (o.hero ? HERO_DAMAGE_TAKEN : 1)   // 范围伤同样给玩家免伤
                         * this.passWallTaken(o);
                     if (o.hp <= 0) this.onManKilled(o, m);
@@ -5704,10 +5997,11 @@ export class Scene13WarLayer {
         //    破损档与 0 血破坏链（`onDefBuildingHit` + D25/D50/D75 + 解碰撞），不另写一份。
         //    倍率 `SUICIDE_BLD_MULT` 说明见常量定义处。
         if (SUICIDE_TYPES.has(m.key)) {
+            const bldVulnMul = this.skillVulnTimer[1 - m.f] > 0 ? 1.35 : 1.0;
             for (const b of [...this.wallGates, ...this.defBuildings]) {
                 if (b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) continue;
                 if ((b.x - m.x) ** 2 + (b.y - m.y) ** 2 > radius * radius) continue;
-                const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * SUICIDE_BLD_MULT / shooter.reload;
+                const bdps = dmgVs(shooter, WALL_GATE_STATS[b.key] ?? WALL_GATE_STATS.STONE_WALL) * mult * frenzyMul * bldVulnMul * SUICIDE_BLD_MULT / shooter.reload;
                 b.atkNext++;
                 if (b.hitAt === undefined) b.hitAt = this.battleSec;
                 b.hp -= bdps * this.sideBonus[m.f] * dt;
@@ -6510,6 +6804,7 @@ export class Scene13WarLayer {
             }
         }
         const deploying = this.deployT > 0;
+        this.tickScene13Skills(dt, deploying);
         // 敌军重心（每帧 O(n)，供 aimAt 兜底）
         const cx = [0, 0], cy = [0, 0], cn = [0, 0];
         for (const m of this.men) { cx[m.f] += m.x; cy[m.f] += m.y; cn[m.f]++; }
@@ -6617,8 +6912,29 @@ export class Scene13WarLayer {
             if (holdCmd) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
-            // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）
-            const spdK = this.isWaterAt(m.x, m.y) ? 0.6 : 1;
+            // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）；【攻】振己威狂暴移速 ×1.20
+            const spdK = (this.isWaterAt(m.x, m.y) ? 0.6 : 1) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
+            // 🔴 [2026-10-18 【混】乱敌阵] 处于恐慌溃乱期的敌方接战/前排士兵（非行军、非主将、非攻城车、非守备哨位）：
+            //    停止攻击，背对推进方向逃窜（暴露后背，触发近战 1.4x 背刺加成）
+            if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
+                const adv = this.advanceVec(m.f);
+                const rvx = -adv.x;
+                const rvy = -adv.y;
+                m.st = 0;
+                m.foe = null;
+                m.fightT = 0;
+                m.dir = this.dir8Hyst(m.dir, rvx, rvy);
+                const pSpd = stats.spd * spdK * 0.85;
+                const nx = m.x + rvx * pSpd * dt;
+                const ny = m.y + rvy * pSpd * dt;
+                if (this.passableAt(nx, ny, m.f, m.siegeW)) {
+                    m.x = nx;
+                    m.y = ny;
+                }
+                const walkAnimSpd = Math.min(2.2, Math.max(0.6, pSpd / 60));
+                m.ph += dt * 8 * walkAnimSpd;
+                continue;
+            }
             const SIGHT = Math.max(isGuard ? 320 : 0, stats.sight ?? 160, stats.rng > 65 ? Math.round(stats.rng * 1.15) + 40 : 0);   // 寻敌/丢目标迟滞（DE LOS，已含羽箭/锥头/护腕视野科技；保证远程视野始终大于最大射程）
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
             //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
@@ -7046,9 +7362,10 @@ export class Scene13WarLayer {
                 // 交战中也走迟滞：贴身互推时目标方位每帧摆动，直接 dir8 会让贴图在两个朝向间跳
                 m.dir = this.dir8Hyst(m.dir, foe.x - m.x, foe.y - m.y);
                 m.lock = (m.lock ?? 0) - dt;
-                // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快
+                // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速 ×1.30
                 const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
-                const reloadTime = (stats.reload || 2.0) / heroRate;
+                const frenzyAtkSpd = this.skillFrenzyTimer[m.f] > 0 ? 1.30 : 1.0;
+                const reloadTime = (stats.reload || 2.0) / (heroRate * frenzyAtkSpd);
                 if (m.lock <= 0) {
                     m.lock = reloadTime; m.ph = 0;
                     m.shot = false;   // 新一轮：等攻击动画播到放箭相位再射
@@ -7203,14 +7520,17 @@ export class Scene13WarLayer {
                 const secondaryDamage = secondaryHitCount * dmgVs(HUSSITE_SECONDARY_SHOT, target);
                 // 🔴 [2026-10-15 DE 高地机制] 高打低 +25%（×1.25），低打高 -25%（×0.75）
                 const elevDmgMul = dElev >= 0.4 ? 1.25 : (dElev <= -0.4 ? 0.75 : 1.0);
-                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul / shooter.reload;
+                // 【攻】振己威：伤害 ×1.30 × 攻速 ×1.30
+                const frenzyDmgMul = this.skillFrenzyTimer[m.f] > 0 ? 1.30 * 1.30 : 1.0;
+                const dps = (primaryDamage + secondaryDamage) * heroRate * elevDmgMul * frenzyDmgMul / shooter.reload;
                 if ('sprite' in foe) {
                     // 🔴 [2026-09-18 主人定·增加所有攻城武器只对建筑破坏力]
                     //    目标为建筑时（城墙/城门），无论是否 wt.aoe，主目标均实打实扣血！
                     foe.atkNext++;
                     if (dps > 0) {
                         if (foe.hitAt === undefined) foe.hitAt = this.battleSec;
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * dt;
+                        const vulnMul = this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0;
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * vulnMul * dt;
                         // 城门/城墙同样设置基础被摧毁保底时间（城门 15s，石墙/垛墙/木栅 10s），防多台攻城槌重叠秒破
                         if (!foe.bld && foe.hitAt !== undefined) {
                             const wallFloorSec = foe.key === 'STONE_GATE' ? 15 : 10;
@@ -7253,7 +7573,9 @@ export class Scene13WarLayer {
                             foe.hurtBy = m;
                             foe.hurtAt = this.battleSec;
                         }
-                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * dt
+                        const shieldMul = this.skillShieldTimer[foe.f] > 0 ? 0.60 : 1.0;
+                        const vulnMul = this.skillVulnTimer[foe.f] > 0 ? 1.35 : 1.0;
+                        foe.hp -= dps * this.sideBonus[m.f] * gangMul(foe) * this.attritionMul() * braceTaken * flankMul * shieldMul * vulnMul * dt
                             * (!('sprite' in foe) && foe.hero ? HERO_DAMAGE_TAKEN : 1)   // 玩家等效「防」，见 HERO_DAMAGE_TAKEN
                             * ('sprite' in foe ? 1 : this.passWallTaken(foe));
                         if (foe.hp <= 0 && !('sprite' in foe)) {

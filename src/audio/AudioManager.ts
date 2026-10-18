@@ -240,6 +240,33 @@ const BGM_FALLBACK_MAP: Record<string, string> = {
 };
 
 /**
+ * 🔴 [2026-10-18 主人令]「这几个音乐，是被我的项目中套用呢。在项目中暂停。」
+ *    —— 下面这些曲子收到 YouTube 版权主张（Content ID），**在项目里暂停使用**：
+ *      · BERBER            征服天堂 Conquest of Paradise（Vangelis）
+ *      · hes_a_pirate      加勒比海盗 He's a Pirate（Klaus Badelt）
+ *      · WEST_ASIA         出埃及记 Exodus（Las Lau）
+ *      · victory           Victory - No Vocals No Choir（Two Steps From Hell）
+ *      · GERMANIC          The Mass（ERA）
+ *      · rock_house_jail   勇闯夺命岛 Rock House Jail（Nick Glennie-Smith / Harry Gregson-Williams / Hans Zimmer）
+ *      · helmet_to_helmet  Brand X Music - Helmet To Helmet
+ *
+ *    🔴 **暂停 ≠ 删除**：.aud 音频文件、`BGM_REGION_GAIN` 响度标定、`BASE16_BGM_MAP` 母体映射
+ *    全部原样保留（主人「不要删除，只是不用了」），恢复时把本集合里对应那一行删掉即可。
+ *    效果：选曲/轮播池会跳过它们（见 `AVAILABLE_BGM_FOLDERS` 与 `shuffledBgmFolders`），
+ *    落到 `GENERIC_BGM_FALLBACK`（age_of_kings，帝国时代2主题，未收到主张）。
+ *    ⚠️ 版权主张截图里第 1 条 `Intro` 不是本项目曲目（项目里没有这个 BGM 夹），故不在本表。
+ */
+const PAUSED_BGM_FOLDERS = new Set<string>([
+    'BERBER',
+    'hes_a_pirate',
+    'WEST_ASIA',
+    'victory',
+    'GERMANIC',
+    'rock_house_jail',
+    'helmet_to_helmet',
+]);
+
+/**
  * BGM 响度补偿：把每首曲子拉平到 **-21.0 LUFS**（ITU-R BS.1770 综合响度，非 RMS）。
  * gain = 10^((-21.0 - 实测LUFS) / 20)，注释里的数字就是该文件的实测值。
  *
@@ -359,8 +386,11 @@ export const BASE16_BGM_MAP: Record<Base16Culture, readonly string[]> = {
  * 放完后不循环单曲，在全部曲目里洗牌随机轮播（不立刻重复同一首）；
  * 镜头进入新文化区/势力范围则区域优先立刻切歌。
  */
-/** 实际存在且完成响度标定的曲目；随机池只允许从这里取，避免抽到不存在的区域文件。 */
-const AVAILABLE_BGM_FOLDERS = new Set<string>(Object.keys(BGM_REGION_GAIN));
+/** 实际存在、完成响度标定、且**未被暂停**的曲目；随机池只允许从这里取，
+ *  既避免抽到不存在的区域文件，也避免抽到 `PAUSED_BGM_FOLDERS`（2026-10-18 版权主张暂停）。 */
+const AVAILABLE_BGM_FOLDERS = new Set<string>(
+    Object.keys(BGM_REGION_GAIN).filter((folder) => !PAUSED_BGM_FOLDERS.has(folder)),
+);
 const BGM_ROTATION_FOLDERS: readonly string[] = Object.freeze([...AVAILABLE_BGM_FOLDERS]);
 const GENERIC_BGM_FALLBACK = 'age_of_kings';
 
@@ -1118,10 +1148,11 @@ export class AudioManager {
     }
 
     /** Fisher–Yates 洗牌全部实际存在且完成响度标定的 BGM folder。
-     *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。 */
+     *  🔴 [2026-10-02 主人定] 剧本期（亚历山大东征）只洗西方歌曲池；乱斗才洗全部曲目。
+     *  🔴 [2026-10-18 主人令] 两个池都要再滤掉 `PAUSED_BGM_FOLDERS`（版权主张暂停，文件保留）。 */
     private shuffledBgmFolders(): string[] {
         const pool = isScriptPeriod() ? SCRIPT_WESTERN_BGM_FOLDERS : BGM_ROTATION_FOLDERS;
-        const arr = [...pool];
+        const arr = pool.filter((folder) => !PAUSED_BGM_FOLDERS.has(folder));
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [arr[i], arr[j]] = [arr[j], arr[i]];

@@ -7620,7 +7620,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
         "/assets/SOUTH_AMERICA/qimu_mingchakaieman.png": {
             "scale": 1.11,
             "offsetX": 0,
-            "offsetY": -19
+            "offsetY": -21
         },
         "/assets/SOUTH_AMERICA/qibucha_pakanqike.png": {
             "scale": 1.04,

@@ -471,6 +471,8 @@ export class CombatUI {
     private skillsRow!: HTMLDivElement;
     private leftSkillsBox!: HTMLDivElement;
     private rightSkillsBox!: HTMLDivElement;
+    private leftScene13SkillBar: HTMLDivElement | null = null;
+    private rightScene13SkillBar: HTMLDivElement | null = null;
 
     // Text Elements
     private leftSideLabel!: HTMLDivElement;
