@@ -545,7 +545,8 @@ korea_a: 0.646,  // -17.2 LUFS
     africa_a: 0.684,  // -17.7 LUFS
     khmer_a: 0.716,  // -18.1 LUFS
     khmer_b: 0.700,  // -17.9 LUFS
-    vietnamese_a: 0.700,  // -17.9 LUFS
+    // 🔴 [2026-10-18 主人令「删除，越南独弦琴 Dan Bau [vietnamese_a]」] vietnamese_a 已删除：
+    //    文件 public/assets/bgm/vietnamese_a_bgm.aud 一并删除，曲池 BGM_POOL_MAP.VIETNAMESE 同步移除。
     vietnamese_b: 0.668,  // -17.5 LUFS
     malay_a: 0.716,  // -18.1 LUFS
     malay_b: 0.708,  // -18.0 LUFS
@@ -703,7 +704,9 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     TUPI: ['de_TUPI', 'tupi_a', 'tupi_b'],
     TURKS: ['de_TURKS', 'turks_a', 'turks_b'],
     VARANGIANS: ['de_VARANGIANS', 'varangians_a', 'varangians_b'],
-    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_a', 'vietnamese_b'],
+    // 🔴 [2026-10-18 主人令] vietnamese_a（越南独弦琴 Dan Bau）已连同 .aud 文件删除，
+    //    本文化池由 3 首降为 2 首（de_VIETNAMESE 主题曲 + vietnamese_b）。
+    VIETNAMESE: ['de_VIETNAMESE', 'vietnamese_b'],
     VIKINGS: ['de_VIKINGS', 'viking_war_drums', 'vikings_a'],
     WEI: ['de_WEI', 'wuzhou', 'zhaosong'],
     WESTERN: ['WESTERN', 'western_a', 'western_b'],

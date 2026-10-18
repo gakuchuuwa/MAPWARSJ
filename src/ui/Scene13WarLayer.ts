@@ -11,7 +11,7 @@
  *   - Scene13MapWaterAdapter.ts  ：战术水体搬迁与真实海向自适应校正
  */
 
-import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, resolveCityDefenseLegionName, resolveCityDefenseLegionComposition, type FormationMode } from '../types/CultureFormations';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
@@ -1548,9 +1548,9 @@ export class Scene13WarLayer {
             }
 
             for (const side of sides) {
-                const lanes = this.slotsOf(side.region, side.factionId, side.generalId, side.hasElite);
+                const lanes = this.slotsOf(side.region, side.factionId, side.generalId, side.hasElite, side.f);
                 const n = lanes.length;
-                const mode = this.formationModeOf(side.region, side.factionId, side.generalId);
+                const mode = this.formationModeOf(side.region, side.factionId, side.generalId, side.f);
                 // 🔴 前中后固定（主人 2026-08-15 定）：不再随机换序，出兵口顺序 = 编制槽位展开序
                 //    （鱼鳞 步骑弓 / 三角 近战+远程+近战 / 雁行 远程+近战+远程）。
                 const lanes2 = lanes;
@@ -1822,6 +1822,15 @@ export class Scene13WarLayer {
      */
     private sideLegionName(side: 0 | 1): string {
         const fid = this.sideFaction[side];
+        if (side === 1 && this.battleType === 'siege') {
+            const defName = resolveCityDefenseLegionName(
+                this.defenderCityId,
+                this.techYearGetter?.() ?? this.techYear,
+                this.defenderCityRecord()?.buildingStyle,
+                fid,
+            );
+            if (defName) return defName;
+        }
         const byFaction = fid ? FACTION_COMPOSITIONS[fid]?.legionName : undefined;
         if (byFaction) return byFaction;
         return getCultureLegionName(this.sideCulture[side] as RegionType) || '';
@@ -2407,8 +2416,30 @@ export class Scene13WarLayer {
     /** DE 自动排布的阵位缓存（键 = 阵型 + 九个兵种键） */
     private deCellCache = new Map<string, { col: number; row: number; cols: number }[]>();
 
-    private slotsOf(region: string, factionId?: string | null, generalId?: string | null, hasElite?: boolean): { key: string }[] {
+    private slotsOf(region: string, factionId?: string | null, generalId?: string | null, hasElite?: boolean, sideF?: 0 | 1): { key: string }[] {
         try {
+            // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
+            if (sideF === 1 && this.battleType === 'siege') {
+                const defComp = resolveCityDefenseLegionComposition(
+                    this.defenderCityId,
+                    this.techYearGetter?.() ?? this.techYear,
+                    this.defenderCityRecord()?.buildingStyle,
+                    factionId,
+                );
+                if (defComp?.slots?.length) {
+                    const types = expandCompositionSlots(defComp.slots);
+                    if (types.length === 9) {
+                        return withCommander(generalId, types, {
+                            factionId,
+                            seedKey: region,
+                            hasElite,
+                            legionCommanderUnit: defComp.commanderUnit,
+                        }).map((key) => ({
+                            key: WAR_TYPES[key] ? key : 'light_infantry',
+                        }));
+                    }
+                }
+            }
             // 🔴 势力专属方阵最优先（如伊贺 iga_d 忍者军团、织田 owari 等）
             const factionSlots = factionId ? getFactionCompositionSlots(factionId, generalId) : null;
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region as any, 50000);
@@ -2437,8 +2468,17 @@ export class Scene13WarLayer {
     }
 
     /** 从编制槽位结构推断阵型（鱼鳞/三角/雁行）；与 slotsOf 用同一 tier，保证布局一致 */
-    private formationModeOf(region: string, factionId?: string | null, generalId?: string | null): FormationMode {
+    private formationModeOf(region: string, factionId?: string | null, generalId?: string | null, sideF?: 0 | 1): FormationMode {
         try {
+            if (sideF === 1 && this.battleType === 'siege') {
+                const defComp = resolveCityDefenseLegionComposition(
+                    this.defenderCityId,
+                    this.techYearGetter?.() ?? this.techYear,
+                    this.defenderCityRecord()?.buildingStyle,
+                    factionId,
+                );
+                if (defComp?.formationMode) return defComp.formationMode;
+            }
             if (factionId) {
                 // 🔴 [2026-09-14] 势力表只剩指针，阵型跟着它挂的那支军团走
                 const custom = getFactionLegionComposition(factionId);

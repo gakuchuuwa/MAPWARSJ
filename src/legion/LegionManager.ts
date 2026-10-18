@@ -1,6 +1,7 @@
 import { Army } from './Army';
 import { getLegionEliteLegionName, isCityGeneralEliteAnchor } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { isGeneralOnStage } from '../data/generalOnStage';
 import {getCityAnchoredStrategicMagnitude, emitFollowedLongDriveDeepBypassFx, getLongDriveDeepBypassChance, emitFollowedCityAnchoredDefensePulse} from '../combat/GeneralSkillCombat';
 import {
     applyLegionSpawnTierToArmy,
@@ -370,7 +371,7 @@ export class LegionManager {
             const state: CitySpawnTierState = city ?? {};
             const atAnchor = isCityGeneralEliteAnchor(cityId);
             const canGeneral =
-                atAnchor && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId) && !!getCityAnchoredGeneral(cityId);
+                atAnchor && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId) && !!getCityAnchoredGeneral(cityId) && isGeneralOnStage(getCityAnchoredGeneral(cityId)?.generalId);
             const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
             if (army.isElite && !army.generalId) {

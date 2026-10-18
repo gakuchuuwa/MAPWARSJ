@@ -8131,6 +8131,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -2
+        },
+        "/assets/LATIN/kelimiya_aobeituosikuaer.png": {
+            "scale": 1.28,
+            "offsetX": 2,
+            "offsetY": 0
         }
     },
     "folderGuides": {

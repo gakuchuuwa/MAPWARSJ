@@ -205,7 +205,6 @@ export const BGM_TITLES: Record<string, string> = {
     varangians_a: '瓦良格维京乐',
     varangians_b: '维京战鼓·Viðarr',
     victory: 'Victory(暂停)',
-    vietnamese_a: '越南独弦琴 Dan Bau',
     vietnamese_b: '越南古筝竹笛',
     viking_war_drums: '维京战鼓',
     vikings_a: '维京战鼓·北欧',

@@ -25,6 +25,7 @@ import { gameLog } from '../utils/GameLogger';
 import { getCityRegion, RegionType, isRegionCenter } from '../systems/RegionSystem';
 import type { SiegeManager } from '../combat/SiegeManager';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
+import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { compareGeneralsByPriority } from '../data/generalSelection';
 import { isGeneralOnCooldown } from '../legion/DefeatCooldown';
@@ -322,6 +323,10 @@ export class RecruitmentSystem {
             if (this.isCityGarrisonCommitted(city.id)) continue;
             // 锚定将战败冷却中：该城暂不出兵。
             if (isGeneralOnCooldown(city.id)) continue;
+            // 🔴 [2026-10-18 主人定「没有武将的据点，不能去打别的据点」「没有武将不能出兵」]
+            //    据点无武将或武将当前不在登场期（此时只有普通守军「XX将军」），不能出兵攻打别的据点。
+            const anchoredGeneral = getCityAnchoredGeneral(city.id);
+            if (!anchoredGeneral || !isGeneralOnStage(anchoredGeneral.generalId)) continue;
             // 计算征兵兵力（城市兵力的90%，据点保留 10% 驻军）
             const baseArmySize = Math.floor((city.troops || 0) * 0.9);
             let armySize = baseArmySize;
@@ -383,6 +388,8 @@ export class RecruitmentSystem {
 
 
     private spawnCandidate(city: RecruitmentCity, armySize: number) {
+        const anchoredGeneral = getCityAnchoredGeneral(city.id);
+        if (!anchoredGeneral || !isGeneralOnStage(anchoredGeneral.generalId)) return null;
         const region = this.getCityRegion(city);
         const base16 = this.getCityBase16(city);
         const factionLegion = FACTION_COMPOSITIONS[city.factionId]?.legionName?.trim();
