@@ -17,7 +17,7 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
-import { getCultureLegionName } from '../types/CultureFormations';
+import { getCultureLegionName, resolveCityDefenseLegionName } from '../types/CultureFormations';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import {
     applyPortraitAdjustToElement,
@@ -1746,7 +1746,11 @@ export class CombatUI {
             || ((init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
                 ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
                 : getCultureLegionName(attRegion));
-        const defLegionName = (init.defenderFactionId && getScriptFactionLegionName(init.defenderFactionId))
+        const defCityLegion = (init.battleType === 'siege' || init.defenderCityId)
+            ? resolveCityDefenseLegionName(init.defenderCityId, init.getYear?.(), undefined, init.defenderFactionId)
+            : null;
+        const defLegionName = defCityLegion
+            || (init.defenderFactionId && getScriptFactionLegionName(init.defenderFactionId))
             || ((init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
                 ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
                 : getCultureLegionName(defRegion));
@@ -6693,11 +6697,17 @@ export class CombatUI {
            （江南 → 封建时代隋唐军团），于是同一支军队在编辑器里是大明军团、到战场变成隋唐军团。
            现在补一层：unit 上没有就用 entity 自己的势力（army.getFactionId / city.factionId），
            只有**确实没有势力**时才允许退回文化区默认名。 */
-        const ent = unit.getEntity?.() as { factionId?: string | null; getFactionId?: () => string | null } | undefined;
+        const ent = unit.getEntity?.() as { id?: string; buildingStyle?: string; factionId?: string | null; getFactionId?: () => string | null } | undefined;
         const factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
         // ⓪ 🔴 [2026-09-23] 剧本期：当前这一仗用的剧本军团名（如「马其顿军团」）
         const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
         if (scriptLegion) return scriptLegion;
+        // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
+        if (unit.unitType === 'city') {
+            const cityId = ent?.id ?? unit.id ?? this.boundRegionalBattleField?.getCity?.()?.id ?? null;
+            const defCityLegion = resolveCityDefenseLegionName(cityId, undefined, ent?.buildingStyle, factionId);
+            if (defCityLegion) return defCityLegion;
+        }
         // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;

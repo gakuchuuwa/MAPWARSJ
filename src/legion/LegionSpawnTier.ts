@@ -6,6 +6,7 @@ import {
 } from '../data/ExpeditionLegions';
 import { getCityAnchoredGeneral } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
+import { isGeneralOnStage } from '../data/generalOnStage';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { pickRandomStrategicSkill, setStrategicSkillOverride } from '../combat/GeneralSkillCombat';
 import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
@@ -27,7 +28,8 @@ export function listAvailableLegionSpawnOutcomes(
     eliteName: string | null,
     cityId?: string | null,
 ): LegionSpawnTierOutcome[] {
-    const hasGeneral = !!generalFactionId && !!getFactionGeneral(generalFactionId);
+    const general = generalFactionId ? getFactionGeneral(generalFactionId) : null;
+    const hasGeneral = !!general && isGeneralOnStage(general.generalId);
     const canGeneral = hasGeneral && !tierState.spawnGeneralUsed && (cityId ? !isGeneralOnCooldown(cityId) : true);
     const canElite = !!eliteName && !tierState.spawnEliteUsed && (cityId ? !isEliteOnCooldown(cityId) : true);
 
@@ -86,7 +88,7 @@ export function attachFactionGeneralToArmy(army: Army): boolean {
     const cityId = army.homeCityId ?? army.getSourceCityId();
     if (!isCityGeneralEliteAnchor(cityId)) return false;
     const general = getCityAnchoredGeneral(cityId);
-    if (!general) return false;
+    if (!general || !isGeneralOnStage(general.generalId)) return false;
     army.generalId = general.generalId;
     army.portraitPath = general.portrait;
     if (getGeneralProfile(general.generalId)?.tier === 'famous') {
@@ -128,7 +130,8 @@ export function applyLegionSpawnTierToArmy(
     const threshold = GameConfig.LEGION_TIER.PROMOTE_TROOPS; // 大军线 4 万（与远征无关）
     const cityId = army.homeCityId ?? army.getSourceCityId();
     const anchorFactionId = getCityAnchorFactionId(cityId);
-    const hasGeneral = !!getCityAnchoredGeneral(cityId);
+    const anchoredGeneral = getCityAnchoredGeneral(cityId);
+    const hasGeneral = !!anchoredGeneral && isGeneralOnStage(anchoredGeneral.generalId);
     const canGeneral = hasGeneral && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId);
     const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 
@@ -154,6 +157,13 @@ export function applyLegionSpawnTierToArmy(
     if (canElite && canGeneral) {
         const applied = makeArmyElite(army, eliteName, true);
         markSpawnTierConsumed(state, { elite: applied.elite, general: applied.general });
+        noteCitySpawnTierFromLegion(state, army);
+        return;
+    }
+    if (canGeneral) {
+        if (attachFactionGeneralToArmy(army)) {
+            markSpawnTierConsumed(state, { general: true });
+        }
         noteCitySpawnTierFromLegion(state, army);
         return;
     }

@@ -35,7 +35,7 @@ import {
     expandCompositionScales,
     expandCompositionSlots,
 } from '../types/LegionComposition';
-import { getCultureTier, getFactionCompositionSlots, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, getFactionCompositionSlots, resolveCityDefenseLegionComposition, type FormationMode } from '../types/CultureFormations';
 import { HeroSpriteDrawer } from './player/HeroSpriteDrawer'; // [2026-09-05 玩家] 单骑精灵
 import { isScriptPeriod } from '../events/scriptPeriod';
 
@@ -1821,8 +1821,9 @@ export class GlobalUnitRenderer {
         const cityPos = { lat: city.latitude, lng: city.longitude };
         const scale = Math.pow(2, Math.min(this.map.getZoom(), 10) - 9) * 0.7;
 
-        // 守军：城所属势力专属 9 槽（如伊贺/大秦等）或文化区 9 槽，面向攻方
-        const factionSlots = city.factionId ? getFactionCompositionSlots(city.factionId) : null;
+        // 守军：每个时代每个据点防守时，只能出本文化该时代的军团（2026-10-18 主人定）
+        const defComp = resolveCityDefenseLegionComposition(city.id, undefined, city.buildingStyle, city.factionId);
+        const factionSlots = defComp?.slots ?? (city.factionId ? getFactionCompositionSlots(city.factionId) : null);
         const tier = factionSlots ? { slots: factionSlots } : getCultureTier((city.region ?? 'CENTRAL') as any, city.troops);
         const slots = tier?.slots;
         if (!slots || slots.length === 0) return fallback;
@@ -3474,9 +3475,10 @@ export class GlobalUnitRenderer {
             const anchor = this.computeSiegeDefenderAnchor(city, atkPos);
             if (!anchor) continue;
 
-            // 守军编队：按城市势力专属或文化区生成 9 槽（与攻方军团同一套）
+            // 守军编队：每个时代每个据点防守时，只能出本文化该时代的军团（2026-10-18 主人定）
             const region = (city.region ?? 'CENTRAL') as any;
-            const factionSlots = city.factionId ? getFactionCompositionSlots(city.factionId) : null;
+            const defComp = resolveCityDefenseLegionComposition(city.id, undefined, city.buildingStyle, city.factionId);
+            const factionSlots = defComp?.slots ?? (city.factionId ? getFactionCompositionSlots(city.factionId) : null);
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region, city.troops);
             const slots = tier?.slots;
             if (!slots || slots.length === 0) continue;

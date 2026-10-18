@@ -28,7 +28,8 @@
 
 import { RegionType } from '../systems/RegionSystem';
 import { STYLE_TO_BASE16, toBase16 } from '../systems/CultureBase16';
-import { LEVEL_2_CIV_62_MAP } from '../data/level2Civ62Legions';
+import { LEVEL_2_CIV_62_LEGIONS, LEVEL_2_CIV_62_MAP } from '../data/level2Civ62Legions';
+import { CITIES_V2 } from '../data/cities_v2';
 import { LEVEL_3_LEGION_MAP } from '../data/level3CustomLegions';
 import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompositionSlots } from './LegionComposition';
 import type { LegionType } from './UnitTypes';
@@ -2390,6 +2391,98 @@ export function getLegionNameByStyle(buildingStyle: string): string {
         if (l3.regions.includes(buildingStyle)) return l3.name;
     }
     return '东亚军团';
+}
+
+const DEFENSE_AGE_ORDER = ['antiquity', 'feudal', 'castle', 'imperial'] as const;
+export type DefenseEraAge = (typeof DEFENSE_AGE_ORDER)[number];
+
+/**
+ * 🔴 [2026-10-18 主人定] 四时代年份划分：
+ *   古典时代：起始 – 公元 476 年
+ *   封建时代：公元 476 年 – 公元 1050 年
+ *   城堡时代：公元 1050 年 – 公元 1500 年
+ *   帝国时代：公元 1500 年 – 公元 1914 年
+ */
+export function getEraByYear(year: number): DefenseEraAge {
+    if (year < 476) return 'antiquity';
+    if (year < 1050) return 'feudal';
+    if (year < 1500) return 'castle';
+    return 'imperial';
+}
+
+/**
+ * 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
+ * 按据点自身建筑风格（66 文化）+ 当前年份所属时代，解析该据点防守时应出的本文化该时代军团名。
+ */
+export function resolveCityDefenseLegionName(
+    cityId?: string | null,
+    year?: number | null,
+    buildingStyle?: string | null,
+    factionId?: string | null,
+): string | null {
+    // 剧本期：当前事件显式指定的剧本守军优先
+    const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
+    if (scriptLegion) return scriptLegion;
+
+    let style = buildingStyle ?? null;
+    if (!style && cityId) {
+        const rtCity = typeof window !== 'undefined' ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
+        style = rtCity?.buildingStyle ?? CITIES_V2.find((c) => c.id === cityId)?.buildingStyle ?? null;
+    }
+    if (!style) return null;
+
+    const resolvedYear =
+        typeof year === 'number' && !Number.isNaN(year)
+            ? year
+            : ((typeof window !== 'undefined'
+                ? ((window as any).game?.scriptCityVisibility?.getCurrentEvent?.()?.year
+                    ?? (window as any).game?.timeSystem?.getYear?.())
+                : null) ?? -845);
+    const targetAge = getEraByYear(resolvedYear);
+
+    const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(style));
+    if (candidates.length === 0) return null;
+
+    const exact = candidates.find((l) => l.age === targetAge);
+    if (exact) return resolveRenamedLegion(exact.name);
+
+    // 极少数未覆盖全部 4 时代的文化（HUNS/MUISCA/MAPUCHE/TUPI）取同文化最近时代兜底
+    const targetIdx = DEFENSE_AGE_ORDER.indexOf(targetAge);
+    let best = candidates[0];
+    let bestDist = Math.abs(DEFENSE_AGE_ORDER.indexOf(best.age) - targetIdx);
+    for (let i = 1; i < candidates.length; i++) {
+        const d = Math.abs(DEFENSE_AGE_ORDER.indexOf(candidates[i].age) - targetIdx);
+        if (d < bestDist) {
+            best = candidates[i];
+            bestDist = d;
+        }
+    }
+    return resolveRenamedLegion(best.name);
+}
+
+/**
+ * 🔴 [2026-10-18 主人定] 解析据点防守时的本文化该时代军团编制（slots / formationMode / commanderUnit / shipId）。
+ */
+export function resolveCityDefenseLegionComposition(
+    cityId?: string | null,
+    year?: number | null,
+    buildingStyle?: string | null,
+    factionId?: string | null,
+): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
+    const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
+    if (scriptLegion) {
+        const scr = SCRIPT_LEGION_MAP.get(scriptLegion);
+        if (scr) {
+            return {
+                formationMode: scr.formationMode,
+                slots: scr.slots.map((s) => ({ ...s })),
+                shipId: scr.shipId,
+                commanderUnit: scr.commanderUnit,
+            };
+        }
+    }
+    const name = resolveCityDefenseLegionName(cityId, year, buildingStyle, factionId);
+    return name ? getLegionCompositionByName(name) : null;
 }
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */
