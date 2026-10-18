@@ -4058,7 +4058,7 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
                     const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
                     this.decorSprites = this.decorSprites.filter((s) => {
-                        const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
+                        const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.startsWith('BATTLEFIELD:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
                         const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
                         const isOldTree = TREE_RE.test(s.asset);
                         const c = glLayer.screenToCell(s.x, s.y, VW, VH);
@@ -4326,7 +4326,9 @@ export class Scene13WarLayer {
                                         && !/^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
                                     if (!isHumidTropical) asset = 'FORAGE_BUSH';
                                 }
-                            } else if (asset !== 'MINE_GOLD' && asset !== 'MINE_STONE') {
+                            } else if (asset === 'MINE_GOLD') {
+                                continue;
+                            } else if (asset !== 'MINE_STONE') {
                                 // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
                                 if (/^ROCK/.test(asset)) {
                                     if (decorSet.solid.length === 0) continue;
@@ -4409,6 +4411,7 @@ export class Scene13WarLayer {
                     }
                 }
                 this.applyDeCityToGround();
+                this.spawnBattlefieldRelics(glLayer, VW, VH);
                 releaseGround();
             } catch (err) {
                 console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败（已无旧 2D 地面兜底，本场没有地面）:', err);
@@ -4417,6 +4420,145 @@ export class Scene13WarLayer {
                 releaseGround();
             }
         });
+    }
+
+    /**
+     * 在战术战场南北两翼安全区（避开城墙、护城河、四门大道、水体、营地出生点与中央主交战走廊）
+     * 点缀 DE 古战场军事遗存（SUCAI_BATTLEFIELD）：
+     *   · 攻城战：倒毁攻城器械残骸（投石机/石炮/冲车/弩炮）、破损拒马木栅残骸、战地火把
+     *   · 野战：古战场骸骨、断车、破损拒马木栅残骸
+     */
+    private spawnBattlefieldRelics(glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
+        const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}`;
+        let rSeed = 2166136261 >>> 0;
+        for (let i = 0; i < seedStr.length; i++) {
+            rSeed = Math.imul(rSeed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+        }
+        const rnd = (): number => {
+            rSeed = Math.imul(rSeed ^ (rSeed >>> 15), 0x85ebca6b) >>> 0;
+            rSeed = Math.imul(rSeed ^ (rSeed >>> 13), 0xc2b2ae35) >>> 0;
+            return ((rSeed ^ (rSeed >>> 16)) >>> 0) / 4294967296;
+        };
+
+        const { x: cx, y: cy } = this.deCity ? this.deCityCenter : { x: VW * 0.5, y: VH * 0.5 };
+        const rx = this.deCity ? this.deCity.width / 2 : 0;
+        const ry = this.deCity ? this.deCity.height / 2 : 0;
+        const ringLm = this.deCity ? Math.max(0, (rx - 200) / (TAC_TILE_W / 2)) : 0;
+        const roadMaxU = ringLm / 2 + 7.5;
+        const roadMaxV = 3.2;
+
+        const placedPts: Array<{ x: number; y: number }> = [];
+        const isSafeSpot = (sx: number, sy: number): boolean => {
+            if (sx < 360 || sx > VW - 360 || sy < 180 || sy > VH - 180) return false;
+            // 避开中央部队冲锋与交战主走廊
+            if (Math.abs(sy - cy) < 360) return false;
+            // 攻城战避开城池、护城河及四门大道
+            if (this.deCity) {
+                if (((sx - cx) / (rx + 180)) ** 2 + ((sy - cy) / (ry + 110)) ** 2 < 1.0) return false;
+                if (ringLm > 0) {
+                    const u = (sx - cx) / (TAC_TILE_W / 2), v = (sy - cy) / (TAC_TILE_H / 2);
+                    const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
+                    if ((di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV)) return false;
+                }
+            }
+            if (glLayer.isWaterAt(sx, sy, VW, VH)) return false;
+            for (const sp of this.spawns) {
+                if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 340) return false;
+            }
+            for (const p of placedPts) {
+                if (Math.hypot(sx - p.x, (sy - p.y) * 1.4) < 260) return false;
+            }
+            return true;
+        };
+
+        const pushRelic = (asset: string, sx: number, sy: number, flip: boolean): void => {
+            placedPts.push({ x: sx, y: sy });
+            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+            this.ensureNatureAsset(asset);
+            this.decorSprites.push({
+                asset,
+                frame: 0,
+                x: sx,
+                y: sy,
+                flip,
+                layer: 'world',
+                z: 0,
+                lift,
+                obstruction: undefined,
+                obstructionContactSec: 0,
+                obstructionTouched: false,
+                obstructionDisabled: true,
+            });
+        };
+
+        const pickSafeFlankSpot = (xMinFrac: number, xMaxFrac: number, preferSouth: boolean): { x: number; y: number } | null => {
+            for (let attempt = 0; attempt < 24; attempt++) {
+                const south = (attempt % 2 === 0) ? preferSouth : !preferSouth;
+                const sx = VW * (xMinFrac + rnd() * (xMaxFrac - xMinFrac));
+                const sy = south
+                    ? VH * (0.70 + rnd() * 0.16)
+                    : VH * (0.14 + rnd() * 0.16);
+                if (isSafeSpot(sx, sy)) return { x: sx, y: sy };
+            }
+            return null;
+        };
+
+        if (this.battleType === 'siege') {
+            const siegeWrecks = [
+                'BATTLEFIELD:DECAY_TREBUCHET',
+                'BATTLEFIELD:DECAY_MANGONEL',
+                'BATTLEFIELD:DECAY_ONAGER',
+                'BATTLEFIELD:DECAY_BATTERING_RAM',
+                'BATTLEFIELD:DECAY_SCORPION',
+            ];
+            const barricadeWrecks = [
+                'BATTLEFIELD:BARRICADE_RUBBLE_A',
+                'BATTLEFIELD:BARRICADE_RUBBLE_B',
+                'BATTLEFIELD:BARRICADE_RUBBLE_C',
+                'BATTLEFIELD:BARRICADE_RUBBLE_D',
+                'BATTLEFIELD:STAKE_BARRICADE',
+            ];
+            const torches = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
+
+            const wreckCount = 2;
+            for (let i = 0; i < wreckCount; i++) {
+                const pt = pickSafeFlankSpot(0.24, 0.72, i % 2 === 0);
+                if (!pt) continue;
+                const asset = siegeWrecks[Math.floor(rnd() * siegeWrecks.length)];
+                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+            }
+            const rubbleCount = 2 + Math.floor(rnd() * 2);
+            for (let i = 0; i < rubbleCount; i++) {
+                const pt = pickSafeFlankSpot(0.20, 0.78, i % 2 === 1);
+                if (!pt) continue;
+                const asset = barricadeWrecks[Math.floor(rnd() * barricadeWrecks.length)];
+                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+            }
+            const torchCount = 2;
+            for (let i = 0; i < torchCount; i++) {
+                const pt = pickSafeFlankSpot(0.26, 0.74, i % 2 === 0);
+                if (!pt) continue;
+                const asset = torches[Math.floor(rnd() * torches.length)];
+                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+            }
+        } else {
+            const fieldRelics = [
+                'BATTLEFIELD:SKELETON_BATTLEFIELD',
+                'BATTLEFIELD:SKELETON_SOLDIER',
+                'BATTLEFIELD:IMPALED_CORPSE',
+                'BATTLEFIELD:BARRICADE_RUBBLE_A',
+                'BATTLEFIELD:BARRICADE_RUBBLE_B',
+                'BATTLEFIELD:BARRICADE_RUBBLE_C',
+                'BATTLEFIELD:CART_BROKEN',
+            ];
+            const relicCount = 3 + Math.floor(rnd() * 2);
+            for (let i = 0; i < relicCount; i++) {
+                const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 0);
+                if (!pt) continue;
+                const asset = fieldRelics[Math.floor(rnd() * fieldRelics.length)];
+                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+            }
+        }
     }
 
     /** 开战前最多等 GL 地面多久（毫秒）；超时照常开打 */

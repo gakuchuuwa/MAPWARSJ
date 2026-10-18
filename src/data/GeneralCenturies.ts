@@ -704,6 +704,9 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_przemysl_ii': 13,                               // 普热梅斯 · dabolan · 波兹南
     'gen_romshlav': 12,                                  // 罗姆什拉夫 · daniebo · 斯摩棱斯克
     'gen_semyon_saburov': 16,                            // 萨布罗夫 · yedi · 沃罗涅日
+    'don_vorontsov': 16,                                 // 沃隆佐夫 · fuerjia · 察里津
+    'nogai_votkhovsky': 16,                              // 沃特霍夫斯基 · nuogai · 萨马拉
+    'bashkir_nagoy': 16,                                 // 纳吉 · bashekeer · 乌法
     'eguo_zasekin': 16,                                  // 扎谢金 · eguo_biandi · 萨拉托夫
     'gen_sergey_belgorod': 16,                           // 谢尔盖 · beisilafu · 别尔哥罗德
     'gen_simeon_great': 10,                              // 西美昂 · seleisi · 普罗夫迪夫

@@ -198,6 +198,8 @@ export interface PlayerQuestDeps {
         ): Army | null;
         getLegionById(id: string): Army | undefined;
         getArmies(): Army[];
+        dequeueArmyFromThirdPartyWaiters?(armyId: string): boolean;
+        triggerSiege?(army: Army, targetCity: City): 'siege' | 'skipped';
     };
     showDialogue: (payload: DialoguePayload) => void;
     closeDialogue: () => void;
@@ -1543,6 +1545,10 @@ export class PlayerQuestSystem {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
         }
+        if (!this.completedFirstBattles.has(g.generalId)) {
+            this.completedFirstBattles.add(g.generalId);
+            (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
+        }
         const factionName = this.deps.cityManager.getFactionName(original);
         this.quest = {
             kind: 'restore',
@@ -1576,6 +1582,10 @@ export class PlayerQuestSystem {
         if (!army) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
+        }
+        if (!this.completedFirstBattles.has(g.generalId)) {
+            this.completedFirstBattles.add(g.generalId);
+            (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         }
         const factionName = this.deps.cityManager.getFactionName(city.factionId);
         this.quest = {
@@ -1659,11 +1669,14 @@ export class PlayerQuestSystem {
 
         let host: Army | null = existingArmy && !existingArmy.isDestroyed ? existingArmy : null;
         if (host) {
+            this.deps.legionManager.dequeueArmyFromThirdPartyWaiters(host.id);
             if (host.getIsInCombat()) host.clearExternalCombatState();
             host.clearPostBattleRest();
             host.isRetreatingHome = false;
             host.setFactionId(myFactionId);
             host.setTroops(myTroops);
+            host.isElite = true;
+            if (!host.generalId) host.generalId = g.generalId;
         } else {
             city.factionId = myFactionId;
             city.troops = Math.max(city.troops || 0, Math.ceil(myTroops / 0.9) + 1000);
@@ -1684,6 +1697,7 @@ export class PlayerQuestSystem {
         (host as Army & { isFirstBattleHero?: boolean }).isFirstBattleHero = true;
         (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
         (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
+        (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId = fb.targetCityId;
         host.scriptMarchExempt = true;
         host.expeditionTargetCityId = null;
 
@@ -1717,13 +1731,19 @@ export class PlayerQuestSystem {
             );
             if (enemyArmy) {
                 enemyArmy.setTroops(enemyTroops);
+                enemyArmy.isElite = true;
                 enemyArmy.generalId = enemySyntheticGenId;
                 const enemyRec = getGeneralRecordByGeneralId(enemySyntheticGenId);
                 if (enemyRec?.portrait) enemyArmy.portraitPath = enemyRec.portrait;
+                if (isOnTheSpot) {
+                    enemyArmy.setPosition(targetPos.lat, targetPos.lng + 0.03);
+                }
                 (enemyArmy as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
                 (enemyArmy as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
                 (enemyArmy as Army & { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy = true;
-                enemyArmy.scriptMarchExempt = !isOnTheSpot;
+                (enemyArmy as Army & { firstBattlePairHeroId?: string }).firstBattlePairHeroId = host.id;
+                (host as Army & { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId = enemyArmy.id;
+                enemyArmy.scriptMarchExempt = true;
                 applyLegionCultureComposition(enemyArmy, enemyArmy.cultureRegion ?? undefined);
                 enemyArmyId = enemyArmy.id;
             }
@@ -1733,8 +1753,9 @@ export class PlayerQuestSystem {
             }
             targetCity.troops = enemyTroops;
             (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemySyntheticGenId;
+            (targetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             if (isOnTheSpot) {
-                const ring = GameConfig.SIEGE.COMBAT_RADIUS * 0.9;
+                const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
                 host.setPosition(targetCity.latitude, targetCity.longitude + ring);
             }
         }
@@ -1857,7 +1878,10 @@ export class PlayerQuestSystem {
                 (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemySyntheticGenId;
                 host.setTargetCity(targetCity);
                 const cPos = { lat: targetCity.latitude, lng: targetCity.longitude };
-                if (getEuclideanDistance(host.getPosition(), cPos) > 0.12) {
+                const d = getEuclideanDistance(host.getPosition(), cPos);
+                if (d <= 0.2 && !host.getIsInCombat()) {
+                    this.deps.legionManager.triggerSiege(host, targetCity);
+                } else if (d > 0.12) {
                     host.moveAlongPath([{ lat: cPos.lat, lng: cPos.lng }]);
                 }
             } else {
@@ -1875,6 +1899,8 @@ export class PlayerQuestSystem {
             delete (host as { isFirstBattleHero?: boolean }).isFirstBattleHero;
             delete (host as { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole;
             delete (host as { firstBattleTitle?: string }).firstBattleTitle;
+            delete (host as { firstBattleTargetCityId?: string }).firstBattleTargetCityId;
+            delete (host as { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId;
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
             host.expeditionUnlocked = true;
@@ -1885,6 +1911,7 @@ export class PlayerQuestSystem {
             delete (enemyArmy as { __scriptPinned?: boolean }).__scriptPinned;
             delete (enemyArmy as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
             delete (enemyArmy as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy;
+            delete (enemyArmy as { firstBattlePairHeroId?: string }).firstBattlePairHeroId;
             enemyArmy.scriptMarchExempt = false;
             enemyArmy.disband();
         }
@@ -1892,6 +1919,7 @@ export class PlayerQuestSystem {
             const tc = this.deps.cityManager.getCity(q.firstBattle.targetCityId);
             if (tc) {
                 delete (tc as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId;
+                delete (tc as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero;
             }
         }
         this.deps.hero.setTravelPointLabel(null);
@@ -2959,6 +2987,10 @@ export class PlayerQuestSystem {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
             return;
         }
+        if (army.generalId && !this.completedFirstBattles.has(army.generalId)) {
+            this.completedFirstBattles.add(army.generalId);
+            (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
+        }
         this.quest = {
             kind: 'campaign',
             cityId: city.id,
@@ -3285,6 +3317,10 @@ export class PlayerQuestSystem {
     private finishQuest(success: boolean): void {
         const q = this.quest;
         if (!q) return;
+        const host = this.deps.legionManager.getLegionById(q.legionId);
+        if (host && !host.isDestroyed) {
+            delete (host as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+        }
         this.quest = null;
         const hero = this.deps.hero;
         // [2026-09-05 玩家] 任务成功不 detach：玩家继续跟着军团，直到军团解散才恢复自由。
@@ -3322,6 +3358,12 @@ export class PlayerQuestSystem {
         if (!hero.isAttached()) return;
         const q = this.quest;
         this.cleanupFirstBattleState(q);
+        if (q) {
+            const host = this.deps.legionManager.getLegionById(q.legionId);
+            if (host && !host.isDestroyed) {
+                delete (host as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
+            }
+        }
         this.quest = null;
         hero.detach();
         this.deps.notify(q ? `离队，放弃任务【${q.targetCityName}】` : '离队');

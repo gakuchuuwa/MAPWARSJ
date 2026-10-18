@@ -294,23 +294,40 @@ function startScene13War(
     gameLog('battle', `🎬 [Scene13War] 出兵口互攻启动: ${attRegion} vs ${defRegion}`);
 }
 
+function isStoryOrFirstBattleUnit(u: { getEntity?(): any } | null | undefined): boolean {
+    const ent = u?.getEntity?.();
+    if (!ent) return false;
+    return ent.isScriptArmy === true
+        || ent.isFirstBattleMarch === true
+        || ent.isFirstBattleHero === true
+        || ent.isFirstBattleFieldEnemy === true
+        || !!ent._firstBattleDefenderGeneralId;
+}
+
 /**
- * 🔴 [2026-10-04 主人定「按专业游戏设计」] 镜头被世界小地图停在别处时，玩家所在军团一开战就自动跟随回军团 ——
- *    否则下面各钩子都要求「镜头正在跟随参战军团」，这一仗会不进战术模式、在后台直接结算掉。
+ * 🔴 [2026-10-04 主人定「按专业游戏设计」｜2026-10-19 强化] 玩家所在军团或首次随将剧情军团一开战，
+ *    镜头无条件切回跟随玩家军团（解除停泊或其它军团跟拍）—— 确保首次随将触发剧情的战斗 100% 进入战术模式。
  */
-function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[]): void {
+function returnParkedCameraIfPlayerFights(app: GameApp, ids: string[], forceForStory = false): void {
     const cam = app.cameraFollowUI;
     const hero = app.playerHero;
-    if (!cam?.isParked() || !hero) return;
+    if (!cam || !hero) return;
     const mine = hero.getHostLegionId() ?? hero.id;
-    if (ids.includes(mine)) cam.followPlayerByUser();
+    const questLegionId = app.playerQuests?.getQuest()?.legionId ?? null;
+    if (forceForStory || ids.includes(mine) || (questLegionId && ids.includes(questLegionId))) {
+        cam.followPlayerByUser();
+    }
 }
 
 /** 战斗 UI：仅在镜头跟随军团参战时才弹出。 */
 export function wireGameAppCombatUiHooks(app: GameApp): void {
     app.combatSystem.onBattleStart = (battle) => {
-        returnParkedCameraIfPlayerFights(app, [battle.attacker.id, battle.defender.id]);
-        const followedId = app.cameraFollowUI?.getFollowedArmyId();
+        const isBattlefieldEvent = isStoryOrFirstBattleUnit(battle.attacker) || isStoryOrFirstBattleUnit(battle.defender);
+        returnParkedCameraIfPlayerFights(app, [battle.attacker.id, battle.defender.id], isBattlefieldEvent);
+        let followedId = app.cameraFollowUI?.getFollowedArmyId();
+        if (isBattlefieldEvent && (!followedId || (battle.attacker.id !== followedId && battle.defender.id !== followedId))) {
+            followedId = battle.attacker.id;
+        }
         if (!followedId) return;
         const isInvolved = battle.attacker.id === followedId || battle.defender.id === followedId;
         if (!isInvolved) return;
@@ -330,9 +347,9 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         //    那条写的是「玩家入伍的仗不进 13，改弹大地图战斗面板观战」，但玩家开自动模式后
         //    基本一直在伍，等于战术模式永远进不去；与「随军必进 13」的定案也相冲。
         //    现在玩家入伍的仗照常进 13，其余门槛（双方兵力 ≥5000 / 不都是海军 / 双方都有将+精锐）不变。
-        const eligible = tacticalModeOn(app) && bigEnough && !bothNaval
+        const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
             && (!!battle.attacker.generalId && !!battle.defender.generalId
-                && attHasElite && defHasElite);
+                && attHasElite && defHasElite)));
         // 🔴 [2026-09-16] 「进不去战术模式」闸门归因：六道闸哪道拦的，直接落盘，别再靠猜。
         //    文档铁律：数字反常先加计数器问「每道闸各拦掉多少」。落 scene13_probe_log.jsonl（why=gateBlocked）。
         if (import.meta.env.DEV) {
@@ -397,10 +414,30 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         isNarrative,
         battleField
     ) => {
-        returnParkedCameraIfPlayerFights(app, [...attackers.map((u) => u.id), ...defenders.map((u) => u.id)]);
-        const followedId = app.cameraFollowUI?.getFollowedArmyId();
+        const allUnits = [...attackers, ...defenders];
+        const allIds = allUnits.map((u) => u.id);
+        const quest = app.playerQuests?.getQuest();
+        const isQuestStoryBattle = !!quest
+            && (quest.kind === 'first_battle' || quest.kind === 'general_event')
+            && allIds.includes(quest.legionId);
+        const isBattlefieldEvent = isQuestStoryBattle || allUnits.some(isStoryOrFirstBattleUnit);
+        returnParkedCameraIfPlayerFights(app, allIds, isBattlefieldEvent);
+        let followedId = app.cameraFollowUI?.getFollowedArmyId();
+        if (isBattlefieldEvent && (!followedId || !allIds.includes(followedId))) {
+            const heroHostId = app.playerHero?.getHostLegionId();
+            if (heroHostId && allIds.includes(heroHostId)) {
+                followedId = heroHostId;
+            } else if (quest?.legionId && allIds.includes(quest.legionId)) {
+                followedId = quest.legionId;
+            } else {
+                const heroUnit = allUnits.find((u) => {
+                    const ent = u.getEntity?.();
+                    return ent?.isFirstBattleHero === true || ent?.isScriptArmy === true;
+                });
+                followedId = heroUnit?.id ?? attackers[0]?.id ?? defenders[0]?.id ?? null;
+            }
+        }
         if (!followedId) return;
-        const allIds = [...attackers.map((u) => u.id), ...defenders.map((u) => u.id)];
         if (!allIds.includes(followedId)) return;
         gameLog(
             'startup',
@@ -414,27 +451,19 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
         const attTroops = attackers.reduce((s, u) => s + (u.troops ?? 0), 0); // 攻方合计（含援军）
         const defTroops = defenders.reduce((s, u) => s + (u.troops ?? 0), 0); // 守方合计（含援军）
         const bigEnough = attTroops >= minTroops && defTroops >= minTroops;
-        const isNavalBattle = [...attackers, ...defenders].some(unitIsNaval);
+        const isNavalBattle = allUnits.some(unitIsNaval);
         const bothNaval = attackers.every(unitIsNaval) && defenders.every(unitIsNaval);
         const isNavalVsFortress = isNavalBattle
-            && [...attackers, ...defenders].some(unitIsFortress);
+            && allUnits.some(unitIsFortress);
         const attHasGen = attackers.some((u) => !!u.generalId);
         const defHasGen = defenders.some((u) => !!u.generalId);
         const attHasElite = attackers.some(unitHasElite);
         const defHasElite = defenders.some(unitHasElite);
-        // 战场事件进战术模式：HistoricalEventManager 为双方军团设置 isScriptArmy。
+        // 战场事件与武将首次剧情战进战术模式：HistoricalEventManager 设置 isScriptArmy，PlayerQuestSystem 设置 isFirstBattleMarch。
         // 攻城和野战共用此入口，不受普通战斗的兵力、将领、精锐门槛阻挡。
-        // 🔴 [2026-09-23 主人「剧本测试，我希望先不进入战术模式，都在战略模式下进行。可是调试面板中的这个功能失效了」]
-        //    改前战场事件连调试面板的「进入战术模式」开关也绕过去了。现在开关关掉，战场事件也留在战略地图打；
-        //    胜负照旧是史实（开战时已按剧本 result 写进 presetResult，战略层结算照它走）。
-        const isBattlefieldEvent = [...attackers, ...defenders]
-            .some((u) => {
-                const ent = u.getEntity?.();
-                return ent?.isScriptArmy === true || ent?.isFirstBattleMarch === true;
-            });
         const eligible = tacticalModeOn(app) && (isBattlefieldEvent || (bigEnough && !bothNaval
             && attHasGen && defHasGen && attHasElite && defHasElite));
-        if (eligible && !battleField?.scene13Frozen) {
+        if (eligible && (!battleField?.scene13Frozen || isBattlefieldEvent)) {
             const followedUnit = [...attackers, ...defenders].find((u) => u.id === followedId);
             const centerUnit = followedUnit ?? attackers[0] ?? defenders[0];
             const t = battleSceneTarget(centerUnit);
@@ -529,7 +558,8 @@ export function wireGameAppCombatUiHooks(app: GameApp): void {
     };
 
     app.combatSystem.onRegionalBattleReinforcement = (battleField, joinedUnit) => {
-        returnParkedCameraIfPlayerFights(app, [joinedUnit.id]);
+        const isStory = isStoryOrFirstBattleUnit(joinedUnit);
+        returnParkedCameraIfPlayerFights(app, [joinedUnit.id], isStory);
         const followedId = app.cameraFollowUI?.getFollowedArmyId();
         if (app.combatUI.isBoundToBattleField(battleField)) {
             app.combatUI.syncRegionalParticipantsFromBattleField(battleField);

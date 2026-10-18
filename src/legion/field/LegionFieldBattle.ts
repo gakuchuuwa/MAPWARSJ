@@ -50,6 +50,15 @@ function collectLegionsNearBattleCenter(
         if (legion.type !== 'legion' || legion.isDestroyed) return false;
         if (legion.getIsInCombat()) return false;
         if (legion.getTroops() < minTroops) return false;
+        const lAny = legion as any;
+        if (
+            legion.scriptMarchExempt ||
+            lAny.isFirstBattleHero ||
+            lAny.isFirstBattleFieldEnemy ||
+            legion.isScriptArmy
+        ) {
+            return false;
+        }
         return getEuclideanDistance(legion.getPosition(), center) <= radius;
     });
 
@@ -124,6 +133,12 @@ export function tryEngageFieldBattle(
     //    （「让剧本军团直接赶赴战场，期间，不予其他任何人交战」）
     if (army.scriptMarchExempt) return false;
 
+    const armyAny = army as any;
+    // 首战攻城军团（有明确首战攻城目标城）不主动触发任何野战
+    if (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && !armyAny.forceFirstBattleField) {
+        return false;
+    }
+
     const marchSegment: LatLng[] =
         Math.abs(oldPos.lat - newPos.lat) > 1e-9 || Math.abs(oldPos.lng - newPos.lng) > 1e-9
             ? [oldPos, newPos]
@@ -146,6 +161,25 @@ export function tryEngageFieldBattle(
         //    不判这一句，敌军照样能把赶路的剧本军拖进野战。
         if (otherArmy.scriptMarchExempt) continue;
 
+        const otherAny = otherArmy as any;
+        // 首战攻城军团不能被第三方拖入野战
+        if (otherAny.isFirstBattleHero && otherAny.firstBattleTargetCityId && !otherAny.forceFirstBattleField) {
+            continue;
+        }
+        // 首战野战配对锁定：玩家首战军团与首战专属敌军只能互相交战，绝不允许第三方军团截胡
+        if (armyAny.isFirstBattleHero && armyAny.firstBattlePairEnemyId && otherArmy.id !== armyAny.firstBattlePairEnemyId) {
+            continue;
+        }
+        if (otherAny.isFirstBattleHero && otherAny.firstBattlePairEnemyId && army.id !== otherAny.firstBattlePairEnemyId) {
+            continue;
+        }
+        if (armyAny.isFirstBattleFieldEnemy && armyAny.firstBattlePairHeroId && otherArmy.id !== armyAny.firstBattlePairHeroId) {
+            continue;
+        }
+        if (otherAny.isFirstBattleFieldEnemy && otherAny.firstBattlePairHeroId && army.id !== otherAny.firstBattlePairHeroId) {
+            continue;
+        }
+
         const opPos = otherArmy.getPosition();
         if (!areArmiesInFieldContact(marchSegment, opPos)) continue;
 
@@ -154,10 +188,10 @@ export function tryEngageFieldBattle(
 
         let otherIsGarrison = false;
         const isForcedField =
-            (army as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
-            (army as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy ||
-            (otherArmy as { forceFirstBattleField?: boolean }).forceFirstBattleField ||
-            (otherArmy as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy;
+            armyAny.forceFirstBattleField ||
+            armyAny.isFirstBattleFieldEnemy ||
+            otherAny.forceFirstBattleField ||
+            otherAny.isFirstBattleFieldEnemy;
         const nearestCity = cityManager.getNearestCity(null, {
             latitude: opPos.lat,
             longitude: opPos.lng,
