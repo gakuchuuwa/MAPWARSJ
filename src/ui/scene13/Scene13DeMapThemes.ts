@@ -241,7 +241,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         baseTerrain: 'ds3',
         // 🔴 [2026-08-21 素材全覆盖] 岩石地/碎石/塞外冷岩 sr2 入伊朗高原
         groundTiles: ['ds2', 'pm1', 'gr4', 'rck', 'rc2', 'sr2'],
-        forestFloorTiles: ['ds3', 'pal', 'pal1'],
+        forestFloorTiles: ['for', 'underbrush_leaves', 'ds3'],
         // [2026-08-21 完善] 伊朗高原无棕榈（棕榈是波斯湾低地绿洲植物）→ PINE（厄尔布尔士/扎格罗斯山松林）替代
         trees: ['PINE'], // 🔴 [2026-08-23 按现实修复] 伊朗高原内陆=干燥大陆性，树少仅1种；PINE=厄尔布尔士/扎格罗斯高山松（无橄榄/无枯树第二树种）
         autumnTrees: ['DEAD_TREE'],
@@ -258,7 +258,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         baseTerrain: 'gr7',
         // 🔴 [2026-08-21 素材全覆盖] 碎石与冷岩 sr2 入塞外干草原
         groundTiles: ['gr4', 'ds3', 'pm1', 'ds5', 'sr2'],
-        forestFloorTiles: ['ds3', 'for'],
+        forestFloorTiles: ['for', 'underbrush_leaves', 'ds3'],
         trees: ['DEAD_TREE'], // 🔴 [2026-08-23 按现实修复] 温带草原(steppe)无树，松树勿作主树（蒙古高原草原+戈壁，树极少，仅河谷有树）
         autumnTrees: ['DEAD_TREE'],
         winterTrees: ['DEAD_TREE'],
@@ -273,7 +273,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         baseTerrain: 'gravel_default', // 青藏高原高山砾石
         // 高原多变地表：绿草、高寒冷土、向阳干草、碎石岩地、冷岩 sr2
         groundTiles: ['gr2', 'pm2', 'gr4', 'ds5', 'rck', 'rc3', 'sr2'],
-        forestFloorTiles: ['ds3', 'grs'],
+        forestFloorTiles: ['for', 'underbrush_leaves', 'ds3'],
         trees: ['ASIAN_PINE', 'PINE'],
         winterTrees: ['SNOW_PINE', 'DEAD_TREE'],
         flatDecor: ['FLOWER_1', 'FLOWER_2', 'FLOWER_3', 'FLOWER_4', 'FLOWERBED', 'FERNPATCH', 'GRASS_GREEN_PATCH'],
@@ -306,7 +306,7 @@ export const DE_MAP_THEMES: Readonly<Record<DeMapThemeId, DeMapThemePalette>> = 
         baseTerrain: 'qs2',
         // 🔴 [2026-08-21 素材全覆盖] qs2 流沙 + rock_wet 湿润岩石入沼泽地面
         groundTiles: ['wt_brown', 'wt_green', 'r01', 'gravel_wet', 'qs2', 'rock_wet', 'sh4'], // sh4=沼泽浅水搭配湿地
-        forestFloorTiles: ['r01', 'underbrush_leaves'],
+        forestFloorTiles: ['fo2', 'underbrush_leaves', 'sh4'],
         trees: ['DEAD_TREE', 'WILLOW'],
         flatDecor: ['GRASS_GREEN_PATCH', 'UNDERBRUSH', 'WEED'],
         solidDecor: ['STUMP_GENERIC', 'ROCK1', 'ROCK2'],
@@ -815,19 +815,25 @@ export function waterTerrainForTheme(
     biome: Biome = 'temperate_forest',
     lng?: number,
 ): string {
-    // 1. 冬季雪区 / 苔原：结冰 (ic2 为可航冰，非结冰期为清澈冷水 wtr)
+    // 1. 冬季雪区 / 苔原：结冰 (DE Ice, Navigable 26 = ic2，非结冰期为清澈冷水 wtr)
     if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
         return 'ic2';
     }
     if (biome === 'tundra_snow') {
         return 'wtr'; // 极地融水清澈冷水
     }
-    // 2. 地中海 / 蔚蓝沿海：清澈蔚蓝海水色 (wt5)
-    if (biome === 'mediterranean') {
+    // 2. 地中海与热带雨林（DE F_seasons.inc PH_TROPHICALSOUTH / PH_TROPHICALEAST: #const VODA 58 Water, Azure）：
+    //    采用清澈蔚蓝水色 wt5
+    if (
+        biome === 'mediterranean' ||
+        biome === 'tropical_rainforest' ||
+        theme.id === 'indomalayan_tropical' ||
+        theme.id === 'neotropical_tropical' ||
+        theme.id === 'afrotropical_tropical'
+    ) {
         return 'wt5';
     }
-    // 3. 其余全部非结冰水域（含原 river_clean_green rgb(38,71,59) 与 wt6 rgb(71,104,104)）：
-    //    🔴 [2026-10-11 偏灰水面清零] 按既有口径统一改为清澈明亮蓝水 wtr (rgb(32,119,162) 饱和 0.80)，冬雪区才换 ic2 冰面
+    // 3. 其余全部非结冰水域：DE 标准浅水 VODA = 1 (Water, Shallow = wtr)
     return 'wtr';
 }
 
@@ -840,24 +846,13 @@ export function beachTerrainForTheme(
     lng?: number,
 ): string {
     if (season === 2 && isSnowArea(lat, elev, biome, lng)) {
-        return 'ice_beach'; // 冬季结冰覆雪海滩
+        return 'ice_beach'; // DE Ice, Beach (37)：冬季结冰覆雪海滩
     }
-    // 沙漠/黄土带使用干黄细沙
-    if (theme.id === 'palaearctic_middle_east_desert' || biome === 'desert') {
-        return 'des';
-    }
-    if (theme.id === 'palaearctic_asia_steppe' || theme.id === 'palaearctic_middle_east_highland') {
-        return 'ds2';
-    }
-    // 欧洲温带 / 地中海 / 东亚中原 / 热带水乡：采用 DE 官方湿润河岸浅滩 (beach_wet)，自然过渡
-    if (
-        theme.id === 'palaearctic_europe_temperate' ||
-        theme.id === 'palaearctic_europe_mediterranean' ||
-        theme.id === 'palaearctic_asia_temperate' ||
-        theme.id === 'indomalayan_tropical' ||
-        theme.id === 'afrotropical_tropical'
-    ) {
-        return 'beach_wet';
-    }
-    return theme.beachTerrain || 'beach_wet';
+    // 严格按各气候主题配置的 DE 沙滩贴图返回：
+    // - 温带/草原/高原：bch (DE Beach 2)
+    // - 地中海：bc4 (DE Beach, Wet Gravel 108)
+    // - 新热带：bc2 (DE Beach, Wet Sand 107)
+    // - 中东/盐漠/亚洲荒漠：bc3 (DE Beach, White Vegetation 52)
+    // - 沼泽湿地：beach_wet
+    return theme.beachTerrain || 'bch';
 }

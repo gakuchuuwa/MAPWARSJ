@@ -292,8 +292,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     deniesite: { generalId: 'gen_mehmed_giray', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/SLAVIC/nieman_weituofute.png' },
     fuerjia: [
-        { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
         { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
+        { generalId: 'gen_astrakhan_khan', generalName: '阿斯特拉', portrait: '/assets/STEPPE/fuerjia_asitela.png' },
     ],
     nuogai: { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png' },
     bashekeer: { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
@@ -303,7 +303,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     siluoboda: { generalId: 'gen_grigory_donets', generalName: '多涅茨', portrait: '/assets/SLAVIC/siluoboda_duonieci.png' },
     // ── 2026-08-04 新增：萨布罗夫（沃罗涅日首任督军，主持建堡）──
     yedi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
-    eguo_biandi: { generalId: 'gen_semyon_saburov', generalName: '萨布罗夫', portrait: '/assets/SLAVIC/yedi_sabuluofu.png' },
+    eguo_biandi: { generalId: 'eguo_zasekin', generalName: '扎谢金', portrait: '/assets/STEPPE/eguo_biandi_zhaxiejin.png' },   // 立绘待主人补；AI 不配图
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/SLAVIC/peilieya_gongguo_monuomahe.png' },
     weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/SLAVIC/weijiebusike_gongguo_aoergeerde.png' },
 
@@ -460,7 +460,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // ── 草原关隘 ──
     wuzhou: { generalId: 'wuzhou_limu', generalName: '李牧', portrait: '/assets/xianqin/wuzhou_limu.png' },
     ashina: { generalId: 'ashina_ashinayandou', generalName: '阿史那燕都', portrait: '/assets/STEPPE/ashina_ashinayandou.png' },
-    wala: { generalId: 'wala_yexian', generalName: '也先', portrait: '/assets/STEPPE/wala_yexian.png' },
     yuwen: { generalId: 'yuwen_yuwentai', generalName: '宇文泰', portrait: '/assets/STEPPE/yuwen_yuwentai.png' },
     chenli_d: { generalId: 'chenli_d_zuoxianwang', generalName: '张必先', portrait: '/assets/STEPPE/chenli_d_zuoxianwang.png' },
     nuoyan_d: { generalId: 'nuoyan_d_sanyinnuoyan', generalName: '三音诺颜', portrait: '/assets/STEPPE/nuoyan_d_sanyinnuoyan.png' },
@@ -487,7 +486,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     huige: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
-    porbazhyn_huihu: { generalId: 'huige_gulipeiluo', generalName: '骨力裴罗', portrait: '/assets/STEPPE/huige_gulipeiluo.png' },
+    porbazhyn_huihu: [
+        { generalId: 'porbazhyn_mouyu', generalName: '牟羽可汗', portrait: '/assets/STEPPE/porbazhyn_mouyu.png' },   // 博尔巴任专属；骨力裴罗只留卜古罕城
+    ],
     huizhou_d: { generalId: 'huizhou_zhugeliang', generalName: '诸葛亮', portrait: '/assets/BASHU/huizhou_zhugeliang.png' },
     kereyid: { generalId: 'kereyid_wanghan', generalName: '脱斡霖', portrait: '/assets/STEPPE/kereyid_tuowolin.png' },
     naiman: { generalId: 'naiman_taiyanghan', generalName: '塔阳', portrait: '/assets/STEPPE/naiman_taiyanghan.png' },
@@ -590,7 +591,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
     anushidgin: { generalId: 'anushidgin_yile', generalName: '伊勒', portrait: '/assets/CENTRAL_ASIA/anushidgin_yile.png' },
-    qincha: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
     dayuan: { generalId: 'dayuan_wugua', generalName: '毋寡', portrait: '/assets/WESTERN/dayuan_wugua.png' },
     kokand: { generalId: 'kokand_alimukuli', generalName: '阿里木库力', portrait: '/assets/CENTRAL_ASIA/kokand_alimukuli.png' },
     dayuzi: { generalId: 'dayuzi_yinalechihei', generalName: '亦纳勒赤黑', portrait: '/assets/CENTRAL_ASIA/dayuzi_yinalechihei.png' },
@@ -1024,8 +1024,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yingzhou_ying_d: { generalId: 'yingzhou_ying_d_muronghuang', generalName: '慕容皝', portrait: '/assets/STEPPE/yingzhou_ying_d_muronghuang.png' },
     buriat: { generalId: 'buriat_tumenjiergale', generalName: '吉尔嘎勒', portrait: '/assets/STEPPE/buriat_tumenjiergale.png' },
     oirat_ming: [
-        { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png' },
         { generalId: 'wala_yexian', generalName: '也先', portrait: '/assets/STEPPE/wala_yexian.png' },
+        { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png' },
     ],
     donghui: { generalId: 'donghui_nanlv', generalName: '南闾', portrait: '/assets/KOREA/donghui_nanlv.png' },
     gonggu: { generalId: 'gonggu_gonggudaozhu', generalName: '麻利芝', portrait: '/assets/JAPAN/gonggu_gonggudaozhu.png' },

@@ -99,7 +99,7 @@ const DEFAULT_FACTIONS_BY_CULTURE: Record<RegionType, string> = {
     THRACIAN:     'baojialiya',  // 色雷斯 → 保加利亚
     PERSIAN:      'aqimeinide',  // 波斯 → 阿契美尼德（波斯波利斯）
     PERSIAN_CASTLE: 'aqimeinide',
-    CUMAN:        'qincha',      // 库曼 → 钦察（萨拉托夫）
+    CUMAN:        'kumanni',     // 库曼 → 库曼尼亚（卡尔卡河）
     BRITONS: 'falanji',  // 不列颠 → 待建势力对齐（暂用父文化势力占位）
     GOTHS: 'falanji',  // 哥特 → 待建势力对齐（暂用父文化势力占位）
     HUNS: 'menggu_d',  // 匈人 → 待建势力对齐（暂用父文化势力占位）

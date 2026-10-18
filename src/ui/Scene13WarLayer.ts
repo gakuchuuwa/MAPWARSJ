@@ -2903,7 +2903,7 @@ export class Scene13WarLayer {
             : this.defenderCityType === 'stockade'
                 ? baseFlatCells + 3.0
                 : baseFlatCells;
-        const TREE_FILTER_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
+        const TREE_FILTER_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
         const removedFlatTrees: DecorSprite[] = [];
         this.decorSprites = this.decorSprites.filter((sp) => {
             if (sp.asset.startsWith('MOUNTAIN_')) return false;
@@ -3001,15 +3001,37 @@ export class Scene13WarLayer {
                 || gl.isIce
                 || !!(this.environmentPlan?.baseTerrain && /^(sno|sn2|snf|snd|snr|ic3|ice)/i.test(this.environmentPlan.baseTerrain));
             const pool = this.getClimateMountainPool(isSnowScene);
-            // 扫描城外围高地平顶台面中心（锁定 elev >= 1.8 且四邻域同高的 2~3 级高地平顶台面，确保大山稳立于高地正中央）
+            // 扫描远郊高地平顶台面中心：
+            //   1) 远离城墙与护城河（dCells >= minHillDistCells + 9.5，且屏幕椭圆外扩 >= 920×520px）；
+            //   2) 严格避开四门进出军大道与桥头延长线（di >= 8.5 && dj >= 8.5），只落在正北/正南/正东/正西四翼远郊高地；
+            //   3) 避开左侧攻方主冲锋走廊与所有出生点（>= 780px），且山脚 3 格半径内不沾水体。
+            const isMountainSafeSpot = (gx: number, gy: number, pt: { x: number; y: number }): boolean => {
+                if (((pt.x - cx) / (rx + 920)) ** 2 + ((pt.y - cy) / (ry + 520)) ** 2 < 1.0) return false;
+                const u = (pt.x - cx) / (TAC_TILE_W / 2), v = (pt.y - cy) / (TAC_TILE_H / 2);
+                const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
+                if (di < 8.5 || dj < 8.5) return false;
+                if (pt.x < cx && Math.abs(pt.y - cy) < 680) return false;
+                for (const sp of this.spawns) {
+                    if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 780) return false;
+                }
+                for (const dy of [-3, 0, 3]) {
+                    for (const dx of [-3, 0, 3]) {
+                        const fp = gl.cellToScreen(gx + 0.5 + dx, gy + 0.5 + dy, W, H);
+                        if (gl.isWaterAt(fp.x, fp.y, W, H) || (inMoat && inMoat(fp.x, fp.y)) || inGateRoad(fp.x, fp.y) || inCity(fp.x, fp.y)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
             const hillCandidates: Array<{ x: number; y: number; elev: number; score: number }> = [];
             for (const minElev of [1.8, 1.35]) {
-                for (let gy = 8; gy <= N - 8; gy += 2) {
-                    for (let gx = 8; gx <= N - 8; gx += 2) {
+                for (let gy = 6; gy <= N - 6; gy += 2) {
+                    for (let gx = 6; gx <= N - 6; gx += 2) {
                         const dCells = Math.hypot(gx - cGx, gy - cGy);
-                        if (dCells < minHillDistCells + 2.0 || dCells > 44) continue;
+                        if (dCells < minHillDistCells + 9.5 || dCells > 52) continue;
                         const pt = gl.cellToScreen(gx + 0.5, gy + 0.5, W, H);
-                        if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y)) || inGateRoad(pt.x, pt.y) || inCity(pt.x, pt.y)) continue;
+                        if (!isMountainSafeSpot(gx, gy, pt)) continue;
                         const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
                         if (elev < minElev) continue;
                         const pL = gl.cellToScreen(gx - 0.5, gy + 0.5, W, H);
@@ -3025,14 +3047,14 @@ export class Scene13WarLayer {
                         if (nbrElev < minElev - 0.2) continue;
                         const plateauScore = elev * 0.65 + nbrElev * 0.35;
                         hillCandidates.push({
-                            x: pt.x + (mRnd() - 0.5) * 20,
-                            y: pt.y + (mRnd() - 0.5) * 12,
+                            x: pt.x + (mRnd() - 0.5) * 16,
+                            y: pt.y + (mRnd() - 0.5) * 10,
                             elev,
-                            score: plateauScore + mRnd() * 0.4,
+                            score: plateauScore + mRnd() * 0.35,
                         });
                     }
                 }
-                if (hillCandidates.length >= 3) break;
+                if (hillCandidates.length >= 2) break;
             }
             hillCandidates.sort((a, b) => b.score - a.score);
             const targetCount = this.defenderCityType === 'pass'
@@ -3911,6 +3933,10 @@ export class Scene13WarLayer {
                 if (site) {
                     const wRatio = calcWaterRatio(site);
                     const skelHmin = site?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
+                    const skelHmax = site?.header?.skeleton?.hmax ?? skelHmin;
+                    if (this.environmentPlan && this.environmentPlan.elevationM === null && site?.header?.skeleton?.hmin !== undefined) {
+                        this.environmentPlan.elevationM = Math.round((skelHmin + skelHmax) * 0.5);
+                    }
                     // 若烘焙图存在明显水体但环境计划尚未检出水体（如瓦片尚未异步加载完），按海拔补齐 river / sea
                     if (wRatio > 0.02 && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
                         this.environmentPlan.waterKind = skelHmin > 10 ? 'river' : 'sea';
@@ -3973,13 +3999,13 @@ export class Scene13WarLayer {
                 return;
             }
             // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
-            //    但若内陆据点（海拔 > 10m 或 waterKind === 'river'）因现代水库蓄水导致水面占比 > 20%（如三峡/科普林卡/哈迪塞水库），
-            //    则将其像海一样的宽阔库区水面重塑为城侧自然蜿蜒河道（relocateTemplateWater）。
+            //    但 DE 标准河流占比仅约 3.5%（海面占比约 23.5%），若内陆据点（海拔 > 10m 或 waterKind === 'river'）
+            //    因现代水库蓄水或大漫滩导致水面占比 > 12%，则将其像海一样的宽阔水面重塑为城侧 3.5 格标准自然河道（relocateTemplateWater）。
             const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
             const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
             const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
                 && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
-                && calcWaterRatio(oriented) > 0.20;
+                && calcWaterRatio(oriented) > 0.12;
             if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
                 this.environmentPlan.waterKind = 'river';
             }
@@ -4030,7 +4056,7 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
                     //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
                     // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
-                    const TREE_RE = /TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE/i;
+                    const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
                     this.decorSprites = this.decorSprites.filter((s) => {
                         const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
                         const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
@@ -4167,7 +4193,7 @@ export class Scene13WarLayer {
                         const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
                         const isAridOrSteppeGround = isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
                         const aridTreeMismatch = isAridOrSteppeGround && !/^(PALM|ACACIA|BAOBAB|OLIVE|CYPRESS|DEAD_TREE|BUSH_TREE|DRAGON_TREE)$/i.test(bestAsset);
-                        const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
+                        const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST|JUNGLE|RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
                         const finalClumpTree = (
                             !bestAsset ||
                             isGenericBakedTree ||
@@ -4308,14 +4334,14 @@ export class Scene13WarLayer {
                                         asset = decorSet.solid[hash % decorSet.solid.length];
                                     }
                                 } else if (/^(FLOWER|PLANT|WEED|SHRUB|BUSH_GREEN|UNDERBRUSH|FERNPATCH)/.test(asset)) {
-                                    if (decorSet.scatter.length === 0) continue;
-                                    if (!decorSet.scatter.includes(asset)) {
-                                        asset = decorSet.scatter[hash % decorSet.scatter.length];
-                                    }
-                                } else if (/^GRASS_/.test(asset)) {
                                     if (decorSet.flat.length === 0) continue;
                                     if (!decorSet.flat.includes(asset)) {
                                         asset = decorSet.flat[hash % decorSet.flat.length];
+                                    }
+                                } else if (/^GRASS_/.test(asset)) {
+                                    if (decorSet.scatter.length === 0) continue;
+                                    if (!decorSet.scatter.includes(asset)) {
+                                        asset = decorSet.scatter[hash % decorSet.scatter.length];
                                     }
                                 }
                                 if (!decorFits(asset, decorCtx)) continue;

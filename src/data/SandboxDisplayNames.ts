@@ -319,6 +319,8 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
 
     'jingmen': '荆门',
 'huige': '回纥',
+    'porbazhyn_huihu': '博鹘',
+    'eguo_biandi': '俄边',
 'dayue': '大越',
     'yamato': '大和',
 'edo': '武藏',

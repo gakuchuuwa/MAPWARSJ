@@ -140,6 +140,8 @@ export const GENERAL_ELITE_LEGIONS: Readonly<Record<string, EliteLegionConfig>> 
   wuer_boshasha: { name: '巴比伦禁卫', tier: 3 },
   sijitai_satraces: { name: '药杀水游骑', tier: 3 },
   yamaxun_faernake: { name: '本都重装骑', tier: 3 },
+  gen_astrakhan_khan: { name: '阿斯特拉骑', tier: 3 },
+  oirat_ming_gaerdan: { name: '准噶尔驼炮', tier: 1 },
 };
 
 /**

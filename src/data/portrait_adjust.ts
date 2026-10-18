@@ -5647,16 +5647,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -7
         },
-        "/assets/STEPPE/__闲置__STEPPE_61.png": {
-            "scale": 1.08,
-            "offsetX": 0,
-            "offsetY": 8
-        },
-        "/assets/STEPPE/__闲置__STEPPE_62.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": -40
-        },
         "/assets/STEPPE/__闲置__STEPPE_63.png": {
             "scale": 1,
             "offsetX": 0,
@@ -8136,6 +8126,16 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1.28,
             "offsetX": 2,
             "offsetY": 0
+        },
+        "/assets/STEPPE/porbazhyn_mouyu.png": {
+            "scale": 1.08,
+            "offsetX": 0,
+            "offsetY": 8
+        },
+        "/assets/STEPPE/eguo_biandi_zhaxiejin.png": {
+            "scale": 1,
+            "offsetX": 0,
+            "offsetY": -40
         }
     },
     "folderGuides": {

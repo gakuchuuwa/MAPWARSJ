@@ -47,6 +47,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'heisha_d_houlihu': -2,                              // 呴犁湖 · heisha_d · 特尔门
     'hongirad_dexuechan': 12,                            // 德薛禅 · hongirad · 捕鱼儿海
     'huige_gulipeiluo': 8,                              // 骨力裴罗 · huige · 卜古罕城
+    'porbazhyn_mouyu': 8,                               // 牟羽可汗 · porbazhyn_huihu · 博尔巴任
     'huihu_dunmohedagan': 8,                            // 顿莫贺达干 · huihu · 青岭牙帐
     'huite_amuersana': 18,                               // 阿睦尔撒纳 · huite · 额尔齐斯
     'huyan_peicen': 1,                                  // 呼衍蒲奴 · huyan · 淖毛湖
@@ -703,6 +704,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_przemysl_ii': 13,                               // 普热梅斯 · dabolan · 波兹南
     'gen_romshlav': 12,                                  // 罗姆什拉夫 · daniebo · 斯摩棱斯克
     'gen_semyon_saburov': 16,                            // 萨布罗夫 · yedi · 沃罗涅日
+    'eguo_zasekin': 16,                                  // 扎谢金 · eguo_biandi · 萨拉托夫
     'gen_sergey_belgorod': 16,                           // 谢尔盖 · beisilafu · 别尔哥罗德
     'gen_simeon_great': 10,                              // 西美昂 · seleisi · 普罗夫迪夫
     'gen_stefan_dusan': 14,                              // 斯蒂芬杜尚 · saierweiya · 贝尔格莱德
