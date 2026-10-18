@@ -1140,7 +1140,7 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_velazquez':                     16,    // 贝拉斯克斯 · taino · 1519 哈瓦那建城、古巴征服
     'gen_martim_afonso':                 16,    // 马丁·阿方索 · tupinijin · 1532 圣维森特建镇
     'gen_morosini':                      17,    // 莫罗西尼 · kelite · 1669 干地亚守城
-    'gen_caffa_consul':                  14,    // 卡法领事 · kelimiya · 热那亚黑海殖民地
+    'gen_caffa_consul':                  14,    // 奥贝托·斯夸尔 · kelimiya · 热那亚卡法领事（Squarciafico 家族）
     'gen_nur_ad_din':                    12,    // 努尔丁 · antiaokegongguo · 叙利亚抗十字军
     'gen_abgar':                          1,    // 阿布加尔 · aosiruowen · 奥斯若恩王
     'gen_bonifatius':                     5,    // 博尼法提乌斯 · wangdaer · 罗马阿非利加守将
