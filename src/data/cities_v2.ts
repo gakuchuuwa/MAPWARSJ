@@ -2414,9 +2414,9 @@ export const CITIES_V2: CityDataV2[] = [
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「GREEK」推出的二级与史实不符 → 归 ATHENIANS：塔纳伊斯（亚速海）：希腊殖民城，一级希腊素材
     { id: 'city_asu', name: '塔纳伊斯', factionId: 'sijitai', lat: 47.23, lng: 39.70, type: 'small_city', troops: 10000, region: 'SCYTHIANS', buildingStyle: 'GREECE', note: '古代塔纳伊斯（Tanais），顿河入海口草原与希腊贸易要津；大斯基泰王国阿泰阿斯王庭商埠，大草原北方贸易市集与军事要冲' },
     { id: 'city_geluodenuo', name: '格罗德诺', factionId: 'nieman', lat: 53.68, lng: 23.83, type: 'stockade', troops: 10000, region: 'LITHUANIANS', buildingStyle: 'LITHUANIANS', note: '定级依据§6.2：格罗德诺非关隘/要塞/堡垒，按城市判级；1558-60年王室清册实数716栋房屋约3600–4300人，未达1万 → 城寨' },
-    { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1589 年俄国伏尔加河木堡，军事哨所；按石墙规则判城寨，不是险要；势力=顿河哥萨克，武将沃隆佐夫，精锐顿河骑兵 T1' },
-    { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1586 年俄国萨马拉河边堡；按石墙规则判城寨，不是险要；势力=诺盖，武将沃特霍夫斯基，精锐萨马拉射手 T3' },
-    { id: 'city_wufa', name: '乌法', factionId: 'bashekeer', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'STEPPE_IMPERIAL', buildingStyle: 'SLAVIC', note: '1574 年俄国在巴什基尔地区建的要塞，俄式木堡；按石墙规则判城寨，不是险要；势力=巴什基尔，武将纳吉，精锐巴什基尔弓骑 T3' },
+    { id: 'city_chalijin', name: '察里津', factionId: 'fuerjia', lat: 48.7, lng: 44.51, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1589 年俄国伏尔加河木堡，军事哨所；按石墙规则判城寨；势力=伏尔加，武将沃隆佐夫，精锐俄国边骑 T4' },
+    { id: 'city_samala', name: '萨马拉', factionId: 'nuogai', lat: 53.2, lng: 50.15, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1586 年俄国萨马拉河边堡；按石墙规则判城寨；势力=喀山军区，武将沃特霍夫斯基，精锐俄国射手 T3' },
+    { id: 'city_wufa', name: '乌法', factionId: 'bashekeer', lat: 54.73, lng: 55.96, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '1574 年俄国在巴什基尔地区建的要塞，俄式木堡；按石墙规则判城寨；势力=乌拉尔，武将纳吉，精锐边地步营 T4' },
     { id: 'city_bieergeleide', name: '别尔哥罗德', factionId: 'beisilafu', lat: 50.6, lng: 36.58, type: 'stockade', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC' },
     // ── 2026-08-04 新增：哈尔科夫（1654哥萨克要塞；斯洛博达乌克兰·哈尔科夫团治所）──
     { id: 'city_haerkefu', name: '哈尔科夫', factionId: 'siluoboda', lat: 49.9935, lng: 36.2304, type: 'small_city', troops: 10000, region: 'RUSSIAN', buildingStyle: 'SLAVIC', note: '乌克兰哈尔科夫；1654年哥萨克筑要塞于哈尔科夫河与洛潘河交汇；1659–1765为斯洛博达乌克兰哈尔科夫团治所；团校多涅茨等抗克里米亚鞑靼' },

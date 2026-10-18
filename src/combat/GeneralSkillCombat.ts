@@ -997,18 +997,16 @@ export function getStrategicBattlePowerMultiplier(
 
 // ━━━ 战略技运行时随机池与 override ━━━
 
-/** 活跃战略技池（剔除退役技、远征专用技 str_11、已退役越城而走 str_21）；战后随机换技从此抽取 */
+/** 活跃战略技池（剔除退役/屏蔽技、远征专用技 str_11、越城而走 str_21、以及 2026-10-19 屏蔽的 str_16/str_22/str_23/str_24）；战后随机换技从此抽取 */
 export const ACTIVE_STRATEGIC_SKILL_POOL: string[] = [
     'str_01', 'str_06', 'str_07', 'str_10', 'str_12', 'str_13',
-    'str_16', 'str_19', 'str_20', 'str_22', 'str_23',
-    'str_24', 'str_29',
+    'str_19', 'str_20', 'str_29',
 ];
 
 /** 随机取一个战略技 ID */
 export function pickRandomStrategicSkill(excludeId?: string): string {
     const pool = ACTIVE_STRATEGIC_SKILL_POOL;
-    // 排除当前技：14 选 1 均匀抽有 1/14≈7% 会抽回原技，观众看到「换技」却毫无变化，
-    // 对直播是纯损失。剔掉当前技后保证每次都真的换。
+    // 排除当前技：均匀抽剔掉当前技后保证每次都真的换。
     const usable = excludeId ? pool.filter((id) => id !== excludeId) : pool;
     const from = usable.length > 0 ? usable : pool;
     return from[Math.floor(Math.random() * from.length)];
@@ -1025,7 +1023,11 @@ const strategicOverrideByUnitId = new Map<string, string>();
  */
 function activeStrategicOverride(unitId: string): string | undefined {
     if (isScriptPeriod()) return undefined;
-    return strategicOverrideByUnitId.get(unitId);
+    const id = strategicOverrideByUnitId.get(unitId);
+    if (!id) return undefined;
+    const def = getStrategicSkillDef(id);
+    if (!def || def.engineStatus === 'retired') return undefined;
+    return id;
 }
 
 /** 「本次持有期内已脉冲过」的记录：key = `${unitId}|${skillId}`，换技/退场时清 */
@@ -1040,6 +1042,8 @@ function resetStrategicFxOnce(unitId: string): void {
 }
 
 export function setStrategicSkillOverride(unitId: string, skillId: string): void {
+    const def = getStrategicSkillDef(skillId);
+    if (!def || def.engineStatus === 'retired') return;
     strategicOverrideByUnitId.set(unitId, skillId);
     resetStrategicFxOnce(unitId);
 }
@@ -1079,7 +1083,9 @@ export function getGeneralStrategicSkillDef(unit: IBattleUnit) {
         }
     }
     if (!overrideId) return null;
-    return getStrategicSkillDef(overrideId) ?? null;
+    const def = getStrategicSkillDef(overrideId);
+    if (!def || def.engineStatus === 'retired') return null;
+    return def;
 }
 
 /** 是否持有指定战略效果 */

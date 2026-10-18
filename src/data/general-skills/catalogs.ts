@@ -117,7 +117,7 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     // ── 视野类 ──
 
-    str_16: { id: 'str_16', grid: 'S⑯', displayName: '神出鬼没', effect: 'hide_during_peacetime', magnitude: 1, engineStatus: 'ready', category: 'vision', note: '非战斗不可见（均势）' },
+    str_16: { id: 'str_16', grid: 'S⑯', displayName: '神出鬼没', effect: 'hide_during_peacetime', magnitude: 1, engineStatus: 'retired', category: 'vision', note: '非战斗不可见（均势，已屏蔽停用）' },
 
     str_17: { id: 'str_17', grid: 'S⑰', displayName: '偃旗息鼓', effect: 'hide_troop_count', magnitude: 1, engineStatus: 'retired', category: 'vision', note: '非战斗隐藏武将名、精锐番号与兵力（已封印退役）' },
 
@@ -135,13 +135,13 @@ export const STRATEGIC_SKILL_CATALOG: Record<string, StrategicSkillDef> = {
 
     str_21: { id: 'str_21', grid: 'S㉑', displayName: '越城而走', effect: 'skip_disadvantaged_siege', magnitude: 0.10, engineStatus: 'retired', category: 'deterrence', note: '【已退役】（2026-08-17 主人令：删除越城而走防卡死）' },
 
-    // ── 纵横类 ──
+    // ── 纵横类（2026-10-19 主人令：可能影响剧本，先屏蔽不使用）──
 
-    str_22: { id: 'str_22', grid: 'S㉒', displayName: '纵横捭阖', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'ready', category: 'diplomacy', note: '10%概率攻城封杀守将/精（造势）。原名翦除羽翼；magnitude=触发概率' },
+    str_22: { id: 'str_22', grid: 'S㉒', displayName: '纵横捭阖', effect: 'sabotage_garrison', magnitude: 0.10, engineStatus: 'retired', category: 'diplomacy', note: '10%概率攻城封杀守将/精（已屏蔽停用）' },
 
-    str_23: { id: 'str_23', grid: 'S㉓', displayName: '飞箝擒王', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀守将（均势）' },
+    str_23: { id: 'str_23', grid: 'S㉓', displayName: '飞箝擒王', effect: 'sabotage_general', magnitude: 0.15, engineStatus: 'retired', category: 'diplomacy', note: '15%的几率，攻城战封杀守将（已屏蔽停用）' },
 
-    str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'ready', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（逆势）' },
+    str_24: { id: 'str_24', grid: 'S㉔', displayName: '转丸破军', effect: 'sabotage_elite', magnitude: 0.15, engineStatus: 'retired', category: 'diplomacy', note: '15%的几率，攻城战封杀精锐（已屏蔽停用）' },
 
     // ── 防务类（⚠️ 封印退役技：大地图军团战略不使用据点防务技，禁止分配给任何武将）──
 

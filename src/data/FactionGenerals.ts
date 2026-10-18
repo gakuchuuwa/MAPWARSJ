@@ -300,9 +300,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kaleiliya: { generalId: 'kaleiliya_kelimu', generalName: '克利姆索博列夫', portrait: '/assets/SLAVIC/kaleiliya_kelimusuoboliefu.png' },
     deniesite: { generalId: 'gen_mehmed_giray', generalName: '迈赫迈德', portrait: '/assets/SLAVIC/deniesite_muhanmodegeli.png' },
     nieman: { generalId: 'gen_vytautas_great', generalName: '维托夫特', portrait: '/assets/SLAVIC/nieman_weituofute.png' },
-    fuerjia: { generalId: 'don_vorontsov', generalName: '沃隆佐夫', portrait: '' },   // 察里津防区督军；立绘待主人补
-    nuogai: { generalId: 'nogai_votkhovsky', generalName: '沃特霍夫斯基', portrait: '' },   // 萨马拉防线守将；立绘待主人补
-    bashekeer: { generalId: 'bashkir_nagoy', generalName: '纳吉', portrait: '' },   // 乌法首任督军；立绘待主人补
+    fuerjia: { generalId: 'don_vorontsov', generalName: '沃隆佐夫', portrait: '/assets/SLAVIC/fuerjia_wolongzuofu_v2.png' },   // 察里津防区督军
+    nuogai: { generalId: 'nogai_votkhovsky', generalName: '沃特霍夫斯基', portrait: '/assets/SLAVIC/nuogai_wotehuofusiji_v2.png' },   // 萨马拉防线守将（俄国边地）
+    bashekeer: { generalId: 'bashkir_nagoy', generalName: '纳吉', portrait: '/assets/SLAVIC/bashekeer_naji_v2.png' },   // 乌法首任督军（俄国边地）
     xierhe: { generalId: 'xierhe_saerjue', generalName: '塞尔柱', portrait: '/assets/STEPPE/xierhe_saierzhu.png' },
     beisilafu: { generalId: 'gen_sergey_belgorod', generalName: '谢尔盖', portrait: '/assets/SLAVIC/beisilafu_xieergai.png' },
     // ── 2026-08-04 新增：多涅茨（哈尔科夫团上校，抗鞑靼、扩建团境）──

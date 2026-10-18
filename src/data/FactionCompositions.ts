@@ -537,11 +537,11 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "nuogai": {
-        legionName: "城堡时代库曼军团",
+        legionName: "帝国时代月牙长斧军团",
         legionType: "sub",
     },
     "bashekeer": {
-        legionName: "城堡时代库曼军团",
+        legionName: "帝国时代月牙长斧军团",
         legionType: "sub",
     },
     "xibo_d": {
@@ -1439,7 +1439,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "fuerjia": {
-        legionName: "帝国时代哥萨克军团",
+        legionName: "帝国时代月牙长斧军团",
         legionType: "sub",
     },
     "kelie": {
