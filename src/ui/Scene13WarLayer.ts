@@ -993,7 +993,8 @@ export class Scene13WarLayer {
     private stepHeroInput(m: WarMan, dt: number): boolean {
         const inp = this.heroInput;
         if (!inp) return false;
-        const spd = this.statsFor(m.key, m.f).spd;
+        const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
+        const spd = this.statsFor(m.key, m.f).spd * spdK;
         const dx = inp.dx;
         const dy = inp.dy;
         const [bx, by] = this.fieldBound(m.x + dx * spd * dt, m.y + dy * spd * dt);
@@ -3583,6 +3584,14 @@ export class Scene13WarLayer {
         return false;
     }
 
+    /** 细分地形行军速度系数：森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0 */
+    private terrainSpeedAt(screenX: number, screenY: number): number {
+        if (this.groundLayerGL && this.canvas) {
+            return this.groundLayerGL.terrainSpeedAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
+        }
+        return this.isWaterAt(screenX, screenY) ? 0.6 : 1.0;
+    }
+
     /** 河流 / 湖泊模板水体从东北角迁到城边（实现见 Scene13MapWaterAdapter.ts） */
     private relocateTemplateWater(mapData: any): any {
         const rec: any = this.defenderCityRecord();
@@ -4731,12 +4740,13 @@ export class Scene13WarLayer {
      * 这里留 10° 缓冲：越过边界 10° 以上才真的换朝向。
      */
     private dir8Hyst(cur: number, dx: number, dy: number): number {
+        if (dx * dx + dy * dy < 9) return cur;
         const next = this.dir8(dx, dy);
         if (next === cur) return cur;
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
         const off = (a + 22.5) % 45;      // 在本扇区内的位置：0 或 45 都表示正贴边界
-        if (off < 10 || off > 35) return cur;
+        if (off < 13 || off > 32) return cur;
         return next;
     }
 
@@ -4969,8 +4979,8 @@ export class Scene13WarLayer {
             //    推挤会把 6 列挤成 12 列、把纵深压掉（探针实测 hei_kuang_heavy 216×53 = 一排）。
             //    推进期他们本就按固定槽位走（够不着不追），推挤只会破坏方阵；接敌后（m.march=false）照常。
             if (m.march) { m.sepX = 0; m.sepY = 0; continue; }
-            // 🔴 [2026-10-18 主人定] 城门未破时，城内出兵口刷出的第二波及后续守军原地不动（只原地攻击），不吃软推挤
-            if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
+            // 🔴 [2026-10-18 主人定] 城门未破时，城内九建筑出兵口刷出的第二波及后续守军原地待命（只原地攻击），不吃软推挤
+            if (m.guardPost) {
                 m.sepX = 0;
                 m.sepY = 0;
                 continue;
@@ -5105,7 +5115,7 @@ export class Scene13WarLayer {
         if (!target || target.f === m.f) return false;
         if ('sprite' in target && (target.sprite.destroyed || (!target.bld && target.sprite.obstructionDisabled))) return false;
         if ('sprite' in target && target.bld && (target.sprite.collapse || target.sprite.asset.includes('_RUBBLE'))) return false;
-        if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
+        if (m.guardPost) {
             return target.hp > 0
                 && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight
                 && ('sprite' in target || !this.wallSeparates(m, target));
@@ -5128,7 +5138,7 @@ export class Scene13WarLayer {
         }
         // 贴脸的攻击者照样要回头反击（最小射程只管分配新目标，见 canKeepTarget 头注）。
         const distance2 = (attacker.x - m.x) ** 2 + (attacker.y - m.y) ** 2;
-        if (m.guardPost && !(m.lane >= 0 && this.remnantLanes.has(m.lane))) {
+        if (m.guardPost) {
             return distance2 < sight * sight && !this.wallSeparates(m, attacker) ? attacker : null;
         }
         return distance2 < sight * sight * 1.44 && !this.wallSeparates(m, attacker) ? attacker : null;
@@ -5143,7 +5153,7 @@ export class Scene13WarLayer {
         return this.ringOpenVal;
     }
 
-    /** 🔴 [2026-10-18 主人令「城门还没破的第二波以后的守军不要动，只原地攻击…等城门破了，第二波往后的守军再发起反击」]
+    /** 🔴 [2026-10-18 主人令「第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话，原地待命，被击毁城门发起反攻」]
      *  守方城门是否已被摧毁（任一城门被毁即算破门；无城门时按城墙缺口或无墙判） */
     private isDefenderGateDestroyed(): boolean {
         if (this.wallGates.length === 0) return true;
@@ -5222,7 +5232,7 @@ export class Scene13WarLayer {
      * 每帧维护每支分队（50 人）唯一的「队级攻击目标（Lane Target）」：
      *   1. 每个目标（敌方分队 targetLane 或守城建筑/城门 targetBld）最多只允许 MAX_LANE_ATTACKERS = 4 支分队同时锁定攻击；
      *   2. 超出 4 队的分队自动分流去攻击其他未满 4 队的目标；若所有可打目标均已满 4 队，则不分配目标（整队原地待命警戒）；
-     *   3. 攻城战第二波起守军在城门刷新，城门被摧毁前在城门驻守，城门被摧毁后集体发动反攻。
+     *   3. 攻城战第二波起守军在九建筑出兵口刷新，城门被摧毁前原地待命，城门被摧毁后集体发动反攻。
      */
     private isInsideAttackerCamp(x: number, y: number): boolean {
         if (this.battleType !== 'siege') return false;
@@ -5236,8 +5246,8 @@ export class Scene13WarLayer {
 
     private defenderCityReturnGoal(m: WarMan): { x: number; y: number } {
         if (m.guardPost) return m.guardPost;
-        const g = this.primaryDefenderGate();
-        if (g) return { x: g.x, y: g.y };
+        const sp = m.lane >= 0 ? this.spawns[m.lane] : undefined;
+        if (sp) return { x: sp.x, y: sp.y };
         return this.deCity ? this.deCityCenter : this.spawnBases[1];
     }
 
@@ -5250,7 +5260,7 @@ export class Scene13WarLayer {
             if (m.hp <= 0 || m.lane < 0 || m.siegeW || m.hero) continue;
             const inR = (this.battleType === 'siege' && this.siegeWithWalls && this.insideRing(m.x, m.y)) ? 1 : 0;
             const isMelee = !WALL_PASS_TYPES.has(m.key) && this.statsFor(m.key, m.f).rng <= 65;
-            const isGuard = !!m.guardPost && !this.remnantLanes.has(m.lane);
+            const isGuard = !!m.guardPost;
             const cur = laneInfo.get(m.lane);
             if (!cur) {
                 laneInfo.set(m.lane, { f: m.f, x: m.x, y: m.y, n: 1, inside: inR, meleeOnly: isMelee, guard: isGuard });
@@ -6880,8 +6890,8 @@ export class Scene13WarLayer {
             if (holdCmd || isGuard) { m.tx = m.x; m.ty = m.y; }
             const wt = this.statsFor(m.key, m.f);
             const stats = wt;
-            // 水里（含护城河）可走但减速；不分深浅（主人 2026-10-12）；【攻】振己威狂暴移速 ×1.20
-            const spdK = (this.isWaterAt(m.x, m.y) ? 0.6 : 1) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
+            // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
+            const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
             // 【混】乱敌阵：处于恐慌溃乱期的敌方接战士兵停止攻击，背对推进方向逃窜（暴露后背受近战 1.4x 背刺加成）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
                 const adv = this.advanceVec[m.f];
@@ -7304,7 +7314,11 @@ export class Scene13WarLayer {
                     }
                     m.x += mvx * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
                     m.y += mvy * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
-                    m.dir = this.dir8Hyst(m.dir, mvx, mvy);   // 朝向跟着实际走向（绕行时朝侧面）
+                    // 🔴 [2026-10-18 主人报「士兵在行进过程中，有的时候会频繁改变朝向，出现颤抖的感觉」]
+                    //    追击朝向对准追击目标方向 (fdx, fdy) 而非瞬态侧滑向量 (mvx, mvy)：
+                    //    侧滑 blocked 随前方队友微移在 0.12s 窗口边缘高频开合，mvx/mvy 随之偏转 ~24°，
+                    //    若朝向跟 mvx/mvy 走，士兵贴图就会在正前与侧前两个 8 向间高频翻面颤抖。
+                    m.dir = this.dir8Hyst(m.dir, fdx, fdy);
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
                     //    刚出生就开始追的兵还会**一直半透明**（fadeT 不递减）。
@@ -7798,11 +7812,12 @@ export class Scene13WarLayer {
             }
         }
         this.corpses = this.corpses.filter(c => c.keep !== true);
-        // 溃逃兵：反向移动 + 渐隐，跑完即消失（主人 2026-08-16）
+        // 溃逃兵：反向移动 + 渐隐，跑完即消失（主人 2026-08-16）；穿林涉水同受地形减速
         for (const f of this.fleers) {
+            const fSpdK = this.terrainSpeedAt(f.x, f.y);
             f.t += dt;
-            f.x += f.vx * dt;
-            f.y += f.vy * dt;
+            f.x += f.vx * fSpdK * dt;
+            f.y += f.vy * fSpdK * dt;
             f.ph += dt * 8;
         }
         this.fleers = this.fleers.filter(f => f.t < FLEE_DUR);

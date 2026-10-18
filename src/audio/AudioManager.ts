@@ -3,7 +3,7 @@ export type AudioCategory = 'ui' | 'battle' | 'feed' | 'bgm';
 import { getRegion, type RegionType } from '../systems/RegionSystem';
 import { extractPortraitFolder } from '../config/PortraitAdjust';
 import { toBase16, type Base16Culture } from '../systems/CultureBase16';
-import { ALL_BRANCHES_MAP } from '../systems/CultureHierarchy';
+import { ALL_BRANCHES_MAP, toCulture66 } from '../systems/CultureHierarchy';
 import { REGION_TO_BRANCH } from '../config/deCastleAssets';
 import { BGM_TITLES } from './bgmTitles';
 import { isScriptPeriod } from '../events/scriptPeriod';
@@ -685,17 +685,18 @@ const BGM_POOL_MAP: Record<string, string[]> = {
     XIANBEI: ['XIANBEI', 'xianbei_a', 'xianbei_b'],
 };
 
-/** 任意文化码（172 区 / 66 分支 / 16 母体）→ 66 分支 key，未知回落 CENTRAL */
-function resolveBranch(region: string | null | undefined): string {
-    if (!region) return 'CENTRAL';
+/** 任意文化码（66 分支 / 172 区 / 16 母体）→ 66 分支 key；未加入势力（null/空）返回 null */
+function resolveBranch(region: string | null | undefined): string | null {
+    if (!region || !region.trim()) return null;
     const u = region.trim().toUpperCase();
     const b = ALL_BRANCHES_MAP[u];
     if (b) return b.key;
-    return REGION_TO_BRANCH[u] ?? 'CENTRAL';
+    return toCulture66(u) || REGION_TO_BRANCH[u] || 'CENTRAL';
 }
 
-/** 分支 → 独立曲池（滤掉暂停曲）*/
-function branchPool(branch: string): string[] {
+/** 分支 → 独立曲池（滤掉暂停曲）；无分支（未加入势力）返回空数组，交由 shuffledBgmFolders 走全库随机 */
+function branchPool(branch: string | null): string[] {
+    if (!branch) return [];
     return (BGM_POOL_MAP[branch] ?? []).filter((f) => AVAILABLE_BGM_FOLDERS.has(f));
 }
 
@@ -1306,11 +1307,20 @@ export class AudioManager {
         this.lastBgmRequest = { portraitPath, lat, lng, cultureRegion };
         if (!this.settings.enabled || !this.unlocked) return;
 
-        // 🔴 [2026-10-18 主人定「按 62+4 文化设计曲子池」] 解析跟随军团文化分支 → 曲池；
-        //   切换军团即换池，池内洗牌轮播；当前曲放完才接力下一首（不打断）。
+        // 🔴 [2026-10-18 主人定「玩家加入哪个势力就播放哪个势力的曲子，没有加入势力就随机」]
+        //   有势力 → 该势力 66 文化曲池（若当前在播曲目不在该池内，立即交叉淡入切至该势力曲子）；
+        //   无势力（cultureRegion 为 null）→ currentBgmPool 为空，走全库随机轮播。
         const branch = resolveBranch(cultureRegion);
         this.currentBgmPool = branchPool(branch);
         this.bgmShuffleQueue = []; // 池变了，下次接力按新池重新洗牌
+        if (
+            this.currentBgmPool.length > 0 &&
+            this.currentBgmFolder !== '' &&
+            !this.currentBgmPool.includes(this.currentBgmFolder)
+        ) {
+            this.playBgmFolder(this.nextRotationFolder(this.currentBgmFolder));
+            return;
+        }
         this.applyCameraFolder(this.nextRotationFolder(this.currentBgmFolder));
     }
 
@@ -1445,10 +1455,10 @@ export class AudioManager {
     private shuffledBgmFolders(): string[] {
         // 🔴 [2026-10-18] 池内轮播：有当前分支曲池就用它；剧本期走西方池；否则回落全局池。
         let pool: readonly string[];
-        if (isScriptPeriod()) {
-            pool = SCRIPT_WESTERN_BGM_FOLDERS;
-        } else if (this.currentBgmPool.length > 0) {
+        if (this.currentBgmPool.length > 0) {
             pool = this.currentBgmPool;
+        } else if (isScriptPeriod()) {
+            pool = SCRIPT_WESTERN_BGM_FOLDERS;
         } else {
             pool = BGM_ROTATION_FOLDERS;
         }

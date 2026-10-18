@@ -974,6 +974,58 @@ export class Scene13GroundLayerGL {
   }
 
   /**
+   * 从屏幕逻辑坐标 (screenX, screenY) 查询地形行军速度系数：
+   *   · 深水：×0.3
+   *   · 浅滩 / 沼泽：×0.6
+   *   · 森林（穿林减速）：×0.5
+   *   · 平地 / 草地 / 道路：×1.0
+   */
+  public terrainSpeedAt(screenX: number, screenY: number, W: number, H: number): number {
+    const N = this.N;
+    const gx = (screenX - W / 2) / TW + N * 0.5;
+    const gy = (screenY - H / 2) / TH + N * 0.5;
+    if (gx < 0 || gy < 0 || gx >= N || gy >= N) return 1.0;
+
+    const x0 = Math.floor(gx), y0 = Math.floor(gy);
+    const x1 = Math.min(N - 1, x0 + 1), y1 = Math.min(N - 1, y0 + 1);
+    const tx = gx - x0, ty = gy - y0;
+
+    const i00 = y0 * N + x0, i10 = y0 * N + x1, i01 = y1 * N + x0, i11 = y1 * N + x1;
+    const wVal = (this.smoothWater[i00] * (1 - tx) + this.smoothWater[i10] * tx) * (1 - ty)
+               + (this.smoothWater[i01] * (1 - tx) + this.smoothWater[i11] * tx) * ty;
+    const fVal = (this.smoothForest[i00] * (1 - tx) + this.smoothForest[i10] * tx) * (1 - ty)
+               + (this.smoothForest[i01] * (1 - tx) + this.smoothForest[i11] * tx) * ty;
+
+    const rx = Math.min(N - 1, Math.max(0, Math.round(gx)));
+    const ry = Math.min(N - 1, Math.max(0, Math.round(gy)));
+    const cellIdx = ry * N + rx;
+    const rawSpd = this.data?.speed?.[cellIdx];
+    const tid = this.data?.terrain?.[cellIdx];
+    const tName = String(DE_TERRAIN_MANIFEST[tid]?.name ?? '');
+
+    // 1. 水体判定（深水 ×0.3，浅滩/沼泽 ×0.6）
+    if (wVal >= 0.45) {
+      if (rawSpd === 60 || /shallow|swamp|marsh|bog|quagmire|mud/i.test(tName)) {
+        return 0.6;
+      }
+      // 近岸浅水过渡带（0.45 <= wVal < 0.68）算浅滩 ×0.6，深水区（wVal >= 0.68）算深水 ×0.3
+      return wVal >= 0.68 ? 0.3 : 0.6;
+    }
+
+    // 2. 陆上沼泽 / 泥潭（×0.6）
+    if (rawSpd === 60 || /swamp|marsh|bog|quagmire|shallows|mud/i.test(tName)) {
+      return 0.6;
+    }
+
+    // 3. 森林（穿林减速 ×0.5；carveFoundation 清空城基后 smoothForest 已归零，不会误减速）
+    if (fVal >= 0.35 || (rawSpd === 50 && fVal >= 0.15)) {
+      return 0.5;
+    }
+
+    return 1.0;
+  }
+
+  /**
    * 屏幕逻辑坐标 (screenX, screenY) → DE 格坐标 (gx, gy)
    */
   public screenToCell(screenX: number, screenY: number, W: number, H: number): { gx: number; gy: number } | null {
@@ -1021,6 +1073,7 @@ export class Scene13GroundLayerGL {
         if (t >= 1) continue;
         const i = y * N + x;
         this.smoothWater[i] *= t;
+        this.smoothForest[i] *= t;
         px[i * 4 + 0] = Math.round(px[i * 4 + 0] * t);
         px[i * 4 + 1] = Math.round(px[i * 4 + 1] * t);
         px[i * 4 + 2] = Math.round(px[i * 4 + 2] * t);
@@ -1065,6 +1118,7 @@ export class Scene13GroundLayerGL {
       touched++;
       if (cov >= 0.35) this.data.terrain[i] = 1;
       if (lvl > sw[i]) sw[i] = lvl;                                            // smoothWater 是只读引用：原地改内容
+      this.smoothForest[i] = 0;
       px[i * 4 + 0] = Math.max(px[i * 4 + 0], Math.round(lvl * 255));
       px[i * 4 + 1] = Math.max(px[i * 4 + 1], Math.round((1 - lvl * 0.55) * 140));
       px[i * 4 + 2] = 0;

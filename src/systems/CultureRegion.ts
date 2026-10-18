@@ -113,3 +113,14 @@ export function resolveUnitCulture66(unit: IBattleUnit): string {
     return toCulture66(resolveUnitCultureRegion(unit));
 }
 
+/** 解析势力所属的 66 文化键（62 二级 + 4 三级）；未加入势力（null/空）返回 null */
+export function resolveFactionCulture66(factionId: string | null | undefined): string | null {
+    if (!factionId) return null;
+    const capital = CAPITAL_V2_BY_FACTION.get(factionId);
+    if (capital?.buildingStyle) return toCulture66(capital.buildingStyle);
+    if (capital?.region) return toCulture66(capital.region);
+    if (factionId === 'kesaiya' || factionId === 'wukexiya') return 'PERSIAN';
+    return toCulture66(factionId);
+}
+
+
