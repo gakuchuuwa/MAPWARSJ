@@ -13,7 +13,6 @@
  */
 import { GENERAL_LIFE_YEARS, getGeneralDebutYear, centenarianYearOf } from './GeneralLifeYears';
 import { isScriptPeriod } from '../events/scriptPeriod';
-import { isFirstBattleEnemySyntheticId } from './GeneralFirstBattles';
 
 /** 当前剧本年份（由 GameApp 注入 = 当前这一场历史事件的年份）；未注入 → null */
 let scriptYearProvider: () => number | null = () => null;
@@ -33,7 +32,6 @@ let inYearLookup = false;
 /** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年] → 按普通武将处理） */
 export function isGeneralOnStage(generalId: string | null | undefined): boolean {
     if (!generalId || inYearLookup) return true;
-    if (isFirstBattleEnemySyntheticId(generalId)) return true;
     const scriptMode = isScriptPeriod();
     inYearLookup = true;
     let year: number | null = null;

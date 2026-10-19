@@ -51,6 +51,7 @@ import { getEuclideanDistance } from '../../core/DistanceUtils';
 import { clampCityTroops } from '../../config/CityConfig';
 import { roadRegistry } from '../../roads/RoadRegistry';
 import { isGeneralOnStage } from '../../data/generalOnStage';
+import { shouldGeneralWaitInCityForFirstBattle } from '../../data/GeneralFirstBattles';
 import type { Army } from '../../legion/Army';
 
 // =====================
@@ -391,6 +392,19 @@ function directionAngleDeg(
 }
 
 export const HasTarget = new Condition('HasTarget', (ctx) => {
+    if ((ctx.army as { __scriptPinned?: boolean }).__scriptPinned) {
+        return false;
+    }
+    if (
+        !ctx.army.isScriptArmy &&
+        !ctx.army.scriptMarchExempt &&
+        shouldGeneralWaitInCityForFirstBattle(ctx.army.generalId, getArmyOriginCityId(ctx.army))
+    ) {
+        clearStrategicTarget(ctx);
+        ctx.army.setTargetCity(null);
+        ctx.army.stopMovement?.();
+        return false;
+    }
     if (!ctx.army.isScriptArmy && !ctx.army.scriptMarchExempt && (!ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))) {
         if (ctx.army.expeditionTargetCityId) {
             restoreExpeditionLegionName(ctx.army);
@@ -576,11 +590,21 @@ export const IsNearTarget = new Condition('IsNearTarget', (ctx) => {
 // =====================
 
 export const FindTarget = new Action('FindTarget', (ctx) => {
+    if ((ctx.army as { __scriptPinned?: boolean }).__scriptPinned) {
+        return BTStatus.FAILURE;
+    }
+    if (
+        !ctx.army.isScriptArmy &&
+        !ctx.army.scriptMarchExempt &&
+        shouldGeneralWaitInCityForFirstBattle(ctx.army.generalId, getArmyOriginCityId(ctx.army))
+    ) {
+        return BTStatus.FAILURE;
+    }
     // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」「没有武将不能出兵」] 兵力不足 5000 或无在场武将的非剧本军团不许再选新目标出征，转入撤退解散
     if (
         !ctx.army.isScriptArmy &&
         !ctx.army.scriptMarchExempt &&
-        (ctx.army.getTroops() < GameConfig.LEGION.MIN_ARMY_SIZE || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
+        (ctx.army.getTroops() < GameConfig.LEGION.DISBAND_TROOP_THRESHOLD || !ctx.army.generalId || !isGeneralOnStage(ctx.army.generalId))
     ) {
         if (ctx.army.expeditionTargetCityId) {
             restoreExpeditionLegionName(ctx.army);
@@ -931,7 +955,14 @@ export const Idle = new Action('Idle', () => BTStatus.SUCCESS);
  */
 export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
     const army = ctx.army;
-    if (army.isScriptArmy || army.scriptMarchExempt) return false;
+    if (
+        army.isScriptArmy ||
+        army.scriptMarchExempt ||
+        (army as { __scriptPinned?: boolean }).__scriptPinned ||
+        shouldGeneralWaitInCityForFirstBattle(army.generalId, getArmyOriginCityId(army))
+    ) {
+        return false;
+    }
 
     const myFaction = army.getFactionId();
     const findFallbackFriendlyCity = () => {

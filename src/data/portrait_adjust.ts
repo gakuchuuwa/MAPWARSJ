@@ -5342,7 +5342,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 6,
             "offsetY": 14
         },
-        "/assets/SLAVIC/kelimiya_hajigelai.png": {
+        "/assets/SLAVIC/__闲置__SLAVIC_08.png": {
             "scale": 1.31,
             "offsetX": 7,
             "offsetY": 17
@@ -5387,7 +5387,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -5,
             "offsetY": 4
         },
-        "/assets/LATIN/kelite_fukasi.png": {
+        "/assets/LATIN/__闲置__LATIN_24.png": {
             "scale": 0.95,
             "offsetX": 0,
             "offsetY": -4
@@ -5502,7 +5502,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -31
         },
-        "/assets/LATIN/aosiruowen_baodewen.png": {
+        "/assets/LATIN/__闲置__LATIN_23.png": {
             "scale": 1.04,
             "offsetX": 0,
             "offsetY": 0
@@ -6502,17 +6502,17 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -31
         },
-        "/assets/AMERICA/tupinijin_dibalisa.png": {
+        "/assets/AMERICA/__闲置__AMERICA_04.png": {
             "scale": 0.88,
             "offsetX": 0,
             "offsetY": 6
         },
-        "/assets/AMERICA/tuotuonake_qikemakate.png": {
+        "/assets/AMERICA/__闲置__AMERICA_03.png": {
             "scale": 0.99,
             "offsetX": 0,
             "offsetY": -31
         },
-        "/assets/AMERICA/taino_hatuyi.png": {
+        "/assets/AMERICA/__闲置__AMERICA_02.png": {
             "scale": 1.07,
             "offsetX": 0,
             "offsetY": 17
@@ -7532,7 +7532,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": -12,
             "offsetY": -5
         },
-        "/assets/LATIN/antiaokegongguo_boximengde.png": {
+        "/assets/LATIN/__闲置__LATIN_22.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": 15
@@ -8097,7 +8097,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 5
         },
-        "/assets/GERMANIC/wangdaer_gaisalike.png": {
+        "/assets/GERMANIC/__闲置__GERMANIC_18.png": {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -5
@@ -8136,11 +8136,6 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -40
-        },
-        "/assets/WEST_ASIA/fb_enemy_wulaertu_guo_saerdu.png": {
-            "scale": 1,
-            "offsetX": 0,
-            "offsetY": 24
         }
     },
     "folderGuides": {
