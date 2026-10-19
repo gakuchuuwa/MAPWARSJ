@@ -48,6 +48,13 @@ export interface FactionGeneral {
      * 未填 = 与势力表（FACTION_COMPOSITIONS）挂的军团相同；同一势力里时代不同的武将才在此各写自己的军团。
      */
     legionName?: string;
+    /**
+     * 🔴 [2026-10-20 主人令「一个据点多个武将，一个武将一个势力，哪个武将登场挂哪个势力的旗帜」]
+     * 武将自己的势力（**只用于显示**）：他带兵 / 守城 / 剧本出场时，军团旗、染色、势力名走这个势力；
+     * **不改据点归属**（据点仍是原来那个势力）、不改军团编制、不改 AI 归属。
+     * 不填 = 跟据点势力（旧行为）。
+     */
+    factionId?: string;
 }
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
@@ -211,7 +218,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     batawei: { generalId: 'gen_civilis', generalName: '西维利斯', portrait: '/assets/GERMANIC/batawei_xiweilisi.png' },
     weijing_york: { generalId: 'gen_eric_bloodaxe', generalName: '埃里克', portrait: '/assets/GERMANIC/weijing_york_xuefuailike.png' },
     kanbuliya: { generalId: 'gen_william_wallace', generalName: '华莱士', portrait: '/assets/GERMANIC/kanbuliya_weilianhualaishi.png' },
-    gaolu_luoma: { generalId: 'gen_clovis_i', generalName: '克洛维', portrait: '/assets/LATIN/gaolu_luoma_keluowei.png' },
+    gaolu_luoma: [
+        { generalId: 'gen_clovis_i', generalName: '克洛维', portrait: '/assets/LATIN/gaolu_luoma_keluowei.png' },
+        // 名将双身份：维钦托利（据点武将＋剧本敌将）
+        { generalId: 'bfe3_46', generalName: '维钦托利', portrait: '', legionName: '古典时代高卢军团' },
+    ],
     aquidan: { generalId: 'gen_black_prince', generalName: '黑太子', portrait: '/assets/LATIN/aquidan_heitaizi.png' },
     puluowangsi: { generalId: 'gen_raymond_iv', generalName: '雷蒙四世', portrait: '/assets/LATIN/puluowangsi_leimengsishi.png' },
     lunbadi: { generalId: 'lunbadi_alboin', generalName: '阿尔博因', portrait: '/assets/GERMANIC/lunbadi_aerboyin.png' },
@@ -255,6 +266,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'baolusi', generalName: '保卢斯', portrait: '', legionName: '古典时代罗马军团' },
         { generalId: 'waluo', generalName: '瓦罗', portrait: '', legionName: '古典时代罗马军团' },
         { generalId: 'aitiliusi', generalName: '埃提乌斯', portrait: '', legionName: '古典时代罗马军团' },
+        // 2026-10-20 主人令「触发历史剧本时作为剧本出现，不触发时作为武将」：三位罗马皇帝落罗马城
+        { generalId: 'bfe3_77', generalName: '瓦勒良', portrait: '', legionName: '古典时代罗马军团' },
+        { generalId: 'bfe3_79', generalName: '奥勒良', portrait: '', legionName: '古典时代罗马军团' },
+        { generalId: 'bfe3_81', generalName: '马克森提乌斯', portrait: '', legionName: '古典时代罗马军团' },
+        // 名将双身份：霍诺留（据点武将＋剧本敌将）
+        { generalId: 'bfe3_91', generalName: '霍诺留', portrait: '', legionName: '古典时代罗马军团' },
     ],
     xiongren: { generalId: 'xiongren_atila', generalName: '阿提拉', portrait: '/assets/STEPPE/xiongren_atila.png' },
     kejila: { generalId: 'kejila_shulunbao', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png' },
@@ -303,6 +320,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
         // 2026-10-20：尼基弗鲁斯·福卡斯（拜占庭皇帝 963–969）→ 君士坦丁堡；BYZANTINE×封建＝拜占庭军区军团
         { generalId: 'gen_nikephoros_phokas', generalName: '福卡斯', portrait: '', legionName: '封建时代拜占庭军区军团' },
+        // 名将双身份：阿内吉斯克鲁斯（据点武将＋剧本敌将）
+        { generalId: 'bfe3_92', generalName: '阿内吉斯克鲁斯', portrait: '', legionName: '古典时代东罗马军团' },
     ],
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
@@ -345,13 +364,29 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     peilieya_gongguo: { generalId: 'gen_vladimir_monomakh', generalName: '莫诺马赫', portrait: '/assets/SLAVIC/peilieya_gongguo_monuomahe.png' },
     weijiebusike_gongguo: { generalId: 'gen_algirdas', generalName: '奥尔格尔德', portrait: '/assets/SLAVIC/weijiebusike_gongguo_aoergeerde.png' },
 
-    qin: { generalId: 'qin_simacuo', generalName: '司马错', portrait: '/assets/yingqin/qin_simacuo.png' },
-    tang: { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
+    qin: [
+        { generalId: 'qin_simacuo', generalName: '司马错', portrait: '/assets/yingqin/qin_simacuo.png' },
+    ],
+    tang: [
+        { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
+        // 屠睢（秦将，站长安、挂秦旗）
+        { generalId: 'bfe3_14', generalName: '屠睢', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        // 王离（秦将，站长安、挂秦旗）
+        { generalId: 'bfe3_17', generalName: '王离', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        // 王龁（秦将，站长安、挂秦旗）
+        { generalId: 'bfe3_9', generalName: '王龁', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        // 胡阳（秦将，站长安、挂秦旗）
+        { generalId: 'bfe3_7', generalName: '胡阳', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+    ],
     wuzhou_d: { generalId: 'wuzhou_d_wuzetian', generalName: '武则天', portrait: '/assets/wuzhou/wuzhou_d_wuzetian.png' },
     ming_d: { generalId: 'ming_d_zhudi', generalName: '朱棣', portrait: '/assets/daming/ming_d_zhudi.png' },
     jinling: { generalId: 'jinling_tandaoji', generalName: '檀道济', portrait: '/assets/JIANGNAN/jinling_tandaoji.png' },
     guangzhou: { generalId: 'guangzhou_liuyin', generalName: '刘隐', portrait: '/assets/LINGNAN/guangzhou_liuyin.png' },
-    shu: { generalId: 'shu_liubei', generalName: '刘备', portrait: '/assets/BASHU/shu_liubei.png' },
+    shu: [
+        { generalId: 'shu_liubei', generalName: '刘备', portrait: '/assets/BASHU/shu_liubei.png' },
+        // 名将双身份：诸葛瞻（据点武将＋剧本敌将）
+        { generalId: 'bfe3_78', generalName: '诸葛瞻', portrait: '', legionName: '古典时代巴蜀军团' },
+    ],
     yangzhou: { generalId: 'yangzhou_wangping', generalName: '王平', portrait: '/assets/BASHU/yangzhou_wangping.png' },
     yang_zhou: { generalId: 'yang_zhou_yangxingmi', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
     // cheng 阳安：岳钟琪已迁赤斤@赤金堡
@@ -369,10 +404,18 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'shang_weiwuji', generalName: '魏无忌', portrait: '/assets/CENTRAL/shang_weiwuji.png' },
         { generalId: 'shang_fuhao', generalName: '妇好', portrait: '/assets/xianqin/shang_fuhao.png' },
     ],
-    bing: { generalId: 'bing_liji', generalName: '李勣', portrait: '/assets/litang/bing_liji.png' },
+    bing: [
+        { generalId: 'bing_liji', generalName: '李勣', portrait: '/assets/litang/bing_liji.png' },
+        // 名将双身份：袁绍（据点武将＋剧本敌将）
+        { generalId: 'bfe3_71', generalName: '袁绍', portrait: '', legionName: '古典时代太行军团' },
+    ],
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/JIANGNAN/min_wangshenzhi.png' },
     quanzhou: { generalId: 'quanzhou_liucongxiao', generalName: '留从效', portrait: '/assets/JIANGNAN/quanzhou_liucongxiao.png' },
-    han_d: { generalId: 'han_d_liubang', generalName: '刘邦', portrait: '/assets/liuhan/han_d_liubang.png' },
+    han_d: [
+        { generalId: 'han_d_liubang', generalName: '刘邦', portrait: '/assets/liuhan/han_d_liubang.png' },
+        // 名将双身份：李广利（据点武将＋剧本敌将）
+        { generalId: 'bfe3_36', generalName: '李广利', portrait: '', legionName: '古典时代秦汉军团' },
+    ],
     wei: { generalId: 'wei_wuqi', generalName: '吴起', portrait: '/assets/xianqin/wei_wuqi.png' },
     manzhou_d: { generalId: 'manzhou_d_duoergun', generalName: '多尔衮', portrait: '/assets/manqing/manzhou_d_duoergun.png' },
     xinluo: { generalId: 'xinluo_jinyuxin', generalName: '金庾信', portrait: '/assets/KOREA/xinluo_jinyuxin.png' },
@@ -434,7 +477,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 // ── 朝鲜区 2026-06-18 ──
     chen3: { generalId: 'chen3_jizhun', generalName: '箕准', portrait: '/assets/KOREA/chen3_jizhun.png' },
     joseon: { generalId: 'joseon_lichenggui', generalName: '李成桂', portrait: '/assets/KOREA/joseon_lichenggui.png' },
-    gaogouli: { generalId: 'gaogouli_yizhiwende', generalName: '乙支文德', portrait: '/assets/KOREA/gaogouli_yizhiwende.png' },
+    gaogouli: [
+        { generalId: 'gaogouli_yizhiwende', generalName: '乙支文德', portrait: '/assets/KOREA/gaogouli_yizhiwende.png' },
+        // 名将双身份：卫满（据点武将＋剧本敌将）
+        { generalId: 'bfe3_20', generalName: '卫满', portrait: '', legionName: '古典时代高句丽军团', factionId: 'joseon' },
+        // 名将双身份：卫右渠（据点武将＋剧本敌将）
+        { generalId: 'bfe3_31', generalName: '卫右渠', portrait: '', legionName: '古典时代高句丽军团', factionId: 'joseon' },
+    ],
     baiji: { generalId: 'baiji_jiebo', generalName: '阶伯', portrait: '/assets/KOREA/baiji_jiebo.png' },
     zhen: { generalId: 'zhen_zhenxuan', generalName: '甄萱', portrait: '/assets/KOREA/zhen_zhenxuan.png' },
     danluo: { generalId: 'danluo_jintongjing', generalName: '金通精', portrait: '/assets/KOREA/danluo_jintongjing.png' },
@@ -514,7 +563,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     tumed: { generalId: 'tumed_andahan', generalName: '俺答', portrait: '/assets/STEPPE/tumed_andahan.png' },
     kiyad: { generalId: 'kiyad_yesugai', generalName: '也速该', portrait: '/assets/STEPPE/kiyad_yesugai.png' },
     xiajiasi: { generalId: 'xiajiasi_are', generalName: '阿热', portrait: '/assets/STEPPE/xiajiasi_are.png' },
-    xiongnu: { generalId: 'xiongnu_maodun', generalName: '冒顿', portrait: '/assets/STEPPE/xiongnu_maodun.png' },
+    xiongnu: [
+        { generalId: 'xiongnu_maodun', generalName: '冒顿', portrait: '/assets/STEPPE/xiongnu_maodun.png' },
+        // 名将双身份：老上单于（据点武将＋剧本敌将）
+        { generalId: 'bfe3_24', generalName: '老上单于', portrait: '', legionName: '古典时代鲜卑军团' },
+        // 名将双身份：儿单于（据点武将＋剧本敌将）
+        { generalId: 'bfe3_34', generalName: '儿单于', portrait: '', legionName: '古典时代鲜卑军团' },
+        // 名将双身份：且鞮侯单于（据点武将＋剧本敌将）
+        { generalId: 'bfe3_38', generalName: '且鞮侯单于', portrait: '', legionName: '古典时代鲜卑军团' },
+        // 名将双身份：北单于（据点武将＋剧本敌将）
+        { generalId: 'bfe3_64', generalName: '北单于', portrait: '', legionName: '古典时代鲜卑军团' },
+        // 名将双身份：白羊王（据点武将＋剧本敌将）
+        { generalId: 'bfe3_32', generalName: '白羊王', portrait: '', legionName: '古典时代鲜卑军团' },
+        // 名将双身份：呼韩邪单于（据点武将＋剧本敌将）
+        { generalId: 'bfe3_48', generalName: '呼韩邪单于', portrait: '', legionName: '古典时代鲜卑军团' },
+    ],
     murong: { generalId: 'murong_murongke', generalName: '慕容恪', portrait: '/assets/STEPPE/murong_murongke.png' },
     wuhuan: { generalId: 'wuhuan_tadun', generalName: '蹋顿', portrait: '/assets/STEPPE/wuhuan_tadun.png' },
     yuan_d: { generalId: 'yuan_d_hubilie', generalName: '忽必烈', portrait: '/assets/STEPPE/yuan_d_hubilie.png' },
@@ -806,7 +869,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     chu: { generalId: 'chu_guanyu', generalName: '关羽', portrait: '/assets/BASHU/chu_guanyu.png' },
     zhongxiang: { generalId: 'zhongxiang_ganning', generalName: '甘宁', portrait: '/assets/LINGNAN/zhongxiang_ganning.png' },
     fengzhou: { generalId: 'fengzhou_wujie', generalName: '吴玠', portrait: '/assets/zhaosong/fengzhou_wujie.png' },
-    fushi: { generalId: 'fushi_wangmeng', generalName: '王猛', portrait: '/assets/CENTRAL/fushi_wangmeng.png' },
+    fushi: [
+        { generalId: 'fushi_wangmeng', generalName: '王猛', portrait: '/assets/CENTRAL/fushi_wangmeng.png' },
+        // 名将双身份：苻融（据点武将＋剧本敌将）
+        { generalId: 'bfe3_88', generalName: '苻融', portrait: '', legionName: '古典时代巴蜀军团' },
+    ],
     wanzhou: { generalId: 'wanzhou_shangguankui', generalName: '上官夔', portrait: '/assets/BASHU/wanzhou_shangguankui.png' },
     ba: { generalId: 'ba_bamanzi', generalName: '巴蔓子', portrait: '/assets/BASHU/ba_bamanzi.png' },
     hezhou: { generalId: 'hezhou_wangjian', generalName: '王坚', portrait: '/assets/zhaosong/hezhou_wangjian.png' },
@@ -940,7 +1007,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     pingyuan: { generalId: 'pingyuan_yanzhenqing', generalName: '颜真卿', portrait: '/assets/litang/pingyuan_yanzhenqing.png' }, // 平原·首倡义兵抗安史
     linhu: { generalId: 'linhu_mafang', generalName: '马芳', portrait: '/assets/NORTH/linhu_mafang.png' },
     xianyu: { generalId: 'xianyu_hanxin', generalName: '韩信', portrait: '/assets/liuhan/xianyu_hanxin.png' },
-    shizhao_d: { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/STEPPE/shizhao_d_shihu.png' },
+    shizhao_d: [
+        { generalId: 'shizhao_d_shihu', generalName: '石虎', portrait: '/assets/STEPPE/shizhao_d_shihu.png' },
+    ],
     loufan: { generalId: 'loufan_xuerengui', generalName: '薛仁贵', portrait: '/assets/litang/loufan_xuerengui.png' },
     shanrong: { generalId: 'shanrong_lanyu', generalName: '蓝玉', portrait: '/assets/daming/shanrong_lanyu.png' },
 
@@ -975,7 +1044,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     heng1: { generalId: 'heng1_yangye', generalName: '杨业', portrait: '/assets/zhaosong/heng1_yangye.png' },
     dingxiang_d: { generalId: 'dingxiang_d_lijing', generalName: '李靖', portrait: '/assets/litang/dingxiang_d_lijing.png' },
     xiayang_d: { generalId: 'xiayang_d_dengyu', generalName: '邓禹', portrait: '/assets/liuhan/xiayang_d_dengyu.png' },
-    ying: { generalId: 'ying_caojingzong', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
+    ying: [
+        { generalId: 'ying_caojingzong', generalName: '曹景宗', portrait: '/assets/JIANGNAN/ying_caojingzong.png' },
+        // 2026-10-20 主人令：名将双身份（据点武将＋剧本敌将）
+        { generalId: 'bfe3_13', generalName: '项燕', portrait: '', legionName: '古典时代吴越军团' },
+    ],
     kejia: { generalId: 'kejia_wentianxiang', generalName: '黄凤', portrait: '/assets/JIANGNAN/kejia_huangfeng.png' },
     tingzhou_d: { generalId: 'tingzhou_d_chenmin', generalName: '陈敏', portrait: '/assets/zhaosong/tingzhou_d_chenmin.png' },
     fu2: { generalId: 'fu2_zhoudi', generalName: '周迪', portrait: '/assets/JIANGNAN/fu2_zhoudi.png' },
@@ -983,7 +1056,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     chu_d: { generalId: 'chu_d_lukang', generalName: '陆康', portrait: '/assets/JIANGNAN/wan_lukang.png' },
     yan: { generalId: 'yan_leyi', generalName: '乐毅', portrait: '/assets/xianqin/yan_leyi.png' },
     zhao: { generalId: 'zhao_lianpo', generalName: '廉颇', portrait: '/assets/xianqin/zhao_lianpo.png' },
-    yunzhong: { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
+    yunzhong: [
+        { generalId: 'yunzhong_tuobaliwei', generalName: '拓跋力微', portrait: '/assets/STEPPE/yunzhong_tuobaliwei.png' },
+        // 名将双身份：轲比能（据点武将＋剧本敌将）
+        { generalId: 'bfe3_74', generalName: '轲比能', portrait: '', legionName: '古典时代鲜卑军团', factionId: 'xianbei' },
+    ],
     yang_aner: { generalId: 'yang_aner_yangan', generalName: '杨安', portrait: '/assets/panjun/yang_aner_yanganer.png' },
         xie_cj_d: { generalId: 'xie_xiefangde', generalName: '谢枋得', portrait: '/assets/JIANGNAN/xie_xiefangde.png' }, // 葛溪·信州抗元殉国
     wan: { generalId: 'wan_liuyuan', generalName: '刘源', portrait: '/assets/JIANGNAN/wan_liuyuan.png' },
@@ -1007,7 +1084,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     changshaguo: { generalId: 'changshaguo_xinqiji', generalName: '辛弃疾', portrait: '/assets/zhaosong/changshaguo_xinqiji.png' },
     yue_d: { generalId: 'yue_d_lusu', generalName: '鲁肃', portrait: '/assets/JIANGNAN/yue_d_lusu.png' },
     zhangshicheng: { generalId: 'zhangshicheng_zhangshicheng', generalName: '张士诚', portrait: '/assets/LINGNAN/zhangshicheng_zhangshicheng.png' },
-    wu: { generalId: 'wu_sunwu', generalName: '孙武', portrait: '/assets/xianqin/wu_sunwu.png' },
+    wu: [
+        { generalId: 'wu_sunwu', generalName: '孙武', portrait: '/assets/xianqin/wu_sunwu.png' },
+        // 2026-10-20 主人令：名将双身份（据点武将＋剧本敌将）
+        { generalId: 'bfe3_28', generalName: '刘濞', portrait: '', legionName: '古典时代吴越军团' },
+        // 名将双身份：刘繇（据点武将＋剧本敌将）
+        { generalId: 'bfe3_70', generalName: '刘繇', portrait: '', legionName: '古典时代吴越军团', factionId: 'han_d' },
+    ],
     qian_d: { generalId: 'qian_d_yudayou', generalName: '俞大猷', portrait: '/assets/JIANGNAN/qian_d_yudayou.png' },
     qiufu: { generalId: 'qiufu_qiufu', generalName: '裘甫', portrait: '/assets/JIANGNAN/qiufu_qiufu.png' },
     qi_d: { generalId: 'qi_d_qijiguang', generalName: '戚继光', portrait: '/assets/daming/qi_d_qijiguang.png' },
@@ -1041,7 +1124,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     guide_d: { generalId: 'guide_d_xiaohe', generalName: '萧何', portrait: '/assets/liuhan/guide_d_xiaohe.png' },
     tongzhou: { generalId: 'tongzhou_liuzhiyuan', generalName: '刘知远', portrait: '/assets/CENTRAL/tongzhou_liuzhiyuan.png' },
     fu_zhou: { generalId: 'fu_zhou_yanyan', generalName: '严颜', portrait: '/assets/BASHU/fu_zhou_yanyan.png' },
-    lushui: { generalId: 'lushui_dongzhuo', generalName: '董卓', portrait: '/assets/HEXI/lushui_dongzhuo.png' },
+    lushui: [
+        { generalId: 'lushui_dongzhuo', generalName: '董卓', portrait: '/assets/HEXI/lushui_dongzhuo.png' },
+        // 名将双身份：华雄（据点武将＋剧本敌将）
+        { generalId: 'bfe3_69', generalName: '华雄', portrait: '', legionName: '古典时代凉州军团' },
+    ],
     cen_d: { generalId: 'cen_d_cenmeng', generalName: '岑猛', portrait: '/assets/LINGNAN/cen_d_cenmeng.png' },
     miao: { generalId: 'miao_amishi', generalName: '阿迷氏', portrait: '/assets/LINGNAN/miao_amishi.png' },
     jiang_s: { generalId: 'jiang_s_huanggai', generalName: '黄盖', portrait: '/assets/JIANGNAN/jiang_s_huanggai.png' },
@@ -1186,11 +1273,17 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     bitiniya: { generalId: 'bitiniya_diaoduoer', generalName: '狄奥多尔', portrait: '/assets/WEST_ASIA/bitiniya_diaoduoer.png' },
     luomu: { generalId: 'luomu_jilijie', generalName: '基利杰', portrait: '/assets/WEST_ASIA/luomu_jilijie.png' },
     osman: { generalId: 'osman_mehmed_ii', generalName: '穆罕默德二世', portrait: '/assets/WEST_ASIA/osman_muhanmodeershi.png' },
-    sailiugu: { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
+    sailiugu: [
+        { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
+        // 名将双身份：安条克一世（据点武将＋剧本敌将）
+        { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '', legionName: '古典时代黎凡特军团' },
+    ],
     womaya: { generalId: 'womaya_muaweiye', generalName: '穆阿维叶', portrait: '/assets/WEST_ASIA/womaya_muaweiye.png' },
     xibolai: [
         { generalId: 'xibolai_majiabi', generalName: '犹大马加比', portrait: '/assets/ORIE/xibolai_youdamajiabi.png' },
         { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
+        // 2026-10-20 主人令「有名字的武将也可以安置据点」：名将双身份（据点武将＋剧本敌将）
+        { generalId: 'bfe3_1', generalName: '西底家', portrait: '', legionName: '古典时代黎凡特军团' },
     ],
     yelusalengwg: [
         { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
@@ -1241,7 +1334,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'daliushi_iii', generalName: '大流士三世', portrait: '/assets/CENTRAL_ASIA/boluosi_daliushisanshi.png' },
         // 公元前330年波斯门战役守帅，立绘按铁律留空走回落、待主人亲自放图分配
         { generalId: 'aqimeinide_aertabazanuosi', generalName: '阿里奥巴赞斯', portrait: '/assets/WEST_ASIA/aqimeinide_aertabazanuosi.png' },
-
     ],
     sashan: { generalId: 'sashan_aerdaxier', generalName: '阿尔达希尔', portrait: '/assets/CENTRAL_ASIA/sashan_aerdaxier.png' },  // 菲鲁扎巴德·萨珊建立者
     safawei_d: { generalId: 'safawei_d_abasi', generalName: '阿拔斯', portrait: '/assets/CENTRAL_ASIA/safawei_d_abasi.png' },
@@ -1268,7 +1360,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'guyashu_tigelate', generalName: '提格拉特', portrait: '/assets/ORIE/guyashu_tigelate.png' },
         { generalId: 'guyashu_shamushi', generalName: '沙姆希阿达', portrait: '/assets/WEST_ASIA/guyashu_shamuxiada.png' },
     ],
-    ansxi: { generalId: 'ansxi_aershake', generalName: '阿尔沙克', portrait: '/assets/CENTRAL_ASIA/ansxi_aershake.png' },
+    ansxi: [
+        { generalId: 'ansxi_aershake', generalName: '阿尔沙克', portrait: '/assets/CENTRAL_ASIA/ansxi_aershake.png' },
+        // 名将双身份：阿尔达班四世（据点武将＋剧本敌将）
+        { generalId: 'bfe3_73', generalName: '阿尔达班四世', portrait: '', legionName: '古典时代阿契美尼德军团' },
+    ],
     nabatai: { generalId: 'nabatai_aleitasi', generalName: '阿雷塔斯', portrait: '/assets/WEST_ASIA/nabatai_aleitasi.png' },
     xike: { generalId: 'xike_lanjite', generalName: '兰季特辛格', portrait: '/assets/INDIA/xike_lanjite.png' },
     deli: { generalId: 'deli_alawuding', generalName: '阿拉乌丁', portrait: '/assets/INDIA/deli_alawuding.png' },
@@ -1591,6 +1687,16 @@ export function getFactionIdOfGeneral(generalId: string | null | undefined): str
     if (hit) return hit.factionId;
     // 战场人物（窦建德 / 平知盛式的"只在场战上出现"的人）也有势力归属，同样答得出来
     return getBattlefieldCharacter(generalId)?.factionId ?? null;
+}
+
+/**
+ * 🔴 [2026-10-20 主人令「一个武将一个势力，哪个武将登场挂哪个势力的旗帜」]
+ * 武将**自己的势力**（只用于显示：旗/染色/名牌）；不填返回 null＝跟据点势力。
+ * 注意：这不是「他归哪个据点」——据点归属仍用 `getFactionIdOfGeneral`（取据点势力）。
+ */
+export function getGeneralOwnFactionId(generalId: string | null | undefined): string | null {
+    if (!generalId) return null;
+    return getGeneralIdIndex().get(generalId)?.general.factionId ?? null;
 }
 
 export function getGeneralRecordByGeneralId(

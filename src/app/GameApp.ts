@@ -625,7 +625,7 @@ export class GameApp {
                     if (followedId === army.id && info.kind !== 'field' && info.kind !== 'siege_attacker') {
                         speechAnnouncer.announceFieldBattleEnd({
                             win: false,
-                            followerFactionId: army.getFactionId(),
+                            followerFactionId: army.getDisplayFactionId(),
                             ju: 'balance', // 援军覆没兜底：无战场可直接读比例
                             followerSkillId: info.battleSkillId ?? null,
                         });
@@ -633,7 +633,7 @@ export class GameApp {
 
                     if (!BrawlFeedPanel.isEliminableFaction(army.getFactionId())) return;
                     this.brawlFeedPanel.pushLegionAnnihilated({
-                        factionId: army.getFactionId(),
+                        factionId: army.getDisplayFactionId(),
                         legionName: army.name || '军团',
                         generalId: army.generalId,
                         cityName: info.cityName,

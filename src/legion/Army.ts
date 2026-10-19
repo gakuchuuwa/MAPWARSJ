@@ -34,6 +34,7 @@ import { getFollowedArmyId } from '../utils/MapFloatingText';
 import { applyLegionCultureComposition, getCultureMovementClass, isCultureCavalryOnly, type FormationMode, type MovementClass } from '../types/CultureFormations';
 import { WAR_TYPES } from '../data/WarTypes';
 import { getNavalShipAssetId, type NavalShipAssetId } from '../types/NavalShipTiers';
+import { getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { isDeployHeld } from './DeployGate';
 import { getArmyCulturePlainSpeedMultiplier, getArmyCultureSeaSpeedMultiplier, isArmyCultureMountainMarchImmune } from './march/MarchAttritionSystem';
 
@@ -605,6 +606,8 @@ export class Army implements IBattleUnit {
         if (v === this._generalId) return;
         this._generalId = v;
         if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
+        // 🔴 [2026-10-20 主人令「哪个武将登场，挂哪个势力的旗帜」] 换将即同步显示势力（旗/染色/名牌）
+        this.syncDisplayFaction();
     }
     public portraitPath?: string; // [NEW] 军队创建时随机固定立绘
     /** 精锐军团（精锐番号 + 名将 + 战力加成）；≥4万必精锐，<4万 50% 概率。出生定，不降级 */
@@ -670,6 +673,7 @@ export class Army implements IBattleUnit {
 
         // Initialize renderer with faction ID
         this.renderer = new UnitRenderer(map, this, '999', this.factionId);
+        this.syncDisplayFaction();
 
         // Registration will be handled by LegionManager after instantiation.
         this.lastRegisteredPos = null;
@@ -1439,13 +1443,25 @@ export class Army implements IBattleUnit {
         return this._factionId;
     }
 
+    /**
+     * 🔴 [2026-10-20 主人令「一个据点多个武将，一个武将一个势力，哪个武将登场挂哪个势力的旗帜」]
+     * **显示用势力**：武将自己的势力优先（旗、染色、名牌走这个），否则军团本来势力。
+     * 只影响显示，`getFactionId()`（AI/归属/攻防判定）不变。
+     */
+    public getDisplayFactionId(): string {
+        return getGeneralOwnFactionId(this._generalId) ?? this._factionId;
+    }
+
+    /** 把显示势力同步给渲染器（旗面/染色都读 renderer.factionId） */
+    private syncDisplayFaction(): void {
+        if (this.renderer) this.renderer.factionId = this.getDisplayFactionId();
+    }
+
     /** 事件链接管军团时统一势力 id（如旧 huaxia → qin） */
     public setFactionId(factionId: string): void {
         if (this._factionId === factionId) return;
         this._factionId = factionId;
-        if (this.renderer) {
-            this.renderer.factionId = factionId;
-        }
+        this.syncDisplayFaction();
         if (this.cultureSlots) applyLegionCultureComposition(this, this.cultureRegion ?? undefined);
     }
 

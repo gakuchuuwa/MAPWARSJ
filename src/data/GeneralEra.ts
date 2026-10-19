@@ -1212,6 +1212,36 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'baolusi': 'antiquity',     // 保卢斯（前 254–前 216，坎尼阵亡）
     'waluo': 'antiquity',       // 瓦罗（前 256–前 195，坎尼）
     'aitiliusi': 'antiquity',   // 埃提乌斯（391–454，沙隆）
+    'bfe3_1': 'antiquity',   // 名将双身份：西底家（据点武将）
+    'bfe3_13': 'antiquity',   // 名将双身份：项燕（据点武将）
+    'bfe3_28': 'antiquity',   // 名将双身份：刘濞（据点武将）
+    'bfe3_77': 'antiquity',   // 名将双身份：瓦勒良（据点武将）
+    'bfe3_79': 'antiquity',   // 名将双身份：奥勒良（据点武将）
+    'bfe3_81': 'antiquity',   // 名将双身份：马克森提乌斯（据点武将）
+    'bfe3_78': 'antiquity',   // 名将双身份：诸葛瞻
+    'bfe3_91': 'antiquity',   // 名将双身份：霍诺留
+    'bfe3_71': 'antiquity',   // 名将双身份：袁绍
+    'bfe3_92': 'antiquity',   // 名将双身份：阿内吉斯克鲁斯
+    'bfe3_14': 'antiquity',   // 名将双身份：屠睢
+    'bfe3_17': 'antiquity',   // 名将双身份：王离
+    'bfe3_9': 'antiquity',   // 名将双身份：王龁
+    'bfe3_7': 'antiquity',   // 名将双身份：胡阳
+    'bfe3_6': 'antiquity',   // 名将双身份：安条克一世
+    'bfe3_73': 'antiquity',   // 名将双身份：阿尔达班四世
+    'bfe3_46': 'antiquity',   // 名将双身份：维钦托利
+    'bfe3_88': 'antiquity',   // 名将双身份：苻融
+    'bfe3_36': 'antiquity',   // 名将双身份：李广利
+    'bfe3_24': 'antiquity',   // 名将双身份：老上单于
+    'bfe3_34': 'antiquity',   // 名将双身份：儿单于
+    'bfe3_38': 'antiquity',   // 名将双身份：且鞮侯单于
+    'bfe3_64': 'antiquity',   // 名将双身份：北单于
+    'bfe3_32': 'antiquity',   // 名将双身份：白羊王
+    'bfe3_48': 'antiquity',   // 名将双身份：呼韩邪单于
+    'bfe3_69': 'antiquity',   // 名将双身份：华雄
+    'bfe3_70': 'antiquity',   // 名将双身份：刘繇
+    'bfe3_20': 'antiquity',   // 名将双身份：卫满
+    'bfe3_31': 'antiquity',   // 名将双身份：卫右渠
+    'bfe3_74': 'antiquity',   // 名将双身份：轲比能
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

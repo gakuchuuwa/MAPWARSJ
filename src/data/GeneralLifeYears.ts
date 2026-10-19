@@ -1225,6 +1225,36 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     baolusi: { birth: -254, death: -216, kaoju: '推定' },  // 保卢斯（坎尼战役罗马执政官卢基乌斯·埃米利乌斯·保卢斯，前216年阵亡）
     waluo: { birth: -256, death: -195, kaoju: '推定' },  // 瓦罗（坎尼战役罗马执政官盖乌斯·特伦提乌斯·瓦罗）
     aitiliusi: { birth: 391, death: 454, kaoju: '异说' },  // 埃提乌斯（沙隆战役西罗马名将弗拉维乌斯·埃提乌斯）
+    bfe3_1: { birth: -630, death: -586, kaoju: '推定' },  // 西底家
+    bfe3_13: { birth: -330, death: -223, kaoju: '推定' },  // 项燕
+    bfe3_28: { birth: -215, death: -154, kaoju: '推定' },  // 刘濞
+    bfe3_77: { birth: 200, death: 260, kaoju: '异说' },  // 瓦勒良
+    bfe3_79: { birth: 214, death: 275, kaoju: '推定' },  // 奥勒良
+    bfe3_81: { birth: 278, death: 312, kaoju: '推定' },  // 马克森提乌斯
+    bfe3_78: { birth: 227, death: 263, kaoju: '推定' },  // 诸葛瞻
+    bfe3_91: { birth: 384, death: 423, kaoju: '推定' },  // 霍诺留
+    bfe3_71: { birth: 154, death: 202, kaoju: '推定' },  // 袁绍
+    bfe3_92: { birth: 400, death: 447, kaoju: '推定' },  // 阿内吉斯克鲁斯
+    bfe3_14: { birth: -260, death: -214, kaoju: '推定' },  // 屠睢
+    bfe3_17: { birth: -240, death: -205, kaoju: '推定' },  // 王离
+    bfe3_9: { birth: -300, death: -244, kaoju: '推定' },  // 王龁
+    bfe3_7: { birth: -300, death: -269, kaoju: '推定' },  // 胡阳
+    bfe3_6: { birth: -324, death: -261, kaoju: '推定' },  // 安条克一世
+    bfe3_73: { birth: 160, death: 224, kaoju: '推定' },  // 阿尔达班四世
+    bfe3_46: { birth: -82, death: -46, kaoju: '推定' },  // 维钦托利
+    bfe3_88: { birth: 340, death: 383, kaoju: '推定' },  // 苻融
+    bfe3_36: { birth: -160, death: -88, kaoju: '推定' },  // 李广利
+    bfe3_24: { birth: -220, death: -161, kaoju: '推定' },  // 老上单于
+    bfe3_34: { birth: -120, death: -96, kaoju: '推定' },  // 儿单于
+    bfe3_38: { birth: -130, death: -96, kaoju: '推定' },  // 且鞮侯单于
+    bfe3_64: { birth: 40, death: 89, kaoju: '推定' },  // 北单于
+    bfe3_32: { birth: -220, death: -127, kaoju: '推定' },  // 白羊王
+    bfe3_48: { birth: -100, death: -31, kaoju: '推定' },  // 呼韩邪单于
+    bfe3_69: { birth: 155, death: 191, kaoju: '推定' },  // 华雄
+    bfe3_70: { birth: 157, death: 198, kaoju: '推定' },  // 刘繇
+    bfe3_20: { birth: -230, death: -170, kaoju: '推定' },  // 卫满
+    bfe3_31: { birth: -160, death: -108, kaoju: '推定' },  // 卫右渠
+    bfe3_74: { birth: 175, death: 235, kaoju: '推定' },  // 轲比能
 };
 
 /** 生年（未收录返回 null） */
