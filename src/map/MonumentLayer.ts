@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
-import { WONDER_FOUNDED_YEAR } from '../data/wonderFoundedYears';
+import { isWonderFounded, getWonderGateYear } from '../data/wonderFoundedYears';
 import { WONDER_NAME } from '../data/WonderNames';
 import { WONDER_COORD } from '../data/WonderCoords';
 import { CITIES_V2 } from '../data/cities_v2';
@@ -103,21 +103,19 @@ export class MonumentLayer {
         this.renderMonuments();
     }
 
-    /** 当前剧本年份（剧本期用于奇观建成年代闸门；乱斗期不看）。null = 无年份信息，不拦。 */
-    private scriptYear: number | null = null;
+    /**
+     * 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+     * 上次重画时用的建成年代闸门年份 —— 年份（或模式）变了才重画，没变就不动：
+     * 百岁模式每跨一年、剧本每打完一场（事件年份前进）、切模式、开关编辑器时调用。
+     */
+    private foundedYearSnapshot: number | null | undefined = undefined;
 
-    public setScriptYear(year: number | null): void {
-        this.scriptYear = year;
+    /** 按最新的建成年代闸门年份重画特殊建筑（判据见 `wonderFoundedYears.ts` 的 `isWonderFounded`） */
+    public syncFoundedYear(): void {
+        const year = getWonderGateYear();
+        if (year === this.foundedYearSnapshot) return;
+        this.foundedYearSnapshot = year;
         this.renderMonuments();
-    }
-
-    /** 奇观建成年代闸门：乱斗恒显示；剧本期「建成年代 ≤ 当前年份」才显示。没填年代的兜底显示。 */
-    private wonderFoundedOk(asset: string): boolean {
-        if (!isScriptPeriod()) return true;
-        if (this.scriptYear == null) return true;
-        const founded = WONDER_FOUNDED_YEAR[asset];
-        if (founded == null) return true;
-        return founded <= this.scriptYear;
     }
 
     /** 据点显示范围变了（剧本进度 / 模式切换）→ 重画 */
@@ -131,8 +129,8 @@ export class MonumentLayer {
         interface WonderMonument extends MonumentData { assetKey: string; }
         const wonderMonuments: WonderMonument[] = Object.entries(CITY_WONDER)
             .map(([cityId, asset]): WonderMonument | null => {
-                // 剧本期：奇观还没建成 → 不显示（挂靠据点照旧显示，只有奇观不画）
-                if (!this.wonderFoundedOk(asset)) return null;
+                // 建成年代还没到 → 不显示（挂靠据点照旧显示，只有奇观不画）
+                if (!isWonderFounded(asset)) return null;
                 const city = cityById.get(cityId);
                 if (!city) return null;
                 const wonderName = WONDER_NAME[asset] || city.name;
@@ -163,7 +161,7 @@ export class MonumentLayer {
                 const city = cityById.get(cityId);
                 if (!city) return [];
                 return extras
-                    .filter((ex) => this.wonderFoundedOk(ex.asset))
+                    .filter((ex) => isWonderFounded(ex.asset))
                     .map((ex) => ({
                         id: `extra_${cityId}_${ex.asset}`,
                         name: ex.name,

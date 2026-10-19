@@ -18,6 +18,7 @@ import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { strategicCityHtml, strategicCityHtmlNative, measureStrategicCity, strategicCityGroundElement, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../data/CityWonders';
+import { isWonderFounded } from '../data/wonderFoundedYears';
 import { expandCompositionSlots } from '../types/LegionComposition';
 import { SPRITE_PATHS } from '../config/UnitAssets';
 import { SpriteTinter } from '../systems/tinting/SpriteTinter';
@@ -3316,10 +3317,12 @@ export class Scene13WarLayer {
             const wonderAssets: string[] = [];
             const wonderSpots: Array<{ x: number; y: number }> = [];
             if (this.defenderCityId) {
+                // 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+                //    这一场那年还没建成的奇观不立（乱斗模式 / 编辑器闸门为 null → 照旧全部显示）。
                 const mainWonder = CITY_WONDER[this.defenderCityId];
-                if (mainWonder) wonderAssets.push(mainWonder);
+                if (mainWonder && isWonderFounded(mainWonder)) wonderAssets.push(mainWonder);
                 const extraWonders = CITY_WONDER_EXTRA[this.defenderCityId];
-                if (extraWonders) for (const ex of extraWonders) wonderAssets.push(ex.asset);
+                if (extraWonders) for (const ex of extraWonders) if (isWonderFounded(ex.asset)) wonderAssets.push(ex.asset);
             }
             if (wonderAssets.length > 0) {
                 const centerX = side.reduce((sum, s) => sum + s.x, 0) / side.length;

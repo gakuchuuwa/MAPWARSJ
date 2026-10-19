@@ -1,8 +1,12 @@
 /**
  * 特殊建筑（城内奇观）建成年代 —— 🔴 [2026-09-30 主人令「给每个特殊建筑添加一个建好的年代」]
  *
- * 剧本期：奇观只在「建成年代 ≤ 当前剧本年份」时才显示（哪怕挂靠据点已显示，奇观未建成也不画）。
- * 乱斗期：一律显示（不看年代）。
+ * 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+ *    口径与据点建城年（`cityFoundedYears.ts`）**完全相同**：
+ *    · 剧本模式（`script`）：奇观只在「建成年代 ≤ 当前**事件**年份」时才显示；
+ *    · 百岁模式（`centenarian`）：奇观只在「建成年代 ≤ 当前**日历**年份」时才显示；
+ *    · 乱斗模式（`melee`）与编辑器模式：一律显示，不看年代。
+ *    哪怕挂靠据点已显示，奇观未建成也不画；战略地图（`MonumentLayer`）与战术攻城战（`Scene13WarLayer`）共用本表判据。
  * key = SUCAI_BUILDING 素材目录名（CityWonders.ts 的 asset），value = 建成年代（公元前用负数）。
  *
  * 口径：
@@ -153,3 +157,34 @@ export const WONDER_FOUNDED_YEAR: Record<string, number> = {
     'WEST_CASTLE_AGE3': 1080,             // 罗切斯特堡：1080年
     'WEST_WONDER_BRITONS': 1075,          // 奇切斯特大教堂：1075年
 };
+
+/**
+ * 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+ * 建成年代闸门的「当前年份」—— 与据点建城年同一套模式口径，由 `GameApp` 注入：
+ *   · 剧本模式（`script`）＝ 当前这一场历史事件的年份；
+ *   · 百岁模式（`centenarian`）＝ 当前游戏日历年份；
+ *   · 乱斗模式（`melee`）/ 编辑器模式 ＝ `null`（不按年代拦，一律显示）。
+ * 战略地图（`MonumentLayer`）与战术攻城战城里那座奇观（`Scene13WarLayer`）共用这一份判据。
+ */
+let gateYearProvider: () => number | null = () => null;
+
+export function setWonderGateYearProvider(fn: () => number | null): void {
+    gateYearProvider = fn;
+}
+
+export function getWonderGateYear(): number | null {
+    return gateYearProvider();
+}
+
+/**
+ * 这座特殊建筑此刻是否已建成 —— 「建成年代 ≤ 当前年份」才算建成，否则不显示。
+ * 闸门年份为 null（乱斗 / 编辑器 / 剧本已打完）→ 一律已建成；
+ * 年代表里查不到的兜底显示（`tools/audit-wonder-coverage.mts` 保证在用奇观全部登记了年代）。
+ */
+export function isWonderFounded(asset: string): boolean {
+    const year = gateYearProvider();
+    if (year == null) return true;
+    const founded = WONDER_FOUNDED_YEAR[asset];
+    if (founded == null) return true;
+    return founded <= year;
+}
