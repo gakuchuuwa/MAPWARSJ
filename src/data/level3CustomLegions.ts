@@ -79,7 +79,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'fish_scale',
         slots: [
             { type: 'heavy_pikeman', count: 3 },
-            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'monk', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 heavy_crossbowman；按史：圣殿、医院骑士团本为修士会
             { type: 'crusader_knight', count: 2 },
         ],
         regions: ['CRUSADERS'],
@@ -149,7 +149,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         slots: [
             { type: 'heavy_pikeman', count: 3 },
             { type: 'conquistador', count: 2 },
-            { type: 'heavy_crossbowman', count: 4 },
+            { type: 'missionary', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 heavy_crossbowman；按史：西班牙征服美洲，传教士随军
         ],
         regions: ['SPANISH'],
         parentLegion: '帝国时代西班牙方阵军团',

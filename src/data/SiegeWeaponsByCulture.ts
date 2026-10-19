@@ -408,7 +408,8 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '帝国时代重装骑兵军团': {
         age: 'imperial',
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon'],
+        // 🔴 [2026-10-19 主人令] 9 件攻城武器里，把 2 件「手推攻城火炮」换成法兰克两位炮兵英雄（同样是火炮样子）：
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'hero_jeanbureau', 'hero_jeandelorrain'],
     },
     '古典时代勃艮第战团': {
         age: 'antiquity',

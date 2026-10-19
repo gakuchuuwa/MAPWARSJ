@@ -150,7 +150,7 @@ export type SubCategory =
     // 步兵
     | 'sword_shield' | 'spear' | 'two_handed'
     // 远程
-    | 'archer' | 'crossbow' | 'thrown' | 'gunpowder'
+    | 'archer' | 'crossbow' | 'thrown' | 'gunpowder' | 'magic'
     // 骑兵
     | 'melee_cav' | 'horse_archer' | 'elephant' | 'chariot'
     // 攻城
@@ -168,6 +168,7 @@ export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
     crossbow: '弩手',
     thrown: '投掷',
     gunpowder: '火器',
+    magic: '法术',
     melee_cav: '战骑',
     horse_archer: '弓骑',
     elephant: '象兵',
@@ -192,7 +193,7 @@ export const SUBCATEGORY_LABEL: Record<SubCategory, string> = {
 /** 每个大类下有哪些子类（图鉴子类过滤下拉 + 排序都用它） */
 export const SUBCATEGORY_BY_CATEGORY: Record<UnitCategory, SubCategory[]> = {
     infantry: ['sword_shield', 'spear', 'two_handed'],
-    ranged: ['archer', 'crossbow', 'thrown', 'gunpowder'],
+    ranged: ['archer', 'crossbow', 'thrown', 'gunpowder', 'magic'],   // 🔴 [2026-10-19 主人令「所有传教士，祭祀，僧侣，异教徒都是法术」「法术属于远程中的一类」]
     cavalry: ['melee_cav', 'horse_archer', 'elephant', 'chariot'],
     siege: ['gunpowder_siege', 'mechanical'],
     naval: ['galley', 'fire_ship', 'cannon_ship', 'demo_ship', 'warship'],
@@ -686,10 +687,10 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'lysander_raider', name: '斯巴达吕山德掠夺者特殊', category: 'infantry', age: 'antiquity', pathPrefix: '/SUCAI/MERCENARY_HOPLITE/' },
     { id: 'outlaw', name: '亡命之徒特殊', category: 'ranged', age: 'feudal', pathPrefix: '/SUCAI/ARCHER/' },
     // ── 2026-10-19 主人令「全部解析……不能缺少任何单位」：补入 DE 有、兵种鉴赏原先没有的单位（tools/de-add-missing-units.mjs 生成）──
-    { id: 'missionary', name: '传教士', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MONK_MISSIONARY/' },   // [2026-10-19 补入] DE「Missionary」dat#775；素材 /SUCAI/MONK_MISSIONARY/
+    { id: 'missionary', name: '传教士', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/MONK_MISSIONARY/' },   // [2026-10-19 补入] DE「Missionary」dat#775；素材 /SUCAI/MONK_MISSIONARY/
     { id: 'fishing_ship', name: '渔船', category: 'civilian', age: 'feudal', pathPrefix: '/SUCAI/SHP_FISHING_SHIP/' },   // [2026-10-19 补入] DE「Fishing Ship」dat#13；素材 /SUCAI/SHP_FISHING_SHIP/
-    { id: 'monk', name: '僧侣', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MONK_WEST/' },   // [2026-10-19 补入] DE「Monk」dat#125；借用「英雄·塔克修士·不列颠」兵模
-    { id: 'priestess', name: '女祭司', category: 'civilian', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },   // [2026-10-19 补入] DE「Priestess」dat#125；素材 /SUCAI/PRIESTESS/
+    { id: 'monk', name: '僧侣', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/MONK_WEST/' },   // [2026-10-19 补入] DE「Monk」dat#125；借用「英雄·塔克修士·不列颠」兵模
+    { id: 'priestess', name: '女祭司', category: 'ranged', age: 'antiquity', pathPrefix: '/SUCAI/PRIESTESS/' },   // [2026-10-19 补入] DE「Priestess」dat#125；素材 /SUCAI/PRIESTESS/
     { id: 'trade_cart', name: '贸易车', category: 'civilian', age: 'feudal', pathPrefix: '/SUCAI_TRADE/TRADE_CART_WEST/' },   // [2026-10-19 补入] DE「Trade Cart」dat#204；素材 /SUCAI_TRADE/TRADE_CART_WEST/
     { id: 'trebuchet_packed', name: '巨型投石机（打包）', category: 'siege', age: 'imperial', pathPrefix: '/SUCAI/SIE_PACKED_TREBUCHET/' },   // [2026-10-19 补入] DE「Trebuchet (Packed)」dat#331；素材 /SUCAI/SIE_PACKED_TREBUCHET/
     { id: 'villager', name: '村民', category: 'civilian', age: 'feudal', pathPrefix: '/SUCAI/VIL_MALE_VILLAGER/' },   // [2026-10-19 补入] DE「Villager」dat#1810；素材 /SUCAI/VIL_MALE_VILLAGER/
@@ -849,10 +850,10 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'nessie', name: '尼西', category: 'other', age: 'feudal', pathPrefix: '/SUCAI/NESSIE/' },   // [2026-10-19 补入] DE「Nessie」dat#1973；素材 /SUCAI/NESSIE/
     { id: 'ox_cart', name: '牛推车', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MISC_CART_OX/' },   // [2026-10-19 补入] DE「Ox Cart」dat#1271；素材 /SUCAI/MISC_CART_OX/
     { id: 'ox_wagon', name: '牛战车', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MISC_WAGON_OX/' },   // [2026-10-19 补入] DE「Ox Wagon」dat#1273；素材 /SUCAI/MISC_WAGON_OX/
-    { id: 'pagan_priest', name: '异教祭司', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MONK_PAGAN_PRIEST/' },   // [2026-10-19 补入] DE「Pagan Priest」dat#1940；素材 /SUCAI/MONK_PAGAN_PRIEST/
+    { id: 'pagan_priest', name: '异教祭司', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/MONK_PAGAN_PRIEST/' },   // [2026-10-19 补入] DE「Pagan Priest」dat#1940；素材 /SUCAI/MONK_PAGAN_PRIEST/
     { id: 'penguin', name: '企鹅', category: 'other', age: 'imperial', pathPrefix: '/SUCAI_ANIMAL/PENGUIN/' },   // [2026-10-19 补入] DE「Penguin」dat#2097；素材 /SUCAI_ANIMAL/PENGUIN/
     { id: 'photonman', name: '装备激光武器的人', category: 'other', age: 'imperial', pathPrefix: '/SUCAI/ARC_PHOTONMAN/' },   // [2026-10-19 补入] DE「Photonman」dat#1577；素材 /SUCAI/ARC_PHOTONMAN/
-    { id: 'priest', name: '祭司', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MONK_PRIEST/' },   // [2026-10-19 补入] DE「Priest」dat#1023；素材 /SUCAI/MONK_PRIEST/
+    { id: 'priest', name: '祭司', category: 'ranged', age: 'castle', pathPrefix: '/SUCAI/MONK_PRIEST/' },   // [2026-10-19 补入] DE「Priest」dat#1023；素材 /SUCAI/MONK_PRIEST/
     { id: 'rabid_wolf', name: '狂暴之狼', category: 'other', age: 'feudal', pathPrefix: '/SUCAI_ANIMAL/WOLF/' },   // [2026-10-19 补入] DE「Rabid Wolf」dat#202；借用「猎狼」兵模
     { id: 'relic_cart', name: '圣物推车', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/MISC_RELIC/' },   // [2026-10-19 补入] DE「Relic Cart」dat#159；素材 /SUCAI/MISC_RELIC/
     { id: 'repairer', name: '修理工', category: 'civilian', age: 'castle', pathPrefix: '/SUCAI/VIL_MALE_BUILDER/' },   // [2026-10-19 补入] DE「Repairer」dat#156；素材 /SUCAI/VIL_MALE_BUILDER/
@@ -1217,6 +1218,8 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     // ── 2026-10-19 补入的 DE 单位 ──
     cobra_car: 'mechanical',
     sharkatzor: 'mechanical',
+    // 🔴 [2026-10-19 主人令「所有传教士，祭祀，僧侣，异教徒都是法术」「法术属于远程中的一类」]
+    priestess: 'magic', missionary: 'magic', priest: 'magic', pagan_priest: 'magic', monk: 'magic',
 };
 
 /** 取兵种二级分类；未登记返回 undefined（图鉴显示「—」）。 */
