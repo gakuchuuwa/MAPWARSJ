@@ -31,6 +31,7 @@ import { WAR_TYPES } from '../data/WarTypes';
 import {
     DE_UNITS_CATALOG, CATEGORY_LABEL, SUBCATEGORY_LABEL,
     getUnitSubcategory, getUnitTier, observeThumbs, drawUnitThumb,
+    attachUnitThumbZoom, hideThumbZoom,
 } from '../legion-editor/main';
 import { getNavalShipChineseName } from '../types/NavalShipTiers';
 
@@ -321,18 +322,20 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
     //    原来这里直写 draft!.types[rowIdx]，新建那条路进来时 draft 是 null → 整个 paint 抛异常，
     //    弹窗开出来是**空白的**（overlay 在、一张卡都没有）。
     const currentType = (): string => (onPick ? (pickedNow ?? '') : (draft?.types[rowIdx] ?? ''));
+    hideThumbZoom();
     document.getElementById('lp-picker')?.remove();
     const overlay = document.createElement('div');
     overlay.id = 'lp-picker';
     overlay.style.cssText = `position:fixed;inset:0;z-index:16000;background:rgba(0,0,0,.72);
         display:flex;align-items:center;justify-content:center;`;
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) { hideThumbZoom(); overlay.remove(); } });
 
     const box = document.createElement('div');
     box.style.cssText = `width:min(1100px,92vw);height:min(760px,88vh);background:#141210;
         border:1px solid #3a342c;border-radius:6px;display:flex;flex-direction:column;overflow:hidden;`;
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+    attachUnitThumbZoom(overlay);
 
     const cats = ['all', ...new Set(DE_UNITS_CATALOG.map(u => u.category))];
 
@@ -348,6 +351,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
     })();
 
     const paint = (): void => {
+        hideThumbZoom();
         const kw = pickerKeyword.trim();
         // 🔴 保持分类顺序：不要在最外层全局按名字排序，否则会把冷兵器等搞到最前面
         const list = DE_UNITS_CATALOG.filter(u => {
@@ -394,7 +398,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                        background:${u.id === currentType() ? '#3a2f1e' : '#201d18'};
                        border:1px solid ${u.id === currentType() ? '#c8a84b' : '#363024'};
                        border-radius:4px;padding:6px 8px;cursor:pointer;">
-                    <canvas data-uid="${esc(u.id)}" width="48" height="48"
+                    <canvas class="le-unit-thumb" data-uid="${esc(u.id)}" width="48" height="48"
                       style="width:48px;height:48px;flex:0 0 48px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
                     <div style="min-width:0;">
                       <div style="color:#e8e0d0;font-size:12px;">${esc(u.name)}</div>
@@ -428,9 +432,10 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
             if (pickerKind === 'ship') pickerShipCat = pickerCat;
             paint();
         }));
-        document.getElementById('lp-pk-close')?.addEventListener('click', () => overlay.remove());
+        document.getElementById('lp-pk-close')?.addEventListener('click', () => { hideThumbZoom(); overlay.remove(); });
         box.querySelectorAll('.lp-pk-card').forEach(c => c.addEventListener('click', () => {
             const uid = (c as HTMLElement).dataset.uid!;
+            hideThumbZoom();
             overlay.remove();
             if (onPick) { onPick(uid); return; }
             if (draft) {
@@ -481,6 +486,7 @@ function visible(): LegionRow[] {
 }
 
 function render(): void {
+    hideThumbZoom();
     const list = visible();
     const sel = selected ? currentRow() : null;
     if (sel && !draft) {
@@ -560,7 +566,7 @@ function render(): void {
                      * 列表里根本没有这一列，四级剧本军团的五兵看起来只有四兵。现补上这一列（读 commanderUnit，与右侧同源）。 */''}
                 <td style="padding:4px 10px;color:#d8c898;">
                   <div style="display:flex;align-items:center;gap:6px;">
-                    ${(d ? d.commanderUnit : r.commanderUnit) ? `<canvas data-uid="${esc(String(d ? d.commanderUnit : r.commanderUnit))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                    ${(d ? d.commanderUnit : r.commanderUnit) ? `<canvas class="le-unit-thumb" data-uid="${esc(String(d ? d.commanderUnit : r.commanderUnit))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
                     <span>${esc((d ? d.commanderUnit : r.commanderUnit) ? cn(String(d ? d.commanderUnit : r.commanderUnit)) : '—')}</span>
                   </div></td>
                 ${[0, 1, 2].map(i => {
@@ -568,13 +574,13 @@ function render(): void {
                     const c = d ? (rCnt[i] ?? 0) : (r.slots[i]?.count ?? 0);
                     return `<td style="padding:4px 10px;color:#d8c898;">
                       <div style="display:flex;align-items:center;gap:6px;">
-                        ${t ? `<canvas data-uid="${esc(t)}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                        ${t ? `<canvas class="le-unit-thumb" data-uid="${esc(t)}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
                         <span>${esc(cn(t ?? '—'))}<span style="color:#6a6358;"> ×${c}</span></span>
                       </div></td>`;
                 }).join('')}
                 <td style="padding:4px 10px;color:#d8c898;">
                   <div style="display:flex;align-items:center;gap:6px;">
-                    ${rShip ? `<canvas data-uid="${esc(shipUnitId(rShip))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
+                    ${rShip ? `<canvas class="le-unit-thumb" data-uid="${esc(shipUnitId(rShip))}" width="36" height="36" style="width:36px;height:36px;background:#141210;border-radius:3px;image-rendering:pixelated;flex:0 0 36px;"></canvas>` : ''}
                     <span>${esc(shipLabel(rShip))}</span>
                   </div></td>
                 <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
@@ -628,7 +634,7 @@ function render(): void {
           </div>
           <div id="lp-commander-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-            <canvas id="lp-thumb-commander" width="64" height="64"
+            <canvas id="lp-thumb-commander" class="le-unit-thumb" ${draft!.commanderUnit ? `data-uid="${esc(draft!.commanderUnit)}"` : ''} width="64" height="64"
               style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
             <div style="flex:1;min-width:0;">
               <div style="color:#e8e0d0;font-size:13px;">${draft!.commanderUnit ? esc(cn(draft!.commanderUnit)) : '未选主队兵模'}</div>
@@ -658,7 +664,7 @@ function render(): void {
             </div>
             <div class="lp-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                  background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-              <canvas id="lp-thumb-${i}" width="64" height="64"
+              <canvas id="lp-thumb-${i}" class="le-unit-thumb" ${draft!.types[i] ? `data-uid="${esc(draft!.types[i])}"` : ''} width="64" height="64"
                 style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
               <div style="flex:1;min-width:0;">
                 <div style="color:#e8e0d0;font-size:13px;">${esc(cn(draft!.types[i]))}</div>
@@ -672,7 +678,7 @@ function render(): void {
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队（战船）</div>
           <div id="lp-ship-card" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-            <canvas id="lp-thumb-ship" width="64" height="64"
+            <canvas id="lp-thumb-ship" class="le-unit-thumb" ${draft!.shipId ? `data-uid="${esc(shipUnitId(draft!.shipId))}"` : ''} width="64" height="64"
               style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
             <div style="flex:1;min-width:0;">
               <div style="color:#e8e0d0;font-size:13px;">${esc(shipLabel(draft!.shipId))}</div>
@@ -953,14 +959,16 @@ function openCreateDialog(): void {
     overlay.id = 'lp-create';
     overlay.style.cssText = `position:fixed;inset:0;z-index:16000;background:rgba(0,0,0,.72);
         display:flex;align-items:center;justify-content:center;`;
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    overlay.addEventListener('click', e => { if (e.target === overlay) { hideThumbZoom(); overlay.remove(); } });
     const box = document.createElement('div');
     box.style.cssText = `width:min(600px,92vw);max-height:92vh;overflow:auto;background:#141210;
         border:1px solid #3a342c;border-radius:6px;padding:18px;color:#e8e0d0;`;
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+    attachUnitThumbZoom(overlay);
 
     const paint = (): void => {
+        hideThumbZoom();
         const cnt = MODE_ROWS[mode];
         box.innerHTML = `
           <div style="font-size:16px;color:#f6e05e;margin-bottom:4px;">新建军团</div>
@@ -985,7 +993,7 @@ function openCreateDialog(): void {
           </div>
           <div id="lp-c-commander" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-            <canvas id="lp-c-thumb-commander" width="64" height="64"
+            <canvas id="lp-c-thumb-commander" class="le-unit-thumb" ${commanderUnit ? `data-uid="${esc(commanderUnit)}"` : ''} width="64" height="64"
               style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
             <div style="flex:1;min-width:0;">
               <div style="color:#e8e0d0;font-size:13px;">${commanderUnit ? esc(cn(commanderUnit)) : '未选主队兵模'}</div>
@@ -1005,7 +1013,7 @@ function openCreateDialog(): void {
             <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">${label} · ${cnt[i]} 人${touched[i] ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</div>
             <div class="lp-c-unit" data-row="${i}" style="display:flex;gap:10px;align-items:center;margin-bottom:12px;
                  background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-              <canvas id="lp-c-thumb-${i}" width="64" height="64"
+              <canvas id="lp-c-thumb-${i}" class="le-unit-thumb" ${types[i] ? `data-uid="${esc(types[i])}"` : ''} width="64" height="64"
                 style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
               <div style="flex:1;min-width:0;">
                 <div style="color:#e8e0d0;font-size:13px;">${esc(cn(types[i]))}</div>
@@ -1017,7 +1025,7 @@ function openCreateDialog(): void {
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">舰队 · 战船${shipTouched ? '' : '　<span style="color:#6a6358;">（照抄归属军团，可点换）</span>'}</div>
           <div id="lp-c-ship" style="display:flex;gap:10px;align-items:center;margin-bottom:14px;
                background:#151310;border:1px solid #3a342c;border-radius:4px;padding:7px 9px;cursor:pointer;">
-            <canvas id="lp-c-thumb-ship" width="64" height="64"
+            <canvas id="lp-c-thumb-ship" class="le-unit-thumb" ${shipId ? `data-uid="${esc(shipUnitId(shipId))}"` : ''} width="64" height="64"
               style="width:64px;height:64px;flex:0 0 64px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
             <div style="flex:1;min-width:0;">
               <div style="color:#e8e0d0;font-size:13px;">${esc(shipLabel(shipId))}</div>
@@ -1097,7 +1105,7 @@ function openCreateDialog(): void {
         document.getElementById('lp-c-assign')?.addEventListener('change', e => {
             assignFactionId = (e.target as HTMLSelectElement).value;
         });
-        document.getElementById('lp-c-cancel')?.addEventListener('click', () => overlay.remove());
+        document.getElementById('lp-c-cancel')?.addEventListener('click', () => { hideThumbZoom(); overlay.remove(); });
         document.getElementById('lp-c-go')?.addEventListener('click', () => {
             void createLegion(name, parentName, mode, types, shipId, commanderUnit, assignFactionId, overlay);
         });
@@ -1164,6 +1172,7 @@ async function createLegion(
             }
         }
         runtimeCreated.add(name);
+        hideThumbZoom();
         overlay.remove();
         selected = name;
         selectedLayer = '三级';
@@ -1315,9 +1324,14 @@ async function remove(): Promise<void> {
     }
 }
 
+let hostThumbZoomBound = false;
 /** 把「军团编辑」挂进军团方阵页的主区（与其它视图页签并排，不另开页、不做浮层） */
 export function mountLegionPanel(container: HTMLElement): void {
     host = container;
+    if (!hostThumbZoomBound) {
+        hostThumbZoomBound = true;
+        attachUnitThumbZoom(container);
+    }
     rows = buildRows();
     render();
 }
