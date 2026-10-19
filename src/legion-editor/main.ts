@@ -918,6 +918,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     swordsman: 'sword_shield', champion: 'two_handed',
     jian_swordsman: 'sword_shield',
     eastern_swordsman: 'sword_shield', legionary: 'sword_shield',
+    bandit: 'sword_shield', imperial_legionary: 'sword_shield',
     elite_konnik_foot: 'sword_shield', elite_serjeant: 'sword_shield',
     elite_teutonic_knight: 'sword_shield', elite_woad_raider: 'sword_shield',
     konnik_foot: 'sword_shield',
@@ -940,6 +941,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     ghulam: 'spear', elite_ghulam: 'spear',
     elite_kamayuk: 'spear', flemish_pikeman: 'spear', flemish_pikeman_f: 'spear',
     halberdier: 'spear', hippeus: 'spear', elite_hippeus: 'spear', hoplite: 'spear', elite_hoplite: 'spear', immortal: 'spear', elite_immortal: 'spear', mercenary_hoplite: 'spear',
+    lysander_raider: 'spear',
     phalangite: 'spear', elite_phalangite: 'spear', sosso_guard: 'foot_hero', sparabara: 'spear', spearman: 'spear',
     sacred_band: 'spear', amazon_warrior: 'spear', polemarch: 'spear',
     temple_guard: 'spear', elite_temple_guard: 'spear', hill_tribesman: 'spear', indian_tribesman: 'spear',
@@ -965,10 +967,11 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     elephant_archer: 'archer', elite_elephant_archer: 'archer', amazon_archer: 'archer', bactrian_archer: 'archer',
     blackwood_archer: 'archer', elite_blackwood_archer: 'archer', cretan_archer: 'archer',
     elite_plumed_archer: 'archer', plumed_archer: 'archer', immortal_ranged: 'archer', elite_immortal_ranged: 'archer',
-    laminated_bowman: 'archer', recurve_bowman: 'archer',
+    laminated_bowman: 'archer', recurve_bowman: 'archer', outlaw: 'archer',
     // 弩手
     chukonu: 'crossbow', elite_chukonu: 'crossbow', crossbowman: 'crossbow', arbalest: 'crossbow', 
     genoese_crossbowman: 'crossbow', elite_genoese_crossbowman: 'crossbow', gastraphetes: 'crossbow',
+    heavy_crossbowman: 'crossbow',
     // 投掷
     throwing_axeman: 'thrown', elite_throwing_axeman: 'thrown', imperial_skirmisher: 'thrown',
     chakram_thrower: 'thrown', elite_chakram_thrower: 'thrown', gbeto: 'thrown', elite_gbeto: 'thrown',
@@ -996,7 +999,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     sogdian_cataphract: 'melee_cav', winged_hussar: 'melee_cav', xolotl_warrior: 'melee_cav', cavalier: 'melee_cav',
     shock_cavalry: 'melee_cav', imperial_cavalry: 'melee_cav', equites: 'melee_cav',
     sarmatian: 'melee_cav', crusader_knight: 'melee_cav', raider: 'melee_cav', antiquity_light_cavalry: 'melee_cav',
-    antiquity_scout_cavalry: 'melee_cav',
+    antiquity_scout_cavalry: 'melee_cav', mounted_samurai: 'melee_cav',
     // 弓骑（骑射/骑乘火器/标枪骑，class 36 + 23）
     xianbei_raider: 'horse_archer', kipchak: 'horse_archer', elite_kipchak: 'horse_archer', mangudai: 'horse_archer',
     mangudai_elite: 'horse_archer', cav_archer: 'horse_archer', cav_archer_heavy: 'horse_archer', arambai: 'horse_archer',
@@ -1005,6 +1008,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     elite_genitour: 'horse_archer', elite_scythian_horse_archer: 'horse_archer', genitour: 'horse_archer',
     scythian_horse_archer: 'horse_archer', tarantine_cavalry: 'horse_archer', varangian_jarl: 'horse_archer', elite_varangian_jarl: 'horse_archer', antiquity_cavalry_archer: 'horse_archer',
     antiquity_heavy_cavalry_archer: 'horse_archer', mounted_crossbowman: 'horse_archer', mounted_crossbowman_heavy: 'horse_archer',
+    khan: 'horse_archer',
     // 象兵
     war_elephant: 'elephant', battle_elephant: 'elephant', armored_elephant: 'elephant', elite_armored_elephant: 'elephant',
     sannahya: 'elephant', elite_sannahya: 'elephant', elite_battle_elephant: 'elephant', elite_war_elephant: 'elephant',
