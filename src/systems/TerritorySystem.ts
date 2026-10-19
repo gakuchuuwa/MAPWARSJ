@@ -3087,6 +3087,15 @@ export class TerritorySystem {
 
     /** 旗号染色/文字生成完成后，刷新该势力**所有已建 marker** 的字色 overlay（黑字白边 / 白字黑边） */
     public patchFactionFlagText(factionId: string): void {
+        this.patchFactionFlagTexts(new Set([factionId]));
+    }
+
+    /**
+     * 🔴 [2026-10-20 主人定] 百岁模式一次会换掉很多势力的旗号（跨年十几个、跨时代上千个），
+     * 必须**只扫一遍 marker**，不许每个势力各扫一遍全图。
+     */
+    public patchFactionFlagTexts(factionIds: ReadonlySet<string>): void {
+        if (factionIds.size === 0) return;
         // 🔴 [2026-09-11 主人报「玩家抵达新区域后旗上的字刷新很慢、过去了也不显示」]
         //   真根因不在"慢"，而在**永远不 patch 到那些旗**：
         //   · 跟拍走进新区域时，新据点是 appendCityMarkers() 追加的，
@@ -3100,8 +3109,8 @@ export class TerritorySystem {
             if (!root) continue;
             for (const el of root.querySelectorAll<HTMLElement>('.city-flag-body')) {
                 const m = /flag-faction-([A-Za-z_0-9]+)/.exec(el.className);
-                if (!m || m[1] !== factionId) continue;
-                this.patchFlagTextOverlay(el, factionId);
+                if (!m || !factionIds.has(m[1])) continue;
+                this.patchFlagTextOverlay(el, m[1]);
                 break;
             }
         }

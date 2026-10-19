@@ -4,11 +4,13 @@
  * 🔴 [2026-08-26 主人：「检查下，所有的奇迹安置的对吗，应该是对应好某一个据点」
  *     「不要闲置，能安置的都按事实安置上」]
  *
- * 四条硬检查：
+ * 五条硬检查：
  *   ① 素材存在 —— 映射不得指向 public/SUCAI_BUILDING/ 里没有的目录
  *   ② 据点存在 —— key 必须是 cities_v2 里真实的 cityId（否则永远命中不了）
  *   ③ 一对一   —— 同一奇观不得配多城；同一城不得配多奇观
  *   ④ 不强塞   —— 未安置素材只报告，不为追求零闲置而错配城市
+ *   ⑤ 全部有建成年代 —— 在用的每一座奇观都必须在 `src/data/wonderFoundedYears.ts` 登记
+ *      （🔴 2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」）
  *
  * ⚠️ 两条**别再犯**的历史错误（2026-08-24 曾配上又按史实撤掉，2026-08-26 已配到正确据点）：
  *   · `ORIE_WONDER_PERSIANS` 别配伊斯法罕 —— 萨法维时代太晚；DE 波斯奇观是泰西封的
@@ -19,6 +21,8 @@
  * 跑法：npx tsx tools/audit-wonder-coverage.mts
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { CITY_WONDER, CITY_WONDER_EXTRA } from '../src/data/CityWonders';
+import { WONDER_FOUNDED_YEAR } from '../src/data/wonderFoundedYears';
 
 let fail = 0;
 const ok = (m: string) => console.log(`  ✅ ${m}`);
@@ -65,6 +69,16 @@ const idle = [...wonderAssets].filter((a) => !used.has(a)).sort();
 console.log(`  ${wonderAssets.size} 座 → 安置 ${wonderAssets.size - idle.length} 座`);
 if (idle.length) console.log(`  ⚪ 未安置（不得强塞）：${idle.join(', ')}`);
 else ok('全部奇观均有史实合适的据点');
+
+console.log('\n建成年代覆盖率（🔴 2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」）：');
+// 用真实映射表（不按文件文本正则 —— 注里的旧条目不算在用）
+const realUsed = new Set<string>([
+    ...Object.values(CITY_WONDER),
+    ...Object.values(CITY_WONDER_EXTRA).flatMap((list) => list.map((ex) => ex.asset)),
+]);
+const noYear = [...realUsed].filter((a) => WONDER_FOUNDED_YEAR[a] === undefined).sort();
+if (noYear.length) bad(`在用奇观缺建成年代（未到年代不显示，缺了会永远显示）：${noYear.join(', ')}`);
+else ok(`在用 ${realUsed.size} 座奇观全部登记了建成年代`);
 
 console.log('\n防回归（曾按史实撤销过的配法）：');
 const wrong: Array<[RegExp, string]> = [

@@ -320,7 +320,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（咸阳、洛阳；秦阿房宫夯土台基、汉未央宫遗址、白马寺；青铜长剑、秦弩连射方阵、汉代铁戟环首刀与轻装具装汉骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代秦汉军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '古典时代关中军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -337,7 +337,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（长安、洛阳；大雁塔、洛阳龙门奉先寺卢舍那大佛、含元殿；府兵制重步兵、唐陌刀劈砍大阵、明光铠与破阵马槊铁骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代隋唐军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '封建时代关陇军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -392,7 +392,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（邺城、洛阳；邺城铜雀台三台遗址、洛阳太极殿基址；魏晋铁骑长标枪、高桥马鞍重甲冲击、筑垒深壕守御战阵）
     //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代魏晋军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        name: '古典时代太行军团', civ: '河朔', age: 'antiquity', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
@@ -410,7 +410,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（平城/大同、太原；大同云冈石窟、悬空寺石木栈道；人马俱装甲骑具装、拓跋鲜卑重型骑枪、黄河与阴山石垒要塞防区）
     //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代北朝军团', civ: '河朔', age: 'feudal', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        name: '封建时代河朔军团', civ: '河朔', age: 'feudal', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
@@ -3464,16 +3464,16 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（华闾、白藤江口；华闾喀斯特环形悬崖石筑水陆关隘、丁仙皇早期石构木梁防御要塞；倒钩破甲长铁矛、轻便藤编漆盾、扼守喀斯特隘口与深江铁桩设伏阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_dinhle / hero_leloi / elite_battle_elephant　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代丁黎军团', civ: '越南', age: 'feudal', deStyle: 'SEAS', region: 'VIETNAMESE' as RegionType,
+        name: '封建时代瞿越军团', civ: '越南', age: 'feudal', deStyle: 'SEAS', region: 'VIETNAMESE' as RegionType,
         buildingStyle: 'VIETNAMESE',
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'GALLEY',
         commanderUnit: 'hero_luunhanchu',
         slots: [
+            { type: 'imperial_skirmisher', count: 2 },
             { type: 'jian_swordsman', count: 3 },
             { type: 'rattan_archer', count: 4 },
-            { type: 'light_cavalry', count: 2 },
         ],
     },
     // ── 安南 · 城堡时代 · 城堡时代大越军团　（本次新建）────────────────
