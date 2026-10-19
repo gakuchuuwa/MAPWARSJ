@@ -196,7 +196,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'KOREA',
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
         formationMode: 'triangle',
-        shipId: 'TURTLE_SHIP',
+        shipId: 'ELITE_TURTLE_SHIP',
         commanderUnit: 'hero_zhaoyun',
         slots: [
             { type: 'elite_war_wagon', count: 2 },
@@ -492,12 +492,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'chukonu', count: 2 },
         ],
     },
-    // ── 江南 · 城堡时代 · 城堡时代临安军团　（本次新建）────────────────
+    // ── 江南 · 城堡时代 · 城堡时代南宋军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、重骑兵为主
     //    描述正文（主人原文，一字未改）：（临安/杭州、镇江；杭州雷峰塔砖心、六和塔石木外檐；岳家军麻扎刀破拐子马、神劲背嵬骑兵、韩家军克敌弓重装步骑协同方阵）
     //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代临安军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        name: '城堡时代南宋军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
@@ -904,7 +904,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'JAPAN',
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
         formationMode: 'fish_scale',
-        shipId: 'GALLEON',
+        shipId: 'TURTLE_SHIP',
         commanderUnit: 'hero_nobunaga',
         slots: [
             { type: 'samurai', count: 3 },
@@ -934,12 +934,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'raider', count: 2 },
         ],
     },
-    // ── 日耳曼 · 封建时代 · 封建时代萨克森军团　（本次新建）────────────────
+    // ── 日耳曼 · 封建时代 · 封建时代东法兰克军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（雷根斯堡、奎德林堡；早期石构巴西利卡、萨克森罗曼式要塞；奥托大帝重骑兵、平定莱希菲尔德、德意志第一帝国奠基骨干）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代萨克森军团', civ: '条顿', age: 'feudal', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '封建时代东法兰克军团', civ: '条顿', age: 'feudal', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'fish_scale',
@@ -951,12 +951,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'pikeman', count: 2 },
         ],
     },
-    // ── 日耳曼 · 城堡时代 · 城堡时代德意志骑士团　（本次新建）────────────────
+    // ── 日耳曼 · 城堡时代 · 城堡时代德意志骑士军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（马尔堡、纽伦堡；马尔堡砖构城堡主楼、高耸砂岩哥特式修道院要塞；白袍黑十字具装重甲骑士、城堡连环推进、条顿骑士团国疆土扩张）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代德意志骑士团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '城堡时代德意志骑士军团', civ: '条顿', age: 'castle', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'fish_scale',
@@ -973,7 +973,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（奥格斯堡、纽伦堡；奥格斯堡早期文艺复兴市政厅、纽伦堡石砌重叠城郭；双手破阵巨剑士（Doppelsöldner）、18英尺密集长矛刺猬阵、马克西米利安精钢板甲与早期火绳枪协同步兵）
     //    英雄队（第 10 队·主将队）：hero_ulrichvonjungingen / hero_johnthefearless　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
+        name: '帝国时代德意志佣兵军团', civ: '条顿', age: 'imperial', deStyle: 'WEST', region: 'TEUTONS' as RegionType,
         buildingStyle: 'GERMANIC',
         castleId: 'EAST_CASTLE_AGE3', castleName: '条顿 东欧石堡',
         formationMode: 'echelon',
@@ -1008,12 +1008,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     },
     // ── 已存在的二级军团（本次不改编制，只补评级/描述/英雄队）：封建时代法兰克军团
     //    ✔ 见本表里【封建时代法兰克军团】那一条前的 ★ 批注
-    // ── 高卢 · 城堡时代 · 城堡时代法兰西骑士团　（本次新建）────────────────
+    // ── 高卢 · 城堡时代 · 城堡时代法兰西骑士军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（巴黎、兰斯；巴黎圣母院、圣殿塔城堡要塞；重装封建锁甲骑枪骑士、法兰西哥特式尖肋拱顶城堡、十字军东征攻防大阵）
     //    英雄队（第 10 队·主将队）：hero_bernardarmagnac / hero_joanofarc / hero_joanthemaid　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代法兰西骑士团', civ: '法兰克', age: 'castle', deStyle: 'WEST', region: 'FRANKS' as RegionType,
+        name: '城堡时代法兰西骑士军团', civ: '法兰克', age: 'castle', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'echelon',
@@ -1025,12 +1025,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'master_of_the_templar', count: 2 },
         ],
     },
-    // ── 高卢 · 帝国时代 · 帝国时代重装骑兵军团　（本次新建）────────────────
+    // ── 高卢 · 帝国时代 · 帝国时代法兰西军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（巴黎、卢瓦尔河谷；香波堡、枫丹白露宫；欧洲全身精钢板甲重装冲击骑兵（Gendarmes）、超长骑枪人马具装、法兰西文艺复兴皇家宫苑规制）
     //    英雄队（第 10 队·主将队）：hero_bernardarmagnac / hero_joanofarc / hero_joanthemaid　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代重装骑兵军团', civ: '法兰克', age: 'imperial', deStyle: 'WEST', region: 'FRANKS' as RegionType,
+        name: '帝国时代法兰西军团', civ: '法兰克', age: 'imperial', deStyle: 'WEST', region: 'FRANKS' as RegionType,
         buildingStyle: 'FRANKS',
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'echelon',
@@ -1046,12 +1046,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 勃艮第　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 勃艮第 · 古典时代 · 古典时代勃艮第战团　（本次新建）────────────────
+    // ── 勃艮第 · 古典时代 · 古典时代勃艮第军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（日内瓦、沃尔姆斯；莱芒湖木石防线、沃尔姆斯王宫石基；重装维京式双刃斧、破阵长标枪、莱茵河谷原始部落拓荒大阵）
     //    英雄队（第 10 队·主将队）：hero_johnthefearless / hero_philipthegood　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代勃艮第战团', civ: '勃艮第', age: 'antiquity', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
+        name: '古典时代勃艮第军团', civ: '勃艮第', age: 'antiquity', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'echelon',
@@ -1080,12 +1080,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'knight', count: 2 },
         ],
     },
-    // ── 勃艮第 · 城堡时代 · 城堡时代勃艮第骑士团　（本次新建）────────────────
+    // ── 勃艮第 · 城堡时代 · 城堡时代勃艮第公国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（布鲁日、第戎、根特；布鲁日钟楼、根特圣巴夫大教堂；欧洲全套镀金雕花重型全身板甲、长柄战斧（Bec de Corbin）、奢华重装骑兵卫队）
     //    英雄队（第 10 队·主将队）：hero_johnthefearless / hero_philipthegood　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代勃艮第骑士团', civ: '勃艮第', age: 'castle', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
+        name: '城堡时代勃艮第公国军团', civ: '勃艮第', age: 'castle', deStyle: 'WEST', region: 'BURGUNDIANS' as RegionType,
         buildingStyle: 'BURGUNDIANS',
         castleId: 'BURG_CASTLE_AGE3', castleName: '勃艮第 第戎公爵宫圆锥塔',
         formationMode: 'fish_scale',
@@ -1135,12 +1135,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'woad_raider', count: 3 },
         ],
     },
-    // ── 不列颠 · 封建时代 · 封建时代撒克森军团　（本次新建）────────────────
+    // ── 不列颠 · 封建时代 · 封建时代盎格鲁撒克逊军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（温彻斯特、约克；厄尔斯巴顿石教堂方塔、木草大厅；阿尔弗雷德铁壁盾墙方阵、双手丹麦长战斧近卫、七国争霸重步大阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代撒克森军团', civ: '不列颠', age: 'feudal', deStyle: 'WEST', region: 'BRITONS' as RegionType,
+        name: '封建时代盎格鲁撒克逊军团', civ: '不列颠', age: 'feudal', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
@@ -1152,12 +1152,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
-    // ── 不列颠 · 城堡时代 · 城堡时代长弓军团　（本次新建）────────────────
+    // ── 不列颠 · 城堡时代 · 城堡时代英格兰军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：远程（步弓）为主
     //    描述正文（主人原文，一字未改）：（伦敦、温莎；伦敦塔白塔、温莎城堡圣乔治礼拜堂；威尔士紫杉长弓落日箭雨、板甲重装骑士破阵、诺曼厚壁多层要塞）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare / hero_friartuck　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代长弓军团', civ: '不列颠', age: 'castle', deStyle: 'WEST', region: 'BRITONS' as RegionType,
+        name: '城堡时代英格兰军团', civ: '不列颠', age: 'castle', deStyle: 'WEST', region: 'BRITONS' as RegionType,
         buildingStyle: 'BRITONS',
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
@@ -1225,12 +1225,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_skirmisher', count: 4 },
         ],
     },
-    // ── 凯尔特 · 城堡时代 · 城堡时代高地阔剑军团　（本次新建）────────────────
+    // ── 凯尔特 · 城堡时代 · 城堡时代盖尔军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（爱丁堡、斯特灵；爱丁堡火山岩绝壁城堡、斯特灵石桥要塞；苏格兰长矛刺猬圆阵（Schiltron）、双手重型高地斩马阔剑（Claymore）、氏族风笛战吼冲锋）
     //    英雄队（第 10 队·主将队）：hero_dafyddapgruffydd / hero_llywelynapgruffydd / hero_williamwallace　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代高地阔剑军团', civ: '凯尔特', age: 'castle', deStyle: 'WEST', region: 'CELTS' as RegionType,
+        name: '城堡时代盖尔军团', civ: '凯尔特', age: 'castle', deStyle: 'WEST', region: 'CELTS' as RegionType,
         buildingStyle: 'CELTS',
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'fish_scale',
@@ -1242,12 +1242,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'halberdier', count: 2 },
         ],
     },
-    // ── 凯尔特 · 帝国时代 · 帝国时代加洛格拉斯军团　（本次新建）────────────────
+    // ── 凯尔特 · 帝国时代 · 帝国时代苏格兰高地军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（多尼戈尔、都柏林近郊；卡里克弗格斯诺曼要塞、盖尔石头碉楼塔楼；重装锁子甲双手长柄破甲重斧、宗族长斧近卫狂战、大航海早期抵御都铎入侵铁壁防线）
     //    英雄队（第 10 队·主将队）：hero_dafyddapgruffydd / hero_llywelynapgruffydd / hero_williamwallace　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代加洛格拉斯军团', civ: '凯尔特', age: 'imperial', deStyle: 'WEST', region: 'CELTS' as RegionType,
+        name: '帝国时代苏格兰高地军团', civ: '凯尔特', age: 'imperial', deStyle: 'WEST', region: 'CELTS' as RegionType,
         buildingStyle: 'CELTS',
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'echelon',
@@ -1263,12 +1263,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 斯堪的纳维亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 斯堪的纳维亚 · 古典时代 · 古典时代狂战士军团　（本次新建）────────────────
+    // ── 斯堪的纳维亚 · 古典时代 · 古典时代北欧日耳曼军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（乌普萨拉老城；旧乌普萨拉巨型皇家土冢、石船墓葬阵列；奥丁狂暴熊皮死士、双手重型伐木斧、原始萨满符文石阵血祭冲锋）
     //    英雄队（第 10 队·主将队）：hero_harald / hero_ulf / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代狂战士军团', civ: '维京', age: 'antiquity', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
+        name: '古典时代北欧日耳曼军团', civ: '维京', age: 'antiquity', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
         buildingStyle: 'VIKINGS',
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
@@ -1280,12 +1280,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'norse_warrior', count: 2 },
         ],
     },
-    // ── 斯堪的纳维亚 · 封建时代 · 封建时代维京盾墙军团　（本次新建）────────────────
+    // ── 斯堪的纳维亚 · 封建时代 · 封建时代维京军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（海瑟比、比尔卡；乌尔内斯木板教堂、博尔贡木教堂；双手破甲丹麦战斧、圆盾交叠铁壁盾墙（Skjaldborg）、北欧重装异教大军陆地推进方阵）
     //    英雄队（第 10 队·主将队）：hero_harald / hero_ulf / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代维京盾墙军团', civ: '维京', age: 'feudal', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
+        name: '封建时代维京军团', civ: '维京', age: 'feudal', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
         buildingStyle: 'VIKINGS',
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
@@ -1297,12 +1297,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'norse_chieftain', count: 2 },
         ],
     },
-    // ── 斯堪的纳维亚 · 城堡时代 · 城堡时代瓦兰吉近卫军团　（本次新建）────────────────
+    // ── 斯堪的纳维亚 · 城堡时代 · 城堡时代北欧军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（维斯比、罗斯基勒；维斯比石灰石环形城墙、卡尔马石堡水郭；双手长柄丹麦破甲巨斧、拜占庭式重装锁甲鳞甲、誓死效忠中枢城堡近卫）
     //    英雄队（第 10 队·主将队）：hero_harald / hero_ulf / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代瓦兰吉近卫军团', civ: '维京', age: 'castle', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
+        name: '城堡时代北欧军团', civ: '维京', age: 'castle', deStyle: 'WEST', region: 'VIKINGS' as RegionType,
         buildingStyle: 'VIKINGS',
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'fish_scale',
@@ -1407,12 +1407,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 萨克森　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 萨克森 · 古典时代 · 古典时代撒克斯短剑军团　（本次新建）────────────────
+    // ── 萨克森 · 古典时代 · 古典时代撒克逊军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（易北河、威悉河下游；木构神圣伊尔敏苏尔木柱神坛、原木防御营垒；单刃开山短剑（Seax）劈砍、北海沿岸划艇闪击掠夺、原始林地伏击方阵）
     //    英雄队（第 10 队·主将队）：hero_tostig / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代撒克斯短剑军团', civ: '撒克逊', age: 'antiquity', deStyle: 'WEST', region: 'SAXONS' as RegionType,
+        name: '古典时代撒克逊军团', civ: '撒克逊', age: 'antiquity', deStyle: 'WEST', region: 'SAXONS' as RegionType,
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
@@ -1441,12 +1441,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'varangian_guard', count: 2 },
         ],
     },
-    // ── 萨克森 · 城堡时代 · 城堡时代选侯重骑军团　（本次新建）────────────────
+    // ── 萨克森 · 城堡时代 · 城堡时代萨克森选侯国军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（迈森、德累斯顿；迈森阿尔布莱希茨山崖石筑宫堡、早生期哥特式修道院要塞；全套镀黑精钢板甲、易北河重装枪骑兵卫队、七大选帝侯亲卫铁骑）
     //    英雄队（第 10 队·主将队）：hero_tostig / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代选侯重骑军团', civ: '撒克逊', age: 'castle', deStyle: 'WEST', region: 'SAXONS' as RegionType,
+        name: '城堡时代萨克森选侯国军团', civ: '撒克逊', age: 'castle', deStyle: 'WEST', region: 'SAXONS' as RegionType,
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'echelon',
@@ -1458,12 +1458,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_varangian_guard', count: 2 },
         ],
     },
-    // ── 萨克森 · 帝国时代 · 帝国时代黑卫士方阵团　（本次新建）────────────────
+    // ── 萨克森 · 帝国时代 · 帝国时代萨克森军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（维滕贝格、托尔高；托尔高哈滕费尔斯文艺复兴早期螺旋梯宫堡、早期多角堡垒要塞；超长密集刺猬矛阵、两手重型破阵巨剑士（Doppelsöldner）、大航海早期施马尔卡尔登同盟铁壁卫队）
     //    英雄队（第 10 队·主将队）：hero_tostig / hero_ataulf　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代黑卫士方阵团', civ: '撒克逊', age: 'imperial', deStyle: 'WEST', region: 'SAXONS' as RegionType,
+        name: '帝国时代萨克森军团', civ: '撒克逊', age: 'imperial', deStyle: 'WEST', region: 'SAXONS' as RegionType,
         buildingStyle: 'SAXONS',
         castleId: 'SAXO_CASTLE_AGE3', castleName: '撒克逊 石木混筑塔堡',
         formationMode: 'fish_scale',
@@ -1496,12 +1496,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
-    // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格战团　（本次新建）────────────────
+    // ── 诺夫哥罗德 · 封建时代 · 封建时代瓦良格军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、骑兵为主
     //    描述正文（主人原文，一字未改）：（拉多加堡、旧诺夫哥罗德；木石混合环形要塞城郭、沃尔霍夫河商贸关垒；瓦良格北欧重装阔剑、交叠彩绘圆盾、罗斯商路重装亲卫步骑护卫队（Druzhina））
     //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代瓦良格战团', civ: '瓦良格', age: 'feudal', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
+        name: '封建时代瓦良格军团', civ: '瓦良格', age: 'feudal', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
         buildingStyle: 'VARANGIANS',
         castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
         formationMode: 'echelon',
@@ -1513,12 +1513,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
-    // ── 诺夫哥罗德 · 城堡时代 · 城堡时代冰湖铁卫军团　（本次新建）────────────────
+    // ── 诺夫哥罗德 · 城堡时代 · 城堡时代诺夫哥罗德军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、重步兵为主
     //    描述正文（主人原文，一字未改）：（大诺夫哥罗德；圣索菲亚大教堂青铜大门、德捷茨白石要塞城垣；亚历山大·涅夫斯基东斯拉夫面具鳞甲骑兵、重型长矛刺猬拒马大阵、冰上之战破铁十字死士）
     //    英雄队（第 10 队·主将队）：hero_harald / hero_halldor　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代冰湖铁卫军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
+        name: '城堡时代诺夫哥罗德军团', civ: '瓦良格', age: 'castle', deStyle: 'WEST', region: 'VARANGIANS' as RegionType,
         buildingStyle: 'VARANGIANS',
         castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
         formationMode: 'balance_yoke',
@@ -1551,12 +1551,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 日德兰　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第二批·西欧与北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 日德兰 · 古典时代 · 古典时代朱特破浪战团　（本次新建）────────────────
+    // ── 日德兰 · 古典时代 · 古典时代日德兰军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（日德兰半岛森林、尼达姆沼泽；沼泽祭祀神坑原木护坡、朱特人橡木茅草长屋；冷锻生铁宽矛、泥沼浅滩步战突袭、强渡北海无畏冲锋大阵）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代朱特破浪战团', civ: '丹麦', age: 'antiquity', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '古典时代日德兰军团', civ: '丹麦', age: 'antiquity', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -1568,12 +1568,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'norse_warrior', count: 2 },
         ],
     },
-    // ── 日德兰 · 封建时代 · 封建时代环堡皇家战团　（本次新建）────────────────
+    // ── 日德兰 · 封建时代 · 封建时代丹麦王国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、骑兵为主
     //    描述正文（主人原文，一字未改）：（耶灵、特雷勒堡；耶灵石碑符文刻石、精密同心圆土木环形军营要塞；双手长柄丹麦破甲巨斧、八字胡斯韦恩北海铁骑、统一北欧职业王室禁卫大阵）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代环堡皇家战团', civ: '丹麦', age: 'feudal', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '封建时代丹麦王国军团', civ: '丹麦', age: 'feudal', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -1585,12 +1585,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'varangian_guard', count: 2 },
         ],
     },
-    // ── 日德兰 · 城堡时代 · 城堡时代红白十字骑士团　（本次新建）────────────────
+    // ── 日德兰 · 城堡时代 · 城堡时代丹麦骑士军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（罗斯基勒、沃尔丁堡；罗斯基勒双塔红砖主教座堂、沃尔丁堡金鹅石塔水郭；红底白十字波罗的海十字军骑士、全套精钢重装锁子甲、海峡咽喉红砖要塞围攻战）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代红白十字骑士团', civ: '丹麦', age: 'castle', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '城堡时代丹麦骑士军团', civ: '丹麦', age: 'castle', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -1602,12 +1602,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_varangian_guard', count: 2 },
         ],
     },
-    // ── 日德兰 · 帝国时代 · 帝国时代海峡要塞铁卫团　（本次新建）────────────────
+    // ── 日德兰 · 帝国时代 · 帝国时代丹麦军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、远程（火器）为主
     //    描述正文（主人原文，一字未改）：（赫尔辛格、哥本哈根；克隆堡宫文艺复兴青铜绿顶城堡、早期松德海峡角楼炮台；重装双手精钢长戟近卫、丹麦王室火绳枪手与重炮营、全欧咽喉要塞陆防铁壁卫队）
     //    英雄队（第 10 队·主将队）：hero_ulf / hero_harald　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代海峡要塞铁卫团', civ: '丹麦', age: 'imperial', deStyle: 'WEST', region: 'DANES' as RegionType,
+        name: '帝国时代丹麦军团', civ: '丹麦', age: 'imperial', deStyle: 'WEST', region: 'DANES' as RegionType,
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
@@ -1641,12 +1641,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'imperial_centurion', count: 2 },
         ],
     },
-    // ── 拜占庭 · 封建时代 · 封建时代具装骑兵团　（本次新建）────────────────
+    // ── 拜占庭 · 封建时代 · 封建时代拜占庭军区军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、重步兵为主
     //    描述正文（主人原文，一字未改）：（君士坦丁堡、安纳托利亚；圣索菲亚大教堂马赛克殿堂、达芙妮修道院；人马俱装重甲冲击铁骑（Cataphract）、手持喷筒式希腊火的伴随重步兵、军区制步骑协同大阵）
     //    英雄队（第 10 队·主将队）：hero_basileus / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代具装骑兵团', civ: '拜占庭', age: 'feudal', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '封建时代拜占庭军区军团', civ: '拜占庭', age: 'feudal', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
@@ -1658,12 +1658,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_cataphract', count: 2 },
         ],
     },
-    // ── 拜占庭 · 城堡时代 · 城堡时代拜占庭近卫军　（本次新建）────────────────
+    // ── 拜占庭 · 城堡时代 · 城堡时代拜占庭军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（君士坦丁堡、米斯特拉斯；布拉赫奈宫城垣、乔拉教堂石雕修道院；双手长柄破甲重战斧、双头鹰要塞守备步兵、中世纪晚期城门死士防御阵）
     //    英雄队（第 10 队·主将队）：hero_basileus / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代拜占庭近卫军', civ: '拜占庭', age: 'castle', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '城堡时代拜占庭军团', civ: '拜占庭', age: 'castle', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'fish_scale',
@@ -1675,17 +1675,17 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cataphract', count: 2 },
         ],
     },
-    // ── 拜占庭 · 帝国时代 · 帝国时代耶尼切里军团　（本次新建）────────────────
+    // ── 拜占庭 · 帝国时代 · 帝国时代东正教军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：远程（步弓）、重步兵为主
     //    描述正文（主人原文，一字未改）：（伊斯坦布尔；托普卡帕宫内廷要塞、法提赫早期清真寺铅皮穹顶；重型反曲复合强弓、大马士革弯刀重装白帽步兵、大航海早期横扫地中海巨舰要塞大阵）
     //    英雄队（第 10 队·主将队）：hero_basileus / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代耶尼切里军团', civ: '拜占庭', age: 'imperial', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
+        name: '帝国时代东正教军团', civ: '拜占庭', age: 'imperial', deStyle: 'EAST', region: 'BYZANTINE' as RegionType,
         buildingStyle: 'BYZANTINE',
         castleId: 'BYZA_CASTLE_AGE3', castleName: '拜占庭 君士坦丁堡红砖穹顶堡',
         formationMode: 'echelon',
         shipId: 'DROMON',
-        commanderUnit: 'hero_tsarkonstantin',
+        commanderUnit: 'archbishop',   // 🔴 [2026-10-19 主人令「主将队换法术系」「帝国可以用所有的」] 原 hero_tsarkonstantin（战车）；东正教 → 大主教（法术系精英兵，帝国时代军团可用任何时代的英雄／精英兵）
         slots: [
             { type: 'royal_janissary', count: 4 },
             { type: 'elite_guardsman', count: 3 },
@@ -1696,12 +1696,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 亚美尼亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 亚美尼亚 · 古典时代 · 古典时代大亚美尼亚铁骑　（本次新建）────────────────
+    // ── 亚美尼亚 · 古典时代 · 古典时代大亚美尼亚军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（阿尔塔沙特、梯格拉诺克塔；加尼玄武岩希腊化爱奥尼柱式神殿；人马俱装艾鲁齐（Ayrudzi）重骑兵、重型长骑枪破阵冲击、高加索高地大阵）
     //    英雄队（第 10 队·主将队）：hero_thoros / hero_tamar　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代大亚美尼亚铁骑', civ: '亚美尼亚', age: 'antiquity', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
+        name: '古典时代大亚美尼亚军团', civ: '亚美尼亚', age: 'antiquity', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
         formationMode: 'fish_scale',
@@ -1713,12 +1713,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cataphract', count: 2 },
         ],
     },
-    // ── 亚美尼亚 · 封建时代 · 封建时代阿尼城卫军　（本次新建）────────────────
+    // ── 亚美尼亚 · 封建时代 · 封建时代巴格拉图尼军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（阿尼城；阿尼千零一座教堂遗址、双层多色玄武岩抗震城墙；复合铁鳞甲高原山地步兵、重型破甲铁骨朵、千城之都商路关隘铁壁防守）
     //    英雄队（第 10 队·主将队）：hero_thoros / hero_tamar　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代阿尼城卫军', civ: '亚美尼亚', age: 'feudal', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
+        name: '封建时代巴格拉图尼军团', civ: '亚美尼亚', age: 'feudal', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
         formationMode: 'fish_scale',
@@ -1730,12 +1730,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'knight', count: 2 },
         ],
     },
-    // ── 亚美尼亚 · 城堡时代 · 城堡时代奇里乞亚骑士团　（本次新建）────────────────
+    // ── 亚美尼亚 · 城堡时代 · 城堡时代奇里乞亚军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵、远程（重弩）为主
     //    描述正文（主人原文，一字未改）：（科里科斯、西斯；科里科斯海中浮堡石头要塞、托罗斯山脉悬崖要塞群；融合法兰克骑士重装板甲、地中海海陆双防要塞重弩、十字军东征坚固东方重装铁骑）
     //    英雄队（第 10 队·主将队）：hero_thoros / hero_tamar　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代奇里乞亚骑士团', civ: '亚美尼亚', age: 'castle', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
+        name: '城堡时代奇里乞亚军团', civ: '亚美尼亚', age: 'castle', deStyle: 'EAST', region: 'ARMENIANS' as RegionType,
         buildingStyle: 'ARMENIANS',
         castleId: 'ARME_CASTLE_AGE3', castleName: '亚美尼亚 埃奇米阿津石砌山顶堡',
         formationMode: 'fish_scale',
@@ -1802,12 +1802,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
-    // ── 高加索 · 城堡时代 · 城堡时代格鲁吉亚骑士团　（本次新建）────────────────
+    // ── 高加索 · 城堡时代 · 城堡时代格鲁吉亚军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（第比利斯、瓦尔齐亚；瓦尔齐亚十三层悬崖凿岩修道院洞窟城、斯瓦涅季防御石塔群（Koshki）；高加索东方重板鳞甲骑兵、迪德格里破阵铁骑、高山垂直绝壁要塞防御大阵）
     //    英雄队（第 10 队·主将队）：hero_tamar / hero_thoros　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代格鲁吉亚骑士团', civ: '格鲁吉亚', age: 'castle', deStyle: 'EAST', region: 'GEORGIANS' as RegionType,
+        name: '城堡时代格鲁吉亚军团', civ: '格鲁吉亚', age: 'castle', deStyle: 'EAST', region: 'GEORGIANS' as RegionType,
         buildingStyle: 'GEORGIANS',
         castleId: 'GEOR_CASTLE_AGE3', castleName: '格鲁吉亚 高加索斯万石塔古堡',
         formationMode: 'fish_scale',
@@ -1840,12 +1840,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 波兰　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 波兰 · 古典时代 · 古典时代卢吉蛮族战团　（本次新建）────────────────
+    // ── 波兰 · 古典时代 · 古典时代卢吉军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（维斯瓦河流域、奥斯特鲁夫；普热沃尔斯克火葬墓穴群、沼泽木桩防御营寨；折刃冷锻长剑（Spatha）、倒钩猎熊重矛、原始橡木森林泥沼伏击大阵）
     //    英雄队（第 10 队·主将队）：hero_jadwiga / hero_jogaila　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代卢吉蛮族战团', civ: '波兰', age: 'antiquity', deStyle: 'SLAV', region: 'POLES' as RegionType,
+        name: '古典时代卢吉军团', civ: '波兰', age: 'antiquity', deStyle: 'SLAV', region: 'POLES' as RegionType,
         buildingStyle: 'POLES',
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'fish_scale',
@@ -1857,12 +1857,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
-    // ── 波兰 · 封建时代 · 封建时代波兰尼铁卫团　（本次新建）────────────────
+    // ── 波兰 · 封建时代 · 封建时代波兰尼军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑兵、步兵为主
     //    描述正文（主人原文，一字未改）：（格涅兹诺、波兹南；奥斯特鲁夫莱德尼茨基湖心要塞、粗糙石灰岩圆拱洗礼堂；波兰尼公爵重锁甲亲卫骑兵（Druzhina）、白木大盾铁骨朵、平原聚落戍卫大阵）
     //    英雄队（第 10 队·主将队）：hero_jadwiga / hero_jogaila　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代波兰尼铁卫团', civ: '波兰', age: 'feudal', deStyle: 'SLAV', region: 'POLES' as RegionType,
+        name: '封建时代波兰尼军团', civ: '波兰', age: 'feudal', deStyle: 'SLAV', region: 'POLES' as RegionType,
         buildingStyle: 'POLES',
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'echelon',
@@ -1874,12 +1874,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'light_cavalry', count: 2 },
         ],
     },
-    // ── 波兰 · 城堡时代 · 城堡时代波兰骑士团　（本次新建）────────────────
+    // ── 波兰 · 城堡时代 · 城堡时代波兰王国军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（克拉科夫；瓦维尔城堡石造主楼、圣母圣殿飞拱砖哥特大教堂；重型锻钢全身板甲、格伦瓦德大破条顿黑十字重装骑兵、瓦维尔红砖要塞防御大阵）
     //    英雄队（第 10 队·主将队）：hero_jadwiga / hero_jogaila　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代波兰骑士团', civ: '波兰', age: 'castle', deStyle: 'SLAV', region: 'POLES' as RegionType,
+        name: '城堡时代波兰王国军团', civ: '波兰', age: 'castle', deStyle: 'SLAV', region: 'POLES' as RegionType,
         buildingStyle: 'POLES',
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'fish_scale',
@@ -1891,12 +1891,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'winged_hussar', count: 2 },
         ],
     },
-    // ── 波兰 · 帝国时代 · 帝国时代翼骑兵军团　（本次新建）────────────────
+    // ── 波兰 · 帝国时代 · 帝国时代波兰立陶宛军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（华沙、维尔纽斯；华沙皇家平原石筑城堡、早期萨尔马提亚木石庄园；背负双翼震慑雕羽、5.5米破阵中空超长骑枪（Kopia）、大马士革马刀（Szabla）平原无敌冲锋铁骑）
     //    英雄队（第 10 队·主将队）：hero_jadwiga / hero_jogaila　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代翼骑兵军团', civ: '波兰', age: 'imperial', deStyle: 'SLAV', region: 'POLES' as RegionType,
+        name: '帝国时代波兰立陶宛军团', civ: '波兰', age: 'imperial', deStyle: 'SLAV', region: 'POLES' as RegionType,
         buildingStyle: 'POLES',
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'echelon',
@@ -1912,12 +1912,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 波希米亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 波希米亚 · 古典时代 · 古典时代波伊山垒战团　（本次新建）────────────────
+    // ── 波希米亚 · 古典时代 · 古典时代波伊军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（伏尔塔瓦河谷扎维斯特；波伊凯尔特大型山丘要塞堡垒Oppidum、土石木框结构围墙；高地粗铁锁甲、凯尔特重型斩剑、山丘环形防御石垒阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_janzizka / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代波伊山垒战团', civ: '波希米亚', age: 'antiquity', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
+        name: '古典时代波伊军团', civ: '波希米亚', age: 'antiquity', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
         buildingStyle: 'BOHEMIANS',
         castleId: 'BOHE_CASTLE_AGE3', castleName: '波希米亚 卡尔施泰因城堡',
         formationMode: 'echelon',
@@ -1946,12 +1946,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'light_cavalry', count: 2 },
         ],
     },
-    // ── 波希米亚 · 城堡时代 · 城堡时代胡斯战车军团　（本次新建）────────────────
+    // ── 波希米亚 · 城堡时代 · 城堡时代胡斯军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：战车、步兵为主
     //    描述正文（主人原文，一字未改）：（布拉格、塔博尔、库特纳霍拉；查理大桥石筑双桥塔、圣维特大教堂砂岩肋拱；装甲重型战车阵（Wagenburg）、双手破甲战连枷（Flail）、以步克骑大破神罗十字军铁壁阵）
     //    英雄队（第 10 队·主将队）：hero_janzizka / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代胡斯战车军团', civ: '波希米亚', age: 'castle', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
+        name: '城堡时代胡斯军团', civ: '波希米亚', age: 'castle', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
         buildingStyle: 'BOHEMIANS',
         castleId: 'BOHE_CASTLE_AGE3', castleName: '波希米亚 卡尔施泰因城堡',
         formationMode: 'triangle',
@@ -1963,12 +1963,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'arbalest', count: 4 },
         ],
     },
-    // ── 波希米亚 · 帝国时代 · 帝国时代黑兵团长矛军　（本次新建）────────────────
+    // ── 波希米亚 · 帝国时代 · 帝国时代波希米亚雇佣军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（布拉格、切斯基克鲁姆洛夫；切斯基克鲁姆洛夫山顶石堡、早期库特纳霍拉造币要塞；文艺复兴黑化精钢半身板甲、超长破骑防卫长枪阵、大航海早期银矿城堡近卫铁壁）
     //    英雄队（第 10 队·主将队）：hero_janzizka / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代黑兵团长矛军', civ: '波希米亚', age: 'imperial', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
+        name: '帝国时代波希米亚雇佣军团', civ: '波希米亚', age: 'imperial', deStyle: 'SLAV', region: 'BOHEMIANS' as RegionType,
         buildingStyle: 'BOHEMIANS',
         castleId: 'BOHE_CASTLE_AGE3', castleName: '波希米亚 卡尔施泰因城堡',
         formationMode: 'triangle',
@@ -2002,12 +2002,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'lancer', count: 2 },
         ],
     },
-    // ── 马扎尔 · 封建时代 · 封建时代马扎尔骑射战团　（本次新建）────────────────
+    // ── 马扎尔 · 封建时代 · 封建时代马扎尔军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射为主
     //    描述正文（主人原文，一字未改）：（埃斯泰尔戈姆、塞克什白堡；埃斯泰尔戈姆早期皇家石堡罗曼式拱门、阿尔帕德帐幕营地；双曲复合角弓风暴、大马士革弯刀轻骑穿插、平定潘诺尼亚掠夺大阵）
     //    英雄队（第 10 队·主将队）：hero_attila / hero_cumanchief / hero_belaiv　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代马扎尔骑射战团', civ: '马扎尔', age: 'feudal', deStyle: 'SLAV', region: 'MAGYAR' as RegionType,
+        name: '封建时代马扎尔军团', civ: '马扎尔', age: 'feudal', deStyle: 'SLAV', region: 'MAGYAR' as RegionType,
         buildingStyle: 'MAGYAR',
         castleId: 'MAGY_CASTLE_AGE3', castleName: '马扎尔 布达佩斯多瑙河石堡',
         formationMode: 'crescent',
@@ -2019,12 +2019,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'recurve_bowman', count: 4 },
         ],
     },
-    // ── 马扎尔 · 城堡时代 · 城堡时代黑军铁甲兵团　（本次新建）────────────────
+    // ── 马扎尔 · 城堡时代 · 城堡时代匈牙利王国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、战车为主
     //    描述正文（主人原文，一字未改）：（维谢格拉德、布达；维谢格拉德多瑙河所罗门八角石塔、布达王宫早期哥特大厅；马加什国王黑化精钢全身板甲、重装长枪铁壁方阵、胡斯战车协同防御大阵）
     //    英雄队（第 10 队·主将队）：hero_attila / hero_cumanchief / hero_belaiv　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代黑军铁甲兵团', civ: '马扎尔', age: 'castle', deStyle: 'SLAV', region: 'MAGYAR' as RegionType,
+        name: '城堡时代匈牙利王国军团', civ: '马扎尔', age: 'castle', deStyle: 'SLAV', region: 'MAGYAR' as RegionType,
         buildingStyle: 'MAGYAR',
         castleId: 'MAGY_CASTLE_AGE3', castleName: '马扎尔 布达佩斯多瑙河石堡',
         formationMode: 'fish_scale',
@@ -2057,12 +2057,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 罗斯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 罗斯 · 古典时代 · 古典时代安特森林战团　（本次新建）────────────────
+    // ── 罗斯 · 古典时代 · 古典时代安特军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、远程（投矛）为主
     //    描述正文（主人原文，一字未改）：（第聂伯河中游森林沼泽；半穴居半木结构泥坑聚落、原木尖桩防御村寨；多柄倒钩破甲投矛（Sulitsy）、坚韧橡木长盾、林沼浅滩潜伏突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_vladdracula / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代安特森林战团', civ: '斯拉夫', age: 'antiquity', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
+        name: '古典时代安特军团', civ: '斯拉夫', age: 'antiquity', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
         buildingStyle: 'SLAVIC',
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'echelon',
@@ -2074,12 +2074,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'spearman', count: 2 },
         ],
     },
-    // ── 罗斯 · 封建时代 · 封建时代德鲁日纳亲卫团　（本次新建）────────────────
+    // ── 罗斯 · 封建时代 · 封建时代基辅罗斯军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、重骑兵为主
     //    描述正文（主人原文，一字未改）：（基辅；基辅圣索菲亚大教堂十三金顶、金门石木防御要塞；尖顶面具锁子甲头盔、大公亲卫双手宽刃剑、基辅城郭抗击游牧骑兵铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_vladdracula / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代德鲁日纳亲卫团', civ: '斯拉夫', age: 'feudal', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
+        name: '封建时代基辅罗斯军团', civ: '斯拉夫', age: 'feudal', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
         buildingStyle: 'SLAVIC',
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'fish_scale',
@@ -2108,12 +2108,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_boyar', count: 2 },
         ],
     },
-    // ── 罗斯 · 帝国时代 · 帝国时代月牙长斧军团　（本次新建）────────────────
+    // ── 罗斯 · 帝国时代 · 帝国时代俄罗斯军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（莫斯科；瓦西里升天大教堂多色洋葱头穹顶、克里姆林宫伊凡大帝石造八角钟楼；重型长柄月牙破甲战斧（Bardiche）、深红羊毛铁甲卫兵、大航海早期沙皇克里姆林铁壁禁卫大阵）
     //    英雄队（第 10 队·主将队）：hero_vladdracula / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代月牙长斧军团', civ: '斯拉夫', age: 'imperial', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
+        name: '帝国时代俄罗斯军团', civ: '斯拉夫', age: 'imperial', deStyle: 'SLAV', region: 'SLAVIC' as RegionType,
         buildingStyle: 'SLAVIC',
         castleId: 'SLAV_CASTLE_AGE3', castleName: '东欧/斯拉夫 莫斯科白石克里姆林',
         formationMode: 'fish_scale',
@@ -2129,12 +2129,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 立陶宛　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 立陶宛 · 古典时代 · 古典时代埃斯蒂琥珀战团　（本次新建）────────────────
+    // ── 立陶宛 · 古典时代 · 古典时代埃斯蒂军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（涅曼河下游、波罗的海沿岸；原始神圣林地石圈、泥沼原木祭坛；粗重硬木狼牙棒、骨角穿甲标枪、波罗的海琥珀古道原始圣林伏击战阵）
     //    英雄队（第 10 队·主将队）：hero_algirdas / hero_jogaila / hero_kestutis / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代埃斯蒂琥珀战团', civ: '立陶宛', age: 'antiquity', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
+        name: '古典时代埃斯蒂军团', civ: '立陶宛', age: 'antiquity', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
         buildingStyle: 'LITHUANIANS',
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'echelon',
@@ -2146,12 +2146,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_scout_cavalry', count: 2 },
         ],
     },
-    // ── 立陶宛 · 封建时代 · 封建时代克尔纳韦山堡卫队　（本次新建）────────────────
+    // ── 立陶宛 · 封建时代 · 封建时代立陶宛部族军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（克尔纳韦；克尔纳韦五大防卫土丘山堡要塞、陡峭多重土壕栅栏；双手破甲粗铁战斧、波罗的生铁圆盾刺矛、高台土木壁障阻击维京长船大阵）
     //    英雄队（第 10 队·主将队）：hero_algirdas / hero_jogaila / hero_kestutis / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代克尔纳韦山堡卫队', civ: '立陶宛', age: 'feudal', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
+        name: '封建时代立陶宛部族军团', civ: '立陶宛', age: 'feudal', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
         buildingStyle: 'LITHUANIANS',
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'echelon',
@@ -2163,12 +2163,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'light_cavalry', count: 2 },
         ],
     },
-    // ── 立陶宛 · 城堡时代 · 城堡时代立陶宛重骑兵团　（本次新建）────────────────
+    // ── 立陶宛 · 城堡时代 · 城堡时代立陶宛大公国军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（特拉凯、维尔纽斯；特拉凯水上红砖城堡、盖迪米纳斯红砖石砌塔楼；格伦瓦德破阵骑射标枪骑兵、东欧紧密锁甲鳞甲、抵御条顿十字军水上要塞铁骑大阵）
     //    英雄队（第 10 队·主将队）：hero_algirdas / hero_jogaila / hero_kestutis / hero_vytautasthegreat　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代立陶宛重骑兵团', civ: '立陶宛', age: 'castle', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
+        name: '城堡时代立陶宛大公国军团', civ: '立陶宛', age: 'castle', deStyle: 'SLAV', region: 'LITHUANIANS' as RegionType,
         buildingStyle: 'LITHUANIANS',
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'fish_scale',
@@ -2201,12 +2201,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 保加利亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第三批·东南欧＋东北欧）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 保加利亚 · 古典时代 · 古典时代色雷斯逆刃战团　（本次新建）────────────────
+    // ── 保加利亚 · 古典时代 · 古典时代巴尔干军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（普罗夫迪夫、赛尔迪卡/索非亚；普罗夫迪夫罗马大剧场、大理石列柱广场与石槽排水渠；恐怖双手双刃逆刃长刀（Rhomphaia）、月牙形轻木小盾（Pelte）、多瑙河南岸山地伏击撕裂方阵）
     //    英雄队（第 10 队·主将队）：hero_ivaylo / hero_ivaylofoot / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代色雷斯逆刃战团', civ: '保加利亚', age: 'antiquity', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
+        name: '古典时代巴尔干军团', civ: '保加利亚', age: 'antiquity', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
         buildingStyle: 'BULGARIANS',
         castleId: 'BULG_CASTLE_AGE3', castleName: '保加利亚 普雷斯拉夫圆顶城堡',
         formationMode: 'echelon',
@@ -2218,12 +2218,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'thracian_peltast', count: 2 },
         ],
     },
-    // ── 保加利亚 · 封建时代 · 封建时代波亚尔铁骑兵团　（本次新建）────────────────
+    // ── 保加利亚 · 封建时代 · 封建时代保加利亚军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（普利斯卡、普利斯拉夫；普利斯卡大罗曼式石砖巴西利卡、圆顶黄金教堂遗址、双层巨石坚固城墙；波亚尔（Bolyar）贵族人马具装重锁甲骑兵、双曲复合角弓风暴、普利斯卡山谷大破拜占庭铁血战阵）
     //    英雄队（第 10 队·主将队）：hero_ivaylo / hero_ivaylofoot / hero_tsarkonstantin　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代波亚尔铁骑兵团', civ: '保加利亚', age: 'feudal', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
+        name: '封建时代保加利亚军团', civ: '保加利亚', age: 'feudal', deStyle: 'SLAV', region: 'BULGARIANS' as RegionType,
         buildingStyle: 'BULGARIANS',
         castleId: 'BULG_CASTLE_AGE3', castleName: '保加利亚 普雷斯拉夫圆顶城堡',
         formationMode: 'fish_scale',
@@ -2274,12 +2274,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 伦巴第　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 伦巴第 · 古典时代 · 古典时代因苏布雷战团　（本次新建）────────────────
+    // ── 伦巴第 · 古典时代 · 古典时代伊特鲁里亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（美狄奥兰农/米兰、布雷西亚；布雷西亚卡比托利欧古罗马神庙、米兰圣洛伦佐巨石柱廊；冷锻双手劈砍长剑、坚木卵形大盾、波河平原原始凯尔特狂暴突击大阵）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代因苏布雷战团', civ: '意大利', age: 'antiquity', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '古典时代伊特鲁里亚军团', civ: '意大利', age: 'antiquity', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
@@ -2291,12 +2291,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'scout_cavalry', count: 2 },
         ],
     },
-    // ── 伦巴第 · 封建时代 · 封建时代伦巴第重骑兵团　（本次新建）────────────────
+    // ── 伦巴第 · 封建时代 · 封建时代伦巴第军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（帕维亚、蒙扎；帕维亚圣米歇尔大殿、蒙扎大教堂铁王冠圣所；阿利曼尼（Arimanni）重锁甲冲锋枪骑兵、伦巴第粗柱罗曼式盲拱堡垒、加冕铁王冠王家护卫大阵）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代伦巴第重骑兵团', civ: '意大利', age: 'feudal', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '封建时代伦巴第军团', civ: '意大利', age: 'feudal', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
@@ -2308,12 +2308,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'knight', count: 2 },
         ],
     },
-    // ── 伦巴第 · 城堡时代 · 城堡时代卡罗乔民兵团　（本次新建）────────────────
+    // ── 伦巴第 · 城堡时代 · 城堡时代意大利城邦军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：战车、长矛步兵为主
     //    描述正文（主人原文，一字未改）：（米兰、曼托瓦；斯福尔扎城堡早期红砖石基、公社执政官官邸Palazzo della Ragione；神圣卡罗乔巨轮战车（Carroccio）、密集长矛刺猬拒马民团、莱尼亚诺大破神罗重骑公社战阵）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代卡罗乔民兵团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '城堡时代意大利城邦军团', civ: '意大利', age: 'castle', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
@@ -2325,12 +2325,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cavalier', count: 2 },
         ],
     },
-    // ── 伦巴第 · 帝国时代 · 帝国时代米兰板甲雇佣军　（本次新建）────────────────
+    // ── 伦巴第 · 帝国时代 · 帝国时代意大利雇佣军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、重骑兵为主
     //    描述正文（主人原文，一字未改）：（米兰、帕维亚；米兰斯福尔扎红砖角塔要塞、帕维亚切尔托萨修道院雕花大理石立面；全套顶级镜面防弹全身板甲（Milanese Plate）、精钢重装长戟卫队、大航海早期文艺复兴要塞佣兵队长（Condottieri）铁壁近卫）
     //    英雄队（第 10 队·主将队）：hero_sforza / hero_bohemond　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代米兰板甲雇佣军', civ: '意大利', age: 'imperial', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
+        name: '帝国时代意大利雇佣军团', civ: '意大利', age: 'imperial', deStyle: 'MEDI', region: 'ITALIANS' as RegionType,
         buildingStyle: 'LATIN',
         castleId: 'MEDI_CASTLE_AGE3', castleName: '地中海/意大利 威尼斯总督红顶宫',
         formationMode: 'fish_scale',
@@ -2351,12 +2351,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（罗马城；罗马斗兽场、万神殿混凝土大穹顶、图拉真广场记功柱；板条铁甲（Lorica Segmentata）、罗马方形大半身盾（Scutum）、重标枪（Pilum）破坏敌盾后西班牙短剑贴身刺杀、龟甲步兵推进大阵）
     //    英雄队（第 10 队·主将队）：hero_aristides / hero_parmenion / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     //    ↑ 该名已在二级表，编制一字未动（见本表原条目）。
-    // ── 罗马 · 封建时代 · 封建时代教皇卫队　（本次新建）────────────────
+    // ── 罗马 · 封建时代 · 封建时代教皇国军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（罗马城；旧圣伯多禄大殿巴西利卡式木构屋架、拉特朗圣若望大殿；锁子甲长矛步兵、早期利奥城墙石基要塞防御、抵御撒拉逊海盗劫掠守备大阵）
     //    英雄队（第 10 队·主将队）：hero_aristides / hero_parmenion / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代教皇卫队', civ: '罗马', age: 'feudal', deStyle: 'MEDI', region: 'ROMA' as RegionType,
+        name: '封建时代教皇国军团', civ: '罗马', age: 'feudal', deStyle: 'MEDI', region: 'ROMA' as RegionType,
         buildingStyle: 'ROMA',
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
@@ -2369,12 +2369,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'centurion', count: 2 },
         ],
     },
-    // ── 罗马 · 城堡时代 · 城堡时代十字军骑士　（本次新建）────────────────
+    // ── 罗马 · 城堡时代 · 城堡时代教廷军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重骑兵、远程（重弩）为主
     //    描述正文（主人原文，一字未改）：（罗马城；圣天使城堡巨石圆筒炮台要塞、科斯马蒂拼花修道院回廊；重装锁甲骑枪骑士、博尔戈高架密道连通石堡要塞、守城石弩与重弩方阵）
     //    英雄队（第 10 队·主将队）：hero_aristides / hero_parmenion / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代十字军骑士', civ: '罗马', age: 'castle', deStyle: 'MEDI', region: 'ROMA' as RegionType,
+        name: '城堡时代教廷军团', civ: '罗马', age: 'castle', deStyle: 'MEDI', region: 'ROMA' as RegionType,
         buildingStyle: 'ROMA',
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
@@ -2386,12 +2386,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'master_of_the_templar', count: 2 },
         ],
     },
-    // ── 罗马 · 帝国时代 · 帝国时代瑞士近卫军　（本次新建）────────────────
+    // ── 罗马 · 帝国时代 · 帝国时代教廷近卫军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵为主
     //    描述正文（主人原文，一字未改）：（梵蒂冈/罗马；圣伯多禄大教堂米开朗基罗早期穹顶工地、西斯廷礼拜堂要塞建筑群；文艺复兴条纹精钢半身胸甲、精钢双手长戟（Halberd）与重剑、罗马之劫决死掩护台阶血战铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_aristides / hero_parmenion / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代瑞士近卫军', civ: '罗马', age: 'imperial', deStyle: 'MEDI', region: 'ROMA' as RegionType,
+        name: '帝国时代教廷近卫军团', civ: '罗马', age: 'imperial', deStyle: 'MEDI', region: 'ROMA' as RegionType,
         buildingStyle: 'ROMA',
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'echelon',
@@ -2407,12 +2407,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 西西里　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 西西里 · 古典时代 · 古典时代叙拉古重步兵团　（本次新建）────────────────
+    // ── 西西里 · 古典时代 · 古典时代叙拉古军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重步兵、远程（弩机）为主
     //    描述正文（主人原文，一字未改）：（叙拉古、阿格里真托；神殿之谷协和多立克柱廊神庙、古希腊采石场与大剧院；青铜阿尔戈斯圆盾、重型长矛刺猬密集方阵、阿基米德投石弩机海陆防卫大阵）
     //    英雄队（第 10 队·主将队）：hero_robertguiscard / hero_bohemond / hero_rogerbosso　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代叙拉古重步兵团', civ: '西西里', age: 'antiquity', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        name: '古典时代叙拉古军团', civ: '西西里', age: 'antiquity', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
         buildingStyle: 'SICILIANS',
         castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
         formationMode: 'crescent',
@@ -2424,12 +2424,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'gastraphetes', count: 4 },
         ],
     },
-    // ── 西西里 · 封建时代 · 封建时代撒拉逊圣战军　（本次新建）────────────────
+    // ── 西西里 · 封建时代 · 封建时代西西里埃米尔军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（巴勒莫、卡塔尼亚；齐萨早期水榭庭院、红色抹灰小穹顶回教聚落清真寺；阿拉伯大马士革弯刀、轻骑突袭复合角弓、西西里丘陵高机动游骑穿插包抄大阵）
     //    英雄队（第 10 队·主将队）：hero_robertguiscard / hero_bohemond / hero_rogerbosso　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代撒拉逊圣战军', civ: '西西里', age: 'feudal', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        name: '封建时代西西里埃米尔军团', civ: '西西里', age: 'feudal', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
         buildingStyle: 'SICILIANS',
         castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
         formationMode: 'fish_scale',
@@ -2441,12 +2441,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'knight', count: 2 },
         ],
     },
-    // ── 西西里 · 城堡时代 · 城堡时代诺曼骑士团　（本次新建）────────────────
+    // ── 西西里 · 城堡时代 · 城堡时代诺曼军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（巴勒莫、蒙雷阿莱；巴勒莫帕拉提那礼拜堂、蒙雷阿莱大教堂马赛克巨石城壁；诺曼泪滴形大盾、双手破甲长枪与锁子甲铁骑、融汇拜占庭阿拉伯筑城技术的地中海十字军东征大阵）
     //    英雄队（第 10 队·主将队）：hero_robertguiscard / hero_bohemond / hero_rogerbosso　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代诺曼骑士团', civ: '西西里', age: 'castle', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
+        name: '城堡时代诺曼军团', civ: '西西里', age: 'castle', deStyle: 'MEDI', region: 'SICILIANS' as RegionType,
         buildingStyle: 'SICILIANS',
         castleId: 'SICI_CASTLE_AGE3', castleName: '西西里 诺曼巴勒莫王宫堡',
         formationMode: 'fish_scale',
@@ -2513,12 +2513,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'cav_archer', count: 4 },
         ],
     },
-    // ── 安达卢斯 · 城堡时代 · 城堡时代圣地亚哥骑士团　（本次新建）────────────────
+    // ── 安达卢斯 · 城堡时代 · 城堡时代卡斯蒂利亚军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（塞维利亚、格拉纳达；塞维利亚吉拉尔达砖塔、阿尔罕布拉宫狮子中庭与阿尔卡萨瓦石堡要塞；重装锁甲骑枪骑士、红白十字战袍、收复失地运动（Reconquista）攻坚破城重铠大阵）
     //    英雄队（第 10 队·主将队）：hero_bernardarmagnac / hero_sforza　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代圣地亚哥骑士团', civ: '西班牙', age: 'castle', deStyle: 'MEDI', region: 'SPANISH' as RegionType,
+        name: '城堡时代卡斯蒂利亚军团', civ: '西班牙', age: 'castle', deStyle: 'MEDI', region: 'SPANISH' as RegionType,
         buildingStyle: 'SPANISH',
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'crescent',
@@ -2554,12 +2554,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 卢西塔尼亚　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 卢西塔尼亚 · 古典时代 · 古典时代卢西塔尼亚战团　（本次新建）────────────────
+    // ── 卢西塔尼亚 · 古典时代 · 古典时代卢西塔尼亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻步兵为主
     //    描述正文（主人原文，一字未改）：（埃武拉、维塞乌；埃武拉狄安娜罗马神庙哥林斯石柱立面、杜罗河沿岸石垒要塞；维里阿修斯双刃阔短剑、粗鞣牛皮轻小圆盾（Caetra）、高山密林伏击罗马军团散兵大阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代卢西塔尼亚战团', civ: '葡萄牙', age: 'antiquity', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
+        name: '古典时代卢西塔尼亚军团', civ: '葡萄牙', age: 'antiquity', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'fish_scale',
@@ -2588,12 +2588,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'light_cavalry', count: 2 },
         ],
     },
-    // ── 卢西塔尼亚 · 城堡时代 · 城堡时代基督骑士团　（本次新建）────────────────
+    // ── 卢西塔尼亚 · 城堡时代 · 城堡时代葡萄牙王国军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵、重步兵为主
     //    描述正文（主人原文，一字未改）：（托马尔、巴塔利亚；托马尔基督会院圆形圣殿与八角石堡、巴塔利亚修道院早期哥特石堂；红十字白袍板甲骑士、重装破甲双手阔剑、收复失地运动与大西洋早期探险骑士大阵）
     //    英雄队（第 10 队·主将队）：hero_edwardlongshanks / hero_gilbertdeclare　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代基督骑士团', civ: '葡萄牙', age: 'castle', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
+        name: '城堡时代葡萄牙王国军团', civ: '葡萄牙', age: 'castle', deStyle: 'MEDI', region: 'PORTUGUESE' as RegionType,
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'fish_scale',
@@ -3030,12 +3030,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_antiquity_skirmisher', count: 4 },
         ],
     },
-    // ── 印度斯坦 · 城堡时代 · 城堡时代德里军团　（本次新建）────────────────
+    // ── 印度斯坦 · 城堡时代 · 城堡时代德里苏丹国军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射、骑兵为主
     //    描述正文（主人原文，一字未改）：（德里、阿杰梅尔；顾特卜塔红砂岩高耸宣礼塔、阿莱达瓦扎石砌穹顶大拱门；大马士革钢重型弯刀（Talwar）、突厥重装锁子甲骑射手、阻击察合台蒙古侵扰的红砂岩要塞守御大阵）
     //    英雄队（第 10 队·主将队）：elite_battle_elephant / hero_prithviraj / hero_rajendrachola / elite_sannahya　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代德里军团', civ: '印度斯坦', age: 'castle', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
+        name: '城堡时代德里苏丹国军团', civ: '印度斯坦', age: 'castle', deStyle: 'INDI', region: 'MUGHAL' as RegionType,
         buildingStyle: 'MUGHAL',
         castleId: 'HIND_CASTLE_AGE3', castleName: '印度斯坦 德里红堡莫卧儿红砂岩',
         formationMode: 'fish_scale',
@@ -3197,12 +3197,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'chakram_thrower', count: 3 },
         ],
     },
-    // ── 古吉拉特 · 帝国时代 · 帝国时代第乌军团　（本次新建）────────────────
+    // ── 古吉拉特 · 帝国时代 · 帝国时代古吉拉特军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：步兵、远程（飞轮刃）、重骑兵为主
     //    描述正文（主人原文，一字未改）：（第乌、苏拉特；第乌海峡早期条石城防营垒、占庞尔帕瓦加德山巅石砌防御卫城；乌兹钢反曲重腰刀与精钢飞轮刃（Chakram）、阿拉伯式重型复合角弓、大航海早期古吉拉特要塞步骑协同铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_prithviraj / hero_rajendrachola / elite_sannahya / hero_chandbardai　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代第乌军团', civ: '瞿折罗', age: 'imperial', deStyle: 'INDI', region: 'GURJARAS' as RegionType,
+        name: '帝国时代古吉拉特军团', civ: '瞿折罗', age: 'imperial', deStyle: 'INDI', region: 'GURJARAS' as RegionType,
         buildingStyle: 'GURJARAS',
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
         formationMode: 'fish_scale',
@@ -3459,12 +3459,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'fire_archer', count: 2 },
         ],
     },
-    // ── 安南 · 封建时代 · 封建时代华闾军团　（本次新建）────────────────
+    // ── 安南 · 封建时代 · 封建时代丁黎军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（华闾、白藤江口；华闾喀斯特环形悬崖石筑水陆关隘、丁仙皇早期石构木梁防御要塞；倒钩破甲长铁矛、轻便藤编漆盾、扼守喀斯特隘口与深江铁桩设伏阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_dinhle / hero_leloi / elite_battle_elephant　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代华闾军团', civ: '越南', age: 'feudal', deStyle: 'SEAS', region: 'VIETNAMESE' as RegionType,
+        name: '封建时代丁黎军团', civ: '越南', age: 'feudal', deStyle: 'SEAS', region: 'VIETNAMESE' as RegionType,
         buildingStyle: 'VIETNAMESE',
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
         formationMode: 'fish_scale',
@@ -3659,12 +3659,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 阿兹特克　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 阿兹特克 · 古典时代 · 古典时代高原战团　（本次新建）────────────────
+    // ── 阿兹特克 · 古典时代 · 古典时代特奥蒂瓦坎军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、远程（投枪）为主
     //    描述正文（主人原文，一字未改）：（特奥蒂瓦坎；太阳金字塔巨型玄武岩阶梯大台基、亡灵大道斜面立面（Tablero-Talud）石砌祭坛堡垒；双刃燧石短剑、重型硬木投枪、高原台地密集步兵圆盾冲击大阵）
     //    英雄队（第 10 队·主将队）：hero_cunhambebe / hero_arariboiamelee　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代高原战团', civ: '阿兹特克', age: 'antiquity', deStyle: 'MESO', region: 'AMERICA' as RegionType,
+        name: '古典时代特奥蒂瓦坎军团', civ: '阿兹特克', age: 'antiquity', deStyle: 'MESO', region: 'AMERICA' as RegionType,
         buildingStyle: 'AMERICA',
         castleId: 'MESO_CASTLE_AGE3', castleName: '中美洲/阿兹特克 特诺奇蒂特兰金字塔',
         formationMode: 'echelon',
@@ -3780,12 +3780,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 穆伊斯卡　四时代二级军团（封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 穆伊斯卡 · 封建时代 · 封建时代波哥大高原战团　（本次新建）────────────────
+    // ── 穆伊斯卡 · 封建时代 · 封建时代波哥大高原军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、远程（投枪）为主
     //    描述正文（主人原文，一字未改）：（波哥大、通哈；早起高原水网防洪梯田基址、圆形硬木立柱黄泥防御聚落；硬木削尖投掷长枪、双刃黑曜石割刀、安第斯湿地泥沼围猎穿插战阵）
     //    英雄队（第 10 队·主将队）：hero_pacanchique / hero_pachacuti　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代波哥大高原战团', civ: '穆伊斯卡', age: 'feudal', deStyle: 'ANDE', region: 'MUISCA' as RegionType,
+        name: '封建时代波哥大高原军团', civ: '穆伊斯卡', age: 'feudal', deStyle: 'ANDE', region: 'MUISCA' as RegionType,
         buildingStyle: 'MUISCA',
         castleId: 'MUIS_CASTLE_AGE3', castleName: '穆伊斯卡 瓜塔维塔黄金湖石堡',
         formationMode: 'echelon',
@@ -3823,12 +3823,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 马普切　四时代二级军团（封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 马普切 · 封建时代 · 封建时代比奥比奥战团　（本次新建）────────────────
+    // ── 马普切 · 封建时代 · 封建时代比奥比奥军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（比奥比奥河谷、特木科；河流冲积阶地深埋巨木桩柱、原始林间开荒硬木环形围栅要塞；重型硬木削尖长枪、坚韧火山玄武岩手斧、温带雨林泥沼设伏短兵近战大阵）
     //    英雄队（第 10 队·主将队）：hero_galvarino / hero_guacolda / hero_lautaro　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代比奥比奥战团', civ: '马普切', age: 'feudal', deStyle: 'ANDE', region: 'MAPUCHE' as RegionType,
+        name: '封建时代比奥比奥军团', civ: '马普切', age: 'feudal', deStyle: 'ANDE', region: 'MAPUCHE' as RegionType,
         buildingStyle: 'MAPUCHE',
         castleId: 'MAPU_CASTLE_AGE3', castleName: '马普切 安第斯南麓木石据点',
         formationMode: 'echelon',
@@ -3923,12 +3923,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'antiquity_spearman', count: 3 },
         ],
     },
-    // ── 马格里布 · 封建时代 · 封建时代柏柏尔骑兵团　（本次新建）────────────────
+    // ── 马格里布 · 封建时代 · 封建时代柏柏尔军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：轻骑兵为主
     //    描述正文（主人原文，一字未改）：（非斯、凯鲁万；非斯卡鲁因石砌拱廊大殿、凯鲁万三层方形条石宣礼塔要塞；轻型硬木长骑枪、细密环扣铁锁甲、跨阿特拉斯山脉狂飙突袭沙漠轻骑大阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_sumanguru　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代柏柏尔骑兵团', civ: '柏柏尔', age: 'feudal', deStyle: 'AFRI', region: 'BERBER' as RegionType,
+        name: '封建时代柏柏尔军团', civ: '柏柏尔', age: 'feudal', deStyle: 'AFRI', region: 'BERBER' as RegionType,
         buildingStyle: 'BERBER',
         castleId: 'BERB_CASTLE_AGE3', castleName: '柏柏尔 撒哈拉泥砖防御碉堡',
         formationMode: 'fish_scale',
@@ -3978,12 +3978,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 萨赫勒　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 萨赫勒 · 古典时代 · 古典时代杰内战团　（本次新建）────────────────
+    // ── 萨赫勒 · 古典时代 · 古典时代杰内军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、远程（标枪）为主
     //    描述正文（主人原文，一字未改）：（杰内、迪亚；杰内生土晒砖圆形房屋基址、尼日尔河内三角洲早期冶铁环形石泥要塞；锻铁双刃倒刺长枪、重质硬木刺棒与投掷飞刀、河岸泥沼芦苇丛设伏与轻步突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_sumanguru / hero_sundjata　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代杰内战团', civ: '马里', age: 'antiquity', deStyle: 'AFRI', region: 'MALI' as RegionType,
+        name: '古典时代杰内军团', civ: '马里', age: 'antiquity', deStyle: 'AFRI', region: 'MALI' as RegionType,
         buildingStyle: 'AFRICA',
         castleId: 'AFRI_CASTLE_AGE3', castleName: '非洲/马里 杰内大清真寺泥石堡',
         formationMode: 'echelon',
@@ -4237,12 +4237,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'savar', count: 2 },
         ],
     },
-    // ── 法尔斯 · 帝国时代 · 帝国时代设拉子军团　（本次新建）────────────────
+    // ── 法尔斯 · 帝国时代 · 帝国时代赞德军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、远程（火器）为主
     //    描述正文（主人原文，一字未改）：（设拉子、阿巴斯港前哨；设拉子城门坚固条石角楼哨卡、波斯湾早期海岸石砌防卫驿站营寨；乌兹钢冷锻弯刀、精铁护心镜与牛皮重盾、大航海早期波斯火绳枪卫队（Tofangchi）与驼载小炮陆防铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_artaphernes / hero_datis　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代设拉子军团', civ: '阿契美尼德', age: 'imperial', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
+        name: '帝国时代赞德军团', civ: '阿契美尼德', age: 'imperial', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
         formationMode: 'echelon',
@@ -4282,12 +4282,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'sacred_band', count: 2 },
         ],
     },
-    // ── 雅典 · 城堡时代 · 城堡时代法兰克卫城军团　（本次新建）────────────────
+    // ── 雅典 · 城堡时代 · 城堡时代雅典公国军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵、重步兵为主
     //    描述正文（主人原文，一字未改）：（雅典卫城、底比斯；雅典卫城山门法兰克巨石高耸要塞角楼、卫城条石方砖防卫石堞；全套欧式重型骑士板条锁甲、双手阔刃破甲重剑、十字军山巅卫城居高临下封锁大阵）
     //    英雄队（第 10 队·主将队）：hero_aristagoras / hero_aristides / hero_themistocles_hoplite　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代法兰克卫城军团', civ: '雅典', age: 'castle', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
+        name: '城堡时代雅典公国军团', civ: '雅典', age: 'castle', deStyle: 'GREEK', region: 'ATHENIANS' as RegionType,
         buildingStyle: 'ATHENIANS',
         castleId: 'ATHENIANS_CASTLE_AGE3', castleName: '雅典 卫城多立克柱廊卫堡',
         formationMode: 'fish_scale',
@@ -4325,12 +4325,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（斯巴达、拉科尼亚；欧罗塔斯河畔军国战阵训练石台、列奥尼达斯巨石干砌纪念基坛；精锻铁矛、红色羊毛战袍与青铜全脸盔、绝对服从之希腊重装密集长矛铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_brasidas / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     //    ↑ 该名已在二级表，编制一字未动（见本表原条目）。
-    // ── 斯巴达 · 封建时代 · 封建时代莫讷姆瓦夏军团　（本次新建）────────────────
+    // ── 斯巴达 · 封建时代 · 封建时代拉科尼亚军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵为主
     //    描述正文（主人原文，一字未改）：（莫讷姆瓦夏、吉雄；莫讷姆瓦夏海上独立巨岩双层海防条石要塞、海崖绝壁拜占庭防御城垣；长柄锋锐铁刺矛、坚韧木质蒙皮重盾、扼守悬崖窄道一夫当关绝壁阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_brasidas / hero_lysander　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代莫讷姆瓦夏军团', civ: '斯巴达', age: 'feudal', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
+        name: '封建时代拉科尼亚军团', civ: '斯巴达', age: 'feudal', deStyle: 'GREEK', region: 'SPARTANS' as RegionType,
         buildingStyle: 'SPARTANS',
         castleId: 'SPARTANS_CASTLE_AGE3', castleName: '斯巴达 泰格特斯山青石重垒',
         formationMode: 'fish_scale',
@@ -4386,12 +4386,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（佩拉、韦尔吉纳；菲利普二世韦尔吉纳地下壁画石砌王陵、佩拉王宫整石多立克柱廊台基；六米萨里萨（Sarissa）超长枪、伙伴骑兵人马轻甲、步兵方阵砧板与骑兵重锤合围歼灭大阵）
     //    英雄队（第 10 队·主将队）：hero_cleitus / hero_dismounted_alexander / hero_mounted_alexander / hero_macedonian_commander / hero_parmenion / hero_perdiccas　— 按 248 主将表取，不进三排兵种编制
     //    ↑ 该名已在二级表，编制一字未动（见本表原条目）。
-    // ── 马其顿 · 封建时代 · 封建时代萨洛尼卡军团　（本次新建）────────────────
+    // ── 马其顿 · 封建时代 · 封建时代拜占庭马其顿军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、骑兵为主
     //    描述正文（主人原文，一字未改）：（塞萨洛尼基、佩拉；圣德米特里奥斯五廊式条石教堂基垒、塞萨洛尼基红砖加固防御古城墙；重型铁锁子甲、锋利单手破甲剑、阻击保加利亚与斯拉夫南下的坚城固守步骑大阵）
     //    英雄队（第 10 队·主将队）：hero_cleitus / hero_dismounted_alexander / hero_mounted_alexander / hero_macedonian_commander / hero_parmenion / hero_perdiccas　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代萨洛尼卡军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
+        name: '封建时代拜占庭马其顿军团', civ: '马其顿', age: 'feudal', deStyle: 'GREEK', region: 'MACEDONIAN' as RegionType,
         buildingStyle: 'MACEDONIAN',
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'echelon',
@@ -4681,12 +4681,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
-    // ── 漠南 · 城堡时代 · 城堡时代漠南骑兵团　（本次新建）────────────────
+    // ── 漠南 · 城堡时代 · 城堡时代漠南蒙古军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑射、战车（车垒）为主
     //    描述正文（主人原文，一字未改）：（应昌、开平；开平卫城残存方石台基城垣、达里诺尔湖畔石木深壕野战寨堡；重型反曲角弓抛射、大马士革锋刃长柄弯刀、草原残部背水结车垒阻击突击大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代漠南骑兵团', civ: '漠南鲜卑', age: 'castle', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
+        name: '城堡时代漠南蒙古军团', civ: '漠南鲜卑', age: 'castle', deStyle: 'ASIA', region: 'XIANBEI' as RegionType,
         buildingStyle: 'XIANBEI',
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'fish_scale',

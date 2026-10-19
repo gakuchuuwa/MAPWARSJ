@@ -78,6 +78,7 @@ import { setupGameAppMapListeners } from './boot/GameAppMapListeners';
 import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityId } from '../events/scriptCityVisibility';
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
+import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { setScriptYearProvider, setCentenarianYearProvider } from '../data/generalOnStage';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -405,8 +406,12 @@ export class GameApp {
             this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
             // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
+            this.cityManager.setOnYearOrEditorChange(() => {
+                this.syncCityFoundedTypes();
+            });
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
+                this.syncCityFoundedTypes();
                 this.cityManager.refreshCityVisibility();
                 // 🔴 [2026-10-03 修] 换属也要跟着年份重跑（原缺这一行 → 前331 场次露出的亚历山大城仍是乱斗旗号「托勒」）
                 this.syncScriptOwners();
@@ -419,6 +424,7 @@ export class GameApp {
 
             setLoadingMessage('正在升旗入场…');
             setLoadingProgress(80);
+            this.syncCityFoundedTypes();
             // 势力色块默认关（chk-faction 未勾选）。禁止 toggleTerritoryLayer(true) / renderTerritoryOnly。§10.1
             await this.cityManager.renderCitiesOnly();
             this.perfMonitor.markBootPhase('视口据点旗号');
@@ -864,6 +870,20 @@ export class GameApp {
         );
     }
 
+    /**
+     * 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和百岁模式中，如果建城年不到，就是小城。」]
+     * 剧本模式按当前事件年份、百岁模式按当前日历年份：未到建城年的大城/中城降为小城（small_city），到年或乱斗模式恢复原城级。
+     */
+    private syncCityFoundedTypes(): void {
+        const mode = this.playerHero?.autoPlan ?? 'centenarian';
+        const year = mode === 'script'
+            ? (this.scriptCityVisibility?.getCurrentEvent()?.year ?? null)
+            : mode === 'centenarian'
+                ? (this.timeSystem?.getYear() ?? null)
+                : null;
+        syncCityFoundedTypes(this.cityManager, mode, year);
+    }
+
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
@@ -936,11 +956,13 @@ export class GameApp {
         //    名字不随模式变（上面已套完），故这里不再有 syncCityNames()
         syncBuildingStyles();
         this.syncScriptOwners();
+        this.syncCityFoundedTypes();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
             syncBuildingStyles();
             this.syncScriptOwners();
+            this.syncCityFoundedTypes();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
             this.map.getMonumentLayer()?.refresh();

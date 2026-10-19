@@ -170,3 +170,18 @@
 .map-fade-in {
     animation: mapFadeIn 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
 }
+
+@keyframes mapFadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.map-fade-out {
+    animation: mapFadeOut 1.2s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+    pointer-events: none !important;
+}
+

@@ -31,6 +31,7 @@ import { CITY_FOUNDED_YEAR } from '../data/cityFoundedYears';
 import { isBattlefieldFought } from './battlefieldState';
 import { resolveEventStartCityId, type StartEventInfo, type StartCity } from './scriptEventStart';
 import { cityExistsInYear } from './cityInYear';
+import { isBigOrMediumBaseCity } from './cityFoundedTypeSync';
 import { roadRegistry } from '../roads/RoadRegistry';
 // 🔴 [2026-09-25 主人令「设计到的据点都要显示」] 段表里的途经点也是**点名用到**的据点（如 1-2 段的索非亚）
 import { SCRIPT_SEGMENTS } from '../battlefield-editor/scriptSegments';
@@ -165,33 +166,19 @@ export class ScriptCityVisibility {
         //    那年存在的 → 全部显现（城样貌＋白名）；那年不存在的 → **只显示灰色名字**（不画城、不可点）。
         //    来由：第 2 场的路标【特尔诺沃】是中世纪保加利亚都城，公元前335年不该有——它却因为「点名」被顶成白名。
         const absentNow = new Set(current?.absentCities ?? []);
+        // 🔴 [2026-10-19 主人定「现在大城据点和中城据点都有建城年。剧本和百岁模式中，如果建城年不到，就是小城。」]
+        //    大城与中城在未到建城年时由 syncCityFoundedTypes 降为小城（small_city）显示，不再隐藏成纯灰字。
         const gateNow = (cityId: string): boolean =>
-            !absentNow.has(cityId) && (!current || cityExistsInYear(cityId, current.year));   // 唯一判据：cityInYear.ts
+            !absentNow.has(cityId) && (!current || isBigOrMediumBaseCity(cityId) || cityExistsInYear(cityId, current.year));
         for (const id of referenced) if (gateNow(id)) out.add(id);
-        // 🔴 [2026-09-23 主人定「先把古典据点都放出来，到了封建显示下一批」] 时代分层：
-        //    除事件用到的据点，再显示「当前事件所处时代及之前」的全部据点（这些就是这个年代早就存在的城），
-        //    后续时代随剧本推进再放开；排掉当前事件标「这一年还不存在」的城（absentCities）。
-        //
-        // 🔴 [2026-09-24 主人定「不光是阿卡，**所有的据点都应该按年代才能显示**，尤其是大城、中城、关隘」]
-        //    **年代闸门对全部据点一律生效 —— 事件用到的城、沿途经过的城也不例外。**
-        //    改之前这两类是 `add()` 无条件塞进 `out` 的（只受 absentCities 拦），
-        //    于是那年头还没有的城，只要被某场事件的路线捎带上就上了图：
-        //    前331 高加米拉那场的路线一带就漏出**大城安提俄基亚**（公元前300年才建）、**大城大马士革**（伍麦叶时代）、
-        //    **中城阿勒颇**、**关隘阿音贾鲁特**；前621 那场漏出 25 座非小城（潼关、维也纳、纽伦堡…）。
-        //    与主人早先的解释一致：「**不显示 ≠ 不存在**」—— 路照走、寻路/归属/战斗一概不受影响，
-        //    只是那一年地图上不画它。
         if (current) {
             const absent = new Set(current.absentCities ?? []);
             const curYear = current.year;
-            /** 这座城那一年该不该上图（建立年代 + 归属武将时代，两道都要过） */
             const passGate = (cityId: string): boolean =>
-                !absent.has(cityId) && cityExistsInYear(cityId, curYear);   // 唯一判据：cityInYear.ts
-            // 🔴 [2026-09-25 主人令「**设计到的据点都要显示**」] 点名的据点已在上面无条件加入 `out`，
-            //    这里**只对「路线顺带经过的」**过闸门 —— 中途路网捎带上的、那年还没有的城照旧不画
-            //    （9-24 的教训仍在：前331 高加米拉那场路线一带漏出大城安提俄基亚〔前300才建〕）。
+                !absent.has(cityId) && (isBigOrMediumBaseCity(cityId) || cityExistsInYear(cityId, curYear));
             // ① 沿途经过的，按同一道闸门过一遍
             for (const id of routeOnly) if (passGate(id)) out.add(id);
-            // ② 再放「当前时代及之前」的全部据点
+            // ② 再放「当前时代及之前」的全部据点（及降为小城的大城/中城）
             for (const c of cities) if (passGate(c.id)) out.add(c.id);
         }
         this.cached = out;

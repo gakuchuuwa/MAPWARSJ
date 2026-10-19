@@ -1595,9 +1595,9 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     GERMANIC: "古典时代日耳曼军团",
     GERMANIC_FEUDAL: '封建时代日耳曼军团',
     GERMANIC_IMPERIAL: '帝国时代日耳曼军团',
-    GERMANIC_CASTLE: '城堡时代德意志骑士团',   // 🔴 [2026-10-16] 原指「城堡时代日耳曼军团」→ 查无此军（幽灵指针）；日耳曼文明城堡节点正名＝德意志骑士团
+    GERMANIC_CASTLE: '城堡时代德意志骑士军团',   // 🔴 [2026-10-16] 原指「城堡时代日耳曼军团」→ 查无此军（幽灵指针）；日耳曼文明城堡节点正名＝德意志骑士团
     LATIN: '古典时代罗马军团',
-    LATIN_CASTLE: '城堡时代卡罗乔民兵团',
+    LATIN_CASTLE: '城堡时代意大利城邦军团',
     LATIN_IMPERIAL: '帝国时代拉丁军团',
     LATIN_FEUDAL: "封建时代罗马军团",
     IMPERIAL_ROME: '古典时代罗马军团',
@@ -1607,7 +1607,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     ACHAEMENIDS: '古典时代长生军团',
     AMAZONS: '古典时代亚马逊军团',
     INDIA: '古典时代印度军团',
-    BERBER: '封建时代柏柏尔骑兵团',
+    BERBER: '封建时代柏柏尔军团',
     AMERICA: '城堡时代阿兹特克军团',
     NORTHAM_IMPERIAL: '帝国时代北美军团',
     AFRICA: '城堡时代马里军团',
@@ -1631,7 +1631,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     INDIA_IMPERIAL: '帝国时代印度军团',
     ORIE: '封建时代阿拉伯军团',
     ORIE_ANTIQUITY: '古典时代阿拉伯军团',
-    EAST: '封建时代具装骑兵团',
+    EAST: '封建时代拜占庭军区军团',
     GREEK: "古典时代希腊军团",
     THRACIAN: '古典时代色雷斯军团',
     // 🔴 [2026-10-05 主人令「这两个军团在历史上是不是重复了？如果是，请删除三级的，保留二级的」]
@@ -1640,22 +1640,22 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     //    三级那条已删；此后二级那一支按 2026-10-16 名册改名【古典时代不死军团】，指针随之改指它。
     //    ⚠️ 指针必须显式改指：若只删三级会悬空，这 15 座波斯城会掉到「建筑风格保底」。
     PERSIAN: '古典时代长生军团',
-    ARMENIANS: '封建时代阿尼城卫军',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 62 表这一支自己声明 region=ARMENIANS
+    ARMENIANS: '封建时代巴格拉图尼军团',   // 🔴 [2026-09-18] 原漏配 → 回落兜底；二级 62 表这一支自己声明 region=ARMENIANS
     CUMAN: '城堡时代库曼军团',
-    BRITONS: '城堡时代长弓军团',
+    BRITONS: '城堡时代英格兰军团',
     GOTHS: '封建时代阿斯图里亚斯军团',
     HUNS: '古典时代匈人军团',
-    TEUTONS: "城堡时代德意志骑士团",
-    VIKINGS: '封建时代维京盾墙军团',
+    TEUTONS: "城堡时代德意志骑士军团",
+    VIKINGS: '封建时代维京军团',
     CELTS_FEUDAL: '封建时代凯尔特军团',
-    ITALIANS: "城堡时代卡罗乔民兵团",
-    SICILIANS: '城堡时代诺曼骑士团',
-    BULGARIANS: '封建时代波亚尔铁骑兵团',
-    MAGYAR: "城堡时代黑军铁甲兵团",
-    LITHUANIANS: "城堡时代立陶宛重骑兵团",
-    POLES: "城堡时代波兰骑士团",
-    BOHEMIANS: "城堡时代胡斯战车军团",
-    BURGUNDIANS: "城堡时代勃艮第骑士团",
+    ITALIANS: "城堡时代意大利城邦军团",
+    SICILIANS: '城堡时代诺曼军团',
+    BULGARIANS: '封建时代保加利亚军团',
+    MAGYAR: "城堡时代匈牙利王国军团",
+    LITHUANIANS: "城堡时代立陶宛大公国军团",
+    POLES: "城堡时代波兰王国军团",
+    BOHEMIANS: "城堡时代胡斯军团",
+    BURGUNDIANS: "城堡时代勃艮第公国军团",
     SPANISH: '帝国时代西班牙方阵军团',
     PORTUGUESE: '帝国时代葡萄牙军团',
     ETHIOPIANS: '封建时代拉利贝拉军团',
@@ -1679,7 +1679,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     HITTITES: '古典时代赫梯军团',
     ASSYRIAN: "古典时代中东军团",
     SCYTHIANS: '古典时代斯基泰军团',
-    BYZANTINE: "封建时代具装骑兵团",
+    BYZANTINE: "封建时代拜占庭军区军团",
     FRANKS: '封建时代法兰克军团',
     SASANIAN: '封建时代霍拉桑军团',
     TURKS: '封建时代突厥军团',
@@ -1690,13 +1690,13 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     KHITAN: "封建时代归义军团",
     UIGHUR: '封建漠北军团',
     MOHE: '封建时代渤海军团',
-    ANGLO_SAXON: '封建时代撒克森军团',   // 🔴 [2026-10-16] 原指「封建时代盎格鲁-撒克逊军团」→ 查无此军（幽灵指针）；不列颠文明封建节点正名＝撒克森军团
+    ANGLO_SAXON: '封建时代盎格鲁撒克逊军团',   // 🔴 [2026-10-16] 原指「封建时代盎格鲁-撒克逊军团」→ 查无此军（幽灵指针）；不列颠文明封建节点正名＝撒克森军团
     GHANA: '封建时代加纳军团',
     KHAZARS: '封建时代可萨军团',
     // 🔴 [2026-10-16] 原指「封建时代汪达尔军团」→ 查无此军（幽灵指针）。汪达尔归日耳曼一支
     //    （deCastleAssets.REGION_TO_BRANCH.VANDALS = 'GERMANIC'），按层级取日耳曼文明的封建节点＝萨克森军团。
     //    ⚠️ 汪达尔≠萨克森，这一条是「按分支层级取最近节点」的机械修复，若主人另有裁定请改回。
-    VANDALS: '封建时代萨克森军团',
+    VANDALS: '封建时代东法兰克军团',
     LOMBARDS: '封建时代伦巴第军团',
     ROURAN: '封建漠北军团',
     SOGDIANS: '封建时代粟特军团',
@@ -1738,7 +1738,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     CRUSADERS: "城堡时代十字军团",
     RUS: '城堡时代罗斯军团',
     TIMURID: "城堡时代帖木儿军团",
-    DELHI: "城堡时代德里军团",
+    DELHI: "城堡时代德里苏丹国军团",
     CASTILE: '城堡时代卡斯蒂利亚军团',
     SCOTLAND: '城堡时代苏格兰军团',
     HRE: '城堡时代罗马军团',

@@ -13,7 +13,7 @@
  * 5. 城堡军团的必须套用古典时代和封建时代和城堡时代+城堡时代攻城热兵器。
  * 6. 帝国时代军团可以套用所有攻城武器。
  * 7. 请符合历史。
- * 8. 每个军团 9 件、必须有冲车；用哪几种按其文明 DE 科技树里实际有的攻城器（2026-10-18 主人令「参照科技树」）。
+ * 8. 每个军团 9 件（🔴 2026-10-19 主人令：「必须有冲车」这条规则已删除，可以没有冲车）；用哪几种按其文明 DE 科技树里实际有的攻城器（2026-10-18 主人令「参照科技树」）。
  *    不再强制 34 种全覆盖/每样≥2 —— 科技树没有的器械不硬塞。
  *
  * 🔴 [2026-10-02 主人定 · 剧本期口径] **不逐场核对，只判「大致年代 + 样式」**
@@ -81,8 +81,14 @@ export const SIEGE_UNITS: Record<string, { name: string; age: SiegeAge; isRam?: 
     houfnice: { name: '手推榴弹炮', age: 'castle' },
     grenadier: { name: '掷弹兵', age: 'castle' },
 
+    // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 以下 3 件是 DE 里有名字的城堡时代投石机，借用「欧洲重型投石车」同款兵模
+    warwolf_trebuchet: { name: '战狼号巨型投石机', age: 'castle' },
+    bad_neighbor: { name: '坏邻居', age: 'castle' },
+    gods_own_sling: { name: '神之弓', age: 'castle' },
+
     // ── 帝国时代 3 种 ──
     bombard_cannon: { name: '手推攻城火炮', age: 'imperial' },
+    trebuchet_packed: { name: '巨型投石机（打包）', age: 'imperial' },
     organ_gun: { name: '葡萄牙风琴炮', age: 'imperial' },
     elite_organ_gun: { name: '葡萄牙风琴炮精锐', age: 'imperial' },
 };
@@ -290,7 +296,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代临安军团': {
+    '城堡时代南宋军团': {
         age: 'castle',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -386,33 +392,35 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代萨克森军团': {
+    '封建时代东法兰克军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代德意志骑士团': {
+    '城堡时代德意志骑士军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代佣兵军团': {
+    '帝国时代德意志佣兵军团': {
         age: 'imperial',
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
+        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 siege_onager → trebuchet_packed（巨型投石机（打包））
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'trebuchet_packed', 'siege_onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '古典时代高卢军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '城堡时代法兰西骑士团': {
+    '城堡时代法兰西骑士军团': {
         age: 'castle',
         // 🔴 [2026-10-19 主人令] 把一件「爆破工兵」换成 DE「破坏者」（同为坑道爆破，借爆破工兵兵模）：
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'saboteur', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → bad_neighbor（坏邻居：第三次十字军围阿卡 1191）
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'saboteur', 'bad_neighbor', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '帝国时代重装骑兵军团': {
+    '帝国时代法兰西军团': {
         age: 'imperial',
         // 🔴 [2026-10-19 主人令] 9 件攻城武器里，把 2 件「手推攻城火炮」换成法兰克两位炮兵英雄（同样是火炮样子）：
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'hero_jeanbureau', 'hero_jeandelorrain'],
     },
-    '古典时代勃艮第战团': {
+    '古典时代勃艮第军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -420,7 +428,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代勃艮第骑士团': {
+    '城堡时代勃艮第公国军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -432,13 +440,14 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代撒克森军团': {
+    '封建时代盎格鲁撒克逊军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代长弓军团': {
+    '城堡时代英格兰军团': {
         age: 'castle',
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → warwolf_trebuchet（战狼号：爱德华一世 1304 年围斯特灵）
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'warwolf_trebuchet', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
     '帝国时代都铎卫队军团': {
         age: 'imperial',
@@ -452,23 +461,23 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代高地阔剑军团': {
+    '城堡时代盖尔军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代加洛格拉斯军团': {
+    '帝国时代苏格兰高地军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代狂战士军团': {
+    '古典时代北欧日耳曼军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代维京盾墙军团': {
+    '封建时代维京军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代瓦兰吉近卫军团': {
+    '城堡时代北欧军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -492,7 +501,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '古典时代撒克斯短剑军团': {
+    '古典时代撒克逊军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -500,11 +509,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代选侯重骑军团': {
+    '城堡时代萨克森选侯国军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代黑卫士方阵团': {
+    '帝国时代萨克森军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -512,11 +521,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代瓦良格战团': {
+    '封建时代瓦良格军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代冰湖铁卫军团': {
+    '城堡时代诺夫哥罗德军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -524,19 +533,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代朱特破浪战团': {
+    '古典时代日德兰军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代环堡皇家战团': {
+    '封建时代丹麦王国军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代红白十字骑士团': {
+    '城堡时代丹麦骑士军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代海峡要塞铁卫团': {
+    '帝国时代丹麦军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -544,27 +553,27 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代具装骑兵团': {
+    '封建时代拜占庭军区军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代拜占庭近卫军': {
+    '城堡时代拜占庭军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代耶尼切里军团': {
+    '帝国时代东正教军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'scorpion', 'scorpion'],
     },
-    '古典时代大亚美尼亚铁骑': {
+    '古典时代大亚美尼亚军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代阿尼城卫军': {
+    '封建时代巴格拉图尼军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代奇里乞亚骑士团': {
+    '城堡时代奇里乞亚军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -580,7 +589,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代格鲁吉亚骑士团': {
+    '城堡时代格鲁吉亚军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -588,23 +597,23 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代卢吉蛮族战团': {
+    '古典时代卢吉军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代波兰尼铁卫团': {
+    '封建时代波兰尼军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代波兰骑士团': {
+    '城堡时代波兰王国军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代翼骑兵军团': {
+    '帝国时代波兰立陶宛军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'scorpion', 'scorpion'],
     },
-    '古典时代波伊山垒战团': {
+    '古典时代波伊军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -612,11 +621,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代胡斯战车军团': {
+    '城堡时代胡斯军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'houfnice', 'houfnice', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '帝国时代黑兵团长矛军': {
+    '帝国时代波希米亚雇佣军团': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'houfnice', 'houfnice', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon'],
     },
@@ -624,11 +633,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代马扎尔骑射战团': {
+    '封建时代马扎尔军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代黑军铁甲兵团': {
+    '城堡时代匈牙利王国军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -636,11 +645,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代安特森林战团': {
+    '古典时代安特军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代德鲁日纳亲卫团': {
+    '封建时代基辅罗斯军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -648,19 +657,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代月牙长斧军团': {
+    '帝国时代俄罗斯军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代埃斯蒂琥珀战团': {
+    '古典时代埃斯蒂军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代克尔纳韦山堡卫队': {
+    '封建时代立陶宛部族军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代立陶宛重骑兵团': {
+    '城堡时代立陶宛大公国军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -668,11 +677,11 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'scorpion', 'scorpion'],
     },
-    '古典时代色雷斯逆刃战团': {
+    '古典时代巴尔干军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代波亚尔铁骑兵团': {
+    '封建时代保加利亚军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -684,43 +693,44 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代因苏布雷战团': {
+    '古典时代伊特鲁里亚军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代伦巴第重骑兵团': {
+    '封建时代伦巴第军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代卡罗乔民兵团': {
+    '城堡时代意大利城邦军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代米兰板甲雇佣军': {
+    '帝国时代意大利雇佣军团': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'scorpion', 'scorpion'],
     },
-    '封建时代教皇卫队': {
+    '封建时代教皇国军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代十字军骑士': {
+    '城堡时代教廷军团': {
         age: 'castle',
-        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
+        // 🔴 [2026-10-19 主人令「按你的四个放法执行，每个换掉一件同类投石机」] 一件 onager → gods_own_sling（神之弓：第三次十字军围阿卡，教会募捐所造）
+        weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'gods_own_sling', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代瑞士近卫军': {
+    '帝国时代教廷近卫军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代叙拉古重步兵团': {
+    '古典时代叙拉古军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代撒拉逊圣战军': {
+    '封建时代西西里埃米尔军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代诺曼骑士团': {
+    '城堡时代诺曼军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -736,7 +746,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代圣地亚哥骑士团': {
+    '城堡时代卡斯蒂利亚军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -744,7 +754,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'scorpion', 'scorpion'],
     },
-    '古典时代卢西塔尼亚战团': {
+    '古典时代卢西塔尼亚军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -752,7 +762,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代基督骑士团': {
+    '城堡时代葡萄牙王国军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -844,7 +854,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['armored_elephant', 'armored_elephant', 'armored_elephant', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代德里军团': {
+    '城堡时代德里苏丹国军团': {
         age: 'castle',
         weapons: ['armored_elephant', 'armored_elephant', 'armored_elephant', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -880,7 +890,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['armored_elephant', 'armored_elephant', 'armored_elephant', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代第乌军团': {
+    '帝国时代古吉拉特军团': {
         age: 'imperial',
         weapons: ['elite_armored_elephant', 'elite_armored_elephant', 'elite_armored_elephant', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
@@ -936,7 +946,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代华闾军团': {
+    '封建时代丁黎军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -980,7 +990,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代高原战团': {
+    '古典时代特奥蒂瓦坎军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -1004,7 +1014,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '封建时代波哥大高原战团': {
+    '封建时代波哥大高原军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1012,7 +1022,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '封建时代比奥比奥战团': {
+    '封建时代比奥比奥军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1032,7 +1042,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代柏柏尔骑兵团': {
+    '封建时代柏柏尔军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1044,7 +1054,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '古典时代杰内战团': {
+    '古典时代杰内军团': {
         age: 'antiquity',
         weapons: ['antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_capped_ram', 'antiquity_siege_onager', 'antiquity_siege_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -1100,7 +1110,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '帝国时代设拉子军团': {
+    '帝国时代赞德军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1108,7 +1118,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代法兰克卫城军团': {
+    '城堡时代雅典公国军团': {
         age: 'castle',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1116,7 +1126,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '封建时代莫讷姆瓦夏军团': {
+    '封建时代拉科尼亚军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
@@ -1128,7 +1138,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '封建时代萨洛尼卡军团': {
+    '封建时代拜占庭马其顿军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'siege_tower', 'siege_tower', 'mangonel', 'mangonel', 'scorpion', 'scorpion'],
     },
@@ -1192,7 +1202,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'mangonel', 'mangonel', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代漠南骑兵团': {
+    '城堡时代漠南蒙古军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },

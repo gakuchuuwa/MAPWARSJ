@@ -2048,6 +2048,8 @@ export class TerritorySystem {
         const chunkSize = 12;
         let cityIndex = 0;
 
+        const crossFadeOutMarkers = new Set<L.Marker>();
+
         while (cityIndex < this.cities.length) {
             if (this.renderCounter !== renderId) return;
             const end = Math.min(cityIndex + chunkSize, this.cities.length);
@@ -2056,8 +2058,9 @@ export class TerritorySystem {
                 // 🔴 [2026-09-12 主人定] 战场已独立出据点体系 → 据点层不再有战场特判。
                 const isGhost = ghostPredicate ? ghostPredicate(city) : false;
                 const spriteNow = TerritorySystem.hasCitySprite(city);
-                if (this.cityMarkers.has(city.id) && this.citySpriteShown.get(city.id) === spriteNow) {
-                    // 已有 marker 且样貌状态没变：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
+                const sigNow = `${spriteNow}|${city.type}|${city.buildingStyle ?? ''}`;
+                if (this.cityMarkers.has(city.id) && this.cityRenderedSig.get(city.id) === sigNow) {
+                    // 已有 marker 且样貌状态/城级/风格均没变：保留，不重新建 DOM，避免打断正在播放的渐显动画或产生重绘闪烁
                     const existingMarker = this.cityMarkers.get(city.id)!;
                     const existingLabel = this.cityLabels.get(city.id);
                     tempCityMarkers.set(city.id, existingMarker);
@@ -2066,11 +2069,27 @@ export class TerritorySystem {
                 }
                 // 🔴 [2026-09-30 主人令「据点和战场的显现请设计为渐显」]
                 //    ① 新出现的据点一律渐显（剧本、乱斗都一样）；
-                //    ② 剧本推进到这座城的年代、「灰字名字」变成完整据点时：旧版原样保留灰字 marker，
-                //       城的样貌要等拖图离开再回来才出现、出现也是硬切。现在按样貌状态变化重建：城图渐显，
-                //       名字本来就在，不重播渐显（只由灰变白），免得名字闪一下。
-                const spriteFlipped = this.cityMarkers.has(city.id);
-                this.renderSingleCity(city, tempLayerGroup, tempCityMarkers, tempCityLabels, isGhost, true, !spriteFlipped);
+                //    ② 剧本推进到这座城的年代、「灰字名字」变成完整据点时：城图与旗帜渐显，名字不闪；
+                //    ③ 🔴 [2026-10-20 主人令「升级的时候，要渐显。不要一下变」]
+                //       已在场的小城到达建城年升级为大城/中城时：新城的城池建筑渐显（1.2s），
+                //       旧小城建筑同步渐隐（1.2s）后再卸载，旗帜与城名保持稳定不闪烁。
+                const hadMarker = this.cityMarkers.has(city.id);
+                const wasSpriteShown = hadMarker && this.citySpriteShown.get(city.id) === true;
+                const isUpgradeCrossFade = wasSpriteShown && spriteNow;
+                if (isUpgradeCrossFade) {
+                    const oldMarker = this.cityMarkers.get(city.id);
+                    if (oldMarker) crossFadeOutMarkers.add(oldMarker);
+                }
+                this.renderSingleCity(
+                    city,
+                    tempLayerGroup,
+                    tempCityMarkers,
+                    tempCityLabels,
+                    isGhost,
+                    true,
+                    !hadMarker,
+                    isUpgradeCrossFade
+                );
             }
             cityIndex = end;
             if (cityIndex < this.cities.length) {
@@ -2086,10 +2105,12 @@ export class TerritorySystem {
         for (const m of tempCityMarkers.values()) keptLayers.add(m);
         for (const l of tempCityLabels.values()) keptLayers.add(l);
 
-        // 仅卸载不再显示的旧 marker/label（保留的 marker 原地不动）
+        // 仅卸载不再显示的旧 marker/label（保留的 marker 原地不动；升级叠化中的旧城延迟渐隐卸载）
         const staleLayers: L.Layer[] = [];
         this.layerGroup.eachLayer((l) => {
-            if (!keptLayers.has(l)) staleLayers.push(l);
+            if (!keptLayers.has(l) && !crossFadeOutMarkers.has(l as L.Marker)) {
+                staleLayers.push(l);
+            }
         });
 
         for (const layer of markerLayers) {
@@ -2097,6 +2118,21 @@ export class TerritorySystem {
         }
         for (const layer of staleLayers) {
             this.layerGroup.removeLayer(layer);
+        }
+        for (const oldMarker of crossFadeOutMarkers) {
+            const oldEl = oldMarker.getElement();
+            if (oldEl) {
+                oldEl.style.pointerEvents = 'none';
+                oldEl.querySelector('.city-flag-pole')?.remove();
+                const oldStack = oldEl.querySelector('.city-building-stack') ?? oldEl.querySelector('.city-image-container');
+                oldStack?.classList.remove('map-fade-in');
+                oldStack?.classList.add('map-fade-out');
+            }
+            window.setTimeout(() => {
+                if (this.layerGroup.hasLayer(oldMarker)) {
+                    this.layerGroup.removeLayer(oldMarker);
+                }
+            }, 1220);
         }
 
         this.cityMarkers = tempCityMarkers;
@@ -2674,9 +2710,12 @@ export class TerritorySystem {
         labelsMap: Map<string, L.Marker>,
         isGhost: boolean = false,
         fadeIn: boolean = false,
-        labelFadeIn: boolean = fadeIn
+        labelFadeIn: boolean = fadeIn,
+        buildingOnlyFadeIn: boolean = false
     ): void {
-        this.citySpriteShown.set(city.id, TerritorySystem.hasCitySprite(city));
+        const spriteNow = TerritorySystem.hasCitySprite(city);
+        this.citySpriteShown.set(city.id, spriteNow);
+        this.cityRenderedSig.set(city.id, `${spriteNow}|${city.type}|${city.buildingStyle ?? ''}`);
         const color = this.factionManager.getFactionColor(city.factionId);
         // [USER REQUEST] Use original coordinates instead of snapping to hex center
         const displayLat = city.latitude;
@@ -2779,8 +2818,9 @@ export class TerritorySystem {
 
         const terrainClass = getCityImageContainerClass(city.id);
         const sizeClass = getCityMarkerSizeClass(city.type);
-        const animClass = fadeIn ? 'map-fade-in' : '';
-        const containerClass = [terrainClass, sizeClass, animClass].filter(Boolean).join(' ');
+        const wholeAnimClass = (fadeIn && !buildingOnlyFadeIn) ? 'map-fade-in' : '';
+        const stackAnimClass = (fadeIn && buildingOnlyFadeIn) ? ' map-fade-in' : '';
+        const containerClass = [terrainClass, sizeClass, wholeAnimClass].filter(Boolean).join(' ');
 
         /**
          * 🔴 [2026-10-09 主人令「旗帜不要被建筑遮挡」——**旗面与旗杆一起修**]
@@ -2800,7 +2840,7 @@ export class TerritorySystem {
          *      margin -6/-6 + width/height 12），所以它的元素左上角在「据点坐标 −6,−6」处；
          *      host 的 left/top 要**补回这 6px** 才能与原位置逐像素重合（下面那两个 +6）。
          */
-        const flagHostHtml = showFlag ? `<div class="city-flag-host${animClass ? ' ' + animClass : ''}" style="
+        const flagHostHtml = showFlag ? `<div class="city-flag-host${wholeAnimClass ? ' ' + wholeAnimClass : ''}" style="
                      position: absolute; left: ${-baseSize / 2 + 6}px; top: ${-(baseSize + 80) / 2 + 6}px;
                      width: ${baseSize}px; height: ${baseSize + 80}px;
                      transform: scale(var(--city-scale, 1));
@@ -2816,12 +2856,12 @@ export class TerritorySystem {
                      transform-origin: center ${(baseSize + 80) / 2 + 4}px; position: relative;
                      ${ghostStyle}
                  ">
-                     ${(flagPole && showFlag) ? `<img src="${flagPole}" style="
+                     ${(flagPole && showFlag) ? `<img class="city-flag-pole" src="${flagPole}" style="
                          position: absolute; top: 15px; left: 50%;
                          transform: translateX(-30%);
                          height: ${poleHeight}px; width: auto; z-index: -1;
                      ">` : ''}
-                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
+                     ${(this.showCityTextures && TerritorySystem.hasCitySprite(city)) ? `<div class="city-building-stack${stackAnimClass}" style="display: inline-block;">${settlementMirror ? '<div style="display:inline-block;transform:scaleX(-1);">' : ''}
                           ${(deStyle
                               ? buildCityStackInnerHtml(city, baseSize, deStyle, centerCastle, useStoneWall, cityRegion)
                               : (city.image
@@ -2894,6 +2934,8 @@ export class TerritorySystem {
     private static spriteFilter: ((city: City) => boolean) | null = null;
     /** 每座已建 marker 上一次画的是「完整据点」还是「灰字名字」，年代闸门翻转时据此重建并渐显 */
     private citySpriteShown = new Map<string, boolean>();
+    /** 每座已建 marker 上一次渲染时的完整样貌签名（显隐|城级|建筑风格），城级随建城年升降时据此重建 */
+    private cityRenderedSig = new Map<string, string>();
     public static setSpriteFilter(f: ((city: City) => boolean) | null): void { TerritorySystem.spriteFilter = f; }
     public static hasCitySprite(city: City): boolean { return !TerritorySystem.spriteFilter || TerritorySystem.spriteFilter(city); }
 
