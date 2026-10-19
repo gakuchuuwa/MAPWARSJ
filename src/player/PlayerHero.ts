@@ -844,6 +844,10 @@ export class PlayerHero {
         const me = this.army.getPosition();
         const it = army.getPosition();
         if (getEuclideanDistance(me, it) <= PLAYER_CITY_ARRIVE_DIST) {
+            if (army.getIsInCombat()) {
+                this.cancelTravel();
+                return;
+            }
             this.chaseArmyId = null;
             this.chaseGeneralName = null;
             this.cancelTravel();

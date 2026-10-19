@@ -60,6 +60,7 @@ export function isEligibleReinforcement(
         lAny.isFirstBattleMarch ||
         lAny.isFirstBattleHero ||
         lAny.isFirstBattleFieldEnemy ||
+        lAny.isFirstBattleSiegeEnemy ||
         legion.isScriptArmy
     ) {
         return false;
@@ -218,7 +219,7 @@ export function pollBattleFieldReinforcements(
     center: LatLng,
     deps: ReinforcementJoinDeps
 ): number {
-    if (battleField.isOver) return 0;
+    if (battleField.isOver || battleField.scene13Frozen) return 0;
 
     const nearby = deps.spatialRegistry.getArmiesInRadius(
         center.lat,

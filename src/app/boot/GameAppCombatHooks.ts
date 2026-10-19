@@ -175,7 +175,7 @@ function startScene13War(
     const attackerEliteName = resolveUnitEliteName(attacker);
     let defenderEliteName = resolveUnitEliteName(defender);
     if (!defenderEliteName && defenderCityId) {
-        defenderEliteName = getCityEliteLegionName(defenderCityId);
+        defenderEliteName = getCityEliteLegionName(defenderCityId, defender.generalId ?? undefined);
     }
     // 🔴 同场唯一：攻守双方精锐番号同名时守方避让，禁止同名精锐自己打自己
     if (attackerEliteName && defenderEliteName && attackerEliteName === defenderEliteName) {
@@ -301,6 +301,7 @@ function isStoryOrFirstBattleUnit(u: { getEntity?(): any } | null | undefined): 
         || ent.isFirstBattleMarch === true
         || ent.isFirstBattleHero === true
         || ent.isFirstBattleFieldEnemy === true
+        || ent.isFirstBattleSiegeEnemy === true
         || !!ent._firstBattleDefenderGeneralId;
 }
 

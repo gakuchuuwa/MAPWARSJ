@@ -679,7 +679,12 @@ export class LegionManager {
         if (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && targetCity.id !== armyAny.firstBattleTargetCityId) {
             return 'skipped';
         }
-        if ((targetCity as any)._firstBattleLockedForHero && !armyAny.isFirstBattleHero && !army.isScriptArmy) {
+        if (
+            (targetCity as any)._firstBattleLockedForHero &&
+            !armyAny.isFirstBattleHero &&
+            !armyAny.isFirstBattleSiegeEnemy &&
+            !army.isScriptArmy
+        ) {
             return 'skipped';
         }
 
