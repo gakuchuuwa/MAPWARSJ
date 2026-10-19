@@ -51,6 +51,7 @@ import {
     isCivEraLegion,
 } from '../data/level2Civ62Legions';
 import { LEVEL_3_LEGION_NAMES, LEVEL_3_LEGIONS } from '../data/level3CustomLegions';
+import { LEGION_78_SIEGE_MAP } from '../data/SiegeWeaponsByCulture';
 import { mountLegionPanel } from '../legion-panel/main';
 import { resolveFallbackForFaction, planFallbackForDeletedLegion, isBaseFallbackLegion } from '../systems/LegionFallbackOnDelete';
 
@@ -4257,6 +4258,32 @@ function isLegionUsedByOther(factionId: string, legionName: string): boolean {
  *   同名军团（前/中/后三排兵种 + 阵型）必须一致，不一致 = 违规。
  * 返回违规信息列表；无违规则空数组。
  */
+/** 战斗兵模的类别（英雄、非战斗、其他不在其内） */
+const COMBAT_CATEGORIES: UnitCategory[] = ['infantry', 'cavalry', 'ranged', 'siege', 'naval'];
+
+/**
+ * 战斗兵模套用统计（2026-10-19 主人令）：返回总数、各类数量、没被任何军团套用的兵模。
+ * 套用来源：全部独立军团的三排兵种、二级军团硬表、势力实际编成、攻城武器发放表、舰队船型。
+ */
+function computeCombatUnitCoverage(): { total: number; summary: string; unused: DeUnitDef[] } {
+    const used = new Set<string>();
+    for (const entry of getAllDistinctLegions().values()) for (const s of entry.slots) used.add(s.type);
+    // 二级军团的权威硬表：势力存过自己的副本时，getAllDistinctLegions 会优先显示副本，硬表里的兵种会被遮住，这里补上
+    for (const l2 of LEVEL_2_CIV_62_LEGIONS) {
+        for (const s of l2.slots) used.add(s.type);
+        if (l2.shipId) used.add(String(l2.shipId).toLowerCase());
+    }
+    for (const l3 of LEVEL_3_LEGIONS) {
+        for (const s of l3.slots) used.add(s.type);
+        if ((l3 as any).shipId) used.add(String((l3 as any).shipId).toLowerCase());
+    }
+    for (const r of allRows) for (const s of r.slots) used.add(s.type);
+    for (const v of Object.values(LEGION_78_SIEGE_MAP)) for (const w of v.weapons) used.add(w);
+    const combat = DE_UNITS_CATALOG.filter((u) => COMBAT_CATEGORIES.includes(u.category));
+    const summary = COMBAT_CATEGORIES.map((c) => `${CATEGORY_LABEL[c]} ${combat.filter((u) => u.category === c).length}`).join('、');
+    return { total: combat.length, summary, unused: combat.filter((u) => !used.has(u.id)) };
+}
+
 function computeLegionNameViolations(): string[] {
     const violations: string[] = [];
 
@@ -4330,30 +4357,20 @@ function computeLegionNameViolations(): string[] {
         }
     }
 
-    // 🔴 [2026-09-10 主人定] 兵种套用检查：步兵/骑兵/远程兵种没被任何军团套用 → 报错。
-    // 🔴 [2026-09-14 修] 原来只扫 allRows（= 势力身上生效的编成），
-    //    于是「军团定义里明明用了，但暂时没有势力挂这个军团」的兵种被误报成「未套用」
-    //    （古典时代雅典/斯巴达/色雷斯军团就是这种：0 势力采用）。
-    //    判据应当是「有没有军团用它」而不是「有没有势力用它」——改扫全部独立军团定义。
-    const usedUnitTypes = new Set<string>();
-    for (const entry of getAllDistinctLegions().values()) {
-        for (const s of entry.slots) usedUnitTypes.add(s.type);
-    }
-    // 二级 62 文明军团的**权威硬表**也要算：势力存过自己的副本时，
-    // getAllDistinctLegions 会优先显示副本（见上面「二级军团编制存不住」那处修复），
-    // 硬表里的兵种就被遮住了 —— 但它确确实实写在一支军团的编制里，不算「没套用」。
-    for (const l2 of LEVEL_2_CIV_62_LEGIONS) {
-        for (const s of l2.slots) usedUnitTypes.add(s.type);
-    }
-    for (const r of allRows) {
-        for (const s of r.slots) usedUnitTypes.add(s.type);
-    }
-    for (const cat of ['infantry', 'cavalry', 'ranged'] as const) {
-        const uncovered = DE_UNITS_CATALOG.filter(u => u.category === cat && !usedUnitTypes.has(u.id));
-        if (uncovered.length > 0) {
-            violations.push(
-                `【${CATEGORY_LABEL[cat]}】${uncovered.length} 种兵种未在任何军团中套用：${uncovered.map(u => `${u.name}（${u.id}）`).join('、')}`,
-            );
+    // 🔴 [2026-10-19 主人令「添加一个自动检查，一共多少兵模，哪个兵模没有被套用，就要报错」「战斗兵模没有被套用，就报错」]
+    //    战斗兵模 ＝ 步兵、骑兵、远程、攻城、船只（英雄、非战斗、其他不算）。
+    //    「套用」＝ 被任何一支军团用上：三排兵种（含一/二/三级军团与势力副本）、攻城武器发放表、舰队船型（shipId）。
+    //    判据是「有没有军团用它」而不是「有没有势力用它」（2026-09-14 修：军团定义里用了、只是暂时没势力挂的，不算没套用）。
+    const cov = computeCombatUnitCoverage();
+    if (cov.unused.length > 0) {
+        violations.push(
+            `【兵模】战斗兵模共 ${cov.total} 个（${cov.summary}），${cov.unused.length} 个没有被任何军团套用，已套用 ${cov.total - cov.unused.length} 个`,
+        );
+        for (const cat of COMBAT_CATEGORIES) {
+            const list = cov.unused.filter((u) => u.category === cat);
+            if (list.length > 0) {
+                violations.push(`【${CATEGORY_LABEL[cat]}】${list.length} 个兵模未被套用：${list.map((u) => `${u.name}（${u.id}）`).join('、')}`);
+            }
         }
     }
 
@@ -4420,7 +4437,7 @@ function reportLegionNameViolations(silentWhenClean = false): void {
     const violations = computeLegionNameViolations();
     if (violations.length === 0) {
         // 打开编辑器时的自动校验走 silent：没错就别弹绿条打扰
-        if (!silentWhenClean) showToast('✅ 军团命名检查通过：无同名不同编违规');
+        if (!silentWhenClean) { const c = computeCombatUnitCoverage(); showToast(`✅ 军团检查通过：战斗兵模共 ${c.total} 个，全部已套用`); }
         return;
     }
     openLegionViolationsModal(violations);
@@ -4512,7 +4529,7 @@ function openLegionViolationsModal(violations: string[]): void {
         <button type="button" class="le-btn le-btn-sm" id="le-viol-close">✕</button>
       </div>
       <div class="le-modal-body" style="grid-template-columns:1fr;gap:8px;max-height:70vh;">
-        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">① 一个军团只能有一种编制（同名同编）；② 步兵/骑兵/远程兵种都要被军团套用；③ 所有军团必须都被武将套用；④ 一个军团只能一排象兵或一排战车（不能同时出现）。以下违规请查看：</div>
+        <div style="font-size:12px;color:#a89f8f;margin-bottom:4px;">① 一个军团只能有一种编制（同名同编）；② 战斗兵模（步兵、骑兵、远程、攻城、船只）都要被军团套用；③ 所有军团必须都被武将套用；④ 一个军团只能一排象兵或一排战车（不能同时出现）。以下违规请查看：</div>
         ${violations.map(v => `<div style="background:#2a1616;border:1px solid #5a2a2a;border-radius:4px;padding:8px 10px;font-size:12px;color:#ffd0c0;">${v}</div>`).join('')}
         <button type="button" class="le-btn le-btn-primary" id="le-auto-fix" style="width:100%;font-size:13px;padding:9px;margin-top:4px;">🛠 一键修复（同名不同编：后来的自动改名）</button>
       </div>

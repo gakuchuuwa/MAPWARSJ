@@ -173,16 +173,24 @@ export class CityManager {
         this.onCityCapturedCallback = callback;
     }
 
+    private onYearOrEditorChangeCallback: (() => void) | null = null;
+
+    public setOnYearOrEditorChange(callback: (() => void) | null): void {
+        this.onYearOrEditorChangeCallback = callback;
+    }
+
     // [NEW] History & Editor Logic
     public updateYear(year: number): void {
         if (this.currentYear !== year) {
             this.currentYear = year;
+            this.onYearOrEditorChangeCallback?.();
             this.requestRender();
         }
     }
 
     public setEditorMode(enabled: boolean): void {
         this.isEditorMode = enabled;
+        this.onYearOrEditorChangeCallback?.();
         this.requestRender(); // Re-render to show/hide ghosts
     }
 
