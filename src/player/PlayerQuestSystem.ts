@@ -217,7 +217,7 @@ export interface PlayerQuestDeps {
     ensureUnpaused: () => void;
     feed?: {
         pushRestoration?(p: { factionId: string; cityName: string }): void;
-        pushExpedition?(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void;
+        pushExpedition?(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void;
     };
     /**
      * 当前游戏年份（负 = 公元前）。
@@ -1607,7 +1607,7 @@ export class PlayerQuestSystem {
         this.deps.hero.attachTo(army);
         this.deps.ensureUnpaused();
         this.deps.kickLegionAi(army.id);
-        this.deps.feed?.pushExpedition?.({ legionName: army.name, cityName: target.name, kind: 'depart' });
+        this.deps.feed?.pushExpedition?.({ legionName: army.name, generalId: army.generalId, cityName: target.name, kind: 'depart' });
         this.deps.notify(`🐎 随${g.generalName}出征【${target.name}】`);
         gameLog('expedition', `[玩家] 出征任务：${g.generalName} 率 ${army.name} 自 ${city.name} 远征 ${target.name}`);
         this.emitChange();
@@ -1841,7 +1841,7 @@ export class PlayerQuestSystem {
         this.deps.ensureUnpaused();
         this.deps.hero.setTravelPointLabel(fb.battleName);
         this.marchHostToFirstBattle(host, targetPos);
-        this.deps.feed?.pushExpedition?.({ legionName: host.name, cityName: fb.targetName, kind: 'depart' });
+        this.deps.feed?.pushExpedition?.({ legionName: host.name, generalId: host.generalId, cityName: fb.targetName, kind: 'depart' });
         const roleLabel = isOnTheSpot ? (role === 'defender' ? '就地迎击' : '就地出击') : '直奔';
         this.deps.notify(
             isOnTheSpot

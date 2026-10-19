@@ -26,7 +26,6 @@
 import { resolveGeneralPortraitPath } from '../config/portrait_defaults';
 import { getBattlefieldCharacter } from './BattlefieldCharacters';
 import { isGeneralOnStage } from './generalOnStage';
-import { FACTIONS } from './factions';
 import { getGeneralProfile } from './general-skills/profiles';
 
 export interface FactionGeneral {
@@ -1439,7 +1438,7 @@ export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] 
         return {
             item: {
                 ...g,
-                generalName: stageGeneralName(g.generalId, g.generalName, factionId),
+                generalName: stageGeneralName(g.generalId, g.generalName),
                 portrait: resolveGeneralPortraitPath(portrait, { factionId }),
             },
             isFamous,
@@ -1469,13 +1468,12 @@ export function getFactionGeneral(
     return resolved.find((g) => isGeneralOnStage(g.generalId)) ?? resolved[0] ?? null;
 }
 
-/** 🔴 [2026-10-16 主人定] 剧本期武将不在「登场年～卒年」内 → 名字一律「势力+将军」（势力 = 武将本来所属势力；立绘不变）。
+/** 🔴 [2026-10-16 主人定] 剧本期武将不在「登场年～卒年」内 → 换名（立绘不变）。
+ *  🔴 [2026-10-20 主人令「没有武将的，不再用XX势力+将军，一律都叫将军」] 原「势力+将军」作废 ⇒ 一律「将军」
+ *     （起因：播报「格鲁吉亚格鲁吉亚将军」说两次势力）。
  *  乱斗 / 编辑器 / 在场 → 原名。 */
-const _factionNameById = new Map(FACTIONS.map((f) => [f.id, f.name]));
-function stageGeneralName(generalId: string, name: string, factionId: string | null | undefined): string {
-    if (isGeneralOnStage(generalId)) return name;
-    const fname = factionId ? _factionNameById.get(factionId) : undefined;
-    return fname ? `${fname}将军` : name;
+function stageGeneralName(generalId: string, name: string): string {
+    return isGeneralOnStage(generalId) ? name : '将军';
 }
 
 /** 武将所属军团名：武将自己写了就用它，否则用势力表挂的军团。🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」] */
@@ -1557,7 +1555,7 @@ export function getGeneralRecordByGeneralId(
         const dedicated = _generalPortraitOverrides[generalId] ?? bfChar.portrait ?? '';
         return {
             generalId: bfChar.generalId,
-            generalName: stageGeneralName(bfChar.generalId, bfChar.generalName, bfChar.factionId),
+            generalName: stageGeneralName(bfChar.generalId, bfChar.generalName),
             portrait: resolveGeneralPortraitPath(dedicated, {
                 factionId: bfChar.factionId,
                 region: options?.region,
@@ -1568,7 +1566,7 @@ export function getGeneralRecordByGeneralId(
     const dedicated = _generalPortraitOverrides[generalId] ?? hit.general.portrait;
     return {
         ...hit.general,
-        generalName: stageGeneralName(generalId, hit.general.generalName, hit.factionId),
+        generalName: stageGeneralName(generalId, hit.general.generalName),
         portrait: resolveGeneralPortraitPath(dedicated, {
             factionId: hit.factionId,
             region: options?.region,

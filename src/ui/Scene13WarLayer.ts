@@ -5681,7 +5681,13 @@ export class Scene13WarLayer {
         if (this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
         this.ensureGateInfo();
-        if (m.f === 1) return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
+        if (m.f === 1) {
+            // 🔴 [2026-10-20 主人令「城内近战兵先走城门出城，守军不断走来走去也不打敌人，要不删除要不优化」]
+            //    墙/门一旦有缺口，守方（非原地守门的 guardPost）与攻方同口径：不算「隔墙」，可直接锁定城外敌人追出去；
+            //    原先守方一律算隔墙 ⇒ 门破后反攻的守军每 0.5 秒只会重新往城门走、锁不住目标，来回走动。
+            if (this.ringOpen() && !m.guardPost) return false;
+            return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
+        }
         if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
@@ -5988,7 +5994,8 @@ export class Scene13WarLayer {
         const minR2 = minRange * minRange;
         // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
         //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
-        const inOnly = (radius <= 1000 || !!guardPost) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
+        // 🔴 [2026-10-20] 城墙已有缺口时非 guardPost 守军不再限定只打城内（见 wallSeparates），与 outOnly 的 !ringOpen 对称
+        const inOnly = (!!guardPost || (radius <= 1000 && !this.ringOpen())) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
             && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
@@ -7196,6 +7203,11 @@ export class Scene13WarLayer {
             if (bestCityFoe) {
                 return { x: bestCityFoe.x + m.jx, y: bestCityFoe.y + m.jy };
             }
+            // 🔴 [2026-10-20 主人令「乱入者作为防守方，不需要等待」] 城边没敌人时，守方乱入者不回城站着，去找全图最近的敌人
+            if (m.hero && this.playerCmd === 'attack') {
+                const far = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
+                if (far) return { x: far.x + m.jx, y: far.y + m.jy };
+            }
             return this.defenderCityReturnGoal(m);
         }
         const globalNearest = this.search(m, 13000, MIN_RANGE_TYPES[m.key] ?? 0, false);
@@ -7526,7 +7538,7 @@ export class Scene13WarLayer {
             // 🔴 [2026-10-15 主人令「改为看到敌人就发起反击」「攻守双方开战的距离太近了，敌人都冲到眼前了，才开战，请拉开点距离」]
             //    注意此处在 `m.next -= dt`（10165 行）之前，故须用 `m.next <= dt` 判断本帧索敌到点（原写 `m.next <= 0` 因下方的重置恒为 false 导致远距索敌从未执行）；
             //    目视迎战距离拉大至 600px，敌军进入阵前 600px 即全军迎战。
-            if (this.holdLanes.size && m.lane >= 0 && this.holdLanes.has(m.lane)
+            if (this.holdLanes.size && !m.hero && m.lane >= 0 && this.holdLanes.has(m.lane)
                 && (!this.marching || m.foe || (m.hurtAt !== undefined && this.battleSec - m.hurtAt < 1) || (m.next <= dt && this.search(m, 600, 0, false)))) {
                 this.holdLanes.clear();
                 if (this.marching) {
@@ -7554,8 +7566,11 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-10-18 主人定] 攻城战第二波以后出门点还是9建筑，刷新后看城门是否被击毁，没有的话原地待命，被击毁城门发起反攻
             const isGuard = !!m.guardPost;
+            // 🔴 [2026-10-20 主人令「战术模式中，乱入者作为防守方，不需要等待。不然镜头不动了」]
+            //    守方乱入者在「自动」下不吃本队的列阵待敌（holdLanes）与分队待命（laneStandby），一直自己找敌人打。
+            const heroHunt = m.hero === true && m.f === 1 && this.playerCmd === 'attack';
             // 🔴 [2026-10-15 主人定] 每个目标最多 4 队攻击；超出 4 队且场上已无其他可打目标的分队，原地列阵待命
-            const laneStandby = !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
+            const laneStandby = !heroHunt && !this.marching && !m.march && m.lane >= 0 && !this.heroOrderPending(m) && !m.siegeW && !isGuard
                 && !this.remnantLanes.has(m.lane) && !this.laneTargets.has(m.lane);
             // 🔴 [2026-09-09 主人定「两个选项：自动 / 待命」] 待命要把**玩家本人**也算进去，
             //    原来写的是 `!m.hero`，本人被排除在待命之外。
@@ -7732,7 +7747,7 @@ export class Scene13WarLayer {
                     // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 推进槽位不再避水（原「落水则收窄 slotY」已删）
                     [m.tx, m.ty] = this.fieldBound(sx, sy);
                 }
-            } else if (!m.foe && !holdCmd && !isGuard && !(m.lane >= 0 && this.holdLanes.has(m.lane))) {   // 城外列阵待敌与城内未破门守军：原地不动
+            } else if (!m.foe && !holdCmd && !isGuard && (heroHunt || !(m.lane >= 0 && this.holdLanes.has(m.lane)))) {   // 城外列阵待敌与城内未破门守军：原地不动
                 // 没在打架就持续更新移动目标走过去（0.5s 刷新一次）
                 // 🔴 [2026-08-22] 守方破墙前待命远程：不更新移动目标（原地站桩射击，不追击）
                 // [2026-09-05 玩家] 玩家没敌可打时不走巡逻航路：站住等玩家指挥（键盘/点地面）
@@ -8413,7 +8428,7 @@ export class Scene13WarLayer {
                     m.idlePose === true
                     || holdCmd
                     || isGuard
-                    || (m.lane >= 0 && this.holdLanes.has(m.lane))
+                    || (!heroHunt && m.lane >= 0 && this.holdLanes.has(m.lane))
                     || (laneStandby && (m.tx - m.x) ** 2 + (m.ty - m.y) ** 2 <= ARRIVE_EPS * ARRIVE_EPS)
                 );
                 m.ph += dt * (isIdlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);

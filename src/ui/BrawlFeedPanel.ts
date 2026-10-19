@@ -1,7 +1,7 @@
 import { TimeSystem } from '../app/TimeSystem';
 import { formatBcYearChinese } from '../data/QinRegnalCalendar';
 import { CityManager } from '../world/CityManager';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { REGION_LABELS, type RegionType } from '../systems/RegionSystem';
 import { StreamModeToggle } from './StreamModeToggle';
 
@@ -20,15 +20,12 @@ function feedBadge(kind: 'fall' | 'wipe' | 'restore' | 'expedition' | 'pass' | '
     return `<span class="feed-badge feed-badge--${kind}">${char}</span>`;
 }
 
-function formatLegionWithGeneral(factionId: string | undefined, legionName: string | undefined): string {
-    let legionStr = legionName || '据点军团';
-    let generalStr = '将军';
-    if (factionId) {
-        const gen = getFactionGeneral(factionId);
-        if (gen) {
-            generalStr = gen.generalName;
-        }
-    }
+/** 🔴 [2026-10-20 主人令「没有武将的，一律都叫将军」] 取这支军团**自己的**武将（原取「势力名下第一个武将」，
+ *  武将领兵在外照样被写成「率」这支军团，张冠李戴）；军团没有武将 → 「将军」。不在世武将的名字已由
+ *  getGeneralRecordByGeneralId 换成「将军」。 */
+function formatLegionWithGeneral(generalId: string | null | undefined, legionName: string | undefined): string {
+    const legionStr = legionName || '据点军团';
+    const generalStr = (generalId ? getGeneralRecordByGeneralId(generalId)?.generalName : undefined) || '将军';
     return `${generalStr} 率 ${legionStr}`;
 }
 
@@ -236,13 +233,15 @@ export class BrawlFeedPanel {
 
     /** 攻占大城（重要据点，A 级） */
     pushCityCapture(params: {
+        /** 这支军团自己的武将（无则播「将军」） */
+        generalId?: string | null;
         attackerFactionId: string;
         legionName: string;
         regionKey?: string;
         cityName: string;
     }): void {
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
-        const displayLegion = formatLegionWithGeneral(params.attackerFactionId, params.legionName);
+        const displayLegion = formatLegionWithGeneral(params.generalId, params.legionName);
         const regionName = REGION_LABELS[params.regionKey as RegionType] || '未知区域';
         
         const line = formatCityCaptureLine(
@@ -257,13 +256,15 @@ export class BrawlFeedPanel {
 
     /** 势力灭亡：攻方占最后一城，守方势力亡（S 级，行级朱砂高亮） */
     pushFactionFall(params: {
+        /** 这支军团自己的武将（无则播「将军」） */
+        generalId?: string | null;
         attackerFactionId: string;
         legionName: string;
         defenderFactionId: string;
         cityName: string;
     }): void {
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
-        const displayLegion = formatLegionWithGeneral(params.attackerFactionId, params.legionName);
+        const displayLegion = formatLegionWithGeneral(params.generalId, params.legionName);
         const line = formatFactionFallLine(
             time,
             this.cityManager.getFactionName(params.attackerFactionId),
@@ -276,13 +277,15 @@ export class BrawlFeedPanel {
 
     /** 远征下令/功成（ExpeditionUI / 行为树远征结算调用，S 级） */
     pushExpedition(params: {
+        /** 这支军团自己的武将（无则播「将军」） */
+        generalId?: string | null;
         factionId?: string;
         legionName: string;
         cityName: string;
         kind: 'depart' | 'success';
     }): void {
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
-        const displayLegion = formatLegionWithGeneral(params.factionId, params.legionName);
+        const displayLegion = formatLegionWithGeneral(params.generalId, params.legionName);
         this.pushFeedLine(
             formatExpeditionLine(time, displayLegion, params.cityName, params.kind),
             's'
@@ -291,6 +294,8 @@ export class BrawlFeedPanel {
 
     /** 攻方或守方军团于某据点全军覆没 */
     pushLegionAnnihilated(params: {
+        /** 这支军团自己的武将（无则播「将军」） */
+        generalId?: string | null;
         factionId: string;
         legionName: string;
         cityName: string;
@@ -298,7 +303,7 @@ export class BrawlFeedPanel {
         if (!BrawlFeedPanel.isEliminableFaction(params.factionId)) return;
 
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
-        const displayLegion = formatLegionWithGeneral(params.factionId, params.legionName);
+        const displayLegion = formatLegionWithGeneral(params.generalId, params.legionName);
         const line = formatLegionAnnihilatedLine(
             time,
             this.cityManager.getFactionName(params.factionId),
@@ -326,6 +331,8 @@ export class BrawlFeedPanel {
 
     /** 关隘被攻打（带 60 秒冷却防刷屏） */
     pushPassSiege(params: {
+        /** 这支军团自己的武将（无则播「将军」） */
+        generalId?: string | null;
         attackerFactionId: string;
         legionName: string;
         cityId: string;
@@ -339,7 +346,7 @@ export class BrawlFeedPanel {
         this.passSiegeCooldowns.set(params.cityId, now);
 
         const time = formatFeedTime(this.timeSystem.getYear(), this.timeSystem.getSeason());
-        const displayLegion = formatLegionWithGeneral(params.attackerFactionId, params.legionName);
+        const displayLegion = formatLegionWithGeneral(params.generalId, params.legionName);
         const line = formatPassSiegeLine(
             time,
             this.cityManager.getFactionName(params.attackerFactionId),

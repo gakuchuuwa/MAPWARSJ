@@ -1012,6 +1012,7 @@ export class SiegeManager {
             window.game?.brawlFeedPanel?.pushPassSiege({
                 attackerFactionId: army.getFactionId(),
                 legionName: army.name,
+                generalId: army.generalId,
                 cityId: targetCity.id,
                 cityName: targetCity.name
             });
