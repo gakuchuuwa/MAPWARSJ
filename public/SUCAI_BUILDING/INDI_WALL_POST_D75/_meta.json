@@ -1,0 +1,9 @@
+{
+  "name": "INDI_WALL_POST_D75",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 172,
+  "anchor_x": 104,
+  "anchor_y": 144,
+  "sld_source": "b_indi_wall_stone_destr_75"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "PURU_WALL_POST_D75",
+  "frames": 1,
+  "box_w": 128,
+  "box_h": 112,
+  "anchor_x": 72,
+  "anchor_y": 84,
+  "sld_source": "b_puru_wall_stone_destr_75"
+}

@@ -14,10 +14,9 @@
  *   · reload 是乘区（拇指环 ×0.85 = 装填变快）
  */
 
-import { MILITARY_TECHS, type MilitaryTech, type TechEra } from '../data/MilitaryTechs';
+import { MILITARY_TECHS, type MilitaryTech, type TechCulture, type TechEra } from '../data/MilitaryTechs';
 import { getUnitClass } from '../data/UnitClasses';
 import { GameConfig } from '../config/GameConfig';
-import type { RegionType } from './RegionSystem';
 
 /** DE 一格 = 40px（与 SIGHT_MAP / rng 同一换算） */
 const TILE_PX = 40;
@@ -36,125 +35,121 @@ export interface TechModifiableStats {
     bonus?: Record<number, number>;
 }
 
-const TECH_CULTURE_PARENT: Partial<Record<RegionType, RegionType>> = {
-    BURMESE: 'MALAY',
-    EGYPT: 'WEST_ASIA',
-    CARTHAGE: 'BERBER',
-    BABYLON: 'WEST_ASIA',
-    HITTITES: 'WEST_ASIA',
-    ASSYRIAN: 'WEST_ASIA',
-    SCYTHIANS: 'STEPPE',
-    BYZANTINE: 'LATIN',
-    FRANKS: 'GERMANIC',
-    SASANIAN: 'PERSIAN',
-    TURKS: 'STEPPE',
-    NANZHAO: 'MALAY',
-    SRIVIJAYA: 'MALAY',
-    KUSHAN: 'CENTRAL_ASIA',
-    KUSH: 'AFRICA',
-    PRE_QIN: 'CENTRAL',
-    // 🔴 [主人定·时间划分] 时代细分区（_ANTIQUITY/_FEUDAL/_CASTLE/_IMPERIAL）→ 父大区。
-    //    原来没映射，这些区查不到父文化，只领到 5 条全区通用科技（「科技少」的根因）。
-    SLAVIC_FEUDAL: 'SLAVIC', SLAVIC_CASTLE: 'SLAVIC', SLAVIC_IMPERIAL: 'SLAVIC',
-    GERMANIC_FEUDAL: 'GERMANIC', GERMANIC_CASTLE: 'GERMANIC', GERMANIC_IMPERIAL: 'GERMANIC',
-    LATIN_FEUDAL: 'LATIN', LATIN_CASTLE: 'LATIN', LATIN_IMPERIAL: 'LATIN',
-    WEST_ASIA_ANTIQUITY: 'WEST_ASIA', WEST_ASIA_CASTLE: 'WEST_ASIA',
-    CELTS_FEUDAL: 'LATIN',
-    JAPAN_ANTIQUITY: 'JAPAN', JAPAN_IMPERIAL: 'JAPAN',
-    HUAXIA_IMPERIAL: 'CENTRAL',
-    CENTRAL_ASIA_ANTIQUITY: 'CENTRAL_ASIA', CENTRAL_ASIA_CASTLE: 'CENTRAL_ASIA', CENTRAL_ASIA_IMPERIAL: 'CENTRAL_ASIA',
-    STEPPE_ANTIQUITY: 'STEPPE', STEPPE_FEUDAL: 'STEPPE', STEPPE_IMPERIAL: 'STEPPE',
-    TIBET_CASTLE: 'TIBET', TIBET_IMPERIAL: 'TIBET',
-    WESTERN_FEUDAL: 'WESTERN', WESTERN_CASTLE: 'WESTERN', WESTERN_IMPERIAL: 'WESTERN',
-    AFRICA_ANTIQUITY: 'AFRICA', AFRICA_CASTLE: 'AFRICA', AFRICA_IMPERIAL: 'AFRICA',
-    PERSIAN_CASTLE: 'PERSIAN',
-    SEASIA_ANTIQUITY: 'MALAY', SEASIA_FEUDAL: 'MALAY', SEASIA_CASTLE: 'MALAY', SEASIA_IMPERIAL: 'MALAY',
-    NORTHAM_IMPERIAL: 'AMERICA',
-    SOUTHAM_IMPERIAL: 'ANDE',
-    ORIE_ANTIQUITY: 'ORIE',
-    INDIA_FEUDAL: 'INDIA', INDIA_CASTLE: 'INDIA', INDIA_IMPERIAL: 'INDIA',
-    // 🔴 [补全] 其余具体文化 → 父大区（原来这些区不在任何科技 cultures 表里，只领到 4~7 条通用科技）
-    HEBREWS: 'WEST_ASIA', WUSUN: 'WESTERN', QIANG: 'TIBET', NABATAEANS: 'ORIE',
-    MACEDONIAN: 'GREEK', HELLENIC: 'GREEK', GREEK_MERCENARY: 'GREEK', MAGNA_GRAECIA: 'GREEK',
-    ACHAEMENIDS: 'PERSIAN', AMAZONS: 'ANDE', GOJOSEON: 'KOREA', IMPERIAL_ROME: 'LATIN',
-    KHITAN: 'NORTHEAST', UIGHUR: 'STEPPE', MOHE: 'NORTHEAST', ANGLO_SAXON: 'GERMANIC',
-    GHANA: 'AFRICA', KHAZARS: 'STEPPE', VANDALS: 'GERMANIC', LOMBARDS: 'GERMANIC',
-    ROURAN: 'STEPPE', SOGDIANS: 'CENTRAL_ASIA', HEPHTHALITES: 'CENTRAL_ASIA', AINU: 'JAPAN',
-    YARLUNG: 'TIBET', RUS: 'SLAVIC',
-    PASHTUN: 'CENTRAL_ASIA', TANGUT: 'TIBET', JAVANESE: 'MALAY', JURCHEN: 'NORTHEAST',
-    SELJUQ: 'CENTRAL_ASIA', SONG: 'CENTRAL', GORYEO: 'KOREA', JOSEON: 'KOREA', MING: 'CENTRAL',
-    DALI: 'CENTRAL', MAMLUKS: 'ORIE', CRUSADERS: 'LATIN', KARA_KHITAN: 'CENTRAL_ASIA',
-    TIMURID: 'CENTRAL_ASIA', DELHI: 'INDIA', CASTILE: 'LATIN', SCOTLAND: 'GERMANIC',
-    HRE: 'GERMANIC', ALMOHAD: 'BERBER', SERBIA: 'SLAVIC', ILKHANATE: 'PERSIAN', ARAGON: 'LATIN',
-    CHIMU: 'ANDE', TARASCAN: 'AMERICA', TAIRONA: 'ANDE',
-    OTTOMAN: 'WEST_ASIA', FRENCH: 'LATIN', SWEDISH: 'GERMANIC', MANCHU: 'NORTHEAST',
-    MUGHAL: 'INDIA', SAFAVID: 'PERSIAN', RUSSIAN: 'SLAVIC', SIKH: 'INDIA',
-    IROQUOIS: 'AMERICA', TEHUELCHE: 'ANDE',
-    // 🔴 [补全·通用科技按 16 大区] 通用科技 cultures 表精简后，这些子文化统一继承父大区
-    BRITONS: 'GERMANIC', GOTHS: 'GERMANIC', TEUTONS: 'GERMANIC', VIKINGS: 'GERMANIC',
-    HUNS: 'STEPPE', CUMAN: 'STEPPE',
-    ITALIANS: 'LATIN', SICILIANS: 'LATIN', BURGUNDIANS: 'LATIN', SPANISH: 'LATIN', PORTUGUESE: 'LATIN',
-    BULGARIANS: 'SLAVIC', MAGYAR: 'SLAVIC', LITHUANIANS: 'SLAVIC', POLES: 'SLAVIC', BOHEMIANS: 'SLAVIC',
-    ETHIOPIANS: 'AFRICA',
-    BENGALIS: 'INDIA', GURJARAS: 'INDIA',
-    VIETNAMESE: 'MALAY', KHMER: 'MALAY',
-    MAYANS: 'AMERICA',
-    MAPUCHE: 'ANDE', MUISCA: 'ANDE', TUPI: 'ANDE',
-    ARMENIANS: 'WEST_ASIA', GEORGIANS: 'WEST_ASIA',
+/**
+ * 66 种建筑文化（62 DE 文明 + 4 三级文化）→ 通用科技大区继承表。
+ * 🔴 专属特殊科技（isCultureUnique）直接按 66 建筑文化精确匹配，不走此表；
+ *    通用科技（铁匠铺/大学/马厩/靶场通用线）按此表继承所属文化圈的可用科技树。
+ */
+const TECH_CULTURE_PARENT: Record<string, TechCulture> = {
+    // 66 建筑文化 → 通用科技大区
+    ATHENIANS: 'GREEK',
+    SPARTANS: 'GREEK',
+    GREECE: 'GREEK',
+    MACEDONIAN: 'GREEK',
     THRACIAN: 'GREEK',
+    ROMA: 'LATIN',
+    LATIN: 'LATIN',
+    CELTS: 'LATIN',
+    SICILIANS: 'LATIN',
+    BURGUNDIANS: 'LATIN',
+    SPANISH: 'LATIN',
+    PORTUGUESE: 'LATIN',
+    FRANKS: 'GERMANIC',
+    GERMANIC: 'GERMANIC',
+    BRITONS: 'GERMANIC',
+    GOTHS: 'GERMANIC',
+    SAXONS: 'GERMANIC',
+    DANES: 'GERMANIC',
+    VIKINGS: 'GERMANIC',
+    VARANGIANS: 'SLAVIC',
+    SLAVIC: 'SLAVIC',
+    BULGARIANS: 'SLAVIC',
+    MAGYAR: 'SLAVIC',
+    LITHUANIANS: 'SLAVIC',
+    POLES: 'SLAVIC',
+    BOHEMIANS: 'SLAVIC',
+    BYZANTINE: 'LATIN',
+    ARMENIANS: 'WEST_ASIA',
+    GEORGIANS: 'WEST_ASIA',
+    TURKS: 'STEPPE',
+    ORIE: 'ORIE',
+    BERBER: 'BERBER',
+    AFRICA: 'AFRICA',
+    ETHIOPIANS: 'AFRICA',
+    PERSIAN: 'PERSIAN',
+    SASANIAN: 'PERSIAN',
+    CENTRAL_ASIA: 'CENTRAL_ASIA',
+    WESTERN: 'WESTERN',
+    HUNS: 'STEPPE',
+    CUMAN: 'STEPPE',
+    MONGOL: 'STEPPE',
+    MOBEI_MONGOL: 'STEPPE',
+    YURT: 'STEPPE',
+    KHITAN: 'NORTHEAST',
+    XIANBEI: 'NORTHEAST',
+    NORTHEAST: 'NORTHEAST',
+    CENTRAL: 'CENTRAL',
+    WEI: 'CENTRAL',
+    BASHU: 'CENTRAL',
+    JIANGNAN: 'JIANGNAN',
+    TIBET: 'TIBET',
+    KOREA: 'KOREA',
+    JAPAN: 'JAPAN',
+    VIETNAMESE: 'MALAY',
+    KHMER: 'MALAY',
+    BURMESE: 'MALAY',
+    MALAY: 'MALAY',
+    BENGALIS: 'INDIA',
+    GURJARAS: 'INDIA',
+    INDIA: 'INDIA',
+    MUGHAL: 'INDIA',
+    PURU: 'PURU',
+    AMERICA: 'AMERICA',
+    MAYANS: 'AMERICA',
+    INCA: 'ANDE',
+    MUISCA: 'ANDE',
+    MAPUCHE: 'ANDE',
+    TUPI: 'ANDE',
+    // 旧区域名兼容映射
+    STEPPE: 'STEPPE',
+    NORTH: 'CENTRAL',
+    HEXI: 'WESTERN',
+    WEST_ASIA: 'ORIE',
+    ANDE: 'ANDE',
+    GREEK: 'GREEK',
+    TEUTONS: 'GERMANIC',
+    ITALIANS: 'LATIN',
+    IMPERIAL_ROME: 'LATIN',
+    CELTS_FEUDAL: 'LATIN',
+    TIMURID: 'CENTRAL_ASIA',
+    OTTOMAN: 'TURKS',
 };
+
+/** 旧区域键 → 66 建筑文化归一（兼容外部仍传旧 RegionType 的调用） */
+const LEGACY_TO_66_CULTURE: Record<string, TechCulture> = {
+    MOBEI_MONGOL: 'MONGOL',
+    YURT: 'MONGOL',
+    STEPPE: 'MONGOL',
+    WEST_ASIA: 'ORIE',
+    ANDE: 'INCA',
+    TEUTONS: 'GERMANIC',
+    ITALIANS: 'LATIN',
+    IMPERIAL_ROME: 'ROMA',
+    CELTS_FEUDAL: 'CELTS',
+    GREEK: 'SPARTANS',
+    NORTH: 'WEI',
+    HEXI: 'KHITAN',
+    TIMURID: 'CENTRAL_ASIA',
+    OTTOMAN: 'TURKS',
+};
+
+/** 归一化为 66 建筑文化键 */
+export function normalizeTechCulture66(culture: string): TechCulture {
+    return (LEGACY_TO_66_CULTURE[culture] ?? culture) as TechCulture;
+}
 
 /** 时代顺序：古典 < 封建 < 城堡 < 帝国 */
 const ERA_ORDER: readonly TechEra[] = ['antiquity', 'feudal', 'castle', 'imperial'];
-
-/**
- * 各文化区（二层具体文化）的巅峰时代 —— 🔴 主人定「时间划分」：
- *   古典只能用古典；封建用古典+封建；城堡用古典+封建+城堡；帝国用全部时代。
- * 未列出的 = 一层大区（拉丁/日耳曼/华夏…时代无关）→ 归帝国（可用全部时代）。
- */
-const REGION_ERA: Partial<Record<RegionType, TechEra>> = {
-    // 古典（–400）
-    GREEK: 'antiquity', THRACIAN: 'antiquity', PERSIAN: 'antiquity',
-    ASSYRIAN: 'antiquity', BABYLON: 'antiquity', HITTITES: 'antiquity',
-    EGYPT: 'antiquity', CARTHAGE: 'antiquity', SCYTHIANS: 'antiquity',
-    MAYANS: 'antiquity', MACEDONIAN: 'antiquity', HELLENIC: 'antiquity',
-    IMPERIAL_ROME: 'antiquity', GREEK_MERCENARY: 'antiquity', MAGNA_GRAECIA: 'antiquity',
-    ACHAEMENIDS: 'antiquity', PRE_QIN: 'antiquity', GOJOSEON: 'antiquity',
-    HUNS: 'antiquity', KUSH: 'antiquity', KUSHAN: 'antiquity', HEBREWS: 'antiquity',
-    NABATAEANS: 'antiquity', AMAZONS: 'antiquity', PURU: 'antiquity', WUSUN: 'antiquity', QIANG: 'antiquity',
-    // 封建（476–1050）
-    FRANKS: 'feudal', GOTHS: 'feudal', VIKINGS: 'feudal', BULGARIANS: 'feudal',
-    CUMAN: 'feudal', TURKS: 'feudal', ANGLO_SAXON: 'feudal', GHANA: 'feudal',
-    KHAZARS: 'feudal', VANDALS: 'feudal', LOMBARDS: 'feudal', ROURAN: 'feudal',
-    SOGDIANS: 'feudal', KHITAN: 'feudal', UIGHUR: 'feudal', MOHE: 'feudal',
-    SASANIAN: 'feudal', BYZANTINE: 'feudal', NANZHAO: 'feudal', SRIVIJAYA: 'feudal',
-    YARLUNG: 'feudal', HEPHTHALITES: 'feudal', AINU: 'feudal', RUS: 'feudal',
-    // 城堡（1050–1500）
-    TEUTONS: 'castle', ITALIANS: 'castle', SICILIANS: 'castle', MAGYAR: 'castle',
-    LITHUANIANS: 'castle', POLES: 'castle', BOHEMIANS: 'castle', BURGUNDIANS: 'castle',
-    BRITONS: 'castle', BENGALIS: 'castle', GURJARAS: 'castle', VIETNAMESE: 'castle',
-    KHMER: 'castle', ARMENIANS: 'castle', GEORGIANS: 'castle', ETHIOPIANS: 'castle',
-    BURMESE: 'castle', SONG: 'castle', GORYEO: 'castle', JOSEON: 'castle', MING: 'castle',
-    DALI: 'castle', MAMLUKS: 'castle', CRUSADERS: 'castle', KARA_KHITAN: 'castle',
-    TIMURID: 'castle', DELHI: 'castle', CASTILE: 'castle', SCOTLAND: 'castle',
-    HRE: 'castle', ALMOHAD: 'castle', SERBIA: 'castle', ILKHANATE: 'castle',
-    ARAGON: 'castle', TANGUT: 'castle', JURCHEN: 'castle', SELJUQ: 'castle',
-    JAVANESE: 'castle', CHIMU: 'castle', TARASCAN: 'castle', TAIRONA: 'castle', PASHTUN: 'castle',
-    // 帝国（1500–1914）
-    SPANISH: 'imperial', PORTUGUESE: 'imperial', MAPUCHE: 'imperial', MUISCA: 'imperial',
-    TUPI: 'imperial', OTTOMAN: 'imperial', FRENCH: 'imperial', SWEDISH: 'imperial',
-    MANCHU: 'imperial', MUGHAL: 'imperial', SAFAVID: 'imperial', RUSSIAN: 'imperial',
-    SIKH: 'imperial', IROQUOIS: 'imperial', TEHUELCHE: 'imperial',
-};
-
-/** 取某文化区的时代（时间划分门控用）：时代后缀区直取后缀，二层文化查表，其余（一层大区）归帝国。 */
-export function regionEra(region: RegionType): TechEra {
-    if (region.endsWith('_ANTIQUITY')) return 'antiquity';
-    if (region.endsWith('_FEUDAL')) return 'feudal';
-    if (region.endsWith('_CASTLE')) return 'castle';
-    if (region.endsWith('_IMPERIAL')) return 'imperial';
-    return REGION_ERA[region] ?? 'imperial';
-}
 
 /** 按真实历史年份映射所属四时代：古典 <476 / 封建 476–1049 / 城堡 1050–1499 / 帝国 ≥1500 */
 export function yearToTechEra(year: number): TechEra {
@@ -173,32 +168,49 @@ function isEraTimeGatedMode(): boolean {
     return mode ? mode !== 'melee' : true;
 }
 
-/** 取某年、某文化区已解锁的科技 */
-export function unlockedTechs(year: number, culture: RegionType): MilitaryTech[] {
-    const timeGated = isEraTimeGatedMode();
-    const techCulture = TECH_CULTURE_PARENT[culture] ?? culture;
-    // 🔴 [2026-10-20 主人定·百岁与剧本四时代科技门控]
-    //    · 古典时代（<476）：只能用古典时代科技（帕提亚战术前 53 年即属古典，无需等到 1500）；
-    //    · 封建时代（476–1050）：可用古典 + 封建科技（优先封建）；
-    //    · 城堡时代（1050–1500）：可用古典 + 封建 + 城堡科技（优先城堡）；
-    //    · 帝国时代（≥1500）：可用全部四个时代的科技（优先帝国）。
-    //    · 乱斗模式（melee）：不做年份门控，仅按文化自身时代上限。
-    const cultureEraIdx = ERA_ORDER.indexOf(regionEra(culture));
-    const maxEraIdx = timeGated
-        ? Math.min(cultureEraIdx, ERA_ORDER.indexOf(yearToTechEra(year)))
-        : cultureEraIdx;
-    return MILITARY_TECHS.filter((t) => {
-        if (ERA_ORDER.indexOf(t.era) > maxEraIdx) return false;
-        if (t.cultures === null) return true;   // 全区通用
-        // 🔴 专属科技（cultures 是 1~3 个小文化区）按原始文化精确匹配；通用科技按父大区匹配。
-        if (t.cultures.length <= 3) return t.cultures.includes(culture) || t.cultures.includes(techCulture);
-        return t.cultures.includes(techCulture);
-    });
+/** 文化专属特殊科技（cultures 是 1~4 个 66 建筑文化）= 优先必选；通用科技的 cultures 是 null 或大区列表。 */
+function isCultureUnique(t: MilitaryTech): boolean {
+    return t.cultures !== null && t.cultures.length <= 4;
 }
 
-/** 文化专属独特科技（cultures 是 1~3 个小文化区）= 必选；通用科技的 cultures 是 null 或 20+ 大表。 */
-function isCultureUnique(t: MilitaryTech): boolean {
-    return t.cultures !== null && t.cultures.length <= 3;
+/** 取某年、某文化（66 建筑文化）已解锁的科技 */
+export function unlockedTechs(year: number, culture: TechCulture): MilitaryTech[] {
+    const timeGated = isEraTimeGatedMode();
+    const c66 = normalizeTechCulture66(String(culture));
+    const parentCulture = TECH_CULTURE_PARENT[c66] ?? TECH_CULTURE_PARENT[String(culture)] ?? c66;
+    // 🔴 [2026-10-20 主人定·66 文化 + 优先本文化特殊科技 + 四时代通用科技门控]
+    //    1) 本文化的 DE 特殊科技（isCultureUnique）始终优先解锁，确保每个文化在任何年份都首先体现自己的 DE 独有科技；
+    //    2) 通用科技按当前历史年份所属四时代门控（古典 <476 只用古典通用科技；封建用古典+封建；城堡用古典+封建+城堡；帝国用全部时代）。
+    const maxEraIdx = timeGated ? ERA_ORDER.indexOf(yearToTechEra(year)) : ERA_ORDER.length - 1;
+
+    const matchCulture = (t: MilitaryTech): boolean => {
+        if (t.cultures === null) return true;
+        if (isCultureUnique(t)) {
+            return t.cultures.includes(c66) || t.cultures.includes(culture);
+        }
+        return t.cultures.includes(parentCulture) || t.cultures.includes(c66);
+    };
+
+    const list = MILITARY_TECHS.filter((t) => {
+        if (!matchCulture(t)) return false;
+        // 本文化的特殊科技始终优先出现
+        if (isCultureUnique(t)) return true;
+        return ERA_ORDER.indexOf(t.era) <= maxEraIdx;
+    });
+
+    // 保底满 10 个科技：若某文化在当前时代的通用池 + 特殊科技不足 10 个，按时代顺序从本文化后续时代通用科技补足至 10 个
+    if (list.length < 10) {
+        const pickedIds = new Set(list.map((t) => t.id));
+        const extra = MILITARY_TECHS
+            .filter((t) => !pickedIds.has(t.id) && matchCulture(t))
+            .sort((a, b) => ERA_ORDER.indexOf(a.era) - ERA_ORDER.indexOf(b.era));
+        for (const t of extra) {
+            list.push(t);
+            if (list.length >= 10) break;
+        }
+    }
+
+    return list;
 }
 
 /** FNV-1a 字符串哈希 → 32 位整数（确定性） */
@@ -222,23 +234,19 @@ function mulberry32(a: number): () => number {
 }
 
 /**
- * 从某文化+时代的科技池子里，给**一支军团**抽最多 **10 条**科技：
- *   · 文化专属独特科技 → 必选（保住「特色」）
- *   · 其余通用科技 → 按军团种子确定性随机补齐到 10 条
- *   · 池子不足 10 条就全给（早期时代文化科技本来就少，不会因此吃亏）
- * 🔴 主人定「每个军团只能随机 10 条科技、该文化专属为必选」——
- *    解决「帝国继承全部科技、条数碾压古典」的不公平。种子 = 军团势力，同军团每次结果一致。
+ * 从某文化（66 建筑文化）+ 时代的科技池子里，给攻守双方各抽固定 **10 条**科技：
+ *   · 本文化专属特殊科技（DE Unique Tech）→ 排在最前、100% 优先必选
+ *   · 其余通用科技 → 优先当前时代、再向下兼容早期时代，按军团种子确定性补齐到 10 条
  */
-export function selectLegionTechs(year: number, culture: RegionType, seed: string): MilitaryTech[] {
+export function selectLegionTechs(year: number, culture: TechCulture, seed: string): MilitaryTech[] {
     const pool = unlockedTechs(year, culture);
     const mandatory = pool.filter(isCultureUnique);
     const rest = pool.filter((t) => !isCultureUnique(t));
     const target = Math.min(10, pool.length);
     const need = Math.max(0, target - mandatory.length);
     const rnd = mulberry32(hashSeed(seed));
-    // 🔴 [2026-10-20 主人定] 四时代阶梯向下兼容 + 优先本时代：
-    //    古典只用古典；封建用古典+封建（优先封建）；城堡用古典+封建+城堡（优先城堡）；帝国可用全部（优先帝国→城堡→封建→古典）。
-    //    同一时代内部按军团种子确定性洗牌，从高时代往低时代依次补齐到 10 条。
+    // 🔴 [2026-10-20 主人定] 攻守双方都 10 个科技，优先出现本文化的特殊科技（mandatory 置顶），
+    //    其余槽位按时代由高到低确定性抽取补齐 10 个。
     const picked: MilitaryTech[] = [];
     for (let eraIdx = ERA_ORDER.length - 1; eraIdx >= 0 && picked.length < need; eraIdx--) {
         const eraKey = ERA_ORDER[eraIdx];
@@ -254,7 +262,8 @@ export function selectLegionTechs(year: number, culture: RegionType, seed: strin
     }
     const byEra = (a: MilitaryTech, b: MilitaryTech) =>
         ERA_ORDER.indexOf(a.era) - ERA_ORDER.indexOf(b.era) || a.id.localeCompare(b.id);
-    return [...mandatory, ...picked].sort(byEra);
+    // 本文化特殊科技排在最前，通用科技按时代排序跟在后面
+    return [...mandatory.sort(byEra), ...picked.sort(byEra)];
 }
 
 /**

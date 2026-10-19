@@ -8136,6 +8136,11 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "scale": 1,
             "offsetX": 0,
             "offsetY": -40
+        },
+        "/assets/CENTRAL/zhou_jifu.png": {
+            "scale": 1.21,
+            "offsetX": 0,
+            "offsetY": 3
         }
     },
     "folderGuides": {

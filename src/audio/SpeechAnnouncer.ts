@@ -524,7 +524,9 @@ export class SpeechAnnouncer {
   /**
    * 攻占城池（仅跟随军团）。攻方只报势力军（武将+精锐刚放过技，不重复），势=跟随军团这一仗的势：
    *   无将 → 「秦国军，攻占邯郸」（守方无武将，不续守方句）
-   *   有将 → 「秦国军，{胜法}，攻占邯郸。{守将}，{败象}，{降服}」（优/均/劣三套词）
+   *   有将 → 「秦国军，{胜法}，攻占邯郸。{守方势力}{守将}，{败象}，{降服}」（优/均/劣三套词）
+   * 🔴 [2026-10-20 主人令「战败方不报势力……应该是XX势力将军卸甲归降」] 守方句必须冠守方势力名，
+   *    不得只说「将军卸甲归降」；守将在世念真名，不在世将名本身即「将军」→「XX势力将军卸甲归降」。
    * 文化中心（regionLabel 有值）额外走 S 级：慢语速（🔴 2026-09-11 主人定：不加「XX中心」前缀，没有什么文化中心）。
    */
   public announceCityCapture(opts: {
@@ -532,6 +534,7 @@ export class SpeechAnnouncer {
     cityName: string;
     ju: CaptureJu;                        // 攻方这一仗的势（兵力比判定）
     attackerSkillId?: string | null;     // 保留
+    defenderFactionId?: string | null;   // 守方势力（败方也要报势力名）
     defenderGeneralId?: string | null;   // 守方武将（无=无将，不续守方句）
     regionLabel?: string | null;         // 文化中心时传（S 级 + 前缀）
   }): void {
@@ -549,7 +552,8 @@ export class SpeechAnnouncer {
       // 守方无武将 → 简报
       text = `${att}军，攻占${cityPhrase}`;
     } else {
-      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
+      const defFaction = opts.defenderFactionId ? getFactionNameForSpeech(opts.defenderFactionId) : "";
+      text = `${att}军，${CAPTURE_WIN[ju]}，攻占${cityPhrase}。${defFaction}${getGeneralNameForSpeech(defGeneral.generalId, defGeneral.generalName)}，${CAPTURE_DEFEAT_SIGN[ju]}，${CAPTURE_DEFEAT_YIELD[ju]}`;
     }
     console.log("[Speech] 攻占:", text);
     if (isCenter) {

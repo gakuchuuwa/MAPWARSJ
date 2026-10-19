@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_WALL_POST_D25",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 180,
+  "anchor_x": 100,
+  "anchor_y": 152,
+  "sld_source": "b_ande_wall_stone_destr_25"
+}

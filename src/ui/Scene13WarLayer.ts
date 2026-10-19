@@ -32,8 +32,9 @@ import type { CityType } from '../types/core';
 import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { resolveEnvironmentClimate, type Scene13ClimatePlan, type Scene13ClimateInput } from './scene13/Scene13EnvironmentGenerator';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
-import { selectLegionTechs, applyTechsToStats } from '../systems/MilitaryTechState';
-import type { MilitaryTech } from '../data/MilitaryTechs';
+import { selectLegionTechs, applyTechsToStats, normalizeTechCulture66 } from '../systems/MilitaryTechState';
+import type { MilitaryTech, TechCulture } from '../data/MilitaryTechs';
+import { GENERAL_CULTURE } from '../data/GeneralCulture';
 import { popCostOf } from '../data/UnitPopCost';
 import { GameConfig } from '../config/GameConfig';
 import { getSiegeWeaponsForCulture } from '../data/SiegeWeaponsByCulture';
@@ -417,8 +418,16 @@ export class Scene13WarLayer {
     private skillPanicTimer: [number, number] = [0, 0];
     /** 【并】挫敌锐（攻城战破防）持续倒计时（秒）：该侧（受害方）守军与城墙/建筑受伤害 ×1.35 */
     private skillVulnTimer: [number, number] = [0, 0];
-    /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 2.6s 再放 */
+    /** 双方武将技错开释放冷却（秒）：禁止双方同帧同时放技；同时满槽时攻方（0）先放，守方（1）隔 SKILL_CAST_GAP_SEC 再放 */
     private skillCastCooldown: number = 0;
+    /**
+     * 🔴 [2026-10-20 主人令「攻守双方武将技不要同时释放」]
+     * 错开窗口必须盖住整段 Cut-in（skill-cut-in 动画 3s）再留余量：旧值 2.6s < 3s，前一个大字没收尾后一个就弹出，看上去像同时放。
+     * 另加**真实时间**闸门：战斗加速时 dt 被放大，游戏秒冷却会被压缩到不足 3 秒真实时间。
+     */
+    private static readonly SKILL_CAST_GAP_SEC = 3.4;
+    /** 下一次允许放技的真实时间（performance.now 毫秒） */
+    private skillCastWallUntil: number = 0;
 
     /** 初始化本场战术模式双方武将技集气槽与速率 */
     private initScene13SkillSystem(init: Scene13WarInit): void {
@@ -431,6 +440,7 @@ export class Scene13WarLayer {
         const defGid = (rawDefGid && rawDefGid !== rawAttGid) ? rawDefGid : null;
         this.sideGeneralId = [rawAttGid, defGid];
         this.skillCastCooldown = 0;
+        this.skillCastWallUntil = 0;
 
         const resolveEliteTier = (eliteName: string | null | undefined, factionId: string | null | undefined, cityId: string | null | undefined, isDef: boolean): number | null => {
             const cleanName = eliteName?.trim();
@@ -576,14 +586,17 @@ export class Scene13WarLayer {
             if (this.skillRatePerSec[f] <= 0) continue;
             this.skillGauge[f] = Math.min(100, this.skillGauge[f] + this.skillRatePerSec[f] * dt);
         }
-        // 严禁同帧同时释放：按 [0(攻方), 1(守方)] 顺序检视，同时满槽时攻方优先释放，并进入 2.6s 错开窗口
-        if (this.skillCastCooldown <= 0) {
+        // 严禁同时释放：按 [0(攻方), 1(守方)] 顺序检视，同时满槽时攻方优先释放；
+        // 之后进入错开窗口（游戏秒 + 真实秒双闸），前一方 Cut-in 完整收尾后另一方才能放
+        const wallNow = performance.now();
+        if (this.skillCastCooldown <= 0 && wallNow >= this.skillCastWallUntil) {
             for (const f of [0, 1] as const) {
                 if (this.skillGauge[f] >= 100) {
                     this.skillGauge[f] = 0;
                     const chosen = this.queuedSkill[f] ?? this.resolveAutoNextSkill(f);
                     this.queuedSkill[f] = null; // 释放后清空手动钦定，回归自动见招拆招
-                    this.skillCastCooldown = 2.6;
+                    this.skillCastCooldown = Scene13WarLayer.SKILL_CAST_GAP_SEC;
+                    this.skillCastWallUntil = wallNow + Scene13WarLayer.SKILL_CAST_GAP_SEC * 1000;
                     this.triggerScene13Skill(f, chosen);
                     break;
                 }
@@ -1208,8 +1221,44 @@ export class Scene13WarLayer {
     }
 
     /**
+     * [2026-10-20 主人定·66 建筑文化科技] 解析攻守双方的 66 建筑文化：
+     *   1) 攻城战守方（side === 1 && battleType === 'siege'）：取守城据点的 `buildingStyle`（66 文化）；
+     *   2) 带将领的一方：取 `GENERAL_CULTURE[generalId]`（每个武将的独立 66 文化属性）；
+     *   3) 按势力查据点或主将：取该势力据点的 `buildingStyle` 或势力主将的 `GENERAL_CULTURE`；
+     *   4) 兜底归一化 `this.sideCulture[side]`。
+     */
+    private sideTechCulture(side: 0 | 1): TechCulture {
+        if (side === 1 && this.battleType === 'siege') {
+            const cityStyle = this.defenderCityRecord()?.buildingStyle;
+            if (cityStyle) return normalizeTechCulture66(String(cityStyle));
+        }
+        const gid = this.sideGeneralId[side];
+        if (gid && GENERAL_CULTURE[gid]) {
+            return normalizeTechCulture66(GENERAL_CULTURE[gid]);
+        }
+        const fid = this.sideFaction[side];
+        if (fid) {
+            const facGen = getFactionGeneral(fid)?.generalId;
+            if (facGen && GENERAL_CULTURE[facGen]) {
+                return normalizeTechCulture66(GENERAL_CULTURE[facGen]);
+            }
+            const city = (CITIES_V2 as any[]).find((c) => c.factionId === fid);
+            if (city?.buildingStyle) {
+                return normalizeTechCulture66(String(city.buildingStyle));
+            }
+        }
+        return normalizeTechCulture66(this.sideCulture[side]);
+    }
+
+    private sideTechSeed(side: 0 | 1): string {
+        return this.sideFaction[side]
+            || this.sideGeneralId[side]
+            || (side === 1 ? (this.defenderCityId || 'defender') : 'attacker');
+    }
+
+    /**
      * [军事科技] 取某兵种完整数据：基础档 + 该方（f = 0 攻 / 1 守）已解锁科技。
-     * 🔴 每方按自己文化区 + 当前年份算（同一兵种攻守双方数值可能不同）。
+     * 🔴 每方按自己 66 建筑文化 + 当前年份算（同一兵种攻守双方数值可能不同）。
      * 🔴 返回新对象、绝不原地改 WAR_TYPES（就地改会逐场累积爆表）。分表缓存，一年才失效一次。
      */
     private statsFor(key: string, f: number): WarType & { sight?: number } {
@@ -1221,14 +1270,9 @@ export class Scene13WarLayer {
         let v = this.techStats[f].get(key);
         if (!v) {
             const base = WAR_TYPES[key] ?? WAR_TYPES.light_infantry;
-            const techs = selectLegionTechs(y, this.sideCulture[f] as RegionType, this.sideFaction[f]);
+            const side: 0 | 1 = f === 0 ? 0 : 1;
+            const techs = selectLegionTechs(y, this.sideTechCulture(side), this.sideTechSeed(side));
             v = applyTechsToStats(base, key, techs, SIGHT_MAP[key] ?? 160);
-            // 🔴 [2026-08-31] 八环质量优势分给血量的那一半（见 start() 的拆分说明）。
-            //    挂在这里而不是 spawn 处，是为了让**所有**读血的地方自动一致 ——
-            //    出兵初始血（`hp: statsFor(...).hp`）和索敌里「目标快死了就不换人」用的
-            //    `foeMax`（statsFor(foe).hp）必须同基准，只改 spawn 会让半血判定提前触发。
-            //    sideHpMult 在 start() 里先于 techStats 重建赋值，所以这里读到的一定是本场的值。
-            //    ⚠️ 城墙/城门走上面 WALL_GATE_STATS 提前 return，**不吃**这个加成（建筑不属于谁带的兵）。
             if (this.sideHpMult[f] !== 1) v = { ...v, hp: Math.max(1, Math.round(v.hp * this.sideHpMult[f])) };
             this.techStats[f].set(key, v);
         }
@@ -1239,27 +1283,22 @@ export class Scene13WarLayer {
     private onTechYearChanged(year: number): void {
         this.techYear = year;
         this.techStats = [new Map(), new Map()];
+        this.techListYear = Number.NaN;
+        this.techListCache = null;
     }
 
     /**
      * [军事科技] 双方各自已解锁的科技名（13 战斗面板「科技行」用；表顺序）。
-     * 每方按自己文化区 + 当前年份算——同一时刻双方科技树可能不同（门控），观众一目了然。
+     * 每方按自己 66 建筑文化 + 当前年份算——优先出现本文化特殊科技，攻守双方均固定 10 个科技。
      */
     public getSideTechs(): { attacker: MilitaryTech[]; defender: MilitaryTech[] } | null {
         if (!this.active && !this.lingering) return null;
         const year = this.techYearGetter?.() ?? this.techYear;
-        // 🔴 必须返回**完整科技对象**：面板要用 `effects` 汇总数值。
-        //    2026-08-18 曾返回精简的 {id,name}，`summarizeTechEffects` 遍历 t.effects 当场抛
-        //    `t.effects is not iterable`，整个 updateStats 中断 → 面板什么都不显示（主人实锤「科技呢，去哪了」）。
-        //    当时用 `as never` 把类型错误压掉了，tsc 不报、运行时每帧炸。别再压类型。
-        // 🔴 [性能 2026-08-18] 面板每帧都调这里，而 unlockedTechs 每次都 filter 一遍并**新建数组**。
-        //    科技只随「跨年」变，按年缓存即可 —— 每帧两次数组分配纯属白烧（600 兵的战场上
-        //    每一点每帧开销都要算清，见 perfStep/perfRender 探针）。
         if (this.techListYear !== year || !this.techListCache) {
             this.techListYear = year;
             this.techListCache = {
-                attacker: selectLegionTechs(year, this.sideCulture[0] as RegionType, this.sideFaction[0]),
-                defender: selectLegionTechs(year, this.sideCulture[1] as RegionType, this.sideFaction[1]),
+                attacker: selectLegionTechs(year, this.sideTechCulture(0), this.sideTechSeed(0)),
+                defender: selectLegionTechs(year, this.sideTechCulture(1), this.sideTechSeed(1)),
             };
         }
         return this.techListCache;
@@ -1411,6 +1450,8 @@ export class Scene13WarLayer {
         this.techYearGetter = init.getYear ?? null;
         this.techYear = this.techYearGetter?.() ?? GameConfig.TIME.TIMELINE_START_YEAR;
         this.techStats = [new Map(), new Map()];
+        this.techListYear = Number.NaN;
+        this.techListCache = null;
         this.batchCd = 0;
         this.deployT = DEPLOY_SECS;
         this.marching = true;    // 待命结束后进入列阵推进（见 MARCH_REL）
@@ -5632,15 +5673,16 @@ export class Scene13WarLayer {
         if (!target || target.f === m.f) return false;
         if ('sprite' in target && (target.sprite.destroyed || (!target.bld && target.sprite.obstructionDisabled))) return false;
         if ('sprite' in target && target.bld && (target.sprite.collapse || target.sprite.asset.includes('_RUBBLE'))) return false;
+        const td2 = 'sprite' in target ? this.bldDist2(m.x, m.y, target) : (target.x - m.x) ** 2 + (target.y - m.y) ** 2;
         if (m.guardPost) {
             return target.hp > 0
-                && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight
+                && td2 < sight * sight
                 && ('sprite' in target || !this.wallSeparates(m, target));
         }
         const wallKeep = 'sprite' in target && target.linked === true && !target.sprite.obstructionDisabled
             && this.battleType === 'siege' && m.f === 0;
         return (target.hp > 0 || wallKeep)
-            && (target.x - m.x) ** 2 + (target.y - m.y) ** 2 < sight * sight * 1.44
+            && td2 < sight * sight * 1.44
             && ('sprite' in target || !this.wallSeparates(m, target));
     }
 
@@ -5722,6 +5764,34 @@ export class Scene13WarLayer {
         if (!b || b.hp <= 0 || b.sprite.destroyed || b.sprite.obstructionDisabled) return null;
         if (m.foe === b || this.battleSec - (m.blockedAt ?? -99) < 1.5) return b;
         return null;
+    }
+
+    /**
+     * 🔴 [2026-10-20 修复「兵和攻城武器在墙角卡着不停颤动闪抖却打不到」]
+     * 单位到城墙/城门/建筑的等效距离平方：
+     * 等轴测 2:1 投影下，正方形碰撞盒 `[-limit, +limit]²` 在屏幕上是扁菱形，左右端角像素距离（96×limit，骑兵 115px / 攻城槌 134px）
+     * 比正对墙面中心距离（53.67×limit，骑兵 64px / 攻城槌 75px）远 1.79 倍，超出 `REACH`（75~83px）形成墙角死区。
+     * 此处按等轴测碰撞盒切比雪夫格距折算为正对墙面等效像素距离平方，使墙角与墙面正中完全同距。
+     */
+    private bldDist2(x: number, y: number, b: WarBuilding): number {
+        let bestD2 = (b.x - x) ** 2 + (b.y - y) ** 2;
+        const isoScale2 = (TAC_TILE_W * TAC_TILE_W + TAC_TILE_H * TAC_TILE_H) / 4; // 48² + 24² = 2880 (53.6656²)
+        const checkSp = (sp: DecorSprite): void => {
+            const dx = x - sp.x, dy = y - sp.y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < bestD2) bestD2 = d2;
+            const ob = sp.obstruction;
+            if (ob && !sp.obstructionDisabled && !sp.destroyed) {
+                const mapX = Math.abs(dx / TAC_TILE_W + dy / TAC_TILE_H);
+                const mapY = Math.abs(dy / TAC_TILE_H - dx / TAC_TILE_W);
+                const effTile = Math.max(0, Math.max(mapX - Math.max(0, ob.x - 0.95), mapY - Math.max(0, ob.y - 0.95)));
+                const isoD2 = effTile * effTile * isoScale2;
+                if (isoD2 < bestD2) bestD2 = isoD2;
+            }
+        };
+        checkSp(b.sprite);
+        if (b.extraSprites) for (const sp of b.extraSprites) checkSp(sp);
+        return bestD2;
     }
 
     /** 攻城武器的目标：尚未打下任何城门时只取还立着的城门（优先打离自己近的城门）；打下一座城门后，周围的城墙、建筑和其他城门一档并列，由调用方取离自己最近的那个。
@@ -6063,18 +6133,23 @@ export class Scene13WarLayer {
             const rng = st.rng ?? 0;
             const reach = Math.max(rng, 65) + this.radiusOf(mKey);
             const reach2 = reach * reach;
+            const bw = rng <= 65 && this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
+            if (bw && bw.f !== m.f) {
+                if (reserve) bw.claims++;
+                return bw;
+            }
             const tier = this.siegeFirstTier(m.f as 0 | 1);
             if (tier.length > 0) {
                 let pick: WarBuilding | null = null, pd = Infinity, far: WarBuilding | null = null, fard = Infinity;
                 for (const b of tier) {
-                    const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                    const d = this.bldDist2(m.x, m.y, b);
                     const s = Math.sqrt(d);
                     if (s < fard) { fard = s; far = b; }
                     if (minR2 > 0 && d < minR2) continue;
                     if (s < pd) { pd = s; pick = b; }
                 }
                 const t = pick ?? far;
-                const td2 = t ? (t.x - m.x) ** 2 + (t.y - m.y) ** 2 : Infinity;
+                const td2 = t ? this.bldDist2(m.x, m.y, t) : Infinity;
                 // 城门/城墙/建筑已在射程内 ⇒ 直接锁定攻城目标
                 if (t && td2 <= reach2) {
                     if (reserve) t.claims++;
@@ -6093,17 +6168,27 @@ export class Scene13WarLayer {
             }
         }
         // 🔴 [2026-10-14 主人定「士兵攻击顺序：士兵，城门，建筑包括箭塔」「所有都是只打近的」「士兵只认城门，不砍墙」]
-        //    攻方士兵（含乱入者）：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。城墙一律不砍。
+        //    攻方士兵（含乱入者）：视野内走得到的兵 → 城墙完整且人在城外时打最近的城门 → 否则打最近的建筑（含箭塔）。
         if (this.battleType === 'siege' && m.f === 0) {
-            if (manChosen) { if (reserve) manChosen.claims++; return manChosen; }
+            const mKey = wm.key ?? '';
+            const mRng = mKey ? (this.statsFor(mKey, 0).rng ?? 0) : 0;
+            const mReach = Math.max(mRng, 65) + (mKey ? this.radiusOf(mKey) : 8);
+            const bg = this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
+            // 近战兵已被墙/门死死顶住（stuckT > 0.35s）且眼前的敌兵不在挥刀距离内 ⇒ 先砍开正挡着自己的这段墙/门，防隔墙锁敌在墙角空抖
+            if (manChosen && !(bg && bg.f !== m.f && mRng <= 65 && (wm.stuckT ?? 0) > 0.35 && (manChosen.x - m.x) ** 2 + (manChosen.y - m.y) ** 2 > (mReach + 18) ** 2)) {
+                if (reserve) manChosen.claims++;
+                return manChosen;
+            }
             this.ensureGateInfo();
             const gatesOnly = this.siegeWithWalls && !this.ringOpen() && !this.insideRing(m.x, m.y);
-            // 🔴 [2026-10-15 主人报「攻方打破城门后，不往里面走」] 被还立着的城门挡住（险要内圈门：流场按门可通行把人带到门前）⇒ 打这座门
-            const bg = this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
-            if (bg && bg.key === 'STONE_GATE' && bg.f !== m.f) { if (reserve) bg.claims++; return bg; }
+            // 🔴 [2026-10-15 主人报「攻方打破城门后，不往里面走」] 被还立着的城门挡住或近战兵已被墙顶住卡位 ⇒ 打这座门/墙
+            if (bg && bg.f !== m.f && (bg.key === 'STONE_GATE' || (mRng <= 65 && (wm.stuckT ?? 0) > 0.35))) {
+                if (reserve) bg.claims++;
+                return bg;
+            }
             // 🔴 [2026-10-15 主人令「让每一队有一个统一的攻击目标」] 若本队已统一锁定某座城门/建筑 targetBld，全队 50 人集火该建筑，不各自散去打旁边的楼
             if (lt?.targetBld && this.wallStanding(lt.targetBld) && (!gatesOnly || lt.targetBld.key === 'STONE_GATE')) {
-                const dBld = (lt.targetBld.x - m.x) ** 2 + (lt.targetBld.y - m.y) ** 2;
+                const dBld = this.bldDist2(m.x, m.y, lt.targetBld);
                 if (dBld < r2) {
                     if (reserve) lt.targetBld.claims++;
                     return lt.targetBld;
@@ -6119,15 +6204,14 @@ export class Scene13WarLayer {
             let t: WarBuilding | null = null, td = r2;
             for (const b of pool) {
                 if (b.f === m.f || !this.wallStanding(b)) continue;
-                const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
+                const d = this.bldDist2(m.x, m.y, b);
                 if (d < td) { td = d; t = b; }
             }
             // 🔴 [2026-10-15 主人令「优先士兵打兵，其次城门建筑，但是现在兵到了墙根后，也不打墙，也过不去」]
             //    最后一档：视野内兵、城门、建筑都没有，又正被一段墙挡着（blockedWall：1.5 秒内被它推开过、它还立着）⇒ 砍这一段墙。
             //    只砍挡着自己的那段；打穿（hp≤0）即解除碰撞，blockedWall 不再返回它，不会接着砍。
-            if (!t) {
-                const bw = this.blockedWall(m as Partial<WarMan>);
-                if (bw && bw.f !== m.f) t = bw;
+            if (!t && bg && bg.f !== m.f) {
+                t = bg;
             }
             if (t && reserve) t.claims++;
             return t;
@@ -7305,6 +7389,18 @@ export class Scene13WarLayer {
                 const limitY = obstruction.y + unitTileRadius;
                 if (pass === 0 && Math.abs(mapX) < limitX + 0.15 && Math.abs(mapY) < limitY + 0.15) {
                     if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
+                    // 单位已贴在墙/建筑碰撞边界（<= limit + 0.08）站桩攻击而不再产生穿透时，持续续期接触时间戳，防 0.35s / 1.5s 周期性断锁闪抖
+                    if (Math.abs(mapX) <= limitX + 0.08 && Math.abs(mapY) <= limitY + 0.08) {
+                        const wbTouch = this.wallBySprite?.get(object);
+                        if (wbTouch && wbTouch.f !== m.f && (m.blockedBy === wbTouch || m.foe === wbTouch)) {
+                            m.blockedBy = wbTouch;
+                            m.blockedAt = this.battleSec;
+                        }
+                        if (m.lastObsSprite === object || (m.foe && 'sprite' in m.foe && (m.foe.sprite === object || m.foe.extraSprites?.includes(object)))) {
+                            m.lastObsSprite = object;
+                            m.lastObsAt = this.battleSec;
+                        }
+                    }
                 }
                 if (Math.abs(mapX) >= limitX || Math.abs(mapY) >= limitY) continue;
                 const penX = limitX - Math.abs(mapX);
@@ -7795,17 +7891,7 @@ export class Scene13WarLayer {
             if (foe) {
                 // 🔴 [2026-09-11] 这里**没有**最小射程出口：只剩贴脸目标时照常出手扣血，
                 //    只是不生成弹丸（见下面 tooClose）。理由见 canKeepTarget 头注。
-                let fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
-                // 若目标是带侧翼碰撞块的多格城门/建筑（如 STONE_GATE 含左右 ±72px extraSprites），
-                // 士兵贴在门翼或建筑边缘时离中心 (foe.x, foe.y) 可达 90~150px（> REACH=73px），
-                // 若只算中心点距离会导致「已被门翼挡住 → 判够不着继续追 → 被推出去 → 下一帧又冲」的贴墙高频闪动；
-                // 此处取离主/副碰撞精灵的最近距离，且若刚被该目标实体碰撞挡住（0.35s 内）则直接视为已贴身够得着。
-                if ('sprite' in foe && foe.extraSprites) {
-                    for (const sp of foe.extraSprites) {
-                        const sd2 = (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2;
-                        if (sd2 < fd2) fd2 = sd2;
-                    }
-                }
+                const fd2 = 'sprite' in foe ? this.bldDist2(m.x, m.y, foe) : (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
                 const touchingFoeBld = 'sprite' in foe && (
                     (m.blockedBy === foe && this.battleSec - (m.blockedAt ?? -99) < 0.35)
                     || ((m.lastObsSprite === foe.sprite || (foe.extraSprites ? foe.extraSprites.includes(m.lastObsSprite as any) : false))
@@ -7987,8 +8073,12 @@ export class Scene13WarLayer {
                     // 角度由 jx/jy 推出（出生时定死，终身不变），所以每个兵稳定从同一个方位围上去。
                     // 停手判据仍看「离目标本人多远」（inReach），所以偏移不会让人够不着。见 CHASE_RING。
                     const ra = Math.atan2(m.jy, m.jx);
-                    const rawChase = { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
-                    const chasePt = isGuard ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase);
+                    const rawChase = 'sprite' in foe
+                        ? { x: foe.x, y: foe.y }
+                        : { x: foe.x + Math.cos(ra) * CHASE_RING, y: foe.y + Math.sin(ra) * CHASE_RING };
+                    const chasePt = isGuard
+                        ? rawChase
+                        : (('sprite' in foe && !foe.bld) ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase));
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
                     const fd = Math.hypot(fdx, fdy);

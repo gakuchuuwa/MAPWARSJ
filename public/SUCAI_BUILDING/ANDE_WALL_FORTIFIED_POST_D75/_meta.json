@@ -1,0 +1,9 @@
+{
+  "name": "ANDE_WALL_FORTIFIED_POST_D75",
+  "frames": 1,
+  "box_w": 152,
+  "box_h": 136,
+  "anchor_x": 88,
+  "anchor_y": 104,
+  "sld_source": "b_ande_wall_fortified_destr_75"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "AFRI_WALL_POST_D25",
+  "frames": 1,
+  "box_w": 168,
+  "box_h": 180,
+  "anchor_x": 108,
+  "anchor_y": 148,
+  "sld_source": "b_afri_wall_stone_destr_25"
+}
