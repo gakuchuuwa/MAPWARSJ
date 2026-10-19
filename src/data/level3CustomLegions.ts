@@ -60,20 +60,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代鲜卑军团」。
     //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
-    {
-        name: '城堡时代大理军团',
-        formationMode: 'triangle',
-        slots: [
-            { type: 'battle_elephant', count: 2 },
-            { type: 'jian_swordsman', count: 3 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 jian_swordman_shielded（与华夏步兵同一 DE 单位、同一兵模）
-            { type: 'elite_chukonu', count: 4 },
-        ],
-        regions: ['DALI'],
-        parentLegion: '东亚军团',
-        shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'hero_zhugeliang',
-        buildingStyle: 'BASHU',
-    },
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
     //    文化区 `ROURAN` 的默认军团与挂它的势力一并改指「封建漠北军团」。
     // 🔴 [2026-10-05 主人定「封建时代渤海军团，封建时代高句丽军团选一个删除」] —— 已删「封建时代高句丽军团」。

@@ -58,6 +58,7 @@
 
 1. **军团 = 四时代 × 建筑文化**：一支军团由 `age`（古典/封建/城堡/帝国）＋ `buildingStyle`（建筑文化，62＋4）唯一确定；同一组「建筑文化 × 时代」只对应**一支二级军团**。「武将 ↔ 军团」就以这条配对。
 2. **武将 = 四时代 + 据点建筑文化**：每个武将的 `GENERAL_ERA`（四时代）× 其**所在据点的 `buildingStyle`** → 命中唯一的二级军团，就是他的军团；势力表 `FACTION_COMPOSITIONS` 必须挂这一支。
+2.1 **每个武将单独有一个文化属性**（2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」）：武将文化表 `src/data/GeneralCulture.ts`（generalId → 建筑文化，由 `tools/gen-general-culture.mts` 生成，取所在势力据点的建筑文化；战场守方科塞亚、乌克西亚无据点，按史实定为 PERSIAN）。武将的军团 ＝ `GENERAL_ERA` × `GENERAL_CULTURE` → 二级军团表的唯一一格。新增武将必须同时有时代和文化。校验：`npx tsx --import ./tools/sim-preload.mjs tools/verify-general-legion.mts`。
 3. **三级军团的武将不动**：已经单独配到**三级军团**（含「古典时代先秦军团」等细分专用军团）的武将，一律保持原样，不按本铁律改。
 4. **一个武将一个军团**（2026-10-19 主人再令：「我要的是，武将和军团对应好。一个武将要有一个对应的军团」，取代原「一势力一军团、时代冲突不硬改」）：势力表仍写一支军团（＝主将的军团）；同一势力里时代不同的武将，在 `FACTION_GENERALS` 该武将条目上写 `legionName`（武将自己的军团），游戏按武将取：`getFactionLegionComposition(势力, 武将)`、挂将时军团名跟武将走。校验：武将的军团 ＝ 其时代（`GENERAL_ERA`）× 所在据点建筑文化 → 唯一二级军团。
 4.1 **军团被删后，武将自己找军团**（2026-10-19 主人令「当军团被删除后，武将要学会自己找对应的军团」）：武将此刻用的军团（自己的 → 势力挂的）若已不存在，游戏按规则自动改找二级军团：`getLegionNameOfGeneral(势力, 武将)`（`CultureFormations.ts`）→ `resolveFallbackForFaction(势力, 武将)`（`LegionFallbackOnDelete.ts`，武将时代 × 据点建筑文化；先秦细分标签的武将仍归「古典时代先秦军团」）。删军团时编辑器同一套规则改挂势力；不用等人手动重挂。

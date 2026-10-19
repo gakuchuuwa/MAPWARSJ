@@ -2065,7 +2065,7 @@ buildingStyle: 'WEI', troops: 10000, tier: 2,
 
 
 
-    { id: 'city_cili', name: '慈利', factionId: 'tan_d', lat: 29.43, lng: 111.12, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'JIANGNAN' },
+    { id: 'city_cili', name: '慈利', factionId: 'tan_d', lat: 29.43, lng: 111.12, type: 'stockade', troops: 10000, region: 'JIANGNAN', buildingStyle: 'BASHU' },
 
     { id: 'city_xiushan', name: '秀山', factionId: 'ran_d', lat: 28.379316, lng: 109.061279, type: 'stockade', troops: 10000, region: 'BASHU', buildingStyle: 'BASHU' },
 
@@ -2261,7 +2261,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_aerjier', name: '阿尔及尔', factionId: 'babali', lat: 36.75, lng: 3.05, type: 'medium_city', troops: 10000, region: 'AFRICA_IMPERIAL', buildingStyle: 'BERBER' },
     { id: 'city_bujiaya', name: '布佳亚', factionId: 'hamade', lat: 36.75, lng: 5.08, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：迦太基：腓尼基—罗马，DE 无布匿分支，取地中海的罗马/意大利古典石堡
-    { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'LATIN', mirror: true },
+    { id: 'city_jiataji', name: '迦太基', factionId: 'buni', lat: 36.85, lng: 10.32, type: 'big_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER', mirror: true },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：凯鲁万：突尼斯，柏柏尔／阿格拉布王朝都城（region=BERBER）
     { id: 'city_kailuwan', name: '凯鲁万', factionId: 'aguelabu', lat: 35.67, lng: 10.1, type: 'small_city', troops: 10000, region: 'BERBER', buildingStyle: 'BERBER' },
     // 🔴 [2026-09-18 主人定：一级按真实地理、二级按民族政权] 原「ORIE」→ 归 BERBER：的黎波里：利比亚，柏柏尔—马格里布东部
@@ -2347,7 +2347,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_luoma', name: '罗马城', factionId: 'luoma_diguo', lat: 41.9, lng: 12.49, type: 'big_city', troops: 10000, region: 'IMPERIAL_ROME', buildingStyle: 'ROMA' },
     { id: 'city_yadian', name: '雅典', factionId: 'xila', lat: 37.98, lng: 23.72, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'ATHENIANS', note: '定级依据§6.2：雅典非关隘/要塞/堡垒，按城市判级；城墙内+比雷埃夫斯 12–18万（公元前431年，古典人口学通行算法）>10万 → 中城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 SPANISH：加的斯：西班牙
-    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'SPANISH' },
+    { id: 'city_jiadisi', name: '加的斯', factionId: 'feiniqi', lat: 36.52, lng: -6.28, type: 'small_city', troops: 10000, region: 'CARTHAGE', buildingStyle: 'BERBER' },
     { id: 'city_lisiben', name: '里斯本', factionId: 'putaoya', lat: 38.72, lng: -9.13, type: 'medium_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '🔴 [2026-10-05 主人令「建筑风格必须是当地的，和殖民者、武将没关系」] 里斯本是**葡萄牙王国首都**（1147 年阿方索一世自摩尔人手中收复，葡萄牙本土），风格挂葡萄牙（PORTUGUESE／一级 MEDI）—— 它同时是 62 类「葡萄牙」的代表据点（城堡 PORT_CASTLE_AGE3）。旧值 LATIN_CASTLE（意大利）与本地不符。' },
 
     { id: 'city_weiyeena', name: '维也纳', factionId: 'habusibao', lat: 48.2, lng: 16.37, type: 'small_city', troops: 10000, region: 'HRE', buildingStyle: 'GERMANIC', note: '哈布斯堡治所；中世约2–2.5万、1600约5万，未达约10万中城门槛，降 small_city' },
@@ -2466,7 +2466,7 @@ buildingStyle: 'JAPAN', troops: 10000, tier: 4,
 buildingStyle: 'PERSIAN', troops: 10000, tier: 4,
         note: '法里亚布；古兹根小城',
     },
-    { id: 'city_mengle', name: '勐泐城', factionId: 'dai', lat: 22.0000, lng: 100.8000, type: 'small_city', region: 'BASHU', buildingStyle: 'BASHU', troops: 10000, note: '刀应勐率傣兵助明御缅' },
+    { id: 'city_mengle', name: '勐泐城', factionId: 'dai', lat: 22.0000, lng: 100.8000, type: 'small_city', region: 'BASHU', buildingStyle: 'BURMESE', troops: 10000, note: '刀应勐率傣兵助明御缅' },
     { id: 'city_chingkham', name: '清坎寨', factionId: 'taiyuan', lat: 19.52, lng: 100.3, type: 'stockade', troops: 10000, region: 'KHMER', buildingStyle: 'MALAY', note: '🔴 [2026-10-18 按史] 清坎寨为澜沧/暹罗边陲湄公河渡口泰老聚落：干栏式高脚柚木排屋、穿斗木构、歇山重檐草瓦顶与原木寨栏，不是高棉石窟；项目无 SIAMESE 分支，退用 MALAY 木石水寨作最接近的木质干栏代理。' },
 
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「SEAS」推出的二级与史实不符 → 归 KHMER：素可泰：泰族立国，承吴哥高棉体系（62 类无泰族分支，择近高棉）
@@ -2877,7 +2877,7 @@ buildingStyle: 'TIBET', troops: 10000,
 
 
     { id: 'city_mengmao', name: '勐卯', factionId: 'luchuan', lat: 24.01, lng: 97.85, type: 'stockade', region: 'BASHU',
-buildingStyle: 'BASHU', troops: 10000,
+buildingStyle: 'BURMESE', troops: 10000,
         note: '勐卯；麓川小城',
     },
     { id: 'city_xiwanjin', name: '悉万斤', factionId: 'yada', lat: 36.66, lng: 65.75, type: 'stockade', troops: 10000, region: 'CENTRAL_ASIA', buildingStyle: 'CENTRAL_ASIA' },
@@ -3666,7 +3666,7 @@ buildingStyle: 'TIBET', troops: 10000,
     { id: 'city_kanpeier', name: '坎佩尔', factionId: 'keernuwaye', lat: 47.995, lng: -4.103, type: 'small_city', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS', note: '布列塔尼首府，圣科朗坦大教堂' },
     { id: 'city_waerna', name: '瓦尔纳', factionId: 'aodesuosi', lat: 43.214, lng: 27.915, type: 'small_city', troops: 10000, region: 'THRACIAN', buildingStyle: 'THRACIAN', note: '古奥德索斯城，黑海港；定级依据§6.2：城内2100–2300人（1515/1530）、5200–5500人（1597奥斯曼税册），未达1万但属城市→小城' },
     // 🔴 [2026-09-18 主人定「据点必须二级 62+3 选 1（套城堡素材）」] 原「MEDI」推出的二级与史实不符 → 归 LATIN：杰姆（突尼斯）：罗马阿非利加行省，罗马古典
-    { id: 'city_jiemu', name: '杰姆', factionId: 'disidelusi', lat: 35.296, lng: 10.706, type: 'pass', troops: 10000, region: 'CARTHAGE', buildingStyle: 'LATIN', note: '杰姆圆形竞技斗兽要塞城（古罗马蒂斯德鲁斯），蒂斯德鲁斯军团驻防' },
+    { id: 'city_jiemu', name: '杰姆', factionId: 'disidelusi', lat: 35.296, lng: 10.706, type: 'pass', troops: 10000, region: 'CARTHAGE', buildingStyle: 'ROMA', note: '杰姆圆形竞技斗兽要塞城（古罗马蒂斯德鲁斯），蒂斯德鲁斯军团驻防' },
     { id: 'city_yazide', name: '亚兹德', factionId: 'yisatisi', lat: 31.897, lng: 54.356, type: 'small_city', troops: 10000, region: 'PERSIAN', buildingStyle: 'PERSIAN' },
 
     { id: 'city_wuer', name: '乌尔城', factionId: 'wuer', lat: 30.962, lng: 46.103, type: 'small_city', troops: 10000, region: 'BABYLON', buildingStyle: 'ORIE', note: '苏美尔月神城，乌尔第三王朝首都' },

@@ -25,6 +25,7 @@ import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { FACTION_GENERALS, getFactionGeneral, getFactionGenerals } from '../data/FactionGenerals';
 import { getGeneralEraSubtagLegion, getGeneralEraSubtagLabel } from '../data/GeneralEraSubtags';
+import { getGeneralCulture } from '../data/GeneralCulture';
 
 export interface FallbackPlanItem {
     factionId: string;
@@ -89,20 +90,26 @@ export function resolveFallbackForFaction(factionId: string, generalId?: string 
     if (!general) return { factionId, reason: '该势力没有配开局武将，判不了时代' };
     const era = GENERAL_ERA[general.generalId];
     if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 不在 GENERAL_ERA 表里` };
+    // 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」] 文化是武将自己的属性（GeneralCulture）；表里没有才退回「势力代表据点」的建筑风格
     const city = pickFactionCity(factionId);
-    if (!city) return { factionId, reason: '该势力名下没有据点，判不了建筑风格' };
-    // 没写 buildingStyle 的据点走同一条解析链算出风格（实测 1128 座据点全都写了，这里是兜底）
-    const style = city.buildingStyle
-        ?? resolveCityDeBuildingStyle(city.id, city.type, city.region, city.lat, city.lng, undefined);
-    if (!style) return { factionId, reason: `据点 ${city.name} 既没写 buildingStyle，也解析不出建筑风格` };
+    const ownStyle = getGeneralCulture(general.generalId);
+    let style: string | undefined = ownStyle;
+    if (!style) {
+        if (!city) return { factionId, reason: '武将没有文化属性，该势力名下也没有据点，判不了建筑风格' };
+        // 没写 buildingStyle 的据点走同一条解析链算出风格（实测 1128 座据点全都写了，这里是兜底）
+        style = city.buildingStyle
+            ?? resolveCityDeBuildingStyle(city.id, city.type, city.region, city.lat, city.lng, undefined)
+            ?? undefined;
+    }
+    if (!style) return { factionId, reason: `据点 ${city?.name ?? ''} 既没写 buildingStyle，也解析不出建筑风格` };
 
     const base: Omit<FallbackPlanItem, 'newLegionName' | 'note'> = {
         factionId,
         generalId: general.generalId,
         generalName: general.generalName || general.generalId,
         era,
-        cityId: city.id,
-        cityName: city.name,
+        cityId: city?.id ?? '',
+        cityName: city?.name ?? '（无据点，按武将文化）',
         buildingStyle: style,
     };
 
@@ -125,7 +132,7 @@ export function resolveFallbackForFaction(factionId: string, generalId?: string 
     return {
         ...base,
         newLegionName: hit.name,
-        note: `${base.generalName}（${era}）据点 ${city.name} 是 ${style} 风格 → 套二级【${hit.name}】`,
+        note: `${base.generalName}（${era}）文化 ${style} → 套二级【${hit.name}】`,
     };
 }
 

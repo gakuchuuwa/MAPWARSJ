@@ -284,7 +284,7 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'gen_bohemond': 'castle',
     'gen_joanofarc': 'castle',
     'gen_edward_longshanks': 'castle',
-    'gen_robert_guiscard': 'castle',
+    'gen_robert_guiscard': 'feudal',   // 🔴 [2026-10-19 主人令] 登场年 1035（生年 1015＋20）< 1050 → 封建（原写城堡）
     'gen_yodit': 'feudal',
     'gen_osman_i': 'castle',
     'gen_carpini': 'castle',

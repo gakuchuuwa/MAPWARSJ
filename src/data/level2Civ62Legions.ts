@@ -867,13 +867,13 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         name: '古典时代大和军团', civ: '日本', age: 'antiquity', deStyle: 'ASIA', region: 'JAPAN' as RegionType,
         buildingStyle: 'JAPAN',
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
-        formationMode: 'fish_scale',
+        formationMode: 'triangle',
         shipId: 'GALLEY',
-        commanderUnit: 'hero_sunce',
+        commanderUnit: 'hero_kitabatake',
         slots: [
+            { type: 'elite_skirmisher', count: 2 },
             { type: 'jian_swordsman', count: 3 },
             { type: 'bowman', count: 4 },
-            { type: 'antiquity_light_cavalry', count: 2 },
         ],
     },
     // ── 日本 · 封建时代 · 封建时代平安军团　（本次新建）────────────────
@@ -886,7 +886,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_sunjian',
+        commanderUnit: 'hero_kitabatake',
         slots: [
             { type: 'jian_swordman_unshielded', count: 3 },
             { type: 'rattan_archer', count: 4 },
@@ -905,7 +905,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ASIA_CASTLE_AGE3', castleName: '东亚/日本 姬路式多重天守阁',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_sunce',
+        commanderUnit: 'hero_nobunaga',
         slots: [
             { type: 'samurai', count: 3 },
             { type: 'ninja', count: 4 },
