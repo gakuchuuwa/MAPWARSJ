@@ -6,7 +6,6 @@
   "immortal_ranged": "Immortal#2174",
   "elite_immortal_ranged": "Elite Immortal#2175",
   "flemish_pikeman_f": "Flemish Militia#1697",
-  "jian_swordman_shielded": "Jian Swordsman#1974",
   "jian_swordman_unshielded": "Jian Swordsman#1976",
   "elite_scythian_horse_archer": "Scythian Horse Archer#2486",
   "elite_greek_cavalry": "Greek Noble Cavalry",
@@ -40,5 +39,6 @@
   "elite_ratha_melee": "Elite Ratha#1740",
   "hero_flagshipofnearchos": "Flagship of Nearchos#2442",
   "horse": "Horse#814",
-  "wild_horse": "Wild Horse#835"
+  "wild_horse": "Wild Horse#835",
+  "jian_swordsman": "Jian Swordsman#1974"
 }
