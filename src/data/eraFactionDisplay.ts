@@ -62,6 +62,12 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
  * 🔴 [2026-10-20 主人定] **朝代名用正名**（「只有朝代要注意」）：
  *   · 两个朝代并列的名字只取后一个：秦汉→汉、隋唐→唐；
  *   · 河朔那一支主人再定：「河朔的古典改为太行，封建改为河朔」→ 古典**太行**、封建**河朔**；
+ *   · 江南那一支主人定：封建→**江淮**、城堡（南宋）→**江南**；
+ *   · 西域那一支（2026-10-20 主人问「用西域好，还是塞种好？回鹘好，还是安西好？」后的裁定）：
+ *     古典→**西域**（汉西域都护府的地区／行政统称；塞种只是于阗一带的族群，盖不全龟兹吐火罗、楼兰车师），
+ *     封建→**安西**（唐安西都护府的行政名，与越南那段「静海＝唐静海军」同一逻辑；回鹘只覆盖 744 年后一段）；
+ *   · 河西那一支（2026-10-20 主人问「河西用西凉好，还是凉州好？」后的裁定）：古典→**凉州**
+ *     （汉凉州刺史部~唐凉州，前后七八百年；西凉只是十六国里 400–421 年的一个短命政权，太窄）；
  *   · 越南那一段主人点名：丁黎→**静海**（用行政名，不用两朝并列）；
  *   · 「宋禁」（宋禁军）只留朝代：→**宋**；
  *   · 带「大」的国号正名保留全名：大明（主人原话「大明是两个字，用大明」）、大金、大夏、大越；
@@ -70,30 +76,46 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
  *
  * 键 = `建筑风格|时代`（**不按军团名当键**：军团本身可能被改名——魏晋/北朝/丁黎已改造成
  * 太行/河朔/瞿越军团，按名字当键会静默失效）。
+ *
+ * 🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] **旗号文字可与显示名分开定**：
+ *    条目写 `flagText` 就按它画旗（`凉州` → 旗面只写「**凉**」），不写就沿用「显示名前两字」的旧规则。
  */
-const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, string>> = {
-    'CENTRAL|antiquity': '汉',        // 古典时代秦汉军团
-    'CENTRAL|feudal': '唐',           // 封建时代隋唐军团
-    'CENTRAL|castle': '宋',           // 城堡时代宋禁军团
-    'WEI|antiquity': '太行',          // 古典时代太行军团（原魏晋军团）
-    'WEI|feudal': '河朔',             // 封建时代河朔军团（原北朝军团）
-    'VIETNAMESE|feudal': '静海',      // 封建时代瞿越军团（原丁黎军团）
+interface EraNameDef {
+    /** 势力名（界面文字，如「凉州」） */
+    name: string;
+    /** 旗号文字（不写 = 取 name 前两字；写了就按它画，如「凉」） */
+    flagText?: string;
+}
+
+const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
+    'CENTRAL|antiquity': { name: '汉' },        // 古典时代秦汉军团
+    'CENTRAL|feudal': { name: '唐' },           // 封建时代隋唐军团
+    'CENTRAL|castle': { name: '宋' },           // 城堡时代宋禁军团
+    'WEI|antiquity': { name: '太行' },          // 古典时代太行军团（原魏晋军团）
+    'WEI|feudal': { name: '河朔' },             // 封建时代河朔军团（原北朝军团）
+    'JIANGNAN|feudal': { name: '江淮' },        // 封建时代江淮军团
+    'JIANGNAN|castle': { name: '江南' },        // 城堡时代江南军团（原南宋军团）
+    'WESTERN|antiquity': { name: '西域' },      // 古典时代西域军团（原塞种军团；地区/行政统称，不用族群名）
+    'WESTERN|feudal': { name: '安西' },         // 封建时代安西军团（原回鹘军团；唐安西都护府，与静海同一类行政名）
+    'KHITAN|antiquity': { name: '凉州', flagText: '凉' },  // 古典时代凉州军团（原西凉军团）；旗面只写一个「凉」
+    'VIETNAMESE|feudal': { name: '静海' },      // 封建时代瞿越军团（原丁黎军团）
 };
 
-/** (建筑风格 × 时代) → 时代名；一局只算一遍（建筑文化 66 × 时代 4） */
-const eraNameCache = new Map<string, string | null>();
-function eraNameOfStyleAndEra(buildingStyle: string | undefined, era: DefenseEraAge): string | null {
+/** (建筑风格 × 时代) → 时代名（含可选旗号文字）；一局只算一遍（建筑文化 66 × 时代 4） */
+const eraNameCache = new Map<string, EraNameDef | null>();
+function eraNameOfStyleAndEra(buildingStyle: string | undefined, era: DefenseEraAge): EraNameDef | null {
     if (!buildingStyle) return null;
     const key = `${buildingStyle}|${era}`;
     if (eraNameCache.has(key)) return eraNameCache.get(key) ?? null;
     const override = ERA_DISPLAY_OVERRIDES[key];
-    let name: string | null = override ?? null;
-    if (!name) {
+    let entry: EraNameDef | null = override ? { name: override.name, flagText: override.flagText } : null;
+    if (!entry) {
         const legion = resolveCityDefenseLegionName(undefined, ERA_SAMPLE_YEAR[era], buildingStyle, null);
-        name = eraNameOfLegion(legion);
+        const name = eraNameOfLegion(legion);
+        entry = name ? { name } : null;
     }
-    eraNameCache.set(key, name);
-    return name;
+    eraNameCache.set(key, entry);
+    return entry;
 }
 
 /** 该势力此刻还有没有在场武将（任一在场即算在场；判定即百岁模式的「登场年 ～ 登场年 + 100」） */
@@ -107,13 +129,19 @@ function hasOnStageGeneral(factionId: string): boolean {
     return false;
 }
 
-/** 当前生效的时代名覆盖：factionId → 名字（空 = 关闭） */
-let overrides = new Map<string, string>();
+/** 当前生效的时代名覆盖：factionId → 名字（含可选旗号文字；空 = 关闭） */
+let overrides = new Map<string, EraNameDef>();
 
 /** 该势力此刻显示的时代名（没有覆盖 → null，照旧用原势力名） */
 export function getEraFactionDisplayName(factionId: string | null | undefined): string | null {
     if (!factionId) return null;
-    return overrides.get(factionId) ?? null;
+    return overrides.get(factionId)?.name ?? null;
+}
+
+/** 该势力此刻的**旗号文字**（主人单独定过的，如凉州→「凉」）；没单独定 → null（沿用显示名前两字） */
+export function getEraFactionDisplayFlagText(factionId: string | null | undefined): string | null {
+    if (!factionId) return null;
+    return overrides.get(factionId)?.flagText ?? null;
 }
 
 /**
@@ -122,18 +150,19 @@ export function getEraFactionDisplayName(factionId: string | null | undefined): 
  * @returns 名字有变化的势力 id（调用方据此刷新这些势力的旗号；开局/跨时代时会很多，跨年一般十几个）
  */
 export function refreshEraFactionDisplays(year: number | null): string[] {
-    const next = new Map<string, string>();
+    const next = new Map<string, EraNameDef>();
     if (year != null && Number.isFinite(year)) {
         const era = getEraByYear(year);
         for (const [factionId, info] of FACTION_CITY) {
             if (hasOnStageGeneral(factionId)) continue;
-            const name = eraNameOfStyleAndEra(info.buildingStyle, era);
-            if (name) next.set(factionId, name);
+            const entry = eraNameOfStyleAndEra(info.buildingStyle, era);
+            if (entry) next.set(factionId, entry);
         }
     }
     const changed: string[] = [];
-    for (const [factionId, name] of next) {
-        if (overrides.get(factionId) !== name) changed.push(factionId);
+    for (const [factionId, entry] of next) {
+        const prev = overrides.get(factionId);
+        if (!prev || prev.name !== entry.name || (prev.flagText ?? null) !== (entry.flagText ?? null)) changed.push(factionId);
     }
     for (const factionId of overrides.keys()) {
         if (!next.has(factionId)) changed.push(factionId);

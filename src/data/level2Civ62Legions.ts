@@ -320,7 +320,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（咸阳、洛阳；秦阿房宫夯土台基、汉未央宫遗址、白马寺；青铜长剑、秦弩连射方阵、汉代铁戟环首刀与轻装具装汉骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代关中军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '古典时代秦汉军团', civ: '中原', age: 'antiquity', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -337,7 +337,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（长安、洛阳；大雁塔、洛阳龙门奉先寺卢舍那大佛、含元殿；府兵制重步兵、唐陌刀劈砍大阵、明光铠与破阵马槊铁骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代关陇军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '封建时代隋唐军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -479,7 +479,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（建康/南京、扬州；栖霞山南朝石刻辟邪、鸡鸣寺台城遗址；南朝神弩车重型床弩、北府兵重装长标枪、步射交织守城破胡阵）
     //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代南朝军团', civ: '江南', age: 'feudal', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        name: '封建时代江淮军团', civ: '江南', age: 'feudal', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
@@ -497,7 +497,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（临安/杭州、镇江；杭州雷峰塔砖心、六和塔石木外檐；岳家军麻扎刀破拐子马、神劲背嵬骑兵、韩家军克敌弓重装步骑协同方阵）
     //    英雄队（第 10 队·主将队）：hero_sunce / hero_sunjian / hero_sunquan　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代南宋军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
+        name: '城堡时代江南军团', civ: '江南', age: 'castle', deStyle: 'ASIA', region: 'JIANGNAN' as RegionType,
         buildingStyle: 'JIANGNAN',
         castleId: 'WU_CASTLE_AGE3', castleName: '江南 水乡飞檐水榭',
         formationMode: 'fish_scale',
@@ -603,12 +603,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 河西　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
     // ═══════════════════════════════════════════════════════════════════
-    // ── 河西 · 古典时代 · 古典时代西凉军团　（本次新建）────────────────
+    // ── 河西 · 古典时代 · 古典时代凉州军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（武威、敦煌；嘉峪关汉代烽燧、悬泉置泥土驿置遗址；汉匈西域争霸、西凉铁骑重铠标枪、敦煌长城内线控弦骑射）
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代西凉军团', civ: '河西', age: 'antiquity', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        name: '古典时代凉州军团', civ: '河西', age: 'antiquity', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
         buildingStyle: 'KHITAN',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'fish_scale',
@@ -4575,12 +4575,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 西域　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 西域 · 古典时代 · 古典时代塞种军团　（本次新建）────────────────
+    // ── 西域 · 古典时代 · 古典时代西域军团（原「塞种军团」，2026-10-20 主人令改地区／行政泛称）──
     //    评级：（未标评级）｜核心兵种：骑射、轻骑兵为主
     //    描述正文（主人原文，一字未改）：（交河、龟兹；交河台地天然悬崖生土削壁城垣、克孜尔千佛洞早期崖壁石窟防卫营址；塞种反曲双曲角弓、锋锐双刃青铜短剑、人马轻装铁鳞甲与沙漠边缘高机动迂回穿插大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代塞种军团', civ: '西域', age: 'antiquity', deStyle: 'CEAS', region: 'WESTERN' as RegionType,
+        name: '古典时代西域军团', civ: '西域', age: 'antiquity', deStyle: 'CEAS', region: 'WESTERN' as RegionType,
         buildingStyle: 'WESTERN',
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
         formationMode: 'fish_scale',
@@ -4592,21 +4592,21 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'scythian_axe_cavalry', count: 2 },
         ],
     },
-    // ── 西域 · 封建时代 · 封建时代回鹘军团　（本次新建）────────────────
+    // ── 西域 · 封建时代 · 封建时代安西军团（原「回鹘军团」，2026-10-20 主人令改地区／行政泛称）──
     //    评级：【高级】｜核心兵种：骑兵为主
     //    描述正文（主人原文，一字未改）：（高昌故城、柏孜克里克；高昌大佛寺厚重夯土外墙与高耸塔台要塞、交河早期砖木关防堡垒；大马士革锻铁弯刀、细密轻型锁子甲、丝路天山南麓绿洲深壕据守与突骑反切大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代回鹘军团', civ: '西域', age: 'feudal', deStyle: 'CEAS', region: 'WESTERN_FEUDAL' as RegionType,
+        name: '封建时代安西军团', civ: '西域', age: 'feudal', deStyle: 'CEAS', region: 'WESTERN_FEUDAL' as RegionType,
         buildingStyle: 'WESTERN',
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
-        formationMode: 'crescent',
+        formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_qutlugh',
+        commanderUnit: 'hero_wangtong',
         slots: [
             { type: 'liao_dao', count: 3 },
-            { type: 'cav_archer_heavy', count: 2 },
             { type: 'recurve_bowman', count: 4 },
+            { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
     // ── 西域 · 城堡时代 · 城堡时代察合台军团　（三级升二级）────────────────

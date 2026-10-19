@@ -132,8 +132,13 @@ function countUsers(): Map<string, number> {
         const rg: RegionType = cap
             ? getCityRegion({ latitude: cap.lat, longitude: cap.lng, region: cap.region })
             : ('CENTRAL' as RegionType);
-        const ptr = (FACTION_COMPOSITIONS as Record<string, { legionName?: string }>)[f.id]?.legionName?.trim();
-        const name = ptr || (CULTURE_LEGION_NAMES as Record<string, string>)[rg];
+        // 🔴 [2026-10-20 修] 面板里刚改过名的军团，势力表/文化区指针还是**旧名**（要等 HMR），
+        //    这里必须同样走 resolveRenamedLegion 换算 —— 否则「使用势力」会把这些家算到旧名头上，
+        //    新名那一行显示「无」（主人报「封建时代江淮军团 使用势力：无，这个时期没有武将吗」）。
+        const ptr = resolveRenamedLegion(
+            ((FACTION_COMPOSITIONS as Record<string, { legionName?: string }>)[f.id]?.legionName ?? '').trim(),
+        );
+        const name = ptr || resolveRenamedLegion((CULTURE_LEGION_NAMES as Record<string, string>)[rg] ?? '');
         if (name) m.set(name, (m.get(name) ?? 0) + 1);
     }
     return m;
@@ -154,8 +159,12 @@ function buildRows(): LegionRow[] {
         const scriptDef = layer === '四级' ? SCRIPT_LEGION_MAP.get(name) : undefined;
         const c = scriptDef ?? getLegionCompositionByName(name);
         if (!c) return;
-        const l2 = layer === '二级' ? LEVEL_2_CIV_62_LEGIONS.find(l => l.name === name) : undefined;
-        const l3 = layer === '三级' ? LEVEL_3_LEGIONS.find(l => l.name === name) : undefined;
+        // 🔴 [2026-10-20 修] 改名后静态表里还是**旧名**（要等 HMR / 刷新才变），
+        //    所以查「建筑文化」必须用 push 传进来的 rawName（静态表原名）兜底 ——
+        //    原来只按 name（新名）查，.find() 落空 → buildingStyle 变 ''，
+        //    右栏「建筑文化」下拉就跳回第一项（主人报「改军团名字的时候，建筑文化也会改」）。
+        const l2 = layer === '二级' ? LEVEL_2_CIV_62_LEGIONS.find(l => l.name === rawName || l.name === name) : undefined;
+        const l3 = layer === '三级' ? LEVEL_3_LEGIONS.find(l => l.name === rawName || l.name === name) : undefined;
         const buildingStyle = l2?.buildingStyle ?? l3?.buildingStyle ?? '';
         out.push({
             name, layer, mode: c.formationMode,
@@ -1075,7 +1084,9 @@ async function rename(raw: string): Promise<void> {
         if (!res.ok || !json.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
         renameLegionInMemory(oldName, newName);
         selected = newName;
-        selectedLayer = '三级';
+        // 🔴 [2026-10-20 修] 原来写死 '三级'：改的是二级军团时，选中层当场错位，
+        //    右栏会拿错行（建筑文化/编制都跟着错）。改成沿用被改名那支军团本来的层。
+        selectedLayer = sel?.layer ?? '三级';
         draft = null;
         rows = buildRows();
         render();

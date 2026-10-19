@@ -1,6 +1,6 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
-import { getEraFactionDisplayName } from '../data/eraFactionDisplay';
+import { getEraFactionDisplayName, getEraFactionDisplayFlagText } from '../data/eraFactionDisplay';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -2013,8 +2013,11 @@ export class CityAssetManager {
     private static resolveFlagTextSpec(factionId: string): { variantKey: string; text: string; fill: string; stroke: string } {
         // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
         //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
+        //   🔴 [2026-10-20 主人令「凉州的话，旗帜只用一个凉字就行」] 个别时代名单独定了旗号文字的，
+        //   优先用那一份（凉州 → 只写「凉」）。
         const eraName = getEraFactionDisplayName(factionId);
-        let textToRender = eraName ?? SANDBOX_DISPLAY_NAMES[factionId];
+        const eraFlagText = getEraFactionDisplayFlagText(factionId);
+        let textToRender = eraName != null ? (eraFlagText ?? eraName) : SANDBOX_DISPLAY_NAMES[factionId];
 
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;
