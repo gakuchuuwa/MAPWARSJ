@@ -43,6 +43,12 @@ export interface FactionGeneral {
     eliteName?: string;
     /** 武将专属精锐档位（0..4 对应 T0..T4；未填则回落到精锐表档位） */
     eliteTier?: 0 | 1 | 2 | 3 | 4;
+    /**
+     * 武将所属军团名（🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」]）。
+     * 军团 = 四时代 × 建筑文化；武将的军团 = 他的时代 × 所在据点的建筑文化。
+     * 未填 = 与势力表（FACTION_COMPOSITIONS）挂的军团相同；同一势力里时代不同的武将才在此各写自己的军团。
+     */
+    legionName?: string;
 }
 
 /** factionId → 开局将领。先做秦/白起跑通，其余知名势力逐个补。 */
@@ -180,7 +186,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     seleisi: [
         { generalId: 'gen_simeon_great', generalName: '西美昂', portrait: '/assets/SLAVIC/seleisi_ximeiang.png' },
         // 公元前335年多瑙河渡河战役守帅（多瑙河北岸盖塔人的君主科托罗，名取自剧本该场对手主将队注释与世纪表的既定记载），立绘按铁律留空、待主人亲自放图分配
-        { generalId: 'jite_shouling', generalName: '科托罗', portrait: '/assets/SLAVIC/seleisi_ketuoluo.png' },
+        { generalId: 'jite_shouling', generalName: '科托罗', portrait: '/assets/SLAVIC/seleisi_ketuoluo.png', legionName: '古典时代色雷斯军团' },
     ],
     bolisiya: { generalId: 'gen_gastold', generalName: '加斯托尔德', portrait: '/assets/SLAVIC/bolisiya_jiasituoerde.png' },
     zhituo: { generalId: 'gen_zhytomyr', generalName: '日托米尔', portrait: '/assets/SLAVIC/zhituo_rituomier.png' },
@@ -270,7 +276,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     baojiaer: [
         { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
-        { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png' },
+        { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png', legionName: '帝国时代乌兹别克军团' },
     ],
     baizanting: { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
@@ -589,7 +595,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     sogdian: [
         { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
         // 公元前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
-        { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '' },
+        { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '', legionName: '古典时代巴克特里亚军团' },
     ],
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
@@ -1028,7 +1034,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     buriat: { generalId: 'buriat_tumenjiergale', generalName: '吉尔嘎勒', portrait: '/assets/STEPPE/buriat_tumenjiergale.png' },
     oirat_ming: [
         { generalId: 'wala_yexian', generalName: '也先', portrait: '/assets/STEPPE/wala_yexian.png' },
-        { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png' },
+        { generalId: 'oirat_ming_gaerdan', generalName: '噶尔丹', portrait: '/assets/STEPPE/oirat_ming_gaerdan.png', legionName: '帝国时代喀尔喀军团' },
     ],
     donghui: { generalId: 'donghui_nanlv', generalName: '南闾', portrait: '/assets/KOREA/donghui_nanlv.png' },
     gonggu: { generalId: 'gonggu_gonggudaozhu', generalName: '麻利芝', portrait: '/assets/JAPAN/gonggu_gonggudaozhu.png' },
@@ -1233,7 +1239,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 立绘留空＝走文化池回落，由主人放图。
     boluo: [
         { generalId: 'boluo_damoboluo', generalName: '达磨波罗', portrait: '/assets/INDIA/boluo_damoboluo.png' },
-        { generalId: 'boluo_vijaya', generalName: '毗阇耶', portrait: '' },
+        { generalId: 'boluo_vijaya', generalName: '毗阇耶', portrait: '', legionName: '古典时代高陀军团' },
     ],
     sumo: { generalId: 'sumo_sumowang', generalName: '苏摩', portrait: '/assets/INDIA/sumo_sumowang.png' },
     jiashi_d: { generalId: 'jiashi_jiashiwang_d', generalName: '梵摩达', portrait: '/assets/INDIA/jiashi_d_jiashiwang.png' },
@@ -1248,7 +1254,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yidier: { generalId: 'yidier_yidiewang', generalName: '约瑟夫', portrait: '/assets/STEPPE/yidier_yuesefu.png' },
     salai: [
         { generalId: 'salai_salaiwang', generalName: '埃迪古', portrait: '/assets/STEPPE/salai_aidigu.png' },
-        { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png' },
+        { generalId: 'gen_onas_khan', generalName: '欧拿斯', portrait: '/assets/STEPPE/nuogai_ounasihan.png', legionName: '帝国时代乌兹别克军团' },
     ],
     mangshi: { generalId: 'mangshi_mangshiwang', generalName: '恰格里', portrait: '/assets/CENTRAL_ASIA/mangshi_mangewang.png' },
     aztec: { generalId: 'gen_cuauhtemoc', generalName: '库奥特莫克', portrait: '/assets/AMERICA/aztec_kuaotemoke.png' },
@@ -1470,6 +1476,17 @@ function stageGeneralName(generalId: string, name: string, factionId: string | n
     if (isGeneralOnStage(generalId)) return name;
     const fname = factionId ? _factionNameById.get(factionId) : undefined;
     return fname ? `${fname}将军` : name;
+}
+
+/** 武将所属军团名：武将自己写了就用它，否则用势力表挂的军团。🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」] */
+export function getGeneralOwnLegionName(generalId: string | null | undefined): string | null {
+    if (!generalId) return null;
+    for (const entry of Object.values(FACTION_GENERALS as Record<string, FactionGeneralEntry>)) {
+        const list = Array.isArray(entry) ? entry : [entry as FactionGeneral];
+        const hit = list.find((g) => g.generalId === generalId);
+        if (hit) return hit.legionName ?? null;
+    }
+    return null;
 }
 
 /** 按 generalId 查势力表条目（F2 绑立绘 / 名牌显示） */

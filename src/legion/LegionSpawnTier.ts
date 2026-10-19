@@ -12,7 +12,7 @@ import { shouldGeneralWaitInCityForFirstBattle } from '../data/GeneralFirstBattl
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { pickRandomStrategicSkill, setStrategicSkillOverride } from '../combat/GeneralSkillCombat';
 import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
-import { applyLegionCultureComposition } from '../types/CultureFormations';
+import { applyLegionCultureComposition, getLegionNameOfGeneral } from '../types/CultureFormations';
 import type { Army } from './Army';
 
 export type LegionSpawnTierOutcome = 'plain' | 'elite' | 'general' | 'elite_general';
@@ -150,6 +150,9 @@ export function attachFactionGeneralToArmy(army: Army): boolean {
         const genEliteName = getGeneralEliteLegionName(general.generalId);
         if (genEliteName) army.name = genEliteName;
     }
+    // 🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」] 武将时代与势力挂的军团不同时，军团名跟武将走（精锐番号优先，上面已处理）
+    const ownLegion = getLegionNameOfGeneral(army.factionId, general.generalId);
+    if (ownLegion && !army.isElite) army.name = ownLegion;
     if (getGeneralProfile(general.generalId)?.tier === 'famous') {
         setStrategicSkillOverride(army.id, pickRandomStrategicSkill());
     }

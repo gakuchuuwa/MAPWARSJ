@@ -1022,7 +1022,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'throwing_axeman', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'master_of_the_templar', count: 2 },
         ],
     },
     // ── 高卢 · 帝国时代 · 帝国时代重装骑兵军团　（本次新建）────────────────
@@ -1744,7 +1744,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'warrior_priest', count: 3 },
             { type: 'composite_bowman', count: 4 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'frankish_paladin', count: 2 },
         ],
     },
     // ── 亚美尼亚 · 帝国时代 · 帝国时代亚美尼亚军团　（本次新建）────────────────
@@ -2381,9 +2381,9 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'WAR_GALLEY',
         commanderUnit: 'hero_richardthelionheart',
         slots: [
-            { type: 'two_handed_swordsman', count: 3 },
-            { type: 'arbalest', count: 4 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'crusader_knight', count: 3 },
+            { type: 'monk', count: 4 },
+            { type: 'master_of_the_templar', count: 2 },
         ],
     },
     // ── 罗马 · 帝国时代 · 帝国时代瑞士近卫军　（本次新建）────────────────
@@ -3688,7 +3688,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'CANOE',
         commanderUnit: 'hero_itzcoatl',
         slots: [
-            { type: 'elite_antiquity_skirmisher', count: 4 },
+            { type: 'jaguar_warrior', count: 4 },
             { type: 'eagle_warrior', count: 3 },
             { type: 'eagle_scout', count: 2 },
         ],
@@ -3711,7 +3711,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_arariboiamelee',
         slots: [
             { type: 'elite_eagle_warrior', count: 3 },
-            { type: 'jaguar_warrior', count: 4 },
+            { type: 'iroquois_warrior', count: 4 },
             { type: 'xolotl_warrior', count: 2 },
         ],
     },
@@ -4296,7 +4296,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'serjeant', count: 3 },
             { type: 'genoese_crossbowman', count: 4 },
-            { type: 'crusader_knight', count: 2 },
+            { type: 'frankish_paladin', count: 2 },
         ],
     },
     // ── 雅典 · 帝国时代 · 帝国时代希腊轻骑军团　（本次新建）────────────────
@@ -4585,7 +4585,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_lubu',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'sakan_axeman', count: 3 },
             { type: 'elite_scythian_horse_archer', count: 4 },

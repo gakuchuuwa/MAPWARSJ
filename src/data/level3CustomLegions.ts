@@ -52,20 +52,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    原挂它的 2 个势力都不是雇佣兵，已按主人令改挂同族／同地军团：
     //      特洛伊·赫克托耳 → 古典时代色雷斯军团（小亚细亚西北，隔赫勒斯滂与色雷斯相望）
     //      伊皮鲁斯·皮洛士 → 古典时代马其顿军团（马其顿式方阵＋战象）
-    {
-        name: '古典时代斯基泰军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'scythian_axe_cavalry', count: 3 },
-            { type: 'scythian_horse_archer', count: 4 },
-            { type: 'sarmatian', count: 2 },
-        ],
-        regions: ['SCYTHIANS'],
-        parentLegion: '古典时代色雷斯军团',
-        shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
-        buildingStyle: 'CUMAN',
-    },
     // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]
     //   原三级【古典时代赫梯军团】（HITTITES 哈图沙，锥形：古典掷矛手2 / 古典长枪兵3 / 双轮战车高级4）
     //   ＝ 与二级【古典时代赫梯军团】（奥斯曼·古典·安纳托利亚）同名同史，重复，已删。
@@ -74,22 +60,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     // 🔴 [2026-10-05 主人定「按地区划分，删除古典鲜卑。删除」] —— 已删「古典时代鲜卑军团」。
     //    原先挂它的 12 个势力已按主人令改套「古典时代羌族军团」；
     //    其文化区 `NORTHEAST`（7 座）默认军团一并改指「古典时代羌族军团」。
-    {
-        name: '城堡时代十字军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'heavy_pikeman', count: 3 },
-            { type: 'monk', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 heavy_crossbowman；按史：圣殿、医院骑士团本为修士会
-            { type: 'crusader_knight', count: 2 },
-        ],
-        regions: ['CRUSADERS'],
-        // 🔴 [2026-10-05 主人定「城堡时代十字军团挂法兰克吧」] 十字军主力＝法兰克人
-        //    （阿拉伯／拜占庭均称十字军为「法兰克人」），故挂法兰克那条线（封建→城堡两代）。
-        parentLegion: '封建时代法兰克军团',
-        shipId: 'CARRACK',
-        commanderUnit: 'hero_bohemond',
-        buildingStyle: 'FRANKS',
-    },
     {
         name: '城堡时代大理军团',
         formationMode: 'triangle',
@@ -103,20 +73,6 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         shipId: 'INCENDIARY_SHIP',
         commanderUnit: 'hero_zhugeliang',
         buildingStyle: 'BASHU',
-    },
-    {
-        name: '城堡时代易洛魁军团',
-        formationMode: 'fish_scale',
-        slots: [
-            { type: 'elite_plumed_archer', count: 3 },
-            { type: 'iroquois_warrior', count: 4 },
-            { type: 'elite_eagle_warrior', count: 2 },
-        ],
-        regions: ['IROQUOIS'],
-        parentLegion: '中美军团',
-        shipId: 'CANOE',
-        commanderUnit: 'hero_cunhambebe',
-        buildingStyle: 'AMERICA',
     },
     // 🔴 [2026-10-05 主人令「删掉 封建时代柔然军团，武将归到封建漠北」] —— 已删「封建时代柔然军团」。
     //    文化区 `ROURAN` 的默认军团与挂它的势力一并改指「封建漠北军团」。

@@ -2449,7 +2449,7 @@ export class Scene13WarLayer {
                 if (types.length === 9) {
                     // 🔴 防御：WAR_TYPES 没有的兵种（势力专属/新兵种）替换成轻步，防运行时 wt.cls 崩溃
                     // 🔴 [2026-09-23] 编制 9 口 + 主将队第 10 口
-                    const legionCommanderUnit = (factionId ? getFactionLegionComposition(factionId)?.commanderUnit : undefined)
+                    const legionCommanderUnit = (factionId ? getFactionLegionComposition(factionId, generalId)?.commanderUnit : undefined)
                         ?? getRegionLegionComposition(region as any)?.commanderUnit;
                     return withCommander(generalId, types, { factionId, seedKey: region, hasElite, legionCommanderUnit }).map((key) => ({
                         key: WAR_TYPES[key] ? key : 'light_infantry',
@@ -2481,7 +2481,7 @@ export class Scene13WarLayer {
             }
             if (factionId) {
                 // 🔴 [2026-09-14] 势力表只剩指针，阵型跟着它挂的那支军团走
-                const custom = getFactionLegionComposition(factionId);
+                const custom = getFactionLegionComposition(factionId, generalId);
                 if (custom?.formationMode) return custom.formationMode;
                 const factionSlots = getFactionCompositionSlots(factionId, generalId);
                 if (factionSlots?.length) return inferFormationModeFromSlots(factionSlots);
