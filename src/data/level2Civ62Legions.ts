@@ -2850,12 +2850,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 河中　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 河中 · 古典时代 · 古典时代巴克特里亚军团　（本次新建）────────────────
+    // ── 河中 · 古典时代 · 古典时代粟特军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、战车、骑射为主
     //    描述正文（主人原文，一字未改）：（阿伊哈努姆、巴克特拉；阿伊哈努姆希腊化卫城多立克柱殿、泥砖希腊剧场与石砌体育馆；萨里萨超长枪重步兵方阵、塞种复合弓轻骑射协同、重型青铜甲双轮战车大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代巴克特里亚军团', civ: '鞑靼', age: 'antiquity', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '古典时代粟特军团', civ: '鞑靼', age: 'antiquity', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
@@ -2867,12 +2867,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'sogdian_cataphract', count: 2 },
         ],
     },
-    // ── 河中 · 封建时代 · 封建时代河中重骑军团　（本次新建）────────────────
+    // ── 河中 · 封建时代 · 封建时代河中军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：重骑兵为主
     //    描述正文（主人原文，一字未改）：（布哈拉、撒马尔罕；伊斯梅尔·萨曼烧结砖几何镂空陵殿、早期布哈拉方砖石木卫城；古拉姆人马锁甲重骑兵、重型破甲铁骨朵、抗击草原游牧袭扰的绿洲深壕营垒大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代河中重骑军团', civ: '鞑靼', age: 'feudal', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '封建时代河中军团', civ: '鞑靼', age: 'feudal', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',

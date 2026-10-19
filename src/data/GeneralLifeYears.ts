@@ -1224,7 +1224,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_caffa_consul: { birth: 1425, death: 1475, kaoju: '推定' },  // 奥贝托·斯夸尔（卡法·热那亚末任卡法执政官，1475年卡法围城战殉城）
     baolusi: { birth: -254, death: -216, kaoju: '推定' },  // 保卢斯（坎尼战役罗马执政官卢基乌斯·埃米利乌斯·保卢斯，前216年阵亡）
     waluo: { birth: -256, death: -195, kaoju: '推定' },  // 瓦罗（坎尼战役罗马执政官盖乌斯·特伦提乌斯·瓦罗）
-    seleisi_shouling: { birth: -365, death: -300, kaoju: '推定' },  // 塞乌特斯（海姆斯山战役色雷斯奥德里西亚国王塞乌特斯三世）
     aitiliusi: { birth: 391, death: 454, kaoju: '异说' },  // 埃提乌斯（沙隆战役西罗马名将弗拉维乌斯·埃提乌斯）
 };
 

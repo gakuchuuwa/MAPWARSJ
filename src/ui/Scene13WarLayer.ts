@@ -180,6 +180,13 @@ export class Scene13WarLayer {
     /** 🔴 [2026-10-14] 守方出城流场：每座城门一张，从「门外 120px」反向 BFS（城门对守方不算障碍） */
     private defGateFlow: Map<WarBuilding, Int16Array> | null = null;
     private defFlowSig = -1;
+    /** 🔴 [2026-10-20 主人令「守军破墙后仍绕城门」] 守方出城总流场：从城墙圈外一圈所有可走格反向 BFS（城门、缺口都算出口） */
+    private defExitFlow: Int16Array | null = null;
+    /** 🔴 [2026-10-20 主人令「攻方流场每秒重算」] 攻方流场缓存：障碍件数 + 中心建筑不变就不重跑 BFS */
+    private atkFlowSig = -1;
+    private atkFlowGoal: WarBuilding | null = null;
+    private atkFlowNoGate: Int16Array | null = null;
+    private atkFlowViaGate: Int16Array | null = null;
     private gateSpriteSet: Set<DecorSprite> | null = null;
     /** 城墙/城门精灵（含附属碰撞件）→ 所属墙段，用来认出「是哪段墙挡住了我」 */
     private wallBySprite = new Map<DecorSprite, WarBuilding>();
@@ -2222,9 +2229,17 @@ export class Scene13WarLayer {
         this.gateSpriteSet = null;
         this.ringBox = undefined;
         this.flowDist = null;
+        this.defGateFlow = null;
+        this.defFlowSig = -1;
+        this.defExitFlow = null;
+        this.atkFlowSig = -1;
+        this.atkFlowGoal = null;
+        this.atkFlowNoGate = null;
+        this.atkFlowViaGate = null;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
+        this.defOutsideBaseCache = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -2599,9 +2614,15 @@ export class Scene13WarLayer {
         this.flowDist = null;
         this.defGateFlow = null;
         this.defFlowSig = -1;
+        this.defExitFlow = null;
+        this.atkFlowSig = -1;
+        this.atkFlowGoal = null;
+        this.atkFlowNoGate = null;
+        this.atkFlowViaGate = null;
         this.laneStart = null;
         this.remnantLanes.clear();
         this.holdLanes.clear();
+        this.defOutsideBaseCache = null;
         this.flowBuiltAt = -99;
         this.arrowTowers = [];
         this.castleTowers = [];
@@ -5587,6 +5608,12 @@ export class Scene13WarLayer {
                         const dd = dx * dx + dy * dy;
                         const gap = rm + this.radiusOf(o.key);      // 这一对的最小间距
                         if (dd >= gap * gap) continue;
+                        // 🔴 [2026-10-20 主人报「军团移动的时候，还是会因为拥挤，产生士兵颤抖」]
+                        //    两个**都在走路**的己方兵互推：推开→各自朝目标走回→再推开，每帧往复 = 颤抖。
+                        //    走路的兵不再吃同样在走路的己方兵的推挤（站着的/交战的/敌兵照常推）；
+                        //    几乎叠在一起（距离 < 间距 40%，即重叠超过六成）时仍推开，防叠成一团。
+                        if (m.st === 0 && !m.idlePose && o.f === m.f && o.st === 0 && !o.idlePose && !o.guardPost
+                            && dd > (gap * 0.4) * (gap * 0.4)) continue;
                         if (dd < nearest2) { nearest2 = dd; minGap = gap; }
                         seen++;
                         if (dd < 1e-4) { ox += (Math.random() - .5); oy += (Math.random() - .5); continue; }
@@ -5833,6 +5860,12 @@ export class Scene13WarLayer {
     private defenderCityReturnGoal(m: WarMan): { x: number; y: number } {
         if (m.guardPost) return m.guardPost;
         const sp = m.lane >= 0 ? this.spawns[m.lane] : undefined;
+        // 🔴 [2026-10-20 主人令「第一波守军没目标时回城外列阵位置」] 城外列阵的那几队（出兵口有 outFwd/outSide）
+        //    没目标时回到本队城外阵位（背靠城墙），不再穿城门回城内出兵口、等敌人出营再穿门出来 ⇒ 不在城门进进出出。
+        if (sp && sp.f === 1 && sp.outFwd !== undefined && sp.outSide !== undefined && this.battleType === 'siege' && this.deCity) {
+            const B = this.defOutsideBaseCached();
+            return this.fieldBoundPt(B.x + B.fwd.x * sp.outFwd + B.side.x * sp.outSide, B.y + B.fwd.y * sp.outFwd + B.side.y * sp.outSide);
+        }
         if (sp) return { x: sp.x, y: sp.y };
         return this.deCity ? this.deCityCenter : this.spawnBases[1];
     }
@@ -6843,7 +6876,18 @@ export class Scene13WarLayer {
             }
             return { dist, blocked };
         };
-        let res = run(false);
+        // 🔴 [2026-10-20 主人令「攻方流场每秒重算」] 原来每秒整张图（约 485×485 小格）重跑一遍 BFS、重新分配数组 ⇒ 攻城战每秒一顿。
+        //    改为：还挡路的障碍件数与中心建筑都没变 ⇒ 直接用上次的结果；墙/门塌一处（件数变）才重算。
+        //    「门当可通行」那张图同样缓存，障碍一变一起作废。
+        let sig = 0;
+        for (const sp of this.decorSprites) if (sp.obstruction && !sp.obstructionDisabled && !sp.destroyed) sig++;
+        if (sig !== this.atkFlowSig || goal !== this.atkFlowGoal || !this.atkFlowNoGate) {
+            this.atkFlowSig = sig;
+            this.atkFlowGoal = goal;
+            this.atkFlowNoGate = run(false).dist;
+            this.atkFlowViaGate = null;
+        }
+        let res = { dist: this.atkFlowNoGate! };
         if (this.ringOpen()) {
             // 攻方士兵一个都到不了中心建筑 ⇒ 门当可通行重算（贴墙站的兵脚下是膨胀障碍格，看周围 2 小格）
             let any = false, reach = false;
@@ -6857,7 +6901,10 @@ export class Scene13WarLayer {
                 }
                 if (reach) break;
             }
-            if (any && !reach) res = run(true);
+            if (any && !reach) {
+                if (!this.atkFlowViaGate) this.atkFlowViaGate = run(true).dist;
+                res = { dist: this.atkFlowViaGate };
+            }
         }
         this.flowDist = res.dist;
         this.flowR = R;
@@ -6939,7 +6986,75 @@ export class Scene13WarLayer {
             fields.set(g, dist);
         }
         this.defGateFlow = fields;
+        // 🔴 [2026-10-20 主人令「守军破墙后仍绕城门」] 出城总流场：终点 = 城墙圈外 1 地块以外的所有可走格（多源 BFS），
+        //    城门、塌掉的墙段都是出口 ⇒ 顺着它走就是「离自己最近的出口」。只在有缺口时由 gateExit 拿来和走城门比路程。
+        {
+            const dist = new Int16Array(N * N).fill(INF);
+            let qh = 0, qt = 0;
+            for (let a = wa0; a <= wa1; a++) for (let b = wb0; b <= wb1; b++) {
+                if (a < 0 || a >= N || b < 0 || b >= N) continue;
+                const ta = (a - R) / S, tb = (b - R) / S;
+                if (ta > r.a0 - 1 && ta < r.a1 + 1 && tb > r.b0 - 1 && tb < r.b1 + 1) continue;
+                const n = a * N + b;
+                if (blocked[n]) continue;
+                dist[n] = 0; queue[qt++] = n;
+            }
+            while (qh < qt) {
+                const c = queue[qh++];
+                const ca = (c / N) | 0, cb = c % N;
+                const nd = dist[c] + 1;
+                for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                    if (!da && !db) continue;
+                    const a2 = ca + da, b2 = cb + db;
+                    if (a2 < wa0 || a2 > wa1 || b2 < wb0 || b2 > wb1 || a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                    const n = a2 * N + b2;
+                    if (blocked[n] || dist[n] <= nd) continue;
+                    if (da && db && (blocked[(ca + da) * N + cb] || blocked[ca * N + cb + db])) continue;   // 斜穿墙角不行
+                    dist[n] = nd; queue[qt++] = n;
+                }
+            }
+            this.defExitFlow = dist;
+        }
         this.flowR = R;
+    }
+
+    /** 流场上某点的步数（站在膨胀障碍带里时取 escape 圈内最小值）；不通 = Infinity */
+    private fieldStepsAt(field: Int16Array, x: number, y: number, escape = 2): number {
+        const R = this.flowR, N = 2 * R + 1;
+        const dx = x - this.worldCX, dy = y - this.worldCY;
+        const a = Math.round((dx / TAC_TILE_W + dy / TAC_TILE_H) * FLOW_SUB) + R, b = Math.round((dy / TAC_TILE_H - dx / TAC_TILE_W) * FLOW_SUB) + R;
+        let best = 32767;
+        for (let da = -escape; da <= escape; da++) for (let db = -escape; db <= escape; db++) {
+            const a2 = a + da, b2 = b + db;
+            if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+            const v = field[a2 * N + b2];
+            if (v < best) best = v;
+        }
+        return best >= 32767 ? Infinity : best;
+    }
+
+    /** 顺着流场一路下坡走到终点（步数 0 处），返回终点世界坐标；不通 = null */
+    private fieldEndpoint(field: Int16Array, x: number, y: number): { x: number; y: number } | null {
+        const R = this.flowR, N = 2 * R + 1;
+        const dx = x - this.worldCX, dy = y - this.worldCY;
+        let a = Math.round((dx / TAC_TILE_W + dy / TAC_TILE_H) * FLOW_SUB) + R, b = Math.round((dy / TAC_TILE_H - dx / TAC_TILE_W) * FLOW_SUB) + R;
+        if (a < 1 || a >= N - 1 || b < 1 || b >= N - 1) return null;
+        for (let i = 0; i < 800; i++) {
+            const cur = field[a * N + b];
+            if (cur === 0) break;
+            let bd = cur, ba = a, bb = b;
+            for (let da = -1; da <= 1; da++) for (let db = -1; db <= 1; db++) {
+                if (!da && !db) continue;
+                const a2 = a + da, b2 = b + db;
+                if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+                const d = field[a2 * N + b2];
+                if (d < bd) { bd = d; ba = a2; bb = b2; }
+            }
+            if (bd >= cur) { if (cur >= 32767) return null; break; }
+            a = ba; b = bb;
+        }
+        const wa = (a - R) / FLOW_SUB, wb = (b - R) / FLOW_SUB;
+        return { x: this.worldCX + (wa - wb) * (TAC_TILE_W / 2), y: this.worldCY + (wa + wb) * (TAC_TILE_H / 2) };
     }
 
     /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity（支持 escape 在贴墙膨胀带内取紧邻可走格距离） */
@@ -7132,6 +7247,21 @@ export class Scene13WarLayer {
         return { x: C.x + fwd.x * proj + side.x * lat, y: C.y + fwd.y * proj + side.y * lat, fwd, side, wallOuter: support };
     }
 
+    /** defOutsideBase 每秒最多算一次（它要扫全部墙件与出兵口；回城外阵位每帧每人都会问） */
+    private defOutsideBaseCache: { sec: number; v: ReturnType<Scene13WarLayer['defOutsideBase']> } | null = null;
+    private defOutsideBaseCached(): ReturnType<Scene13WarLayer['defOutsideBase']> {
+        const c = this.defOutsideBaseCache;
+        if (c && Math.abs(this.battleSec - c.sec) < 1) return c.v;
+        const v = this.defOutsideBase();
+        this.defOutsideBaseCache = { sec: this.battleSec, v };
+        return v;
+    }
+
+    private fieldBoundPt(x: number, y: number): { x: number; y: number } {
+        const [bx, by] = this.fieldBound(x, y);
+        return { x: bx, y: by };
+    }
+
     private insideRing(x: number, y: number): boolean {
         const r = this.ringBox;
         if (!r) return false;
@@ -7154,19 +7284,36 @@ export class Scene13WarLayer {
         const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
         // 按「守军到门 + 门到目标 aim」总路程最短选择外圈城门
         let g: WarBuilding | null = null, bestScore = Infinity;
+        const gateScore = (b: WarBuilding): number => Math.hypot(b.x - m.x, b.y - m.y) * 0.7 + Math.hypot(aim.x - b.x, aim.y - b.y);
+        let outerOnly = true;
         for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
             const [ba, bb] = this.tileAB(b.x, b.y);
             if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
-            const score = Math.hypot(b.x - m.x, b.y - m.y) * 0.7 + Math.hypot(aim.x - b.x, aim.y - b.y);
+            const score = gateScore(b);
             if (score < bestScore) { bestScore = score; g = b; }
         }
-        if (!g) for (const b of this.wallGates) {
-            if (b.key !== 'STONE_GATE') continue;
-            const score = Math.hypot(b.x - m.x, b.y - m.y) * 0.7 + Math.hypot(aim.x - b.x, aim.y - b.y);
-            if (score < bestScore) { bestScore = score; g = b; }
+        if (!g) {
+            outerOnly = false;
+            for (const b of this.wallGates) {
+                if (b.key !== 'STONE_GATE') continue;
+                const score = gateScore(b);
+                if (score < bestScore) { bestScore = score; g = b; }
+            }
         }
         if (!g) return aim;
+        // 🔴 [2026-10-20 主人令「城门选择加防抖」] 目标在走、总路程会变：两座门分数接近时每帧来回换门 ⇒ 守军在两门之间折返。
+        //    上次选的门仍是候选（同一档：外圈门/全部门）且新门总路程没有短出 15% 以上 ⇒ 继续用上次那座门。
+        const prev = m.exitGate;
+        if (prev && prev !== g && prev.key === 'STONE_GATE' && this.wallGates.includes(prev)) {
+            let prevOk = true;
+            if (outerOnly) {
+                const [pa, pb] = this.tileAB(prev.x, prev.y);
+                prevOk = Math.min(Math.abs(pa - r.a0), Math.abs(pa - r.a1), Math.abs(pb - r.b0), Math.abs(pb - r.b1)) < 1;
+            }
+            if (prevOk && bestScore > gateScore(prev) * 0.85) g = prev;
+        }
+        m.exitGate = g;
 
         const gd2 = (g.x - m.x) ** 2 + (g.y - m.y) ** 2;
         const aimD2 = (aim.x - m.x) ** 2 + (aim.y - m.y) ** 2;
@@ -7183,8 +7330,29 @@ export class Scene13WarLayer {
             return { x: g.x - vx / vl * 90, y: g.y - vy / vl * 90 };
         }
         // 已出城墙圈外（!inWallRing）⇒ 直接奔城外目标，绝不在墙外再次触发出城引导
-        if (!inWallRing) return aim;
-        const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
+        if (!inWallRing) { m.exitViaGap = false; return aim; }
+        // 🔴 [2026-10-20 主人令「守军破墙后仍绕城门」] 墙/门有缺口时，比较两条出城路：
+        //    走选定的城门（流场步数 + 门外点到目标）vs 走最近的出口（出城总流场，缺口也算；步数 + 出口到目标）。
+        //    缺口那条短出 15% 以上才改走缺口；已经在走缺口的，只要不比城门长就继续走（防两条路来回换）。
+        const gField = this.defGateFlow?.get(g) ?? null;
+        if (this.ringOpen() && this.defExitFlow) {
+            const STEP_PX = 53.67 / FLOW_SUB;   // 一个小格约等于的屏幕距离（一地块 ≈ 53.67px）
+            const exitSteps = this.fieldStepsAt(this.defExitFlow, m.x, m.y);
+            const exitPt = Number.isFinite(exitSteps) ? this.fieldEndpoint(this.defExitFlow, m.x, m.y) : null;
+            if (exitPt) {
+                const vx0 = g.x - ccx, vy0 = g.y - ccy, vl0 = Math.hypot(vx0, vy0) || 1;
+                const gOut = { x: g.x + vx0 / vl0 * 120, y: g.y + vy0 / vl0 * 120 };
+                const gSteps = gField ? this.fieldStepsAt(gField, m.x, m.y) : Infinity;
+                const gateTotal = (Number.isFinite(gSteps) ? gSteps * STEP_PX : Math.hypot(g.x - m.x, g.y - m.y)) + Math.hypot(aim.x - gOut.x, aim.y - gOut.y);
+                const gapTotal = exitSteps * STEP_PX + Math.hypot(aim.x - exitPt.x, aim.y - exitPt.y);
+                const useGap = m.exitViaGap ? gapTotal <= gateTotal : gapTotal < gateTotal * 0.85;
+                m.exitViaGap = useGap;
+                if (useGap) return this.flowWaypoint(m.x, m.y, this.defExitFlow, -1, 2, FLOW_SUB) ?? exitPt;
+            }
+        } else {
+            m.exitViaGap = false;
+        }
+        const wp = this.flowWaypoint(m.x, m.y, gField, -1, 2, FLOW_SUB);
         if (wp) return wp;
         const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
         return { x: g.x + vx / vl * 90, y: g.y + vy / vl * 90 };

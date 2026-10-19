@@ -1715,6 +1715,14 @@ export class PlayerQuestSystem {
             (enemyFactionId !== 'panjun' ? getFactionGeneral(enemyFactionId) : null);
         const enemyGeneralId = existingEnemyGen?.generalId;
         const enemyDisplayName = existingEnemyGen?.generalName ?? `${fb.enemyFactionName}军`;
+        // 🔴 [2026-10-20 主人令「叛军用起义军团，势力也用起义吧」] 起义（panjun）出兵的军团名一律叫
+        //    **起义军团**：不按敌势力泛称拼「XX军／XX部」，也不回落到文化军团名。
+        const enemyLegionName =
+            enemyFactionId === 'panjun'
+                ? '起义军团'
+                : existingEnemyGen
+                  ? `${enemyDisplayName}部`
+                  : enemyDisplayName;
 
         let enemyArmyId: string | undefined;
         if (effectiveBattleType === 'field') {
@@ -1726,7 +1734,7 @@ export class PlayerQuestSystem {
                 enemySpawnPos,
                 enemyTroops,
                 enemyFactionId,
-                existingEnemyGen ? `${enemyDisplayName}部` : enemyDisplayName,
+                enemyLegionName,
                 undefined,
                 undefined,
                 fb.targetCityId,
@@ -1768,7 +1776,7 @@ export class PlayerQuestSystem {
                 enemySpawnPos,
                 enemyTroops,
                 enemyFactionId,
-                existingEnemyGen ? `${enemyDisplayName}部` : enemyDisplayName,
+                enemyLegionName,
                 undefined,
                 undefined,
                 defendedCity.id,

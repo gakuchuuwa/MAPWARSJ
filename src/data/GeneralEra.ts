@@ -566,7 +566,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'jiaodong_tiandan': 'antiquity',
     'jiashi_jiashiwang_d': 'antiquity',
     'jiashi_wangxuance': 'feudal',
-    'jiaye_jiaye': 'antiquity',
     'jiaye_punafamo': 'feudal',
     'jiazini_mahamaode': 'feudal',
     'jibei2_qingshuizongzhi': 'imperial',
@@ -599,7 +598,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'juqu_d_juqumengxun': 'antiquity',
     'jurchen_wanyanzongbi': 'castle',
     'kaerka_abadaihan': 'imperial',
-    'kaernute_kotuatousi': 'antiquity',
     'kaga_d_xiajianlailian': 'imperial',
     'kai_wutianxinxuan': 'imperial',
     'kakizaki_liqiqingguang': 'imperial',
@@ -633,7 +631,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     // 🔴 [2026-09-25] 巴尔干战役（前335）三位守帅 —— 与亚历山大同属古典时代
     'dasaleiti_kleitos': 'antiquity',
     'dibisi_phoinix': 'antiquity',
-    'seleisi_shouling': 'antiquity',
     'jite_shouling': 'antiquity',
     'suogediyana_arimazes': 'antiquity',
     'sute_spitamenes': 'antiquity',
@@ -1210,6 +1207,11 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'zhou_jifu': 'antiquity',
     'yin_yuejin': 'antiquity',
     'xibolai_majiabi': 'antiquity',
+
+    // 🔴 [2026-10-20 主人令「有名字的武将都要安置在据点」] 补三位罗马将的时代（生卒皆在 476 年前 → 古典时代）
+    'baolusi': 'antiquity',     // 保卢斯（前 254–前 216，坎尼阵亡）
+    'waluo': 'antiquity',       // 瓦罗（前 256–前 195，坎尼）
+    'aitiliusi': 'antiquity',   // 埃提乌斯（391–454，沙隆）
 };
 
 export function getGeneralEra(generalId: string): GeneralEra | undefined {

@@ -639,7 +639,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 8000,
             attackerSourceCityId: 'city_niniwei',   // 出兵据点＝军团此刻在哪：上一场高加米拉战场，按 §三.1 取那年离战场最近且已存在的据点＝尼尼微（34 公里）；巴比伦是沿途路标
             attackerLegionName: '马其顿军团',
-            defenderFactionId: 'wukexiya',
+            defenderFactionId: 'ailan',   // 🔴 [2026-10-20] 原「乌克西亚」无城战役势力已删 → 守方改挂埃兰（苏萨），守将马达泰斯随势力
             defenderGeneralId: 'wukexiya_madates',
             defenderTroops: 5000,
             defenderLegionName: '乌克西亚军团',
@@ -1129,7 +1129,7 @@ export const HISTORICAL_EVENT_SCRIPT: HistoricalEvent[] = [
             attackerTroops: 12000,
             attackerSourceCityId: 'city_malisi',
             attackerLegionName: '马其顿军团',
-            defenderFactionId: 'kesaiya',
+            defenderFactionId: 'midi',   // 🔴 [2026-10-20] 原「科塞亚」无城战役势力已删 → 守方改挂米底（哈马丹），守将卡什提利亚什随势力
             defenderGeneralId: 'kesaiya_kashtiliash',
             defenderTroops: 8000,
             defenderSourceCityId: '',

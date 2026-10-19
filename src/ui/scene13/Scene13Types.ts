@@ -163,6 +163,10 @@ export interface WarMan {
     y0: number;
     /** 🔴 [2026-10-15 主人令] 攻城战第二波起守军的原地警戒驻守点（本队出兵口原位槽位）：攻击附近敌人后回原位警戒 */
     guardPost?: { x: number; y: number };
+    /** 🔴 [2026-10-20 主人令「城门选择加防抖」] 守方进出城时上次选定的城门：新门总路程须明显更短（见 gateExit）才换 */
+    exitGate?: WarBuilding | null;
+    /** 🔴 [2026-10-20 主人令「守军破墙后仍绕城门」] 守方出城上次是否走的缺口（gateExit 防两条路来回换） */
+    exitViaGap?: boolean;
     /** 上一帧位置（算真实位移用，见 stuckT） */
     prevX: number;
     prevY: number;

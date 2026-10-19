@@ -1080,7 +1080,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'wukexiya_madates':                  -4,    // 马达泰斯 · wukexiya · 乌克西亚（扎格罗斯及乌克西亚部落首领；旧写「提里巴斯」已改，2026-10-02）
     'dasaleiti_kleitos':                 -4,    // 克莱图斯 · dasaleiti · 佩利昂（公元前335年佩利昂围城战守帅）
     'dibisi_phoinix':                    -4,    // 菲尼克斯 · boootiya · 底比斯（公元前335年底比斯战役守帅）
-    'seleisi_shouling':                  -4,    // 塞乌特斯 · seleisi · 海姆斯山（公元前335年海姆斯山战役守帅）
     'jite_shouling':                     -4,    // 科托罗 · seleisi · 多瑙河渡河（公元前335年多瑙河渡河战役守帅）
     'suogediyana_arimazes':    -4,    // 阿里马泽斯 · suogediyana · 索格狄亚那（公元前327年索格狄亚那岩守将）
     'sute_spitamenes':                   -4,    // 斯皮塔米尼斯 · sute · 诺塔卡（公元前328年粟特起义统帅）
@@ -1106,7 +1105,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'fujisi_fujiweng':                   -4,    // 福基翁 · fujisi · 雅典城邦政治家军事家（前4世纪）
     'yilisi_yifeituosi':                 -8,    // 伊菲托斯 · yilisi · 古希腊伊利斯国王恢复奥运会（公元前776年）
     'kushi_amanilunnasi':                -1,    // 阿玛尼伦纳斯 · kushi · 库施独眼女王击退罗马军（约公元前24年）
-    'jiaye_jiaye':                       1,     // 金首露/伽耶 · jiaye · 伽耶开国君主（公元1世纪）
     'jiaye_punafamo':                    7,     // 普那伐摩 · jiaye · 摩揭陀国王护持菩提伽耶（7世纪初）
     'pidisha_pidisha':                   -2,    // 毗底沙邑长 · pidisha · 巽伽王朝陪都名邑（前2世纪）
     'aodesuosi_aodesuosi':               -4,    // 奥德索斯首领 · aodesuosi · 黑海希腊殖民城邦首领（前4世纪）
@@ -1127,7 +1125,6 @@ export const GENERAL_CENTURIES: Record<string, number> = {
     'gen_saguamanchica':                 15,    // 萨瓜曼奇卡 · muisca · 穆伊斯卡联合酋长（1470-1490在位）
     'gen_pachacuti':                     15,    // 帕查库提 · tawantinsuyu · 印加帝国缔造者（1438-1471在位）
     'pomeilaniya_bogislaw':              15,    // 博吉斯拉夫十世 · pomeilaniya · 波美拉尼亚公国统帅（1474-1523在位）
-    'kaernute_kotuatousi':               1,     // 科图阿图斯 · kaernute · 高卢卡努特部落抗罗马首领（公元1世纪）
     'gen_kaernute_kotuatousi':           1,     // 科图阿图斯 · kaernute · 高卢卡努特部落抗罗马首领（公元1世纪）
     'bolan_suobiesiji':                  17,    // 扬三世·索别斯基 · bolan · 维也纳之战翼骑兵冲锋（1683年解围）
     'xibanya_pisaluo':                   16,    // 皮萨罗 · xibanya · 西班牙征服印加帝国（1532年成名）
