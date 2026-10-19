@@ -30,8 +30,15 @@ const mainSrc = fs.readFileSync('src/legion-editor/main.ts', 'utf8');
 const block = mainSrc.slice(mainSrc.indexOf('export const DE_UNITS_CATALOG'), mainSrc.indexOf('export const DE_UNITS_MAP'));
 const catalog = [...block.matchAll(/\{\s*id:\s*'([^']+)',\s*name:\s*'([^']+)',\s*category:\s*'([^']+)'/g)]
     .map((m) => ({ id: m[1], name: m[2], category: m[3] }));
-const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+// 去变音再规范化（Lü Bu → lubu）
+const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 const catByKey = new Map(catalog.map((c) => [norm(c.id), c]));
+// 🔴 [2026-10-19] 兵种鉴赏的英雄 id 带 hero_ 前缀（hero_liubei），以前按整个 id 比对，100 个英雄只对上 5 个；补一份去前缀的索引
+const catByHeroKey = new Map(catalog.filter((c) => c.id.startsWith('hero_')).map((c) => [norm(c.id.slice(5)), c]));
+// 共用对号表（兵种 id → DE 英文名），与 tools/de-unit-source-types.mjs 同一份
+const NAME_ALIAS = JSON.parse(fs.readFileSync('tools/de-unit-name-alias.json', 'utf8'));
+const catByDeName = new Map();
+for (const [cid, de] of Object.entries(NAME_ALIAS)) if (!cid.startsWith('_') && !catByDeName.has(norm(de))) { const c = catalog.find((x) => x.id === cid); if (c) catByDeName.set(norm(de), c); }
 const CATEGORY_TO_CLS = { infantry: 'infantry', cavalry: 'cavalry', ranged: 'ranged', siege: 'siege', naval: 'naval', hero: 'hero' };
 
 /** 英文名 → 官方中文名（用 strings-en 反查 string id，再取 strings-zh 同 id） */
@@ -52,11 +59,64 @@ const CATALOG_ALIAS = {
 const catalogOf = (nameEn) => {
     const k = norm(nameEn);
     if (CATALOG_ALIAS[k] && catByKey.has(norm(CATALOG_ALIAS[k]))) return catByKey.get(norm(CATALOG_ALIAS[k]));
+    // 顺序：① id 完全同名（war_dog）② 共用对号表（Themistocles → 步战版，不是同名的旗舰）③ 去 hero_ 前缀同名（Liu Bei → hero_liubei）
     if (catByKey.has(k)) return catByKey.get(k);
+    if (catByDeName.has(k)) return catByDeName.get(k);
+    if (catByHeroKey.has(k)) return catByHeroKey.get(k);
     // "Heavy Pikeman (Age of Empires II)" → heavy_pikeman
     for (const [key, c] of catByKey) if (key === k.replace(/ageofempiresii$/, '')) return c;
     return null;
 };
+
+/** 素材：兵种表里有的，写 SUCAI 贴图路径（懒加载画 idle 帧） */
+function attachSprites(list) {
+    for (const r of list) {
+        if (!r.catalogId) { r.spriteDir = undefined; r.spriteUrl = null; continue; }
+        const m = block.match(new RegExp(`id: '${r.catalogId}'[^}]*?pathPrefix: '([^']+)'`));
+        if (!m) continue;
+        // 帧号不一定有 idle_2，按顺序取第一个真实存在的
+        const cand = ['idle_2', 'idle_3', 'idle_1', 'idle_0', 'idle_4'].find((f) => fs.existsSync(`public${m[1]}${f}.png`));
+        r.spriteDir = m[1];
+        r.spriteUrl = cand ? `${m[1]}${cand}.png` : null;
+    }
+}
+const isCombat = (r) => r.bucket === 'combat';
+function buildTotals(rows) {
+    return {
+        all: rows.length,
+        combat: rows.filter(isCombat).length,
+        combatAoe2: rows.filter((r) => isCombat(r) && r.game === 'aoe2').length,
+        combatChronicles: rows.filter((r) => isCombat(r) && r.game === 'chronicles').length,
+        hero: rows.filter((r) => r.bucket === 'hero').length,
+        animal: rows.filter((r) => r.bucket === 'animal').length,
+        civilian: rows.filter((r) => r.bucket === 'civilian').length,
+        joke: rows.filter((r) => r.bucket === 'joke').length,
+        other: rows.filter((r) => r.bucket === 'other').length,
+        inCatalog: rows.filter((r) => r.inCatalog).length,
+        missing: rows.filter((r) => !r.inCatalog).length,
+        combatInCatalog: rows.filter((r) => isCombat(r) && r.inCatalog).length,
+        combatMissing: rows.filter((r) => isCombat(r) && !r.inCatalog).length,
+        withZhName: rows.filter((r) => r.name_zh).length,
+    };
+}
+
+// 🔴 [2026-10-19] 离线重连：只按当前兵种鉴赏重算「是否收录 / 对应 id / 贴图」，不访问 wiki、不动其他字段
+//    用法：node tools/gen-de-offtree-units.mjs --relink
+if (process.argv.includes('--relink')) {
+    const old = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+    for (const r of old.units) {
+        const cat = catalogOf(r.name_en);
+        r.inCatalog = !!cat;
+        r.catalogId = cat ? cat.id : null;
+        r.catalogName = cat ? cat.name : null;
+        if (cat && !r.iconUrl) r.iconUrl = unitIcons[cat.id] || null;
+    }
+    attachSprites(old.units);
+    old.totals = buildTotals(old.units);
+    fs.writeFileSync(OUT, JSON.stringify(old, null, 1), 'utf8');
+    console.log('离线重连完成：', JSON.stringify(old.totals));
+    process.exit(0);
+}
 
 // ---------------------------------------------------------------- wiki：不可训练清单
 const sec = await get(`${API}?action=parse&page=Scenario%20Editor%20(Age%20of%20Empires%20II)&prop=wikitext&section=28&format=json`);
@@ -293,18 +353,8 @@ for (const row of rows) {
 }
 console.log(`图标：成功 ${iconOk}（其中复用缓存 ${iconCached}） / 失败 ${iconFail}${noIcon.length ? ' → ' + noIcon.join(', ') : ''}`);
 
-// 素材：兵种表里有的，写 SUCAI 贴图路径（懒加载画 idle 帧）
-for (const r of rows) {
-    if (!r.catalogId) continue;
-    const m = block.match(new RegExp(`id: '${r.catalogId}'[^}]*?pathPrefix: '([^']+)'`));
-    if (!m) continue;
-    // 帧号不一定有 idle_2，按顺序取第一个真实存在的
-    const cand = ['idle_2', 'idle_3', 'idle_1', 'idle_0', 'idle_4'].find((f) => fs.existsSync(`public${m[1]}${f}.png`));
-    r.spriteDir = m[1];
-    r.spriteUrl = cand ? `${m[1]}${cand}.png` : null;
-}
+attachSprites(rows);
 
-const isCombat = (r) => r.bucket === 'combat';
 const data = {
     generatedAt: new Date().toISOString(),
     sources: {
@@ -314,22 +364,7 @@ const data = {
         categories: 'Category:Scenario Editor units (Age of Empires II) / (Chronicles)',
         local: 'public/de-techtree/strings-en|zh.json + unit-icons.json + src/legion-editor/main.ts DE_UNITS_CATALOG',
     },
-    totals: {
-        all: rows.length,
-        combat: rows.filter(isCombat).length,
-        combatAoe2: rows.filter((r) => isCombat(r) && r.game === 'aoe2').length,
-        combatChronicles: rows.filter((r) => isCombat(r) && r.game === 'chronicles').length,
-        hero: rows.filter((r) => r.bucket === 'hero').length,
-        animal: rows.filter((r) => r.bucket === 'animal').length,
-        civilian: rows.filter((r) => r.bucket === 'civilian').length,
-        joke: rows.filter((r) => r.bucket === 'joke').length,
-        other: rows.filter((r) => r.bucket === 'other').length,
-        inCatalog: rows.filter((r) => r.inCatalog).length,
-        missing: rows.filter((r) => !r.inCatalog).length,
-        combatInCatalog: rows.filter((r) => isCombat(r) && r.inCatalog).length,
-        combatMissing: rows.filter((r) => isCombat(r) && !r.inCatalog).length,
-        withZhName: rows.filter((r) => r.name_zh).length,
-    },
+    totals: buildTotals(rows),
     units: rows,
 };
 fs.writeFileSync(OUT, JSON.stringify(data, null, 1), 'utf8');

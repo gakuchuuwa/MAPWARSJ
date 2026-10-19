@@ -39,6 +39,7 @@ import { FACTION_GENERALS, getFactionGeneral } from '../data/FactionGenerals';
 import { GENERAL_ERA } from '../data/GeneralEra';
 import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
 import { WAR_TYPES, type WarType } from '../data/WarTypes';
+import { DE_UNIT_SOURCE_TYPE, DE_SOURCE_TYPE_LABEL, DE_SOURCE_TYPE_ORDER, type DeSourceType } from '../data/deUnitSourceTypes';
 import { getCombatPower, getPowerRefs, getLegionPower, invalidateCombatPowerCache } from '../data/CombatPower';
 import { listNavalShipWeapons, listCultureNavalShips, type NavalWeapon, getCultureNavalShip, getNavalShipChineseName, getNavalWeapons } from '../types/NavalShipTiers';
 import { STRATEGIC_SPACING_X, STRATEGIC_SPACING_Y, SPRITE_BASE_H } from '../config/LegionSpacing';
@@ -579,9 +580,9 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_generalaraiyan', name: '英雄·拉贾拉贾一世·达罗毗荼', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GENERALARAIYAN/' },   // [2026-09-08 主人定·通用形象改挂真实人物] 朱罗海权开创者 985–1014；Araiyan 是泰米尔语「王/首领」，素材本属朱罗系
     { id: 'hero_gidajan', name: '英雄·吉达扬·埃塞俄比亚', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GIDAJAN/' },
     { id: 'hero_gilbertdeclare', name: '英雄·吉尔伯特·不列颠', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/GILBERTDECLARE/' },
-    { id: 'hero_girgenkhan', name: '英雄·吉尔根汗·河西', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/GIRGENKHAN/' },
+    { id: 'hero_girgenkhan', name: '英雄·吉尔根汗·库曼', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/GIRGENKHAN/' },
     { id: 'hero_guacolda', name: '英雄·瓜科尔达·马普切', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/GUACOLDA/' },
-    { id: 'hero_guanyu', name: '英雄·关羽·巴蜀', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/GUANYU/' },
+    { id: 'hero_guanyu', name: '英雄·关羽·河朔', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/GUANYU/' },
     { id: 'hero_ivaylo', name: '英雄·骑马伊瓦伊洛·保加利亚', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/IVAYLO/' },
     { id: 'hero_ivaylofoot', name: '英雄·步战伊瓦伊洛·保加利亚', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/IVAYLOFOOT/' },
     { id: 'hero_janzizka', name: '英雄·扬·杰式卡·波希米亚', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JANZIZKA/' },
@@ -591,7 +592,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_johnthefearless', name: '英雄·无畏的约翰·勃艮第', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JOHNTHEFEARLESS/' },
     { id: 'hero_kestutis', name: '英雄·科斯图提斯·立陶宛', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KESTUTIS/' },
     { id: 'hero_kotyankhan', name: '英雄·忽炭汗·库曼', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KOTYANKHAN/' },
-    { id: 'hero_kushluk', name: '英雄·屈出律·漠北蒙古', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KUSHLUK/' },
+    { id: 'hero_kushluk', name: '英雄·屈出律·鞑靼', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KUSHLUK/' },
     { id: 'hero_lautaro', name: '英雄·劳塔罗·马普切', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/LAUTARO/' },
     { id: 'hero_leloi', name: '英雄·黎利·越南', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/LELOI/' },
     { id: 'hero_liubei', name: '英雄·刘备·巴蜀', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/LIUBEI/' },
@@ -1077,7 +1078,11 @@ let catalogCatFilter: 'all' | UnitCategory = 'all';
 let catalogSubFilter: 'all' | SubCategory = 'all';
 let catalogTierFilter: 'all' | 'elite' | 'base' = 'all';
 let catalogAgeFilter: 'all' | UnitAge = 'all';
-let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' = 'name';
+// 🔴 [2026-10-19 主人令] DE 来源七类：城堡兵、文化兵、区域兵、特殊兵、普通兵、英雄、精英兵；none＝DE 查不到出处（项目自建）
+let catalogSrcFilter: 'all' | DeSourceType | 'none' = 'all';
+const getUnitSource = (id: string): DeSourceType | 'none' => DE_UNIT_SOURCE_TYPE[id] ?? 'none';
+const srcLabel = (t: DeSourceType | 'none'): string => t === 'none' ? '项目自建' : DE_SOURCE_TYPE_LABEL[t];
+let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'source' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' = 'name';
 let catalogSortAsc = true;
 let selectedUnitId: string | null = null;
 
@@ -1140,6 +1145,10 @@ app.innerHTML = `
     <option value="elite">⭐ 仅精锐 / 帝国档 (${DE_UNITS_CATALOG.filter(u => getUnitTier(u) === 'elite').length})</option>
     <option value="base">仅普通档 (${DE_UNITS_CATALOG.filter(u => getUnitTier(u) !== 'elite').length})</option>
   </select>
+  <select id="le-src-filter" class="le-select" title="按 DE 来源分：城堡兵、文化兵、区域兵、特殊兵、普通兵、英雄、精英兵">
+    <option value="all">全部来源 (${DE_UNITS_CATALOG.length})</option>
+    ${[...DE_SOURCE_TYPE_ORDER, 'none' as const].map(t => `<option value="${t}">${srcLabel(t)} (${DE_UNITS_CATALOG.filter(u => getUnitSource(u.id) === t).length})</option>`).join('')}
+  </select>
   <span id="le-cat-stats" class="le-stats">加载中…</span>
 </div>
 <div class="le-body">
@@ -1180,6 +1189,7 @@ const els = {
     catFilter: document.getElementById('le-cat-filter') as HTMLSelectElement,
     subFilter: document.getElementById('le-sub-filter') as HTMLSelectElement,
     tierFilter: document.getElementById('le-tier-filter') as HTMLSelectElement,
+    srcFilter: document.getElementById('le-src-filter') as HTMLSelectElement,
     ageFilter: document.getElementById('le-age-filter') as HTMLSelectElement,
     catStats: document.getElementById('le-cat-stats')!,
     catTableWrap: document.getElementById('le-cat-table-wrap')!,
@@ -4496,6 +4506,7 @@ function applyCatalogFilter(): void {
         if (catalogSubFilter !== 'all' && getUnitSubcategory(u.id) !== catalogSubFilter) return false;
         if (catalogTierFilter !== 'all' && getUnitTier(u) !== catalogTierFilter) return false;
         if (catalogAgeFilter !== 'all' && u.age !== catalogAgeFilter) return false;
+        if (catalogSrcFilter !== 'all' && getUnitSource(u.id) !== catalogSrcFilter) return false;
         if (q) {
             const hit = u.name.toLowerCase().includes(q)
                 || u.id.toLowerCase().includes(q)
@@ -4534,6 +4545,12 @@ function sortCatalogRows(): void {
             const sa = getUnitSubcategory(a.id) ?? '';
             const sb = getUnitSubcategory(b.id) ?? '';
             const d = sa.localeCompare(sb);
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
+        if (catalogSortCol === 'source') {
+            const order: Array<DeSourceType | 'none'> = [...DE_SOURCE_TYPE_ORDER, 'none'];
+            const d = order.indexOf(getUnitSource(a.id)) - order.indexOf(getUnitSource(b.id));
             if (d !== 0) return dir * d;
             return a.name.localeCompare(b.name, 'zh-CN');
         }
@@ -4592,6 +4609,7 @@ function renderCatalogTable(): void {
           <th data-col="tier" style="width:80px;">升级档${arrow('tier')}</th>
           <th data-col="category" style="width:100px;">类别${arrow('category')}</th>
           <th data-col="subcategory" style="width:90px;">子类${arrow('subcategory')}</th>
+          <th data-col="source" style="width:80px;" title="DE 来源：城堡兵、文化兵、区域兵、特殊兵、普通兵、英雄、精英兵">来源${arrow('source')}</th>
           <th data-col="power" style="width:62px;" title="综合战力指数：√(有效输出 × 有效血)，全表中位数=100。只作粗排序，不含相克">战力${arrow('power')}</th>
           <th data-col="hp" style="width:52px;" title="DE hit_points">血${arrow('hp')}</th>
           <th data-col="atk" style="width:52px;" title="DE displayed_attack 基础攻击">攻${arrow('atk')}</th>
@@ -4624,6 +4642,7 @@ function renderCatalogTable(): void {
                 : `<span class="tier-tag tier-base">普通</span>`}</td>
             <td><span class="cat-tag">${CATEGORY_LABEL[u.category]}</span></td>
             <td>${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : `<span style="color:#7a7266;">—</span>`}</td>
+            <td><span class="sub-tag"${getUnitSource(u.id) === 'none' ? ' style="opacity:.6;"' : ''}>${srcLabel(getUnitSource(u.id))}</span></td>
             <td class="stat-cell">${pw ? `<b style="color:${pw.index >= 200 ? '#e08a5a' : pw.index >= 100 ? '#e0c060' : '#8fae8f'};font-size:13px;">${pw.index}</b>` : dash}</td>
             <td class="stat-cell">${st ? `<b style="color:#d98a7a;">${st.hp}</b>` : dash}</td>
             <td class="stat-cell">${st ? `<b style="color:#e0c060;">${st.atk}</b>` : dash}</td>
@@ -5019,6 +5038,7 @@ function renderUnitPanel(unitId: string): void {
           <span class="age-tag age-${u.age}" title="${AGE_YEARS[u.age].anchor}">${AGE_LABEL[u.age]}　<span style="opacity:.65;font-weight:normal;">${AGE_YEARS[u.age].span}</span></span>
           <span class="cat-tag">${CATEGORY_LABEL[u.category]}</span>
           ${sub ? `<span class="sub-tag">${SUBCATEGORY_LABEL[sub]}</span>` : ''}
+          <span class="sub-tag" title="DE 来源">${srcLabel(getUnitSource(u.id))}</span>
           ${tier === 'elite' ? `<span class="tier-tag tier-elite">⭐ 精锐</span>` : `<span class="tier-tag tier-base">普通</span>`}
           <button type="button" id="le-unit-btn-toggle-classify" class="le-btn le-btn-xs" style="background:#202820;border:1px solid #3c5a3c;color:#a0d8a0;cursor:pointer;margin-left:4px;" title="修改兵种类别、子分类与时代">⚙️ 设定分类/时代</button>
         </div>
@@ -6149,6 +6169,10 @@ els.tierFilter.addEventListener('change', () => {
 });
 els.ageFilter.addEventListener('change', () => {
     catalogAgeFilter = els.ageFilter.value as typeof catalogAgeFilter;
+    runCatalogFilter();
+});
+els.srcFilter.addEventListener('change', () => {
+    catalogSrcFilter = els.srcFilter.value as typeof catalogSrcFilter;
     runCatalogFilter();
 });
 
