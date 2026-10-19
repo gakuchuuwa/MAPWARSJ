@@ -5360,7 +5360,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '萨尔尼察河畔',
-        targetCityId: 'bf_kalka',
         targetLat: 47.27,
         targetLng: 37.55,
         myTroops: 30000,
@@ -6064,7 +6063,6 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         battleType: 'field',
         role: 'attacker',
         targetName: '顿涅茨迦勒迦河畔',
-        targetCityId: 'bf_kalka',
         targetLat: 47.27,
         targetLng: 37.55,
         myTroops: 25000,
@@ -11916,20 +11914,18 @@ export function clearCompletedFirstBattles(): void {
 }
 
 /**
- * 本城就地开战 / 防守迎击类的首战武将（role === 'defender' 或 targetCityId === 本城）：
- * 在玩家尚未与其触发并完成首战前，留在城中等候玩家，不提前由 AI 募兵出征攻打别城；
- * 等首战打完后再自由出征。
+ * 守己方城类的首战武将（battleType === 'siege' && role === 'defender'）：
+ * 在玩家尚未与其触发并完成首战前，留在城中等候玩家，不提前由 AI 募兵出征；
+ * 攻其他城与野战类的武将不限制出征，玩家无论在城中还是野外找到该武将均可直接奔赴战场开战。
  */
 export function shouldGeneralWaitInCityForFirstBattle(
     generalId: string | null | undefined,
-    cityId?: string | null,
+    _cityId?: string | null,
 ): boolean {
     if (!generalId || isFirstBattleCompleted(generalId)) return false;
     const fb = getGeneralFirstBattle(generalId);
     if (!fb) return false;
-    if (fb.role === 'defender') return true;
-    if (cityId && fb.targetCityId === cityId) return true;
-    return false;
+    return fb.battleType === 'siege' && fb.role === 'defender';
 }
 
 // @ts-ignore

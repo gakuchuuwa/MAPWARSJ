@@ -55,6 +55,7 @@ function collectLegionsNearBattleCenter(
             legion.scriptMarchExempt ||
             lAny.isFirstBattleHero ||
             lAny.isFirstBattleFieldEnemy ||
+            lAny.isFirstBattleSiegeEnemy ||
             legion.isScriptArmy
         ) {
             return false;
@@ -135,7 +136,10 @@ export function tryEngageFieldBattle(
 
     const armyAny = army as any;
     // 首战攻城军团（有明确首战攻城目标城）不主动触发任何野战
-    if (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && !armyAny.forceFirstBattleField) {
+    if (
+        armyAny.isFirstBattleSiegeEnemy ||
+        (armyAny.isFirstBattleHero && armyAny.firstBattleTargetCityId && !armyAny.forceFirstBattleField)
+    ) {
         return false;
     }
 
@@ -163,7 +167,10 @@ export function tryEngageFieldBattle(
 
         const otherAny = otherArmy as any;
         // 首战攻城军团不能被第三方拖入野战
-        if (otherAny.isFirstBattleHero && otherAny.firstBattleTargetCityId && !otherAny.forceFirstBattleField) {
+        if (
+            otherAny.isFirstBattleSiegeEnemy ||
+            (otherAny.isFirstBattleHero && otherAny.firstBattleTargetCityId && !otherAny.forceFirstBattleField)
+        ) {
             continue;
         }
         // 首战野战配对锁定：玩家首战军团与首战专属敌军只能互相交战，绝不允许第三方军团截胡

@@ -1691,14 +1691,15 @@ export class PlayerQuestSystem {
         }
 
         const role: 'attacker' | 'defender' = fb.role ?? 'attacker';
-        const effectiveBattleType: 'field' | 'siege' = role === 'defender' ? 'field' : fb.battleType;
+        const effectiveBattleType: 'field' | 'siege' = fb.battleType;
         applyLegionCultureComposition(host, host.cultureRegion ?? undefined);
         (host as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
         (host as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         (host as Army & { isFirstBattleHero?: boolean }).isFirstBattleHero = true;
         (host as Army & { firstBattleRole?: 'attacker' | 'defender' }).firstBattleRole = role;
         (host as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
-        (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId = fb.targetCityId;
+        (host as Army & { firstBattleTargetCityId?: string }).firstBattleTargetCityId =
+            fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined);
         host.scriptMarchExempt = true;
         host.expeditionTargetCityId = null;
 
@@ -1706,8 +1707,7 @@ export class PlayerQuestSystem {
         const targetPos = targetCity
             ? { lat: targetCity.latitude, lng: targetCity.longitude }
             : { lat: fb.targetLat, lng: fb.targetLng };
-        const isOnTheSpot =
-            fb.targetCityId === city.id || getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
+        const isOnTheSpot = getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
         const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panjun';
         const existingEnemyGen =
@@ -1752,6 +1752,47 @@ export class PlayerQuestSystem {
                 applyLegionCultureComposition(enemyArmy, enemyArmy.cultureRegion ?? undefined);
                 enemyArmyId = enemyArmy.id;
             }
+        } else if (role === 'defender') {
+            const defendedCity = targetCity ?? city;
+            defendedCity.factionId = myFactionId;
+            const cityGarrison = Math.min(1000, Math.max(1, Math.floor(myTroops * 0.1)));
+            defendedCity.troops = cityGarrison;
+            host.setTroops(Math.max(1, myTroops - cityGarrison));
+            (defendedCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
+            if (isOnTheSpot) {
+                host.setPosition(defendedCity.latitude, defendedCity.longitude);
+            }
+            const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
+            const enemySpawnPos = { lat: defendedCity.latitude, lng: defendedCity.longitude + ring };
+            const enemyArmy = this.deps.legionManager.createLegion(
+                enemySpawnPos,
+                enemyTroops,
+                enemyFactionId,
+                existingEnemyGen ? `${enemyDisplayName}部` : enemyDisplayName,
+                undefined,
+                undefined,
+                defendedCity.id,
+                enemyGeneralId,
+                true,
+            );
+            if (enemyArmy) {
+                enemyArmy.setTroops(enemyTroops);
+                enemyArmy.isElite = true;
+                if (enemyGeneralId) {
+                    enemyArmy.generalId = enemyGeneralId;
+                }
+                if (existingEnemyGen?.portrait) enemyArmy.portraitPath = existingEnemyGen.portrait;
+                enemyArmy.setPosition(enemySpawnPos.lat, enemySpawnPos.lng);
+                (enemyArmy as Army & { __scriptPinned?: boolean }).__scriptPinned = true;
+                (enemyArmy as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
+                (enemyArmy as Army & { isFirstBattleSiegeEnemy?: boolean }).isFirstBattleSiegeEnemy = true;
+                (enemyArmy as Army & { firstBattleTitle?: string }).firstBattleTitle = fb.battleName;
+                (enemyArmy as Army & { firstBattlePairHeroId?: string }).firstBattlePairHeroId = host.id;
+                (host as Army & { firstBattlePairEnemyId?: string }).firstBattlePairEnemyId = enemyArmy.id;
+                enemyArmy.scriptMarchExempt = true;
+                applyLegionCultureComposition(enemyArmy, enemyArmy.cultureRegion ?? undefined);
+                enemyArmyId = enemyArmy.id;
+            }
         } else if (targetCity) {
             if (targetCity.factionId === myFactionId) {
                 targetCity.factionId = enemyFactionId;
@@ -1786,7 +1827,7 @@ export class PlayerQuestSystem {
                 myTroops,
                 targetLat: targetPos.lat,
                 targetLng: targetPos.lng,
-                targetCityId: fb.targetCityId,
+                targetCityId: fb.targetCityId ?? (effectiveBattleType === 'siege' ? city.id : undefined),
                 enemyArmyId,
                 enemyFactionId,
                 enemyTroops,
@@ -1873,6 +1914,29 @@ export class PlayerQuestSystem {
             } else {
                 fbState.engaged = true;
             }
+        } else if (fbState.role === 'defender' && fbState.targetCityId) {
+            const defendedCity = this.deps.cityManager.getCity(fbState.targetCityId);
+            const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
+            if (defendedCity && enemyArmy && !enemyArmy.isDestroyed) {
+                defendedCity.factionId = host.getFactionId();
+                const cityGarrison = Math.min(1000, Math.max(1, Math.floor(fbState.myTroops * 0.1)));
+                defendedCity.troops = cityGarrison;
+                host.setTroops(Math.max(1, fbState.myTroops - cityGarrison));
+                const cPos = { lat: defendedCity.latitude, lng: defendedCity.longitude };
+                if (getEuclideanDistance(host.getPosition(), cPos) > 0.04) {
+                    host.setPosition(cPos.lat, cPos.lng);
+                }
+                enemyArmy.scriptMarchExempt = false;
+                enemyArmy.setTargetCity(defendedCity);
+                const eDist = getEuclideanDistance(enemyArmy.getPosition(), cPos);
+                if (eDist <= 0.2 && !enemyArmy.getIsInCombat() && !host.getIsInCombat()) {
+                    this.deps.legionManager.triggerSiege?.(enemyArmy, defendedCity);
+                } else if (eDist > 0.12 && !enemyArmy.isMarching()) {
+                    enemyArmy.moveAlongPath([{ lat: cPos.lat, lng: cPos.lng }]);
+                }
+            } else {
+                fbState.engaged = true;
+            }
         } else if (fbState.targetCityId) {
             const targetCity = this.deps.cityManager.getCity(fbState.targetCityId);
             if (targetCity) {
@@ -1921,6 +1985,8 @@ export class PlayerQuestSystem {
             delete (enemyArmy as { __scriptPinned?: boolean }).__scriptPinned;
             delete (enemyArmy as { isFirstBattleMarch?: boolean }).isFirstBattleMarch;
             delete (enemyArmy as { isFirstBattleFieldEnemy?: boolean }).isFirstBattleFieldEnemy;
+            delete (enemyArmy as { isFirstBattleSiegeEnemy?: boolean }).isFirstBattleSiegeEnemy;
+            delete (enemyArmy as { firstBattleTitle?: string }).firstBattleTitle;
             delete (enemyArmy as { firstBattlePairHeroId?: string }).firstBattlePairHeroId;
             enemyArmy.scriptMarchExempt = false;
             enemyArmy.disband();
@@ -2032,6 +2098,17 @@ export class PlayerQuestSystem {
                 return;
             }
             if (distToTarget <= 0.2) {
+                this.onHostReachFirstBattle();
+            } else if (!host.isMarching()) {
+                this.marchHostToFirstBattle(host, targetPos);
+            }
+        } else if (fbState.role === 'defender') {
+            const enemyArmy = fbState.enemyArmyId ? this.deps.legionManager.getLegionById(fbState.enemyArmyId) : undefined;
+            if (!enemyArmy || enemyArmy.isDestroyed || enemyArmy.getTroops() <= 0 || (fbState.engaged && !host.getIsInCombat())) {
+                this.completeFirstBattleAndContinueExpedition(q, host);
+                return;
+            }
+            if (distToTarget <= 0.22) {
                 this.onHostReachFirstBattle();
             } else if (!host.isMarching()) {
                 this.marchHostToFirstBattle(host, targetPos);
@@ -2906,8 +2983,10 @@ export class PlayerQuestSystem {
         if (hero.isAttached() || this.quest) return;
         const cityId = this.chaseCityId;
         this.chaseCityId = null;
-        const city = cityId ? this.deps.cityManager.getCity(cityId) : null;
         const gid = army.generalId;
+        const resolvedCityId =
+            cityId ?? army.homeCityId ?? army.getSourceCityId?.() ?? (gid ? this.generalCityId(gid) : null);
+        const city = resolvedCityId ? this.deps.cityManager.getCity(resolvedCityId) : null;
         if (!city || !gid || !isGeneralOnStage(gid)) return;
         this.rememberVisit(city, gid);
         const rec = getGeneralRecordByGeneralId(gid);

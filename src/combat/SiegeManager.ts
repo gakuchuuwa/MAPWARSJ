@@ -851,6 +851,7 @@ export class SiegeManager {
                 legion.scriptMarchExempt ||
                 lAny.isFirstBattleHero ||
                 lAny.isFirstBattleFieldEnemy ||
+                lAny.isFirstBattleSiegeEnemy ||
                 legion.isScriptArmy
             ) {
                 return false;
@@ -945,7 +946,9 @@ export class SiegeManager {
             return;
         }
 
+        const isFirstBattleSiegeEnemy = !!(army as { isFirstBattleSiegeEnemy?: boolean }).isFirstBattleSiegeEnemy;
         const isFirstBattleSiege =
+            isFirstBattleSiegeEnemy ||
             !!(army as { isFirstBattleMarch?: boolean }).isFirstBattleMarch ||
             !!(army as { isFirstBattleHero?: boolean }).isFirstBattleHero ||
             !!army.isScriptArmy;
@@ -1018,20 +1021,33 @@ export class SiegeManager {
 
         const excludedIds = new Set<string>([army.id]);
 
-        const nearbyDefenderLegions = this.collectDefenderLegionsForSiege(
-            targetCity,
-            cityPos,
-            excludedIds
-        );
-        nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
+        let nearbyDefenderLegions: Army[];
+        let nearbyAttackerLegions: Army[];
+        if (isFirstBattleSiegeEnemy) {
+            const pairHeroId = (army as { firstBattlePairHeroId?: string }).firstBattlePairHeroId;
+            const pairHero = pairHeroId ? this.legionManager.getLegionById(pairHeroId) : undefined;
+            nearbyDefenderLegions = pairHero && !pairHero.isDestroyed ? [pairHero] : [];
+            nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
+            nearbyAttackerLegions = [];
+        } else if ((army as { isFirstBattleHero?: boolean }).isFirstBattleHero) {
+            nearbyDefenderLegions = [];
+            nearbyAttackerLegions = [];
+        } else {
+            nearbyDefenderLegions = this.collectDefenderLegionsForSiege(
+                targetCity,
+                cityPos,
+                excludedIds
+            );
+            nearbyDefenderLegions.forEach((legion) => excludedIds.add(legion.id));
 
-        // 攻方：主攻军团 + 附近援军（仅闲置/目标本城；路过不拉）
-        const nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
-            cityPos,
-            army.getFactionId(),
-            excludedIds,
-            targetCity.id,
-        );
+            // 攻方：主攻军团 + 附近援军（仅闲置/目标本城；路过不拉）
+            nearbyAttackerLegions = this.collectNearbyLegionsForFaction(
+                cityPos,
+                army.getFactionId(),
+                excludedIds,
+                targetCity.id,
+            );
+        }
 
         // ── 纵横技（必须在守城加成 applySiegeGarrisonBoostIfNeeded 前执行，确保 spawnUsed 优先消耗）──
         // 剧情/首战攻城不触发纵横削将/削精锐，保证历史对手完整出场并进入战术模式
@@ -1100,7 +1116,7 @@ export class SiegeManager {
             landNavalLegionForSiege(legion, cityPos);
         }
 
-        const siegePreset = siegeData.result ?? (isFirstBattleSiege ? 'attacker_win' : undefined);
+        const siegePreset = siegeData.result ?? (isFirstBattleSiegeEnemy ? 'defender_win' : isFirstBattleSiege ? 'attacker_win' : undefined);
 
         // Adapters
         const attackerAdapter = BattleUnitFactory.createAdapter(
