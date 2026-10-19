@@ -865,6 +865,414 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '实有其人：难陀王朝末王达那难陀。',
     },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_2: {
+        generalId: 'bfe3_2',
+        generalName: '芦子霸王',
+        factionId: 'shu',
+        portrait: '',
+        note: '实有其人：开明十二世（末代蜀王／芦子霸王），《华阳国志·蜀志》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_3: {
+        generalId: 'bfe3_3',
+        generalName: '楼烦王',
+        factionId: 'loufan',
+        portrait: '',
+        note: '史无载，拟名：楼烦王（史未载具体名讳），《史记·赵世家》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_4: {
+        generalId: 'bfe3_4',
+        generalName: '拉维利乌斯',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：执政官普布利乌斯·瓦莱里乌斯·拉维利乌斯，普鲁塔克《希腊罗马名人传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_11: {
+        generalId: 'bfe3_11',
+        generalName: '罗马副执政官',
+        factionId: 'panjun',
+        portrait: '',
+        note: '史无载，拟名：该阶段执政官卢基乌斯·凯基利乌斯·梅特路斯或前线统帅，波利比乌斯《通史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_12: {
+        generalId: 'bfe3_12',
+        generalName: '匈奴单于',
+        factionId: 'xiongnu',
+        portrait: '',
+        note: '史无载，拟名：战国晚期匈奴单于（头曼之前史无详名），《史记·廉颇蔺相如列传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_16: {
+        generalId: 'bfe3_16',
+        generalName: '桀骏',
+        factionId: 'xiou',
+        portrait: '',
+        note: '实有其人：译吁宋死后推桀骏为将继续抗秦，《淮南子·人间训》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_18: {
+        generalId: 'bfe3_18',
+        generalName: '陈馀',
+        factionId: 'zhao',
+        portrait: '',
+        note: '实有其人：成安君陈馀（与赵王歇），《史记·淮阴侯列传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_19: {
+        generalId: 'bfe3_19',
+        generalName: '斯科帕斯',
+        factionId: 'tuolemi',
+        portrait: '',
+        note: '实有其人：埃托利亚雇佣军统帅斯科帕斯，波利比乌斯《通史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_21: {
+        generalId: 'bfe3_21',
+        generalName: '锡诺普执政官',
+        factionId: 'bendou_d',
+        portrait: '',
+        note: '史无载，拟名：锡诺普为黑海南岸独立希腊化城邦，波利比乌斯《通史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_22: {
+        generalId: 'bfe3_22',
+        generalName: '驺郢',
+        factionId: 'yue',
+        portrait: '',
+        note: '实有其人：闽越王驺郢，《史记·东越列传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_23: {
+        generalId: 'bfe3_23',
+        generalName: '塞隆',
+        factionId: 'sailiugu',
+        portrait: '',
+        note: '实有其人：叙利亚军司令塞隆（Seron），《马加比一书》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_25: {
+        generalId: 'bfe3_25',
+        generalName: '埃拉拉',
+        factionId: 'zhuluo',
+        portrait: '',
+        note: '实有其人：朱罗王／达罗毗荼入侵者埃拉拉（Elara），斯里兰卡《大史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_26: {
+        generalId: 'bfe3_26',
+        generalName: '月氏王',
+        factionId: 'yuezhi',
+        portrait: '',
+        note: '史无载，拟名：乌孙昆莫猎骄靡击走西迁大月氏王（大月氏王被杀，史未记名），《汉书·张骞传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_27: {
+        generalId: 'bfe3_27',
+        generalName: '婆苏密多罗',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：巽伽王朝普希亚米特拉之孙婆苏密多罗，迦梨陀娑《摩罗维迦与阿耆尼密多罗》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_29: {
+        generalId: 'bfe3_29',
+        generalName: '纳巴泰海盗首领',
+        factionId: 'alabo',
+        portrait: '',
+        note: '史无载，拟名：托勒密王朝红海商路驱逐纳巴泰海盗，阿加索尔基德斯《论红海》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_30: {
+        generalId: 'bfe3_30',
+        generalName: '匈奴左贤王',
+        factionId: 'xiongnu',
+        portrait: '',
+        note: '史无载，拟名：元光六年匈奴骑兵围李广，《史记·李将军列传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_33: {
+        generalId: 'bfe3_33',
+        generalName: '邦国首领',
+        factionId: 'tubo',
+        portrait: '',
+        note: '史无载，拟名：赞普聂赤赞普一统雅隆诸邦，《贤者喜宴》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_35: {
+        generalId: 'bfe3_35',
+        generalName: '公孙敖',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：汉因受降城被围派公孙敖筑塞及守城，《汉书·匈奴传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_39: {
+        generalId: 'bfe3_39',
+        generalName: '开陵侯',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：汉开陵侯成娩率楼兰六国兵击车师，《汉书·西域传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_41: {
+        generalId: 'bfe3_41',
+        generalName: '奇里乞亚海盗首领',
+        factionId: 'panjun',
+        portrait: '',
+        note: '史无载，拟名：庞培平定地中海奇里乞亚海盗同盟，普鲁塔克《庞培传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_42: {
+        generalId: 'bfe3_42',
+        generalName: '龟兹贵族',
+        factionId: 'qiuci',
+        portrait: '',
+        note: '史无载，拟名：龟兹副王姑翼被汉立温宿王所杀，汉廷立白霸，《汉书·西域传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_43: {
+        generalId: 'bfe3_43',
+        generalName: '杨玉',
+        factionId: 'xianlingqiang',
+        portrait: '',
+        note: '实有其人：先零首领杨玉、犹非，《汉书·赵充国传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_44: {
+        generalId: 'bfe3_44',
+        generalName: '靡忘',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：罕羌首领靡忘，《汉书·赵充国传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_45: {
+        generalId: 'bfe3_45',
+        generalName: '郑吉',
+        factionId: 'xiyuduhu',
+        portrait: '',
+        note: '实有其人：首任西域都护郑吉，《汉书·郑吉传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_47: {
+        generalId: 'bfe3_47',
+        generalName: '莎车王',
+        factionId: 'shache',
+        portrait: '',
+        note: '史无载，拟名：汉代西域子合国与莎车国冲突，《汉书·西域传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_50: {
+        generalId: 'bfe3_50',
+        generalName: '头兰',
+        factionId: 'yelang',
+        portrait: '',
+        note: '实有其人：牂柯夜郎王兴反，毋波击杀夜郎侯头兰，《汉书·西南夷传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_51: {
+        generalId: 'bfe3_51',
+        generalName: '佩特罗尼乌斯',
+        factionId: 'luoma_diguo',
+        portrait: '',
+        note: '实有其人：罗马埃及省总督盖乌斯·佩特罗尼乌斯，斯特拉波《地理学》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_53: {
+        generalId: 'bfe3_53',
+        generalName: '且末王',
+        factionId: 'qiemo',
+        portrait: '',
+        note: '史无载，拟名：去胡来为婼羌国王，抗御且末，《汉书·西域传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_54: {
+        generalId: 'bfe3_54',
+        generalName: '匈奴奥鞬日逐王',
+        factionId: 'xiongnu',
+        portrait: '',
+        note: '史无载，拟名：新莽天凤年间鲜卑拓跋推寅率部南迁与匈奴边部战，《魏书·序纪》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_55: {
+        generalId: 'bfe3_55',
+        generalName: '斯基泰首领',
+        factionId: 'sijitai',
+        portrait: '',
+        note: '史无载，拟名：提比略封阿斯普尔格斯为博斯普鲁斯王抗斯基泰',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_56: {
+        generalId: 'bfe3_56',
+        generalName: '王寻',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：王莽大司空王邑、大司徒王寻（王寻阵亡），《后汉书·光武帝纪》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_57: {
+        generalId: 'bfe3_57',
+        generalName: '樊参',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：更始定安王王匡、大将军樊参（樊参被斩），《后汉书·邓禹传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_58: {
+        generalId: 'bfe3_58',
+        generalName: '张步',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：割据齐地军阀张步，《后汉书·耿弇传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_59: {
+        generalId: 'bfe3_59',
+        generalName: '叙利亚行省提督',
+        factionId: 'luoma_diguo',
+        portrait: '',
+        note: '史无载，拟名：奥斯若恩阿布加尔五世时期对抗罗马东部防线驻军，塔西佗《编年史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_60: {
+        generalId: 'bfe3_60',
+        generalName: '索头部酋领',
+        factionId: 'yunzhong',
+        portrait: '',
+        note: '史无载，拟名：索头鲜卑早期推拓跋毛为五部酋长，《魏书·序纪》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_62: {
+        generalId: 'bfe3_62',
+        generalName: '赫尔迈奥斯残部',
+        factionId: 'panjun',
+        portrait: '',
+        note: '史无载，拟名：贵霜丘就却灭高附希腊化末王残余政权，《后汉书·西域传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_63: {
+        generalId: 'bfe3_63',
+        generalName: '霍尔多尼乌斯',
+        factionId: 'luoma_diguo',
+        portrait: '',
+        note: '实有其人：罗马莱茵军团统帅霍尔多尼乌斯·弗拉克库斯，塔西佗《历史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_65: {
+        generalId: 'bfe3_65',
+        generalName: '帕提亚总督',
+        factionId: 'panjun',
+        portrait: '',
+        note: '史无载，拟名：迦腻色迦一世驱逐帕提亚安息势力定都富楼沙，拉巴塔克铭文',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_66: {
+        generalId: 'bfe3_66',
+        generalName: '零昌残党首领',
+        factionId: 'panjun',
+        portrait: '',
+        note: '史无载，拟名：延熹四年皇甫规平定陇右并州零羌叛军，《后汉书·皇甫规传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_67: {
+        generalId: 'bfe3_67',
+        generalName: '王国',
+        factionId: 'liangzhou',
+        portrait: '',
+        note: '实有其人：凉州叛军推王国为统帅围陈仓，《后汉书·皇甫嵩传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_68: {
+        generalId: 'bfe3_68',
+        generalName: '严纲',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：公孙瓒以严纲为先锋骑兵，麴义斩严纲，《三国志·公孙瓒传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_75: {
+        generalId: 'bfe3_75',
+        generalName: '刘胄',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：汶山及南中夷帅刘胄作乱，马忠斩之，《三国志·马忠传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_76: {
+        generalId: 'bfe3_76',
+        generalName: '曹爽',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：魏大将军曹爽、夏侯玄南征入骆谷，《三国志·王平传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_80: {
+        generalId: 'bfe3_80',
+        generalName: '张微',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：晋广汉太守张微（张嶷之孙，被斩），《晋书·李特载记》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_83: {
+        generalId: 'bfe3_83',
+        generalName: '李势',
+        factionId: 'chenghan',
+        portrait: '',
+        note: '实有其人：成汉末代皇帝李势，《晋书·桓温传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_84: {
+        generalId: 'bfe3_84',
+        generalName: '麦罗埃国王',
+        factionId: 'kushi',
+        portrait: '',
+        note: '史无载，拟名：阿克苏姆埃扎纳碑铭记载其出兵攻灭麦罗埃（库施末期王）',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_85: {
+        generalId: 'bfe3_85',
+        generalName: '石琨',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：后赵汝阴王石琨率张春等十万大军伐闵，《晋书·冉闵载记》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_86: {
+        generalId: 'bfe3_86',
+        generalName: '克诺多马尔',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：阿拉曼尼国王克诺多马尔，阿米亚努斯·马尔切利努斯《罗马史》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_87: {
+        generalId: 'bfe3_87',
+        generalName: '慕容评',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：前燕太傅太原王慕容评，《晋书·王猛传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_89: {
+        generalId: 'bfe3_89',
+        generalName: '高车酋长',
+        factionId: 'gaoche',
+        portrait: '',
+        note: '史无载，拟名：柔然社仑破高车诸部立柔然汗国，《魏书·蠕蠕传》',
+    },
+    // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
+    bfe3_90: {
+        generalId: 'bfe3_90',
+        generalName: '慕容超',
+        factionId: 'panjun',
+        portrait: '',
+        note: '实有其人：南燕末主慕容超，《宋书·武帝纪》',
+    },
 };
 
 /** 按 id 取战场人物（查不到返回 null） */

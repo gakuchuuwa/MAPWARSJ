@@ -52,7 +52,7 @@ import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/format
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withCommander } from '../data/generalHeroUnits';
 import { getGeneralProfile } from '../data/GeneralSkills';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { getFactionGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
 import { TACTICAL_SKILL_ENTRIES_V1, EFFECT_TO_SIX_SET, type TacticalSixSet } from '../data/TacticalSkillCatalog';
 
@@ -401,6 +401,14 @@ export class Scene13WarLayer {
     // ── 战术模式：武将技集气槽与六计见招拆招/玩家钦定系统 ──
     /** 攻/守双方主将 ID（若为无名统帅则为 null，按普将 ×1.00 档位计算） */
     private sideGeneralId: [string | null, string | null] = [null, null];
+    /**
+     * 🔴 [2026-10-20 主人令「一个武将一个势力，哪个武将登场挂哪个势力的旗帜」]
+     * 该侧的**显示势力**：主将自带势力优先（旗/染色/名牌走这个），否则战场势力。
+     * 只影响显示，战斗判定仍按 `sideFaction`。
+     */
+    private displayFaction(side: 0 | 1): string {
+        return getGeneralOwnFactionId(this.sideGeneralId[side]) ?? this.sideFaction[side];
+    }
     /** 攻/守双方是否为名将（名将 ×1.25 / 普将 ×1.00） */
     private sideIsFamous: [boolean, boolean] = [false, false];
     /** 攻/守双方精锐层级（T0=0 .. T4=4，无精锐=null；倍率 1.5 / 1.4 / 1.3 / 1.2 / 1.1 / 1.0） */
@@ -5012,7 +5020,7 @@ export class Scene13WarLayer {
         if (!sides) { sides = new Set(); this.bankSides.set(key, sides); }
         sides.add(side);
         const gen = this.assetGen;
-        const faction = this.sideFaction[side];
+        const faction = this.displayFaction(side);
         try {
             const assets = (SPRITE_PATHS.UNIT_ASSETS as Record<string, any>)[key];
             if (!assets) { this.bank[key] = { realMelee: false, noAttackAnim: false, fh: 84, isDE: false, frames: {}, sets: { move: [[], []], atk: [[], []], die: [[], []], melee: [[], []], charge: [[], []], idle: [[], []] } }; return; }
@@ -6207,6 +6215,17 @@ export class Scene13WarLayer {
             const mRng = mKey ? (this.statsFor(mKey, 0).rng ?? 0) : 0;
             const mReach = Math.max(mRng, 65) + (mKey ? this.radiusOf(mKey) : 8);
             const bg = this.siegeWithWalls ? this.blockedWall(m as Partial<WarMan>) : null;
+            // 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
+            //    DE 护甲算法下普通弓弩打石墙（远防 10）/城门（远防 6）每发只扣 1 点，等于白射。
+            //    「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。
+            if (mRng > 65) {
+                const bon = mKey ? this.statsFor(mKey, 0).bonus : undefined;
+                const hitsBld = !!bon && ((bon[11] ?? 0) > 0 || (bon[13] ?? 0) > 0 || (bon[21] ?? 0) > 0 || (bon[22] ?? 0) > 0);
+                if (!hitsBld) {
+                    if (manChosen && reserve) manChosen.claims++;
+                    return manChosen;
+                }
+            }
             // 近战兵已被墙/门死死顶住（stuckT > 0.35s）且眼前的敌兵不在挥刀距离内 ⇒ 先砍开正挡着自己的这段墙/门，防隔墙锁敌在墙角空抖
             if (manChosen && !(bg && bg.f !== m.f && mRng <= 65 && (wm.stuckT ?? 0) > 0.35 && (manChosen.x - m.x) ** 2 + (manChosen.y - m.y) ** 2 > (mReach + 18) ** 2)) {
                 if (reserve) manChosen.claims++;
@@ -7932,11 +7951,21 @@ export class Scene13WarLayer {
             const wrongLaneFoe = lt !== undefined && m.next <= 0 && m.foe !== null && !('sprite' in m.foe)
                 && lt.targetLane !== undefined && m.foe.lane !== lt.targetLane
                 && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > 75 * 75;
+            // 🔴 [2026-10-20 主人报「武将贴着墙的时候，为什么不打墙呢」]
+            //    攻方近战兵（含乱入者）锁着墙后的敌兵、被一段敌墙顶住超过 0.35 秒、敌兵又不在挥刀距离内 ⇒ 放掉这个目标重新索敌，
+            //    search 攻方段据此改砍挡着自己的这段墙（原先 canKeepTarget 一直放行：乱入者不吃 wallSeparates、
+            //    墙有缺口后所有攻方也不吃 ⇒ 永远不重新索敌，贴墙干顶不出手）。
+            const wallStuckBw = (m.next <= 0 && m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !m.siegeW
+                && m.foe && !('sprite' in m.foe) && stats.rng <= 65 && (m.stuckT ?? 0) > 0.35
+                && (m.foe.x - m.x) ** 2 + (m.foe.y - m.y) ** 2 > (REACH + 18) ** 2) ? this.blockedWall(m) : null;
+            const wallStuck = !!wallStuckBw && wallStuckBw.f !== m.f;
             const keep = this.canKeepTarget(m, SIGHT)
                 && !(m.foe && 'sprite' in m.foe && !m.siegeW && m.next <= 0)
                 && !(m.siegeW && m.foe && !('sprite' in m.foe) && m.next <= 0)
-                && !wrongLaneFoe;
-            const hb = m.siegeW && this.battleType === 'siege' ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
+                && !wrongLaneFoe
+                && !wallStuck;
+            // 被墙顶住时也不回头锁墙后放箭的人（否则又锁回墙后目标、继续贴墙干顶）
+            const hb = (m.siegeW && this.battleType === 'siege') || wallStuck ? null : this.recentAttacker(m, SIGHT);   // 🔴 [2026-10-12] 攻城武器不回头打人，只认城门/箭塔/中心建筑
             const reactWhileChasing = keep && previousTarget && !('sprite' in previousTarget) && hb
                 && (previousTarget.x - m.x) ** 2 + (previousTarget.y - m.y) ** 2 >= REACH * REACH
                 && (hb.x - m.x) ** 2 + (hb.y - m.y) ** 2 < 65 * 65;
@@ -9218,7 +9247,7 @@ export class Scene13WarLayer {
      * @param tick 已含本面旗的相位偏移，别再在里面加（见 WarMan.fo）
      */
     private drawOneFlag(ctx: CanvasRenderingContext2D, x: number, y: number, f: 0 | 1, tick: number): void {
-        const faction = this.sideFaction[f];
+        const faction = this.displayFaction(f);
         LegionFlagDrawer.drawFlag(ctx, { x, y }, 5, FLAG_SCALE, tick, faction, -999, FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
 

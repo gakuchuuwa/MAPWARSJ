@@ -1188,6 +1188,36 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'baolusi': 'ROMA',                    // 保卢斯｜罗马｜罗马城
     'waluo': 'ROMA',                      // 瓦罗｜罗马｜罗马城
     'aitiliusi': 'ROMA',                  // 埃提乌斯｜罗马｜罗马城
+    'bfe3_1': 'ORIE',   // 西底家｜据点文化
+    'bfe3_13': 'JIANGNAN',   // 项燕｜据点文化
+    'bfe3_28': 'JIANGNAN',   // 刘濞｜据点文化
+    'bfe3_77': 'ROMA',   // 瓦勒良｜据点文化
+    'bfe3_79': 'ROMA',   // 奥勒良｜据点文化
+    'bfe3_81': 'ROMA',   // 马克森提乌斯｜据点文化
+    'bfe3_78': 'BASHU',   // 诸葛瞻｜据点文化
+    'bfe3_91': 'ROMA',   // 霍诺留｜据点文化
+    'bfe3_71': 'WEI',   // 袁绍｜据点文化
+    'bfe3_92': 'BYZANTINE',   // 阿内吉斯克鲁斯｜据点文化
+    'bfe3_14': 'CENTRAL',   // 屠睢｜据点文化
+    'bfe3_17': 'CENTRAL',   // 王离｜据点文化
+    'bfe3_9': 'CENTRAL',   // 王龁｜据点文化
+    'bfe3_7': 'CENTRAL',   // 胡阳｜据点文化
+    'bfe3_6': 'ORIE',   // 安条克一世｜据点文化
+    'bfe3_73': 'PERSIAN',   // 阿尔达班四世｜据点文化
+    'bfe3_46': 'FRANKS',   // 维钦托利｜据点文化
+    'bfe3_88': 'BASHU',   // 苻融｜据点文化
+    'bfe3_36': 'CENTRAL',   // 李广利｜据点文化
+    'bfe3_24': 'XIANBEI',   // 老上单于｜据点文化
+    'bfe3_34': 'XIANBEI',   // 儿单于｜据点文化
+    'bfe3_38': 'XIANBEI',   // 且鞮侯单于｜据点文化
+    'bfe3_64': 'XIANBEI',   // 北单于｜据点文化
+    'bfe3_32': 'XIANBEI',   // 白羊王｜据点文化
+    'bfe3_48': 'XIANBEI',   // 呼韩邪单于｜据点文化
+    'bfe3_69': 'KHITAN',   // 华雄｜据点文化
+    'bfe3_70': 'JIANGNAN',   // 刘繇｜据点文化
+    'bfe3_20': 'KOREA',   // 卫满｜据点文化
+    'bfe3_31': 'KOREA',   // 卫右渠｜据点文化
+    'bfe3_74': 'XIANBEI',   // 轲比能｜据点文化
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */

@@ -38,7 +38,7 @@ export class CameraFollowUI {
                 generalName: gName,
                 legionName: lName,
                 armyId: army.id,
-                factionId: army.getFactionId?.() ?? '',
+                factionId: army.getDisplayFactionId?.() ?? army.getFactionId?.() ?? '',
             };
         }
     }
