@@ -91,7 +91,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         //    原为 TRIREME；按主人定的「不看人名、只看样式」比对：这条与 TRIREME **同型**
         //    （同船体、同舷侧白圆盾列、同单桅桨列与船首冲角），只差帆色与帆上纹章，
         //    故升为马其顿军团旗舰。素材是完整 16 向战船，登记见 UnitAssets 'HERO_THEMISTOCLES'。
-        shipId: 'LEVIATHAN',
+        shipId: 'SHP_FLAGSHIP',
         commanderUnit: 'hero_mounted_alexander',
         // 🔴 [2026-10-16 主人令「13 支军团的主力4档，请都套用城堡精锐」] 主力4档＝马其顿城堡兵【伙伴骑兵精锐】。
         // 🔴 [2026-10-16 主人令「给这6个军团补3档，用独特的普通兵补3档」] 3 档＝紫框独特兵【马其顿方阵步兵】的普通档
@@ -757,7 +757,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '蒙古 哈拉和林木石大斡耳朵',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_lubu',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'scythian_horse_archer', count: 3 },
             { type: 'antiquity_cavalry_archer', count: 4 },
@@ -847,7 +847,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'KOREA',
         castleId: 'KORE_CASTLE_AGE3', castleName: '高丽 汉阳南汉山城堞楼',
         formationMode: 'triangle',
-        shipId: 'ELITE_TURTLE_SHIP',
+        shipId: 'HERO_ADMIRALYISUNSHIN',
         commanderUnit: 'hero_zhouyu',
         slots: [
             { type: 'war_wagon', count: 2 },
@@ -1035,7 +1035,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'FRAN_CASTLE_AGE3', castleName: '法兰克 卢瓦尔河双圆塔石堡',
         formationMode: 'echelon',
         shipId: 'CANNON_GALLEON',
-        commanderUnit: 'hero_lahire',
+        commanderUnit: 'hero_bernardarmagnac',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'champion', count: 3 },
@@ -1179,7 +1179,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEST_CASTLE_AGE3', castleName: '不列颠 西欧通用石堡',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_kingarthur',
+        commanderUnit: 'hero_williamwallace',
         slots: [
             { type: 'champion', count: 3 },
             { type: 'longbowman', count: 4 },
@@ -1235,7 +1235,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'fish_scale',
         shipId: 'HULK',
-        commanderUnit: 'hero_williamwallace',
+        commanderUnit: 'hero_dafyddapgruffydd',
         slots: [
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
@@ -1252,7 +1252,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CELT_CASTLE_AGE3', castleName: '凯尔特 苏格兰高地圆塔',
         formationMode: 'echelon',
         shipId: 'HEAVY_DEMO_SHIP',
-        commanderUnit: 'hero_williamwallace',
+        commanderUnit: 'hero_llywelynapgruffydd',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'two_handed_swordsman', count: 3 },
@@ -1289,7 +1289,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'VIKINGS',
         castleId: 'VIKI_CASTLE_AGE3', castleName: '维京 斯堪的纳维亚环形堡垒',
         formationMode: 'echelon',
-        shipId: 'LONGBOAT',
+        shipId: 'HERO_LEIFERIKSON',
         commanderUnit: 'hero_harald',
         slots: [
             { type: 'elite_skirmisher', count: 4 },
@@ -1489,7 +1489,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VARA_CASTLE_AGE3', castleName: '瓦良格 诺斯山形屋顶要塞',
         formationMode: 'echelon',
         shipId: 'MONOREME',
-        commanderUnit: 'norse_chieftain',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_ulf',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_harald（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'skirmisher', count: 4 },
             { type: 'norse_warrior', count: 3 },
@@ -1594,7 +1594,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'DANES',
         castleId: 'DANE_CASTLE_AGE3', castleName: '丹麦 圆塔木石堡',
         formationMode: 'echelon',
-        shipId: 'ELITE_LONGBOAT',
+        shipId: 'THE_MIDDLEBROOK',
         commanderUnit: 'hero_kalfarnason',
         slots: [
             { type: 'throwing_axeman', count: 4 },
@@ -1901,7 +1901,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'echelon',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_zawiszatheblack',
+        commanderUnit: 'hero_vytautasthegreat',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'obuch', count: 3 },
@@ -2173,7 +2173,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_vytautasthegreat',
+        commanderUnit: 'hero_algirdas',
         slots: [
             { type: 'elite_leitis', count: 3 },
             { type: 'pagan_priest', count: 4 },   // 🔴 [2026-10-19 主人令「把这 5 个法术兵按历史编进对应文明的军团」] 原 crossbowman；按史：立陶宛至 1387 年仍奉多神教
@@ -2190,7 +2190,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'LITH_CASTLE_AGE3', castleName: '立陶宛 特拉凯湖心红砖城堡',
         formationMode: 'echelon',
         shipId: 'CANNON_GALLEON',
-        commanderUnit: 'hero_zawiszatheblack',
+        commanderUnit: 'hero_kestutis',
         slots: [
             { type: 'hand_cannoneer', count: 4 },
             { type: 'leitis', count: 3 },
@@ -2379,7 +2379,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'ROMA_CASTLE_AGE3', castleName: '罗马 帝国古典方石要塞',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'master_of_the_templar',
+        commanderUnit: 'hero_richardthelionheart',
         slots: [
             { type: 'two_handed_swordsman', count: 3 },
             { type: 'arbalest', count: 4 },
@@ -2597,7 +2597,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'PORTUGUESE',
         castleId: 'PORT_CASTLE_AGE3', castleName: '葡萄牙 贝伦塔大西洋海堡',
         formationMode: 'fish_scale',
-        shipId: 'CARAVEL',
+        shipId: 'HERO_VASCODAGAMA',
         commanderUnit: 'hero_elcidcampeador',
         // 🔴 [2026-10-16 主人令·撤回] 「相邻时代军团 2 档」是我自造规则，无效 → 2 档恢复欧洲游侠高级。
         //    风琴炮基础档改放新建三级军团「帝国时代葡萄牙风琴军团」3 档。
@@ -2698,7 +2698,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'HUNS_CASTLE_AGE3', castleName: '匈奴/匈人 简易木石混合要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_bledathehun',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_attila（主将队须为古典时代的英雄或精英兵）
         // 🔴 [2026-10-16 主人令] 匈人只有古典一档：4 档＝城堡精锐【匈奴答剌罕骑兵精锐】；无封建军团，普通档不另放。
         slots: [
             { type: 'antiquity_heavy_cavalry_archer', count: 3 },
@@ -2720,7 +2720,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CUMA_CASTLE_AGE3', castleName: '库曼 黑海北岸克里米亚要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_belisarius',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_cumanchief（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'amazon_warrior', count: 3 },
             { type: 'amazon_archer', count: 4 },
@@ -2860,7 +2860,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_hephaistion',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_qutlugh（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_dismounted_alexander',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_qutlugh（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'guardsman', count: 3 },
             { type: 'bactrian_archer', count: 4 },
@@ -3156,7 +3156,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'GURJ_CASTLE_AGE3', castleName: '瞿折罗 索姆纳特多层砂岩堡',
         formationMode: 'echelon',
         shipId: 'BIREME',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_prithviraj（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_artaphernes',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_prithviraj（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
             { type: 'indian_tribesman', count: 3 },
@@ -4005,7 +4005,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'AFRI_CASTLE_AGE3', castleName: '非洲/马里 杰内大清真寺泥石堡',
         formationMode: 'echelon',
         shipId: 'CANOE',
-        commanderUnit: 'sosso_guard',
+        commanderUnit: 'hero_sumanguru',
         slots: [
             { type: 'elite_antiquity_skirmisher', count: 4 },
             { type: 'guardsman', count: 3 },
@@ -4396,7 +4396,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 佩拉要塞重石堡',
         formationMode: 'echelon',
         shipId: 'ANT_GALLEY',
-        commanderUnit: 'hero_dismounted_alexander',
+        commanderUnit: 'hero_parmenion',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：马其顿伙伴骑兵（普通档）替城堡档的骑士。
         slots: [
             { type: 'elite_antiquity_skirmisher', count: 4 },
@@ -4414,7 +4414,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MACEDONIAN_CASTLE_AGE3', castleName: '马其顿 瓦尔达尔河河口巨石石砦',
         formationMode: 'fish_scale',
         shipId: 'ANT_WAR_GALLEY',
-        commanderUnit: 'hero_yury',
+        commanderUnit: 'hero_perdiccas',
         slots: [
             { type: 'heavy_pikeman', count: 4 },
             { type: 'cataphract', count: 3 },
@@ -4585,7 +4585,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
         formationMode: 'fish_scale',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_lubu',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'sakan_axeman', count: 3 },
             { type: 'elite_scythian_horse_archer', count: 4 },
@@ -4657,7 +4657,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MONG_CASTLE_AGE3', castleName: '漠南 塞外王帐石堡',
         formationMode: 'crescent',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
+        commanderUnit: 'hero_caocao',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kotyankhan（主将队须为古典时代的英雄或精英兵）
         slots: [
             { type: 'antiquity_light_cavalry', count: 3 },
             { type: 'xianbei_raider', count: 2 },

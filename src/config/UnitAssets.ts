@@ -1190,6 +1190,54 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/HERO_AEGINETAN/idle_${d}.png`),
             DEATH: [],
         },
+        'SHP_FLAGSHIP': {
+            // 英雄·尼阿库斯旗舰（马其顿）：DE「Flagship of Nearchos」（b_shp_flagship），完整 16 向战船素材（/SUCAI/SHP_FLAGSHIP/，dirs16 meta）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/death_${d}.png`),
+        },
+        'HERO_FLAGSHIPOFNEARCHOS': {
+            // 英雄·尼阿库斯旗舰（同名别名，供舰队模型与 shipId 使用）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/SHP_FLAGSHIP/death_${d}.png`),
+        },
+        'HERO_LEIFERIKSON': {
+            // 英雄·莱夫·埃里克松（旗舰）：DE 沿用「维京长船高级」16 向素材（/SUCAI/ELITE_LONGBOAT/），2026-10-19 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DEATH: [],
+        },
+        'THE_MIDDLEBROOK': {
+            // 米德尔布鲁克（英雄·维京长船）：DE 沿用「维京长船高级」16 向素材（/SUCAI/ELITE_LONGBOAT/），2026-10-19 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_LONGBOAT/idle_${d}.png`),
+            DEATH: [],
+        },
+        'HERO_VASCODAGAMA': {
+            // 英雄·瓦斯科·达·伽马（旗舰）：DE 沿用「卡拉维尔帆船高级」16 向素材（/SUCAI/ELITE_CARAVEL/），2026-10-19 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_CARAVEL/death_${d}.png`),
+        },
+        'HERO_ADMIRALYISUNSHIN': {
+            // 英雄·李舜臣将军（旗舰）：DE 沿用「龟船高级」16 向素材（/SUCAI/ELITE_TURTLE_SHIP/），2026-10-19 主人令登记为舰队模型，供军团 shipId 使用。
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_TURTLE_SHIP/move_${d}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_TURTLE_SHIP/attack_${d}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_TURTLE_SHIP/idle_${d}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_TURTLE_SHIP/idle_${d}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/ELITE_TURTLE_SHIP/death_${d}.png`),
+        },
         'THIRISADAI': {
             // 达罗毗荼多桅楼船（南亚/印度）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(d => `/SUCAI/THIRISADAI/move_${d}.png`),
@@ -5600,12 +5648,12 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/death_${dir}.png`),
         },
         'hero_flagshipofnearchos': {
-            // 【英雄·尼阿库斯旗舰·马其顿】[2026-10-19 补入] DE「Flagship of Nearchos」，素材 /SUCAI/SHP_FLAGSHIP/
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/death_${dir}.png`),
+            // 【英雄·尼阿库斯旗舰·马其顿】[2026-10-19 补入] DE「Flagship of Nearchos」，素材 /SUCAI/SHP_FLAGSHIP/（16 向）
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(dir => `/SUCAI/SHP_FLAGSHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(dir => `/SUCAI/SHP_FLAGSHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(dir => `/SUCAI/SHP_FLAGSHIP/death_${dir}.png`),
         },
         'hero_hephaistion': {
             // 【英雄·赫菲斯提昂·马其顿】[2026-10-19 补入] DE「Hephaistion」，借用「英雄·腓力二世·马其顿」兵模

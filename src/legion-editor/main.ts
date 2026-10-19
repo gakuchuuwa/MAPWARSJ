@@ -1403,7 +1403,7 @@ let catalogAgeFilter: 'all' | UnitAge = 'all';
 let catalogSrcFilter: 'all' | DeSourceType | 'none' = 'all';
 const getUnitSource = (id: string): DeSourceType | 'none' => DE_UNIT_SOURCE_TYPE[id] ?? 'none';
 const srcLabel = (t: DeSourceType | 'none'): string => t === 'none' ? '项目自建' : DE_SOURCE_TYPE_LABEL[t];
-let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'source' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' = 'name';
+let catalogSortCol: 'name' | 'id' | 'category' | 'subcategory' | 'source' | 'tier' | 'age' | 'hp' | 'atk' | 'rng' | 'power' | 'model' = 'name';
 let catalogSortAsc = true;
 let selectedUnitId: string | null = null;
 
@@ -4856,6 +4856,16 @@ function applyCatalogFilter(): void {
         + ` <span style="color:#8c8273;margin:0 4px;">|</span> 当前显示 <b>${catalogRows.length}</b>`;
 }
 
+/**
+ * 🔴 [2026-10-19 主人令「给兵模添加一个标签，相同兵模的 ID 可以一目了然」]
+ * 兵模标签 = 该兵种所借素材目录（pathPrefix 最后一段，大写）。
+ * 同一个标签 = 同一套兵模样子（同一张/同一组贴图）；标签后的人数 = 全库有多少个兵种共用这个兵模。
+ */
+function unitModelTag(u: DeUnitDef): string {
+    const seg = u.pathPrefix.split('/').filter(Boolean).pop();
+    return (seg ?? u.id).toUpperCase();
+}
+
 function sortCatalogRows(): void {
     const dir = catalogSortAsc ? 1 : -1;
     catalogRows.sort((a, b) => {
@@ -4906,6 +4916,11 @@ function sortCatalogRows(): void {
             if (d !== 0) return dir * d;
             return a.name.localeCompare(b.name, 'zh-CN');
         }
+        if (catalogSortCol === 'model') {
+            const d = unitModelTag(a).localeCompare(unitModelTag(b));
+            if (d !== 0) return dir * d;
+            return a.name.localeCompare(b.name, 'zh-CN');
+        }
         if (catalogSortCol === 'id') return dir * a.id.localeCompare(b.id);
         return dir * a.name.localeCompare(b.name, 'zh-CN');
     });
@@ -4921,6 +4936,14 @@ function renderCatalogTable(): void {
     const arrow = (col: string) => catalogSortCol === col
         ? (catalogSortAsc ? ' <span style="color:#e0c888;">▲</span>' : ' <span style="color:#e0c888;">▼</span>')
         : '';
+
+    // 兵模标签 → 共用同一套素材的全部兵种 id（含自己）
+    const modelGroups = new Map<string, string[]>();
+    for (const u of DE_UNITS_CATALOG) {
+        const tag = unitModelTag(u);
+        if (!modelGroups.has(tag)) modelGroups.set(tag, []);
+        modelGroups.get(tag)!.push(u.id);
+    }
 
     els.catTableWrap.innerHTML = `
     <table class="le-table">
@@ -4940,6 +4963,7 @@ function renderCatalogTable(): void {
           <th data-col="rng" style="width:58px;" title="DE max_range，单位「格」；白刃 = 贴身">射程${arrow('rng')}</th>
           <th style="width:52px;" title="DE reload_time 装填秒数，越小越快">射速</th>
           <th data-col="id" style="width:170px;">兵种 ID${arrow('id')}</th>
+          <th data-col="model" style="width:104px;" title="兵模标签 = 同一套素材（同一张/同一组贴图）；×人数 = 全库共用这个兵模的兵种数，「独」= 全库只有它自己用这套素材">兵模${arrow('model')}</th>
           <th>素材目录</th>
         </tr>
       </thead>
@@ -4949,6 +4973,9 @@ function renderCatalogTable(): void {
             const sub = getUnitSubcategory(u.id);
             const st = getUnitStats(u.id);
             const pw = getCombatPower(u.id);
+            const modelTag = unitModelTag(u);
+            const modelPeers = modelGroups.get(modelTag) ?? [u.id];
+            const modelShared = modelPeers.length > 1;
             const dash = `<span style="color:#5a5348;">—</span>`;
             return `
           <tr data-uid="${u.id}" class="${u.id === selectedUnitId ? 'selected' : ''}">
@@ -4973,6 +5000,7 @@ function renderCatalogTable(): void {
             <td class="stat-cell">${st ? (st.rng > 0 ? rangeInTiles(st.rng) : `<span style="color:#7a7266;">白刃</span>`) : dash}</td>
             <td class="stat-cell">${st ? st.reload : dash}</td>
             <td><span class="cell-id" style="margin-left:0;">${u.id}</span></td>
+            <td><span class="sub-tag" style="font-family:monospace;${modelShared ? '' : 'color:#f0d080;'}" title="${modelShared ? '共用兵模（' + modelPeers.length + ' 个兵种）：' + modelPeers.join('、') : '独用兵模：全库只有它自己用这套素材'}">${modelTag}${modelShared ? ' ×' + modelPeers.length : ' 独'}</span></td>
             <td><span class="cell-path">${u.pathPrefix}</span></td>
           </tr>`;
         }).join('')}
