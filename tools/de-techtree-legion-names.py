@@ -110,10 +110,12 @@ def main() -> int:
         for e in o["units_techs"]:
             if e.get("Use Type") != "Unit":
                 continue
-            rec = units.setdefault(e["name"], {"ids": set(), "zh": e.get("name_zh")})
+            rec = units.setdefault(e["name"], {"ids": set(), "med_ids": set(), "zh": e.get("name_zh")})
             if e.get("name_zh"):
                 rec["zh"] = e["name_zh"]
             rec["ids"].add(e["Node ID"])
+            if o.get("era") != "antiquity":
+                rec["med_ids"].add(e["Node ID"])
             node_names[str(e["Node ID"])] = e["name"]
 
     # 仅在古典文明出现的单位节点，不应写入中世纪兜底的 by_id（中世纪 125=僧侣 Monk、331=巨型投石机 Trebuchet 未收录进兵种鉴赏）
@@ -126,12 +128,20 @@ def main() -> int:
         k = norm(name)
         if k in catalog:
             by_norm[k] = catalog_id[k]
-            for nid in rec["ids"]:
-                if nid not in ANT_ONLY_REUSE_NODES:
-                    by_id.setdefault(str(nid), catalog_id[k])
             matched += 1
         else:
             unmatched.append({"name": name, "zh": (rec["zh"] or "").replace("\n", ""), "nodeIds": sorted(rec["ids"])})
+
+    # 🔴 [2026-10-19] by_id 先让中世纪文明的节点占号，古典文明独有的节点号再补：古典文明复用中世纪节点号
+    #    （如 5＝中世纪火枪手、古典腹弓手），以前按英文名字母序先到先得，古典兵（Gastraphetes）抢走了中世纪的号。
+    for pass_key in ("med_ids", "ids"):
+        for name, rec in sorted(units.items()):
+            k = norm(name)
+            if k not in catalog:
+                continue
+            for nid in rec[pass_key]:
+                if nid not in ANT_ONLY_REUSE_NODES:
+                    by_id.setdefault(str(nid), catalog_id[k])
 
     # 古典文明（Chronicles）复用中世纪节点 ID 时的精确映射（节点 ID → 图鉴 ID）
     by_ant_id: dict[str, str] = {

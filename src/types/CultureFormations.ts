@@ -1153,7 +1153,7 @@ export const CENTRAL_BASE_TIERS: CompositionTier[] = [
         slots: [
         { type: 'jian_swordsman', count: 3 },
         { type: 'chukonu', count: 4 },
-        { type: 'hei_kuang', count: 2 },
+        { type: 'tiger_rider', count: 2 },
     ]
     }
 ];
@@ -1915,7 +1915,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         formationMode: 'fish_scale',
         tiers: CENTRAL_BASE_TIERS,
         shipId: 'LOU_CHUAN', // 东亚军团：中国楼船（汉唐宋华夏水师旗舰主力）
-        commanderUnit: 'hero_guanyu',
+        commanderUnit: 'war_chariot_ranged',
     },
     ANDE: {
         formationMode: 'triangle',
@@ -1954,7 +1954,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         formationMode: 'triangle',
         tiers: INDIA_BASE_TIERS,
         shipId: 'THIRISADAI', // 印度军团：孟加拉楼船（DE南亚专属多桅巨舰）
-        commanderUnit: 'hero_prithviraj',
+        commanderUnit: 'porus_elephant',
     },
     SLAVIC: {
         formationMode: 'fish_scale',
@@ -1977,7 +1977,7 @@ export const BASE_16_TIERS_MAP: Partial<Record<RegionType, { formationMode: Form
         formationMode: 'fish_scale',
         tiers: STEPPE_BASE_TIERS,
         shipId: 'DEMO_RAFT', // 中亚军团：渡河木筏（内陆游牧渡河皮筏/木排，史实无远洋水师）
-        commanderUnit: 'hero_kotyankhan',
+        commanderUnit: 'hero_artaphernes',
     },
     ORIE: {
         formationMode: 'fish_scale',
