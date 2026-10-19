@@ -96,6 +96,10 @@ const NAVAL_OARED_ANIMATED_SHIPS = new Set([
     'ELITE_LEMBOS', 'ELITE_TURTLE_SHIP', 'HEAVY_LEMBOS', 'HERO_ARTEMISIA',
     'HERO_THEMISTOCLES', 'LEMBOS', 'LEVIATHAN', 'LOU_CHUAN', 'MONOREME',
     'ONAGER_SHIP', 'TRIREME', 'TURTLE_SHIP', 'WAR_LEMBOS',
+    // 2026-10-19 主人令：英雄·李舜臣旗舰（龟船高级 16 向图）登记为划桨动效船
+    'HERO_ADMIRALYISUNSHIN',
+    // 2026-10-19 补全：英雄·尼阿库斯旗舰（马其顿旗舰 16 向 30 帧划桨图）
+    'SHP_FLAGSHIP', 'HERO_FLAGSHIPOFNEARCHOS', 'hero_flagshipofnearchos',
 ]);
 
 export class LegionPhalanxDrawer {
