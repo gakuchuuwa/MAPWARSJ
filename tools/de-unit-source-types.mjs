@@ -118,10 +118,10 @@ const DE_NAME_OF = Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(
 const DE_OTHER = {
     xolotl_warrior: ['special', 'DE 文本有「Xolotl Warrior」「Create Xolotl Warrior」'],
     hero_stoertebeker: ['hero', 'DE 文本有「Stoertebeker」，DE 单位 HSTOER id=114'],
-    hero_basileus: ['hero', 'DE 本体剧情单位「巴西琉斯」（见 WarTypes 注释）'],
-    vanguard: ['special', 'DE 素材 u_inf_vanguard（SLD），DE 文本未见单位名'],
+    hero_basileus: ['hero', '素材独立，DE 里没有单位使用（最接近 DE 古典「国王」u_ant_king，攻击、死亡帧数对不上）'],
     equites: ['special', 'DE 素材（SLD），DE 文本未见单位名'],
     sarmatian: ['special', 'DE 素材（SLD），DE 文本未见单位名'],
+    elite_peltast: ['special', 'DE 素材 u_arc_elite_peltast（SLD），DE 里没有单位使用这套素材'],
 };
 const treeTypeByName = new Map();
 const treeTypeById = new Map();

@@ -485,6 +485,54 @@ function visible(): LegionRow[] {
     return out;
 }
 
+function formatLegionInfoText(r: LegionRow, useDraft = false): string {
+    const d = (useDraft && draft && r.name === selected && r.layer === selectedLayer) ? draft : null;
+    const rMode = d ? d.mode : r.mode;
+    const rCnt = MODE_ROWS[rMode] ?? [0, 0, 0];
+    const rTypes: (string | undefined)[] = d
+        ? [d.types[0], d.types[1], d.types[2]]
+        : [r.slots[0]?.type, r.slots[1]?.type, r.slots[2]?.type];
+    const rShip = d ? d.shipId : r.shipId;
+    const rCmdr = d ? d.commanderUnit : r.commanderUnit;
+    const rSource = d ? d.source : r.source;
+    const styleText = r.buildingStyle
+        ? `${STYLE_LABELS[r.buildingStyle] ?? r.buildingStyle}（${r.buildingStyle}）`
+        : '—';
+    const rowLabels = ['前排', '中坚', '后排'];
+    const lines = [
+        `军团：${r.name}（${r.layer}）`,
+        `建筑风格：${styleText}`,
+        `阵型：${MODE_LABEL[rMode] ?? rMode}`,
+        `英雄（主队 · 第 10 队）：${rCmdr ? cn(rCmdr) : '—'}`,
+        ...[0, 1, 2].map(i => {
+            const t = rTypes[i];
+            const c = d ? (rCnt[i] ?? 0) : (r.slots[i]?.count ?? 0);
+            return `${rowLabels[i]}：${cn(t ?? '—')} ×${c}`;
+        }),
+        `舰队：${shipLabel(rShip)}`,
+        `使用势力：${r.users ? `${r.users} 家` : '无'}`,
+        ...(r.layer === '四级' && rSource ? [`史料出处：${rSource}`] : []),
+    ];
+    return lines.join('\n');
+}
+
+async function copyLegionInfo(r: LegionRow, useDraft = false): Promise<void> {
+    const text = formatLegionInfoText(r, useDraft);
+    try {
+        await navigator.clipboard.writeText(text);
+        toast(`📋 已复制【${r.name}】的军团信息`);
+    } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;left:50%;top:20%;transform:translateX(-50%);z-index:20000;width:min(560px,90vw);height:220px;';
+        document.body.appendChild(ta);
+        ta.select();
+        toast('⚠️ 剪贴板不可用，已选中文本，按 Ctrl+C 复制；点空白处关闭', true);
+        const close = (): void => { ta.remove(); document.removeEventListener('click', close); };
+        setTimeout(() => document.addEventListener('click', close), 300);
+    }
+}
+
 function render(): void {
     hideThumbZoom();
     const list = visible();
@@ -539,6 +587,7 @@ function render(): void {
               <th id="lp-sort-users" title="点击按势力家数排序（多在前 / 少在前 / 原顺序）"
                   style="padding:7px 10px;cursor:pointer;user-select:none;${sortByUsers !== 'none' ? 'color:#f6e05e;' : ''}">
                 势力${sortByUsers === 'desc' ? ' ▼' : sortByUsers === 'asc' ? ' ▲' : ' ⇅'}</th>
+              <th style="padding:7px 10px;width:54px;">复制</th>
             </tr>
           </thead>
           <tbody>
@@ -584,6 +633,10 @@ function render(): void {
                     <span>${esc(shipLabel(rShip))}</span>
                   </div></td>
                 <td style="padding:6px 10px;color:${r.users ? '#8a8378' : '#e07a7a'};">${r.users || '无'}</td>
+                <td style="padding:4px 10px;">
+                  <button type="button" class="lp-copy-row" data-name="${esc(r.name)}" data-layer="${r.layer}" title="复制【${esc(r.name)}】的军团信息"
+                    style="padding:3px 8px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:3px;font-size:12px;cursor:pointer;white-space:nowrap;">📋 复制</button>
+                </td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -592,9 +645,15 @@ function render(): void {
 
       <div style="width:420px;border-left:1px solid #2a2520;overflow:auto;padding:14px;">
         ${sel && draft ? `
-          <div style="font-size:16px;color:#f6e05e;">${esc(sel.name)}</div>
-          <div style="font-size:12px;color:#8a8378;margin:4px 0 14px;">
-            ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+            <div>
+              <div style="font-size:16px;color:#f6e05e;">${esc(sel.name)}</div>
+              <div style="font-size:12px;color:#8a8378;margin:4px 0 14px;">
+                ${sel.layer}军团 · ${sel.users ? `${sel.users} 家势力在用` : '当前无势力使用'}
+              </div>
+            </div>
+            <button id="lp-copy-sel" type="button" title="复制【${esc(sel.name)}】的军团信息"
+              style="flex:0 0 auto;padding:5px 11px;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;font-size:12px;cursor:pointer;white-space:nowrap;">📋 一键复制</button>
           </div>
 
           ${sel.layer === '二级' || sel.layer === '三级' ? `
@@ -764,6 +823,19 @@ function render(): void {
             draft = null;
             render();
         });
+    });
+    host.querySelectorAll('.lp-copy-row').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const rName = (btn as HTMLElement).dataset.name!;
+            const rLayer = ((btn as HTMLElement).dataset.layer as Layer) ?? null;
+            const target = (rLayer ? rows.find(r => r.name === rName && r.layer === rLayer) : undefined)
+                ?? rows.find(r => r.name === rName);
+            if (target) void copyLegionInfo(target, true);
+        });
+    });
+    document.getElementById('lp-copy-sel')?.addEventListener('click', () => {
+        if (sel) void copyLegionInfo(sel, true);
     });
     const renameGo = document.getElementById('lp-rename-go');
     const renameIn = document.getElementById('lp-rename') as HTMLInputElement | null;

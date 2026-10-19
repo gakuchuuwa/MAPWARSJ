@@ -53,14 +53,6 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GUANYU/death_${dir}.png`),
         },
-        'jian_swordman_shielded': {
-            // 【jian_swordman_shielded】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JIANSWORDMANSHIELDED/death_${dir}.png`),
-        },
         'crusader_knight': {
             // 【crusader_knight】AoE2 DE 素材，2026-08-18 接线（目录名与 key 的下划线不一致，按编辑器 pathPrefix 取）
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CRUSADERKNIGHT/move_${dir}.png`),
@@ -100,14 +92,6 @@ export const SPRITE_PATHS = {
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/idle_${dir}.png`),
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SOSSO_GUARD/death_${dir}.png`),
-        },
-        'elite_greek_cavalry': {
-            // 【elite_greek_cavalry】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_GREEK_CAVALRY/death_${dir}.png`),
         },
         'levy': {
             // 【levy】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
@@ -183,14 +167,6 @@ export const SPRITE_PATHS = {
             DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/attack_${dir}.png`),
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_PELTAST/death_${dir}.png`),
-        },
-        'vanguard': {
-            // 【vanguard】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/death_${dir}.png`),
         },
         'bowman': {
             // 【bowman】AoE2 DE 素材，2026-08-18 接线（此前只有兵种数值、无素材声明 → 战场上不可见）
@@ -4318,13 +4294,6 @@ export const SPRITE_PATHS = {
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_AEGINETAN/idle_${dir}.png`),
         },
         // 【欧洲接舷战船】8方向，复用 /SUCAI/GALLEY/ 素材
-        'boarding_galley': {
-            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/attack_${dir}.png`),
-            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/attack_${dir}.png`),
-            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GALLEY/idle_${dir}.png`),
-        },
         // ── 2026-10-14 补 6 个 DE 官方战斗兵种（素材 u_* SLD 提取；链锤兵复用 VANGUARD 同 u_inf_vanguard）──
         'maceman': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VANGUARD/move_${dir}.png`),

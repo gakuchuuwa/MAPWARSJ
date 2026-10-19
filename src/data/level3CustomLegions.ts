@@ -95,7 +95,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         formationMode: 'triangle',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'jian_swordman_shielded', count: 3 },
+            { type: 'jian_swordsman', count: 3 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 jian_swordman_shielded（与华夏步兵同一 DE 单位、同一兵模）
             { type: 'elite_chukonu', count: 4 },
         ],
         regions: ['DALI'],
