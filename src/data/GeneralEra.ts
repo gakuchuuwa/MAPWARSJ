@@ -16,6 +16,12 @@
 export type GeneralEra = 'antiquity' | 'feudal' | 'castle' | 'imperial';
 
 export const GENERAL_ERA: Record<string, GeneralEra> = {
+    // 🔴 [2026-10-19 补入] 原先缺时代的 5 位，按 GeneralCenturies 成名世纪：16 世纪＝帝国（1500 起）、8 世纪＝封建
+    'nogai_votkhovsky': 'imperial',
+    'bashkir_nagoy': 'imperial',
+    'eguo_zasekin': 'imperial',
+    'don_vorontsov': 'imperial',
+    'porbazhyn_mouyu': 'feudal',
     'aba_shapuer': 'antiquity',
     'abasi_mansuer': 'feudal',
     'adal_ghazi': 'imperial',

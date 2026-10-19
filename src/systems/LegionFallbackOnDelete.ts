@@ -23,7 +23,7 @@ import { resolveCityDeBuildingStyle } from './cityDeStyle';
 import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
 import { LEVEL_2_CIV_62_LEGIONS } from '../data/level2Civ62Legions';
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
-import { getFactionGeneral } from '../data/FactionGenerals';
+import { FACTION_GENERALS, getFactionGeneral, getFactionGenerals } from '../data/FactionGenerals';
 import { getGeneralEraSubtagLegion, getGeneralEraSubtagLabel } from '../data/GeneralEraSubtags';
 
 export interface FallbackPlanItem {
@@ -81,8 +81,11 @@ function pickFactionCity(factionId: string): CityDataV2 | null {
 }
 
 /** 单个势力：按「武将时代 + 据点建筑风格」算它该套哪支二级军团 */
-export function resolveFallbackForFaction(factionId: string): FallbackPlanItem | FallbackPlanSkip {
-    const general = getFactionGeneral(factionId);
+export function resolveFallbackForFaction(factionId: string, generalId?: string | null): FallbackPlanItem | FallbackPlanSkip {
+    // 🔴 [2026-10-19 主人令「当军团被删除后，武将要学会自己找对应的军团」] 指定了武将就按这位武将的时代找；没指定仍取势力开局名将
+    const general = generalId
+        ? (getFactionGenerals(factionId).find((g) => g.generalId === generalId) ?? null)
+        : getFactionGeneral(factionId);
     if (!general) return { factionId, reason: '该势力没有配开局武将，判不了时代' };
     const era = GENERAL_ERA[general.generalId];
     if (!era) return { factionId, reason: `武将 ${general.generalName || general.generalId} 不在 GENERAL_ERA 表里` };
@@ -134,6 +137,14 @@ export function planFallbackForDeletedLegion(deletedLegion: string): FallbackPla
         if (entry?.legionName !== deletedLegion) continue;
         const r = resolveFallbackForFaction(factionId);
         if ('newLegionName' in r) items.push(r); else skipped.push(r);
+    }
+    // 武将自己写了「所属军团」且正是被删那支的（同势力里时代不同的武将）：各自按自己的时代再找
+    for (const factionId of Object.keys(FACTION_GENERALS)) {
+        for (const g of getFactionGenerals(factionId)) {
+            if (g.legionName !== deletedLegion) continue;
+            const r = resolveFallbackForFaction(factionId, g.generalId);
+            if ('newLegionName' in r) items.push(r); else skipped.push(r);
+        }
     }
     return { deletedLegion, items, skipped };
 }

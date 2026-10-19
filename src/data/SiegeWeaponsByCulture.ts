@@ -404,7 +404,8 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
     },
     '城堡时代法兰西骑士团': {
         age: 'castle',
-        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
+        // 🔴 [2026-10-19 主人令] 把一件「爆破工兵」换成 DE「破坏者」（同为坑道爆破，借爆破工兵兵模）：
+        weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'saboteur', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion'],
     },
     '帝国时代重装骑兵军团': {
         age: 'imperial',

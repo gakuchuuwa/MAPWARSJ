@@ -639,7 +639,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'lancer', name: '古典枪骑兵', category: 'cavalry', age: 'antiquity', pathPrefix: '/SUCAI/LANCER/' },
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻骑兵', category: 'cavalry', age: 'castle', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
-    { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
+    { id: 'frankish_paladin', name: '中世纪枪骑兵', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
     { id: 'siege_ballista', name: '古典波斯攻城弩炮', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
     { id: 'bireme', name: '双列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/BIREME/' },
@@ -719,7 +719,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_lahire', name: '英雄·拉海尔·法兰克', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CHAMPION/' },   // [2026-10-19 补入] DE「La Hire」dat#640；借用「冠军剑士」兵模
     { id: 'hero_lancelot', name: '英雄·兰斯洛特·不列颠', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },   // [2026-10-19 补入] DE「Lancelot」dat#174；借用「骑士游侠高级」兵模
     { id: 'hero_lorddegraville', name: '英雄·格拉维尔领主·法兰克', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ARBALEST/' },   // [2026-10-19 补入] DE「Lord de Graville」dat#642；借用「劲弩手高级」兵模
-    { id: 'master_of_the_templar', name: '圣殿骑士团首领', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },   // [2026-10-19 补入] DE「Master of the Templar」dat#680；借用「中世纪枪骑兵高级」兵模
+    { id: 'master_of_the_templar', name: '圣殿骑士团', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },   // [2026-10-19 补入] DE「Master of the Templar」dat#680；借用「中世纪枪骑兵高级」兵模
     { id: 'hero_minamoto', name: '英雄·源氏·日本', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },   // [2026-10-19 补入] DE「Minamoto」dat#196；借用「日本武士精锐」兵模
     { id: 'hero_mordred', name: '英雄·莫特列德·不列颠', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/PALADIN/' },   // [2026-10-19 补入] DE「Mordred」dat#176；借用「骑士游侠高级」兵模
     { id: 'ornlu_the_wolf', name: '灰狼欧鲁', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI_ANIMAL/WOLF/' },   // [2026-10-19 补入] DE「Ornlu the Wolf」dat#707；素材 /SUCAI_ANIMAL/WOLF/

@@ -73,7 +73,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     envoy: { name: '英雄·柏朗嘉宾·意大利', cls: 'cav', sz: 1, hp: 250, atk: 12, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', armorTags: [8, 31] },
     scout_cavalry: { name: '斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
     light_cavalry: { name: '轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
-    frankish_paladin: { name: '中世纪枪骑兵高级', cls: 'cav', sz: 1, hp: 150, atk: 16, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2.0, spd: 58, dmgType: 'melee', armorTags: [8, 31] },
+    frankish_paladin: { name: '中世纪枪骑兵', cls: 'cav', sz: 1, hp: 150, atk: 16, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2.0, spd: 58, dmgType: 'melee', armorTags: [8, 31] },
     siege_ballista: { name: '古典波斯攻城弩炮', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 26, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
 
     tarantine_cavalry: { name: '塔兰托骑兵特殊', cls: 'cav', sz: 1, hp: 60, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.7, spd: 54, dmgType: 'pierce', bonus: { 1: 3, 15: 4, 27: 4, 28: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },
@@ -601,7 +601,7 @@ export const WAR_TYPES: Record<string, WarType> = {
     hero_lahire: { name: '英雄·拉海尔·法兰克', cls: 'melee', sz: 1, hp: 200, atk: 18, meleeArmor: 2, pierceArmor: 1, rng: 0, reload: 2, spd: 36, dmgType: 'melee', bonus: { 11: 3 }, armorTags: [31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#640 HHIRE）
     hero_lancelot: { name: '英雄·兰斯洛特·不列颠', cls: 'cav', sz: 1, hp: 240, atk: 14, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2, spd: 52, dmgType: 'melee', armorTags: [8, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#174 HLANCE）
     hero_lorddegraville: { name: '英雄·格拉维尔领主·法兰克', cls: 'ranged', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 3, spd: 40, dmgType: 'pierce', bonus: { 17: 1 }, armorTags: [15, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#642 HGRAV）
-    master_of_the_templar: { name: '圣殿骑士团首领', cls: 'cav', sz: 1, hp: 250, atk: 15, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2, spd: 53, dmgType: 'melee', armorTags: [8, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#680 HMOT）
+    master_of_the_templar: { name: '圣殿骑士团', cls: 'cav', sz: 1, hp: 250, atk: 15, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2, spd: 53, dmgType: 'melee', armorTags: [8, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#680 HMOT）
     hero_minamoto: { name: '英雄·源氏·日本', cls: 'melee', sz: 1, hp: 200, atk: 8, meleeArmor: 1, pierceArmor: 0, rng: 0, reload: 2, spd: 36, dmgType: 'melee', bonus: { 11: 2, 19: 5 }, armorTags: [1, 19, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#196 HMINA）
     hero_mordred: { name: '英雄·莫特列德·不列颠', cls: 'cav', sz: 1, hp: 240, atk: 14, meleeArmor: 4, pierceArmor: 5, rng: 0, reload: 2, spd: 52, dmgType: 'melee', armorTags: [8, 31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#176 HMORD）
     ornlu_the_wolf: { name: '灰狼欧鲁', cls: 'melee', sz: 1, hp: 400, atk: 20, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2, spd: 30, dmgType: 'melee', armorTags: [31, 36] },   // [2026-10-19 补入] DE 本体数值（dat#707 HORNL）

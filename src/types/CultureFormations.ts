@@ -432,6 +432,8 @@ export function convertSlotsToMode(slots: CompositionSlot[], mode: FormationMode
 }
 
 import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
+import { getGeneralOwnLegionName } from '../data/FactionGenerals';
+import { resolveFallbackForFaction } from '../systems/LegionFallbackOnDelete';
 
 // ============================================================
 // 势力专属方阵（优先于文化区默认）
@@ -1022,12 +1024,13 @@ export function isBerberDynasty(factionId?: string | null, generalId?: string | 
  *  ⚠️ 别再加回来。要给某个势力特殊编制，就在 FACTION_COMPOSITIONS 里给它一个**有番号名**的条目。 */
 export function getFactionCompositionSlots(factionId: string, generalId?: string | null): CompositionSlot[] | null {
     // 🔴 [2026-09-14] 势力表已不存编制，只存「挂哪支军团」。编制按军团名去三层表查。
-    return getFactionLegionComposition(factionId)?.slots ?? null;
+    return getFactionLegionComposition(factionId, generalId)?.slots ?? null;
 }
 
 /** 势力挂的那支军团的编制（三层表里查）；势力没挂军团名则 null */
 export function getFactionLegionComposition(
     factionId: string,
+    generalId?: string | null,   // 🔴 [2026-10-19 主人令「一个武将要有一个对应的军团」] 武将自己有军团就用武将的
 ): { formationMode: FormationMode; slots: CompositionSlot[]; commanderUnit?: string } | null {
     // 🔴 [2026-09-23] 剧本期：当前这一仗的攻 / 守方改用事件指名的剧本军团（第四层）；乱斗恒走下面原路
     const scriptLegion = getScriptFactionLegionName(factionId);
@@ -1043,7 +1046,19 @@ export function getFactionLegionComposition(
         const c = getLegionCompositionByName(scriptLegion);
         if (c) return c;
     }
-    return getLegionCompositionByName(FACTION_COMPOSITIONS[factionId]?.legionName);
+    return getLegionCompositionByName(getLegionNameOfGeneral(factionId, generalId));
+}
+
+/**
+ * 武将此刻该用的军团名。🔴 [2026-10-19 主人令「当军团被删除后，武将要学会自己找对应的军团」]
+ *   武将自己的军团 → 势力挂的军团；这支军团已不存在（被删了、改名了、名字写错了）→ 武将自己按
+ *   「他的时代 × 所在据点建筑文化」重新找二级军团（规则同 LegionFallbackOnDelete）。找不到才返回原名。
+ */
+export function getLegionNameOfGeneral(factionId: string, generalId?: string | null): string | undefined {
+    const named = getGeneralOwnLegionName(generalId) ?? FACTION_COMPOSITIONS[factionId]?.legionName;
+    if (!named || getLegionCompositionByName(named)) return named;
+    const found = resolveFallbackForFaction(factionId, generalId);
+    return 'newLegionName' in found ? found.newLegionName : named;
 }
 
 export interface LegionCompositionTarget {
@@ -1092,7 +1107,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
     if (!slots) return;
 
     // 🔴 [2026-09-23 主人定「战略，战术都改为10队」] 编制 9 队 + 主将队 1 队（src/data/generalHeroUnits.ts）
-    const legionCommanderUnit = getFactionLegionComposition(army.factionId)?.commanderUnit ?? getRegionLegionComposition(culture)?.commanderUnit;
+    const legionCommanderUnit = getFactionLegionComposition(army.factionId, army.generalId)?.commanderUnit ?? getRegionLegionComposition(culture)?.commanderUnit;
     army.cultureSlots = withCommander(army.generalId, expandCompositionSlots(slots), { factionId: army.factionId, seedKey: culture, hasElite: armyHasElite(army), legionCommanderUnit });
     const scales9 = expandCompositionScales(slots);
     army.cultureScales = army.cultureSlots.length > scales9.length ? [...scales9, 1] : scales9;
@@ -1104,7 +1119,7 @@ export function applyLegionCultureComposition(army: LegionCompositionTarget, reg
               : 'mixed';
 
     // 阵型判定：势力专属覆盖最优先（含支文化细分）→ 鹤翼阵(步骑远) / 鱼鳞阵(2近1远) / 三角阵(骑+弓骑) / 雁行阵(2远1近) → 文化区默认
-    const custom = getFactionLegionComposition(army.factionId);
+    const custom = getFactionLegionComposition(army.factionId, army.generalId);
     if (custom?.formationMode) {
         army.formationMode = custom.formationMode;
     } else if (isQin || isHan || isTang || isSong || isPer || isPol || isTeu || isSen) {
