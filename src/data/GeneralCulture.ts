@@ -4,7 +4,8 @@
  * 🔴 [2026-10-19 主人令「必须给每个武将单独添加一个文化属性，才能对应上军团」]
  *   · 军团 ＝ 四时代 × 建筑文化（二级军团表 `age` + `buildingStyle`，一个格子唯一一支）；
  *   · 武将 ＝ 时代（`GENERAL_ERA`）× 文化（本表）→ 他的军团。武将的文化是武将自己的属性，不再借势力的据点推。
- *   · 取值依据：所在势力据点的建筑文化；战场守方（科塞亚、乌克西亚）无据点，按史实逐个定，见各行注释。
+ *   · 取值依据：所在势力据点的建筑文化；🔴 [2026-10-20 主人令「每个武将都要给安置据点」] 全库武将都有据点，
+ *     不再有「无城战役守方」需要手工兜底（科塞亚／乌克西亚两势力已删，守将改挂米底／埃兰）。
  */
 import type { BuildingStyle } from './cities_v2';
 
@@ -1170,6 +1171,23 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zu_d_yuanchonghuan': 'XIANBEI',   // 严州｜袁崇焕｜据点 宁远城
     'zubu_mogusi': 'MONGOL',   // 阻卜｜磨古斯｜据点 特尔浑
     'zuo_d_wufu': 'BASHU',   // 笮人｜吴复｜据点 清溪关
+
+    // 🔴 [2026-10-20 主人令「有名字的武将都要安置在据点，要符合武将文化的据点」] 新安置武将的文化 = 所在据点建筑文化
+    'gen_bohemond': 'SICILIANS',          // 博希蒙德｜诺曼人｜巴勒莫（西西里）
+    'gen_nikephoros_phokas': 'BYZANTINE', // 福卡斯｜拜占庭｜君士坦丁堡
+    'gen_haci_giray': 'CUMAN',            // 哈吉格莱｜克里米亚汗｜奥列什基（库曼）
+    'aosiruowen_baodewen': 'FRANKS',      // 鲍德温一世｜十字军法兰克人｜阿卡（耶路撒冷王国）
+    'gen_tibirica': 'TUPI',               // 蒂巴里萨｜图皮尼金｜瓜纳巴拉
+    'gen_chicomacatl': 'AMERICA',         // 奇科马卡特｜托托纳克（中美洲）｜钦聪灿
+    'gen_hatuey': 'SPANISH',              // 哈土依｜泰诺｜哈瓦那（该城建筑文化为西班牙）
+    'wangdaer_gaisalike': 'BERBER',       // 盖萨里克｜汪达尔｜迦太基
+    'gen_jogaila': 'LITHUANIANS',         // 雅盖沃｜立陶宛｜维尔纽斯
+    'xisi_yakubusafaer': 'PERSIAN',       // 雅库布｜萨法尔王朝｜博斯特
+    'yisatisi_yisatisi': 'PERSIAN',       // 伊萨提斯｜古波斯｜亚兹德
+    'zhuluo_lajindela': 'INDIA',          // 拉金德拉一世｜朱罗｜坦贾武尔
+    'baolusi': 'ROMA',                    // 保卢斯｜罗马｜罗马城
+    'waluo': 'ROMA',                      // 瓦罗｜罗马｜罗马城
+    'aitiliusi': 'ROMA',                  // 埃提乌斯｜罗马｜罗马城
 };
 
 /** 武将的建筑文化；表里没有返回 undefined */

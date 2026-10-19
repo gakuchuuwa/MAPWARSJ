@@ -60,7 +60,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ayinu_ezo: { generalId: 'gen_koshamain', generalName: '柯沙玛因', portrait: '/assets/NORTHEAST/ayinu_ezo_keshamayin.png' },
     yiluokui: { generalId: 'gen_hiawatha', generalName: '海华沙', portrait: '/assets/NORTH_AMERICA/yiluokui_haihuasha.png' },
     qimu: { generalId: 'gen_minchancaman', generalName: '明查凯曼', portrait: '/assets/SOUTH_AMERICA/qimu_mingchakaieman.png' },
-    talasike: { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '/assets/NORTH_AMERICA/talasike_qiqipandakualei.png' },
+    talasike: [
+        { generalId: 'gen_tzitzipandaquare', generalName: '齐齐潘达夸雷', portrait: '/assets/NORTH_AMERICA/talasike_qiqipandakualei.png' },
+        // 2026-10-20：托托纳克酋长奇科马卡特（1519 年联络科尔特斯）→ 中美洲（钦聪灿）；AMERICA×帝国＝特诺奇军团
+        { generalId: 'gen_chicomacatl', generalName: '奇科马卡特', portrait: '', legionName: '帝国时代特诺奇军团' },
+    ],
     tailuona: { generalId: 'gen_cuchacique', generalName: '库查西克', portrait: '/assets/SOUTH_AMERICA/tailuona_kuchaxike.png' },
     teweierqie: { generalId: 'gen_casimiro_bigua', generalName: '卡西米罗·比格', portrait: '/assets/SOUTH_AMERICA/teweierqie_kaximilobige.png' },
     xinnidelan: { generalId: 'gen_stuyvesant', generalName: '斯泰弗森特', portrait: '/assets/NORTH_AMERICA/xinnidelan_sitaifusente.png' },
@@ -94,7 +98,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     duobuluojia: { generalId: 'gen_ivaylo', generalName: '伊瓦伊洛', portrait: '/assets/SLAVIC/duobuluojia_yiwaiyiluo.png' },
     aertai: { generalId: 'gen_kuchlug', generalName: '屈出律', portrait: '/assets/STEPPE/aertai_quchulv.png' },
     kumanni: { generalId: 'gen_girgen', generalName: '吉尔根汗', portrait: '/assets/STEPPE/xikuman_jiergenhan.png' },
-    kuman_oleshky: { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
+    kuman_oleshky: [
+        { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
+        // 2026-10-20：克里米亚汗国奠基者哈吉·格莱（1397–1466）→ 黑海北岸库曼（克里米亚鞑靼族源）奥列什基；CUMAN×城堡＝库曼军团
+        { generalId: 'gen_haci_giray', generalName: '哈吉格莱', portrait: '', legionName: '城堡时代库曼军团' },
+    ],
     qincha_saksin: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png' },
     feierganna: { generalId: 'gen_qutlugh', generalName: '忽都鲁', portrait: '/assets/CENTRAL_ASIA/feierganna_hudulu.png' },
     qibucha: { generalId: 'gen_pacanchiq', generalName: '帕坎奇克', portrait: '/assets/SOUTH_AMERICA/qibucha_pakanqike.png' },
@@ -126,7 +134,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kelite: { generalId: 'gen_morosini', generalName: '莫罗西尼', portrait: '/assets/LATIN/kelite_moluoxini.png' },
     leangongguo: { generalId: 'gen_alfonso_ix', generalName: '阿方索九世', portrait: '/assets/LATIN/leangongguo_afangsuojiushi.png' },
     bohepingyuan: { generalId: 'gen_cangrande', generalName: '坎格兰德', portrait: '/assets/LATIN/bohepingyuan_diaoduolike.png' },
-    xixiliwangguo: { generalId: 'gen_frederic_ii', generalName: '腓特烈二世', portrait: '/assets/LATIN/xixiliwangguo_feitelieershi.png' },
+    xixiliwangguo: [
+        { generalId: 'gen_frederic_ii', generalName: '腓特烈二世', portrait: '/assets/LATIN/xixiliwangguo_feitelieershi.png' },
+        // 2026-10-20 主人令「有名字的武将都要安置在据点」：诺曼人博希蒙德（塔兰托亲王、安条克亲王）→ 诺曼西西里（巴勒莫），军团随 SICILIANS×城堡＝诺曼军团
+        { generalId: 'gen_bohemond', generalName: '博希蒙德', portrait: '', legionName: '城堡时代诺曼军团' },
+    ],
     weixi: { generalId: 'gen_ansgar', generalName: '安斯加尔', portrait: '/assets/GERMANIC/weixi_ansijiaer.png' },
 
     yipilusi: { generalId: 'yipilusi_piluoshi', generalName: '皮洛士', portrait: '/assets/LATIN/yipilusi_piluoshi.png' },
@@ -162,7 +174,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     zhayan: { generalId: 'gen_yaghmurasen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png' },
     babali: { generalId: 'gen_barbarossa', generalName: '巴巴罗萨', portrait: '/assets/BERBER/babali_babaluosa.png' },
     hamade: { generalId: 'gen_hammad', generalName: '哈马德', portrait: '/assets/BERBER/hamade_hamade.png' },
-    buni: { generalId: 'gen_hannibal', generalName: '汉尼拔', portrait: '/assets/BERBER/buni_hanniba.png' },
+    buni: [
+        { generalId: 'gen_hannibal', generalName: '汉尼拔', portrait: '/assets/BERBER/buni_hanniba.png' },
+        // 2026-10-20：汪达尔国王盖萨里克（389–477，439 年取迦太基）→ 迦太基；BERBER×古典＝迦太基军团
+        { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '', legionName: '古典时代迦太基军团' },
+    ],
     aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
     telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/BERBER/jileinaijia_majiasi.png' },
@@ -233,7 +249,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/LATIN/bulietani_alan.png' },
     saierweiya: { generalId: 'gen_stefan_dusan', generalName: '斯蒂芬杜尚', portrait: '/assets/SLAVIC/saierweiya_sidifendushang.png' },
 
-    luoma_diguo: { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/LATIN/luoma_diguo_kaisa.png' },
+    luoma_diguo: [
+        { generalId: 'gen_julius_caesar', generalName: '恺撒', portrait: '/assets/LATIN/luoma_diguo_kaisa.png' },
+        // 2026-10-20 主人令「有名字的武将都要安置在据点」：坎尼战役两位罗马执政官 + 末代名将埃提乌斯 → 罗马城；ROMA×古典＝罗马军团
+        { generalId: 'baolusi', generalName: '保卢斯', portrait: '', legionName: '古典时代罗马军团' },
+        { generalId: 'waluo', generalName: '瓦罗', portrait: '', legionName: '古典时代罗马军团' },
+        { generalId: 'aitiliusi', generalName: '埃提乌斯', portrait: '', legionName: '古典时代罗马军团' },
+    ],
     xiongren: { generalId: 'xiongren_atila', generalName: '阿提拉', portrait: '/assets/STEPPE/xiongren_atila.png' },
     kejila: { generalId: 'kejila_shulunbao', generalName: '舒伦堡', portrait: '/assets/LATIN/kejila_shulunbao.png' },
     putaoya: { generalId: 'gen_afonso_henriques', generalName: '阿方索一世', portrait: '/assets/LATIN/putaoya_afangsuo.png' },
@@ -277,13 +299,21 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_ulugh_muhammad', generalName: '兀鲁黑', portrait: '/assets/SLAVIC/baojiaer_wuluhei.png' },
         { generalId: 'gen_karasakal', generalName: '卡拉萨卡尔', portrait: '/assets/STEPPE/bashekeer_kalasakaer.png', legionName: '帝国时代乌兹别克军团' },
     ],
-    baizanting: { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
+    baizanting: [
+        { generalId: 'gen_basil_ii', generalName: '巴西尔二世', portrait: '/assets/LATIN/baizanting_fulajimier.png' },
+        // 2026-10-20：尼基弗鲁斯·福卡斯（拜占庭皇帝 963–969）→ 君士坦丁堡；BYZANTINE×封建＝拜占庭军区军团
+        { generalId: 'gen_nikephoros_phokas', generalName: '福卡斯', portrait: '', legionName: '封建时代拜占庭军区军团' },
+    ],
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
     kelimiya: { generalId: 'gen_caffa_consul', generalName: '奥贝托·斯夸尔', portrait: '/assets/LATIN/kelimiya_aobeituosikuaer.png' },
     keluodiya: { generalId: 'gen_nikola_zrinski', generalName: '兹林斯基', portrait: '/assets/GERMANIC/keluodiya_zilinsiji.png' },
     mengtainiya: { generalId: 'mengtainiya_radu_iii', generalName: '拉杜三世', portrait: '/assets/LATIN/kuertaiya_kuertaiya.png' },
-    litaowan: { generalId: 'gen_gediminas', generalName: '格迪米纳斯', portrait: '/assets/SLAVIC/litaowan_gediminasi.png' },
+    litaowan: [
+        { generalId: 'gen_gediminas', generalName: '格迪米纳斯', portrait: '/assets/SLAVIC/litaowan_gediminasi.png' },
+        // 2026-10-20：雅盖沃（立陶宛大公、波兰国王，约 1351–1434）→ 维尔纽斯；LITHUANIANS×城堡＝立陶宛大公国军团
+        { generalId: 'gen_jogaila', generalName: '雅盖沃', portrait: '', legionName: '城堡时代立陶宛大公国军团' },
+    ],
     bolan: { generalId: 'bolan_suobiesiji', generalName: '索别斯基', portrait: '/assets/SLAVIC/bolan_suobiesiji.png' },
     // ── 2026-08-04 新增：普热梅斯二世（波兹南公爵/大波兰公/波兰国王）──
     dabolan: { generalId: 'gen_przemysl_ii', generalName: '普热梅斯', portrait: '/assets/SLAVIC/dabolan_puremeisi.png' },
@@ -594,7 +624,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     sogdian: [
         { generalId: 'sogdian_dewasitiqi', generalName: '德瓦什提奇', portrait: '/assets/CENTRAL_ASIA/sogdian_dewasitiqi.png' },
         // 公元前328年索格底亚那岩山守帅（当地大贵族起义领袖奥克夏特斯），立绘按铁律留空走回落、待主人亲自放图分配
-        { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '', legionName: '古典时代巴克特里亚军团' },
+        { generalId: 'sogdian_aokexiate', generalName: '奥克夏特斯', portrait: '', legionName: '古典时代粟特军团' },
     ],
     yanda: { generalId: 'yanda_touluoman', generalName: '头罗曼', portrait: '/assets/CENTRAL_ASIA/yanda_touluoman.png' },
     yada: { generalId: 'yada_ahexiong', generalName: '阿赫雄', portrait: '/assets/CENTRAL_ASIA/yada_ahexiong.png' },
@@ -1088,7 +1118,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
   baha: { generalId: 'baha_gaiwamu', generalName: '盖瓦姆', portrait: '/assets/CENTRAL_ASIA/baha_gaiwamu.png' },
     hali: { generalId: 'hali_gedaerzi', generalName: '戈达尔兹', portrait: '/assets/CENTRAL_ASIA/hali_gedaerzi.png' },
   kalan: { generalId: 'kalan_suhela', generalName: '苏赫拉', portrait: '/assets/CENTRAL_ASIA/kalan_suhela.png' },
-    xisi: { generalId: 'xisi_safaer', generalName: '萨法尔', portrait: '/assets/CENTRAL_ASIA/xisi_yakubu.png' },
+    xisi: [
+        { generalId: 'xisi_safaer', generalName: '萨法尔', portrait: '/assets/CENTRAL_ASIA/xisi_yakubu.png' },
+        // 2026-10-20：萨法尔王朝创建者雅库布·伊本·莱斯（840–879）→ 锡斯坦（博斯特）；PERSIAN×封建＝德莱木军团
+        { generalId: 'xisi_yakubusafaer', generalName: '雅库布', portrait: '', legionName: '封建时代德莱木军团' },
+    ],
   delan: { generalId: 'delan_sulun', generalName: '苏伦', portrait: '/assets/CENTRAL_ASIA/delan_sulun.png' },
     huluo: { generalId: 'huluo_jiyasiding', generalName: '吉亚斯丁', portrait: '/assets/CENTRAL_ASIA/huluo_jiyasiding.png' },
   aba: { generalId: 'aba_shapuer', generalName: '沙普尔', portrait: '/assets/CENTRAL_ASIA/aba_shapuer.png' },
@@ -1158,7 +1192,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xibolai_majiabi', generalName: '犹大马加比', portrait: '/assets/ORIE/xibolai_youdamajiabi.png' },
         { generalId: 'xibolai_dawei', generalName: '大卫', portrait: '/assets/WEST_ASIA/xibolai_dawei.png' },
     ],
-    yelusalengwg: { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
+    yelusalengwg: [
+        { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
+        // 2026-10-20：鲍德温一世（1058–1118，埃德萨伯爵、耶路撒冷国王）→ 耶路撒冷王国（阿卡）；FRANKS×城堡＝法兰西骑士军团
+        { generalId: 'aosiruowen_baodewen', generalName: '鲍德温一世', portrait: '', legionName: '城堡时代法兰西骑士军团' },
+    ],
     shengdian_qishi: { generalId: 'shengdian_qishi_demolai', generalName: '莫莱', portrait: '/assets/GERMANIC/shengdian_qishi_demolai.png' },
     maerta_qishi: { generalId: 'maerta_qishi_walaite', generalName: '瓦莱特', portrait: '/assets/GERMANIC/maerta_qishi_lawalaite.png' },
     dibisi: [
@@ -1181,7 +1219,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yashu: { generalId: 'yashu_saergong', generalName: '萨尔贡', portrait: '/assets/WEST_ASIA/yashu_saergong.png' },
     youfaladi: { generalId: 'youfaladi_yehaiya', generalName: '叶海亚', portrait: '/assets/WEST_ASIA/youfaladi_yehaiya.png' },
     mamuluke: { generalId: 'mamuluke_baibaisi', generalName: '拜巴尔斯', portrait: '/assets/WEST_ASIA/mamuluke_baibaersi.png' },
-    midi: { generalId: 'midi_daiaokaisi', generalName: '戴奥凯斯', portrait: '/assets/CENTRAL_ASIA/midi_daiaokaisi.png' },
+    midi: [
+        { generalId: 'midi_daiaokaisi', generalName: '戴奥凯斯', portrait: '/assets/CENTRAL_ASIA/midi_daiaokaisi.png' },
+        // 🔴 [2026-10-20] 原「科塞亚」无城战役势力已删；守将卡什提利亚什改挂米底，精锐仍用「科塞亚山兵」T4
+        { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '', legionName: '古典时代阿契美尼德军团', eliteName: '科塞亚山兵', eliteTier: 4 },
+    ],
     qiliqiya: { generalId: 'qiliqiya_pangpei', generalName: '庞培', portrait: '/assets/WEST_ASIA/qiliqiya_pangpei.png' },
     // 🔴 [2026-09-12 主人「什么玩意，看历史啊」] 阿契美尼德的武将改正为 **大流士三世**：
     //    ① 史实：亚历山大东征（前334–330）时期在位的大王就是大流士三世，伊苏斯/高加米拉的主帅都是他；
@@ -1214,6 +1256,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ailan: [
         { generalId: 'ailan_julushi', generalName: '居鲁士二世', portrait: '/assets/PERSIAN/ailan_julushiershi.png' },
         { generalId: 'ailan_shuteluke', generalName: '舒特鲁克·纳克昆特', portrait: '/assets/CENTRAL_ASIA/ailan_shutelukenakekunte.png' },
+        // 🔴 [2026-10-20] 原「乌克西亚」无城战役势力已删；首领马达泰斯改挂埃兰，精锐仍用「乌克西亚弓」T3
+        { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '', legionName: '古典时代阿契美尼德军团', eliteName: '乌克西亚弓', eliteTier: 3 },
     ],
     kesa: { generalId: 'kesa_bulan', generalName: '布兰', portrait: '/assets/STEPPE/kesa_bulankehan.png' },
     aiaoniya: { generalId: 'aiaoniya_alisita', generalName: '阿里斯塔', portrait: '/assets/WEST_ASIA/aiaoniya_alisita.png' },
@@ -1242,7 +1286,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     sumo: { generalId: 'sumo_sumowang', generalName: '苏摩', portrait: '/assets/INDIA/sumo_sumowang.png' },
     jiashi_d: { generalId: 'jiashi_jiashiwang_d', generalName: '梵摩达', portrait: '/assets/INDIA/jiashi_d_jiashiwang.png' },
-    zhuluo: { generalId: 'zhuluo_lajialajia', generalName: '拉贾拉贾一世', portrait: '/assets/INDIA/zhuluo_lajialajiayishi.png' },
+    zhuluo: [
+        { generalId: 'zhuluo_lajialajia', generalName: '拉贾拉贾一世', portrait: '/assets/INDIA/zhuluo_lajialajiayishi.png' },
+        // 2026-10-20：朱罗帝国拉金德拉一世（1014–1044 在位，远征南洋）→ 坦贾武尔；INDIA×封建＝朱罗军团
+        { generalId: 'zhuluo_lajindela', generalName: '拉金德拉一世', portrait: '', legionName: '封建时代朱罗军团' },
+    ],
     pandiya: { generalId: 'pandiya_jiatawaerman', generalName: '贾塔瓦尔曼', portrait: '/assets/INDIA/pandiya_jiatawaerman.png' },
     beileinisi: { generalId: 'beileinisi_tuolemiershi', generalName: '托勒密二世', portrait: '/assets/WEST_ASIA/beileinisi_tuolemiershi.png' },
     dedan: { generalId: 'dedan_dedanwang', generalName: '卡比里尔', portrait: '/assets/WEST_ASIA/dedan_dedanwang.png' },
@@ -1261,7 +1309,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     maya: { generalId: 'gen_jasawchan', generalName: '亚斯纳昌', portrait: '/assets/AMERICA/maya_yasinachang.png' },
     mapuche: { generalId: 'gen_lautaro', generalName: '劳塔罗', portrait: '/assets/AMERICA/mapuche_laotaluo.png' },
     muisca: { generalId: 'gen_saguamanchica', generalName: '萨瓜曼奇卡', portrait: '/assets/AMERICA/muisca_saguamanqika.png' },
-    tupi: { generalId: 'gen_arariboia', generalName: '阿拉里博亚', portrait: '/assets/AMERICA/tupi_alaliboya.png' },
+    tupi: [
+        { generalId: 'gen_arariboia', generalName: '阿拉里博亚', portrait: '/assets/AMERICA/tupi_alaliboya.png' },
+        // 2026-10-20：图皮尼金酋长蒂巴里萨（16 世纪，巴西）→ 图皮（瓜纳巴拉）；TUPI×帝国＝塔莫约军团
+        { generalId: 'gen_tibirica', generalName: '蒂巴里萨', portrait: '', legionName: '帝国时代塔莫约军团' },
+    ],
     xibanya: { generalId: 'xibanya_pisaluo', generalName: '皮萨罗', portrait: '/assets/LATIN/xibanya_pisaluo.png' },  // 利马·征服印加的西班牙征服者
     manding: { generalId: 'gen_sundjata', generalName: '松迪亚塔', portrait: '/assets/AFRICA/manding_songdiyata.png' },
     ethiopia: { generalId: 'gen_ezana', generalName: '埃扎纳', portrait: '/assets/AFRICA/ethiopia_aizhana.png' },
@@ -1280,7 +1332,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 🔴 [2026-10-18 主人令] 建筑风格定武将：韦拉克鲁斯 SPANISH→西班牙将、哈瓦那 SPANISH→西班牙将、圣维森特 PORTUGUESE→葡萄牙将；新武将 portrait 留空，走文化池回落。
     tupinijin: { generalId: 'gen_martim_afonso', generalName: '马丁·阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png' },
     tuotuonake: { generalId: 'gen_cortes', generalName: '科尔特斯', portrait: '/assets/SPANISH/tuotuonake_keertesi.png' },
-    taino: { generalId: 'gen_velazquez', generalName: '贝拉斯克斯', portrait: '/assets/SPANISH/taino_beilasikesi.png' },
+    taino: [
+        { generalId: 'gen_velazquez', generalName: '贝拉斯克斯', portrait: '/assets/SPANISH/taino_beilasikesi.png' },
+        // 2026-10-20：泰诺人反抗领袖哈土依（1478–1512，古巴）→ 泰诺（哈瓦那）；SPANISH×帝国＝西班牙方阵军团（该城建筑文化即如此）
+        { generalId: 'gen_hatuey', generalName: '哈土依', portrait: '', legionName: '帝国时代西班牙方阵军团' },
+    ],
     guanche: { generalId: 'gen_bentejui', generalName: '本特胡伊', portrait: '/assets/AMERICA/guanche_bentehuyi.png' },
     // 🔴 [2026-10-13 主人令「添加一个据点，关岛」] 阿加尼亚·查莫罗：1671 年反抗西班牙的查莫罗领袖（英文维基 Hurao 条目）
     chamorro: { generalId: 'gen_hurao', generalName: '胡劳', portrait: '/assets/SOUTHEAST_ASIA/chamorro_hulao.png' },
@@ -1300,7 +1356,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     keernuwaye: { generalId: 'keernuwaye_geladelong', generalName: '格拉德隆', portrait: '/assets/GERMANIC/keernuwaye_geladelong.png' },
     aodesuosi: { generalId: 'aodesuosi_aodesuosi', generalName: '奥德索斯首领', portrait: '/assets/LATIN/aodesuosi_aodesuosi.png' },
     disidelusi: { generalId: 'disidelusi_disidelusi', generalName: '蒂斯德鲁斯督造', portrait: '/assets/LATIN/disidelusi_disidelusi.png' },
-    yisatisi: { generalId: 'yisatisi_falukezhade', generalName: '法鲁克扎德', portrait: '/assets/CENTRAL_ASIA/yisatisi_yisatisi.png' },
+    yisatisi: [
+        { generalId: 'yisatisi_falukezhade', generalName: '法鲁克扎德', portrait: '/assets/CENTRAL_ASIA/yisatisi_yisatisi.png' },
+        // 2026-10-20：古波斯行省总督伊萨提斯（前 6 世纪）→ 亚兹德；PERSIAN×古典＝阿契美尼德军团
+        { generalId: 'yisatisi_yisatisi', generalName: '伊萨提斯', portrait: '', legionName: '古典时代阿契美尼德军团' },
+    ],
     wuer: [
         { generalId: 'wuer_boshasha', generalName: '伯沙撒', portrait: '/assets/ORIE/wuer_boshasha.png' },
         { generalId: 'wuer_wuernamu', generalName: '乌尔纳姆', portrait: '/assets/CENTRAL_ASIA/wuer_wuernamu.png' },
@@ -1366,13 +1426,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     julushi: { generalId: 'julushi_catanes', generalName: '卡塔涅斯', portrait: '/assets/CENTRAL_ASIA/julushi_kataniesi.png' },
     // 公元前325年马里斯战役守帅（马利/摩罗婆同盟首领），立绘按铁律留空走回落、待主人亲自放图分配
     malli: { generalId: 'malli_malavapala', generalName: '摩罗波罗', portrait: '/assets/INDIA/malli_moluobaluo.png' },
-    // 公元前324年科塞亚战役守帅（加喜特战王名卡什提利亚什，与史料依据、底本、武将 id 一致），立绘按铁律留空走回落、待主人亲自放图分配
-    kesaiya: { generalId: 'kesaiya_kashtiliash', generalName: '卡什提利亚什', portrait: '/assets/WEST_ASIA/kesaiya_agumuershi.png' },
-    // 公元前331年乌克西亚隘口战役守帅（扎格罗斯山乌克西亚部落首领马达泰斯；英文维基 Battle of the Uxian Defile
-    //    信息框 commander2 = Madates），立绘按铁律留空走回落、待主人亲自放图分配
-    //    🔴 [2026-10-02 逐场复核查出] 旧名册名写「提里巴斯」（Tiribazus＝亚美尼亚总督，另一人），与武将 id
-    //    `wukexiya_madates`、事件数据、史料依据、底本四处的「马达泰斯」全对不上，已统一为「马达泰斯」。
-    wukexiya: { generalId: 'wukexiya_madates', generalName: '马达泰斯', portrait: '/assets/PERSIAN/wukexiya_tilibasi.png' },
+    // 🔴 [2026-10-20 主人令「每个武将都要给安置据点」] 原「科塞亚」「乌克西亚」两个无城战役势力已删：
+    //    卡什提利亚什 → 米底（哈马丹）、马达泰斯 → 埃兰（苏萨），条目在各自城势力下（带 eliteName 保住原精锐番号）。
     // 🔴 [2026-09-25 主人批准新建佩利昂] 公元前335年佩利昂围城战守帅（伊利里亚王克莱图斯，巴尔迪利斯之子；
     //    英文维基 Siege of Pelium 信息框 commander2 = Kleitos, Glaukias），立绘按铁律留空走回落、待主人亲自放图分配
     dasaleiti: { generalId: 'dasaleiti_kleitos', generalName: '克莱图斯', portrait: '/assets/GREEK/dasaleiti_kelaitusi.png' },

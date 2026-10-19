@@ -691,7 +691,7 @@ export class SpeechAnnouncer {
   /**
    * 三势技释放（仅跟随军团那场战斗，攻/守各一次，由 CombatUI 调用）。
    * 句式：武将，本人势技名，精锐番号，八字诀（八字诀由 skillId 推六套，攻守分表）。
-   * 入队成功返回 true，onStart 在 TTS 真正开口时触发（CombatUI 用它驱动脉冲 Cut-in，声画同刻）；
+   * 入队成功返回 true，onStart 在该句出队、TTS 开口**之前**触发（CombatUI 用它驱动脉冲 Cut-in；2026-10-20 主人定「宁可字早」）；
    * 返回 false = 本句不播，调用方自行安排脉冲时机。
    */
   public announceSkillRelease(opts: {
@@ -745,12 +745,28 @@ export class SpeechAnnouncer {
     this.skillQueueGen++;
     this.skillSpeakQueue.length = 0;
     this.skillSpeaking = false;
+    if (this.skillGateTimer) { window.clearTimeout(this.skillGateTimer); this.skillGateTimer = 0; }
     this.endSpeechDuckSessionIfIdle();
   }
 
-  /** 串行出队：按入队顺序依次念（BattleField 已排劣先/均势随机）；onStart 在 TTS 开口时触发 */
+  /** 串行出队：按入队顺序依次念（BattleField 已排劣先/均势随机）；onStart（大字 Cut-in）在开口**之前**触发 */
   private drainSkillQueue(): void {
     if (this.skillSpeaking) return;
+    if (this.skillSpeakQueue.length === 0) return;
+    // 🔴 [2026-10-20 主人令「不要语音比大字早一点念出来，宁可字早」]
+    //    出队前先问 Cut-in 闸门：另一方大字还没收尾 → 这句语音连同它的大字一起等，绝不先开口。
+    const gateWait = this.skillCutInGate ? this.skillCutInGate() : 0;
+    if (gateWait > 0) {
+      if (!this.skillGateTimer) {
+        const gateGen = this.skillQueueGen;
+        this.skillGateTimer = window.setTimeout(() => {
+          this.skillGateTimer = 0;
+          if (gateGen !== this.skillQueueGen) return;
+          this.drainSkillQueue();
+        }, gateWait);
+      }
+      return;
+    }
     const next = this.skillSpeakQueue.shift();
     if (next === undefined) return;
     this.skillSpeaking = true;
@@ -758,17 +774,14 @@ export class SpeechAnnouncer {
     //    根因：剧本开战时正念战役旁白（sTier），speak() 对常规播报**当场**回调 onStart+onDone 不开口 →
     //    队列里攻守两句同一瞬间先后出队 → 两个 Cut-in 同刻弹出。语音关闭 / TTS 不可用也是同一条路。
     //    现在：一句亮相后至少过 SKILL_CUTIN_GAP_MS（= Cut-in 动画 3 秒）才放下一句，不管这句念没念出声。
-    let startedAt = 0;
-    const onStart = next.onStart;
+    // 🔴 [2026-10-20] 大字先亮再开口：onStart 在调用 speak 之前触发，TTS 起声延迟只会让字比声早，不会让声比字早。
     const gen = this.skillQueueGen;
+    const startedAt = Date.now();
+    next.onStart?.();
     this.speak(next.text, {
       skipGlobalNameReplace: next.skipGlobalNameReplace,
-      onStart: () => {
-        startedAt = Date.now();
-        onStart?.();
-      },
       onDone: () => {
-        const wait = startedAt ? Math.max(0, startedAt + SpeechAnnouncer.SKILL_CUTIN_GAP_MS - Date.now()) : 0;
+        const wait = Math.max(0, startedAt + SpeechAnnouncer.SKILL_CUTIN_GAP_MS - Date.now());
         const release = () => {
           if (gen !== this.skillQueueGen) return;   // 期间队列已被新一场清掉：旧计时器不再动状态
           this.skillSpeaking = false;
@@ -777,6 +790,13 @@ export class SpeechAnnouncer {
         if (wait > 0) window.setTimeout(release, wait); else release();
       },
     });
+  }
+
+  /** Cut-in 闸门：返回还需等待的毫秒（由 CombatUI 注册；>0 时技能语音暂不出队） */
+  private skillCutInGate: (() => number) | null = null;
+  private skillGateTimer = 0;
+  public setSkillCutInGate(gate: (() => number) | null): void {
+    this.skillCutInGate = gate;
   }
 
   /** 技能队列代号：每次清队列 +1，作废上一场残留的放行计时器 */

@@ -119,7 +119,6 @@ export function resolveFactionCulture66(factionId: string | null | undefined): s
     const capital = CAPITAL_V2_BY_FACTION.get(factionId);
     if (capital?.buildingStyle) return toCulture66(capital.buildingStyle);
     if (capital?.region) return toCulture66(capital.region);
-    if (factionId === 'kesaiya' || factionId === 'wukexiya') return 'PERSIAN';
     return toCulture66(factionId);
 }
 

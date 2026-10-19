@@ -24,7 +24,7 @@ import { findEventSite } from '../data/eventSites';
 import { isScriptPeriod } from './scriptPeriod';
 // 🔴 [2026-09-19 主人令「精锐凭什么不能挂战场」] 精锐**按势力**取番号与档位：
 //    表就是 `factionId → { name, tier }`（各区 ExpeditionLegions），与据点无关。
-import { getExpeditionEliteConfig } from '../data/ExpeditionLegions';
+import { getExpeditionEliteConfig, type EliteTier } from '../data/ExpeditionLegions';
 
 export class HistoricalEventManager {
     private timeSystem: TimeSystem;
@@ -516,7 +516,13 @@ export class HistoricalEventManager {
             reuse.setTroops(troops);
             reuse.isElite = true;
             reuse.name = this.sideBaseLegionName(fb, side);
-            reuse.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
+            // 🔴 [2026-10-20 主人令「每个武将都要给安置据点」] 武将条目自带精锐（eliteName/eliteTier）优先 ——
+            //    原「科塞亚」「乌克西亚」两个无城战役势力已删，守将改挂米底/埃兰，但精锐番号
+            //    「科塞亚山兵」「乌克西亚弓」仍随武将走，不被换成本城精锐。
+            const reuseRec = reuse.generalId ? getGeneralRecordByGeneralId(reuse.generalId) : null;
+            reuse.eliteOverride = (reuseRec?.eliteName
+                ? { name: reuseRec.eliteName, tier: (reuseRec.eliteTier ?? 0) as EliteTier }
+                : null) ?? getExpeditionEliteConfig(factionId) ?? null;
             applyLegionCultureComposition(reuse, reuse.cultureRegion ?? undefined);
             reuse.scriptMarchExempt = true;
             reuse.isScriptArmy = true;
@@ -576,10 +582,13 @@ export class HistoricalEventManager {
         //    回落到名字匹配（`CultureCombat.ts:136` 有这条兜底：名字等于某番号名即按其 tier）。
         // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 军团名只写军团名；番号按势力挂到 eliteOverride
         army.name = legionName;
-        army.eliteOverride = getExpeditionEliteConfig(factionId) ?? null;
+        // 🔴 [2026-10-20 主人令「每个武将都要给安置据点」] 武将条目自带精锐优先（同 reuse 分支说明）
+        const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
+        army.eliteOverride = (rec?.eliteName
+            ? { name: rec.eliteName, tier: (rec.eliteTier ?? 0) as EliteTier }
+            : null) ?? getExpeditionEliteConfig(factionId) ?? null;
         if (legionGeneralId && !army.generalId) army.generalId = legionGeneralId;
         applyLegionCultureComposition(army, army.cultureRegion ?? undefined);
-        const rec = legionGeneralId ? getGeneralRecordByGeneralId(legionGeneralId) : null;
         if (rec?.portrait) army.portraitPath = rec.portrait;
         // 只为这一仗而生：不自行行军、不另寻目标、不掉兵
         army.scriptMarchExempt = true;
