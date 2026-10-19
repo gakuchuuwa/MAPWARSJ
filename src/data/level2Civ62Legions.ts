@@ -487,7 +487,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_sunce',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：火焰弓箭手普通档（精锐留古典军团）。
         slots: [
-            { type: 'jian_swordman_shielded', count: 3 },
+            { type: 'jian_swordsman', count: 3 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 jian_swordman_shielded（与华夏步兵同一 DE 单位、同一兵模）
             { type: 'fire_archer', count: 4 },
             { type: 'chukonu', count: 2 },
         ],
@@ -1147,7 +1147,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         shipId: 'GALLEY',
         commanderUnit: 'hero_gilbertdeclare',
         slots: [
-            { type: 'vanguard', count: 3 },
+            { type: 'maceman', count: 3 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 vanguard（与古典钉锤兵同一兵模（DE 钉锤兵用的就是 u_inf_vanguard））
             { type: 'laminated_bowman', count: 4 },
             { type: 'antiquity_light_cavalry', count: 2 },
         ],
@@ -4750,7 +4750,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'hoplite', count: 3 },
             { type: 'gastraphetes', count: 4 },
-            { type: 'elite_greek_cavalry', count: 2 },
+            { type: 'greek_noble_cavalry', count: 2 },   // 🔴 [2026-10-19 主人令「DE 里没有、兵模还重复的，删除」] 原 elite_greek_cavalry（与希腊贵族骑兵同一 DE 单位、同一兵模）
         ],
     },
     // ── 爱奥尼亚 · 城堡时代 · 城堡时代士麦那军团　（本次新建）────────────────

@@ -17,10 +17,10 @@
   "civilian": 14,
   "joke": 11,
   "other": 0,
-  "inCatalog": 320,
-  "missing": 1,
-  "combatInCatalog": 41,
-  "combatMissing": 0,
+  "inCatalog": 319,
+  "missing": 2,
+  "combatInCatalog": 40,
+  "combatMissing": 1,
   "withZhName": 320
  },
  "units": [
@@ -6397,15 +6397,14 @@
    "gaia": false,
    "hasUpgrade": false,
    "removed": false,
-   "inCatalog": true,
-   "catalogId": "boarding_galley",
-   "catalogName": "欧洲接舷战船特殊",
+   "inCatalog": false,
+   "catalogId": null,
+   "catalogName": null,
    "iconUrl": "/de-techtree/icons/Unit/82.png",
-   "spriteUrl": "/SUCAI/GALLEY/idle_2.png",
+   "spriteUrl": null,
    "wikiUrl": "https://ageofempires.fandom.com/wiki/Boarding_Galley",
    "note": "分类里有、清单未列（接舷战船）",
-   "localIcon": "/de-techtree/offtree-icons/boarding-galley.webp",
-   "spriteDir": "/SUCAI/GALLEY/"
+   "localIcon": "/de-techtree/offtree-icons/boarding-galley.webp"
   },
   {
    "name_en": "Outlaw",

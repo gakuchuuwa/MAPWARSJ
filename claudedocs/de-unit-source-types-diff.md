@@ -2,7 +2,7 @@
 
 由 `node tools/de-unit-source-types.mjs` 生成。判据见脚本文件头。
 
-兵种鉴赏共 641 个；能在 DE 找到出处的 641 个：城堡兵 130、文化兵 40、区域兵 38、特殊兵 75、普通兵 98、英雄 223、精英兵 19、非战斗 18。
+兵种鉴赏共 637 个；能在 DE 找到出处的 637 个：城堡兵 130、文化兵 39、区域兵 38、特殊兵 72、普通兵 98、英雄 223、精英兵 19、非战斗 18。
 
 ## 多余：兵种鉴赏有、DE 查不到出处（0 个）
 
@@ -11,7 +11,7 @@
 | id | 名字 | 类别 |
 |---|---|---|
 
-## 按 DE 英文名逐条对号的兵种（42 个）
+## 按 DE 英文名逐条对号的兵种（39 个）
 
 自动对号对不上（变体形态、女兵素材、英文名带变音等），逐个核实后登记在 tools/de-unit-name-alias.json。
 
@@ -23,12 +23,9 @@
 | `immortal_ranged` | 波斯长生军弓手 | Immortal | 城堡兵 |
 | `elite_immortal_ranged` | 波斯长生军弓手高级 | Elite Immortal | 城堡兵 |
 | `flemish_pikeman_f` | 勃艮第佛兰德民兵高级 | Flemish Militia | 文化兵 |
-| `jian_swordman_shielded` | 华夏步兵高级 | Jian Swordsman | 文化兵 |
 | `jian_swordman_unshielded` | 华夏双手步兵 | Jian Swordsman | 文化兵 |
 | `elite_scythian_horse_archer` | 斯基泰骑射手高级 | Scythian Horse Archer | 特殊兵 |
-| `elite_greek_cavalry` | 希腊贵族骑兵高级 | Greek Noble Cavalry | 特殊兵 |
 | `elite_war_dog` | 战犬高级 | War Dog | 特殊兵 |
-| `elite_peltast` | 色雷斯标枪手高级 | Mercenary Peltast | 特殊兵 |
 | `bayinnaung_elephant` | 缅甸御驾战象 | Bayinnaung | 英雄 |
 | `dagnajan_elephant` | 达格纳詹御驾战象 | Dagnajan | 英雄 |
 | `porus_elephant` | 波鲁斯王战象 | Porus | 英雄 |
@@ -66,18 +63,19 @@
 |---|---|---|---|
 | `xolotl_warrior` | 阿兹特克索洛特尔骑兵高级 | 特殊兵 | DE 文本有「Xolotl Warrior」「Create Xolotl Warrior」 |
 | `hero_stoertebeker` | 英雄·斯托尔特贝克·条顿 | 英雄 | DE 文本有「Stoertebeker」，DE 单位 HSTOER id=114 |
-| `hero_basileus` | 英雄·皇帝巴西琉斯·拜占庭 | 英雄 | DE 本体剧情单位「巴西琉斯」（见 WarTypes 注释） |
-| `vanguard` | 诺曼先锋步兵高级 | 特殊兵 | DE 素材 u_inf_vanguard（SLD），DE 文本未见单位名 |
+| `hero_basileus` | 英雄·皇帝巴西琉斯·拜占庭 | 英雄 | 素材独立，DE 里没有单位使用（最接近 DE 古典「国王」u_ant_king，攻击、死亡帧数对不上） |
 | `equites` | 罗马伴随骑士高级 | 特殊兵 | DE 素材（SLD），DE 文本未见单位名 |
 | `sarmatian` | 萨尔马提亚骑兵 | 特殊兵 | DE 素材（SLD），DE 文本未见单位名 |
+| `elite_peltast` | 色雷斯标枪手高级 | 特殊兵 | DE 素材 u_arc_elite_peltast（SLD），DE 里没有单位使用这套素材 |
 
 ## 缺少①：DE 科技树里有、兵种鉴赏没有（0 个）
 
 | DE 英文名 | DE 中文名 | 类别 | 是否战斗单位 | 出现于文明 |
 |---|---|---|---|---|
 
-## 缺少②：DE 不可训练单位里有、兵种鉴赏没有（英雄 0 个、战斗单位 0 个、动物／平民／秘籍玩笑等 1 个）
+## 缺少②：DE 不可训练单位里有、兵种鉴赏没有（英雄 0 个、战斗单位 1 个、动物／平民／秘籍玩笑等 1 个）
 
 | DE 英文名 | DE 中文名 | DE 分组 | 备注 |
 |---|---|---|---|
+| Boarding Galley | 接舷战船 | 战斗单位 | 分类里有、清单未列（接舷战船） |
 | Butterflies | 蝴蝶 | 动物 | Gaia 专属 |

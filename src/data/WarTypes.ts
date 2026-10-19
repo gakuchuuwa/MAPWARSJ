@@ -366,8 +366,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     halberdier: { name: '长戟兵', cls: 'melee', sz: 1, hp: 60, atk: 6, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 3.0, spd: 40, dmgType: 'melee', bonus: { 5: 28, 8: 32, 16: 17, 21: 1, 29: 1, 30: 26, 35: 7 }, armorTags: [27, 1, 31] },
     norse_warrior: { name: '维京北欧战士特殊', cls: 'melee', sz: 1, hp: 60, atk: 9, meleeArmor: 0, pierceArmor: 1, rng: 0, reload: 2.0, spd: 36, dmgType: 'melee', bonus: { 29: 6 }, armorTags: [1, 31] },
     sosso_guard: { name: '西非索索禁卫高级', cls: 'melee', sz: 1, hp: 95, atk: 15, meleeArmor: 1, pierceArmor: 2, rng: 0, reload: 2.0, spd: 42, dmgType: 'melee', bonus: { 21: 1, 29: 2 }, armorTags: [1, 19, 31, 36] },
-    elite_greek_cavalry: { name: '希腊贵族骑兵高级', cls: 'cav', sz: 1, hp: 150, atk: 10, meleeArmor: 3, pierceArmor: 4, rng: 0, reload: 1.9, spd: 54, dmgType: 'melee', armorTags: [8, 31] },
-    jian_swordman_shielded: { name: '华夏步兵高级', cls: 'melee', sz: 1, hp: 70, atk: 8, meleeArmor: 0, pierceArmor: 5, rng: 0, reload: 2.0, spd: 40, dmgType: 'melee', bonus: { 15: 4, 21: 2 }, armorTags: [1, 29, 19, 31] },
     levy: { name: '古典民兵', cls: 'melee', sz: 1, hp: 35, atk: 3, meleeArmor: 0, pierceArmor: 0, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', armorTags: [1, 31] },
     gastraphetes: { name: '腹弩兵', cls: 'ranged', sz: 1, hp: 45, atk: 8, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 3.5, spd: 38, dmgType: 'pierce', bonus: { 27: 4 }, armorTags: [15, 31] },
     laminated_bowman: { name: '复合弓手', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 38, dmgType: 'pierce', bonus: { 27: 2 }, armorTags: [15, 19, 31] },
@@ -378,7 +376,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     equites: { name: '罗马伴随骑士高级', cls: 'cav', sz: 1, hp: 90, atk: 9, meleeArmor: 2, pierceArmor: 2, rng: 0, reload: 1.8, spd: 56, dmgType: 'melee', armorTags: [8, 31] },
     sarmatian: { name: '萨尔马提亚骑兵', cls: 'cav', sz: 1, hp: 140, atk: 13, meleeArmor: 3, pierceArmor: 3, rng: 0, reload: 1.9, spd: 56, dmgType: 'melee', armorTags: [8, 19, 31] },
     elite_peltast: { name: '色雷斯标枪手高级', cls: 'ranged', sz: 1, hp: 40, atk: 4, meleeArmor: 0, pierceArmor: 4, rng: 200, reload: 3.0, spd: 38, dmgType: 'pierce', bonus: { 15: 4, 27: 4, 28: 2, 35: 2 }, armorTags: [15, 31, 38] },
-    vanguard: { name: '诺曼先锋步兵高级', cls: 'melee', sz: 1, hp: 70, atk: 13, meleeArmor: 1, pierceArmor: 1, rng: 0, reload: 2.0, spd: 38, dmgType: 'melee', bonus: { 21: 4, 29: 6 }, armorTags: [1, 19, 31] },
     bowman: { name: '古典弓手', cls: 'ranged', sz: 1, hp: 30, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 200, reload: 2.0, spd: 39, dmgType: 'pierce', bonus: { 27: 3 }, armorTags: [15, 31] },
     crusader_knight: { name: '欧洲十字军骑士特殊', cls: 'cav', sz: 1, hp: 100, atk: 18, meleeArmor: 4, pierceArmor: 4, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', armorTags: [8, 31] },
     raider: { name: '掠骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', armorTags: [8, 31] },
@@ -570,7 +567,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     khan: { name: '蒙古可汗特殊', cls: 'cav', sz: 1, kite: 70, hp: 160, atk: 12, meleeArmor: 2, pierceArmor: 2, rng: 160, reload: 2.1, spd: 58, dmgType: 'pierce', bonus: { 20: 5, 27: 1, 39: -3 }, armorTags: [8, 15, 19, 28, 31] },
     mounted_samurai: { name: '倭寇骑士特殊', cls: 'cav', sz: 1, hp: 130, atk: 14, meleeArmor: 3, pierceArmor: 5, rng: 0, reload: 1.75, spd: 54, dmgType: 'melee', bonus: { 19: 12, 39: -3 }, armorTags: [8, 19, 31] },
     lysander_raider: { name: '斯巴达吕山德掠夺者特殊', cls: 'melee', sz: 1, hp: 70, atk: 10, meleeArmor: 3, pierceArmor: 1, rng: 12, reload: 2, spd: 36, dmgType: 'melee', bonus: { 21: 4 }, armorTags: [1, 19, 31] },
-    boarding_galley: { name: '欧洲接舷战船特殊', cls: 'melee', sz: 1, hp: 200, atk: 0, meleeArmor: 3, pierceArmor: 2, rng: 40, reload: 2, spd: 76, dmgType: 'melee', armorTags: [16, 31] },
     outlaw: { name: '亡命之徒特殊', cls: 'ranged', sz: 1, hp: 15, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 160, reload: 1.8, spd: 29, dmgType: 'pierce', armorTags: [31] },
     // ── 2026-10-19 主人令「全部解析……不能缺少任何单位」：补入的 DE 单位（tools/de-add-missing-units.mjs 生成）──
     missionary: { name: '传教士', cls: 'ranged', sz: 1, hp: 30, atk: 0, meleeArmor: 0, pierceArmor: 0, rng: 280, reload: 1, spd: 44, dmgType: 'melee', armorTags: [25, 8, 19, 31] },   // [2026-10-19 补入] DE 本体数值（dat#775 MONKY）
