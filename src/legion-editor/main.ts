@@ -642,7 +642,6 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'scout_cavalry', name: '斥候骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/SCOUTCAVALRY/' },
     { id: 'light_cavalry', name: '轻骑兵', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },
     { id: 'frankish_paladin', name: '中世纪枪骑兵高级', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },
-    { id: 'jarl', name: '维京首领骑兵高级', category: 'cavalry', age: 'feudal', pathPrefix: '/SUCAI/JARL/' },
     { id: 'siege_ballista', name: '古典波斯攻城弩炮', category: 'siege', age: 'antiquity', pathPrefix: '/SUCAI/SIEGE_BALLISTA/' },
     { id: 'monoreme', name: '单列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/MONOREME/' },
     { id: 'bireme', name: '双列桨座战船', category: 'naval', age: 'antiquity', pathPrefix: '/SUCAI/BIREME/' },
@@ -749,14 +748,14 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_kingsancho', name: '英雄·桑丘国王·西班牙', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/KING_WEST/' },   // [2026-10-19 补入] DE「King Sancho」dat#838；借用「英雄·贝拉四世国王·马扎尔」兵模
     { id: 'hero_nobunaga', name: '英雄·织田信长·日本', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/SAMURAI_ELITE/' },   // [2026-10-19 补入] DE「Nobunaga」dat#845；借用「日本武士精锐」兵模
     { id: 'hero_popeleoi', name: '英雄·教皇利奥一世·罗马', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_WEST/' },   // [2026-10-19 补入] DE「Pope Leo I」dat#781；借用「英雄·塔克修士·不列颠」兵模；DE 官方中文「罗马教皇里奥一世」，改用通行译名
-    { id: 'scythian_scout', name: '斯基泰斥候', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },   // [2026-10-19 补入] DE「Scythian Scout」dat#852；借用「轻骑兵」兵模
+    { id: 'scythian_scout', name: '斯基泰斥候', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/LIGHTCAVALRY/' },   // [2026-10-19 补入] DE「Scythian Scout」dat#852；借用「轻骑兵」兵模
     { id: 'scythian_wild_woman', name: '斯基泰野女人', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/JOANTHEMAID/' },   // [2026-10-19 补入] DE「Scythian Wild Woman」dat#783；借用「英雄·少女战士·法兰克」兵模
     { id: 'hero_williamtheconqueror', name: '英雄·征服者威廉·法兰克', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/FRANKISHPALADIN/' },   // [2026-10-19 补入] DE「William the Conqueror」dat#849；借用「中世纪枪骑兵高级」兵模
     { id: 'hero_cuauhtemoc', name: '英雄·瓜特穆斯·阿兹特克', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ELITEEAGLEWARRIOR/' },   // [2026-10-19 补入] DE「Cuauhtemoc」dat#307；借用「鹰战士」兵模
     { id: 'hero_franciscodeorellana', name: '英雄·弗朗西斯科·德·奥雷利亚纳·西班牙', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/CONQUISTADOR/' },   // [2026-10-19 补入] DE「Francisco de Orellana」dat#425；借用「西班牙征服者」兵模
     { id: 'hero_frederickbarbarossa', name: '英雄·腓特烈·巴巴罗萨·条顿', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/TEUTONICKNIGHT/' },   // [2026-10-19 补入] DE「Frederick Barbarossa」dat#429；借用「条顿武士」兵模
     { id: 'hero_gonzalopizarro', name: '英雄·贡萨洛·皮萨罗·西班牙', category: 'hero', age: 'imperial', pathPrefix: '/SUCAI/ELITECONQUISTADOR/' },   // [2026-10-19 补入] DE「Gonzalo Pizarro」dat#427；借用「西班牙征服者精锐」兵模
-    { id: 'norse_chieftain', name: '北欧酋长', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/JARL/' },   // [2026-10-19 补入] DE「Norse Chieftain」dat#931；借用「瓦良格首领」兵模
+    { id: 'norse_chieftain', name: '北欧酋长', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/JARL/' },   // [2026-10-19 补入] DE「Norse Chieftain」dat#931；借用「瓦良格首领」兵模
     { id: 'hero_khosrau', name: '英雄·霍斯劳·波斯', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ELITEELEPHANTARCHER/' },   // [2026-10-19 补入] DE「Khosrau」dat#930；借用「象弓骑兵高级」兵模
     { id: 'hero_prithvi', name: '英雄·布里陀毗·瞿折罗', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/CROSSBOWMAN/' },   // [2026-10-19 补入] DE「Prithvi」dat#926；借用「劲弩手」兵模
     { id: 'queen', name: '皇后', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/QUEEN_WEST/' },   // [2026-10-19 补入] DE「Queen」dat#923；素材 /SUCAI/QUEEN_WEST/
@@ -892,7 +891,6 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     scout_cavalry: 'melee_cav',
     light_cavalry: 'melee_cav',
     frankish_paladin: 'mounted_hero',
-    jarl: 'melee_cav',
     siege_ballista: 'mechanical',
     monoreme: 'galley',
     bireme: 'galley',

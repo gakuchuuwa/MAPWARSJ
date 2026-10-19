@@ -74,7 +74,6 @@ export const WAR_TYPES: Record<string, WarType> = {
     scout_cavalry: { name: '斥候骑兵', cls: 'cav', sz: 1, hp: 45, atk: 3, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 48, dmgType: 'melee', bonus: { 25: 6 }, armorTags: [8, 31] },
     light_cavalry: { name: '轻骑兵', cls: 'cav', sz: 1, hp: 60, atk: 7, meleeArmor: 0, pierceArmor: 2, rng: 0, reload: 2.0, spd: 60, dmgType: 'melee', bonus: { 25: 10 }, armorTags: [8, 31] },
     frankish_paladin: { name: '中世纪枪骑兵高级', cls: 'cav', sz: 1, hp: 150, atk: 16, meleeArmor: 2, pierceArmor: 3, rng: 0, reload: 2.0, spd: 58, dmgType: 'melee', armorTags: [8, 31] },
-    jarl: { name: '维京首领骑兵高级', cls: 'cav', sz: 1, hp: 140, atk: 18, meleeArmor: 1, pierceArmor: 1, rng: 160, reload: 2.1, spd: 52, dmgType: 'melee', bonus: { 11: 5 }, armorTags: [8, 31] },
     siege_ballista: { name: '古典波斯攻城弩炮', cls: 'ranged', sz: 1, hp: 40, atk: 11, meleeArmor: 0, pierceArmor: 7, rng: 280, reload: 3.6, spd: 26, dmgType: 'pierce', bonus: { 1: 1, 5: 7, 11: 3, 17: 1 }, armorTags: [20, 31] },
 
     tarantine_cavalry: { name: '塔兰托骑兵特殊', cls: 'cav', sz: 1, hp: 60, atk: 4, meleeArmor: 0, pierceArmor: 0, rng: 240, reload: 2.7, spd: 54, dmgType: 'pierce', bonus: { 1: 3, 15: 4, 27: 4, 28: 2 }, armorTags: [15, 8, 28, 19, 31, 38] },

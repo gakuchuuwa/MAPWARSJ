@@ -112,7 +112,8 @@ for (const u of offArr) {
 
 // ── 逐条登记：自动对号对不上、但 DE 里确有出处的兵种（2026-10-19 逐个核实）──
 // 变体（远程形态／女兵素材／带盾不带盾／精锐档）、英文名带变音（Lü Bu）或与 id 写法不同的英雄，按 DE 英文名指认。
-const DE_NAME_OF = Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync('tools/de-unit-name-alias.json', 'utf8'))).filter(([k]) => !k.startsWith('_')));
+// 值写「DE 英文名#编号」：这里只用名字部分（编号给 tools/de-catalog-audit.py 用）
+const DE_NAME_OF = Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync('tools/de-unit-name-alias.json', 'utf8'))).filter(([k]) => !k.startsWith('_')).map(([k, v]) => [k, String(v).split('#')[0] || String(v)]));
 // DE 里有（DE 文本或 DE 素材），但既不在科技树、也不在 wiki 不可训练清单里的：直接定类，附依据
 const DE_OTHER = {
     xolotl_warrior: ['special', 'DE 文本有「Xolotl Warrior」「Create Xolotl Warrior」'],
@@ -123,6 +124,7 @@ const DE_OTHER = {
     sarmatian: ['special', 'DE 素材（SLD），DE 文本未见单位名'],
 };
 const treeTypeByName = new Map();
+const treeTypeById = new Map();
 for (const civ of index) {
     const tree = JSON.parse(fs.readFileSync(`public/de-techtree/${civ.file}`, 'utf8'));
     for (const n of Object.values(tree.units_techs)) {
@@ -130,6 +132,8 @@ for (const civ of index) {
         const t = n['Node Type'] === 'UniqueUnit' ? (CASTLE_BUILDINGS.has(n['Building ID']) ? 'castle' : 'culture')
             : n['Node Type'] === 'RegionalUnit' ? 'regional' : 'normal';
         if (!treeTypeByName.has(n.name) || RANK[t] > RANK[treeTypeByName.get(n.name)]) treeTypeByName.set(n.name, t);
+        const nid = n['Node ID'];
+        if (!treeTypeById.has(nid) || RANK[t] > RANK[treeTypeById.get(nid)]) treeTypeById.set(nid, t);
     }
 }
 const offByName = new Map(offArr.filter(Boolean).map((u) => [u.name_en, u]));
@@ -138,7 +142,11 @@ for (const [cid, deName] of Object.entries(DE_NAME_OF)) {
     if (!catById.has(cid)) continue;
     const c = catById.get(cid);
     let t;
-    if (treeTypeByName.has(deName)) t = treeTypeByName.get(deName);
+    if (String(deName).startsWith('#')) {
+        // 「#编号」＝直接指 DE 单位编号（同名多条时用）：在科技树里就取树里的类型；不在树里（英雄、近战形态等）沿用已判出的类型
+        const nid = Number(deName.slice(1));
+        t = treeTypeById.get(nid) ?? type.get(cid) ?? (c.category === 'hero' ? (isPerson(cid) ? 'hero' : 'elite') : 'special');
+    } else if (treeTypeByName.has(deName)) t = treeTypeByName.get(deName);
     else if (offByName.has(deName)) {
         const u = offByName.get(deName);
         t = u.bucket === 'hero' ? (c.name.startsWith('英雄·') || PERSON_MOUNTS.has(c.id) ? 'hero' : 'elite') : 'special';

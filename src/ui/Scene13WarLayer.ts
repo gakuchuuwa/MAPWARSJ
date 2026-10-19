@@ -726,11 +726,11 @@ export class Scene13WarLayer {
             }
             this.skillShieldTimer[f] = 8.0;
         } else if (six === 'hunzhan') {
-            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌方前线士兵原地混乱定身 3.5 秒（不攻不动，受近战伤害 ×1.4）
+            // 5. 【混】乱阵：当场驱散敌方正在生效的所有技能 Buff，并令敌方前线士兵陷入混乱 8 秒（胡乱走动、期间不攻击，受近战伤害 ×1.4）
             this.skillFrenzyTimer[ef] = 0;
             this.skillShieldTimer[ef] = 0;
             this.skillVulnTimer[f] = 0;
-            this.skillPanicTimer[ef] = 3.5;
+            this.skillPanicTimer[ef] = 8.0;
         } else if (six === 'bingzhan') {
             // 6. 【并】奇袭：8 秒内己方全军打出破甲奇袭（无视敌方护盾减伤，且令敌方全体承伤 +35%），同时压制敌方集气
             this.skillShieldTimer[ef] = 0;
@@ -2059,7 +2059,7 @@ export class Scene13WarLayer {
     /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
     private manSeq = 0;
     /** [PERF 2026-08-29] 渲染排序列表对象池：render 每帧原 new 700+ 个临时对象加剧 GC，改为复用。 */
-    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
+    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -5210,13 +5210,57 @@ export class Scene13WarLayer {
         if (dx * dx + dy * dy < 1e-6) return cur;
         const next = this.dir8(dx, dy);
         if (next === cur) return cur;
+        // 真实夹角迟滞：8 向每格 45°（半宽 22.5°），需偏离当前朝向中心角超过 36°（越过扇区边界 13.5° 以上）才允许换向
+        if (attackArcDeg(cur, dx, dy) < 36) return cur;
         const diff = Math.abs(next - cur);
         if (diff !== 1 && diff !== 7) return next;
         let a = Math.atan2(-dy, dx) * 180 / Math.PI;
         a = ((a % 360) + 360) % 360;
         const off = (a + 22.5) % 45;      // 在本扇区内的位置：0 或 45 都表示正贴边界
-        if (off < 10 || off > 35) return cur;
+        if (off < 14 || off > 31) return cur;
         return next;
+    }
+
+    /**
+     * 统一控制兵种朝向变更（带「换向前置确认」+「换向后冷却锁」双重防闪）：
+     *   1) 冷却锁（dirCd）：每次改变朝向后锁定 minHoldSec（默认 0.35s），冷却期内严禁再次换向；
+     *   2) 前置确认（pendingDir / pendingDirT）：需连续 confirmSec（默认 0.09s，约 5~6 帧）请求同一新方向才真正转身，
+     *      彻底过滤贴墙反弹、流场跨格、队友软推挤造成的 1~4 帧瞬时方向跳变；
+     *   3) 贴墙/受阻微移保护：处于移动状态（st===0）但上一帧实际位移极小（stepMax < 0.45px，被墙或队友顶住）时保持原朝向。
+     */
+    private commitManDir(m: WarMan, nextDir: number, dt: number, minHoldSec = 0.35, confirmSec = 0.09, standing = false): void {
+        if (nextDir === m.dir) {
+            m.pendingDir = nextDir;
+            m.pendingDirT = 0;
+            return;
+        }
+        if ((m.dirCd ?? 0) > 0) return;
+        // 受阻锁向只管「想走却被顶住」的兵；已到位站定的兵（守位、入列对齐领队）本来就不动，必须放行转身
+        if (!standing && m.st === 0 && !m.march && m.stepMax !== undefined && m.stepMax < 0.45) return;
+        if (confirmSec <= 0) {
+            m.dir = nextDir;
+            m.dirCd = minHoldSec;
+            m.pendingDir = nextDir;
+            m.pendingDirT = 0;
+            return;
+        }
+        if (m.pendingDir === nextDir) {
+            m.pendingDirT = (m.pendingDirT ?? 0) + dt;
+            if (m.pendingDirT >= confirmSec) {
+                m.dir = nextDir;
+                m.dirCd = minHoldSec;
+                m.pendingDirT = 0;
+            }
+        } else {
+            m.pendingDir = nextDir;
+            m.pendingDirT = dt;
+        }
+    }
+
+    private steerManDir(m: WarMan, dx: number, dy: number, dt: number, minHoldSec = 0.35, confirmSec = 0.09): void {
+        if (dx * dx + dy * dy < 1e-6) return;
+        const nextDir = this.dir8Hyst(m.dir, dx, dy);
+        this.commitManDir(m, nextDir, dt, minHoldSec, confirmSec);
     }
 
     /** 对面最近的**还在出兵的**敌口（纵向加权 = 同一路优先）。空口不算——认死空口会让整路兵原地朝前走不转向 */
@@ -5665,8 +5709,8 @@ export class Scene13WarLayer {
 
     private waitAtRangeEdge(m: WarMan, inBand: boolean, dt: number): boolean {
         m.rangeWait = inBand ? (m.rangeWait ?? 0) + dt : 0;
-        // 保留短暂防抖；最多等待一个索敌周期，之后沿原追击流程接敌。
-        return inBand && m.rangeWait <= 0.2;
+        // 保留防抖；覆盖至少两个索敌周期（0.45s），防止在接触距离边缘每帧切换追击/攻击姿态。
+        return inBand && m.rangeWait <= 0.45;
     }
 
     /** 🔴 [2026-10-12 主人令「只有在城墙挡路的时候攻击城墙，打完就不要再打了」]
@@ -6818,8 +6862,8 @@ export class Scene13WarLayer {
         this.flowR = R;
     }
 
-    /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity */
-    private flowDistAt(x: number, y: number): number {
+    /** 某世界坐标到中心建筑的步数；没有流场/封死/不通 = Infinity（支持 escape 在贴墙膨胀带内取紧邻可走格距离） */
+    private flowDistAt(x: number, y: number, escape = 0): number {
         const f = this.flowDist;
         if (!f || !this.canvas) return Infinity;
         const R = this.flowR, N = 2 * R + 1;
@@ -6827,7 +6871,15 @@ export class Scene13WarLayer {
         const a = Math.round((dx / TAC_TILE_W + dy / TAC_TILE_H) * FLOW_SUB) + R, b = Math.round((dy / TAC_TILE_H - dx / TAC_TILE_W) * FLOW_SUB) + R;
         if (a < 0 || a >= N || b < 0 || b >= N) return Infinity;
         const d = f[a * N + b];
-        return d >= 32767 ? Infinity : d;
+        if (d < 32767 || escape <= 0) return d >= 32767 ? Infinity : d;
+        let best = 32767;
+        for (let da = -escape; da <= escape; da++) for (let db = -escape; db <= escape; db++) {
+            const a2 = a + da, b2 = b + db;
+            if (a2 < 0 || a2 >= N || b2 < 0 || b2 >= N) continue;
+            const v = f[a2 * N + b2];
+            if (v < best) best = v;
+        }
+        return best >= 32767 ? Infinity : best;
     }
 
     /** 沿流场往中心走：返回前方几格的世界坐标；已在中心附近 / 无路 = null */
@@ -6875,22 +6927,23 @@ export class Scene13WarLayer {
             if (bd <= 3 * FLOW_SUB) break;
         }
         const wa = (a - R) / FLOW_SUB, wb = (b - R) / FLOW_SUB;
-        return { x: cx + (wa - wb) * (TW / 2), y: cy + (wa + wb) * (TH / 2) };
+        const wx = cx + (wa - wb) * (TW / 2), wy = cy + (wa + wb) * (TH / 2);
+        // 若推算出的流场点就在自己脚下（< 18px），直接交还真实目标，避免绕脚下点每帧 180° 翻转
+        if ((wx - x) * (wx - x) + (wy - y) * (wy - y) < 18 * 18) return null;
+        return { x: wx, y: wy };
     }
 
     /** 寻敌结果过一道流场：攻方在城外、目的地更靠近中心时，改走流场路径（绕缺口进城） */
     private flowRedirect(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
         if (!this.flowDist || m.f !== 0 || this.heroOrderPending(m) || WALL_PASS_TYPES.has(m.key)) return aim;
-        const du = this.flowDistAt(m.x, m.y);
-        // 🔴 [2026-10-15 主人报「士兵有的时候会贴着城门城墙，也不打」] 贴墙站的兵脚下是膨胀障碍格（du=∞）：
-        //    原来直接放弃流场、直线顶墙；现先让 flowWaypoint 往外挪到最近的可走格再沿流场走（实测独松关 95 个 ∞ 兵救回 56）。
-        if (!Number.isFinite(du)) return this.flowWaypoint(m.x, m.y, this.flowDist, 6 * FLOW_SUB, 6 * FLOW_SUB, 4) ?? aim;
-        if (du <= 6 * FLOW_SUB) return aim;
+        // 统一使用 escape=4 获取当前流场步数：消除「贴墙格 du=∞ 走 flowWaypoint」与「被推开 1px 后 du<∞ 却因 dt2=∞ 走 aim」之间的逐帧跳变
+        const du = this.flowDistAt(m.x, m.y, 4);
+        if (!Number.isFinite(du) || du <= 6 * FLOW_SUB) return aim;
         const target = aim ?? (this.centerBld ? { x: this.centerBld.x, y: this.centerBld.y } : null);
         if (!target) return aim;
-        const dt2 = this.flowDistAt(target.x, target.y);
+        const dt2 = this.flowDistAt(target.x, target.y, 4);
         if (!Number.isFinite(dt2) || dt2 > du) return aim;   // 目的地在更外面 / 本身在墙上（如城门）：照旧直走
-        return this.flowWaypoint(m.x, m.y) ?? aim;
+        return this.flowWaypoint(m.x, m.y, this.flowDist, 6 * FLOW_SUB, 6 * FLOW_SUB, 4) ?? aim;
     }
 
     private aimAt(m: WarMan): { x: number; y: number } | null {
@@ -7227,43 +7280,61 @@ export class Scene13WarLayer {
         const unitTileRadius = this.radiusOf(m.key) / 40;
         // 🔴 [2026-10-12] 占地按 DE 原生一格（96×48）换算：物件素材按原生像素画，原用旧网格 64×32 ⇒ 碰撞框只有画面的 2/3
         const TILE_W = TAC_TILE_W, TILE_H = TAC_TILE_H;
-        if (m.f === 1 || WALL_PASS_TYPES.has(m.key)) this.ensureGateInfo();
-        for (let pass = 0; pass < 3; pass++) {
-            let changed = false;
+        this.ensureGateInfo();
+        // 每轮按「最大穿透深度」优先解算：当士兵沿共线相邻墙段（W1→W2）贴墙滑行时，
+        // 先由正对的墙面（penX 较小但 min(penX,penY) 最大）把士兵推出墙外表面，此时已不再与 W2 重叠；
+        // 避免先碰到 W2 的内部接缝侧边（penY 极小 < penX）而被沿墙面反向弹回，造成贴墙移动时在接缝处高频卡顿闪动。
+        for (let pass = 0; pass < 4; pass++) {
+            let bestObj: (typeof activeObstructions)[number] | null = null;
+            let bestDepth = 0;
+            let bestMapX = 0, bestMapY = 0, bestLimitX = 0, bestLimitY = 0;
             for (const object of activeObstructions) {
                 if (m.f === 1 && this.gateSpriteSet?.has(object)) continue;   // 🔴 [2026-10-12] 守方从自己城门进出
                 if (WALL_PASS_TYPES.has(m.key) && (this.wallBySprite?.has(object) || this.gateSpriteSet?.has(object))) continue;   // 🔴 [2026-10-13 主人令] 穿墙特种兵可以穿墙
                 const obstruction = object.obstruction!;
                 const dx = px - object.x, dy = py - object.y;
-                let mapX = dx / TILE_W + dy / TILE_H;
-                let mapY = dy / TILE_H - dx / TILE_W;
+                const mapX = dx / TILE_W + dy / TILE_H;
+                const mapY = dy / TILE_H - dx / TILE_W;
                 const limitX = obstruction.x + unitTileRadius;
                 const limitY = obstruction.y + unitTileRadius;
-                if (Math.abs(mapX) < limitX + 0.15 && Math.abs(mapY) < limitY + 0.15) {
+                if (pass === 0 && Math.abs(mapX) < limitX + 0.15 && Math.abs(mapY) < limitY + 0.15) {
                     if (object.obstructionReleaseAfterSec !== undefined) object.obstructionTouched = true;
                 }
                 if (Math.abs(mapX) >= limitX || Math.abs(mapY) >= limitY) continue;
-
                 const penX = limitX - Math.abs(mapX);
                 const penY = limitY - Math.abs(mapY);
-                if (penX < penY) {
-                    // 🔴 [2026-10-18 主人报「这个兵在城门这里呆着总是闪」] 兵正好压在城门中线上时，
-                    //    Math.sign(mapX) 会在 ±0 间逐帧翻转；旧代码再跟 prevMapX 翻 ⇒ 人被左右推来推去闪。
-                    //    中线附近直接用终身不变的 zid 奇偶定侧，位置稳定后不再来回换边。
-                    const stableSign = (m.zid & 1) ? 1 : -1;
-                    const sign = Math.abs(mapX) > 0.01 ? Math.sign(mapX) : stableSign;
-                    mapX = sign * limitX;
-                } else {
-                    const stableSign = (m.zid & 1) ? 1 : -1;
-                    const sign = Math.abs(mapY) > 0.01 ? Math.sign(mapY) : stableSign;
-                    mapY = sign * limitY;
+                const depth = Math.min(penX, penY);
+                if (depth > bestDepth) {
+                    bestDepth = depth;
+                    bestObj = object;
+                    bestMapX = mapX;
+                    bestMapY = mapY;
+                    bestLimitX = limitX;
+                    bestLimitY = limitY;
                 }
-                if (m.f === 0) { const wb = this.wallBySprite.get(object); if (wb) { m.blockedBy = wb; m.blockedAt = this.battleSec; } }
-                px = object.x + (mapX - mapY) * (TILE_W / 2);
-                py = object.y + (mapX + mapY) * (TILE_H / 2);
-                changed = true;
             }
-            if (!changed) break;
+            if (!bestObj) break;
+            let mapX = bestMapX, mapY = bestMapY;
+            const penX = bestLimitX - Math.abs(mapX);
+            const penY = bestLimitY - Math.abs(mapY);
+            const stableSign = (m.zid & 1) ? 1 : -1;
+            if (penX < penY) {
+                const sign = Math.abs(mapX) > 0.01 ? Math.sign(mapX) : stableSign;
+                mapX = sign * bestLimitX;
+            } else {
+                const sign = Math.abs(mapY) > 0.01 ? Math.sign(mapY) : stableSign;
+                mapY = sign * bestLimitY;
+            }
+            const wb = this.wallBySprite?.get(bestObj);
+            if (wb && wb.f !== m.f) {
+                m.blockedBy = wb;
+                m.blockedAt = this.battleSec;
+            }
+            // 「碰到什么」单独计时：blockedAt 只给敌方城墙/城门用（blockedWall 靠它判「墙还挡着」），碰树碰房不许刷新它
+            m.lastObsSprite = bestObj;
+            m.lastObsAt = this.battleSec;
+            px = bestObj.x + (mapX - mapY) * (TILE_W / 2);
+            py = bestObj.y + (mapX + mapY) * (TILE_H / 2);
         }
         m.x = px;
         m.y = py;
@@ -7441,6 +7512,7 @@ export class Scene13WarLayer {
         for (const m of this.men) {
             this.releaseReservedTarget(m);
             if (m.hp <= 0) continue;
+            if ((m.dirCd ?? 0) > 0) m.dirCd = Math.max(0, (m.dirCd ?? 0) - dt);
             // 开场列阵待命：静止渐显，不索敌、不移动、不攻击（主人 2026-08-16）
             if (deploying) {
                 m.st = 0;
@@ -7493,19 +7565,36 @@ export class Scene13WarLayer {
             const stats = wt;
             // 地形细分减速（森林 ×0.5、浅滩/沼泽 ×0.6、深水 ×0.3、平地 ×1.0）；【攻】振己威狂暴移速 ×1.20
             const spdK = this.terrainSpeedAt(m.x, m.y) * (this.skillFrenzyTimer[m.f] > 0 ? 1.20 : 1.0);
-            // 【混】乱阵：处于混乱定身期的敌方前线士兵原地混乱定身 3.5 秒（停止攻击与移动，受近战 1.4x 伤害）
+            // 【混】乱阵：处于混乱期的敌方前线士兵胡乱走动 8 秒（每隔 0.85~1.6 秒或受阻时随机换向，期间停止攻击，受近战 1.4x 伤害）
             if (this.skillPanicTimer[m.f] > 0 && !m.march && !m.hero && !m.siegeW && !isGuard) {
                 m.st = 0;
                 m.foe = null;
                 m.fightT = 0;
                 m.lock = 0;
-                m.stuckT = 0;
-                m.stepMax = 0;
-                m.tx = m.x;
-                m.ty = m.y;
+                if (m.panicAng === undefined || m.panicTurnT === undefined || m.panicTurnT <= 0 || m.stuckT > 0.25) {
+                    m.panicAng = (m.panicAng !== undefined && m.stuckT > 0.25)
+                        ? m.panicAng + Math.PI * (0.65 + Math.random() * 0.7)
+                        : Math.random() * Math.PI * 2;
+                    m.panicTurnT = 0.85 + Math.random() * 0.75;
+                    m.stuckT = 0;
+                } else {
+                    m.panicTurnT -= dt;
+                }
+                const ux = Math.cos(m.panicAng);
+                const uy = Math.sin(m.panicAng);
+                const step = stats.spd * spdK * dt;
+                if (step > 0) {
+                    m.x += ux * step;
+                    m.y += uy * step;
+                    this.steerManDir(m, ux, uy, dt);
+                }
+                m.tx = m.x + ux * 60;
+                m.ty = m.y + uy * 60;
                 if (m.fadeT > 0) m.fadeT -= dt;
-                m.ph += dt * (8 / LOOP_WINDOW_IDLE_SEC);
+                m.ph += dt * (m.idlePose ? (8 / LOOP_WINDOW_IDLE_SEC) : 8);
                 continue;
+            } else if (m.panicTurnT !== undefined && m.panicTurnT > 0) {
+                m.panicTurnT = 0;
             }
             // 🔴 [2026-10-13 全面体检抓出·已修] 贴身距离必须**补偿单位自身碰撞半径**，否则大型攻城器永远打不到墙：
             //    墙/门的碰撞半宽 0.95 格，松开后停在 `53.67×(0.95 + radiusOf/40)` px 处
@@ -7697,7 +7786,21 @@ export class Scene13WarLayer {
             if (foe) {
                 // 🔴 [2026-09-11] 这里**没有**最小射程出口：只剩贴脸目标时照常出手扣血，
                 //    只是不生成弹丸（见下面 tooClose）。理由见 canKeepTarget 头注。
-                const fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
+                let fd2 = (foe.x - m.x) ** 2 + (foe.y - m.y) ** 2;
+                // 若目标是带侧翼碰撞块的多格城门/建筑（如 STONE_GATE 含左右 ±72px extraSprites），
+                // 士兵贴在门翼或建筑边缘时离中心 (foe.x, foe.y) 可达 90~150px（> REACH=73px），
+                // 若只算中心点距离会导致「已被门翼挡住 → 判够不着继续追 → 被推出去 → 下一帧又冲」的贴墙高频闪动；
+                // 此处取离主/副碰撞精灵的最近距离，且若刚被该目标实体碰撞挡住（0.35s 内）则直接视为已贴身够得着。
+                if ('sprite' in foe && foe.extraSprites) {
+                    for (const sp of foe.extraSprites) {
+                        const sd2 = (sp.x - m.x) ** 2 + (sp.y - m.y) ** 2;
+                        if (sd2 < fd2) fd2 = sd2;
+                    }
+                }
+                const touchingFoeBld = 'sprite' in foe && (
+                    (m.blockedBy === foe && this.battleSec - (m.blockedAt ?? -99) < 0.35)
+                    || ((m.lastObsSprite === foe.sprite || (foe.extraSprites ? foe.extraSprites.includes(m.lastObsSprite as any) : false))
+                        && this.battleSec - (m.lastObsAt ?? -99) < 0.35));
                 /* ── 【放风筝】主人 2026-08-22 定「被攻击才撤、撤一段就停」──────────────
                  * 触发 = 被近战贴脸（kd < 65，敌人已挥刀砍过来），不是 70px 预判跑——
                  * 弓骑先站着射，敌人真贴到脸上砍了才拨马后撤，符合帕提亚回马射「站定射→被追上→跑」。
@@ -7729,7 +7832,7 @@ export class Scene13WarLayer {
                         // 越过地图边界或本方大本营底线即停止风筝
                         } else {
                             m.x = bx; m.y = by;
-                            m.dir = this.dir8Hyst(m.dir, dx, dy);   // 朝向 = 逃跑方向（带迟滞防抖）→ 转身跑，不是倒着滑
+                            this.steerManDir(m, dx, dy, dt);   // 朝向 = 逃跑方向（带迟滞与冷却防抖）→ 转身跑，不是倒着滑
                             m.st = 0;                    // 走路状态：尾部才会推走路动画
                             m.fightT = 0;
                             m.kiteLeg = (m.kiteLeg ?? 0) + step;
@@ -7753,7 +7856,7 @@ export class Scene13WarLayer {
                         }
                     }
                 }
-                const close = fd2 < 65 * 65;
+                const close = fd2 < 65 * 65 || touchingFoeBld;
                 const minR = MIN_RANGE_TYPES[m.key] ?? 0;
                 const tooClose = minR > 0 && fd2 < minR * minR;
                 // 🔴 [2026-08-17 修·「动作切换时的颤抖」] 够得着的判定必须带迟滞。
@@ -7768,7 +7871,7 @@ export class Scene13WarLayer {
                 //    刚被推出攻击距离、但还没退出 1.2 倍的兵，既不追也不打，**站住保持原姿势**，
                 //    等真的被拉开了才转身去追。伤害一分不多给（迟滞带里本来就够不着，不结算）。
                 const engaged = m.st !== 0;                       // m.st 此刻仍是上一帧的值
-                const inReach = fd2 < REACH * REACH;              // 严格：出手/扣血用这个
+                const inReach = fd2 < REACH * REACH || touchingFoeBld;   // 严格：出手/扣血用这个（贴住宽体城门/建筑碰撞框同样算够着）
                 // 🔴 [2026-08-17 再修] 迟滞带宽度取「20% 射程」与「25px」的**较小值**。
                 //    原来只按比例算，远程兵会宽得离谱：射程 400 的火焰弓，400~480px 之间
                 //    既不放箭也不挪窝 —— 主人反馈「离敌军很近还在待命」就有这一份。
@@ -7839,7 +7942,13 @@ export class Scene13WarLayer {
                         m.x += (dx / d) * mv;
                         m.y += (dy / d) * mv;
                         const uFwd = this.advanceVec[m.f];
-                        m.dir = d < 24 ? this.dir8Hyst(m.dir, uFwd.x, uFwd.y) : this.dir8Hyst(m.dir, dx, dy);
+                        const fwdDir = this.dir8(uFwd.x, uFwd.y);
+                        // 距离迟滞（进入 <24px、维持 <36px），避免 d 在 24px 附近因队友推挤每帧切换朝向参考系
+                        if (d < (m.dir === fwdDir ? 36 : 24)) {
+                            this.commitManDir(m, fwdDir, dt);
+                        } else {
+                            this.steerManDir(m, dx, dy, dt);
+                        }
                     }
                     // 🔴 这里 continue 会跳过循环尾部的渐显与动画推进，必须就地补上
                     //    （不补 = 贴地滑行不迈腿 + 新兵一路半透明，见追击分支同款血训）
@@ -7873,7 +7982,8 @@ export class Scene13WarLayer {
                     const chasePt = isGuard ? rawChase : (this.gateExit(m, this.flowRedirect(m, rawChase)) ?? rawChase);
                     const fdx = chasePt.x - m.x;
                     const fdy = chasePt.y - m.y;
-                    const fd = Math.hypot(fdx, fdy) || 1;
+                    const fd = Math.hypot(fdx, fdy);
+                    const invFd = fd > 1e-4 ? 1 / fd : 0;
                     // ── 前方被己方兵挡住 → **绕过去**，不是站着等 ──────────────────────
                     // 🔴 [2026-08-17 主人拍板] 「战场上被挡着就站 2 秒」不成立，人会绕。
                     //    帝国时代的弧形阵面就是这么长出来的：每个兵有自己的占地，被前面的人挡住时
@@ -7881,7 +7991,7 @@ export class Scene13WarLayer {
                     //    我们没有寻路，用最省的等效做法：**沿垂直方向侧滑**。
                     //    绕行方向按本兵固定（取自 jy 的符号），不每帧现挑 —— 现挑会左右摇摆，又是一种抖。
                     //    绕开之后下一帧自然判定不堵，立刻恢复直冲。
-                    const ux = fdx / fd, uy = fdy / fd;
+                    const ux = fdx * invFd, uy = fdy * invFd;
                     const px = m.x + ux * CELL_S, py = m.y + uy * CELL_S;
                     const bcx = (px / CELL_S) | 0, bcy = (py / CELL_S) | 0;
                     let blocked = false;
@@ -7897,7 +8007,7 @@ export class Scene13WarLayer {
                             }
                         }
                     }
-                    if (blocked) m.avoidT = 0.12;
+                    if (blocked) m.avoidT = 0.28;
                     else m.avoidT = Math.max(0, (m.avoidT ?? 0) - dt);
                     const avoiding = blocked || (m.avoidT ?? 0) > 0;
                     let mvx = ux, mvy = uy;
@@ -7910,13 +8020,17 @@ export class Scene13WarLayer {
                         const bl = Math.hypot(bx, by) || 1;
                         mvx = bx / bl; mvy = by / bl;
                     }
-                    m.x += mvx * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
-                    m.y += mvy * stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
+                    const step = stats.spd * spdK * (avoiding ? SLIDE_RATE : 1) * dt;
+                    const mv = Math.min(step, fd);   // 限制单步不超过剩余距离 fd，彻底杜绝跨过航点后每帧 180° 往返闪动
+                    m.x += mvx * mv;
+                    m.y += mvy * mv;
                     // 🔴 [2026-10-18 主人报「士兵在行进过程中，有的时候会频繁改变朝向，出现颤抖的感觉」]
-                    //    追击朝向对准追击目标方向 (fdx, fdy) 而非瞬态侧滑向量 (mvx, mvy)：
-                    //    侧滑 blocked 随前方队友微移在 0.12s 窗口边缘高频开合，mvx/mvy 随之偏转 ~24°，
-                    //    若朝向跟 mvx/mvy 走，士兵贴图就会在正前与侧前两个 8 向间高频翻面颤抖。
-                    m.dir = this.dir8Hyst(m.dir, fdx, fdy);
+                    //    追击朝向对准追击目标方向 (fdx, fdy) 而非瞬态侧滑向量 (mvx, mvy)，并走带确认与冷却锁的 steerManDir。
+                    if (fd > ARRIVE_EPS) {
+                        this.steerManDir(m, fdx, fdy, dt);
+                    } else {
+                        this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
+                    }
                     // 🔴 [2026-08-17 修] 这里 continue 会跳过循环尾部的渐显与动画推进，
                     //    所以必须就地补上：不补的话，追击中的兵**踏步动画冻结**（贴地滑行），
                     //    刚出生就开始追的兵还会**一直半透明**（fadeT 不递减）。
@@ -7939,8 +8053,8 @@ export class Scene13WarLayer {
                     continue;
                 }
                 m.st = (stats.rng && close && this.bank[m.key]?.realMelee) ? 2 : 1;
-                // 交战中也走迟滞：贴身互推时目标方位每帧摆动，直接 dir8 会让贴图在两个朝向间跳
-                m.dir = this.dir8Hyst(m.dir, foe.x - m.x, foe.y - m.y);
+                // 交战中同样走带确认与冷却锁的 steerManDir：贴身互推时目标方位每帧摆动，禁止贴图在两个朝向间高频跳变
+                this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
                 m.lock = (m.lock ?? 0) - dt;
                 // 玩家本人出手更快（见 HERO_ATTACK_RATE）：装填缩短，攻击动画随之加快；【攻】振己威攻速 ×1.30
                 const heroRate = m.hero ? HERO_ATTACK_RATE : 1;
@@ -8270,21 +8384,21 @@ export class Scene13WarLayer {
                     const mv = trackSlot ? Math.min(step, d) : step;   // 跟随锚点/列阵推进/原位警戒归位：连续跟随，不迈整步
                     m.x += dx / d * mv;
                     m.y += dy / d * mv;
-                    // 连续跟随与领队行进统一走带迟滞的 8 向（dir8Hyst）；
-                    // 归队队员已靠近自身槽位（d < 24px）仅作微调时，朝向直接对齐领队朝向，绝不因几像素偏差侧转或回头。
+                    // 连续跟随与领队行进统一走带确认与冷却锁的转向控制；
+                    // 归队队员已靠近自身槽位（进入 <24px、维持 <36px）仅作微调时，朝向直接对齐领队朝向，绝不因几像素偏差侧转或回头。
                     const leader = slot ? laneLeaders.get(m.lane) : undefined;
-                    if (slot && leader && d < 24) {
-                        m.dir = leader.dir;
+                    if (slot && leader && d < (m.dir === leader.dir ? 36 : 24)) {
+                        this.commitManDir(m, leader.dir, dt);
                     } else {
-                        m.dir = this.dir8Hyst(m.dir, dx, dy);
+                        this.steerManDir(m, dx, dy, dt);
                     }
                 } else if (isGuard) {
                     const uFwd = this.advanceVec[m.f];
-                    m.dir = this.dir8(uFwd.x, uFwd.y);
+                    this.commitManDir(m, this.dir8(uFwd.x, uFwd.y), dt, undefined, undefined, true);
                 } else if (slot) {
                     // 归队入列后朝向与领队保持一致
                     const leader = laneLeaders.get(m.lane);
-                    if (leader) m.dir = leader.dir;
+                    if (leader) this.commitManDir(m, leader.dir, dt, undefined, undefined, true);
                 }
             }
             if (m.fadeT > 0) m.fadeT -= dt;
@@ -8296,7 +8410,7 @@ export class Scene13WarLayer {
             //    而非定义的 LOOP_WINDOW_IDLE_SEC(1.6 秒)，导致全场待命动作偏快 60%！此处区分站立待命与行走，待命统一按 8 / LOOP_WINDOW_IDLE_SEC 推进。
             if (m.st === 0) {
                 const isIdlePose = !m.march && (
-                    (m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
+                    m.idlePose === true
                     || holdCmd
                     || isGuard
                     || (m.lane >= 0 && this.holdLanes.has(m.lane))
@@ -8353,6 +8467,7 @@ export class Scene13WarLayer {
                 m.stuckT = 0;
                 m.netT = 0;
                 m.stepMax = 0;
+                m.idlePose = false;
                 m.prevX = m.x; m.prevY = m.y;
                 continue;
             }
@@ -8374,9 +8489,30 @@ export class Scene13WarLayer {
                 netStuck = m.st === 0 && wantNet > 0 && (ndx * ndx + ndy * ndy) < (wantNet * 0.25) ** 2;
                 m.anchorX = m.x; m.anchorY = m.y; m.netT = 0;
             }
-            if (netStuck) m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + NET_STUCK_WINDOW);
-            else if (frameStuck) m.stuckT += dt;
-            else m.stuckT = 0; // 🔴 [2026-10-03 修] 既然正常移动迈开腿了，当帧清零 stuckT（对齐「一旦真的挪起来，当帧就切回走路」原设计，彻底杜绝冲锋待命滑步）
+            if (netStuck) {
+                m.stuckT = Math.max(m.stuckT, STUCK_IDLE_SEC + NET_STUCK_WINDOW);
+            } else if (frameStuck) {
+                m.stuckT += dt;
+            } else {
+                // 当旁边的队友软推挤或贴墙反弹产生瞬时单帧位移（>0.25*want）但距 anchor 的净位移仍不足 5px 时，
+                // 平滑衰减 stuckT 而非瞬时归零，防止 netStuck 在下一帧立即失效造成 idle ⇄ move 每帧闪烁；
+                // 一旦真正走出拥挤区（距 anchor > 5px），立即清零切回走路帧。
+                const adx = m.x - m.anchorX, ady = m.y - m.anchorY;
+                if (adx * adx + ady * ady > 25) {
+                    m.stuckT = 0;
+                } else {
+                    m.stuckT = Math.max(0, m.stuckT - dt * 1.5);
+                }
+            }
+            // 待命/移动姿态切换双阈值迟滞：进入 idle 需 stuckT > STUCK_IDLE_SEC 且 stepMax < 0.45，
+            // 维持 idle 允许微小推挤（stepMax < 1.1 且 stuckT > 0.1），彻底杜绝在贴墙/贴队友时逐帧闪切贴图集
+            if (m.st !== 0) {
+                m.idlePose = false;
+            } else if (m.idlePose) {
+                m.idlePose = m.stuckT > 0.1 && m.stepMax < 1.1;
+            } else {
+                m.idlePose = m.stuckT > STUCK_IDLE_SEC && m.stepMax < 0.45;
+            }
             m.prevX = m.x; m.prevY = m.y;
         }
         // 旗手战死 → 原地留下一面倒下的军旗。men 数组只在这一处出人，死亡侦测放这里最稳。
@@ -8907,6 +9043,7 @@ export class Scene13WarLayer {
                 const it = take();
                 it.kind = 'environment';
                 it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
+                it.sortY = it.y - 12;   // 环境对象等效排序 y 上提 12px（严格传递序：近墙 12px 内恒保证人压在墙前，消除非传递 3-cycle 抖动）
                 it.z = sprite.layer === 'ground' ? -10 : sprite.z;
                 it.zid = 0;
                 it.sprite = sprite;
@@ -8923,7 +9060,7 @@ export class Scene13WarLayer {
         for (const c of this.corpses) {
             const it = take();
             it.kind = 'unit';
-            it.y = c.y - this.elevationLiftAt(c.x, c.y); it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
+            it.y = c.y - this.elevationLiftAt(c.x, c.y); it.sortY = it.y; it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
             it.fr = c.t;
             it.a = this.isWaterAt(c.x, c.y) ? (1 - 0.62 * Math.min(1, c.t / DEATH_ANIM)) : 1;
             it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
@@ -8932,7 +9069,7 @@ export class Scene13WarLayer {
         for (const f of this.fleers) {
             const it = take();
             it.kind = 'unit';
-            it.y = f.y - this.elevationLiftAt(f.x, f.y); it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
+            it.y = f.y - this.elevationLiftAt(f.x, f.y); it.sortY = it.y; it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
             it.fr = f.ph;
             it.a = Math.max(0, 1 - f.t / FLEE_DUR);
             it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
@@ -8954,20 +9091,11 @@ export class Scene13WarLayer {
             }
             // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 原「攻城战开战前 30 秒守方播待机帧」那条分支
             //    （判据 `battleType === 'siege' && m.f === 1 && defenderHolding`）随待命期一并删除；
-            //    守方不动的判据只剩上面的 deployT / lingering，以及下面按 `stuckT` 的结果判。
+            //    守方不动的判据只剩上面的 deployT / lingering，以及下面按 `stuckT` / `idlePose` 的结果判。
             // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
-            //    **按结果判不按原因判**：不管挡路判定有没有漏网、不管近战远程，
-            //    只要连着 STUCK_IDLE_SEC 没挪窝就别迈腿；一旦真的挪起来，当帧就切回走路。
-            // 首批列阵仍在整体推进时，骑兵会用自身高速追上按最慢兵种前移的槽位，随后多帧停在
-            // ARRIVE_EPS 内等槽位继续前移；这不是堵死，不能因 stuckT 改播 idle，避免骑兵静止滑行。
-            // 🔴 [2026-10-11 主人报「移动时贴图滑步、没有移动动作」] 原来只看 m.stuckT > STUCK_IDLE_SEC 就播 idle，
-            //    而 stuckT 是**部署期待命期间**累起来的 ⇒ 一开拔位移已发生、渲染却继续选 idle = 滑步
-            //    （塌墙函数里那条注释正是描述这个现象）。现在**再加一条「本帧真的没动」**才许播 idle：
-            //    |Δx|<0.5 且 |Δy|<0.5 ⇒ 移动中永远播走路帧。
-            //    🔴 [2026-10-13] 这条判据此前**恒成立**：step 末尾结算卡住时已把 prevX/prevY 写成当前位置，
-            //    渲染层再拿 m.x - m.prevX 比恒为 0（真机实测 1%~4% 的移动帧误播待命）。改读 step 结算好的 m.stepMax。
-            else if (!m.march && ((m.stuckT > STUCK_IDLE_SEC && (m.stepMax ?? 0) < 0.5)
-                || (m.st === 0 && (!!m.guardPost || (this.skillPanicTimer[m.f] > 0 && !m.hero && !m.siegeW))))
+            //    采用 step 中带双阈值迟滞结算的 m.idlePose，杜绝贴墙/贴队友微幅推挤时在 idle 与 move 间逐帧闪烁。
+            else if (!m.march && (m.idlePose === true
+                || (m.st === 0 && !!m.guardPost))
                 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
                 set = 'idle';
             }
@@ -8995,23 +9123,26 @@ export class Scene13WarLayer {
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
             const it = take();
             it.kind = 'unit';
-            it.y = m.y - this.elevationLiftAt(m.x, m.y); it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
+            const drawY = m.y - this.elevationLiftAt(m.x, m.y);
+            // 排序深度 sortY 带 1.8px 迟滞死区：当士兵贴墙或与队友并排受软推挤产生 ±1px 微抖时，sortY 锁定不动
+            if (m.sortY === undefined || Math.abs(drawY - m.sortY) > 1.8) {
+                m.sortY = drawY;
+            }
+            it.y = drawY; it.sortY = m.sortY; it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
             it.z = 0; it.zid = m.zid; it.sprite = null;
         }
         vis.length = vi;
         const _tsort0 = performance.now();
-        // 🔴 [2026-10-18 主人报「这个兵在城门这里呆着，总是闪」]
-        //    y 只差几像素时，士兵与城墙/城门（environment）会逐帧互换前后：兵贴着墙基站，
-        //    y 被推挤/落脚修正抖 1~2px，跨过 ZORDER_EPS 就翻一次层 ⇒ 看起来人一直闪。
-        //    近墙 12px 内固定「人压在环境之上」（城门洞里本来也是人在墙前），超出 12px 仍按 y 排。
-        const ENV_ZORDER_EPS = 12;
+        // 严格满足传递性（Transitive Total Order）的 Z 轴排序：
+        // 原比较器同时用 `aEnv !== bEnv && |dy| < 12` 与 `|dy| < 4 -> a.zid - b.zid`（非传递关系），
+        // 在士兵贴墙且旁边有队友时形成 A < B < W < A 循环，导致 TimSort 每帧随机颠倒遮挡次序闪烁。
+        // 现统一使用带迟滞的 sortY（环境已预设 sortY = y - 12），同高度时按固定 z / zid 决胜，100% 确定且无循环。
         vis.sort((a, b) => {
-            const dy = a.y - b.y;
-            const aEnv = a.kind === 'environment', bEnv = b.kind === 'environment';
-            if (aEnv !== bEnv && Math.abs(dy) < ENV_ZORDER_EPS) return aEnv ? -1 : 1;
-            // 拥挤时 y 每帧抖 1~2px，严格按 y 排会让重叠兵「谁上谁下」狂闪 → 接近时用出生序号 zid 定序（终身不变）
-            if (Math.abs(dy) < ZORDER_EPS) return a.zid - b.zid;
-            return dy || ((a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0));
+            const dy = (a.sortY ?? a.y) - (b.sortY ?? b.y);
+            if (Math.abs(dy) > 0.01) return dy;
+            const dz = (a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0);
+            if (dz !== 0) return dz;
+            return a.zid - b.zid;
         });
         // 🔴 [2026-10-13 主人令「飞鸟应该显示在建筑上层」] 飞鸟在空中：排序后整体挪到队尾，最后画 ⇒ 压在建筑、塔、士兵之上
         {
