@@ -8,6 +8,7 @@ import {
 import { getCityAnchoredGeneral, getCityAnchoredGenerals } from '../data/CityGeneralBridge';
 import { getFactionGeneral } from '../data/FactionGenerals';
 import { isGeneralOnStage } from '../data/generalOnStage';
+import { shouldGeneralWaitInCityForFirstBattle } from '../data/GeneralFirstBattles';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { pickRandomStrategicSkill, setStrategicSkillOverride } from '../combat/GeneralSkillCombat';
 import { isGeneralOnCooldown, isEliteOnCooldown } from './DefeatCooldown';
@@ -34,12 +35,25 @@ function getActiveLegionGeneralIds(): ReadonlySet<string> {
     return _activeGeneralIdsProvider ? _activeGeneralIdsProvider() : new Set<string>();
 }
 
-/** 该据点是否仍有未出征的在场武将（一个据点多武将时，只要还有一位在场武将未带兵在外即可出将/精） */
+/** 排除已在外领兵的武将 + 尚未打完本城就地/防守首战、需留在城中等候玩家的武将 */
+function getExcludedGeneralIdsForSpawn(cityId?: string | null): ReadonlySet<string> {
+    const activeIds = getActiveLegionGeneralIds();
+    if (!cityId) return activeIds;
+    const waiting = getCityAnchoredGenerals(cityId).filter((g) =>
+        shouldGeneralWaitInCityForFirstBattle(g.generalId, cityId),
+    );
+    if (waiting.length === 0) return activeIds;
+    const merged = new Set(activeIds);
+    for (const g of waiting) merged.add(g.generalId);
+    return merged;
+}
+
+/** 该据点是否仍有未出征且可自由出征的在场武将（本城首战待命武将留在城中等玩家，首战打完后再自由出征） */
 export function hasAvailableCityGeneral(cityId: string | null | undefined): boolean {
     if (!cityId) return false;
-    const activeIds = getActiveLegionGeneralIds();
+    const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
     return getCityAnchoredGenerals(cityId).some(
-        (g) => isGeneralOnStage(g.generalId) && !activeIds.has(g.generalId),
+        (g) => isGeneralOnStage(g.generalId) && !excludedIds.has(g.generalId),
     );
 }
 
@@ -50,11 +64,11 @@ export function listAvailableLegionSpawnOutcomes(
     eliteName: string | null,
     cityId?: string | null,
 ): LegionSpawnTierOutcome[] {
-    const activeIds = getActiveLegionGeneralIds();
+    const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
     const general = cityId
-        ? getCityAnchoredGeneral(cityId, activeIds)
-        : (generalFactionId ? getFactionGeneral(generalFactionId, activeIds) : null);
-    const hasGeneral = !!general && isGeneralOnStage(general.generalId) && !activeIds.has(general.generalId);
+        ? getCityAnchoredGeneral(cityId, excludedIds)
+        : (generalFactionId ? getFactionGeneral(generalFactionId, excludedIds) : null);
+    const hasGeneral = !!general && isGeneralOnStage(general.generalId) && !excludedIds.has(general.generalId);
     const canGeneral = hasGeneral && !tierState.spawnGeneralUsed && (cityId ? !isGeneralOnCooldown(cityId) : true);
     const canElite = !!eliteName && !tierState.spawnEliteUsed && (cityId ? !isEliteOnCooldown(cityId) : true);
 
@@ -126,9 +140,9 @@ export function attachFactionGeneralToArmy(army: Army): boolean {
     if (army.generalId) return false;
     const cityId = army.homeCityId ?? army.getSourceCityId();
     if (!isCityGeneralEliteAnchor(cityId)) return false;
-    const activeIds = getActiveLegionGeneralIds();
-    const general = getCityAnchoredGeneral(cityId, activeIds);
-    if (!general || !isGeneralOnStage(general.generalId) || activeIds.has(general.generalId)) return false;
+    const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
+    const general = getCityAnchoredGeneral(cityId, excludedIds);
+    if (!general || !isGeneralOnStage(general.generalId) || excludedIds.has(general.generalId)) return false;
     army.generalId = general.generalId;
     army.portraitPath = general.portrait;
     // 一个武将一支精锐：已升精锐的军团挂上该武将后，番号同步为该武将专属精锐
@@ -178,9 +192,9 @@ export function applyLegionSpawnTierToArmy(
     const threshold = GameConfig.LEGION_TIER.PROMOTE_TROOPS; // 大军线 4 万（与远征无关）
     const cityId = army.homeCityId ?? army.getSourceCityId();
     const anchorFactionId = getCityAnchorFactionId(cityId);
-    const activeIds = getActiveLegionGeneralIds();
-    const anchoredGeneral = getCityAnchoredGeneral(cityId, activeIds);
-    const hasGeneral = !!anchoredGeneral && isGeneralOnStage(anchoredGeneral.generalId) && !activeIds.has(anchoredGeneral.generalId);
+    const excludedIds = getExcludedGeneralIdsForSpawn(cityId);
+    const anchoredGeneral = getCityAnchoredGeneral(cityId, excludedIds);
+    const hasGeneral = !!anchoredGeneral && isGeneralOnStage(anchoredGeneral.generalId) && !excludedIds.has(anchoredGeneral.generalId);
     const canGeneral = hasGeneral && !state.spawnGeneralUsed && !!cityId && !isGeneralOnCooldown(cityId);
     const canElite = !state.spawnEliteUsed && !!cityId && !isEliteOnCooldown(cityId);
 

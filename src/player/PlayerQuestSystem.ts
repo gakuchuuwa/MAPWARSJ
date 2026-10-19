@@ -14,7 +14,7 @@ import type { City, HistoricalEvent } from '../types/core';
 import { getCityAnchoredGeneral, getCityAnchoredGenerals, isGeneralAnchoredAtCity } from '../data/CityGeneralBridge';
 import { isGeneralOnStage } from '../data/generalOnStage';
 import { getCityEliteLegionName } from '../data/ExpeditionLegions';
-import { getGeneralRecordByGeneralId } from '../data/FactionGenerals';
+import { getFactionGeneral, getGeneralRecordByGeneralId } from '../data/FactionGenerals';
 import { GameConfig } from '../config/GameConfig';
 import { getGeneralProfile } from '../data/general-skills/profiles';
 import { comparePlayerGeneralsByPriority } from '../data/generalSelection';
@@ -40,8 +40,9 @@ import { CITY_DISPLAY_NAMES } from '../data/cityDisplayNames';
 import { SCRIPT_ROAD_SEGMENTS } from '../battlefield-editor/scriptSegments';
 import {
     getGeneralFirstBattle,
-    getFirstBattleEnemySyntheticId,
-    resolveFirstBattleEnemyDisplayName,
+    markFirstBattleCompleted,
+    isFirstBattleCompleted,
+    clearCompletedFirstBattles,
     type GeneralFirstBattle,
 } from '../data/GeneralFirstBattles';
 
@@ -122,7 +123,7 @@ export interface PlayerQuest {
         enemyArmyId?: string;
         enemyFactionId: string;
         enemyTroops: number;
-        enemySyntheticGenId: string;
+        enemyGeneralId?: string;
         engaged?: boolean;
     };
 }
@@ -460,7 +461,7 @@ export class PlayerQuestSystem {
             }
         }
 
-        // 武将首次会面·历史首战：第一次找到武将时触发真实历史场景对话，配备历史兵力（1~10万）直奔战场
+        // 武将首次会面·历史首战：第一次找到武将时触发真实历史场景对话，配备历史兵力直奔战场
         const fb = this.hasPendingFirstBattle(g.generalId);
         if (fb) {
             this.showFirstBattleDialogue(city, g, portrait, factionName, fb, null);
@@ -1540,13 +1541,14 @@ export class PlayerQuestSystem {
     private startRestoration(city: City, g: { generalId: string; generalName: string; portrait: string }, original: string): void {
         this.deps.closeDialogue();
         if (!isGeneralOnStage(g.generalId)) return;
+        const firstTime = !isFirstBattleCompleted(g.generalId);
+        markFirstBattleCompleted(g.generalId);
         const army = this.raiseLegion(city, original, g, city.id);
         if (!army) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
         }
-        if (!this.completedFirstBattles.has(g.generalId)) {
-            this.completedFirstBattles.add(g.generalId);
+        if (firstTime) {
             (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         }
         const factionName = this.deps.cityManager.getFactionName(original);
@@ -1578,13 +1580,14 @@ export class PlayerQuestSystem {
     ): void {
         this.deps.closeDialogue();
         if (!isGeneralOnStage(g.generalId)) return;
+        const firstTime = !isFirstBattleCompleted(g.generalId);
+        markFirstBattleCompleted(g.generalId);
         const army = this.raiseLegion(city, city.factionId, g, target.id);
         if (!army) {
             this.deps.notify('起兵失败（军团未能建立）');
             return;
         }
-        if (!this.completedFirstBattles.has(g.generalId)) {
-            this.completedFirstBattles.add(g.generalId);
+        if (firstTime) {
             (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         }
         const factionName = this.deps.cityManager.getFactionName(city.factionId);
@@ -1611,12 +1614,10 @@ export class PlayerQuestSystem {
     }
 
     // ── 武将首次会面·历史首战（2026-10-18 主人定）────────────────────
-    private completedFirstBattles = new Set<string>();
-
     private hasPendingFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {
         if (!generalId) return null;
         if (this.deps.hero.autoPlan === 'script') return null;
-        if (this.completedFirstBattles.has(generalId)) return null;
+        if (isFirstBattleCompleted(generalId)) return null;
         return getGeneralFirstBattle(generalId);
     }
 
@@ -1660,12 +1661,12 @@ export class PlayerQuestSystem {
     ): void {
         this.deps.closeDialogue();
         if (!isGeneralOnStage(g.generalId)) return;
-        this.completedFirstBattles.add(g.generalId);
+        markFirstBattleCompleted(g.generalId);
         this.headingToEventGeneralId = null;
 
         const myFactionId = existingArmy?.getFactionId() || this.initialFaction.get(city.id) || city.factionId;
-        const myTroops = Math.max(10000, Math.min(100000, fb.myTroops));
-        const enemyTroops = Math.max(10000, Math.min(100000, fb.enemyTroops));
+        const myTroops = Math.max(1, fb.myTroops);
+        const enemyTroops = Math.max(1, fb.enemyTroops);
 
         let host: Army | null = existingArmy && !existingArmy.isDestroyed ? existingArmy : null;
         if (host) {
@@ -1679,7 +1680,7 @@ export class PlayerQuestSystem {
             if (!host.generalId) host.generalId = g.generalId;
         } else {
             city.factionId = myFactionId;
-            city.troops = Math.max(city.troops || 0, Math.ceil(myTroops / 0.9) + 1000);
+            city.troops = Math.max(city.troops || 0, Math.ceil(Math.max(myTroops, GameConfig.LEGION.MIN_ARMY_SIZE) / 0.9) + 1000);
             host = this.raiseLegion(city, myFactionId, g, fb.targetCityId ?? city.id);
             if (host) host.setTroops(myTroops);
         }
@@ -1709,8 +1710,11 @@ export class PlayerQuestSystem {
             fb.targetCityId === city.id || getEuclideanDistance(host.getPosition(), targetPos) <= 0.12;
 
         const enemyFactionId = fb.enemyFactionId !== myFactionId ? fb.enemyFactionId : 'panjun';
-        const enemySyntheticGenId = getFirstBattleEnemySyntheticId(fb.generalId);
-        const enemyDisplayName = resolveFirstBattleEnemyDisplayName(fb);
+        const existingEnemyGen =
+            (fb.enemyGeneralId ? getGeneralRecordByGeneralId(fb.enemyGeneralId) : null) ??
+            (enemyFactionId !== 'panjun' ? getFactionGeneral(enemyFactionId) : null);
+        const enemyGeneralId = existingEnemyGen?.generalId;
+        const enemyDisplayName = existingEnemyGen?.generalName ?? `${fb.enemyFactionName}军`;
 
         let enemyArmyId: string | undefined;
         if (effectiveBattleType === 'field') {
@@ -1722,19 +1726,20 @@ export class PlayerQuestSystem {
                 enemySpawnPos,
                 enemyTroops,
                 enemyFactionId,
-                `${enemyDisplayName}部`,
+                existingEnemyGen ? `${enemyDisplayName}部` : enemyDisplayName,
                 undefined,
                 undefined,
                 fb.targetCityId,
-                enemySyntheticGenId,
+                enemyGeneralId,
                 true,
             );
             if (enemyArmy) {
                 enemyArmy.setTroops(enemyTroops);
                 enemyArmy.isElite = true;
-                enemyArmy.generalId = enemySyntheticGenId;
-                const enemyRec = getGeneralRecordByGeneralId(enemySyntheticGenId);
-                if (enemyRec?.portrait) enemyArmy.portraitPath = enemyRec.portrait;
+                if (enemyGeneralId) {
+                    enemyArmy.generalId = enemyGeneralId;
+                }
+                if (existingEnemyGen?.portrait) enemyArmy.portraitPath = existingEnemyGen.portrait;
                 if (isOnTheSpot) {
                     enemyArmy.setPosition(targetPos.lat, targetPos.lng + 0.03);
                 }
@@ -1752,7 +1757,9 @@ export class PlayerQuestSystem {
                 targetCity.factionId = enemyFactionId;
             }
             targetCity.troops = enemyTroops;
-            (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemySyntheticGenId;
+            if (enemyGeneralId) {
+                (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = enemyGeneralId;
+            }
             (targetCity as { _firstBattleLockedForHero?: boolean })._firstBattleLockedForHero = true;
             if (isOnTheSpot) {
                 const ring = Math.min(0.08, GameConfig.SIEGE.COMBAT_RADIUS * 0.6);
@@ -1783,7 +1790,7 @@ export class PlayerQuestSystem {
                 enemyArmyId,
                 enemyFactionId,
                 enemyTroops,
-                enemySyntheticGenId,
+                enemyGeneralId,
                 engaged: false,
             },
         };
@@ -1875,7 +1882,9 @@ export class PlayerQuestSystem {
                 if ((targetCity.troops || 0) < fbState.enemyTroops) {
                     targetCity.troops = fbState.enemyTroops;
                 }
-                (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemySyntheticGenId;
+                if (fbState.enemyGeneralId) {
+                    (targetCity as { _firstBattleDefenderGeneralId?: string })._firstBattleDefenderGeneralId = fbState.enemyGeneralId;
+                }
                 host.setTargetCity(targetCity);
                 const cPos = { lat: targetCity.latitude, lng: targetCity.longitude };
                 const d = getEuclideanDistance(host.getPosition(), cPos);
@@ -1904,6 +1913,7 @@ export class PlayerQuestSystem {
             delete (host as { forceFirstBattleField?: boolean }).forceFirstBattleField;
             host.scriptMarchExempt = false;
             host.expeditionUnlocked = true;
+            this.deps.kickLegionAi(host.id);
         }
         const enemyId = q.firstBattle.enemyArmyId;
         const enemyArmy = enemyId ? this.deps.legionManager.getLegionById(enemyId) : undefined;
@@ -2987,8 +2997,8 @@ export class PlayerQuestSystem {
             this.deps.notify(`${generalName}所部暂无战事，另寻他人`);
             return;
         }
-        if (army.generalId && !this.completedFirstBattles.has(army.generalId)) {
-            this.completedFirstBattles.add(army.generalId);
+        if (army.generalId && !isFirstBattleCompleted(army.generalId)) {
+            markFirstBattleCompleted(army.generalId);
             (army as Army & { isFirstBattleMarch?: boolean }).isFirstBattleMarch = true;
         }
         this.quest = {
@@ -3098,7 +3108,7 @@ export class PlayerQuestSystem {
             // 🔴 [2026-09-09 主人定] 不再排除「已率军在外」的武将 —— 人不在城里就去野外找他。
             //    原来这里 `if (away) continue`，于是玩家赶到城里扑空、当场换目标，反复空跑。
             // 🔴 [2026-10-18 主人定「没有5000兵，不能出征」] 武将已率军在外看该军团可否继续出征（≥5000且非撤退），在城中看城防 90% ≥ 5000；
-            //    若该武将尚未触发首次历史战役，则首次找他必按历史配备 10000~100000 兵力出征。
+            //    若该武将尚未触发首次历史战役，则首次找他必按历史配备兵力出征。
             const pendingFb = this.hasPendingFirstBattle(g.generalId);
             const army = this.armyOfGeneral(g.generalId);
             const canSortie = pendingFb
@@ -3373,7 +3383,7 @@ export class PlayerQuestSystem {
     public clearForRestore(): void {
         this.cleanupFirstBattleState(this.quest);
         this.quest = null;
-        this.completedFirstBattles.clear();
+        clearCompletedFirstBattles();
         this.clearJourneyBriefing();
         this.briefedBattlefields.clear();   // 读档后重走的场次照常播报
         this.emitChange();
