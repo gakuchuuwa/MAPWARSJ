@@ -79,7 +79,9 @@ import { ScriptCityVisibility, findCurrentScriptEventCity, scriptEventStartCityI
 import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync';
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
+import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
 import { setScriptYearProvider, setCentenarianYearProvider } from '../data/generalOnStage';
+import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
 import { setScriptPeriodProvider, setScriptFactionLegionResolver, setScriptCommanderUnitResolver, setScriptEventStartResolver, setScriptSiegeDefenderResolver, isScriptPeriod } from '../events/scriptPeriod';
@@ -283,6 +285,8 @@ export class GameApp {
                 if (this.gameTimeHUD) {
                     this.gameTimeHUD.updateTime(year, this.timeSystem.getSeason());
                 }
+                // 🔴 [2026-10-20 主人定] 百岁模式跨年：不在世武将的势力名字/旗号换当时代的军团名
+                this.syncEraFactionDisplays();
             });
             this.timeSystem.onSeasonChange((season, year) => {
                 if (this.gameTimeHUD) {
@@ -397,17 +401,29 @@ export class GameApp {
                     && (d.attackerGeneralId === generalId || d.defenderGeneralId === generalId);
                 return isFoe ? (ev.foeCommanderUnit || null) : null;
             });
+            // 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+            //    特殊建筑（城内奇观）建成年代闸门的「当前年份」—— 与据点建城年同一套模式口径：
+            //    剧本模式取当前事件年份、百岁模式取日历年份、乱斗与编辑器模式为 null（不按年代拦）。
+            setWonderGateYearProvider(() => {
+                if (this.cityManager?.getIsEditorMode()) return null;
+                const mode = this.playerHero?.autoPlan ?? 'centenarian';
+                if (mode === 'script') return this.scriptCityVisibility?.getCurrentEvent()?.year ?? null;
+                if (mode === 'centenarian') return this.timeSystem?.getYear() ?? null;
+                return null;
+            });
             // 🔴 [2026-09-23 主人定「特殊建筑都是和据点绑定的」] 特殊建筑跟着挂靠据点显隐
             this.map.getMonumentLayer()?.setCityFilter((cityId) => {
                 const c = this.cityManager.getCity(cityId);
                 return !!c && this.cityManager.isCityVisible(c);
             });
-            // 🔴 [2026-09-30 主人令「给每个特殊建筑添加一个建好的年代」] 奇观建成年代闸门：剧本期按当前年份，乱斗恒 null
-            this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
+            // 🔴 [2026-09-30 主人令「给每个特殊建筑添加一个建好的年代」] 奇观建成年代闸门：按当前年份重画
+            this.map.getMonumentLayer()?.syncFoundedYear();
             // 战场同理：剧本期只显示已打过的与当前这一场（主人：「该显示的战场显示，不该显示的不能显示」）
             this.map.getBattlefieldLayer()?.setVisibilityFilter((bfId) => this.scriptCityVisibility!.isBattlefieldVisible(bfId));
             this.cityManager.setOnYearOrEditorChange(() => {
                 this.syncCityFoundedTypes();
+                // 百岁模式跨年 / 编辑器切换 → 特殊建筑按新建成年份重画
+                this.map.getMonumentLayer()?.syncFoundedYear();
             });
             onBattlefieldFought(() => {
                 this.scriptCityVisibility?.invalidate();
@@ -418,13 +434,15 @@ export class GameApp {
                 this.historicalEventManager?.getLegionManager()?.refreshCultureFormations();
                 this.map.getBattlefieldLayer()?.renderBattlefields();
                 // 打完一场 → 当前事件年份前进 → 奇观建成年代闸门按新年份重画
-                this.map.getMonumentLayer()?.setScriptYear(this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
+                this.map.getMonumentLayer()?.syncFoundedYear();
                 this.map.getMonumentLayer()?.refresh();
             });
 
             setLoadingMessage('正在升旗入场…');
             setLoadingProgress(80);
             this.syncCityFoundedTypes();
+            // 🔴 [2026-10-20 主人定] 百岁模式：开局就按当前年份把「不在世武将的势力」换成当时代军团名
+            this.syncEraFactionDisplays();
             // 势力色块默认关（chk-faction 未勾选）。禁止 toggleTerritoryLayer(true) / renderTerritoryOnly。§10.1
             await this.cityManager.renderCitiesOnly();
             this.perfMonitor.markBootPhase('视口据点旗号');
@@ -887,6 +905,23 @@ export class GameApp {
         syncCityFoundedTypes(this.cityManager, mode, year);
     }
 
+    /**
+     * 🔴 [2026-10-20 主人定] 百岁模式：**武将不在世的势力，名字与旗号改用当时代的军团名**
+     * （如日本古典时代＝大和、15XX 德川在世＝武藏）。只改显示，不改归属；
+     * 剧本模式（用史实归属）/ 乱斗模式（原样）一律关闭。
+     */
+    private syncEraFactionDisplays(): void {
+        if (!this.cityManager) return;
+        const mode = this.playerHero?.autoPlan ?? 'centenarian';
+        const year = mode === 'centenarian' ? (this.timeSystem?.getYear() ?? null) : null;
+        const changed = refreshEraFactionDisplays(year);
+        if (changed.length === 0) return;
+        // 名字变了的势力 → 清旗号文字缓存，再**一次扫完**所有据点旗（跨时代一次上千家，不许逐家扫全图）
+        const changedSet = new Set(changed);
+        for (const factionId of changed) CityAssetManager.invalidateFlagTextCache(factionId);
+        this.cityManager.getTerritorySystem().patchFactionFlagTexts(changedSet);
+    }
+
     private setupPlayer(legionManager: LegionManager): void {
         const allCities = this.cityManager.getCities();
         if (allCities.length === 0) return;
@@ -958,16 +993,21 @@ export class GameApp {
         const syncBuildingStyles = () => syncScriptBuildingStyles(this.cityManager, hero.autoPlan === 'script');
         //    名字不随模式变（上面已套完），故这里不再有 syncCityNames()
         syncBuildingStyles();
+        this.syncEraFactionDisplays();
         this.syncScriptOwners();
         this.syncCityFoundedTypes();
+        // 玩家对象建好后按模式重算一次特殊建筑建成年代闸门（剧本=事件年份 / 百岁=日历年份 / 乱斗=不拦）
+        this.map.getMonumentLayer()?.syncFoundedYear();
         hero.onChange(() => {
             if (hero.autoPlan === lastPlan) return;
             lastPlan = hero.autoPlan;
             syncBuildingStyles();
+            this.syncEraFactionDisplays();
             this.syncScriptOwners();
             this.syncCityFoundedTypes();
             this.cityManager.refreshCityVisibility();
             this.map.getBattlefieldLayer()?.renderBattlefields();
+            this.map.getMonumentLayer()?.syncFoundedYear();
             this.map.getMonumentLayer()?.refresh();
         });
 

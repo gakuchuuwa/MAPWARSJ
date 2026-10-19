@@ -14,6 +14,7 @@ import {
     RESERVED_FACTION_COLOR_HEXES,
 } from '../data/HistoricalFactionColors';
 import { Faction } from '../types/core';
+import { getEraFactionDisplayName } from '../data/eraFactionDisplay';
 
 /**
  * ═══════════════════════════════════════════════════════════════════
@@ -432,6 +433,10 @@ export class FactionManager {
     }
 
     public getFactionName(id: string): string {
+        // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，显示「当时代的军团名」
+        //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；只改显示，势力本身不动。
+        const eraName = getEraFactionDisplayName(id);
+        if (eraName) return eraName;
         const faction = this.factions.get(id);
         return faction ? faction.name : '未知势力';
     }

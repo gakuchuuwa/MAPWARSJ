@@ -1,5 +1,6 @@
 import { DynamicFlagTextGenerator } from '../utils/DynamicFlagTextGenerator';
 import { SANDBOX_DISPLAY_NAMES } from '../data/SandboxDisplayNames';
+import { getEraFactionDisplayName } from '../data/eraFactionDisplay';
 import { FLAG_TEXT_WHITE_STYLE_FACTIONS, FLAG_TEXT_BLACK_STYLE_FACTIONS, HISTORICAL_FACTION_COLORS, FLAG_TEXT_LUM_THRESHOLD } from '../data/HistoricalFactionColors';
 import type { FactionManager } from '../world/FactionManager';
 import { PerformanceMonitor } from '../debug/PerformanceMonitor';
@@ -1966,21 +1967,26 @@ export class CityAssetManager {
                 if (idle?.timeRemaining && idle.timeRemaining() < 2) return false;
                 return true;
             };
+            const generated: string[] = [];
             do {
                 const next = this.flagTextQueue.values().next();
-                if (next.done) return;
+                if (next.done) break;
                 const factionId = next.value;
                 this.flagTextQueue.delete(factionId);
                 try {
                     this.buildFlagTextSync(factionId);
-                    // 只 patch，不能走会先删除缓存的 CityManager.refreshFactionFlagText。
-                    (window as unknown as {
-                        game?: { cityManager?: { getTerritorySystem?(): { patchFactionFlagText?(id: string): void } } };
-                    }).game?.cityManager?.getTerritorySystem?.()?.patchFactionFlagText?.(factionId);
+                    generated.push(factionId);
                 } catch (error) {
                     console.warn('[CityAssetManager] 旗号文字生成失败:', factionId, error);
                 }
             } while (canContinue());
+            // 🔴 [2026-10-20] 一轮生成的那几张**一次扫完**再 patch：百岁模式换时代时一次会有上千家排队，
+            //   逐家 patch 各扫一遍全图太贵（等价结果，不改变 patch 时机）。
+            if (generated.length > 0) {
+                (window as unknown as {
+                    game?: { cityManager?: { getTerritorySystem?(): { patchFactionFlagTexts?(ids: ReadonlySet<string>): void } } };
+                }).game?.cityManager?.getTerritorySystem?.()?.patchFactionFlagTexts?.(new Set(generated));
+            }
             if (this.flagTextQueue.size > 0) this.scheduleFlagTextDrain();
         };
         // 🔴 [2026-09-10 主人报「旗帜上的字有的不显示」] 根因：**一轮只出一张**。
@@ -2005,7 +2011,10 @@ export class CityAssetManager {
 
     /** 旗号文字的渲染参数（文字内容 + 配色 + 缓存键），生成与查缓存共用一份，避免两处算歪 */
     private static resolveFlagTextSpec(factionId: string): { variantKey: string; text: string; fill: string; stroke: string } {
-        let textToRender = SANDBOX_DISPLAY_NAMES[factionId];
+        // 🔴 [2026-10-20 主人定] 百岁模式：该势力没有在世武将时，旗号改用「当时代的军团名」
+        //   （如日本古典时代 = 大和、15XX 德川在世 = 武藏）；下面的「只画前两字」规则照旧。
+        const eraName = getEraFactionDisplayName(factionId);
+        let textToRender = eraName ?? SANDBOX_DISPLAY_NAMES[factionId];
 
         if (!textToRender) {
             const factionManager = (window as any).game?.factionManager;

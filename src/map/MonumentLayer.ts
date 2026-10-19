@@ -15,6 +15,8 @@ interface MonumentData {
     lat: number;
     lng: number;
     asset: string;
+    /** SUCAI_BUILDING 素材目录名（建成年代闸门按它查 `WONDER_FOUNDED_YEAR`） */
+    assetKey: string;
     scale?: number;
     description: string;
     /** 挂靠的据点：特殊建筑都和据点绑定，据点显示它才显示 */
@@ -126,11 +128,8 @@ export class MonumentLayer {
     private renderMonuments(): void {
         // [2026-08-27 主人定「把所有奇观按坐标独立摆放到战略地图，不动据点」]：名城奇观也按城市坐标独立摆放
         const cityById = new Map(CITIES_V2.map((c) => [c.id, c]));
-        interface WonderMonument extends MonumentData { assetKey: string; }
-        const wonderMonuments: WonderMonument[] = Object.entries(CITY_WONDER)
-            .map(([cityId, asset]): WonderMonument | null => {
-                // 建成年代还没到 → 不显示（挂靠据点照旧显示，只有奇观不画）
-                if (!isWonderFounded(asset)) return null;
+        const wonderMonuments: MonumentData[] = Object.entries(CITY_WONDER)
+            .map(([cityId, asset]): MonumentData | null => {
                 const city = cityById.get(cityId);
                 if (!city) return null;
                 const wonderName = WONDER_NAME[asset] || city.name;
@@ -152,7 +151,7 @@ export class MonumentLayer {
                     cityId,
                 };
             })
-            .filter((x): x is WonderMonument => x !== null);
+            .filter((x): x is MonumentData => x !== null);
 
         // [2026-08-28 主人定「所有奇观统称城内奇观」] 附加城内奇观（CITY_WONDER_EXTRA）：
         //   原野外奇观就近挂靠据点，同样参与去重叠。真实坐标保留在 lat/lng（弹窗用）。
@@ -160,19 +159,18 @@ export class MonumentLayer {
             .flatMap(([cityId, extras]) => {
                 const city = cityById.get(cityId);
                 if (!city) return [];
-                return extras
-                    .filter((ex) => isWonderFounded(ex.asset))
-                    .map((ex) => ({
-                        id: `extra_${cityId}_${ex.asset}`,
-                        name: ex.name,
-                        category: ex.category ?? 'ANCIENT_WONDER',
-                        lat: ex.lat ?? city.lat,
-                        lng: ex.lng ?? city.lng,
-                        asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
-                        scale: WONDER_SCALE_OVERRIDE[ex.asset],
-                        description: ex.description,
-                        cityId,
-                    }));
+                return extras.map((ex) => ({
+                    id: `extra_${cityId}_${ex.asset}`,
+                    assetKey: ex.asset,
+                    name: ex.name,
+                    category: ex.category ?? 'ANCIENT_WONDER',
+                    lat: ex.lat ?? city.lat,
+                    lng: ex.lng ?? city.lng,
+                    asset: `/SUCAI_BUILDING/${ex.asset}/preview.png`,
+                    scale: WONDER_SCALE_OVERRIDE[ex.asset],
+                    description: ex.description,
+                    cityId,
+                }));
             });
 
         // [2026-08-27] 去重叠排序：正确挂靠（真实就在城市）优先落位固定；错位修正（WONDER_COORD）其次；
@@ -184,11 +182,15 @@ export class MonumentLayer {
             ...extraMonuments,
         ];
         const placed = this.deoverlap(allMonuments);
+        // 🔴 [2026-10-20 主人令「给所有的特殊建筑也设计一个建城年，和据点一样。不到时间不显示。」]
+        //    建成年代还没到 → 不画。闸门放在**落位之后**：未建成的也照旧占位，
+        //    将来建成登场时，旁边已显示的奇观不会因为去重叠重排而跳位。
+        const founded = placed.filter((m) => isWonderFounded(m.assetKey));
         // 「查看奇观」只翻当前显示的
-        this.browseMonuments = this.cityFilter ? placed.filter((m) => this.cityFilter!(m.cityId)) : placed;
+        this.browseMonuments = this.cityFilter ? founded.filter((m) => this.cityFilter!(m.cityId)) : founded;
 
         const visibleMonuments = new Map<string, PlacedMonument>();
-        for (const mon of placed) {
+        for (const mon of founded) {
             // 挂靠据点没显示 → 不画（落位仍按全部奇观算，位置不随显隐跳动）
             if (this.cityFilter && !this.cityFilter(mon.cityId)) continue;
             visibleMonuments.set(mon.id, mon);

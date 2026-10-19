@@ -5679,18 +5679,11 @@ export class Scene13WarLayer {
         return this.ringOpen();
     }
 
-    /** 近战兵与目标隔着城墙（攻方城外/城内相隔，或守方在城内而敌在城外）⇒ 走不过去，先由 gateExit 出城门再锁敌追击 */
+    /** 近战兵与目标隔着城墙（仅攻方在城墙未破且城外/城内相隔时生效；守方本身可穿自家城门，不按隔墙丢目标） */
     private wallSeparates(m: WarMan, o: { x: number; y: number }): boolean {
-        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.hero || m.siegeW
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f === 1 || m.hero || m.siegeW
             || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, m.f).rng > 65) return false;
         this.ensureGateInfo();
-        if (m.f === 1) {
-            // 🔴 [2026-10-20 主人令「城内近战兵先走城门出城，守军不断走来走去也不打敌人，要不删除要不优化」]
-            //    墙/门一旦有缺口，守方（非原地守门的 guardPost）与攻方同口径：不算「隔墙」，可直接锁定城外敌人追出去；
-            //    原先守方一律算隔墙 ⇒ 门破后反攻的守军每 0.5 秒只会重新往城门走、锁不住目标，来回走动。
-            if (this.ringOpen() && !m.guardPost) return false;
-            return this.insideRing(m.x, m.y) && !this.insideRing(o.x, o.y);
-        }
         if (this.ringOpen()) return false;
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
@@ -5995,11 +5988,6 @@ export class Scene13WarLayer {
         //    主人实锤「看不到投石兵的石弹」。改成索敌时就避开太近的目标：
         //    优先挑够得着又打得出的，实在只剩贴脸的才打（总比呆站着强）。
         const minR2 = minRange * minRange;
-        // 🔴 [2026-10-12 主人报「守方寻敌不知道走城门还是直接找敌人」] 城墙还挡路时，城内的守方近战兵不锁定城外的敌人
-        //    （隔着墙够不着，锁了只会顶墙）；他们由 aimAt → gateExit 先走城门出去，出城后再正常索敌。远程照常隔墙射。
-        // 🔴 [2026-10-20] 城墙已有缺口时非 guardPost 守军不再限定只打城内（见 wallSeparates），与 outOnly 的 !ringOpen 对称
-        const inOnly = (!!guardPost || (radius <= 1000 && !this.ringOpen())) && m.f === 1 && this.battleType === 'siege' && this.siegeWithWalls 
-            && !!wm.key && !WALL_PASS_TYPES.has(wm.key) && this.statsFor(wm.key, 1).rng <= 65 && (this.ensureGateInfo(), this.insideRing(m.x, m.y));
         // 🔴 [2026-10-12 主人报「士兵挤在墙边也不打城墙」] 攻方近战兵：城外、墙还封着没路进城时，城里的敌兵够不着 ⇒ 不锁定他们，
         //    于是落到下面的城墙兜底（先兵、墙最后，但「兵」够不着就不算兵）。有缺口（flowOpen）则正常追兵。
         const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key
@@ -6012,7 +6000,6 @@ export class Scene13WarLayer {
                 const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                 if (d >= r2) continue;
                 if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
-                if (inOnly && !this.insideRing(o.x, o.y)) continue;
                 if (outOnly && this.insideRing(o.x, o.y)) continue;
                 const tooNear = minR2 > 0 && d < minR2;
                 if (d < bd) { bd = d; best = o; }
@@ -6044,7 +6031,6 @@ export class Scene13WarLayer {
                             const d = (o.x - m.x) ** 2 + (o.y - m.y) ** 2;
                             if (d >= r2) continue;
                             if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
-                            if (inOnly && !this.insideRing(o.x, o.y)) continue;
                             if (outOnly && this.insideRing(o.x, o.y)) continue;
                             const tooNear = minR2 > 0 && d < minR2;
                             // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
@@ -7069,50 +7055,55 @@ export class Scene13WarLayer {
         return a > r.a0 + 1 && a < r.a1 - 1 && b > r.b0 + 1 && b < r.b1 - 1;
     }
 
-    /** 🔴 [2026-10-12 主人令「守方可以从城门出城」] 守方在城内、目标在城外 ⇒ 先走到最近的城门，从门里出去；
-     *  守方在城外、目标在城内（回城迎击入城之敌）⇒ 先走到最近的外圈城门，从门里回城。
+    /** 🔴 [2026-10-12 → 2026-10-20 优化] 守方进出城门引导：
+     *  1. 按「守军→城门 + 城门→目标点 aim」总路程最短选外圈城门（不再只按离自身最近选到背对敌人的反方向城门）；
+     *  2. 已在城门附近且目标也在该门交战区（≤160px）时直接奔目标砍杀，不再强拉去门外 120px 固定点造成门口折返；
+     *  3. 仅当守军在城墙圈内（ma ∈ r.a0..r.a1）而目标在城外时沿该城门流场出城。
      */
     private gateExit(m: WarMan, aim: { x: number; y: number } | null): { x: number; y: number } | null {
-        if (m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
+        if (!aim || m.f !== 1 || this.battleType !== 'siege' || !this.siegeWithWalls || WALL_PASS_TYPES.has(m.key)) return aim;
         this.ensureGateInfo();
         if (!this.ringBox) return aim;
         const r = this.ringBox, [ma, mb] = this.tileAB(m.x, m.y);
         const am = (r.a0 + r.a1) / 2, bm = (r.b0 + r.b1) / 2;
         const ccx = this.worldCX + (am - bm) * (TAC_TILE_W / 2);
         const ccy = this.worldCY + (am + bm) * (TAC_TILE_H / 2);
-        // 守军一律选择离自己最近的外圈城门进出城
-        let g: WarBuilding | null = null, gd = Infinity;
+        // 按「守军到门 + 门到目标 aim」总路程最短选择外圈城门
+        let g: WarBuilding | null = null, bestScore = Infinity;
         for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
             const [ba, bb] = this.tileAB(b.x, b.y);
             if (Math.min(Math.abs(ba - r.a0), Math.abs(ba - r.a1), Math.abs(bb - r.b0), Math.abs(bb - r.b1)) >= 1) continue;   // 只认外圈门
-            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d < gd) { gd = d; g = b; }
+            const score = Math.hypot(b.x - m.x, b.y - m.y) * 0.7 + Math.hypot(aim.x - b.x, aim.y - b.y);
+            if (score < bestScore) { bestScore = score; g = b; }
         }
         if (!g) for (const b of this.wallGates) {
             if (b.key !== 'STONE_GATE') continue;
-            const d = (b.x - m.x) ** 2 + (b.y - m.y) ** 2;
-            if (d < gd) { gd = d; g = b; }
+            const score = Math.hypot(b.x - m.x, b.y - m.y) * 0.7 + Math.hypot(aim.x - b.x, aim.y - b.y);
+            if (score < bestScore) { bestScore = score; g = b; }
         }
         if (!g) return aim;
 
-        const inGateRing = ma > r.a0 - 1 && ma < r.a1 + 1 && mb > r.b0 - 1 && mb < r.b1 + 1;
-        const aimInside = !!aim && this.insideRing(aim.x, aim.y);
+        const gd2 = (g.x - m.x) ** 2 + (g.y - m.y) ** 2;
+        const aimD2 = (aim.x - m.x) ** 2 + (aim.y - m.y) ** 2;
+        // 守军已在城门口附近且目标就在身边（≤160px）⇒ 直接扑向目标接战，不走门外固定引导点
+        if (gd2 <= 150 * 150 && aimD2 <= 160 * 160) return aim;
+
+        const inWallRing = ma > r.a0 - 0.15 && ma < r.a1 + 0.15 && mb > r.b0 - 0.15 && mb < r.b1 + 0.15;
+        const aimInside = this.insideRing(aim.x, aim.y);
         if (aimInside) {
-            // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经最近城门往城内走 120px 入城
+            // 目标在城内：已进城内则直奔目标；尚在城外或城门通道口则经城门往城内走入城
             if (this.insideRing(m.x, m.y)) return aim;
-            if (!inGateRing && gd > 110 * 110) return { x: g.x, y: g.y };
+            if (!inWallRing && gd2 > 110 * 110) return { x: g.x, y: g.y };
             const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-            return { x: g.x - vx / vl * 120, y: g.y - vy / vl * 120 };
+            return { x: g.x - vx / vl * 90, y: g.y - vy / vl * 90 };
         }
-        // 含城门通道本身（r.a0-1..r.a1+1）：原 insideRing 在 r.a0+1（门内 1 格）就提前判成已出城，导致守军走到门内口就失去出城引导、在城门附近来回打转
-        if (!inGateRing) return aim;
-        // 🔴 [2026-10-14 主人令「全改」] 门还是这座门，路改成沿这座门的流场绕过去（不再直线顶墙堆在城角）；已到门外附近 / 无路才走下面的直线
+        // 已出城墙圈外（!inWallRing）⇒ 直接奔城外目标，绝不在墙外再次触发出城引导
+        if (!inWallRing) return aim;
         const wp = this.flowWaypoint(m.x, m.y, this.defGateFlow?.get(g) ?? null, -1, 2, FLOW_SUB);
         if (wp) return wp;
-        // 目标点放在城门外侧约 120px（从城中心指向城门的方向），出了门就明确在城外，不会在门口来回折返
         const vx = g.x - ccx, vy = g.y - ccy, vl = Math.hypot(vx, vy) || 1;
-        return { x: g.x + vx / vl * 120, y: g.y + vy / vl * 120 };
+        return { x: g.x + vx / vl * 90, y: g.y + vy / vl * 90 };
     }
 
     /**
