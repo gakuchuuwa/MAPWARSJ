@@ -30,7 +30,8 @@ import { gameLog } from '../utils/GameLogger';
  *   固定色表优先，其余每局随机；邻邦 assignSpatialColors 避撞色。
  *
  * 【B · 叛军旗面系统】RebelFlagConstants + processedRebelFlags（与 A 无关）
- *   panjun **没有势力色、不染色、无汉字旗号、无领土色、军队不染色**。
+ *   panjun（势力名「起义」）**没有势力色、不染色、无领土色、军队不染色**；
+ *   旗号按主人 2026-10-20 令只写**单字繁体「義」**（`SANDBOX_DISPLAY_NAMES['panjun']`）。
  *   每座叛军城仅随机绑定 S10QZ 7–58 共 52 张**原素材旗面**之一（chromaKey 时 color=null）。
  *   据点 CSS：`.flag-rebel-{index}`；index = getProcessedRebelFlagIndex(cityId)。
  *   52 面素材本身已带各色图案，不是「随机 hex 染同一模板」。
@@ -2054,12 +2055,13 @@ export class CityAssetManager {
      * [DYNAMIC REFACTOR] Dynamically render flag text using DynamicFlagTextGenerator
      *
      * 返回 null 有**两种**含义，调用方必须分清（见 isFlagTextPending）：
-     *   · 这个势力本来就不显示文字（panjun）→ 该抹掉已有文字
+     *   · 势力 id 为空（无名势力）→ 该抹掉已有文字
      *   · 本帧生成预算用完、已排队 → **保留**已有文字，等补齐，别抹（抹了会闪）
      */
     public static getProcessedFlagText(factionId: string): string | null {
-        // [USER-REQUEST] Hide flag text for panjun
-        if (!factionId || factionId === 'panjun') return null;
+        // 🔴 [2026-10-20 主人令「旗号，用一个字，繁体的义」] panjun（起义）也要写字：单字繁体「義」
+        //    （原「[USER-REQUEST] Hide flag text for panjun」按主人最新令作废）
+        if (!factionId) return null;
 
         const spec = this.resolveFlagTextSpec(factionId);
         const cached = this.processedFlagCache.get(spec.variantKey);
@@ -2081,7 +2083,7 @@ export class CityAssetManager {
      *    军团旗改走这里——同步编码、立即返回并写缓存（据点旗排队命中缓存即可，不重复生成）。
      */
     public static getProcessedFlagTextSync(factionId: string): string | null {
-        if (!factionId || factionId === 'panjun') return null;
+        if (!factionId) return null;
         const spec = this.resolveFlagTextSpec(factionId);
         const cached = this.processedFlagCache.get(spec.variantKey);
         if (cached) return cached;

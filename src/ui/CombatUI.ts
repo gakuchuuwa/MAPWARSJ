@@ -434,6 +434,13 @@ export class CombatUI {
     private smoothedStalematePct: number = 50;
     private skillPulseLastAt = 0;
     private skillPulseTimers: number[] = [];
+    /**
+     * 🔴 [2026-10-20 主人令「攻守双方武将技不要同时释放」] 统一 Cut-in 闸门（真实毫秒）：
+     * 任一方大字 Cut-in 弹出后，到此时刻前另一方的 Cut-in 一律顺延（不论语音路径、计时兜底还是战术集气路径），
+     * 保证前一个 3 秒大字完整收尾后才放下一个。
+     */
+    private skillCutInBusyUntil = 0;
+    private static readonly SKILL_CUTIN_GAP_MS = 3200;
     /** 同场双方技能连放时仅首句插技能音效（无语音兜底路径） */
     private skillBurstSfxPlayed = false;
     /**
@@ -610,6 +617,8 @@ export class CombatUI {
     constructor() {
         document.querySelectorAll('#combat-ui-panel, [data-combat-ui-detached="true"]').forEach((el) => el.remove());
         this.portraitConfig = new PortraitConfigManager();
+        // 🔴 [2026-10-20 主人令「不要语音比大字早，宁可字早」] 技能语音出队前先问 Cut-in 闸门：另一方大字未收尾 → 语音一起等
+        speechAnnouncer.setSkillCutInGate(() => Math.max(0, this.skillCutInBusyUntil - Date.now()));
         this.injectGlobalStyles();
         this.container = this.createContainer();
         this.createElements();
@@ -4121,6 +4130,7 @@ export class CombatUI {
         this.clashEffect.style.animation = 'clash-pulse 1.2s infinite ease-in-out';
         this.battleTitle.style.animation = '';
         this.skillPulseLastAt = 0;
+        this.skillCutInBusyUntil = 0;
         this.skillBurstSfxPlayed = false;
         for (const t of this.skillPulseTimers) window.clearTimeout(t);
         this.skillPulseTimers.length = 0;
@@ -4461,6 +4471,13 @@ export class CombatUI {
 
         const runUi = () => {
             if (this.boundRegionalBattleField?.isOver) return;
+            // 🔴 [2026-10-20] 统一闸门：另一方 Cut-in 尚未收尾 → 顺延到收尾后再弹，绝不两边同时亮
+            const gateNow = Date.now();
+            if (gateNow < this.skillCutInBusyUntil) {
+                this.skillPulseTimers.push(window.setTimeout(runUi, this.skillCutInBusyUntil - gateNow));
+                return;
+            }
+            this.skillCutInBusyUntil = gateNow + CombatUI.SKILL_CUTIN_GAP_MS;
             // 实际弹出时刻记档：混合场景（一侧语音驱动、一侧计时兜底）也按真实弹出时间错开
             this.skillPulseLastAt = Math.max(this.skillPulseLastAt, Date.now());
             // 🔴 [2026-09-24] 战力倍率徽章：随该侧武将技实际释放时弹出闪烁（不在派发时双侧同闪）
@@ -4510,6 +4527,11 @@ export class CombatUI {
 
         /** 无语音兜底：音效与 Cut-in 同刻；双方紧挨时仅首句插音效 */
         const runWithSfx = () => {
+            const gateNow = Date.now();
+            if (gateNow < this.skillCutInBusyUntil) {
+                this.skillPulseTimers.push(window.setTimeout(runWithSfx, this.skillCutInBusyUntil - gateNow));
+                return;
+            }
             if (!this.skillBurstSfxPlayed && audioUnitId) {
                 this.skillBurstSfxPlayed = true;
                 audioManager.playGeneralSkillSfx(audioUnitId);
@@ -4622,6 +4644,8 @@ export class CombatUI {
         _skillId?: string,
     ): void {
         if (!this.scene13LayoutOn) return;
+        // 占用统一 Cut-in 闸门（错开由 Scene13WarLayer 的游戏秒＋真实秒双闸保证，此处不再顺延，保持技效与大字同刻）
+        this.skillCutInBusyUntil = Date.now() + CombatUI.SKILL_CUTIN_GAP_MS;
         this.pulsePortraitForSkill(side);
         audioManager.playGeneralSkillSfx(generalId || `${side}_${sixSet}`);
 

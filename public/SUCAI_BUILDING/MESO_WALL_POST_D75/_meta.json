@@ -1,0 +1,9 @@
+{
+  "name": "MESO_WALL_POST_D75",
+  "frames": 1,
+  "box_w": 152,
+  "box_h": 184,
+  "anchor_x": 100,
+  "anchor_y": 156,
+  "sld_source": "b_meso_wall_stone_destr_75"
+}

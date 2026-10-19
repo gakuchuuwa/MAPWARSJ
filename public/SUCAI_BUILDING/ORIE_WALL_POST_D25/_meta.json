@@ -1,0 +1,9 @@
+{
+  "name": "ORIE_WALL_POST_D25",
+  "frames": 1,
+  "box_w": 160,
+  "box_h": 184,
+  "anchor_x": 112,
+  "anchor_y": 156,
+  "sld_source": "b_orie_wall_stone_destr_25"
+}

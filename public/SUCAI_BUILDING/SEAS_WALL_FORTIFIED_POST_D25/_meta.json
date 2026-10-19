@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WALL_FORTIFIED_POST_D25",
+  "frames": 1,
+  "box_w": 172,
+  "box_h": 176,
+  "anchor_x": 112,
+  "anchor_y": 148,
+  "sld_source": "b_seas_wall_fortified_destr_25"
+}

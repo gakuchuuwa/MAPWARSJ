@@ -1,0 +1,9 @@
+{
+  "name": "PERSIAN_WALL_POST_D25",
+  "frames": 1,
+  "box_w": 156,
+  "box_h": 168,
+  "anchor_x": 100,
+  "anchor_y": 136,
+  "sld_source": "b_persian_wall_stone_destr_25"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SEAS_WALL_POST_D50",
+  "frames": 1,
+  "box_w": 148,
+  "box_h": 148,
+  "anchor_x": 92,
+  "anchor_y": 120,
+  "sld_source": "b_seas_wall_stone_destr_50"
+}

@@ -584,6 +584,7 @@ export class GameApp {
                             cityName: event.cityName,
                             ju: capJu,
                             attackerSkillId: event.attackerSkillId,
+                            defenderFactionId: event.previousFactionId,
                             defenderGeneralId: event.defenderGeneralId,
                             regionLabel,
                         });

@@ -565,12 +565,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'elite_fire_archer', count: 2 },
         ],
     },
-    // ── 巴蜀 · 城堡时代 · 城堡时代山城军团　（本次新建）────────────────
+    // ── 巴蜀 · 城堡时代 · 城堡时代川峡军团　（本次新建）────────────────
     //    评级：【精锐】｜核心兵种：远程（弩炮）、重步兵为主
     //    描述正文（主人原文，一字未改）：（合川钓鱼城、重庆；合川钓鱼城绝壁石城、白帝城石垣要塞；嘉陵江断崖重弩炮要塞防御、山城天险死守飞石滚木、击毙蒙哥汗山城铁血死士）
     //    英雄队（第 10 队·主将队）：hero_zhugeliang / hero_liubei / hero_guanyu / hero_zhangfei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代山城军团', civ: '巴蜀', age: 'castle', deStyle: 'ASIA', region: 'BASHU' as RegionType,
+        name: '城堡时代川峡军团', civ: '巴蜀', age: 'castle', deStyle: 'ASIA', region: 'BASHU' as RegionType,
         buildingStyle: 'BASHU',
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
@@ -4184,12 +4184,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 法尔斯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第六批·中美＋安第斯＋非洲＋伊朗）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 法尔斯 · 古典时代 · 古典时代不死军团　（本次新建）────────────────
+    // ── 法尔斯 · 古典时代 · 古典时代阿契美尼德军团（2026-10-20 主人令由「长生军团」改名；长生军是精锐名）──
     //    评级：【精锐】｜核心兵种：步兵、战车、远程为主
     //    描述正文（主人原文，一字未改）：（波斯波利斯、帕萨尔加德；波斯波利斯万国之门双翼牛身石雕、百柱大殿双头公牛柱头与巨石台基；双手青铜双刃短剑（Akinakes）、柳条编织蒙皮轻长盾、万人方阵战车冲阵与密集弓箭遮蔽大阵）
     //    英雄队（第 10 队·主将队）：hero_artaphernes / hero_datis　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代长生军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
+        name: '古典时代阿契美尼德军团', civ: '阿契美尼德', age: 'antiquity', deStyle: 'PERSIAN', region: 'ACHAEMENIDS' as RegionType,
         buildingStyle: 'PERSIAN',
         castleId: 'PERSIAN_CASTLE_AGE3', castleName: '阿契美尼德 波斯波利斯万国门石台',
         formationMode: 'triangle',

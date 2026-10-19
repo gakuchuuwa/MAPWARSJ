@@ -42,6 +42,10 @@
  */
 
 import { REGION_ORDER, type RegionType } from '../systems/RegionSystem';
+import type { BuildingStyle } from './cities_v2';
+
+/** 军事科技文化键：66 种建筑文化（62 DE 文明 + 4 三级文化）或旧大区兼容键 */
+export type TechCulture = BuildingStyle | RegionType;
 
 /** 效果作用的属性 */
 export type TechAttr =
@@ -95,11 +99,11 @@ export interface MilitaryTech {
     basis: string;
     effects: readonly TechEffect[];
     /**
-     * 可获得该科技的文化区；null = 全部 20 区。
+     * 可获得该科技的文化（66 建筑文化）；null = 全部文化。
      * 🔴 **全区同享的科技对胜负是空转的**（所有势力同时变强，相对强弱不变，只改战斗时长）。
      *    科技系统的价值全在这一列的差异化上——素材是 DE 自己的文明科技树。
      */
-    cultures: readonly RegionType[] | null;
+    cultures: readonly TechCulture[] | null;
 }
 
 /** 欧亚锁甲分布带 */
@@ -284,9 +288,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
 
     // ── 附加四条 ──────────────────────────────────────────────────────────
     {
-        id: 'husbandry', name: '畜牧', de: 'Husbandry', year: 477,
-        era: 'feudal',
-        basis: '马镫在南北朝定型并西传，骑兵机动力质变',
+        id: 'husbandry', name: '畜牧', de: 'Husbandry', year: -300,
+        era: 'antiquity',
+        basis: '战马驯养与官牧良马自古典时代成熟，骑兵机动力提升',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 23, 36, 47] }],
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AFRICA', 'MALAY', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
@@ -327,9 +331,9 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SLAVIC', 'GERMANIC', 'NORTH', 'WESTERN', 'NORTHEAST', 'KOREA', 'JAPAN', 'WEST_ASIA', 'AMERICA', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
     {
-        id: 'squires', name: '护卫', de: 'Squires', year: 1000,
-        era: 'feudal',
-        basis: '步兵行军与耐力训练',
+        id: 'squires', name: '护卫', de: 'Squires', year: -200,
+        era: 'antiquity',
+        basis: '古典军制步兵行军与耐力队列训练',
         effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [6] }],   // 🔴 [2026-10-13 治本] 同上：枪兵已归 6，删 DE 空类 46
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'CENTRAL', 'NORTH', 'JIANGNAN', 'HEXI', 'WESTERN', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'CENTRAL_ASIA', 'WEST_ASIA', 'INDIA', 'BERBER', 'AMERICA', 'AFRICA', 'MALAY', 'ANDE', 'PURU', 'ORIE', 'EAST', 'GREEK', 'PERSIAN', ],
     },
@@ -372,79 +376,272 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['SLAVIC', 'GERMANIC', 'LATIN', 'NORTH', 'TIBET', 'STEPPE', 'NORTHEAST', 'KOREA', 'JAPAN', 'INDIA', 'BERBER', 'AMERICA', 'MALAY', 'ANDE', 'ORIE', 'EAST', ],
     },
 
-    // ── 文化专属独特科技（DE 本体 Unique Tech，按文化区映射）────────────────
+    // ── 文化专属特殊科技（66 建筑文化 100% 映射 DE Unique Tech，优先必选）────────
     {
         id: 'sagaris', name: '波斯战斧', de: 'Sagaris', year: -500,
         era: 'antiquity',
-        basis: '阿契美尼德骑兵战斧，对有机单位加成',
+        basis: '阿契美尼德骑兵战斧（DE tech 1261），对有机单位加成',
         effects: [{ attr: 'bonus', op: 'add', value: 2, classes: [12], bonusClass: 31 }],
         cultures: ['PERSIAN'],
     },
     {
         id: 'sparabaras', name: '盾牌兵', de: 'Sparabaras', year: -500,
         era: 'antiquity',
-        basis: '阿契美尼德重装盾矛步兵，步兵双甲强化',
-        effects: [{ attr: 'meleeArmor', op: 'add', value: 2, classes: [6] },
-            { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] }],
+        basis: '阿契美尼德重装盾矛步兵（DE tech 1262），步兵双甲强化',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 2, classes: [6] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
+        ],
         cultures: ['PERSIAN'],
     },
     {
         id: 'reed_arrows', name: '芦苇箭', de: 'Reed Arrows', year: -500,
         era: 'antiquity',
-        basis: '阿契美尼德芦苇杆箭，弓手装填提速',
+        basis: '阿契美尼德芦苇杆箭（DE tech 1264），弓手装填提速',
         effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0] }],
         cultures: ['PERSIAN'],
     },
     {
         id: 'skeuophoroi', name: '盾牌扈从', de: 'Skeuophoroi', year: -400,
         era: 'antiquity',
-        basis: '斯巴达重装步兵扈从，步兵近攻强化',
+        basis: '斯巴达重装步兵扈从（DE tech 1225），步兵近攻强化',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6] }],
-        cultures: ['GREEK'],
+        cultures: ['SPARTANS'],
     },
     {
         id: 'hippagretai', name: '王伴骑兵', de: 'Hippagretai', year: -400,
         era: 'antiquity',
-        basis: '斯巴达王伴精锐，步兵血量强化',
-        // 🔴 [2026-10-13 对账修·作用面写反] 原写 classes:[12]（**全部骑兵 +50HP**，共 94 个兵种白得）——
-        //    DE 原始表（tech 1226）`hp +50` 打在 u2162(POLEMARCH_1) 与 u2164–2167、u2270–2272 共 **8 个 unit**，
-        //    经 `de_unit_class.json` 反查全部是 **class 6（斯巴达步兵体系）**，与骑兵无关。⇒ 作用面改 **[6]**。
+        basis: '斯巴达王伴精锐（DE tech 1226），步兵血量强化',
         effects: [{ attr: 'hp', op: 'add', value: 50, classes: [6] }],
-        cultures: ['GREEK'],
+        cultures: ['SPARTANS'],
+    },
+    {
+        id: 'taxiarchs', name: '联队长', de: 'Taxiarchs', year: -450,
+        era: 'antiquity',
+        basis: '雅典十将军与各部联队长指挥（DE tech 1120），步兵近战攻击与视野提升',
+        effects: [
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [6] },
+            { attr: 'los', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['ATHENIANS', 'GREECE'],
+    },
+    {
+        id: 'pezhetairoi', name: '马其顿方阵步兵', de: 'Pezhetairoi', year: -350,
+        era: 'antiquity',
+        basis: '马其顿步兵伙伴方阵（DE tech 1286），步兵近战护甲 +2',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 2, classes: [6] }],
+        cultures: ['MACEDONIAN'],
+    },
+    {
+        id: 'sarissophoroi', name: '萨里沙骑兵', de: 'Sarissophoroi', year: -340,
+        era: 'antiquity',
+        basis: '马其顿萨里沙长矛突击骑兵（DE tech 1287），骑兵近战攻击 +2',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [12, 47] }],
+        cultures: ['MACEDONIAN'],
+    },
+    {
+        id: 'bessian_metalworking', name: '贝锡安金属利用', de: 'Bessian Metalworking', year: -400,
+        era: 'antiquity',
+        basis: '色雷斯贝锡部落冶金与破甲刃器（DE tech 1298），步骑近战攻击 +2',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [6, 12, 47] }],
+        cultures: ['THRACIAN'],
+    },
+    {
+        id: 'peltasts', name: '轻装盾兵', de: 'Peltasts', year: -400,
+        era: 'antiquity',
+        basis: '色雷斯新月轻盾散兵战术（DE tech 1299），远程单位射程与穿刺攻击 +1',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [0, 36] },
+            { attr: 'range', op: 'add', value: 1, classes: [0, 36] },
+        ],
+        cultures: ['THRACIAN'],
     },
     {
         id: 'battle_drills', name: '战斗操练', de: 'Battle Drills', year: -350,
         era: 'antiquity',
-        basis: '古希腊/马其顿/色雷斯重装步兵方阵操练（DE tech 1173）',
+        basis: '古希腊/斯巴达/马其顿/色雷斯重装步兵方阵操练（DE tech 1173）',
         effects: [
             { attr: 'meleeAttack', op: 'add', value: 3, classes: [6] },
             { attr: 'bonus', op: 'add', value: 1, classes: [6], bonusClass: 21 },
             { attr: 'bonus', op: 'add', value: 2, classes: [6], bonusClass: 29 },
             { attr: 'los', op: 'add', value: 1, classes: [6] },
         ],
-        cultures: ['GREEK', 'MACEDONIAN', 'THRACIAN'],
+        cultures: ['SPARTANS', 'GREECE', 'MACEDONIAN', 'THRACIAN'],
+    },
+    {
+        id: 'vadhavadha', name: '践踏屠戮', de: 'Vadhavadha', year: -326,
+        era: 'antiquity',
+        basis: '普鲁王波鲁斯战象冲锋践踏（DE tech 1307），战象与骑兵近战攻击 +2',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [12] }],
+        cultures: ['PURU', 'TIBET'],
+    },
+    {
+        id: 'leaf_headed_shafts', name: '叶头箭杆', de: 'Leaf-Headed Shafts', year: -326,
+        era: 'antiquity',
+        basis: '古印度竹制大弓与宽叶铁簇箭杆（DE tech 1308），弓兵穿刺攻击 +2',
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] }],
+        cultures: ['PURU', 'TIBET'],
     },
     {
         id: 'ballistas', name: '罗马弩炮', de: 'Ballistas', year: -100,
         era: 'antiquity',
-        basis: '罗马弩炮，弩炮装填与穿刺强化',
-        effects: [{ attr: 'reload', op: 'mul', value: 0.75, classes: [55] },
-            { attr: 'pierceAttack', op: 'add', value: 2, classes: [55] }],
-        cultures: ['IMPERIAL_ROME'],
+        basis: '罗马军团扭力弩炮（DE tech 883），弩炮装填与穿刺强化',
+        effects: [
+            { attr: 'reload', op: 'mul', value: 0.75, classes: [55] },
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [55] },
+        ],
+        cultures: ['ROMA'],
     },
     {
-        id: 'ming_kuang_armor', name: '明光铠', de: 'Ming-Kuang Armor', year: 600,
-        era: 'feudal',
-        basis: '魏晋至隋唐明光铠，具装骑兵近防强化',
+        id: 'comitatenses', name: '野战军', de: 'Comitatenses', year: 300,
+        era: 'antiquity',
+        basis: '罗马帝国晚期机动野战军团（DE tech 884），步兵与骑兵近战攻击 +1、装填提速',
+        effects: [
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [6, 12] },
+            { attr: 'reload', op: 'mul', value: 0.85, classes: [6, 12] },
+        ],
+        cultures: ['ROMA'],
+    },
+    {
+        id: 'ming_kuang_armor', name: '明光铠', de: 'Ming-Kuang Armor', year: 220,
+        era: 'antiquity',
+        basis: '曹魏至北朝明光铠（DE tech 1059），具装骑兵近防强化',
         effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [47, 12, 36, 23] }],
-        cultures: ['CENTRAL'],
+        cultures: ['WEI'],
+    },
+    {
+        id: 'tuntian_soldiers', name: '屯田兵', de: 'Tuntian', year: 196,
+        era: 'antiquity',
+        basis: '曹魏军屯制兵农合一（DE tech 1060），步兵生命值 +20、近战护甲 +1',
+        effects: [
+            { attr: 'hp', op: 'add', value: 20, classes: [6] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['WEI'],
+    },
+    {
+        id: 'coiled_serpent_array', name: '盘蛇阵', de: 'Coiled Serpent Array', year: 225,
+        era: 'antiquity',
+        basis: '蜀汉诸葛亮八阵与长枪步兵盘蛇阵（DE tech 1070），步兵生命值 +30',
+        effects: [{ attr: 'hp', op: 'add', value: 30, classes: [6] }],
+        cultures: ['BASHU'],
+    },
+    {
+        id: 'bolt_magazine', name: '弩箭匣', de: 'Bolt Magazine', year: 230,
+        era: 'antiquity',
+        basis: '蜀汉元戎连弩箭匣（DE tech 1069），弓弩手与弩炮装填提速',
+        effects: [{ attr: 'reload', op: 'mul', value: 0.85, classes: [0, 55] }],
+        cultures: ['BASHU'],
+    },
+    {
+        id: 'red_cliff_tactics', name: '赤壁战术', de: 'Red Cliff Tactics', year: 208,
+        era: 'antiquity',
+        basis: '东吴赤壁火攻战术（DE tech 1080），弓箭手穿刺与对建筑加成提升',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] },
+            { attr: 'bonus', op: 'add', value: 2, classes: [0, 36], bonusClass: 11 },
+        ],
+        cultures: ['JIANGNAN'],
+    },
+    {
+        id: 'sitting_tiger', name: '卧虎', de: 'Sitting Tiger', year: 222,
+        era: 'antiquity',
+        basis: '东吴卧虎抛石车改良（DE tech 1081），攻城器械攻击与对建筑加成提升',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 55] },
+            { attr: 'bonus', op: 'mul', value: 1.2, classes: [13, 55], bonusClass: 11 },
+        ],
+        cultures: ['JIANGNAN'],
+    },
+    {
+        id: 'kamandaran', name: '波斯步弓手', de: 'Kamandaran', year: 250,
+        era: 'antiquity',
+        basis: '萨珊波斯精锐复合弓手（DE tech 488），步弓装填提速与穿刺攻击 +1',
+        effects: [
+            { attr: 'reload', op: 'mul', value: 0.85, classes: [0] },
+            { attr: 'pierceAttack', op: 'add', value: 1, classes: [0] },
+        ],
+        cultures: ['SASANIAN'],
+    },
+    {
+        id: 'citadels', name: '堡垒', de: 'Citadels', year: 530,
+        era: 'feudal',
+        basis: '萨珊要塞火枪与重箭防御（DE tech 7），远程单位穿刺攻击 +2',
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36, 44] }],
+        cultures: ['SASANIAN'],
+    },
+    {
+        id: 'marauders', name: '掠夺者', de: 'Marauders', year: 430,
+        era: 'antiquity',
+        basis: '匈人铁骑闪电劫掠战术（DE tech 483），骑兵移速与对建筑加成提升',
+        effects: [
+            { attr: 'speed', op: 'mul', value: 1.1, classes: [12, 36, 47] },
+            { attr: 'bonus', op: 'add', value: 3, classes: [12, 36, 47], bonusClass: 21 },
+        ],
+        cultures: ['HUNS'],
+    },
+    {
+        id: 'perfusion', name: '井喷', de: 'Perfusion', year: 410,
+        era: 'antiquity',
+        basis: '哥特部族总动员倾巢冲锋（DE tech 457），步兵移速与近战攻击提升',
+        effects: [
+            { attr: 'speed', op: 'mul', value: 1.1, classes: [6] },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['GOTHS'],
+    },
+    {
+        id: 'shield_wall', name: '盾墙', de: 'Shield Wall', year: 700,
+        era: 'feudal',
+        basis: '撒克逊圆盾密接盾墙阵（DE tech 1464），步兵双甲 +1/+1',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [6] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['SAXONS'],
+    },
+    {
+        id: 'hamask', name: '哈马思克', de: 'Hamask', year: 850,
+        era: 'feudal',
+        basis: '丹麦狂战士披熊狼皮狂暴突击（DE tech 1484），步兵近战攻击 +3',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 3, classes: [6] }],
+        cultures: ['DANES'],
+    },
+    {
+        id: 'northmens_fury', name: '北方人之怒', de: "Northmen's Fury", year: 880,
+        era: 'feudal',
+        basis: '丹麦维京大军破城强袭（DE tech 1483），攻城器械射程 +1、对建筑加成提升',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [13, 55] },
+            { attr: 'bonus', op: 'mul', value: 1.3, classes: [13, 55], bonusClass: 11 },
+        ],
+        cultures: ['DANES'],
+    },
+    {
+        id: 'vendel_legacy', name: '文德尔传承', de: 'Vendel Legacy', year: 650,
+        era: 'feudal',
+        basis: '北欧文德尔时代精工武备传承（DE tech 1473），骑兵近战攻击 +2',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 2, classes: [12, 47] }],
+        cultures: ['VARANGIANS'],
+    },
+    {
+        id: 'gothikon', name: '哥瑟砍', de: 'Gothikon', year: 988,
+        era: 'feudal',
+        basis: '瓦兰吉卫队双手巨斧战舞（DE tech 1474），步兵近战攻击 +2、生命值 +20',
+        effects: [
+            { attr: 'meleeAttack', op: 'add', value: 2, classes: [6] },
+            { attr: 'hp', op: 'add', value: 20, classes: [6] },
+        ],
+        cultures: ['VARANGIANS'],
     },
     {
         id: 'viking_chieftains', name: '维京酋长', de: 'Chieftains', year: 900,
         era: 'feudal',
-        basis: '维京酋长亲卫，步兵对骑兵/骆驼加成',
-        effects: [{ attr: 'bonus', op: 'add', value: 5, classes: [6], bonusClass: 8 },
-            { attr: 'bonus', op: 'add', value: 4, classes: [6], bonusClass: 30 }],
+        basis: '维京酋长亲卫（DE tech 463），步兵对骑兵/骆驼加成',
+        effects: [
+            { attr: 'bonus', op: 'add', value: 5, classes: [6], bonusClass: 8 },
+            { attr: 'bonus', op: 'add', value: 4, classes: [6], bonusClass: 30 },
+        ],
         cultures: ['VIKINGS'],
     },
     {
@@ -457,27 +654,52 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'zealotry', name: '狂热', de: 'Zealotry', year: 700,
         era: 'feudal',
-        basis: '萨拉森（阿拉伯）狂热教团（DE tech 9），骆驼系血量强化',
-        // 🔴 [2026-10-13 对账修·作用面] DE 原始表实测（tech 9）：`hp +20` 打在
-        //    u282/556（DERVI/UDERV 骆驼）、u1755（CAMELSC）、u329/330（CVLRY/HCLRY）、u207（SHCLRY）、
-        //    u1923（SIEGECAMEL）＝ **class 12**；u1007/1009（CAMAR/ECAMAR）＝ **class 36 骆驼弓骑**。
-        // 🔴 [2026-10-20 去重合并] 原 `zealotry`（ORIE）与 `saracen_zealotry`（WEST_ASIA）同属 DE tech 9，合并为一条。
+        basis: '萨拉森（阿拉伯）狂热教团（DE tech 9），骆驼与骑兵系血量强化',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 36] }],
-        cultures: ['WEST_ASIA', 'ORIE'],
+        cultures: ['ORIE'],
+    },
+    {
+        id: 'counterweights', name: '反击配重', de: 'Counterweights', year: 1100,
+        era: 'castle',
+        basis: '萨拉森反击配重（配重投石机改良，DE tech 454），攻城器械对建筑加成提升',
+        effects: [{ attr: 'bonus', op: 'mul', value: 1.15, classes: [13], bonusClass: 11 }],
+        cultures: ['ORIE'],
     },
     {
         id: 'logistica', name: '后勤', de: 'Logistica', year: 1000,
         era: 'feudal',
-        basis: '拜占庭甲胄骑兵后勤，骑兵对步兵加成',
+        basis: '拜占庭甲胄骑兵后勤（DE tech 61），骑兵对步兵加成',
         effects: [{ attr: 'bonus', op: 'add', value: 6, classes: [12], bonusClass: 1 }],
+        cultures: ['BYZANTINE'],
+    },
+    {
+        id: 'greek_fire', name: '希腊火', de: 'Greek Fire', year: 672,
+        era: 'feudal',
+        basis: '拜占庭加利尼科斯秘制希腊火投射器（DE tech 464），攻城器械射程 +1、穿刺攻击 +2',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [13, 55] },
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 55] },
+        ],
         cultures: ['BYZANTINE'],
     },
     {
         id: 'bearded_axe', name: '阔斧', de: 'Bearded Axe', year: 800,
         era: 'feudal',
-        basis: '法兰克掷斧兵阔斧，掷斧射程强化',
-        effects: [{ attr: 'range', op: 'add', value: 2, classes: [37] },
-            { attr: 'los', op: 'add', value: 2, classes: [37] }],
+        basis: '法兰克掷斧兵阔斧（DE tech 83），掷斧射程强化',
+        effects: [
+            { attr: 'range', op: 'add', value: 2, classes: [37] },
+            { attr: 'los', op: 'add', value: 2, classes: [37] },
+        ],
+        cultures: ['FRANKS'],
+    },
+    {
+        id: 'chivalry', name: '骑士精神', de: 'Chivalry', year: 1095,
+        era: 'castle',
+        basis: '法兰克封建骑士精神（DE tech 493），骑士系生命值 +20、近战攻击 +1',
+        effects: [
+            { attr: 'hp', op: 'add', value: 20, classes: [12] },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [12] },
+        ],
         cultures: ['FRANKS'],
     },
     {
@@ -495,29 +717,93 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['BULGARIANS'],
     },
     {
-        id: 'british_yeoman', name: '英长弓手', de: 'Yeomen', year: 1400,
+        id: 'lamellar_armor', name: '札甲', de: 'Lamellar Armor', year: 916,
+        era: 'feudal',
+        basis: '契丹/鲜卑铁札甲（DE tech 1006），步兵与射手护甲提升',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 2, classes: [6, 0] },
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [6, 0] },
+        ],
+        cultures: ['KHITAN', 'XIANBEI'],
+    },
+    {
+        id: 'ordo_cavalry', name: '斡鲁朵骑兵', de: 'Ordo Cavalry', year: 947,
+        era: 'feudal',
+        basis: '辽朝宫帐斡鲁朵皮室铁骑（DE tech 1007），骑兵生命值 +30',
+        effects: [{ attr: 'hp', op: 'add', value: 30, classes: [12, 36, 47] }],
+        cultures: ['KHITAN', 'XIANBEI'],
+    },
+    {
+        id: 'thunderclap_bombs', name: '霹雳炸弹', de: 'Thunderclap Bombs', year: 1126,
         era: 'castle',
-        basis: '不列颠自由民长弓，步弓射程强化',
-        effects: [{ attr: 'range', op: 'add', value: 1, classes: [0] },
-            { attr: 'los', op: 'add', value: 1, classes: [0] }],
+        basis: '女真金军震天雷铁壳火药弹（DE tech 997），攻城与火器攻击提升',
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 44, 55] }],
+        cultures: ['NORTHEAST'],
+    },
+    {
+        id: 'steppe_husbandry', name: '大草原畜牧', de: 'Steppe Husbandry', year: 900,
+        era: 'feudal',
+        basis: '钦察-库曼大草原群牧骑乘术（DE tech 689），骑兵与骑射手移速提升',
+        effects: [{ attr: 'speed', op: 'mul', value: 1.1, classes: [12, 36, 47] }],
+        cultures: ['CUMAN'],
+    },
+    {
+        id: 'druzhina', name: '皇家卫队', de: 'Druzhina', year: 980,
+        era: 'feudal',
+        basis: '基辅罗斯王公亲兵卫队德鲁日纳（DE tech 513），步兵近战攻击 +3',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 3, classes: [6] }],
+        cultures: ['SLAVIC'],
+    },
+    {
+        id: 'british_yeoman', name: '英长弓手', de: 'Yeomen', year: 1298,
+        era: 'castle',
+        basis: '不列颠自由民长弓（DE tech 3），步弓射程强化',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [0] },
+            { attr: 'los', op: 'add', value: 1, classes: [0] },
+        ],
         cultures: ['BRITONS'],
     },
     {
         id: 'celtic_furor', name: '凯尔特之怒', de: 'Furor Celtica', year: 1100,
         era: 'castle',
-        basis: '凯尔特狂战士攻城，攻城器械血量强化',
-        // 🔴 [2026-10-13 对账补作用面] DE 原始表（tech 5）是 `c13/c55/c51/c54 hp×1.4`
-        //    ＋点名 u1120/1122/1744/1746/1923（象炮/攻城象/攻城骆驼，cls12）—— 原来只写 `[13,55]`，
-        //    漏了 **51/54（投石机与重型投石机系）** 与攻城象/骆驼。项目里 class 51/54 无对应兵种，故补 12 兜住攻城兽。
+        basis: '凯尔特狂战士攻城（DE tech 5），攻城器械血量强化',
         effects: [{ attr: 'hp', op: 'mul', value: 1.4, classes: [12, 13, 51, 54, 55] }],
-        cultures: ['CELTS_FEUDAL'],
+        cultures: ['CELTS'],
+    },
+    {
+        id: 'flemish_revolution', name: '弗拉芒革命', de: 'Flemish Revolution', year: 1302,
+        era: 'castle',
+        basis: '金马刺战役弗拉芒市民长矛方阵（DE tech 755），步兵对骑兵加成 +3、近战攻击 +1',
+        effects: [
+            { attr: 'bonus', op: 'add', value: 3, classes: [6], bonusClass: 8 },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['BURGUNDIANS'],
+    },
+    {
+        id: 'lechitic_legacy', name: '列克提克遗产', de: 'Lechitic Legacy', year: 1241,
+        era: 'castle',
+        basis: '波兰皮雅斯特王朝翼骑兵冲击传统（DE tech 783），骑兵近战攻击 +3',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 3, classes: [12, 47] }],
+        cultures: ['POLES'],
+    },
+    {
+        id: 'aznauri_cavalry', name: '阿兹瑙里骑兵', de: 'Aznauri Cavalry', year: 1121,
+        era: 'castle',
+        basis: '格鲁吉亚大卫四世阿兹瑙里贵族铁骑（DE tech 924），骑兵生命值 +20、近战攻击 +1',
+        effects: [
+            { attr: 'hp', op: 'add', value: 20, classes: [12, 47] },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [12, 47] },
+        ],
+        cultures: ['GEORGIANS'],
     },
     {
         id: 'mongol_siege_drill', name: '蒙古攻城钻', de: 'Drill', year: 1200,
         era: 'castle',
         basis: '蒙古攻城演练（DE tech 6），攻城器械移速强化',
         effects: [{ attr: 'speed', op: 'mul', value: 1.5, classes: [13, 55] }],
-        cultures: ['STEPPE'],
+        cultures: ['MONGOL'],
     },
     {
         id: 'atlatl', name: '掷矛器', de: 'Atlatl', year: 1300,
@@ -533,7 +819,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'aztec_garland_wars', name: '花环战争', de: 'Garland Wars', year: 1450,
         era: 'castle',
-        basis: '阿兹特克荣冠之战，步兵近攻强化',
+        basis: '阿兹特克荣冠之战（DE tech 24），步兵近攻强化',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 4, classes: [6] }],
         cultures: ['AMERICA'],
     },
@@ -542,7 +828,7 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         era: 'castle',
         basis: '印加安第斯投石索（DE tech 516），投石/步弓穿刺攻击 +1',
         effects: [{ attr: 'pierceAttack', op: 'add', value: 1, classes: [0] }],
-        cultures: ['ANDE'],
+        cultures: ['INCA'],
     },
     {
         id: 'fabric_shields', name: '织物盾', de: 'Fabric Shields', year: 1400,
@@ -552,21 +838,19 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [0, 6, 12] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [0, 6, 12] },
         ],
-        cultures: ['ANDE'],
+        cultures: ['INCA'],
     },
     {
         id: 'teutons_ironclad', name: '条顿铁甲', de: 'Ironclad', year: 1200,
         era: 'castle',
-        basis: '条顿铁甲，攻城器械近防强化',
+        basis: '条顿铁甲（DE tech 489），攻城器械近防强化',
         effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [13, 55] }],
-        cultures: ['TEUTONS'],
+        cultures: ['GERMANIC'],
     },
     {
         id: 'sipahi', name: '西帕希', de: 'Sipahi', year: 1400,
         era: 'castle',
-        basis: '奥斯曼西帕希骑兵，弓骑血量强化',
-        // 🔴 [2026-10-13 对账补作用面] DE（tech 491）= `c36 hp+20` ＋点名 u1738/1740（RATHA/ERATHA 战车系，cls12）。
-        //    项目侧「远程战车」记在 cls36、「近战战车」记在 cls12 ⇒ 补 12 兜住近战战车。
+        basis: '奥斯曼西帕希骑兵（DE tech 491），弓骑血量强化',
         effects: [{ attr: 'hp', op: 'add', value: 20, classes: [12, 36] }],
         cultures: ['TURKS'],
     },
@@ -578,15 +862,17 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 2, classes: [13] },
             { attr: 'los', op: 'add', value: 2, classes: [13] },
         ],
-        cultures: ['TURKS', 'OTTOMAN'],
+        cultures: ['TURKS'],
     },
     {
         id: 'pavise', name: '帕维塞盾', de: 'Pavise', year: 1300,
         era: 'castle',
-        basis: '意大利帕维塞大盾，步弓双甲强化',
-        effects: [{ attr: 'pierceArmor', op: 'add', value: 1, classes: [0] },
-            { attr: 'meleeArmor', op: 'add', value: 1, classes: [0] }],
-        cultures: ['ITALIANS'],
+        basis: '意大利帕维塞大盾（DE tech 494），步弓双甲强化',
+        effects: [
+            { attr: 'pierceArmor', op: 'add', value: 1, classes: [0] },
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [0] },
+        ],
+        cultures: ['LATIN'],
     },
     {
         id: 'recurve_bow', name: '反曲弓', de: 'Recurve Bow', year: 1300,
@@ -607,17 +893,31 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 2, classes: [44] },
             { attr: 'los', op: 'add', value: 2, classes: [44] },
         ],
-        cultures: ['INDIA', 'MUGHAL'],
+        cultures: ['MUGHAL'],
+    },
+    {
+        id: 'medical_corps', name: '医疗部队', de: 'Medical Corps', year: 1050,
+        era: 'castle',
+        basis: '达罗毗荼/南印战象随军医护（DE tech 831），战象与骑兵生命值 +40',
+        effects: [{ attr: 'hp', op: 'add', value: 40, classes: [12] }],
+        cultures: ['INDIA'],
+    },
+    {
+        id: 'wootz_steel', name: '乌兹钢', de: 'Wootz Steel', year: 1200,
+        era: 'castle',
+        basis: '南印度大马士革坩埚乌兹钢锻刃（DE tech 832），步兵与骑兵近战攻击 +3',
+        effects: [{ attr: 'meleeAttack', op: 'add', value: 3, classes: [6, 12] }],
+        cultures: ['INDIA'],
     },
     {
         id: 'silk_armor', name: '丝护甲', de: 'Silk Armor', year: 1300,
         era: 'castle',
-        basis: '中亚/鞑靼丝绸内衬复合甲（DE tech 687），骑兵与骑射手双甲 +1/+1',
+        basis: '中亚/西域丝绸内衬复合甲（DE tech 687），骑兵与骑射手双甲 +1/+1',
         effects: [
             { attr: 'meleeArmor', op: 'add', value: 1, classes: [12, 36, 47] },
             { attr: 'pierceArmor', op: 'add', value: 1, classes: [12, 36, 47] },
         ],
-        cultures: ['CENTRAL_ASIA', 'TIMURID'],
+        cultures: ['CENTRAL_ASIA', 'WESTERN'],
     },
     {
         id: 'timurid_siegecraft', name: '帖木儿攻城术', de: 'Timurid Siegecraft', year: 1380,
@@ -627,19 +927,43 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
             { attr: 'range', op: 'add', value: 2, classes: [12, 13] },
             { attr: 'los', op: 'add', value: 2, classes: [12, 13] },
         ],
-        cultures: ['CENTRAL_ASIA', 'TIMURID'],
+        cultures: ['CENTRAL_ASIA', 'WESTERN'],
+    },
+    {
+        id: 'maghrebi_camels', name: '马格里布骆驼', de: 'Maghrebi Camels', year: 1100,
+        era: 'castle',
+        basis: '北非柏柏尔耐力驼骑（DE tech 579），骆驼与骑兵生命值 +25',
+        effects: [{ attr: 'hp', op: 'add', value: 25, classes: [12, 36] }],
+        cultures: ['BERBER'],
     },
     {
         id: 'farimba', name: '法林巴', de: 'Farimba', year: 1300,
         era: 'castle',
-        basis: '马里法林巴骑兵，骑兵近攻强化',
+        basis: '马里法林巴精锐骑兵（DE tech 577），骑兵近攻强化',
         effects: [{ attr: 'meleeAttack', op: 'add', value: 5, classes: [12, 47] }],
         cultures: ['AFRICA'],
     },
     {
+        id: 'royal_heirs', name: '龙脉', de: 'Royal Heirs', year: 1270,
+        era: 'castle',
+        basis: '埃塞俄比亚所罗门王室卫队（DE tech 574），步兵与骑兵近战护甲 +2',
+        effects: [{ attr: 'meleeArmor', op: 'add', value: 2, classes: [6, 12] }],
+        cultures: ['ETHIOPIANS'],
+    },
+    {
+        id: 'torsion_engines', name: '扭绞机', de: 'Torsion Engines', year: 1350,
+        era: 'castle',
+        basis: '埃塞俄比亚扭力攻城器械改良（DE tech 575），攻城器械攻击与对建筑加成提升',
+        effects: [
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [13, 55] },
+            { attr: 'bonus', op: 'mul', value: 1.15, classes: [13, 55], bonusClass: 11 },
+        ],
+        cultures: ['ETHIOPIANS'],
+    },
+    {
         id: 'manipur_cavalry', name: '曼尼普尔骑兵', de: 'Manipur Cavalry', year: 1200,
         era: 'castle',
-        basis: '缅甸曼尼普尔骑兵，骑兵对射手加成',
+        basis: '缅甸曼尼普尔骑兵（DE tech 627），骑兵对射手加成',
         effects: [{ attr: 'bonus', op: 'add', value: 4, classes: [12, 47], bonusClass: 15 }],
         cultures: ['BURMESE'],
     },
@@ -661,6 +985,16 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
         cultures: ['KHMER'],
     },
     {
+        id: 'forced_levy', name: '强征兵役', de: 'Forced Levy', year: 1293,
+        era: 'castle',
+        basis: '满者伯夷马来群岛总动员征召（DE tech 625），步兵生命值 +20、近战攻击 +1',
+        effects: [
+            { attr: 'hp', op: 'add', value: 20, classes: [6] },
+            { attr: 'meleeAttack', op: 'add', value: 1, classes: [6] },
+        ],
+        cultures: ['MALAY'],
+    },
+    {
         id: 'chatras', name: '宝伞', de: 'Chatras', year: 1200,
         era: 'castle',
         basis: '安南/交趾战象华盖宝伞（DE tech 628），战象/骑兵生命值 +100',
@@ -677,117 +1011,126 @@ export const MILITARY_TECHS: readonly MilitaryTech[] = [
     {
         id: 'fereters', name: '费列泰斯', de: 'Fereters', year: 1200,
         era: 'castle',
-        basis: '亚美尼亚费列泰斯步兵，步兵血量强化',
+        basis: '亚美尼亚费列泰斯步兵（DE tech 921），步兵血量强化',
         effects: [{ attr: 'hp', op: 'add', value: 30, classes: [6] }],
         cultures: ['ARMENIANS'],
     },
     {
         id: 'herbalism', name: '草医', de: 'Herbalism', year: 1400,
         era: 'castle',
-        basis: '穆伊斯卡草医，步弓移速强化',
+        basis: '穆伊斯卡草医（DE tech 1369），步弓移速强化',
         effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [0] }],
         cultures: ['MUISCA'],
     },
     {
         id: 'el_dorado', name: '黄金国', de: 'El Dorado', year: 1300,
         era: 'castle',
-        basis: '玛雅黄金国，鹰勇士血量强化',
-        // 🔴 [2026-10-13 对账修·作用面] 原写 classes:[29] —— **DE 全表 class 29 一个单位都没有**，
-        //    这条科技一直**空转**（一分加成不发）。DE 原始表实测（`scratch/de_techs.json` tech 578）：
-        //    `hp +40` 打在 u751/752/753（EAGLE/EAGLEX/EAGLEH，经 `scratch/de_unit_class.json` 反查 = **class 6 步兵**）。
-        //    本项目鹰勇士是骑兵型单位，且 DE 的 AZTRAIDER(u1570) 亦为 class 12 ⇒ 作用面取 **[6,12]**。
+        basis: '玛雅黄金国（DE tech 4），鹰勇士血量强化',
         effects: [{ attr: 'hp', op: 'add', value: 40, classes: [6, 12] }],
         cultures: ['MAYANS'],
     },
     {
         id: 'hauberk', name: '锁子甲', de: 'Hauberk', year: 1100,
         era: 'castle',
-        basis: '西西里锁子甲，骑兵双甲强化',
-        effects: [{ attr: 'meleeArmor', op: 'add', value: 1, classes: [12] },
-            { attr: 'pierceArmor', op: 'add', value: 2, classes: [12] }],
+        basis: '西西里诺曼锁子甲（DE tech 757），骑兵双甲强化',
+        effects: [
+            { attr: 'meleeArmor', op: 'add', value: 1, classes: [12] },
+            { attr: 'pierceArmor', op: 'add', value: 2, classes: [12] },
+        ],
         cultures: ['SICILIANS'],
     },
     {
         id: 'paiks', name: '孟加拉战象', de: 'Paiks', year: 1300,
         era: 'castle',
-        basis: '孟加拉战象，战象装填提速',
-        // 🔴 [2026-10-13 对账补作用面] DE（tech 833）打在 cls12 与 **cls36** 两侧：
-        //    u873/875（ELEAR/UELEA 象弓手，cls36）、u1759/1761（远程战车 cls36）都在 36 那一侧 —— 原写 `[12]` 漏了。
+        basis: '孟加拉帕伊克制度与战象协同（DE tech 833），战象/象弓装填提速',
         effects: [{ attr: 'reload', op: 'mul', value: 0.833, classes: [12, 36] }],
         cultures: ['BENGALIS'],
     },
     {
         id: 'frontier_guards', name: '边境卫队', de: 'Frontier Guards', year: 1100,
         era: 'castle',
-        basis: '瞿折罗边境卫队，骆驼与象弓手近防强化',
-        // 🔴 [2026-10-13 对账修·作用面写反] 原写 classes:[6]，且 basis 写「步兵近防强化」——
-        //    两条都反了：DE 原始表（tech 836）`armor +4`(1028 = 装甲类4 +4) 打在
-        //    u1755(CAMELSC)/u329(CVLRY)/u330(HCLRY)/u207(SHCLRY) ＝ **class 12 骆驼**，
-        //    u873/u875(ELEAR/UELEA) ＝ **class 36 象弓手**；**从不给步兵**。
-        //    原写法等于让项目里 101 个步兵兵种白得 +4 近防（写爆）。⇒ 作用面与 basis 一并改回骆驼/象弓手。
+        basis: '瞿折罗边境卫队（DE tech 836），骆驼与象弓手近防强化',
         effects: [{ attr: 'meleeArmor', op: 'add', value: 4, classes: [12, 36] }],
         cultures: ['GURJARAS'],
     },
     {
         id: 'wagenburg', name: '车堡战术', de: 'Wagenburg Tactics', year: 1400,
         era: 'castle',
-        basis: '波希米亚胡斯车堡，火枪/攻城移速强化',
-        // 🔴 [2026-10-13 对账补作用面] DE（tech 784）点名还含 cls22（战船系 u420/691/831/832）与
-        //    **cls55（胡斯战车 u1704/1706）**；原写 `[44,13]` 漏了这两支。项目 class 22 无兵种（船走船表），故补 55。
+        basis: '波希米亚胡斯车堡（DE tech 784），火枪/攻城移速强化',
         effects: [{ attr: 'speed', op: 'mul', value: 1.15, classes: [13, 44, 55] }],
         cultures: ['BOHEMIANS'],
     },
     {
         id: 'kataparuto', name: '片仓', de: 'Kataparuto', year: 1200,
         era: 'castle',
-        basis: '日本片仓工法，攻城器械装填提速',
+        basis: '日本片仓工法（DE tech 59），攻城器械装填提速',
         effects: [{ attr: 'reload', op: 'mul', value: 0.75, classes: [13] }],
         cultures: ['JAPAN'],
     },
     {
-        id: 'rocketry', name: '火箭', de: 'Rocketry', year: 1300,
+        id: 'rocketry', name: '火箭', de: 'Rocketry', year: 1232,
         era: 'castle',
-        basis: '华夏火箭，弩炮穿刺强化',
-        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [55] }],
+        basis: '华夏火药火箭与诸葛连弩（DE tech 52），弩炮与弓弩穿刺强化',
+        effects: [{ attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 55] }],
         cultures: ['CENTRAL'],
     },
     {
         id: 'huaracas', name: '瓦拉卡投石', de: 'Huaracas', year: 1400,
         era: 'castle',
-        basis: '穆伊斯卡瓦拉卡投石，投石射程强化',
-        effects: [{ attr: 'range', op: 'add', value: 1, classes: [0] },
-            { attr: 'los', op: 'add', value: 1, classes: [0] }],
+        basis: '穆伊斯卡瓦拉卡投石（DE tech 1370），投石射程强化',
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [0] },
+            { attr: 'los', op: 'add', value: 1, classes: [0] },
+        ],
         cultures: ['MUISCA'],
     },
     {
         id: 'caciques', name: '卡西克', de: 'Caciques', year: 1400,
         era: 'castle',
-        basis: '图皮卡西克首领，弓手装填提速',
-        // 🔴 [2026-10-13 对账补作用面] DE（tech 1392）= 点名 u185(SLINGR 投石手 cls0) ＋ u2550/2552/2554/2588
-        //    （CHAMP* 冠军系 cls6）＋ u1570(AZTRAIDER 阿兹特克突袭者 cls12)。原写 `[0]` 只覆盖投石手 ——
-        //    这是**图皮**的专属科技，补 6/12 会把范围扩到全部步兵与骑兵；按 DE 原样保留三系（宁可宽，不空转）。
+        basis: '图皮卡西克首领（DE tech 1392），弓手与步兵装填提速',
         effects: [{ attr: 'reload', op: 'mul', value: 0.8, classes: [0, 6, 12] }],
         cultures: ['TUPI'],
     },
     {
-        id: 'counterweights', name: '反击配重', de: 'Counterweights', year: 1100,
-        era: 'castle',
-        basis: '萨拉森反击配重（配重投石机改良），攻城器械对建筑加成提升',
-        // DE tech 454：`attack ×1.15`(2941=11×256+5) 打在 c54/c51（投石机/重型投石机系）与 u280/550/588
-        // (MANGO/ONAGR/SNAGR c13)、u1942(TRTREB c13)、u1923(SIEGECAMEL c12)。
-        // 项目里 c51/c54 无兵种，故只落 **c13 攻城器械**（数值取 ×1.15）。
-        effects: [{ attr: 'bonus', op: 'mul', value: 1.15, classes: [13], bonusClass: 11 }],
-        cultures: ['WEST_ASIA'],
+        id: 'malon', name: '突袭', de: 'Malon', year: 1550,
+        era: 'imperial',
+        basis: '马普切马隆闪电奇袭（DE tech 1379），骑兵与远程穿刺攻击 +2',
+        effects: [
+            { attr: 'meleeAttack', op: 'add', value: 2, classes: [12, 47] },
+            { attr: 'pierceAttack', op: 'add', value: 2, classes: [0, 36] },
+        ],
+        cultures: ['MAPUCHE'],
     },
     {
-        id: 'korean_catapults', name: '神机箭', de: 'Shinkichon', year: 1400,
+        id: 'supremacy', name: '霸权', de: 'Supremacy', year: 1525,
+        era: 'imperial',
+        basis: '西班牙帝国大方阵霸权（DE tech 440），步兵生命值 +40、双甲 +2/+2',
+        effects: [
+            { attr: 'hp', op: 'add', value: 40, classes: [6] },
+            { attr: 'meleeArmor', op: 'add', value: 2, classes: [6] },
+            { attr: 'pierceArmor', op: 'add', value: 2, classes: [6] },
+        ],
+        cultures: ['SPANISH'],
+    },
+    {
+        id: 'arquebus', name: '火绳枪', de: 'Arquebus', year: 1510,
+        era: 'imperial',
+        basis: '葡萄牙火绳枪与弹道术（DE tech 573），火器与攻城器械装填提速、射程 +1',
+        effects: [
+            { attr: 'reload', op: 'mul', value: 0.85, classes: [13, 23, 44] },
+            { attr: 'range', op: 'add', value: 1, classes: [13, 23, 44] },
+        ],
+        cultures: ['PORTUGUESE'],
+    },
+    {
+        id: 'korean_catapults', name: '神机箭', de: 'Shinkichon', year: 1448,
         era: 'castle',
         basis: '朝鲜神机箭改良（DE tech 445），火箭车/攻城器械射程与装填提升',
-        // DE tech 445：u1904/1907(RCKTCRT/HRCKTCRT c13) `range+1 los+1 reload-0.35`；u831/832 是龟船（项目走船表）。
-        // ⇒ 只落 c13（火箭车在项目里是 class 13）。reload 是「越小越快」，DE 给的是 **-0.35 加法**。
-        effects: [{ attr: 'range', op: 'add', value: 1, classes: [13] },
+        effects: [
+            { attr: 'range', op: 'add', value: 1, classes: [13] },
             { attr: 'los', op: 'add', value: 1, classes: [13] },
-            { attr: 'reload', op: 'add', value: -0.35, classes: [13] }],
+            { attr: 'reload', op: 'add', value: -0.35, classes: [13] },
+        ],
         cultures: ['KOREA'],
     },
 ];

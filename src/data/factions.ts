@@ -1348,7 +1348,7 @@ export const FACTIONS: Faction[] = [
 
     { id: 'zhuerqi', name: '主儿乞' },
     { id: 'chechen', name: '车臣' },
-    { id: 'panjun', name: '叛军' },
+    { id: 'panjun', name: '起义' },
     { id: 'changshan', name: '常山' },
 
           // 倒马关·常山郡

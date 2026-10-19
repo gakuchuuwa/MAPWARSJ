@@ -312,7 +312,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代山城军团': {
+    '城堡时代川峡军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'traction_trebuchet', 'siege_tower', 'siege_tower'],
     },
@@ -1098,7 +1098,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '古典时代长生军团': {
+    '古典时代阿契美尼德军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_onager', 'antiquity_onager', 'antiquity_scorpion', 'antiquity_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
