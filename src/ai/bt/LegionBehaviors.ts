@@ -134,9 +134,10 @@ function resolveExpeditionState(ctx: BTContext): 'locked' | 'done' | null {
         );
         if (target) {
             (window as unknown as {
-                game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
+                game?: { brawlFeedPanel?: { pushExpedition(p: { legionName: string; generalId?: string | null; cityName: string; kind: 'depart' | 'success' }): void } };
             }).game?.brawlFeedPanel?.pushExpedition({
                 legionName,
+                generalId: army.generalId,
                 cityName: target.name,
                 kind: 'success',
             });

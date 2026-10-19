@@ -107,7 +107,7 @@ export class ExpeditionUI {
             'expedition',
             `🐎 [征伐] ${army.name}（${Math.floor(army.getTroops() / 10000)} 万兵·自动）征伐【${targetName}·${label}】——断粮不回，直至占领或全军覆没`
         );
-        this.pushFeed(army.getFactionId(), army.name, targetName, 'depart');
+        this.pushFeed(army.generalId, army.name, targetName, 'depart');
     }
 
     /** 距大本营最远的可远征目标（远征嘛，往远了打；多个并列时取最远的） */
@@ -233,12 +233,12 @@ export class ExpeditionUI {
     }
 
     /** 军情面板播报（S 级「征」徽章行） */
-    private pushFeed(factionId: string | undefined, legionName: string, cityName: string, kind: 'depart' | 'success'): void {
+    private pushFeed(generalId: string | null | undefined, legionName: string, cityName: string, kind: 'depart' | 'success'): void {
         if (window.game?.brawlFeedPanel) {
             (window as unknown as {
-                game?: { brawlFeedPanel?: { pushExpedition(p: { factionId?: string; legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
+                game?: { brawlFeedPanel?: { pushExpedition(p: { generalId?: string | null; legionName: string; cityName: string; kind: 'depart' | 'success' }): void } };
             }).game?.brawlFeedPanel?.pushExpedition({
-                factionId,
+                generalId,
                 legionName,
                 cityName,
                 kind

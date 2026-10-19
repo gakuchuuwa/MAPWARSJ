@@ -26,7 +26,6 @@ export const BGM_TITLES: Record<string, string> = {
     africa_a: '西非巴拉风木琴',
     age_of_kings: '帝国时代2主题',
     armenians_a: '亚美尼亚都杜克笛',
-    armenians_b: '亚美尼亚卡农琴 Kanun',
     athenians_a: '古希腊里拉+阿夫洛斯',
     athenians_b: '古希腊里拉琴 Sonata',
     aztec_war_drums: '阿兹特克战鼓',

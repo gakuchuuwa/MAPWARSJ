@@ -578,6 +578,7 @@ export class GameApp {
                         this.brawlFeedPanel.pushFactionFall({
                             attackerFactionId: event.newFactionId,
                             legionName: event.captorLegionName,
+                            generalId: event.captorGeneralId,
                             defenderFactionId: event.previousFactionId,
                             cityName: event.cityName,
                         });
@@ -590,6 +591,7 @@ export class GameApp {
                         this.brawlFeedPanel.pushCityCapture({
                             attackerFactionId: event.newFactionId,
                             legionName: event.captorLegionName,
+                            generalId: event.captorGeneralId,
                             regionKey: city.region,
                             cityName: event.cityName
                         });
@@ -614,6 +616,7 @@ export class GameApp {
                     this.brawlFeedPanel.pushLegionAnnihilated({
                         factionId: army.getFactionId(),
                         legionName: army.name || '军团',
+                        generalId: army.generalId,
                         cityName: info.cityName,
                     });
                 });

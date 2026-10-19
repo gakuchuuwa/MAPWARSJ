@@ -14,6 +14,7 @@ import { audioManager } from "./AudioManager";
 import { getGeneralNameForSpeech, prepareSpeechText } from "./GeneralSpeechNames";
 import { getTacticalSkillEntry } from "../data/TacticalSkillCatalog";
 import { edgeTtsClient, type EdgeVoice } from "./EdgeTtsClient";
+import { isGeneralOnStage } from "../data/generalOnStage";
 
 interface SpeakOptions {
   /** S 级大事：略慢语速、同步字幕条、播报期间丢弃常规播报（不被打断） */
@@ -62,6 +63,8 @@ function hasEliteName(name: string): boolean {
 /** 名将 = tier famous（2026-08-03 起战略技全随机，不再以 strategicSkillId 判名将）。用于攻城播报是否冠「名将」二字。 */
 function isFamousGeneral(generalId?: string | null): boolean {
   if (!generalId) return false;
+  // 🔴 [2026-10-20] 不在世的武将叫「将军」、不算名将（2026-10-16 主人定），不冠「名将」，免得念成「名将将军」
+  if (!isGeneralOnStage(generalId)) return false;
   return getGeneralProfile(generalId)?.tier === 'famous';
 }
 

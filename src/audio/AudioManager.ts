@@ -526,7 +526,8 @@ korea_a: 0.646,  // -17.2 LUFS
     byzantine_a: 0.750,  // -18.5 LUFS
     byzantine_b: 0.676,  // -17.6 LUFS
     armenians_a: 0.767,  // -18.7 LUFS
-    armenians_b: 0.589,  // -16.4 LUFS
+    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b（亚美尼亚卡农琴 Kanun）已删除：
+    //    文件 public/assets/bgm/armenians_b_bgm.aud 一并删除，曲池 BGM_POOL_MAP.ARMENIANS 同步移除。
     georgians_a: 0.716,  // -18.1 LUFS
     georgians_b: 0.716,  // -18.1 LUFS
     latin_a: 0.610,  // -16.7 LUFS
@@ -637,13 +638,16 @@ function resolveAvailableBgmFolder(folder: string): string {
 }
 
 /**
- * 🔴 [2026-10-18 主人定「按 66 文化分曲子，每个文化至少 3 首、各自独立、符合文化」]
+ * 🔴 [2026-10-18 主人定「按 66 文化分曲子、各自独立、符合文化」]
+ * 🔴 [2026-10-20 主人定「每个文化至少 2 首」] 每池最低 **2 首**（原 2026-10-18「每个文化至少 3 首」旧标准作废）。
  * 每分支一个独立曲池（不再共享母体）：[专属主题曲] + [本文化自有曲]。
  */
 const BGM_POOL_MAP: Record<string, string[]> = {
     AFRICA: ['de_AFRICA', 'AFRICA', 'africa_a'],
     AMERICA: ['de_AMERICA', 'aztec_war_drums', 'mexica_ritual', 'eagle_warrior', 'mohicans'],
-    ARMENIANS: ['de_ARMENIANS', 'armenians_a', 'armenians_b'],
+    // 🔴 [2026-10-20 主人令「把亚美尼亚卡农琴 Kanun [armenians_b]删除。把这个曲子删除。」] armenians_b 已连同 .aud 文件删除，
+    //    本文化池由 3 首降为 2 首（de_ARMENIANS 主题曲 + armenians_a）。
+    ARMENIANS: ['de_ARMENIANS', 'armenians_a'],
     ATHENIANS: ['de_ATHENIANS', 'athenians_a', 'athenians_b'],
     BASHU: ['de_BASHU', 'BASHU', 'bashu_a'],
     BENGALIS: ['de_BENGALIS', 'bengalis_a', 'bengalis_b'],
