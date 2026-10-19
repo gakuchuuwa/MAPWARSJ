@@ -2663,7 +2663,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_saladin',
         slots: [
             { type: 'elite_mameluke', count: 3 },
-            { type: 'eastern_swordsman', count: 4 },
+            { type: 'archer_of_the_eyes', count: 4 },
             { type: 'camel_rider', count: 2 },
         ],
     },
@@ -3561,7 +3561,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_radenwijaya',
         slots: [
             { type: 'battle_elephant', count: 2 },
-            { type: 'elite_skirmisher', count: 4 },
+            { type: 'sunda_royal_fighter', count: 4 },
             { type: 'karambit_warrior_elite', count: 3 },
         ],
     },
