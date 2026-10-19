@@ -9114,11 +9114,17 @@ export class Scene13WarLayer {
             }
             else if (m.st === 2) set = 'melee';
             else if (m.atkFlip && hasChg) set = 'charge';
+            else if (CASTER_TYPES.has(m.key) && (this.bank[m.key]?.noAttackAnim || NO_ATTACK_ANIM.has(m.key))) {
+                // 🔴 [2026-10-19 主人令「没有施法动作的兵模，一律采用原地移动的动作替代施法动作」]
+                set = 'move';
+            }
             else set = 'atk';
             // 🔴 [2026-10-11 主人令] 法师类／无攻击动作的兵种：**攻击帧集为空时退回待命帧**。
             //    否则渲染层取不到图会 `if (!img) continue` —— 整个兵模被跳过，一出手就闪没（诸葛亮/布塞法洛斯原来就是这样）。
             if ((set === 'atk' || set === 'melee' || set === 'charge') && !this.bank[m.key]?.sets[set]?.[m.f]?.length) {
-                set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
+                set = (CASTER_TYPES.has(m.key) && (this.bank[m.key]?.noAttackAnim || NO_ATTACK_ANIM.has(m.key)))
+                    ? 'move'
+                    : (this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move');
             }
             const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
             const it = take();

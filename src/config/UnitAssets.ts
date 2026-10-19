@@ -3392,9 +3392,9 @@ export const SPRITE_PATHS = {
         },
         'hero_zhugeliang': {
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/idle_${dir}.png`),   // DE 无攻击图，用 idle
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/move_${dir}.png`),   // [2026-10-19 主人令] 无施法动作采用原地移动替代
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/move_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ZHUGELIANG/death_${dir}.png`),
         },
         'hero_bucephalus': {
@@ -4674,9 +4674,9 @@ export const SPRITE_PATHS = {
         'emperor_in_a_barrel': {
             // 【装在桶里的皇帝】[2026-10-19 补入] DE「Emperor in a Barrel」，素材 /SUCAI_TRADE/TRADE_CART_WEST/
             MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),
-            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),   // [2026-10-19 主人令] 无施法动作采用原地移动替代
             IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
-            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/death_${dir}.png`),
         },
         'hero_erikthered': {

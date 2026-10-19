@@ -44,6 +44,8 @@ export const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     war_chariot_ranged: 0.8,
     bombard_cannon: 0.93,
     houfnice: 0.93,
+    hero_jeanbureau: 0.93,
+    hero_jeandelorrain: 0.93,
     ballista: 1.6,
     elite_mameluke: 1.6,
     elite_organ_gun: 1.6,
@@ -52,6 +54,9 @@ export const SHOOT_PHASE_BY_TYPE: Record<string, number> = {
     scorpion: 1.6,
     siege_ballista: 1.6,
     traction_trebuchet: 1.78,
+    bad_neighbor: 1.78,
+    gods_own_sling: 1.78,
+    warwolf_trebuchet: 1.78,
     conquistador: 2.31,
     elite_conquistador: 2.31,
     chukonu: 2.53,
@@ -194,6 +199,13 @@ export const PROJ_TYPE: Record<string, string> = {
     hero_jayanegara: 'PROJ_MAGIC',
     // 🔴 [2026-10-19 主人令「所有传教士，祭祀，僧侣，异教徒都是法术」「法术属于远程中的一类」]
     priestess: 'PROJ_MAGIC', missionary: 'PROJ_MAGIC', priest: 'PROJ_MAGIC', pagan_priest: 'PROJ_MAGIC', monk: 'PROJ_MAGIC',
+    // 🔴 [2026-10-19 主人令「请补上」] 法术类其余英雄全部接上法球攻击特效（此前只挂了 9 个，漏了这些）：
+    hero_popeleoi: 'PROJ_MAGIC', archbishop: 'PROJ_MAGIC',
+    hero_zhangjue: 'PROJ_MAGIC', hero_yuji: 'PROJ_MAGIC', hero_buibi: 'PROJ_MAGIC',
+    hero_kingalfonso: 'PROJ_MAGIC', hero_kingsancho: 'PROJ_MAGIC',
+    hero_udayadityavarmani: 'PROJ_MAGIC',
+    queen: 'PROJ_MAGIC', hero_sanyogita: 'PROJ_MAGIC', hero_princessyodit: 'PROJ_MAGIC', hero_jacquelineofhainaut: 'PROJ_MAGIC',
+    emperor_in_a_barrel: 'PROJ_MAGIC', emperor_in_a_litter: 'PROJ_MAGIC',
     // ── [2026-08-18 补] 这些范围伤远程原本没映射，会退回默认的 PROJ_ARROW（投石车射箭矢）──
     antiquity_mangonel: 'PROJ_MANGONEL',
     antiquity_onager: 'PROJ_MANGONEL',
@@ -294,6 +306,9 @@ export const PROJ_TYPE: Record<string, string> = {
     siege_onager: 'PROJ_MANGONEL',
     traction_trebuchet: 'PROJ_ROCK',
     mounted_trebuchet: 'PROJ_ROCK',
+    bad_neighbor: 'PROJ_ROCK',
+    gods_own_sling: 'PROJ_ROCK',
+    warwolf_trebuchet: 'PROJ_ROCK',
     // 热兵器（2026-08-16 主人定：火枪/火炮/掷弹兵用 DE 独立抛射物）
     hand_cannoneer: 'PROJ_GUNPOWDER',
     janissary: 'PROJ_GUNPOWDER',
@@ -305,6 +320,8 @@ export const PROJ_TYPE: Record<string, string> = {
     elite_organ_gun: 'PROJ_GUNPOWDER',
     bombard_cannon: 'PROJ_BOMBARD_BALL',
     houfnice: 'PROJ_BOMBARD_BALL',
+    hero_jeanbureau: 'PROJ_BOMBARD_BALL',
+    hero_jeandelorrain: 'PROJ_BOMBARD_BALL',
     grenadier: 'PROJ_GRENADE',
 };
 /** DE 本体逐单位命中率；0% 散射武器在本引擎中单独按散射结算，不放进整轮 miss 判定。 */
@@ -469,6 +486,7 @@ export const NO_ATTACK_ANIM = new Set([
     'flaming_camel',             // FLAMINGCAMEL（自爆兵，走 SUICIDE_TYPES 爆炸，不进放箭分支）
     'hussite_wagon',             // HUSSITEWAGON
     'petard',                    // PETARD（同上）
+    'saboteur',                  // SABOTEUR（借用爆破工兵，走 SUICIDE_TYPES 爆炸）
     'war_chariot_ranged',        // WARCHARIOT
     'war_wagon',                 // WARWAGON
     'hero_zhugeliang',
@@ -476,14 +494,24 @@ export const NO_ATTACK_ANIM = new Set([
     'hero_shahking',
     'hero_jayanegara',
     'hero_bucephalus',
+    'emperor_in_a_barrel',
+    // 🔴 [2026-10-19 主人令「没有施法动作的兵模，一律采用原地移动的动作替代施法动作」]
+    // 补齐其余无真实攻击动作的法术单位（DE 原作无攻击帧，attack 帧与 idle 帧完全相同）：
+    'hero_kingalfonso',
+    'hero_kingsancho',
+    'hero_udayadityavarmani',
+    'queen',
+    'hero_sanyogita',
+    'hero_princessyodit',
+    'hero_jacquelineofhainaut',
+    'emperor_in_a_litter',
 ]);
 
 /** 无攻击动画的车辆开火时的尘烟配色（素色木屑/尘土，区别于火器的橙黄炮口焰） */
 export const SHOT_DUST_COLORS = ['#D8CDB8', '#B9A98C', '#8C7F66', '#EDE6D6'] as const;
 
 /**
- * 🔴 [2026-10-18 主人定] 全部 9 位非攻击性英雄统一归入简单魔法系形态（CASTER_TYPES）：
- *   · 诸葛亮（谋士）、雅德维加／塔玛尔（女王）、塔克修士／伊玛目／昌德·菩达一（僧侣／诗人）、贝拉四世／沙阿王／贾亚纳加拉（无武器国王）
+ * 🔴 [2026-10-18 主人定] 全部 28 位法术单位统一归入简单魔法系形态（CASTER_TYPES）：
  *   · 投射物 = `PROJ_MAGIC`（简洁干净的微光法球 + 短流光尾迹，不再使用粗大杂乱的喷火特效）
  *   · 施法微光 = `GREEK_FIRE_COLORS`（已改为清爽的青白/淡金奥术微光）
  */
@@ -493,12 +521,19 @@ export const CASTER_TYPES = new Set([
     'hero_belaiv', 'hero_shahking', 'hero_jayanegara',
     // 🔴 [2026-10-19 主人令「所有传教士，祭祀，僧侣，异教徒都是法术」「法术属于远程中的一类」]
     'priestess', 'missionary', 'priest', 'pagan_priest', 'monk',
+    // 🔴 [2026-10-19 补全] 其余 14 位法术单位同步补齐施法微光与施法音效
+    'hero_popeleoi', 'archbishop',
+    'hero_zhangjue', 'hero_yuji', 'hero_buibi',
+    'hero_kingalfonso', 'hero_kingsancho',
+    'hero_udayadityavarmani',
+    'queen', 'hero_sanyogita', 'hero_princessyodit', 'hero_jacquelineofhainaut',
+    'emperor_in_a_barrel', 'emperor_in_a_litter',
 ]);
 /** 魔法英雄施法微光配色（清爽青白与淡金星光，替代原杂乱火焰色） */
 export const GREEK_FIRE_COLORS = ['#E8F8FF', '#7CE8FF', '#FFE699', '#FFFFFF'] as const;
 export const FIREARM_TYPES = new Set([
     'hussite_wagon', 'elite_hussite_wagon',   // 胡斯火铳车（2026-08-18）
-    'bombard_cannon', 'houfnice', 'hand_cannoneer',
+    'bombard_cannon', 'houfnice', 'hero_jeanbureau', 'hero_jeandelorrain', 'hand_cannoneer',
     'janissary', 'elite_janissary', 'royal_janissary',
     'conquistador', 'elite_conquistador', 'organ_gun', 'elite_organ_gun',
 ]);
@@ -581,7 +616,7 @@ export const PROJ_FRAME_DUR: Record<string, number> = {
     PROJ_HUSSITE_WAGON: 1 / 60,
 };
 /** 炸药自爆单位（DE 爆破兵/火焰骆驼：冲入敌阵一旦近身引爆，造成毁灭性 AoE 伤害并自爆牺牲）。 */
-export const SUICIDE_TYPES = new Set(['petard', 'flaming_camel']);
+export const SUICIDE_TYPES = new Set(['petard', 'flaming_camel', 'saboteur']);
 /**
  * 🔴 [2026-10-13 全面审计抓出·自爆对建筑] 自爆伤害打到**建筑**时的倍率。
  *
@@ -610,10 +645,15 @@ export const MIN_RANGE_TYPES: Record<string, number> = {
     traction_trebuchet: 160,
     mounted_trebuchet: 160,
     trebuchet: 160,
+    bad_neighbor: 160,
+    gods_own_sling: 160,
+    warwolf_trebuchet: 160,
 
     // 火炮/榴弹炮系列（DE 最小射程 5 格 = 200px）
     bombard_cannon: 200,
     houfnice: 200,
+    hero_jeanbureau: 200,
+    hero_jeandelorrain: 200,
 
     // 火箭车系列（远程齐射器械，最小射程 3 格 = 120px）
     rocket_cart: 120,
@@ -700,6 +740,7 @@ export const FX_DUR: Record<string, number> = {
 /** 火器兵种 → 炮口焰特效 key（按口径/枪型区分）。 */
 export const FIREARM_MUZZLE: Record<string, string> = {
     bombard_cannon: 'FX_MUZZLE_BOMBARD', houfnice: 'FX_MUZZLE_BOMBARD',
+    hero_jeanbureau: 'FX_MUZZLE_BOMBARD', hero_jeandelorrain: 'FX_MUZZLE_BOMBARD',
     organ_gun: 'FX_MUZZLE_ORGAN', elite_organ_gun: 'FX_MUZZLE_ORGAN',
     hand_cannoneer: 'FX_MUZZLE_HAND', janissary: 'FX_MUZZLE_HAND',
     elite_janissary: 'FX_MUZZLE_HAND', royal_janissary: 'FX_MUZZLE_HAND',
