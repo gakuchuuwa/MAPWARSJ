@@ -24,8 +24,8 @@ import fs from 'node:fs';
 
 const CASTLE_BUILDINGS = new Set([82, 1251]);
 const PERSON_MOUNTS = new Set(['porus_elephant', 'bayinnaung_elephant', 'dagnajan_elephant']);
-const RANK = { castle: 7, culture: 6, regional: 5, normal: 4, elite: 3, hero: 2, special: 1 };
-const LABEL = { castle: '城堡兵', culture: '文化兵', regional: '区域兵', special: '特殊兵', normal: '普通兵', hero: '英雄', elite: '精英兵' };
+const RANK = { castle: 7, culture: 6, regional: 5, normal: 4, elite: 3, hero: 2, special: 1, noncombat: 0 };
+const LABEL = { castle: '城堡兵', culture: '文化兵', regional: '区域兵', special: '特殊兵', normal: '普通兵', hero: '英雄', elite: '精英兵', noncombat: '非战斗' };
 
 const mainSrc = fs.readFileSync('src/legion-editor/main.ts', 'utf8');
 const block = mainSrc.slice(mainSrc.indexOf('export const DE_UNITS_CATALOG'), mainSrc.indexOf('export const DE_UNITS_MAP'));
@@ -36,7 +36,8 @@ const catById = new Map(catalog.map((c) => [c.id, c]));
 const ln = JSON.parse(fs.readFileSync('public/de-techtree/legion-names.json', 'utf8'));
 const index = JSON.parse(fs.readFileSync('public/de-techtree/index.json', 'utf8'));
 const offtree = JSON.parse(fs.readFileSync('public/de-techtree/offtree-units.json', 'utf8'));
-const offArr = Array.isArray(offtree) ? offtree : Object.values(offtree).flat();
+// 只读 units：文件头的 generatedAt / sources / totals 不是单位
+const offArr = Array.isArray(offtree) ? offtree : (offtree.units ?? []);
 
 const type = new Map();          // 兵种 id → 类别
 const civsOf = new Map();        // 兵种 id → 出现的 DE 文明
@@ -45,6 +46,8 @@ const civsOf = new Map();        // 兵种 id → 出现的 DE 文明
 const isPerson = (id) => PERSON_MOUNTS.has(id) || (catById.get(id)?.name ?? '').startsWith('英雄·');
 const set = (id, t) => {
     if (isPerson(id)) t = 'hero';
+    // 🔴 [2026-10-19 主人令] 村民、渔船、贸易车、僧侣、女祭司、传教士（兵种鉴赏类别＝非战斗）一律归非战斗
+    if (catById.get(id)?.category === 'civilian') { type.set(id, 'noncombat'); return; }
     if (!type.has(id) || RANK[t] > RANK[type.get(id)]) type.set(id, t);
 };
 
@@ -101,7 +104,8 @@ for (const u of offArr) {
             ? (c.name.startsWith('英雄·') || PERSON_MOUNTS.has(c.id) ? 'hero' : 'elite')
             : 'special';
         set(c.id, t);
-    } else if (u.bucket === 'hero' || u.bucket === 'combat') {
+    } else {
+        // 🔴 [2026-10-19 主人令「剩下的动物、平民、秘籍玩笑单位也全部补进兵种鉴赏」] 不再只看英雄与战斗单位
         missingOff.push(u);
     }
 }
@@ -160,14 +164,14 @@ const extra = catalog.filter((c) => !type.has(c.id));
 const entries = catalog.filter((c) => type.has(c.id)).map((c) => `    ${JSON.stringify(c.id)}: '${type.get(c.id)}',`);
 fs.writeFileSync('src/data/deUnitSourceTypes.ts', `/**
  * 兵种来源类别（DE 七类）—— 由 tools/de-unit-source-types.mjs 生成，勿手改；改判据请改脚本后重跑。
- * 🔴 [2026-10-19 主人令] 城堡兵、文化兵、区域兵、特殊兵、普通兵、英雄、精英兵。
+ * 🔴 [2026-10-19 主人令] 城堡兵、文化兵、区域兵、特殊兵、普通兵、英雄、精英兵、非战斗。
  * 查不到 DE 出处的兵种不在本表（兵种鉴赏显示「项目自建」）。
  */
-export type DeSourceType = 'castle' | 'culture' | 'regional' | 'special' | 'normal' | 'hero' | 'elite';
+export type DeSourceType = 'castle' | 'culture' | 'regional' | 'special' | 'normal' | 'hero' | 'elite' | 'noncombat';
 
 export const DE_SOURCE_TYPE_LABEL: Record<DeSourceType, string> = ${JSON.stringify(LABEL, null, 4).replace(/"(\w+)":/g, '$1:').replace(/"/g, "'")};
 
-export const DE_SOURCE_TYPE_ORDER: DeSourceType[] = ['castle', 'culture', 'regional', 'special', 'normal', 'hero', 'elite'];
+export const DE_SOURCE_TYPE_ORDER: DeSourceType[] = ['castle', 'culture', 'regional', 'special', 'normal', 'hero', 'elite', 'noncombat'];
 
 export const DE_UNIT_SOURCE_TYPE: Record<string, DeSourceType> = {
 ${entries.join('\n')}
@@ -203,17 +207,19 @@ for (const [name, r] of mt) {
 }
 const heroMiss = missingOff.filter((u) => u.bucket === 'hero');
 const combatMiss = missingOff.filter((u) => u.bucket === 'combat');
-lines.push('', `## 缺少②：DE 不可训练单位里有、兵种鉴赏没有（英雄 ${heroMiss.length} 个、战斗单位 ${combatMiss.length} 个）`, '');
+const otherMiss = missingOff.filter((u) => u.bucket !== 'hero' && u.bucket !== 'combat');
+const BUCKET_ZH = { hero: '英雄', combat: '战斗单位', animal: '动物', civilian: '平民', joke: '秘籍玩笑', object: '物件', other: '其他' };
+lines.push('', `## 缺少②：DE 不可训练单位里有、兵种鉴赏没有（英雄 ${heroMiss.length} 个、战斗单位 ${combatMiss.length} 个、动物／平民／秘籍玩笑等 ${otherMiss.length} 个）`, '');
 lines.push('| DE 英文名 | DE 中文名 | DE 分组 | 备注 |', '|---|---|---|---|');
-for (const u of [...combatMiss, ...heroMiss]) lines.push(`| ${u.name_en} | ${u.name_zh ?? ''} | ${u.bucket === 'hero' ? '英雄' : '战斗单位'} | ${u.note ?? ''} |`);
+for (const u of [...combatMiss, ...heroMiss, ...otherMiss]) lines.push(`| ${u.name_en} | ${u.name_zh ?? ''} | ${BUCKET_ZH[u.bucket] ?? u.bucket} | ${u.note ?? ''} |`);
 // 缺少清单（机器读）：给 tools/de-extract-missing-units.py 提取素材用
 fs.mkdirSync('scratch/out', { recursive: true });
 fs.writeFileSync('scratch/out/de_missing_units.json', JSON.stringify([
     ...mt.map(([name, r]) => ({ name_en: name, name_zh: r.zh, from: 'tree', type: r.type, nonCombat: nonCombat.test(name) })),
-    ...[...combatMiss, ...heroMiss].map((u) => ({ name_en: u.name_en, name_zh: u.name_zh ?? '', from: 'offtree', bucket: u.bucket, game: u.game, removed: !!u.removed, note: u.note ?? '' })),
+    ...[...combatMiss, ...heroMiss, ...otherMiss].map((u) => ({ name_en: u.name_en, name_zh: u.name_zh ?? '', from: 'offtree', bucket: u.bucket, game: u.game, removed: !!u.removed, note: u.note ?? '' })),
 ], null, 1));
 fs.mkdirSync('claudedocs', { recursive: true });
 fs.writeFileSync('claudedocs/de-unit-source-types-diff.md', lines.join('\n') + '\n');
 
 console.log('分类：', Object.fromEntries(Object.keys(LABEL).map((k) => [LABEL[k], count[k] || 0])));
-console.log(`多余 ${extra.length}；缺少：科技树 ${mt.length}、不可训练英雄 ${heroMiss.length}、不可训练战斗单位 ${combatMiss.length}`);
+console.log(`多余 ${extra.length}；缺少：科技树 ${mt.length}、不可训练英雄 ${heroMiss.length}、不可训练战斗单位 ${combatMiss.length}、动物／平民／秘籍玩笑 ${otherMiss.length}`);

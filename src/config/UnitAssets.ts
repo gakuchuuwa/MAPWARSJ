@@ -4525,6 +4525,1441 @@ export const SPRITE_PATHS = {
             SHOOT: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCORPION/attack_${dir}.png`),
             DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCORPION/death_${dir}.png`),
         },
+        // ── 2026-10-19 补入的 DE 单位（tools/de-add-missing-units.mjs 生成）──
+        'missionary': {
+            // 【传教士】[2026-10-19 补入] DE「Missionary」，素材 /SUCAI/MONK_MISSIONARY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_MISSIONARY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_MISSIONARY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_MISSIONARY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_MISSIONARY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_MISSIONARY/death_${dir}.png`),
+        },
+        'fishing_ship': {
+            // 【渔船】[2026-10-19 补入] DE「Fishing Ship」，素材 /SUCAI/SHP_FISHING_SHIP/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FISHING_SHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FISHING_SHIP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FISHING_SHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FISHING_SHIP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FISHING_SHIP/death_${dir}.png`),
+        },
+        'monk': {
+            // 【僧侣】[2026-10-19 补入] DE「Monk」，借用「英雄·塔克修士·不列颠」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/death_${dir}.png`),
+        },
+        'priestess': {
+            // 【女祭司】[2026-10-19 补入] DE「Priestess」，素材 /SUCAI/PRIESTESS/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PRIESTESS/death_${dir}.png`),
+        },
+        'trade_cart': {
+            // 【贸易车】[2026-10-19 补入] DE「Trade Cart」，素材 /SUCAI_TRADE/TRADE_CART_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/death_${dir}.png`),
+        },
+        'trebuchet_packed': {
+            // 【巨型投石机（打包）】[2026-10-19 补入] DE「Trebuchet (Packed)」，素材 /SUCAI/SIE_PACKED_TREBUCHET/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_PACKED_TREBUCHET/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_PACKED_TREBUCHET/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_PACKED_TREBUCHET/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_PACKED_TREBUCHET/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_PACKED_TREBUCHET/death_${dir}.png`),
+        },
+        'villager': {
+            // 【村民】[2026-10-19 补入] DE「Villager」，素材 /SUCAI/VIL_MALE_VILLAGER/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_VILLAGER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_VILLAGER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_VILLAGER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_VILLAGER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_VILLAGER/death_${dir}.png`),
+        },
+        'hero_aethelfrith': {
+            // 【英雄·艾特尔弗里思·撒克逊】[2026-10-19 补入] DE「Aethelfrith」，借用「凯尔特靛蓝突袭者精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWOADRAIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWOADRAIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWOADRAIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWOADRAIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWOADRAIDER/death_${dir}.png`),
+        },
+        'archbishop': {
+            // 【大主教】[2026-10-19 补入] DE「Archbishop」，借用「英雄·塔克修士·不列颠」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/death_${dir}.png`),
+        },
+        'archer_of_the_eyes': {
+            // 【神眼步弓手】[2026-10-19 补入] DE「Archer of the Eyes」，借用「劲弩手高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/death_${dir}.png`),
+        },
+        'bad_neighbor': {
+            // 【坏邻居】[2026-10-19 补入] DE「Bad Neighbor」，素材 /SUCAI/SIE_UNPACKED_TREBUCHET/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/death_${dir}.png`),
+        },
+        'hero_belisarius': {
+            // 【英雄·贝利沙鲁斯·拜占庭】[2026-10-19 补入] DE「Belisarius」，借用「罗马帝国百夫长特殊」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCENTURION/death_${dir}.png`),
+        },
+        'hero_charlemagne': {
+            // 【英雄·查理曼·法兰克】[2026-10-19 补入] DE「Charlemagne」，借用「法兰克掷斧兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/death_${dir}.png`),
+        },
+        'hero_charlesmartel': {
+            // 【英雄·查理马特·法兰克】[2026-10-19 补入] DE「Charles Martel」，借用「法兰克掷斧兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETHROWINGAXEMAN/death_${dir}.png`),
+        },
+        'hero_constablerichemont': {
+            // 【英雄·康斯塔伯理察蒙·法兰克】[2026-10-19 补入] DE「Constable Richemont」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_dukedalencon': {
+            // 【英雄·阿朗松公爵·法兰克】[2026-10-19 补入] DE「Duke D'Alençon」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_elcid': {
+            // 【英雄·熙德·西班牙】[2026-10-19 补入] DE「El Cid」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'emperor_in_a_barrel': {
+            // 【装在桶里的皇帝】[2026-10-19 补入] DE「Emperor in a Barrel」，素材 /SUCAI_TRADE/TRADE_CART_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/death_${dir}.png`),
+        },
+        'hero_erikthered': {
+            // 【英雄·红胡子艾里克·维京】[2026-10-19 补入] DE「Erik the Red」，借用「维京狂战士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/death_${dir}.png`),
+        },
+        'hero_gawain': {
+            // 【英雄·高文爵士·不列颠】[2026-10-19 补入] DE「Gawain」，借用「骑士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
+        },
+        'hero_genghiskhan': {
+            // 【英雄·成吉思汗·漠北蒙古】[2026-10-19 补入] DE「Genghis Khan」，借用「蒙古突骑精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/death_${dir}.png`),
+        },
+        'gods_own_sling': {
+            // 【神之弓】[2026-10-19 补入] DE「God's Own Sling」，素材 /SUCAI/SIE_UNPACKED_TREBUCHET/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/death_${dir}.png`),
+        },
+        'hero_guyjosselyne': {
+            // 【英雄·盖佐斯尔立·法兰克】[2026-10-19 补入] DE「Guy Josselyne」，借用「骑士游侠高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        'hero_hrolftheganger': {
+            // 【英雄·首领罗夫·维京】[2026-10-19 补入] DE「Hrolf the Ganger」，借用「维京狂战士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BERSERK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BERSERK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BERSERK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BERSERK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BERSERK/death_${dir}.png`),
+        },
+        'hunting_wolf': {
+            // 【猎狼】[2026-10-19 补入] DE「Hunting Wolf」，素材 /SUCAI_ANIMAL/WOLF/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'hero_jeanbureau': {
+            // 【英雄·让·彼罗·法兰克】[2026-10-19 补入] DE「Jean Bureau」，借用「手推攻城火炮」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/death_${dir}.png`),
+        },
+        'hero_jeandelorrain': {
+            // 【英雄·让·德·洛兰·法兰克】[2026-10-19 补入] DE「Jean de Lorrain」，借用「手推攻城火炮」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/BOMBARDCANNON/death_${dir}.png`),
+        },
+        'hero_kingarthur': {
+            // 【英雄·亚瑟王·不列颠】[2026-10-19 补入] DE「King Arthur」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'hero_kitabatake': {
+            // 【英雄·北畠氏·日本】[2026-10-19 补入] DE「Kitabatake」，借用「日本武士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_DE/death_${dir}.png`),
+        },
+        'hero_lahire': {
+            // 【英雄·拉海尔·法兰克】[2026-10-19 补入] DE「La Hire」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'hero_lancelot': {
+            // 【英雄·兰斯洛特·不列颠】[2026-10-19 补入] DE「Lancelot」，借用「骑士游侠高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        'hero_lorddegraville': {
+            // 【英雄·格拉维尔领主·法兰克】[2026-10-19 补入] DE「Lord de Graville」，借用「劲弩手高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/death_${dir}.png`),
+        },
+        'master_of_the_templar': {
+            // 【圣殿骑士团首领】[2026-10-19 补入] DE「Master of the Templar」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_minamoto': {
+            // 【英雄·源氏·日本】[2026-10-19 补入] DE「Minamoto」，借用「日本武士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/death_${dir}.png`),
+        },
+        'hero_mordred': {
+            // 【英雄·莫特列德·不列颠】[2026-10-19 补入] DE「Mordred」，借用「骑士游侠高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        'ornlu_the_wolf': {
+            // 【灰狼欧鲁】[2026-10-19 补入] DE「Ornlu the Wolf」，素材 /SUCAI_ANIMAL/WOLF/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'hero_reynalddechatillon': {
+            // 【英雄·沙蒂永的雷纳德·法兰克】[2026-10-19 补入] DE「Reynald de Chatillon」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_richardthelionheart': {
+            // 【英雄·狮心王理查·不列颠】[2026-10-19 补入] DE「Richard the Lionheart」，借用「骑士游侠高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        'hero_robinhood': {
+            // 【英雄·罗宾汉·不列颠】[2026-10-19 补入] DE「Robin Hood」，借用「不列颠长弓兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGBOWMAN_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGBOWMAN_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGBOWMAN_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGBOWMAN_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGBOWMAN_ELITE/death_${dir}.png`),
+        },
+        'hero_roland': {
+            // 【英雄·罗兰·法兰克】[2026-10-19 补入] DE「Roland」，借用「骑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/death_${dir}.png`),
+        },
+        'saboteur': {
+            // 【破坏者】[2026-10-19 补入] DE「Saboteur」，借用「爆破工兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PETARD/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PETARD/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PETARD/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PETARD/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PETARD/death_${dir}.png`),
+        },
+        'hero_sheriffofnottingham': {
+            // 【英雄·诺丁安的郡长·不列颠】[2026-10-19 补入] DE「Sheriff of Nottingham」，借用「重装剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/death_${dir}.png`),
+        },
+        'hero_siegfried': {
+            // 【英雄·齐格菲·条顿】[2026-10-19 补入] DE「Siegfried」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'hero_sieurbertrand': {
+            // 【英雄·伯特兰爵士·法兰克】[2026-10-19 补入] DE「Sieur Bertrand」，借用「骑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/death_${dir}.png`),
+        },
+        'hero_sieurdemetz': {
+            // 【英雄·德·梅斯爵士·法兰克】[2026-10-19 补入] DE「Sieur de Metz」，借用「骑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/death_${dir}.png`),
+        },
+        'hero_sirjohnfastolf': {
+            // 【英雄·约翰法斯托夫爵士·不列颠】[2026-10-19 补入] DE「Sir John Fastolf」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_tamerlane': {
+            // 【英雄·帖木儿·鞑靼】[2026-10-19 补入] DE「Tamerlane」，借用「蒙古突骑精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANGUDAI_ELITE/death_${dir}.png`),
+        },
+        'hero_theblackprince': {
+            // 【英雄·黑亲王·不列颠】[2026-10-19 补入] DE「The Black Prince」，借用「骑士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
+        },
+        'hero_theodoricthegoth': {
+            // 【英雄·狄奥多里克·哥特】[2026-10-19 补入] DE「Theodoric the Goth」，借用「哥特近卫军精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEHUSKARL/death_${dir}.png`),
+        },
+        'hero_admiralyisunshin': {
+            // 【英雄·李舜臣将军·高丽】[2026-10-19 补入] DE「Admiral Yi Sun-Shin」，借用「龟船高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TURTLE_SHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TURTLE_SHIP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TURTLE_SHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TURTLE_SHIP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_TURTLE_SHIP/death_${dir}.png`),
+        },
+        'hero_alexandernevski': {
+            // 【英雄·亚历山大·涅夫斯基·斯拉夫】[2026-10-19 补入] DE「Alexander Nevski」，借用「骑士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
+        },
+        'hero_bledathehun': {
+            // 【英雄·布莱达·匈人】[2026-10-19 补入] DE「Bleda the Hun」，借用「草原枪骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STEPPE_LANCER/death_${dir}.png`),
+        },
+        'hero_elcidcampeador': {
+            // 【英雄·熙德·坎培多尔·西班牙】[2026-10-19 补入] DE「El Cid Campeador」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_henryv': {
+            // 【英雄·亨利五世·不列颠】[2026-10-19 补入] DE「Henry V」，借用「骑士游侠高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/PALADIN/death_${dir}.png`),
+        },
+        'hero_kingalfonso': {
+            // 【英雄·阿方索国王·西班牙】[2026-10-19 补入] DE「King Alfonso」，借用「英雄·贝拉四世国王·马扎尔」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/death_${dir}.png`),
+        },
+        'hero_kingsancho': {
+            // 【英雄·桑丘国王·西班牙】[2026-10-19 补入] DE「King Sancho」，借用「英雄·贝拉四世国王·马扎尔」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/death_${dir}.png`),
+        },
+        'hero_nobunaga': {
+            // 【英雄·织田信长·日本】[2026-10-19 补入] DE「Nobunaga」，借用「日本武士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAMURAI_ELITE/death_${dir}.png`),
+        },
+        'hero_popeleoi': {
+            // 【英雄·教皇利奥一世·罗马】[2026-10-19 补入] DE「Pope Leo I」，借用「英雄·塔克修士·不列颠」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_WEST/death_${dir}.png`),
+        },
+        'scythian_scout': {
+            // 【斯基泰斥候】[2026-10-19 补入] DE「Scythian Scout」，借用「轻骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/death_${dir}.png`),
+        },
+        'scythian_wild_woman': {
+            // 【斯基泰野女人】[2026-10-19 补入] DE「Scythian Wild Woman」，借用「英雄·少女战士·法兰克」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/death_${dir}.png`),
+        },
+        'hero_williamtheconqueror': {
+            // 【英雄·征服者威廉·法兰克】[2026-10-19 补入] DE「William the Conqueror」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_cuauhtemoc': {
+            // 【英雄·瓜特穆斯·阿兹特克】[2026-10-19 补入] DE「Cuauhtemoc」，借用「鹰战士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEEAGLEWARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEEAGLEWARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEEAGLEWARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEEAGLEWARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEEAGLEWARRIOR/death_${dir}.png`),
+        },
+        'hero_franciscodeorellana': {
+            // 【英雄·弗朗西斯科·德·奥雷利亚纳·西班牙】[2026-10-19 补入] DE「Francisco de Orellana」，借用「西班牙征服者」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONQUISTADOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONQUISTADOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONQUISTADOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONQUISTADOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CONQUISTADOR/death_${dir}.png`),
+        },
+        'hero_frederickbarbarossa': {
+            // 【英雄·腓特烈·巴巴罗萨·条顿】[2026-10-19 补入] DE「Frederick Barbarossa」，借用「条顿武士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEUTONICKNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEUTONICKNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEUTONICKNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEUTONICKNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TEUTONICKNIGHT/death_${dir}.png`),
+        },
+        'hero_gonzalopizarro': {
+            // 【英雄·贡萨洛·皮萨罗·西班牙】[2026-10-19 补入] DE「Gonzalo Pizarro」，借用「西班牙征服者精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECONQUISTADOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECONQUISTADOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECONQUISTADOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECONQUISTADOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECONQUISTADOR/death_${dir}.png`),
+        },
+        'norse_chieftain': {
+            // 【北欧酋长】[2026-10-19 补入] DE「Norse Chieftain」，借用「瓦良格首领」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JARL/death_${dir}.png`),
+        },
+        'hero_khosrau': {
+            // 【英雄·霍斯劳·波斯】[2026-10-19 补入] DE「Khosrau」，借用「象弓骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/death_${dir}.png`),
+        },
+        'hero_prithvi': {
+            // 【英雄·布里陀毗·瞿折罗】[2026-10-19 补入] DE「Prithvi」，借用「劲弩手」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CROSSBOWMAN/death_${dir}.png`),
+        },
+        'queen': {
+            // 【皇后】[2026-10-19 补入] DE「Queen」，素材 /SUCAI/QUEEN_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/death_${dir}.png`),
+        },
+        'hero_saladin': {
+            // 【英雄·萨拉丁·萨拉森】[2026-10-19 补入] DE「Saladin」，借用「萨拉森马穆鲁克精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAMELUKE/death_${dir}.png`),
+        },
+        'hero_sanyogita': {
+            // 【英雄·姗悦姬妲·瞿折罗】[2026-10-19 补入] DE「Sanyogita」，素材 /SUCAI/QUEEN_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/death_${dir}.png`),
+        },
+        'hero_abrahaelephant': {
+            // 【英雄·阿布拉哈战象·埃塞俄比亚】[2026-10-19 补入] DE「Abraha Elephant」，借用「波斯战象精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWARELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWARELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWARELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWARELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEWARELEPHANT/death_${dir}.png`),
+        },
+        'hero_babur': {
+            // 【英雄·巴布尔·印度斯坦】[2026-10-19 补入] DE「Babur」，借用「印度斯坦帝王骆驼兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IMPERIALCAMELRIDER/death_${dir}.png`),
+        },
+        'hero_guglielmoembriaco': {
+            // 【英雄·古列尔莫·安布里科·意大利】[2026-10-19 补入] DE「Guglielmo Embriaco」，借用「意大利热那亚弩手精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGENOESECROSSBOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGENOESECROSSBOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGENOESECROSSBOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGENOESECROSSBOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEGENOESECROSSBOWMAN/death_${dir}.png`),
+        },
+        'hero_henryii': {
+            // 【英雄·亨利二世·不列颠】[2026-10-19 补入] DE「Henry II」，借用「双手剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/death_${dir}.png`),
+        },
+        'hero_huaynacapac': {
+            // 【英雄·瓦伊纳·卡帕克·印加】[2026-10-19 补入] DE「Huayna Capac」，借用「投石兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SLINGER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SLINGER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SLINGER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SLINGER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SLINGER/death_${dir}.png`),
+        },
+        'hero_itzcoatl': {
+            // 【英雄·伊兹科阿图·阿兹特克】[2026-10-19 补入] DE「Itzcoatl」，借用「阿兹特克豹勇士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/death_${dir}.png`),
+        },
+        'hero_littlejohn': {
+            // 【英雄·小约翰·不列颠】[2026-10-19 补入] DE「Little John」，借用「长矛兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SPEARMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SPEARMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SPEARMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SPEARMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SPEARMAN/death_${dir}.png`),
+        },
+        'hero_miklostoldi': {
+            // 【英雄·米克罗斯·陶笛·马扎尔】[2026-10-19 补入] DE「Miklos Toldi」，借用「马扎尔骠骑兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEMAGYARHUSZAR/death_${dir}.png`),
+        },
+        'hero_musaibnnusayr': {
+            // 【英雄·穆萨·伊本·奴萨尔·萨拉森】[2026-10-19 补入] DE「Musa ibn Nusayr」，借用「柏柏尔骆驼弓骑精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECAMELARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECAMELARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECAMELARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECAMELARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITECAMELARCHER/death_${dir}.png`),
+        },
+        'hero_mustafapasha': {
+            // 【英雄·穆斯塔法帕夏·奥斯曼】[2026-10-19 补入] DE「Mustafa Pasha」，借用「土耳其苏丹亲兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJANISSARY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJANISSARY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJANISSARY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJANISSARY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJANISSARY/death_${dir}.png`),
+        },
+        'hero_pacalii': {
+            // 【英雄·帕柯二世·玛雅】[2026-10-19 补入] DE「Pacal II」，借用「玛雅羽箭手精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEPLUMEDARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEPLUMEDARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEPLUMEDARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEPLUMEDARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEPLUMEDARCHER/death_${dir}.png`),
+        },
+        'hero_princessyodit': {
+            // 【英雄·游娣特公主·埃塞俄比亚】[2026-10-19 补入] DE「Princess Yodit」，素材 /SUCAI/QUEEN_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/death_${dir}.png`),
+        },
+        'hero_richarddeclare': {
+            // 【英雄·理查·德·克莱尔伯爵·不列颠】[2026-10-19 补入] DE「Richard de Clare」，借用「轻骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LIGHTCAVALRY/death_${dir}.png`),
+        },
+        'hero_sudingfang': {
+            // 【英雄·苏定方·中原】[2026-10-19 补入] DE「Su Dingfang」，借用「中国诸葛弩精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CHUKONU/death_${dir}.png`),
+        },
+        'hero_tristan': {
+            // 【英雄·崔士坦爵士·不列颠】[2026-10-19 补入] DE「Tristan」，借用「马扎尔骠骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MAGYARHUSZAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MAGYARHUSZAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MAGYARHUSZAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MAGYARHUSZAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MAGYARHUSZAR/death_${dir}.png`),
+        },
+        'hero_yekunoamlak': {
+            // 【英雄·耶库诺·阿姆拉克·埃塞俄比亚】[2026-10-19 补入] DE「Yekuno Amlak」，借用「埃塞俄比亚弯刀勇士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHOTELWARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHOTELWARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHOTELWARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHOTELWARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHOTELWARRIOR/death_${dir}.png`),
+        },
+        'hero_zawiszatheblack': {
+            // 【英雄·黑衣扎维沙·波兰】[2026-10-19 补入] DE「Zawisza the Black」，借用「骠骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUSSAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUSSAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUSSAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUSSAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HUSSAR/death_${dir}.png`),
+        },
+        'hero_buibi': {
+            // 【英雄·裴备·越南】[2026-10-19 补入] DE「Bui Bi」，借用「英雄·昌德·菩达一·瞿折罗」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/death_${dir}.png`),
+        },
+        'hero_jayaviravarman': {
+            // 【英雄·阇耶毗罗跋摩·高棉】[2026-10-19 补入] DE「Jayaviravarman」，借用「马来爪刀勇士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR_ELITE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR_ELITE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR_ELITE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR_ELITE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KARAMBIT_WARRIOR_ELITE/death_${dir}.png`),
+        },
+        'hero_lelai': {
+            // 【英雄·黎来·越南】[2026-10-19 补入] DE「Le Lai」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'hero_letrien': {
+            // 【英雄·李篆·越南】[2026-10-19 补入] DE「Le Trien」，借用「冠军剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHAMPION/death_${dir}.png`),
+        },
+        'hero_luunhanchu': {
+            // 【英雄·刘仁澍·越南】[2026-10-19 补入] DE「Luu Nhan Chu」，借用「劲弩手高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARBALEST/death_${dir}.png`),
+        },
+        'hero_radenwijaya': {
+            // 【英雄·拉登甲亮·马来】[2026-10-19 补入] DE「Raden Wijaya」，借用「骑士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
+        },
+        'hero_suryavarmani': {
+            // 【英雄·苏耶跋摩一世·高棉】[2026-10-19 补入] DE「Suryavarman I」，借用「战斗象高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBATTLEELEPHANT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBATTLEELEPHANT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBATTLEELEPHANT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBATTLEELEPHANT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBATTLEELEPHANT/death_${dir}.png`),
+        },
+        'hero_tabinshwehti': {
+            // 【英雄·莽瑞体·缅甸】[2026-10-19 补入] DE「Tabinshwehti」，借用「象弓骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEELEPHANTARCHER/death_${dir}.png`),
+        },
+        'hero_udayadityavarmani': {
+            // 【英雄·乌达雅迭耶跋摩一世·高棉】[2026-10-19 补入] DE「Udayadityavarman I」，借用「英雄·贾亚纳加拉·马来」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_SEAS/death_${dir}.png`),
+        },
+        'hero_wangtong': {
+            // 【英雄·王通·中原】[2026-10-19 补入] DE「Wang Tong」，借用「英雄·丁礼·越南」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DINHLE/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DINHLE/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DINHLE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DINHLE/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/DINHLE/death_${dir}.png`),
+        },
+        'hero_henrythelion': {
+            // 【英雄·猛狮亨利·撒克逊】[2026-10-19 补入] DE「Henry the Lion」，借用「骑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KNIGHT/death_${dir}.png`),
+        },
+        'hero_leiferikson': {
+            // 【英雄·莱夫·埃里克松·维京】[2026-10-19 补入] DE「Leif Erikson」，借用「维京长船高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/death_${dir}.png`),
+        },
+        'the_middlebrook': {
+            // 【米德尔布鲁克】[2026-10-19 补入] DE「The Middlebrook」，借用「维京长船高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_LONGBOAT/death_${dir}.png`),
+        },
+        'hero_tokhtamyshkhan': {
+            // 【英雄·脱脱迷失汗·鞑靼】[2026-10-19 补入] DE「Tokhtamysh Khan」，借用「鞑靼怯薛军精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEKESHIK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEKESHIK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEKESHIK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEKESHIK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEKESHIK/death_${dir}.png`),
+        },
+        'hero_topayupanqui': {
+            // 【英雄·托巴·尤潘基·印加】[2026-10-19 补入] DE「Topa Yupanqui」，借用「阿兹特克豹勇士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEJAGUARWARRIOR/death_${dir}.png`),
+        },
+        'hero_uruskhan': {
+            // 【英雄·兀鲁思汗·鞑靼】[2026-10-19 补入] DE「Urus Khan」，借用「库曼钦察弓骑精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_KIPCHAK/death_${dir}.png`),
+        },
+        'hero_vascodagama': {
+            // 【英雄·瓦斯科·达·伽马·葡萄牙】[2026-10-19 补入] DE「Vasco da Gama」，借用「卡拉维尔帆船高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CARAVEL/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CARAVEL/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CARAVEL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CARAVEL/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_CARAVEL/death_${dir}.png`),
+        },
+        'hero_jacquelineofhainaut': {
+            // 【英雄·埃诺的杰奎琳·勃艮第】[2026-10-19 补入] DE「Jacqueline of Hainaut」，素材 /SUCAI/QUEEN_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/QUEEN_WEST/death_${dir}.png`),
+        },
+        'warwolf_trebuchet': {
+            // 【战狼号巨型投石机】[2026-10-19 补入] DE「Warwolf Trebuchet」，素材 /SUCAI/SIE_UNPACKED_TREBUCHET/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_UNPACKED_TREBUCHET/death_${dir}.png`),
+        },
+        'hero_dmitryofmoscow': {
+            // 【英雄·莫斯科的德米特里·斯拉夫】[2026-10-19 补入] DE「Dmitry of Moscow」，借用「骑士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAVALIER/death_${dir}.png`),
+        },
+        'hero_emperorsigismund': {
+            // 【英雄·西吉斯蒙德皇帝·条顿】[2026-10-19 补入] DE「Emperor Sigismund」，借用「中世纪枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/FRANKISHPALADIN/death_${dir}.png`),
+        },
+        'hero_mikhailoftver': {
+            // 【英雄·特维尔亲王米哈伊尔·斯拉夫】[2026-10-19 补入] DE「Mikhail of Tver」，借用「斯拉夫贵族铁骑精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBOYAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBOYAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBOYAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBOYAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBOYAR/death_${dir}.png`),
+        },
+        'hero_youngjadwiga': {
+            // 【英雄·年轻的雅德维加·波兰】[2026-10-19 补入] DE「Young Jadwiga」，借用「英雄·少女战士·法兰克」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/JOANTHEMAID/death_${dir}.png`),
+        },
+        'hero_amoghavarsha': {
+            // 【英雄·阿目佉跋沙·达罗毗荼】[2026-10-19 补入] DE「Amoghavarsha」，借用「达罗毗荼软剑士精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEURUMISWORDSMAN/death_${dir}.png`),
+        },
+        'hero_ibrahimlodi': {
+            // 【英雄·易卜拉欣·洛迪·印度斯坦】[2026-10-19 补入] DE「Ibrahim Lodi」，借用「蒙古可汗特殊」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HERO_KHAN/death_${dir}.png`),
+        },
+        'hero_mihirabhoja': {
+            // 【英雄·迷企罗·波阇·瞿折罗】[2026-10-19 补入] DE「Mihira Bhoja」，借用「什里瓦姆沙骑手高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHRIVAMSHARIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHRIVAMSHARIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHRIVAMSHARIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHRIVAMSHARIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITESHRIVAMSHARIDER/death_${dir}.png`),
+        },
+        'hero_shaybanikhan': {
+            // 【英雄·昔班尼汗·鞑靼】[2026-10-19 补入] DE「Shaybani Khan」，借用「英雄·吉尔根汗·库曼」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GIRGENKHAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GIRGENKHAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GIRGENKHAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GIRGENKHAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/GIRGENKHAN/death_${dir}.png`),
+        },
+        'hero_youngbabur': {
+            // 【英雄·年轻的巴布尔·印度斯坦】[2026-10-19 补入] DE「Young Babur」，借用「骆驼骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CAMEL_HEAVY/death_${dir}.png`),
+        },
+        'hero_ismail': {
+            // 【英雄·亦思马因·波斯】[2026-10-19 补入] DE「Ismail」，借用「斥候骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SCOUTCAVALRY/death_${dir}.png`),
+        },
+        'hero_ivane': {
+            // 【英雄·伊万·格鲁吉亚】[2026-10-19 补入] DE「Ivane」，借用「拜占庭圣骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CATAPHRACT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CATAPHRACT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CATAPHRACT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CATAPHRACT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CATAPHRACT/death_${dir}.png`),
+        },
+        'hero_mleh': {
+            // 【英雄·姆莱·亚美尼亚】[2026-10-19 补入] DE「Mleh」，借用「双手剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TWOHANDEDSWORDSMAN/death_${dir}.png`),
+        },
+        'hero_selimthegrim': {
+            // 【英雄·冷酷者塞利姆·奥斯曼】[2026-10-19 补入] DE「Selim the Grim」，借用「萨珊波斯萨瓦兰骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SAVAR/death_${dir}.png`),
+        },
+        'hero_stephan': {
+            // 【英雄·斯蒂芬·亚美尼亚】[2026-10-19 补入] DE「Stephan」，借用「亚美尼亚修士战士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/death_${dir}.png`),
+        },
+        'hero_yury': {
+            // 【英雄·尤里·斯拉夫】[2026-10-19 补入] DE「Yury」，借用「英雄·骑马伊瓦伊洛·保加利亚」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IVAYLO/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IVAYLO/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IVAYLO/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IVAYLO/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/IVAYLO/death_${dir}.png`),
+        },
+        'hero_zakare': {
+            // 【英雄·扎卡雷·格鲁吉亚】[2026-10-19 补入] DE「Zakare」，借用「亚美尼亚修士战士高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARRIORPRIEST/death_${dir}.png`),
+        },
+        'hero_dongzhuo': {
+            // 【英雄·董卓·河西】[2026-10-19 补入] DE「Dong Zhuo」，借用「南北朝黑光铠骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HEI_KUANG_HEAVY/death_${dir}.png`),
+        },
+        'emperor_in_a_litter': {
+            // 【乘舆中的皇帝】[2026-10-19 补入] DE「Emperor in a Litter」，素材 /SUCAI/EMPERORLITTER/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EMPERORLITTER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EMPERORLITTER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EMPERORLITTER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EMPERORLITTER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/EMPERORLITTER/death_${dir}.png`),
+        },
+        'hero_liubiao': {
+            // 【英雄·刘表·江南】[2026-10-19 补入] DE「Liu Biao」，借用「先秦远程战车」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARCHARIOT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARCHARIOT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARCHARIOT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARCHARIOT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/WARCHARIOT/death_${dir}.png`),
+        },
+        'hero_whitetigeryan': {
+            // 【英雄·严白虎·江南】[2026-10-19 补入] DE「White Tiger Yan」，借用「魏虎骑兵精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETIGERCAVALRY/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETIGERCAVALRY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETIGERCAVALRY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETIGERCAVALRY/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITETIGERCAVALRY/death_${dir}.png`),
+        },
+        'hero_yuji': {
+            // 【英雄·于吉·江南】[2026-10-19 补入] DE「Yu Ji」，借用「英雄·昌德·菩达一·瞿折罗」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/death_${dir}.png`),
+        },
+        'hero_yuanshao': {
+            // 【英雄·袁绍·河朔】[2026-10-19 补入] DE「Yuan Shao」，借用「鲜卑掠骑兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/XIANBEI_RAIDER/death_${dir}.png`),
+        },
+        'hero_zhangjue': {
+            // 【英雄·张角·河朔】[2026-10-19 补入] DE「Zhang Jue」，借用「英雄·昌德·菩达一·瞿折罗」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_ASIA/death_${dir}.png`),
+        },
+        'hero_zhaoyun': {
+            // 【英雄·赵云·巴蜀】[2026-10-19 补入] DE「Zhao Yun」，借用「草原枪骑兵高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_STEPPE_LANCER/death_${dir}.png`),
+        },
+        'hero_zhouyu': {
+            // 【英雄·周瑜·江南】[2026-10-19 补入] DE「Zhou Yu」，借用「吴火焰弓箭手精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_FIRE_ARCHER/death_${dir}.png`),
+        },
+        'hero_einarpaunchshaker': {
+            // 【英雄·神射手埃纳尔·维京】[2026-10-19 补入] DE「Einar Paunch-Shaker」，借用「亚美尼亚复合弓手精锐」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_COMPOSITE_BOWMAN/death_${dir}.png`),
+        },
+        'hero_finnarnason': {
+            // 【英雄·芬恩·阿纳森·维京】[2026-10-19 补入] DE「Finn Arnason」，借用「长戟兵」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HALBERDIER/death_${dir}.png`),
+        },
+        'hero_kalfarnason': {
+            // 【英雄·卡尔夫·阿纳森·维京】[2026-10-19 补入] DE「Kalf Arnason」，借用「重装剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/LONGSWORDSMAN/death_${dir}.png`),
+        },
+        'hero_cleon': {
+            // 【英雄·克里昂·雅典】[2026-10-19 补入] DE「Cleon」，借用「雅典将军卫队」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/STRATEGOS/death_${dir}.png`),
+        },
+        'hero_darius': {
+            // 【英雄·大流士·阿契美尼德】[2026-10-19 补入] DE「Darius」，借用「双轮战车高级」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_WAR_CHARIOT/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_WAR_CHARIOT/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_WAR_CHARIOT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_WAR_CHARIOT/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITE_WAR_CHARIOT/death_${dir}.png`),
+        },
+        'hero_leonidas': {
+            // 【英雄·列奥尼达·斯巴达】[2026-10-19 补入] DE「Leonidas」，借用「斯巴达三百」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/HIPPEUS/death_${dir}.png`),
+        },
+        'hero_miltiades': {
+            // 【英雄·米太亚德·雅典】[2026-10-19 补入] DE「Miltiades」，借用「军事执政官」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/POLEMARCH/death_${dir}.png`),
+        },
+        'hero_flagshipofnearchos': {
+            // 【英雄·尼阿库斯旗舰·马其顿】[2026-10-19 补入] DE「Flagship of Nearchos」，素材 /SUCAI/SHP_FLAGSHIP/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SHP_FLAGSHIP/death_${dir}.png`),
+        },
+        'hero_hephaistion': {
+            // 【英雄·赫菲斯提昂·马其顿】[2026-10-19 补入] DE「Hephaistion」，借用「英雄·腓力二世·马其顿」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/death_${dir}.png`),
+        },
+        'hero_nearchos': {
+            // 【英雄·尼阿库斯·马其顿】[2026-10-19 补入] DE「Nearchos」，借用「英雄·腓力二世·马其顿」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MACEDONIAN_COMMANDER/death_${dir}.png`),
+        },
+        // ── 2026-10-19 补入的 DE 单位（tools/de-add-missing-units.mjs 生成）──
+        'hero_haraldhardrada': {
+            // 【英雄·哈拉尔·哈德拉达·维京】[2026-10-19 补入] DE「Harald Hardrada」，借用「英雄·红胡子艾里克·维京」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ELITEBERSERK/death_${dir}.png`),
+        },
+        // ── 2026-10-19 补入的 DE 单位（tools/de-add-missing-units.mjs 生成）──
+        'alfred_the_alpaca': {
+            // 【羊驼阿弗瑞德】[2026-10-19 补入] DE「Alfred the Alpaca」，素材 /SUCAI/ALFRED/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALFRED/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALFRED/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALFRED/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALFRED/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ALFRED/death_${dir}.png`),
+        },
+        'alpaca': {
+            // 【羊驼】[2026-10-19 补入] DE「Alpaca」，素材 /SUCAI_ANIMAL/ALPACA/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'bactrian_camel': {
+            // 【双峰骆驼】[2026-10-19 补入] DE「Bactrian Camel」，素材 /SUCAI_ANIMAL/DROMEDARY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'camel': {
+            // 【骆驼】[2026-10-19 补入] DE「Camel」，素材 /SUCAI_ANIMAL/CAMEL/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'cart': {
+            // 【推车】[2026-10-19 补入] DE「Cart」，借用「装在桶里的皇帝」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/TRADE_CART_WEST/death_${dir}.png`),
+        },
+        'cobra_car': {
+            // 【眼镜蛇跑车】[2026-10-19 补入] DE「Cobra Car」，素材 /SUCAI/SIE_COBRA_CAR/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_COBRA_CAR/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_COBRA_CAR/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_COBRA_CAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/SIE_COBRA_CAR/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'dire_wolf': {
+            // 【恶狼】[2026-10-19 补入] DE「Dire Wolf」，借用「猎狼」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'donkey': {
+            // 【毛驴】[2026-10-19 补入] DE「Donkey」，素材 /SUCAI_ANIMAL/DONKEY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DONKEY/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DONKEY/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DONKEY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DONKEY/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'dummy_target': {
+            // 【假人目标】[2026-10-19 补入] DE「Dummy Target」，素材 /SUCAI/TRAINING_DUMMY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRAINING_DUMMY/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRAINING_DUMMY/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRAINING_DUMMY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TRAINING_DUMMY/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'furious_the_monkey_boy': {
+            // 【狂暴猴孩】[2026-10-19 补入] DE「Furious the Monkey Boy」，素材 /SUCAI_ANIMAL/MONKEY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'horse': {
+            // 【马】[2026-10-19 补入] DE「Horse」，素材 /SUCAI_ANIMAL/HORSE/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'iron_boar': {
+            // 【铁甲野猪】[2026-10-19 补入] DE「Iron Boar」，素材 /SUCAI_ANIMAL/BOAR/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/BOAR/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/BOAR/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/BOAR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/BOAR/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'king': {
+            // 【国王】[2026-10-19 补入] DE「King」，借用「英雄·贝拉四世国王·马扎尔」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/KING_WEST/death_${dir}.png`),
+        },
+        'merchant': {
+            // 【商人】[2026-10-19 补入] DE「Merchant」，素材 /SUCAI_TRADE/MERCHANT_WEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/MERCHANT_WEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/MERCHANT_WEST/move_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/MERCHANT_WEST/move_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_TRADE/MERCHANT_WEST/move_${dir}.png`),
+            DEATH: [],
+        },
+        'monkey': {
+            // 【猴子】[2026-10-19 补入] DE「Monkey」，素材 /SUCAI_ANIMAL/MONKEY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/MONKEY/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'nessie': {
+            // 【尼西】[2026-10-19 补入] DE「Nessie」，素材 /SUCAI/NESSIE/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NESSIE/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NESSIE/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NESSIE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/NESSIE/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'ox_cart': {
+            // 【牛推车】[2026-10-19 补入] DE「Ox Cart」，素材 /SUCAI/MISC_CART_OX/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_CART_OX/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_CART_OX/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_CART_OX/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_CART_OX/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_CART_OX/death_${dir}.png`),
+        },
+        'ox_wagon': {
+            // 【牛战车】[2026-10-19 补入] DE「Ox Wagon」，素材 /SUCAI/MISC_WAGON_OX/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WAGON_OX/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WAGON_OX/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WAGON_OX/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WAGON_OX/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WAGON_OX/death_${dir}.png`),
+        },
+        'pagan_priest': {
+            // 【异教祭司】[2026-10-19 补入] DE「Pagan Priest」，素材 /SUCAI/MONK_PAGAN_PRIEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PAGAN_PRIEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PAGAN_PRIEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PAGAN_PRIEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PAGAN_PRIEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PAGAN_PRIEST/death_${dir}.png`),
+        },
+        'penguin': {
+            // 【企鹅】[2026-10-19 补入] DE「Penguin」，素材 /SUCAI_ANIMAL/PENGUIN/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'photonman': {
+            // 【装备激光武器的人】[2026-10-19 补入] DE「Photonman」，素材 /SUCAI/ARC_PHOTONMAN/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARC_PHOTONMAN/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARC_PHOTONMAN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARC_PHOTONMAN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARC_PHOTONMAN/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/ARC_PHOTONMAN/death_${dir}.png`),
+        },
+        'priest': {
+            // 【祭司】[2026-10-19 补入] DE「Priest」，素材 /SUCAI/MONK_PRIEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PRIEST/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PRIEST/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PRIEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PRIEST/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MONK_PRIEST/death_${dir}.png`),
+        },
+        'rabid_wolf': {
+            // 【狂暴之狼】[2026-10-19 补入] DE「Rabid Wolf」，借用「猎狼」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/WOLF/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'relic_cart': {
+            // 【圣物推车】[2026-10-19 补入] DE「Relic Cart」，素材 /SUCAI/MISC_RELIC/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_RELIC/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_RELIC/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_RELIC/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_RELIC/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'repairer': {
+            // 【修理工】[2026-10-19 补入] DE「Repairer」，素材 /SUCAI/VIL_MALE_BUILDER/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_BUILDER/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_BUILDER/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_BUILDER/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_BUILDER/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/VIL_MALE_BUILDER/death_${dir}.png`),
+        },
+        'sharkatzor': {
+            // 【骑鲨圣猫】[2026-10-19 补入] DE「Sharkatzor」，素材 /SUCAI/CHEAT_SHARKATZOR/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_SHARKATZOR/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_SHARKATZOR/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_SHARKATZOR/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_SHARKATZOR/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'stormy_dog': {
+            // 【风暴犬】[2026-10-19 补入] DE「Stormy Dog」，素材 /SUCAI/CHEAT_STORMYDOG/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_STORMYDOG/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_STORMYDOG/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_STORMYDOG/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/CHEAT_STORMYDOG/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'treasure_chest': {
+            // 【宝藏箱】[2026-10-19 补入] DE「Treasure Chest」，素材 /SUCAI/TREASURE_CHEST/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TREASURE_CHEST/idle_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TREASURE_CHEST/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TREASURE_CHEST/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/TREASURE_CHEST/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'war_penguin': {
+            // 【战争企鹅】[2026-10-19 补入] DE「War Penguin」，素材 /SUCAI_ANIMAL/PENGUIN/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/PENGUIN/attack_${dir}.png`),
+            DEATH: [],
+        },
+        'wheeled_ship': {
+            // 【轮式船】[2026-10-19 补入] DE「Wheeled Ship」，素材 /SUCAI/MISC_WHEELED_SHIP/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WHEELED_SHIP/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WHEELED_SHIP/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WHEELED_SHIP/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WHEELED_SHIP/idle_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MISC_WHEELED_SHIP/death_${dir}.png`),
+        },
+        'wild_alpaca': {
+            // 【野羊驼】[2026-10-19 补入] DE「Wild Alpaca」，素材 /SUCAI_ANIMAL/ALPACA/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/ALPACA/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'wild_bactrian_camel': {
+            // 【野双峰骆驼】[2026-10-19 补入] DE「Wild Bactrian Camel」，素材 /SUCAI_ANIMAL/DROMEDARY/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/DROMEDARY/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'wild_camel': {
+            // 【野骆驼】[2026-10-19 补入] DE「Wild Camel」，素材 /SUCAI_ANIMAL/CAMEL/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/CAMEL/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'wild_horse': {
+            // 【野马】[2026-10-19 补入] DE「Wild Horse」，素材 /SUCAI_ANIMAL/HORSE/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/HORSE/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'goat': {
+            // 【山羊】[2026-10-19 补入] DE「Goat」，素材 /SUCAI_ANIMAL/GOAT/
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/GOAT/walk_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/GOAT/idle_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/GOAT/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI_ANIMAL/GOAT/idle_${dir}.png`),
+            DEATH: [],
+        },
+        'spy': {
+            // 【间谍】[2026-10-19 补入] DE「Spy」，借用「武装剑士」兵模
+            MOVE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/move_${dir}.png`),
+            ATTACK: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/attack_${dir}.png`),
+            IDLE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/idle_${dir}.png`),
+            DAMAGE: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/attack_${dir}.png`),
+            DEATH: [0, 1, 2, 3, 4, 5, 6, 7].map(dir => `/SUCAI/MANATARMS/death_${dir}.png`),
+        },
     },
     // 旧 public/assets/avg/NPC 与 /assets/NPC/ 三帧 PNG 已废弃（勿引用 avg/）。
     // 沙盒/map 军团贴图统一走 LEGION + UNIT_ASSETS（S10DB 八向）。

@@ -1,0 +1,739 @@
+{
+  "_说明": "补入兵种鉴赏的 DE 单位逐条登记（2026-10-19 主人令「全部解析……不能缺少任何单位」）。id＝兵种 id；zh＝中文名（默认 DE 官方中文，译错的已改，见 fix）；named＝是否具体人物（是→「英雄·人名·文化」，否→精英兵用原名）；culture＝62+4 文化（只给具体人物，按人物身份定，待按样子复核）；age＝时代（不填则取所借兵模的时代）。",
+  "Missionary": {
+    "id": "missionary",
+    "zh": "传教士",
+    "cat": "civilian",
+    "age": "castle"
+  },
+  "Fishing Ship": {
+    "id": "fishing_ship",
+    "zh": "渔船",
+    "cat": "civilian",
+    "age": "feudal"
+  },
+  "Monk": {
+    "id": "monk",
+    "zh": "僧侣",
+    "cat": "civilian",
+    "age": "castle"
+  },
+  "Priestess": {
+    "id": "priestess",
+    "zh": "女祭司",
+    "cat": "civilian",
+    "age": "antiquity"
+  },
+  "Trade Cart": {
+    "id": "trade_cart",
+    "zh": "贸易车",
+    "cat": "civilian",
+    "age": "feudal"
+  },
+  "Villager": {
+    "id": "villager",
+    "zh": "村民",
+    "cat": "civilian",
+    "age": "feudal"
+  },
+  "Trebuchet (Packed)": {
+    "id": "trebuchet_packed",
+    "zh": "巨型投石机（打包）",
+    "cat": "siege",
+    "age": "castle"
+  },
+  "Aethelfrith": {
+    "id": "hero_aethelfrith",
+    "named": true,
+    "culture": "撒克逊"
+  },
+  "Archbishop": {
+    "id": "archbishop",
+    "named": false
+  },
+  "Archer of the Eyes": {
+    "id": "archer_of_the_eyes",
+    "named": false
+  },
+  "Bad Neighbor": {
+    "id": "bad_neighbor",
+    "named": false,
+    "age": "castle"
+  },
+  "Belisarius": {
+    "id": "hero_belisarius",
+    "named": true,
+    "culture": "拜占庭"
+  },
+  "Charlemagne": {
+    "id": "hero_charlemagne",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Charles Martel": {
+    "id": "hero_charlesmartel",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Constable Richemont": {
+    "id": "hero_constablerichemont",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Duke D'Alençon": {
+    "id": "hero_dukedalencon",
+    "zh": "阿朗松公爵",
+    "fix": "DE 官方中文「诺曼底公爵」译错：Alençon＝阿朗松",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "El Cid": {
+    "id": "hero_elcid",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "Emperor in a Barrel": {
+    "id": "emperor_in_a_barrel",
+    "named": false,
+    "age": "castle"
+  },
+  "Erik the Red": {
+    "id": "hero_erikthered",
+    "named": true,
+    "culture": "维京"
+  },
+  "Gawain": {
+    "id": "hero_gawain",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Genghis Khan": {
+    "id": "hero_genghiskhan",
+    "named": true,
+    "culture": "漠北蒙古"
+  },
+  "God's Own Sling": {
+    "id": "gods_own_sling",
+    "named": false,
+    "age": "castle"
+  },
+  "Guy Josselyne": {
+    "id": "hero_guyjosselyne",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Hrolf the Ganger": {
+    "id": "hero_hrolftheganger",
+    "named": true,
+    "culture": "维京"
+  },
+  "Hunting Wolf": {
+    "id": "hunting_wolf",
+    "named": false,
+    "age": "feudal"
+  },
+  "Jean Bureau": {
+    "id": "hero_jeanbureau",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Jean de Lorrain": {
+    "id": "hero_jeandelorrain",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "King Arthur": {
+    "id": "hero_kingarthur",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Kitabatake": {
+    "id": "hero_kitabatake",
+    "named": true,
+    "culture": "日本"
+  },
+  "La Hire": {
+    "id": "hero_lahire",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Lancelot": {
+    "id": "hero_lancelot",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Lord de Graville": {
+    "id": "hero_lorddegraville",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Master of the Templar": {
+    "id": "master_of_the_templar",
+    "named": false
+  },
+  "Minamoto": {
+    "id": "hero_minamoto",
+    "named": true,
+    "culture": "日本"
+  },
+  "Mordred": {
+    "id": "hero_mordred",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Ornlu the Wolf": {
+    "id": "ornlu_the_wolf",
+    "named": false,
+    "age": "feudal"
+  },
+  "Reynald de Chatillon": {
+    "id": "hero_reynalddechatillon",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Richard the Lionheart": {
+    "id": "hero_richardthelionheart",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Robin Hood": {
+    "id": "hero_robinhood",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Roland": {
+    "id": "hero_roland",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Saboteur": {
+    "id": "saboteur",
+    "named": false
+  },
+  "Sheriff of Nottingham": {
+    "id": "hero_sheriffofnottingham",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Siegfried": {
+    "id": "hero_siegfried",
+    "named": true,
+    "culture": "条顿"
+  },
+  "Sieur Bertrand": {
+    "id": "hero_sieurbertrand",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Sieur de Metz": {
+    "id": "hero_sieurdemetz",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Sir John Fastolf": {
+    "id": "hero_sirjohnfastolf",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Tamerlane": {
+    "id": "hero_tamerlane",
+    "named": true,
+    "culture": "鞑靼"
+  },
+  "The Black Prince": {
+    "id": "hero_theblackprince",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Theodoric the Goth": {
+    "id": "hero_theodoricthegoth",
+    "zh": "狄奥多里克",
+    "named": true,
+    "culture": "哥特"
+  },
+  "Admiral Yi Sun-Shin": {
+    "id": "hero_admiralyisunshin",
+    "named": true,
+    "culture": "高丽"
+  },
+  "Alexander Nevski": {
+    "id": "hero_alexandernevski",
+    "zh": "亚历山大·涅夫斯基",
+    "fix": "DE 官方中文「亚历山大 莱斯基」译错",
+    "named": true,
+    "culture": "斯拉夫"
+  },
+  "Bleda the Hun": {
+    "id": "hero_bledathehun",
+    "zh": "布莱达",
+    "fix": "DE 官方中文「匈奴王布莱达」把匈人写成匈奴（项目定：匈奴不是匈人）",
+    "named": true,
+    "culture": "匈人"
+  },
+  "El Cid Campeador": {
+    "id": "hero_elcidcampeador",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "Henry V": {
+    "id": "hero_henryv",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "King Alfonso": {
+    "id": "hero_kingalfonso",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "King Sancho": {
+    "id": "hero_kingsancho",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "Nobunaga": {
+    "id": "hero_nobunaga",
+    "named": true,
+    "culture": "日本"
+  },
+  "Pope Leo I": {
+    "id": "hero_popeleoi",
+    "zh": "教皇利奥一世",
+    "named": true,
+    "culture": "罗马",
+    "fix": "DE 官方中文「罗马教皇里奥一世」，改用通行译名"
+  },
+  "Scythian Scout": {
+    "id": "scythian_scout",
+    "named": false
+  },
+  "Scythian Wild Woman": {
+    "id": "scythian_wild_woman",
+    "zh": "斯基泰野女人",
+    "named": false
+  },
+  "William the Conqueror": {
+    "id": "hero_williamtheconqueror",
+    "named": true,
+    "culture": "法兰克"
+  },
+  "Cuauhtemoc": {
+    "id": "hero_cuauhtemoc",
+    "named": true,
+    "culture": "阿兹特克"
+  },
+  "Francisco de Orellana": {
+    "id": "hero_franciscodeorellana",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "Frederick Barbarossa": {
+    "id": "hero_frederickbarbarossa",
+    "named": true,
+    "culture": "条顿"
+  },
+  "Gonzalo Pizarro": {
+    "id": "hero_gonzalopizarro",
+    "named": true,
+    "culture": "西班牙"
+  },
+  "Norse Chieftain": {
+    "id": "norse_chieftain",
+    "named": false
+  },
+  "Khosrau": {
+    "id": "hero_khosrau",
+    "named": true,
+    "culture": "波斯"
+  },
+  "Prithvi": {
+    "id": "hero_prithvi",
+    "named": true,
+    "culture": "瞿折罗"
+  },
+  "Queen": {
+    "id": "queen",
+    "named": false,
+    "age": "castle"
+  },
+  "Saladin": {
+    "id": "hero_saladin",
+    "named": true,
+    "culture": "萨拉森"
+  },
+  "Sanyogita": {
+    "id": "hero_sanyogita",
+    "named": true,
+    "culture": "瞿折罗",
+    "age": "castle"
+  },
+  "Abraha Elephant": {
+    "id": "hero_abrahaelephant",
+    "zh": "阿布拉哈战象",
+    "named": true,
+    "culture": "埃塞俄比亚"
+  },
+  "Babur": {
+    "id": "hero_babur",
+    "named": true,
+    "culture": "印度斯坦"
+  },
+  "Guglielmo Embriaco": {
+    "id": "hero_guglielmoembriaco",
+    "named": true,
+    "culture": "意大利"
+  },
+  "Henry II": {
+    "id": "hero_henryii",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Huayna Capac": {
+    "id": "hero_huaynacapac",
+    "named": true,
+    "culture": "印加"
+  },
+  "Itzcoatl": {
+    "id": "hero_itzcoatl",
+    "named": true,
+    "culture": "阿兹特克"
+  },
+  "Little John": {
+    "id": "hero_littlejohn",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Miklos Toldi": {
+    "id": "hero_miklostoldi",
+    "named": true,
+    "culture": "马扎尔"
+  },
+  "Musa ibn Nusayr": {
+    "id": "hero_musaibnnusayr",
+    "named": true,
+    "culture": "萨拉森"
+  },
+  "Mustafa Pasha": {
+    "id": "hero_mustafapasha",
+    "named": true,
+    "culture": "奥斯曼"
+  },
+  "Pacal II": {
+    "id": "hero_pacalii",
+    "named": true,
+    "culture": "玛雅"
+  },
+  "Princess Yodit": {
+    "id": "hero_princessyodit",
+    "named": true,
+    "culture": "埃塞俄比亚",
+    "age": "castle"
+  },
+  "Richard de Clare": {
+    "id": "hero_richarddeclare",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Su Dingfang": {
+    "id": "hero_sudingfang",
+    "named": true,
+    "culture": "中原"
+  },
+  "Tristan": {
+    "id": "hero_tristan",
+    "named": true,
+    "culture": "不列颠"
+  },
+  "Yekuno Amlak": {
+    "id": "hero_yekunoamlak",
+    "named": true,
+    "culture": "埃塞俄比亚"
+  },
+  "Zawisza the Black": {
+    "id": "hero_zawiszatheblack",
+    "zh": "黑衣扎维沙",
+    "named": true,
+    "culture": "波兰"
+  },
+  "Bui Bi": {
+    "id": "hero_buibi",
+    "named": true,
+    "culture": "越南"
+  },
+  "Jayaviravarman": {
+    "id": "hero_jayaviravarman",
+    "named": true,
+    "culture": "高棉"
+  },
+  "Le Lai": {
+    "id": "hero_lelai",
+    "named": true,
+    "culture": "越南"
+  },
+  "Le Trien": {
+    "id": "hero_letrien",
+    "named": true,
+    "culture": "越南"
+  },
+  "Luu Nhan Chu": {
+    "id": "hero_luunhanchu",
+    "named": true,
+    "culture": "越南"
+  },
+  "Raden Wijaya": {
+    "id": "hero_radenwijaya",
+    "named": true,
+    "culture": "马来"
+  },
+  "Suryavarman I": {
+    "id": "hero_suryavarmani",
+    "named": true,
+    "culture": "高棉"
+  },
+  "Tabinshwehti": {
+    "id": "hero_tabinshwehti",
+    "named": true,
+    "culture": "缅甸"
+  },
+  "Udayadityavarman I": {
+    "id": "hero_udayadityavarmani",
+    "named": true,
+    "culture": "高棉"
+  },
+  "Wang Tong": {
+    "id": "hero_wangtong",
+    "named": true,
+    "culture": "中原"
+  },
+  "Henry the Lion": {
+    "id": "hero_henrythelion",
+    "named": true,
+    "culture": "撒克逊"
+  },
+  "Leif Erikson": {
+    "id": "hero_leiferikson",
+    "named": true,
+    "culture": "维京"
+  },
+  "The Middlebrook": {
+    "id": "the_middlebrook",
+    "named": false
+  },
+  "Tokhtamysh Khan": {
+    "id": "hero_tokhtamyshkhan",
+    "named": true,
+    "culture": "鞑靼"
+  },
+  "Topa Yupanqui": {
+    "id": "hero_topayupanqui",
+    "named": true,
+    "culture": "印加"
+  },
+  "Urus Khan": {
+    "id": "hero_uruskhan",
+    "named": true,
+    "culture": "鞑靼"
+  },
+  "Vasco da Gama": {
+    "id": "hero_vascodagama",
+    "named": true,
+    "culture": "葡萄牙"
+  },
+  "Jacqueline of Hainaut": {
+    "id": "hero_jacquelineofhainaut",
+    "named": true,
+    "culture": "勃艮第",
+    "age": "castle"
+  },
+  "Warwolf Trebuchet": {
+    "id": "warwolf_trebuchet",
+    "named": false,
+    "age": "castle"
+  },
+  "Dmitry of Moscow": {
+    "id": "hero_dmitryofmoscow",
+    "named": true,
+    "culture": "斯拉夫"
+  },
+  "Emperor Sigismund": {
+    "id": "hero_emperorsigismund",
+    "named": true,
+    "culture": "条顿"
+  },
+  "Mikhail of Tver": {
+    "id": "hero_mikhailoftver",
+    "named": true,
+    "culture": "斯拉夫"
+  },
+  "Young Jadwiga": {
+    "id": "hero_youngjadwiga",
+    "named": true,
+    "culture": "波兰"
+  },
+  "Amoghavarsha": {
+    "id": "hero_amoghavarsha",
+    "named": true,
+    "culture": "达罗毗荼"
+  },
+  "Ibrahim Lodi": {
+    "id": "hero_ibrahimlodi",
+    "named": true,
+    "culture": "印度斯坦"
+  },
+  "Mihira Bhoja": {
+    "id": "hero_mihirabhoja",
+    "named": true,
+    "culture": "瞿折罗"
+  },
+  "Shaybani Khan": {
+    "id": "hero_shaybanikhan",
+    "named": true,
+    "culture": "鞑靼"
+  },
+  "Young Babur": {
+    "id": "hero_youngbabur",
+    "named": true,
+    "culture": "印度斯坦"
+  },
+  "Ismail": {
+    "id": "hero_ismail",
+    "named": true,
+    "culture": "波斯"
+  },
+  "Ivane": {
+    "id": "hero_ivane",
+    "named": true,
+    "culture": "格鲁吉亚"
+  },
+  "Mleh": {
+    "id": "hero_mleh",
+    "named": true,
+    "culture": "亚美尼亚"
+  },
+  "Selim the Grim": {
+    "id": "hero_selimthegrim",
+    "named": true,
+    "culture": "奥斯曼"
+  },
+  "Stephan": {
+    "id": "hero_stephan",
+    "named": true,
+    "culture": "亚美尼亚"
+  },
+  "Yury": {
+    "id": "hero_yury",
+    "named": true,
+    "culture": "斯拉夫"
+  },
+  "Zakare": {
+    "id": "hero_zakare",
+    "named": true,
+    "culture": "格鲁吉亚"
+  },
+  "Dong Zhuo": {
+    "id": "hero_dongzhuo",
+    "named": true,
+    "culture": "河西"
+  },
+  "Emperor in a Litter": {
+    "id": "emperor_in_a_litter",
+    "zh": "乘舆中的皇帝",
+    "fix": "DE 官方中文「草垫中的皇帝」译错：litter＝乘舆、肩舆",
+    "named": false,
+    "age": "antiquity"
+  },
+  "Liu Biao": {
+    "id": "hero_liubiao",
+    "named": true,
+    "culture": "江南"
+  },
+  "White Tiger Yan": {
+    "id": "hero_whitetigeryan",
+    "named": true,
+    "culture": "江南"
+  },
+  "Yu Ji": {
+    "id": "hero_yuji",
+    "named": true,
+    "culture": "江南"
+  },
+  "Yuan Shao": {
+    "id": "hero_yuanshao",
+    "named": true,
+    "culture": "河朔"
+  },
+  "Zhang Jue": {
+    "id": "hero_zhangjue",
+    "named": true,
+    "culture": "河朔"
+  },
+  "Zhao Yun": {
+    "id": "hero_zhaoyun",
+    "named": true,
+    "culture": "巴蜀"
+  },
+  "Zhou Yu": {
+    "id": "hero_zhouyu",
+    "named": true,
+    "culture": "江南"
+  },
+  "Einar Paunch-Shaker": {
+    "id": "hero_einarpaunchshaker",
+    "named": true,
+    "culture": "维京"
+  },
+  "Finn Arnason": {
+    "id": "hero_finnarnason",
+    "named": true,
+    "culture": "维京"
+  },
+  "Kalf Arnason": {
+    "id": "hero_kalfarnason",
+    "named": true,
+    "culture": "维京"
+  },
+  "Cleon": {
+    "id": "hero_cleon",
+    "named": true,
+    "culture": "雅典"
+  },
+  "Darius": {
+    "id": "hero_darius",
+    "named": true,
+    "culture": "阿契美尼德"
+  },
+  "Leonidas": {
+    "id": "hero_leonidas",
+    "named": true,
+    "culture": "斯巴达"
+  },
+  "Miltiades": {
+    "id": "hero_miltiades",
+    "named": true,
+    "culture": "雅典"
+  },
+  "Flagship of Nearchos": {
+    "id": "hero_flagshipofnearchos",
+    "zh": "尼阿库斯旗舰",
+    "named": true,
+    "culture": "马其顿",
+    "age": "antiquity"
+  },
+  "Hephaistion": {
+    "id": "hero_hephaistion",
+    "named": true,
+    "culture": "马其顿"
+  },
+  "Nearchos": {
+    "id": "hero_nearchos",
+    "zh": "尼阿库斯",
+    "named": true,
+    "culture": "马其顿"
+  },
+  "Harald Hardrada": {
+    "id": "hero_haraldhardrada",
+    "zh": "哈拉尔·哈德拉达",
+    "named": true,
+    "culture": "维京",
+    "note": "DE 老版英雄（借狂战士精锐模型），与 DE 新版「Harald」（hero_harald，专属模型）是两个单位"
+  }
+}
