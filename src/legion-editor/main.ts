@@ -816,7 +816,7 @@ export const DE_UNITS_CATALOG: DeUnitDef[] = [
     { id: 'hero_whitetigeryan', name: '英雄·严白虎·江南', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ELITETIGERCAVALRY/' },   // [2026-10-19 补入] DE「White Tiger Yan」dat#2048；借用「魏虎骑兵精锐」兵模
     { id: 'hero_yuji', name: '英雄·于吉·江南', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_ASIA/' },   // [2026-10-19 补入] DE「Yu Ji」dat#2047；借用「英雄·昌德·菩达一·瞿折罗」兵模
     { id: 'hero_yuanshao', name: '英雄·袁绍·河朔', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/XIANBEI_RAIDER/' },   // [2026-10-19 补入] DE「Yuan Shao」dat#2046；借用「鲜卑掠骑兵」兵模
-    { id: 'hero_zhangjue', name: '英雄·张角·河朔', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_ASIA/' },   // [2026-10-19 补入] DE「Zhang Jue」dat#2050；借用「英雄·昌德·菩达一·瞿折罗」兵模
+    { id: 'hero_zhangjue', name: '英雄·张角·中原', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/MONK_ASIA/' },   // [2026-10-19 补入] DE「Zhang Jue」dat#2050；借用「英雄·昌德·菩达一·瞿折罗」兵模
     { id: 'hero_zhaoyun', name: '英雄·赵云·巴蜀', category: 'hero', age: 'castle', pathPrefix: '/SUCAI/ELITE_STEPPE_LANCER/' },   // [2026-10-19 补入] DE「Zhao Yun」dat#2051；借用「草原枪骑兵高级」兵模
     { id: 'hero_zhouyu', name: '英雄·周瑜·江南', category: 'hero', age: 'antiquity', pathPrefix: '/SUCAI/ELITE_FIRE_ARCHER/' },   // [2026-10-19 补入] DE「Zhou Yu」dat#2044；借用「吴火焰弓箭手精锐」兵模
     { id: 'hero_einarpaunchshaker', name: '英雄·神射手埃纳尔·维京', category: 'hero', age: 'feudal', pathPrefix: '/SUCAI/ELITE_COMPOSITE_BOWMAN/' },   // [2026-10-19 补入] DE「Einar Paunch-Shaker」dat#2727；借用「亚美尼亚复合弓手精锐」兵模
@@ -1095,7 +1095,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_constablerichemont: 'mounted_hero',
     hero_dukedalencon: 'mounted_hero',
     hero_elcid: 'foot_hero',
-    emperor_in_a_barrel: 'magic_hero',
+    emperor_in_a_barrel: 'noncombat_hero',
     hero_erikthered: 'foot_hero',
     hero_gawain: 'mounted_hero',
     hero_genghiskhan: 'horse_archer_hero',
@@ -1197,7 +1197,7 @@ export const UNIT_SUBCATEGORY: Record<string, SubCategory> = {
     hero_yury: 'foot_hero',
     hero_zakare: 'foot_hero',
     hero_dongzhuo: 'mounted_hero',
-    emperor_in_a_litter: 'magic_hero',
+    emperor_in_a_litter: 'noncombat_hero',
     hero_liubiao: 'horse_archer_hero',
     hero_whitetigeryan: 'mounted_hero',
     hero_yuji: 'magic_hero',
@@ -2051,6 +2051,11 @@ function applyFilter(): void {
                 const name = getUnitDisplayName(s.type).toLowerCase();
                 return s.type.toLowerCase().includes(q) || name.includes(q);
             });
+            // 🔴 [2026-10-19 主人报「军团编辑搜索，找不到英雄人名」] 主将队（英雄兵模）也要参与搜索：
+            //    之前只搜势力/军团名/三排/舰队，搜「雅德维加」「张角」这种主将人名永远 0 结果。
+            const commanderName = r.commanderUnit ? getUnitDisplayName(r.commanderUnit).toLowerCase() : '';
+            const commanderMatch = !!r.commanderUnit
+                && (commanderName.includes(q) || r.commanderUnit.toLowerCase().includes(q));
             const match = r.factionId.toLowerCase().includes(q)
                 || r.factionName.toLowerCase().includes(q)
                 || r.flagText.toLowerCase().includes(q)
@@ -2059,6 +2064,7 @@ function applyFilter(): void {
                 || (r.eliteName && r.eliteName.toLowerCase().includes(q))
                 || effectiveLegionName(r).toLowerCase().includes(q)
                 || slotMatch
+                || commanderMatch
                 || shipName.toLowerCase().includes(q)
                 || shipAssetId.toLowerCase().includes(q);
             if (!match) return false;
@@ -4573,8 +4579,14 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     /** 兵种鉴赏同款「子分类」筛选（刀盾/长矛/弓手/弩手/战骑/弓骑…） */
     let currentSub: 'all' | SubCategory = 'all';
     const rowTitle = isCommander ? '英雄（主队 · 第 10 队）' : ['前排', '中坚', '后排'][rowIdx];
-    const isAllowed = (u: { id: string; category: UnitCategory }) =>
-        !isCommander || (u.category !== 'naval' && getUnitSubcategory(u.id) !== 'naval_hero');
+    const isAllowed = (u: { id: string; category: UnitCategory }) => {
+        if (!isCommander) return true;
+        if (u.category !== 'hero') return false;
+        const sub = getUnitSubcategory(u.id);
+        if (sub === 'naval_hero' || sub === 'noncombat_hero') return false;
+        if (['scythian_scout', 'norse_chieftain', 'sosso_guard', 'master_of_the_templar', 'sunda_royal_fighter'].includes(u.id)) return false;
+        return true;
+    };
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
@@ -4591,14 +4603,21 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         // 切 tab / 搜索会整块换掉图标节点，mouseout 不一定补发 —— 先主动收起放大镜
         hideThumbZoom();
         const q = unitSearch.trim().toLowerCase();
-        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤（主将队过滤战船）
+        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤（主将队过滤战船与非战斗英雄）
         const units = (q
             ? DE_UNITS_CATALOG.filter(u => isAllowed(u) && (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)))
             : DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === currentTab))
             .filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub)
             .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
-        const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab] || []).filter(s => !isCommander || s !== 'naval_hero');
+        const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab] || []).filter(s => !isCommander || (s !== 'naval_hero' && s !== 'noncombat_hero'));
         const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => isAllowed(u) && getUnitSubcategory(u.id) === s).length;
+        const modalTabsHtml = isCommander
+            ? `<div class="le-modal-tab active" data-cat="hero">👑 战斗英雄 (${DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === 'hero').length})</div>`
+            : CATEGORY_ORDER.map(c => {
+                const count = DE_UNITS_CATALOG.filter(u => u.category === c).length;
+                const icon = c === 'infantry' ? '🛡️ ' : c === 'cavalry' ? '🐎 ' : c === 'ranged' ? '🏹 ' : c === 'siege' ? '⚙️ ' : c === 'naval' ? '🚢 ' : c === 'hero' ? '👑 ' : c === 'civilian' ? '🧺 ' : '🐾 ';
+                return `<div class="le-modal-tab ${currentTab === c ? 'active' : ''}" data-cat="${c}">${icon}${CATEGORY_LABEL[c]} (${count})</div>`;
+            }).join('');
         overlay.innerHTML = `
         <div class="le-modal">
           <div class="le-modal-header">
@@ -4606,12 +4625,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <button type="button" class="le-btn le-btn-sm" id="le-modal-close" style="font-size:14px;padding:2px 8px;cursor:pointer;">✕</button>
           </div>
           <div class="le-modal-tabs">
-            <div class="le-modal-tab ${currentTab === 'infantry' ? 'active' : ''}" data-cat="infantry">🛡️ 步兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='infantry').length})</div>
-            <div class="le-modal-tab ${currentTab === 'cavalry' ? 'active' : ''}" data-cat="cavalry">🐎 骑兵 (${DE_UNITS_CATALOG.filter(u=>u.category==='cavalry').length})</div>
-            <div class="le-modal-tab ${currentTab === 'ranged' ? 'active' : ''}" data-cat="ranged">🏹 远程 (${DE_UNITS_CATALOG.filter(u=>u.category==='ranged').length})</div>
-            <div class="le-modal-tab ${currentTab === 'siege' ? 'active' : ''}" data-cat="siege">⚙️ 攻城 (${DE_UNITS_CATALOG.filter(u=>u.category==='siege').length})</div>
-            ${isCommander ? '' : `<div class="le-modal-tab ${currentTab === 'naval' ? 'active' : ''}" data-cat="naval">🚢 船只 (${DE_UNITS_CATALOG.filter(u=>u.category==='naval').length})</div>`}
-            <div class="le-modal-tab ${currentTab === 'hero' ? 'active' : ''}" data-cat="hero">👑 英雄 (${DE_UNITS_CATALOG.filter(u=>isAllowed(u) && u.category==='hero').length})</div>
+            ${modalTabsHtml}
           </div>
           <div style="display:flex;align-items:center;gap:8px;padding:8px 12px 0;">
             <span style="font-size:11px;color:#a89f8f;white-space:nowrap;">子分类:</span>
@@ -4636,15 +4650,19 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
             <span style="margin-left:auto;font-size:11px;color:#8a8070;white-space:nowrap;">🔍 鼠标悬停图标放大</span>
           </div>
           <div class="le-modal-body">
-            ${units.map(u => `
+            ${units.map(u => {
+              const sub = getUnitSubcategory(u.id);
+              const subText = sub ? ` · ${SUBCATEGORY_LABEL[sub]}` : '';
+              const tierText = getUnitTier(u) === 'elite' ? ' · ⭐精锐' : '';
+              return `
               <div class="le-unit-card" data-uid="${u.id}">
                 <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
                 <div class="le-unit-card-text">
                   <div class="le-unit-card-name">${u.name}</div>
-                  <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${getUnitTier(u) === 'elite' ? ' · ⭐精锐' : ''}</div>
+                  <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${subText}${tierText}</div>
                 </div>
               </div>
-            `).join('')}
+            `;}).join('')}
           </div>
         </div>
         `;

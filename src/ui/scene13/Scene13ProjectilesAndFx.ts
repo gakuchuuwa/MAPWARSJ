@@ -205,7 +205,6 @@ export const PROJ_TYPE: Record<string, string> = {
     hero_kingalfonso: 'PROJ_MAGIC', hero_kingsancho: 'PROJ_MAGIC',
     hero_udayadityavarmani: 'PROJ_MAGIC',
     queen: 'PROJ_MAGIC', hero_sanyogita: 'PROJ_MAGIC', hero_princessyodit: 'PROJ_MAGIC', hero_jacquelineofhainaut: 'PROJ_MAGIC',
-    emperor_in_a_barrel: 'PROJ_MAGIC', emperor_in_a_litter: 'PROJ_MAGIC',
     // ── [2026-08-18 补] 这些范围伤远程原本没映射，会退回默认的 PROJ_ARROW（投石车射箭矢）──
     antiquity_mangonel: 'PROJ_MANGONEL',
     antiquity_onager: 'PROJ_MANGONEL',
@@ -527,7 +526,6 @@ export const CASTER_TYPES = new Set([
     'hero_kingalfonso', 'hero_kingsancho',
     'hero_udayadityavarmani',
     'queen', 'hero_sanyogita', 'hero_princessyodit', 'hero_jacquelineofhainaut',
-    'emperor_in_a_barrel', 'emperor_in_a_litter',
 ]);
 /** 魔法英雄施法微光配色（清爽青白与淡金星光，替代原杂乱火焰色） */
 export const GREEK_FIRE_COLORS = ['#E8F8FF', '#7CE8FF', '#FFE699', '#FFFFFF'] as const;

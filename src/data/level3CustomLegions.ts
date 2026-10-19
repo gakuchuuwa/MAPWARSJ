@@ -134,7 +134,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '东亚军团',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_guanyu',
+        commanderUnit: 'hero_sunce',
         buildingStyle: 'CENTRAL',
     },
     // 🔴 [2026-10-05 主人令「都套用在游戏中」] 瓦良格卫队本体（兵营兵）与精锐首领，二级瓦良格军团的 3 个槽位放不下，单列一支三级军团，
@@ -210,7 +210,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: [],
         parentLegion: '西欧军团',
         shipId: 'TRANSPORT_SHIP',
-        commanderUnit: 'hero_ivaylo',
+        commanderUnit: 'hero_zhangjue',
         // 🔴 [2026-10-18 主人令] 起义军团＝**西方**造反军团（强盗/亡命之徒），建筑文化 WEST；东方农民起义军改用【帝国时代华夏军团】
         buildingStyle: 'WEST',
     },

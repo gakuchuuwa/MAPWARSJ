@@ -432,7 +432,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_zhangjue',
+        commanderUnit: 'hero_caocao',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },
             { type: 'elite_fire_archer', count: 4 },
@@ -540,7 +540,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'INCENDIARY_SHIP',
-        commanderUnit: 'hero_liubei',
+        commanderUnit: 'hero_zhugeliang',
         slots: [
             { type: 'elite_white_feather_guard', count: 3 },
             { type: 'chukonu', count: 4 },
@@ -557,7 +557,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SHU_CASTLE_AGE3', castleName: '巴蜀 汉式斗拱望楼',
         formationMode: 'fish_scale',
         shipId: 'FIRE_GALLEY',
-        commanderUnit: 'hero_zhugeliang',
+        commanderUnit: 'hero_liubei',
         // 🔴 [2026-10-16 主人令] 城堡兵普通档进同文化封建军团：蜀白毦兵（普通档）替下借来的中国诸葛弩。
         slots: [
             { type: 'liao_dao', count: 3 },
@@ -1294,7 +1294,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         slots: [
             { type: 'elite_skirmisher', count: 4 },
             { type: 'elite_berserk', count: 3 },
-            { type: 'varangian_guard', count: 2 },
+            { type: 'norse_chieftain', count: 2 },
         ],
     },
     // ── 斯堪的纳维亚 · 城堡时代 · 城堡时代瓦兰吉近卫军团　（本次新建）────────────────
@@ -1884,7 +1884,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'POLE_CASTLE_AGE3', castleName: '波兰 马尔堡红砖条顿古堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_jadwiga',
+        commanderUnit: 'hero_jogaila',
         slots: [
             { type: 'elite_obuch', count: 3 },
             { type: 'crossbowman', count: 4 },
@@ -2029,7 +2029,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'MAGY_CASTLE_AGE3', castleName: '马扎尔 布达佩斯多瑙河石堡',
         formationMode: 'fish_scale',
         shipId: 'WAR_GALLEY',
-        commanderUnit: 'hero_belaiv',
+        commanderUnit: 'hero_jadwiga',
         slots: [
             { type: 'elite_magyar_huszar', count: 3 },
             { type: 'cav_archer_heavy', count: 4 },
@@ -2540,7 +2540,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'SPAN_CASTLE_AGE3', castleName: '西班牙 塞戈维亚阿尔卡萨堡',
         formationMode: 'crescent',
         shipId: 'ELITE_CANNON_GALLEON',
-        commanderUnit: 'hero_gonzalopizarro',
+        commanderUnit: 'hero_kingalfonso',
         // 🔴 [2026-10-16 主人令·撤回] 「帝国无下一时代→落同军团 3 档」自造规则无效。
         //    4 档＝西班牙征服者精锐（主人令「4 档放城堡精锐」）；3 档恢复冠军剑士。
         //    征服者基础档改放新建三级军团「帝国时代西班牙征服军团」3 档。
@@ -3503,7 +3503,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'VIET_CASTLE_AGE3', castleName: '越南 顺化京城多檐城门楼',
         formationMode: 'fish_scale',
         shipId: 'GALLEON',
-        commanderUnit: 'hero_lelai',
+        commanderUnit: 'hero_dinhle',
         slots: [
             { type: 'imperial_skirmisher', count: 3 },
             { type: 'rattan_archer', count: 4 },
@@ -3915,7 +3915,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         buildingStyle: 'BERBER',
         castleId: 'BERB_CASTLE_AGE3', castleName: '柏柏尔 撒哈拉泥砖防御碉堡',
         formationMode: 'balance_yoke',
-        shipId: 'TRIREME',
+        shipId: 'LEVIATHAN',
         commanderUnit: 'hero_aristides',
         slots: [
             { type: 'antiquity_skirmisher', count: 4 },
@@ -4008,7 +4008,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_sumanguru',
         slots: [
             { type: 'elite_antiquity_skirmisher', count: 4 },
-            { type: 'guardsman', count: 3 },
+            { type: 'sosso_guard', count: 3 },
             { type: 'camel_heavy', count: 2 },
         ],
     },
