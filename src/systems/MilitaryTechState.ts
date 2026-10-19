@@ -156,15 +156,38 @@ export function regionEra(region: RegionType): TechEra {
     return REGION_ERA[region] ?? 'imperial';
 }
 
+/** 按真实历史年份映射所属四时代：古典 <476 / 封建 476–1049 / 城堡 1050–1499 / 帝国 ≥1500 */
+export function yearToTechEra(year: number): TechEra {
+    if (year < 476) return 'antiquity';
+    if (year < 1050) return 'feudal';
+    if (year < 1500) return 'castle';
+    return 'imperial';
+}
+
+/** 当前是否处于按历史时代门控科技的模式（百岁模式 centenarian / 剧本模式 script） */
+function isEraTimeGatedMode(): boolean {
+    if (GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS) return true;
+    const g = (globalThis as { window?: { game?: { playerHero?: { autoPlan?: string } } } }).window?.game;
+    const mode = g?.playerHero?.autoPlan;
+    // 默认百岁模式（centenarian）与剧本模式（script）开启历史四时代科技门控；仅乱斗模式（melee）全放开
+    return mode ? mode !== 'melee' : true;
+}
+
 /** 取某年、某文化区已解锁的科技 */
 export function unlockedTechs(year: number, culture: RegionType): MilitaryTech[] {
-    // 乱斗模式（历史脚本关闭）→ 科技全开，不做年份门控；历史脚本开启后按年份逐步开放。
-    const timeGated = GameConfig.SYSTEM.ENABLE_HISTORICAL_EVENTS;
+    const timeGated = isEraTimeGatedMode();
     const techCulture = TECH_CULTURE_PARENT[culture] ?? culture;
-    // 🔴 [主人定·时间划分] 文化自己的时代决定科技上限：古典只能用古典、封建+古典、城堡+前三、帝国=全部。
-    const maxEraIdx = ERA_ORDER.indexOf(regionEra(culture));
+    // 🔴 [2026-10-20 主人定·百岁与剧本四时代科技门控]
+    //    · 古典时代（<476）：只能用古典时代科技（帕提亚战术前 53 年即属古典，无需等到 1500）；
+    //    · 封建时代（476–1050）：可用古典 + 封建科技（优先封建）；
+    //    · 城堡时代（1050–1500）：可用古典 + 封建 + 城堡科技（优先城堡）；
+    //    · 帝国时代（≥1500）：可用全部四个时代的科技（优先帝国）。
+    //    · 乱斗模式（melee）：不做年份门控，仅按文化自身时代上限。
+    const cultureEraIdx = ERA_ORDER.indexOf(regionEra(culture));
+    const maxEraIdx = timeGated
+        ? Math.min(cultureEraIdx, ERA_ORDER.indexOf(yearToTechEra(year)))
+        : cultureEraIdx;
     return MILITARY_TECHS.filter((t) => {
-        if (timeGated && t.year !== null && year < t.year) return false;
         if (ERA_ORDER.indexOf(t.era) > maxEraIdx) return false;
         if (t.cultures === null) return true;   // 全区通用
         // 🔴 专属科技（cultures 是 1~3 个小文化区）按原始文化精确匹配；通用科技按父大区匹配。
@@ -213,12 +236,22 @@ export function selectLegionTechs(year: number, culture: RegionType, seed: strin
     const target = Math.min(10, pool.length);
     const need = Math.max(0, target - mandatory.length);
     const rnd = mulberry32(hashSeed(seed));
-    const shuffled = rest.slice();
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(rnd() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // 🔴 [2026-10-20 主人定] 四时代阶梯向下兼容 + 优先本时代：
+    //    古典只用古典；封建用古典+封建（优先封建）；城堡用古典+封建+城堡（优先城堡）；帝国可用全部（优先帝国→城堡→封建→古典）。
+    //    同一时代内部按军团种子确定性洗牌，从高时代往低时代依次补齐到 10 条。
+    const picked: MilitaryTech[] = [];
+    for (let eraIdx = ERA_ORDER.length - 1; eraIdx >= 0 && picked.length < need; eraIdx--) {
+        const eraKey = ERA_ORDER[eraIdx];
+        const bucket = rest.filter((t) => t.era === eraKey);
+        for (let i = bucket.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            [bucket[i], bucket[j]] = [bucket[j], bucket[i]];
+        }
+        for (const t of bucket) {
+            if (picked.length >= need) break;
+            picked.push(t);
+        }
     }
-    const picked = shuffled.slice(0, need);
     const byEra = (a: MilitaryTech, b: MilitaryTech) =>
         ERA_ORDER.indexOf(a.era) - ERA_ORDER.indexOf(b.era) || a.id.localeCompare(b.id);
     return [...mandatory, ...picked].sort(byEra);
