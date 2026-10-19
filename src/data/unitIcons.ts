@@ -423,7 +423,6 @@ export const UNIT_ICONS: Record<string, string> = {
     'scout_cavalry': '/de-techtree/icons/Unit/64.png',
     'light_cavalry': '/de-techtree/icons/Unit/91.png',
     'frankish_paladin': '/de-techtree/icons/Unit/62.png',
-    'jarl': '/de-techtree/icons/Unit/906.png',
     'siege_ballista': '/de-techtree/icons/Unit/754.png',
     'monoreme': '/de-techtree/icons/Unit/661.png',
     'bireme': '/de-techtree/icons/Unit/662.png',

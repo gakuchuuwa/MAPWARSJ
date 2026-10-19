@@ -143,6 +143,22 @@ export interface WarMan {
     sepY: number;
     /** 前方刚检测到己方阻挡后的绕行迟滞；防止直走/侧滑逐帧切换。 */
     avoidT?: number;
+    /** 朝向切换冷却（秒）：改变一次朝向后锁定一段时间，禁止高频改变朝向造成贴图闪动 */
+    dirCd?: number;
+    /** 待确认的新朝向与持续时间（秒）：过滤贴墙反弹、流场跨格、队友推挤造成的 1~4 帧瞬时方向跳变 */
+    pendingDir?: number;
+    pendingDirT?: number;
+    /** 待命站姿迟滞标记：防贴墙或队友挤压时 stepMax 在 0.5px 临界值附近逐帧切换 idle/move 贴图 */
+    idlePose?: boolean;
+    /** 渲染排序 y 迟滞缓存：防贴墙或与队友挨靠微颤时图层前后遮挡逐帧互闪 */
+    sortY?: number;
+    /** 【混】乱阵：士兵处于混乱状态时的当前乱走方向角（弧度）与下次换向倒计时（秒） */
+    panicAng?: number;
+    panicTurnT?: number;
+    /** 最近一次碰撞阻挡本单位的装饰物精灵 */
+    lastObsSprite?: DecorSprite | null;
+    /** 最近一次被装饰物碰撞阻挡的时刻（battleSec）；与 blockedAt（只记敌方城墙）分开计 */
+    lastObsAt?: number;
     /** 出生时所在的 y */
     y0: number;
     /** 🔴 [2026-10-15 主人令] 攻城战第二波起守军的原地警戒驻守点（本队出兵口原位槽位）：攻击附近敌人后回原位警戒 */

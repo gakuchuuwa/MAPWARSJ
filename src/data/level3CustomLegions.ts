@@ -63,7 +63,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         regions: ['SCYTHIANS'],
         parentLegion: '古典时代色雷斯军团',
         shipId: 'DEMO_RAFT',
-        commanderUnit: 'hero_kushluk',
+        commanderUnit: 'scythian_scout',   // 🔴 [2026-10-19 主人令「古典军团的必须套用古典时代的英雄和精英兵」] 原 hero_kushluk（主将队须为古典时代的英雄或精英兵）
         buildingStyle: 'CUMAN',
     },
     // 🔴 [2026-10-16 主人令「有重复的三级军团就删除，以后大部分都只套用 257 个二级军团」]

@@ -38,7 +38,7 @@ const catByHeroKey = new Map(catalog.filter((c) => c.id.startsWith('hero_')).map
 // 共用对号表（兵种 id → DE 英文名），与 tools/de-unit-source-types.mjs 同一份
 const NAME_ALIAS = JSON.parse(fs.readFileSync('tools/de-unit-name-alias.json', 'utf8'));
 const catByDeName = new Map();
-for (const [cid, de] of Object.entries(NAME_ALIAS)) if (!cid.startsWith('_') && !catByDeName.has(norm(de))) { const c = catalog.find((x) => x.id === cid); if (c) catByDeName.set(norm(de), c); }
+for (const [cid, de0] of Object.entries(NAME_ALIAS)) { const de = String(de0).split('#')[0]; if (!cid.startsWith('_') && de && !catByDeName.has(norm(de))) { const c = catalog.find((x) => x.id === cid); if (c) catByDeName.set(norm(de), c); } }
 const CATEGORY_TO_CLS = { infantry: 'infantry', cavalry: 'cavalry', ranged: 'ranged', siege: 'siege', naval: 'naval', hero: 'hero' };
 
 /** 英文名 → 官方中文名（用 strings-en 反查 string id，再取 strings-zh 同 id） */

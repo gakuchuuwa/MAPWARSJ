@@ -247,7 +247,6 @@ export const UNIT_CLASS_BY_KEY: Readonly<Record<string, number>> = {
     iroquois_warrior: 6,
     jaguar_warrior: 6,
     janissary: 44,
-    jarl: 36,
     jian_swordman_shielded: 6,
     jian_swordman_unshielded: 6,
     jian_swordsman: 6,

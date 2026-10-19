@@ -2,7 +2,7 @@
 
 由 `node tools/de-unit-source-types.mjs` 生成。判据见脚本文件头。
 
-兵种鉴赏共 642 个；能在 DE 找到出处的 642 个：城堡兵 131、文化兵 40、区域兵 38、特殊兵 75、普通兵 98、英雄 223、精英兵 19、非战斗 18。
+兵种鉴赏共 641 个；能在 DE 找到出处的 641 个：城堡兵 130、文化兵 40、区域兵 38、特殊兵 75、普通兵 98、英雄 223、精英兵 19、非战斗 18。
 
 ## 多余：兵种鉴赏有、DE 查不到出处（0 个）
 
@@ -11,7 +11,7 @@
 | id | 名字 | 类别 |
 |---|---|---|
 
-## 按 DE 英文名逐条对号的兵种（38 个）
+## 按 DE 英文名逐条对号的兵种（42 个）
 
 自动对号对不上（变体形态、女兵素材、英文名带变音等），逐个核实后登记在 tools/de-unit-name-alias.json。
 
@@ -25,7 +25,6 @@
 | `flemish_pikeman_f` | 勃艮第佛兰德民兵高级 | Flemish Militia | 文化兵 |
 | `jian_swordman_shielded` | 华夏步兵高级 | Jian Swordsman | 文化兵 |
 | `jian_swordman_unshielded` | 华夏双手步兵 | Jian Swordsman | 文化兵 |
-| `jarl` | 维京首领骑兵高级 | Elite Jarl | 城堡兵 |
 | `elite_scythian_horse_archer` | 斯基泰骑射手高级 | Scythian Horse Archer | 特殊兵 |
 | `elite_greek_cavalry` | 希腊贵族骑兵高级 | Greek Noble Cavalry | 特殊兵 |
 | `elite_war_dog` | 战犬高级 | War Dog | 特殊兵 |
@@ -55,6 +54,11 @@
 | `hero_alaric` | 英雄·亚拉里克·哥特 | Alaric the Goth | 英雄 |
 | `hero_halldor` | 英雄·哈尔多尔·斯诺拉松·维京 | Halldor Snorrason | 英雄 |
 | `hero_tostig` | 英雄·托斯蒂格·葛温森·撒克逊 | Tostig Godwinson | 英雄 |
+| `ratha_melee` | 孟加拉拉塔战车 | Ratha | 城堡兵 |
+| `elite_ratha_melee` | 孟加拉拉塔战车高级 | Elite Ratha | 城堡兵 |
+| `hero_flagshipofnearchos` | 英雄·尼阿库斯旗舰·马其顿 | Flagship of Nearchos | 英雄 |
+| `horse` | 马 | Horse | 特殊兵 |
+| `wild_horse` | 野马 | Wild Horse | 特殊兵 |
 
 ## DE 里有，但不在科技树和 wiki 不可训练清单里的兵种（6 个）
 

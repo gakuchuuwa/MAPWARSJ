@@ -439,7 +439,6 @@ export const DE_UNIT_SOURCE_TYPE: Record<string, DeSourceType> = {
     "scout_cavalry": 'normal',
     "light_cavalry": 'normal',
     "frankish_paladin": 'elite',
-    "jarl": 'castle',
     "siege_ballista": 'normal',
     "monoreme": 'normal',
     "bireme": 'normal',
