@@ -4568,9 +4568,9 @@ function updateRowScale(legion: EditableLegion, rowIdx: number, scale: number): 
     }
 }
 
-// ============================================================
-// 6. 兵种挑选弹窗 (Unit Picker Modal)
-// ============================================================
+function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     const overlay = document.createElement('div');
@@ -4580,6 +4580,7 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
     let currentTab: UnitCategory = isCommander ? 'hero' : 'infantry';
     let unitSearch = '';
     let isSearchComposing = false;
+    let unitStatusFilter: 'all' | 'applied' | 'unapplied' = 'all';
     /** 兵种鉴赏同款「子分类」筛选（刀盾/长矛/弓手/弩手/战骑/弓骑…） */
     let currentSub: 'all' | SubCategory = 'all';
     const rowTitle = isCommander ? '英雄（主队 · 第 10 队）' : ['前排', '中坚', '后排'][rowIdx];
@@ -4591,6 +4592,35 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         if (['scythian_scout', 'norse_chieftain', 'sosso_guard', 'master_of_the_templar', 'sunda_royal_fighter'].includes(u.id)) return false;
         return true;
     };
+
+    // 预计算全部军团的兵种/英雄使用情况
+    const distinctMap = getAllDistinctLegions();
+    const usageMap = new Map<string, string[]>();
+    for (const d of distinctMap.values()) {
+        if (isCommander) {
+            if (d.commanderUnit) {
+                if (!usageMap.has(d.commanderUnit)) usageMap.set(d.commanderUnit, []);
+                if (!usageMap.get(d.commanderUnit)!.includes(d.name)) usageMap.get(d.commanderUnit)!.push(d.name);
+            }
+            for (const s of d.slots) {
+                if (s.type) {
+                    if (!usageMap.has(s.type)) usageMap.set(s.type, []);
+                    if (!usageMap.get(s.type)!.includes(d.name)) usageMap.get(s.type)!.push(d.name);
+                }
+            }
+        } else {
+            for (const s of d.slots) {
+                if (s.type) {
+                    if (!usageMap.has(s.type)) usageMap.set(s.type, []);
+                    if (!usageMap.get(s.type)!.includes(d.name)) usageMap.get(s.type)!.push(d.name);
+                }
+            }
+            if (d.commanderUnit) {
+                if (!usageMap.has(d.commanderUnit)) usageMap.set(d.commanderUnit, []);
+                if (!usageMap.get(d.commanderUnit)!.includes(d.name)) usageMap.get(d.commanderUnit)!.push(d.name);
+            }
+        }
+    }
 
     const closeModal = () => {
         window.removeEventListener('keydown', handleKey);
@@ -4607,12 +4637,30 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
         // 切 tab / 搜索会整块换掉图标节点，mouseout 不一定补发 —— 先主动收起放大镜
         hideThumbZoom();
         const q = unitSearch.trim().toLowerCase();
-        // 🔴 搜索框非空 → 跨 tab 按名字/ID 搜；空 → 按当前 tab 过滤（主将队过滤战船与非战斗英雄）
-        const units = (q
-            ? DE_UNITS_CATALOG.filter(u => isAllowed(u) && (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)))
-            : DE_UNITS_CATALOG.filter(u => isAllowed(u) && u.category === currentTab))
-            .filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub)
-            .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
+
+        const candidateUnits = DE_UNITS_CATALOG.filter(u => {
+            if (!isAllowed(u)) return false;
+            if (q) return true; // 搜索模式跨 tab
+            return u.category === currentTab;
+        }).filter(u => currentSub === 'all' || getUnitSubcategory(u.id) === currentSub);
+
+        const appliedTotal = candidateUnits.filter(u => (usageMap.get(u.id)?.length ?? 0) > 0).length;
+        const unappliedTotal = candidateUnits.length - appliedTotal;
+
+        const units = candidateUnits.filter(u => {
+            const used = usageMap.get(u.id) ?? [];
+            const isApplied = used.length > 0;
+            if (unitStatusFilter === 'applied' && !isApplied) return false;
+            if (unitStatusFilter === 'unapplied' && isApplied) return false;
+
+            if (!q) return true;
+            if (u.name.toLowerCase().includes(q) || u.id.toLowerCase().includes(q)) return true;
+            if (isApplied && (q === '已套用' || q === '已用' || q === 'applied')) return true;
+            if (!isApplied && (q === '未套用' || q === '闲置' || q === '空闲' || q === 'unapplied')) return true;
+            if (used.some(leg => leg.toLowerCase().includes(q))) return true;
+            return false;
+        }).sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN') || a.id.localeCompare(b.id));
+
         const subOptions = (SUBCATEGORY_BY_CATEGORY[currentTab] || []).filter(s => !isCommander || (s !== 'naval_hero' && s !== 'noncombat_hero'));
         const subCount = (s: SubCategory) => DE_UNITS_CATALOG.filter(u => isAllowed(u) && getUnitSubcategory(u.id) === s).length;
         const modalTabsHtml = isCommander
@@ -4638,8 +4686,8 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               ${subOptions.map(s => `<option value="${s}" ${currentSub === s ? 'selected' : ''}>${SUBCATEGORY_LABEL[s]} (${subCount(s)})</option>`).join('')}
             </select>
           </div>
-          <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
-          <div style="display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:8px;">
+          <input id="le-unit-search" class="le-input" type="search" placeholder="🔍 搜索兵种名称 / 军团名 / ID…" style="margin:8px 12px;width:calc(100% - 24px);box-sizing:border-box;" />
+          <div style="display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:8px;flex-wrap:wrap;">
             <span style="font-size:11px;color:#a89f8f;">全体朝向:</span>
             <select id="le-thumb-dir" class="le-select" style="padding:2px 6px;font-size:12px;">
               <option value="2" ${unitThumbDir === 2 ? 'selected' : ''}>东南 (2)</option>
@@ -4651,19 +4699,40 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
               <option value="5" ${unitThumbDir === 5 ? 'selected' : ''}>西 (5)</option>
               <option value="4" ${unitThumbDir === 4 ? 'selected' : ''}>西南 (4)</option>
             </select>
-            <span style="margin-left:auto;font-size:11px;color:#8a8070;white-space:nowrap;">🔍 鼠标悬停图标放大</span>
+            <div style="display:inline-flex;gap:3px;align-items:center;margin-left:4px;">
+              <button type="button" data-status="all" class="le-pk-status-btn" style="background:${unitStatusFilter === 'all' ? '#4a3e2c' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'all' ? '#c8a84b' : '#363024'};color:${unitStatusFilter === 'all' ? '#f5e6c8' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">全部 (${candidateUnits.length})</button>
+              <button type="button" data-status="applied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'applied' ? '#183620' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'applied' ? '#38a169' : '#363024'};color:${unitStatusFilter === 'applied' ? '#7ee787' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">✓ 已套用 (${appliedTotal})</button>
+              <button type="button" data-status="unapplied" class="le-pk-status-btn" style="background:${unitStatusFilter === 'unapplied' ? '#352417' : '#1e1c18'};border:1px solid ${unitStatusFilter === 'unapplied' ? '#c05621' : '#363024'};color:${unitStatusFilter === 'unapplied' ? '#fbd38d' : '#8a8378'};border-radius:4px;padding:3px 7px;cursor:pointer;font-size:11px;">⚪ 未套用 (${unappliedTotal})</button>
+            </div>
+            <span style="margin-left:auto;font-size:11px;color:#8a8070;white-space:nowrap;">🔍 悬停放大 · 显示 ${units.length} 个</span>
           </div>
           <div class="le-modal-body">
             ${units.map(u => {
               const sub = getUnitSubcategory(u.id);
               const subText = sub ? ` · ${SUBCATEGORY_LABEL[sub]}` : '';
               const tierText = getUnitTier(u) === 'elite' ? ' · ⭐精锐' : '';
+              const used = usageMap.get(u.id) ?? [];
+              const isApplied = used.length > 0;
+              const roleTxt = isCommander ? '作为主将' : '作为编制';
+              const usedTooltip = isApplied
+                  ? `【${u.name}】${roleTxt}已套用于 ${used.length} 支军团：\n` + used.map((l, i) => `  ${i + 1}. ${l}`).join('\n')
+                  : `【${u.name}】当前未在任何军团中套用（闲置）`;
               return `
-              <div class="le-unit-card" data-uid="${u.id}">
+              <div class="le-unit-card" data-uid="${u.id}" title="${esc(usedTooltip)}" style="${isApplied ? 'background:#162218;border-color:#2d5a38;' : ''}">
                 <canvas class="le-unit-thumb" data-uid="${u.id}" width="64" height="64"></canvas>
-                <div class="le-unit-card-text">
-                  <div class="le-unit-card-name">${u.name}</div>
+                <div class="le-unit-card-text" style="min-width:0;flex:1;">
+                  <div class="le-unit-card-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div>
                   <div class="le-unit-card-cat">${CATEGORY_LABEL[u.category]}${subText}${tierText}</div>
+                  ${isApplied ? `
+                    <div style="font-size:10px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(usedTooltip)}">
+                      <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#183620;border:1px solid #2d6639;color:#7ee787;font-weight:bold;font-size:9px;">✓ 已套用${used.length > 1 ? ` (${used.length})` : ''}</span>
+                      <span style="color:#9ae6b4;font-size:10px;margin-left:2px;">${esc(used[0])}</span>
+                    </div>
+                  ` : `
+                    <div style="font-size:10px;margin-top:3px;">
+                      <span style="display:inline-block;padding:0 4px;border-radius:2px;background:#1d1b17;border:1px solid #332d24;color:#7a7266;font-size:9px;">⚪ 未套用（闲置）</span>
+                    </div>
+                  `}
                 </div>
               </div>
             `;}).join('')}
@@ -4681,6 +4750,14 @@ function openUnitPickerModal(row: FactionLegionRow, rowIdx: number): void {
                 e.stopPropagation();
                 currentTab = (tab as HTMLElement).dataset.cat as UnitCategory;
                 currentSub = 'all';
+                renderModalContent();
+            });
+        });
+
+        overlay.querySelectorAll('.le-pk-status-btn').forEach(b => {
+            b.addEventListener('click', (e) => {
+                e.stopPropagation();
+                unitStatusFilter = (b as HTMLElement).dataset.status as 'all' | 'applied' | 'unapplied';
                 renderModalContent();
             });
         });
