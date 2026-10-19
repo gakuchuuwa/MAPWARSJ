@@ -163,7 +163,7 @@ function buildRows(): LegionRow[] {
             users: users.get(name) ?? 0,
             shipId: c.shipId ?? '',
             buildingStyle,
-            commanderUnit: c.commanderUnit ?? '',
+            commanderUnit: c.commanderUnit ?? l2?.commanderUnit ?? l3?.commanderUnit ?? '',
             source: layer === '四级' ? (SCRIPT_LEGION_MAP.get(name)?.source ?? '') : '',
         });
     };
@@ -337,7 +337,8 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
     document.body.appendChild(overlay);
     attachUnitThumbZoom(overlay);
 
-    const cats = ['all', ...new Set(DE_UNITS_CATALOG.map(u => u.category))];
+    const CATEGORY_ORDER = ['infantry', 'cavalry', 'ranged', 'siege', 'naval', 'hero', 'civilian', 'other'];
+    const cats = kind === 'hero' ? ['hero'] : ['all', ...CATEGORY_ORDER.filter(c => DE_UNITS_CATALOG.some(u => u.category === c))];
 
     // 🔴 保持 DE_UNITS_CATALOG 原始子分类顺序（分类绝对不可乱）
     const SUB_ORDER = (() => {
@@ -355,7 +356,12 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
         const kw = pickerKeyword.trim();
         // 🔴 保持分类顺序：不要在最外层全局按名字排序，否则会把冷兵器等搞到最前面
         const list = DE_UNITS_CATALOG.filter(u => {
-            if (kind === 'hero' && (u.category === 'naval' || getUnitSubcategory(u.id) === 'naval_hero')) return false;
+            if (kind === 'hero') {
+                if (u.category !== 'hero') return false;
+                const sub = getUnitSubcategory(u.id);
+                if (sub === 'naval_hero' || sub === 'noncombat_hero') return false;
+                if (['scythian_scout', 'norse_chieftain', 'sosso_guard', 'master_of_the_templar', 'sunda_royal_fighter'].includes(u.id)) return false;
+            }
             if (pickerCat !== 'all' && u.category !== pickerCat) return false;
             if (!kw) return true;
             return u.name.includes(kw) || u.id.includes(kw) || subLabelOf(u.id).includes(kw);
@@ -381,9 +387,13 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
             <b style="color:#f6e05e;">选兵种 · ${kind === 'hero' ? '英雄（主队）' : (['前排', '中坚', '后排'][rowIdx] ?? '舰队')}</b>
             <input id="lp-pk-search" placeholder="搜兵种名 / 子分类 / ID" value="${esc(pickerKeyword)}"
               style="width:220px;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:6px 9px;">
-            ${cats.map(c => `<button data-cat="${c}" class="lp-pk-cat" style="background:${pickerCat === c ? '#5a3c28' : '#243246'};
-              border:1px solid ${pickerCat === c ? '#8a6038' : '#4a5568'};color:#e8e0d0;border-radius:4px;padding:5px 11px;cursor:pointer;font-size:12px;">
-              ${c === 'all' ? '全部' : esc((CATEGORY_LABEL as Record<string, string>)[c] ?? c)}</button>`).join('')}
+            ${cats.map(c => {
+              const icon = c === 'infantry' ? '🛡️ ' : c === 'cavalry' ? '🐎 ' : c === 'ranged' ? '🏹 ' : c === 'siege' ? '⚙️ ' : c === 'naval' ? '🚢 ' : c === 'hero' ? '👑 ' : c === 'civilian' ? '🧺 ' : c === 'other' ? '🐾 ' : '';
+              const label = c === 'all' ? '全部' : `${icon}${(CATEGORY_LABEL as Record<string, string>)[c] ?? c}`;
+              return `<button data-cat="${c}" class="lp-pk-cat" style="background:${pickerCat === c ? '#5a3c28' : '#243246'};
+                border:1px solid ${pickerCat === c ? '#8a6038' : '#4a5568'};color:#e8e0d0;border-radius:4px;padding:5px 11px;cursor:pointer;font-size:12px;">
+                ${esc(label)}</button>`;
+            }).join('')}
             <span style="color:#8a8378;font-size:12px;">${list.length} 个</span>
             <button id="lp-pk-close" style="margin-left:auto;background:#243246;border:1px solid #4a5568;color:#cbd5e1;border-radius:4px;padding:5px 12px;cursor:pointer;">✕</button>
           </div>
@@ -402,7 +412,7 @@ function openUnitPicker(rowIdx: number, onPick?: (unitId: string) => void, picke
                       style="width:48px;height:48px;flex:0 0 48px;background:#141210;border-radius:3px;image-rendering:pixelated;"></canvas>
                     <div style="min-width:0;">
                       <div style="color:#e8e0d0;font-size:12px;">${esc(u.name)}</div>
-                      <div style="color:#6a6358;font-size:10px;">${getUnitTier(u) === 'elite' ? '⭐精锐' : ''}</div>
+                      <div style="color:#8a8378;font-size:10px;">${esc(subLabelOf(u.id))}</div>
                     </div>
                   </div>`).join('')}
               </div>`).join('')}
@@ -457,6 +467,8 @@ function visible(): LegionRow[] {
         if (!kw) return true;
         return r.name.includes(kw)
             || r.slots.some(s => cn(s.type).includes(kw))
+            // 🔴 [2026-10-19 主人报「军团编辑搜索，找不到英雄人名」] 主将队英雄兵模也要能搜到（二级/三级主将读自军团表）
+            || (r.commanderUnit ? (cn(r.commanderUnit).includes(kw) || r.commanderUnit.includes(kw)) : false)
             || (r.buildingStyle && (r.buildingStyle.includes(kw) || (STYLE_LABELS[r.buildingStyle] ?? '').includes(kw)));
     });
     if (sortByName !== 'none') {
