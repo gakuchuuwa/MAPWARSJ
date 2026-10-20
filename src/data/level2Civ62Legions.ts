@@ -418,7 +418,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_yuanshao',
         slots: [
             { type: 'xianbei_raider', count: 3 },
-            { type: 'recurve_bowman', count: 4 },
+            { type: 'elite_fire_archer', count: 4 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],
     },

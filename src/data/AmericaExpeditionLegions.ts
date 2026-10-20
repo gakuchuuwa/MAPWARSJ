@@ -14,6 +14,7 @@ export const AMERICA_EXPEDITION_ELITE_LEGIONS: Readonly<Record<string, { name: s
     gualani: { name: '传教区军', tier: 2 },
     xingelana: { name: '地峡征服者', tier: 3 },
     xiyindu: { name: '奥萨马守军', tier: 3 },   // 圣多明各·巴托洛梅：美洲第一堡奥萨马城堡(Fortaleza Ozama)驻军，西印度总督府加勒比守备
+    taino_d: { name: '泰诺勇士', tier: 4 },   // 亚拉·哈土依：泰诺人武士（无具名精锐，抗西班牙殖民；不得回落图皮的图皮战士）
     jialebi: { name: '要塞守备', tier: 2 },   // 卡塔赫纳·布拉斯莱索：南美最坚固防线卡塔赫纳要塞守军，1741以寡击众击退英军弗农舰队
     tutul_xiu: { name: '普克矛兵', tier: 4 },
     yiluokui: { name: '易洛魁战士', tier: 3 },  // 奥农多加·海华沙：易洛魁联盟武士，海狸战争中摧毁休伦/伊利等世仇

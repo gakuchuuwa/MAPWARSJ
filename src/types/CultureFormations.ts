@@ -1730,7 +1730,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     GORYEO: '城堡时代高丽军团',
     JOSEON: '帝国时代朝鲜军团',
     GOJOSEON: '古典时代朝鲜军团',
-    PRE_QIN: '古典时代先秦军团',
+    PRE_QIN: '先秦军团',
     MING: "帝国时代燕晋军团",
     HUAXIA_IMPERIAL: "帝国时代中国军团",
     DALI: '城堡时代大理军团',
@@ -2441,8 +2441,8 @@ export function resolveCityDefenseLegionName(
 
     // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] 起义势力**守城也一律用三级起义军团**
     //    （名义上「每个据点只能出本文化该时代军团」对起义军不再适用；其它势力守城口径不变）
-    if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName === '帝国时代起义军团') {
-        return resolveRenamedLegion('帝国时代起义军团');
+    if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName === '起义军') {
+        return resolveRenamedLegion('起义军');
     }
 
     let style = buildingStyle ?? null;

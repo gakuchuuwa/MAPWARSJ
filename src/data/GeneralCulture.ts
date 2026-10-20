@@ -1278,7 +1278,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aosiruowen_baodewen': 'FRANKS',      // 鲍德温一世｜十字军法兰克人｜阿卡（耶路撒冷王国）
     'gen_tibirica': 'TUPI',               // 蒂巴里萨｜图皮尼金｜瓜纳巴拉
     'gen_chicomacatl': 'AMERICA',         // 奇科马卡特｜托托纳克（中美洲）｜钦聪灿
-    'gen_hatuey': 'SPANISH',              // 哈土依｜泰诺｜哈瓦那（该城建筑文化为西班牙）
+    'gen_hatuey': 'TUPI',                 // 哈土依｜泰诺｜亚拉（TUPI 风格的加勒比原住民村落）
     'wangdaer_gaisalike': 'BERBER',       // 盖萨里克｜汪达尔｜迦太基
     'gen_jogaila': 'LITHUANIANS',         // 雅盖沃｜立陶宛｜维尔纽斯
     'xisi_yakubusafaer': 'PERSIAN',       // 雅库布｜萨法尔王朝｜博斯特

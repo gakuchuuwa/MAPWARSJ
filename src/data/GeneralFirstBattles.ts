@@ -3632,12 +3632,14 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
         targetLat: 34.81,
         targetLng: 113.17,
         myTroops: 20000,
+        // 🔴 [2026-10-20 主人令「窦建德的夏，历史是怎么称呼的，就改为什么」] 窦建德 618 年称夏王、国号「夏」（《旧唐书》《新唐书》正史称呼；「大夏」为后世别称），故显示名用「夏」
         enemyFactionId: 'dangxiang',
-        enemyFactionName: '大夏',
+        enemyFactionName: '夏',
+        enemyGeneralId: 'bfe_dou_jiande',   // 🔴 [2026-10-20 主人令] 621 虎牢关敌将＝夏王窦建德（该事件两边实名）
         enemyTroops: 100000,
         introLines: [
             { speaker: 'general', text: '窦建德倾巢来救王世充，骄兵易破！某引玄甲黑骑扼守虎牢，待其阵动一战擒双王！壮士，执槊随秦王破阵！' },
-            { speaker: 'player', text: '愿随李世民将军共守虎牢关之战，大破大夏敌军！' },
+            { speaker: 'player', text: '愿随李世民将军共守虎牢关之战，大破夏军！' },
         ],
     },
 
