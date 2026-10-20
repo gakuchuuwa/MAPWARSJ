@@ -903,21 +903,22 @@ function pickFactionThenCulturePath(
     factionId: string | null | undefined,
     cultureRegion: RegionType,
     exclude?: string,
+    stableKey?: string,
 ): string {
     if (factionId === 'panjun') {
-        const fromPanjun = pickRandomExisting(_panjunPortraitPool, exclude);
+        const fromPanjun = pickExisting(_panjunPortraitPool, exclude, stableKey);
         if (fromPanjun) return normalizePortraitWebPath(fromPanjun);
         return BATTLE_PORTRAIT_FALLBACK;
     }
 
     const factionPool = getFactionPortraitPool(factionId);
     if (factionPool?.length) {
-        const fromFaction = pickRandomExisting(factionPool, exclude);
+        const fromFaction = pickExisting(factionPool, exclude, stableKey);
         if (fromFaction) return normalizePortraitWebPath(fromFaction);
     }
 
     const regionPool = REGION_PORTRAIT_POOLS[cultureRegion];
-    const fromRegion = regionPool ? pickRandomExisting(regionPool, exclude) : undefined;
+    const fromRegion = regionPool ? pickExisting(regionPool, exclude, stableKey) : undefined;
     if (fromRegion) return normalizePortraitWebPath(fromRegion);
 
     // 主人亲自维护希腊立绘：希腊专用夹为空时只显示统一保底图，不得跨到中原/拉丁池乱抽。
@@ -926,14 +927,17 @@ function pickFactionThenCulturePath(
     if (PERSIAN_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
     if (SOUTHEAST_ASIA_PORTRAIT_REGIONS.has(cultureRegion)) return BATTLE_PORTRAIT_FALLBACK;
 
-    const fromCentral = pickRandomExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude);
+    const fromCentral = pickExisting(REGION_PORTRAIT_POOLS.CENTRAL, exclude, stableKey);
     if (fromCentral) return normalizePortraitWebPath(fromCentral);
 
-    const fromPanjun = pickRandomExisting(_panjunPortraitPool, exclude);
+    const fromPanjun = pickExisting(_panjunPortraitPool, exclude, stableKey);
     if (fromPanjun) return normalizePortraitWebPath(fromPanjun);
 
     return BATTLE_PORTRAIT_FALLBACK;
 }
+
+/** 无专图武将的回落立绘：generalId → 首次定下的那张（见 resolveGeneralPortraitPath） */
+const _generalFallbackPortraits = new Map<string, string>();
 
 /**
  * 武将立绘：专图已登记则直接使用；文化池尚未刷新时也先尝试明确绑定的专图，
@@ -941,7 +945,7 @@ function pickFactionThenCulturePath(
  */
 export function resolveGeneralPortraitPath(
     dedicatedPath: string | undefined,
-    options?: { factionId?: string; region?: RegionType; exclude?: string },
+    options?: { factionId?: string; region?: RegionType; exclude?: string; generalId?: string },
 ): string {
     const cultureRegion = (options?.region
         ?? (options?.factionId ? getFactionCultureRegion(options.factionId) : undefined)
@@ -953,8 +957,20 @@ export function resolveGeneralPortraitPath(
     ) {
         return normalizePortraitWebPath(dedicatedPath);
     }
-    return pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude);
+    // 🔴 [2026-10-20 主人令「项目中有的人，立绘总是换来换去的。请修复。」]
+    //    无专图的武将原先每取一次就从池里 Math.random 抽一张 → 信息栏、战斗、会面各取各的，图来回换。
+    //    现按 generalId 定死：同一武将同一池永远取同一张（哈希定位），且首次结果记住，
+    //    之后不论哪个入口、带什么 region/势力上下文来取，都还是这一张（图被删了才重取）。
+    const generalId = options?.generalId;
+    if (!generalId) return pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude);
+    const cached = _generalFallbackPortraits.get(generalId);
+    const cachedValid = !!cached && (cached === BATTLE_PORTRAIT_FALLBACK || portraitAssetExists(cached));
+    if (cachedValid && !(options?.exclude && portraitUrlsEqual(cached!, options.exclude))) return cached!;
+    const picked = pickFactionThenCulturePath(options?.factionId, cultureRegion, options?.exclude, generalId);
+    if (!cachedValid) _generalFallbackPortraits.set(generalId, picked);
+    return picked;
 }
+
 
 /** @deprecated 内部兼容；请用 getFactionPortraitPool + pickFactionThenCulturePath */
 function resolvePortraitPool(
@@ -980,12 +996,24 @@ function pickRandom(arr: string[], exclude?: string): string {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function pickRandomExisting(pool: string[], exclude?: string): string | undefined {
+/** 有 stableKey（generalId）→ 按哈希定位，同一人同一池永远同一张；否则随机 */
+function pickExisting(pool: string[], exclude?: string, stableKey?: string): string | undefined {
     const existing = pool
         .map(normalizePortraitWebPath)
         .filter(p => portraitAssetExists(p));
     if (!existing.length) return undefined;
-    return pickRandom(existing, exclude);
+    if (!stableKey) return pickRandom(existing, exclude);
+    let arr = [...new Set(existing)].sort();
+    if (exclude && arr.length > 1) {
+        const filtered = arr.filter(p => !portraitUrlsEqual(p, exclude));
+        if (filtered.length > 0) arr = filtered;
+    }
+    let h = 2166136261;
+    for (let i = 0; i < stableKey.length; i++) {
+        h ^= stableKey.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+    }
+    return arr[(h >>> 0) % arr.length];
 }
 
 /** 比较两个立绘路径是否指向同一文件（浏览器 src 可能解析为完整 URL） */
@@ -1036,7 +1064,7 @@ export function registerPortraitPathRuntime(path: string): void {
  * 【2026-07-19 主人工况】主人是「边玩边发现问题、边改边删立绘」，而立绘清单由
  * vite 插件在 dev server 启动时扫盘生成、之后不再更新 —— 运行期删掉的图仍留在
  * 抽签池里，抽中即 404，表现为守方城池驻军偶发空白立绘。
- * 剔除后 pickRandomExisting 会按 portraitAssetExists 自动跳过它（所有文化区池、
+ * 剔除后 pickExisting 会按 portraitAssetExists 自动跳过它（所有文化区池、
  * 政权专夹池共用同一份清单，故一处剔除全局生效），**无需重启 dev server**。
  * 与 registerPortraitPathRuntime 对称。
  */

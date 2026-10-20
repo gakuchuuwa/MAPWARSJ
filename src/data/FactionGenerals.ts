@@ -1601,7 +1601,7 @@ export function getFactionGeneralsResolved(factionId: string): FactionGeneral[] 
             item: {
                 ...g,
                 generalName: stageGeneralName(g.generalId, g.generalName),
-                portrait: resolveGeneralPortraitPath(portrait, { factionId }),
+                portrait: resolveGeneralPortraitPath(portrait, { factionId, generalId: g.generalId }),
             },
             isFamous,
             idx,
@@ -1734,6 +1734,7 @@ export function getGeneralRecordByGeneralId(
             portrait: resolveGeneralPortraitPath(dedicated, {
                 factionId: bfChar.factionId,
                 region: options?.region,
+                generalId,
             }),
         };
     }
@@ -1745,6 +1746,7 @@ export function getGeneralRecordByGeneralId(
         portrait: resolveGeneralPortraitPath(dedicated, {
             factionId: hit.factionId,
             region: options?.region,
+            generalId,
         }),
     };
 }
