@@ -1226,7 +1226,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'onager', 'onager', 'heavy_scorpion', 'heavy_scorpion', 'siege_tower', 'siege_tower'],
     },
-    '古典时代先秦军团': {
+    '先秦军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
@@ -1246,7 +1246,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'siege_onager', 'siege_onager', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代岳家军团': {
+    '岳家军': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },
@@ -1266,7 +1266,7 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'mangonel', 'mangonel', 'bombard_cannon', 'bombard_cannon', 'heavy_scorpion', 'heavy_scorpion'],
     },
-    '帝国时代起义军团': {
+    '起义军': {
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'petard', 'petard', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon'],
     },

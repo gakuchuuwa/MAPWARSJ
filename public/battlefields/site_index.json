@@ -4,7 +4,7 @@
  "size": 120,
  "cellMeters": 25,
  "passableAll": true,
- "generatedAt": "2026-10-20T03:58:52.235Z",
+ "generatedAt": "2026-10-20T07:45:40.584Z",
  "records": [
   {
    "id": "city_weiyeena",
@@ -15600,6 +15600,20 @@
    "reliefM": 22,
    "cliffs": 0,
    "top": "Dry Grass 88.6% · Forest, Lush Bamboo 6.8% · Bamboo 2.2% · Forest, Bush 1.3%",
+   "verify": "ok"
+  },
+  {
+   "id": "city_yala",
+   "file": "site_city_yala.json",
+   "bytes": 334345,
+   "koppen": "Aw",
+   "theme": "NEOTROPICAL_TROPICAL",
+   "water": "WorldCover",
+   "waterCells": 0,
+   "waterPct": 0,
+   "reliefM": 19,
+   "cliffs": 0,
+   "top": "Jungle Grass 89.6% · Jungle 8% · Rainforest 2.4%",
    "verify": "ok"
   }
  ],

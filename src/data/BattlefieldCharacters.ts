@@ -233,6 +233,14 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史无载，拟名：1228 年完颜陈和尚大昌原胜蒙古军，蒙古主将姓名未传。',
     },
+    // 🔴 [2026-10-20 主人令「621 虎牢关敌将空着，现在该怎么弄就怎么弄」] 窦建德为史有其人（夏王 573–621），仅在该战出场，登记为战场人物，不重建已删的「夏」势力
+    bfe_dou_jiande: {
+        generalId: 'bfe_dou_jiande',
+        generalName: '窦建德',
+        factionId: 'dangxiang',
+        portrait: '',
+        note: '史有其人：夏王窦建德（573–621），621 年虎牢关之战兵败被李世民所俘。',
+    },
     // 🔴 [2026-10-20 首战规则] 1242 楚德湖冰上战役条顿/利沃尼亚骑士团主将姓名未传 → 拟名战场人物（立绘留空）
     bfe_teutonic_jiang: {
         generalId: 'bfe_teutonic_jiang',

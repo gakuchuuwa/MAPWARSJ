@@ -35,7 +35,7 @@ export interface Level3LegionDef {
 
 export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     {
-        name: '古典时代先秦军团',
+        name: '先秦军团',
         formationMode: 'triangle',
         slots: [
             { type: 'war_chariot_ranged', count: 2 },
@@ -66,7 +66,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
     //    理由：`KOREA` 那 9 座（国内城／平壤／开城／金城／泗沘…）在**朝鲜半岛**，划归朝鲜半岛那条线；
     //    该文化区默认军团改指「封建时代新罗军团」。白山黑水（满洲）那条线：原改名来的「封建时代白山黑水军团」已按主人令删除，封建节点归新名单的「封建时代渤海军团」（`MOHE` 指针已改指它）。
     {
-        name: '城堡时代岳家军团',
+        name: '岳家军',
         formationMode: 'fish_scale',
         slots: [
             { type: 'liao_dao', count: 3 },
@@ -142,7 +142,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         buildingStyle: 'TURKS',
     },
     {
-        name: '帝国时代起义军团',
+        name: '起义军',
         formationMode: 'fish_scale',
         slots: [
             { type: 'bandit', count: 3 },
@@ -157,7 +157,7 @@ export const LEVEL_3_LEGIONS: Level3LegionDef[] = [
         // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] **中外所有历史起义势力一律挂这支**
         //    （大顺/大西/太平/白莲/赤眉/黄巾/绿林/天完/黄王/圣公/大周/铲平/处州/干越/剡中/陈吊/回军/苗民/清真/天顺/鼎州/天地会/巴塔维/多布罗加
         //     ＋起义 panjun 占位势力，共 25 家）；不再按「武将时代×据点文化」挂二级军团，也不再「东方改用帝国时代中国军团」。
-        buildingStyle: 'WEST',
+        buildingStyle: 'CENTRAL',
     },
 ];
 

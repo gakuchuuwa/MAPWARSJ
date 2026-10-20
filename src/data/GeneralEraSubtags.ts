@@ -13,7 +13,7 @@
  *   ③ 且属**中国（东亚系建筑文化：CENTRAL / WEI / JIANGNAN / BASHU / KHITAN / NORTHEAST）**——
  *      非中国的同期武将（列奥尼达／赫梯／埃及／亚述／苏美尔…）**不打此标签**，各归其文化军团。
  *
- * 与军团的关系：这 16 位所在势力在势力表里一致挂「古典时代先秦军团」（`FACTION_COMPOSITIONS`）。
+ * 与军团的关系：这 16 位所在势力在势力表里一致挂「先秦军团」（`FACTION_COMPOSITIONS`）。
  * 自检：`npx tsx --import ./tools/sim-preload.mjs scratch/_check_era_subtag.mts`
  */
 
@@ -57,10 +57,10 @@ export function getGeneralEraSubtag(generalId: string | null | undefined): Gener
 
 /**
  * 细分标签 → 它对应的**军团**（该细分专属，优先于「建筑文化 × 四时代」的二级命中）。
- * 目前只有「先秦」：先秦武将的势力一律挂「古典时代先秦军团」（三级子区域军团，主人已做好的指派）。
+ * 目前只有「先秦」：先秦武将的势力一律挂「先秦军团」（三级子区域军团，主人已做好的指派）。
  */
 export const GENERAL_ERA_SUBTAG_LEGION: Record<GeneralEraSubtag, string> = {
-    pre_qin: '古典时代先秦军团',
+    pre_qin: '先秦军团',
 };
 
 /** 取某武将细分标签对应的军团名（无细分返回 null） */

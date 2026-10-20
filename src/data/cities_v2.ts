@@ -3630,6 +3630,8 @@ buildingStyle: 'TIBET', troops: 10000,
     // 🔴 [2026-10-18 按史] 韦拉克鲁斯真实建成的实体是西班牙圣胡安德乌卢阿珊瑚石星形棱堡、防御石墙与西属美洲殖民巴洛克建筑群 → SPANISH；不因驻将奇科马卡特为托托纳克人而降为 AMERICA。
     { id: 'city_veracruz', name: '韦拉克鲁斯', factionId: 'tuotuonake', lat: 19.19, lng: -96.14, type: 'small_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '科尔特斯1519登陆建城，新西班牙大西洋门户；特诺奇提特兰在内陆湖，这里是它的出海口。本地为托托纳克人，都城森波阿拉在北 30km' },
     // 🔴 [2026-10-18 按史] 哈瓦那真实建成的实体是莫罗城堡、皇家军队城堡、拉卡瓦尼亚堡与西班牙殖民街区，西欧文艺复兴转古典主义砖石海防要塞城 → SPANISH；不因驻将哈土依为泰诺人而降为 AMERICA。
+    // 🔴 [2026-10-20 主人令「武将文化一定要符合建筑风格，不然套的军团都是错的」] 古巴东部泰诺人村落「亚拉」：给泰诺反抗领袖哈土依一个建筑风格对口（TUPI 热带美洲原住民茅草村落）的据点
+    { id: 'city_yala', name: '亚拉', factionId: 'taino_d', lat: 20.35, lng: -76.85, type: 'stockade', troops: 3000, region: 'AMERICA', buildingStyle: 'TUPI', note: '古巴东部泰诺人村落（Yara 一带，1510 年代西班牙征服古巴时泰诺反抗活动区；哈土依 1512 被西班牙烧死）' },
     { id: 'city_havana', name: '哈瓦那', factionId: 'taino', lat: 23.13, lng: -82.38, type: 'medium_city', troops: 10000, region: 'NORTHAM_IMPERIAL', buildingStyle: 'SPANISH', note: '西印度群岛总集结地，返西班牙的珍宝船队在此编成武装护航舰队启航。本岛原住民为泰诺人' },
     { id: 'city_telde', name: '特尔德', factionId: 'guanche', lat: 28.00, lng: -15.42, type: 'small_city', troops: 10000, region: 'AFRICA_CASTLE', buildingStyle: 'AFRICA', note: '大加那利岛关切人王国都城，西向航线借东北信风起航的补给站；关切人属柏柏尔系' },
     { id: 'city_angra', name: '安格拉', factionId: 'yasuer', lat: 38.66, lng: -27.22, type: 'small_city', troops: 10000, region: 'PORTUGUESE', buildingStyle: 'PORTUGUESE', note: '亚速尔首府（Angra do Heroismo），东返航线借西风带休整的中继站；1581 萨尔加之战牛群冲阵退敌' },
