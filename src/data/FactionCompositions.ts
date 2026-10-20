@@ -2330,7 +2330,7 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionType: "sub",
     },
     "haikou": {
-        legionName: "帝国时代两江军团",
+        legionName: "起义军",
         legionType: "sub",
     },
     "guazhou": {
