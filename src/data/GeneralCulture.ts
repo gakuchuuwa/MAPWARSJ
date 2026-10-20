@@ -296,6 +296,42 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'huarazim_jalal': 'CENTRAL_ASIA',   // 花剌子模｜扎兰丁｜据点 玉龙杰赤
+    'dajin_wanyanheda': 'NORTHEAST',    // 大金｜完颜合达｜据点 会宁府
+    'abasi_mustasim': 'ORIE',           // 阿拔斯｜穆斯塔西姆｜据点 巴格达
+    'taira_pingzongsheng': 'JAPAN',       // 长门｜平宗盛｜据点 赤间关
+    'kasidiliya_afangsuoba': 'SPANISH',   // 卡斯蒂利亚｜阿方索八世｜据点 马德里
+    'dajin_wanyanchengyu': 'NORTHEAST',   // 大金｜完颜承裕｜据点 会宁府
+    'yelusalengwg_amalric': 'FRANKS',     // 耶路撒冷王国｜阿马尔里克｜据点 阿卡
+    'baizanting_isaac_ii': 'BYZANTINE',   // 拜占庭｜伊萨克二世｜据点 君士坦丁堡
+    'baizanting_alexios_v': 'BYZANTINE',  // 拜占庭｜阿莱克修斯五世｜据点 君士坦丁堡
+    'liao_d_tianzuodi': 'XIANBEI',         // 大辽｜天祚帝｜据点 临潢府
+    'song_zhangjun': 'CENTRAL',            // 宋国｜张浚｜据点 开封
+    'jiazini_khusrau_malik': 'PERSIAN',    // 伽色尼｜呼斯劳·马利克｜据点 哥疾宁
+    'gaer_sigtrygg': 'CELTS',            // 盖尔｜西格特里格·丝须｜据点 都柏林
+    'suomunate_bhima_i': 'GURJARAS',     // 拉其普特｜毗摩一世｜据点 索姆纳特
+    'song_renfu': 'CENTRAL',             // 宋国｜任福｜据点 萧关
+    'luoma_diguo_leo_ix': 'ROMA',        // 罗马帝国｜利奥九世｜据点 罗马城
+    'tubo_muzheng': 'TIBET',             // 吐蕃｜木征｜据点 逻些
+    'womaya_yahya': 'GOTHS',             // 倭马亚｜叶海亚｜据点 托莱多
+    'sailiugu_yaghi': 'ORIE',            // 塞尔柱｜雅吉·西扬｜据点 安提俄基亚
+    'sengjialuo_mahinda_v': 'PURU',       // 僧伽罗｜摩哂陀五世｜据点 阿努拉德
+    'liao_d_handewei': 'XIANBEI',         // 大辽｜韩德威｜据点 临潢府
+    'song_peiji': 'KHITAN',               // 宋国｜裴济｜据点 回乐
+    'duonaobaojia_samuel': 'BULGARIANS',  // 多瑙保加｜萨穆伊尔｜据点 普雷斯拉夫
+    'jiazini_masud': 'PERSIAN',           // 伽色尼｜马斯乌德｜据点 哥疾宁
+    'liao_d_xiaoduli': 'XIANBEI',      // 大辽｜萧咄李｜据点 临潢府
+    'bohai_dayinzhuan': 'NORTHEAST',   // 渤海｜大諲撰｜据点 龙泉府
+    'liao_d_xiaopaiya': 'XIANBEI',      // 大辽｜萧排押｜据点 临潢府
+    'xin_liuchong': 'CENTRAL',         // 上党｜刘崇｜据点 长子
+    'song_zhaoguangyi': 'CENTRAL',     // 宋国｜赵光义｜据点 开封
+    'song_wangbing': 'WEI',            // 宋国｜王禀｜据点 晋阳
+    'dang_d_pangshigu': 'CENTRAL',      // 虞国｜庞师古｜据点 虞城
+    'liang_d_wangjingren': 'CENTRAL',   // 梁国｜王景仁｜据点 商丘
+    'xisi_amr': 'PERSIAN',              // 锡斯坦｜阿姆尔·本·莱斯｜据点 博斯特
+    'baizanting_romanosi': 'BYZANTINE', // 拜占庭｜罗曼努斯一世｜据点 君士坦丁堡
+    'danmai_guthrum': 'DANES',          // 丹麦｜古思伦｜据点 哥本哈根
+    'aliya_muhammad_tahir': 'PERSIAN',  // 阿利亚｜穆罕默德·本·塔希尔｜据点 赫拉特
     'huihu_wusa': 'MONGOL',           // 回鹘｜㕎馺可汗｜据点 青岭牙帐
     'abasi_muwafake': 'ORIE',         // 阿拔斯｜穆瓦法克｜据点 巴格达
     'falanji_kalman': 'FRANKS',       // 法兰克｜卡洛曼｜据点 科隆
@@ -858,7 +894,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qinghai_yuezhongqi': 'TIBET',   // 青海｜岳钟琪｜据点 噶斯口
     'qingqiang_jiangwei': 'BASHU',   // 冉駹｜姜维｜据点 汶山城
     'qingyi_fanchangsheng': 'BASHU',   // 青衣｜范长生｜据点 严道
-    'qingyuan_bd_zhoudewei': 'WEI',   // 清苑｜周德威｜据点 保定
+    'qingyuan_bd_zhoudewei': 'WEI',   // 并州｜周德威｜据点 晋阳
     'qiong_rengui': 'BASHU',   // 邛人｜任贵｜据点 邛都
     'qiuchi_yangnandang': 'BASHU',   // 仇池｜杨难当｜据点 上禄
     'qiuci_baiba': 'WESTERN',   // 龟兹｜白霸｜据点 伊逻卢
@@ -909,7 +945,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'shaodang_mitang': 'TIBET',   // 烧当｜迷唐｜据点 玛曲
     'shaozhou_d_mayin': 'JIANGNAN',   // 邵陵｜马殷｜据点 邵州
     'shaozhou_zhangzhensun': 'JIANGNAN',   // 韶州｜张镇孙｜据点 韶关
-    'shatuo_likeyong': 'XIANBEI',   // 沙陀｜李克用｜据点 光禄城
+    'shatuo_likeyong': 'WEI',   // 并州｜李克用｜据点 晋阳（晋王都太原）
     'shazhou_zhangyichao': 'KHITAN',   // 沙州｜张议潮｜据点 敦煌
     'she_ethnic_leiwanxing': 'JIANGNAN',   // 畲族｜雷万兴｜据点 敕木山
     'she_shechongming': 'BASHU',   // 永宁｜奢崇明｜据点 叙永

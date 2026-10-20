@@ -161,6 +161,86 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史无载，拟名：848 年张议潮逐吐蕃守军复沙州，吐蕃守将姓名未传。',
     },
+    // 🔴 [2026-10-20 首战规则] 878 年黄巢破仙霞关，唐守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_xianxia_shoujiang: {
+        generalId: 'bfe_xianxia_shoujiang',
+        generalName: '仙霞关唐守将',
+        factionId: 'tang',
+        portrait: '',
+        note: '史无载，拟名：878 年黄巢开山七百里破仙霞关，唐军守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1036 年基辅罗斯逐佩切涅格人，佩切涅格可汗姓名未传 → 拟名战场人物（立绘留空）
+    bfe_pecheneg_khan: {
+        generalId: 'bfe_pecheneg_khan',
+        generalName: '佩切涅格汗',
+        factionId: 'kumanni',
+        portrait: '',
+        note: '史无载，拟名：1036 年雅罗斯拉夫逐佩切涅格人于基辅城下，佩切涅格可汗姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1068 米西尔梅里之战，西西里酋长国守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_sicily_shoujiang: {
+        generalId: 'bfe_sicily_shoujiang',
+        generalName: '米西尔梅里守将',
+        factionId: 'xixiliwangguo',
+        portrait: '',
+        note: '史无载，拟名：1068 年罗杰一世攻米西尔梅里，西西里酋长国守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1130 年完颜宗弼攻明州，南宋守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_mingzhou_shoujiang: {
+        generalId: 'bfe_mingzhou_shoujiang',
+        generalName: '明州守将',
+        factionId: 'song',
+        portrait: '',
+        note: '史无载，拟名：1130 年完颜宗弼（金兀术）攻明州，南宋守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1107 年高丽尹瓘逐曷懒甸女真，女真首领姓名未传 → 拟名战场人物（立绘留空）
+    bfe_helan_dian_shouling: {
+        generalId: 'bfe_helan_dian_shouling',
+        generalName: '曷懒甸女真首领',
+        factionId: 'jurchen',
+        portrait: '',
+        note: '史无载，拟名：1107 年高丽尹瓘拓九城，曷懒甸女真首领姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1204 特拉布宗立国，拜占庭割据势力主将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_trebizond_shoujiang: {
+        generalId: 'bfe_trebizond_shoujiang',
+        generalName: '特拉布宗割据主将',
+        factionId: 'baizanting',
+        portrait: '',
+        note: '史无载，拟名：1204 年阿历克塞在特拉布宗立国，拜占庭割据势力主将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1217 孟宗政襄阳击退金军，金军主将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_jin_xiangyang_jiang: {
+        generalId: 'bfe_jin_xiangyang_jiang',
+        generalName: '攻襄阳金将',
+        factionId: 'dajin',
+        portrait: '',
+        note: '史无载，拟名：1217 年金军攻襄阳，主将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1218 木华黎拔太原，金太原守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_jin_taiyuan_shoujiang: {
+        generalId: 'bfe_jin_taiyuan_shoujiang',
+        generalName: '太原金军守将',
+        factionId: 'dajin',
+        portrait: '',
+        note: '史无载，拟名：1218 年木华黎攻太原，金军守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1228 大昌原之战蒙古军主将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_mongol_dachangyuan_jiang: {
+        generalId: 'bfe_mongol_dachangyuan_jiang',
+        generalName: '大昌原蒙古主将',
+        factionId: 'menggu_d',
+        portrait: '',
+        note: '史无载，拟名：1228 年完颜陈和尚大昌原胜蒙古军，蒙古主将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1152 年拜占庭攻奇里乞亚，拜占庭军主将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_cilicia_shoujiang: {
+        generalId: 'bfe_cilicia_shoujiang',
+        generalName: '拜占庭奇里乞亚主将',
+        factionId: 'baizanting',
+        portrait: '',
+        note: '史无载，拟名：1152 年拜占庭军攻奇里乞亚，主将姓名未传。',
+    },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_achish: {
         generalId: 'bfe_achish',

@@ -271,7 +271,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     anggelu: { generalId: 'gen_alfred_great', generalName: '阿尔弗雷德', portrait: '/assets/GERMANIC/anggelu_aerfuleide.png' },
     yinggelan: { generalId: 'gen_henry_v', generalName: '亨利五世', portrait: '/assets/GERMANIC/yinggelan_hengliwushi.png' },
     piketai: { generalId: 'gen_onuist_i', generalName: '奥恩格斯', portrait: '/assets/GERMANIC/piketai_aoengesi.png' },
-    gaer: { generalId: 'gen_domhnall', generalName: '多姆纳尔', portrait: '/assets/GERMANIC/gaer_duomunaer.png' },
+    gaer: [
+        { generalId: 'gen_domhnall', generalName: '多姆纳尔', portrait: '/assets/GERMANIC/gaer_duomunaer.png' },
+        // 🔴 [2026-10-20 首战规则] 西格特里格·丝须＝都柏林维京王（1014 克朗塔夫之战被布赖恩击败）→ 都柏林·盖尔；普将；立绘留空
+        { generalId: 'gaer_sigtrygg', generalName: '西格特里格·丝须', portrait: '' },
+    ],
     mangsite: { generalId: 'mangsite_bulaienbolu', generalName: '布赖恩博鲁', portrait: '/assets/GERMANIC/mangsite_bulaienbolu.png' },
     tuomengde: { generalId: 'tuomengde_aobulaien', generalName: '奥布赖恩', portrait: '/assets/GERMANIC/tuomengde_aobulaien.png' },
     bulietani: { generalId: 'gen_alain_i', generalName: '阿兰', portrait: '/assets/LATIN/bulietani_alan.png' },
@@ -283,6 +287,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'baolusi', generalName: '保卢斯', portrait: '', legionName: '古典时代罗马军团' },
         { generalId: 'waluo', generalName: '瓦罗', portrait: '', legionName: '古典时代罗马军团' },
         { generalId: 'aitiliusi', generalName: '埃提乌斯', portrait: '', legionName: '古典时代罗马军团' },
+        // 🔴 [2026-10-20 首战规则] 教皇利奥九世＝1053 奇维塔特之战教皇联军主帅（被诺曼人击败被俘）→ 罗马城·罗马帝国（教皇国无独立势力，挂该城势力，报告）；普将；封建×罗马＝封建时代教皇国军团；立绘留空
+        { generalId: 'luoma_diguo_leo_ix', generalName: '利奥九世', portrait: '', legionName: '封建时代教皇国军团' },
         // 🔴 [2026-10-20 首战规则] 西阿格里乌斯＝苏瓦松罗马残部首领（486 苏瓦松之战被克洛维击败）→ 罗马城·罗马帝国；普将；立绘留空
         { generalId: 'luoma_xiageliwusi', generalName: '西阿格里乌斯', portrait: '', legionName: '古典时代罗马军团' , eliteName: '苏瓦松边军', eliteTier: 4 },   // 🔴 486 高卢罗马残部的晚期边军（原配「罗马军团」是帝国早期军团）
         // 2026-10-20 主人令「触发历史剧本时作为剧本出现，不触发时作为武将」：三位罗马皇帝落罗马城
@@ -352,6 +358,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe3_92', generalName: '阿内吉斯克鲁斯', portrait: '', legionName: '古典时代东罗马军团' },
         // 🔴 [2026-10-20 首战规则] 尼基弗鲁斯一世＝拜占庭皇帝（811 普利斯卡战役战死）→ 君士坦丁堡·拜占庭；名将；立绘留空
         { generalId: 'baizanting_nikephoros_i', generalName: '尼基弗鲁斯一世', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 罗曼努斯一世＝拜占庭海军将领/后为皇帝（917 阿海洛战役拜占庭主帅，大败）→ 君士坦丁堡·拜占庭；名将；立绘留空
+        { generalId: 'baizanting_romanosi', generalName: '罗曼努斯一世', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 伊萨克二世·安格洛斯＝拜占庭皇帝（1190 特里亚夫纳被保加利亚阿森一世击败）→ 君士坦丁堡·拜占庭；普将；立绘留空
+        { generalId: 'baizanting_isaac_ii', generalName: '伊萨克二世', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 阿莱克修斯五世＝拜占庭末帝（1204 君士坦丁堡被十字军攻陷）→ 君士坦丁堡·拜占庭；普将；立绘留空
+        { generalId: 'baizanting_alexios_v', generalName: '阿莱克修斯五世', portrait: '' },
     ],
     taolika: { generalId: 'gen_aspurgus', generalName: '阿斯普尔', portrait: '/assets/SLAVIC/taolika_asipuergesi.png' },
     bosi_puluosi: { generalId: 'bosi_puluosi_liukong', generalName: '琉孔一世', portrait: '/assets/LATIN/bosi_puluosi_liukongyishi.png' },
@@ -434,7 +446,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yang_zhou: { generalId: 'yang_zhou_yangxingmi', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
     // cheng 阳安：岳钟琪已迁赤斤@赤金堡
     pagan: { generalId: 'pagan_anulvtuo', generalName: '阿奴律陀', portrait: '/assets/DIANQIAN/pagan_anultuo.png' },
-    liang_d: { generalId: 'liang_d_zhangxun', generalName: '张巡', portrait: '/assets/litang/liang_d_zhangxun.png' },
+    liang_d: [
+        { generalId: 'liang_d_zhangxun', generalName: '张巡', portrait: '/assets/litang/liang_d_zhangxun.png' },
+        // 🔴 [2026-10-20 首战规则] 王景仁＝后梁将（911 柏乡之战主帅，被晋军击败）→ 商丘·梁国；普将；立绘留空
+        { generalId: 'liang_d_wangjingren', generalName: '王景仁', portrait: '' },
+    ],
     qiuci: { generalId: 'qiuci_baiba', generalName: '白霸', portrait: '/assets/WESTERN/qiuci_baiba.png' },
     tubo: [
         { generalId: 'tubo_songzanganbu', generalName: '松赞干布', portrait: '/assets/TIBET/tubo_songzanganbu.png' },
@@ -442,9 +458,15 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'tubo_xinuoluo', generalName: '悉诺逻恭禄', portrait: '' },
         // 🔴 [2026-10-20 首战规则] 论莽热＝801 维州之战吐蕃主帅（被韦皋围歼）→ 逻些·吐蕃；普将；立绘留空
         { generalId: 'tubo_lunmangre', generalName: '论莽热', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 木征＝唃厮啰孙、熙河吐蕃首领（1073 王韶收复熙河，木征降）→ 逻些·吐蕃（熙州无城，锚定吐蕃代表据点）；普将；立绘留空
+        { generalId: 'tubo_muzheng', generalName: '木征', portrait: '' },
     ],
     menggu_d: { generalId: 'menggu_d_chengjisihan', generalName: '成吉思汗', portrait: '/assets/STEPPE/menggu_d_chengjisihan.png' },
-    bohai: { generalId: 'bohai_dazuorong', generalName: '大祚荣', portrait: '/assets/NORTHEAST/bohai_dazuorong.png' },
+    bohai: [
+        { generalId: 'bohai_dazuorong', generalName: '大祚荣', portrait: '/assets/NORTHEAST/bohai_dazuorong.png' },
+        // 🔴 [2026-10-20 首战规则] 大諲撰＝渤海末王（926 辽太祖攻灭忽汗城）→ 龙泉府·渤海；普将；立绘留空
+        { generalId: 'bohai_dayinzhuan', generalName: '大諲撰', portrait: '' },
+    ],
     goryeo: { generalId: 'goryeo_jianghanzan', generalName: '姜邯赞', portrait: '/assets/KOREA/goryeo_jianghanzan.png' },
     ashikaga: { generalId: 'ashikaga_zulizunshi', generalName: '足利尊氏', portrait: '/assets/JAPAN/ashikaga_zulizunshi.png' },
     tiemuer: { generalId: 'tiemuer_tiemuer', generalName: '帖木儿', portrait: '/assets/CENTRAL_ASIA/tiemuer_tiemuer.png' },
@@ -457,6 +479,14 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bing_liji', generalName: '李勣', portrait: '/assets/litang/bing_liji.png' },
         // 名将双身份：袁绍（据点武将＋剧本敌将）
         { generalId: 'bfe3_71', generalName: '袁绍', portrait: '', legionName: '古典时代太行军团' },
+        // 🔴 [2026-10-20 五代抽查] 李克用：原挂光禄城（沙陀发源，不是最知名驻地）→ 晋阳（晋王都太原）；势力沙陀；精锐 沙陀鸦军 T1
+        { generalId: 'shatuo_likeyong', generalName: '李克用', portrait: '/assets/CENTRAL/shatuo_likeyong.png', factionId: 'shatuo', eliteName: '沙陀鸦军', eliteTier: 1 },
+        // 🔴 [2026-10-20 五代抽查] 周德威：原挂清苑(保定)→晋阳（晋军总管随晋王）；势力沙陀；精锐 沙陀鸦军 T1
+        { generalId: 'qingyuan_bd_zhoudewei', generalName: '周德威', portrait: '/assets/NORTH/qingyuan_bd_zhoudewei.png', factionId: 'shatuo', eliteName: '沙陀鸦军', eliteTier: 1 },
+        // 🔴 [2026-10-20 首战规则] 王禀＝北宋太原守将（1126 太原之战死守殉国）→ 晋阳（太原）·宋国；普将；封建×河朔＝封建时代河朔军团；立绘留空
+        { generalId: 'song_wangbing', generalName: '王禀', portrait: '', legionName: '封建时代河朔军团', factionId: 'song' },
+        // 🔴 [2026-10-20 抽查] 李光弼：原挂乐成(河间)错——他最知名是守太原大捷（河东节度使）→ 晋阳；势力=唐国；精锐 河东军 T2
+        { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/litang/liwang_liguangbi.png', factionId: 'tang', eliteName: '河东军', eliteTier: 2 },
     ],
     min: { generalId: 'min_wangshenzhi', generalName: '王审知', portrait: '/assets/JIANGNAN/min_wangshenzhi.png' },
     quanzhou: { generalId: 'quanzhou_liucongxiao', generalName: '留从效', portrait: '/assets/JIANGNAN/quanzhou_liucongxiao.png' },
@@ -519,7 +549,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     kakizaki: { generalId: 'kakizaki_liqiqingguang', generalName: '蛎崎庆广', portrait: '/assets/JAPAN/kakizaki_liqiqingguang.png' },
     ayinu: { generalId: 'ayinu_hushemoquan', generalName: '胡奢魔犬', portrait: '/assets/LINGNAN/ayinu_hushemoquan.png' },
     so: { generalId: 'so_zongyizhi', generalName: '宗义智', portrait: '/assets/JAPAN/so_zongyizhi.png' },
-    taira: { generalId: 'taira_pingzhisheng', generalName: '平知盛', portrait: '/assets/JAPAN/taira_pingzhisheng.png' },
+    taira: [
+        { generalId: 'taira_pingzhisheng', generalName: '平知盛', portrait: '/assets/JAPAN/taira_pingzhisheng.png' },
+        // 🔴 [2026-10-20 首战规则] 平宗盛＝平家总帅（1180 富士川不战而溃）→ 赤间关·长门（平家）；普将；封建×日本＝封建时代平安军团；立绘留空
+        { generalId: 'taira_pingzongsheng', generalName: '平宗盛', portrait: '', legionName: '封建时代平安军团' },
+    ],
     lelang: { generalId: 'lelang_wangqi', generalName: '王颀', portrait: '/assets/KOREA/lelang_wangqi.png' },
     anmei: { generalId: 'anmei_yuwandaqin', generalName: '与湾大亲', portrait: '/assets/JAPAN/anmei_yuwandaqin.png' },
 
@@ -562,7 +596,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     wuliangha: { generalId: 'wuliangha_subutai', generalName: '速不台', portrait: '/assets/STEPPE/wuliangha_subutai.png' },
     fuyu: { generalId: 'fuyu_weichoutai', generalName: '尉仇台', portrait: '/assets/NORTHEAST/fuyu_weichoutai.png' },
-    dajin: { generalId: 'dajin_wanyanaguda', generalName: '完颜阿骨打', portrait: '/assets/NORTHEAST/dajin_wanyanaguda.png' },
+    dajin: [
+        { generalId: 'dajin_wanyanaguda', generalName: '完颜阿骨打', portrait: '/assets/NORTHEAST/dajin_wanyanaguda.png' },
+        // 🔴 [2026-10-20 首战规则] 完颜承裕＝金军野狐岭主帅（1211 被成吉思汗大败）→ 会宁府·大金；普将；封建×东北＝封建时代渤海军团；立绘留空
+        { generalId: 'dajin_wanyanchengyu', generalName: '完颜承裕', portrait: '', legionName: '封建时代渤海军团' },
+        // 🔴 [2026-10-20 首战规则] 完颜合达＝金军三峰山主帅（1232 被拖雷击灭）→ 会宁府·大金；普将；封建时代渤海军团；立绘留空
+        { generalId: 'dajin_wanyanheda', generalName: '完颜合达', portrait: '', legionName: '封建时代渤海军团' },
+    ],
     yizhou: { generalId: 'yizhou_wanyanloushi', generalName: '完颜娄室', portrait: '/assets/NORTHEAST/yizhou_wanyanloushi.png' },
     aisin_d: { generalId: 'aisin_d_huangtaiji', generalName: '皇太极', portrait: '/assets/manqing/aisin_d_huangtaiji.png' },
     xianbei: { generalId: 'xianbei_tuobamao', generalName: '拓跋毛', portrait: '/assets/STEPPE/xianbei_tuobamao.png' },
@@ -608,7 +648,17 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     wuli_d: { generalId: 'wuli_d_celeng', generalName: '策楞', portrait: '/assets/STEPPE/wuli_d_celeng.png' },
     jiluo_d: { generalId: 'jiluo_d_douxian', generalName: '窦宪', portrait: '/assets/liuhan/jiluo_d_douxian.png' },
 // ── 草原区 2026-06-18 ──
-    liao_d: { generalId: 'liao_d_yelvabaoji', generalName: '耶律阿保机', portrait: '/assets/STEPPE/liao_d_yelvabaoji.png' },
+    liao_d: [
+        { generalId: 'liao_d_yelvabaoji', generalName: '耶律阿保机', portrait: '/assets/STEPPE/liao_d_yelvabaoji.png' },
+        // 🔴 [2026-10-20 首战规则] 萧排押＝辽将（1019 龟州之战主帅，被姜邯赞大破）→ 临潢府·大辽；普将；立绘留空
+        { generalId: 'liao_d_xiaopaiya', generalName: '萧排押', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 萧咄李＝辽驸马侍中（980 雁门关之战被杨业阵斩）→ 临潢府·大辽；普将；立绘留空
+        { generalId: 'liao_d_xiaoduli', generalName: '萧咄李', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 韩德威＝辽将（995 子河汊之战被折御卿击败）→ 临潢府·大辽；普将；立绘留空
+        { generalId: 'liao_d_handewei', generalName: '韩德威', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 天祚帝＝辽末帝耶律延禧（1115 护步达冈亲征被完颜阿骨打大败）→ 临潢府·大辽；普将；立绘留空
+        { generalId: 'liao_d_tianzuodi', generalName: '天祚帝', portrait: '' },
+    ],
     yel: { generalId: 'yel_yelvxiuge', generalName: '耶律休哥', portrait: '/assets/STEPPE/yel_yelxiuge.png' },
     kumoxi: { generalId: 'kumoxi_ahuihui', generalName: '阿会毁', portrait: '/assets/STEPPE/kumoxi_ahuihui.png' },
     kumo: { generalId: 'kumo_xiwanghuilibao', generalName: '回离保', portrait: '/assets/STEPPE/kumo_xiwanghuilibao.png' },
@@ -638,7 +688,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yuan_d: { generalId: 'yuan_d_hubilie', generalName: '忽必烈', portrait: '/assets/STEPPE/yuan_d_hubilie.png' },
     mengwu: { generalId: 'mengwu_hebulehan', generalName: '合不勒', portrait: '/assets/STEPPE/mengwu_hebulehan.png' },
     shaodang: { generalId: 'shaodang_mitang', generalName: '迷唐', portrait: '/assets/TIBET/shaodang_mitang.png' },
-    shatuo: { generalId: 'shatuo_likeyong', generalName: '李克用', portrait: '/assets/CENTRAL/shatuo_likeyong.png' },
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     // 骨力裴罗＝回纥（后改称回鹘）汗国开国可汗，回纥/回鹘/博尔巴任回鹘是同一汗国 → 统一挂回鹘
@@ -745,12 +794,26 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     wusun: { generalId: 'wusun_liejiaomi', generalName: '猎骄靡', portrait: '/assets/WESTERN/wusun_liejiaomi.png' },
     tujishi: { generalId: 'tujishi_sulukehan', generalName: '苏禄', portrait: '/assets/WESTERN/tujishi_sulu.png' },
     xiliao: { generalId: 'xiliao_yelvdashi', generalName: '耶律大石', portrait: '/assets/STEPPE/xiliao_yeldashi.png' },
-    jiazini: { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
+    jiazini: [
+        { generalId: 'jiazini_mahamaode', generalName: '马哈茂德', portrait: '/assets/CENTRAL_ASIA/jiazini_mahamaode.png' },
+        // 🔴 [2026-10-20 首战规则] 马斯乌德＝伽色尼苏丹（1040 丹丹纳坎被塞尔柱大败）→ 哥疾宁·伽色尼；名将；立绘留空
+        { generalId: 'jiazini_masud', generalName: '马斯乌德', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 呼斯劳·马利克＝伽色尼末王（1175 赫拉特被古尔王朝击灭）→ 哥疾宁·伽色尼；普将；立绘留空
+        { generalId: 'jiazini_khusrau_malik', generalName: '呼斯劳·马利克', portrait: '' },
+    ],
     jibin: { generalId: 'jibin_jianisejia', generalName: '迦腻色迦', portrait: '/assets/CENTRAL_ASIA/jibin_jianisejia.png' },
     babuer: { generalId: 'babuer_babuer', generalName: '巴布尔', portrait: '/assets/CENTRAL_ASIA/babuer_babuer.png' },
-    danmai: { generalId: 'danmai_abusalong', generalName: '阿布萨隆', portrait: '/assets/GERMANIC/danmai_abusalong.png' },
+    danmai: [
+        { generalId: 'danmai_abusalong', generalName: '阿布萨隆', portrait: '/assets/GERMANIC/danmai_abusalong.png' },
+        // 🔴 [2026-10-20 首战规则] 古思伦＝丹麦维京军首领（878 埃丁顿战败、后受洗）→ 哥本哈根·丹麦；名将；立绘留空
+        { generalId: 'danmai_guthrum', generalName: '古思伦', portrait: '', legionName: '封建时代丹麦王国军团' },
+    ],
     ruidian_si: { generalId: 'ruidian_si_biergeyaer', generalName: '比尔格雅尔', portrait: '/assets/GERMANIC/ruidian_si_biergeyaer.png' },
-    kasidiliya: { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
+    kasidiliya: [
+        { generalId: 'kasidiliya_afangsuoshiyi', generalName: '阿方索十一', portrait: '/assets/LATIN/kasidiliya_afangsuoshiyishi.png' },
+        // 🔴 [2026-10-20 首战规则] 阿方索八世＝卡斯蒂利亚王（1195 阿拉科斯败于穆瓦希德，1212 托洛萨大胜）→ 马德里·卡斯蒂利亚；名将；封建×西班牙＝封建时代摩尔游骑军团；立绘留空
+        { generalId: 'kasidiliya_afangsuoba', generalName: '阿方索八世', portrait: '', legionName: '封建时代摩尔游骑军团' },
+    ],
     duluo: { generalId: 'duluo_sangqiao', generalName: '桑乔一世', portrait: '/assets/LATIN/duluo_sangqiaoyishi.png' },
     teluoyi: [
         { generalId: 'teluoyi_maniya', generalName: '马尼亚', portrait: '/assets/ORIE/teluoyi_maniya.png' },
@@ -765,7 +828,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 养吉干·咸海 / 真珠河·乌护 宁缺毋滥
 
 // ── 中亚区 2026-06-18 ──
-    huarazim: { generalId: 'huarazim_mohemo', generalName: '摩诃末', portrait: '/assets/CENTRAL_ASIA/huarazim_mohemo.png' },
+    huarazim: [
+        { generalId: 'huarazim_mohemo', generalName: '摩诃末', portrait: '/assets/CENTRAL_ASIA/huarazim_mohemo.png' },
+        // 🔴 [2026-10-20 首战规则] 扎兰丁＝花剌子模末代沙阿（1231 被绰儿马罕击灭）→ 玉龙杰赤·花剌子模；名将；封建×中亚＝封建时代河中军团；立绘留空
+        { generalId: 'huarazim_jalal', generalName: '扎兰丁', portrait: '', legionName: '封建时代河中军团' },
+    ],
     kazakh: { generalId: 'kazakh_hasimu', generalName: '哈斯木', portrait: '/assets/CENTRAL_ASIA/kazakh_hasimu.png' },
     // 公元前327年索格狄亚那岩守帅（Rock of Ariamazes 的岩堡首领；英文维基信息框 commander2 = Arimazes）；
     //    立绘按铁律留空走保底图，等主人亲自放图
@@ -1026,7 +1093,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     huizhou: { generalId: 'huizhou_yaosi', generalName: '姚兕', portrait: '/assets/HEXI/huizhou_yaosi.png' },
     huan: { generalId: 'huan_zhongshidao', generalName: '种师道', portrait: '/assets/zhaosong/huan_zhongshidao.png' },
     wei2: { generalId: 'wei2_hunjian', generalName: '浑瑊', portrait: '/assets/zhaosong/wei2_hunjian.png' },
-    lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/litang/lingzhou_puguhuaien.png' },
+    // 🔴 [2026-10-20 抽查] 仆固怀恩：唐朔方节度使（原挂灵州藩镇势力）→ 势力=唐国；据点回乐（灵州/灵武）✓；精锐 朔方军 T1
+    lingzhou: { generalId: 'pugu_puguhuaien', generalName: '仆固怀恩', portrait: '/assets/litang/lingzhou_puguhuaien.png', factionId: 'tang', eliteName: '朔方军', eliteTier: 1 },
     ningkou: { generalId: 'ningkou_liling', generalName: '李陵', portrait: '/assets/liuhan/ningkou_liling.png' },
     juqu_d: { generalId: 'juqu_d_juqumengxun', generalName: '沮渠蒙逊', portrait: '/assets/HEXI/juqu_d_juqumengxun.png' },
         zhengzhou: { generalId: 'zhengzhou_chenqingzhi', generalName: '陈庆之', portrait: '/assets/NORTH/zhengzhou_chenqingzhi.png' },
@@ -1080,7 +1148,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 主人令「相同势力，归到一个势力中」] 子受＝商王帝辛（殷即商），与安阳妇好同属商 → 挂商国旗、不与商互打
         { generalId: 'yin_dixin', generalName: '子受', portrait: '/assets/xianqin/yin_dixin.png', factionId: 'shang' , legionName: '古典时代华夏军团' , eliteName: '虎贲多射', eliteTier: 2 },
     ],
-    liwang: { generalId: 'liwang_liguangbi', generalName: '李光弼', portrait: '/assets/litang/liwang_liguangbi.png' },
     qing: { generalId: 'qing_quduan', generalName: '曲端', portrait: '/assets/zhaosong/qing_quduan.png' },
     han: { generalId: 'han_baoyuan', generalName: '暴鸢', portrait: '/assets/xianqin/han_baoyuan.png' },
     xuguo: { generalId: 'caoren', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png' },
@@ -1092,11 +1159,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // 商鞅：姬姓公孙氏，本名卫鞅/公孙鞅，封于商（商於）后历代通称商鞅
     shangzhou: { generalId: 'shangzhou_shangyang', generalName: '商鞅', portrait: '/assets/yingqin/shangzhou_shangyang.png' },
     yuan_cj_d: { generalId: 'yuan_cj_d_lishuo', generalName: '李愬', portrait: '/assets/litang/yuan_cj_d_lishuo.png' },
-    xinping: { generalId: 'lingwu_guoziyi', generalName: '郭子仪', portrait: '/assets/litang/xinping_guoziyi.png' },
+    // 🔴 [2026-10-20 抽查] 郭子仪：唐中央名将（原挂新平藩镇势力）→ 势力=唐国；据点新平（邠州，他镇邠多年）✓；精锐 朔方军 T1
+    xinping: { generalId: 'lingwu_guoziyi', generalName: '郭子仪', portrait: '/assets/litang/xinping_guoziyi.png', factionId: 'tang', eliteName: '朔方军', eliteTier: 1 },
     yuzhou: { generalId: 'yuzhou_zuti', generalName: '祖逖', portrait: '/assets/NORTH/yuzhou_zuti.png' },
     mengcheng_d: { generalId: 'mengcheng_d_gaoqiong', generalName: '高琼', portrait: '/assets/CENTRAL/mengcheng_d_gaoqiong.png' },
     lulin: { generalId: 'lulin_liuxiu', generalName: '刘秀', portrait: '/assets/liuhan/lulin_liuxiu.png' },
-    dang_d: { generalId: 'dang_d_zhuwen', generalName: '朱温', portrait: '/assets/CENTRAL/dang_d_zhuwen.png' },
+    dang_d: [
+        { generalId: 'dang_d_zhuwen', generalName: '朱温', portrait: '/assets/CENTRAL/dang_d_zhuwen.png' },
+        // 🔴 [2026-10-20 首战规则] 庞师古＝朱温大将（897 清口之战被杨行密决水斩杀）→ 虞城·虞国；普将；立绘留空
+        { generalId: 'dang_d_pangshigu', generalName: '庞师古', portrait: '' },
+    ],
     hao_d: { generalId: 'hao_d_weirui', generalName: '韦睿', portrait: '/assets/JIANGNAN/hao_d_weirui.png' },
     bozhou_d: { generalId: 'bozhou_d_yujin', generalName: '于禁', portrait: '/assets/CENTRAL/bozhou_d_yujin.png' },
     zhuozhou: [
@@ -1145,7 +1217,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 首战规则] 元英＝北魏中山王、507 钟离之战主帅（被韦睿击败）→ 大同·拓跋；普将；立绘留空
         { generalId: 'tuoba_yuanying', generalName: '元英', portrait: '' },
     ],
-    qingyuan_bd: { generalId: 'qingyuan_bd_zhoudewei', generalName: '周德威', portrait: '/assets/NORTH/qingyuan_bd_zhoudewei.png' },
     changshan: { generalId: 'changshan_yangyanzhao', generalName: '杨延昭', portrait: '/assets/zhaosong/changshan_yangyanzhao.png' },
     hejian: { generalId: 'hejian_gongsunzan', generalName: '公孙瓒', portrait: '/assets/NORTH/hejian_gongsunzan.png' }, // 文安·河间郡公孙瓒白马义从
     liangshidu: { generalId: 'liangshidu_longjia', generalName: '龙贾', portrait: '/assets/xianqin/liangshidu_longjia.png' },
@@ -1326,7 +1397,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     yong: { generalId: 'yong_lujili', generalName: '庐戢黎', portrait: '/assets/xianqin/yong_lujili.png' , legionName: '古典时代华夏军团' },
     jingcheng_d: { generalId: 'jingcheng_d_yuyouzhao', generalName: '鱼有沼', portrait: '/assets/KOREA/jingcheng_d_yuyouzhao.png' },
     // 🔴 [2026-10-20 主人令「不能让同势力的人乱打，不能白起打王龁」] 白起是秦将 → 出场挂秦（百岁模式出城即归秦）
-    xin: { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png', factionId: 'qin' , eliteName: '铁鹰锐士', eliteTier: 1 },
+    xin: [
+        { generalId: 'xin_baiqi', generalName: '白起', portrait: '/assets/yingqin/xin_baiqi.png', factionId: 'qin' , eliteName: '铁鹰锐士', eliteTier: 1 },
+        // 🔴 [2026-10-20 首战规则] 刘崇＝北汉世祖（954 高平之战被柴荣大破）→ 长子·上党（北汉）；普将；封建×中原＝封建时代中原军团；立绘留空
+        { generalId: 'xin_liuchong', generalName: '刘崇', portrait: '', legionName: '封建时代中原军团' },
+    ],
   pangzha: { generalId: 'pangzha_halixinge', generalName: '哈里辛格', portrait: '/assets/INDIA/pangzha_halixinge.png' },
     najie: { generalId: 'najie_minande', generalName: '米南德', portrait: '/assets/CENTRAL_ASIA/najie_minande.png' },
     dulan_d: { generalId: 'dulan_d_aihamaide', generalName: '艾哈迈德', portrait: '/assets/CENTRAL_ASIA/dulan_d_aihamaide.png' },
@@ -1338,16 +1413,29 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xisi_safaer', generalName: '萨法尔', portrait: '/assets/CENTRAL_ASIA/xisi_yakubu.png' },
         // 2026-10-20：萨法尔王朝创建者雅库布·伊本·莱斯（840–879）→ 锡斯坦（博斯特）；PERSIAN×封建＝德莱木军团
         { generalId: 'xisi_yakubusafaer', generalName: '雅库布', portrait: '', legionName: '封建时代德莱木军团' },
+        // 🔴 [2026-10-20 首战规则] 阿姆尔·本·莱斯＝萨法尔王朝第二任埃米尔（900 巴尔赫被萨曼伊斯玛仪生擒）→ 博斯特·锡斯坦；名将；立绘留空
+        { generalId: 'xisi_amr', generalName: '阿姆尔·本·莱斯', portrait: '' },
     ],
   delan: { generalId: 'delan_sulun', generalName: '苏伦', portrait: '/assets/CENTRAL_ASIA/delan_sulun.png' },
     huluo: { generalId: 'huluo_jiyasiding', generalName: '吉亚斯丁', portrait: '/assets/CENTRAL_ASIA/huluo_jiyasiding.png' },
   aba: { generalId: 'aba_shapuer', generalName: '沙普尔', portrait: '/assets/CENTRAL_ASIA/aba_shapuer.png' },
     wenling: { generalId: 'wenling_shilang', generalName: '施琅', portrait: '/assets/JIANGNAN/wenling_shilang.png' },
-    qianzhou: { generalId: 'qianzhou_lisheng', generalName: '李晟', portrait: '/assets/litang/qianzhou_lisheng.png' },
+    // 🔴 [2026-10-20 抽查] 李晟：唐中央名将（原挂乾州藩镇势力）→ 势力=唐国；据点奉天（平叛驻地）✓；精锐 神策军 T2
+    qianzhou: { generalId: 'qianzhou_lisheng', generalName: '李晟', portrait: '/assets/litang/qianzhou_lisheng.png', factionId: 'tang', eliteName: '神策军', eliteTier: 2 },
     wuyue: { generalId: 'wuyue_qianliu', generalName: '钱镠', portrait: '/assets/JIANGNAN/wuyue_qianliu.png' },
     shaozhou_d: { generalId: 'shaozhou_d_mayin', generalName: '马殷', portrait: '/assets/JIANGNAN/shaozhou_d_mayin.png' },
 
-    song: { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
+    song: [
+        { generalId: 'song_zhaokuangyin', generalName: '赵匡胤', portrait: '/assets/zhaosong/song_zhaokuangyin.png' },
+        // 🔴 [2026-10-20 首战规则] 赵光义＝宋太宗（979 高梁河之战亲征，被耶律休哥大败）→ 开封·宋国；名将；立绘留空
+        { generalId: 'song_zhaoguangyi', generalName: '赵光义', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 裴济＝北宋灵州知州（1002 灵州陷落战死）→ 回乐（灵州）·宋国；普将；封建×契丹＝封建时代归义军团；立绘留空
+        { generalId: 'song_peiji', generalName: '裴济', portrait: '', legionName: '封建时代归义军团' },
+        // 🔴 [2026-10-20 首战规则] 任福＝北宋好水川之战主帅（1041 中伏战死）→ 萧关（好水川一带）·宋国；普将；立绘留空
+        { generalId: 'song_renfu', generalName: '任福', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 张浚＝南宋川陕五路主帅（1130 富平之战被完颜娄室大败）→ 开封·宋国（驻兴州，城库无，锚定宋代表据点）；普将；立绘留空
+        { generalId: 'song_zhangjun', generalName: '张浚', portrait: '' },
+    ],
     chuzhou_d: { generalId: 'chuzhou_d_huangfuhui', generalName: '皇甫晖', portrait: '/assets/CENTRAL/chuzhou_d_huangfuhui.png' },
     xiyuduhu: { generalId: 'xiyuduhu_banchao', generalName: '班超', portrait: '/assets/liuhan/xiyuduhu_banchao.png' },
     zizhou: { generalId: 'zizhou_wangjian', generalName: '王建', portrait: '/assets/BASHU/zizhou_wangjian.png' },
@@ -1409,6 +1497,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'sailiugu_antiaoke', generalName: '安条克', portrait: '/assets/WEST_ASIA/sailiugu_antiaoke.png' },
         // 名将双身份：安条克一世（据点武将＋剧本敌将）
         { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '', legionName: '古典时代黎凡特军团' },
+        // 🔴 [2026-10-20 首战规则] 雅吉·西扬＝安条克城守将（1098 十字军围城时被杀）→ 安提俄基亚·塞尔柱；普将；封建×ORIE＝封建时代萨拉森军团；立绘留空
+        { generalId: 'sailiugu_yaghi', generalName: '雅吉·西扬', portrait: '', legionName: '封建时代萨拉森军团' },
     ],
     womaya: [
         { generalId: 'womaya_muaweiye', generalName: '穆阿维叶', portrait: '/assets/WEST_ASIA/womaya_muaweiye.png' },
@@ -1416,6 +1506,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_toghtekin', generalName: '图格特金', portrait: '', legionName: '城堡时代马穆鲁克军团' },
         // 🔴 [2026-10-20 首战规则] 穆斯林·本·赛义德＝724 渴水日之战倭马亚主帅（大败）→ 大马士革·倭马亚；普将；立绘留空
         { generalId: 'womaya_muslim', generalName: '穆斯林·本·赛义德', portrait: '' },
+        // 🔴 [2026-10-20 首战规则] 叶海亚＝托莱多泰法王（1085 托莱多被阿方索六世攻陷）→ 托莱多·倭马亚（泰法为倭马亚系，报告）；普将；立绘留空
+        { generalId: 'womaya_yahya', generalName: '叶海亚', portrait: '', legionName: '封建时代阿斯图里亚斯军团' },
         // 🔴 [2026-10-20 首战规则] 阿卜杜勒·拉赫曼＝732 普瓦捷之战倭马亚主帅（战死）→ 大马士革·倭马亚；名将；立绘留空
         { generalId: 'womaya_abdrahman', generalName: '阿卜杜勒·拉赫曼', portrait: '' },
     ],
@@ -1431,6 +1523,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_baodewen_iv', generalName: '鲍德温四世', portrait: '/assets/WEST_ASIA/yelusalengwg_baodewensishi.png' },
         // 2026-10-20：鲍德温一世（1058–1118，埃德萨伯爵、耶路撒冷国王）→ 耶路撒冷王国（阿卡）；FRANKS×城堡＝法兰西骑士军团
         { generalId: 'aosiruowen_baodewen', generalName: '鲍德温一世', portrait: '', legionName: '城堡时代法兰西骑士军团' },
+        // 🔴 [2026-10-20 首战规则] 阿马尔里克＝耶路撒冷王（1167 巴班之战十字军主帅）→ 阿卡·耶路撒冷王国；普将；封建×法兰克＝封建时代法兰克军团；立绘留空
+        { generalId: 'yelusalengwg_amalric', generalName: '阿马尔里克', portrait: '', legionName: '封建时代法兰克军团' },
     ],
     shengdian_qishi: { generalId: 'shengdian_qishi_demolai', generalName: '莫莱', portrait: '/assets/GERMANIC/shengdian_qishi_demolai.png' },
     maerta_qishi: { generalId: 'maerta_qishi_walaite', generalName: '瓦莱特', portrait: '/assets/GERMANIC/maerta_qishi_lawalaite.png' },
@@ -1451,6 +1545,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     paermila: { generalId: 'paermila_zhinuobiya', generalName: '芝诺比娅', portrait: '/assets/WEST_ASIA/paermila_zhinuobiya.png' },
     abasi: [
         { generalId: 'abasi_mansuer', generalName: '曼苏尔', portrait: '/assets/WEST_ASIA/abasi_mansuer.png' },
+        // 🔴 [2026-10-20 首战规则] 穆斯塔西姆＝阿拔斯末代哈里发（1258 巴格达被旭烈兀攻陷）→ 巴格达·阿拔斯；普将；立绘留空
+        { generalId: 'abasi_mustasim', generalName: '穆斯塔西姆', portrait: '' },
         // 🔴 [2026-10-20 首战规则] 穆瓦法克＝阿拔斯摄政、876 代尔阿库勒之战击败萨法尔军主帅 → 巴格达·阿拔斯；名将；立绘留空
         { generalId: 'abasi_muwafake', generalName: '穆瓦法克', portrait: '' },
     ],
@@ -1607,8 +1703,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 首战规则] 那加巴塔二世＝瞿折罗王（820 大破波罗军）→ 帕坦·瞿折罗；名将；立绘留空
         { generalId: 'gurjara_nagabhata_ii', generalName: '那加巴塔二世', portrait: '' },
     ],
-    suomunate: { generalId: 'suomunate_kumalapala', generalName: '库马拉帕拉', portrait: '/assets/INDIA/suomunate_kumalapala.png' },
-    sengjialuo: { generalId: 'sengjialuo_dutugamo', generalName: '杜图伽摩尼', portrait: '/assets/INDIA/sengjialuo_dutujiamoni.png' },
+    suomunate: [
+        { generalId: 'suomunate_kumalapala', generalName: '库马拉帕拉', portrait: '/assets/INDIA/suomunate_kumalapala.png' },
+        // 🔴 [2026-10-20 首战规则] 毗摩一世＝索兰基（古吉拉特）王，1026 索姆纳特被伽色尼马哈茂德劫掠 → 索姆纳特·拉其普特；普将；封建×瞿折罗＝封建时代古贾拉铁骑军团；立绘留空
+        { generalId: 'suomunate_bhima_i', generalName: '毗摩一世', portrait: '', legionName: '封建时代古贾拉铁骑军团' },
+    ],
+    sengjialuo: [
+        { generalId: 'sengjialuo_dutugamo', generalName: '杜图伽摩尼', portrait: '/assets/INDIA/sengjialuo_dutujiamoni.png' },
+        // 🔴 [2026-10-20 首战规则] 摩哂陀五世＝僧伽罗王（993 朱罗攻陷阿努拉德普拉，被俘）→ 阿努拉德·僧伽罗；普将；封建×普鲁＝封建时代沙希军团；立绘留空
+        { generalId: 'sengjialuo_mahinda_v', generalName: '摩哂陀五世', portrait: '', legionName: '封建时代沙希军团' },
+    ],
     puxiangyindu: { generalId: 'puxiangyindu_albukeerke', generalName: '阿尔布克尔克', portrait: '/assets/AMERICA/puxiangyindu_aerbukeerke.png' },
     // 🔴 [2026-10-18 主人令] 建筑风格定武将：韦拉克鲁斯 SPANISH→西班牙将、哈瓦那 SPANISH→西班牙将、圣维森特 PORTUGUESE→葡萄牙将；新武将 portrait 留空，走文化池回落。
     tupinijin: { generalId: 'gen_martim_afonso', generalName: '马丁·阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png' },
@@ -1653,7 +1757,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     muwaxide: { generalId: 'muwaxide_yakubu', generalName: '雅库布', portrait: '/assets/CENTRAL_ASIA/muwaxide_yakubu.png' },
     varendra: { generalId: 'varendra_devapala', generalName: '提婆波罗', portrait: '/assets/INDIA/varendra_tipoboluo.png' },
     chatigangren: { generalId: 'chatigangren_wumeide', generalName: '乌梅德汗', portrait: '/assets/CENTRAL_ASIA/chatigangren_wumeidehan.png' },
-    duonaobaojia: { generalId: 'duonaobaojia_tzimiskes', generalName: '齐米斯基', portrait: '/assets/WEST_ASIA/duonaobaojia_qimisiji.png' },
+    duonaobaojia: [
+        { generalId: 'duonaobaojia_tzimiskes', generalName: '齐米斯基', portrait: '/assets/WEST_ASIA/duonaobaojia_qimisiji.png' },
+        // 🔴 [2026-10-20 首战规则] 萨穆伊尔＝保加利亚第一王国沙皇（1014 克雷迪昂战役惨败）→ 普雷斯拉夫·多瑙保加；名将；立绘留空
+        { generalId: 'duonaobaojia_samuel', generalName: '萨穆伊尔', portrait: '' },
+    ],
     lumiliya: { generalId: 'lumiliya_lalashahin', generalName: '拉拉沙欣', portrait: '/assets/CENTRAL_ASIA/lumiliya_lalashaxin.png' },
     yilaka: { generalId: 'yilaka_tundama', generalName: '通达马', portrait: '/assets/AMERICA/yilaka_tongdama.png' },
     xingelana: { generalId: 'xingelana_dawila', generalName: '达维拉', portrait: '/assets/AMERICA/xingelana_daweila.png' , legionName: '帝国时代西班牙方阵军团' },
@@ -1720,7 +1828,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     maermajika: { generalId: 'maermajika_paraetos', generalName: '帕拉伊托斯', portrait: '/assets/WEST_ASIA/maermajika_palayituosi.png' },   // 马特鲁港守将（史无实考驻守者，按据点相关性选配；立绘留空走回落）
     ameng: { generalId: 'ameng_jisi', generalName: '阿曼阿托', portrait: '/assets/WEST_ASIA/ameng_amanatuo.png' },   // 锡瓦绿洲（阿蒙神庙大祭司）
     eerbulushi: { generalId: 'eerbulushi_beisusi', generalName: '贝苏斯', portrait: '/assets/PERSIAN/eerbulushi_beisusi.png' },   // 里海门守将（立绘留空走回落）
-    aliya: { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '/assets/CENTRAL_ASIA/aliya_satibazhanisi.png' },   // 赫拉特守将（立绘留空走回落）
+    aliya: [
+        { generalId: 'aliya_satibazanishi', generalName: '萨提巴扎尼斯', portrait: '/assets/CENTRAL_ASIA/aliya_satibazhanisi.png' },   // 赫拉特守将（立绘留空）
+        // 🔴 [2026-10-20 首战规则] 穆罕默德·本·塔希尔＝塔希尔王朝末王（867 希拉特被萨法尔击败）→ 赫拉特·阿利亚（塔希尔无独立势力，挂该城势力，报告）；普将；封建×波斯＝封建时代德莱木军团；立绘留空
+        { generalId: 'aliya_muhammad_tahir', generalName: '穆罕默德·本·塔希尔', portrait: '', legionName: '封建时代德莱木军团' },
+    ],
     xuliya: { generalId: 'xuliya_shoujiang', generalName: '马泽乌斯', portrait: '/assets/WEST_ASIA/xuliya_mazewusi.png' },   // 塔普萨库斯（阿契美尼德王朝幼发拉底河重镇及两河流域总督）
     emesene: { generalId: 'emesene_xierkuhe', generalName: '希尔库赫', portrait: '/assets/WEST_ASIA/emesene_xierkuhe.png' },   // 🔴 [2026-10-04 建埃梅萨] 希尔库赫 Asad ad-Din Shirkuh（萨拉丁之叔、霍姆斯长官、三征埃及）。⚠️ 立绘文件尚未存在，待主人补
 
