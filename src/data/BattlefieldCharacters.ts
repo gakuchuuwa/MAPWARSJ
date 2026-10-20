@@ -602,14 +602,6 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         note: '实有其人：加喜特巴比伦末王（前1157年被埃兰所俘）。',
     },
     // 🔴 [2026-10-20 主人令「双方武将必须实名」] 首战回补·第二批
-    bfe2_di_xin: {
-        generalId: 'bfe2_di_xin',
-        generalName: '帝辛',
-        factionId: 'panjun',
-        portrait: '',
-        note: '实有其人：商朝末王帝辛（商纣王）。',
-    },
-    // 🔴 [2026-10-20 主人令「双方武将必须实名」] 首战回补·第二批
     bfe2_shalmaneser_iii: {
         generalId: 'bfe2_shalmaneser_iii',
         generalName: '沙尔马那塞尔三世',

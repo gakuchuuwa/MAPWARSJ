@@ -1748,7 +1748,9 @@ export function getGeneralRecordByGeneralId(
         const dedicated = _generalPortraitOverrides[generalId] ?? bfChar.portrait ?? '';
         return {
             generalId: bfChar.generalId,
-            generalName: stageGeneralName(bfChar.generalId, bfChar.generalName),
+            // 🔴 [2026-10-20 主人令「姬发的剧本敌对武将错误」] 战场人物不在生卒年表里，isGeneralOnStage 对他们恒为 false，
+            //    被一律念成「将军」；战场人物只在那一仗出场，名字始终显示真名，不走在场闸。
+            generalName: bfChar.generalName,
             portrait: resolveGeneralPortraitPath(dedicated, {
                 factionId: bfChar.factionId,
                 region: options?.region,
