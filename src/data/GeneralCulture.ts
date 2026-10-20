@@ -292,7 +292,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_charles_martel': 'FRANKS',   // 法兰克｜查理马特｜据点 科隆
     'gen_charles_vii': 'FRANKS',   // 法兰西｜查理七世｜据点 巴黎
     'gen_cipriano_figueiredo': 'PORTUGUESE',   // 亚速尔｜西普里亚诺｜据点 安格拉
-    'gen_city_syracuse': 'GREECE',   // 西西里东｜阿加索克利｜据点 锡拉库萨
+    'gen_city_syracuse': 'SICILIANS',   // 西西里东｜阿加索克利｜据点 锡拉库萨
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
@@ -552,10 +552,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_pachacuti': 'INCA',   // 塔万廷苏尤｜帕查库提｜据点 马丘比丘
     'gen_panangkaran': 'MALAY',   // 马打蓝｜帕南卡兰｜据点 卡拉桑
     'gen_parameswara': 'MALAY',   // 满剌加｜拜里米苏拉｜据点 马六甲
-    'gen_parmenion': 'GREECE',   // 密西亚｜帕曼纽｜据点 格拉尼库斯
+    'gen_parmenion': 'MACEDONIAN',   // 马其顿｜帕曼纽｜据点 佩拉
     'gen_perdiccas': 'ORIE',   // 下埃及｜佩尔狄卡斯｜据点 佩鲁西姆
     'gen_philip_good': 'BURGUNDIANS',   // 勃艮第尼德兰｜好人菲利普｜据点 里尔
-    'gen_philip_ii': 'GREECE',   // 哈尔基季基｜腓力二世｜据点 奥林索斯
+    'gen_philip_ii': 'MACEDONIAN',   // 马其顿｜腓力二世｜据点 佩拉
     'gen_prettenberg': 'GERMANIC',   // 利沃尼亚｜普雷特贝格｜据点 塔林
     'gen_prithviraj': 'INDIA',   // 遮娄其｜普里特维｜据点 阿杰梅尔
     'gen_przemysl_ii': 'POLES',   // 波兰亚｜普热梅斯｜据点 波兹南
@@ -751,7 +751,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'kala_satuke': 'WESTERN',   // 喀喇｜萨图克｜据点 奥什
     'kalan_suhela': 'PERSIAN',   // 卡伦｜苏赫拉｜据点 图斯
     'kaleiliya_kelimu': 'SLAVIC',   // 卡累利阿｜克利姆索博列夫｜据点 基日岛
-    'kalun_dexinga': 'TIBET',   // 柴达木｜德兴阿｜据点 尕斯淖尔
+    'kalun_dexinga': 'JIANGNAN',   // 扬州｜德兴阿｜据点 广陵（江北大营·雷塘/茱萸湾）
     'kamanniya_zongdu': 'PERSIAN',   // 卡曼尼亚行省｜阿斯普兰斯｜据点 卡曼尼亚
     'kanan_azemier': 'ORIE',   // 迦南｜阿泽米尔｜据点 推罗
     'kanata_lamalaya': 'INDIA',   // 卡纳塔｜拉玛拉亚｜据点 亨比
@@ -969,7 +969,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'qin_simacuo': 'CENTRAL',   // 秦国｜司马错｜据点 天水
     'qincha_baqiman': 'CUMAN',   // 钦察｜巴奇曼｜据点 萨克辛
     'qing_quduan': 'CENTRAL',   // 庆州｜曲端｜据点 合水
-    'qinghai_yuezhongqi': 'TIBET',   // 青海｜岳钟琪｜据点 噶斯口
+    'qinghai_yuezhongqi': 'BASHU',   // 蜀｜岳钟琪｜据点 成都（川陕总督）
     'qingqiang_jiangwei': 'BASHU',   // 冉駹｜姜维｜据点 汶山城
     'qingyi_fanchangsheng': 'BASHU',   // 青衣｜范长生｜据点 严道
     'qingyuan_bd_zhoudewei': 'WEI',   // 并州｜周德威｜据点 晋阳
@@ -1207,7 +1207,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'xingliao_dayanlin': 'KOREA',   // 兴辽｜大延琳｜据点 龙湾
     'xingwei_hanba': 'BURMESE',   // 兴威｜罕拔｜据点 木邦
     'xingxingxia_guoxiaoke': 'KHITAN',   // 伊州｜郭孝恪｜据点 五峰燧
-    'xining_yangyingju': 'TIBET',   // 西宁｜杨应琚｜据点 马海台
+    'xining_yangyingju': 'KHITAN',   // 河西｜杨应琚｜据点 皋兰（兰州，陕甘总督）
     'xinjiang_maji': 'JIANGNAN',   // 静江｜马塈｜据点 始安
     'xinluo_jinyuxin': 'KOREA',   // 新罗｜金庾信｜据点 金城
     'xiongding_murongyong': 'CENTRAL',   // 雄定｜慕容永｜据点 天井关
