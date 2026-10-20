@@ -106,10 +106,10 @@ export const DE_ARCHAIC_PALISADE_ANCHORS: Record<string, { pctX: number; pctY: n
         path: '/SUCAI_BUILDING/ARCHAIC_WALL_PALISADE_SE/preview.png',
     },
     POST: {
-        pctX: 56.3,
-        pctY: 75.9,
-        widthFactor: 0.27, // 2026-09-10 主人定：加高栅栏木垛
-        path: '/SUCAI_BUILDING/DARK_WALL_PALISADE_POST/preview.png',
+        pctX: 60.0,
+        pctY: 75.0,
+        widthFactor: 0.23, // 🔴 [2026-10-20 主人令] 换用强木栅栏的垛角（保持横木平切栅栏元素，只换垛角）
+        path: '/SUCAI_BUILDING/HARDWOOD_WALL_PALISADE_POST/preview.png',
     },
     GATE: {
         pctX: 56.9,

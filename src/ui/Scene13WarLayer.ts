@@ -12,7 +12,7 @@
  */
 
 import { getCultureTier, getFactionCompositionSlots, getFactionLegionComposition, getRegionLegionComposition, getCultureLegionName, inferFormationModeFromSlots, resolveCityDefenseLegionName, resolveCityDefenseLegionComposition, type FormationMode } from '../types/CultureFormations';
-import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
+import { Scene13GroundLayerGL, TAC_MAP_HALF_W, TAC_MAP_HALF_H, TAC_TILE_W, TAC_TILE_H } from './scene13/Scene13GroundLayerGL';
 // @ts-ignore
 import { planSpawns } from '../systems/battlefield/spawnPlan.mjs';
 import { strategicCityHtmlNative, type StrategicCityHtml } from './scene13/Scene13StrategicCity';
@@ -27,7 +27,6 @@ import { CITIES_V2 } from '../data/cities_v2';
 import { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
 import type { BattleType } from '../combat/CombatSystem';
 import type { CityType } from '../types/core';
-import { DEFAULT_TERRAIN_TILE } from './Scene13Biome';
 import { resolveEnvironmentClimate, type Scene13ClimatePlan, type Scene13ClimateInput } from './scene13/Scene13EnvironmentGenerator';
 import { resolveTimeOfDay, isNightBattle, Scene13TimeOfDayGrader } from './scene13/Scene13TimeOfDay';
 import { selectLegionTechs, applyTechsToStats, normalizeTechCulture66 } from '../systems/MilitaryTechState';
@@ -60,7 +59,7 @@ import type {
 export type { TechBrief, Scene13WarInit, PassMountainConfig } from './scene13/Scene13Types';
 
 import {
-    ensureCleanImage, gunpowderTrailSprite, getCachedViennaMapData, setCachedViennaMapData,
+    ensureCleanImage, getCachedViennaMapData,
 } from './scene13/Scene13SpriteCache';
 
 import {
@@ -68,15 +67,15 @@ import {
     SIDE_LANES, COMMANDER_CELL, bldFootprintSide, DE_DYN_DIRS, REGION_BUILDING_STYLE,
     FACTION_BUILDING_STYLE,
     marchFilesOf, MARCH_SP, MARCH_SP_DEPTH_MAX, ROW_DEPTH, COL_SPACING, marchSpacingOf,
-    UNIT_RADIUS, LOOP_WINDOW_IDLE_SEC, loopRate,
+    UNIT_RADIUS, LOOP_WINDOW_IDLE_SEC,
 } from './scene13/Scene13UnitTables';
 
 import {
     DEATH_ANIM, ARROW_DUR, SHOOT_PHASE_BY_TYPE, DEFAULT_SHOOT_PHASE, MUZZLE_LIFT_BY_TYPE,
-    PROJ_SCALE, PROJ_SCALE_OVERRIDE, PROJ_ASSET_KEY, PROJ_TYPE, accuracyOf, PROJ_FLAT,
-    PROJ_HIGH_ARC, PROJ_ARC_RATIO, NO_ATTACK_ANIM, SHOT_DUST_COLORS, CASTER_TYPES,
-    GREEK_FIRE_COLORS, FIREARM_TYPES, PROJ_ANGLE_OFFSET, PROJ_VOLLEY, ORGAN_GUN_TYPES,
-    ORGAN_GUN_DISPERSION_PX, PROJ_VOLLEY_DELAY, PROJ_DUR, PROJ_SPEED_PX, PROJ_FRAME_DUR,
+    PROJ_ASSET_KEY, PROJ_TYPE, accuracyOf,
+    NO_ATTACK_ANIM, SHOT_DUST_COLORS, CASTER_TYPES,
+    GREEK_FIRE_COLORS, FIREARM_TYPES, PROJ_VOLLEY, ORGAN_GUN_TYPES,
+    ORGAN_GUN_DISPERSION_PX, PROJ_VOLLEY_DELAY, PROJ_DUR, PROJ_SPEED_PX,
     SUICIDE_TYPES, SUICIDE_BLD_MULT, MIN_RANGE_TYPES, FIRE_LANCER_TYPES, FIRE_LANCER_VOLLEY,
     FIRE_LANCER_CHARGE, WALL_PASS_TYPES, FX_CFG, FX_SCALE, FX_DUR, FIREARM_MUZZLE, DE_FIRE_DELTAS,
 } from './scene13/Scene13ProjectilesAndFx';
@@ -89,11 +88,11 @@ import {
     DEF_WALL_GAP, SIEGE_FIELD_GAP, CLOUD_BASE_URL, CLOUD_FILES, CLOUD_COUNT_MIN,
     CLOUD_COUNT_MAX, CLOUD_SCALE_MAX, CLOUD_SCALE_MIN, CLOUD_SPD_MIN, CLOUD_SPD_MAX,
     CLOUD_ALPHA_MIN, CLOUD_ALPHA_MAX, NATURE_BASE_URL, BUILDING_BASE_URL,
-    BATTLEFIELD_BASE_URL, ANIMAL_BASE_URL, MAPDATA_DIR, FALLBACK_MAPDATA_URL,
+    BATTLEFIELD_BASE_URL, ANIMAL_BASE_URL,
     SIDE_CAP, TRIGGER, SPRITE_TROOPS, CORPSE_KEEP, FLEE_SPD, FLEE_DUR, FLAG_EVERY,
     FLAG_SCALE, FLAG_FALL, FLAG_POLE_RATIO, FLAG_POLE_LIFT, BATCH_COOLDOWN, FADE_IN,
     DEPLOY_SECS, DEPLOY_FADE, ARRIVE_EPS, MARCH_REL, LANE_REGROUP_SEC, LANE_TRACK_EPS,
-    LANE_W, MARCH_R, CHARGE_CYCLE, SPREAD_CAP, SEP_DIST,
+    LANE_W, MARCH_R, SPREAD_CAP, SEP_DIST,
     SEP_SMOOTH, SEP_SPD, SEP_FIGHT, LEASH_LAT, CELL_S, STUCK_IDLE_SEC, NET_STUCK_WINDOW,
     SLIDE_RATE, SLIDE_W, KEEP_TARGET_HP, KITE_RETREAT_DIST, KITE_SAFE, KITE_RETREAT_CAP,
     ATTRITION_START_SEC, ATTRITION_RAMP_SEC, ATTRITION_CAP, HKEY, CELL_M, CELL_R,
@@ -103,17 +102,17 @@ import {
 } from './scene13/Scene13CombatMath';
 export { isPikeBraceType, isCavalryType, faceAngleDeg, attackArcDeg, inFrontArc, flankMulOf } from './scene13/Scene13CombatMath';
 
-import { animalNativeAt, animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
+import { animalDeOf, stepTacticalAnimals } from './scene13/Scene13Animals';
 import { relocateTemplateWater, adaptMapDataSeaOrientation } from './scene13/Scene13MapWaterAdapter';
-import { pickTree, treeDensityFor, type TreeSeason } from './scene13/TreeAssignment';
-import { groundDecorFor, decorFits } from './scene13/DecorFit';
-import { applyDeCityToGround, syncDeCityGround, applySpawnBuildings } from './scene13/Scene13CityLayout';
+import { applySpawnBuildings } from './scene13/Scene13CityLayout';
+import { requestGroundLayerGL } from './scene13/Scene13GroundSetup';
+import { render } from './scene13/Scene13Render';
 
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
     public passMountainConfig: PassMountainConfig = {};
     canvas: HTMLCanvasElement | null = null;
-    private ctx: CanvasRenderingContext2D | null = null;
+    ctx: CanvasRenderingContext2D | null = null;
     active = false;
     /**
      * 残局待命中（战斗已结束、场景还没退的那 5 秒）。
@@ -128,26 +127,26 @@ export class Scene13WarLayer {
     defenderCityId: string | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
-    private men: WarMan[] = [];
-    private corpses: WarCorpse[] = [];
-    private fleers: WarFleer[] = [];
-    private arrows: WarArrow[] = [];
-    private slashes: WarSlash[] = [];
-    private sparks: WarSpark[] = [];
+    men: WarMan[] = [];
+    corpses: WarCorpse[] = [];
+    fleers: WarFleer[] = [];
+    arrows: WarArrow[] = [];
+    slashes: WarSlash[] = [];
+    sparks: WarSpark[] = [];
     /** DE 攻击特效实例（爆炸/炮口焰，一次性生命周期） */
-    private fxs: WarFx[] = [];
+    fxs: WarFx[] = [];
     /** DE 攻击特效素材缓存（单组 1 向 / 炮口焰 8 向） */
-    private fxBank: Record<string, FxAsset> = {};
-    private fallenFlags: WarFallenFlag[] = [];
+    fxBank: Record<string, FxAsset> = {};
+    fallenFlags: WarFallenFlag[] = [];
     /** 场景云（最上层飘动装饰） */
-    private clouds: SceneCloud[] = [];
+    clouds: SceneCloud[] = [];
     /** 本场季节（0=绿夏 1=橙秋 2=白冬）：start 时定一次，树/湖全场统一，禁混季 */
     sceneSeason: 0 | 1 | 2 = 0;
     /** 本场环境方案（生成器产出，纯数据；Scene13WarLayer 只负责画） */
     environmentPlan: Scene13ClimatePlan | null = null;
     /** [2026-09-03] 时段色调：画布内每帧固定两次整画布合成（DOM 混合层版实测卡死已废） */
-    private timeOfDay = new Scene13TimeOfDayGrader();
-    private perfTint: number[] = [];
+    timeOfDay = new Scene13TimeOfDayGrader();
+    perfTint: number[] = [];
     /** 战场中心坐标（海拔判定用；start 时从 init 读） */
     centerLat: number | undefined;
     centerLng: number | undefined;
@@ -157,11 +156,11 @@ export class Scene13WarLayer {
      * 所以死亡动画播完就把最后一帧**烙**进这张图，之后每帧只 drawImage 一次，开销恒定。
      * 代价：窗口 resize 会丢失已烙的尸体（画布尺寸变了，位置无从换算）。
      */
-    private ground: HTMLCanvasElement | null = null;
+    ground: HTMLCanvasElement | null = null;
     private groundCtx: CanvasRenderingContext2D | null = null;
-    private groundHasContent = false;
+    groundHasContent = false;
     decorSprites: DecorSprite[] = [];
-    private tacticalAnimals: TacticalAnimal[] = [];
+    tacticalAnimals: TacticalAnimal[] = [];
     private animalMetaCache: Record<string, any> = {};
     /** 攻城战守方城墙/城门装饰贴图（纯视觉，不可攻击不阻挡）；30 秒随机塌一半 */
     wallGates: WarBuilding[] = [];
@@ -211,7 +210,7 @@ export class Scene13WarLayer {
     private cityBuildings: CityBuildingEntry[] = [];
     private natureCache: Record<string, NatureAsset> = {};
     /** M3 WebGL 地面层渲染器与底层画布（默认关，realGeography 开关开启时启用） */
-    private glCanvas: HTMLCanvasElement | null = null;
+    glCanvas: HTMLCanvasElement | null = null;
     /** 🔴 [2026-10-11 主人「城池在中心，样式和战略地图一致」] 新战术模式攻城战：战略地图同款城池（null = 旧 13 左右布阵） */
     deCity: StrategicCityHtml | null = null;
     /** 城心（逻辑坐标）＝地图中心 */
@@ -230,9 +229,9 @@ export class Scene13WarLayer {
     /** 攻守双方阵营出兵中心（屏幕逻辑坐标） */
     private spawnBases: [{ x: number; y: number }, { x: number; y: number }] = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
     private over = false;
-    private bank: Record<string, WarBank> = {};
+    bank: Record<string, WarBank> = {};
     /** DE 抛射物素材缓存（箭/标枪/飞镖/飞斧/火箭）：key -> ProjAsset */
-    private projBank: Record<string, ProjAsset> = {};
+    projBank: Record<string, ProjAsset> = {};
     pending = 0;
     private bankSides = new Map<string, Set<0 | 1>>();
     private deferredAssetLoads: Array<() => void> = [];
@@ -249,7 +248,7 @@ export class Scene13WarLayer {
         this.coveredMap = null;
     }
 
-    private coverStrategyMap(): void {
+    coverStrategyMap(): void {
         // 战场底图铺满后，底下的地图不再参与浏览器绘制/合成；保留尺寸和镜头状态。
         // 地形缺图时仍显示原地图，不能用空白战场盖住它。
         if (this.coveredMap || !this.useGroundGL) return;
@@ -307,7 +306,7 @@ export class Scene13WarLayer {
     /** 空间网格桶复用池：避免每帧为三张网格反复创建数百个短命数组，触发长 GC 停顿。 */
     private gridBucketPool: WarMan[][] = [];
     /** [2026-08-11 势力本色] 攻/守双方染色 rgba（start 时按 factionId 解析） */
-    private sideFaction: [string, string] = ['', ''];
+    sideFaction: [string, string] = ['', ''];
     /**
      * 每兵总加成（攻/守），乘在伤害上。把战略层的强弱带进 13 —— 将领、精锐、武将技、
      * 文化、运气都在里面（兵力已除掉，它由精灵数量体现）。兵种相克不受影响：
@@ -333,7 +332,7 @@ export class Scene13WarLayer {
     /** 成批增援冷却（秒），一次只补一边所以单值 */
     private batchCd = 0;
     /** 开场列阵待命剩余时间（秒）：阶段内全军静止渐显，结束才开打（主人 2026-08-16） */
-    private deployT = 0;
+    deployT = 0;
     /** 列阵推进阶段是否仍在进行（见 MARCH_REL）；解除后整场不再回到列阵 */
     private marching = false;
     /**
@@ -382,7 +381,7 @@ export class Scene13WarLayer {
     /** 音景此刻是否开着（只为省掉每帧重复调用，start/stop 本身幂等） */
     private contactSfxOn = false;
     /** 首批素材是否已经全部就绪过一次：之后再有素材加载都不许冻结演出（见 tick 里那道闸） */
-    private assetsReadyOnce = false;
+    assetsReadyOnce = false;
 
     /** 攻方主帅武将 id（攻城武器时代判定用） */
     private attackerGeneralId: string | null = null;
@@ -766,11 +765,11 @@ export class Scene13WarLayer {
 
     // ── [2026-09-05 玩家] 战术模式玩家布置（玩家本体 + 受控编队 + 指令） ──
     /** 本场玩家布置（start 时从 window.game.playerHero 取；玩家不在军中 = null） */
-    private playerSetup: Scene13PlayerSetup | null = null;
+    playerSetup: Scene13PlayerSetup | null = null;
     /** 玩家可指挥的出兵口（lane）集合，按官阶定：探马 1 队 / 先锋整前排 / 将军三排 */
-    private playerCtlLanes = new Set<number>();
+    playerCtlLanes = new Set<number>();
     /** 受控编队当前指令：attack 自动索敌（默认）/ hold 待命（不动，够得着照打） */
-    private playerCmd: 'attack' | 'hold' = 'attack';
+    playerCmd: 'attack' | 'hold' = 'attack';
     /** 玩家键盘移动输入（屏幕方向单位向量；null = 没按） */
     private heroInput: { dx: number; dy: number } | null = null;
     /**
@@ -779,7 +778,7 @@ export class Scene13WarLayer {
      * 分不出这个点是玩家点的还是归队自己设的（拿「离目标还远」近似 → 英雄会一跳一跳跟队）。
      */
     private heroClickOrder: { x: number; y: number } | null = null;
-    private heroMan: WarMan | null = null;
+    heroMan: WarMan | null = null;
     /** 🔴 [2026-09-09 主人定] 玩家阵亡复活倒计时（秒；0=活着/未在倒计时） */
     private heroRespawnTimer = 0;
     /** 本场玩家（本人 + 受控编队）击杀精灵数 */
@@ -1268,7 +1267,7 @@ export class Scene13WarLayer {
      * 🔴 每方按自己 66 建筑文化 + 当前年份算（同一兵种攻守双方数值可能不同）。
      * 🔴 返回新对象、绝不原地改 WAR_TYPES（就地改会逐场累积爆表）。分表缓存，一年才失效一次。
      */
-    private statsFor(key: string, f: number): WarType & { sight?: number } {
+    statsFor(key: string, f: number): WarType & { sight?: number } {
         // 城墙/城门建筑：直接返回 DE 属性（不走科技/文化，建筑不吃兵种科技加成）
         const wall = WALL_GATE_STATS[key];
         if (wall) return wall;
@@ -1746,7 +1745,7 @@ export class Scene13WarLayer {
             const __d0 = performance.now();
             this.initDecor();
             this.diagPush('startTimings', { env: +__envMs.toFixed(1), terrainDecor: +(performance.now() - __d0).toFixed(1) });
-            this.requestGroundLayerGL();
+            requestGroundLayerGL.call(this);
 
             // 🔴 [2026-10-02 主人定] 战役战斗过程播报（进入战术模式后，等行军播报结束完毕才能播放；只描述战斗过程、不说结果）
             if (init.battleBriefing) {
@@ -2107,7 +2106,7 @@ export class Scene13WarLayer {
     /** 出生递增序号（zid 分配源）：渲染 z-order 稳定排序用，见 WarMan.zid */
     private manSeq = 0;
     /** [PERF 2026-08-29] 渲染排序列表对象池：render 每帧原 new 700+ 个临时对象加剧 GC，改为复用。 */
-    private visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
+    visPool: Array<{ kind: 'unit' | 'environment'; y: number; sortY?: number; x: number; f: number; key: string; dir: number; set: string; fr: number; a: number; st?: number; z: number; zid: number; sprite: DecorSprite | null }> = [];
     private diagEvents: Array<[number, string, unknown]> = [];
     private diagSent = false;
     private diagAssetsReady = false;
@@ -2270,17 +2269,17 @@ export class Scene13WarLayer {
     // ── 进场过渡（2026-10-03 主人「添加一个丝滑进场」；2026-10-15 主人「战略地图转场到战术地图的转场效果请优化下」）──
     //   start() 把 2D 画布与 WebGL 地形画布同步置成「全透明 + scale(1.045) 俯冲拉近 + 暗角微柔焦」，
     //   等 render() 第一次真正画出来才同步淡入并归位（消除原本 WebGL 底图先硬切出现、2D 画布后淡入的割裂感）。
-    private entryFadePending = false;
-    private entryStartedAt = 0;
+    entryFadePending = false;
+    entryStartedAt = 0;
     /** 最多等素材这么久（真实毫秒），超时就让战场先淡入，不让玩家一直盯着静止的战略地图。
      *  实测素材就绪时间波动很大（1.3 / 4.4 / 8.5 秒），4 秒的上限会在慢的时候把「一起出现」又拆成两段，故放宽到 10 秒。 */
-    private static readonly ENTRY_WAIT_MAX_MS = 10000;
+    static readonly ENTRY_WAIT_MAX_MS = 10000;
     /** 淡入进行中（从 beginEntryFade 到浏览器报告 opacity 渐变结束，或兜底超时）；期间不许盖地图 */
     private entryFadeActive = false;
     private entryFadeCleanup: (() => void) | null = null;
     private static readonly ENTRY_FADE_MS = 680;
 
-    private applyInitialEntryStyle(el: HTMLCanvasElement): void {
+    applyInitialEntryStyle(el: HTMLCanvasElement): void {
         el.style.transition = 'none';
         el.style.transformOrigin = '50% 50%';
         el.style.opacity = '0';
@@ -2296,7 +2295,7 @@ export class Scene13WarLayer {
         this.entryStartedAt = performance.now();
     }
 
-    private beginEntryFade(cv: HTMLCanvasElement): void {
+    beginEntryFade(cv: HTMLCanvasElement): void {
         this.entryFadePending = false;
         const gl = this.glCanvas;
         void cv.offsetWidth;   // 强制样式落定：保证「透明 + 俯冲拉近」是过渡的起点
@@ -2674,7 +2673,7 @@ export class Scene13WarLayer {
         return d;
     }
 
-    private isWaterAt(screenX: number, screenY: number): boolean {
+    isWaterAt(screenX: number, screenY: number): boolean {
         if (this.groundLayerGL && this.canvas) {
             return this.groundLayerGL.isWaterAt(screenX, screenY, this.worldCX * 2, this.worldCY * 2);
         }
@@ -2704,7 +2703,7 @@ export class Scene13WarLayer {
     }
 
     /** 河流 / 湖泊模板水体从东北角迁到城边（实现见 Scene13MapWaterAdapter.ts） */
-    private relocateTemplateWater(mapData: any): any {
+    relocateTemplateWater(mapData: any): any {
         const rec: any = this.defenderCityRecord();
         return relocateTemplateWater(
             mapData,
@@ -2717,7 +2716,7 @@ export class Scene13WarLayer {
     }
 
     /** 自适应校正战术地图水体方位，使海岸线朝向与真实地理（＝战略地图）一致（实现见 Scene13MapWaterAdapter.ts） */
-    private async adaptMapDataSeaOrientation(mapData: any): Promise<any> {
+    async adaptMapDataSeaOrientation(mapData: any): Promise<any> {
         const rec: any = this.defenderCityRecord();
         return adaptMapDataSeaOrientation(
             mapData,
@@ -2726,683 +2725,9 @@ export class Scene13WarLayer {
         );
     }
 
-    /**
-     * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
-     * 并加载新地图物件，替换旧 13 随机树木与岩石。
-     */
-    private requestGroundLayerGL(): void {
-        if (!this.glCanvas) return;
-        // 世界大小（开战时定死的世界中心 ×2）：地面格子与屏幕像素的换算口径，与窗口大小无关
-        const VW = this.worldCX * 2, VH = this.worldCY * 2;
-        const gen = this.assetGen;
-        const cv = this.glCanvas;
-        // 🔴 [2026-10-14 删除旧 13 的 2D 地面后] 开战前等 GL 地面就绪（占 1 个 pending，与兵种贴图同一道素材闸），
-        //    最多等 GL_GROUND_WAIT_MS，超时照常开打，绝不卡住战斗。实测本机 GL 地面 0.86~1.17s 就绪，比其余素材还早约 50ms。
-        this.pending++;
-        let held = true;
-        const releaseGround = () => { if (!held) return; held = false; if (gen === this.assetGen) this.pending--; };
-        window.setTimeout(releaseGround, Scene13WarLayer.GL_GROUND_WAIT_MS);
-
-        // 🔴 [2026-10-11「整合各场景素材」] 地图数据按**真实地理**取，三级退让：
-        //    ① 探针注入 window.__M3_TEST_MAPDATA__（真机验收用，保留最高优先）；
-        //    ② public/battlefields/site_<据点id>.json —— 由 scratch/_bake_site_maps.mjs 用**真实高程 + WorldCover 水体**
-        //       做成骨架喂给引擎（脚本的造水/造陆段跳过）⇒ 战场就是那个地方的地形（维也纳＝多瑙河）；
-        //    ③ 没有该据点 → theme_<环境计划的 deMapTheme>.json（B 批：按气候主题烘焙的通用地貌）；
-        //    ④ 都没有 → 维也纳测试图兜底，保证战斗照样能开。
-        const calcWaterRatio = (md: any): number => {
-            if (!md?.terrain?.length) return 0;
-            let w = 0;
-            for (let i = 0; i < md.terrain.length; i++) {
-                const t = md.terrain[i];
-                if (t === 1 || t === 15 || t === 22 || t === 23 || t === 4 || t === 58 || t === 95 || t === 96) w++;
-            }
-            return w / md.terrain.length;
-        };
-        const getMapData = async () => {
-            if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
-            const load = async (file: string) => {
-                try {
-                    const res = await fetch(MAPDATA_DIR + file);
-                    if (res.ok) return await res.json();
-                } catch {}
-                return null;
-            };
-            const siteId = this.defenderCityId;
-            if (siteId) {
-                const site = await load('site_' + siteId + '.json');
-                if (site) {
-                    const wRatio = calcWaterRatio(site);
-                    const skelHmin = site?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
-                    const skelHmax = site?.header?.skeleton?.hmax ?? skelHmin;
-                    if (this.environmentPlan && this.environmentPlan.elevationM === null && site?.header?.skeleton?.hmin !== undefined) {
-                        this.environmentPlan.elevationM = Math.round((skelHmin + skelHmax) * 0.5);
-                    }
-                    // 若烘焙图存在明显水体但环境计划尚未检出水体（如瓦片尚未异步加载完），按海拔补齐 river / sea
-                    if (wRatio > 0.02 && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
-                        this.environmentPlan.waterKind = skelHmin > 10 ? 'river' : 'sea';
-                    }
-                    // 🔴 修复大非川（龙羊峡水库 100% 水）、萨尔克尔（齐姆良斯克水库 100% 水）、郧阳（丹江口水库 65% 水）等
-                    //    因现代水库蓄水或海湾裁剪导致全图 >55% 变成汪洋大海、丧失陆地与林木的问题：
-                    //    此类淹没图退回当前气候带的 _river / _sea 主题模板，并按真实河道/海岸方向生成城侧水体
-                    if (wRatio <= 0.55) {
-                        return site;
-                    }
-                    console.info(`[Scene13WarLayer] 🏞 据点图 site_${siteId}.json 水面占比过高 (${(wRatio * 100).toFixed(1)}%，现代水库/海湾淹没)，切换为当地气候水体模板`);
-                }
-            }
-            const theme = this.environmentPlan?.deMapTheme;
-            if (theme) {
-                const THEME_MAP_FILES: Record<string, string> = {
-                    afrotropical_tropical: 'theme_afrotropical_tropical.json',
-                    neotropical_temperate: 'theme_neotropical_temperate.json',
-                    neotropical_tropical: 'theme_neotropical_tropical.json',
-                    nearctic_temperate: 'theme_nearctic_temperate.json',
-                    indomalayan_tropical: 'theme_indomalayan_tropical.json',
-                    palaearctic_asia_temperate: 'theme_palaearctic_asia_temperate.json',
-                    palaearctic_middle_east_desert: 'theme_palaearctic_middle_east_desert.json',
-                    palaearctic_europe_taiga: 'theme_palaearctic_europe_taiga.json',
-                    palaearctic_europe_temperate: 'theme_palaearctic_europe_temperate.json',
-                    palaearctic_europe_mediterranean: 'theme_palaearctic_europe_mediterranean.json',
-                    australasian_temperate: 'theme_australasian_temperate.json',
-                    palaearctic_asia_desert: 'theme_palaearctic_asia_desert.json',
-                    palaearctic_salt_desert: 'theme_palaearctic_salt_desert.json',
-                    palaearctic_asia_steppe: 'theme_palaearctic_asia_steppe.json',
-                    palaearctic_tibetan_plateau: 'theme_palaearctic_tibetan_plateau.json',
-                    palaearctic_middle_east_highland: 'theme_palaearctic_middle_east_highland.json',
-                    serengeti: 'theme_serengeti.json',
-                    palustrine_swamp: 'theme_palustrine_swamp.json',
-                };
-                const waterKind = this.environmentPlan?.waterKind;
-                if (waterKind && waterKind !== 'none') {
-                    const waterVariant = await load(`theme_${theme}_${waterKind}.json`);
-                    if (waterVariant) return waterVariant;
-                }
-                const targetFile = THEME_MAP_FILES[theme] ?? ('theme_' + theme + '.json');
-                const themed = await load(targetFile);
-                if (themed) return themed;
-            }
-            try {
-                const res = await fetch(FALLBACK_MAPDATA_URL);
-                if (res.ok) {
-                    console.warn(`[Scene13WarLayer] 无据点/主题地图（site=${siteId ?? '无'} theme=${theme ?? '无'}），地面退回维也纳测试图`);
-                    return await res.json();
-                }
-            } catch {}
-            return null;
-        };
-
-        void getMapData().then(async (rawMapData) => {
-            if (gen !== this.assetGen || !rawMapData) {
-                this.useGroundGL = false;
-                cv.style.display = 'none';
-                releaseGround();
-                return;
-            }
-            // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
-            //    但 DE 标准河流占比仅约 3.5%（海面占比约 23.5%），若内陆据点（海拔 > 10m 或 waterKind === 'river'）
-            //    因现代水库蓄水或大漫滩导致水面占比 > 12%，则将其像海一样的宽阔水面重塑为城侧 3.5 格标准自然河道（relocateTemplateWater）。
-            const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
-            const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
-            const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
-                && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
-                && calcWaterRatio(oriented) > 0.12;
-            if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
-                this.environmentPlan.waterKind = 'river';
-            }
-            const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
-                ? oriented
-                : this.relocateTemplateWater(oriented);
-            try {
-                if (this.groundLayerGL) this.groundLayerGL.destroy();
-                // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
-                const glLayer = await Scene13GroundLayerGL.create(cv, mapData, this.environmentPlan?.groundTiles);
-                if (gen !== this.assetGen) {
-                    glLayer.destroy();
-                    releaseGround();
-                    return;
-                }
-                this.groundLayerGL = glLayer;
-                setCachedViennaMapData(glLayer.data);
-                this.useGroundGL = true;
-                // 🔴 [2026-10-11 主人令「这个菱形的周边黑色很丑，可以换成底图吗」]
-                // WebGL 画布底层平铺当前气候主题的自然底图，任何缩放与平移下满屏铺满，彻底消除菱形周边黑边
-                const baseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
-                cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
-                cv.style.backgroundRepeat = 'repeat';
-                cv.style.backgroundPosition = 'center center';
-                if (this.entryFadePending) this.applyInitialEntryStyle(cv);
-                cv.style.display = 'block';
-
-                // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
-                const data = transposeMapData(mapData);
-                if (data && data.objects) {
-                    // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
-                    //    并拿掉落在地基上的树木与建筑冲突物。
-                    const foundations: Array<{ x: number; y: number; r: number }> = [];
-                    const siegeBuildings = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
-                    for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
-                    for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
-                    for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
-                    glLayer.flushFoundation();
-                    const onFoundation = (x: number, y: number): boolean => {
-                        const c = glLayer.screenToCell(x, y, VW, VH);
-                        if (!c) return false;
-                        return foundations.some((fd) => {
-                            const f = glLayer.screenToCell(fd.x, fd.y, VW, VH);
-                            return !!f && Math.hypot(c.gx - f.gx, c.gy - f.gy) < fd.r;
-                        });
-                    };
-
-                    // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
-                    //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
-                    // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
-                    const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
-                    this.decorSprites = this.decorSprites.filter((s) => {
-                        const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.startsWith('BATTLEFIELD:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
-                        const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
-                        const isOldTree = TREE_RE.test(s.asset);
-                        const c = glLayer.screenToCell(s.x, s.y, VW, VH);
-                        const inWater = !!c && glLayer.getWaterDensityAt(Math.round(c.gx), Math.round(c.gy)) > 0.42;
-                        return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
-                    });
-
-                    // 🔴 [2026-10-16 阶段四：真实地理与四季植被/地表装饰多样性]
-                    // 接回 TreeAssignment (pickTree: 40 种 DE 树木 × 全球专属地域框 × 26 底图 × 春夏秋冬四季)
-                    // 与 DecorFit (groundDecorFor / decorFits: 26 底图同色系岩石、花草、灌木)，彻底告别单一 Arabia 模板表现。
-                    const defCityRec = this.defenderCityRecord();
-                    const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
-                    const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
-                    const mapBuildingStyle = defCityRec?.buildingStyle ?? this.environmentPlan?.buildingStyle;
-                    const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
-                    const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
-                        ? rawCalSeason
-                        : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-                    const regionalTree = pickTree({
-                        baseTile: baseTerrain,
-                        lat: mapLat,
-                        lng: mapLng,
-                        season: calSeason,
-                        isSiege: this.battleType === 'siege',
-                        buildingStyle: mapBuildingStyle,
-                    });
-                    const decorSet = groundDecorFor(baseTerrain);
-                    const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
-                        || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
-                    const decorCtx = {
-                        lat: mapLat,
-                        lng: mapLng,
-                        season: this.sceneSeason,
-                        winterSnow: isSnowBase,
-                        isSiege: this.battleType === 'siege',
-                    };
-                    const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
-                    // 🔴 [2026-10-16 主人指出「怎么都没有树呢，看看DE是怎么安排的树」]
-                    //    DE 原版（empires2_x2_p1.dat + RMS 烘焙图 site_*.json / theme_*.json）的树木安排规则：
-                    //    1) 「林地底图（lv2/for/fo2/snf）与树木 1:1 严格绑定」：凡是地面画了森林底图斑块的格子，上面 100% 必立一棵树，绝不允许把林团砍剩几棵而留下一大片光秃秃的 lv2 落叶底图；
-                    //    2) 「成片林团（Forest Clumps）+ 原野散株（Straggler Trees）」双层布局：非荒漠/非干草原地图 100% 原样保留 DE 烘焙图的全部林团与散株（clumpKeepMod = 1，不截断单团棵数）；
-                    //    3) 仅在地面层已隐藏森林底斑的极旱荒漠/戈壁/干草原（isSparseTreelessBiome）上，才对复用的大林团做稀疏化。
-                    const isSparseTreelessBiome = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
-                        || baseTerrain === 'qs' || baseTerrain === 'pal1'
-                        || baseTerrain === 'gr7' || baseTerrain === 'gr5' || baseTerrain === 'gravel_default';
-                    const treeDensity = treeDensityFor(baseTerrain, this.battleType === 'siege');
-                    const clumpKeepMod = !isSparseTreelessBiome ? 1
-                        : (treeDensity.forestCover >= 0.004 ? 2 : 3);
-                    const maxTreesPerClump = !isSparseTreelessBiome ? 9999
-                        : (treeDensity.forestCover >= 0.004 ? 18 : 8);
-
-                    // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
-                    // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
-                    const treeClumpDominant = new Map<number, string>();
-                    const skippedTreeIndices = new Set<number>();
-                    const rawTreeIndices: number[] = [];
-                    data.objects.forEach((ob: any, idx: number) => {
-                        if (ob.name && !ob.name.includes('CLIFF')) {
-                            const r = resolveNatureSprite(ob.name);
-                            if (r && r[0] === 'NATURE' && TREE_RE.test(r[1])) {
-                                rawTreeIndices.push(idx);
-                            }
-                        }
-                    });
-
-                    // 空间网格桶快速连通聚类 (网格大小 2 格)
-                    const treeGrid = new Map<string, number[]>();
-                    for (const tidx of rawTreeIndices) {
-                        const ob = data.objects[tidx];
-                        const key = `${Math.floor(ob.x / 2)},${Math.floor(ob.y / 2)}`;
-                        if (!treeGrid.has(key)) treeGrid.set(key, []);
-                        treeGrid.get(key)!.push(tidx);
-                    }
-
-                    const visitedTree = new Set<number>();
-                    let clumpCounter = 0;
-                    for (const startIdx of rawTreeIndices) {
-                        if (visitedTree.has(startIdx)) continue;
-                        const cId = clumpCounter++;
-                        const clumpMembers: number[] = [];
-                        const queue = [startIdx];
-                        visitedTree.add(startIdx);
-                        while (queue.length > 0) {
-                            const curIdx = queue.shift()!;
-                            clumpMembers.push(curIdx);
-                            const curOb = data.objects[curIdx];
-                            const gx = Math.floor(curOb.x / 2), gy = Math.floor(curOb.y / 2);
-                            for (let dx = -1; dx <= 1; dx++) {
-                                for (let dy = -1; dy <= 1; dy++) {
-                                    const bucket = treeGrid.get(`${gx + dx},${gy + dy}`);
-                                    if (bucket) {
-                                        for (const nbrIdx of bucket) {
-                                            if (!visitedTree.has(nbrIdx)) {
-                                                const nbrOb = data.objects[nbrIdx];
-                                                if (Math.hypot(curOb.x - nbrOb.x, curOb.y - nbrOb.y) <= 1.6) {
-                                                    visitedTree.add(nbrIdx);
-                                                    queue.push(nbrIdx);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        // 仅在隐藏了森林底斑的荒漠/戈壁/干草原（isSparseTreelessBiome）裁剪大林团；其余地图 100% 保留 DE 林团与散株
-                        if (clumpKeepMod > 1 && clumpMembers.length > 3 && (cId % clumpKeepMod !== 0)) {
-                            for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
-                            continue;
-                        }
-                        if (clumpMembers.length > maxTreesPerClump) {
-                            for (let k = maxTreesPerClump; k < clumpMembers.length; k++) {
-                                skippedTreeIndices.add(clumpMembers[k]);
-                            }
-                        }
-
-                        // 统计该林块内的原生主导树种，并与当地真实地理/四季主导树种 regionalTree 融合：
-                        // 85% 林团直接使用当地与当季的 regionalTree（如日本春樱/秋银杏、岭南翠竹、地中海油橄榄、北非金合欢等），
-                        // 15% 林团若原图自带非通用橡树/棕榈的特色伴生树且符合当前季节，则保留整团伴生树，做到既纯正又富有层次
-                        const counts: Record<string, number> = {};
-                        for (const mIdx of clumpMembers) {
-                            const r = resolveNatureSprite(data.objects[mIdx].name);
-                            if (r) counts[r[1]] = (counts[r[1]] || 0) + 1;
-                        }
-                        let maxCnt = 0, bestAsset = '';
-                        for (const [ast, cnt] of Object.entries(counts)) {
-                            if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
-                        }
-                        const isGenericBakedTree = bestAsset === 'OAK' || bestAsset === 'PALM' || bestAsset === 'PINE' || bestAsset === 'GREEN_OAK';
-                        const snowTreeOnNonSnowGround = !isSnowBase && /^SNOW_/.test(bestAsset);
-                        const greenTreeInSnow = isSnowBase && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
-                        const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
-                        const isAridOrSteppeGround = isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
-                        const aridTreeMismatch = isAridOrSteppeGround && !/^(PALM|ACACIA|BAOBAB|OLIVE|CYPRESS|DEAD_TREE|BUSH_TREE|DRAGON_TREE)$/i.test(bestAsset);
-                        const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST|JUNGLE|RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
-                        const finalClumpTree = (
-                            !bestAsset ||
-                            isGenericBakedTree ||
-                            snowTreeOnNonSnowGround ||
-                            greenTreeInSnow ||
-                            autumnMismatch ||
-                            aridTreeMismatch ||
-                            tropicalTreeOnNonTropical ||
-                            (cId % 6 !== 0)
-                        ) ? regionalTree : bestAsset;
-
-                        for (const mIdx of clumpMembers) {
-                            if (!skippedTreeIndices.has(mIdx)) {
-                                treeClumpDominant.set(mIdx, finalClumpTree);
-                            }
-                        }
-                    }
-
-                    // 🔴 [2026-10-13 主人令「动物逻辑和DE不一样，请核对清楚」＋「尽量真实，游戏合理」]
-                    //    分类 / 速度 / 视野 / 血量 / 攻击一律照 DE 本体（表 ANIMAL_DE，见文件上方），不再手写三张 Set。
-                    //    旧版自造的三条已废：① 城池/营帐内动物一律删（DE 的牲畜本来就出生在 TC 旁，删了就没牲畜）
-                    //    ② 猛兽离图心 1400px 删（DE 用 min_distance_to_players，从不看图心；实测白删 31% 猛兽）
-                    //    ③ 猎物复制 3 只（DE 的群是 RMS 一只只摆好的，复制＝平白多三倍）。
-
-                    const inCityZone = (x: number, y: number): boolean => {
-                        if (this.insideRing(x, y)) return true;
-                        if (this.deCity) {
-                            const cx = this.deCityCenter ? this.deCityCenter.x : VW / 2;
-                            const cy = this.deCityCenter ? this.deCityCenter.y : VH / 2;
-                            const rx = this.deCity.width / 2 + 500;   // 🔴 [2026-10-13 主人令] 野生动物离城墙外 500px（原 180/120）
-                            const ry = this.deCity.height / 2 + 500;
-                            if (((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1) return true;
-                        }
-                        return false;
-                    };
-                    const inCampZone = (x: number, y: number): boolean => {
-                        for (const sp of this.spawns) {
-                            if (sp.f === 0 && Math.hypot(x - sp.x, y - sp.y) < 220) return true;
-                        }
-                        return false;
-                    };
-
-                    for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
-                        if (skippedTreeIndices.has(obIdx)) continue;
-                        const ob = data.objects[obIdx];
-                        if (ob.name && ob.name.includes('CLIFF')) continue;
-                        const r = resolveNatureSprite(ob.name);
-                        if (r && (r[0] === 'NATURE' || r[0] === 'ANIMAL')) {
-                            const isAnimal = r[0] === 'ANIMAL';
-                            const ox = ob.x - 0.5, oy = ob.y - 0.5;
-                            const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
-                            let sx = (ox - 60) * TAC_TILE_W + VW / 2;
-                            let sy = (oy - 60) * TAC_TILE_H + VH / 2;
-
-                            if (isAnimal) {
-                                const species = r[1];
-                                const de = animalDeOf(species);
-                                if (!animalNativeAt(species, mapLat, mapLng, baseTerrain)) continue;   // 非当地或非当前地表气候物种不放
-
-                                // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
-                                //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
-                                if (onFoundation(sx, sy)) continue;
-                                if (de.kind !== 'livestock' && (inCityZone(sx, sy) || inCampZone(sx, sy))) continue;
-
-                                // ② 一个 DE 物件 = 一只动物（DE 的群由 RMS 一只只摆好，不再复制成群）
-                                const dir = hash % 8;
-                                const isBird = de.kind === 'bird';
-                                const startAct: AnimalAction = isBird ? 'fly' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
-                                const animSprite: DecorSprite = {
-                                    asset: `ANIMAL:${species}/${startAct}_${isBird ? 0 : dir}`,
-                                    frame: hash,
-                                    x: sx,
-                                    y: sy,
-                                    flip: false,
-                                    layer: 'world',
-                                    z: 0,
-                                    lift: isBird ? 180 : glLayer.elevationLiftAt(sx, sy, VW, VH),
-                                    densityHash: hash,
-                                    obstructionContactSec: 0,
-                                    obstructionTouched: false,
-                                    obstructionDisabled: true,
-                                };
-                                this.ensureNatureAsset(animSprite.asset);
-                                this.decorSprites.push(animSprite);
-                                this.tacticalAnimals.push({
-                                    sprite: animSprite,
-                                    species,
-                                    kind: de.kind,
-                                    action: startAct,
-                                    dir: isBird ? 0 : dir,
-                                    homeX: sx,
-                                    homeY: sy,
-                                    x: sx,
-                                    y: sy,
-                                    vx: 0,
-                                    vy: 0,
-                                    fleeTimer: 0,
-                                    fleeDX: 0,          // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 首次受惊时锁定
-                                    fleeDY: 0,
-                                    idleTimer: Math.random() * 3,
-                                    wanderX: sx,
-                                    wanderY: sy,
-                                    animPhase: hash,
-                                    hp: de.hp,
-                                    atkNext: 0,
-                                    flyX: sx + Math.cos(hash * 0.1) * 800,
-                                    flyY: sy + Math.sin(hash * 0.1) * 800,
-                                    hovering: false,
-                                });
-                                continue;
-                            }
-
-                            // 静态自然植被与矿石资源
-                            let asset = treeClumpDominant.get(obIdx) ?? r[1];
-                            const isTree = TREE_RE.test(asset);
-                            if (isTree) {
-                                if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
-                                if (!isSnowBase) {
-                                    if (asset === 'SNOW_PINE') asset = regionalTree;
-                                    else if (asset === 'SNOW_AUTUMN_OAK') asset = this.sceneSeason === 1 ? 'AUTUMN_OAK' : regionalTree;
-                                    else if (asset === 'SNOW_BIRCH') asset = this.sceneSeason === 1 ? 'BIRCH_AUTUMN' : regionalTree;
-                                    else if (asset === 'SNOW_DEAD_TREE') asset = 'DEAD_TREE';
-                                }
-                            } else if (asset.startsWith('FORAGE_')) {
-                                // 非湿润热带区域（如雪地、荒漠、温带/寒带），将烘培模板中的热带菠萝/木瓜浆果丛统一转为通用浆果丛
-                                if (asset !== 'FORAGE_BUSH') {
-                                    const isHumidTropical = !isSnowBase
-                                        && !isSparseTreelessBiome
-                                        && Math.abs(mapLat) <= 23.5
-                                        && !/^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
-                                    if (!isHumidTropical) asset = 'FORAGE_BUSH';
-                                }
-                            } else if (asset === 'MINE_GOLD') {
-                                continue;
-                            } else if (asset !== 'MINE_STONE') {
-                                // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
-                                if (/^ROCK/.test(asset)) {
-                                    if (decorSet.solid.length === 0) continue;
-                                    if (!decorSet.solid.includes(asset)) {
-                                        asset = decorSet.solid[hash % decorSet.solid.length];
-                                    }
-                                } else if (/^(FLOWER|PLANT|WEED|SHRUB|BUSH_GREEN|UNDERBRUSH|FERNPATCH)/.test(asset)) {
-                                    if (decorSet.flat.length === 0) continue;
-                                    if (!decorSet.flat.includes(asset)) {
-                                        asset = decorSet.flat[hash % decorSet.flat.length];
-                                    }
-                                } else if (/^GRASS_/.test(asset)) {
-                                    if (decorSet.scatter.length === 0) continue;
-                                    if (!decorSet.scatter.includes(asset)) {
-                                        asset = decorSet.scatter[hash % decorSet.scatter.length];
-                                    }
-                                }
-                                if (!decorFits(asset, decorCtx)) continue;
-                            }
-                            const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
-                            const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
-                            sx += jx;
-                            sy += jy;
-                            if (onFoundation(sx, sy)) continue;
-                            this.ensureNatureAsset(asset);
-                            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-                            this.decorSprites.push({
-                                asset,
-                                frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
-                                x: sx,
-                                y: sy,
-                                flip: (hash % 2 === 0),
-                                layer: 'world',
-                                z: 0,
-                                lift,
-                                densityHash: hash,
-                                obstruction: undefined,
-                                obstructionContactSec: 0,
-                                obstructionTouched: false,
-                                obstructionDisabled: true,
-                            });
-                        }
-                    }
-
-                    // 自然水岸生态：沿水岸线点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
-                    const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
-                    const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);
-                    if (!isFrozenWater) {
-                        for (let gy = 2; gy < 118; gy += 2) {
-                            for (let gx = 2; gx < 118; gx += 2) {
-                                const dens = glLayer.getWaterDensityAt(gx, gy);
-                                if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
-                                    const ox = gx - 0.5, oy = gy - 0.5;
-                                    const sx = (ox - 60) * TAC_TILE_W + VW / 2;
-                                    const sy = (oy - 60) * TAC_TILE_H + VH / 2;
-                                    const isLily = allowWaterLily && dens > 0.44 && ((gx + gy) % 3 === 0);
-                                    const asset = isLily ? 'WATER_LILY' : 'REEDS';
-                                    if (!decorFits(asset, decorCtx)) continue;
-                                    const hash = (gx * 11 + gy * 7) % 100;
-                                    const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-                                    this.ensureNatureAsset(asset);
-                                    this.decorSprites.push({
-                                        asset,
-                                        frame: hash,
-                                        x: sx,
-                                        y: sy,
-                                        flip: (gx % 2 === 0),
-                                        layer: 'world',
-                                        z: 0,
-                                        lift,
-                                        densityHash: hash,
-                                        obstruction: undefined,
-                                        obstructionContactSec: 0,
-                                        obstructionTouched: false,
-                                        obstructionDisabled: true,
-                                    });
-                                }
-                            }
-                        }
-                    }
-                }
-                applyDeCityToGround.call(this);
-                this.spawnBattlefieldRelics(glLayer, VW, VH);
-                releaseGround();
-            } catch (err) {
-                console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败（已无旧 2D 地面兜底，本场没有地面）:', err);
-                this.useGroundGL = false;
-                cv.style.display = 'none';
-                releaseGround();
-            }
-        });
-    }
-
-    /**
-     * 在战术战场南北两翼安全区（避开城墙、护城河、四门大道、水体、营地出生点与中央主交战走廊）
-     * 点缀 DE 古战场军事遗存（SUCAI_BATTLEFIELD）：
-     *   · 攻城战：倒毁攻城器械残骸（投石机/石炮/冲车/弩炮）、破损拒马木栅残骸、战地火把
-     *   · 野战：古战场骸骨、断车、破损拒马木栅残骸
-     */
-    private spawnBattlefieldRelics(glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
-        const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}`;
-        let rSeed = 2166136261 >>> 0;
-        for (let i = 0; i < seedStr.length; i++) {
-            rSeed = Math.imul(rSeed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
-        }
-        const rnd = (): number => {
-            rSeed = Math.imul(rSeed ^ (rSeed >>> 15), 0x85ebca6b) >>> 0;
-            rSeed = Math.imul(rSeed ^ (rSeed >>> 13), 0xc2b2ae35) >>> 0;
-            return ((rSeed ^ (rSeed >>> 16)) >>> 0) / 4294967296;
-        };
-
-        const { x: cx, y: cy } = this.deCity ? this.deCityCenter : { x: VW * 0.5, y: VH * 0.5 };
-        const rx = this.deCity ? this.deCity.width / 2 : 0;
-        const ry = this.deCity ? this.deCity.height / 2 : 0;
-        const ringLm = this.deCity ? Math.max(0, (rx - 200) / (TAC_TILE_W / 2)) : 0;
-        const roadMaxU = ringLm / 2 + 7.5;
-        const roadMaxV = 3.2;
-
-        const placedPts: Array<{ x: number; y: number }> = [];
-        const isSafeSpot = (sx: number, sy: number): boolean => {
-            if (sx < 360 || sx > VW - 360 || sy < 180 || sy > VH - 180) return false;
-            // 避开中央部队冲锋与交战主走廊
-            if (Math.abs(sy - cy) < 360) return false;
-            // 攻城战避开城池、护城河及四门大道
-            if (this.deCity) {
-                if (((sx - cx) / (rx + 180)) ** 2 + ((sy - cy) / (ry + 110)) ** 2 < 1.0) return false;
-                if (ringLm > 0) {
-                    const u = (sx - cx) / (TAC_TILE_W / 2), v = (sy - cy) / (TAC_TILE_H / 2);
-                    const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
-                    if ((di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV)) return false;
-                }
-            }
-            if (glLayer.isWaterAt(sx, sy, VW, VH)) return false;
-            for (const sp of this.spawns) {
-                if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 340) return false;
-            }
-            for (const p of placedPts) {
-                if (Math.hypot(sx - p.x, (sy - p.y) * 1.4) < 260) return false;
-            }
-            return true;
-        };
-
-        const pushRelic = (asset: string, sx: number, sy: number, flip: boolean): void => {
-            placedPts.push({ x: sx, y: sy });
-            const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
-            this.ensureNatureAsset(asset);
-            this.decorSprites.push({
-                asset,
-                frame: 0,
-                x: sx,
-                y: sy,
-                flip,
-                layer: 'world',
-                z: 0,
-                lift,
-                obstruction: undefined,
-                obstructionContactSec: 0,
-                obstructionTouched: false,
-                obstructionDisabled: true,
-            });
-        };
-
-        const pickSafeFlankSpot = (xMinFrac: number, xMaxFrac: number, preferSouth: boolean): { x: number; y: number } | null => {
-            for (let attempt = 0; attempt < 24; attempt++) {
-                const south = (attempt % 2 === 0) ? preferSouth : !preferSouth;
-                const sx = VW * (xMinFrac + rnd() * (xMaxFrac - xMinFrac));
-                const sy = south
-                    ? VH * (0.70 + rnd() * 0.16)
-                    : VH * (0.14 + rnd() * 0.16);
-                if (isSafeSpot(sx, sy)) return { x: sx, y: sy };
-            }
-            return null;
-        };
-
-        if (this.battleType === 'siege') {
-            const siegeWrecks = [
-                'BATTLEFIELD:DECAY_TREBUCHET',
-                'BATTLEFIELD:DECAY_MANGONEL',
-                'BATTLEFIELD:DECAY_ONAGER',
-                'BATTLEFIELD:DECAY_BATTERING_RAM',
-                'BATTLEFIELD:DECAY_SCORPION',
-            ];
-            const barricadeWrecks = [
-                'BATTLEFIELD:BARRICADE_RUBBLE_A',
-                'BATTLEFIELD:BARRICADE_RUBBLE_B',
-                'BATTLEFIELD:BARRICADE_RUBBLE_C',
-                'BATTLEFIELD:BARRICADE_RUBBLE_D',
-                'BATTLEFIELD:STAKE_BARRICADE',
-            ];
-            const torches = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
-
-            const wreckCount = 2;
-            for (let i = 0; i < wreckCount; i++) {
-                const pt = pickSafeFlankSpot(0.24, 0.72, i % 2 === 0);
-                if (!pt) continue;
-                const asset = siegeWrecks[Math.floor(rnd() * siegeWrecks.length)];
-                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-            }
-            const rubbleCount = 2 + Math.floor(rnd() * 2);
-            for (let i = 0; i < rubbleCount; i++) {
-                const pt = pickSafeFlankSpot(0.20, 0.78, i % 2 === 1);
-                if (!pt) continue;
-                const asset = barricadeWrecks[Math.floor(rnd() * barricadeWrecks.length)];
-                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-            }
-            const torchCount = 2;
-            for (let i = 0; i < torchCount; i++) {
-                const pt = pickSafeFlankSpot(0.26, 0.74, i % 2 === 0);
-                if (!pt) continue;
-                const asset = torches[Math.floor(rnd() * torches.length)];
-                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-            }
-        } else {
-            const fieldRelics = [
-                'BATTLEFIELD:SKELETON_BATTLEFIELD',
-                'BATTLEFIELD:SKELETON_SOLDIER',
-                'BATTLEFIELD:IMPALED_CORPSE',
-                'BATTLEFIELD:BARRICADE_RUBBLE_A',
-                'BATTLEFIELD:BARRICADE_RUBBLE_B',
-                'BATTLEFIELD:BARRICADE_RUBBLE_C',
-                'BATTLEFIELD:CART_BROKEN',
-            ];
-            const relicCount = 3 + Math.floor(rnd() * 2);
-            for (let i = 0; i < relicCount; i++) {
-                const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 0);
-                if (!pt) continue;
-                const asset = fieldRelics[Math.floor(rnd() * fieldRelics.length)];
-                pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
-            }
-        }
-    }
 
     /** 开战前最多等 GL 地面多久（毫秒）；超时照常开打 */
-    private static readonly GL_GROUND_WAIT_MS = 5000;
+    static readonly GL_GROUND_WAIT_MS = 5000;
 
 
     /** 懒加载自然装饰 sheet（frames.png + _meta.json），命中缓存即返回。
@@ -3482,7 +2807,7 @@ export class Scene13WarLayer {
     }
 
     /** DE 级涉水动态交互：涉水士兵移动与落水尸体产生向外扩散淡出的等距椭圆涟漪与水花 */
-    private renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
+    renderWadingRipples(ctx: CanvasRenderingContext2D, t: number): void {
         if (!this.useGroundGL || !this.groundLayerGL) return;
         const gl = this.groundLayerGL, W = this.worldCX * 2, H = this.worldCY * 2;
         const isWater = (x: number, y: number) => gl.isWaterAt(x, y, W, H);
@@ -3563,7 +2888,7 @@ export class Scene13WarLayer {
 
     /** 🔴 [2026-10-11 主人「底图让战略地图和战术地图一致」] 新战术模式（WebGL 地面）里，守方每栋建筑脚下垫战略地图同款
      *  `*_plaza.png` 地基底图：宽 = 建筑宽 × 2.3、高 = 宽 × 0.58，与建筑同中心（同 TerritorySystem 的 bGroundW / bGroundH）。 */
-    private drawCityPlazas(ctx: CanvasRenderingContext2D): void {
+    drawCityPlazas(ctx: CanvasRenderingContext2D): void {
         if (this.battleType !== 'siege' || this.deCity) return;   // 战略同款城池自带地基层
         const tile = this.cityPlazaTile();
         if (!tile) return;
@@ -3592,7 +2917,7 @@ export class Scene13WarLayer {
         }
     }
 
-    private drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite, drawY: number = s.y): void {
+    drawDecorSprite(g: CanvasRenderingContext2D, s: DecorSprite, drawY: number = s.y): void {
         const na = this.natureCache[s.asset];
         if (!na || !na.img || !na.img.complete || !na.meta) return;
         const m = na.meta;
@@ -4273,7 +3598,7 @@ export class Scene13WarLayer {
      * 敌我都推（战线才会顶住而不是穿过去）。每人最多看 6 个邻居，保证 O(n)。
      */
     /** 本兵占地半径（DE 真值，见 UNIT_RADIUS）；表里没有的落旧行为 SEP_DIST/2 */
-    private radiusOf(key: string): number {
+    radiusOf(key: string): number {
         return UNIT_RADIUS[key] ?? SEP_DIST / 2;
     }
 
@@ -6071,7 +5396,7 @@ export class Scene13WarLayer {
         return { x: bx, y: by };
     }
 
-    private insideRing(x: number, y: number): boolean {
+    insideRing(x: number, y: number): boolean {
         const r = this.ringBox;
         if (!r) return false;
         const [a, b] = this.tileAB(x, y);
@@ -8004,7 +7329,7 @@ export class Scene13WarLayer {
         // 残局待命：战斗已结束、场景还没退（5 秒切换延迟）——继续跑，只是不打仗
         if (!this.active && this.lingering) {
             this.lingerStep(dt);
-            this.render();
+            render.call(this);
             return;
         }
         if (!this.active) return;
@@ -8016,7 +7341,7 @@ export class Scene13WarLayer {
         if (this.pending > 0 && !this.assetsReadyOnce) {
             // 先显示已经就绪的战场，素材等待不再迫使浏览器反复合成底下的战略地图。
             // 此处只绘制，部队部署与战斗计时仍等必需素材全部就绪才开始。
-            if (this.useGroundGL) this.render();
+            if (this.useGroundGL) render.call(this);
             // 🔴 [2026-08-11 实锤] 素材 pending 卡死 = 演出冻结 + 引擎冻结（scene13Frozen）
             //    → 跟随军团永远不动、战斗面板数字不动（主人截图实锤）。
             //    素材若 30 秒内没加载完（404/跨域/异常），强制判负退出，绝不永冻：
@@ -8055,7 +7380,7 @@ export class Scene13WarLayer {
             const t0 = performance.now();
             this.step(dt);
             const t1 = performance.now();
-            this.render();
+            render.call(this);
             const t2 = performance.now();
             const stepMs = t1 - t0, renderMs = t2 - t1;
             this.perfStep.push(stepMs);
@@ -8079,7 +7404,7 @@ export class Scene13WarLayer {
             }
         } else {
             this.step(dt);
-            this.render();
+            render.call(this);
         }
     }
 
@@ -8099,7 +7424,7 @@ export class Scene13WarLayer {
      *
      * @param tick 已含本面旗的相位偏移，别再在里面加（见 WarMan.fo）
      */
-    private drawOneFlag(ctx: CanvasRenderingContext2D, x: number, y: number, f: 0 | 1, tick: number): void {
+    drawOneFlag(ctx: CanvasRenderingContext2D, x: number, y: number, f: 0 | 1, tick: number): void {
         const faction = this.displayFaction(f);
         LegionFlagDrawer.drawFlag(ctx, { x, y }, 5, FLAG_SCALE, tick, faction, -999, FLAG_POLE_RATIO, FLAG_POLE_LIFT);
     }
@@ -8114,617 +7439,5 @@ export class Scene13WarLayer {
         return { n: a.length, avg: +(sum / a.length).toFixed(2), p50: q(0.5), p95: q(0.95), max: +s[s.length - 1].toFixed(2) };
     }
 
-    private render(): void {
-        const ctx = this.ctx, cv = this.canvas;
-        if (!ctx || !cv) return;
-        // 🔴 [2026-10-03 主人「先刷建筑再刷兵，一起更好吗」→「请修复」] 战场与军队**一起**出现：
-        //    原来第一帧画出来（地形/建筑，素材还在加载）就淡入，士兵要等素材就绪才开始渐显，中间是个空战场
-        //    （实测 3 秒；真机约 1~1.5 秒）。现在等素材就绪（士兵同一刻开始部署渐显）再淡入，
-        //    最多等 ENTRY_WAIT_MAX_MS，超时就让战场先淡入。
-        if (this.entryFadePending
-            && (this.assetsReadyOnce || performance.now() - this.entryStartedAt > Scene13WarLayer.ENTRY_WAIT_MAX_MS)) {
-            this.beginEntryFade(cv);
-        }
-        const _tFrameStart = performance.now();
-        let _tGL = 0, _tCull = 0, _tSort = 0, _tDrawDecor = 0, _tDrawUnits = 0;
-        // 🔴 [2026-10-08 主人「请给战术模式添加用鼠标滚轴可以使战场画面缩放功能」]
-        const zoom = this.tacticalZoom;
-        const hasZoom = Math.abs(zoom - 1) > 0.001;
-        const hasPan = Math.abs(this.tacticalPanX) > 0.5 || Math.abs(this.tacticalPanY) > 0.5;
-        const cx = cv.width / 2;
-        const cy = cv.height / 2;
-        // 世界中心开战时定死（worldCX/CY）；窗口缩放后它和画布中心不再重合，也要做变换
-        const hasShift = Math.abs(this.worldCX - cx) > 0.5 || Math.abs(this.worldCY - cy) > 0.5;
-        const hasTransform = hasZoom || hasPan || hasShift;
-
-        if (hasTransform) {
-            ctx.clearRect(0, 0, cv.width, cv.height);
-            ctx.save();
-            ctx.translate(cx + this.tacticalPanX, cy + this.tacticalPanY);
-            ctx.scale(zoom, zoom);
-            ctx.translate(-this.worldCX, -this.worldCY);
-        }
-
-        if (this.useGroundGL && this.groundLayerGL) {
-            const _tgl0 = performance.now();
-            const camZoom = zoom;
-            const camX = cv.width / 2 + this.tacticalPanX - TAC_MAP_HALF_W * camZoom;
-            const camY = cv.height / 2 + this.tacticalPanY - TAC_MAP_HALF_H * camZoom;
-            this.groundLayerGL.setCamera({ x: camX, y: camY, zoom: camZoom });
-            this.groundLayerGL.render();
-            _tGL = performance.now() - _tgl0;
-            if (!hasTransform) {
-                ctx.save();
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-                ctx.clearRect(0, 0, cv.width, cv.height);
-                ctx.restore();
-            }
-            // 🔴 DE 涉水水波交互 (Wading Ripples)：涉水行军与倒在水中的士兵产生微弱同心水圈
-            this.drawCityPlazas(ctx);
-            syncDeCityGround.call(this);
-            this.renderWadingRipples(ctx, performance.now() * 0.001);
-        } else if (!hasTransform) {
-            ctx.clearRect(0, 0, cv.width, cv.height);   // GL 地面还没就绪：只清屏，不画任何旧地面
-        }
-
-        // [PERF 2026-08-29] 对象池复用：原来每帧 new 700+ 个临时对象（vis 数组 + 每个元素），加剧 GC。
-        const vis = this.visPool;
-        let vi = 0;
-        const take = () => {
-            let it = vis[vi];
-            if (!it) { it = { kind: 'unit', y: 0, x: 0, f: 0, key: '', dir: 0, set: '', fr: 0, a: 1, z: 0, zid: 0, sprite: null }; vis[vi] = it; }
-            vi++;
-            return it;
-        };
-        // DE 式世界对象：树木、岩石、资源等不再烙进背景，按脚点 y 与单位共同排序。
-        const _tcull0 = performance.now();
-        const cullDecor = this.useGroundGL;
-        const vMargin = 120;
-        const vMinX = (0 - cx - this.tacticalPanX) / zoom + this.worldCX - vMargin;
-        const vMaxX = (cv.width - cx - this.tacticalPanX) / zoom + this.worldCX + vMargin;
-        const vMinY = (0 - cy - this.tacticalPanY) / zoom + this.worldCY - vMargin;
-        const vMaxY = (cv.height - cy - this.tacticalPanY) / zoom + this.worldCY + vMargin;
-        let decorDrawnCount = 0;
-        for (const sprite of this.decorSprites) {
-            if (sprite.destroyed) continue;   // 城墙/城门已破：不再绘制
-            if (cullDecor && (sprite.x < vMinX || sprite.x > vMaxX || sprite.y < vMinY || sprite.y > vMaxY)) continue;
-            if (sprite.layer === 'world' || (this.useGroundGL && sprite.layer === 'ground')) {
-                const it = take();
-                it.kind = 'environment';
-                it.y = sprite.y - (sprite.lift !== undefined ? sprite.lift : this.elevationLiftAt(sprite.x, sprite.y));
-                it.sortY = it.y - 12;   // 环境对象等效排序 y 上提 12px（严格传递序：近墙 12px 内恒保证人压在墙前，消除非传递 3-cycle 抖动）
-                it.z = sprite.layer === 'ground' ? -10 : sprite.z;
-                it.zid = 0;
-                it.sprite = sprite;
-                decorDrawnCount++;
-            }
-        }
-        _tCull = performance.now() - _tcull0;
-        this.perfStats.decorTotal = this.decorSprites.length;
-        this.perfStats.decorDrawn = decorDrawnCount;
-        this.perfStats.decorCulled = this.decorSprites.length - decorDrawnCount;
-        // 已烙的尸体：一张图搞定（在所有活人之下）
-        if (this.groundHasContent && this.ground) ctx.drawImage(this.ground, this.worldCX - TAC_MAP_HALF_W, this.worldCY - TAC_MAP_HALF_H);
-        // 留下的尸体：死亡动画逐帧画（全程不透明，播完即烙地面）
-        for (const c of this.corpses) {
-            const it = take();
-            it.kind = 'unit';
-            it.y = c.y - this.elevationLiftAt(c.x, c.y); it.sortY = it.y; it.x = c.x; it.f = c.f; it.key = c.key; it.dir = c.dir; it.set = 'die';
-            it.fr = c.t;
-            it.a = this.isWaterAt(c.x, c.y) ? (1 - 0.62 * Math.min(1, c.t / DEATH_ANIM)) : 1;
-            it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
-        }
-        // 溃逃兵：跑动帧 + 反向移动 + 渐隐（主人 2026-08-16）
-        for (const f of this.fleers) {
-            const it = take();
-            it.kind = 'unit';
-            it.y = f.y - this.elevationLiftAt(f.x, f.y); it.sortY = it.y; it.x = f.x; it.f = f.f; it.key = f.key; it.dir = f.dir; it.set = 'move';
-            it.fr = f.ph;
-            it.a = Math.max(0, 1 - f.t / FLEE_DUR);
-            it.st = undefined; it.z = 0; it.zid = 0; it.sprite = null;
-        }
-        for (const m of this.men) {
-            // 有冲锋组的兵种（象兵/弓骑）两处用冲锋帧（主人 2026-08-12 拍板「两者都要」）：
-            //   ① 移动时**逐轮交替**：一轮移动、一轮冲锋（见 CHARGE_CYCLE）；
-            //   ② 攻击时按出手轮次与攻击帧交替（m.atkFlip 每轮出手翻转）。
-            // 其余兵种不受影响：赶路一律移动帧、攻击固定攻击帧。白刃（st=2）用近战帧。
-            const hasChg = !!this.bank[m.key]?.sets.charge?.[m.f]?.length;
-            let set: string;
-            // 残局待命 / 开场列阵待命：全军播待命帧（没有待命素材的退回移动帧，绝不留静止画面）。
-            // 🔴 [2026-08-30 修·滑步] 部署期（deployT>0）step 的 deploying 分支对**所有**兵 continue（静止）、
-            //    marchTick 也 return，所以部署期全军（含列阵兵、攻城武器）都静止，应统一播 idle。
-            //    之前误加 !m.march && !m.siegeW，让静止的列阵兵播走路帧 = 原地踏步/滑步。
-            //    攻城武器真正开动是 deployT 归零后开打阶段，由下面 !m.siegeW 单独管。
-            if (this.lingering || this.deployT > 0) {
-                set = this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move';
-            }
-            // 🔴 [2026-10-13 主人令「现在所有都改为开局就动」] 原「攻城战开战前 30 秒守方播待机帧」那条分支
-            //    （判据 `battleType === 'siege' && m.f === 1 && defenderHolding`）随待命期一并删除；
-            //    守方不动的判据只剩上面的 deployT / lingering，以及下面按 `stuckT` / `idlePose` 的结果判。
-            // 🔴 [2026-08-17] 站着不动的兵播待命帧（远程让位、被挤住、走不动，全算在内）。
-            //    采用 step 中带双阈值迟滞结算的 m.idlePose，杜绝贴墙/贴队友微幅推挤时在 idle 与 move 间逐帧闪烁。
-            else if (!m.march && (m.idlePose === true
-                || (m.st === 0 && !!m.guardPost))
-                && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
-                set = 'idle';
-            }
-            else if (m.st === 0) {
-                const odd = Math.floor(m.ph / CHARGE_CYCLE) % 2 === 1;
-                set = (hasChg && odd) ? 'charge' : 'move';
-            }
-            // 🔴 [2026-08-17] 攻击动作播完、还在等装填 → 回待命姿势，别定格在最后一帧。
-            //    DE 的做法就是这样：攻击动画只播一遍，播完回 idle 站姿，装填走它自己的计时。
-            //    不加这条的话，长装填兵种会**保持挥/举的姿势僵住好几秒**：
-            //    动作固定 1.5s 播完，而火炮装填 6.5s（僵 5s）、牵引投石机 11s（僵 9.5s）。
-            //    （短装填兵种 reload≈2s 只僵 0.5s，本来就看不出来。）
-            //    没有 idle 素材的兵种退回原样定格末帧 —— 绝不退回 move，站着原地迈腿更假。
-            else if (m.ph >= 8 && (m.lock ?? 0) > 0 && this.bank[m.key]?.sets.idle?.[m.f]?.length) {
-                set = 'idle';
-            }
-            else if (m.st === 2) set = 'melee';
-            else if (m.atkFlip && hasChg) set = 'charge';
-            else if (CASTER_TYPES.has(m.key) && (this.bank[m.key]?.noAttackAnim || NO_ATTACK_ANIM.has(m.key))) {
-                // 🔴 [2026-10-19 主人令「没有施法动作的兵模，一律采用原地移动的动作替代施法动作」]
-                set = 'move';
-            }
-            else set = 'atk';
-            // 🔴 [2026-10-11 主人令] 法师类／无攻击动作的兵种：**攻击帧集为空时退回待命帧**。
-            //    否则渲染层取不到图会 `if (!img) continue` —— 整个兵模被跳过，一出手就闪没（诸葛亮/布塞法洛斯原来就是这样）。
-            if ((set === 'atk' || set === 'melee' || set === 'charge') && !this.bank[m.key]?.sets[set]?.[m.f]?.length) {
-                set = (CASTER_TYPES.has(m.key) && (this.bank[m.key]?.noAttackAnim || NO_ATTACK_ANIM.has(m.key)))
-                    ? 'move'
-                    : (this.bank[m.key]?.sets.idle?.[m.f]?.length ? 'idle' : 'move');
-            }
-            const fade = m.fadeT > 0 ? 1 - m.fadeT / (m.fadeMax || FADE_IN) : 1;
-            const it = take();
-            it.kind = 'unit';
-            const drawY = m.y - this.elevationLiftAt(m.x, m.y);
-            // 排序深度 sortY 带 1.8px 迟滞死区：当士兵贴墙或与队友并排受软推挤产生 ±1px 微抖时，sortY 锁定不动
-            if (m.sortY === undefined || Math.abs(drawY - m.sortY) > 1.8) {
-                m.sortY = drawY;
-            }
-            it.y = drawY; it.sortY = m.sortY; it.x = m.x; it.f = m.f; it.key = m.key; it.dir = m.dir; it.set = set; it.fr = m.ph; it.a = fade; it.st = m.st;
-            it.z = 0; it.zid = m.zid; it.sprite = null;
-        }
-        vis.length = vi;
-        const _tsort0 = performance.now();
-        // 严格满足传递性（Transitive Total Order）的 Z 轴排序：
-        // 原比较器同时用 `aEnv !== bEnv && |dy| < 12` 与 `|dy| < 4 -> a.zid - b.zid`（非传递关系），
-        // 在士兵贴墙且旁边有队友时形成 A < B < W < A 循环，导致 TimSort 每帧随机颠倒遮挡次序闪烁。
-        // 现统一使用带迟滞的 sortY（环境已预设 sortY = y - 12），同高度时按固定 z / zid 决胜，100% 确定且无循环。
-        vis.sort((a, b) => {
-            const dy = (a.sortY ?? a.y) - (b.sortY ?? b.y);
-            if (Math.abs(dy) > 0.01) return dy;
-            const dz = (a.kind === 'environment' ? a.z : 0) - (b.kind === 'environment' ? b.z : 0);
-            if (dz !== 0) return dz;
-            return a.zid - b.zid;
-        });
-        // 🔴 [2026-10-13 主人令「飞鸟应该显示在建筑上层」] 飞鸟在空中：排序后整体挪到队尾，最后画 ⇒ 压在建筑、塔、士兵之上
-        {
-            let w = 0;
-            const birds: typeof vis = [];
-            for (let i = 0; i < vis.length; i++) {
-                const v = vis[i];
-                const a = v.kind === 'environment' && v.sprite ? v.sprite.asset : '';
-                if (a.startsWith('ANIMAL:') && animalDeOf(a.slice(7, a.indexOf('/'))).kind === 'bird') birds.push(v);
-                else vis[w++] = v;
-            }
-            for (const b of birds) vis[w++] = b;
-        }
-        _tSort = performance.now() - _tsort0;
-
-        // ── [2026-09-05 玩家] 受控编队脚下标记环（画在人之下）：攻击=绿 / 待命=蓝；玩家脚下金环 ──
-        if (this.playerSetup && this.playerCtlLanes.size) {
-            ctx.save();
-            ctx.lineWidth = 1.2;
-            ctx.strokeStyle = this.playerCmd === 'hold' ? 'rgba(120,180,255,0.75)' : 'rgba(120,235,140,0.7)';
-            for (const m of this.men) {
-                if (m.hp <= 0 || m.hero || !this.playerCtlLanes.has(m.lane)) continue;
-                const r = this.radiusOf(m.key) * 0.9;
-                ctx.beginPath();
-                ctx.ellipse(m.x, m.y - this.elevationLiftAt(m.x, m.y) + 1, r, r * 0.5, 0, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-        if (this.heroMan && this.heroMan.hp > 0) {
-            const h = this.heroMan;
-            ctx.save();
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgba(255,210,122,0.95)';
-            ctx.beginPath();
-            ctx.ellipse(h.x, h.y - this.elevationLiftAt(h.x, h.y) + 1, 22, 11, 0, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.restore();
-        }
-
-        // ── 旗杆：画在士兵层**之下**（主人 2026-08-12「只改旗杆，放到士兵层下面」）──
-        // 与大地图同序：GlobalUnitRenderer 先 drawPole（Behind Soldiers）、后 drawFlag（On Top）。
-        // 只画不等：LegionFlagDrawer 没预加载完时自己 return，绝不在 13 里 await。
-        const flagTick = performance.now();
-        for (const m of this.men) {
-            if (!m.flag) continue;
-            LegionFlagDrawer.drawPole(ctx, { x: m.x, y: m.y - this.elevationLiftAt(m.x, m.y) }, FLAG_SCALE, this.sideFaction[m.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
-        }
-
-        for (const v of vis) {
-            if (v.kind === 'environment') {
-                const _td0 = performance.now();
-                this.drawDecorSprite(ctx, v.sprite!, v.y);
-                _tDrawDecor += performance.now() - _td0;
-                continue;
-            }
-            const _tu0 = performance.now();
-            const b = this.bank[v.key];
-            if (!b) continue;
-            const img = b.sets[v.set]?.[v.f]?.[v.dir];
-            if (!img) continue;
-            const wt = WAR_TYPES[v.key];
-            // [2026-08-15 全帧修复] 各动作帧数不同（S10DB=8，AoE2=30~60），
-            // 帧宽按该动作实际帧数算、帧号按「每秒 8 相位」换算，循环节奏与原 8 帧素材一致。
-            const n = b.frames[v.set] ?? 8;
-            const fr = v.set === 'die'
-                ? Math.min(n - 1, Math.floor(v.fr / DEATH_ANIM * n))   // 死亡：DEATH_ANIM 内播完 n 帧，冻结末帧
-                : (v.set === 'move' || v.set === 'idle' || v.st === 0)
-                    ? Math.floor(v.fr * n * loopRate(b, v.set) / 8) % n // 移动/待命/走路：循环
-                    : Math.min(n - 1, Math.floor(v.fr * n / 8));       // 攻击/近战/冲锋：播满停末帧（ph=8 不再溢出回第一帧）
-            const dm = b.dyn?.[v.set]?.[v.dir];
-            // 🔴 DE 素材 meta 未就绪：跳过本帧，S10DB 正方形假设（fh=84）会切错 DE 非正方形 strip（144px 等）
-            if (!dm && b.isDE) continue;
-            if (v.a < 1) ctx.globalAlpha = v.a;
-            if (dm) {
-                // 🔴 AoE2 DE 动态帧框（hotspot 对齐，2026-08-15 定稿）：
-                //   游戏里 hotspot = canvas 中心，渲染时 hotspot 对齐单位位置，脚底随动作浮动（倒地时大幅下移）。
-                //   这里把 box 里的 hotspot(dm.hx/dm.hy) 对齐 v.x/v.y，统一缩放 s —— 站立帧/横躺帧都完整，无裁切。
-                // 🔴 [2026-10-11 检查回滚] 上一版把这里改成 `s = 1.0`（顺手删掉 size 乘数 sz），已恢复：
-                //   UNIT_PX = 64 ⇒ 基准缩放本来就是 1.0（DE 原生），`sz` 是**兵种之间的相对尺子**
-                //   （骑兵 1.15~1.2、战象 0.7~0.8、法师 0.55，共 25 支），删掉它等于把战象凭空放大 25~43%。
-                const s = UNIT_PX * (wt?.sz ?? 1) / 64;   // 统一缩放（站立高度 64 参考）
-                ctx.drawImage(img, fr * dm.fw, 0, dm.fw, dm.fh, v.x - dm.hx * s, v.y - dm.hy * s, dm.fw * s, dm.fh * s);
-            } else {
-                // S10DB 正方形帧（原逻辑不变）
-                const px = UNIT_PX * (wt?.sz ?? 1) * (b.fh / 64);
-                ctx.drawImage(img, fr * b.fh, 0, b.fh, b.fh, v.x - px / 2, v.y - px * 0.9, px, px);
-            }
-            if (v.a < 1) ctx.globalAlpha = 1;
-            _tDrawUnits += performance.now() - _tu0;
-        }
-
-        // ── 旗面：画在所有人之上（旗杆已在士兵层之下画过）──
-        // 🔴 必须**单开一趟、不参与 y 排序**：排序看的是脚底 y，而旗杆比人高得多，
-        //    混进 vis 会让前排的人盖住后排的旗面 —— 旗帜作为「穿透人群的信息层」就废了一半。
-        // 🔴 只画不等：LegionFlagDrawer 没预加载完时 drawFlag 自己 return（不崩、只是暂时没旗）。
-        //    绝不在 13 里 await 旗帜加载 —— 启动慢那次（89s→11s）就是全屏 24 面旗 await 阻塞。
-        for (const m of this.men) {
-            if (!m.flag) continue;
-            this.drawOneFlag(ctx, m.x, m.y - this.elevationLiftAt(m.x, m.y), m.f, flagTick + m.fo);
-        }
-        // 倒下的军旗：前半程转倒 90°，全程淡出。
-        // 这里**杆和旗面一起**画在旋转变换里 —— 倒下的是整面旗，杆不能留在原地竖着。
-        for (const ff of this.fallenFlags) {
-            const p = ff.t / FLAG_FALL;
-            ctx.save();
-            ctx.translate(ff.x, ff.y - this.elevationLiftAt(ff.x, ff.y));
-            ctx.rotate(Math.PI / 2 * Math.min(1, p * 2));
-            ctx.globalAlpha = 1 - p;
-            LegionFlagDrawer.drawPole(ctx, { x: 0, y: 0 }, FLAG_SCALE, this.sideFaction[ff.f], FLAG_POLE_RATIO, FLAG_POLE_LIFT);
-            this.drawOneFlag(ctx, 0, 0, ff.f, flagTick + ff.fo);
-            ctx.restore();
-        }
-
-        // ── [2026-09-05 玩家] 玩家头顶名牌 + 血条（画在人之上；镜像时反翻转让文字正向）──
-        if (this.heroMan && this.heroMan.hp > 0 && this.playerSetup) {
-            const h = this.heroMan;
-            const maxHp = this.statsFor(h.key, h.f).hp || 1;
-            const sx = h.x;
-            const sy = h.y - this.elevationLiftAt(h.x, h.y) - UNIT_PX * 1.25;
-            ctx.save();
-            ctx.font = "bold 13px 'Noto Serif SC','SimSun',serif";
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'bottom';
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-            ctx.strokeText(this.playerSetup.heroName, sx, sy);
-            ctx.fillStyle = '#ffd27a';
-            ctx.fillText(this.playerSetup.heroName, sx, sy);
-            const bw = 40, bh = 4;
-            ctx.fillStyle = 'rgba(0,0,0,0.6)';
-            ctx.fillRect(sx - bw / 2, sy + 2, bw, bh);
-            ctx.fillStyle = '#e04a3a';
-            ctx.fillRect(sx - bw / 2, sy + 2, bw * Math.max(0, Math.min(1, h.hp / maxHp)), bh);
-            ctx.restore();
-        }
-
-        // 箭矢与火器弹丸画在人上面。🔴 2026-08-22 对齐 DE 本体：火药兵种（火枪手/苏丹亲兵/征服者/风琴炮）增加 DE 原版白烟弹线 (Unit 1648 Trail Smoke) 与枪口硝烟
-        if (this.arrows.length) {
-            ctx.save();
-            for (const a of this.arrows) {
-                const delay = a.delay ?? 0;
-                if (a.t < delay) continue;          // 连发尚未射出
-                const p = (a.t - delay) / a.dur;
-                const d = a.len * p;
-                // 高抛（炮弹/手榴弹）弧高翻倍；有 DE 实值的弹丸按其 projectile_arc；平直弹丸无弧。
-                const arcRatio = PROJ_ARC_RATIO[a.proj] ?? (PROJ_HIGH_ARC.has(a.proj) ? 0.5 : 0.3);
-                const arcH = Math.min(a.len * arcRatio, PROJ_HIGH_ARC.has(a.proj) ? 160 : 100);
-                const flatFlight = !!a.towerFlight || PROJ_FLAT.has(a.proj);
-                const arc = flatFlight ? 0 : 4 * arcH * p * (1 - p);
-                const x = a.x + a.dx * d;
-                const groundY = a.y + a.dy * d;
-                const flightLift = a.towerFlight
-                    ? a.towerFlight.startLift + (a.towerFlight.endLift - a.towerFlight.startLift) * p
-                    : this.elevationLiftAt(x, groundY);
-                const y = groundY - flightLift - arc;
-
-                const startLift = a.towerFlight?.startLift ?? this.elevationLiftAt(a.x, a.y);
-                const startX = a.x;
-                const startY = a.y - startLift;
-
-                // ── 💨 火枪手白烟弹线 (Unit 1648 Trail Smoke) 与枪口硝烟 ──
-                const isGunpowder = a.proj === 'PROJ_GUNPOWDER';
-
-                if (isGunpowder) {
-                    const trailLen = Math.min(d, 85);
-                    const tailX = x - a.dx * trailLen;
-                    const tailY = y - a.dy * trailLen;
-
-                    // [PERF 2026-08-29] 白烟弹线改预渲染 sprite：save/restore 隔离变换，视觉与渐变线一致
-                    const trailAngle = Math.atan2(a.dy, a.dx);
-                    ctx.save();
-                    ctx.translate(tailX, tailY);
-                    ctx.rotate(trailAngle);
-                    ctx.drawImage(gunpowderTrailSprite(), 0, 0, 90, 4, 0, -2, trailLen, 4);
-                    ctx.restore();
-
-                    // 枪口瞬间微硝烟
-                    const elapsed = a.t - delay;
-                    if (elapsed < 0.16) {
-                        const puffP = elapsed / 0.16;
-                        const smokeR = 2 + puffP * 9;
-                        const smokeAlpha = Math.max(0, 0.65 - puffP * 0.65);
-                        ctx.save();
-                        ctx.fillStyle = `rgba(235, 238, 245, ${smokeAlpha})`;
-                        ctx.beginPath();
-                        ctx.arc(startX, startY, smokeR, 0, Math.PI * 2);
-                        ctx.fill();
-
-                        if (elapsed < 0.05) {
-                            const flashAlpha = (1 - elapsed / 0.05) * 0.90;
-                            ctx.fillStyle = `rgba(255, 230, 130, ${flashAlpha})`;
-                            ctx.beginPath();
-                            ctx.arc(startX + a.dx * 3, startY + a.dy * 3, 2.5, 0, Math.PI * 2);
-                            ctx.fill();
-                        }
-                        ctx.restore();
-                    }
-                }
-
-                if (a.proj === 'PROJ_MAGIC') {
-                    // 🔴 [2026-10-18 主人定] 简单魔法系弹道：短流光尾迹 + 青白/淡金双层微光法球，干净克制不遮挡战场
-                    const tailLen = Math.min(d, 22);
-                    const tailX = x - a.dx * tailLen;
-                    const tailY = y - a.dy * tailLen;
-                    ctx.save();
-                    ctx.strokeStyle = a.f === 0 ? 'rgba(130, 225, 255, 0.55)' : 'rgba(255, 215, 130, 0.55)';
-                    ctx.lineWidth = 2.6;
-                    ctx.lineCap = 'round';
-                    ctx.beginPath();
-                    ctx.moveTo(tailX, tailY);
-                    ctx.lineTo(x, y);
-                    ctx.stroke();
-
-                    ctx.fillStyle = a.f === 0 ? 'rgba(100, 215, 255, 0.38)' : 'rgba(255, 200, 100, 0.38)';
-                    ctx.beginPath();
-                    ctx.arc(x, y, 6.2, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    ctx.fillStyle = a.f === 0 ? 'rgba(195, 245, 255, 0.92)' : 'rgba(255, 238, 175, 0.92)';
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3.6, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    ctx.fillStyle = '#ffffff';
-                    ctx.beginPath();
-                    ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                    continue;
-                }
-
-                const pa = this.projBank[a.proj];
-                if (!pa?.img || !pa.fw) continue;   // 素材未就绪（加载中跳过）
-
-                // 🔴 [2026-08-16 修复向北及全向弹道切线角]
-                const vx = a.dx * a.len;
-                const vy = a.dy * a.len - (flatFlight ? 0 : 4 * arcH * (1 - 2 * p))
-                    - (a.towerFlight ? a.towerFlight.endLift - a.towerFlight.startLift : 0);
-                const angle = Math.atan2(vy, vx) + (PROJ_ANGLE_OFFSET[a.proj] ?? 0);
-
-                const S = PROJ_SCALE * (PROJ_SCALE_OVERRIDE[a.proj] ?? 1);
-                let fr = 0;
-                const isChakram = a.proj === 'PROJ_CHAKRAM' || a.proj === 'PROJ_CHAKRAM_ELITE';
-                if (isChakram) {
-                    // DE 原素材：16 个飞行方向 × 每方向 10 帧旋转动画，方向组连续排列。
-                    const normalizedAngle = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-                    const direction = Math.round(normalizedAngle / (Math.PI * 2) * 16) % 16;
-                    fr = direction * 10 + Math.floor(p * 20) % 10;
-                } else if (a.proj === 'PROJ_THROWING_AXE') {
-                    // 飞斧空中 360° 旋转
-                    fr = Math.floor(p * 24) % pa.n;
-                } else if (a.proj === 'PROJ_FIRE' || a.proj === 'FLAMETHROWER_FLAME') {
-                    // 猛火油柜喷火 / 法师的希腊火：30 帧火焰动画循环播放
-                    fr = Math.floor(p * pa.n) % pa.n;
-                } else if (PROJ_FRAME_DUR[a.proj]) {
-                    fr = Math.floor((a.t - delay) / PROJ_FRAME_DUR[a.proj]) % pa.n;
-                } else if (pa.n > 1) {
-                    // 箭矢/标枪/飞镖取正水平基准帧，由 rotate(angle) 切线角精确控制全 360° 俯仰与起伏
-                    fr = Math.floor(pa.n / 2);
-                }
-
-                ctx.translate(x, y);
-                // 飞轮的 16 向角度已经画在 DE 原帧里；其他弹丸仍旋转水平基准帧。
-                if (!isChakram) ctx.rotate(angle);
-                ctx.drawImage(pa.img, fr * pa.fw, 0, pa.fw, pa.fh, -pa.hx * S, -pa.hy * S, pa.fw * S, pa.fh * S);
-                if (!isChakram) ctx.rotate(-angle);
-                ctx.translate(-x, -y);
-            }
-            ctx.restore();
-        }
-
-        // ── 云：画在**所有东西之上**（士兵/旗帜/箭矢之后），半透明横向飘过 ──
-        // 🔴 这是全场唯一"盖在人上面"的装饰层。
-        //    以中心为锚点，各自按 c.scale 缩放绘制。
-        for (const c of this.clouds) {
-            if (!c.img) continue;
-            const iw = c.img.naturalWidth * c.scale, ih = c.img.naturalHeight * c.scale;
-            if (!iw || !ih) continue;
-            ctx.globalAlpha = c.alpha;
-            if (c.flip) {
-                ctx.save();
-                ctx.translate(c.x, c.y);
-                ctx.scale(-1, 1);
-                ctx.drawImage(c.img, -iw / 2, -ih / 2, iw, ih);
-                ctx.restore();
-            } else {
-                ctx.drawImage(c.img, c.x - iw / 2, c.y - ih / 2, iw, ih);
-            }
-            ctx.globalAlpha = 1;
-        }
-
-        // ── 刀光剑影（半月斩击弧光 & 突刺枪芒 & 接触星芒）──
-        if (this.slashes.length) {
-            ctx.save();
-            for (const s of this.slashes) {
-                const p = Math.min(1, s.t / s.dur);
-                const alpha = Math.max(0, 1 - p * p) * 0.9;
-                ctx.save();
-                ctx.translate(s.x, s.y);
-                ctx.rotate(s.angle);
-                ctx.globalAlpha = alpha;
-
-                // 命中瞬间接触星芒（瞬态十字闪光）
-                if (p < 0.4) {
-                    const fp = p / 0.4;
-                    const fa = (1 - fp) * 0.95;
-                    const sl = (s.kind === 'thrust' ? 5.5 : 7) * (1 - fp * 0.35);
-                    ctx.save();
-                    ctx.globalAlpha = fa;
-                    ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 1.2 * (1 - fp);
-                    ctx.beginPath();
-                    ctx.moveTo(-sl, 0); ctx.lineTo(sl, 0);
-                    ctx.moveTo(0, -sl); ctx.lineTo(0, sl);
-                    ctx.stroke();
-                    ctx.restore();
-                }
-
-                if (s.kind === 'slash') {
-                    // 刀剑微弯斩击刀痕（弧刃更清晰张扬）
-                    const len = s.radius * (0.9 + p * 0.2);
-                    const h = s.flip ? -3.8 : 3.8;
-
-                    // 外层微光
-                    ctx.beginPath();
-                    ctx.moveTo(0, -len * 0.5);
-                    ctx.quadraticCurveTo(h, 0, 0, len * 0.5);
-                    ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 2.0 * (1 - p);
-                    ctx.lineCap = 'round';
-                    ctx.shadowColor = s.color;
-                    ctx.shadowBlur = 3;
-                    ctx.stroke();
-
-                    // 核心白亮线
-                    ctx.beginPath();
-                    ctx.moveTo(0, -len * 0.38);
-                    ctx.quadraticCurveTo(h * 0.7, 0, 0, len * 0.38);
-                    ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 1.0 * (1 - p);
-                    ctx.stroke();
-                } else {
-                    // 长枪/矛突刺短芒（沿刺击方向的坚挺枪芒）
-                    const len = s.radius * (0.85 + p * 0.3);
-
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.lineTo(len, 0);
-                    ctx.strokeStyle = s.color;
-                    ctx.lineWidth = 1.8 * (1 - p);
-                    ctx.lineCap = 'round';
-                    ctx.shadowColor = '#FFFFFF';
-                    ctx.shadowBlur = 3;
-                    ctx.stroke();
-
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.lineTo(len * 0.75, 0);
-                    ctx.strokeStyle = '#FFFFFF';
-                    ctx.lineWidth = 0.9 * (1 - p);
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
-            ctx.restore();
-        }
-
-        // ── 兵刃交锋火花（金属飞溅火星）──
-        if (this.sparks.length) {
-            ctx.save();
-            for (const s of this.sparks) {
-                const alpha = Math.max(0, 1 - s.t / s.dur) * 0.9;
-                ctx.globalAlpha = alpha;
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = s.size;
-                ctx.lineCap = 'round';
-
-                // 沿速度反方向拉出火星尾迹线
-                const tailScale = 0.024;
-                const tailX = s.x - s.vx * tailScale;
-                const tailY = s.y - s.vy * tailScale;
-
-                ctx.beginPath();
-                ctx.moveTo(s.x, s.y);
-                ctx.lineTo(tailX, tailY);
-                ctx.stroke();
-
-                // 火星头部亮点
-                ctx.fillStyle = '#FFFFFF';
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size * 0.5, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            ctx.restore();
-        }
-
-        // ── DE 攻击特效（爆炸/炮口焰，画在火花之上）──
-        if (this.fxs.length) {
-            for (const f of this.fxs) {
-                const fx = this.fxBank[f.type];
-                if (!fx) continue;
-                const fd = fx.dirs[f.dir % fx.dirs.length];
-                if (!fd?.img || !fd.fw) continue;   // 素材未就绪跳过
-                const p = Math.min(1, f.t / f.dur);
-                const fr = Math.min(fd.n - 1, Math.floor(p * fd.n));
-                const s = f.scale;
-                ctx.drawImage(fd.img, fr * fd.fw, 0, fd.fw, fd.fh, f.x - fd.hx * s, f.y - fd.hy * s, fd.fw * s, fd.fh * s);
-            }
-        }
-        if (hasTransform) ctx.restore();
-        this.coverStrategyMap();
-        // [2026-09-03] 时段色调：所有精灵画完后两次整画布合成；DEV 单独计时进 perf.tint
-        if (this.timeOfDay.active && this.useGroundGL) {   // 地形缺图时画布不是满铺，不能整屏压色
-            const _tt0 = import.meta.env.DEV ? performance.now() : 0;
-            this.timeOfDay.paint(ctx, cv.width, cv.height, performance.now());
-            if (import.meta.env.DEV) {
-                this.perfTint.push(performance.now() - _tt0);
-                if (this.perfTint.length > 1800) this.perfTint.shift();
-            }
-        }
-        this.perfStats.tGL = +_tGL.toFixed(2);
-        this.perfStats.tCull = +_tCull.toFixed(2);
-        this.perfStats.tSort = +_tSort.toFixed(2);
-        this.perfStats.tDrawDecor = +_tDrawDecor.toFixed(2);
-        this.perfStats.tDrawUnits = +_tDrawUnits.toFixed(2);
-        this.perfStats.tTotal = +(performance.now() - _tFrameStart).toFixed(2);
-    }
 
 }

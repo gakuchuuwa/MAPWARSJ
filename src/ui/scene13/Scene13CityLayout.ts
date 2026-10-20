@@ -425,7 +425,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const defCityForInterior: any = this.defenderCityRecord();
     const interiorBldStyle = defCityForInterior?.buildingStyle ?? this.environmentPlan?.buildingStyle;
     const isYurtOrNomadCity = this.buildingStyleFor(1) === 'YURT' || interiorBldStyle === 'MONGOL';
-    if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city')) {
+    if (!isYurtOrNomadCity && (this.defenderCityType === 'big_city' || this.defenderCityType === 'medium_city' || this.defenderCityType === 'small_city' || this.defenderCityType === 'stockade')) {
         const TW = 96, TH = 48;
         const isoToWorld = (ci: number, cj: number): { x: number; y: number } => {
             let dx = (ci - cj) * (TW * 0.5);
@@ -460,7 +460,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             ? [[-2.0, -9.2, 'BATTLEFIELD:TORCH_A'], [9.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 10.2, 'BATTLEFIELD:TORCH_A'], [-8.8, 2.0, 'BATTLEFIELD:TORCH_B']]
             : this.defenderCityType === 'medium_city'
                 ? [[-2.0, -8.2, 'BATTLEFIELD:TORCH_A'], [8.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 9.2, 'BATTLEFIELD:TORCH_A'], [-7.8, 2.0, 'BATTLEFIELD:TORCH_B']]
-                : [[-2.0, -7.2, 'BATTLEFIELD:TORCH_A'], [7.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 8.2, 'BATTLEFIELD:TORCH_A'], [-6.8, 2.0, 'BATTLEFIELD:TORCH_B']];
+                : this.defenderCityType === 'small_city'
+                    ? [[-2.0, -7.2, 'BATTLEFIELD:TORCH_A'], [7.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 8.2, 'BATTLEFIELD:TORCH_A'], [-6.8, 2.0, 'BATTLEFIELD:TORCH_B']]
+                    : [[-2.0, -6.2, 'BATTLEFIELD:TORCH_A'], [6.8, -1.0, 'BATTLEFIELD:TORCH_B'], [3.0, 7.2, 'BATTLEFIELD:TORCH_A'], [-5.8, 2.0, 'BATTLEFIELD:TORCH_B']];
         for (const [ti, tj, tAsset] of gateTorchCoords) {
             pushInteriorDecor(tAsset, ti, tj, 0.92);
         }
@@ -481,7 +483,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             ? [[-3.5, -3.5], [4.5, 4.5], [-3.5, 4.5], [4.5, -3.5]]
             : this.defenderCityType === 'medium_city'
                 ? [[-2.5, -2.5], [3.5, 3.5], [-2.5, 3.5], [3.5, -2.5]]
-                : [[-2.2, -2.2], [3.2, 3.2]];
+                : this.defenderCityType === 'small_city'
+                    ? [[-2.2, -2.2], [3.2, 3.2]]
+                    : [];
         for (const [ti, tj] of treeCoords) {
             pushInteriorDecor(courtyardTreeAsset, ti + (mRnd() - 0.5) * 0.16, tj + (mRnd() - 0.5) * 0.16, 0.78 + mRnd() * 0.12);
         }
@@ -498,10 +502,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
                     [-2.2, 2.6, 'BARRELS', 0.85],
                     [3.2, -1.6, 'BARRELS', 0.85],
                 ]
-                : [
-                    [-2.2, 2.4, 'BARRELS', 0.82],
-                    [3.2, -1.4, 'BARRELS', 0.82],
-                ];
+                : this.defenderCityType === 'small_city'
+                    ? [
+                        [-2.2, 2.4, 'BARRELS', 0.82],
+                        [3.2, -1.4, 'BARRELS', 0.82],
+                    ]
+                    : [
+                        [-2.0, 1.8, 'BARRELS', 0.80],
+                        [2.2, -1.2, 'BARRELS', 0.80],
+                        [-6.0, 1.0, 'BUSH_GREEN', 0.78],
+                        [6.0, -1.0, 'BUSH_GREEN', 0.78],
+                        [-1.5, 6.5, 'STUMP_GENERIC', 0.75],
+                    ];
         for (const [pi, pj, pAsset, pScale] of propCoords) {
             pushInteriorDecor(pAsset, pi, pj, pScale);
         }

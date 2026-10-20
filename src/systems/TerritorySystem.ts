@@ -89,6 +89,18 @@ function deMulberry32(seed: number): () => number {
  */
 let _citySessionSeed: number | null = null;
 const _citySeedCache = new Map<string, number>();
+/** 🔴 [2026-10-20 主人令「所有城池，九建筑和防御塔朝向一律随机」]
+ *  利用 32 位 Murmur3 avalanche 雪崩算法对每栋建筑与防御塔独立哈希，确保每栋建筑与每座防御塔各 50% 真正均匀随机朝向 */
+export function cityBuildingFlip(cityId: string, itemKey: string): boolean {
+    let h = deHashString(`${cityId}|orient|${itemKey}`);
+    h ^= h >>> 16;
+    h = Math.imul(h, 0x85ebca6b);
+    h ^= h >>> 13;
+    h = Math.imul(h, 0xc2b2ae35);
+    h ^= h >>> 16;
+    return (h & 1) === 1;
+}
+
 function cityRnd(cityId: string): () => number {
     // 本局种子：只在**第一次**取用时生成一次（Math.random 全局只掷一回），此后整局不变
     if (_citySessionSeed === null) _citySessionSeed = Math.floor(Math.random() * 0xFFFFFFFF);
@@ -126,7 +138,6 @@ const DE_SMALL_CITY_POOL = ['MILL', 'HOUSE', 'HOUSE', 'BARRACKS', 'BLACKSMITH', 
 const DE_STOCKADE_BUILDING_POOL = [
     'SETTLEMENT',
     'HUT_A', 'HUT_B', 'HUT_C', 'HUT_D', 'HUT_E', 'HUT_F', 'HUT_G',
-    'OUTPOST', 'FORTIFIED_OUTPOST',
     'DARK_HOUSE_AGE1', 'DARK_MILL_AGE1',
     'DARK_BARRACKS_AGE1', 'DARK_SETTLEMENT_AGE1', 'DARK_TOWN_CENTER_AGE1',
 ];
@@ -279,7 +290,7 @@ function buildYurtCampHtml(baseSize: number, cityId: string, fence = false, cent
         const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「毡帐系（YURT）险要走的是另一个 0.56，也改为0.54，全世界统一」] 0.56 → 0.54（毡帐系中心城堡，与全库城堡口径统一）
         const cgW = cW * 1.6;
         const cgH = cgW * 0.58;
-        const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+        const cFlip = cityBuildingFlip(cityId, 'center');
         parts.push(
             `<img src="/SUCAI_TERRAIN/pm1_plaza.png" style="position:absolute;left:50%;top:50%;width:${cgW.toFixed(1)}px;height:${cgH.toFixed(1)}px;transform:translate(-50%,-50%);z-index:10;opacity:0.92;pointer-events:none;" />`
         );
@@ -628,10 +639,19 @@ function buildDeSmallCityStackHtml(baseSize: number, cityId: string, style: stri
                     groundTile: cityGroundTile(buildingStyle, 'sr2'),
                     slotCenters: slotCenters.map((sc) => ({ ci: sc.ci, cj: sc.cj, isCenter: sc.isCenter })),
                     auxBuildings: [
-                        { b: 'TOWER', age: 'AGE2', ci: -7, cj: 8 },
-                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: -7 },
-                        { b: 'TOWER', age: 'AGE2', ci: -8, cj: -3 },
-                        { b: 'TOWER', age: 'AGE2', ci: 8, cj: 3 },
+                        // 东西固定各 1 座
+                        { b: 'TOWER', age: 'AGE2', ci: -8, cj: 9 },
+                        { b: 'TOWER', age: 'AGE2', ci: 9, cj: -8 },
+                        // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
+                        ...(((deHashString(cityId + '|small_tower_diag') & 1) === 0)
+                            ? [
+                                { b: 'TOWER', age: 'AGE2', ci: -8, cj: -4 }, // 北在左（西北）
+                                { b: 'TOWER', age: 'AGE2', ci: 9, cj: 5 },   // 南在右（东南）
+                            ]
+                            : [
+                                { b: 'TOWER', age: 'AGE2', ci: -4, cj: -8 }, // 北在右（东北）
+                                { b: 'TOWER', age: 'AGE2', ci: 5, cj: 9 },   // 南在左（西南）
+                            ]),
                     ],
                 }, buildingStyle);
         }
@@ -828,6 +848,21 @@ function buildDeStockadeStackHtml(
             wallAnchors,
             groundTile: cityGroundTile(buildingStyle, 'sr2'),
             slotCenters: stockadePos.map(([bi, bj], k) => ({ ci: 0.5 + bi * STOCKADE_PITCH, cj: 0.5 + bj * STOCKADE_PITCH, isCenter: k === 0 })),
+            auxBuildings: isMobei ? undefined : [
+                // 东西固定各 1 座
+                { b: (deHashString(cityId + '|stockade_tower|0') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: -7, cj: 8 },
+                { b: (deHashString(cityId + '|stockade_tower|1') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: 8, cj: -7 },
+                // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
+                ...(((deHashString(cityId + '|stockade_tower_diag') & 1) === 0)
+                    ? [
+                        { b: (deHashString(cityId + '|stockade_tower|2') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: -7, cj: -4 }, // 北在左（西北）
+                        { b: (deHashString(cityId + '|stockade_tower|3') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: 8, cj: 5 },   // 南在右（东南）
+                    ]
+                    : [
+                        { b: (deHashString(cityId + '|stockade_tower|2') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: -4, cj: -7 }, // 北在右（东北）
+                        { b: (deHashString(cityId + '|stockade_tower|3') & 1) === 0 ? 'OUTPOST' : 'FORTIFIED_OUTPOST', age: 'AGE1', ci: 5, cj: 8 },   // 南在左（西南）
+                    ]),
+            ],
         }, buildingStyle) : null;
     if (gridHtml) return gridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
     const stockadeShape = shapeIdx < 0 ? baseShapeIdx : shapeIdx;   // 形制序号照旧（院内建筑槽位随形制走）；围墙与地面裁切在有自定义样式时用样式自己的
@@ -1055,7 +1090,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     if (isMobeiStyle(buildingStyle)) {
         const yurtDir = 'YURT_H';
         const centerW = baseSize * 0.46;
-        const centerFlip = (deHashString(cityId + '|center|' + yurtDir) & 1) === 1;
+        const centerFlip = cityBuildingFlip(cityId, 'center');
         parts.push(
             `<img src="/SUCAI_BUILDING/${yurtDir}/preview.png" style="position:absolute;left:50%;top:calc(50% - 8px);width:${centerW.toFixed(1)}px;transform:translate(-50%,-65%)${centerFlip ? ' scaleX(-1)' : ''};z-index:150;" />`
         );
@@ -1066,7 +1101,7 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         // 🔴 [2026-10-11 主人「你别乱改 PASS，你给我改回来」] **已回退**：中心城堡曾被我改成「按素材原生宽」——
         //    与城墙步距不同源，同样会造成比例错位。回到原始公式。
         const centerW = (native?.spriteW?.[castleDir] ?? null) ?? (baseSize * 0.54);   // 🔴 [2026-10-12 主人令「改为0.54看看」] 0.56 → 0.54（战略地图；战术侧仍走素材原生宽）
-        const centerFlip = (deHashString(cityId + '|castle|' + castleDir) & 1) === 1;
+        const centerFlip = cityBuildingFlip(cityId, 'center');
         const cOffsetY = -8;
         const castleZ = Math.round(500 + cOffsetY);
         parts.push(
@@ -1169,10 +1204,19 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
                     : (DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA']),
                 groundTile: cityGroundTile(buildingStyle, 'rd2'),
                 auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                    { b: 'TOWER', age: 'AGE3', ci: -8, cj: 9 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: -8 },
-                    { b: 'TOWER', age: 'AGE3', ci: -9, cj: -4 },
-                    { b: 'TOWER', age: 'AGE3', ci: 9, cj: 4 },
+                    // 东西固定各 1 座
+                    { b: 'TOWER', age: 'AGE3', ci: -9, cj: 10 },
+                    { b: 'TOWER', age: 'AGE3', ci: 10, cj: -9 },
+                    // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
+                    ...(((deHashString(cityId + '|medium_tower_diag') & 1) === 0)
+                        ? [
+                            { b: 'TOWER', age: 'AGE3', ci: -9, cj: -5 }, // 北在左（西北）
+                            { b: 'TOWER', age: 'AGE3', ci: 10, cj: 6 },  // 南在右（东南）
+                        ]
+                        : [
+                            { b: 'TOWER', age: 'AGE3', ci: -5, cj: -9 }, // 北在右（东北）
+                            { b: 'TOWER', age: 'AGE3', ci: 6, cj: 10 },  // 南在左（西南）
+                        ]),
                 ],
             }, buildingStyle);
     }
@@ -1213,7 +1257,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
             const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（中城中心城堡；战术侧已在上面提前 return（buildDeCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
-            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            const cFlip = cityBuildingFlip(cityId, 'center');
             parts.push(
                 `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
@@ -1222,7 +1266,7 @@ function buildDeMediumCityStackHtml(baseSize: number, cityId: string, style: str
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
             const bW = nativeW(native, b, 'AGE3') ?? (baseSize * (isYurtItem(b) ? MONGOL_YURT_SCALE : 0.32) * AUTO);
             const zIndex = Math.round(500 + slot.y);
-            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+            const bFlip = cityBuildingFlip(cityId, `bldg_${i}_${b}`); // 独立随机镜像
 
             parts.push(
                 `<img src="${cityBuildingSrc(style, b, 'AGE3')}" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
@@ -1316,10 +1360,19 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd1'),
             auxBuildings: isMobeiStyle(buildingStyle) ? undefined : [
-                { b: 'TOWER', age: 'AGE4', ci: -9, cj: 10 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: -9 },
-                { b: 'TOWER', age: 'AGE4', ci: -10, cj: -5 },
-                { b: 'TOWER', age: 'AGE4', ci: 10, cj: 5 },
+                // 东西固定各 1 座
+                { b: 'TOWER', age: 'AGE4', ci: -10, cj: 11 },
+                { b: 'TOWER', age: 'AGE4', ci: 11, cj: -10 },
+                // 南北各 1 座：一左一右对角互补（北在左则南在右，北在右则南在左，按城 50% 随机对角）
+                ...(((deHashString(cityId + '|big_tower_diag') & 1) === 0)
+                    ? [
+                        { b: 'TOWER', age: 'AGE4', ci: -10, cj: -6 }, // 北在左（西北）
+                        { b: 'TOWER', age: 'AGE4', ci: 11, cj: 7 },   // 南在右（东南）
+                    ]
+                    : [
+                        { b: 'TOWER', age: 'AGE4', ci: -6, cj: -10 }, // 北在右（东北）
+                        { b: 'TOWER', age: 'AGE4', ci: 7, cj: 11 },   // 南在左（西南）
+                    ]),
             ],
         }, buildingStyle);
     }
@@ -1367,7 +1420,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画
             const cW = baseSize * 0.54;   // 🔴 [2026-10-12 主人令「全图所有……改为0.54」] 0.48 → 0.54（大城中心城堡；战术侧已在上面提前 return（buildDeBigCityGridHtml），这里只剩战略版）
             const zIndex = Math.round(500 + slot.y);
-            const cFlip = (deHashString(cityId + '|center|castle') & 1) === 1;
+            const cFlip = cityBuildingFlip(cityId, 'center');
             parts.push(
                 `<img src="/SUCAI_BUILDING/${castleDir}/preview.png" style="position:absolute;left:50%;top:50%;width:${cW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-65% + ${slot.y.toFixed(1)}px))${cFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
             );
@@ -1376,7 +1429,7 @@ function buildDeBigCityStackHtml(baseSize: number, cityId: string, style: string
             // 🔴 [2026-10-11 战术侧 1.0] 传了原生尺寸表就按 DE 原生像素画，否则沿用统一 0.32
             const bW = nativeW(native, b, age) ?? (baseSize * 0.32 * AUTO);
             const zIndex = Math.round(500 + slot.y);
-            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1; // 独立随机镜像
+            const bFlip = cityBuildingFlip(cityId, `medium_ring_${i}_${b}`); // 独立随机镜像
 
             parts.push(
                 `<img src="${cityBuildingSrc(style, b, age)}" style="position:absolute;left:50%;top:50%;width:${bW.toFixed(1)}px;transform:translate(calc(-50% + ${slot.x.toFixed(1)}px),calc(-50% + ${slot.y.toFixed(1)}px - 15%))${bFlip ? ' scaleX(-1)' : ''};z-index:${zIndex};" />`
@@ -1416,7 +1469,7 @@ function deBuildingFootprint(b: string): number {
     if (b.includes('WONDER')) return 5;
     if (b.includes('BARRACKS') || b.includes('ARCHERY_RANGE') || b.includes('STABLE') || b.includes('BLACKSMITH') || b.includes('MONASTERY')) return 3;
     if (b.includes('HOUSE') || b.includes('MILL') || b.startsWith('YURT_')) return 2;
-    if (b.includes('TOWER')) return 1;
+    if (b.includes('TOWER') || b.includes('OUTPOST')) return 1;
     return 3;
 }
 
@@ -1537,7 +1590,7 @@ function buildDeCityGridHtml(
             const src = g.rawDirNames ? `/SUCAI_BUILDING/${b}/preview.png` : cityBuildingSrc(bStyle, b, age);
             const dir = dirOf(src);
             const bW = (g.rawDirNames ? native.spriteW?.[b] : (nativeW(native, b, age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);
-            const bFlip = (deHashString(cityId + '|bldg|' + b + '|' + i) & 1) === 1;
+            const bFlip = cityBuildingFlip(cityId, `big_ring_${i}_${b}`);
             placeBuilding(dir, src, bW, deBuildingFootprint(b), slot.ci, slot.cj, bFlip);
         }
     });
@@ -1548,7 +1601,7 @@ function buildDeCityGridHtml(
             const src = g.rawDirNames ? `/SUCAI_BUILDING/${aux.b}/preview.png` : cityBuildingSrc(bStyle, aux.b, aux.age);
             const dir = dirOf(src);
             const bW = (g.rawDirNames ? native.spriteW?.[aux.b] : (nativeW(native, aux.b, aux.age) ?? DE_SPRITE_BOX_W[dir])) ?? (baseSize * 0.32 * AUTO);
-            const bFlip = (deHashString(cityId + '|aux|' + aux.b + '|' + ai) & 1) === 1;
+            const bFlip = cityBuildingFlip(cityId, `aux_${ai}_${aux.b}`);
             placeBuilding(dir, src, bW, deBuildingFootprint(aux.b), aux.ci, aux.cj, bFlip, true);
         });
     }

@@ -1,0 +1,692 @@
+/**
+ * 🔴 [2026-10-20 主人令「按功能模块拆分 Scene13WarLayer.ts，保证原有功能完全正常」]
+ * 战术模式（Scene13）**WebGL 地面层接入**：requestGroundLayerGL()（载入战场地图、地形、树木大山等自然物件）＋ spawnBattlefieldRelics()（两翼古战场遗存）。
+ * 从 Scene13WarLayer.ts 原样搬出（逻辑一行未改）。写法同 Scene13CityLayout.ts：
+ * 函数以 `this: Scene13WarLayer` 调用（类里用 `fn.call(this, …)`），函数体与原方法逐字一致。
+ */
+// 值导入（用到静态常量 Scene13WarLayer.GL_GROUND_WAIT_MS）；循环引用只在函数调用时取值，模块加载期不读
+import { Scene13WarLayer } from '../Scene13WarLayer';
+import type { AnimalAction, DecorSprite } from './Scene13Types';
+import { DEFAULT_TERRAIN_TILE } from '../Scene13Biome';
+import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
+import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
+import { pickTree, treeDensityFor, type TreeSeason } from './TreeAssignment';
+import { animalNativeAt, animalDeOf } from './Scene13Animals';
+import { applyDeCityToGround } from './Scene13CityLayout';
+import { groundDecorFor, decorFits } from './DecorFit';
+import { setCachedViennaMapData } from './Scene13SpriteCache';
+
+/**
+ * M3 WebGL 地面层接入：在 realGeography 开关开启时初始化底层 WebGL 视口，
+ * 并加载新地图物件，替换旧 13 随机树木与岩石。
+ */
+export function requestGroundLayerGL(this: Scene13WarLayer): void {
+    if (!this.glCanvas) return;
+    // 世界大小（开战时定死的世界中心 ×2）：地面格子与屏幕像素的换算口径，与窗口大小无关
+    const VW = this.worldCX * 2, VH = this.worldCY * 2;
+    const gen = this.assetGen;
+    const cv = this.glCanvas;
+    // 🔴 [2026-10-14 删除旧 13 的 2D 地面后] 开战前等 GL 地面就绪（占 1 个 pending，与兵种贴图同一道素材闸），
+    //    最多等 GL_GROUND_WAIT_MS，超时照常开打，绝不卡住战斗。实测本机 GL 地面 0.86~1.17s 就绪，比其余素材还早约 50ms。
+    this.pending++;
+    let held = true;
+    const releaseGround = () => { if (!held) return; held = false; if (gen === this.assetGen) this.pending--; };
+    window.setTimeout(releaseGround, Scene13WarLayer.GL_GROUND_WAIT_MS);
+
+    // 🔴 [2026-10-11「整合各场景素材」] 地图数据按**真实地理**取，三级退让：
+    //    ① 探针注入 window.__M3_TEST_MAPDATA__（真机验收用，保留最高优先）；
+    //    ② public/battlefields/site_<据点id>.json —— 由 scratch/_bake_site_maps.mjs 用**真实高程 + WorldCover 水体**
+    //       做成骨架喂给引擎（脚本的造水/造陆段跳过）⇒ 战场就是那个地方的地形（维也纳＝多瑙河）；
+    //    ③ 没有该据点 → theme_<环境计划的 deMapTheme>.json（B 批：按气候主题烘焙的通用地貌）；
+    //    ④ 都没有 → 维也纳测试图兜底，保证战斗照样能开。
+    const calcWaterRatio = (md: any): number => {
+        if (!md?.terrain?.length) return 0;
+        let w = 0;
+        for (let i = 0; i < md.terrain.length; i++) {
+            const t = md.terrain[i];
+            if (t === 1 || t === 15 || t === 22 || t === 23 || t === 4 || t === 58 || t === 95 || t === 96) w++;
+        }
+        return w / md.terrain.length;
+    };
+    const getMapData = async () => {
+        if ((window as any).__M3_TEST_MAPDATA__) return (window as any).__M3_TEST_MAPDATA__;
+        const load = async (file: string) => {
+            try {
+                const res = await fetch(MAPDATA_DIR + file);
+                if (res.ok) return await res.json();
+            } catch {}
+            return null;
+        };
+        const siteId = this.defenderCityId;
+        if (siteId) {
+            const site = await load('site_' + siteId + '.json');
+            if (site) {
+                const wRatio = calcWaterRatio(site);
+                const skelHmin = site?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
+                const skelHmax = site?.header?.skeleton?.hmax ?? skelHmin;
+                if (this.environmentPlan && this.environmentPlan.elevationM === null && site?.header?.skeleton?.hmin !== undefined) {
+                    this.environmentPlan.elevationM = Math.round((skelHmin + skelHmax) * 0.5);
+                }
+                // 若烘焙图存在明显水体但环境计划尚未检出水体（如瓦片尚未异步加载完），按海拔补齐 river / sea
+                if (wRatio > 0.02 && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
+                    this.environmentPlan.waterKind = skelHmin > 10 ? 'river' : 'sea';
+                }
+                // 🔴 修复大非川（龙羊峡水库 100% 水）、萨尔克尔（齐姆良斯克水库 100% 水）、郧阳（丹江口水库 65% 水）等
+                //    因现代水库蓄水或海湾裁剪导致全图 >55% 变成汪洋大海、丧失陆地与林木的问题：
+                //    此类淹没图退回当前气候带的 _river / _sea 主题模板，并按真实河道/海岸方向生成城侧水体
+                if (wRatio <= 0.55) {
+                    return site;
+                }
+                console.info(`[Scene13WarLayer] 🏞 据点图 site_${siteId}.json 水面占比过高 (${(wRatio * 100).toFixed(1)}%，现代水库/海湾淹没)，切换为当地气候水体模板`);
+            }
+        }
+        const theme = this.environmentPlan?.deMapTheme;
+        if (theme) {
+            const THEME_MAP_FILES: Record<string, string> = {
+                afrotropical_tropical: 'theme_afrotropical_tropical.json',
+                neotropical_temperate: 'theme_neotropical_temperate.json',
+                neotropical_tropical: 'theme_neotropical_tropical.json',
+                nearctic_temperate: 'theme_nearctic_temperate.json',
+                indomalayan_tropical: 'theme_indomalayan_tropical.json',
+                palaearctic_asia_temperate: 'theme_palaearctic_asia_temperate.json',
+                palaearctic_middle_east_desert: 'theme_palaearctic_middle_east_desert.json',
+                palaearctic_europe_taiga: 'theme_palaearctic_europe_taiga.json',
+                palaearctic_europe_temperate: 'theme_palaearctic_europe_temperate.json',
+                palaearctic_europe_mediterranean: 'theme_palaearctic_europe_mediterranean.json',
+                australasian_temperate: 'theme_australasian_temperate.json',
+                palaearctic_asia_desert: 'theme_palaearctic_asia_desert.json',
+                palaearctic_salt_desert: 'theme_palaearctic_salt_desert.json',
+                palaearctic_asia_steppe: 'theme_palaearctic_asia_steppe.json',
+                palaearctic_tibetan_plateau: 'theme_palaearctic_tibetan_plateau.json',
+                palaearctic_middle_east_highland: 'theme_palaearctic_middle_east_highland.json',
+                serengeti: 'theme_serengeti.json',
+                palustrine_swamp: 'theme_palustrine_swamp.json',
+            };
+            const waterKind = this.environmentPlan?.waterKind;
+            if (waterKind && waterKind !== 'none') {
+                const waterVariant = await load(`theme_${theme}_${waterKind}.json`);
+                if (waterVariant) return waterVariant;
+            }
+            const targetFile = THEME_MAP_FILES[theme] ?? ('theme_' + theme + '.json');
+            const themed = await load(targetFile);
+            if (themed) return themed;
+        }
+        try {
+            const res = await fetch(FALLBACK_MAPDATA_URL);
+            if (res.ok) {
+                console.warn(`[Scene13WarLayer] 无据点/主题地图（site=${siteId ?? '无'} theme=${theme ?? '无'}），地面退回维也纳测试图`);
+                return await res.json();
+            }
+        } catch {}
+        return null;
+    };
+
+    void getMapData().then(async (rawMapData) => {
+        if (gen !== this.assetGen || !rawMapData) {
+            this.useGroundGL = false;
+            cv.style.display = 'none';
+            releaseGround();
+            return;
+        }
+        // 🔴 [2026-10-13 / 2026-10-19] 据点真实图（header.skeleton）通常保留真实水体；
+        //    但 DE 标准河流占比仅约 3.5%（海面占比约 23.5%），若内陆据点（海拔 > 10m 或 waterKind === 'river'）
+        //    因现代水库蓄水或大漫滩导致水面占比 > 12%，则将其像海一样的宽阔水面重塑为城侧 3.5 格标准自然河道（relocateTemplateWater）。
+        const oriented = await this.adaptMapDataSeaOrientation(rawMapData);
+        const skelHmin = rawMapData?.header?.skeleton?.hmin ?? (this.environmentPlan?.elevationM ?? 0);
+        const isInlandReservoirFlood = !!(rawMapData?.header?.skeleton)
+            && (skelHmin > 10 || this.environmentPlan?.waterKind === 'river')
+            && calcWaterRatio(oriented) > 0.12;
+        if (isInlandReservoirFlood && this.environmentPlan && (!this.environmentPlan.waterKind || this.environmentPlan.waterKind === 'none')) {
+            this.environmentPlan.waterKind = 'river';
+        }
+        const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
+            ? oriented
+            : this.relocateTemplateWater(oriented);
+        try {
+            if (this.groundLayerGL) this.groundLayerGL.destroy();
+            // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
+            const glLayer = await Scene13GroundLayerGL.create(cv, mapData, this.environmentPlan?.groundTiles);
+            if (gen !== this.assetGen) {
+                glLayer.destroy();
+                releaseGround();
+                return;
+            }
+            this.groundLayerGL = glLayer;
+            setCachedViennaMapData(glLayer.data);
+            this.useGroundGL = true;
+            // 🔴 [2026-10-11 主人令「这个菱形的周边黑色很丑，可以换成底图吗」]
+            // WebGL 画布底层平铺当前气候主题的自然底图，任何缩放与平移下满屏铺满，彻底消除菱形周边黑边
+            const baseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+            cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
+            cv.style.backgroundRepeat = 'repeat';
+            cv.style.backgroundPosition = 'center center';
+            if (this.entryFadePending) this.applyInitialEntryStyle(cv);
+            cv.style.display = 'block';
+
+            // 🔴 [2026-10-11 主人令] 陆战口径：水/树林/建筑一律可通行 ⇒ 删去「保障所有出兵口与初始士兵不落入水体」
+            const data = transposeMapData(mapData);
+            if (data && data.objects) {
+                // 🔴 [2026-10-11 主人「让植被，建筑等固定在地基上」] 给每栋建筑 / 城门 / 塔 / 墙脚下清出一块干燥平地（地基），
+                //    并拿掉落在地基上的树木与建筑冲突物。
+                const foundations: Array<{ x: number; y: number; r: number }> = [];
+                const siegeBuildings = this.decorSprites.filter((s) => s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL'));
+                for (const sp of this.spawns) if (sp.f === 1 && !sp.commander) foundations.push({ x: sp.x, y: sp.y, r: 4 });
+                for (const sp of siegeBuildings) foundations.push({ x: sp.x, y: sp.y, r: 2.5 });
+                for (const fd of foundations) glLayer.carveFoundation(fd.x, fd.y, VW, VH, fd.r);
+                glLayer.flushFoundation();
+                const onFoundation = (x: number, y: number): boolean => {
+                    const c = glLayer.screenToCell(x, y, VW, VH);
+                    if (!c) return false;
+                    return foundations.some((fd) => {
+                        const f = glLayer.screenToCell(fd.x, fd.y, VW, VH);
+                        return !!f && Math.hypot(c.gx - f.gx, c.gy - f.gy) < fd.r;
+                    });
+                };
+
+                // 🔴 [2026-10-10 主人「这里光秃秃的，啥元素也没有呀」]
+                //    保留未落入建筑地基（!onFoundation）的自然植被与草花碎石，绝不一刀切清空整场生态
+                // 🔴 [2026-10-12 任务1] 地图数据自带完整树林时，剔除旧环境方案遗留的混杂树木，树种严格统一由地图数据决定
+                const TREE_RE = /^(?!PLANT|UNDERBRUSH|ROCK|FORAGE|FALLEN_LEAVES|FELLED|STUMP|FLOWER|GRASS|WEED|SHRUB|BUSH_GREEN).*(TREE|PINE|OAK|BAMBOO|PALM|BIRCH|CYPRESS|MAPLE|WILLOW|OLIVE|BAOBAB|BRAZILWOOD|JUNGLE|RAINFOREST|ACACIA|MANGROVE|BLOSSOM|GINKGO|EUCALYPTUS|MONKEY_PUZZLE)/i;
+                this.decorSprites = this.decorSprites.filter((s) => {
+                    const isBuilding = s.asset === '' || s.asset.startsWith('BUILDING:') || s.asset.startsWith('BUILDINGANIM:') || s.asset.startsWith('BATTLEFIELD:') || s.asset.includes('GATE') || s.asset.includes('TOWER') || s.asset.includes('WALL');
+                    const isWaterPlant = s.asset === 'WATER_LILY' || s.asset === 'REEDS' || s.asset === 'SEA_ROCKS' || s.asset === 'SHIPWRECK';
+                    const isOldTree = TREE_RE.test(s.asset);
+                    const c = glLayer.screenToCell(s.x, s.y, VW, VH);
+                    const inWater = !!c && glLayer.getWaterDensityAt(Math.round(c.gx), Math.round(c.gy)) > 0.42;
+                    return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
+                });
+
+                // 🔴 [2026-10-16 阶段四：真实地理与四季植被/地表装饰多样性]
+                // 接回 TreeAssignment (pickTree: 40 种 DE 树木 × 全球专属地域框 × 26 底图 × 春夏秋冬四季)
+                // 与 DecorFit (groundDecorFor / decorFits: 26 底图同色系岩石、花草、灌木)，彻底告别单一 Arabia 模板表现。
+                const defCityRec = this.defenderCityRecord();
+                const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
+                const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
+                const mapBuildingStyle = defCityRec?.buildingStyle ?? this.environmentPlan?.buildingStyle;
+                const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
+                const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
+                    ? rawCalSeason
+                    : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
+                const regionalTree = pickTree({
+                    baseTile: baseTerrain,
+                    lat: mapLat,
+                    lng: mapLng,
+                    season: calSeason,
+                    isSiege: this.battleType === 'siege',
+                    buildingStyle: mapBuildingStyle,
+                });
+                const decorSet = groundDecorFor(baseTerrain);
+                const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
+                    || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+                const decorCtx = {
+                    lat: mapLat,
+                    lng: mapLng,
+                    season: this.sceneSeason,
+                    winterSnow: isSnowBase,
+                    isSiege: this.battleType === 'siege',
+                };
+                const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
+                // 🔴 [2026-10-16 主人指出「怎么都没有树呢，看看DE是怎么安排的树」]
+                //    DE 原版（empires2_x2_p1.dat + RMS 烘焙图 site_*.json / theme_*.json）的树木安排规则：
+                //    1) 「林地底图（lv2/for/fo2/snf）与树木 1:1 严格绑定」：凡是地面画了森林底图斑块的格子，上面 100% 必立一棵树，绝不允许把林团砍剩几棵而留下一大片光秃秃的 lv2 落叶底图；
+                //    2) 「成片林团（Forest Clumps）+ 原野散株（Straggler Trees）」双层布局：非荒漠/非干草原地图 100% 原样保留 DE 烘焙图的全部林团与散株（clumpKeepMod = 1，不截断单团棵数）；
+                //    3) 仅在地面层已隐藏森林底斑的极旱荒漠/戈壁/干草原（isSparseTreelessBiome）上，才对复用的大林团做稀疏化。
+                const isSparseTreelessBiome = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
+                    || baseTerrain === 'qs' || baseTerrain === 'pal1'
+                    || baseTerrain === 'gr7' || baseTerrain === 'gr5' || baseTerrain === 'gravel_default';
+                const treeDensity = treeDensityFor(baseTerrain, this.battleType === 'siege');
+                const clumpKeepMod = !isSparseTreelessBiome ? 1
+                    : (treeDensity.forestCover >= 0.004 ? 2 : 3);
+                const maxTreesPerClump = !isSparseTreelessBiome ? 9999
+                    : (treeDensity.forestCover >= 0.004 ? 18 : 8);
+
+                // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
+                // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
+                const treeClumpDominant = new Map<number, string>();
+                const skippedTreeIndices = new Set<number>();
+                const rawTreeIndices: number[] = [];
+                data.objects.forEach((ob: any, idx: number) => {
+                    if (ob.name && !ob.name.includes('CLIFF')) {
+                        const r = resolveNatureSprite(ob.name);
+                        if (r && r[0] === 'NATURE' && TREE_RE.test(r[1])) {
+                            rawTreeIndices.push(idx);
+                        }
+                    }
+                });
+
+                // 空间网格桶快速连通聚类 (网格大小 2 格)
+                const treeGrid = new Map<string, number[]>();
+                for (const tidx of rawTreeIndices) {
+                    const ob = data.objects[tidx];
+                    const key = `${Math.floor(ob.x / 2)},${Math.floor(ob.y / 2)}`;
+                    if (!treeGrid.has(key)) treeGrid.set(key, []);
+                    treeGrid.get(key)!.push(tidx);
+                }
+
+                const visitedTree = new Set<number>();
+                let clumpCounter = 0;
+                for (const startIdx of rawTreeIndices) {
+                    if (visitedTree.has(startIdx)) continue;
+                    const cId = clumpCounter++;
+                    const clumpMembers: number[] = [];
+                    const queue = [startIdx];
+                    visitedTree.add(startIdx);
+                    while (queue.length > 0) {
+                        const curIdx = queue.shift()!;
+                        clumpMembers.push(curIdx);
+                        const curOb = data.objects[curIdx];
+                        const gx = Math.floor(curOb.x / 2), gy = Math.floor(curOb.y / 2);
+                        for (let dx = -1; dx <= 1; dx++) {
+                            for (let dy = -1; dy <= 1; dy++) {
+                                const bucket = treeGrid.get(`${gx + dx},${gy + dy}`);
+                                if (bucket) {
+                                    for (const nbrIdx of bucket) {
+                                        if (!visitedTree.has(nbrIdx)) {
+                                            const nbrOb = data.objects[nbrIdx];
+                                            if (Math.hypot(curOb.x - nbrOb.x, curOb.y - nbrOb.y) <= 1.6) {
+                                                visitedTree.add(nbrIdx);
+                                                queue.push(nbrIdx);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // 仅在隐藏了森林底斑的荒漠/戈壁/干草原（isSparseTreelessBiome）裁剪大林团；其余地图 100% 保留 DE 林团与散株
+                    if (clumpKeepMod > 1 && clumpMembers.length > 3 && (cId % clumpKeepMod !== 0)) {
+                        for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
+                        continue;
+                    }
+                    if (clumpMembers.length > maxTreesPerClump) {
+                        for (let k = maxTreesPerClump; k < clumpMembers.length; k++) {
+                            skippedTreeIndices.add(clumpMembers[k]);
+                        }
+                    }
+
+                    // 统计该林块内的原生主导树种，并与当地真实地理/四季主导树种 regionalTree 融合：
+                    // 85% 林团直接使用当地与当季的 regionalTree（如日本春樱/秋银杏、岭南翠竹、地中海油橄榄、北非金合欢等），
+                    // 15% 林团若原图自带非通用橡树/棕榈的特色伴生树且符合当前季节，则保留整团伴生树，做到既纯正又富有层次
+                    const counts: Record<string, number> = {};
+                    for (const mIdx of clumpMembers) {
+                        const r = resolveNatureSprite(data.objects[mIdx].name);
+                        if (r) counts[r[1]] = (counts[r[1]] || 0) + 1;
+                    }
+                    let maxCnt = 0, bestAsset = '';
+                    for (const [ast, cnt] of Object.entries(counts)) {
+                        if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
+                    }
+                    const isGenericBakedTree = bestAsset === 'OAK' || bestAsset === 'PALM' || bestAsset === 'PINE' || bestAsset === 'GREEN_OAK';
+                    const snowTreeOnNonSnowGround = !isSnowBase && /^SNOW_/.test(bestAsset);
+                    const greenTreeInSnow = isSnowBase && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
+                    const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
+                    const isAridOrSteppeGround = isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
+                    const aridTreeMismatch = isAridOrSteppeGround && !/^(PALM|ACACIA|BAOBAB|OLIVE|CYPRESS|DEAD_TREE|BUSH_TREE|DRAGON_TREE)$/i.test(bestAsset);
+                    const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST|JUNGLE|RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
+                    const finalClumpTree = (
+                        !bestAsset ||
+                        isGenericBakedTree ||
+                        snowTreeOnNonSnowGround ||
+                        greenTreeInSnow ||
+                        autumnMismatch ||
+                        aridTreeMismatch ||
+                        tropicalTreeOnNonTropical ||
+                        (cId % 6 !== 0)
+                    ) ? regionalTree : bestAsset;
+
+                    for (const mIdx of clumpMembers) {
+                        if (!skippedTreeIndices.has(mIdx)) {
+                            treeClumpDominant.set(mIdx, finalClumpTree);
+                        }
+                    }
+                }
+
+                // 🔴 [2026-10-13 主人令「动物逻辑和DE不一样，请核对清楚」＋「尽量真实，游戏合理」]
+                //    分类 / 速度 / 视野 / 血量 / 攻击一律照 DE 本体（表 ANIMAL_DE，见文件上方），不再手写三张 Set。
+                //    旧版自造的三条已废：① 城池/营帐内动物一律删（DE 的牲畜本来就出生在 TC 旁，删了就没牲畜）
+                //    ② 猛兽离图心 1400px 删（DE 用 min_distance_to_players，从不看图心；实测白删 31% 猛兽）
+                //    ③ 猎物复制 3 只（DE 的群是 RMS 一只只摆好的，复制＝平白多三倍）。
+
+                const inCityZone = (x: number, y: number): boolean => {
+                    if (this.insideRing(x, y)) return true;
+                    if (this.deCity) {
+                        const cx = this.deCityCenter ? this.deCityCenter.x : VW / 2;
+                        const cy = this.deCityCenter ? this.deCityCenter.y : VH / 2;
+                        const rx = this.deCity.width / 2 + 500;   // 🔴 [2026-10-13 主人令] 野生动物离城墙外 500px（原 180/120）
+                        const ry = this.deCity.height / 2 + 500;
+                        if (((x - cx) ** 2) / (rx * rx) + ((y - cy) ** 2) / (ry * ry) <= 1) return true;
+                    }
+                    return false;
+                };
+                const inCampZone = (x: number, y: number): boolean => {
+                    for (const sp of this.spawns) {
+                        if (sp.f === 0 && Math.hypot(x - sp.x, y - sp.y) < 220) return true;
+                    }
+                    return false;
+                };
+
+                for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
+                    if (skippedTreeIndices.has(obIdx)) continue;
+                    const ob = data.objects[obIdx];
+                    if (ob.name && ob.name.includes('CLIFF')) continue;
+                    const r = resolveNatureSprite(ob.name);
+                    if (r && (r[0] === 'NATURE' || r[0] === 'ANIMAL')) {
+                        const isAnimal = r[0] === 'ANIMAL';
+                        const ox = ob.x - 0.5, oy = ob.y - 0.5;
+                        const hash = Math.abs(Math.round(ob.x * 7 + ob.y * 13)) % 100;
+                        let sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                        let sy = (oy - 60) * TAC_TILE_H + VH / 2;
+
+                        if (isAnimal) {
+                            const species = r[1];
+                            const de = animalDeOf(species);
+                            if (!animalNativeAt(species, mapLat, mapLng, baseTerrain)) continue;   // 非当地或非当前地表气候物种不放
+
+                            // ① 建筑地基上不放；野生动物不进城内 / 攻方营帐，**家畜可以留在城里**
+                            //    （DE 每名玩家出生点旁就有 4 只牲畜 + 近旁 4 只，全在自家聚落里）
+                            if (onFoundation(sx, sy)) continue;
+                            if (de.kind !== 'livestock' && (inCityZone(sx, sy) || inCampZone(sx, sy))) continue;
+
+                            // ② 一个 DE 物件 = 一只动物（DE 的群由 RMS 一只只摆好，不再复制成群）
+                            const dir = hash % 8;
+                            const isBird = de.kind === 'bird';
+                            const startAct: AnimalAction = isBird ? 'fly' : (de.acts.includes('idle') ? 'idle' : de.acts[0]);
+                            const animSprite: DecorSprite = {
+                                asset: `ANIMAL:${species}/${startAct}_${isBird ? 0 : dir}`,
+                                frame: hash,
+                                x: sx,
+                                y: sy,
+                                flip: false,
+                                layer: 'world',
+                                z: 0,
+                                lift: isBird ? 180 : glLayer.elevationLiftAt(sx, sy, VW, VH),
+                                densityHash: hash,
+                                obstructionContactSec: 0,
+                                obstructionTouched: false,
+                                obstructionDisabled: true,
+                            };
+                            this.ensureNatureAsset(animSprite.asset);
+                            this.decorSprites.push(animSprite);
+                            this.tacticalAnimals.push({
+                                sprite: animSprite,
+                                species,
+                                kind: de.kind,
+                                action: startAct,
+                                dir: isBird ? 0 : dir,
+                                homeX: sx,
+                                homeY: sy,
+                                x: sx,
+                                y: sy,
+                                vx: 0,
+                                vy: 0,
+                                fleeTimer: 0,
+                                fleeDX: 0,          // 🔴 [2026-10-13 主人令「只冒着一个方向跑」] 首次受惊时锁定
+                                fleeDY: 0,
+                                idleTimer: Math.random() * 3,
+                                wanderX: sx,
+                                wanderY: sy,
+                                animPhase: hash,
+                                hp: de.hp,
+                                atkNext: 0,
+                                flyX: sx + Math.cos(hash * 0.1) * 800,
+                                flyY: sy + Math.sin(hash * 0.1) * 800,
+                                hovering: false,
+                            });
+                            continue;
+                        }
+
+                        // 静态自然植被与矿石资源
+                        let asset = treeClumpDominant.get(obIdx) ?? r[1];
+                        const isTree = TREE_RE.test(asset);
+                        if (isTree) {
+                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
+                            if (!isSnowBase) {
+                                if (asset === 'SNOW_PINE') asset = regionalTree;
+                                else if (asset === 'SNOW_AUTUMN_OAK') asset = this.sceneSeason === 1 ? 'AUTUMN_OAK' : regionalTree;
+                                else if (asset === 'SNOW_BIRCH') asset = this.sceneSeason === 1 ? 'BIRCH_AUTUMN' : regionalTree;
+                                else if (asset === 'SNOW_DEAD_TREE') asset = 'DEAD_TREE';
+                            }
+                        } else if (asset.startsWith('FORAGE_')) {
+                            // 非湿润热带区域（如雪地、荒漠、温带/寒带），将烘培模板中的热带菠萝/木瓜浆果丛统一转为通用浆果丛
+                            if (asset !== 'FORAGE_BUSH') {
+                                const isHumidTropical = !isSnowBase
+                                    && !isSparseTreelessBiome
+                                    && Math.abs(mapLat) <= 23.5
+                                    && !/^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
+                                if (!isHumidTropical) asset = 'FORAGE_BUSH';
+                            }
+                        } else if (asset === 'MINE_GOLD') {
+                            continue;
+                        } else if (asset !== 'MINE_STONE') {
+                            // 按 DecorFit 将底图不匹配的通用岩石/花草映射为当前底图同色系装饰
+                            if (/^ROCK/.test(asset)) {
+                                if (decorSet.solid.length === 0) continue;
+                                if (!decorSet.solid.includes(asset)) {
+                                    asset = decorSet.solid[hash % decorSet.solid.length];
+                                }
+                            } else if (/^(FLOWER|PLANT|WEED|SHRUB|BUSH_GREEN|UNDERBRUSH|FERNPATCH)/.test(asset)) {
+                                if (decorSet.flat.length === 0) continue;
+                                if (!decorSet.flat.includes(asset)) {
+                                    asset = decorSet.flat[hash % decorSet.flat.length];
+                                }
+                            } else if (/^GRASS_/.test(asset)) {
+                                if (decorSet.scatter.length === 0) continue;
+                                if (!decorSet.scatter.includes(asset)) {
+                                    asset = decorSet.scatter[hash % decorSet.scatter.length];
+                                }
+                            }
+                            if (!decorFits(asset, decorCtx)) continue;
+                        }
+                        const jx = isTree ? (((hash * 17) % 23) / 22 - 0.5) * TAC_TILE_W * 0.46 : 0;
+                        const jy = isTree ? (((hash * 31) % 29) / 28 - 0.5) * TAC_TILE_H * 0.46 : 0;
+                        sx += jx;
+                        sy += jy;
+                        if (onFoundation(sx, sy)) continue;
+                        this.ensureNatureAsset(asset);
+                        const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+                        this.decorSprites.push({
+                            asset,
+                            frame: ob.rot !== undefined ? Math.round(ob.rot) : hash,
+                            x: sx,
+                            y: sy,
+                            flip: (hash % 2 === 0),
+                            layer: 'world',
+                            z: 0,
+                            lift,
+                            densityHash: hash,
+                            obstruction: undefined,
+                            obstructionContactSec: 0,
+                            obstructionTouched: false,
+                            obstructionDisabled: true,
+                        });
+                    }
+                }
+
+                // 自然水岸生态：沿水岸线点缀芦苇与睡莲（按气候/季节/海陆水体自适应：冬季冰面不长，荒漠与海岸仅生芦苇不生睡莲）
+                const isFrozenWater = glLayer.isIce || baseTerrain === 'sn2' || baseTerrain === 'snf' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
+                const allowWaterLily = !isFrozenWater && !isBarrenBase && this.sceneSeason === 0 && this.environmentPlan?.waterKind !== 'sea' && !/^(ds|drt|sav|sa2|zn)/.test(baseTerrain);
+                if (!isFrozenWater) {
+                    for (let gy = 2; gy < 118; gy += 2) {
+                        for (let gx = 2; gx < 118; gx += 2) {
+                            const dens = glLayer.getWaterDensityAt(gx, gy);
+                            if (dens >= 0.41 && dens <= 0.48 && ((gx * 31 + gy * 19) % 5 === 0)) {
+                                const ox = gx - 0.5, oy = gy - 0.5;
+                                const sx = (ox - 60) * TAC_TILE_W + VW / 2;
+                                const sy = (oy - 60) * TAC_TILE_H + VH / 2;
+                                const isLily = allowWaterLily && dens > 0.44 && ((gx + gy) % 3 === 0);
+                                const asset = isLily ? 'WATER_LILY' : 'REEDS';
+                                if (!decorFits(asset, decorCtx)) continue;
+                                const hash = (gx * 11 + gy * 7) % 100;
+                                const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+                                this.ensureNatureAsset(asset);
+                                this.decorSprites.push({
+                                    asset,
+                                    frame: hash,
+                                    x: sx,
+                                    y: sy,
+                                    flip: (gx % 2 === 0),
+                                    layer: 'world',
+                                    z: 0,
+                                    lift,
+                                    densityHash: hash,
+                                    obstruction: undefined,
+                                    obstructionContactSec: 0,
+                                    obstructionTouched: false,
+                                    obstructionDisabled: true,
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            applyDeCityToGround.call(this);
+            spawnBattlefieldRelics.call(this, glLayer, VW, VH);
+            releaseGround();
+        } catch (err) {
+            console.warn('[Scene13WarLayer] ⚠️ WebGL 地面层初始化失败（已无旧 2D 地面兜底，本场没有地面）:', err);
+            this.useGroundGL = false;
+            cv.style.display = 'none';
+            releaseGround();
+        }
+    });
+}
+
+/**
+ * 在战术战场南北两翼安全区（避开城墙、护城河、四门大道、水体、营地出生点与中央主交战走廊）
+ * 点缀 DE 古战场军事遗存（SUCAI_BATTLEFIELD）：
+ *   · 攻城战：倒毁攻城器械残骸（投石机/石炮/冲车/弩炮）、破损拒马木栅残骸、战地火把
+ *   · 野战：古战场骸骨、断车、破损拒马木栅残骸
+ */
+export function spawnBattlefieldRelics(this: Scene13WarLayer, glLayer: Scene13GroundLayerGL, VW: number, VH: number): void {
+    const seedStr = `${this.defenderCityId || 'field'}_${Math.round((this.centerLat ?? 30) * 100)}_${Math.round((this.centerLng ?? 110) * 100)}_${this.battleType}`;
+    let rSeed = 2166136261 >>> 0;
+    for (let i = 0; i < seedStr.length; i++) {
+        rSeed = Math.imul(rSeed ^ seedStr.charCodeAt(i), 16777619) >>> 0;
+    }
+    const rnd = (): number => {
+        rSeed = Math.imul(rSeed ^ (rSeed >>> 15), 0x85ebca6b) >>> 0;
+        rSeed = Math.imul(rSeed ^ (rSeed >>> 13), 0xc2b2ae35) >>> 0;
+        return ((rSeed ^ (rSeed >>> 16)) >>> 0) / 4294967296;
+    };
+
+    const { x: cx, y: cy } = this.deCity ? this.deCityCenter : { x: VW * 0.5, y: VH * 0.5 };
+    const rx = this.deCity ? this.deCity.width / 2 : 0;
+    const ry = this.deCity ? this.deCity.height / 2 : 0;
+    const ringLm = this.deCity ? Math.max(0, (rx - 200) / (TAC_TILE_W / 2)) : 0;
+    const roadMaxU = ringLm / 2 + 7.5;
+    const roadMaxV = 3.2;
+
+    const placedPts: Array<{ x: number; y: number }> = [];
+    const isSafeSpot = (sx: number, sy: number): boolean => {
+        if (sx < 360 || sx > VW - 360 || sy < 180 || sy > VH - 180) return false;
+        // 避开中央部队冲锋与交战主走廊
+        if (Math.abs(sy - cy) < 360) return false;
+        // 攻城战避开城池、护城河及四门大道
+        if (this.deCity) {
+            if (((sx - cx) / (rx + 180)) ** 2 + ((sy - cy) / (ry + 110)) ** 2 < 1.0) return false;
+            if (ringLm > 0) {
+                const u = (sx - cx) / (TAC_TILE_W / 2), v = (sy - cy) / (TAC_TILE_H / 2);
+                const di = Math.abs((u + v) / 2 - 0.5), dj = Math.abs((v - u) / 2 - 0.5);
+                if ((di <= roadMaxU && dj <= roadMaxV) || (dj <= roadMaxU && di <= roadMaxV)) return false;
+            }
+        }
+        if (glLayer.isWaterAt(sx, sy, VW, VH)) return false;
+        for (const sp of this.spawns) {
+            if (Math.hypot(sx - sp.x, (sy - sp.y) * 1.4) < 340) return false;
+        }
+        for (const p of placedPts) {
+            if (Math.hypot(sx - p.x, (sy - p.y) * 1.4) < 260) return false;
+        }
+        return true;
+    };
+
+    const pushRelic = (asset: string, sx: number, sy: number, flip: boolean): void => {
+        placedPts.push({ x: sx, y: sy });
+        const lift = glLayer.elevationLiftAt(sx, sy, VW, VH);
+        this.ensureNatureAsset(asset);
+        this.decorSprites.push({
+            asset,
+            frame: 0,
+            x: sx,
+            y: sy,
+            flip,
+            layer: 'world',
+            z: 0,
+            lift,
+            obstruction: undefined,
+            obstructionContactSec: 0,
+            obstructionTouched: false,
+            obstructionDisabled: true,
+        });
+    };
+
+    const pickSafeFlankSpot = (xMinFrac: number, xMaxFrac: number, preferSouth: boolean): { x: number; y: number } | null => {
+        for (let attempt = 0; attempt < 24; attempt++) {
+            const south = (attempt % 2 === 0) ? preferSouth : !preferSouth;
+            const sx = VW * (xMinFrac + rnd() * (xMaxFrac - xMinFrac));
+            const sy = south
+                ? VH * (0.70 + rnd() * 0.16)
+                : VH * (0.14 + rnd() * 0.16);
+            if (isSafeSpot(sx, sy)) return { x: sx, y: sy };
+        }
+        return null;
+    };
+
+    if (this.battleType === 'siege') {
+        const siegeWrecks = [
+            'BATTLEFIELD:DECAY_TREBUCHET',
+            'BATTLEFIELD:DECAY_MANGONEL',
+            'BATTLEFIELD:DECAY_ONAGER',
+            'BATTLEFIELD:DECAY_BATTERING_RAM',
+            'BATTLEFIELD:DECAY_SCORPION',
+        ];
+        const barricadeWrecks = [
+            'BATTLEFIELD:BARRICADE_RUBBLE_A',
+            'BATTLEFIELD:BARRICADE_RUBBLE_B',
+            'BATTLEFIELD:BARRICADE_RUBBLE_C',
+            'BATTLEFIELD:BARRICADE_RUBBLE_D',
+            'BATTLEFIELD:STAKE_BARRICADE',
+        ];
+        const torches = ['BATTLEFIELD:TORCH_A', 'BATTLEFIELD:TORCH_B'];
+
+        const wreckCount = 2;
+        for (let i = 0; i < wreckCount; i++) {
+            const pt = pickSafeFlankSpot(0.24, 0.72, i % 2 === 0);
+            if (!pt) continue;
+            const asset = siegeWrecks[Math.floor(rnd() * siegeWrecks.length)];
+            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+        }
+        const rubbleCount = 2 + Math.floor(rnd() * 2);
+        for (let i = 0; i < rubbleCount; i++) {
+            const pt = pickSafeFlankSpot(0.20, 0.78, i % 2 === 1);
+            if (!pt) continue;
+            const asset = barricadeWrecks[Math.floor(rnd() * barricadeWrecks.length)];
+            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+        }
+        const torchCount = 2;
+        for (let i = 0; i < torchCount; i++) {
+            const pt = pickSafeFlankSpot(0.26, 0.74, i % 2 === 0);
+            if (!pt) continue;
+            const asset = torches[Math.floor(rnd() * torches.length)];
+            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+        }
+    } else {
+        const fieldRelics = [
+            'BATTLEFIELD:SKELETON_BATTLEFIELD',
+            'BATTLEFIELD:SKELETON_SOLDIER',
+            'BATTLEFIELD:IMPALED_CORPSE',
+            'BATTLEFIELD:BARRICADE_RUBBLE_A',
+            'BATTLEFIELD:BARRICADE_RUBBLE_B',
+            'BATTLEFIELD:BARRICADE_RUBBLE_C',
+            'BATTLEFIELD:CART_BROKEN',
+        ];
+        const relicCount = 3 + Math.floor(rnd() * 2);
+        for (let i = 0; i < relicCount; i++) {
+            const pt = pickSafeFlankSpot(0.22, 0.78, i % 2 === 0);
+            if (!pt) continue;
+            const asset = fieldRelics[Math.floor(rnd() * fieldRelics.length)];
+            pushRelic(asset, pt.x, pt.y, rnd() < 0.5);
+        }
+    }
+}
