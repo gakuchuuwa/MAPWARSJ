@@ -137,6 +137,37 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    huihu_wusa: { birth: 790, death: 840, kaoju: '推定' },      // 㕎馺可汗（回鹘末代可汗）
+    abasi_muwafake: { birth: 844, death: 891 },                // 穆瓦法克（阿拔斯摄政）
+    falanji_kalman: { birth: 830, death: 880 },                // 卡洛曼（巴伐利亚王）
+    nanzhao_duanqiuxian: { birth: 830, death: 866, kaoju: '推定' },  // 段酋迁（南诏将）
+    gurjara_vatsaraja: { birth: 730, death: 800, kaoju: '推定' },      // 瓦萨拉贾（瞿折罗王）
+    gurjara_nagabhata_ii: { birth: 760, death: 833, kaoju: '推定' },   // 那加巴塔二世（瞿折罗王）
+    tubo_lunmangre: { birth: 750, death: 810, kaoju: '推定' },         // 论莽热（吐蕃大相/将）
+    baizanting_nikephoros_i: { birth: 750, death: 811 },               // 尼基弗鲁斯一世（811 战死）
+    lunbadi_desiderius: { birth: 720, death: 786, kaoju: '推定' },   // 德西德里乌斯（伦巴第末王）
+    tang_zhuci: { birth: 742, death: 784 },                          // 朱泚（784 被杀）
+    zhuozhou_anshouzhong: { birth: 700, death: 760, kaoju: '推定' },   // 安守忠（大燕将）
+    zhuozhou_shisiming: { birth: 703, death: 761 },                   // 史思明（大燕帝）
+    xijue_ashina_funian: { birth: 640, death: 681, kaoju: '推定' },   // 阿史那匐念（西突厥十姓可汗）
+    xigete_roderic: { birth: 688, death: 711, kaoju: '推定' },        // 罗德里克（西哥特末王）
+    womaya_muslim: { birth: 670, death: 730, kaoju: '推定' },         // 穆斯林·本·赛义德
+    womaya_abdrahman: { birth: 680, death: 732, kaoju: '推定' },      // 阿卜杜勒·拉赫曼（普瓦捷战死）
+    rierman_odoacer: { birth: 433, death: 493 },                   // 奥多亚克
+    yidou_qixin: { birth: 550, death: 589, kaoju: '推定' },        // 戚昕
+    maidina_ali: { birth: 600, death: 661 },                       // 阿里（第四任正统哈里发）
+    sashan_bahram_vi: { birth: 540, death: 591, kaoju: '推定' },   // 巴赫拉姆六世（591 布拉拉通战败被杀）
+    tujue_wusumishi: { birth: 700, death: 744, kaoju: '推定' },    // 乌苏米施可汗（后突厥末代）
+    tubo_xinuoluo: { birth: 690, death: 728, kaoju: '推定' },      // 悉诺逻恭禄（吐蕃名将）
+    tang_limi: { birth: 700, death: 754, kaoju: '推定' },          // 李宓（754 西洱河战死）
+    aiji_psamtik_iii: { birth: -560, death: -525, kaoju: '推定' },  // 普萨美提克三世（前526–525 在位）
+    yiduhu_quwentai: { birth: 580, death: 640, kaoju: '推定' },    // 麴文泰（高昌王）
+    kongque_aluonashun: { birth: 600, death: 648, kaoju: '推定' }, // 阿罗那顺（中天竺篡位王）
+    dayu_liqianshi: { birth: 500, death: 551, kaoju: '推定' },     // 李迁仕
+    nanqi_xiaobaojuan: { birth: 483, death: 501 },                 // 萧宝卷（南齐东昏侯）
+    erzhu_erzhuzhao: { birth: 500, death: 533, kaoju: '推定' },   // 尔朱兆
+    gaoqi_d_xiaogui: { birth: 500, death: 556, kaoju: '推定' },   // 萧轨
+    yuwen_yuwenxian: { birth: 544, death: 578 },                  // 宇文宪
     // 🔴 2026-10-20 首战补敌将
     sashan_khosrow_ii: { birth: 570, death: 628, kaoju: '推定' },   // 霍斯劳二世（萨珊末代雄主）
     sui_yuwenshu: { birth: 546, death: 616 },                      // 宇文述（隋，萨水主帅）

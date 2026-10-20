@@ -62,7 +62,7 @@ export class PlayerHUD {
     private isUserInteracting(): boolean {
         if (this.pointerInPanel) return true;
         const ae = document.activeElement;
-        return !!(ae && this.panel?.contains(ae) && ae.tagName === 'SELECT');
+        return !!(ae && this.panel?.contains(ae) && (ae.tagName === 'SELECT' || (ae.tagName === 'INPUT' && (ae as HTMLInputElement).type === 'number')));
     }
     private flushPendingRefresh(): void {
         if (this.refreshPending && !this.isUserInteracting()) {
@@ -89,6 +89,9 @@ export class PlayerHUD {
             /** 🔴 [2026-10-02 主人令「在玩家面板中添加一个十倍加速按钮」] 对局倍速（1 常规 / 10 加速） */
             getSpeed?(): number;
             setSpeed?(mult: number): void;
+            /** 🔴 [2026-10-20 主人令] 百岁模式跳年：返回实际跳到的年份，非百岁模式返回 null */
+            getYear?(): number;
+            jumpToYear?(year: number): number | null;
         },
     ) {
         this.createPanel();
@@ -517,6 +520,53 @@ export class PlayerHUD {
         }
         planSel.addEventListener('change', () => hero.setAutoPlan(planSel.value as PlayerAutoPlan));
         secControls.appendChild(planSel);
+
+        // 📅 跳年（🔴 [2026-10-20 主人令]「在百岁模式中的玩家面板中添加一个年代输入，输入年代执行后，时间就直接跳到哪个年代」）
+        //    负数＝公元前（如 -221＝公元前221年）；只在百岁模式显示。
+        if (hero.autoPlan === 'centenarian' && this.deps.jumpToYear) {
+            const yearWrap = document.createElement('span');
+            yearWrap.style.cssText = 'display:inline-flex; align-items:center; gap:3px;';
+            const yearInput = document.createElement('input');
+            yearInput.type = 'number';
+            yearInput.step = '1';
+            yearInput.placeholder = String(this.deps.getYear?.() ?? '');
+            yearInput.title = '输入年代后回车或点「跳年」：负数为公元前（如 -221 ＝ 公元前221年）';
+            yearInput.style.cssText = `
+                width:62px; height:22px; box-sizing:border-box; font-family:inherit; font-size:11px; font-weight:700;
+                color:#e8c77e; background:linear-gradient(180deg, rgba(42,34,24,0.94), rgba(24,19,14,0.96));
+                border:1px solid rgba(212,175,55,0.45); border-radius:4px; padding:0 4px; outline:none;
+            `;
+            const jumpBtn = document.createElement('button');
+            jumpBtn.type = 'button';
+            jumpBtn.className = 'player-hud-pill-btn';
+            jumpBtn.textContent = '📅 跳年';
+            jumpBtn.style.cssText = `
+                cursor:pointer; font-size:11px; font-weight:700; padding:0 7px; height:22px; border-radius:4px; font-family:inherit; line-height:20px; box-sizing:border-box;
+                background:linear-gradient(180deg, rgba(42,34,24,0.9), rgba(24,19,14,0.95)); color:#dfc28c;
+                border:1px solid rgba(212,175,55,0.38); box-shadow:inset 0 1px 0 rgba(255,235,180,0.12), 0 1px 3px rgba(0,0,0,0.35);
+            `;
+            const doJump = () => {
+                const raw = yearInput.value.trim();
+                if (raw === '') return;
+                const target = Number(raw);
+                const got = Number.isFinite(target) ? this.deps.jumpToYear!(target) : null;
+                if (got === null) {
+                    this.notify('年代无效');
+                    return;
+                }
+                this.notify(`已跳到${got < 0 ? `公元前${-got}` : `公元${got}`}年`);
+                yearInput.blur();
+                this.refresh();
+            };
+            yearInput.addEventListener('keydown', (e) => {
+                e.stopPropagation();   // 输入数字时不触发全局快捷键
+                if (e.key === 'Enter') doJump();
+            });
+            jumpBtn.addEventListener('click', doJump);
+            yearWrap.appendChild(yearInput);
+            yearWrap.appendChild(jumpBtn);
+            secControls.appendChild(yearWrap);
+        }
 
         // ⏩ 10× 加速（🔴 [2026-10-02 主人令]「在玩家面板中添加一个十倍加速按钮」）
         if (this.deps.getSpeed && this.deps.setSpeed) {
