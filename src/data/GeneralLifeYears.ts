@@ -137,6 +137,21 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    gen_toghus_temur: { birth: 1342, death: 1388, kaoju: '推定' }, // 脱古思帖木儿（北元后主）
+    gen_si_lunfa: { birth: 1340, death: 1399, kaoju: '推定' },     // 思伦发（麓川土司）
+    gen_li_jinglong: { birth: 1360, death: 1424, kaoju: '推定' },  // 李景隆（曹国公）
+    gen_bayezid_i: { birth: 1360, death: 1403 },                   // 巴耶济德一世（奥斯曼苏丹）
+    gen_vukasin: { birth: 1320, death: 1371 },            // 武卡辛（塞尔维亚领主）
+    gen_mamai: { birth: 1335, death: 1381, kaoju: '推定' }, // 马麦（金帐权臣）
+    gen_juan_i_castile: { birth: 1358, death: 1390 },     // 胡安一世（卡斯蒂利亚国王）
+    gen_abu_yahya: { birth: 1190, death: 1229, kaoju: '推定' },           // 阿布·叶海亚（马略卡总督）
+    gen_pietro_tiepolo: { birth: 1200, death: 1250, kaoju: '推定' },      // 皮耶罗·提埃波洛（米兰执政官）
+    gen_kutlug_buga: { birth: 1300, death: 1363, kaoju: '推定' },         // 库特卢格·布加（金帐王公）
+    gen_ali_ibn_yusuf: { birth: 1084, death: 1143 },              // 阿里·本·优素福（穆拉比特埃米尔）
+    gen_kusaila: { birth: 620, death: 690, kaoju: '推定' },              // 库赛拉（柏柏尔王）
+    malin_abulhasan: { birth: 1297, death: 1351 },              // 阿布·哈桑·阿里（马林苏丹）
+    zhao_gerong: { birth: 495, death: 528, kaoju: '推定' },       // 葛荣（六镇起义首领）
+    gen_ramiro_ii: { birth: 900, death: 951 },             // 拉米罗二世（莱昂国王）
     mazhaer_charles_i: { birth: 1288, death: 1342 },       // 查理一世（匈牙利）
     baojialiya_mikhail: { birth: 1280, death: 1330, kaoju: '推定' },  // 米哈伊尔·希什曼（保加利亚沙皇）
     yuan_d_tuotuo: { birth: 1314, death: 1356 },           // 脱脱（元末丞相）
