@@ -15,6 +15,7 @@
  */
 import { GENERAL_LIFE_YEARS, getGeneralDebutYear, centenarianYearOf } from './GeneralLifeYears';
 import { isScriptPeriod } from '../events/scriptPeriod';
+import { GameConfig } from '../config/GameConfig';
 
 /** 当前剧本年份（由 GameApp 注入 = 当前这一场历史事件的年份）；未注入 → null */
 let scriptYearProvider: () => number | null = () => null;
@@ -55,10 +56,30 @@ export function isGeneralOnStage(generalId: string | null | undefined): boolean 
         inYearLookup = false;
     }
     if (year == null) return true;
+    if (scriptMode) {
+        const life = GENERAL_LIFE_YEARS[generalId];
+        if (!life) return false;
+        const debut = getGeneralDebutYear(generalId);
+        if (debut == null) return false;
+        return year >= debut && year <= life.death;
+    }
+    const win = getCentenarianStageWindow(generalId);
+    return !!win && year >= win.from && year <= win.to;
+}
+
+/**
+ * 百岁模式在场窗口 [登场年, 退场年]；未收录 → null。
+ * 🔴 [2026-10-20 主人令「把开局设为前800年，所有前800年前的武将都按开局登场」「100年退场」]
+ *   本来的百岁窗口在开局年之前就已结束的武将 → 开局即登场，在场 100 年（开局年 ～ 开局年+100）；
+ *   开局时本就在场或之后才登场的武将，窗口不变。
+ */
+export function getCentenarianStageWindow(generalId: string): { from: number; to: number } | null {
     const life = GENERAL_LIFE_YEARS[generalId];
-    if (!life) return false;
+    if (!life) return null;
     const debut = getGeneralDebutYear(generalId);
-    if (debut == null) return false;
-    const endYear = scriptMode ? life.death : Math.max(debut, centenarianYearOf(life.birth));
-    return year >= debut && year <= endYear;
+    if (debut == null) return null;
+    const to = Math.max(debut, centenarianYearOf(life.birth));
+    const start = GameConfig.TIME.TIMELINE_START_YEAR;
+    if (to < start) return { from: start, to: start + 100 };
+    return { from: debut, to };
 }

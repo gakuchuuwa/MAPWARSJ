@@ -1173,6 +1173,10 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zuo_d_wufu': 'BASHU',   // 笮人｜吴复｜据点 清溪关
 
     // 🔴 [2026-10-20 主人令「有名字的武将都要安置在据点，要符合武将文化的据点」] 新安置武将的文化 = 所在据点建筑文化
+    'gen_shi_chaoyi': 'WEI',   // 史朝义｜安史之乱｜范阳
+    'gen_sayf_al_dawla': 'ORIE',   // 赛弗·道莱｜哈姆丹王朝｜阿勒颇
+    'gen_toghtekin': 'ORIE',   // 图格特金｜大马士革总督
+    'gen_sangrama_vijayottungavarman': 'MALAY',   // 桑格拉玛｜三佛齐｜巨港
     'gen_bohemond': 'SICILIANS',          // 博希蒙德｜诺曼人｜巴勒莫（西西里）
     'gen_nikephoros_phokas': 'BYZANTINE', // 福卡斯｜拜占庭｜君士坦丁堡
     'gen_haci_giray': 'CUMAN',            // 哈吉格莱｜克里米亚汗｜奥列什基（库曼）

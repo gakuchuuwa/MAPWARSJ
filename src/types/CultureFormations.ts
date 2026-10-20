@@ -1731,7 +1731,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     JOSEON: '帝国时代朝鲜军团',
     GOJOSEON: '古典时代朝鲜军团',
     PRE_QIN: '古典时代先秦军团',
-    MING: "帝国时代大明军团",
+    MING: "帝国时代燕晋军团",
     HUAXIA_IMPERIAL: "帝国时代中国军团",
     DALI: '城堡时代大理军团',
     MAMLUKS: "城堡时代马穆鲁克军团",
@@ -2439,6 +2439,12 @@ export function resolveCityDefenseLegionName(
     const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
     if (scriptLegion) return scriptLegion;
 
+    // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] 起义势力**守城也一律用三级起义军团**
+    //    （名义上「每个据点只能出本文化该时代军团」对起义军不再适用；其它势力守城口径不变）
+    if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName === '帝国时代起义军团') {
+        return resolveRenamedLegion('帝国时代起义军团');
+    }
+
     let style = buildingStyle ?? null;
     if (!style && cityId) {
         const rtCity = typeof window !== 'undefined' ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
@@ -2452,7 +2458,7 @@ export function resolveCityDefenseLegionName(
             : ((typeof window !== 'undefined'
                 ? ((window as any).game?.scriptCityVisibility?.getCurrentEvent?.()?.year
                     ?? (window as any).game?.timeSystem?.getYear?.())
-                : null) ?? -832);
+                : null) ?? -800);
     const targetAge = getEraByYear(resolvedYear);
 
     const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(style));
