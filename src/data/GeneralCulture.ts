@@ -296,6 +296,51 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'gen_lajos_ii': 'MAGYAR',   // 匈牙利｜拉约什二世｜据点 布达佩斯（MAGYAR）
+    'gen_li_xiucheng': 'JIANGNAN',    // 太平天国｜李秀成｜据点 金陵（JIANGNAN）
+    'gen_shashanka': 'INDIA',         // 高达｜设赏迦｜据点 曲女城（INDIA）
+    'gen_sadashivrao': 'MUGHAL',      // 马拉塔｜萨达希夫｜据点 德里（MUGHAL）
+    'gen_mingrui': 'NORTHEAST',       // 清｜明瑞｜据点 沈阳（NORTHEAST）
+    'gen_zengguofan': 'JIANGNAN',     // 湘军｜曾国藩｜据点 长沙（JIANGNAN）
+    'gen_lobsang_danjin': 'TIBET',    // 和硕特｜罗卜藏丹津｜据点 当雄（TIBET）
+    'gen_furdan': 'NORTHEAST',        // 清｜傅尔丹｜据点 沈阳（NORTHEAST）
+    'gen_vernon': 'SAXONS',           // 英｜弗农｜据点 温彻斯特（SAXONS）
+    'gen_binnya_dala': 'BURMESE',     // 汉达瓦底｜彬尼亚达拉｜据点 勃固（BURMESE）
+    'gen_chogtu_khan': 'MONGOL',       // 喀尔喀｜却图汗｜据点 哈拉和林（MONGOL）
+    'gen_liu_guoxuan': 'JIANGNAN',    // 明郑｜刘国轩｜据点 承天（JIANGNAN）
+    'gen_kara_mustafa': 'TURKS',      // 奥斯曼｜卡拉·穆斯塔法｜据点 布尔萨（TURKS）
+    'gen_kangxi': 'NORTHEAST',        // 清｜康熙｜据点 沈阳（NORTHEAST）
+    'gen_charles_xii': 'GERMANIC',    // 瑞典｜查理十二｜据点 斯德哥尔摩（GERMANIC）
+    'gen_akechi_mitsuhide': 'JAPAN',   // 明智｜光秀｜据点 京都（JAPAN）
+    'gen_ryuzoji_takanobu': 'JAPAN',   // 龙造寺｜隆信｜据点 熊本（JAPAN）
+    'gen_nanda_bayin': 'BURMESE',      // 东吁｜莽应里｜据点 凯图玛蒂（BURMESE）
+    'gen_ishida_mitsunari': 'JAPAN',   // 石田｜三成｜据点 姬路城（JAPAN）
+    'gen_hemu': 'MUGHAL',             // 苏尔帝国｜赫穆｜据点 德里（MUGHAL）
+    'gen_mustafa_pasha': 'TURKS',     // 奥斯曼｜穆斯塔法帕夏｜据点 布尔萨（TURKS）
+    'gen_laudonniere': 'FRANKS',      // 法兰西｜劳多尼耶｜据点 巴黎（FRANKS）
+    'gen_suleiman': 'TURKS',          // 奥斯曼｜苏莱曼｜据点 布尔萨（TURKS）
+    'gen_qiu_luan': 'WEI',            // 明｜仇鸾｜据点 北京（WEI）
+    'gen_yang_hao': 'WEI',            // 明｜杨镐｜据点 北京（WEI）
+    'gen_hong_chengchou': 'WEI',      // 明｜洪承畴｜据点 北京（WEI）
+    'gen_wang_qiaonian': 'WEI',       // 明｜汪乔年｜据点 北京（WEI）
+    'gen_nikan': 'NORTHEAST',         // 清｜尼堪｜据点 沈阳（NORTHEAST）
+    'gen_wang_ji': 'WEI',             // 明｜王骥｜据点 北京（WEI）
+    'gen_vasili_iii': 'SLAVIC',       // 莫斯科｜瓦西里三世｜据点 莫斯科（SLAVIC）
+    'gen_atahualpa': 'INCA',          // 印加｜阿塔瓦尔帕｜据点 库斯科（INCA）
+    'gen_valdivia': 'SPANISH',        // 西班牙｜瓦尔迪维亚｜据点 利马（SPANISH）
+    'gen_medinaceli': 'SPANISH',      // 西班牙｜梅迪纳科利｜据点 利马（SPANISH）
+    'gen_chen_youliang': 'JIANGNAN', // 陈汉｜陈友谅｜据点 武昌（JIANGNAN）
+    'gen_razadarit': 'BURMESE',      // 勃固｜罗娑陀利｜据点 直通（BURMESE）
+    'gen_wang_tong': 'WEI',          // 明｜王通｜据点 北京（WEI）
+    'gen_louis_xi': 'FRANKS',          // 法兰西｜路易十一｜据点 巴黎（FRANKS）
+    'gen_beg_arslan': 'XIANBEI',       // 鞑靼｜癿加思兰｜据点 河套（XIANBEI）
+    'gen_muhammad_xii': 'SPANISH',     // 格拉纳达｜穆罕默德十二世｜据点 格拉纳达（SPANISH）
+    'gen_maximilian_sforza': 'LATIN',  // 米兰｜斯福尔扎｜据点 米兰（LATIN）
+    'gen_ibrahim_lodi': 'MUGHAL',      // 德里苏丹国｜易卜拉欣·洛迪｜据点 德里（MUGHAL）
+    'gen_boucicaut': 'FRANKS',        // 法兰西｜布锡考特｜据点 巴黎（FRANKS）
+    'gen_suffolk': 'SAXONS',         // 英格兰｜萨福克伯爵｜据点 温彻斯特（SAXONS）
+    'gen_wangzhen': 'WEI',           // 明｜王振｜据点 北京（WEI）
+    'gen_constantine_xi': 'BYZANTINE', // 拜占庭｜君士坦丁十一世｜据点 君士坦丁堡（BYZANTINE）
     'gen_toghus_temur': 'XIANBEI',    // 北元｜脱古思帖木儿｜据点 应昌（XIANBEI）
     'gen_si_lunfa': 'BURMESE',        // 麓川｜思伦发｜据点 勐卯（BURMESE）
     'gen_li_jinglong': 'JIANGNAN',    // 南军｜李景隆｜据点 南京（JIANGNAN）
