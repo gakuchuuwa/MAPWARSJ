@@ -582,8 +582,9 @@ export interface Scene13WarInit {
      *  不传或 'square'＝现有方形，一个像素不动。 */
     defenderPassShape?: 'square' | 'rect' | 'rect_mirror' | null;
     /** [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」]
-     *  险要地形：'flat'＝把城墙脚下的高台抹平（城坐平地，城外只留丘陵与大山）；不传＝现状多层高台。 */
-    defenderPassTerrain?: 'mound' | 'flat' | null;
+     *  险要地形：'mound'＝现状多层阶梯高台；'plateau'＝整块矩形高台（整座城同一块平顶高地）；
+     *  'flat'＝把高台抹平（城坐平地，城外只留丘陵与大山）；不传＝现状多层高台。 */
+    defenderPassTerrain?: 'mound' | 'flat' | 'plateau' | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */
