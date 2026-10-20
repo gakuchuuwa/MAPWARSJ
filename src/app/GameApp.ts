@@ -80,7 +80,8 @@ import { syncScriptHistoricalOwners } from '../events/scriptHistoricalOwnersSync
 import { syncScriptBuildingStyles } from '../events/scriptBuildingStylesSync';
 import { syncCityFoundedTypes } from '../events/cityFoundedTypeSync';
 import { refreshEraFactionDisplays } from '../data/eraFactionDisplay';
-import { setScriptYearProvider, setCentenarianYearProvider } from '../data/generalOnStage';
+import { syncCentenarianGeneralOwners } from '../events/centenarianGeneralOwnersSync';
+import { setScriptYearProvider, setCentenarianYearProvider, setGameModeProvider } from '../data/generalOnStage';
 import { setWonderGateYearProvider } from '../data/wonderFoundedYears';
 import { applyCityDisplayNames } from '../events/cityDisplayNamesSync';
 import { onBattlefieldFought } from '../events/battlefieldState';
@@ -346,6 +347,9 @@ export class GameApp {
             );
             // 🔴 [2026-10-16 主人定] 剧本模式武将严格按「登场年～卒年」出现：年份 = 当前这一场历史事件的年份
             setScriptYearProvider(() => this.scriptCityVisibility?.getCurrentEvent()?.year ?? null);
+            // 🔴 [2026-10-20 主人令「百岁模式出城的军团真归秦；乱斗模式一个据点一个武将一个势力，多武将不并存」]
+            //    数据层按模式分流（FactionGenerals / Army），玩家对象晚于此处创建 → 取不到按默认百岁模式算。
+            setGameModeProvider(() => this.playerHero?.autoPlan ?? 'centenarian');
             // 🔴 [2026-10-18 主人定] 百岁模式（默认）：武将按「登场年～百岁（生年+100）」出现，年份 = 当前游戏日历年份
             setCentenarianYearProvider(() =>
                 (this.playerHero?.autoPlan ?? 'centenarian') === 'centenarian'
@@ -914,6 +918,9 @@ export class GameApp {
     private syncEraFactionDisplays(): void {
         if (!this.cityManager) return;
         const mode = this.playerHero?.autoPlan ?? 'centenarian';
+        // 🔴 [2026-10-20 主人令「据点和势力没有关系了」「真实的历史不应该是B吗」] 百岁模式据点归当年在场武将的势力
+        //    （开局、跨年、切模式与时代名同一批时机；先定归属再算名字）
+        syncCentenarianGeneralOwners(this.cityManager, mode === 'centenarian');
         const year = mode === 'centenarian' ? (this.timeSystem?.getYear() ?? null) : null;
         const changed = refreshEraFactionDisplays(year);
         if (changed.length === 0) return;

@@ -127,13 +127,34 @@ function eraNameOfStyleAndEra(buildingStyle: string | undefined, era: DefenseEra
     return entry;
 }
 
+/**
+ * 势力 → 为它出场的武将 id。
+ * 🔴 [2026-10-20 主人令「一个武将一个势力」] 武将写了自己的 `factionId` 就算那个势力的人
+ *    （长安的王离算秦、不算唐），否则算所在据点的势力。
+ */
+let generalsByOwnFaction: Map<string, string[]> | null = null;
+function getGeneralsByOwnFaction(): Map<string, string[]> {
+    if (generalsByOwnFaction) return generalsByOwnFaction;
+    const map = new Map<string, string[]>();
+    for (const [anchorFactionId, entry] of Object.entries(FACTION_GENERALS)) {
+        const list: FactionGeneral[] = Array.isArray(entry) ? entry : [entry as FactionGeneral];
+        for (const general of list) {
+            const fid = general.factionId ?? anchorFactionId;
+            const ids = map.get(fid);
+            if (ids) ids.push(general.generalId);
+            else map.set(fid, [general.generalId]);
+        }
+    }
+    generalsByOwnFaction = map;
+    return map;
+}
+
 /** 该势力此刻还有没有在场武将（任一在场即算在场；判定即百岁模式的「登场年 ～ 登场年 + 100」） */
 function hasOnStageGeneral(factionId: string): boolean {
-    const entry = FACTION_GENERALS[factionId];
-    if (!entry) return false;
-    const list: FactionGeneral[] = Array.isArray(entry) ? [...entry] : [entry as FactionGeneral];
-    for (const general of list) {
-        if (isGeneralOnStage(general.generalId)) return true;
+    const ids = getGeneralsByOwnFaction().get(factionId);
+    if (!ids) return false;
+    for (const generalId of ids) {
+        if (isGeneralOnStage(generalId)) return true;
     }
     return false;
 }

@@ -7937,7 +7937,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": -5
         },
-        "/assets/PERSIAN/wukexiya_tilibasi.png": {
+        "/assets/PERSIAN/__闲置__PERSIAN_01.png": {
             "scale": 1.1,
             "offsetX": -17,
             "offsetY": -25
@@ -7972,7 +7972,7 @@ export const DEFAULT_PORTRAIT_ADJUST: PortraitAdjustData = {
             "offsetX": 0,
             "offsetY": 4
         },
-        "/assets/WEST_ASIA/kesaiya_agumuershi.png": {
+        "/assets/WEST_ASIA/__闲置__WEST_ASIA_63.png": {
             "scale": 1.08,
             "offsetX": 0,
             "offsetY": 0

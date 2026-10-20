@@ -29,6 +29,18 @@ export function setCentenarianYearProvider(fn: () => number | null): void {
     centenarianYearProvider = fn;
 }
 
+/** 当前玩法模式（由 GameApp 注入）；编辑器 / 离线脚本未注入 → null（不按模式改行为） */
+export type GeneralGameMode = 'script' | 'centenarian' | 'melee';
+let gameModeProvider: () => GeneralGameMode | null = () => null;
+
+export function setGameModeProvider(fn: () => GeneralGameMode | null): void {
+    gameModeProvider = fn;
+}
+
+export function getGameMode(): GeneralGameMode | null {
+    return gameModeProvider();
+}
+
 let inYearLookup = false;
 
 /** 武将此刻是否在场（false = 剧本期不在[登场年,卒年] 或 百岁模式不在[登场年,百岁年] → 按普通武将处理） */

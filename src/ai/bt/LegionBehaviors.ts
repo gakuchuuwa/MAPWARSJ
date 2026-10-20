@@ -90,7 +90,8 @@ function homeNeedsHelp(ctx: BTContext): boolean {
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
     // 已失守 → 收复（判据统一走 isHomeCityLost，勿再内联手写）
-    if (isHomeCityLost(homeId, ctx.army.getFactionId(), ctx.cityManager)) return true;
+    // 🔴 [2026-10-20] 老家判定看出身势力（百岁模式王离出长安是秦军，长安仍属唐 ≠ 失守）
+    if (isHomeCityLost(homeId, ctx.army.getHomeFactionId(), ctx.cityManager)) return true;
     return ctx.legionManager.isCityBeingSieged(homeId);                   // 仍我方且正被攻城 → 回援（在途/迫近不算）
 }
 
@@ -234,6 +235,13 @@ function buildExcludeTargetIds(ctx: BTContext): Set<string> {
     const lastDrawCityId = (ctx.army as any).lastDrawCityId as string | undefined;
     if (lastDrawCityId) {
         excludeTargetIds.add(lastDrawCityId);
+    }
+    // 🔴 [2026-10-20 主人令「百岁模式，出城的军团是真归秦了，但长安这座城本身仍属唐国」]
+    //    军团真实势力随武将、与出身势力不同时，老家据点（仍属出身势力）不许当成敌城去打。
+    const originId = getArmyOriginCityId(ctx.army);
+    const homeFaction = ctx.army.getHomeFactionId();
+    if (originId && homeFaction !== ctx.army.getFactionId()) {
+        if (ctx.cityManager.getCity(originId)?.factionId === homeFaction) excludeTargetIds.add(originId);
     }
     for (const [targetId, failedAt] of ctx.recentFailedTargets.entries()) {
         if (now - failedAt <= FAILED_TARGET_COOLDOWN_MS) {
@@ -443,7 +451,7 @@ export const HasTarget = new Condition('HasTarget', (ctx) => {
 
     if (!shouldSkipHomeRecapture(ctx.army)) {
         const originCityId = getArmyOriginCityId(ctx.army) ?? '';
-        const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
+        const recaptureId = resolveRecaptureTarget(ctx.army.getHomeFactionId(), originCityId, ctx.cityManager);
 
         if (recaptureId && recaptureId !== lastDrawCityId) {
             const strategicId = getStrategicTargetId(ctx);
@@ -636,7 +644,7 @@ export const FindTarget = new Action('FindTarget', (ctx) => {
     }
 
     if (!shouldSkipHomeRecapture(ctx.army)) {
-        const recaptureId = resolveRecaptureTarget(myFaction, originCityId, ctx.cityManager);
+        const recaptureId = resolveRecaptureTarget(ctx.army.getHomeFactionId(), originCityId, ctx.cityManager);
         if (recaptureId && recaptureId !== lastDrawCityId && !excludeTargetIds.has(recaptureId)) {
             const recaptureCity = ctx.cityManager.getCity(recaptureId);
             if (!recaptureCity) {
@@ -983,7 +991,7 @@ export const IsWeakLegion = new Condition('IsWeakLegion', (ctx) => {
 
     let homeId = getArmyOriginCityId(army);
     let home = homeId ? ctx.cityManager.getCity(homeId) : undefined;
-    let homeAlive = !!home && home.factionId === myFaction;
+    let homeAlive = !!home && home.factionId === army.getHomeFactionId();
 
     // 意图锁定：已决意撤退的军团，只要有己方据点就继续撤退，不看兵力
     if (army.isRetreatingHome) {
@@ -1090,7 +1098,7 @@ export const IsHomeStillMine = new Condition('IsHomeStillMine', (ctx) => {
     const homeId = getArmyOriginCityId(ctx.army);
     if (!homeId) return false;
     const home = ctx.cityManager.getCity(homeId);
-    return !!home && home.factionId === ctx.army.getFactionId();
+    return !!home && home.factionId === ctx.army.getHomeFactionId();
 });
 
 /** 非远征军团（远征目标锁死，本城被攻打也不回援） */
