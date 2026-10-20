@@ -317,6 +317,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     gen_prithviraj: { birth: 1166, death: 1192 },  // 普里特维
     gen_sumanguru: { birth: 1170, death: 1235, kaoju: '推定' },  // 苏曼古鲁
     gen_bohemond: { birth: 1054, death: 1111 },  // 博希蒙德
+    gen_shi_chaoyi: { birth: 725, death: 763, kaoju: '推定' },  // 史朝义（卒年763自缢于广阳，生年史无载，推定）
+    gen_sayf_al_dawla: { birth: 916, death: 967 },  // 赛弗·道莱（哈姆丹王朝阿勒颇埃米尔）
+    gen_toghtekin: { birth: 1062, death: 1128, kaoju: '异说' },  // 图格特金（大马士革突厥总督）
+    gen_sangrama_vijayottungavarman: { birth: 985, death: 1035, kaoju: '推定' },  // 桑格拉玛·维阇耶东伽跋摩（1025年被朱罗俘虏，生卒史无载，推定）
     gen_edward_longshanks: { birth: 1239, death: 1307 },  // 长腿爱德华
     gen_robert_guiscard: { birth: 1015, death: 1085 },  // 吉斯卡尔
     gen_yodit: { birth: 940, death: 1000, kaoju: '推定' },  // 尤迪特
@@ -1077,6 +1081,7 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     sumo_sumowang: { birth: -560, death: -500, kaoju: '推定' },  // 苏摩
     jiashi_jiashiwang_d: { birth: -580, death: -520, kaoju: '推定' },  // 梵摩达
     zhuluo_lajialajia: { birth: 947, death: 1014 },  // 拉贾拉贾一世
+    zhuluo_lajindela: { birth: 971, death: 1044 },  // 拉金德拉一世（🔴 2026-10-20 主人给定生卒 971–1044）
     pandiya_jiatawaerman: { birth: 1220, death: 1268, kaoju: '推定' },  // 贾塔瓦尔曼
     dedan_dedanwang: { birth: -580, death: -525, kaoju: '推定' },  // 卡比里尔
     maidina_halide: { birth: 592, death: 642, kaoju: '推定' },  // 哈立德

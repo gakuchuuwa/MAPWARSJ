@@ -12181,6 +12181,137 @@ export const GENERAL_FIRST_BATTLES: Readonly<Record<string, GeneralFirstBattle>>
             { speaker: 'player', text: '愿随安末深盘将军共守且末抗莎车兼并保卫战，大破莎车王国敌军！' },
         ],
     },
+
+    // 🔴 [2026-10-20 主人令「先确定这些是名将吗，是的话请设定剧情事件，事件分三种，防守，攻城，野战」]
+    // #550 盖萨里克 (389 ~ 477) — 公元430年希波围城战（汪达尔—阿兰人渡海入阿非利加后围攻西罗马阿非利加伯爵博尼法提乌斯据守的希波，围城十四个月，圣奥古斯丁卒于围城中；出处：Possidius《奥古斯丁传》、Procopius《汪达尔战争》I.3）
+    wangdaer_gaisalike: {
+        generalId: 'wangdaer_gaisalike',
+        battleName: '希波围城战',
+        battleYear: 430,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '希波',
+        targetCityId: 'city_xibo',
+        targetLat: 36.90,
+        targetLng: 7.76,
+        myTroops: 20000,
+        enemyFactionId: 'wangdaer',
+        enemyFactionName: '西罗马',
+        enemyGeneralId: 'gen_bonifatius',
+        enemyTroops: 10000,
+        introLines: [
+            { speaker: 'general', text: '汪达尔与阿兰之众已渡海登岸，阿非利加伯爵博尼法提乌斯退守希波。我要把这座港城团团围住，你可愿随我攻城？' },
+            { speaker: 'player', text: '愿随国王围住希波，断其海陆，迫博尼法提乌斯出降！' },
+        ],
+    },
+
+    // #551 博希蒙德 (1054 ~ 1111) — 公元1097年多利留姆之战（第一次十字军前锋纵队在多利留姆遭罗姆苏丹基利杰·阿尔斯兰一世伏击，博希蒙德结营死守至后队戈弗雷来援，反击大破突厥军；出处：《法兰克人行传》Gesta Francorum、安娜·科穆宁娜《阿历克塞传》）
+    gen_bohemond: {
+        generalId: 'gen_bohemond',
+        battleName: '多利留姆之战',
+        battleYear: 1097,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '多利留姆',
+        targetLat: 39.78,
+        targetLng: 30.52,
+        myTroops: 20000,
+        enemyFactionId: 'luomu',
+        enemyFactionName: '罗姆',
+        enemyGeneralId: 'luomu_jilijie',
+        enemyTroops: 10000,
+        introLines: [
+            { speaker: 'general', text: '尼西亚已下，罗姆苏丹基利杰收拢骑兵埋伏在多利留姆一带。我率前锋先行，你可愿随我穿过安纳托利亚高原？' },
+            { speaker: 'player', text: '愿随亲王前锋结阵迎敌，挡住突厥骑射，等后队来援一举击溃！' },
+        ],
+    },
+
+    // #552 牟羽可汗 (730 ~ 779) — 公元762年洛阳之战（登里可汗应唐代宗之请，会同唐军于洛阳北邙山击溃史朝义，收复东都；出处：《旧唐书·回纥传》《资治通鉴》卷222）
+    porbazhyn_mouyu: {
+        generalId: 'porbazhyn_mouyu',
+        battleName: '洛阳之战',
+        battleYear: 762,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '洛阳邙山',
+        targetCityId: 'city_luoyang',
+        targetLat: 34.62,
+        targetLng: 112.45,
+        myTroops: 40000,
+        enemyFactionId: 'panjun',
+        enemyFactionName: '安史叛军',
+        enemyGeneralId: 'gen_shi_chaoyi',
+        enemyTroops: 60000,
+        introLines: [
+            { speaker: 'general', text: '史朝义据洛阳不下，唐廷借我回纥兵马收复东都。我愿率骑兵先破贼阵，你可愿随我出战？' },
+            { speaker: 'player', text: '愿随可汗纵马冲阵，击溃史朝义，收复洛阳！' },
+        ],
+    },
+
+    // #553 福卡斯 (912 ~ 969) — 公元962年阿勒颇围城战（东罗马军队统帅尼基弗鲁斯·福卡斯攻入哈姆丹王朝的阿勒颇，赛弗·道莱败走；出处：莱昂执事《历史》、Skylitzes 编年史）
+    gen_nikephoros_phokas: {
+        generalId: 'gen_nikephoros_phokas',
+        battleName: '阿勒颇围城战',
+        battleYear: 962,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '阿勒颇',
+        targetCityId: 'city_alepo',
+        targetLat: 36.2,
+        targetLng: 37.16,
+        myTroops: 40000,
+        enemyFactionId: 'ayoubu',
+        enemyFactionName: '哈姆丹',
+        enemyGeneralId: 'gen_sayf_al_dawla',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '赛弗·道莱割据阿勒颇多年，屡犯我叙利亚边境。皇帝命我挥师东进，你可愿随我攻下这座名城？' },
+            { speaker: 'player', text: '愿随将军合围阿勒颇，夺回叙利亚！' },
+        ],
+    },
+
+    // #554 鲍德温一世 (1058 ~ 1118) — 公元1105年第三次拉姆拉之战（耶路撒冷国王鲍德温一世以少击多，大破埃及法蒂玛军与大马士革图格特金联军；出处：沙特尔的富尔彻《耶路撒冷史》）
+    aosiruowen_baodewen: {
+        generalId: 'aosiruowen_baodewen',
+        battleName: '拉姆拉之战',
+        battleYear: 1105,
+        battleType: 'field',
+        role: 'attacker',
+        targetName: '拉姆拉',
+        targetLat: 31.93,
+        targetLng: 34.87,
+        myTroops: 12000,
+        enemyFactionId: 'womaya',
+        enemyFactionName: '倭马亚',
+        enemyGeneralId: 'gen_toghtekin',
+        enemyTroops: 20000,
+        introLines: [
+            { speaker: 'general', text: '埃及人与大马士革的图格特金联兵北上，要夺回海岸。我手中骑士不多，但绝不退让，你可愿随我迎战？' },
+            { speaker: 'player', text: '愿随国王列阵迎击，击溃图格特金，守住耶路撒冷王国！' },
+        ],
+    },
+
+    // #555 拉金德拉一世 (971 ~ 1044) — 公元1025年远征三佛齐（朱罗海军袭击巨港与吉打，俘虏国王桑格拉玛·维阇耶东伽跋摩；出处：坦贾武尔布里哈迪什瓦拉神庙碑铭）
+    zhuluo_lajindela: {
+        generalId: 'zhuluo_lajindela',
+        battleName: '三佛齐远征战',
+        battleYear: 1025,
+        battleType: 'siege',
+        role: 'attacker',
+        targetName: '巨港',
+        targetCityId: 'city_sanfoqi',
+        targetLat: -2.99,
+        targetLng: 104.75,
+        myTroops: 50000,
+        enemyFactionId: 'sanfoqi',
+        enemyFactionName: '三佛齐',
+        enemyGeneralId: 'gen_sangrama_vijayottungavarman',
+        enemyTroops: 25000,
+        introLines: [
+            { speaker: 'general', text: '三佛齐扼住马六甲海峡，阻断我朱罗商路。我已集结舰队渡海南征，你可愿随我远征？' },
+            { speaker: 'player', text: '愿随陛下扬帆南下，攻陷巨港，擒其国王！' },
+        ],
+    },
 };
 
 export function getGeneralFirstBattle(generalId: string | null | undefined): GeneralFirstBattle | null {

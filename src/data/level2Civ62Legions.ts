@@ -439,12 +439,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'hei_kuang', count: 2 },
         ],
     },
-    // ── 河朔 · 帝国时代 · 帝国时代大明军团　（三级升二级）────────────────
+    // ── 河朔 · 帝国时代 · 帝国时代燕晋军团　（三级升二级）────────────────
     //    评级：【高级】｜核心兵种：战车、骑兵为主
     //    描述正文（主人原文，一字未改）：（蓟州、宣府；宣化古城清远楼、宣大长城砖石要塞、紫荆关；九边重镇精锐骑兵、明式腰刀重圆盾、大航海早期塞北防线车营火器联防大阵）
     //    英雄队（第 10 队·主将队）：hero_caocao / hero_lubu　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代大明军团', civ: '河朔', age: 'imperial', deStyle: 'ASIA', region: 'WEI' as RegionType,
+        name: '帝国时代燕晋军团', civ: '河朔', age: 'imperial', deStyle: 'ASIA', region: 'WEI' as RegionType,
         buildingStyle: 'WEI',
         castleId: 'WEI_CASTLE_AGE3', castleName: '河朔 邺城重檐铜雀楼',
         formationMode: 'crescent',
@@ -4503,12 +4503,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 吐蕃　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第七批·希腊＋色雷斯＋三级自建风格）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 吐蕃 · 古典时代 · 古典时代象雄军团　（本次新建）────────────────
+    // ── 吐蕃 · 古典时代 · 古典时代发羌军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、远程为主
     //    描述正文（主人原文，一字未改）：（阿里达巴、穹窿银城；卡尔东高耸泥石窑洞悬崖山寨、象雄黑白条石祭坛垒台；双曲硬木短弓、冷锻倒刺铁矛、高寒山巅悬崖堡寨居高临下滚石檑木阻击大阵）
     //    英雄队（第 10 队·主将队）：hero_prithviraj / hero_guanyu　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代象雄军团', civ: '青藏', age: 'antiquity', deStyle: 'PURU', region: 'TIBET' as RegionType,
+        name: '古典时代发羌军团', civ: '青藏', age: 'antiquity', deStyle: 'PURU', region: 'TIBET' as RegionType,
         buildingStyle: 'TIBET',
         castleId: 'TIBET_CASTLE_AGE3', castleName: '吐蕃 藏式金顶宗堡',
         formationMode: 'crescent',
