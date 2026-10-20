@@ -12,6 +12,7 @@ import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
 import type { TreeSeason } from './TreeAssignment';
 import { bareSandRejectsTree, seasonalDeTree } from './Scene13DeTrees';
+import { deriveDeGroundTiles } from './Scene13DeGround';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
@@ -143,10 +144,22 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
         const mapData = (rawMapData?.header?.skeleton && !isInlandReservoirFlood)
             ? oriented
             : this.relocateTemplateWater(oriented);
+        // 🔴 [2026-10-21 主人令「请全部和DE保持一致」]
+        //    地面 6 张贴图改由 **DE 烘焙地形直方图** 决定（见 Scene13DeGround.ts）：
+        //    `14 Desert→pal`、`12 Grass2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt3→ds3`…
+        //    旧做法只看据点建筑风格/气候主题，会让沙漠图铺成黄土、温带图铺成夯土，与 DE 原版观感不符。
+        //    雪地/冬季例外：仍按季节贴图（不能把雪原铺成草地）。
+        const groundBaseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+        const isSnowGround = /^(sno|sn2|snf|snd|snr|ic3|ice)/.test(groundBaseTerrain) || this.sceneSeason === 2;
+        const deGroundTiles = isSnowGround
+            ? null
+            : deriveDeGroundTiles(mapData?.terrain, this.environmentPlan?.groundTiles);
+        const groundTiles = deGroundTiles ?? this.environmentPlan?.groundTiles;
+        if (deGroundTiles && this.environmentPlan) this.environmentPlan.groundTiles = deGroundTiles;
         try {
             if (this.groundLayerGL) this.groundLayerGL.destroy();
             // 🔴 [2026-10-11] 底面四张素材（草/沙/林/水）按战场所在气候主题取，来源＝一份 environmentPlan.groundTiles（沙漠＝沙地、雪原＝雪林等），不再恒为 gr2 绿草 + bch 沙 + for 林 + 绿河
-            const glLayer = await Scene13GroundLayerGL.create(cv, mapData, this.environmentPlan?.groundTiles);
+            const glLayer = await Scene13GroundLayerGL.create(cv, mapData, groundTiles);
             if (gen !== this.assetGen) {
                 glLayer.destroy();
                 releaseGround();
@@ -157,7 +170,9 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
             this.useGroundGL = true;
             // 🔴 [2026-10-11 主人令「这个菱形的周边黑色很丑，可以换成底图吗」]
             // WebGL 画布底层平铺当前气候主题的自然底图，任何缩放与平移下满屏铺满，彻底消除菱形周边黑边
-            const baseTerrain = this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
+            // 🔴 [2026-10-21 请全部和DE保持一致] 底图与地面层用同一张「DE 地形主导贴图」（derived ground.grass），
+            //    避免「地里是 DE 沙地、菱形外圈却还是黄土」的接缝。
+            const baseTerrain = groundTiles?.grass ?? this.environmentPlan?.baseTerrain ?? DEFAULT_TERRAIN_TILE;
             cv.style.backgroundImage = `url(/SUCAI_TERRAIN/${baseTerrain}.png)`;
             cv.style.backgroundRepeat = 'repeat';
             cv.style.backgroundPosition = 'center center';

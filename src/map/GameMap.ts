@@ -467,6 +467,19 @@ export class GameMap {
         catch { return true; }
     })();
 
+    // 7 层高地试验：默认关，只有存过 'true' 才开
+    private isTerraceExpEnabled = (() => {
+        try { return localStorage.getItem('mapwar.terrace7.enabled') === 'true'; }
+        catch { return false; }
+    })();
+
+    public setTerraceExp(enabled: boolean): void {
+        this.isTerraceExpEnabled = enabled;
+        try { localStorage.setItem('mapwar.terrace7.enabled', String(enabled)); }
+        catch { /* 存储不可用时仍正常切换当前画面。 */ }
+        this.hillshadeLayer?.setTerraceExp(enabled);
+    }
+
     public setValleyReliefExp(enabled: boolean): void {
         this.isValleyReliefExpEnabled = enabled;
         try { localStorage.setItem('mapwar.valleyRelief.enabled', String(enabled)); }
@@ -501,6 +514,7 @@ export class GameMap {
                     zFactor: 33,   // 与 getZFactor(8-11) 对齐，避免开机即 redraw
                     experimentalRelief: this.isExperimentalReliefEnabled,
                     valleyReliefExp: this.isValleyReliefExpEnabled,
+                    terraceExp: this.isTerraceExpEnabled,
                 });
                 // 沙漠河流绿带要河流线段：已加载就直接给，没加载就触发一次（加载完会自动转交）
                 if (this.riverSegmentsCache) this.hillshadeLayer.setRiverSegments(this.riverSegmentsCache);
@@ -750,6 +764,11 @@ export class GameMap {
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#a9742a;margin-top:2px;margin-bottom:8px;">
                         <input type="checkbox" id="chk-desert-coloring" checked> 
                         <b>🏜️ 沙漠涂色</b>
+                    </label>
+
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#6d5a3a;margin-top:2px;margin-bottom:8px;">
+                        <input type="checkbox" id="chk-terrace7"${this.isTerraceExpEnabled ? ' checked' : ''}> 
+                        <b>⛰️ 7层高地（试验）</b>
                     </label>
 
                     <hr style="margin:8px 0;width:100%;border:0;border-top:1px solid #eee;">
@@ -1113,6 +1132,14 @@ export class GameMap {
             if (chkDesert) {
                 chkDesert.addEventListener('change', (e: any) => {
                     this.hillshadeLayer?.setParams({ useDesertColoring: e.target.checked });
+                });
+            }
+
+            // 7 层高地试验开关（DE 台地光照，Zoom7–12 浮雕瓦片）
+            const chkTerrace = document.getElementById('chk-terrace7') as HTMLInputElement;
+            if (chkTerrace) {
+                chkTerrace.addEventListener('change', (e: any) => {
+                    this.setTerraceExp(e.target.checked);
                 });
             }
 

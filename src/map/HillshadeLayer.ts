@@ -42,6 +42,8 @@ interface HillshadeOptions extends L.GridLayerOptions {
     experimentalRelief?: boolean;
     /** 尼罗河谷冲积地貌试验（ZOOM 9），独立开关 */
     valleyReliefExp?: boolean;
+    /** 7 层高地试验（DE 台地光照，浮雕瓦片 Zoom7–12），默认关 */
+    terraceExp?: boolean;
 }
 
 const WORKER_POOL_SIZE = 3;
@@ -61,6 +63,7 @@ export class HillshadeLayer extends L.GridLayer {
     private useDesertColoring: boolean;
     private experimentalRelief: boolean = true;
     private valleyReliefExp: boolean = true;
+    private terraceExp: boolean = false;
     private modeVersion: number = 0;
 
     private workers: Worker[] = [];
@@ -112,6 +115,7 @@ export class HillshadeLayer extends L.GridLayer {
         this.useDesertColoring = options?.useDesertColoring ?? true;
         this.experimentalRelief = options?.experimentalRelief ?? true;
         this.valleyReliefExp = options?.valleyReliefExp ?? true;
+        this.terraceExp = options?.terraceExp ?? false;
         perfDoctor.registerCache({
             name: 'HillshadeLayer:DE materials(战略地表)',
             where: 'src/map/StrategicTerrainMaterial.ts:textures',
@@ -212,7 +216,7 @@ export class HillshadeLayer extends L.GridLayer {
      *    预取侧的版本号落后（v3 vs v6）就再也判不出「这块已经算好了」，每次切 zoom 都白发一轮请求。
      */
     private tileCacheKey(z: number, x: number, y: number, isRelief: boolean, isValley: boolean): string {
-        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v13' : 'std_v5'}:${isValley ? 'valley_nile_v1' : 'v0'}`;
+        return `${z}/${x}/${y}:${isRelief ? 'relief_snow_v13' : 'std_v5'}:${isValley ? 'valley_nile_v1' : 'v0'}${isRelief && this.terraceExp ? ':terrace7_v1' : ''}`;
     }
 
     /** LRU 读：命中则移到队尾标记为最近使用 */
@@ -353,6 +357,14 @@ export class HillshadeLayer extends L.GridLayer {
         this.redraw();
     }
 
+    public setTerraceExp(enabled: boolean): void {
+        if (this.terraceExp === enabled) return;
+        this.terraceExp = enabled;
+        this.modeVersion++;
+        this.clearTileCache();
+        this.redraw();
+    }
+
     createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
         const tile = L.DomUtil.create('canvas', 'leaflet-tile') as HTMLCanvasElement;
         tile.style.pointerEvents = 'none';
@@ -474,6 +486,7 @@ export class HillshadeLayer extends L.GridLayer {
             coords: { z: coords.z, x: coords.x, y: coords.y },
             experimentalRelief: isExpTile,
             valleyReliefExp: isValleyTile,
+            terraceExp: isExpTile && this.terraceExp,
             modeVersion: this.modeVersion
         };
 
