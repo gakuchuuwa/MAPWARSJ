@@ -370,13 +370,13 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     tang: [
         { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
         // 屠睢（秦将，站长安、挂秦旗）
-        { generalId: 'bfe3_14', generalName: '屠睢', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        { generalId: 'bfe3_14', generalName: '屠睢', portrait: '', legionName: '古典时代华夏军团', factionId: 'qin' },
         // 王离（秦将，站长安、挂秦旗）
-        { generalId: 'bfe3_17', generalName: '王离', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        { generalId: 'bfe3_17', generalName: '王离', portrait: '', legionName: '古典时代华夏军团', factionId: 'qin' },
         // 王龁（秦将，站长安、挂秦旗）
-        { generalId: 'bfe3_9', generalName: '王龁', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        { generalId: 'bfe3_9', generalName: '王龁', portrait: '', legionName: '古典时代华夏军团', factionId: 'qin' },
         // 胡阳（秦将，站长安、挂秦旗）
-        { generalId: 'bfe3_7', generalName: '胡阳', portrait: '', legionName: '古典时代秦汉军团', factionId: 'qin' },
+        { generalId: 'bfe3_7', generalName: '胡阳', portrait: '', legionName: '古典时代华夏军团', factionId: 'qin' },
     ],
     wuzhou_d: { generalId: 'wuzhou_d_wuzetian', generalName: '武则天', portrait: '/assets/wuzhou/wuzhou_d_wuzetian.png' },
     ming_d: { generalId: 'ming_d_zhudi', generalName: '朱棣', portrait: '/assets/daming/ming_d_zhudi.png' },
@@ -414,7 +414,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     han_d: [
         { generalId: 'han_d_liubang', generalName: '刘邦', portrait: '/assets/liuhan/han_d_liubang.png' },
         // 名将双身份：李广利（据点武将＋剧本敌将）
-        { generalId: 'bfe3_36', generalName: '李广利', portrait: '', legionName: '古典时代秦汉军团' },
+        { generalId: 'bfe3_36', generalName: '李广利', portrait: '', legionName: '古典时代华夏军团' },
     ],
     wei: { generalId: 'wei_wuqi', generalName: '吴起', portrait: '/assets/xianqin/wei_wuqi.png' },
     manzhou_d: { generalId: 'manzhou_d_duoergun', generalName: '多尔衮', portrait: '/assets/manqing/manzhou_d_duoergun.png' },

@@ -1928,7 +1928,7 @@ export class CombatUI {
             pointer-events: auto;
             gap: 1px;
         `;
-        const fallback = isAtt ? '古典时代秦汉军团' : '古典时代秦汉军团';
+        const fallback = isAtt ? '古典时代华夏军团' : '古典时代华夏军团';
         const name = (rawLegionName || fallback).trim();
         chip.title = `军团编制：${name}`;
 
@@ -6209,7 +6209,7 @@ export class CombatUI {
         unit: IBattleUnit,
         side: 'attacker' | 'defender',
     ): void {
-        /* 🔴 [2026-09-18 主人报障「朱棣怎么是封建时代隋唐军团？必须一套数据」]
+        /* 🔴 [2026-09-18 主人报障「朱棣怎么是封建时代中原军团？必须一套数据」]
          *   名牌与军团名必须同源：名字取自谁，军团名/精锐番号就取谁，永远是同一支军队。 */
         let nameUnit: IBattleUnit = unit;
         let generalId = unit.generalId;
@@ -6734,7 +6734,7 @@ export class CombatUI {
 
         /* 🔴 [2026-09-18 主人定「必须一套数据」] 势力优先，且势力要从**实体本身**取：
            改前只看 `unit.factionId`，包装对象没带 factionId 时就一路退到「文化区默认军团名」
-           （江南 → 封建时代隋唐军团），于是同一支军队在编辑器里是大明军团、到战场变成隋唐军团。
+           （江南 → 封建时代中原军团），于是同一支军队在编辑器里是大明军团、到战场变成隋唐军团。
            现在补一层：unit 上没有就用 entity 自己的势力（army.getFactionId / city.factionId），
            只有**确实没有势力**时才允许退回文化区默认名。 */
         const ent = unit.getEntity?.() as { id?: string; buildingStyle?: string; factionId?: string | null; getFactionId?: () => string | null } | undefined;
@@ -6752,13 +6752,13 @@ export class CombatUI {
         if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
             return FACTION_COMPOSITIONS[factionId].legionName!;
         }
-        // ② 时代 + 文化军团（如「古典时代先秦军团」「古典时代秦汉军团」「封建时代高句丽军团」「城堡时代蒙古军团」）
+        // ② 时代 + 文化军团（如「古典时代先秦军团」「古典时代华夏军团」「封建时代高句丽军团」「城堡时代蒙古军团」）
         const region = resolveUnitCultureRegion(unit);
         const cultureLegionName = getCultureLegionName(region);
         if (cultureLegionName) {
             return cultureLegionName;
         }
-        return side === 'attacker' ? '古典时代秦汉军团' : '古典时代秦汉军团';
+        return side === 'attacker' ? '古典时代华夏军团' : '古典时代华夏军团';
     }
 
     private createFamousBadge(side: 'left' | 'right'): HTMLDivElement {

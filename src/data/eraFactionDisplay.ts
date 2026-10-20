@@ -15,6 +15,10 @@
  *   · 据点建筑文化 × 当前年份所属时代 → 军团，一律走 `resolveCityDefenseLegionName`
  *     （与「每个时代每个据点只能出本文化该时代军团」同一条解析，不另写一套）；
  *   · 旗号文字 = 时代名（旗面绘制仍按现规则只画前两字：大和→大和、巴克特里亚→巴克）；
+ *   · 🔴 [2026-10-20 主人令「中原军团改用华夏军团势力，旗显示四个时代统一为华」]
+ *     中原（CENTRAL）四时代的名字**不写死朝代名**，一律随当时代军团名
+ *     （古典时代华夏军团→华夏、封建时代中原军团→中原、城堡时代中华军团→中华、帝国时代中国军团→中国），
+ *     **旗号四个时代统一只写一个字「华」**（见下面的 `CENTRAL|*` 条目）；
  *   · 只在**百岁模式**启用（`refreshEraFactionDisplays(null)` 即关闭：剧本模式用史实归属、乱斗不变）。
  */
 import { CITIES_V2 } from './cities_v2';
@@ -60,6 +64,8 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
 
 /**
  * 🔴 [2026-10-20 主人定] **朝代名用正名**（「只有朝代要注意」）：
+ *   · 🔴 **中原（CENTRAL）四时代已按主人 2026-10-20 新令改为「随当时代军团名 + 旗号统一华」**，
+ *     不再写死朝代名（原「秦汉→汉、隋唐→唐、宋禁→宋」对中原四时代作废，见下面 `CENTRAL|*` 条目）；
  *   · 两个朝代并列的名字只取后一个：秦汉→汉、隋唐→唐；
  *   · 河朔那一支主人再定：「河朔的古典改为太行，封建改为河朔」→ 古典**太行**、封建**河朔**；
  *   · 江南那一支主人定：封建→**江淮**、城堡（南宋）→**江南**；
@@ -76,7 +82,7 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
  *     那已经是另一支波斯建筑文化（`SASANIAN`，势力名「波斯」）的招牌。改为**阿契美尼德**（王朝正名，
  *     与那支波斯的「古典时代萨珊军团」正好对称）；军团全名「古典时代阿契美尼德军团」不与剧本军团「阿契美尼德军团」重名；
  *   · 越南那一段主人点名：丁黎→**静海**（用行政名，不用两朝并列）；
- *   · 「宋禁」（宋禁军）只留朝代：→**宋**；
+ *   · 「宋禁」（宋禁军）只留朝代：→**宋**（中原·城堡，2026-10-20 中原四时代改随军团名后已不适用）；
  *   · 带「大」的国号正名保留全名：大明（主人原话「大明是两个字，用大明」）、大金、大夏、大越；
  *   · 单个朝代／政权名本身已经是正名（南宋、朝鲜、新罗、高丽…）→ 不动；
  *   · 非朝代的泛称（大和、平安、幕府、华夏、吴越、燕云、巴蜀…）→ 一律不动。
@@ -88,16 +94,18 @@ function eraNameOfLegion(legionName: string | null | undefined): string | null {
  *    条目写 `flagText` 就按它画旗（`凉州` → 旗面只写「**凉**」），不写就沿用「显示名前两字」的旧规则。
  */
 interface EraNameDef {
-    /** 势力名（界面文字，如「凉州」） */
-    name: string;
-    /** 旗号文字（不写 = 取 name 前两字；写了就按它画，如「凉」） */
+    /** 势力名（界面文字，如「凉州」）；**不写 = 随当时代军团名**（去时代前缀与「军团」） */
+    name?: string;
+    /** 旗号文字（不写 = 取 name 前两字；写了就按它画，如「凉」「华」） */
     flagText?: string;
 }
 
 const ERA_DISPLAY_OVERRIDES: Readonly<Record<string, EraNameDef>> = {
-    'CENTRAL|antiquity': { name: '汉' },        // 古典时代秦汉军团
-    'CENTRAL|feudal': { name: '唐' },           // 封建时代隋唐军团
-    'CENTRAL|castle': { name: '宋' },           // 城堡时代宋禁军团
+    // 🔴 [2026-10-20 主人令] 中原四时代：名字随当时代军团名（华夏/中原/中华/中国），旗号四时代统一「华」
+    'CENTRAL|antiquity': { flagText: '华' },    // 古典时代华夏军团 → 华夏；旗面只写「华」
+    'CENTRAL|feudal': { flagText: '华' },       // 封建时代中原军团 → 中原；旗面只写「华」
+    'CENTRAL|castle': { flagText: '华' },       // 城堡时代中华军团 → 中华；旗面只写「华」
+    'CENTRAL|imperial': { flagText: '华' },     // 帝国时代中国军团 → 中国；旗面只写「华」
     'WEI|antiquity': { name: '太行' },          // 古典时代太行军团（原魏晋军团）
     'WEI|feudal': { name: '河朔' },             // 封建时代河朔军团（原北朝军团）
     'JIANGNAN|feudal': { name: '江淮' },        // 封建时代江淮军团
@@ -117,12 +125,10 @@ function eraNameOfStyleAndEra(buildingStyle: string | undefined, era: DefenseEra
     const key = `${buildingStyle}|${era}`;
     if (eraNameCache.has(key)) return eraNameCache.get(key) ?? null;
     const override = ERA_DISPLAY_OVERRIDES[key];
-    let entry: EraNameDef | null = override ? { name: override.name, flagText: override.flagText } : null;
-    if (!entry) {
-        const legion = resolveCityDefenseLegionName(undefined, ERA_SAMPLE_YEAR[era], buildingStyle, null);
-        const name = eraNameOfLegion(legion);
-        entry = name ? { name } : null;
-    }
+    // 名字：主人单独定过就用它；没定（如中原四时代）→ 随当时代军团名
+    const legion = resolveCityDefenseLegionName(undefined, ERA_SAMPLE_YEAR[era], buildingStyle, null);
+    const name = override?.name ?? eraNameOfLegion(legion);
+    const entry: EraNameDef | null = name ? { name, flagText: override?.flagText } : null;
     eraNameCache.set(key, entry);
     return entry;
 }

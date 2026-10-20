@@ -3714,7 +3714,7 @@ function renderEditPanel(row: FactionLegionRow): void {
         <span>军团名称</span>
         <span style="font-size:11px;color:#a89f8f;font-weight:normal;">须包含时代且以「军团」二字结尾</span>
       </div>
-      <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || ''}" placeholder="例如：古典时代秦汉军团、城堡时代蒙古军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
+      <input id="le-legion-name-input" class="le-input" type="text" value="${currentEditingLegion?.legionName || row.legionName || ''}" placeholder="例如：古典时代华夏军团、城堡时代蒙古军团" style="width:100%;font-size:13px;font-weight:bold;color:#f5e6c8;box-sizing:border-box;" />
       ${row.eliteName ? `<div style="font-size:11px;color:#8ab4c4;margin-top:6px;">精锐番号：${row.eliteName}${row.eliteTier != null ? ` T${row.eliteTier}` : ''}</div>` : ''}
     </div>
 
