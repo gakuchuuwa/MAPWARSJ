@@ -585,6 +585,9 @@ export interface Scene13WarInit {
      *  险要地形：'mound'＝现状多层阶梯高台；'plateau'＝整块矩形高台（整座城同一块平顶高地）；
      *  'flat'＝把高台抹平（城坐平地，城外只留丘陵与大山）；不传＝现状多层高台。 */
     defenderPassTerrain?: 'mound' | 'flat' | 'plateau' | null;
+    /** [2026-10-21 主人令「把道路添加一个南北走向的」]
+     *  关隘山谷与道路走向：'ew'＝东西走向（默认）、'ns'＝南北走向；不传＝东西走向。 */
+    defenderPassRoadDir?: 'ew' | 'ns' | null;
     /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观：守方城中央立奇观地标）。 */
     defenderCityId?: string | null;
     /** [2026-09-12] 剧本战斗标题（`fieldBattleData.title`，如「伊苏斯战役」）；战斗面板大标题直接用它。 */

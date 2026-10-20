@@ -410,6 +410,27 @@ export function isSnowBaseTile(tile: string): boolean {
 }
 
 /**
+ * 🔴 [2026-10-21 主人令「沙子里面长树，这对吗，看看DE是如何设计的」]
+ * 纯沙地贴图（塔克拉玛干/阿拉伯的砂质沙漠、流沙、干盐壳）：
+ * DE 的沙地上**不长**松/桦/橡这类温带寒带乔木（dat 里 14 Desert 没有任何自动树），
+ * 只有脚本撒的沙漠散树（棕榈/龙血树/金合欢…）。这里是兜底护栏：
+ * 任何路径挑出来的树种，只要脚下是真沙地，就一律换成沙漠树种。
+ */
+export function isSandTile(tile: string): boolean {
+    return tile === 'pal' || tile === 'pal1' || tile === 'qs';
+}
+
+/** 沙漠/干热树种（沙地上唯一允许的树） */
+const DESERT_SAFE_TREES: ReadonlySet<string> = new Set([
+    'PALM', 'DRAGON_TREE', 'ACACIA', 'BAOBAB', 'CACTUS', 'DEAD_TREE', 'BUSH_TREE_A', 'BUSH_TREE_B', 'BUSH_TREE_C',
+]);
+function guardSandTree(tree: string, baseTile: string): string {
+    if (!isSandTile(baseTile)) return tree;
+    if (DESERT_SAFE_TREES.has(tree)) return tree;
+    return baseTile === 'qs' || baseTile === 'pal1' ? 'DEAD_TREE' : 'PALM';
+}
+
+/**
  * 按 16 种一级建筑风格 + 66 种二/三级子风格优先选定地域树种，使青藏、西域、蒙古、东南亚、河西等特殊地带与东亚严格区分。
  */
 function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
@@ -454,7 +475,12 @@ function pickTreeByBuildingStyle(q: TreeQuery): string | undefined {
 
     // ── 波斯 / 中东 / 非洲 / 美洲 / 欧洲 ──
     if (sub === 'PERSIAN' || sub === 'SASANIAN' || sub === 'ACHAEMENIDS') {
-        return (q.baseTile === 'pal' || q.baseTile === 'des') && q.lat < 33 ? 'PALM' : 'PINE';
+        // 🔴 [2026-10-21 主人令「沙子里面长树，这对吗，看看DE是如何设计的」]
+        //    旧逻辑 `lat >= 33 或非沙底 → PINE` 把寒带针叶树（PINE 属泰加/雪林，见 DE-nature-asset-classification.md）
+        //    塞进了伊朗高原与两河沙漠，于是沙漠里长松树。按 DE 群系归属：
+        //    纯沙/干热 → PALM（DE 沙漠主题 STRAGGLER = 351 Palm Tree）；高原/地中海 → CYPRESS（波斯柏）/ OLIVE。
+        if (isSandTile(q.baseTile)) return 'PALM';
+        return 'CYPRESS';
     }
     if (sub === 'ORIE') {
         if (q.lat >= 12 && q.lat <= 20 && q.lng >= 42 && q.lng <= 56) return 'DRAGON_TREE';
@@ -502,6 +528,9 @@ export function pickTree(q: TreeQuery): string {
     }
     if (!tree) tree = TREE_BY_BASE[q.baseTile];
     if (!tree) tree = FALLBACK_TREE;
+
+    // 🔴 [2026-10-21] 沙地护栏：真沙地上绝不许出现温带/寒带乔木（DE 的沙地不长这些）
+    tree = guardSandTree(tree, q.baseTile);
 
     // 攻城战不出枯树：城郊的枯木早被拾去烧了。换成耐旱的活树。
     if (tree === 'DEAD_TREE' && !allowsDeadTree(q.isSiege ?? false)) {

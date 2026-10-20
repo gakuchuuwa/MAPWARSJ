@@ -30,6 +30,11 @@ export const TAC_TILE_W = TW, TAC_TILE_H = TH;
 
 const NATURE_ALIAS: Record<string, [string, string]> = {
   FDRA: ['NATURE', 'DRAGON_TREE'], FPAL: ['NATURE', 'PALM'], FBAM: ['NATURE', 'BAMBOO'], BIRCH: ['NATURE', 'BIRCH_GREEN'],
+  // 🔴 [2026-10-21] DE dat 里这些地形默认单位此前没有别名，烘焙图里长出来也画不出（静默丢弃）：
+  //    49 Baobab Forest→FBAO、55 Mangrove Forest→FMANGRO、131/132 Forest Spruce→SPRUCE/SPRUCESNOW
+  //    （FACA 50 Acacia Forest 原本已登记，见下方 FACA 行）
+  FBAO: ['NATURE', 'BAOBAB'], FMANGRO: ['NATURE', 'MANGROVE'],
+  SPRUCE: ['NATURE', 'PINE'], SPRUCESNOW: ['NATURE', 'SNOW_PINE'],
   FJUN: ['NATURE', 'JUNGLE'], FSNO: ['NATURE', 'SNOW_PINE'], FOAK: ['NATURE', 'OAK'], FPIN: ['NATURE', 'PINE'],
   ITPINE: ['NATURE', 'ITALIAN_PINE'], OLIVE: ['NATURE', 'OLIVE'], CYPRESS: ['NATURE', 'CYPRESS'],
   GREENOAK: ['NATURE', 'GREEN_OAK'], BUSH: ['NATURE', 'BUSH_GREEN'], BUSH2: ['NATURE', 'BUSH_TREE_A'], BUSH3: ['NATURE', 'BUSH_TREE_B'],
@@ -1395,7 +1400,8 @@ export class Scene13GroundLayerGL {
     wallCenterJ: number,
     outerHalfI: number,
     outerHalfJ: number,
-    rnd: () => number
+    rnd: () => number,
+    roadDir: 'ew' | 'ns' = 'ew'
   ): void {
     const N = this.N;
     const V = N + 1;
@@ -1416,8 +1422,8 @@ export class Scene13GroundLayerGL {
     const isWet = (gx: number, gy: number) =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
-    // 峡谷南北山脚线：紧贴城关外圈南北两端（约 cgy ± 12.0）
-    const halfCorridorY = Math.max(11.8, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
+    // 峡谷山脚线：紧贴城关外圈两端（约 halfCorridor ± 12.0）
+    const halfCorridor = Math.max(11.8, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
     const p1 = rnd() * 6.28, p2 = rnd() * 6.28;
 
     // ── 第一阶段：生成第一层广阔平顶高地基座（Level 2~3）──
@@ -1425,16 +1431,31 @@ export class Scene13GroundLayerGL {
       for (let gx = 0; gx < N; gx++) {
         if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
 
-        const distFromCenter = Math.abs(gx - cgx);
-        const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
-        const jitter = (2.0 * Math.sin(gx * 0.13 + p1) + 1.2 * Math.cos(gx * 0.27 + p2)) * damp;
-
-        const northFoot = (cgy - halfCorridorY) + jitter;
-        const southFoot = (cgy + halfCorridorY) - jitter;
-
         let dMountain = 0;
-        if (gy < northFoot) dMountain = northFoot - gy;
-        else if (gy > southFoot) dMountain = gy - southFoot;
+        if (roadDir === 'ns') {
+          // 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」]
+          // 南北走向：山谷与道路纵贯南北，高地位于东西两侧（West & East）
+          const distFromCenter = Math.abs(gy - cgy);
+          const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
+          const jitter = (2.0 * Math.sin(gy * 0.13 + p1) + 1.2 * Math.cos(gy * 0.27 + p2)) * damp;
+
+          const westFoot = (cgx - halfCorridor) + jitter;
+          const eastFoot = (cgx + halfCorridor) - jitter;
+
+          if (gx < westFoot) dMountain = westFoot - gx;
+          else if (gx > eastFoot) dMountain = gx - eastFoot;
+        } else {
+          // 东西走向（默认）：山谷与道路横贯东西，高地位于南北两翼（North & South）
+          const distFromCenter = Math.abs(gx - cgx);
+          const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
+          const jitter = (2.0 * Math.sin(gx * 0.13 + p1) + 1.2 * Math.cos(gx * 0.27 + p2)) * damp;
+
+          const northFoot = (cgy - halfCorridor) + jitter;
+          const southFoot = (cgy + halfCorridor) - jitter;
+
+          if (gy < northFoot) dMountain = northFoot - gy;
+          else if (gy > southFoot) dMountain = gy - southFoot;
+        }
 
         if (dMountain <= 0) {
           tileElev[gy * N + gx] = 0;
@@ -1451,33 +1472,64 @@ export class Scene13GroundLayerGL {
     interface Mound { x: number; y: number; rx: number; ry: number; targetH: number; }
     const tier2Mounds: Mound[] = [];
 
-    // 北翼：在 cgy - 15 ~ cgy - 24 之间放置 5 座二级高台（Level 5）
-    const nTier2X = [-34, -18, -2, 14, 30, 46];
-    for (const dx of nTier2X) {
-      const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
-      const my = Math.round(cgy - 17 - rnd() * 5);
-      if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
-        tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+    if (roadDir === 'ns') {
+      // 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」]
+      // 西翼：在 cgx - 15 ~ cgx - 24 之间放置二级高台（Level 5）
+      const wTier2Y = [-34, -18, -2, 14, 30, 46];
+      for (const dy of wTier2Y) {
+        const my = Math.round(cgy + dy + (rnd() - 0.5) * 4);
+        const mx = Math.round(cgx - 17 - rnd() * 5);
+        if (mx >= 6 && mx < N - 6 && my >= 8 && my < N - 8) {
+          tier2Mounds.push({ x: mx, y: my, rx: 5 + Math.floor(rnd() * 3), ry: 8 + Math.floor(rnd() * 4), targetH: 5 });
+        }
       }
-    }
 
-    // 南翼：在 cgy + 15 ~ cgy + 24 之间放置 5 座二级高台（Level 5）
-    const sTier2X = [-38, -22, -6, 10, 26, 42];
-    for (const dx of sTier2X) {
-      const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
-      const my = Math.round(cgy + 17 + rnd() * 5);
-      if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
-        tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+      // 东翼：在 cgx + 15 ~ cgx + 24 之间放置二级高台（Level 5）
+      const eTier2Y = [-38, -22, -6, 10, 26, 42];
+      for (const dy of eTier2Y) {
+        const my = Math.round(cgy + dy + (rnd() - 0.5) * 4);
+        const mx = Math.round(cgx + 17 + rnd() * 5);
+        if (mx >= 6 && mx < N - 6 && my >= 8 && my < N - 8) {
+          tier2Mounds.push({ x: mx, y: my, rx: 5 + Math.floor(rnd() * 3), ry: 8 + Math.floor(rnd() * 4), targetH: 5 });
+        }
       }
-    }
 
-    // 关口两翼近侧前哨山丘（关城左右两翼平视可见的高台上小高地）
-    tier2Mounds.push(
-      { x: Math.round(cgx - 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
-      { x: Math.round(cgx + 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
-      { x: Math.round(cgx - 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 },
-      { x: Math.round(cgx + 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 }
-    );
+      // 关口近侧前哨山丘（关城上下两翼平视可见的高台上小高地）
+      tier2Mounds.push(
+        { x: Math.round(cgx - 13), y: Math.round(cgy - 18), rx: 4, ry: 6, targetH: 4 },
+        { x: Math.round(cgx - 13), y: Math.round(cgy + 18), rx: 4, ry: 6, targetH: 4 },
+        { x: Math.round(cgx + 13), y: Math.round(cgy - 18), rx: 4, ry: 6, targetH: 4 },
+        { x: Math.round(cgx + 13), y: Math.round(cgy + 18), rx: 4, ry: 6, targetH: 4 }
+      );
+    } else {
+      // 北翼：在 cgy - 15 ~ cgy - 24 之间放置 5 座二级高台（Level 5）
+      const nTier2X = [-34, -18, -2, 14, 30, 46];
+      for (const dx of nTier2X) {
+        const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
+        const my = Math.round(cgy - 17 - rnd() * 5);
+        if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
+          tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+        }
+      }
+
+      // 南翼：在 cgy + 15 ~ cgy + 24 之间放置 5 座二级高台（Level 5）
+      const sTier2X = [-38, -22, -6, 10, 26, 42];
+      for (const dx of sTier2X) {
+        const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
+        const my = Math.round(cgy + 17 + rnd() * 5);
+        if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
+          tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+        }
+      }
+
+      // 关口两翼近侧前哨山丘（关城左右两翼平视可见的高台上小高地）
+      tier2Mounds.push(
+        { x: Math.round(cgx - 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
+        { x: Math.round(cgx + 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
+        { x: Math.round(cgx - 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 },
+        { x: Math.round(cgx + 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 }
+      );
+    }
 
     // 叠置第二层高台（内部全平为 4~5 级，边缘平滑跌落回 3 级基座）
     for (const m of tier2Mounds) {
@@ -1506,12 +1558,13 @@ export class Scene13GroundLayerGL {
     for (let i = 0; i < tier2Mounds.length; i += 2) {
       const m2 = tier2Mounds[i];
       if (m2.targetH < 5) continue;
-      const offY = m2.y < cgy ? -2 : 2;
+      const offX = roadDir === 'ns' ? (m2.x < cgx ? -2 : 2) : 0;
+      const offY = roadDir === 'ns' ? 0 : (m2.y < cgy ? -2 : 2);
       tier3Summits.push({
-        x: m2.x,
+        x: m2.x + offX,
         y: m2.y + offY,
-        rx: Math.max(3, m2.rx - 4),
-        ry: Math.max(2, m2.ry - 2),
+        rx: Math.max(3, m2.rx - (roadDir === 'ns' ? 2 : 4)),
+        ry: Math.max(2, m2.ry - (roadDir === 'ns' ? 4 : 2)),
         targetH: 7
       });
     }
@@ -2228,6 +2281,8 @@ export class Scene13GroundLayerGL {
     /** 🔴 [2026-10-20 主人令] 地形：'mound'＝现状多层阶梯高台；'flat'＝抹平城坐平地；
      *  'plateau'＝整块矩形高台（整座外圈城正好坐在同一块平顶高台上，内外圈同高、城堡也在同一高地上）。 */
     terrain: 'mound' | 'flat' | 'plateau' = 'mound',
+    /** 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」] 山谷道路走向：'ew' 东西（默认）/ 'ns' 南北 */
+    roadDir: 'ew' | 'ns' = 'ew',
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
@@ -2329,7 +2384,7 @@ export class Scene13GroundLayerGL {
           if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
         }
       }
-      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd);
+      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd, roadDir);
       this.updateCornerLight();
       this.elevDirty = true;
       return { castleLevel: plateauLevel, innerLevel: plateauLevel, outerLevel: plateauLevel };
@@ -2388,7 +2443,7 @@ export class Scene13GroundLayerGL {
           if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
         }
       }
-      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd);
+      this.generatePassGorgeTerrain(c.gx, c.gy, wallCenterI, wallCenterJ, outerHalfI, outerHalfJ, rnd, roadDir);
       this.updateCornerLight();
       this.elevDirty = true;
       return { castleLevel: innerPlateauH, innerLevel: innerPlateauH, outerLevel: outerGroundH };
@@ -2476,7 +2531,7 @@ export class Scene13GroundLayerGL {
     }
 
     // 4. 外围城墙外围：外围丘陵推远到 R3 + 5.5 之外生成，且最高不超过 outerLevel - 0.5（彻底杜绝堵门与高程倒挂）
-    this.generatePassGorgeTerrain(cx, cy, 0.5, 0.5, R3, R3, rnd);
+    this.generatePassGorgeTerrain(cx, cy, 0.5, 0.5, R3, R3, rnd, roadDir);
 
     // 6. 重新计算等轴浮雕坡面光照并标记脏标记
     this.updateCornerLight();
