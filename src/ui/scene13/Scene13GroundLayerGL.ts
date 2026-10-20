@@ -92,6 +92,7 @@ const VS = `attribute vec2 aPos;
 attribute vec2 aGUV;
 attribute float aLight;
 attribute float aElev;
+attribute float aSlope;
 uniform vec2 uRes;
 uniform vec2 uCam;
 uniform float uZoom;
@@ -99,12 +100,14 @@ varying vec2 vGUV;
 varying vec2 vWorldPos;
 varying float vLight;
 varying float vElev;
+varying float vSlope;
 
 void main() {
   vGUV = aGUV;
   vWorldPos = aPos;
   vLight = aLight;
   vElev = aElev;
+  vSlope = aSlope;
   vec2 p = (aPos + uCam) * uZoom;
   vec2 c = vec2(uRes.x * 0.5, uRes.y * 0.5);
   gl_Position = vec4((p.x - c.x) / c.x, -(p.y - c.y) / c.y, 0.0, 1.0);
@@ -115,6 +118,7 @@ varying vec2 vGUV;
 varying vec2 vWorldPos;
 varying float vLight;
 varying float vElev;
+varying float vSlope;
 
 uniform sampler2D uFieldTex;
 uniform sampler2D uGrassTex;
@@ -289,7 +293,7 @@ void main() {
   }
   
   // ── DE 高地斜坡立体边坡肌理与坡脚体积暗部（不画 fract 等高线圈，仅对斜坡面赋予自然边坡立体感） ──
-  if (vElev > 0.02 && isWater < 0.25) {
+  if ((vSlope > 0.04 || vElev > 0.02) && isWater < 0.25) {
     float flatBaseLight = 1.0 + min(0.07, vElev * 0.022);
     float slopeDiff = abs(vLight - flatBaseLight);
     float isSlopeFace = smoothstep(0.02, 0.12, slopeDiff);
@@ -413,7 +417,7 @@ function blurGrid2D(src: Float32Array, N: number): Float32Array {
   return dst;
 }
 
-const FLOATS_PER_VERT = 6;
+const FLOATS_PER_VERT = 7;
 const STRIDE = FLOATS_PER_VERT * 4;
 
 export class Scene13GroundLayerGL {
@@ -615,6 +619,7 @@ export class Scene13GroundLayerGL {
       aGUV: A('aGUV'),
       aLight: A('aLight'),
       aElev: A('aElev'),
+      aSlope: A('aSlope'),
       uRes: U('uRes'),
       uCam: U('uCam'),
       uZoom: U('uZoom'),
@@ -910,6 +915,7 @@ export class Scene13GroundLayerGL {
     gl.enableVertexAttribArray(this.loc.aGUV as number);
     gl.enableVertexAttribArray(this.loc.aLight as number);
     gl.enableVertexAttribArray(this.loc.aElev as number);
+    gl.enableVertexAttribArray(this.loc.aSlope as number);
 
     if (!this.buf || this.elevDirty) {
       this.rebuildBuffers();
@@ -922,6 +928,7 @@ export class Scene13GroundLayerGL {
       gl.vertexAttribPointer(this.loc.aGUV as number, 2, gl.FLOAT, false, STRIDE, 8);
       gl.vertexAttribPointer(this.loc.aLight as number, 1, gl.FLOAT, false, STRIDE, 16);
       gl.vertexAttribPointer(this.loc.aElev as number, 1, gl.FLOAT, false, STRIDE, 20);
+      gl.vertexAttribPointer(this.loc.aSlope as number, 1, gl.FLOAT, false, STRIDE, 24);
       gl.drawArrays(gl.TRIANGLES, 0, this.vertCount);
     }
   }
@@ -952,6 +959,12 @@ export class Scene13GroundLayerGL {
           [x, y + 1]
         ];
 
+        const tileSlope = Math.max(
+          Math.abs(cElev[0] - cElev[1]),
+          Math.abs(cElev[1] - cElev[2]),
+          Math.abs(cElev[2] - cElev[3]),
+          Math.abs(cElev[3] - cElev[0])
+        );
         const tri = Math.abs(cElev[0] - cElev[2]) <= Math.abs(cElev[1] - cElev[3]) ? TRI_A : TRI_B;
         for (const t of tri) {
           const gx = guv[t][0], gy = guv[t][1];
@@ -961,7 +974,8 @@ export class Scene13GroundLayerGL {
             gx,
             gy,
             cLight[t],
-            cElev[t]
+            cElev[t],
+            tileSlope
           );
         }
       }
@@ -1356,6 +1370,24 @@ export class Scene13GroundLayerGL {
    * 3. 严格遵循 DE 8 邻域高差 <= 1、填平窄沟、削去尖脊、角点保边光照，360° 等轴浮雕光影；
    * 4. 彻底封死侧翼绕行，形成「两山夹一关，断绝通路，唯有关城可通」的千古雄关史诗气势。
    */
+  /**
+   * 🔴 [2026-10-20 主人令「整个地图的感觉就像，只有攻下险要才能过去的感觉」＋「还要有在高地上放高地，不然看不出效果」]
+   * 关隘（险要）专属「梯级多层嵌套高台 / 高地上放高地」地貌生成器：
+   * 1. 中央峡谷通道：行军走廊在城池外侧保持平整开阔（0 级），关城横断峡谷咽喉（内城 5 级矩形台、外城 2 级平地）；
+   * 2. 第一级基座高台（Level 2~3）：南北两翼横贯全图的广阔平顶台地，自谷底拔地而起；
+   * 3. 第二级嵌套台地（Level 4~5，高地上放高地）：在一级基座高台面上，拔起数座椭圆/长条状平顶山梁高地；
+   * 4. 第三级峰顶天堑（Level 6~7，绝顶峰峦）：在二级高台之上拔地而起数座最高级主峰，形成梯级嵌套、层峦叠嶂的立体高地；
+   * 5. 严格保证平顶台地角点不模糊（isFlatCorner 保边光照），8 邻域落差 <= 1，消除撕裂。
+   */
+  /**
+   * 🔴 [2026-10-20 主人令「整个地图的感觉就像，只有攻下险要才能过去的感觉」＋「还要有在高地上放高地，不然看不出效果」]
+   * 关隘（险要）专属「梯级多层嵌套高台 / 高地上放高地」地貌生成器：
+   * 1. 中央峡谷通道：行军走廊在城池外侧保持平整开阔（0 级），关城横断峡谷咽喉（内城 5 级矩形台、外城 2 级平地）；
+   * 2. 第一层基础高台（Level 2~3）：南北两翼横贯全图的广阔平顶台地，自谷底平稳拔起；
+   * 3. 第二层嵌套高台（Level 4~5，高地上放高地）：在一级台地之上，拔起数座独立平顶山梁高台；
+   * 4. 第三层绝顶主峰（Level 6~7，高地上再放高地）：在二级高台之上拔地而起最高峰顶台，形成三级层峦叠嶂；
+   * 5. 严格保证平顶台地角点不模糊（isFlatCorner 保边光照），8 邻域落差 <= 1，消除撕裂。
+   */
   private generatePassGorgeTerrain(
     cx: number,
     cy: number,
@@ -1384,52 +1416,122 @@ export class Scene13GroundLayerGL {
     const isWet = (gx: number, gy: number) =>
       gx >= 0 && gx < N && gy >= 0 && gy < N && (this.smoothWater[gy * N + gx] ?? 0) >= 0.16;
 
-    // 峡谷南北山脚线：
-    // 关城外圈在屏幕 Y 方向半跨度约为 12.5~14.5 格
+    // 峡谷南北山脚线：紧贴城关外圈南北两端（约 cgy ± 12.0）
     const halfCorridorY = Math.max(11.8, (outerHalfI + outerHalfJ) * 0.5 - 0.2);
-    const p1 = rnd() * 6.28, p2 = rnd() * 6.28, p3 = rnd() * 6.28, p4 = rnd() * 6.28;
+    const p1 = rnd() * 6.28, p2 = rnd() * 6.28;
 
+    // ── 第一阶段：生成第一层广阔平顶高地基座（Level 2~3）──
     for (let gy = 0; gy < N; gy++) {
       for (let gx = 0; gx < N; gx++) {
         if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
 
-        // 沿 X 轴的自然山脚起伏（但在关隘附近收紧，使山脚与关隘城墙精准咬合）
         const distFromCenter = Math.abs(gx - cgx);
         const damp = Math.min(1.0, Math.max(0.2, distFromCenter / 14.0));
-        const jitter = (2.2 * Math.sin(gx * 0.13 + p1) + 1.4 * Math.cos(gx * 0.29 + p2)) * damp;
+        const jitter = (2.0 * Math.sin(gx * 0.13 + p1) + 1.2 * Math.cos(gx * 0.27 + p2)) * damp;
 
         const northFoot = (cgy - halfCorridorY) + jitter;
         const southFoot = (cgy + halfCorridorY) - jitter;
 
         let dMountain = 0;
-        if (gy < northFoot) {
-          dMountain = northFoot - gy;
-        } else if (gy > southFoot) {
-          dMountain = gy - southFoot;
-        }
+        if (gy < northFoot) dMountain = northFoot - gy;
+        else if (gy > southFoot) dMountain = gy - southFoot;
 
         if (dMountain <= 0) {
           tileElev[gy * N + gx] = 0;
         } else {
-          // 陡峭崇山峻岭：山脚紧贴关塞两端，快速陡峭抬升至 6~7 级巍峨绝顶
-          let h = 0;
-          if (dMountain <= 0.8) h = 1;
-          else if (dMountain <= 1.8) h = 2;
-          else if (dMountain <= 2.9) h = 3;
-          else if (dMountain <= 4.2) h = 4;
-          else if (dMountain <= 5.6) h = 5;
-          else if (dMountain <= 7.2) h = 6;
-          else h = 7; // 最高 7 级平顶崇山天幕！
+          // 第一层平坦大高台（2~3 级广阔平顶台地）
+          if (dMountain <= 0.8) tileElev[gy * N + gx] = 1;
+          else if (dMountain <= 1.8) tileElev[gy * N + gx] = 2;
+          else tileElev[gy * N + gx] = 3; // 基础高台基座保持 3 级平顶
+        }
+      }
+    }
 
-          // 叠加自然山脊/主峰扰动，让山顶产生错落起伏的峰峦
-          const ridgeNoise = Math.sin(gx * 0.24 + gy * 0.20 + p3) * 0.6 + Math.cos(gx * 0.36 - gy * 0.28 + p4) * 0.4;
-          if (h >= 4 && ridgeNoise > 0.38) {
-            h = Math.min(7, h + 1);
-          } else if (h >= 5 && ridgeNoise < -0.42) {
-            h = h - 1;
+    // ── 第二阶段：在高地上放高地（Tier 2: 4~5 级嵌套平顶高台）──
+    interface Mound { x: number; y: number; rx: number; ry: number; targetH: number; }
+    const tier2Mounds: Mound[] = [];
+
+    // 北翼：在 cgy - 15 ~ cgy - 24 之间放置 5 座二级高台（Level 5）
+    const nTier2X = [-34, -18, -2, 14, 30, 46];
+    for (const dx of nTier2X) {
+      const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
+      const my = Math.round(cgy - 17 - rnd() * 5);
+      if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
+        tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+      }
+    }
+
+    // 南翼：在 cgy + 15 ~ cgy + 24 之间放置 5 座二级高台（Level 5）
+    const sTier2X = [-38, -22, -6, 10, 26, 42];
+    for (const dx of sTier2X) {
+      const mx = Math.round(cgx + dx + (rnd() - 0.5) * 4);
+      const my = Math.round(cgy + 17 + rnd() * 5);
+      if (mx >= 8 && mx < N - 8 && my >= 6 && my < N - 6) {
+        tier2Mounds.push({ x: mx, y: my, rx: 8 + Math.floor(rnd() * 4), ry: 5 + Math.floor(rnd() * 3), targetH: 5 });
+      }
+    }
+
+    // 关口两翼近侧前哨山丘（关城左右两翼平视可见的高台上小高地）
+    tier2Mounds.push(
+      { x: Math.round(cgx - 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
+      { x: Math.round(cgx + 18), y: Math.round(cgy - 13), rx: 6, ry: 4, targetH: 4 },
+      { x: Math.round(cgx - 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 },
+      { x: Math.round(cgx + 18), y: Math.round(cgy + 13), rx: 6, ry: 4, targetH: 4 }
+    );
+
+    // 叠置第二层高台（内部全平为 4~5 级，边缘平滑跌落回 3 级基座）
+    for (const m of tier2Mounds) {
+      for (let dy = -m.ry; dy <= m.ry; dy++) {
+        for (let dx = -m.rx; dx <= m.rx; dx++) {
+          const gx = m.x + dx, gy = m.y + dy;
+          if (gx < 0 || gx >= N || gy < 0 || gy >= N) continue;
+          if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
+          const d = Math.hypot(dx / m.rx, dy / m.ry);
+          if (d > 1.0) continue;
+          let h = m.targetH;
+          if (d > 0.70) {
+            const t = (d - 0.70) / 0.30;
+            h = Math.round(m.targetH - t * (m.targetH - 3));
           }
+          if (h > tileElev[gy * N + gx]) {
+            tileElev[gy * N + gx] = h;
+          }
+        }
+      }
+    }
 
-          tileElev[gy * N + gx] = Math.max(0, Math.min(7, h));
+    // ── 第三阶段：在二级高台上再放第三层绝顶主峰（Tier 3: Level 7 最高峰，高地上再放高地）──
+    const tier3Summits: Mound[] = [];
+    // 在二级高台的核心，叠置 7 级平顶顶峰
+    for (let i = 0; i < tier2Mounds.length; i += 2) {
+      const m2 = tier2Mounds[i];
+      if (m2.targetH < 5) continue;
+      const offY = m2.y < cgy ? -2 : 2;
+      tier3Summits.push({
+        x: m2.x,
+        y: m2.y + offY,
+        rx: Math.max(3, m2.rx - 4),
+        ry: Math.max(2, m2.ry - 2),
+        targetH: 7
+      });
+    }
+
+    for (const m of tier3Summits) {
+      for (let dy = -m.ry; dy <= m.ry; dy++) {
+        for (let dx = -m.rx; dx <= m.rx; dx++) {
+          const gx = m.x + dx, gy = m.y + dy;
+          if (gx < 0 || gx >= N || gy < 0 || gy >= N) continue;
+          if (inPassProtect(gx, gy) || isWet(gx, gy)) continue;
+          const d = Math.hypot(dx / m.rx, dy / m.ry);
+          if (d > 1.0) continue;
+          let h = m.targetH;
+          if (d > 0.65) {
+            const t = (d - 0.65) / 0.35;
+            h = Math.round(m.targetH - t * 2.0);
+          }
+          if (h > tileElev[gy * N + gx]) {
+            tileElev[gy * N + gx] = h;
+          }
         }
       }
     }
@@ -1468,7 +1570,7 @@ export class Scene13GroundLayerGL {
       }
     }
 
-    for (let pass = 0; pass < 5; pass++) {
+    for (let pass = 0; pass < 6; pass++) {
       let changed = false;
       for (let y = 1; y < N - 1; y++) {
         for (let x = 1; x < N - 1; x++) {
@@ -1494,7 +1596,7 @@ export class Scene13GroundLayerGL {
       if (!changed) break;
     }
 
-    // 转换至角点网格
+    // 转换至角点网格：平顶台地与平地角点锁定严禁模糊，仅对斜坡角点做轻量圆角
     const hillCorners = new Float32Array(V * V);
     const isFlatCorner = new Uint8Array(V * V);
     for (let gy = 0; gy <= N; gy++) {
@@ -1528,13 +1630,14 @@ export class Scene13GroundLayerGL {
 
         const h = count > 0 ? sum / count : 0;
         hillCorners[gy * V + gx] = h;
+        // 四角相邻瓦片同高（0 级平地、3 级台面、5 级台面、7 级顶台），锁定角点，保住平顶台地棱角！
         if (minT === maxT) {
           isFlatCorner[gy * V + gx] = 1;
         }
       }
     }
 
-    // 斜坡角点轻量圆角
+    // 仅对斜坡折角做 1 遍轻量圆角（0.68 / 0.32）
     const prev = new Float32Array(hillCorners);
     for (let gy = 1; gy < N; gy++) {
       for (let gx = 1; gx < N; gx++) {
