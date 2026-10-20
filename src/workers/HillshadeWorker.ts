@@ -219,6 +219,8 @@ export interface HillshadeRequest {
     coords?: { z: number; x: number; y: number };
     experimentalRelief?: boolean;
     valleyReliefExp?: boolean;
+    /** 7 层高地试验（DE 台地光照），只在浮雕瓦片上生效 */
+    terraceExp?: boolean;
     modeVersion?: number;
 }
 
@@ -409,7 +411,9 @@ function writeTerrarium(src: Uint8ClampedArray, dem: Float32Array): void {
     }
 }
 
-const PAD = 3;
+// 🔴 [2026-10-21] 3 → 12：7 层高地试验的坡带（模糊半径 3）与台地投影（最长 8px）都要跨瓦片取样，
+//    外扩不够会在瓦片边缘断开。内部像素取值不变（原有算法只用到 ±3）。
+const PAD = 12;
 const PAD_W = 256 + 2 * PAD;
 
 async function getPaddedDem(src: Uint8ClampedArray, coords: { z: number; x: number; y: number }, centerDem?: Float32Array): Promise<Float32Array | null> {
@@ -597,6 +601,143 @@ const rampWorker = (v: number, a: number, b: number) => {
 };
 
 /** 掩膜向外扩 R 像素（先横后竖两遍滑窗，O(n)） */
+/**
+ * 🔴 [2026-10-21 主人令「在战略地图试做 7 层高地」] 照搬战术模式（Scene13GroundLayerGL）的 DE 台地做法：
+ *    真实海拔分 0~7 共 8 档 → DE clean_elevation 填窄沟/削尖脊 → 档内平顶、档间一圈坡带四面受光
+ *    （向阳 +28% / 背阳 -31% / 侧坡 -10%，台面每档 +2.2% 封顶 7%）＋坡面土石色＋坡脚暗影。
+ *    战略地图是俯视、顶点抬不起来，另加「高一档的台地往背光方向投影」补立体感（每档 2.5px，最长 8px）。
+ *    全部按绝对海拔和对称/双缓冲运算，结果与瓦片位置无关，跨瓦片无缝。
+ */
+const TERRACE_THRESHOLDS = [200, 500, 1000, 1500, 2000, 3000, 4500];
+const TERRACE_BLUR_R = 3;
+const TERRACE_SHADOW_PX_PER_LEVEL = 2.5;
+const TERRACE_SHADOW_MAX = 8;
+
+interface TerraceField {
+    /** DE 坡面光照倍率（含台面提亮） */
+    light: Float32Array;
+    /** 坡面权重 0~1（混土石色用） */
+    slope: Float32Array;
+    /** 坡脚暗影 0~1 */
+    foot: Float32Array;
+    /** 台地投影倍率（1 = 无投影） */
+    shadow: Float32Array;
+}
+
+function computeTerrace(pd: Float32Array, azimuthDeg: number): TerraceField {
+    const W = PAD_W, N = W * W;
+    // 1. 3×3 均值去掉 DEM 噪点，再按绝对海拔分档
+    const lev = new Int8Array(N);
+    for (let y = 0; y < W; y++) {
+        for (let x = 0; x < W; x++) {
+            let sum = 0, cnt = 0;
+            for (let dy = -1; dy <= 1; dy++) {
+                const yy = y + dy;
+                if (yy < 0 || yy >= W) continue;
+                for (let dx = -1; dx <= 1; dx++) {
+                    const xx = x + dx;
+                    if (xx < 0 || xx >= W) continue;
+                    sum += pd[yy * W + xx];
+                    cnt++;
+                }
+            }
+            const z = sum / cnt;
+            let l = 0;
+            if (z > 0) while (l < TERRACE_THRESHOLDS.length && z >= TERRACE_THRESHOLDS[l]) l++;
+            lev[y * W + x] = l;
+        }
+    }
+    // 2. DE clean_elevation：填 1 格窄沟、削 1 格尖脊（双缓冲，不受扫描顺序影响）
+    let cur = lev, next = new Int8Array(N);
+    for (let pass = 0; pass < 2; pass++) {
+        next.set(cur);
+        for (let y = 1; y < W - 1; y++) {
+            for (let x = 1; x < W - 1; x++) {
+                const i = y * W + x, h = cur[i];
+                const hN = cur[i - W], hS = cur[i + W], hW = cur[i - 1], hE = cur[i + 1];
+                if ((hN > h && hS > h) || (hW > h && hE > h)) next[i] = Math.min(7, h + 1);
+                else if (h > 0 && ((hN < h && hS < h) || (hW < h && hE < h))) next[i] = h - 1;
+            }
+        }
+        const t = cur; cur = next; next = t;
+    }
+    const L = cur;
+    // 3. 分档盒式模糊成连续坡带（可分离）
+    const R = TERRACE_BLUR_R;
+    const tmp = new Float32Array(N), Lb = new Float32Array(N);
+    for (let y = 0; y < W; y++) {
+        for (let x = 0; x < W; x++) {
+            let s = 0, c = 0;
+            for (let k = -R; k <= R; k++) {
+                const xx = x + k;
+                if (xx < 0 || xx >= W) continue;
+                s += L[y * W + xx]; c++;
+            }
+            tmp[y * W + x] = s / c;
+        }
+    }
+    for (let y = 0; y < W; y++) {
+        for (let x = 0; x < W; x++) {
+            let s = 0, c = 0;
+            for (let k = -R; k <= R; k++) {
+                const yy = y + k;
+                if (yy < 0 || yy >= W) continue;
+                s += tmp[yy * W + x]; c++;
+            }
+            Lb[y * W + x] = s / c;
+        }
+    }
+    // 4. 逐像素：DE 四面坡光照 + 坡面权重 + 坡脚暗影 + 台地投影
+    const az = azimuthDeg * Math.PI / 180;
+    const sunX = Math.sin(az), sunY = -Math.cos(az);   // 屏幕坐标下指向太阳
+    const light = new Float32Array(256 * 256);
+    const slope = new Float32Array(256 * 256);
+    const foot = new Float32Array(256 * 256);
+    const shadow = new Float32Array(256 * 256);
+    const band = 2 * R + 1;
+    const smooth = (a: number, b: number, v: number) => {
+        const t = Math.max(0, Math.min(1, (v - a) / (b - a)));
+        return t * t * (3 - 2 * t);
+    };
+    for (let y = 0; y < 256; y++) {
+        for (let x = 0; x < 256; x++) {
+            const px = x + PAD, py = y + PAD, i = py * W + px, o = y * 256 + x;
+            const gx = (Lb[i + 1] - Lb[i - 1]) * 0.5 * band;
+            const gy = (Lb[i + W] - Lb[i - W]) * 0.5 * band;
+            const mag = Math.hypot(gx, gy);
+            const towardSun = -(gx * sunX + gy * sunY);
+            const cross = Math.abs(gx * sunY - gy * sunX);
+            let l = 1.0;
+            if (mag > 0.05) {
+                if (towardSun > 0.01) l = 1.0 + Math.min(0.28, towardSun * 0.65);
+                else if (towardSun < -0.01) l = 1.0 + Math.max(-0.31, towardSun * 0.72);
+                else l = 1.0 - Math.min(0.10, cross * 0.22);
+            }
+            const flat = 1.0 + Math.min(0.07, Lb[i] * 0.022);
+            light[o] = Math.max(0.67, Math.min(1.30, l + flat - 1.0));
+            slope[o] = smooth(0.02, 0.12, Math.abs(light[o] - flat));
+            const e = Math.max(0, Math.min(1, Lb[i] - L[i]));
+            foot[o] = smooth(0.02, 0.20, e) * (1 - smooth(0.20, 0.58, e));
+            // 台地投影：朝太阳方向找更高的档，落差越大投得越远
+            const h0 = L[i];
+            let sh = 1.0;
+            if (h0 < 7) {
+                for (let d = 1; d <= TERRACE_SHADOW_MAX; d++) {
+                    const sx = px + Math.round(sunX * d), sy = py + Math.round(sunY * d);
+                    const diff = L[sy * W + sx] - h0;
+                    if (diff <= 0) continue;
+                    const reach = diff * TERRACE_SHADOW_PX_PER_LEVEL;
+                    if (d > reach) continue;
+                    const s = 1.0 - 0.18 * (1 - (d - 1) / reach);
+                    if (s < sh) sh = s;
+                }
+            }
+            shadow[o] = sh;
+        }
+    }
+    return { light, slope, foot, shadow };
+}
+
 function dilateMask(mask: Uint8Array, w: number, h: number, R: number): Uint8Array {
     const tmp = new Uint8Array(w * h), out = new Uint8Array(w * h);
     for (let y = 0; y < h; y++) {
@@ -730,6 +871,10 @@ function renderHillshade(
     const lzS = Math.sin(altExpS);
 
     const zScale = (params.zFactor / 25.0);
+    // 7 层高地试验：需要外扩高程（浮雕瓦片才有），没有就不画
+    const terrace = req.terraceExp && paddedDem && width === 256 && height === 256
+        ? computeTerrace(paddedDem, params.azimuth)
+        : null;
 
     // [REGION-PREP] 预解析区域用于逐像素查询
     const hasRegions = !!(regions && regions.length > 0 && tileBounds);
@@ -1006,6 +1151,12 @@ function renderHillshade(
                     expShade = Math.max(minShade, Math.min(1.42, expShade));
 
                     shadeFactor = 1 + (expShade - 1) * params.opacity;
+                }
+                // 7 层高地：档内只留 30% 原山影，台地光影由 DE 坡面光照、坡脚暗影与台地投影给出
+                const terraceOn = terrace !== null && zC > 0 && !(waterMask !== null && waterMask[yM + x] !== 0);
+                if (terraceOn) {
+                    const o = yM + x;
+                    shadeFactor = (1 + (shadeFactor - 1) * 0.30) * terrace.light[o] * terrace.shadow[o] * (1 - terrace.foot[o] * 0.11);
                 }
                 //const shadeFactor = Math.min(1.0, ambientBase + hillshade * shadowStrength);
 
@@ -1318,6 +1469,14 @@ function renderHillshade(
                     const k = lit * 0.12;
                     r *= 1 + k;
                     b *= 1 - k;
+                }
+
+                // 7 层高地：坡面混 26% 土石色（同战术模式），雪线以上不混
+                if (terraceOn) {
+                    const k = terrace.slope[yM + x] * 0.26 * snowFade;
+                    r += (150 - r) * k;
+                    g += (124 - g) * k;
+                    b += (92 - b) * k;
                 }
 
                 let outR = r * shadeFactor;

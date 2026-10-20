@@ -6673,7 +6673,11 @@ export class Scene13WarLayer {
                     m.y += mvy * mv;
                     // 🔴 [2026-10-18 主人报「士兵在行进过程中，有的时候会频繁改变朝向，出现颤抖的感觉」]
                     //    追击朝向对准追击目标方向 (fdx, fdy) 而非瞬态侧滑向量 (mvx, mvy)，并走带确认与冷却锁的 steerManDir。
-                    if (fd > ARRIVE_EPS) {
+                    // 🔴 [2026-10-21 主人报「攻城塔往北往上走，但是朝向不对」] 攻城武器是车，不会侧着滑：
+                    //    被己方兵挡住侧滑绕行时，车头跟实际行进方向 (mvx, mvy)，不对准追击目标。士兵仍按上条口径。
+                    if (fd > ARRIVE_EPS && m.siegeW) {
+                        this.steerManDir(m, mvx, mvy, dt);
+                    } else if (fd > ARRIVE_EPS) {
                         this.steerManDir(m, fdx, fdy, dt);
                     } else {
                         this.steerManDir(m, foe.x - m.x, foe.y - m.y, dt);
