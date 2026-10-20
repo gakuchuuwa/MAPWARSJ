@@ -1525,31 +1525,51 @@ export function computeFortifiedWallAndGate(baseSize: number, S: number = 7, nar
  *    DE 东北向、东南向的墙段与城门各有一套素材 ⇒ 左上边、右下边（走向 ↗↙）用 NE；右上边、左下边（走向 ↘↖）用 SE。
  */
 export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: number, gateEdges: readonly boolean[] = [true, true, true, true]): { pieces: PalisadeGridPiece[]; L: number; a: number } {
-    const L = 2 * seg + 5;
-    const a = -Math.floor(L / 2);
+    const r = buildFortifiedRectRingOnGrid(seg, seg, tileW, tileH, gateEdges);
+    return { pieces: r.pieces, L: r.Li, a: r.ai };
+}
+
+/**
+ * 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子」]
+ * 方形加固墙圈的**矩形泛化**（只给「险要矩形形制」用；方形仍走上面的 `buildFortifiedRingOnGrid`，两者输出逐件一致）：
+ *   · 两个方向分别算边长：i 向（屏幕 ↘）边长 `Li = 2·segI + 5`，j 向（屏幕 ↗）边长 `Lj = 2·segJ + 5`；
+ *   · 一角的城垛 + 该边墙段 + 城门 4 格 + 墙段 + 下一角城垛；城门居中 ⇒ 每条边按**自己那条边**的 seg 算门位：
+ *       j 向的两条边（W→N、E→S）用 segJ，i 向的两条边（N→E、S→W）用 segI；
+ *   · 圈心恒在 (0.5, 0.5)：`ai = −⌊Li/2⌋`、`aj = −⌊Lj/2⌋`，Li/Lj 都是奇数 ⇒ 圈心屏幕坐标恒为 (0, +tileH/2)，
+ *     与 `buildDeCityGridHtml` 的容器/铺装中心同源；
+ *   · 每件坐标仍用 at(i,j) = ((i−j)·tileW/2, (i+j)·tileH/2)，与方形同一套格坐标。
+ */
+export function buildFortifiedRectRingOnGrid(
+    segI: number, segJ: number, tileW: number, tileH: number,
+    gateEdges: readonly boolean[] = [true, true, true, true],
+): { pieces: PalisadeGridPiece[]; Li: number; Lj: number; ai: number; aj: number } {
+    const Li = 2 * segI + 5, Lj = 2 * segJ + 5;
+    const ai = -Math.floor(Li / 2), aj = -Math.floor(Lj / 2);
     const hx = tileW / 2, hy = tileH / 2;
     const at = (i: number, j: number) => ({ x: (i - j) * hx, y: (i + j) * hy });
     const pieces: PalisadeGridPiece[] = [];
-    const N = { i: a, j: a }, E = { i: a + L, j: a }, S = { i: a + L, j: a + L }, W = { i: a, j: a + L };
+    const N = { i: ai, j: aj }, E = { i: ai + Li, j: aj }, S = { i: ai + Li, j: aj + Lj }, W = { i: ai, j: aj + Lj };
     for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
-    const gateMid = seg + 2.5;                               // 从起点角楼数，门心所在的步数（半整数）
-    const isWall = (t: number) => t <= seg || t >= seg + 5;   // t = 1 … L−1
-    // 四条边：起点角、每步增量、墙段 / 城门朝向（DE 两套素材，不镜像）
-    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE' }> = [
-        { from: W, di: 0, dj: -1, dir: 'NE' },   // 左上边：西角 → 北角（屏幕 ↗）
-        { from: N, di: 1, dj: 0, dir: 'SE' },    // 右上边：北角 → 东角（屏幕 ↘）
-        { from: E, di: 0, dj: 1, dir: 'NE' },    // 右下边：东角 → 南角（屏幕 ↙，与 ↗ 同一走向）
-        { from: S, di: -1, dj: 0, dir: 'SE' },   // 左下边：南角 → 西角（屏幕 ↖，与 ↘ 同一走向）
+    // 四条边：起点角、每步增量、墙段 / 城门朝向（DE 两套素材，不镜像）、这条边的 seg（城门居中 + 两侧墙段等长）
+    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE'; seg: number }> = [
+        { from: W, di: 0, dj: -1, dir: 'NE', seg: segJ },   // 左上边：西角 → 北角（屏幕 ↗）
+        { from: N, di: 1, dj: 0, dir: 'SE', seg: segI },    // 右上边：北角 → 东角（屏幕 ↘）
+        { from: E, di: 0, dj: 1, dir: 'NE', seg: segJ },    // 右下边：东角 → 南角（屏幕 ↙，与 ↗ 同一走向）
+        { from: S, di: -1, dj: 0, dir: 'SE', seg: segI },   // 左下边：南角 → 西角（屏幕 ↖，与 ↘ 同一走向）
     ];
     edges.forEach((e, k) => {
         const hasGate = gateEdges[k] !== false;   // 不开门的边整边是墙（中城普通双门款：只开左上、右下两边）
-        for (let t = 1; t <= L - 1; t++) {
+        const seg = e.seg;
+        const len = e.di === 0 ? Lj : Li;         // 这条边从起点角到终点角的总步数（= 2·seg + 5）
+        const gateMid = seg + 2.5;                // 从起点角楼数，门心所在的步数（半整数）
+        const isWall = (t: number) => t <= seg || t >= seg + 5;   // t = 1 … len−1
+        for (let t = 1; t <= len - 1; t++) {
             if (hasGate && !isWall(t)) continue;
             pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
         }
         if (hasGate) pieces.push({ ...at(e.from.i + e.di * gateMid, e.from.j + e.dj * gateMid), type: 'GATE', gateDir: e.dir });
     });
-    return { pieces, L, a };
+    return { pieces, Li, Lj, ai, aj };
 }
 
 /**
@@ -1562,28 +1582,87 @@ export function buildFortifiedRingOnGrid(seg: number, tileW: number, tileH: numb
  *   · DE 门素材只有 NE / SE 两种走向（无真正朝正向的门），所以每个顶点的门只能顺着一条边开。
  */
 export function buildCornerGateRingOnGrid(seg: number, tileW: number, tileH: number): { pieces: PalisadeGridPiece[]; L: number; a: number } {
-    const L = 2 * seg + 5;
-    const a = -Math.floor(L / 2);
+    const r = buildCornerGateRectRingOnGrid(seg, seg, tileW, tileH);
+    return { pieces: r.pieces, L: r.Li, a: r.ai };
+}
+
+/**
+ * 🔴 [2026-10-20 主人令「东方险要改矩形」] 外圈墙的**矩形泛化**（方形仍走上面的 `buildCornerGateRingOnGrid`，输出逐件一致）：
+ *   · 外圈比内圈再大一圈：i 向 `Li = 2·segI + 5`、j 向 `Lj = 2·segJ + 5`；
+ *   · 每条边两道门（8 门），门位按这条边的长度取 ~26% / ~74%（方形 L=25 时正好回到原来的 6.5 / 18.5，8 门间距均匀）；
+ *   · 门的 4 格 = 门本体 2 + 两侧门塔各 1，故门的格位 = |t − 门心| < 2；
+ *   · 圈心同样恒在 (0.5, 0.5)，坐标仍用 at(i,j)。
+ */
+export function buildCornerGateRectRingOnGrid(
+    segI: number, segJ: number, tileW: number, tileH: number,
+): { pieces: PalisadeGridPiece[]; Li: number; Lj: number; ai: number; aj: number } {
+    const Li = 2 * segI + 5, Lj = 2 * segJ + 5;
+    const ai = -Math.floor(Li / 2), aj = -Math.floor(Lj / 2);
     const hx = tileW / 2, hy = tileH / 2;
     const at = (i: number, j: number) => ({ x: (i - j) * hx, y: (i + j) * hy });
     const pieces: PalisadeGridPiece[] = [];
-    const N = { i: a, j: a }, E = { i: a + L, j: a }, S = { i: a + L, j: a + L }, W = { i: a, j: a + L };
-    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE' }> = [
-        { from: W, di: 0, dj: -1, dir: 'NE' },
-        { from: N, di: 1, dj: 0, dir: 'SE' },
-        { from: E, di: 0, dj: 1, dir: 'NE' },
-        { from: S, di: -1, dj: 0, dir: 'SE' },
+    const N = { i: ai, j: aj }, E = { i: ai + Li, j: aj }, S = { i: ai + Li, j: aj + Lj }, W = { i: ai, j: aj + Lj };
+    const edges: Array<{ from: { i: number; j: number }; di: number; dj: number; dir: 'NE' | 'SE'; len: number }> = [
+        { from: W, di: 0, dj: -1, dir: 'NE', len: Lj },
+        { from: N, di: 1, dj: 0, dir: 'SE', len: Li },
+        { from: E, di: 0, dj: 1, dir: 'NE', len: Lj },
+        { from: S, di: -1, dj: 0, dir: 'SE', len: Li },
     ];
     for (const c of [W, N, E, S]) pieces.push({ ...at(c.i, c.j), type: 'POST' });
     for (const e of edges) {
         // 🔴 [2026-10-20 主人令「8 个城门挨得有点近，分开一些，让 8 个城门间距差不多」]
-        //    L = 25，8 门均匀环绕要塞（门心间距均约为 12~13 步，彻底消除角楼两侧扎堆拥挤）：
-        //    角垛(t=0) → 墙(t=1..4, 4件) → 门1(t=5..8，门心 6.5) → 中段墙(t=9..16, 8件) → 门2(t=17..20，门心 18.5) → 墙(t=21..24, 4件) → 下一角垛(t=25)
-        for (let t = 1; t <= 4; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
-        pieces.push({ ...at(e.from.i + e.di * 6.5, e.from.j + e.dj * 6.5), type: 'GATE', gateDir: e.dir });
-        for (let t = 9; t <= 16; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
-        pieces.push({ ...at(e.from.i + e.di * 18.5, e.from.j + e.dj * 18.5), type: 'GATE', gateDir: e.dir });
-        for (let t = 21; t <= L - 1; t++) pieces.push({ ...at(e.from.i + e.di * t, e.from.j + e.dj * t), type: e.dir });
+        //    L=25 时原为 6.5 / 18.5（≈26% / 74%）；矩形两边长度不同，门位按各自边长取同样的比例 ⇒ 8 门沿环均匀。
+        const t1 = Math.floor(e.len * 0.26) + 0.5;
+        const t2 = Math.floor(e.len * 0.74) + 0.5;
+        const gateCells = [t1, t2];
+        const seq: Array<{ t: number; gate: boolean }> = [];
+        for (let t = 1; t <= e.len - 1; t++) {
+            if (gateCells.some((g) => Math.abs(t - g) < 2)) continue;   // 门的 4 格让给城门
+            seq.push({ t, gate: false });
+        }
+        seq.push({ t: t1, gate: true }, { t: t2, gate: true });
+        seq.sort((a, b) => a.t - b.t);   // 与方形原实现同序（墙…门…墙…门…墙）
+        for (const s of seq) {
+            pieces.push({
+                ...at(e.from.i + e.di * s.t, e.from.j + e.dj * s.t),
+                type: s.gate ? 'GATE' : e.dir,
+                ...(s.gate ? { gateDir: e.dir } : {}),
+            });
+        }
     }
-    return { pieces, L, a };
+    return { pieces, Li, Lj, ai, aj };
+}
+
+/**
+ * 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子我看看」]
+ * 险要（pass）双圈形制参数 —— **一处定义**，`TerritorySystem` 摆城与 `Scene13GroundLayerGL` 台地平整共用：
+ *   · 方形（现状）：内圈 17×17 步、外圈 25×25 步；
+ *   · 矩形（新，2:1）：内圈 21×13 步、外圈 29×21 步。两边周长与方形**完全相同**
+ *     （内 2·(21+13)=68 = 2·(17+17)，外 100 = 100）⇒ 墙/门件总数不变，只把形状拉长。
+ */
+export const PASS_SQUARE_RINGS = {
+    inner: { segI: 6, segJ: 6 },    // Li 17 × Lj 17
+    outer: { segI: 10, segJ: 10 },  // Li 25 × Lj 25
+} as const;
+export const PASS_RECT_RINGS = {
+    inner: { segI: 8, segJ: 4 },    // Li 21 × Lj 13
+    outer: { segI: 12, segJ: 8 },   // Li 29 × Lj 21
+} as const;
+
+export interface PassRingHalfExtents {
+    /** 内圈 i / j 方向半边长（格） */
+    innerHalfI: number; innerHalfJ: number;
+    /** 外圈 i / j 方向半边长（格） */
+    outerHalfI: number; outerHalfJ: number;
+}
+
+/** 取险要双圈的半边长（格）；`Scene13GroundLayerGL.flattenPassTerraces` 的矩形分支用它算台地边界。 */
+export function passRingHalfExtents(rect: boolean): PassRingHalfExtents {
+    const r = rect ? PASS_RECT_RINGS : PASS_SQUARE_RINGS;
+    return {
+        innerHalfI: (2 * r.inner.segI + 5) / 2,
+        innerHalfJ: (2 * r.inner.segJ + 5) / 2,
+        outerHalfI: (2 * r.outer.segI + 5) / 2,
+        outerHalfJ: (2 * r.outer.segJ + 5) / 2,
+    };
 }

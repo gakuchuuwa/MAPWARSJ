@@ -15,6 +15,7 @@
 
 import { DE_TERRAIN_MANIFEST, DE_TERRAIN_BLEND, type DeTerrainManifestItem } from '../../data/battlefield/deTerrainData';
 import type { Scene13GroundTiles } from './Scene13EnvironmentGenerator';
+import type { PassRingHalfExtents } from '../../systems/cityWallShared';
 
 export const DE_TILE_W = 96, DE_TILE_H = 48, DE_ELEV_H = 24;
 // 🔴 [2026-10-12 主人令「地面放大到 96×48」「保留长方形」] 原 64×32：建筑/城墙/兵模按 DE 原生像素画（1.0），
@@ -1900,7 +1901,9 @@ export class Scene13GroundLayerGL {
     H: number,
     seedStr: string,
     wallPts: ReadonlyArray<{ x: number; y: number }> = [],
-    bldPts: ReadonlyArray<{ x: number; y: number }> = []
+    bldPts: ReadonlyArray<{ x: number; y: number }> = [],
+    /** 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈半边长（格）；传了就走下面的矩形感知台地分支，不传＝现有方形算法一个像素不动 */
+    rect?: PassRingHalfExtents,
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
@@ -1921,6 +1924,62 @@ export class Scene13GroundLayerGL {
     const castleLevel = 6.5 + (rnd() < 0.6 ? 0.5 : 0); // 6.5 或 7.0 级
     const innerLevel = 4.5 + (rnd() < 0.6 ? 0.5 : 0);  // 4.5 或 5.0 级
     const outerLevel = 3.0 + (rnd() < 0.5 ? 0.5 : 0);  // 3.0 或 3.5 级
+
+    // 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子」]
+    //    矩形双圈专属台地：方形版靠「墙件曼哈顿距离找内/外圈间隙」，矩形两圈的距离范围会重叠（内圈角 10.5 > 外圈短边 10.5），
+    //    所以这里直接用矩形边界算：在等轴 i/j 坐标里取「到矩形的最大轴向距离」——dIn / dOut 为点到内/外圈矩形外面的距离（圈内为负）。
+    //    层次与方形一致：城堡平顶(6.5~7) → 内城平台(4.5~5) → 外城平台(3~3.5) → 外坡落回谷底(0)。
+    //    屏幕格坐标 (x,y) → 等轴 i/j：圈心恒在屏幕 (0, +TH/2)（格坐标里 y 偏 +0.5），i = dxc+dyc、j = dyc−dxc。
+    if (rect) {
+      const { innerHalfI, innerHalfJ, outerHalfI, outerHalfJ } = rect;
+      const cx = c.gx, cy = c.gy + 0.5;
+      const PAD = 1.0;                     // 平台比墙线外扩（地面双线性插值的余量）
+      const castleTop = 2.6, castleFoot = 4.2;   // 城堡平顶 / 降到内城的坡脚（离城心格数）
+      const innerSlope = 2.0;              // 内圈墙外 → 外城平台的坡宽
+      const outerSlope = 3.5;              // 外圈墙外 → 谷底的坡宽
+      const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;   // 外坡起点
+      const maxCheck = R3 + outerSlope + 2;
+      this.cornerElev.fill(0);
+      for (let y = 0; y <= N; y++) {
+        for (let x = 0; x <= N; x++) {
+          const dxc = x - cx, dyc = y - cy;
+          const di = dxc + dyc, dj = dyc - dxc;
+          const dOut = Math.max(Math.abs(di) - outerHalfI, Math.abs(dj) - outerHalfJ);
+          if (dOut > maxCheck) continue;   // 超出外坡范围由外围地形接管
+          const dIn = Math.max(Math.abs(di) - innerHalfI, Math.abs(dj) - innerHalfJ);
+          const dCenter = Math.max(Math.abs(di), Math.abs(dj));
+          let targetH = 0;
+          if (dIn <= PAD) {
+            // 内圈以内（含城堡）：城堡平顶 → 平滑降到内城平台 → 平台一直铺到内墙脚下
+            if (dCenter <= castleTop) targetH = castleLevel;
+            else if (dCenter <= castleFoot) {
+              const s = (dCenter - castleTop) / (castleFoot - castleTop);
+              const t = s * s * (3 - 2 * s);
+              targetH = castleLevel + (innerLevel - castleLevel) * t;
+            } else targetH = innerLevel;
+          } else if (dIn <= PAD + innerSlope) {
+            // 内墙 → 外墙之间：从内城平台平滑降到外城平台
+            const s = (dIn - PAD) / innerSlope;
+            const t = s * s * (3 - 2 * s);
+            targetH = innerLevel + (outerLevel - innerLevel) * t;
+          } else if (dOut <= PAD) {
+            // 外城平台：外圈墙与四门都站在这一层
+            targetH = outerLevel;
+          } else {
+            // 外圈墙脚下：有机缓坡落回 0 级谷底（攻方仰攻）
+            const s = Math.min(1, (dOut - PAD) / outerSlope);
+            const t = s * s * (3 - 2 * s);
+            targetH = outerLevel * (1 - t);
+          }
+          const idx = y * V + x;
+          if (targetH > this.cornerElev[idx]) this.cornerElev[idx] = targetH;
+        }
+      }
+      this.generateDeElevationGrid(cx, cy, R3 + 5.5, outerLevel - 0.5, rnd, 'pass');
+      this.updateCornerLight();
+      this.elevDirty = true;
+      return { castleLevel, innerLevel, outerLevel };
+    }
 
     // 3. 台地边缘按实际墙件 / 建筑位置定（曼哈顿距离 |dx|+|dy|：两圈城墙在地面格里都是菱形）
     // 🔴 [2026-10-15 主人令「险要的内墙、箭塔不平你来修」] 原写死 R1=4.0（+1.8 坡）/ R2=8.6 / R3=14.2，实测独松关：

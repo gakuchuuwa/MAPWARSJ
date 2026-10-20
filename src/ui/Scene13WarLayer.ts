@@ -152,6 +152,8 @@ export class Scene13WarLayer {
     /** [2026-08-22] 攻城战守方城等级（big_city/medium_city/small_city/pass）——决定守城建筑池时代 */
     defenderCityType: CityType | null = null;    /** [2026-08-24] 攻城战守方据点 cityId（名城挂世界奇观，守方城中央立奇观地标） */
     defenderCityId: string | null = null;
+    /** 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的……先做个样子」] 险要形制：'rect'＝矩形 2:1（预览 opt-in）；null/方形＝现状 */
+    defenderPassShape: 'square' | 'rect' | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
     men: WarMan[] = [];
@@ -1478,6 +1480,7 @@ export class Scene13WarLayer {
         this.battleType = init.battleType ?? 'field';
         this.defenderCityType = init.defenderCityType ?? null;
         this.defenderCityId = init.defenderCityId ?? null;
+        this.defenderPassShape = init.defenderPassShape ?? null;
         if (init.passMountainConfig) {
             this.passMountainConfig = { ...this.passMountainConfig, ...init.passMountainConfig };
         }
@@ -1546,7 +1549,9 @@ export class Scene13WarLayer {
                 //    逐类（建筑）/逐件（墙·门·垛·箭塔）定宽；尺寸来自构建期常量表 `DE_SPRITE_BOX_W`，**同步可取**。
                 //    必须是同步的：异步会让城池件表晚于「出兵口布阵」就绪 ⇒ 八方向出兵整支落到旧 13 回退阵型
                 //    （实测八个方向基座恒为 512,450）。战略地图那条路不传原生表，一个像素不动。
-                this.deCity = city ? strategicCityHtmlNative(city) : null;
+                this.deCity = city
+                    ? strategicCityHtmlNative(city, this.defenderPassShape === 'rect' ? { passShape: 'rect' } : undefined)
+                    : null;
                 this.deCityCenter = { x: this.worldCX, y: this.worldCY };
             }
             {

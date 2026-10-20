@@ -11,7 +11,10 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     // 🔴 [M4 件表版 · 2026-10-11 主人令「按文档顺序先做①件表版」] 险要/大城的两个围墙函数与件类型
     //     **搬进共享模块**（纯搬迁、一字未改）：战术侧要直接调真函数、不许复刻一份；
     //     名字保持原样（无 alias）⇒ 本文件里的调用点一个字不用改。
-    computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, buildCornerGateRingOnGrid, type PalisadeGridPiece } from './cityWallShared';
+    computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, buildCornerGateRingOnGrid,
+    // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形形制：方形两份保留、矩形另加两份（方形真实调用点一字未改）
+    buildFortifiedRectRingOnGrid, buildCornerGateRectRingOnGrid, PASS_RECT_RINGS, PASS_SQUARE_RINGS,
+    type PalisadeGridPiece } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
 export { REGION_TO_DE_STYLE, resolveCityDeBuildingStyle };
@@ -1023,7 +1026,7 @@ function buildDeStockadeStackHtml(
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes, buildingStyle?: string): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes, buildingStyle?: string, passShape?: 'square' | 'rect'): string {
     // 2026-09-10 主人定：草原险要去掉围墙，中心耸立蒙古要塞城堡+营帐环卫 —— 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」]
     //    现只留给**战略地图**（没传原生尺寸表）；战术侧毡帐险要也走下面按格摆放的同一套（加固墙+外圈石墙+四门+城堡+箭塔）。
     if (style === 'YURT' && !native) return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native);
@@ -1035,6 +1038,12 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    箭塔占 1×1，位心取 −5 / 0.5 / 6（离城堡 3 格空隙，关于城心对称，吸附整格后落在 −5 / 1 / 6）。
     //    🔴 [2026-10-18 主人定「真实的漠北 9 建筑都是蒙古包」「中间的城堡换成蒙古包」] 漠北（MONGOL）的险要：
     //       9 栋全是蒙古包（8 种各一 + 1 个重复，城心也是包），城墙/角楼等防御件不动。
+    // 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子我看看」]
+    //    矩形是**新增形制、按 opt-in 开关**（`passShape === 'rect'`）：不传＝上面这套方形一个像素不动。
+    //    矩形 2:1：内圈 21×13 步、外圈 29×21 步（周长与方形完全相同 ⇒ 墙/门/角楼件数一分不差）；
+    //    城内仍 9 栋＝中心城堡 + 4 角塔 + 4 侧翼塔，塔位改按矩形内圈（长轴向 i，屏幕↘）重新排。
+    const passRings = passShape === 'rect' ? PASS_RECT_RINGS : PASS_SQUARE_RINGS;
+    const isRectPass = passShape === 'rect';
     const isMobeiPass = isMobeiStyle(buildingStyle);
     const passInnerBuildings: Array<[string, string]> = isMobeiPass
         ? (isMobeiHalfYurtCity(cityId)
@@ -1051,24 +1060,37 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    内墙 seg=6（角垛在 -8,-8），原角塔位仅 -5（距城心 5.5 格，被高耸城堡屋顶遮挡）；
     //    现角塔前推至 -6.5 / 7.5（距城心 7 格，紧咬内城角垛），高度与视野彻底越过城堡屋脊，耸立于北城头；
     //    4 侧翼哨位（东南西北正十字）分布在 -5.0 / 6.0，守护四向内门通道。
-    const passCornerAt = (b: number): number => (b < 0 ? -6.5 : 7.5);
-    const passFlankAt = (b: number): number => (b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0));
+    //    🔴 [2026-10-20] 矩形内圈（i −10…11 / j −6…7，圈心 0.5,0.5）沿用同一思路：角塔只留 2 格离墙、侧翼塔贴四门内侧 2 格。
+    //    注意矩形 i/j 两轴半长不同（10.5 / 6.5），角塔的 cj 必须用短轴值（−4 / 5），否则会掉到内外墙夹道的坡上。
+    const passCornerI = (b: number): number => (isRectPass ? (b < 0 ? -8 : 9) : (b < 0 ? -6.5 : 7.5));
+    const passCornerJ = (b: number): number => (isRectPass ? (b < 0 ? -4 : 5) : (b < 0 ? -6.5 : 7.5));
+    const passFlankAt = (b: number, axis: 'i' | 'j'): number => {
+        if (isRectPass) return axis === 'i' ? (b < 0 ? -8 : 9) : (b < 0 ? -4 : 5);
+        return b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0);
+    };
     const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
     const passFlanks: ReadonlyArray<readonly [number, number]> = [[0, -1], [-1, 0], [1, 0], [0, 1]];
     const passSlotCenters = [
         { ci: 0.5, cj: 0.5, isCenter: true },
-        ...passCorners.map(([bi, bj]) => ({ ci: passCornerAt(bi), cj: passCornerAt(bj), isCenter: false })),
-        ...passFlanks.map(([bi, bj]) => ({ ci: passFlankAt(bi), cj: passFlankAt(bj), isCenter: false })),
+        ...passCorners.map(([bi, bj]) => ({ ci: passCornerI(bi), cj: passCornerJ(bj), isCenter: false })),
+        ...passFlanks.map(([bi, bj]) => ({
+            ci: bi === 0 ? 0.5 : passFlankAt(bi, 'i'),
+            cj: bj === 0 ? 0.5 : passFlankAt(bj, 'j'),
+            isCenter: false,
+        })),
     ];
     const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {
-            seg: 6, near: 0, far: 0, corner: false,
+            seg: passRings.inner.segI, segJ: passRings.inner.segJ, near: 0, far: 0, corner: false,
             gateEdges: [true, true, true, true],
             wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd2'),
             buildingStyle: style === 'YURT' ? 'ASIA' : style,
             slotCenters: passSlotCenters,
-            outer: { seg: 10, wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'] },
+            outer: {
+                seg: passRings.outer.segI, segJ: passRings.outer.segJ,
+                wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'],
+            },
         }, buildingStyle) : null;
     if (passGridHtml) return passGridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
 
@@ -1491,8 +1513,10 @@ function deBuildingFootprint(b: string): number {
  */
 /** 战术侧「按格摆放」城池的城型参数（每个数都要先逐格核对：不重叠、不压大道、两栋间 ≥ 1 格、离墙 ≥ 2 格） */
 interface CityGridSpec {
-    /** 每段墙格数（角到角 = 2·seg + 5） */
+    /** 每段墙格数（角到角 = 2·seg + 5）；不传 segJ 时四边等长＝方形（大城/中城/小城/城寨照旧） */
     seg: number;
+    /** 🔴 [2026-10-20 主人令「东方险要改矩形」] j 向（屏幕 ↗）每段墙格数；传了就成矩形（只给险要矩形形制用） */
+    segJ?: number;
     /** 个位中心离圈心的近 / 远距离（格） */
     near: number;
     far: number;
@@ -1510,7 +1534,7 @@ interface CityGridSpec {
     /** 🔴 [2026-10-12 主人令「城寨每段 6」] 城寨的建筑名本身就是完整素材目录名（HUT_A、DARK_HOUSE_AGE1…），不再拼「风格_名_时代」；宽度取 native.spriteW[目录名] */
     rawDirNames?: boolean;
     /** 🔴 [2026-10-12 主人令「险要外围再套一圈普通石墙」] 外圈墙：同心、门开在四个顶点（见 buildCornerGateRingOnGrid）；不传＝只有一圈 */
-    outer?: { seg: number; wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> };
+    outer?: { seg: number; segJ?: number; wallAnchors: Record<string, { pctX: number; pctY: number; widthFactor: number; path: string }> };
     /** 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」] 城内建筑取素材用的风格名（不传＝用 style）。毡帐系没有 `YURT_TOWER_AGE3`，箭塔借亚洲木塔：传 'ASIA'。 */
     buildingStyle?: string;
     /** 不铺城内整片地面（游牧毡帐直接立在草地上，无地基） */
@@ -1524,24 +1548,37 @@ function buildDeCityGridHtml(
     pool: Array<[string, string]>, native: CityNativeSizes, g: CityGridSpec, buildingStyle?: string,
 ): string {
     const TW = DE_ISO_TILE_W, TH = DE_ISO_TILE_H;
+    const hx = TW / 2, hy = TH / 2;
     // 墙圈按格逐件生成：每边 = 角楼 + 墙 seg 格 + 城门 4 格 + 墙 seg 格 + 角楼 ⇒ 角到角 2·seg + 5 步
     // （主人 2026-10-12「先计算下……每段多少个城墙」；不开门的边整边是墙）
-    const ring = buildFortifiedRingOnGrid(g.seg, TW, TH, g.gateEdges);
-    const outerRing = g.outer ? buildCornerGateRingOnGrid(g.outer.seg, TW, TH) : null;
+    // 🔴 [2026-10-20 主人令「东方险要改矩形」] 一律走**矩形泛化版**：segJ 缺省＝seg（方形输出与旧 `buildFortifiedRingOnGrid` 逐件一致）。
+    const ring = buildFortifiedRectRingOnGrid(g.seg, g.segJ ?? g.seg, TW, TH, g.gateEdges);
+    const outerRing = g.outer
+        ? buildCornerGateRectRingOnGrid(g.outer.seg, g.outer.segJ ?? g.outer.seg, TW, TH)
+        : null;
     const frame = outerRing ?? ring;                            // 地面与容器跟最外一圈走
-    const rX = frame.L * TW / 2, rY = frame.L * TH / 2;         // 墙圈菱形半宽 / 半高（px）
-    const ringCy = (2 * frame.a + frame.L) * TH / 2;            // 圈心的屏幕 y（L 为奇数时圈心在半格处）
-    const W = 2 * rX + 400, H = 2 * (rY + Math.abs(ringCy)) + 600;   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
+    // 墙圈外接框（相对容器中心 at(0,0)）：圈心恒在屏幕 (0, +TH/2)（i/j 圈心都落在 0.5），
+    // 半宽 = (Li+Lj)/2·TW/2、半高 = (Li+Lj)/2·TH/2 ⇒ 方形时与旧公式（L·TW/2、L·TH/2）完全相同。
+    const frameHalfW = (frame.Li + frame.Lj) / 2 * hx;
+    const frameHalfH = (frame.Li + frame.Lj) / 2 * hy;
+    const ringCy = hy;                                          // 圈心屏幕 y（Li/Lj 奇数 ⇒ 圈心恒在半格处）
+    const W = 2 * frameHalfW + 400, H = 2 * (frameHalfH + ringCy) + 600;   // 容器：包住墙圈与角楼（战术侧的 deCity.width/height 取这里）
     const AUTO = 1.2;
     const parts: string[] = [];
 
     // 🔴 [2026-10-13 主人令「PASS的内城套上和中城一样的地基地图」]
     // 有外圈墙（如 PASS 双层城）时，地基底图严格对应内城墙圈（ring），与中城地基尺寸范围完全对齐；单层城则沿用 frame。
-    const innerRX = ring.L * TW / 2, innerRY = ring.L * TH / 2;
-    const innerCy = (2 * ring.a + ring.L) * TH / 2;
+    // 🔴 [2026-10-20] 内圈四角改用通用 at(i,j) 求（方形时与旧的 innerRX/innerRY/innerCy 四个点完全相同）。
+    const ringCorner = (i: number, j: number): [number, number] => [(i - j) * hx, (i + j) * hy];
+    const innerCorners: Array<[number, number]> = [
+        ringCorner(ring.ai, ring.aj),
+        ringCorner(ring.ai + ring.Li, ring.aj),
+        ringCorner(ring.ai + ring.Li, ring.aj + ring.Lj),
+        ringCorner(ring.ai, ring.aj + ring.Lj),
+    ];
     if (!g.noGround) parts.push(featheredPolygonGroundDiv(
         W, H, `/SUCAI_TERRAIN/${g.groundTile}.png`, baseSize * 0.32 * AUTO * 2.3,
-        [[0, innerCy - innerRY], [innerRX, innerCy], [0, innerCy + innerRY], [-innerRX, innerCy]],
+        innerCorners,
         TW * 0.5, 0.93, 10,
     ));
 
@@ -1677,8 +1714,9 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
     return { cityRegion, centerCastle, deStyle, useStoneWall };
 }
 
-/** 据点建筑栈（城墙 / 城门 / 建筑 / 地基）HTML —— 战略地图与战术攻城战同一份；baseSize 由调用方给（战术按 DE 原尺寸放大）。 */
-export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType, native?: CityNativeSizes): string {
+/** 据点建筑栈（城墙 / 城门 / 建筑 / 地基）HTML —— 战略地图与战术攻城战同一份；baseSize 由调用方给（战术按 DE 原尺寸放大）。
+ *  🔴 [2026-10-20] `opts.passShape` 只给险要（pass）用：'rect'＝矩形形制（新增，战术预览 opt-in）；不传＝现有方形，一个像素不动。 */
+export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType, native?: CityNativeSizes, opts?: { passShape?: 'square' | 'rect' }): string {
     return (city.type === 'big_city'
     ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native)
     : city.type === 'medium_city'
@@ -1690,7 +1728,7 @@ export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: s
             //          ② 战术攻城战的 pass 早就一律用石墙石砌（2026-08-27 主人「险要城墙与战略一致，用石墙」），
             //             原先只有日本/青藏走小城分支，是战略自己跟战术打架。
             //    中心城堡仍按 resolveCastleAsset 对号：青藏=TIBET_CASTLE_AGE3 藏式金顶宗堡，日本=ASIA_CASTLE_AGE3 天守阁。
-            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native, city.buildingStyle)
+            ? buildDePassStackHtml(baseSize, city.id, deStyle, city.factionId, city.region || cityRegion, city.mirror, native, city.buildingStyle, opts?.passShape)
             : city.type === 'stockade'
                 ? buildDeStockadeStackHtml(baseSize, city.id, deStyle, city.stockadeShape, city.stockadeFence, native, city.buildingStyle, centerCastle)
                 : buildDeSmallCityStackHtml(baseSize, city.id, deStyle, useStoneWall, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native));
