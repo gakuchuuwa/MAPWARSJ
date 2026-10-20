@@ -110,6 +110,31 @@ import { applySpawnBuildings } from './scene13/Scene13CityLayout';
 import { requestGroundLayerGL } from './scene13/Scene13GroundSetup';
 import { render } from './scene13/Scene13Render';
 
+/**
+ * 🔴 [2026-10-20 主人令「对方刚放的计优先用克它的计回应」] 六计相克表（对方刚放的计 → 我方回应：首选、备选），
+ * 按战术模式里六计的实际效果定（见 triggerScene13Skill）：
+ *   攻（猛攻增伤）→ 敌（回血＋减伤四成）｜混（驱散）
+ *   敌（固守减伤）→ 并（破甲：清护盾＋承伤 +35%）｜混（驱散）
+ *   混（我方乱阵、增益被驱散）→ 敌（回血固守撑过混乱）｜胜（补生力军）
+ *   并（我方破甲承伤 +35%）→ 混（清除己方破甲，反乱敌阵）｜敌（减伤抵消）
+ *   胜（对方增兵 8%）→ 败（当场折损敌军 8%）｜攻（猛攻吃掉新兵）
+ *   败（我方折损 8%）→ 胜（补回 8% 生力军）｜敌（固守止损）
+ */
+const SIX_COUNTER: Readonly<Record<TacticalSixSet, readonly TacticalSixSet[]>> = {
+    gongzhan: ['dizhan', 'hunzhan'],
+    dizhan: ['bingzhan', 'hunzhan'],
+    hunzhan: ['dizhan', 'shengzhan'],
+    bingzhan: ['hunzhan', 'dizhan'],
+    shengzhan: ['baizhan', 'gongzhan'],
+    baizhan: ['shengzhan', 'dizhan'],
+};
+/** 三势计池（六计三类见 `SIX_SET_TO_TRI_CLASS`）：优势＝优势组＋均势组；劣势＝劣势组＋均势组；均势＝六计全有 */
+const SIX_POOL_BY_STANCE: Readonly<Record<'adv' | 'bal' | 'dis', readonly TacticalSixSet[]>> = {
+    adv: ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan'],
+    bal: ['gongzhan', 'shengzhan', 'dizhan', 'hunzhan', 'bingzhan', 'baizhan'],
+    dis: ['bingzhan', 'baizhan', 'dizhan', 'hunzhan'],
+};
+
 export class Scene13WarLayer {
     /** [2026-09-20 主人定稿] 关隘城门大山配置（未指定 asset/northAsset 时默认从 11 种大山随机抽取，支持两山夹一关） */
     public passMountainConfig: PassMountainConfig = {};
@@ -411,6 +436,12 @@ export class Scene13WarLayer {
     private lastCastSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
     /** 攻/守双方上一次释放的技能四字名称 */
     private lastCastSkillName: [string, string] = ['', ''];
+    /** 双方各自已放了几计（每放一计 +1）——判断「对方刚放的那一计我回应过没有」 */
+    private skillCastSeq: [number, number] = [0, 0];
+    /** 我方已回应到对方第几计（= 对方 skillCastSeq）；对方又放了新计且未回应 ⇒ 见招拆招 */
+    private skillAnsweredSeq: [number, number] = [0, 0];
+    /** 自动选好的下一计（含随机部分）：同一局面下定死，免得 UI 预告每帧乱跳；局面一变重选 */
+    private plannedSkill: [{ key: string; six: TacticalSixSet } | null, { key: string; six: TacticalSixSet } | null] = [null, null];
     /** 玩家手动预点亮（钦定）的下一计；null 表示自动见招拆招 */
     private queuedSkill: [TacticalSixSet | null, TacticalSixSet | null] = [null, null];
     /** 【攻】振己威持续倒计时（秒）：己方全场士兵攻速 ×1.30、移速 ×1.20、伤害 ×1.30 */
@@ -487,6 +518,9 @@ export class Scene13WarLayer {
             this.lastCastSkill[f] = null;
             this.lastCastSkillName[f] = '';
             this.queuedSkill[f] = null;
+            this.skillCastSeq[f] = 0;
+            this.skillAnsweredSeq[f] = 0;
+            this.plannedSkill[f] = null;
             this.skillFrenzyTimer[f] = 0;
             this.skillShieldTimer[f] = 0;
             this.skillPanicTimer[f] = 0;
@@ -494,14 +528,18 @@ export class Scene13WarLayer {
         }
     }
 
-    /** 计算某方当前若不手动干预，按战局态势（顺风/焦灼/逆风）自动释放的六计类型 */
+    /**
+     * 🔴 [2026-10-20 主人令「按方案甲改六计：对方刚放的计优先用克它的计回应；没有可克的就按当前优势、均势、劣势从对应计池里选，并且不连续重复同一计」]
+     * 自动选下一计（玩家没钦定时）：
+     *   ① 见招拆招：对方放了新计、我方还没回应 ⇒ 用克它的计（首选 → 备选），须在本方当前形势的计池里、且不是我上一计；
+     *   ② 否则按形势从计池里选：优先本武将该形势的专属计（不是上一计时），其余在池里随机，不连续重复同一计。
+     *   计池（六计三类见 `SIX_SET_TO_TRI_CLASS`：攻·胜=优势 / 敌·混=均势 / 并·败=劣势）：
+     *     优势＝攻胜敌混；均势＝六计全有；劣势＝并败敌混 —— 「败」只有均势、劣势时才放得出。
+     *   同一局面（形势、对方第几计、我上一计）下结果定死，UI 预告不乱跳。
+     */
     private resolveAutoNextSkill(f: 0 | 1): TacticalSixSet {
         const ef: 0 | 1 = f === 0 ? 1 : 0;
-        // 若敌方正在生效增益 Buff（振威/固防/破防），优先用【混战】看破驱散并控场
-        if (this.skillFrenzyTimer[ef] > 0.5 || this.skillShieldTimer[ef] > 0.5 || this.skillVulnTimer[f] > 0.5) {
-            return 'hunzhan';
-        }
-        // 计算双方当前战力比（场上存活人口 + 后备池人口）
+        // 双方当前战力比（场上存活人口 + 后备池人口）
         let myPop = 0, foePop = 0;
         for (const m of this.men) {
             if (m.hp <= 0) continue;
@@ -515,28 +553,38 @@ export class Scene13WarLayer {
         }
         const ratio = myPop / Math.max(1, foePop);
         const stance: 'adv' | 'bal' | 'dis' = ratio >= 1.15 ? 'adv' : (ratio <= 0.85 ? 'dis' : 'bal');
+        const last = this.lastCastSkill[f];
+        const oppNew = this.skillCastSeq[ef] > this.skillAnsweredSeq[f] ? this.lastCastSkill[ef] : null;
+        const key = `${stance}|${oppNew ?? '-'}|${this.skillCastSeq[ef]}|${last ?? '-'}`;
+        const planned = this.plannedSkill[f];
+        if (planned && planned.key === key) return planned.six;
 
-        // 优先取该武将在当前态势下的专属计策
-        const gid = this.sideGeneralId[f];
-        if (gid) {
-            const profile = getGeneralProfile(gid);
-            const sigId = stance === 'adv'
-                ? (f === 0 ? (profile?.atkAdvantageSkillId ?? profile?.advantageSkillId) : (profile?.defAdvantageSkillId ?? profile?.advantageSkillId))
-                : stance === 'dis'
-                    ? (f === 0 ? (profile?.atkDisadvantageSkillId ?? profile?.disadvantageSkillId) : (profile?.defDisadvantageSkillId ?? profile?.disadvantageSkillId))
-                    : (f === 0 ? (profile?.atkBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId) : (profile?.defBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId));
-            if (sigId) {
-                const entry = TACTICAL_SKILL_ENTRIES_V1.find((e) => e.id === sigId);
-                if (entry) return EFFECT_TO_SIX_SET[entry.baseEffect];
+        const pool: readonly TacticalSixSet[] = SIX_POOL_BY_STANCE[stance];
+        const usable = (s: TacticalSixSet | undefined): s is TacticalSixSet => !!s && s !== last && pool.includes(s);
+        let six: TacticalSixSet | undefined;
+        // ① 见招拆招
+        if (oppNew) six = SIX_COUNTER[oppNew].find(usable);
+        // ② 按形势选：本武将该形势专属计优先
+        if (!six) {
+            const gid = this.sideGeneralId[f];
+            if (gid) {
+                const profile = getGeneralProfile(gid);
+                const sigId = stance === 'adv'
+                    ? (f === 0 ? (profile?.atkAdvantageSkillId ?? profile?.advantageSkillId) : (profile?.defAdvantageSkillId ?? profile?.advantageSkillId))
+                    : stance === 'dis'
+                        ? (f === 0 ? (profile?.atkDisadvantageSkillId ?? profile?.disadvantageSkillId) : (profile?.defDisadvantageSkillId ?? profile?.disadvantageSkillId))
+                        : (f === 0 ? (profile?.atkBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId) : (profile?.defBalanceSkillId ?? profile?.balanceSkillId ?? profile?.tacticalSkillId));
+                const entry = sigId ? TACTICAL_SKILL_ENTRIES_V1.find((e) => e.id === sigId) : undefined;
+                const sig = entry ? EFFECT_TO_SIX_SET[entry.baseEffect] : undefined;
+                if (usable(sig)) six = sig;
             }
         }
-        // 默认按三势轮换：顺风（胜/敌）、焦灼（攻/混）、逆风（并/败）
-        const pair: [TacticalSixSet, TacticalSixSet] = stance === 'adv'
-            ? ['shengzhan', 'dizhan']
-            : stance === 'dis'
-                ? ['bingzhan', 'baizhan']
-                : ['gongzhan', 'hunzhan'];
-        return this.lastCastSkill[f] === pair[0] ? pair[1] : pair[0];
+        if (!six) {
+            const rest = pool.filter((s) => s !== last);
+            six = rest[Math.floor(Math.random() * rest.length)] ?? pool[0];
+        }
+        this.plannedSkill[f] = { key, six };
+        return six;
     }
 
     /** 玩家在 UI 上点击六计徽章：预点亮（钦定）下一计，再次点击同枚则取消钦定恢复自动选计 */
@@ -704,6 +752,9 @@ export class Scene13WarLayer {
 
         this.lastCastSkill[f] = six;
         this.lastCastSkillName[f] = displayName;
+        // 见招拆招计数：我放了一计（对方据此回应）；我这一计同时算回应了对方此前所有的计
+        this.skillCastSeq[f]++;
+        this.skillAnsweredSeq[f] = this.skillCastSeq[ef];
 
         // ── 执行六计正交战场效果 ──
         if (six === 'shengzhan') {
@@ -1600,6 +1651,19 @@ export class Scene13WarLayer {
                 const lanes2 = lanes;
                 // 兵力按总量平分到各口（1 精灵 = SPRITE_TROOPS 兵；口少的一边每口出得快）
                 const poolPer = Math.max(1, Math.round(side.troops / SPRITE_TROOPS / n));
+                // 每一排里最宽那一队的横宽（px）：列数 × 本兵种列距 + 体宽；队距按它拉开（见下 colSpacing）
+                const LANE_GAP = 120;
+                const cellOf = (idx: number) => idx >= 9
+                    ? COMMANDER_CELL[mode]
+                    : DE_FORMATION_LAYOUT
+                        ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
+                        : LAYOUT[mode][idx];
+                const rowWidth = new Map<number, number>();
+                lanes2.forEach((lane, idx) => {
+                    const w = (marchFilesOf(lane.key) - 1) * marchSpacingOf(lane.key) + 2 * this.radiusOf(lane.key);
+                    const r = cellOf(idx).row;
+                    rowWidth.set(r, Math.max(rowWidth.get(r) ?? 0, w));
+                });
                 lanes2.forEach((lane, idx) => {
                     const key = lane.key;
                     this.ensureType(key, side.f);
@@ -1608,11 +1672,7 @@ export class Scene13WarLayer {
                     let x: number, y: number;
                     let outFwd: number | undefined, outSide: number | undefined;
                     // 阵位：DE 自动排布（开关见 DE_FORMATION_LAYOUT）｜关掉即回到七种经典阵型的 LAYOUT 表
-                    const cell = idx >= 9
-                        ? COMMANDER_CELL[mode]
-                        : DE_FORMATION_LAYOUT
-                            ? (this.deFormationCells(lanes2, mode)[idx] ?? LAYOUT[mode][idx])
-                            : LAYOUT[mode][idx];
+                    const cell = cellOf(idx);
                     {
                         const base = this.spawnBases[side.f];
                         const uFwd = this.advanceVec[side.f];
@@ -1620,7 +1680,10 @@ export class Scene13WarLayer {
                         const forwardOffset = (1 - cell.row) * depth;
                         // 🔴 [2026-10-11 主人「攻击方的10个出兵点，都拥挤在一起」]
                         //    相邻方队横向间隔由局促的 110px 彻底拉开至 210~240px，方阵左右舒展不重叠
-                        const colSpacing = COL_SPACING;
+                        // 🔴 [2026-10-20 主人令「每队50人，正好5*10，怎么阵型不对呢？」→ 选方案一]
+                        //    原固定 300px，而一队 10 列横宽约 240px（战车 9 列约 400px）⇒ 同排相邻两队只空 60px、甚至压住，
+                        //    看着连成一整条长线。改为：同排最宽那队的实际横宽 + LANE_GAP 空隙（不小于原 300）。
+                        const colSpacing = Math.max(COL_SPACING, (rowWidth.get(cell.row) ?? 0) + LANE_GAP);
                         let sideOffset = (cell.col - (cell.cols - 1) / 2) * colSpacing;
                         x = base.x + uFwd.x * forwardOffset + uSide.x * sideOffset;
                         y = base.y + uFwd.y * forwardOffset + uSide.y * sideOffset;
@@ -3451,7 +3514,8 @@ export class Scene13WarLayer {
 
     private spawnTick(dt: number): void {
         const onField = [0, 0];
-        for (const m of this.men) if (m.hp > 0) onField[m.f]++;
+        // 🔴 [2026-10-20 主人选方案一「按人口分兵」] 场上按人口计（战车/战象 2、炮 3），与下面成批补兵同一口径
+        for (const m of this.men) if (m.hp > 0) onField[m.f] += Math.max(1, m.pop ?? 1);
 
         // 成批补：开局双方各出 500（10 队 × 50 人）；之后一方场上 < 250 才再补 500。
         //   成批补（不是死一个补一个），一方打掉一半才补一波，靠成批的兵反推战线。
@@ -3466,22 +3530,24 @@ export class Scene13WarLayer {
 
             const ports = this.spawns.filter(s => s.f === f && s.pool > 0);
             if (!ports.length) continue;
-            let batch = SIDE_CAP;                  // 一次补 500（固定批量）
-            for (const s of ports) s.slotN = 0;    // 每批重置槽位计数（补兵也排方阵）
-
+            // 🔴 [2026-10-20 主人令「每队50人，正好5*10」→ 选方案一「按人口分兵」]
+            //    每队每批固定 SIDE_CAP ÷ SIDE_LANES = 50 **人口**（战车/战象占 2 ⇒ 25 辆，炮占 3 ⇒ 16 门）；
+            //    某队兵源用完就停，**不把剩余名额挪给别队**（原按精灵数轮流发满 500：大体型队只出半数，
+            //    余额分给别队 ⇒ 别队 52~53 人、多出一排不满的第 6 排，方阵参差）。
+            const laneQuota = SIDE_CAP / SIDE_LANES;
+            const batchPop = new Map<WarSpawn, number>();
+            for (const s of ports) { s.slotN = 0; batchPop.set(s, 0); }   // 每批重置槽位计数（补兵也排方阵）
 
             // 从**所有还有兵的出兵口**一起涌出，不是一个点
             let pi = 0;
             const outsideMen: WarMan[] = [];   // 本批在城外列阵出生的守军（批末按实际站位贴墙校正，见下）
-            while (batch > 0) {
+            const canSpawn = (p: WarSpawn): boolean => p.pool > 0 && (batchPop.get(p) ?? 0) + Math.max(1, p.pop) <= laneQuota;
+            while (ports.some(canSpawn)) {
                 const s = ports[pi % ports.length];
                 pi++;
-                if (s.pool <= 0) {
-                    if (ports.every(p => p.pool <= 0)) break;
-                    continue;
-                }
+                if (!canSpawn(s)) continue;
                 s.pool--;
-                batch--;
+                batchPop.set(s, (batchPop.get(s) ?? 0) + Math.max(1, s.pop));
                 const tgt = this.nearestEnemySpawn(s) ?? this.enemyCen[1 - s.f];
                 if (!tgt) break;
                 // 本兵终身固定的落点偏移（见 AIM_JITTER）：出生时抽一次，之后 aimAt 的共用坐标都加它
