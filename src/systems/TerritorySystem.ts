@@ -13,7 +13,7 @@ import { legacyFenceClip, smallCityUsesStoneWall, DE_PALISADE_ANCHORS, DE_DARK_P
     //     名字保持原样（无 alias）⇒ 本文件里的调用点一个字不用改。
     computeRectWall, computeFortifiedWallAndGate, buildFortifiedRingOnGrid, buildCornerGateRingOnGrid,
     // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形形制：方形两份保留、矩形另加两份（方形真实调用点一字未改）
-    buildFortifiedRectRingOnGrid, buildCornerGateRectRingOnGrid, PASS_RECT_RINGS, PASS_SQUARE_RINGS,
+    buildFortifiedRectRingOnGrid, buildCornerGateRectRingOnGrid, PASS_RECT_RINGS, PASS_RECT_MIRROR_RINGS, PASS_SQUARE_RINGS, type PassShapeMode,
     type PalisadeGridPiece } from './cityWallShared';
 // 🔴 [2026-10-02 主人令「自助编辑器」] 玩家在围栏编辑器里存盘的样式（自动生成的数据文件）
 import { pickStockadeWallStyleByCategory } from '../data/stockadeWallStyleLookup';
@@ -1026,7 +1026,7 @@ function buildDeStockadeStackHtml(
 
 // 险要（关隘/要塞）DE 建筑渲染：中间城堡 + 兵营/靶场/民居/马厩 + 4 警戒箭塔（中1+周8，全城堡时代 AGE3，石墙绕城）。
 // 2026-08-27 主人定「中间是城堡，兵营、靶场、民居、马厩 + 4 警戒箭塔；石墙作城墙素材，rd2 碎石作建筑底图」
-function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes, buildingStyle?: string, passShape?: 'square' | 'rect'): string {
+function buildDePassStackHtml(baseSize: number, cityId: string, style: string, factionId?: string, region?: string, mirror?: boolean, native?: CityNativeSizes, buildingStyle?: string, passShape?: PassShapeMode): string {
     // 2026-09-10 主人定：草原险要去掉围墙，中心耸立蒙古要塞城堡+营帐环卫 —— 🔴 [2026-10-12 主人令「漠北蒙古的 PASS 添加和其他文化同样的设计」]
     //    现只留给**战略地图**（没传原生尺寸表）；战术侧毡帐险要也走下面按格摆放的同一套（加固墙+外圈石墙+四门+城堡+箭塔）。
     if (style === 'YURT' && !native) return buildYurtCampHtml(baseSize, cityId, false, true, factionId, region, native);
@@ -1042,8 +1042,13 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    矩形是**新增形制、按 opt-in 开关**（`passShape === 'rect'`）：不传＝上面这套方形一个像素不动。
     //    矩形 2:1：内圈 21×13 步、外圈 29×21 步（周长与方形完全相同 ⇒ 墙/门/角楼件数一分不差）；
     //    城内仍 9 栋＝中心城堡 + 4 角塔 + 4 侧翼塔，塔位改按矩形内圈（长轴向 i，屏幕↘）重新排。
-    const passRings = passShape === 'rect' ? PASS_RECT_RINGS : PASS_SQUARE_RINGS;
-    const isRectPass = passShape === 'rect';
+    //    🔴 [2026-10-20 主人令「再做一个镜像的矩形」] `rect_mirror`：长/短轴对调（内 13×21、外 21×29），
+    //    矩形整体镜像到屏幕 ↙ 方向；周长、件数、塔位规则与 `rect` 完全一致。
+    const passRings = passShape === 'rect'
+        ? PASS_RECT_RINGS
+        : passShape === 'rect_mirror'
+            ? PASS_RECT_MIRROR_RINGS
+            : PASS_SQUARE_RINGS;
     const isMobeiPass = isMobeiStyle(buildingStyle);
     const passInnerBuildings: Array<[string, string]> = isMobeiPass
         ? (isMobeiHalfYurtCity(cityId)
@@ -1062,10 +1067,20 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
     //    4 侧翼哨位（东南西北正十字）分布在 -5.0 / 6.0，守护四向内门通道。
     //    🔴 [2026-10-20] 矩形内圈（i −10…11 / j −6…7，圈心 0.5,0.5）沿用同一思路：角塔只留 2 格离墙、侧翼塔贴四门内侧 2 格。
     //    注意矩形 i/j 两轴半长不同（10.5 / 6.5），角塔的 cj 必须用短轴值（−4 / 5），否则会掉到内外墙夹道的坡上。
-    const passCornerI = (b: number): number => (isRectPass ? (b < 0 ? -8 : 9) : (b < 0 ? -6.5 : 7.5));
-    const passCornerJ = (b: number): number => (isRectPass ? (b < 0 ? -4 : 5) : (b < 0 ? -6.5 : 7.5));
+    //    🔴 [2026-10-20 镜像矩形] rect_mirror 把 i/j 两轴对调（内圈 i −6…7 / j −10…11）：塔位同步对调。
+    const passCornerI = (b: number): number => {
+        if (passShape === 'rect') return b < 0 ? -8 : 9;
+        if (passShape === 'rect_mirror') return b < 0 ? -4 : 5;
+        return b < 0 ? -6.5 : 7.5;
+    };
+    const passCornerJ = (b: number): number => {
+        if (passShape === 'rect') return b < 0 ? -4 : 5;
+        if (passShape === 'rect_mirror') return b < 0 ? -8 : 9;
+        return b < 0 ? -6.5 : 7.5;
+    };
     const passFlankAt = (b: number, axis: 'i' | 'j'): number => {
-        if (isRectPass) return axis === 'i' ? (b < 0 ? -8 : 9) : (b < 0 ? -4 : 5);
+        if (passShape === 'rect') return axis === 'i' ? (b < 0 ? -8 : 9) : (b < 0 ? -4 : 5);
+        if (passShape === 'rect_mirror') return axis === 'i' ? (b < 0 ? -4 : 5) : (b < 0 ? -8 : 9);
         return b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0);
     };
     const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
@@ -1716,7 +1731,7 @@ export function cityStackParams(city: City): { cityRegion: RegionType; centerCas
 
 /** 据点建筑栈（城墙 / 城门 / 建筑 / 地基）HTML —— 战略地图与战术攻城战同一份；baseSize 由调用方给（战术按 DE 原尺寸放大）。
  *  🔴 [2026-10-20] `opts.passShape` 只给险要（pass）用：'rect'＝矩形形制（新增，战术预览 opt-in）；不传＝现有方形，一个像素不动。 */
-export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType, native?: CityNativeSizes, opts?: { passShape?: 'square' | 'rect' }): string {
+export function buildCityStackInnerHtml(city: City, baseSize: number, deStyle: string, centerCastle: boolean, useStoneWall: boolean, cityRegion: RegionType, native?: CityNativeSizes, opts?: { passShape?: PassShapeMode }): string {
     return (city.type === 'big_city'
     ? buildDeBigCityStackHtml(baseSize, city.id, deStyle, centerCastle, city.factionId, city.region || cityRegion, city.buildingStyle, native)
     : city.type === 'medium_city'

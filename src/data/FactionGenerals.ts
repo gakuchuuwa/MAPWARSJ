@@ -7232,7 +7232,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    zhuxie: { generalId: 'zhuxie_zhuxiechixin', generalName: '朱邪赤心', portrait: '/assets/STEPPE/zhuxie_zhuxiechixin.png' },
 
 
 
@@ -8279,7 +8278,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    gaoliang: { generalId: 'gaoliang_geshuhan', generalName: '哥舒翰', portrait: '/assets/litang/gaoliang_geshuhan.png' },
 
 
 
@@ -9675,7 +9673,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png' },
+    // 🔴 [2026-10-20 主人定「藏羌一家」] 梁弥定＝宕昌羌王，羌与藏同源，挂青藏文化的封建时代吐蕃军团可以（迭部风格已按史实改青藏）
+    dangchang: { generalId: 'dangchang_liangmiding', generalName: '梁弥定', portrait: '/assets/BASHU/dangchang_liangmiding.png', legionName: '封建时代吐蕃军团' },
 
 
 
@@ -12985,7 +12984,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    shanzhou: { generalId: 'shanzhou_wangzhongsi', generalName: '王忠嗣', portrait: '/assets/litang/shanzhou_wangzhongsi.png' },
+    shanzhou: [
+        { generalId: 'shanzhou_wangzhongsi', generalName: '王忠嗣', portrait: '/assets/litang/shanzhou_wangzhongsi.png' },
+        // 🔴 [2026-10-20 主人令「没有历史吗，为什么让我定」] 哥舒翰＝陇右节度使（747 起，封西平郡王），治所鄯州（今西宁一带，库里的乐都），前任王忠嗣同在此；原挂 潘寨→西宁势力（马海台，在柴达木，离鄯州六七百公里）与史实不符 → 放乐都（河西边墙要塞风格，唐蕃边塞）；势力＝唐；军团＝封建×河西（蕃汉混编的河陇军）。他军中史载有吐谷浑、突厥、铁勒、党项、羌等蕃兵，吐蕃降户无明确记载 → 不给吐蕃军团（吐蕃是他的对手）
+        { generalId: 'gaoliang_geshuhan', factionId: 'tang', generalName: '哥舒翰', portrait: '/assets/litang/gaoliang_geshuhan.png', legionName: '封建时代河西军团' },
+    ],
 
 
 
@@ -16518,6 +16521,25 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+    // 🔴 [2026-10-20 主人批准] 驻地型新增：保定（张柔）/嘉峪关（冯胜）/常德（钟相）/延恩（苏建）/格拉尼库斯（阿萨米斯）/沙陀（朱邪赤心）
+    shatuo: [
+        { generalId: 'zhuxie_zhuxiechixin', generalName: '朱邪赤心', portrait: '/assets/STEPPE/zhuxie_zhuxiechixin.png', legionName: '封建时代契丹军团' },
+    ],
+    qingyuan_bd: [
+        { generalId: 'gen_zhang_rou', generalName: '张柔', portrait: '', legionName: '城堡时代燕云军团' },
+    ],
+    suzhou: [
+        { generalId: 'gen_feng_sheng', generalName: '冯胜', portrait: '', legionName: '帝国时代陕甘军团' },
+    ],
+    zhongxiang: [
+        { generalId: 'zhongxiang_zhongxiang', generalName: '钟相', portrait: '', legionName: '起义军' },
+    ],
+    shuofang: [
+        { generalId: 'shuofang_sujian', generalName: '苏建', portrait: '', factionId: 'han_d', legionName: '古典时代鲜卑军团' },
+    ],
+    mixiya: [
+        { generalId: 'mixiya_arsames', generalName: '阿萨米斯', portrait: '', legionName: '古典时代爱奥尼亚军团' },
+    ],
 };
 
 

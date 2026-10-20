@@ -141,7 +141,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'daliushi_iii': 'PERSIAN',   // 阿契美尼德｜大流士三世｜据点 波斯波利斯
     'dalung_sangjiwen': 'TIBET',   // 达隆｜桑吉温｜据点 类乌齐
     'dang_d_zhuwen': 'CENTRAL',   // 虞国｜朱温｜据点 虞城
-    'dangchang_liangmiding': 'BASHU',   // 叠州｜梁弥定｜据点 迭部
+    'dangchang_liangmiding': 'TIBET',   // 叠州｜梁弥定｜据点 迭部（迭部风格改 TIBET，2026-10-20 按史实）
     'dangxiang_liyuanhao': 'KHITAN',   // 大夏｜李元昊｜据点 兴庆府
     'dangzhou_qiangduan': 'BASHU',   // 氐族｜强端｜据点 阴平
     'danluo_jintongjing': 'KOREA',   // 耽罗｜金通精｜据点 星主厅
@@ -229,7 +229,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ganzhou_dourong': 'KHITAN',   // 甘州｜窦融｜据点 张掖
     'gaoche_afuzhiluo': 'MONGOL',   // 高车｜阿伏至罗｜据点 浚稽山
     'gaogouli_yizhiwende': 'KOREA',   // 高句丽｜乙支文德｜据点 平壤
-    'gaoliang_geshuhan': 'BASHU',   // 潘州｜哥舒翰｜据点 潘寨
+    'gaoliang_geshuhan': 'KHITAN',   // 唐｜哥舒翰｜据点 乐都（鄯州，陇右节度使治所；文化随据点风格，2026-10-20 按史实）
     'gaoqi_d_gaohuan': 'WEI',   // 北齐｜高欢｜据点 蓨城
     'gar_kham_dengbazeren': 'TIBET',   // 德司｜登巴泽仁｜据点 德格
     'gar_lunqinling': 'TIBET',   // 噶尔｜论钦陵｜据点 萨毗营
@@ -295,6 +295,11 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'gen_zhang_rou': 'WEI',
+    'gen_feng_sheng': 'KHITAN',
+    'zhongxiang_zhongxiang': 'JIANGNAN',
+    'shuofang_sujian': 'XIANBEI',
+    'mixiya_arsames': 'GREECE',
     'bfe2_pollis': 'SPARTANS',   // 斯巴达｜波利斯｜据点 斯巴达
     'bfe3_86': 'GERMANIC',   // 莱茵兰｜克诺多马尔｜据点 美因茨
     'bfe_su_ding': 'JIANGNAN',
@@ -1405,7 +1410,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhuoshi_gaopian': 'BASHU',   // 卓氏｜高骈｜据点 临邛
     'zhuozhou_anlushan': 'WEI',   // 涿州｜安禄山｜据点 范阳
     'zhuqian_shaoerzineng': 'JAPAN',   // 筑前｜少贰资能｜据点 太宰府
-    'zhuxie_zhuxiechixin': 'WESTERN',   // 朱邪｜朱邪赤心｜据点 大石堡
+    'zhuxie_zhuxiechixin': 'XIANBEI',   // 朱邪｜朱邪赤心｜据点 大石堡
     'zi_changhong': 'BASHU',   // 资州｜苌弘｜据点 盘石
     'zizhou_wangjian': 'BASHU',   // 昌城｜王建｜据点 梓州
     'zu_d_yuanchonghuan': 'XIANBEI',   // 严州｜袁崇焕｜据点 宁远城

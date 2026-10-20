@@ -1904,6 +1904,8 @@ export class Scene13GroundLayerGL {
     bldPts: ReadonlyArray<{ x: number; y: number }> = [],
     /** 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈半边长（格）；传了就走下面的矩形感知台地分支，不传＝现有方形算法一个像素不动 */
     rect?: PassRingHalfExtents,
+    /** 🔴 [2026-10-20 主人令「你先把高地抹平了 / 或者把高地也改为矩形」] true＝把城墙脚下的高台整个抹平（城坐平地，城外只留低缓丘陵与大山） */
+    flat = false,
   ): { castleLevel: number; innerLevel: number; outerLevel: number } {
     const c = this.screenToCell(screenX, screenY, W, H);
     if (!c) return { castleLevel: 5, innerLevel: 3, outerLevel: 2 };
@@ -1925,6 +1927,28 @@ export class Scene13GroundLayerGL {
     const innerLevel = 4.5 + (rnd() < 0.6 ? 0.5 : 0);  // 4.5 或 5.0 级
     const outerLevel = 3.0 + (rnd() < 0.5 ? 0.5 : 0);  // 3.0 或 3.5 级
 
+    // 🔴 [2026-10-20 主人令「你先把高地抹平了 / 或者把高地也改为矩形」]
+    //    「抹平」地形：城墙内外同一高度（0 级平地），城堡/箭塔/城墙/城门全部直接坐平地，没有任何高台与梯级；
+    //    只在保护圈外重新长出 2~3 级丘陵（大山候选高地照旧，所以 MOUNTAIN_* 依旧摆在城外围）。
+    //    与 rect 分支互斥：flat 优先（矩形+抹平＝「平地险要」，矩形+高台＝「矩形高台」）。
+    if (flat) {
+      const cgx = c.gx, cgy = c.gy;
+      let protectR = rect ? Math.max(rect.outerHalfI, rect.outerHalfJ) + 2.0 : 0;
+      if (!rect) {
+        let maxD = 0;
+        for (const p of wallPts) {
+          const q = this.screenToCell(p.x, p.y, W, H);
+          if (q) maxD = Math.max(maxD, Math.abs(q.gx - cgx) + Math.abs(q.gy - cgy));
+        }
+        protectR = (maxD > 0 ? maxD : 13.5) + 2.0;
+      }
+      this.cornerElev.fill(0);
+      this.generateDeElevationGrid(cgx, cgy, protectR, 3.0, rnd, 'pass');
+      this.updateCornerLight();
+      this.elevDirty = true;
+      return { castleLevel: 0, innerLevel: 0, outerLevel: 0 };
+    }
+
     // 🔴 [2026-10-20 主人令「东方很多险要应该都是矩形的，不是方形的……先做个样子」]
     //    矩形双圈专属台地：方形版靠「墙件曼哈顿距离找内/外圈间隙」，矩形两圈的距离范围会重叠（内圈角 10.5 > 外圈短边 10.5），
     //    所以这里直接用矩形边界算：在等轴 i/j 坐标里取「到矩形的最大轴向距离」——dIn / dOut 为点到内/外圈矩形外面的距离（圈内为负）。
@@ -1934,11 +1958,14 @@ export class Scene13GroundLayerGL {
       const { innerHalfI, innerHalfJ, outerHalfI, outerHalfJ } = rect;
       const cx = c.gx, cy = c.gy + 0.5;
       const PAD = 1.0;                     // 平台比墙线外扩（地面双线性插值的余量）
-      const castleTop = 2.6, castleFoot = 4.2;   // 城堡平顶 / 降到内城的坡脚（离城心格数）
+      const castleTop = 2.6, castleFoot = 3.6;   // 城堡平顶 / 降到内城的坡脚（离城心格数）——侧翼塔在 dCenter 4 处，必须已落到平台
       const innerSlope = 2.0;              // 内圈墙外 → 外城平台的坡宽
       const outerSlope = 3.5;              // 外圈墙外 → 谷底的坡宽
       const R3 = Math.max(outerHalfI, outerHalfJ) + PAD;   // 外坡起点
       const maxCheck = R3 + outerSlope + 2;
+      // 有机起伏（与方形分支同一手法）：外坡坡脚按方位角做双频扰动，避免矩形台地边缘像刀切一样笔直
+      const phase1 = rnd() * 6.28, phase2 = rnd() * 6.28;
+      const deformAmp = 0.06 + rnd() * 0.05;
       this.cornerElev.fill(0);
       for (let y = 0; y <= N; y++) {
         for (let x = 0; x <= N; x++) {
@@ -1948,6 +1975,8 @@ export class Scene13GroundLayerGL {
           if (dOut > maxCheck) continue;   // 超出外坡范围由外围地形接管
           const dIn = Math.max(Math.abs(di) - innerHalfI, Math.abs(dj) - innerHalfJ);
           const dCenter = Math.max(Math.abs(di), Math.abs(dj));
+          const theta = Math.atan2(dj, di);
+          const rJitter = 1.0 + deformAmp * Math.sin(2 * theta + phase1) + (deformAmp * 0.65) * Math.cos(3 * theta + phase2);
           let targetH = 0;
           if (dIn <= PAD) {
             // 内圈以内（含城堡）：城堡平顶 → 平滑降到内城平台 → 平台一直铺到内墙脚下
@@ -1966,8 +1995,8 @@ export class Scene13GroundLayerGL {
             // 外城平台：外圈墙与四门都站在这一层
             targetH = outerLevel;
           } else {
-            // 外圈墙脚下：有机缓坡落回 0 级谷底（攻方仰攻）
-            const s = Math.min(1, (dOut - PAD) / outerSlope);
+            // 外圈墙脚下：按方位角带有机起伏的缓坡落回 0 级谷底（攻方仰攻）
+            const s = Math.min(1, (dOut - PAD) / (outerSlope * rJitter));
             const t = s * s * (3 - 2 * s);
             targetH = outerLevel * (1 - t);
           }
