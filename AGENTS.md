@@ -20,8 +20,12 @@
 6. **建筑风格只兜底**：无烘焙图（战略地图/主题模板）才退回「气候 + 建筑风格」挑树，且纯沙地一律换成沙漠树种（`TreeAssignment.guardSandTree`）。`PERSIAN/SASANIAN/ACHAEMENIDS` 不再返回 `PINE`（旧逻辑 `lat≥33→PINE` 是这次「沙漠长松树」的根因之一），沙漠→`PALM`、高原→`CYPRESS`。
 7. **血训（2026-10-21）**：旧渲染在 `Scene13GroundSetup` 用 `regionalTree`（`pickTree`→SASANIAN→PINE）+ `isGenericBakedTree/aridTreeMismatch` 把 DE 烘焙图里的棕榈/桦**全团替换成松树**（菲鲁扎巴德 1278 棵里 1224 棵是 PINE，这才是「沙子里长松树」的元凶）；`Scene13CityLayout` 另在小山丘上补的 4 团林，按 HEAD 实测树种是 **ACACIA**（没传 buildingStyle，走的是地区框）——同样不是脚下 DE 地形决定的树，已随人工补林整段一起删除。修复后同图 = **PALM 948 / BIRCH_GREEN 362 / DRAGON_TREE 48，PINE 0**（另有 DE 沙漠主题的 110 桦林斑，保留）。
 8. 🔴 **云层是单独项目，保留，不许按 DE 口径删（2026-10-21 主人令「把云给我弄回来，这是单独项目。」）**：战术场景的飘云（`Scene13WarLayer` 的 `clouds` / `scatterClouds`、`Scene13Render` 最上层绘制、`Scene13CombatMath` 的 `CLOUD_*`、`Scene13Types` 的 `SceneCloud`）**不属于「全部和DE一致」的范围**——DE 本体虽然没有战场飘云（只有菜单图标 `cloud_save.png`），但云是本项目自己的独立项目（三国群英传云素材、风向与旗帜一致，见 2026-08-12 主人令）。此前按 DE 口径删过一次，已按主人令**全部恢复**；以后改树林/地表时**别碰云**。
-9. 🔴 **地面贴图也跟 DE 地形走（2026-10-21 主人令「请全部和DE保持一致」）**：战术地面取哪张贴图不再只看建筑风格/气候主题，而是**按 DE 烘焙图 `terrain[]` 的直方图**取：`14 Desert→pal`、`12 Grass 2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt 3→ds3`…（实现 `src/ui/scene13/Scene13DeGround.ts` 的 `deriveDeGroundTiles`，在 `Scene13GroundSetup.requestGroundLayerGL` 里替换 `environmentPlan.groundTiles`；**雪地/冬季保留季节贴图**）。验收：`dump` 里 `env.groundTiles.grass` 应等于该图 DE 主导陆地地形的贴图（菲鲁扎巴德=pal、库尔泰亚=gr2、吴哥=gr7）。
+9. 🔴 **地面绘制当前生效版本（2026-10-21 主人令「不会改就恢复以前的设定，不要没有把握就乱改」）**：战术地面**已回到原来的「6 张图 + 平滑势场混合」版本**（`Scene13GroundLayerGL` 回滚到改动前：水体/沙滩/森林/泥土势场 + 噪声咬合，水岸连续过渡）。
+   - **「逐格 DE 地形贴图（图集 atlas + 每格索引）」整套实现同日上线后已被主人叫停并整段回滚，不要再上**。回滚原因（血训）：它把 dat 的 96×48 地形格（尤其 `2 Beach` 沙滩格、`Dirt` 泥土格）按方格逐格画出来，水边/河边那圈就出现**方块**；旧做法的势场混合是连续过渡的。**渲染主链路没把握不要动。**
+   - **保留的 DE 口径（与河边绘制无关、主人此前已要求）**：地面「用哪 6 张贴图」仍按 DE 烘焙地形主导取（`Scene13DeGround.deriveDeGroundTiles`：`14 Desert→pal`、`12 Grass2→gr2`、`100 Dry Grass→gr7`、`2 Beach→bch`、`10 Forest→for`、`3 Dirt3→ds3`；雪地/冬季例外），背景 CSS 底图同源。要连这层也回旧版，等主人另说。
+   - 验收：`npx tsc --noEmit`；6 城树验收 PASS；水边目视「平滑过渡、无方格」。
 10. **验收**：`npx tsc --noEmit`；`node scratch/_verify_forest_on_sand.mjs`（逐城查「纯沙地无温带树」「沙漠主题 PINE=0、PALM>0」「树不站水里」）；单城看 `scratch/_siege_preview.html?city=city_feiluzhabade`。完整口径与证据：`docs/02-design/树林与地表-DE口径-2026-10-21.md`。
+11. 🔴 **拒马 / 木栅残骸不许落在水里或湿岸上（2026-10-21 主人截图报「拒马立在河里」）**：营地拒马圈是按「营地半径画一圈」机械生成的，原来不查脚下地形，河道穿过营地圈时就把拒马插进水里；攻城残骸只挡深水（水体密度≥0.45），浅水/湿岸照放。**规则**：① 圈上每个落点按「最终水体密度 ≥0.18（湿岸也算水）」跳过；② 场地生成完（`applyDeCityToGround` + `spawnBattlefieldRelics` 之后）再兜底扫一遍 `STAKE_BARRICADE` / `BARRICADE_RUBBLE`，落在水里/湿岸（含 3×3 邻格，防跨格漏判）的一律移除（`Scene13GroundSetup.pruneWetBarricades`）。营地跨河时拒马圈留缺口＝天然渡口。验收：`scratch/_tmp_screenshot/probe_stakes_water.mjs <city...>` 打印每城拒马数与「在水里的根数」，应为 0。
 
 ## 🔴🔴🔴 2026-10-20 · 武将安置与势力归属唯一标准（主人定，最高口径，凌驾全书）
 

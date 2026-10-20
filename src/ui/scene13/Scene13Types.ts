@@ -175,6 +175,11 @@ export interface WarMan {
     /** 🔴 [2026-10-13] 本帧真实位移的 max(|Δx|,|Δy|)（step 末尾结算；渲染层判「本帧真的没动」用）。
      *  不能在渲染层拿 prevX 比：step 末尾已把 prevX 写成当前位置，那样比出来恒为 0。 */
     stepMax?: number;
+    /** 🔴 [2026-10-21 主人令「朝向统一按 DE 修」] 本帧是否在走路（行进分支置 true，step 末尾按实际位移定朝向后清零） */
+    walked?: boolean;
+    /** 平滑后的实际位移向量（DE MovingObject：新 0.2 + 旧 0.8 指数平滑），朝向由它决定 */
+    mvX?: number;
+    mvY?: number;
     /**
      * 净位移锚点 + 计时（见 NET_STUCK_WINDOW）。
      * 单帧位移只能识别「被堵得完全不动」；被推挤来回震荡时**每帧位移并不小**（推开又被推回），

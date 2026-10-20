@@ -1094,14 +1094,30 @@ export function applyBuildingsForSide(this: Scene13WarLayer, f: 0 | 1): void {
         const ex = EX / eLen, ey = EY / eLen;
         /** 拒马正面是否朝敌：素材正面朝西南（屏幕 (-0.707,+0.707)），用「由营心指向该根」的法线点乘敌方向判定 */
         const faceEnemy = (dx: number, dy: number): boolean => (dx * ex + dy * ey) > 0;
+        // 🔴 [2026-10-21 主人报「拒马立在河里」] 拒马圈是按营地半径机械画的，会画到河道上；
+        //    水里插拒马物理上不成立 → 落点在水面/湿地的直接跳过（营地跨河时圈上留缺口，正好是天然渡口）。
+        //    ⚠️ 坐标口径：装饰精灵的 x/y 是**世界像素**，查询要用世界尺寸（worldCX*2 / worldCY*2），
+        //       不是画布像素（用错会全判成「不在水里」，等于没修）。
+        const barW = this.worldCX * 2;
+        const barH = this.worldCY * 2;
+        const barGl = this.groundLayerGL;
+        const isWetSpot = (x: number, y: number): boolean => {
+            if (!barGl) return false;
+            const c = barGl.screenToCell(x, y, barW, barH);
+            if (!c) return true;                       // 出图的位置也不放
+            return barGl.getWaterDensityAt(c.gx, c.gy) >= 0.18;
+        };
         this.ensureNatureAsset(barricadeAsset);
         for (let i = 0; i < barricadeCount; i++) {
             const a = (i / barricadeCount) * Math.PI * 2;
             const dx = Math.cos(a), dy = Math.sin(a) * 0.58;     // 等距压缩（与地面同一 2.5D 比例）
+            const bx = CEN.x + dx * ringR;
+            const by = CEN.y + dy * ringR;
+            if (isWetSpot(bx, by)) continue;
             this.decorSprites.push({
                 asset: barricadeAsset, frame: 0,
-                x: CEN.x + dx * ringR,
-                y: CEN.y + dy * ringR,
+                x: bx,
+                y: by,
                 flip: faceEnemy(dx, dy),
                 scale: 1.0,
                 layer: 'world', z: 0,
