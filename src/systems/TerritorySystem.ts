@@ -1040,27 +1040,34 @@ function buildDePassStackHtml(baseSize: number, cityId: string, style: string, f
         ? (isMobeiHalfYurtCity(cityId)
             ? mixHalfYurtPool(DE_MEDIUM_CITY_POOL, deMulberry32(deHashString(cityId + '|pass_inner_mix'))).map((b): [string, string] => [b, 'AGE3'])
             : MOBEI_YURT_RING_NINE.map((y): [string, string] => [y, 'AGE3']))
-        : [['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4']];
-    {
-        const r = deMulberry32(deHashString(cityId + '|pass_inner_towers'));
-        for (let i = passInnerBuildings.length - 1; i > 0; i--) {
-            const j = Math.floor(r() * (i + 1));
-            [passInnerBuildings[i], passInnerBuildings[j]] = [passInnerBuildings[j], passInnerBuildings[i]];
-        }
-    }
-    const passTowerAt = (b: number): number => (b === 0 ? 0.5 : (b < 0 ? -5 : 6));
-    const passRing: ReadonlyArray<readonly [number, number]> = [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]];
+        : [
+            // 4 角内城关键哨位：固定布设 4 座四级高级要塞石塔（AGE4 Keep）
+            ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'], ['TOWER', 'AGE4'],
+            // 4 侧隘口侧翼哨位：固定布设 4 座三级警戒箭塔（AGE3 Guard Tower）
+            ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'], ['TOWER', 'AGE3'],
+        ];
+    // 🔴 [2026-10-20] 4 角关键哨位与 4 侧翼隘口梯度排布：
+    //    彻底解决北侧箭塔被中央大城堡屋脊遮挡问题：
+    //    内墙 seg=6（角垛在 -8,-8），原角塔位仅 -5（距城心 5.5 格，被高耸城堡屋顶遮挡）；
+    //    现角塔前推至 -6.5 / 7.5（距城心 7 格，紧咬内城角垛），高度与视野彻底越过城堡屋脊，耸立于北城头；
+    //    4 侧翼哨位（东南西北正十字）分布在 -5.0 / 6.0，守护四向内门通道。
+    const passCornerAt = (b: number): number => (b < 0 ? -6.5 : 7.5);
+    const passFlankAt = (b: number): number => (b === 0 ? 0.5 : (b < 0 ? -5.0 : 6.0));
+    const passCorners: ReadonlyArray<readonly [number, number]> = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+    const passFlanks: ReadonlyArray<readonly [number, number]> = [[0, -1], [-1, 0], [1, 0], [0, 1]];
+    const passSlotCenters = [
+        { ci: 0.5, cj: 0.5, isCenter: true },
+        ...passCorners.map(([bi, bj]) => ({ ci: passCornerAt(bi), cj: passCornerAt(bj), isCenter: false })),
+        ...passFlanks.map(([bi, bj]) => ({ ci: passFlankAt(bi), cj: passFlankAt(bj), isCenter: false })),
+    ];
     const passGridHtml = native ? buildDeCityGridHtml(baseSize, cityId, style, !isMobeiStyle(buildingStyle), factionId, region,
         passInnerBuildings, native, {
             seg: 6, near: 0, far: 0, corner: false,
             gateEdges: [true, true, true, true],
-            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],   // 🔴 [2026-10-12 主人令「城墙改为加强的城墙，就是大城那种」]
+            wallAnchors: DE_FORTIFIED_ANCHORS_BY_STYLE[style] || DE_FORTIFIED_ANCHORS_BY_STYLE['ASIA'],
             groundTile: cityGroundTile(buildingStyle, 'rd2'),
-            buildingStyle: style === 'YURT' ? 'ASIA' : style,   // 毡帐系箭塔借亚洲木塔
-            slotCenters: [{ ci: 0.5, cj: 0.5, isCenter: true },
-                ...passRing.map(([bi, bj]) => ({ ci: passTowerAt(bi), cj: passTowerAt(bj), isCenter: false }))],
-            // 🔴 [2026-10-12 主人令「在外围再套一圈城墙，用普通石墙」＋「四门、错开对不齐、正南北东西朝向」]
-            //    外圈每段 10（角到角 25，与内圈隔 3 格；该间距是我算的，主人未定），普通石墙，四门开在菱形四个顶点。
+            buildingStyle: style === 'YURT' ? 'ASIA' : style,
+            slotCenters: passSlotCenters,
             outer: { seg: 10, wallAnchors: DE_STONE_ANCHORS_BY_STYLE[style] || DE_STONE_ANCHORS_BY_STYLE['ASIA'] },
         }, buildingStyle) : null;
     if (passGridHtml) return passGridHtml;   // 用结果判而不是 if (native)：免得 TS 把后面战略版旧代码里的 native 推成 never
