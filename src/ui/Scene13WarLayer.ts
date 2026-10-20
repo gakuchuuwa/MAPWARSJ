@@ -162,6 +162,8 @@ export class Scene13WarLayer {
     defenderPassLayoutShape: 'square' | 'rect' | 'rect_mirror' | null = null;
     /** 🔴 [2026-10-20 主人令「你先把高地抹平了／或者把高地也改为矩形」] 险要地形：'flat'＝抹平、'plateau'＝整块矩形高台；null＝现状多层高台 */
     defenderPassTerrain: 'mound' | 'flat' | 'plateau' | null = null;
+    /** 🔴 [2026-10-21 主人令「把道路添加一个南北走向的」] 关隘山谷道路走向：'ew'＝东西走向（默认）、'ns'＝南北走向 */
+    defenderPassRoadDir: 'ew' | 'ns' | null = null;
     /** 🔴 [2026-09-11 主人「和游戏同步」] 守方据点经**战略地图同一解析**得到的 DE 建筑风格前缀（null = 该据点无风格，走旧的两层）。 */
     private defenderMapStyle: string | null = null;
     men: WarMan[] = [];
@@ -1490,6 +1492,7 @@ export class Scene13WarLayer {
         this.defenderCityId = init.defenderCityId ?? null;
         this.defenderPassShape = init.defenderPassShape ?? null;
         this.defenderPassTerrain = init.defenderPassTerrain ?? null;
+        this.defenderPassRoadDir = init.defenderPassRoadDir ?? null;
         if (init.passMountainConfig) {
             this.passMountainConfig = { ...this.passMountainConfig, ...init.passMountainConfig };
         }

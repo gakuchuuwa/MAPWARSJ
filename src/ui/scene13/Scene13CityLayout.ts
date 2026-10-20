@@ -16,6 +16,10 @@ import {
     SIEGE_CITY_BUILDING_SCALE, SIEGE_CASTLE_SCALE, SIEGE_WONDER_SCALE, siegeBuildingScale,
 } from './Scene13UnitTables';
 import { pickTree, type TreeSeason } from './TreeAssignment';
+import { DE_MAP_THEMES, type DeMapThemeId } from './Scene13DeMapThemes';
+import {
+    deTerrainSeasonalTree, seasonalDeTree, isBareSandTerrain, isDesertTreeAsset,
+} from './Scene13DeTrees';
 import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
 import { isWonderFounded } from '../../data/wonderFoundedYears';
@@ -148,7 +152,8 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             this.defenderPassShape && this.defenderPassShape !== 'square'
                 ? passRingHalfExtents(this.defenderPassShape)
                 : undefined,
-            this.defenderPassTerrain ?? 'mound');
+            this.defenderPassTerrain ?? 'mound',
+            this.defenderPassRoadDir ?? 'ew');
     } else if (this.defenderCityType === 'stockade') {
         gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
     } else {
@@ -389,6 +394,15 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     const cGx = cityCell ? cityCell.gx : N * 0.5;
     const cGy = cityCell ? cityCell.gy : N * 0.5;
 
+    /** 该网格脚下 DE 地形 id（gl.data.terrain 已由 transposeMapData 对调成同一套坐标） */
+    const terrainAtCell = (gx: number, gy: number): number => {
+        const ter = gl.data?.terrain;
+        if (!ter) return -1;
+        const x = Math.max(0, Math.min(N - 1, Math.round(gx)));
+        const y = Math.max(0, Math.min(N - 1, Math.round(gy)));
+        return ter[y * N + x] ?? -1;
+    };
+
     // 🔴 [2026-10-21 主人令「树木要成林，你放一堆一个树干什么？」「看看DE是怎么做的。看看文档里有做树林的方法吗」]
     // 严格遵循帝国时代 II (DE) 原版引擎与 RMS 森林生成法则（见 tools/rms/rmsEngine.mjs line 914）：
     // 1. 【DE 森林生成机制】：
@@ -416,14 +430,26 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
 
     // DE 核心：整片森林采用统一当季主导树种，纯正和谐
-    const forestTreeAsset = pickTree({
-        baseTile: siteBaseTile,
-        lat: siteLat,
-        lng: siteLng,
-        season: calSeason,
-        isSiege: true,
-    });
-    this.ensureNatureAsset(forestTreeAsset);
+    // 🔴 [2026-10-21 主人令「沙子里面长树，这对吗，看看DE是如何设计的」]
+    //    DE 的树由「脚下地形」＋「气候主题」决定，不由建筑风格决定：
+    //      · 森林地形（dat density=1000）自己长树：13 Palm Desert→棕榈、110 Birch→桦、10 Forest→橡……（见 Scene13DeTrees.ts）
+    //      · 没有森林地形可用时，用 DE 气候主题主树（DE_MAP_THEMES[theme].trees；沙漠主题＝PALM 棕榈）；
+    //      · 旧逻辑按建筑风格推（SASANIAN→PINE），于是在沙漠沙丘上补出 4 团松林 —— 那正是「沙子里长树」的错处。
+    const envTheme: DeMapThemeId | null = this.environmentPlan?.deMapTheme ?? null;
+    const themePalette = envTheme ? DE_MAP_THEMES[envTheme] : null;
+    // 只从主题表里取「乔木」当林团主树：BUSH_TREE_* 是灌木树（下层植被），DEAD_TREE 是枯木，都不能当林相
+    const themeTreePool: readonly string[] = ((calSeason === 2 && themePalette?.autumnTrees?.length)
+        ? themePalette.autumnTrees
+        : (calSeason === 3 && themePalette?.winterTrees?.length)
+            ? themePalette.winterTrees
+            : (themePalette?.trees ?? [])).filter((a) => !/^BUSH_TREE_/.test(a) && a !== 'DEAD_TREE');
+    /** 这一格该长什么树：DE 地形登记的树 > DE 气候主题主树 > 旧兜底（无烘焙图时才走到这一步） */
+    const forestTreeForTerrain = (tid: number): string | null => {
+        const byTerrain = deTerrainSeasonalTree(tid, calSeason, isSnow);
+        if (byTerrain) return byTerrain;
+        if (themeTreePool.length > 0) return seasonalDeTree(themeTreePool[0], calSeason, isSnow);
+        return pickTree({ baseTile: siteBaseTile, lat: siteLat, lng: siteLng, season: calSeason, isSiege: true });
+    };
 
     // 预热微景观素材
     const landmarkRocks = isArid
@@ -484,16 +510,18 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     };
 
     // ── 1. 【DE 原版森林算法：网格连续生长，每格一树】：
-    // 在南北山体高地上挑选 2~3 个森林种子格，采用连续网格连通生长（BFS/Dijkstra 类似 DE create_terrain WOODIES）
-    // 扩展出一片自然的连绵森林地块。每属于森林的一个网格 (gx, gy)，仅在格中心 (gx + 0.5, gy + 0.5) 种一棵树！
+    // DE 的「森林」本质是地形（dat 里森林地形登记 density=1000 的树，每格长一棵）。
+    // 本作烘焙图已带 DE 的森林地形与树，这里只补「城郊高地」上的林团；
+    // 🔴 树种必须跟 DE 地形/气候主题一致（Scene13DeTrees.ts / DE_MAP_THEMES），不许按建筑风格推。
     const isPassType = this.defenderCityType === 'pass';
-    const forestCellSet = new Set<string>();
+    /** 森林网格：格坐标 → 这一格种的树（同一团统一树种，DE 口径） */
+    const forestCells = new Map<string, string>();
 
-    const growForestClump = (seedGx: number, seedGy: number, targetCellCount: number) => {
+    const growForestClump = (seedGx: number, seedGy: number, targetCellCount: number, clumpAsset: string) => {
         const queue: Array<[number, number]> = [[seedGx, seedGy]];
-        forestCellSet.add(`${seedGx},${seedGy}`);
+        forestCells.set(`${seedGx},${seedGy}`, clumpAsset);
 
-        while (queue.length > 0 && forestCellSet.size < targetCellCount) {
+        while (queue.length > 0 && forestCells.size < targetCellCount) {
             // 随机从前沿挑一个格向四邻生长（模拟 DE RMS clumping 生长）
             const qIdx = Math.floor(mRnd() * queue.length);
             const [curGx, curGy] = queue.splice(qIdx, 1)[0];
@@ -513,33 +541,45 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             for (const [ngx, ngy] of neighbors) {
                 if (ngx < 4 || ngx > N - 5 || ngy < 4 || ngy > N - 5) continue;
                 const nKey = `${ngx},${ngy}`;
-                if (forestCellSet.has(nKey)) continue;
+                if (forestCells.has(nKey)) continue;
 
                 const pt = gl.cellToScreen(ngx + 0.5, ngy + 0.5, W, H);
                 if (inCity(pt.x, pt.y) || inGateRoad(pt.x, pt.y)) continue;
                 if (gl.isWaterAt(pt.x, pt.y, W, H) || (inMoat && inMoat(pt.x, pt.y))) continue;
+                // 🔴 [2026-10-21 主人令「沙子里面长树，这对吗」] 纯沙地（DE 14 Desert / 2 Beach）只准长沙漠树种；
+                //    温带/寒带树种（松/桦/橡）一律不许铺到沙地上
+                if (isBareSandTerrain(terrainAtCell(ngx, ngy)) && !isDesertTreeAsset(clumpAsset)) continue;
 
                 // 关隘森林生长在南北两侧山脉上（远离中央关卡峡谷，|ngy - cGy| >= 14 格）
                 if (isPassType && Math.abs(ngy - cGy) < 14.0) continue;
                 const elev = gl.elevationLevelAt(pt.x, pt.y, W, H);
                 if (elev < 1.4) continue;
 
-                forestCellSet.add(nKey);
+                forestCells.set(nKey, clumpAsset);
                 queue.push([ngx, ngy]);
-                if (forestCellSet.size >= targetCellCount) break;
+                if (forestCells.size >= targetCellCount) break;
             }
         }
     };
 
+    /** 在 (gx,gy) 补一团林：树种取脚下 DE 地形登记树 / DE 气候主题主树；沙漠主题只做小棕榈林（绿洲），不做大片密林 */
+    const plantForestClump = (gx: number, gy: number, targetCells: number): void => {
+        const asset = forestTreeForTerrain(terrainAtCell(gx, gy));
+        if (!asset) return;
+        this.ensureNatureAsset(asset);
+        const target = isDesertTreeAsset(asset) ? Math.min(targetCells, 12) : targetCells;
+        growForestClump(gx, gy, target, asset);
+    };
+
     if (isPassType) {
         // 北翼森林种子（选在正北与东北高山腰）
-        growForestClump(Math.round(cGx - 12), Math.round(cGy - 19), 32);
-        growForestClump(Math.round(cGx + 16), Math.round(cGy - 18), 28);
+        plantForestClump(Math.round(cGx - 12), Math.round(cGy - 19), 32);
+        plantForestClump(Math.round(cGx + 16), Math.round(cGy - 18), 28);
         // 南翼森林种子（选在正南与西南高山梁）
-        growForestClump(Math.round(cGx - 14), Math.round(cGy + 19), 32);
-        growForestClump(Math.round(cGx + 15), Math.round(cGy + 18), 28);
+        plantForestClump(Math.round(cGx - 14), Math.round(cGy + 19), 32);
+        plantForestClump(Math.round(cGx + 15), Math.round(cGy + 18), 28);
     } else {
-        // 普通城池在远郊山地上长 2 片森林
+        // 普通城池在远郊山地上长 1 片森林
         const outerHill = [];
         for (let gy = 6; gy <= N - 6; gy += 4) {
             for (let gx = 6; gx <= N - 6; gx += 4) {
@@ -552,14 +592,14 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         }
         if (outerHill.length > 0) {
             const seed = outerHill[Math.floor(mRnd() * outerHill.length)];
-            growForestClump(seed[0], seed[1], 35);
+            plantForestClump(seed[0], seed[1], 35);
         }
     }
 
     // 【DE 关键实现】：遍历森林网格，每格中心恰好种 1 棵树！
     // 树木间距完全由网格保证（天然等轴 96×48px），树木错落有序、树冠相接、绝不堆叠！
     let placedForestEdgeWood = false;
-    for (const key of forestCellSet) {
+    for (const [key, cellAsset] of forestCells) {
         const [gxStr, gyStr] = key.split(',');
         const gx = parseInt(gxStr, 10), gy = parseInt(gyStr, 10);
         // 格中心轻微自然微扰（±5px），打破机械对齐，仍保持独立格距
@@ -571,7 +611,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         const tScale = 0.96 + (mRnd() - 0.5) * 0.12;
         const tFrame = Math.floor(mRnd() * 8);
 
-        if (pushSafeDecor(forestTreeAsset, tx, ty, tScale, tFrame, mRnd() < 0.5)) {
+        if (pushSafeDecor(cellAsset, tx, ty, tScale, tFrame, mRnd() < 0.5)) {
             // 格内地表渲染 DE 森林底泥
             gl.addForestAt(tx, ty, W, H, 1.4);
 
@@ -612,7 +652,11 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         if (peakSpot) {
             const rfAsset = landmarkRocks[Math.floor(mRnd() * landmarkRocks.length)];
             if (pushSafeDecor(rfAsset, peakSpot.x, peakSpot.y, 1.10, 0, mRnd() < 0.5)) {
-                const lonePine = isSnow ? 'PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE');
+                // 🔴 [2026-10-21] 山巅孤树也按 DE 地形/气候主题取树种：沙漠图给棕榈/枯木，不再给松树
+                const peakTree = forestTreeForTerrain(terrainAtCell(peakSpot.gx, peakSpot.gy));
+                const lonePine = peakTree && isDesertTreeAsset(peakTree)
+                    ? peakTree
+                    : (isSnow ? 'PINE' : (isArid ? 'DEAD_TREE' : 'ASIAN_PINE'));
                 this.ensureNatureAsset(lonePine);
                 pushSafeDecor(lonePine, peakSpot.x + 32, peakSpot.y - 16, 0.82, 0, mRnd() < 0.5);
             }
@@ -990,7 +1034,7 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
             const distFromCityCenter = Math.hypot((pt.x - cx) / 1.15, (pt.y - cy) * 1.45);
             if (distFromCityCenter < 980) return false;
             if (this.defenderCityType === 'pass') {
-                if (Math.abs(gy - cGy) < 16.0) return false;
+                if ((this.defenderPassRoadDir === 'ns' ? Math.abs(gx - cGx) : Math.abs(gy - cGy)) < 16.0) return false;
             }
             for (const sp of this.spawns) {
                 if (Math.hypot(pt.x - sp.x, (pt.y - sp.y) * 1.5) < 700) return false;

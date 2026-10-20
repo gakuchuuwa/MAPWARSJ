@@ -7,6 +7,20 @@
 > 据点 · 势力 · 旗号 · 武将 · 精锐 ＝ `docs/AGENTS/一据点一整套-单一口径.md`；兵模绘制比例 ＝ `docs/AGENTS/unit-sprite-scale.md`。
 > 建筑风格判定 / 缺分支代理 / 城级城堡覆盖 ＝ `docs/AGENTS/建筑风格判定与代理规则.md`。
 
+## 🔴🔴 2026-10-21 · 战术场景「树跟地形走，沙地不长温带树」铁律（主人令，DE 口径）
+
+> 🔴 **主人原话（2026-10-21 逐字照录）**：
+> **「沙子里面张树，这对吗，看看DE是如何设计的。」**
+
+1. **DE 的树是「地形自动长」的**：森林地形在 dat 里登记 `terrain_unit_id / terrain_unit_density`，`density = 1000` 即每格必长一棵（官方 `tc-rms-guide.md:301`「Forests … will be filled with tree objects」；`docs/02-design/RMS引擎语义-给CC.md` §12.8；`docs/02-design/RMS对齐台账.md:70-72`）。**树由脚下地形决定，不由建筑风格决定。**
+2. **全表见 `src/ui/scene13/Scene13DeTrees.ts`**（由 `scratch/de_terrain_units.json`＝DE `empires2_x2_p1.dat` 导出）。关键几条：`10 Forest→橡(OAK)`、`13 Palm Desert→棕榈(PALM)`、`14 Desert→无树`、`19 Pine Forest→松(PINE)`、`21 Snow Forest→雪松`、`48 Dragon Forest→龙血树`、`88 Mediterranean→柏/橄榄/意松`、`104 Autumn→秋橡`、`110 Birch→桦`、`113 Lush Bamboo→茂竹`。
+3. **纯沙地（DE 14 Desert / 2 Beach）不长温带/寒带乔木**：松、桦、橡、枫长到沙地上就是「沙子里长树」。沙地上只允许沙漠树种（棕榈/龙血树/金合欢/猴面包/仙人掌/枯木/灌木）；**这些树种来自 DE 自己的沙漠主题**——`Arabia.rms` 的 `PALAEARCTIC_MIDDLE_EAST_DESERT` 段：`BASE_TERRAIN 14 Desert`、`BASE_FOREST 13 Palm Desert`、`BASE_FOREST_VARIATION_A 110 Forest,Birch`、`STRAGGLER_SPAWN 351 Palm Tree`。**所以「沙地上长棕榈」是 DE 原设计，「沙地上长松树」不是。**
+4. **战术场景有 DE 烘焙图（`public/battlefields/site_<据点>.json` 的 `terrain[]`）时，树种以烘焙物件为准**（`FPAL`/`BIRCH`/`FDRA`… 就是 DE 引擎按地形长的），渲染层只许做「季节换装（同族：橡→秋橡/雪橡、桦→秋桦、松→雪松）」；**不许再按建筑风格把整片林换掉**。
+5. **人工补的林团（`Scene13CityLayout.applyDeCityToGround` 的 `growForestClump`）**：树种取「脚下 DE 地形登记树 > DE 气候主题主树（`Scene13DeMapThemes.ts` 的 `DE_MAP_THEMES[theme].trees`）」，沙漠主题=**棕榈小绿洲**（≤12 格），绝不再按建筑风格出松林。
+6. **建筑风格只兜底**：无烘焙图（战略地图/主题模板）才退回「气候 + 建筑风格」挑树，且纯沙地一律换成沙漠树种（`TreeAssignment.guardSandTree`）。`PERSIAN/SASANIAN/ACHAEMENIDS` 不再返回 `PINE`（旧逻辑 `lat≥33→PINE` 是这次「沙漠长松树」的根因之一），沙漠→`PALM`、高原→`CYPRESS`。
+7. **血训（2026-10-21）**：旧渲染在 `Scene13GroundSetup` 用 `regionalTree`（`pickTree`→SASANIAN→PINE）+ `isGenericBakedTree/aridTreeMismatch` 把 DE 烘焙图里的棕榈/桦**全团替换成松树**（菲鲁扎巴德 1278 棵里 1224 棵是 PINE，这才是「沙子里长松树」的元凶）；`Scene13CityLayout` 另在小山丘上补的 4 团林，按 HEAD 实测树种是 **ACACIA**（没传 buildingStyle，走的是地区框）——同样不是脚下 DE 地形决定的树，一并改成「DE 地形/主题树」。修复后同图 = PALM 880 / BIRCH_GREEN 355 / DRAGON_TREE 16，PINE 0。
+8. **验收**：`npx tsc --noEmit`；`node scratch/_verify_forest_on_sand.mjs`（逐城查「纯沙地无温带树」「沙漠主题 PINE=0、PALM>0」「树不站水里」）；单城看 `scratch/_siege_preview.html?city=city_feiluzhabade`。完整口径与证据：`docs/02-design/树林与地表-DE口径-2026-10-21.md`。
+
 ## 🔴🔴🔴 2026-10-20 · 武将安置与势力归属唯一标准（主人定，最高口径，凌驾全书）
 
 > 🔴 **主人原话（2026-10-20 逐字照录）**：

@@ -10,7 +10,8 @@ import type { AnimalAction, DecorSprite } from './Scene13Types';
 import { DEFAULT_TERRAIN_TILE } from '../Scene13Biome';
 import { FALLBACK_MAPDATA_URL, MAPDATA_DIR } from './Scene13CombatMath';
 import { Scene13GroundLayerGL, resolveNatureSprite, transposeMapData, TAC_TILE_W, TAC_TILE_H } from './Scene13GroundLayerGL';
-import { pickTree, treeDensityFor, type TreeSeason } from './TreeAssignment';
+import type { TreeSeason } from './TreeAssignment';
+import { bareSandRejectsTree, seasonalDeTree } from './Scene13DeTrees';
 import { animalNativeAt, animalDeOf } from './Scene13Animals';
 import { applyDeCityToGround } from './Scene13CityLayout';
 import { groundDecorFor, decorFits } from './DecorFit';
@@ -196,25 +197,22 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     return isBuilding || (!onFoundation(s.x, s.y) && !isOldTree && (isWaterPlant ? inWater : !inWater));
                 });
 
-                // 🔴 [2026-10-16 阶段四：真实地理与四季植被/地表装饰多样性]
-                // 接回 TreeAssignment (pickTree: 40 种 DE 树木 × 全球专属地域框 × 26 底图 × 春夏秋冬四季)
-                // 与 DecorFit (groundDecorFor / decorFits: 26 底图同色系岩石、花草、灌木)，彻底告别单一 Arabia 模板表现。
+                // 🔴 [2026-10-21 主人令「沙子里面长树，这对吗，看看DE是如何设计的」]
+                //    DE 的树由「脚下地形」决定，不由建筑风格决定（全表见 Scene13DeTrees.ts）：
+                //    烘焙图 site_*.json 里的对象名就是 DE 引擎按地形长出来的树（FPAL 棕榈 / BIRCH 桦 / FDRA 龙血树…），
+                //    13 Palm Desert 长棕榈、110 Birch 长桦、14 Desert 一根自动树都没有（沙漠上的棕榈是脚本散树）。
+                //    ⇒ 这里**不再**按建筑风格/底图把树种整体替换掉（旧逻辑 regionalTree 把 DE 的棕榈全换成了 PINE，
+                //      于是「沙子里长出一片松树」）。每棵树只做三件事，见下方对象循环：
+                //      ① 纯沙地（DE 14 Desert / 2 Beach）上出现非沙漠树种 → 剔除；
+                //      ② 水格上的树 → 剔除；
+                //      ③ 季节换装（只换同族形态：橡→秋橡/雪橡、松→雪松），绝不跨族换树种。
                 const defCityRec = this.defenderCityRecord();
                 const mapLat = defCityRec?.lat ?? this.centerLat ?? 30;
                 const mapLng = defCityRec?.lng ?? this.centerLng ?? 110;
-                const mapBuildingStyle = defCityRec?.buildingStyle ?? this.environmentPlan?.buildingStyle;
                 const rawCalSeason = (window as any).game?.timeSystem?.getSeason?.();
                 const calSeason: TreeSeason = (rawCalSeason === 0 || rawCalSeason === 1 || rawCalSeason === 2 || rawCalSeason === 3)
                     ? rawCalSeason
                     : (this.sceneSeason === 2 ? 3 : this.sceneSeason === 1 ? 2 : 1);
-                const regionalTree = pickTree({
-                    baseTile: baseTerrain,
-                    lat: mapLat,
-                    lng: mapLng,
-                    season: calSeason,
-                    isSiege: this.battleType === 'siege',
-                    buildingStyle: mapBuildingStyle,
-                });
                 const decorSet = groundDecorFor(baseTerrain);
                 const isSnowBase = baseTerrain === 'sno' || baseTerrain === 'sn2' || baseTerrain === 'snf'
                     || baseTerrain === 'snd' || baseTerrain === 'snr' || baseTerrain === 'ic3' || baseTerrain === 'ice';
@@ -226,121 +224,25 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                     isSiege: this.battleType === 'siege',
                 };
                 const isBarrenBase = baseTerrain === 'pal1' || baseTerrain === 'qs' || baseTerrain === 'ds5' || baseTerrain === 'gravel_default' || baseTerrain === 'rck';
-                // 🔴 [2026-10-16 主人指出「怎么都没有树呢，看看DE是怎么安排的树」]
-                //    DE 原版（empires2_x2_p1.dat + RMS 烘焙图 site_*.json / theme_*.json）的树木安排规则：
-                //    1) 「林地底图（lv2/for/fo2/snf）与树木 1:1 严格绑定」：凡是地面画了森林底图斑块的格子，上面 100% 必立一棵树，绝不允许把林团砍剩几棵而留下一大片光秃秃的 lv2 落叶底图；
-                //    2) 「成片林团（Forest Clumps）+ 原野散株（Straggler Trees）」双层布局：非荒漠/非干草原地图 100% 原样保留 DE 烘焙图的全部林团与散株（clumpKeepMod = 1，不截断单团棵数）；
-                //    3) 仅在地面层已隐藏森林底斑的极旱荒漠/戈壁/干草原（isSparseTreelessBiome）上，才对复用的大林团做稀疏化。
                 const isSparseTreelessBiome = baseTerrain === 'pal' || baseTerrain === 'des' || baseTerrain === 'ds5'
                     || baseTerrain === 'qs' || baseTerrain === 'pal1'
                     || baseTerrain === 'gr7' || baseTerrain === 'gr5' || baseTerrain === 'gravel_default';
-                const treeDensity = treeDensityFor(baseTerrain, this.battleType === 'siege');
-                const clumpKeepMod = !isSparseTreelessBiome ? 1
-                    : (treeDensity.forestCover >= 0.004 ? 2 : 3);
-                const maxTreesPerClump = !isSparseTreelessBiome ? 9999
-                    : (treeDensity.forestCover >= 0.004 ? 18 : 8);
+                /** 水体 DE 地形 id（与 calcWaterRatio 同一份口径）：水上不长树 */
+                const WATER_TERRAINS = new Set([1, 4, 15, 22, 23, 58, 95, 96]);
+                const N_TILES = data.width ?? 120;
+                /** 对象脚下的 DE 地形 id（transposeMapData 已把对象坐标/terrain 对调成同一套） */
+                const terrainUnder = (ob: any): number => {
+                    if (!data.terrain) return -1;
+                    const cell = ob.cell >= 0 && ob.cell < data.terrain.length
+                        ? ob.cell
+                        : Math.floor(ob.y) * N_TILES + Math.floor(ob.x);
+                    return data.terrain[cell] ?? -1;
+                };
 
-                // 🔴 [2026-10-12 任务1] 空间聚类纯化：保证「错落成团，一块林基本一个树种」
-                // 对相连的森林树木进行距离聚类，同团统一为主导树种（纯度 >= 96%），并优先对齐当地真实气候与四季树种 regionalTree
-                const treeClumpDominant = new Map<number, string>();
-                const skippedTreeIndices = new Set<number>();
-                const rawTreeIndices: number[] = [];
-                data.objects.forEach((ob: any, idx: number) => {
-                    if (ob.name && !ob.name.includes('CLIFF')) {
-                        const r = resolveNatureSprite(ob.name);
-                        if (r && r[0] === 'NATURE' && TREE_RE.test(r[1])) {
-                            rawTreeIndices.push(idx);
-                        }
-                    }
-                });
-
-                // 空间网格桶快速连通聚类 (网格大小 2 格)
-                const treeGrid = new Map<string, number[]>();
-                for (const tidx of rawTreeIndices) {
-                    const ob = data.objects[tidx];
-                    const key = `${Math.floor(ob.x / 2)},${Math.floor(ob.y / 2)}`;
-                    if (!treeGrid.has(key)) treeGrid.set(key, []);
-                    treeGrid.get(key)!.push(tidx);
-                }
-
-                const visitedTree = new Set<number>();
-                let clumpCounter = 0;
-                for (const startIdx of rawTreeIndices) {
-                    if (visitedTree.has(startIdx)) continue;
-                    const cId = clumpCounter++;
-                    const clumpMembers: number[] = [];
-                    const queue = [startIdx];
-                    visitedTree.add(startIdx);
-                    while (queue.length > 0) {
-                        const curIdx = queue.shift()!;
-                        clumpMembers.push(curIdx);
-                        const curOb = data.objects[curIdx];
-                        const gx = Math.floor(curOb.x / 2), gy = Math.floor(curOb.y / 2);
-                        for (let dx = -1; dx <= 1; dx++) {
-                            for (let dy = -1; dy <= 1; dy++) {
-                                const bucket = treeGrid.get(`${gx + dx},${gy + dy}`);
-                                if (bucket) {
-                                    for (const nbrIdx of bucket) {
-                                        if (!visitedTree.has(nbrIdx)) {
-                                            const nbrOb = data.objects[nbrIdx];
-                                            if (Math.hypot(curOb.x - nbrOb.x, curOb.y - nbrOb.y) <= 1.6) {
-                                                visitedTree.add(nbrIdx);
-                                                queue.push(nbrIdx);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 仅在隐藏了森林底斑的荒漠/戈壁/干草原（isSparseTreelessBiome）裁剪大林团；其余地图 100% 保留 DE 林团与散株
-                    if (clumpKeepMod > 1 && clumpMembers.length > 3 && (cId % clumpKeepMod !== 0)) {
-                        for (const mIdx of clumpMembers) skippedTreeIndices.add(mIdx);
-                        continue;
-                    }
-                    if (clumpMembers.length > maxTreesPerClump) {
-                        for (let k = maxTreesPerClump; k < clumpMembers.length; k++) {
-                            skippedTreeIndices.add(clumpMembers[k]);
-                        }
-                    }
-
-                    // 统计该林块内的原生主导树种，并与当地真实地理/四季主导树种 regionalTree 融合：
-                    // 85% 林团直接使用当地与当季的 regionalTree（如日本春樱/秋银杏、岭南翠竹、地中海油橄榄、北非金合欢等），
-                    // 15% 林团若原图自带非通用橡树/棕榈的特色伴生树且符合当前季节，则保留整团伴生树，做到既纯正又富有层次
-                    const counts: Record<string, number> = {};
-                    for (const mIdx of clumpMembers) {
-                        const r = resolveNatureSprite(data.objects[mIdx].name);
-                        if (r) counts[r[1]] = (counts[r[1]] || 0) + 1;
-                    }
-                    let maxCnt = 0, bestAsset = '';
-                    for (const [ast, cnt] of Object.entries(counts)) {
-                        if (cnt > maxCnt) { maxCnt = cnt; bestAsset = ast; }
-                    }
-                    const isGenericBakedTree = bestAsset === 'OAK' || bestAsset === 'PALM' || bestAsset === 'PINE' || bestAsset === 'GREEN_OAK';
-                    const snowTreeOnNonSnowGround = !isSnowBase && /^SNOW_/.test(bestAsset);
-                    const greenTreeInSnow = isSnowBase && !/^SNOW_|PINE|DEAD_TREE|BIRCH_WINTER/.test(bestAsset);
-                    const autumnMismatch = this.sceneSeason === 1 && (bestAsset === 'OAK' || bestAsset === 'GREEN_OAK' || bestAsset === 'BIRCH_GREEN' || bestAsset === 'ASIAN_MAPLE_GREEN');
-                    const isAridOrSteppeGround = isSparseTreelessBiome || /^(des|pal|pal1|qs|ds2|ds5|gr5|gr7|gravel_default|rck)$/i.test(baseTerrain);
-                    const aridTreeMismatch = isAridOrSteppeGround && !/^(PALM|ACACIA|BAOBAB|OLIVE|CYPRESS|DEAD_TREE|BUSH_TREE|DRAGON_TREE)$/i.test(bestAsset);
-                    const tropicalTreeOnNonTropical = Math.abs(mapLat) > 25 && /^(RAINFOREST|JUNGLE|RAINFOREST_TREE|JUNGLE_TREE|MANGROVE|BRAZILWOOD|PALM|BAOBAB)$/i.test(bestAsset) && !/^(des|pal|pal1|qs|ds2|ds5)$/i.test(baseTerrain);
-                    const finalClumpTree = (
-                        !bestAsset ||
-                        isGenericBakedTree ||
-                        snowTreeOnNonSnowGround ||
-                        greenTreeInSnow ||
-                        autumnMismatch ||
-                        aridTreeMismatch ||
-                        tropicalTreeOnNonTropical ||
-                        (cId % 6 !== 0)
-                    ) ? regionalTree : bestAsset;
-
-                    for (const mIdx of clumpMembers) {
-                        if (!skippedTreeIndices.has(mIdx)) {
-                            treeClumpDominant.set(mIdx, finalClumpTree);
-                        }
-                    }
-                }
+                // 🔴 [2026-10-21] 旧「空间聚类纯化 / regionalTree 融合」整段已删：
+                //    那段按建筑风格把整团树替换成 regionalTree（SASANIAN→PINE），
+                //    DE 烘焙图里的棕榈林/桦林因此全变成松林（菲鲁扎巴德 1224/1278 棵是 PINE）。
+                //    现在树种以脚下 DE 地形为准（见 Scene13DeTrees.ts），循环里逐棵保留 DE 树种、只做季节换装。
 
                 // 🔴 [2026-10-13 主人令「动物逻辑和DE不一样，请核对清楚」＋「尽量真实，游戏合理」]
                 //    分类 / 速度 / 视野 / 血量 / 攻击一律照 DE 本体（表 ANIMAL_DE，见文件上方），不再手写三张 Set。
@@ -367,7 +269,6 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                 };
 
                 for (let obIdx = 0; obIdx < data.objects.length; obIdx++) {
-                    if (skippedTreeIndices.has(obIdx)) continue;
                     const ob = data.objects[obIdx];
                     if (ob.name && ob.name.includes('CLIFF')) continue;
                     const r = resolveNatureSprite(ob.name);
@@ -437,16 +338,21 @@ export function requestGroundLayerGL(this: Scene13WarLayer): void {
                         }
 
                         // 静态自然植被与矿石资源
-                        let asset = treeClumpDominant.get(obIdx) ?? r[1];
+                        // 🔴 [2026-10-21] 树种以**脚下 DE 地形**为准（见 Scene13DeTrees.ts）：
+                        //    DE 烘焙图里 FPAL 长在 13 Palm Desert、BIRCH 长在 110 Birch…，直接照用，不再按建筑风格替换。
+                        let asset = r[1];
                         const isTree = TREE_RE.test(asset);
                         if (isTree) {
-                            if (baseTerrain === 'gravel_default' && (asset === 'SNOW_PINE' || asset === 'PINE' || asset === 'ASIAN_PINE')) continue;
-                            if (!isSnowBase) {
-                                if (asset === 'SNOW_PINE') asset = regionalTree;
-                                else if (asset === 'SNOW_AUTUMN_OAK') asset = this.sceneSeason === 1 ? 'AUTUMN_OAK' : regionalTree;
-                                else if (asset === 'SNOW_BIRCH') asset = this.sceneSeason === 1 ? 'BIRCH_AUTUMN' : regionalTree;
-                                else if (asset === 'SNOW_DEAD_TREE') asset = 'DEAD_TREE';
-                            }
+                            const tid = terrainUnder(ob);
+                            // ① 水格不长树
+                            if (WATER_TERRAINS.has(tid)) continue;
+                            // ② 纯沙地（DE 14 Desert / 2 Beach）只准长沙漠树种（棕榈/龙血树/金合欢…）；
+                            //    松、桦、橡、枫这些温带/寒带树种长到沙地上就是「沙子里面长树」
+                            if (bareSandRejectsTree(tid, asset)) continue;
+                            // ③ 季节换装：只换同族形态（橡→秋橡/雪橡、桦→秋桦/冬桦、松→雪松），绝不跨族换树种
+                            asset = seasonalDeTree(asset, calSeason, isSnowBase);
+                            // ④ 高山砾石底图（青藏/帕米尔）不长成片针叶林（旧口径保留）
+                            if (baseTerrain === 'gravel_default' && /^(SNOW_PINE|PINE|ASIAN_PINE)$/.test(asset)) continue;
                         } else if (asset.startsWith('FORAGE_')) {
                             // 非湿润热带区域（如雪地、荒漠、温带/寒带），将烘培模板中的热带菠萝/木瓜浆果丛统一转为通用浆果丛
                             if (asset !== 'FORAGE_BUSH') {
