@@ -2026,7 +2026,6 @@ export const FACTIONS: Faction[] = [
     { id: 'medang', name: '马打蓝' },        // 卡拉桑·马打蓝王国（古爪哇 Medang，赛伦德拉王朝建卡拉桑）
     { id: 'ternate', name: '特尔纳特' },        // 德尔纳特·特尔纳特苏丹国（丁香群岛/马鲁古，巴布拉1570-1583）
     { id: 'sulu', name: '苏禄' },        // 霍洛·苏禄苏丹国（苏禄群岛，东王朝贡大明）
-    { id: 'xishudongyin', name: '西属东印' },        // 马尼拉·西属东印度（西班牙菲律宾，莱加斯皮1571）
     { id: 'gurjara', name: '瞿折罗' },        // 帕坦·瞿折罗（古吉拉特）
     { id: 'suomunate', name: '索姆纳特' },     // 索姆纳特·印度教十二光辉林伽之首
     { id: 'zhuluo', name: '朱罗' },        // 坦贾武尔·朱罗王朝（南印度海权帝国）
@@ -2138,7 +2137,6 @@ export const FACTIONS: Faction[] = [
   // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权 ──
   { id: 'dalriada', name: '达尔里阿达' },  // 邓纳德
   { id: 'scotland', name: '苏格兰' },  // 斯昆
-  { id: 'hre', name: '神圣罗马帝国' },  // 法兰克福
   { id: 'chanka', name: '昌卡' },  // 安达瓦伊拉斯
   { id: 'ouchi', name: '大内' },  // 山口
   { id: 'cueva', name: '库埃瓦' },  // 科马格雷
@@ -2146,20 +2144,11 @@ export const FACTIONS: Faction[] = [
   { id: 'gujarat', name: '古吉拉特' },  // 艾哈迈达巴德
   { id: 'arakan', name: '阿拉干' },  // 妙乌
   { id: 'voc', name: '荷兰东印度公司' },  // 巴达维亚
-  { id: 'malla', name: '马拉' },  // 巴德岗
-  { id: 'qiangfang', name: '羌方' },  // 羌邑
-  { id: 'huaiyi', name: '淮夷' },  // 淮浦
-  { id: 'pisa', name: '皮萨' },  // 皮萨提斯
-  { id: 'cimmerian', name: '辛梅里安' },  // 辛梅里孔
-  { id: 'libya', name: '利比亚' },  // 马尔马里卡
   { id: 'kosala', name: '拘萨罗' },  // 舍卫城
   { id: 'kalinga', name: '羯陵伽' },  // 丹塔普拉
   { id: 'anga', name: '鸯伽' },  // 瞻波
   { id: 'shunga', name: '巽伽' },  // 阿逾陀
   { id: 'antigonid', name: '安提柯' },  // 凯莱奈
-  { id: 'mimo', name: '靡莫' },  // 靡莫邑
-  { id: 'xizhou', name: '西州' },  // 平襄
-  { id: 'shijun', name: '十二使君' },  // 杜洞江
 ];
 
 // @ts-ignore
