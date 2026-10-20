@@ -81,7 +81,7 @@ const STYLE_LABELS: Record<string, string> = {
     POLES: '波兰', BOHEMIANS: '波希米亚', MAGYAR: '马扎尔', SLAVIC: '斯拉夫', LITHUANIANS: '立陶宛', BULGARIANS: '保加利亚',
     LATIN: '意大利', ROMA: '罗马', SICILIANS: '西西里', SPANISH: '西班牙', PORTUGUESE: '葡萄牙',
     ORIE: '萨拉森',
-    HUNS: '匈人', CUMAN: '库曼', TURKS: '奥斯曼', CENTRAL_ASIA: '鞑靼',
+    HUNS: '匈人', CUMAN: '库曼', TURKS: '土耳其', CENTRAL_ASIA: '鞑靼',
     INDIA: '达罗毗荼', MUGHAL: '印度斯坦', BENGALIS: '孟加拉', GURJARAS: '瞿折罗',
     PURU: '普鲁',
     KHMER: '高棉', BURMESE: '缅甸', VIETNAMESE: '越南', MALAY: '马来',
