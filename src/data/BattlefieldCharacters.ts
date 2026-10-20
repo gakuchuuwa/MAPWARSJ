@@ -233,6 +233,54 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史无载，拟名：1228 年完颜陈和尚大昌原胜蒙古军，蒙古主将姓名未传。',
     },
+    // 🔴 [2026-10-20 首战规则] 1242 楚德湖冰上战役条顿/利沃尼亚骑士团主将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_teutonic_jiang: {
+        generalId: 'bfe_teutonic_jiang',
+        generalName: '条顿骑士团主将',
+        factionId: 'tiaodun_qishi',
+        portrait: '',
+        note: '史无载，拟名：1242 年楚德湖冰上战役，条顿/利沃尼亚骑士团主将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1292 兰甘亨夺取洛坤，单马令王国（三佛齐属国）守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_tambralinga_jiang: {
+        generalId: 'bfe_tambralinga_jiang',
+        generalName: '单马令守将',
+        factionId: 'sanfoqi',
+        portrait: '',
+        note: '史无载，拟名：1292 年兰甘亨攻洛坤，单马令王国守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1292 孟莱攻哈利奔猜，末代孟王姓名未传 → 拟名战场人物（立绘留空）
+    bfe_hariphunchai_wang: {
+        generalId: 'bfe_hariphunchai_wang',
+        generalName: '哈利奔猜王',
+        factionId: 'mon',
+        portrait: '',
+        note: '史无载，拟名：1292 年孟莱攻灭哈利奔猜，末代孟王姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1302 巴菲乌斯战役拜占庭守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_bapheus_shoujiang: {
+        generalId: 'bfe_bapheus_shoujiang',
+        generalName: '巴菲乌斯拜占庭守将',
+        factionId: 'baizanting',
+        portrait: '',
+        note: '史无载，拟名：1302 年奥斯曼破拜占庭于巴菲乌斯，拜占庭守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1303 奇托尔攻城战拉其普特守将姓名未传 → 拟名战场人物（立绘留空）
+    bfe_chittor_shoujiang: {
+        generalId: 'bfe_chittor_shoujiang',
+        generalName: '奇托尔拉其普特守将',
+        factionId: 'suomunate',
+        portrait: '',
+        note: '史无载，拟名：1303 年阿拉乌丁攻奇托尔，拉其普特守将姓名未传。',
+    },
+    // 🔴 [2026-10-20 首战规则] 1321 伊尔平河战役罗斯诸公主帅姓名未传 → 拟名战场人物（立绘留空）
+    bfe_irpen_jiang: {
+        generalId: 'bfe_irpen_jiang',
+        generalName: '伊尔平河罗斯主将',
+        factionId: 'luosi',
+        portrait: '',
+        note: '史无载，拟名：1321 年格迪米纳斯败罗斯诸公于伊尔平河，罗斯主将姓名未传。',
+    },
     // 🔴 [2026-10-20 首战规则] 1152 年拜占庭攻奇里乞亚，拜占庭军主将姓名未传 → 拟名战场人物（立绘留空）
     bfe_cilicia_shoujiang: {
         generalId: 'bfe_cilicia_shoujiang',
