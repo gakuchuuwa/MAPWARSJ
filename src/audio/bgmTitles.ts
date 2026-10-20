@@ -50,7 +50,6 @@ export const BGM_TITLES: Record<string, string> = {
     celts_b: '苏格兰风笛 Scotland the Brave',
     central_asia_a: 'Dombra & Kobyz 哈萨克冬不拉',
     cuman_a: '钦察战鼓 Kipchak War Drums',
-    cuman_b: 'Kobyz 哈萨克库布孜',
     daming: '大明·8月4日',
     danes_a: '维京号角战乐',
     danes_b: '维京进行曲',

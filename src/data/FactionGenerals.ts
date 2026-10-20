@@ -83,7 +83,12 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     antiaokegongguo: { generalId: 'gen_nur_ad_din', generalName: '努尔丁', portrait: '/assets/ORIE/antiaokegongguo_nuerding.png' },
     aoerlianggongguo: { generalId: 'gen_joanofarc', generalName: '贞德', portrait: '/assets/LATIN/aoerlianggongguo_zhende.png' },
     jinquehua: { generalId: 'gen_edward_longshanks', generalName: '长腿爱德华', portrait: '/assets/GERMANIC/jinquehua_changtuiaidehua.png' },
-    apuliya: { generalId: 'gen_robert_guiscard', generalName: '吉斯卡尔', portrait: '/assets/LATIN/apuliya_jisikaer.png' },
+    apuliya: [
+        { generalId: 'gen_robert_guiscard', generalName: '吉斯卡尔', portrait: '/assets/LATIN/apuliya_jisikaer.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝贝内文托战役 → 最近同风格据点梅尔菲
+        // 🔴 [2026-10-20 首战规则] 曼弗雷德＝霍亨斯陶芬家西西里王（1266 贝内文托败于安茹的卡洛）；霍亨斯陶芬无独立势力，挂神圣罗马帝国并报告；名将；封建×西西里＝封建时代西西里埃米尔军团；立绘留空
+        { generalId: 'hre_manfred', factionId: 'hre', legionName: '城堡时代诺曼军团', generalName: '曼弗雷德', portrait: '' },
+    ],
     saimien: { generalId: 'gen_yodit', generalName: '尤迪特', portrait: '/assets/AFRICA/saimien_youdite.png' },
     aosimanbeiyiguo: { generalId: 'gen_osman_i', generalName: '奥斯曼一世', portrait: '/assets/WEST_ASIA/aosimanbeiyiguo_aosimanyishi.png' },
     aiduoniya: { generalId: 'gen_brasidas', generalName: '巴西达斯', portrait: '/assets/GREEK/aiduoniya_baxidasi.png' },
@@ -113,6 +118,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'gen_kotyan', generalName: '忽炭汗', portrait: '/assets/STEPPE/kumanni_hutanhan.png' },
         // 2026-10-20：克里米亚汗国奠基者哈吉·格莱（1397–1466）→ 黑海北岸库曼（克里米亚鞑靼族源）奥列什基；CUMAN×城堡＝库曼军团
         { generalId: 'gen_haci_giray', generalName: '哈吉格莱', portrait: '', legionName: '城堡时代库曼军团' },
+        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_cimmericum 已删 → 迁奥列什基（同建筑风格最近），仍挂本政权 cimmerian
+        { generalId: 'bfe_cimmerian_king', factionId: 'cimmerian', legionName: '古典时代萨尔马提亚军团', generalName: '辛梅里安王 图格达梅', portrait: '' },
     ],
     // 巴奇曼＝伏尔加钦察汗；钦察＝库曼（Cuman-Kipchak 同一联盟，汉名钦察／西名库曼），与忽炭汗同一边、不是敌人 → 统一挂库曼
     qincha_saksin: { generalId: 'qincha_baqiman', generalName: '巴奇曼', portrait: '/assets/STEPPE/qincha_baqiman.png', factionId: 'kuman_oleshky' , eliteName: '库曼弓骑', eliteTier: 1 },
@@ -197,7 +204,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'wangdaer_gaisalike', generalName: '盖萨里克', portrait: '', legionName: '古典时代迦太基军团' },
     ],
     aguelabu: { generalId: 'gen_uqba', generalName: '奥克巴', portrait: '/assets/BERBER/aguelabu_aokeba.png' },
-    telibolisi: { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
+    telibolisi: [
+        { generalId: 'gen_dragut', generalName: '德拉古特', portrait: '/assets/BERBER/telibolisi_delagute.png' },
+        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_marmarica 已删 → 迁的黎波里（同建筑风格最近），仍挂本政权 libya
+        { generalId: 'bfe_libyan_chief', factionId: 'libya', legionName: '古典时代迦太基军团', generalName: '利比亚诸部盟主 阿迪尔', portrait: '' },
+    ],
     jileinaijia: { generalId: 'gen_magas', generalName: '马加斯', portrait: '/assets/BERBER/jileinaijia_majiasi.png' },
     talike: { generalId: 'talike_talike', generalName: '塔里克', portrait: '/assets/BERBER/talike_talike.png' },
 
@@ -247,7 +258,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'xigete_roderic', generalName: '罗德里克', portrait: '', legionName: '封建时代阿斯图里亚斯军团' , eliteName: '西哥特亲兵', eliteTier: 4 },   // 🔴 卡斯蒂骑士是 1085 年阿方索六世的，不是 711 年西哥特的兵
     ],
     andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
-    alagong: { generalId: 'gen_james_i_aragon', generalName: '海梅', portrait: '/assets/LATIN/alagong_haimei.png' },
+    alagong: [
+        { generalId: 'gen_james_i_aragon', generalName: '海梅', portrait: '/assets/LATIN/alagong_haimei.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」] 马尼拉改判 MALAY，西班牙文化的莱加斯皮按规则迁离事发地（马尼拉）最近的 SPANISH 据点＝萨拉戈萨，仍挂本政权 xishudongyin
+        { generalId: 'xishudongyin_lijiasipi', factionId: 'xishudongyin', legionName: '帝国时代西班牙方阵军团', generalName: '莱加斯皮', portrait: '/assets/AMERICA/xishudongyin_laijiasipi.png' },
+    ],
     shaiyue: { generalId: 'shaiyue_aerpade', generalName: '阿尔帕德', portrait: '/assets/GERMANIC/shaiyue_aerpade.png' },
 
     nuosi: { generalId: 'gen_olaf_skotkonung', generalName: '奥拉夫', portrait: '/assets/GERMANIC/nuosi_aolafu.png' },
@@ -330,6 +345,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'falanji_kalman', generalName: '卡洛曼', portrait: '' },
         // 🔴 [2026-10-20 首战规则] 鲍德温一世＝第四次十字军首领、拉丁帝国皇帝（1205 阿德里安堡被卡洛扬击败被俘）→ 科隆·法兰克（拉丁帝国无独立势力，挂法兰克并报告）；名将；立绘留空
         { generalId: 'falanji_baodewen', legionName: '城堡时代法兰西骑士军团', generalName: '鲍德温一世', portrait: '' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝沃林根战役（科隆） → 最近同风格据点科隆
+        // 🔴 [2026-10-20 首战规则] 西格弗里德＝科隆大主教（1288 沃林根战役联军主帅，败于布拉班特公爵约翰一世）→ 科隆；普将；封建×法兰克＝封建时代法兰克军团；立绘留空
+        { generalId: 'hre_siegfried', factionId: 'hre', legionName: '城堡时代法兰西骑士军团', generalName: '西格弗里德', portrait: '' },
     ],
     jialuolin: { generalId: 'gen_charlemagne', generalName: '查理曼', portrait: '/assets/GERMANIC/jialuolin_chalidadi.png' },
     rierman: [
@@ -341,7 +359,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     shiwaben: { generalId: 'gen_ulrich_augsburg', generalName: '乌尔里希', portrait: '/assets/GERMANIC/shiwaben_shengwuerlixi.png' },
     asikanani: { generalId: 'gen_albrecht_bear', generalName: '阿尔布雷', portrait: '/assets/GERMANIC/asikanani_aerbulei.png' },
     wende: { generalId: 'gen_gero_margrave', generalName: '杰罗', portrait: '/assets/GERMANIC/wende_jieluobojue.png' },
-    bafaliya: { generalId: 'gen_tassilo_iii', generalName: '塔西洛三世', portrait: '/assets/GERMANIC/bafaliya_taxiluosanshi.png' },
+    bafaliya: [
+        { generalId: 'gen_tassilo_iii', generalName: '塔西洛三世', portrait: '/assets/GERMANIC/bafaliya_taxiluosanshi.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝维特科夫山战役（布拉格） → 最近同风格据点雷根斯堡
+        { generalId: 'bfe_sigismund', factionId: 'hre', legionName: '城堡时代德意志骑士军团', generalName: '西吉斯蒙德', portrait: '' },
+    ],
     huohengsuolun: { generalId: 'gen_frederick_i_nuremberg', generalName: '腓特烈一世', portrait: '/assets/GERMANIC/huohengsuolun_feitelieyishi.png' },
     mozeer: { generalId: 'gen_constantine_great', generalName: '君士坦丁', portrait: '/assets/GERMANIC/mozeer_junshitanding.png' },
     ruishi: { generalId: 'gen_winkelried', generalName: '温克尔里德', portrait: '/assets/GERMANIC/ruishi_ciwenli.png' },
@@ -430,6 +452,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     qin: [
         { generalId: 'qin_simacuo', generalName: '司马错', portrait: '/assets/yingqin/qin_simacuo.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝助光武夹击隗嚣陇右战 → 最近同风格据点天水
+        { generalId: 'bfe_niu_han', factionId: 'xizhou', generalName: '隗嚣将 牛邯', portrait: '' },
     ],
     tang: [
         { generalId: 'tang_lishimin', generalName: '李世民', portrait: '/assets/litang/tang_lishimin.png' },
@@ -721,7 +745,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'yuan_d_manzihaiya', legionName: '城堡时代蒙古军团', generalName: '蛮子海牙', portrait: '' },
     ],
     mengwu: { generalId: 'mengwu_hebulehan', generalName: '合不勒', portrait: '/assets/STEPPE/mengwu_hebulehan.png' },
-    shaodang: { generalId: 'shaodang_mitang', generalName: '迷唐', portrait: '/assets/TIBET/shaodang_mitang.png' },
+    shaodang: [
+        { generalId: 'shaodang_mitang', generalName: '迷唐', portrait: '/assets/TIBET/shaodang_mitang.png' },
+        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_qiangyi 已删 → 迁玛曲（同建筑风格最近），仍挂本政权 qiangfang
+        { generalId: 'bfe_qiang_bo', factionId: 'qiangfang', generalName: '羌方首领 羌伯砺', portrait: '' },
+    ],
     xueyantuo: { generalId: 'xueyantuo_yinan', generalName: '夷男', portrait: '/assets/STEPPE/xueyantuo_yinan.png' },
 
     // 骨力裴罗＝回纥（后改称回鹘）汗国开国可汗，回纥/回鹘/博尔巴任回鹘是同一汗国 → 统一挂回鹘
@@ -909,7 +937,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 // ── 青藏区 2026-06-18 ──
     song2: { generalId: 'song2_houjunji', generalName: '侯君集', portrait: '/assets/litang/song2_houjunji.png' },
-    gurkha: { generalId: 'gurkha_baduersaye', generalName: '巴都尔萨野', portrait: '/assets/TIBET/gurkha_badouersaye.png' },
+    gurkha: [
+        { generalId: 'gurkha_baduersaye', generalName: '巴都尔萨野', portrait: '/assets/TIBET/gurkha_badouersaye.png' },
+        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_bhaktapur 已删 → 迁加德满都（同建筑风格最近），仍挂本政权 malla
+        { generalId: 'bfe_jaya_prakash', factionId: 'malla', generalName: '贾亚·普拉卡什·马拉', portrait: '' },
+    ],
     gongbu: { generalId: 'gongbu_gongbumangbuzhi', generalName: '工布莽布支', portrait: '/assets/TIBET/gongbu_gongbumangbuzhi.png' },
     khon: { generalId: 'khon_basiba', generalName: '八思巴', portrait: '/assets/TIBET/khon_basiba.png' },
     xiadun: { generalId: 'xiadun_xiazhongawanglangjie', generalName: '阿旺朗杰', portrait: '/assets/TIBET/xiadun_awanglangjie.png' },
@@ -966,7 +998,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     dongxu: { generalId: 'dongxu_mangruiti', generalName: '莽瑞体', portrait: '/assets/DIANQIAN/dongxu_mangruiti.png' },
     meitai: { generalId: 'meitai_hagenba', generalName: '哈根巴', portrait: '/assets/INDIA/meitai_hagenba.png' },  // 康格拉·曼尼普尔国王
     mu_lijiang: { generalId: 'mu_lijiang_muzeng', generalName: '木增', portrait: '/assets/DIANQIAN/mu_lijiang_muzeng.png' },
-    dianguo: { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/xianqin/dianguo_zhuangqiao.png' },
+    dianguo: [
+        { generalId: 'dianguo_zhuangqiao', generalName: '庄蹻', portrait: '/assets/xianqin/dianguo_zhuangqiao.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝远征平滇称王之役 → 最近同风格据点滇池
+        { generalId: 'bfe_dian_chief', factionId: 'mimo', legionName: '古典时代巴蜀军团', generalName: '靡莫大酋 苴兰', portrait: '' },
+    ],
     konbaung: { generalId: 'konbaung_yongjiya', generalName: '雍笈牙', portrait: '/assets/DIANQIAN/konbaung_yongjiya.png' },
     hantawadi: { generalId: 'hantawadi_mangyinglong', generalName: '莽应龙', portrait: '/assets/DIANQIAN/hantawadi_mangyinglong.png' },
     nanzhao: [
@@ -974,7 +1010,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         // 🔴 [2026-10-20 首战规则] 段酋迁＝南诏将（866 守交趾被高骈击破）→ 蒙舍城·南诏；普将；立绘留空
         { generalId: 'nanzhao_duanqiuxian', generalName: '段酋迁', portrait: '' },
     ],
-    wuman: { generalId: 'wuman_gaipin', generalName: '盖聘', portrait: '/assets/BASHU/wuman_cuangui.png' },
+    wuman: [
+        { generalId: 'wuman_gaipin', generalName: '盖聘', portrait: '/assets/BASHU/wuman_cuangui.png' },
+    ],
     dai: { generalId: 'dai_daoyingmeng', generalName: '刀应勐', portrait: '/assets/DIANQIAN/dai_daoyingmeng.png' },
     taiyuan: { generalId: 'taiyuan_menglai', generalName: '孟莱', portrait: '/assets/DIANQIAN/taiyuan_menglai.png' },
     suke: { generalId: 'suke_langanheng', generalName: '兰甘亨', portrait: '/assets/DIANQIAN/suke_langanheng.png' },
@@ -1007,7 +1045,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     geng: { generalId: 'geng_gengjingzhong', generalName: '耿精忠', portrait: '/assets/LINGNAN/geng_gengjingzhong.png' },
     longwu: { generalId: 'longwu_huangdaozhou', generalName: '黄道周', portrait: '/assets/LINGNAN/longwu_huangdaozhou.png' },
     xinjiang: { generalId: 'xinjiang_maji', generalName: '马塈', portrait: '/assets/LINGNAN/xinjiang_maji.png' },
-    jing: { generalId: 'jing_dingbuling', generalName: '丁部领', portrait: '/assets/LINGNAN/jing_dingbuling.png' },
+    jing: [
+        { generalId: 'jing_dingbuling', generalName: '丁部领', portrait: '/assets/LINGNAN/jing_dingbuling.png' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝平定十二使君之战 → 最近同风格据点华闾
+        { generalId: 'bfe_ngo_nhat_khanh', factionId: 'shijun', legionName: '封建时代瞿越军团', generalName: '吴日庆', portrait: '' },
+    ],
     paiwan: { generalId: 'paiwan_alugu', generalName: '阿禄古', portrait: '/assets/LINGNAN/paiwan_alugu.png' },
     ming_zheng: { generalId: 'ming_zheng_zhengchenggong', generalName: '郑成功', portrait: '/assets/BASHU/ming_zheng_zhengchenggong.png' },
     nguyen_guangnan: { generalId: 'nguyen_guangnan_ruanfuying', generalName: '阮福映', portrait: '/assets/LINGNAN/nguyen_guangnan_ruanfuying.png' },
@@ -1037,7 +1079,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     li_s: { generalId: 'li_s_mayuan', generalName: '马援', portrait: '/assets/liuhan/li_s_mayuan.png' },
     leloi: { generalId: 'leloi', generalName: '黎利', portrait: '/assets/LINGNAN/leloi.png' },
     dacheng: { generalId: 'dacheng_chenkai', generalName: '陈开', portrait: '/assets/LINGNAN/dacheng_chenkai.png' },
-    dayue: { generalId: 'dayue_chenguojun', generalName: '陈国峻', portrait: '/assets/LINGNAN/dayue_chenguojun.png' },
+    dayue: [
+        { generalId: 'dayue_chenguojun', generalName: '陈国峻', portrait: '/assets/LINGNAN/dayue_chenguojun.png' },
+    ],
     shengmiao: { generalId: 'shengmiao_baoli', generalName: '包利', portrait: '/assets/LINGNAN/shengmiao_baoli.png' },
     miao_qing: { generalId: 'miao_qing_yangwanzhe', generalName: '杨完者', portrait: '/assets/LINGNAN/miao_qing_yangwanzhe.png' },
     guizhou: { generalId: 'guizhou_lidingguo', generalName: '李定国', portrait: '/assets/daming/guizhou_lidingguo.png' },
@@ -1185,7 +1229,9 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'zhou_jifu', generalName: '吉甫', portrait: '/assets/CENTRAL/zhou_jifu.png' , legionName: '先秦军团' },
         { generalId: 'zhou_jifa', generalName: '姬发', portrait: '/assets/xianqin/zhou_jifa.png' , legionName: '先秦军团' },
     ],
-    quanrong: { generalId: 'quanrong_yiquhai', generalName: '义渠骇', portrait: '/assets/xianqin/quanrong_yiquhai.png' },
+    quanrong: [
+        { generalId: 'quanrong_yiquhai', generalName: '义渠骇', portrait: '/assets/xianqin/quanrong_yiquhai.png' },
+    ],
     cai: { generalId: 'cai_lishuo', generalName: '石勒', portrait: '/assets/NORTH/cai_shile.png' },
     yun: { generalId: 'yun_wuli', generalName: '吾离', portrait: '/assets/xianqin/yun_wuli.png' , legionName: '先秦军团' },
     suzhou_d: { generalId: 'suzhou_d_shikefa', generalName: '史可法', portrait: '/assets/daming/suzhou_d_shikefa.png' },
@@ -1198,10 +1244,16 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     han: { generalId: 'han_baoyuan', generalName: '暴鸢', portrait: '/assets/xianqin/han_baoyuan.png' },
     xuguo: { generalId: 'caoren', generalName: '曹仁', portrait: '/assets/CENTRAL/caoren.png' },
     bailian: { generalId: 'bailian_wangconger', generalName: '王聪儿', portrait: '/assets/panjun/bailian_wangconger.png' },
-    shen: { generalId: 'shen_shenbo', generalName: '申伯', portrait: '/assets/xianqin/shen_shenbo.png' , legionName: '先秦军团' },
+    shen: [
+        { generalId: 'shen_shenbo', generalName: '申伯', portrait: '/assets/xianqin/shen_shenbo.png' , legionName: '先秦军团' },
+        // 🔴 [2026-10-20 主人令「放到离他事发地最近的相同建筑风格文化的据点」「所有武将都这么处理，不要擅自添加据点」] 事发地＝宣王南征谢邑封国战 → 最近同风格据点安康
+        { generalId: 'bfe_huaiyi_chief', factionId: 'huaiyi', legionName: '古典时代华夏军团', generalName: '淮夷首领 嬴夷吾', portrait: '' },
+    ],
     sima_d: { generalId: 'sima_d_simayi', generalName: '司马懿', portrait: '/assets/CENTRAL/sima_d_simayi.png' },
     liguo: { generalId: 'liguo_zhaoshe', generalName: '赵奢', portrait: '/assets/xianqin/liguo_zhaoshe.png' },
-    huai: { generalId: 'huai_zhuyuanzhang', generalName: '朱元璋', portrait: '/assets/daming/huai_zhuyuanzhang.png' },
+    huai: [
+        { generalId: 'huai_zhuyuanzhang', generalName: '朱元璋', portrait: '/assets/daming/huai_zhuyuanzhang.png' },
+    ],
     // 商鞅：姬姓公孙氏，本名卫鞅/公孙鞅，封于商（商於）后历代通称商鞅
     shangzhou: { generalId: 'shangzhou_shangyang', generalName: '商鞅', portrait: '/assets/yingqin/shangzhou_shangyang.png' },
     yuan_cj_d: { generalId: 'yuan_cj_d_lishuo', generalName: '李愬', portrait: '/assets/litang/yuan_cj_d_lishuo.png' },
@@ -1742,8 +1794,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     ],
     medang: { generalId: 'gen_panangkaran', generalName: '帕南卡兰', portrait: '/assets/DIANQIAN/medang_panankalan.png' },
     ternate: { generalId: 'ternate_babula', generalName: '巴布拉', portrait: '/assets/DIANQIAN/ternate_babula.png' },
-    sulu: { generalId: 'sulu_paduka', generalName: '巴杜卡', portrait: '/assets/AFRICA/sulu_baduka.png' },
-    xishudongyin: { generalId: 'xishudongyin_lijiasipi', generalName: '莱加斯皮', portrait: '/assets/AMERICA/xishudongyin_laijiasipi.png' },
+    sulu: [
+        { generalId: 'sulu_paduka', generalName: '巴杜卡', portrait: '/assets/AFRICA/sulu_baduka.png' },
+    ],
+    // 🔴 [2026-10-20 主人令「先确定马尼拉什么建筑风格，再确定据点放什么相同风格的武将」] 马尼拉改判 MALAY ⇒ 挂马来文化的拉者苏莱曼三世（事发地＝马尼拉），仍挂本政权 maynila
+    maynila: { generalId: 'bfe_rajah_sulayman', legionName: '帝国时代马六甲军团', generalName: '拉者苏莱曼三世', portrait: '' },
     gurjara: [
         { generalId: 'gen_mihirabhoja', generalName: '迷企罗波阇', portrait: '/assets/INDIA/gurjara_miqiluobodu.png' },
         // 🔴 [2026-10-20 首战规则] 瓦萨拉贾＝瞿折罗-普腊蒂哈腊王（790 争曲女城，曾破波罗军）→ 帕坦·瞿折罗；名将；立绘留空
@@ -1786,7 +1841,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     adile: { generalId: 'adile_adilesha', generalName: '阿迪勒沙', portrait: '/assets/CENTRAL_ASIA/adile_adilesha.png' },
     foluolida: { generalId: 'foluolida_meinendeshi', generalName: '梅嫩德斯', portrait: '/assets/AMERICA/foluolida_meinendesi.png' , legionName: '帝国时代西班牙征服军团' },
     fujisi: { generalId: 'fujisi_fujiweng', generalName: '福基翁', portrait: '/assets/LATIN/fujisi_fujiweng.png' },
-    yilisi: { generalId: 'yilisi_yifeituosi', generalName: '伊菲托斯', portrait: '/assets/LATIN/yilisi_yifeituosi.png' },
+    yilisi: [
+        { generalId: 'yilisi_yifeituosi', generalName: '伊菲托斯', portrait: '/assets/LATIN/yilisi_yifeituosi.png' },
+        // 🔴 [2026-10-20 主人令「这些据点违规了……请删除。据点中有武将的话，请放到相同风格的临近据点」] 原据点 city_pisatis 已删 → 迁奥林匹亚（同建筑风格最近），仍挂本政权 pisa
+        { generalId: 'bfe_pisa_king', factionId: 'pisa', generalName: '皮萨王 潘塔琉斯', portrait: '' },
+    ],
     nuowei: { generalId: 'nuowei_halaer', generalName: '哈拉尔', portrait: '/assets/SLAVIC/nuowei_halaer.png' },
     keernuwaye: { generalId: 'keernuwaye_geladelong', generalName: '格拉德隆', portrait: '/assets/GERMANIC/keernuwaye_geladelong.png' },
     aodesuosi: { generalId: 'aodesuosi_aodesuosi', generalName: '奥德索斯首领', portrait: '/assets/LATIN/aodesuosi_aodesuosi.png' },
@@ -1911,34 +1970,17 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     // ── 🔴 [2026-10-20 主人令「看武将，以武将来定义势力」] 起义占位首战改挂真实政权：敌将落为本势力据点武将（立绘留空） ──
     dalriada: { generalId: 'bfe_dalriada_king', generalName: '达尔里阿达王 费尔古斯·麦克·埃赫达赫', portrait: '' },
     scotland: { generalId: 'gen_john_comyn', generalName: '约翰·科明', portrait: '' },
-    hre: [
-        { generalId: 'bfe_sigismund', generalName: '西吉斯蒙德', portrait: '' },
-        // 🔴 [2026-10-20 首战规则] 曼弗雷德＝霍亨斯陶芬家西西里王（1266 贝内文托败于安茹的卡洛）；霍亨斯陶芬无独立势力，挂神圣罗马帝国并报告；名将；封建×西西里＝封建时代西西里埃米尔军团；立绘留空
-        { generalId: 'hre_manfred', legionName: '城堡时代诺曼军团', generalName: '曼弗雷德', portrait: '' },
-        // 🔴 [2026-10-20 首战规则] 西格弗里德＝科隆大主教（1288 沃林根战役联军主帅，败于布拉班特公爵约翰一世）→ 科隆；普将；封建×法兰克＝封建时代法兰克军团；立绘留空
-        { generalId: 'hre_siegfried', legionName: '城堡时代法兰西骑士军团', generalName: '西格弗里德', portrait: '' },
-    ],
     chanka: { generalId: 'bfe_chanca_chief', generalName: '昌卡部族盟主 阿斯塔瓦兰卡', portrait: '' },
     ouchi: { generalId: 'bfe_sue_harutaka', generalName: '陶晴贤', portrait: '' },
     cueva: { generalId: 'bfe_darien_chief', generalName: '达连酋长 库纳', portrait: '' },
-    maynila: { generalId: 'bfe_rajah_sulayman', generalName: '拉者苏莱曼三世', portrait: '' },
     gujarat: { generalId: 'bfe_muzaffar_shah', generalName: '穆扎法尔·沙阿三世', portrait: '' },
     arakan: { generalId: 'bfe_arakan_general', generalName: '阿拉干守将 阿萨杜拉', portrait: '' },
     voc: { generalId: 'bfe_coyett', generalName: '揆一', portrait: '' },
-    malla: { generalId: 'bfe_jaya_prakash', generalName: '贾亚·普拉卡什·马拉', portrait: '' },
-    qiangfang: { generalId: 'bfe_qiang_bo', generalName: '羌方首领 羌伯砺', portrait: '' },
-    huaiyi: { generalId: 'bfe_huaiyi_chief', generalName: '淮夷首领 嬴夷吾', portrait: '' },
-    pisa: { generalId: 'bfe_pisa_king', generalName: '皮萨王 潘塔琉斯', portrait: '' },
-    cimmerian: { generalId: 'bfe_cimmerian_king', generalName: '辛梅里安王 图格达梅', portrait: '' },
-    libya: { generalId: 'bfe_libyan_chief', generalName: '利比亚诸部盟主 阿迪尔', portrait: '' },
     kosala: { generalId: 'bfe_prasenajit', generalName: '拘萨罗王 波斯匿', portrait: '' },
     kalinga: { generalId: 'bfe_kalinga_king', generalName: '羯陵伽王 婆摩', portrait: '' },
     anga: { generalId: 'bfe_anga_king', generalName: '鸯伽王 达摩婆罗', portrait: '' },
     shunga: { generalId: 'bfe_pushyamitra', generalName: '巽伽王 普沙密多罗', portrait: '' },
     antigonid: { generalId: 'bfe_antigonus', generalName: '安提柯一世', portrait: '' },
-    mimo: { generalId: 'bfe_dian_chief', generalName: '靡莫大酋 苴兰', portrait: '' },
-    xizhou: { generalId: 'bfe_niu_han', generalName: '隗嚣将 牛邯', portrait: '' },
-    shijun: { generalId: 'bfe_ngo_nhat_khanh', generalName: '吴日庆', portrait: '' },
 };
 
 /** 🔴 [2026-09-12 主人「**一势力一将，这个规则取消**」]
