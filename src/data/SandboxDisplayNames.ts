@@ -24,6 +24,7 @@ export const SANDBOX_DISPLAY_NAMES: Record<string, string> = {
   tupinijin: '葡属',  // 葡属巴西（圣维森特）
   tuotuonake: '新墨',  // 西属墨西哥（韦拉克鲁斯）
   taino: '古巴',  // 西属古巴（哈瓦那）
+    taino_d: '泰诺',  // 泰诺（古巴东部亚拉）
   guanche: '关切',  // [2026-08-26] 加那利原住民关切人（柏柏尔系）
   yasuer: '亚速',  // [2026-08-26] 葡属亚速尔群岛，首府安格拉
   chamorro: '查',  // 查莫罗（关岛·阿加尼亚）
@@ -1198,7 +1199,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'medang': '马打',
     'ternate': '特尔',
     'sulu': '苏禄',
-    'xishudongyin': '西属',
     'puxiangyindu': '葡印',
     'xiyindu': '西印',
     'jialebi': '加勒',
@@ -1300,7 +1300,6 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
     'xindu': '信度',
   dalriada: '达里',  // 达尔里阿达
   scotland: '苏格',  // 苏格兰
-  hre: '神罗',  // 神圣罗马帝国
   chanka: '昌卡',  // 昌卡
   ouchi: '大内',  // 大内
   cueva: '库埃',  // 库埃瓦
@@ -1308,20 +1307,11 @@ shaiyue: '巴阡',  // [2026-08-26 旗号去重] 喀尔巴阡：「喀尔」与�
   gujarat: '古吉',  // 古吉拉特
   arakan: '若开',  // 阿拉干
   voc: '荷印',  // 荷兰东印度公司
-  malla: '马拉',  // 马拉
-  qiangfang: '羌方',  // 羌方
-  huaiyi: '淮夷',  // 淮夷
-  pisa: '皮萨',  // 皮萨
-  cimmerian: '辛梅',  // 辛梅里安
-  libya: '利比',  // 利比亚
   kosala: '拘萨',  // 拘萨罗
   kalinga: '羯陵',  // 羯陵伽
   anga: '鸯伽',  // 鸯伽
   shunga: '巽伽',  // 巽伽
   antigonid: '安提',  // 安提柯
-  mimo: '靡莫',  // 靡莫
-  xizhou: '西州',  // 西州
-  shijun: '使君',  // 十二使君
 };
 
 // @ts-ignore

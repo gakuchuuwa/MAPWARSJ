@@ -6,6 +6,7 @@ export const STARTING_CAPITALS: Record<string, string> = {
   // ── [2026-08-26] 大西洋航线七势力（1 势力 = 1 据点）──
   'tuotuonake': 'city_veracruz',
   'taino': 'city_havana',
+  'taino_d': 'city_yala', // 泰诺（古巴东部亚拉）
   'guanche': 'city_telde',
   'yasuer': 'city_angra',
   'fodejiao': 'city_ribeira',

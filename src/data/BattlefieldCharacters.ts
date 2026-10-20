@@ -191,7 +191,7 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-10-20 首战规则] 前275 大象之战：高卢首领姓名不载，拟名「卢塔里乌斯」
     bfe_gaul_chief: { generalId: 'bfe_gaul_chief', generalName: '卢塔里乌斯', factionId: 'gaolu_luoma', portrait: '', note: '史无载，拟名：前275 年安条克一世破高卢人之役，高卢首领姓名未传。' },
     // 🔴 [2026-10-20 首战规则] 1744 努瓦科特：加德满都马拉王姓名不载，拟名「拉纳吉特·马拉」
-    bfe_malla_king: { generalId: 'bfe_malla_king', generalName: '拉纳吉特·马拉', factionId: 'malla', portrait: '', note: '史无载，拟名：1744 年廓尔喀攻努瓦科特时马拉王姓名未确载。' },
+    bfe_malla_king: { generalId: 'bfe_malla_king', generalName: '拉纳吉特·马拉', factionId: 'gurkha', portrait: '', note: '史无载，拟名：1744 年廓尔喀攻努瓦科特时马拉王姓名未确载。' },
     // 🔴 [2026-10-20 首战规则] 1514 斯摩棱斯克：立陶宛守将尤里·格列博维奇（史有其人，生卒不详）
     bfe_zhao_handa_guard: { generalId: 'bfe_zhao_handa_guard', generalName: '赵午', factionId: 'zhao', portrait: '', note: '史无载，拟名：前353 年桂陵之战时邯郸赵军守将姓名未传。' },
     bfe_gandhara_king: { generalId: 'bfe_gandhara_king', generalName: '婆罗那', factionId: 'jibin', portrait: '', note: '史无载，拟名：498 年犍陀罗远征时罽宾／犍陀罗王姓名未传。' },
@@ -335,10 +335,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_zhang_hong: {
         generalId: 'bfe_zhang_hong',
-        generalName: '越嶲太守 张鸿',
+        generalName: '越嶲太守',
         factionId: 'panjun',
         portrait: '',
-        note: '史无载，拟名：东汉越嶲太守张鸿讨任贵无正史明载，借近载暂代。',
+        note: '史无载，拟名（不具名）：越嶲太守讨任贵，正史无明载。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
@@ -366,10 +366,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_ilkhani_general: {
         generalId: 'bfe_ilkhani_general',
-        generalName: '伊儿汗国残将 苏莱曼沙',
+        generalName: '苏莱曼沙',
         factionId: 'panjun',
         portrait: '',
-        note: '史无载，拟名：伊儿汗国残部首领名字未传。',
+        note: '史无载，拟名：伊儿汗国残部将领，名字未传。',
     },
     // 🔴 [2026-10-20 主人令「要给武将起名字」] 起义（panjun）首战补的敌将
     bfe_luang_prabang_king: {
@@ -626,10 +626,10 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
     // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
     bfe3_62: {
         generalId: 'bfe3_62',
-        generalName: '赫尔迈奥斯残部',
+        generalName: '狄奥菲洛斯',
         factionId: 'panjun',
         portrait: '',
-        note: '史无载，拟名：贵霜丘就却灭高附希腊化末王残余政权，《后汉书·西域传》',
+        note: '史无载，拟名：赫尔迈奥斯残部（高附希腊化末王残党）首领，姓名未传，《后汉书·西域传》',
     },
     // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将
     // 🔴 [2026-10-20 主人查史料回填·古典时代] 首战敌将

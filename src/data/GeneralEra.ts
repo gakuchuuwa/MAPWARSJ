@@ -234,7 +234,6 @@ export const GENERAL_ERA: Record<string, GeneralEra> = {
     'ganden_zongkaba': 'castle',
     'gandenpozhang_dibasangjiejiacuo': 'imperial',
     'ganzhou_dourong': 'antiquity',
-    'gaochang_quwentai': 'feudal',
     'gaoche_afuzhiluo': 'antiquity',
     'gaogouli_yizhiwende': 'feudal',
     'gaoliang_geshuhan': 'feudal',

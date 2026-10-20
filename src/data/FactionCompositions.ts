@@ -53,10 +53,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代安第斯游击军团",
         legionType: "sub",
     },
-    "xishudongyin": {
-        legionName: "帝国时代西班牙方阵军团",
-        legionType: "sub",
-    },
     "genji_iyo": {
         legionName: "城堡时代幕府军团",
         legionType: "sub",
@@ -1453,10 +1449,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代蒙古军团",
         legionType: "sub",
     },
-    "wala": {
-        legionName: "城堡时代蒙古军团",
-        legionType: "sub",
-    },
     "wuliangha": {
         legionName: "城堡时代蒙古军团",
         legionType: "sub",
@@ -1982,10 +1974,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "nguyen_guangnan": {
         legionName: "帝国时代安南军团",
-        legionType: "sub",
-    },
-    "qincha": {
-        legionName: "城堡时代库曼军团",
         legionType: "sub",
     },
     "xixiliwangguo": {
@@ -4558,10 +4546,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "城堡时代盖尔军团",
         legionType: "sub",
     },
-    "hre": {
-        legionName: "城堡时代德意志骑士军团",
-        legionType: "sub",
-    },
     "chanka": {
         legionName: "城堡时代印加军团",
         legionType: "sub",
@@ -4590,30 +4574,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
         legionName: "帝国时代马六甲军团",
         legionType: "sub",
     },
-    "malla": {
-        legionName: "帝国时代卫藏军团",
-        legionType: "sub",
-    },
-    "qiangfang": {
-        legionName: "古典时代发羌军团",
-        legionType: "sub",
-    },
-    "huaiyi": {
-        legionName: "古典时代华夏军团",
-        legionType: "sub",
-    },
-    "pisa": {
-        legionName: "古典时代爱奥尼亚军团",
-        legionType: "sub",
-    },
-    "cimmerian": {
-        legionName: "古典时代萨尔马提亚军团",
-        legionType: "sub",
-    },
-    "libya": {
-        legionName: "古典时代迦太基军团",
-        legionType: "sub",
-    },
     "kosala": {
         legionName: "古典时代泰米尔军团",
         legionType: "sub",
@@ -4632,18 +4592,6 @@ export const FACTION_COMPOSITIONS: Record<string, CustomFactionLegion> = {
     },
     "antigonid": {
         legionName: "古典时代马其顿军团",
-        legionType: "sub",
-    },
-    "mimo": {
-        legionName: "古典时代巴蜀军团",
-        legionType: "sub",
-    },
-    "xizhou": {
-        legionName: "古典时代华夏军团",
-        legionType: "sub",
-    },
-    "shijun": {
-        legionName: "封建时代瞿越军团",
         legionType: "sub",
     },
 };

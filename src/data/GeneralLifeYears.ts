@@ -886,7 +886,6 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     dzungar_galedanceling: { birth: 1695, death: 1745 },  // 噶勒丹策凌
     anxi_guoxin: { birth: 735, death: 808, kaoju: '推定' },  // 郭昕
     yanqi_longtuqizhi: { birth: 600, death: 648, kaoju: '推定' },  // 龙突骑支
-    gaochang_quwentai: { birth: 585, death: 640, kaoju: '推定' },  // 麴文泰
     yarkand_abudulatifu: { birth: 1610, death: 1670, kaoju: '推定' },  // 拉提夫
     yiduhu_baershu: { birth: 1175, death: 1242, kaoju: '推定' },  // 巴尔术
     yuchi_weichiyao: { birth: 740, death: 790, kaoju: '推定' },  // 尉迟曜

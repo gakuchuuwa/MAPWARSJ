@@ -4529,23 +4529,29 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     }
 
     // generals: { [factionId]: { generalId, generalName, portrait } }
+    // 🔴 [2026-10-20 修「势力无武将」误报] 旧正则要求 generalId/generalName/portrait **紧邻同序**、
+    //    且数组写法要求 `[` 后紧跟 `{`；一旦条目里多出 factionId/legionName/eliteName 字段，
+    //    或数组 `[` 后先写一行注释，就整条匹配不到 → 页面误报「势力无武将」（马其顿/法兰西/英格兰/
+    //    匈牙利 等 15 个势力被误报）。改为「先框定对象体、再在体内取字段」，并且允许数组内注释。
     const generals: Record<string, { generalId: string; generalName: string; portrait: string }> = {};
-    for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
-        generals[m[1]] = { generalId: m[2], generalName: m[3], portrait: m[4] };
+    const pickGeneral = (body: string) => {
+        const gi = body.match(/generalId:\s*'([^']+)'/);
+        if (!gi) return null;
+        const gn = body.match(/generalName:\s*'([^']+)'/);
+        const po = body.match(/portrait:\s*'([^']*)'/);
+        return { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
+    };
+    // 单条写法：`    键: { … }`（字段顺序/数量不限）
+    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\{([^}]*)\}/gm)) {
+        if (generals[m[1]]) continue;
+        const g = pickGeneral(m[2]);
+        if (g) generals[m[1]] = g;
     }
-
-    // 🔴 [2026-09-12 主人「一势力一将，这个规则取消」] **多将数组写法**也要认：
-    //    `factionId: [ {generalId…}, {generalId…} ]` 里的对象**没有键前缀**（键在 `[` 的前一行），
-    //    上面那条正则匹配不到 → 这些势力会被误报成「无武将」✗（主人实测：阿契美尼德 / 波罗帝国）。
-    //    这里取**第一个**对象＝该势力守将，与运行时 `getFactionGeneral()` 取数组首位的口径一致 ✓。
-    for (const m of fgText.matchAll(/(\w+):\s*\[\s*\{([\s\S]*?)\}/g)) {
-        const fId = m[1];
-        if (generals[fId]) continue;                    // 单行写法优先，绝不覆盖
-        const inner = m[2];
-        const gi = inner.match(/generalId:\s*'([^']*)'/);
-        const gn = inner.match(/generalName:\s*'([^']*)'/);
-        const po = inner.match(/portrait:\s*'([^']*)'/);
-        if (gi) generals[fId] = { generalId: gi[1], generalName: gn ? gn[1] : '', portrait: po ? po[1] : '' };
+    // 多将数组写法：`    键: [ … ]`（取第一个对象＝守将；允许 [ 后先写注释）
+    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\[\s*([\s\S]*?)\n\s{4}\]/gm)) {
+        if (generals[m[1]]) continue;
+        const g = pickGeneral(m[2]);
+        if (g) generals[m[1]] = g;
     }
 
     // 🔴 [2026-09-16 修「立绘调校面板缺多将势力的非首位武将」] allGenerals：**所有**武将
@@ -4555,10 +4561,11 @@ function serverReadAllEntityData() {    const factionText = fs.readFileSync(path
     for (const m of fgText.matchAll(/(\w+):\s*\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'/g)) {
         allGenerals.push({ generalId: m[2], generalName: m[3], portrait: m[4], factionId: m[1] });
     }
-    for (const m of fgText.matchAll(/(\w+):\s*\[\s*([\s\S]*?)\s*\](?=\s*,|\s*\n)/g)) {
+    for (const m of fgText.matchAll(/^\s{4}(\w+):\s*\[\s*([\s\S]*?)\n\s{4}\]/gm)) {
         const fId = m[1];
-        for (const g of m[2].matchAll(/\{\s*generalId:\s*'([^']+)',\s*generalName:\s*'([^']+)',\s*portrait:\s*'([^']*)'\s*\}/g)) {
-            allGenerals.push({ generalId: g[1], generalName: g[2], portrait: g[3], factionId: fId });
+        for (const g of m[2].matchAll(/\{\s*([\s\S]*?)\}/g)) {
+            const gg = pickGeneral(g[1]);
+            if (gg) allGenerals.push({ generalId: gg.generalId, generalName: gg.generalName, portrait: gg.portrait, factionId: fId });
         }
     }
 

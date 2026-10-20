@@ -51,6 +51,7 @@ export class CityAssetManager {
     // 因此从 private 改为 public。仅作只读引用，请勿在外部修改其内容。
     public static readonly factionFlagMap: { [key: string]: string } = {
 'maqidun': '马其',
+        'taino_d': '泰诺',
 'chatigangren': '查蒂',
 'pelianci': '佩伦',
 'zhen': '武珍',
@@ -979,7 +980,6 @@ export class CityAssetManager {
         'medang': '马打',
         'ternate': '特尔',
         'sulu': '苏禄',
-        'xishudongyin': '西属',
         'puxiangyindu': '葡印',
         'xiyindu': '西印',
         'jialebi': '加勒',
@@ -1070,7 +1070,6 @@ export class CityAssetManager {
         'chamorro': '查',
         'dalriada': '达里',
         'scotland': '苏格',
-        'hre': '神罗',
         'chanka': '昌卡',
         'ouchi': '大内',
         'cueva': '库埃',
@@ -1078,20 +1077,11 @@ export class CityAssetManager {
         'gujarat': '古吉',
         'arakan': '若开',
         'voc': '荷印',
-        'malla': '马拉',
-        'qiangfang': '羌方',
-        'huaiyi': '淮夷',
-        'pisa': '皮萨',
-        'cimmerian': '辛梅',
-        'libya': '利比',
         'kosala': '拘萨',
         'kalinga': '羯陵',
         'anga': '鸯伽',
         'shunga': '巽伽',
         'antigonid': '安提',
-        'mimo': '靡莫',
-        'xizhou': '西州',
-        'shijun': '使君',
 };
 
     // [DYNAMIC REFACTOR] Removed factionFlagTextMap to dynamically generate all texts

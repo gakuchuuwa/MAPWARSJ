@@ -227,7 +227,6 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'ganden_zongkaba': 'TIBET',   // 甘丹｜宗喀巴｜据点 黑河宗
     'gandenpozhang_dibasangjiejiacuo': 'TIBET',   // 冈底斯｜桑结嘉措｜据点 扎敦宗
     'ganzhou_dourong': 'KHITAN',   // 甘州｜窦融｜据点 张掖
-    'gaochang_quwentai': 'WESTERN',   // 麴氏｜麴文泰｜据点 赤亭关
     'gaoche_afuzhiluo': 'MONGOL',   // 高车｜阿伏至罗｜据点 浚稽山
     'gaogouli_yizhiwende': 'KOREA',   // 高句丽｜乙支文德｜据点 平壤
     'gaoliang_geshuhan': 'BASHU',   // 潘州｜哥舒翰｜据点 潘寨
@@ -485,7 +484,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'liao_d_xiaoduli': 'XIANBEI',      // 大辽｜萧咄李｜据点 临潢府
     'bohai_dayinzhuan': 'NORTHEAST',   // 渤海｜大諲撰｜据点 龙泉府
     'liao_d_xiaopaiya': 'XIANBEI',      // 大辽｜萧排押｜据点 临潢府
-    'xin_liuchong': 'CENTRAL',         // 上党｜刘崇｜据点 长子
+    'xin_liuchong': 'WEI',         // 并州｜刘崇｜据点 晋阳（北汉都太原；WEI 河朔风格，主人令「遇到问题先看符合历史」）
     'song_zhaoguangyi': 'CENTRAL',     // 宋国｜赵光义｜据点 开封
     'song_wangbing': 'WEI',            // 宋国｜王禀｜据点 晋阳
     'dang_d_pangshigu': 'CENTRAL',      // 虞国｜庞师古｜据点 虞城
@@ -1180,7 +1179,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'tiemuer_tiemuer': 'CENTRAL_ASIA',   // 图兰｜帖木儿｜据点 撒马尔罕
     'tingzhou_d_chenmin': 'JIANGNAN',   // 汀州｜陈敏｜据点 瑞金
     'tongma_taishici': 'CENTRAL',   // 胶西｜太史慈｜据点 黔陬
-    'tongzhou_liuzhiyuan': 'CENTRAL',   // 同州｜刘知远｜据点 长宁
+    'tongzhou_liuzhiyuan': 'WEI',   // 并州｜刘知远｜据点 晋阳（河东节度使镇太原，后汉高祖；与其弟刘崇同挂）
     'totomi_jiujingzhongci': 'JAPAN',   // 远江｜酒井忠次｜据点 浜松城
     'tsangpa_pengcuonanjie': 'TIBET',   // 藏巴汗｜彭措南杰｜据点 桑珠孜
     'tubo_songzanganbu': 'TIBET',   // 吐蕃｜松赞干布｜据点 逻些
