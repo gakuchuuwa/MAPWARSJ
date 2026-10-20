@@ -152,7 +152,7 @@ export const CULTURE_62_GROUPS: readonly CultureGroup[] = [
         branches: [
             { key: 'HUNS',         deStyle: 'CEAS', castle: 'HUNS_CASTLE_AGE3', label: '⚔️ 匈人（游牧营垒木石要塞）' },
             { key: 'CUMAN',        deStyle: 'CEAS', castle: 'CUMA_CASTLE_AGE3', label: '⚔️ 库曼（草原要塞）' },
-            { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3', label: '🕌 奥斯曼（海峡要塞）' },
+            { key: 'TURKS',        deStyle: 'CEAS', castle: 'TURK_CASTLE_AGE3', label: '🕌 土耳其（海峡要塞）' },
             { key: 'CENTRAL_ASIA', deStyle: 'CEAS', castle: 'CEAS_CASTLE_AGE3', label: '🐴 鞑靼（赫拉特城堡）' },
         ],
     },

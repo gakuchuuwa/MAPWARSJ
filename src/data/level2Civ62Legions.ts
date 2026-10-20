@@ -620,12 +620,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'tiger_rider', count: 2 },
         ],
     },
-    // ── 河西 · 封建时代 · 封建时代归义军团　（本次新建）────────────────
+    // ── 河西 · 封建时代 · 封建时代河西军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：步兵、骑兵混编为主
     //    描述正文（主人原文，一字未改）：（敦煌、酒泉；莫高窟张议潮统军出行图、锁阳城夯土古城墙；起义光复河西、唐蕃交锋孤胆守丝路、驼铃商道轻重装步骑大阵）
     //    英雄队（第 10 队·主将队）：hero_girgenkhan / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代归义军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
+        name: '封建时代河西军团', civ: '河西', age: 'feudal', deStyle: 'ASIA', region: 'KHITAN' as RegionType,
         buildingStyle: 'KHITAN',
         castleId: 'KHIT_CASTLE_AGE3', castleName: '河西 辽阳八角木石塔楼',
         formationMode: 'fish_scale',
@@ -2775,7 +2775,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（哈图沙；哈图沙双层巨石城墙狮子门、斯芬克斯门要塞、亚兹勒卡亚岩壁浮雕神庙；三人青铜双轮重战车冲击、早期冷锻铁刃剑短矛、巨石卫城干砌地下暗道突袭大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代赫梯军团', civ: '奥斯曼', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '古典时代赫梯军团', civ: '土耳其', age: 'antiquity', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crane_wing',
@@ -2797,7 +2797,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（科尼亚、锡瓦斯；科尼亚因杰米纳雷学校精雕石门、苏丹哈尼石砌大驿站防御堡垒；双曲复合角弓高速环形回旋射击、轻型柳叶锁子甲、诱敌深入曼古歹伏击骑兵大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代突厥骑射军团', civ: '奥斯曼', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '封建时代突厥骑射军团', civ: '土耳其', age: 'feudal', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crescent',
@@ -2814,7 +2814,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（布尔萨、埃迪尔内；布尔萨大清真寺二十小穹顶大殿、乌卢清真寺石造泉池中庭；大马士革钢重型弯刀（Kilij）、锥形精钢尖顶头盔、山地奔袭破阵步骑突击大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代加齐突骑军团', civ: '奥斯曼', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '城堡时代加齐突骑军团', civ: '土耳其', age: 'castle', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'crescent',
@@ -2831,7 +2831,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（伊斯坦布尔、埃迪尔内；托普卡帕宫崇敬之门石砌双角塔城堡、巴耶济德二世早期铅顶石砌清真寺；西帕希人马具装重锁甲骑兵、重型长破甲枪与圆牌盾、大航海早期巨型重石球锻铁臼炮围攻大阵）
     //    英雄队（第 10 队·主将队）：hero_osman / hero_qutlugh　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代土耳其军团', civ: '奥斯曼', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
+        name: '帝国时代土耳其军团', civ: '土耳其', age: 'imperial', deStyle: 'CEAS', region: 'OTTOMAN' as RegionType,
         buildingStyle: 'TURKS',
         castleId: 'TURK_CASTLE_AGE3', castleName: '奥斯曼 托普卡珀皇宫圆堡',
         formationMode: 'balance_yoke',
@@ -3421,12 +3421,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'gastraphetes', count: 4 },
         ],
     },
-    // ── 缅甸 · 帝国时代 · 帝国时代东吁军团　（本次新建）────────────────
+    // ── 缅甸 · 帝国时代 · 帝国时代缅甸军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：战象、远程（飞标）为主
     //    描述正文（主人原文，一字未改）：（东吁、勃固；东吁早期柚木泥石深壕山垒要塞、早期砖石覆钵防卫佛塔营垒；双人木制象轿重长枪、竹柄涂毒投掷飞标、大航海早期收拢流亡部族密林结垒突袭大阵）
     //    英雄队（第 10 队·主将队）：bayinnaung_elephant / hero_gajahmada / elite_battle_elephant / elite_elephant_archer　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代东吁军团', civ: '缅甸', age: 'imperial', deStyle: 'SEAS', region: 'BURMESE' as RegionType,
+        name: '帝国时代缅甸军团', civ: '缅甸', age: 'imperial', deStyle: 'SEAS', region: 'BURMESE' as RegionType,
         buildingStyle: 'BURMESE',
         castleId: 'BURM_CASTLE_AGE3', castleName: '缅甸 蒲甘千佛塔金顶堡',
         formationMode: 'balance_yoke',
@@ -4799,7 +4799,7 @@ export const LEVEL_2_CIV_CIV_MAP: Map<string, Level2CivLegionDef> = new Map(
     LEVEL_2_CIV_62_LEGIONS.map(l => [l.civ, l])
 );
 // 兼容突厥/土耳其别名
-// 🔴 [2026-10-16 修 bug] 原 `find(l => l.civ === '奥斯曼')` 取该文明**第一条**——
+// 🔴 [2026-10-16 修 bug] 原 `find(l => l.civ === '土耳其')` 取该文明**第一条**——
 //    新矩阵下一个文明有 4 条（古典赫梯战车/封建突厥骑射/城堡加齐突骑/帝国土耳其），
 //    于是 `LEVEL_2_CIV_62_MAP.set('帝国时代土耳其军团', ottomanLegion)` 把**真条目**覆盖成了「赫梯战车军团」。
 //    现改为按军团名取真条目，并删掉那条会覆盖真名的 set。

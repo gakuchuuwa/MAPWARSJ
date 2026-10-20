@@ -1687,7 +1687,7 @@ export const CULTURE_LEGION_NAMES: Partial<Record<RegionType, string>> = {
     SRIVIJAYA: '封建时代三佛齐军团',
     KUSHAN: '古典时代贵霜军团',
     KUSH: '古典时代努比亚军团',
-    KHITAN: "封建时代归义军团",
+    KHITAN: "封建时代河西军团",
     UIGHUR: '封建漠北军团',
     MOHE: '封建时代渤海军团',
     ANGLO_SAXON: '封建时代盎格鲁撒克逊军团',   // 🔴 [2026-10-16] 原指「封建时代盎格鲁-撒克逊军团」→ 查无此军（幽灵指针）；不列颠文明封建节点正名＝撒克森军团

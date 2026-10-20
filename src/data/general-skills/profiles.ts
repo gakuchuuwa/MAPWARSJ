@@ -3236,7 +3236,91 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     bfe_antigonus: { generalId: 'bfe_antigonus', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 安提柯一世：名将（过三闸）
     gen_li_xin: { generalId: 'gen_li_xin', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 李信
     gen_seleucus_i: { generalId: 'gen_seleucus_i', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 塞琉古一世
+    bfe2_xerxes_i: { generalId: 'bfe2_xerxes_i', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 薛西斯一世
+    bfe2_mardonius: { generalId: 'bfe2_mardonius', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 马尔多尼乌斯
+    bfe2_cleon: { generalId: 'bfe2_cleon', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 克里昂
+    bfe2_conon: { generalId: 'bfe2_conon', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 科农
+    bfe2_cleombrotus_i: { generalId: 'bfe2_cleombrotus_i', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 克勒翁布罗图斯一世
+    bfe_callias: { generalId: 'bfe_callias', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 卡尔基斯僭主 卡利斯
+    bfe_bomilcar: { generalId: 'bfe_bomilcar', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 迦太基将 波米尔卡
+    bfe_gaius_livius: { generalId: 'bfe_gaius_livius', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 罗马舰队司令 盖乌斯·李维乌斯
+    bfe3_51: { generalId: 'bfe3_51', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 佩特罗尼乌斯
+    bfe3_63: { generalId: 'bfe3_63', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 霍尔多尼乌斯
+    bfe_isaac_komnenos: { generalId: 'bfe_isaac_komnenos', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 伊萨克·科穆宁
+    bfe2_esarhaddon: { generalId: 'bfe2_esarhaddon', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 以撒哈顿
+    bfe2_shalmaneser_iii: { generalId: 'bfe2_shalmaneser_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 沙尔马那塞尔三世
+    bfe2_sin_shar_ishkun: { generalId: 'bfe2_sin_shar_ishkun', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 辛·沙尔·伊什昆
+    bfe2_nabonidus: { generalId: 'bfe2_nabonidus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 那波尼德
+    bfe2_enlil_nadin_ahi: { generalId: 'bfe2_enlil_nadin_ahi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 恩利尔纳丁·阿基
+    bfe2_nidintu_bel: { generalId: 'bfe2_nidintu_bel', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 尼丁图-贝尔
+    bfe2_yahdun_lim: { generalId: 'bfe2_yahdun_lim', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 亚赫敦·林
+    bfe2_rezin: { generalId: 'bfe2_rezin', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 利汛
+    bfe_meherdates: { generalId: 'bfe_meherdates', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 梅哈尔达特
+    bfe_achish: { generalId: 'bfe_achish', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 迦特王 亚吉
+    bfe_tahir_king: { generalId: 'bfe_tahir_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 穆罕默德·伊本·塔希尔
+    bfe_nikephoros_ii: { generalId: 'bfe_nikephoros_ii', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 尼基弗鲁斯二世
+    bfe2_pang_juan: { generalId: 'bfe2_pang_juan', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 庞涓
+    bfe3_18: { generalId: 'bfe3_18', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 陈馀
+    bfe2_chu_zhuangwang: { generalId: 'bfe2_chu_zhuangwang', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 楚庄王
+    bfe2_qi_qinggong: { generalId: 'bfe2_qi_qinggong', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 齐顷公
+    bfe2_bao_shuya: { generalId: 'bfe2_bao_shuya', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 鲍叔牙
+    bfe2_ziyu: { generalId: 'bfe2_ziyu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 子玉
+    bfe2_xun_linfu: { generalId: 'bfe2_xun_linfu', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 荀林父
+    bfe3_58: { generalId: 'bfe3_58', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 张步
+    bfe_wu_yuanji: { generalId: 'bfe_wu_yuanji', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 吴元济
+    bfe_sun_ru: { generalId: 'bfe_sun_ru', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 孙儒
+    bfe_gao_zhihui: { generalId: 'bfe_gao_zhihui', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 高智慧
     aiji_psamtik_iii: { generalId: 'aiji_psamtik_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 普萨美提克三世：佩鲁西姆败亡，普将
+    bfe2_pollis: { generalId: 'bfe2_pollis', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 波利斯
+    bfe3_86: { generalId: 'bfe3_86', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 克诺多马尔
+    bfe_su_ding: { generalId: 'bfe_su_ding', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 交趾太守 苏定
+    bfe_sonom: { generalId: 'bfe_sonom', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 索诺木
+    bfe3_43: { generalId: 'bfe3_43', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 杨玉
+    bfe3_44: { generalId: 'bfe3_44', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 靡忘
+    bfe_ajibaldo: { generalId: 'bfe_ajibaldo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿只拔都
+    bfe2_dhanananda: { generalId: 'bfe2_dhanananda', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 达那难陀
+    bfe3_27: { generalId: 'bfe3_27', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 婆苏密多罗
+    bfe_rasul_khan: { generalId: 'bfe_rasul_khan', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 果阿守将 拉苏尔汗
+    bfe3_25: { generalId: 'bfe3_25', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 埃拉拉
+    bfe_cleombrotus: { generalId: 'bfe_cleombrotus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 斯巴达将 克里奥姆布罗图斯
+    bfe2_pharnabazus: { generalId: 'bfe2_pharnabazus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 法那巴佐斯
+    bfe2_theagenes: { generalId: 'bfe2_theagenes', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 特阿格尼斯
+    bfe2_antiphilus: { generalId: 'bfe2_antiphilus', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 安提菲卢斯
+    bfe3_19: { generalId: 'bfe3_19', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 斯科帕斯
+    bfe3_23: { generalId: 'bfe3_23', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 塞隆
+    bfe3_4: { generalId: 'bfe3_4', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 拉维利乌斯
+    bfe_smolensk_voivode: { generalId: 'bfe_smolensk_voivode', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 尤里·格列博维奇
+    bfe_albert_lombard: { generalId: 'bfe_albert_lombard', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿尔伯特
+    bfe_li_song: { generalId: 'bfe_li_song', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 更始将 李松
+    bfe3_57: { generalId: 'bfe3_57', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 樊参
+    bfe3_67: { generalId: 'bfe3_67', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 王国
+    bfe_yin_ziqi: { generalId: 'bfe_yin_ziqi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 尹子奇
+    bfe_chen_dong: { generalId: 'bfe_chen_dong', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 陈东
+    bfe3_16: { generalId: 'bfe3_16', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 桀骏
+    bfe3_22: { generalId: 'bfe3_22', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 驺郢
+    bfe3_68: { generalId: 'bfe3_68', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 严纲
+    bfe3_75: { generalId: 'bfe3_75', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 刘胄
+    bfe3_80: { generalId: 'bfe3_80', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 张微
+    bfe3_83: { generalId: 'bfe3_83', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 李势
+    bfe3_85: { generalId: 'bfe3_85', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 石琨
+    bfe3_87: { generalId: 'bfe3_87', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 慕容评
+    bfe3_90: { generalId: 'bfe3_90', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 慕容超
+    bfe3_39: { generalId: 'bfe3_39', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 开陵侯
+    bfe2_zi_chang: { generalId: 'bfe2_zi_chang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 子常
+    bfe2_gongzi_ang: { generalId: 'bfe2_gongzi_ang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 公子卬
+    bfe_dou_jiande: { generalId: 'bfe_dou_jiande', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 窦建德
+    bfe_prince_chao: { generalId: 'bfe_prince_chao', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 王子朝
+    bfe_ma_heluo: { generalId: 'bfe_ma_heluo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 马何罗
+    bfe_ren_guang: { generalId: 'bfe_ren_guang', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 任光
+    bfe3_56: { generalId: 'bfe3_56', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 王寻
+    bfe3_35: { generalId: 'bfe3_35', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 公孙敖
+    bfe3_76: { generalId: 'bfe3_76', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 曹爽
+    bfe_xu_hai: { generalId: 'bfe_xu_hai', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 徐海
+    bfe_zhu_chenhao: { generalId: 'bfe_zhu_chenhao', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 宁王 朱宸濠
+    bfe_guangde: { generalId: 'bfe_guangde', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 于阗王 广德
+    bfe3_45: { generalId: 'bfe3_45', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 郑吉
+    bfe3_50: { generalId: 'bfe3_50', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 头兰
+    bfe3_2: { generalId: 'bfe3_2', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 芦子霸王
     tujue_wusumishi: { generalId: 'tujue_wusumishi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 乌苏米施：末代可汗被灭，普将
     tubo_xinuoluo: { generalId: 'tubo_xinuoluo', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 悉诺逻恭禄：吐蕃名将（破唐边城），名将
     tang_limi: { generalId: 'tang_limi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 李宓：西洱河覆没，普将
