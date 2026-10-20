@@ -2616,12 +2616,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 阿拉伯　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立（第四批·地中海＋中东＋中亚＋印度）
     // ═══════════════════════════════════════════════════════════════════
-    // ── 阿拉伯 · 古典时代 · 古典时代黎凡特军团　（本次新建）────────────────
+    // ── 阿拉伯 · 古典时代 · 古典时代近东军团　（本次新建）────────────────
     //    评级：（未标评级）｜核心兵种：骑兵（骆驼骑兵）、远程为主
     //    描述正文（主人原文，一字未改）：（佩特拉、亚历山大里亚、帕尔米拉；佩特拉卡兹尼砂岩凿岩神殿立面、帕尔米拉十里列柱大道、亚历山大里亚巨石灯塔水郭；青铜重装大圆盾、双曲复合角弓波状射击、近东长矛阵与沙漠重装骆驼铁骑冲锋大阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_shahismail / hero_shahking / hero_imam　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '古典时代黎凡特军团', civ: '萨拉森', age: 'antiquity', deStyle: 'ORIE', region: 'ORIE' as RegionType,
+        name: '古典时代近东军团', civ: '撒拉森', age: 'antiquity', deStyle: 'ORIE', region: 'ORIE' as RegionType,
         buildingStyle: 'ORIE',
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'crane_wing',
@@ -2633,12 +2633,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'mercenary_hoplite', count: 3 },
         ],
     },
-    // ── 阿拉伯 · 封建时代 · 封建时代萨拉森军团　（本次新建）────────────────
+    // ── 阿拉伯 · 封建时代 · 封建时代哈里发军团　（本次新建）────────────────
     //    评级：【高级】｜核心兵种：轻骑兵为主
     //    描述正文（主人原文，一字未改）：（巴格达圆城、萨马拉；萨马拉大清真寺螺旋宣礼塔、巴格达运河辐射泥砖石木城垣；大马士革冷锻弧形弯刀（Saif）、轻装突厥式锁子甲骑兵、黑旗哈里发沙漠绿洲狂飚突击阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_shahismail / hero_shahking / hero_imam　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代萨拉森军团', civ: '萨拉森', age: 'feudal', deStyle: 'ORIE', region: 'ORIE' as RegionType,
+        name: '封建时代哈里发军团', civ: '撒拉森', age: 'feudal', deStyle: 'ORIE', region: 'ORIE' as RegionType,
         buildingStyle: 'ORIE',
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'fish_scale',
@@ -2650,12 +2650,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'camel_heavy', count: 2 },
         ],
     },
-    // ── 阿拉伯 · 城堡时代 · 城堡时代马穆鲁克军团　（三级升二级）────────────────
+    // ── 阿拉伯 · 城堡时代 · 城堡时代撒拉森军团　（三级升二级）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（开罗、大马士革；开罗萨拉丁城堡巨石要塞、苏丹哈桑清真寺高大石砌山门；全套人马具装重锁甲、精钢破甲重骑枪与骑射连发、阿音札鲁特大破蒙古铁骑铁壁大阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_shahismail / hero_shahking / hero_imam　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代马穆鲁克军团', civ: '萨拉森', age: 'castle', deStyle: 'ORIE', region: 'ORIE' as RegionType,
+        name: '城堡时代撒拉森军团', civ: '撒拉森', age: 'castle', deStyle: 'ORIE', region: 'ORIE' as RegionType,
         buildingStyle: 'ORIE',
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'fish_scale',
@@ -2672,7 +2672,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     //    描述正文（主人原文，一字未改）：（麦加、开罗、大马士革；开罗城堡苏莱曼帕夏早期铅顶石砌清真寺、麦加禁寺早期石筑环廊要塞；大马士革精钢长柄弯刀、复合角弓与轻型护胸板、大航海早期扼守红海香料商道沙漠突骑大阵）
     //    英雄队（第 10 队·主将队）：hero_tariqibnziyad / hero_shahismail / hero_shahking / hero_imam　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代阿拉伯军团', civ: '萨拉森', age: 'imperial', deStyle: 'ORIE', region: 'ORIE' as RegionType,
+        name: '帝国时代阿拉伯军团', civ: '撒拉森', age: 'imperial', deStyle: 'ORIE', region: 'ORIE' as RegionType,
         buildingStyle: 'ORIE',
         castleId: 'ORIE_CASTLE_AGE3', castleName: '中东/萨拉森 开罗萨拉丁大城堡',
         formationMode: 'fish_scale',
@@ -2884,12 +2884,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'sarmatian', count: 2 },
         ],
     },
-    // ── 河中 · 城堡时代 · 城堡时代帖木儿军团　（三级升二级）────────────────
+    // ── 河中 · 城堡时代 · 城堡时代察合台军团　（三级升二级）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、战象为主
     //    描述正文（主人原文，一字未改）：（撒马尔罕、渴石；比比哈努姆清真寺巨型伊万门、古尔·埃米尔陵高耸蓝绿琉璃瓦葱头双层穹顶；全套东方铁板鳞甲骑兵、超强复合角弓抛射、重装长骑枪与战象协同野战大阵）
     //    英雄队（第 10 队·主将队）：hero_qutlugh / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代帖木儿军团', civ: '鞑靼', age: 'castle', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
+        name: '城堡时代察合台军团', civ: '鞑靼', age: 'castle', deStyle: 'CEAS', region: 'CENTRAL_ASIA' as RegionType,
         buildingStyle: 'CENTRAL_ASIA',
         castleId: 'CEAS_CASTLE_AGE3', castleName: '中亚/鞑靼 撒马尔罕帖木儿蓝顶堡',
         formationMode: 'fish_scale',
@@ -4609,12 +4609,12 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
             { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
-    // ── 西域 · 城堡时代 · 城堡时代察合台军团　（三级升二级）────────────────
+    // ── 西域 · 城堡时代 · 城堡时代蒙兀儿军团　（三级升二级）────────────────
     //    评级：【精锐】｜核心兵种：重骑兵、骑射为主
     //    描述正文（主人原文，一字未改）：（阿力麻里、喀什噶尔；阿力麻里秃黑鲁帖木儿汗麻扎单跨尖拱砖砌门楼、伊犁河谷砖石防御驻营；东方铁板鳞甲骑兵、超强反曲角弓重镝箭、天山南北纵深长驱奔袭合围大阵）
     //    英雄队（第 10 队·主将队）：hero_kotyankhan / hero_kushluk　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代察合台军团', civ: '西域', age: 'castle', deStyle: 'CEAS', region: 'WESTERN_CASTLE' as RegionType,
+        name: '城堡时代蒙兀儿军团', civ: '西域', age: 'castle', deStyle: 'CEAS', region: 'WESTERN_CASTLE' as RegionType,
         buildingStyle: 'WESTERN',
         castleId: 'WESTERN_CASTLE_AGE3', castleName: '西域 汉伊高台绿洲要塞',
         formationMode: 'crescent',

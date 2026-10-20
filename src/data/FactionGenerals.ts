@@ -758,7 +758,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    mixiya: { generalId: 'gen_parmenion', generalName: '帕曼纽', portrait: '/assets/GREEK/mixiya_pamanniu.png' },
 
 
 
@@ -870,7 +869,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    haerjijiji: { generalId: 'gen_philip_ii', generalName: '腓力二世', portrait: '/assets/GREEK/haerjijiji_feiliershi.png' },
 
 
 
@@ -1351,6 +1349,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     maqidun: [
+        // 🔴 [2026-10-20 史实] 腓力二世＝马其顿国王，都城佩拉（非奥林索斯战场）；马其顿军团
+        { generalId: 'gen_philip_ii', generalName: '腓力二世', portrait: '/assets/GREEK/haerjijiji_feiliershi.png', legionName: '古典时代马其顿军团' },
+        // 🔴 [2026-10-20 史实] 帕曼纽＝马其顿老将，随王驻佩拉；马其顿军团
+        { generalId: 'gen_parmenion', generalName: '帕曼纽', portrait: '/assets/GREEK/mixiya_pamanniu.png', legionName: '古典时代马其顿军团' },
 
 
 
@@ -2428,7 +2430,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png' },
+    xilagu: { generalId: 'gen_city_syracuse', generalName: '阿加索克利', portrait: '/assets/LATIN/xilagu_ajiasuokeli.png', legionName: '古典时代叙拉古军团' },
 
 
 
@@ -3334,19 +3336,19 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 库特卢格·布加＝金帐王公（1362 蓝水河三王之一，被阿尔吉尔达斯击败）→ 萨莱（CENTRAL_ASIA）；城堡×中部亚洲＝城堡时代帖木儿军团；立绘留空
+        // 🔴 [2026-10-20 首战规则] 库特卢格·布加＝金帐王公（1362 蓝水河三王之一，被阿尔吉尔达斯击败）→ 萨莱（CENTRAL_ASIA）；城堡×中部亚洲＝城堡时代察合台军团；立绘留空
 
 
 
-        { generalId: 'gen_kutlug_buga', generalName: '库特卢格·布加', portrait: '', legionName: '城堡时代帖木儿军团' },
+        { generalId: 'gen_kutlug_buga', generalName: '库特卢格·布加', portrait: '', legionName: '城堡时代察合台军团' },
 
 
 
-        // 🔴 [2026-10-20 首战规则] 马麦＝金帐权臣（1380 库利科沃被德米特里击败）→ 萨莱（CENTRAL_ASIA）；城堡时代帖木儿军团；立绘留空
+        // 🔴 [2026-10-20 首战规则] 马麦＝金帐权臣（1380 库利科沃被德米特里击败）→ 萨莱（CENTRAL_ASIA）；城堡时代察合台军团；立绘留空
 
 
 
-        { generalId: 'gen_mamai', generalName: '马麦', portrait: '', legionName: '城堡时代帖木儿军团' },
+        { generalId: 'gen_mamai', generalName: '马麦', portrait: '', legionName: '城堡时代察合台军团' },
 
 
 
@@ -3370,7 +3372,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'jinzhang_nogai', legionName: '城堡时代帖木儿军团', generalName: '那海', portrait: '' },
+        { generalId: 'jinzhang_nogai', legionName: '城堡时代察合台军团', generalName: '那海', portrait: '' },
 
 
 
@@ -4199,6 +4201,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     shu: [
+        // 🔴 [2026-10-20 史实] 岳钟琪＝川陕总督，最知名驻扎成都；据点成都（BASHU）；帝国时代四川军团
+        { generalId: 'qinghai_yuezhongqi', generalName: '岳钟琪', portrait: '/assets/manqing/qinghai_yuezhongqi.png', factionId: 'manzhou_d', legionName: '帝国时代四川军团' },
 
 
 
@@ -4246,7 +4250,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    yang_zhou: { generalId: 'yang_zhou_yangxingmi', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
+    yang_zhou: [
+        { generalId: 'yang_zhou_yangxingmi', generalName: '杨行密', portrait: '/assets/JIANGNAN/yang_zhou_yangxingmi.png' },
+        // 🔴 [2026-10-20 主人令/史实] 德兴阿＝清江北大营钦差大臣（正黄旗蒙古都统），大本营在扬州城郊雷塘、茱萸湾，扼瓜洲/仪征/六合；据点为扬州（广陵，JIANGNAN）；帝国时代两江军团
+        { generalId: 'kalun_dexinga', generalName: '德兴阿', portrait: '/assets/TIBET/kalun_dexinga.png', factionId: 'manzhou_d', legionName: '帝国时代两江军团' },
+    ],
 
 
 
@@ -7258,7 +7266,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'xiliao_uthman', legionName: '城堡时代帖木儿军团', generalName: '奥斯曼', portrait: '' },
+        { generalId: 'xiliao_uthman', legionName: '城堡时代察合台军团', generalName: '奥斯曼', portrait: '' },
 
 
 
@@ -7582,7 +7590,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'huarazim_jalal', legionName: '城堡时代帖木儿军团', generalName: '扎兰丁', portrait: '' },
+        { generalId: 'huarazim_jalal', legionName: '城堡时代察合台军团', generalName: '扎兰丁', portrait: '' },
 
 
 
@@ -9663,7 +9671,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    lanzhou: { generalId: 'lanzhou_zhaochongguo', generalName: '赵充国', portrait: '/assets/liuhan/lanzhou_zhaochongguo.png' },
+    lanzhou: [
+        { generalId: 'lanzhou_zhaochongguo', generalName: '赵充国', portrait: '/assets/liuhan/lanzhou_zhaochongguo.png' },
+        // 🔴 [2026-10-20 史实] 杨应琚＝陕甘总督，驻兰州；据点皋兰（KHITAN 河西）；帝国时代陕甘军团
+        { generalId: 'xining_yangyingju', generalName: '杨应琚', portrait: '/assets/manqing/xining_yangyingju.png', factionId: 'manzhou_d', legionName: '帝国时代陕甘军团' },
+    ],
 
 
 
@@ -11955,7 +11967,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    qinghai: { generalId: 'qinghai_yuezhongqi', generalName: '岳钟琪', portrait: '/assets/manqing/qinghai_yuezhongqi.png' },
 
 
 
@@ -11987,7 +11998,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    xining: { generalId: 'xining_yangyingju', generalName: '杨应琚', portrait: '/assets/manqing/xining_yangyingju.png' },
 
 
 
@@ -11995,7 +12005,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    kalun: { generalId: 'kalun_dexinga', generalName: '德兴阿', portrait: '/assets/TIBET/kalun_dexinga.png' },
 
 
 
@@ -13274,8 +13283,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
     sailiugu: [
-        // 🔴 [2026-10-20 主人令] 塞琉古一世＝塞琉古帝国开国君主（前301 伊普苏斯破安提柯）→ 安提俄基亚（ORIE）；古典时代黎凡特军团；立绘留空
-        { generalId: 'gen_seleucus_i', generalName: '塞琉古', portrait: '', legionName: '古典时代黎凡特军团' , eliteName: '银盾兵', eliteTier: 1},
+        // 🔴 [2026-10-20 主人令] 塞琉古一世＝塞琉古帝国开国君主（前301 伊普苏斯破安提柯）→ 安提俄基亚（ORIE）；古典时代近东军团；立绘留空
+        { generalId: 'gen_seleucus_i', generalName: '塞琉古', portrait: '', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
 
 
 
@@ -13299,7 +13308,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '', legionName: '古典时代黎凡特军团' , eliteName: '银盾兵', eliteTier: 1},
+        { generalId: 'bfe3_6', generalName: '安条克一世', portrait: '', legionName: '古典时代近东军团' , eliteName: '银盾兵', eliteTier: 1},
 
 
 
@@ -13307,7 +13316,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 雅吉·西扬＝安条克城守将（1098 十字军围城时被杀）→ 安提俄基亚·塞尔柱；普将；封建×ORIE＝封建时代萨拉森军团；立绘留空
+        // 🔴 [2026-10-20 首战规则] 雅吉·西扬＝安条克城守将（1098 十字军围城时被杀）→ 安提俄基亚·塞尔柱；普将；封建×ORIE＝封建时代哈里发军团；立绘留空
 
 
 
@@ -13315,7 +13324,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'sailiugu_yaghi', legionName: '城堡时代马穆鲁克军团', generalName: '雅吉·西扬', portrait: '' },
+        { generalId: 'sailiugu_yaghi', legionName: '城堡时代撒拉森军团', generalName: '雅吉·西扬', portrait: '' },
 
 
 
@@ -13355,7 +13364,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_toghtekin', generalName: '图格特金', portrait: '', legionName: '城堡时代马穆鲁克军团' , eliteName: '突厥古拉姆', eliteTier: 2},
+        { generalId: 'gen_toghtekin', generalName: '图格特金', portrait: '', legionName: '城堡时代撒拉森军团' , eliteName: '突厥古拉姆', eliteTier: 2},
 
 
 
@@ -13435,7 +13444,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'bfe3_1', generalName: '西底家', portrait: '', legionName: '古典时代黎凡特军团' , eliteName: '犹大守军', eliteTier: 4},
+        { generalId: 'bfe3_1', generalName: '西底家', portrait: '', legionName: '古典时代近东军团' , eliteName: '犹大守军', eliteTier: 4},
 
 
 
@@ -13451,7 +13460,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_aristobulus_ii', generalName: '阿里斯托布鲁斯二世', portrait: '', legionName: '古典时代黎凡特军团' , eliteName: '哈斯蒙卫军', eliteTier: 4},
+        { generalId: 'gen_aristobulus_ii', generalName: '阿里斯托布鲁斯二世', portrait: '', legionName: '古典时代近东军团' , eliteName: '哈斯蒙卫军', eliteTier: 4},
 
 
 
@@ -13619,7 +13628,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'aiji_psamtik_iii', generalName: '普萨美提克三世', portrait: '', legionName: '古典时代黎凡特军团' , eliteName: '希腊雇佣兵', eliteTier: 4 },   // 🔴 26 王朝法老军含希腊雇佣兵（原配「麦查伊军」是新王国前的努比亚兵）
+        { generalId: 'aiji_psamtik_iii', generalName: '普萨美提克三世', portrait: '', legionName: '古典时代近东军团' , eliteName: '希腊雇佣兵', eliteTier: 4 },   // 🔴 26 王朝法老军含希腊雇佣兵（原配「麦查伊军」是新王国前的努比亚兵）
 
 
 
@@ -13683,7 +13692,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'abasi_mustasim', legionName: '城堡时代马穆鲁克军团', generalName: '穆斯塔西姆', portrait: '' },
+        { generalId: 'abasi_mustasim', legionName: '城堡时代撒拉森军团', generalName: '穆斯塔西姆', portrait: '' },
 
 
 
@@ -14107,7 +14116,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'gen_sayf_al_dawla', generalName: '赛弗·道莱', portrait: '', legionName: '封建时代萨拉森军团' , eliteName: '哈姆丹骑', eliteTier: 2},
+        { generalId: 'gen_sayf_al_dawla', generalName: '赛弗·道莱', portrait: '', legionName: '封建时代哈里发军团' , eliteName: '哈姆丹骑', eliteTier: 2},
 
 
 
@@ -14611,7 +14620,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 阿里＝第四任正统哈里发（656 骆驼之战胜、657 隋芬之战对穆阿维叶）→ 麦地那·拉希顿；名将；封建×ORIE＝封建时代萨拉森军团；立绘留空
+        // 🔴 [2026-10-20 首战规则] 阿里＝第四任正统哈里发（656 骆驼之战胜、657 隋芬之战对穆阿维叶）→ 麦地那·拉希顿；名将；封建×ORIE＝封建时代哈里发军团；立绘留空
 
 
 
@@ -15123,7 +15132,7 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    tupinijin: { generalId: 'gen_martim_afonso', generalName: '马丁·阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', legionName: '帝国时代葡萄牙风琴军团' },
+    tupinijin: { generalId: 'gen_martim_afonso', generalName: '马丁·阿方索', portrait: '/assets/PORTUGUESE/tupinijin_madingafangsuo.png', factionId: 'putaoya', legionName: '帝国时代葡萄牙风琴军团' },
 
 
 

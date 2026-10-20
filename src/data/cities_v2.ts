@@ -2329,7 +2329,7 @@ export const CITIES_V2: CityDataV2[] = [
     { id: 'city_calais', name: '加莱', factionId: 'fulandesi', lat: 50.95, lng: 1.85, type: 'stockade', troops: 10000, region: 'FRENCH', buildingStyle: 'FRANKS', mirror: true, note: '定级依据§6.2：加莱非纯军事要塞（有城内市镇人口），按城市判级；约1300年城内约7000、1346年约7000–8000，未达1万 → 城寨' },
 
     { id: 'city_rennes', name: '雷恩', factionId: 'bulietani', lat: 48.11, lng: -1.67, type: 'stockade', troops: 10000, region: 'CELTS_FEUDAL', buildingStyle: 'BRITONS' },
-    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'GREECE' },
+    { id: 'city_syracuse', name: '锡拉库萨', factionId: 'xilagu', lat: 37.07, lng: 15.28, type: 'medium_city', troops: 10000, region: 'GREEK', buildingStyle: 'SICILIANS' },
     { id: 'city_bucharest', name: '布加勒斯特', factionId: 'mengtainiya', lat: 44.43, lng: 26.1, type: 'small_city', troops: 10000, region: 'SLAVIC_CASTLE', buildingStyle: 'SLAVIC', note: '15世纪成为瓦拉几亚王侯驻地' },
     { id: 'city_belgrade', name: '贝尔格莱德', factionId: 'saierweiya', lat: 44.78, lng: 20.45, type: 'small_city', troops: 10000, region: 'SERBIA', buildingStyle: 'SLAVIC' },
 
