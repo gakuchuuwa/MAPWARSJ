@@ -256,19 +256,19 @@ export const LEGION_78_SIEGE_MAP: Record<string, { age: SiegeAge; weapons: strin
         age: 'imperial',
         weapons: ['capped_ram', 'capped_ram', 'capped_ram', 'organ_gun', 'organ_gun', 'onager', 'onager', 'bombard_cannon', 'bombard_cannon'],
     },
-    '古典时代秦汉军团': {
+    '古典时代华夏军团': {
         age: 'antiquity',
         weapons: ['antiquity_siege_ram', 'antiquity_siege_ram', 'antiquity_siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'antiquity_heavy_scorpion', 'antiquity_heavy_scorpion', 'antiquity_siege_tower', 'antiquity_siege_tower'],
     },
-    '封建时代隋唐军团': {
+    '封建时代中原军团': {
         age: 'feudal',
         weapons: ['battering_ram', 'battering_ram', 'battering_ram', 'traction_trebuchet', 'traction_trebuchet', 'scorpion', 'scorpion', 'siege_tower', 'siege_tower'],
     },
-    '城堡时代宋禁军团': {
+    '城堡时代中华军团': {
         age: 'castle',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'rocket_cart', 'rocket_cart'],
     },
-    '帝国时代华夏军团': {
+    '帝国时代中国军团': {
         age: 'imperial',
         weapons: ['siege_ram', 'siege_ram', 'siege_ram', 'traction_trebuchet', 'traction_trebuchet', 'flamethrower', 'flamethrower', 'heavy_rocket_cart', 'heavy_rocket_cart'],
     },

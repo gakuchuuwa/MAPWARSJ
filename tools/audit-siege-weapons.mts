@@ -161,7 +161,9 @@ function main(): void {
   console.log('\n中国系攻城投石槽（查真表 SiegeWeaponsByCulture.ts）：');
   const weaponsOf = new Map<string, string[]>([...LEGIONS].map(([k, v]) => [k, v.weapons]));
   // 中国系军团 = 真表里所有名字含这些字样的编成（母体「东亚军团」＋各二级/三级中国系军团）
-  const CN_NAME_RE = /东亚|华夏|中原|北方|江南|岭南|巴蜀|河西|东北|大理|南诏|宋|明|清|唐|汉|魏|吴|蜀|辽|金|高丽|朝鲜/;
+  // 🔴 [2026-10-20 主人改中原四军团名后补] 中原那四支现名「古典时代华夏军团／封建时代中原军团／
+  //    城堡时代中华军团／帝国时代中国军团」，判据要补「中华／中国」，否则这两支会被漏判、漏查。
+  const CN_NAME_RE = /东亚|华夏|中华|中国|中原|北方|江南|岭南|巴蜀|河西|东北|大理|南诏|宋|明|清|唐|汉|魏|吴|蜀|辽|金|高丽|朝鲜/;
   let cnBad = 0, cnChecked = 0;
   const cnBadList: string[] = [];
   for (const [key, ws] of weaponsOf) {
@@ -192,7 +194,7 @@ function main(): void {
   //     · `西北`/`东北` 之类的地区名天然带方位词。
   //   下面这组正反例每次运行都跑一遍 —— 判据一旦被改坏，这里立刻报红，不会静默误判数据。
   console.log('\n尺子自校（中国系判据）：');
-  const CN_SHOULD_HIT = ['东亚军团_castle', '古典时代巴蜀军团', '城堡时代宋禁军团', '大理军团', '南诏军团', '大明神机箭军团', '东北军团'];
+  const CN_SHOULD_HIT = ['东亚军团_castle', '古典时代巴蜀军团', '城堡时代中华军团', '大理军团', '南诏军团', '大明神机箭军团', '东北军团'];
   const CN_SHOULD_NOT = ['东北欧军团_castle', '东南欧军团_castle', '西欧军团_castle', '高丽禁卫军团', '帝国时代朝鲜军团'];
   let selfBad = 0;
   for (const k of CN_SHOULD_HIT) if (!CN_NAME_RE.test(k) || /欧/.test(k)) { console.log(`  🔴 正例「${k}」没被判为中国系`); selfBad++; }

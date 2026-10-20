@@ -1101,7 +1101,7 @@ async function rename(raw: string): Promise<void> {
  *
  * 一级 16 母体与二级 62 文明是定数，只能改不能增，所以新建的**一律落三级表**。
  * 弹窗要填三样：
- *   · 军团名：命名法「时代 + 民族 + 军团」（如「城堡时代宋禁军团」），三层里不许重名
+ *   · 军团名：命名法「时代 + 民族 + 军团」（如「城堡时代中华军团」），三层里不许重名
  *   · 归属军团 parentLegion：一级 16 或二级 62 里的一支（三级表这个字段是必填）
  *   · 阵型：七阵型之一，三排人数总和恒为 9
  * 三排兵种先照抄归属军团的，战船 shipId 也跟归属军团走 —— 新建出来就是一支能用的军团，
@@ -1162,10 +1162,10 @@ function openCreateDialog(): void {
           <div style="font-size:16px;color:#f6e05e;margin-bottom:4px;">新建军团</div>
           <div style="font-size:11px;color:#6a6358;margin-bottom:14px;line-height:1.7;">
             新建的军团一律是<b>三级</b>（一级 16 母体与二级 62 文明是定数，只能改不能增）。<br>
-            命名法：时代 + 民族 + 军团，例「城堡时代宋禁军团」。
+            命名法：时代 + 民族 + 军团，例「城堡时代中华军团」。
           </div>
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">军团名</div>
-          <input id="lp-c-name" maxlength="24" placeholder="如：城堡时代宋禁军团" value="${esc(name)}"
+          <input id="lp-c-name" maxlength="24" placeholder="如：城堡时代中华军团" value="${esc(name)}"
             style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">
           <div style="font-size:12px;color:#a89f8f;margin-bottom:5px;">归属军团（一级 16 / 二级 62）</div>
           <select id="lp-c-parent" style="width:100%;box-sizing:border-box;background:#151310;border:1px solid #3a342c;color:#e8e0d0;border-radius:4px;padding:8px 9px;margin-bottom:14px;">

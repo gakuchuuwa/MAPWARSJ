@@ -315,7 +315,7 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
     // ═══════════════════════════════════════════════════════════════════
     // 中原　四时代二级军团（古典 / 封建 / 城堡 / 帝国）—— 2026-10-16 主人令建立
     // ═══════════════════════════════════════════════════════════════════
-    // ── 中原 · 古典时代 · 古典时代秦汉军团　（三级升二级）────────────────
+    // ── 中原 · 古典时代 · 古典时代华夏军团　（三级升二级）────────────────
     //    评级：【高级】｜核心兵种：远程、骑兵为主
     //    描述正文（主人原文，一字未改）：（咸阳、洛阳；秦阿房宫夯土台基、汉未央宫遗址、白马寺；青铜长剑、秦弩连射方阵、汉代铁戟环首刀与轻装具装汉骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
@@ -325,19 +325,19 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_caocao',
+        commanderUnit: 'hero_guanyu',
         slots: [
             { type: 'white_feather_guard', count: 3 },
             { type: 'elite_chukonu', count: 4 },
             { type: 'tiger_rider', count: 2 },
         ],
     },
-    // ── 中原 · 封建时代 · 封建时代隋唐军团　（三级升二级）────────────────
+    // ── 中原 · 封建时代 · 封建时代中原军团　（三级升二级）────────────────
     //    评级：【精锐】｜核心兵种：重步兵、重骑兵为主
     //    描述正文（主人原文，一字未改）：（长安、洛阳；大雁塔、洛阳龙门奉先寺卢舍那大佛、含元殿；府兵制重步兵、唐陌刀劈砍大阵、明光铠与破阵马槊铁骑）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '封建时代中华军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '封建时代中原军团', civ: '中原', age: 'feudal', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
@@ -345,42 +345,42 @@ export const LEVEL_2_CIV_62_LEGIONS: Level2CivLegionDef[] = [
         commanderUnit: 'hero_guanyu',
         slots: [
             { type: 'liao_dao', count: 3 },
-            { type: 'chukonu', count: 4 },
+            { type: 'elite_chukonu', count: 4 },
             { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
-    // ── 中原 · 城堡时代 · 城堡时代宋禁军团　（三级升二级）────────────────
+    // ── 中原 · 城堡时代 · 城堡时代中华军团　（三级升二级）────────────────
     //    评级：（未标评级）｜核心兵种：重步兵、远程为主
     //    描述正文（主人原文，一字未改）：（开封、归德；繁塔、宋开封铁塔、清明上河图虹桥瓮城；神臂弓克敌连珠弩、步人甲重步兵刺猬阵、斩马刀扎垒守备）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '城堡时代宋禁军团', civ: '中原', age: 'castle', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '城堡时代中华军团', civ: '中原', age: 'castle', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'LOU_CHUAN',
-        commanderUnit: 'hero_zhaoyun',
+        commanderUnit: 'hero_guanyu',
         slots: [
             { type: 'elite_fire_lancer', count: 3 },
-            { type: 'chukonu', count: 4 },
-            { type: 'hei_kuang', count: 2 },
+            { type: 'elite_chukonu', count: 4 },
+            { type: 'hei_kuang_heavy', count: 2 },
         ],
     },
-    // ── 中原 · 帝国时代 · 帝国时代华夏军团　（三级升二级）────────────────
+    // ── 中原 · 帝国时代 · 帝国时代中国军团　（三级升二级）────────────────
     //    评级：（未标评级）｜核心兵种：远程（火器）、步兵为主
     //    描述正文（主人原文，一字未改）：（北京、南京；明南京紫禁城、明十三陵、早期居庸关长城；京营三大营三眼铳与神机火器、重型长枪圆牌阵、大航海早期内线精甲卫所军）
     //    英雄队（第 10 队·主将队）：hero_lubu / hero_guanyu / hero_zhangfei / hero_liubei　— 按 248 主将表取，不进三排兵种编制
     {
-        name: '帝国时代华夏军团', civ: '中原', age: 'imperial', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
+        name: '帝国时代中国军团', civ: '中原', age: 'imperial', deStyle: 'ASIA', region: 'CENTRAL' as RegionType,
         buildingStyle: 'CENTRAL',
         castleId: 'CHIN_CASTLE_AGE3', castleName: '中原 北方华北·汉唐城楼',
         formationMode: 'fish_scale',
         shipId: 'DRAGON_SHIP',
-        commanderUnit: 'hero_zhangfei',
+        commanderUnit: 'hero_guanyu',
         slots: [
-            { type: 'jian_swordman_unshielded', count: 3 },
-            { type: 'fire_archer', count: 4 },
-            { type: 'fire_lancer', count: 2 },
+            { type: 'elite_fire_lancer', count: 3 },
+            { type: 'elite_fire_archer', count: 4 },
+            { type: 'cav_archer_heavy', count: 2 },
         ],
     },
 
@@ -4819,7 +4819,7 @@ if (goryeoLegion) {
     LEVEL_2_CIV_62_MAP.set('城堡时代朝鲜军团', goryeoLegion);
 }
 // 兼容简写别名（如不含“时代”二字的旧名）
-LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_MAP.get('古典时代秦汉军团')!);
+LEVEL_2_CIV_62_MAP.set('古典华夏中原军团', LEVEL_2_CIV_62_MAP.get('古典时代华夏军团')!);
 LEVEL_2_CIV_62_MAP.set('古典华夏巴蜀军团', LEVEL_2_CIV_62_MAP.get('古典时代巴蜀军团')!);
 LEVEL_2_CIV_62_MAP.set('古典华夏江南军团', LEVEL_2_CIV_62_MAP.get('古典时代吴越军团')!);
 LEVEL_2_CIV_62_MAP.set('古典华夏河朔军团', LEVEL_2_CIV_62_MAP.get('古典时代魏晋军团')!);
