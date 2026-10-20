@@ -35,7 +35,8 @@ import {
     expandCompositionScales,
     expandCompositionSlots,
 } from '../types/LegionComposition';
-import { getCultureTier, getFactionCompositionSlots, resolveCityDefenseLegionComposition, type FormationMode } from '../types/CultureFormations';
+import { getCultureTier, resolveCityLegionComposition, type FormationMode } from '../types/CultureFormations';
+import { readSiegeGarrisonGeneralId } from '../combat/SiegeGarrisonTier';
 import { HeroSpriteDrawer } from './player/HeroSpriteDrawer'; // [2026-09-05 玩家] 单骑精灵
 import { isScriptPeriod } from '../events/scriptPeriod';
 
@@ -1821,9 +1822,10 @@ export class GlobalUnitRenderer {
         const cityPos = { lat: city.latitude, lng: city.longitude };
         const scale = Math.pow(2, Math.min(this.map.getZoom(), 10) - 9) * 0.7;
 
-        // 守军：每个时代每个据点防守时，只能出本文化该时代的军团（2026-10-18 主人定）
-        const defComp = resolveCityDefenseLegionComposition(city.id, undefined, city.buildingStyle, city.factionId);
-        const factionSlots = defComp?.slots ?? (city.factionId ? getFactionCompositionSlots(city.factionId) : null);
+        // 🔴 [2026-10-21 主人令「防守的也是武将，武将是什么军团，就出什么军团」] 守军按守将取军团
+        //    无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格
+        const defGeneralId = readSiegeGarrisonGeneralId(city) ?? city.generalId;
+        const factionSlots = resolveCityLegionComposition(city.factionId, defGeneralId, { cityId: city.id, buildingStyle: city.buildingStyle })?.slots ?? null;
         const tier = factionSlots ? { slots: factionSlots } : getCultureTier((city.region ?? 'CENTRAL') as any, city.troops);
         const slots = tier?.slots;
         if (!slots || slots.length === 0) return fallback;
@@ -3475,10 +3477,11 @@ export class GlobalUnitRenderer {
             const anchor = this.computeSiegeDefenderAnchor(city, atkPos);
             if (!anchor) continue;
 
-            // 守军编队：每个时代每个据点防守时，只能出本文化该时代的军团（2026-10-18 主人定）
+            // 🔴 [2026-10-21 主人令「防守的也是武将，武将是什么军团，就出什么军团」] 守军编队按守将取军团
             const region = (city.region ?? 'CENTRAL') as any;
-            const defComp = resolveCityDefenseLegionComposition(city.id, undefined, city.buildingStyle, city.factionId);
-            const factionSlots = defComp?.slots ?? (city.factionId ? getFactionCompositionSlots(city.factionId) : null);
+            //    无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格
+            const defGeneralId = readSiegeGarrisonGeneralId(city) ?? city.generalId;
+            const factionSlots = resolveCityLegionComposition(city.factionId, defGeneralId, { cityId: city.id, buildingStyle: city.buildingStyle })?.slots ?? null;
             const tier = factionSlots ? { slots: factionSlots } : getCultureTier(region, city.troops);
             const slots = tier?.slots;
             if (!slots || slots.length === 0) continue;

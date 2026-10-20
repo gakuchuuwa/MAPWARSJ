@@ -12,8 +12,8 @@
  *     前缀和「军团」二字）——如日本：古典=大和 / 封建=平安 / 城堡=幕府 / 帝国=武家；
  *   · **判定用在场武将**：该势力（一势力一据点）只要还有一位在场武将，就照旧用原势力名；
  *     一位都不在场（未登场 / 已过「登场年 + 100」）才换成时代名；
- *   · 据点建筑文化 × 当前年份所属时代 → 军团，一律走 `resolveCityDefenseLegionName`
- *     （与「每个时代每个据点只能出本文化该时代军团」同一条解析，不另写一套）；
+ *   · 据点建筑文化 × 当前年份所属时代 → 军团名，走 `resolveCultureEraLegionName`（只用来取名，不决定出兵；
+ *     出兵的军团只看武将，见 2026-10-21 主人令）；
  *   · 旗号文字 = 时代名（旗面绘制仍按现规则只画前两字：大和→大和、巴克特里亚→巴克）；
  *   · 🔴 [2026-10-20 主人令「中原军团改用华夏军团势力，旗显示四个时代统一为华」]
  *     中原（CENTRAL）四时代的名字**不写死朝代名**，一律随当时代军团名
@@ -26,7 +26,7 @@ import { FACTION_GENERALS, type FactionGeneral } from './FactionGenerals';
 import { isGeneralOnStage } from './generalOnStage';
 import {
     getEraByYear,
-    resolveCityDefenseLegionName,
+    resolveCultureEraLegionName,
     type DefenseEraAge,
 } from '../types/CultureFormations';
 
@@ -132,7 +132,7 @@ function eraNameOfStyleAndEra(buildingStyle: string | undefined, era: DefenseEra
     if (eraNameCache.has(key)) return eraNameCache.get(key) ?? null;
     const override = ERA_DISPLAY_OVERRIDES[key];
     // 名字：主人单独定过就用它；没定（如中原四时代）→ 随当时代军团名
-    const legion = resolveCityDefenseLegionName(undefined, ERA_SAMPLE_YEAR[era], buildingStyle, null);
+    const legion = resolveCultureEraLegionName(ERA_SAMPLE_YEAR[era], buildingStyle);
     const name = override?.name ?? eraNameOfLegion(legion);
     const entry: EraNameDef | null = name ? { name, flagText: override?.flagText } : null;
     eraNameCache.set(key, entry);

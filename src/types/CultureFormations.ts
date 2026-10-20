@@ -35,6 +35,8 @@ import { CompositionSlot, CompositionTier, expandCompositionScales, expandCompos
 import type { LegionType } from './UnitTypes';
 import { SCRIPT_LEGION_MAP } from '../data/scriptLegions';
 import { getScriptFactionLegionName } from '../events/scriptPeriod';
+import { isGeneralOnStage } from '../data/generalOnStage';
+import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { withCommander } from '../data/generalHeroUnits';
 import { getLegionEliteLegionName, getExpeditionEliteLegionName } from '../data/ExpeditionLegions';
 
@@ -2426,42 +2428,23 @@ export function getEraByYear(year: number): DefenseEraAge {
 }
 
 /**
- * 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
- * 按据点自身建筑风格（66 文化）+ 当前年份所属时代，解析该据点防守时应出的本文化该时代军团名。
+ * 🔴 [2026-10-21 主人令「所有军团必须只挂靠武将」「防守的也是武将，武将是什么军团，就出什么军团。军团只看武将，删除一切无关逻辑」]
+ * 军团名的唯一入口（攻、守、战略、战术、面板同一条）：剧本期事件指名的剧本军团 → 武将自己的军团 → 势力挂的军团。
+ * 原「据点建筑文化 × 当前时代 → 守城军团」（2026-10-18）已删。
  */
-export function resolveCityDefenseLegionName(
-    cityId?: string | null,
-    year?: number | null,
-    buildingStyle?: string | null,
-    factionId?: string | null,
-): string | null {
-    // 剧本期：当前事件显式指定的剧本守军优先
-    const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
-    if (scriptLegion) return scriptLegion;
+export function resolveGeneralLegionName(factionId?: string | null, generalId?: string | null): string | undefined {
+    if (!factionId) return undefined;
+    return getScriptFactionLegionName(factionId) ?? getLegionNameOfGeneral(factionId, generalId);
+}
 
-    // 🔴 [2026-10-20 主人令「起义军，一律算到三级起义军团」] 起义势力**守城也一律用三级起义军团**
-    //    （名义上「每个据点只能出本文化该时代军团」对起义军不再适用；其它势力守城口径不变）
-    if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName === '起义军') {
-        return resolveRenamedLegion('起义军');
-    }
-
-    let style = buildingStyle ?? null;
-    if (!style && cityId) {
-        const rtCity = typeof window !== 'undefined' ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
-        style = rtCity?.buildingStyle ?? CITIES_V2.find((c) => c.id === cityId)?.buildingStyle ?? null;
-    }
-    if (!style) return null;
-
-    const resolvedYear =
-        typeof year === 'number' && !Number.isNaN(year)
-            ? year
-            : ((typeof window !== 'undefined'
-                ? ((window as any).game?.scriptCityVisibility?.getCurrentEvent?.()?.year
-                    ?? (window as any).game?.timeSystem?.getYear?.())
-                : null) ?? -800);
-    const targetAge = getEraByYear(resolvedYear);
-
-    const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(style));
+/**
+ * 建筑文化 × 时代 → 该格的二级军团名。**只给百岁模式「势力名/旗号改用时代泛称」取名用**（eraFactionDisplay），
+ * 不决定任何军团的出兵。
+ */
+export function resolveCultureEraLegionName(year: number, buildingStyle: string | null | undefined): string | null {
+    if (!buildingStyle) return null;
+    const targetAge = getEraByYear(year);
+    const candidates = LEVEL_2_CIV_62_LEGIONS.filter((l) => String(l.buildingStyle) === String(buildingStyle));
     if (candidates.length === 0) return null;
 
     const exact = candidates.find((l) => l.age === targetAge);
@@ -2482,28 +2465,60 @@ export function resolveCityDefenseLegionName(
 }
 
 /**
- * 🔴 [2026-10-18 主人定] 解析据点防守时的本文化该时代军团编制（slots / formationMode / commanderUnit / shipId）。
+ * 🔴 [2026-10-21 主人令「如果守城时武将不在场、只剩普通守军，就看当时的年份+建筑风格找军团，武将也是这么找的」]
+ * 据点守军的军团：有在场武将（或只在这一仗出场的战场人物）→ 武将的军团；
+ * 没有 → 剧本期事件指名的剧本军团 → 「当时年份所属时代 × 据点建筑风格」的二级军团。
  */
-export function resolveCityDefenseLegionComposition(
-    cityId?: string | null,
-    year?: number | null,
-    buildingStyle?: string | null,
-    factionId?: string | null,
-): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
+function hasStageGeneral(generalId: string | null | undefined): generalId is string {
+    return !!generalId && (isBattlefieldCharacter(generalId) || isGeneralOnStage(generalId));
+}
+
+/** 当前游戏年份：剧本期取当前事件年份，否则取日历年份；都取不到（编辑器/离线脚本）按开局前 800 年 */
+function currentGameYear(): number {
+    const g = typeof window !== 'undefined' ? (window as any).game : null;
+    const y = g?.scriptCityVisibility?.getCurrentEvent?.()?.year ?? g?.timeSystem?.getYear?.();
+    return typeof y === 'number' && !Number.isNaN(y) ? y : -800;
+}
+
+function cityBuildingStyleOf(cityId?: string | null, buildingStyle?: string | null): string | null {
+    if (buildingStyle) return buildingStyle;
+    if (!cityId) return null;
+    const rtCity = typeof window !== 'undefined' ? (window as any).game?.cityManager?.getCity?.(cityId) : null;
+    return rtCity?.buildingStyle ?? CITIES_V2.find((c) => c.id === cityId)?.buildingStyle ?? null;
+}
+
+export interface CityLegionContext {
+    cityId?: string | null;
+    buildingStyle?: string | null;
+    year?: number | null;
+}
+
+export function resolveCityLegionName(
+    factionId: string | null | undefined,
+    generalId: string | null | undefined,
+    ctx: CityLegionContext = {},
+): string | undefined {
+    if (hasStageGeneral(generalId)) return resolveGeneralLegionName(factionId, generalId);
     const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
-    if (scriptLegion) {
-        const scr = SCRIPT_LEGION_MAP.get(scriptLegion);
-        if (scr) {
-            return {
-                formationMode: scr.formationMode,
-                slots: scr.slots.map((s) => ({ ...s })),
-                shipId: scr.shipId,
-                commanderUnit: scr.commanderUnit,
-            };
-        }
+    if (scriptLegion) return scriptLegion;
+    const year = typeof ctx.year === 'number' && !Number.isNaN(ctx.year) ? ctx.year : currentGameYear();
+    return resolveCultureEraLegionName(year, cityBuildingStyleOf(ctx.cityId, ctx.buildingStyle))
+        ?? resolveGeneralLegionName(factionId, null);
+}
+
+export function resolveCityLegionComposition(
+    factionId: string | null | undefined,
+    generalId: string | null | undefined,
+    ctx: CityLegionContext = {},
+): { formationMode: FormationMode; slots: CompositionSlot[]; shipId?: string; commanderUnit?: string } | null {
+    if (hasStageGeneral(generalId) && factionId) return getFactionLegionComposition(factionId, generalId);
+    const name = resolveCityLegionName(factionId, null, ctx);
+    if (!name) return null;
+    const scr = SCRIPT_LEGION_MAP.get(name);
+    if (scr && factionId && getScriptFactionLegionName(factionId) === name) {
+        return { formationMode: scr.formationMode, slots: scr.slots.map((s) => ({ ...s })), shipId: scr.shipId, commanderUnit: scr.commanderUnit };
     }
-    const name = resolveCityDefenseLegionName(cityId, year, buildingStyle, factionId);
-    return name ? getLegionCompositionByName(name) : null;
+    return getLegionCompositionByName(name);
 }
 
 /** 编辑器保存后立刻写入内存（不依赖 HMR 才生效） */

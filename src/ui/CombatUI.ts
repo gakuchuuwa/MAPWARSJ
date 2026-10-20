@@ -17,7 +17,7 @@ import {
     type PortraitSourceFacing,
 } from '../config/portrait_defaults';
 import { resolveUnitCultureRegion } from '../systems/CultureCombat';
-import { getCultureLegionName, resolveCityDefenseLegionName } from '../types/CultureFormations';
+import { getCultureLegionName, resolveGeneralLegionName, resolveCityLegionName } from '../types/CultureFormations';
 import { alignPortraitCenterFromUrl } from '../config/portraitAutoFit';
 import {
     applyPortraitAdjustToElement,
@@ -1750,19 +1750,14 @@ export class CombatUI {
         const defRegion = init.defenderFactionId
             ? resolveUnitCultureRegion({ factionId: init.defenderFactionId, unitType: 'legion', getPosition: () => ({ lat: 0, lng: 0 }) } as any)
             : 'CENTRAL';
-        // 🔴 [2026-09-23 主人定「军团只显示马其顿军团就行了」] 剧本期：当前这一仗用的剧本军团名优先
-        const attLegionName = (init.attackerFactionId && getScriptFactionLegionName(init.attackerFactionId))
-            || ((init.attackerFactionId && FACTION_COMPOSITIONS[init.attackerFactionId]?.legionName)
-                ? FACTION_COMPOSITIONS[init.attackerFactionId].legionName!
-                : getCultureLegionName(attRegion));
-        const defCityLegion = (init.battleType === 'siege' || init.defenderCityId)
-            ? resolveCityDefenseLegionName(init.defenderCityId, init.getYear?.(), undefined, init.defenderFactionId)
-            : null;
-        const defLegionName = defCityLegion
-            || (init.defenderFactionId && getScriptFactionLegionName(init.defenderFactionId))
-            || ((init.defenderFactionId && FACTION_COMPOSITIONS[init.defenderFactionId]?.legionName)
-                ? FACTION_COMPOSITIONS[init.defenderFactionId].legionName!
-                : getCultureLegionName(defRegion));
+        // 🔴 [2026-10-21 主人令「所有军团必须只挂靠武将」] 攻守军团名一律按武将取（剧本期剧本军团 → 武将军团 → 势力军团）
+        const attLegionName = resolveGeneralLegionName(init.attackerFactionId, init.attackerGeneralId)
+            || getCultureLegionName(attRegion);
+        //    守城无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格
+        const defLegionName = ((init.battleType === 'siege' || init.defenderCityId)
+            ? resolveCityLegionName(init.defenderFactionId, resolvedDefGeneralId ?? init.defenderGeneralId, { cityId: init.defenderCityId, year: init.getYear?.() })
+            : resolveGeneralLegionName(init.defenderFactionId, resolvedDefGeneralId ?? init.defenderGeneralId))
+            || getCultureLegionName(defRegion);
 
         // 🔴 [2026-09-19 主人定] 战术模式中，武将名字下写势力
         const attackerLegionTag = this.sideElement('attacker', this.leftLegionTag, this.rightLegionTag);
@@ -6739,19 +6734,15 @@ export class CombatUI {
            只有**确实没有势力**时才允许退回文化区默认名。 */
         const ent = unit.getEntity?.() as { id?: string; buildingStyle?: string; factionId?: string | null; getFactionId?: () => string | null } | undefined;
         const factionId = unit.factionId ?? ent?.factionId ?? ent?.getFactionId?.() ?? null;
-        // ⓪ 🔴 [2026-09-23] 剧本期：当前这一仗用的剧本军团名（如「马其顿军团」）
-        const scriptLegion = factionId ? getScriptFactionLegionName(factionId) : null;
-        if (scriptLegion) return scriptLegion;
-        // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
-        if (unit.unitType === 'city') {
-            const cityId = ent?.id ?? unit.id ?? (this.boundRegionalBattleField as any)?.getCity?.()?.id ?? null;
-            const defCityLegion = resolveCityDefenseLegionName(cityId, undefined, ent?.buildingStyle, factionId);
-            if (defCityLegion) return defCityLegion;
-        }
-        // ① 专属军团名优先（FACTION_COMPOSITIONS.legionName = 三排编成的正式军团名）。
-        if (factionId && FACTION_COMPOSITIONS[factionId]?.legionName) {
-            return FACTION_COMPOSITIONS[factionId].legionName!;
-        }
+        // 🔴 [2026-10-21 主人令「军团只看武将，删除一切无关逻辑」] 攻守（含守城）一律按这支部队的武将取军团
+        //    据点守军无在场武将（只剩普通守军）→ 当时年份 × 据点建筑风格
+        const byGeneral = unit.unitType === 'city'
+            ? resolveCityLegionName(factionId, unit.generalId, {
+                cityId: ent?.id ?? unit.id ?? (this.boundRegionalBattleField as any)?.getCity?.()?.id ?? null,
+                buildingStyle: ent?.buildingStyle,
+            })
+            : resolveGeneralLegionName(factionId, unit.generalId);
+        if (byGeneral) return byGeneral;
         // ② 时代 + 文化军团（如「古典时代先秦军团」「古典时代华夏军团」「封建时代高句丽军团」「城堡时代蒙古军团」）
         const region = resolveUnitCultureRegion(unit);
         const cultureLegionName = getCultureLegionName(region);
