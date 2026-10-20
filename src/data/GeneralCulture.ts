@@ -383,7 +383,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_seleucus_i': 'ORIE',         // 塞琉古｜塞琉古一世｜据点 安提俄基亚（ORIE）
     'gen_lajos_ii': 'MAGYAR',   // 匈牙利｜拉约什二世｜据点 布达佩斯（MAGYAR）
     'gen_li_xiucheng': 'JIANGNAN',    // 太平天国｜李秀成｜据点 金陵（JIANGNAN）
-    'gen_shashanka': 'INDIA',         // 高达｜设赏迦｜据点 曲女城（INDIA）
+    'gen_shashanka': 'BENGALIS',   // 据点 高达城（2026-10-20 按史实复核，文化随据点风格）
     'gen_sadashivrao': 'MUGHAL',      // 马拉塔｜萨达希夫｜据点 德里（MUGHAL）
     'gen_mingrui': 'NORTHEAST',       // 清｜明瑞｜据点 沈阳（NORTHEAST）
     'gen_zengguofan': 'JIANGNAN',     // 湘军｜曾国藩｜据点 长沙（JIANGNAN）
@@ -407,7 +407,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_qiu_luan': 'WEI',            // 明｜仇鸾｜据点 北京（WEI）
     'gen_yang_hao': 'WEI',            // 明｜杨镐｜据点 北京（WEI）
     'gen_hong_chengchou': 'WEI',      // 明｜洪承畴｜据点 北京（WEI）
-    'gen_wang_qiaonian': 'WEI',       // 明｜汪乔年｜据点 北京（WEI）
+    'gen_wang_qiaonian': 'CENTRAL',   // 据点 长安（2026-10-20 按史实复核，文化随据点风格）
     'gen_nikan': 'NORTHEAST',         // 清｜尼堪｜据点 沈阳（NORTHEAST）
     'gen_wang_ji': 'WEI',             // 明｜王骥｜据点 北京（WEI）
     'gen_vasili_iii': 'SLAVIC',       // 莫斯科｜瓦西里三世｜据点 莫斯科（SLAVIC）
@@ -437,7 +437,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_pietro_tiepolo': 'LATIN',   // 米兰执政官｜皮耶罗·提埃波洛｜据点 米兰（LATIN）
     'gen_kutlug_buga': 'CENTRAL_ASIA', // 金帐王公｜库特卢格·布加｜据点 萨莱（CENTRAL_ASIA）
     'gen_ali_ibn_yusuf': 'BERBER',   // 穆拉比特｜阿里·本·优素福｜据点 马拉喀什（BERBER）
-    'gen_kusaila': 'BERBER',      // 柏柏尔｜库赛拉｜据点 丹吉尔（BERBER）
+    'gen_kusaila': 'BERBER',   // 据点 特莱姆森（2026-10-20 按史实复核，文化随据点风格）
     'malin_abulhasan': 'BERBER',  // 马林王朝｜阿布·哈桑·阿里｜据点 非斯（BERBER）
     'zhao_gerong': 'CENTRAL',        // 六镇起义｜葛荣｜据点 邯郸（CENTRAL）
     'gen_ramiro_ii': 'SPANISH',      // 莱昂王国｜拉米罗二世｜据点 萨拉曼卡（SPANISH）
@@ -467,13 +467,13 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'baizanting_isaac_ii': 'BYZANTINE',   // 拜占庭｜伊萨克二世｜据点 君士坦丁堡
     'baizanting_alexios_v': 'BYZANTINE',  // 拜占庭｜阿莱克修斯五世｜据点 君士坦丁堡
     'liao_d_tianzuodi': 'XIANBEI',         // 大辽｜天祚帝｜据点 临潢府
-    'song_zhangjun': 'CENTRAL',            // 宋国｜张浚｜据点 开封
+    'song_zhangjun': 'BASHU',   // 据点 略阳（2026-10-20 按史实复核，文化随据点风格）
     'jiazini_khusrau_malik': 'PERSIAN',    // 伽色尼｜呼斯劳·马利克｜据点 哥疾宁
     'gaer_sigtrygg': 'CELTS',            // 盖尔｜西格特里格·丝须｜据点 都柏林
-    'suomunate_bhima_i': 'GURJARAS',     // 拉其普特｜毗摩一世｜据点 索姆纳特
+    'suomunate_bhima_i': 'GURJARAS',   // 据点 帕坦（2026-10-20 按史实复核，文化随据点风格）
     'song_renfu': 'CENTRAL',             // 宋国｜任福｜据点 萧关
     'luoma_diguo_leo_ix': 'ROMA',        // 罗马帝国｜利奥九世｜据点 罗马城
-    'tubo_muzheng': 'TIBET',             // 吐蕃｜木征｜据点 逻些
+    'tubo_muzheng': 'KHITAN',   // 据点 枹罕（河州，木征根据地；文化随据点风格，2026-10-20 按史实改）
     'womaya_yahya': 'GOTHS',             // 倭马亚｜叶海亚｜据点 托莱多
     'sailiugu_yaghi': 'ORIE',            // 塞尔柱｜雅吉·西扬｜据点 安提俄基亚
     'sengjialuo_mahinda_v': 'PURU',       // 僧伽罗｜摩哂陀五世｜据点 阿努拉德
@@ -495,7 +495,7 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'aliya_muhammad_tahir': 'PERSIAN',  // 阿利亚｜穆罕默德·本·塔希尔｜据点 赫拉特
     'huihu_wusa': 'MONGOL',           // 回鹘｜㕎馺可汗｜据点 青岭牙帐
     'abasi_muwafake': 'ORIE',         // 阿拔斯｜穆瓦法克｜据点 巴格达
-    'falanji_kalman': 'FRANKS',       // 法兰克｜卡洛曼｜据点 科隆
+    'falanji_kalman': 'GERMANIC',   // 据点 雷根斯堡（2026-10-20 按史实复核，文化随据点风格）
     'nanzhao_duanqiuxian': 'BASHU',   // 南诏｜段酋迁｜据点 蒙舍城
     'gurjara_vatsaraja': 'GURJARAS',      // 瞿折罗｜瓦萨拉贾｜据点 帕坦
     'gurjara_nagabhata_ii': 'GURJARAS',   // 瞿折罗｜那加巴塔二世｜据点 帕坦
@@ -507,9 +507,9 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'zhuozhou_shisiming': 'WEI',     // 涿州｜史思明｜据点 范阳
     'xijue_ashina_funian': 'CENTRAL_ASIA',   // 十箭｜阿史那匐念｜据点 碎叶
     'xigete_roderic': 'GOTHS',               // 西哥特｜罗德里克｜据点 托莱多
-    'womaya_muslim': 'ORIE',                 // 倭马亚｜穆斯林·本·赛义德｜据点 大马士革
-    'womaya_abdrahman': 'ORIE',              // 倭马亚｜阿卜杜勒·拉赫曼｜据点 大马士革
-    'rierman_odoacer': 'GERMANIC',   // 莱茵兰｜奥多亚克｜据点 美因茨
+    'womaya_muslim': 'SASANIAN',   // 据点 木鹿（2026-10-20 按史实复核，文化随据点风格）
+    'womaya_abdrahman': 'SPANISH',   // 据点 科尔多瓦（2026-10-20 按史实复核，文化随据点风格）
+    'rierman_odoacer': 'GOTHS',   // 据点 拉文纳（2026-10-20 按史实复核，文化随据点风格）
     'yidou_qixin': 'JIANGNAN',       // 宜都｜戚昕｜据点 夷陵
     'maidina_ali': 'ORIE',           // 拉希顿｜阿里｜据点 麦地那
     'sashan_bahram_vi': 'SASANIAN',   // 萨珊｜巴赫拉姆六世｜据点 菲鲁扎巴德
@@ -526,12 +526,12 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'yuwen_yuwenxian': 'XIANBEI',      // 宇文｜宇文宪｜据点 武川镇
     // 🔴 2026-10-20 首战补敌将
     'sashan_khosrow_ii': 'SASANIAN',   // 萨珊｜霍斯劳二世｜据点 菲鲁扎巴德
-    'sui_yuwenshu': 'JIANGNAN',        // 隋｜宇文述｜据点 汉东
+    'sui_yuwenshu': 'CENTRAL',   // 据点 长安（2026-10-20 按史实复核，文化随据点风格）
     'tujue_xielikehan': 'MONGOL',      // 突厥｜颉利可汗｜据点 于都斤山
     // 🔴 2026-10-20 首战补敌将
     'sashan_beilusi': 'SASANIAN',        // 萨珊｜卑路斯一世｜据点 菲鲁扎巴德
     'luoma_xiageliwusi': 'ROMA',         // 罗马帝国｜西阿格里乌斯｜据点 罗马城
-    'tuoba_yuanying': 'WEI',             // 拓跋｜元英｜据点 大同
+    'tuoba_yuanying': 'CENTRAL',   // 据点 洛阳（2026-10-20 按史实复核，文化随据点风格）
     'rouran_anagui': 'MONGOL',           // 柔然｜阿那瓌｜据点 赛尔乌苏
     'gen_constantine_great': 'LATIN',   // 摩泽尔｜君士坦丁｜据点 特里尔
     'gen_cortes': 'SPANISH',   // 西属墨西哥｜科尔特斯｜据点 韦拉克鲁斯

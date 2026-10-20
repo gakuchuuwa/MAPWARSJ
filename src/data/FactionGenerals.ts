@@ -1666,7 +1666,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    zhayan: { generalId: 'gen_yaghmurasen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png' },
+    zhayan: [
+        { generalId: 'gen_yaghmurasen', generalName: '亚格姆拉森', portrait: '/assets/BERBER/zhayan_yalimoluo.png' },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：库赛拉＝奥雷巴柏柏尔王，阿尔塔瓦王国（今特莱姆森一带）；丹吉尔从未是他的驻地 → 放特莱姆森（zhayan，风格 BERBER）；仍挂本政权 talike
+        { generalId: 'gen_kusaila', factionId: 'talike', legionName: '封建时代柏柏尔军团', generalName: '库赛拉', portrait: '', },
+    ],
 
 
 
@@ -1803,15 +1807,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 库赛拉＝奥雷斯柏柏尔王（683 塔胡达伏杀欧克巴，682 与欧克巴对敌）→ 丹吉尔（马格里布，BERBER 风格）；封建×柏柏尔＝封建时代柏柏尔军团；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'gen_kusaila', generalName: '库赛拉', portrait: '', legionName: '封建时代柏柏尔军团' },
 
 
 
@@ -2194,7 +2189,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    donggete: { generalId: 'gen_theodoric_great', generalName: '狄奥多里克', portrait: '/assets/LATIN/donggete_diaoduolike.png' },
+    donggete: [
+        { generalId: 'gen_theodoric_great', generalName: '狄奥多里克', portrait: '/assets/LATIN/donggete_diaoduolike.png' },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：奥多亚克＝意大利王，都拉文纳，493 年在拉文纳被围杀；美因茨与他无关 → 放拉文纳（donggete，风格 GOTHS）；仍挂本政权 rierman
+        { generalId: 'rierman_odoacer', factionId: 'rierman', generalName: '奥多亚克', portrait: '', eliteName: '日耳曼佣兵', eliteTier: 4 },
+    ],
 
 
 
@@ -2258,7 +2257,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    andaluoxiya: { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
+    andaluoxiya: [
+        { generalId: 'gen_abd_al_rahman_iii', generalName: '阿卜杜拉', portrait: '/assets/LATIN/andaluoxiya_abudula.png' },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：阿卜杜勒·拉赫曼·加菲基＝安达卢斯总督，驻科尔多瓦，732 年由此北征普瓦捷；大马士革是哈里发都城 → 放科尔多瓦（andaluoxiya，风格 SPANISH）；仍挂本政权 womaya
+        { generalId: 'womaya_abdrahman', factionId: 'womaya', generalName: '阿卜杜勒·拉赫曼', portrait: '' },
+    ],
 
 
 
@@ -2983,15 +2986,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 卡洛曼＝东法兰克巴伐利亚王（871 攻摩拉维亚被斯瓦托普卢克击败）→ 科隆·法兰克；普将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'falanji_kalman', generalName: '卡洛曼', portrait: '' },
 
 
 
@@ -3072,15 +3066,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 奥多亚克＝意大利王（476 废西罗马末帝，493 拉文纳被围杀）→ 美因茨·莱茵兰（意大利王国无独立势力，挂日耳曼相近势力，已报告）；普将；古典×日耳曼＝古典时代条顿军团；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'rierman_odoacer', generalName: '奥多亚克', portrait: '', legionName: '古典时代条顿军团' , eliteName: '日耳曼佣兵', eliteTier: 4 },   // 🔴 奥多亚克本人是日耳曼雇佣军首领（原配「莱茵选侯军」是 1356 年后）
 
 
 
@@ -3160,6 +3145,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：卡洛曼＝东法兰克巴伐利亚王，驻雷根斯堡；科隆不是他的驻地 → 放雷根斯堡（bafaliya，风格 GERMANIC）；仍挂本政权 falanji
+        { generalId: 'falanji_kalman', factionId: 'falanji', generalName: '卡洛曼', portrait: '' },
     ],
 
 
@@ -4100,6 +4087,10 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：宇文述＝隋左卫大将军，驻隋都大兴（长安）；汉东（随州）只是杨坚封地，与他无涉 → 放长安（tang，风格 CENTRAL）；仍挂本政权 sui
+        { generalId: 'sui_yuwenshu', factionId: 'sui', generalName: '宇文述', portrait: '' , eliteName: '隋军府兵', eliteTier: 4 },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：汪乔年＝明陕西总督，总督衙门驻西安（长安）；1642 襄城之败是出潼关救援 → 放长安（tang，风格 CENTRAL）；仍挂本政权 ming_d
+        { generalId: 'gen_wang_qiaonian', factionId: 'ming_d', legionName: '城堡时代中华军团', generalName: '汪乔年', portrait: '', },
     ],
 
 
@@ -4112,6 +4103,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
         { generalId: 'bfe3_76', generalName: '曹爽', portrait: '', factionId: 'cao_d', legionName: '古典时代华夏军团' },
         { generalId: 'wuzhou_d_wuzetian', generalName: '武则天', portrait: '/assets/wuzhou/wuzhou_d_wuzetian.png' },
         { generalId: 'bfe_prince_chao', generalName: '王子朝', portrait: '', factionId: 'zhou', legionName: '古典时代华夏军团' },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：元英＝北魏中山王，507 钟离之战时北魏已于 494 年迁都洛阳，大同（平城）已非都城 → 放洛阳（wuzhou_d，风格 CENTRAL）；仍挂本政权 tuoba
+        { generalId: 'tuoba_yuanying', factionId: 'tuoba', legionName: '古典时代华夏军团', generalName: '元英', portrait: '' },
     ],
 
 
@@ -4162,9 +4155,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
         { generalId: 'gen_hong_chengchou', generalName: '洪承畴', portrait: '', legionName: '城堡时代燕云军团' },
 
-        // 🔴 [2026-10-20 首战规则] 汪乔年＝明陕西总督（1642 襄城战死）→ 北京（WEI）；城堡时代燕云军团；立绘留空
-
-        { generalId: 'gen_wang_qiaonian', generalName: '汪乔年', portrait: '', legionName: '城堡时代燕云军团' },
 
 
 
@@ -4412,15 +4402,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 木征＝唃厮啰孙、熙河吐蕃首领（1073 王韶收复熙河，木征降）→ 逻些·吐蕃（熙州无城，锚定吐蕃代表据点）；普将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'tubo_muzheng', legionName: '城堡时代萨迦军团', generalName: '木征', portrait: '' },
 
 
 
@@ -4804,6 +4785,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
     seljuq: [
         { generalId: 'seljuq_sangjiaer', generalName: '桑贾尔', portrait: '/assets/CENTRAL_ASIA/seljuq_sangjiaer.png' },
         { generalId: 'bfe_tahir_king', generalName: '穆罕默德·伊本·塔希尔', portrait: '', factionId: 'xisi', legionName: '封建时代霍拉桑军团' },
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：穆斯林·本·赛义德＝呼罗珊总督，驻木鹿（梅尔夫）；724 年渴水日之战是呼罗珊军，不是大马士革 → 放木鹿（seljuq，风格 SASANIAN）；仍挂本政权 womaya
+        { generalId: 'womaya_muslim', factionId: 'womaya', legionName: '封建时代霍拉桑军团', generalName: '穆斯林·本·赛义德', portrait: '' },
     ],
 
 
@@ -8049,7 +8032,11 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-    qifu_d: { generalId: 'qifu_d_qifuchipan', generalName: '乞伏炽磐', portrait: '/assets/HEXI/qifu_d_qifuchipan.png' },
+    qifu_d: [
+        { generalId: 'qifu_d_qifuchipan', generalName: '乞伏炽磐', portrait: '/assets/HEXI/qifu_d_qifuchipan.png' },
+        // 🔴 [2026-10-20 主人问「木征为什么不挂熙河」→ 按史实改] 木征＝河州（今临夏，库里的枹罕）吐蕃首领，1072～1073 王韶熙河之役所败者；熙州＝库里的狄道。上一轮误以为熙河无据点而放玛曲，现放枹罕（风格 KHITAN 河西，文化随据点）；仍挂本政权 tubo
+        { generalId: 'tubo_muzheng', factionId: 'tubo', legionName: '城堡时代大夏军团', generalName: '木征', portrait: '' },
+    ],
 
 
 
@@ -9518,6 +9505,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：张浚＝南宋川陕宣抚处置使，1130 富平战后驻兴州（今略阳）；开封从未是他的驻地 → 放略阳（fushi，风格 BASHU）；仍挂本政权 song
+        { generalId: 'song_zhangjun', factionId: 'song', legionName: '城堡时代川峡军团', generalName: '张浚', portrait: '' },
     ],
 
 
@@ -11042,15 +11031,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 元英＝北魏中山王、507 钟离之战主帅（被韦睿击败）→ 大同·拓跋；普将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'tuoba_yuanying', generalName: '元英', portrait: '' },
 
 
 
@@ -11590,15 +11570,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 宇文述＝612 隋征高句丽萨水之战主帅（大败），汉东·隋；普将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'sui_yuwenshu', generalName: '宇文述', portrait: '' , eliteName: '隋军府兵', eliteTier: 4 },   // 🔴 612 年隋征高句丽是府兵（骁果军 613 年才成立）
 
 
 
@@ -12860,15 +12831,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 张浚＝南宋川陕五路主帅（1130 富平之战被完颜娄室大败）→ 开封·宋国（驻兴州，城库无，锚定宋代表据点）；普将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'song_zhangjun', legionName: '城堡时代中华军团', generalName: '张浚', portrait: '' },
 
 
 
@@ -13489,7 +13451,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 穆斯林·本·赛义德＝724 渴水日之战倭马亚主帅（大败）→ 大马士革·倭马亚；普将；立绘留空
 
 
 
@@ -13497,23 +13458,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        { generalId: 'womaya_muslim', generalName: '穆斯林·本·赛义德', portrait: '' },
-
-
-
-
-
-
-
-        // 🔴 [2026-10-20 首战规则] 阿卜杜勒·拉赫曼＝732 普瓦捷之战倭马亚主帅（战死）→ 大马士革·倭马亚；名将；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'womaya_abdrahman', generalName: '阿卜杜勒·拉赫曼', portrait: '' },
 
 
 
@@ -14536,8 +14480,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
     jieri: [
         { generalId: 'jieri_jieriwang', generalName: '哈尔沙', portrait: '/assets/INDIA/jieri_jieriwang.png' },
-        // 🔴 [2026-10-20 首战规则] 设赏迦＝高达国王（600–637，618 戒日王统一北印度时的对手）；曲女城无独立高达势力，借波罗（报告）；封建×印度＝封建时代朱罗军团；立绘留空
-        { generalId: 'gen_shashanka', generalName: '设赏迦', portrait: '', factionId: 'boluo', legionName: '封建时代朱罗军团' },
     ],
 
 
@@ -14651,6 +14593,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：设赏迦＝高达（孟加拉）国王、戒日王死敌，根据地孟加拉，不是戒日王都曲女城 → 放高达城（boluo，风格 BENGALIS）；仍挂本政权 jieri
+        { generalId: 'gen_shashanka', generalName: '设赏迦', portrait: '', factionId: 'boluo', },
     ],
 
 
@@ -15164,6 +15108,8 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
+        // 🔴 [2026-10-20 主人令「遇到问题先看符合历史，下结论再动手」] 首战回补安置按史实复核：毗摩一世＝索兰基（Chaulukya）王，都阿尼尔瓦达＝今帕坦；索姆纳特只是 1026 年被劫之地 → 放帕坦（gurjara，风格 GURJARAS）；仍挂本政权 suomunate
+        { generalId: 'suomunate_bhima_i', factionId: 'suomunate', generalName: '毗摩一世', portrait: '', },
     ],
 
 
@@ -15188,15 +15134,6 @@ export const FACTION_GENERALS: Readonly<Record<string, FactionGeneralEntry>> = {
 
 
 
-        // 🔴 [2026-10-20 首战规则] 毗摩一世＝索兰基（古吉拉特）王，1026 索姆纳特被伽色尼马哈茂德劫掠 → 索姆纳特·拉其普特；普将；封建×瞿折罗＝封建时代古贾拉铁骑军团；立绘留空
-
-
-
-
-
-
-
-        { generalId: 'suomunate_bhima_i', generalName: '毗摩一世', portrait: '', legionName: '封建时代古贾拉铁骑军团' },
 
 
 

@@ -20,7 +20,7 @@ import { CITIES_V2 } from '../../data/cities_v2';
 import { CITY_WONDER, CITY_WONDER_EXTRA } from '../../data/CityWonders';
 import { isWonderFounded } from '../../data/wonderFoundedYears';
 import { resolveStockadeFenceKey } from '../../data/stockadeWallStyleLookup';
-import { resolveTacticalWallSetup } from '../../systems/cityWallShared';
+import { resolveTacticalWallSetup, passRingHalfExtents } from '../../systems/cityWallShared';
 import { isMountainPass, EXCLUDED_PASS_IDS } from '../../systems/passMountainDecision';
 
 /**
@@ -142,7 +142,9 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
     //    即内陆干旱区的城）不挖——历史上这类城要么是干壕、要么根本无壕，凭空挖一圈水不符合地理。
     const moatOn = moatW > 0 && this.buildingStyleFor(1) !== 'YURT' && this.environmentPlan?.waterKind !== 'none';
     if (this.defenderCityType === 'pass') {
-        gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings);
+        // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形形制：台地边界按矩形双圈算（旧方形不传，走原算法一个像素不动）
+        gl.flattenPassTerraces(cx, cy, W, H, seedStr, this.wallGates, this.defBuildings,
+            this.defenderPassShape === 'rect' ? passRingHalfExtents(true) : undefined);
     } else if (this.defenderCityType === 'stockade') {
         gl.flattenStockadeTerraces(cx, cy, W, H, seedStr, this.wallGates);
     } else {
@@ -589,26 +591,39 @@ export function applyDeCityToGround(this: Scene13WarLayer): void {
         } else if (this.defenderCityType === 'pass') {
             // 险要（关隘）：双重石构城郭、瓮城夹道防线与内城要塞细节
             // 候选点位涵盖：瓮城夹道（两圈城墙之间走廊）、外门内侧防区、内廷营防死角
-            const passCandidates: ReadonlyArray<readonly [number, number]> = [
-                // 瓮城夹道四面走廊（内墙与外墙之间空当）
-                [-9.5, 0.5],   // 西夹道中
-                [10.5, 0.5],   // 东夹道中
-                [0.5, -9.5],   // 北夹道中
-                [0.5, 10.5],   // 南夹道中
-                [-8.5, -4.5],  // 西北夹道
-                [8.5, 4.5],    // 东南夹道
-                [-4.5, -8.5],  // 东北夹道偏北
-                [4.5, 8.5],    // 西南夹道偏南
-                [-8.5, 4.5],   // 西南夹道偏西
-                [8.5, -4.5],   // 东北夹道偏东
-                [-4.5, 8.5],   // 西南夹道走廊
-                [4.5, -8.5],   // 东北夹道走廊
-                // 内城要塞四隅与城堡夹道
-                [-2.2, 2.2],   // 内城西侧
-                [3.2, -2.2],   // 内城东侧
-                [-2.2, -2.2],  // 内城北空隙
-                [3.2, 3.2],    // 内城南空隙
-            ];
+            // 🔴 [2026-10-20 主人令「东方险要改矩形」] 矩形双圈（内 21×13 / 外 29×21）的夹道在 i 向 −12.5 / j 向 ±8.5：
+            //    方形那组里的 [±9.5~10.5, 0.5] 在矩形下会落回内城里压内墙 ⇒ 矩形换一组按 inner/outer 半长中点算的点位。
+            const passCandidates: ReadonlyArray<readonly [number, number]> = this.defenderPassShape === 'rect'
+                ? [
+                    // 瓮城夹道四边中点（i 半长内 10.5→外 14.5 取 12.5、j 半长 6.5→10.5 取 8.5）
+                    [-12, 0.5], [13, 0.5], [0.5, -8], [0.5, 9],
+                    // 夹道四角
+                    [-12, -8], [13, -8], [-12, 9], [13, 9],
+                    // 夹道长边中段
+                    [-6, -8], [7, -8], [-6, 9], [7, 9],
+                    // 内城要塞四隅与城堡夹道（与方形同一组，矩形内城中心不变）
+                    [-2.2, 2.2], [3.2, -2.2], [-2.2, -2.2], [3.2, 3.2],
+                ]
+                : [
+                    // 瓮城夹道四面走廊（内墙与外墙之间空当）
+                    [-9.5, 0.5],   // 西夹道中
+                    [10.5, 0.5],   // 东夹道中
+                    [0.5, -9.5],   // 北夹道中
+                    [0.5, 10.5],   // 南夹道中
+                    [-8.5, -4.5],  // 西北夹道
+                    [8.5, 4.5],    // 东南夹道
+                    [-4.5, -8.5],  // 东北夹道偏北
+                    [4.5, 8.5],    // 西南夹道偏南
+                    [-8.5, 4.5],   // 西南夹道偏西
+                    [8.5, -4.5],   // 东北夹道偏东
+                    [-4.5, 8.5],   // 西南夹道走廊
+                    [4.5, -8.5],   // 东北夹道走廊
+                    // 内城要塞四隅与城堡夹道
+                    [-2.2, 2.2],   // 内城西侧
+                    [3.2, -2.2],   // 内城东侧
+                    [-2.2, -2.2],  // 内城北空隙
+                    [3.2, 3.2],    // 内城南空隙
+                ];
             // 军备防御道具池：拒马、礌石擂石、战备粮箱粮桶、破损辎重车、城根荒野灌木
             const passFlora = isAridSite ? 'GRASS_DRY' : (mRnd() < 0.5 ? 'BUSH_GREEN' : 'SHRUB_GREEN');
             const passPropsPool = [

@@ -112,11 +112,12 @@ function buildNativeSizes(city: City, deStyle: string, centerCastle: boolean): C
     return { widths, castleW: castleDir ? DE_SPRITE_BOX_W[castleDir] : undefined, spriteW };
 }
 
-/** 战术用：按 DE 原生像素生成建筑栈（**同步**，出兵口布阵要用它；战略地图走不传原生表的那个版本） */
-export function strategicCityHtmlNative(city: City): StrategicCityHtml | null {
+/** 战术用：按 DE 原生像素生成建筑栈（**同步**，出兵口布阵要用它；战略地图走不传原生表的那个版本）
+ *  🔴 [2026-10-20] opts.passShape 只对险要生效：'rect'＝矩形形制（预览页 opt-in）；不传＝现有方形，一个像素不动。 */
+export function strategicCityHtmlNative(city: City, opts?: { passShape?: 'square' | 'rect' }): StrategicCityHtml | null {
     const p = cityStackParams(city);
     if (!p.deStyle) return null;
-    return strategicCityHtmlWith(city, p, buildNativeSizes(city, p.deStyle, p.centerCastle));
+    return strategicCityHtmlWith(city, p, buildNativeSizes(city, p.deStyle, p.centerCastle), opts);
 }
 
 export function strategicCityHtml(city: City): StrategicCityHtml | null {
@@ -129,9 +130,10 @@ function strategicCityHtmlWith(
     city: City,
     p: { cityRegion: RegionType; centerCastle: boolean; deStyle: string | null; useStoneWall: boolean },
     native?: CityNativeSizes,
+    opts?: { passShape?: 'square' | 'rect' },
 ): StrategicCityHtml | null {
     if (!p.deStyle) return null;
-    const html = buildCityStackInnerHtml(city, TACTICAL_CITY_BASE_SIZE, p.deStyle, p.centerCastle, p.useStoneWall, p.cityRegion, native);
+    const html = buildCityStackInnerHtml(city, TACTICAL_CITY_BASE_SIZE, p.deStyle, p.centerCastle, p.useStoneWall, p.cityRegion, native, opts);
     const mirror = !!city.mirror;   // [2026-10-11] 险要(pass)也吃镜像（原先被排除，守军出兵口与画出的建筑左右相反）
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const root = doc.body.firstElementChild as HTMLElement | null;
