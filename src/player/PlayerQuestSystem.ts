@@ -2034,6 +2034,30 @@ export class PlayerQuestSystem {
             }
         }
 
+        // 🔴 [2026-10-20 主人令「所有野战剧情结束后，要有据点获得奖励」] 野战首战打赢后也奖励一座据点：
+        //    优先战场所属据点（targetCityId）；没写据点或已是我方的，取离战场最近的非我方据点。
+        if (fbState?.battleType === 'field') {
+            const cities = this.deps.cityManager.getCities();
+            const battlePos = { lat: fbState.targetLat, lng: fbState.targetLng };
+            let reward = fbState.targetCityId ? this.deps.cityManager.getCity(fbState.targetCityId) : undefined;
+            if (!reward || reward.factionId === q.factionId) {
+                let best: City | undefined;
+                let bestDist = Infinity;
+                for (const c of cities) {
+                    if (c.factionId === q.factionId) continue;
+                    const d = getEuclideanDistance(battlePos, { lat: c.latitude, lng: c.longitude });
+                    if (d < bestDist) { bestDist = d; best = c; }
+                }
+                reward = best;
+            }
+            if (reward) {
+                reward.factionId = q.factionId;
+                if ((reward.troops || 0) < 3000) reward.troops = 3000;
+                this.deps.notify(`🏆 【${fbState.battleName}】大捷，获得据点【${reward.name}】`);
+                gameLog('expedition', `[玩家] 野战首战奖励据点：${q.generalName} ${fbState.battleName} → ${reward.name}`);
+            }
+        }
+
         // 确保首战后出征军团兵力充足（至少 10,000 人），绝不因战损低于 5,000 而在本城解散
         const minContinueTroops = Math.max(10000, Math.min(fbState?.myTroops ?? 20000, 20000));
         if (host.getTroops() < minContinueTroops) {
