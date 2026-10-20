@@ -45,6 +45,8 @@ import { categorizeUnit } from '../legion/formation/deUnitCategories';
 import { computeDeFormationLayout, type DeCategoryGroup } from '../legion/formation/deFormationLayout';
 import type { Scene13PlayerSetup } from '../player/PlayerHero';
 import { withCommander } from '../data/generalHeroUnits';
+import { isGeneralOnStage } from '../data/generalOnStage';
+import { isBattlefieldCharacter } from '../data/BattlefieldCharacters';
 import { getGeneralProfile } from '../data/GeneralSkills';
 import { getFactionGeneral, getGeneralOwnFactionId } from '../data/FactionGenerals';
 import { CITY_ELITE_LEGIONS, getExpeditionEliteConfig, getCityEliteConfig } from '../data/ExpeditionLegions';
@@ -340,6 +342,8 @@ export class Scene13WarLayer {
      * 每段城墙/垛墙/栅栏/篱笆的破口档（0.75 / 0.50 / 0.25 / 0），首次用到时随机定下、本场不变（见 wallBreachRatio）。
      */
     private wallBreachRatios = new WeakMap<WarBuilding, number>();
+    /** 墙件坍塌前的原始素材名（坍塌会换成残骸贴图；城门连带塌墙要靠原名认出城垛 `_POST`） */
+    private wallOrigAsset = new WeakMap<WarBuilding, string>();
     /**
      * 🔴 [2026-10-03] 本场是不是「**真有城墙的攻城战**」（城寨守方、漠北蒙古守方按野战算 —— 见 2026-09-03、
      *    2026-09-19 主人定「城寨/漠北蒙古与野战一致：直接开战」）。
@@ -1438,6 +1442,7 @@ export class Scene13WarLayer {
         // 🔴 [2026-09-19 主人定] 漠北蒙古风格(MOBEI_MONGOL)和城寨野战一样：直接开战，守方不待命。
         this.siegeWithWalls = this.battleType === 'siege' && this.defenderCityType !== 'stockade' && !this.isMobeiMongolDefender();
         this.wallBreachRatios = new WeakMap();   // 🔴 [2026-10-20 主人令] 城墙破损档每场重新随机
+        this.wallOrigAsset = new WeakMap();
         // [2026-08-31] 本地名将加成已删（名将/精锐都走八环唯一通道，见 dmgVs 上方说明）。
         // [军事科技] 双方文化区 + 年份来源 + 分表重置（新一场战斗按当前年份重算，不沿用旧缓存）
         // 🔴 [2026-08-19] 双方兜底同为 CENTRAL：上游 GameAppCombatHooks 已按战场坐标兜过一次，
@@ -1660,10 +1665,12 @@ export class Scene13WarLayer {
                 this.spawns.filter((s) => s.f === 1).length,
             ];
             this.diagPush('laneCount', { attacker: laneCount[0], defender: laneCount[1] });
-            if (laneCount[0] !== SIDE_LANES || laneCount[1] !== SIDE_LANES) {
+            // 🔴 [2026-10-20 主人令「没有武将的战术模式中，没有主将队，只保留9对编制」] 无将的一方 9 口也合法
+            const laneOk = (n: number) => n === SIDE_LANES || n === SIDE_LANES - 1;
+            if (!laneOk(laneCount[0]) || !laneOk(laneCount[1])) {
                 console.warn(
                     `⚠️ [Scene13War] 编队数铁律被破坏：攻方 ${laneCount[0]} 口 / 守方 ${laneCount[1]} 口，`
-                    + `应恒为 ${SIDE_LANES} 口（主人 2026-09-23 定 10 队：编制 9 + 主将队 1）。`,
+                    + `应为 ${SIDE_LANES} 口（编制 9 + 主将队 1），无将的一方 ${SIDE_LANES - 1} 口。`,
                 );
             }
 
@@ -2460,10 +2467,19 @@ export class Scene13WarLayer {
         return out;
     }
 
+    /** 这一方有没有**真武将**：在场的据点武将，或只在这一仗出场的战场人物（不在生卒表里，在场闸对他们恒为 false） */
+    private hasStageGeneral(generalId: string | null | undefined): boolean {
+        if (!generalId) return false;
+        return isBattlefieldCharacter(generalId) || isGeneralOnStage(generalId);
+    }
+
     /** DE 自动排布的阵位缓存（键 = 阵型 + 九个兵种键） */
     private deCellCache = new Map<string, { col: number; row: number; cols: number }[]>();
 
     private slotsOf(region: string, factionId?: string | null, generalId?: string | null, hasElite?: boolean, sideF?: 0 | 1): { key: string }[] {
+        // 🔴 [2026-10-20 主人令「没有武将的战术模式中，没有主将队，只保留9对编制」]
+        //    无将、或这位武将此刻不在场（百岁/剧本模式里只剩「XX将军」普通守军）⇒ 不追加第 10 口主将队。战场人物只在那一仗出场，照算有将。
+        if (!this.hasStageGeneral(generalId)) generalId = null;
         try {
             // 🔴 [2026-10-18 主人定「每个时代每个据点，防守的时候，只能出本文化该时代的军团」]
             if (sideF === 1 && this.battleType === 'siege') {
@@ -2510,7 +2526,7 @@ export class Scene13WarLayer {
             { key: 'light_infantry' }, { key: 'light_infantry' }, { key: 'light_infantry' },
             { key: 'lancer' }, { key: 'general_cavalry' }, { key: 'lancer' },
             { key: 'archer' }, { key: 'archer' }, { key: 'archer' },
-            { key: 'light_infantry' },   // 第 10 口：主将队（兜底同前排兵种）
+            ...(generalId ? [{ key: 'light_infantry' }] : []),   // 第 10 口：主将队（兜底同前排兵种；无将不出）
         ];
     }
 
@@ -3849,6 +3865,31 @@ export class Scene13WarLayer {
         return this.insideRing(m.x, m.y) !== this.insideRing(o.x, o.y);
     }
 
+    /** 🔴 [2026-10-20 主人令「普通远程兵不打墙、城门和建筑，带攻城加成的远程兵照打」]
+     *  「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。 */
+    private rangedHitsBuildings(key: string): boolean {
+        const bon = this.statsFor(key, 0).bonus;
+        return !!bon && ((bon[11] ?? 0) > 0 || (bon[13] ?? 0) > 0 || (bon[21] ?? 0) > 0 || (bon[22] ?? 0) > 0);
+    }
+
+    /**
+     * 🔴 [2026-10-20 主人报「远程不攻击建筑后，远程兵就在城外转，也进不了城」]
+     * 攻方**普通远程兵**（不打墙门建筑的那种）此刻在城外、城墙一处都还没破 ⇒ 守在城外：
+     * 只射射程内的敌兵（可隔墙），不朝墙后够不着的兵走，没目标就在城门外、近战后方列队待命；墙/门一破照常走流场进城。
+     */
+    private rangedHoldsOutside(m: WarMan): boolean {
+        if (this.battleType !== 'siege' || !this.siegeWithWalls || m.f !== 0 || !m.key || m.hero || m.siegeW
+            || WALL_PASS_TYPES.has(m.key) || this.statsFor(m.key, 0).rng <= 65 || this.rangedHitsBuildings(m.key)) return false;
+        this.ensureGateInfo();
+        return !this.ringOpen() && !this.insideRing(m.x, m.y);
+    }
+
+    /** 远程兵站着不动就射得到的距离²（射程 + 自身半径 + 余量） */
+    private rangedShootReach2(m: WarMan): number {
+        const r = this.statsFor(m.key, 0).rng + this.radiusOf(m.key) + 18;
+        return r * r;
+    }
+
     private reserveExistingTargets(deploying: boolean): void {
         for (const target of this.men) target.claims = 0;
         for (const target of this.wallGates) target.claims = 0;
@@ -4198,6 +4239,10 @@ export class Scene13WarLayer {
         const outOnly = m.f === 0 && this.battleType === 'siege' && this.siegeWithWalls && !!wm.key
             && !(m as { siegeW?: boolean }).siegeW && this.statsFor(wm.key, 0).rng <= 65
             && (this.ensureGateInfo(), !this.insideRing(m.x, m.y)) && !this.ringOpen();
+        // 🔴 [2026-10-20 主人报「远程不攻击建筑后，远程兵就在城外转，也进不了城」]
+        //    攻方远程在城外、墙还封着：城里的敌兵只在**射程内**才锁（隔墙放箭，同 DE）；射程外的不锁 ——
+        //    原来会锁上墙后够不着的兵，朝他走、顶在墙上被推挤着打转（远程又不打墙门，卡死）。
+        const rangedOutReach2 = this.rangedHoldsOutside(m as WarMan) ? this.rangedShootReach2(m as WarMan) : 0;
         if (span >= 6) {
             for (let i = 0; i < this.men.length; i++) {
                 const o = this.men[i];
@@ -4206,6 +4251,7 @@ export class Scene13WarLayer {
                 if (d >= r2) continue;
                 if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
                 if (outOnly && this.insideRing(o.x, o.y)) continue;
+                if (rangedOutReach2 > 0 && d > rangedOutReach2 && this.insideRing(o.x, o.y)) continue;
                 const tooNear = minR2 > 0 && d < minR2;
                 if (d < bd) { bd = d; best = o; }
                 if (!tooNear && d < rd) { rd = d; inRange = o; }
@@ -4243,6 +4289,7 @@ export class Scene13WarLayer {
                             if (d >= r2) continue;
                             if (guardPost && (o.x - guardPost.x) ** 2 + (o.y - guardPost.y) ** 2 > guardLeash2) continue;
                             if (outOnly && this.insideRing(o.x, o.y)) continue;
+                            if (rangedOutReach2 > 0 && d > rangedOutReach2 && this.insideRing(o.x, o.y)) continue;
                             const tooNear = minR2 > 0 && d < minR2;
                             // 视野内最近敌人永远保留作兜底：巡逻只用于找漏敌，不能因目标已被 4 人锁定
                             // 就把眼前敌人当作不存在。未满目标仍走 free，全部满员时才回退 best。
@@ -4324,9 +4371,7 @@ export class Scene13WarLayer {
             //    DE 护甲算法下普通弓弩打石墙（远防 10）/城门（远防 6）每发只扣 1 点，等于白射。
             //    「带攻城加成」= DE 加成表里对建筑护甲类（11 全建筑 / 13 石质防御 / 21 标准建筑 / 22 城墙城门）有正加成。
             if (mRng > 65) {
-                const bon = mKey ? this.statsFor(mKey, 0).bonus : undefined;
-                const hitsBld = !!bon && ((bon[11] ?? 0) > 0 || (bon[13] ?? 0) > 0 || (bon[21] ?? 0) > 0 || (bon[22] ?? 0) > 0);
-                if (!hitsBld) {
+                if (!mKey || !this.rangedHitsBuildings(mKey)) {
                     if (manChosen && reserve) manChosen.claims++;
                     return manChosen;
                 }
@@ -4417,19 +4462,15 @@ export class Scene13WarLayer {
      * 🔴 [2026-10-20 主人令「城门至城垛为一段。城门坍塌，同时也坍塌一段城墙」「并可以通行士兵，这样可以避免AI寻路」]
      * 城门倒塌时，**随机一侧**从城门到第一座城垛（`_POST` / 篱笆转角 `CORNER`，城垛本身不塌）之间的城墙一起坍塌：
      *   · 每块按各自随机破口档（wallBreachRatio）定格成 75/50/25/0 四种破损样子之一，全部解除阻挡可通行；
-     *   · 沿城门所在那条墙线找：门的走向与门两侧碰撞体同一口径（`_SE` 与左右镜像决定斜向），偏离墙线太远的不算；
-     *   · 墙件间距取全场墙件最近邻距离的中位数，相邻两块之间隔得太远（墙线断开/拐角）就停；
+     *   · 沿城门所在那条墙线找：走向按城门附近墙件的实际位置判（不靠素材名），偏离墙线太远的不算；
+     *   · 墙件间距取全场墙件最近邻距离的中位数；门心到第一块墙最远放宽到 4 格（门本身占 4 格），之后相邻两块隔得太远（墙线断开/拐角）就停；
+     *   · 那一侧门与城垛之间没有墙，就换另一侧；
      *   · 倒塌音只播一次（城门那一下已播），这一段静音塌。
      */
     private collapseGateSideSegment(gate: WarBuilding): void {
-        const dir = gate.sprite.asset.replace(/^BUILDING:/, '');
-        const dSign = (/_SE$/.test(dir) ? 1 : -1) * (gate.sprite.flip ? -1 : 1);
-        const ul = Math.hypot(24, 12);
-        const side = Math.random() < 0.5 ? 1 : -1;
-        const ux = (24 / ul) * side, uy = (12 * dSign / ul) * side;
         const walls = this.wallGates.filter((b) => b !== gate && b.key !== 'STONE_GATE' && !b.bld);
         if (walls.length < 2) return;
-        // 墙件间距：全场墙件最近邻距离的中位数
+        // 墙件间距：全场墙件最近邻距离的中位数（DE 墙按格逐件摆 ⇒ ≈ 一格斜距）
         const nn: number[] = [];
         for (const a of walls) {
             let best = Infinity;
@@ -4442,26 +4483,48 @@ export class Scene13WarLayer {
         }
         nn.sort((p, q) => p - q);
         const spacing = nn[Math.floor(nn.length / 2)] ?? 40;
-        const maxStep = spacing * 2.2;
-        const isPost = (b: WarBuilding): boolean => /_POST|CORNER/.test(b.sprite.asset) || /_POST|CORNER/.test(b.rubbleAsset ?? '');
-        const visited = new Set<WarBuilding>();
-        let px = gate.x, py = gate.y;
-        for (let n = 0; n < 16; n++) {
-            let next: WarBuilding | null = null, nextAlong = Infinity;
+        // 🔴 [2026-10-20 修] 墙线走向按**墙件实际位置**判，不靠素材名：木栅栏/篱笆门（如 DARK_GATE_PALISADE）
+        //    名字里没有 _SE/_NE，按名字判会判反方向。两条等轴斜线（↘ / ↗）里，取城门附近落在线上墙件多的那条。
+        const ul = Math.hypot(24, 12);
+        const lines = [{ x: 24 / ul, y: 12 / ul }, { x: 24 / ul, y: -12 / ul }];
+        let best = lines[0], bestHits = -1;
+        for (const d of lines) {
+            let hits = 0;
             for (const b of walls) {
-                if (visited.has(b)) continue;
-                const vx = b.x - px, vy = b.y - py;
-                const along = vx * ux + vy * uy;
-                if (along <= 0.5 || along > maxStep) continue;
-                const perp = Math.abs(vx * uy - vy * ux);
-                if (perp > along * 0.45 + spacing * 0.25) continue;
-                if (along < nextAlong) { nextAlong = along; next = b; }
+                const vx = b.x - gate.x, vy = b.y - gate.y;
+                if (Math.abs(vx * d.x + vy * d.y) > spacing * 5) continue;
+                if (Math.abs(vx * d.y - vy * d.x) <= spacing * 0.35) hits++;
             }
-            if (!next || isPost(next)) break;   // 墙线断了 / 到城垛了 → 这一段到此为止
-            visited.add(next);
-            if (this.wallStanding(next)) this.collapseOneWall(next, true);
-            px = next.x; py = next.y;
+            if (hits > bestHits) { bestHits = hits; best = d; }
         }
+        // 城垛判定：按墙件**原始**素材名（城垛先塌过会换成残骸贴图，看现贴图会认不出、越过它塌进下一条边）
+        const isPost = (b: WarBuilding): boolean => /_POST|CORNER/.test(this.wallOrigAsset.get(b) ?? b.sprite.asset);
+        // 沿一侧走：城门本身占 4 格（门 2 + 门塔 2），门心到第一块墙 ≈ 2.5 格 ⇒ 第一步放宽到 4 格，之后每步 ≤ 2.2 格
+        const walk = (side: 1 | -1): number => {
+            const ux = best.x * side, uy = best.y * side;
+            const visited = new Set<WarBuilding>();
+            let px = gate.x, py = gate.y, fell = 0;
+            for (let n = 0; n < 24; n++) {
+                const maxStep = spacing * (n === 0 ? 4 : 2.2);
+                let next: WarBuilding | null = null, nextAlong = Infinity;
+                for (const b of walls) {
+                    if (visited.has(b)) continue;
+                    const vx = b.x - px, vy = b.y - py;
+                    const along = vx * ux + vy * uy;
+                    if (along <= 0.5 || along > maxStep) continue;
+                    if (Math.abs(vx * uy - vy * ux) > spacing * 0.5) continue;   // 偏离墙线（拐角另一条边、内外圈）不算
+                    if (along < nextAlong) { nextAlong = along; next = b; }
+                }
+                if (!next || isPost(next)) break;   // 墙线断了 / 到城垛了 → 这一段到此为止
+                visited.add(next);
+                if (this.wallStanding(next)) { this.collapseOneWall(next, true); fell++; }
+                px = next.x; py = next.y;
+            }
+            return visited.size + fell;
+        };
+        // 随机一侧；那一侧门到城垛之间没有墙（门紧挨角楼）就换另一侧，保证总有一段塌
+        const side: 1 | -1 = Math.random() < 0.5 ? 1 : -1;
+        if (walk(side) === 0) walk(side === 1 ? -1 : 1);
     }
 
     /** 单个墙/门/垛段坍塌（严格对齐 DE empires2_x2_p1.dat）：
@@ -4470,6 +4533,7 @@ export class Scene13WarLayer {
      *  - 篱笆(Unit 1062)：按 `wallBreachRatio` 阈值触发 `FX_WALL_DUST` + 切 `BATTLEFIELD:FENCE_RUBBLE`；
      *  - 城门(Unit 64)：必须 0 血完全摧毁，照播 DE 独立 100 帧倒塌动画（`*_GATE_*_DESTR` → `*_GATE_*_RUBBLE`）。 */
     private collapseOneWall(b: WarBuilding, quiet = false): void {
+        if (!this.wallOrigAsset.has(b)) this.wallOrigAsset.set(b, b.sprite.asset);
         b.sprite.obstruction = undefined;
         b.sprite.obstructionDisabled = true;
         if (b.extraSprites) for (const sp of b.extraSprites) { sp.obstruction = undefined; sp.obstructionDisabled = true; }
@@ -5534,7 +5598,9 @@ export class Scene13WarLayer {
 
         // ③ 本队统一目标（含乱入者）：敌方分队或城门/建筑
         const lt = (m.lane >= 0 && !m.siegeW) ? this.laneTargets.get(m.lane) : undefined;
-        if (lt?.targetLane !== undefined) {
+        // 🔴 [2026-10-20] 城外待命的普通远程：本队目标敌队在墙里就不追（追了只会顶墙打转），落到下面的城门外列队
+        const rangedHold = this.rangedHoldsOutside(m);
+        if (lt?.targetLane !== undefined && !(rangedHold && this.insideRing(lt.x, lt.y))) {
             return { x: lt.x + ringX + m.jx, y: lt.y + ringY + m.jy };
         }
         if (this.battleType === 'siege' && m.f === 0 && !m.siegeW) {
@@ -5555,7 +5621,9 @@ export class Scene13WarLayer {
                     }
                     if (gate) {
                         const vx = gate.x - c.x, vy = gate.y - c.y, vl = Math.hypot(vx, vy) || 1;
-                        return { x: gate.x + (vx / vl) * 150 + m.jx, y: gate.y + (vy / vl) * 150 + m.jy };
+                        // 普通远程站在近战身后、约 0.6 个射程处列队（门前留给打门的近战），门一破再进城
+                        const back = 150 + (rangedHold ? this.statsFor(m.key, 0).rng * 0.6 : 0);
+                        return { x: gate.x + (vx / vl) * back + m.jx, y: gate.y + (vy / vl) * back + m.jy };
                     }
                 }
                 // 流场不可达（如险要内外墙夹道）时，就近打本队目标或最近立着的建筑/城门
