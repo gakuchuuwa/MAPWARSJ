@@ -10,6 +10,7 @@ import { FACTION_COMPOSITIONS } from '../data/FactionCompositions';
 import { GENERAL_ERA, type GeneralEra } from '../data/GeneralEra';
 import { HISTORICAL_EVENT_SCRIPT } from '../data/HistoricalEventScript';
 import { FACTION_GENERALS } from '../data/FactionGenerals';
+import { BATTLEFIELD_CHARACTERS } from '../data/BattlefieldCharacters';
 import { PORTRAIT_CANONICAL_MAP } from '../config/portrait_canonical';
 import { getCityRegion, REGION_ORDER } from '../systems/RegionSystem';
 import { resolveCityDeBuildingStyle } from '../systems/cityDeStyle';
@@ -659,7 +660,8 @@ function applyFilter(): void {
             case 'no-era': return !!r.generalId && !r.era;
             case 'incomplete': return r.completeness < 100;
             case 'no-general': return !r.generalId;
-            case 'no-portrait': return !!r.generalId && !(r.portrait ?? '').trim();
+            // 🔴 [2026-10-20 主人令「把所有缺少立绘的武将都要报错」] 一个势力多位武将：任一位缺立绘就显示（原只看第一位）
+            case 'no-portrait': return !!r.generalId && factionHasMissingPortrait(r.id);
             case 'no-elite': return !r.eliteName;
             case 'no-legion': return !r.legionName;
             case 'no-skill': return rowHasSkillError(r);
@@ -689,7 +691,9 @@ function updateStats(): void {
     const total = rows.length;
     const complete = rows.filter(r => r.completeness === 100).length;
     const noGen = rows.filter(r => !r.generalId).length;
-    const noPortrait = rows.filter(r => !!r.generalId && !(r.portrait ?? '').trim()).length;
+    // 🔴 [2026-10-20 主人令「没有立绘的武将应该报错」] 缺立绘按全库武将逐条统计（不是按势力行，避免同势力多武将漏计）
+    //    2026-10-20 再补：战场人物（首战里只出场一仗的人）也算，与「运行校验」报错同一口径
+    const noPortrait = countMissingPortraits();
     const noSkill = rows.filter(r => rowHasSkillError(r)).length;
     const noElite = rows.filter(r => !r.eliteName).length;
     const noLegion = rows.filter(r => !r.legionName).length;
@@ -706,7 +710,7 @@ function updateStats(): void {
         }
     }
     els.stats.innerHTML =
-        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | 缺立绘 ${noPortrait} | 缺精锐 ${noElite} | 缺军团 ${noLegion} | 显示 ${filteredRows.length}`
+        `共 ${total} 势力 | 完整 ${complete} | 缺武将 ${noGen} | 缺武将技 ${noSkill} | <span style="color:#e06060">缺立绘 ${noPortrait}</span> | 缺精锐 ${noElite} | 缺军团 ${noLegion} | 显示 ${filteredRows.length}`
         + `<br><span style="color:#c8a868">名将 ${famous} | 普将 ${ordinary}</span>`
         + `<span style="margin-left:12px;color:#8ab4c4">T0:<b>${t[0]}</b> T1:<b>${t[1]}</b> T2:<b>${t[2]}</b> T3:<b>${t[3]}</b> T4:<b>${t[4]}</b></span>`
         + `<span style="margin-left:12px;color:#e5c158">古典:<b>${eraCounts.antiquity}</b></span> <span style="color:#78c878">封建:<b>${eraCounts.feudal}</b></span> <span style="color:#8ab4f8">城堡:<b>${eraCounts.castle}</b></span> <span style="color:#f08080">帝王:<b>${eraCounts.imperial}</b></span>`
@@ -1015,7 +1019,7 @@ async function openEditPanel(factionId: string | null): Promise<void> {
             </label>
           </div>
           <label><span>立绘（输入拼音/势力key 即时筛选，如 liguang）</span>
-            ${qInput('bm-quick-portrait', '留空 → 从未被占用的立绘中随机')}
+            ${qInput('bm-quick-portrait', '留空 → 立绘留空（按主人令不随机）')}
           </label>
           <div class="bm-portrait-preview">
             <img id="bm-quick-portrait-img" style="display:none" alt="立绘" />
@@ -1674,10 +1678,8 @@ async function handleQuickSubmit(): Promise<void> {
         aptitude = pickRandom(['create', 'leverage', 'reverse'] as const) ?? 'leverage';
         randomNotes.push(`三势=${aptitude}`);
         if (!portrait) {
-            const p = await pickRandomUnusedPortrait();
-            if (!p) { showToast('随机立绘失败：立绘清单为空，请手动选择', true); return; }
-            portrait = p;
-            randomNotes.push(`立绘=${p.split('/').pop()}`);
+            // 🔴 [2026-10-20 主人令「立绘一律留空，禁代建/代填/随机配图」] 不再随机补立绘
+            randomNotes.push('立绘留空（按主人令）');
         }
     }
 
@@ -2064,8 +2066,9 @@ async function collectScriptPortraitIssues(): Promise<ValidationIssue[]> {
         const g = byGid.get(gid);
         if (!g) { out.push({ level: 'error', msg: `剧本人物 ${gid} ${where} 在武将表里没有这个人（没有立绘）` }); continue; }
         const who = `${g.name}（${gid} / ${g.fid}）${where}`;
-        if (!g.portrait) { out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 没有立绘` }); continue; }
-        if (catalogLoaded && !catalog.has(g.portrait)) { out.push({ level: 'error', factionId: g.fid, msg: `剧本人物 ${who} 立绘文件不存在：${g.portrait}（被挪走／改名／删了？）` }); continue; }
+        // 没有立绘 / 文件不存在：已由全库武将立绘检查（collectAllGeneralPortraitIssues）逐个报过，这里不再重复报
+        if (!g.portrait) continue;
+        if (catalogLoaded && !catalog.has(g.portrait)) continue;
         const grp = groupOf.get(g.portrait);
         if (grp) {
             for (const other of grp.filter(x => x !== g.portrait)) {
@@ -2080,11 +2083,61 @@ async function collectScriptPortraitIssues(): Promise<ValidationIssue[]> {
     return out;
 }
 
+/**
+ * 🔴 [2026-10-20 主人令「把所有缺少立绘的武将都要报错，不然我无法知道哪些武将缺少立绘」]
+ * 全库武将立绘检查（并入「运行校验」）：据点武将（FACTION_GENERALS，一个势力多位武将逐个查）
+ * ＋ 战场人物（BATTLEFIELD_CHARACTERS，首战里只出场一仗的人），逐个报 error：
+ *   ① 没有立绘；② 立绘文件不存在（被挪走／改名／删了）。只检查、不改任何立绘与路径。
+ */
+async function collectAllGeneralPortraitIssues(): Promise<ValidationIssue[]> {
+    const out: ValidationIssue[] = [];
+    const catalog = new Set((await loadPortraitCatalog()).map(normalizePortraitPath));
+    const catalogLoaded = catalog.size > 0;
+    const seen = new Set<string>();
+    const check = (fid: string, gid: string, name: string, portrait: string, kind: string): void => {
+        if (!gid || seen.has(gid)) return;
+        seen.add(gid);
+        const who = `${kind} ${name}（${gid} / ${fid}）`;
+        const pp = normalizePortraitPath(portrait ?? '');
+        if (!pp.trim()) { out.push({ level: 'error', factionId: fid, msg: `${who} 没有立绘` }); return; }
+        if (catalogLoaded && !catalog.has(pp)) out.push({ level: 'error', factionId: fid, msg: `${who} 立绘文件不存在：${pp}（被挪走／改名／删了？）` });
+    };
+    for (const [fid, raw] of Object.entries(FACTION_GENERALS as Record<string, any>)) {
+        for (const g of (Array.isArray(raw) ? raw : [raw])) if (g) check(fid, g.generalId, g.generalName, g.portrait, '武将');
+    }
+    for (const c of Object.values(BATTLEFIELD_CHARACTERS)) check(c.factionId, c.generalId, c.generalName, c.portrait ?? '', '战场人物');
+    return out;
+}
+
+/** 状态栏「缺立绘」：与上面报错同一口径（据点武将 ＋ 战场人物，同一 id 只算一次） */
+function countMissingPortraits(): number {
+    const seen = new Set<string>();
+    let n = 0;
+    const tally = (gid: string, portrait: string | undefined) => {
+        if (!gid || seen.has(gid)) return;
+        seen.add(gid);
+        if (!(portrait ?? '').trim()) n++;
+    };
+    for (const e of Object.values(FACTION_GENERALS as any)) for (const g of (Array.isArray(e) ? e : [e]) as any[]) if (g) tally(g.generalId, g.portrait);
+    for (const c of Object.values(BATTLEFIELD_CHARACTERS)) tally(c.generalId, c.portrait);
+    return n;
+}
+
+/** 该势力里任一武将缺立绘（「缺立绘」筛选用：一个势力多位武将，不能只看第一位） */
+function factionHasMissingPortrait(fid: string): boolean {
+    const raw = (FACTION_GENERALS as Record<string, any>)[fid];
+    if (!raw) return false;
+    return (Array.isArray(raw) ? raw : [raw]).some((g: any) => g && !(g.portrait ?? '').trim());
+}
+
 async function runValidation(): Promise<void> {
     try {
         const res = await fetch('/api/validate-entities');
         const data = await res.json();
-        issues = data.issues ?? [];
+        // 服务端每个势力只查第一位武将的立绘（会漏同势力其余武将）⇒ 这两类改由下面的全库检查统一报，去掉服务端的，免得重复
+        issues = (data.issues ?? []).filter((i: ValidationIssue) => !/武将 ".*" 立绘(路径为空|不存在)/.test(i.msg));
+        // 全库武将缺立绘 / 立绘文件丢失（据点武将 ＋ 战场人物，逐个报错）
+        try { issues = [...issues, ...(await collectAllGeneralPortraitIssues())]; } catch (e: any) { issues.push({ level: 'warn', msg: `全库武将立绘检查没跑成：${e?.message ?? e}` }); }
         // 剧本人物立绘（战场武将没有立绘、文件丢了、同一张脸挂两个人……）并入同一份校验结果
         try { issues = [...issues, ...(await collectScriptPortraitIssues())]; } catch (e: any) { issues.push({ level: 'warn', msg: `剧本人物立绘检查没跑成：${e?.message ?? e}` }); }
         

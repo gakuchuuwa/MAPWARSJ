@@ -3169,6 +3169,73 @@ export const GENERAL_PROFILES: Record<string, GeneralProfile> = {
     gen_zengguofan: { generalId: 'gen_zengguofan', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 曾国藩
     gen_li_xiucheng: { generalId: 'gen_li_xiucheng', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'defense' },   // 李秀成：太平天国忠王
     gen_lajos_ii: { generalId: 'gen_lajos_ii', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'defense' },   // 拉约什二世
+    bfe_cimmerian_king: { generalId: 'bfe_cimmerian_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 辛梅里安王 图格达梅：普将
+    bfe_libyan_chief: { generalId: 'bfe_libyan_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 利比亚诸部盟主 阿迪尔：普将
+    bfe3_46: { generalId: 'bfe3_46', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 维钦托利：名将（过三闸）
+    baolusi: { generalId: 'baolusi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 保卢斯：普将
+    waluo: { generalId: 'waluo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 瓦罗：普将
+    aitiliusi: { generalId: 'aitiliusi', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 埃提乌斯：名将（过三闸）
+    bfe3_77: { generalId: 'bfe3_77', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 瓦勒良：普将
+    bfe3_79: { generalId: 'bfe3_79', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 奥勒良：名将（过三闸）
+    bfe3_81: { generalId: 'bfe3_81', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 马克森提乌斯：普将
+    bfe3_91: { generalId: 'bfe3_91', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 霍诺留：普将
+    bfe_sigismund: { generalId: 'bfe_sigismund', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 西吉斯蒙德：普将
+    bfe3_92: { generalId: 'bfe3_92', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿内吉斯克鲁斯：普将
+    gen_jogaila: { generalId: 'gen_jogaila', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 雅盖沃：名将（过三闸）
+    bfe_niu_han: { generalId: 'bfe_niu_han', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 隗嚣将 牛邯：普将
+    bfe3_14: { generalId: 'bfe3_14', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 屠睢：普将
+    bfe3_17: { generalId: 'bfe3_17', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 王离：普将
+    bfe3_9: { generalId: 'bfe3_9', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 王龁：名将（过三闸）
+    bfe3_7: { generalId: 'bfe3_7', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 胡阳：普将
+    bfe3_78: { generalId: 'bfe3_78', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 诸葛瞻：普将
+    bfe3_71: { generalId: 'bfe3_71', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 袁绍：边界（未达战略级）→ 普将
+    bfe3_36: { generalId: 'bfe3_36', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 李广利：边界（未达战略级）→ 普将
+    bfe3_20: { generalId: 'bfe3_20', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 卫满：普将
+    bfe3_31: { generalId: 'bfe3_31', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 卫右渠：普将
+    bfe3_24: { generalId: 'bfe3_24', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 老上单于：边界（未达战略级）→ 普将
+    bfe3_34: { generalId: 'bfe3_34', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 儿单于：普将
+    bfe3_38: { generalId: 'bfe3_38', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'attack' },   // 且鞮侯单于：名将（过三闸）
+    bfe3_64: { generalId: 'bfe3_64', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 北单于：普将
+    bfe3_32: { generalId: 'bfe3_32', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 白羊王：普将
+    bfe3_48: { generalId: 'bfe3_48', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 呼韩邪单于：普将
+    bfe_qiang_bo: { generalId: 'bfe_qiang_bo', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 羌方首领 羌伯砺：普将
+    bfe3_74: { generalId: 'bfe3_74', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 轲比能：普将
+    bfe_jaya_prakash: { generalId: 'bfe_jaya_prakash', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'attack' },   // 贾亚·普拉卡什·马拉：名将（过三闸）
+    bfe_dian_chief: { generalId: 'bfe_dian_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 靡莫大酋 苴兰：普将
+    bfe_ngo_nhat_khanh: { generalId: 'bfe_ngo_nhat_khanh', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 吴日庆：普将
+    bfe3_88: { generalId: 'bfe3_88', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 苻融：普将
+    bfe_huaiyi_chief: { generalId: 'bfe_huaiyi_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 淮夷首领 嬴夷吾：普将
+    gen_shi_chaoyi: { generalId: 'gen_shi_chaoyi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 史朝义：普将
+    bfe3_13: { generalId: 'bfe3_13', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'attack' },   // 项燕：名将（过三闸）
+    bfe3_28: { generalId: 'bfe3_28', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 刘濞：普将
+    bfe3_70: { generalId: 'bfe3_70', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 刘繇：普将
+    bfe3_69: { generalId: 'bfe3_69', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 华雄：普将
+    xisi_yakubusafaer: { generalId: 'xisi_yakubusafaer', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 雅库布：名将（过三闸）
+    bfe3_6: { generalId: 'bfe3_6', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'reverse', attackStyle: 'attack' },   // 安条克一世：名将（过三闸）
+    gen_toghtekin: { generalId: 'gen_toghtekin', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 图格特金：边界（未达战略级）→ 普将
+    bfe3_1: { generalId: 'bfe3_1', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 西底家：普将
+    gen_aristobulus_ii: { generalId: 'gen_aristobulus_ii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿里斯托布鲁斯二世：普将
+    gen_sayf_al_dawla: { generalId: 'gen_sayf_al_dawla', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 赛弗·道莱：名将（过三闸）
+    bfe3_73: { generalId: 'bfe3_73', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿尔达班四世：普将
+    gen_sangrama_vijayottungavarman: { generalId: 'gen_sangrama_vijayottungavarman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 桑格拉玛：普将
+    bfe_rajah_sulayman: { generalId: 'bfe_rajah_sulayman', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 拉者苏莱曼三世：普将
+    bfe_pisa_king: { generalId: 'bfe_pisa_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 皮萨王 潘塔琉斯：普将
+    yisatisi_yisatisi: { generalId: 'yisatisi_yisatisi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 伊萨提斯：普将
+    bfe_dalriada_king: { generalId: 'bfe_dalriada_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 达尔里阿达王 费尔古斯·麦克·埃赫达赫：普将
+    gen_john_comyn: { generalId: 'gen_john_comyn', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 约翰·科明：普将
+    bfe_chanca_chief: { generalId: 'bfe_chanca_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 昌卡部族盟主 阿斯塔瓦兰卡：普将
+    bfe_sue_harutaka: { generalId: 'bfe_sue_harutaka', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 陶晴贤：普将
+    bfe_darien_chief: { generalId: 'bfe_darien_chief', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 达连酋长 库纳：普将
+    bfe_muzaffar_shah: { generalId: 'bfe_muzaffar_shah', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 穆扎法尔·沙阿三世：普将
+    bfe_arakan_general: { generalId: 'bfe_arakan_general', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 阿拉干守将 阿萨杜拉：普将
+    bfe_coyett: { generalId: 'bfe_coyett', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 揆一：普将
+    bfe_prasenajit: { generalId: 'bfe_prasenajit', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 拘萨罗王 波斯匿：普将
+    bfe_kalinga_king: { generalId: 'bfe_kalinga_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 羯陵伽王 婆摩：普将
+    bfe_anga_king: { generalId: 'bfe_anga_king', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 鸯伽王 达摩婆罗：普将
+    bfe_pushyamitra: { generalId: 'bfe_pushyamitra', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 巽伽王 普沙密多罗：普将
+    bfe_antigonus: { generalId: 'bfe_antigonus', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 安提柯一世：名将（过三闸）
+    gen_li_xin: { generalId: 'gen_li_xin', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 李信
+    gen_seleucus_i: { generalId: 'gen_seleucus_i', tier: 'famous', tacticalSkillId: 'ts_001', atkAdvantageSkillId: 'ts_340', atkBalanceSkillId: 'ts_300', atkDisadvantageSkillId: 'ts_218', defAdvantageSkillId: 'ts_39', defBalanceSkillId: 'ts_526', defDisadvantageSkillId: 'ts_016', aptitude: 'create', attackStyle: 'attack' },   // 塞琉古一世
     aiji_psamtik_iii: { generalId: 'aiji_psamtik_iii', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 普萨美提克三世：佩鲁西姆败亡，普将
     tujue_wusumishi: { generalId: 'tujue_wusumishi', tier: 'ordinary', tacticalSkillId: 'ts_001', aptitude: 'reverse', attackStyle: 'defense' },   // 乌苏米施：末代可汗被灭，普将
     tubo_xinuoluo: { generalId: 'tubo_xinuoluo', tier: 'famous', tacticalSkillId: 'ts_001', aptitude: 'create', attackStyle: 'attack' },   // 悉诺逻恭禄：吐蕃名将（破唐边城），名将

@@ -137,6 +137,10 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    gen_jogaila: { birth: 1348, death: 1434 },           // 雅盖沃（立陶宛大公/波兰国王）
+    xisi_yakubusafaer: { birth: 840, death: 879, kaoju: '推定' }, // 雅库布（萨法尔王朝开国）
+    gen_li_xin: { birth: -300, death: -250, kaoju: '推定' }, // 李信（秦将）
+    gen_seleucus_i: { birth: -358, death: -281 },          // 塞琉古一世
     gen_lajos_ii: { birth: 1506, death: 1526 },           // 拉约什二世（匈牙利国王）
     gen_li_xiucheng: { birth: 1823, death: 1864 },         // 李秀成（太平天国忠王）
     gen_shashanka: { birth: 590, death: 637, kaoju: '推定' },  // 设赏迦（高达王）

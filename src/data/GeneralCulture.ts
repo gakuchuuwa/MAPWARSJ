@@ -296,6 +296,8 @@ export const GENERAL_CULTURE: Record<string, BuildingStyle> = {
     'gen_civilis': 'GERMANIC',   // 巴塔维｜西维利斯｜据点 乌特勒支
     'gen_cleitus': 'ORIE',   // 阿迪亚贝纳｜克雷图斯｜据点 阿尔贝拉
     'gen_clovis_i': 'FRANKS',   // 高卢罗曼｜克洛维｜据点 里昂
+    'gen_li_xin': 'CENTRAL',          // 秦｜李信｜据点 长安（CENTRAL）
+    'gen_seleucus_i': 'ORIE',         // 塞琉古｜塞琉古一世｜据点 安提俄基亚（ORIE）
     'gen_lajos_ii': 'MAGYAR',   // 匈牙利｜拉约什二世｜据点 布达佩斯（MAGYAR）
     'gen_li_xiucheng': 'JIANGNAN',    // 太平天国｜李秀成｜据点 金陵（JIANGNAN）
     'gen_shashanka': 'INDIA',         // 高达｜设赏迦｜据点 曲女城（INDIA）

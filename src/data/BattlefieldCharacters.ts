@@ -241,6 +241,14 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史有其人：夏王窦建德（573–621），621 年虎牢关之战兵败被李世民所俘。',
     },
+    // 🔴 [2026-10-20 首战规则] 867 尼沙普尔：塔希尔王朝末王穆罕默德·伊本·塔希尔（史有其人，生卒不详）
+    bfe_tahir_king: { generalId: 'bfe_tahir_king', generalName: '穆罕默德·伊本·塔希尔', factionId: 'xisi', portrait: '', note: '史有其人：塔希尔王朝末王，867 年尼沙普尔被雅库布攻灭。' },
+    // 🔴 [2026-10-20 首战规则] 962 阿勒颇：拜占庭皇帝尼基弗鲁斯二世（史有其人）
+    bfe_nikephoros_ii: { generalId: 'bfe_nikephoros_ii', generalName: '尼基弗鲁斯二世', factionId: 'baizanting', portrait: '', note: '史有其人：拜占庭皇帝尼基弗鲁斯二世·福卡斯，962 年攻取阿勒颇。' },
+    // 🔴 [2026-10-20 首战规则] 前275 大象之战：高卢首领姓名不载，拟名「卢塔里乌斯」
+    bfe_gaul_chief: { generalId: 'bfe_gaul_chief', generalName: '卢塔里乌斯', factionId: 'gaolu_luoma', portrait: '', note: '史无载，拟名：前275 年安条克一世破高卢人之役，高卢首领姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 1744 努瓦科特：加德满都马拉王姓名不载，拟名「拉纳吉特·马拉」
+    bfe_malla_king: { generalId: 'bfe_malla_king', generalName: '拉纳吉特·马拉', factionId: 'malla', portrait: '', note: '史无载，拟名：1744 年廓尔喀攻努瓦科特时马拉王姓名未确载。' },
     // 🔴 [2026-10-20 首战规则] 1514 斯摩棱斯克：立陶宛守将尤里·格列博维奇（史有其人，生卒不详）
     bfe_smolensk_voivode: { generalId: 'bfe_smolensk_voivode', generalName: '尤里·格列博维奇', factionId: 'litaowan', portrait: '', note: '史有其人：1514 年斯摩棱斯克立陶宛守将尤里·格列博维奇，生卒不详。' },
     // 🔴 [2026-10-20 首战规则] 批量拟名（史无载）：498 罽宾王、1529 肖阿苏丹、1618 帕竹第司、1639 藏巴将军、1641 葡军军官、1641 奥斯曼帕夏、1801 西山将、1818 木尔坦总督、1837 贾姆鲁德守将
