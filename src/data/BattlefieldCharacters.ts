@@ -241,6 +241,26 @@ export const BATTLEFIELD_CHARACTERS: Readonly<Record<string, BattlefieldCharacte
         portrait: '',
         note: '史有其人：夏王窦建德（573–621），621 年虎牢关之战兵败被李世民所俘。',
     },
+    // 🔴 [2026-10-20 首战规则] 1514 斯摩棱斯克：立陶宛守将尤里·格列博维奇（史有其人，生卒不详）
+    bfe_smolensk_voivode: { generalId: 'bfe_smolensk_voivode', generalName: '尤里·格列博维奇', factionId: 'litaowan', portrait: '', note: '史有其人：1514 年斯摩棱斯克立陶宛守将尤里·格列博维奇，生卒不详。' },
+    // 🔴 [2026-10-20 首战规则] 批量拟名（史无载）：498 罽宾王、1529 肖阿苏丹、1618 帕竹第司、1639 藏巴将军、1641 葡军军官、1641 奥斯曼帕夏、1801 西山将、1818 木尔坦总督、1837 贾姆鲁德守将
+    bfe_gandhara_king: { generalId: 'bfe_gandhara_king', generalName: '婆罗那', factionId: 'jibin', portrait: '', note: '史无载，拟名：498 年犍陀罗远征时罽宾／犍陀罗王姓名未传。' },
+    bfe_shaah_sultan: { generalId: 'bfe_shaah_sultan', generalName: '阿达利', factionId: 'xiaoa', portrait: '', note: '史无载，拟名：1529 年欣比拉库雷之役肖阿苏丹姓名未传。' },
+    bfe_phagmo_depsi: { generalId: 'bfe_phagmo_depsi', generalName: '札巴坚赞', factionId: 'lang_clan', portrait: '', note: '史无载，拟名：1618 年羊卓之战帕竹第司姓名未确载。' },
+    bfe_tsangpa_general: { generalId: 'bfe_tsangpa_general', generalName: '丹增', factionId: 'tsangpa', portrait: '', note: '史无载，拟名：1639 年普纳卡之战藏巴军主将姓名未载。' },
+    bfe_portuguese_officer: { generalId: 'bfe_portuguese_officer', generalName: '迪奥戈·苏亚雷斯', factionId: 'putaoya', portrait: '', note: '史无载，拟名：1641 年姆博罗雷之战葡萄牙军官姓名未传。' },
+    bfe_azov_pasha: { generalId: 'bfe_azov_pasha', generalName: '侯赛因帕夏', factionId: 'osman', portrait: '', note: '史无载，拟名：1641 年阿速夫围城奥斯曼统帅姓名未确载。' },
+    bfe_tayson_general: { generalId: 'bfe_tayson_general', generalName: '阮文宝', factionId: 'dayue', portrait: '', note: '史无载，拟名：1801 年归仁守将姓名未载。' },
+    bfe_multan_governor: { generalId: 'bfe_multan_governor', generalName: '穆扎法尔汗', factionId: 'dulan_d', portrait: '', note: '史无载，拟名：1818 年木尔坦杜兰尼总督姓名未载。' },
+    bfe_jamrud_commander: { generalId: 'bfe_jamrud_commander', generalName: '汗·瓦利', factionId: 'dulan_d', portrait: '', note: '史无载，拟名：1837 年贾姆鲁德要塞守将姓名未载。' },
+    // 🔴 [2026-10-20 首战规则] 1716 科孚：奥斯曼远征统帅姓名未确载，拟名「达马德·阿里帕夏」
+    bfe_corfu_ottoman: { generalId: 'bfe_corfu_ottoman', generalName: '达马德·阿里帕夏', factionId: 'osman', portrait: '', note: '史无载，拟名：1716 年科孚岛围攻奥斯曼统帅姓名未确载。' },
+    // 🔴 [2026-10-20 首战规则] 1605 苏菲扬：奥斯曼统帅姓名未确载，拟名「尤素福帕夏」
+    bfe_yusuf_pasha: { generalId: 'bfe_yusuf_pasha', generalName: '尤素福帕夏', factionId: 'osman', portrait: '', note: '史无载，拟名：1605 年苏菲扬战役奥斯曼统帅姓名未确载。' },
+    // 🔴 [2026-10-20 首战规则] 1575 德尔纳特：葡萄牙要塞司令姓名不载，拟名「若昂·德·梅斯基塔」
+    bfe_ternate_portuguese: { generalId: 'bfe_ternate_portuguese', generalName: '若昂·德·梅斯基塔', factionId: 'putaoya', portrait: '', note: '史无载，拟名：1575 年德尔纳特逐葡战，葡萄牙要塞司令姓名未传。' },
+    // 🔴 [2026-10-20 首战规则] 1248 塞维利亚围城：守将姓名不载，拟名「阿布·贝克尔」
+    bfe_sevilla_guard: { generalId: 'bfe_sevilla_guard', generalName: '阿布·贝克尔', factionId: 'muwaxide', portrait: '', note: '史无载，拟名：1248 年塞维利亚围城守将姓名未传。' },
     // 🔴 [2026-10-20 首战规则] 1366 加里波利：奥斯曼守将姓名不载，拟名「哈桑·贝伊」
     bfe_gallipoli_guard: { generalId: 'bfe_gallipoli_guard', generalName: '哈桑·贝伊', factionId: 'osman', portrait: '', note: '史无载，拟名：1366 年萨伏依十字军攻加里波利，奥斯曼守将姓名未传。' },
     // 🔴 [2026-10-20 首战规则] 1354 帕竹攻灭萨迦：萨迦末代本钦姓名不载，拟名「旺尊」

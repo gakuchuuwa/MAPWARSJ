@@ -137,6 +137,51 @@ export const GENERAL_LIFE_YEARS: Record<string, GeneralLifeYears> = {
     hao_d_weirui: { birth: 442, death: 520 },              // 韦睿
     gen_theodoric_great: { birth: 454, death: 526 },       // 狄奥多里克大帝
     gen_clovis_i: { birth: 466, death: 511 },              // 克洛维
+    gen_lajos_ii: { birth: 1506, death: 1526 },           // 拉约什二世（匈牙利国王）
+    gen_li_xiucheng: { birth: 1823, death: 1864 },         // 李秀成（太平天国忠王）
+    gen_shashanka: { birth: 590, death: 637, kaoju: '推定' },  // 设赏迦（高达王）
+    gen_sadashivrao: { birth: 1730, death: 1761 },         // 萨达希夫·拉奥·巴乌
+    gen_mingrui: { birth: 1727, death: 1768 },             // 明瑞（清云贵总督）
+    gen_zengguofan: { birth: 1811, death: 1872 },          // 曾国藩（湘军主帅）
+    gen_lobsang_danjin: { birth: 1692, death: 1745, kaoju: '推定' }, // 罗卜藏丹津
+    gen_furdan: { birth: 1680, death: 1755, kaoju: '推定' },    // 傅尔丹（清靖边将军）
+    gen_vernon: { birth: 1684, death: 1757 },              // 弗农（英国海军上将）
+    gen_binnya_dala: { birth: 1700, death: 1757, kaoju: '推定' }, // 彬尼亚达拉（汉达瓦底末王）
+    gen_chogtu_khan: { birth: 1580, death: 1637, kaoju: '推定' }, // 却图汗（喀尔喀）
+    gen_liu_guoxuan: { birth: 1629, death: 1693 },        // 刘国轩（明郑澎湖守将）
+    gen_kara_mustafa: { birth: 1634, death: 1683 },       // 卡拉·穆斯塔法帕夏
+    gen_kangxi: { birth: 1654, death: 1722 },             // 康熙帝
+    gen_charles_xii: { birth: 1682, death: 1718 },        // 查理十二（瑞典国王）
+    gen_akechi_mitsuhide: { birth: 1528, death: 1582 },   // 明智光秀
+    gen_ryuzoji_takanobu: { birth: 1529, death: 1584 },   // 龙造寺隆信
+    gen_nanda_bayin: { birth: 1535, death: 1600, kaoju: '推定' }, // 莽应里（东吁王）
+    gen_ishida_mitsunari: { birth: 1560, death: 1600 },    // 石田三成
+    gen_hemu: { birth: 1501, death: 1556, kaoju: '推定' }, // 赫穆（苏尔帝国将军）
+    gen_mustafa_pasha: { birth: 1500, death: 1580, kaoju: '推定' }, // 拉拉·穆斯塔法帕夏
+    gen_laudonniere: { birth: 1529, death: 1574 },         // 劳多尼耶（法国胡格诺首领）
+    gen_suleiman: { birth: 1494, death: 1566 },            // 苏莱曼大帝
+    gen_qiu_luan: { birth: 1505, death: 1552, kaoju: '推定' }, // 仇鸾（明大同总兵）
+    gen_yang_hao: { birth: 1540, death: 1629, kaoju: '推定' }, // 杨镐（明辽东经略）
+    gen_hong_chengchou: { birth: 1593, death: 1665 },      // 洪承畴（明蓟辽总督）
+    gen_wang_qiaonian: { birth: 1580, death: 1642, kaoju: '推定' }, // 汪乔年（明陕西总督）
+    gen_nikan: { birth: 1610, death: 1652, kaoju: '推定' }, // 尼堪（清敬谨亲王）
+    gen_wang_ji: { birth: 1378, death: 1460, kaoju: '推定' },  // 王骥（明兵部尚书）
+    gen_vasili_iii: { birth: 1479, death: 1533 },          // 瓦西里三世（莫斯科大公）
+    gen_atahualpa: { birth: 1502, death: 1533 },           // 阿塔瓦尔帕（印加末帝）
+    gen_valdivia: { birth: 1497, death: 1553 },            // 瓦尔迪维亚（智利征服者）
+    gen_medinaceli: { birth: 1500, death: 1574, kaoju: '推定' }, // 梅迪纳科利公爵
+    gen_chen_youliang: { birth: 1320, death: 1363, kaoju: '推定' }, // 陈友谅（陈汉皇帝）
+    gen_razadarit: { birth: 1368, death: 1421 },           // 罗娑陀利（勃固孟王）
+    gen_wang_tong: { birth: 1370, death: 1450, kaoju: '推定' }, // 王通（明征夷将军）
+    gen_louis_xi: { birth: 1423, death: 1483 },           // 路易十一（法国国王）
+    gen_beg_arslan: { birth: 1420, death: 1479, kaoju: '推定' }, // 癿加思兰（鞑靼太师）
+    gen_muhammad_xii: { birth: 1460, death: 1533 },        // 穆罕默德十二世（格拉纳达末代苏丹）
+    gen_maximilian_sforza: { birth: 1493, death: 1530 },   // 马克西米利安·斯福尔扎（米兰公爵）
+    gen_ibrahim_lodi: { birth: 1480, death: 1526, kaoju: '推定' }, // 易卜拉欣·洛迪（德里苏丹）
+    gen_boucicaut: { birth: 1366, death: 1421 },          // 布锡考特（法国元帅）
+    gen_suffolk: { birth: 1396, death: 1450 },            // 萨福克伯爵（英军统帅）
+    gen_wangzhen: { birth: 1370, death: 1449, kaoju: '推定' }, // 王振（明司礼监太监）
+    gen_constantine_xi: { birth: 1405, death: 1453 },      // 君士坦丁十一世（拜占庭末帝）
     gen_toghus_temur: { birth: 1342, death: 1388, kaoju: '推定' }, // 脱古思帖木儿（北元后主）
     gen_si_lunfa: { birth: 1340, death: 1399, kaoju: '推定' },     // 思伦发（麓川土司）
     gen_li_jinglong: { birth: 1360, death: 1424, kaoju: '推定' },  // 李景隆（曹国公）
